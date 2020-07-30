@@ -32,7 +32,7 @@ static constexpr char kAnnotationStampWithApBaseContentChecksum[] =
 #if defined(OS_WIN)
 static constexpr char kAnnotationStampWithApBaseContentChecksum[] =
     "649d6792ea50faf98c013c2d81710595";
-#elif defined(OS_MACOSX)
+#elif defined(OS_APPLE)
 static constexpr char kAnnotationStampWithApBaseContentChecksum[] =
     "83e9f5222c4c959b0b63a5cd24f773a1";
 #else
@@ -323,7 +323,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderTextWithColorScheme) {
 #if defined(OS_WIN)
   static constexpr char kMD5ContentWithText[] =
       "4245f32cc11748a00fd69852a5e5808d";
-#elif defined(OS_MACOSX)
+#elif defined(OS_APPLE)
   static constexpr char kMD5ContentWithText[] =
       "754a742f10ce0926b766dc3dd47d1f64";
 #else
@@ -369,7 +369,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderHighlightWithColorScheme) {
 // Note: The fill color rendered for highlight is different from the normal
 // path since highlights have Multiply blend mode, while the other path has
 // Normal blend mode.
-#if defined(OS_MACOSX)
+#if defined(OS_APPLE)
   static constexpr char kMD5ContentWithHighlightFill[] =
       "a820afec9b99d3d3f2e9e9382bbad7c1";
 #else
@@ -392,7 +392,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest,
 // Note: The stroke color rendered for highlight is different from the normal
 // path since highlights have Multiply blend mode, while the other path has
 // Normal blend mode.
-#if defined(OS_MACOSX)
+#if defined(OS_APPLE)
   static constexpr char kMD5ContentWithHighlight[] =
       "8837bea0b3520164b1784e513c882a2d";
 #else
@@ -430,7 +430,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderStampWithColorScheme) {
 #if defined(OS_WIN)
   static constexpr char kMD5ContentWithStamp[] =
       "71dce8f1221e1d2fe59d74258c3afd54";
-#elif defined(OS_MACOSX)
+#elif defined(OS_APPLE)
   static constexpr char kMD5ContentWithStamp[] =
       "e2d9bef817d366021e5727d9350bde43";
 #else

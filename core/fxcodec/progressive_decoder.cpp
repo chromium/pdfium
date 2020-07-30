@@ -40,11 +40,11 @@ namespace {
 constexpr size_t kBlockSize = 4096;
 
 #ifdef PDF_ENABLE_XFA_PNG
-#if defined(OS_MACOSX)
+#if defined(OS_APPLE)
 const double kPngGamma = 1.7;
 #else
 const double kPngGamma = 2.2;
-#endif  // defined(OS_MACOSX)
+#endif  // defined(OS_APPLE)
 #endif  // PDF_ENABLE_XFA_PNG
 
 void RGB2BGR(uint8_t* buffer, int width = 1) {

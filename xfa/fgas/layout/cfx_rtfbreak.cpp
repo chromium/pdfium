@@ -782,7 +782,7 @@ size_t CFX_RTFBreak::GetDisplayPos(const CFX_TextPiece* pPiece,
       current_char_pos.m_GlyphIndex = pFont->GetGlyphIndex(wForm);
       if (current_char_pos.m_GlyphIndex == 0xFFFF)
         current_char_pos.m_GlyphIndex = pFont->GetGlyphIndex(wch);
-#if defined(OS_MACOSX)
+#if defined(OS_APPLE)
       current_char_pos.m_ExtGID = current_char_pos.m_GlyphIndex;
 #endif
       current_char_pos.m_FontCharWidth = iCharWidth;

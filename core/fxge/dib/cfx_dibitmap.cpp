@@ -319,7 +319,7 @@ bool CFX_DIBitmap::LoadChannelFromAlpha(
         if (!ConvertFormat(IsCmykImage() ? FXDIB_Cmyka : FXDIB_Argb))
           return false;
       } else {
-#if defined(OS_MACOSX)
+#if defined(OS_APPLE)
         constexpr FXDIB_Format kPlatformFormat = FXDIB_Rgb32;
 #else
         constexpr FXDIB_Format kPlatformFormat = FXDIB_Rgb;
@@ -401,7 +401,7 @@ bool CFX_DIBitmap::LoadChannel(FXDIB_Channel destChannel, int value) {
           return false;
         }
       } else {
-#if defined(OS_MACOSX)
+#if defined(OS_APPLE)
         constexpr FXDIB_Format kPlatformFormat = FXDIB_Rgb;
 #else
         constexpr FXDIB_Format kPlatformFormat = FXDIB_Rgb32;

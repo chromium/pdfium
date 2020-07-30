@@ -843,7 +843,7 @@ size_t CFX_TxtBreak::GetDisplayPos(const Run* pTxtRun,
       }
       if (!bEmptyChar || (bEmptyChar && !bSkipSpace)) {
         pCharPos->m_GlyphIndex = pFont->GetGlyphIndex(wForm);
-#if defined(OS_MACOSX)
+#if defined(OS_APPLE)
         pCharPos->m_ExtGID = pCharPos->m_GlyphIndex;
 #endif
         // TODO(npm): change widths in this method to unsigned to avoid implicit

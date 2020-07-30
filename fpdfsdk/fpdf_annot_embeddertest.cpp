@@ -527,11 +527,11 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractInkMultiple) {
   }
   {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#if defined(OS_MACOSX)
+#if defined(OS_APPLE)
     static constexpr char kExpectedHash[] = "acddfe688a117ead56af7b249a2cf8a1";
 #else
     static constexpr char kExpectedHash[] = "1fb0dd8dd5f0b9bb8d076e48eb59296d";
-#endif  // defined(OS_MACOSX)
+#endif  // defined(OS_APPLE)
 #else
 #if defined(OS_WIN)
     static constexpr char kExpectedHash[] = "49d0a81c636531a337429325273d0508";
@@ -811,7 +811,7 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_ModifyRectQuadpointsWithAP) {
   static const char kMd5ModifiedHighlight[] =
       "66f3caef3a7d488a4fa1ad37fc06310e";
   static const char kMd5ModifiedSquare[] = "a456dad0bc6801ee2d6408a4394af563";
-#elif defined(OS_MACOSX)
+#elif defined(OS_APPLE)
   static const char kMd5Original[] = "fc59468d154f397fd298c69f47ef565a";
   static const char kMd5ModifiedHighlight[] =
       "e64bf648f6e9354d1f3eedb47a2c9498";
@@ -1030,7 +1030,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
   static const char kMd5ModifiedPath[] = "a7a8d675a6ddbcbdfecee65a33ba19e1";
   static const char kMd5TwoPaths[] = "7c0bdd4552329704c47a7cce47edbbd6";
   static const char kMd5NewAnnot[] = "3c48d492b4f62941fed0fb62f729f31e";
-#elif defined(OS_MACOSX)
+#elif defined(OS_APPLE)
   static const char kMd5ModifiedPath[] = "8cfae6d547fc5d6702f5f1ac631beb5e";
   static const char kMd5TwoPaths[] = "9677e4892bb02950d3e4dbe74470578f";
   static const char kMd5NewAnnot[] = "e8ebddac4db8c0a4b556ddf79aa1a26d";
@@ -1241,7 +1241,7 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_AddAndModifyImage) {
   static const char kMd5ModifiedImage[] = "5f97f98f58ed04dc393f31460485f1a2";
 #endif  // defined(OS_LINUX)
 #else
-#if defined(OS_MACOSX)
+#if defined(OS_APPLE)
   static const char kMd5NewImage[] = "dd18709d90c245a12ce0b8c4d092bea9";
   static const char kMd5ModifiedImage[] = "8d6f478ff8c7e67d49b253f1af587a99";
 #elif defined(OS_WIN)
@@ -1336,7 +1336,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
 #if defined(OS_WIN)
   static const char kMd5NewText[] = "204cc01749a70b8afc246a4ca33c7eb6";
   static const char kMd5ModifiedText[] = "641261a45e8dfd68c89b80bfd237660d";
-#elif defined(OS_MACOSX)
+#elif defined(OS_APPLE)
   static const char kMd5NewText[] = "e657266260b88c964938efe6c9b292da";
   static const char kMd5ModifiedText[] = "7accdf2bac64463101783221f53d3188";
 #else
@@ -1478,7 +1478,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
   static const char kMd5[] = "626d25c5aa5baf67d22d9a0e1c23f6aa";
 #endif  // defined(OS_LINUX)
 #else
-#if defined(OS_MACOSX)
+#if defined(OS_APPLE)
   static const char kMd5[] = "5e7e185b386ad21ca83b0287268c50fb";
 #elif defined(OS_WIN)
   static const char kMd5[] = "20b612ebd46babcb44c48c903e2c5a48";
@@ -2915,7 +2915,7 @@ TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotRendering) {
 #else
 #if defined(OS_WIN)
     static const char kMd5sum[] = "3877bec7cb3e3144eaa6d10f38bf7a30";
-#elif defined(OS_MACOSX)
+#elif defined(OS_APPLE)
     static const char kMd5sum[] = "04b16db5026b5490a50fb6ff0954c867";
 #else
     static const char kMd5sum[] = "40a7354d1f653127bcdac10e15f81654";
@@ -2945,7 +2945,7 @@ TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotRendering) {
 #else
 #if defined(OS_WIN)
     static const char kMd5sum[] = "a30f1bd1cac022d08ceb100df4940b5f";
-#elif defined(OS_MACOSX)
+#elif defined(OS_APPLE)
     static const char kMd5sum[] = "3f984a164f2f6d6e3d69f27fd430e346";
 #else
     static const char kMd5sum[] = "e4c4de73addabf10672c308870e8a4ee";
@@ -2966,7 +2966,7 @@ TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotRendering) {
 #else
 #if defined(OS_WIN)
     static const char kMd5sum[] = "467f5a4db98fcadd5121807ff4e2eb10";
-#elif defined(OS_MACOSX)
+#elif defined(OS_APPLE)
     static const char kMd5sum[] = "c6d6f9dc7090e8eaf3867ba714023b1e";
 #else
     static const char kMd5sum[] = "65e831885e16b7ecc977cce2e4a27110";

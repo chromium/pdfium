@@ -63,7 +63,7 @@ void CFWL_ListBoxTP::DrawListBoxItem(CXFA_Graphics* pGraphics,
     pGraphics->SaveGraphState();
     pGraphics->SetFillColor(CXFA_GEColor(FWLTHEME_COLOR_BKSelected));
     CXFA_GEPath path;
-#if defined(OS_MACOSX)
+#if defined(OS_APPLE)
     path.AddRectangle(rtItem.left, rtItem.top, rtItem.width - 1,
                       rtItem.height - 1);
 #else

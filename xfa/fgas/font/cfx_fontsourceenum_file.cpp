@@ -20,7 +20,7 @@ constexpr const char* kFontFolders[] = {
     "/usr/share/X11/fonts/Type1",
     "/usr/share/X11/fonts/TTF",
     "/usr/local/share/fonts",
-#elif defined(OS_MACOSX)
+#elif defined(OS_APPLE)
     "~/Library/Fonts",
     "/Library/Fonts",
     "/System/Library/Fonts",

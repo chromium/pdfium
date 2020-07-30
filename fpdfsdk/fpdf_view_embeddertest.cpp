@@ -1342,7 +1342,7 @@ TEST_F(FPDFViewEmbedderTest, RenderHelloWorldWithFlags) {
   static const char kLcdTextChecksum[] = "6e32f5a9c46e4e0730481081fe80617d";
   static const char kNoSmoothtextChecksum[] =
       "a728a18c9515ecddf77cfcf45fb6c375";
-#elif defined(OS_MACOSX)
+#elif defined(OS_APPLE)
   static const char kLcdTextChecksum[] = "c38b75e16a13852aee3b97d77a0f0ee7";
   static const char kNoSmoothtextChecksum[] =
       "c38b75e16a13852aee3b97d77a0f0ee7";

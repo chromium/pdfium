@@ -36,7 +36,7 @@ namespace {
 
 constexpr int kEditMargin = 3;
 
-#if defined(OS_MACOSX)
+#if defined(OS_APPLE)
 constexpr int kEditingModifier = FWL_KEYFLAG_Command;
 #else
 constexpr int kEditingModifier = FWL_KEYFLAG_Ctrl;

@@ -107,7 +107,7 @@ class CFX_Font {
   void AdjustMMParams(int glyph_index, int dest_width, int weight) const;
   CFX_PathData* LoadGlyphPathImpl(uint32_t glyph_index,
                                   uint32_t dest_width) const;
-#if defined(OS_MACOSX)
+#if defined(OS_APPLE)
   void* GetPlatformFont() const { return m_pPlatformFont; }
   void SetPlatformFont(void* font) { m_pPlatformFont = font; }
 #endif
@@ -135,7 +135,7 @@ class CFX_Font {
  private:
   RetainPtr<CFX_GlyphCache> GetOrCreateGlyphCache() const;
   void ClearGlyphCache();
-#if defined(OS_MACOSX)
+#if defined(OS_APPLE)
   void ReleasePlatformResource();
 #endif
   ByteString GetFamilyNameOrUntitled() const;
@@ -151,7 +151,7 @@ class CFX_Font {
   pdfium::span<uint8_t> m_FontData;
   bool m_bEmbedded = false;
   bool m_bVertical = false;
-#if defined(OS_MACOSX)
+#if defined(OS_APPLE)
   void* m_pPlatformFont = nullptr;
 #endif
 };

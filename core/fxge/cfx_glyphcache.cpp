@@ -257,7 +257,7 @@ const CFX_GlyphBitmap* CFX_GlyphCache::LoadGlyphBitmap(
     return nullptr;
 
   UniqueKeyGen keygen;
-#if defined(OS_MACOSX)
+#if defined(OS_APPLE)
   const bool bNative = text_options->native_text;
 #else
   const bool bNative = false;
@@ -265,7 +265,7 @@ const CFX_GlyphBitmap* CFX_GlyphCache::LoadGlyphBitmap(
   GenKey(&keygen, pFont, matrix, dest_width, anti_alias, bNative);
   ByteString FaceGlyphsKey(keygen.key_, keygen.key_len_);
 
-#if defined(OS_MACOSX) && !defined(_SKIA_SUPPORT_) && \
+#if defined(OS_APPLE) && !defined(_SKIA_SUPPORT_) && \
     !defined(_SKIA_SUPPORT_PATHS_)
   const bool bDoLookUp = !text_options->native_text;
 #else
@@ -276,7 +276,7 @@ const CFX_GlyphBitmap* CFX_GlyphCache::LoadGlyphBitmap(
                              bFontStyle, dest_width, anti_alias);
   }
 
-#if defined(OS_MACOSX) && !defined(_SKIA_SUPPORT_) && \
+#if defined(OS_APPLE) && !defined(_SKIA_SUPPORT_) && \
     !defined(_SKIA_SUPPORT_PATHS_)
   std::unique_ptr<CFX_GlyphBitmap> pGlyphBitmap;
   auto it = m_SizeMap.find(FaceGlyphsKey);
@@ -333,7 +333,7 @@ CFX_TypeFace* CFX_GlyphCache::GetDeviceCache(const CFX_Font* pFont) {
 }
 #endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
-#if !defined(OS_MACOSX)
+#if !defined(OS_APPLE)
 void CFX_GlyphCache::InitPlatform() {}
 #endif
 

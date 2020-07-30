@@ -221,7 +221,7 @@ const CFX_Font::CharsetFontMap CFX_Font::defaultTTFMap[] = {
     {FX_CHARSET_ShiftJIS, "MS Gothic"},
     {FX_CHARSET_Hangul, "Batang"},
     {FX_CHARSET_MSWin_Cyrillic, "Arial"},
-#if defined(OS_LINUX) || defined(OS_ASMJS) || defined(OS_MACOSX)
+#if defined(OS_LINUX) || defined(OS_ASMJS) || defined(OS_APPLE)
     {FX_CHARSET_MSWin_EasternEuropean, "Arial"},
 #else
     {FX_CHARSET_MSWin_EasternEuropean, "Tahoma"},
@@ -339,7 +339,7 @@ CFX_Font::~CFX_Font() {
   m_FontData = {};  // m_FontData can't outive m_Face.
   m_Face.Reset();
 
-#if defined(OS_MACOSX)
+#if defined(OS_APPLE)
   ReleasePlatformResource();
 #endif
 }

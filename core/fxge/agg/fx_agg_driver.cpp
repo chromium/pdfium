@@ -1141,7 +1141,7 @@ uint8_t* CFX_AggDeviceDriver::GetBuffer() const {
   return m_pBitmap->GetBuffer();
 }
 
-#if !defined(OS_MACOSX)
+#if !defined(OS_APPLE)
 void CFX_AggDeviceDriver::InitPlatform() {}
 
 void CFX_AggDeviceDriver::DestroyPlatform() {}
@@ -1154,7 +1154,7 @@ bool CFX_AggDeviceDriver::DrawDeviceText(int nChars,
                                          uint32_t color) {
   return false;
 }
-#endif  // !defined(OS_MACOSX)
+#endif  // !defined(OS_APPLE)
 
 DeviceType CFX_AggDeviceDriver::GetDeviceType() const {
   return DeviceType::kDisplay;

@@ -55,7 +55,7 @@ constexpr uintptr_t AslrMask(uintptr_t bits) {
     // Try not to map pages into the range where Windows loads DLLs by default.
     constexpr uintptr_t kASLROffset = 0x80000000ULL;
 
-  #elif defined(OS_MACOSX)
+  #elif defined(OS_APPLE)
 
     // macOS as of 10.12.5 does not clean up entries in page map levels 3/4
     // [PDP/PML4] created from mmap or mach_vm_allocate, even after the region

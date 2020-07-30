@@ -115,7 +115,7 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
   RetainPtr<CFX_DIBitmap> const m_pBitmap;
   std::unique_ptr<CFX_ClipRgn> m_pClipRgn;
   std::vector<std::unique_ptr<CFX_ClipRgn>> m_StateStack;
-#if defined(OS_MACOSX)
+#if defined(OS_APPLE)
   void* m_pPlatformGraphics = nullptr;
 #endif
   CFX_FillRenderOptions m_FillOptions;

@@ -438,7 +438,7 @@ const FGAS_FontInfo g_XFAFontsMap[] = {
     {0xfe209a82, "LucidaCalligraphy", "Arial", 0, 1252},
     {0xfef135f8, "AdobeHeitiStd-Regular", "Batang,Century,Dotum", 0, 936},
 };
-#elif defined(OS_MACOSX)
+#elif defined(OS_APPLE)
 const FGAS_FontInfo g_XFAFontsMap[] = {
     {0x01d5d33e, "SimSun", "STHeiti,Heiti TC,STFangsong", 0, 936},
     {0x01e4f102, "YouYuan", "STHeiti,Heiti TC,STFangsong", 1, 936},

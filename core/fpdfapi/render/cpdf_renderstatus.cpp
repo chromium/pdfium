@@ -1398,7 +1398,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
   int width = pClipRect->right - pClipRect->left;
   int height = pClipRect->bottom - pClipRect->top;
   FXDIB_Format format;
-#if defined(OS_MACOSX) || defined(_SKIA_SUPPORT_) || \
+#if defined(OS_APPLE) || defined(_SKIA_SUPPORT_) || \
     defined(_SKIA_SUPPORT_PATHS_)
   format = bLuminosity ? FXDIB_Rgb32 : FXDIB_8bppMask;
 #else

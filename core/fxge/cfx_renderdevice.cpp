@@ -356,7 +356,7 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
 
 bool ShouldDrawDeviceText(const CFX_Font* pFont,
                           const CFX_TextRenderOptions& options) {
-#if defined(OS_MACOSX)
+#if defined(OS_APPLE)
   if (options.font_is_cid)
     return false;
 
@@ -454,7 +454,7 @@ bool CFX_RenderDevice::CreateCompatibleBitmap(
   }
   if (m_RenderCaps & FXRC_BYTEMASK_OUTPUT)
     return pDIB->Create(width, height, FXDIB_8bppMask);
-#if defined(OS_MACOSX) || defined(_SKIA_SUPPORT_PATHS_)
+#if defined(OS_APPLE) || defined(_SKIA_SUPPORT_PATHS_)
   constexpr FXDIB_Format kPlatformFormat = FXDIB_Rgb32;
 #else
   constexpr FXDIB_Format kPlatformFormat = FXDIB_Rgb;

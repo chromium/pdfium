@@ -143,7 +143,7 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPassword) {
 TEST_F(CPDFSecurityHandlerEmbedderTest, MAYBE_PasswordAfterGenerateSave) {
 #if defined(OS_WIN)
   const char md5[] = "041c2fb541c8907cc22ce101b686c79e";
-#elif defined(OS_MACOSX)
+#elif defined(OS_APPLE)
   const char md5[] = "1ace03eb7c466c132aacf319cb9d69d3";
 #else
   const char md5[] = "7048dca58e2ed8f93339008b91e4eb4e";

@@ -17,7 +17,7 @@
 
 namespace {
 
-#if defined(OS_MACOSX)
+#if defined(OS_APPLE)
 constexpr bool kScaleDeviceBuffer = false;
 #else
 constexpr bool kScaleDeviceBuffer = true;

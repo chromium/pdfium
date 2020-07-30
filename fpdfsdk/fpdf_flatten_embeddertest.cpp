@@ -47,7 +47,7 @@ TEST_F(FPDFFlattenEmbedderTest, FlatPrint) {
 TEST_F(FPDFFlattenEmbedderTest, MAYBE_BUG_861842) {
 #if defined(OS_WIN)
   constexpr char kCheckboxHash[] = "95fba3cb7bce7e0d3c94279f60984e17";
-#elif defined(OS_MACOSX)
+#elif defined(OS_APPLE)
   constexpr char kCheckboxHash[] = "6aafcb2d98da222964bcdbf5aa1f4f1f";
 #else
   constexpr char kCheckboxHash[] = "594265790b81df2d93120d33b72a6ada";
@@ -74,7 +74,7 @@ TEST_F(FPDFFlattenEmbedderTest, BUG_889099) {
 #if defined(OS_WIN)
   constexpr char kPageHash[] = "8c6e1dab0a15072f2c9c0ca240fdc739";
   constexpr char kFlattenedPageHash[] = "9fb932ce7f370c0e68eec0a5d4d76271";
-#elif defined(OS_MACOSX)
+#elif defined(OS_APPLE)
   constexpr char kPageHash[] = "d43f54c60b325726392a558f861402a9";
   constexpr char kFlattenedPageHash[] = "627f143efb920a5e7ddd311e963b9c66";
 #else

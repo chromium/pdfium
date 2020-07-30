@@ -613,7 +613,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
       }
     } else {
       if (Charset == FX_CHARSET_Symbol) {
-#if defined(OS_MACOSX) || defined(OS_ANDROID)
+#if defined(OS_APPLE) || defined(OS_ANDROID)
         if (SubstName == "Symbol") {
           pSubstFont->m_Family = "Chrome Symbol";
           pSubstFont->m_Charset = FX_CHARSET_Symbol;

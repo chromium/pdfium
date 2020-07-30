@@ -1323,7 +1323,7 @@ TEST_F(FPDFFormFillEmbedderTest, FormText) {
   const char kUnfocusedTextFormWithAbcChecksum[] =
       "4a961599a512a08468b26b89d389c30a";
 #else
-#if defined(OS_MACOSX)
+#if defined(OS_APPLE)
   const char kFocusedTextFormWithAbcChecksum[] =
       "c6e4a2fb10661116771ee74f54d9c5e0";
   const char kUnfocusedTextFormWithAbcChecksum[] =
@@ -1414,7 +1414,7 @@ TEST_F(FPDFFormFillEmbedderTest, RemoveFormFieldHighlight) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   const char kMd5NoHighlight[] = "6fe3921e4fe3f4190c248acf34e9bd3b";
 #else
-#if defined(OS_MACOSX)
+#if defined(OS_APPLE)
   const char kMd5NoHighlight[] = "5e4b87c5b304c6fa9bd5f6311260494e";
 #elif defined(OS_WIN)
   const char kMd5NoHighlight[] = "3ec0938828e0a37ef23f687ee95a80e1";
