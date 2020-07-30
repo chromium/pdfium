@@ -106,24 +106,9 @@ int CalcAlpha(int src, int alpha) {
   return src * alpha / 255;
 }
 
-void Merge(uint8_t src, int channel, int alpha, uint8_t* dest) {
-  *dest = FXDIB_ALPHA_MERGE(*dest, channel, CalcAlpha(src, alpha));
-}
-
 void MergeGammaAdjust(uint8_t src, int channel, int alpha, uint8_t* dest) {
   *dest =
       FXDIB_ALPHA_MERGE(*dest, channel, CalcAlpha(TextGammaAdjust(src), alpha));
-}
-
-void MergeGammaAdjustBgr(const uint8_t* src,
-                         int r,
-                         int g,
-                         int b,
-                         int a,
-                         uint8_t* dest) {
-  MergeGammaAdjust(src[0], b, a, &dest[0]);
-  MergeGammaAdjust(src[1], g, a, &dest[1]);
-  MergeGammaAdjust(src[2], r, a, &dest[2]);
 }
 
 void MergeGammaAdjustRgb(const uint8_t* src,
@@ -229,7 +214,6 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
                           int start_col,
                           int end_col,
                           bool bNormal,
-                          bool bBGRStripe,
                           int x_subpixel,
                           int a,
                           int r,
@@ -248,49 +232,6 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
 
     uint8_t* src_scan = src_buf + row * src_pitch + (start_col - left) * 3;
     uint8_t* dest_scan = dest_buf + dest_row * dest_pitch + start_col * Bpp;
-    if (bBGRStripe) {
-      if (x_subpixel == 0) {
-        for (int col = start_col; col < end_col; ++col) {
-          if (has_alpha) {
-            Merge(src_scan[2], r, a, &dest_scan[2]);
-            Merge(src_scan[1], g, a, &dest_scan[1]);
-            Merge(src_scan[0], b, a, &dest_scan[0]);
-          } else {
-            MergeGammaAdjustBgr(&src_scan[0], r, g, b, a, &dest_scan[0]);
-          }
-          SetAlpha(has_alpha, dest_scan);
-          NextPixel(&src_scan, &dest_scan, Bpp);
-        }
-        continue;
-      }
-      if (x_subpixel == 1) {
-        MergeGammaAdjust(src_scan[1], r, a, &dest_scan[2]);
-        MergeGammaAdjust(src_scan[0], g, a, &dest_scan[1]);
-        if (start_col > left)
-          MergeGammaAdjust(src_scan[-1], b, a, &dest_scan[0]);
-        SetAlpha(has_alpha, dest_scan);
-        NextPixel(&src_scan, &dest_scan, Bpp);
-        for (int col = start_col + 1; col < end_col - 1; ++col) {
-          MergeGammaAdjustBgr(&src_scan[-1], r, g, b, a, &dest_scan[0]);
-          SetAlpha(has_alpha, dest_scan);
-          NextPixel(&src_scan, &dest_scan, Bpp);
-        }
-        continue;
-      }
-      MergeGammaAdjust(src_scan[0], r, a, &dest_scan[2]);
-      if (start_col > left) {
-        MergeGammaAdjust(src_scan[-1], g, a, &dest_scan[1]);
-        MergeGammaAdjust(src_scan[-2], b, a, &dest_scan[0]);
-      }
-      SetAlpha(has_alpha, dest_scan);
-      NextPixel(&src_scan, &dest_scan, Bpp);
-      for (int col = start_col + 1; col < end_col - 1; ++col) {
-        MergeGammaAdjustBgr(&src_scan[-2], r, g, b, a, &dest_scan[0]);
-        SetAlpha(has_alpha, dest_scan);
-        NextPixel(&src_scan, &dest_scan, Bpp);
-      }
-      continue;
-    }
     if (x_subpixel == 0) {
       for (int col = start_col; col < end_col; ++col) {
         if (bNormal) {
@@ -930,7 +871,8 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
         anti_alias = FT_RENDER_MODE_NORMAL;
       } else {
         anti_alias = FT_RENDER_MODE_LCD;
-        bNormal = !pFont->GetFaceRec() || !options.IsLcd();
+        bNormal = !pFont->GetFaceRec() ||
+                  options.aliasing_type != CFX_TextRenderOptions::kLcd;
       }
     }
   }
@@ -1051,10 +993,8 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
     if (start_col >= end_col)
       continue;
 
-    DrawNormalTextHelper(
-        bitmap, pGlyph, nrows, point->x, point->y, start_col, end_col, bNormal,
-        options.aliasing_type == CFX_TextRenderOptions::kBgrStripe, x_subpixel,
-        a, r, g, b);
+    DrawNormalTextHelper(bitmap, pGlyph, nrows, point->x, point->y, start_col,
+                         end_col, bNormal, x_subpixel, a, r, g, b);
   }
   if (bitmap->IsAlphaMask())
     SetBitMask(bitmap, bmp_rect.left, bmp_rect.top, fill_color);

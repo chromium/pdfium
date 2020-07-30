@@ -24,7 +24,6 @@ class CPDF_RenderOptions {
     Options(const Options& rhs);
 
     bool bClearType = false;
-    bool bBGRStripe = false;
     bool bNoNativeText = false;
     bool bForceHalftone = false;
     bool bRectAA = false;
