@@ -93,8 +93,7 @@ TEST_F(HeapUnitTest, NoReferences) {
     EXPECT_EQ(1u, PseudoCollectible::LiveCount());
     EXPECT_EQ(0u, PseudoCollectible::DeadCount());
   }
-  heap1->ForceGarbageCollectionSlow("NoReferences", "test",
-                                    cppgc::Heap::StackState::kNoHeapPointers);
+  FXGC_ForceGarbageCollection(heap1.get());
   EXPECT_EQ(0u, PseudoCollectible::LiveCount());
   EXPECT_EQ(1u, PseudoCollectible::DeadCount());
 }
@@ -115,9 +114,7 @@ TEST_F(HeapUnitTest, HasReferences) {
     EXPECT_EQ(1u, PseudoCollectible::LiveCount());
     EXPECT_EQ(0u, PseudoCollectible::DeadCount());
 
-    heap1->ForceGarbageCollectionSlow("HasReferences", "test",
-                                      cppgc::Heap::StackState::kNoHeapPointers);
-
+    FXGC_ForceGarbageCollection(heap1.get());
     EXPECT_TRUE(PseudoCollectible::s_persistent_->IsLive());
     EXPECT_EQ(1u, PseudoCollectible::LiveCount());
     EXPECT_EQ(0u, PseudoCollectible::DeadCount());

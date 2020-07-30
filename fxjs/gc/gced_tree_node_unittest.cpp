@@ -48,9 +48,7 @@ class GCedTreeNodeUnitTest : public FXGCUnitTest {
   }
 
   void ForceGCAndPump() {
-    heap()->ForceGarbageCollectionSlow(
-        "GCedTreeNodeUnitTest", "test",
-        cppgc::Heap::StackState::kNoHeapPointers);
+    FXGC_ForceGarbageCollection(heap());
     V8TestEnvironment::PumpPlatformMessageLoop(isolate());
   }
 
