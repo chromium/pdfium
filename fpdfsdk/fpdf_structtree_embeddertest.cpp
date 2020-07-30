@@ -87,7 +87,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetStringAttribute) {
     ASSERT_TRUE(struct_tree);
     ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
 
-    FPDF_STRUCTELEMENT document = document =
+    FPDF_STRUCTELEMENT document =
         FPDF_StructTree_GetChildAtIndex(struct_tree.get(), 0);
     ASSERT_TRUE(document);
 
@@ -150,7 +150,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetID) {
     ASSERT_TRUE(struct_tree);
     ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
 
-    FPDF_STRUCTELEMENT document = document =
+    FPDF_STRUCTELEMENT document =
         FPDF_StructTree_GetChildAtIndex(struct_tree.get(), 0);
     ASSERT_TRUE(document);
 
@@ -195,7 +195,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetLang) {
     ASSERT_TRUE(struct_tree);
     ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
 
-    FPDF_STRUCTELEMENT document = document =
+    FPDF_STRUCTELEMENT document =
         FPDF_StructTree_GetChildAtIndex(struct_tree.get(), 0);
     ASSERT_TRUE(document);
 
