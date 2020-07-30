@@ -43,6 +43,16 @@ config("pdfium_common_config") {
     # Assume UTF-8 by default to avoid code page dependencies.
     cflags += [ "/utf-8" ]
   }
+
+  if (is_clang) {
+    # Override -Wno-c++11-narrowing.
+    cflags += [ "-Wc++11-narrowing" ]
+  }
+
+  if (!is_win && !is_clang) {
+    # Override -Wno-narrowing.
+    cflags += [ "-Wnarrowing" ]
+  }
 }
 
 config("pdfium_implementation_config") {
