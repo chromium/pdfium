@@ -61,11 +61,8 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFText_ClosePage(FPDF_TEXTPAGE text_page) {
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFText_CountChars(FPDF_TEXTPAGE text_page) {
-  if (!text_page)
-    return -1;
-
   CPDF_TextPage* textpage = CPDFTextPageFromFPDFTextPage(text_page);
-  return textpage->CountChars();
+  return textpage ? textpage->CountChars() : -1;
 }
 
 FPDF_EXPORT unsigned int FPDF_CALLCONV
@@ -317,10 +314,10 @@ FPDFText_GetCharIndexAtPos(FPDF_TEXTPAGE text_page,
                            double y,
                            double xTolerance,
                            double yTolerance) {
-  if (!text_page)
+  CPDF_TextPage* textpage = CPDFTextPageFromFPDFTextPage(text_page);
+  if (!textpage)
     return -3;
 
-  CPDF_TextPage* textpage = CPDFTextPageFromFPDFTextPage(text_page);
   return textpage->GetIndexAtPos(
       CFX_PointF(static_cast<float>(x), static_cast<float>(y)),
       CFX_SizeF(static_cast<float>(xTolerance),
@@ -331,10 +328,10 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetText(FPDF_TEXTPAGE page,
                                                int start_index,
                                                int char_count,
                                                unsigned short* result) {
-  if (!page || start_index < 0 || char_count < 0 || !result)
+  CPDF_TextPage* textpage = CPDFTextPageFromFPDFTextPage(page);
+  if (!textpage || start_index < 0 || char_count < 0 || !result)
     return 0;
 
-  CPDF_TextPage* textpage = CPDFTextPageFromFPDFTextPage(page);
   int char_available = textpage->CountChars() - start_index;
   if (char_available <= 0)
     return 0;
@@ -365,11 +362,8 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetText(FPDF_TEXTPAGE page,
 FPDF_EXPORT int FPDF_CALLCONV FPDFText_CountRects(FPDF_TEXTPAGE text_page,
                                                   int start,
                                                   int count) {
-  if (!text_page)
-    return 0;
-
   CPDF_TextPage* textpage = CPDFTextPageFromFPDFTextPage(text_page);
-  return textpage->CountRects(start, count);
+  return textpage ? textpage->CountRects(start, count) : 0;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetRect(FPDF_TEXTPAGE text_page,
@@ -378,10 +372,10 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetRect(FPDF_TEXTPAGE text_page,
                                                      double* top,
                                                      double* right,
                                                      double* bottom) {
-  if (!text_page)
+  CPDF_TextPage* textpage = CPDFTextPageFromFPDFTextPage(text_page);
+  if (!textpage)
     return false;
 
-  CPDF_TextPage* textpage = CPDFTextPageFromFPDFTextPage(text_page);
   CFX_FloatRect rect;
   bool result = textpage->GetRect(rect_index, &rect);
 
@@ -399,10 +393,10 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetBoundedText(FPDF_TEXTPAGE text_page,
                                                       double bottom,
                                                       unsigned short* buffer,
                                                       int buflen) {
-  if (!text_page)
+  CPDF_TextPage* textpage = CPDFTextPageFromFPDFTextPage(text_page);
+  if (!textpage)
     return 0;
 
-  CPDF_TextPage* textpage = CPDFTextPageFromFPDFTextPage(text_page);
   CFX_FloatRect rect((float)left, (float)bottom, (float)right, (float)top);
   WideString str = textpage->GetTextByRect(rect);
 
@@ -423,7 +417,8 @@ FPDFText_FindStart(FPDF_TEXTPAGE text_page,
                    FPDF_WIDESTRING findwhat,
                    unsigned long flags,
                    int start_index) {
-  if (!text_page)
+  CPDF_TextPage* textpage = CPDFTextPageFromFPDFTextPage(text_page);
+  if (!textpage)
     return nullptr;
 
   CPDF_TextPageFind::Options options;
@@ -431,8 +426,7 @@ FPDFText_FindStart(FPDF_TEXTPAGE text_page,
   options.bMatchWholeWord = !!(flags & FPDF_MATCHWHOLEWORD);
   options.bConsecutive = !!(flags & FPDF_CONSECUTIVE);
   auto find = CPDF_TextPageFind::Create(
-      CPDFTextPageFromFPDFTextPage(text_page),
-      WideStringFromFPDFWideString(findwhat), options,
+      textpage, WideStringFromFPDFWideString(findwhat), options,
       start_index >= 0 ? Optional<size_t>(start_index) : pdfium::nullopt);
 
   // Caller takes ownership.
@@ -484,15 +478,15 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFText_FindClose(FPDF_SCHHANDLE handle) {
 // web link
 FPDF_EXPORT FPDF_PAGELINK FPDF_CALLCONV
 FPDFLink_LoadWebLinks(FPDF_TEXTPAGE text_page) {
-  if (!text_page)
+  CPDF_TextPage* textpage = CPDFTextPageFromFPDFTextPage(text_page);
+  if (!textpage)
     return nullptr;
 
-  CPDF_TextPage* pPage = CPDFTextPageFromFPDFTextPage(text_page);
-  auto pageLink = std::make_unique<CPDF_LinkExtract>(pPage);
-  pageLink->ExtractLinks();
+  auto pagelink = std::make_unique<CPDF_LinkExtract>(textpage);
+  pagelink->ExtractLinks();
 
   // Caller takes ownership.
-  return FPDFPageLinkFromCPDFLinkExtract(pageLink.release());
+  return FPDFPageLinkFromCPDFLinkExtract(pagelink.release());
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFLink_CountWebLinks(FPDF_PAGELINK link_page) {
