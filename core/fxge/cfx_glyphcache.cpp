@@ -34,6 +34,10 @@
 #endif
 #endif
 
+#if defined(OS_APPLE)
+#include "core/fxge/cfx_textrenderoptions.h"
+#endif
+
 namespace {
 
 constexpr uint32_t kInvalidGlyphIndex = static_cast<uint32_t>(-1);

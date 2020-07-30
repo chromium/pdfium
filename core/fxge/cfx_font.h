@@ -15,7 +15,6 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxge/cfx_face.h"
-#include "core/fxge/cfx_textrenderoptions.h"
 #include "core/fxge/fx_freetype.h"
 #include "third_party/base/span.h"
 
@@ -23,11 +22,12 @@
 #include "core/fxge/fx_font.h"
 #endif
 
-class CFX_GlyphCache;
 class CFX_GlyphBitmap;
+class CFX_GlyphCache;
 class CFX_PathData;
 class CFX_SubstFont;
 class IFX_SeekableReadStream;
+struct CFX_TextRenderOptions;
 
 class CFX_Font {
  public:
