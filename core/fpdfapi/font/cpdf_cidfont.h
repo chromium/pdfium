@@ -68,9 +68,6 @@ class CPDF_CIDFont final : public CPDF_Font {
   void LoadGB2312();
   int GetGlyphIndex(uint32_t unicodeb, bool* pVertGlyph);
   int GetVerticalGlyph(int index, bool* pVertGlyph);
-  void LoadMetricsArray(const CPDF_Array* pArray,
-                        std::vector<uint32_t>* result,
-                        int nElements);
   void LoadSubstFont();
   wchar_t GetUnicodeFromCharCode(uint32_t charcode) const;
 

@@ -205,6 +205,58 @@ bool IsMetricForCID(const uint32_t* pEntry, uint16_t cid) {
   return pEntry[0] <= cid && pEntry[1] >= cid;
 }
 
+void LoadMetricsArray(const CPDF_Array* pArray,
+                      std::vector<uint32_t>* result,
+                      int nElements) {
+  int width_status = 0;
+  int iCurElement = 0;
+  uint32_t first_code = 0;
+  uint32_t last_code = 0;
+  for (size_t i = 0; i < pArray->size(); i++) {
+    const CPDF_Object* pObj = pArray->GetDirectObjectAt(i);
+    if (!pObj)
+      continue;
+
+    const CPDF_Array* pObjArray = pObj->AsArray();
+    if (pObjArray) {
+      if (width_status != 1)
+        return;
+      if (first_code >
+          std::numeric_limits<uint32_t>::max() - pObjArray->size()) {
+        width_status = 0;
+        continue;
+      }
+
+      for (size_t j = 0; j < pObjArray->size(); j += nElements) {
+        result->push_back(first_code);
+        result->push_back(first_code);
+        for (int k = 0; k < nElements; k++)
+          result->push_back(pObjArray->GetIntegerAt(j + k));
+        first_code++;
+      }
+      width_status = 0;
+    } else {
+      if (width_status == 0) {
+        first_code = pObj->GetInteger();
+        width_status = 1;
+      } else if (width_status == 1) {
+        last_code = pObj->GetInteger();
+        width_status = 2;
+        iCurElement = 0;
+      } else {
+        if (!iCurElement) {
+          result->push_back(first_code);
+          result->push_back(last_code);
+        }
+        result->push_back(pObj->GetInteger());
+        iCurElement++;
+        if (iCurElement == nElements)
+          width_status = 0;
+      }
+    }
+  }
+}
+
 }  // namespace
 
 CPDF_CIDFont::CPDF_CIDFont(CPDF_Document* pDocument, CPDF_Dictionary* pFontDict)
@@ -761,58 +813,6 @@ void CPDF_CIDFont::LoadSubstFont() {
   m_Font.LoadSubst(m_BaseFontName, !m_bType1, m_Flags,
                    safeStemV.ValueOrDefault(FXFONT_FW_NORMAL), m_ItalicAngle,
                    g_CharsetCPs[m_Charset], IsVertWriting());
-}
-
-void CPDF_CIDFont::LoadMetricsArray(const CPDF_Array* pArray,
-                                    std::vector<uint32_t>* result,
-                                    int nElements) {
-  int width_status = 0;
-  int iCurElement = 0;
-  uint32_t first_code = 0;
-  uint32_t last_code = 0;
-  for (size_t i = 0; i < pArray->size(); i++) {
-    const CPDF_Object* pObj = pArray->GetDirectObjectAt(i);
-    if (!pObj)
-      continue;
-
-    const CPDF_Array* pObjArray = pObj->AsArray();
-    if (pObjArray) {
-      if (width_status != 1)
-        return;
-      if (first_code >
-          std::numeric_limits<uint32_t>::max() - pObjArray->size()) {
-        width_status = 0;
-        continue;
-      }
-
-      for (size_t j = 0; j < pObjArray->size(); j += nElements) {
-        result->push_back(first_code);
-        result->push_back(first_code);
-        for (int k = 0; k < nElements; k++)
-          result->push_back(pObjArray->GetIntegerAt(j + k));
-        first_code++;
-      }
-      width_status = 0;
-    } else {
-      if (width_status == 0) {
-        first_code = pObj->GetInteger();
-        width_status = 1;
-      } else if (width_status == 1) {
-        last_code = pObj->GetInteger();
-        width_status = 2;
-        iCurElement = 0;
-      } else {
-        if (!iCurElement) {
-          result->push_back(first_code);
-          result->push_back(last_code);
-        }
-        result->push_back(pObj->GetInteger());
-        iCurElement++;
-        if (iCurElement == nElements)
-          width_status = 0;
-      }
-    }
-  }
 }
 
 // static
