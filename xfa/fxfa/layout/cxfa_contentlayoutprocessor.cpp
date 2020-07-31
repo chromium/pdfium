@@ -827,25 +827,25 @@ CXFA_ContentLayoutProcessor::ExtractLayoutItem() {
 
 void CXFA_ContentLayoutProcessor::GotoNextContainerNodeSimple(
     bool bUsePageBreak) {
-  m_nCurChildNodeStage = GotoNextContainerNode(
-      m_nCurChildNodeStage, bUsePageBreak, GetFormNode(), &m_pCurChildNode);
+  std::tie(m_nCurChildNodeStage, m_pCurChildNode) = GotoNextContainerNode(
+      m_nCurChildNodeStage, bUsePageBreak, GetFormNode(), m_pCurChildNode);
 }
 
-CXFA_ContentLayoutProcessor::Stage
+std::pair<CXFA_ContentLayoutProcessor::Stage, CXFA_Node*>
 CXFA_ContentLayoutProcessor::GotoNextContainerNode(Stage nCurStage,
                                                    bool bUsePageBreak,
                                                    CXFA_Node* pParentContainer,
-                                                   CXFA_Node** pCurActionNode) {
+                                                   CXFA_Node* pCurActionNode) {
   CXFA_Node* pChildContainer = nullptr;
   switch (nCurStage) {
     case Stage::kBreakBefore:
     case Stage::kBreakAfter: {
-      pChildContainer = (*pCurActionNode)->GetParent();
+      pChildContainer = pCurActionNode->GetParent();
       break;
     }
     case Stage::kKeep:
     case Stage::kContainer:
-      pChildContainer = *pCurActionNode;
+      pChildContainer = pCurActionNode;
       break;
     default:
       pChildContainer = nullptr;
@@ -855,62 +855,59 @@ CXFA_ContentLayoutProcessor::GotoNextContainerNode(Stage nCurStage,
   Optional<Stage> ret;
   switch (nCurStage) {
     case Stage::kKeep:
-      ret = HandleKeep(pChildContainer->GetFirstChild(), pCurActionNode);
+      ret = HandleKeep(pChildContainer->GetFirstChild(), &pCurActionNode);
       if (ret.has_value())
-        return ret.value();
+        return {ret.value(), pCurActionNode};
       break;
 
     case Stage::kNone:
-      *pCurActionNode = nullptr;
+      pCurActionNode = nullptr;
       FALLTHROUGH;
 
     case Stage::kBookendLeader:
-      ret = HandleBookendLeader(pParentContainer, pCurActionNode);
+      ret = HandleBookendLeader(pParentContainer, &pCurActionNode);
       if (ret.has_value())
-        return ret.value();
-
-      *pCurActionNode = nullptr;
+        return {ret.value(), pCurActionNode};
+      pCurActionNode = nullptr;
       FALLTHROUGH;
 
     case Stage::kBreakBefore:
-      ret = HandleBreakBefore(pChildContainer, pCurActionNode);
+      ret = HandleBreakBefore(pChildContainer, &pCurActionNode);
       if (ret.has_value())
-        return ret.value();
+        return {ret.value(), pCurActionNode};
       break;
 
     case Stage::kContainer:
-      *pCurActionNode = nullptr;
+      pCurActionNode = nullptr;
       FALLTHROUGH;
 
     case Stage::kBreakAfter:
-      ret = HandleBreakAfter(pChildContainer, pCurActionNode);
+      ret = HandleBreakAfter(pChildContainer, &pCurActionNode);
       if (ret.has_value())
-        return ret.value();
+        return {ret.value(), pCurActionNode};
       break;
 
     case Stage::kBookendTrailer:
-      ret = HandleBookendTrailer(pParentContainer, pCurActionNode);
+      ret = HandleBookendTrailer(pParentContainer, &pCurActionNode);
       if (ret.has_value())
-        return ret.value();
+        return {ret.value(), pCurActionNode};
       FALLTHROUGH;
 
     default:
-      *pCurActionNode = nullptr;
-      return Stage::kDone;
+      return {Stage::kDone, nullptr};
   }
 
   ret = HandleCheckNextChildContainer(pParentContainer, pChildContainer,
-                                      pCurActionNode);
+                                      &pCurActionNode);
   if (ret.has_value())
-    return ret.value();
+    return {ret.value(), pCurActionNode};
 
-  *pCurActionNode = nullptr;
-  ret = HandleBookendTrailer(pParentContainer, pCurActionNode);
+  pCurActionNode = nullptr;
+  ret = HandleBookendTrailer(pParentContainer, &pCurActionNode);
   if (ret.has_value())
-    return ret.value();
+    return {ret.value(), pCurActionNode};
 
-  *pCurActionNode = nullptr;
-  return Stage::kDone;
+  return {Stage::kDone, nullptr};
 }
 
 Optional<CXFA_ContentLayoutProcessor::Stage>
@@ -974,14 +971,15 @@ void CXFA_ContentLayoutProcessor::DoLayoutPageArea(
   CXFA_Node* pFormNode = pPageAreaLayoutItem->GetFormNode();
   CXFA_Node* pCurChildNode = nullptr;
   CXFA_LayoutItem* pBeforeItem = nullptr;
-  for (Stage nCurChildNodeStage = GotoNextContainerNode(
-           Stage::kNone, false, pFormNode, &pCurChildNode);
-       pCurChildNode;
-       nCurChildNodeStage = GotoNextContainerNode(nCurChildNodeStage, false,
-                                                  pFormNode, &pCurChildNode)) {
-    if (nCurChildNodeStage != Stage::kContainer)
-      continue;
-    if (pCurChildNode->GetElementType() == XFA_Element::Variables)
+  Stage nCurChildNodeStage = Stage::kNone;
+  while (1) {
+    std::tie(nCurChildNodeStage, pCurChildNode) = GotoNextContainerNode(
+        nCurChildNodeStage, false, pFormNode, pCurChildNode);
+    if (!pCurChildNode)
+      break;
+
+    if (nCurChildNodeStage != Stage::kContainer ||
+        pCurChildNode->GetElementType() == XFA_Element::Variables)
       continue;
 
     auto pProcessor =
@@ -992,6 +990,7 @@ void CXFA_ContentLayoutProcessor::DoLayoutPageArea(
 
     pProcessor->SetCurrentComponentPos(CalculatePositionedContainerPos(
         pCurChildNode, pProcessor->GetCurrentComponentSize()));
+
     RetainPtr<CXFA_LayoutItem> pProcessItem = pProcessor->ExtractLayoutItem();
     if (!pBeforeItem)
       pPageAreaLayoutItem->AppendFirstChild(pProcessItem);
