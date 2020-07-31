@@ -41,4 +41,16 @@ struct CFX_TextRenderOptions {
   bool native_text = true;
 };
 
+inline bool operator==(const CFX_TextRenderOptions& lhs,
+                       const CFX_TextRenderOptions& rhs) {
+  return lhs.aliasing_type == rhs.aliasing_type &&
+         lhs.font_is_cid == rhs.font_is_cid &&
+         lhs.native_text == rhs.native_text;
+}
+
+inline bool operator!=(const CFX_TextRenderOptions& lhs,
+                       const CFX_TextRenderOptions& rhs) {
+  return !(lhs == rhs);
+}
+
 #endif  // CORE_FXGE_CFX_TEXTRENDEROPTIONS_H_

@@ -1151,7 +1151,8 @@ bool CFX_AggDeviceDriver::DrawDeviceText(int nChars,
                                          CFX_Font* pFont,
                                          const CFX_Matrix& mtObject2Device,
                                          float font_size,
-                                         uint32_t color) {
+                                         uint32_t color,
+                                         const CFX_TextRenderOptions& options) {
   return false;
 }
 #endif  // !defined(OS_APPLE)

@@ -824,10 +824,53 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
                                       const CFX_Matrix& mtText2Device,
                                       uint32_t fill_color,
                                       const CFX_TextRenderOptions& options) {
+  // |anti_alias| and |bNormal| don't affect Skia/SkiaPaths rendering.
+  int anti_alias = FT_RENDER_MODE_MONO;
+  bool bNormal = false;
+  const bool is_text_smooth = options.IsSmooth();
+  // |text_options| has the potential to affect all derived classes of
+  // RenderDeviceDriverIface. But now it only affects Skia rendering.
+  CFX_TextRenderOptions text_options(options);
+  if (is_text_smooth) {
+    if (GetDeviceType() == DeviceType::kDisplay && m_bpp > 1) {
+      if (!CFX_GEModule::Get()->GetFontMgr()->FTLibrarySupportsHinting()) {
+        // Some Freetype implementations (like the one packaged with Fedora) do
+        // not support hinting due to patents 6219025, 6239783, 6307566,
+        // 6225973, 6243070, 6393145, 6421054, 6282327, and 6624828; the latest
+        // one expires 10/7/19.  This makes LCD anti-aliasing very ugly, so we
+        // instead fall back on NORMAL anti-aliasing.
+        anti_alias = FT_RENDER_MODE_NORMAL;
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+        // Since |anti_alias| doesn't affect Skia rendering, and Skia only
+        // follows strictly to the options provided by |text_options|, we need
+        // to update |text_options| so that Skia falls back on normal
+        // anti-aliasing as well.
+        text_options.aliasing_type = CFX_TextRenderOptions::kAntiAliasing;
+#endif
+      } else if ((m_RenderCaps & (FXRC_ALPHA_OUTPUT | FXRC_CMYK_OUTPUT))) {
+        // Whether Skia uses LCD optimization should strictly follow the
+        // rendering options provided by |text_options|. No change needs to be
+        // done for |text_options| here.
+        anti_alias = FT_RENDER_MODE_LCD;
+        bNormal = true;
+      } else if (m_bpp < 16) {
+        // This case doesn't apply to Skia since Skia always have |m_bpp| = 32.
+        anti_alias = FT_RENDER_MODE_NORMAL;
+      } else {
+        // Whether Skia uses LCD optimization should strictly follow the
+        // rendering options provided by |text_options|. No change needs to be
+        // done for |text_options| here.
+        anti_alias = FT_RENDER_MODE_LCD;
+        bNormal = !pFont->GetFaceRec() ||
+                  options.aliasing_type != CFX_TextRenderOptions::kLcd;
+      }
+    }
+  }
+
   if (GetDeviceType() != DeviceType::kDisplay) {
     if (ShouldDrawDeviceText(pFont, options) &&
         m_pDeviceDriver->DrawDeviceText(nChars, pCharPos, pFont, mtText2Device,
-                                        font_size, fill_color)) {
+                                        font_size, fill_color, text_options)) {
       return true;
     }
     if (FXARGB_A(fill_color) < 255)
@@ -835,11 +878,11 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
   } else if (options.native_text) {
     if (ShouldDrawDeviceText(pFont, options) &&
         m_pDeviceDriver->DrawDeviceText(nChars, pCharPos, pFont, mtText2Device,
-                                        font_size, fill_color)) {
+                                        font_size, fill_color, text_options)) {
       return true;
     }
   }
-  bool is_text_smooth = options.IsSmooth();
+
   CFX_Matrix char2device = mtText2Device;
   CFX_Matrix text2Device = mtText2Device;
   char2device.Scale(font_size, -font_size);
@@ -853,32 +896,8 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
                           path_options);
     }
   }
-  int anti_alias = FT_RENDER_MODE_MONO;
-  bool bNormal = false;
-  if (is_text_smooth) {
-    if (GetDeviceType() == DeviceType::kDisplay && m_bpp > 1) {
-      if (!CFX_GEModule::Get()->GetFontMgr()->FTLibrarySupportsHinting()) {
-        // Some Freetype implementations (like the one packaged with Fedora) do
-        // not support hinting due to patents 6219025, 6239783, 6307566,
-        // 6225973, 6243070, 6393145, 6421054, 6282327, and 6624828; the latest
-        // one expires 10/7/19.  This makes LCD antialiasing very ugly, so we
-        // instead fall back on NORMAL antialiasing.
-        anti_alias = FT_RENDER_MODE_NORMAL;
-      } else if ((m_RenderCaps & (FXRC_ALPHA_OUTPUT | FXRC_CMYK_OUTPUT))) {
-        anti_alias = FT_RENDER_MODE_LCD;
-        bNormal = true;
-      } else if (m_bpp < 16) {
-        anti_alias = FT_RENDER_MODE_NORMAL;
-      } else {
-        anti_alias = FT_RENDER_MODE_LCD;
-        bNormal = !pFont->GetFaceRec() ||
-                  options.aliasing_type != CFX_TextRenderOptions::kLcd;
-      }
-    }
-  }
   std::vector<TextGlyphPos> glyphs(nChars);
   CFX_Matrix deviceCtm = char2device;
-  CFX_TextRenderOptions native_text_options(options);
 
   for (size_t i = 0; i < glyphs.size(); ++i) {
     TextGlyphPos& glyph = glyphs[i];
@@ -898,11 +917,11 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
       new_matrix.Concat(deviceCtm);
       glyph.m_pGlyph = pFont->LoadGlyphBitmap(
           charpos.m_GlyphIndex, charpos.m_bFontStyle, new_matrix,
-          charpos.m_FontCharWidth, anti_alias, &native_text_options);
+          charpos.m_FontCharWidth, anti_alias, &text_options);
     } else {
       glyph.m_pGlyph = pFont->LoadGlyphBitmap(
           charpos.m_GlyphIndex, charpos.m_bFontStyle, deviceCtm,
-          charpos.m_FontCharWidth, anti_alias, &native_text_options);
+          charpos.m_FontCharWidth, anti_alias, &text_options);
     }
   }
   if (anti_alias < FT_RENDER_MODE_LCD && glyphs.size() > 1)

@@ -138,7 +138,8 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
                       CFX_Font* pFont,
                       const CFX_Matrix& mtObject2Device,
                       float font_size,
-                      uint32_t color) override;
+                      uint32_t color,
+                      const CFX_TextRenderOptions& options) override;
 
   int GetDriverType() const override;
 

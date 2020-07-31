@@ -8,6 +8,7 @@
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
+#include "core/fxge/cfx_textrenderoptions.h"
 #include "core/fxge/skia/fx_skia_device.h"
 #include "core/fxge/text_char_pos.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
@@ -58,6 +59,7 @@ void CommonTest(CFX_SkiaDeviceDriver* driver, const State& state) {
   CFX_Matrix matrix2;
   matrix2.Translate(1, 0);
   CFX_GraphStateData graphState;
+  CFX_TextRenderOptions text_options;
   if (state.m_save == State::Save::kYes)
     driver->SaveState();
   if (state.m_clip != State::Clip::kNo)
@@ -68,7 +70,7 @@ void CommonTest(CFX_SkiaDeviceDriver* driver, const State& state) {
                      BlendMode::kNormal);
   } else if (state.m_graphic == State::Graphic::kText) {
     driver->DrawDeviceText(SK_ARRAY_COUNT(charPos), charPos, &font, matrix,
-                           fontSize, 0xFF445566);
+                           fontSize, 0xFF445566, text_options);
   }
   if (state.m_save == State::Save::kYes)
     driver->RestoreState(true);
@@ -92,7 +94,7 @@ void CommonTest(CFX_SkiaDeviceDriver* driver, const State& state) {
                      BlendMode::kNormal);
   } else if (state.m_graphic == State::Graphic::kText) {
     driver->DrawDeviceText(SK_ARRAY_COUNT(charPos), charPos, &font, matrix2,
-                           fontSize, 0xFF445566);
+                           fontSize, 0xFF445566, text_options);
   }
   if (state.m_save == State::Save::kYes)
     driver->RestoreState(false);

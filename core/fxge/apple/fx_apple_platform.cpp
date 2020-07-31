@@ -102,12 +102,14 @@ void CFX_AggDeviceDriver::DestroyPlatform() {
   }
 }
 
-bool CFX_AggDeviceDriver::DrawDeviceText(int nChars,
-                                         const TextCharPos* pCharPos,
-                                         CFX_Font* pFont,
-                                         const CFX_Matrix& mtObject2Device,
-                                         float font_size,
-                                         uint32_t argb) {
+bool CFX_AggDeviceDriver::DrawDeviceText(
+    int nChars,
+    const TextCharPos* pCharPos,
+    CFX_Font* pFont,
+    const CFX_Matrix& mtObject2Device,
+    float font_size,
+    uint32_t argb,
+    const CFX_TextRenderOptions& /*options*/) {
   if (!pFont)
     return false;
 

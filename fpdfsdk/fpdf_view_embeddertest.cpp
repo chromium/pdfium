@@ -1341,9 +1341,17 @@ TEST_F(FPDFViewEmbedderTest, RenderHelloWorldWithFlags) {
   TestRenderPageBitmapWithFlags(page, FPDF_RENDER_NO_SMOOTHPATH,
                                 kHelloWorldChecksum);
 
-// TODO(crbug.com/pdfium/1522) Fix and enable the tests for FPDF_LCD_TEXT and
-// FPDF_RENDER_NO_SMOOTHTEXT flags for Skia and SkiaPaths.
-#if !defined(_SKIA_SUPPORT_) && !defined(_SKIA_SUPPORT_PATHS_)
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#if defined(OS_WIN)
+  static const char kLcdTextChecksum[] = "fa4b12e9db8316f699624250307e5106";
+#elif defined(OS_APPLE)
+  static const char kLcdTextChecksum[] = "b0a33a2ab9f26d225bbad1c714d95beb";
+#else
+  static const char kLcdTextChecksum[] = "693563ed2a3f1f6545856377be4bf3b3";
+#endif
+  static const char kNoSmoothtextChecksum[] =
+      "18156d2a55ae142c3870da7229650890";
+#else
 #if defined(OS_WIN)
   static const char kLcdTextChecksum[] = "6e32f5a9c46e4e0730481081fe80617d";
   static const char kNoSmoothtextChecksum[] =
@@ -1357,6 +1365,7 @@ TEST_F(FPDFViewEmbedderTest, RenderHelloWorldWithFlags) {
   static const char kNoSmoothtextChecksum[] =
       "3d01e234120b783a3fffb27273ea1ea8";
 #endif
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
   TestRenderPageBitmapWithFlags(page, FPDF_LCD_TEXT, kLcdTextChecksum);
   TestRenderPageBitmapWithFlags(page, FPDF_RENDER_NO_SMOOTHTEXT,
@@ -1366,7 +1375,6 @@ TEST_F(FPDFViewEmbedderTest, RenderHelloWorldWithFlags) {
   // will be ignored.
   TestRenderPageBitmapWithFlags(page, FPDF_LCD_TEXT | FPDF_RENDER_NO_SMOOTHTEXT,
                                 kNoSmoothtextChecksum);
-#endif  // !defined(_SKIA_SUPPORT_) && !defined(_SKIA_SUPPORT_PATHS_)
 
   UnloadPage(page);
 }
