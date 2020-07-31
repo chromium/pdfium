@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef FXJS_GC_GCED_TREE_NODE_H_
-#define FXJS_GC_GCED_TREE_NODE_H_
+#ifndef FXJS_GC_GCED_TREE_NODE_MIXIN_H_
+#define FXJS_GC_GCED_TREE_NODE_MIXIN_H_
 
 #include "core/fxcrt/tree_node.h"
 #include "v8/include/cppgc/garbage-collected.h"
@@ -12,10 +12,11 @@
 
 namespace fxjs {
 
-// For DOM/XML-ish trees, where references outside the tree are Persistent<>.
+// For DOM/XML-ish trees, where references outside the tree are Persistent<>,
+// usable by classes that are already garbage collected themselves.
 template <typename T>
-class GCedTreeNode : public cppgc::GarbageCollected<GCedTreeNode<T>>,
-                     public TreeNode<T, cppgc::Member<T>> {
+class GCedTreeNodeMixin : public cppgc::GarbageCollectedMixin,
+                          public TreeNode<T, cppgc::Member<T>> {
  public:
   using TreeNode<T, cppgc::Member<T>>::RemoveChild;
 
@@ -28,13 +29,13 @@ class GCedTreeNode : public cppgc::GarbageCollected<GCedTreeNode<T>>,
   }
 
  protected:
-  GCedTreeNode() = default;
-  GCedTreeNode(const GCedTreeNode& that) = delete;
-  GCedTreeNode& operator=(const GCedTreeNode& that) = delete;
+  GCedTreeNodeMixin() = default;
+  GCedTreeNodeMixin(const GCedTreeNodeMixin& that) = delete;
+  GCedTreeNodeMixin& operator=(const GCedTreeNodeMixin& that) = delete;
 };
 
 }  // namespace fxjs
 
-using fxjs::GCedTreeNode;
+using fxjs::GCedTreeNodeMixin;
 
-#endif  // FXJS_GC_GCED_TREE_NODE_H_
+#endif  // FXJS_GC_GCED_TREE_NODE_MIXIN_H_
