@@ -1710,8 +1710,8 @@ void CXFA_ViewLayoutProcessor::MergePageSetContents() {
           }
           if (bIsExistForm) {
             CXFA_Node* pNewSubform = pFormLayout->GetFormNode();
-            if (pViewItem->m_pOldSubform &&
-                pViewItem->m_pOldSubform != pNewSubform) {
+            if (pViewItem->GetOldSubform() &&
+                pViewItem->GetOldSubform() != pNewSubform) {
               CXFA_Node* pExistingNode = XFA_DataMerge_FindFormDOMInstance(
                   pDocument, pViewItem->GetFormNode()->GetElementType(),
                   pViewItem->GetFormNode()->GetNameHash(), pParentNode);
@@ -1732,7 +1732,7 @@ void CXFA_ViewLayoutProcessor::MergePageSetContents() {
                 pParentNode->RemoveChildAndNotify(pExistingNode, true);
               }
             }
-            pViewItem->m_pOldSubform = pNewSubform;
+            pViewItem->SetOldSubform(pNewSubform);
           }
           CXFA_Node* pOldNode = pViewItem->GetFormNode();
           CXFA_Node* pNewNode = pDocument->DataMerge_CopyContainer(
