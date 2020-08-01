@@ -453,8 +453,18 @@ bool ParseCommandLine(const std::vector<std::string>& args,
     } else if (cur_arg == "--save-attachments") {
       options->save_attachments = true;
     } else if (cur_arg == "--save-images") {
+      if (options->save_rendered_images) {
+        fprintf(stderr,
+                "--save-rendered-images conflicts with --save-images\n");
+        return false;
+      }
       options->save_images = true;
     } else if (cur_arg == "--save-rendered-images") {
+      if (options->save_images) {
+        fprintf(stderr,
+                "--save-images conflicts with --save-rendered-images\n");
+        return false;
+      }
       options->save_rendered_images = true;
     } else if (cur_arg == "--save-thumbs") {
       options->save_thumbnails = true;
@@ -1048,52 +1058,57 @@ void ShowConfig() {
 
 constexpr char kUsageString[] =
     "Usage: pdfium_test [OPTION] [FILE]...\n"
-    "  --show-config        - print build options and exit\n"
-    "  --show-metadata      - print the file metadata\n"
-    "  --show-pageinfo      - print information about pages\n"
-    "  --show-structure     - print the structure elements from the document\n"
-    "  --send-events        - send input described by .evt file\n"
-    "  --mem-document       - load document with FPDF_LoadMemDocument()\n"
-    "  --render-oneshot     - render image without using progressive renderer\n"
-    "  --lcd-text           - render text optimized for LCD displays\n"
-    "  --no-nativetext      - render without using the native text output\n"
-    "  --grayscale          - render grayscale output\n"
-    "  --forced-color       - render in forced color mode\n"
-    "  --fill-to-stroke     - render fill as stroke in forced color mode\n"
-    "  --limit-cache        - render limiting image cache size\n"
-    "  --force-halftone     - render forcing halftone\n"
-    "  --printing           - render as if for printing\n"
-    "  --no-smoothtext      - render disabling text anti-aliasing\n"
-    "  --no-smoothimage     - render disabling image anti-alisasing\n"
-    "  --no-smoothpath      - render disabling path anti-aliasing\n"
-    "  --reverse-byte-order - render to BGRA, if supported by the output "
+    "  --show-config          - print build options and exit\n"
+    "  --show-metadata        - print the file metadata\n"
+    "  --show-pageinfo        - print information about pages\n"
+    "  --show-structure       - print the structure elements from the "
+    "document\n"
+    "  --send-events          - send input described by .evt file\n"
+    "  --mem-document         - load document with FPDF_LoadMemDocument()\n"
+    "  --render-oneshot       - render image without using progressive "
+    "renderer\n"
+    "  --lcd-text             - render text optimized for LCD displays\n"
+    "  --no-nativetext        - render without using the native text output\n"
+    "  --grayscale            - render grayscale output\n"
+    "  --forced-color         - render in forced color mode\n"
+    "  --fill-to-stroke       - render fill as stroke in forced color mode\n"
+    "  --limit-cache          - render limiting image cache size\n"
+    "  --force-halftone       - render forcing halftone\n"
+    "  --printing             - render as if for printing\n"
+    "  --no-smoothtext        - render disabling text anti-aliasing\n"
+    "  --no-smoothimage       - render disabling image anti-alisasing\n"
+    "  --no-smoothpath        - render disabling path anti-aliasing\n"
+    "  --reverse-byte-order   - render to BGRA, if supported by the output "
     "format\n"
-    "  --save-attachments   - write embedded attachments "
+    "  --save-attachments     - write embedded attachments "
     "<pdf-name>.attachment.<attachment-name>\n"
-    "  --save-images        - write embedded images "
+    "  --save-images          - write raw embedded images "
     "<pdf-name>.<page-number>.<object-number>.png\n"
-    "  --save-thumbs        - write page thumbnails "
+    "  --save-rendered-images - write embedded images as rendered on the page "
+    "<pdf-name>.<page-number>.<object-number>.png\n"
+    "  --save-thumbs          - write page thumbnails "
     "<pdf-name>.thumbnail.<page-number>.png\n"
-    "  --save-thumbs-dec    - write page thumbnails' decoded stream data"
+    "  --save-thumbs-dec      - write page thumbnails' decoded stream data"
     "<pdf-name>.thumbnail.decoded.<page-number>.png\n"
-    "  --save-thumbs-raw    - write page thumbnails' raw stream data"
+    "  --save-thumbs-raw      - write page thumbnails' raw stream data"
     "<pdf-name>.thumbnail.raw.<page-number>.png\n"
 #ifdef PDF_ENABLE_V8
-    "  --disable-javascript - do not execute JS in PDF files\n"
+    "  --disable-javascript   - do not execute JS in PDF files\n"
 #ifdef PDF_ENABLE_XFA
-    "  --disable-xfa        - do not process XFA forms\n"
+    "  --disable-xfa          - do not process XFA forms\n"
 #endif  // PDF_ENABLE_XFA
 #endif  // PDF_ENABLE_V8
 #ifdef ENABLE_CALLGRIND
-    "  --callgrind-delim    - delimit interesting section when using "
+    "  --callgrind-delim      - delimit interesting section when using "
     "callgrind\n"
 #endif
 #if defined(__APPLE__) || (defined(__linux__) && !defined(__ANDROID__))
-    "  --no-system-fonts    - do not use system fonts, overrides --font-dir\n"
+    "  --no-system-fonts      - do not use system fonts, overrides --font-dir\n"
 #endif
-    "  --bin-dir=<path>     - override path to v8 external data\n"
-    "  --font-dir=<path>    - override path to external fonts\n"
-    "  --scale=<number>     - scale output size by number (e.g. 0.5)\n"
+    "  --bin-dir=<path>       - override path to v8 external data\n"
+    "  --font-dir=<path>      - override path to external fonts\n"
+    "  --scale=<number>       - scale output size by number (e.g. 0.5)\n"
+    "  --password=<secret>    - password to decrypt the PDF with\n"
     "  --pages=<number>(-<number>) - only render the given 0-based page(s)\n"
 #ifdef _WIN32
     "  --bmp   - write page images <pdf-name>.<page-number>.bmp\n"
