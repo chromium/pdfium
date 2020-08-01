@@ -222,7 +222,7 @@ std::string WritePpm(const char* pdf_name,
   return std::string(filename);
 }
 
-void WriteText(FPDF_PAGE page, const char* pdf_name, int num) {
+void WriteText(FPDF_TEXTPAGE textpage, const char* pdf_name, int num) {
   char filename[256];
   int chars_formatted =
       snprintf(filename, sizeof(filename), "%s.%d.txt", pdf_name, num);
@@ -246,9 +246,8 @@ void WriteText(FPDF_PAGE page, const char* pdf_name, int num) {
     return;
   }
 
-  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page));
-  for (int i = 0; i < FPDFText_CountChars(textpage.get()); i++) {
-    uint32_t c = FPDFText_GetUnicode(textpage.get(), i);
+  for (int i = 0; i < FPDFText_CountChars(textpage); i++) {
+    uint32_t c = FPDFText_GetUnicode(textpage, i);
     if (fwrite(&c, sizeof(c), 1, fp) != 1) {
       fprintf(stderr, "Failed to write to %s\n", filename);
       break;

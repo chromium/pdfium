@@ -20,7 +20,7 @@ std::string WritePpm(const char* pdf_name,
                      int stride,
                      int width,
                      int height);
-void WriteText(FPDF_PAGE page, const char* pdf_name, int num);
+void WriteText(FPDF_TEXTPAGE textpage, const char* pdf_name, int num);
 void WriteAnnot(FPDF_PAGE page, const char* pdf_name, int num);
 std::string WritePng(const char* pdf_name,
                      int num,

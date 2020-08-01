@@ -815,7 +815,7 @@ bool ProcessPage(const std::string& name,
         break;
 #endif
       case OutputFormat::kText:
-        WriteText(page, name.c_str(), page_index);
+        WriteText(text_page.get(), name.c_str(), page_index);
         break;
 
       case OutputFormat::kAnnot:
