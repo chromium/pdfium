@@ -4,6 +4,8 @@
 
 #include "public/fpdf_signature.h"
 #include "testing/embedder_test.h"
+#include "testing/fx_string_testhelpers.h"
+#include "third_party/base/stl_util.h"
 
 class FPDFSignatureEmbedderTest : public EmbedderTest {};
 
@@ -127,4 +129,34 @@ TEST_F(FPDFSignatureEmbedderTest, GetSubFilterNoKeyExists) {
 
   // FPDFSignatureObj_GetSubFilter() negative testing: no SubFilter
   ASSERT_EQ(0U, FPDFSignatureObj_GetSubFilter(signature, nullptr, 0));
+}
+
+TEST_F(FPDFSignatureEmbedderTest, GetReason) {
+  ASSERT_TRUE(OpenDocument("signature_reason.pdf"));
+  FPDF_SIGNATURE signature = FPDF_GetSignatureObject(document(), 0);
+  EXPECT_NE(nullptr, signature);
+
+  // FPDFSignatureObj_GetReason() positive testing.
+  constexpr char kReason[] = "test reason";
+  // Return value includes the terminating NUL that is provided.
+  constexpr unsigned long kReasonUTF16Size = pdfium::size(kReason) * 2;
+  constexpr wchar_t kReasonWide[] = L"test reason";
+  unsigned long size = FPDFSignatureObj_GetReason(signature, nullptr, 0);
+  ASSERT_EQ(kReasonUTF16Size, size);
+
+  std::vector<unsigned short> buffer(size);
+  ASSERT_EQ(size, FPDFSignatureObj_GetReason(signature, buffer.data(), size));
+  ASSERT_EQ(kReasonWide, GetPlatformWString(buffer.data()));
+
+  // FPDFSignatureObj_GetReason() negative testing.
+  ASSERT_EQ(0U, FPDFSignatureObj_GetReason(nullptr, nullptr, 0));
+
+  // Buffer is too small, ensure it's not modified.
+  buffer.resize(2);
+  buffer[0] = 'x';
+  buffer[1] = '\0';
+  size = FPDFSignatureObj_GetReason(signature, buffer.data(), buffer.size());
+  ASSERT_EQ(kReasonUTF16Size, size);
+  EXPECT_EQ('x', buffer[0]);
+  EXPECT_EQ('\0', buffer[1]);
 }

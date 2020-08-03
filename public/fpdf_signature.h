@@ -94,6 +94,25 @@ FPDFSignatureObj_GetSubFilter(FPDF_SIGNATURE signature,
                               char* buffer,
                               unsigned long length);
 
+// Experimental API.
+// Function: FPDFSignatureObj_GetReason
+//          Get the reason (comment) of the signature object.
+// Parameters:
+//          signature   -   Handle to the signature object. Returned by
+//                          FPDF_GetSignatureObject().
+//          buffer      -   The address of a buffer that receives the reason.
+//          length      -   The size, in bytes, of |buffer|.
+// Return value:
+//          Returns the number of bytes in the reason on success, 0 on error.
+//
+// Regardless of the platform, the |buffer| is always in UTF-16LE encoding. The
+// string is terminated by a UTF16 NUL character. If |length| is less than the
+// returned length, or |buffer| is NULL, |buffer| will not be modified.
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFSignatureObj_GetReason(FPDF_SIGNATURE signature,
+                           void* buffer,
+                           unsigned long length);
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif  // __cplusplus

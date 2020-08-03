@@ -122,3 +122,23 @@ FPDFSignatureObj_GetSubFilter(FPDF_SIGNATURE signature,
 
   return sub_filter_len;
 }
+
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFSignatureObj_GetReason(FPDF_SIGNATURE signature,
+                           void* buffer,
+                           unsigned long length) {
+  CPDF_Dictionary* signature_dict = CPDFDictionaryFromFPDFSignature(signature);
+  if (!signature_dict)
+    return 0;
+
+  CPDF_Dictionary* value_dict = signature_dict->GetDictFor("V");
+  if (!value_dict)
+    return 0;
+
+  const CPDF_Object* obj = value_dict->GetObjectFor("Reason");
+  if (!obj || !obj->IsString())
+    return 0;
+
+  return Utf16EncodeMaybeCopyAndReturnLength(obj->GetUnicodeText(), buffer,
+                                             length);
+}
