@@ -235,9 +235,7 @@ CFX_GifDecodeStatus CFX_GifContext::LoadFrame(int32_t frame_num) {
 
       if (!lzw_decompressor_.get()) {
         lzw_decompressor_ = CFX_LZWDecompressor::Create(
-            !gif_image->local_palettes.empty() ? gif_image->local_palette_exp
-                                               : global_palette_exp_,
-            gif_image->code_exp);
+            GetPaletteExp(gif_image), gif_image->code_exp);
       }
       SaveDecodingStatus(GIF_D_STATUS_IMG_DATA);
       img_row_offset_ += img_row_avail_size_;
@@ -275,11 +273,8 @@ CFX_GifDecodeStatus CFX_GifContext::LoadFrame(int32_t frame_num) {
             }
 
             if (!lzw_decompressor_.get()) {
-              lzw_decompressor_ =
-                  CFX_LZWDecompressor::Create(!gif_image->local_palettes.empty()
-                                                  ? gif_image->local_palette_exp
-                                                  : global_palette_exp_,
-                                              gif_image->code_exp);
+              lzw_decompressor_ = CFX_LZWDecompressor::Create(
+                  GetPaletteExp(gif_image), gif_image->code_exp);
             }
             SaveDecodingStatus(GIF_D_STATUS_IMG_DATA);
             img_row_offset_ += img_row_avail_size_;
@@ -513,10 +508,9 @@ CFX_GifDecodeStatus CFX_GifContext::DecodeImageInfo() {
       // Need to test that the color that is going to be transparent is actually
       // in the palette being used.
       if (graphic_control_extension_->trans_index >=
-          2 << (gif_image->local_palettes.empty()
-                    ? global_palette_exp_
-                    : gif_image->local_palette_exp))
+          (2 << GetPaletteExp(gif_image.get()))) {
         return CFX_GifDecodeStatus::Error;
+      }
     }
     gif_image->image_GCE = std::move(graphic_control_extension_);
     graphic_control_extension_ = nullptr;
@@ -546,6 +540,11 @@ bool CFX_GifContext::ScanForTerminalMarker() {
   }
 
   return true;
+}
+
+uint8_t CFX_GifContext::GetPaletteExp(CFX_GifImage* gif_image) const {
+  return !gif_image->local_palettes.empty() ? gif_image->local_palette_exp
+                                            : global_palette_exp_;
 }
 
 }  // namespace fxcodec

@@ -74,6 +74,7 @@ class CFX_GifContext : public ProgressiveDecoderIface::Context {
   CFX_GifDecodeStatus DecodeImageInfo();
   void DecodingFailureAtTailCleanup(CFX_GifImage* gif_image);
   bool ScanForTerminalMarker();
+  uint8_t GetPaletteExp(CFX_GifImage* gif_image) const;
 };
 
 }  // namespace fxcodec
