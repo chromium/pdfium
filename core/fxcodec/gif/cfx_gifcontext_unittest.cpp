@@ -211,7 +211,7 @@ TEST(CFX_GifContext, ReadLocalScreenDescriptor) {
     EXPECT_EQ(0x000A, context.width_);
     EXPECT_EQ(0x0F00, context.height_);
     EXPECT_EQ(1u, context.bc_index_);
-    EXPECT_EQ(1u, context.global_pal_exp_);
+    EXPECT_EQ(1u, context.global_palette_exp_);
     EXPECT_EQ(1, context.global_sort_flag_);
     EXPECT_EQ(2, context.global_color_resolution_);
     EXPECT_EQ(0, memcmp(data.palette, context.global_palette_.data(),
@@ -294,7 +294,7 @@ TEST(CFX_GifContext, ReadHeader) {
     EXPECT_EQ(0x000A, context.width_);
     EXPECT_EQ(0x0F00, context.height_);
     EXPECT_EQ(1u, context.bc_index_);
-    EXPECT_EQ(1u, context.global_pal_exp_);
+    EXPECT_EQ(1u, context.global_palette_exp_);
     EXPECT_EQ(1, context.global_sort_flag_);
     EXPECT_EQ(2, context.global_color_resolution_);
     EXPECT_EQ(0, memcmp(data.palette, context.global_palette_.data(),

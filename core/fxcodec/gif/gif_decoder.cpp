@@ -34,7 +34,7 @@ CFX_GifDecodeStatus GifDecoder::ReadHeader(
 
   *width = context->width_;
   *height = context->height_;
-  *pal_num = (2 << context->global_pal_exp_);
+  *pal_num = (2 << context->global_palette_exp_);
   *pal_pp = context->global_palette_.empty() ? nullptr
                                              : context->global_palette_.data();
   *bg_index = context->bc_index_;

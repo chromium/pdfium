@@ -126,7 +126,7 @@ struct CFX_GifImage {
   std::vector<CFX_GifPalette> local_palettes;
   std::vector<uint8_t, FxAllocAllocator<uint8_t>> row_buffer;
   CFX_CFX_GifImageInfo image_info;
-  uint8_t local_pallette_exp;
+  uint8_t local_palette_exp;
   uint8_t code_exp;
   uint32_t data_pos;
   int32_t row_num;
