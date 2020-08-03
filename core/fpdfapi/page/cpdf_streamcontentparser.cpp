@@ -306,8 +306,7 @@ int CPDF_StreamContentParser::GetNextParamPos() {
 void CPDF_StreamContentParser::AddNameParam(ByteStringView bsName) {
   ContentParam& param = m_ParamBuf[GetNextParamPos()];
   param.m_Type = ContentParam::NAME;
-  param.m_Name =
-      bsName.Contains('#') ? PDF_NameDecode(bsName) : ByteString(bsName);
+  param.m_Name = PDF_NameDecode(bsName);
 }
 
 void CPDF_StreamContentParser::AddNumberParam(ByteStringView str) {
