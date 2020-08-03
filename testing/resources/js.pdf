@@ -22,7 +22,6 @@ endobj
 4 0 obj <<
   /Names [
     (normal) 5 0 R
-    (encoded_subtype) 6 0 R
     (no_type) 7 0 R
     (wrongtype) 8 0 R
     (wrongsubtype) 9 0 R
@@ -33,12 +32,6 @@ endobj
 5 0 obj <<
   /Type /Action
   /S /JavaScript
-  /JS 11 0 R
->>
-endobj
-6 0 obj <<
-  /Type /Action
-  /S /J#61v#61Script
   /JS 11 0 R
 >>
 endobj
