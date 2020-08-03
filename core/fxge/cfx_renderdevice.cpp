@@ -213,7 +213,7 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
                           int top,
                           int start_col,
                           int end_col,
-                          bool bNormal,
+                          bool normalize,
                           int x_subpixel,
                           int a,
                           int r,
@@ -234,7 +234,7 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
     uint8_t* dest_scan = dest_buf + dest_row * dest_pitch + start_col * Bpp;
     if (x_subpixel == 0) {
       for (int col = start_col; col < end_col; ++col) {
-        if (bNormal) {
+        if (normalize) {
           int src_value = AverageRgb(&src_scan[0]);
           NormalizeDest(has_alpha, src_value, r, g, b, a, dest_scan);
         } else {
@@ -246,7 +246,7 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
       continue;
     }
     if (x_subpixel == 1) {
-      if (bNormal) {
+      if (normalize) {
         int src_value = start_col > left ? AverageRgb(&src_scan[-1])
                                          : (src_scan[0] + src_scan[1]) / 3;
         NormalizeSrc(has_alpha, src_value, r, g, b, a, dest_scan);
@@ -259,7 +259,7 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
       }
       NextPixel(&src_scan, &dest_scan, Bpp);
       for (int col = start_col + 1; col < end_col; ++col) {
-        if (bNormal) {
+        if (normalize) {
           int src_value = AverageRgb(&src_scan[-1]);
           NormalizeDest(has_alpha, src_value, r, g, b, a, dest_scan);
         } else {
@@ -270,7 +270,7 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
       }
       continue;
     }
-    if (bNormal) {
+    if (normalize) {
       int src_value =
           start_col > left ? AverageRgb(&src_scan[-2]) : src_scan[0] / 3;
       NormalizeSrc(has_alpha, src_value, r, g, b, a, dest_scan);
@@ -284,7 +284,7 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
     }
     NextPixel(&src_scan, &dest_scan, Bpp);
     for (int col = start_col + 1; col < end_col; ++col) {
-      if (bNormal) {
+      if (normalize) {
         int src_value = AverageRgb(&src_scan[-2]);
         NormalizeDest(has_alpha, src_value, r, g, b, a, dest_scan);
       } else {
@@ -824,9 +824,9 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
                                       const CFX_Matrix& mtText2Device,
                                       uint32_t fill_color,
                                       const CFX_TextRenderOptions& options) {
-  // |anti_alias| and |bNormal| don't affect Skia/SkiaPaths rendering.
+  // |anti_alias| and |normalize| don't affect Skia/SkiaPaths rendering.
   int anti_alias = FT_RENDER_MODE_MONO;
-  bool bNormal = false;
+  bool normalize = false;
   const bool is_text_smooth = options.IsSmooth();
   // |text_options| has the potential to affect all derived classes of
   // RenderDeviceDriverIface. But now it only affects Skia rendering.
@@ -852,7 +852,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
         // rendering options provided by |text_options|. No change needs to be
         // done for |text_options| here.
         anti_alias = FT_RENDER_MODE_LCD;
-        bNormal = true;
+        normalize = true;
       } else if (m_bpp < 16) {
         // This case doesn't apply to Skia since Skia always have |m_bpp| = 32.
         anti_alias = FT_RENDER_MODE_NORMAL;
@@ -861,8 +861,8 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
         // rendering options provided by |text_options|. No change needs to be
         // done for |text_options| here.
         anti_alias = FT_RENDER_MODE_LCD;
-        bNormal = !pFont->GetFaceRec() ||
-                  options.aliasing_type != CFX_TextRenderOptions::kLcd;
+        normalize = !pFont->GetFaceRec() ||
+                    options.aliasing_type != CFX_TextRenderOptions::kLcd;
       }
     }
   }
@@ -1013,7 +1013,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
       continue;
 
     DrawNormalTextHelper(bitmap, pGlyph, nrows, point->x, point->y, start_col,
-                         end_col, bNormal, x_subpixel, a, r, g, b);
+                         end_col, normalize, x_subpixel, a, r, g, b);
   }
   if (bitmap->IsAlphaMask())
     SetBitMask(bitmap, bmp_rect.left, bmp_rect.top, fill_color);
