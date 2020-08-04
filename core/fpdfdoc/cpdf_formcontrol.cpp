@@ -180,26 +180,6 @@ int CPDF_FormControl::GetTextPosition() const {
   return GetMK().GetTextPosition();
 }
 
-CPDF_Action CPDF_FormControl::GetAction() const {
-  if (!m_pWidgetDict)
-    return CPDF_Action(nullptr);
-
-  if (m_pWidgetDict->KeyExist("A"))
-    return CPDF_Action(m_pWidgetDict->GetDictFor("A"));
-
-  CPDF_Object* pObj = CPDF_FormField::GetFieldAttr(m_pField->GetDict(), "A");
-  return CPDF_Action(pObj ? pObj->GetDict() : nullptr);
-}
-
-CPDF_AAction CPDF_FormControl::GetAdditionalAction() const {
-  if (!m_pWidgetDict)
-    return CPDF_AAction(nullptr);
-
-  if (m_pWidgetDict->KeyExist("AA"))
-    return CPDF_AAction(m_pWidgetDict->GetDictFor("AA"));
-  return m_pField->GetAdditionalAction();
-}
-
 CPDF_DefaultAppearance CPDF_FormControl::GetDefaultAppearance() const {
   if (!m_pWidgetDict)
     return CPDF_DefaultAppearance();

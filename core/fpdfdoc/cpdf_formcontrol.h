@@ -87,8 +87,6 @@ class CPDF_FormControl {
   CPDF_IconFit GetIconFit() const;
 
   int GetTextPosition() const;
-  CPDF_Action GetAction() const;
-  CPDF_AAction GetAdditionalAction() const;
   CPDF_DefaultAppearance GetDefaultAppearance() const;
 
   Optional<WideString> GetDefaultControlFontName() const;
