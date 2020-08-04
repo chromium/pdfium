@@ -11,6 +11,7 @@
 
 #include "constants/annotation_common.h"
 #include "constants/annotation_flags.h"
+#include "constants/form_fields.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
@@ -204,7 +205,7 @@ CPDF_Action CPDFSDK_BAAnnot::GetAction() const {
 }
 
 CPDF_AAction CPDFSDK_BAAnnot::GetAAction() const {
-  return CPDF_AAction(GetAnnotDict()->GetDictFor("AA"));
+  return CPDF_AAction(GetAnnotDict()->GetDictFor(pdfium::form_fields::kAA));
 }
 
 CPDF_Action CPDFSDK_BAAnnot::GetAAction(CPDF_AAction::AActionType eAAT) {
