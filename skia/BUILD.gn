@@ -79,7 +79,7 @@ config("skia_library_config") {
   }
 
   # Settings for text blitting, chosen to approximate the system browser.
-  if (is_linux) {
+  if (is_linux || is_chromeos) {
     defines += [
       "SK_GAMMA_EXPONENT=1.2",
       "SK_GAMMA_CONTRAST=0.2",
@@ -153,7 +153,7 @@ source_set("skcms") {
   # LLVM automatically sets the equivalent of GCC's -mfp16-format=ieee on ARM
   # builds by default, while GCC itself does not. We need it to enable support
   # for half-precision floating point data types used by SKCMS on ARM.
-  if (is_linux && !is_clang && current_cpu == "arm") {
+  if ((is_linux || is_chromeos) && !is_clang && current_cpu == "arm") {
     cflags += [ "-mfp16-format=ieee" ]
   }
 
@@ -275,7 +275,7 @@ component("skia") {
       "//third_party/skia/src/ports/SkFontMgr_android_parser.cpp",
     ]
   }
-  if (!is_linux && !is_android && !is_win && !is_mac) {
+  if (!is_linux && !is_chromeos && !is_android && !is_win && !is_mac) {
     sources -= [
       "//third_party/skia/src/ports/SkFontHost_FreeType.cpp",
       "//third_party/skia/src/ports/SkFontHost_FreeType_common.cpp",
@@ -307,7 +307,7 @@ component("skia") {
   ]
   public_deps = [ ":skia_core_and_effects" ]
 
-  if (is_linux) {
+  if (is_linux || is_chromeos) {
     deps += [ "//third_party/icu:icuuc" ]
   }
 

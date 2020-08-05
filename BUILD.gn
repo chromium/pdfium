@@ -96,7 +96,7 @@ config("pdfium_core_config") {
     "//build/config/compiler:noshadowing",
   ]
   defines = []
-  if (is_linux) {
+  if (is_linux || is_chromeos) {
     if (current_cpu == "x64") {
       defines += [ "_FX_CPU_=_FX_X64_" ]
       cflags += [ "-fPIC" ]
