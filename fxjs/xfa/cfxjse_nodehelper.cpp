@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/parser/cxfa_nodehelper.h"
+#include "fxjs/xfa/cfxjse_nodehelper.h"
 
 #include <utility>
 
@@ -18,11 +18,11 @@
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
-CXFA_NodeHelper::CXFA_NodeHelper() = default;
+CFXJSE_NodeHelper::CFXJSE_NodeHelper() = default;
 
-CXFA_NodeHelper::~CXFA_NodeHelper() = default;
+CFXJSE_NodeHelper::~CFXJSE_NodeHelper() = default;
 
-bool CXFA_NodeHelper::CreateNodeForCondition(const WideString& wsCondition) {
+bool CFXJSE_NodeHelper::CreateNodeForCondition(const WideString& wsCondition) {
   size_t szLen = wsCondition.GetLength();
   WideString wsIndex(L"0");
   bool bAll = false;
@@ -58,10 +58,10 @@ bool CXFA_NodeHelper::CreateNodeForCondition(const WideString& wsCondition) {
   return true;
 }
 
-bool CXFA_NodeHelper::CreateNode(const WideString& wsName,
-                                 const WideString& wsCondition,
-                                 bool bLastNode,
-                                 CFXJSE_Engine* pScriptContext) {
+bool CFXJSE_NodeHelper::CreateNode(const WideString& wsName,
+                                   const WideString& wsCondition,
+                                   bool bLastNode,
+                                   CFXJSE_Engine* pScriptContext) {
   if (!m_pCreateParent)
     return false;
 
@@ -123,7 +123,7 @@ bool CXFA_NodeHelper::CreateNode(const WideString& wsName,
   return bResult;
 }
 
-void CXFA_NodeHelper::SetCreateNodeType(CXFA_Node* refNode) {
+void CFXJSE_NodeHelper::SetCreateNodeType(CXFA_Node* refNode) {
   if (!refNode)
     return;
 

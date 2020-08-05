@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_NODEHELPER_H_
-#define XFA_FXFA_PARSER_CXFA_NODEHELPER_H_
+#ifndef FXJS_XFA_CFXJSE_NODEHELPER_H_
+#define FXJS_XFA_CFXJSE_NODEHELPER_H_
 
 #include "core/fxcrt/fx_string.h"
 #include "xfa/fxfa/fxfa_basic.h"
@@ -14,10 +14,10 @@
 class CFXJSE_Engine;
 class CXFA_Node;
 
-class CXFA_NodeHelper {
+class CFXJSE_NodeHelper {
  public:
-  CXFA_NodeHelper();
-  ~CXFA_NodeHelper();
+  CFXJSE_NodeHelper();
+  ~CFXJSE_NodeHelper();
 
   bool CreateNode(const WideString& wsName,
                   const WideString& wsCondition,
@@ -34,4 +34,4 @@ class CXFA_NodeHelper {
   UnownedPtr<CXFA_Node> m_pAllStartParent;
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_NODEHELPER_H_
+#endif  // FXJS_XFA_CFXJSE_NODEHELPER_H_

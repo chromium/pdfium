@@ -16,7 +16,7 @@
 #include "xfa/fxfa/parser/xfa_basic_data.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
-class CXFA_NodeHelper;
+class CFXJSE_NodeHelper;
 
 class CFXJSE_ResolveNodeData {
  public:
@@ -49,7 +49,7 @@ class CFXJSE_ResolveProcessor {
                         int32_t iCount);
   void SetCurStart(int32_t start) { m_iCurStart = start; }
 
-  CXFA_NodeHelper* GetNodeHelper() { return m_pNodeHelper.get(); }
+  CFXJSE_NodeHelper* GetNodeHelper() { return m_pNodeHelper.get(); }
 
  private:
   bool ResolveForAttributeRs(CXFA_Object* curNode,
@@ -70,7 +70,7 @@ class CFXJSE_ResolveProcessor {
   void FilterCondition(WideString wsCondition, CFXJSE_ResolveNodeData* pRnd);
 
   int32_t m_iCurStart = 0;
-  std::unique_ptr<CXFA_NodeHelper> const m_pNodeHelper;
+  std::unique_ptr<CFXJSE_NodeHelper> const m_pNodeHelper;
 };
 
 #endif  // FXJS_XFA_CFXJSE_RESOLVEPROCESSOR_H_

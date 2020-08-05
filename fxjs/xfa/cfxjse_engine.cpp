@@ -15,6 +15,7 @@
 #include "fxjs/xfa/cfxjse_class.h"
 #include "fxjs/xfa/cfxjse_context.h"
 #include "fxjs/xfa/cfxjse_formcalc_context.h"
+#include "fxjs/xfa/cfxjse_nodehelper.h"
 #include "fxjs/xfa/cfxjse_resolveprocessor.h"
 #include "fxjs/xfa/cfxjse_value.h"
 #include "fxjs/xfa/cjx_object.h"
@@ -25,7 +26,6 @@
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
-#include "xfa/fxfa/parser/cxfa_nodehelper.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
 #include "xfa/fxfa/parser/cxfa_thisproxy.h"
 #include "xfa/fxfa/parser/xfa_basic_data.h"
@@ -620,7 +620,7 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
   }
 
   bool bNextCreate = false;
-  CXFA_NodeHelper* pNodeHelper = m_ResolveProcessor->GetNodeHelper();
+  CFXJSE_NodeHelper* pNodeHelper = m_ResolveProcessor->GetNodeHelper();
   if (dwStyles & XFA_RESOLVENODE_CreateNode)
     pNodeHelper->SetCreateNodeType(bindNode);
 

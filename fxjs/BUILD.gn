@@ -128,6 +128,8 @@ source_set("fxjs") {
         "xfa/cfxjse_formcalc_context.h",
         "xfa/cfxjse_isolatetracker.cpp",
         "xfa/cfxjse_isolatetracker.h",
+        "xfa/cfxjse_nodehelper.cpp",
+        "xfa/cfxjse_nodehelper.h",
         "xfa/cfxjse_resolveprocessor.cpp",
         "xfa/cfxjse_resolveprocessor.h",
         "xfa/cfxjse_runtimedata.cpp",
