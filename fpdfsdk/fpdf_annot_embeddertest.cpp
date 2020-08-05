@@ -1016,7 +1016,7 @@ TEST_F(FPDFAnnotEmbedderTest, RemoveAnnotation) {
 
 TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#if defined(OS_LINUX)
+#if defined(OS_LINUX) || defined(OS_CHROMEOS)
   static const char kMd5ModifiedPath[] = "d76382fd57fafad0233f7549f871dafa";
   static const char kMd5TwoPaths[] = "323151317b8cb62130546c7b8d70f622";
   static const char kMd5NewAnnot[] = "9a3b02d876620d19787549ee1100b63c";
@@ -1024,7 +1024,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
   static const char kMd5ModifiedPath[] = "c9ba60887a312370d9a32198aa53aca4";
   static const char kMd5TwoPaths[] = "0768d56373094fcdf4ddf3f3364c006f";
   static const char kMd5NewAnnot[] = "6f7e1c189bcfac90ffccf2a527857006";
-#endif  // defined(OS_LINUX)
+#endif  // defined(OS_LINUX) || defined(OS_CHROMEOS)
 #else
 #if defined(OS_WIN)
   static const char kMd5ModifiedPath[] = "a7a8d675a6ddbcbdfecee65a33ba19e1";
@@ -1233,13 +1233,13 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyAnnotationFlags) {
 #endif
 TEST_F(FPDFAnnotEmbedderTest, MAYBE_AddAndModifyImage) {
 #if defined(_SKIA_SUPPORT_PATHS_)
-#if defined(OS_LINUX)
+#if defined(OS_LINUX) || defined(OS_CHROMEOS)
   static const char kMd5NewImage[] = "26a8eb30937226a677839379e0d7ae1a";
   static const char kMd5ModifiedImage[] = "2985114b32ba1a96be78ee643fe31aa5";
 #else
   static const char kMd5NewImage[] = "14012ab500b4671fa73dd760129a8a93";
   static const char kMd5ModifiedImage[] = "5f97f98f58ed04dc393f31460485f1a2";
-#endif  // defined(OS_LINUX)
+#endif  // defined(OS_LINUX) || defined(OS_CHROMEOS)
 #else
 #if defined(OS_APPLE)
   static const char kMd5NewImage[] = "dd18709d90c245a12ce0b8c4d092bea9";
@@ -1325,13 +1325,13 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_AddAndModifyImage) {
 
 TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#if defined(OS_LINUX)
+#if defined(OS_LINUX) || defined(OS_CHROMEOS)
   static const char kMd5NewText[] = "c9d853a5fb6bca31e9696ccc4462c74a";
   static const char kMd5ModifiedText[] = "bc681fa9174223983c5e4357e919d36c";
 #else
   static const char kMd5NewText[] = "4aaa34e9df2e41d621dbd81b1d535c48";
   static const char kMd5ModifiedText[] = "d6ea20beb7834ef4b6d370581ce425fc";
-#endif  // defined(OS_LINUX)
+#endif  // defined(OS_LINUX) || defined(OS_CHROMEOS)
 #else
 #if defined(OS_WIN)
   static const char kMd5NewText[] = "204cc01749a70b8afc246a4ca33c7eb6";
@@ -1472,11 +1472,11 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
   UnloadPage(page);
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#if defined(OS_LINUX)
+#if defined(OS_LINUX) || defined(OS_CHROMEOS)
   static const char kMd5[] = "7a2b712ca88d7b71f125ea3f9c88e57a";
 #else
   static const char kMd5[] = "626d25c5aa5baf67d22d9a0e1c23f6aa";
-#endif  // defined(OS_LINUX)
+#endif  // defined(OS_LINUX) || defined(OS_CHROMEOS)
 #else
 #if defined(OS_APPLE)
   static const char kMd5[] = "5e7e185b386ad21ca83b0287268c50fb";

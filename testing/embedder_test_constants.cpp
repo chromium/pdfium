@@ -9,13 +9,13 @@
 namespace pdfium {
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#if defined(OS_LINUX)
+#if defined(OS_LINUX) || defined(OS_CHROMEOS)
 const char kAnnotationStampWithApChecksum[] =
     "db83eaadc92967e3ac9bebfc6178ca75";
 #else
 const char kAnnotationStampWithApChecksum[] =
     "3c87b4a8e51245964357fb5f5fbc612b";
-#endif  // defined(OS_LINUX)
+#endif  // defined(OS_LINUX) || defined(OS_CHROMEOS)
 #else
 #if defined(OS_WIN)
 const char kAnnotationStampWithApChecksum[] =

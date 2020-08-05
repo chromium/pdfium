@@ -21,13 +21,13 @@ constexpr FX_ARGB kRed = 0xFFFF0000;
 constexpr FX_ARGB kWhite = 0xFFFFFFFF;
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#if defined(OS_LINUX)
+#if defined(OS_LINUX) || defined(OS_CHROMEOS)
 static constexpr char kAnnotationStampWithApBaseContentChecksum[] =
     "fbd62f1df1cae1fd2fbf5a24bed6b4cd";
 #else
 static constexpr char kAnnotationStampWithApBaseContentChecksum[] =
     "44e6dd3c36d8bbfb38d306b442e61241";
-#endif  // defined(OS_LINUX)
+#endif  // defined(OS_LINUX) || defined(OS_CHROMEOS)
 #else
 #if defined(OS_WIN)
 static constexpr char kAnnotationStampWithApBaseContentChecksum[] =

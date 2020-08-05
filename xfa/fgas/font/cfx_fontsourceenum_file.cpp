@@ -15,7 +15,7 @@ namespace {
 constexpr char kFolderSeparator = '/';
 
 constexpr const char* kFontFolders[] = {
-#if defined(OS_LINUX)
+#if defined(OS_LINUX) || defined(OS_CHROMEOS)
     "/usr/share/fonts",
     "/usr/share/X11/fonts/Type1",
     "/usr/share/X11/fonts/TTF",
