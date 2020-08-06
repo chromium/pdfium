@@ -84,7 +84,6 @@ class CFXJSE_Engine final : public CFX_V8 {
                       CXFA_Node* bindNode);
 
   CFXJSE_Value* GetOrCreateJSBindingFromMap(CXFA_Object* pObject);
-  void RemoveJSBindingFromMap(CXFA_Object* pObject);
 
   CXFA_Object* GetThisObject() const { return m_pThisObject.Get(); }
   CFXJSE_Class* GetJseNormalClass() const { return m_pJsClass.Get(); }

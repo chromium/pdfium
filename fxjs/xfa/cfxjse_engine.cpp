@@ -785,15 +785,6 @@ CFXJSE_Value* CFXJSE_Engine::GetOrCreateJSBindingFromMap(CXFA_Object* pObject) {
   return pValue;
 }
 
-void CFXJSE_Engine::RemoveJSBindingFromMap(CXFA_Object* pObject) {
-  auto iter = m_mapObjectToValue.find(pObject);
-  if (iter == m_mapObjectToValue.end())
-    return;
-
-  iter->second->ClearHostObject();
-  m_mapObjectToValue.erase(iter);
-}
-
 void CFXJSE_Engine::SetNodesOfRunScript(std::vector<CXFA_Node*>* pArray) {
   m_pScriptNodeArray = pArray;
 }
