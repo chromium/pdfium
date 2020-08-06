@@ -179,22 +179,10 @@ component("skia") {
     "//third_party/skia/src/fonts/SkFontMgr_indirect.cpp",
     "//third_party/skia/src/fonts/SkRemotableFontMgr.cpp",
     "//third_party/skia/src/images/SkImageEncoder.cpp",
-    "//third_party/skia/src/ports/SkFontHost_FreeType.cpp",
-    "//third_party/skia/src/ports/SkFontHost_FreeType_common.cpp",
-    "//third_party/skia/src/ports/SkFontHost_win.cpp",
-    "//third_party/skia/src/ports/SkFontMgr_android.cpp",
     "//third_party/skia/src/ports/SkFontMgr_android_factory.cpp",
-    "//third_party/skia/src/ports/SkFontMgr_android_parser.cpp",
     "//third_party/skia/src/ports/SkGlobalInitialization_default.cpp",
     "//third_party/skia/src/ports/SkImageGenerator_none.cpp",
-    "//third_party/skia/src/ports/SkOSFile_posix.cpp",
     "//third_party/skia/src/ports/SkOSFile_stdio.cpp",
-    "//third_party/skia/src/ports/SkOSFile_win.cpp",
-    "//third_party/skia/src/ports/SkRemotableFontMgr_win_dw.cpp",
-    "//third_party/skia/src/ports/SkScalerContext_win_dw.cpp",
-    "//third_party/skia/src/ports/SkTLS_pthread.cpp",
-    "//third_party/skia/src/ports/SkTLS_win.cpp",
-    "//third_party/skia/src/ports/SkTypeface_win_dw.cpp",
     "//third_party/skia/src/sfnt/SkOTTable_name.cpp",
     "//third_party/skia/src/sfnt/SkOTUtils.cpp",
 
@@ -252,35 +240,64 @@ component("skia") {
     ]
   }
 
-  # Fixup skia library sources.
-  if (is_win) {
-    sources -= [
-      "//third_party/skia/src/ports/SkOSFile_posix.cpp",
-      "//third_party/skia/src/ports/SkTLS_pthread.cpp",
+  # Select Skia ports.
+
+  # FreeType is needed everywhere (except on iOS), on Linux and Android as main
+  # font backend, on Windows and Mac as fallback backend for Variations.
+  if (!is_ios) {
+    sources += [
+      "//third_party/skia/src/ports/SkFontHost_FreeType.cpp",
+      "//third_party/skia/src/ports/SkFontHost_FreeType_common.cpp",
     ]
-  } else {
-    sources -= [
+  }
+
+  if (is_win) {
+    sources += [
       "//third_party/skia/src/ports/SkFontHost_win.cpp",
+      "//third_party/skia/src/ports/SkFontMgr_win_dw.cpp",
       "//third_party/skia/src/ports/SkOSFile_win.cpp",
       "//third_party/skia/src/ports/SkRemotableFontMgr_win_dw.cpp",
       "//third_party/skia/src/ports/SkScalerContext_win_dw.cpp",
       "//third_party/skia/src/ports/SkTLS_win.cpp",
       "//third_party/skia/src/ports/SkTypeface_win_dw.cpp",
     ]
-  }
-  if (!is_android) {
-    sources -= [
-      "//third_party/skia/src/ports/SkFontMgr_android.cpp",
-      "//third_party/skia/src/ports/SkFontMgr_android_factory.cpp",
-      "//third_party/skia/src/ports/SkFontMgr_android_parser.cpp",
+  } else {
+    sources += [
+      "//third_party/skia/src/ports/SkOSFile_posix.cpp",
+      "//third_party/skia/src/ports/SkTLS_pthread.cpp",
     ]
   }
-  if (!is_linux && !is_chromeos && !is_android && !is_win && !is_mac) {
-    sources -= [
-      "//third_party/skia/src/ports/SkFontHost_FreeType.cpp",
-      "//third_party/skia/src/ports/SkFontHost_FreeType_common.cpp",
-      "//third_party/skia/src/ports/SkFontMgr_custom.cpp",
-      "//third_party/skia/src/ports/SkFontMgr_custom_empty_factory.cpp",
+
+  if (is_apple) {
+    set_sources_assignment_filter([])
+    sources += [
+      "//third_party/skia/include/ports/SkFontMgr_mac_ct.h",
+      "//third_party/skia/src/ports/SkFontMgr_mac_ct.cpp",
+      "//third_party/skia/src/ports/SkFontMgr_mac_ct_factory.cpp",
+      "//third_party/skia/src/ports/SkScalerContext_mac_ct.cpp",
+      "//third_party/skia/src/ports/SkScalerContext_mac_ct.h",
+      "//third_party/skia/src/ports/SkTypeface_mac_ct.cpp",
+      "//third_party/skia/src/ports/SkTypeface_mac_ct.h",
+    ]
+    set_sources_assignment_filter(sources_assignment_filter)
+  }
+
+  if (is_linux || is_chromeos) {
+    sources += [
+      "//third_party/skia/src/ports/SkFontConfigInterface.cpp",
+      "//third_party/skia/src/ports/SkFontConfigInterface_direct.cpp",
+      "//third_party/skia/src/ports/SkFontConfigInterface_direct_factory.cpp",
+      "//third_party/skia/src/ports/SkFontMgr_FontConfigInterface.cpp",
+    ]
+  }
+
+  if (is_linux || is_chromeos || is_android) {
+    sources += [
+      # Retain the files for the SkFontMgr_Android on linux to emulate android
+      # fonts. See content/zygote/zygote_main_linux.cc
+      # Note that this requires expat.
+      "//third_party/skia/src/ports/SkFontMgr_android.cpp",
+      "//third_party/skia/src/ports/SkFontMgr_android_parser.cpp",
     ]
   }
 
