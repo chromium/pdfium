@@ -10,19 +10,10 @@
 #include <memory>
 
 #include "xfa/fwl/ifwl_themeprovider.h"
-#include "xfa/fwl/theme/cfwl_barcodetp.h"
-#include "xfa/fwl/theme/cfwl_carettp.h"
-#include "xfa/fwl/theme/cfwl_checkboxtp.h"
-#include "xfa/fwl/theme/cfwl_comboboxtp.h"
-#include "xfa/fwl/theme/cfwl_datetimepickertp.h"
-#include "xfa/fwl/theme/cfwl_edittp.h"
-#include "xfa/fwl/theme/cfwl_listboxtp.h"
-#include "xfa/fwl/theme/cfwl_monthcalendartp.h"
-#include "xfa/fwl/theme/cfwl_pictureboxtp.h"
-#include "xfa/fwl/theme/cfwl_pushbuttontp.h"
-#include "xfa/fwl/theme/cfwl_scrollbartp.h"
-#include "xfa/fwl/theme/cfwl_widgettp.h"
-#include "xfa/fxfa/cxfa_ffapp.h"
+
+class CFDE_TextOut;
+class CXFA_FFApp;
+class CXFA_FFDoc;
 
 class CXFA_FWLTheme final : public IFWL_ThemeProvider {
  public:
@@ -47,19 +38,6 @@ class CXFA_FWLTheme final : public IFWL_ThemeProvider {
   CFX_SizeF GetSpaceAboveBelow(const CFWL_ThemePart& pThemePart) const override;
 
  private:
-  CFWL_WidgetTP* GetTheme(CFWL_Widget* pWidget) const;
-
-  std::unique_ptr<CFWL_CheckBoxTP> m_pCheckBoxTP;
-  std::unique_ptr<CFWL_ListBoxTP> m_pListBoxTP;
-  std::unique_ptr<CFWL_PictureBoxTP> m_pPictureBoxTP;
-  std::unique_ptr<CFWL_ScrollBarTP> m_pSrollBarTP;
-  std::unique_ptr<CFWL_EditTP> m_pEditTP;
-  std::unique_ptr<CFWL_ComboBoxTP> m_pComboBoxTP;
-  std::unique_ptr<CFWL_MonthCalendarTP> m_pMonthCalendarTP;
-  std::unique_ptr<CFWL_DateTimePickerTP> m_pDateTimePickerTP;
-  std::unique_ptr<CFWL_PushButtonTP> m_pPushButtonTP;
-  std::unique_ptr<CFWL_CaretTP> m_pCaretTP;
-  std::unique_ptr<CFWL_BarcodeTP> m_pBarcodeTP;
   std::unique_ptr<CFDE_TextOut> m_pTextOut;
   RetainPtr<CFGAS_GEFont> m_pCalendarFont;
   WideString m_wsResource;

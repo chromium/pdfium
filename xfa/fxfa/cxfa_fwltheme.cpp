@@ -48,19 +48,7 @@ CXFA_FFWidget* XFA_ThemeGetOuterWidget(CFWL_Widget* pWidget) {
 }  // namespace
 
 CXFA_FWLTheme::CXFA_FWLTheme(CXFA_FFApp* pApp)
-    : m_pCheckBoxTP(std::make_unique<CFWL_CheckBoxTP>()),
-      m_pListBoxTP(std::make_unique<CFWL_ListBoxTP>()),
-      m_pPictureBoxTP(std::make_unique<CFWL_PictureBoxTP>()),
-      m_pSrollBarTP(std::make_unique<CFWL_ScrollBarTP>()),
-      m_pEditTP(std::make_unique<CFWL_EditTP>()),
-      m_pComboBoxTP(std::make_unique<CFWL_ComboBoxTP>()),
-      m_pMonthCalendarTP(std::make_unique<CFWL_MonthCalendarTP>()),
-      m_pDateTimePickerTP(std::make_unique<CFWL_DateTimePickerTP>()),
-      m_pPushButtonTP(std::make_unique<CFWL_PushButtonTP>()),
-      m_pCaretTP(std::make_unique<CFWL_CaretTP>()),
-      m_pBarcodeTP(std::make_unique<CFWL_BarcodeTP>()),
-      m_pTextOut(std::make_unique<CFDE_TextOut>()),
-      m_pApp(pApp) {}
+    : m_pTextOut(std::make_unique<CFDE_TextOut>()), m_pApp(pApp) {}
 
 bool CXFA_FWLTheme::LoadCalendarFont(CXFA_FFDoc* doc) {
   for (size_t i = 0; !m_pCalendarFont && i < pdfium::size(g_FWLTheme_CalFonts);
@@ -249,33 +237,4 @@ void CXFA_FWLTheme::CalcTextRect(const CFWL_ThemeText& pParams,
   m_pTextOut->SetAlignment(pParams.m_iTTOAlign);
   m_pTextOut->SetStyles(pParams.m_dwTTOStyles);
   m_pTextOut->CalcLogicSize(pParams.m_wsText.AsStringView(), pRect);
-}
-
-CFWL_WidgetTP* CXFA_FWLTheme::GetTheme(CFWL_Widget* pWidget) const {
-  switch (pWidget->GetClassID()) {
-    case FWL_Type::CheckBox:
-      return m_pCheckBoxTP.get();
-    case FWL_Type::ListBox:
-      return m_pListBoxTP.get();
-    case FWL_Type::PictureBox:
-      return m_pPictureBoxTP.get();
-    case FWL_Type::ScrollBar:
-      return m_pSrollBarTP.get();
-    case FWL_Type::Edit:
-      return m_pEditTP.get();
-    case FWL_Type::ComboBox:
-      return m_pComboBoxTP.get();
-    case FWL_Type::MonthCalendar:
-      return m_pMonthCalendarTP.get();
-    case FWL_Type::DateTimePicker:
-      return m_pDateTimePickerTP.get();
-    case FWL_Type::PushButton:
-      return m_pPushButtonTP.get();
-    case FWL_Type::Caret:
-      return m_pCaretTP.get();
-    case FWL_Type::Barcode:
-      return m_pBarcodeTP.get();
-    default:
-      return nullptr;
-  }
 }
