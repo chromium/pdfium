@@ -121,8 +121,8 @@ CFXJSE_Engine::CFXJSE_Engine(CXFA_Document* pDocument,
 }
 
 CFXJSE_Engine::~CFXJSE_Engine() {
-  // This is what ensures that the v8 object bound to a CXFA_Node
-  // no longer retains that binding since it will outlive that node.
+  // This is what ensures that the v8 object bound to a CJX_Object
+  // no longer retains that binding since it will outlive that object.
   for (const auto& pair : m_mapObjectToValue)
     pair.second->ClearHostObject();
 }
@@ -773,15 +773,16 @@ CFXJSE_Value* CFXJSE_Engine::GetOrCreateJSBindingFromMap(CXFA_Object* pObject) {
   if (pObject->IsNode())
     RunVariablesScript(pObject->AsNode());
 
-  auto iter = m_mapObjectToValue.find(pObject);
+  CJX_Object* pCJXObject = pObject->JSObject();
+  auto iter = m_mapObjectToValue.find(pCJXObject);
   if (iter != m_mapObjectToValue.end())
     return iter->second.get();
 
   auto jsValue = std::make_unique<CFXJSE_Value>(GetIsolate());
-  jsValue->SetHostObject(pObject->JSObject(), m_pJsClass.Get());
+  jsValue->SetHostObject(pCJXObject, m_pJsClass.Get());
 
   CFXJSE_Value* pValue = jsValue.get();
-  m_mapObjectToValue.insert(std::make_pair(pObject, std::move(jsValue)));
+  m_mapObjectToValue[pCJXObject] = std::move(jsValue);
   return pValue;
 }
 
