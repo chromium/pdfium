@@ -112,7 +112,8 @@ class CFXJSE_Engine final : public CFX_V8 {
                        uint32_t dwFlag,
                        bool bSetting);
   bool IsStrictScopeInJavaScript();
-  CXFA_Object* GetVariablesThis(CXFA_Object* pObject, bool bScriptNode);
+  CXFA_Object* GetVariablesThis(CXFA_Object* pObject);
+  CXFA_Object* GetVariablesScript(CXFA_Object* pObject);
   bool QueryVariableValue(CXFA_Node* pScriptNode,
                           ByteStringView szPropName,
                           CFXJSE_Value* pValue,

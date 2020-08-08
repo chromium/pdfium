@@ -191,7 +191,7 @@ void CFXJSE_Engine::GlobalPropertySetter(CFXJSE_Value* pObject,
   CFXJSE_Engine* lpScriptContext = pDoc->GetScriptContext();
   CXFA_Node* pRefNode = ToNode(lpScriptContext->GetThisObject());
   if (lpOrginalNode->IsThisProxy())
-    pRefNode = ToNode(lpScriptContext->GetVariablesThis(lpOrginalNode, false));
+    pRefNode = ToNode(lpScriptContext->GetVariablesThis(lpOrginalNode));
 
   WideString wsPropName = WideString::FromUTF8(szPropName);
   if (lpScriptContext->QueryNodeByFlag(
@@ -252,8 +252,7 @@ void CFXJSE_Engine::GlobalPropertyGetter(CFXJSE_Value* pObject,
 
   CXFA_Node* pRefNode = ToNode(lpScriptContext->GetThisObject());
   if (pOriginalObject->IsThisProxy()) {
-    pRefNode =
-        ToNode(lpScriptContext->GetVariablesThis(pOriginalObject, false));
+    pRefNode = ToNode(lpScriptContext->GetVariablesThis(pOriginalObject));
   }
   if (lpScriptContext->QueryNodeByFlag(
           pRefNode, wsPropName.AsStringView(), pValue,
@@ -269,7 +268,7 @@ void CFXJSE_Engine::GlobalPropertyGetter(CFXJSE_Value* pObject,
   }
 
   CXFA_Object* pScriptObject =
-      lpScriptContext->GetVariablesThis(pOriginalObject, true);
+      lpScriptContext->GetVariablesScript(pOriginalObject);
   if (pScriptObject && lpScriptContext->QueryVariableValue(
                            pScriptObject->AsNode(), szPropName, pValue, true)) {
     return;
@@ -305,7 +304,7 @@ int32_t CFXJSE_Engine::GlobalPropTypeGetter(CFXJSE_Value* pOriginalValue,
     return FXJSE_ClassPropType_None;
 
   CFXJSE_Engine* lpScriptContext = pObject->GetDocument()->GetScriptContext();
-  pObject = lpScriptContext->GetVariablesThis(pObject, false);
+  pObject = lpScriptContext->GetVariablesThis(pObject);
   WideString wsPropName = WideString::FromUTF8(szPropName);
   if (pObject->JSObject()->HasMethod(wsPropName))
     return FXJSE_ClassPropType_Method;
@@ -325,8 +324,7 @@ void CFXJSE_Engine::NormalPropertyGetter(CFXJSE_Value* pOriginalValue,
   WideString wsPropName = WideString::FromUTF8(szPropName);
   CFXJSE_Engine* lpScriptContext =
       pOriginalObject->GetDocument()->GetScriptContext();
-  CXFA_Object* pObject =
-      lpScriptContext->GetVariablesThis(pOriginalObject, false);
+  CXFA_Object* pObject = lpScriptContext->GetVariablesThis(pOriginalObject);
   if (wsPropName.EqualsASCII("xfa")) {
     CFXJSE_Value* pValue = lpScriptContext->GetOrCreateJSBindingFromMap(
         lpScriptContext->GetDocument()->GetRoot());
@@ -353,7 +351,7 @@ void CFXJSE_Engine::NormalPropertyGetter(CFXJSE_Value* pOriginalValue,
     return;
 
   CXFA_Object* pScriptObject =
-      lpScriptContext->GetVariablesThis(pOriginalObject, true);
+      lpScriptContext->GetVariablesScript(pOriginalObject);
   if (!pScriptObject)
     return;
 
@@ -403,8 +401,7 @@ void CFXJSE_Engine::NormalPropertySetter(CFXJSE_Value* pOriginalValue,
 
   CFXJSE_Engine* lpScriptContext =
       pOriginalObject->GetDocument()->GetScriptContext();
-  CXFA_Object* pObject =
-      lpScriptContext->GetVariablesThis(pOriginalObject, false);
+  CXFA_Object* pObject = lpScriptContext->GetVariablesThis(pOriginalObject);
   WideString wsPropName = WideString::FromUTF8(szPropName);
   WideStringView wsPropNameView = wsPropName.AsStringView();
   Optional<XFA_SCRIPTATTRIBUTEINFO> info =
@@ -442,7 +439,7 @@ void CFXJSE_Engine::NormalPropertySetter(CFXJSE_Value* pOriginalValue,
   }
 
   CXFA_Object* pScriptObject =
-      lpScriptContext->GetVariablesThis(pOriginalObject, true);
+      lpScriptContext->GetVariablesScript(pOriginalObject);
   if (pScriptObject) {
     lpScriptContext->QueryVariableValue(ToNode(pScriptObject), szPropName,
                                         pReturnValue, false);
@@ -457,7 +454,7 @@ int32_t CFXJSE_Engine::NormalPropTypeGetter(CFXJSE_Value* pOriginalValue,
     return FXJSE_ClassPropType_None;
 
   CFXJSE_Engine* lpScriptContext = pObject->GetDocument()->GetScriptContext();
-  pObject = lpScriptContext->GetVariablesThis(pObject, false);
+  pObject = lpScriptContext->GetVariablesThis(pObject);
   XFA_Element eType = pObject->GetElementType();
   WideString wsPropName = WideString::FromUTF8(szPropName);
   if (pObject->JSObject()->HasMethod(wsPropName))
@@ -478,7 +475,7 @@ CJS_Result CFXJSE_Engine::NormalMethodCall(
     return CJS_Result::Failure(L"no Holder() present.");
 
   CFXJSE_Engine* lpScriptContext = pObject->GetDocument()->GetScriptContext();
-  pObject = lpScriptContext->GetVariablesThis(pObject, false);
+  pObject = lpScriptContext->GetVariablesThis(pObject);
 
   std::vector<v8::Local<v8::Value>> parameters;
   for (int i = 0; i < info.Length(); i++)
@@ -511,13 +508,14 @@ CFXJSE_Context* CFXJSE_Engine::CreateVariablesContext(CXFA_Node* pScriptNode,
   return pResult;
 }
 
-CXFA_Object* CFXJSE_Engine::GetVariablesThis(CXFA_Object* pObject,
-                                             bool bScriptNode) {
+CXFA_Object* CFXJSE_Engine::GetVariablesThis(CXFA_Object* pObject) {
   CXFA_ThisProxy* pProxy = ToThisProxy(pObject);
-  if (!pProxy)
-    return pObject;
+  return pProxy ? pProxy->GetThisNode() : pObject;
+}
 
-  return bScriptNode ? pProxy->GetScriptNode() : pProxy->GetThisNode();
+CXFA_Object* CFXJSE_Engine::GetVariablesScript(CXFA_Object* pObject) {
+  CXFA_ThisProxy* pProxy = ToThisProxy(pObject);
+  return pProxy ? pProxy->GetScriptNode() : pObject;
 }
 
 bool CFXJSE_Engine::RunVariablesScript(CXFA_Node* pScriptNode) {
