@@ -507,7 +507,7 @@ CFXJSE_Context* CFXJSE_Engine::CreateVariablesContext(CXFA_Node* pScriptNode,
   RemoveBuiltInObjs(pNewContext.get());
   pNewContext->EnableCompatibleMode();
   CFXJSE_Context* pResult = pNewContext.get();
-  m_mapVariableToContext[pScriptNode] = std::move(pNewContext);
+  m_mapVariableToContext[pScriptNode->JSObject()] = std::move(pNewContext);
   return pResult;
 }
 
@@ -531,7 +531,7 @@ bool CFXJSE_Engine::RunVariablesScript(CXFA_Node* pScriptNode) {
   if (!pParent || pParent->GetElementType() != XFA_Element::Variables)
     return false;
 
-  auto it = m_mapVariableToContext.find(pScriptNode);
+  auto it = m_mapVariableToContext.find(pScriptNode->JSObject());
   if (it != m_mapVariableToContext.end() && it->second)
     return true;
 
@@ -567,7 +567,7 @@ bool CFXJSE_Engine::QueryVariableValue(CXFA_Node* pScriptNode,
       variablesNode->GetElementType() != XFA_Element::Variables)
     return false;
 
-  auto it = m_mapVariableToContext.find(pScriptNode);
+  auto it = m_mapVariableToContext.find(pScriptNode->JSObject());
   if (it == m_mapVariableToContext.end() || !it->second)
     return false;
 
