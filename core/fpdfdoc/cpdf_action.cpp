@@ -54,14 +54,15 @@ CPDF_Action::ActionType CPDF_Action::GetType() const {
 
 CPDF_Dest CPDF_Action::GetDest(CPDF_Document* pDoc) const {
   ActionType type = GetType();
-  if (type != GoTo && type != GoToR)
+  if (type != GoTo && type != GoToR && type != GoToE) {
     return CPDF_Dest(nullptr);
+  }
   return CPDF_Dest::Create(pDoc, m_pDict->GetDirectObjectFor("D"));
 }
 
 WideString CPDF_Action::GetFilePath() const {
   ActionType type = GetType();
-  if (type != GoToR && type != Launch && type != SubmitForm &&
+  if (type != GoToR && type != GoToE && type != Launch && type != SubmitForm &&
       type != ImportData) {
     return WideString();
   }

@@ -388,6 +388,43 @@ TEST_F(FPDFDocEmbedderTest, ActionGoto) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFDocEmbedderTest, ActionEmbeddedGoto) {
+  ASSERT_TRUE(OpenDocument("gotoe_action.pdf"));
+
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // The target action is nearly the size of the whole page.
+  FPDF_LINK link = FPDFLink_GetLinkAtPoint(page, 100, 100);
+  ASSERT_TRUE(link);
+
+  FPDF_ACTION action = FPDFLink_GetAction(link);
+  ASSERT_TRUE(action);
+  EXPECT_EQ(static_cast<unsigned long>(PDFACTION_EMBEDDEDGOTO),
+            FPDFAction_GetType(action));
+
+  FPDF_DEST dest = FPDFAction_GetDest(document(), action);
+  EXPECT_TRUE(dest);
+
+  unsigned long num_params = 42;
+  FS_FLOAT params[4];
+  std::fill_n(params, 4, 42.4242f);
+  EXPECT_EQ(static_cast<unsigned long>(PDFDEST_VIEW_FIT),
+            FPDFDest_GetView(dest, &num_params, params));
+  EXPECT_EQ(0u, num_params);
+  EXPECT_FLOAT_EQ(42.4242f, params[0]);
+
+  const char kExpectedResult[] = "ExampleFile.pdf";
+  const unsigned long kExpectedLength = sizeof(kExpectedResult);
+  char buf[1024];
+  unsigned long bufsize = FPDFAction_GetFilePath(action, nullptr, 0);
+  EXPECT_EQ(kExpectedLength, bufsize);
+  EXPECT_EQ(kExpectedLength, FPDFAction_GetFilePath(action, buf, bufsize));
+  EXPECT_STREQ(kExpectedResult, buf);
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFDocEmbedderTest, ActionNonesuch) {
   ASSERT_TRUE(OpenDocument("nonesuch_action.pdf"));
 

@@ -163,6 +163,8 @@ FPDF_EXPORT unsigned long FPDF_CALLCONV FPDFAction_GetType(FPDF_ACTION action) {
       return PDFACTION_GOTO;
     case CPDF_Action::GoToR:
       return PDFACTION_REMOTEGOTO;
+    case CPDF_Action::GoToE:
+      return PDFACTION_EMBEDDEDGOTO;
     case CPDF_Action::URI:
       return PDFACTION_URI;
     case CPDF_Action::Launch:
@@ -179,9 +181,10 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDFAction_GetDest(FPDF_DOCUMENT document,
     return nullptr;
 
   unsigned long type = FPDFAction_GetType(action);
-  if (type != PDFACTION_GOTO && type != PDFACTION_REMOTEGOTO)
+  if (type != PDFACTION_GOTO && type != PDFACTION_REMOTEGOTO &&
+      type != PDFACTION_EMBEDDEDGOTO) {
     return nullptr;
-
+  }
   CPDF_Action cAction(CPDFDictionaryFromFPDFAction(action));
   return FPDFDestFromCPDFArray(cAction.GetDest(pDoc).GetArray());
 }
@@ -189,8 +192,10 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDFAction_GetDest(FPDF_DOCUMENT document,
 FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFAction_GetFilePath(FPDF_ACTION action, void* buffer, unsigned long buflen) {
   unsigned long type = FPDFAction_GetType(action);
-  if (type != PDFACTION_REMOTEGOTO && type != PDFACTION_LAUNCH)
+  if (type != PDFACTION_REMOTEGOTO && type != PDFACTION_EMBEDDEDGOTO &&
+      type != PDFACTION_LAUNCH) {
     return 0;
+  }
 
   CPDF_Action cAction(CPDFDictionaryFromFPDFAction(action));
   ByteString path = cAction.GetFilePath().ToUTF8();

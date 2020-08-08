@@ -1,0 +1,48 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /MediaBox [0 0 200 200]
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Annots [4 0 R]
+>>
+endobj
+{{object 4 0}} <<
+  /Type /Annot
+  /Subtype /Link
+  /FT /Tx
+  /Ff 29360128
+  /A 5 0 R
+  /T (txtName)
+  /F 4
+  /M (D:20150514070426+05'30')
+  /Rect [1 1 199 199]
+  /BS  <<
+    /W 1
+    /S /S
+  >>
+  /DA (/Helv 0 Tf 0 0 0 rg)
+  /V ()
+>>
+endobj
+{{object 5 0}} <<
+  /S /GoToE
+  /D [1 /Fit]
+  /F (ExampleFile.pdf)
+>>
+>>
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

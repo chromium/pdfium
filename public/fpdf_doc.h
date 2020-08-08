@@ -24,6 +24,8 @@ extern "C" {
 #define PDFACTION_URI 3
 // Launch an application or open a file.
 #define PDFACTION_LAUNCH 4
+// Go to a destination in an embedded file.
+#define PDFACTION_EMBEDDEDGOTO 5
 
 // View destination fit types. See pdfmark reference v9, page 48.
 #define PDFDEST_VIEW_UNKNOWN_MODE 0
