@@ -199,25 +199,6 @@ void CFWL_WidgetMgr::RemoveWidget(CFWL_Widget* pWidget) {
   m_mapWidgetItem.erase(pWidget);
 }
 
-void CFWL_WidgetMgr::SetOwner(CFWL_Widget* pOwner, CFWL_Widget* pOwned) {
-  Item* pParentItem = GetWidgetMgrItem(pOwner);
-  if (!pParentItem) {
-    auto item = std::make_unique<Item>(pOwner);
-    pParentItem = item.get();
-    m_mapWidgetItem[pOwner] = std::move(item);
-
-    pParentItem->pParent = GetWidgetMgrItem(nullptr);
-    AppendWidget(pOwner);
-  }
-
-  Item* pItem = GetWidgetMgrItem(pOwned);
-  if (!pItem) {
-    auto item = std::make_unique<Item>(pOwned);
-    pItem = item.get();
-    m_mapWidgetItem[pOwned] = std::move(item);
-  }
-  pItem->pOwner = pParentItem;
-}
 void CFWL_WidgetMgr::SetParent(CFWL_Widget* pParent, CFWL_Widget* pChild) {
   Item* pParentItem = GetWidgetMgrItem(pParent);
   Item* pItem = GetWidgetMgrItem(pChild);

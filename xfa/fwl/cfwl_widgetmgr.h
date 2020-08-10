@@ -51,7 +51,6 @@ class CFWL_WidgetMgr {
 
   void InsertWidget(CFWL_Widget* pParent, CFWL_Widget* pChild);
   void RemoveWidget(CFWL_Widget* pWidget);
-  void SetOwner(CFWL_Widget* pOwner, CFWL_Widget* pOwned);
   void SetParent(CFWL_Widget* pParent, CFWL_Widget* pChild);
 
   CFWL_Widget* GetWidgetAtPoint(CFWL_Widget* pParent,
