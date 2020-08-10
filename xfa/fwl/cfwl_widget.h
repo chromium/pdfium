@@ -101,8 +101,10 @@ class CFWL_Widget : public Observable, public IFWL_WidgetDelegate {
   bool IsPopup() const;
   bool IsChild() const;
 
+  CFWL_WidgetMgr* GetWidgetMgr() const { return m_pWidgetMgr.Get(); }
   CFWL_Widget* GetOwner() { return m_pWidgetMgr->GetOwnerWidget(this); }
   CFWL_Widget* GetOuter() const { return m_pOuter; }
+  void SetOuter(CFWL_Widget* pOuter) { m_pOuter = pOuter; }
   CFWL_Widget* GetOutmost() const;
 
   void ModifyStyles(uint32_t dwStylesAdded, uint32_t dwStylesRemoved);
@@ -144,6 +146,10 @@ class CFWL_Widget : public Observable, public IFWL_WidgetDelegate {
   float GetCYBorderSize() const;
   CFX_RectF GetRelativeRect() const;
   IFWL_ThemeProvider* GetAvailableTheme() const;
+  CFWL_WidgetProperties* GetProperties() { return m_pProperties.get(); }
+  const CFWL_WidgetProperties* GetProperties() const {
+    return m_pProperties.get();
+  }
   CFX_SizeF CalcTextSize(const WideString& wsText,
                          IFWL_ThemeProvider* pTheme,
                          bool bMultiLine);
@@ -161,12 +167,6 @@ class CFWL_Widget : public Observable, public IFWL_WidgetDelegate {
                   IFWL_ThemeProvider* pTheme,
                   const CFX_Matrix& pMatrix);
 
-  UnownedPtr<const CFWL_App> const m_pOwnerApp;
-  UnownedPtr<CFWL_WidgetMgr> const m_pWidgetMgr;
-  std::unique_ptr<CFWL_WidgetProperties> m_pProperties;
-  CFWL_Widget* m_pOuter;
-  int32_t m_iLock = 0;
-
  private:
   void LockUpdate() { m_iLock++; }
   void UnlockUpdate() {
@@ -183,7 +183,12 @@ class CFWL_Widget : public Observable, public IFWL_WidgetDelegate {
   void NotifyDriver();
   bool IsParent(CFWL_Widget* pParent);
 
+  int32_t m_iLock = 0;
   uint64_t m_nEventKey = 0;
+  UnownedPtr<const CFWL_App> const m_pOwnerApp;
+  UnownedPtr<CFWL_WidgetMgr> const m_pWidgetMgr;
+  std::unique_ptr<CFWL_WidgetProperties> m_pProperties;
+  CFWL_Widget* m_pOuter;
   AdapterIface* m_pAdapterIface = nullptr;
   UnownedPtr<IFWL_WidgetDelegate> m_pDelegate;
 };

@@ -42,10 +42,10 @@ FWL_Type CFWL_ListBox::GetClassID() const {
 void CFWL_ListBox::Update() {
   if (IsLocked())
     return;
-  if (!m_pProperties->m_pThemeProvider)
-    m_pProperties->m_pThemeProvider = GetAvailableTheme();
+  if (!GetProperties()->m_pThemeProvider)
+    GetProperties()->m_pThemeProvider = GetAvailableTheme();
 
-  switch (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_AlignMask) {
+  switch (GetProperties()->m_dwStyleExes & FWL_STYLEEXT_LTB_AlignMask) {
     case FWL_STYLEEXT_LTB_LeftAlign: {
       m_iTTOAligns = FDE_TextAlignment::kCenterLeft;
       break;
@@ -86,7 +86,7 @@ void CFWL_ListBox::DrawWidget(CXFA_Graphics* pGraphics,
   if (!pGraphics)
     return;
 
-  IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider.Get();
+  IFWL_ThemeProvider* pTheme = GetProperties()->m_pThemeProvider.Get();
   if (!pTheme)
     return;
 
@@ -101,7 +101,7 @@ void CFWL_ListBox::DrawWidget(CXFA_Graphics* pGraphics,
     rtClip.width -= m_fScorllBarWidth;
 
   pGraphics->SetClipRect(matrix.TransformRect(rtClip));
-  if ((m_pProperties->m_dwStyles & FWL_WGTSTYLE_NoBackground) == 0)
+  if ((GetProperties()->m_dwStyles & FWL_WGTSTYLE_NoBackground) == 0)
     DrawBkground(pGraphics, pTheme, &matrix);
 
   DrawItems(pGraphics, pTheme, &matrix);
@@ -110,7 +110,7 @@ void CFWL_ListBox::DrawWidget(CXFA_Graphics* pGraphics,
 
 void CFWL_ListBox::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
   if (pThemeProvider)
-    m_pProperties->m_pThemeProvider = pThemeProvider;
+    GetProperties()->m_pThemeProvider = pThemeProvider;
 }
 
 int32_t CFWL_ListBox::CountSelItems() {
@@ -229,7 +229,7 @@ void CFWL_ListBox::SetSelectionDirect(CFWL_ListItem* pItem, bool bSelect) {
 }
 
 bool CFWL_ListBox::IsMultiSelection() const {
-  return m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_MultiSelection;
+  return GetProperties()->m_dwStyleExes & FWL_STYLEEXT_LTB_MultiSelection;
 }
 
 bool CFWL_ListBox::IsItemSelected(CFWL_ListItem* pItem) {
@@ -405,12 +405,12 @@ void CFWL_ListBox::DrawItem(CXFA_Graphics* pGraphics,
                             const CFX_Matrix* pMatrix) {
   uint32_t dwItemStyles = pItem ? pItem->GetStates() : 0;
   uint32_t dwPartStates = CFWL_PartState_Normal;
-  if (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)
+  if (GetProperties()->m_dwStates & FWL_WGTSTATE_Disabled)
     dwPartStates = CFWL_PartState_Disabled;
   else if (dwItemStyles & FWL_ITEMSTATE_LTB_Selected)
     dwPartStates = CFWL_PartState_Selected;
 
-  if (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused &&
+  if (GetProperties()->m_dwStates & FWL_WGTSTATE_Focused &&
       dwItemStyles & FWL_ITEMSTATE_LTB_Focused) {
     dwPartStates |= CFWL_PartState_Focused;
   }
@@ -458,13 +458,13 @@ void CFWL_ListBox::DrawItem(CXFA_Graphics* pGraphics,
 }
 
 CFX_SizeF CFWL_ListBox::CalcSize(bool bAutoSize) {
-  if (!m_pProperties->m_pThemeProvider)
+  if (!GetProperties()->m_pThemeProvider)
     return CFX_SizeF();
 
   m_ClientRect = GetClientRect();
   m_ContentRect = m_ClientRect;
   CFX_RectF rtUIMargin;
-  if (!m_pOuter) {
+  if (!GetOuter()) {
     CFWL_ThemePart part;
     part.m_pWidget = this;
     IFWL_ThemeProvider* theme = GetAvailableTheme();
@@ -494,7 +494,7 @@ CFX_SizeF CFWL_ListBox::CalcSize(bool bAutoSize) {
   float iHeight = m_ClientRect.height;
   bool bShowVertScr = false;
   bool bShowHorzScr = false;
-  if (!bShowVertScr && (m_pProperties->m_dwStyles & FWL_WGTSTYLE_VScroll))
+  if (!bShowVertScr && (GetProperties()->m_dwStyles & FWL_WGTSTYLE_VScroll))
     bShowVertScr = (fs.height > iHeight);
 
   CFX_SizeF szRange;
@@ -520,9 +520,9 @@ CFX_SizeF CFWL_ListBox::CalcSize(bool bAutoSize) {
         pdfium::clamp(m_pVertScrollBar->GetPos(), 0.0f, szRange.height);
     m_pVertScrollBar->SetPos(fPos);
     m_pVertScrollBar->SetTrackPos(fPos);
-    if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_ShowScrollBarFocus) ==
-            0 ||
-        (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused)) {
+    if ((GetProperties()->m_dwStyleExes &
+         FWL_STYLEEXT_LTB_ShowScrollBarFocus) == 0 ||
+        (GetProperties()->m_dwStates & FWL_WGTSTATE_Focused)) {
       m_pVertScrollBar->RemoveStates(FWL_WGTSTATE_Invisible);
     }
     m_pVertScrollBar->Update();
@@ -552,9 +552,9 @@ CFX_SizeF CFWL_ListBox::CalcSize(bool bAutoSize) {
         pdfium::clamp(m_pHorzScrollBar->GetPos(), 0.0f, szRange.height);
     m_pHorzScrollBar->SetPos(fPos);
     m_pHorzScrollBar->SetTrackPos(fPos);
-    if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_ShowScrollBarFocus) ==
-            0 ||
-        (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused)) {
+    if ((GetProperties()->m_dwStyleExes &
+         FWL_STYLEEXT_LTB_ShowScrollBarFocus) == 0 ||
+        (GetProperties()->m_dwStates & FWL_WGTSTATE_Focused)) {
       m_pHorzScrollBar->RemoveStates(FWL_WGTSTATE_Invisible);
     }
     m_pHorzScrollBar->Update();
@@ -593,7 +593,7 @@ float CFWL_ListBox::GetMaxTextWidth() {
       continue;
 
     CFX_SizeF sz = CalcTextSize(pItem->GetText(),
-                                m_pProperties->m_pThemeProvider.Get(), false);
+                                GetProperties()->m_pThemeProvider.Get(), false);
     fRet = std::max(fRet, sz.width);
   }
   return fRet;
@@ -620,8 +620,8 @@ void CFWL_ListBox::InitVerticalScrollBar() {
   prop->m_dwStates = FWL_WGTSTATE_Invisible;
   prop->m_pParent = this;
   prop->m_pThemeProvider = m_pScrollBarTP;
-  m_pVertScrollBar = std::make_unique<CFWL_ScrollBar>(m_pOwnerApp.Get(),
-                                                      std::move(prop), this);
+  m_pVertScrollBar =
+      std::make_unique<CFWL_ScrollBar>(GetOwnerApp(), std::move(prop), this);
 }
 
 void CFWL_ListBox::InitHorizontalScrollBar() {
@@ -633,8 +633,8 @@ void CFWL_ListBox::InitHorizontalScrollBar() {
   prop->m_dwStates = FWL_WGTSTATE_Invisible;
   prop->m_pParent = this;
   prop->m_pThemeProvider = m_pScrollBarTP;
-  m_pHorzScrollBar = std::make_unique<CFWL_ScrollBar>(m_pOwnerApp.Get(),
-                                                      std::move(prop), this);
+  m_pHorzScrollBar =
+      std::make_unique<CFWL_ScrollBar>(GetOwnerApp(), std::move(prop), this);
 }
 
 bool CFWL_ListBox::IsShowScrollBar(bool bVert) {
@@ -643,9 +643,9 @@ bool CFWL_ListBox::IsShowScrollBar(bool bVert) {
   if (!pScrollbar || !pScrollbar->IsVisible())
     return false;
 
-  return !(m_pProperties->m_dwStyleExes &
+  return !(GetProperties()->m_dwStyleExes &
            FWL_STYLEEXT_LTB_ShowScrollBarFocus) ||
-         (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused);
+         (GetProperties()->m_dwStates & FWL_WGTSTATE_Focused);
 }
 
 void CFWL_ListBox::OnProcessMessage(CFWL_Message* pMessage) {
@@ -728,9 +728,9 @@ void CFWL_ListBox::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
     }
   }
   if (bSet)
-    m_pProperties->m_dwStates |= (FWL_WGTSTATE_Focused);
+    GetProperties()->m_dwStates |= (FWL_WGTSTATE_Focused);
   else
-    m_pProperties->m_dwStates &= ~(FWL_WGTSTATE_Focused);
+    GetProperties()->m_dwStates &= ~(FWL_WGTSTATE_Focused);
 
   RepaintRect(m_ClientRect);
 }
@@ -822,8 +822,8 @@ void CFWL_ListBox::OnVK(CFWL_ListItem* pItem, bool bShift, bool bCtrl) {
   SetFocusItem(pItem);
   ScrollToVisible(pItem);
 
-  RepaintRect(CFX_RectF(0, 0, m_pProperties->m_WidgetRect.width,
-                        m_pProperties->m_WidgetRect.height));
+  RepaintRect(CFX_RectF(0, 0, GetProperties()->m_WidgetRect.width,
+                        GetProperties()->m_WidgetRect.height));
 }
 
 bool CFWL_ListBox::OnScroll(CFWL_ScrollBar* pScrollBar,

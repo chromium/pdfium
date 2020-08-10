@@ -107,8 +107,8 @@ CFX_RectF CFWL_MonthCalendar::GetAutosizedWidgetRect() {
 void CFWL_MonthCalendar::Update() {
   if (IsLocked())
     return;
-  if (!m_pProperties->m_pThemeProvider)
-    m_pProperties->m_pThemeProvider = GetAvailableTheme();
+  if (!GetProperties()->m_pThemeProvider)
+    GetProperties()->m_pThemeProvider = GetAvailableTheme();
 
   GetCapValue();
   if (!m_bInitialized) {
@@ -126,10 +126,10 @@ void CFWL_MonthCalendar::DrawWidget(CXFA_Graphics* pGraphics,
   if (!pGraphics)
     return;
 
-  if (!m_pProperties->m_pThemeProvider)
-    m_pProperties->m_pThemeProvider = GetAvailableTheme();
+  if (!GetProperties()->m_pThemeProvider)
+    GetProperties()->m_pThemeProvider = GetAvailableTheme();
 
-  IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider.Get();
+  IFWL_ThemeProvider* pTheme = GetProperties()->m_pThemeProvider.Get();
   if (HasBorder())
     DrawBorder(pGraphics, CFWL_Part::Border, pTheme, matrix);
 
@@ -220,7 +220,7 @@ void CFWL_MonthCalendar::DrawCaption(CXFA_Graphics* pGraphics,
   textParam.m_pGraphics = pGraphics;
   textParam.m_wsText = GetHeadText(m_iCurYear, m_iCurMonth);
   m_HeadSize = CalcTextSize(textParam.m_wsText,
-                            m_pProperties->m_pThemeProvider.Get(), false);
+                            GetProperties()->m_pThemeProvider.Get(), false);
   CalcHeadSize();
   textParam.m_PartRect = m_HeadTextRect;
   textParam.m_dwTTOStyles.single_line_ = true;
@@ -312,7 +312,7 @@ void CFWL_MonthCalendar::DrawToday(CXFA_Graphics* pGraphics,
   params.m_wsText = GetTodayText(m_iYear, m_iMonth, m_iDay);
 
   m_TodaySize = CalcTextSize(params.m_wsText,
-                             m_pProperties->m_pThemeProvider.Get(), false);
+                             GetProperties()->m_pThemeProvider.Get(), false);
   CalcTodaySize();
   params.m_PartRect = m_TodayRect;
   params.m_dwTTOStyles.single_line_ = true;
@@ -387,7 +387,7 @@ void CFWL_MonthCalendar::DrawDatesInCircle(CXFA_Graphics* pGraphics,
 }
 
 CFX_SizeF CFWL_MonthCalendar::CalcSize() {
-  IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider.Get();
+  IFWL_ThemeProvider* pTheme = GetProperties()->m_pThemeProvider.Get();
   if (!pTheme)
     return CFX_SizeF();
 
@@ -517,8 +517,8 @@ void CFWL_MonthCalendar::CalDateItem() {
 }
 
 void CFWL_MonthCalendar::GetCapValue() {
-  if (!m_pProperties->m_pThemeProvider)
-    m_pProperties->m_pThemeProvider = GetAvailableTheme();
+  if (!GetProperties()->m_pThemeProvider)
+    GetProperties()->m_pThemeProvider = GetAvailableTheme();
 }
 
 void CFWL_MonthCalendar::InitDate() {
@@ -764,7 +764,7 @@ void CFWL_MonthCalendar::OnLButtonUp(CFWL_MessageMouse* pMsg) {
     }
     AddSelDay(iCurSel);
     CFWL_DateTimePicker* pDateTime =
-        static_cast<CFWL_DateTimePicker*>(m_pOuter);
+        static_cast<CFWL_DateTimePicker*>(GetOuter());
     pDateTime->ProcessSelChanged(m_iCurYear, m_iCurMonth, iCurSel);
     pDateTime->ShowMonthCalendar(false);
   }

@@ -36,9 +36,9 @@ void CFWL_Barcode::DrawWidget(CXFA_Graphics* pGraphics,
                               const CFX_Matrix& matrix) {
   if (!pGraphics)
     return;
-  if (!m_pProperties->m_pThemeProvider)
+  if (!GetProperties()->m_pThemeProvider)
     return;
-  if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0) {
+  if ((GetProperties()->m_dwStates & FWL_WGTSTATE_Focused) == 0) {
     GenerateBarcodeImageCache();
     if (!m_pBarcodeEngine || m_eStatus != Status::kEncodeSuccess)
       return;

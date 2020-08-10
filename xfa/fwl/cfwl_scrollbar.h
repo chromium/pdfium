@@ -60,7 +60,7 @@ class CFWL_ScrollBar final : public CFWL_Widget,
 
  private:
   bool IsVertical() const {
-    return !!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_SCB_Vert);
+    return !!(GetProperties()->m_dwStyleExes & FWL_STYLEEXT_SCB_Vert);
   }
   void DrawTrack(CXFA_Graphics* pGraphics,
                  IFWL_ThemeProvider* pTheme,

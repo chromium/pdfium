@@ -30,11 +30,11 @@ void CFWL_DateTimeEdit::OnProcessMessage(CFWL_Message* pMessage) {
   CFWL_MessageMouse* pMouse = static_cast<CFWL_MessageMouse*>(pMessage);
   if (pMouse->m_dwCmd == FWL_MouseCommand::LeftButtonDown ||
       pMouse->m_dwCmd == FWL_MouseCommand::RightButtonDown) {
-    if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0)
-      m_pProperties->m_dwStates |= FWL_WGTSTATE_Focused;
+    if ((GetProperties()->m_dwStates & FWL_WGTSTATE_Focused) == 0)
+      GetProperties()->m_dwStates |= FWL_WGTSTATE_Focused;
 
     CFWL_DateTimePicker* pDateTime =
-        static_cast<CFWL_DateTimePicker*>(m_pOuter);
+        static_cast<CFWL_DateTimePicker*>(GetOuter());
     if (pDateTime->IsMonthCalendarVisible()) {
       CFX_RectF rtInvalidate = pDateTime->GetWidgetRect();
       pDateTime->ShowMonthCalendar(false);

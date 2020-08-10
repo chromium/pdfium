@@ -88,8 +88,6 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   bool CanUndo();
   bool CanRedo();
 
-  void SetOuter(CFWL_Widget* pOuter);
-
   // CFDE_TextEditEngine::Delegate
   void NotifyTextFull() override;
   void OnCaretChanged() override;

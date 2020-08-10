@@ -42,8 +42,8 @@ FWL_Type CFWL_ScrollBar::GetClassID() const {
 void CFWL_ScrollBar::Update() {
   if (IsLocked())
     return;
-  if (!m_pProperties->m_pThemeProvider)
-    m_pProperties->m_pThemeProvider = GetAvailableTheme();
+  if (!GetProperties()->m_pThemeProvider)
+    GetProperties()->m_pThemeProvider = GetAvailableTheme();
 
   Layout();
 }
@@ -52,10 +52,10 @@ void CFWL_ScrollBar::DrawWidget(CXFA_Graphics* pGraphics,
                                 const CFX_Matrix& matrix) {
   if (!pGraphics)
     return;
-  if (!m_pProperties->m_pThemeProvider)
+  if (!GetProperties()->m_pThemeProvider)
     return;
 
-  IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider.Get();
+  IFWL_ThemeProvider* pTheme = GetProperties()->m_pThemeProvider.Get();
   if (HasBorder())
     DrawBorder(pGraphics, CFWL_Part::Border, pTheme, matrix);
   DrawTrack(pGraphics, pTheme, true, &matrix);
@@ -85,7 +85,7 @@ void CFWL_ScrollBar::DrawTrack(CXFA_Graphics* pGraphics,
   CFWL_ThemeBackground param;
   param.m_pWidget = this;
   param.m_iPart = bLower ? CFWL_Part::LowerTrack : CFWL_Part::UpperTrack;
-  param.m_dwStates = (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)
+  param.m_dwStates = (GetProperties()->m_dwStates & FWL_WGTSTATE_Disabled)
                          ? CFWL_PartState_Disabled
                          : (bLower ? m_iMinTrackState : m_iMaxTrackState);
   param.m_pGraphics = pGraphics;
@@ -101,7 +101,7 @@ void CFWL_ScrollBar::DrawArrowBtn(CXFA_Graphics* pGraphics,
   CFWL_ThemeBackground param;
   param.m_pWidget = this;
   param.m_iPart = bMinBtn ? CFWL_Part::ForeArrow : CFWL_Part::BackArrow;
-  param.m_dwStates = (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)
+  param.m_dwStates = (GetProperties()->m_dwStates & FWL_WGTSTATE_Disabled)
                          ? CFWL_PartState_Disabled
                          : (bMinBtn ? m_iMinButtonState : m_iMaxButtonState);
   param.m_pGraphics = pGraphics;
@@ -117,7 +117,7 @@ void CFWL_ScrollBar::DrawThumb(CXFA_Graphics* pGraphics,
   CFWL_ThemeBackground param;
   param.m_pWidget = this;
   param.m_iPart = CFWL_Part::Thumb;
-  param.m_dwStates = (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)
+  param.m_dwStates = (GetProperties()->m_dwStates & FWL_WGTSTATE_Disabled)
                          ? CFWL_PartState_Disabled
                          : m_iThumbButtonState;
   param.m_pGraphics = pGraphics;

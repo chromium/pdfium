@@ -20,8 +20,8 @@ FWL_Type CFWL_PictureBox::GetClassID() const {
 void CFWL_PictureBox::Update() {
   if (IsLocked())
     return;
-  if (!m_pProperties->m_pThemeProvider)
-    m_pProperties->m_pThemeProvider = GetAvailableTheme();
+  if (!GetProperties()->m_pThemeProvider)
+    GetProperties()->m_pThemeProvider = GetAvailableTheme();
 
   m_ClientRect = GetClientRect();
 }
@@ -30,7 +30,7 @@ void CFWL_PictureBox::DrawWidget(CXFA_Graphics* pGraphics,
                                  const CFX_Matrix& matrix) {
   if (!pGraphics)
     return;
-  if (!m_pProperties->m_pThemeProvider)
+  if (!GetProperties()->m_pThemeProvider)
     return;
 
   IFWL_ThemeProvider* pTheme = GetAvailableTheme();

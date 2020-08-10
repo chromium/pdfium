@@ -97,7 +97,7 @@ class CFWL_ComboBox final : public CFWL_Widget {
 
  private:
   bool IsDropDownStyle() const {
-    return !!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CMB_DropDown);
+    return !!(GetProperties()->m_dwStyleExes & FWL_STYLEEXT_CMB_DropDown);
   }
   void MatchEditText();
   void SyncEditText(int32_t iListItem);
