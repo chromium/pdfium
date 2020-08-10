@@ -44,7 +44,7 @@ bool CXFA_FFListBox::LoadWidget() {
   RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
 
   auto pNew = std::make_unique<CFWL_ListBox>(
-      GetFWLApp(), std::make_unique<CFWL_WidgetProperties>(), nullptr);
+      GetFWLApp(), std::make_unique<CFWL_WidgetProperties>(nullptr), nullptr);
   CFWL_ListBox* pListBox = pNew.get();
   pListBox->ModifyStyles(FWL_WGTSTYLE_VScroll | FWL_WGTSTYLE_NoBackground,
                          0xFFFFFFFF);

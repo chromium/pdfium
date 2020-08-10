@@ -6,6 +6,7 @@
 
 #include "xfa/fwl/cfwl_widgetproperties.h"
 
-CFWL_WidgetProperties::CFWL_WidgetProperties() = default;
+CFWL_WidgetProperties::CFWL_WidgetProperties(CFWL_Widget* pParent)
+    : m_pParent(pParent) {}
 
 CFWL_WidgetProperties::~CFWL_WidgetProperties() = default;

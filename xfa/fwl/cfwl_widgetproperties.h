@@ -17,7 +17,7 @@ class IFWL_ThemeProvider;
 
 class CFWL_WidgetProperties {
  public:
-  CFWL_WidgetProperties();
+  explicit CFWL_WidgetProperties(CFWL_Widget* pParent);
   ~CFWL_WidgetProperties();
 
   uint32_t m_dwStyles = FWL_WGTSTYLE_Child;
@@ -25,7 +25,7 @@ class CFWL_WidgetProperties {
   uint32_t m_dwStates = 0;
   CFX_RectF m_WidgetRect;
   UnownedPtr<IFWL_ThemeProvider> m_pThemeProvider;
-  CFWL_Widget* m_pParent = nullptr;  // Raw, this class owned by node in tree.
+  CFWL_Widget* const m_pParent;  // Raw, this class owned by node in tree.
 };
 
 #endif  // XFA_FWL_CFWL_WIDGETPROPERTIES_H_
