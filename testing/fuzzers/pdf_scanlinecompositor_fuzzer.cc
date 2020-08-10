@@ -4,6 +4,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
@@ -41,6 +42,14 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   bool is_rgb_byte_order = !(data[32] % 2);
   size -= kParameterSize;
   data += kParameterSize;
+
+  static constexpr uint32_t kMemLimit = 512000000;  // 512 MB
+  static constexpr uint32_t kComponents = 4;
+  FX_SAFE_UINT32 mem = width;
+  mem *= height;
+  mem *= kComponents;
+  if (!mem.IsValid() || mem.ValueOrDie() > kMemLimit)
+    return 0;
 
   auto src_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   auto dest_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();

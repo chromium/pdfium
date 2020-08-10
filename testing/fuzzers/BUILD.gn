@@ -485,6 +485,7 @@ pdfium_fuzzer("pdf_scanlinecompositor_fuzzer") {
   sources = [ "pdf_scanlinecompositor_fuzzer.cc" ]
   deps = [
     ":fuzzer_utils",
+    "../../core/fxcrt",
     "../../core/fxge",
     "../../third_party:pdfium_base",
   ]
