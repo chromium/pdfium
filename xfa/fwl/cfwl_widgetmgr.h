@@ -11,6 +11,7 @@
 #include <memory>
 
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/tree_node.h"
 #include "xfa/fxgraphics/cxfa_graphics.h"
 
 class CFWL_Message;
@@ -64,17 +65,13 @@ class CFWL_WidgetMgr {
                           CFX_RectF* pPopupRect) const;
 
  private:
-  class Item {
+  class Item : public TreeNode<Item> {
    public:
     Item();
     explicit Item(CFWL_Widget* widget);
-    ~Item();
+    ~Item() final;
 
-    Item* pParent = nullptr;
     Item* pOwner = nullptr;
-    Item* pChild = nullptr;
-    Item* pPrevious = nullptr;
-    Item* pNext = nullptr;
     CFWL_Widget* const pWidget;
     std::unique_ptr<CXFA_Graphics> pOffscreen;
     int32_t iRedrawCounter = 0;
@@ -83,9 +80,11 @@ class CFWL_WidgetMgr {
   CFWL_Widget* GetFirstSiblingWidget(CFWL_Widget* pWidget) const;
   CFWL_Widget* GetPriorSiblingWidget(CFWL_Widget* pWidget) const;
   CFWL_Widget* GetLastChildWidget(CFWL_Widget* pWidget) const;
-  Item* GetWidgetMgrItem(const CFWL_Widget* pWidget) const;
 
-  void AppendWidget(CFWL_Widget* pWidget);
+  Item* GetWidgetMgrRootItem() const;
+  Item* GetWidgetMgrItem(const CFWL_Widget* pWidget) const;
+  Item* CreateWidgetMgrItem(CFWL_Widget* pWidget);
+
   void ResetRedrawCounts(CFWL_Widget* pWidget);
   void DrawChild(CFWL_Widget* pParent,
                  const CFX_RectF& rtClip,

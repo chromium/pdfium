@@ -22,7 +22,11 @@ CFWL_WidgetMgr::~CFWL_WidgetMgr() = default;
 
 CFWL_Widget* CFWL_WidgetMgr::GetParentWidget(const CFWL_Widget* pWidget) const {
   Item* pItem = GetWidgetMgrItem(pWidget);
-  return pItem && pItem->pParent ? pItem->pParent->pWidget : nullptr;
+  if (!pItem)
+    return nullptr;
+
+  Item* pParent = pItem->GetParent();
+  return pParent ? pParent->pWidget : nullptr;
 }
 
 CFWL_Widget* CFWL_WidgetMgr::GetOwnerWidget(const CFWL_Widget* pWidget) const {
@@ -35,25 +39,41 @@ CFWL_Widget* CFWL_WidgetMgr::GetFirstSiblingWidget(CFWL_Widget* pWidget) const {
   if (!pItem)
     return nullptr;
 
-  pItem = pItem->pPrevious;
-  while (pItem && pItem->pPrevious)
-    pItem = pItem->pPrevious;
-  return pItem ? pItem->pWidget : nullptr;
+  pItem = pItem->GetPrevSibling();  // Item is never its own first sibling.
+  if (!pItem)
+    return nullptr;
+
+  while (pItem->GetPrevSibling())
+    pItem = pItem->GetPrevSibling();
+
+  return pItem->pWidget;
 }
 
 CFWL_Widget* CFWL_WidgetMgr::GetPriorSiblingWidget(CFWL_Widget* pWidget) const {
   Item* pItem = GetWidgetMgrItem(pWidget);
-  return pItem && pItem->pPrevious ? pItem->pPrevious->pWidget : nullptr;
+  if (!pItem)
+    return nullptr;
+
+  Item* pSibling = pItem->GetPrevSibling();
+  return pSibling ? pSibling->pWidget : nullptr;
 }
 
 CFWL_Widget* CFWL_WidgetMgr::GetNextSiblingWidget(CFWL_Widget* pWidget) const {
   Item* pItem = GetWidgetMgrItem(pWidget);
-  return pItem && pItem->pNext ? pItem->pNext->pWidget : nullptr;
+  if (!pItem)
+    return nullptr;
+
+  Item* pSibling = pItem->GetNextSibling();
+  return pSibling ? pSibling->pWidget : nullptr;
 }
 
 CFWL_Widget* CFWL_WidgetMgr::GetFirstChildWidget(CFWL_Widget* pWidget) const {
   Item* pItem = GetWidgetMgrItem(pWidget);
-  return pItem && pItem->pChild ? pItem->pChild->pWidget : nullptr;
+  if (!pItem)
+    return nullptr;
+
+  Item* pChild = pItem->GetFirstChild();
+  return pChild ? pChild->pWidget : nullptr;
 }
 
 CFWL_Widget* CFWL_WidgetMgr::GetLastChildWidget(CFWL_Widget* pWidget) const {
@@ -61,10 +81,8 @@ CFWL_Widget* CFWL_WidgetMgr::GetLastChildWidget(CFWL_Widget* pWidget) const {
   if (!pItem)
     return nullptr;
 
-  pItem = pItem->pChild;
-  while (pItem && pItem->pNext)
-    pItem = pItem->pNext;
-  return pItem ? pItem->pWidget : nullptr;
+  Item* pChild = pItem->GetLastChild();
+  return pChild ? pChild->pWidget : nullptr;
 }
 
 CFWL_Widget* CFWL_WidgetMgr::GetSystemFormWidget(CFWL_Widget* pWidget) const {
@@ -72,53 +90,11 @@ CFWL_Widget* CFWL_WidgetMgr::GetSystemFormWidget(CFWL_Widget* pWidget) const {
   while (pItem) {
     if (IsAbleNative(pItem->pWidget))
       return pItem->pWidget;
-    pItem = pItem->pParent;
+    pItem = pItem->GetParent();
   }
   return nullptr;
 }
 
-void CFWL_WidgetMgr::AppendWidget(CFWL_Widget* pWidget) {
-  Item* pItem = GetWidgetMgrItem(pWidget);
-  if (!pItem)
-    return;
-  if (!pItem->pParent)
-    return;
-
-  Item* pChild = pItem->pParent->pChild;
-  int32_t i = 0;
-  while (pChild) {
-    if (pChild == pItem) {
-      if (pChild->pPrevious)
-        pChild->pPrevious->pNext = pChild->pNext;
-      if (pChild->pNext)
-        pChild->pNext->pPrevious = pChild->pPrevious;
-      if (pItem->pParent->pChild == pItem)
-        pItem->pParent->pChild = pItem->pNext;
-
-      pItem->pNext = nullptr;
-      pItem->pPrevious = nullptr;
-      break;
-    }
-    if (!pChild->pNext)
-      break;
-
-    pChild = pChild->pNext;
-    ++i;
-  }
-
-  pChild = pItem->pParent->pChild;
-  if (pChild) {
-    while (pChild->pNext)
-      pChild = pChild->pNext;
-
-    pChild->pNext = pItem;
-    pItem->pPrevious = pChild;
-  } else {
-    pItem->pParent->pChild = pItem;
-    pItem->pPrevious = nullptr;
-  }
-  pItem->pNext = nullptr;
-}
 
 void CFWL_WidgetMgr::RepaintWidget(CFWL_Widget* pWidget,
                                    const CFX_RectF& rect) {
@@ -139,70 +115,39 @@ void CFWL_WidgetMgr::RepaintWidget(CFWL_Widget* pWidget,
 void CFWL_WidgetMgr::InsertWidget(CFWL_Widget* pParent, CFWL_Widget* pChild) {
   Item* pParentItem = GetWidgetMgrItem(pParent);
   if (!pParentItem) {
-    auto item = std::make_unique<Item>(pParent);
-    pParentItem = item.get();
-    m_mapWidgetItem[pParent] = std::move(item);
-
-    pParentItem->pParent = GetWidgetMgrItem(nullptr);
-    AppendWidget(pParent);
+    pParentItem = CreateWidgetMgrItem(pParent);
+    GetWidgetMgrRootItem()->AppendLastChild(pParentItem);
   }
-
-  Item* pItem = GetWidgetMgrItem(pChild);
-  if (!pItem) {
-    auto item = std::make_unique<Item>(pChild);
-    pItem = item.get();
-    m_mapWidgetItem[pChild] = std::move(item);
-  }
-  if (pItem->pParent && pItem->pParent != pParentItem) {
-    if (pItem->pPrevious)
-      pItem->pPrevious->pNext = pItem->pNext;
-    if (pItem->pNext)
-      pItem->pNext->pPrevious = pItem->pPrevious;
-    if (pItem->pParent->pChild == pItem)
-      pItem->pParent->pChild = pItem->pNext;
-  }
-  pItem->pParent = pParentItem;
-  AppendWidget(pChild);
+  Item* pChildItem = GetWidgetMgrItem(pChild);
+  if (!pChildItem)
+    pChildItem = CreateWidgetMgrItem(pChild);
+  pParentItem->AppendLastChild(pChildItem);
 }
 
 void CFWL_WidgetMgr::RemoveWidget(CFWL_Widget* pWidget) {
+  ASSERT(pWidget);
   Item* pItem = GetWidgetMgrItem(pWidget);
   if (!pItem)
     return;
-  if (pItem->pPrevious)
-    pItem->pPrevious->pNext = pItem->pNext;
-  if (pItem->pNext)
-    pItem->pNext->pPrevious = pItem->pPrevious;
-  if (pItem->pParent && pItem->pParent->pChild == pItem)
-    pItem->pParent->pChild = pItem->pNext;
 
-  Item* pChild = pItem->pChild;
-  while (pChild) {
-    Item* pNext = pChild->pNext;
-    RemoveWidget(pChild->pWidget);
-    pChild = pNext;
-  }
+  while (pItem->GetFirstChild())
+    RemoveWidget(pItem->GetFirstChild()->pWidget);
+
+  pItem->RemoveSelfIfParented();
   m_mapWidgetItem.erase(pWidget);
 }
 
 void CFWL_WidgetMgr::SetParent(CFWL_Widget* pParent, CFWL_Widget* pChild) {
-  Item* pParentItem = GetWidgetMgrItem(pParent);
   Item* pItem = GetWidgetMgrItem(pChild);
   if (!pItem)
     return;
-  if (pItem->pParent && pItem->pParent != pParentItem) {
-    if (pItem->pPrevious)
-      pItem->pPrevious->pNext = pItem->pNext;
-    if (pItem->pNext)
-      pItem->pNext->pPrevious = pItem->pPrevious;
-    if (pItem->pParent->pChild == pItem)
-      pItem->pParent->pChild = pItem->pNext;
 
-    pItem->pNext = nullptr;
-    pItem->pPrevious = nullptr;
+  Item* pParentItem = GetWidgetMgrItem(pParent);
+  if (!pParentItem) {
+    pItem->RemoveSelfIfParented();
+    return;
   }
-  pItem->pParent = pParentItem;
-  AppendWidget(pChild);
+  pParentItem->AppendLastChild(pItem);
 }
 
 CFWL_Widget* CFWL_WidgetMgr::GetWidgetAtPoint(CFWL_Widget* parent,
@@ -254,10 +199,22 @@ void CFWL_WidgetMgr::ResetRedrawCounts(CFWL_Widget* pWidget) {
   GetWidgetMgrItem(pWidget)->iRedrawCounter = 0;
 }
 
+CFWL_WidgetMgr::Item* CFWL_WidgetMgr::GetWidgetMgrRootItem() const {
+  return GetWidgetMgrItem(nullptr);
+}
+
 CFWL_WidgetMgr::Item* CFWL_WidgetMgr::GetWidgetMgrItem(
     const CFWL_Widget* pWidget) const {
   auto it = m_mapWidgetItem.find(pWidget);
   return it != m_mapWidgetItem.end() ? it->second.get() : nullptr;
+}
+
+CFWL_WidgetMgr::Item* CFWL_WidgetMgr::CreateWidgetMgrItem(
+    CFWL_Widget* pWidget) {
+  auto pOwnedItem = std::make_unique<Item>(pWidget);
+  auto* pItem = pOwnedItem.get();
+  m_mapWidgetItem[pWidget] = std::move(pOwnedItem);
+  return pItem;
 }
 
 bool CFWL_WidgetMgr::IsAbleNative(CFWL_Widget* pWidget) const {
@@ -338,7 +295,7 @@ void CFWL_WidgetMgr::DrawChild(CFWL_Widget* parent,
   }
 }
 
-CFWL_WidgetMgr::Item::Item() : CFWL_WidgetMgr::Item(nullptr) {}
+CFWL_WidgetMgr::Item::Item() : pWidget(nullptr) {}
 
 CFWL_WidgetMgr::Item::Item(CFWL_Widget* widget) : pWidget(widget) {}
 
