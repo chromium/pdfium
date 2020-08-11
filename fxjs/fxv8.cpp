@@ -61,6 +61,7 @@ v8::Local<v8::Date> NewDateHelper(v8::Isolate* pIsolate, double d) {
 int ReentrantToInt32Helper(v8::Isolate* pIsolate, v8::Local<v8::Value> pValue) {
   if (pValue.IsEmpty())
     return 0;
+  v8::TryCatch squash_exceptions(pIsolate);
   return pValue->Int32Value(pIsolate->GetCurrentContext()).FromMaybe(0);
 }
 
@@ -68,6 +69,7 @@ bool ReentrantToBooleanHelper(v8::Isolate* pIsolate,
                               v8::Local<v8::Value> pValue) {
   if (pValue.IsEmpty())
     return false;
+  v8::TryCatch squash_exceptions(pIsolate);
   return pValue->BooleanValue(pIsolate);
 }
 
@@ -75,6 +77,7 @@ double ReentrantToDoubleHelper(v8::Isolate* pIsolate,
                                v8::Local<v8::Value> pValue) {
   if (pValue.IsEmpty())
     return 0.0;
+  v8::TryCatch squash_exceptions(pIsolate);
   return pValue->NumberValue(pIsolate->GetCurrentContext()).FromMaybe(0.0);
 }
 
@@ -83,6 +86,7 @@ WideString ReentrantToWideStringHelper(v8::Isolate* pIsolate,
   if (pValue.IsEmpty())
     return WideString();
 
+  v8::TryCatch squash_exceptions(pIsolate);
   v8::MaybeLocal<v8::String> maybe_string =
       pValue->ToString(pIsolate->GetCurrentContext());
   if (maybe_string.IsEmpty())
@@ -97,6 +101,7 @@ ByteString ReentrantToByteStringHelper(v8::Isolate* pIsolate,
   if (pValue.IsEmpty())
     return ByteString();
 
+  v8::TryCatch squash_exceptions(pIsolate);
   v8::MaybeLocal<v8::String> maybe_string =
       pValue->ToString(pIsolate->GetCurrentContext());
   if (maybe_string.IsEmpty())
@@ -110,6 +115,8 @@ v8::Local<v8::Object> ReentrantToObjectHelper(v8::Isolate* pIsolate,
                                               v8::Local<v8::Value> pValue) {
   if (pValue.IsEmpty() || !pValue->IsObject())
     return v8::Local<v8::Object>();
+
+  v8::TryCatch squash_exceptions(pIsolate);
   v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
   return pValue->ToObject(context).ToLocalChecked();
 }
@@ -118,6 +125,8 @@ v8::Local<v8::Array> ReentrantToArrayHelper(v8::Isolate* pIsolate,
                                             v8::Local<v8::Value> pValue) {
   if (pValue.IsEmpty() || !pValue->IsArray())
     return v8::Local<v8::Array>();
+
+  v8::TryCatch squash_exceptions(pIsolate);
   v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
   return v8::Local<v8::Array>::Cast(pValue->ToObject(context).ToLocalChecked());
 }
@@ -129,6 +138,7 @@ v8::Local<v8::Value> ReentrantGetObjectPropertyHelper(
   if (pObj.IsEmpty())
     return v8::Local<v8::Value>();
 
+  v8::TryCatch squash_exceptions(pIsolate);
   v8::Local<v8::Value> val;
   if (!pObj->Get(pIsolate->GetCurrentContext(),
                  NewStringHelper(pIsolate, bsUTF8PropertyName))
@@ -144,6 +154,7 @@ std::vector<WideString> ReentrantGetObjectPropertyNamesHelper(
   if (pObj.IsEmpty())
     return std::vector<WideString>();
 
+  v8::TryCatch squash_exceptions(pIsolate);
   v8::Local<v8::Array> val;
   v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
   if (!pObj->GetPropertyNames(context).ToLocal(&val))
@@ -165,6 +176,7 @@ bool ReentrantPutObjectPropertyHelper(v8::Isolate* pIsolate,
   if (pObj.IsEmpty())
     return false;
 
+  v8::TryCatch squash_exceptions(pIsolate);
   v8::Local<v8::String> name = NewStringHelper(pIsolate, bsUTF8PropertyName);
   v8::Maybe<bool> result = pObj->Set(pIsolate->GetCurrentContext(), name, pPut);
   return result.IsJust() && result.FromJust();
@@ -177,6 +189,7 @@ bool ReentrantPutArrayElementHelper(v8::Isolate* pIsolate,
   if (pArray.IsEmpty())
     return false;
 
+  v8::TryCatch squash_exceptions(pIsolate);
   v8::Maybe<bool> result =
       pArray->Set(pIsolate->GetCurrentContext(), index, pValue);
   return result.IsJust() && result.FromJust();
@@ -187,6 +200,8 @@ v8::Local<v8::Value> ReentrantGetArrayElementHelper(v8::Isolate* pIsolate,
                                                     unsigned index) {
   if (pArray.IsEmpty())
     return v8::Local<v8::Value>();
+
+  v8::TryCatch squash_exceptions(pIsolate);
   v8::Local<v8::Value> val;
   if (!pArray->Get(pIsolate->GetCurrentContext(), index).ToLocal(&val))
     return v8::Local<v8::Value>();

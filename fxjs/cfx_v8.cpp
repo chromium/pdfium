@@ -17,19 +17,18 @@ CFX_V8::~CFX_V8() = default;
 v8::Local<v8::Value> CFX_V8::GetObjectProperty(
     v8::Local<v8::Object> pObj,
     ByteStringView bsUTF8PropertyName) {
-  return fxv8::ReentrantGetObjectPropertyHelper(m_pIsolate.Get(), pObj,
+  return fxv8::ReentrantGetObjectPropertyHelper(GetIsolate(), pObj,
                                                 bsUTF8PropertyName);
 }
 
 std::vector<WideString> CFX_V8::GetObjectPropertyNames(
     v8::Local<v8::Object> pObj) {
-  return fxv8::ReentrantGetObjectPropertyNamesHelper(m_pIsolate.Get(), pObj);
+  return fxv8::ReentrantGetObjectPropertyNamesHelper(GetIsolate(), pObj);
 }
 
 void CFX_V8::PutObjectProperty(v8::Local<v8::Object> pObj,
                                ByteStringView bsUTF8PropertyName,
                                v8::Local<v8::Value> pPut) {
-  v8::TryCatch squash_exceptions(GetIsolate());
   fxv8::ReentrantPutObjectPropertyHelper(GetIsolate(), pObj, bsUTF8PropertyName,
                                          pPut);
 }
@@ -50,7 +49,6 @@ v8::Local<v8::Object> CFX_V8::NewObject() {
 void CFX_V8::PutArrayElement(v8::Local<v8::Array> pArray,
                              unsigned index,
                              v8::Local<v8::Value> pValue) {
-  v8::TryCatch squash_exceptions(GetIsolate());
   fxv8::ReentrantPutArrayElementHelper(GetIsolate(), pArray, index, pValue);
 }
 
@@ -104,23 +102,23 @@ v8::Local<v8::Date> CFX_V8::NewDate(double d) {
 }
 
 int CFX_V8::ToInt32(v8::Local<v8::Value> pValue) {
-  return fxv8::ReentrantToInt32Helper(m_pIsolate.Get(), pValue);
+  return fxv8::ReentrantToInt32Helper(GetIsolate(), pValue);
 }
 
 bool CFX_V8::ToBoolean(v8::Local<v8::Value> pValue) {
-  return fxv8::ReentrantToBooleanHelper(m_pIsolate.Get(), pValue);
+  return fxv8::ReentrantToBooleanHelper(GetIsolate(), pValue);
 }
 
 double CFX_V8::ToDouble(v8::Local<v8::Value> pValue) {
-  return fxv8::ReentrantToDoubleHelper(m_pIsolate.Get(), pValue);
+  return fxv8::ReentrantToDoubleHelper(GetIsolate(), pValue);
 }
 
 WideString CFX_V8::ToWideString(v8::Local<v8::Value> pValue) {
-  return fxv8::ReentrantToWideStringHelper(m_pIsolate.Get(), pValue);
+  return fxv8::ReentrantToWideStringHelper(GetIsolate(), pValue);
 }
 
 ByteString CFX_V8::ToByteString(v8::Local<v8::Value> pValue) {
-  return fxv8::ReentrantToByteStringHelper(m_pIsolate.Get(), pValue);
+  return fxv8::ReentrantToByteStringHelper(GetIsolate(), pValue);
 }
 
 v8::Local<v8::Object> CFX_V8::ToObject(v8::Local<v8::Value> pValue) {
