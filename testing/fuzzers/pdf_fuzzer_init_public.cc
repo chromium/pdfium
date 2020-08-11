@@ -62,9 +62,9 @@ struct TestCase {
 #ifdef PDF_ENABLE_V8
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
     platform = InitializeV8ForPDFiumWithStartupData(
-        ProgramPath(), std::string(), &snapshot_blob);
+        ProgramPath(), std::string(), std::string(), &snapshot_blob);
 #else
-    platform = InitializeV8ForPDFium(ProgramPath());
+    platform = InitializeV8ForPDFium(ProgramPath(), std::string());
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
 #endif  // PDF_ENABLE_V8
 

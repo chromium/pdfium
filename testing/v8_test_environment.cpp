@@ -49,12 +49,12 @@ void V8TestEnvironment::PumpPlatformMessageLoop(v8::Isolate* isolate) {
 void V8TestEnvironment::SetUp() {
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
   if (v8_snapshot_) {
-    platform_ =
-        InitializeV8ForPDFiumWithStartupData(exe_path_, std::string(), nullptr);
+    platform_ = InitializeV8ForPDFiumWithStartupData(exe_path_, std::string(),
+                                                     std::string(), nullptr);
   } else {
     v8_snapshot_ = std::make_unique<v8::StartupData>();
-    platform_ = InitializeV8ForPDFiumWithStartupData(exe_path_, std::string(),
-                                                     v8_snapshot_.get());
+    platform_ = InitializeV8ForPDFiumWithStartupData(
+        exe_path_, std::string(), std::string(), v8_snapshot_.get());
   }
 #else
   platform_ = InitializeV8ForPDFium(exe_path_);

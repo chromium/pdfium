@@ -125,6 +125,7 @@ struct Options {
   bool save_thumbnails_raw = false;
 #ifdef PDF_ENABLE_V8
   bool disable_javascript = false;
+  std::string js_flags;  // Extra flags to pass to v8 init.
 #ifdef PDF_ENABLE_XFA
   bool disable_xfa = false;
 #endif  // PDF_ENABLE_XFA
@@ -475,6 +476,12 @@ bool ParseCommandLine(const std::vector<std::string>& args,
 #ifdef PDF_ENABLE_V8
     } else if (cur_arg == "--disable-javascript") {
       options->disable_javascript = true;
+    } else if (ParseSwitchKeyValue(cur_arg, "--js-flags=", &value)) {
+      if (!options->js_flags.empty()) {
+        fprintf(stderr, "Duplicate --js-flags argument\n");
+        return false;
+      }
+      options->js_flags = value;
 #ifdef PDF_ENABLE_XFA
     } else if (cur_arg == "--disable-xfa") {
       options->disable_xfa = true;
@@ -1094,6 +1101,7 @@ constexpr char kUsageString[] =
     "<pdf-name>.thumbnail.raw.<page-number>.png\n"
 #ifdef PDF_ENABLE_V8
     "  --disable-javascript   - do not execute JS in PDF files\n"
+    "  --js-flags=<flags>     - additional flags to pas to V8"
 #ifdef PDF_ENABLE_XFA
     "  --disable-xfa          - do not process XFA forms\n"
 #endif  // PDF_ENABLE_XFA
@@ -1166,9 +1174,9 @@ int main(int argc, const char* argv[]) {
   if (!options.disable_javascript) {
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
     platform = InitializeV8ForPDFiumWithStartupData(
-        options.exe_path, options.bin_directory, &snapshot);
+        options.exe_path, options.js_flags, options.bin_directory, &snapshot);
 #else   // V8_USE_EXTERNAL_STARTUP_DATA
-    platform = InitializeV8ForPDFium(options.exe_path);
+    platform = InitializeV8ForPDFium(options.exe_path, options.js_flags);
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
     config.m_pPlatform = platform.get();
 
