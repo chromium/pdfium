@@ -615,7 +615,7 @@ void CFWL_ListBox::InitVerticalScrollBar() {
   if (m_pVertScrollBar)
     return;
 
-  auto prop = std::make_unique<CFWL_WidgetProperties>(this);
+  auto prop = std::make_unique<CFWL_WidgetProperties>();
   prop->m_dwStyleExes = FWL_STYLEEXT_SCB_Vert;
   prop->m_dwStates = FWL_WGTSTATE_Invisible;
   prop->m_pThemeProvider = m_pScrollBarTP;
@@ -627,7 +627,7 @@ void CFWL_ListBox::InitHorizontalScrollBar() {
   if (m_pHorzScrollBar)
     return;
 
-  auto prop = std::make_unique<CFWL_WidgetProperties>(this);
+  auto prop = std::make_unique<CFWL_WidgetProperties>();
   prop->m_dwStyleExes = FWL_STYLEEXT_SCB_Horz;
   prop->m_dwStates = FWL_WGTSTATE_Invisible;
   prop->m_pThemeProvider = m_pScrollBarTP;

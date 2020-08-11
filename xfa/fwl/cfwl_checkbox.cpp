@@ -29,9 +29,7 @@ const int kCaptionMargin = 5;
 }  // namespace
 
 CFWL_CheckBox::CFWL_CheckBox(const CFWL_App* app)
-    : CFWL_Widget(app,
-                  std::make_unique<CFWL_WidgetProperties>(nullptr),
-                  nullptr) {
+    : CFWL_Widget(app, std::make_unique<CFWL_WidgetProperties>(), nullptr) {
   m_TTOStyles.single_line_ = true;
 }
 

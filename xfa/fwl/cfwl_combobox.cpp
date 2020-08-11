@@ -29,9 +29,7 @@
 #include "xfa/fwl/ifwl_themeprovider.h"
 
 CFWL_ComboBox::CFWL_ComboBox(const CFWL_App* app)
-    : CFWL_Widget(app,
-                  std::make_unique<CFWL_WidgetProperties>(nullptr),
-                  nullptr) {
+    : CFWL_Widget(app, std::make_unique<CFWL_WidgetProperties>(), nullptr) {
   InitComboList();
   InitComboEdit();
 }
@@ -407,7 +405,7 @@ void CFWL_ComboBox::InitComboList() {
   if (m_pListBox)
     return;
 
-  auto prop = std::make_unique<CFWL_WidgetProperties>(this);
+  auto prop = std::make_unique<CFWL_WidgetProperties>();
   prop->m_dwStyles = FWL_WGTSTYLE_Border | FWL_WGTSTYLE_VScroll;
   prop->m_dwStates = FWL_WGTSTATE_Invisible;
   prop->m_pThemeProvider = GetProperties()->m_pThemeProvider;
@@ -419,7 +417,7 @@ void CFWL_ComboBox::InitComboEdit() {
   if (m_pEdit)
     return;
 
-  auto prop = std::make_unique<CFWL_WidgetProperties>(this);
+  auto prop = std::make_unique<CFWL_WidgetProperties>();
   prop->m_pThemeProvider = GetProperties()->m_pThemeProvider;
 
   m_pEdit =

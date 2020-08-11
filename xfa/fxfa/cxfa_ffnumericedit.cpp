@@ -29,7 +29,7 @@ bool CXFA_FFNumericEdit::LoadWidget() {
   RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
 
   auto pNewEdit = std::make_unique<CFWL_Edit>(
-      GetFWLApp(), std::make_unique<CFWL_WidgetProperties>(nullptr), nullptr);
+      GetFWLApp(), std::make_unique<CFWL_WidgetProperties>(), nullptr);
   CFWL_Edit* pWidget = pNewEdit.get();
   SetNormalWidget(std::move(pNewEdit));
   pWidget->SetAdapterIface(this);

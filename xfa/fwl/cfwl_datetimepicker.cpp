@@ -24,12 +24,10 @@ const int kDateTimePickerHeight = 20;
 
 }  // namespace
 CFWL_DateTimePicker::CFWL_DateTimePicker(const CFWL_App* app)
-    : CFWL_Widget(app,
-                  std::make_unique<CFWL_WidgetProperties>(nullptr),
-                  nullptr) {
+    : CFWL_Widget(app, std::make_unique<CFWL_WidgetProperties>(), nullptr) {
   GetProperties()->m_dwStyleExes = FWL_STYLEEXT_DTP_ShortDateFormat;
 
-  auto monthProp = std::make_unique<CFWL_WidgetProperties>(this);
+  auto monthProp = std::make_unique<CFWL_WidgetProperties>();
   monthProp->m_dwStyles = FWL_WGTSTYLE_Popup | FWL_WGTSTYLE_Border;
   monthProp->m_dwStates = FWL_WGTSTATE_Invisible;
   monthProp->m_pThemeProvider = GetProperties()->m_pThemeProvider;
@@ -39,7 +37,7 @@ CFWL_DateTimePicker::CFWL_DateTimePicker(const CFWL_App* app)
   m_pMonthCal->SetWidgetRect(
       CFX_RectF(0, 0, m_pMonthCal->GetAutosizedWidgetRect().Size()));
 
-  auto editProp = std::make_unique<CFWL_WidgetProperties>(this);
+  auto editProp = std::make_unique<CFWL_WidgetProperties>();
   editProp->m_pThemeProvider = GetProperties()->m_pThemeProvider;
 
   m_pEdit = std::make_unique<CFWL_DateTimeEdit>(GetOwnerApp(),

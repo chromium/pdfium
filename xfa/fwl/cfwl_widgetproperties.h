@@ -12,12 +12,11 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fwl/fwl_widgetdef.h"
 
-class CFWL_Widget;
 class IFWL_ThemeProvider;
 
 class CFWL_WidgetProperties {
  public:
-  explicit CFWL_WidgetProperties(CFWL_Widget* pParent);
+  CFWL_WidgetProperties();
   ~CFWL_WidgetProperties();
 
   uint32_t m_dwStyles = FWL_WGTSTYLE_Child;
@@ -25,7 +24,6 @@ class CFWL_WidgetProperties {
   uint32_t m_dwStates = 0;
   CFX_RectF m_WidgetRect;
   UnownedPtr<IFWL_ThemeProvider> m_pThemeProvider;
-  CFWL_Widget* const m_pParent;  // Raw, this class owned by node in tree.
 };
 
 #endif  // XFA_FWL_CFWL_WIDGETPROPERTIES_H_

@@ -16,9 +16,7 @@
 #include "xfa/fwl/theme/cfwl_utils.h"
 
 CFWL_Barcode::CFWL_Barcode(const CFWL_App* app)
-    : CFWL_Edit(app,
-                std::make_unique<CFWL_WidgetProperties>(nullptr),
-                nullptr) {}
+    : CFWL_Edit(app, std::make_unique<CFWL_WidgetProperties>(), nullptr) {}
 
 CFWL_Barcode::~CFWL_Barcode() = default;
 
