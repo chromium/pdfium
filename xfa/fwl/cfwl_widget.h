@@ -102,7 +102,6 @@ class CFWL_Widget : public Observable, public IFWL_WidgetDelegate {
   CFWL_WidgetMgr* GetWidgetMgr() const { return m_pWidgetMgr.Get(); }
   CFWL_Widget* GetOwner() { return m_pWidgetMgr->GetOwnerWidget(this); }
   CFWL_Widget* GetOuter() const { return m_pOuter; }
-  void SetOuter(CFWL_Widget* pOuter) { m_pOuter = pOuter; }
   CFWL_Widget* GetOutmost() const;
 
   void ModifyStyles(uint32_t dwStylesAdded, uint32_t dwStylesRemoved);
@@ -186,7 +185,7 @@ class CFWL_Widget : public Observable, public IFWL_WidgetDelegate {
   UnownedPtr<const CFWL_App> const m_pOwnerApp;
   UnownedPtr<CFWL_WidgetMgr> const m_pWidgetMgr;
   std::unique_ptr<CFWL_WidgetProperties> m_pProperties;
-  CFWL_Widget* m_pOuter;
+  CFWL_Widget* const m_pOuter;
   AdapterIface* m_pAdapterIface = nullptr;
   UnownedPtr<IFWL_WidgetDelegate> m_pDelegate;
 };

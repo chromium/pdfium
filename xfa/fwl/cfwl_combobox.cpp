@@ -424,7 +424,6 @@ void CFWL_ComboBox::InitComboEdit() {
 
   m_pEdit =
       std::make_unique<CFWL_ComboEdit>(GetOwnerApp(), std::move(prop), this);
-  m_pEdit->SetOuter(this);
 }
 
 void CFWL_ComboBox::OnProcessMessage(CFWL_Message* pMessage) {
