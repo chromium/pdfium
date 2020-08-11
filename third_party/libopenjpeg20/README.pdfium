@@ -29,3 +29,4 @@ Local Modifications:
 0035-opj_image_data_free.patch: Use the right free function in opj_jp2_apply_pclr.
 0036-opj_j2k_update_image_dimensions.patch: fix integer overflow.
 0037-tcd_init_tile.patch: Avoid integer overflow in opj_tcd_init_tile().
+0038-opj_j2k_validate_param.patch: Validate all SGcod/SPcod/SPcoc parameter values.
