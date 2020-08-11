@@ -171,22 +171,6 @@ bool CFWL_NoteDriver::DoKey(CFWL_Message* pMessage, CFWL_Widget* pMessageForm) {
 #if !defined(OS_APPLE)
   if (pMsg->m_dwCmd == CFWL_MessageKey::Type::kKeyDown &&
       pMsg->m_dwKeyCode == XFA_FWL_VKEY_Tab) {
-    CFWL_WidgetMgr* pWidgetMgr = pMessageForm->GetOwnerApp()->GetWidgetMgr();
-    CFWL_Widget* pForm = GetMessageForm(pMsg->GetDstTarget());
-    CFWL_Widget* pFocus = m_pFocus.Get();
-    if (m_pFocus && pWidgetMgr->GetSystemFormWidget(m_pFocus.Get()) != pForm)
-      pFocus = nullptr;
-
-    CFWL_Widget* pNextTabStop = nullptr;
-    if (pForm) {
-      pNextTabStop = CFWL_WidgetMgr::NextTab(pForm, pFocus);
-      if (!pNextTabStop)
-        pNextTabStop = CFWL_WidgetMgr::NextTab(pForm, nullptr);
-    }
-    if (pNextTabStop == pFocus)
-      return true;
-    if (pNextTabStop)
-      SetFocus(pNextTabStop);
     return true;
   }
 #endif
