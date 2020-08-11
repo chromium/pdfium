@@ -120,8 +120,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderTiling::Draw(
       pStates = CPDF_RenderStatus::CloneObjStates(pPageObj, bStroke);
 
     const CPDF_Dictionary* pFormDict = pPatternForm->GetDict();
-    const CPDF_Dictionary* pFormResource =
-        pFormDict ? pFormDict->GetDictFor("Resources") : nullptr;
+    const CPDF_Dictionary* pFormResource = pFormDict->GetDictFor("Resources");
     for (int col = min_col; col <= max_col; col++) {
       for (int row = min_row; row <= max_row; row++) {
         CFX_PointF original = mtPattern2Device.Transform(
