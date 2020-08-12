@@ -322,6 +322,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFSignatureObj_GetContents);
     CHK(FPDFSignatureObj_GetReason);
     CHK(FPDFSignatureObj_GetSubFilter);
+    CHK(FPDFSignatureObj_GetTime);
     CHK(FPDF_GetSignatureCount);
     CHK(FPDF_GetSignatureObject);
 

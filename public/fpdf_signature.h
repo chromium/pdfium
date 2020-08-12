@@ -113,6 +113,30 @@ FPDFSignatureObj_GetReason(FPDF_SIGNATURE signature,
                            void* buffer,
                            unsigned long length);
 
+// Experimental API.
+// Function: FPDFSignatureObj_GetTime
+//          Get the time of signing of a signature object.
+// Parameters:
+//          signature   -   Handle to the signature object. Returned by
+//                          FPDF_GetSignatureObject().
+//          buffer      -   The address of a buffer that receives the time.
+//          length      -   The size, in bytes, of |buffer|.
+// Return value:
+//          Returns the number of bytes in the encoding name (including the
+//          trailing NUL character) on success, 0 on error.
+//
+// The |buffer| is always encoded in 7-bit ASCII. If |length| is less than the
+// returned length, or |buffer| is NULL, |buffer| will not be modified.
+//
+// The format of time is expected to be D:YYYYMMDDHHMMSS+XX'YY', i.e. it's
+// percision is seconds, with timezone information. This value should be used
+// only when the time of signing is not available in the (PKCS#7 binary)
+// signature.
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFSignatureObj_GetTime(FPDF_SIGNATURE signature,
+                         char* buffer,
+                         unsigned long length);
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif  // __cplusplus

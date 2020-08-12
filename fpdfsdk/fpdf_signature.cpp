@@ -142,3 +142,22 @@ FPDFSignatureObj_GetReason(FPDF_SIGNATURE signature,
   return Utf16EncodeMaybeCopyAndReturnLength(obj->GetUnicodeText(), buffer,
                                              length);
 }
+
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFSignatureObj_GetTime(FPDF_SIGNATURE signature,
+                         char* buffer,
+                         unsigned long length) {
+  CPDF_Dictionary* signature_dict = CPDFDictionaryFromFPDFSignature(signature);
+  if (!signature_dict)
+    return 0;
+
+  CPDF_Dictionary* value_dict = signature_dict->GetDictFor("V");
+  if (!value_dict)
+    return 0;
+
+  const CPDF_Object* obj = value_dict->GetObjectFor("M");
+  if (!obj || !obj->IsString())
+    return 0;
+
+  return NulTerminateMaybeCopyAndReturnLength(obj->GetString(), buffer, length);
+}

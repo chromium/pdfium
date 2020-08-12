@@ -160,3 +160,30 @@ TEST_F(FPDFSignatureEmbedderTest, GetReason) {
   EXPECT_EQ('x', buffer[0]);
   EXPECT_EQ('\0', buffer[1]);
 }
+
+TEST_F(FPDFSignatureEmbedderTest, GetTime) {
+  ASSERT_TRUE(OpenDocument("two_signatures.pdf"));
+  FPDF_SIGNATURE signature = FPDF_GetSignatureObject(document(), 0);
+  EXPECT_NE(nullptr, signature);
+
+  // FPDFSignatureObj_GetTime() positive testing.
+  unsigned long size = FPDFSignatureObj_GetTime(signature, nullptr, 0);
+  const char kExpectedTime[] = "D:20200624093114+02'00'";
+  ASSERT_EQ(sizeof(kExpectedTime), size);
+  std::vector<char> time_buffer(size);
+  ASSERT_EQ(size,
+            FPDFSignatureObj_GetTime(signature, time_buffer.data(), size));
+  ASSERT_EQ(0, memcmp(kExpectedTime, time_buffer.data(), size));
+
+  // FPDFSignatureObj_GetTime() negative testing.
+  ASSERT_EQ(0U, FPDFSignatureObj_GetTime(nullptr, nullptr, 0));
+
+  time_buffer.resize(2);
+  time_buffer[0] = 'x';
+  time_buffer[1] = '\0';
+  size = FPDFSignatureObj_GetTime(signature, time_buffer.data(),
+                                  time_buffer.size());
+  ASSERT_EQ(sizeof(kExpectedTime), size);
+  EXPECT_EQ('x', time_buffer[0]);
+  EXPECT_EQ('\0', time_buffer[1]);
+}
