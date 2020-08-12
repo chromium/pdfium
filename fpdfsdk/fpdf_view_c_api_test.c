@@ -144,6 +144,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFLink_GetQuadPoints);
     CHK(FPDF_GetFileIdentifier);
     CHK(FPDF_GetMetaText);
+    CHK(FPDF_GetPageAAction);
     CHK(FPDF_GetPageLabel);
 
     // fpdf_edit.h
