@@ -137,19 +137,6 @@ void CFWL_WidgetMgr::RemoveWidget(CFWL_Widget* pWidget) {
   m_mapWidgetItem.erase(pWidget);
 }
 
-void CFWL_WidgetMgr::SetParent(CFWL_Widget* pParent, CFWL_Widget* pChild) {
-  Item* pItem = GetWidgetMgrItem(pChild);
-  if (!pItem)
-    return;
-
-  Item* pParentItem = GetWidgetMgrItem(pParent);
-  if (!pParentItem) {
-    pItem->RemoveSelfIfParented();
-    return;
-  }
-  pParentItem->AppendLastChild(pItem);
-}
-
 CFWL_Widget* CFWL_WidgetMgr::GetWidgetAtPoint(CFWL_Widget* parent,
                                               const CFX_PointF& point) const {
   if (!parent)

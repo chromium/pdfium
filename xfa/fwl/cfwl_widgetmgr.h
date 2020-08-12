@@ -50,7 +50,6 @@ class CFWL_WidgetMgr {
 
   void InsertWidget(CFWL_Widget* pParent, CFWL_Widget* pChild);
   void RemoveWidget(CFWL_Widget* pWidget);
-  void SetParent(CFWL_Widget* pParent, CFWL_Widget* pChild);
 
   CFWL_Widget* GetWidgetAtPoint(CFWL_Widget* pParent,
                                 const CFX_PointF& point) const;

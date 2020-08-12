@@ -961,7 +961,6 @@ void CFWL_Edit::InitCaret() {
 
   m_pCaret = std::make_unique<CFWL_Caret>(
       GetOwnerApp(), std::make_unique<CFWL_WidgetProperties>(), this);
-  GetWidgetMgr()->SetParent(this, m_pCaret.get());
   m_pCaret->SetStates(GetProperties()->m_dwStates);
   UpdateCursorRect();
 }
