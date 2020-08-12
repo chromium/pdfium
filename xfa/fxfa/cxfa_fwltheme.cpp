@@ -39,7 +39,7 @@ const wchar_t* const g_FWLTheme_CalFonts[] = {
 
 const float kLineHeight = 12.0f;
 
-CXFA_FFWidget* XFA_ThemeGetOuterWidget(CFWL_Widget* pWidget) {
+CXFA_FFWidget* GetOutmostFFWidget(CFWL_Widget* pWidget) {
   CFWL_Widget* pOuter = pWidget ? pWidget->GetOutmost() : nullptr;
   return pOuter ? static_cast<CXFA_FFWidget*>(pOuter->GetAdapterIface())
                 : nullptr;
@@ -82,7 +82,7 @@ void CXFA_FWLTheme::DrawText(const CFWL_ThemeText& pParams) {
     return;
 
   if (pParams.m_pWidget->GetClassID() == FWL_Type::MonthCalendar) {
-    CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pParams.m_pWidget);
+    CXFA_FFWidget* pWidget = GetOutmostFFWidget(pParams.m_pWidget);
     if (!pWidget)
       return;
 
@@ -112,7 +112,7 @@ void CXFA_FWLTheme::DrawText(const CFWL_ThemeText& pParams) {
                               pParams.m_PartRect);
     return;
   }
-  CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pParams.m_pWidget);
+  CXFA_FFWidget* pWidget = GetOutmostFFWidget(pParams.m_pWidget);
   if (!pWidget)
     return;
 
@@ -135,7 +135,7 @@ void CXFA_FWLTheme::DrawText(const CFWL_ThemeText& pParams) {
 }
 
 CFX_RectF CXFA_FWLTheme::GetUIMargin(const CFWL_ThemePart& pThemePart) const {
-  CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart.m_pWidget);
+  CXFA_FFWidget* pWidget = GetOutmostFFWidget(pThemePart.m_pWidget);
   if (!pWidget)
     return CFX_RectF();
 
@@ -169,20 +169,20 @@ float CXFA_FWLTheme::GetCYBorderSize() const {
 }
 
 float CXFA_FWLTheme::GetFontSize(const CFWL_ThemePart& pThemePart) const {
-  if (CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart.m_pWidget))
+  if (CXFA_FFWidget* pWidget = GetOutmostFFWidget(pThemePart.m_pWidget))
     return pWidget->GetNode()->GetFontSize();
   return FWLTHEME_CAPACITY_FontSize;
 }
 
 RetainPtr<CFGAS_GEFont> CXFA_FWLTheme::GetFont(
     const CFWL_ThemePart& pThemePart) const {
-  if (CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart.m_pWidget))
+  if (CXFA_FFWidget* pWidget = GetOutmostFFWidget(pThemePart.m_pWidget))
     return pWidget->GetNode()->GetFDEFont(pWidget->GetDoc());
   return GetTheme(pThemePart.m_pWidget)->GetFont();
 }
 
 float CXFA_FWLTheme::GetLineHeight(const CFWL_ThemePart& pThemePart) const {
-  if (CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart.m_pWidget))
+  if (CXFA_FFWidget* pWidget = GetOutmostFFWidget(pThemePart.m_pWidget))
     return pWidget->GetNode()->GetLineHeight();
   return kLineHeight;
 }
@@ -193,7 +193,7 @@ float CXFA_FWLTheme::GetScrollBarWidth() const {
 
 FX_COLORREF CXFA_FWLTheme::GetTextColor(
     const CFWL_ThemePart& pThemePart) const {
-  if (CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart.m_pWidget))
+  if (CXFA_FFWidget* pWidget = GetOutmostFFWidget(pThemePart.m_pWidget))
     return pWidget->GetNode()->GetTextColor();
   return FWLTHEME_CAPACITY_TextColor;
 }
@@ -201,7 +201,7 @@ FX_COLORREF CXFA_FWLTheme::GetTextColor(
 CFX_SizeF CXFA_FWLTheme::GetSpaceAboveBelow(
     const CFWL_ThemePart& pThemePart) const {
   CFX_SizeF sizeAboveBelow;
-  if (CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart.m_pWidget)) {
+  if (CXFA_FFWidget* pWidget = GetOutmostFFWidget(pThemePart.m_pWidget)) {
     CXFA_Para* para = pWidget->GetNode()->GetParaIfExists();
     if (para) {
       sizeAboveBelow.width = para->GetSpaceAbove();
@@ -216,7 +216,7 @@ void CXFA_FWLTheme::CalcTextRect(const CFWL_ThemeText& pParams,
   if (!m_pTextOut)
     return;
 
-  CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pParams.m_pWidget);
+  CXFA_FFWidget* pWidget = GetOutmostFFWidget(pParams.m_pWidget);
   if (!pWidget)
     return;
 
