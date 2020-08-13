@@ -44,7 +44,6 @@ class CFWL_WidgetMgr {
   CFWL_Widget* GetOwnerWidget(const CFWL_Widget* pWidget) const;
   CFWL_Widget* GetNextSiblingWidget(CFWL_Widget* pWidget) const;
   CFWL_Widget* GetFirstChildWidget(CFWL_Widget* pWidget) const;
-  CFWL_Widget* GetSystemFormWidget(CFWL_Widget* pWidget) const;
 
   void RepaintWidget(CFWL_Widget* pWidget, const CFX_RectF& pRect);
 
@@ -76,7 +75,6 @@ class CFWL_WidgetMgr {
     int32_t iRedrawCounter = 0;
   };
 
-  CFWL_Widget* GetFirstSiblingWidget(CFWL_Widget* pWidget) const;
   CFWL_Widget* GetPriorSiblingWidget(CFWL_Widget* pWidget) const;
   CFWL_Widget* GetLastChildWidget(CFWL_Widget* pWidget) const;
 
@@ -89,8 +87,6 @@ class CFWL_WidgetMgr {
                  const CFX_RectF& rtClip,
                  CXFA_Graphics* pGraphics,
                  const CFX_Matrix* pMatrix);
-
-  bool IsAbleNative(CFWL_Widget* pWidget) const;
 
   std::map<const CFWL_Widget*, std::unique_ptr<Item>> m_mapWidgetItem;
   UnownedPtr<AdapterIface> const m_pAdapter;

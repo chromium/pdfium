@@ -62,27 +62,6 @@ void CFWL_NoteDriver::UnregisterEventTarget(CFWL_Widget* pListener) {
     it->second->FlagInvalid();
 }
 
-bool CFWL_NoteDriver::SetFocus(CFWL_Widget* pFocus) {
-  if (m_pFocus == pFocus)
-    return true;
-
-  CFWL_Widget* pPrev = m_pFocus.Get();
-  m_pFocus = pFocus;
-  if (pPrev) {
-    if (IFWL_WidgetDelegate* pDelegate = pPrev->GetDelegate()) {
-      CFWL_MessageKillFocus ms(pPrev, pPrev);
-      pDelegate->OnProcessMessage(&ms);
-    }
-  }
-  if (pFocus) {
-    if (IFWL_WidgetDelegate* pDelegate = pFocus->GetDelegate()) {
-      CFWL_MessageSetFocus ms(nullptr, pFocus);
-      pDelegate->OnProcessMessage(&ms);
-    }
-  }
-  return true;
-}
-
 void CFWL_NoteDriver::NotifyTargetHide(CFWL_Widget* pNoteTarget) {
   if (m_pFocus == pNoteTarget)
     m_pFocus = nullptr;
@@ -259,12 +238,4 @@ void CFWL_NoteDriver::MouseSecondary(CFWL_Message* pMessage) {
 
   CFWL_MessageMouse msHover(pTarget, FWL_MouseCommand::Hover, 0, pMsg->m_pos);
   DispatchMessage(&msHover, nullptr);
-}
-
-CFWL_Widget* CFWL_NoteDriver::GetMessageForm(CFWL_Widget* pDstTarget) {
-  if (!pDstTarget)
-    return nullptr;
-
-  CFWL_WidgetMgr* pWidgetMgr = pDstTarget->GetOwnerApp()->GetWidgetMgr();
-  return pWidgetMgr->GetSystemFormWidget(pDstTarget);
 }

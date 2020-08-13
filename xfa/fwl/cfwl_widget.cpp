@@ -279,7 +279,7 @@ void CFWL_Widget::CalcTextRect(const WideString& wsText,
 
 void CFWL_Widget::SetGrab(bool bSet) {
   CFWL_NoteDriver* pDriver = GetOwnerApp()->GetNoteDriver();
-  pDriver->SetGrab(this, bSet);
+  pDriver->SetGrab(bSet ? this : nullptr);
 }
 
 void CFWL_Widget::RegisterEventTarget(CFWL_Widget* pEventSource) {

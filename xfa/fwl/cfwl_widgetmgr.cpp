@@ -34,21 +34,6 @@ CFWL_Widget* CFWL_WidgetMgr::GetOwnerWidget(const CFWL_Widget* pWidget) const {
   return pItem && pItem->pOwner ? pItem->pOwner->pWidget : nullptr;
 }
 
-CFWL_Widget* CFWL_WidgetMgr::GetFirstSiblingWidget(CFWL_Widget* pWidget) const {
-  Item* pItem = GetWidgetMgrItem(pWidget);
-  if (!pItem)
-    return nullptr;
-
-  pItem = pItem->GetPrevSibling();  // Item is never its own first sibling.
-  if (!pItem)
-    return nullptr;
-
-  while (pItem->GetPrevSibling())
-    pItem = pItem->GetPrevSibling();
-
-  return pItem->pWidget;
-}
-
 CFWL_Widget* CFWL_WidgetMgr::GetPriorSiblingWidget(CFWL_Widget* pWidget) const {
   Item* pItem = GetWidgetMgrItem(pWidget);
   if (!pItem)
@@ -84,17 +69,6 @@ CFWL_Widget* CFWL_WidgetMgr::GetLastChildWidget(CFWL_Widget* pWidget) const {
   Item* pChild = pItem->GetLastChild();
   return pChild ? pChild->pWidget : nullptr;
 }
-
-CFWL_Widget* CFWL_WidgetMgr::GetSystemFormWidget(CFWL_Widget* pWidget) const {
-  Item* pItem = GetWidgetMgrItem(pWidget);
-  while (pItem) {
-    if (IsAbleNative(pItem->pWidget))
-      return pItem->pWidget;
-    pItem = pItem->GetParent();
-  }
-  return nullptr;
-}
-
 
 void CFWL_WidgetMgr::RepaintWidget(CFWL_Widget* pWidget,
                                    const CFX_RectF& rect) {
@@ -202,13 +176,6 @@ CFWL_WidgetMgr::Item* CFWL_WidgetMgr::CreateWidgetMgrItem(
   auto* pItem = pOwnedItem.get();
   m_mapWidgetItem[pWidget] = std::move(pOwnedItem);
   return pItem;
-}
-
-bool CFWL_WidgetMgr::IsAbleNative(CFWL_Widget* pWidget) const {
-  if (!pWidget || !pWidget->IsForm())
-    return false;
-
-  return pWidget->IsOverLapper() || pWidget->IsPopup();
 }
 
 void CFWL_WidgetMgr::GetAdapterPopupPos(CFWL_Widget* pWidget,
