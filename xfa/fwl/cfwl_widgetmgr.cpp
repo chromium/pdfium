@@ -30,8 +30,7 @@ CFWL_Widget* CFWL_WidgetMgr::GetParentWidget(const CFWL_Widget* pWidget) const {
 }
 
 CFWL_Widget* CFWL_WidgetMgr::GetOwnerWidget(const CFWL_Widget* pWidget) const {
-  Item* pItem = GetWidgetMgrItem(pWidget);
-  return pItem && pItem->pOwner ? pItem->pOwner->pWidget : nullptr;
+  return nullptr;
 }
 
 CFWL_Widget* CFWL_WidgetMgr::GetPriorSiblingWidget(CFWL_Widget* pWidget) const {
