@@ -89,47 +89,34 @@ class CFWL_MonthCalendar final : public CFWL_Widget {
   };
 
   void DrawBackground(CXFA_Graphics* pGraphics,
-                      IFWL_ThemeProvider* pTheme,
                       const CFX_Matrix* pMatrix);
   void DrawHeadBK(CXFA_Graphics* pGraphics,
-                  IFWL_ThemeProvider* pTheme,
                   const CFX_Matrix* pMatrix);
   void DrawLButton(CXFA_Graphics* pGraphics,
-                   IFWL_ThemeProvider* pTheme,
                    const CFX_Matrix* pMatrix);
   void DrawRButton(CXFA_Graphics* pGraphics,
-                   IFWL_ThemeProvider* pTheme,
                    const CFX_Matrix* pMatrix);
   void DrawCaption(CXFA_Graphics* pGraphics,
-                   IFWL_ThemeProvider* pTheme,
                    const CFX_Matrix* pMatrix);
   void DrawSeparator(CXFA_Graphics* pGraphics,
-                     IFWL_ThemeProvider* pTheme,
                      const CFX_Matrix* pMatrix);
   void DrawDatesInBK(CXFA_Graphics* pGraphics,
-                     IFWL_ThemeProvider* pTheme,
                      const CFX_Matrix* pMatrix);
   void DrawWeek(CXFA_Graphics* pGraphics,
-                IFWL_ThemeProvider* pTheme,
                 const CFX_Matrix* pMatrix);
   void DrawToday(CXFA_Graphics* pGraphics,
-                 IFWL_ThemeProvider* pTheme,
                  const CFX_Matrix* pMatrix);
   void DrawDatesIn(CXFA_Graphics* pGraphics,
-                   IFWL_ThemeProvider* pTheme,
                    const CFX_Matrix* pMatrix);
   void DrawDatesOut(CXFA_Graphics* pGraphics,
-                    IFWL_ThemeProvider* pTheme,
                     const CFX_Matrix* pMatrix);
   void DrawDatesInCircle(CXFA_Graphics* pGraphics,
-                         IFWL_ThemeProvider* pTheme,
                          const CFX_Matrix* pMatrix);
   CFX_SizeF CalcSize();
   void Layout();
   void CalcHeadSize();
   void CalcTodaySize();
   void CalDateItem();
-  void GetCapValue();
   void InitDate();
   void ClearDateItem();
   void ResetDateItem();

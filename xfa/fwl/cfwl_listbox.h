@@ -43,7 +43,6 @@ class CFWL_ListBox : public CFWL_Widget {
   void Update() override;
   FWL_WidgetHit HitTest(const CFX_PointF& point) override;
   void DrawWidget(CXFA_Graphics* pGraphics, const CFX_Matrix& matrix) override;
-  void SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
   void OnDrawWidget(CXFA_Graphics* pGraphics,
@@ -86,18 +85,15 @@ class CFWL_ListBox : public CFWL_Widget {
   CFWL_ListItem* GetFocusedItem();
   void SetFocusItem(CFWL_ListItem* hItem);
   void DrawBkground(CXFA_Graphics* pGraphics,
-                    IFWL_ThemeProvider* pTheme,
                     const CFX_Matrix* pMatrix);
   void DrawItems(CXFA_Graphics* pGraphics,
-                 IFWL_ThemeProvider* pTheme,
                  const CFX_Matrix* pMatrix);
   void DrawItem(CXFA_Graphics* pGraphics,
-                IFWL_ThemeProvider* pTheme,
                 CFWL_ListItem* hItem,
                 int32_t Index,
                 const CFX_RectF& rtItem,
                 const CFX_Matrix* pMatrix);
-  void DrawStatic(CXFA_Graphics* pGraphics, IFWL_ThemeProvider* pTheme);
+  void DrawStatic(CXFA_Graphics* pGraphics);
   CFX_SizeF CalcSize(bool bAutoSize);
   void UpdateItemSize(CFWL_ListItem* hItem,
                       CFX_SizeF& size,
@@ -128,7 +124,6 @@ class CFWL_ListBox : public CFWL_Widget {
   float m_fItemHeight = 0.0f;
   float m_fScorllBarWidth = 0.0f;
   CFWL_ListItem* m_hAnchor = nullptr;
-  IFWL_ThemeProvider* m_pScrollBarTP = nullptr;
   std::vector<std::unique_ptr<CFWL_ListItem>> m_ItemArray;
 };
 

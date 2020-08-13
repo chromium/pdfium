@@ -167,8 +167,8 @@ CFX_Matrix CFWL_Widget::GetMatrix() const {
   return matrix;
 }
 
-void CFWL_Widget::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
-  m_pProperties->m_pThemeProvider = pThemeProvider;
+IFWL_ThemeProvider* CFWL_Widget::GetThemeProvider() const {
+  return m_pOwnerApp->GetAdapterNative()->GetThemeProvider();
 }
 
 bool CFWL_Widget::IsEnabled() const {
@@ -212,13 +212,11 @@ CFX_RectF CFWL_Widget::GetEdgeRect() const {
 }
 
 float CFWL_Widget::GetCXBorderSize() const {
-  IFWL_ThemeProvider* theme = GetAvailableTheme();
-  return theme ? theme->GetCXBorderSize() : 0.0f;
+  return GetThemeProvider()->GetCXBorderSize();
 }
 
 float CFWL_Widget::GetCYBorderSize() const {
-  IFWL_ThemeProvider* theme = GetAvailableTheme();
-  return theme ? theme->GetCYBorderSize() : 0.0f;
+  return GetThemeProvider()->GetCYBorderSize();
 }
 
 CFX_RectF CFWL_Widget::GetRelativeRect() const {
@@ -226,29 +224,8 @@ CFX_RectF CFWL_Widget::GetRelativeRect() const {
                    m_pProperties->m_WidgetRect.height);
 }
 
-IFWL_ThemeProvider* CFWL_Widget::GetAvailableTheme() const {
-  if (m_pProperties->m_pThemeProvider)
-    return m_pProperties->m_pThemeProvider.Get();
-
-  const CFWL_Widget* pUp = this;
-  do {
-    pUp = pUp->IsPopup() ? m_pWidgetMgr->GetOwnerWidget(pUp)
-                         : m_pWidgetMgr->GetParentWidget(pUp);
-    if (pUp) {
-      IFWL_ThemeProvider* pRet = pUp->GetThemeProvider();
-      if (pRet)
-        return pRet;
-    }
-  } while (pUp);
-  return nullptr;
-}
-
 CFX_SizeF CFWL_Widget::CalcTextSize(const WideString& wsText,
-                                    IFWL_ThemeProvider* pTheme,
                                     bool bMultiLine) {
-  if (!pTheme)
-    return CFX_SizeF();
-
   CFWL_ThemeText calPart;
   calPart.m_pWidget = this;
   calPart.m_wsText = wsText;
@@ -260,12 +237,11 @@ CFX_SizeF CFWL_Widget::CalcTextSize(const WideString& wsText,
   calPart.m_iTTOAlign = FDE_TextAlignment::kTopLeft;
   float fWidth = bMultiLine ? FWL_WGT_CalcMultiLineDefWidth : FWL_WGT_CalcWidth;
   CFX_RectF rect(0, 0, fWidth, FWL_WGT_CalcHeight);
-  pTheme->CalcTextRect(calPart, &rect);
+  GetThemeProvider()->CalcTextRect(calPart, &rect);
   return CFX_SizeF(rect.width, rect.height);
 }
 
 void CFWL_Widget::CalcTextRect(const WideString& wsText,
-                               IFWL_ThemeProvider* pTheme,
                                const FDE_TextStyle& dwTTOStyles,
                                FDE_TextAlignment iTTOAlign,
                                CFX_RectF* pRect) {
@@ -274,7 +250,7 @@ void CFWL_Widget::CalcTextRect(const WideString& wsText,
   calPart.m_wsText = wsText;
   calPart.m_dwTTOStyles = dwTTOStyles;
   calPart.m_iTTOAlign = iTTOAlign;
-  pTheme->CalcTextRect(calPart, pRect);
+  GetThemeProvider()->CalcTextRect(calPart, pRect);
 }
 
 void CFWL_Widget::SetGrab(bool bSet) {
@@ -307,7 +283,6 @@ void CFWL_Widget::RepaintRect(const CFX_RectF& pRect) {
 
 void CFWL_Widget::DrawBackground(CXFA_Graphics* pGraphics,
                                  CFWL_Part iPartBk,
-                                 IFWL_ThemeProvider* pTheme,
                                  const CFX_Matrix* pMatrix) {
   CFWL_ThemeBackground param;
   param.m_pWidget = this;
@@ -316,12 +291,11 @@ void CFWL_Widget::DrawBackground(CXFA_Graphics* pGraphics,
   if (pMatrix)
     param.m_matrix = *pMatrix;
   param.m_PartRect = GetRelativeRect();
-  pTheme->DrawBackground(param);
+  GetThemeProvider()->DrawBackground(param);
 }
 
 void CFWL_Widget::DrawBorder(CXFA_Graphics* pGraphics,
                              CFWL_Part iPartBorder,
-                             IFWL_ThemeProvider* pTheme,
                              const CFX_Matrix& matrix) {
   CFWL_ThemeBackground param;
   param.m_pWidget = this;
@@ -329,7 +303,7 @@ void CFWL_Widget::DrawBorder(CXFA_Graphics* pGraphics,
   param.m_pGraphics = pGraphics;
   param.m_matrix = matrix;
   param.m_PartRect = GetRelativeRect();
-  pTheme->DrawBackground(param);
+  GetThemeProvider()->DrawBackground(param);
 }
 
 void CFWL_Widget::NotifyDriver() {

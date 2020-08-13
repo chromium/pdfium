@@ -40,8 +40,6 @@ void CFWL_PushButton::SetStates(uint32_t dwStates) {
 void CFWL_PushButton::Update() {
   if (IsLocked())
     return;
-  if (!GetProperties()->m_pThemeProvider)
-    GetProperties()->m_pThemeProvider = GetAvailableTheme();
 
   m_ClientRect = GetClientRect();
   m_CaptionRect = m_ClientRect;
@@ -52,17 +50,13 @@ void CFWL_PushButton::DrawWidget(CXFA_Graphics* pGraphics,
   if (!pGraphics)
     return;
 
-  IFWL_ThemeProvider* pTheme = GetProperties()->m_pThemeProvider.Get();
-  if (!pTheme)
-    return;
-
   if (HasBorder())
-    DrawBorder(pGraphics, CFWL_Part::Border, pTheme, matrix);
-  DrawBkground(pGraphics, pTheme, &matrix);
+    DrawBorder(pGraphics, CFWL_Part::Border, matrix);
+
+  DrawBkground(pGraphics, &matrix);
 }
 
 void CFWL_PushButton::DrawBkground(CXFA_Graphics* pGraphics,
-                                   IFWL_ThemeProvider* pTheme,
                                    const CFX_Matrix* pMatrix) {
   CFWL_ThemeBackground param;
   param.m_pWidget = this;
@@ -74,7 +68,7 @@ void CFWL_PushButton::DrawBkground(CXFA_Graphics* pGraphics,
   param.m_PartRect = m_ClientRect;
   if (GetProperties()->m_dwStates & FWL_WGTSTATE_Focused)
     param.m_pRtData = &m_CaptionRect;
-  pTheme->DrawBackground(param);
+  GetThemeProvider()->DrawBackground(param);
 }
 
 uint32_t CFWL_PushButton::GetPartStates() {

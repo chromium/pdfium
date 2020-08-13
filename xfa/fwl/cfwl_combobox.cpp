@@ -76,7 +76,6 @@ void CFWL_ComboBox::Update() {
 
   if (m_pEdit)
     ResetEditAlignment();
-  ResetTheme();
   Layout();
 }
 
@@ -97,7 +96,6 @@ FWL_WidgetHit CFWL_ComboBox::HitTest(const CFX_PointF& point) {
 
 void CFWL_ComboBox::DrawWidget(CXFA_Graphics* pGraphics,
                                const CFX_Matrix& matrix) {
-  IFWL_ThemeProvider* pTheme = GetProperties()->m_pThemeProvider.Get();
   pGraphics->SaveGraphState();
   pGraphics->ConcatMatrix(&matrix);
   if (!m_BtnRect.IsEmpty(0.1f)) {
@@ -107,7 +105,7 @@ void CFWL_ComboBox::DrawWidget(CXFA_Graphics* pGraphics,
     param.m_dwStates = m_iBtnState;
     param.m_pGraphics = pGraphics;
     param.m_PartRect = m_BtnRect;
-    pTheme->DrawBackground(param);
+    GetThemeProvider()->DrawBackground(param);
   }
   pGraphics->RestoreGraphState();
 
@@ -123,17 +121,6 @@ void CFWL_ComboBox::DrawWidget(CXFA_Graphics* pGraphics,
     mt.Concat(matrix);
     m_pListBox->DrawWidget(pGraphics, mt);
   }
-}
-
-void CFWL_ComboBox::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
-  if (!pThemeProvider)
-    return;
-
-  GetProperties()->m_pThemeProvider = pThemeProvider;
-  if (m_pListBox)
-    m_pListBox->SetThemeProvider(pThemeProvider);
-  if (m_pEdit)
-    m_pEdit->SetThemeProvider(pThemeProvider);
 }
 
 WideString CFWL_ComboBox::GetTextByIndex(int32_t iIndex) const {
@@ -281,10 +268,8 @@ void CFWL_ComboBox::SyncEditText(int32_t iListItem) {
 void CFWL_ComboBox::Layout() {
   m_ClientRect = GetClientRect();
   m_ContentRect = m_ClientRect;
-  IFWL_ThemeProvider* theme = GetAvailableTheme();
-  if (!theme)
-    return;
 
+  IFWL_ThemeProvider* theme = GetThemeProvider();
   float borderWidth = 1;
   float fBtn = theme->GetScrollBarWidth();
   if (!(GetStylesEx() & FWL_STYLEEXT_CMB_ReadOnly)) {
@@ -312,17 +297,6 @@ void CFWL_ComboBox::Layout() {
     m_pEdit->SetText(hItem ? hItem->GetText() : WideString());
   }
   m_pEdit->Update();
-}
-
-void CFWL_ComboBox::ResetTheme() {
-  if (!GetProperties()->m_pThemeProvider)
-    GetProperties()->m_pThemeProvider = GetAvailableTheme();
-
-  IFWL_ThemeProvider* pTheme = GetProperties()->m_pThemeProvider.Get();
-  if (m_pListBox && !m_pListBox->GetThemeProvider())
-    m_pListBox->SetThemeProvider(pTheme);
-  if (m_pEdit && !m_pEdit->GetThemeProvider())
-    m_pEdit->SetThemeProvider(pTheme);
 }
 
 void CFWL_ComboBox::ResetEditAlignment() {
@@ -408,7 +382,6 @@ void CFWL_ComboBox::InitComboList() {
   auto prop = std::make_unique<CFWL_WidgetProperties>();
   prop->m_dwStyles = FWL_WGTSTYLE_Border | FWL_WGTSTYLE_VScroll;
   prop->m_dwStates = FWL_WGTSTATE_Invisible;
-  prop->m_pThemeProvider = GetProperties()->m_pThemeProvider;
   m_pListBox =
       std::make_unique<CFWL_ComboList>(GetOwnerApp(), std::move(prop), this);
 }
@@ -417,11 +390,8 @@ void CFWL_ComboBox::InitComboEdit() {
   if (m_pEdit)
     return;
 
-  auto prop = std::make_unique<CFWL_WidgetProperties>();
-  prop->m_pThemeProvider = GetProperties()->m_pThemeProvider;
-
-  m_pEdit =
-      std::make_unique<CFWL_ComboEdit>(GetOwnerApp(), std::move(prop), this);
+  m_pEdit = std::make_unique<CFWL_ComboEdit>(
+      GetOwnerApp(), std::make_unique<CFWL_WidgetProperties>(), this);
 }
 
 void CFWL_ComboBox::OnProcessMessage(CFWL_Message* pMessage) {

@@ -14,6 +14,7 @@
 
 class CFWL_NoteDriver;
 class CFWL_WidgetMgr;
+class IFWL_ThemeProvider;
 
 enum FWL_KeyFlag {
   FWL_KEYFLAG_Ctrl = 1 << 0,
@@ -32,6 +33,7 @@ class CFWL_App {
     virtual ~AdapterIface() = default;
     virtual CFWL_WidgetMgr::AdapterIface* GetWidgetMgrAdapter() = 0;
     virtual TimerHandlerIface* GetTimerHandler() = 0;
+    virtual IFWL_ThemeProvider* GetThemeProvider() = 0;
   };
 
   explicit CFWL_App(AdapterIface* pAdapter);

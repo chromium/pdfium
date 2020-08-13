@@ -30,18 +30,15 @@ CFWL_DateTimePicker::CFWL_DateTimePicker(const CFWL_App* app)
   auto monthProp = std::make_unique<CFWL_WidgetProperties>();
   monthProp->m_dwStyles = FWL_WGTSTYLE_Popup | FWL_WGTSTYLE_Border;
   monthProp->m_dwStates = FWL_WGTSTATE_Invisible;
-  monthProp->m_pThemeProvider = GetProperties()->m_pThemeProvider;
   m_pMonthCal = std::make_unique<CFWL_MonthCalendar>(
       GetOwnerApp(), std::move(monthProp), this);
 
   m_pMonthCal->SetWidgetRect(
       CFX_RectF(0, 0, m_pMonthCal->GetAutosizedWidgetRect().Size()));
 
-  auto editProp = std::make_unique<CFWL_WidgetProperties>();
-  editProp->m_pThemeProvider = GetProperties()->m_pThemeProvider;
+  m_pEdit = std::make_unique<CFWL_DateTimeEdit>(
+      GetOwnerApp(), std::make_unique<CFWL_WidgetProperties>(), this);
 
-  m_pEdit = std::make_unique<CFWL_DateTimeEdit>(GetOwnerApp(),
-                                                std::move(editProp), this);
   RegisterEventTarget(m_pMonthCal.get());
   RegisterEventTarget(m_pEdit.get());
 }
@@ -58,21 +55,12 @@ void CFWL_DateTimePicker::Update() {
   if (IsLocked())
     return;
 
-  if (!GetProperties()->m_pThemeProvider)
-    GetProperties()->m_pThemeProvider = GetAvailableTheme();
-  m_pEdit->SetThemeProvider(GetProperties()->m_pThemeProvider.Get());
   m_ClientRect = GetClientRect();
   m_pEdit->SetWidgetRect(m_ClientRect);
   ResetEditAlignment();
   m_pEdit->Update();
-  if (!m_pMonthCal->GetThemeProvider())
-    m_pMonthCal->SetThemeProvider(GetProperties()->m_pThemeProvider.Get());
 
-  IFWL_ThemeProvider* theme = GetAvailableTheme();
-  if (!theme)
-    return;
-
-  m_fBtn = theme->GetScrollBarWidth();
+  m_fBtn = GetThemeProvider()->GetScrollBarWidth();
   CFX_RectF rtMonthCal = m_pMonthCal->GetAutosizedWidgetRect();
   CFX_RectF rtPopUp(rtMonthCal.left, rtMonthCal.top + kDateTimePickerHeight,
                     rtMonthCal.width, rtMonthCal.height);
@@ -101,18 +89,14 @@ void CFWL_DateTimePicker::DrawWidget(CXFA_Graphics* pGraphics,
   if (!pGraphics)
     return;
 
-  IFWL_ThemeProvider* pTheme = GetProperties()->m_pThemeProvider.Get();
-  if (!pTheme)
-    return;
-
   if (HasBorder())
-    DrawBorder(pGraphics, CFWL_Part::Border, pTheme, matrix);
+    DrawBorder(pGraphics, CFWL_Part::Border, matrix);
+
   if (!m_BtnRect.IsEmpty())
-    DrawDropDownButton(pGraphics, pTheme, &matrix);
+    DrawDropDownButton(pGraphics, &matrix);
 
   if (m_pEdit) {
     CFX_RectF rtEdit = m_pEdit->GetWidgetRect();
-
     CFX_Matrix mt(1, 0, 0, 1, rtEdit.left, rtEdit.top);
     mt.Concat(matrix);
     m_pEdit->DrawWidget(pGraphics, mt);
@@ -124,11 +108,6 @@ void CFWL_DateTimePicker::DrawWidget(CXFA_Graphics* pGraphics,
   CFX_Matrix mt(1, 0, 0, 1, rtMonth.left, rtMonth.top);
   mt.Concat(matrix);
   m_pMonthCal->DrawWidget(pGraphics, mt);
-}
-
-void CFWL_DateTimePicker::SetThemeProvider(IFWL_ThemeProvider* pTP) {
-  GetProperties()->m_pThemeProvider = pTP;
-  m_pMonthCal->SetThemeProvider(pTP);
 }
 
 void CFWL_DateTimePicker::GetCurSel(int32_t& iYear,
@@ -198,7 +177,6 @@ void CFWL_DateTimePicker::ModifyEditStylesEx(uint32_t dwStylesExAdded,
 }
 
 void CFWL_DateTimePicker::DrawDropDownButton(CXFA_Graphics* pGraphics,
-                                             IFWL_ThemeProvider* pTheme,
                                              const CFX_Matrix* pMatrix) {
   CFWL_ThemeBackground param;
   param.m_pWidget = this;
@@ -208,7 +186,7 @@ void CFWL_DateTimePicker::DrawDropDownButton(CXFA_Graphics* pGraphics,
   param.m_PartRect = m_BtnRect;
   if (pMatrix)
     param.m_matrix.Concat(*pMatrix);
-  pTheme->DrawBackground(param);
+  GetThemeProvider()->DrawBackground(param);
 }
 
 WideString CFWL_DateTimePicker::FormatDateString(int32_t iYear,

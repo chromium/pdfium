@@ -63,16 +63,12 @@ class CFWL_ScrollBar final : public CFWL_Widget,
     return !!(GetProperties()->m_dwStyleExes & FWL_STYLEEXT_SCB_Vert);
   }
   void DrawTrack(CXFA_Graphics* pGraphics,
-                 IFWL_ThemeProvider* pTheme,
                  bool bLower,
                  const CFX_Matrix* pMatrix);
   void DrawArrowBtn(CXFA_Graphics* pGraphics,
-                    IFWL_ThemeProvider* pTheme,
                     bool bMinBtn,
                     const CFX_Matrix* pMatrix);
-  void DrawThumb(CXFA_Graphics* pGraphics,
-                 IFWL_ThemeProvider* pTheme,
-                 const CFX_Matrix* pMatrix);
+  void DrawThumb(CXFA_Graphics* pGraphics, const CFX_Matrix* pMatrix);
   void Layout();
   void CalcButtonLen();
   CFX_RectF CalcMinButtonRect();

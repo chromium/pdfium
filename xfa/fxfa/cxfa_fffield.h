@@ -73,7 +73,6 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   bool PtInActiveRect(const CFX_PointF& point) override;
 
   virtual void SetFWLRect();
-  void SetFWLThemeProvider();
   CFWL_Widget* GetNormalWidget();
   const CFWL_Widget* GetNormalWidget() const;
   void SetNormalWidget(std::unique_ptr<CFWL_Widget> widget);

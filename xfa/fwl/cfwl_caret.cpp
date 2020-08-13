@@ -41,12 +41,8 @@ void CFWL_Caret::DrawWidget(CXFA_Graphics* pGraphics,
                             const CFX_Matrix& matrix) {
   if (!pGraphics)
     return;
-  if (!GetProperties()->m_pThemeProvider)
-    GetProperties()->m_pThemeProvider = GetAvailableTheme();
-  if (!GetProperties()->m_pThemeProvider)
-    return;
 
-  DrawCaretBK(pGraphics, GetProperties()->m_pThemeProvider.Get(), &matrix);
+  DrawCaretBK(pGraphics, &matrix);
 }
 
 void CFWL_Caret::ShowCaret() {
@@ -63,7 +59,6 @@ void CFWL_Caret::HideCaret() {
 }
 
 void CFWL_Caret::DrawCaretBK(CXFA_Graphics* pGraphics,
-                             IFWL_ThemeProvider* pTheme,
                              const CFX_Matrix* pMatrix) {
   if (!(GetProperties()->m_dwStates & kStateHighlight))
     return;
@@ -76,7 +71,8 @@ void CFWL_Caret::DrawCaretBK(CXFA_Graphics* pGraphics,
   param.m_dwStates = CFWL_PartState_HightLight;
   if (pMatrix)
     param.m_matrix.Concat(*pMatrix);
-  pTheme->DrawBackground(param);
+
+  GetThemeProvider()->DrawBackground(param);
 }
 
 void CFWL_Caret::OnProcessMessage(CFWL_Message* pMessage) {}

@@ -83,9 +83,8 @@ class CFWL_Widget : public Observable, public IFWL_WidgetDelegate {
   virtual FWL_WidgetHit HitTest(const CFX_PointF& point);
   virtual void DrawWidget(CXFA_Graphics* pGraphics,
                           const CFX_Matrix& matrix) = 0;
-  virtual void SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
 
-  // IFWL_WidgetDelegate.
+  // IFWL_WidgetDelegate:
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
   void OnDrawWidget(CXFA_Graphics* pGraphics,
@@ -110,10 +109,7 @@ class CFWL_Widget : public Observable, public IFWL_WidgetDelegate {
 
   CFX_PointF TransformTo(CFWL_Widget* pWidget, const CFX_PointF& point);
   CFX_Matrix GetMatrix() const;
-  IFWL_ThemeProvider* GetThemeProvider() const {
-    return m_pProperties->m_pThemeProvider.Get();
-  }
-
+  IFWL_ThemeProvider* GetThemeProvider() const;
   void SetDelegate(IFWL_WidgetDelegate* delegate) { m_pDelegate = delegate; }
   IFWL_WidgetDelegate* GetDelegate() {
     return m_pDelegate ? m_pDelegate.Get() : this;
@@ -142,16 +138,13 @@ class CFWL_Widget : public Observable, public IFWL_WidgetDelegate {
   float GetCXBorderSize() const;
   float GetCYBorderSize() const;
   CFX_RectF GetRelativeRect() const;
-  IFWL_ThemeProvider* GetAvailableTheme() const;
   CFWL_WidgetProperties* GetProperties() { return m_pProperties.get(); }
   const CFWL_WidgetProperties* GetProperties() const {
     return m_pProperties.get();
   }
   CFX_SizeF CalcTextSize(const WideString& wsText,
-                         IFWL_ThemeProvider* pTheme,
                          bool bMultiLine);
   void CalcTextRect(const WideString& wsText,
-                    IFWL_ThemeProvider* pTheme,
                     const FDE_TextStyle& dwTTOStyles,
                     FDE_TextAlignment iTTOAlign,
                     CFX_RectF* pRect);
@@ -161,7 +154,6 @@ class CFWL_Widget : public Observable, public IFWL_WidgetDelegate {
   void DispatchEvent(CFWL_Event* pEvent);
   void DrawBorder(CXFA_Graphics* pGraphics,
                   CFWL_Part iPartBorder,
-                  IFWL_ThemeProvider* pTheme,
                   const CFX_Matrix& pMatrix);
 
  private:
@@ -175,7 +167,6 @@ class CFWL_Widget : public Observable, public IFWL_WidgetDelegate {
   CFX_SizeF GetOffsetFromParent(CFWL_Widget* pParent);
   void DrawBackground(CXFA_Graphics* pGraphics,
                       CFWL_Part iPartBk,
-                      IFWL_ThemeProvider* pTheme,
                       const CFX_Matrix* pMatrix);
   void NotifyDriver();
   bool IsParent(CFWL_Widget* pParent);

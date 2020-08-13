@@ -33,7 +33,6 @@ class CFWL_PushButton final : public CFWL_Widget {
 
  private:
   void DrawBkground(CXFA_Graphics* pGraphics,
-                    IFWL_ThemeProvider* pTheme,
                     const CFX_Matrix* pMatrix);
   uint32_t GetPartStates();
   void UpdateTextOutStyles();

@@ -9,10 +9,7 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fwl/fwl_widgetdef.h"
-
-class IFWL_ThemeProvider;
 
 class CFWL_WidgetProperties {
  public:
@@ -23,7 +20,6 @@ class CFWL_WidgetProperties {
   uint32_t m_dwStyleExes = 0;
   uint32_t m_dwStates = 0;
   CFX_RectF m_WidgetRect;
-  UnownedPtr<IFWL_ThemeProvider> m_pThemeProvider;
 };
 
 #endif  // XFA_FWL_CFWL_WIDGETPROPERTIES_H_

@@ -49,7 +49,6 @@ class CFWL_ComboBox final : public CFWL_Widget {
   void Update() override;
   FWL_WidgetHit HitTest(const CFX_PointF& point) override;
   void DrawWidget(CXFA_Graphics* pGraphics, const CFX_Matrix& matrix) override;
-  void SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
   void OnDrawWidget(CXFA_Graphics* pGraphics,
@@ -102,7 +101,6 @@ class CFWL_ComboBox final : public CFWL_Widget {
   void MatchEditText();
   void SyncEditText(int32_t iListItem);
   void Layout();
-  void ResetTheme();
   void ResetEditAlignment();
   void ResetListItemAlignment();
   void GetPopupPos(float fMinHeight,

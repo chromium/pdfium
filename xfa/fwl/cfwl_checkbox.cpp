@@ -46,8 +46,6 @@ void CFWL_CheckBox::SetBoxSize(float fHeight) {
 void CFWL_CheckBox::Update() {
   if (IsLocked())
     return;
-  if (!GetProperties()->m_pThemeProvider)
-    GetProperties()->m_pThemeProvider = GetAvailableTheme();
 
   UpdateTextOutStyles();
   Layout();
@@ -58,15 +56,10 @@ void CFWL_CheckBox::DrawWidget(CXFA_Graphics* pGraphics,
   if (!pGraphics)
     return;
 
-  IFWL_ThemeProvider* pTheme = GetProperties()->m_pThemeProvider.Get();
-  if (!pTheme)
-    return;
-
   if (HasBorder())
-    DrawBorder(pGraphics, CFWL_Part::Border, pTheme, matrix);
+    DrawBorder(pGraphics, CFWL_Part::Border, matrix);
 
   int32_t dwStates = GetPartStates();
-
   CFWL_ThemeBackground param;
   param.m_pWidget = this;
   param.m_iPart = CFWL_Part::Background;
@@ -75,8 +68,9 @@ void CFWL_CheckBox::DrawWidget(CXFA_Graphics* pGraphics,
   param.m_matrix.Concat(matrix);
   param.m_PartRect = m_ClientRect;
   if (GetProperties()->m_dwStates & FWL_WGTSTATE_Focused)
-
     param.m_pRtData = &m_FocusRect;
+
+  IFWL_ThemeProvider* pTheme = GetThemeProvider();
   pTheme->DrawBackground(param);
 
   param.m_iPart = CFWL_Part::CheckBox;
@@ -127,9 +121,7 @@ void CFWL_CheckBox::Layout() {
   m_CaptionRect.Inflate(-kCaptionMargin, -kCaptionMargin);
 
   CFX_RectF rtFocus = m_CaptionRect;
-  CalcTextRect(L"Check box", GetProperties()->m_pThemeProvider.Get(),
-               m_TTOStyles, m_iTTOAlign, &rtFocus);
-
+  CalcTextRect(L"Check box", m_TTOStyles, m_iTTOAlign, &rtFocus);
   m_FocusRect = CFX_RectF(m_CaptionRect.TopLeft(),
                           std::max(m_CaptionRect.width, rtFocus.width),
                           std::min(m_CaptionRect.height, rtFocus.height));
