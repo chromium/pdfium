@@ -116,11 +116,7 @@ FPDFSignatureObj_GetSubFilter(FPDF_SIGNATURE signature,
     return 0;
 
   ByteString sub_filter = value_dict->GetNameFor("SubFilter");
-  unsigned long sub_filter_len = sub_filter.GetLength() + 1;
-  if (buffer && length >= sub_filter_len)
-    memcpy(buffer, sub_filter.c_str(), sub_filter_len);
-
-  return sub_filter_len;
+  return NulTerminateMaybeCopyAndReturnLength(sub_filter, buffer, length);
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
