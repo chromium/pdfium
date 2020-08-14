@@ -11,7 +11,7 @@
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fwl/cfwl_themebackground.h"
-#include "xfa/fwl/cfwl_widgetproperties.h"
+#include "xfa/fwl/fwl_widgetdef.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
 
 namespace {
@@ -23,9 +23,9 @@ constexpr int kStateHighlight = (1 << 0);
 }  // namespace
 
 CFWL_Caret::CFWL_Caret(const CFWL_App* app,
-                       std::unique_ptr<CFWL_WidgetProperties> properties,
+                       const Properties& properties,
                        CFWL_Widget* pOuter)
-    : CFWL_Widget(app, std::move(properties), pOuter) {
+    : CFWL_Widget(app, properties, pOuter) {
   SetStates(kStateHighlight);
 }
 
@@ -60,7 +60,7 @@ void CFWL_Caret::HideCaret() {
 
 void CFWL_Caret::DrawCaretBK(CXFA_Graphics* pGraphics,
                              const CFX_Matrix* pMatrix) {
-  if (!(GetProperties()->m_dwStates & kStateHighlight))
+  if (!(m_Properties.m_dwStates & kStateHighlight))
     return;
 
   CFWL_ThemeBackground param;

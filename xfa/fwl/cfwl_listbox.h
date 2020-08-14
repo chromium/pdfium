@@ -15,7 +15,6 @@
 #include "xfa/fwl/cfwl_listbox.h"
 #include "xfa/fwl/cfwl_listitem.h"
 #include "xfa/fwl/cfwl_widget.h"
-#include "xfa/fwl/cfwl_widgetproperties.h"
 
 #define FWL_STYLEEXT_LTB_MultiSelection (1L << 0)
 #define FWL_STYLEEXT_LTB_LeftAlign (0L << 4)
@@ -33,9 +32,9 @@ class CFX_DIBitmap;
 
 class CFWL_ListBox : public CFWL_Widget {
  public:
-  explicit CFWL_ListBox(const CFWL_App* pApp,
-                        std::unique_ptr<CFWL_WidgetProperties> properties,
-                        CFWL_Widget* pOuter);
+  CFWL_ListBox(const CFWL_App* pApp,
+               const Properties& properties,
+               CFWL_Widget* pOuter);
   ~CFWL_ListBox() override;
 
   // CFWL_Widget

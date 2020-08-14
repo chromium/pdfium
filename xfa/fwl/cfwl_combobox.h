@@ -12,12 +12,11 @@
 #include "xfa/fwl/cfwl_comboedit.h"
 #include "xfa/fwl/cfwl_combolist.h"
 #include "xfa/fwl/cfwl_listbox.h"
+#include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fxgraphics/cxfa_graphics.h"
 
-class CFWL_WidgetProperties;
 class CFWL_ComboBox;
 class CFWL_ListBox;
-class CFWL_Widget;
 
 #define FWL_STYLEEXT_CMB_DropDown (1L << 0)
 #define FWL_STYLEEXT_CMB_Sort (1L << 1)
@@ -96,7 +95,7 @@ class CFWL_ComboBox final : public CFWL_Widget {
 
  private:
   bool IsDropDownStyle() const {
-    return !!(GetProperties()->m_dwStyleExes & FWL_STYLEEXT_CMB_DropDown);
+    return !!(m_Properties.m_dwStyleExes & FWL_STYLEEXT_CMB_DropDown);
   }
   void MatchEditText();
   void SyncEditText(int32_t iListItem);

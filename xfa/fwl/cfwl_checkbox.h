@@ -9,7 +9,6 @@
 
 #include "xfa/fwl/cfwl_event.h"
 #include "xfa/fwl/cfwl_widget.h"
-#include "xfa/fwl/cfwl_widgetproperties.h"
 
 #define FWL_STYLEEXT_CKB_3State (1L << 6)
 #define FWL_STYLEEXT_CKB_RadioButton (1L << 7)
@@ -28,8 +27,6 @@
 #define FWL_STATE_CKB_CheckMask (3L << (FWL_WGTSTATE_MAX + 2))
 
 class CFWL_MessageMouse;
-class CFWL_WidgetProperties;
-class CFWL_Widget;
 
 class CFWL_CheckBox final : public CFWL_Widget {
  public:

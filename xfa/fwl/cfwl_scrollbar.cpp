@@ -27,11 +27,10 @@ const float kMinThumbSize = 5.0f;
 
 }  // namespace
 
-CFWL_ScrollBar::CFWL_ScrollBar(
-    const CFWL_App* app,
-    std::unique_ptr<CFWL_WidgetProperties> properties,
-    CFWL_Widget* pOuter)
-    : CFWL_Widget(app, std::move(properties), pOuter) {}
+CFWL_ScrollBar::CFWL_ScrollBar(const CFWL_App* app,
+                               const Properties& properties,
+                               CFWL_Widget* pOuter)
+    : CFWL_Widget(app, properties, pOuter) {}
 
 CFWL_ScrollBar::~CFWL_ScrollBar() = default;
 
@@ -80,7 +79,7 @@ void CFWL_ScrollBar::DrawTrack(CXFA_Graphics* pGraphics,
   CFWL_ThemeBackground param;
   param.m_pWidget = this;
   param.m_iPart = bLower ? CFWL_Part::LowerTrack : CFWL_Part::UpperTrack;
-  param.m_dwStates = (GetProperties()->m_dwStates & FWL_WGTSTATE_Disabled)
+  param.m_dwStates = (m_Properties.m_dwStates & FWL_WGTSTATE_Disabled)
                          ? CFWL_PartState_Disabled
                          : (bLower ? m_iMinTrackState : m_iMaxTrackState);
   param.m_pGraphics = pGraphics;
@@ -95,7 +94,7 @@ void CFWL_ScrollBar::DrawArrowBtn(CXFA_Graphics* pGraphics,
   CFWL_ThemeBackground param;
   param.m_pWidget = this;
   param.m_iPart = bMinBtn ? CFWL_Part::ForeArrow : CFWL_Part::BackArrow;
-  param.m_dwStates = (GetProperties()->m_dwStates & FWL_WGTSTATE_Disabled)
+  param.m_dwStates = (m_Properties.m_dwStates & FWL_WGTSTATE_Disabled)
                          ? CFWL_PartState_Disabled
                          : (bMinBtn ? m_iMinButtonState : m_iMaxButtonState);
   param.m_pGraphics = pGraphics;
@@ -110,7 +109,7 @@ void CFWL_ScrollBar::DrawThumb(CXFA_Graphics* pGraphics,
   CFWL_ThemeBackground param;
   param.m_pWidget = this;
   param.m_iPart = CFWL_Part::Thumb;
-  param.m_dwStates = (GetProperties()->m_dwStates & FWL_WGTSTATE_Disabled)
+  param.m_dwStates = (m_Properties.m_dwStates & FWL_WGTSTATE_Disabled)
                          ? CFWL_PartState_Disabled
                          : m_iThumbButtonState;
   param.m_pGraphics = pGraphics;

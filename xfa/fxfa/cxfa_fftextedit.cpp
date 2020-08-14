@@ -49,7 +49,7 @@ bool CXFA_FFTextEdit::LoadWidget() {
   RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
 
   auto pNewWidget = std::make_unique<CFWL_Edit>(
-      GetFWLApp(), std::make_unique<CFWL_WidgetProperties>(), nullptr);
+      GetFWLApp(), CFWL_Widget::Properties(), nullptr);
   CFWL_Edit* pFWLEdit = pNewWidget.get();
   SetNormalWidget(std::move(pNewWidget));
   pFWLEdit->SetAdapterIface(this);

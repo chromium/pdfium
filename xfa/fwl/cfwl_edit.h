@@ -40,13 +40,12 @@
 
 class CFWL_Edit;
 class CFWL_MessageMouse;
-class CFWL_WidgetProperties;
 class CFWL_Caret;
 
 class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
  public:
   CFWL_Edit(const CFWL_App* app,
-            std::unique_ptr<CFWL_WidgetProperties> properties,
+            const Properties& properties,
             CFWL_Widget* pOuter);
   ~CFWL_Edit() override;
 

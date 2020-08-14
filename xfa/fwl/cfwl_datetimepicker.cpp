@@ -24,20 +24,20 @@ const int kDateTimePickerHeight = 20;
 
 }  // namespace
 CFWL_DateTimePicker::CFWL_DateTimePicker(const CFWL_App* app)
-    : CFWL_Widget(app, std::make_unique<CFWL_WidgetProperties>(), nullptr) {
-  GetProperties()->m_dwStyleExes = FWL_STYLEEXT_DTP_ShortDateFormat;
+    : CFWL_Widget(app, Properties(), nullptr) {
+  m_Properties.m_dwStyleExes = FWL_STYLEEXT_DTP_ShortDateFormat;
 
-  auto monthProp = std::make_unique<CFWL_WidgetProperties>();
-  monthProp->m_dwStyles = FWL_WGTSTYLE_Popup | FWL_WGTSTYLE_Border;
-  monthProp->m_dwStates = FWL_WGTSTATE_Invisible;
-  m_pMonthCal = std::make_unique<CFWL_MonthCalendar>(
-      GetOwnerApp(), std::move(monthProp), this);
+  Properties monthProp;
+  monthProp.m_dwStyles = FWL_WGTSTYLE_Popup | FWL_WGTSTYLE_Border;
+  monthProp.m_dwStates = FWL_WGTSTATE_Invisible;
+  m_pMonthCal =
+      std::make_unique<CFWL_MonthCalendar>(GetOwnerApp(), monthProp, this);
 
   m_pMonthCal->SetWidgetRect(
       CFX_RectF(0, 0, m_pMonthCal->GetAutosizedWidgetRect().Size()));
 
-  m_pEdit = std::make_unique<CFWL_DateTimeEdit>(
-      GetOwnerApp(), std::make_unique<CFWL_WidgetProperties>(), this);
+  m_pEdit =
+      std::make_unique<CFWL_DateTimeEdit>(GetOwnerApp(), Properties(), this);
 
   RegisterEventTarget(m_pMonthCal.get());
   RegisterEventTarget(m_pEdit.get());
@@ -190,7 +190,7 @@ void CFWL_DateTimePicker::DrawDropDownButton(CXFA_Graphics* pGraphics,
 WideString CFWL_DateTimePicker::FormatDateString(int32_t iYear,
                                                  int32_t iMonth,
                                                  int32_t iDay) {
-  if (GetProperties()->m_dwStyleExes & FWL_STYLEEXT_DTP_ShortDateFormat)
+  if (m_Properties.m_dwStyleExes & FWL_STYLEEXT_DTP_ShortDateFormat)
     return WideString::Format(L"%d-%d-%d", iYear, iMonth, iDay);
 
   return WideString::Format(L"%d Year %d Month %d Day", iYear, iMonth, iDay);
@@ -240,7 +240,7 @@ void CFWL_DateTimePicker::ResetEditAlignment() {
     return;
 
   uint32_t dwAdd = 0;
-  switch (GetProperties()->m_dwStyleExes & FWL_STYLEEXT_DTP_EditHAlignMask) {
+  switch (m_Properties.m_dwStyleExes & FWL_STYLEEXT_DTP_EditHAlignMask) {
     case FWL_STYLEEXT_DTP_EditHCenter: {
       dwAdd |= FWL_STYLEEXT_EDT_HCenter;
       break;
@@ -254,7 +254,7 @@ void CFWL_DateTimePicker::ResetEditAlignment() {
       break;
     }
   }
-  switch (GetProperties()->m_dwStyleExes & FWL_STYLEEXT_DTP_EditVAlignMask) {
+  switch (m_Properties.m_dwStyleExes & FWL_STYLEEXT_DTP_EditVAlignMask) {
     case FWL_STYLEEXT_DTP_EditVCenter: {
       dwAdd |= FWL_STYLEEXT_EDT_VCenter;
       break;
@@ -268,7 +268,7 @@ void CFWL_DateTimePicker::ResetEditAlignment() {
       break;
     }
   }
-  if (GetProperties()->m_dwStyleExes & FWL_STYLEEXT_DTP_EditJustified)
+  if (m_Properties.m_dwStyleExes & FWL_STYLEEXT_DTP_EditJustified)
     dwAdd |= FWL_STYLEEXT_EDT_Justified;
 
   m_pEdit->ModifyStylesEx(dwAdd, FWL_STYLEEXT_EDT_HAlignMask |
@@ -300,7 +300,7 @@ void CFWL_DateTimePicker::ProcessSelChanged(int32_t iYear,
 }
 
 bool CFWL_DateTimePicker::NeedsToShowButton() const {
-  return GetProperties()->m_dwStates & FWL_WGTSTATE_Focused ||
+  return m_Properties.m_dwStates & FWL_WGTSTATE_Focused ||
          m_pMonthCal->GetStates() & FWL_WGTSTATE_Focused ||
          m_pEdit->GetStates() & FWL_WGTSTATE_Focused;
 }
@@ -359,7 +359,7 @@ void CFWL_DateTimePicker::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
 
   CFX_RectF rtInvalidate(m_BtnRect);
   if (bSet) {
-    GetProperties()->m_dwStates |= FWL_WGTSTATE_Focused;
+    m_Properties.m_dwStates |= FWL_WGTSTATE_Focused;
     if (m_pEdit && !(m_pEdit->GetStylesEx() & FWL_STYLEEXT_EDT_ReadOnly)) {
       m_BtnRect =
           CFX_RectF(m_WidgetRect.width, 0, m_fBtn, m_WidgetRect.height - 1);
@@ -368,7 +368,7 @@ void CFWL_DateTimePicker::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
     pMsg->SetDstTarget(m_pEdit.get());
     m_pEdit->GetDelegate()->OnProcessMessage(pMsg);
   } else {
-    GetProperties()->m_dwStates &= ~FWL_WGTSTATE_Focused;
+    m_Properties.m_dwStates &= ~FWL_WGTSTATE_Focused;
     m_BtnRect = CFX_RectF();
     if (IsMonthCalendarVisible())
       ShowMonthCalendar(false);

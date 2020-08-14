@@ -14,9 +14,6 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fwl/cfwl_eventscroll.h"
 #include "xfa/fwl/cfwl_widget.h"
-#include "xfa/fwl/cfwl_widgetproperties.h"
-
-class CFWL_Widget;
 
 #define FWL_STYLEEXT_SCB_Horz (0L << 0)
 #define FWL_STYLEEXT_SCB_Vert (1L << 0)
@@ -25,7 +22,7 @@ class CFWL_ScrollBar final : public CFWL_Widget,
                              public CFX_Timer::CallbackIface {
  public:
   CFWL_ScrollBar(const CFWL_App* app,
-                 std::unique_ptr<CFWL_WidgetProperties> properties,
+                 const Properties& properties,
                  CFWL_Widget* pOuter);
   ~CFWL_ScrollBar() override;
 
@@ -60,7 +57,7 @@ class CFWL_ScrollBar final : public CFWL_Widget,
 
  private:
   bool IsVertical() const {
-    return !!(GetProperties()->m_dwStyleExes & FWL_STYLEEXT_SCB_Vert);
+    return !!(m_Properties.m_dwStyleExes & FWL_STYLEEXT_SCB_Vert);
   }
   void DrawTrack(CXFA_Graphics* pGraphics,
                  bool bLower,

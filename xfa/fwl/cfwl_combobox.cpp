@@ -29,7 +29,7 @@
 #include "xfa/fwl/ifwl_themeprovider.h"
 
 CFWL_ComboBox::CFWL_ComboBox(const CFWL_App* app)
-    : CFWL_Widget(app, std::make_unique<CFWL_WidgetProperties>(), nullptr) {
+    : CFWL_Widget(app, Properties(), nullptr) {
   InitComboList();
   InitComboEdit();
 }
@@ -61,7 +61,7 @@ void CFWL_ComboBox::ModifyStylesEx(uint32_t dwStylesExAdded,
   bool bDelDropDown = !!(dwStylesExRemoved & FWL_STYLEEXT_CMB_DropDown);
 
   dwStylesExRemoved &= ~FWL_STYLEEXT_CMB_DropDown;
-  GetProperties()->m_dwStyleExes |= FWL_STYLEEXT_CMB_DropDown;
+  m_Properties.m_dwStyleExes |= FWL_STYLEEXT_CMB_DropDown;
 
   if (bAddDropDown)
     m_pEdit->ModifyStylesEx(0, FWL_STYLEEXT_EDT_ReadOnly);
@@ -302,7 +302,7 @@ void CFWL_ComboBox::ResetEditAlignment() {
     return;
 
   uint32_t dwAdd = 0;
-  switch (GetProperties()->m_dwStyleExes & FWL_STYLEEXT_CMB_EditHAlignMask) {
+  switch (m_Properties.m_dwStyleExes & FWL_STYLEEXT_CMB_EditHAlignMask) {
     case FWL_STYLEEXT_CMB_EditHCenter: {
       dwAdd |= FWL_STYLEEXT_EDT_HCenter;
       break;
@@ -312,7 +312,7 @@ void CFWL_ComboBox::ResetEditAlignment() {
       break;
     }
   }
-  switch (GetProperties()->m_dwStyleExes & FWL_STYLEEXT_CMB_EditVAlignMask) {
+  switch (m_Properties.m_dwStyleExes & FWL_STYLEEXT_CMB_EditVAlignMask) {
     case FWL_STYLEEXT_CMB_EditVCenter: {
       dwAdd |= FWL_STYLEEXT_EDT_VCenter;
       break;
@@ -326,7 +326,7 @@ void CFWL_ComboBox::ResetEditAlignment() {
       break;
     }
   }
-  if (GetProperties()->m_dwStyleExes & FWL_STYLEEXT_CMB_EditJustified)
+  if (m_Properties.m_dwStyleExes & FWL_STYLEEXT_CMB_EditJustified)
     dwAdd |= FWL_STYLEEXT_EDT_Justified;
 
   m_pEdit->ModifyStylesEx(dwAdd, FWL_STYLEEXT_EDT_HAlignMask |
@@ -339,7 +339,7 @@ void CFWL_ComboBox::ResetListItemAlignment() {
     return;
 
   uint32_t dwAdd = 0;
-  switch (GetProperties()->m_dwStyleExes & FWL_STYLEEXT_CMB_ListItemAlignMask) {
+  switch (m_Properties.m_dwStyleExes & FWL_STYLEEXT_CMB_ListItemAlignMask) {
     case FWL_STYLEEXT_CMB_ListItemCenterAlign: {
       dwAdd |= FWL_STYLEEXT_LTB_CenterAlign;
       break;
@@ -377,19 +377,17 @@ void CFWL_ComboBox::InitComboList() {
   if (m_pListBox)
     return;
 
-  auto prop = std::make_unique<CFWL_WidgetProperties>();
-  prop->m_dwStyles = FWL_WGTSTYLE_Border | FWL_WGTSTYLE_VScroll;
-  prop->m_dwStates = FWL_WGTSTATE_Invisible;
-  m_pListBox =
-      std::make_unique<CFWL_ComboList>(GetOwnerApp(), std::move(prop), this);
+  Properties prop;
+  prop.m_dwStyles = FWL_WGTSTYLE_Border | FWL_WGTSTYLE_VScroll;
+  prop.m_dwStates = FWL_WGTSTATE_Invisible;
+  m_pListBox = std::make_unique<CFWL_ComboList>(GetOwnerApp(), prop, this);
 }
 
 void CFWL_ComboBox::InitComboEdit() {
   if (m_pEdit)
     return;
 
-  m_pEdit = std::make_unique<CFWL_ComboEdit>(
-      GetOwnerApp(), std::make_unique<CFWL_WidgetProperties>(), this);
+  m_pEdit = std::make_unique<CFWL_ComboEdit>(GetOwnerApp(), Properties(), this);
 }
 
 void CFWL_ComboBox::OnProcessMessage(CFWL_Message* pMessage) {
@@ -492,13 +490,13 @@ void CFWL_ComboBox::OnLButtonDown(CFWL_MessageMouse* pMsg) {
 
 void CFWL_ComboBox::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
   if (bSet) {
-    GetProperties()->m_dwStates |= FWL_WGTSTATE_Focused;
+    m_Properties.m_dwStates |= FWL_WGTSTATE_Focused;
     if ((m_pEdit->GetStates() & FWL_WGTSTATE_Focused) == 0) {
       CFWL_MessageSetFocus msg(nullptr, m_pEdit.get());
       m_pEdit->GetDelegate()->OnProcessMessage(&msg);
     }
   } else {
-    GetProperties()->m_dwStates &= ~FWL_WGTSTATE_Focused;
+    m_Properties.m_dwStates &= ~FWL_WGTSTATE_Focused;
     ShowDropList(false);
     CFWL_MessageKillFocus msg(m_pEdit.get());
     m_pEdit->GetDelegate()->OnProcessMessage(&msg);

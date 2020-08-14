@@ -6,7 +6,6 @@
 
 #include "xfa/fwl/cfwl_pushbutton.h"
 
-#include <memory>
 #include <utility>
 
 #include "xfa/fde/cfde_textout.h"
@@ -21,7 +20,7 @@
 #include "xfa/fwl/ifwl_themeprovider.h"
 
 CFWL_PushButton::CFWL_PushButton(const CFWL_App* app)
-    : CFWL_Widget(app, std::make_unique<CFWL_WidgetProperties>(), nullptr) {}
+    : CFWL_Widget(app, Properties(), nullptr) {}
 
 CFWL_PushButton::~CFWL_PushButton() = default;
 
@@ -31,7 +30,7 @@ FWL_Type CFWL_PushButton::GetClassID() const {
 
 void CFWL_PushButton::SetStates(uint32_t dwStates) {
   if (dwStates & FWL_WGTSTATE_Disabled) {
-    GetProperties()->m_dwStates = FWL_WGTSTATE_Disabled;
+    m_Properties.m_dwStates = FWL_WGTSTATE_Disabled;
     return;
   }
   CFWL_Widget::SetStates(dwStates);
@@ -66,20 +65,20 @@ void CFWL_PushButton::DrawBkground(CXFA_Graphics* pGraphics,
   if (pMatrix)
     param.m_matrix.Concat(*pMatrix);
   param.m_PartRect = m_ClientRect;
-  if (GetProperties()->m_dwStates & FWL_WGTSTATE_Focused)
+  if (m_Properties.m_dwStates & FWL_WGTSTATE_Focused)
     param.m_pRtData = &m_CaptionRect;
   GetThemeProvider()->DrawBackground(param);
 }
 
 uint32_t CFWL_PushButton::GetPartStates() {
   uint32_t dwStates = CFWL_PartState_Normal;
-  if (GetProperties()->m_dwStates & FWL_WGTSTATE_Focused)
+  if (m_Properties.m_dwStates & FWL_WGTSTATE_Focused)
     dwStates |= CFWL_PartState_Focused;
-  if (GetProperties()->m_dwStates & FWL_WGTSTATE_Disabled)
+  if (m_Properties.m_dwStates & FWL_WGTSTATE_Disabled)
     dwStates = CFWL_PartState_Disabled;
-  else if (GetProperties()->m_dwStates & FWL_STATE_PSB_Pressed)
+  else if (m_Properties.m_dwStates & FWL_STATE_PSB_Pressed)
     dwStates |= CFWL_PartState_Pressed;
-  else if (GetProperties()->m_dwStates & FWL_STATE_PSB_Hovered)
+  else if (m_Properties.m_dwStates & FWL_STATE_PSB_Hovered)
     dwStates |= CFWL_PartState_Hovered;
   return dwStates;
 }
@@ -136,28 +135,28 @@ void CFWL_PushButton::OnDrawWidget(CXFA_Graphics* pGraphics,
 
 void CFWL_PushButton::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
   if (bSet)
-    GetProperties()->m_dwStates |= FWL_WGTSTATE_Focused;
+    m_Properties.m_dwStates |= FWL_WGTSTATE_Focused;
   else
-    GetProperties()->m_dwStates &= ~FWL_WGTSTATE_Focused;
+    m_Properties.m_dwStates &= ~FWL_WGTSTATE_Focused;
 
   RepaintRect(m_ClientRect);
 }
 
 void CFWL_PushButton::OnLButtonDown(CFWL_MessageMouse* pMsg) {
   m_bBtnDown = true;
-  GetProperties()->m_dwStates |= FWL_STATE_PSB_Hovered;
-  GetProperties()->m_dwStates |= FWL_STATE_PSB_Pressed;
+  m_Properties.m_dwStates |= FWL_STATE_PSB_Hovered;
+  m_Properties.m_dwStates |= FWL_STATE_PSB_Pressed;
   RepaintRect(m_ClientRect);
 }
 
 void CFWL_PushButton::OnLButtonUp(CFWL_MessageMouse* pMsg) {
   m_bBtnDown = false;
   if (m_ClientRect.Contains(pMsg->m_pos)) {
-    GetProperties()->m_dwStates &= ~FWL_STATE_PSB_Pressed;
-    GetProperties()->m_dwStates |= FWL_STATE_PSB_Hovered;
+    m_Properties.m_dwStates &= ~FWL_STATE_PSB_Pressed;
+    m_Properties.m_dwStates |= FWL_STATE_PSB_Hovered;
   } else {
-    GetProperties()->m_dwStates &= ~FWL_STATE_PSB_Hovered;
-    GetProperties()->m_dwStates &= ~FWL_STATE_PSB_Pressed;
+    m_Properties.m_dwStates &= ~FWL_STATE_PSB_Hovered;
+    m_Properties.m_dwStates &= ~FWL_STATE_PSB_Pressed;
   }
   if (m_ClientRect.Contains(pMsg->m_pos)) {
     CFWL_Event wmClick(CFWL_Event::Type::Click, this);
@@ -170,29 +169,29 @@ void CFWL_PushButton::OnMouseMove(CFWL_MessageMouse* pMsg) {
   bool bRepaint = false;
   if (m_bBtnDown) {
     if (m_ClientRect.Contains(pMsg->m_pos)) {
-      if ((GetProperties()->m_dwStates & FWL_STATE_PSB_Pressed) == 0) {
-        GetProperties()->m_dwStates |= FWL_STATE_PSB_Pressed;
+      if ((m_Properties.m_dwStates & FWL_STATE_PSB_Pressed) == 0) {
+        m_Properties.m_dwStates |= FWL_STATE_PSB_Pressed;
         bRepaint = true;
       }
-      if (GetProperties()->m_dwStates & FWL_STATE_PSB_Hovered) {
-        GetProperties()->m_dwStates &= ~FWL_STATE_PSB_Hovered;
+      if (m_Properties.m_dwStates & FWL_STATE_PSB_Hovered) {
+        m_Properties.m_dwStates &= ~FWL_STATE_PSB_Hovered;
         bRepaint = true;
       }
     } else {
-      if (GetProperties()->m_dwStates & FWL_STATE_PSB_Pressed) {
-        GetProperties()->m_dwStates &= ~FWL_STATE_PSB_Pressed;
+      if (m_Properties.m_dwStates & FWL_STATE_PSB_Pressed) {
+        m_Properties.m_dwStates &= ~FWL_STATE_PSB_Pressed;
         bRepaint = true;
       }
-      if ((GetProperties()->m_dwStates & FWL_STATE_PSB_Hovered) == 0) {
-        GetProperties()->m_dwStates |= FWL_STATE_PSB_Hovered;
+      if ((m_Properties.m_dwStates & FWL_STATE_PSB_Hovered) == 0) {
+        m_Properties.m_dwStates |= FWL_STATE_PSB_Hovered;
         bRepaint = true;
       }
     }
   } else {
     if (!m_ClientRect.Contains(pMsg->m_pos))
       return;
-    if ((GetProperties()->m_dwStates & FWL_STATE_PSB_Hovered) == 0) {
-      GetProperties()->m_dwStates |= FWL_STATE_PSB_Hovered;
+    if ((m_Properties.m_dwStates & FWL_STATE_PSB_Hovered) == 0) {
+      m_Properties.m_dwStates |= FWL_STATE_PSB_Hovered;
       bRepaint = true;
     }
   }
@@ -202,8 +201,8 @@ void CFWL_PushButton::OnMouseMove(CFWL_MessageMouse* pMsg) {
 
 void CFWL_PushButton::OnMouseLeave(CFWL_MessageMouse* pMsg) {
   m_bBtnDown = false;
-  GetProperties()->m_dwStates &= ~FWL_STATE_PSB_Hovered;
-  GetProperties()->m_dwStates &= ~FWL_STATE_PSB_Pressed;
+  m_Properties.m_dwStates &= ~FWL_STATE_PSB_Hovered;
+  m_Properties.m_dwStates &= ~FWL_STATE_PSB_Pressed;
   RepaintRect(m_ClientRect);
 }
 

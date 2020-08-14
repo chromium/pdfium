@@ -7,7 +7,6 @@
 #include "xfa/fwl/cfwl_checkbox.h"
 
 #include <algorithm>
-#include <memory>
 #include <utility>
 
 #include "xfa/fde/cfde_textout.h"
@@ -29,7 +28,7 @@ const int kCaptionMargin = 5;
 }  // namespace
 
 CFWL_CheckBox::CFWL_CheckBox(const CFWL_App* app)
-    : CFWL_Widget(app, std::make_unique<CFWL_WidgetProperties>(), nullptr) {
+    : CFWL_Widget(app, Properties(), nullptr) {
   m_TTOStyles.single_line_ = true;
 }
 
@@ -67,7 +66,7 @@ void CFWL_CheckBox::DrawWidget(CXFA_Graphics* pGraphics,
   param.m_pGraphics = pGraphics;
   param.m_matrix.Concat(matrix);
   param.m_PartRect = m_ClientRect;
-  if (GetProperties()->m_dwStates & FWL_WGTSTATE_Focused)
+  if (m_Properties.m_dwStates & FWL_WGTSTATE_Focused)
     param.m_pRtData = &m_FocusRect;
 
   IFWL_ThemeProvider* pTheme = GetThemeProvider();
@@ -91,14 +90,14 @@ void CFWL_CheckBox::DrawWidget(CXFA_Graphics* pGraphics,
 }
 
 void CFWL_CheckBox::SetCheckState(int32_t iCheck) {
-  GetProperties()->m_dwStates &= ~FWL_STATE_CKB_CheckMask;
+  m_Properties.m_dwStates &= ~FWL_STATE_CKB_CheckMask;
   switch (iCheck) {
     case 1:
-      GetProperties()->m_dwStates |= FWL_STATE_CKB_Checked;
+      m_Properties.m_dwStates |= FWL_STATE_CKB_Checked;
       break;
     case 2:
-      if (GetProperties()->m_dwStyleExes & FWL_STYLEEXT_CKB_3State)
-        GetProperties()->m_dwStates |= FWL_STATE_CKB_Neutral;
+      if (m_Properties.m_dwStyleExes & FWL_STYLEEXT_CKB_3State)
+        m_Properties.m_dwStates |= FWL_STATE_CKB_Neutral;
       break;
     default:
       break;
@@ -128,22 +127,22 @@ void CFWL_CheckBox::Layout() {
 
 uint32_t CFWL_CheckBox::GetPartStates() const {
   int32_t dwStates = CFWL_PartState_Normal;
-  if ((GetProperties()->m_dwStates & FWL_STATE_CKB_CheckMask) ==
+  if ((m_Properties.m_dwStates & FWL_STATE_CKB_CheckMask) ==
       FWL_STATE_CKB_Neutral) {
     dwStates = CFWL_PartState_Neutral;
-  } else if ((GetProperties()->m_dwStates & FWL_STATE_CKB_CheckMask) ==
+  } else if ((m_Properties.m_dwStates & FWL_STATE_CKB_CheckMask) ==
              FWL_STATE_CKB_Checked) {
     dwStates = CFWL_PartState_Checked;
   }
-  if (GetProperties()->m_dwStates & FWL_WGTSTATE_Disabled)
+  if (m_Properties.m_dwStates & FWL_WGTSTATE_Disabled)
     dwStates |= CFWL_PartState_Disabled;
-  else if (GetProperties()->m_dwStates & FWL_STATE_CKB_Hovered)
+  else if (m_Properties.m_dwStates & FWL_STATE_CKB_Hovered)
     dwStates |= CFWL_PartState_Hovered;
-  else if (GetProperties()->m_dwStates & FWL_STATE_CKB_Pressed)
+  else if (m_Properties.m_dwStates & FWL_STATE_CKB_Pressed)
     dwStates |= CFWL_PartState_Pressed;
   else
     dwStates |= CFWL_PartState_Normal;
-  if (GetProperties()->m_dwStates & FWL_WGTSTATE_Focused)
+  if (m_Properties.m_dwStates & FWL_WGTSTATE_Focused)
     dwStates |= CFWL_PartState_Focused;
   return dwStates;
 }
@@ -155,31 +154,31 @@ void CFWL_CheckBox::UpdateTextOutStyles() {
 }
 
 void CFWL_CheckBox::NextStates() {
-  uint32_t dwFirststate = GetProperties()->m_dwStates;
-  if (GetProperties()->m_dwStyleExes & FWL_STYLEEXT_CKB_RadioButton) {
-    if ((GetProperties()->m_dwStates & FWL_STATE_CKB_CheckMask) ==
+  uint32_t dwFirststate = m_Properties.m_dwStates;
+  if (m_Properties.m_dwStyleExes & FWL_STYLEEXT_CKB_RadioButton) {
+    if ((m_Properties.m_dwStates & FWL_STATE_CKB_CheckMask) ==
         FWL_STATE_CKB_Unchecked) {
-      GetProperties()->m_dwStates |= FWL_STATE_CKB_Checked;
+      m_Properties.m_dwStates |= FWL_STATE_CKB_Checked;
     }
   } else {
-    if ((GetProperties()->m_dwStates & FWL_STATE_CKB_CheckMask) ==
+    if ((m_Properties.m_dwStates & FWL_STATE_CKB_CheckMask) ==
         FWL_STATE_CKB_Neutral) {
-      GetProperties()->m_dwStates &= ~FWL_STATE_CKB_CheckMask;
-      if (GetProperties()->m_dwStyleExes & FWL_STYLEEXT_CKB_3State)
-        GetProperties()->m_dwStates |= FWL_STATE_CKB_Checked;
-    } else if ((GetProperties()->m_dwStates & FWL_STATE_CKB_CheckMask) ==
+      m_Properties.m_dwStates &= ~FWL_STATE_CKB_CheckMask;
+      if (m_Properties.m_dwStyleExes & FWL_STYLEEXT_CKB_3State)
+        m_Properties.m_dwStates |= FWL_STATE_CKB_Checked;
+    } else if ((m_Properties.m_dwStates & FWL_STATE_CKB_CheckMask) ==
                FWL_STATE_CKB_Checked) {
-      GetProperties()->m_dwStates &= ~FWL_STATE_CKB_CheckMask;
+      m_Properties.m_dwStates &= ~FWL_STATE_CKB_CheckMask;
     } else {
-      if (GetProperties()->m_dwStyleExes & FWL_STYLEEXT_CKB_3State)
-        GetProperties()->m_dwStates |= FWL_STATE_CKB_Neutral;
+      if (m_Properties.m_dwStyleExes & FWL_STYLEEXT_CKB_3State)
+        m_Properties.m_dwStates |= FWL_STATE_CKB_Neutral;
       else
-        GetProperties()->m_dwStates |= FWL_STATE_CKB_Checked;
+        m_Properties.m_dwStates |= FWL_STATE_CKB_Checked;
     }
   }
 
   RepaintRect(m_ClientRect);
-  if (dwFirststate == GetProperties()->m_dwStates)
+  if (dwFirststate == m_Properties.m_dwStates)
     return;
 
   CFWL_Event wmCheckBoxState(CFWL_Event::Type::CheckStateChanged, this);
@@ -235,20 +234,20 @@ void CFWL_CheckBox::OnDrawWidget(CXFA_Graphics* pGraphics,
 
 void CFWL_CheckBox::OnFocusChanged(bool bSet) {
   if (bSet)
-    GetProperties()->m_dwStates |= FWL_WGTSTATE_Focused;
+    m_Properties.m_dwStates |= FWL_WGTSTATE_Focused;
   else
-    GetProperties()->m_dwStates &= ~FWL_WGTSTATE_Focused;
+    m_Properties.m_dwStates &= ~FWL_WGTSTATE_Focused;
 
   RepaintRect(m_ClientRect);
 }
 
 void CFWL_CheckBox::OnLButtonDown() {
-  if (GetProperties()->m_dwStates & FWL_WGTSTATE_Disabled)
+  if (m_Properties.m_dwStates & FWL_WGTSTATE_Disabled)
     return;
 
   m_bBtnDown = true;
-  GetProperties()->m_dwStates &= ~FWL_STATE_CKB_Hovered;
-  GetProperties()->m_dwStates |= FWL_STATE_CKB_Pressed;
+  m_Properties.m_dwStates &= ~FWL_STATE_CKB_Hovered;
+  m_Properties.m_dwStates |= FWL_STATE_CKB_Pressed;
   RepaintRect(m_ClientRect);
 }
 
@@ -260,41 +259,41 @@ void CFWL_CheckBox::OnLButtonUp(CFWL_MessageMouse* pMsg) {
   if (!m_ClientRect.Contains(pMsg->m_pos))
     return;
 
-  GetProperties()->m_dwStates |= FWL_STATE_CKB_Hovered;
-  GetProperties()->m_dwStates &= ~FWL_STATE_CKB_Pressed;
+  m_Properties.m_dwStates |= FWL_STATE_CKB_Hovered;
+  m_Properties.m_dwStates &= ~FWL_STATE_CKB_Pressed;
   NextStates();
 }
 
 void CFWL_CheckBox::OnMouseMove(CFWL_MessageMouse* pMsg) {
-  if (GetProperties()->m_dwStates & FWL_WGTSTATE_Disabled)
+  if (m_Properties.m_dwStates & FWL_WGTSTATE_Disabled)
     return;
 
   bool bRepaint = false;
   if (m_bBtnDown) {
     if (m_ClientRect.Contains(pMsg->m_pos)) {
-      if ((GetProperties()->m_dwStates & FWL_STATE_CKB_Pressed) == 0) {
+      if ((m_Properties.m_dwStates & FWL_STATE_CKB_Pressed) == 0) {
         bRepaint = true;
-        GetProperties()->m_dwStates |= FWL_STATE_CKB_Pressed;
+        m_Properties.m_dwStates |= FWL_STATE_CKB_Pressed;
       }
-      if ((GetProperties()->m_dwStates & FWL_STATE_CKB_Hovered)) {
+      if ((m_Properties.m_dwStates & FWL_STATE_CKB_Hovered)) {
         bRepaint = true;
-        GetProperties()->m_dwStates &= ~FWL_STATE_CKB_Hovered;
+        m_Properties.m_dwStates &= ~FWL_STATE_CKB_Hovered;
       }
     } else {
-      if (GetProperties()->m_dwStates & FWL_STATE_CKB_Pressed) {
+      if (m_Properties.m_dwStates & FWL_STATE_CKB_Pressed) {
         bRepaint = true;
-        GetProperties()->m_dwStates &= ~FWL_STATE_CKB_Pressed;
+        m_Properties.m_dwStates &= ~FWL_STATE_CKB_Pressed;
       }
-      if ((GetProperties()->m_dwStates & FWL_STATE_CKB_Hovered) == 0) {
+      if ((m_Properties.m_dwStates & FWL_STATE_CKB_Hovered) == 0) {
         bRepaint = true;
-        GetProperties()->m_dwStates |= FWL_STATE_CKB_Hovered;
+        m_Properties.m_dwStates |= FWL_STATE_CKB_Hovered;
       }
     }
   } else {
     if (m_ClientRect.Contains(pMsg->m_pos)) {
-      if ((GetProperties()->m_dwStates & FWL_STATE_CKB_Hovered) == 0) {
+      if ((m_Properties.m_dwStates & FWL_STATE_CKB_Hovered) == 0) {
         bRepaint = true;
-        GetProperties()->m_dwStates |= FWL_STATE_CKB_Hovered;
+        m_Properties.m_dwStates |= FWL_STATE_CKB_Hovered;
       }
     }
   }
@@ -304,9 +303,9 @@ void CFWL_CheckBox::OnMouseMove(CFWL_MessageMouse* pMsg) {
 
 void CFWL_CheckBox::OnMouseLeave() {
   if (m_bBtnDown)
-    GetProperties()->m_dwStates |= FWL_STATE_CKB_Hovered;
+    m_Properties.m_dwStates |= FWL_STATE_CKB_Hovered;
   else
-    GetProperties()->m_dwStates &= ~FWL_STATE_CKB_Hovered;
+    m_Properties.m_dwStates &= ~FWL_STATE_CKB_Hovered;
 
   RepaintRect(m_BoxRect);
 }

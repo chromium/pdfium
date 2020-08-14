@@ -14,7 +14,6 @@
 #include "xfa/fwl/cfwl_event.h"
 #include "xfa/fwl/cfwl_monthcalendar.h"
 #include "xfa/fwl/cfwl_widget.h"
-#include "xfa/fwl/cfwl_widgetproperties.h"
 
 #define FWL_STYLEEXT_DTP_ShortDateFormat (1L << 1)
 #define FWL_STYLEEXT_DTP_EditHAlignMask (3L << 4)

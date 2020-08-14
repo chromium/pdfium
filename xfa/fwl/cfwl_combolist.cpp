@@ -6,7 +6,6 @@
 
 #include "xfa/fwl/cfwl_combolist.h"
 
-#include <memory>
 #include <utility>
 
 #include "xfa/fwl/cfwl_combobox.h"
@@ -17,11 +16,10 @@
 #include "xfa/fwl/cfwl_messagemouse.h"
 #include "xfa/fwl/fwl_widgetdef.h"
 
-CFWL_ComboList::CFWL_ComboList(
-    const CFWL_App* app,
-    std::unique_ptr<CFWL_WidgetProperties> properties,
-    CFWL_Widget* pOuter)
-    : CFWL_ListBox(app, std::move(properties), pOuter) {
+CFWL_ComboList::CFWL_ComboList(const CFWL_App* app,
+                               const Properties& properties,
+                               CFWL_Widget* pOuter)
+    : CFWL_ListBox(app, properties, pOuter) {
   ASSERT(pOuter);
 }
 

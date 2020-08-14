@@ -8,7 +8,6 @@
 #define XFA_FWL_CFWL_PICTUREBOX_H_
 
 #include "xfa/fwl/cfwl_widget.h"
-#include "xfa/fwl/cfwl_widgetproperties.h"
 
 class CFX_DIBitmap;
 class CFWL_Widget;

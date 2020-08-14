@@ -28,7 +28,7 @@ bool CXFA_FFPasswordEdit::LoadWidget() {
   RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
 
   auto pNewEdit = std::make_unique<CFWL_Edit>(
-      GetFWLApp(), std::make_unique<CFWL_WidgetProperties>(), nullptr);
+      GetFWLApp(), CFWL_Widget::Properties(), nullptr);
   CFWL_Edit* pWidget = pNewEdit.get();
   SetNormalWidget(std::move(pNewEdit));
   pWidget->SetAdapterIface(this);

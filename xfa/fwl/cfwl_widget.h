@@ -7,8 +7,6 @@
 #ifndef XFA_FWL_CFWL_WIDGET_H_
 #define XFA_FWL_CFWL_WIDGET_H_
 
-#include <memory>
-
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/observed_ptr.h"
@@ -16,7 +14,7 @@
 #include "xfa/fde/cfde_data.h"
 #include "xfa/fwl/cfwl_themepart.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
-#include "xfa/fwl/cfwl_widgetproperties.h"
+#include "xfa/fwl/fwl_widgetdef.h"
 #include "xfa/fwl/fwl_widgethit.h"
 #include "xfa/fwl/ifwl_widgetdelegate.h"
 
@@ -57,6 +55,17 @@ class CFWL_Widget : public Observable, public IFWL_WidgetDelegate {
     virtual CFX_Matrix GetRotateMatrix() = 0;
     virtual void DisplayCaret(bool bVisible, const CFX_RectF* pRtAnchor) = 0;
     virtual void GetBorderColorAndThickness(FX_ARGB* cr, float* fWidth) = 0;
+  };
+
+  class Properties {
+   public:
+    Properties();
+    Properties(const Properties& that);
+    ~Properties();
+
+    uint32_t m_dwStyles = FWL_WGTSTYLE_Child;
+    uint32_t m_dwStyleExes = 0;
+    uint32_t m_dwStates = 0;
   };
 
   class ScopedUpdateLock {
@@ -103,8 +112,8 @@ class CFWL_Widget : public Observable, public IFWL_WidgetDelegate {
   CFWL_Widget* GetOutmost() const;
 
   void ModifyStyles(uint32_t dwStylesAdded, uint32_t dwStylesRemoved);
-  uint32_t GetStylesEx() const;
-  uint32_t GetStates() const;
+  uint32_t GetStylesEx() const { return m_Properties.m_dwStyleExes; }
+  uint32_t GetStates() const { return m_Properties.m_dwStates; }
 
   CFX_PointF TransformTo(CFWL_Widget* pWidget, const CFX_PointF& point);
   CFX_Matrix GetMatrix() const;
@@ -127,7 +136,7 @@ class CFWL_Widget : public Observable, public IFWL_WidgetDelegate {
 
  protected:
   CFWL_Widget(const CFWL_App* app,
-              std::unique_ptr<CFWL_WidgetProperties> properties,
+              const Properties& properties,
               CFWL_Widget* pOuter);
 
   bool IsEnabled() const;
@@ -137,10 +146,6 @@ class CFWL_Widget : public Observable, public IFWL_WidgetDelegate {
   float GetCXBorderSize() const;
   float GetCYBorderSize() const;
   CFX_RectF GetRelativeRect() const;
-  CFWL_WidgetProperties* GetProperties() { return m_pProperties.get(); }
-  const CFWL_WidgetProperties* GetProperties() const {
-    return m_pProperties.get();
-  }
   CFX_SizeF CalcTextSize(const WideString& wsText,
                          bool bMultiLine);
   void CalcTextRect(const WideString& wsText,
@@ -155,6 +160,7 @@ class CFWL_Widget : public Observable, public IFWL_WidgetDelegate {
                   CFWL_Part iPartBorder,
                   const CFX_Matrix& pMatrix);
 
+  Properties m_Properties;
   CFX_RectF m_WidgetRect;
 
  private:
@@ -176,7 +182,6 @@ class CFWL_Widget : public Observable, public IFWL_WidgetDelegate {
   uint64_t m_nEventKey = 0;
   UnownedPtr<const CFWL_App> const m_pOwnerApp;
   UnownedPtr<CFWL_WidgetMgr> const m_pWidgetMgr;
-  std::unique_ptr<CFWL_WidgetProperties> m_pProperties;
   CFWL_Widget* const m_pOuter;
   AdapterIface* m_pAdapterIface = nullptr;
   UnownedPtr<IFWL_WidgetDelegate> m_pDelegate;
