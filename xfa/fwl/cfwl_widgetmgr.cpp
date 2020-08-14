@@ -77,7 +77,6 @@ void CFWL_WidgetMgr::RepaintWidget(CFWL_Widget* pWidget,
     pNative = pOuter;
     pOuter = pOuter->GetOuter();
   }
-  AddRedrawCounts(pNative);
   m_pAdapter->RepaintWidget(pNative);
 }
 
@@ -146,14 +145,6 @@ CFWL_Widget* CFWL_WidgetMgr::GetDefaultButton(CFWL_Widget* pParent) const {
   return nullptr;
 }
 
-void CFWL_WidgetMgr::AddRedrawCounts(CFWL_Widget* pWidget) {
-  GetWidgetMgrItem(pWidget)->iRedrawCounter++;
-}
-
-void CFWL_WidgetMgr::ResetRedrawCounts(CFWL_Widget* pWidget) {
-  GetWidgetMgrItem(pWidget)->iRedrawCounter = 0;
-}
-
 CFWL_WidgetMgr::Item* CFWL_WidgetMgr::GetWidgetMgrRootItem() const {
   return GetWidgetMgrItem(nullptr);
 }
@@ -202,8 +193,6 @@ void CFWL_WidgetMgr::OnDrawWidget(CFWL_Widget* pWidget,
   CFX_RectF clipBounds = pGraphics->GetClipRect();
   if (!clipBounds.IsEmpty())
     DrawChildren(pWidget, clipBounds, pGraphics, &matrix);
-
-  ResetRedrawCounts(pWidget);
 }
 
 void CFWL_WidgetMgr::DrawChildren(CFWL_Widget* parent,

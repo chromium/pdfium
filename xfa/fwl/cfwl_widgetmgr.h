@@ -53,8 +53,6 @@ class CFWL_WidgetMgr {
                                 const CFX_PointF& point) const;
 
   CFWL_Widget* GetDefaultButton(CFWL_Widget* pParent) const;
-  void AddRedrawCounts(CFWL_Widget* pWidget);
-
   void GetAdapterPopupPos(CFWL_Widget* pWidget,
                           float fMinHeight,
                           float fMaxHeight,
@@ -69,7 +67,6 @@ class CFWL_WidgetMgr {
     ~Item() final;
 
     CFWL_Widget* const pWidget;
-    int32_t iRedrawCounter = 0;
   };
 
   CFWL_Widget* GetPriorSiblingWidget(CFWL_Widget* pWidget) const;
@@ -79,7 +76,6 @@ class CFWL_WidgetMgr {
   Item* GetWidgetMgrItem(const CFWL_Widget* pWidget) const;
   Item* CreateWidgetMgrItem(CFWL_Widget* pWidget);
 
-  void ResetRedrawCounts(CFWL_Widget* pWidget);
   void DrawChildren(CFWL_Widget* pParent,
                     const CFX_RectF& rtClip,
                     CXFA_Graphics* pGraphics,
