@@ -155,6 +155,8 @@ class CFWL_Widget : public Observable, public IFWL_WidgetDelegate {
                   CFWL_Part iPartBorder,
                   const CFX_Matrix& pMatrix);
 
+  CFX_RectF m_WidgetRect;
+
  private:
   void LockUpdate() { m_iLock++; }
   void UnlockUpdate() {

@@ -8,4 +8,7 @@
 
 CFWL_WidgetProperties::CFWL_WidgetProperties() = default;
 
+CFWL_WidgetProperties::CFWL_WidgetProperties(
+    const CFWL_WidgetProperties& that) = default;
+
 CFWL_WidgetProperties::~CFWL_WidgetProperties() = default;

@@ -69,8 +69,7 @@ void CFWL_DateTimePicker::Update() {
 }
 
 FWL_WidgetHit CFWL_DateTimePicker::HitTest(const CFX_PointF& point) {
-  CFX_RectF rect(0, 0, GetProperties()->m_WidgetRect.width,
-                 GetProperties()->m_WidgetRect.height);
+  CFX_RectF rect(0, 0, m_WidgetRect.width, m_WidgetRect.height);
   if (rect.Contains(point))
     return FWL_WidgetHit::Edit;
   if (NeedsToShowButton())
@@ -158,15 +157,14 @@ int32_t CFWL_DateTimePicker::GetEditTextLength() const {
 }
 
 CFX_RectF CFWL_DateTimePicker::GetBBox() const {
-  CFX_RectF rect = GetProperties()->m_WidgetRect;
+  CFX_RectF rect = m_WidgetRect;
   if (NeedsToShowButton())
     rect.width += m_fBtn;
   if (!IsMonthCalendarVisible())
     return rect;
 
   CFX_RectF rtMonth = m_pMonthCal->GetWidgetRect();
-  rtMonth.Offset(GetProperties()->m_WidgetRect.left,
-                 GetProperties()->m_WidgetRect.top);
+  rtMonth.Offset(m_WidgetRect.left, m_WidgetRect.top);
   rect.Union(rtMonth);
   return rect;
 }
@@ -206,7 +204,7 @@ void CFWL_DateTimePicker::ShowMonthCalendar(bool bActivate) {
     CFX_RectF rtMonthCal = m_pMonthCal->GetAutosizedWidgetRect();
     float fPopupMin = rtMonthCal.height;
     float fPopupMax = rtMonthCal.height;
-    CFX_RectF rtAnchor(GetProperties()->m_WidgetRect);
+    CFX_RectF rtAnchor = m_WidgetRect;
     rtAnchor.width = rtMonthCal.width;
     rtMonthCal.left = m_ClientRect.left;
     rtMonthCal.top = rtAnchor.Height();
@@ -226,9 +224,7 @@ void CFWL_DateTimePicker::ShowMonthCalendar(bool bActivate) {
     m_pEdit->GetDelegate()->OnProcessMessage(&msg);
   }
 
-  CFX_RectF rtInvalidate(0, 0, GetProperties()->m_WidgetRect.width,
-                         GetProperties()->m_WidgetRect.height);
-
+  CFX_RectF rtInvalidate(0, 0, m_WidgetRect.width, m_WidgetRect.height);
   CFX_RectF rtCal = m_pMonthCal->GetWidgetRect();
   rtInvalidate.Union(rtCal);
   rtInvalidate.Inflate(2, 2);
@@ -365,8 +361,8 @@ void CFWL_DateTimePicker::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
   if (bSet) {
     GetProperties()->m_dwStates |= FWL_WGTSTATE_Focused;
     if (m_pEdit && !(m_pEdit->GetStylesEx() & FWL_STYLEEXT_EDT_ReadOnly)) {
-      m_BtnRect = CFX_RectF(GetProperties()->m_WidgetRect.width, 0, m_fBtn,
-                            GetProperties()->m_WidgetRect.height - 1);
+      m_BtnRect =
+          CFX_RectF(m_WidgetRect.width, 0, m_fBtn, m_WidgetRect.height - 1);
     }
     rtInvalidate = m_BtnRect;
     pMsg->SetDstTarget(m_pEdit.get());

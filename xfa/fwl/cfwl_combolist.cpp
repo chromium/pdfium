@@ -64,8 +64,7 @@ void CFWL_ComboList::ChangeSelected(int32_t iSel) {
 }
 
 CFX_PointF CFWL_ComboList::ClientToOuter(const CFX_PointF& point) {
-  return point + CFX_PointF(GetProperties()->m_WidgetRect.left,
-                            GetProperties()->m_WidgetRect.top);
+  return point + CFX_PointF(m_WidgetRect.left, m_WidgetRect.top);
 }
 
 void CFWL_ComboList::OnProcessMessage(CFWL_Message* pMessage) {
@@ -225,9 +224,7 @@ void CFWL_ComboList::OnDropListKeyDown(CFWL_MessageKey* pKey) {
 
       SetSelection(hItem, hItem, true);
       ScrollToVisible(hItem);
-      CFX_RectF rtInvalidate(0, 0, GetProperties()->m_WidgetRect.width,
-                             GetProperties()->m_WidgetRect.height);
-      RepaintRect(rtInvalidate);
+      RepaintRect(CFX_RectF(0, 0, m_WidgetRect.width, m_WidgetRect.height));
       break;
     }
     default:

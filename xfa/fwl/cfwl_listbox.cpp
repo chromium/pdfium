@@ -789,9 +789,7 @@ void CFWL_ListBox::OnVK(CFWL_ListItem* pItem, bool bShift, bool bCtrl) {
 
   SetFocusItem(pItem);
   ScrollToVisible(pItem);
-
-  RepaintRect(CFX_RectF(0, 0, GetProperties()->m_WidgetRect.width,
-                        GetProperties()->m_WidgetRect.height));
+  RepaintRect(CFX_RectF(0, 0, m_WidgetRect.width, m_WidgetRect.height));
 }
 
 bool CFWL_ListBox::OnScroll(CFWL_ScrollBar* pScrollBar,

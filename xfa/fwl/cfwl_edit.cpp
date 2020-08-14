@@ -63,7 +63,7 @@ FWL_Type CFWL_Edit::GetClassID() const {
 }
 
 CFX_RectF CFWL_Edit::GetWidgetRect() {
-  CFX_RectF rect = GetProperties()->m_WidgetRect;
+  CFX_RectF rect = m_WidgetRect;
   if (GetProperties()->m_dwStyleExes & FWL_STYLEEXT_EDT_OuterScrollbar) {
     float scrollbarWidth = GetThemeProvider()->GetScrollBarWidth();
     if (IsShowScrollBar(true)) {
@@ -864,11 +864,9 @@ void CFWL_Edit::ShowCaret(CFX_RectF* pRect) {
   }
 
   CFWL_Widget* pOuter = this;
-  pRect->Offset(GetProperties()->m_WidgetRect.left,
-                GetProperties()->m_WidgetRect.top);
+  pRect->Offset(m_WidgetRect.left, m_WidgetRect.top);
   while (pOuter->GetOuter()) {
     pOuter = pOuter->GetOuter();
-
     CFX_RectF rtOuter = pOuter->GetWidgetRect();
     pRect->Offset(rtOuter.left, rtOuter.top);
   }
@@ -1051,9 +1049,7 @@ void CFWL_Edit::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
   if (!bRepaint)
     return;
 
-  CFX_RectF rtInvalidate(0, 0, GetProperties()->m_WidgetRect.width,
-                         GetProperties()->m_WidgetRect.height);
-  RepaintRect(rtInvalidate);
+  RepaintRect(CFX_RectF(0, 0, m_WidgetRect.width, m_WidgetRect.height));
 }
 
 void CFWL_Edit::OnLButtonDown(CFWL_MessageMouse* pMsg) {

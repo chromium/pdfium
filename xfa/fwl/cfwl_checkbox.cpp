@@ -107,10 +107,8 @@ void CFWL_CheckBox::SetCheckState(int32_t iCheck) {
 }
 
 void CFWL_CheckBox::Layout() {
-  GetProperties()->m_WidgetRect.width =
-      FXSYS_roundf(GetProperties()->m_WidgetRect.width);
-  GetProperties()->m_WidgetRect.height =
-      FXSYS_roundf(GetProperties()->m_WidgetRect.height);
+  m_WidgetRect.width = FXSYS_roundf(m_WidgetRect.width);
+  m_WidgetRect.height = FXSYS_roundf(m_WidgetRect.height);
   m_ClientRect = GetClientRect();
 
   float fTextLeft = m_ClientRect.left + m_fBoxHeight;

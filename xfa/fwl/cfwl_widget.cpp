@@ -59,7 +59,7 @@ CFX_RectF CFWL_Widget::GetAutosizedWidgetRect() {
 }
 
 CFX_RectF CFWL_Widget::GetWidgetRect() {
-  return m_pProperties->m_WidgetRect;
+  return m_WidgetRect;
 }
 
 void CFWL_Widget::InflateWidgetRect(CFX_RectF& rect) {
@@ -71,7 +71,7 @@ void CFWL_Widget::InflateWidgetRect(CFX_RectF& rect) {
 }
 
 void CFWL_Widget::SetWidgetRect(const CFX_RectF& rect) {
-  m_pProperties->m_WidgetRect = rect;
+  m_WidgetRect = rect;
 }
 
 CFX_RectF CFWL_Widget::GetClientRect() {
@@ -204,8 +204,7 @@ CFWL_Widget* CFWL_Widget::GetOutmost() const {
 }
 
 CFX_RectF CFWL_Widget::GetEdgeRect() const {
-  CFX_RectF rtEdge(0, 0, m_pProperties->m_WidgetRect.width,
-                   m_pProperties->m_WidgetRect.height);
+  CFX_RectF rtEdge(0, 0, m_WidgetRect.width, m_WidgetRect.height);
   if (HasBorder())
     rtEdge.Deflate(GetCXBorderSize(), GetCYBorderSize());
   return rtEdge;
@@ -220,8 +219,7 @@ float CFWL_Widget::GetCYBorderSize() const {
 }
 
 CFX_RectF CFWL_Widget::GetRelativeRect() const {
-  return CFX_RectF(0, 0, m_pProperties->m_WidgetRect.width,
-                   m_pProperties->m_WidgetRect.height);
+  return CFX_RectF(0, 0, m_WidgetRect.width, m_WidgetRect.height);
 }
 
 CFX_SizeF CFWL_Widget::CalcTextSize(const WideString& wsText,
@@ -315,10 +313,8 @@ CFX_SizeF CFWL_Widget::GetOffsetFromParent(CFWL_Widget* pParent) {
   if (pParent == this)
     return CFX_SizeF();
 
+  CFX_SizeF szRet(m_WidgetRect.left, m_WidgetRect.top);
   CFWL_WidgetMgr* pWidgetMgr = GetOwnerApp()->GetWidgetMgr();
-  CFX_SizeF szRet(m_pProperties->m_WidgetRect.left,
-                  m_pProperties->m_WidgetRect.top);
-
   CFWL_Widget* pDstWidget = GetParent();
   while (pDstWidget && pDstWidget != pParent) {
     CFX_RectF rtDst = pDstWidget->GetWidgetRect();

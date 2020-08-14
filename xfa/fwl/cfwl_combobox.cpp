@@ -80,8 +80,8 @@ void CFWL_ComboBox::Update() {
 }
 
 FWL_WidgetHit CFWL_ComboBox::HitTest(const CFX_PointF& point) {
-  CFX_RectF rect(0, 0, GetProperties()->m_WidgetRect.width - m_BtnRect.width,
-                 GetProperties()->m_WidgetRect.height);
+  CFX_RectF rect(0, 0, m_WidgetRect.width - m_BtnRect.width,
+                 m_WidgetRect.height);
   if (rect.Contains(point))
     return FWL_WidgetHit::Edit;
   if (m_BtnRect.Contains(point))
@@ -183,7 +183,7 @@ void CFWL_ComboBox::OpenDropDownList(bool bActivate) {
 }
 
 CFX_RectF CFWL_ComboBox::GetBBox() const {
-  CFX_RectF rect = GetProperties()->m_WidgetRect;
+  CFX_RectF rect = m_WidgetRect;
   if (!m_pListBox || !IsDropListVisible())
     return rect;
 
@@ -224,10 +224,8 @@ void CFWL_ComboBox::ShowDropList(bool bActivate) {
       fPopupMin = fItemHeight * 3 + fBorder * 2;
 
     float fPopupMax = fItemHeight * iItems + fBorder * 2;
-    CFX_RectF rtList(m_ClientRect.left, 0, GetProperties()->m_WidgetRect.width,
-                     0);
-    GetPopupPos(fPopupMin, fPopupMax, GetProperties()->m_WidgetRect, &rtList);
-
+    CFX_RectF rtList(m_ClientRect.left, 0, m_WidgetRect.width, 0);
+    GetPopupPos(fPopupMin, fPopupMax, m_WidgetRect, &rtList);
     m_pListBox->SetWidgetRect(rtList);
     m_pListBox->Update();
   }
