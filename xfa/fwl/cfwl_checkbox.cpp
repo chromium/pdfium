@@ -189,9 +189,6 @@ void CFWL_CheckBox::NextStates() {
 }
 
 void CFWL_CheckBox::OnProcessMessage(CFWL_Message* pMessage) {
-  if (!pMessage)
-    return;
-
   switch (pMessage->GetType()) {
     case CFWL_Message::Type::kSetFocus:
       OnFocusChanged(true);

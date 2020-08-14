@@ -619,8 +619,6 @@ bool CFWL_ListBox::IsShowScrollBar(bool bVert) {
 }
 
 void CFWL_ListBox::OnProcessMessage(CFWL_Message* pMessage) {
-  if (!pMessage)
-    return;
   if (!IsEnabled())
     return;
 

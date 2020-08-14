@@ -69,9 +69,6 @@ CFX_PointF CFWL_ComboList::ClientToOuter(const CFX_PointF& point) {
 }
 
 void CFWL_ComboList::OnProcessMessage(CFWL_Message* pMessage) {
-  if (!pMessage)
-    return;
-
   CFWL_Message::Type type = pMessage->GetType();
   bool backDefault = true;
   if (type == CFWL_Message::Type::kSetFocus ||

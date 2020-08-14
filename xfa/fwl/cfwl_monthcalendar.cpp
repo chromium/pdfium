@@ -645,9 +645,6 @@ CFX_RectF CFWL_MonthCalendar::GetDayRect(int32_t iDay) {
 }
 
 void CFWL_MonthCalendar::OnProcessMessage(CFWL_Message* pMessage) {
-  if (!pMessage)
-    return;
-
   switch (pMessage->GetType()) {
     case CFWL_Message::Type::kSetFocus:
     case CFWL_Message::Type::kKillFocus:

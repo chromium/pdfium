@@ -959,9 +959,6 @@ void CFWL_Edit::SetCursorPosition(size_t position) {
 }
 
 void CFWL_Edit::OnProcessMessage(CFWL_Message* pMessage) {
-  if (!pMessage)
-    return;
-
   switch (pMessage->GetType()) {
     case CFWL_Message::Type::kSetFocus:
       OnFocusChanged(pMessage, true);

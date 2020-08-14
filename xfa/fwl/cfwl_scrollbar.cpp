@@ -294,9 +294,6 @@ bool CFWL_ScrollBar::OnScroll(CFWL_EventScroll::Code dwCode, float fPos) {
 }
 
 void CFWL_ScrollBar::OnProcessMessage(CFWL_Message* pMessage) {
-  if (!pMessage)
-    return;
-
   CFWL_Message::Type type = pMessage->GetType();
   if (type == CFWL_Message::Type::kMouse) {
     CFWL_MessageMouse* pMsg = static_cast<CFWL_MessageMouse*>(pMessage);

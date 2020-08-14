@@ -85,8 +85,6 @@ uint32_t CFWL_PushButton::GetPartStates() {
 }
 
 void CFWL_PushButton::OnProcessMessage(CFWL_Message* pMessage) {
-  if (!pMessage)
-    return;
   if (!IsEnabled())
     return;
 

@@ -395,9 +395,6 @@ void CFWL_ComboBox::InitComboEdit() {
 }
 
 void CFWL_ComboBox::OnProcessMessage(CFWL_Message* pMessage) {
-  if (!pMessage)
-    return;
-
   bool backDefault = true;
   switch (pMessage->GetType()) {
     case CFWL_Message::Type::kSetFocus: {

@@ -310,9 +310,6 @@ bool CFWL_DateTimePicker::NeedsToShowButton() const {
 }
 
 void CFWL_DateTimePicker::OnProcessMessage(CFWL_Message* pMessage) {
-  if (!pMessage)
-    return;
-
   switch (pMessage->GetType()) {
     case CFWL_Message::Type::kSetFocus:
       OnFocusChanged(pMessage, true);
