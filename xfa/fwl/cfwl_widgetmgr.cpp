@@ -132,8 +132,7 @@ CFWL_Widget* CFWL_WidgetMgr::GetDefaultButton(CFWL_Widget* pParent) const {
     return pParent;
   }
 
-  CFWL_Widget* child =
-      pParent->GetOwnerApp()->GetWidgetMgr()->GetFirstChildWidget(pParent);
+  CFWL_Widget* child = GetFirstChildWidget(pParent);
   while (child) {
     if ((child->GetClassID() == FWL_Type::PushButton) &&
         (child->GetStates() & (1 << (FWL_WGTSTATE_MAX + 2)))) {
@@ -142,7 +141,7 @@ CFWL_Widget* CFWL_WidgetMgr::GetDefaultButton(CFWL_Widget* pParent) const {
     if (CFWL_Widget* find = GetDefaultButton(child))
       return find;
 
-    child = child->GetOwnerApp()->GetWidgetMgr()->GetNextSiblingWidget(child);
+    child = GetNextSiblingWidget(child);
   }
   return nullptr;
 }
@@ -198,24 +197,19 @@ void CFWL_WidgetMgr::OnDrawWidget(CFWL_Widget* pWidget,
   if (!pWidget || !pGraphics)
     return;
 
-  CFX_RectF clipCopy(0, 0, pWidget->GetWidgetRect().Size());
-  CFX_RectF clipBounds;
-
   pWidget->GetDelegate()->OnDrawWidget(pGraphics, matrix);
-  clipBounds = pGraphics->GetClipRect();
-  clipCopy = clipBounds;
 
+  CFX_RectF clipBounds = pGraphics->GetClipRect();
   if (!clipBounds.IsEmpty())
-    DrawChild(pWidget, clipBounds, pGraphics, &matrix);
+    DrawChildren(pWidget, clipBounds, pGraphics, &matrix);
 
-  GetWidgetMgrItem(pWidget)->iRedrawCounter = 0;
   ResetRedrawCounts(pWidget);
 }
 
-void CFWL_WidgetMgr::DrawChild(CFWL_Widget* parent,
-                               const CFX_RectF& rtClip,
-                               CXFA_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix) {
+void CFWL_WidgetMgr::DrawChildren(CFWL_Widget* parent,
+                                  const CFX_RectF& rtClip,
+                                  CXFA_Graphics* pGraphics,
+                                  const CFX_Matrix* pMatrix) {
   if (!parent)
     return;
 
@@ -240,7 +234,7 @@ void CFWL_WidgetMgr::DrawChild(CFWL_Widget* parent,
     if (IFWL_WidgetDelegate* pDelegate = child->GetDelegate())
       pDelegate->OnDrawWidget(pGraphics, widgetMatrix);
 
-    DrawChild(child, clipBounds, pGraphics, &widgetMatrix);
+    DrawChildren(child, clipBounds, pGraphics, &widgetMatrix);
   }
 }
 

@@ -80,10 +80,10 @@ class CFWL_WidgetMgr {
   Item* CreateWidgetMgrItem(CFWL_Widget* pWidget);
 
   void ResetRedrawCounts(CFWL_Widget* pWidget);
-  void DrawChild(CFWL_Widget* pParent,
-                 const CFX_RectF& rtClip,
-                 CXFA_Graphics* pGraphics,
-                 const CFX_Matrix* pMatrix);
+  void DrawChildren(CFWL_Widget* pParent,
+                    const CFX_RectF& rtClip,
+                    CXFA_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix);
 
   std::map<const CFWL_Widget*, std::unique_ptr<Item>> m_mapWidgetItem;
   UnownedPtr<AdapterIface> const m_pAdapter;
