@@ -64,10 +64,8 @@ void CFWL_ComboList::ChangeSelected(int32_t iSel) {
 }
 
 CFX_PointF CFWL_ComboList::ClientToOuter(const CFX_PointF& point) {
-  CFX_PointF ret = point + CFX_PointF(GetProperties()->m_WidgetRect.left,
-                                      GetProperties()->m_WidgetRect.top);
-  CFWL_Widget* pOwner = GetOwner();
-  return pOwner ? pOwner->TransformTo(GetOuter(), ret) : ret;
+  return point + CFX_PointF(GetProperties()->m_WidgetRect.left,
+                            GetProperties()->m_WidgetRect.top);
 }
 
 void CFWL_ComboList::OnProcessMessage(CFWL_Message* pMessage) {

@@ -99,7 +99,6 @@ class CFWL_Widget : public Observable, public IFWL_WidgetDelegate {
   bool IsChild() const;
 
   CFWL_WidgetMgr* GetWidgetMgr() const { return m_pWidgetMgr.Get(); }
-  CFWL_Widget* GetOwner() { return m_pWidgetMgr->GetOwnerWidget(this); }
   CFWL_Widget* GetOuter() const { return m_pOuter; }
   CFWL_Widget* GetOutmost() const;
 
