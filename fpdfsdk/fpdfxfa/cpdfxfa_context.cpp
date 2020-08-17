@@ -13,6 +13,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_seekablemultistream.h"
+#include "core/fxcrt/autonuller.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmlparser.h"
@@ -130,6 +131,7 @@ bool CPDFXFA_Context::LoadXFADoc() {
     return false;
   }
 
+  AutoNuller<std::unique_ptr<CXFA_FFDoc>> doc_nuller(&m_pXFADoc);
   m_pXFADoc =
       CXFA_FFDoc::CreateAndOpen(m_pXFAApp.get(), m_pDocEnv.get(),
                                 m_pPDFDoc.Get(), m_pGCHeap.get(), m_pXML.get());
@@ -139,7 +141,6 @@ bool CPDFXFA_Context::LoadXFADoc() {
   }
 
   if (!m_pXFAApp->LoadFWLTheme(m_pXFADoc.get())) {
-    m_pXFADoc.reset();
     FXSYS_SetLastError(FPDF_ERR_XFALAYOUT);
     return false;
   }
@@ -150,16 +151,19 @@ bool CPDFXFA_Context::LoadXFADoc() {
   else
     m_FormType = FormType::kXFAForeground;
 
+  AutoNuller<UnownedPtr<CXFA_FFDocView>> view_nuller(&m_pXFADocView);
   m_pXFADocView = m_pXFADoc->CreateDocView();
+
   if (m_pXFADocView->StartLayout() < 0) {
-    m_pXFADocView = nullptr;
-    m_pXFADoc.reset();
     FXSYS_SetLastError(FPDF_ERR_XFALAYOUT);
     return false;
   }
 
   m_pXFADocView->DoLayout();
   m_pXFADocView->StopLayout();
+
+  view_nuller.AbandonNullification();
+  doc_nuller.AbandonNullification();
   m_nLoadStatus = FXFA_LOADSTATUS_LOADED;
   return true;
 }
