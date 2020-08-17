@@ -34,6 +34,7 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
+#include "core/fxcrt/autonuller.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "third_party/base/logging.h"
@@ -57,19 +58,6 @@ const char kPathOperatorCubicBezier2 = 'v';
 const char kPathOperatorCubicBezier3 = 'y';
 const char kPathOperatorClosePath = 'h';
 const char kPathOperatorRectangle[] = "re";
-
-class CPDF_StreamParserAutoClearer {
- public:
-  CPDF_StreamParserAutoClearer(UnownedPtr<CPDF_StreamParser>* scoped_variable,
-                               CPDF_StreamParser* new_parser)
-      : scoped_variable_(scoped_variable) {
-    *scoped_variable_ = new_parser;
-  }
-  ~CPDF_StreamParserAutoClearer() { *scoped_variable_ = nullptr; }
-
- private:
-  UnownedPtr<CPDF_StreamParser>* scoped_variable_;
-};
 
 CFX_FloatRect GetShadingBBox(CPDF_ShadingPattern* pShading,
                              const CFX_Matrix& matrix) {
@@ -1515,7 +1503,8 @@ uint32_t CPDF_StreamContentParser::Parse(
   uint32_t init_obj_count = m_pObjectHolder->GetPageObjectCount();
   CPDF_StreamParser syntax(pdfium::make_span(pDataStart, size_left),
                            m_pDocument->GetByteStringPool());
-  CPDF_StreamParserAutoClearer auto_clearer(&m_pSyntax, &syntax);
+  AutoNuller<UnownedPtr<CPDF_StreamParser>> auto_clearer(&m_pSyntax);
+  m_pSyntax = &syntax;
   while (1) {
     uint32_t cost = m_pObjectHolder->GetPageObjectCount() - init_obj_count;
     if (max_cost && cost >= max_cost) {

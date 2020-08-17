@@ -7,6 +7,7 @@ import("../../testing/test.gni")
 
 source_set("fxcrt") {
   sources = [
+    "autonuller.h",
     "autorestorer.h",
     "byteorder.h",
     "bytestring.cpp",
@@ -132,6 +133,7 @@ source_set("fxcrt") {
 
 pdfium_unittest_source_set("unittests") {
   sources = [
+    "autonuller_unittest.cpp",
     "autorestorer_unittest.cpp",
     "byteorder_unittest.cpp",
     "bytestring_unittest.cpp",
