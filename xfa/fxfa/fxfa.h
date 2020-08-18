@@ -23,6 +23,10 @@ class CXFA_Submit;
 class IFX_SeekableReadStream;
 class IJS_Runtime;
 
+namespace cppgc {
+class Heap;
+}  // namespace cppgc
+
 // Note, values must match fpdf_formfill.h JSPLATFORM_ALERT_BUTTON_* flags.
 enum class AlertButton {
   kDefault = 0,
@@ -90,7 +94,7 @@ enum XFA_WidgetStatus {
   XFA_WidgetStatus_Visible = 1 << 8
 };
 
-// Probably should be called IXFA_AppDelegate.
+// Probably should be CXFA_FFApp::CallbackIface in cxfa_ffapp.h
 class IXFA_AppProvider {
  public:
   virtual ~IXFA_AppProvider() = default;
@@ -192,8 +196,10 @@ class IXFA_AppProvider {
                              const WideString& wsEncode) = 0;
 
   virtual TimerHandlerIface* GetTimerHandler() const = 0;
+  virtual cppgc::Heap* GetGCHeap() const = 0;
 };
 
+// Probably should be called CFXA_FFDoc::CallbackIface in cxfa_ffdoc.h
 class IXFA_DocEnvironment {
  public:
   virtual ~IXFA_DocEnvironment() = default;

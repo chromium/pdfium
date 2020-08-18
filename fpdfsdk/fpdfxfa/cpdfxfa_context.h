@@ -49,7 +49,6 @@ class CPDFXFA_Context final : public CPDF_Document::Extension,
   CFX_XMLDocument* GetXMLDoc() { return m_pXML.get(); }
   CXFA_FFDoc* GetXFADoc() { return m_pXFADoc.get(); }
   CXFA_FFDocView* GetXFADocView() const { return m_pXFADocView.Get(); }
-  cppgc::Heap* GetGCHeap() { return m_pGCHeap.get(); }
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const {
     return m_pFormFillEnv.Get();
   }
@@ -96,6 +95,7 @@ class CPDFXFA_Context final : public CPDF_Document::Extension,
                      const WideString& wsData,
                      const WideString& wsEncode) override;
   TimerHandlerIface* GetTimerHandler() const override;
+  cppgc::Heap* GetGCHeap() const override;
 
   bool SaveDatasetsPackage(const RetainPtr<IFX_SeekableStream>& pStream);
   bool SaveFormPackage(const RetainPtr<IFX_SeekableStream>& pStream);

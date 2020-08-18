@@ -353,6 +353,10 @@ TimerHandlerIface* CPDFXFA_Context::GetTimerHandler() const {
   return m_pFormFillEnv ? m_pFormFillEnv->GetTimerHandler() : nullptr;
 }
 
+cppgc::Heap* CPDFXFA_Context::GetGCHeap() const {
+  return m_pGCHeap.get();
+}
+
 bool CPDFXFA_Context::SaveDatasetsPackage(
     const RetainPtr<IFX_SeekableStream>& pStream) {
   return SavePackage(pStream, XFA_HASHCODE_Datasets);

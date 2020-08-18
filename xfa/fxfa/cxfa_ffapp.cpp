@@ -70,3 +70,7 @@ TimerHandlerIface* CXFA_FFApp::GetTimerHandler() {
 IFWL_ThemeProvider* CXFA_FFApp::GetThemeProvider() {
   return m_pFWLTheme.get();
 }
+
+cppgc::Heap* CXFA_FFApp::GetHeap() {
+  return m_pProvider->GetGCHeap();
+}

@@ -30,6 +30,7 @@ class CXFA_FFApp : public CFWL_App::AdapterIface {
   CFWL_WidgetMgr::AdapterIface* GetWidgetMgrAdapter() override;
   TimerHandlerIface* GetTimerHandler() override;
   IFWL_ThemeProvider* GetThemeProvider() override;
+  cppgc::Heap* GetHeap() override;
 
   bool LoadFWLTheme(CXFA_FFDoc* doc);
   CFWL_WidgetMgr* GetFWLWidgetMgr() const { return m_pFWLApp->GetWidgetMgr(); }

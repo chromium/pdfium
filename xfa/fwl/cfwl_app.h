@@ -15,6 +15,10 @@
 class CFWL_NoteDriver;
 class IFWL_ThemeProvider;
 
+namespace cppgc {
+class Heap;
+}  // namespace cppgc
+
 enum FWL_KeyFlag {
   FWL_KEYFLAG_Ctrl = 1 << 0,
   FWL_KEYFLAG_Alt = 1 << 1,
@@ -33,6 +37,7 @@ class CFWL_App {
     virtual CFWL_WidgetMgr::AdapterIface* GetWidgetMgrAdapter() = 0;
     virtual TimerHandlerIface* GetTimerHandler() = 0;
     virtual IFWL_ThemeProvider* GetThemeProvider() = 0;
+    virtual cppgc::Heap* GetHeap() = 0;
   };
 
   explicit CFWL_App(AdapterIface* pAdapter);
@@ -47,6 +52,7 @@ class CFWL_App {
   IFWL_ThemeProvider* GetThemeProvider() const {
     return m_pAdapter->GetThemeProvider();
   }
+  cppgc::Heap* GetHeap() const { return m_pAdapter->GetHeap(); }
   CFWL_WidgetMgr* GetWidgetMgr() const { return m_pWidgetMgr.get(); }
   CFWL_NoteDriver* GetNoteDriver() const { return m_pNoteDriver.get(); }
 
