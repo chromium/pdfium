@@ -13,7 +13,6 @@
 #include "xfa/fwl/cfwl_widgetmgr.h"
 
 class CFWL_NoteDriver;
-class CFWL_WidgetMgr;
 class IFWL_ThemeProvider;
 
 enum FWL_KeyFlag {
@@ -39,12 +38,20 @@ class CFWL_App {
   explicit CFWL_App(AdapterIface* pAdapter);
   ~CFWL_App();
 
-  AdapterIface* GetAdapterNative() const { return m_pAdapterNative.Get(); }
+  CFWL_WidgetMgr::AdapterIface* GetWidgetMgrAdapter() const {
+    return m_pAdapter->GetWidgetMgrAdapter();
+  }
+  TimerHandlerIface* GetTimerHandler() const {
+    return m_pAdapter->GetTimerHandler();
+  }
+  IFWL_ThemeProvider* GetThemeProvider() const {
+    return m_pAdapter->GetThemeProvider();
+  }
   CFWL_WidgetMgr* GetWidgetMgr() const { return m_pWidgetMgr.get(); }
   CFWL_NoteDriver* GetNoteDriver() const { return m_pNoteDriver.get(); }
 
  private:
-  UnownedPtr<AdapterIface> const m_pAdapterNative;
+  UnownedPtr<AdapterIface> const m_pAdapter;
   std::unique_ptr<CFWL_WidgetMgr> m_pWidgetMgr;
   std::unique_ptr<CFWL_NoteDriver> m_pNoteDriver;
 };

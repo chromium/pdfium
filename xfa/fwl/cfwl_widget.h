@@ -126,7 +126,7 @@ class CFWL_Widget : public Observable, public IFWL_WidgetDelegate {
     return m_pDelegate ? m_pDelegate.Get() : this;
   }
 
-  const CFWL_App* GetOwnerApp() const { return m_pOwnerApp.Get(); }
+  const CFWL_App* GetFWLApp() const { return m_pFWLApp.Get(); }
   uint64_t GetEventKey() const { return m_nEventKey; }
   void SetEventKey(uint64_t key) { m_nEventKey = key; }
 
@@ -180,7 +180,7 @@ class CFWL_Widget : public Observable, public IFWL_WidgetDelegate {
 
   int32_t m_iLock = 0;
   uint64_t m_nEventKey = 0;
-  UnownedPtr<const CFWL_App> const m_pOwnerApp;
+  UnownedPtr<const CFWL_App> const m_pFWLApp;
   UnownedPtr<CFWL_WidgetMgr> const m_pWidgetMgr;
   CFWL_Widget* const m_pOuter;
   AdapterIface* m_pAdapterIface = nullptr;

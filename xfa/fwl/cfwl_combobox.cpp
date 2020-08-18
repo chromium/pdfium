@@ -380,14 +380,14 @@ void CFWL_ComboBox::InitComboList() {
   Properties prop;
   prop.m_dwStyles = FWL_WGTSTYLE_Border | FWL_WGTSTYLE_VScroll;
   prop.m_dwStates = FWL_WGTSTATE_Invisible;
-  m_pListBox = std::make_unique<CFWL_ComboList>(GetOwnerApp(), prop, this);
+  m_pListBox = std::make_unique<CFWL_ComboList>(GetFWLApp(), prop, this);
 }
 
 void CFWL_ComboBox::InitComboEdit() {
   if (m_pEdit)
     return;
 
-  m_pEdit = std::make_unique<CFWL_ComboEdit>(GetOwnerApp(), Properties(), this);
+  m_pEdit = std::make_unique<CFWL_ComboEdit>(GetFWLApp(), Properties(), this);
 }
 
 void CFWL_ComboBox::OnProcessMessage(CFWL_Message* pMessage) {

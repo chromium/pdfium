@@ -46,9 +46,8 @@ void CFWL_Caret::DrawWidget(CXFA_Graphics* pGraphics,
 }
 
 void CFWL_Caret::ShowCaret() {
-  m_pTimer = std::make_unique<CFX_Timer>(
-      GetOwnerApp()->GetAdapterNative()->GetTimerHandler(), this,
-      kBlinkPeriodMs);
+  m_pTimer = std::make_unique<CFX_Timer>(GetFWLApp()->GetTimerHandler(), this,
+                                         kBlinkPeriodMs);
   RemoveStates(FWL_WGTSTATE_Invisible);
   SetStates(kStateHighlight);
 }

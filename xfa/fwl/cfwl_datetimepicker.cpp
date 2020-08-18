@@ -31,13 +31,13 @@ CFWL_DateTimePicker::CFWL_DateTimePicker(const CFWL_App* app)
   monthProp.m_dwStyles = FWL_WGTSTYLE_Popup | FWL_WGTSTYLE_Border;
   monthProp.m_dwStates = FWL_WGTSTATE_Invisible;
   m_pMonthCal =
-      std::make_unique<CFWL_MonthCalendar>(GetOwnerApp(), monthProp, this);
+      std::make_unique<CFWL_MonthCalendar>(GetFWLApp(), monthProp, this);
 
   m_pMonthCal->SetWidgetRect(
       CFX_RectF(0, 0, m_pMonthCal->GetAutosizedWidgetRect().Size()));
 
   m_pEdit =
-      std::make_unique<CFWL_DateTimeEdit>(GetOwnerApp(), Properties(), this);
+      std::make_unique<CFWL_DateTimeEdit>(GetFWLApp(), Properties(), this);
 
   RegisterEventTarget(m_pMonthCal.get());
   RegisterEventTarget(m_pEdit.get());

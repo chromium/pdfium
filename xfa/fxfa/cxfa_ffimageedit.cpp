@@ -41,7 +41,7 @@ bool CXFA_FFImageEdit::LoadWidget() {
   SetNormalWidget(std::move(pNew));
   pPictureBox->SetAdapterIface(this);
 
-  CFWL_NoteDriver* pNoteDriver = pPictureBox->GetOwnerApp()->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = pPictureBox->GetFWLApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pPictureBox, pPictureBox);
   m_pOldDelegate = pPictureBox->GetDelegate();
   pPictureBox->SetDelegate(this);

@@ -149,7 +149,7 @@ bool CXFA_FFBarcode::LoadWidget() {
   SetNormalWidget(std::move(pNew));
   pFWLBarcode->SetAdapterIface(this);
 
-  CFWL_NoteDriver* pNoteDriver = pFWLBarcode->GetOwnerApp()->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = pFWLBarcode->GetFWLApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pFWLBarcode, pFWLBarcode);
   m_pOldDelegate = pFWLBarcode->GetDelegate();
   pFWLBarcode->SetDelegate(this);

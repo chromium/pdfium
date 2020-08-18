@@ -36,7 +36,7 @@ CFWL_Widget::CFWL_Widget(const CFWL_App* app,
                          const Properties& properties,
                          CFWL_Widget* pOuter)
     : m_Properties(properties),
-      m_pOwnerApp(app),
+      m_pFWLApp(app),
       m_pWidgetMgr(app->GetWidgetMgr()),
       m_pOuter(pOuter) {
   m_pWidgetMgr->InsertWidget(m_pOuter, this);
@@ -104,10 +104,10 @@ void CFWL_Widget::SetStates(uint32_t dwStates) {
   if (IsVisible())
     return;
 
-  CFWL_NoteDriver* noteDriver = GetOwnerApp()->GetNoteDriver();
+  CFWL_NoteDriver* noteDriver = GetFWLApp()->GetNoteDriver();
   noteDriver->NotifyTargetHide(this);
 
-  CFWL_WidgetMgr* widgetMgr = GetOwnerApp()->GetWidgetMgr();
+  CFWL_WidgetMgr* widgetMgr = GetFWLApp()->GetWidgetMgr();
   CFWL_Widget* child = widgetMgr->GetFirstChildWidget(this);
   while (child) {
     noteDriver->NotifyTargetHide(child);
@@ -158,7 +158,7 @@ CFX_Matrix CFWL_Widget::GetMatrix() const {
 }
 
 IFWL_ThemeProvider* CFWL_Widget::GetThemeProvider() const {
-  return m_pOwnerApp->GetAdapterNative()->GetThemeProvider();
+  return GetFWLApp()->GetThemeProvider();
 }
 
 bool CFWL_Widget::IsEnabled() const {
@@ -242,17 +242,17 @@ void CFWL_Widget::CalcTextRect(const WideString& wsText,
 }
 
 void CFWL_Widget::SetGrab(bool bSet) {
-  CFWL_NoteDriver* pDriver = GetOwnerApp()->GetNoteDriver();
+  CFWL_NoteDriver* pDriver = GetFWLApp()->GetNoteDriver();
   pDriver->SetGrab(bSet ? this : nullptr);
 }
 
 void CFWL_Widget::RegisterEventTarget(CFWL_Widget* pEventSource) {
-  CFWL_NoteDriver* pNoteDriver = GetOwnerApp()->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = GetFWLApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(this, pEventSource);
 }
 
 void CFWL_Widget::UnregisterEventTarget() {
-  CFWL_NoteDriver* pNoteDriver = GetOwnerApp()->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = GetFWLApp()->GetNoteDriver();
   pNoteDriver->UnregisterEventTarget(this);
 }
 
@@ -261,7 +261,7 @@ void CFWL_Widget::DispatchEvent(CFWL_Event* pEvent) {
     m_pOuter->GetDelegate()->OnProcessEvent(pEvent);
     return;
   }
-  CFWL_NoteDriver* pNoteDriver = GetOwnerApp()->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = GetFWLApp()->GetNoteDriver();
   pNoteDriver->SendEvent(pEvent);
 }
 
@@ -295,7 +295,7 @@ void CFWL_Widget::DrawBorder(CXFA_Graphics* pGraphics,
 }
 
 void CFWL_Widget::NotifyDriver() {
-  CFWL_NoteDriver* pDriver = GetOwnerApp()->GetNoteDriver();
+  CFWL_NoteDriver* pDriver = GetFWLApp()->GetNoteDriver();
   pDriver->NotifyTargetDestroy(this);
 }
 
@@ -304,7 +304,7 @@ CFX_SizeF CFWL_Widget::GetOffsetFromParent(CFWL_Widget* pParent) {
     return CFX_SizeF();
 
   CFX_SizeF szRet(m_WidgetRect.left, m_WidgetRect.top);
-  CFWL_WidgetMgr* pWidgetMgr = GetOwnerApp()->GetWidgetMgr();
+  CFWL_WidgetMgr* pWidgetMgr = GetFWLApp()->GetWidgetMgr();
   CFWL_Widget* pDstWidget = GetParent();
   while (pDstWidget && pDstWidget != pParent) {
     CFX_RectF rtDst = pDstWidget->GetWidgetRect();

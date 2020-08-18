@@ -33,7 +33,7 @@ CXFA_FFListBox::~CXFA_FFListBox() {
     return;
 
   CFWL_NoteDriver* pNoteDriver =
-      GetNormalWidget()->GetOwnerApp()->GetNoteDriver();
+      GetNormalWidget()->GetFWLApp()->GetNoteDriver();
   pNoteDriver->UnregisterEventTarget(GetNormalWidget());
 }
 
@@ -51,7 +51,7 @@ bool CXFA_FFListBox::LoadWidget() {
   SetNormalWidget(std::move(pNew));
   pListBox->SetAdapterIface(this);
 
-  CFWL_NoteDriver* pNoteDriver = pListBox->GetOwnerApp()->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = pListBox->GetFWLApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pListBox, pListBox);
   m_pOldDelegate = pListBox->GetDelegate();
   pListBox->SetDelegate(this);

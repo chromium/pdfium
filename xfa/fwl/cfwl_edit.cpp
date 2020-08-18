@@ -838,8 +838,7 @@ void CFWL_Edit::InitVerticalScrollBar() {
   Properties prop;
   prop.m_dwStyleExes = FWL_STYLEEXT_SCB_Vert;
   prop.m_dwStates = FWL_WGTSTATE_Disabled | FWL_WGTSTATE_Invisible;
-  m_pVertScrollBar =
-      std::make_unique<CFWL_ScrollBar>(GetOwnerApp(), prop, this);
+  m_pVertScrollBar = std::make_unique<CFWL_ScrollBar>(GetFWLApp(), prop, this);
 }
 
 void CFWL_Edit::InitHorizontalScrollBar() {
@@ -849,8 +848,7 @@ void CFWL_Edit::InitHorizontalScrollBar() {
   Properties prop;
   prop.m_dwStyleExes = FWL_STYLEEXT_SCB_Horz;
   prop.m_dwStates = FWL_WGTSTATE_Disabled | FWL_WGTSTATE_Invisible;
-  m_pHorzScrollBar =
-      std::make_unique<CFWL_ScrollBar>(GetOwnerApp(), prop, this);
+  m_pHorzScrollBar = std::make_unique<CFWL_ScrollBar>(GetFWLApp(), prop, this);
 }
 
 void CFWL_Edit::ShowCaret(CFX_RectF* pRect) {
@@ -920,7 +918,7 @@ void CFWL_Edit::InitCaret() {
   if (m_pCaret)
     return;
 
-  m_pCaret = std::make_unique<CFWL_Caret>(GetOwnerApp(), Properties(), this);
+  m_pCaret = std::make_unique<CFWL_Caret>(GetFWLApp(), Properties(), this);
   m_pCaret->SetStates(m_Properties.m_dwStates);
   UpdateCursorRect();
 }

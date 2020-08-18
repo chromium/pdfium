@@ -37,7 +37,7 @@ CXFA_FFTextEdit::CXFA_FFTextEdit(CXFA_Node* pNode) : CXFA_FFField(pNode) {}
 CXFA_FFTextEdit::~CXFA_FFTextEdit() {
   if (GetNormalWidget()) {
     CFWL_NoteDriver* pNoteDriver =
-        GetNormalWidget()->GetOwnerApp()->GetNoteDriver();
+        GetNormalWidget()->GetFWLApp()->GetNoteDriver();
     pNoteDriver->UnregisterEventTarget(GetNormalWidget());
   }
 }
@@ -54,7 +54,7 @@ bool CXFA_FFTextEdit::LoadWidget() {
   SetNormalWidget(std::move(pNewWidget));
   pFWLEdit->SetAdapterIface(this);
 
-  CFWL_NoteDriver* pNoteDriver = pFWLEdit->GetOwnerApp()->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = pFWLEdit->GetFWLApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pFWLEdit, pFWLEdit);
   m_pOldDelegate = pFWLEdit->GetDelegate();
   pFWLEdit->SetDelegate(this);

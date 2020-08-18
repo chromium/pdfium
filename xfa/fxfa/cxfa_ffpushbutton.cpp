@@ -60,7 +60,7 @@ bool CXFA_FFPushButton::LoadWidget() {
   SetNormalWidget(std::move(pNew));
   pPushButton->SetAdapterIface(this);
 
-  CFWL_NoteDriver* pNoteDriver = pPushButton->GetOwnerApp()->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = pPushButton->GetFWLApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pPushButton, pPushButton);
 
   {

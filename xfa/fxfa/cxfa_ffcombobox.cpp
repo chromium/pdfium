@@ -59,7 +59,7 @@ bool CXFA_FFComboBox::LoadWidget() {
   SetNormalWidget(std::move(pNew));
   pComboBox->SetAdapterIface(this);
 
-  CFWL_NoteDriver* pNoteDriver = pComboBox->GetOwnerApp()->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = pComboBox->GetFWLApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pComboBox, pComboBox);
   m_pOldDelegate = pComboBox->GetDelegate();
   pComboBox->SetDelegate(this);

@@ -161,7 +161,7 @@ bool CFWL_NoteDriver::DoKey(CFWL_Message* pMessage, CFWL_Widget* pMessageForm) {
 
   if (pMsg->m_dwCmd == CFWL_MessageKey::Type::kKeyDown &&
       pMsg->m_dwKeyCode == XFA_FWL_VKEY_Return) {
-    CFWL_WidgetMgr* pWidgetMgr = pMessageForm->GetOwnerApp()->GetWidgetMgr();
+    CFWL_WidgetMgr* pWidgetMgr = pMessageForm->GetFWLApp()->GetWidgetMgr();
     CFWL_Widget* pDefButton = pWidgetMgr->GetDefaultButton(pMessageForm);
     if (pDefButton) {
       pMsg->SetDstTarget(pDefButton);
@@ -188,7 +188,7 @@ bool CFWL_NoteDriver::DoMouse(CFWL_Message* pMessage,
 
 bool CFWL_NoteDriver::DoWheel(CFWL_Message* pMessage,
                               CFWL_Widget* pMessageForm) {
-  CFWL_WidgetMgr* pWidgetMgr = pMessageForm->GetOwnerApp()->GetWidgetMgr();
+  CFWL_WidgetMgr* pWidgetMgr = pMessageForm->GetFWLApp()->GetWidgetMgr();
   CFWL_MessageMouseWheel* pMsg = static_cast<CFWL_MessageMouseWheel*>(pMessage);
   CFWL_Widget* pDst = pWidgetMgr->GetWidgetAtPoint(pMessageForm, pMsg->pos());
   if (!pDst)
@@ -201,7 +201,7 @@ bool CFWL_NoteDriver::DoWheel(CFWL_Message* pMessage,
 
 bool CFWL_NoteDriver::DoMouseEx(CFWL_Message* pMessage,
                                 CFWL_Widget* pMessageForm) {
-  CFWL_WidgetMgr* pWidgetMgr = pMessageForm->GetOwnerApp()->GetWidgetMgr();
+  CFWL_WidgetMgr* pWidgetMgr = pMessageForm->GetFWLApp()->GetWidgetMgr();
   CFWL_Widget* pTarget = nullptr;
   if (m_pGrab)
     pTarget = m_pGrab.Get();

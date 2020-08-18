@@ -42,7 +42,7 @@ bool CXFA_FFCheckButton::LoadWidget() {
   SetNormalWidget(std::move(pNew));
   pCheckBox->SetAdapterIface(this);
 
-  CFWL_NoteDriver* pNoteDriver = pCheckBox->GetOwnerApp()->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = pCheckBox->GetFWLApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pCheckBox, pCheckBox);
   m_pOldDelegate = pCheckBox->GetDelegate();
   pCheckBox->SetDelegate(this);

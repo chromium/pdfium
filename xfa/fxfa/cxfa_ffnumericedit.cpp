@@ -34,7 +34,7 @@ bool CXFA_FFNumericEdit::LoadWidget() {
   SetNormalWidget(std::move(pNewEdit));
   pWidget->SetAdapterIface(this);
 
-  CFWL_NoteDriver* pNoteDriver = pWidget->GetOwnerApp()->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = pWidget->GetFWLApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pWidget, pWidget);
   m_pOldDelegate = pWidget->GetDelegate();
   pWidget->SetDelegate(this);

@@ -178,7 +178,7 @@ void CFWL_WidgetMgr::OnProcessMessageToForm(
   if (!pDstWidget)
     return;
 
-  CFWL_NoteDriver* pNoteDriver = pDstWidget->GetOwnerApp()->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = pDstWidget->GetFWLApp()->GetNoteDriver();
   pNoteDriver->ProcessMessage(std::move(pMessage));
 }
 
