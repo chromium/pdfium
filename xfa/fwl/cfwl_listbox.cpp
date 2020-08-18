@@ -589,20 +589,18 @@ void CFWL_ListBox::InitVerticalScrollBar() {
   if (m_pVertScrollBar)
     return;
 
-  Properties prop;
-  prop.m_dwStyleExes = FWL_STYLEEXT_SCB_Vert;
-  prop.m_dwStates = FWL_WGTSTATE_Invisible;
-  m_pVertScrollBar = std::make_unique<CFWL_ScrollBar>(GetFWLApp(), prop, this);
+  m_pVertScrollBar = std::make_unique<CFWL_ScrollBar>(
+      GetFWLApp(), Properties{0, FWL_STYLEEXT_SCB_Vert, FWL_WGTSTATE_Invisible},
+      this);
 }
 
 void CFWL_ListBox::InitHorizontalScrollBar() {
   if (m_pHorzScrollBar)
     return;
 
-  Properties prop;
-  prop.m_dwStyleExes = FWL_STYLEEXT_SCB_Horz;
-  prop.m_dwStates = FWL_WGTSTATE_Invisible;
-  m_pHorzScrollBar = std::make_unique<CFWL_ScrollBar>(GetFWLApp(), prop, this);
+  m_pHorzScrollBar = std::make_unique<CFWL_ScrollBar>(
+      GetFWLApp(), Properties{0, FWL_STYLEEXT_SCB_Horz, FWL_WGTSTATE_Invisible},
+      this);
 }
 
 bool CFWL_ListBox::IsShowScrollBar(bool bVert) {

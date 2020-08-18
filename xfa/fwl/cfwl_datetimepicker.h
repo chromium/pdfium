@@ -97,8 +97,8 @@ class CFWL_DateTimePicker final : public CFWL_Widget {
   float m_fBtn = 0.0f;
   CFX_RectF m_BtnRect;
   CFX_RectF m_ClientRect;
-  std::unique_ptr<CFWL_DateTimeEdit> m_pEdit;
-  std::unique_ptr<CFWL_MonthCalendar> m_pMonthCal;
+  std::unique_ptr<CFWL_DateTimeEdit> const m_pEdit;
+  std::unique_ptr<CFWL_MonthCalendar> const m_pMonthCal;
 };
 
 #endif  // XFA_FWL_CFWL_DATETIMEPICKER_H_

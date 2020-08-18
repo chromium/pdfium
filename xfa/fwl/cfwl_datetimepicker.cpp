@@ -24,20 +24,17 @@ const int kDateTimePickerHeight = 20;
 
 }  // namespace
 CFWL_DateTimePicker::CFWL_DateTimePicker(const CFWL_App* app)
-    : CFWL_Widget(app, Properties(), nullptr) {
-  m_Properties.m_dwStyleExes = FWL_STYLEEXT_DTP_ShortDateFormat;
-
-  Properties monthProp;
-  monthProp.m_dwStyles = FWL_WGTSTYLE_Popup | FWL_WGTSTYLE_Border;
-  monthProp.m_dwStates = FWL_WGTSTATE_Invisible;
-  m_pMonthCal =
-      std::make_unique<CFWL_MonthCalendar>(GetFWLApp(), monthProp, this);
-
+    : CFWL_Widget(app,
+                  Properties{0, FWL_STYLEEXT_DTP_ShortDateFormat, 0},
+                  nullptr),
+      m_pEdit(std::make_unique<CFWL_DateTimeEdit>(app, Properties(), this)),
+      m_pMonthCal(std::make_unique<CFWL_MonthCalendar>(
+          app,
+          Properties{FWL_WGTSTYLE_Popup | FWL_WGTSTYLE_Border, 0,
+                     FWL_WGTSTATE_Invisible},
+          this)) {
   m_pMonthCal->SetWidgetRect(
       CFX_RectF(0, 0, m_pMonthCal->GetAutosizedWidgetRect().Size()));
-
-  m_pEdit =
-      std::make_unique<CFWL_DateTimeEdit>(GetFWLApp(), Properties(), this);
 
   RegisterEventTarget(m_pMonthCal.get());
   RegisterEventTarget(m_pEdit.get());
