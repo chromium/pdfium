@@ -347,12 +347,6 @@ void CFWL_Widget::OnProcessEvent(CFWL_Event* pEvent) {}
 void CFWL_Widget::OnDrawWidget(CXFA_Graphics* pGraphics,
                                const CFX_Matrix& matrix) {}
 
-CFWL_Widget::Properties::Properties() = default;
-
-CFWL_Widget::Properties::Properties(const Properties& that) = default;
-
-CFWL_Widget::Properties::~Properties() = default;
-
 CFWL_Widget::ScopedUpdateLock::ScopedUpdateLock(CFWL_Widget* widget)
     : widget_(widget) {
   widget_->LockUpdate();

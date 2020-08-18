@@ -29,10 +29,13 @@
 #include "xfa/fwl/ifwl_themeprovider.h"
 
 CFWL_ComboBox::CFWL_ComboBox(const CFWL_App* app)
-    : CFWL_Widget(app, Properties(), nullptr) {
-  InitComboList();
-  InitComboEdit();
-}
+    : CFWL_Widget(app, Properties(), nullptr),
+      m_pEdit(std::make_unique<CFWL_ComboEdit>(app, Properties(), this)),
+      m_pListBox(std::make_unique<CFWL_ComboList>(
+          app,
+          Properties{FWL_WGTSTYLE_Border | FWL_WGTSTYLE_VScroll, 0,
+                     FWL_WGTSTATE_Invisible},
+          this)) {}
 
 CFWL_ComboBox::~CFWL_ComboBox() = default;
 
@@ -54,19 +57,15 @@ void CFWL_ComboBox::RemoveAll() {
 
 void CFWL_ComboBox::ModifyStylesEx(uint32_t dwStylesExAdded,
                                    uint32_t dwStylesExRemoved) {
-  if (!m_pEdit)
-    InitComboEdit();
-
   bool bAddDropDown = !!(dwStylesExAdded & FWL_STYLEEXT_CMB_DropDown);
   bool bDelDropDown = !!(dwStylesExRemoved & FWL_STYLEEXT_CMB_DropDown);
-
   dwStylesExRemoved &= ~FWL_STYLEEXT_CMB_DropDown;
   m_Properties.m_dwStyleExes |= FWL_STYLEEXT_CMB_DropDown;
-
   if (bAddDropDown)
     m_pEdit->ModifyStylesEx(0, FWL_STYLEEXT_EDT_ReadOnly);
   else if (bDelDropDown)
     m_pEdit->ModifyStylesEx(FWL_STYLEEXT_EDT_ReadOnly, 0);
+
   CFWL_Widget::ModifyStylesEx(dwStylesExAdded, dwStylesExRemoved);
 }
 
@@ -371,23 +370,6 @@ void CFWL_ComboBox::ProcessSelChanged(bool bLButtonUp) {
   CFWL_EventSelectChanged ev(this);
   ev.bLButtonUp = bLButtonUp;
   DispatchEvent(&ev);
-}
-
-void CFWL_ComboBox::InitComboList() {
-  if (m_pListBox)
-    return;
-
-  Properties prop;
-  prop.m_dwStyles = FWL_WGTSTYLE_Border | FWL_WGTSTYLE_VScroll;
-  prop.m_dwStates = FWL_WGTSTATE_Invisible;
-  m_pListBox = std::make_unique<CFWL_ComboList>(GetFWLApp(), prop, this);
-}
-
-void CFWL_ComboBox::InitComboEdit() {
-  if (m_pEdit)
-    return;
-
-  m_pEdit = std::make_unique<CFWL_ComboEdit>(GetFWLApp(), Properties(), this);
 }
 
 void CFWL_ComboBox::OnProcessMessage(CFWL_Message* pMessage) {

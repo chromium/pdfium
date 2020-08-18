@@ -107,9 +107,6 @@ class CFWL_ComboBox final : public CFWL_Widget {
                    const CFX_RectF& rtAnchor,
                    CFX_RectF* pPopupRect);
   void OnLButtonUp(CFWL_MessageMouse* pMsg);
-
-  void InitComboList();
-  void InitComboEdit();
   bool IsDropListVisible() const { return m_pListBox->IsVisible(); }
   void OnLButtonDown(CFWL_MessageMouse* pMsg);
   void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
@@ -118,8 +115,8 @@ class CFWL_ComboBox final : public CFWL_Widget {
   CFX_RectF m_ClientRect;
   CFX_RectF m_ContentRect;
   CFX_RectF m_BtnRect;
-  std::unique_ptr<CFWL_ComboEdit> m_pEdit;
-  std::unique_ptr<CFWL_ComboList> m_pListBox;
+  std::unique_ptr<CFWL_ComboEdit> const m_pEdit;
+  std::unique_ptr<CFWL_ComboList> const m_pListBox;
   int32_t m_iCurSel = -1;
   int32_t m_iBtnState = CFWL_PartState_Normal;
 };
