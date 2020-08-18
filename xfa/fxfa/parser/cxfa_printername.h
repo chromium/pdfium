@@ -11,8 +11,11 @@
 
 class CXFA_PrinterName final : public CXFA_Node {
  public:
-  CXFA_PrinterName(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_PrinterName() override;
+
+ private:
+  CXFA_PrinterName(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_PRINTERNAME_H_

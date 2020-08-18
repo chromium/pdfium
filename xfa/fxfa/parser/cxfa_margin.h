@@ -11,7 +11,7 @@
 
 class CXFA_Margin final : public CXFA_Node {
  public:
-  CXFA_Margin(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Margin() override;
 
   float GetLeftInset() const;
@@ -23,6 +23,9 @@ class CXFA_Margin final : public CXFA_Node {
   Optional<float> TryTopInset() const;
   Optional<float> TryRightInset() const;
   Optional<float> TryBottomInset() const;
+
+ private:
+  CXFA_Margin(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_MARGIN_H_

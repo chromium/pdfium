@@ -11,8 +11,11 @@
 
 class CXFA_Break final : public CXFA_Node {
  public:
-  CXFA_Break(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Break() override;
+
+ private:
+  CXFA_Break(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_BREAK_H_

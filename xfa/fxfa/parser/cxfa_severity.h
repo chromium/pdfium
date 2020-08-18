@@ -11,8 +11,11 @@
 
 class CXFA_Severity final : public CXFA_Node {
  public:
-  CXFA_Severity(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Severity() override;
+
+ private:
+  CXFA_Severity(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_SEVERITY_H_

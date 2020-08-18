@@ -11,8 +11,11 @@
 
 class CXFA_CompressLogicalStructure final : public CXFA_Node {
  public:
-  CXFA_CompressLogicalStructure(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_CompressLogicalStructure() override;
+
+ private:
+  CXFA_CompressLogicalStructure(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_COMPRESSLOGICALSTRUCTURE_H_

@@ -11,13 +11,16 @@
 
 class CXFA_FFArc final : public CXFA_FFWidget {
  public:
-  explicit CXFA_FFArc(CXFA_Node* pnode);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FFArc() override;
 
   // CXFA_FFWidget
   void RenderWidget(CXFA_Graphics* pGS,
                     const CFX_Matrix& matrix,
                     HighlightOption highlight) override;
+
+ private:
+  explicit CXFA_FFArc(CXFA_Node* pnode);
 };
 
 #endif  // XFA_FXFA_CXFA_FFARC_H_

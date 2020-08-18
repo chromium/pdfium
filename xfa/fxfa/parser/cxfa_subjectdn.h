@@ -11,8 +11,11 @@
 
 class CXFA_SubjectDN final : public CXFA_Node {
  public:
-  CXFA_SubjectDN(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_SubjectDN() override;
+
+ private:
+  CXFA_SubjectDN(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_SUBJECTDN_H_

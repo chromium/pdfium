@@ -11,8 +11,11 @@
 
 class CXFA_ExObject final : public CXFA_Node {
  public:
-  CXFA_ExObject(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_ExObject() override;
+
+ private:
+  CXFA_ExObject(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_EXOBJECT_H_

@@ -11,8 +11,11 @@
 
 class CXFA_Rename final : public CXFA_Node {
  public:
-  CXFA_Rename(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Rename() override;
+
+ private:
+  CXFA_Rename(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_RENAME_H_

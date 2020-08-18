@@ -16,7 +16,7 @@ class CXFA_Graphics;
 
 class CXFA_Radial final : public CXFA_Node {
  public:
-  CXFA_Radial(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Radial() override;
 
   void Draw(CXFA_Graphics* pGS,
@@ -26,6 +26,8 @@ class CXFA_Radial final : public CXFA_Node {
             const CFX_Matrix& matrix);
 
  private:
+  CXFA_Radial(CXFA_Document* doc, XFA_PacketType packet);
+
   bool IsToEdge();
   CXFA_Color* GetColorIfExists();
 };

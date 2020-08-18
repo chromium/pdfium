@@ -11,8 +11,11 @@
 
 class CXFA_SilentPrint final : public CXFA_Node {
  public:
-  CXFA_SilentPrint(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_SilentPrint() override;
+
+ private:
+  CXFA_SilentPrint(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_SILENTPRINT_H_

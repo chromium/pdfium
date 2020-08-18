@@ -11,6 +11,7 @@
 #include "fxjs/xfa/cfxjse_class.h"
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cfxjse_value.h"
+#include "v8/include/cppgc/allocation.h"
 #include "xfa/fxfa/parser/cxfa_arraynodelist.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_field.h"
@@ -38,8 +39,11 @@ CJS_Result CJX_Container::getDelta(
 CJS_Result CJX_Container::getDeltas(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  auto* pList = static_cast<CXFA_ArrayNodeList*>(GetDocument()->AddOwnedList(
-      std::make_unique<CXFA_ArrayNodeList>(GetDocument())));
+  CXFA_Document* pDoc = GetDocument();
+  auto* pList = cppgc::MakeGarbageCollected<CXFA_ArrayNodeList>(
+      pDoc->GetHeap()->GetAllocationHandle(), pDoc);
+  pDoc->GetNodeOwner()->PersistList(pList);
+
   auto* pEngine = static_cast<CFXJSE_Engine*>(runtime);
   return CJS_Result::Success(pEngine->NewXFAObject(
       pList, pEngine->GetJseNormalClass()->GetTemplate()));

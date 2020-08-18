@@ -11,8 +11,11 @@
 
 class CXFA_Window final : public CXFA_Node {
  public:
-  CXFA_Window(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Window() override;
+
+ private:
+  CXFA_Window(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_WINDOW_H_

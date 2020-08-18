@@ -11,8 +11,11 @@
 
 class CXFA_CurrencySymbols final : public CXFA_Node {
  public:
-  CXFA_CurrencySymbols(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_CurrencySymbols() override;
+
+ private:
+  CXFA_CurrencySymbols(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_CURRENCYSYMBOLS_H_

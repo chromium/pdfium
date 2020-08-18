@@ -9,14 +9,25 @@
 #include <utility>
 #include <vector>
 
+#include "xfa/fxfa/parser/cxfa_node.h"
+
 CXFA_ArrayNodeList::CXFA_ArrayNodeList(CXFA_Document* pDocument)
     : CXFA_TreeList(pDocument) {}
 
 CXFA_ArrayNodeList::~CXFA_ArrayNodeList() = default;
 
-void CXFA_ArrayNodeList::SetArrayNodeList(std::vector<CXFA_Node*> srcArray) {
-  if (!srcArray.empty())
-    m_array = std::move(srcArray);
+void CXFA_ArrayNodeList::Trace(cppgc::Visitor* visitor) const {
+  CXFA_TreeList::Trace(visitor);
+  for (const auto& node : m_array)
+    visitor->Trace(node);
+}
+
+void CXFA_ArrayNodeList::SetArrayNodeList(
+    const std::vector<CXFA_Node*>& srcArray) {
+  if (!srcArray.empty()) {
+    m_array =
+        std::vector<cppgc::Member<CXFA_Node>>(srcArray.begin(), srcArray.end());
+  }
 }
 
 size_t CXFA_ArrayNodeList::GetLength() {

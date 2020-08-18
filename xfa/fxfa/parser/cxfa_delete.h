@@ -11,8 +11,11 @@
 
 class CXFA_Delete final : public CXFA_Node {
  public:
-  CXFA_Delete(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Delete() override;
+
+ private:
+  CXFA_Delete(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_DELETE_H_

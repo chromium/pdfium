@@ -11,8 +11,11 @@
 
 class CXFA_Trace final : public CXFA_Node {
  public:
-  CXFA_Trace(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Trace() override;
+
+ private:
+  CXFA_Trace(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_TRACE_H_

@@ -11,11 +11,14 @@
 
 class CXFA_DateTimeEdit final : public CXFA_Node {
  public:
-  CXFA_DateTimeEdit(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_DateTimeEdit() override;
 
   XFA_Element GetValueNodeType() const override;
   XFA_FFWidgetType GetDefaultFFWidgetType() const override;
+
+ private:
+  CXFA_DateTimeEdit(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_DATETIMEEDIT_H_

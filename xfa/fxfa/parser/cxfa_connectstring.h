@@ -11,8 +11,11 @@
 
 class CXFA_ConnectString final : public CXFA_Node {
  public:
-  CXFA_ConnectString(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_ConnectString() override;
+
+ private:
+  CXFA_ConnectString(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_CONNECTSTRING_H_

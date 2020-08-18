@@ -11,8 +11,11 @@
 
 class CXFA_NeverEmbed final : public CXFA_Node {
  public:
-  CXFA_NeverEmbed(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_NeverEmbed() override;
+
+ private:
+  CXFA_NeverEmbed(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_NEVEREMBED_H_

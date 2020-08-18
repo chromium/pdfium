@@ -11,8 +11,11 @@
 
 class CXFA_ValidationMessaging final : public CXFA_Node {
  public:
-  CXFA_ValidationMessaging(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_ValidationMessaging() override;
+
+ private:
+  CXFA_ValidationMessaging(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_VALIDATIONMESSAGING_H_

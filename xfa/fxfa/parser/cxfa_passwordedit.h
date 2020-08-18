@@ -11,11 +11,14 @@
 
 class CXFA_PasswordEdit final : public CXFA_Node {
  public:
-  CXFA_PasswordEdit(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_PasswordEdit() override;
 
   XFA_FFWidgetType GetDefaultFFWidgetType() const override;
   WideString GetPasswordChar();
+
+ private:
+  CXFA_PasswordEdit(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_PASSWORDEDIT_H_

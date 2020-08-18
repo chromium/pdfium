@@ -8,6 +8,10 @@
 #define XFA_FXFA_CXFA_FFWIDGETHANDLER_H_
 
 #include "core/fxcrt/unowned_ptr.h"
+#include "fxjs/gc/heap.h"
+#include "v8/include/cppgc/garbage-collected.h"
+#include "v8/include/cppgc/member.h"
+#include "v8/include/cppgc/visitor.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
@@ -16,10 +20,13 @@ class CXFA_FFDocView;
 class CXFA_Graphics;
 enum class FWL_WidgetHit;
 
-class CXFA_FFWidgetHandler {
+class CXFA_FFWidgetHandler final
+    : public cppgc::GarbageCollected<CXFA_FFWidgetHandler> {
  public:
-  explicit CXFA_FFWidgetHandler(CXFA_FFDocView* pDocView);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FFWidgetHandler();
+
+  void Trace(cppgc::Visitor* visitor) const;
 
   bool OnMouseEnter(CXFA_FFWidget* hWidget);
   bool OnMouseExit(CXFA_FFWidget* hWidget);
@@ -71,7 +78,9 @@ class CXFA_FFWidgetHandler {
   XFA_EventError ProcessEvent(CXFA_Node* pNode, CXFA_EventParam* pParam);
 
  private:
-  UnownedPtr<CXFA_FFDocView> m_pDocView;
+  explicit CXFA_FFWidgetHandler(CXFA_FFDocView* pDocView);
+
+  cppgc::Member<CXFA_FFDocView> m_pDocView;
 };
 
 #endif  //  XFA_FXFA_CXFA_FFWIDGETHANDLER_H_

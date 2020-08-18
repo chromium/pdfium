@@ -12,6 +12,7 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "v8/include/cppgc/persistent.h"
 #include "v8/include/v8.h"
 
 class CFXJSE_Class;
@@ -26,7 +27,7 @@ class CFXJSE_Context {
       v8::Isolate* pIsolate,
       const FXJSE_CLASS_DESCRIPTOR* pGlobalClass,
       CFXJSE_HostObject* pGlobalObject,
-      std::unique_ptr<CXFA_ThisProxy> pProxy);
+      CXFA_ThisProxy* pProxy);
 
   ~CFXJSE_Context();
 
@@ -41,14 +42,14 @@ class CFXJSE_Context {
                      CFXJSE_Value* lpNewThisObject);
 
  private:
-  CFXJSE_Context(v8::Isolate* pIsolate, std::unique_ptr<CXFA_ThisProxy> pProxy);
+  CFXJSE_Context(v8::Isolate* pIsolate, CXFA_ThisProxy* pProxy);
   CFXJSE_Context(const CFXJSE_Context&) = delete;
   CFXJSE_Context& operator=(const CFXJSE_Context&) = delete;
 
   v8::Global<v8::Context> m_hContext;
   UnownedPtr<v8::Isolate> m_pIsolate;
   std::vector<std::unique_ptr<CFXJSE_Class>> m_rgClasses;
-  std::unique_ptr<CXFA_ThisProxy> m_pProxy;
+  cppgc::Persistent<CXFA_ThisProxy> m_pProxy;
 };
 
 void FXJSE_UpdateObjectBinding(v8::Local<v8::Object> hObject,

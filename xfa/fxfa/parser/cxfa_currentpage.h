@@ -11,8 +11,11 @@
 
 class CXFA_CurrentPage final : public CXFA_Node {
  public:
-  CXFA_CurrentPage(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_CurrentPage() override;
+
+ private:
+  CXFA_CurrentPage(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_CURRENTPAGE_H_

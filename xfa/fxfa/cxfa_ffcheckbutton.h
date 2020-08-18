@@ -8,6 +8,8 @@
 #define XFA_FXFA_CXFA_FFCHECKBUTTON_H_
 
 #include "core/fxcrt/unowned_ptr.h"
+#include "v8/include/cppgc/member.h"
+#include "v8/include/cppgc/visitor.h"
 #include "xfa/fxfa/cxfa_fffield.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
@@ -16,8 +18,10 @@ class CXFA_CheckButton;
 
 class CXFA_FFCheckButton final : public CXFA_FFField {
  public:
-  CXFA_FFCheckButton(CXFA_Node* pNode, CXFA_CheckButton* button);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FFCheckButton() override;
+
+  void Trace(cppgc::Visitor* visitor) const override;
 
   // CXFA_FFField
   void RenderWidget(CXFA_Graphics* pGS,
@@ -38,6 +42,8 @@ class CXFA_FFCheckButton final : public CXFA_FFField {
   void SetFWLCheckState(XFA_CHECKSTATE eCheckState);
 
  private:
+  CXFA_FFCheckButton(CXFA_Node* pNode, CXFA_CheckButton* button);
+
   bool CommitData() override;
   bool IsDataChanged() override;
   void CapLeftRightPlacement(const CXFA_Margin* captionMargin);
@@ -45,8 +51,8 @@ class CXFA_FFCheckButton final : public CXFA_FFField {
   XFA_CHECKSTATE FWLState2XFAState();
 
   UnownedPtr<IFWL_WidgetDelegate> m_pOldDelegate;
+  cppgc::Member<CXFA_CheckButton> const button_;
   CFX_RectF m_CheckBoxRect;
-  UnownedPtr<CXFA_CheckButton> const button_;
 };
 
 #endif  // XFA_FXFA_CXFA_FFCHECKBUTTON_H_

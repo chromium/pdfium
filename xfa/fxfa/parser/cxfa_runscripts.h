@@ -11,8 +11,11 @@
 
 class CXFA_RunScripts final : public CXFA_Node {
  public:
-  CXFA_RunScripts(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_RunScripts() override;
+
+ private:
+  CXFA_RunScripts(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_RUNSCRIPTS_H_

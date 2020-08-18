@@ -11,8 +11,11 @@
 
 class CXFA_RootElement final : public CXFA_Node {
  public:
-  CXFA_RootElement(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_RootElement() override;
+
+ private:
+  CXFA_RootElement(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_ROOTELEMENT_H_

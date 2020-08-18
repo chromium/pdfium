@@ -11,8 +11,11 @@
 
 class CXFA_Overflow final : public CXFA_Node {
  public:
-  CXFA_Overflow(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Overflow() override;
+
+ private:
+  CXFA_Overflow(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_OVERFLOW_H_

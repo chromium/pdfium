@@ -11,8 +11,11 @@
 
 class CXFA_NumberPattern final : public CXFA_Node {
  public:
-  CXFA_NumberPattern(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_NumberPattern() override;
+
+ private:
+  CXFA_NumberPattern(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_NUMBERPATTERN_H_

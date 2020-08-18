@@ -12,6 +12,11 @@
 
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "fxjs/gc/heap.h"
+#include "v8/include/cppgc/garbage-collected.h"
+#include "v8/include/cppgc/member.h"
+#include "v8/include/cppgc/prefinalizer.h"
+#include "v8/include/cppgc/visitor.h"
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 
@@ -43,16 +48,17 @@ struct FX_IMAGEDIB_AND_DPI {
   int32_t iImageYDpi;
 };
 
-class CXFA_FFDoc {
- public:
-  static std::unique_ptr<CXFA_FFDoc> CreateAndOpen(
-      CXFA_FFApp* pApp,
-      IXFA_DocEnvironment* pDocEnvironment,
-      CPDF_Document* pPDFDoc,
-      cppgc::Heap* pGCHeap,
-      CFX_XMLDocument* pXML);
+class CXFA_FFDoc : public cppgc::GarbageCollected<CXFA_FFDoc> {
+  CPPGC_USING_PRE_FINALIZER(CXFA_FFDoc, PreFinalize);
 
+ public:
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FFDoc();
+
+  void PreFinalize();
+  void Trace(cppgc::Visitor* visitor) const;
+
+  bool OpenDoc(CFX_XMLDocument* pXML);
 
   IXFA_DocEnvironment* GetDocEnvironment() const {
     return m_pDocEnvironment.Get();
@@ -64,7 +70,7 @@ class CXFA_FFDoc {
   }
 
   CXFA_FFDocView* CreateDocView();
-  CXFA_Document* GetXFADoc() const { return m_pDocument.get(); }
+  CXFA_Document* GetXFADoc() const { return m_pDocument; }
   CXFA_FFApp* GetApp() const { return m_pApp.Get(); }
   CPDF_Document* GetPDFDoc() const { return m_pPDFDoc.Get(); }
   CXFA_FFDocView* GetDocView(CXFA_LayoutProcessor* pLayout);
@@ -82,7 +88,6 @@ class CXFA_FFDoc {
              IXFA_DocEnvironment* pDocEnvironment,
              CPDF_Document* pPDFDoc,
              cppgc::Heap* pHeap);
-  bool OpenDoc(CFX_XMLDocument* pXML);
   bool BuildDoc(CFX_XMLDocument* pXML);
 
   UnownedPtr<IXFA_DocEnvironment> const m_pDocEnvironment;
@@ -90,9 +95,9 @@ class CXFA_FFDoc {
   UnownedPtr<CPDF_Document> const m_pPDFDoc;
   UnownedPtr<cppgc::Heap> const m_pHeap;
   UnownedPtr<CFX_XMLDocument> m_pXMLDoc;
-  std::unique_ptr<CXFA_FFNotify> m_pNotify;
-  std::unique_ptr<CXFA_Document> m_pDocument;
-  std::unique_ptr<CXFA_FFDocView> m_DocView;
+  cppgc::Member<CXFA_FFNotify> m_pNotify;
+  cppgc::Member<CXFA_Document> m_pDocument;
+  cppgc::Member<CXFA_FFDocView> m_DocView;
   std::unique_ptr<CFGAS_PDFFontMgr> m_pPDFFontMgr;
   std::map<uint32_t, FX_IMAGEDIB_AND_DPI> m_HashToDibDpiMap;
   FormType m_FormType = FormType::kXFAForeground;

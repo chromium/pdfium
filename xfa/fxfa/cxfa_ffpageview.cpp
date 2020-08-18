@@ -123,7 +123,8 @@ class CXFA_TabParam {
   ~CXFA_TabParam() = default;
 
   CXFA_FFWidget* GetWidget() const { return m_pItem->GetFFWidget(); }
-  const std::vector<RetainPtr<CXFA_ContentLayoutItem>>& GetChildren() const {
+  const std::vector<cppgc::Persistent<CXFA_ContentLayoutItem>>& GetChildren()
+      const {
     return m_Children;
   }
   void ClearChildren() { m_Children.clear(); }
@@ -134,8 +135,8 @@ class CXFA_TabParam {
   }
 
  private:
-  RetainPtr<CXFA_ContentLayoutItem> m_pItem;
-  std::vector<RetainPtr<CXFA_ContentLayoutItem>> m_Children;
+  cppgc::Persistent<CXFA_ContentLayoutItem> m_pItem;
+  std::vector<cppgc::Persistent<CXFA_ContentLayoutItem>> m_Children;
 };
 
 CXFA_FFPageView::CXFA_FFPageView(CXFA_FFDocView* pDocView, CXFA_Node* pPageArea)
@@ -143,8 +144,14 @@ CXFA_FFPageView::CXFA_FFPageView(CXFA_FFDocView* pDocView, CXFA_Node* pPageArea)
 
 CXFA_FFPageView::~CXFA_FFPageView() = default;
 
+void CXFA_FFPageView::Trace(cppgc::Visitor* visitor) const {
+  visitor->Trace(m_pPageArea);
+  visitor->Trace(m_pDocView);
+  visitor->Trace(m_pLayoutItem);
+}
+
 CXFA_FFDocView* CXFA_FFPageView::GetDocView() const {
-  return m_pDocView.Get();
+  return m_pDocView;
 }
 
 CFX_RectF CXFA_FFPageView::GetPageViewRect() const {
@@ -164,15 +171,18 @@ CFX_Matrix CXFA_FFPageView::GetDisplayMatrix(const FX_RECT& rtDisp,
   return GetPageMatrix(CFX_RectF(0, 0, pItem->GetPageSize()), rtDisp, iRotate);
 }
 
-std::unique_ptr<IXFA_WidgetIterator> CXFA_FFPageView::CreateFormWidgetIterator(
+IXFA_WidgetIterator* CXFA_FFPageView::CreateGCedFormWidgetIterator(
     uint32_t dwWidgetFilter) {
-  return std::make_unique<CXFA_FFPageWidgetIterator>(this, dwWidgetFilter);
+  return cppgc::MakeGarbageCollected<CXFA_FFPageWidgetIterator>(
+      GetDocView()->GetDoc()->GetHeap()->GetAllocationHandle(), this,
+      dwWidgetFilter);
 }
 
-std::unique_ptr<IXFA_WidgetIterator>
-CXFA_FFPageView::CreateTraverseWidgetIterator(uint32_t dwWidgetFilter) {
-  return std::make_unique<CXFA_FFTabOrderPageWidgetIterator>(this,
-                                                             dwWidgetFilter);
+IXFA_WidgetIterator* CXFA_FFPageView::CreateGCedTraverseWidgetIterator(
+    uint32_t dwWidgetFilter) {
+  return cppgc::MakeGarbageCollected<CXFA_FFTabOrderPageWidgetIterator>(
+      GetDocView()->GetDoc()->GetHeap()->GetAllocationHandle(), this,
+      dwWidgetFilter);
 }
 
 CXFA_FFPageWidgetIterator::CXFA_FFPageWidgetIterator(CXFA_FFPageView* pPageView,
@@ -260,6 +270,12 @@ CXFA_FFTabOrderPageWidgetIterator::CXFA_FFTabOrderPageWidgetIterator(
 
 CXFA_FFTabOrderPageWidgetIterator::~CXFA_FFTabOrderPageWidgetIterator() =
     default;
+
+void CXFA_FFTabOrderPageWidgetIterator::Trace(cppgc::Visitor* visitor) const {
+  visitor->Trace(m_pPageViewLayout);
+  for (const auto& item : m_TabOrderWidgetArray)
+    visitor->Trace(item);
+}
 
 void CXFA_FFTabOrderPageWidgetIterator::Reset() {
   CreateTabOrderWidgetArray();
@@ -356,12 +372,12 @@ CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::FindWidgetByName(
 void CXFA_FFTabOrderPageWidgetIterator::CreateTabOrderWidgetArray() {
   m_TabOrderWidgetArray.clear();
 
-  const std::vector<RetainPtr<CXFA_ContentLayoutItem>> items =
+  const std::vector<CXFA_ContentLayoutItem*> items =
       CreateSpaceOrderLayoutItems();
   if (items.empty())
     return;
 
-  RetainPtr<CXFA_ContentLayoutItem> item = items[0];
+  CXFA_ContentLayoutItem* item = items[0];
   while (m_TabOrderWidgetArray.size() < items.size()) {
     if (!pdfium::Contains(m_TabOrderWidgetArray, item)) {
       m_TabOrderWidgetArray.emplace_back(item);
@@ -444,9 +460,9 @@ void CXFA_FFTabOrderPageWidgetIterator::OrderContainer(
     pContainer->AppendTabParam(pParam.get());
 }
 
-std::vector<RetainPtr<CXFA_ContentLayoutItem>>
+std::vector<CXFA_ContentLayoutItem*>
 CXFA_FFTabOrderPageWidgetIterator::CreateSpaceOrderLayoutItems() {
-  std::vector<RetainPtr<CXFA_ContentLayoutItem>> items;
+  std::vector<CXFA_ContentLayoutItem*> items;
   CXFA_LayoutItemIterator sIterator(m_pPageViewLayout.Get());
   auto pParam = std::make_unique<CXFA_TabParam>();
   bool bCurrentItem = false;

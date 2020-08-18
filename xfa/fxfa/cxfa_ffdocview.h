@@ -13,6 +13,10 @@
 
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "fxjs/gc/heap.h"
+#include "v8/include/cppgc/garbage-collected.h"
+#include "v8/include/cppgc/member.h"
+#include "v8/include/cppgc/visitor.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
@@ -44,10 +48,12 @@ enum XFA_DOCVIEW_LAYOUTSTATUS {
   XFA_DOCVIEW_LAYOUTSTATUS_End
 };
 
-class CXFA_FFDocView {
+class CXFA_FFDocView : public cppgc::GarbageCollected<CXFA_FFDocView> {
  public:
-  explicit CXFA_FFDocView(CXFA_FFDoc* pDoc);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FFDocView();
+
+  void Trace(cppgc::Visitor* visitor) const;
 
   CXFA_FFDoc* GetDoc() const { return m_pDoc.Get(); }
   int32_t StartLayout();
@@ -102,6 +108,8 @@ class CXFA_FFDocView {
   std::vector<WideString> m_NullTestMsgArray;
 
  private:
+  explicit CXFA_FFDocView(CXFA_FFDoc* pDoc);
+
   bool RunEventLayoutReady();
   void RunBindItems();
   void InitCalculate(CXFA_Node* pNode);
@@ -117,15 +125,15 @@ class CXFA_FFDocView {
   XFA_EventError RunCalculateWidgets();
   void RunSubformIndexChange();
 
-  UnownedPtr<CXFA_FFDoc> const m_pDoc;
-  std::unique_ptr<CXFA_FFWidgetHandler> m_pWidgetHandler;
-  UnownedPtr<CXFA_Node> m_pFocusNode;
+  cppgc::Member<CXFA_FFDoc> const m_pDoc;
+  cppgc::Member<CXFA_FFWidgetHandler> m_pWidgetHandler;
+  cppgc::Member<CXFA_Node> m_pFocusNode;
   ObservedPtr<CXFA_FFWidget> m_pFocusWidget;
-  std::deque<CXFA_Node*> m_ValidateNodes;
-  std::vector<CXFA_Node*> m_CalculateNodes;
-  std::deque<CXFA_BindItems*> m_BindItems;
-  std::deque<CXFA_Node*> m_NewAddedNodes;
-  std::deque<CXFA_Node*> m_IndexChangedSubforms;
+  std::deque<cppgc::Member<CXFA_Node>> m_ValidateNodes;
+  std::vector<cppgc::Member<CXFA_Node>> m_CalculateNodes;
+  std::deque<cppgc::Member<CXFA_BindItems>> m_BindItems;
+  std::deque<cppgc::Member<CXFA_Node>> m_NewAddedNodes;
+  std::deque<cppgc::Member<CXFA_Node>> m_IndexChangedSubforms;
   XFA_DOCVIEW_LAYOUTSTATUS m_iStatus = XFA_DOCVIEW_LAYOUTSTATUS_None;
   int32_t m_iLock = 0;
 };

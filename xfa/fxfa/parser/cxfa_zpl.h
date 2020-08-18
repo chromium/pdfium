@@ -11,8 +11,11 @@
 
 class CXFA_Zpl final : public CXFA_Node {
  public:
-  CXFA_Zpl(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Zpl() override;
+
+ private:
+  CXFA_Zpl(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_ZPL_H_

@@ -11,7 +11,7 @@
 
 class CXFA_FFImage final : public CXFA_FFWidget {
  public:
-  explicit CXFA_FFImage(CXFA_Node* pNode);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FFImage() override;
 
   // CXFA_FFWidget
@@ -20,6 +20,9 @@ class CXFA_FFImage final : public CXFA_FFWidget {
                     HighlightOption highlight) override;
   bool IsLoaded() override;
   bool LoadWidget() override;
+
+ private:
+  explicit CXFA_FFImage(CXFA_Node* pNode);
 };
 
 #endif  // XFA_FXFA_CXFA_FFIMAGE_H_

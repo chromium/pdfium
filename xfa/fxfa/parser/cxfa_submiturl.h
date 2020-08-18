@@ -11,8 +11,11 @@
 
 class CXFA_SubmitUrl final : public CXFA_Node {
  public:
-  CXFA_SubmitUrl(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_SubmitUrl() override;
+
+ private:
+  CXFA_SubmitUrl(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_SUBMITURL_H_

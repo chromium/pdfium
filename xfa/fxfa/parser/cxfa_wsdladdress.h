@@ -11,8 +11,11 @@
 
 class CXFA_WsdlAddress final : public CXFA_Node {
  public:
-  CXFA_WsdlAddress(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_WsdlAddress() override;
+
+ private:
+  CXFA_WsdlAddress(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_WSDLADDRESS_H_

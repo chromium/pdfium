@@ -7,9 +7,9 @@
 #ifndef XFA_FXFA_CXFA_FFPUSHBUTTON_H_
 #define XFA_FXFA_CXFA_FFPUSHBUTTON_H_
 
-#include <memory>
-
 #include "core/fxcrt/unowned_ptr.h"
+#include "v8/include/cppgc/member.h"
+#include "v8/include/cppgc/visitor.h"
 #include "xfa/fxfa/cxfa_fffield.h"
 
 #define XFA_FWL_PSBSTYLEEXT_HiliteInverted (1L << 0)
@@ -22,8 +22,10 @@ class CXFA_TextProvider;
 
 class CXFA_FFPushButton final : public CXFA_FFField {
  public:
-  CXFA_FFPushButton(CXFA_Node* pNode, CXFA_Button* button);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FFPushButton() override;
+
+  void Trace(cppgc::Visitor* visitor) const override;
 
   // CXFA_FFField
   void RenderWidget(CXFA_Graphics* pGS,
@@ -39,6 +41,8 @@ class CXFA_FFPushButton final : public CXFA_FFField {
   FormFieldType GetFormFieldType() override;
 
  private:
+  CXFA_FFPushButton(CXFA_Node* pNode, CXFA_Button* button);
+
   void LoadHighlightCaption();
   void LayoutHighlightCaption();
   void RenderHighlightCaption(CXFA_Graphics* pGS, CFX_Matrix* pMatrix);
@@ -46,12 +50,12 @@ class CXFA_FFPushButton final : public CXFA_FFField {
   FX_ARGB GetLineColor();
   FX_ARGB GetFillColor();
 
-  std::unique_ptr<CXFA_TextLayout> m_pRolloverTextLayout;
-  std::unique_ptr<CXFA_TextLayout> m_pDownTextLayout;
-  std::unique_ptr<CXFA_TextProvider> m_pRollProvider;
-  std::unique_ptr<CXFA_TextProvider> m_pDownProvider;
+  cppgc::Member<CXFA_TextLayout> m_pRolloverTextLayout;
+  cppgc::Member<CXFA_TextLayout> m_pDownTextLayout;
+  cppgc::Member<CXFA_TextProvider> m_pRollProvider;
+  cppgc::Member<CXFA_TextProvider> m_pDownProvider;
   UnownedPtr<IFWL_WidgetDelegate> m_pOldDelegate;
-  UnownedPtr<CXFA_Button> const button_;
+  cppgc::Member<CXFA_Button> const button_;
 };
 
 #endif  // XFA_FXFA_CXFA_FFPUSHBUTTON_H_

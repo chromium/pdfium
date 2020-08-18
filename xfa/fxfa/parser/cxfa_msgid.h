@@ -11,8 +11,11 @@
 
 class CXFA_MsgId final : public CXFA_Node {
  public:
-  CXFA_MsgId(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_MsgId() override;
+
+ private:
+  CXFA_MsgId(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_MSGID_H_

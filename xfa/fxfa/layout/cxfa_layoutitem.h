@@ -7,18 +7,30 @@
 #ifndef XFA_FXFA_LAYOUT_CXFA_LAYOUTITEM_H_
 #define XFA_FXFA_LAYOUT_CXFA_LAYOUTITEM_H_
 
-#include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/retained_tree_node.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "fxjs/gc/gced_tree_node.h"
+#include "fxjs/gc/heap.h"
+#include "v8/include/cppgc/member.h"
+#include "v8/include/cppgc/prefinalizer.h"
+#include "v8/include/cppgc/visitor.h"
 
 class CXFA_ContentLayoutItem;
 class CXFA_LayoutProcessor;
 class CXFA_Node;
 class CXFA_ViewLayoutItem;
 
-class CXFA_LayoutItem : public RetainedTreeNode<CXFA_LayoutItem> {
+class CXFA_LayoutItem : public GCedTreeNode<CXFA_LayoutItem> {
+  CPPGC_USING_PRE_FINALIZER(CXFA_LayoutItem, PreFinalize);
+
  public:
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_LayoutItem() override;
+
+  void PreFinalize();
+
+  // GCedTreeNode:
+  void Trace(cppgc::Visitor* visitor) const override;
 
   bool IsViewLayoutItem() const { return m_ItemType == kViewItem; }
   bool IsContentLayoutItem() const { return m_ItemType == kContentItem; }
@@ -29,7 +41,7 @@ class CXFA_LayoutItem : public RetainedTreeNode<CXFA_LayoutItem> {
 
   const CXFA_ViewLayoutItem* GetPage() const;
   CXFA_Node* GetFormNode() const { return m_pFormNode.Get(); }
-  void SetFormNode(CXFA_Node* pNode) { m_pFormNode = pNode; }
+  void SetFormNode(CXFA_Node* pNode);
 
  protected:
   enum ItemType { kViewItem, kContentItem };
@@ -37,7 +49,7 @@ class CXFA_LayoutItem : public RetainedTreeNode<CXFA_LayoutItem> {
 
  private:
   const ItemType m_ItemType;
-  UnownedPtr<CXFA_Node> m_pFormNode;
+  cppgc::Member<CXFA_Node> m_pFormNode;
 };
 
 inline CXFA_ViewLayoutItem* ToViewLayoutItem(CXFA_LayoutItem* item) {
@@ -48,6 +60,6 @@ inline CXFA_ContentLayoutItem* ToContentLayoutItem(CXFA_LayoutItem* item) {
   return item ? item->AsContentLayoutItem() : nullptr;
 }
 
-void XFA_ReleaseLayoutItem(const RetainPtr<CXFA_LayoutItem>& pLayoutItem);
+void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem);
 
 #endif  // XFA_FXFA_LAYOUT_CXFA_LAYOUTITEM_H_

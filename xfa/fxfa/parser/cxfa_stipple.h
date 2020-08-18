@@ -18,7 +18,7 @@ class CXFA_Stipple final : public CXFA_Node {
  public:
   static int32_t GetDefaultRate() { return 50; }
 
-  CXFA_Stipple(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Stipple() override;
 
   void Draw(CXFA_Graphics* pGS,
@@ -27,6 +27,8 @@ class CXFA_Stipple final : public CXFA_Node {
             const CFX_Matrix& matrix);
 
  private:
+  CXFA_Stipple(CXFA_Document* doc, XFA_PacketType packet);
+
   CXFA_Color* GetColorIfExists();
   int32_t GetRate();
 };

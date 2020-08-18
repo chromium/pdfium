@@ -138,11 +138,13 @@ CXFA_FFBarcode::CXFA_FFBarcode(CXFA_Node* pNode, CXFA_Barcode* barcode)
 
 CXFA_FFBarcode::~CXFA_FFBarcode() = default;
 
+void CXFA_FFBarcode::Trace(cppgc::Visitor* visitor) const {
+  CXFA_FFTextEdit::Trace(visitor);
+  visitor->Trace(barcode_);
+}
+
 bool CXFA_FFBarcode::LoadWidget() {
   ASSERT(!IsLoaded());
-
-  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
-  RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
 
   auto pNew = std::make_unique<CFWL_Barcode>(GetFWLApp());
   CFWL_Barcode* pFWLBarcode = pNew.get();

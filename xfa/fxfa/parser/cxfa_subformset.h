@@ -11,8 +11,11 @@
 
 class CXFA_SubformSet final : public CXFA_Node {
  public:
-  CXFA_SubformSet(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_SubformSet() override;
+
+ private:
+  CXFA_SubformSet(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_SUBFORMSET_H_

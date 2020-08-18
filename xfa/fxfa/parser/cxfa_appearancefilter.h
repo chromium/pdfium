@@ -11,8 +11,11 @@
 
 class CXFA_AppearanceFilter final : public CXFA_Node {
  public:
-  CXFA_AppearanceFilter(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_AppearanceFilter() override;
+
+ private:
+  CXFA_AppearanceFilter(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_APPEARANCEFILTER_H_

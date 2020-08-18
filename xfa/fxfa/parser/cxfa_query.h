@@ -11,8 +11,11 @@
 
 class CXFA_Query final : public CXFA_Node {
  public:
-  CXFA_Query(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Query() override;
+
+ private:
+  CXFA_Query(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_QUERY_H_

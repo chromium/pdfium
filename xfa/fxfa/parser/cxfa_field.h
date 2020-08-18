@@ -11,8 +11,11 @@
 
 class CXFA_Field final : public CXFA_Node {
  public:
-  CXFA_Field(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Field() override;
+
+ private:
+  CXFA_Field(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_FIELD_H_

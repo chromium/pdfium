@@ -11,8 +11,11 @@
 
 class CXFA_Insert final : public CXFA_Node {
  public:
-  CXFA_Insert(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Insert() override;
+
+ private:
+  CXFA_Insert(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_INSERT_H_

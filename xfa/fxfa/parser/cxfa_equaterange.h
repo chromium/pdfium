@@ -11,8 +11,11 @@
 
 class CXFA_EquateRange final : public CXFA_Node {
  public:
-  CXFA_EquateRange(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_EquateRange() override;
+
+ private:
+  CXFA_EquateRange(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_EQUATERANGE_H_

@@ -11,8 +11,11 @@
 
 class CXFA_Arc final : public CXFA_Box {
  public:
-  CXFA_Arc(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Arc() override;
+
+ private:
+  CXFA_Arc(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_ARC_H_

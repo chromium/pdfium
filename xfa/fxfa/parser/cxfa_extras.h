@@ -11,8 +11,11 @@
 
 class CXFA_Extras final : public CXFA_Node {
  public:
-  CXFA_Extras(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Extras() override;
+
+ private:
+  CXFA_Extras(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_EXTRAS_H_

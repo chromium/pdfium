@@ -13,12 +13,15 @@ class CXFA_Script;
 
 class CXFA_Calculate final : public CXFA_Node {
  public:
-  CXFA_Calculate(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Calculate() override;
 
   XFA_AttributeValue GetOverride();
   CXFA_Script* GetScriptIfExists();
   WideString GetMessageText();
+
+ private:
+  CXFA_Calculate(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_CALCULATE_H_

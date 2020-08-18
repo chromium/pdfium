@@ -11,8 +11,11 @@
 
 class CXFA_Log final : public CXFA_Node {
  public:
-  CXFA_Log(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Log() override;
+
+ private:
+  CXFA_Log(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_LOG_H_

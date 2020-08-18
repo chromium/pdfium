@@ -11,8 +11,11 @@
 
 class CXFA_Select final : public CXFA_Node {
  public:
-  CXFA_Select(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Select() override;
+
+ private:
+  CXFA_Select(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_SELECT_H_

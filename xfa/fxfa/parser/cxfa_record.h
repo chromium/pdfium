@@ -11,8 +11,11 @@
 
 class CXFA_Record final : public CXFA_Node {
  public:
-  CXFA_Record(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Record() override;
+
+ private:
+  CXFA_Record(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_RECORD_H_

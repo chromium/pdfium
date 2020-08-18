@@ -11,8 +11,11 @@
 
 class CXFA_TimePatterns final : public CXFA_Node {
  public:
-  CXFA_TimePatterns(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_TimePatterns() override;
+
+ private:
+  CXFA_TimePatterns(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_TIMEPATTERNS_H_

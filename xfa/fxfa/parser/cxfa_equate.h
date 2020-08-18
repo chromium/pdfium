@@ -11,8 +11,11 @@
 
 class CXFA_Equate final : public CXFA_Node {
  public:
-  CXFA_Equate(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Equate() override;
+
+ private:
+  CXFA_Equate(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_EQUATE_H_

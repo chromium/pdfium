@@ -23,6 +23,7 @@ class CXFA_Stroke;
 
 class CXFA_Box : public CXFA_Node {
  public:
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Box() override;
 
   XFA_AttributeValue GetPresence();

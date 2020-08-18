@@ -11,8 +11,11 @@
 
 class CXFA_NumberOfCopies final : public CXFA_Node {
  public:
-  CXFA_NumberOfCopies(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_NumberOfCopies() override;
+
+ private:
+  CXFA_NumberOfCopies(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_NUMBEROFCOPIES_H_

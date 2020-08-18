@@ -11,8 +11,11 @@
 
 class CXFA_Typefaces final : public CXFA_Node {
  public:
-  CXFA_Typefaces(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Typefaces() override;
+
+ private:
+  CXFA_Typefaces(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_TYPEFACES_H_

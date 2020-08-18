@@ -11,7 +11,7 @@
 
 class CXFA_CheckButton final : public CXFA_Node {
  public:
-  CXFA_CheckButton(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_CheckButton() override;
 
   XFA_FFWidgetType GetDefaultFFWidgetType() const override;
@@ -19,6 +19,9 @@ class CXFA_CheckButton final : public CXFA_Node {
   bool IsRound();
   bool IsAllowNeutral();
   XFA_AttributeValue GetMark();
+
+ private:
+  CXFA_CheckButton(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_CHECKBUTTON_H_

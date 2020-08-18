@@ -12,13 +12,16 @@
 
 class CXFA_Submit final : public CXFA_Node {
  public:
-  CXFA_Submit(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Submit() override;
 
   bool IsSubmitEmbedPDF();
   XFA_AttributeValue GetSubmitFormat();
   WideString GetSubmitTarget();
   WideString GetSubmitXDPContent();
+
+ private:
+  CXFA_Submit(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_SUBMIT_H_

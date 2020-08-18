@@ -11,8 +11,11 @@
 
 class CXFA_Corner final : public CXFA_Stroke {
  public:
-  CXFA_Corner(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Corner() override;
+
+ private:
+  CXFA_Corner(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_CORNER_H_

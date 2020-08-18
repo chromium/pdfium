@@ -11,12 +11,15 @@
 
 class CXFA_Button final : public CXFA_Node {
  public:
-  CXFA_Button(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Button() override;
 
   XFA_FFWidgetType GetDefaultFFWidgetType() const override;
 
   XFA_AttributeValue GetHighlight();
+
+ private:
+  CXFA_Button(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_BUTTON_H_

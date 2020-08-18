@@ -11,8 +11,11 @@
 
 class CXFA_IfEmpty final : public CXFA_Node {
  public:
-  CXFA_IfEmpty(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_IfEmpty() override;
+
+ private:
+  CXFA_IfEmpty(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_IFEMPTY_H_

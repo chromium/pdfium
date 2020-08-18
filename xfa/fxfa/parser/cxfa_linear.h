@@ -19,7 +19,7 @@ class CXFA_Linear final : public CXFA_Node {
   static constexpr XFA_AttributeValue kDefaultType =
       XFA_AttributeValue::ToRight;
 
-  CXFA_Linear(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Linear() override;
 
   void Draw(CXFA_Graphics* pGS,
@@ -29,6 +29,8 @@ class CXFA_Linear final : public CXFA_Node {
             const CFX_Matrix& matrix);
 
  private:
+  CXFA_Linear(CXFA_Document* doc, XFA_PacketType packet);
+
   XFA_AttributeValue GetType();
   CXFA_Color* GetColorIfExists();
 };

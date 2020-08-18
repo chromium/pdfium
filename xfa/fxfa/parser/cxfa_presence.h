@@ -11,8 +11,11 @@
 
 class CXFA_Presence final : public CXFA_Node {
  public:
-  CXFA_Presence(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Presence() override;
+
+ private:
+  CXFA_Presence(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_PRESENCE_H_

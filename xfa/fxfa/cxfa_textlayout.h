@@ -13,6 +13,10 @@
 #include "core/fxcrt/css/cfx_css.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
+#include "fxjs/gc/heap.h"
+#include "v8/include/cppgc/garbage-collected.h"
+#include "v8/include/cppgc/member.h"
+#include "v8/include/cppgc/visitor.h"
 #include "xfa/fgas/layout/cfx_char.h"
 #include "xfa/fxfa/cxfa_textparser.h"
 
@@ -31,10 +35,12 @@ class TextCharPos;
 struct CXFA_LoaderContext;
 struct FX_RTFTEXTOBJ;
 
-class CXFA_TextLayout {
+class CXFA_TextLayout final : public cppgc::GarbageCollected<CXFA_TextLayout> {
  public:
-  CXFA_TextLayout(CXFA_FFDoc* doc, CXFA_TextProvider* pTextProvider);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_TextLayout();
+
+  void Trace(cppgc::Visitor* visitor) const;
 
   float GetLayoutHeight();
   float StartLayout(float fWidth);
@@ -66,6 +72,8 @@ class CXFA_TextLayout {
     size_t szIndex;
     size_t szLength;
   };
+
+  CXFA_TextLayout(CXFA_FFDoc* doc, CXFA_TextProvider* pTextProvider);
 
   void GetTextDataNode();
   CFX_XMLNode* GetXMLContainerNode();
@@ -124,9 +132,9 @@ class CXFA_TextLayout {
   int32_t m_iLines = 0;
   float m_fMaxWidth = 0;
   std::vector<BlockData> m_Blocks;
-  UnownedPtr<CXFA_FFDoc> const m_pDoc;
-  CXFA_TextProvider* const m_pTextProvider;  // Raw, owned by tree node.
-  CXFA_Node* m_pTextDataNode = nullptr;      // Raw, owned by tree node.
+  cppgc::Member<CXFA_FFDoc> const m_pDoc;
+  cppgc::Member<CXFA_TextProvider> const m_pTextProvider;
+  cppgc::Member<CXFA_Node> m_pTextDataNode;
   std::unique_ptr<CFX_RTFBreak> m_pBreak;
   std::unique_ptr<CXFA_LoaderContext> m_pLoader;
   CXFA_TextParser m_textParser;

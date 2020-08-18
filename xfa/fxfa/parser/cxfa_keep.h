@@ -11,8 +11,11 @@
 
 class CXFA_Keep final : public CXFA_Node {
  public:
-  CXFA_Keep(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Keep() override;
+
+ private:
+  CXFA_Keep(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_KEEP_H_

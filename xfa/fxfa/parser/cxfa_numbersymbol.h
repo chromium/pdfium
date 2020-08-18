@@ -11,8 +11,11 @@
 
 class CXFA_NumberSymbol final : public CXFA_Node {
  public:
-  CXFA_NumberSymbol(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_NumberSymbol() override;
+
+ private:
+  CXFA_NumberSymbol(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_NUMBERSYMBOL_H_

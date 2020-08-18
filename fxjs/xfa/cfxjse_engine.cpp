@@ -148,7 +148,7 @@ bool CFXJSE_Engine::RunScript(CXFA_Script::Type eScriptType,
   } else {
     btScript = FX_UTF8Encode(wsScript);
   }
-  AutoRestorer<UnownedPtr<CXFA_Object>> nodeRestorer(&m_pThisObject);
+  AutoRestorer<cppgc::Persistent<CXFA_Object>> nodeRestorer(&m_pThisObject);
   m_pThisObject = pThisObject;
 
   CFXJSE_Value* pValue =
@@ -497,10 +497,11 @@ CFXJSE_Context* CFXJSE_Engine::CreateVariablesContext(CXFA_Node* pScriptNode,
   if (!pScriptNode || !pSubform)
     return nullptr;
 
-  auto proxy = std::make_unique<CXFA_ThisProxy>(pSubform, pScriptNode);
-  CJX_Object* js_object = proxy->JSObject();
+  auto* proxy = cppgc::MakeGarbageCollected<CXFA_ThisProxy>(
+      pScriptNode->GetDocument()->GetHeap()->GetAllocationHandle(), pSubform,
+      pScriptNode);
   auto pNewContext = CFXJSE_Context::Create(
-      GetIsolate(), &VariablesClassDescriptor, js_object, std::move(proxy));
+      GetIsolate(), &VariablesClassDescriptor, proxy->JSObject(), proxy);
   RemoveBuiltInObjs(pNewContext.get());
   pNewContext->EnableCompatibleMode();
   CFXJSE_Context* pResult = pNewContext.get();
@@ -547,7 +548,7 @@ bool CFXJSE_Engine::RunVariablesScript(CXFA_Node* pScriptNode) {
   CXFA_Node* pThisObject = pParent->GetParent();
   CFXJSE_Context* pVariablesContext =
       CreateVariablesContext(pScriptNode, pThisObject);
-  AutoRestorer<UnownedPtr<CXFA_Object>> nodeRestorer(&m_pThisObject);
+  AutoRestorer<cppgc::Persistent<CXFA_Object>> nodeRestorer(&m_pThisObject);
   m_pThisObject = pThisObject;
   return pVariablesContext->ExecuteScript(btScript.c_str(), hRetValue.get(),
                                           nullptr);
@@ -784,13 +785,14 @@ CFXJSE_Value* CFXJSE_Engine::GetOrCreateJSBindingFromMap(CXFA_Object* pObject) {
   return pValue;
 }
 
-void CFXJSE_Engine::SetNodesOfRunScript(std::vector<CXFA_Node*>* pArray) {
+void CFXJSE_Engine::SetNodesOfRunScript(
+    std::vector<cppgc::Persistent<CXFA_Node>>* pArray) {
   m_pScriptNodeArray = pArray;
 }
 
 void CFXJSE_Engine::AddNodesOfRunScript(CXFA_Node* pNode) {
   if (m_pScriptNodeArray && !pdfium::Contains(*m_pScriptNodeArray, pNode))
-    m_pScriptNodeArray->push_back(pNode);
+    m_pScriptNodeArray->emplace_back(pNode);
 }
 
 CXFA_Object* CFXJSE_Engine::ToXFAObject(v8::Local<v8::Value> obj) {

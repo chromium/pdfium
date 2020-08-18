@@ -11,8 +11,11 @@
 
 class CXFA_Integer final : public CXFA_Node {
  public:
-  CXFA_Integer(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Integer() override;
+
+ private:
+  CXFA_Integer(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_INTEGER_H_

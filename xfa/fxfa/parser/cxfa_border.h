@@ -11,8 +11,11 @@
 
 class CXFA_Border final : public CXFA_Rectangle {
  public:
-  CXFA_Border(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Border() override;
+
+ private:
+  CXFA_Border(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_BORDER_H_

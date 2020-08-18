@@ -11,8 +11,11 @@
 
 class CXFA_Overprint final : public CXFA_Node {
  public:
-  CXFA_Overprint(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Overprint() override;
+
+ private:
+  CXFA_Overprint(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_OVERPRINT_H_

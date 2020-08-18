@@ -12,7 +12,7 @@
 
 class CXFA_Barcode final : public CXFA_Node {
  public:
-  CXFA_Barcode(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Barcode() override;
 
   XFA_FFWidgetType GetDefaultFFWidgetType() const override;
@@ -30,6 +30,9 @@ class CXFA_Barcode final : public CXFA_Node {
   Optional<XFA_AttributeValue> GetTextLocation();
   Optional<bool> GetTruncate();
   Optional<int8_t> GetWideNarrowRatio();
+
+ private:
+  CXFA_Barcode(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_BARCODE_H_

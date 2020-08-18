@@ -11,8 +11,11 @@
 
 class CXFA_Exclude final : public CXFA_Node {
  public:
-  CXFA_Exclude(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Exclude() override;
+
+ private:
+  CXFA_Exclude(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_EXCLUDE_H_

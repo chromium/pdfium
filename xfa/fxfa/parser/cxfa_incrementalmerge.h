@@ -11,8 +11,11 @@
 
 class CXFA_IncrementalMerge final : public CXFA_Node {
  public:
-  CXFA_IncrementalMerge(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_IncrementalMerge() override;
+
+ private:
+  CXFA_IncrementalMerge(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_INCREMENTALMERGE_H_

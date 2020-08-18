@@ -1274,9 +1274,12 @@ void UpdateDataRelation(CXFA_Node* pDataNode, CXFA_Node* pDataDescriptionNode) {
 }  // namespace
 
 CXFA_Document::CXFA_Document(CXFA_FFNotify* notify,
-                             std::unique_ptr<LayoutProcessorIface> pLayout)
-    : CXFA_NodeOwner(),
+                             cppgc::Heap* heap,
+                             LayoutProcessorIface* pLayout)
+    : heap_(heap),
       notify_(notify),
+      node_owner_(cppgc::MakeGarbageCollected<CXFA_NodeOwner>(
+          heap->GetAllocationHandle())),
       m_pLayoutProcessor(std::move(pLayout)) {
   if (m_pLayoutProcessor)
     m_pLayoutProcessor->SetDocument(this);
@@ -1284,16 +1287,31 @@ CXFA_Document::CXFA_Document(CXFA_FFNotify* notify,
 
 CXFA_Document::~CXFA_Document() = default;
 
+void CXFA_Document::Trace(cppgc::Visitor* visitor) const {
+  visitor->Trace(notify_);
+  visitor->Trace(node_owner_);
+  visitor->Trace(m_pRootNode);
+  visitor->Trace(m_pLayoutProcessor);
+  visitor->Trace(m_pScriptDataWindow);
+  visitor->Trace(m_pScriptEvent);
+  visitor->Trace(m_pScriptHost);
+  visitor->Trace(m_pScriptLog);
+  visitor->Trace(m_pScriptLayout);
+  visitor->Trace(m_pScriptSignature);
+  for (const auto& binding : m_rgGlobalBinding)
+    visitor->Trace(binding.second);
+}
+
 void CXFA_Document::ClearLayoutData() {
-  m_pLayoutProcessor.reset();
+  m_pLayoutProcessor = nullptr;
   m_pScriptContext.reset();
   m_pLocaleMgr.reset();
-  m_pScriptDataWindow.reset();
-  m_pScriptEvent.reset();
-  m_pScriptHost.reset();
-  m_pScriptLog.reset();
-  m_pScriptLayout.reset();
-  m_pScriptSignature.reset();
+  m_pScriptDataWindow = nullptr;
+  m_pScriptEvent = nullptr;
+  m_pScriptHost = nullptr;
+  m_pScriptLog = nullptr;
+  m_pScriptLayout = nullptr;
+  m_pScriptSignature = nullptr;
 }
 
 CXFA_Object* CXFA_Document::GetXFAObject(XFA_HashCode dwNodeNameHash) {
@@ -1335,34 +1353,41 @@ CXFA_Object* CXFA_Document::GetXFAObject(XFA_HashCode dwNodeNameHash) {
     }
     case XFA_HASHCODE_DataWindow: {
       if (!m_pScriptDataWindow)
-        m_pScriptDataWindow = std::make_unique<CScript_DataWindow>(this);
-      return m_pScriptDataWindow.get();
+        m_pScriptDataWindow = cppgc::MakeGarbageCollected<CScript_DataWindow>(
+            GetHeap()->GetAllocationHandle(), this);
+      return m_pScriptDataWindow;
     }
     case XFA_HASHCODE_Event: {
       if (!m_pScriptEvent)
-        m_pScriptEvent = std::make_unique<CScript_EventPseudoModel>(this);
-      return m_pScriptEvent.get();
+        m_pScriptEvent = cppgc::MakeGarbageCollected<CScript_EventPseudoModel>(
+            GetHeap()->GetAllocationHandle(), this);
+      return m_pScriptEvent;
     }
     case XFA_HASHCODE_Host: {
       if (!m_pScriptHost)
-        m_pScriptHost = std::make_unique<CScript_HostPseudoModel>(this);
-      return m_pScriptHost.get();
+        m_pScriptHost = cppgc::MakeGarbageCollected<CScript_HostPseudoModel>(
+            GetHeap()->GetAllocationHandle(), this);
+      return m_pScriptHost;
     }
     case XFA_HASHCODE_Log: {
       if (!m_pScriptLog)
-        m_pScriptLog = std::make_unique<CScript_LogPseudoModel>(this);
-      return m_pScriptLog.get();
+        m_pScriptLog = cppgc::MakeGarbageCollected<CScript_LogPseudoModel>(
+            GetHeap()->GetAllocationHandle(), this);
+      return m_pScriptLog;
     }
     case XFA_HASHCODE_Signature: {
       if (!m_pScriptSignature)
         m_pScriptSignature =
-            std::make_unique<CScript_SignaturePseudoModel>(this);
-      return m_pScriptSignature.get();
+            cppgc::MakeGarbageCollected<CScript_SignaturePseudoModel>(
+                GetHeap()->GetAllocationHandle(), this);
+      return m_pScriptSignature;
     }
     case XFA_HASHCODE_Layout: {
       if (!m_pScriptLayout)
-        m_pScriptLayout = std::make_unique<CScript_LayoutPseudoModel>(this);
-      return m_pScriptLayout.get();
+        m_pScriptLayout =
+            cppgc::MakeGarbageCollected<CScript_LayoutPseudoModel>(
+                GetHeap()->GetAllocationHandle(), this);
+      return m_pScriptLayout;
     }
     default:
       return m_pRootNode->GetFirstChildByName(dwNodeNameHash);
@@ -1373,7 +1398,8 @@ CXFA_Node* CXFA_Document::CreateNode(XFA_PacketType packet,
                                      XFA_Element eElement) {
   if (eElement == XFA_Element::Unknown)
     return nullptr;
-  return AddOwnedNode(CXFA_Node::Create(this, eElement, packet));
+
+  return CXFA_Node::Create(this, eElement, packet);
 }
 
 bool CXFA_Document::IsInteractive() {
@@ -1414,7 +1440,7 @@ CXFA_LocaleMgr* CXFA_Document::GetLocaleMgr() {
 }
 
 cppgc::Heap* CXFA_Document::GetHeap() const {
-  return notify_->GetFFDoc()->GetHeap();
+  return heap_.Get();
 }
 
 CFXJSE_Engine* CXFA_Document::InitScriptContext(CJS_Runtime* fxjs_runtime) {
@@ -1832,3 +1858,7 @@ void CXFA_Document::SetPendingNodesUnusedAndUnbound() {
 CXFA_Document::LayoutProcessorIface::LayoutProcessorIface() = default;
 
 CXFA_Document::LayoutProcessorIface::~LayoutProcessorIface() = default;
+
+void CXFA_Document::LayoutProcessorIface::Trace(cppgc::Visitor* visitor) const {
+  visitor->Trace(m_pDocument);
+}

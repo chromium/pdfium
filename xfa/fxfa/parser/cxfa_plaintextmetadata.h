@@ -11,8 +11,11 @@
 
 class CXFA_PlaintextMetadata final : public CXFA_Node {
  public:
-  CXFA_PlaintextMetadata(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_PlaintextMetadata() override;
+
+ private:
+  CXFA_PlaintextMetadata(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_PLAINTEXTMETADATA_H_

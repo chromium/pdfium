@@ -11,10 +11,13 @@
 
 class CXFA_TextEdit final : public CXFA_Node {
  public:
-  CXFA_TextEdit(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_TextEdit() override;
 
   XFA_FFWidgetType GetDefaultFFWidgetType() const override;
+
+ private:
+  CXFA_TextEdit(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_TEXTEDIT_H_

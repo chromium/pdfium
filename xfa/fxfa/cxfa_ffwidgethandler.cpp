@@ -25,6 +25,10 @@ CXFA_FFWidgetHandler::CXFA_FFWidgetHandler(CXFA_FFDocView* pDocView)
 
 CXFA_FFWidgetHandler::~CXFA_FFWidgetHandler() = default;
 
+void CXFA_FFWidgetHandler::Trace(cppgc::Visitor* visitor) const {
+  visitor->Trace(m_pDocView);
+}
+
 bool CXFA_FFWidgetHandler::OnMouseEnter(CXFA_FFWidget* hWidget) {
   m_pDocView->LockUpdate();
   bool bRet = hWidget->OnMouseEnter();
@@ -44,9 +48,6 @@ bool CXFA_FFWidgetHandler::OnMouseExit(CXFA_FFWidget* hWidget) {
 bool CXFA_FFWidgetHandler::OnLButtonDown(CXFA_FFWidget* hWidget,
                                          uint32_t dwFlags,
                                          const CFX_PointF& point) {
-  // Prevents destruction of the CXFA_ContentLayoutItem that owns |hWidget|.
-  RetainPtr<CXFA_LayoutItem> retainer(hWidget->GetLayoutItem());
-
   m_pDocView->LockUpdate();
   bool bRet = hWidget->AcceptsFocusOnButtonDown(
       dwFlags, hWidget->Rotate2Normal(point), FWL_MouseCommand::LeftButtonDown);
@@ -96,9 +97,6 @@ bool CXFA_FFWidgetHandler::OnMouseWheel(CXFA_FFWidget* hWidget,
 bool CXFA_FFWidgetHandler::OnRButtonDown(CXFA_FFWidget* hWidget,
                                          uint32_t dwFlags,
                                          const CFX_PointF& point) {
-  // Prevents destruction of the CXFA_ContentLayoutItem that owns |hWidget|.
-  RetainPtr<CXFA_LayoutItem> retainer(hWidget->GetLayoutItem());
-
   if (!hWidget->AcceptsFocusOnButtonDown(dwFlags, hWidget->Rotate2Normal(point),
                                          FWL_MouseCommand::RightButtonDown)) {
     return false;

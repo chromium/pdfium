@@ -11,8 +11,11 @@
 
 class CXFA_Solid final : public CXFA_Node {
  public:
-  CXFA_Solid(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Solid() override;
+
+ private:
+  CXFA_Solid(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_SOLID_H_

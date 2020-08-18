@@ -177,12 +177,11 @@ std::unique_ptr<CFXJSE_Context> CFXJSE_Context::Create(
     v8::Isolate* pIsolate,
     const FXJSE_CLASS_DESCRIPTOR* pGlobalClass,
     CFXJSE_HostObject* pGlobalObject,
-    std::unique_ptr<CXFA_ThisProxy> pProxy) {
+    CXFA_ThisProxy* pProxy) {
   CFXJSE_ScopeUtil_IsolateHandle scope(pIsolate);
 
   // Private constructor.
-  auto pContext =
-      pdfium::WrapUnique(new CFXJSE_Context(pIsolate, std::move(pProxy)));
+  auto pContext = pdfium::WrapUnique(new CFXJSE_Context(pIsolate, pProxy));
   v8::Local<v8::ObjectTemplate> hObjectTemplate;
   if (pGlobalClass) {
     CFXJSE_Class* pGlobalClassObj =
@@ -214,9 +213,8 @@ std::unique_ptr<CFXJSE_Context> CFXJSE_Context::Create(
   return pContext;
 }
 
-CFXJSE_Context::CFXJSE_Context(v8::Isolate* pIsolate,
-                               std::unique_ptr<CXFA_ThisProxy> pProxy)
-    : m_pIsolate(pIsolate), m_pProxy(std::move(pProxy)) {}
+CFXJSE_Context::CFXJSE_Context(v8::Isolate* pIsolate, CXFA_ThisProxy* pProxy)
+    : m_pIsolate(pIsolate), m_pProxy(pProxy) {}
 
 CFXJSE_Context::~CFXJSE_Context() = default;
 

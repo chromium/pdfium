@@ -11,8 +11,11 @@
 
 class CXFA_BatchOutput final : public CXFA_Node {
  public:
-  CXFA_BatchOutput(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_BatchOutput() override;
+
+ private:
+  CXFA_BatchOutput(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_BATCHOUTPUT_H_

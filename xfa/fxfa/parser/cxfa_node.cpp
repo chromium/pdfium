@@ -813,46 +813,61 @@ void TraverseSiblings(CXFA_Node* parent,
 
 }  // namespace
 
-class CXFA_WidgetLayoutData {
+class CXFA_WidgetLayoutData
+    : public cppgc::GarbageCollected<CXFA_WidgetLayoutData> {
  public:
-  CXFA_WidgetLayoutData() = default;
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   virtual ~CXFA_WidgetLayoutData() = default;
+
+  virtual void Trace(cppgc::Visitor* visitor) const {}
 
   virtual CXFA_FieldLayoutData* AsFieldLayoutData() { return nullptr; }
   virtual CXFA_ImageLayoutData* AsImageLayoutData() { return nullptr; }
   virtual CXFA_TextLayoutData* AsTextLayoutData() { return nullptr; }
 
   float m_fWidgetHeight = -1.0f;
+
+ protected:
+  CXFA_WidgetLayoutData() = default;
 };
 
 class CXFA_TextLayoutData final : public CXFA_WidgetLayoutData {
  public:
-  CXFA_TextLayoutData() = default;
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_TextLayoutData() override = default;
+
+  void Trace(cppgc::Visitor* visitor) const override {
+    CXFA_WidgetLayoutData::Trace(visitor);
+    visitor->Trace(m_pTextLayout);
+    visitor->Trace(m_pTextProvider);
+  }
 
   CXFA_TextLayoutData* AsTextLayoutData() override { return this; }
 
-  CXFA_TextLayout* GetTextLayout() const { return m_pTextLayout.get(); }
-  CXFA_TextProvider* GetTextProvider() const { return m_pTextProvider.get(); }
+  CXFA_TextLayout* GetTextLayout() const { return m_pTextLayout; }
+  CXFA_TextProvider* GetTextProvider() const { return m_pTextProvider; }
 
   void LoadText(CXFA_FFDoc* doc, CXFA_Node* pNode) {
     if (m_pTextLayout)
       return;
 
-    m_pTextProvider =
-        std::make_unique<CXFA_TextProvider>(pNode, XFA_TEXTPROVIDERTYPE_Text);
-    m_pTextLayout =
-        std::make_unique<CXFA_TextLayout>(doc, m_pTextProvider.get());
+    m_pTextProvider = cppgc::MakeGarbageCollected<CXFA_TextProvider>(
+        doc->GetHeap()->GetAllocationHandle(), pNode,
+        XFA_TEXTPROVIDERTYPE_Text);
+    m_pTextLayout = cppgc::MakeGarbageCollected<CXFA_TextLayout>(
+        doc->GetHeap()->GetAllocationHandle(), doc, m_pTextProvider);
   }
 
  private:
-  std::unique_ptr<CXFA_TextLayout> m_pTextLayout;
-  std::unique_ptr<CXFA_TextProvider> m_pTextProvider;
+  CXFA_TextLayoutData() = default;
+
+  cppgc::Member<CXFA_TextLayout> m_pTextLayout;
+  cppgc::Member<CXFA_TextProvider> m_pTextProvider;
 };
 
 class CXFA_ImageLayoutData final : public CXFA_WidgetLayoutData {
  public:
-  CXFA_ImageLayoutData() = default;
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_ImageLayoutData() override = default;
 
   CXFA_ImageLayoutData* AsImageLayoutData() override { return this; }
@@ -878,13 +893,21 @@ class CXFA_ImageLayoutData final : public CXFA_WidgetLayoutData {
   int32_t m_iImageXDpi = 0;
   int32_t m_iImageYDpi = 0;
   RetainPtr<CFX_DIBitmap> m_pDIBitmap;
+
+ private:
+  CXFA_ImageLayoutData() = default;
 };
 
 class CXFA_FieldLayoutData : public CXFA_WidgetLayoutData {
  public:
-  CXFA_FieldLayoutData() = default;
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FieldLayoutData() override = default;
 
+  void Trace(cppgc::Visitor* visitor) const override {
+    CXFA_WidgetLayoutData::Trace(visitor);
+    visitor->Trace(m_pCapTextLayout);
+    visitor->Trace(m_pCapTextProvider);
+  }
   CXFA_FieldLayoutData* AsFieldLayoutData() override { return this; }
 
   virtual CXFA_ImageEditData* AsImageEditData() { return nullptr; }
@@ -897,30 +920,37 @@ class CXFA_FieldLayoutData : public CXFA_WidgetLayoutData {
     if (!caption || caption->IsHidden())
       return false;
 
-    m_pCapTextProvider = std::make_unique<CXFA_TextProvider>(
-        pNode, XFA_TEXTPROVIDERTYPE_Caption);
-    m_pCapTextLayout =
-        std::make_unique<CXFA_TextLayout>(doc, m_pCapTextProvider.get());
+    m_pCapTextProvider = cppgc::MakeGarbageCollected<CXFA_TextProvider>(
+        doc->GetHeap()->GetAllocationHandle(), pNode,
+        XFA_TEXTPROVIDERTYPE_Caption);
+    m_pCapTextLayout = cppgc::MakeGarbageCollected<CXFA_TextLayout>(
+        doc->GetHeap()->GetAllocationHandle(), doc, m_pCapTextProvider);
     return true;
   }
 
-  std::unique_ptr<CXFA_TextLayout> m_pCapTextLayout;
-  std::unique_ptr<CXFA_TextProvider> m_pCapTextProvider;
+  cppgc::Member<CXFA_TextLayout> m_pCapTextLayout;
+  cppgc::Member<CXFA_TextProvider> m_pCapTextProvider;
   std::unique_ptr<CFDE_TextOut> m_pTextOut;
   std::vector<float> m_FieldSplitArray;
+
+ protected:
+  CXFA_FieldLayoutData() = default;
 };
 
 class CXFA_TextEditData final : public CXFA_FieldLayoutData {
  public:
-  CXFA_TextEditData() = default;
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_TextEditData() override = default;
 
   CXFA_TextEditData* AsTextEditData() override { return this; }
+
+ protected:
+  CXFA_TextEditData() = default;
 };
 
 class CXFA_ImageEditData final : public CXFA_FieldLayoutData {
  public:
-  CXFA_ImageEditData() = default;
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_ImageEditData() override = default;
 
   CXFA_ImageEditData* AsImageEditData() override { return this; }
@@ -946,6 +976,9 @@ class CXFA_ImageEditData final : public CXFA_FieldLayoutData {
   int32_t m_iImageXDpi = 0;
   int32_t m_iImageYDpi = 0;
   RetainPtr<CFX_DIBitmap> m_pDIBitmap;
+
+ private:
+  CXFA_ImageEditData() = default;
 };
 
 CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
@@ -965,6 +998,16 @@ CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
 }
 
 CXFA_Node::~CXFA_Node() = default;
+
+void CXFA_Node::Trace(cppgc::Visitor* visitor) const {
+  CXFA_Object::Trace(visitor);
+  GCedTreeNodeMixin<CXFA_Node>::Trace(visitor);
+  visitor->Trace(m_pAuxNode);
+  for (const auto& node : binding_nodes_)
+    visitor->Trace(node);
+  visitor->Trace(m_pLayoutData);
+  visitor->Trace(ui_);
+}
 
 CXFA_Node* CXFA_Node::Clone(bool bRecursive) {
   CXFA_Node* pClone = m_pDocument->CreateNode(m_ePacket, m_elementType);
@@ -1255,12 +1298,16 @@ CXFA_Node* CXFA_Node::GetBindData() {
   return GetBindingNode();
 }
 
+std::vector<CXFA_Node*> CXFA_Node::GetBindItemsCopy() const {
+  return std::vector<CXFA_Node*>(binding_nodes_.begin(), binding_nodes_.end());
+}
+
 int32_t CXFA_Node::AddBindItem(CXFA_Node* pFormNode) {
   ASSERT(pFormNode);
 
   if (BindsFormItems()) {
     bool found = false;
-    for (auto* v : binding_nodes_) {
+    for (const auto& v : binding_nodes_) {
       if (v == pFormNode) {
         found = true;
         break;
@@ -1279,11 +1326,9 @@ int32_t CXFA_Node::AddBindItem(CXFA_Node* pFormNode) {
   if (pOldFormItem == pFormNode)
     return 1;
 
-  std::vector<CXFA_Node*> items;
-  items.push_back(pOldFormItem);
-  items.push_back(pFormNode);
-  binding_nodes_ = std::move(items);
-
+  binding_nodes_.clear();
+  binding_nodes_.push_back(pOldFormItem);
+  binding_nodes_.push_back(pFormNode);
   m_uNodeFlags |= XFA_NodeFlag_BindFormItems;
   return 2;
 }
@@ -1576,7 +1621,7 @@ void CXFA_Node::RemoveChildAndNotify(CXFA_Node* pNode, bool bNotify) {
     return;
 
   pNode->SetFlag(XFA_NodeFlag_HasRemovedChildren);
-  TreeNode<CXFA_Node>::RemoveChild(pNode);
+  GCedTreeNodeMixin<CXFA_Node>::RemoveChild(pNode);
   OnRemoved(bNotify);
 
   if (!IsNeedSavingXMLNode() || !pNode->xml_node_)
@@ -2734,7 +2779,7 @@ std::pair<XFA_EventError, bool> CXFA_Node::ExecuteBoolScript(
   pContext->SetEventParam(pEventParam);
   pContext->SetRunAtType(script->GetRunAt());
 
-  std::vector<CXFA_Node*> refNodes;
+  std::vector<cppgc::Persistent<CXFA_Node>> refNodes;
   if (pEventParam->m_eType == XFA_EVENT_InitCalculate ||
       pEventParam->m_eType == XFA_EVENT_Calculate) {
     pContext->SetNodesOfRunScript(&refNodes);
@@ -3134,7 +3179,7 @@ void CXFA_Node::CalcCaptionSize(CXFA_FFDoc* doc, CFX_SizeF* pszCap) {
   const bool bVert = iCapPlacement == XFA_AttributeValue::Top ||
                      iCapPlacement == XFA_AttributeValue::Bottom;
   CXFA_TextLayout* pCapTextLayout =
-      m_pLayoutData->AsFieldLayoutData()->m_pCapTextLayout.get();
+      m_pLayoutData->AsFieldLayoutData()->m_pCapTextLayout;
   if (pCapTextLayout) {
     if (!bVert && GetFFWidgetType() != XFA_FFWidgetType::kButton)
       pszCap->width = fCapReserve;
@@ -3400,12 +3445,12 @@ bool CXFA_Node::CalculateImageEditAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
 }
 
 bool CXFA_Node::LoadImageImage(CXFA_FFDoc* doc) {
-  InitLayoutData();
+  InitLayoutData(doc);
   return m_pLayoutData->AsImageLayoutData()->LoadImageData(doc, this);
 }
 
 bool CXFA_Node::LoadImageEditImage(CXFA_FFDoc* doc) {
-  InitLayoutData();
+  InitLayoutData(doc);
   return m_pLayoutData->AsFieldLayoutData()->AsImageEditData()->LoadImageData(
       doc, this);
 }
@@ -3470,7 +3515,7 @@ float CXFA_Node::GetHeightWithoutMargin(float fHeightCalc) const {
 void CXFA_Node::StartWidgetLayout(CXFA_FFDoc* doc,
                                   float* pCalcWidth,
                                   float* pCalcHeight) {
-  InitLayoutData();
+  InitLayoutData(doc);
 
   if (GetFFWidgetType() == XFA_FFWidgetType::kText) {
     m_pLayoutData->m_fWidgetHeight = TryHeight().value_or(-1);
@@ -3780,37 +3825,43 @@ Optional<float> CXFA_Node::FindSplitPos(CXFA_FFDocView* pDocView,
   return fSplitHeight;
 }
 
-void CXFA_Node::InitLayoutData() {
+void CXFA_Node::InitLayoutData(CXFA_FFDoc* doc) {
   if (m_pLayoutData)
     return;
 
   switch (GetFFWidgetType()) {
     case XFA_FFWidgetType::kText:
-      m_pLayoutData = std::make_unique<CXFA_TextLayoutData>();
+      m_pLayoutData = cppgc::MakeGarbageCollected<CXFA_TextLayoutData>(
+          doc->GetHeap()->GetAllocationHandle());
       return;
     case XFA_FFWidgetType::kTextEdit:
-      m_pLayoutData = std::make_unique<CXFA_TextEditData>();
+      m_pLayoutData = cppgc::MakeGarbageCollected<CXFA_TextEditData>(
+          doc->GetHeap()->GetAllocationHandle());
       return;
     case XFA_FFWidgetType::kImage:
-      m_pLayoutData = std::make_unique<CXFA_ImageLayoutData>();
+      m_pLayoutData = cppgc::MakeGarbageCollected<CXFA_ImageLayoutData>(
+          doc->GetHeap()->GetAllocationHandle());
       return;
     case XFA_FFWidgetType::kImageEdit:
-      m_pLayoutData = std::make_unique<CXFA_ImageEditData>();
+      m_pLayoutData = cppgc::MakeGarbageCollected<CXFA_ImageEditData>(
+          doc->GetHeap()->GetAllocationHandle());
       return;
     default:
       break;
   }
   if (GetElementType() == XFA_Element::Field) {
-    m_pLayoutData = std::make_unique<CXFA_FieldLayoutData>();
+    m_pLayoutData = cppgc::MakeGarbageCollected<CXFA_FieldLayoutData>(
+        doc->GetHeap()->GetAllocationHandle());
     return;
   }
-  m_pLayoutData = std::make_unique<CXFA_WidgetLayoutData>();
+  m_pLayoutData = cppgc::MakeGarbageCollected<CXFA_WidgetLayoutData>(
+      doc->GetHeap()->GetAllocationHandle());
 }
 
 void CXFA_Node::StartTextLayout(CXFA_FFDoc* doc,
                                 float* pCalcWidth,
                                 float* pCalcHeight) {
-  InitLayoutData();
+  InitLayoutData(doc);
 
   CXFA_TextLayoutData* pTextLayoutData = m_pLayoutData->AsTextLayoutData();
   pTextLayoutData->LoadText(doc, this);
@@ -3852,14 +3903,13 @@ void CXFA_Node::StartTextLayout(CXFA_FFDoc* doc,
 }
 
 bool CXFA_Node::LoadCaption(CXFA_FFDoc* doc) {
-  InitLayoutData();
+  InitLayoutData(doc);
   return m_pLayoutData->AsFieldLayoutData()->LoadCaption(doc, this);
 }
 
 CXFA_TextLayout* CXFA_Node::GetCaptionTextLayout() {
-  return m_pLayoutData
-             ? m_pLayoutData->AsFieldLayoutData()->m_pCapTextLayout.get()
-             : nullptr;
+  return m_pLayoutData ? m_pLayoutData->AsFieldLayoutData()->m_pCapTextLayout
+                       : nullptr;
 }
 
 CXFA_TextLayout* CXFA_Node::GetTextLayout() {
@@ -5086,919 +5136,1222 @@ CFX_XMLDocument* CXFA_Node::GetXMLDocument() const {
 }
 
 // static
-std::unique_ptr<CXFA_Node> CXFA_Node::Create(CXFA_Document* doc,
-                                             XFA_Element element,
-                                             XFA_PacketType packet) {
-  std::unique_ptr<CXFA_Node> node;
+CXFA_Node* CXFA_Node::Create(CXFA_Document* doc,
+                             XFA_Element element,
+                             XFA_PacketType packet) {
+  CXFA_Node* node = nullptr;
   switch (element) {
     case XFA_Element::Ps:
-      node = std::make_unique<CXFA_Ps>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Ps>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::To:
-      node = std::make_unique<CXFA_To>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_To>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Ui:
-      node = std::make_unique<CXFA_Ui>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Ui>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::RecordSet:
-      node = std::make_unique<CXFA_RecordSet>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_RecordSet>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::SubsetBelow:
-      node = std::make_unique<CXFA_SubsetBelow>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_SubsetBelow>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::SubformSet:
-      node = std::make_unique<CXFA_SubformSet>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_SubformSet>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::AdobeExtensionLevel:
-      node = std::make_unique<CXFA_AdobeExtensionLevel>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_AdobeExtensionLevel>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Typeface:
-      node = std::make_unique<CXFA_Typeface>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Typeface>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Break:
-      node = std::make_unique<CXFA_Break>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Break>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::FontInfo:
-      node = std::make_unique<CXFA_FontInfo>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_FontInfo>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::NumberPattern:
-      node = std::make_unique<CXFA_NumberPattern>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_NumberPattern>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::DynamicRender:
-      node = std::make_unique<CXFA_DynamicRender>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_DynamicRender>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::PrintScaling:
-      node = std::make_unique<CXFA_PrintScaling>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_PrintScaling>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::CheckButton:
-      node = std::make_unique<CXFA_CheckButton>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_CheckButton>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::DatePatterns:
-      node = std::make_unique<CXFA_DatePatterns>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_DatePatterns>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::SourceSet:
-      node = std::make_unique<CXFA_SourceSet>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_SourceSet>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Amd:
-      node = std::make_unique<CXFA_Amd>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Amd>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Arc:
-      node = std::make_unique<CXFA_Arc>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Arc>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Day:
-      node = std::make_unique<CXFA_Day>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Day>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Era:
-      node = std::make_unique<CXFA_Era>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Era>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Jog:
-      node = std::make_unique<CXFA_Jog>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Jog>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Log:
-      node = std::make_unique<CXFA_Log>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Log>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Map:
-      node = std::make_unique<CXFA_Map>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Map>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Mdp:
-      node = std::make_unique<CXFA_Mdp>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Mdp>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::BreakBefore:
-      node = std::make_unique<CXFA_BreakBefore>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_BreakBefore>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Oid:
-      node = std::make_unique<CXFA_Oid>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Oid>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Pcl:
-      node = std::make_unique<CXFA_Pcl>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Pcl>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Pdf:
-      node = std::make_unique<CXFA_Pdf>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Pdf>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Ref:
-      node = std::make_unique<CXFA_Ref>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Ref>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Uri:
-      node = std::make_unique<CXFA_Uri>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Uri>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Xdc:
-      node = std::make_unique<CXFA_Xdc>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Xdc>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Xdp:
-      node = std::make_unique<CXFA_Xdp>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Xdp>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Xfa:
-      node = std::make_unique<CXFA_Xfa>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Xfa>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Xsl:
-      node = std::make_unique<CXFA_Xsl>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Xsl>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Zpl:
-      node = std::make_unique<CXFA_Zpl>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Zpl>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Cache:
-      node = std::make_unique<CXFA_Cache>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Cache>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Margin:
-      node = std::make_unique<CXFA_Margin>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Margin>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::KeyUsage:
-      node = std::make_unique<CXFA_KeyUsage>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_KeyUsage>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Exclude:
-      node = std::make_unique<CXFA_Exclude>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Exclude>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::ChoiceList:
-      node = std::make_unique<CXFA_ChoiceList>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_ChoiceList>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Level:
-      node = std::make_unique<CXFA_Level>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Level>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::LabelPrinter:
-      node = std::make_unique<CXFA_LabelPrinter>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_LabelPrinter>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::CalendarSymbols:
-      node = std::make_unique<CXFA_CalendarSymbols>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_CalendarSymbols>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Para:
-      node = std::make_unique<CXFA_Para>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Para>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Part:
-      node = std::make_unique<CXFA_Part>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Part>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Pdfa:
-      node = std::make_unique<CXFA_Pdfa>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Pdfa>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Filter:
-      node = std::make_unique<CXFA_Filter>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Filter>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Present:
-      node = std::make_unique<CXFA_Present>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Present>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Pagination:
-      node = std::make_unique<CXFA_Pagination>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Pagination>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Encoding:
-      node = std::make_unique<CXFA_Encoding>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Encoding>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Event:
-      node = std::make_unique<CXFA_Event>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Event>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Whitespace:
-      node = std::make_unique<CXFA_Whitespace>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Whitespace>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::DefaultUi:
-      node = std::make_unique<CXFA_DefaultUi>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_DefaultUi>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::DataModel:
-      node = std::make_unique<CXFA_DataModel>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_DataModel>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Barcode:
-      node = std::make_unique<CXFA_Barcode>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Barcode>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::TimePattern:
-      node = std::make_unique<CXFA_TimePattern>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_TimePattern>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::BatchOutput:
-      node = std::make_unique<CXFA_BatchOutput>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_BatchOutput>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Enforce:
-      node = std::make_unique<CXFA_Enforce>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Enforce>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::CurrencySymbols:
-      node = std::make_unique<CXFA_CurrencySymbols>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_CurrencySymbols>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::AddSilentPrint:
-      node = std::make_unique<CXFA_AddSilentPrint>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_AddSilentPrint>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Rename:
-      node = std::make_unique<CXFA_Rename>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Rename>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Operation:
-      node = std::make_unique<CXFA_Operation>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Operation>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Typefaces:
-      node = std::make_unique<CXFA_Typefaces>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Typefaces>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::SubjectDNs:
-      node = std::make_unique<CXFA_SubjectDNs>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_SubjectDNs>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Issuers:
-      node = std::make_unique<CXFA_Issuers>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Issuers>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::WsdlConnection:
-      node = std::make_unique<CXFA_WsdlConnection>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_WsdlConnection>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Debug:
-      node = std::make_unique<CXFA_Debug>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Debug>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Delta:
-      node = std::make_unique<CXFA_Delta>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Delta>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::EraNames:
-      node = std::make_unique<CXFA_EraNames>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_EraNames>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::ModifyAnnots:
-      node = std::make_unique<CXFA_ModifyAnnots>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_ModifyAnnots>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::StartNode:
-      node = std::make_unique<CXFA_StartNode>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_StartNode>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Button:
-      node = std::make_unique<CXFA_Button>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Button>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Format:
-      node = std::make_unique<CXFA_Format>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Format>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Border:
-      node = std::make_unique<CXFA_Border>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Border>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Area:
-      node = std::make_unique<CXFA_Area>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Area>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Hyphenation:
-      node = std::make_unique<CXFA_Hyphenation>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Hyphenation>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Text:
-      node = std::make_unique<CXFA_Text>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Text>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Time:
-      node = std::make_unique<CXFA_Time>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Time>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Type:
-      node = std::make_unique<CXFA_Type>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Type>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Overprint:
-      node = std::make_unique<CXFA_Overprint>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Overprint>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Certificates:
-      node = std::make_unique<CXFA_Certificates>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Certificates>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::EncryptionMethods:
-      node = std::make_unique<CXFA_EncryptionMethods>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_EncryptionMethods>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::SetProperty:
-      node = std::make_unique<CXFA_SetProperty>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_SetProperty>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::PrinterName:
-      node = std::make_unique<CXFA_PrinterName>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_PrinterName>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::StartPage:
-      node = std::make_unique<CXFA_StartPage>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_StartPage>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::PageOffset:
-      node = std::make_unique<CXFA_PageOffset>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_PageOffset>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::DateTime:
-      node = std::make_unique<CXFA_DateTime>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_DateTime>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Comb:
-      node = std::make_unique<CXFA_Comb>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Comb>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Pattern:
-      node = std::make_unique<CXFA_Pattern>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Pattern>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::IfEmpty:
-      node = std::make_unique<CXFA_IfEmpty>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_IfEmpty>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::SuppressBanner:
-      node = std::make_unique<CXFA_SuppressBanner>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_SuppressBanner>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::OutputBin:
-      node = std::make_unique<CXFA_OutputBin>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_OutputBin>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Field:
-      node = std::make_unique<CXFA_Field>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Field>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Agent:
-      node = std::make_unique<CXFA_Agent>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Agent>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::OutputXSL:
-      node = std::make_unique<CXFA_OutputXSL>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_OutputXSL>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::AdjustData:
-      node = std::make_unique<CXFA_AdjustData>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_AdjustData>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::AutoSave:
-      node = std::make_unique<CXFA_AutoSave>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_AutoSave>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::ContentArea:
-      node = std::make_unique<CXFA_ContentArea>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_ContentArea>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::WsdlAddress:
-      node = std::make_unique<CXFA_WsdlAddress>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_WsdlAddress>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Solid:
-      node = std::make_unique<CXFA_Solid>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Solid>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::DateTimeSymbols:
-      node = std::make_unique<CXFA_DateTimeSymbols>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_DateTimeSymbols>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::EncryptionLevel:
-      node = std::make_unique<CXFA_EncryptionLevel>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_EncryptionLevel>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Edge:
-      node = std::make_unique<CXFA_Edge>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Edge>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Stipple:
-      node = std::make_unique<CXFA_Stipple>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Stipple>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Attributes:
-      node = std::make_unique<CXFA_Attributes>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Attributes>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::VersionControl:
-      node = std::make_unique<CXFA_VersionControl>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_VersionControl>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Meridiem:
-      node = std::make_unique<CXFA_Meridiem>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Meridiem>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::ExclGroup:
-      node = std::make_unique<CXFA_ExclGroup>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_ExclGroup>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::ToolTip:
-      node = std::make_unique<CXFA_ToolTip>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_ToolTip>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Compress:
-      node = std::make_unique<CXFA_Compress>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Compress>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Reason:
-      node = std::make_unique<CXFA_Reason>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Reason>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Execute:
-      node = std::make_unique<CXFA_Execute>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Execute>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::ContentCopy:
-      node = std::make_unique<CXFA_ContentCopy>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_ContentCopy>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::DateTimeEdit:
-      node = std::make_unique<CXFA_DateTimeEdit>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_DateTimeEdit>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Config:
-      node = std::make_unique<CXFA_Config>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Config>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Image:
-      node = std::make_unique<CXFA_Image>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Image>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::SharpxHTML:
-      node = std::make_unique<CXFA_SharpxHTML>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_SharpxHTML>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::NumberOfCopies:
-      node = std::make_unique<CXFA_NumberOfCopies>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_NumberOfCopies>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::BehaviorOverride:
-      node = std::make_unique<CXFA_BehaviorOverride>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_BehaviorOverride>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::TimeStamp:
-      node = std::make_unique<CXFA_TimeStamp>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_TimeStamp>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Month:
-      node = std::make_unique<CXFA_Month>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Month>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::ViewerPreferences:
-      node = std::make_unique<CXFA_ViewerPreferences>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_ViewerPreferences>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::ScriptModel:
-      node = std::make_unique<CXFA_ScriptModel>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_ScriptModel>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Decimal:
-      node = std::make_unique<CXFA_Decimal>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Decimal>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Subform:
-      node = std::make_unique<CXFA_Subform>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Subform>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Select:
-      node = std::make_unique<CXFA_Select>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Select>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Window:
-      node = std::make_unique<CXFA_Window>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Window>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::LocaleSet:
-      node = std::make_unique<CXFA_LocaleSet>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_LocaleSet>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Handler:
-      node = std::make_unique<CXFA_Handler>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Handler>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Presence:
-      node = std::make_unique<CXFA_Presence>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Presence>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Record:
-      node = std::make_unique<CXFA_Record>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Record>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Embed:
-      node = std::make_unique<CXFA_Embed>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Embed>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Version:
-      node = std::make_unique<CXFA_Version>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Version>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Command:
-      node = std::make_unique<CXFA_Command>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Command>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Copies:
-      node = std::make_unique<CXFA_Copies>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Copies>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Staple:
-      node = std::make_unique<CXFA_Staple>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Staple>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::SubmitFormat:
-      node = std::make_unique<CXFA_SubmitFormat>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_SubmitFormat>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Boolean:
-      node = std::make_unique<CXFA_Boolean>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Boolean>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Message:
-      node = std::make_unique<CXFA_Message>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Message>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Output:
-      node = std::make_unique<CXFA_Output>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Output>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::PsMap:
-      node = std::make_unique<CXFA_PsMap>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_PsMap>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::ExcludeNS:
-      node = std::make_unique<CXFA_ExcludeNS>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_ExcludeNS>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Assist:
-      node = std::make_unique<CXFA_Assist>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Assist>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Picture:
-      node = std::make_unique<CXFA_Picture>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Picture>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Traversal:
-      node = std::make_unique<CXFA_Traversal>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Traversal>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::SilentPrint:
-      node = std::make_unique<CXFA_SilentPrint>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_SilentPrint>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::WebClient:
-      node = std::make_unique<CXFA_WebClient>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_WebClient>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Producer:
-      node = std::make_unique<CXFA_Producer>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Producer>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Corner:
-      node = std::make_unique<CXFA_Corner>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Corner>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::MsgId:
-      node = std::make_unique<CXFA_MsgId>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_MsgId>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Color:
-      node = std::make_unique<CXFA_Color>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Color>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Keep:
-      node = std::make_unique<CXFA_Keep>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Keep>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Query:
-      node = std::make_unique<CXFA_Query>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Query>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Insert:
-      node = std::make_unique<CXFA_Insert>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Insert>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::ImageEdit:
-      node = std::make_unique<CXFA_ImageEdit>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_ImageEdit>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Validate:
-      node = std::make_unique<CXFA_Validate>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Validate>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::DigestMethods:
-      node = std::make_unique<CXFA_DigestMethods>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_DigestMethods>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::NumberPatterns:
-      node = std::make_unique<CXFA_NumberPatterns>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_NumberPatterns>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::PageSet:
-      node = std::make_unique<CXFA_PageSet>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_PageSet>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Integer:
-      node = std::make_unique<CXFA_Integer>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Integer>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::SoapAddress:
-      node = std::make_unique<CXFA_SoapAddress>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_SoapAddress>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Equate:
-      node = std::make_unique<CXFA_Equate>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Equate>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::FormFieldFilling:
-      node = std::make_unique<CXFA_FormFieldFilling>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_FormFieldFilling>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::PageRange:
-      node = std::make_unique<CXFA_PageRange>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_PageRange>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Update:
-      node = std::make_unique<CXFA_Update>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Update>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::ConnectString:
-      node = std::make_unique<CXFA_ConnectString>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_ConnectString>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Mode:
-      node = std::make_unique<CXFA_Mode>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Mode>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Layout:
-      node = std::make_unique<CXFA_Layout>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Layout>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Sharpxml:
-      node = std::make_unique<CXFA_Sharpxml>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Sharpxml>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::XsdConnection:
-      node = std::make_unique<CXFA_XsdConnection>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_XsdConnection>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Traverse:
-      node = std::make_unique<CXFA_Traverse>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Traverse>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Encodings:
-      node = std::make_unique<CXFA_Encodings>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Encodings>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Template:
-      node = std::make_unique<CXFA_Template>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Template>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Acrobat:
-      node = std::make_unique<CXFA_Acrobat>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Acrobat>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::ValidationMessaging:
-      node = std::make_unique<CXFA_ValidationMessaging>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_ValidationMessaging>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Signing:
-      node = std::make_unique<CXFA_Signing>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Signing>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Script:
-      node = std::make_unique<CXFA_Script>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Script>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::AddViewerPreferences:
-      node = std::make_unique<CXFA_AddViewerPreferences>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_AddViewerPreferences>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::AlwaysEmbed:
-      node = std::make_unique<CXFA_AlwaysEmbed>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_AlwaysEmbed>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::PasswordEdit:
-      node = std::make_unique<CXFA_PasswordEdit>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_PasswordEdit>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::NumericEdit:
-      node = std::make_unique<CXFA_NumericEdit>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_NumericEdit>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::EncryptionMethod:
-      node = std::make_unique<CXFA_EncryptionMethod>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_EncryptionMethod>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Change:
-      node = std::make_unique<CXFA_Change>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Change>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::PageArea:
-      node = std::make_unique<CXFA_PageArea>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_PageArea>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::SubmitUrl:
-      node = std::make_unique<CXFA_SubmitUrl>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_SubmitUrl>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Oids:
-      node = std::make_unique<CXFA_Oids>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Oids>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Signature:
-      node = std::make_unique<CXFA_Signature>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Signature>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::ADBE_JSConsole:
-      node = std::make_unique<CXFA_ADBE_JSConsole>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_ADBE_JSConsole>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Caption:
-      node = std::make_unique<CXFA_Caption>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Caption>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Relevant:
-      node = std::make_unique<CXFA_Relevant>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Relevant>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::FlipLabel:
-      node = std::make_unique<CXFA_FlipLabel>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_FlipLabel>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::ExData:
-      node = std::make_unique<CXFA_ExData>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_ExData>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::DayNames:
-      node = std::make_unique<CXFA_DayNames>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_DayNames>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::SoapAction:
-      node = std::make_unique<CXFA_SoapAction>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_SoapAction>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::DefaultTypeface:
-      node = std::make_unique<CXFA_DefaultTypeface>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_DefaultTypeface>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Manifest:
-      node = std::make_unique<CXFA_Manifest>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Manifest>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Overflow:
-      node = std::make_unique<CXFA_Overflow>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Overflow>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Linear:
-      node = std::make_unique<CXFA_Linear>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Linear>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::CurrencySymbol:
-      node = std::make_unique<CXFA_CurrencySymbol>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_CurrencySymbol>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Delete:
-      node = std::make_unique<CXFA_Delete>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Delete>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::DigestMethod:
-      node = std::make_unique<CXFA_DigestMethod>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_DigestMethod>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::InstanceManager:
-      node = std::make_unique<CXFA_InstanceManager>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_InstanceManager>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::EquateRange:
-      node = std::make_unique<CXFA_EquateRange>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_EquateRange>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Medium:
-      node = std::make_unique<CXFA_Medium>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Medium>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::TextEdit:
-      node = std::make_unique<CXFA_TextEdit>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_TextEdit>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::TemplateCache:
-      node = std::make_unique<CXFA_TemplateCache>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_TemplateCache>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::CompressObjectStream:
-      node = std::make_unique<CXFA_CompressObjectStream>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_CompressObjectStream>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::DataValue:
-      node = std::make_unique<CXFA_DataValue>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_DataValue>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::AccessibleContent:
-      node = std::make_unique<CXFA_AccessibleContent>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_AccessibleContent>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::IncludeXDPContent:
-      node = std::make_unique<CXFA_IncludeXDPContent>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_IncludeXDPContent>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::XmlConnection:
-      node = std::make_unique<CXFA_XmlConnection>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_XmlConnection>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::ValidateApprovalSignatures:
-      node = std::make_unique<CXFA_ValidateApprovalSignatures>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_ValidateApprovalSignatures>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::SignData:
-      node = std::make_unique<CXFA_SignData>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_SignData>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Packets:
-      node = std::make_unique<CXFA_Packets>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Packets>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::DatePattern:
-      node = std::make_unique<CXFA_DatePattern>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_DatePattern>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::DuplexOption:
-      node = std::make_unique<CXFA_DuplexOption>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_DuplexOption>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Base:
-      node = std::make_unique<CXFA_Base>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Base>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Bind:
-      node = std::make_unique<CXFA_Bind>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Bind>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Compression:
-      node = std::make_unique<CXFA_Compression>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Compression>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::User:
-      node = std::make_unique<CXFA_User>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_User>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Rectangle:
-      node = std::make_unique<CXFA_Rectangle>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Rectangle>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::EffectiveOutputPolicy:
-      node = std::make_unique<CXFA_EffectiveOutputPolicy>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_EffectiveOutputPolicy>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::ADBE_JSDebugger:
-      node = std::make_unique<CXFA_ADBE_JSDebugger>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_ADBE_JSDebugger>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Acrobat7:
-      node = std::make_unique<CXFA_Acrobat7>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Acrobat7>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Interactive:
-      node = std::make_unique<CXFA_Interactive>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Interactive>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Locale:
-      node = std::make_unique<CXFA_Locale>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Locale>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::CurrentPage:
-      node = std::make_unique<CXFA_CurrentPage>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_CurrentPage>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Data:
-      node = std::make_unique<CXFA_Data>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Data>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Date:
-      node = std::make_unique<CXFA_Date>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Date>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Desc:
-      node = std::make_unique<CXFA_Desc>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Desc>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Encrypt:
-      node = std::make_unique<CXFA_Encrypt>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Encrypt>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Draw:
-      node = std::make_unique<CXFA_Draw>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Draw>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Encryption:
-      node = std::make_unique<CXFA_Encryption>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Encryption>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::MeridiemNames:
-      node = std::make_unique<CXFA_MeridiemNames>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_MeridiemNames>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Messaging:
-      node = std::make_unique<CXFA_Messaging>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Messaging>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Speak:
-      node = std::make_unique<CXFA_Speak>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Speak>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::DataGroup:
-      node = std::make_unique<CXFA_DataGroup>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_DataGroup>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Common:
-      node = std::make_unique<CXFA_Common>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Common>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Sharptext:
-      node = std::make_unique<CXFA_Sharptext>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Sharptext>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::PaginationOverride:
-      node = std::make_unique<CXFA_PaginationOverride>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_PaginationOverride>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Reasons:
-      node = std::make_unique<CXFA_Reasons>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Reasons>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::SignatureProperties:
-      node = std::make_unique<CXFA_SignatureProperties>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_SignatureProperties>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Threshold:
-      node = std::make_unique<CXFA_Threshold>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Threshold>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::AppearanceFilter:
-      node = std::make_unique<CXFA_AppearanceFilter>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_AppearanceFilter>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Fill:
-      node = std::make_unique<CXFA_Fill>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Fill>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Font:
-      node = std::make_unique<CXFA_Font>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Font>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Form:
-      node = std::make_unique<CXFA_Form>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Form>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::MediumInfo:
-      node = std::make_unique<CXFA_MediumInfo>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_MediumInfo>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Certificate:
-      node = std::make_unique<CXFA_Certificate>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Certificate>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Password:
-      node = std::make_unique<CXFA_Password>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Password>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::RunScripts:
-      node = std::make_unique<CXFA_RunScripts>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_RunScripts>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Trace:
-      node = std::make_unique<CXFA_Trace>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Trace>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Float:
-      node = std::make_unique<CXFA_Float>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Float>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::RenderPolicy:
-      node = std::make_unique<CXFA_RenderPolicy>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_RenderPolicy>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Destination:
-      node = std::make_unique<CXFA_Destination>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Destination>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Value:
-      node = std::make_unique<CXFA_Value>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Value>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Bookend:
-      node = std::make_unique<CXFA_Bookend>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Bookend>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::ExObject:
-      node = std::make_unique<CXFA_ExObject>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_ExObject>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::OpenAction:
-      node = std::make_unique<CXFA_OpenAction>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_OpenAction>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::NeverEmbed:
-      node = std::make_unique<CXFA_NeverEmbed>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_NeverEmbed>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::BindItems:
-      node = std::make_unique<CXFA_BindItems>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_BindItems>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Calculate:
-      node = std::make_unique<CXFA_Calculate>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Calculate>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Print:
-      node = std::make_unique<CXFA_Print>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Print>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Extras:
-      node = std::make_unique<CXFA_Extras>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Extras>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Proto:
-      node = std::make_unique<CXFA_Proto>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Proto>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::DSigData:
-      node = std::make_unique<CXFA_DSigData>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_DSigData>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Creator:
-      node = std::make_unique<CXFA_Creator>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Creator>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Connect:
-      node = std::make_unique<CXFA_Connect>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Connect>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Permissions:
-      node = std::make_unique<CXFA_Permissions>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Permissions>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::ConnectionSet:
-      node = std::make_unique<CXFA_ConnectionSet>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_ConnectionSet>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Submit:
-      node = std::make_unique<CXFA_Submit>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Submit>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Range:
-      node = std::make_unique<CXFA_Range>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Range>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Linearized:
-      node = std::make_unique<CXFA_Linearized>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Linearized>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Packet:
-      node = std::make_unique<CXFA_Packet>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Packet>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::RootElement:
-      node = std::make_unique<CXFA_RootElement>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_RootElement>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::PlaintextMetadata:
-      node = std::make_unique<CXFA_PlaintextMetadata>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_PlaintextMetadata>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::NumberSymbols:
-      node = std::make_unique<CXFA_NumberSymbols>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_NumberSymbols>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::PrintHighQuality:
-      node = std::make_unique<CXFA_PrintHighQuality>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_PrintHighQuality>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Driver:
-      node = std::make_unique<CXFA_Driver>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Driver>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::IncrementalLoad:
-      node = std::make_unique<CXFA_IncrementalLoad>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_IncrementalLoad>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::SubjectDN:
-      node = std::make_unique<CXFA_SubjectDN>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_SubjectDN>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::CompressLogicalStructure:
-      node = std::make_unique<CXFA_CompressLogicalStructure>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_CompressLogicalStructure>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::IncrementalMerge:
-      node = std::make_unique<CXFA_IncrementalMerge>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_IncrementalMerge>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Radial:
-      node = std::make_unique<CXFA_Radial>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Radial>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Variables:
-      node = std::make_unique<CXFA_Variables>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Variables>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::TimePatterns:
-      node = std::make_unique<CXFA_TimePatterns>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_TimePatterns>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::EffectiveInputPolicy:
-      node = std::make_unique<CXFA_EffectiveInputPolicy>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_EffectiveInputPolicy>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::NameAttr:
-      node = std::make_unique<CXFA_NameAttr>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_NameAttr>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Conformance:
-      node = std::make_unique<CXFA_Conformance>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Conformance>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Transform:
-      node = std::make_unique<CXFA_Transform>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Transform>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::LockDocument:
-      node = std::make_unique<CXFA_LockDocument>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_LockDocument>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::BreakAfter:
-      node = std::make_unique<CXFA_BreakAfter>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_BreakAfter>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Line:
-      node = std::make_unique<CXFA_Line>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Line>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Source:
-      node = std::make_unique<CXFA_Source>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Source>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Occur:
-      node = std::make_unique<CXFA_Occur>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Occur>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::PickTrayByPDFSize:
-      node = std::make_unique<CXFA_PickTrayByPDFSize>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_PickTrayByPDFSize>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::MonthNames:
-      node = std::make_unique<CXFA_MonthNames>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_MonthNames>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Severity:
-      node = std::make_unique<CXFA_Severity>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Severity>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::GroupParent:
-      node = std::make_unique<CXFA_GroupParent>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_GroupParent>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::DocumentAssembly:
-      node = std::make_unique<CXFA_DocumentAssembly>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_DocumentAssembly>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::NumberSymbol:
-      node = std::make_unique<CXFA_NumberSymbol>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_NumberSymbol>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Tagged:
-      node = std::make_unique<CXFA_Tagged>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Tagged>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     case XFA_Element::Items:
-      node = std::make_unique<CXFA_Items>(doc, packet);
+      node = cppgc::MakeGarbageCollected<CXFA_Items>(
+          doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
     default:
       NOTREACHED();

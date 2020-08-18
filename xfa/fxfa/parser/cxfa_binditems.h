@@ -11,12 +11,15 @@
 
 class CXFA_BindItems final : public CXFA_Node {
  public:
-  CXFA_BindItems(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_BindItems() override;
 
   WideString GetLabelRef();
   WideString GetValueRef();
   WideString GetRef();
+
+ private:
+  CXFA_BindItems(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_BINDITEMS_H_

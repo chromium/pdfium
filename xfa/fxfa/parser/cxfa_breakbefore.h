@@ -11,8 +11,11 @@
 
 class CXFA_BreakBefore final : public CXFA_Node {
  public:
-  CXFA_BreakBefore(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_BreakBefore() override;
+
+ private:
+  CXFA_BreakBefore(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_BREAKBEFORE_H_

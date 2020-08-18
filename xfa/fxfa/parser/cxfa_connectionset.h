@@ -11,8 +11,11 @@
 
 class CXFA_ConnectionSet final : public CXFA_Node {
  public:
-  CXFA_ConnectionSet(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_ConnectionSet() override;
+
+ private:
+  CXFA_ConnectionSet(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_CONNECTIONSET_H_

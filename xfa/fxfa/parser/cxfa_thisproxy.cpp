@@ -20,3 +20,9 @@ CXFA_ThisProxy::CXFA_ThisProxy(CXFA_Node* pThisNode, CXFA_Node* pScriptNode)
       m_pScriptNode(pScriptNode) {}
 
 CXFA_ThisProxy::~CXFA_ThisProxy() = default;
+
+void CXFA_ThisProxy::Trace(cppgc::Visitor* visitor) const {
+  CXFA_Object::Trace(visitor);
+  visitor->Trace(m_pThisNode);
+  visitor->Trace(m_pScriptNode);
+}

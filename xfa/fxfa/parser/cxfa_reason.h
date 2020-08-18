@@ -11,8 +11,11 @@
 
 class CXFA_Reason final : public CXFA_Node {
  public:
-  CXFA_Reason(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Reason() override;
+
+ private:
+  CXFA_Reason(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_REASON_H_

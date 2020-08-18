@@ -11,10 +11,13 @@
 
 class CXFA_Ui final : public CXFA_Node {
  public:
-  CXFA_Ui(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Ui() override;
 
   bool IsAOneOfChild(CXFA_Node* child) const;
+
+ private:
+  CXFA_Ui(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_UI_H_

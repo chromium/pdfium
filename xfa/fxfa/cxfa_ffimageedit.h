@@ -12,7 +12,7 @@
 
 class CXFA_FFImageEdit final : public CXFA_FFField {
  public:
-  explicit CXFA_FFImageEdit(CXFA_Node* pNode);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FFImageEdit() override;
 
   // CXFA_FFField
@@ -31,6 +31,8 @@ class CXFA_FFImageEdit final : public CXFA_FFField {
   FormFieldType GetFormFieldType() override;
 
  private:
+  explicit CXFA_FFImageEdit(CXFA_Node* pNode);
+
   void SetFWLRect() override;
   bool UpdateFWLData() override;
   bool CommitData() override;

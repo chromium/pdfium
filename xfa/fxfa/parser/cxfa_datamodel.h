@@ -11,8 +11,11 @@
 
 class CXFA_DataModel final : public CXFA_Node {
  public:
-  CXFA_DataModel(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_DataModel() override;
+
+ private:
+  CXFA_DataModel(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_DATAMODEL_H_

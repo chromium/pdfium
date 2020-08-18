@@ -11,8 +11,11 @@
 
 class CXFA_BehaviorOverride final : public CXFA_Node {
  public:
-  CXFA_BehaviorOverride(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_BehaviorOverride() override;
+
+ private:
+  CXFA_BehaviorOverride(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_BEHAVIOROVERRIDE_H_

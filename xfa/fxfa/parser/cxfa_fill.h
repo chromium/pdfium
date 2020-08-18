@@ -20,7 +20,7 @@ class CXFA_Stipple;
 
 class CXFA_Fill final : public CXFA_Node {
  public:
-  CXFA_Fill(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Fill() override;
 
   bool IsVisible();
@@ -34,6 +34,8 @@ class CXFA_Fill final : public CXFA_Node {
             const CFX_Matrix& matrix);
 
  private:
+  CXFA_Fill(CXFA_Document* doc, XFA_PacketType packet);
+
   XFA_Element GetType() const;
 
   void DrawStipple(CXFA_Graphics* pGS,

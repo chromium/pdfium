@@ -11,8 +11,11 @@
 
 class CXFA_Desc final : public CXFA_Node {
  public:
-  CXFA_Desc(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Desc() override;
+
+ private:
+  CXFA_Desc(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_DESC_H_

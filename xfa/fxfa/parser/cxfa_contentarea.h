@@ -11,8 +11,11 @@
 
 class CXFA_ContentArea final : public CXFA_Node {
  public:
-  CXFA_ContentArea(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_ContentArea() override;
+
+ private:
+  CXFA_ContentArea(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_CONTENTAREA_H_

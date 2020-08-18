@@ -11,8 +11,11 @@
 
 class CXFA_OpenAction final : public CXFA_Node {
  public:
-  CXFA_OpenAction(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_OpenAction() override;
+
+ private:
+  CXFA_OpenAction(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_OPENACTION_H_

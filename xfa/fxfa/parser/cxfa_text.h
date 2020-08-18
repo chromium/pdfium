@@ -12,10 +12,13 @@
 
 class CXFA_Text final : public CXFA_Node {
  public:
-  CXFA_Text(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Text() override;
 
   WideString GetContent();
+
+ private:
+  CXFA_Text(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_TEXT_H_

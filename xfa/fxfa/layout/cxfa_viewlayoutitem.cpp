@@ -16,17 +16,19 @@
 #include "xfa/fxfa/parser/cxfa_medium.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-CXFA_ViewLayoutItem::CXFA_ViewLayoutItem(
-    CXFA_Node* pNode,
-    std::unique_ptr<CXFA_FFPageView> pPageView)
-    : CXFA_LayoutItem(pNode, kViewItem), m_pFFPageView(std::move(pPageView)) {
+CXFA_ViewLayoutItem::CXFA_ViewLayoutItem(CXFA_Node* pNode,
+                                         CXFA_FFPageView* pPageView)
+    : CXFA_LayoutItem(pNode, kViewItem), m_pFFPageView(pPageView) {
   if (m_pFFPageView)
     m_pFFPageView->SetLayoutItem(this);
 }
 
-CXFA_ViewLayoutItem::~CXFA_ViewLayoutItem() {
-  if (m_pFFPageView)
-    m_pFFPageView->SetLayoutItem(nullptr);
+CXFA_ViewLayoutItem::~CXFA_ViewLayoutItem() = default;
+
+void CXFA_ViewLayoutItem::Trace(cppgc::Visitor* visitor) const {
+  CXFA_LayoutItem::Trace(visitor);
+  visitor->Trace(m_pOldSubform);
+  visitor->Trace(m_pFFPageView);
 }
 
 CXFA_LayoutProcessor* CXFA_ViewLayoutItem::GetLayout() const {
@@ -58,4 +60,8 @@ CFX_SizeF CXFA_ViewLayoutItem::GetPageSize() const {
 
 CXFA_Node* CXFA_ViewLayoutItem::GetMasterPage() const {
   return GetFormNode();
+}
+
+void CXFA_ViewLayoutItem::SetOldSubform(CXFA_Node* pSubform) {
+  m_pOldSubform = pSubform;
 }

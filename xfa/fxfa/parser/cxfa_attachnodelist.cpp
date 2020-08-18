@@ -15,6 +15,11 @@ CXFA_AttachNodeList::CXFA_AttachNodeList(CXFA_Document* pDocument,
 
 CXFA_AttachNodeList::~CXFA_AttachNodeList() = default;
 
+void CXFA_AttachNodeList::Trace(cppgc::Visitor* visitor) const {
+  CXFA_TreeList::Trace(visitor);
+  visitor->Trace(m_pAttachNode);
+}
+
 size_t CXFA_AttachNodeList::GetLength() {
   return m_pAttachNode->CountChildren(
       XFA_Element::Unknown,

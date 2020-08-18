@@ -11,8 +11,11 @@
 
 class CXFA_Embed final : public CXFA_Node {
  public:
-  CXFA_Embed(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Embed() override;
+
+ private:
+  CXFA_Embed(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_EMBED_H_

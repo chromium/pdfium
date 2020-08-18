@@ -9,12 +9,16 @@
 
 #include <memory>
 
+#include "fxjs/gc/heap.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
 
+class CJX_Object;
 class CXFA_Document;
+class CXFA_Node;
 
 class CXFA_List : public CXFA_Object {
  public:
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_List() override;
 
   virtual size_t GetLength() = 0;

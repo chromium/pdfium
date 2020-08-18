@@ -11,8 +11,11 @@
 
 class CXFA_LockDocument final : public CXFA_Node {
  public:
-  CXFA_LockDocument(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_LockDocument() override;
+
+ private:
+  CXFA_LockDocument(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_LOCKDOCUMENT_H_

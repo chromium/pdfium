@@ -11,8 +11,11 @@
 
 class CXFA_Float final : public CXFA_Node {
  public:
-  CXFA_Float(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Float() override;
+
+ private:
+  CXFA_Float(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_FLOAT_H_

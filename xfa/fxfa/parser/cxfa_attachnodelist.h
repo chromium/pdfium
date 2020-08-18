@@ -7,6 +7,8 @@
 #ifndef XFA_FXFA_PARSER_CXFA_ATTACHNODELIST_H_
 #define XFA_FXFA_PARSER_CXFA_ATTACHNODELIST_H_
 
+#include "v8/include/cppgc/member.h"
+#include "v8/include/cppgc/visitor.h"
 #include "xfa/fxfa/parser/cxfa_treelist.h"
 
 class CXFA_Document;
@@ -14,8 +16,10 @@ class CXFA_Node;
 
 class CXFA_AttachNodeList final : public CXFA_TreeList {
  public:
-  CXFA_AttachNodeList(CXFA_Document* pDocument, CXFA_Node* pAttachNode);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_AttachNodeList() override;
+
+  void Trace(cppgc::Visitor* visitor) const override;
 
   // CXFA_TreeList:
   size_t GetLength() override;
@@ -25,7 +29,9 @@ class CXFA_AttachNodeList final : public CXFA_TreeList {
   CXFA_Node* Item(size_t iIndex) override;
 
  private:
-  UnownedPtr<CXFA_Node> const m_pAttachNode;
+  CXFA_AttachNodeList(CXFA_Document* pDocument, CXFA_Node* pAttachNode);
+
+  cppgc::Member<CXFA_Node> const m_pAttachNode;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_ATTACHNODELIST_H_

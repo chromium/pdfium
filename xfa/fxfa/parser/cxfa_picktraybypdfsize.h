@@ -11,8 +11,11 @@
 
 class CXFA_PickTrayByPDFSize final : public CXFA_Node {
  public:
-  CXFA_PickTrayByPDFSize(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_PickTrayByPDFSize() override;
+
+ private:
+  CXFA_PickTrayByPDFSize(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_PICKTRAYBYPDFSIZE_H_

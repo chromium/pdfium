@@ -11,8 +11,11 @@
 
 class CXFA_SignatureProperties final : public CXFA_Node {
  public:
-  CXFA_SignatureProperties(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_SignatureProperties() override;
+
+ private:
+  CXFA_SignatureProperties(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_SIGNATUREPROPERTIES_H_

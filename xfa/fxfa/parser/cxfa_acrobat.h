@@ -11,8 +11,11 @@
 
 class CXFA_Acrobat final : public CXFA_Node {
  public:
-  CXFA_Acrobat(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Acrobat() override;
+
+ private:
+  CXFA_Acrobat(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_ACROBAT_H_

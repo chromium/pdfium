@@ -11,8 +11,11 @@
 
 class CXFA_DateTimeSymbols final : public CXFA_Node {
  public:
-  CXFA_DateTimeSymbols(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_DateTimeSymbols() override;
+
+ private:
+  CXFA_DateTimeSymbols(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_DATETIMESYMBOLS_H_

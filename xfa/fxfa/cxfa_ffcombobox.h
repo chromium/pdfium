@@ -14,7 +14,7 @@ class CXFA_EventParam;
 
 class CXFA_FFComboBox final : public CXFA_FFDropDown {
  public:
-  explicit CXFA_FFComboBox(CXFA_Node* pNode);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FFComboBox() override;
 
   // CXFA_FFDropDown:
@@ -62,6 +62,8 @@ class CXFA_FFComboBox final : public CXFA_FFDropDown {
   void SetItemState(int32_t nIndex, bool bSelected);
 
  private:
+  explicit CXFA_FFComboBox(CXFA_Node* pNode);
+
   // CXFA_FFField:
   bool PtInActiveRect(const CFX_PointF& point) override;
   bool CommitData() override;

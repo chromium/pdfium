@@ -11,8 +11,11 @@
 
 class CXFA_Compress final : public CXFA_Node {
  public:
-  CXFA_Compress(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Compress() override;
+
+ private:
+  CXFA_Compress(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_COMPRESS_H_

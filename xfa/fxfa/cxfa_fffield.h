@@ -24,7 +24,7 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
  public:
   enum ShapeOption { kSquareShape = 0, kRoundShape };
 
-  explicit CXFA_FFField(CXFA_Node* pNode);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FFField() override;
 
   virtual CXFA_FFDropDown* AsDropDown();
@@ -70,9 +70,14 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   uint32_t UpdateUIProperty();
 
  protected:
+  explicit CXFA_FFField(CXFA_Node* pNode);
+
   bool PtInActiveRect(const CFX_PointF& point) override;
 
   virtual void SetFWLRect();
+  virtual bool CommitData();
+  virtual bool IsDataChanged();
+
   CFWL_Widget* GetNormalWidget();
   const CFWL_Widget* GetNormalWidget() const;
   void SetNormalWidget(std::unique_ptr<CFWL_Widget> widget);
@@ -83,8 +88,6 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   int32_t CalculateOverride();
   int32_t CalculateNode(CXFA_Node* pNode);
   bool ProcessCommittedData();
-  virtual bool CommitData();
-  virtual bool IsDataChanged();
   void DrawHighlight(CXFA_Graphics* pGS,
                      CFX_Matrix* pMatrix,
                      HighlightOption highlight,

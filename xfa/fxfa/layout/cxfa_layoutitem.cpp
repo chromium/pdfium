@@ -17,19 +17,19 @@
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-void XFA_ReleaseLayoutItem(const RetainPtr<CXFA_LayoutItem>& pLayoutItem) {
-  RetainPtr<CXFA_LayoutItem> pNode(pLayoutItem->GetFirstChild());
+void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem) {
+  CXFA_LayoutItem* pNode = pLayoutItem->GetFirstChild();
   while (pNode) {
-    RetainPtr<CXFA_LayoutItem> pNext(pNode->GetNextSibling());
+    CXFA_LayoutItem* pNext = pNode->GetNextSibling();
     XFA_ReleaseLayoutItem(pNode);
-    pNode = std::move(pNext);
+    pNode = pNext;
   }
   CXFA_Document* pDocument = pLayoutItem->GetFormNode()->GetDocument();
   CXFA_FFNotify* pNotify = pDocument->GetNotify();
   auto* pDocLayout = CXFA_LayoutProcessor::FromDocument(pDocument);
-  pNotify->OnLayoutItemRemoving(pDocLayout, pLayoutItem.Get());
+  pNotify->OnLayoutItemRemoving(pDocLayout, pLayoutItem);
   if (pLayoutItem->GetFormNode()->GetElementType() == XFA_Element::PageArea) {
-    pNotify->OnPageEvent(ToViewLayoutItem(pLayoutItem.Get()),
+    pNotify->OnPageEvent(ToViewLayoutItem(pLayoutItem),
                          XFA_PAGEVIEWEVENT_PostRemoved);
   }
   pLayoutItem->RemoveSelfIfParented();
@@ -38,13 +38,20 @@ void XFA_ReleaseLayoutItem(const RetainPtr<CXFA_LayoutItem>& pLayoutItem) {
 CXFA_LayoutItem::CXFA_LayoutItem(CXFA_Node* pNode, ItemType type)
     : m_ItemType(type), m_pFormNode(pNode) {}
 
-CXFA_LayoutItem::~CXFA_LayoutItem() {
-  CHECK(!GetParent());
-  if (m_pFormNode) {
-    auto* pJSObj = m_pFormNode->JSObject();
-    if (pJSObj && pJSObj->GetLayoutItem() == this)
-      pJSObj->SetLayoutItem(nullptr);
-  }
+CXFA_LayoutItem::~CXFA_LayoutItem() = default;
+
+void CXFA_LayoutItem::PreFinalize() {
+  if (!m_pFormNode)
+    return;
+
+  auto* pJSObj = m_pFormNode->JSObject();
+  if (pJSObj && pJSObj->GetLayoutItem() == this)
+    pJSObj->SetLayoutItem(nullptr);
+}
+
+void CXFA_LayoutItem::Trace(cppgc::Visitor* visitor) const {
+  GCedTreeNode<CXFA_LayoutItem>::Trace(visitor);
+  visitor->Trace(m_pFormNode);
 }
 
 CXFA_ViewLayoutItem* CXFA_LayoutItem::AsViewLayoutItem() {
@@ -74,4 +81,9 @@ const CXFA_ViewLayoutItem* CXFA_LayoutItem::GetPage() const {
       return pCurNode->AsViewLayoutItem();
   }
   return nullptr;
+}
+
+void CXFA_LayoutItem::SetFormNode(CXFA_Node* pNode) {
+  // Not in header, assignment requires complete type, not just forward decl.
+  m_pFormNode = pNode;
 }

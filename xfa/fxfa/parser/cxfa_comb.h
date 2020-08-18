@@ -11,8 +11,11 @@
 
 class CXFA_Comb final : public CXFA_Node {
  public:
-  CXFA_Comb(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Comb() override;
+
+ private:
+  CXFA_Comb(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_COMB_H_

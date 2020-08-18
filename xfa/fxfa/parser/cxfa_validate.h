@@ -13,7 +13,7 @@ class CXFA_Script;
 
 class CXFA_Validate final : public CXFA_Node {
  public:
-  CXFA_Validate(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Validate() override;
 
   XFA_AttributeValue GetFormatTest();
@@ -34,6 +34,8 @@ class CXFA_Validate final : public CXFA_Node {
   CXFA_Script* GetScriptIfExists();
 
  private:
+  CXFA_Validate(CXFA_Document* doc, XFA_PacketType packet);
+
   WideString GetMessageText(const WideString& wsMessageType);
   void SetMessageText(const WideString& wsMessageType,
                       const WideString& wsMessage);

@@ -19,7 +19,7 @@ class CXFA_Pattern final : public CXFA_Node {
   static constexpr XFA_AttributeValue kDefaultType =
       XFA_AttributeValue::Unknown;
 
-  CXFA_Pattern(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Pattern() override;
 
   void Draw(CXFA_Graphics* pGS,
@@ -29,6 +29,8 @@ class CXFA_Pattern final : public CXFA_Node {
             const CFX_Matrix& matrix);
 
  private:
+  CXFA_Pattern(CXFA_Document* doc, XFA_PacketType packet);
+
   XFA_AttributeValue GetType();
   CXFA_Color* GetColorIfExists();
 };

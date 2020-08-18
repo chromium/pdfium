@@ -11,8 +11,11 @@
 
 class CXFA_Traverse final : public CXFA_Node {
  public:
-  CXFA_Traverse(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Traverse() override;
+
+ private:
+  CXFA_Traverse(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_TRAVERSE_H_

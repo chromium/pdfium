@@ -23,6 +23,7 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/ptr_util.h"
+#include "v8/include/cppgc/allocation.h"
 #include "v8/include/cppgc/heap.h"
 #include "xfa/fgas/font/cfgas_pdffontmgr.h"
 #include "xfa/fwl/cfwl_notedriver.h"
@@ -51,26 +52,6 @@ FX_IMAGEDIB_AND_DPI::FX_IMAGEDIB_AND_DPI(const RetainPtr<CFX_DIBBase>& pDib,
 
 FX_IMAGEDIB_AND_DPI::~FX_IMAGEDIB_AND_DPI() = default;
 
-// static
-std::unique_ptr<CXFA_FFDoc> CXFA_FFDoc::CreateAndOpen(
-    CXFA_FFApp* pApp,
-    IXFA_DocEnvironment* pDocEnvironment,
-    CPDF_Document* pPDFDoc,
-    cppgc::Heap* pGCHeap,
-    CFX_XMLDocument* pXML) {
-  ASSERT(pApp);
-  ASSERT(pDocEnvironment);
-  ASSERT(pPDFDoc);
-
-  // Use WrapUnique() to keep constructor private.
-  auto result = pdfium::WrapUnique(
-      new CXFA_FFDoc(pApp, pDocEnvironment, pPDFDoc, pGCHeap));
-  if (!result->OpenDoc(pXML))
-    return nullptr;
-
-  return result;
-}
-
 CXFA_FFDoc::CXFA_FFDoc(CXFA_FFApp* pApp,
                        IXFA_DocEnvironment* pDocEnvironment,
                        CPDF_Document* pPDFDoc,
@@ -79,30 +60,38 @@ CXFA_FFDoc::CXFA_FFDoc(CXFA_FFApp* pApp,
       m_pApp(pApp),
       m_pPDFDoc(pPDFDoc),
       m_pHeap(pHeap),
-      m_pNotify(std::make_unique<CXFA_FFNotify>(this)),
-      m_pDocument(std::make_unique<CXFA_Document>(
-          m_pNotify.get(),
-          std::make_unique<CXFA_LayoutProcessor>(pHeap))) {}
+      m_pNotify(cppgc::MakeGarbageCollected<CXFA_FFNotify>(
+          pHeap->GetAllocationHandle(),
+          this)),
+      m_pDocument(cppgc::MakeGarbageCollected<CXFA_Document>(
+          pHeap->GetAllocationHandle(),
+          m_pNotify,
+          pHeap,
+          cppgc::MakeGarbageCollected<CXFA_LayoutProcessor>(
+              pHeap->GetAllocationHandle(),
+              pHeap))) {}
 
-CXFA_FFDoc::~CXFA_FFDoc() {
-  if (m_DocView) {
+CXFA_FFDoc::~CXFA_FFDoc() = default;
+
+void CXFA_FFDoc::PreFinalize() {
+  if (m_DocView)
     m_DocView->RunDocClose();
-    m_DocView.reset();
-  }
+
   if (m_pDocument)
     m_pDocument->ClearLayoutData();
+}
 
-  m_pDocument.reset();
-  m_pNotify.reset();
-  m_pPDFFontMgr.reset();
-  m_HashToDibDpiMap.clear();
+void CXFA_FFDoc::Trace(cppgc::Visitor* visitor) const {
+  visitor->Trace(m_pNotify);
+  visitor->Trace(m_pDocument);
+  visitor->Trace(m_DocView);
 }
 
 bool CXFA_FFDoc::BuildDoc(CFX_XMLDocument* pXML) {
   if (!pXML)
     return false;
 
-  CXFA_DocumentBuilder builder(m_pDocument.get());
+  CXFA_DocumentBuilder builder(m_pDocument);
   if (!builder.BuildDocument(pXML, XFA_PacketType::Xdp))
     return false;
 
@@ -111,20 +100,20 @@ bool CXFA_FFDoc::BuildDoc(CFX_XMLDocument* pXML) {
 }
 
 CXFA_FFDocView* CXFA_FFDoc::CreateDocView() {
-  if (!m_DocView)
-    m_DocView = std::make_unique<CXFA_FFDocView>(this);
-
-  return m_DocView.get();
+  if (!m_DocView) {
+    m_DocView = cppgc::MakeGarbageCollected<CXFA_FFDocView>(
+        m_pHeap->GetAllocationHandle(), this);
+  }
+  return m_DocView;
 }
 
 CXFA_FFDocView* CXFA_FFDoc::GetDocView(CXFA_LayoutProcessor* pLayout) {
-  return m_DocView && m_DocView->GetLayoutProcessor() == pLayout
-             ? m_DocView.get()
-             : nullptr;
+  return m_DocView && m_DocView->GetLayoutProcessor() == pLayout ? m_DocView
+                                                                 : nullptr;
 }
 
 CXFA_FFDocView* CXFA_FFDoc::GetDocView() {
-  return m_DocView.get();
+  return m_DocView;
 }
 
 bool CXFA_FFDoc::OpenDoc(CFX_XMLDocument* pXML) {

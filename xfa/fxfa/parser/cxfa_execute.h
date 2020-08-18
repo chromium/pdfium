@@ -11,8 +11,11 @@
 
 class CXFA_Execute final : public CXFA_Node {
  public:
-  CXFA_Execute(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Execute() override;
+
+ private:
+  CXFA_Execute(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_EXECUTE_H_

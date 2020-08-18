@@ -13,8 +13,11 @@ class CXFA_Edge final : public CXFA_Stroke {
  public:
   static constexpr FX_ARGB kDefaultColor = 0xFF000000;
 
-  CXFA_Edge(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Edge() override;
+
+ private:
+  CXFA_Edge(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_EDGE_H_

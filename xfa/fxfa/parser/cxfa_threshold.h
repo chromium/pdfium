@@ -11,8 +11,11 @@
 
 class CXFA_Threshold final : public CXFA_Node {
  public:
-  CXFA_Threshold(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Threshold() override;
+
+ private:
+  CXFA_Threshold(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_THRESHOLD_H_

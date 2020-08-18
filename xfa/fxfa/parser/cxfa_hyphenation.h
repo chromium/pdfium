@@ -11,8 +11,11 @@
 
 class CXFA_Hyphenation final : public CXFA_Node {
  public:
-  CXFA_Hyphenation(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Hyphenation() override;
+
+ private:
+  CXFA_Hyphenation(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_HYPHENATION_H_

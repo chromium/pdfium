@@ -11,7 +11,7 @@
 
 class CXFA_FFText final : public CXFA_FFWidget {
  public:
-  explicit CXFA_FFText(CXFA_Node* pNode);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FFText() override;
 
   // CXFA_FFWidget
@@ -29,6 +29,8 @@ class CXFA_FFText final : public CXFA_FFWidget {
   bool PerformLayout() override;
 
  private:
+  explicit CXFA_FFText(CXFA_Node* pNode);
+
   const wchar_t* GetLinkURLAtPoint(const CFX_PointF& point);
 };
 

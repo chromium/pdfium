@@ -11,8 +11,11 @@
 
 class CXFA_ADBE_JSConsole final : public CXFA_Node {
  public:
-  CXFA_ADBE_JSConsole(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_ADBE_JSConsole() override;
+
+ private:
+  CXFA_ADBE_JSConsole(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_ADBE_JSCONSOLE_H_

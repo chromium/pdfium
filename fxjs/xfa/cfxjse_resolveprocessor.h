@@ -12,6 +12,7 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "fxjs/xfa/cfxjse_engine.h"
+#include "v8/include/cppgc/macros.h"
 #include "xfa/fxfa/fxfa_basic.h"
 #include "xfa/fxfa/parser/xfa_basic_data.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
@@ -19,6 +20,8 @@
 class CFXJSE_NodeHelper;
 
 class CFXJSE_ResolveNodeData {
+  CPPGC_STACK_ALLOCATED();  // Allows Raw/Unowned pointers.
+
  public:
   explicit CFXJSE_ResolveNodeData(CFXJSE_Engine* pSC);
   ~CFXJSE_ResolveNodeData();

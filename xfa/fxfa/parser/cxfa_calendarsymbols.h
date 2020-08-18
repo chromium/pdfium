@@ -11,8 +11,11 @@
 
 class CXFA_CalendarSymbols final : public CXFA_Node {
  public:
-  CXFA_CalendarSymbols(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_CalendarSymbols() override;
+
+ private:
+  CXFA_CalendarSymbols(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_CALENDARSYMBOLS_H_

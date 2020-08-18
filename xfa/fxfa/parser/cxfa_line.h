@@ -13,12 +13,15 @@ class CXFA_Edge;
 
 class CXFA_Line final : public CXFA_Node {
  public:
-  CXFA_Line(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Line() override;
 
   XFA_AttributeValue GetHand();
   bool GetSlope();
   CXFA_Edge* GetEdgeIfExists();
+
+ private:
+  CXFA_Line(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_LINE_H_

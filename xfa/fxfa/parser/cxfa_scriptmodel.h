@@ -11,8 +11,11 @@
 
 class CXFA_ScriptModel final : public CXFA_Node {
  public:
-  CXFA_ScriptModel(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_ScriptModel() override;
+
+ private:
+  CXFA_ScriptModel(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_SCRIPTMODEL_H_

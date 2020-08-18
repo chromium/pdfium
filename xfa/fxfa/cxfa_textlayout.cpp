@@ -26,6 +26,7 @@
 #include "xfa/fgas/layout/cfx_linkuserdata.h"
 #include "xfa/fgas/layout/cfx_rtfbreak.h"
 #include "xfa/fgas/layout/cfx_textuserdata.h"
+#include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_loadercontext.h"
 #include "xfa/fxfa/cxfa_pieceline.h"
 #include "xfa/fxfa/cxfa_textparsecontext.h"
@@ -75,6 +76,12 @@ CXFA_TextLayout::CXFA_TextLayout(CXFA_FFDoc* doc,
 CXFA_TextLayout::~CXFA_TextLayout() {
   m_textParser.Reset();
   Unload();
+}
+
+void CXFA_TextLayout::Trace(cppgc::Visitor* visitor) const {
+  visitor->Trace(m_pDoc);
+  visitor->Trace(m_pTextProvider);
+  visitor->Trace(m_pTextDataNode);
 }
 
 void CXFA_TextLayout::Unload() {

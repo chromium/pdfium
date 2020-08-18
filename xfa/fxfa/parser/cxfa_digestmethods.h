@@ -11,8 +11,11 @@
 
 class CXFA_DigestMethods final : public CXFA_Node {
  public:
-  CXFA_DigestMethods(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_DigestMethods() override;
+
+ private:
+  CXFA_DigestMethods(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_DIGESTMETHODS_H_

@@ -11,8 +11,11 @@
 
 class CXFA_Encoding final : public CXFA_Node {
  public:
-  CXFA_Encoding(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Encoding() override;
+
+ private:
+  CXFA_Encoding(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_ENCODING_H_

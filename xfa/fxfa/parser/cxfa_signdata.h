@@ -11,8 +11,11 @@
 
 class CXFA_SignData final : public CXFA_Node {
  public:
-  CXFA_SignData(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_SignData() override;
+
+ private:
+  CXFA_SignData(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_SIGNDATA_H_

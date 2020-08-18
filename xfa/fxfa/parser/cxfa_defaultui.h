@@ -11,10 +11,13 @@
 
 class CXFA_DefaultUi final : public CXFA_Node {
  public:
-  CXFA_DefaultUi(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_DefaultUi() override;
 
   XFA_FFWidgetType GetDefaultFFWidgetType() const override;
+
+ private:
+  CXFA_DefaultUi(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_DEFAULTUI_H_

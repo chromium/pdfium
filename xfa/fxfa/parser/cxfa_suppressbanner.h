@@ -11,8 +11,11 @@
 
 class CXFA_SuppressBanner final : public CXFA_Node {
  public:
-  CXFA_SuppressBanner(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_SuppressBanner() override;
+
+ private:
+  CXFA_SuppressBanner(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_SUPPRESSBANNER_H_

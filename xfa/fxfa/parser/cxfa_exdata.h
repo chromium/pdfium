@@ -11,10 +11,13 @@
 
 class CXFA_ExData final : public CXFA_Node {
  public:
-  CXFA_ExData(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_ExData() override;
 
   void SetContentType(const WideString& wsContentType);
+
+ private:
+  CXFA_ExData(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_EXDATA_H_

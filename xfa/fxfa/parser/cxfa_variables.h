@@ -11,8 +11,11 @@
 
 class CXFA_Variables final : public CXFA_Node {
  public:
-  CXFA_Variables(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Variables() override;
+
+ private:
+  CXFA_Variables(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_VARIABLES_H_

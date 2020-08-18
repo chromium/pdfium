@@ -11,8 +11,11 @@
 
 class CXFA_Messaging final : public CXFA_Node {
  public:
-  CXFA_Messaging(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Messaging() override;
+
+ private:
+  CXFA_Messaging(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_MESSAGING_H_

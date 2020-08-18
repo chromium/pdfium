@@ -11,8 +11,11 @@
 
 class CXFA_SubmitFormat final : public CXFA_Node {
  public:
-  CXFA_SubmitFormat(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_SubmitFormat() override;
+
+ private:
+  CXFA_SubmitFormat(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_SUBMITFORMAT_H_

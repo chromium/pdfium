@@ -11,8 +11,11 @@
 
 class CXFA_ViewerPreferences final : public CXFA_Node {
  public:
-  CXFA_ViewerPreferences(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_ViewerPreferences() override;
+
+ private:
+  CXFA_ViewerPreferences(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_VIEWERPREFERENCES_H_

@@ -21,7 +21,7 @@ class IFWL_WidgetDelegate;
 
 class CXFA_FFTextEdit : public CXFA_FFField {
  public:
-  explicit CXFA_FFTextEdit(CXFA_Node* pNode);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FFTextEdit() override;
 
   // CXFA_FFField
@@ -62,6 +62,7 @@ class CXFA_FFTextEdit : public CXFA_FFField {
   FormFieldType GetFormFieldType() override;
 
  protected:
+  explicit CXFA_FFTextEdit(CXFA_Node* pNode);
   uint32_t GetAlignment();
 
   UnownedPtr<IFWL_WidgetDelegate> m_pOldDelegate;

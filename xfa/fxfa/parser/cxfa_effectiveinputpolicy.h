@@ -11,8 +11,11 @@
 
 class CXFA_EffectiveInputPolicy final : public CXFA_Node {
  public:
-  CXFA_EffectiveInputPolicy(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_EffectiveInputPolicy() override;
+
+ private:
+  CXFA_EffectiveInputPolicy(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_EFFECTIVEINPUTPOLICY_H_

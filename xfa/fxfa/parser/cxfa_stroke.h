@@ -28,6 +28,7 @@ void XFA_StrokeTypeSetLineDash(CXFA_Graphics* pGraphics,
 
 class CXFA_Stroke : public CXFA_Node {
  public:
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Stroke() override;
 
   bool IsCorner() const { return GetElementType() == XFA_Element::Corner; }

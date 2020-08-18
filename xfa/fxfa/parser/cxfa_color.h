@@ -13,12 +13,15 @@ class CXFA_Color final : public CXFA_Node {
  public:
   static constexpr FX_ARGB kBlackColor = 0xFF000000;
 
-  CXFA_Color(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Color() override;
 
   FX_ARGB GetValue();
   FX_ARGB GetValueOrDefault(FX_ARGB defaultValue);
   void SetValue(FX_ARGB color);
+
+ private:
+  CXFA_Color(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_COLOR_H_

@@ -11,8 +11,11 @@
 
 class CXFA_SetProperty final : public CXFA_Node {
  public:
-  CXFA_SetProperty(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_SetProperty() override;
+
+ private:
+  CXFA_SetProperty(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_SETPROPERTY_H_

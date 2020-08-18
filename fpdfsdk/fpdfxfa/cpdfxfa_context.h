@@ -18,6 +18,7 @@
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
 #include "fxjs/gc/heap.h"
+#include "v8/include/cppgc/persistent.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 
 class CFX_XMLDocument;
@@ -47,7 +48,7 @@ class CPDFXFA_Context final : public CPDF_Document::Extension,
   }
 
   CFX_XMLDocument* GetXMLDoc() { return m_pXML.get(); }
-  CXFA_FFDoc* GetXFADoc() { return m_pXFADoc.get(); }
+  CXFA_FFDoc* GetXFADoc() { return m_pXFADoc; }
   CXFA_FFDocView* GetXFADocView() const { return m_pXFADocView.Get(); }
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const {
     return m_pFormFillEnv.Get();
@@ -115,16 +116,16 @@ class CPDFXFA_Context final : public CPDF_Document::Extension,
   // The order in which the following members are destroyed is critical.
   UnownedPtr<CPDF_Document> const m_pPDFDoc;
   std::unique_ptr<CFX_XMLDocument> m_pXML;
-  FXGCScopedHeap m_pGCHeap;
-  ObservedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
   std::unique_ptr<CXFA_FFApp> const m_pXFAApp;
+  ObservedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
   std::vector<RetainPtr<CPDFXFA_Page>> m_XFAPageList;
 
   // Can't outlive |m_pFormFillEnv|.
   std::unique_ptr<CPDFXFA_DocEnvironment> m_pDocEnv;
 
-  std::unique_ptr<CXFA_FFDoc> m_pXFADoc;
-  UnownedPtr<CXFA_FFDocView> m_pXFADocView;
+  FXGCScopedHeap m_pGCHeap;
+  cppgc::Persistent<CXFA_FFDoc> m_pXFADoc;          // Can't outlive |m_pGCHeap|
+  cppgc::Persistent<CXFA_FFDocView> m_pXFADocView;  // Can't outlive |m_pGCHeap|
 };
 
 #endif  // FPDFSDK_FPDFXFA_CPDFXFA_CONTEXT_H_

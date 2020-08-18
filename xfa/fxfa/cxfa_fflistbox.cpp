@@ -40,9 +40,6 @@ CXFA_FFListBox::~CXFA_FFListBox() {
 bool CXFA_FFListBox::LoadWidget() {
   ASSERT(!IsLoaded());
 
-  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
-  RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
-
   auto pNew = std::make_unique<CFWL_ListBox>(
       GetFWLApp(), CFWL_Widget::Properties(), nullptr);
   CFWL_ListBox* pListBox = pNew.get();
@@ -80,9 +77,6 @@ bool CXFA_FFListBox::LoadWidget() {
 }
 
 bool CXFA_FFListBox::OnKillFocus(CXFA_FFWidget* pNewFocus) {
-  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
-  RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
-
   ObservedPtr<CXFA_FFWidget> pNewWatched(pNewFocus);
   if (!ProcessCommittedData())
     UpdateFWLData();
@@ -148,9 +142,6 @@ bool CXFA_FFListBox::UpdateFWLData() {
   if (!pListBox)
     return false;
 
-  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
-  RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
-
   std::vector<int32_t> iSelArray = m_pNode->GetSelectedItems();
   std::vector<CFWL_ListItem*> selItemArray(iSelArray.size());
   std::transform(iSelArray.begin(), iSelArray.end(), selItemArray.begin(),
@@ -165,9 +156,6 @@ bool CXFA_FFListBox::UpdateFWLData() {
 }
 
 void CXFA_FFListBox::OnSelectChanged(CFWL_Widget* pWidget) {
-  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
-  RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
-
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Change;
   eParam.m_pTarget = m_pNode.Get();
@@ -200,16 +188,10 @@ void CXFA_FFListBox::DeleteItem(int32_t nIndex) {
 }
 
 void CXFA_FFListBox::OnProcessMessage(CFWL_Message* pMessage) {
-  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
-  RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
-
   m_pOldDelegate->OnProcessMessage(pMessage);
 }
 
 void CXFA_FFListBox::OnProcessEvent(CFWL_Event* pEvent) {
-  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
-  RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
-
   CXFA_FFField::OnProcessEvent(pEvent);
   switch (pEvent->GetType()) {
     case CFWL_Event::Type::SelectChanged:
@@ -223,9 +205,6 @@ void CXFA_FFListBox::OnProcessEvent(CFWL_Event* pEvent) {
 
 void CXFA_FFListBox::OnDrawWidget(CXFA_Graphics* pGraphics,
                                   const CFX_Matrix& matrix) {
-  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
-  RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
-
   m_pOldDelegate->OnDrawWidget(pGraphics, matrix);
 }
 

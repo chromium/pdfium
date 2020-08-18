@@ -11,8 +11,11 @@
 
 class CXFA_TemplateCache final : public CXFA_Node {
  public:
-  CXFA_TemplateCache(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_TemplateCache() override;
+
+ private:
+  CXFA_TemplateCache(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_TEMPLATECACHE_H_

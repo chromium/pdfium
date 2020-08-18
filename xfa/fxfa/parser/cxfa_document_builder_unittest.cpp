@@ -7,17 +7,28 @@
 #include "core/fxcrt/cfx_readonlymemorystream.h"
 #include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmlparser.h"
+#include "testing/fxgc_unittest.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "v8/include/cppgc/allocation.h"
+#include "v8/include/cppgc/persistent.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 
-class CXFA_DocumentBuilderTest : public testing::Test {
+class CXFA_DocumentBuilderTest : public FXGCUnitTest {
  public:
   void SetUp() override {
-    doc_ = std::make_unique<CXFA_Document>(nullptr, nullptr);
-    builder_ = std::make_unique<CXFA_DocumentBuilder>(doc_.get());
+    FXGCUnitTest::SetUp();
+    doc_ = cppgc::MakeGarbageCollected<CXFA_Document>(
+        heap()->GetAllocationHandle(), nullptr, heap(), nullptr);
+    builder_ = std::make_unique<CXFA_DocumentBuilder>(doc_);
   }
 
-  CXFA_Document* GetDoc() const { return doc_.get(); }
+  void TearDown() override {
+    builder_.reset();
+    doc_ = nullptr;
+    FXGCUnitTest::TearDown();
+  }
+
+  CXFA_Document* GetDoc() const { return doc_; }
 
   CXFA_Node* ParseAndBuild(const RetainPtr<CFX_ReadOnlyMemoryStream>& stream) {
     xml_ = CFX_XMLParser(stream).Parse();
@@ -30,8 +41,8 @@ class CXFA_DocumentBuilderTest : public testing::Test {
 
  private:
   std::unique_ptr<CFX_XMLDocument> xml_;
-  std::unique_ptr<CXFA_Document> doc_;
   std::unique_ptr<CXFA_DocumentBuilder> builder_;
+  cppgc::Persistent<CXFA_Document> doc_;
 };
 
 TEST_F(CXFA_DocumentBuilderTest, EmptyInput) {

@@ -11,8 +11,11 @@
 
 class CXFA_InstanceManager final : public CXFA_Node {
  public:
-  CXFA_InstanceManager(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_InstanceManager() override;
+
+ private:
+  CXFA_InstanceManager(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_INSTANCEMANAGER_H_

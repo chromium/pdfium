@@ -46,6 +46,10 @@ CXFA_FFNotify::CXFA_FFNotify(CXFA_FFDoc* pDoc) : m_pDoc(pDoc) {}
 
 CXFA_FFNotify::~CXFA_FFNotify() = default;
 
+void CXFA_FFNotify::Trace(cppgc::Visitor* visitor) const {
+  visitor->Trace(m_pDoc);
+}
+
 void CXFA_FFNotify::OnPageEvent(CXFA_ViewLayoutItem* pSender,
                                 uint32_t dwEvent) {
   CXFA_FFDocView* pDocView = m_pDoc->GetDocView(pSender->GetLayout());
@@ -78,17 +82,17 @@ void CXFA_FFNotify::OnWidgetListItemRemoved(CXFA_Node* pSender,
   }
 }
 
-std::unique_ptr<CXFA_FFPageView> CXFA_FFNotify::OnCreateViewLayoutItem(
-    CXFA_Node* pNode) {
+CXFA_FFPageView* CXFA_FFNotify::OnCreateViewLayoutItem(CXFA_Node* pNode) {
   if (pNode->GetElementType() != XFA_Element::PageArea)
     return nullptr;
 
   auto* pLayout = CXFA_LayoutProcessor::FromDocument(m_pDoc->GetXFADoc());
-  return std::make_unique<CXFA_FFPageView>(m_pDoc->GetDocView(pLayout), pNode);
+  return cppgc::MakeGarbageCollected<CXFA_FFPageView>(
+      m_pDoc->GetHeap()->GetAllocationHandle(), m_pDoc->GetDocView(pLayout),
+      pNode);
 }
 
-std::unique_ptr<CXFA_FFWidget> CXFA_FFNotify::OnCreateContentLayoutItem(
-    CXFA_Node* pNode) {
+CXFA_FFWidget* CXFA_FFNotify::OnCreateContentLayoutItem(CXFA_Node* pNode) {
   ASSERT(pNode->GetElementType() != XFA_Element::ContentArea);
   ASSERT(pNode->GetElementType() != XFA_Element::PageArea);
 
@@ -96,15 +100,16 @@ std::unique_ptr<CXFA_FFWidget> CXFA_FFNotify::OnCreateContentLayoutItem(
   if (!pNode->HasCreatedUIWidget())
     return nullptr;
 
-  std::unique_ptr<CXFA_FFWidget> pWidget;
+  CXFA_FFWidget* pWidget = nullptr;
   switch (pNode->GetFFWidgetType()) {
     case XFA_FFWidgetType::kBarcode: {
       CXFA_Node* child = pNode->GetUIChildNode();
       if (child->GetElementType() != XFA_Element::Barcode)
         return nullptr;
 
-      pWidget = std::make_unique<CXFA_FFBarcode>(
-          pNode, static_cast<CXFA_Barcode*>(child));
+      pWidget = cppgc::MakeGarbageCollected<CXFA_FFBarcode>(
+          m_pDoc->GetHeap()->GetAllocationHandle(), pNode,
+          static_cast<CXFA_Barcode*>(child));
       break;
     }
     case XFA_FFWidgetType::kButton: {
@@ -112,8 +117,9 @@ std::unique_ptr<CXFA_FFWidget> CXFA_FFNotify::OnCreateContentLayoutItem(
       if (child->GetElementType() != XFA_Element::Button)
         return nullptr;
 
-      pWidget = std::make_unique<CXFA_FFPushButton>(
-          pNode, static_cast<CXFA_Button*>(child));
+      pWidget = cppgc::MakeGarbageCollected<CXFA_FFPushButton>(
+          m_pDoc->GetHeap()->GetAllocationHandle(), pNode,
+          static_cast<CXFA_Button*>(child));
       break;
     }
     case XFA_FFWidgetType::kCheckButton: {
@@ -121,61 +127,78 @@ std::unique_ptr<CXFA_FFWidget> CXFA_FFNotify::OnCreateContentLayoutItem(
       if (child->GetElementType() != XFA_Element::CheckButton)
         return nullptr;
 
-      pWidget = std::make_unique<CXFA_FFCheckButton>(
-          pNode, static_cast<CXFA_CheckButton*>(child));
+      pWidget = cppgc::MakeGarbageCollected<CXFA_FFCheckButton>(
+          m_pDoc->GetHeap()->GetAllocationHandle(), pNode,
+          static_cast<CXFA_CheckButton*>(child));
       break;
     }
     case XFA_FFWidgetType::kChoiceList: {
-      if (pNode->IsListBox())
-        pWidget = std::make_unique<CXFA_FFListBox>(pNode);
-      else
-        pWidget = std::make_unique<CXFA_FFComboBox>(pNode);
+      if (pNode->IsListBox()) {
+        pWidget = cppgc::MakeGarbageCollected<CXFA_FFListBox>(
+            m_pDoc->GetHeap()->GetAllocationHandle(), pNode);
+      } else {
+        pWidget = cppgc::MakeGarbageCollected<CXFA_FFComboBox>(
+            m_pDoc->GetHeap()->GetAllocationHandle(), pNode);
+      }
       break;
     }
     case XFA_FFWidgetType::kDateTimeEdit:
-      pWidget = std::make_unique<CXFA_FFDateTimeEdit>(pNode);
+      pWidget = cppgc::MakeGarbageCollected<CXFA_FFDateTimeEdit>(
+          m_pDoc->GetHeap()->GetAllocationHandle(), pNode);
       break;
     case XFA_FFWidgetType::kImageEdit:
-      pWidget = std::make_unique<CXFA_FFImageEdit>(pNode);
+      pWidget = cppgc::MakeGarbageCollected<CXFA_FFImageEdit>(
+          m_pDoc->GetHeap()->GetAllocationHandle(), pNode);
       break;
     case XFA_FFWidgetType::kNumericEdit:
-      pWidget = std::make_unique<CXFA_FFNumericEdit>(pNode);
+      pWidget = cppgc::MakeGarbageCollected<CXFA_FFNumericEdit>(
+          m_pDoc->GetHeap()->GetAllocationHandle(), pNode);
       break;
     case XFA_FFWidgetType::kPasswordEdit: {
       CXFA_Node* child = pNode->GetUIChildNode();
       if (child->GetElementType() != XFA_Element::PasswordEdit)
         return nullptr;
 
-      pWidget = std::make_unique<CXFA_FFPasswordEdit>(
-          pNode, static_cast<CXFA_PasswordEdit*>(child));
+      pWidget = cppgc::MakeGarbageCollected<CXFA_FFPasswordEdit>(
+          m_pDoc->GetHeap()->GetAllocationHandle(), pNode,
+          static_cast<CXFA_PasswordEdit*>(child));
       break;
     }
     case XFA_FFWidgetType::kSignature:
-      pWidget = std::make_unique<CXFA_FFSignature>(pNode);
+      pWidget = cppgc::MakeGarbageCollected<CXFA_FFSignature>(
+          m_pDoc->GetHeap()->GetAllocationHandle(), pNode);
       break;
     case XFA_FFWidgetType::kTextEdit:
-      pWidget = std::make_unique<CXFA_FFTextEdit>(pNode);
+      pWidget = cppgc::MakeGarbageCollected<CXFA_FFTextEdit>(
+          m_pDoc->GetHeap()->GetAllocationHandle(), pNode);
       break;
     case XFA_FFWidgetType::kArc:
-      pWidget = std::make_unique<CXFA_FFArc>(pNode);
+      pWidget = cppgc::MakeGarbageCollected<CXFA_FFArc>(
+          m_pDoc->GetHeap()->GetAllocationHandle(), pNode);
       break;
     case XFA_FFWidgetType::kLine:
-      pWidget = std::make_unique<CXFA_FFLine>(pNode);
+      pWidget = cppgc::MakeGarbageCollected<CXFA_FFLine>(
+          m_pDoc->GetHeap()->GetAllocationHandle(), pNode);
       break;
     case XFA_FFWidgetType::kRectangle:
-      pWidget = std::make_unique<CXFA_FFRectangle>(pNode);
+      pWidget = cppgc::MakeGarbageCollected<CXFA_FFRectangle>(
+          m_pDoc->GetHeap()->GetAllocationHandle(), pNode);
       break;
     case XFA_FFWidgetType::kText:
-      pWidget = std::make_unique<CXFA_FFText>(pNode);
+      pWidget = cppgc::MakeGarbageCollected<CXFA_FFText>(
+          m_pDoc->GetHeap()->GetAllocationHandle(), pNode);
       break;
     case XFA_FFWidgetType::kImage:
-      pWidget = std::make_unique<CXFA_FFImage>(pNode);
+      pWidget = cppgc::MakeGarbageCollected<CXFA_FFImage>(
+          m_pDoc->GetHeap()->GetAllocationHandle(), pNode);
       break;
     case XFA_FFWidgetType::kSubform:
-      pWidget = std::make_unique<CXFA_FFWidget>(pNode);
+      pWidget = cppgc::MakeGarbageCollected<CXFA_FFWidget>(
+          m_pDoc->GetHeap()->GetAllocationHandle(), pNode);
       break;
     case XFA_FFWidgetType::kExclGroup:
-      pWidget = std::make_unique<CXFA_FFExclGroup>(pNode);
+      pWidget = cppgc::MakeGarbageCollected<CXFA_FFExclGroup>(
+          m_pDoc->GetHeap()->GetAllocationHandle(), pNode);
       break;
     case XFA_FFWidgetType::kNone:
       return nullptr;

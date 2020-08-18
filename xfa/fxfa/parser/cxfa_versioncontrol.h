@@ -11,8 +11,11 @@
 
 class CXFA_VersionControl final : public CXFA_Node {
  public:
-  CXFA_VersionControl(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_VersionControl() override;
+
+ private:
+  CXFA_VersionControl(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_VERSIONCONTROL_H_

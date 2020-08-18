@@ -11,8 +11,11 @@
 
 class CXFA_Xsl final : public CXFA_Node {
  public:
-  CXFA_Xsl(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Xsl() override;
+
+ private:
+  CXFA_Xsl(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_XSL_H_

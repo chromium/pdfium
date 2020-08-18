@@ -15,7 +15,7 @@
 
 class CXFA_Rectangle : public CXFA_Box {
  public:
-  CXFA_Rectangle(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Rectangle() override;
 
   void GetFillPath(const std::vector<CXFA_Stroke*>& strokes,
@@ -27,6 +27,7 @@ class CXFA_Rectangle : public CXFA_Box {
             const CFX_Matrix& matrix);
 
  protected:
+  CXFA_Rectangle(CXFA_Document* doc, XFA_PacketType packet);
   CXFA_Rectangle(CXFA_Document* pDoc,
                  XFA_PacketType ePacket,
                  uint32_t validPackets,
@@ -36,7 +37,6 @@ class CXFA_Rectangle : public CXFA_Box {
                  pdfium::span<const AttributeData> attributes,
                  std::unique_ptr<CJX_Object> js_node);
 
- private:
   void Stroke(const std::vector<CXFA_Stroke*>& strokes,
               CXFA_Graphics* pGS,
               CFX_RectF rtWidget,

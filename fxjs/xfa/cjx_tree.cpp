@@ -13,6 +13,7 @@
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cfxjse_value.h"
 #include "third_party/base/numerics/safe_conversions.h"
+#include "v8/include/cppgc/allocation.h"
 #include "xfa/fxfa/parser/cxfa_arraynodelist.h"
 #include "xfa/fxfa/parser/cxfa_attachnodelist.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
@@ -135,10 +136,12 @@ void CJX_Tree::nodes(CFXJSE_Value* pValue,
     return;
   }
 
-  auto* pNodeList =
-      static_cast<CXFA_AttachNodeList*>(GetDocument()->AddOwnedList(
-          std::make_unique<CXFA_AttachNodeList>(GetDocument(), GetXFANode())));
-  CFXJSE_Engine* pEngine = GetDocument()->GetScriptContext();
+  CXFA_Document* pDoc = GetDocument();
+  auto* pNodeList = cppgc::MakeGarbageCollected<CXFA_AttachNodeList>(
+      pDoc->GetHeap()->GetAllocationHandle(), pDoc, GetXFANode());
+  pDoc->GetNodeOwner()->PersistList(pNodeList);
+
+  CFXJSE_Engine* pEngine = pDoc->GetScriptContext();
   pValue->SetHostObject(pNodeList->JSObject(), pEngine->GetJseNormalClass());
 }
 
@@ -206,12 +209,15 @@ void CJX_Tree::ResolveNodeList(CFXJSE_Value* pValue,
     refNode = GetXFANode();
 
   XFA_RESOLVENODE_RS resolveNodeRS;
-  CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
+  CXFA_Document* pDoc = GetDocument();
+  CFXJSE_Engine* pScriptContext = pDoc->GetScriptContext();
   pScriptContext->ResolveObjects(refNode, wsExpression.AsStringView(),
                                  &resolveNodeRS, dwFlag, nullptr);
-  auto* pNodeList =
-      static_cast<CXFA_ArrayNodeList*>(GetDocument()->AddOwnedList(
-          std::make_unique<CXFA_ArrayNodeList>(GetDocument())));
+
+  auto* pNodeList = cppgc::MakeGarbageCollected<CXFA_ArrayNodeList>(
+      pDoc->GetHeap()->GetAllocationHandle(), pDoc);
+  pDoc->GetNodeOwner()->PersistList(pNodeList);
+
   if (resolveNodeRS.dwFlags == XFA_ResolveNode_RSType_Nodes) {
     for (auto& pObject : resolveNodeRS.objects) {
       if (pObject->IsNode())

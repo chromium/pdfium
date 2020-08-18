@@ -12,7 +12,7 @@
 
 class CXFA_Font final : public CXFA_Node {
  public:
-  CXFA_Font(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Font() override;
 
   float GetBaselineShift() const;
@@ -30,6 +30,9 @@ class CXFA_Font final : public CXFA_Node {
 
   FX_ARGB GetColor();
   void SetColor(FX_ARGB color);
+
+ private:
+  CXFA_Font(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_FONT_H_

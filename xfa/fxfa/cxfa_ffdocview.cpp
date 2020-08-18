@@ -62,6 +62,27 @@ CXFA_FFDocView::CXFA_FFDocView(CXFA_FFDoc* pDoc) : m_pDoc(pDoc) {}
 
 CXFA_FFDocView::~CXFA_FFDocView() = default;
 
+void CXFA_FFDocView::Trace(cppgc::Visitor* visitor) const {
+  visitor->Trace(m_pDoc);
+  visitor->Trace(m_pWidgetHandler);
+  visitor->Trace(m_pFocusNode);
+
+  for (const auto& node : m_ValidateNodes)
+    visitor->Trace(node);
+
+  for (const auto& node : m_CalculateNodes)
+    visitor->Trace(node);
+
+  for (const auto& node : m_NewAddedNodes)
+    visitor->Trace(node);
+
+  for (const auto& node : m_BindItems)
+    visitor->Trace(node);
+
+  for (const auto& node : m_IndexChangedSubforms)
+    visitor->Trace(node);
+}
+
 void CXFA_FFDocView::InitLayout(CXFA_Node* pNode) {
   RunBindItems();
   ExecEventActivityByDeepFirst(pNode, XFA_EVENT_Initialize, false, true);
@@ -277,9 +298,11 @@ CXFA_FFWidget* CXFA_FFDocView::GetWidgetForNode(CXFA_Node* node) {
 }
 
 CXFA_FFWidgetHandler* CXFA_FFDocView::GetWidgetHandler() {
-  if (!m_pWidgetHandler)
-    m_pWidgetHandler = std::make_unique<CXFA_FFWidgetHandler>(this);
-  return m_pWidgetHandler.get();
+  if (!m_pWidgetHandler) {
+    m_pWidgetHandler = cppgc::MakeGarbageCollected<CXFA_FFWidgetHandler>(
+        m_pDoc->GetHeap()->GetAllocationHandle(), this);
+  }
+  return m_pWidgetHandler;
 }
 
 std::unique_ptr<CXFA_ReadyNodeIterator>
@@ -292,10 +315,6 @@ CXFA_FFDocView::CreateReadyNodeIterator() {
 bool CXFA_FFDocView::SetFocus(CXFA_FFWidget* pNewFocus) {
   if (pNewFocus == m_pFocusWidget)
     return false;
-
-  // Prevents destruction of the CXFA_ContentLayoutItem that owns |pNewFocus|.
-  RetainPtr<CXFA_ContentLayoutItem> retain_layout(
-      pNewFocus ? pNewFocus->GetLayoutItem() : nullptr);
 
   if (m_pFocusWidget) {
     CXFA_ContentLayoutItem* pItem = m_pFocusWidget->GetLayoutItem();
@@ -325,10 +344,9 @@ bool CXFA_FFDocView::SetFocus(CXFA_FFWidget* pNewFocus) {
     m_pFocusNode = node->IsWidgetReady() ? node : nullptr;
     m_pFocusWidget.Reset(pNewFocus);
   } else {
-    m_pFocusNode.Reset();
+    m_pFocusNode.Clear();
     m_pFocusWidget.Reset();
   }
-
   return true;
 }
 
@@ -349,7 +367,7 @@ void CXFA_FFDocView::DeleteLayoutItem(CXFA_FFWidget* pWidget) {
   if (m_pFocusNode != pWidget->GetNode())
     return;
 
-  m_pFocusNode.Reset();
+  m_pFocusNode = nullptr;
   m_pFocusWidget.Reset();
 }
 

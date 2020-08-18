@@ -11,8 +11,11 @@
 
 class CXFA_Oids final : public CXFA_Node {
  public:
-  CXFA_Oids(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Oids() override;
+
+ private:
+  CXFA_Oids(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_OIDS_H_

@@ -12,13 +12,16 @@
 
 class CXFA_FFExclGroup final : public CXFA_FFWidget {
  public:
-  explicit CXFA_FFExclGroup(CXFA_Node* pNode);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FFExclGroup() override;
 
   // CXFA_FFWidget
   void RenderWidget(CXFA_Graphics* pGS,
                     const CFX_Matrix& matrix,
                     HighlightOption highlight) override;
+
+ private:
+  explicit CXFA_FFExclGroup(CXFA_Node* pNode);
 };
 
 #endif  // XFA_FXFA_CXFA_FFEXCLGROUP_H_

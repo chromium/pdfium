@@ -11,8 +11,11 @@
 
 class CXFA_Pagination final : public CXFA_Node {
  public:
-  CXFA_Pagination(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Pagination() override;
+
+ private:
+  CXFA_Pagination(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_PAGINATION_H_

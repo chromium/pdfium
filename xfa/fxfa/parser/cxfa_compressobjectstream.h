@@ -11,8 +11,11 @@
 
 class CXFA_CompressObjectStream final : public CXFA_Node {
  public:
-  CXFA_CompressObjectStream(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_CompressObjectStream() override;
+
+ private:
+  CXFA_CompressObjectStream(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_COMPRESSOBJECTSTREAM_H_

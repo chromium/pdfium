@@ -31,6 +31,7 @@ source_set("fpdfxfa") {
     "../../xfa/fxfa",
     "../../xfa/fxfa/parser",
     "../../xfa/fxgraphics",
+    "//v8:cppgc",
   ]
   configs += [ "../../:pdfium_core_config" ]
   visibility = [ "../../*" ]

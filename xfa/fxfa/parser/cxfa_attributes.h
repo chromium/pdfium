@@ -11,8 +11,11 @@
 
 class CXFA_Attributes final : public CXFA_Node {
  public:
-  CXFA_Attributes(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Attributes() override;
+
+ private:
+  CXFA_Attributes(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_ATTRIBUTES_H_

@@ -11,8 +11,11 @@
 
 class CXFA_Date final : public CXFA_Node {
  public:
-  CXFA_Date(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Date() override;
+
+ private:
+  CXFA_Date(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_DATE_H_

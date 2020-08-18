@@ -11,8 +11,11 @@
 
 class CXFA_Amd final : public CXFA_Node {
  public:
-  CXFA_Amd(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Amd() override;
+
+ private:
+  CXFA_Amd(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_AMD_H_

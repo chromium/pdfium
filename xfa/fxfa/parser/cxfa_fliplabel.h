@@ -11,8 +11,11 @@
 
 class CXFA_FlipLabel final : public CXFA_Node {
  public:
-  CXFA_FlipLabel(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FlipLabel() override;
+
+ private:
+  CXFA_FlipLabel(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_FLIPLABEL_H_

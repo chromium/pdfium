@@ -11,6 +11,7 @@
 #include "fxjs/js_resources.h"
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cfxjse_value.h"
+#include "v8/include/cppgc/allocation.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_arraynodelist.h"
@@ -46,9 +47,11 @@ CJS_Result CJX_Form::formNodes(
   if (!pDataNode)
     return CJS_Result::Failure(JSMessage::kValueError);
 
-  auto* pFormNodes =
-      static_cast<CXFA_ArrayNodeList*>(GetDocument()->AddOwnedList(
-          std::make_unique<CXFA_ArrayNodeList>(GetDocument())));
+  CXFA_Document* pDoc = GetDocument();
+  auto* pFormNodes = cppgc::MakeGarbageCollected<CXFA_ArrayNodeList>(
+      pDoc->GetHeap()->GetAllocationHandle(), pDoc);
+  pDoc->GetNodeOwner()->PersistList(pFormNodes);
+
   CFXJSE_Value* value = pEngine->GetOrCreateJSBindingFromMap(pFormNodes);
   return CJS_Result::Success(
       value->DirectGetValue().Get(runtime->GetIsolate()));

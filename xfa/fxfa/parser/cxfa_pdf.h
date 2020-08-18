@@ -11,8 +11,11 @@
 
 class CXFA_Pdf final : public CXFA_Node {
  public:
-  CXFA_Pdf(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Pdf() override;
+
+ private:
+  CXFA_Pdf(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_PDF_H_

@@ -11,8 +11,11 @@
 
 class CXFA_EncryptionMethods final : public CXFA_Node {
  public:
-  CXFA_EncryptionMethods(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_EncryptionMethods() override;
+
+ private:
+  CXFA_EncryptionMethods(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_ENCRYPTIONMETHODS_H_

@@ -11,8 +11,11 @@
 
 class CXFA_Proto final : public CXFA_Node {
  public:
-  CXFA_Proto(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Proto() override;
+
+ private:
+  CXFA_Proto(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_PROTO_H_

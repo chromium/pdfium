@@ -11,8 +11,11 @@
 
 class CXFA_ModifyAnnots final : public CXFA_Node {
  public:
-  CXFA_ModifyAnnots(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_ModifyAnnots() override;
+
+ private:
+  CXFA_ModifyAnnots(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_MODIFYANNOTS_H_

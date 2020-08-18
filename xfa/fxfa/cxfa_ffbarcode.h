@@ -9,6 +9,8 @@
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxbarcode/BC_Library.h"
+#include "v8/include/cppgc/member.h"
+#include "v8/include/cppgc/visitor.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_fftextedit.h"
 
@@ -90,8 +92,10 @@ class CXFA_FFBarcode final : public CXFA_FFTextEdit {
  public:
   static const BarCodeInfo* GetBarcodeTypeByName(const WideString& wsName);
 
-  CXFA_FFBarcode(CXFA_Node* pNode, CXFA_Barcode* barcode);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FFBarcode() override;
+
+  void Trace(cppgc::Visitor* visitor) const override;
 
   // CXFA_FFTextEdit
   bool LoadWidget() override;
@@ -104,7 +108,9 @@ class CXFA_FFBarcode final : public CXFA_FFTextEdit {
                                 FWL_MouseCommand command) override;
 
  private:
-  UnownedPtr<CXFA_Barcode> const barcode_;
+  CXFA_FFBarcode(CXFA_Node* pNode, CXFA_Barcode* barcode);
+
+  cppgc::Member<CXFA_Barcode> const barcode_;
 };
 
 #endif  // XFA_FXFA_CXFA_FFBARCODE_H_

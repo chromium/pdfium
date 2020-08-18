@@ -11,8 +11,11 @@
 
 class CXFA_Base final : public CXFA_Node {
  public:
-  CXFA_Base(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Base() override;
+
+ private:
+  CXFA_Base(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_BASE_H_

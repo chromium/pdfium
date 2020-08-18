@@ -11,8 +11,11 @@
 
 class CXFA_Month final : public CXFA_Node {
  public:
-  CXFA_Month(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Month() override;
+
+ private:
+  CXFA_Month(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_MONTH_H_

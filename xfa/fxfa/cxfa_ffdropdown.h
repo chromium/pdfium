@@ -14,6 +14,7 @@ class CXFA_FFComboBox;
 
 class CXFA_FFDropDown : public CXFA_FFField {
  public:
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FFDropDown() override;
 
   // CXFA_FFField:

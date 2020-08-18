@@ -11,10 +11,13 @@
 
 class CXFA_Signature final : public CXFA_Node {
  public:
-  CXFA_Signature(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Signature() override;
 
   XFA_FFWidgetType GetDefaultFFWidgetType() const override;
+
+ private:
+  CXFA_Signature(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_SIGNATURE_H_

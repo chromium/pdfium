@@ -19,7 +19,7 @@ class CXFA_Rectangle;
 
 class CXFA_Value final : public CXFA_Node {
  public:
-  CXFA_Value(CXFA_Document* doc, XFA_PacketType packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Value() override;
 
   XFA_Element GetChildValueClassID() const;
@@ -30,6 +30,9 @@ class CXFA_Value final : public CXFA_Node {
   CXFA_Text* GetTextIfExists() const;
   CXFA_ExData* GetExDataIfExists() const;
   CXFA_Image* GetImageIfExists() const;
+
+ private:
+  CXFA_Value(CXFA_Document* doc, XFA_PacketType packet);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_VALUE_H_
