@@ -31,10 +31,7 @@ CFX_PointF ScaleBezierPoint(const CFX_PointF& point) {
 
 CFWL_CheckBoxTP::CFWL_CheckBoxTP() = default;
 
-CFWL_CheckBoxTP::~CFWL_CheckBoxTP() {
-  if (m_pCheckPath)
-    m_pCheckPath->Clear();
-}
+CFWL_CheckBoxTP::~CFWL_CheckBoxTP() = default;
 
 void CFWL_CheckBoxTP::DrawText(const CFWL_ThemeText& pParams) {
   EnsureTTOInitialized();
