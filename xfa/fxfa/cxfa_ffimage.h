@@ -14,7 +14,8 @@ class CXFA_FFImage final : public CXFA_FFWidget {
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FFImage() override;
 
-  // CXFA_FFWidget
+  // CXFA_FFWidget:
+  void PreFinalize() override;
   void RenderWidget(CXFA_Graphics* pGS,
                     const CFX_Matrix& matrix,
                     HighlightOption highlight) override;

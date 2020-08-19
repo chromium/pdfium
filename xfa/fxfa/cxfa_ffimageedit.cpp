@@ -26,8 +26,11 @@
 
 CXFA_FFImageEdit::CXFA_FFImageEdit(CXFA_Node* pNode) : CXFA_FFField(pNode) {}
 
-CXFA_FFImageEdit::~CXFA_FFImageEdit() {
+CXFA_FFImageEdit::~CXFA_FFImageEdit() = default;
+
+void CXFA_FFImageEdit::PreFinalize() {
   m_pNode->SetImageEditImage(nullptr);
+  CXFA_FFField::PreFinalize();
 }
 
 bool CXFA_FFImageEdit::LoadWidget() {

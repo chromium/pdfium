@@ -15,7 +15,8 @@ class CXFA_FFImageEdit final : public CXFA_FFField {
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FFImageEdit() override;
 
-  // CXFA_FFField
+  // CXFA_FFField:
+  void PreFinalize() override;
   void RenderWidget(CXFA_Graphics* pGS,
                     const CFX_Matrix& matrix,
                     HighlightOption highlight) override;

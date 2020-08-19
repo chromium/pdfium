@@ -28,13 +28,15 @@ CFWL_ListBox* ToListBox(CFWL_Widget* widget) {
 
 CXFA_FFListBox::CXFA_FFListBox(CXFA_Node* pNode) : CXFA_FFDropDown(pNode) {}
 
-CXFA_FFListBox::~CXFA_FFListBox() {
-  if (!GetNormalWidget())
-    return;
+CXFA_FFListBox::~CXFA_FFListBox() = default;
 
-  CFWL_NoteDriver* pNoteDriver =
-      GetNormalWidget()->GetFWLApp()->GetNoteDriver();
-  pNoteDriver->UnregisterEventTarget(GetNormalWidget());
+void CXFA_FFListBox::PreFinalize() {
+  if (GetNormalWidget()) {
+    CFWL_NoteDriver* pNoteDriver =
+        GetNormalWidget()->GetFWLApp()->GetNoteDriver();
+    pNoteDriver->UnregisterEventTarget(GetNormalWidget());
+  }
+  CXFA_FFDropDown::PreFinalize();
 }
 
 bool CXFA_FFListBox::LoadWidget() {
