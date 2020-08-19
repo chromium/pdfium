@@ -503,7 +503,7 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
         return pBitmap;
       }
     }
-    pImageFileRead = pDoc->GetDocEnvironment()->OpenLinkedFile(pDoc, wsURL);
+    pImageFileRead = pDoc->OpenLinkedFile(wsURL);
   }
   if (!pImageFileRead)
     return nullptr;

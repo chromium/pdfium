@@ -95,9 +95,7 @@ void CXFA_FFField::DrawHighlight(CXFA_Graphics* pGS,
       !m_pNode->IsOpenAccess()) {
     return;
   }
-  CXFA_FFDoc* pDoc = GetDoc();
-  pGS->SetFillColor(
-      CXFA_GEColor(pDoc->GetDocEnvironment()->GetHighlightColor(pDoc)));
+  pGS->SetFillColor(CXFA_GEColor(GetDoc()->GetHighlightColor()));
   CXFA_GEPath path;
   if (shape == kRoundShape)
     path.AddEllipse(m_UIRect);

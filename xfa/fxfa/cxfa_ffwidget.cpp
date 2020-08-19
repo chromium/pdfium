@@ -581,11 +581,7 @@ CFX_Matrix CXFA_FFWidget::GetRotateMatrix() {
 }
 
 void CXFA_FFWidget::DisplayCaret(bool bVisible, const CFX_RectF* pRtAnchor) {
-  IXFA_DocEnvironment* pDocEnvironment = GetDoc()->GetDocEnvironment();
-  if (!pDocEnvironment)
-    return;
-
-  pDocEnvironment->DisplayCaret(this, bVisible, pRtAnchor);
+  GetDoc()->DisplayCaret(this, bVisible, pRtAnchor);
 }
 
 void CXFA_FFWidget::GetBorderColorAndThickness(FX_ARGB* cr, float* fWidth) {

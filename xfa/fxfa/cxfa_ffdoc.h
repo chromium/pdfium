@@ -60,25 +60,50 @@ class CXFA_FFDoc : public cppgc::GarbageCollected<CXFA_FFDoc> {
 
   bool OpenDoc(CFX_XMLDocument* pXML);
 
-  IXFA_DocEnvironment* GetDocEnvironment() const {
-    return m_pDocEnvironment.Get();
-  }
-  FormType GetFormType() const { return m_FormType; }
-  cppgc::Heap* GetHeap() const { return m_pHeap.Get(); }
-  CFX_XMLDocument* GetXMLDocument() const {
-    return m_pDocEnvironment->GetXMLDoc();
-  }
+  void SetChangeMark();
+  void InvalidateRect(CXFA_FFPageView* pPageView, const CFX_RectF& rt);
+  void DisplayCaret(CXFA_FFWidget* hWidget,
+                    bool bVisible,
+                    const CFX_RectF* pRtAnchor);
+  bool GetPopupPos(CXFA_FFWidget* hWidget,
+                   float fMinPopup,
+                   float fMaxPopup,
+                   const CFX_RectF& rtAnchor,
+                   CFX_RectF* pPopupRect) const;
+  bool PopupMenu(CXFA_FFWidget* hWidget, const CFX_PointF& ptPopup);
+  void PageViewEvent(CXFA_FFPageView* pPageView, uint32_t dwFlags);
+  void WidgetPostAdd(CXFA_FFWidget* hWidget);
+  void WidgetPreRemove(CXFA_FFWidget* hWidget);
+  int32_t CountPages() const;
+  int32_t GetCurrentPage() const;
+  void SetCurrentPage(int32_t iCurPage);
+  bool IsCalculationsEnabled() const;
+  void SetCalculationsEnabled(bool bEnabled);
+  WideString GetTitle() const;
+  void SetTitle(const WideString& wsTitle);
+  void ExportData(const WideString& wsFilePath, bool bXDP);
+  void GotoURL(const WideString& bsURL);
+  bool IsValidationsEnabled() const;
+  void SetValidationsEnabled(bool bEnabled);
+  void SetFocusWidget(CXFA_FFWidget* hWidget);
+  void Print(int32_t nStartPage, int32_t nEndPage, uint32_t dwOptions);
+  FX_ARGB GetHighlightColor() const;
+  IJS_Runtime* GetIJSRuntime() const;
+  CFX_XMLDocument* GetXMLDocument() const;
+  RetainPtr<IFX_SeekableReadStream> OpenLinkedFile(const WideString& wsLink);
 
   CXFA_FFDocView* CreateDocView();
+  FormType GetFormType() const { return m_FormType; }
+  cppgc::Heap* GetHeap() const { return m_pHeap.Get(); }
   CXFA_Document* GetXFADoc() const { return m_pDocument; }
   CXFA_FFApp* GetApp() const { return m_pApp.Get(); }
   CPDF_Document* GetPDFDoc() const { return m_pPDFDoc.Get(); }
+  CFGAS_PDFFontMgr* GetPDFFontMgr() const { return m_pPDFFontMgr.get(); }
   CXFA_FFDocView* GetDocView(CXFA_LayoutProcessor* pLayout);
   CXFA_FFDocView* GetDocView();
   RetainPtr<CFX_DIBitmap> GetPDFNamedImage(WideStringView wsName,
                                            int32_t& iImageXDpi,
                                            int32_t& iImageYDpi);
-  CFGAS_PDFFontMgr* GetPDFFontMgr() const { return m_pPDFFontMgr.get(); }
 
   bool SavePackage(CXFA_Node* pNode,
                    const RetainPtr<IFX_SeekableStream>& pFile);

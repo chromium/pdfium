@@ -289,7 +289,7 @@ void CXFA_FFDocView::ResetNode(CXFA_Node* pNode) {
     }
   }
   if (bChanged)
-    m_pDoc->GetDocEnvironment()->SetChangeMark(m_pDoc.Get());
+    m_pDoc->SetChangeMark();
 }
 
 CXFA_FFWidget* CXFA_FFDocView::GetWidgetForNode(CXFA_Node* node) {
@@ -359,8 +359,7 @@ void CXFA_FFDocView::SetFocusNode(CXFA_Node* node) {
   if (m_iStatus != XFA_DOCVIEW_LAYOUTSTATUS_End)
     return;
 
-  m_pDoc->GetDocEnvironment()->SetFocusWidget(m_pDoc.Get(),
-                                              m_pFocusWidget.Get());
+  m_pDoc->SetFocusWidget(m_pFocusWidget.Get());
 }
 
 void CXFA_FFDocView::DeleteLayoutItem(CXFA_FFWidget* pWidget) {
@@ -383,10 +382,8 @@ static XFA_EventError XFA_ProcessEvent(CXFA_FFDocView* pDocView,
     case XFA_EVENT_Calculate:
       return pNode->ProcessCalculate(pDocView);
     case XFA_EVENT_Validate:
-      if (pDocView->GetDoc()->GetDocEnvironment()->IsValidationsEnabled(
-              pDocView->GetDoc())) {
+      if (pDocView->GetDoc()->IsValidationsEnabled())
         return pNode->ProcessValidate(pDocView, 0x01);
-      }
       return XFA_EventError::kDisabled;
     case XFA_EVENT_InitCalculate: {
       CXFA_Calculate* calc = pNode->GetCalculateIfExists();
@@ -394,7 +391,6 @@ static XFA_EventError XFA_ProcessEvent(CXFA_FFDocView* pDocView,
         return XFA_EventError::kNotExist;
       if (pNode->IsUserInteractive())
         return XFA_EventError::kDisabled;
-
       return pNode->ExecuteScript(pDocView, calc->GetScriptIfExists(), pParam);
     }
     default:
@@ -481,12 +477,12 @@ CXFA_FFWidget* CXFA_FFDocView::GetWidgetByName(const WideString& wsName,
 void CXFA_FFDocView::OnPageEvent(CXFA_ViewLayoutItem* pSender,
                                  uint32_t dwEvent) {
   CXFA_FFPageView* pFFPageView = pSender ? pSender->GetPageView() : nullptr;
-  m_pDoc->GetDocEnvironment()->PageViewEvent(pFFPageView, dwEvent);
+  m_pDoc->PageViewEvent(pFFPageView, dwEvent);
 }
 
 void CXFA_FFDocView::InvalidateRect(CXFA_FFPageView* pPageView,
                                     const CFX_RectF& rtInvalidate) {
-  m_pDoc->GetDocEnvironment()->InvalidateRect(pPageView, rtInvalidate);
+  m_pDoc->InvalidateRect(pPageView, rtInvalidate);
 }
 
 bool CXFA_FFDocView::RunLayout() {
@@ -498,14 +494,12 @@ bool CXFA_FFDocView::RunLayout() {
     pProcessor->DoLayout();
     UnlockUpdate();
     m_bInLayoutStatus = false;
-    m_pDoc->GetDocEnvironment()->PageViewEvent(nullptr,
-                                               XFA_PAGEVIEWEVENT_StopLayout);
+    m_pDoc->PageViewEvent(nullptr, XFA_PAGEVIEWEVENT_StopLayout);
     return true;
   }
 
   m_bInLayoutStatus = false;
-  m_pDoc->GetDocEnvironment()->PageViewEvent(nullptr,
-                                             XFA_PAGEVIEWEVENT_StopLayout);
+  m_pDoc->PageViewEvent(nullptr, XFA_PAGEVIEWEVENT_StopLayout);
   UnlockUpdate();
   return false;
 }
@@ -584,7 +578,7 @@ size_t CXFA_FFDocView::RunCalculateRecursive(size_t index) {
 }
 
 XFA_EventError CXFA_FFDocView::RunCalculateWidgets() {
-  if (!m_pDoc->GetDocEnvironment()->IsCalculationsEnabled(m_pDoc.Get()))
+  if (!m_pDoc->IsCalculationsEnabled())
     return XFA_EventError::kDisabled;
 
   if (!m_CalculateNodes.empty())
@@ -614,7 +608,7 @@ void CXFA_FFDocView::ProcessValueChanged(CXFA_Node* node) {
 }
 
 bool CXFA_FFDocView::InitValidate(CXFA_Node* pNode) {
-  if (!m_pDoc->GetDocEnvironment()->IsValidationsEnabled(m_pDoc.Get()))
+  if (!m_pDoc->IsValidationsEnabled())
     return false;
 
   ExecEventActivityByDeepFirst(pNode, XFA_EVENT_Validate, false, true);
@@ -623,7 +617,7 @@ bool CXFA_FFDocView::InitValidate(CXFA_Node* pNode) {
 }
 
 bool CXFA_FFDocView::RunValidate() {
-  if (!m_pDoc->GetDocEnvironment()->IsValidationsEnabled(m_pDoc.Get()))
+  if (!m_pDoc->IsValidationsEnabled())
     return false;
 
   while (!m_ValidateNodes.empty()) {
@@ -714,7 +708,7 @@ void CXFA_FFDocView::SetChangeMark() {
   if (m_iStatus < XFA_DOCVIEW_LAYOUTSTATUS_End)
     return;
 
-  m_pDoc->GetDocEnvironment()->SetChangeMark(m_pDoc.Get());
+  m_pDoc->SetChangeMark();
 }
 
 CXFA_Subform* CXFA_FFDocView::GetRootSubform() {

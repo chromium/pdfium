@@ -198,7 +198,7 @@ void CXFA_FFDateTimeEdit::OnSelectChanged(CFWL_Widget* pWidget,
   CFWL_DateTimePicker* pPicker = GetPickerWidget();
   pPicker->SetEditText(wsDate);
   pPicker->Update();
-  GetDoc()->GetDocEnvironment()->SetFocusWidget(GetDoc(), nullptr);
+  GetDoc()->SetFocusWidget(nullptr);
 
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Change;

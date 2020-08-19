@@ -133,8 +133,7 @@ bool CXFA_FFText::OnLButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
   if (!wsURLContent)
     return false;
 
-  CXFA_FFDoc* pDoc = GetDoc();
-  pDoc->GetDocEnvironment()->GotoURL(pDoc, wsURLContent);
+  GetDoc()->GotoURL(wsURLContent);
   return true;
 }
 

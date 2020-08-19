@@ -53,10 +53,9 @@ bool CXFA_FFWidgetHandler::OnLButtonDown(CXFA_FFWidget* hWidget,
       dwFlags, hWidget->Rotate2Normal(point), FWL_MouseCommand::LeftButtonDown);
   if (bRet) {
     // May re-enter JS.
-    if (m_pDocView->SetFocus(hWidget)) {
-      m_pDocView->GetDoc()->GetDocEnvironment()->SetFocusWidget(
-          m_pDocView->GetDoc(), hWidget);
-    }
+    if (m_pDocView->SetFocus(hWidget))
+      m_pDocView->GetDoc()->SetFocusWidget(hWidget);
+
     bRet = hWidget->OnLButtonDown(dwFlags, hWidget->Rotate2Normal(point));
   }
   m_pDocView->UnlockUpdate();
@@ -103,8 +102,7 @@ bool CXFA_FFWidgetHandler::OnRButtonDown(CXFA_FFWidget* hWidget,
   }
   // May re-enter JS.
   if (m_pDocView->SetFocus(hWidget)) {
-    m_pDocView->GetDoc()->GetDocEnvironment()->SetFocusWidget(
-        m_pDocView->GetDoc(), hWidget);
+    m_pDocView->GetDoc()->SetFocusWidget(hWidget);
   }
   return hWidget->OnRButtonDown(dwFlags, hWidget->Rotate2Normal(point));
 }
@@ -234,10 +232,8 @@ XFA_EventError CXFA_FFWidgetHandler::ProcessEvent(CXFA_Node* pNode,
     case XFA_EVENT_Calculate:
       return pNode->ProcessCalculate(m_pDocView.Get());
     case XFA_EVENT_Validate:
-      if (m_pDocView->GetDoc()->GetDocEnvironment()->IsValidationsEnabled(
-              m_pDocView->GetDoc())) {
+      if (m_pDocView->GetDoc()->IsValidationsEnabled())
         return pNode->ProcessValidate(m_pDocView.Get(), 0);
-      }
       return XFA_EventError::kDisabled;
     case XFA_EVENT_InitCalculate: {
       CXFA_Calculate* calc = pNode->GetCalculateIfExists();

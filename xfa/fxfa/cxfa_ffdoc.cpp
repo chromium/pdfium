@@ -107,6 +107,117 @@ CXFA_FFDocView* CXFA_FFDoc::CreateDocView() {
   return m_DocView;
 }
 
+void CXFA_FFDoc::SetChangeMark() {
+  m_pDocEnvironment->SetChangeMark(this);
+}
+
+void CXFA_FFDoc::InvalidateRect(CXFA_FFPageView* pPageView,
+                                const CFX_RectF& rt) {
+  m_pDocEnvironment->InvalidateRect(pPageView, rt);
+}
+
+void CXFA_FFDoc::DisplayCaret(CXFA_FFWidget* hWidget,
+                              bool bVisible,
+                              const CFX_RectF* pRtAnchor) {
+  return m_pDocEnvironment->DisplayCaret(hWidget, bVisible, pRtAnchor);
+}
+
+bool CXFA_FFDoc::GetPopupPos(CXFA_FFWidget* hWidget,
+                             float fMinPopup,
+                             float fMaxPopup,
+                             const CFX_RectF& rtAnchor,
+                             CFX_RectF* pPopupRect) const {
+  return m_pDocEnvironment->GetPopupPos(hWidget, fMinPopup, fMaxPopup, rtAnchor,
+                                        pPopupRect);
+}
+
+bool CXFA_FFDoc::PopupMenu(CXFA_FFWidget* hWidget, const CFX_PointF& ptPopup) {
+  return m_pDocEnvironment->PopupMenu(hWidget, ptPopup);
+}
+
+void CXFA_FFDoc::PageViewEvent(CXFA_FFPageView* pPageView, uint32_t dwFlags) {
+  m_pDocEnvironment->PageViewEvent(pPageView, dwFlags);
+}
+
+void CXFA_FFDoc::WidgetPostAdd(CXFA_FFWidget* hWidget) {
+  m_pDocEnvironment->WidgetPostAdd(hWidget);
+}
+
+void CXFA_FFDoc::WidgetPreRemove(CXFA_FFWidget* hWidget) {
+  m_pDocEnvironment->WidgetPreRemove(hWidget);
+}
+
+int32_t CXFA_FFDoc::CountPages() const {
+  return m_pDocEnvironment->CountPages(this);
+}
+
+int32_t CXFA_FFDoc::GetCurrentPage() const {
+  return m_pDocEnvironment->GetCurrentPage(this);
+}
+
+void CXFA_FFDoc::SetCurrentPage(int32_t iCurPage) {
+  m_pDocEnvironment->SetCurrentPage(this, iCurPage);
+}
+
+bool CXFA_FFDoc::IsCalculationsEnabled() const {
+  return m_pDocEnvironment->IsCalculationsEnabled(this);
+}
+
+void CXFA_FFDoc::SetCalculationsEnabled(bool bEnabled) {
+  return m_pDocEnvironment->SetCalculationsEnabled(this, bEnabled);
+}
+
+WideString CXFA_FFDoc::GetTitle() const {
+  return m_pDocEnvironment->GetTitle(this);
+}
+
+void CXFA_FFDoc::SetTitle(const WideString& wsTitle) {
+  m_pDocEnvironment->SetTitle(this, wsTitle);
+}
+
+void CXFA_FFDoc::ExportData(const WideString& wsFilePath, bool bXDP) {
+  m_pDocEnvironment->ExportData(this, wsFilePath, bXDP);
+}
+
+void CXFA_FFDoc::GotoURL(const WideString& bsURL) {
+  m_pDocEnvironment->GotoURL(this, bsURL);
+}
+
+bool CXFA_FFDoc::IsValidationsEnabled() const {
+  return m_pDocEnvironment->IsValidationsEnabled(this);
+}
+
+void CXFA_FFDoc::SetValidationsEnabled(bool bEnabled) {
+  m_pDocEnvironment->SetValidationsEnabled(this, bEnabled);
+}
+
+void CXFA_FFDoc::SetFocusWidget(CXFA_FFWidget* hWidget) {
+  m_pDocEnvironment->SetFocusWidget(this, hWidget);
+}
+
+void CXFA_FFDoc::Print(int32_t nStartPage,
+                       int32_t nEndPage,
+                       uint32_t dwOptions) {
+  m_pDocEnvironment->Print(this, nStartPage, nEndPage, dwOptions);
+}
+
+FX_ARGB CXFA_FFDoc::GetHighlightColor() const {
+  return m_pDocEnvironment->GetHighlightColor(this);
+}
+
+IJS_Runtime* CXFA_FFDoc::GetIJSRuntime() const {
+  return m_pDocEnvironment->GetIJSRuntime(this);
+}
+
+CFX_XMLDocument* CXFA_FFDoc::GetXMLDocument() const {
+  return m_pDocEnvironment->GetXMLDoc();
+}
+
+RetainPtr<IFX_SeekableReadStream> CXFA_FFDoc::OpenLinkedFile(
+    const WideString& wsLink) {
+  return m_pDocEnvironment->OpenLinkedFile(this, wsLink);
+}
+
 CXFA_FFDocView* CXFA_FFDoc::GetDocView(CXFA_LayoutProcessor* pLayout) {
   return m_DocView && m_DocView->GetLayoutProcessor() == pLayout ? m_DocView
                                                                  : nullptr;

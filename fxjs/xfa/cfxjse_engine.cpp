@@ -211,8 +211,7 @@ void CFXJSE_Engine::GlobalPropertySetter(CFXJSE_Value* pObject,
     return;
 
   CXFA_FFDoc* hDoc = pNotify->GetFFDoc();
-  auto* pCJSRuntime =
-      static_cast<CJS_Runtime*>(hDoc->GetDocEnvironment()->GetIJSRuntime(hDoc));
+  auto* pCJSRuntime = static_cast<CJS_Runtime*>(hDoc->GetIJSRuntime());
   if (!pCJSRuntime)
     return;
 
@@ -279,8 +278,7 @@ void CFXJSE_Engine::GlobalPropertyGetter(CFXJSE_Value* pObject,
     return;
 
   CXFA_FFDoc* hDoc = pNotify->GetFFDoc();
-  auto* pCJSRuntime =
-      static_cast<CJS_Runtime*>(hDoc->GetDocEnvironment()->GetIJSRuntime(hDoc));
+  auto* pCJSRuntime = static_cast<CJS_Runtime*>(hDoc->GetIJSRuntime());
   if (!pCJSRuntime)
     return;
 
@@ -374,8 +372,7 @@ void CFXJSE_Engine::NormalPropertyGetter(CFXJSE_Value* pOriginalValue,
     return;
 
   CXFA_FFDoc* hDoc = pNotify->GetFFDoc();
-  auto* pCJSRuntime =
-      static_cast<CJS_Runtime*>(hDoc->GetDocEnvironment()->GetIJSRuntime(hDoc));
+  auto* pCJSRuntime = static_cast<CJS_Runtime*>(hDoc->GetIJSRuntime());
   if (!pCJSRuntime)
     return;
 

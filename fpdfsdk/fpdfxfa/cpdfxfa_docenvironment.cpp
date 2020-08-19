@@ -342,13 +342,13 @@ void CPDFXFA_DocEnvironment::WidgetPreRemove(CXFA_FFWidget* hWidget) {
     pSdkPageView->DeleteAnnot(pAnnot);
 }
 
-int32_t CPDFXFA_DocEnvironment::CountPages(CXFA_FFDoc* hDoc) {
+int32_t CPDFXFA_DocEnvironment::CountPages(const CXFA_FFDoc* hDoc) const {
   if (hDoc == m_pContext->GetXFADoc() && m_pContext->GetFormFillEnv())
     return m_pContext->GetPageCount();
   return 0;
 }
 
-int32_t CPDFXFA_DocEnvironment::GetCurrentPage(CXFA_FFDoc* hDoc) {
+int32_t CPDFXFA_DocEnvironment::GetCurrentPage(const CXFA_FFDoc* hDoc) const {
   if (hDoc != m_pContext->GetXFADoc() || !m_pContext->GetFormFillEnv())
     return -1;
 
@@ -374,7 +374,8 @@ void CPDFXFA_DocEnvironment::SetCurrentPage(CXFA_FFDoc* hDoc,
   pFormFillEnv->SetCurrentPage(iCurPage);
 }
 
-bool CPDFXFA_DocEnvironment::IsCalculationsEnabled(CXFA_FFDoc* hDoc) {
+bool CPDFXFA_DocEnvironment::IsCalculationsEnabled(
+    const CXFA_FFDoc* hDoc) const {
   if (hDoc != m_pContext->GetXFADoc() || !m_pContext->GetFormFillEnv())
     return false;
   auto* pForm = m_pContext->GetFormFillEnv()->GetInteractiveForm();
@@ -389,16 +390,16 @@ void CPDFXFA_DocEnvironment::SetCalculationsEnabled(CXFA_FFDoc* hDoc,
       bEnabled);
 }
 
-void CPDFXFA_DocEnvironment::GetTitle(CXFA_FFDoc* hDoc, WideString& wsTitle) {
+WideString CPDFXFA_DocEnvironment::GetTitle(const CXFA_FFDoc* hDoc) const {
   if (hDoc != m_pContext->GetXFADoc() || !m_pContext->GetPDFDoc())
-    return;
+    return WideString();
 
   const CPDF_Dictionary* pInfoDict = m_pContext->GetPDFDoc()->GetInfo();
   if (!pInfoDict)
-    return;
+    return WideString();
 
   ByteString csTitle = pInfoDict->GetStringFor("Title");
-  wsTitle = WideString::FromDefANSI(csTitle.AsStringView());
+  return WideString::FromDefANSI(csTitle.AsStringView());
 }
 
 void CPDFXFA_DocEnvironment::SetTitle(CXFA_FFDoc* hDoc,
@@ -520,7 +521,8 @@ void CPDFXFA_DocEnvironment::GotoURL(CXFA_FFDoc* hDoc,
   pFormFillEnv->GotoURL(wsURL);
 }
 
-bool CPDFXFA_DocEnvironment::IsValidationsEnabled(CXFA_FFDoc* hDoc) {
+bool CPDFXFA_DocEnvironment::IsValidationsEnabled(
+    const CXFA_FFDoc* hDoc) const {
   if (hDoc != m_pContext->GetXFADoc() || !m_pContext->GetFormFillEnv())
     return false;
 
@@ -585,7 +587,8 @@ void CPDFXFA_DocEnvironment::Print(CXFA_FFDoc* hDoc,
       dwOptions & XFA_PRINTOPT_PrintAnnot);
 }
 
-FX_ARGB CPDFXFA_DocEnvironment::GetHighlightColor(CXFA_FFDoc* hDoc) {
+FX_ARGB CPDFXFA_DocEnvironment::GetHighlightColor(
+    const CXFA_FFDoc* hDoc) const {
   if (hDoc != m_pContext->GetXFADoc() || !m_pContext->GetFormFillEnv())
     return 0;
 
@@ -595,7 +598,8 @@ FX_ARGB CPDFXFA_DocEnvironment::GetHighlightColor(CXFA_FFDoc* hDoc) {
                                 pForm->GetHighlightColor(FormFieldType::kXFA));
 }
 
-IJS_Runtime* CPDFXFA_DocEnvironment::GetIJSRuntime(CXFA_FFDoc* hDoc) const {
+IJS_Runtime* CPDFXFA_DocEnvironment::GetIJSRuntime(
+    const CXFA_FFDoc* hDoc) const {
   if (hDoc != m_pContext->GetXFADoc())
     return nullptr;
 
