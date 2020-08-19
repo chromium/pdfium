@@ -15,6 +15,7 @@
 #include "core/fxge/cfx_graphstatedata.h"
 #include "fxjs/gc/heap.h"
 #include "v8/include/cppgc/garbage-collected.h"
+#include "v8/include/cppgc/prefinalizer.h"
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_messagemouse.h"
@@ -72,6 +73,8 @@ class CXFA_CalcData {
 class CXFA_FFWidget : public cppgc::GarbageCollected<CXFA_FFWidget>,
                       public Observable,
                       public CFWL_Widget::AdapterIface {
+  CPPGC_USING_PRE_FINALIZER(CXFA_FFWidget, PreFinalize);
+
  public:
   enum FocusOption { kDoNotDrawFocus = 0, kDrawFocus };
   enum HighlightOption { kNoHighlight = 0, kHighlight };
@@ -79,6 +82,7 @@ class CXFA_FFWidget : public cppgc::GarbageCollected<CXFA_FFWidget>,
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FFWidget() override;
 
+  virtual void PreFinalize();
   virtual void Trace(cppgc::Visitor* visitor) const;
 
   // CFWL_Widget::AdapterIface:

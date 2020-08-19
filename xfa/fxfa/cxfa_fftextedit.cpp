@@ -34,12 +34,15 @@ CFWL_Edit* ToEdit(CFWL_Widget* widget) {
 
 CXFA_FFTextEdit::CXFA_FFTextEdit(CXFA_Node* pNode) : CXFA_FFField(pNode) {}
 
-CXFA_FFTextEdit::~CXFA_FFTextEdit() {
+CXFA_FFTextEdit::~CXFA_FFTextEdit() = default;
+
+void CXFA_FFTextEdit::PreFinalize() {
   if (GetNormalWidget()) {
     CFWL_NoteDriver* pNoteDriver =
         GetNormalWidget()->GetFWLApp()->GetNoteDriver();
     pNoteDriver->UnregisterEventTarget(GetNormalWidget());
   }
+  CXFA_FFField::PreFinalize();
 }
 
 bool CXFA_FFTextEdit::LoadWidget() {

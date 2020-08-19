@@ -24,6 +24,8 @@ class CXFA_FFTextEdit : public CXFA_FFField {
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FFTextEdit() override;
 
+  void PreFinalize() override;
+
   // CXFA_FFField
   bool LoadWidget() override;
   void UpdateWidgetProperty() override;
