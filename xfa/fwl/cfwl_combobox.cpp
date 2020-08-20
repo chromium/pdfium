@@ -123,7 +123,7 @@ void CFWL_ComboBox::DrawWidget(CXFA_Graphics* pGraphics,
 }
 
 WideString CFWL_ComboBox::GetTextByIndex(int32_t iIndex) const {
-  CFWL_ListItem* pItem = static_cast<CFWL_ListItem*>(
+  auto* pItem = static_cast<CFWL_ListBox::Item*>(
       m_pListBox->GetItem(m_pListBox.get(), iIndex));
   return pItem ? pItem->GetText() : WideString();
 }
@@ -135,7 +135,7 @@ void CFWL_ComboBox::SetCurSel(int32_t iSel) {
     if (bClearSel) {
       m_pEdit->SetText(WideString());
     } else {
-      CFWL_ListItem* hItem = m_pListBox->GetItem(this, iSel);
+      CFWL_ListBox::Item* hItem = m_pListBox->GetItem(this, iSel);
       m_pEdit->SetText(hItem ? hItem->GetText() : WideString());
     }
     m_pEdit->Update();
@@ -173,7 +173,7 @@ WideString CFWL_ComboBox::GetEditText() const {
   if (!m_pListBox)
     return WideString();
 
-  CFWL_ListItem* hItem = m_pListBox->GetItem(this, m_iCurSel);
+  CFWL_ListBox::Item* hItem = m_pListBox->GetItem(this, m_iCurSel);
   return hItem ? hItem->GetText() : WideString();
 }
 
@@ -256,7 +256,7 @@ void CFWL_ComboBox::MatchEditText() {
 }
 
 void CFWL_ComboBox::SyncEditText(int32_t iListItem) {
-  CFWL_ListItem* hItem = m_pListBox->GetItem(this, iListItem);
+  CFWL_ListBox::Item* hItem = m_pListBox->GetItem(this, iListItem);
   m_pEdit->SetText(hItem ? hItem->GetText() : WideString());
   m_pEdit->Update();
   m_pEdit->SetSelected();
@@ -289,7 +289,7 @@ void CFWL_ComboBox::Layout() {
   m_pEdit->SetWidgetRect(rtEdit);
 
   if (m_iCurSel >= 0) {
-    CFWL_ListItem* hItem = m_pListBox->GetItem(this, m_iCurSel);
+    CFWL_ListBox::Item* hItem = m_pListBox->GetItem(this, m_iCurSel);
     ScopedUpdateLock update_lock(m_pEdit.get());
     m_pEdit->SetText(hItem ? hItem->GetText() : WideString());
   }
@@ -358,7 +358,7 @@ void CFWL_ComboBox::ProcessSelChanged(bool bLButtonUp) {
     return;
   }
 
-  CFWL_ListItem* hItem = m_pListBox->GetItem(this, m_iCurSel);
+  CFWL_ListBox::Item* hItem = m_pListBox->GetItem(this, m_iCurSel);
   if (!hItem)
     return;
   if (m_pEdit) {
@@ -501,7 +501,7 @@ void CFWL_ComboBox::OnKey(CFWL_MessageKey* pMsg) {
       WideString wsText = m_pEdit->GetText();
       iCurSel = pComboList->MatchItem(wsText.AsStringView());
       if (iCurSel >= 0) {
-        CFWL_ListItem* item = m_pListBox->GetSelItem(iCurSel);
+        CFWL_ListBox::Item* item = m_pListBox->GetSelItem(iCurSel);
         bMatchEqual = wsText == (item ? item->GetText() : WideString());
       }
     }

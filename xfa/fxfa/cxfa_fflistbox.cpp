@@ -106,7 +106,7 @@ bool CXFA_FFListBox::IsDataChanged() {
     return true;
 
   for (int32_t i = 0; i < iSels; ++i) {
-    CFWL_ListItem* hlistItem = pListBox->GetItem(nullptr, iSelArray[i]);
+    CFWL_ListBox::Item* hlistItem = pListBox->GetItem(nullptr, iSelArray[i]);
     if (!(hlistItem->GetStates() & FWL_ITEMSTATE_LTB_Selected))
       return true;
   }
@@ -145,12 +145,12 @@ bool CXFA_FFListBox::UpdateFWLData() {
     return false;
 
   std::vector<int32_t> iSelArray = m_pNode->GetSelectedItems();
-  std::vector<CFWL_ListItem*> selItemArray(iSelArray.size());
+  std::vector<CFWL_ListBox::Item*> selItemArray(iSelArray.size());
   std::transform(iSelArray.begin(), iSelArray.end(), selItemArray.begin(),
                  [pListBox](int32_t val) { return pListBox->GetSelItem(val); });
 
   pListBox->SetSelItem(pListBox->GetSelItem(-1), false);
-  for (CFWL_ListItem* pItem : selItemArray)
+  for (CFWL_ListBox::Item* pItem : selItemArray)
     pListBox->SetSelItem(pItem, true);
 
   GetNormalWidget()->Update();

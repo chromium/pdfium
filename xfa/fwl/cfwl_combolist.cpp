@@ -29,7 +29,7 @@ int32_t CFWL_ComboList::MatchItem(WideStringView wsMatch) {
 
   int32_t iCount = CountItems(this);
   for (int32_t i = 0; i < iCount; i++) {
-    CFWL_ListItem* hItem = GetItem(this, i);
+    CFWL_ListBox::Item* hItem = GetItem(this, i);
     WideString wsText = hItem ? hItem->GetText() : WideString();
     auto pos = wsText.Find(wsMatch);
     if (pos.has_value() && pos.value() == 0)
@@ -39,22 +39,22 @@ int32_t CFWL_ComboList::MatchItem(WideStringView wsMatch) {
 }
 
 void CFWL_ComboList::ChangeSelected(int32_t iSel) {
-  CFWL_ListItem* hItem = GetItem(this, iSel);
-  CFWL_ListItem* hOld = GetSelItem(0);
+  CFWL_ListBox::Item* hItem = GetItem(this, iSel);
+  CFWL_ListBox::Item* hOld = GetSelItem(0);
   int32_t iOld = GetItemIndex(this, hOld);
   if (iOld == iSel)
     return;
 
   CFX_RectF rtInvalidate;
   if (iOld > -1) {
-    if (CFWL_ListItem* hOldItem = GetItem(this, iOld))
+    if (CFWL_ListBox::Item* hOldItem = GetItem(this, iOld))
       rtInvalidate = hOldItem->GetRect();
     SetSelItem(hOld, false);
   }
   if (hItem) {
-    if (CFWL_ListItem* hOldItem = GetItem(this, iSel))
+    if (CFWL_ListBox::Item* hOldItem = GetItem(this, iSel))
       rtInvalidate.Union(hOldItem->GetRect());
-    CFWL_ListItem* hSel = GetItem(this, iSel);
+    CFWL_ListBox::Item* hSel = GetItem(this, iSel);
     SetSelItem(hSel, true);
   }
   if (!rtInvalidate.IsEmpty())
@@ -132,7 +132,7 @@ void CFWL_ComboList::OnDropListMouseMove(CFWL_MessageMouse* pMsg) {
         return;
     }
 
-    CFWL_ListItem* hItem = GetItemAtPoint(pMsg->m_pos);
+    CFWL_ListBox::Item* hItem = GetItemAtPoint(pMsg->m_pos);
     if (!hItem)
       return;
 
@@ -169,7 +169,7 @@ void CFWL_ComboList::OnDropListLButtonUp(CFWL_MessageMouse* pMsg) {
   }
   pOuter->ShowDropList(false);
 
-  CFWL_ListItem* hItem = GetItemAtPoint(pMsg->m_pos);
+  CFWL_ListBox::Item* hItem = GetItemAtPoint(pMsg->m_pos);
   if (hItem)
     pOuter->ProcessSelChanged(true);
 }
@@ -215,7 +215,7 @@ void CFWL_ComboList::OnDropListKeyDown(CFWL_MessageKey* pKey) {
     case XFA_FWL_VKEY_Home:
     case XFA_FWL_VKEY_End: {
       CFWL_ComboBox* pOuter = static_cast<CFWL_ComboBox*>(GetOuter());
-      CFWL_ListItem* hItem = GetItem(this, pOuter->GetCurrentSelection());
+      CFWL_ListBox::Item* hItem = GetItem(this, pOuter->GetCurrentSelection());
       hItem = GetListItem(hItem, dwKeyCode);
       if (!hItem)
         break;
