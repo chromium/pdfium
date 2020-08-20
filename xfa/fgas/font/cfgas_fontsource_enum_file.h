@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FGAS_FONT_CFX_FONTSOURCEENUM_FILE_H_
-#define XFA_FGAS_FONT_CFX_FONTSOURCEENUM_FILE_H_
+#ifndef XFA_FGAS_FONT_CFGAS_FONTSOURCE_ENUM_FILE_H_
+#define XFA_FGAS_FONT_CFGAS_FONTSOURCE_ENUM_FILE_H_
 
 #include <vector>
 
@@ -19,10 +19,10 @@
 #error "Not used on Windows"
 #endif
 
-class CFX_FontSourceEnum_File {
+class CFGAS_FontSourceEnumFile {
  public:
-  CFX_FontSourceEnum_File();
-  ~CFX_FontSourceEnum_File();
+  CFGAS_FontSourceEnumFile();
+  ~CFGAS_FontSourceEnumFile();
 
   void GetNext();
   bool HasNext() const;
@@ -46,4 +46,4 @@ class CFX_FontSourceEnum_File {
   std::vector<ByteString> m_FolderPaths;
 };
 
-#endif  // XFA_FGAS_FONT_CFX_FONTSOURCEENUM_FILE_H_
+#endif  // XFA_FGAS_FONT_CFGAS_FONTSOURCE_ENUM_FILE_H_

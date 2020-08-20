@@ -41,8 +41,8 @@ source_set("fgas") {
 
   if (!is_win) {
     sources += [
-      "font/cfx_fontsourceenum_file.cpp",
-      "font/cfx_fontsourceenum_file.h",
+      "font/cfgas_fontsource_enum_file.cpp",
+      "font/cfgas_fontsource_enum_file.h",
     ]
   }
 }

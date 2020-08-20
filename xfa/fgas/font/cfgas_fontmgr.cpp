@@ -24,7 +24,7 @@
 #include "xfa/fgas/font/fgas_fontutils.h"
 
 #if !defined(OS_WIN)
-#include "xfa/fgas/font/cfx_fontsourceenum_file.h"
+#include "xfa/fgas/font/cfgas_fontsource_enum_file.h"
 #endif
 
 namespace {
@@ -609,7 +609,7 @@ CFX_FontDescriptor::CFX_FontDescriptor()
 CFX_FontDescriptor::~CFX_FontDescriptor() = default;
 
 CFGAS_FontMgr::CFGAS_FontMgr()
-    : m_pFontSource(std::make_unique<CFX_FontSourceEnum_File>()) {}
+    : m_pFontSource(std::make_unique<CFGAS_FontSourceEnumFile>()) {}
 
 CFGAS_FontMgr::~CFGAS_FontMgr() = default;
 

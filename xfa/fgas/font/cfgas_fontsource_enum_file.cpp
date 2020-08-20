@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fgas/font/cfx_fontsourceenum_file.h"
+#include "xfa/fgas/font/cfgas_fontsource_enum_file.h"
 
 #include <iterator>
 
@@ -31,12 +31,12 @@ constexpr const char* kFontFolders[] = {
 
 }  // namespace
 
-CFX_FontSourceEnum_File::CFX_FontSourceEnum_File()
+CFGAS_FontSourceEnumFile::CFGAS_FontSourceEnumFile()
     : m_FolderPaths(std::begin(kFontFolders), std::end(kFontFolders)) {}
 
-CFX_FontSourceEnum_File::~CFX_FontSourceEnum_File() = default;
+CFGAS_FontSourceEnumFile::~CFGAS_FontSourceEnumFile() = default;
 
-ByteString CFX_FontSourceEnum_File::GetNextFile() {
+ByteString CFGAS_FontSourceEnumFile::GetNextFile() {
   FX_FolderHandle* pCurHandle =
       !m_FolderQueue.empty() ? m_FolderQueue.back().pFolderHandle : nullptr;
   if (!pCurHandle) {
@@ -82,15 +82,15 @@ ByteString CFX_FontSourceEnum_File::GetNextFile() {
   return bsName;
 }
 
-void CFX_FontSourceEnum_File::GetNext() {
+void CFGAS_FontSourceEnumFile::GetNext() {
   m_wsNext = WideString::FromUTF8(GetNextFile().AsStringView());
 }
 
-bool CFX_FontSourceEnum_File::HasNext() const {
+bool CFGAS_FontSourceEnumFile::HasNext() const {
   return !m_wsNext.IsEmpty();
 }
 
-RetainPtr<IFX_SeekableStream> CFX_FontSourceEnum_File::GetStream() const {
+RetainPtr<IFX_SeekableStream> CFGAS_FontSourceEnumFile::GetStream() const {
   ASSERT(HasNext());
   return IFX_SeekableStream::CreateFromFilename(m_wsNext.c_str(),
                                                 FX_FILEMODE_ReadOnly);
