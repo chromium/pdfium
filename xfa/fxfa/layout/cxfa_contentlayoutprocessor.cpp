@@ -267,32 +267,31 @@ void RelocateTableRowCells(CXFA_ContentLayoutItem* pLayoutRow,
       CXFA_Para* pParaNode =
           pLayoutChild->GetFormNode()->GetFirstChildByClass<CXFA_Para>(
               XFA_Element::Para);
-      if (pParaNode && pLayoutChild->GetFirstChild()) {
-        float fOffHeight = fContentCalculatedHeight - fOldChildHeight;
-        XFA_AttributeValue eVType =
-            pParaNode->JSObject()->GetEnum(XFA_Attribute::VAlign);
-        switch (eVType) {
-          case XFA_AttributeValue::Middle:
-            fOffHeight = fOffHeight / 2;
-            break;
-          case XFA_AttributeValue::Bottom:
-            break;
-          case XFA_AttributeValue::Top:
-          default:
-            fOffHeight = 0;
-            break;
-        }
-        if (fOffHeight > 0) {
-          for (CXFA_LayoutItem* pInnerIter = pLayoutChild->GetFirstChild();
-               pInnerIter; pInnerIter = pInnerIter->GetNextSibling()) {
-            CXFA_ContentLayoutItem* pInnerChild =
-                pInnerIter->AsContentLayoutItem();
-            if (!pInnerChild)
-              continue;
+      if (!pParaNode || !pLayoutChild->GetFirstChild())
+        continue;
 
-            pInnerChild->m_sPos.y += fOffHeight;
-          }
-        }
+      float fOffHeight = fContentCalculatedHeight - fOldChildHeight;
+      XFA_AttributeValue eVType =
+          pParaNode->JSObject()->GetEnum(XFA_Attribute::VAlign);
+      switch (eVType) {
+        case XFA_AttributeValue::Middle:
+          fOffHeight = fOffHeight / 2;
+          break;
+        case XFA_AttributeValue::Bottom:
+          break;
+        case XFA_AttributeValue::Top:
+        default:
+          fOffHeight = 0;
+          break;
+      }
+      if (fOffHeight <= 0)
+        continue;
+
+      for (CXFA_LayoutItem* pInnerIter = pLayoutChild->GetFirstChild();
+           pInnerIter; pInnerIter = pInnerIter->GetNextSibling()) {
+        CXFA_ContentLayoutItem* pInnerChild = pInnerIter->AsContentLayoutItem();
+        if (pInnerChild)
+          pInnerChild->m_sPos.y += fOffHeight;
       }
     }
   }
