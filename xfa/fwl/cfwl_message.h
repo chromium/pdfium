@@ -10,20 +10,23 @@
 #include <memory>
 
 #include "core/fxcrt/fx_system.h"
-#include "core/fxcrt/observed_ptr.h"
-#include "xfa/fwl/cfwl_widget.h"
+#include "v8/include/cppgc/macros.h"
+
+class CFWL_Widget;
 
 class CFWL_Message {
+  CPPGC_STACK_ALLOCATED();  // Allow Raw/Unowned pointers.
+
  public:
   enum class Type { kKey, kKillFocus, kMouse, kMouseWheel, kSetFocus };
 
   virtual ~CFWL_Message();
 
   Type GetType() const { return m_type; }
-  CFWL_Widget* GetSrcTarget() const { return m_pSrcTarget.Get(); }
-  CFWL_Widget* GetDstTarget() const { return m_pDstTarget.Get(); }
-  void SetSrcTarget(CFWL_Widget* pWidget) { m_pSrcTarget.Reset(pWidget); }
-  void SetDstTarget(CFWL_Widget* pWidget) { m_pDstTarget.Reset(pWidget); }
+  CFWL_Widget* GetSrcTarget() const { return m_pSrcTarget; }
+  CFWL_Widget* GetDstTarget() const { return m_pDstTarget; }
+  void SetSrcTarget(CFWL_Widget* pWidget) { m_pSrcTarget = pWidget; }
+  void SetDstTarget(CFWL_Widget* pWidget) { m_pDstTarget = pWidget; }
 
  protected:
   CFWL_Message(Type type, CFWL_Widget* pSrcTarget, CFWL_Widget* pDstTarget);
@@ -32,8 +35,8 @@ class CFWL_Message {
 
  private:
   const Type m_type;
-  ObservedPtr<CFWL_Widget> m_pSrcTarget;
-  ObservedPtr<CFWL_Widget> m_pDstTarget;
+  CFWL_Widget* m_pSrcTarget = nullptr;
+  CFWL_Widget* m_pDstTarget = nullptr;
 };
 
 #endif  // XFA_FWL_CFWL_MESSAGE_H_

@@ -172,14 +172,13 @@ void CFWL_WidgetMgr::GetAdapterPopupPos(CFWL_Widget* pWidget,
                           pPopupRect);
 }
 
-void CFWL_WidgetMgr::OnProcessMessageToForm(
-    std::unique_ptr<CFWL_Message> pMessage) {
+void CFWL_WidgetMgr::OnProcessMessageToForm(CFWL_Message* pMessage) {
   CFWL_Widget* pDstWidget = pMessage->GetDstTarget();
   if (!pDstWidget)
     return;
 
   CFWL_NoteDriver* pNoteDriver = pDstWidget->GetFWLApp()->GetNoteDriver();
-  pNoteDriver->ProcessMessage(std::move(pMessage));
+  pNoteDriver->ProcessMessage(pMessage);
 }
 
 void CFWL_WidgetMgr::OnDrawWidget(CFWL_Widget* pWidget,

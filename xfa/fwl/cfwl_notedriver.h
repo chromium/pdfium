@@ -31,7 +31,7 @@ class CFWL_NoteDriver {
 
   void NotifyTargetHide(CFWL_Widget* pNoteTarget);
   void NotifyTargetDestroy(CFWL_Widget* pNoteTarget);
-  void ProcessMessage(std::unique_ptr<CFWL_Message> pMessage);
+  void ProcessMessage(CFWL_Message* pMessage);
 
  private:
   bool DispatchMessage(CFWL_Message* pMessage, CFWL_Widget* pMessageForm);

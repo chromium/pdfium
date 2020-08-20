@@ -35,7 +35,7 @@ class CFWL_WidgetMgr {
   explicit CFWL_WidgetMgr(AdapterIface* pAdapterNative);
   ~CFWL_WidgetMgr();
 
-  void OnProcessMessageToForm(std::unique_ptr<CFWL_Message> pMessage);
+  void OnProcessMessageToForm(CFWL_Message* pMessage);
   void OnDrawWidget(CFWL_Widget* pWidget,
                     CXFA_Graphics* pGraphics,
                     const CFX_Matrix& matrix);

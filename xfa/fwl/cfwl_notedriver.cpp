@@ -82,16 +82,16 @@ void CFWL_NoteDriver::NotifyTargetDestroy(CFWL_Widget* pNoteTarget) {
   UnregisterEventTarget(pNoteTarget);
 }
 
-void CFWL_NoteDriver::ProcessMessage(std::unique_ptr<CFWL_Message> pMessage) {
+void CFWL_NoteDriver::ProcessMessage(CFWL_Message* pMessage) {
   CFWL_Widget* pMessageForm = pMessage->GetDstTarget();
   if (!pMessageForm)
     return;
 
-  if (!DispatchMessage(pMessage.get(), pMessageForm))
+  if (!DispatchMessage(pMessage, pMessageForm))
     return;
 
   if (pMessage->GetType() == CFWL_Message::Type::kMouse)
-    MouseSecondary(pMessage.get());
+    MouseSecondary(pMessage);
 }
 
 bool CFWL_NoteDriver::DispatchMessage(CFWL_Message* pMessage,

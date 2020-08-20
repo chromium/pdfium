@@ -136,10 +136,9 @@ bool CXFA_FFTextEdit::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
     InvalidateRect();
   }
   SetButtonDown(true);
-  SendMessageToFWLWidget(std::make_unique<CFWL_MessageMouse>(
-      GetNormalWidget(), FWL_MouseCommand::LeftButtonDown, dwFlags,
-      FWLToClient(point)));
-
+  CFWL_MessageMouse msg(GetNormalWidget(), FWL_MouseCommand::LeftButtonDown,
+                        dwFlags, FWLToClient(point));
+  SendMessageToFWLWidget(&msg);
   return true;
 }
 
@@ -150,9 +149,9 @@ bool CXFA_FFTextEdit::OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
     InvalidateRect();
   }
   SetButtonDown(true);
-  SendMessageToFWLWidget(std::make_unique<CFWL_MessageMouse>(
-      nullptr, FWL_MouseCommand::RightButtonDown, dwFlags, FWLToClient(point)));
-
+  CFWL_MessageMouse msg(nullptr, FWL_MouseCommand::RightButtonDown, dwFlags,
+                        FWLToClient(point));
+  SendMessageToFWLWidget(&msg);
   return true;
 }
 
@@ -175,17 +174,15 @@ bool CXFA_FFTextEdit::OnSetFocus(CXFA_FFWidget* pOldWidget) {
   if (!CXFA_FFWidget::OnSetFocus(pOldWatched.Get()))
     return false;
 
-  SendMessageToFWLWidget(
-      std::make_unique<CFWL_MessageSetFocus>(nullptr, GetNormalWidget()));
-
+  CFWL_MessageSetFocus msg(nullptr, GetNormalWidget());
+  SendMessageToFWLWidget(&msg);
   return true;
 }
 
 bool CXFA_FFTextEdit::OnKillFocus(CXFA_FFWidget* pNewWidget) {
   ObservedPtr<CXFA_FFWidget> pNewWatched(pNewWidget);
-  SendMessageToFWLWidget(
-      std::make_unique<CFWL_MessageKillFocus>(nullptr, GetNormalWidget()));
-
+  CFWL_MessageKillFocus msg(nullptr, GetNormalWidget());
+  SendMessageToFWLWidget(&msg);
   GetLayoutItem()->ClearStatusBits(XFA_WidgetStatus_Focused);
   SetEditScrollOffset();
   ProcessCommittedData();

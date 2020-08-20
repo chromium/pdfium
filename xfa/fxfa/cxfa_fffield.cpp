@@ -378,9 +378,8 @@ bool CXFA_FFField::OnMouseEnter() {
   if (!GetNormalWidget())
     return false;
 
-  SendMessageToFWLWidget(std::make_unique<CFWL_MessageMouse>(
-      GetNormalWidget(), FWL_MouseCommand::Enter));
-
+  CFWL_MessageMouse msg(GetNormalWidget(), FWL_MouseCommand::Enter);
+  SendMessageToFWLWidget(&msg);
   return true;
 }
 
@@ -388,9 +387,8 @@ bool CXFA_FFField::OnMouseExit() {
   if (!GetNormalWidget())
     return false;
 
-  SendMessageToFWLWidget(std::make_unique<CFWL_MessageMouse>(
-      GetNormalWidget(), FWL_MouseCommand::Leave));
-
+  CFWL_MessageMouse msg(GetNormalWidget(), FWL_MouseCommand::Leave);
+  SendMessageToFWLWidget(&msg);
   return true;
 }
 
@@ -415,10 +413,9 @@ bool CXFA_FFField::AcceptsFocusOnButtonDown(uint32_t dwFlags,
 
 bool CXFA_FFField::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   SetButtonDown(true);
-  SendMessageToFWLWidget(std::make_unique<CFWL_MessageMouse>(
-      GetNormalWidget(), FWL_MouseCommand::LeftButtonDown, dwFlags,
-      FWLToClient(point)));
-
+  CFWL_MessageMouse msg(GetNormalWidget(), FWL_MouseCommand::LeftButtonDown,
+                        dwFlags, FWLToClient(point));
+  SendMessageToFWLWidget(&msg);
   return true;
 }
 
@@ -429,10 +426,10 @@ bool CXFA_FFField::OnLButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
     return false;
 
   SetButtonDown(false);
-  SendMessageToFWLWidget(std::make_unique<CFWL_MessageMouse>(
-      GetNormalWidget(), FWL_MouseCommand::LeftButtonUp, dwFlags,
-      FWLToClient(point)));
 
+  CFWL_MessageMouse msg(GetNormalWidget(), FWL_MouseCommand::LeftButtonUp,
+                        dwFlags, FWLToClient(point));
+  SendMessageToFWLWidget(&msg);
   return true;
 }
 
@@ -440,10 +437,9 @@ bool CXFA_FFField::OnLButtonDblClk(uint32_t dwFlags, const CFX_PointF& point) {
   if (!GetNormalWidget())
     return false;
 
-  SendMessageToFWLWidget(std::make_unique<CFWL_MessageMouse>(
-      GetNormalWidget(), FWL_MouseCommand::LeftButtonDblClk, dwFlags,
-      FWLToClient(point)));
-
+  CFWL_MessageMouse msg(GetNormalWidget(), FWL_MouseCommand::LeftButtonDblClk,
+                        dwFlags, FWLToClient(point));
+  SendMessageToFWLWidget(&msg);
   return true;
 }
 
@@ -451,9 +447,9 @@ bool CXFA_FFField::OnMouseMove(uint32_t dwFlags, const CFX_PointF& point) {
   if (!GetNormalWidget())
     return false;
 
-  SendMessageToFWLWidget(std::make_unique<CFWL_MessageMouse>(
-      GetNormalWidget(), FWL_MouseCommand::Move, dwFlags, FWLToClient(point)));
-
+  CFWL_MessageMouse msg(GetNormalWidget(), FWL_MouseCommand::Move, dwFlags,
+                        FWLToClient(point));
+  SendMessageToFWLWidget(&msg);
   return true;
 }
 
@@ -463,18 +459,17 @@ bool CXFA_FFField::OnMouseWheel(uint32_t dwFlags,
   if (!GetNormalWidget())
     return false;
 
-  SendMessageToFWLWidget(std::make_unique<CFWL_MessageMouseWheel>(
-      GetNormalWidget(), FWLToClient(point), delta));
-
+  CFWL_MessageMouseWheel msg(GetNormalWidget(), FWLToClient(point), delta);
+  SendMessageToFWLWidget(&msg);
   return true;
 }
 
 bool CXFA_FFField::OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   SetButtonDown(true);
-  SendMessageToFWLWidget(std::make_unique<CFWL_MessageMouse>(
-      GetNormalWidget(), FWL_MouseCommand::RightButtonDown, dwFlags,
-      FWLToClient(point)));
 
+  CFWL_MessageMouse msg(GetNormalWidget(), FWL_MouseCommand::RightButtonDown,
+                        dwFlags, FWLToClient(point));
+  SendMessageToFWLWidget(&msg);
   return true;
 }
 
@@ -485,10 +480,9 @@ bool CXFA_FFField::OnRButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
     return false;
 
   SetButtonDown(false);
-  SendMessageToFWLWidget(std::make_unique<CFWL_MessageMouse>(
-      GetNormalWidget(), FWL_MouseCommand::RightButtonUp, dwFlags,
-      FWLToClient(point)));
-
+  CFWL_MessageMouse msg(GetNormalWidget(), FWL_MouseCommand::RightButtonUp,
+                        dwFlags, FWLToClient(point));
+  SendMessageToFWLWidget(&msg);
   return true;
 }
 
@@ -496,10 +490,9 @@ bool CXFA_FFField::OnRButtonDblClk(uint32_t dwFlags, const CFX_PointF& point) {
   if (!GetNormalWidget())
     return false;
 
-  SendMessageToFWLWidget(std::make_unique<CFWL_MessageMouse>(
-      GetNormalWidget(), FWL_MouseCommand::RightButtonDblClk, dwFlags,
-      FWLToClient(point)));
-
+  CFWL_MessageMouse msg(GetNormalWidget(), FWL_MouseCommand::RightButtonDblClk,
+                        dwFlags, FWLToClient(point));
+  SendMessageToFWLWidget(&msg);
   return true;
 }
 
@@ -510,8 +503,8 @@ bool CXFA_FFField::OnSetFocus(CXFA_FFWidget* pOldWidget) {
   if (!GetNormalWidget())
     return false;
 
-  SendMessageToFWLWidget(
-      std::make_unique<CFWL_MessageSetFocus>(nullptr, GetNormalWidget()));
+  CFWL_MessageSetFocus msg(nullptr, GetNormalWidget());
+  SendMessageToFWLWidget(&msg);
   GetLayoutItem()->SetStatusBits(XFA_WidgetStatus_Focused);
   InvalidateRect();
 
@@ -521,8 +514,8 @@ bool CXFA_FFField::OnSetFocus(CXFA_FFWidget* pOldWidget) {
 bool CXFA_FFField::OnKillFocus(CXFA_FFWidget* pNewWidget) {
   ObservedPtr<CXFA_FFWidget> pNewWatched(pNewWidget);
   if (GetNormalWidget()) {
-    SendMessageToFWLWidget(
-        std::make_unique<CFWL_MessageKillFocus>(nullptr, GetNormalWidget()));
+    CFWL_MessageKillFocus msg(nullptr, GetNormalWidget());
+    SendMessageToFWLWidget(&msg);
     GetLayoutItem()->ClearStatusBits(XFA_WidgetStatus_Focused);
     InvalidateRect();
   }
@@ -533,9 +526,9 @@ bool CXFA_FFField::OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags) {
   if (!GetNormalWidget() || !GetDoc()->GetXFADoc()->IsInteractive())
     return false;
 
-  SendMessageToFWLWidget(std::make_unique<CFWL_MessageKey>(
-      GetNormalWidget(), CFWL_MessageKey::Type::kKeyDown, dwFlags, dwKeyCode));
-
+  CFWL_MessageKey msg(GetNormalWidget(), CFWL_MessageKey::Type::kKeyDown,
+                      dwFlags, dwKeyCode);
+  SendMessageToFWLWidget(&msg);
   return true;
 }
 
@@ -543,9 +536,9 @@ bool CXFA_FFField::OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) {
   if (!GetNormalWidget() || !GetDoc()->GetXFADoc()->IsInteractive())
     return false;
 
-  SendMessageToFWLWidget(std::make_unique<CFWL_MessageKey>(
-      GetNormalWidget(), CFWL_MessageKey::Type::kKeyUp, dwFlags, dwKeyCode));
-
+  CFWL_MessageKey msg(GetNormalWidget(), CFWL_MessageKey::Type::kKeyUp, dwFlags,
+                      dwKeyCode);
+  SendMessageToFWLWidget(&msg);
   return true;
 }
 
@@ -559,9 +552,9 @@ bool CXFA_FFField::OnChar(uint32_t dwChar, uint32_t dwFlags) {
   if (!m_pNode->IsOpenAccess())
     return false;
 
-  SendMessageToFWLWidget(std::make_unique<CFWL_MessageKey>(
-      GetNormalWidget(), CFWL_MessageKey::Type::kChar, dwFlags, dwChar));
-
+  CFWL_MessageKey msg(GetNormalWidget(), CFWL_MessageKey::Type::kChar, dwFlags,
+                      dwChar);
+  SendMessageToFWLWidget(&msg);
   return true;
 }
 
@@ -718,10 +711,9 @@ bool CXFA_FFField::IsDataChanged() {
   return false;
 }
 
-void CXFA_FFField::SendMessageToFWLWidget(
-    std::unique_ptr<CFWL_Message> pMessage) {
+void CXFA_FFField::SendMessageToFWLWidget(CFWL_Message* pMessage) {
   ASSERT(pMessage);
-  GetApp()->GetFWLWidgetMgr()->OnProcessMessageToForm(std::move(pMessage));
+  GetApp()->GetFWLWidgetMgr()->OnProcessMessageToForm(pMessage);
 }
 
 void CXFA_FFField::OnProcessMessage(CFWL_Message* pMessage) {}

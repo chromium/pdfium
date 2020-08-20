@@ -260,10 +260,9 @@ bool CXFA_FFCheckButton::OnLButtonUp(uint32_t dwFlags,
     return false;
 
   SetButtonDown(false);
-  SendMessageToFWLWidget(std::make_unique<CFWL_MessageMouse>(
-      GetNormalWidget(), FWL_MouseCommand::LeftButtonUp, dwFlags,
-      FWLToClient(point)));
-
+  CFWL_MessageMouse msg(GetNormalWidget(), FWL_MouseCommand::LeftButtonUp,
+                        dwFlags, FWLToClient(point));
+  SendMessageToFWLWidget(&msg);
   return true;
 }
 

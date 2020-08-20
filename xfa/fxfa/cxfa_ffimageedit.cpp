@@ -113,10 +113,9 @@ bool CXFA_FFImageEdit::AcceptsFocusOnButtonDown(uint32_t dwFlags,
 bool CXFA_FFImageEdit::OnLButtonDown(uint32_t dwFlags,
                                      const CFX_PointF& point) {
   SetButtonDown(true);
-  SendMessageToFWLWidget(std::make_unique<CFWL_MessageMouse>(
-      GetNormalWidget(), FWL_MouseCommand::LeftButtonDown, dwFlags,
-      FWLToClient(point)));
-
+  CFWL_MessageMouse msg(GetNormalWidget(), FWL_MouseCommand::LeftButtonDown,
+                        dwFlags, FWLToClient(point));
+  SendMessageToFWLWidget(&msg);
   return true;
 }
 
