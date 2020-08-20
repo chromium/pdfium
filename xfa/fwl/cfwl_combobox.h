@@ -7,8 +7,6 @@
 #ifndef XFA_FWL_CFWL_COMBOBOX_H_
 #define XFA_FWL_CFWL_COMBOBOX_H_
 
-#include <memory>
-
 #include "xfa/fwl/cfwl_comboedit.h"
 #include "xfa/fwl/cfwl_combolist.h"
 #include "xfa/fwl/cfwl_listbox.h"
@@ -36,10 +34,11 @@ class CFWL_ListBox;
 
 class CFWL_ComboBox final : public CFWL_Widget {
  public:
-  explicit CFWL_ComboBox(const CFWL_App* pApp);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CFWL_ComboBox() override;
 
   // CFWL_Widget
+  void Trace(cppgc::Visitor* visitor) const override;
   FWL_Type GetClassID() const override;
   void ModifyStylesEx(uint32_t dwStylesExAdded,
                       uint32_t dwStylesExRemoved) override;
@@ -88,12 +87,14 @@ class CFWL_ComboBox final : public CFWL_Widget {
   void EditModifyStylesEx(uint32_t dwStylesExAdded, uint32_t dwStylesExRemoved);
   void ShowDropList(bool bActivate);
 
-  CFWL_ComboEdit* GetComboEdit() const { return m_pEdit.get(); }
+  CFWL_ComboEdit* GetComboEdit() const { return m_pEdit; }
 
   void ProcessSelChanged(bool bLButtonUp);
   int32_t GetCurrentSelection() const { return m_iCurSel; }
 
  private:
+  explicit CFWL_ComboBox(const CFWL_App* pApp);
+
   bool IsDropDownStyle() const {
     return !!(m_Properties.m_dwStyleExes & FWL_STYLEEXT_CMB_DropDown);
   }
@@ -115,8 +116,8 @@ class CFWL_ComboBox final : public CFWL_Widget {
   CFX_RectF m_ClientRect;
   CFX_RectF m_ContentRect;
   CFX_RectF m_BtnRect;
-  std::unique_ptr<CFWL_ComboEdit> const m_pEdit;
-  std::unique_ptr<CFWL_ComboList> const m_pListBox;
+  cppgc::Member<CFWL_ComboEdit> const m_pEdit;
+  cppgc::Member<CFWL_ComboList> const m_pListBox;
   int32_t m_iCurSel = -1;
   int32_t m_iBtnState = CFWL_PartState_Normal;
 };

@@ -7,14 +7,14 @@
 #ifndef XFA_FWL_IFWL_WIDGETDELEGATE_H_
 #define XFA_FWL_IFWL_WIDGETDELEGATE_H_
 
-#include <stdint.h>
+#include "v8/include/cppgc/garbage-collected.h"
 
 class CFWL_Event;
 class CFWL_Message;
 class CXFA_Graphics;
 class CFX_Matrix;
 
-class IFWL_WidgetDelegate {
+class IFWL_WidgetDelegate : public cppgc::GarbageCollectedMixin {
  public:
   virtual ~IFWL_WidgetDelegate() = default;
 

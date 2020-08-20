@@ -6,10 +6,10 @@
 
 #include "xfa/fxfa/cxfa_ffcombobox.h"
 
-#include <memory>
 #include <utility>
 #include <vector>
 
+#include "v8/include/cppgc/visitor.h"
 #include "xfa/fwl/cfwl_combobox.h"
 #include "xfa/fwl/cfwl_eventselectchanged.h"
 #include "xfa/fwl/cfwl_notedriver.h"
@@ -33,6 +33,11 @@ CXFA_FFComboBox::CXFA_FFComboBox(CXFA_Node* pNode) : CXFA_FFDropDown(pNode) {}
 
 CXFA_FFComboBox::~CXFA_FFComboBox() = default;
 
+void CXFA_FFComboBox::Trace(cppgc::Visitor* visitor) const {
+  CXFA_FFDropDown::Trace(visitor);
+  visitor->Trace(m_pOldDelegate);
+}
+
 CXFA_FFComboBox* CXFA_FFComboBox::AsComboBox() {
   return this;
 }
@@ -51,9 +56,9 @@ bool CXFA_FFComboBox::PtInActiveRect(const CFX_PointF& point) {
 bool CXFA_FFComboBox::LoadWidget() {
   ASSERT(!IsLoaded());
 
-  auto pNew = std::make_unique<CFWL_ComboBox>(GetFWLApp());
-  CFWL_ComboBox* pComboBox = pNew.get();
-  SetNormalWidget(std::move(pNew));
+  CFWL_ComboBox* pComboBox = cppgc::MakeGarbageCollected<CFWL_ComboBox>(
+      GetFWLApp()->GetHeap()->GetAllocationHandle(), GetFWLApp());
+  SetNormalWidget(pComboBox);
   pComboBox->SetAdapterIface(this);
 
   CFWL_NoteDriver* pNoteDriver = pComboBox->GetFWLApp()->GetNoteDriver();

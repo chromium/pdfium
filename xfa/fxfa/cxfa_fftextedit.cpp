@@ -45,13 +45,18 @@ void CXFA_FFTextEdit::PreFinalize() {
   CXFA_FFField::PreFinalize();
 }
 
+void CXFA_FFTextEdit::Trace(cppgc::Visitor* visitor) const {
+  CXFA_FFField::Trace(visitor);
+  visitor->Trace(m_pOldDelegate);
+}
+
 bool CXFA_FFTextEdit::LoadWidget() {
   ASSERT(!IsLoaded());
 
-  auto pNewWidget = std::make_unique<CFWL_Edit>(
-      GetFWLApp(), CFWL_Widget::Properties(), nullptr);
-  CFWL_Edit* pFWLEdit = pNewWidget.get();
-  SetNormalWidget(std::move(pNewWidget));
+  CFWL_Edit* pFWLEdit = cppgc::MakeGarbageCollected<CFWL_Edit>(
+      GetFWLApp()->GetHeap()->GetAllocationHandle(), GetFWLApp(),
+      CFWL_Widget::Properties(), nullptr);
+  SetNormalWidget(pFWLEdit);
   pFWLEdit->SetAdapterIface(this);
 
   CFWL_NoteDriver* pNoteDriver = pFWLEdit->GetFWLApp()->GetNoteDriver();

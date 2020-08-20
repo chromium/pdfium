@@ -11,7 +11,6 @@
 
 #include "core/fxcrt/cfx_timer.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fwl/cfwl_eventscroll.h"
 #include "xfa/fwl/cfwl_widget.h"
 
@@ -21,9 +20,7 @@
 class CFWL_ScrollBar final : public CFWL_Widget,
                              public CFX_Timer::CallbackIface {
  public:
-  CFWL_ScrollBar(const CFWL_App* app,
-                 const Properties& properties,
-                 CFWL_Widget* pOuter);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CFWL_ScrollBar() override;
 
   // CFWL_Widget:
@@ -56,6 +53,10 @@ class CFWL_ScrollBar final : public CFWL_Widget,
   void SetTrackPos(float fTrackPos);
 
  private:
+  CFWL_ScrollBar(const CFWL_App* app,
+                 const Properties& properties,
+                 CFWL_Widget* pOuter);
+
   bool IsVertical() const {
     return !!(m_Properties.m_dwStyleExes & FWL_STYLEEXT_SCB_Vert);
   }

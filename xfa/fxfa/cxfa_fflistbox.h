@@ -7,7 +7,7 @@
 #ifndef XFA_FXFA_CXFA_FFLISTBOX_H_
 #define XFA_FXFA_CXFA_FFLISTBOX_H_
 
-#include "core/fxcrt/unowned_ptr.h"
+#include "v8/include/cppgc/member.h"
 #include "xfa/fxfa/cxfa_ffdropdown.h"
 
 class CXFA_FFListBox final : public CXFA_FFDropDown {
@@ -17,6 +17,7 @@ class CXFA_FFListBox final : public CXFA_FFDropDown {
 
   // CXFA_FFField:
   void PreFinalize() override;
+  void Trace(cppgc::Visitor* visitor) const override;
   bool LoadWidget() override;
   bool OnKillFocus(CXFA_FFWidget* pNewWidget) override WARN_UNUSED_RESULT;
   void OnProcessMessage(CFWL_Message* pMessage) override;
@@ -41,7 +42,7 @@ class CXFA_FFListBox final : public CXFA_FFDropDown {
 
   uint32_t GetAlignment();
 
-  UnownedPtr<IFWL_WidgetDelegate> m_pOldDelegate;
+  cppgc::Member<IFWL_WidgetDelegate> m_pOldDelegate;
 };
 
 #endif  // XFA_FXFA_CXFA_FFLISTBOX_H_

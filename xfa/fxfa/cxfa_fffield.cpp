@@ -48,6 +48,11 @@ CXFA_FFField* CXFA_FFField::AsField() {
   return this;
 }
 
+void CXFA_FFField::Trace(cppgc::Visitor* visitor) const {
+  CXFA_FFWidget::Trace(visitor);
+  visitor->Trace(m_pNormalWidget);
+}
+
 CFX_RectF CXFA_FFField::GetBBox(FocusOption focus) {
   if (focus == kDoNotDrawFocus)
     return CXFA_FFWidget::GetBBox(kDoNotDrawFocus);
@@ -123,15 +128,15 @@ void CXFA_FFField::DrawFocus(CXFA_Graphics* pGS, CFX_Matrix* pMatrix) {
 }
 
 CFWL_Widget* CXFA_FFField::GetNormalWidget() {
-  return m_pNormalWidget.get();
+  return m_pNormalWidget;
 }
 
 const CFWL_Widget* CXFA_FFField::GetNormalWidget() const {
-  return m_pNormalWidget.get();
+  return m_pNormalWidget;
 }
 
-void CXFA_FFField::SetNormalWidget(std::unique_ptr<CFWL_Widget> widget) {
-  m_pNormalWidget = std::move(widget);
+void CXFA_FFField::SetNormalWidget(CFWL_Widget* widget) {
+  m_pNormalWidget = widget;
 }
 
 bool CXFA_FFField::IsLoaded() {

@@ -8,6 +8,7 @@
 
 #include <utility>
 
+#include "v8/include/cppgc/visitor.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fwl/cfwl_pushbutton.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
@@ -36,6 +37,7 @@ void CXFA_FFPushButton::Trace(cppgc::Visitor* visitor) const {
   visitor->Trace(m_pDownTextLayout);
   visitor->Trace(m_pRollProvider);
   visitor->Trace(m_pDownProvider);
+  visitor->Trace(m_pOldDelegate);
   visitor->Trace(button_);
 }
 
@@ -60,11 +62,11 @@ void CXFA_FFPushButton::RenderWidget(CXFA_Graphics* pGS,
 bool CXFA_FFPushButton::LoadWidget() {
   ASSERT(!IsLoaded());
 
-  auto pNew = std::make_unique<CFWL_PushButton>(GetFWLApp());
-  CFWL_PushButton* pPushButton = pNew.get();
+  CFWL_PushButton* pPushButton = cppgc::MakeGarbageCollected<CFWL_PushButton>(
+      GetFWLApp()->GetHeap()->GetAllocationHandle(), GetFWLApp());
   m_pOldDelegate = pPushButton->GetDelegate();
   pPushButton->SetDelegate(this);
-  SetNormalWidget(std::move(pNew));
+  SetNormalWidget(pPushButton);
   pPushButton->SetAdapterIface(this);
 
   CFWL_NoteDriver* pNoteDriver = pPushButton->GetFWLApp()->GetNoteDriver();

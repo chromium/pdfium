@@ -6,9 +6,10 @@
 
 #include "xfa/fwl/cfwl_datetimepicker.h"
 
-#include <memory>
 #include <utility>
 
+#include "v8/include/cppgc/visitor.h"
+#include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_event.h"
 #include "xfa/fwl/cfwl_eventselectchanged.h"
 #include "xfa/fwl/cfwl_messagemouse.h"
@@ -27,8 +28,13 @@ CFWL_DateTimePicker::CFWL_DateTimePicker(const CFWL_App* app)
     : CFWL_Widget(app,
                   Properties{0, FWL_STYLEEXT_DTP_ShortDateFormat, 0},
                   nullptr),
-      m_pEdit(std::make_unique<CFWL_DateTimeEdit>(app, Properties(), this)),
-      m_pMonthCal(std::make_unique<CFWL_MonthCalendar>(
+      m_pEdit(cppgc::MakeGarbageCollected<CFWL_DateTimeEdit>(
+          app->GetHeap()->GetAllocationHandle(),
+          app,
+          Properties(),
+          this)),
+      m_pMonthCal(cppgc::MakeGarbageCollected<CFWL_MonthCalendar>(
+          app->GetHeap()->GetAllocationHandle(),
           app,
           Properties{FWL_WGTSTYLE_Popup | FWL_WGTSTYLE_Border, 0,
                      FWL_WGTSTATE_Invisible},
@@ -36,12 +42,21 @@ CFWL_DateTimePicker::CFWL_DateTimePicker(const CFWL_App* app)
   m_pMonthCal->SetWidgetRect(
       CFX_RectF(0, 0, m_pMonthCal->GetAutosizedWidgetRect().Size()));
 
-  RegisterEventTarget(m_pMonthCal.get());
-  RegisterEventTarget(m_pEdit.get());
+  RegisterEventTarget(m_pMonthCal);
+  RegisterEventTarget(m_pEdit);
 }
 
-CFWL_DateTimePicker::~CFWL_DateTimePicker() {
+CFWL_DateTimePicker::~CFWL_DateTimePicker() = default;
+
+void CFWL_DateTimePicker::PreFinalize() {
   UnregisterEventTarget();
+  CFWL_Widget::PreFinalize();
+}
+
+void CFWL_DateTimePicker::Trace(cppgc::Visitor* visitor) const {
+  CFWL_Widget::Trace(visitor);
+  visitor->Trace(m_pEdit);
+  visitor->Trace(m_pMonthCal);
 }
 
 FWL_Type CFWL_DateTimePicker::GetClassID() const {
@@ -217,7 +232,7 @@ void CFWL_DateTimePicker::ShowMonthCalendar(bool bActivate) {
     m_pMonthCal->SetStates(FWL_WGTSTATE_Invisible);
 
   if (bActivate) {
-    CFWL_MessageSetFocus msg(m_pEdit.get(), m_pMonthCal.get());
+    CFWL_MessageSetFocus msg(m_pEdit, m_pMonthCal);
     m_pEdit->GetDelegate()->OnProcessMessage(&msg);
   }
 
@@ -362,7 +377,7 @@ void CFWL_DateTimePicker::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
           CFX_RectF(m_WidgetRect.width, 0, m_fBtn, m_WidgetRect.height - 1);
     }
     rtInvalidate = m_BtnRect;
-    pMsg->SetDstTarget(m_pEdit.get());
+    pMsg->SetDstTarget(m_pEdit);
     m_pEdit->GetDelegate()->OnProcessMessage(pMsg);
   } else {
     m_Properties.m_dwStates &= ~FWL_WGTSTATE_Focused;
@@ -370,7 +385,7 @@ void CFWL_DateTimePicker::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
     if (IsMonthCalendarVisible())
       ShowMonthCalendar(false);
     if (m_pEdit->GetStates() & FWL_WGTSTATE_Focused) {
-      pMsg->SetSrcTarget(m_pEdit.get());
+      pMsg->SetSrcTarget(m_pEdit);
       m_pEdit->GetDelegate()->OnProcessMessage(pMsg);
     }
   }

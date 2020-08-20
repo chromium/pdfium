@@ -12,13 +12,16 @@
 
 class CFWL_DateTimeEdit final : public CFWL_Edit {
  public:
-  CFWL_DateTimeEdit(const CFWL_App* app,
-                    const Properties& properties,
-                    CFWL_Widget* pOuter);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CFWL_DateTimeEdit() override;
 
   // CFWL_Edit:
   void OnProcessMessage(CFWL_Message* pMessage) override;
+
+ private:
+  CFWL_DateTimeEdit(const CFWL_App* app,
+                    const Properties& properties,
+                    CFWL_Widget* pOuter);
 };
 
 #endif  // XFA_FWL_CFWL_DATETIMEEDIT_H_

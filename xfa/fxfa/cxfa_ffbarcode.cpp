@@ -6,7 +6,6 @@
 
 #include "xfa/fxfa/cxfa_ffbarcode.h"
 
-#include <memory>
 #include <utility>
 
 #include "core/fxcrt/fx_extension.h"
@@ -146,9 +145,9 @@ void CXFA_FFBarcode::Trace(cppgc::Visitor* visitor) const {
 bool CXFA_FFBarcode::LoadWidget() {
   ASSERT(!IsLoaded());
 
-  auto pNew = std::make_unique<CFWL_Barcode>(GetFWLApp());
-  CFWL_Barcode* pFWLBarcode = pNew.get();
-  SetNormalWidget(std::move(pNew));
+  CFWL_Barcode* pFWLBarcode = cppgc::MakeGarbageCollected<CFWL_Barcode>(
+      GetFWLApp()->GetHeap()->GetAllocationHandle(), GetFWLApp());
+  SetNormalWidget(pFWLBarcode);
   pFWLBarcode->SetAdapterIface(this);
 
   CFWL_NoteDriver* pNoteDriver = pFWLBarcode->GetFWLApp()->GetNoteDriver();

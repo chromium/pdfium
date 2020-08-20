@@ -12,9 +12,7 @@
 
 class CFWL_ComboEdit final : public CFWL_Edit {
  public:
-  CFWL_ComboEdit(const CFWL_App* app,
-                 const Properties& properties,
-                 CFWL_Widget* pOuter);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CFWL_ComboEdit() override;
 
   // CFWL_Edit:
@@ -23,6 +21,11 @@ class CFWL_ComboEdit final : public CFWL_Edit {
   void ClearSelected();
   void SetSelected();
   void FlagFocus(bool bSet);
+
+ private:
+  CFWL_ComboEdit(const CFWL_App* app,
+                 const Properties& properties,
+                 CFWL_Widget* pOuter);
 };
 
 #endif  // XFA_FWL_CFWL_COMBOEDIT_H_

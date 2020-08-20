@@ -7,9 +7,9 @@
 #include "xfa/fwl/cfwl_combobox.h"
 
 #include <algorithm>
-#include <memory>
 #include <utility>
 
+#include "v8/include/cppgc/visitor.h"
 #include "xfa/fde/cfde_texteditengine.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fwl/cfwl_app.h"
@@ -30,14 +30,25 @@
 
 CFWL_ComboBox::CFWL_ComboBox(const CFWL_App* app)
     : CFWL_Widget(app, Properties(), nullptr),
-      m_pEdit(std::make_unique<CFWL_ComboEdit>(app, Properties(), this)),
-      m_pListBox(std::make_unique<CFWL_ComboList>(
+      m_pEdit(cppgc::MakeGarbageCollected<CFWL_ComboEdit>(
+          app->GetHeap()->GetAllocationHandle(),
+          app,
+          Properties(),
+          this)),
+      m_pListBox(cppgc::MakeGarbageCollected<CFWL_ComboList>(
+          app->GetHeap()->GetAllocationHandle(),
           app,
           Properties{FWL_WGTSTYLE_Border | FWL_WGTSTYLE_VScroll, 0,
                      FWL_WGTSTATE_Invisible},
           this)) {}
 
 CFWL_ComboBox::~CFWL_ComboBox() = default;
+
+void CFWL_ComboBox::Trace(cppgc::Visitor* visitor) const {
+  CFWL_Widget::Trace(visitor);
+  visitor->Trace(m_pEdit);
+  visitor->Trace(m_pListBox);
+}
 
 FWL_Type CFWL_ComboBox::GetClassID() const {
   return FWL_Type::ComboBox;
@@ -123,8 +134,7 @@ void CFWL_ComboBox::DrawWidget(CXFA_Graphics* pGraphics,
 }
 
 WideString CFWL_ComboBox::GetTextByIndex(int32_t iIndex) const {
-  auto* pItem = static_cast<CFWL_ListBox::Item*>(
-      m_pListBox->GetItem(m_pListBox.get(), iIndex));
+  CFWL_ListBox::Item* pItem = m_pListBox->GetItem(m_pListBox, iIndex);
   return pItem ? pItem->GetText() : WideString();
 }
 
@@ -208,7 +218,7 @@ void CFWL_ComboBox::ShowDropList(bool bActivate) {
     if (!preEvent.GetSrcTarget())
       return;
 
-    CFWL_ComboList* pComboList = m_pListBox.get();
+    CFWL_ComboList* pComboList = m_pListBox;
     int32_t iItems = pComboList->CountItems(nullptr);
     if (iItems < 1)
       return;
@@ -290,7 +300,7 @@ void CFWL_ComboBox::Layout() {
 
   if (m_iCurSel >= 0) {
     CFWL_ListBox::Item* hItem = m_pListBox->GetItem(this, m_iCurSel);
-    ScopedUpdateLock update_lock(m_pEdit.get());
+    ScopedUpdateLock update_lock(m_pEdit);
     m_pEdit->SetText(hItem ? hItem->GetText() : WideString());
   }
   m_pEdit->Update();
@@ -474,13 +484,13 @@ void CFWL_ComboBox::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
   if (bSet) {
     m_Properties.m_dwStates |= FWL_WGTSTATE_Focused;
     if ((m_pEdit->GetStates() & FWL_WGTSTATE_Focused) == 0) {
-      CFWL_MessageSetFocus msg(nullptr, m_pEdit.get());
+      CFWL_MessageSetFocus msg(nullptr, m_pEdit);
       m_pEdit->GetDelegate()->OnProcessMessage(&msg);
     }
   } else {
     m_Properties.m_dwStates &= ~FWL_WGTSTATE_Focused;
     ShowDropList(false);
-    CFWL_MessageKillFocus msg(m_pEdit.get());
+    CFWL_MessageKillFocus msg(m_pEdit);
     m_pEdit->GetDelegate()->OnProcessMessage(&msg);
   }
 }
@@ -490,7 +500,7 @@ void CFWL_ComboBox::OnKey(CFWL_MessageKey* pMsg) {
   const bool bUp = dwKeyCode == XFA_FWL_VKEY_Up;
   const bool bDown = dwKeyCode == XFA_FWL_VKEY_Down;
   if (bUp || bDown) {
-    CFWL_ComboList* pComboList = m_pListBox.get();
+    CFWL_ComboList* pComboList = m_pListBox;
     int32_t iCount = pComboList->CountItems(nullptr);
     if (iCount < 1)
       return;

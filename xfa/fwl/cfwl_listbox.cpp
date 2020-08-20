@@ -11,6 +11,7 @@
 #include <utility>
 
 #include "third_party/base/stl_util.h"
+#include "v8/include/cppgc/visitor.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_messagekey.h"
@@ -34,6 +35,12 @@ CFWL_ListBox::CFWL_ListBox(const CFWL_App* app,
     : CFWL_Widget(app, properties, pOuter) {}
 
 CFWL_ListBox::~CFWL_ListBox() = default;
+
+void CFWL_ListBox::Trace(cppgc::Visitor* visitor) const {
+  CFWL_Widget::Trace(visitor);
+  visitor->Trace(m_pHorzScrollBar);
+  visitor->Trace(m_pVertScrollBar);
+}
 
 FWL_Type CFWL_ListBox::GetClassID() const {
   return FWL_Type::ListBox;
@@ -582,23 +589,22 @@ void CFWL_ListBox::InitVerticalScrollBar() {
   if (m_pVertScrollBar)
     return;
 
-  m_pVertScrollBar = std::make_unique<CFWL_ScrollBar>(
-      GetFWLApp(), Properties{0, FWL_STYLEEXT_SCB_Vert, FWL_WGTSTATE_Invisible},
-      this);
+  m_pVertScrollBar = cppgc::MakeGarbageCollected<CFWL_ScrollBar>(
+      GetFWLApp()->GetHeap()->GetAllocationHandle(), GetFWLApp(),
+      Properties{0, FWL_STYLEEXT_SCB_Vert, FWL_WGTSTATE_Invisible}, this);
 }
 
 void CFWL_ListBox::InitHorizontalScrollBar() {
   if (m_pHorzScrollBar)
     return;
 
-  m_pHorzScrollBar = std::make_unique<CFWL_ScrollBar>(
-      GetFWLApp(), Properties{0, FWL_STYLEEXT_SCB_Horz, FWL_WGTSTATE_Invisible},
-      this);
+  m_pHorzScrollBar = cppgc::MakeGarbageCollected<CFWL_ScrollBar>(
+      GetFWLApp()->GetHeap()->GetAllocationHandle(), GetFWLApp(),
+      Properties{0, FWL_STYLEEXT_SCB_Horz, FWL_WGTSTATE_Invisible}, this);
 }
 
 bool CFWL_ListBox::IsShowScrollBar(bool bVert) {
-  CFWL_ScrollBar* pScrollbar =
-      bVert ? m_pVertScrollBar.get() : m_pHorzScrollBar.get();
+  CFWL_ScrollBar* pScrollbar = bVert ? m_pVertScrollBar : m_pHorzScrollBar;
   if (!pScrollbar || !pScrollbar->IsVisible())
     return false;
 
@@ -655,8 +661,8 @@ void CFWL_ListBox::OnProcessEvent(CFWL_Event* pEvent) {
     return;
 
   CFWL_Widget* pSrcTarget = pEvent->GetSrcTarget();
-  if ((pSrcTarget == m_pVertScrollBar.get() && m_pVertScrollBar) ||
-      (pSrcTarget == m_pHorzScrollBar.get() && m_pHorzScrollBar)) {
+  if ((pSrcTarget == m_pVertScrollBar && m_pVertScrollBar) ||
+      (pSrcTarget == m_pHorzScrollBar && m_pHorzScrollBar)) {
     CFWL_EventScroll* pScrollEvent = static_cast<CFWL_EventScroll*>(pEvent);
     OnScroll(static_cast<CFWL_ScrollBar*>(pSrcTarget),
              pScrollEvent->m_iScrollCode, pScrollEvent->m_fPos);

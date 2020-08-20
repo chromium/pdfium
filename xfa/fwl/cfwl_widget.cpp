@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "third_party/base/stl_util.h"
+#include "v8/include/cppgc/visitor.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_combobox.h"
@@ -42,10 +43,17 @@ CFWL_Widget::CFWL_Widget(const CFWL_App* app,
   m_pWidgetMgr->InsertWidget(m_pOuter, this);
 }
 
-CFWL_Widget::~CFWL_Widget() {
+CFWL_Widget::~CFWL_Widget() = default;
+
+void CFWL_Widget::PreFinalize() {
   CHECK(!IsLocked());  // Prefer hard stop to UaF.
   NotifyDriver();
   m_pWidgetMgr->RemoveWidget(this);
+}
+
+void CFWL_Widget::Trace(cppgc::Visitor* visitor) const {
+  visitor->Trace(m_pOuter);
+  visitor->Trace(m_pDelegate);
 }
 
 bool CFWL_Widget::IsForm() const {

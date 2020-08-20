@@ -7,9 +7,7 @@
 #ifndef XFA_FXFA_CXFA_FFPUSHBUTTON_H_
 #define XFA_FXFA_CXFA_FFPUSHBUTTON_H_
 
-#include "core/fxcrt/unowned_ptr.h"
 #include "v8/include/cppgc/member.h"
-#include "v8/include/cppgc/visitor.h"
 #include "xfa/fxfa/cxfa_fffield.h"
 
 #define XFA_FWL_PSBSTYLEEXT_HiliteInverted (1L << 0)
@@ -54,7 +52,7 @@ class CXFA_FFPushButton final : public CXFA_FFField {
   cppgc::Member<CXFA_TextLayout> m_pDownTextLayout;
   cppgc::Member<CXFA_TextProvider> m_pRollProvider;
   cppgc::Member<CXFA_TextProvider> m_pDownProvider;
-  UnownedPtr<IFWL_WidgetDelegate> m_pOldDelegate;
+  cppgc::Member<IFWL_WidgetDelegate> m_pOldDelegate;
   cppgc::Member<CXFA_Button> const button_;
 };
 

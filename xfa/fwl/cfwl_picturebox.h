@@ -14,7 +14,7 @@ class CFWL_Widget;
 
 class CFWL_PictureBox final : public CFWL_Widget {
  public:
-  explicit CFWL_PictureBox(const CFWL_App* pApp);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CFWL_PictureBox() override;
 
   // CFWL_Widget
@@ -25,6 +25,8 @@ class CFWL_PictureBox final : public CFWL_Widget {
                     const CFX_Matrix& matrix) override;
 
  private:
+  explicit CFWL_PictureBox(const CFWL_App* pApp);
+
   CFX_RectF m_ClientRect;
   CFX_RectF m_ImageRect;
   CFX_Matrix m_matrix;

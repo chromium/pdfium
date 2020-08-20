@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "core/fxge/dib/cfx_dibitmap.h"
+#include "v8/include/cppgc/visitor.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_messagemouse.h"
 #include "xfa/fwl/cfwl_notedriver.h"
@@ -33,12 +34,17 @@ void CXFA_FFImageEdit::PreFinalize() {
   CXFA_FFField::PreFinalize();
 }
 
+void CXFA_FFImageEdit::Trace(cppgc::Visitor* visitor) const {
+  CXFA_FFField::Trace(visitor);
+  visitor->Trace(m_pOldDelegate);
+}
+
 bool CXFA_FFImageEdit::LoadWidget() {
   ASSERT(!IsLoaded());
 
-  auto pNew = std::make_unique<CFWL_PictureBox>(GetFWLApp());
-  CFWL_PictureBox* pPictureBox = pNew.get();
-  SetNormalWidget(std::move(pNew));
+  CFWL_PictureBox* pPictureBox = cppgc::MakeGarbageCollected<CFWL_PictureBox>(
+      GetFWLApp()->GetHeap()->GetAllocationHandle(), GetFWLApp());
+  SetNormalWidget(pPictureBox);
   pPictureBox->SetAdapterIface(this);
 
   CFWL_NoteDriver* pNoteDriver = pPictureBox->GetFWLApp()->GetNoteDriver();

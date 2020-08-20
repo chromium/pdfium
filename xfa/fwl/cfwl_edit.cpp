@@ -15,6 +15,7 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/text_char_pos.h"
 #include "third_party/base/stl_util.h"
+#include "v8/include/cppgc/visitor.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fwl/cfwl_app.h"
@@ -52,10 +53,20 @@ CFWL_Edit::CFWL_Edit(const CFWL_App* app,
   m_pEditEngine->SetDelegate(this);
 }
 
-CFWL_Edit::~CFWL_Edit() {
+CFWL_Edit::~CFWL_Edit() = default;
+
+void CFWL_Edit::PreFinalize() {
   m_pEditEngine->SetDelegate(nullptr);
   if (m_Properties.m_dwStates & FWL_WGTSTATE_Focused)
     HideCaret(nullptr);
+  CFWL_Widget::PreFinalize();
+}
+
+void CFWL_Edit::Trace(cppgc::Visitor* visitor) const {
+  CFWL_Widget::Trace(visitor);
+  visitor->Trace(m_pVertScrollBar);
+  visitor->Trace(m_pHorzScrollBar);
+  visitor->Trace(m_pCaret);
 }
 
 FWL_Type CFWL_Edit::GetClassID() const {
@@ -564,7 +575,7 @@ bool CFWL_Edit::UpdateOffset() {
 }
 
 bool CFWL_Edit::UpdateOffset(CFWL_ScrollBar* pScrollBar, float fPosChanged) {
-  if (pScrollBar == m_pHorzScrollBar.get())
+  if (pScrollBar == m_pHorzScrollBar)
     m_fScrollOffsetX += fPosChanged;
   else
     m_fScrollOffsetY += fPosChanged;
@@ -631,7 +642,7 @@ CFWL_ScrollBar* CFWL_Edit::UpdateScroll() {
     CFX_RectF rtScroll = m_pHorzScrollBar->GetWidgetRect();
     if (rtScroll.width < contents_bounds.width) {
       {
-        ScopedUpdateLock update_lock(m_pHorzScrollBar.get());
+        ScopedUpdateLock update_lock(m_pHorzScrollBar);
         float fRange = contents_bounds.width - rtScroll.width;
         m_pHorzScrollBar->SetRange(0.0f, fRange);
 
@@ -643,15 +654,15 @@ CFWL_ScrollBar* CFWL_Edit::UpdateScroll() {
         m_pHorzScrollBar->RemoveStates(FWL_WGTSTATE_Disabled);
       }
       m_pHorzScrollBar->Update();
-      pRepaint = m_pHorzScrollBar.get();
+      pRepaint = m_pHorzScrollBar;
     } else if ((m_pHorzScrollBar->GetStates() & FWL_WGTSTATE_Disabled) == 0) {
       {
-        ScopedUpdateLock update_lock(m_pHorzScrollBar.get());
+        ScopedUpdateLock update_lock(m_pHorzScrollBar);
         m_pHorzScrollBar->SetRange(0, -1);
         m_pHorzScrollBar->SetStates(FWL_WGTSTATE_Disabled);
       }
       m_pHorzScrollBar->Update();
-      pRepaint = m_pHorzScrollBar.get();
+      pRepaint = m_pHorzScrollBar;
     }
   }
 
@@ -659,7 +670,7 @@ CFWL_ScrollBar* CFWL_Edit::UpdateScroll() {
     CFX_RectF rtScroll = m_pVertScrollBar->GetWidgetRect();
     if (rtScroll.height < contents_bounds.height) {
       {
-        ScopedUpdateLock update_lock(m_pHorzScrollBar.get());
+        ScopedUpdateLock update_lock(m_pHorzScrollBar);
         float fStep = m_pEditEngine->GetLineSpace();
         float fRange =
             std::max(contents_bounds.height - m_EngineRect.height, fStep);
@@ -673,15 +684,15 @@ CFWL_ScrollBar* CFWL_Edit::UpdateScroll() {
         m_pVertScrollBar->RemoveStates(FWL_WGTSTATE_Disabled);
       }
       m_pVertScrollBar->Update();
-      pRepaint = m_pVertScrollBar.get();
+      pRepaint = m_pVertScrollBar;
     } else if ((m_pVertScrollBar->GetStates() & FWL_WGTSTATE_Disabled) == 0) {
       {
-        ScopedUpdateLock update_lock(m_pHorzScrollBar.get());
+        ScopedUpdateLock update_lock(m_pHorzScrollBar);
         m_pVertScrollBar->SetRange(0, -1);
         m_pVertScrollBar->SetStates(FWL_WGTSTATE_Disabled);
       }
       m_pVertScrollBar->Update();
-      pRepaint = m_pVertScrollBar.get();
+      pRepaint = m_pVertScrollBar;
     }
   }
   return pRepaint;
@@ -835,8 +846,8 @@ void CFWL_Edit::InitVerticalScrollBar() {
   if (m_pVertScrollBar)
     return;
 
-  m_pVertScrollBar = std::make_unique<CFWL_ScrollBar>(
-      GetFWLApp(),
+  m_pVertScrollBar = cppgc::MakeGarbageCollected<CFWL_ScrollBar>(
+      GetFWLApp()->GetHeap()->GetAllocationHandle(), GetFWLApp(),
       Properties{0, FWL_STYLEEXT_SCB_Vert,
                  FWL_WGTSTATE_Disabled | FWL_WGTSTATE_Invisible},
       this);
@@ -846,8 +857,8 @@ void CFWL_Edit::InitHorizontalScrollBar() {
   if (m_pHorzScrollBar)
     return;
 
-  m_pHorzScrollBar = std::make_unique<CFWL_ScrollBar>(
-      GetFWLApp(),
+  m_pHorzScrollBar = cppgc::MakeGarbageCollected<CFWL_ScrollBar>(
+      GetFWLApp()->GetHeap()->GetAllocationHandle(), GetFWLApp(),
       Properties{0, FWL_STYLEEXT_SCB_Horz,
                  FWL_WGTSTATE_Disabled | FWL_WGTSTATE_Invisible},
       this);
@@ -920,7 +931,9 @@ void CFWL_Edit::InitCaret() {
   if (m_pCaret)
     return;
 
-  m_pCaret = std::make_unique<CFWL_Caret>(GetFWLApp(), Properties(), this);
+  m_pCaret = cppgc::MakeGarbageCollected<CFWL_Caret>(
+      GetFWLApp()->GetHeap()->GetAllocationHandle(), GetFWLApp(), Properties(),
+      this);
   m_pCaret->SetStates(m_Properties.m_dwStates);
   UpdateCursorRect();
 }
@@ -1006,8 +1019,8 @@ void CFWL_Edit::OnProcessEvent(CFWL_Event* pEvent) {
     return;
 
   CFWL_Widget* pSrcTarget = pEvent->GetSrcTarget();
-  if ((pSrcTarget == m_pVertScrollBar.get() && m_pVertScrollBar) ||
-      (pSrcTarget == m_pHorzScrollBar.get() && m_pHorzScrollBar)) {
+  if ((pSrcTarget == m_pVertScrollBar && m_pVertScrollBar) ||
+      (pSrcTarget == m_pHorzScrollBar && m_pHorzScrollBar)) {
     CFWL_EventScroll* pScrollEvent = static_cast<CFWL_EventScroll*>(pEvent);
     OnScroll(static_cast<CFWL_ScrollBar*>(pSrcTarget),
              pScrollEvent->m_iScrollCode, pScrollEvent->m_fPos);

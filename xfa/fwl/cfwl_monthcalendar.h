@@ -21,9 +21,7 @@ class CFWL_MessageMouse;
 
 class CFWL_MonthCalendar final : public CFWL_Widget {
  public:
-  CFWL_MonthCalendar(const CFWL_App* app,
-                     const Properties& properties,
-                     CFWL_Widget* pOuter);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CFWL_MonthCalendar() override;
 
   // FWL_WidgetImp
@@ -86,6 +84,10 @@ class CFWL_MonthCalendar final : public CFWL_Widget {
     CFX_RectF rect;
     WideString wsDay;
   };
+
+  CFWL_MonthCalendar(const CFWL_App* app,
+                     const Properties& properties,
+                     CFWL_Widget* pOuter);
 
   void DrawBackground(CXFA_Graphics* pGraphics,
                       const CFX_Matrix* pMatrix);

@@ -18,7 +18,7 @@ class CFWL_Widget;
 
 class CFWL_PushButton final : public CFWL_Widget {
  public:
-  explicit CFWL_PushButton(const CFWL_App*);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CFWL_PushButton() override;
 
   // CFWL_Widget
@@ -31,6 +31,8 @@ class CFWL_PushButton final : public CFWL_Widget {
                     const CFX_Matrix& matrix) override;
 
  private:
+  explicit CFWL_PushButton(const CFWL_App*);
+
   void DrawBkground(CXFA_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix);
   uint32_t GetPartStates();

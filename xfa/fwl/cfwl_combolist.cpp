@@ -23,6 +23,8 @@ CFWL_ComboList::CFWL_ComboList(const CFWL_App* app,
   ASSERT(pOuter);
 }
 
+CFWL_ComboList::~CFWL_ComboList() = default;
+
 int32_t CFWL_ComboList::MatchItem(WideStringView wsMatch) {
   if (wsMatch.IsEmpty())
     return -1;

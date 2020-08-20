@@ -44,12 +44,12 @@ class CFWL_Caret;
 
 class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
  public:
-  CFWL_Edit(const CFWL_App* app,
-            const Properties& properties,
-            CFWL_Widget* pOuter);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CFWL_Edit() override;
 
   // CFWL_Widget:
+  void PreFinalize() override;
+  void Trace(cppgc::Visitor* visitor) const override;
   FWL_Type GetClassID() const override;
   CFX_RectF GetAutosizedWidgetRect() override;
   CFX_RectF GetWidgetRect() override;
@@ -96,6 +96,10 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   void SetScrollOffset(float fScrollOffset) override;
 
  protected:
+  CFWL_Edit(const CFWL_App* app,
+            const Properties& properties,
+            CFWL_Widget* pOuter);
+
   void ShowCaret(CFX_RectF* pRect);
   void HideCaret(CFX_RectF* pRect);
   const CFX_RectF& GetRTClient() const { return m_ClientRect; }
@@ -157,9 +161,9 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   float m_fFontSize = 0.0f;
   size_t m_CursorPosition = 0;
   std::unique_ptr<CFDE_TextEditEngine> const m_pEditEngine;
-  std::unique_ptr<CFWL_ScrollBar> m_pVertScrollBar;
-  std::unique_ptr<CFWL_ScrollBar> m_pHorzScrollBar;
-  std::unique_ptr<CFWL_Caret> m_pCaret;
+  cppgc::Member<CFWL_ScrollBar> m_pVertScrollBar;
+  cppgc::Member<CFWL_ScrollBar> m_pHorzScrollBar;
+  cppgc::Member<CFWL_Caret> m_pCaret;
   WideString m_wsCache;
   WideString m_wsFont;
 };

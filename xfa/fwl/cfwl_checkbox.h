@@ -30,7 +30,7 @@ class CFWL_MessageMouse;
 
 class CFWL_CheckBox final : public CFWL_Widget {
  public:
-  explicit CFWL_CheckBox(const CFWL_App* pApp);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CFWL_CheckBox() override;
 
   // CFWL_Widget
@@ -45,6 +45,8 @@ class CFWL_CheckBox final : public CFWL_Widget {
   void SetBoxSize(float fHeight);
 
  private:
+  explicit CFWL_CheckBox(const CFWL_App* pApp);
+
   void SetCheckState(int32_t iCheck);
   void Layout();
   uint32_t GetPartStates() const;
