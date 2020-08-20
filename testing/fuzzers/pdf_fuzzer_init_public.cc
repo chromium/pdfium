@@ -69,10 +69,13 @@ struct TestCase {
 #endif  // PDF_ENABLE_V8
 
     memset(&config, '\0', sizeof(config));
-    config.version = 2;
+    config.version = 3;
     config.m_pUserFontPaths = nullptr;
     config.m_pIsolate = nullptr;
     config.m_v8EmbedderSlot = 0;
+#ifdef PDF_ENABLE_V8
+    config.m_pPlatform = platform.get();
+#endif  // PDF_ENABLE_V8
     FPDF_InitLibraryWithConfig(&config);
 
     memset(&unsupport_info, '\0', sizeof(unsupport_info));
