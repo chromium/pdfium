@@ -13,7 +13,6 @@
 #include "core/fxcrt/fx_extension.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fwl/cfwl_app.h"
-#include "xfa/fwl/cfwl_eventtarget.h"
 #include "xfa/fwl/cfwl_messagekey.h"
 #include "xfa/fwl/cfwl_messagekillfocus.h"
 #include "xfa/fwl/cfwl_messagemouse.h"
@@ -47,7 +46,7 @@ void CFWL_NoteDriver::RegisterEventTarget(CFWL_Widget* pListener,
     pListener->SetEventKey(key);
   }
   if (!m_eventTargets[key])
-    m_eventTargets[key] = std::make_unique<CFWL_EventTarget>(pListener);
+    m_eventTargets[key] = std::make_unique<Target>(pListener);
 
   m_eventTargets[key]->SetEventSource(pEventSource);
 }
@@ -238,4 +237,24 @@ void CFWL_NoteDriver::MouseSecondary(CFWL_Message* pMessage) {
 
   CFWL_MessageMouse msHover(pTarget, FWL_MouseCommand::Hover, 0, pMsg->m_pos);
   DispatchMessage(&msHover, nullptr);
+}
+
+CFWL_NoteDriver::Target::Target(CFWL_Widget* pListener)
+    : m_pListener(pListener) {}
+
+CFWL_NoteDriver::Target::~Target() = default;
+
+void CFWL_NoteDriver::Target::SetEventSource(CFWL_Widget* pSource) {
+  if (pSource)
+    m_widgets.insert(pSource);
+}
+
+bool CFWL_NoteDriver::Target::ProcessEvent(CFWL_Event* pEvent) {
+  IFWL_WidgetDelegate* pDelegate = m_pListener->GetDelegate();
+  if (!pDelegate)
+    return false;
+  if (!m_widgets.empty() && m_widgets.count(pEvent->GetSrcTarget()) == 0)
+    return false;
+  pDelegate->OnProcessEvent(pEvent);
+  return true;
 }

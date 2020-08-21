@@ -15,9 +15,7 @@
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fxgraphics/cxfa_graphics.h"
 
-class CFWL_EventTarget;
-class CFWL_TargetImp;
-class CFWL_Widget;
+class CFWL_Event;
 
 class CFWL_NoteDriver {
  public:
@@ -25,15 +23,30 @@ class CFWL_NoteDriver {
   ~CFWL_NoteDriver();
 
   void SendEvent(CFWL_Event* pNote);
+  void ProcessMessage(CFWL_Message* pMessage);
   void RegisterEventTarget(CFWL_Widget* pListener, CFWL_Widget* pEventSource);
   void UnregisterEventTarget(CFWL_Widget* pListener);
-  void SetGrab(CFWL_Widget* pGrab) { m_pGrab = pGrab; }
-
   void NotifyTargetHide(CFWL_Widget* pNoteTarget);
   void NotifyTargetDestroy(CFWL_Widget* pNoteTarget);
-  void ProcessMessage(CFWL_Message* pMessage);
+  void SetGrab(CFWL_Widget* pGrab) { m_pGrab = pGrab; }
 
  private:
+  class Target {
+   public:
+    explicit Target(CFWL_Widget* pListener);
+    ~Target();
+
+    void SetEventSource(CFWL_Widget* pSource);
+    bool ProcessEvent(CFWL_Event* pEvent);
+    bool IsValid() const { return m_bValid; }
+    void FlagInvalid() { m_bValid = false; }
+
+   private:
+    bool m_bValid = true;
+    CFWL_Widget* const m_pListener;
+    std::set<CFWL_Widget*> m_widgets;
+  };
+
   bool DispatchMessage(CFWL_Message* pMessage, CFWL_Widget* pMessageForm);
   bool DoSetFocus(CFWL_Message* pMsg, CFWL_Widget* pMessageForm);
   bool DoKillFocus(CFWL_Message* pMsg, CFWL_Widget* pMessageForm);
@@ -43,7 +56,7 @@ class CFWL_NoteDriver {
   bool DoMouseEx(CFWL_Message* pMsg, CFWL_Widget* pMessageForm);
   void MouseSecondary(CFWL_Message* pMsg);
 
-  std::map<uint64_t, std::unique_ptr<CFWL_EventTarget>> m_eventTargets;
+  std::map<uint64_t, std::unique_ptr<Target>> m_eventTargets;
   UnownedPtr<CFWL_Widget> m_pHover;
   UnownedPtr<CFWL_Widget> m_pFocus;
   UnownedPtr<CFWL_Widget> m_pGrab;

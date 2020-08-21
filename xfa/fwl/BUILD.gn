@@ -37,8 +37,6 @@ source_set("fwl") {
     "cfwl_eventscroll.h",
     "cfwl_eventselectchanged.cpp",
     "cfwl_eventselectchanged.h",
-    "cfwl_eventtarget.cpp",
-    "cfwl_eventtarget.h",
     "cfwl_eventtextwillchange.cpp",
     "cfwl_eventtextwillchange.h",
     "cfwl_eventvalidate.cpp",
