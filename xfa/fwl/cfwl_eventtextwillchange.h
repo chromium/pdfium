@@ -7,6 +7,7 @@
 #ifndef XFA_FWL_CFWL_EVENTTEXTWILLCHANGE_H_
 #define XFA_FWL_CFWL_EVENTTEXTWILLCHANGE_H_
 
+#include "core/fxcrt/widestring.h"
 #include "xfa/fwl/cfwl_event.h"
 
 class CFWL_EventTextWillChange final : public CFWL_Event {

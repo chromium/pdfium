@@ -7,6 +7,7 @@
 #ifndef XFA_FWL_CFWL_EVENTVALIDATE_H_
 #define XFA_FWL_CFWL_EVENTVALIDATE_H_
 
+#include "core/fxcrt/widestring.h"
 #include "xfa/fwl/cfwl_event.h"
 
 class CFWL_EventValidate final : public CFWL_Event {

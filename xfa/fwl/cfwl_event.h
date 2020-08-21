@@ -7,10 +7,14 @@
 #ifndef XFA_FWL_CFWL_EVENT_H_
 #define XFA_FWL_CFWL_EVENT_H_
 
-#include "core/fxcrt/observed_ptr.h"
-#include "xfa/fwl/cfwl_widget.h"
+#include "core/fxcrt/fx_system.h"
+#include "v8/include/cppgc/macros.h"
+
+class CFWL_Widget;
 
 class CFWL_Event {
+  CPPGC_STACK_ALLOCATED();  // Allow Raw/Unowned pointers.
+
  public:
   enum class Type {
     CheckStateChanged,
@@ -33,13 +37,13 @@ class CFWL_Event {
   virtual ~CFWL_Event();
 
   Type GetType() const { return m_type; }
-  CFWL_Widget* GetSrcTarget() const { return m_pSrcTarget.Get(); }
-  CFWL_Widget* GetDstTarget() const { return m_pDstTarget.Get(); }
+  CFWL_Widget* GetSrcTarget() const { return m_pSrcTarget; }
+  CFWL_Widget* GetDstTarget() const { return m_pDstTarget; }
 
  private:
   const Type m_type;
-  ObservedPtr<CFWL_Widget> const m_pSrcTarget;
-  ObservedPtr<CFWL_Widget> const m_pDstTarget;
+  CFWL_Widget* const m_pSrcTarget = nullptr;
+  CFWL_Widget* const m_pDstTarget = nullptr;
 };
 
 #endif  // XFA_FWL_CFWL_EVENT_H_
