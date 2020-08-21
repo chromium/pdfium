@@ -11,11 +11,11 @@
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fwl/cfwl_app.h"
-#include "xfa/fxfa/cxfa_fontmgr.h"
 #include "xfa/fxfa/fxfa.h"
 
 class CFGAS_FontMgr;
 class CFWL_WidgetMgr;
+class CXFA_FontMgr;
 class CXFA_FWLAdapterWidgetMgr;
 class CXFA_FWLTheme;
 
@@ -38,7 +38,7 @@ class CXFA_FFApp : public CFWL_App::AdapterIface {
 
   IXFA_AppProvider* GetAppProvider() const { return m_pProvider.Get(); }
   const CFWL_App* GetFWLApp() const { return m_pFWLApp.get(); }
-  CXFA_FontMgr* GetXFAFontMgr() { return &m_pFontMgr; }
+  CXFA_FontMgr* GetXFAFontMgr() const { return m_pXFAFontMgr.get(); }
 
  private:
   UnownedPtr<IXFA_AppProvider> const m_pProvider;
@@ -54,8 +54,7 @@ class CXFA_FFApp : public CFWL_App::AdapterIface {
   // TODO(dsinclair): The GEFont should have the FontMgr as the pointer instead
   // of the DEFFontMgr so this goes away. Bug 561.
   std::unique_ptr<CFGAS_FontMgr> m_pFDEFontMgr;
-  CXFA_FontMgr m_pFontMgr;
-
+  std::unique_ptr<CXFA_FontMgr> m_pXFAFontMgr;
   std::unique_ptr<CXFA_FWLAdapterWidgetMgr> m_pAdapterWidgetMgr;
 
   // |m_pFWLApp| has to be released first, then |m_pFWLTheme| since the former

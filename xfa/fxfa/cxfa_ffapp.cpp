@@ -30,7 +30,8 @@ void CXFA_FFApp::SkipFontLoadForTesting(bool skip) {
   g_skipFontLoadForTesting = skip;
 }
 
-CXFA_FFApp::CXFA_FFApp(IXFA_AppProvider* pProvider) : m_pProvider(pProvider) {
+CXFA_FFApp::CXFA_FFApp(IXFA_AppProvider* pProvider)
+    : m_pProvider(pProvider), m_pXFAFontMgr(std::make_unique<CXFA_FontMgr>()) {
   // Ensure fully initialized before making an app based on |this|.
   m_pFWLApp = std::make_unique<CFWL_App>(this);
 }
