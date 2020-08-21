@@ -7,7 +7,7 @@ import("../pdfium.gni")
 assert(pdf_enable_xfa)
 
 config("xfa_warnings") {
-  visibility = [ ":*" ]
+  visibility = [ "./*" ]
   if (is_posix && !is_clang) {  # When GCC.
     cflags = [ "-Wno-strict-overflow" ]
   }
