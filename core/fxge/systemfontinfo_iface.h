@@ -34,7 +34,6 @@ class SystemFontInfoIface {
                                pdfium::span<uint8_t> buffer) = 0;
   virtual bool GetFaceName(void* hFont, ByteString* name) = 0;
   virtual bool GetFontCharset(void* hFont, int* charset) = 0;
-  virtual int GetFaceIndex(void* hFont);
   virtual void DeleteFont(void* hFont) = 0;
 };
 

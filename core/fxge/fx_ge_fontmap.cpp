@@ -9,10 +9,6 @@
 #include "build/build_config.h"
 #include "core/fxge/systemfontinfo_iface.h"
 
-int SystemFontInfoIface::GetFaceIndex(void* hFont) {
-  return 0;
-}
-
 #if defined(OS_ANDROID)
 std::unique_ptr<SystemFontInfoIface> SystemFontInfoIface::CreateDefault(
     const char** pUnused) {

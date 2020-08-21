@@ -771,8 +771,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::GetCachedFace(void* hFont,
     return pFace;
 
   pFace = m_pFontMgr->NewFixedFace(pFontDesc,
-                                   pFontDesc->FontData().first(font_size),
-                                   m_pFontInfo->GetFaceIndex(hFont));
+                                   pFontDesc->FontData().first(font_size), 0);
   if (!pFace)
     return nullptr;
 
