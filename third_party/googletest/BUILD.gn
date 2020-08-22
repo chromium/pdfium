@@ -23,7 +23,10 @@ config("gtest_config") {
   ]
 
   # Gtest headers need to be able to find themselves.
-  include_dirs = [ "src/googletest/include" ]
+  include_dirs = [
+    "custom",
+    "src/googletest/include",
+  ]
 
   if (is_win) {
     cflags = [ "/wd4800" ]  # Unused variable warning.
@@ -43,6 +46,15 @@ config("gmock_config") {
 source_set("gtest") {
   testonly = true
   sources = [
+    "custom/gtest/internal/custom/gtest.h",
+    "custom/gtest/internal/custom/stack_trace_getter.cc",
+    "custom/gtest/internal/custom/stack_trace_getter.h",
+
+    # TODO(crbug.com/1009553): Remove this wrapper and custom temp dir
+    # after plumbing a workable temporary path into googletest on Android.
+    "custom/gtest/internal/custom/gtest_port_wrapper.cc",
+    "custom/gtest/internal/custom/pdfium_custom_temp_dir.cc",
+    "custom/gtest/internal/custom/pdfium_custom_temp_dir.h",
     "src/googletest/include/gtest/gtest-death-test.h",
     "src/googletest/include/gtest/gtest-matchers.h",
     "src/googletest/include/gtest/gtest-message.h",
@@ -53,15 +65,18 @@ source_set("gtest") {
     "src/googletest/include/gtest/gtest-typed-test.h",
     "src/googletest/include/gtest/gtest.h",
     "src/googletest/include/gtest/gtest_pred_impl.h",
+    "src/googletest/include/gtest/gtest_prod.h",
+
+    #"src/googletest/include/gtest/internal/custom/gtest.h",  # Superseded.
+    "src/googletest/include/gtest/internal/custom/gtest-port.h",
+    "src/googletest/include/gtest/internal/custom/gtest-printers.h",
     "src/googletest/include/gtest/internal/gtest-death-test-internal.h",
     "src/googletest/include/gtest/internal/gtest-filepath.h",
     "src/googletest/include/gtest/internal/gtest-internal.h",
-    "src/googletest/include/gtest/internal/gtest-linked_ptr.h",
-    "src/googletest/include/gtest/internal/gtest-param-util-generated.h",
     "src/googletest/include/gtest/internal/gtest-param-util.h",
+    "src/googletest/include/gtest/internal/gtest-port-arch.h",
     "src/googletest/include/gtest/internal/gtest-port.h",
     "src/googletest/include/gtest/internal/gtest-string.h",
-    "src/googletest/include/gtest/internal/gtest-tuple.h",
     "src/googletest/include/gtest/internal/gtest-type-util.h",
 
     #"src/googletest/src/gtest-all.cc",  # Not needed by our build.
@@ -69,7 +84,11 @@ source_set("gtest") {
     "src/googletest/src/gtest-filepath.cc",
     "src/googletest/src/gtest-internal-inl.h",
     "src/googletest/src/gtest-matchers.cc",
-    "src/googletest/src/gtest-port.cc",
+
+    # gtest_port_wrapper.cc is used instead of gtest-port.cc.
+    # TODO(crbug.com/1009553): Re-enable this file after plumbing a workable
+    #                          temporary path into googletest on Android.
+    #"src/googletest/src/gtest-port.cc",
     "src/googletest/src/gtest-printers.cc",
     "src/googletest/src/gtest-test-part.cc",
     "src/googletest/src/gtest-typed-test.cc",
@@ -79,10 +98,16 @@ source_set("gtest") {
   # Some files include "src/gtest-internal-inl.h".
   include_dirs = [ "src/googletest" ]
 
-  all_dependent_configs = [ ":gtest_config" ]
+  public_configs = [ ":gtest_config" ]
 
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [ "//build/config/compiler:no_chromium_code" ]
+
+  defines = [ "GTEST_DISABLE_PRINT_STACK_TRACE" ]
+  sources -= [
+    "custom/gtest/internal/custom/stack_trace_getter.cc",
+    "custom/gtest/internal/custom/stack_trace_getter.h",
+  ]
 }
 
 # Do NOT depend on this directly. Use //testing/gtest:gtest_main instead.
@@ -100,16 +125,21 @@ source_set("gmock") {
   sources = [
     "src/googlemock/include/gmock/gmock-actions.h",
     "src/googlemock/include/gmock/gmock-cardinalities.h",
+    "src/googlemock/include/gmock/gmock-function-mocker.h",
     "src/googlemock/include/gmock/gmock-generated-actions.h",
-    "src/googlemock/include/gmock/gmock-generated-function-mockers.h",
-    "src/googlemock/include/gmock/gmock-generated-matchers.h",
-    "src/googlemock/include/gmock/gmock-generated-nice-strict.h",
     "src/googlemock/include/gmock/gmock-matchers.h",
+    "src/googlemock/include/gmock/gmock-more-actions.h",
+    "src/googlemock/include/gmock/gmock-more-matchers.h",
+    "src/googlemock/include/gmock/gmock-nice-strict.h",
     "src/googlemock/include/gmock/gmock-spec-builders.h",
     "src/googlemock/include/gmock/gmock.h",
-    "src/googlemock/include/gmock/internal/gmock-generated-internal-utils.h",
+
+    #"src/googlemock/include/gmock/internal/custom/gmock-port.h",  # Superseded.
+    "src/googlemock/include/gmock/internal/custom/gmock-generated-actions.h",
+    "src/googlemock/include/gmock/internal/custom/gmock-matchers.h",
     "src/googlemock/include/gmock/internal/gmock-internal-utils.h",
     "src/googlemock/include/gmock/internal/gmock-port.h",
+    "src/googlemock/include/gmock/internal/gmock-pp.h",
 
     # gmock helpers.
     "custom/gmock/internal/custom/gmock-port.h",
@@ -122,10 +152,9 @@ source_set("gmock") {
     "src/googlemock/src/gmock.cc",
   ]
 
-  public_configs = [
-    ":gmock_config",
-    ":gtest_config",
-  ]
+  public_deps = [ ":gtest" ]
+
+  public_configs = [ ":gmock_config" ]
 }
 
 # Do NOT depend on this directly. Use //testing/gmock:gmock_main instead.
