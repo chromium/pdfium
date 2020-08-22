@@ -80,3 +80,8 @@ bool CFX_AndroidFontInfo::GetFontCharset(void* hFont, int* charset) {
 }
 
 void CFX_AndroidFontInfo::DeleteFont(void* hFont) {}
+
+std::unique_ptr<SystemFontInfoIface> SystemFontInfoIface::CreateDefault(
+    const char** pUnused) {
+  return nullptr;
+}
