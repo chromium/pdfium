@@ -23,10 +23,9 @@ source_set("test_support") {
     "utils/file_util.h",
     "utils/hash.cpp",
     "utils/hash.h",
-    "utils/path_service.cpp",
-    "utils/path_service.h",
   ]
   data = [ "resources/" ]
+  public_deps = [ ":path_service" ]
   deps = [
     "../:pdfium_public_headers",
     "../core/fdrm",
@@ -47,6 +46,17 @@ source_set("test_support") {
     ]
     configs += [ "//v8:external_startup_data" ]
   }
+}
+
+source_set("path_service") {
+  testonly = true
+  sources = [
+    "utils/path_service.cpp",
+    "utils/path_service.h",
+  ]
+  deps = [ "../core/fxcrt" ]
+  configs += [ "../:pdfium_core_config" ]
+  visibility = [ "../*" ]
 }
 
 source_set("test_environments") {

@@ -412,6 +412,7 @@ source_set("fx_libopenjpeg") {
     "libopenjpeg20/tgt.c",
     "libopenjpeg20/thread.c",
   ]
+  deps = [ "../core/fxcrt" ]
 }
 
 config("system_libpng_config") {

@@ -12,24 +12,14 @@ default_args = {
   v8_optimized_debug = true
 }
 
-check_targets = [
-  ":pdfium",
-  ":pdfium_embeddertests",
-  ":pdfium_unittests",
-  "//constants/*",
-  "//core/*",
-  "//fpdfsdk/*",
-  "//fxbarcode/*",
-  "//fxjs/*",
-  "//samples/*",
-  "//skia/*",
-  "//testing/:*",
-  "//testing/fuzzers/*",
-  "//testing/image_diff/*",
-  "//third_party:bigint",
-  "//third_party:fx_agg",
-  "//third_party:fx_freetype",
-  "//third_party:pdfium_base",
-  "//third_party:skia_shared",
-  "//xfa/*",
+no_check_targets = [
+  "//third_party/icu/*",
+  "//v8/src/inspector:*",
+  "//v8/test/cctest:*",
+  "//v8/test/unittests:*",
+  "//v8/test/wasm-api-tests:*",
+  "//v8/third_party/inspector_protocol:*",
+  "//v8/tools/debug_helper:*",
+  "//v8/tools/v8windbg:*",
+  "//v8:*",
 ]

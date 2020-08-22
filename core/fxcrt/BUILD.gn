@@ -99,6 +99,7 @@ source_set("fxcrt") {
     "../../testing/fuzzers/*",
     "../../third_party:fx_agg",
     "../../third_party:fx_lcms2",
+    "../../third_party:fx_libopenjpeg",
     "../../third_party:fx_tiff",
     "../../third_party:pdfium_base",
     "../../xfa/*",
