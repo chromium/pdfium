@@ -7,6 +7,7 @@
 #include <set>
 
 #include "testing/embedder_test.h"
+#include "testing/embedder_test_environment.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/stl_util.h"
 
@@ -75,6 +76,15 @@ class FPDFUnavailableSysFontInfoEmbedderTest : public EmbedderTest {
     FPDF_SetSystemFontInfo(&font_info_);
   }
 
+  void TearDown() override {
+    EmbedderTest::TearDown();
+
+    // Bouncing the library is the only reliable way to undo the
+    // FPDF_SetSystemFontInfo() call at the momemt.
+    EmbedderTestEnvironment::GetInstance()->TearDown();
+    EmbedderTestEnvironment::GetInstance()->SetUp();
+  }
+
   FPDF_SYSFONTINFO font_info_;
 };
 
@@ -92,7 +102,15 @@ class FPDFSysFontInfoEmbedderTest : public EmbedderTest {
 
   void TearDown() override {
     EmbedderTest::TearDown();
+
+    // Bouncing the library is the only reliable way to undo the
+    // FPDF_SetSystemFontInfo() call at the momemt.
+    EmbedderTestEnvironment::GetInstance()->TearDown();
+
+    // After shutdown, it is safe to release the font info.
     FPDF_FreeDefaultSystemFontInfo(font_info_);
+
+    EmbedderTestEnvironment::GetInstance()->SetUp();
   }
 
   FPDF_SYSFONTINFO* font_info_;

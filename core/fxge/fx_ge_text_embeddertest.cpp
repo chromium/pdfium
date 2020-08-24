@@ -6,9 +6,21 @@
 
 #include "public/cpp/fpdf_scopers.h"
 #include "testing/embedder_test.h"
+#include "testing/embedder_test_environment.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-class FXGETextEmbedderTest : public EmbedderTest {};
+class FXGETextEmbedderTest : public EmbedderTest {
+ public:
+  void TearDown() override {
+    EmbedderTest::TearDown();
+
+    // TODO(tsepez): determine how this is changing the environment,
+    // such that FPDFAnnotEmbedderTest.BUG_1206 will diff if run
+    // after this.
+    EmbedderTestEnvironment::GetInstance()->TearDown();
+    EmbedderTestEnvironment::GetInstance()->SetUp();
+  }
+};
 
 TEST_F(FXGETextEmbedderTest, BadItalic) {
   // Shouldn't crash.

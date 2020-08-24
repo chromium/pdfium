@@ -78,6 +78,7 @@ source_set("test_environments") {
       "v8_test_environment.h",
     ]
     deps += [
+      "../fxjs",
       "//v8",
       "//v8:v8_libplatform",
     ]
@@ -130,6 +131,8 @@ source_set("embedder_test_support") {
     "embedder_test.h",
     "embedder_test_constants.cpp",
     "embedder_test_constants.h",
+    "embedder_test_environment.cpp",
+    "embedder_test_environment.h",
     "embedder_test_mock_delegate.h",
     "embedder_test_timer_handling_delegate.h",
     "fake_file_access.cpp",

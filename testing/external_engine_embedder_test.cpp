@@ -5,13 +5,14 @@
 #include "testing/external_engine_embedder_test.h"
 
 #include "fxjs/cfxjs_engine.h"
+#include "testing/v8_test_environment.h"
 
 ExternalEngineEmbedderTest::ExternalEngineEmbedderTest() = default;
 
 ExternalEngineEmbedderTest::~ExternalEngineEmbedderTest() = default;
 
 void ExternalEngineEmbedderTest::SetUp() {
-  JSEmbedderTest::SetUp();
+  EmbedderTest::SetUp();
 
   v8::Isolate::Scope isolate_scope(isolate());
   v8::HandleScope handle_scope(isolate());

@@ -4,6 +4,7 @@
 
 #include "testing/v8_test_environment.h"
 
+#include <memory>
 #include <string>
 
 #include "core/fxcrt/fx_system.h"
@@ -19,19 +20,21 @@ V8TestEnvironment* g_environment = nullptr;
 }  // namespace
 
 V8TestEnvironment::V8TestEnvironment(const char* exe_name)
-    : exe_path_(exe_name) {
+    : exe_path_(exe_name),
+      array_buffer_allocator_(std::make_unique<CFX_V8ArrayBufferAllocator>()) {
   ASSERT(!g_environment);
   g_environment = this;
 }
 
 V8TestEnvironment::~V8TestEnvironment() {
   ASSERT(g_environment);
-  g_environment = nullptr;
 
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
-  if (v8_snapshot_)
-    free(const_cast<char*>(v8_snapshot_->data));
+  if (startup_data_)
+    free(const_cast<char*>(startup_data_->data));
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
+
+  g_environment = nullptr;
 }
 
 // static
@@ -48,19 +51,24 @@ void V8TestEnvironment::PumpPlatformMessageLoop(v8::Isolate* isolate) {
 
 void V8TestEnvironment::SetUp() {
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
-  if (v8_snapshot_) {
+  if (startup_data_) {
     platform_ = InitializeV8ForPDFiumWithStartupData(exe_path_, std::string(),
                                                      std::string(), nullptr);
   } else {
-    v8_snapshot_ = std::make_unique<v8::StartupData>();
+    startup_data_ = std::make_unique<v8::StartupData>();
     platform_ = InitializeV8ForPDFiumWithStartupData(
-        exe_path_, std::string(), std::string(), v8_snapshot_.get());
+        exe_path_, std::string(), std::string(), startup_data_.get());
   }
 #else
   platform_ = InitializeV8ForPDFium(exe_path_);
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
+
+  v8::Isolate::CreateParams params;
+  params.array_buffer_allocator = array_buffer_allocator_.get();
+  isolate_.reset(v8::Isolate::New(params));
 }
 
 void V8TestEnvironment::TearDown() {
+  isolate_.reset();
   v8::V8::ShutdownPlatform();
 }

@@ -62,25 +62,11 @@ EmbedderTest::EmbedderTest()
 EmbedderTest::~EmbedderTest() = default;
 
 void EmbedderTest::SetUp() {
-  FPDF_LIBRARY_CONFIG config;
-  config.version = 3;
-  config.m_pUserFontPaths = nullptr;
-  config.m_v8EmbedderSlot = 0;
-  config.m_pIsolate = external_isolate_;
-#ifdef PDF_ENABLE_V8
-  config.m_pPlatform = V8TestEnvironment::GetInstance()->platform();
-#else   // PDF_ENABLE_V8
-  config.m_pPlatform = nullptr;
-#endif  // PDF_ENABLE_V8
-
-  FPDF_InitLibraryWithConfig(&config);
-
   UNSUPPORT_INFO* info = static_cast<UNSUPPORT_INFO*>(this);
   memset(info, 0, sizeof(UNSUPPORT_INFO));
   info->version = 1;
   info->FSDK_UnSupport_Handler = UnsupportedHandlerTrampoline;
   FSDK_SetUnSpObjProcessHandler(info);
-
   saved_document_ = nullptr;
 }
 
@@ -89,20 +75,12 @@ void EmbedderTest::TearDown() {
   // possible. This can fail when an ASSERT test fails in a test case.
   EXPECT_EQ(0U, page_map_.size());
   EXPECT_EQ(0U, saved_page_map_.size());
-
   if (document_)
     CloseDocument();
 
   FPDFAvail_Destroy(avail_);
-  FPDF_DestroyLibrary();
   loader_.reset();
 }
-
-#ifdef PDF_ENABLE_V8
-void EmbedderTest::SetExternalIsolate(void* isolate) {
-  external_isolate_ = static_cast<v8::Isolate*>(isolate);
-}
-#endif  // PDF_ENABLE_V8
 
 bool EmbedderTest::CreateEmptyDocument() {
   document_ = FPDF_CreateNewDocument();
@@ -244,9 +222,8 @@ FPDF_FORMHANDLE EmbedderTest::SetupFormFillEnvironment(
     JavaScriptOption javascript_option) {
   IPDF_JSPLATFORM* platform = static_cast<IPDF_JSPLATFORM*>(this);
   memset(platform, '\0', sizeof(IPDF_JSPLATFORM));
-  platform->version = 2;
+  platform->version = 3;
   platform->app_alert = AlertTrampoline;
-  platform->m_isolate = external_isolate_;
 
   FPDF_FORMFILLINFO* formfillinfo = static_cast<FPDF_FORMFILLINFO*>(this);
   memset(formfillinfo, 0, sizeof(FPDF_FORMFILLINFO));

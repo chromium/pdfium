@@ -16,6 +16,7 @@
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
 #include "testing/embedder_test_constants.h"
+#include "testing/embedder_test_environment.h"
 #include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/file_util.h"
@@ -312,7 +313,7 @@ TEST_F(FPDFViewEmbedderTest, PageCoordinatesToDeviceCoordinates) {
 }
 
 TEST_F(FPDFViewEmbedderTest, MultipleInitDestroy) {
-  FPDF_InitLibrary();  // Redundant given call in SetUp(), but safe.
+  FPDF_InitLibrary();  // Redundant given SetUp() in environment, but safe.
   FPDF_InitLibrary();  // Doubly-redundant even, but safe.
 
   ASSERT_TRUE(OpenDocument("about_blank.pdf"));
@@ -320,8 +321,11 @@ TEST_F(FPDFViewEmbedderTest, MultipleInitDestroy) {
   CloseDocument();  // Redundant given above, but safe.
   CloseDocument();  // Doubly-redundant even, but safe.
 
-  FPDF_DestroyLibrary();  // Doubly-redundant even, but safe.
-  FPDF_DestroyLibrary();  // Redundant given call in TearDown(), but safe.
+  FPDF_DestroyLibrary();  // Doubly-Redundant even, but safe.
+  FPDF_DestroyLibrary();  // Redundant given call to TearDown(), but safe.
+
+  EmbedderTestEnvironment::GetInstance()->TearDown();
+  EmbedderTestEnvironment::GetInstance()->SetUp();
 }
 
 TEST_F(FPDFViewEmbedderTest, Document) {

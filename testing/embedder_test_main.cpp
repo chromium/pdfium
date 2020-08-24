@@ -4,6 +4,7 @@
 
 #include "build/build_config.h"
 #include "core/fxcrt/fx_memory.h"
+#include "testing/embedder_test_environment.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
@@ -21,6 +22,9 @@ int main(int argc, char** argv) {
   // The env will be deleted by gtest.
   AddGlobalTestEnvironment(new V8TestEnvironment(argv[0]));
 #endif  // PDF_ENABLE_V8
+
+  // The env will be deleted by gtest.
+  AddGlobalTestEnvironment(new EmbedderTestEnvironment);
 
   testing::InitGoogleTest(&argc, argv);
   testing::InitGoogleMock(&argc, argv);
