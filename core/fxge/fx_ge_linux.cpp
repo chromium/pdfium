@@ -155,27 +155,22 @@ bool CFX_LinuxFontInfo::ParseFontCfg(const char** pUserPaths) {
 
 }  // namespace
 
-std::unique_ptr<SystemFontInfoIface> SystemFontInfoIface::CreateDefault(
-    const char** pUserPaths) {
-  auto pInfo = std::make_unique<CFX_LinuxFontInfo>();
-  if (!pInfo->ParseFontCfg(pUserPaths)) {
-    pInfo->AddPath("/usr/share/fonts");
-    pInfo->AddPath("/usr/share/X11/fonts/Type1");
-    pInfo->AddPath("/usr/share/X11/fonts/TTF");
-    pInfo->AddPath("/usr/local/share/fonts");
-  }
-  return std::move(pInfo);
-}
-
 class CLinuxPlatform : public CFX_GEModule::PlatformIface {
  public:
   CLinuxPlatform() = default;
   ~CLinuxPlatform() override = default;
 
-  void Init() override {
-    CFX_GEModule* pModule = CFX_GEModule::Get();
-    pModule->GetFontMgr()->SetSystemFontInfo(
-        SystemFontInfoIface::CreateDefault(pModule->GetUserFontPaths()));
+  void Init() override {}
+
+  std::unique_ptr<SystemFontInfoIface> CreateDefaultSystemFontInfo() override {
+    auto pInfo = std::make_unique<CFX_LinuxFontInfo>();
+    if (!pInfo->ParseFontCfg(CFX_GEModule::Get()->GetUserFontPaths())) {
+      pInfo->AddPath("/usr/share/fonts");
+      pInfo->AddPath("/usr/share/X11/fonts/Type1");
+      pInfo->AddPath("/usr/share/X11/fonts/TTF");
+      pInfo->AddPath("/usr/local/share/fonts");
+    }
+    return pInfo;
   }
 };
 

@@ -677,8 +677,21 @@ bool CFX_Win32FontInfo::GetFontCharset(void* hFont, int* charset) {
 
 WindowsPrintMode g_pdfium_print_mode = WindowsPrintMode::kModeEmf;
 
-std::unique_ptr<SystemFontInfoIface> SystemFontInfoIface::CreateDefault(
-    const char** pUnused) {
+CWin32Platform::CWin32Platform() = default;
+
+CWin32Platform::~CWin32Platform() = default;
+
+void CWin32Platform::Init() {
+  OSVERSIONINFO ver;
+  ver.dwOSVersionInfoSize = sizeof(ver);
+  GetVersionEx(&ver);
+  m_bHalfTone = ver.dwMajorVersion >= 5;
+  if (pdfium::base::win::IsUser32AndGdi32Available())
+    m_GdiplusExt.Load();
+}
+
+std::unique_ptr<SystemFontInfoIface>
+CWin32Platform::CreateDefaultSystemFontInfo() {
   if (pdfium::base::win::IsUser32AndGdi32Available())
     return std::unique_ptr<SystemFontInfoIface>(new CFX_Win32FontInfo);
 
@@ -694,21 +707,6 @@ std::unique_ptr<SystemFontInfoIface> SystemFontInfoIface::CreateDefault(
     pInfoFallback->AddPath(fonts_path);
   }
   return std::unique_ptr<SystemFontInfoIface>(pInfoFallback);
-}
-
-CWin32Platform::CWin32Platform() = default;
-
-CWin32Platform::~CWin32Platform() = default;
-
-void CWin32Platform::Init() {
-  OSVERSIONINFO ver;
-  ver.dwOSVersionInfoSize = sizeof(ver);
-  GetVersionEx(&ver);
-  m_bHalfTone = ver.dwMajorVersion >= 5;
-  if (pdfium::base::win::IsUser32AndGdi32Available())
-    m_GdiplusExt.Load();
-  CFX_GEModule::Get()->GetFontMgr()->SetSystemFontInfo(
-      SystemFontInfoIface::CreateDefault(nullptr));
 }
 
 // static

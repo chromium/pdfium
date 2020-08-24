@@ -6,6 +6,7 @@
 
 #include "core/fxge/cfx_folderfontinfo.h"
 #include "core/fxge/cfx_fontmapper.h"
+#include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/fx_font.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/path_service.h"
@@ -45,7 +46,8 @@ TEST(FXFontTest, ReadFontNameFromMicrosoftEntries) {
     folder_font_info.AddPath(
         (test_data_dir + PATH_SEPARATOR + "font_tests").c_str());
 
-    font_mapper.SetSystemFontInfo(SystemFontInfoIface::CreateDefault(nullptr));
+    font_mapper.SetSystemFontInfo(
+        CFX_GEModule::Get()->GetPlatform()->CreateDefaultSystemFontInfo());
     ASSERT_TRUE(folder_font_info.EnumFontList(&font_mapper));
   }
 

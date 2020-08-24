@@ -29,6 +29,8 @@ void CFX_GEModule::Create(const char** pUserFontPaths) {
   ASSERT(!g_pGEModule);
   g_pGEModule = new CFX_GEModule(pUserFontPaths);
   g_pGEModule->m_pPlatform->Init();
+  g_pGEModule->GetFontMgr()->SetSystemFontInfo(
+      g_pGEModule->m_pPlatform->CreateDefaultSystemFontInfo());
 }
 
 // static

@@ -11,6 +11,7 @@
 
 class CFX_FontCache;
 class CFX_FontMgr;
+class SystemFontInfoIface;
 
 class CFX_GEModule {
  public:
@@ -20,6 +21,8 @@ class CFX_GEModule {
     virtual ~PlatformIface() {}
 
     virtual void Init() = 0;
+    virtual std::unique_ptr<SystemFontInfoIface>
+    CreateDefaultSystemFontInfo() = 0;
   };
 
   static void Create(const char** pUserFontPaths);

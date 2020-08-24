@@ -17,9 +17,6 @@ constexpr uint32_t kTableTTCF = CFX_FontMapper::MakeTag('t', 't', 'c', 'f');
 
 class SystemFontInfoIface {
  public:
-  static std::unique_ptr<SystemFontInfoIface> CreateDefault(
-      const char** pUserPaths);
-
   virtual ~SystemFontInfoIface() = default;
 
   virtual bool EnumFontList(CFX_FontMapper* pMapper) = 0;

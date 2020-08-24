@@ -130,25 +130,21 @@ bool CFX_MacFontInfo::ParseFontCfg(const char** pUserPaths) {
 }
 }  // namespace
 
-std::unique_ptr<SystemFontInfoIface> SystemFontInfoIface::CreateDefault(
-    const char** pUserPaths) {
+CApplePlatform::CApplePlatform() = default;
+
+CApplePlatform::~CApplePlatform() = default;
+
+void CApplePlatform::Init() {}
+
+std::unique_ptr<SystemFontInfoIface>
+CApplePlatform::CreateDefaultSystemFontInfo() {
   auto pInfo = std::make_unique<CFX_MacFontInfo>();
-  if (!pInfo->ParseFontCfg(pUserPaths)) {
+  if (!pInfo->ParseFontCfg(CFX_GEModule::Get()->GetUserFontPaths())) {
     pInfo->AddPath("~/Library/Fonts");
     pInfo->AddPath("/Library/Fonts");
     pInfo->AddPath("/System/Library/Fonts");
   }
   return std::move(pInfo);
-}
-
-CApplePlatform::CApplePlatform() = default;
-
-CApplePlatform::~CApplePlatform() = default;
-
-void CApplePlatform::Init() {
-  CFX_GEModule* pModule = CFX_GEModule::Get();
-  pModule->GetFontMgr()->SetSystemFontInfo(
-      SystemFontInfoIface::CreateDefault(pModule->GetUserFontPaths()));
 }
 
 // static

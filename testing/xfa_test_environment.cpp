@@ -30,10 +30,10 @@ XFATestEnvironment::~XFATestEnvironment() {
 }
 
 void XFATestEnvironment::SetUp() {
-  // TODO(dsinclair): This font loading is slow. We should make a test font
-  // loader which loads up a single font we use in all tests.
+  // This font loading is slow, but we do it only once per binary
+  // execution, not once per test.
   CFX_GEModule::Get()->GetFontMgr()->SetSystemFontInfo(
-      SystemFontInfoIface::CreateDefault(nullptr));
+      CFX_GEModule::Get()->GetPlatform()->CreateDefaultSystemFontInfo());
 
   auto font_mgr = std::make_unique<CFGAS_FontMgr>();
   if (font_mgr->EnumFonts())
