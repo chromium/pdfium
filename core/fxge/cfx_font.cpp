@@ -24,6 +24,7 @@
 #include "core/fxge/fx_font.h"
 #include "core/fxge/scoped_font_transform.h"
 #include "third_party/base/span.h"
+#include "third_party/base/stl_util.h"
 
 #define EM_ADJUST(em, a) (em == 0 ? (a) : (a)*1000 / em)
 
@@ -180,23 +181,22 @@ bool ShouldAppendStyle(const ByteString& style) {
   return !style.IsEmpty() && style != "Regular";
 }
 
-}  // namespace
-
-const char CFX_Font::s_AngleSkew[] = {
-    0,  2,  3,  5,  7,  9,  11, 12, 14, 16, 18, 19, 21, 23, 25,
-    27, 29, 31, 32, 34, 36, 38, 40, 42, 45, 47, 49, 51, 53, 55,
+constexpr int8_t kAngleSkew[] = {
+    -0,  -2,  -3,  -5,  -7,  -9,  -11, -12, -14, -16, -18, -19, -21, -23, -25,
+    -27, -29, -31, -32, -34, -36, -38, -40, -42, -45, -47, -49, -51, -53, -55,
 };
 
-const uint8_t CFX_Font::s_WeightPow[] = {
-    0,  3,  6,  7,  8,  9,  11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22,
-    23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 35, 36, 36, 37,
-    37, 37, 38, 38, 38, 39, 39, 39, 40, 40, 40, 41, 41, 41, 42, 42, 42,
-    42, 43, 43, 43, 44, 44, 44, 44, 45, 45, 45, 45, 46, 46, 46, 46, 47,
-    47, 47, 47, 48, 48, 48, 48, 48, 49, 49, 49, 49, 50, 50, 50, 50, 50,
-    51, 51, 51, 51, 51, 52, 52, 52, 52, 52, 53, 53, 53, 53, 53,
+constexpr uint8_t kWeightPow[] = {
+    0,   6,   12,  14,  16,  18,  22,  24,  28,  30,  32,  34,  36,  38,  40,
+    42,  44,  46,  48,  50,  52,  54,  56,  58,  60,  62,  64,  66,  68,  70,
+    70,  72,  72,  74,  74,  74,  76,  76,  76,  78,  78,  78,  80,  80,  80,
+    82,  82,  82,  84,  84,  84,  84,  86,  86,  86,  88,  88,  88,  88,  90,
+    90,  90,  90,  92,  92,  92,  92,  94,  94,  94,  94,  96,  96,  96,  96,
+    96,  98,  98,  98,  98,  100, 100, 100, 100, 100, 102, 102, 102, 102, 102,
+    104, 104, 104, 104, 104, 106, 106, 106, 106, 106,
 };
 
-const uint8_t CFX_Font::s_WeightPow_11[] = {
+constexpr uint8_t kWeightPow11[] = {
     0,  4,  7,  8,  9,  10, 12, 13, 15, 17, 18, 19, 20, 21, 22, 23, 24,
     25, 26, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 39, 39, 40, 40, 41,
     41, 41, 42, 42, 42, 43, 43, 43, 44, 44, 44, 45, 45, 45, 46, 46, 46,
@@ -205,14 +205,23 @@ const uint8_t CFX_Font::s_WeightPow_11[] = {
     56, 56, 56, 56, 56, 57, 57, 57, 57, 57, 58, 58, 58, 58, 58,
 };
 
-const uint8_t CFX_Font::s_WeightPow_SHIFTJIS[] = {
-    0,  0,  1,  2,  3,  4,  5,  7,  8,  10, 11, 13, 14, 16, 17, 19, 21,
-    22, 24, 26, 28, 30, 32, 33, 35, 37, 39, 41, 43, 45, 48, 48, 48, 48,
-    49, 49, 49, 50, 50, 50, 50, 51, 51, 51, 51, 52, 52, 52, 52, 52, 53,
-    53, 53, 53, 53, 54, 54, 54, 54, 54, 55, 55, 55, 55, 55, 56, 56, 56,
-    56, 56, 56, 57, 57, 57, 57, 57, 57, 57, 58, 58, 58, 58, 58, 58, 58,
-    59, 59, 59, 59, 59, 59, 59, 60, 60, 60, 60, 60, 60, 60, 60,
+constexpr uint8_t kWeightPowShiftJis[] = {
+    0,   0,   2,   4,   6,   8,   10,  14,  16,  20,  22,  26,  28,  32,  34,
+    38,  42,  44,  48,  52,  56,  60,  64,  66,  70,  74,  78,  82,  86,  90,
+    96,  96,  96,  96,  98,  98,  98,  100, 100, 100, 100, 102, 102, 102, 102,
+    104, 104, 104, 104, 104, 106, 106, 106, 106, 106, 108, 108, 108, 108, 108,
+    110, 110, 110, 110, 110, 112, 112, 112, 112, 112, 112, 114, 114, 114, 114,
+    114, 114, 114, 116, 116, 116, 116, 116, 116, 116, 118, 118, 118, 118, 118,
+    118, 118, 120, 120, 120, 120, 120, 120, 120, 120,
 };
+
+constexpr size_t kWeightPowArraySize = 100;
+static_assert(kWeightPowArraySize == pdfium::size(kWeightPow), "Wrong size");
+static_assert(kWeightPowArraySize == pdfium::size(kWeightPow11), "Wrong size");
+static_assert(kWeightPowArraySize == pdfium::size(kWeightPowShiftJis),
+              "Wrong size");
+
+}  // namespace
 
 const CFX_Font::CharsetFontMap CFX_Font::defaultTTFMap[] = {
     {FX_CHARSET_ANSI, kDefaultAnsiFontName},
@@ -649,15 +658,7 @@ CFX_PathData* CFX_Font::LoadGlyphPathImpl(uint32_t glyph_index,
   FT_Matrix ft_matrix = {65536, 0, 0, 65536};
   if (m_pSubstFont) {
     if (m_pSubstFont->m_ItalicAngle) {
-      int skew = m_pSubstFont->m_ItalicAngle;
-      // |skew| is nonpositive so |-skew| is used as the index. We need to make
-      // sure |skew| != INT_MIN since -INT_MIN is undefined.
-      if (skew <= 0 && skew != std::numeric_limits<int>::min() &&
-          static_cast<size_t>(-skew) < kAngleSkewArraySize) {
-        skew = -s_AngleSkew[-skew];
-      } else {
-        skew = -58;
-      }
+      int skew = GetSkewFromAngle(m_pSubstFont->m_ItalicAngle);
       if (m_bVertical)
         ft_matrix.yx += ft_matrix.yy * skew / 100;
       else
@@ -675,13 +676,13 @@ CFX_PathData* CFX_Font::LoadGlyphPathImpl(uint32_t glyph_index,
     return nullptr;
   if (m_pSubstFont && !m_pSubstFont->m_bFlagMM &&
       m_pSubstFont->m_Weight > 400) {
-    uint32_t index = (m_pSubstFont->m_Weight - 400) / 10;
-    index = std::min(index, static_cast<uint32_t>(kWeightPowArraySize - 1));
-    int level = 0;
+    uint32_t index = std::min<uint32_t>((m_pSubstFont->m_Weight - 400) / 10,
+                                        kWeightPowArraySize - 1);
+    int level;
     if (m_pSubstFont->m_Charset == FX_CHARSET_ShiftJIS)
-      level = s_WeightPow_SHIFTJIS[index] * 2 * 65536 / 36655;
+      level = kWeightPowShiftJis[index] * 65536 / 36655;
     else
-      level = s_WeightPow[index] * 2;
+      level = kWeightPow[index];
     FT_Outline_Embolden(FXFT_Get_Glyph_Outline(m_Face->GetRec()), level);
   }
 
@@ -725,6 +726,27 @@ const CFX_GlyphBitmap* CFX_Font::LoadGlyphBitmap(
 const CFX_PathData* CFX_Font::LoadGlyphPath(uint32_t glyph_index,
                                             uint32_t dest_width) const {
   return GetOrCreateGlyphCache()->LoadGlyphPath(this, glyph_index, dest_width);
+}
+
+// static
+int CFX_Font::GetWeightLevel(int charset, size_t index) {
+  if (index >= kWeightPowArraySize)
+    return -1;
+
+  if (charset == FX_CHARSET_ShiftJIS)
+    return kWeightPowShiftJis[index];
+  return kWeightPow11[index];
+}
+
+// static
+int CFX_Font::GetSkewFromAngle(int angle) {
+  // |angle| is non-positive so |-angle| is used as the index. Need to make sure
+  // |angle| != INT_MIN since -INT_MIN is undefined.
+  if (angle > 0 || angle == std::numeric_limits<int>::min() ||
+      static_cast<size_t>(-angle) >= pdfium::size(kAngleSkew)) {
+    return -58;
+  }
+  return kAngleSkew[-angle];
 }
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)

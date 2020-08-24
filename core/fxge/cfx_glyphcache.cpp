@@ -121,20 +121,13 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_GlyphCache::RenderGlyph(
   const CFX_SubstFont* pSubstFont = pFont->GetSubstFont();
   if (pSubstFont) {
     bUseCJKSubFont = pSubstFont->m_bSubstCJK && bFontStyle;
-    int skew = 0;
+    int angle;
     if (bUseCJKSubFont)
-      skew = pSubstFont->m_bItalicCJK ? -15 : 0;
+      angle = pSubstFont->m_bItalicCJK ? -15 : 0;
     else
-      skew = pSubstFont->m_ItalicAngle;
-    if (skew) {
-      // |skew| is nonpositive so |-skew| is used as the index. We need to make
-      // sure |skew| != INT_MIN since -INT_MIN is undefined.
-      if (skew <= 0 && skew != std::numeric_limits<int>::min() &&
-          static_cast<size_t>(-skew) < CFX_Font::kAngleSkewArraySize) {
-        skew = -CFX_Font::s_AngleSkew[-skew];
-      } else {
-        skew = -58;
-      }
+      angle = pSubstFont->m_ItalicAngle;
+    if (angle) {
+      int skew = CFX_Font::GetSkewFromAngle(angle);
       if (pFont->IsVertical())
         ft_matrix.yx += ft_matrix.yy * skew / 100;
       else
@@ -170,13 +163,10 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_GlyphCache::RenderGlyph(
     weight = pSubstFont ? pSubstFont->m_Weight : 0;
   if (pSubstFont && !pSubstFont->m_bFlagMM && weight > 400) {
     uint32_t index = (weight - 400) / 10;
-    if (index >= CFX_Font::kWeightPowArraySize)
+    pdfium::base::CheckedNumeric<signed long> level =
+        CFX_Font::GetWeightLevel(pSubstFont->m_Charset, index);
+    if (level.ValueOrDefault(-1) < 0)
       return nullptr;
-    pdfium::base::CheckedNumeric<signed long> level = 0;
-    if (pSubstFont->m_Charset == FX_CHARSET_ShiftJIS)
-      level = CFX_Font::s_WeightPow_SHIFTJIS[index] * 2;
-    else
-      level = CFX_Font::s_WeightPow_11[index];
 
     level = level *
             (abs(static_cast<int>(ft_matrix.xx)) +
