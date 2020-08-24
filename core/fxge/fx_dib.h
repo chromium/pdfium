@@ -185,4 +185,10 @@ FX_RECT FXDIB_SwapClipBox(const FX_RECT& clip,
                           bool bFlipX,
                           bool bFlipY);
 
+inline void ReverseCopy3Bytes(uint8_t* dest, const uint8_t* src) {
+  dest[2] = src[0];
+  dest[1] = src[1];
+  dest[0] = src[2];
+}
+
 #endif  // CORE_FXGE_FX_DIB_H_

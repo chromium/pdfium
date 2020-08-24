@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include "core/fxcrt/fx_memory.h"
+#include "core/fxge/fx_dib.h"
 
 namespace fxcodec {
 
@@ -29,9 +30,8 @@ void ReverseRGB(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels) {
     }
   } else {
     for (int i = 0; i < pixels; i++) {
-      *pDestBuf++ = pSrcBuf[2];
-      *pDestBuf++ = pSrcBuf[1];
-      *pDestBuf++ = pSrcBuf[0];
+      ReverseCopy3Bytes(pDestBuf, pSrcBuf);
+      pDestBuf += 3;
       pSrcBuf += 3;
     }
   }

@@ -471,9 +471,7 @@ bool JpegModule::JpegEncode(const RetainPtr<CFX_DIBBase>& pSource,
       uint8_t* dest_scan = line_buf;
       if (nComponents == 3) {
         for (uint32_t i = 0; i < width; i++) {
-          dest_scan[0] = src_scan[2];
-          dest_scan[1] = src_scan[1];
-          dest_scan[2] = src_scan[0];
+          ReverseCopy3Bytes(dest_scan, src_scan);
           dest_scan += 3;
           src_scan += Bpp;
         }
