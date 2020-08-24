@@ -384,15 +384,9 @@ void ConvertBuffer_1bppMask2Rgb(FXDIB_Format dest_format,
     uint8_t* dest_scan = dest_buf + row * dest_pitch;
     const uint8_t* src_scan = pSrcBitmap->GetScanline(src_top + row);
     for (int col = src_left; col < src_left + width; ++col) {
-      if (src_scan[col / 8] & (1 << (7 - col % 8))) {
-        dest_scan[0] = kSetGray;
-        dest_scan[1] = kSetGray;
-        dest_scan[2] = kSetGray;
-      } else {
-        dest_scan[0] = kResetGray;
-        dest_scan[1] = kResetGray;
-        dest_scan[2] = kResetGray;
-      }
+      uint8_t value =
+          (src_scan[col / 8] & (1 << (7 - col % 8))) ? kSetGray : kResetGray;
+      memset(dest_scan, value, 3);
       dest_scan += comps;
     }
   }
@@ -410,13 +404,10 @@ void ConvertBuffer_8bppMask2Rgb(FXDIB_Format dest_format,
   for (int row = 0; row < height; ++row) {
     uint8_t* dest_scan = dest_buf + row * dest_pitch;
     const uint8_t* src_scan = pSrcBitmap->GetScanline(src_top + row) + src_left;
-    uint8_t src_pixel;
     for (int col = 0; col < width; ++col) {
-      src_pixel = *src_scan++;
-      *dest_scan++ = src_pixel;
-      *dest_scan++ = src_pixel;
-      *dest_scan = src_pixel;
-      dest_scan += comps - 2;
+      memset(dest_scan, *src_scan, 3);
+      dest_scan += comps;
+      ++src_scan;
     }
   }
 }
@@ -458,16 +449,9 @@ void ConvertBuffer_1bppPlt2Rgb(FXDIB_Format dest_format,
     uint8_t* dest_scan = dest_buf + row * dest_pitch;
     const uint8_t* src_scan = pSrcBitmap->GetScanline(src_top + row);
     for (int col = src_left; col < src_left + width; ++col) {
-      if (src_scan[col / 8] & (1 << (7 - col % 8))) {
-        *dest_scan++ = bgr_ptr[3];
-        *dest_scan++ = bgr_ptr[4];
-        *dest_scan = bgr_ptr[5];
-      } else {
-        *dest_scan++ = bgr_ptr[0];
-        *dest_scan++ = bgr_ptr[1];
-        *dest_scan = bgr_ptr[2];
-      }
-      dest_scan += comps - 2;
+      size_t offset = (src_scan[col / 8] & (1 << (7 - col % 8))) ? 3 : 0;
+      memcpy(dest_scan, bgr_ptr + offset, 3);
+      dest_scan += comps;
     }
   }
 }
@@ -508,10 +492,8 @@ void ConvertBuffer_8bppPlt2Rgb(FXDIB_Format dest_format,
     const uint8_t* src_scan = pSrcBitmap->GetScanline(src_top + row) + src_left;
     for (int col = 0; col < width; ++col) {
       uint8_t* src_pixel = bgr_ptr + 3 * (*src_scan++);
-      *dest_scan++ = *src_pixel++;
-      *dest_scan++ = *src_pixel++;
-      *dest_scan = *src_pixel++;
-      dest_scan += comps - 2;
+      memcpy(dest_scan, src_pixel, 3);
+      dest_scan += comps;
     }
   }
 }
@@ -543,10 +525,9 @@ void ConvertBuffer_32bppRgb2Rgb24(uint8_t* dest_buf,
     const uint8_t* src_scan =
         pSrcBitmap->GetScanline(src_top + row) + src_left * 4;
     for (int col = 0; col < width; ++col) {
-      *dest_scan++ = *src_scan++;
-      *dest_scan++ = *src_scan++;
-      *dest_scan++ = *src_scan++;
-      ++src_scan;
+      memcpy(dest_scan, src_scan, 3);
+      dest_scan += 3;
+      src_scan += 4;
     }
   }
 }
@@ -564,11 +545,9 @@ void ConvertBuffer_Rgb2Rgb32(uint8_t* dest_buf,
     const uint8_t* src_scan =
         pSrcBitmap->GetScanline(src_top + row) + src_left * comps;
     for (int col = 0; col < width; ++col) {
-      *dest_scan++ = *src_scan++;
-      *dest_scan++ = *src_scan++;
-      *dest_scan++ = *src_scan++;
-      ++dest_scan;
-      src_scan += comps - 3;
+      memcpy(dest_scan, src_scan, 3);
+      dest_scan += 4;
+      src_scan += comps;
     }
   }
 }
@@ -1037,9 +1016,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::FlipImage(bool bXFlip, bool bYFlip) const {
       }
     } else if (Bpp == 3) {
       for (int col = 0; col < m_Width; ++col) {
-        dest_scan[0] = src_scan[0];
-        dest_scan[1] = src_scan[1];
-        dest_scan[2] = src_scan[2];
+        memcpy(dest_scan, src_scan, 3);
         dest_scan -= 3;
         src_scan += 3;
       }
@@ -1176,10 +1153,9 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::SwapXY(bool bXFlip, bool bYFlip) const {
           }
         } else {
           for (int col = col_start; col < col_end; ++col) {
-            *dest_scan++ = *src_scan++;
-            *dest_scan++ = *src_scan++;
-            *dest_scan = *src_scan++;
-            dest_scan += dest_step;
+            memcpy(dest_scan, src_scan, 3);
+            dest_scan += 2 + dest_step;
+            src_scan += 3;
           }
         }
       }
