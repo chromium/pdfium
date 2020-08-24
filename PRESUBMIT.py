@@ -251,12 +251,8 @@ def _CheckIncludeOrder(input_api, output_api):
   Each region separated by #if, #elif, #else, #endif, #define and #undef follows
   these rules separately.
   """
-  def FileFilterIncludeOrder(affected_file):
-    black_list = (input_api.DEFAULT_BLACK_LIST)
-    return input_api.FilterSourceFile(affected_file, black_list=black_list)
-
   warnings = []
-  for f in input_api.AffectedFiles(file_filter=FileFilterIncludeOrder):
+  for f in input_api.AffectedFiles(file_filter=input_api.FilterSourceFile):
     if f.LocalPath().endswith(('.cc', '.cpp', '.h', '.mm')):
       changed_linenums = set(line_num for line_num, _ in f.ChangedContents())
       warnings.extend(_CheckIncludeOrderInFile(input_api, f, changed_linenums))
@@ -266,6 +262,7 @@ def _CheckIncludeOrder(input_api, output_api):
     results.append(output_api.PresubmitPromptOrNotify(_INCLUDE_ORDER_WARNING,
                                                       warnings))
   return results
+
 
 def _CheckTestDuplicates(input_api, output_api):
   """Checks that pixel and javascript tests don't contain duplicates.
