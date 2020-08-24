@@ -1852,13 +1852,7 @@ TEST_F(FPDFEditEmbedderTest, PathsPoints) {
   FPDFPageObj_Destroy(img);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_PathOnTopOfText DISABLED_PathOnTopOfText
-#else
-#define MAYBE_PathOnTopOfText PathOnTopOfText
-#endif
-TEST_F(FPDFEditEmbedderTest, MAYBE_PathOnTopOfText) {
+TEST_F(FPDFEditEmbedderTest, PathOnTopOfText) {
   // Load document with some text
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -1879,16 +1873,24 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_PathOnTopOfText) {
   EXPECT_TRUE(FPDFPath_Close(black_path));
   FPDFPage_InsertObject(page, black_path);
 
-  // Render and check the result. Text is slightly different on Mac.
+  // Render and check the result.
   ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-#if defined(OS_APPLE)
-  const char md5[] = "e55bcd1facb7243dc6e16dd5f912265b";
-#elif defined(OS_WIN)
-  const char md5[] = "74dd9c393b8b2578d2b7feb032b7daad";
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#if defined(OS_WIN)
+  const char kChecksum[] = "e755a955696373e39dbebb5cb96e1338";
 #else
-  const char md5[] = "aa71b09b93b55f467f1290e5111babee";
+  const char kChecksum[] = "d082f9756c86bb47e1abbc2b1df7138a";
+#endif  // defined(OS_WIN)
+#else
+#if defined(OS_WIN)
+  const char kChecksum[] = "74dd9c393b8b2578d2b7feb032b7daad";
+#elif defined(OS_APPLE)
+  const char kChecksum[] = "e55bcd1facb7243dc6e16dd5f912265b";
+#else
+  const char kChecksum[] = "aa71b09b93b55f467f1290e5111babee";
 #endif
-  CompareBitmap(bitmap.get(), 200, 200, md5);
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+  CompareBitmap(bitmap.get(), 200, 200, kChecksum);
   UnloadPage(page);
 }
 
