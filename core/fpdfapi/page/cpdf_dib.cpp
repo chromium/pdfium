@@ -731,9 +731,7 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap() {
         const uint8_t* src = result_bitmap->GetScanline(row);
         uint8_t* dest = rgb_bitmap->GetWritableScanline(row);
         for (uint32_t col = 0; col < image_info.width; ++col) {
-          dest[0] = src[0];
-          dest[1] = src[1];
-          dest[2] = src[2];
+          memcpy(dest, src, 3);
           src += 4;
           dest += 3;
         }
@@ -860,9 +858,8 @@ void CPDF_DIB::LoadPalette() {
       return;
     }
     float color_values[3];
-    color_values[0] = m_CompData[0].m_DecodeMin;
-    color_values[1] = color_values[0];
-    color_values[2] = color_values[0];
+    std::fill(std::begin(color_values), std::end(color_values),
+              m_CompData[0].m_DecodeMin);
 
     float R = 0.0f;
     float G = 0.0f;

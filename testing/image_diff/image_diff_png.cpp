@@ -92,12 +92,12 @@ void ConvertRGBAtoRGB(const uint8_t* rgba,
                       int pixel_width,
                       uint8_t* rgb,
                       bool* is_opaque) {
+  const uint8_t* pixel_in = rgba;
+  uint8_t* pixel_out = rgb;
   for (int x = 0; x < pixel_width; x++) {
-    const uint8_t* pixel_in = &rgba[x * 4];
-    uint8_t* pixel_out = &rgb[x * 3];
-    pixel_out[0] = pixel_in[0];
-    pixel_out[1] = pixel_in[1];
-    pixel_out[2] = pixel_in[2];
+    memcpy(pixel_out, pixel_in, 3);
+    pixel_in += 4;
+    pixel_out += 3;
   }
 }
 
@@ -148,13 +148,13 @@ void ConvertRGBtoRGBA(const uint8_t* rgb,
                       int pixel_width,
                       uint8_t* rgba,
                       bool* is_opaque) {
+  const uint8_t* pixel_in = rgb;
+  uint8_t* pixel_out = rgba;
   for (int x = 0; x < pixel_width; x++) {
-    const uint8_t* pixel_in = &rgb[x * 3];
-    uint8_t* pixel_out = &rgba[x * 4];
-    pixel_out[0] = pixel_in[0];
-    pixel_out[1] = pixel_in[1];
-    pixel_out[2] = pixel_in[2];
+    memcpy(pixel_out, pixel_in, 3);
     pixel_out[3] = 0xff;
+    pixel_in += 3;
+    pixel_out += 4;
   }
 }
 
