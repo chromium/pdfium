@@ -372,13 +372,10 @@ bool RetrieveSpecificFont(LOGFONTA& lf) {
   return fd.bFind;
 }
 
-bool RetrieveSpecificFont(uint8_t charSet,
-                          uint8_t pitchAndFamily,
-                          LPCSTR pcsFontName,
-                          LOGFONTA& lf) {
+bool RetrieveSpecificFont(uint8_t charSet, LPCSTR pcsFontName, LOGFONTA& lf) {
   memset(&lf, 0, sizeof(LOGFONTA));
   lf.lfCharSet = charSet;
-  lf.lfPitchAndFamily = pitchAndFamily;
+  lf.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
   if (pcsFontName) {
     // TODO(dsinclair): Should this be strncpy?
     // NOLINTNEXTLINE(runtime/printf)
@@ -629,28 +626,20 @@ ByteString CPDF_InteractiveForm::GetNativeFontName(uint8_t charSet,
   bool bRet = false;
   const ByteString default_font_name =
       CFX_Font::GetDefaultFontNameByCharset(charSet);
-  if (!default_font_name.IsEmpty()) {
-    bRet = RetrieveSpecificFont(charSet, DEFAULT_PITCH | FF_DONTCARE,
-                                default_font_name.c_str(), lf);
-  }
-  if (!bRet) {
-    bRet = RetrieveSpecificFont(charSet, DEFAULT_PITCH | FF_DONTCARE,
-                                CFX_Font::kUniversalDefaultFontName, lf);
-  }
-  if (!bRet) {
-    bRet = RetrieveSpecificFont(charSet, DEFAULT_PITCH | FF_DONTCARE,
-                                "Microsoft Sans Serif", lf);
-  }
+  if (!default_font_name.IsEmpty())
+    bRet = RetrieveSpecificFont(charSet, default_font_name.c_str(), lf);
   if (!bRet) {
     bRet =
-        RetrieveSpecificFont(charSet, DEFAULT_PITCH | FF_DONTCARE, nullptr, lf);
+        RetrieveSpecificFont(charSet, CFX_Font::kUniversalDefaultFontName, lf);
   }
+  if (!bRet)
+    bRet = RetrieveSpecificFont(charSet, "Microsoft Sans Serif", lf);
+  if (!bRet)
+    bRet = RetrieveSpecificFont(charSet, nullptr, lf);
   if (bRet) {
     if (pLogFont)
       memcpy(pLogFont, &lf, sizeof(LOGFONTA));
-
     csFontName = lf.lfFaceName;
-    return csFontName;
   }
 #endif
   return csFontName;
