@@ -50,7 +50,6 @@ class CPDF_InteractiveForm {
   static void SetUpdateAP(bool bUpdateAP);
   static bool IsUpdateAPEnabled();
   static uint8_t GetNativeCharSet();
-  static ByteString GetNativeFontName(uint8_t iCharSet, void* pLogFont);
   static RetainPtr<CPDF_Font> AddStandardFont(CPDF_Document* pDocument,
                                               ByteString csFontName);
   static RetainPtr<CPDF_Font> AddNativeFont(uint8_t iCharSet,

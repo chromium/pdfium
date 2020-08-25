@@ -40,6 +40,78 @@ void AddFont(CPDF_Dictionary*& pFormDict,
              const RetainPtr<CPDF_Font>& pFont,
              ByteString* csNameTag);
 
+#if defined(OS_WIN)
+struct PDF_FONTDATA {
+  bool bFind;
+  LOGFONTA lf;
+};
+
+int CALLBACK EnumFontFamExProc(ENUMLOGFONTEXA* lpelfe,
+                               NEWTEXTMETRICEX* lpntme,
+                               DWORD FontType,
+                               LPARAM lParam) {
+  if (FontType != 0x004 || strchr(lpelfe->elfLogFont.lfFaceName, '@'))
+    return 1;
+
+  PDF_FONTDATA* pData = (PDF_FONTDATA*)lParam;
+  memcpy(&pData->lf, &lpelfe->elfLogFont, sizeof(LOGFONTA));
+  pData->bFind = true;
+  return 0;
+}
+
+bool RetrieveSpecificFont(uint8_t charSet, LPCSTR pcsFontName, LOGFONTA& lf) {
+  memset(&lf, 0, sizeof(LOGFONTA));
+  lf.lfCharSet = charSet;
+  lf.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
+  if (pcsFontName) {
+    // TODO(dsinclair): Should this be strncpy?
+    // NOLINTNEXTLINE(runtime/printf)
+    strcpy(lf.lfFaceName, pcsFontName);
+  }
+
+  PDF_FONTDATA fd;
+  memset(&fd, 0, sizeof(PDF_FONTDATA));
+  HDC hDC = ::GetDC(nullptr);
+  EnumFontFamiliesExA(hDC, &lf, (FONTENUMPROCA)EnumFontFamExProc, (LPARAM)&fd,
+                      0);
+  ::ReleaseDC(nullptr, hDC);
+  if (fd.bFind)
+    memcpy(&lf, &fd.lf, sizeof(LOGFONTA));
+
+  return fd.bFind;
+}
+#endif  // defined(OS_WIN)
+
+ByteString GetNativeFontName(uint8_t charSet, void* pLogFont) {
+  ByteString csFontName;
+#if defined(OS_WIN)
+  LOGFONTA lf = {};
+  if (charSet == FX_CHARSET_ANSI) {
+    csFontName = CFX_Font::kDefaultAnsiFontName;
+    return csFontName;
+  }
+  bool bRet = false;
+  const ByteString default_font_name =
+      CFX_Font::GetDefaultFontNameByCharset(charSet);
+  if (!default_font_name.IsEmpty())
+    bRet = RetrieveSpecificFont(charSet, default_font_name.c_str(), lf);
+  if (!bRet) {
+    bRet =
+        RetrieveSpecificFont(charSet, CFX_Font::kUniversalDefaultFontName, lf);
+  }
+  if (!bRet)
+    bRet = RetrieveSpecificFont(charSet, "Microsoft Sans Serif", lf);
+  if (!bRet)
+    bRet = RetrieveSpecificFont(charSet, nullptr, lf);
+  if (bRet) {
+    if (pLogFont)
+      memcpy(pLogFont, &lf, sizeof(LOGFONTA));
+    csFontName = lf.lfFaceName;
+  }
+#endif
+  return csFontName;
+}
+
 ByteString GenerateNewFontResourceName(const CPDF_Dictionary* pResDict,
                                        const ByteString& csPrefix) {
   static const char kDummyFontName[] = "ZiTi";
@@ -96,8 +168,7 @@ void InitDict(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument) {
       AddFont(pFormDict, pDocument, pFont, &csBaseName);
 
     if (charSet != FX_CHARSET_ANSI) {
-      ByteString csFontName =
-          CPDF_InteractiveForm::GetNativeFontName(charSet, nullptr);
+      ByteString csFontName = GetNativeFontName(charSet, nullptr);
       if (!pFont || csFontName != CFX_Font::kDefaultAnsiFontName) {
         pFont = CPDF_InteractiveForm::AddNativeFont(pDocument);
         if (pFont) {
@@ -290,51 +361,6 @@ class CFieldNameExtractor {
   size_t m_iCur = 0;
 };
 
-#if defined(OS_WIN)
-struct PDF_FONTDATA {
-  bool bFind;
-  LOGFONTA lf;
-};
-
-static int CALLBACK EnumFontFamExProc(ENUMLOGFONTEXA* lpelfe,
-                                      NEWTEXTMETRICEX* lpntme,
-                                      DWORD FontType,
-                                      LPARAM lParam) {
-  if (FontType != 0x004 || strchr(lpelfe->elfLogFont.lfFaceName, '@'))
-    return 1;
-
-  PDF_FONTDATA* pData = (PDF_FONTDATA*)lParam;
-  memcpy(&pData->lf, &lpelfe->elfLogFont, sizeof(LOGFONTA));
-  pData->bFind = true;
-  return 0;
-}
-
-bool RetrieveSpecificFont(LOGFONTA& lf) {
-  PDF_FONTDATA fd;
-  memset(&fd, 0, sizeof(PDF_FONTDATA));
-  HDC hDC = ::GetDC(nullptr);
-  EnumFontFamiliesExA(hDC, &lf, (FONTENUMPROCA)EnumFontFamExProc, (LPARAM)&fd,
-                      0);
-  ::ReleaseDC(nullptr, hDC);
-  if (fd.bFind)
-    memcpy(&lf, &fd.lf, sizeof(LOGFONTA));
-
-  return fd.bFind;
-}
-
-bool RetrieveSpecificFont(uint8_t charSet, LPCSTR pcsFontName, LOGFONTA& lf) {
-  memset(&lf, 0, sizeof(LOGFONTA));
-  lf.lfCharSet = charSet;
-  lf.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
-  if (pcsFontName) {
-    // TODO(dsinclair): Should this be strncpy?
-    // NOLINTNEXTLINE(runtime/printf)
-    strcpy(lf.lfFaceName, pcsFontName);
-  }
-  return RetrieveSpecificFont(lf);
-}
-#endif  // defined(OS_WIN)
-
 }  // namespace
 
 class CFieldTree {
@@ -524,8 +550,7 @@ RetainPtr<CPDF_Font> CPDF_InteractiveForm::AddNativeInteractiveFormFont(
     *csNameTag = std::move(csTemp);
     return pFont;
   }
-  ByteString csFontName =
-      CPDF_InteractiveForm::GetNativeFontName(charSet, nullptr);
+  ByteString csFontName = GetNativeFontName(charSet, nullptr);
   if (!csFontName.IsEmpty() &&
       FindFont(pFormDict, pDocument, csFontName, pFont, csNameTag)) {
     return pFont;
@@ -585,37 +610,6 @@ RetainPtr<CPDF_Font> CPDF_InteractiveForm::AddStandardFont(
 
   static const CPDF_FontEncoding encoding(PDFFONT_ENCODING_WINANSI);
   return pPageData->AddStandardFont(csFontName, &encoding);
-}
-
-ByteString CPDF_InteractiveForm::GetNativeFontName(uint8_t charSet,
-                                                   void* pLogFont) {
-  ByteString csFontName;
-#if defined(OS_WIN)
-  LOGFONTA lf = {};
-  if (charSet == FX_CHARSET_ANSI) {
-    csFontName = CFX_Font::kDefaultAnsiFontName;
-    return csFontName;
-  }
-  bool bRet = false;
-  const ByteString default_font_name =
-      CFX_Font::GetDefaultFontNameByCharset(charSet);
-  if (!default_font_name.IsEmpty())
-    bRet = RetrieveSpecificFont(charSet, default_font_name.c_str(), lf);
-  if (!bRet) {
-    bRet =
-        RetrieveSpecificFont(charSet, CFX_Font::kUniversalDefaultFontName, lf);
-  }
-  if (!bRet)
-    bRet = RetrieveSpecificFont(charSet, "Microsoft Sans Serif", lf);
-  if (!bRet)
-    bRet = RetrieveSpecificFont(charSet, nullptr, lf);
-  if (bRet) {
-    if (pLogFont)
-      memcpy(pLogFont, &lf, sizeof(LOGFONTA));
-    csFontName = lf.lfFaceName;
-  }
-#endif
-  return csFontName;
 }
 
 RetainPtr<CPDF_Font> CPDF_InteractiveForm::AddNativeFont(
