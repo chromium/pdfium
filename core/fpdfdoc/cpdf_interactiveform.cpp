@@ -148,6 +148,10 @@ ByteString GenerateNewFontResourceName(const CPDF_Dictionary* pResDict,
   return csTmp;
 }
 
+uint8_t GetNativeCharSet() {
+  return FX_GetCharsetFromCodePage(FXSYS_GetACP());
+}
+
 void InitDict(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument) {
   if (!pDocument)
     return;
@@ -161,7 +165,7 @@ void InitDict(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument) {
   ByteString csDA;
   if (!pFormDict->KeyExist("DR")) {
     ByteString csBaseName;
-    uint8_t charSet = CPDF_InteractiveForm::GetNativeCharSet();
+    uint8_t charSet = GetNativeCharSet();
     RetainPtr<CPDF_Font> pFont = CPDF_InteractiveForm::AddStandardFont(
         pDocument, CFX_Font::kDefaultAnsiFontName);
     if (pFont)
@@ -170,7 +174,7 @@ void InitDict(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument) {
     if (charSet != FX_CHARSET_ANSI) {
       ByteString csFontName = GetNativeFontName(charSet, nullptr);
       if (!pFont || csFontName != CFX_Font::kDefaultAnsiFontName) {
-        pFont = CPDF_InteractiveForm::AddNativeFont(pDocument);
+        pFont = CPDF_InteractiveForm::AddNativeFont(charSet, pDocument);
         if (pFont) {
           csBaseName.clear();
           AddFont(pFormDict, pDocument, pFont, &csBaseName);
@@ -542,7 +546,7 @@ RetainPtr<CPDF_Font> CPDF_InteractiveForm::AddNativeInteractiveFormFont(
   if (!pFormDict)
     InitDict(pFormDict, pDocument);
 
-  uint8_t charSet = CPDF_InteractiveForm::GetNativeCharSet();
+  uint8_t charSet = GetNativeCharSet();
   ByteString csTemp;
   RetainPtr<CPDF_Font> pFont =
       GetNativeFont(pFormDict, pDocument, charSet, &csTemp);
@@ -561,11 +565,6 @@ RetainPtr<CPDF_Font> CPDF_InteractiveForm::AddNativeInteractiveFormFont(
 
   AddFont(pFormDict, pDocument, pFont, csNameTag);
   return pFont;
-}
-
-// static
-uint8_t CPDF_InteractiveForm::GetNativeCharSet() {
-  return FX_GetCharsetFromCodePage(FXSYS_GetACP());
 }
 
 CPDF_InteractiveForm::CPDF_InteractiveForm(CPDF_Document* pDocument)
@@ -628,11 +627,6 @@ RetainPtr<CPDF_Font> CPDF_InteractiveForm::AddNativeFont(
   }
 #endif
   return nullptr;
-}
-
-RetainPtr<CPDF_Font> CPDF_InteractiveForm::AddNativeFont(
-    CPDF_Document* pDocument) {
-  return pDocument ? AddNativeFont(GetNativeCharSet(), pDocument) : nullptr;
 }
 
 size_t CPDF_InteractiveForm::CountFields(const WideString& csFieldName) const {
