@@ -5,15 +5,20 @@
 #include "fxjs/gc/heap.h"
 
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
 
 size_t g_platform_ref_count = 0;
 v8::Platform* g_platform = nullptr;
+v8::Isolate* g_isolate = nullptr;
 
 }  // namespace
 
+// Taken from v8/samples/cppgc/cppgc-for-v8-embedders.cc.
+// Adaptper that makes the global v8::Platform compatible with a
+// cppgc::Platform.
 class CFXGC_Platform final : public cppgc::Platform {
  public:
   CFXGC_Platform() = default;
@@ -31,7 +36,7 @@ class CFXGC_Platform final : public cppgc::Platform {
     // V8's default platform creates a new task runner when passed the
     // v8::Isolate pointer the first time. For non-default platforms this will
     // require getting the appropriate task runner.
-    return g_platform->GetForegroundTaskRunner(nullptr);
+    return g_platform->GetForegroundTaskRunner(g_isolate);
   }
 
   std::unique_ptr<cppgc::JobHandle> PostJob(
@@ -41,10 +46,11 @@ class CFXGC_Platform final : public cppgc::Platform {
   }
 };
 
-void FXGC_Initialize(v8::Platform* platform) {
+void FXGC_Initialize(v8::Platform* platform, v8::Isolate* isolate) {
   if (platform) {
     ASSERT(!g_platform);
     g_platform = platform;
+    g_isolate = isolate;
     cppgc::InitializeProcess(platform->GetPageAllocator());
   }
 }
@@ -53,6 +59,7 @@ void FXGC_Release() {
   if (g_platform && g_platform_ref_count == 0) {
     cppgc::ShutdownProcess();
     g_platform = nullptr;
+    g_isolate = nullptr;
   }
 }
 
