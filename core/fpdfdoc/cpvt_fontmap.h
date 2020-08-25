@@ -37,7 +37,7 @@ class CPVT_FontMap final : public IPVT_FontMap {
 
   static RetainPtr<CPDF_Font> GetAnnotSysPDFFont(CPDF_Document* pDoc,
                                                  CPDF_Dictionary* pResDict,
-                                                 ByteString* sSysFontAlias);
+                                                 ByteString* pSysFontAlias);
 
  private:
   UnownedPtr<CPDF_Document> const m_pDocument;

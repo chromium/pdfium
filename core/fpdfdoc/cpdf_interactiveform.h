@@ -28,10 +28,6 @@ class CPDF_FormControl;
 class CPDF_Object;
 class CPDF_Page;
 
-RetainPtr<CPDF_Font> AddNativeInteractiveFormFont(CPDF_Dictionary*& pFormDict,
-                                                  CPDF_Document* pDocument,
-                                                  ByteString* csNameTag);
-
 class CPDF_InteractiveForm {
  public:
   class NotifierIface {
@@ -60,6 +56,10 @@ class CPDF_InteractiveForm {
   static RetainPtr<CPDF_Font> AddNativeFont(uint8_t iCharSet,
                                             CPDF_Document* pDocument);
   static RetainPtr<CPDF_Font> AddNativeFont(CPDF_Document* pDocument);
+  static RetainPtr<CPDF_Font> AddNativeInteractiveFormFont(
+      CPDF_Dictionary*& pFormDict,
+      CPDF_Document* pDocument,
+      ByteString* csNameTag);
 
   size_t CountFields(const WideString& csFieldName) const;
   CPDF_FormField* GetField(uint32_t index, const WideString& csFieldName) const;

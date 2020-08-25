@@ -117,28 +117,6 @@ void InitDict(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument) {
     pFormDict->SetNewFor<CPDF_String>("DA", csDA, false);
 }
 
-RetainPtr<CPDF_Font> GetFont(CPDF_Dictionary* pFormDict,
-                             CPDF_Document* pDocument,
-                             const ByteString& csNameTag) {
-  ByteString csAlias = PDF_NameDecode(csNameTag.AsStringView());
-  if (!pFormDict || csAlias.IsEmpty())
-    return nullptr;
-
-  CPDF_Dictionary* pDR = pFormDict->GetDictFor("DR");
-  if (!pDR)
-    return nullptr;
-
-  CPDF_Dictionary* pFonts = pDR->GetDictFor("Font");
-  if (!ValidateFontResourceDict(pFonts))
-    return nullptr;
-
-  CPDF_Dictionary* pElement = pFonts->GetDictFor(csAlias);
-  if (!pElement || pElement->GetNameFor("Type") != "Font")
-    return nullptr;
-
-  return CPDF_DocPageData::FromDocument(pDocument)->GetFont(pElement);
-}
-
 RetainPtr<CPDF_Font> GetNativeFont(CPDF_Dictionary* pFormDict,
                                    CPDF_Document* pDocument,
                                    uint8_t charSet,
@@ -288,34 +266,6 @@ void AddFont(CPDF_Dictionary*& pFormDict,
   *csNameTag = GenerateNewFontResourceName(pDR, *csNameTag);
   pFonts->SetNewFor<CPDF_Reference>(*csNameTag, pDocument,
                                     pFont->GetFontDict()->GetObjNum());
-}
-
-RetainPtr<CPDF_Font> AddNativeFont(CPDF_Dictionary*& pFormDict,
-                                   CPDF_Document* pDocument,
-                                   uint8_t charSet,
-                                   ByteString* csNameTag) {
-  if (!pFormDict)
-    InitDict(pFormDict, pDocument);
-
-  ByteString csTemp;
-  RetainPtr<CPDF_Font> pFont =
-      GetNativeFont(pFormDict, pDocument, charSet, &csTemp);
-  if (pFont) {
-    *csNameTag = std::move(csTemp);
-    return pFont;
-  }
-  ByteString csFontName =
-      CPDF_InteractiveForm::GetNativeFontName(charSet, nullptr);
-  if (!csFontName.IsEmpty() &&
-      FindFont(pFormDict, pDocument, csFontName, pFont, csNameTag)) {
-    return pFont;
-  }
-  pFont = CPDF_InteractiveForm::AddNativeFont(charSet, pDocument);
-  if (!pFont)
-    return nullptr;
-
-  AddFont(pFormDict, pDocument, pFont, csNameTag);
-  return pFont;
 }
 
 class CFieldNameExtractor {
@@ -558,11 +508,34 @@ CFieldTree::Node* CFieldTree::FindNode(const WideString& full_name) {
   return pNode;
 }
 
-RetainPtr<CPDF_Font> AddNativeInteractiveFormFont(CPDF_Dictionary*& pFormDict,
-                                                  CPDF_Document* pDocument,
-                                                  ByteString* csNameTag) {
+// static
+RetainPtr<CPDF_Font> CPDF_InteractiveForm::AddNativeInteractiveFormFont(
+    CPDF_Dictionary*& pFormDict,
+    CPDF_Document* pDocument,
+    ByteString* csNameTag) {
+  if (!pFormDict)
+    InitDict(pFormDict, pDocument);
+
   uint8_t charSet = CPDF_InteractiveForm::GetNativeCharSet();
-  return AddNativeFont(pFormDict, pDocument, charSet, csNameTag);
+  ByteString csTemp;
+  RetainPtr<CPDF_Font> pFont =
+      GetNativeFont(pFormDict, pDocument, charSet, &csTemp);
+  if (pFont) {
+    *csNameTag = std::move(csTemp);
+    return pFont;
+  }
+  ByteString csFontName =
+      CPDF_InteractiveForm::GetNativeFontName(charSet, nullptr);
+  if (!csFontName.IsEmpty() &&
+      FindFont(pFormDict, pDocument, csFontName, pFont, csNameTag)) {
+    return pFont;
+  }
+  pFont = CPDF_InteractiveForm::AddNativeFont(charSet, pDocument);
+  if (!pFont)
+    return nullptr;
+
+  AddFont(pFormDict, pDocument, pFont, csNameTag);
+  return pFont;
 }
 
 // static
@@ -774,7 +747,23 @@ int CPDF_InteractiveForm::FindFieldInCalculationOrder(
 
 RetainPtr<CPDF_Font> CPDF_InteractiveForm::GetFormFont(
     ByteString csNameTag) const {
-  return GetFont(m_pFormDict.Get(), m_pDocument.Get(), csNameTag);
+  ByteString csAlias = PDF_NameDecode(csNameTag.AsStringView());
+  if (!m_pFormDict || csAlias.IsEmpty())
+    return nullptr;
+
+  CPDF_Dictionary* pDR = m_pFormDict->GetDictFor("DR");
+  if (!pDR)
+    return nullptr;
+
+  CPDF_Dictionary* pFonts = pDR->GetDictFor("Font");
+  if (!ValidateFontResourceDict(pFonts))
+    return nullptr;
+
+  CPDF_Dictionary* pElement = pFonts->GetDictFor(csAlias);
+  if (!pElement || pElement->GetNameFor("Type") != "Font")
+    return nullptr;
+
+  return CPDF_DocPageData::FromDocument(m_pDocument)->GetFont(pElement);
 }
 
 CPDF_DefaultAppearance CPDF_InteractiveForm::GetDefaultAppearance() const {
