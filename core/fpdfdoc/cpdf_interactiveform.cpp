@@ -148,6 +148,19 @@ ByteString GenerateNewFontResourceName(const CPDF_Dictionary* pResDict,
   return csTmp;
 }
 
+RetainPtr<CPDF_Font> AddStandardFont(CPDF_Document* pDocument,
+                                     ByteString csFontName) {
+  if (!pDocument || csFontName.IsEmpty())
+    return nullptr;
+
+  auto* pPageData = CPDF_DocPageData::FromDocument(pDocument);
+  if (csFontName == "ZapfDingbats")
+    return pPageData->AddStandardFont(csFontName, nullptr);
+
+  static const CPDF_FontEncoding encoding(PDFFONT_ENCODING_WINANSI);
+  return pPageData->AddStandardFont(csFontName, &encoding);
+}
+
 uint8_t GetNativeCharSet() {
   return FX_GetCharsetFromCodePage(FXSYS_GetACP());
 }
@@ -166,8 +179,8 @@ void InitDict(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument) {
   if (!pFormDict->KeyExist("DR")) {
     ByteString csBaseName;
     uint8_t charSet = GetNativeCharSet();
-    RetainPtr<CPDF_Font> pFont = CPDF_InteractiveForm::AddStandardFont(
-        pDocument, CFX_Font::kDefaultAnsiFontName);
+    RetainPtr<CPDF_Font> pFont =
+        AddStandardFont(pDocument, CFX_Font::kDefaultAnsiFontName);
     if (pFont)
       AddFont(pFormDict, pDocument, pFont, &csBaseName);
 
@@ -595,20 +608,6 @@ bool CPDF_InteractiveForm::IsUpdateAPEnabled() {
 
 void CPDF_InteractiveForm::SetUpdateAP(bool bUpdateAP) {
   s_bUpdateAP = bUpdateAP;
-}
-
-RetainPtr<CPDF_Font> CPDF_InteractiveForm::AddStandardFont(
-    CPDF_Document* pDocument,
-    ByteString csFontName) {
-  if (!pDocument || csFontName.IsEmpty())
-    return nullptr;
-
-  auto* pPageData = CPDF_DocPageData::FromDocument(pDocument);
-  if (csFontName == "ZapfDingbats")
-    return pPageData->AddStandardFont(csFontName, nullptr);
-
-  static const CPDF_FontEncoding encoding(PDFFONT_ENCODING_WINANSI);
-  return pPageData->AddStandardFont(csFontName, &encoding);
 }
 
 RetainPtr<CPDF_Font> CPDF_InteractiveForm::AddNativeFont(
