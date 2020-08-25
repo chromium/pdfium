@@ -223,18 +223,17 @@ static_assert(kWeightPowArraySize == pdfium::size(kWeightPowShiftJis),
 
 }  // namespace
 
-const CFX_Font::CharsetFontMap CFX_Font::defaultTTFMap[] = {
+const CFX_Font::CharsetFontMap CFX_Font::kDefaultTTFMap[] = {
     {FX_CHARSET_ANSI, kDefaultAnsiFontName},
     {FX_CHARSET_ChineseSimplified, "SimSun"},
     {FX_CHARSET_ChineseTraditional, "MingLiU"},
     {FX_CHARSET_ShiftJIS, "MS Gothic"},
     {FX_CHARSET_Hangul, "Batang"},
     {FX_CHARSET_MSWin_Cyrillic, "Arial"},
-#if defined(OS_LINUX) || defined(OS_CHROMEOS) || defined(OS_ASMJS) || \
-    defined(OS_APPLE)
-    {FX_CHARSET_MSWin_EasternEuropean, "Arial"},
-#else
+#if defined(OS_WIN)
     {FX_CHARSET_MSWin_EasternEuropean, "Tahoma"},
+#else
+    {FX_CHARSET_MSWin_EasternEuropean, "Arial"},
 #endif
     {FX_CHARSET_MSWin_Arabic, "Arial"},
     {-1, nullptr}};
@@ -250,11 +249,9 @@ const char CFX_Font::kUniversalDefaultFontName[] = "Arial Unicode MS";
 
 // static
 ByteString CFX_Font::GetDefaultFontNameByCharset(uint8_t nCharset) {
-  int i = 0;
-  while (defaultTTFMap[i].charset != -1) {
-    if (nCharset == static_cast<uint8_t>(defaultTTFMap[i].charset))
-      return defaultTTFMap[i].fontname;
-    ++i;
+  for (size_t i = 0; i < pdfium::size(kDefaultTTFMap) - 1; ++i) {
+    if (nCharset == static_cast<uint8_t>(kDefaultTTFMap[i].charset))
+      return kDefaultTTFMap[i].fontname;
   }
   return kUniversalDefaultFontName;
 }

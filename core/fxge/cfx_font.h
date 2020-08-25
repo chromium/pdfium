@@ -124,12 +124,10 @@ class CFX_Font {
     const char* fontname;  // Name of default font to use with that charset.
   };
 
-  /**
-   *    Pointer to the default character set to TT Font name map. The
-   *    map is an array of CharsetFontMap structs, with its end indicated
-   *    by a { -1, NULL } entry.
-   **/
-  static const CharsetFontMap defaultTTFMap[];
+  // Pointer to the default character set to TT Font name map. The map is an
+  // array of CharsetFontMap structs, with its end indicated by a {-1, nullptr}
+  // entry.
+  static const CharsetFontMap kDefaultTTFMap[];
 
  private:
   RetainPtr<CFX_GlyphCache> GetOrCreateGlyphCache() const;
