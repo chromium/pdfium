@@ -311,7 +311,7 @@ def _CheckPNGFormat(input_api, output_api):
 
 def CheckChangeOnUpload(input_api, output_api):
   cpp_source_filter = lambda x: input_api.FilterSourceFile(
-      x, white_list=(r'\.(?:c|cc|cpp|h)$',))
+      x, files_to_check=(r'\.(?:c|cc|cpp|h)$',))
 
   results = []
   results.extend(_CheckUnwantedDependencies(input_api, output_api))
