@@ -32,17 +32,17 @@
 
 namespace {
 
-bool FindNativeTrueTypeFont(ByteString sFontFaceName) {
+bool FindNativeTrueTypeFont(ByteStringView sFontFaceName) {
   CFX_FontMgr* pFontMgr = CFX_GEModule::Get()->GetFontMgr();
   CFX_FontMapper* pFontMapper = pFontMgr->GetBuiltinMapper();
   pFontMapper->LoadInstalledFonts();
 
   for (const auto& font : pFontMapper->m_InstalledTTFonts) {
-    if (font.Compare(sFontFaceName.AsStringView()))
+    if (font.Compare(sFontFaceName))
       return true;
   }
   for (const auto& fontPair : pFontMapper->m_LocalizedTTFonts) {
-    if (fontPair.first.Compare(sFontFaceName.AsStringView()))
+    if (fontPair.first.Compare(sFontFaceName))
       return true;
   }
   return false;
@@ -415,7 +415,7 @@ ByteString CBA_FontMap::GetNativeFontName(int32_t nCharset) {
     nCharset = GetNativeCharset();
 
   ByteString sFontName = CFX_Font::GetDefaultFontNameByCharset(nCharset);
-  if (!FindNativeTrueTypeFont(sFontName))
+  if (!FindNativeTrueTypeFont(sFontName.AsStringView()))
     return ByteString();
 
   return sFontName;
