@@ -154,6 +154,21 @@ RetainPtr<CPDF_Font> AddStandardFont(CPDF_Document* pDocument) {
   return pPageData->AddStandardFont(CFX_Font::kDefaultAnsiFontName, &encoding);
 }
 
+RetainPtr<CPDF_Font> AddNativeFont(uint8_t charSet, CPDF_Document* pDocument) {
+  ASSERT(pDocument);
+
+#if defined(OS_WIN)
+  LOGFONTA lf;
+  ByteString csFontName = GetNativeFontName(charSet, &lf);
+  if (!csFontName.IsEmpty()) {
+    if (csFontName == CFX_Font::kDefaultAnsiFontName)
+      return AddStandardFont(pDocument);
+    return CPDF_DocPageData::FromDocument(pDocument)->AddWindowsFont(&lf);
+  }
+#endif
+  return nullptr;
+}
+
 uint8_t GetNativeCharSet() {
   return FX_GetCharsetFromCodePage(FXSYS_GetACP());
 }
@@ -179,7 +194,7 @@ void InitDict(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument) {
     if (charSet != FX_CHARSET_ANSI) {
       ByteString csFontName = GetNativeFontName(charSet, nullptr);
       if (!pFont || csFontName != CFX_Font::kDefaultAnsiFontName) {
-        pFont = CPDF_InteractiveForm::AddNativeFont(charSet, pDocument);
+        pFont = AddNativeFont(charSet, pDocument);
         if (pFont) {
           csBaseName.clear();
           AddFont(pFormDict, pDocument, pFont, &csBaseName);
@@ -564,7 +579,7 @@ RetainPtr<CPDF_Font> CPDF_InteractiveForm::AddNativeInteractiveFormFont(
       FindFont(pFormDict, pDocument, csFontName, pFont, csNameTag)) {
     return pFont;
   }
-  pFont = CPDF_InteractiveForm::AddNativeFont(charSet, pDocument);
+  pFont = AddNativeFont(charSet, pDocument);
   if (!pFont)
     return nullptr;
 
@@ -600,24 +615,6 @@ bool CPDF_InteractiveForm::IsUpdateAPEnabled() {
 
 void CPDF_InteractiveForm::SetUpdateAP(bool bUpdateAP) {
   s_bUpdateAP = bUpdateAP;
-}
-
-RetainPtr<CPDF_Font> CPDF_InteractiveForm::AddNativeFont(
-    uint8_t charSet,
-    CPDF_Document* pDocument) {
-  if (!pDocument)
-    return nullptr;
-
-#if defined(OS_WIN)
-  LOGFONTA lf;
-  ByteString csFontName = GetNativeFontName(charSet, &lf);
-  if (!csFontName.IsEmpty()) {
-    if (csFontName == CFX_Font::kDefaultAnsiFontName)
-      return AddStandardFont(pDocument);
-    return CPDF_DocPageData::FromDocument(pDocument)->AddWindowsFont(&lf);
-  }
-#endif
-  return nullptr;
 }
 
 size_t CPDF_InteractiveForm::CountFields(const WideString& csFieldName) const {
