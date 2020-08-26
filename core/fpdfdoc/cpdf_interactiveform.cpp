@@ -148,17 +148,10 @@ ByteString GenerateNewFontResourceName(const CPDF_Dictionary* pResDict,
   return csTmp;
 }
 
-RetainPtr<CPDF_Font> AddStandardFont(CPDF_Document* pDocument,
-                                     ByteString csFontName) {
-  if (!pDocument || csFontName.IsEmpty())
-    return nullptr;
-
+RetainPtr<CPDF_Font> AddStandardFont(CPDF_Document* pDocument) {
   auto* pPageData = CPDF_DocPageData::FromDocument(pDocument);
-  if (csFontName == "ZapfDingbats")
-    return pPageData->AddStandardFont(csFontName, nullptr);
-
   static const CPDF_FontEncoding encoding(PDFFONT_ENCODING_WINANSI);
-  return pPageData->AddStandardFont(csFontName, &encoding);
+  return pPageData->AddStandardFont(CFX_Font::kDefaultAnsiFontName, &encoding);
 }
 
 uint8_t GetNativeCharSet() {
@@ -179,8 +172,7 @@ void InitDict(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument) {
   if (!pFormDict->KeyExist("DR")) {
     ByteString csBaseName;
     uint8_t charSet = GetNativeCharSet();
-    RetainPtr<CPDF_Font> pFont =
-        AddStandardFont(pDocument, CFX_Font::kDefaultAnsiFontName);
+    RetainPtr<CPDF_Font> pFont = AddStandardFont(pDocument);
     if (pFont)
       AddFont(pFormDict, pDocument, pFont, &csBaseName);
 
@@ -621,7 +613,7 @@ RetainPtr<CPDF_Font> CPDF_InteractiveForm::AddNativeFont(
   ByteString csFontName = GetNativeFontName(charSet, &lf);
   if (!csFontName.IsEmpty()) {
     if (csFontName == CFX_Font::kDefaultAnsiFontName)
-      return AddStandardFont(pDocument, csFontName);
+      return AddStandardFont(pDocument);
     return CPDF_DocPageData::FromDocument(pDocument)->AddWindowsFont(&lf);
   }
 #endif
