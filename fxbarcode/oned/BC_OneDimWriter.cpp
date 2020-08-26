@@ -33,15 +33,9 @@
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
-#include "core/fxge/cfx_textrenderoptions.h"
 #include "core/fxge/cfx_unicodeencodingex.h"
 #include "core/fxge/text_char_pos.h"
 #include "fxbarcode/BC_Writer.h"
-
-// static
-const CFX_TextRenderOptions& CBC_OneDimWriter::GetTextRenderOptions() {
-  return CFX_TextRenderOptions::LcdOptions();
-}
 
 // static
 bool CBC_OneDimWriter::HasValidContentSize(WideStringView contents) {

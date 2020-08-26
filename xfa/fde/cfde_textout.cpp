@@ -70,7 +70,7 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
   RetainPtr<CFGAS_GEFont> pCurFont;
   TextCharPos* pCurCP = nullptr;
   int32_t iCurCount = 0;
-  const CFX_TextRenderOptions& options = CFX_TextRenderOptions::LcdOptions();
+  static constexpr CFX_TextRenderOptions kOptions(CFX_TextRenderOptions::kLcd);
   for (auto& pos : pCharPos) {
     RetainPtr<CFGAS_GEFont> pSTFont =
         pFont->GetSubstFont(static_cast<int32_t>(pos.m_GlyphIndex));
@@ -90,7 +90,7 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
 #endif
 
         device->DrawNormalText(iCurCount, pCurCP, font, -fFontSize, matrix,
-                               color, options);
+                               color, kOptions);
       }
       pCurFont = pSTFont;
       pCurCP = &pos;
@@ -113,7 +113,7 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
 #endif
 
     bRet = device->DrawNormalText(iCurCount, pCurCP, font, -fFontSize, matrix,
-                                  color, options);
+                                  color, kOptions);
   }
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   device->Flush(false);
