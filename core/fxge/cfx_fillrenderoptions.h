@@ -21,11 +21,16 @@ struct CFX_FillRenderOptions {
     kWinding = 2,
   };
 
-  static const CFX_FillRenderOptions& EvenOddOptions();
-  static const CFX_FillRenderOptions& WindingOptions();
+  static constexpr CFX_FillRenderOptions EvenOddOptions() {
+    return CFX_FillRenderOptions(FillType::kEvenOdd);
+  }
+  static constexpr CFX_FillRenderOptions WindingOptions() {
+    return CFX_FillRenderOptions(FillType::kWinding);
+  }
 
-  CFX_FillRenderOptions();
-  explicit CFX_FillRenderOptions(FillType fill_type);
+  constexpr CFX_FillRenderOptions() = default;
+  constexpr explicit CFX_FillRenderOptions(FillType fill_type)
+      : fill_type(fill_type) {}
 
   // Fill type.
   FillType fill_type = FillType::kNoFill;

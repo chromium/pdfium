@@ -27,7 +27,6 @@ source_set("fxge") {
     "cfx_drawutils.h",
     "cfx_face.cpp",
     "cfx_face.h",
-    "cfx_fillrenderoptions.cpp",
     "cfx_fillrenderoptions.h",
     "cfx_folderfontinfo.cpp",
     "cfx_folderfontinfo.h",
