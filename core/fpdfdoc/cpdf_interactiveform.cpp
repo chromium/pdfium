@@ -35,11 +35,6 @@ namespace {
 
 const int nMaxRecursion = 32;
 
-void AddFont(CPDF_Dictionary*& pFormDict,
-             CPDF_Document* pDocument,
-             const RetainPtr<CPDF_Font>& pFont,
-             ByteString* csNameTag);
-
 #if defined(OS_WIN)
 struct PDF_FONTDATA {
   bool bFind;
@@ -169,88 +164,6 @@ RetainPtr<CPDF_Font> AddNativeFont(uint8_t charSet, CPDF_Document* pDocument) {
   return nullptr;
 }
 
-uint8_t GetNativeCharSet() {
-  return FX_GetCharsetFromCodePage(FXSYS_GetACP());
-}
-
-void InitDict(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument) {
-  if (!pDocument)
-    return;
-
-  if (!pFormDict) {
-    pFormDict = pDocument->NewIndirect<CPDF_Dictionary>();
-    pDocument->GetRoot()->SetNewFor<CPDF_Reference>("AcroForm", pDocument,
-                                                    pFormDict->GetObjNum());
-  }
-
-  ByteString csDA;
-  if (!pFormDict->KeyExist("DR")) {
-    ByteString csBaseName;
-    uint8_t charSet = GetNativeCharSet();
-    RetainPtr<CPDF_Font> pFont = AddStandardFont(pDocument);
-    if (pFont)
-      AddFont(pFormDict, pDocument, pFont, &csBaseName);
-
-    if (charSet != FX_CHARSET_ANSI) {
-      ByteString csFontName = GetNativeFontName(charSet, nullptr);
-      if (!pFont || csFontName != CFX_Font::kDefaultAnsiFontName) {
-        pFont = AddNativeFont(charSet, pDocument);
-        if (pFont) {
-          csBaseName.clear();
-          AddFont(pFormDict, pDocument, pFont, &csBaseName);
-        }
-      }
-    }
-    if (pFont)
-      csDA = "/" + PDF_NameEncode(csBaseName) + " 0 Tf";
-  }
-  if (!csDA.IsEmpty())
-    csDA += " ";
-
-  csDA += "0 g";
-  if (!pFormDict->KeyExist("DA"))
-    pFormDict->SetNewFor<CPDF_String>("DA", csDA, false);
-}
-
-RetainPtr<CPDF_Font> GetNativeFont(CPDF_Dictionary* pFormDict,
-                                   CPDF_Document* pDocument,
-                                   uint8_t charSet,
-                                   ByteString* csNameTag) {
-  CPDF_Dictionary* pDR = pFormDict->GetDictFor("DR");
-  if (!pDR)
-    return nullptr;
-
-  CPDF_Dictionary* pFonts = pDR->GetDictFor("Font");
-  if (!ValidateFontResourceDict(pFonts))
-    return nullptr;
-
-  CPDF_DictionaryLocker locker(pFonts);
-  for (const auto& it : locker) {
-    const ByteString& csKey = it.first;
-    if (!it.second)
-      continue;
-
-    CPDF_Dictionary* pElement = ToDictionary(it.second->GetDirect());
-    if (!pElement || pElement->GetNameFor("Type") != "Font")
-      continue;
-
-    auto* pData = CPDF_DocPageData::FromDocument(pDocument);
-    RetainPtr<CPDF_Font> pFind = pData->GetFont(pElement);
-    if (!pFind)
-      continue;
-
-    CFX_SubstFont* pSubst = pFind->GetSubstFont();
-    if (!pSubst)
-      continue;
-
-    if (pSubst->m_Charset == static_cast<int>(charSet)) {
-      *csNameTag = csKey;
-      return pFind;
-    }
-  }
-  return nullptr;
-}
-
 bool FindFont(CPDF_Dictionary* pFormDict,
               const CPDF_Font* pFont,
               ByteString* csNameTag) {
@@ -348,6 +261,88 @@ void AddFont(CPDF_Dictionary*& pFormDict,
   *csNameTag = GenerateNewFontResourceName(pDR, *csNameTag);
   pFonts->SetNewFor<CPDF_Reference>(*csNameTag, pDocument,
                                     pFont->GetFontDict()->GetObjNum());
+}
+
+uint8_t GetNativeCharSet() {
+  return FX_GetCharsetFromCodePage(FXSYS_GetACP());
+}
+
+void InitDict(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument) {
+  if (!pDocument)
+    return;
+
+  if (!pFormDict) {
+    pFormDict = pDocument->NewIndirect<CPDF_Dictionary>();
+    pDocument->GetRoot()->SetNewFor<CPDF_Reference>("AcroForm", pDocument,
+                                                    pFormDict->GetObjNum());
+  }
+
+  ByteString csDA;
+  if (!pFormDict->KeyExist("DR")) {
+    ByteString csBaseName;
+    uint8_t charSet = GetNativeCharSet();
+    RetainPtr<CPDF_Font> pFont = AddStandardFont(pDocument);
+    if (pFont)
+      AddFont(pFormDict, pDocument, pFont, &csBaseName);
+
+    if (charSet != FX_CHARSET_ANSI) {
+      ByteString csFontName = GetNativeFontName(charSet, nullptr);
+      if (!pFont || csFontName != CFX_Font::kDefaultAnsiFontName) {
+        pFont = AddNativeFont(charSet, pDocument);
+        if (pFont) {
+          csBaseName.clear();
+          AddFont(pFormDict, pDocument, pFont, &csBaseName);
+        }
+      }
+    }
+    if (pFont)
+      csDA = "/" + PDF_NameEncode(csBaseName) + " 0 Tf";
+  }
+  if (!csDA.IsEmpty())
+    csDA += " ";
+
+  csDA += "0 g";
+  if (!pFormDict->KeyExist("DA"))
+    pFormDict->SetNewFor<CPDF_String>("DA", csDA, false);
+}
+
+RetainPtr<CPDF_Font> GetNativeFont(CPDF_Dictionary* pFormDict,
+                                   CPDF_Document* pDocument,
+                                   uint8_t charSet,
+                                   ByteString* csNameTag) {
+  CPDF_Dictionary* pDR = pFormDict->GetDictFor("DR");
+  if (!pDR)
+    return nullptr;
+
+  CPDF_Dictionary* pFonts = pDR->GetDictFor("Font");
+  if (!ValidateFontResourceDict(pFonts))
+    return nullptr;
+
+  CPDF_DictionaryLocker locker(pFonts);
+  for (const auto& it : locker) {
+    const ByteString& csKey = it.first;
+    if (!it.second)
+      continue;
+
+    CPDF_Dictionary* pElement = ToDictionary(it.second->GetDirect());
+    if (!pElement || pElement->GetNameFor("Type") != "Font")
+      continue;
+
+    auto* pData = CPDF_DocPageData::FromDocument(pDocument);
+    RetainPtr<CPDF_Font> pFind = pData->GetFont(pElement);
+    if (!pFind)
+      continue;
+
+    CFX_SubstFont* pSubst = pFind->GetSubstFont();
+    if (!pSubst)
+      continue;
+
+    if (pSubst->m_Charset == static_cast<int>(charSet)) {
+      *csNameTag = csKey;
+      return pFind;
+    }
+  }
+  return nullptr;
 }
 
 class CFieldNameExtractor {
