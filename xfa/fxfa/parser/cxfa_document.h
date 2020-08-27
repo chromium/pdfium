@@ -148,7 +148,6 @@ class CXFA_Document final : public cppgc::GarbageCollected<CXFA_Document> {
   cppgc::Member<CXFA_FFNotify> const notify_;
   cppgc::Member<CXFA_NodeOwner> const node_owner_;
   cppgc::Member<CXFA_Node> m_pRootNode;
-  std::map<uint32_t, cppgc::Member<CXFA_Node>> m_rgGlobalBinding;
   std::unique_ptr<CFXJSE_Engine> m_pScriptContext;
   cppgc::Member<LayoutProcessorIface> m_pLayoutProcessor;
   std::unique_ptr<CXFA_LocaleMgr> m_pLocaleMgr;
@@ -158,7 +157,8 @@ class CXFA_Document final : public cppgc::GarbageCollected<CXFA_Document> {
   cppgc::Member<CScript_LogPseudoModel> m_pScriptLog;
   cppgc::Member<CScript_LayoutPseudoModel> m_pScriptLayout;
   cppgc::Member<CScript_SignaturePseudoModel> m_pScriptSignature;
-  std::vector<CXFA_Node*> m_pPendingPageSet;
+  std::map<uint32_t, cppgc::Member<CXFA_Node>> m_rgGlobalBinding;
+  std::vector<cppgc::Member<CXFA_Node>> m_pPendingPageSet;
   XFA_VERSION m_eCurVersionMode = XFA_VERSION_DEFAULT;
   Optional<bool> m_Interactive;
   bool m_bStrictScoping = false;

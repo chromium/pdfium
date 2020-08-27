@@ -1300,6 +1300,8 @@ void CXFA_Document::Trace(cppgc::Visitor* visitor) const {
   visitor->Trace(m_pScriptSignature);
   for (const auto& binding : m_rgGlobalBinding)
     visitor->Trace(binding.second);
+  for (const auto& pending : m_pPendingPageSet)
+    visitor->Trace(pending);
 }
 
 void CXFA_Document::ClearLayoutData() {
