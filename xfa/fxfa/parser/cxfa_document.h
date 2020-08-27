@@ -132,9 +132,12 @@ class CXFA_Document final : public cppgc::GarbageCollected<CXFA_Document> {
 
   CXFA_Node* GetGlobalBinding(uint32_t dwNameHash);
   void RegisterGlobalBinding(uint32_t dwNameHash, CXFA_Node* pDataNode);
-  void SetPendingNodesUnusedAndUnbound();
 
-  std::vector<CXFA_Node*> m_pPendingPageSet;
+  size_t GetPendingNodesCount() const;
+  CXFA_Node* GetPendingNodeAtIndex(size_t index) const;
+  void AppendPendingNode(CXFA_Node* node);
+  void ClearPendingNodes();
+  void SetPendingNodesUnusedAndUnbound();
 
  private:
   CXFA_Document(CXFA_FFNotify* notify,
@@ -155,6 +158,7 @@ class CXFA_Document final : public cppgc::GarbageCollected<CXFA_Document> {
   cppgc::Member<CScript_LogPseudoModel> m_pScriptLog;
   cppgc::Member<CScript_LayoutPseudoModel> m_pScriptLayout;
   cppgc::Member<CScript_SignaturePseudoModel> m_pScriptSignature;
+  std::vector<CXFA_Node*> m_pPendingPageSet;
   XFA_VERSION m_eCurVersionMode = XFA_VERSION_DEFAULT;
   Optional<bool> m_Interactive;
   bool m_bStrictScoping = false;

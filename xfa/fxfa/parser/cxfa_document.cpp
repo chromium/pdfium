@@ -1838,6 +1838,22 @@ void CXFA_Document::RegisterGlobalBinding(uint32_t dwNameHash,
   m_rgGlobalBinding[dwNameHash] = pDataNode;
 }
 
+size_t CXFA_Document::GetPendingNodesCount() const {
+  return m_pPendingPageSet.size();
+}
+
+CXFA_Node* CXFA_Document::GetPendingNodeAtIndex(size_t index) const {
+  return m_pPendingPageSet[index];
+}
+
+void CXFA_Document::AppendPendingNode(CXFA_Node* node) {
+  m_pPendingPageSet.push_back(node);
+}
+
+void CXFA_Document::ClearPendingNodes() {
+  m_pPendingPageSet.clear();
+}
+
 void CXFA_Document::SetPendingNodesUnusedAndUnbound() {
   for (CXFA_Node* pPageNode : m_pPendingPageSet) {
     CXFA_NodeIterator sIterator(pPageNode);
