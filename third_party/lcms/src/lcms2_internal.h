@@ -1,7 +1,7 @@
 
 //
 //  Little Color Management System
-//  Copyright (c) 1998-2017 Marti Maria Saguer
+//  Copyright (c) 1998-2020 Marti Maria Saguer
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the "Software"),
@@ -47,7 +47,7 @@
 #endif
 
 // BorlandC 5.5, VC2003 are broken on that
-#if defined(__BORLANDC__) || (_MSC_VER < 1400) // 1400 == VC++ 8.0
+#if defined(__BORLANDC__) || (defined(_MSC_VER) && (_MSC_VER < 1400)) // 1400 == VC++ 8.0
 #define sinf(x) (float)sin((float)x)
 #define sqrtf(x) (float)sqrt((float)x)
 #endif
@@ -88,6 +88,13 @@
 #   define cmsINLINE static inline
 #endif
 
+// Allow signed overflow, we know this is harmless in this particular context 
+#if defined(__clang__)
+#   define CMS_NO_SANITIZE __attribute__((no_sanitize("signed-integer-overflow")))
+#else
+#   define CMS_NO_SANITIZE 
+#endif
+
 // Other replacement functions
 #ifdef _MSC_VER
 # ifndef snprintf
@@ -99,11 +106,18 @@
 
 /// Properly define some macros to accommodate
 /// older MSVC versions.
-# if _MSC_VER <= 1700
+# if defined(_MSC_VER) && _MSC_VER <= 1700
         #include <float.h>
         #define isnan _isnan
         #define isinf(x) (!_finite((x)))
 # endif
+
+#if !defined(_MSC_VER) && (defined(__STDC_VERSION__) && __STDC_VERSION__ < 199901L)
+        #if !defined(isinf)
+        #define isinf(x) (!finite((x)))
+        #endif
+#endif
+
 
 #endif
 
@@ -180,13 +194,14 @@ cmsINLINE cmsUInt16Number _cmsQuickSaturateWord(cmsFloat64Number d)
     return _cmsQuickFloorWord(d);
 }
 
+// Test bed entry points---------------------------------------------------------------
+#define CMSCHECKPOINT CMSAPI
 
 // Pthread support --------------------------------------------------------------------
 #ifndef CMS_NO_PTHREADS
 
 // This is the threading support. Unfortunately, it has to be platform-dependent because 
 // windows does not support pthreads. 
-
 #ifdef CMS_IS_WINDOWS_
 
 #define WIN32_LEAN_AND_MEAN 1
@@ -823,10 +838,10 @@ void                 _cmsTagSignature2String(char String[5], cmsTagSignature sig
 
 // Interpolation ---------------------------------------------------------------------------------------------------------
 
-cmsInterpParams*     _cmsComputeInterpParams(cmsContext ContextID, cmsUInt32Number nSamples, cmsUInt32Number InputChan, cmsUInt32Number OutputChan, const void* Table, cmsUInt32Number dwFlags);
-cmsInterpParams*     _cmsComputeInterpParamsEx(cmsContext ContextID, const cmsUInt32Number nSamples[], cmsUInt32Number InputChan, cmsUInt32Number OutputChan, const void* Table, cmsUInt32Number dwFlags);
-void                 _cmsFreeInterpParams(cmsInterpParams* p);
-cmsBool              _cmsSetInterpolationRoutine(cmsContext ContextID, cmsInterpParams* p);
+CMSCHECKPOINT cmsInterpParams* CMSEXPORT _cmsComputeInterpParams(cmsContext ContextID, cmsUInt32Number nSamples, cmsUInt32Number InputChan, cmsUInt32Number OutputChan, const void* Table, cmsUInt32Number dwFlags);
+cmsInterpParams*                         _cmsComputeInterpParamsEx(cmsContext ContextID, const cmsUInt32Number nSamples[], cmsUInt32Number InputChan, cmsUInt32Number OutputChan, const void* Table, cmsUInt32Number dwFlags);
+CMSCHECKPOINT void             CMSEXPORT _cmsFreeInterpParams(cmsInterpParams* p);
+cmsBool                                  _cmsSetInterpolationRoutine(cmsContext ContextID, cmsInterpParams* p);
 
 // Curves ----------------------------------------------------------------------------------------------------------------
 
@@ -876,20 +891,20 @@ struct _cmsStage_struct {
 
 
 // Special Stages (cannot be saved)
-cmsStage*        _cmsStageAllocLab2XYZ(cmsContext ContextID);
-cmsStage*        _cmsStageAllocXYZ2Lab(cmsContext ContextID);
-cmsStage*        _cmsStageAllocLabPrelin(cmsContext ContextID);
-cmsStage*        _cmsStageAllocLabV2ToV4(cmsContext ContextID);
-cmsStage*        _cmsStageAllocLabV2ToV4curves(cmsContext ContextID);
-cmsStage*        _cmsStageAllocLabV4ToV2(cmsContext ContextID);
-cmsStage*        _cmsStageAllocNamedColor(cmsNAMEDCOLORLIST* NamedColorList, cmsBool UsePCS);
-cmsStage*        _cmsStageAllocIdentityCurves(cmsContext ContextID, cmsUInt32Number nChannels);
-cmsStage*        _cmsStageAllocIdentityCLut(cmsContext ContextID, cmsUInt32Number nChan);
-cmsStage*        _cmsStageNormalizeFromLabFloat(cmsContext ContextID);
-cmsStage*        _cmsStageNormalizeFromXyzFloat(cmsContext ContextID);
-cmsStage*        _cmsStageNormalizeToLabFloat(cmsContext ContextID);
-cmsStage*        _cmsStageNormalizeToXyzFloat(cmsContext ContextID);
-cmsStage*        _cmsStageClipNegatives(cmsContext ContextID, cmsUInt32Number nChannels);
+CMSCHECKPOINT cmsStage*  CMSEXPORT _cmsStageAllocLab2XYZ(cmsContext ContextID);
+CMSCHECKPOINT cmsStage*  CMSEXPORT _cmsStageAllocXYZ2Lab(cmsContext ContextID);
+cmsStage*                          _cmsStageAllocLabPrelin(cmsContext ContextID);
+CMSCHECKPOINT cmsStage*  CMSEXPORT _cmsStageAllocLabV2ToV4(cmsContext ContextID);
+cmsStage*                          _cmsStageAllocLabV2ToV4curves(cmsContext ContextID);
+CMSCHECKPOINT cmsStage*  CMSEXPORT _cmsStageAllocLabV4ToV2(cmsContext ContextID);
+CMSCHECKPOINT cmsStage*  CMSEXPORT _cmsStageAllocNamedColor(cmsNAMEDCOLORLIST* NamedColorList, cmsBool UsePCS);
+CMSCHECKPOINT cmsStage*  CMSEXPORT _cmsStageAllocIdentityCurves(cmsContext ContextID, cmsUInt32Number nChannels);
+CMSCHECKPOINT cmsStage*  CMSEXPORT _cmsStageAllocIdentityCLut(cmsContext ContextID, cmsUInt32Number nChan);
+cmsStage*                          _cmsStageNormalizeFromLabFloat(cmsContext ContextID);
+cmsStage*                          _cmsStageNormalizeFromXyzFloat(cmsContext ContextID);
+cmsStage*                          _cmsStageNormalizeToLabFloat(cmsContext ContextID);
+cmsStage*                          _cmsStageNormalizeToXyzFloat(cmsContext ContextID);
+cmsStage*                          _cmsStageClipNegatives(cmsContext ContextID, cmsUInt32Number nChannels);
 
 
 // For curve set only
@@ -924,9 +939,9 @@ struct _cmsPipeline_struct {
 // Read tags using low-level function, provide necessary glue code to adapt versions, etc. All those return a brand new copy
 // of the LUTS, since ownership of original is up to the profile. The user should free allocated resources.
 
-cmsPipeline*      _cmsReadInputLUT(cmsHPROFILE hProfile, cmsUInt32Number Intent);
-cmsPipeline*      _cmsReadOutputLUT(cmsHPROFILE hProfile, cmsUInt32Number Intent);
-cmsPipeline*      _cmsReadDevicelinkLUT(cmsHPROFILE hProfile, cmsUInt32Number Intent);
+CMSCHECKPOINT cmsPipeline* CMSEXPORT _cmsReadInputLUT(cmsHPROFILE hProfile, cmsUInt32Number Intent);
+CMSCHECKPOINT cmsPipeline* CMSEXPORT _cmsReadOutputLUT(cmsHPROFILE hProfile, cmsUInt32Number Intent);
+CMSCHECKPOINT cmsPipeline* CMSEXPORT _cmsReadDevicelinkLUT(cmsHPROFILE hProfile, cmsUInt32Number Intent);
 
 // Special values
 cmsBool           _cmsReadMediaWhitePoint(cmsCIEXYZ* Dest, cmsHPROFILE hProfile);
@@ -934,6 +949,9 @@ cmsBool           _cmsReadCHAD(cmsMAT3* Dest, cmsHPROFILE hProfile);
 
 // Profile linker --------------------------------------------------------------------------------------------------
 
+// Link several profiles to obtain a single LUT modelling the whole color transform. Intents, Black point
+// compensation and Adaptation parameters may vary across profiles. BPC and Adaptation refers to the PCS
+// after the profile. I.e, BPC[0] refers to connexion between profile(0) and profile(1)
 cmsPipeline* _cmsLinkProfiles(cmsContext         ContextID,
                               cmsUInt32Number    nProfiles,
                               cmsUInt32Number    TheIntents[],
@@ -951,7 +969,8 @@ cmsSEQ* _cmsCompileProfileSequence(cmsContext ContextID, cmsUInt32Number nProfil
 
 // LUT optimization ------------------------------------------------------------------------------------------------
 
-cmsUInt16Number  _cmsQuantizeVal(cmsFloat64Number i, cmsUInt32Number MaxSamples);
+CMSCHECKPOINT cmsUInt16Number  CMSEXPORT _cmsQuantizeVal(cmsFloat64Number i, cmsUInt32Number MaxSamples);
+
 cmsUInt32Number  _cmsReasonableGridpointsByColorspace(cmsColorSpaceSignature Colorspace, cmsUInt32Number dwFlags);
 
 cmsBool          _cmsEndPointsBySpace(cmsColorSpaceSignature Space,
@@ -985,17 +1004,17 @@ cmsPipeline*     _cmsCreateGamutCheckPipeline(cmsContext ContextID,
 cmsBool         _cmsFormatterIsFloat(cmsUInt32Number Type);
 cmsBool         _cmsFormatterIs8bit(cmsUInt32Number Type);
 
-cmsFormatter    _cmsGetFormatter(cmsContext ContextID,
-                                 cmsUInt32Number Type,          // Specific type, i.e. TYPE_RGB_8
-                                 cmsFormatterDirection Dir,
-                                 cmsUInt32Number dwFlags);
+CMSCHECKPOINT cmsFormatter CMSEXPORT _cmsGetFormatter(cmsContext ContextID,
+                                                      cmsUInt32Number Type,          // Specific type, i.e. TYPE_RGB_8
+                                                      cmsFormatterDirection Dir,
+                                                      cmsUInt32Number dwFlags);
 
 
 #ifndef CMS_NO_HALF_SUPPORT 
 
 // Half float
-cmsFloat32Number _cmsHalf2Float(cmsUInt16Number h);
-cmsUInt16Number  _cmsFloat2Half(cmsFloat32Number flt);
+CMSCHECKPOINT cmsFloat32Number CMSEXPORT _cmsHalf2Float(cmsUInt16Number h);
+CMSCHECKPOINT cmsUInt16Number  CMSEXPORT _cmsFloat2Half(cmsFloat32Number flt);
 
 #endif
 

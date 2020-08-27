@@ -40,7 +40,7 @@ index eb3dd881c..6e36cf462 100644
  
      if (Curve ->Segments) {
  
-@@ -766,20 +771,30 @@ void CMSEXPORT cmsFreeToneCurve(cmsToneCurve* Curve)
+@@ -876,18 +881,25 @@ void CMSEXPORT cmsFreeToneCurve(cmsToneCurve* Curve)
  
              if (Curve ->Segments[i].SampledPoints) {
                  _cmsFree(ContextID, Curve ->Segments[i].SampledPoints);
@@ -66,14 +66,8 @@ index eb3dd881c..6e36cf462 100644
 +        Curve -> Evals = NULL;
 +    }
  
--    if (Curve) _cmsFree(ContextID, Curve);
-+    if (Curve) {
-+        _cmsFree(ContextID, Curve);
-+        Curve = NULL;
-+    }
+     _cmsFree(ContextID, Curve);
  }
- 
- // Utility function, free 3 gamma tables
 @@ -799,7 +814,10 @@ void CMSEXPORT cmsFreeToneCurveTriple(cmsToneCurve* Curve[3])
  // Duplicate a gamma table
  cmsToneCurve* CMSEXPORT cmsDupToneCurve(const cmsToneCurve* In)
@@ -133,20 +127,3 @@ index 1b026488d..cc5f89064 100644
  
  // Low-level save to disk.
  cmsBool  CMSEXPORT cmsSaveProfileToFile(cmsHPROFILE hProfile, const char* FileName)
-diff --git a/third_party/lcms/src/cmsio1.c b/third_party/lcms/src/cmsio1.c
-index 364741c9e..4b12ae18e 100644
---- a/third_party/lcms/src/cmsio1.c
-+++ b/third_party/lcms/src/cmsio1.c
-@@ -201,7 +201,11 @@ cmsPipeline* BuildGrayInputMatrixPipeline(cmsHPROFILE hProfile)
-     return Lut;
- 
- Error:
--    cmsFreeToneCurve(GrayTRC);
-+    // memory pointed by GrayTRC is not a new malloc memory, so don't free it here, 
-+    // memory pointed by GrayTRC will be freed when hProfile is closed.
-+    // test file :0047776_Pocket Medicine_ The Massachusetts General Hospital Handbook of Internal Medicine-2.pdf
-+    // Xiaochuan Liu, 20140421
-+    //cmsFreeToneCurve(GrayTRC);
-     cmsPipelineFree(Lut);
-     return NULL;
- }

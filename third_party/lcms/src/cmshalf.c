@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------
 //
 //  Little Color Management System
-//  Copyright (c) 1998-2017 Marti Maria Saguer
+//  Copyright (c) 1998-2020 Marti Maria Saguer
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the "Software"),
@@ -460,7 +460,7 @@ static const cmsUInt16Number Base[512] = {
 0xfc00, 0xfc00
 };
 
-static const cmsUInt8Number  Shift[512] = {
+static const cmsUInt8Number Shift[512] = {
 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18,
 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18,
 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18,
@@ -503,7 +503,7 @@ static const cmsUInt8Number  Shift[512] = {
 0x18, 0x18, 0x18, 0x18, 0x0d
 };
 
-cmsFloat32Number _cmsHalf2Float(cmsUInt16Number h)
+cmsFloat32Number CMSEXPORT _cmsHalf2Float(cmsUInt16Number h)
 {
     union {
         cmsFloat32Number flt;
@@ -516,7 +516,7 @@ cmsFloat32Number _cmsHalf2Float(cmsUInt16Number h)
     return out.flt;
 }
 
-cmsUInt16Number _cmsFloat2Half(cmsFloat32Number flt)
+cmsUInt16Number CMSEXPORT _cmsFloat2Half(cmsFloat32Number flt)
 {
     union {
         cmsFloat32Number flt;

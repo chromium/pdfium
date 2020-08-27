@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------
 //
 //  Little Color Management System
-//  Copyright (c) 1998-2017 Marti Maria Saguer
+//  Copyright (c) 1998-2020 Marti Maria Saguer
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the "Software"),
@@ -321,9 +321,9 @@ cmsBool PreOptimize(cmsPipeline* Lut)
 }
 
 static
-void Eval16nop1D(register const cmsUInt16Number Input[],
-                 register cmsUInt16Number Output[],
-                 register const struct _cms_interp_struc* p)
+void Eval16nop1D(CMSREGISTER const cmsUInt16Number Input[],
+                 CMSREGISTER cmsUInt16Number Output[],
+                 CMSREGISTER const struct _cms_interp_struc* p)
 {
     Output[0] = Input[0];
 
@@ -331,9 +331,9 @@ void Eval16nop1D(register const cmsUInt16Number Input[],
 }
 
 static
-void PrelinEval16(register const cmsUInt16Number Input[],
-                  register cmsUInt16Number Output[],
-                  register const void* D)
+void PrelinEval16(CMSREGISTER const cmsUInt16Number Input[],
+                  CMSREGISTER cmsUInt16Number Output[],
+                  CMSREGISTER const void* D)
 {
     Prelin16Data* p16 = (Prelin16Data*) D;
     cmsUInt16Number  StageABC[MAX_INPUT_DIMENSIONS];
@@ -439,7 +439,7 @@ Prelin16Data* PrelinOpt16alloc(cmsContext ContextID,
 // Sampler implemented by another LUT. This is a clean way to precalculate the devicelink 3D CLUT for
 // almost any transform. We use floating point precision and then convert from floating point to 16 bits.
 static
-cmsInt32Number XFormSampler16(register const cmsUInt16Number In[], register cmsUInt16Number Out[], register void* Cargo)
+cmsInt32Number XFormSampler16(CMSREGISTER const cmsUInt16Number In[], CMSREGISTER cmsUInt16Number Out[], CMSREGISTER void* Cargo)
 {
     cmsPipeline* Lut = (cmsPipeline*) Cargo;
     cmsFloat32Number InFloat[cmsMAXCHANNELS], OutFloat[cmsMAXCHANNELS];
@@ -556,10 +556,10 @@ cmsBool  PatchLUT(cmsStage* CLUT, cmsUInt16Number At[], cmsUInt16Number Value[],
                 return FALSE;
             }
 
-            for (i = 0; i < (int) nChannelsOut; i++)
-                Grid->Tab.T[index + i] = Value[i];
+    for (i = 0; i < (int) nChannelsOut; i++)
+        Grid->Tab.T[index + i] = Value[i];
 
-            return TRUE;
+    return TRUE;
 }
 
 // Auxiliary, to see if two values are equal or very different
@@ -677,7 +677,7 @@ cmsBool OptimizeByResampling(cmsPipeline** Lut, cmsUInt32Number Intent, cmsUInt3
     cmsToneCurve** DataSetOut;
     Prelin16Data* p16;
 
-    // This is a loosy optimization! does not apply in floating-point cases
+    // This is a lossy optimization! does not apply in floating-point cases
     if (_cmsFormatterIsFloat(*InputFormat) || _cmsFormatterIsFloat(*OutputFormat)) return FALSE;
 
     ColorSpace       = _cmsICCcolorSpace((int) T_COLORSPACE(*InputFormat));
@@ -941,19 +941,19 @@ void* Prelin8dup(cmsContext ContextID, const void* ptr)
 
 // A optimized interpolation for 8-bit input.
 #define DENS(i,j,k) (LutTable[(i)+(j)+(k)+OutChan])
-static
-void PrelinEval8(register const cmsUInt16Number Input[],
-                  register cmsUInt16Number Output[],
-                  register const void* D)
+static CMS_NO_SANITIZE
+void PrelinEval8(CMSREGISTER const cmsUInt16Number Input[],
+                  CMSREGISTER cmsUInt16Number Output[],
+                  CMSREGISTER const void* D)
 {
 
     cmsUInt8Number         r, g, b;
     cmsS15Fixed16Number    rx, ry, rz;
     cmsS15Fixed16Number    c0, c1, c2, c3, Rest;
     int                    OutChan;
-    register cmsS15Fixed16Number X0, X1, Y0, Y1, Z0, Z1;
+    CMSREGISTER cmsS15Fixed16Number X0, X1, Y0, Y1, Z0, Z1;
     Prelin8Data* p8 = (Prelin8Data*) D;
-    register const cmsInterpParams* p = p8 ->p;
+    CMSREGISTER const cmsInterpParams* p = p8 ->p;
     int                    TotalOut = (int) p -> nOutputs;
     const cmsUInt16Number* LutTable = (const cmsUInt16Number*) p->Table;
 
@@ -1024,8 +1024,8 @@ void PrelinEval8(register const cmsUInt16Number Input[],
                                 c1 = c2 = c3 = 0;
                             }
 
-                            Rest = c1 * rx + c2 * ry + c3 * rz + 0x8001;
-                            Output[OutChan] = (cmsUInt16Number) (c0 + ((Rest + (Rest >> 16)) >> 16));
+        Rest = c1 * rx + c2 * ry + c3 * rz + 0x8001;
+        Output[OutChan] = (cmsUInt16Number) (c0 + ((Rest + (Rest >> 16)) >> 16));
 
     }
 }
@@ -1074,7 +1074,7 @@ cmsBool OptimizeByComputingLinearization(cmsPipeline** Lut, cmsUInt32Number Inte
     _cmsStageCLutData* OptimizedPrelinCLUT;
 
 
-    // This is a loosy optimization! does not apply in floating-point cases
+    // This is a lossy optimization! does not apply in floating-point cases
     if (_cmsFormatterIsFloat(*InputFormat) || _cmsFormatterIsFloat(*OutputFormat)) return FALSE;
 
     // Only on chunky RGB
@@ -1117,6 +1117,7 @@ cmsBool OptimizeByComputingLinearization(cmsPipeline** Lut, cmsUInt32Number Inte
     {
         cmsStage* last = cmsPipelineGetPtrToLastStage(OriginalLut);
 
+        if (last == NULL) goto Error;
         if (cmsStageType(last) == cmsSigCurveSetElemType) {
 
             _cmsStageToneCurvesData* Data = (_cmsStageToneCurvesData*)cmsStageData(last);
@@ -1363,9 +1364,9 @@ Curves16Data* CurvesAlloc(cmsContext ContextID, cmsUInt32Number nCurves, cmsUInt
 }
 
 static
-void FastEvaluateCurves8(register const cmsUInt16Number In[],
-                          register cmsUInt16Number Out[],
-                          register const void* D)
+void FastEvaluateCurves8(CMSREGISTER const cmsUInt16Number In[],
+                          CMSREGISTER cmsUInt16Number Out[],
+                          CMSREGISTER const void* D)
 {
     Curves16Data* Data = (Curves16Data*) D;
     int x;
@@ -1380,9 +1381,9 @@ void FastEvaluateCurves8(register const cmsUInt16Number In[],
 
 
 static
-void FastEvaluateCurves16(register const cmsUInt16Number In[],
-                          register cmsUInt16Number Out[],
-                          register const void* D)
+void FastEvaluateCurves16(CMSREGISTER const cmsUInt16Number In[],
+                          CMSREGISTER cmsUInt16Number Out[],
+                          CMSREGISTER const void* D)
 {
     Curves16Data* Data = (Curves16Data*) D;
     cmsUInt32Number i;
@@ -1394,9 +1395,9 @@ void FastEvaluateCurves16(register const cmsUInt16Number In[],
 
 
 static
-void FastIdentity16(register const cmsUInt16Number In[],
-                    register cmsUInt16Number Out[],
-                    register const void* D)
+void FastIdentity16(CMSREGISTER const cmsUInt16Number In[],
+                    CMSREGISTER cmsUInt16Number Out[],
+                    CMSREGISTER const void* D)
 {
     cmsPipeline* Lut = (cmsPipeline*) D;
     cmsUInt32Number i;
@@ -1421,7 +1422,7 @@ cmsBool OptimizeByJoiningCurves(cmsPipeline** Lut, cmsUInt32Number Intent, cmsUI
     cmsStage* ObtainedCurves = NULL;
 
 
-    // This is a loosy optimization! does not apply in floating-point cases
+    // This is a lossy optimization! does not apply in floating-point cases
     if (_cmsFormatterIsFloat(*InputFormat) || _cmsFormatterIsFloat(*OutputFormat)) return FALSE;
 
     //  Only curves in this LUT?
@@ -1471,27 +1472,26 @@ cmsBool OptimizeByJoiningCurves(cmsPipeline** Lut, cmsUInt32Number Intent, cmsUI
 
     // Maybe the curves are linear at the end
     if (!AllCurvesAreLinear(ObtainedCurves)) {
+       _cmsStageToneCurvesData* Data;
 
         if (!cmsPipelineInsertStage(Dest, cmsAT_BEGIN, ObtainedCurves))
             goto Error;
+        Data = (_cmsStageToneCurvesData*) cmsStageData(ObtainedCurves);
+        ObtainedCurves = NULL;
 
         // If the curves are to be applied in 8 bits, we can save memory
         if (_cmsFormatterIs8bit(*InputFormat)) {
-
-            _cmsStageToneCurvesData* Data = (_cmsStageToneCurvesData*) ObtainedCurves ->Data;
              Curves16Data* c16 = CurvesAlloc(Dest ->ContextID, Data ->nCurves, 256, Data ->TheCurves);
 
-             if (c16 == NULL) goto Error; 
+             if (c16 == NULL) goto Error;
              *dwFlags |= cmsFLAGS_NOCACHE;
             _cmsPipelineSetOptimizationParameters(Dest, FastEvaluateCurves8, c16, CurvesFree, CurvesDup);
 
         }
         else {
-
-            _cmsStageToneCurvesData* Data = (_cmsStageToneCurvesData*) cmsStageData(ObtainedCurves);
              Curves16Data* c16 = CurvesAlloc(Dest ->ContextID, Data ->nCurves, 65536, Data ->TheCurves);
 
-             if (c16 == NULL) goto Error; 
+             if (c16 == NULL) goto Error;
              *dwFlags |= cmsFLAGS_NOCACHE;
             _cmsPipelineSetOptimizationParameters(Dest, FastEvaluateCurves16, c16, CurvesFree, CurvesDup);
         }
@@ -1555,9 +1555,9 @@ void* DupMatShaper(cmsContext ContextID, const void* Data)
 // to accomplish some performance. Actually it takes 256x3 16 bits tables and 16385 x 3 tables of 8 bits,
 // in total about 50K, and the performance boost is huge!
 static
-void MatShaperEval16(register const cmsUInt16Number In[],
-                     register cmsUInt16Number Out[],
-                     register const void* D)
+void MatShaperEval16(CMSREGISTER const cmsUInt16Number In[],
+                     CMSREGISTER cmsUInt16Number Out[],
+                     CMSREGISTER const void* D)
 {
     MatShaper8Data* p = (MatShaper8Data*) D;
     cmsS1Fixed14Number r, g, b;

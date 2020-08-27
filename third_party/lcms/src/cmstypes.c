@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------
 //
 //  Little Color Management System
-//  Copyright (c) 1998-2017 Marti Maria Saguer
+//  Copyright (c) 1998-2020 Marti Maria Saguer
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the "Software"),
@@ -166,7 +166,7 @@ typedef cmsBool (* PositionTableEntryFn)(struct _cms_typehandler_struct* self,
                                              cmsUInt32Number SizeOfTag);
 
 // Helper function to deal with position tables as described in ICC spec 4.3
-// A table of n elements is readed, where first comes n records containing offsets and sizes and
+// A table of n elements is read, where first comes n records containing offsets and sizes and
 // then a block containing the data itself. This allows to reuse same data in more than one entry
 static
 cmsBool ReadPositionTable(struct _cms_typehandler_struct* self,
@@ -974,7 +974,7 @@ cmsBool  Type_Text_Description_Write(struct _cms_typehandler_struct* self, cmsIO
     len = cmsMLUgetASCII(mlu, cmsNoLanguage, cmsNoCountry, NULL, 0);
 
     // Specification ICC.1:2001-04 (v2.4.0): It has been found that textDescriptionType can contain misaligned data
-    //(see clause 4.1 for the definition of "aligned"). Because the Unicode language
+    //(see clause 4.1 for the definition of 'aligned'). Because the Unicode language
     // code and Unicode count immediately follow the ASCII description, their
     // alignment is not correct if the ASCII count is not a multiple of four. The
     // ScriptCode code is misaligned when the ASCII count is odd. Profile reading and
@@ -1480,7 +1480,7 @@ void *Type_MLU_Read(struct _cms_typehandler_struct* self, cmsIOHANDLER* io, cmsU
         // True begin of the string
         BeginOfThisString = Offset - SizeOfHeader - 8;
 
-        // Ajust to wchar_t elements
+        // Adjust to wchar_t elements
         mlu ->Entries[i].Len = (Len * sizeof(wchar_t)) / sizeof(cmsUInt16Number);
         mlu ->Entries[i].StrW = (BeginOfThisString * sizeof(wchar_t)) / sizeof(cmsUInt16Number);
 
@@ -1853,7 +1853,7 @@ Error:
 static
 cmsBool  Type_LUT8_Write(struct _cms_typehandler_struct* self, cmsIOHANDLER* io, void* Ptr, cmsUInt32Number nItems)
 {
-    cmsUInt32Number j, nTabSize;
+    cmsUInt32Number j, nTabSize, i, n;
     cmsUInt8Number  val;
     cmsPipeline* NewLUT = (cmsPipeline*) Ptr;
     cmsStage* mpe;
@@ -1902,21 +1902,18 @@ cmsBool  Type_LUT8_Write(struct _cms_typehandler_struct* self, cmsIOHANDLER* io,
     if (!_cmsWriteUInt8Number(io, (cmsUInt8Number) clutPoints)) return FALSE;
     if (!_cmsWriteUInt8Number(io, 0)) return FALSE; // Padding
 
+	n = NewLUT->InputChannels * NewLUT->OutputChannels;
 
     if (MatMPE != NULL) {
 
-        if (!_cmsWrite15Fixed16Number(io, MatMPE -> Double[0])) return FALSE;
-        if (!_cmsWrite15Fixed16Number(io, MatMPE -> Double[1])) return FALSE;
-        if (!_cmsWrite15Fixed16Number(io, MatMPE -> Double[2])) return FALSE;
-        if (!_cmsWrite15Fixed16Number(io, MatMPE -> Double[3])) return FALSE;
-        if (!_cmsWrite15Fixed16Number(io, MatMPE -> Double[4])) return FALSE;
-        if (!_cmsWrite15Fixed16Number(io, MatMPE -> Double[5])) return FALSE;
-        if (!_cmsWrite15Fixed16Number(io, MatMPE -> Double[6])) return FALSE;
-        if (!_cmsWrite15Fixed16Number(io, MatMPE -> Double[7])) return FALSE;
-        if (!_cmsWrite15Fixed16Number(io, MatMPE -> Double[8])) return FALSE;
-
+		for (i = 0; i < n; i++)
+		{
+			if (!_cmsWrite15Fixed16Number(io, MatMPE->Double[i])) return FALSE;
+		}
     }
     else {
+
+		if (n != 9) return FALSE;
 
         if (!_cmsWrite15Fixed16Number(io, 1)) return FALSE;
         if (!_cmsWrite15Fixed16Number(io, 0)) return FALSE;
@@ -2141,7 +2138,7 @@ Error:
 // Some empty defaults are created for missing parts
 
 static
-cmsBool  Type_LUT16_Write(struct _cms_typehandler_struct* self, cmsIOHANDLER* io, void* Ptr, cmsUInt32Number nItems)
+cmsBool Type_LUT16_Write(struct _cms_typehandler_struct* self, cmsIOHANDLER* io, void* Ptr, cmsUInt32Number nItems)
 {
     cmsUInt32Number nTabSize;
     cmsPipeline* NewLUT = (cmsPipeline*) Ptr;
@@ -2156,6 +2153,7 @@ cmsBool  Type_LUT16_Write(struct _cms_typehandler_struct* self, cmsIOHANDLER* io
     if (mpe != NULL && mpe ->Type == cmsSigMatrixElemType) {
 
         MatMPE = (_cmsStageMatrixData*) mpe ->Data;
+        if (mpe->InputChannels != 3 || mpe->OutputChannels != 3) return FALSE;
         mpe = mpe -> Next;
     }
 
@@ -2193,22 +2191,17 @@ cmsBool  Type_LUT16_Write(struct _cms_typehandler_struct* self, cmsIOHANDLER* io
     if (!_cmsWriteUInt8Number(io, (cmsUInt8Number) OutputChannels)) return FALSE;
     if (!_cmsWriteUInt8Number(io, (cmsUInt8Number) clutPoints)) return FALSE;
     if (!_cmsWriteUInt8Number(io, 0)) return FALSE; // Padding
-
-
+	
     if (MatMPE != NULL) {
-
-        if (!_cmsWrite15Fixed16Number(io, MatMPE -> Double[0])) return FALSE;
-        if (!_cmsWrite15Fixed16Number(io, MatMPE -> Double[1])) return FALSE;
-        if (!_cmsWrite15Fixed16Number(io, MatMPE -> Double[2])) return FALSE;
-        if (!_cmsWrite15Fixed16Number(io, MatMPE -> Double[3])) return FALSE;
-        if (!_cmsWrite15Fixed16Number(io, MatMPE -> Double[4])) return FALSE;
-        if (!_cmsWrite15Fixed16Number(io, MatMPE -> Double[5])) return FALSE;
-        if (!_cmsWrite15Fixed16Number(io, MatMPE -> Double[6])) return FALSE;
-        if (!_cmsWrite15Fixed16Number(io, MatMPE -> Double[7])) return FALSE;
-        if (!_cmsWrite15Fixed16Number(io, MatMPE -> Double[8])) return FALSE;
+        
+		for (i = 0; i < 9; i++)
+		{
+			if (!_cmsWrite15Fixed16Number(io, MatMPE->Double[i])) return FALSE;
+		}
+      
     }
     else {
-
+		
         if (!_cmsWrite15Fixed16Number(io, 1)) return FALSE;
         if (!_cmsWrite15Fixed16Number(io, 0)) return FALSE;
         if (!_cmsWrite15Fixed16Number(io, 0)) return FALSE;
@@ -2394,7 +2387,7 @@ cmsStage* ReadCLUT(struct _cms_typehandler_struct* self, cmsIOHANDLER* io,
             return NULL;
         }
 
-        return CLUT;
+    return CLUT;
 }
 
 static
@@ -2550,31 +2543,31 @@ Error:
 static
 cmsBool  WriteMatrix(struct _cms_typehandler_struct* self, cmsIOHANDLER* io, cmsStage* mpe)
 {
+	cmsUInt32Number i, n;
+
     _cmsStageMatrixData* m = (_cmsStageMatrixData*) mpe -> Data;
 
-    // Write the Matrix
-    if (!_cmsWrite15Fixed16Number(io, m -> Double[0])) return FALSE;
-    if (!_cmsWrite15Fixed16Number(io, m -> Double[1])) return FALSE;
-    if (!_cmsWrite15Fixed16Number(io, m -> Double[2])) return FALSE;
-    if (!_cmsWrite15Fixed16Number(io, m -> Double[3])) return FALSE;
-    if (!_cmsWrite15Fixed16Number(io, m -> Double[4])) return FALSE;
-    if (!_cmsWrite15Fixed16Number(io, m -> Double[5])) return FALSE;
-    if (!_cmsWrite15Fixed16Number(io, m -> Double[6])) return FALSE;
-    if (!_cmsWrite15Fixed16Number(io, m -> Double[7])) return FALSE;
-    if (!_cmsWrite15Fixed16Number(io, m -> Double[8])) return FALSE;
+	n = mpe->InputChannels * mpe->OutputChannels;
 
-    if (m ->Offset != NULL) {
+	// Write the Matrix
+	for (i = 0; i < n; i++)
+	{
+		if (!_cmsWrite15Fixed16Number(io, m->Double[i])) return FALSE;
+	}
 
-    if (!_cmsWrite15Fixed16Number(io, m -> Offset[0])) return FALSE;
-    if (!_cmsWrite15Fixed16Number(io, m -> Offset[1])) return FALSE;
-    if (!_cmsWrite15Fixed16Number(io, m -> Offset[2])) return FALSE;
-    }
-    else {
-        if (!_cmsWrite15Fixed16Number(io, 0)) return FALSE;
-        if (!_cmsWrite15Fixed16Number(io, 0)) return FALSE;
-        if (!_cmsWrite15Fixed16Number(io, 0)) return FALSE;
+	if (m->Offset != NULL) {
 
-    }
+		for (i = 0; i < mpe->OutputChannels; i++)
+		{
+			if (!_cmsWrite15Fixed16Number(io, m->Offset[i])) return FALSE;
+		}
+	}
+	else {
+		for (i = 0; i < mpe->OutputChannels; i++)
+		{
+			if (!_cmsWrite15Fixed16Number(io, 0)) return FALSE;
+		}
+	}
 
 
     return TRUE;
@@ -2678,9 +2671,9 @@ cmsBool WriteCLUT(struct _cms_typehandler_struct* self, cmsIOHANDLER* io, cmsUIn
             return FALSE;
         }
 
-        if (!_cmsWriteAlignment(io)) return FALSE;
+    if (!_cmsWriteAlignment(io)) return FALSE;
 
-        return TRUE;
+    return TRUE;
 }
 
 
@@ -3091,8 +3084,8 @@ void Type_ColorantTable_Free(struct _cms_typehandler_struct* self, void* Ptr)
 //The namedColor2Type is a count value and array of structures that provide color
 //coordinates for 7-bit ASCII color names. For each named color, a PCS and optional
 //device representation of the color are given. Both representations are 16-bit values.
-//The device representation corresponds to the header's "color space of data" field.
-//This representation should be consistent with the "number of device components"
+//The device representation corresponds to the header's 'color space of data' field.
+//This representation should be consistent with the 'number of device components'
 //field in the namedColor2Type. If this field is 0, device coordinates are not provided.
 //The PCS representation corresponds to the header's PCS field. The PCS representation
 //is always provided. Color names are fixed-length, 32-byte fields including null
