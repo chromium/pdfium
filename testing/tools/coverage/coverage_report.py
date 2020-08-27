@@ -247,7 +247,7 @@ class CoverageExecutor(object):
     coverage_args += ['-o', report_directory]
     coverage_args += self.build_targets
 
-    # Whitelist the directories of interest
+    # Only analyze the directories of interest.
     coverage_args += ['-f', 'core']
     coverage_args += ['-f', 'fpdfsdk']
     coverage_args += ['-f', 'fxbarcode']
@@ -256,7 +256,7 @@ class CoverageExecutor(object):
     coverage_args += ['-f', 'samples']
     coverage_args += ['-f', 'xfa']
 
-    # Blacklist test files
+    # Ignore test files.
     coverage_args += ['-i', '.*test.*']
 
     # Component view is only useful for Chromium
