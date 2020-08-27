@@ -1769,7 +1769,8 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
         }
         case Stage::kBookendTrailer: {
           if (m_pCurChildPreprocessor) {
-            pProcessor = std::move(m_pCurChildPreprocessor);
+            pProcessor = m_pCurChildPreprocessor;
+            m_pCurChildPreprocessor.Clear();
           } else if (m_pViewLayoutProcessor) {
             CXFA_Node* pTrailerNode =
                 m_pViewLayoutProcessor->ProcessBookendTrailer(m_pCurChildNode);
@@ -1810,7 +1811,8 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
 
           bool bNewRow = false;
           if (m_pCurChildPreprocessor) {
-            pProcessor = std::move(m_pCurChildPreprocessor);
+            pProcessor = m_pCurChildPreprocessor;
+            m_pCurChildPreprocessor.Clear();
             bNewRow = true;
           } else {
             pProcessor =
@@ -1855,8 +1857,10 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
         break;
       continue;
     SuspendAndCreateNewRow:
-      if (pProcessor)
-        m_pCurChildPreprocessor = std::move(pProcessor);
+      if (pProcessor) {
+        m_pCurChildPreprocessor = pProcessor;
+        pProcessor = nullptr;
+      }
       break;
     }
 
