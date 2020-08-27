@@ -198,6 +198,9 @@ bool FindFontFromDoc(CPDF_Dictionary* pFormDict,
                      ByteString csFontName,
                      RetainPtr<CPDF_Font>& pFont,
                      ByteString* csNameTag) {
+  if (csFontName.IsEmpty())
+    return false;
+
   CPDF_Dictionary* pDR = pFormDict->GetDictFor("DR");
   if (!pDR)
     return false;
@@ -206,9 +209,7 @@ bool FindFontFromDoc(CPDF_Dictionary* pFormDict,
   if (!ValidateFontResourceDict(pFonts))
     return false;
 
-  if (csFontName.GetLength() > 0)
-    csFontName.Remove(' ');
-
+  csFontName.Remove(' ');
   CPDF_DictionaryLocker locker(pFonts);
   for (const auto& it : locker) {
     const ByteString& csKey = it.first;
@@ -268,8 +269,7 @@ uint8_t GetNativeCharSet() {
 }
 
 void InitDict(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument) {
-  if (!pDocument)
-    return;
+  ASSERT(pDocument);
 
   if (!pFormDict) {
     pFormDict = pDocument->NewIndirect<CPDF_Dictionary>();
@@ -561,10 +561,9 @@ RetainPtr<CPDF_Font> CPDF_InteractiveForm::AddNativeInteractiveFormFont(
     return pFont;
   }
   ByteString csFontName = GetNativeFontName(charSet, nullptr);
-  if (!csFontName.IsEmpty() &&
-      FindFontFromDoc(pFormDict, pDocument, csFontName, pFont, csNameTag)) {
+  if (FindFontFromDoc(pFormDict, pDocument, csFontName, pFont, csNameTag))
     return pFont;
-  }
+
   pFont = AddNativeFont(charSet, pDocument);
   if (!pFont)
     return nullptr;
