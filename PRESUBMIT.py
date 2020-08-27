@@ -344,6 +344,6 @@ def CheckChangeOnUpload(input_api, output_api):
                 input_api,
                 output_api,
                 full_path,
-                whitelist=[r'^PRESUBMIT_test\.py$']))
+                files_to_check=[r'^PRESUBMIT_test\.py$']))
 
   return results
