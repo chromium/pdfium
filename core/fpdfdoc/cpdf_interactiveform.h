@@ -47,8 +47,8 @@ class CPDF_InteractiveForm {
   explicit CPDF_InteractiveForm(CPDF_Document* pDocument);
   ~CPDF_InteractiveForm();
 
-  static void SetUpdateAP(bool bUpdateAP);
   static bool IsUpdateAPEnabled();
+  static void SetUpdateAP(bool bUpdateAP);
   static RetainPtr<CPDF_Font> AddNativeInteractiveFormFont(
       CPDF_Dictionary*& pFormDict,
       CPDF_Document* pDocument,

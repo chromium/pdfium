@@ -540,6 +540,38 @@ CFieldTree::Node* CFieldTree::FindNode(const WideString& full_name) {
   return pNode;
 }
 
+CPDF_InteractiveForm::CPDF_InteractiveForm(CPDF_Document* pDocument)
+    : m_pDocument(pDocument), m_pFieldTree(std::make_unique<CFieldTree>()) {
+  CPDF_Dictionary* pRoot = m_pDocument->GetRoot();
+  if (!pRoot)
+    return;
+
+  m_pFormDict.Reset(pRoot->GetDictFor("AcroForm"));
+  if (!m_pFormDict)
+    return;
+
+  CPDF_Array* pFields = m_pFormDict->GetArrayFor("Fields");
+  if (!pFields)
+    return;
+
+  for (size_t i = 0; i < pFields->size(); ++i)
+    LoadField(pFields->GetDictAt(i), 0);
+}
+
+CPDF_InteractiveForm::~CPDF_InteractiveForm() = default;
+
+bool CPDF_InteractiveForm::s_bUpdateAP = true;
+
+// static
+bool CPDF_InteractiveForm::IsUpdateAPEnabled() {
+  return s_bUpdateAP;
+}
+
+// static
+void CPDF_InteractiveForm::SetUpdateAP(bool bUpdateAP) {
+  s_bUpdateAP = bUpdateAP;
+}
+
 // static
 RetainPtr<CPDF_Font> CPDF_InteractiveForm::AddNativeInteractiveFormFont(
     CPDF_Dictionary*& pFormDict,
@@ -570,36 +602,6 @@ RetainPtr<CPDF_Font> CPDF_InteractiveForm::AddNativeInteractiveFormFont(
 
   AddFont(pFormDict, pDocument, pFont, csNameTag);
   return pFont;
-}
-
-CPDF_InteractiveForm::CPDF_InteractiveForm(CPDF_Document* pDocument)
-    : m_pDocument(pDocument), m_pFieldTree(std::make_unique<CFieldTree>()) {
-  CPDF_Dictionary* pRoot = m_pDocument->GetRoot();
-  if (!pRoot)
-    return;
-
-  m_pFormDict.Reset(pRoot->GetDictFor("AcroForm"));
-  if (!m_pFormDict)
-    return;
-
-  CPDF_Array* pFields = m_pFormDict->GetArrayFor("Fields");
-  if (!pFields)
-    return;
-
-  for (size_t i = 0; i < pFields->size(); ++i)
-    LoadField(pFields->GetDictAt(i), 0);
-}
-
-CPDF_InteractiveForm::~CPDF_InteractiveForm() = default;
-
-bool CPDF_InteractiveForm::s_bUpdateAP = true;
-
-bool CPDF_InteractiveForm::IsUpdateAPEnabled() {
-  return s_bUpdateAP;
-}
-
-void CPDF_InteractiveForm::SetUpdateAP(bool bUpdateAP) {
-  s_bUpdateAP = bUpdateAP;
 }
 
 size_t CPDF_InteractiveForm::CountFields(const WideString& csFieldName) const {
