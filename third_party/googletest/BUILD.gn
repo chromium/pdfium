@@ -141,9 +141,6 @@ source_set("gmock") {
     "src/googlemock/include/gmock/internal/gmock-port.h",
     "src/googlemock/include/gmock/internal/gmock-pp.h",
 
-    # gmock helpers.
-    "custom/gmock/internal/custom/gmock-port.h",
-
     #"src/googlemock/src/gmock-all.cc",  # Not needed by our build.
     "src/googlemock/src/gmock-cardinalities.cc",
     "src/googlemock/src/gmock-internal-utils.cc",
