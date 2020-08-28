@@ -480,6 +480,13 @@ source_set("fx_lpng") {
       "PNG_ARM_NEON_OPT=2",
       "PNG_ARM_NEON_IMPLEMENTATION=1",
     ]
+    configs -= [ "//build/config/compiler:default_optimization" ]
+    configs += [ "//build/config/compiler:optimize_speed" ]
+  } else if (current_cpu == "mips64el" && mips_use_msa) {
+    sources += [
+      "mips/filter_msa_intrinsics.c",
+      "mips/mips_init.c",
+    ]
   }
 
   if (is_win) {
