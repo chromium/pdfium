@@ -231,7 +231,7 @@ bool CXFA_FFDoc::OpenDoc(CFX_XMLDocument* pXML) {
   if (!BuildDoc(pXML))
     return false;
 
-  CFGAS_FontMgr* mgr = GetApp()->GetFDEFontMgr();
+  CFGAS_FontMgr* mgr = GetApp()->GetFGASFontMgr();
   if (!mgr)
     return false;
 

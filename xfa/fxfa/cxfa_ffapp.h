@@ -34,7 +34,7 @@ class CXFA_FFApp : public CFWL_App::AdapterIface {
 
   bool LoadFWLTheme(CXFA_FFDoc* doc);
   CFWL_WidgetMgr* GetFWLWidgetMgr() const { return m_pFWLApp->GetWidgetMgr(); }
-  CFGAS_FontMgr* GetFDEFontMgr();
+  CFGAS_FontMgr* GetFGASFontMgr();
 
   IXFA_AppProvider* GetAppProvider() const { return m_pProvider.Get(); }
   const CFWL_App* GetFWLApp() const { return m_pFWLApp.get(); }
@@ -53,7 +53,7 @@ class CXFA_FFApp : public CFWL_App::AdapterIface {
   //
   // TODO(dsinclair): The GEFont should have the FontMgr as the pointer instead
   // of the DEFFontMgr so this goes away. Bug 561.
-  std::unique_ptr<CFGAS_FontMgr> m_pFDEFontMgr;
+  std::unique_ptr<CFGAS_FontMgr> m_pFGASFontMgr;
   std::unique_ptr<CXFA_FontMgr> m_pXFAFontMgr;
   std::unique_ptr<CXFA_FWLAdapterWidgetMgr> m_pAdapterWidgetMgr;
 

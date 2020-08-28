@@ -38,15 +38,15 @@ CXFA_FFApp::CXFA_FFApp(IXFA_AppProvider* pProvider)
 
 CXFA_FFApp::~CXFA_FFApp() = default;
 
-CFGAS_FontMgr* CXFA_FFApp::GetFDEFontMgr() {
-  if (!m_pFDEFontMgr) {
-    m_pFDEFontMgr = std::make_unique<CFGAS_FontMgr>();
+CFGAS_FontMgr* CXFA_FFApp::GetFGASFontMgr() {
+  if (!m_pFGASFontMgr) {
+    m_pFGASFontMgr = std::make_unique<CFGAS_FontMgr>();
     if (!g_skipFontLoadForTesting) {
-      if (!m_pFDEFontMgr->EnumFonts())
-        m_pFDEFontMgr = nullptr;
+      if (!m_pFGASFontMgr->EnumFonts())
+        m_pFGASFontMgr = nullptr;
     }
   }
-  return m_pFDEFontMgr.get();
+  return m_pFGASFontMgr.get();
 }
 
 bool CXFA_FFApp::LoadFWLTheme(CXFA_FFDoc* doc) {

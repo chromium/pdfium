@@ -73,7 +73,7 @@ class CFWL_WidgetTP {
                     const CFX_Matrix& matrix);
 
   std::unique_ptr<CFDE_TextOut> m_pTextOut;
-  RetainPtr<CFGAS_GEFont> m_pFDEFont;
+  RetainPtr<CFGAS_GEFont> m_pFGASFont;
   std::unique_ptr<CColorData> m_pColorData;
 };
 

@@ -41,7 +41,7 @@ RetainPtr<CFGAS_GEFont> CXFA_FontMgr::GetFont(CXFA_FFDoc* hDoc,
       return pFont;
   }
   if (!pFont) {
-    pFont = CFGAS_DefaultFontManager::GetFont(hDoc->GetApp()->GetFDEFontMgr(),
+    pFont = CFGAS_DefaultFontManager::GetFont(hDoc->GetApp()->GetFGASFontMgr(),
                                               wsFontFamily, dwFontStyles);
   }
   if (!pFont && pMgr) {
@@ -51,11 +51,11 @@ RetainPtr<CFGAS_GEFont> CXFA_FontMgr::GetFont(CXFA_FFDoc* hDoc,
   }
   if (!pFont) {
     pFont = CFGAS_DefaultFontManager::GetDefaultFont(
-        hDoc->GetApp()->GetFDEFontMgr(), dwFontStyles);
+        hDoc->GetApp()->GetFGASFontMgr(), dwFontStyles);
   }
   if (!pFont) {
     pFont = CFGAS_GEFont::LoadStockFont(
-        hDoc->GetPDFDoc(), hDoc->GetApp()->GetFDEFontMgr(),
+        hDoc->GetPDFDoc(), hDoc->GetApp()->GetFGASFontMgr(),
         ByteString::Format("%ls", WideString(wsFontFamily).c_str()));
   }
   if (pFont)

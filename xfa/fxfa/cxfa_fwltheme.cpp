@@ -59,7 +59,7 @@ bool CXFA_FWLTheme::LoadCalendarFont(CXFA_FFDoc* doc) {
   }
 
   if (!m_pCalendarFont) {
-    CFGAS_FontMgr* font_mgr = m_pApp->GetFDEFontMgr();
+    CFGAS_FontMgr* font_mgr = m_pApp->GetFGASFontMgr();
     if (font_mgr) {
       m_pCalendarFont = font_mgr->GetFontByCodePage(
           FX_CODEPAGE_MSWin_WesternEuropean, 0, nullptr);
@@ -122,7 +122,7 @@ void CXFA_FWLTheme::DrawText(const CFWL_ThemeText& pParams) {
   CFX_RenderDevice* pRenderDevice = pGraphics->GetRenderDevice();
   m_pTextOut->SetStyles(pParams.m_dwTTOStyles);
   m_pTextOut->SetAlignment(pParams.m_iTTOAlign);
-  m_pTextOut->SetFont(pNode->GetFDEFont(pWidget->GetDoc()));
+  m_pTextOut->SetFont(pNode->GetFGASFont(pWidget->GetDoc()));
   m_pTextOut->SetFontSize(pNode->GetFontSize());
   m_pTextOut->SetTextColor(pNode->GetTextColor());
   CFX_Matrix mtPart = pParams.m_matrix;
@@ -178,7 +178,7 @@ float CXFA_FWLTheme::GetFontSize(const CFWL_ThemePart& pThemePart) const {
 RetainPtr<CFGAS_GEFont> CXFA_FWLTheme::GetFont(
     const CFWL_ThemePart& pThemePart) const {
   if (CXFA_FFWidget* pWidget = GetOutmostFFWidget(pThemePart.m_pWidget))
-    return pWidget->GetNode()->GetFDEFont(pWidget->GetDoc());
+    return pWidget->GetNode()->GetFGASFont(pWidget->GetDoc());
   return GetTheme(pThemePart.m_pWidget)->GetFont();
 }
 
@@ -232,7 +232,7 @@ void CXFA_FWLTheme::CalcTextRect(const CFWL_ThemeText& pParams,
   }
 
   CXFA_Node* pNode = pWidget->GetNode();
-  m_pTextOut->SetFont(pNode->GetFDEFont(pWidget->GetDoc()));
+  m_pTextOut->SetFont(pNode->GetFGASFont(pWidget->GetDoc()));
   m_pTextOut->SetFontSize(pNode->GetFontSize());
   m_pTextOut->SetTextColor(pNode->GetTextColor());
   m_pTextOut->SetAlignment(pParams.m_iTTOAlign);

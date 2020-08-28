@@ -3310,7 +3310,7 @@ void CXFA_Node::CalculateTextContentSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
   if (!layoutData->m_pTextOut) {
     layoutData->m_pTextOut = std::make_unique<CFDE_TextOut>();
     CFDE_TextOut* pTextOut = layoutData->m_pTextOut.get();
-    pTextOut->SetFont(GetFDEFont(doc));
+    pTextOut->SetFont(GetFGASFont(doc));
     pTextOut->SetFontSize(fFontSize);
     pTextOut->SetLineBreakTolerance(fFontSize * 0.2f);
     pTextOut->SetLineSpace(GetLineHeight());
@@ -3942,7 +3942,7 @@ void CXFA_Node::SetImageEditImage(const RetainPtr<CFX_DIBitmap>& newImage) {
     pData->m_pDIBitmap = newImage;
 }
 
-RetainPtr<CFGAS_GEFont> CXFA_Node::GetFDEFont(CXFA_FFDoc* doc) {
+RetainPtr<CFGAS_GEFont> CXFA_Node::GetFGASFont(CXFA_FFDoc* doc) {
   WideString wsFontName = L"Courier";
   uint32_t dwFontStyle = 0;
   CXFA_Font* font = GetFontIfExists();

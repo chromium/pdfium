@@ -54,7 +54,7 @@ void CFWL_WidgetTP::DrawText(const CFWL_ThemeText& pParams) {
 }
 
 const RetainPtr<CFGAS_GEFont>& CFWL_WidgetTP::GetFont() const {
-  return m_pFDEFont;
+  return m_pFGASFont;
 }
 
 void CFWL_WidgetTP::InitializeArrowColorData() {
@@ -84,9 +84,9 @@ void CFWL_WidgetTP::EnsureTTOInitialized() {
   if (m_pTextOut)
     return;
 
-  m_pFDEFont = CFWL_FontManager::GetInstance()->FindFont(L"Helvetica", 0, 0);
+  m_pFGASFont = CFWL_FontManager::GetInstance()->FindFont(L"Helvetica", 0, 0);
   m_pTextOut = std::make_unique<CFDE_TextOut>();
-  m_pTextOut->SetFont(m_pFDEFont);
+  m_pTextOut->SetFont(m_pFGASFont);
   m_pTextOut->SetFontSize(FWLTHEME_CAPACITY_FontSize);
   m_pTextOut->SetTextColor(FWLTHEME_CAPACITY_TextColor);
 }

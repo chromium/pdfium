@@ -314,7 +314,7 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
   void SetImageImage(const RetainPtr<CFX_DIBitmap>& newImage);
   void SetImageEditImage(const RetainPtr<CFX_DIBitmap>& newImage);
 
-  RetainPtr<CFGAS_GEFont> GetFDEFont(CXFA_FFDoc* doc);
+  RetainPtr<CFGAS_GEFont> GetFGASFont(CXFA_FFDoc* doc);
 
   bool IsListBox();
   bool IsRadioButton();
