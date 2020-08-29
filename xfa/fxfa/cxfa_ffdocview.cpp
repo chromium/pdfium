@@ -305,13 +305,6 @@ CXFA_FFWidgetHandler* CXFA_FFDocView::GetWidgetHandler() {
   return m_pWidgetHandler;
 }
 
-std::unique_ptr<CXFA_ReadyNodeIterator>
-CXFA_FFDocView::CreateReadyNodeIterator() {
-  CXFA_Subform* pFormRoot = GetRootSubform();
-  return pFormRoot ? std::make_unique<CXFA_ReadyNodeIterator>(pFormRoot)
-                   : nullptr;
-}
-
 bool CXFA_FFDocView::SetFocus(CXFA_FFWidget* pNewFocus) {
   if (pNewFocus == m_pFocusWidget)
     return false;
@@ -711,7 +704,7 @@ void CXFA_FFDocView::SetChangeMark() {
   m_pDoc->SetChangeMark();
 }
 
-CXFA_Subform* CXFA_FFDocView::GetRootSubform() {
+CXFA_Node* CXFA_FFDocView::GetRootSubform() {
   CXFA_Node* pFormPacketNode =
       ToNode(m_pDoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Form));
   if (!pFormPacketNode)

@@ -26,7 +26,6 @@ class CXFA_BindItems;
 class CXFA_FFDoc;
 class CXFA_FFWidgetHandler;
 class CXFA_Node;
-class CXFA_ReadyNodeIterator;
 class CXFA_Subform;
 class CXFA_ViewLayoutItem;
 
@@ -68,8 +67,8 @@ class CXFA_FFDocView : public cppgc::GarbageCollected<CXFA_FFDocView> {
   CXFA_FFPageView* GetPageView(int32_t nIndex) const;
 
   void ResetNode(CXFA_Node* pNode);
+  CXFA_Node* GetRootSubform();
   CXFA_FFWidgetHandler* GetWidgetHandler();
-  std::unique_ptr<CXFA_ReadyNodeIterator> CreateReadyNodeIterator();
   CXFA_FFWidget* GetFocusWidget() const { return m_pFocusWidget.Get(); }
   bool SetFocus(CXFA_FFWidget* pNewFocus);
   CXFA_FFWidget* GetWidgetForNode(CXFA_Node* node);
@@ -117,7 +116,6 @@ class CXFA_FFDocView : public cppgc::GarbageCollected<CXFA_FFDocView> {
   size_t RunCalculateRecursive(size_t index);
   void ShowNullTestMsg();
   bool ResetSingleNodeData(CXFA_Node* pNode);
-  CXFA_Subform* GetRootSubform();
 
   bool IsUpdateLocked() const { return m_iLock > 0; }
   bool InitValidate(CXFA_Node* pNode);

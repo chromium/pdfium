@@ -391,8 +391,8 @@ void CPDFXFA_Context::SendPostSaveToXFADoc() {
     return;
 
   CXFA_FFWidgetHandler* pWidgetHandler = pXFADocView->GetWidgetHandler();
-  auto it = pXFADocView->CreateReadyNodeIterator();
-  while (CXFA_Node* pNode = it->MoveToNext()) {
+  CXFA_ReadyNodeIterator it(pXFADocView->GetRootSubform());
+  while (CXFA_Node* pNode = it.MoveToNext()) {
     CXFA_EventParam preParam;
     preParam.m_eType = XFA_EVENT_PostSave;
     pWidgetHandler->ProcessEvent(pNode, &preParam);
@@ -411,8 +411,8 @@ void CPDFXFA_Context::SendPreSaveToXFADoc(
     return;
 
   CXFA_FFWidgetHandler* pWidgetHandler = pXFADocView->GetWidgetHandler();
-  auto it = pXFADocView->CreateReadyNodeIterator();
-  while (CXFA_Node* pNode = it->MoveToNext()) {
+  CXFA_ReadyNodeIterator it(pXFADocView->GetRootSubform());
+  while (CXFA_Node* pNode = it.MoveToNext()) {
     CXFA_EventParam preParam;
     preParam.m_eType = XFA_EVENT_PreSave;
     pWidgetHandler->ProcessEvent(pNode, &preParam);
