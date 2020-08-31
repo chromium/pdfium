@@ -7,7 +7,6 @@
 #ifndef XFA_FXFA_PARSER_CXFA_THISPROXY_H_
 #define XFA_FXFA_PARSER_CXFA_THISPROXY_H_
 
-#include "core/fxcrt/unowned_ptr.h"
 #include "v8/include/cppgc/member.h"
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fxfa/parser/cxfa_object.h"

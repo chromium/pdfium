@@ -7,7 +7,6 @@
 #ifndef XFA_FXFA_CXFA_FFBARCODE_H_
 #define XFA_FXFA_CXFA_FFBARCODE_H_
 
-#include "core/fxcrt/unowned_ptr.h"
 #include "fxbarcode/BC_Library.h"
 #include "v8/include/cppgc/member.h"
 #include "v8/include/cppgc/visitor.h"

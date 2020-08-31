@@ -7,7 +7,6 @@
 #ifndef XFA_FXFA_CXFA_FFPASSWORDEDIT_H_
 #define XFA_FXFA_CXFA_FFPASSWORDEDIT_H_
 
-#include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/gc/heap.h"
 #include "v8/include/cppgc/member.h"
 #include "v8/include/cppgc/visitor.h"

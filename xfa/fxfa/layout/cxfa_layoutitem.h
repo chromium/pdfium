@@ -8,7 +8,6 @@
 #define XFA_FXFA_LAYOUT_CXFA_LAYOUTITEM_H_
 
 #include "core/fxcrt/retained_tree_node.h"
-#include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/gc/gced_tree_node.h"
 #include "fxjs/gc/heap.h"
 #include "v8/include/cppgc/member.h"

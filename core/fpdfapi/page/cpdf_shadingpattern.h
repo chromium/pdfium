@@ -14,7 +14,6 @@
 #include "core/fpdfapi/page/cpdf_pattern.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "core/fxcrt/unowned_ptr.h"
 
 // Values used in PDFs except for |kInvalidShading| and |kMaxShading|.
 // Do not change.

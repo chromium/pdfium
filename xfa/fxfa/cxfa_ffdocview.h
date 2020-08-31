@@ -12,7 +12,6 @@
 #include <vector>
 
 #include "core/fxcrt/observed_ptr.h"
-#include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/gc/heap.h"
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/member.h"

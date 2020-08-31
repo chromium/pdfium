@@ -5,7 +5,6 @@
 #include "fxjs/gc/heap.h"
 
 #include "core/fxcrt/fx_system.h"
-#include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
