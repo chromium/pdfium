@@ -21,7 +21,7 @@
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/macros.h"
 #include "v8/include/cppgc/member.h"
-#include "v8/include/cppgc/visitor.h"
+#include "v8/include/cppgc/persistent.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
 constexpr float kXFALayoutPrecision = 0.0005f;
@@ -96,7 +96,8 @@ class CXFA_ContentLayoutProcessor
   bool ProcessKeepForSplit(
       CXFA_ContentLayoutProcessor* pChildProcessor,
       Result eRetValue,
-      std::vector<CXFA_ContentLayoutItem*>* rgCurLineLayoutItem,
+      std::vector<cppgc::Persistent<CXFA_ContentLayoutItem>>*
+          rgCurLineLayoutItem,
       float* fContentCurRowAvailWidth,
       float* fContentCurRowHeight,
       float* fContentCurRowY,
@@ -121,7 +122,8 @@ class CXFA_ContentLayoutProcessor
                        float fSplitPos);
   float InsertKeepLayoutItems();
   bool CalculateRowChildPosition(
-      std::vector<CXFA_ContentLayoutItem*> (&rgCurLineLayoutItems)[3],
+      std::vector<cppgc::Persistent<CXFA_ContentLayoutItem>> (
+          &rgCurLineLayoutItems)[3],
       XFA_AttributeValue eFlowStrategy,
       bool bContainerHeightAutoSize,
       bool bContainerWidthAutoSize,
@@ -178,7 +180,8 @@ class CXFA_ContentLayoutProcessor
       float fContainerHeight,
       XFA_AttributeValue eFlowStrategy,
       uint8_t* uCurHAlignState,
-      std::vector<CXFA_ContentLayoutItem*> (&rgCurLineLayoutItems)[3],
+      std::vector<cppgc::Persistent<CXFA_ContentLayoutItem>> (
+          &rgCurLineLayoutItems)[3],
       bool bUseBreakControl,
       float fAvailHeight,
       float fRealHeight,
