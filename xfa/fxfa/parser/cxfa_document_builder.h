@@ -10,7 +10,6 @@
 #include <utility>
 
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/retain_ptr.h"
 #include "v8/include/cppgc/persistent.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
