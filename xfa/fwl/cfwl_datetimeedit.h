@@ -19,7 +19,7 @@ class CFWL_DateTimeEdit final : public CFWL_Edit {
   void OnProcessMessage(CFWL_Message* pMessage) override;
 
  private:
-  CFWL_DateTimeEdit(const CFWL_App* app,
+  CFWL_DateTimeEdit(CFWL_App* app,
                     const Properties& properties,
                     CFWL_Widget* pOuter);
 };

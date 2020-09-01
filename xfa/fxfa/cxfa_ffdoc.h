@@ -116,10 +116,10 @@ class CXFA_FFDoc : public cppgc::GarbageCollected<CXFA_FFDoc> {
   bool BuildDoc(CFX_XMLDocument* pXML);
 
   UnownedPtr<IXFA_DocEnvironment> const m_pDocEnvironment;
-  UnownedPtr<CXFA_FFApp> const m_pApp;
   UnownedPtr<CPDF_Document> const m_pPDFDoc;
   UnownedPtr<cppgc::Heap> const m_pHeap;
   UnownedPtr<CFX_XMLDocument> m_pXMLDoc;
+  cppgc::Member<CXFA_FFApp> const m_pApp;
   cppgc::Member<CXFA_FFNotify> m_pNotify;
   cppgc::Member<CXFA_Document> m_pDocument;
   cppgc::Member<CXFA_FFDocView> m_DocView;

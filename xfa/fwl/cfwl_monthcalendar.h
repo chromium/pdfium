@@ -85,7 +85,7 @@ class CFWL_MonthCalendar final : public CFWL_Widget {
     WideString wsDay;
   };
 
-  CFWL_MonthCalendar(const CFWL_App* app,
+  CFWL_MonthCalendar(CFWL_App* app,
                      const Properties& properties,
                      CFWL_Widget* pOuter);
 

@@ -12,14 +12,15 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
+#include "xfa/fgas/font/cfgas_fontmgr.h"
 
-class CFGAS_FontMgr;
 class CFGAS_GEFont;
 class CPDF_Document;
 
 class CFGAS_PDFFontMgr final : public Observable {
  public:
-  explicit CFGAS_PDFFontMgr(CPDF_Document* pDoc, CFGAS_FontMgr* pFontMgr);
+  CFGAS_PDFFontMgr(CPDF_Document* pDoc, CFGAS_FontMgr* pFontMgr);
   ~CFGAS_PDFFontMgr();
 
   RetainPtr<CFGAS_GEFont> GetFont(WideStringView wsFontFamily,
@@ -41,7 +42,7 @@ class CFGAS_PDFFontMgr final : public Observable {
                              bool bStrictMatch);
 
   UnownedPtr<CPDF_Document> const m_pDoc;
-  UnownedPtr<CFGAS_FontMgr> const m_pFontMgr;
+  ObservedPtr<CFGAS_FontMgr> const m_pFontMgr;
   std::map<ByteString, RetainPtr<CFGAS_GEFont>> m_FontMap;
 };
 

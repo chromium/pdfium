@@ -27,7 +27,7 @@ const float kMinThumbSize = 5.0f;
 
 }  // namespace
 
-CFWL_ScrollBar::CFWL_ScrollBar(const CFWL_App* app,
+CFWL_ScrollBar::CFWL_ScrollBar(CFWL_App* app,
                                const Properties& properties,
                                CFWL_Widget* pOuter)
     : CFWL_Widget(app, properties, pOuter) {}

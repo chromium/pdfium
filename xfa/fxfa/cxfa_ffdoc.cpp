@@ -57,9 +57,9 @@ CXFA_FFDoc::CXFA_FFDoc(CXFA_FFApp* pApp,
                        CPDF_Document* pPDFDoc,
                        cppgc::Heap* pHeap)
     : m_pDocEnvironment(pDocEnvironment),
-      m_pApp(pApp),
       m_pPDFDoc(pPDFDoc),
       m_pHeap(pHeap),
+      m_pApp(pApp),
       m_pNotify(cppgc::MakeGarbageCollected<CXFA_FFNotify>(
           pHeap->GetAllocationHandle(),
           this)),
@@ -82,6 +82,7 @@ void CXFA_FFDoc::PreFinalize() {
 }
 
 void CXFA_FFDoc::Trace(cppgc::Visitor* visitor) const {
+  visitor->Trace(m_pApp);
   visitor->Trace(m_pNotify);
   visitor->Trace(m_pDocument);
   visitor->Trace(m_DocView);

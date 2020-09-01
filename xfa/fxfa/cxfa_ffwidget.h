@@ -168,6 +168,7 @@ class CXFA_FFWidget : public cppgc::GarbageCollected<CXFA_FFWidget>,
   CXFA_FFDoc* GetDoc();
   CXFA_FFApp* GetApp();
   IXFA_AppProvider* GetAppProvider();
+  CFWL_App* GetFWLApp() const;
   void InvalidateRect();
   bool IsFocused() const {
     return GetLayoutItem()->TestStatusBits(XFA_WidgetStatus_Focused);
@@ -176,8 +177,6 @@ class CXFA_FFWidget : public cppgc::GarbageCollected<CXFA_FFWidget>,
   bool IsLayoutRectEmpty();
   CXFA_LayoutItem* GetParent();
   bool IsAncestorOf(CXFA_FFWidget* pWidget);
-  const CFWL_App* GetFWLApp();
-
   bool HasEventUnderHandler(XFA_EVENTTYPE eEventType,
                             CXFA_FFWidgetHandler* pHandler);
   bool ProcessEventUnderHandler(CXFA_EventParam* params,

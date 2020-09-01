@@ -31,7 +31,7 @@ class CFWL_PushButton final : public CFWL_Widget {
                     const CFX_Matrix& matrix) override;
 
  private:
-  explicit CFWL_PushButton(const CFWL_App*);
+  explicit CFWL_PushButton(CFWL_App* pApp);
 
   void DrawBkground(CXFA_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix);

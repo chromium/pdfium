@@ -25,6 +25,7 @@
 #include "fxjs/ijs_runtime.h"
 #include "public/fpdf_formfill.h"
 #include "third_party/base/stl_util.h"
+#include "v8/include/cppgc/allocation.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
@@ -85,10 +86,15 @@ RetainPtr<CPDF_SeekableMultiStream> CreateXFAMultiStream(
 
 CPDFXFA_Context::CPDFXFA_Context(CPDF_Document* pPDFDoc)
     : m_pPDFDoc(pPDFDoc),
-      m_pXFAApp(std::make_unique<CXFA_FFApp>(this)),
       m_pDocEnv(std::make_unique<CPDFXFA_DocEnvironment>(this)),
       m_pGCHeap(FXGC_CreateHeap()) {
   ASSERT(m_pPDFDoc);
+
+  // There might not be a heap when JS not initialized.
+  if (m_pGCHeap) {
+    m_pXFAApp = cppgc::MakeGarbageCollected<CXFA_FFApp>(
+        m_pGCHeap->GetAllocationHandle(), this);
+  }
 }
 
 CPDFXFA_Context::~CPDFXFA_Context() {
@@ -104,6 +110,9 @@ void CPDFXFA_Context::SetFormFillEnv(
   // the layout data to clear.
   if (m_pXFADoc && m_pXFADoc->GetXFADoc()) {
     m_pXFADoc->GetXFADoc()->ClearLayoutData();
+    m_pXFADocView.Clear();
+    m_pXFADoc.Clear();
+    m_pXFAApp.Clear();
     FXGC_ForceGarbageCollection(m_pGCHeap.get());
   }
   m_pFormFillEnv.Reset(pFormFillEnv);
@@ -134,7 +143,7 @@ bool CPDFXFA_Context::LoadXFADoc() {
 
   AutoNuller<cppgc::Persistent<CXFA_FFDoc>> doc_nuller(&m_pXFADoc);
   m_pXFADoc = cppgc::MakeGarbageCollected<CXFA_FFDoc>(
-      m_pGCHeap->GetAllocationHandle(), m_pXFAApp.get(), m_pDocEnv.get(),
+      m_pGCHeap->GetAllocationHandle(), m_pXFAApp, m_pDocEnv.get(),
       m_pPDFDoc.Get(), m_pGCHeap.get());
 
   if (!m_pXFADoc->OpenDoc(m_pXML.get())) {

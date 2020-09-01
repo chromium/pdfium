@@ -28,7 +28,7 @@
 #include "xfa/fwl/fwl_widgetdef.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
 
-CFWL_ComboBox::CFWL_ComboBox(const CFWL_App* app)
+CFWL_ComboBox::CFWL_ComboBox(CFWL_App* app)
     : CFWL_Widget(app, Properties(), nullptr),
       m_pEdit(cppgc::MakeGarbageCollected<CFWL_ComboEdit>(
           app->GetHeap()->GetAllocationHandle(),

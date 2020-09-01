@@ -10,6 +10,9 @@
 #include <memory>
 
 #include "core/fxcrt/unowned_ptr.h"
+#include "fxjs/gc/heap.h"
+#include "v8/include/cppgc/garbage-collected.h"
+#include "v8/include/cppgc/member.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fxfa/fxfa.h"
 
@@ -19,14 +22,16 @@ class CXFA_FontMgr;
 class CXFA_FWLAdapterWidgetMgr;
 class CXFA_FWLTheme;
 
-class CXFA_FFApp : public CFWL_App::AdapterIface {
+class CXFA_FFApp : public cppgc::GarbageCollected<CXFA_FFApp>,
+                   public CFWL_App::AdapterIface {
  public:
   static void SkipFontLoadForTesting(bool skip);
 
-  explicit CXFA_FFApp(IXFA_AppProvider* pProvider);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FFApp() override;
 
   // CFWL_App::AdapterIface:
+  void Trace(cppgc::Visitor* visitor) const override;
   CFWL_WidgetMgr::AdapterIface* GetWidgetMgrAdapter() override;
   TimerHandlerIface* GetTimerHandler() override;
   IFWL_ThemeProvider* GetThemeProvider() override;
@@ -37,10 +42,12 @@ class CXFA_FFApp : public CFWL_App::AdapterIface {
   CFGAS_FontMgr* GetFGASFontMgr();
 
   IXFA_AppProvider* GetAppProvider() const { return m_pProvider.Get(); }
-  const CFWL_App* GetFWLApp() const { return m_pFWLApp.get(); }
+  CFWL_App* GetFWLApp() const { return m_pFWLApp; }
   CXFA_FontMgr* GetXFAFontMgr() const { return m_pXFAFontMgr.get(); }
 
  private:
+  explicit CXFA_FFApp(IXFA_AppProvider* pProvider);
+
   UnownedPtr<IXFA_AppProvider> const m_pProvider;
 
   // The fonts stored in the font manager may have been created by the default
@@ -55,12 +62,9 @@ class CXFA_FFApp : public CFWL_App::AdapterIface {
   // of the DEFFontMgr so this goes away. Bug 561.
   std::unique_ptr<CFGAS_FontMgr> m_pFGASFontMgr;
   std::unique_ptr<CXFA_FontMgr> m_pXFAFontMgr;
-  std::unique_ptr<CXFA_FWLAdapterWidgetMgr> m_pAdapterWidgetMgr;
-
-  // |m_pFWLApp| has to be released first, then |m_pFWLTheme| since the former
-  // may refers to theme manager and the latter refers to font manager.
-  std::unique_ptr<CXFA_FWLTheme> m_pFWLTheme;
-  std::unique_ptr<CFWL_App> m_pFWLApp;
+  cppgc::Member<CXFA_FWLAdapterWidgetMgr> m_pAdapterWidgetMgr;
+  cppgc::Member<CXFA_FWLTheme> m_pFWLTheme;
+  cppgc::Member<CFWL_App> m_pFWLApp;
 };
 
 #endif  // XFA_FXFA_CXFA_FFAPP_H_

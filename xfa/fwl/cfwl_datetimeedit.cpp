@@ -12,7 +12,7 @@
 #include "xfa/fwl/cfwl_messagemouse.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
 
-CFWL_DateTimeEdit::CFWL_DateTimeEdit(const CFWL_App* app,
+CFWL_DateTimeEdit::CFWL_DateTimeEdit(CFWL_App* app,
                                      const Properties& properties,
                                      CFWL_Widget* pOuter)
     : CFWL_Edit(app, properties, pOuter) {}

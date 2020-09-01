@@ -23,7 +23,7 @@ class CFWL_ComboEdit final : public CFWL_Edit {
   void FlagFocus(bool bSet);
 
  private:
-  CFWL_ComboEdit(const CFWL_App* app,
+  CFWL_ComboEdit(CFWL_App* app,
                  const Properties& properties,
                  CFWL_Widget* pOuter);
 };

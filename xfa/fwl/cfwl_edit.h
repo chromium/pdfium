@@ -96,9 +96,7 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   void SetScrollOffset(float fScrollOffset) override;
 
  protected:
-  CFWL_Edit(const CFWL_App* app,
-            const Properties& properties,
-            CFWL_Widget* pOuter);
+  CFWL_Edit(CFWL_App* app, const Properties& properties, CFWL_Widget* pOuter);
 
   void ShowCaret(CFX_RectF* pRect);
   void HideCaret(CFX_RectF* pRect);

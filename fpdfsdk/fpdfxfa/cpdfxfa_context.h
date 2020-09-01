@@ -116,7 +116,6 @@ class CPDFXFA_Context final : public CPDF_Document::Extension,
   // The order in which the following members are destroyed is critical.
   UnownedPtr<CPDF_Document> const m_pPDFDoc;
   std::unique_ptr<CFX_XMLDocument> m_pXML;
-  std::unique_ptr<CXFA_FFApp> const m_pXFAApp;
   ObservedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
   std::vector<RetainPtr<CPDFXFA_Page>> m_XFAPageList;
 
@@ -124,6 +123,7 @@ class CPDFXFA_Context final : public CPDF_Document::Extension,
   std::unique_ptr<CPDFXFA_DocEnvironment> m_pDocEnv;
 
   FXGCScopedHeap m_pGCHeap;
+  cppgc::Persistent<CXFA_FFApp> m_pXFAApp;          // can't outlive |m_pGCHeap|
   cppgc::Persistent<CXFA_FFDoc> m_pXFADoc;          // Can't outlive |m_pGCHeap|
   cppgc::Persistent<CXFA_FFDocView> m_pXFADocView;  // Can't outlive |m_pGCHeap|
 };

@@ -66,7 +66,7 @@ class CFWL_Barcode final : public CFWL_Edit {
     kEncodeSuccess,
   };
 
-  explicit CFWL_Barcode(const CFWL_App* pApp);
+  explicit CFWL_Barcode(CFWL_App* pApp);
 
   void GenerateBarcodeImageCache();
   void CreateBarcodeEngine();

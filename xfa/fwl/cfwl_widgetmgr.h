@@ -11,17 +11,22 @@
 #include <memory>
 
 #include "core/fxcrt/fx_system.h"
-#include "core/fxcrt/tree_node.h"
+#include "fxjs/gc/gced_tree_node.h"
+#include "fxjs/gc/heap.h"
+#include "v8/include/cppgc/garbage-collected.h"
+#include "v8/include/cppgc/member.h"
+#include "v8/include/cppgc/visitor.h"
 #include "xfa/fxgraphics/cxfa_graphics.h"
 
 class CFWL_Message;
 class CXFA_Graphics;
 class CFX_Matrix;
+class CFWL_App;
 class CFWL_Widget;
 
-class CFWL_WidgetMgr {
+class CFWL_WidgetMgr final : public cppgc::GarbageCollected<CFWL_WidgetMgr> {
  public:
-  class AdapterIface {
+  class AdapterIface : public cppgc::GarbageCollectedMixin {
    public:
     virtual ~AdapterIface() {}
     virtual void RepaintWidget(CFWL_Widget* pWidget) = 0;
@@ -32,8 +37,10 @@ class CFWL_WidgetMgr {
                              CFX_RectF* pPopupRect) = 0;
   };
 
-  explicit CFWL_WidgetMgr(AdapterIface* pAdapterNative);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CFWL_WidgetMgr();
+
+  void Trace(cppgc::Visitor* visitor) const;
 
   void OnProcessMessageToForm(CFWL_Message* pMessage);
   void OnDrawWidget(CFWL_Widget* pWidget,
@@ -60,14 +67,21 @@ class CFWL_WidgetMgr {
                           CFX_RectF* pPopupRect) const;
 
  private:
-  class Item : public TreeNode<Item> {
+  class Item final : public GCedTreeNode<Item> {
    public:
-    Item();
-    explicit Item(CFWL_Widget* widget);
+    CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
     ~Item() final;
 
-    CFWL_Widget* const pWidget;
+    // GcedTreeNode:
+    void Trace(cppgc::Visitor* visitor) const override;
+
+    cppgc::Member<CFWL_Widget> const pWidget;
+
+   private:
+    explicit Item(CFWL_Widget* widget);
   };
+
+  CFWL_WidgetMgr(AdapterIface* pAdapter, CFWL_App* pApp);
 
   CFWL_Widget* GetPriorSiblingWidget(CFWL_Widget* pWidget) const;
   CFWL_Widget* GetLastChildWidget(CFWL_Widget* pWidget) const;
@@ -81,8 +95,9 @@ class CFWL_WidgetMgr {
                     CXFA_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix);
 
-  std::map<const CFWL_Widget*, std::unique_ptr<Item>> m_mapWidgetItem;
-  UnownedPtr<AdapterIface> const m_pAdapter;
+  cppgc::Member<AdapterIface> const m_pAdapter;
+  cppgc::Member<CFWL_App> const m_pApp;
+  std::map<const CFWL_Widget*, cppgc::Member<Item>> m_mapWidgetItem;
 };
 
 #endif  // XFA_FWL_CFWL_WIDGETMGR_H_

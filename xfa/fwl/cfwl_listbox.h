@@ -77,7 +77,7 @@ class CFWL_ListBox : public CFWL_Widget {
   float CalcItemHeight();
 
  protected:
-  CFWL_ListBox(const CFWL_App* pApp,
+  CFWL_ListBox(CFWL_App* pApp,
                const Properties& properties,
                CFWL_Widget* pOuter);
 

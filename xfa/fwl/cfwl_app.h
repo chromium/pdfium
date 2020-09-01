@@ -10,14 +10,14 @@
 #include <memory>
 
 #include "core/fxcrt/timerhandler_iface.h"
+#include "fxjs/gc/heap.h"
+#include "v8/include/cppgc/garbage-collected.h"
+#include "v8/include/cppgc/member.h"
+#include "v8/include/cppgc/visitor.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
 
 class CFWL_NoteDriver;
 class IFWL_ThemeProvider;
-
-namespace cppgc {
-class Heap;
-}  // namespace cppgc
 
 enum FWL_KeyFlag {
   FWL_KEYFLAG_Ctrl = 1 << 0,
@@ -29,9 +29,9 @@ enum FWL_KeyFlag {
   FWL_KEYFLAG_MButton = 1 << 6
 };
 
-class CFWL_App {
+class CFWL_App final : public cppgc::GarbageCollected<CFWL_App> {
  public:
-  class AdapterIface {
+  class AdapterIface : public cppgc::GarbageCollectedMixin {
    public:
     virtual ~AdapterIface() = default;
     virtual CFWL_WidgetMgr::AdapterIface* GetWidgetMgrAdapter() = 0;
@@ -40,8 +40,10 @@ class CFWL_App {
     virtual cppgc::Heap* GetHeap() = 0;
   };
 
-  explicit CFWL_App(AdapterIface* pAdapter);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CFWL_App();
+
+  void Trace(cppgc::Visitor* visitor) const;
 
   CFWL_WidgetMgr::AdapterIface* GetWidgetMgrAdapter() const {
     return m_pAdapter->GetWidgetMgrAdapter();
@@ -53,13 +55,15 @@ class CFWL_App {
     return m_pAdapter->GetThemeProvider();
   }
   cppgc::Heap* GetHeap() const { return m_pAdapter->GetHeap(); }
-  CFWL_WidgetMgr* GetWidgetMgr() const { return m_pWidgetMgr.get(); }
-  CFWL_NoteDriver* GetNoteDriver() const { return m_pNoteDriver.get(); }
+  CFWL_WidgetMgr* GetWidgetMgr() const { return m_pWidgetMgr; }
+  CFWL_NoteDriver* GetNoteDriver() const { return m_pNoteDriver; }
 
  private:
-  UnownedPtr<AdapterIface> const m_pAdapter;
-  std::unique_ptr<CFWL_WidgetMgr> m_pWidgetMgr;
-  std::unique_ptr<CFWL_NoteDriver> m_pNoteDriver;
+  explicit CFWL_App(AdapterIface* pAdapter);
+
+  cppgc::Member<AdapterIface> const m_pAdapter;
+  cppgc::Member<CFWL_WidgetMgr> m_pWidgetMgr;
+  cppgc::Member<CFWL_NoteDriver> m_pNoteDriver;
 };
 
 #endif  // XFA_FWL_CFWL_APP_H_

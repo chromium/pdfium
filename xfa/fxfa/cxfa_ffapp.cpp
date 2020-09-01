@@ -32,11 +32,18 @@ void CXFA_FFApp::SkipFontLoadForTesting(bool skip) {
 
 CXFA_FFApp::CXFA_FFApp(IXFA_AppProvider* pProvider)
     : m_pProvider(pProvider), m_pXFAFontMgr(std::make_unique<CXFA_FontMgr>()) {
-  // Ensure fully initialized before making an app based on |this|.
-  m_pFWLApp = std::make_unique<CFWL_App>(this);
+  // Ensure fully initialized before making objects based on |this|.
+  m_pFWLApp = cppgc::MakeGarbageCollected<CFWL_App>(
+      GetHeap()->GetAllocationHandle(), this);
 }
 
 CXFA_FFApp::~CXFA_FFApp() = default;
+
+void CXFA_FFApp::Trace(cppgc::Visitor* visitor) const {
+  visitor->Trace(m_pAdapterWidgetMgr);
+  visitor->Trace(m_pFWLTheme);
+  visitor->Trace(m_pFWLApp);
+}
 
 CFGAS_FontMgr* CXFA_FFApp::GetFGASFontMgr() {
   if (!m_pFGASFontMgr) {
@@ -50,18 +57,21 @@ CFGAS_FontMgr* CXFA_FFApp::GetFGASFontMgr() {
 }
 
 bool CXFA_FFApp::LoadFWLTheme(CXFA_FFDoc* doc) {
-  auto fwl_theme = std::make_unique<CXFA_FWLTheme>(this);
+  auto* fwl_theme = cppgc::MakeGarbageCollected<CXFA_FWLTheme>(
+      GetHeap()->GetAllocationHandle(), this);
   if (!fwl_theme->LoadCalendarFont(doc))
     return false;
 
-  m_pFWLTheme = std::move(fwl_theme);
+  m_pFWLTheme = fwl_theme;
   return true;
 }
 
 CFWL_WidgetMgr::AdapterIface* CXFA_FFApp::GetWidgetMgrAdapter() {
-  if (!m_pAdapterWidgetMgr)
-    m_pAdapterWidgetMgr = std::make_unique<CXFA_FWLAdapterWidgetMgr>();
-  return m_pAdapterWidgetMgr.get();
+  if (!m_pAdapterWidgetMgr) {
+    m_pAdapterWidgetMgr = cppgc::MakeGarbageCollected<CXFA_FWLAdapterWidgetMgr>(
+        GetHeap()->GetAllocationHandle());
+  }
+  return m_pAdapterWidgetMgr;
 }
 
 TimerHandlerIface* CXFA_FFApp::GetTimerHandler() {
@@ -69,7 +79,7 @@ TimerHandlerIface* CXFA_FFApp::GetTimerHandler() {
 }
 
 IFWL_ThemeProvider* CXFA_FFApp::GetThemeProvider() {
-  return m_pFWLTheme.get();
+  return m_pFWLTheme;
 }
 
 cppgc::Heap* CXFA_FFApp::GetHeap() {

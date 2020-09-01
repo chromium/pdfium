@@ -85,7 +85,7 @@ WideString GetMonth(int month) {
 
 }  // namespace
 
-CFWL_MonthCalendar::CFWL_MonthCalendar(const CFWL_App* app,
+CFWL_MonthCalendar::CFWL_MonthCalendar(CFWL_App* app,
                                        const Properties& properties,
                                        CFWL_Widget* pOuter)
     : CFWL_Widget(app, properties, pOuter) {}

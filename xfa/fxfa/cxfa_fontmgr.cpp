@@ -15,6 +15,7 @@
 #include "core/fxge/cfx_gemodule.h"
 #include "xfa/fgas/font/cfgas_defaultfontmanager.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
+#include "xfa/fgas/font/cfgas_pdffontmgr.h"
 #include "xfa/fgas/font/fgas_fontutils.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"

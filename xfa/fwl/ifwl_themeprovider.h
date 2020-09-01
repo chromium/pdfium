@@ -12,6 +12,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/fx_dib.h"
+#include "v8/include/cppgc/garbage-collected.h"
 
 class CFGAS_GEFont;
 class CFWL_ThemeBackground;
@@ -20,9 +21,8 @@ class CFWL_ThemeText;
 class CFWL_Widget;
 class CFWL_WidgetTP;
 
-class IFWL_ThemeProvider {
+class IFWL_ThemeProvider : public cppgc::GarbageCollectedMixin {
  public:
-  IFWL_ThemeProvider();
   virtual ~IFWL_ThemeProvider();
 
   virtual void DrawBackground(const CFWL_ThemeBackground& pParams) = 0;
@@ -42,6 +42,8 @@ class IFWL_ThemeProvider {
       const CFWL_ThemePart& pThemePart) const = 0;
 
  protected:
+  IFWL_ThemeProvider();
+
   CFWL_WidgetTP* GetTheme(const CFWL_Widget* pWidget) const;
 
  private:

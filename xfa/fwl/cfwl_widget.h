@@ -9,7 +9,6 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/gc/heap.h"
 #include "v8/include/cppgc/garbage-collected.h"
@@ -53,7 +52,6 @@ enum class FWL_Type {
 
 // NOTE: CFWL_Widget serves as its own delegate until replaced at runtime.
 class CFWL_Widget : public cppgc::GarbageCollected<CFWL_Widget>,
-                    public Observable,
                     public IFWL_WidgetDelegate {
   CPPGC_USING_PRE_FINALIZER(CFWL_Widget, PreFinalize);
 
@@ -118,7 +116,7 @@ class CFWL_Widget : public cppgc::GarbageCollected<CFWL_Widget>,
   bool IsPopup() const;
   bool IsChild() const;
 
-  CFWL_WidgetMgr* GetWidgetMgr() const { return m_pWidgetMgr.Get(); }
+  CFWL_WidgetMgr* GetWidgetMgr() const { return m_pWidgetMgr; }
   CFWL_Widget* GetOuter() const { return m_pOuter; }
   CFWL_Widget* GetOutmost() const;
 
@@ -137,7 +135,7 @@ class CFWL_Widget : public cppgc::GarbageCollected<CFWL_Widget>,
     return m_pDelegate ? m_pDelegate.Get() : this;
   }
 
-  const CFWL_App* GetFWLApp() const { return m_pFWLApp.Get(); }
+  CFWL_App* GetFWLApp() const { return m_pFWLApp.Get(); }
   uint64_t GetEventKey() const { return m_nEventKey; }
   void SetEventKey(uint64_t key) { m_nEventKey = key; }
 
@@ -146,9 +144,7 @@ class CFWL_Widget : public cppgc::GarbageCollected<CFWL_Widget>,
   void RepaintRect(const CFX_RectF& pRect);
 
  protected:
-  CFWL_Widget(const CFWL_App* app,
-              const Properties& properties,
-              CFWL_Widget* pOuter);
+  CFWL_Widget(CFWL_App* app, const Properties& properties, CFWL_Widget* pOuter);
 
   bool IsEnabled() const;
   bool IsLocked() const { return m_iLock > 0; }
@@ -191,11 +187,11 @@ class CFWL_Widget : public cppgc::GarbageCollected<CFWL_Widget>,
 
   int32_t m_iLock = 0;
   uint64_t m_nEventKey = 0;
-  UnownedPtr<const CFWL_App> const m_pFWLApp;
-  UnownedPtr<CFWL_WidgetMgr> const m_pWidgetMgr;
-  cppgc::Member<CFWL_Widget> const m_pOuter;
   AdapterIface* m_pAdapterIface = nullptr;
+  cppgc::Member<CFWL_App> const m_pFWLApp;
+  cppgc::Member<CFWL_WidgetMgr> const m_pWidgetMgr;
   cppgc::Member<IFWL_WidgetDelegate> m_pDelegate;
+  cppgc::Member<CFWL_Widget> const m_pOuter;
 };
 
 #endif  // XFA_FWL_CFWL_WIDGET_H_

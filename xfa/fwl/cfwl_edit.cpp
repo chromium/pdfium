@@ -45,7 +45,7 @@ constexpr int kEditingModifier = FWL_KEYFLAG_Ctrl;
 
 }  // namespace
 
-CFWL_Edit::CFWL_Edit(const CFWL_App* app,
+CFWL_Edit::CFWL_Edit(CFWL_App* app,
                      const Properties& properties,
                      CFWL_Widget* pOuter)
     : CFWL_Widget(app, properties, pOuter),

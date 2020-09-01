@@ -9,9 +9,11 @@
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_fffield.h"
 
-CXFA_FWLAdapterWidgetMgr::CXFA_FWLAdapterWidgetMgr() {}
+CXFA_FWLAdapterWidgetMgr::CXFA_FWLAdapterWidgetMgr() = default;
 
 CXFA_FWLAdapterWidgetMgr::~CXFA_FWLAdapterWidgetMgr() = default;
+
+void CXFA_FWLAdapterWidgetMgr::Trace(cppgc::Visitor* visitor) const {}
 
 void CXFA_FWLAdapterWidgetMgr::RepaintWidget(CFWL_Widget* pWidget) {
   if (!pWidget)

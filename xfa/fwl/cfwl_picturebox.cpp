@@ -6,7 +6,7 @@
 
 #include "xfa/fwl/cfwl_picturebox.h"
 
-CFWL_PictureBox::CFWL_PictureBox(const CFWL_App* app)
+CFWL_PictureBox::CFWL_PictureBox(CFWL_App* app)
     : CFWL_Widget(app, CFWL_Widget::Properties(), nullptr) {}
 
 CFWL_PictureBox::~CFWL_PictureBox() = default;

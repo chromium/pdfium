@@ -53,7 +53,7 @@ class CFWL_ScrollBar final : public CFWL_Widget,
   void SetTrackPos(float fTrackPos);
 
  private:
-  CFWL_ScrollBar(const CFWL_App* app,
+  CFWL_ScrollBar(CFWL_App* app,
                  const Properties& properties,
                  CFWL_Widget* pOuter);
 

@@ -29,7 +29,7 @@ const int kItemTextMargin = 2;
 
 }  // namespace
 
-CFWL_ListBox::CFWL_ListBox(const CFWL_App* app,
+CFWL_ListBox::CFWL_ListBox(CFWL_App* app,
                            const Properties& properties,
                            CFWL_Widget* pOuter)
     : CFWL_Widget(app, properties, pOuter) {}

@@ -45,7 +45,7 @@ class CFWL_CheckBox final : public CFWL_Widget {
   void SetBoxSize(float fHeight);
 
  private:
-  explicit CFWL_CheckBox(const CFWL_App* pApp);
+  explicit CFWL_CheckBox(CFWL_App* pApp);
 
   void SetCheckState(int32_t iCheck);
   void Layout();

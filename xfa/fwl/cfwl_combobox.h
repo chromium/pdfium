@@ -93,7 +93,7 @@ class CFWL_ComboBox final : public CFWL_Widget {
   int32_t GetCurrentSelection() const { return m_iCurSel; }
 
  private:
-  explicit CFWL_ComboBox(const CFWL_App* pApp);
+  explicit CFWL_ComboBox(CFWL_App* pApp);
 
   bool IsDropDownStyle() const {
     return !!(m_Properties.m_dwStyleExes & FWL_STYLEEXT_CMB_DropDown);

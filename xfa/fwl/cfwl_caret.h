@@ -33,9 +33,7 @@ class CFWL_Caret final : public CFWL_Widget, public CFX_Timer::CallbackIface {
   void HideCaret();
 
  private:
-  CFWL_Caret(const CFWL_App* app,
-             const Properties& properties,
-             CFWL_Widget* pOuter);
+  CFWL_Caret(CFWL_App* app, const Properties& properties, CFWL_Widget* pOuter);
 
   void DrawCaretBK(CXFA_Graphics* pGraphics, const CFX_Matrix* pMatrix);
 

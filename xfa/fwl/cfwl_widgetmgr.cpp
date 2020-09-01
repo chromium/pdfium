@@ -13,12 +13,21 @@
 #include "xfa/fwl/cfwl_message.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 
-CFWL_WidgetMgr::CFWL_WidgetMgr(AdapterIface* pAdapterNative)
-    : m_pAdapter(pAdapterNative) {
-  m_mapWidgetItem[nullptr] = std::make_unique<Item>();
+CFWL_WidgetMgr::CFWL_WidgetMgr(AdapterIface* pAdapter, CFWL_App* pApp)
+    : m_pAdapter(pAdapter), m_pApp(pApp) {
+  ASSERT(m_pAdapter);
+  m_mapWidgetItem[nullptr] = cppgc::MakeGarbageCollected<Item>(
+      pApp->GetHeap()->GetAllocationHandle(), nullptr);
 }
 
 CFWL_WidgetMgr::~CFWL_WidgetMgr() = default;
+
+void CFWL_WidgetMgr::Trace(cppgc::Visitor* visitor) const {
+  visitor->Trace(m_pApp);
+  visitor->Trace(m_pAdapter);
+  for (auto& item : m_mapWidgetItem)
+    visitor->Trace(item.second);
+}
 
 CFWL_Widget* CFWL_WidgetMgr::GetParentWidget(const CFWL_Widget* pWidget) const {
   Item* pItem = GetWidgetMgrItem(pWidget);
@@ -152,14 +161,14 @@ CFWL_WidgetMgr::Item* CFWL_WidgetMgr::GetWidgetMgrRootItem() const {
 CFWL_WidgetMgr::Item* CFWL_WidgetMgr::GetWidgetMgrItem(
     const CFWL_Widget* pWidget) const {
   auto it = m_mapWidgetItem.find(pWidget);
-  return it != m_mapWidgetItem.end() ? it->second.get() : nullptr;
+  return it != m_mapWidgetItem.end() ? it->second : nullptr;
 }
 
 CFWL_WidgetMgr::Item* CFWL_WidgetMgr::CreateWidgetMgrItem(
     CFWL_Widget* pWidget) {
-  auto pOwnedItem = std::make_unique<Item>(pWidget);
-  auto* pItem = pOwnedItem.get();
-  m_mapWidgetItem[pWidget] = std::move(pOwnedItem);
+  auto* pItem = cppgc::MakeGarbageCollected<Item>(
+      m_pApp->GetHeap()->GetAllocationHandle(), pWidget);
+  m_mapWidgetItem[pWidget] = pItem;
   return pItem;
 }
 
@@ -226,8 +235,11 @@ void CFWL_WidgetMgr::DrawChildren(CFWL_Widget* parent,
   }
 }
 
-CFWL_WidgetMgr::Item::Item() : pWidget(nullptr) {}
-
 CFWL_WidgetMgr::Item::Item(CFWL_Widget* widget) : pWidget(widget) {}
 
 CFWL_WidgetMgr::Item::~Item() = default;
+
+void CFWL_WidgetMgr::Item::Trace(cppgc::Visitor* visitor) const {
+  GCedTreeNode<Item>::Trace(visitor);
+  visitor->Trace(pWidget);
+}

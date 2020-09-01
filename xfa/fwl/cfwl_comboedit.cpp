@@ -12,7 +12,7 @@
 #include "xfa/fwl/cfwl_combobox.h"
 #include "xfa/fwl/cfwl_messagemouse.h"
 
-CFWL_ComboEdit::CFWL_ComboEdit(const CFWL_App* app,
+CFWL_ComboEdit::CFWL_ComboEdit(CFWL_App* app,
                                const Properties& properties,
                                CFWL_Widget* pOuter)
     : CFWL_Edit(app, properties, pOuter) {}

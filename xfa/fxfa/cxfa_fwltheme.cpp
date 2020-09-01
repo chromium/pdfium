@@ -51,6 +51,17 @@ CXFA_FFWidget* GetOutmostFFWidget(CFWL_Widget* pWidget) {
 CXFA_FWLTheme::CXFA_FWLTheme(CXFA_FFApp* pApp)
     : m_pTextOut(std::make_unique<CFDE_TextOut>()), m_pApp(pApp) {}
 
+CXFA_FWLTheme::~CXFA_FWLTheme() = default;
+
+void CXFA_FWLTheme::PreFinalize() {
+  m_pTextOut.reset();
+  CFWL_FontManager::DestroyInstance();
+}
+
+void CXFA_FWLTheme::Trace(cppgc::Visitor* visitor) const {
+  visitor->Trace(m_pApp);
+}
+
 bool CXFA_FWLTheme::LoadCalendarFont(CXFA_FFDoc* doc) {
   for (size_t i = 0; !m_pCalendarFont && i < pdfium::size(g_FWLTheme_CalFonts);
        ++i) {
@@ -67,11 +78,6 @@ bool CXFA_FWLTheme::LoadCalendarFont(CXFA_FFDoc* doc) {
   }
 
   return m_pCalendarFont != nullptr;
-}
-
-CXFA_FWLTheme::~CXFA_FWLTheme() {
-  m_pTextOut.reset();
-  CFWL_FontManager::DestroyInstance();
 }
 
 void CXFA_FWLTheme::DrawBackground(const CFWL_ThemeBackground& pParams) {

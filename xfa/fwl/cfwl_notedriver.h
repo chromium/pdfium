@@ -9,18 +9,23 @@
 
 #include <map>
 #include <memory>
+#include <set>
 
-#include "core/fxcrt/unowned_ptr.h"
-#include "xfa/fwl/cfwl_event.h"
+#include "fxjs/gc/heap.h"
+#include "v8/include/cppgc/garbage-collected.h"
+#include "v8/include/cppgc/member.h"
+#include "v8/include/cppgc/visitor.h"
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fxgraphics/cxfa_graphics.h"
 
 class CFWL_Event;
 
-class CFWL_NoteDriver {
+class CFWL_NoteDriver final : public cppgc::GarbageCollected<CFWL_NoteDriver> {
  public:
-  CFWL_NoteDriver();
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CFWL_NoteDriver();
+
+  void Trace(cppgc::Visitor* visitor) const;
 
   void SendEvent(CFWL_Event* pNote);
   void ProcessMessage(CFWL_Message* pMessage);
@@ -36,6 +41,7 @@ class CFWL_NoteDriver {
     explicit Target(CFWL_Widget* pListener);
     ~Target();
 
+    void Trace(cppgc::Visitor* visitor) const;
     void SetEventSource(CFWL_Widget* pSource);
     bool ProcessEvent(CFWL_Event* pEvent);
     bool IsValid() const { return m_bValid; }
@@ -43,9 +49,11 @@ class CFWL_NoteDriver {
 
    private:
     bool m_bValid = true;
-    CFWL_Widget* const m_pListener;
-    std::set<CFWL_Widget*> m_widgets;
+    cppgc::Member<CFWL_Widget> const m_pListener;
+    std::set<cppgc::Member<CFWL_Widget>> m_widgets;
   };
+
+  CFWL_NoteDriver();
 
   bool DispatchMessage(CFWL_Message* pMessage, CFWL_Widget* pMessageForm);
   bool DoSetFocus(CFWL_Message* pMsg, CFWL_Widget* pMessageForm);
@@ -57,9 +65,9 @@ class CFWL_NoteDriver {
   void MouseSecondary(CFWL_Message* pMsg);
 
   std::map<uint64_t, std::unique_ptr<Target>> m_eventTargets;
-  UnownedPtr<CFWL_Widget> m_pHover;
-  UnownedPtr<CFWL_Widget> m_pFocus;
-  UnownedPtr<CFWL_Widget> m_pGrab;
+  cppgc::Member<CFWL_Widget> m_pHover;
+  cppgc::Member<CFWL_Widget> m_pFocus;
+  cppgc::Member<CFWL_Widget> m_pGrab;
 };
 
 #endif  // XFA_FWL_CFWL_NOTEDRIVER_H_

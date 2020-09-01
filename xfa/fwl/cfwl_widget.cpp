@@ -33,7 +33,7 @@
 #define FWL_WGT_CalcWidth 2048
 #define FWL_WGT_CalcMultiLineDefWidth 120.0f
 
-CFWL_Widget::CFWL_Widget(const CFWL_App* app,
+CFWL_Widget::CFWL_Widget(CFWL_App* app,
                          const Properties& properties,
                          CFWL_Widget* pOuter)
     : m_Properties(properties),
@@ -52,8 +52,10 @@ void CFWL_Widget::PreFinalize() {
 }
 
 void CFWL_Widget::Trace(cppgc::Visitor* visitor) const {
-  visitor->Trace(m_pOuter);
+  visitor->Trace(m_pFWLApp);
+  visitor->Trace(m_pWidgetMgr);
   visitor->Trace(m_pDelegate);
+  visitor->Trace(m_pOuter);
 }
 
 bool CFWL_Widget::IsForm() const {

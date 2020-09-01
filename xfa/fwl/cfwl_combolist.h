@@ -23,7 +23,7 @@ class CFWL_ComboList final : public CFWL_ListBox {
   void SetNotifyOwner(bool notify) { m_bNotifyOwner = notify; }
 
  private:
-  CFWL_ComboList(const CFWL_App* app,
+  CFWL_ComboList(CFWL_App* app,
                  const Properties& properties,
                  CFWL_Widget* pOuter);
 

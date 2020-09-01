@@ -76,7 +76,7 @@ class CFWL_DateTimePicker final : public CFWL_Widget {
   void ProcessSelChanged(int32_t iYear, int32_t iMonth, int32_t iDay);
 
  private:
-  explicit CFWL_DateTimePicker(const CFWL_App* pApp);
+  explicit CFWL_DateTimePicker(CFWL_App* pApp);
 
   void DrawDropDownButton(CXFA_Graphics* pGraphics, const CFX_Matrix* pMatrix);
   WideString FormatDateString(int32_t iYear, int32_t iMonth, int32_t iDay);

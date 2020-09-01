@@ -9,20 +9,28 @@
 
 #include <memory>
 
+#include "fxjs/gc/heap.h"
+#include "v8/include/cppgc/garbage-collected.h"
+#include "v8/include/cppgc/member.h"
+#include "v8/include/cppgc/prefinalizer.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
 
 class CFDE_TextOut;
 class CXFA_FFApp;
 class CXFA_FFDoc;
 
-class CXFA_FWLTheme final : public IFWL_ThemeProvider {
+class CXFA_FWLTheme final : public cppgc::GarbageCollected<CXFA_FWLTheme>,
+                            public IFWL_ThemeProvider {
+  CPPGC_USING_PRE_FINALIZER(CXFA_FWLTheme, PreFinalize);
+
  public:
-  explicit CXFA_FWLTheme(CXFA_FFApp* pApp);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FWLTheme() override;
 
-  bool LoadCalendarFont(CXFA_FFDoc* doc);
+  void PreFinalize();
 
   // IFWL_ThemeProvider:
+  void Trace(cppgc::Visitor* visitor) const override;
   void DrawBackground(const CFWL_ThemeBackground& pParams) override;
   void DrawText(const CFWL_ThemeText& pParams) override;
   void CalcTextRect(const CFWL_ThemeText& pParams, CFX_RectF* pRect) override;
@@ -37,11 +45,15 @@ class CXFA_FWLTheme final : public IFWL_ThemeProvider {
   FX_COLORREF GetTextColor(const CFWL_ThemePart& pThemePart) const override;
   CFX_SizeF GetSpaceAboveBelow(const CFWL_ThemePart& pThemePart) const override;
 
+  bool LoadCalendarFont(CXFA_FFDoc* doc);
+
  private:
+  explicit CXFA_FWLTheme(CXFA_FFApp* pApp);
+
   std::unique_ptr<CFDE_TextOut> m_pTextOut;
   RetainPtr<CFGAS_GEFont> m_pCalendarFont;
+  cppgc::Member<CXFA_FFApp> const m_pApp;
   WideString m_wsResource;
-  UnownedPtr<CXFA_FFApp> const m_pApp;
   CFX_RectF m_Rect;
 };
 

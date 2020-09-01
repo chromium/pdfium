@@ -22,7 +22,7 @@ constexpr int kStateHighlight = (1 << 0);
 
 }  // namespace
 
-CFWL_Caret::CFWL_Caret(const CFWL_App* app,
+CFWL_Caret::CFWL_Caret(CFWL_App* app,
                        const Properties& properties,
                        CFWL_Widget* pOuter)
     : CFWL_Widget(app, properties, pOuter) {

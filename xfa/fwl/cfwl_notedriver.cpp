@@ -13,6 +13,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fwl/cfwl_app.h"
+#include "xfa/fwl/cfwl_event.h"
 #include "xfa/fwl/cfwl_messagekey.h"
 #include "xfa/fwl/cfwl_messagekillfocus.h"
 #include "xfa/fwl/cfwl_messagemouse.h"
@@ -30,6 +31,15 @@ uint64_t g_next_listener_key = 1;
 CFWL_NoteDriver::CFWL_NoteDriver() = default;
 
 CFWL_NoteDriver::~CFWL_NoteDriver() = default;
+
+void CFWL_NoteDriver::Trace(cppgc::Visitor* visitor) const {
+  for (const auto& item : m_eventTargets)
+    item.second->Trace(visitor);
+
+  visitor->Trace(m_pHover);
+  visitor->Trace(m_pFocus);
+  visitor->Trace(m_pGrab);
+}
 
 void CFWL_NoteDriver::SendEvent(CFWL_Event* pNote) {
   for (const auto& pair : m_eventTargets) {
@@ -243,6 +253,12 @@ CFWL_NoteDriver::Target::Target(CFWL_Widget* pListener)
     : m_pListener(pListener) {}
 
 CFWL_NoteDriver::Target::~Target() = default;
+
+void CFWL_NoteDriver::Target::Trace(cppgc::Visitor* visitor) const {
+  visitor->Trace(m_pListener);
+  for (auto& widget : m_widgets)
+    visitor->Trace(widget);
+}
 
 void CFWL_NoteDriver::Target::SetEventSource(CFWL_Widget* pSource) {
   if (pSource)

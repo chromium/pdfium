@@ -239,7 +239,7 @@ void CXFA_FFWidget::Trace(cppgc::Visitor* visitor) const {
   visitor->Trace(m_pDocView);
 }
 
-const CFWL_App* CXFA_FFWidget::GetFWLApp() {
+CFWL_App* CXFA_FFWidget::GetFWLApp() const {
   return GetPageView()->GetDocView()->GetDoc()->GetApp()->GetFWLApp();
 }
 
