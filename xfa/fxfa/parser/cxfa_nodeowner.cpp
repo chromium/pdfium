@@ -8,6 +8,7 @@
 
 #include <utility>
 
+#include "fxjs/gc/container_trace.h"
 #include "xfa/fxfa/parser/cxfa_list.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
@@ -16,8 +17,7 @@ CXFA_NodeOwner::CXFA_NodeOwner() = default;
 CXFA_NodeOwner::~CXFA_NodeOwner() = default;
 
 void CXFA_NodeOwner::Trace(cppgc::Visitor* visitor) const {
-  for (const auto& list : lists_)
-    visitor->Trace(list);
+  ContainerTrace(visitor, lists_);
 }
 
 void CXFA_NodeOwner::PersistList(CXFA_List* list) {

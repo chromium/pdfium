@@ -7,7 +7,7 @@
 #ifndef XFA_FXFA_CXFA_FFDOCVIEW_H_
 #define XFA_FXFA_CXFA_FFDOCVIEW_H_
 
-#include <deque>
+#include <list>
 #include <memory>
 #include <vector>
 
@@ -126,11 +126,11 @@ class CXFA_FFDocView : public cppgc::GarbageCollected<CXFA_FFDocView> {
   cppgc::Member<CXFA_FFWidgetHandler> m_pWidgetHandler;
   cppgc::Member<CXFA_Node> m_pFocusNode;
   ObservedPtr<CXFA_FFWidget> m_pFocusWidget;
-  std::deque<cppgc::Member<CXFA_Node>> m_ValidateNodes;
+  std::list<cppgc::Member<CXFA_Node>> m_ValidateNodes;
   std::vector<cppgc::Member<CXFA_Node>> m_CalculateNodes;
-  std::deque<cppgc::Member<CXFA_BindItems>> m_BindItems;
-  std::deque<cppgc::Member<CXFA_Node>> m_NewAddedNodes;
-  std::deque<cppgc::Member<CXFA_Node>> m_IndexChangedSubforms;
+  std::list<cppgc::Member<CXFA_BindItems>> m_BindItems;
+  std::list<cppgc::Member<CXFA_Node>> m_NewAddedNodes;
+  std::list<cppgc::Member<CXFA_Node>> m_IndexChangedSubforms;
   XFA_DOCVIEW_LAYOUTSTATUS m_iStatus = XFA_DOCVIEW_LAYOUTSTATUS_None;
   int32_t m_iLock = 0;
 };

@@ -12,6 +12,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
+#include "fxjs/gc/container_trace.h"
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/compiler_specific.h"
@@ -1298,10 +1299,8 @@ void CXFA_Document::Trace(cppgc::Visitor* visitor) const {
   visitor->Trace(m_pScriptLog);
   visitor->Trace(m_pScriptLayout);
   visitor->Trace(m_pScriptSignature);
-  for (const auto& binding : m_rgGlobalBinding)
-    visitor->Trace(binding.second);
-  for (const auto& pending : m_pPendingPageSet)
-    visitor->Trace(pending);
+  ContainerTrace(visitor, m_rgGlobalBinding);
+  ContainerTrace(visitor, m_pPendingPageSet);
 }
 
 void CXFA_Document::ClearLayoutData() {

@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/layout/cxfa_layoutprocessor.h"
 
+#include "fxjs/gc/container_trace.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/stl_util.h"
 #include "v8/include/cppgc/heap.h"
@@ -35,8 +36,7 @@ void CXFA_LayoutProcessor::Trace(cppgc::Visitor* visitor) const {
   CXFA_Document::LayoutProcessorIface::Trace(visitor);
   visitor->Trace(m_pViewLayoutProcessor);
   visitor->Trace(m_pContentLayoutProcessor);
-  for (const auto& container : m_rgChangedContainers)
-    visitor->Trace(container);
+  ContainerTrace(visitor, m_rgChangedContainers);
 }
 
 void CXFA_LayoutProcessor::SetForceRelayout(bool bForceRestart) {

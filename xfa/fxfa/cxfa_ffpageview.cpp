@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 
+#include "fxjs/gc/container_trace.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffcheckbutton.h"
@@ -273,8 +274,7 @@ CXFA_FFTabOrderPageWidgetIterator::~CXFA_FFTabOrderPageWidgetIterator() =
 
 void CXFA_FFTabOrderPageWidgetIterator::Trace(cppgc::Visitor* visitor) const {
   visitor->Trace(m_pPageViewLayout);
-  for (const auto& item : m_TabOrderWidgetArray)
-    visitor->Trace(item);
+  ContainerTrace(visitor, m_TabOrderWidgetArray);
 }
 
 void CXFA_FFTabOrderPageWidgetIterator::Reset() {

@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "core/fxcrt/fx_extension.h"
+#include "fxjs/gc/container_trace.h"
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/stl_util.h"
@@ -66,21 +67,11 @@ void CXFA_FFDocView::Trace(cppgc::Visitor* visitor) const {
   visitor->Trace(m_pDoc);
   visitor->Trace(m_pWidgetHandler);
   visitor->Trace(m_pFocusNode);
-
-  for (const auto& node : m_ValidateNodes)
-    visitor->Trace(node);
-
-  for (const auto& node : m_CalculateNodes)
-    visitor->Trace(node);
-
-  for (const auto& node : m_NewAddedNodes)
-    visitor->Trace(node);
-
-  for (const auto& node : m_BindItems)
-    visitor->Trace(node);
-
-  for (const auto& node : m_IndexChangedSubforms)
-    visitor->Trace(node);
+  ContainerTrace(visitor, m_ValidateNodes);
+  ContainerTrace(visitor, m_CalculateNodes);
+  ContainerTrace(visitor, m_NewAddedNodes);
+  ContainerTrace(visitor, m_BindItems);
+  ContainerTrace(visitor, m_IndexChangedSubforms);
 }
 
 void CXFA_FFDocView::InitLayout(CXFA_Node* pNode) {

@@ -9,6 +9,7 @@
 #include <utility>
 #include <vector>
 
+#include "fxjs/gc/container_trace.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 CXFA_ArrayNodeList::CXFA_ArrayNodeList(CXFA_Document* pDocument)
@@ -18,8 +19,7 @@ CXFA_ArrayNodeList::~CXFA_ArrayNodeList() = default;
 
 void CXFA_ArrayNodeList::Trace(cppgc::Visitor* visitor) const {
   CXFA_TreeList::Trace(visitor);
-  for (const auto& node : m_array)
-    visitor->Trace(node);
+  ContainerTrace(visitor, m_array);
 }
 
 void CXFA_ArrayNodeList::SetArrayNodeList(

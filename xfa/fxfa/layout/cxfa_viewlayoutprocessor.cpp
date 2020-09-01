@@ -8,6 +8,7 @@
 
 #include <utility>
 
+#include "fxjs/gc/container_trace.h"
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/stl_util.h"
@@ -369,8 +370,7 @@ void CXFA_ViewLayoutProcessor::Trace(cppgc::Visitor* visitor) const {
   if (m_CurrentViewRecordIter != m_ProposedViewRecords.end())
     visitor->Trace(*m_CurrentViewRecordIter);
 
-  for (const auto& page : m_PageArray)
-    visitor->Trace(page);
+  ContainerTrace(visitor, m_PageArray);
 }
 
 bool CXFA_ViewLayoutProcessor::InitLayoutPage(CXFA_Node* pFormNode) {
