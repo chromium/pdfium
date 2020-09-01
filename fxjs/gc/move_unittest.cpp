@@ -40,12 +40,12 @@ class CppObject {
 class MoveUnitTest : public FXGCUnitTest {};
 
 TEST_F(MoveUnitTest, Member) {
-  // Moving a Member<> leaves the moved-from object intact.
+  // Moving a Member<> leaves the moved-from object as null.
   auto* obj =
       cppgc::MakeGarbageCollected<HeapObject>(heap()->GetAllocationHandle());
   obj->frick_ = obj;
   obj->frack_ = std::move(obj->frick_);
-  EXPECT_EQ(obj, obj->frick_);
+  EXPECT_EQ(nullptr, obj->frick_);
   EXPECT_EQ(obj, obj->frack_);
 }
 
