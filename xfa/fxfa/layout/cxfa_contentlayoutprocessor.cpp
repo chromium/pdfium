@@ -10,6 +10,7 @@
 #include <utility>
 #include <vector>
 
+#include "fxjs/gc/container_trace.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/compiler_specific.h"
 #include "third_party/base/containers/adapters.h"
@@ -639,8 +640,8 @@ void CXFA_ContentLayoutProcessor::Trace(cppgc::Visitor* visitor) const {
   visitor->Trace(m_pLayoutItem);
   visitor->Trace(m_pOldLayoutItem);
   visitor->Trace(m_pViewLayoutProcessor);
-  for (const auto& item : m_ArrayKeepItems)
-    visitor->Trace(item);
+  ContainerTrace(visitor, m_ArrayKeepItems);
+  ContainerTrace(visitor, m_PendingNodes);
 }
 
 CXFA_ContentLayoutItem* CXFA_ContentLayoutProcessor::CreateContentLayoutItem(
