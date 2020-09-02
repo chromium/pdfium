@@ -19,11 +19,9 @@ class CXFA_DocumentBuilderTest : public FXGCUnitTest {
     FXGCUnitTest::SetUp();
     doc_ = cppgc::MakeGarbageCollected<CXFA_Document>(
         heap()->GetAllocationHandle(), nullptr, heap(), nullptr);
-    builder_ = std::make_unique<CXFA_DocumentBuilder>(doc_);
   }
 
   void TearDown() override {
-    builder_.reset();
     doc_ = nullptr;
     FXGCUnitTest::TearDown();
   }
@@ -34,14 +32,15 @@ class CXFA_DocumentBuilderTest : public FXGCUnitTest {
     xml_ = CFX_XMLParser(stream).Parse();
     if (!xml_)
       return nullptr;
-    if (!builder_->BuildDocument(xml_.get(), XFA_PacketType::Config))
+
+    CXFA_DocumentBuilder builder(doc_);
+    if (!builder.BuildDocument(xml_.get(), XFA_PacketType::Config))
       return nullptr;
-    return builder_->GetRootNode();
+    return builder.GetRootNode();
   }
 
  private:
   std::unique_ptr<CFX_XMLDocument> xml_;
-  std::unique_ptr<CXFA_DocumentBuilder> builder_;
   cppgc::Persistent<CXFA_Document> doc_;
 };
 

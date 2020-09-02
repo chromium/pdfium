@@ -10,7 +10,8 @@
 #include <utility>
 
 #include "core/fxcrt/fx_string.h"
-#include "v8/include/cppgc/persistent.h"
+#include "core/fxcrt/unowned_ptr.h"
+#include "v8/include/cppgc/macros.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
 class CFX_XMLDocument;
@@ -20,6 +21,8 @@ class CXFA_Node;
 class CFX_XMLInstruction;
 
 class CXFA_DocumentBuilder {
+  CPPGC_STACK_ALLOCATED();  // Allow Raw/Unowned pointers.
+
  public:
   explicit CXFA_DocumentBuilder(CXFA_Document* pNodeFactory);
   ~CXFA_DocumentBuilder();
@@ -63,8 +66,8 @@ class CXFA_DocumentBuilder {
                         CFX_XMLInstruction* pXMLInstruction,
                         XFA_PacketType ePacketID);
 
-  cppgc::Persistent<CXFA_Document> node_factory_;
-  cppgc::Persistent<CXFA_Node> root_node_;
+  UnownedPtr<CXFA_Document> node_factory_;
+  UnownedPtr<CXFA_Node> root_node_;
   UnownedPtr<CFX_XMLDocument> xml_doc_;
   size_t execute_recursion_depth_ = 0;
 };

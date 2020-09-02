@@ -271,8 +271,8 @@ CJS_Result CJX_Node::loadXML(CFX_V8* runtime,
 
   CFX_XMLParser parser(stream);
   std::unique_ptr<CFX_XMLDocument> xml_doc = parser.Parse();
-  auto builder = std::make_unique<CXFA_DocumentBuilder>(GetDocument());
-  CFX_XMLNode* pXMLNode = builder->Build(xml_doc.get());
+  CXFA_DocumentBuilder builder(GetDocument());
+  CFX_XMLNode* pXMLNode = builder.Build(xml_doc.get());
   if (!pXMLNode)
     return CJS_Result::Success();
 
@@ -319,8 +319,8 @@ CJS_Result CJX_Node::loadXML(CFX_V8* runtime,
     pFakeXMLRoot->AppendLastChild(pXMLNode);
   }
 
-  builder->ConstructXFANode(pFakeRoot, pFakeXMLRoot);
-  pFakeRoot = builder->GetRootNode();
+  builder.ConstructXFANode(pFakeRoot, pFakeXMLRoot);
+  pFakeRoot = builder.GetRootNode();
   if (!pFakeRoot)
     return CJS_Result::Success();
 
