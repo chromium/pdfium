@@ -41,7 +41,6 @@ struct OUTLINE_PARAMS {
 };
 
 #ifdef PDF_ENABLE_XFA
-
 unsigned long FTStreamRead(FXFT_StreamRec* stream,
                            unsigned long offset,
                            unsigned char* buffer,
@@ -55,30 +54,6 @@ unsigned long FTStreamRead(FXFT_StreamRec* stream,
 }
 
 void FTStreamClose(FXFT_StreamRec* stream) {}
-
-RetainPtr<CFX_Face> LoadFileImp(FXFT_LibraryRec* library,
-                                const RetainPtr<IFX_SeekableReadStream>& pFile,
-                                int32_t faceIndex,
-                                std::unique_ptr<FXFT_StreamRec>* stream) {
-  auto stream1 = std::make_unique<FXFT_StreamRec>();
-  stream1->base = nullptr;
-  stream1->size = static_cast<unsigned long>(pFile->GetSize());
-  stream1->pos = 0;
-  stream1->descriptor.pointer = static_cast<void*>(pFile.Get());
-  stream1->close = FTStreamClose;
-  stream1->read = FTStreamRead;
-
-  FT_Open_Args args;
-  args.flags = FT_OPEN_STREAM;
-  args.stream = stream1.get();
-
-  RetainPtr<CFX_Face> face = CFX_Face::Open(library, &args, faceIndex);
-  if (!face)
-    return nullptr;
-
-  *stream = std::move(stream1);
-  return face;
-}
 #endif  // PDF_ENABLE_XFA
 
 void Outline_CheckEmptyContour(OUTLINE_PARAMS* param) {
@@ -319,14 +294,25 @@ bool CFX_Font::LoadFile(RetainPtr<IFX_SeekableReadStream> pFile,
                         int nFaceIndex) {
   m_bEmbedded = false;
 
-  CFX_FontMgr* pFontMgr = CFX_GEModule::Get()->GetFontMgr();
-  std::unique_ptr<FXFT_StreamRec> stream;
-  m_Face = LoadFileImp(pFontMgr->GetFTLibrary(), pFile, nFaceIndex, &stream);
+  auto pStreamRec = std::make_unique<FXFT_StreamRec>();
+  pStreamRec->base = nullptr;
+  pStreamRec->size = static_cast<unsigned long>(pFile->GetSize());
+  pStreamRec->pos = 0;
+  pStreamRec->descriptor.pointer = static_cast<void*>(pFile.Get());
+  pStreamRec->close = FTStreamClose;
+  pStreamRec->read = FTStreamRead;
+
+  FT_Open_Args args;
+  args.flags = FT_OPEN_STREAM;
+  args.stream = pStreamRec.get();
+
+  m_Face = CFX_Face::Open(CFX_GEModule::Get()->GetFontMgr()->GetFTLibrary(),
+                          &args, nFaceIndex);
   if (!m_Face)
     return false;
 
   m_pOwnedFile = std::move(pFile);
-  m_pOwnedStream = std::move(stream);
+  m_pOwnedStreamRec = std::move(pStreamRec);
   FT_Set_Pixel_Sizes(m_Face->GetRec(), 0, 64);
   return true;
 }

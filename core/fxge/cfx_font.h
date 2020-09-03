@@ -138,9 +138,9 @@ class CFX_Font {
   ByteString GetFamilyNameOrUntitled() const;
 
 #if defined(PDF_ENABLE_XFA)
-  // |m_pOwnedFile| must outlive |m_pOwnedStream|.
+  // |m_pOwnedFile| must outlive |m_pOwnedStreamRec|.
   RetainPtr<IFX_SeekableReadStream> m_pOwnedFile;
-  std::unique_ptr<FXFT_StreamRec> m_pOwnedStream;  // Must outlive |m_Face|.
+  std::unique_ptr<FXFT_StreamRec> m_pOwnedStreamRec;  // Must outlive |m_Face|.
 #endif
   mutable RetainPtr<CFX_Face> m_Face;
   mutable RetainPtr<CFX_GlyphCache> m_GlyphCache;
