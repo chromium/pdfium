@@ -98,7 +98,6 @@ source_set("fpdfsdk") {
 
   if (pdf_enable_xfa) {
     deps += [
-      "../fxbarcode",
       "../xfa/fxfa",
       "../xfa/fxfa/parser",
       "fpdfxfa",

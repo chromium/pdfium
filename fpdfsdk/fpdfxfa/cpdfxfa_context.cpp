@@ -21,6 +21,7 @@
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_docenvironment.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
+#include "fxbarcode/BC_Library.h"
 #include "fxjs/cjs_runtime.h"
 #include "fxjs/ijs_runtime.h"
 #include "public/fpdf_formfill.h"
@@ -83,6 +84,14 @@ RetainPtr<CPDF_SeekableMultiStream> CreateXFAMultiStream(
 }
 
 }  // namespace
+
+void CPDFXFA_ModuleInit() {
+  BC_Library_Init();
+}
+
+void CPDFXFA_ModuleDestroy() {
+  BC_Library_Destroy();
+}
 
 CPDFXFA_Context::CPDFXFA_Context(CPDF_Document* pPDFDoc)
     : m_pPDFDoc(pPDFDoc),

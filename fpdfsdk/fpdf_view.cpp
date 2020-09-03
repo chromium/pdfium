@@ -58,7 +58,6 @@
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
-#include "fxbarcode/BC_Library.h"
 #endif  // PDF_ENABLE_XFA
 
 #if defined(OS_WIN)
@@ -176,8 +175,9 @@ FPDF_InitLibraryWithConfig(const FPDF_LIBRARY_CONFIG* config) {
   CPDF_PageModule::Create();
 
 #ifdef PDF_ENABLE_XFA
-  BC_Library_Init();
+  CPDFXFA_ModuleInit();
 #endif  // PDF_ENABLE_XFA
+
   if (config && config->version >= 2) {
     void* platform = config->version >= 3 ? config->m_pPlatform : nullptr;
     IJS_Runtime::Initialize(config->m_v8EmbedderSlot, config->m_pIsolate,
@@ -191,7 +191,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_DestroyLibrary() {
     return;
 
 #ifdef PDF_ENABLE_XFA
-  BC_Library_Destroy();
+  CPDFXFA_ModuleDestroy();
 #endif  // PDF_ENABLE_XFA
 
   CPDF_PageModule::Destroy();
