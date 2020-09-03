@@ -110,8 +110,6 @@ class CFGAS_FontMgr final : public Observable {
   RetainPtr<CFGAS_GEFont> LoadFont(const wchar_t* pszFontFamily,
                                    uint32_t dwFontStyles,
                                    uint16_t wCodePage);
-  void RemoveFont(const RetainPtr<CFGAS_GEFont>& pFont);
-
   bool EnumFonts();
 
  private:

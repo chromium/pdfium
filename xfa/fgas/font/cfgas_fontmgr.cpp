@@ -886,26 +886,3 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::LoadFont(const wchar_t* pszFontFamily,
   return GetFontByCodePage(wCodePage, dwFontStyles, pszFontFamily);
 #endif  // defined(OS_WIN)
 }
-
-void CFGAS_FontMgr::RemoveFont(const RetainPtr<CFGAS_GEFont>& pEFont) {
-  if (!pEFont)
-    return;
-
-#if !defined(OS_WIN)
-  m_IFXFont2FileRead.erase(pEFont);
-#endif
-
-  auto iter = m_Hash2Fonts.begin();
-  while (iter != m_Hash2Fonts.end()) {
-    auto old_iter = iter++;
-    bool all_empty = true;
-    for (size_t i = 0; i < old_iter->second.size(); i++) {
-      if (old_iter->second[i] == pEFont)
-        old_iter->second[i].Reset();
-      else if (old_iter->second[i])
-        all_empty = false;
-    }
-    if (all_empty)
-      m_Hash2Fonts.erase(old_iter);
-  }
-}
