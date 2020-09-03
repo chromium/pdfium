@@ -98,27 +98,25 @@ TEST_F(FPDFFlattenEmbedderTest, BUG_889099) {
   VerifySavedDocument(300, 400, kFlattenedPageHash);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
+TEST_F(FPDFFlattenEmbedderTest, BUG_890322) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_BUG_890322 DISABLED_BUG_890322
+  constexpr char kChecksum[] = "793689536cf64fe792c2f241888c0cf3";
 #else
-#define MAYBE_BUG_890322 BUG_890322
+  constexpr char kChecksum[] = "6c674642154408e877d88c6c082d67e9";
 #endif
-TEST_F(FPDFFlattenEmbedderTest, MAYBE_BUG_890322) {
-  constexpr char md5_hash[] = "6c674642154408e877d88c6c082d67e9";
   ASSERT_TRUE(OpenDocument("bug_890322.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
   ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
-  CompareBitmap(bitmap.get(), 200, 200, md5_hash);
+  CompareBitmap(bitmap.get(), 200, 200, kChecksum);
 
   EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page, FLAT_PRINT));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
   UnloadPage(page);
 
-  VerifySavedDocument(200, 200, md5_hash);
+  VerifySavedDocument(200, 200, kChecksum);
 }
 
 // TODO(crbug.com/pdfium/11): Fix this test and enable.
