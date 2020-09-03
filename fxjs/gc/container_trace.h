@@ -17,10 +17,6 @@ namespace fxgc {
 
 template <typename T, typename V = cppgc::Visitor>
 void ContainerTrace(V* visitor, const std::list<cppgc::Member<T>>& container) {
-  // Defend against CPPGC invoking Trace() on zero-initialized memory.
-  if (container.empty())
-    return;
-
   for (const auto& item : container)
     visitor->Trace(item);
 }
@@ -28,20 +24,12 @@ void ContainerTrace(V* visitor, const std::list<cppgc::Member<T>>& container) {
 template <typename T, typename U, typename V = cppgc::Visitor>
 void ContainerTrace(V* visitor,
                     const std::map<U, cppgc::Member<T>>& container) {
-  // Defend against CPPGC invoking Trace() on zero-initialized memory.
-  if (container.empty())
-    return;
-
   for (const auto& item : container)
     visitor->Trace(item.second);
 }
 
 template <typename T, typename V = cppgc::Visitor>
 void ContainerTrace(V* visitor, const std::set<cppgc::Member<T>>& container) {
-  // Defend against CPPGC invoking Trace() on zero-initialized memory.
-  if (container.empty())
-    return;
-
   for (const auto& item : container)
     visitor->Trace(item);
 }

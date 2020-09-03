@@ -71,7 +71,10 @@ FXGCScopedHeap FXGC_CreateHeap() {
     return nullptr;
 
   ++g_platform_ref_count;
-  auto heap = cppgc::Heap::Create(std::make_shared<CFXGC_Platform>());
+  auto heap = cppgc::Heap::Create(
+      std::make_shared<CFXGC_Platform>(),
+      {{}, cppgc::Heap::StackSupport::kNoConservativeStackScan, {}});
+
   return FXGCScopedHeap(heap.release());
 }
 
