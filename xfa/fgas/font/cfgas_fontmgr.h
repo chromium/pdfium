@@ -153,8 +153,6 @@ class CFGAS_FontMgr final : public Observable {
   std::vector<std::unique_ptr<CFX_FontDescriptor>> m_InstalledFonts;
   std::map<uint32_t, std::unique_ptr<std::vector<CFX_FontDescriptorInfo>>>
       m_Hash2CandidateList;
-  std::map<RetainPtr<CFGAS_GEFont>, RetainPtr<IFX_SeekableReadStream>>
-      m_IFXFont2FileRead;
 #endif  // defined(OS_WIN)
 };
 

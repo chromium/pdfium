@@ -689,16 +689,10 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::LoadFontInternal(
     return nullptr;
 
   auto pInternalFont = std::make_unique<CFX_Font>();
-  if (!pInternalFont->LoadFile(pFontStream, iFaceIndex))
+  if (!pInternalFont->LoadFile(std::move(pFontStream), iFaceIndex))
     return nullptr;
 
-  RetainPtr<CFGAS_GEFont> pFont =
-      CFGAS_GEFont::LoadFont(std::move(pInternalFont), this);
-  if (!pFont)
-    return nullptr;
-
-  m_IFXFont2FileRead[pFont] = pFontStream;
-  return pFont;
+  return CFGAS_GEFont::LoadFont(std::move(pInternalFont), this);
 }
 
 void CFGAS_FontMgr::MatchFonts(

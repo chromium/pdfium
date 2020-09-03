@@ -60,7 +60,7 @@ class CFX_Font {
   int GetSubstFontItalicAngle() const;
 
 #if defined(PDF_ENABLE_XFA)
-  bool LoadFile(const RetainPtr<IFX_SeekableReadStream>& pFile, int nFaceIndex);
+  bool LoadFile(RetainPtr<IFX_SeekableReadStream> pFile, int nFaceIndex);
 
 #if !defined(OS_WIN)
   void SetFace(RetainPtr<CFX_Face> face);
@@ -138,6 +138,8 @@ class CFX_Font {
   ByteString GetFamilyNameOrUntitled() const;
 
 #if defined(PDF_ENABLE_XFA)
+  // |m_pOwnedFile| must outlive |m_pOwnedStream|.
+  RetainPtr<IFX_SeekableReadStream> m_pOwnedFile;
   std::unique_ptr<FXFT_StreamRec> m_pOwnedStream;  // Must outlive |m_Face|.
 #endif
   mutable RetainPtr<CFX_Face> m_Face;

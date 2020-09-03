@@ -315,7 +315,7 @@ int CFX_Font::GetSubstFontItalicAngle() const {
 }
 
 #ifdef PDF_ENABLE_XFA
-bool CFX_Font::LoadFile(const RetainPtr<IFX_SeekableReadStream>& pFile,
+bool CFX_Font::LoadFile(RetainPtr<IFX_SeekableReadStream> pFile,
                         int nFaceIndex) {
   m_bEmbedded = false;
 
@@ -325,6 +325,7 @@ bool CFX_Font::LoadFile(const RetainPtr<IFX_SeekableReadStream>& pFile,
   if (!m_Face)
     return false;
 
+  m_pOwnedFile = std::move(pFile);
   m_pOwnedStream = std::move(stream);
   FT_Set_Pixel_Sizes(m_Face->GetRec(), 0, 64);
   return true;
