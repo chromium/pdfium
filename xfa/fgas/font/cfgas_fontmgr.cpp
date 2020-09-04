@@ -23,10 +23,6 @@
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/font/fgas_fontutils.h"
 
-#if !defined(OS_WIN)
-#include "xfa/fgas/font/cfgas_fontsource_enum_file.h"
-#endif
-
 namespace {
 
 bool VerifyUnicode(const RetainPtr<CFGAS_GEFont>& pFont, wchar_t wcUnicode) {
@@ -608,8 +604,7 @@ CFX_FontDescriptor::CFX_FontDescriptor()
 
 CFX_FontDescriptor::~CFX_FontDescriptor() = default;
 
-CFGAS_FontMgr::CFGAS_FontMgr()
-    : m_pFontSource(std::make_unique<CFGAS_FontSourceEnumFile>()) {}
+CFGAS_FontMgr::CFGAS_FontMgr() = default;
 
 CFGAS_FontMgr::~CFGAS_FontMgr() = default;
 
@@ -632,19 +627,8 @@ bool CFGAS_FontMgr::EnumFontsFromFontMapper() {
   return !m_InstalledFonts.empty();
 }
 
-bool CFGAS_FontMgr::EnumFontsFromFiles() {
-  m_pFontSource->GetNext();
-  while (m_pFontSource->HasNext()) {
-    RetainPtr<IFX_SeekableStream> stream = m_pFontSource->GetStream();
-    if (stream)
-      RegisterFaces(stream, nullptr);
-    m_pFontSource->GetNext();
-  }
-  return !m_InstalledFonts.empty();
-}
-
 bool CFGAS_FontMgr::EnumFonts() {
-  return EnumFontsFromFontMapper() || EnumFontsFromFiles();
+  return EnumFontsFromFontMapper();
 }
 
 RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByUnicodeImpl(

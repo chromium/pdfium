@@ -38,13 +38,6 @@ source_set("fgas") {
     "../:xfa_warnings",
   ]
   visibility = [ "../../*" ]
-
-  if (!is_win) {
-    sources += [
-      "font/cfgas_fontsource_enum_file.cpp",
-      "font/cfgas_fontsource_enum_file.h",
-    ]
-  }
 }
 
 pdfium_unittest_source_set("unittests") {
