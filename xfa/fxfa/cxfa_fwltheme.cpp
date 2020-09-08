@@ -34,7 +34,7 @@
 
 namespace {
 
-const wchar_t* const g_FWLTheme_CalFonts[] = {
+constexpr const wchar_t* kFWLThemeCalFonts[] = {
     L"Arial",
     L"Courier New",
     L"DejaVu Sans",
@@ -65,15 +65,17 @@ void CXFA_FWLTheme::Trace(cppgc::Visitor* visitor) const {
 }
 
 bool CXFA_FWLTheme::LoadCalendarFont(CXFA_FFDoc* doc) {
-  for (size_t i = 0; !m_pCalendarFont && i < pdfium::size(g_FWLTheme_CalFonts);
-       ++i) {
-    m_pCalendarFont =
-        m_pApp->GetXFAFontMgr()->GetFont(doc, g_FWLTheme_CalFonts[i], 0);
+  if (m_pCalendarFont)
+    return true;
+
+  for (const wchar_t* font : kFWLThemeCalFonts) {
+    m_pCalendarFont = m_pApp->GetXFAFontMgr()->GetFont(doc, font, 0);
+    if (m_pCalendarFont)
+      return true;
   }
-  if (!m_pCalendarFont) {
-    m_pCalendarFont = CFGAS_GEModule::Get()->GetFontMgr()->GetFontByCodePage(
-        FX_CODEPAGE_MSWin_WesternEuropean, 0, nullptr);
-  }
+
+  m_pCalendarFont = CFGAS_GEModule::Get()->GetFontMgr()->GetFontByCodePage(
+      FX_CODEPAGE_MSWin_WesternEuropean, 0, nullptr);
   return !!m_pCalendarFont;
 }
 
