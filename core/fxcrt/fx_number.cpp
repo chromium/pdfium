@@ -50,11 +50,11 @@ FX_Number::FX_Number(ByteStringView strc)
     cc++;
   }
 
-  while (cc < strc.GetLength() && std::isdigit(strc[cc])) {
-    unsigned_val = unsigned_val * 10 + FXSYS_DecimalCharToInt(strc.CharAt(cc));
-    if (!unsigned_val.IsValid())
-      break;
-    cc++;
+  for (; cc < strc.GetLength() && std::isdigit(strc[cc]); ++cc) {
+    // Deliberately not using FXSYS_DecimalCharToInt() in a tight loop to avoid
+    // a duplicate std::isdigit() call. Note that the order of operation is
+    // important to avoid unintentional overflows.
+    unsigned_val = unsigned_val * 10 + (strc[cc] - '0');
   }
 
   uint32_t uValue = unsigned_val.ValueOrDefault(0);
