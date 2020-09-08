@@ -665,3 +665,7 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion6Latin1) {
   VerifySavedModifiedHelloWorldDocumentWithPassword(kHotelLatin1);
   VerifySavedModifiedHelloWorldDocumentWithPassword(kHotelUTF8);
 }
+
+TEST_F(CPDFSecurityHandlerEmbedderTest, BUG_1124998) {
+  OpenAndVerifyHelloWorldDocumentWithPassword("bug_1124998.pdf", "test");
+}
