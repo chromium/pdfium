@@ -11,6 +11,7 @@
 
 #include "build/build_config.h"
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_pathdata.h"

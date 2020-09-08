@@ -11,7 +11,6 @@
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cfxjse_value.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "xfa/fxfa/cxfa_ffapp.h"
 
 XFAJSEmbedderTest::XFAJSEmbedderTest() = default;
 
@@ -19,12 +18,9 @@ XFAJSEmbedderTest::~XFAJSEmbedderTest() = default;
 
 void XFAJSEmbedderTest::SetUp() {
   JSEmbedderTest::SetUp();
-  CXFA_FFApp::SkipFontLoadForTesting(true);
 }
 
 void XFAJSEmbedderTest::TearDown() {
-  CXFA_FFApp::SkipFontLoadForTesting(false);
-
   value_.reset();
   script_context_ = nullptr;
 

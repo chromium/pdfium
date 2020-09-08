@@ -11,15 +11,12 @@
 #include "core/fxcrt/retain_ptr.h"
 
 class CFGAS_GEFont;
-class CFGAS_FontMgr;
 
 class CFGAS_DefaultFontManager {
  public:
-  static RetainPtr<CFGAS_GEFont> GetFont(CFGAS_FontMgr* pFontMgr,
-                                         WideStringView wsFontFamily,
+  static RetainPtr<CFGAS_GEFont> GetFont(WideStringView wsFontFamily,
                                          uint32_t dwFontStyles);
-  static RetainPtr<CFGAS_GEFont> GetDefaultFont(CFGAS_FontMgr* pFontMgr,
-                                                uint32_t dwFontStyles);
+  static RetainPtr<CFGAS_GEFont> GetDefaultFont(uint32_t dwFontStyles);
 
   CFGAS_DefaultFontManager() = delete;
   CFGAS_DefaultFontManager(const CFGAS_DefaultFontManager&) = delete;

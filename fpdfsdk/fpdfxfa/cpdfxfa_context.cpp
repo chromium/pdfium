@@ -27,6 +27,7 @@
 #include "public/fpdf_formfill.h"
 #include "third_party/base/stl_util.h"
 #include "v8/include/cppgc/allocation.h"
+#include "xfa/fgas/font/cfgas_gemodule.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
@@ -86,11 +87,13 @@ RetainPtr<CPDF_SeekableMultiStream> CreateXFAMultiStream(
 }  // namespace
 
 void CPDFXFA_ModuleInit() {
+  CFGAS_GEModule::Create();
   BC_Library_Init();
 }
 
 void CPDFXFA_ModuleDestroy() {
   BC_Library_Destroy();
+  CFGAS_GEModule::Destroy();
 }
 
 CPDFXFA_Context::CPDFXFA_Context(CPDF_Document* pPDFDoc)

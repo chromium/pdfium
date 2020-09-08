@@ -42,21 +42,19 @@ RetainPtr<CFGAS_GEFont> CXFA_FontMgr::GetFont(CXFA_FFDoc* hDoc,
       return pFont;
   }
   if (!pFont) {
-    pFont = CFGAS_DefaultFontManager::GetFont(hDoc->GetApp()->GetFGASFontMgr(),
-                                              wsFontFamily, dwFontStyles);
+    pFont = CFGAS_DefaultFontManager::GetFont(wsFontFamily, dwFontStyles);
   }
   if (!pFont && pMgr) {
     pFont = pMgr->GetFont(wsEnglishName.AsStringView(), dwFontStyles, false);
     if (pFont)
       return pFont;
   }
-  if (!pFont) {
-    pFont = CFGAS_DefaultFontManager::GetDefaultFont(
-        hDoc->GetApp()->GetFGASFontMgr(), dwFontStyles);
-  }
+  if (!pFont)
+    pFont = CFGAS_DefaultFontManager::GetDefaultFont(dwFontStyles);
+
   if (!pFont) {
     pFont = CFGAS_GEFont::LoadStockFont(
-        hDoc->GetPDFDoc(), hDoc->GetApp()->GetFGASFontMgr(),
+        hDoc->GetPDFDoc(),
         ByteString::Format("%ls", WideString(wsFontFamily).c_str()));
   }
   if (pFont)

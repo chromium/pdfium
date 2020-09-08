@@ -10,6 +10,7 @@
 #include <limits>
 #include <utility>
 
+#include "core/fxcrt/fx_extension.h"
 #include "core/fxge/text_char_pos.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fde/cfde_wordbreak_data.h"

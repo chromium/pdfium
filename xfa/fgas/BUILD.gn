@@ -21,6 +21,8 @@ source_set("fgas") {
     "font/cfgas_fontmgr.h",
     "font/cfgas_gefont.cpp",
     "font/cfgas_gefont.h",
+    "font/cfgas_gemodule.cpp",
+    "font/cfgas_gemodule.h",
     "font/cfgas_pdffontmgr.cpp",
     "font/cfgas_pdffontmgr.h",
     "font/fgas_fontutils.cpp",

@@ -232,14 +232,9 @@ bool CXFA_FFDoc::OpenDoc(CFX_XMLDocument* pXML) {
   if (!BuildDoc(pXML))
     return false;
 
-  CFGAS_FontMgr* mgr = GetApp()->GetFGASFontMgr();
-  if (!mgr)
-    return false;
-
   // At this point we've got an XFA document and we want to always return
   // true to signify the load succeeded.
-  m_pPDFFontMgr = std::make_unique<CFGAS_PDFFontMgr>(GetPDFDoc(), mgr);
-
+  m_pPDFFontMgr = std::make_unique<CFGAS_PDFFontMgr>(GetPDFDoc());
   m_FormType = FormType::kXFAForeground;
   CXFA_Node* pConfig = ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_Config));
   if (!pConfig)

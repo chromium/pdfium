@@ -37,8 +37,7 @@ class CFDE_TextEditEngineTest : public testing::Test {
   ~CFDE_TextEditEngineTest() override {}
 
   void SetUp() override {
-    font_ = CFGAS_GEFont::LoadFont(L"Arial Black", 0, 0,
-                                   XFATestEnvironment::GetGlobalFontManager());
+    font_ = CFGAS_GEFont::LoadFont(L"Arial Black", 0, 0);
     ASSERT_TRUE(font_);
 
     engine_ = std::make_unique<CFDE_TextEditEngine>();
@@ -46,7 +45,10 @@ class CFDE_TextEditEngineTest : public testing::Test {
     engine_->SetFontSize(12.0f);
   }
 
-  void TearDown() override { engine_.reset(); }
+  void TearDown() override {
+    engine_.reset();
+    font_.Reset();
+  }
 
   CFDE_TextEditEngine* engine() const { return engine_.get(); }
 

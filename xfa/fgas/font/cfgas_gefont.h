@@ -14,11 +14,11 @@
 
 #include "build/build_config.h"
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/maybe_owned.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "third_party/base/optional.h"
-#include "xfa/fgas/font/cfgas_fontmgr.h"
 
 class CFX_Font;
 class CFX_UnicodeEncodingEx;
@@ -31,16 +31,10 @@ class CFGAS_GEFont final : public Retainable {
 
   static RetainPtr<CFGAS_GEFont> LoadFont(const wchar_t* pszFontFamily,
                                           uint32_t dwFontStyles,
-                                          uint16_t wCodePage,
-                                          CFGAS_FontMgr* pFontMgr);
-  static RetainPtr<CFGAS_GEFont> LoadFont(const RetainPtr<CPDF_Font>& pPDFFont,
-                                          CFGAS_FontMgr* pFontMgr);
-  static RetainPtr<CFGAS_GEFont> LoadFont(
-      std::unique_ptr<CFX_Font> pInternalFont,
-      CFGAS_FontMgr* pFontMgr);
-
+                                          uint16_t wCodePage);
+  static RetainPtr<CFGAS_GEFont> LoadFont(const RetainPtr<CPDF_Font>& pFont);
+  static RetainPtr<CFGAS_GEFont> LoadFont(std::unique_ptr<CFX_Font> pFont);
   static RetainPtr<CFGAS_GEFont> LoadStockFont(CPDF_Document* pDoc,
-                                               CFGAS_FontMgr* pMgr,
                                                const ByteString& font_family);
 
   uint32_t GetFontStyles() const;
@@ -60,7 +54,7 @@ class CFGAS_GEFont final : public Retainable {
   }
 
  private:
-  explicit CFGAS_GEFont(CFGAS_FontMgr* pFontMgr);
+  CFGAS_GEFont();
   ~CFGAS_GEFont() override;
 
 #if defined(OS_WIN)
@@ -80,7 +74,6 @@ class CFGAS_GEFont final : public Retainable {
   Optional<uint32_t> m_dwLogFontStyle;
   RetainPtr<CPDF_Font> m_pPDFFont;  // Must come before |m_pFont|.
   MaybeOwned<CFX_Font> m_pFont;     // Must come before |m_pFontEncoding|.
-  ObservedPtr<CFGAS_FontMgr> const m_pFontMgr;
   std::unique_ptr<CFX_UnicodeEncodingEx> m_pFontEncoding;
   std::map<wchar_t, int32_t> m_CharWidthMap;
   std::map<wchar_t, FX_RECT> m_BBoxMap;

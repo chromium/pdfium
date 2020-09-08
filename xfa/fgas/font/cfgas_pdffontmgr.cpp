@@ -28,10 +28,8 @@ const char* const g_XFAPDFFontName[][5] = {
 
 }  // namespace
 
-CFGAS_PDFFontMgr::CFGAS_PDFFontMgr(CPDF_Document* pDoc, CFGAS_FontMgr* pFontMgr)
-    : m_pDoc(pDoc), m_pFontMgr(pFontMgr) {
+CFGAS_PDFFontMgr::CFGAS_PDFFontMgr(CPDF_Document* pDoc) : m_pDoc(pDoc) {
   ASSERT(pDoc);
-  ASSERT(pFontMgr);
 }
 
 CFGAS_PDFFontMgr::~CFGAS_PDFFontMgr() = default;
@@ -69,7 +67,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_PDFFontMgr::FindFont(const ByteString& strPsName,
     if (!pPDFFont || !pPDFFont->IsEmbedded())
       return nullptr;
 
-    return CFGAS_GEFont::LoadFont(pPDFFont, m_pFontMgr.Get());
+    return CFGAS_GEFont::LoadFont(pPDFFont);
   }
   return nullptr;
 }

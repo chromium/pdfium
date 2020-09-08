@@ -25,8 +25,6 @@ class CXFA_FWLTheme;
 class CXFA_FFApp : public cppgc::GarbageCollected<CXFA_FFApp>,
                    public CFWL_App::AdapterIface {
  public:
-  static void SkipFontLoadForTesting(bool skip);
-
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FFApp() override;
 
@@ -39,8 +37,6 @@ class CXFA_FFApp : public cppgc::GarbageCollected<CXFA_FFApp>,
 
   bool LoadFWLTheme(CXFA_FFDoc* doc);
   CFWL_WidgetMgr* GetFWLWidgetMgr() const { return m_pFWLApp->GetWidgetMgr(); }
-  CFGAS_FontMgr* GetFGASFontMgr();
-
   IXFA_AppProvider* GetAppProvider() const { return m_pProvider.Get(); }
   CFWL_App* GetFWLApp() const { return m_pFWLApp; }
   CXFA_FontMgr* GetXFAFontMgr() const { return m_pXFAFontMgr.get(); }
@@ -57,10 +53,6 @@ class CXFA_FFApp : public cppgc::GarbageCollected<CXFA_FFApp>,
   // you get a use-after-free. The m_pFWLTheme can try to cleanup a GEFont
   // when it frees, so make sure it gets cleaned up first. That requires
   // m_pFWLApp to be cleaned up as well.
-  //
-  // TODO(dsinclair): The GEFont should have the FontMgr as the pointer instead
-  // of the DEFFontMgr so this goes away. Bug 561.
-  std::unique_ptr<CFGAS_FontMgr> m_pFGASFontMgr;
   std::unique_ptr<CXFA_FontMgr> m_pXFAFontMgr;
   cppgc::Member<CXFA_FWLAdapterWidgetMgr> m_pAdapterWidgetMgr;
   cppgc::Member<CXFA_FWLTheme> m_pFWLTheme;

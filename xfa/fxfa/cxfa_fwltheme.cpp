@@ -9,7 +9,9 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_textout.h"
+#include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
+#include "xfa/fgas/font/cfgas_gemodule.h"
 #include "xfa/fwl/cfwl_barcode.h"
 #include "xfa/fwl/cfwl_caret.h"
 #include "xfa/fwl/cfwl_checkbox.h"
@@ -68,16 +70,11 @@ bool CXFA_FWLTheme::LoadCalendarFont(CXFA_FFDoc* doc) {
     m_pCalendarFont =
         m_pApp->GetXFAFontMgr()->GetFont(doc, g_FWLTheme_CalFonts[i], 0);
   }
-
   if (!m_pCalendarFont) {
-    CFGAS_FontMgr* font_mgr = m_pApp->GetFGASFontMgr();
-    if (font_mgr) {
-      m_pCalendarFont = font_mgr->GetFontByCodePage(
-          FX_CODEPAGE_MSWin_WesternEuropean, 0, nullptr);
-    }
+    m_pCalendarFont = CFGAS_GEModule::Get()->GetFontMgr()->GetFontByCodePage(
+        FX_CODEPAGE_MSWin_WesternEuropean, 0, nullptr);
   }
-
-  return m_pCalendarFont != nullptr;
+  return !!m_pCalendarFont;
 }
 
 void CXFA_FWLTheme::DrawBackground(const CFWL_ThemeBackground& pParams) {

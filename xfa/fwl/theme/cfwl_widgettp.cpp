@@ -239,15 +239,10 @@ bool CFWL_FontData::LoadFont(WideStringView wsFontFamily,
   m_wsFamily = wsFontFamily;
   m_dwStyles = dwFontStyles;
   m_dwCodePage = dwCodePage;
-  if (!m_pFontMgr) {
-    m_pFontMgr = std::make_unique<CFGAS_FontMgr>();
-    if (!m_pFontMgr->EnumFonts())
-      m_pFontMgr = nullptr;
-  }
 
   // TODO(tsepez): check usage of c_str() below.
   m_pFont = CFGAS_GEFont::LoadFont(wsFontFamily.unterminated_c_str(),
-                                   dwFontStyles, dwCodePage, m_pFontMgr.get());
+                                   dwFontStyles, dwCodePage);
   return !!m_pFont;
 }
 
