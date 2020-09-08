@@ -743,17 +743,19 @@ bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
       return false;
   }
 
-  uint32_t pitch = 0;
-  uint32_t neededData = 0;
-  if (!CFX_DIBitmap::CalculatePitchAndSize(m_SrcWidth, m_SrcHeight, format,
-                                           &pitch, &neededData)) {
+  // Set to 0 to make CalculatePitchAndSize() calculate it.
+  constexpr uint32_t kNoPitch = 0;
+  Optional<CFX_DIBitmap::PitchAndSize> needed_data =
+      CFX_DIBitmap::CalculatePitchAndSize(m_SrcWidth, m_SrcHeight, format,
+                                          kNoPitch);
+  if (!needed_data.has_value()) {
     m_status = FXCODEC_STATUS_ERR_FORMAT;
     return false;
   }
 
-  uint32_t availableData = m_pFile->GetSize() - m_offSet +
-                           BmpDecoder::GetAvailInput(pBmpContext.get());
-  if (neededData > availableData) {
+  uint32_t available_data = m_pFile->GetSize() - m_offSet +
+                            BmpDecoder::GetAvailInput(pBmpContext.get());
+  if (needed_data.value().size > available_data) {
     m_status = FXCODEC_STATUS_ERR_FORMAT;
     return false;
   }

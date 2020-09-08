@@ -46,14 +46,13 @@ bool CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext,
     int32_t width = bitmap_rect.Width();
     int32_t height = bitmap_rect.Height();
     // Set to 0 to make CalculatePitchAndSize() calculate it.
-    uint32_t pitch = 0;
-    uint32_t size;
-    if (!CFX_DIBitmap::CalculatePitchAndSize(width, height, dibFormat, &pitch,
-                                             &size)) {
+    constexpr uint32_t kNoPitch = 0;
+    Optional<CFX_DIBitmap::PitchAndSize> pitch_size =
+        CFX_DIBitmap::CalculatePitchAndSize(width, height, dibFormat, kNoPitch);
+    if (!pitch_size.has_value())
       return false;
-    }
 
-    if (size <= kImageSizeLimitBytes &&
+    if (pitch_size.value().size <= kImageSizeLimitBytes &&
         m_pBitmapDevice->Create(width, height, dibFormat, nullptr)) {
       break;
     }

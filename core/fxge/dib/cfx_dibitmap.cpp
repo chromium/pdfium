@@ -47,14 +47,15 @@ bool CFX_DIBitmap::Create(int width,
   m_Height = 0;
   m_Pitch = 0;
 
-  uint32_t calculatedSize;
-  if (!CalculatePitchAndSize(height, width, format, &pitch, &calculatedSize))
+  Optional<PitchAndSize> pitch_size =
+      CalculatePitchAndSize(height, width, format, pitch);
+  if (!pitch_size.has_value())
     return false;
 
   if (pBuffer) {
     m_pBuffer.Reset(pBuffer);
   } else {
-    size_t bufferSize = calculatedSize + 4;
+    size_t bufferSize = pitch_size.value().size + 4;
     if (bufferSize >= kMaxOOMLimit) {
       m_pBuffer = std::unique_ptr<uint8_t, FxFreeDeleter>(
           FX_TryAlloc(uint8_t, bufferSize));
@@ -67,7 +68,7 @@ bool CFX_DIBitmap::Create(int width,
   }
   m_Width = width;
   m_Height = height;
-  m_Pitch = pitch;
+  m_Pitch = pitch_size.value().pitch;
   if (!HasAlpha() || format == FXDIB_Argb)
     return true;
 
@@ -840,29 +841,30 @@ bool CFX_DIBitmap::ConvertColorScale(uint32_t forecolor, uint32_t backcolor) {
 }
 
 // static
-bool CFX_DIBitmap::CalculatePitchAndSize(int height,
-                                         int width,
-                                         FXDIB_Format format,
-                                         uint32_t* pitch,
-                                         uint32_t* size) {
+Optional<CFX_DIBitmap::PitchAndSize> CFX_DIBitmap::CalculatePitchAndSize(
+    int height,
+    int width,
+    FXDIB_Format format,
+    uint32_t pitch) {
   if (width <= 0 || height <= 0)
-    return false;
+    return pdfium::nullopt;
 
   int bpp = GetBppFromFormat(format);
   if (!bpp)
-    return false;
+    return pdfium::nullopt;
 
   if ((INT_MAX - 31) / width < bpp)
-    return false;
+    return pdfium::nullopt;
 
-  if (!*pitch)
-    *pitch = static_cast<uint32_t>((width * bpp + 31) / 32 * 4);
+  uint32_t actual_pitch = pitch;
+  if (actual_pitch == 0)
+    actual_pitch = static_cast<uint32_t>((width * bpp + 31) / 32 * 4);
 
-  if ((1 << 30) / *pitch < static_cast<uint32_t>(height))
-    return false;
+  if ((1 << 30) / actual_pitch < static_cast<uint32_t>(height))
+    return pdfium::nullopt;
 
-  *size = *pitch * static_cast<uint32_t>(height);
-  return true;
+  uint32_t size = actual_pitch * static_cast<uint32_t>(height);
+  return PitchAndSize{actual_pitch, size};
 }
 
 bool CFX_DIBitmap::CompositeBitmap(int dest_left,

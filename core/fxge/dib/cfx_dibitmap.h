@@ -13,9 +13,15 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/fx_dib.h"
+#include "third_party/base/optional.h"
 
 class CFX_DIBitmap : public CFX_DIBBase {
  public:
+  struct PitchAndSize {
+    uint32_t pitch;
+    uint32_t size;
+  };
+
   CONSTRUCT_VIA_MAKE_RETAIN;
 
   bool Create(int width, int height, FXDIB_Format format);
@@ -93,11 +99,17 @@ class CFX_DIBitmap : public CFX_DIBBase {
 
   bool ConvertColorScale(uint32_t forecolor, uint32_t backcolor);
 
-  static bool CalculatePitchAndSize(int height,
-                                    int width,
-                                    FXDIB_Format format,
-                                    uint32_t* pitch,
-                                    uint32_t* size);
+  // |width| and |height| must be greater than 0.
+  // |format| must have a valid bits per pixel count.
+  // If |pitch| is zero, then the actual pitch will be calculated based on
+  // |width| and |format|.
+  // If |pitch| is non-zero, then that be used as the actual pitch.
+  // The actual pitch will be used to calculate the size.
+  // Returns the calculated pitch and size on success, or nullopt on failure.
+  static Optional<PitchAndSize> CalculatePitchAndSize(int height,
+                                                      int width,
+                                                      FXDIB_Format format,
+                                                      uint32_t pitch);
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   void PreMultiply();
