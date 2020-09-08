@@ -9,7 +9,6 @@
 
 #include <vector>
 
-#include "core/fxcrt/observed_ptr.h"
 #include "fxjs/gc/heap.h"
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/member.h"
@@ -23,8 +22,7 @@ class CXFA_FFWidget;
 class CXFA_FFDocView;
 class CXFA_TabParam;
 
-class CXFA_FFPageView final : public cppgc::GarbageCollected<CXFA_FFPageView>,
-                              public Observable {
+class CXFA_FFPageView final : public cppgc::GarbageCollected<CXFA_FFPageView> {
  public:
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FFPageView();

@@ -21,7 +21,6 @@
 #include "xfa/fwl/cfwl_messagemouse.h"
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
-#include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
 
@@ -155,9 +154,9 @@ class CXFA_FFWidget : public cppgc::GarbageCollected<CXFA_FFWidget>,
   CXFA_Node* GetNode() const { return m_pNode.Get(); }
   CXFA_ContentLayoutItem* GetLayoutItem() const { return m_pLayoutItem.Get(); }
   void SetLayoutItem(CXFA_ContentLayoutItem* pItem) { m_pLayoutItem = pItem; }
-  CXFA_FFPageView* GetPageView() const { return m_pPageView.Get(); }
-  void SetPageView(CXFA_FFPageView* pPageView) { m_pPageView.Reset(pPageView); }
-  CXFA_FFDocView* GetDocView() const { return m_pDocView.Get(); }
+  CXFA_FFPageView* GetPageView() const { return m_pPageView; }
+  void SetPageView(CXFA_FFPageView* pPageView) { m_pPageView = pPageView; }
+  CXFA_FFDocView* GetDocView() const { return m_pDocView; }
   void SetDocView(CXFA_FFDocView* pDocView) { m_pDocView = pDocView; }
 
   CXFA_FFWidget* GetNextFFWidget() const;
@@ -204,7 +203,7 @@ class CXFA_FFWidget : public cppgc::GarbageCollected<CXFA_FFWidget>,
 
   cppgc::Member<CXFA_ContentLayoutItem> m_pLayoutItem;
   cppgc::Member<CXFA_FFDocView> m_pDocView;
-  ObservedPtr<CXFA_FFPageView> m_pPageView;
+  cppgc::Member<CXFA_FFPageView> m_pPageView;
   cppgc::Member<CXFA_Node> const m_pNode;
   mutable CFX_RectF m_WidgetRect;
 };

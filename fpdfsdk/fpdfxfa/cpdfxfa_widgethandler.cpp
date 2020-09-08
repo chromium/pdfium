@@ -610,16 +610,10 @@ bool CPDFXFA_WidgetHandler::OnXFAChangedFocus(
   if (!pXFAPageView)
     return true;
 
-  ObservedPtr<CXFA_FFPageView> pObservedXFAPageView(pXFAPageView);
-  bool bRet = pXFAPageView->GetDocView()->SetFocus(hWidget);
+  if (pXFAPageView->GetDocView()->SetFocus(hWidget))
+    return true;
 
-  // Check |pXFAPageView| again because |SetFocus| can trigger JS to destroy it.
-  if (pObservedXFAPageView &&
-      pXFAPageView->GetDocView()->GetFocusWidget() == hWidget) {
-    bRet = true;
-  }
-
-  return bRet;
+  return pXFAPageView->GetDocView()->GetFocusWidget() == hWidget;
 }
 
 bool CPDFXFA_WidgetHandler::SetIndexSelected(ObservedPtr<CPDFSDK_Annot>* pAnnot,

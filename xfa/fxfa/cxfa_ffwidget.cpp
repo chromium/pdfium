@@ -23,6 +23,7 @@
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffdocview.h"
+#include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_ffwidgethandler.h"
 #include "xfa/fxfa/cxfa_imagerenderer.h"
 #include "xfa/fxfa/layout/cxfa_layoutprocessor.h"
@@ -235,8 +236,9 @@ void CXFA_FFWidget::PreFinalize() {}
 
 void CXFA_FFWidget::Trace(cppgc::Visitor* visitor) const {
   visitor->Trace(m_pLayoutItem);
-  visitor->Trace(m_pNode);
   visitor->Trace(m_pDocView);
+  visitor->Trace(m_pPageView);
+  visitor->Trace(m_pNode);
 }
 
 CFWL_App* CXFA_FFWidget::GetFWLApp() const {
