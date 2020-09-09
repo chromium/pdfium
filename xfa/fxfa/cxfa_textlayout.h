@@ -59,14 +59,10 @@ class CXFA_TextLayout final : public cppgc::GarbageCollected<CXFA_TextLayout> {
                   size_t szBlockIndex);
   bool IsLoaded() const { return !m_pieceLines.empty(); }
   void Unload();
-
-  const std::vector<std::unique_ptr<CXFA_PieceLine>>* GetPieceLines() const {
-    return &m_pieceLines;
-  }
-
   bool HasBlock() const { return m_bHasBlock; }
   void ClearBlocks() { m_Blocks.clear(); }
   void ResetHasBlock() { m_bHasBlock = false; }
+  const wchar_t* GetLinkURLAtPoint(const CFX_PointF& point);
 
  private:
   struct BlockData {

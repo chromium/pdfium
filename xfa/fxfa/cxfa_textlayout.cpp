@@ -98,6 +98,16 @@ void CXFA_TextLayout::Unload() {
   m_pBreak.reset();
 }
 
+const wchar_t* CXFA_TextLayout::GetLinkURLAtPoint(const CFX_PointF& point) {
+  for (const auto& pPieceLine : m_pieceLines) {
+    for (const auto& pPiece : pPieceLine->m_textPieces) {
+      if (pPiece->pLinkData && pPiece->rtPiece.Contains(point))
+        return pPiece->pLinkData->GetLinkURL();
+    }
+  }
+  return nullptr;
+}
+
 void CXFA_TextLayout::GetTextDataNode() {
   CXFA_Node* pNode = m_pTextProvider->GetTextNode(&m_bRichText);
   if (pNode && m_bRichText)
