@@ -71,8 +71,6 @@ source_set("fxfa") {
     "cxfa_fwltheme.h",
     "cxfa_imagerenderer.cpp",
     "cxfa_imagerenderer.h",
-    "cxfa_loadercontext.cpp",
-    "cxfa_loadercontext.h",
     "cxfa_pieceline.cpp",
     "cxfa_pieceline.h",
     "cxfa_readynodeiterator.cpp",

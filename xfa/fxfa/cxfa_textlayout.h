@@ -13,6 +13,8 @@
 #include "core/fxcrt/css/cfx_css.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/gc/heap.h"
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/member.h"
@@ -32,7 +34,6 @@ class CXFA_TextPiece;
 class CXFA_TextProvider;
 class CXFA_TextTabstopsContext;
 class TextCharPos;
-struct CXFA_LoaderContext;
 struct FX_RTFTEXTOBJ;
 
 class CXFA_TextLayout final : public cppgc::GarbageCollected<CXFA_TextLayout> {
@@ -71,6 +72,33 @@ class CXFA_TextLayout final : public cppgc::GarbageCollected<CXFA_TextLayout> {
   struct BlockData {
     size_t szIndex;
     size_t szLength;
+  };
+
+  struct BlockHeight {
+    size_t szBlockIndex;
+    float fHeight;
+  };
+
+  struct LoaderContext {
+    LoaderContext();
+    ~LoaderContext();
+
+    void Trace(cppgc::Visitor* visitor) const;
+
+    bool bSaveLineHeight = false;
+    bool bFilterSpace = false;
+    float fWidth = 0;
+    float fHeight = 0;
+    float fLastPos = 0;
+    float fStartLineOffset = 0;
+    int32_t iChar = 0;
+    // TODO(thestig): Make this size_t?
+    int32_t iTotalLines = -1;
+    UnownedPtr<const CFX_XMLNode> pXMLNode;
+    RetainPtr<CFX_CSSComputedStyle> pParentStyle;
+    cppgc::Member<CXFA_Node> pNode;
+    std::vector<float> lineHeights;
+    std::vector<BlockHeight> blockHeights;
   };
 
   CXFA_TextLayout(CXFA_FFDoc* doc, CXFA_TextProvider* pTextProvider);
@@ -136,7 +164,7 @@ class CXFA_TextLayout final : public cppgc::GarbageCollected<CXFA_TextLayout> {
   cppgc::Member<CXFA_TextProvider> const m_pTextProvider;
   cppgc::Member<CXFA_Node> m_pTextDataNode;
   std::unique_ptr<CFX_RTFBreak> m_pBreak;
-  std::unique_ptr<CXFA_LoaderContext> m_pLoader;
+  std::unique_ptr<LoaderContext> m_pLoader;
   CXFA_TextParser m_textParser;
   std::vector<std::unique_ptr<CXFA_PieceLine>> m_pieceLines;
   std::unique_ptr<CXFA_TextTabstopsContext> m_pTabstopContext;
