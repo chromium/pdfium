@@ -412,50 +412,42 @@ int32_t CXFA_TextParser::GetVerScale(CXFA_TextProvider* pTextProvider,
   return font ? static_cast<int32_t>(font->GetVerticalScale()) : 100;
 }
 
-void CXFA_TextParser::GetUnderline(CXFA_TextProvider* pTextProvider,
-                                   const CFX_CSSComputedStyle* pStyle,
-                                   int32_t& iUnderline,
-                                   XFA_AttributeValue& iPeriod) const {
-  iUnderline = 0;
-  iPeriod = XFA_AttributeValue::All;
+int32_t CXFA_TextParser::GetUnderline(
+    CXFA_TextProvider* pTextProvider,
+    const CFX_CSSComputedStyle* pStyle) const {
   CXFA_Font* font = pTextProvider->GetFontIfExists();
-  if (!pStyle) {
-    if (font) {
-      iUnderline = font->GetUnderline();
-      iPeriod = font->GetUnderlinePeriod();
-    }
-    return;
-  }
+  if (!pStyle)
+    return font ? font->GetUnderline() : 0;
 
-  uint32_t dwDecoration = pStyle->GetTextDecoration();
+  const uint32_t dwDecoration = pStyle->GetTextDecoration();
   if (dwDecoration & CFX_CSSTEXTDECORATION_Double)
-    iUnderline = 2;
-  else if (dwDecoration & CFX_CSSTEXTDECORATION_Underline)
-    iUnderline = 1;
-
-  WideString wsValue;
-  if (pStyle->GetCustomStyle(L"underlinePeriod", &wsValue)) {
-    if (wsValue.EqualsASCII("word"))
-      iPeriod = XFA_AttributeValue::Word;
-  } else if (font) {
-    iPeriod = font->GetUnderlinePeriod();
-  }
+    return 2;
+  if (dwDecoration & CFX_CSSTEXTDECORATION_Underline)
+    return 1;
+  return 0;
 }
 
-void CXFA_TextParser::GetLinethrough(CXFA_TextProvider* pTextProvider,
-                                     const CFX_CSSComputedStyle* pStyle,
-                                     int32_t& iLinethrough) const {
-  iLinethrough = 0;
-  if (pStyle) {
-    uint32_t dwDecoration = pStyle->GetTextDecoration();
-    if (dwDecoration & CFX_CSSTEXTDECORATION_LineThrough)
-      iLinethrough = 1;
-    return;
+XFA_AttributeValue CXFA_TextParser::GetUnderlinePeriod(
+    CXFA_TextProvider* pTextProvider,
+    const CFX_CSSComputedStyle* pStyle) const {
+  WideString wsValue;
+  if (pStyle && pStyle->GetCustomStyle(L"underlinePeriod", &wsValue)) {
+    return wsValue.EqualsASCII("word") ? XFA_AttributeValue::Word
+                                       : XFA_AttributeValue::All;
   }
-
   CXFA_Font* font = pTextProvider->GetFontIfExists();
-  if (font)
-    iLinethrough = font->GetLineThrough();
+  return font ? font->GetUnderlinePeriod() : XFA_AttributeValue::All;
+}
+
+int32_t CXFA_TextParser::GetLinethrough(
+    CXFA_TextProvider* pTextProvider,
+    const CFX_CSSComputedStyle* pStyle) const {
+  if (pStyle) {
+    const uint32_t dwDecoration = pStyle->GetTextDecoration();
+    return (dwDecoration & CFX_CSSTEXTDECORATION_LineThrough) ? 1 : 0;
+  }
+  CXFA_Font* font = pTextProvider->GetFontIfExists();
+  return font ? font->GetLineThrough() : 0;
 }
 
 FX_ARGB CXFA_TextParser::GetColor(CXFA_TextProvider* pTextProvider,

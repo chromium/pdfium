@@ -1017,10 +1017,12 @@ void CXFA_TextLayout::AppendTextLine(CFX_BreakType dwStatus,
       pTP->iBidiLevel = pPiece->m_iBidiLevel;
       pTP->iHorScale = pPiece->m_iHorizontalScale;
       pTP->iVerScale = pPiece->m_iVerticalScale;
-      m_textParser.GetUnderline(m_pTextProvider, pStyle.Get(), pTP->iUnderline,
-                                pTP->iPeriod);
-      m_textParser.GetLinethrough(m_pTextProvider, pStyle.Get(),
-                                  pTP->iLineThrough);
+      pTP->iUnderline =
+          m_textParser.GetUnderline(m_pTextProvider, pStyle.Get());
+      pTP->iPeriod =
+          m_textParser.GetUnderlinePeriod(m_pTextProvider, pStyle.Get());
+      pTP->iLineThrough =
+          m_textParser.GetLinethrough(m_pTextProvider, pStyle.Get());
       pTP->dwColor = m_textParser.GetColor(m_pTextProvider, pStyle.Get());
       pTP->pFont =
           m_textParser.GetFont(m_pDoc.Get(), m_pTextProvider, pStyle.Get());
