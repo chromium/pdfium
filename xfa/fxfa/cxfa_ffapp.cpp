@@ -18,9 +18,10 @@
 #include "xfa/fxfa/cxfa_fwladapterwidgetmgr.h"
 #include "xfa/fxfa/cxfa_fwltheme.h"
 
-CXFA_FFApp::CXFA_FFApp(IXFA_AppProvider* pProvider)
-    : m_pProvider(pProvider), m_pXFAFontMgr(std::make_unique<CXFA_FontMgr>()) {
+CXFA_FFApp::CXFA_FFApp(IXFA_AppProvider* pProvider) : m_pProvider(pProvider) {
   // Ensure fully initialized before making objects based on |this|.
+  m_pXFAFontMgr = cppgc::MakeGarbageCollected<CXFA_FontMgr>(
+      GetHeap()->GetAllocationHandle());
   m_pFWLApp = cppgc::MakeGarbageCollected<CFWL_App>(
       GetHeap()->GetAllocationHandle(), this);
 }
@@ -28,6 +29,7 @@ CXFA_FFApp::CXFA_FFApp(IXFA_AppProvider* pProvider)
 CXFA_FFApp::~CXFA_FFApp() = default;
 
 void CXFA_FFApp::Trace(cppgc::Visitor* visitor) const {
+  visitor->Trace(m_pXFAFontMgr);
   visitor->Trace(m_pAdapterWidgetMgr);
   visitor->Trace(m_pFWLTheme);
   visitor->Trace(m_pFWLApp);

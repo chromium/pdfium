@@ -39,21 +39,13 @@ class CXFA_FFApp : public cppgc::GarbageCollected<CXFA_FFApp>,
   CFWL_WidgetMgr* GetFWLWidgetMgr() const { return m_pFWLApp->GetWidgetMgr(); }
   IXFA_AppProvider* GetAppProvider() const { return m_pProvider.Get(); }
   CFWL_App* GetFWLApp() const { return m_pFWLApp; }
-  CXFA_FontMgr* GetXFAFontMgr() const { return m_pXFAFontMgr.get(); }
+  CXFA_FontMgr* GetXFAFontMgr() const { return m_pXFAFontMgr; }
 
  private:
   explicit CXFA_FFApp(IXFA_AppProvider* pProvider);
 
   UnownedPtr<IXFA_AppProvider> const m_pProvider;
-
-  // The fonts stored in the font manager may have been created by the default
-  // font manager. The GEFont::LoadFont call takes the manager as a param and
-  // stores it internally. When you destroy the GEFont it tries to unregister
-  // from the font manager and if the default font manager was destroyed first
-  // you get a use-after-free. The m_pFWLTheme can try to cleanup a GEFont
-  // when it frees, so make sure it gets cleaned up first. That requires
-  // m_pFWLApp to be cleaned up as well.
-  std::unique_ptr<CXFA_FontMgr> m_pXFAFontMgr;
+  cppgc::Member<CXFA_FontMgr> m_pXFAFontMgr;
   cppgc::Member<CXFA_FWLAdapterWidgetMgr> m_pAdapterWidgetMgr;
   cppgc::Member<CXFA_FWLTheme> m_pFWLTheme;
   cppgc::Member<CFWL_App> m_pFWLApp;

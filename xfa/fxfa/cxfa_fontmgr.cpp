@@ -24,6 +24,8 @@ CXFA_FontMgr::CXFA_FontMgr() = default;
 
 CXFA_FontMgr::~CXFA_FontMgr() = default;
 
+void CXFA_FontMgr::Trace(cppgc::Visitor* visitor) const {}
+
 RetainPtr<CFGAS_GEFont> CXFA_FontMgr::GetFont(CXFA_FFDoc* hDoc,
                                               WideStringView wsFontFamily,
                                               uint32_t dwFontStyles) {
