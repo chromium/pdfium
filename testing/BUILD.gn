@@ -90,8 +90,8 @@ source_set("test_environments") {
       "xfa_test_environment.h",
     ]
     deps += [
+      "../fxjs:gc",
       "../xfa/fgas",
-      "//v8:cppgc",
     ]
   }
 }
@@ -119,6 +119,10 @@ source_set("unit_test_support") {
       sources += [
         "fxgc_unittest.cpp",
         "fxgc_unittest.h",
+      ]
+      deps += [
+        "../fxjs:gc",
+        "//testing/gtest",
       ]
     }
   }

@@ -681,10 +681,10 @@ source_set("parser") {
     "../../../core/fxcrt",
     "../../../core/fxge",
     "../../../fxjs",
+    "../../../fxjs:gc",
     "../../fde",
     "../../fgas",
     "../../fxgraphics",
-    "//v8:cppgc",
   ]
   allow_circular_includes_from = [ "../../../fxjs" ]
   configs += [
@@ -708,7 +708,7 @@ pdfium_unittest_source_set("unittests") {
   deps = [
     ":parser",
     "../../../fxjs",
-    "//v8:cppgc",
+    "../../../fxjs:gc",
   ]
   pdfium_root_dir = "../../../"
 }

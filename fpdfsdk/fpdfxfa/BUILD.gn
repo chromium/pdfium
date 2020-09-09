@@ -28,12 +28,12 @@ source_set("fpdfxfa") {
     "../../core/fxcrt",
     "../../fxbarcode",
     "../../fxjs",
+    "../../fxjs:gc",
     "../../xfa/fgas",
     "../../xfa/fwl",
     "../../xfa/fxfa",
     "../../xfa/fxfa/parser",
     "../../xfa/fxgraphics",
-    "//v8:cppgc",
   ]
   configs += [ "../../:pdfium_core_config" ]
   visibility = [ "../../*" ]

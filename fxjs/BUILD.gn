@@ -114,11 +114,6 @@ source_set("fxjs") {
 
     if (pdf_enable_xfa) {
       sources += [
-        "gc/container_trace.h",
-        "gc/gced_tree_node.h",
-        "gc/gced_tree_node_mixin.h",
-        "gc/heap.cpp",
-        "gc/heap.h",
         "xfa/cfxjse_class.cpp",
         "xfa/cfxjse_class.h",
         "xfa/cfxjse_context.cpp",
@@ -210,10 +205,29 @@ source_set("fxjs") {
         "xfa/jse_define.h",
       ]
       deps += [
+        ":gc",
         "../xfa/fgas",
         "../xfa/fxfa/fm2js",
-        "//v8:cppgc",
       ]
+    }
+  }
+}
+
+if (pdf_enable_v8) {
+  if (pdf_enable_xfa) {
+    source_set("gc") {
+      sources = [
+        "gc/container_trace.h",
+        "gc/gced_tree_node.h",
+        "gc/gced_tree_node_mixin.h",
+        "gc/heap.cpp",
+        "gc/heap.h",
+      ]
+      deps = [
+        "../core/fxcrt",
+        "//v8:v8_libplatform",
+      ]
+      public_deps = [ "//v8:cppgc" ]
     }
   }
 }
@@ -239,7 +253,7 @@ if (pdf_enable_v8) {
         "gc/heap_unittest.cpp",
         "gc/move_unittest.cpp",
       ]
-      deps += [ "//v8:cppgc" ]
+      deps += [ ":gc" ]
     }
   }
 
@@ -263,8 +277,8 @@ if (pdf_enable_v8) {
         "xfa/cjx_list_embeddertest.cpp",
       ]
       deps += [
+        ":gc",
         "../xfa/fxfa",
-        "//v8:cppgc",
       ]
     }
   }

@@ -108,11 +108,10 @@ source_set("fwl") {
     "../../core/fxcrt",
     "../../core/fxge",
     "../../fxbarcode",
-    "../../fxjs",
+    "../../fxjs:gc",
     "../fde",
     "../fgas",
     "../fxgraphics",
-    "//v8:cppgc",
   ]
   configs += [
     "../../:pdfium_core_config",
@@ -123,6 +122,6 @@ source_set("fwl") {
 
 pdfium_embeddertest_source_set("embeddertests") {
   sources = [ "cfwl_edit_embeddertest.cpp" ]
-  deps = [ "//v8:cppgc" ]
+  deps = [ "../../fxjs:gc" ]
   pdfium_root_dir = "../../"
 }
