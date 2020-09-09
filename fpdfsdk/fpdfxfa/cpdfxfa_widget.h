@@ -8,9 +8,9 @@
 #define FPDFSDK_FPDFXFA_CPDFXFA_WIDGET_H_
 
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
+#include "v8/include/cppgc/persistent.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 
 class CPDFSDK_InteractiveForm;
@@ -35,7 +35,7 @@ class CPDFXFA_Widget final : public CPDFSDK_Annot {
 
  private:
   UnownedPtr<CPDFSDK_InteractiveForm> const m_pInteractiveForm;
-  ObservedPtr<CXFA_FFWidget> const m_pXFAFFWidget;
+  cppgc::Persistent<CXFA_FFWidget> const m_pXFAFFWidget;
 };
 
 #endif  // FPDFSDK_FPDFXFA_CPDFXFA_WIDGET_H_

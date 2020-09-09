@@ -11,7 +11,6 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/observed_ptr.h"
 #include "fxjs/gc/heap.h"
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/member.h"
@@ -68,7 +67,7 @@ class CXFA_FFDocView : public cppgc::GarbageCollected<CXFA_FFDocView> {
   void ResetNode(CXFA_Node* pNode);
   CXFA_Node* GetRootSubform();
   CXFA_FFWidgetHandler* GetWidgetHandler();
-  CXFA_FFWidget* GetFocusWidget() const { return m_pFocusWidget.Get(); }
+  CXFA_FFWidget* GetFocusWidget() const { return m_pFocusWidget; }
   bool SetFocus(CXFA_FFWidget* pNewFocus);
   CXFA_FFWidget* GetWidgetForNode(CXFA_Node* node);
   CXFA_FFWidget* GetWidgetByName(const WideString& wsName,
@@ -91,7 +90,7 @@ class CXFA_FFDocView : public cppgc::GarbageCollected<CXFA_FFDocView> {
   bool RunLayout();
   void AddNewFormNode(CXFA_Node* pNode);
   void AddIndexChangedSubform(CXFA_Node* pNode);
-  CXFA_Node* GetFocusNode() const { return m_pFocusNode.Get(); }
+  CXFA_Node* GetFocusNode() const { return m_pFocusNode; }
   void SetFocusNode(CXFA_Node* pNode);
   void DeleteLayoutItem(CXFA_FFWidget* pWidget);
   XFA_EventError ExecEventActivityByDeepFirst(CXFA_Node* pFormNode,
@@ -125,7 +124,7 @@ class CXFA_FFDocView : public cppgc::GarbageCollected<CXFA_FFDocView> {
   cppgc::Member<CXFA_FFDoc> const m_pDoc;
   cppgc::Member<CXFA_FFWidgetHandler> m_pWidgetHandler;
   cppgc::Member<CXFA_Node> m_pFocusNode;
-  ObservedPtr<CXFA_FFWidget> m_pFocusWidget;
+  cppgc::Member<CXFA_FFWidget> m_pFocusWidget;
   std::list<cppgc::Member<CXFA_Node>> m_ValidateNodes;
   std::vector<cppgc::Member<CXFA_Node>> m_CalculateNodes;
   std::list<cppgc::Member<CXFA_BindItems>> m_BindItems;

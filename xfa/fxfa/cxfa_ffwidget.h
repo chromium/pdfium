@@ -11,7 +11,6 @@
 
 #include "core/fpdfdoc/cpdf_formfield.h"
 #include "core/fxcodec/fx_codec_def.h"
-#include "core/fxcrt/observed_ptr.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "fxjs/gc/heap.h"
 #include "v8/include/cppgc/garbage-collected.h"
@@ -70,7 +69,6 @@ class CXFA_CalcData {
 };
 
 class CXFA_FFWidget : public cppgc::GarbageCollected<CXFA_FFWidget>,
-                      public Observable,
                       public CFWL_Widget::AdapterIface {
   CPPGC_USING_PRE_FINALIZER(CXFA_FFWidget, PreFinalize);
 

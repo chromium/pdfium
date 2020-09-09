@@ -184,7 +184,7 @@ static XFA_EVENTTYPE GetXFAEventType(CPDF_AAction::AActionType eAAT,
 }
 
 bool CPDFSDK_Widget::HasXFAAAction(PDFSDK_XFAAActionType eXFAAAT) const {
-  ObservedPtr<CXFA_FFWidget> pWidget(GetMixXFAWidget());
+  CXFA_FFWidget* pWidget = GetMixXFAWidget();
   if (!pWidget)
     return false;
 
@@ -202,9 +202,7 @@ bool CPDFSDK_Widget::HasXFAAAction(PDFSDK_XFAAActionType eXFAAAT) const {
     }
   }
 
-  // Check |pWidget| again because JS may have destroyed it in the block above.
-  return pWidget &&
-         pWidget->HasEventUnderHandler(eEventType, pXFAWidgetHandler);
+  return pWidget->HasEventUnderHandler(eEventType, pXFAWidgetHandler);
 }
 
 bool CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
@@ -215,7 +213,7 @@ bool CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
   if (!pContext)
     return false;
 
-  ObservedPtr<CXFA_FFWidget> pWidget(GetMixXFAWidget());
+  CXFA_FFWidget* pWidget = GetMixXFAWidget();
   if (!pWidget)
     return false;
 
@@ -247,12 +245,9 @@ bool CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
     }
   }
 
-  // Check |pWidget| again because JS may have destroyed it in the block above.
-  if (!pWidget)
-    return false;
-
   bool ret = pWidget->ProcessEventUnderHandler(&param, pXFAWidgetHandler);
-  if (CXFA_FFDocView* pDocView = pContext->GetXFADocView())
+  CXFA_FFDocView* pDocView = pContext->GetXFADocView();
+  if (pDocView)
     pDocView->UpdateDocView();
 
   return ret;

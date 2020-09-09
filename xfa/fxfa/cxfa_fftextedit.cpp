@@ -163,14 +163,13 @@ bool CXFA_FFTextEdit::OnRButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
 }
 
 bool CXFA_FFTextEdit::OnSetFocus(CXFA_FFWidget* pOldWidget) {
-  ObservedPtr<CXFA_FFWidget> pOldWatched(pOldWidget);
   GetLayoutItem()->ClearStatusBits(XFA_WidgetStatus_TextEditValueChanged);
   if (!IsFocused()) {
     GetLayoutItem()->SetStatusBits(XFA_WidgetStatus_Focused);
     UpdateFWLData();
     InvalidateRect();
   }
-  if (!CXFA_FFWidget::OnSetFocus(pOldWatched.Get()))
+  if (!CXFA_FFWidget::OnSetFocus(pOldWidget))
     return false;
 
   CFWL_MessageSetFocus msg(nullptr, GetNormalWidget());
@@ -179,16 +178,16 @@ bool CXFA_FFTextEdit::OnSetFocus(CXFA_FFWidget* pOldWidget) {
 }
 
 bool CXFA_FFTextEdit::OnKillFocus(CXFA_FFWidget* pNewWidget) {
-  ObservedPtr<CXFA_FFWidget> pNewWatched(pNewWidget);
   CFWL_MessageKillFocus msg(nullptr, GetNormalWidget());
   SendMessageToFWLWidget(&msg);
+
   GetLayoutItem()->ClearStatusBits(XFA_WidgetStatus_Focused);
   SetEditScrollOffset();
   ProcessCommittedData();
   UpdateFWLData();
   InvalidateRect();
 
-  if (!CXFA_FFWidget::OnKillFocus(pNewWatched.Get()))
+  if (!CXFA_FFWidget::OnKillFocus(pNewWidget))
     return false;
 
   GetLayoutItem()->ClearStatusBits(XFA_WidgetStatus_TextEditValueChanged);
