@@ -13,6 +13,7 @@
 #include <utility>
 
 #include "build/build_config.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/dib/cfx_cmyk_to_srgb.h"
 #include "core/fxge/dib/cfx_scanlinecompositor.h"
@@ -55,15 +56,20 @@ bool CFX_DIBitmap::Create(int width,
   if (pBuffer) {
     m_pBuffer.Reset(pBuffer);
   } else {
-    size_t bufferSize = pitch_size.value().size + 4;
-    if (bufferSize >= kMaxOOMLimit) {
+    FX_SAFE_SIZE_T safe_buffer_size = pitch_size.value().size;
+    safe_buffer_size += 4;
+    if (!safe_buffer_size.IsValid())
+      return false;
+
+    size_t buffer_size = safe_buffer_size.ValueOrDie();
+    if (buffer_size >= kMaxOOMLimit) {
       m_pBuffer = std::unique_ptr<uint8_t, FxFreeDeleter>(
-          FX_TryAlloc(uint8_t, bufferSize));
+          FX_TryAlloc(uint8_t, buffer_size));
       if (!m_pBuffer)
         return false;
     } else {
       m_pBuffer = std::unique_ptr<uint8_t, FxFreeDeleter>(
-          FX_Alloc(uint8_t, bufferSize));
+          FX_Alloc(uint8_t, buffer_size));
     }
   }
   m_Width = width;
