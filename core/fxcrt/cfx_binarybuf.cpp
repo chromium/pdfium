@@ -13,7 +13,32 @@
 
 CFX_BinaryBuf::CFX_BinaryBuf() = default;
 
+CFX_BinaryBuf::CFX_BinaryBuf(CFX_BinaryBuf&& that) noexcept
+    : m_AllocStep(that.m_AllocStep),
+      m_AllocSize(that.m_AllocSize),
+      m_DataSize(that.m_DataSize),
+      m_pBuffer(std::move(that.m_pBuffer)) {
+  // Can't just default, need to leave |that| in a valid state, which means
+  // that the size members reflect the (null) moved-from buffer.
+  that.m_AllocStep = 0;
+  that.m_AllocSize = 0;
+  that.m_DataSize = 0;
+}
+
 CFX_BinaryBuf::~CFX_BinaryBuf() = default;
+
+CFX_BinaryBuf& CFX_BinaryBuf::operator=(CFX_BinaryBuf&& that) noexcept {
+  // Can't just default, need to leave |that| in a valid state, which means
+  // that the size members reflect the (null) moved-from buffer.
+  m_AllocStep = that.m_AllocStep;
+  m_AllocSize = that.m_AllocSize;
+  m_DataSize = that.m_DataSize;
+  m_pBuffer = std::move(that.m_pBuffer);
+  that.m_AllocStep = 0;
+  that.m_AllocSize = 0;
+  that.m_DataSize = 0;
+  return *this;
+}
 
 void CFX_BinaryBuf::Delete(size_t start_index, size_t count) {
   if (!m_pBuffer || count > m_DataSize || start_index > m_DataSize - count)

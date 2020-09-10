@@ -18,7 +18,7 @@ TEST(WideTextBuf, EmptyBuf) {
 TEST(WideTextBuf, OperatorLtLt) {
   CFX_WideTextBuf wtb;
   wtb << 42 << 3.14 << "clams" << L"\u208c\u208e";
-  EXPECT_TRUE(wtb.MakeString() == L"423.14clams\u208c\u208e");
+  EXPECT_EQ(wtb.MakeString(), L"423.14clams\u208c\u208e");
 }
 
 TEST(WideTextBuf, Deletion) {
@@ -40,6 +40,21 @@ TEST(WideTextBuf, Deletion) {
 
   wtb.Delete(0, 0);
   EXPECT_TRUE(wtb.AsStringView().EqualsASCII(""));
+}
+
+TEST(WideTextBuf, Move) {
+  CFX_WideTextBuf wtb;
+  wtb << "clams";
+  EXPECT_EQ(wtb.MakeString(), L"clams");
+
+  CFX_WideTextBuf wtb2(std::move(wtb));
+  EXPECT_EQ(wtb.MakeString(), L"");
+  EXPECT_EQ(wtb2.MakeString(), L"clams");
+
+  CFX_WideTextBuf wtb3;
+  wtb3 = std::move(wtb2);
+  EXPECT_EQ(wtb2.MakeString(), L"");
+  EXPECT_EQ(wtb3.MakeString(), L"clams");
 }
 
 }  // namespace fxcrt

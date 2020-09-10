@@ -17,7 +17,11 @@
 class CFX_BinaryBuf {
  public:
   CFX_BinaryBuf();
+  CFX_BinaryBuf(CFX_BinaryBuf&& that) noexcept;
   virtual ~CFX_BinaryBuf();
+
+  // Moved-from value will be left empty.
+  CFX_BinaryBuf& operator=(CFX_BinaryBuf&& that) noexcept;
 
   pdfium::span<uint8_t> GetSpan();
   pdfium::span<const uint8_t> GetSpan() const;
