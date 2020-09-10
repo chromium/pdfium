@@ -34,21 +34,9 @@ class CXFA_FMFunctionDefinition final : public CXFA_FMExpression {
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) override;
 
  private:
-  WideStringView m_wsName;
-  std::vector<WideStringView> m_pArguments;
-  std::vector<std::unique_ptr<CXFA_FMExpression>> m_pExpressions;
-};
-
-class CXFA_FMAST {
- public:
-  explicit CXFA_FMAST(
-      std::vector<std::unique_ptr<CXFA_FMExpression>> expressions);
-  ~CXFA_FMAST();
-
-  bool ToJavaScript(CFX_WideTextBuf* js);
-
- private:
-  std::vector<std::unique_ptr<CXFA_FMExpression>> expressions_;
+  const WideStringView m_wsName;
+  std::vector<WideStringView> const m_pArguments;
+  std::vector<std::unique_ptr<CXFA_FMExpression>> const m_pExpressions;
 };
 
 class CXFA_FMVarExpression final : public CXFA_FMExpression {
@@ -60,8 +48,8 @@ class CXFA_FMVarExpression final : public CXFA_FMExpression {
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) override;
 
  private:
-  WideStringView m_wsName;
-  std::unique_ptr<CXFA_FMSimpleExpression> m_pInit;
+  WideStringView const m_wsName;
+  std::unique_ptr<CXFA_FMSimpleExpression> const m_pInit;
 };
 
 class CXFA_FMExpExpression final : public CXFA_FMExpression {
@@ -73,7 +61,7 @@ class CXFA_FMExpExpression final : public CXFA_FMExpression {
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) override;
 
  private:
-  std::unique_ptr<CXFA_FMSimpleExpression> m_pExpression;
+  std::unique_ptr<CXFA_FMSimpleExpression> const m_pExpression;
 };
 
 class CXFA_FMBlockExpression final : public CXFA_FMExpression {
@@ -85,7 +73,7 @@ class CXFA_FMBlockExpression final : public CXFA_FMExpression {
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) override;
 
  private:
-  std::vector<std::unique_ptr<CXFA_FMExpression>> m_ExpressionList;
+  std::vector<std::unique_ptr<CXFA_FMExpression>> const m_ExpressionList;
 };
 
 class CXFA_FMDoExpression final : public CXFA_FMExpression {
@@ -96,7 +84,7 @@ class CXFA_FMDoExpression final : public CXFA_FMExpression {
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) override;
 
  private:
-  std::unique_ptr<CXFA_FMExpression> m_pList;
+  std::unique_ptr<CXFA_FMExpression> const m_pList;
 };
 
 class CXFA_FMIfExpression final : public CXFA_FMExpression {
@@ -111,10 +99,10 @@ class CXFA_FMIfExpression final : public CXFA_FMExpression {
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) override;
 
  private:
-  std::unique_ptr<CXFA_FMSimpleExpression> m_pExpression;
-  std::unique_ptr<CXFA_FMExpression> m_pIfExpression;
-  std::vector<std::unique_ptr<CXFA_FMIfExpression>> m_pElseIfExpressions;
-  std::unique_ptr<CXFA_FMExpression> m_pElseExpression;
+  std::unique_ptr<CXFA_FMSimpleExpression> const m_pExpression;
+  std::unique_ptr<CXFA_FMExpression> const m_pIfExpression;
+  std::vector<std::unique_ptr<CXFA_FMIfExpression>> const m_pElseIfExpressions;
+  std::unique_ptr<CXFA_FMExpression> const m_pElseExpression;
 };
 
 class CXFA_FMWhileExpression final : public CXFA_FMExpression {
@@ -126,8 +114,8 @@ class CXFA_FMWhileExpression final : public CXFA_FMExpression {
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) override;
 
  private:
-  std::unique_ptr<CXFA_FMSimpleExpression> m_pCondition;
-  std::unique_ptr<CXFA_FMExpression> m_pExpression;
+  std::unique_ptr<CXFA_FMSimpleExpression> const m_pCondition;
+  std::unique_ptr<CXFA_FMExpression> const m_pExpression;
 };
 
 class CXFA_FMBreakExpression final : public CXFA_FMExpression {
@@ -159,12 +147,12 @@ class CXFA_FMForExpression final : public CXFA_FMExpression {
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) override;
 
  private:
-  WideStringView m_wsVariant;
-  std::unique_ptr<CXFA_FMSimpleExpression> m_pAssignment;
-  std::unique_ptr<CXFA_FMSimpleExpression> m_pAccessor;
+  const WideStringView m_wsVariant;
+  std::unique_ptr<CXFA_FMSimpleExpression> const m_pAssignment;
+  std::unique_ptr<CXFA_FMSimpleExpression> const m_pAccessor;
   const bool m_bDirection;
-  std::unique_ptr<CXFA_FMSimpleExpression> m_pStep;
-  std::unique_ptr<CXFA_FMExpression> m_pList;
+  std::unique_ptr<CXFA_FMSimpleExpression> const m_pStep;
+  std::unique_ptr<CXFA_FMExpression> const m_pList;
 };
 
 class CXFA_FMForeachExpression final : public CXFA_FMExpression {
@@ -179,9 +167,21 @@ class CXFA_FMForeachExpression final : public CXFA_FMExpression {
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) override;
 
  private:
-  WideStringView m_wsIdentifier;
-  std::vector<std::unique_ptr<CXFA_FMSimpleExpression>> m_pAccessors;
-  std::unique_ptr<CXFA_FMExpression> m_pList;
+  const WideStringView m_wsIdentifier;
+  std::vector<std::unique_ptr<CXFA_FMSimpleExpression>> const m_pAccessors;
+  std::unique_ptr<CXFA_FMExpression> const m_pList;
+};
+
+class CXFA_FMAST {
+ public:
+  explicit CXFA_FMAST(
+      std::vector<std::unique_ptr<CXFA_FMExpression>> expressions);
+  ~CXFA_FMAST();
+
+  bool ToJavaScript(CFX_WideTextBuf* js);
+
+ private:
+  std::vector<std::unique_ptr<CXFA_FMExpression>> const expressions_;
 };
 
 #endif  // XFA_FXFA_FM2JS_CXFA_FMEXPRESSION_H_
