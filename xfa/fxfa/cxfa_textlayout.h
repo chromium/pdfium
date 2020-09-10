@@ -20,17 +20,17 @@
 #include "v8/include/cppgc/member.h"
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fgas/layout/cfx_char.h"
+#include "xfa/fgas/layout/cfx_textpiece.h"
 #include "xfa/fxfa/cxfa_textparser.h"
 
 class CFDE_RenderDevice;
+class CFX_LinkUserData;
 class CFX_CSSComputedStyle;
 class CFX_RTFBreak;
 class CFX_RenderDevice;
 class CFX_XMLNode;
 class CFX_LinkUserData;
 class CXFA_Node;
-class CXFA_PieceLine;
-class CXFA_TextPiece;
 class CXFA_TextProvider;
 class CXFA_TextTabstopsContext;
 class TextCharPos;
@@ -65,6 +65,27 @@ class CXFA_TextLayout final : public cppgc::GarbageCollected<CXFA_TextLayout> {
   const wchar_t* GetLinkURLAtPoint(const CFX_PointF& point);
 
  private:
+  class TextPiece : public CFX_TextPiece {
+   public:
+    TextPiece();
+    ~TextPiece();
+
+    int32_t iUnderline = 0;
+    int32_t iLineThrough = 0;
+    XFA_AttributeValue iPeriod = XFA_AttributeValue::All;
+    FX_ARGB dwColor = 0;
+    RetainPtr<CFX_LinkUserData> pLinkData;
+  };
+
+  class PieceLine {
+   public:
+    PieceLine();
+    ~PieceLine();
+
+    std::vector<std::unique_ptr<TextPiece>> m_textPieces;
+    std::vector<size_t> m_charCounts;
+  };
+
   struct BlockData {
     size_t szIndex;
     size_t szLength;
@@ -134,18 +155,18 @@ class CXFA_TextLayout final : public cppgc::GarbageCollected<CXFA_TextLayout> {
   bool IsEnd(bool bSavePieces);
   void UpdateAlign(float fHeight, float fBottom);
   void RenderString(CFX_RenderDevice* pDevice,
-                    CXFA_PieceLine* pPieceLine,
+                    PieceLine* pPieceLine,
                     size_t szPiece,
                     std::vector<TextCharPos>* pCharPos,
                     const CFX_Matrix& mtDoc2Device);
   void RenderPath(CFX_RenderDevice* pDevice,
-                  CXFA_PieceLine* pPieceLine,
+                  const PieceLine* pPieceLine,
                   size_t szPiece,
                   std::vector<TextCharPos>* pCharPos,
                   const CFX_Matrix& mtDoc2Device);
-  size_t GetDisplayPos(const CXFA_TextPiece* pPiece,
+  size_t GetDisplayPos(const TextPiece* pPiece,
                        std::vector<TextCharPos>* pCharPos);
-  void DoTabstops(CFX_CSSComputedStyle* pStyle, CXFA_PieceLine* pPieceLine);
+  void DoTabstops(CFX_CSSComputedStyle* pStyle, PieceLine* pPieceLine);
   bool LayoutInternal(size_t szBlockIndex);
   size_t CountBlocks() const;
   size_t GetNextIndexFromLastBlockData() const;
@@ -162,7 +183,7 @@ class CXFA_TextLayout final : public cppgc::GarbageCollected<CXFA_TextLayout> {
   std::unique_ptr<CFX_RTFBreak> m_pBreak;
   std::unique_ptr<LoaderContext> m_pLoader;
   CXFA_TextParser m_textParser;
-  std::vector<std::unique_ptr<CXFA_PieceLine>> m_pieceLines;
+  std::vector<std::unique_ptr<PieceLine>> m_pieceLines;
   std::unique_ptr<CXFA_TextTabstopsContext> m_pTabstopContext;
 };
 

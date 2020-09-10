@@ -27,9 +27,7 @@
 #include "xfa/fgas/layout/cfx_rtfbreak.h"
 #include "xfa/fgas/layout/cfx_textuserdata.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
-#include "xfa/fxfa/cxfa_pieceline.h"
 #include "xfa/fxfa/cxfa_textparsecontext.h"
-#include "xfa/fxfa/cxfa_textpiece.h"
 #include "xfa/fxfa/cxfa_textprovider.h"
 #include "xfa/fxfa/cxfa_texttabstopscontext.h"
 #include "xfa/fxfa/parser/cxfa_font.h"
@@ -65,6 +63,14 @@ void ProcessText(WideString* pText) {
 }
 
 }  // namespace
+
+CXFA_TextLayout::TextPiece::TextPiece() = default;
+
+CXFA_TextLayout::TextPiece::~TextPiece() = default;
+
+CXFA_TextLayout::PieceLine::PieceLine() = default;
+
+CXFA_TextLayout::PieceLine::~PieceLine() = default;
 
 CXFA_TextLayout::LoaderContext::LoaderContext() = default;
 
@@ -619,9 +625,9 @@ bool CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
     if (i + szLineStart >= m_pieceLines.size())
       break;
 
-    CXFA_PieceLine* pPieceLine = m_pieceLines[i + szLineStart].get();
+    PieceLine* pPieceLine = m_pieceLines[i + szLineStart].get();
     for (size_t j = 0; j < pPieceLine->m_textPieces.size(); ++j) {
-      const CXFA_TextPiece* pPiece = pPieceLine->m_textPieces[j].get();
+      const TextPiece* pPiece = pPieceLine->m_textPieces[j].get();
       int32_t iChars = pPiece->iChars;
       if (pdfium::CollectionSize<int32_t>(char_pos) < iChars)
         char_pos.resize(iChars);
@@ -941,7 +947,7 @@ void CXFA_TextLayout::EndBreak(CFX_BreakType dwStatus,
 }
 
 void CXFA_TextLayout::DoTabstops(CFX_CSSComputedStyle* pStyle,
-                                 CXFA_PieceLine* pPieceLine) {
+                                 PieceLine* pPieceLine) {
   if (!pStyle || !pPieceLine)
     return;
 
@@ -952,7 +958,7 @@ void CXFA_TextLayout::DoTabstops(CFX_CSSComputedStyle* pStyle,
   if (iPieces == 0)
     return;
 
-  CXFA_TextPiece* pPiece = pPieceLine->m_textPieces[iPieces - 1].get();
+  TextPiece* pPiece = pPieceLine->m_textPieces[iPieces - 1].get();
   int32_t& iTabstopsIndex = m_pTabstopContext->m_iTabIndex;
   int32_t iCount = m_textParser.CountTabs(pStyle);
   if (!pdfium::IndexInBounds(m_pTabstopContext->m_tabstops, iTabstopsIndex))
@@ -963,7 +969,7 @@ void CXFA_TextLayout::DoTabstops(CFX_CSSComputedStyle* pStyle,
     m_pTabstopContext->m_bHasTabstops = true;
     float fRight = 0;
     if (iPieces > 1) {
-      CXFA_TextPiece* p = pPieceLine->m_textPieces[iPieces - 2].get();
+      const TextPiece* p = pPieceLine->m_textPieces[iPieces - 2].get();
       fRight = p->rtPiece.right();
     }
     m_pTabstopContext->m_fTabWidth =
@@ -1005,8 +1011,8 @@ void CXFA_TextLayout::AppendTextLine(CFX_BreakType dwStatus,
 
   RetainPtr<CFX_CSSComputedStyle> pStyle;
   if (bSavePieces) {
-    auto pNew = std::make_unique<CXFA_PieceLine>();
-    CXFA_PieceLine* pPieceLine = pNew.get();
+    auto pNew = std::make_unique<PieceLine>();
+    PieceLine* pPieceLine = pNew.get();
     m_pieceLines.push_back(std::move(pNew));
     if (m_pTabstopContext)
       m_pTabstopContext->Reset();
@@ -1020,7 +1026,7 @@ void CXFA_TextLayout::AppendTextLine(CFX_BreakType dwStatus,
         pStyle = pUserData->m_pStyle;
       float fVerScale = pPiece->m_iVerticalScale / 100.0f;
 
-      auto pTP = std::make_unique<CXFA_TextPiece>();
+      auto pTP = std::make_unique<TextPiece>();
       pTP->iChars = pPiece->m_iCharCount;
       pTP->szText = pPiece->GetString();
       pTP->Widths = pPiece->GetWidths();
@@ -1133,11 +1139,11 @@ void CXFA_TextLayout::AppendTextLine(CFX_BreakType dwStatus,
 }
 
 void CXFA_TextLayout::RenderString(CFX_RenderDevice* pDevice,
-                                   CXFA_PieceLine* pPieceLine,
+                                   PieceLine* pPieceLine,
                                    size_t szPiece,
                                    std::vector<TextCharPos>* pCharPos,
                                    const CFX_Matrix& mtDoc2Device) {
-  const CXFA_TextPiece* pPiece = pPieceLine->m_textPieces[szPiece].get();
+  const TextPiece* pPiece = pPieceLine->m_textPieces[szPiece].get();
   size_t szCount = GetDisplayPos(pPiece, pCharPos);
   if (szCount > 0) {
     auto span = pdfium::make_span(pCharPos->data(), szCount);
@@ -1148,11 +1154,11 @@ void CXFA_TextLayout::RenderString(CFX_RenderDevice* pDevice,
 }
 
 void CXFA_TextLayout::RenderPath(CFX_RenderDevice* pDevice,
-                                 CXFA_PieceLine* pPieceLine,
+                                 const PieceLine* pPieceLine,
                                  size_t szPiece,
                                  std::vector<TextCharPos>* pCharPos,
                                  const CFX_Matrix& mtDoc2Device) {
-  CXFA_TextPiece* pPiece = pPieceLine->m_textPieces[szPiece].get();
+  const TextPiece* pPiece = pPieceLine->m_textPieces[szPiece].get();
   bool bNoUnderline = pPiece->iUnderline < 1 || pPiece->iUnderline > 2;
   bool bNoLineThrough = pPiece->iLineThrough < 1 || pPiece->iLineThrough > 2;
   if (bNoUnderline && bNoLineThrough)
@@ -1271,7 +1277,7 @@ void CXFA_TextLayout::RenderPath(CFX_RenderDevice* pDevice,
                     CFX_FillRenderOptions());
 }
 
-size_t CXFA_TextLayout::GetDisplayPos(const CXFA_TextPiece* pPiece,
+size_t CXFA_TextLayout::GetDisplayPos(const TextPiece* pPiece,
                                       std::vector<TextCharPos>* pCharPos) {
   if (!pPiece || pPiece->iChars < 1)
     return 0;
