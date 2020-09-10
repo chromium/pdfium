@@ -223,6 +223,7 @@ if (pdf_enable_v8) {
         "gc/heap.cpp",
         "gc/heap.h",
       ]
+      configs += [ "../:pdfium_core_config" ]
       deps = [
         "../core/fxcrt",
         "//v8:v8_libplatform",
