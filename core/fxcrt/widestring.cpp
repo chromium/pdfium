@@ -410,7 +410,7 @@ WideString& WideString::operator=(const WideString& that) {
   return *this;
 }
 
-WideString& WideString::operator=(WideString&& that) {
+WideString& WideString::operator=(WideString&& that) noexcept {
   if (m_pData != that.m_pData)
     m_pData = std::move(that.m_pData);
 

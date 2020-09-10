@@ -36,7 +36,7 @@ class CFX_PathData {
  public:
   CFX_PathData();
   CFX_PathData(const CFX_PathData& src);
-  CFX_PathData(CFX_PathData&& src);
+  CFX_PathData(CFX_PathData&& src) noexcept;
   ~CFX_PathData();
 
   void Clear();

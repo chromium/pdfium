@@ -28,11 +28,11 @@ class CFX_GraphStateData {
 
   CFX_GraphStateData();
   CFX_GraphStateData(const CFX_GraphStateData& src);
-  CFX_GraphStateData(CFX_GraphStateData&& src);
+  CFX_GraphStateData(CFX_GraphStateData&& src) noexcept;
   ~CFX_GraphStateData();
 
   CFX_GraphStateData& operator=(const CFX_GraphStateData& that);
-  CFX_GraphStateData& operator=(CFX_GraphStateData&& that);
+  CFX_GraphStateData& operator=(CFX_GraphStateData&& that) noexcept;
 
   LineCap m_LineCap = LineCapButt;
   LineJoin m_LineJoin = LineJoinMiter;

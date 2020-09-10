@@ -10,15 +10,16 @@ CFX_GraphStateData::CFX_GraphStateData() = default;
 
 CFX_GraphStateData::CFX_GraphStateData(const CFX_GraphStateData& src) = default;
 
-CFX_GraphStateData::CFX_GraphStateData(CFX_GraphStateData&& src) = default;
+CFX_GraphStateData::CFX_GraphStateData(CFX_GraphStateData&& src) noexcept =
+    default;
 
 CFX_GraphStateData::~CFX_GraphStateData() = default;
 
 CFX_GraphStateData& CFX_GraphStateData::operator=(
     const CFX_GraphStateData& that) = default;
 
-CFX_GraphStateData& CFX_GraphStateData::operator=(CFX_GraphStateData&& that) =
-    default;
+CFX_GraphStateData& CFX_GraphStateData::operator=(
+    CFX_GraphStateData&& that) noexcept = default;
 
 CFX_RetainableGraphStateData::CFX_RetainableGraphStateData() = default;
 

@@ -134,7 +134,7 @@ class ByteString {
   ByteString& operator=(const ByteString& that);
 
   // Move-assign a ByteString. After assignment, |that| is empty.
-  ByteString& operator=(ByteString&& that);
+  ByteString& operator=(ByteString&& that) noexcept;
 
   ByteString& operator+=(char ch);
   ByteString& operator+=(const char* str);

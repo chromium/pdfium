@@ -117,7 +117,7 @@ class WideString {
   WideString& operator=(const WideString& that);
 
   // Move-assign a WideString. After assignment, |that| is empty.
-  WideString& operator=(WideString&& that);
+  WideString& operator=(WideString&& that) noexcept;
 
   WideString& operator+=(const wchar_t* str);
   WideString& operator+=(wchar_t ch);

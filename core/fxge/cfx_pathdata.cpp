@@ -189,7 +189,7 @@ CFX_PathData::CFX_PathData() = default;
 
 CFX_PathData::CFX_PathData(const CFX_PathData& src) = default;
 
-CFX_PathData::CFX_PathData(CFX_PathData&& src) = default;
+CFX_PathData::CFX_PathData(CFX_PathData&& src) noexcept = default;
 
 CFX_PathData::~CFX_PathData() = default;
 

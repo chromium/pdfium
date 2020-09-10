@@ -57,7 +57,7 @@ class CXFA_EventParam {
   ~CXFA_EventParam();
 
   CXFA_EventParam& operator=(const CXFA_EventParam& other);
-  CXFA_EventParam& operator=(CXFA_EventParam&& other);
+  CXFA_EventParam& operator=(CXFA_EventParam&& other) noexcept;
 
   WideString GetNewText() const;
 

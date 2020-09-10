@@ -215,7 +215,7 @@ ByteString& ByteString::operator=(const ByteString& that) {
   return *this;
 }
 
-ByteString& ByteString::operator=(ByteString&& that) {
+ByteString& ByteString::operator=(ByteString&& that) noexcept {
   if (m_pData != that.m_pData)
     m_pData = std::move(that.m_pData);
 

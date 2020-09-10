@@ -63,7 +63,7 @@ class MaybeOwned {
   }
 
   MaybeOwned& operator=(const MaybeOwned& that) = delete;
-  MaybeOwned& operator=(MaybeOwned&& that) {
+  MaybeOwned& operator=(MaybeOwned&& that) noexcept {
     m_pObj = that.m_pObj;
     m_pOwnedObj = std::move(that.m_pOwnedObj);
     that.m_pObj = nullptr;
