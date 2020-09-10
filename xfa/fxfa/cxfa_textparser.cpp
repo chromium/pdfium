@@ -55,8 +55,7 @@ WideString GetLowerCaseElementAttributeOrDefault(
 
 }  // namespace
 
-CXFA_TextParser::CXFA_TextParser()
-    : m_bParsed(false), m_cssInitialized(false) {}
+CXFA_TextParser::CXFA_TextParser() = default;
 
 CXFA_TextParser::~CXFA_TextParser() = default;
 
@@ -623,7 +622,6 @@ bool CXFA_TextParser::GetTabstops(const CFX_CSSComputedStyle* pStyle,
   return true;
 }
 
-CXFA_TextParser::TagProvider::TagProvider()
-    : m_bTagAvailable(false), m_bContent(false) {}
+CXFA_TextParser::TagProvider::TagProvider() = default;
 
 CXFA_TextParser::TagProvider::~TagProvider() = default;

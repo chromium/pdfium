@@ -15,22 +15,24 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "core/fxge/fx_dib.h"
 #include "fxjs/gc/heap.h"
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/member.h"
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fgas/layout/cfx_char.h"
 #include "xfa/fgas/layout/cfx_textpiece.h"
-#include "xfa/fxfa/cxfa_textparser.h"
+#include "xfa/fxfa/fxfa_basic.h"
 
 class CFDE_RenderDevice;
-class CFX_LinkUserData;
 class CFX_CSSComputedStyle;
+class CFX_LinkUserData;
 class CFX_RTFBreak;
 class CFX_RenderDevice;
 class CFX_XMLNode;
-class CFX_LinkUserData;
+class CXFA_FFDoc;
 class CXFA_Node;
+class CXFA_TextParser;
 class CXFA_TextProvider;
 class CXFA_TextTabstopsContext;
 class TextCharPos;
@@ -180,9 +182,9 @@ class CXFA_TextLayout final : public cppgc::GarbageCollected<CXFA_TextLayout> {
   cppgc::Member<CXFA_FFDoc> const m_pDoc;
   cppgc::Member<CXFA_TextProvider> const m_pTextProvider;
   cppgc::Member<CXFA_Node> m_pTextDataNode;
+  cppgc::Member<CXFA_TextParser> m_pTextParser;
   std::unique_ptr<CFX_RTFBreak> m_pBreak;
   std::unique_ptr<LoaderContext> m_pLoader;
-  CXFA_TextParser m_textParser;
   std::vector<std::unique_ptr<PieceLine>> m_pieceLines;
   std::unique_ptr<CXFA_TextTabstopsContext> m_pTabstopContext;
 };
