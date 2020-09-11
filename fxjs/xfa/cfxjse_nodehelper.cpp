@@ -6,8 +6,6 @@
 
 #include "fxjs/xfa/cfxjse_nodehelper.h"
 
-#include <utility>
-
 #include "core/fxcrt/fx_extension.h"
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cjx_object.h"

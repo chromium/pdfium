@@ -6,8 +6,6 @@
 
 #include "core/fpdfapi/font/cpdf_fontencoding.h"
 
-#include <utility>
-
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_name.h"

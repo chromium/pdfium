@@ -6,8 +6,6 @@
 
 #include "core/fpdfapi/font/cpdf_type1font.h"
 
-#include <algorithm>
-
 #include "build/build_config.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fxge/cfx_fontmapper.h"

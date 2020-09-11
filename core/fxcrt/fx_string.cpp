@@ -6,8 +6,6 @@
 
 #include "core/fxcrt/fx_string.h"
 
-#include <limits>
-
 #include "core/fxcrt/cfx_utf8decoder.h"
 #include "core/fxcrt/cfx_utf8encoder.h"
 #include "core/fxcrt/fx_extension.h"

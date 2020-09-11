@@ -6,9 +6,6 @@
 
 #include "xfa/fwl/cfwl_combobox.h"
 
-#include <algorithm>
-#include <utility>
-
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fde/cfde_texteditengine.h"
 #include "xfa/fde/cfde_textout.h"

@@ -6,8 +6,6 @@
 
 #include "xfa/fxfa/cxfa_ffpushbutton.h"
 
-#include <utility>
-
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fwl/cfwl_pushbutton.h"

@@ -7,8 +7,6 @@
 #ifndef XFA_FWL_CFWL_MESSAGEKILLFOCUS_H_
 #define XFA_FWL_CFWL_MESSAGEKILLFOCUS_H_
 
-#include <memory>
-
 #include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fwl/cfwl_message.h"
 

@@ -7,8 +7,6 @@
 #ifndef XFA_FWL_CFWL_APP_H_
 #define XFA_FWL_CFWL_APP_H_
 
-#include <memory>
-
 #include "core/fxcrt/timerhandler_iface.h"
 #include "fxjs/gc/heap.h"
 #include "v8/include/cppgc/garbage-collected.h"

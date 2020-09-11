@@ -7,8 +7,6 @@
 #ifndef CORE_FPDFAPI_PARSER_CPDF_NULL_H_
 #define CORE_FPDFAPI_PARSER_CPDF_NULL_H_
 
-#include <memory>
-
 #include "core/fpdfapi/parser/cpdf_object.h"
 
 class CPDF_Null final : public CPDF_Object {

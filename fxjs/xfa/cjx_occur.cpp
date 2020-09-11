@@ -6,8 +6,6 @@
 
 #include "fxjs/xfa/cjx_occur.h"
 
-#include <algorithm>
-
 #include "fxjs/xfa/cfxjse_value.h"
 #include "xfa/fxfa/parser/cxfa_occur.h"
 

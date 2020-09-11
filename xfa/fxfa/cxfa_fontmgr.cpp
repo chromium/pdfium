@@ -6,10 +6,6 @@
 
 #include "xfa/fxfa/cxfa_fontmgr.h"
 
-#include <algorithm>
-#include <memory>
-#include <utility>
-
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"

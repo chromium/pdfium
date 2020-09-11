@@ -6,10 +6,6 @@
 
 #include "xfa/fxfa/cxfa_ffapp.h"
 
-#include <algorithm>
-#include <memory>
-#include <utility>
-
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"

@@ -6,8 +6,6 @@
 
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 
-#include <algorithm>
-
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/parser/cpdf_array.h"

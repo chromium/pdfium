@@ -7,8 +7,6 @@
 #ifndef CORE_FPDFAPI_PARSER_CPDF_STRING_H_
 #define CORE_FPDFAPI_PARSER_CPDF_STRING_H_
 
-#include <memory>
-
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"

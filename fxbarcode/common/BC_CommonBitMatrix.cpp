@@ -22,9 +22,6 @@
 
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 
-#include <algorithm>
-#include <iterator>
-
 #include "third_party/base/stl_util.h"
 
 CBC_CommonBitMatrix::CBC_CommonBitMatrix() {}

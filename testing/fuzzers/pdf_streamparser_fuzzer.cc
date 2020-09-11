@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 #include <cstdint>
-#include <memory>
 
 #include "core/fpdfapi/page/cpdf_streamparser.h"
 #include "core/fpdfapi/parser/cpdf_object.h"

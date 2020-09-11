@@ -6,8 +6,6 @@
 
 #include "xfa/fxfa/layout/cxfa_viewlayoutitem.h"
 
-#include <utility>
-
 #include "fxjs/xfa/cjx_object.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/layout/cxfa_layoutprocessor.h"

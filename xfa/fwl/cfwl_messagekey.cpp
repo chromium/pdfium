@@ -6,8 +6,6 @@
 
 #include "xfa/fwl/cfwl_messagekey.h"
 
-#include <memory>
-
 CFWL_MessageKey::CFWL_MessageKey(CFWL_Widget* pDstTarget,
                                  Type cmd,
                                  uint32_t flags,

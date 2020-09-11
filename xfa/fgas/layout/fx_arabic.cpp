@@ -6,8 +6,6 @@
 
 #include "xfa/fgas/layout/fx_arabic.h"
 
-#include <algorithm>
-
 #include "core/fxcrt/fx_unicode.h"
 #include "third_party/base/stl_util.h"
 

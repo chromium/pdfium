@@ -4,9 +4,6 @@
 
 #include "testing/xfa_test_environment.h"
 
-#include <memory>
-#include <utility>
-
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/systemfontinfo_iface.h"

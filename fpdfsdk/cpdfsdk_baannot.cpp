@@ -6,9 +6,6 @@
 
 #include "fpdfsdk/cpdfsdk_baannot.h"
 
-#include <algorithm>
-#include <utility>
-
 #include "constants/annotation_common.h"
 #include "constants/annotation_flags.h"
 #include "constants/form_fields.h"

@@ -5,8 +5,6 @@
 #ifndef TESTING_JS_EMBEDDER_TEST_H_
 #define TESTING_JS_EMBEDDER_TEST_H_
 
-#include <memory>
-
 #include "testing/embedder_test.h"
 
 namespace v8 {

@@ -6,8 +6,6 @@
 
 #include "xfa/fwl/cfwl_pushbutton.h"
 
-#include <utility>
-
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fwl/cfwl_event.h"
 #include "xfa/fwl/cfwl_eventmouse.h"

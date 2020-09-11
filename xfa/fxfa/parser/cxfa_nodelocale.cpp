@@ -6,8 +6,6 @@
 
 #include "xfa/fxfa/parser/cxfa_nodelocale.h"
 
-#include <utility>
-
 #include "fxjs/xfa/cjx_object.h"
 #include "xfa/fxfa/parser/cxfa_calendarsymbols.h"
 #include "xfa/fxfa/parser/cxfa_datetimesymbols.h"

@@ -6,8 +6,6 @@
 
 #include "xfa/fwl/cfwl_barcode.h"
 
-#include <utility>
-
 #include "fxbarcode/cfx_barcode.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fwl/cfwl_notedriver.h"

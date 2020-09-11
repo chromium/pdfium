@@ -7,8 +7,6 @@
 #ifndef XFA_FXFA_FXFA_H_
 #define XFA_FXFA_FXFA_H_
 
-#include <memory>
-
 #include "core/fxcrt/cfx_timer.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"

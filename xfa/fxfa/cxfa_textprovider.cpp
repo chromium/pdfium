@@ -6,8 +6,6 @@
 
 #include "xfa/fxfa/cxfa_textprovider.h"
 
-#include <algorithm>
-
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "fxjs/xfa/cfxjse_engine.h"

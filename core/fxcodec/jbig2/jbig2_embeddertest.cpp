@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include <memory>
-
 #include "public/cpp/fpdf_scopers.h"
 #include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"

@@ -6,8 +6,6 @@
 
 #include "xfa/fwl/cfwl_widgetmgr.h"
 
-#include <utility>
-
 #include "build/build_config.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_message.h"

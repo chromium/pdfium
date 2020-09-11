@@ -6,9 +6,6 @@
 
 #include "core/fxge/cfx_fontcache.h"
 
-#include <memory>
-#include <utility>
-
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_glyphcache.h"
 #include "core/fxge/fx_font.h"

@@ -7,8 +7,6 @@
 #ifndef XFA_FXFA_CXFA_FFFIELD_H_
 #define XFA_FXFA_CXFA_FFFIELD_H_
 
-#include <memory>
-
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/ifwl_widgetdelegate.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"

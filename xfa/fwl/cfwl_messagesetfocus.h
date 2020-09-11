@@ -7,8 +7,6 @@
 #ifndef XFA_FWL_CFWL_MESSAGESETFOCUS_H_
 #define XFA_FWL_CFWL_MESSAGESETFOCUS_H_
 
-#include <memory>
-
 #include "xfa/fwl/cfwl_message.h"
 
 class CFWL_MessageSetFocus final : public CFWL_Message {

@@ -4,8 +4,6 @@
 
 #include "core/fxcrt/cfx_seekablestreamproxy.h"
 
-#include <memory>
-
 #include "core/fxcrt/cfx_readonlymemorystream.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "testing/gtest/include/gtest/gtest.h"

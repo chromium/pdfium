@@ -6,8 +6,6 @@
 
 #include "xfa/fxfa/cxfa_ffdatetimeedit.h"
 
-#include <utility>
-
 #include "xfa/fwl/cfwl_datetimepicker.h"
 #include "xfa/fwl/cfwl_eventselectchanged.h"
 #include "xfa/fwl/cfwl_notedriver.h"

@@ -7,8 +7,6 @@
 #ifndef XFA_FWL_CFWL_MESSAGEKEY_H_
 #define XFA_FWL_CFWL_MESSAGEKEY_H_
 
-#include <memory>
-
 #include "xfa/fwl/cfwl_message.h"
 
 class CFWL_MessageKey final : public CFWL_Message {

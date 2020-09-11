@@ -6,9 +6,6 @@
 
 #include "xfa/fxfa/cxfa_ffimageedit.h"
 
-#include <memory>
-#include <utility>
-
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fwl/cfwl_app.h"

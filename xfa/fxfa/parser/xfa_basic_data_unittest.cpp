@@ -4,8 +4,6 @@
 
 #include "xfa/fxfa/parser/xfa_basic_data.h"
 
-#include <utility>
-
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(XFABasicDataTest, GetPacketByName) {

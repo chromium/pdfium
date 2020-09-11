@@ -4,9 +4,6 @@
 
 #include "core/fxcodec/jbig2/JBig2_BitStream.h"
 
-#include <memory>
-#include <utility>
-
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(JBig2_BitStream, ReadNBits) {

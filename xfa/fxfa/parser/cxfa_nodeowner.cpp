@@ -6,8 +6,6 @@
 
 #include "xfa/fxfa/parser/cxfa_nodeowner.h"
 
-#include <utility>
-
 #include "fxjs/gc/container_trace.h"
 #include "xfa/fxfa/parser/cxfa_list.h"
 #include "xfa/fxfa/parser/cxfa_node.h"

@@ -6,8 +6,6 @@
 
 #include "core/fxcrt/css/cfx_csssyntaxparser.h"
 
-#include <algorithm>
-
 #include "core/fxcrt/css/cfx_cssdata.h"
 #include "core/fxcrt/css/cfx_cssdeclaration.h"
 #include "core/fxcrt/fx_codepage.h"

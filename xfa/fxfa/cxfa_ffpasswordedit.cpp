@@ -6,8 +6,6 @@
 
 #include "xfa/fxfa/cxfa_ffpasswordedit.h"
 
-#include <utility>
-
 #include "xfa/fwl/cfwl_edit.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"

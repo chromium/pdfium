@@ -7,8 +7,6 @@
 #ifndef XFA_FWL_CFWL_MESSAGE_H_
 #define XFA_FWL_CFWL_MESSAGE_H_
 
-#include <memory>
-
 #include "core/fxcrt/fx_system.h"
 #include "v8/include/cppgc/macros.h"
 

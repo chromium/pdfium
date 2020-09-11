@@ -7,8 +7,6 @@
 #ifndef CORE_FPDFAPI_FONT_CFX_STOCKFONTARRAY_H_
 #define CORE_FPDFAPI_FONT_CFX_STOCKFONTARRAY_H_
 
-#include <memory>
-
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_fontmapper.h"
 

@@ -6,8 +6,6 @@
 
 #include "core/fxcrt/xml/cfx_xmlinstruction.h"
 
-#include <utility>
-
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/xml/cfx_xmldocument.h"

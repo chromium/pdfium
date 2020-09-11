@@ -6,8 +6,6 @@
 
 #include "xfa/fwl/cfwl_messagekillfocus.h"
 
-#include <memory>
-
 CFWL_MessageKillFocus::CFWL_MessageKillFocus(CFWL_Widget* pSrcTarget)
     : CFWL_MessageKillFocus(pSrcTarget, nullptr) {}
 

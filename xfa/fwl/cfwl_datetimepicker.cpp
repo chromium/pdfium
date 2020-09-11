@@ -6,8 +6,6 @@
 
 #include "xfa/fwl/cfwl_datetimepicker.h"
 
-#include <utility>
-
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_event.h"
 #include "xfa/fwl/cfwl_eventselectchanged.h"

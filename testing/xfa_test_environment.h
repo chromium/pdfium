@@ -5,8 +5,6 @@
 #ifndef TESTING_XFA_UNIT_TEST_SUPPORT_H_
 #define TESTING_XFA_UNIT_TEST_SUPPORT_H_
 
-#include <memory>
-
 #include "testing/gtest/include/gtest/gtest.h"
 
 #ifndef PDF_ENABLE_XFA

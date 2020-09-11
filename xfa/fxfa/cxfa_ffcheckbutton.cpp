@@ -6,9 +6,6 @@
 
 #include "xfa/fxfa/cxfa_ffcheckbutton.h"
 
-#include <memory>
-#include <utility>
-
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fwl/cfwl_checkbox.h"
 #include "xfa/fwl/cfwl_messagemouse.h"

@@ -7,8 +7,6 @@
 #ifndef XFA_FWL_CFWL_MESSAGEMOUSE_H_
 #define XFA_FWL_CFWL_MESSAGEMOUSE_H_
 
-#include <memory>
-
 #include "core/fxcrt/fx_coordinates.h"
 #include "xfa/fwl/cfwl_message.h"
 

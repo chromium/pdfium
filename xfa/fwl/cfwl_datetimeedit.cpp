@@ -6,8 +6,6 @@
 
 #include "xfa/fwl/cfwl_datetimeedit.h"
 
-#include <utility>
-
 #include "xfa/fwl/cfwl_datetimepicker.h"
 #include "xfa/fwl/cfwl_messagemouse.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"

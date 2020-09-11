@@ -4,9 +4,6 @@
 
 #include "core/fpdfapi/parser/cpdf_cross_ref_avail.h"
 
-#include <algorithm>
-#include <memory>
-
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_read_validator.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"

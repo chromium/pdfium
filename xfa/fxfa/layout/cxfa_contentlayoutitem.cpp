@@ -6,8 +6,6 @@
 
 #include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
 
-#include <utility>
-
 #include "fxjs/xfa/cjx_object.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/parser/cxfa_margin.h"

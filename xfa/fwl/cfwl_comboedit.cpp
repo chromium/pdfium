@@ -6,8 +6,6 @@
 
 #include "xfa/fwl/cfwl_comboedit.h"
 
-#include <utility>
-
 #include "xfa/fde/cfde_texteditengine.h"
 #include "xfa/fwl/cfwl_combobox.h"
 #include "xfa/fwl/cfwl_messagemouse.h"

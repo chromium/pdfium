@@ -6,8 +6,6 @@
 
 #include "xfa/fwl/cfwl_combolist.h"
 
-#include <utility>
-
 #include "xfa/fwl/cfwl_combobox.h"
 #include "xfa/fwl/cfwl_comboedit.h"
 #include "xfa/fwl/cfwl_listbox.h"

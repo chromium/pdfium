@@ -6,8 +6,6 @@
 
 #include "fpdfsdk/cpdfsdk_annot.h"
 
-#include <algorithm>
-
 #include "fpdfsdk/cpdfsdk_pageview.h"
 
 CPDFSDK_Annot::CPDFSDK_Annot(CPDFSDK_PageView* pPageView)
