@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef TESTING_XFA_UNIT_TEST_SUPPORT_H_
-#define TESTING_XFA_UNIT_TEST_SUPPORT_H_
+#ifndef TESTING_XFA_TEST_ENVIRONMENT_H_
+#define TESTING_XFA_TEST_ENVIRONMENT_H_
 
 #include "testing/gtest/include/gtest/gtest.h"
 
@@ -21,4 +21,4 @@ class XFATestEnvironment : public testing::Environment {
   void TearDown() override;
 };
 
-#endif  // TESTING_XFA_UNIT_TEST_SUPPORT_H_
+#endif  // TESTING_XFA_TEST_ENVIRONMENT_H_
