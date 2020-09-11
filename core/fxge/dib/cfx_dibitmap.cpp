@@ -20,7 +20,6 @@
 
 namespace {
 
-constexpr size_t kMaxOOMLimit = 12000000;
 constexpr int8_t kChannelOffset[] = {0, 2, 1, 0, 0, 1, 2, 3, 3};
 
 }  // namespace
@@ -61,16 +60,10 @@ bool CFX_DIBitmap::Create(int width,
     if (!safe_buffer_size.IsValid())
       return false;
 
-    size_t buffer_size = safe_buffer_size.ValueOrDie();
-    if (buffer_size >= kMaxOOMLimit) {
-      m_pBuffer = std::unique_ptr<uint8_t, FxFreeDeleter>(
-          FX_TryAlloc(uint8_t, buffer_size));
-      if (!m_pBuffer)
-        return false;
-    } else {
-      m_pBuffer = std::unique_ptr<uint8_t, FxFreeDeleter>(
-          FX_Alloc(uint8_t, buffer_size));
-    }
+    m_pBuffer = std::unique_ptr<uint8_t, FxFreeDeleter>(
+        FX_TryAlloc(uint8_t, safe_buffer_size.ValueOrDie()));
+    if (!m_pBuffer)
+      return false;
   }
   m_Width = width;
   m_Height = height;
