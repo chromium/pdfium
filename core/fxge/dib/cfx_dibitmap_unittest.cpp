@@ -68,8 +68,8 @@ TEST(CFX_DIBitmap, CalculatePitchAndSizeBad) {
       CFX_DIBitmap::CalculatePitchAndSize(4194304, 1024, FXDIB_8bppRgb, 0));
 
   // Overflow cases with provided pitch.
-  EXPECT_FALSE(CFX_DIBitmap::CalculatePitchAndSize(1073741824, 1, FXDIB_Argb,
-                                                   1073741824));
+  EXPECT_FALSE(CFX_DIBitmap::CalculatePitchAndSize(1073741825, 1, FXDIB_Argb,
+                                                   1073741825));
   EXPECT_FALSE(
       CFX_DIBitmap::CalculatePitchAndSize(1048576, 1024, FXDIB_Argb, 4194304));
   EXPECT_FALSE(CFX_DIBitmap::CalculatePitchAndSize(4194304, 1024, FXDIB_8bppRgb,
@@ -79,12 +79,12 @@ TEST(CFX_DIBitmap, CalculatePitchAndSizeBad) {
 TEST(CFX_DIBitmap, CalculatePitchAndSizeBoundary) {
   // Test boundary condition for pitch overflow.
   Optional<CFX_DIBitmap::PitchAndSize> result =
-      CFX_DIBitmap::CalculatePitchAndSize(268435452, 4, FXDIB_8bppRgb, 0);
+      CFX_DIBitmap::CalculatePitchAndSize(268435456, 4, FXDIB_8bppRgb, 0);
   ASSERT_TRUE(result);
-  EXPECT_EQ(268435452u, result.value().pitch);
-  EXPECT_EQ(1073741808u, result.value().size);
+  EXPECT_EQ(268435456u, result.value().pitch);
+  EXPECT_EQ(1073741824u, result.value().size);
   EXPECT_FALSE(
-      CFX_DIBitmap::CalculatePitchAndSize(268435453, 4, FXDIB_8bppRgb, 0));
+      CFX_DIBitmap::CalculatePitchAndSize(268435457, 4, FXDIB_8bppRgb, 0));
 
   // Test boundary condition for size overflow.
   result = CFX_DIBitmap::CalculatePitchAndSize(17043520, 63, FXDIB_8bppRgb, 0);
