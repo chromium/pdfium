@@ -3200,10 +3200,10 @@ void CFXJSE_FormCalcContext::Eval(
     return;
   }
 
-  CFX_WideTextBuf wsJavaScriptBuf;
-  if (!CFXJSE_FormCalcContext::Translate(
-          WideString::FromUTF8(bsUtf8Script.AsStringView()).AsStringView(),
-          &wsJavaScriptBuf)) {
+  WideString wsCalcScript = WideString::FromUTF8(bsUtf8Script.AsStringView());
+  Optional<CFX_WideTextBuf> wsJavaScriptBuf =
+      CFXJSE_FormCalcContext::Translate(wsCalcScript.AsStringView());
+  if (!wsJavaScriptBuf.has_value()) {
     pContext->ThrowCompilerErrorException();
     return;
   }
@@ -3213,8 +3213,8 @@ void CFXJSE_FormCalcContext::Eval(
 
   auto returnValue = std::make_unique<CFXJSE_Value>(pIsolate);
   pNewContext->ExecuteScript(
-      FX_UTF8Encode(wsJavaScriptBuf.AsStringView()).c_str(), returnValue.get(),
-      nullptr);
+      FX_UTF8Encode(wsJavaScriptBuf.value().AsStringView()).c_str(),
+      returnValue.get(), nullptr);
 
   info.GetReturnValue().Set(returnValue->DirectGetValue());
 }
@@ -5010,16 +5010,16 @@ void CFXJSE_FormCalcContext::eval_translation(
     return;
   }
 
-  WideString wsScript = WideString::FromUTF8(bsArg.AsStringView());
-  CFX_WideTextBuf wsJavaScriptBuf;
-  if (!CFXJSE_FormCalcContext::Translate(wsScript.AsStringView(),
-                                         &wsJavaScriptBuf)) {
+  WideString wsCalcScript = WideString::FromUTF8(bsArg.AsStringView());
+  Optional<CFX_WideTextBuf> wsJavaScriptBuf =
+      CFXJSE_FormCalcContext::Translate(wsCalcScript.AsStringView());
+  if (!wsJavaScriptBuf.has_value()) {
     pContext->ThrowCompilerErrorException();
     return;
   }
   info.GetReturnValue().Set(fxv8::NewStringHelper(
       info.GetIsolate(),
-      FX_UTF8Encode(wsJavaScriptBuf.AsStringView()).AsStringView()));
+      FX_UTF8Encode(wsJavaScriptBuf.value().AsStringView()).AsStringView()));
 }
 
 // static
@@ -5648,23 +5648,25 @@ ByteString CFXJSE_FormCalcContext::ValueToUTF8String(CFXJSE_Value* arg) {
 }
 
 // static.
-bool CFXJSE_FormCalcContext::Translate(WideStringView wsFormcalc,
-                                       CFX_WideTextBuf* wsJavascript) {
-  if (wsFormcalc.IsEmpty()) {
-    wsJavascript->Clear();
-    return true;
-  }
+Optional<CFX_WideTextBuf> CFXJSE_FormCalcContext::Translate(
+    WideStringView wsFormcalc) {
+  if (wsFormcalc.IsEmpty())
+    return CFX_WideTextBuf();
 
   CXFA_FMParser parser(wsFormcalc);
   std::unique_ptr<CXFA_FMAST> ast = parser.Parse();
   if (!ast || parser.HasError())
-    return false;
+    return pdfium::nullopt;
 
   CXFA_FMToJavaScriptDepth::Reset();
-  if (!ast->ToJavaScript(wsJavascript))
-    return false;
+  Optional<CFX_WideTextBuf> wsJavaScript = ast->ToJavaScript();
+  if (!wsJavaScript.has_value())
+    return pdfium::nullopt;
 
-  return !CXFA_IsTooBig(wsJavascript);
+  if (CXFA_IsTooBig(wsJavaScript.value()))
+    return pdfium::nullopt;
+
+  return wsJavaScript;
 }
 
 CFXJSE_FormCalcContext::CFXJSE_FormCalcContext(v8::Isolate* pScriptIsolate,

@@ -11,13 +11,7 @@
 #include "fxjs/xfa/cfxjse_formcalc_context.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
-  FX_SAFE_SIZE_T safe_size = size;
-  if (!safe_size.IsValid())
-    return 0;
-
-  CFX_WideTextBuf js;
-  WideString input =
-      WideString::FromUTF8(ByteStringView(data, safe_size.ValueOrDie()));
-  CFXJSE_FormCalcContext::Translate(input.AsStringView(), &js);
+  WideString input = WideString::FromUTF8(ByteStringView(data, size));
+  CFXJSE_FormCalcContext::Translate(input.AsStringView());
   return 0;
 }

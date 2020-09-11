@@ -12,6 +12,7 @@
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/xfa/fxjse.h"
+#include "third_party/base/optional.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
 class CFXJSE_Context;
@@ -299,9 +300,7 @@ class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
   static double ExtractDouble(CFXJSE_HostObject* pThis,
                               CFXJSE_Value* src,
                               bool* ret);
-
-  static bool Translate(WideStringView wsFormcalc,
-                        CFX_WideTextBuf* wsJavascript);
+  static Optional<CFX_WideTextBuf> Translate(WideStringView wsFormcalc);
 
   void GlobalPropertyGetter(CFXJSE_Value* pValue);
 

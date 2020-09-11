@@ -139,12 +139,13 @@ bool CFXJSE_Engine::RunScript(CXFA_Script::Type eScriptType,
       m_FM2JSContext = std::make_unique<CFXJSE_FormCalcContext>(
           GetIsolate(), m_JsContext.get(), m_pDocument.Get());
     }
-    CFX_WideTextBuf wsJavaScript;
-    if (!CFXJSE_FormCalcContext::Translate(wsScript, &wsJavaScript)) {
+    Optional<CFX_WideTextBuf> wsJavaScript =
+        CFXJSE_FormCalcContext::Translate(wsScript);
+    if (!wsJavaScript.has_value()) {
       hRetValue->SetUndefined();
       return false;
     }
-    btScript = FX_UTF8Encode(wsJavaScript.AsStringView());
+    btScript = FX_UTF8Encode(wsJavaScript.value().AsStringView());
   } else {
     btScript = FX_UTF8Encode(wsScript);
   }

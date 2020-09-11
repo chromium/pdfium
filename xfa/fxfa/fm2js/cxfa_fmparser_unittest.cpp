@@ -15,10 +15,10 @@ TEST(CXFA_FMParserTest, Empty) {
   EXPECT_FALSE(parser->HasError());
 
   CXFA_FMToJavaScriptDepth::Reset();
-  CFX_WideTextBuf buf;
-  EXPECT_TRUE(ast->ToJavaScript(&buf));
+  Optional<CFX_WideTextBuf> buf = ast->ToJavaScript();
+  ASSERT_TRUE(buf.has_value());
   // TODO(dsinclair): This is a little weird .....
-  EXPECT_STREQ(L"// comments only", buf.MakeString().c_str());
+  EXPECT_STREQ(L"// comments only", buf.value().MakeString().c_str());
 }
 
 TEST(CXFA_FMParserTest, CommentOnlyIsError) {
@@ -30,9 +30,9 @@ TEST(CXFA_FMParserTest, CommentOnlyIsError) {
   // EXPECT_TRUE(parser->HasError());
 
   CXFA_FMToJavaScriptDepth::Reset();
-  CFX_WideTextBuf buf;
-  EXPECT_TRUE(ast->ToJavaScript(&buf));
-  EXPECT_STREQ(L"// comments only", buf.MakeString().c_str());
+  Optional<CFX_WideTextBuf> buf = ast->ToJavaScript();
+  ASSERT_TRUE(buf.has_value());
+  EXPECT_STREQ(L"// comments only", buf.value().MakeString().c_str());
 }
 
 TEST(CXFA_FMParserTest, CommentThenValue) {
@@ -59,9 +59,9 @@ return pfm_rt.get_val(pfm_ret);
   EXPECT_FALSE(parser->HasError());
 
   CXFA_FMToJavaScriptDepth::Reset();
-  CFX_WideTextBuf buf;
-  EXPECT_TRUE(ast->ToJavaScript(&buf));
-  EXPECT_STREQ(ret, buf.MakeString().c_str());
+  Optional<CFX_WideTextBuf> buf = ast->ToJavaScript();
+  ASSERT_TRUE(buf.has_value());
+  EXPECT_STREQ(ret, buf.value().MakeString().c_str());
 }
 
 TEST(CXFA_FMParserTest, Parse) {
@@ -128,9 +128,9 @@ return pfm_rt.get_val(pfm_ret);
   EXPECT_FALSE(parser->HasError());
 
   CXFA_FMToJavaScriptDepth::Reset();
-  CFX_WideTextBuf buf;
-  EXPECT_TRUE(ast->ToJavaScript(&buf));
-  EXPECT_EQ(ret, buf.AsStringView());
+  Optional<CFX_WideTextBuf> buf = ast->ToJavaScript();
+  ASSERT_TRUE(buf.has_value());
+  EXPECT_EQ(ret, buf.value().AsStringView());
 }
 
 TEST(CXFA_FMParserTest, MaxParseDepth) {
@@ -190,9 +190,9 @@ return pfm_rt.get_val(pfm_ret);
   EXPECT_FALSE(parser->HasError());
 
   CXFA_FMToJavaScriptDepth::Reset();
-  CFX_WideTextBuf buf;
-  EXPECT_TRUE(ast->ToJavaScript(&buf));
-  EXPECT_STREQ(ret, buf.MakeString().c_str());
+  Optional<CFX_WideTextBuf> buf = ast->ToJavaScript();
+  ASSERT_TRUE(buf.has_value());
+  EXPECT_STREQ(ret, buf.value().MakeString().c_str());
 }
 
 TEST(CXFA_FMParserTest, ParseFuncWithoutParams) {
@@ -228,9 +228,9 @@ return pfm_rt.get_val(pfm_ret);
   EXPECT_FALSE(parser->HasError());
 
   CXFA_FMToJavaScriptDepth::Reset();
-  CFX_WideTextBuf buf;
-  EXPECT_TRUE(ast->ToJavaScript(&buf));
-  EXPECT_STREQ(ret, buf.MakeString().c_str());
+  Optional<CFX_WideTextBuf> buf = ast->ToJavaScript();
+  ASSERT_TRUE(buf.has_value());
+  EXPECT_STREQ(ret, buf.value().MakeString().c_str());
 }
 
 TEST(CXFA_FMParserTest, ParseFuncWithBadParamsList) {
@@ -312,9 +312,9 @@ return pfm_rt.get_val(pfm_ret);
   EXPECT_FALSE(parser->HasError());
 
   CXFA_FMToJavaScriptDepth::Reset();
-  CFX_WideTextBuf buf;
-  EXPECT_TRUE(ast->ToJavaScript(&buf));
-  EXPECT_STREQ(ret, buf.MakeString().c_str());
+  Optional<CFX_WideTextBuf> buf = ast->ToJavaScript();
+  ASSERT_TRUE(buf.has_value());
+  EXPECT_STREQ(ret, buf.value().MakeString().c_str());
 }
 
 TEST(CXFA_FMParserTest, ParseCallBig) {
@@ -353,9 +353,9 @@ return pfm_rt.get_val(pfm_ret);
   EXPECT_FALSE(parser->HasError());
 
   CXFA_FMToJavaScriptDepth::Reset();
-  CFX_WideTextBuf buf;
-  EXPECT_TRUE(ast->ToJavaScript(&buf));
-  EXPECT_STREQ(ret, buf.MakeString().c_str());
+  Optional<CFX_WideTextBuf> buf = ast->ToJavaScript();
+  ASSERT_TRUE(buf.has_value());
+  EXPECT_STREQ(ret, buf.value().MakeString().c_str());
 }
 
 TEST(CXFA_FMParserTest, ParseVar) {
@@ -384,9 +384,9 @@ return pfm_rt.get_val(pfm_ret);
   EXPECT_FALSE(parser->HasError());
 
   CXFA_FMToJavaScriptDepth::Reset();
-  CFX_WideTextBuf buf;
-  EXPECT_TRUE(ast->ToJavaScript(&buf));
-  EXPECT_STREQ(ret, buf.MakeString().c_str());
+  Optional<CFX_WideTextBuf> buf = ast->ToJavaScript();
+  ASSERT_TRUE(buf.has_value());
+  EXPECT_STREQ(ret, buf.value().MakeString().c_str());
 }
 
 TEST(CXFA_FMParserTest, ParseFunctionCallNoArguments) {
@@ -416,9 +416,9 @@ return pfm_rt.get_val(pfm_ret);
   std::unique_ptr<CXFA_FMAST> ast = parser->Parse();
   EXPECT_FALSE(parser->HasError());
   CXFA_FMToJavaScriptDepth::Reset();
-  CFX_WideTextBuf buf;
-  EXPECT_TRUE(ast->ToJavaScript(&buf));
-  EXPECT_STREQ(ret, buf.MakeString().c_str());
+  Optional<CFX_WideTextBuf> buf = ast->ToJavaScript();
+  ASSERT_TRUE(buf.has_value());
+  EXPECT_STREQ(ret, buf.value().MakeString().c_str());
 }
 
 TEST(CXFA_FMParserTest, ParseFunctionCallSingleArgument) {
@@ -448,9 +448,9 @@ return pfm_rt.get_val(pfm_ret);
   std::unique_ptr<CXFA_FMAST> ast = parser->Parse();
   EXPECT_FALSE(parser->HasError());
   CXFA_FMToJavaScriptDepth::Reset();
-  CFX_WideTextBuf buf;
-  EXPECT_TRUE(ast->ToJavaScript(&buf));
-  EXPECT_STREQ(ret, buf.MakeString().c_str());
+  Optional<CFX_WideTextBuf> buf = ast->ToJavaScript();
+  ASSERT_TRUE(buf.has_value());
+  EXPECT_STREQ(ret, buf.value().MakeString().c_str());
 }
 
 TEST(CXFA_FMParserTest, ParseFunctionCallMultipleArguments) {
@@ -480,9 +480,9 @@ return pfm_rt.get_val(pfm_ret);
   std::unique_ptr<CXFA_FMAST> ast = parser->Parse();
   EXPECT_FALSE(parser->HasError());
   CXFA_FMToJavaScriptDepth::Reset();
-  CFX_WideTextBuf buf;
-  EXPECT_TRUE(ast->ToJavaScript(&buf));
-  EXPECT_STREQ(ret, buf.MakeString().c_str());
+  Optional<CFX_WideTextBuf> buf = ast->ToJavaScript();
+  ASSERT_TRUE(buf.has_value());
+  EXPECT_STREQ(ret, buf.value().MakeString().c_str());
 }
 
 TEST(CXFA_FMParserTest, ParseFunctionCallMissingCommas) {

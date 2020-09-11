@@ -333,6 +333,6 @@ class CXFA_FMMethodCallExpression final : public CXFA_FMChainableExpression {
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) override;
 };
 
-bool CXFA_IsTooBig(const CFX_WideTextBuf* js);
+bool CXFA_IsTooBig(const CFX_WideTextBuf& js);
 
 #endif  // XFA_FXFA_FM2JS_CXFA_FMSIMPLEEXPRESSION_H_
