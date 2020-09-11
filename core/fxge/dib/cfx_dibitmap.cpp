@@ -866,11 +866,12 @@ Optional<CFX_DIBitmap::PitchAndSize> CFX_DIBitmap::CalculatePitchAndSize(
     actual_pitch = safe_pitch.ValueOrDie();
   }
 
-  if ((1 << 30) / actual_pitch < static_cast<uint32_t>(height))
+  FX_SAFE_UINT32 safe_size = actual_pitch;
+  safe_size *= height;
+  if (!safe_size.IsValid())
     return pdfium::nullopt;
 
-  uint32_t size = actual_pitch * static_cast<uint32_t>(height);
-  return PitchAndSize{actual_pitch, size};
+  return PitchAndSize{actual_pitch, safe_size.ValueOrDie()};
 }
 
 bool CFX_DIBitmap::CompositeBitmap(int dest_left,
