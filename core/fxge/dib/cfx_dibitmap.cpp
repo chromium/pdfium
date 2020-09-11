@@ -6,8 +6,6 @@
 
 #include "core/fxge/dib/cfx_dibitmap.h"
 
-#include <limits.h>
-
 #include <limits>
 #include <memory>
 #include <utility>

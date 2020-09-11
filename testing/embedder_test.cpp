@@ -4,8 +4,6 @@
 
 #include "testing/embedder_test.h"
 
-#include <limits.h>
-
 #include <memory>
 #include <string>
 #include <utility>

@@ -6,8 +6,6 @@
 
 #include "core/fpdfapi/page/cpdf_devicecs.h"
 
-#include <limits.h>
-
 #include <algorithm>
 
 #include "core/fpdfapi/parser/cpdf_array.h"

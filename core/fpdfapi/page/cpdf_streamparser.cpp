@@ -6,8 +6,6 @@
 
 #include "core/fpdfapi/page/cpdf_streamparser.h"
 
-#include <limits.h>
-
 #include <algorithm>
 #include <memory>
 #include <sstream>
