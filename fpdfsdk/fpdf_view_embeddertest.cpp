@@ -1267,6 +1267,34 @@ TEST_F(FPDFViewEmbedderTest, RenderBug664284WithNoNativeText) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFViewEmbedderTest, RenderJpxLzwImageWithFlags) {
+  static const char kNormalChecksum[] = "4bcd56cae1ca2622403e8af07242e71a";
+  static const char kGrayscaleChecksum[] = "fe45ad56efe868ba82285fa5ffedc0cb";
+
+  ASSERT_TRUE(OpenDocument("jpx_lzw.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  TestRenderPageBitmapWithFlags(page, 0, kNormalChecksum);
+  TestRenderPageBitmapWithFlags(page, FPDF_ANNOT, kNormalChecksum);
+  TestRenderPageBitmapWithFlags(page, FPDF_LCD_TEXT, kNormalChecksum);
+  TestRenderPageBitmapWithFlags(page, FPDF_NO_NATIVETEXT, kNormalChecksum);
+  TestRenderPageBitmapWithFlags(page, FPDF_GRAYSCALE, kGrayscaleChecksum);
+  TestRenderPageBitmapWithFlags(page, FPDF_RENDER_LIMITEDIMAGECACHE,
+                                kNormalChecksum);
+  TestRenderPageBitmapWithFlags(page, FPDF_RENDER_FORCEHALFTONE,
+                                kNormalChecksum);
+  TestRenderPageBitmapWithFlags(page, FPDF_PRINTING, kNormalChecksum);
+  TestRenderPageBitmapWithFlags(page, FPDF_RENDER_NO_SMOOTHTEXT,
+                                kNormalChecksum);
+  TestRenderPageBitmapWithFlags(page, FPDF_RENDER_NO_SMOOTHIMAGE,
+                                kNormalChecksum);
+  TestRenderPageBitmapWithFlags(page, FPDF_RENDER_NO_SMOOTHPATH,
+                                kNormalChecksum);
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFViewEmbedderTest, RenderManyRectanglesWithFlags) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   static const char kGrayscaleMD5[] = "b596ac8bbe64e7bff31888ab05e4dcf4";
