@@ -129,7 +129,7 @@ class CFX_DIBitmap : public CFX_DIBBase {
 
   MaybeOwned<uint8_t, FxFreeDeleter> m_pBuffer;
 #if defined(_SKIA_SUPPORT_PATHS_)
-  Format m_nFormat;
+  Format m_nFormat = Format::kCleared;
 #endif
 
  private:
