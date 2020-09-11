@@ -38,27 +38,31 @@ TEST_F(FPDFFlattenEmbedderTest, FlatPrint) {
   UnloadPage(page);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
+TEST_F(FPDFFlattenEmbedderTest, BUG_861842) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_BUG_861842 DISABLED_BUG_861842
-#else
-#define MAYBE_BUG_861842 BUG_861842
-#endif
-TEST_F(FPDFFlattenEmbedderTest, MAYBE_BUG_861842) {
 #if defined(OS_WIN)
-  constexpr char kCheckboxHash[] = "95fba3cb7bce7e0d3c94279f60984e17";
+  constexpr char kCheckboxChecksum[] = "ec7d1600d179aca614f2231c1f77ccb9";
 #elif defined(OS_APPLE)
-  constexpr char kCheckboxHash[] = "6aafcb2d98da222964bcdbf5aa1f4f1f";
+  constexpr char kCheckboxChecksum[] = "c7c687f93fb34a4174bdae33535e0627";
 #else
-  constexpr char kCheckboxHash[] = "594265790b81df2d93120d33b72a6ada";
+  constexpr char kCheckboxChecksum[] = "b8aecddfece463096d51596537a20b61";
 #endif
+#else
+#if defined(OS_WIN)
+  constexpr char kCheckboxChecksum[] = "95fba3cb7bce7e0d3c94279f60984e17";
+#elif defined(OS_APPLE)
+  constexpr char kCheckboxChecksum[] = "6aafcb2d98da222964bcdbf5aa1f4f1f";
+#else
+  constexpr char kCheckboxChecksum[] = "594265790b81df2d93120d33b72a6ada";
+#endif
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
   ASSERT_TRUE(OpenDocument("bug_861842.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
   ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
-  CompareBitmap(bitmap.get(), 100, 120, kCheckboxHash);
+  CompareBitmap(bitmap.get(), 100, 120, kCheckboxChecksum);
 
   EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page, FLAT_PRINT));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
