@@ -27,10 +27,6 @@ bool RenderDeviceDriverIface::SetClip_PathStroke(
 
 void RenderDeviceDriverIface::SetBaseClip(const FX_RECT& rect) {}
 
-bool RenderDeviceDriverIface::SetPixel(int x, int y, uint32_t color) {
-  return false;
-}
-
 bool RenderDeviceDriverIface::FillRectWithBlend(const FX_RECT& rect,
                                                 uint32_t fill_color,
                                                 BlendMode blend_type) {
@@ -73,8 +69,6 @@ bool RenderDeviceDriverIface::DrawDeviceText(
 int RenderDeviceDriverIface::GetDriverType() const {
   return 0;
 }
-
-void RenderDeviceDriverIface::ClearDriver() {}
 
 bool RenderDeviceDriverIface::DrawShading(const CPDF_ShadingPattern* pPattern,
                                           const CFX_Matrix* pMatrix,

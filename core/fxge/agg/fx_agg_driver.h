@@ -61,7 +61,6 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
                 uint32_t stroke_color,
                 const CFX_FillRenderOptions& fill_options,
                 BlendMode blend_type) override;
-  bool SetPixel(int x, int y, uint32_t color) override;
   bool FillRectWithBlend(const FX_RECT& rect,
                          uint32_t fill_color,
                          BlendMode blend_type) override;
