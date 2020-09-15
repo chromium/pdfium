@@ -90,7 +90,10 @@ source_set("fuzzer_init_public") {
   testonly = true
   sources = [ "pdf_fuzzer_init_public.cc" ]
   include_dirs = [ "../.." ]
-  deps = [ "../../:pdfium_public_headers" ]
+  deps = [
+    ":fuzzer_utils",
+    "../../:pdfium_public_headers",
+  ]
   if (pdf_enable_v8) {
     configs += [ "//v8:external_startup_data" ]
     deps += [
@@ -98,6 +101,9 @@ source_set("fuzzer_init_public") {
       "//v8",
       "//v8:v8_libplatform",
     ]
+    if (pdf_enable_xfa) {
+      deps += [ "../../fxjs:gc" ]
+    }
   }
 }
 
@@ -356,9 +362,12 @@ if (pdf_enable_v8) {
     pdfium_fuzzer("pdf_formcalc_fuzzer") {
       sources = [ "pdf_formcalc_fuzzer.cc" ]
       deps = [
+        ":fuzzer_utils",
         "../../core/fxcrt",
+        "../../fxjs:gc",
         "../../xfa/fxfa/fm2js",
       ]
+      public_fuzzer = true
     }
 
     pdfium_fuzzer("pdfium_xfa_fuzzer") {
