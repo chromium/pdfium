@@ -286,8 +286,7 @@ CXFA_FMParser::ParseLogicalOrExpression() {
   if (!e1)
     return nullptr;
 
-  // TODO(dsinclair): Is this for() needed?
-  for (;;) {
+  while (1) {
     if (!IncrementParseDepthAndCheck())
       return nullptr;
 
@@ -296,22 +295,18 @@ CXFA_FMParser::ParseLogicalOrExpression() {
       case TOKksor: {
         if (!NextToken())
           return nullptr;
-
         std::unique_ptr<CXFA_FMSimpleExpression> e2(
             ParseLogicalAndExpression());
         if (!e2)
           return nullptr;
-
         e1 = std::make_unique<CXFA_FMLogicalOrExpression>(TOKor, std::move(e1),
                                                           std::move(e2));
-        continue;
+        break;
       }
       default:
-        break;
+        return e1;
     }
-    break;
   }
-  return e1;
 }
 
 // LogicalAnd := EqualityExpression |
@@ -326,8 +321,7 @@ CXFA_FMParser::ParseLogicalAndExpression() {
   if (!e1)
     return nullptr;
 
-  // TODO(dsinclair): Is this for() needed?
-  for (;;) {
+  while (1) {
     if (!IncrementParseDepthAndCheck())
       return nullptr;
 
@@ -336,21 +330,17 @@ CXFA_FMParser::ParseLogicalAndExpression() {
       case TOKksand: {
         if (!NextToken())
           return nullptr;
-
         std::unique_ptr<CXFA_FMSimpleExpression> e2 = ParseEqualityExpression();
         if (!e2)
           return nullptr;
-
         e1 = std::make_unique<CXFA_FMLogicalAndExpression>(
             TOKand, std::move(e1), std::move(e2));
-        continue;
+        break;
       }
       default:
-        break;
+        return e1;
     }
-    break;
   }
-  return e1;
 }
 
 // Equality := RelationExpression |
@@ -365,8 +355,7 @@ CXFA_FMParser::ParseEqualityExpression() {
   if (!e1)
     return nullptr;
 
-  // TODO(dsinclair): Is this for() needed?
-  for (;;) {
+  while (1) {
     if (!IncrementParseDepthAndCheck())
       return nullptr;
 
@@ -375,36 +364,30 @@ CXFA_FMParser::ParseEqualityExpression() {
       case TOKkseq: {
         if (!NextToken())
           return nullptr;
-
         std::unique_ptr<CXFA_FMSimpleExpression> e2 =
             ParseRelationalExpression();
         if (!e2)
           return nullptr;
-
         e1 = std::make_unique<CXFA_FMEqualExpression>(TOKeq, std::move(e1),
                                                       std::move(e2));
-        continue;
+        break;
       }
       case TOKne:
       case TOKksne: {
         if (!NextToken())
           return nullptr;
-
         std::unique_ptr<CXFA_FMSimpleExpression> e2 =
             ParseRelationalExpression();
         if (!e2)
           return nullptr;
-
         e1 = std::make_unique<CXFA_FMNotEqualExpression>(TOKne, std::move(e1),
                                                          std::move(e2));
-        continue;
+        break;
       }
       default:
-        break;
+        return e1;
     }
-    break;
   }
-  return e1;
 }
 
 // Relational := AdditiveExpression |
@@ -419,8 +402,7 @@ CXFA_FMParser::ParseRelationalExpression() {
   if (!e1)
     return nullptr;
 
-  // TODO(dsinclair): Is this for() needed?
-  for (;;) {
+  while (1) {
     if (!IncrementParseDepthAndCheck())
       return nullptr;
 
@@ -430,56 +412,46 @@ CXFA_FMParser::ParseRelationalExpression() {
       case TOKkslt:
         if (!NextToken())
           return nullptr;
-
         e2 = ParseAdditiveExpression();
         if (!e2)
           return nullptr;
-
         e1 = std::make_unique<CXFA_FMLtExpression>(TOKlt, std::move(e1),
                                                    std::move(e2));
-        continue;
+        break;
       case TOKgt:
       case TOKksgt:
         if (!NextToken())
           return nullptr;
-
         e2 = ParseAdditiveExpression();
         if (!e2)
           return nullptr;
-
         e1 = std::make_unique<CXFA_FMGtExpression>(TOKgt, std::move(e1),
                                                    std::move(e2));
-        continue;
+        break;
       case TOKle:
       case TOKksle:
         if (!NextToken())
           return nullptr;
-
         e2 = ParseAdditiveExpression();
         if (!e2)
           return nullptr;
-
         e1 = std::make_unique<CXFA_FMLeExpression>(TOKle, std::move(e1),
                                                    std::move(e2));
-        continue;
+        break;
       case TOKge:
       case TOKksge:
         if (!NextToken())
           return nullptr;
-
         e2 = ParseAdditiveExpression();
         if (!e2)
           return nullptr;
-
         e1 = std::make_unique<CXFA_FMGeExpression>(TOKge, std::move(e1),
                                                    std::move(e2));
-        continue;
-      default:
         break;
+      default:
+        return e1;
     }
-    break;
   }
-  return e1;
 }
 
 // Additive := MultiplicativeExpression |
@@ -494,8 +466,7 @@ CXFA_FMParser::ParseAdditiveExpression() {
   if (!e1)
     return nullptr;
 
-  // TODO(dsinclair): Is this for() needed?
-  for (;;) {
+  while (1) {
     if (!IncrementParseDepthAndCheck())
       return nullptr;
 
@@ -504,14 +475,13 @@ CXFA_FMParser::ParseAdditiveExpression() {
       case TOKplus:
         if (!NextToken())
           return nullptr;
-
         e2 = ParseMultiplicativeExpression();
         if (!e2)
           return nullptr;
 
         e1 = std::make_unique<CXFA_FMPlusExpression>(TOKplus, std::move(e1),
                                                      std::move(e2));
-        continue;
+        break;
       case TOKminus:
         if (!NextToken())
           return nullptr;
@@ -522,13 +492,11 @@ CXFA_FMParser::ParseAdditiveExpression() {
 
         e1 = std::make_unique<CXFA_FMMinusExpression>(TOKminus, std::move(e1),
                                                       std::move(e2));
-        continue;
-      default:
         break;
+      default:
+        return e1;
     }
-    break;
   }
-  return e1;
 }
 
 // Multiplicative := UnaryExpression |
@@ -543,8 +511,7 @@ CXFA_FMParser::ParseMultiplicativeExpression() {
   if (!e1)
     return nullptr;
 
-  // TODO(dsinclair): Is this for() needed?
-  for (;;) {
+  while (1) {
     if (!IncrementParseDepthAndCheck())
       return nullptr;
 
@@ -553,31 +520,25 @@ CXFA_FMParser::ParseMultiplicativeExpression() {
       case TOKmul:
         if (!NextToken())
           return nullptr;
-
         e2 = ParseUnaryExpression();
         if (!e2)
           return nullptr;
-
         e1 = std::make_unique<CXFA_FMMulExpression>(TOKmul, std::move(e1),
                                                     std::move(e2));
-        continue;
+        break;
       case TOKdiv:
         if (!NextToken())
           return nullptr;
-
         e2 = ParseUnaryExpression();
         if (!e2)
           return nullptr;
-
         e1 = std::make_unique<CXFA_FMDivExpression>(TOKdiv, std::move(e1),
                                                     std::move(e2));
-        continue;
-      default:
         break;
+      default:
+        return e1;
     }
-    break;
   }
-  return e1;
 }
 
 // Unary := PrimaryExpression | UnaryOperator UnaryExpression
