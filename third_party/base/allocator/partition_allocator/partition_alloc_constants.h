@@ -39,6 +39,8 @@ static const size_t kBucketShift = (kAllocationGranularity == 8) ? 3 : 2;
 static const size_t kPartitionPageShift = 16;  // 64 KiB
 #elif defined(ARCH_CPU_PPC64)
 static const size_t kPartitionPageShift = 18;  // 256 KiB
+#elif defined(OS_APPLE) && defined(ARCH_CPU_ARM64)
+static const size_t kPartitionPageShift = 16;  // 64 KiB
 #else
 static const size_t kPartitionPageShift = 14;  // 16 KiB
 #endif
