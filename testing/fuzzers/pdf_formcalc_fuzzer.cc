@@ -11,10 +11,9 @@
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   auto* state = static_cast<PDFFuzzerPublic*>(FPDF_GetFuzzerPerProcessState());
-  CHECK(state);
-  CHECK(state->GetHeap());
   WideString input = WideString::FromUTF8(ByteStringView(data, size));
   CXFA_FMParser parser(input.AsStringView());
   parser.Parse();
+  state->MaybeForceGCAndPump();
   return 0;
 }
