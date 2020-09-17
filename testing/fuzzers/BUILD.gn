@@ -344,6 +344,7 @@ if (pdf_enable_v8) {
         "../../core/fxcrt",
         "../../fxjs",
       ]
+      public_fuzzer = true
     }
 
     pdfium_fuzzer("pdf_formcalc_context_fuzzer") {
