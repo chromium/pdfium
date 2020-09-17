@@ -19,6 +19,10 @@ class CFXJSE_Context;
 class CFX_WideTextBuf;
 class CXFA_Document;
 
+namespace cppgc {
+class Heap;
+}  // namespace cppgc
+
 class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
  public:
   CFXJSE_FormCalcContext(v8::Isolate* pScriptIsolate,
@@ -287,7 +291,6 @@ class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
       CFXJSE_Value* pParentValue,
       std::vector<std::unique_ptr<CFXJSE_Value>>* resultValues,
       bool* bAttribute);
-
   static std::unique_ptr<CFXJSE_Value> GetSimpleValue(
       CFXJSE_HostObject* pThis,
       const v8::FunctionCallbackInfo<v8::Value>& info,
@@ -300,7 +303,8 @@ class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
   static double ExtractDouble(CFXJSE_HostObject* pThis,
                               CFXJSE_Value* src,
                               bool* ret);
-  static Optional<CFX_WideTextBuf> Translate(WideStringView wsFormcalc);
+  static Optional<CFX_WideTextBuf> Translate(cppgc::Heap* pHeap,
+                                             WideStringView wsFormcalc);
 
   void GlobalPropertyGetter(CFXJSE_Value* pValue);
 

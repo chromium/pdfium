@@ -140,7 +140,7 @@ bool CFXJSE_Engine::RunScript(CXFA_Script::Type eScriptType,
           GetIsolate(), m_JsContext.get(), m_pDocument.Get());
     }
     Optional<CFX_WideTextBuf> wsJavaScript =
-        CFXJSE_FormCalcContext::Translate(wsScript);
+        CFXJSE_FormCalcContext::Translate(m_pDocument->GetHeap(), wsScript);
     if (!wsJavaScript.has_value()) {
       hRetValue->SetUndefined();
       return false;

@@ -9,9 +9,13 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_string.h"
 #include "fxjs/xfa/cfxjse_formcalc_context.h"
+#include "testing/fuzzers/pdf_fuzzer_init_public.h"
+#include "testing/fuzzers/pdfium_fuzzer_util.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
+  auto* state = static_cast<PDFFuzzerPublic*>(FPDF_GetFuzzerPerProcessState());
   WideString input = WideString::FromUTF8(ByteStringView(data, size));
-  CFXJSE_FormCalcContext::Translate(input.AsStringView());
+  CFXJSE_FormCalcContext::Translate(state->GetHeap(), input.AsStringView());
+  state->MaybeForceGCAndPump();
   return 0;
 }

@@ -340,6 +340,7 @@ if (pdf_enable_v8) {
     pdfium_fuzzer("pdf_fm2js_fuzzer") {
       sources = [ "pdf_fm2js_fuzzer.cc" ]
       deps = [
+        ":fuzzer_utils",
         "../../core/fxcrt",
         "../../fxjs",
       ]

@@ -7,10 +7,13 @@
 #ifndef XFA_FXFA_FM2JS_CXFA_FMEXPRESSION_H_
 #define XFA_FXFA_FM2JS_CXFA_FMEXPRESSION_H_
 
-#include <memory>
 #include <vector>
 
+#include "core/fxcrt/fx_string.h"
+#include "fxjs/gc/heap.h"
 #include "third_party/base/optional.h"
+#include "v8/include/cppgc/garbage-collected.h"
+#include "v8/include/cppgc/member.h"
 #include "xfa/fxfa/fm2js/cxfa_fmlexer.h"
 
 class CFX_WideTextBuf;
@@ -24,9 +27,11 @@ enum XFA_FM_AccessorIndex {
 
 enum class ReturnType { kImplied, kInfered };
 
-class CXFA_FMExpression {
+class CXFA_FMExpression : public cppgc::GarbageCollected<CXFA_FMExpression> {
  public:
   virtual ~CXFA_FMExpression();
+  virtual void Trace(cppgc::Visitor* visitor) const;
+
   virtual bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) const = 0;
 
  protected:
@@ -38,87 +43,93 @@ class CXFA_FMSimpleExpression : public CXFA_FMExpression {
   ~CXFA_FMSimpleExpression() override;
 
   XFA_FM_TOKEN GetOperatorToken() const { return m_op; }
-  bool chainable() const { return m_bChainable; }
 
  protected:
   explicit CXFA_FMSimpleExpression(XFA_FM_TOKEN op);
-  CXFA_FMSimpleExpression(XFA_FM_TOKEN op, bool chainable);
 
  private:
   const XFA_FM_TOKEN m_op;
-  const bool m_bChainable;
 };
 
 class CXFA_FMChainableExpression : public CXFA_FMSimpleExpression {
  public:
   ~CXFA_FMChainableExpression() override;
+  void Trace(cppgc::Visitor* visitor) const override;
 
  protected:
   CXFA_FMChainableExpression(XFA_FM_TOKEN op,
-                             std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
-                             std::unique_ptr<CXFA_FMSimpleExpression> pExp2);
+                             CXFA_FMSimpleExpression* pExp1,
+                             CXFA_FMSimpleExpression* pExp2);
 
-  CXFA_FMSimpleExpression* GetFirstExpression() const;
-  CXFA_FMSimpleExpression* GetSecondExpression() const;
+  CXFA_FMSimpleExpression* GetFirstExpression() const { return m_pExp1; }
+  CXFA_FMSimpleExpression* GetSecondExpression() const { return m_pExp2; }
 
  private:
-  // Iteratively delete a chainable expression tree in linear time and constant
-  // space.
-  static void DeleteChain(std::unique_ptr<CXFA_FMSimpleExpression> pRoot);
-
-  std::unique_ptr<CXFA_FMSimpleExpression> m_pExp1;
-  std::unique_ptr<CXFA_FMSimpleExpression> m_pExp2;
+  cppgc::Member<CXFA_FMSimpleExpression> m_pExp1;
+  cppgc::Member<CXFA_FMSimpleExpression> m_pExp2;
 };
 
 class CXFA_FMNullExpression final : public CXFA_FMSimpleExpression {
  public:
-  CXFA_FMNullExpression();
-  ~CXFA_FMNullExpression() override = default;
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
+  ~CXFA_FMNullExpression() override;
 
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) const override;
+
+ private:
+  CXFA_FMNullExpression();
 };
 
 class CXFA_FMNumberExpression final : public CXFA_FMSimpleExpression {
  public:
-  explicit CXFA_FMNumberExpression(WideStringView wsNumber);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FMNumberExpression() override;
 
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) const override;
 
  private:
-  WideStringView m_wsNumber;
+  explicit CXFA_FMNumberExpression(WideString wsNumber);
+
+  WideString m_wsNumber;
 };
 
 class CXFA_FMStringExpression final : public CXFA_FMSimpleExpression {
  public:
-  explicit CXFA_FMStringExpression(WideStringView wsString);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FMStringExpression() override;
 
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) const override;
 
  private:
-  WideStringView m_wsString;
+  explicit CXFA_FMStringExpression(WideString wsString);
+
+  WideString m_wsString;
 };
 
 class CXFA_FMIdentifierExpression final : public CXFA_FMSimpleExpression {
  public:
-  explicit CXFA_FMIdentifierExpression(WideStringView wsIdentifier);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FMIdentifierExpression() override;
 
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) const override;
 
  private:
-  WideStringView m_wsIdentifier;
+  explicit CXFA_FMIdentifierExpression(WideString wsIdentifier);
+
+  WideString m_wsIdentifier;
 };
 
 class CXFA_FMAssignExpression final : public CXFA_FMChainableExpression {
  public:
-  CXFA_FMAssignExpression(XFA_FM_TOKEN op,
-                          std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
-                          std::unique_ptr<CXFA_FMSimpleExpression> pExp2);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FMAssignExpression() override;
 
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) const override;
+
+ private:
+  CXFA_FMAssignExpression(XFA_FM_TOKEN op,
+                          CXFA_FMSimpleExpression* pExp1,
+                          CXFA_FMSimpleExpression* pExp2);
 };
 
 class CXFA_FMBinExpression : public CXFA_FMChainableExpression {
@@ -130,8 +141,8 @@ class CXFA_FMBinExpression : public CXFA_FMChainableExpression {
  protected:
   CXFA_FMBinExpression(const WideString& opName,
                        XFA_FM_TOKEN op,
-                       std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
-                       std::unique_ptr<CXFA_FMSimpleExpression> pExp2);
+                       CXFA_FMSimpleExpression* pExp1,
+                       CXFA_FMSimpleExpression* pExp2);
 
  private:
   WideString m_OpName;
@@ -139,179 +150,232 @@ class CXFA_FMBinExpression : public CXFA_FMChainableExpression {
 
 class CXFA_FMLogicalOrExpression final : public CXFA_FMBinExpression {
  public:
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
+  ~CXFA_FMLogicalOrExpression() override;
+
+ private:
   CXFA_FMLogicalOrExpression(XFA_FM_TOKEN op,
-                             std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
-                             std::unique_ptr<CXFA_FMSimpleExpression> pExp2);
-  ~CXFA_FMLogicalOrExpression() override = default;
+                             CXFA_FMSimpleExpression* pExp1,
+                             CXFA_FMSimpleExpression* pExp2);
 };
 
 class CXFA_FMLogicalAndExpression final : public CXFA_FMBinExpression {
  public:
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
+  ~CXFA_FMLogicalAndExpression() override;
+
+ private:
   CXFA_FMLogicalAndExpression(XFA_FM_TOKEN op,
-                              std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
-                              std::unique_ptr<CXFA_FMSimpleExpression> pExp2);
-  ~CXFA_FMLogicalAndExpression() override = default;
+                              CXFA_FMSimpleExpression* pExp1,
+                              CXFA_FMSimpleExpression* pExp2);
 };
 
 class CXFA_FMEqualExpression final : public CXFA_FMBinExpression {
  public:
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
+  ~CXFA_FMEqualExpression() override;
+
+ private:
   CXFA_FMEqualExpression(XFA_FM_TOKEN op,
-                         std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
-                         std::unique_ptr<CXFA_FMSimpleExpression> pExp2);
-  ~CXFA_FMEqualExpression() override = default;
+                         CXFA_FMSimpleExpression* pExp1,
+                         CXFA_FMSimpleExpression* pExp2);
 };
 
 class CXFA_FMNotEqualExpression final : public CXFA_FMBinExpression {
  public:
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
+  ~CXFA_FMNotEqualExpression() override;
+
+ private:
   CXFA_FMNotEqualExpression(XFA_FM_TOKEN op,
-                            std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
-                            std::unique_ptr<CXFA_FMSimpleExpression> pExp2);
-  ~CXFA_FMNotEqualExpression() override = default;
+                            CXFA_FMSimpleExpression* pExp1,
+                            CXFA_FMSimpleExpression* pExp2);
 };
 
 class CXFA_FMGtExpression final : public CXFA_FMBinExpression {
  public:
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
+  ~CXFA_FMGtExpression() override;
+
+ private:
   CXFA_FMGtExpression(XFA_FM_TOKEN op,
-                      std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
-                      std::unique_ptr<CXFA_FMSimpleExpression> pExp2);
-  ~CXFA_FMGtExpression() override = default;
+                      CXFA_FMSimpleExpression* pExp1,
+                      CXFA_FMSimpleExpression* pExp2);
 };
 
 class CXFA_FMGeExpression final : public CXFA_FMBinExpression {
  public:
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
+  ~CXFA_FMGeExpression() override;
+
+ private:
   CXFA_FMGeExpression(XFA_FM_TOKEN op,
-                      std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
-                      std::unique_ptr<CXFA_FMSimpleExpression> pExp2);
-  ~CXFA_FMGeExpression() override = default;
+                      CXFA_FMSimpleExpression* pExp1,
+                      CXFA_FMSimpleExpression* pExp2);
 };
 
 class CXFA_FMLtExpression final : public CXFA_FMBinExpression {
  public:
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
+  ~CXFA_FMLtExpression() override;
+
+ private:
   CXFA_FMLtExpression(XFA_FM_TOKEN op,
-                      std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
-                      std::unique_ptr<CXFA_FMSimpleExpression> pExp2);
-  ~CXFA_FMLtExpression() override = default;
+                      CXFA_FMSimpleExpression* pExp1,
+                      CXFA_FMSimpleExpression* pExp2);
 };
 
 class CXFA_FMLeExpression final : public CXFA_FMBinExpression {
  public:
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
+  ~CXFA_FMLeExpression() override;
+
+ private:
   CXFA_FMLeExpression(XFA_FM_TOKEN op,
-                      std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
-                      std::unique_ptr<CXFA_FMSimpleExpression> pExp2);
-  ~CXFA_FMLeExpression() override = default;
+                      CXFA_FMSimpleExpression* pExp1,
+                      CXFA_FMSimpleExpression* pExp2);
 };
 
 class CXFA_FMPlusExpression final : public CXFA_FMBinExpression {
  public:
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
+  ~CXFA_FMPlusExpression() override;
+
+ private:
   CXFA_FMPlusExpression(XFA_FM_TOKEN op,
-                        std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
-                        std::unique_ptr<CXFA_FMSimpleExpression> pExp2);
-  ~CXFA_FMPlusExpression() override = default;
+                        CXFA_FMSimpleExpression* pExp1,
+                        CXFA_FMSimpleExpression* pExp2);
 };
 
 class CXFA_FMMinusExpression final : public CXFA_FMBinExpression {
  public:
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
+  ~CXFA_FMMinusExpression() override;
+
+ private:
   CXFA_FMMinusExpression(XFA_FM_TOKEN op,
-                         std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
-                         std::unique_ptr<CXFA_FMSimpleExpression> pExp2);
-  ~CXFA_FMMinusExpression() override = default;
+                         CXFA_FMSimpleExpression* pExp1,
+                         CXFA_FMSimpleExpression* pExp2);
 };
 
 class CXFA_FMMulExpression final : public CXFA_FMBinExpression {
  public:
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
+  ~CXFA_FMMulExpression() override;
+
+ private:
   CXFA_FMMulExpression(XFA_FM_TOKEN op,
-                       std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
-                       std::unique_ptr<CXFA_FMSimpleExpression> pExp2);
-  ~CXFA_FMMulExpression() override = default;
+                       CXFA_FMSimpleExpression* pExp1,
+                       CXFA_FMSimpleExpression* pExp2);
 };
 
 class CXFA_FMDivExpression final : public CXFA_FMBinExpression {
  public:
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
+  ~CXFA_FMDivExpression() override;
+
+ private:
   CXFA_FMDivExpression(XFA_FM_TOKEN op,
-                       std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
-                       std::unique_ptr<CXFA_FMSimpleExpression> pExp2);
-  ~CXFA_FMDivExpression() override = default;
+                       CXFA_FMSimpleExpression* pExp1,
+                       CXFA_FMSimpleExpression* pExp2);
 };
 
 class CXFA_FMUnaryExpression : public CXFA_FMSimpleExpression {
  public:
   ~CXFA_FMUnaryExpression() override;
 
+  void Trace(cppgc::Visitor* visitor) const override;
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) const override;
 
  protected:
   CXFA_FMUnaryExpression(const WideString& opName,
                          XFA_FM_TOKEN op,
-                         std::unique_ptr<CXFA_FMSimpleExpression> pExp);
+                         CXFA_FMSimpleExpression* pExp);
 
  private:
   WideString m_OpName;
-  std::unique_ptr<CXFA_FMSimpleExpression> m_pExp;
+  cppgc::Member<CXFA_FMSimpleExpression> m_pExp;
 };
 
 class CXFA_FMPosExpression final : public CXFA_FMUnaryExpression {
  public:
-  explicit CXFA_FMPosExpression(std::unique_ptr<CXFA_FMSimpleExpression> pExp);
-  ~CXFA_FMPosExpression() override = default;
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
+  ~CXFA_FMPosExpression() override;
+
+ private:
+  explicit CXFA_FMPosExpression(CXFA_FMSimpleExpression* pExp);
 };
 
 class CXFA_FMNegExpression final : public CXFA_FMUnaryExpression {
  public:
-  explicit CXFA_FMNegExpression(std::unique_ptr<CXFA_FMSimpleExpression> pExp);
-  ~CXFA_FMNegExpression() override = default;
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
+  ~CXFA_FMNegExpression() override;
+
+ private:
+  explicit CXFA_FMNegExpression(CXFA_FMSimpleExpression* pExp);
 };
 
 class CXFA_FMNotExpression final : public CXFA_FMUnaryExpression {
  public:
-  explicit CXFA_FMNotExpression(std::unique_ptr<CXFA_FMSimpleExpression> pExp);
-  ~CXFA_FMNotExpression() override = default;
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
+  ~CXFA_FMNotExpression() override;
+
+ private:
+  explicit CXFA_FMNotExpression(CXFA_FMSimpleExpression* pExp);
 };
 
 class CXFA_FMCallExpression final : public CXFA_FMSimpleExpression {
  public:
-  CXFA_FMCallExpression(
-      std::unique_ptr<CXFA_FMSimpleExpression> pExp,
-      std::vector<std::unique_ptr<CXFA_FMSimpleExpression>>&& pArguments,
-      bool bIsSomMethod);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FMCallExpression() override;
 
+  void Trace(cppgc::Visitor* visitor) const override;
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) const override;
 
   bool IsBuiltInFunc(CFX_WideTextBuf* funcName) const;
   uint32_t IsMethodWithObjParam(const WideString& methodName) const;
 
  private:
-  std::unique_ptr<CXFA_FMSimpleExpression> m_pExp;
+  CXFA_FMCallExpression(
+      CXFA_FMSimpleExpression* pExp,
+      std::vector<cppgc::Member<CXFA_FMSimpleExpression>>&& pArguments,
+      bool bIsSomMethod);
+
+  cppgc::Member<CXFA_FMSimpleExpression> m_pExp;
+  std::vector<cppgc::Member<CXFA_FMSimpleExpression>> m_Arguments;
   bool m_bIsSomMethod;
-  std::vector<std::unique_ptr<CXFA_FMSimpleExpression>> m_Arguments;
 };
 
 class CXFA_FMDotAccessorExpression final : public CXFA_FMChainableExpression {
  public:
-  CXFA_FMDotAccessorExpression(
-      std::unique_ptr<CXFA_FMSimpleExpression> pAccessor,
-      XFA_FM_TOKEN op,
-      WideStringView wsIdentifier,
-      std::unique_ptr<CXFA_FMSimpleExpression> pIndexExp);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FMDotAccessorExpression() override;
 
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) const override;
 
  private:
-  WideStringView m_wsIdentifier;
+  CXFA_FMDotAccessorExpression(CXFA_FMSimpleExpression* pAccessor,
+                               XFA_FM_TOKEN op,
+                               WideString wsIdentifier,
+                               CXFA_FMSimpleExpression* pIndexExp);
+
+  WideString m_wsIdentifier;
 };
 
 class CXFA_FMIndexExpression final : public CXFA_FMSimpleExpression {
  public:
-  CXFA_FMIndexExpression(XFA_FM_AccessorIndex accessorIndex,
-                         std::unique_ptr<CXFA_FMSimpleExpression> pIndexExp,
-                         bool bIsStarIndex);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FMIndexExpression() override;
 
+  void Trace(cppgc::Visitor* visitor) const override;
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) const override;
 
  private:
-  std::unique_ptr<CXFA_FMSimpleExpression> m_pExp;
+  CXFA_FMIndexExpression(XFA_FM_AccessorIndex accessorIndex,
+                         CXFA_FMSimpleExpression* pIndexExp,
+                         bool bIsStarIndex);
+
+  cppgc::Member<CXFA_FMSimpleExpression> m_pExp;
   XFA_FM_AccessorIndex m_accessorIndex;
   bool m_bIsStarIndex;
 };
@@ -319,190 +383,227 @@ class CXFA_FMIndexExpression final : public CXFA_FMSimpleExpression {
 class CXFA_FMDotDotAccessorExpression final
     : public CXFA_FMChainableExpression {
  public:
-  CXFA_FMDotDotAccessorExpression(
-      std::unique_ptr<CXFA_FMSimpleExpression> pAccessor,
-      XFA_FM_TOKEN op,
-      WideStringView wsIdentifier,
-      std::unique_ptr<CXFA_FMSimpleExpression> pIndexExp);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FMDotDotAccessorExpression() override;
 
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) const override;
 
  private:
-  WideStringView m_wsIdentifier;
+  CXFA_FMDotDotAccessorExpression(CXFA_FMSimpleExpression* pAccessor,
+                                  XFA_FM_TOKEN op,
+                                  WideString wsIdentifier,
+                                  CXFA_FMSimpleExpression* pIndexExp);
+
+  WideString m_wsIdentifier;
 };
 
 class CXFA_FMMethodCallExpression final : public CXFA_FMChainableExpression {
  public:
-  CXFA_FMMethodCallExpression(
-      std::unique_ptr<CXFA_FMSimpleExpression> pAccessorExp1,
-      std::unique_ptr<CXFA_FMSimpleExpression> pCallExp);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FMMethodCallExpression() override;
-
-  bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) const override;
-};
-
-bool CXFA_IsTooBig(const CFX_WideTextBuf& js);
-
-class CXFA_FMFunctionDefinition final : public CXFA_FMExpression {
- public:
-  CXFA_FMFunctionDefinition(
-      WideStringView wsName,
-      std::vector<WideStringView>&& arguments,
-      std::vector<std::unique_ptr<CXFA_FMExpression>>&& expressions);
-  ~CXFA_FMFunctionDefinition() override;
 
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) const override;
 
  private:
-  const WideStringView m_wsName;
-  std::vector<WideStringView> const m_pArguments;
-  std::vector<std::unique_ptr<CXFA_FMExpression>> const m_pExpressions;
+  CXFA_FMMethodCallExpression(CXFA_FMSimpleExpression* pAccessorExp1,
+                              CXFA_FMSimpleExpression* pCallExp);
+};
+
+class CXFA_FMFunctionDefinition final : public CXFA_FMExpression {
+ public:
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
+  ~CXFA_FMFunctionDefinition() override;
+
+  void Trace(cppgc::Visitor* visitor) const override;
+  bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) const override;
+
+ private:
+  CXFA_FMFunctionDefinition(
+      WideString wsName,
+      std::vector<WideString>&& arguments,
+      std::vector<cppgc::Member<CXFA_FMExpression>>&& expressions);
+
+  const WideString m_wsName;
+  std::vector<WideString> const m_pArguments;
+  std::vector<cppgc::Member<CXFA_FMExpression>> const m_pExpressions;
 };
 
 class CXFA_FMVarExpression final : public CXFA_FMExpression {
  public:
-  CXFA_FMVarExpression(WideStringView wsName,
-                       std::unique_ptr<CXFA_FMSimpleExpression> pInit);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FMVarExpression() override;
 
+  void Trace(cppgc::Visitor* visitor) const override;
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) const override;
 
  private:
-  WideStringView const m_wsName;
-  std::unique_ptr<CXFA_FMSimpleExpression> const m_pInit;
+  CXFA_FMVarExpression(WideString wsName, CXFA_FMSimpleExpression* pInit);
+
+  WideString const m_wsName;
+  cppgc::Member<CXFA_FMSimpleExpression> const m_pInit;
 };
 
 class CXFA_FMExpExpression final : public CXFA_FMExpression {
  public:
-  explicit CXFA_FMExpExpression(
-      std::unique_ptr<CXFA_FMSimpleExpression> pExpression);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FMExpExpression() override;
 
+  void Trace(cppgc::Visitor* visitor) const override;
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) const override;
 
  private:
-  std::unique_ptr<CXFA_FMSimpleExpression> const m_pExpression;
+  explicit CXFA_FMExpExpression(CXFA_FMSimpleExpression* pExpression);
+
+  cppgc::Member<CXFA_FMSimpleExpression> const m_pExpression;
 };
 
 class CXFA_FMBlockExpression final : public CXFA_FMExpression {
  public:
-  CXFA_FMBlockExpression(
-      std::vector<std::unique_ptr<CXFA_FMExpression>>&& pExpressionList);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FMBlockExpression() override;
 
+  void Trace(cppgc::Visitor* visitor) const override;
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) const override;
 
  private:
-  std::vector<std::unique_ptr<CXFA_FMExpression>> const m_ExpressionList;
+  CXFA_FMBlockExpression(
+      std::vector<cppgc::Member<CXFA_FMExpression>>&& pExpressionList);
+
+  std::vector<cppgc::Member<CXFA_FMExpression>> const m_ExpressionList;
 };
 
 class CXFA_FMDoExpression final : public CXFA_FMExpression {
  public:
-  explicit CXFA_FMDoExpression(std::unique_ptr<CXFA_FMExpression> pList);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FMDoExpression() override;
 
+  void Trace(cppgc::Visitor* visitor) const override;
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) const override;
 
  private:
-  std::unique_ptr<CXFA_FMExpression> const m_pList;
+  explicit CXFA_FMDoExpression(CXFA_FMExpression* pList);
+
+  cppgc::Member<CXFA_FMExpression> const m_pList;
 };
 
 class CXFA_FMIfExpression final : public CXFA_FMExpression {
  public:
-  CXFA_FMIfExpression(
-      std::unique_ptr<CXFA_FMSimpleExpression> pExpression,
-      std::unique_ptr<CXFA_FMExpression> pIfExpression,
-      std::vector<std::unique_ptr<CXFA_FMIfExpression>> pElseIfExpressions,
-      std::unique_ptr<CXFA_FMExpression> pElseExpression);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FMIfExpression() override;
 
+  void Trace(cppgc::Visitor* visitor) const override;
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) const override;
 
  private:
-  std::unique_ptr<CXFA_FMSimpleExpression> const m_pExpression;
-  std::unique_ptr<CXFA_FMExpression> const m_pIfExpression;
-  std::vector<std::unique_ptr<CXFA_FMIfExpression>> const m_pElseIfExpressions;
-  std::unique_ptr<CXFA_FMExpression> const m_pElseExpression;
+  CXFA_FMIfExpression(
+      CXFA_FMSimpleExpression* pExpression,
+      CXFA_FMExpression* pIfExpression,
+      std::vector<cppgc::Member<CXFA_FMIfExpression>>&& pElseIfExpressions,
+      CXFA_FMExpression* pElseExpression);
+
+  cppgc::Member<CXFA_FMSimpleExpression> const m_pExpression;
+  cppgc::Member<CXFA_FMExpression> const m_pIfExpression;
+  std::vector<cppgc::Member<CXFA_FMIfExpression>> const m_pElseIfExpressions;
+  cppgc::Member<CXFA_FMExpression> const m_pElseExpression;
 };
 
 class CXFA_FMWhileExpression final : public CXFA_FMExpression {
  public:
-  CXFA_FMWhileExpression(std::unique_ptr<CXFA_FMSimpleExpression> pCodition,
-                         std::unique_ptr<CXFA_FMExpression> pExpression);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FMWhileExpression() override;
 
+  void Trace(cppgc::Visitor* visitor) const override;
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) const override;
 
  private:
-  std::unique_ptr<CXFA_FMSimpleExpression> const m_pCondition;
-  std::unique_ptr<CXFA_FMExpression> const m_pExpression;
+  CXFA_FMWhileExpression(CXFA_FMSimpleExpression* pCodition,
+                         CXFA_FMExpression* pExpression);
+
+  cppgc::Member<CXFA_FMSimpleExpression> const m_pCondition;
+  cppgc::Member<CXFA_FMExpression> const m_pExpression;
 };
 
 class CXFA_FMBreakExpression final : public CXFA_FMExpression {
  public:
-  CXFA_FMBreakExpression();
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FMBreakExpression() override;
 
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) const override;
+
+ private:
+  CXFA_FMBreakExpression();
 };
 
 class CXFA_FMContinueExpression final : public CXFA_FMExpression {
  public:
-  CXFA_FMContinueExpression();
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FMContinueExpression() override;
 
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) const override;
+
+ private:
+  CXFA_FMContinueExpression();
 };
 
 class CXFA_FMForExpression final : public CXFA_FMExpression {
  public:
-  CXFA_FMForExpression(WideStringView wsVariant,
-                       std::unique_ptr<CXFA_FMSimpleExpression> pAssignment,
-                       std::unique_ptr<CXFA_FMSimpleExpression> pAccessor,
-                       int32_t iDirection,
-                       std::unique_ptr<CXFA_FMSimpleExpression> pStep,
-                       std::unique_ptr<CXFA_FMExpression> pList);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FMForExpression() override;
 
+  void Trace(cppgc::Visitor* visitor) const override;
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) const override;
 
  private:
-  const WideStringView m_wsVariant;
-  std::unique_ptr<CXFA_FMSimpleExpression> const m_pAssignment;
-  std::unique_ptr<CXFA_FMSimpleExpression> const m_pAccessor;
+  CXFA_FMForExpression(WideString wsVariant,
+                       CXFA_FMSimpleExpression* pAssignment,
+                       CXFA_FMSimpleExpression* pAccessor,
+                       int32_t iDirection,
+                       CXFA_FMSimpleExpression* pStep,
+                       CXFA_FMExpression* pList);
+
+  const WideString m_wsVariant;
   const bool m_bDirection;
-  std::unique_ptr<CXFA_FMSimpleExpression> const m_pStep;
-  std::unique_ptr<CXFA_FMExpression> const m_pList;
+  cppgc::Member<CXFA_FMSimpleExpression> const m_pAssignment;
+  cppgc::Member<CXFA_FMSimpleExpression> const m_pAccessor;
+  cppgc::Member<CXFA_FMSimpleExpression> const m_pStep;
+  cppgc::Member<CXFA_FMExpression> const m_pList;
 };
 
 class CXFA_FMForeachExpression final : public CXFA_FMExpression {
  public:
-  // Takes ownership of |pAccessors|.
-  CXFA_FMForeachExpression(
-      WideStringView wsIdentifier,
-      std::vector<std::unique_ptr<CXFA_FMSimpleExpression>>&& pAccessors,
-      std::unique_ptr<CXFA_FMExpression> pList);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FMForeachExpression() override;
 
+  void Trace(cppgc::Visitor* visitor) const override;
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) const override;
 
  private:
-  const WideStringView m_wsIdentifier;
-  std::vector<std::unique_ptr<CXFA_FMSimpleExpression>> const m_pAccessors;
-  std::unique_ptr<CXFA_FMExpression> const m_pList;
+  // Takes ownership of |pAccessors|.
+  CXFA_FMForeachExpression(
+      WideString wsIdentifier,
+      std::vector<cppgc::Member<CXFA_FMSimpleExpression>>&& pAccessors,
+      CXFA_FMExpression* pList);
+
+  const WideString m_wsIdentifier;
+  std::vector<cppgc::Member<CXFA_FMSimpleExpression>> const m_pAccessors;
+  cppgc::Member<CXFA_FMExpression> const m_pList;
 };
 
-class CXFA_FMAST {
+class CXFA_FMAST : public cppgc::GarbageCollected<CXFA_FMAST> {
  public:
-  explicit CXFA_FMAST(
-      std::vector<std::unique_ptr<CXFA_FMExpression>> expressions);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FMAST();
 
+  void Trace(cppgc::Visitor* visitor) const;
   Optional<CFX_WideTextBuf> ToJavaScript() const;
 
  private:
-  std::vector<std::unique_ptr<CXFA_FMExpression>> const expressions_;
+  explicit CXFA_FMAST(
+      std::vector<cppgc::Member<CXFA_FMExpression>> expressions);
+
+  std::vector<cppgc::Member<CXFA_FMExpression>> const expressions_;
 };
+
+bool CXFA_IsTooBig(const CFX_WideTextBuf& js);
 
 #endif  // XFA_FXFA_FM2JS_CXFA_FMEXPRESSION_H_

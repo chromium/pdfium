@@ -20,15 +20,16 @@ constexpr unsigned int kMaxExpressionListSize = 10000;
 
 }  // namespace
 
-CXFA_FMParser::CXFA_FMParser(WideStringView wsFormcalc)
-    : m_lexer(std::make_unique<CXFA_FMLexer>(wsFormcalc)),
+CXFA_FMParser::CXFA_FMParser(cppgc::Heap* pHeap, WideStringView wsFormcalc)
+    : m_heap(pHeap),
+      m_lexer(std::make_unique<CXFA_FMLexer>(wsFormcalc)),
       m_error(false),
       m_parse_depth(0),
       m_max_parse_depth(kMaxParseDepth) {}
 
 CXFA_FMParser::~CXFA_FMParser() = default;
 
-std::unique_ptr<CXFA_FMAST> CXFA_FMParser::Parse() {
+CXFA_FMAST* CXFA_FMParser::Parse() {
   m_token = m_lexer->NextToken();
   if (HasError())
     return nullptr;
@@ -41,7 +42,8 @@ std::unique_ptr<CXFA_FMAST> CXFA_FMParser::Parse() {
   if (!m_lexer->IsComplete())
     return nullptr;
 
-  return std::make_unique<CXFA_FMAST>(std::move(expressions));
+  return cppgc::MakeGarbageCollected<CXFA_FMAST>(m_heap->GetAllocationHandle(),
+                                                 std::move(expressions));
 }
 
 bool CXFA_FMParser::NextToken() {
@@ -69,13 +71,13 @@ bool CXFA_FMParser::IncrementParseDepthAndCheck() {
   return ++m_parse_depth < m_max_parse_depth;
 }
 
-std::vector<std::unique_ptr<CXFA_FMExpression>>
+std::vector<cppgc::Member<CXFA_FMExpression>>
 CXFA_FMParser::ParseExpressionList() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
-    return std::vector<std::unique_ptr<CXFA_FMExpression>>();
+    return std::vector<cppgc::Member<CXFA_FMExpression>>();
 
-  std::vector<std::unique_ptr<CXFA_FMExpression>> expressions;
+  std::vector<cppgc::Member<CXFA_FMExpression>> expressions;
   while (!HasError()) {
     if (m_token.m_type == TOKeof || m_token.m_type == TOKendfunc ||
         m_token.m_type == TOKendif || m_token.m_type == TOKelseif ||
@@ -85,19 +87,17 @@ CXFA_FMParser::ParseExpressionList() {
       break;
     }
 
-    std::unique_ptr<CXFA_FMExpression> expr =
+    CXFA_FMExpression* expr =
         m_token.m_type == TOKfunc ? ParseFunction() : ParseExpression();
     if (!expr) {
       m_error = true;
-      return std::vector<std::unique_ptr<CXFA_FMExpression>>();
+      return std::vector<cppgc::Member<CXFA_FMExpression>>();
     }
-
     if (expressions.size() >= kMaxExpressionListSize) {
       m_error = true;
-      return std::vector<std::unique_ptr<CXFA_FMExpression>>();
+      return std::vector<cppgc::Member<CXFA_FMExpression>>();
     }
-
-    expressions.push_back(std::move(expr));
+    expressions.push_back(expr);
   }
   return expressions;
 }
@@ -105,7 +105,7 @@ CXFA_FMParser::ParseExpressionList() {
 // Func := 'func' Identifier '(' ParameterList ')' do ExpressionList 'endfunc'
 // ParamterList := (Not actually defined in the grammar) .....
 //                 (Identifier (',' Identifier)*)?
-std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseFunction() {
+CXFA_FMExpression* CXFA_FMParser::ParseFunction() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
@@ -114,13 +114,13 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseFunction() {
   if (m_token.m_type != TOKidentifier)
     return nullptr;
 
-  WideStringView ident = m_token.m_string;
+  WideString ident(m_token.m_string);
   if (!NextToken())
     return nullptr;
   if (!CheckThenNext(TOKlparen))
     return nullptr;
 
-  std::vector<WideStringView> arguments;
+  std::vector<WideString> arguments;
   bool last_was_comma = false;
   while (1) {
     if (m_token.m_type == TOKrparen)
@@ -130,7 +130,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseFunction() {
 
     last_was_comma = false;
 
-    arguments.push_back(m_token.m_string);
+    arguments.emplace_back(m_token.m_string);
     if (!NextToken())
       return nullptr;
     if (m_token.m_type != TOKcomma)
@@ -145,26 +145,27 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseFunction() {
   if (!CheckThenNext(TOKdo))
     return nullptr;
 
-  std::vector<std::unique_ptr<CXFA_FMExpression>> expressions;
+  std::vector<cppgc::Member<CXFA_FMExpression>> expressions;
   if (m_token.m_type != TOKendfunc)
     expressions = ParseExpressionList();
 
   if (!CheckThenNext(TOKendfunc))
     return nullptr;
 
-  return std::make_unique<CXFA_FMFunctionDefinition>(
-      ident, std::move(arguments), std::move(expressions));
+  return cppgc::MakeGarbageCollected<CXFA_FMFunctionDefinition>(
+      m_heap->GetAllocationHandle(), std::move(ident), std::move(arguments),
+      std::move(expressions));
 }
 
 // Expression := IfExpression | WhileExpression | ForExpression |
 //               ForEachExpression | AssignmentExpression |
 //               DeclarationExpression | SimpleExpression
-std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseExpression() {
+CXFA_FMExpression* CXFA_FMParser::ParseExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  std::unique_ptr<CXFA_FMExpression> expr;
+  CXFA_FMExpression* expr = nullptr;
   switch (m_token.m_type) {
     case TOKvar:
       expr = ParseDeclarationExpression();
@@ -195,12 +196,14 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseExpression() {
       expr = ParseDoExpression();
       break;
     case TOKbreak:
-      expr = std::make_unique<CXFA_FMBreakExpression>();
+      expr = cppgc::MakeGarbageCollected<CXFA_FMBreakExpression>(
+          m_heap->GetAllocationHandle());
       if (!NextToken())
         return nullptr;
       break;
     case TOKcontinue:
-      expr = std::make_unique<CXFA_FMContinueExpression>();
+      expr = cppgc::MakeGarbageCollected<CXFA_FMContinueExpression>(
+          m_heap->GetAllocationHandle());
       if (!NextToken())
         return nullptr;
       break;
@@ -213,22 +216,19 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseExpression() {
 // Declaration := 'var' Variable | 'var' Variable '=' SimpleExpression |
 //           'Func' Identifier '(' ParameterList ')' do ExpressionList 'EndFunc'
 // TODO(dsinclair): We appear to be handling the 'func' case elsewhere.
-std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseDeclarationExpression() {
+CXFA_FMExpression* CXFA_FMParser::ParseDeclarationExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  WideStringView ident;
-  if (!NextToken())
-    return nullptr;
-  if (m_token.m_type != TOKidentifier)
+  if (!NextToken() || m_token.m_type != TOKidentifier)
     return nullptr;
 
-  ident = m_token.m_string;
+  WideString ident(m_token.m_string);
   if (!NextToken())
     return nullptr;
 
-  std::unique_ptr<CXFA_FMSimpleExpression> expr;
+  CXFA_FMSimpleExpression* expr = nullptr;
   if (m_token.m_type == TOKassign) {
     if (!NextToken())
       return nullptr;
@@ -238,12 +238,12 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseDeclarationExpression() {
       return nullptr;
   }
 
-  return std::make_unique<CXFA_FMVarExpression>(ident, std::move(expr));
+  return cppgc::MakeGarbageCollected<CXFA_FMVarExpression>(
+      m_heap->GetAllocationHandle(), std::move(ident), expr);
 }
 
 // SimpleExpression := LogicalOrExpression
-std::unique_ptr<CXFA_FMSimpleExpression>
-CXFA_FMParser::ParseSimpleExpression() {
+CXFA_FMSimpleExpression* CXFA_FMParser::ParseSimpleExpression() {
   if (HasError())
     return nullptr;
 
@@ -251,12 +251,12 @@ CXFA_FMParser::ParseSimpleExpression() {
 }
 
 // Exp := SimpleExpression ( '=' SimpleExpression )?
-std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseExpExpression() {
+CXFA_FMExpression* CXFA_FMParser::ParseExpExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  std::unique_ptr<CXFA_FMSimpleExpression> pExp1 = ParseSimpleExpression();
+  CXFA_FMSimpleExpression* pExp1 = ParseSimpleExpression();
   if (!pExp1)
     return nullptr;
 
@@ -264,25 +264,25 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseExpExpression() {
     if (!NextToken())
       return nullptr;
 
-    std::unique_ptr<CXFA_FMSimpleExpression> pExp2 = ParseSimpleExpression();
+    CXFA_FMSimpleExpression* pExp2 = ParseSimpleExpression();
     if (!pExp2)
       return nullptr;
 
-    pExp1 = std::make_unique<CXFA_FMAssignExpression>(
-        TOKassign, std::move(pExp1), std::move(pExp2));
+    pExp1 = cppgc::MakeGarbageCollected<CXFA_FMAssignExpression>(
+        m_heap->GetAllocationHandle(), TOKassign, pExp1, pExp2);
   }
-  return std::make_unique<CXFA_FMExpExpression>(std::move(pExp1));
+  return cppgc::MakeGarbageCollected<CXFA_FMExpExpression>(
+      m_heap->GetAllocationHandle(), pExp1);
 }
 
 // LogicalOr := LogicalAndExpression |
 //              LogicalOrExpression LogicalOrOperator LogicalAndExpression
-std::unique_ptr<CXFA_FMSimpleExpression>
-CXFA_FMParser::ParseLogicalOrExpression() {
+CXFA_FMSimpleExpression* CXFA_FMParser::ParseLogicalOrExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  std::unique_ptr<CXFA_FMSimpleExpression> e1 = ParseLogicalAndExpression();
+  CXFA_FMSimpleExpression* e1 = ParseLogicalAndExpression();
   if (!e1)
     return nullptr;
 
@@ -295,12 +295,11 @@ CXFA_FMParser::ParseLogicalOrExpression() {
       case TOKksor: {
         if (!NextToken())
           return nullptr;
-        std::unique_ptr<CXFA_FMSimpleExpression> e2(
-            ParseLogicalAndExpression());
+        CXFA_FMSimpleExpression* e2 = ParseLogicalAndExpression();
         if (!e2)
           return nullptr;
-        e1 = std::make_unique<CXFA_FMLogicalOrExpression>(TOKor, std::move(e1),
-                                                          std::move(e2));
+        e1 = cppgc::MakeGarbageCollected<CXFA_FMLogicalOrExpression>(
+            m_heap->GetAllocationHandle(), TOKor, e1, e2);
         break;
       }
       default:
@@ -311,13 +310,12 @@ CXFA_FMParser::ParseLogicalOrExpression() {
 
 // LogicalAnd := EqualityExpression |
 //               LogicalAndExpression LogicalAndOperator EqualityExpression
-std::unique_ptr<CXFA_FMSimpleExpression>
-CXFA_FMParser::ParseLogicalAndExpression() {
+CXFA_FMSimpleExpression* CXFA_FMParser::ParseLogicalAndExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  std::unique_ptr<CXFA_FMSimpleExpression> e1 = ParseEqualityExpression();
+  CXFA_FMSimpleExpression* e1 = ParseEqualityExpression();
   if (!e1)
     return nullptr;
 
@@ -330,11 +328,11 @@ CXFA_FMParser::ParseLogicalAndExpression() {
       case TOKksand: {
         if (!NextToken())
           return nullptr;
-        std::unique_ptr<CXFA_FMSimpleExpression> e2 = ParseEqualityExpression();
+        CXFA_FMSimpleExpression* e2 = ParseEqualityExpression();
         if (!e2)
           return nullptr;
-        e1 = std::make_unique<CXFA_FMLogicalAndExpression>(
-            TOKand, std::move(e1), std::move(e2));
+        e1 = cppgc::MakeGarbageCollected<CXFA_FMLogicalAndExpression>(
+            m_heap->GetAllocationHandle(), TOKand, e1, e2);
         break;
       }
       default:
@@ -345,13 +343,12 @@ CXFA_FMParser::ParseLogicalAndExpression() {
 
 // Equality := RelationExpression |
 //             EqualityExpression EqulaityOperator RelationalExpression
-std::unique_ptr<CXFA_FMSimpleExpression>
-CXFA_FMParser::ParseEqualityExpression() {
+CXFA_FMSimpleExpression* CXFA_FMParser::ParseEqualityExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  std::unique_ptr<CXFA_FMSimpleExpression> e1 = ParseRelationalExpression();
+  CXFA_FMSimpleExpression* e1 = ParseRelationalExpression();
   if (!e1)
     return nullptr;
 
@@ -364,24 +361,22 @@ CXFA_FMParser::ParseEqualityExpression() {
       case TOKkseq: {
         if (!NextToken())
           return nullptr;
-        std::unique_ptr<CXFA_FMSimpleExpression> e2 =
-            ParseRelationalExpression();
+        CXFA_FMSimpleExpression* e2 = ParseRelationalExpression();
         if (!e2)
           return nullptr;
-        e1 = std::make_unique<CXFA_FMEqualExpression>(TOKeq, std::move(e1),
-                                                      std::move(e2));
+        e1 = cppgc::MakeGarbageCollected<CXFA_FMEqualExpression>(
+            m_heap->GetAllocationHandle(), TOKeq, e1, e2);
         break;
       }
       case TOKne:
       case TOKksne: {
         if (!NextToken())
           return nullptr;
-        std::unique_ptr<CXFA_FMSimpleExpression> e2 =
-            ParseRelationalExpression();
+        CXFA_FMSimpleExpression* e2 = ParseRelationalExpression();
         if (!e2)
           return nullptr;
-        e1 = std::make_unique<CXFA_FMNotEqualExpression>(TOKne, std::move(e1),
-                                                         std::move(e2));
+        e1 = cppgc::MakeGarbageCollected<CXFA_FMNotEqualExpression>(
+            m_heap->GetAllocationHandle(), TOKne, e1, e2);
         break;
       }
       default:
@@ -392,13 +387,12 @@ CXFA_FMParser::ParseEqualityExpression() {
 
 // Relational := AdditiveExpression |
 //               RelationalExpression RelationalOperator AdditiveExpression
-std::unique_ptr<CXFA_FMSimpleExpression>
-CXFA_FMParser::ParseRelationalExpression() {
+CXFA_FMSimpleExpression* CXFA_FMParser::ParseRelationalExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  std::unique_ptr<CXFA_FMSimpleExpression> e1 = ParseAdditiveExpression();
+  CXFA_FMSimpleExpression* e1 = ParseAdditiveExpression();
   if (!e1)
     return nullptr;
 
@@ -406,48 +400,51 @@ CXFA_FMParser::ParseRelationalExpression() {
     if (!IncrementParseDepthAndCheck())
       return nullptr;
 
-    std::unique_ptr<CXFA_FMSimpleExpression> e2;
     switch (m_token.m_type) {
       case TOKlt:
-      case TOKkslt:
+      case TOKkslt: {
         if (!NextToken())
           return nullptr;
-        e2 = ParseAdditiveExpression();
+        CXFA_FMSimpleExpression* e2 = ParseAdditiveExpression();
         if (!e2)
           return nullptr;
-        e1 = std::make_unique<CXFA_FMLtExpression>(TOKlt, std::move(e1),
-                                                   std::move(e2));
+        e1 = cppgc::MakeGarbageCollected<CXFA_FMLtExpression>(
+            m_heap->GetAllocationHandle(), TOKlt, e1, e2);
         break;
+      }
       case TOKgt:
-      case TOKksgt:
+      case TOKksgt: {
         if (!NextToken())
           return nullptr;
-        e2 = ParseAdditiveExpression();
+        CXFA_FMSimpleExpression* e2 = ParseAdditiveExpression();
         if (!e2)
           return nullptr;
-        e1 = std::make_unique<CXFA_FMGtExpression>(TOKgt, std::move(e1),
-                                                   std::move(e2));
+        e1 = cppgc::MakeGarbageCollected<CXFA_FMGtExpression>(
+            m_heap->GetAllocationHandle(), TOKgt, e1, e2);
         break;
+      }
       case TOKle:
-      case TOKksle:
+      case TOKksle: {
         if (!NextToken())
           return nullptr;
-        e2 = ParseAdditiveExpression();
+        CXFA_FMSimpleExpression* e2 = ParseAdditiveExpression();
         if (!e2)
           return nullptr;
-        e1 = std::make_unique<CXFA_FMLeExpression>(TOKle, std::move(e1),
-                                                   std::move(e2));
+        e1 = cppgc::MakeGarbageCollected<CXFA_FMLeExpression>(
+            m_heap->GetAllocationHandle(), TOKle, e1, e2);
         break;
+      }
       case TOKge:
-      case TOKksge:
+      case TOKksge: {
         if (!NextToken())
           return nullptr;
-        e2 = ParseAdditiveExpression();
+        CXFA_FMSimpleExpression* e2 = ParseAdditiveExpression();
         if (!e2)
           return nullptr;
-        e1 = std::make_unique<CXFA_FMGeExpression>(TOKge, std::move(e1),
-                                                   std::move(e2));
+        e1 = cppgc::MakeGarbageCollected<CXFA_FMGeExpression>(
+            m_heap->GetAllocationHandle(), TOKge, e1, e2);
         break;
+      }
       default:
         return e1;
     }
@@ -456,13 +453,12 @@ CXFA_FMParser::ParseRelationalExpression() {
 
 // Additive := MultiplicativeExpression |
 //             AdditiveExpression AdditiveOperator MultiplicativeExpression
-std::unique_ptr<CXFA_FMSimpleExpression>
-CXFA_FMParser::ParseAdditiveExpression() {
+CXFA_FMSimpleExpression* CXFA_FMParser::ParseAdditiveExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  std::unique_ptr<CXFA_FMSimpleExpression> e1 = ParseMultiplicativeExpression();
+  CXFA_FMSimpleExpression* e1 = ParseMultiplicativeExpression();
   if (!e1)
     return nullptr;
 
@@ -470,29 +466,27 @@ CXFA_FMParser::ParseAdditiveExpression() {
     if (!IncrementParseDepthAndCheck())
       return nullptr;
 
-    std::unique_ptr<CXFA_FMSimpleExpression> e2;
     switch (m_token.m_type) {
-      case TOKplus:
+      case TOKplus: {
         if (!NextToken())
           return nullptr;
-        e2 = ParseMultiplicativeExpression();
+        CXFA_FMSimpleExpression* e2 = ParseMultiplicativeExpression();
         if (!e2)
           return nullptr;
-
-        e1 = std::make_unique<CXFA_FMPlusExpression>(TOKplus, std::move(e1),
-                                                     std::move(e2));
+        e1 = cppgc::MakeGarbageCollected<CXFA_FMPlusExpression>(
+            m_heap->GetAllocationHandle(), TOKplus, e1, e2);
         break;
-      case TOKminus:
+      }
+      case TOKminus: {
         if (!NextToken())
           return nullptr;
-
-        e2 = ParseMultiplicativeExpression();
+        CXFA_FMSimpleExpression* e2 = ParseMultiplicativeExpression();
         if (!e2)
           return nullptr;
-
-        e1 = std::make_unique<CXFA_FMMinusExpression>(TOKminus, std::move(e1),
-                                                      std::move(e2));
+        e1 = cppgc::MakeGarbageCollected<CXFA_FMMinusExpression>(
+            m_heap->GetAllocationHandle(), TOKminus, e1, e2);
         break;
+      }
       default:
         return e1;
     }
@@ -501,13 +495,12 @@ CXFA_FMParser::ParseAdditiveExpression() {
 
 // Multiplicative := UnaryExpression |
 //                 MultiplicateExpression MultiplicativeOperator UnaryExpression
-std::unique_ptr<CXFA_FMSimpleExpression>
-CXFA_FMParser::ParseMultiplicativeExpression() {
+CXFA_FMSimpleExpression* CXFA_FMParser::ParseMultiplicativeExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  std::unique_ptr<CXFA_FMSimpleExpression> e1 = ParseUnaryExpression();
+  CXFA_FMSimpleExpression* e1 = ParseUnaryExpression();
   if (!e1)
     return nullptr;
 
@@ -515,26 +508,27 @@ CXFA_FMParser::ParseMultiplicativeExpression() {
     if (!IncrementParseDepthAndCheck())
       return nullptr;
 
-    std::unique_ptr<CXFA_FMSimpleExpression> e2;
     switch (m_token.m_type) {
-      case TOKmul:
+      case TOKmul: {
         if (!NextToken())
           return nullptr;
-        e2 = ParseUnaryExpression();
+        CXFA_FMSimpleExpression* e2 = ParseUnaryExpression();
         if (!e2)
           return nullptr;
-        e1 = std::make_unique<CXFA_FMMulExpression>(TOKmul, std::move(e1),
-                                                    std::move(e2));
+        e1 = cppgc::MakeGarbageCollected<CXFA_FMMulExpression>(
+            m_heap->GetAllocationHandle(), TOKmul, e1, e2);
         break;
-      case TOKdiv:
+      }
+      case TOKdiv: {
         if (!NextToken())
           return nullptr;
-        e2 = ParseUnaryExpression();
+        CXFA_FMSimpleExpression* e2 = ParseUnaryExpression();
         if (!e2)
           return nullptr;
-        e1 = std::make_unique<CXFA_FMDivExpression>(TOKdiv, std::move(e1),
-                                                    std::move(e2));
+        e1 = cppgc::MakeGarbageCollected<CXFA_FMDivExpression>(
+            m_heap->GetAllocationHandle(), TOKdiv, e1, e2);
         break;
+      }
       default:
         return e1;
     }
@@ -542,102 +536,101 @@ CXFA_FMParser::ParseMultiplicativeExpression() {
 }
 
 // Unary := PrimaryExpression | UnaryOperator UnaryExpression
-std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParseUnaryExpression() {
+CXFA_FMSimpleExpression* CXFA_FMParser::ParseUnaryExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  std::unique_ptr<CXFA_FMSimpleExpression> expr;
   switch (m_token.m_type) {
-    case TOKplus:
+    case TOKplus: {
       if (!NextToken())
         return nullptr;
-
-      expr = ParseUnaryExpression();
+      CXFA_FMSimpleExpression* expr = ParseUnaryExpression();
       if (!expr)
         return nullptr;
-
-      expr = std::make_unique<CXFA_FMPosExpression>(std::move(expr));
-      break;
-    case TOKminus:
+      return cppgc::MakeGarbageCollected<CXFA_FMPosExpression>(
+          m_heap->GetAllocationHandle(), expr);
+    }
+    case TOKminus: {
       if (!NextToken())
         return nullptr;
-
-      expr = ParseUnaryExpression();
+      CXFA_FMSimpleExpression* expr = ParseUnaryExpression();
       if (!expr)
         return nullptr;
-
-      expr = std::make_unique<CXFA_FMNegExpression>(std::move(expr));
-      break;
-    case TOKksnot:
+      return cppgc::MakeGarbageCollected<CXFA_FMNegExpression>(
+          m_heap->GetAllocationHandle(), expr);
+    }
+    case TOKksnot: {
       if (!NextToken())
         return nullptr;
-
-      expr = ParseUnaryExpression();
+      CXFA_FMSimpleExpression* expr = ParseUnaryExpression();
       if (!expr)
         return nullptr;
-
-      expr = std::make_unique<CXFA_FMNotExpression>(std::move(expr));
-      break;
+      return cppgc::MakeGarbageCollected<CXFA_FMNotExpression>(
+          m_heap->GetAllocationHandle(), expr);
+    }
     default:
       return ParsePrimaryExpression();
   }
-  return expr;
 }
 
 // Primary := Literal | FunctionCall | Accessor ('.*' )? |
 //           '(' SimpleExpression ')'
-std::unique_ptr<CXFA_FMSimpleExpression>
-CXFA_FMParser::ParsePrimaryExpression() {
+CXFA_FMSimpleExpression* CXFA_FMParser::ParsePrimaryExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  std::unique_ptr<CXFA_FMSimpleExpression> expr = ParseLiteral();
+  CXFA_FMSimpleExpression* expr = ParseLiteral();
   if (expr)
-    return NextToken() ? std::move(expr) : nullptr;
+    return NextToken() ? expr : nullptr;
 
   switch (m_token.m_type) {
     case TOKidentifier: {
-      WideStringView wsIdentifier(m_token.m_string);
+      WideString wsIdentifier(m_token.m_string);
       if (!NextToken())
         return nullptr;
       if (m_token.m_type == TOKlbracket) {
-        std::unique_ptr<CXFA_FMSimpleExpression> s = ParseIndexExpression();
+        CXFA_FMSimpleExpression* s = ParseIndexExpression();
         if (!s)
           return nullptr;
-
-        expr = std::make_unique<CXFA_FMDotAccessorExpression>(
-            nullptr, TOKdot, wsIdentifier, std::move(s));
+        expr = cppgc::MakeGarbageCollected<CXFA_FMDotAccessorExpression>(
+            m_heap->GetAllocationHandle(), nullptr, TOKdot,
+            std::move(wsIdentifier), s);
         if (!expr)
           return nullptr;
         if (!NextToken())
           return nullptr;
       } else {
-        expr = std::make_unique<CXFA_FMIdentifierExpression>(wsIdentifier);
+        expr = cppgc::MakeGarbageCollected<CXFA_FMIdentifierExpression>(
+            m_heap->GetAllocationHandle(), wsIdentifier);
       }
       break;
     }
-    case TOKlparen:
+    case TOKlparen: {
       expr = ParseParenExpression();
       if (!expr)
         return nullptr;
       break;
+    }
     default:
       return nullptr;
   }
-  return ParsePostExpression(std::move(expr));
+  return ParsePostExpression(expr);
 }
 
 // Literal := String | Number | Null
-std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParseLiteral() {
+CXFA_FMSimpleExpression* CXFA_FMParser::ParseLiteral() {
   switch (m_token.m_type) {
     case TOKnumber:
-      return std::make_unique<CXFA_FMNumberExpression>(m_token.m_string);
+      return cppgc::MakeGarbageCollected<CXFA_FMNumberExpression>(
+          m_heap->GetAllocationHandle(), WideString(m_token.m_string));
     case TOKstring:
-      return std::make_unique<CXFA_FMStringExpression>(m_token.m_string);
+      return cppgc::MakeGarbageCollected<CXFA_FMStringExpression>(
+          m_heap->GetAllocationHandle(), WideString(m_token.m_string));
     case TOKnull:
-      return std::make_unique<CXFA_FMNullExpression>();
+      return cppgc::MakeGarbageCollected<CXFA_FMNullExpression>(
+          m_heap->GetAllocationHandle());
     default:
       return nullptr;
   }
@@ -645,8 +638,8 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParseLiteral() {
 
 // TODO(dsinclair): Make this match up to the grammar
 // I believe this is parsing the accessor ( '.' | '..' | '.#' )
-std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
-    std::unique_ptr<CXFA_FMSimpleExpression> expr) {
+CXFA_FMSimpleExpression* CXFA_FMParser::ParsePostExpression(
+    CXFA_FMSimpleExpression* expr) {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
@@ -662,24 +655,25 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
 
     switch (m_token.m_type) {
       case TOKlparen: {
-        std::unique_ptr<std::vector<std::unique_ptr<CXFA_FMSimpleExpression>>>
+        Optional<std::vector<cppgc::Member<CXFA_FMSimpleExpression>>>
             expressions = ParseArgumentList();
-        if (!expressions)
+        if (!expressions.has_value())
           return nullptr;
 
-        expr = std::make_unique<CXFA_FMCallExpression>(
-            std::move(expr), std::move(*expressions), false);
+        expr = cppgc::MakeGarbageCollected<CXFA_FMCallExpression>(
+            m_heap->GetAllocationHandle(), expr, std::move(expressions.value()),
+            false);
         if (!NextToken())
           return nullptr;
         if (m_token.m_type != TOKlbracket)
           continue;
 
-        std::unique_ptr<CXFA_FMSimpleExpression> s = ParseIndexExpression();
+        CXFA_FMSimpleExpression* s = ParseIndexExpression();
         if (!s)
           return nullptr;
 
-        expr = std::make_unique<CXFA_FMDotAccessorExpression>(
-            std::move(expr), TOKcall, WideStringView(), std::move(s));
+        expr = cppgc::MakeGarbageCollected<CXFA_FMDotAccessorExpression>(
+            m_heap->GetAllocationHandle(), expr, TOKcall, WideString(), s);
         break;
       }
       case TOKdot: {
@@ -688,45 +682,50 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
         if (m_token.m_type != TOKidentifier)
           return nullptr;
 
-        WideStringView tempStr = m_token.m_string;
+        WideString tempStr(m_token.m_string);
         if (!NextToken())
           return nullptr;
         if (m_token.m_type == TOKlparen) {
-          std::unique_ptr<std::vector<std::unique_ptr<CXFA_FMSimpleExpression>>>
+          Optional<std::vector<cppgc::Member<CXFA_FMSimpleExpression>>>
               expressions = ParseArgumentList();
-          if (!expressions)
+          if (!expressions.has_value())
             return nullptr;
 
-          auto pIdentifier =
-              std::make_unique<CXFA_FMIdentifierExpression>(tempStr);
-          auto pExpCall = std::make_unique<CXFA_FMCallExpression>(
-              std::move(pIdentifier), std::move(*expressions), true);
-          expr = std::make_unique<CXFA_FMMethodCallExpression>(
-              std::move(expr), std::move(pExpCall));
+          auto* pIdentifier =
+              cppgc::MakeGarbageCollected<CXFA_FMIdentifierExpression>(
+                  m_heap->GetAllocationHandle(), std::move(tempStr));
+          auto* pExpCall = cppgc::MakeGarbageCollected<CXFA_FMCallExpression>(
+              m_heap->GetAllocationHandle(), pIdentifier,
+              std::move(expressions.value()), true);
+          expr = cppgc::MakeGarbageCollected<CXFA_FMMethodCallExpression>(
+              m_heap->GetAllocationHandle(), expr, pExpCall);
           if (!NextToken())
             return nullptr;
           if (m_token.m_type != TOKlbracket)
             continue;
 
-          std::unique_ptr<CXFA_FMSimpleExpression> s = ParseIndexExpression();
+          CXFA_FMSimpleExpression* s = ParseIndexExpression();
           if (!s)
             return nullptr;
 
-          expr = std::make_unique<CXFA_FMDotAccessorExpression>(
-              std::move(expr), TOKcall, WideStringView(), std::move(s));
+          expr = cppgc::MakeGarbageCollected<CXFA_FMDotAccessorExpression>(
+              m_heap->GetAllocationHandle(), expr, TOKcall, WideString(), s);
         } else if (m_token.m_type == TOKlbracket) {
-          std::unique_ptr<CXFA_FMSimpleExpression> s = ParseIndexExpression();
+          CXFA_FMSimpleExpression* s = ParseIndexExpression();
           if (!s)
             return nullptr;
 
-          expr = std::make_unique<CXFA_FMDotAccessorExpression>(
-              std::move(expr), TOKdot, tempStr, std::move(s));
+          expr = cppgc::MakeGarbageCollected<CXFA_FMDotAccessorExpression>(
+              m_heap->GetAllocationHandle(), expr, TOKdot, std::move(tempStr),
+              s);
         } else {
-          std::unique_ptr<CXFA_FMSimpleExpression> s =
-              std::make_unique<CXFA_FMIndexExpression>(ACCESSOR_NO_INDEX,
-                                                       nullptr, false);
-          expr = std::make_unique<CXFA_FMDotAccessorExpression>(
-              std::move(expr), TOKdot, tempStr, std::move(s));
+          CXFA_FMSimpleExpression* s =
+              cppgc::MakeGarbageCollected<CXFA_FMIndexExpression>(
+                  m_heap->GetAllocationHandle(), ACCESSOR_NO_INDEX, nullptr,
+                  false);
+          expr = cppgc::MakeGarbageCollected<CXFA_FMDotAccessorExpression>(
+              m_heap->GetAllocationHandle(), expr, TOKdot, std::move(tempStr),
+              s);
           continue;
         }
         break;
@@ -737,22 +736,25 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
         if (m_token.m_type != TOKidentifier)
           return nullptr;
 
-        WideStringView tempStr = m_token.m_string;
+        WideString tempStr(m_token.m_string);
         if (!NextToken())
           return nullptr;
         if (m_token.m_type == TOKlbracket) {
-          std::unique_ptr<CXFA_FMSimpleExpression> s = ParseIndexExpression();
+          CXFA_FMSimpleExpression* s = ParseIndexExpression();
           if (!s)
             return nullptr;
 
-          expr = std::make_unique<CXFA_FMDotDotAccessorExpression>(
-              std::move(expr), TOKdotdot, tempStr, std::move(s));
+          expr = cppgc::MakeGarbageCollected<CXFA_FMDotDotAccessorExpression>(
+              m_heap->GetAllocationHandle(), expr, TOKdotdot,
+              std::move(tempStr), s);
         } else {
-          std::unique_ptr<CXFA_FMSimpleExpression> s =
-              std::make_unique<CXFA_FMIndexExpression>(ACCESSOR_NO_INDEX,
-                                                       nullptr, false);
-          expr = std::make_unique<CXFA_FMDotDotAccessorExpression>(
-              std::move(expr), TOKdotdot, tempStr, std::move(s));
+          CXFA_FMSimpleExpression* s =
+              cppgc::MakeGarbageCollected<CXFA_FMIndexExpression>(
+                  m_heap->GetAllocationHandle(), ACCESSOR_NO_INDEX, nullptr,
+                  false);
+          expr = cppgc::MakeGarbageCollected<CXFA_FMDotDotAccessorExpression>(
+              m_heap->GetAllocationHandle(), expr, TOKdotdot,
+              std::move(tempStr), s);
           continue;
         }
         break;
@@ -763,33 +765,33 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
         if (m_token.m_type != TOKidentifier)
           return nullptr;
 
-        WideStringView tempStr = m_token.m_string;
+        WideString tempStr(m_token.m_string);
         if (!NextToken())
           return nullptr;
 
         if (m_token.m_type != TOKlbracket) {
-          std::unique_ptr<CXFA_FMSimpleExpression> s =
-              std::make_unique<CXFA_FMIndexExpression>(ACCESSOR_NO_INDEX,
-                                                       nullptr, false);
-          expr = std::make_unique<CXFA_FMDotAccessorExpression>(
-              std::move(expr), TOKdotscream, tempStr, std::move(s));
+          auto* s = cppgc::MakeGarbageCollected<CXFA_FMIndexExpression>(
+              m_heap->GetAllocationHandle(), ACCESSOR_NO_INDEX, nullptr, false);
+          expr = cppgc::MakeGarbageCollected<CXFA_FMDotAccessorExpression>(
+              m_heap->GetAllocationHandle(), expr, TOKdotscream,
+              std::move(tempStr), s);
           continue;
         }
 
-        std::unique_ptr<CXFA_FMSimpleExpression> s = ParseIndexExpression();
+        CXFA_FMSimpleExpression* s = ParseIndexExpression();
         if (!s)
           return nullptr;
 
-        expr = std::make_unique<CXFA_FMDotAccessorExpression>(
-            std::move(expr), TOKdotscream, tempStr, std::move(s));
+        expr = cppgc::MakeGarbageCollected<CXFA_FMDotAccessorExpression>(
+            m_heap->GetAllocationHandle(), expr, TOKdotscream,
+            std::move(tempStr), s);
         break;
       }
       case TOKdotstar: {
-        std::unique_ptr<CXFA_FMSimpleExpression> s =
-            std::make_unique<CXFA_FMIndexExpression>(ACCESSOR_NO_INDEX, nullptr,
-                                                     false);
-        expr = std::make_unique<CXFA_FMDotAccessorExpression>(
-            std::move(expr), TOKdotstar, L"*", std::move(s));
+        auto* s = cppgc::MakeGarbageCollected<CXFA_FMIndexExpression>(
+            m_heap->GetAllocationHandle(), ACCESSOR_NO_INDEX, nullptr, false);
+        expr = cppgc::MakeGarbageCollected<CXFA_FMDotAccessorExpression>(
+            m_heap->GetAllocationHandle(), expr, TOKdotstar, L"*", s);
         break;
       }
       default:
@@ -803,36 +805,35 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
 
 // Argument lists are zero or more comma seperated simple expressions found
 // between '(' and ')'
-std::unique_ptr<std::vector<std::unique_ptr<CXFA_FMSimpleExpression>>>
+Optional<std::vector<cppgc::Member<CXFA_FMSimpleExpression>>>
 CXFA_FMParser::ParseArgumentList() {
   if (m_token.m_type != TOKlparen || !NextToken())
-    return nullptr;
+    return pdfium::nullopt;
 
-  auto expressions =
-      std::make_unique<std::vector<std::unique_ptr<CXFA_FMSimpleExpression>>>();
+  std::vector<cppgc::Member<CXFA_FMSimpleExpression>> expressions;
   bool first_arg = true;
   while (m_token.m_type != TOKrparen) {
     if (first_arg) {
       first_arg = false;
     } else {
       if (m_token.m_type != TOKcomma || !NextToken())
-        return nullptr;
+        return pdfium::nullopt;
     }
 
-    std::unique_ptr<CXFA_FMSimpleExpression> exp = ParseSimpleExpression();
+    CXFA_FMSimpleExpression* exp = ParseSimpleExpression();
     if (!exp)
-      return nullptr;
+      return pdfium::nullopt;
 
-    expressions->push_back(std::move(exp));
-    if (expressions->size() > kMaxPostExpressions)
-      return nullptr;
+    expressions.push_back(exp);
+    if (expressions.size() > kMaxPostExpressions)
+      return pdfium::nullopt;
   }
 
   return expressions;
 }
 
 // Index := '[' ('*' | '+' SimpleExpression | '-' SimpleExpression) ']'
-std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParseIndexExpression() {
+CXFA_FMSimpleExpression* CXFA_FMParser::ParseIndexExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
@@ -840,8 +841,9 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParseIndexExpression() {
     return nullptr;
 
   if (m_token.m_type == TOKmul) {
-    auto pExp = std::make_unique<CXFA_FMIndexExpression>(
-        ACCESSOR_NO_RELATIVEINDEX, nullptr, true);
+    auto* pExp = cppgc::MakeGarbageCollected<CXFA_FMIndexExpression>(
+        m_heap->GetAllocationHandle(), ACCESSOR_NO_RELATIVEINDEX, nullptr,
+        true);
     if (!pExp || !NextToken())
       return nullptr;
 
@@ -863,18 +865,18 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParseIndexExpression() {
       return nullptr;
   }
 
-  std::unique_ptr<CXFA_FMSimpleExpression> s = ParseSimpleExpression();
+  CXFA_FMSimpleExpression* s = ParseSimpleExpression();
   if (!s)
     return nullptr;
   if (m_token.m_type != TOKrbracket)
     return nullptr;
 
-  return std::make_unique<CXFA_FMIndexExpression>(accessorIndex, std::move(s),
-                                                  false);
+  return cppgc::MakeGarbageCollected<CXFA_FMIndexExpression>(
+      m_heap->GetAllocationHandle(), accessorIndex, s, false);
 }
 
 // Paren := '(' SimpleExpression ')'
-std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParseParenExpression() {
+CXFA_FMSimpleExpression* CXFA_FMParser::ParseParenExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
@@ -884,7 +886,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParseParenExpression() {
   if (m_token.m_type == TOKrparen)
     return nullptr;
 
-  std::unique_ptr<CXFA_FMSimpleExpression> pExp1 = ParseSimpleExpression();
+  CXFA_FMSimpleExpression* pExp1 = ParseSimpleExpression();
   if (!pExp1)
     return nullptr;
 
@@ -897,7 +899,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParseParenExpression() {
 //       ('elseif' '(' SimpleExpression ')' 'then' ExpressionList)*
 //       ('else' ExpressionList)?
 //       'endif'
-std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseIfExpression() {
+CXFA_FMExpression* CXFA_FMParser::ParseIfExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
@@ -905,58 +907,60 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseIfExpression() {
   if (!CheckThenNext(TOKif))
     return nullptr;
 
-  std::unique_ptr<CXFA_FMSimpleExpression> pCondition = ParseParenExpression();
+  CXFA_FMSimpleExpression* pCondition = ParseParenExpression();
   if (!pCondition)
     return nullptr;
   if (!CheckThenNext(TOKthen))
     return nullptr;
 
-  auto pIfExpressions =
-      std::make_unique<CXFA_FMBlockExpression>(ParseExpressionList());
+  auto* pIfExpressions = cppgc::MakeGarbageCollected<CXFA_FMBlockExpression>(
+      m_heap->GetAllocationHandle(), ParseExpressionList());
 
-  std::vector<std::unique_ptr<CXFA_FMIfExpression>> pElseIfExpressions;
+  std::vector<cppgc::Member<CXFA_FMIfExpression>> pElseIfExpressions;
   while (m_token.m_type == TOKelseif) {
     if (!NextToken())
       return nullptr;
 
-    auto elseIfCondition = ParseParenExpression();
+    auto* elseIfCondition = ParseParenExpression();
     if (!elseIfCondition)
       return nullptr;
     if (!CheckThenNext(TOKthen))
       return nullptr;
 
     auto elseIfExprs = ParseExpressionList();
-    pElseIfExpressions.push_back(std::make_unique<CXFA_FMIfExpression>(
-        std::move(elseIfCondition),
-        std::make_unique<CXFA_FMBlockExpression>(std::move(elseIfExprs)),
-        std::vector<std::unique_ptr<CXFA_FMIfExpression>>(), nullptr));
+    pElseIfExpressions.push_back(
+        cppgc::MakeGarbageCollected<CXFA_FMIfExpression>(
+            m_heap->GetAllocationHandle(), elseIfCondition,
+            cppgc::MakeGarbageCollected<CXFA_FMBlockExpression>(
+                m_heap->GetAllocationHandle(), std::move(elseIfExprs)),
+            std::vector<cppgc::Member<CXFA_FMIfExpression>>(), nullptr));
   }
 
-  std::unique_ptr<CXFA_FMExpression> pElseExpression;
+  CXFA_FMExpression* pElseExpression = nullptr;
   if (m_token.m_type == TOKelse) {
     if (!NextToken())
       return nullptr;
 
-    pElseExpression =
-        std::make_unique<CXFA_FMBlockExpression>(ParseExpressionList());
+    pElseExpression = cppgc::MakeGarbageCollected<CXFA_FMBlockExpression>(
+        m_heap->GetAllocationHandle(), ParseExpressionList());
   }
   if (!CheckThenNext(TOKendif))
     return nullptr;
 
-  return std::make_unique<CXFA_FMIfExpression>(
-      std::move(pCondition), std::move(pIfExpressions),
-      std::move(pElseIfExpressions), std::move(pElseExpression));
+  return cppgc::MakeGarbageCollected<CXFA_FMIfExpression>(
+      m_heap->GetAllocationHandle(), pCondition, pIfExpressions,
+      std::move(pElseIfExpressions), pElseExpression);
 }
 
 // While := 'while' '(' SimpleExpression ')' 'do' ExpressionList 'endwhile'
-std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseWhileExpression() {
+CXFA_FMExpression* CXFA_FMParser::ParseWhileExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
   if (!CheckThenNext(TOKwhile))
     return nullptr;
 
-  std::unique_ptr<CXFA_FMSimpleExpression> pCondition = ParseParenExpression();
+  CXFA_FMSimpleExpression* pCondition = ParseParenExpression();
   if (!pCondition || !CheckThenNext(TOKdo))
     return nullptr;
 
@@ -964,16 +968,17 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseWhileExpression() {
   if (!CheckThenNext(TOKendwhile))
     return nullptr;
 
-  return std::make_unique<CXFA_FMWhileExpression>(
-      std::move(pCondition),
-      std::make_unique<CXFA_FMBlockExpression>(std::move(exprs)));
+  return cppgc::MakeGarbageCollected<CXFA_FMWhileExpression>(
+      m_heap->GetAllocationHandle(), pCondition,
+      cppgc::MakeGarbageCollected<CXFA_FMBlockExpression>(
+          m_heap->GetAllocationHandle(), std::move(exprs)));
 }
 
 // For := 'for' Assignment 'upto' Accessor ('step' SimpleExpression)?
 //            'do' ExpressionList 'endfor' |
 //         'for' Assignment 'downto' Accessor ('step' SimpleExpression)?
 //            'do' ExpressionList 'endfor'
-std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseForExpression() {
+CXFA_FMExpression* CXFA_FMParser::ParseForExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
@@ -982,14 +987,13 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseForExpression() {
   if (m_token.m_type != TOKidentifier)
     return nullptr;
 
-  WideStringView wsVariant = m_token.m_string;
+  WideString wsVariant(m_token.m_string);
   if (!NextToken())
     return nullptr;
   if (!CheckThenNext(TOKassign))
     return nullptr;
 
-  std::unique_ptr<CXFA_FMSimpleExpression> pAssignment =
-      ParseSimpleExpression();
+  CXFA_FMSimpleExpression* pAssignment = ParseSimpleExpression();
   if (!pAssignment)
     return nullptr;
 
@@ -1004,11 +1008,11 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseForExpression() {
   if (!NextToken())
     return nullptr;
 
-  std::unique_ptr<CXFA_FMSimpleExpression> pAccessor = ParseSimpleExpression();
+  CXFA_FMSimpleExpression* pAccessor = ParseSimpleExpression();
   if (!pAccessor)
     return nullptr;
 
-  std::unique_ptr<CXFA_FMSimpleExpression> pStep;
+  CXFA_FMSimpleExpression* pStep = nullptr;
   if (m_token.m_type == TOKstep) {
     if (!NextToken())
       return nullptr;
@@ -1023,15 +1027,16 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseForExpression() {
   if (!CheckThenNext(TOKendfor))
     return nullptr;
 
-  return std::make_unique<CXFA_FMForExpression>(
-      wsVariant, std::move(pAssignment), std::move(pAccessor), iDirection,
-      std::move(pStep),
-      std::make_unique<CXFA_FMBlockExpression>(std::move(exprs)));
+  return cppgc::MakeGarbageCollected<CXFA_FMForExpression>(
+      m_heap->GetAllocationHandle(), wsVariant, pAssignment, pAccessor,
+      iDirection, pStep,
+      cppgc::MakeGarbageCollected<CXFA_FMBlockExpression>(
+          m_heap->GetAllocationHandle(), std::move(exprs)));
 }
 
 // Foreach := 'foreach' Identifier 'in' '(' ArgumentList ')'
 //            'do' ExpressionList 'endfor'
-std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseForeachExpression() {
+CXFA_FMExpression* CXFA_FMParser::ParseForeachExpression() {
   if (m_token.m_type != TOKforeach)
     return nullptr;
 
@@ -1043,17 +1048,17 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseForeachExpression() {
   if (m_token.m_type != TOKidentifier)
     return nullptr;
 
-  WideStringView wsIdentifier = m_token.m_string;
+  WideString wsIdentifier(m_token.m_string);
   if (!NextToken() || !CheckThenNext(TOKin) || !CheckThenNext(TOKlparen))
     return nullptr;
 
-  std::vector<std::unique_ptr<CXFA_FMSimpleExpression>> pArgumentList;
+  std::vector<cppgc::Member<CXFA_FMSimpleExpression>> pArgumentList;
   while (m_token.m_type != TOKrparen) {
-    std::unique_ptr<CXFA_FMSimpleExpression> s = ParseSimpleExpression();
+    CXFA_FMSimpleExpression* s = ParseSimpleExpression();
     if (!s)
       return nullptr;
 
-    pArgumentList.push_back(std::move(s));
+    pArgumentList.push_back(s);
     if (m_token.m_type != TOKcomma)
       break;
     if (!NextToken())
@@ -1069,13 +1074,15 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseForeachExpression() {
   if (!CheckThenNext(TOKendfor))
     return nullptr;
 
-  return std::make_unique<CXFA_FMForeachExpression>(
-      wsIdentifier, std::move(pArgumentList),
-      std::make_unique<CXFA_FMBlockExpression>(std::move(exprs)));
+  return cppgc::MakeGarbageCollected<CXFA_FMForeachExpression>(
+      m_heap->GetAllocationHandle(), std::move(wsIdentifier),
+      std::move(pArgumentList),
+      cppgc::MakeGarbageCollected<CXFA_FMBlockExpression>(
+          m_heap->GetAllocationHandle(), std::move(exprs)));
 }
 
 // Block := 'do' ExpressionList 'end'
-std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseDoExpression() {
+CXFA_FMExpression* CXFA_FMParser::ParseDoExpression() {
   if (m_token.m_type != TOKdo)
     return nullptr;
 
@@ -1089,8 +1096,10 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseDoExpression() {
   if (!CheckThenNext(TOKend))
     return nullptr;
 
-  return std::make_unique<CXFA_FMDoExpression>(
-      std::make_unique<CXFA_FMBlockExpression>(std::move(exprs)));
+  return cppgc::MakeGarbageCollected<CXFA_FMDoExpression>(
+      m_heap->GetAllocationHandle(),
+      cppgc::MakeGarbageCollected<CXFA_FMBlockExpression>(
+          m_heap->GetAllocationHandle(), std::move(exprs)));
 }
 
 bool CXFA_FMParser::HasError() const {

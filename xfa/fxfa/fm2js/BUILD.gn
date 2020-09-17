@@ -18,7 +18,10 @@ source_set("fm2js") {
     "cxfa_fmtojavascriptdepth.cpp",
     "cxfa_fmtojavascriptdepth.h",
   ]
-  deps = [ "../../../core/fxcrt" ]
+  deps = [
+    "../../../core/fxcrt",
+    "../../../fxjs:gc",
+  ]
   configs += [
     "../../../:pdfium_core_config",
     "../../:xfa_warnings",
@@ -32,6 +35,9 @@ pdfium_unittest_source_set("unittests") {
     "cxfa_fmlexer_unittest.cpp",
     "cxfa_fmparser_unittest.cpp",
   ]
-  deps = [ ":fm2js" ]
+  deps = [
+    ":fm2js",
+    "../../../fxjs:gc",
+  ]
   pdfium_root_dir = "../../../"
 }
