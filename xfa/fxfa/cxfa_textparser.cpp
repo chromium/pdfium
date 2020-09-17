@@ -11,6 +11,7 @@
 
 #include "core/fxcrt/css/cfx_css.h"
 #include "core/fxcrt/css/cfx_csscomputedstyle.h"
+#include "core/fxcrt/css/cfx_cssdeclaration.h"
 #include "core/fxcrt/css/cfx_cssstyleselector.h"
 #include "core/fxcrt/css/cfx_cssstylesheet.h"
 #include "core/fxcrt/fx_codepage.h"
@@ -22,7 +23,6 @@
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_fontmgr.h"
-#include "xfa/fxfa/cxfa_textparsecontext.h"
 #include "xfa/fxfa/cxfa_textprovider.h"
 #include "xfa/fxfa/cxfa_texttabstopscontext.h"
 #include "xfa/fxfa/parser/cxfa_font.h"
@@ -199,11 +199,11 @@ RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::ComputeStyle(
   if (it == m_mapXMLNodeToParseContext.end())
     return nullptr;
 
-  CXFA_TextParseContext* pContext = it->second.get();
+  Context* pContext = it->second.get();
   if (!pContext)
     return nullptr;
 
-  pContext->m_pParentStyle.Reset(pParentStyle);
+  pContext->SetParentStyle(pParentStyle);
 
   auto tagProvider = ParseTagInfo(pXMLNode);
   if (tagProvider->m_bContent)
@@ -239,7 +239,7 @@ void CXFA_TextParser::ParseRichText(const CFX_XMLNode* pXMLNode,
   RetainPtr<CFX_CSSComputedStyle> pNewStyle;
   if (!(tagProvider->GetTagName().EqualsASCII("body") &&
         tagProvider->GetTagName().EqualsASCII("html"))) {
-    auto pTextContext = std::make_unique<CXFA_TextParseContext>();
+    auto pTextContext = std::make_unique<Context>();
     CFX_CSSDisplay eDisplay = CFX_CSSDisplay::Inline;
     if (!tagProvider->m_bContent) {
       auto declArray =
@@ -384,9 +384,9 @@ int32_t CXFA_TextParser::GetHorScale(CXFA_TextProvider* pTextProvider,
     while (pXMLNode) {
       auto it = m_mapXMLNodeToParseContext.find(pXMLNode);
       if (it != m_mapXMLNodeToParseContext.end()) {
-        CXFA_TextParseContext* pContext = it->second.get();
-        if (pContext && pContext->m_pParentStyle &&
-            pContext->m_pParentStyle->GetCustomStyle(
+        Context* pContext = it->second.get();
+        if (pContext && pContext->GetParentStyle() &&
+            pContext->GetParentStyle()->GetCustomStyle(
                 L"xfa-font-horizontal-scale", &wsValue)) {
           return wsValue.GetInteger();
         }
@@ -527,7 +527,7 @@ Optional<WideString> CXFA_TextParser::GetEmbeddedObj(
   return pTextProvider->GetEmbeddedObj(wsAttr);
 }
 
-CXFA_TextParseContext* CXFA_TextParser::GetParseContextFromMap(
+CXFA_TextParser::Context* CXFA_TextParser::GetParseContextFromMap(
     const CFX_XMLNode* pXMLNode) {
   auto it = m_mapXMLNodeToParseContext.find(pXMLNode);
   return it != m_mapXMLNodeToParseContext.end() ? it->second.get() : nullptr;
@@ -625,3 +625,17 @@ bool CXFA_TextParser::GetTabstops(const CFX_CSSComputedStyle* pStyle,
 CXFA_TextParser::TagProvider::TagProvider() = default;
 
 CXFA_TextParser::TagProvider::~TagProvider() = default;
+
+CXFA_TextParser::Context::Context() = default;
+
+CXFA_TextParser::Context::~Context() = default;
+
+void CXFA_TextParser::Context::SetParentStyle(
+    const CFX_CSSComputedStyle* style) {
+  m_pParentStyle.Reset(style);
+}
+
+void CXFA_TextParser::Context::SetDecls(
+    std::vector<const CFX_CSSDeclaration*>&& decl) {
+  decls_ = std::move(decl);
+}

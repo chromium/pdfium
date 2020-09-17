@@ -75,8 +75,6 @@ source_set("fxfa") {
     "cxfa_readynodeiterator.h",
     "cxfa_textlayout.cpp",
     "cxfa_textlayout.h",
-    "cxfa_textparsecontext.cpp",
-    "cxfa_textparsecontext.h",
     "cxfa_textparser.cpp",
     "cxfa_textparser.h",
     "cxfa_textprovider.cpp",

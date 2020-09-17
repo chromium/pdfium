@@ -27,7 +27,6 @@
 #include "xfa/fgas/layout/cfx_rtfbreak.h"
 #include "xfa/fgas/layout/cfx_textuserdata.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
-#include "xfa/fxfa/cxfa_textparsecontext.h"
 #include "xfa/fxfa/cxfa_textparser.h"
 #include "xfa/fxfa/cxfa_textprovider.h"
 #include "xfa/fxfa/cxfa_texttabstopscontext.h"
@@ -737,7 +736,7 @@ bool CXFA_TextLayout::LoadRichText(
   if (!pXMLNode)
     return false;
 
-  CXFA_TextParseContext* pContext =
+  CXFA_TextParser::Context* pContext =
       m_pTextParser->GetParseContextFromMap(pXMLNode);
   CFX_CSSDisplay eDisplay = CFX_CSSDisplay::None;
   bool bContentNode = false;
