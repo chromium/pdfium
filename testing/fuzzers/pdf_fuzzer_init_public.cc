@@ -11,6 +11,9 @@
 #ifdef PDF_ENABLE_V8
 #include "testing/free_deleter.h"
 #include "testing/v8_initializer.h"
+#ifdef PDF_ENABLE_XFA
+#include "testing/fuzzers/xfa_process_state.h"
+#endif  // PDF_ENABLE_XFA
 #endif  // PDF_ENABLE_V8
 
 #ifdef _WIN32
@@ -57,7 +60,7 @@ std::string ProgramPath() {
 
 }  // namespace
 
-PDFFuzzerPublic::PDFFuzzerPublic() {
+PDFFuzzerInitPublic::PDFFuzzerInitPublic() {
 #ifdef PDF_ENABLE_V8
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
   platform_ = InitializeV8ForPDFiumWithStartupData(
@@ -71,7 +74,6 @@ PDFFuzzerPublic::PDFFuzzerPublic() {
   create_params.array_buffer_allocator = allocator_.get();
   isolate_.reset(v8::Isolate::New(create_params));
   FXGC_Initialize(platform_.get(), isolate_.get());
-  heap_ = FXGC_CreateHeap();
 #endif  // PDF_ENABLE_XFA
 #endif  // PDF_ENABLE_V8
 
@@ -91,30 +93,12 @@ PDFFuzzerPublic::PDFFuzzerPublic() {
   unsupport_info_.version = 1;
   unsupport_info_.FSDK_UnSupport_Handler = [](UNSUPPORT_INFO*, int) {};
   FSDK_SetUnSpObjProcessHandler(&unsupport_info_);
-}
 
-#ifdef PDF_ENABLE_V8
 #ifdef PDF_ENABLE_XFA
-cppgc::Heap* PDFFuzzerPublic::GetHeap() const {
-  return heap_.get();
-}
-
-void PDFFuzzerPublic::MaybeForceGCAndPump() {
-  if (++iterations_ > 1000) {
-    FXGC_ForceGarbageCollection(heap_.get());
-    iterations_ = 0;
-  }
-  while (v8::platform::PumpMessageLoop(platform_.get(), isolate_.get()))
-    continue;
-}
-#endif  // PDF_ENABLE_XFA
-#endif  // PDF_ENABLE_V8
-
-PDFFuzzerPublic::~PDFFuzzerPublic() = default;
-
-PDFFuzzerInitPublic::PDFFuzzerInitPublic()
-    : context_(std::make_unique<PDFFuzzerPublic>()) {
-  FPDF_SetFuzzerPerProcessState(context_.get());
+  xfa_process_state_ =
+      std::make_unique<XFAProcessState>(platform_.get(), isolate_.get());
+  FPDF_SetFuzzerPerProcessState(xfa_process_state_.get());
+#endif
 }
 
 PDFFuzzerInitPublic::~PDFFuzzerInitPublic() {
