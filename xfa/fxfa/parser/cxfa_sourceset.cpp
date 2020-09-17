@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_sourceset.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_model.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -29,6 +28,8 @@ CXFA_SourceSet::CXFA_SourceSet(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::SourceSet,
                 {},
                 kSourceSetAttributeData,
-                std::make_unique<CJX_Model>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Model>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_SourceSet::~CXFA_SourceSet() = default;

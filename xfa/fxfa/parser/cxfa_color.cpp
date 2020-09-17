@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_color.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -34,7 +33,9 @@ CXFA_Color::CXFA_Color(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Color,
                 kColorPropertyData,
                 kColorAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Color::~CXFA_Color() = default;
 

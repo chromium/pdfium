@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_form.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_form.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -26,6 +25,8 @@ CXFA_Form::CXFA_Form(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Form,
                 {},
                 kFormAttributeData,
-                std::make_unique<CJX_Form>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Form>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Form::~CXFA_Form() = default;

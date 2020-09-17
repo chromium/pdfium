@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_lockdocument.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -30,6 +29,8 @@ CXFA_LockDocument::CXFA_LockDocument(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::LockDocument,
                 {},
                 kLockDocumentAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_LockDocument::~CXFA_LockDocument() = default;

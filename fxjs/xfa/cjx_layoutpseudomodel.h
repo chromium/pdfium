@@ -19,14 +19,13 @@ enum XFA_LAYOUTMODEL_HWXY {
   XFA_LAYOUTMODEL_Y
 };
 
-class CFXJSE_Value;
 class CScript_LayoutPseudoModel;
 class CXFA_LayoutProcessor;
 class CXFA_Node;
 
 class CJX_LayoutPseudoModel final : public CJX_Object {
  public:
-  explicit CJX_LayoutPseudoModel(CScript_LayoutPseudoModel* model);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CJX_LayoutPseudoModel() override;
 
   // CJX_Object:
@@ -55,6 +54,8 @@ class CJX_LayoutPseudoModel final : public CJX_Object {
   JSE_PROP(ready);
 
  private:
+  explicit CJX_LayoutPseudoModel(CScript_LayoutPseudoModel* model);
+
   using Type__ = CJX_LayoutPseudoModel;
   using ParentType__ = CJX_Object;
 

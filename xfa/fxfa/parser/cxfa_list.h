@@ -7,7 +7,6 @@
 #ifndef XFA_FXFA_PARSER_CXFA_LIST_H_
 #define XFA_FXFA_PARSER_CXFA_LIST_H_
 
-#include <memory>
 
 #include "fxjs/gc/heap.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
@@ -28,11 +27,11 @@ class CXFA_List : public CXFA_Object {
   virtual CXFA_Node* Item(size_t iIndex) = 0;
 
  protected:
-  CXFA_List(CXFA_Document* doc, std::unique_ptr<CJX_Object> js_obj);
+  CXFA_List(CXFA_Document* doc, CJX_Object* js_obj);
   CXFA_List(CXFA_Document* pDocument,
             XFA_ObjectType objectType,
             XFA_Element eType,
-            std::unique_ptr<CJX_Object> obj);
+            CJX_Object* obj);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_LIST_H_

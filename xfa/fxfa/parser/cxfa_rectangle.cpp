@@ -11,6 +11,7 @@
 
 #include "fxjs/xfa/cjx_node.h"
 #include "xfa/fxfa/parser/cxfa_corner.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_stroke.h"
 
 namespace {
@@ -39,7 +40,9 @@ CXFA_Rectangle::CXFA_Rectangle(CXFA_Document* doc, XFA_PacketType packet)
                XFA_Element::Rectangle,
                kRectanglePropertyData,
                kRectangleAttributeData,
-               std::make_unique<CJX_Node>(this)) {}
+               cppgc::MakeGarbageCollected<CJX_Node>(
+                   doc->GetHeap()->GetAllocationHandle(),
+                   this)) {}
 
 CXFA_Rectangle::CXFA_Rectangle(CXFA_Document* pDoc,
                                XFA_PacketType ePacket,
@@ -48,7 +51,7 @@ CXFA_Rectangle::CXFA_Rectangle(CXFA_Document* pDoc,
                                XFA_Element eType,
                                pdfium::span<const PropertyData> properties,
                                pdfium::span<const AttributeData> attributes,
-                               std::unique_ptr<CJX_Object> js_node)
+                               CJX_Object* js_node)
     : CXFA_Box(pDoc,
                ePacket,
                validPackets,
@@ -56,7 +59,7 @@ CXFA_Rectangle::CXFA_Rectangle(CXFA_Document* pDoc,
                eType,
                properties,
                attributes,
-               std::move(js_node)) {}
+               js_node) {}
 
 CXFA_Rectangle::~CXFA_Rectangle() = default;
 

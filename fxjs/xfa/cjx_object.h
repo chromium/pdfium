@@ -12,13 +12,14 @@
 #include <utility>
 #include <vector>
 
-#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxcrt/widestring.h"
+#include "fxjs/gc/heap.h"
 #include "fxjs/xfa/fxjse.h"
 #include "fxjs/xfa/jse_define.h"
 #include "third_party/base/optional.h"
 #include "third_party/base/span.h"
-#include "v8/include/cppgc/persistent.h"
+#include "v8/include/cppgc/garbage-collected.h"
+#include "v8/include/cppgc/member.h"
 #include "xfa/fxfa/fxfa_basic.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 
@@ -57,7 +58,8 @@ enum XFA_SOM_MESSAGETYPE {
   XFA_SOM_MandatoryMessage
 };
 
-class CJX_Object : public CFXJSE_HostObject {
+class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
+                   public CFXJSE_HostObject {
  public:
   // Corresponds 1:1 with CJX_ subclasses.
   enum class TypeTag {
@@ -98,12 +100,13 @@ class CJX_Object : public CFXJSE_HostObject {
     Xfa,
   };
 
-  explicit CJX_Object(CXFA_Object* obj);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CJX_Object() override;
 
   // CFXJSE_HostObject:
   CJX_Object* AsCJXObject() override;
 
+  virtual void Trace(cppgc::Visitor* visitor) const;
   virtual bool DynamicTypeIs(TypeTag eType) const;
 
   JSE_PROP(className);
@@ -222,6 +225,8 @@ class CJX_Object : public CFXJSE_HostObject {
   void ThrowTooManyOccurancesException(const WideString& obj) const;
 
  protected:
+  explicit CJX_Object(CXFA_Object* obj);
+
   void DefineMethods(pdfium::span<const CJX_MethodSpec> methods);
   void MoveBufferMapData(CXFA_Object* pSrcModule, CXFA_Object* pDstModule);
   void SetMapModuleString(void* pKey, WideStringView wsValue);
@@ -261,8 +266,8 @@ class CJX_Object : public CFXJSE_HostObject {
   void RemoveMapModuleKey(void* pKey);
   void MoveBufferMapData(CXFA_Object* pDstModule);
 
-  UnownedPtr<CXFA_Object> object_;
-  CXFA_LayoutItem* layout_item_ = nullptr;
+  cppgc::Member<CXFA_Object> object_;
+  cppgc::Member<CXFA_LayoutItem> layout_item_;
   std::unique_ptr<XFA_MAPMODULEDATA> map_module_data_;
   std::unique_ptr<CXFA_CalcData> calc_data_;
   std::map<ByteString, CJX_MethodCall> method_specs_;

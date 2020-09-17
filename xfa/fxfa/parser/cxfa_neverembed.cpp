@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_neverembed.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -27,6 +26,8 @@ CXFA_NeverEmbed::CXFA_NeverEmbed(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::NeverEmbed,
                 {},
                 kNeverEmbedAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_NeverEmbed::~CXFA_NeverEmbed() = default;

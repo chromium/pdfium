@@ -14,7 +14,7 @@ class CXFA_InstanceManager;
 
 class CJX_InstanceManager final : public CJX_Node {
  public:
-  explicit CJX_InstanceManager(CXFA_InstanceManager* mgr);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CJX_InstanceManager() override;
 
   // CJX_Object:
@@ -33,6 +33,8 @@ class CJX_InstanceManager final : public CJX_Node {
   int32_t MoveInstance(int32_t iTo, int32_t iFrom);
 
  private:
+  explicit CJX_InstanceManager(CXFA_InstanceManager* mgr);
+
   using Type__ = CJX_InstanceManager;
   using ParentType__ = CJX_Node;
 

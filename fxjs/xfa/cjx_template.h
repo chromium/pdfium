@@ -14,7 +14,7 @@ class CXFA_Template;
 
 class CJX_Template final : public CJX_Model {
  public:
-  explicit CJX_Template(CXFA_Template* tmpl);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CJX_Template() override;
 
   // CJX_Object:
@@ -31,6 +31,8 @@ class CJX_Template final : public CJX_Model {
   JSE_METHOD(remerge);
 
  private:
+  explicit CJX_Template(CXFA_Template* tmpl);
+
   using Type__ = CJX_Template;
   using ParentType__ = CJX_Model;
 

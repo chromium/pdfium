@@ -14,16 +14,13 @@
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-CXFA_List::CXFA_List(CXFA_Document* pDocument, std::unique_ptr<CJX_Object> obj)
-    : CXFA_List(pDocument,
-                XFA_ObjectType::List,
-                XFA_Element::List,
-                std::move(obj)) {}
+CXFA_List::CXFA_List(CXFA_Document* pDocument, CJX_Object* obj)
+    : CXFA_List(pDocument, XFA_ObjectType::List, XFA_Element::List, obj) {}
 
 CXFA_List::CXFA_List(CXFA_Document* pDocument,
                      XFA_ObjectType objectType,
                      XFA_Element eType,
-                     std::unique_ptr<CJX_Object> obj)
-    : CXFA_Object(pDocument, objectType, eType, std::move(obj)) {}
+                     CJX_Object* obj)
+    : CXFA_Object(pDocument, objectType, eType, obj) {}
 
 CXFA_List::~CXFA_List() = default;

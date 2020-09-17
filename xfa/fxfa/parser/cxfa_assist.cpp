@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_assist.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -34,6 +33,8 @@ CXFA_Assist::CXFA_Assist(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Assist,
                 kAssistPropertyData,
                 kAssistAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Assist::~CXFA_Assist() = default;

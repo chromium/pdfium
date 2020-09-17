@@ -14,7 +14,7 @@ class CXFA_ExclGroup;
 
 class CJX_ExclGroup final : public CJX_Node {
  public:
-  explicit CJX_ExclGroup(CXFA_ExclGroup* group);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CJX_ExclGroup() override;
 
   // CJX_Object:
@@ -32,6 +32,8 @@ class CJX_ExclGroup final : public CJX_Node {
   JSE_PROP(transient);
 
  private:
+  explicit CJX_ExclGroup(CXFA_ExclGroup* group);
+
   using Type__ = CJX_ExclGroup;
   using ParentType__ = CJX_Node;
 

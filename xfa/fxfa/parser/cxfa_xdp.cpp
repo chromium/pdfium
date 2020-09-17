@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_xdp.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -31,6 +30,8 @@ CXFA_Xdp::CXFA_Xdp(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Xdp,
                 kXdpPropertyData,
                 kXdpAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Xdp::~CXFA_Xdp() = default;

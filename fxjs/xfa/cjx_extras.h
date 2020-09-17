@@ -14,7 +14,7 @@ class CXFA_Extras;
 
 class CJX_Extras final : public CJX_Node {
  public:
-  explicit CJX_Extras(CXFA_Extras* node);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CJX_Extras() override;
 
   // CJX_Object:
@@ -23,6 +23,8 @@ class CJX_Extras final : public CJX_Node {
   JSE_PROP(type);
 
  private:
+  explicit CJX_Extras(CXFA_Extras* node);
+
   using Type__ = CJX_Extras;
   using ParentType__ = CJX_Node;
 

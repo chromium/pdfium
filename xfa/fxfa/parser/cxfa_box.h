@@ -7,7 +7,6 @@
 #ifndef XFA_FXFA_PARSER_CXFA_BOX_H_
 #define XFA_FXFA_PARSER_CXFA_BOX_H_
 
-#include <memory>
 #include <tuple>
 #include <vector>
 
@@ -48,7 +47,7 @@ class CXFA_Box : public CXFA_Node {
            XFA_Element eType,
            pdfium::span<const PropertyData> properties,
            pdfium::span<const AttributeData> attributes,
-           std::unique_ptr<CJX_Object> js_node);
+           CJX_Object* js_node);
 
   XFA_AttributeValue GetHand();
 

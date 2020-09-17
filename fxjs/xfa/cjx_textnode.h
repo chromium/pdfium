@@ -14,7 +14,7 @@ class CXFA_Node;
 
 class CJX_TextNode : public CJX_Node {
  public:
-  explicit CJX_TextNode(CXFA_Node* node);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CJX_TextNode() override;
 
   // CJX_Object:
@@ -22,6 +22,9 @@ class CJX_TextNode : public CJX_Node {
 
   JSE_PROP(defaultValue); /* {default} */
   JSE_PROP(value);
+
+ protected:
+  explicit CJX_TextNode(CXFA_Node* node);
 
  private:
   using Type__ = CJX_TextNode;

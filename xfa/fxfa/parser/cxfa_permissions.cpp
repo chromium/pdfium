@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_permissions.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -39,6 +38,8 @@ CXFA_Permissions::CXFA_Permissions(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Permissions,
                 kPermissionsPropertyData,
                 kPermissionsAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Permissions::~CXFA_Permissions() = default;

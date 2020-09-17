@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_update.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_textnode.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -29,6 +28,8 @@ CXFA_Update::CXFA_Update(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Update,
                 {},
                 kUpdateAttributeData,
-                std::make_unique<CJX_TextNode>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_TextNode>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Update::~CXFA_Update() = default;

@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_templatecache.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -29,6 +28,8 @@ CXFA_TemplateCache::CXFA_TemplateCache(CXFA_Document* doc,
                 XFA_Element::TemplateCache,
                 {},
                 kTemplateCacheAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_TemplateCache::~CXFA_TemplateCache() = default;

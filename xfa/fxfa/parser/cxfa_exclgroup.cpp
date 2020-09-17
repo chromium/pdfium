@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_exclgroup.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_exclgroup.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -61,6 +60,8 @@ CXFA_ExclGroup::CXFA_ExclGroup(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::ExclGroup,
                 kExclGroupPropertyData,
                 kExclGroupAttributeData,
-                std::make_unique<CJX_ExclGroup>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_ExclGroup>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_ExclGroup::~CXFA_ExclGroup() = default;

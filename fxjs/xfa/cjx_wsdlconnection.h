@@ -14,7 +14,7 @@ class CXFA_WsdlConnection;
 
 class CJX_WsdlConnection final : public CJX_Node {
  public:
-  explicit CJX_WsdlConnection(CXFA_WsdlConnection* connection);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CJX_WsdlConnection() override;
 
   // CJX_Object:
@@ -23,6 +23,8 @@ class CJX_WsdlConnection final : public CJX_Node {
   JSE_METHOD(execute);
 
  private:
+  explicit CJX_WsdlConnection(CXFA_WsdlConnection* connection);
+
   using Type__ = CJX_WsdlConnection;
   using ParentType__ = CJX_Node;
 

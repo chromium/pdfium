@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_datetimeedit.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -39,7 +38,9 @@ CXFA_DateTimeEdit::CXFA_DateTimeEdit(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::DateTimeEdit,
                 kDateTimeEditPropertyData,
                 kDateTimeEditAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_DateTimeEdit::~CXFA_DateTimeEdit() = default;
 

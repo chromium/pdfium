@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_encryptionmethods.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -31,6 +30,8 @@ CXFA_EncryptionMethods::CXFA_EncryptionMethods(CXFA_Document* doc,
                 XFA_Element::EncryptionMethods,
                 {},
                 kEncryptionMethodsAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_EncryptionMethods::~CXFA_EncryptionMethods() = default;

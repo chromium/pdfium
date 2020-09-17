@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_adbe_jsdebugger.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -28,6 +27,8 @@ CXFA_ADBE_JSDebugger::CXFA_ADBE_JSDebugger(CXFA_Document* doc,
                 XFA_Element::ADBE_JSDebugger,
                 {},
                 kADBE_JSDebuggerAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_ADBE_JSDebugger::~CXFA_ADBE_JSDebugger() = default;

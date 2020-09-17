@@ -14,7 +14,7 @@ class CXFA_Handler;
 
 class CJX_Handler final : public CJX_TextNode {
  public:
-  explicit CJX_Handler(CXFA_Handler* node);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CJX_Handler() override;
 
   // CJX_Object:
@@ -23,6 +23,8 @@ class CJX_Handler final : public CJX_TextNode {
   JSE_PROP(version);
 
  private:
+  explicit CJX_Handler(CXFA_Handler* node);
+
   using Type__ = CJX_Handler;
   using ParentType__ = CJX_TextNode;
 

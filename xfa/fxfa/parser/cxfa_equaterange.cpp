@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_equaterange.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -30,6 +29,8 @@ CXFA_EquateRange::CXFA_EquateRange(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::EquateRange,
                 {},
                 kEquateRangeAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_EquateRange::~CXFA_EquateRange() = default;

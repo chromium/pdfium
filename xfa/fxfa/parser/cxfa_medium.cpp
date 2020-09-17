@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_medium.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -38,6 +37,8 @@ CXFA_Medium::CXFA_Medium(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Medium,
                 {},
                 kMediumAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Medium::~CXFA_Medium() = default;

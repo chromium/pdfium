@@ -6,14 +6,15 @@
 
 #include "xfa/fxfa/parser/cscript_logpseudomodel.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_logpseudomodel.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
-CScript_LogPseudoModel::CScript_LogPseudoModel(CXFA_Document* pDocument)
-    : CXFA_Object(pDocument,
+CScript_LogPseudoModel::CScript_LogPseudoModel(CXFA_Document* doc)
+    : CXFA_Object(doc,
                   XFA_ObjectType::Object,
                   XFA_Element::LogPseudoModel,
-                  std::make_unique<CJX_LogPseudoModel>(this)) {}
+                  cppgc::MakeGarbageCollected<CJX_LogPseudoModel>(
+                      doc->GetHeap()->GetAllocationHandle(),
+                      this)) {}
 
 CScript_LogPseudoModel::~CScript_LogPseudoModel() = default;

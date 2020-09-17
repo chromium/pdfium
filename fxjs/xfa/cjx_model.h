@@ -14,7 +14,7 @@ class CXFA_Node;
 
 class CJX_Model : public CJX_Node {
  public:
-  explicit CJX_Model(CXFA_Node* obj);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CJX_Model() override;
 
   // CJX_Object:
@@ -26,6 +26,9 @@ class CJX_Model : public CJX_Node {
 
   JSE_PROP(aliasNode);
   JSE_PROP(context);
+
+ protected:
+  explicit CJX_Model(CXFA_Node* obj);
 
  private:
   using Type__ = CJX_Model;

@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_versioncontrol.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -33,6 +32,8 @@ CXFA_VersionControl::CXFA_VersionControl(CXFA_Document* doc,
                 XFA_Element::VersionControl,
                 {},
                 kVersionControlAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_VersionControl::~CXFA_VersionControl() = default;

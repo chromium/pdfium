@@ -6,10 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_bind.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
 #include "fxjs/xfa/cjx_object.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_picture.h"
 
 namespace {
@@ -42,7 +41,9 @@ CXFA_Bind::CXFA_Bind(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Bind,
                 kBindPropertyData,
                 kBindAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Bind::~CXFA_Bind() = default;
 

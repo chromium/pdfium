@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_boolean.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_boolean.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -30,6 +29,8 @@ CXFA_Boolean::CXFA_Boolean(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Boolean,
                 {},
                 kBooleanAttributeData,
-                std::make_unique<CJX_Boolean>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Boolean>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Boolean::~CXFA_Boolean() = default;

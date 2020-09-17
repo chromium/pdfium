@@ -12,6 +12,7 @@
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/parser/cxfa_color.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
@@ -69,7 +70,7 @@ CXFA_Stroke::CXFA_Stroke(CXFA_Document* pDoc,
                          XFA_Element eType,
                          pdfium::span<const PropertyData> properties,
                          pdfium::span<const AttributeData> attributes,
-                         std::unique_ptr<CJX_Object> js_node)
+                         CJX_Object* js_node)
     : CXFA_Node(pDoc,
                 ePacket,
                 validPackets,
@@ -77,7 +78,7 @@ CXFA_Stroke::CXFA_Stroke(CXFA_Document* pDoc,
                 eType,
                 properties,
                 attributes,
-                std::move(js_node)) {}
+                js_node) {}
 
 CXFA_Stroke::~CXFA_Stroke() = default;
 

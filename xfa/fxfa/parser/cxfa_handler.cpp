@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_handler.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_handler.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -30,6 +29,8 @@ CXFA_Handler::CXFA_Handler(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Handler,
                 {},
                 kHandlerAttributeData,
-                std::make_unique<CJX_Handler>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Handler>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Handler::~CXFA_Handler() = default;

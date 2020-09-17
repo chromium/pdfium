@@ -6,10 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_validate.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
 #include "fxjs/xfa/cjx_object.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_message.h"
 #include "xfa/fxfa/parser/cxfa_picture.h"
 #include "xfa/fxfa/parser/cxfa_script.h"
@@ -52,7 +51,9 @@ CXFA_Validate::CXFA_Validate(CXFA_Document* doc, XFA_PacketType packet)
           XFA_Element::Validate,
           kValidatePropertyData,
           kValidateAttributeData,
-          std::make_unique<CJX_Node>(this)) {}
+          cppgc::MakeGarbageCollected<CJX_Node>(
+              doc->GetHeap()->GetAllocationHandle(),
+              this)) {}
 
 CXFA_Validate::~CXFA_Validate() = default;
 

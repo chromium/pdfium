@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_manifest.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_manifest.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -35,6 +34,8 @@ CXFA_Manifest::CXFA_Manifest(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Manifest,
                 kManifestPropertyData,
                 kManifestAttributeData,
-                std::make_unique<CJX_Manifest>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Manifest>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Manifest::~CXFA_Manifest() = default;

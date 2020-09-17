@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_reasons.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -30,6 +29,8 @@ CXFA_Reasons::CXFA_Reasons(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Reasons,
                 {},
                 kReasonsAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Reasons::~CXFA_Reasons() = default;

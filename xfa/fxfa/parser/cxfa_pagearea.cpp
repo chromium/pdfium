@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_pagearea.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_container.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -45,6 +44,8 @@ CXFA_PageArea::CXFA_PageArea(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::PageArea,
                 kPageAreaPropertyData,
                 kPageAreaAttributeData,
-                std::make_unique<CJX_Container>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Container>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_PageArea::~CXFA_PageArea() = default;

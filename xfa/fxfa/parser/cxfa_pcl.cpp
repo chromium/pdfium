@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_pcl.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -35,6 +34,8 @@ CXFA_Pcl::CXFA_Pcl(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Pcl,
                 kPclPropertyData,
                 kPclAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Pcl::~CXFA_Pcl() = default;

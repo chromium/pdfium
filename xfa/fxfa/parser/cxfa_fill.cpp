@@ -6,10 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_fill.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
 #include "xfa/fxfa/parser/cxfa_color.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_linear.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_pattern.h"
@@ -47,7 +46,9 @@ CXFA_Fill::CXFA_Fill(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Fill,
                 kFillPropertyData,
                 kFillAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Fill::~CXFA_Fill() = default;
 

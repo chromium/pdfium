@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_dynamicrender.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -28,6 +27,8 @@ CXFA_DynamicRender::CXFA_DynamicRender(CXFA_Document* doc,
                 XFA_Element::DynamicRender,
                 {},
                 kDynamicRenderAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_DynamicRender::~CXFA_DynamicRender() = default;

@@ -11,12 +11,11 @@
 #include "fxjs/xfa/jse_define.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
-class CFXJSE_Value;
 class CScript_HostPseudoModel;
 
 class CJX_HostPseudoModel final : public CJX_Object {
  public:
-  explicit CJX_HostPseudoModel(CScript_HostPseudoModel* model);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CJX_HostPseudoModel() override;
 
   // CJX_Object:
@@ -54,6 +53,8 @@ class CJX_HostPseudoModel final : public CJX_Object {
   JSE_PROP(name);
 
  private:
+  explicit CJX_HostPseudoModel(CScript_HostPseudoModel* model);
+
   using Type__ = CJX_HostPseudoModel;
   using ParentType__ = CJX_Object;
 

@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_printhighquality.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -28,6 +27,8 @@ CXFA_PrintHighQuality::CXFA_PrintHighQuality(CXFA_Document* doc,
                 XFA_Element::PrintHighQuality,
                 {},
                 kPrintHighQualityAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_PrintHighQuality::~CXFA_PrintHighQuality() = default;

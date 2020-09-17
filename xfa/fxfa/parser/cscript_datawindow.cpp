@@ -6,17 +6,15 @@
 
 #include "xfa/fxfa/parser/cscript_datawindow.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_datawindow.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
-#include "xfa/fxfa/parser/cxfa_localemgr.h"
-#include "xfa/fxfa/parser/xfa_utils.h"
 
-CScript_DataWindow::CScript_DataWindow(CXFA_Document* pDocument)
-    : CXFA_Object(pDocument,
+CScript_DataWindow::CScript_DataWindow(CXFA_Document* doc)
+    : CXFA_Object(doc,
                   XFA_ObjectType::Object,
                   XFA_Element::DataWindow,
-                  std::make_unique<CJX_DataWindow>(this)) {}
+                  cppgc::MakeGarbageCollected<CJX_DataWindow>(
+                      doc->GetHeap()->GetAllocationHandle(),
+                      this)) {}
 
 CScript_DataWindow::~CScript_DataWindow() = default;

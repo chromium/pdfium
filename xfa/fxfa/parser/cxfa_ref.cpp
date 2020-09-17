@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_ref.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_textnode.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -28,6 +27,8 @@ CXFA_Ref::CXFA_Ref(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Ref,
                 {},
                 kRefAttributeData,
-                std::make_unique<CJX_TextNode>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_TextNode>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Ref::~CXFA_Ref() = default;

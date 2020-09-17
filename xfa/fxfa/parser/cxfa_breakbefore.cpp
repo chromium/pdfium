@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_breakbefore.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -38,6 +37,8 @@ CXFA_BreakBefore::CXFA_BreakBefore(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::BreakBefore,
                 kBreakBeforePropertyData,
                 kBreakBeforeAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_BreakBefore::~CXFA_BreakBefore() = default;

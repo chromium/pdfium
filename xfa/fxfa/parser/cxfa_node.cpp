@@ -989,8 +989,8 @@ CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
                      XFA_Element eType,
                      pdfium::span<const PropertyData> properties,
                      pdfium::span<const AttributeData> attributes,
-                     std::unique_ptr<CJX_Object> js_object)
-    : CXFA_Object(pDoc, oType, eType, std::move(js_object)),
+                     CJX_Object* js_object)
+    : CXFA_Object(pDoc, oType, eType, js_object),
       m_Properties(properties),
       m_Attributes(attributes),
       m_ValidPackets(validPackets),

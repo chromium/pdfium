@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_typeface.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -26,6 +25,8 @@ CXFA_Typeface::CXFA_Typeface(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Typeface,
                 {},
                 kTypefaceAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Typeface::~CXFA_Typeface() = default;

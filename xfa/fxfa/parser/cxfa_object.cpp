@@ -22,18 +22,19 @@
 CXFA_Object::CXFA_Object(CXFA_Document* pDocument,
                          XFA_ObjectType objectType,
                          XFA_Element elementType,
-                         std::unique_ptr<CJX_Object> jsObject)
-    : m_pDocument(pDocument),
-      m_objectType(objectType),
+                         CJX_Object* jsObject)
+    : m_objectType(objectType),
       m_elementType(elementType),
       m_elementName(XFA_ElementToName(elementType)),
       m_elementNameHash(FX_HashCode_GetAsIfW(m_elementName, false)),
-      m_pJSObject(std::move(jsObject)) {}
+      m_pDocument(pDocument),
+      m_pJSObject(jsObject) {}
 
 CXFA_Object::~CXFA_Object() = default;
 
 void CXFA_Object::Trace(cppgc::Visitor* visitor) const {
   visitor->Trace(m_pDocument);
+  visitor->Trace(m_pJSObject);
 }
 
 WideString CXFA_Object::GetSOMExpression() {

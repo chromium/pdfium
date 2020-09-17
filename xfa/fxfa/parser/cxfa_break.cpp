@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_break.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -44,6 +43,8 @@ CXFA_Break::CXFA_Break(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Break,
                 kBreakPropertyData,
                 kBreakAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Break::~CXFA_Break() = default;

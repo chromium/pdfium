@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_pagerange.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -27,6 +26,8 @@ CXFA_PageRange::CXFA_PageRange(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::PageRange,
                 {},
                 kPageRangeAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_PageRange::~CXFA_PageRange() = default;

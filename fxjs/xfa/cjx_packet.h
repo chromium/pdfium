@@ -14,7 +14,7 @@ class CXFA_Packet;
 
 class CJX_Packet final : public CJX_Node {
  public:
-  explicit CJX_Packet(CXFA_Packet* packet);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CJX_Packet() override;
 
   // CJX_Object:
@@ -27,6 +27,8 @@ class CJX_Packet final : public CJX_Node {
   JSE_PROP(content);
 
  private:
+  explicit CJX_Packet(CXFA_Packet* packet);
+
   using Type__ = CJX_Packet;
   using ParentType__ = CJX_Node;
 

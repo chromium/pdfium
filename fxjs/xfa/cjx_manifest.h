@@ -14,7 +14,7 @@ class CXFA_Manifest;
 
 class CJX_Manifest final : public CJX_Node {
  public:
-  explicit CJX_Manifest(CXFA_Manifest* manifest);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CJX_Manifest() override;
 
   // CJX_Object:
@@ -23,6 +23,8 @@ class CJX_Manifest final : public CJX_Node {
   JSE_METHOD(evaluate);
 
  private:
+  explicit CJX_Manifest(CXFA_Manifest* manifest);
+
   using Type__ = CJX_Manifest;
   using ParentType__ = CJX_Node;
 

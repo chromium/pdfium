@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_connectionset.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_model.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 CXFA_ConnectionSet::CXFA_ConnectionSet(CXFA_Document* doc,
                                        XFA_PacketType packet)
@@ -19,6 +18,8 @@ CXFA_ConnectionSet::CXFA_ConnectionSet(CXFA_Document* doc,
                 XFA_Element::ConnectionSet,
                 {},
                 {},
-                std::make_unique<CJX_Model>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Model>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_ConnectionSet::~CXFA_ConnectionSet() = default;

@@ -16,7 +16,7 @@ class CScript_LogPseudoModel;
 // xfa_basic_data_element_script is removed.
 class CJX_LogPseudoModel final : public CJX_Object {
  public:
-  explicit CJX_LogPseudoModel(CScript_LogPseudoModel* model);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CJX_LogPseudoModel() override;
 
   // CJX_Object:
@@ -29,6 +29,8 @@ class CJX_LogPseudoModel final : public CJX_Object {
   JSE_METHOD(trace);
 
  private:
+  explicit CJX_LogPseudoModel(CScript_LogPseudoModel* model);
+
   using Type__ = CJX_LogPseudoModel;
   using ParentType__ = CJX_Object;
 

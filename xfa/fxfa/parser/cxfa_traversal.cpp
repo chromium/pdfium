@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_traversal.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -32,6 +31,8 @@ CXFA_Traversal::CXFA_Traversal(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Traversal,
                 kTraversalPropertyData,
                 kTraversalAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Traversal::~CXFA_Traversal() = default;

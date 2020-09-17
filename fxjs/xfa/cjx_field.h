@@ -14,7 +14,7 @@ class CXFA_Field;
 
 class CJX_Field final : public CJX_Container {
  public:
-  explicit CJX_Field(CXFA_Field* field);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CJX_Field() override;
 
   // CJX_Object:
@@ -43,6 +43,8 @@ class CJX_Field final : public CJX_Container {
   JSE_PROP(selectedIndex);
 
  private:
+  explicit CJX_Field(CXFA_Field* field);
+
   using Type__ = CJX_Field;
   using ParentType__ = CJX_Container;
 

@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_eranames.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -26,6 +25,8 @@ CXFA_EraNames::CXFA_EraNames(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::EraNames,
                 kEraNamesPropertyData,
                 {},
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_EraNames::~CXFA_EraNames() = default;

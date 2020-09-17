@@ -14,7 +14,7 @@ class CScript_SignaturePseudoModel;
 
 class CJX_SignaturePseudoModel final : public CJX_Object {
  public:
-  explicit CJX_SignaturePseudoModel(CScript_SignaturePseudoModel* model);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CJX_SignaturePseudoModel() override;
 
   // CJX_Object:
@@ -26,6 +26,8 @@ class CJX_SignaturePseudoModel final : public CJX_Object {
   JSE_METHOD(clear);
 
  private:
+  explicit CJX_SignaturePseudoModel(CScript_SignaturePseudoModel* model);
+
   using Type__ = CJX_SignaturePseudoModel;
   using ParentType__ = CJX_Object;
 

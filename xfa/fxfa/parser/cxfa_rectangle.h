@@ -7,7 +7,6 @@
 #ifndef XFA_FXFA_PARSER_CXFA_RECTANGLE_H_
 #define XFA_FXFA_PARSER_CXFA_RECTANGLE_H_
 
-#include <memory>
 #include <vector>
 
 #include "xfa/fxfa/parser/cxfa_box.h"
@@ -35,7 +34,7 @@ class CXFA_Rectangle : public CXFA_Box {
                  XFA_Element eType,
                  pdfium::span<const PropertyData> properties,
                  pdfium::span<const AttributeData> attributes,
-                 std::unique_ptr<CJX_Object> js_node);
+                 CJX_Object* js_node);
 
   void Stroke(const std::vector<CXFA_Stroke*>& strokes,
               CXFA_Graphics* pGS,

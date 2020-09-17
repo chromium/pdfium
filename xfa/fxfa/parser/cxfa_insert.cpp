@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_insert.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_textnode.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -29,6 +28,8 @@ CXFA_Insert::CXFA_Insert(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Insert,
                 {},
                 kInsertAttributeData,
-                std::make_unique<CJX_TextNode>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_TextNode>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Insert::~CXFA_Insert() = default;

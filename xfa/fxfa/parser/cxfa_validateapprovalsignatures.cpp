@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_validateapprovalsignatures.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -29,6 +28,8 @@ CXFA_ValidateApprovalSignatures::CXFA_ValidateApprovalSignatures(
                 XFA_Element::ValidateApprovalSignatures,
                 {},
                 kValidateApprovalSignaturesAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_ValidateApprovalSignatures::~CXFA_ValidateApprovalSignatures() = default;

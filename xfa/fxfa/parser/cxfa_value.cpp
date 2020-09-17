@@ -6,11 +6,10 @@
 
 #include "xfa/fxfa/parser/cxfa_value.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "xfa/fxfa/parser/cxfa_arc.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_exdata.h"
 #include "xfa/fxfa/parser/cxfa_image.h"
 #include "xfa/fxfa/parser/cxfa_line.h"
@@ -52,7 +51,9 @@ CXFA_Value::CXFA_Value(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Value,
                 kValuePropertyData,
                 kValueAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Value::~CXFA_Value() = default;
 

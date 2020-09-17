@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_hyphenation.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -34,6 +33,8 @@ CXFA_Hyphenation::CXFA_Hyphenation(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Hyphenation,
                 {},
                 kHyphenationAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Hyphenation::~CXFA_Hyphenation() = default;

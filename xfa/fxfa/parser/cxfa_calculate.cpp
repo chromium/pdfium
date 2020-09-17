@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_calculate.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_message.h"
 #include "xfa/fxfa/parser/cxfa_script.h"
 #include "xfa/fxfa/parser/cxfa_text.h"
@@ -39,7 +38,9 @@ CXFA_Calculate::CXFA_Calculate(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Calculate,
                 kCalculatePropertyData,
                 kCalculateAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Calculate::~CXFA_Calculate() = default;
 

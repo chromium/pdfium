@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_embed.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -27,6 +26,8 @@ CXFA_Embed::CXFA_Embed(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Embed,
                 {},
                 kEmbedAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Embed::~CXFA_Embed() = default;

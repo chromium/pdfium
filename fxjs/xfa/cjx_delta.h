@@ -14,7 +14,7 @@ class CXFA_Delta;
 
 class CJX_Delta final : public CJX_Object {
  public:
-  explicit CJX_Delta(CXFA_Delta* delta);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CJX_Delta() override;
 
   // CJX_Object:
@@ -27,6 +27,8 @@ class CJX_Delta final : public CJX_Object {
   JSE_PROP(target);
 
  private:
+  explicit CJX_Delta(CXFA_Delta* delta);
+
   using Type__ = CJX_Delta;
   using ParentType__ = CJX_Object;
 

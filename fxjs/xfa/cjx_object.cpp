@@ -131,6 +131,11 @@ CJX_Object* CJX_Object::AsCJXObject() {
   return this;
 }
 
+void CJX_Object::Trace(cppgc::Visitor* visitor) const {
+  visitor->Trace(object_);
+  visitor->Trace(layout_item_);
+}
+
 bool CJX_Object::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__;
 }

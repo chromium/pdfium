@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_presence.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -27,6 +26,8 @@ CXFA_Presence::CXFA_Presence(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Presence,
                 {},
                 kPresenceAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Presence::~CXFA_Presence() = default;

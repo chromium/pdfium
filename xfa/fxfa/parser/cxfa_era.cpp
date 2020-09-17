@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_era.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 CXFA_Era::CXFA_Era(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
@@ -18,6 +17,8 @@ CXFA_Era::CXFA_Era(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Era,
                 {},
                 {},
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Era::~CXFA_Era() = default;

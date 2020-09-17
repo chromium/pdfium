@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_script.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_script.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -42,7 +41,9 @@ CXFA_Script::CXFA_Script(CXFA_Document* doc, XFA_PacketType packet)
           XFA_Element::Script,
           kScriptPropertyData,
           kScriptAttributeData,
-          std::make_unique<CJX_Script>(this)) {}
+          cppgc::MakeGarbageCollected<CJX_Script>(
+              doc->GetHeap()->GetAllocationHandle(),
+              this)) {}
 
 CXFA_Script::~CXFA_Script() = default;
 

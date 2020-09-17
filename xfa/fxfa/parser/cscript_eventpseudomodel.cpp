@@ -6,14 +6,15 @@
 
 #include "xfa/fxfa/parser/cscript_eventpseudomodel.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_eventpseudomodel.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
-CScript_EventPseudoModel::CScript_EventPseudoModel(CXFA_Document* pDocument)
-    : CXFA_Object(pDocument,
+CScript_EventPseudoModel::CScript_EventPseudoModel(CXFA_Document* doc)
+    : CXFA_Object(doc,
                   XFA_ObjectType::Object,
                   XFA_Element::EventPseudoModel,
-                  std::make_unique<CJX_EventPseudoModel>(this)) {}
+                  cppgc::MakeGarbageCollected<CJX_EventPseudoModel>(
+                      doc->GetHeap()->GetAllocationHandle(),
+                      this)) {}
 
 CScript_EventPseudoModel::~CScript_EventPseudoModel() = default;

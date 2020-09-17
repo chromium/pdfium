@@ -6,10 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_linear.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
 #include "xfa/fxfa/parser/cxfa_color.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxgraphics/cxfa_geshading.h"
 
 namespace {
@@ -37,7 +36,9 @@ CXFA_Linear::CXFA_Linear(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Linear,
                 kLinearPropertyData,
                 kLinearAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Linear::~CXFA_Linear() = default;
 

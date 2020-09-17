@@ -14,7 +14,7 @@ class CXFA_Script;
 
 class CJX_Script final : public CJX_Node {
  public:
-  explicit CJX_Script(CXFA_Script* node);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CJX_Script() override;
 
   // CJX_Object:
@@ -23,6 +23,8 @@ class CJX_Script final : public CJX_Node {
   JSE_PROP(stateless);
 
  private:
+  explicit CJX_Script(CXFA_Script* node);
+
   using Type__ = CJX_Script;
   using ParentType__ = CJX_Node;
 

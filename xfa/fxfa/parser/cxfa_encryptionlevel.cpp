@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_encryptionlevel.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -28,6 +27,8 @@ CXFA_EncryptionLevel::CXFA_EncryptionLevel(CXFA_Document* doc,
                 XFA_Element::EncryptionLevel,
                 {},
                 kEncryptionLevelAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_EncryptionLevel::~CXFA_EncryptionLevel() = default;

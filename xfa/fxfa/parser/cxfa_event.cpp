@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_event.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_script.h"
 #include "xfa/fxfa/parser/cxfa_submit.h"
 
@@ -44,7 +43,9 @@ CXFA_Event::CXFA_Event(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Event,
                 kEventPropertyData,
                 kEventAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Event::~CXFA_Event() = default;
 

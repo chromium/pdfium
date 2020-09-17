@@ -14,7 +14,7 @@ class CXFA_Xfa;
 
 class CJX_Xfa final : public CJX_Model {
  public:
-  explicit CJX_Xfa(CXFA_Xfa* node);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CJX_Xfa() override;
 
   // CJX_Object:
@@ -23,6 +23,8 @@ class CJX_Xfa final : public CJX_Model {
   JSE_PROP(thisValue); /* this */
 
  private:
+  explicit CJX_Xfa(CXFA_Xfa* node);
+
   using Type__ = CJX_Xfa;
   using ParentType__ = CJX_Model;
 

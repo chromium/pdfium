@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_compresslogicalstructure.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -29,6 +28,8 @@ CXFA_CompressLogicalStructure::CXFA_CompressLogicalStructure(
                 XFA_Element::CompressLogicalStructure,
                 {},
                 kCompressLogicalStructureAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_CompressLogicalStructure::~CXFA_CompressLogicalStructure() = default;

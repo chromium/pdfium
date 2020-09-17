@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_template.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_template.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -36,6 +35,8 @@ CXFA_Template::CXFA_Template(CXFA_Document* doc, XFA_PacketType packet)
           XFA_Element::Template,
           kTemplatePropertyData,
           kTemplateAttributeData,
-          std::make_unique<CJX_Template>(this)) {}
+          cppgc::MakeGarbageCollected<CJX_Template>(
+              doc->GetHeap()->GetAllocationHandle(),
+              this)) {}
 
 CXFA_Template::~CXFA_Template() = default;

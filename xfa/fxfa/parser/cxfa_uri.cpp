@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_uri.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_textnode.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -31,6 +30,8 @@ CXFA_Uri::CXFA_Uri(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Uri,
                 {},
                 kUriAttributeData,
-                std::make_unique<CJX_TextNode>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_TextNode>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Uri::~CXFA_Uri() = default;

@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_delete.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_textnode.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -29,6 +28,8 @@ CXFA_Delete::CXFA_Delete(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Delete,
                 {},
                 kDeleteAttributeData,
-                std::make_unique<CJX_TextNode>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_TextNode>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Delete::~CXFA_Delete() = default;

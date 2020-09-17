@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_wsdlconnection.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_wsdlconnection.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -37,6 +36,8 @@ CXFA_WsdlConnection::CXFA_WsdlConnection(CXFA_Document* doc,
                 XFA_Element::WsdlConnection,
                 kWsdlConnectionPropertyData,
                 kWsdlConnectionAttributeData,
-                std::make_unique<CJX_WsdlConnection>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_WsdlConnection>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_WsdlConnection::~CXFA_WsdlConnection() = default;

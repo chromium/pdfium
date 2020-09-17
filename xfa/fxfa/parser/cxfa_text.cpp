@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_text.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_object.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -32,7 +31,9 @@ CXFA_Text::CXFA_Text(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Text,
                 {},
                 kTextAttributeData,
-                std::make_unique<CJX_Object>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Object>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Text::~CXFA_Text() = default;
 

@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_meridiemnames.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -27,6 +26,8 @@ CXFA_MeridiemNames::CXFA_MeridiemNames(CXFA_Document* doc,
                 XFA_Element::MeridiemNames,
                 kMeridiemNamesPropertyData,
                 {},
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_MeridiemNames::~CXFA_MeridiemNames() = default;

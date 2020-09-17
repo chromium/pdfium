@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_overflow.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -31,6 +30,8 @@ CXFA_Overflow::CXFA_Overflow(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Overflow,
                 {},
                 kOverflowAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Overflow::~CXFA_Overflow() = default;

@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_passwordedit.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
 
@@ -37,7 +36,9 @@ CXFA_PasswordEdit::CXFA_PasswordEdit(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::PasswordEdit,
                 kPasswordEditPropertyData,
                 kPasswordEditAttributeData,
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_PasswordEdit::~CXFA_PasswordEdit() = default;
 

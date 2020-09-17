@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_meridiem.h"
 
-#include <memory>
-
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 CXFA_Meridiem::CXFA_Meridiem(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
@@ -18,6 +17,8 @@ CXFA_Meridiem::CXFA_Meridiem(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Meridiem,
                 {},
                 {},
-                std::make_unique<CJX_Node>(this)) {}
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Meridiem::~CXFA_Meridiem() = default;
