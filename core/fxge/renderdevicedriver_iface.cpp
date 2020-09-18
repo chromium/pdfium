@@ -72,6 +72,7 @@ bool RenderDeviceDriverIface::DrawShading(const CPDF_ShadingPattern* pPattern,
   return false;
 }
 
+#if defined(_SKIA_SUPPORT_)
 bool RenderDeviceDriverIface::SetBitsWithMask(
     const RetainPtr<CFX_DIBBase>& pBitmap,
     const RetainPtr<CFX_DIBBase>& pMask,
@@ -81,6 +82,7 @@ bool RenderDeviceDriverIface::SetBitsWithMask(
     BlendMode blend_type) {
   return false;
 }
+#endif
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 void RenderDeviceDriverIface::Flush() {}

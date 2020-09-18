@@ -107,12 +107,14 @@ class RenderDeviceDriverIface {
                            const FX_RECT& clip_rect,
                            int alpha,
                            bool bAlphaMode);
+#if defined(_SKIA_SUPPORT_)
   virtual bool SetBitsWithMask(const RetainPtr<CFX_DIBBase>& pBitmap,
                                const RetainPtr<CFX_DIBBase>& pMask,
                                int left,
                                int top,
                                int bitmap_alpha,
                                BlendMode blend_type);
+#endif
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   virtual void Flush();
 #endif
