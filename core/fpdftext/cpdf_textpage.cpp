@@ -1075,8 +1075,7 @@ void CPDF_TextPage::ProcessTextObject(const TransformedTextObject& obj) {
     charinfo.m_CharBox.bottom = rect.bottom * fFontSize + item.m_Origin.y;
     if (fabsf(charinfo.m_CharBox.top - charinfo.m_CharBox.bottom) <
         kSizeEpsilon) {
-      charinfo.m_CharBox.top =
-          charinfo.m_CharBox.bottom + pTextObj->GetFontSize();
+      charinfo.m_CharBox.top = charinfo.m_CharBox.bottom + fFontSize;
     }
     if (fabsf(charinfo.m_CharBox.right - charinfo.m_CharBox.left) <
         kSizeEpsilon) {
