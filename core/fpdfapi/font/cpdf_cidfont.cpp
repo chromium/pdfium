@@ -201,17 +201,17 @@ void FT_UseCIDCharmap(FXFT_FaceRec* face, int coding) {
     FT_Set_Charmap(face, *FXFT_Get_Face_Charmaps(face));
 }
 
-bool IsMetricForCID(const uint32_t* pEntry, uint16_t cid) {
+bool IsMetricForCID(const int* pEntry, uint16_t cid) {
   return pEntry[0] <= cid && pEntry[1] >= cid;
 }
 
 void LoadMetricsArray(const CPDF_Array* pArray,
-                      std::vector<uint32_t>* result,
+                      std::vector<int>* result,
                       int nElements) {
   int width_status = 0;
   int iCurElement = 0;
-  uint32_t first_code = 0;
-  uint32_t last_code = 0;
+  int first_code = 0;
+  int last_code = 0;
   for (size_t i = 0; i < pArray->size(); i++) {
     const CPDF_Object* pObj = pArray->GetDirectObjectAt(i);
     if (!pObj)
@@ -221,8 +221,8 @@ void LoadMetricsArray(const CPDF_Array* pArray,
     if (pObjArray) {
       if (width_status != 1)
         return;
-      if (first_code >
-          std::numeric_limits<uint32_t>::max() - pObjArray->size()) {
+      if (first_code > std::numeric_limits<int>::max() -
+                           pdfium::CollectionSize<int>(*pObjArray)) {
         width_status = 0;
         continue;
       }
@@ -551,15 +551,15 @@ FX_RECT CPDF_CIDFont::GetCharBBox(uint32_t charcode) {
   return rect;
 }
 
-uint32_t CPDF_CIDFont::GetCharWidthF(uint32_t charcode) {
+int CPDF_CIDFont::GetCharWidthF(uint32_t charcode) {
   if (charcode < 0x80 && m_bAnsiWidthsFixed)
     return (charcode >= 32 && charcode < 127) ? 500 : 0;
 
   uint16_t cid = CIDFromCharCode(charcode);
   size_t size = m_WidthList.size();
-  const uint32_t* pList = m_WidthList.data();
+  const int* pList = m_WidthList.data();
   for (size_t i = 0; i < size; i += 3) {
-    const uint32_t* pEntry = pList + i;
+    const int* pEntry = pList + i;
     if (IsMetricForCID(pEntry, cid))
       return pEntry[2];
   }
@@ -569,9 +569,9 @@ uint32_t CPDF_CIDFont::GetCharWidthF(uint32_t charcode) {
 int16_t CPDF_CIDFont::GetVertWidth(uint16_t cid) const {
   size_t vertsize = m_VertMetrics.size() / 5;
   if (vertsize) {
-    const uint32_t* pTable = m_VertMetrics.data();
+    const int* pTable = m_VertMetrics.data();
     for (size_t i = 0; i < vertsize; i++) {
-      const uint32_t* pEntry = pTable + (i * 5);
+      const int* pEntry = pTable + (i * 5);
       if (IsMetricForCID(pEntry, cid))
         return static_cast<int16_t>(pEntry[2]);
     }
@@ -582,26 +582,26 @@ int16_t CPDF_CIDFont::GetVertWidth(uint16_t cid) const {
 CFX_Point16 CPDF_CIDFont::GetVertOrigin(uint16_t cid) const {
   size_t vertsize = m_VertMetrics.size() / 5;
   if (vertsize) {
-    const uint32_t* pTable = m_VertMetrics.data();
+    const int* pTable = m_VertMetrics.data();
     for (size_t i = 0; i < vertsize; i++) {
-      const uint32_t* pEntry = pTable + (i * 5);
+      const int* pEntry = pTable + (i * 5);
       if (IsMetricForCID(pEntry, cid)) {
         return {static_cast<int16_t>(pEntry[3]),
                 static_cast<int16_t>(pEntry[4])};
       }
     }
   }
-  uint32_t dwWidth = m_DefaultWidth;
+  int width = m_DefaultWidth;
   size_t size = m_WidthList.size();
-  const uint32_t* pList = m_WidthList.data();
+  const int* pList = m_WidthList.data();
   for (size_t i = 0; i < size; i += 3) {
-    const uint32_t* pEntry = pList + i;
+    const int* pEntry = pList + i;
     if (IsMetricForCID(pEntry, cid)) {
-      dwWidth = pEntry[2];
+      width = pEntry[2];
       break;
     }
   }
-  return {static_cast<int16_t>(dwWidth / 2), m_DefaultVY};
+  return {static_cast<int16_t>(width / 2), m_DefaultVY};
 }
 
 int CPDF_CIDFont::GetGlyphIndex(uint32_t unicode, bool* pVertGlyph) {

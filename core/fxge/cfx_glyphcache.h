@@ -36,12 +36,12 @@ class CFX_GlyphCache : public Retainable, public Observable {
                                          uint32_t glyph_index,
                                          bool bFontStyle,
                                          const CFX_Matrix& matrix,
-                                         uint32_t dest_width,
+                                         int dest_width,
                                          int anti_alias,
                                          CFX_TextRenderOptions* text_options);
   const CFX_PathData* LoadGlyphPath(const CFX_Font* pFont,
                                     uint32_t glyph_index,
-                                    uint32_t dest_width);
+                                    int dest_width);
 
   RetainPtr<CFX_Face> GetFace() { return m_Face; }
   FXFT_FaceRec* GetFaceRec() { return m_Face ? m_Face->GetRec() : nullptr; }
@@ -55,26 +55,26 @@ class CFX_GlyphCache : public Retainable, public Observable {
 
   using SizeGlyphCache = std::map<uint32_t, std::unique_ptr<CFX_GlyphBitmap>>;
   // <glyph_index, width, weight, angle, vertical>
-  using PathMapKey = std::tuple<uint32_t, uint32_t, int, int, bool>;
+  using PathMapKey = std::tuple<uint32_t, int, int, int, bool>;
 
   std::unique_ptr<CFX_GlyphBitmap> RenderGlyph(const CFX_Font* pFont,
                                                uint32_t glyph_index,
                                                bool bFontStyle,
                                                const CFX_Matrix& matrix,
-                                               uint32_t dest_width,
+                                               int dest_width,
                                                int anti_alias);
   std::unique_ptr<CFX_GlyphBitmap> RenderGlyph_Nativetext(
       const CFX_Font* pFont,
       uint32_t glyph_index,
       const CFX_Matrix& matrix,
-      uint32_t dest_width,
+      int dest_width,
       int anti_alias);
   CFX_GlyphBitmap* LookUpGlyphBitmap(const CFX_Font* pFont,
                                      const CFX_Matrix& matrix,
                                      const ByteString& FaceGlyphsKey,
                                      uint32_t glyph_index,
                                      bool bFontStyle,
-                                     uint32_t dest_width,
+                                     int dest_width,
                                      int anti_alias);
   void InitPlatform();
   void DestroyPlatform();

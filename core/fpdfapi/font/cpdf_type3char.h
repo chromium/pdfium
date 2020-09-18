@@ -35,7 +35,7 @@ class CPDF_Type3Char {
   const RetainPtr<CFX_DIBitmap>& GetBitmap() const;
 
   bool colored() const { return m_bColored; }
-  uint32_t width() const { return m_Width; }
+  int width() const { return m_Width; }
   const CFX_Matrix& matrix() const { return m_ImageMatrix; }
   const FX_RECT& bbox() const { return m_BBox; }
 
@@ -46,7 +46,7 @@ class CPDF_Type3Char {
   std::unique_ptr<CPDF_Font::FormIface> m_pForm;
   RetainPtr<CFX_DIBitmap> m_pBitmap;
   bool m_bColored = false;
-  uint32_t m_Width = 0;
+  int m_Width = 0;
   CFX_Matrix m_ImageMatrix;
   FX_RECT m_BBox;
 };

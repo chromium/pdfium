@@ -110,8 +110,7 @@ IPVT_FontMap* CPWL_EditImpl_Provider::GetFontMap() const {
   return m_pFontMap;
 }
 
-uint32_t CPWL_EditImpl_Provider::GetCharWidth(int32_t nFontIndex,
-                                              uint16_t word) {
+int CPWL_EditImpl_Provider::GetCharWidth(int32_t nFontIndex, uint16_t word) {
   RetainPtr<CPDF_Font> pPDFFont = m_pFontMap->GetPDFFont(nFontIndex);
   if (!pPDFFont)
     return 0;

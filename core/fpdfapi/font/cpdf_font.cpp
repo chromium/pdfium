@@ -275,9 +275,9 @@ void CPDF_Font::LoadUnicodeMap() const {
   m_pToUnicodeMap = std::make_unique<CPDF_ToUnicodeMap>(pStream);
 }
 
-uint32_t CPDF_Font::GetStringWidth(ByteStringView pString) {
+int CPDF_Font::GetStringWidth(ByteStringView pString) {
   size_t offset = 0;
-  uint32_t width = 0;
+  int width = 0;
   while (offset < pString.GetLength())
     width += GetCharWidthF(GetNextChar(pString, &offset));
   return width;

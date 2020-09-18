@@ -30,7 +30,7 @@ class CPDF_Type3Font final : public CPDF_SimpleFont {
   const CPDF_Type3Font* AsType3Font() const override;
   CPDF_Type3Font* AsType3Font() override;
   void WillBeDestroyed() override;
-  uint32_t GetCharWidthF(uint32_t charcode) override;
+  int GetCharWidthF(uint32_t charcode) override;
   FX_RECT GetCharBBox(uint32_t charcode) override;
 
   void SetPageResources(CPDF_Dictionary* pResources) {
@@ -60,7 +60,7 @@ class CPDF_Type3Font final : public CPDF_SimpleFont {
   RetainPtr<CPDF_Dictionary> m_pPageResources;
   RetainPtr<CPDF_Dictionary> m_pFontResources;
   std::map<uint32_t, std::unique_ptr<CPDF_Type3Char>> m_CacheMap;
-  uint32_t m_CharWidthL[256];
+  int m_CharWidthL[256] = {};
 };
 
 #endif  // CORE_FPDFAPI_FONT_CPDF_TYPE3FONT_H_

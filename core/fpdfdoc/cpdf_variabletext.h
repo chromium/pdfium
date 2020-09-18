@@ -53,7 +53,7 @@ class CPDF_VariableText {
     explicit Provider(IPVT_FontMap* pFontMap);
     virtual ~Provider();
 
-    virtual uint32_t GetCharWidth(int32_t nFontIndex, uint16_t word);
+    virtual int GetCharWidth(int32_t nFontIndex, uint16_t word);
     virtual int32_t GetTypeAscent(int32_t nFontIndex);
     virtual int32_t GetTypeDescent(int32_t nFontIndex);
     virtual int32_t GetWordFontIndex(uint16_t word,
@@ -163,7 +163,7 @@ class CPDF_VariableText {
   float GetLineIndent();
 
  private:
-  uint32_t GetCharWidth(int32_t nFontIndex, uint16_t Word, uint16_t SubWord);
+  int GetCharWidth(int32_t nFontIndex, uint16_t Word, uint16_t SubWord);
   int32_t GetTypeAscent(int32_t nFontIndex);
   int32_t GetTypeDescent(int32_t nFontIndex);
   int32_t GetWordFontIndex(uint16_t word, int32_t charset, int32_t nFontIndex);

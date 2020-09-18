@@ -130,7 +130,7 @@ void CBC_OneDimWriter::CalcTextInfo(const ByteString& text,
   for (size_t i = 0; i < length; ++i) {
     charcodes[i] = encoding->CharCodeFromUnicode(text[i]);
     int32_t glyph_code = encoding->GlyphFromCharCode(charcodes[i]);
-    uint32_t glyph_value = cFont->GetGlyphWidth(glyph_code);
+    int glyph_value = cFont->GetGlyphWidth(glyph_code);
     float temp = glyph_value * fontSize / 1000.0;
     charWidth += temp;
   }

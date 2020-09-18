@@ -73,17 +73,16 @@ class CFX_Font {
       uint32_t glyph_index,
       bool bFontStyle,
       const CFX_Matrix& matrix,
-      uint32_t dest_width,
+      int dest_width,
       int anti_alias,
       CFX_TextRenderOptions* text_options) const;
-  const CFX_PathData* LoadGlyphPath(uint32_t glyph_index,
-                                    uint32_t dest_width) const;
+  const CFX_PathData* LoadGlyphPath(uint32_t glyph_index, int dest_width) const;
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   CFX_TypeFace* GetDeviceCache() const;
 #endif
 
-  uint32_t GetGlyphWidth(uint32_t glyph_index);
+  int GetGlyphWidth(uint32_t glyph_index);
   int GetAscent() const;
   int GetDescent() const;
   bool GetGlyphBBox(uint32_t glyph_index, FX_RECT* pBBox);
@@ -105,8 +104,7 @@ class CFX_Font {
   void SetSubData(uint8_t* data) { m_pGsubData.reset(data); }
   pdfium::span<uint8_t> GetFontSpan() const { return m_FontData; }
   void AdjustMMParams(int glyph_index, int dest_width, int weight) const;
-  CFX_PathData* LoadGlyphPathImpl(uint32_t glyph_index,
-                                  uint32_t dest_width) const;
+  CFX_PathData* LoadGlyphPathImpl(uint32_t glyph_index, int dest_width) const;
 #if defined(OS_APPLE)
   void* GetPlatformFont() const { return m_pPlatformFont; }
   void SetPlatformFont(void* font) { m_pPlatformFont = font; }

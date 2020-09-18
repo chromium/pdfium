@@ -18,7 +18,7 @@ class TextCharPos {
   CFX_PointF m_Origin;
   uint32_t m_Unicode = 0;
   uint32_t m_GlyphIndex = 0;
-  uint32_t m_FontCharWidth = 0;
+  int m_FontCharWidth = 0;
 #if defined(OS_APPLE)
   uint32_t m_ExtGID = 0;
 #endif

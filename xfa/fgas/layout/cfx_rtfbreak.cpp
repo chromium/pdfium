@@ -758,7 +758,7 @@ size_t CFX_RTFBreak::GetDisplayPos(const CFX_TextPiece* pPiece,
       continue;
     }
 
-    uint32_t iCharWidth = abs(iWidth);
+    int iCharWidth = abs(iWidth);
     const bool bEmptyChar = (dwCharType >= FX_CHARTYPE::kTab &&
                              dwCharType <= FX_CHARTYPE::kControl);
     if (!bEmptyChar)

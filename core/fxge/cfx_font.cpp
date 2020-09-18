@@ -357,7 +357,7 @@ void CFX_Font::LoadSubst(const ByteString& face_name,
   }
 }
 
-uint32_t CFX_Font::GetGlyphWidth(uint32_t glyph_index) {
+int CFX_Font::GetGlyphWidth(uint32_t glyph_index) {
   if (!m_Face)
     return 0;
   if (m_pSubstFont && m_pSubstFont->m_bFlagMM)
@@ -369,7 +369,7 @@ uint32_t CFX_Font::GetGlyphWidth(uint32_t glyph_index) {
     return 0;
 
   int horiAdvance = FXFT_Get_Glyph_HoriAdvance(m_Face->GetRec());
-  if (horiAdvance < 0 || horiAdvance > kThousandthMaxInt)
+  if (horiAdvance < kThousandthMinInt || horiAdvance > kThousandthMaxInt)
     return 0;
 
   return EM_ADJUST(FXFT_Get_Face_UnitsPerEM(m_Face->GetRec()), horiAdvance);
@@ -634,7 +634,7 @@ void CFX_Font::AdjustMMParams(int glyph_index,
 }
 
 CFX_PathData* CFX_Font::LoadGlyphPathImpl(uint32_t glyph_index,
-                                          uint32_t dest_width) const {
+                                          int dest_width) const {
   if (!m_Face)
     return nullptr;
 
@@ -699,7 +699,7 @@ const CFX_GlyphBitmap* CFX_Font::LoadGlyphBitmap(
     uint32_t glyph_index,
     bool bFontStyle,
     const CFX_Matrix& matrix,
-    uint32_t dest_width,
+    int dest_width,
     int anti_alias,
     CFX_TextRenderOptions* text_options) const {
   return GetOrCreateGlyphCache()->LoadGlyphBitmap(this, glyph_index, bFontStyle,
@@ -708,7 +708,7 @@ const CFX_GlyphBitmap* CFX_Font::LoadGlyphBitmap(
 }
 
 const CFX_PathData* CFX_Font::LoadGlyphPath(uint32_t glyph_index,
-                                            uint32_t dest_width) const {
+                                            int dest_width) const {
   return GetOrCreateGlyphCache()->LoadGlyphPath(this, glyph_index, dest_width);
 }
 

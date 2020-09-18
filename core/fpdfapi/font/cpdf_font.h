@@ -107,13 +107,13 @@ class CPDF_Font : public Retainable, public Observable {
   const FX_RECT& GetFontBBox() const { return m_FontBBox; }
   int GetTypeAscent() const { return m_Ascent; }
   int GetTypeDescent() const { return m_Descent; }
-  uint32_t GetStringWidth(ByteStringView pString);
+  int GetStringWidth(ByteStringView pString);
   uint32_t FallbackFontFromCharcode(uint32_t charcode);
   int FallbackGlyphFromCharcode(int fallbackFont, uint32_t charcode);
   int GetFontFlags() const { return m_Flags; }
   int GetFontWeight() const;
 
-  virtual uint32_t GetCharWidthF(uint32_t charcode) = 0;
+  virtual int GetCharWidthF(uint32_t charcode) = 0;
   virtual FX_RECT GetCharBBox(uint32_t charcode) = 0;
 
   // Can return nullptr for stock Type1 fonts. Always returns non-null for other

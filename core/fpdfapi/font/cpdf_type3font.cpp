@@ -29,7 +29,6 @@ CPDF_Type3Font::CPDF_Type3Font(CPDF_Document* pDocument,
                                FormFactoryIface* pFormFactory)
     : CPDF_SimpleFont(pDocument, pFontDict), m_pFormFactory(pFormFactory) {
   ASSERT(GetDocument());
-  memset(m_CharWidthL, 0, sizeof(m_CharWidthL));
 }
 
 CPDF_Type3Font::~CPDF_Type3Font() = default;
@@ -148,7 +147,7 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
   return pCachedChar;
 }
 
-uint32_t CPDF_Type3Font::GetCharWidthF(uint32_t charcode) {
+int CPDF_Type3Font::GetCharWidthF(uint32_t charcode) {
   if (charcode >= pdfium::size(m_CharWidthL))
     charcode = 0;
 

@@ -92,8 +92,8 @@ std::vector<TextCharPos> GetCharPosList(pdfium::span<const uint32_t> char_codes,
     float scaling_factor = 1.0f;
     if (!font->IsEmbedded() && font->HasFontWidths() && !is_vertical_writing &&
         !current_font->GetSubstFont()->m_bFlagMM) {
-      uint32_t pdf_glyph_width = font->GetCharWidthF(char_code);
-      uint32_t font_glyph_width =
+      int pdf_glyph_width = font->GetCharWidthF(char_code);
+      int font_glyph_width =
           current_font ? current_font->GetGlyphWidth(text_char_pos.m_GlyphIndex)
                        : 0;
       if (font_glyph_width && pdf_glyph_width > font_glyph_width + 1) {

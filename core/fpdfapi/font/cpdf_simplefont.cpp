@@ -164,7 +164,7 @@ void CPDF_SimpleFont::LoadPDFEncoding(bool bEmbedded, bool bTrueType) {
   }
 }
 
-uint32_t CPDF_SimpleFont::GetCharWidthF(uint32_t charcode) {
+int CPDF_SimpleFont::GetCharWidthF(uint32_t charcode) {
   if (charcode > 0xff)
     charcode = 0;
 

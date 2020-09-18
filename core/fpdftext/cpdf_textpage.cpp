@@ -157,11 +157,11 @@ bool IsRightToLeft(const CPDF_TextObject& text_obj, const CPDF_Font& font) {
   return CFX_BidiString(str).OverallDirection() == CFX_BidiChar::RIGHT;
 }
 
-uint32_t GetCharWidth(uint32_t charCode, CPDF_Font* pFont) {
+int GetCharWidth(uint32_t charCode, CPDF_Font* pFont) {
   if (charCode == CPDF_Font::kInvalidCharCode)
     return 0;
 
-  uint32_t w = pFont->GetCharWidthF(charCode);
+  int w = pFont->GetCharWidthF(charCode);
   if (w > 0)
     return w;
 
@@ -1233,11 +1233,11 @@ CPDF_TextPage::GenerateCharacter CPDF_TextPage::ProcessInsertObject(
   }
 
   float last_pos = PrevItem.m_Origin.x;
-  uint32_t nLastWidth =
+  int nLastWidth =
       GetCharWidth(PrevItem.m_CharCode, m_pPrevTextObj->GetFont().Get());
   float last_width = nLastWidth * m_pPrevTextObj->GetFontSize() / 1000;
   last_width = fabs(last_width);
-  uint32_t nThisWidth = GetCharWidth(item.m_CharCode, pObj->GetFont().Get());
+  int nThisWidth = GetCharWidth(item.m_CharCode, pObj->GetFont().Get());
   float this_width = fabs(nThisWidth * pObj->GetFontSize() / 1000);
   float threshold = std::max(last_width, this_width) / 4;
 

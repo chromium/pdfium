@@ -37,8 +37,8 @@ CPDF_VariableText::Provider::Provider(IPVT_FontMap* pFontMap)
 
 CPDF_VariableText::Provider::~Provider() = default;
 
-uint32_t CPDF_VariableText::Provider::GetCharWidth(int32_t nFontIndex,
-                                                   uint16_t word) {
+int CPDF_VariableText::Provider::GetCharWidth(int32_t nFontIndex,
+                                              uint16_t word) {
   RetainPtr<CPDF_Font> pPDFFont = m_pFontMap->GetPDFFont(nFontIndex);
   if (!pPDFFont)
     return 0;
@@ -862,9 +862,9 @@ CPVT_FloatRect CPDF_VariableText::RearrangeSections(
   return rcRet;
 }
 
-uint32_t CPDF_VariableText::GetCharWidth(int32_t nFontIndex,
-                                         uint16_t Word,
-                                         uint16_t SubWord) {
+int CPDF_VariableText::GetCharWidth(int32_t nFontIndex,
+                                    uint16_t Word,
+                                    uint16_t SubWord) {
   if (!m_pVTProvider)
     return 0;
   uint16_t word = SubWord ? SubWord : Word;

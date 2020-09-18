@@ -42,7 +42,7 @@ void CommonTest(CFX_SkiaDeviceDriver* driver, const State& state) {
   TextCharPos charPos[1];
   charPos[0].m_Origin = CFX_PointF(0, 1);
   charPos[0].m_GlyphIndex = 1;
-  charPos[0].m_FontCharWidth = 4u;
+  charPos[0].m_FontCharWidth = 4;
 
   CFX_Font font;
   float fontSize = 1;
