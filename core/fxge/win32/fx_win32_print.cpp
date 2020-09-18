@@ -389,7 +389,7 @@ CPSPrinterDriver::CPSPrinterDriver(HDC hDC,
 }
 
 CPSPrinterDriver::~CPSPrinterDriver() {
-  EndRendering();
+  m_PSRenderer.EndRendering();
 }
 
 DeviceType CPSPrinterDriver::GetDeviceType() const {
@@ -414,14 +414,6 @@ int CPSPrinterDriver::GetDeviceCaps(int caps_id) const {
       NOTREACHED();
       return 0;
   }
-}
-
-bool CPSPrinterDriver::StartRendering() {
-  return m_PSRenderer.StartRendering();
-}
-
-void CPSPrinterDriver::EndRendering() {
-  m_PSRenderer.EndRendering();
 }
 
 void CPSPrinterDriver::SaveState() {
@@ -532,9 +524,7 @@ CTextOnlyPrinterDriver::CTextOnlyPrinterDriver(HDC hDC)
   m_nBitsPerPixel = ::GetDeviceCaps(m_hDC, BITSPIXEL);
 }
 
-CTextOnlyPrinterDriver::~CTextOnlyPrinterDriver() {
-  EndRendering();
-}
+CTextOnlyPrinterDriver::~CTextOnlyPrinterDriver() = default;
 
 DeviceType CTextOnlyPrinterDriver::GetDeviceType() const {
   return DeviceType::kPrinter;

@@ -12,12 +12,6 @@
 
 RenderDeviceDriverIface::~RenderDeviceDriverIface() = default;
 
-bool RenderDeviceDriverIface::StartRendering() {
-  return true;
-}
-
-void RenderDeviceDriverIface::EndRendering() {}
-
 bool RenderDeviceDriverIface::SetClip_PathStroke(
     const CFX_PathData* pPathData,
     const CFX_Matrix* pObject2Device,

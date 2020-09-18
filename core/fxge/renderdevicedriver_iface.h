@@ -40,8 +40,6 @@ class RenderDeviceDriverIface {
   virtual DeviceType GetDeviceType() const = 0;
   virtual int GetDeviceCaps(int caps_id) const = 0;
 
-  virtual bool StartRendering();
-  virtual void EndRendering();
   virtual void SaveState() = 0;
   virtual void RestoreState(bool bKeepSaved) = 0;
 

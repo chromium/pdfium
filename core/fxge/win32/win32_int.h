@@ -233,8 +233,6 @@ class CPSPrinterDriver final : public RenderDeviceDriverIface {
   // RenderDeviceDriverIface:
   DeviceType GetDeviceType() const override;
   int GetDeviceCaps(int caps_id) const override;
-  bool StartRendering() override;
-  void EndRendering() override;
   void SaveState() override;
   void RestoreState(bool bKeepSaved) override;
   bool SetClip_PathFill(const CFX_PathData* pPathData,
