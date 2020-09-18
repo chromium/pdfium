@@ -2818,11 +2818,8 @@ std::pair<XFA_EventError, bool> CXFA_Node::ExecuteBoolScript(
         if (pRefNode == this)
           continue;
 
-        CXFA_CalcData* pGlobalData = pRefNode->JSObject()->GetCalcData();
-        if (!pGlobalData) {
-          pRefNode->JSObject()->SetCalcData(std::make_unique<CXFA_CalcData>());
-          pGlobalData = pRefNode->JSObject()->GetCalcData();
-        }
+        CJX_Object::CalcData* pGlobalData =
+            pRefNode->JSObject()->GetOrCreateCalcData(pDoc->GetHeap());
         if (!pdfium::Contains(pGlobalData->m_Globals, this))
           pGlobalData->m_Globals.push_back(this);
       }

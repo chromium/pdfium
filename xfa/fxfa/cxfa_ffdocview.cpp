@@ -528,11 +528,11 @@ void CXFA_FFDocView::AddCalculateNode(CXFA_Node* node) {
 }
 
 void CXFA_FFDocView::AddCalculateNodeNotify(CXFA_Node* pNodeChange) {
-  CXFA_CalcData* pGlobalData = pNodeChange->JSObject()->GetCalcData();
+  CJX_Object::CalcData* pGlobalData = pNodeChange->JSObject()->GetCalcData();
   if (!pGlobalData)
     return;
 
-  for (auto* pResult : pGlobalData->m_Globals) {
+  for (auto pResult : pGlobalData->m_Globals) {
     if (!pResult->HasRemovedChildren() && pResult->IsWidgetReady())
       AddCalculateNode(pResult);
   }

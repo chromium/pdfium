@@ -224,10 +224,6 @@ CXFA_FFWidget* XFA_GetWidgetFromLayoutItem(CXFA_LayoutItem* pLayoutItem) {
   return GetFFWidget(ToContentLayoutItem(pLayoutItem));
 }
 
-CXFA_CalcData::CXFA_CalcData() = default;
-
-CXFA_CalcData::~CXFA_CalcData() = default;
-
 CXFA_FFWidget::CXFA_FFWidget(CXFA_Node* node) : m_pNode(node) {}
 
 CXFA_FFWidget::~CXFA_FFWidget() = default;

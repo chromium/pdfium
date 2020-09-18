@@ -60,14 +60,6 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageFromBuffer(
 void XFA_RectWithoutMargin(CFX_RectF* rt, const CXFA_Margin* margin);
 CXFA_FFWidget* XFA_GetWidgetFromLayoutItem(CXFA_LayoutItem* pLayoutItem);
 
-class CXFA_CalcData {
- public:
-  CXFA_CalcData();
-  ~CXFA_CalcData();
-
-  std::vector<CXFA_Node*> m_Globals;
-};
-
 class CXFA_FFWidget : public cppgc::GarbageCollected<CXFA_FFWidget>,
                       public CFWL_Widget::AdapterIface {
   CPPGC_USING_PRE_FINALIZER(CXFA_FFWidget, PreFinalize);

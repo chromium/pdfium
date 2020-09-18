@@ -27,7 +27,6 @@ class CFX_XMLElement;
 class CFXJSE_Value;
 class CFX_V8;
 class CJX_Object;
-class CXFA_CalcData;
 class CXFA_Document;
 class CXFA_LayoutItem;
 class CXFA_Node;
@@ -98,6 +97,19 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
     TreeList,
     WsdlConnection,
     Xfa,
+  };
+
+  class CalcData : public cppgc::GarbageCollected<CalcData> {
+   public:
+    CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
+    ~CalcData();
+
+    void Trace(cppgc::Visitor* visitor) const;
+
+    std::vector<cppgc::Member<CXFA_Node>> m_Globals;
+
+   private:
+    CalcData();
   };
 
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
@@ -214,9 +226,9 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
 
   void MergeAllData(CXFA_Object* pDstModule);
 
-  void SetCalcData(std::unique_ptr<CXFA_CalcData> data);
-  CXFA_CalcData* GetCalcData() const { return calc_data_.get(); }
-  std::unique_ptr<CXFA_CalcData> ReleaseCalcData();
+  CalcData* GetCalcData() const { return calc_data_; }
+  CalcData* GetOrCreateCalcData(cppgc::Heap* heap);
+  void TakeCalcDataFrom(CJX_Object* that);
 
   void ThrowInvalidPropertyException() const;
   void ThrowArgumentMismatchException() const;
@@ -268,8 +280,8 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
 
   cppgc::Member<CXFA_Object> object_;
   cppgc::Member<CXFA_LayoutItem> layout_item_;
+  cppgc::Member<CalcData> calc_data_;
   std::unique_ptr<XFA_MAPMODULEDATA> map_module_data_;
-  std::unique_ptr<CXFA_CalcData> calc_data_;
   std::map<ByteString, CJX_MethodCall> method_specs_;
   size_t calc_recursion_count_ = 0;
 };
