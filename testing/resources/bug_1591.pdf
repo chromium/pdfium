@@ -1,0 +1,122 @@
+%PDF-1.7
+% ò¤ô
+1 0 obj <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+2 0 obj <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+3 0 obj <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+  /MediaBox [0 0 160 400]
+  /Resources <<
+    /ProcSet [/PDF /Text]
+    /Font <<
+      /F1 5 0 R
+    >>
+  >>
+>>
+endobj
+4 0 obj <<
+  /Length 102
+>>
+stream
+0 0 0 rg
+BT
+/F1 1 Tf
+240 0 0 240 50 50 Tm
+0.2 Tw
+0.05 0 Td
+(1) Tj
+0.1 0 Td
+(2) Tj
+0.05 0 Td
+(1) Tj
+ET
+endstream
+endobj
+5 0 obj <<
+  /Type /Font
+  /Subtype /Type3
+  /CharProcs 6 0 R
+  /Encoding 7 0 R
+  /FirstChar 49
+  /FontBBox [-1 -8 28 27]
+  /FontMatrix [0.001 0 0 0.001 0 0]
+  /LastChar 50
+  /Name /F1
+  /Resources <<
+    /ProcSet [/PDF /ImageB]
+  >>
+  /Widths [8 10]
+>>
+endobj
+6 0 obj <<
+  /uniE022 8 0 R
+  /uniE023 9 0 R
+>>
+endobj
+7 0 obj <<
+  /Type /Encoding
+  /Differences [49 /uniE022 /uniE023]
+>>
+endobj
+8 0 obj <<
+  /Length 105
+>>
+stream
+q
+6 0 0 48 6 0 cm
+BI
+/W 6
+/H 48
+/BPC 1
+/IM true
+ID
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+EI
+Q
+endstream
+endobj
+9 0 obj <<
+  /Length 42
+>>
+stream
+q
+BI
+/W 4
+/H 4
+/BPC 1
+/IM true
+ID
+xx
+EI
+Q
+endstream
+endobj
+xref
+0 10
+0000000000 65535 f 
+0000000015 00000 n 
+0000000068 00000 n 
+0000000131 00000 n 
+0000000309 00000 n 
+0000000463 00000 n 
+0000000724 00000 n 
+0000000779 00000 n 
+0000000856 00000 n 
+0000001013 00000 n 
+trailer <<
+  /Root 1 0 R
+  /Size 10
+>>
+startxref
+1106
+%%EOF
