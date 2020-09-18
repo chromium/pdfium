@@ -49,8 +49,12 @@ class CFX_DIBitmap : public CFX_DIBBase {
   bool ConvertFormat(FXDIB_Format format);
   void Clear(uint32_t color);
 
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   uint32_t GetPixel(int x, int y) const;
+#endif
+#if defined(_SKIA_SUPPORT_)
   void SetPixel(int x, int y, uint32_t color);
+#endif
 
   bool LoadChannelFromAlpha(FXDIB_Channel destChannel,
                             const RetainPtr<CFX_DIBBase>& pSrcBitmap);
