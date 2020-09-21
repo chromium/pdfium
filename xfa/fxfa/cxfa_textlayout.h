@@ -24,7 +24,6 @@
 #include "xfa/fgas/layout/cfx_textpiece.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
-class CFDE_RenderDevice;
 class CFX_CSSComputedStyle;
 class CFX_LinkUserData;
 class CFX_RTFBreak;

@@ -16,7 +16,6 @@
 #include "xfa/fde/cfde_data.h"
 #include "xfa/fgas/layout/cfx_char.h"
 
-class CFDE_RenderDevice;
 class CFGAS_GEFont;
 class CFX_RenderDevice;
 class CFX_TxtBreak;
