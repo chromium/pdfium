@@ -4,8 +4,10 @@
 
 #include "testing/fuzzers/xfa_process_state.h"
 
+#include "fxjs/gc/heap.h"
+
 XFAProcessState::XFAProcessState(v8::Platform* platform, v8::Isolate* isolate)
-    : platform_(platform), isolate_(isolate) {}
+    : platform_(platform), isolate_(isolate), heap_(FXGC_CreateHeap()) {}
 
 XFAProcessState::~XFAProcessState() = default;
 
