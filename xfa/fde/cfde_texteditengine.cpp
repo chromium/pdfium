@@ -1085,13 +1085,13 @@ void CFDE_TextEditEngine::RebuildPieces() {
   size_t current_piece_start = 0;
   float current_line_start = 0;
 
-  auto iter = std::make_unique<CFDE_TextEditEngine::Iterator>(this);
-  while (!iter->IsEOF(false)) {
-    iter->Next(false);
+  CFDE_TextEditEngine::Iterator iter(this);
+  while (!iter.IsEOF(false)) {
+    iter.Next(false);
 
     CFX_BreakType break_status = text_break_.AppendChar(
-        password_mode_ ? password_alias_ : iter->GetChar());
-    if (iter->IsEOF(false) && CFX_BreakTypeNoneOrPiece(break_status))
+        password_mode_ ? password_alias_ : iter.GetChar());
+    if (iter.IsEOF(false) && CFX_BreakTypeNoneOrPiece(break_status))
       break_status = text_break_.EndBreak(CFX_BreakType::kParagraph);
 
     if (CFX_BreakTypeNoneOrPiece(break_status))
