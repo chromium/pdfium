@@ -217,7 +217,8 @@ void XFA_RectWithoutMargin(CFX_RectF* rt, const CXFA_Margin* margin) {
               margin->GetRightInset(), margin->GetBottomInset());
 }
 
-CXFA_FFWidget* XFA_GetWidgetFromLayoutItem(CXFA_LayoutItem* pLayoutItem) {
+// static
+CXFA_FFWidget* CXFA_FFWidget::FromLayoutItem(CXFA_LayoutItem* pLayoutItem) {
   if (!pLayoutItem->GetFormNode()->HasCreatedUIWidget())
     return nullptr;
 

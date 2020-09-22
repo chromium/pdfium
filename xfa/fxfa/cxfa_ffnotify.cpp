@@ -264,7 +264,7 @@ void CXFA_FFNotify::OpenDropDownList(CXFA_Node* pNode) {
   if (!pLayoutItem)
     return;
 
-  CXFA_FFWidget* hWidget = XFA_GetWidgetFromLayoutItem(pLayoutItem);
+  CXFA_FFWidget* hWidget = CXFA_FFWidget::FromLayoutItem(pLayoutItem);
   if (!hWidget)
     return;
 
@@ -475,7 +475,7 @@ void CXFA_FFNotify::OnLayoutItemAdded(CXFA_LayoutProcessor* pLayout,
   if (!pDocView)
     return;
 
-  CXFA_FFWidget* pWidget = XFA_GetWidgetFromLayoutItem(pSender);
+  CXFA_FFWidget* pWidget = CXFA_FFWidget::FromLayoutItem(pSender);
   if (!pWidget)
     return;
 
@@ -509,7 +509,7 @@ void CXFA_FFNotify::OnLayoutItemRemoving(CXFA_LayoutProcessor* pLayout,
   if (!pDocView)
     return;
 
-  CXFA_FFWidget* pWidget = XFA_GetWidgetFromLayoutItem(pSender);
+  CXFA_FFWidget* pWidget = CXFA_FFWidget::FromLayoutItem(pSender);
   if (!pWidget)
     return;
 

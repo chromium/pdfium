@@ -58,7 +58,6 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageFromBuffer(
     int32_t& iImageYDpi);
 
 void XFA_RectWithoutMargin(CFX_RectF* rt, const CXFA_Margin* margin);
-CXFA_FFWidget* XFA_GetWidgetFromLayoutItem(CXFA_LayoutItem* pLayoutItem);
 
 class CXFA_FFWidget : public cppgc::GarbageCollected<CXFA_FFWidget>,
                       public CFWL_Widget::AdapterIface {
@@ -67,6 +66,8 @@ class CXFA_FFWidget : public cppgc::GarbageCollected<CXFA_FFWidget>,
  public:
   enum FocusOption { kDoNotDrawFocus = 0, kDrawFocus };
   enum HighlightOption { kNoHighlight = 0, kHighlight };
+
+  static CXFA_FFWidget* FromLayoutItem(CXFA_LayoutItem* pLayoutItem);
 
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FFWidget() override;
