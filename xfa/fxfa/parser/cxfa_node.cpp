@@ -546,12 +546,19 @@ bool SplitDateTime(const WideString& wsDateTime,
   return true;
 }
 
-std::vector<CXFA_Node*> NodesSortedByDocumentIdx(
-    const std::set<CXFA_Node*>& rgNodeSet) {
-  if (rgNodeSet.empty())
-    return std::vector<CXFA_Node*>();
+// Stack allocated. Using containers of members would be correct here
+// if advanced GC worked with STL.
+using NodeSet = std::set<cppgc::Member<CXFA_Node>>;
+using NodeSetPair = std::pair<NodeSet, NodeSet>;
+using NodeSetPairMap = std::map<uint32_t, NodeSetPair>;
+using NodeSetPairMapMap = std::map<CXFA_Node*, NodeSetPairMap>;
+using NodeVector = std::vector<cppgc::Member<CXFA_Node>>;
 
-  std::vector<CXFA_Node*> rgNodeArray;
+NodeVector NodesSortedByDocumentIdx(const NodeSet& rgNodeSet) {
+  if (rgNodeSet.empty())
+    return NodeVector();
+
+  NodeVector rgNodeArray;
   CXFA_Node* pCommonParent = (*rgNodeSet.begin())->GetParent();
   for (CXFA_Node* pNode = pCommonParent->GetFirstChild(); pNode;
        pNode = pNode->GetNextSibling()) {
@@ -561,40 +568,26 @@ std::vector<CXFA_Node*> NodesSortedByDocumentIdx(
   return rgNodeArray;
 }
 
-using CXFA_NodeSetPair = std::pair<std::set<CXFA_Node*>, std::set<CXFA_Node*>>;
-using CXFA_NodeSetPairMap =
-    std::map<uint32_t, std::unique_ptr<CXFA_NodeSetPair>>;
-using CXFA_NodeSetPairMapMap =
-    std::map<CXFA_Node*, std::unique_ptr<CXFA_NodeSetPairMap>>;
-
-CXFA_NodeSetPair* NodeSetPairForNode(CXFA_Node* pNode,
-                                     CXFA_NodeSetPairMapMap* pMap) {
+NodeSetPair* NodeSetPairForNode(CXFA_Node* pNode, NodeSetPairMapMap* pMap) {
   CXFA_Node* pParentNode = pNode->GetParent();
   uint32_t dwNameHash = pNode->GetNameHash();
   if (!pParentNode || !dwNameHash)
     return nullptr;
 
-  if (!(*pMap)[pParentNode])
-    (*pMap)[pParentNode] = std::make_unique<CXFA_NodeSetPairMap>();
-
-  CXFA_NodeSetPairMap* pNodeSetPairMap = (*pMap)[pParentNode].get();
-  if (!(*pNodeSetPairMap)[dwNameHash])
-    (*pNodeSetPairMap)[dwNameHash] = std::make_unique<CXFA_NodeSetPair>();
-
-  return (*pNodeSetPairMap)[dwNameHash].get();
+  return &((*pMap)[pParentNode][dwNameHash]);
 }
 
-void ReorderDataNodes(const std::set<CXFA_Node*>& sSet1,
-                      const std::set<CXFA_Node*>& sSet2,
+void ReorderDataNodes(const NodeSet& sSet1,
+                      const NodeSet& sSet2,
                       bool bInsertBefore) {
-  CXFA_NodeSetPairMapMap rgMap;
+  NodeSetPairMapMap rgMap;
   for (CXFA_Node* pNode : sSet1) {
-    CXFA_NodeSetPair* pNodeSetPair = NodeSetPairForNode(pNode, &rgMap);
+    NodeSetPair* pNodeSetPair = NodeSetPairForNode(pNode, &rgMap);
     if (pNodeSetPair)
       pNodeSetPair->first.insert(pNode);
   }
   for (CXFA_Node* pNode : sSet2) {
-    CXFA_NodeSetPair* pNodeSetPair = NodeSetPairForNode(pNode, &rgMap);
+    NodeSetPair* pNodeSetPair = NodeSetPairForNode(pNode, &rgMap);
     if (pNodeSetPair) {
       if (pdfium::Contains(pNodeSetPair->first, pNode))
         pNodeSetPair->first.erase(pNode);
@@ -602,19 +595,13 @@ void ReorderDataNodes(const std::set<CXFA_Node*>& sSet1,
         pNodeSetPair->second.insert(pNode);
     }
   }
-  for (const auto& iter1 : rgMap) {
-    CXFA_NodeSetPairMap* pNodeSetPairMap = iter1.second.get();
-    if (!pNodeSetPairMap)
-      continue;
-
-    for (const auto& iter2 : *pNodeSetPairMap) {
-      CXFA_NodeSetPair* pNodeSetPair = iter2.second.get();
-      if (!pNodeSetPair)
-        continue;
+  for (auto& iter1 : rgMap) {
+    NodeSetPairMap* pNodeSetPairMap = &iter1.second;
+    for (auto& iter2 : *pNodeSetPairMap) {
+      NodeSetPair* pNodeSetPair = &iter2.second;
       if (!pNodeSetPair->first.empty() && !pNodeSetPair->second.empty()) {
-        std::vector<CXFA_Node*> rgNodeArray1 =
-            NodesSortedByDocumentIdx(pNodeSetPair->first);
-        std::vector<CXFA_Node*> rgNodeArray2 =
+        NodeVector rgNodeArray1 = NodesSortedByDocumentIdx(pNodeSetPair->first);
+        NodeVector rgNodeArray2 =
             NodesSortedByDocumentIdx(pNodeSetPair->second);
         CXFA_Node* pParentNode = nullptr;
         CXFA_Node* pBeforeNode = nullptr;
@@ -626,7 +613,7 @@ void ReorderDataNodes(const std::set<CXFA_Node*>& sSet1,
           pParentNode = pLastNode->GetParent();
           pBeforeNode = pLastNode->GetNextSibling();
         }
-        for (auto* pCurNode : rgNodeArray1) {
+        for (auto& pCurNode : rgNodeArray1) {
           pParentNode->RemoveChildAndNotify(pCurNode, true);
           pParentNode->InsertChildAndNotify(pCurNode, pBeforeNode);
         }
@@ -1926,29 +1913,25 @@ void CXFA_Node::InsertItem(CXFA_Node* pNewInstance,
         iCount > 0 ? item->GetNextSibling() : GetNextSibling();
     GetParent()->InsertChildAndNotify(pNewInstance, pNextSibling);
     if (bMoveDataBindingNodes) {
-      std::set<CXFA_Node*> sNew;
-      std::set<CXFA_Node*> sAfter;
+      NodeSet sNew;
       CXFA_NodeIteratorTemplate<CXFA_Node,
                                 CXFA_TraverseStrategy_XFAContainerNode>
           sIteratorNew(pNewInstance);
       for (CXFA_Node* pNode = sIteratorNew.GetCurrent(); pNode;
            pNode = sIteratorNew.MoveToNext()) {
         CXFA_Node* pDataNode = pNode->GetBindData();
-        if (!pDataNode)
-          continue;
-
-        sNew.insert(pDataNode);
+        if (pDataNode)
+          sNew.insert(pDataNode);
       }
+      NodeSet sAfter;
       CXFA_NodeIteratorTemplate<CXFA_Node,
                                 CXFA_TraverseStrategy_XFAContainerNode>
           sIteratorAfter(pNextSibling);
       for (CXFA_Node* pNode = sIteratorAfter.GetCurrent(); pNode;
            pNode = sIteratorAfter.MoveToNext()) {
         CXFA_Node* pDataNode = pNode->GetBindData();
-        if (!pDataNode)
-          continue;
-
-        sAfter.insert(pDataNode);
+        if (pDataNode)
+          sAfter.insert(pDataNode);
       }
       ReorderDataNodes(sNew, sAfter, false);
     }
@@ -1961,29 +1944,25 @@ void CXFA_Node::InsertItem(CXFA_Node* pNewInstance,
 
     GetParent()->InsertChildAndNotify(pNewInstance, pBeforeInstance);
     if (bMoveDataBindingNodes) {
-      std::set<CXFA_Node*> sNew;
-      std::set<CXFA_Node*> sBefore;
+      NodeSet sNew;
       CXFA_NodeIteratorTemplate<CXFA_Node,
                                 CXFA_TraverseStrategy_XFAContainerNode>
           sIteratorNew(pNewInstance);
       for (CXFA_Node* pNode = sIteratorNew.GetCurrent(); pNode;
            pNode = sIteratorNew.MoveToNext()) {
         CXFA_Node* pDataNode = pNode->GetBindData();
-        if (!pDataNode)
-          continue;
-
-        sNew.insert(pDataNode);
+        if (pDataNode)
+          sNew.insert(pDataNode);
       }
+      NodeSet sBefore;
       CXFA_NodeIteratorTemplate<CXFA_Node,
                                 CXFA_TraverseStrategy_XFAContainerNode>
           sIteratorBefore(pBeforeInstance);
       for (CXFA_Node* pNode = sIteratorBefore.GetCurrent(); pNode;
            pNode = sIteratorBefore.MoveToNext()) {
         CXFA_Node* pDataNode = pNode->GetBindData();
-        if (!pDataNode)
-          continue;
-
-        sBefore.insert(pDataNode);
+        if (pDataNode)
+          sBefore.insert(pDataNode);
       }
       ReorderDataNodes(sNew, sBefore, true);
     }
