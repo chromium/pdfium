@@ -20,7 +20,6 @@
 
 class CXFA_FFWidget;
 class CXFA_FFDocView;
-class CXFA_TabParam;
 
 class CXFA_FFPageView final : public cppgc::GarbageCollected<CXFA_FFPageView> {
  public:
@@ -69,8 +68,6 @@ class CXFA_FFPageWidgetIterator final
  private:
   CXFA_FFPageWidgetIterator(CXFA_FFPageView* pPageView, uint32_t dwFilter);
 
-  CXFA_FFWidget* GetWidget(CXFA_LayoutItem* pLayoutItem);
-
   CXFA_LayoutItemIterator m_sIterator;
   const uint32_t m_dwFilter;
   const bool m_bIgnoreRelevant;
@@ -102,13 +99,6 @@ class CXFA_FFTabOrderPageWidgetIterator final
                                   CXFA_FFWidget* pRefWidget);
   void CreateTabOrderWidgetArray();
   std::vector<CXFA_ContentLayoutItem*> CreateSpaceOrderLayoutItems();
-  CXFA_FFWidget* GetWidget(CXFA_LayoutItem* pLayoutItem);
-  void OrderContainer(CXFA_LayoutItemIterator* sIterator,
-                      CXFA_LayoutItem* pViewItem,
-                      CXFA_TabParam* pContainer,
-                      bool* bCurrentItem,
-                      bool* bContentArea,
-                      bool bMasterPage);
 
   cppgc::Member<CXFA_ViewLayoutItem> const m_pPageViewLayout;
   std::vector<cppgc::Member<CXFA_ContentLayoutItem>> m_TabOrderWidgetArray;
