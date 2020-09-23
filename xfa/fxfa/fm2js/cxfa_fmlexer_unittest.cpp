@@ -26,83 +26,95 @@ TEST(CXFA_FMLexerTest, EmptyString) {
 }
 
 TEST(CXFA_FMLexerTest, Numbers) {
-  auto lexer = std::make_unique<CXFA_FMLexer>(L"-12");
-  CXFA_FMToken token = lexer->NextToken();
-  // TODO(dsinclair): Should this return -12 instead of two tokens?
-  EXPECT_EQ(TOKminus, token.m_type);
-  token = lexer->NextToken();
-  EXPECT_EQ(L"12", token.m_string);
-  token = lexer->NextToken();
-  EXPECT_EQ(TOKeof, token.m_type);
-
-  lexer = std::make_unique<CXFA_FMLexer>(L"1.5362");
-  token = lexer->NextToken();
-  EXPECT_EQ(TOKnumber, token.m_type);
-  EXPECT_EQ(L"1.5362", token.m_string);
-
-  lexer = std::make_unique<CXFA_FMLexer>(L"0.875");
-  token = lexer->NextToken();
-  EXPECT_EQ(TOKnumber, token.m_type);
-  EXPECT_EQ(L"0.875", token.m_string);
-
-  lexer = std::make_unique<CXFA_FMLexer>(L"5.56e-2");
-  token = lexer->NextToken();
-  EXPECT_EQ(TOKnumber, token.m_type);
-  EXPECT_EQ(L"5.56e-2", token.m_string);
-
-  lexer = std::make_unique<CXFA_FMLexer>(L"1.234E10");
-  token = lexer->NextToken();
-  EXPECT_EQ(TOKnumber, token.m_type);
-  EXPECT_EQ(L"1.234E10", token.m_string);
-
-  lexer = std::make_unique<CXFA_FMLexer>(L"123456789.012345678");
-  token = lexer->NextToken();
-  EXPECT_EQ(TOKnumber, token.m_type);
-  // TODO(dsinclair): This should round as per IEEE 64-bit values.
-  // EXPECT_EQ(L"123456789.01234567", token.m_string);
-  EXPECT_EQ(L"123456789.012345678", token.m_string);
-
-  lexer = std::make_unique<CXFA_FMLexer>(L"99999999999999999");
-  token = lexer->NextToken();
-  EXPECT_EQ(TOKnumber, token.m_type);
-  // TODO(dsinclair): This is spec'd as rounding when > 16 significant digits
-  // prior to the exponent.
-  // EXPECT_EQ(L"100000000000000000", token.m_string);
-  EXPECT_EQ(L"99999999999999999", token.m_string);
-  EXPECT_TRUE(lexer->IsComplete());
+  {
+    CXFA_FMLexer lexer(L"-12");
+    CXFA_FMToken token = lexer.NextToken();
+    // TODO(dsinclair): Should this return -12 instead of two tokens?
+    EXPECT_EQ(TOKminus, token.m_type);
+    token = lexer.NextToken();
+    EXPECT_EQ(L"12", token.m_string);
+    token = lexer.NextToken();
+    EXPECT_EQ(TOKeof, token.m_type);
+  }
+  {
+    CXFA_FMLexer lexer(L"1.5362");
+    CXFA_FMToken token = lexer.NextToken();
+    EXPECT_EQ(TOKnumber, token.m_type);
+    EXPECT_EQ(L"1.5362", token.m_string);
+  }
+  {
+    CXFA_FMLexer lexer(L"0.875");
+    CXFA_FMToken token = lexer.NextToken();
+    EXPECT_EQ(TOKnumber, token.m_type);
+    EXPECT_EQ(L"0.875", token.m_string);
+  }
+  {
+    CXFA_FMLexer lexer(L"5.56e-2");
+    CXFA_FMToken token = lexer.NextToken();
+    EXPECT_EQ(TOKnumber, token.m_type);
+    EXPECT_EQ(L"5.56e-2", token.m_string);
+  }
+  {
+    CXFA_FMLexer lexer(L"1.234E10");
+    CXFA_FMToken token = lexer.NextToken();
+    EXPECT_EQ(TOKnumber, token.m_type);
+    EXPECT_EQ(L"1.234E10", token.m_string);
+  }
+  {
+    CXFA_FMLexer lexer(L"123456789.012345678");
+    CXFA_FMToken token = lexer.NextToken();
+    EXPECT_EQ(TOKnumber, token.m_type);
+    // TODO(dsinclair): This should round as per IEEE 64-bit values.
+    // EXPECT_EQ(L"123456789.01234567", token.m_string);
+    EXPECT_EQ(L"123456789.012345678", token.m_string);
+  }
+  {
+    CXFA_FMLexer lexer(L"99999999999999999");
+    CXFA_FMToken token = lexer.NextToken();
+    EXPECT_EQ(TOKnumber, token.m_type);
+    // TODO(dsinclair): This is spec'd as rounding when > 16 significant digits
+    // prior to the exponent.
+    // EXPECT_EQ(L"100000000000000000", token.m_string);
+    EXPECT_EQ(L"99999999999999999", token.m_string);
+    EXPECT_TRUE(lexer.IsComplete());
+  }
 }
 
 // The quotes are stripped in CXFA_FMStringExpression::ToJavaScript.
 TEST(CXFA_FMLexerTest, Strings) {
-  auto lexer =
-      std::make_unique<CXFA_FMLexer>(L"\"The cat jumped over the fence.\"");
-  CXFA_FMToken token = lexer->NextToken();
-  EXPECT_EQ(TOKstring, token.m_type);
-  EXPECT_EQ(L"\"The cat jumped over the fence.\"", token.m_string);
+  {
+    CXFA_FMLexer lexer(L"\"The cat jumped over the fence.\"");
+    CXFA_FMToken token = lexer.NextToken();
+    EXPECT_EQ(TOKstring, token.m_type);
+    EXPECT_EQ(L"\"The cat jumped over the fence.\"", token.m_string);
 
-  token = lexer->NextToken();
-  EXPECT_EQ(TOKeof, token.m_type);
-
-  lexer = std::make_unique<CXFA_FMLexer>(L"\"\"");
-  token = lexer->NextToken();
-  EXPECT_EQ(TOKstring, token.m_type);
-  EXPECT_EQ(L"\"\"", token.m_string);
-
-  lexer = std::make_unique<CXFA_FMLexer>(
-      L"\"The message reads: \"\"Warning: Insufficient Memory\"\"\"");
-  token = lexer->NextToken();
-  EXPECT_EQ(TOKstring, token.m_type);
-  EXPECT_EQ(L"\"The message reads: \"\"Warning: Insufficient Memory\"\"\"",
-            token.m_string);
-
-  lexer = std::make_unique<CXFA_FMLexer>(
-      L"\"\\u0047\\u006f\\u0066\\u0069\\u0073\\u0068\\u0021\\u000d\\u000a\"");
-  token = lexer->NextToken();
-  EXPECT_EQ(TOKstring, token.m_type);
-  EXPECT_EQ(
-      L"\"\\u0047\\u006f\\u0066\\u0069\\u0073\\u0068\\u0021\\u000d\\u000a\"",
-      token.m_string);
-  EXPECT_TRUE(lexer->IsComplete());
+    token = lexer.NextToken();
+    EXPECT_EQ(TOKeof, token.m_type);
+  }
+  {
+    CXFA_FMLexer lexer(L"\"\"");
+    CXFA_FMToken token = lexer.NextToken();
+    EXPECT_EQ(TOKstring, token.m_type);
+    EXPECT_EQ(L"\"\"", token.m_string);
+  }
+  {
+    CXFA_FMLexer lexer(
+        L"\"The message reads: \"\"Warning: Insufficient Memory\"\"\"");
+    CXFA_FMToken token = lexer.NextToken();
+    EXPECT_EQ(TOKstring, token.m_type);
+    EXPECT_EQ(L"\"The message reads: \"\"Warning: Insufficient Memory\"\"\"",
+              token.m_string);
+  }
+  {
+    CXFA_FMLexer lexer(
+        L"\"\\u0047\\u006f\\u0066\\u0069\\u0073\\u0068\\u0021\\u000d\\u000a\"");
+    CXFA_FMToken token = lexer.NextToken();
+    EXPECT_EQ(TOKstring, token.m_type);
+    EXPECT_EQ(
+        L"\"\\u0047\\u006f\\u0066\\u0069\\u0073\\u0068\\u0021\\u000d\\u000a\"",
+        token.m_string);
+    EXPECT_TRUE(lexer.IsComplete());
+  }
 }
 
 // Note, 'this' is a keyword but is not matched by the lexer.
@@ -171,123 +183,137 @@ TEST(CXFA_FMLexerTest, OperatorsAndKeywords) {
             {L".*", TOKdotstar}};
 
   for (size_t i = 0; i < pdfium::size(op); ++i) {
-    auto lexer = std::make_unique<CXFA_FMLexer>(op[i].op);
-    CXFA_FMToken token = lexer->NextToken();
+    CXFA_FMLexer lexer(op[i].op);
+    CXFA_FMToken token = lexer.NextToken();
     EXPECT_EQ(op[i].token, token.m_type);
-    EXPECT_TRUE(lexer->IsComplete());
+    EXPECT_TRUE(lexer.IsComplete());
   }
 }
 
 TEST(CXFA_FMLexerTest, Comments) {
-  auto lexer = std::make_unique<CXFA_FMLexer>(L"// Empty.");
-  CXFA_FMToken token = lexer->NextToken();
-  EXPECT_EQ(TOKeof, token.m_type);
+  {
+    CXFA_FMLexer lexer(L"// Empty.");
+    CXFA_FMToken token = lexer.NextToken();
+    EXPECT_EQ(TOKeof, token.m_type);
+  }
+  {
+    CXFA_FMLexer lexer(L"//");
+    CXFA_FMToken token = lexer.NextToken();
+    EXPECT_EQ(TOKeof, token.m_type);
+  }
+  {
+    CXFA_FMLexer lexer(L"123 // Empty.\n\"str\"");
+    CXFA_FMToken token = lexer.NextToken();
+    EXPECT_EQ(TOKnumber, token.m_type);
+    EXPECT_EQ(L"123", token.m_string);
 
-  lexer = std::make_unique<CXFA_FMLexer>(L"//");
-  token = lexer->NextToken();
-  EXPECT_EQ(TOKeof, token.m_type);
+    token = lexer.NextToken();
+    EXPECT_EQ(TOKstring, token.m_type);
+    EXPECT_EQ(L"\"str\"", token.m_string);
 
-  lexer = std::make_unique<CXFA_FMLexer>(L"123 // Empty.\n\"str\"");
-  token = lexer->NextToken();
-  EXPECT_EQ(TOKnumber, token.m_type);
-  EXPECT_EQ(L"123", token.m_string);
+    token = lexer.NextToken();
+    EXPECT_EQ(TOKeof, token.m_type);
+  }
+  {
+    CXFA_FMLexer lexer(L";");
+    CXFA_FMToken token = lexer.NextToken();
+    EXPECT_EQ(TOKeof, token.m_type);
+  }
+  {
+    CXFA_FMLexer lexer(L"; Empty.");
+    CXFA_FMToken token = lexer.NextToken();
+    EXPECT_EQ(TOKeof, token.m_type);
+  }
+  {
+    CXFA_FMLexer lexer(L"123 ;Empty.\n\"str\"");
+    CXFA_FMToken token = lexer.NextToken();
+    EXPECT_EQ(TOKnumber, token.m_type);
+    EXPECT_EQ(L"123", token.m_string);
 
-  token = lexer->NextToken();
-  EXPECT_EQ(TOKstring, token.m_type);
-  EXPECT_EQ(L"\"str\"", token.m_string);
+    token = lexer.NextToken();
+    EXPECT_EQ(TOKstring, token.m_type);
+    EXPECT_EQ(L"\"str\"", token.m_string);
 
-  token = lexer->NextToken();
-  EXPECT_EQ(TOKeof, token.m_type);
-
-  lexer = std::make_unique<CXFA_FMLexer>(L";");
-  token = lexer->NextToken();
-  EXPECT_EQ(TOKeof, token.m_type);
-
-  lexer = std::make_unique<CXFA_FMLexer>(L"; Empty.");
-  token = lexer->NextToken();
-  EXPECT_EQ(TOKeof, token.m_type);
-
-  lexer = std::make_unique<CXFA_FMLexer>(L"123 ;Empty.\n\"str\"");
-  token = lexer->NextToken();
-  EXPECT_EQ(TOKnumber, token.m_type);
-  EXPECT_EQ(L"123", token.m_string);
-
-  token = lexer->NextToken();
-  EXPECT_EQ(TOKstring, token.m_type);
-  EXPECT_EQ(L"\"str\"", token.m_string);
-
-  token = lexer->NextToken();
-  EXPECT_EQ(TOKeof, token.m_type);
-  EXPECT_TRUE(lexer->IsComplete());
+    token = lexer.NextToken();
+    EXPECT_EQ(TOKeof, token.m_type);
+    EXPECT_TRUE(lexer.IsComplete());
+  }
 }
 
 TEST(CXFA_FMLexerTest, ValidIdentifiers) {
   std::vector<const wchar_t*> identifiers = {
       L"a", L"an_identifier", L"_ident", L"$ident", L"!ident", L"GetAddr"};
   for (const auto* ident : identifiers) {
-    auto lexer = std::make_unique<CXFA_FMLexer>(ident);
-    CXFA_FMToken token = lexer->NextToken();
+    CXFA_FMLexer lexer(ident);
+    CXFA_FMToken token = lexer.NextToken();
     EXPECT_EQ(TOKidentifier, token.m_type);
     EXPECT_EQ(ident, token.m_string);
-    EXPECT_TRUE(lexer->IsComplete());
+    EXPECT_TRUE(lexer.IsComplete());
   }
 }
 
 TEST(CXFA_FMLexerTest, InvalidIdentifiers) {
-  auto lexer = std::make_unique<CXFA_FMLexer>(L"#a");
-  auto token = lexer->NextToken();
-  EXPECT_EQ(TOKreserver, token.m_type);
-
-  lexer = std::make_unique<CXFA_FMLexer>(L"1a");
-  token = lexer->NextToken();
-  EXPECT_EQ(TOKreserver, token.m_type);
-
-  lexer = std::make_unique<CXFA_FMLexer>(L"an@identifier");
-  token = lexer->NextToken();
-  EXPECT_NE(TOKreserver, token.m_type);
-  token = lexer->NextToken();
-  EXPECT_EQ(TOKreserver, token.m_type);
-  token = lexer->NextToken();
-  EXPECT_EQ(TOKreserver, token.m_type);
-
-  lexer = std::make_unique<CXFA_FMLexer>(L"_ident@");
-  token = lexer->NextToken();
-  EXPECT_NE(TOKreserver, token.m_type);
-  token = lexer->NextToken();
-  EXPECT_EQ(TOKreserver, token.m_type);
-  EXPECT_FALSE(lexer->IsComplete());
+  {
+    CXFA_FMLexer lexer(L"#a");
+    CXFA_FMToken token = lexer.NextToken();
+    EXPECT_EQ(TOKreserver, token.m_type);
+  }
+  {
+    CXFA_FMLexer lexer(L"1a");
+    CXFA_FMToken token = lexer.NextToken();
+    EXPECT_EQ(TOKreserver, token.m_type);
+  }
+  {
+    CXFA_FMLexer lexer(L"an@identifier");
+    CXFA_FMToken token = lexer.NextToken();
+    EXPECT_NE(TOKreserver, token.m_type);
+    token = lexer.NextToken();
+    EXPECT_EQ(TOKreserver, token.m_type);
+    token = lexer.NextToken();
+    EXPECT_EQ(TOKreserver, token.m_type);
+  }
+  {
+    CXFA_FMLexer lexer(L"_ident@");
+    CXFA_FMToken token = lexer.NextToken();
+    EXPECT_NE(TOKreserver, token.m_type);
+    token = lexer.NextToken();
+    EXPECT_EQ(TOKreserver, token.m_type);
+    EXPECT_FALSE(lexer.IsComplete());
+  }
 }
 
 TEST(CXFA_FMLexerTest, Whitespace) {
-  auto lexer = std::make_unique<CXFA_FMLexer>(L" \t\xc\x9\xb");
-  CXFA_FMToken token = lexer->NextToken();
-  EXPECT_EQ(TOKeof, token.m_type);
+  {
+    CXFA_FMLexer lexer(L" \t\xc\x9\xb");
+    CXFA_FMToken token = lexer.NextToken();
+    EXPECT_EQ(TOKeof, token.m_type);
+  }
+  {
+    CXFA_FMLexer lexer(L"123 \t\xc\x9\xb 456");
+    CXFA_FMToken token = lexer.NextToken();
+    EXPECT_EQ(TOKnumber, token.m_type);
+    EXPECT_EQ(L"123", token.m_string);
 
-  lexer = std::make_unique<CXFA_FMLexer>(L"123 \t\xc\x9\xb 456");
-  token = lexer->NextToken();
-  EXPECT_EQ(TOKnumber, token.m_type);
-  EXPECT_EQ(L"123", token.m_string);
+    token = lexer.NextToken();
+    EXPECT_EQ(TOKnumber, token.m_type);
+    EXPECT_EQ(L"456", token.m_string);
 
-  token = lexer->NextToken();
-  EXPECT_EQ(TOKnumber, token.m_type);
-  EXPECT_EQ(L"456", token.m_string);
-
-  token = lexer->NextToken();
-  EXPECT_EQ(TOKeof, token.m_type);
-  EXPECT_TRUE(lexer->IsComplete());
+    token = lexer.NextToken();
+    EXPECT_EQ(TOKeof, token.m_type);
+    EXPECT_TRUE(lexer.IsComplete());
+  }
 }
 
 TEST(CXFA_FMLexerTest, NullData) {
-  auto lexer = std::make_unique<CXFA_FMLexer>(
-      WideStringView(L"\x2d\x32\x00\x2d\x32", 5));
-  CXFA_FMToken token = lexer->NextToken();
+  CXFA_FMLexer lexer(WideStringView(L"\x2d\x32\x00\x2d\x32", 5));
+  CXFA_FMToken token = lexer.NextToken();
   EXPECT_EQ(TOKminus, token.m_type);
 
-  token = lexer->NextToken();
+  token = lexer.NextToken();
   EXPECT_EQ(TOKnumber, token.m_type);
   EXPECT_EQ(L"2", token.m_string);
 
-  token = lexer->NextToken();
+  token = lexer.NextToken();
   EXPECT_EQ(TOKeof, token.m_type);
-  EXPECT_FALSE(lexer->IsComplete());
+  EXPECT_FALSE(lexer.IsComplete());
 }

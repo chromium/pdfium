@@ -12,7 +12,8 @@
 class CXFA_FMParserTest : public FXGCUnitTest {};
 
 TEST_F(CXFA_FMParserTest, Empty) {
-  CXFA_FMParser parser(heap(), L"");
+  CXFA_FMLexer lexer(L"");
+  CXFA_FMParser parser(heap(), &lexer);
   CXFA_FMAST* ast = parser.Parse();
   ASSERT_TRUE(ast);
   EXPECT_FALSE(parser.HasError());
@@ -25,7 +26,8 @@ TEST_F(CXFA_FMParserTest, Empty) {
 }
 
 TEST_F(CXFA_FMParserTest, CommentOnlyIsError) {
-  CXFA_FMParser parser(heap(), L"; Just comment");
+  CXFA_FMLexer lexer(L"; Just comment");
+  CXFA_FMParser parser(heap(), &lexer);
   CXFA_FMAST* ast = parser.Parse();
   ASSERT_TRUE(ast);
   // TODO(dsinclair): This isn't allowed per the spec.
@@ -56,7 +58,8 @@ pfm_ret = 12;
 return pfm_rt.get_val(pfm_ret);
 }).call(this);)***";
 
-  CXFA_FMParser parser(heap(), L"; Just comment\n12");
+  CXFA_FMLexer lexer(L"; Just comment\n12");
+  CXFA_FMParser parser(heap(), &lexer);
   CXFA_FMAST* ast = parser.Parse();
   ASSERT_TRUE(ast);
   EXPECT_FALSE(parser.HasError());
@@ -125,7 +128,8 @@ pfm_ret = this;
 return pfm_rt.get_val(pfm_ret);
 }).call(this);)***";
 
-  CXFA_FMParser parser(heap(), input);
+  CXFA_FMLexer lexer(input);
+  CXFA_FMParser parser(heap(), &lexer);
   CXFA_FMAST* ast = parser.Parse();
   ASSERT_TRUE(ast);
   EXPECT_FALSE(parser.HasError());
@@ -137,24 +141,27 @@ return pfm_rt.get_val(pfm_ret);
 }
 
 TEST_F(CXFA_FMParserTest, MaxParseDepth) {
-  CXFA_FMParser parser(heap(), L"foo(bar[baz(fizz[0])])");
+  CXFA_FMLexer lexer(L"foo(bar[baz(fizz[0])])");
+  CXFA_FMParser parser(heap(), &lexer);
   parser.SetMaxParseDepthForTest(5);
   EXPECT_EQ(nullptr, parser.Parse());
   EXPECT_TRUE(parser.HasError());
 }
 
 TEST_F(CXFA_FMParserTest, chromium752201) {
-  CXFA_FMParser parser(heap(),
-                       LR"***(fTep a
+  CXFA_FMLexer lexer(
+      LR"***(fTep a
 .#
 fo@ =[=l)***");
+
+  CXFA_FMParser parser(heap(), &lexer);
   EXPECT_EQ(nullptr, parser.Parse());
   EXPECT_TRUE(parser.HasError());
 }
 
 TEST_F(CXFA_FMParserTest, MultipleAssignmentIsNotAllowed) {
-  CXFA_FMParser parser(heap(), L"(a=(b=t))=u");
-
+  CXFA_FMLexer lexer(L"(a=(b=t))=u");
+  CXFA_FMParser parser(heap(), &lexer);
   CXFA_FMAST* ast = parser.Parse();
   ASSERT_TRUE(!ast);
   EXPECT_TRUE(parser.HasError());
@@ -187,7 +194,8 @@ return pfm_ret;
 return pfm_rt.get_val(pfm_ret);
 }).call(this);)***";
 
-  CXFA_FMParser parser(heap(), input);
+  CXFA_FMLexer lexer(input);
+  CXFA_FMParser parser(heap(), &lexer);
   CXFA_FMAST* ast = parser.Parse();
   ASSERT_TRUE(ast);
   EXPECT_FALSE(parser.HasError());
@@ -225,7 +233,8 @@ return pfm_ret;
 return pfm_rt.get_val(pfm_ret);
 }).call(this);)***";
 
-  CXFA_FMParser parser(heap(), input);
+  CXFA_FMLexer lexer(input);
+  CXFA_FMParser parser(heap(), &lexer);
   CXFA_FMAST* ast = parser.Parse();
   ASSERT_TRUE(ast);
   EXPECT_FALSE(parser.HasError());
@@ -242,7 +251,8 @@ TEST_F(CXFA_FMParserTest, ParseFuncWithBadParamsList) {
   param1 * param2
 endfunc)***";
 
-  CXFA_FMParser parser(heap(), input);
+  CXFA_FMLexer lexer(input);
+  CXFA_FMParser parser(heap(), &lexer);
   CXFA_FMAST* ast = parser.Parse();
   ASSERT_TRUE(ast == nullptr);
   EXPECT_TRUE(parser.HasError());
@@ -250,8 +260,8 @@ endfunc)***";
 
 TEST_F(CXFA_FMParserTest, ParseBadIfExpression) {
   const wchar_t input[] = L"if ( then";
-
-  CXFA_FMParser parser(heap(), input);
+  CXFA_FMLexer lexer(input);
+  CXFA_FMParser parser(heap(), &lexer);
   CXFA_FMAST* ast = parser.Parse();
   ASSERT_TRUE(ast == nullptr);
   EXPECT_TRUE(parser.HasError());
@@ -262,7 +272,8 @@ TEST_F(CXFA_FMParserTest, ParseBadElseIfExpression) {
       LR"***(if ($ ne -1) then"
 elseif( then)***";
 
-  CXFA_FMParser parser(heap(), input);
+  CXFA_FMLexer lexer(input);
+  CXFA_FMParser parser(heap(), &lexer);
   CXFA_FMAST* ast = parser.Parse();
   ASSERT_TRUE(ast == nullptr);
   EXPECT_TRUE(parser.HasError());
@@ -272,14 +283,16 @@ TEST_F(CXFA_FMParserTest, ParseDepthWithWideTree) {
   const wchar_t input[] = L"a <> b <> c <> d <> e <> f <> g <> h <> i <> j";
 
   {
-    CXFA_FMParser parser(heap(), input);
+    CXFA_FMLexer lexer(input);
+    CXFA_FMParser parser(heap(), &lexer);
     CXFA_FMAST* ast = parser.Parse();
     ASSERT_TRUE(ast);
     EXPECT_TRUE(!parser.HasError());
   }
 
   {
-    CXFA_FMParser parser(heap(), input);
+    CXFA_FMLexer lexer(input);
+    CXFA_FMParser parser(heap(), &lexer);
     parser.SetMaxParseDepthForTest(5);
     CXFA_FMAST* ast = parser.Parse();
     ASSERT_TRUE(ast == nullptr);
@@ -310,7 +323,8 @@ pfm_ret = pfm_rt.get_val((function() {
 return pfm_rt.get_val(pfm_ret);
 }).call(this);)***";
 
-  CXFA_FMParser parser(heap(), input);
+  CXFA_FMLexer lexer(input);
+  CXFA_FMParser parser(heap(), &lexer);
   CXFA_FMAST* ast = parser.Parse();
   EXPECT_FALSE(parser.HasError());
 
@@ -351,7 +365,8 @@ pfm_ret = pfm_rt.get_val((function() {
 return pfm_rt.get_val(pfm_ret);
 }).call(this);)***";
 
-  CXFA_FMParser parser(heap(), input);
+  CXFA_FMLexer lexer(input);
+  CXFA_FMParser parser(heap(), &lexer);
   CXFA_FMAST* ast = parser.Parse();
   EXPECT_FALSE(parser.HasError());
 
@@ -382,7 +397,8 @@ pfm_ret = s;
 return pfm_rt.get_val(pfm_ret);
 }).call(this);)***";
 
-  CXFA_FMParser parser(heap(), input);
+  CXFA_FMLexer lexer(input);
+  CXFA_FMParser parser(heap(), &lexer);
   CXFA_FMAST* ast = parser.Parse();
   EXPECT_FALSE(parser.HasError());
 
@@ -415,9 +431,11 @@ pfm_ret = pfm_rt.get_val((function() {
 return pfm_rt.get_val(pfm_ret);
 }).call(this);)***";
 
-  CXFA_FMParser parser(heap(), input);
+  CXFA_FMLexer lexer(input);
+  CXFA_FMParser parser(heap(), &lexer);
   CXFA_FMAST* ast = parser.Parse();
   EXPECT_FALSE(parser.HasError());
+
   CXFA_FMToJavaScriptDepth::Reset();
   Optional<CFX_WideTextBuf> buf = ast->ToJavaScript();
   ASSERT_TRUE(buf.has_value());
@@ -447,9 +465,11 @@ pfm_ret = pfm_rt.get_val((function() {
 return pfm_rt.get_val(pfm_ret);
 }).call(this);)***";
 
-  CXFA_FMParser parser(heap(), input);
+  CXFA_FMLexer lexer(input);
+  CXFA_FMParser parser(heap(), &lexer);
   CXFA_FMAST* ast = parser.Parse();
   EXPECT_FALSE(parser.HasError());
+
   CXFA_FMToJavaScriptDepth::Reset();
   Optional<CFX_WideTextBuf> buf = ast->ToJavaScript();
   ASSERT_TRUE(buf.has_value());
@@ -479,9 +499,11 @@ pfm_ret = pfm_rt.get_val((function() {
 return pfm_rt.get_val(pfm_ret);
 }).call(this);)***";
 
-  CXFA_FMParser parser(heap(), input);
+  CXFA_FMLexer lexer(input);
+  CXFA_FMParser parser(heap(), &lexer);
   CXFA_FMAST* ast = parser.Parse();
   EXPECT_FALSE(parser.HasError());
+
   CXFA_FMToJavaScriptDepth::Reset();
   Optional<CFX_WideTextBuf> buf = ast->ToJavaScript();
   ASSERT_TRUE(buf.has_value());
@@ -490,8 +512,8 @@ return pfm_rt.get_val(pfm_ret);
 
 TEST_F(CXFA_FMParserTest, ParseFunctionCallMissingCommas) {
   const wchar_t input[] = L"P.x(!foo!bar!baz)";
-
-  CXFA_FMParser parser(heap(), input);
+  CXFA_FMLexer lexer(input);
+  CXFA_FMParser parser(heap(), &lexer);
   CXFA_FMAST* ast = parser.Parse();
   ASSERT_TRUE(ast == nullptr);
   EXPECT_TRUE(parser.HasError());
@@ -499,8 +521,8 @@ TEST_F(CXFA_FMParserTest, ParseFunctionCallMissingCommas) {
 
 TEST_F(CXFA_FMParserTest, ParseFunctionCallTrailingComma) {
   const wchar_t input[] = L"P.x(foo,bar,baz,)";
-
-  CXFA_FMParser parser(heap(), input);
+  CXFA_FMLexer lexer(input);
+  CXFA_FMParser parser(heap(), &lexer);
   CXFA_FMAST* ast = parser.Parse();
   ASSERT_TRUE(ast == nullptr);
   EXPECT_TRUE(parser.HasError());
@@ -508,8 +530,8 @@ TEST_F(CXFA_FMParserTest, ParseFunctionCallTrailingComma) {
 
 TEST_F(CXFA_FMParserTest, ParseFunctionCallExtraComma) {
   const wchar_t input[] = L"P.x(foo,bar,,baz)";
-
-  CXFA_FMParser parser(heap(), input);
+  CXFA_FMLexer lexer(input);
+  CXFA_FMParser parser(heap(), &lexer);
   CXFA_FMAST* ast = parser.Parse();
   ASSERT_TRUE(ast == nullptr);
   EXPECT_TRUE(parser.HasError());

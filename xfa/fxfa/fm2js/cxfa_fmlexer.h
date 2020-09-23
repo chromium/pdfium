@@ -8,6 +8,7 @@
 #define XFA_FXFA_FM2JS_CXFA_FMLEXER_H_
 
 #include "core/fxcrt/fx_string.h"
+#include "v8/include/cppgc/macros.h"
 
 enum XFA_FM_TOKEN {
   TOKand,
@@ -80,11 +81,6 @@ enum XFA_FM_TOKEN {
   TOKreserver
 };
 
-struct XFA_FMKeyword {
-  XFA_FM_TOKEN m_type;
-  const char* m_keyword;  // Raw, POD struct.
-};
-
 class CXFA_FMToken {
  public:
   CXFA_FMToken();
@@ -101,6 +97,8 @@ class CXFA_FMToken {
 };
 
 class CXFA_FMLexer {
+  CPPGC_STACK_ALLOCATED();  // Raw pointers allowed.
+
  public:
   explicit CXFA_FMLexer(WideStringView wsFormcalc);
   ~CXFA_FMLexer();

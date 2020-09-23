@@ -22,7 +22,7 @@ class CXFA_FMParser {
   CPPGC_STACK_ALLOCATED();  // Allow Raw/Unowned pointers.
 
  public:
-  CXFA_FMParser(cppgc::Heap* heap, WideStringView wsFormcalc);
+  CXFA_FMParser(cppgc::Heap* heap, CXFA_FMLexer* pLexer);
   ~CXFA_FMParser();
 
   // Returned object is owned by cppgc heap.
@@ -65,10 +65,10 @@ class CXFA_FMParser {
   ParseArgumentList();
 
   UnownedPtr<cppgc::Heap> const m_heap;
-  std::unique_ptr<CXFA_FMLexer> m_lexer;
+  UnownedPtr<CXFA_FMLexer> m_lexer;
   CXFA_FMToken m_token;
-  bool m_error;
-  unsigned long m_parse_depth;
+  bool m_error = false;
+  unsigned long m_parse_depth = 0;
   unsigned long m_max_parse_depth;
 };
 

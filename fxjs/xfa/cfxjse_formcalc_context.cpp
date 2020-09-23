@@ -5653,7 +5653,8 @@ Optional<CFX_WideTextBuf> CFXJSE_FormCalcContext::Translate(
   if (wsFormcalc.IsEmpty())
     return CFX_WideTextBuf();
 
-  CXFA_FMParser parser(pHeap, wsFormcalc);
+  CXFA_FMLexer lexer(wsFormcalc);
+  CXFA_FMParser parser(pHeap, &lexer);
   CXFA_FMAST* ast = parser.Parse();
   if (!ast || parser.HasError())
     return pdfium::nullopt;

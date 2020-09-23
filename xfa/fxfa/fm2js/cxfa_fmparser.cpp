@@ -20,12 +20,8 @@ constexpr unsigned int kMaxExpressionListSize = 10000;
 
 }  // namespace
 
-CXFA_FMParser::CXFA_FMParser(cppgc::Heap* pHeap, WideStringView wsFormcalc)
-    : m_heap(pHeap),
-      m_lexer(std::make_unique<CXFA_FMLexer>(wsFormcalc)),
-      m_error(false),
-      m_parse_depth(0),
-      m_max_parse_depth(kMaxParseDepth) {}
+CXFA_FMParser::CXFA_FMParser(cppgc::Heap* pHeap, CXFA_FMLexer* pLexer)
+    : m_heap(pHeap), m_lexer(pLexer), m_max_parse_depth(kMaxParseDepth) {}
 
 CXFA_FMParser::~CXFA_FMParser() = default;
 

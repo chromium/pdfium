@@ -35,6 +35,11 @@ bool IsWhitespaceCharacter(wchar_t c) {
          c == 0x0020;    // Space
 }
 
+struct XFA_FMKeyword {
+  XFA_FM_TOKEN m_type;
+  const char* m_keyword;  // Raw, POD struct.
+};
+
 const XFA_FMKeyword keyWords[] = {
     {TOKdo, "do"},
     {TOKkseq, "eq"},
