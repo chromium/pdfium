@@ -1634,3 +1634,72 @@ TEST_F(FPDFViewEmbedderTest, ImageMask) {
   UnloadPage(page);
 }
 #endif  // defined(OS_WIN)
+
+TEST_F(FPDFViewEmbedderTest, GetTrailerEnds) {
+  ASSERT_TRUE(OpenDocument("two_signatures.pdf"));
+
+  // FPDF_GetTrailerEnds() positive testing.
+  unsigned long size = FPDF_GetTrailerEnds(document(), nullptr, 0);
+  const std::vector<unsigned int> kExpectedEnds{633, 1703, 2781};
+  ASSERT_EQ(kExpectedEnds.size(), size);
+  std::vector<unsigned int> ends(size);
+  ASSERT_EQ(size, FPDF_GetTrailerEnds(document(), ends.data(), size));
+  ASSERT_EQ(kExpectedEnds, ends);
+
+  // FPDF_GetTrailerEnds() negative testing.
+  ASSERT_EQ(0U, FPDF_GetTrailerEnds(nullptr, nullptr, 0));
+
+  ends.resize(2);
+  ends[0] = 0;
+  ends[1] = 1;
+  size = FPDF_GetTrailerEnds(document(), ends.data(), ends.size());
+  ASSERT_EQ(kExpectedEnds.size(), size);
+  EXPECT_EQ(0U, ends[0]);
+  EXPECT_EQ(1U, ends[1]);
+}
+
+TEST_F(FPDFViewEmbedderTest, GetTrailerEndsHelloWorld) {
+  // Single trailer, \n line ending at the trailer end.
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+
+  // FPDF_GetTrailerEnds() positive testing.
+  unsigned long size = FPDF_GetTrailerEnds(document(), nullptr, 0);
+  const std::vector<unsigned int> kExpectedEnds{840};
+  ASSERT_EQ(kExpectedEnds.size(), size);
+  std::vector<unsigned int> ends(size);
+  ASSERT_EQ(size, FPDF_GetTrailerEnds(document(), ends.data(), size));
+  ASSERT_EQ(kExpectedEnds, ends);
+}
+
+TEST_F(FPDFViewEmbedderTest, GetTrailerEndsAnnotationStamp) {
+  // Multiple trailers, \r\n line ending at the trailer ends.
+  ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
+
+  // FPDF_GetTrailerEnds() positive testing.
+  unsigned long size = FPDF_GetTrailerEnds(document(), nullptr, 0);
+  const std::vector<unsigned int> kExpectedEnds{441, 7945, 101719};
+  ASSERT_EQ(kExpectedEnds.size(), size);
+  std::vector<unsigned int> ends(size);
+  ASSERT_EQ(size, FPDF_GetTrailerEnds(document(), ends.data(), size));
+  ASSERT_EQ(kExpectedEnds, ends);
+}
+
+TEST_F(FPDFViewEmbedderTest, GetTrailerEndsLinearized) {
+  // Set up linearized PDF.
+  FileAccessForTesting file_acc("linearized.pdf");
+  FakeFileAccess fake_acc(&file_acc);
+  avail_ = FPDFAvail_Create(fake_acc.GetFileAvail(), fake_acc.GetFileAccess());
+  fake_acc.SetWholeFileAvailable();
+
+  // Multiple trailers, \r line ending at the trailer ends (no \n).
+  document_ = FPDFAvail_GetDocument(avail_, nullptr);
+  ASSERT_TRUE(document());
+
+  // FPDF_GetTrailerEnds() positive testing.
+  unsigned long size = FPDF_GetTrailerEnds(document(), nullptr, 0);
+  const std::vector<unsigned int> kExpectedEnds{474, 11384};
+  ASSERT_EQ(kExpectedEnds.size(), size);
+  std::vector<unsigned int> ends(size);
+  ASSERT_EQ(size, FPDF_GetTrailerEnds(document(), ends.data(), size));
+  ASSERT_EQ(kExpectedEnds, ends);
+}

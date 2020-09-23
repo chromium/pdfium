@@ -606,6 +606,25 @@ FPDF_EXPORT unsigned long FPDF_CALLCONV FPDF_GetLastError();
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDF_DocumentHasValidCrossReferenceTable(FPDF_DOCUMENT document);
 
+// Experimental API.
+// Function: FPDF_GetTrailerEnds
+//          Get the byte offsets of trailer ends.
+// Parameters:
+//          document    -   Handle to document. Returned by FPDF_LoadDocument().
+//          buffer      -   The address of a buffer that receives the
+//                          byte offsets.
+//          length      -   The size, in ints, of |buffer|.
+// Return value:
+//          Returns the number of ints in the buffer on success, 0 on error.
+//
+// |buffer| is an array of integers that describes the exact byte offsets of the
+// trailer ends in the document. If |length| is less than the returned length,
+// or |document| or |buffer| is NULL, |buffer| will not be modified.
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDF_GetTrailerEnds(FPDF_DOCUMENT document,
+                    unsigned int* buffer,
+                    unsigned long length);
+
 // Function: FPDF_GetDocPermission
 //          Get file permission flags of the document.
 // Parameters:

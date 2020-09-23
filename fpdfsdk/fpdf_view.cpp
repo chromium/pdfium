@@ -23,6 +23,7 @@
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
+#include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/render/cpdf_docrenderdata.h"
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
@@ -1221,4 +1222,66 @@ FPDF_GetXFAPacketContent(FPDF_DOCUMENT document,
   *out_buflen = DecodeStreamMaybeCopyAndReturnLength(xfa_packets[index].data,
                                                      buffer, buflen);
   return true;
+}
+
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDF_GetTrailerEnds(FPDF_DOCUMENT document,
+                    unsigned int* buffer,
+                    unsigned long length) {
+  auto* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc)
+    return 0;
+
+  // Start recording trailer ends.
+  auto* parser = doc->GetParser();
+  CPDF_SyntaxParser* syntax = parser->GetSyntax();
+  std::vector<unsigned int> trailer_ends;
+  syntax->SetTrailerEnds(&trailer_ends);
+
+  // Traverse the document.
+  syntax->SetPos(0);
+  while (1) {
+    bool number;
+    ByteString word = syntax->GetNextWord(&number);
+    if (number) {
+      // The object number was read. Read the generation number.
+      word = syntax->GetNextWord(&number);
+      if (!number)
+        break;
+
+      word = syntax->GetNextWord(nullptr);
+      if (word != "obj")
+        break;
+
+      syntax->GetObjectBody(nullptr);
+
+      word = syntax->GetNextWord(nullptr);
+      if (word != "endobj")
+        break;
+    } else if (word == "trailer") {
+      syntax->GetObjectBody(nullptr);
+    } else if (word == "startxref") {
+      syntax->GetNextWord(nullptr);
+    } else if (word == "xref") {
+      while (1) {
+        word = syntax->GetNextWord(nullptr);
+        if (word.IsEmpty() || word == "startxref")
+          break;
+      }
+      syntax->GetNextWord(nullptr);
+    } else {
+      break;
+    }
+  }
+
+  // Stop recording trailer ends.
+  syntax->SetTrailerEnds(nullptr);
+
+  unsigned long trailer_ends_len = trailer_ends.size();
+  if (buffer && length >= trailer_ends_len) {
+    for (size_t i = 0; i < trailer_ends_len; ++i)
+      buffer[i] = trailer_ends[i];
+  }
+
+  return trailer_ends_len;
 }

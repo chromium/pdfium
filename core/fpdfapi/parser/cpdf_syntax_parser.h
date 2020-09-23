@@ -12,6 +12,7 @@
 
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/string_pool_template.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxcrt/weak_ptr.h"
 
 class CPDF_CryptoHandler;
@@ -51,6 +52,7 @@ class CPDF_SyntaxParser {
   ByteString GetKeyword();
   void ToNextLine();
   void ToNextWord();
+  void RecordingToNextWord();
   bool BackwardsSearchToWord(ByteStringView word, FX_FILESIZE limit);
   FX_FILESIZE FindTag(ByteStringView tag);
   bool ReadBlock(uint8_t* pBuf, uint32_t size);
@@ -74,6 +76,10 @@ class CPDF_SyntaxParser {
 
   ByteString ReadString();
   ByteString ReadHexString();
+
+  void SetTrailerEnds(std::vector<unsigned int>* trailer_ends) {
+    m_TrailerEnds = trailer_ends;
+  }
 
  private:
   friend class CPDF_DataAvail;
@@ -114,6 +120,9 @@ class CPDF_SyntaxParser {
   uint32_t m_WordSize = 0;
   uint8_t m_WordBuffer[257];
   uint32_t m_ReadBufferSize = CPDF_Stream::kFileBufSize;
+
+  // The syntax parser records traversed trailer end byte offsets here.
+  UnownedPtr<std::vector<unsigned int>> m_TrailerEnds;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_SYNTAX_PARSER_H_
