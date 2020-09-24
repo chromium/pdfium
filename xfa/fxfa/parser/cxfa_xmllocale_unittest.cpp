@@ -171,15 +171,15 @@ TEST(CXFA_XMLLocaleTest, GetDatePattern) {
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"M/D/YY",
-            locale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Short));
+            locale->GetDatePattern(LocaleIface::DateTimeSubcategory::kShort));
   EXPECT_EQ(L"MMM D, YYYY",
-            locale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Default));
+            locale->GetDatePattern(LocaleIface::DateTimeSubcategory::kDefault));
   EXPECT_EQ(L"MMM D, YYYY",
-            locale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Medium));
+            locale->GetDatePattern(LocaleIface::DateTimeSubcategory::kMedium));
   EXPECT_EQ(L"EEEE, MMMM D, YYYY",
-            locale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Full));
+            locale->GetDatePattern(LocaleIface::DateTimeSubcategory::kFull));
   EXPECT_EQ(L"MMMM D, YYYY",
-            locale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Long));
+            locale->GetDatePattern(LocaleIface::DateTimeSubcategory::kLong));
 }
 
 TEST(CXFA_XMLLocaleTest, GetTimePattern) {
@@ -187,15 +187,15 @@ TEST(CXFA_XMLLocaleTest, GetTimePattern) {
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"h:MM A",
-            locale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Short));
+            locale->GetTimePattern(LocaleIface::DateTimeSubcategory::kShort));
   EXPECT_EQ(L"h:MM:SS A",
-            locale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Default));
+            locale->GetTimePattern(LocaleIface::DateTimeSubcategory::kDefault));
   EXPECT_EQ(L"h:MM:SS A",
-            locale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Medium));
+            locale->GetTimePattern(LocaleIface::DateTimeSubcategory::kMedium));
   EXPECT_EQ(L"h:MM:SS A Z",
-            locale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Full));
+            locale->GetTimePattern(LocaleIface::DateTimeSubcategory::kFull));
   EXPECT_EQ(L"h:MM:SS A Z",
-            locale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Long));
+            locale->GetTimePattern(LocaleIface::DateTimeSubcategory::kLong));
 }
 
 TEST(CXFA_XMLLocaleTest, GetNumPattern) {
@@ -203,11 +203,11 @@ TEST(CXFA_XMLLocaleTest, GetNumPattern) {
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"z,zzz,zzz,zzz,zzz,zzz%",
-            locale->GetNumPattern(FX_LOCALENUMPATTERN_Percent));
+            locale->GetNumPattern(LocaleIface::NumSubcategory::kPercent));
   EXPECT_EQ(L"$z,zzz,zzz,zzz,zzz,zz9.99",
-            locale->GetNumPattern(FX_LOCALENUMPATTERN_Currency));
+            locale->GetNumPattern(LocaleIface::NumSubcategory::kCurrency));
   EXPECT_EQ(L"z,zzz,zzz,zzz,zzz,zz9.zzz",
-            locale->GetNumPattern(FX_LOCALENUMPATTERN_Decimal));
+            locale->GetNumPattern(LocaleIface::NumSubcategory::kDecimal));
   EXPECT_EQ(L"z,zzz,zzz,zzz,zzz,zzz",
-            locale->GetNumPattern(FX_LOCALENUMPATTERN_Integer));
+            locale->GetNumPattern(LocaleIface::NumSubcategory::kInteger));
 }

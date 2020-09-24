@@ -152,57 +152,55 @@ WideString CXFA_XMLLocale::GetCalendarSymbol(WideStringView symbol,
   return sym_element ? sym_element->GetTextData() : WideString();
 }
 
-WideString CXFA_XMLLocale::GetDatePattern(
-    FX_LOCALEDATETIMESUBCATEGORY eType) const {
+WideString CXFA_XMLLocale::GetDatePattern(DateTimeSubcategory eType) const {
   CFX_XMLElement* patterns = locale_->GetFirstChildNamed(L"datePatterns");
   if (!patterns)
     return WideString();
 
   WideString wsName;
   switch (eType) {
-    case FX_LOCALEDATETIMESUBCATEGORY_Short:
+    case DateTimeSubcategory::kShort:
       wsName = L"short";
       break;
-    case FX_LOCALEDATETIMESUBCATEGORY_Default:
-    case FX_LOCALEDATETIMESUBCATEGORY_Medium:
+    case DateTimeSubcategory::kDefault:
+    case DateTimeSubcategory::kMedium:
       wsName = L"med";
       break;
-    case FX_LOCALEDATETIMESUBCATEGORY_Full:
+    case DateTimeSubcategory::kFull:
       wsName = L"full";
       break;
-    case FX_LOCALEDATETIMESUBCATEGORY_Long:
+    case DateTimeSubcategory::kLong:
       wsName = L"long";
       break;
   }
   return GetPattern(patterns, L"datePattern", wsName.AsStringView());
 }
 
-WideString CXFA_XMLLocale::GetTimePattern(
-    FX_LOCALEDATETIMESUBCATEGORY eType) const {
+WideString CXFA_XMLLocale::GetTimePattern(DateTimeSubcategory eType) const {
   CFX_XMLElement* patterns = locale_->GetFirstChildNamed(L"timePatterns");
   if (!patterns)
     return WideString();
 
   WideString wsName;
   switch (eType) {
-    case FX_LOCALEDATETIMESUBCATEGORY_Short:
+    case DateTimeSubcategory::kShort:
       wsName = L"short";
       break;
-    case FX_LOCALEDATETIMESUBCATEGORY_Default:
-    case FX_LOCALEDATETIMESUBCATEGORY_Medium:
+    case DateTimeSubcategory::kDefault:
+    case DateTimeSubcategory::kMedium:
       wsName = L"med";
       break;
-    case FX_LOCALEDATETIMESUBCATEGORY_Full:
+    case DateTimeSubcategory::kFull:
       wsName = L"full";
       break;
-    case FX_LOCALEDATETIMESUBCATEGORY_Long:
+    case DateTimeSubcategory::kLong:
       wsName = L"long";
       break;
   }
   return GetPattern(patterns, L"timePattern", wsName.AsStringView());
 }
 
-WideString CXFA_XMLLocale::GetNumPattern(FX_LOCALENUMSUBCATEGORY eType) const {
+WideString CXFA_XMLLocale::GetNumPattern(NumSubcategory eType) const {
   CFX_XMLElement* patterns = locale_->GetFirstChildNamed(L"numberPatterns");
   return patterns ? XFA_PatternToString(eType) : WideString();
 }

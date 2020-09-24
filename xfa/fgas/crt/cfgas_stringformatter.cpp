@@ -34,32 +34,32 @@
 
 namespace {
 
-struct LocaleDateTimeSubCategoryWithHash {
+struct LocaleDateTimeSubcategoryWithHash {
   uint32_t uHash;  // Hashed as wide string.
-  FX_LOCALEDATETIMESUBCATEGORY eSubCategory;
+  LocaleIface::DateTimeSubcategory eSubCategory;
 };
 
-struct LocaleNumberSubCategoryWithHash {
+struct LocaleNumberSubcategoryWithHash {
   uint32_t uHash;  // Hashed as wide string.
-  FX_LOCALENUMSUBCATEGORY eSubCategory;
+  LocaleIface::NumSubcategory eSubCategory;
 };
 
 #undef SUBC
 #define SUBC(a, b, c) a, c
 
-const LocaleDateTimeSubCategoryWithHash g_FXLocaleDateTimeSubCatData[] = {
-    {SUBC(0x14da2125, "default", FX_LOCALEDATETIMESUBCATEGORY_Default)},
-    {SUBC(0x9041d4b0, "short", FX_LOCALEDATETIMESUBCATEGORY_Short)},
-    {SUBC(0xa084a381, "medium", FX_LOCALEDATETIMESUBCATEGORY_Medium)},
-    {SUBC(0xcdce56b3, "full", FX_LOCALEDATETIMESUBCATEGORY_Full)},
-    {SUBC(0xf6b4afb0, "long", FX_LOCALEDATETIMESUBCATEGORY_Long)},
+constexpr LocaleDateTimeSubcategoryWithHash kLocaleDateTimeSubcategoryData[] = {
+    {SUBC(0x14da2125, "default", LocaleIface::DateTimeSubcategory::kDefault)},
+    {SUBC(0x9041d4b0, "short", LocaleIface::DateTimeSubcategory::kShort)},
+    {SUBC(0xa084a381, "medium", LocaleIface::DateTimeSubcategory::kMedium)},
+    {SUBC(0xcdce56b3, "full", LocaleIface::DateTimeSubcategory::kFull)},
+    {SUBC(0xf6b4afb0, "long", LocaleIface::DateTimeSubcategory::kLong)},
 };
 
-const LocaleNumberSubCategoryWithHash g_FXLocaleNumSubCatData[] = {
-    {SUBC(0x46f95531, "percent", FX_LOCALENUMPATTERN_Percent)},
-    {SUBC(0x4c4e8acb, "currency", FX_LOCALENUMPATTERN_Currency)},
-    {SUBC(0x54034c2f, "decimal", FX_LOCALENUMPATTERN_Decimal)},
-    {SUBC(0x7568e6ae, "integer", FX_LOCALENUMPATTERN_Integer)},
+constexpr LocaleNumberSubcategoryWithHash kLocaleNumSubcategoryData[] = {
+    {SUBC(0x46f95531, "percent", LocaleIface::NumSubcategory::kPercent)},
+    {SUBC(0x4c4e8acb, "currency", LocaleIface::NumSubcategory::kCurrency)},
+    {SUBC(0x54034c2f, "decimal", LocaleIface::NumSubcategory::kDecimal)},
+    {SUBC(0x7568e6ae, "integer", LocaleIface::NumSubcategory::kInteger)},
 };
 
 #undef SUBC
@@ -848,8 +848,8 @@ std::vector<WideString> CFGAS_StringFormatter::SplitOnBars(
   return wsPatterns;
 }
 
-FX_LOCALECATEGORY CFGAS_StringFormatter::GetCategory() const {
-  FX_LOCALECATEGORY eCategory = FX_LOCALECATEGORY_Unknown;
+CFGAS_StringFormatter::Category CFGAS_StringFormatter::GetCategory() const {
+  Category eCategory = Category::kUnknown;
   size_t ccf = 0;
   bool bBraceOpen = false;
   while (ccf < m_spPattern.size()) {
@@ -873,23 +873,23 @@ FX_LOCALECATEGORY CFGAS_StringFormatter::GetCategory() const {
       }
       uint32_t dwHash = FX_HashCode_GetW(wsCategory.AsStringView(), false);
       if (dwHash == FX_LOCALECATEGORY_DateTimeHash)
-        return FX_LOCALECATEGORY_DateTime;
+        return Category::kDateTime;
       if (dwHash == FX_LOCALECATEGORY_TextHash)
-        return FX_LOCALECATEGORY_Text;
+        return Category::kText;
       if (dwHash == FX_LOCALECATEGORY_NumHash)
-        return FX_LOCALECATEGORY_Num;
+        return Category::kNum;
       if (dwHash == FX_LOCALECATEGORY_ZeroHash)
-        return FX_LOCALECATEGORY_Zero;
+        return Category::kZero;
       if (dwHash == FX_LOCALECATEGORY_NullHash)
-        return FX_LOCALECATEGORY_Null;
+        return Category::kNull;
       if (dwHash == FX_LOCALECATEGORY_DateHash) {
-        if (eCategory == FX_LOCALECATEGORY_Time)
-          return FX_LOCALECATEGORY_DateTime;
-        eCategory = FX_LOCALECATEGORY_Date;
+        if (eCategory == Category::kTime)
+          return Category::kDateTime;
+        eCategory = Category::kDate;
       } else if (dwHash == FX_LOCALECATEGORY_TimeHash) {
-        if (eCategory == FX_LOCALECATEGORY_Date)
-          return FX_LOCALECATEGORY_DateTime;
-        eCategory = FX_LOCALECATEGORY_Time;
+        if (eCategory == Category::kDate)
+          return Category::kDateTime;
+        eCategory = Category::kTime;
       }
     } else if (m_spPattern[ccf] == '}') {
       bBraceOpen = false;
@@ -995,8 +995,9 @@ LocaleIface* CFGAS_StringFormatter::GetNumericFormat(
           }
           uint32_t dwSubHash =
               FX_HashCode_GetW(wsSubCategory.AsStringView(), false);
-          FX_LOCALENUMSUBCATEGORY eSubCategory = FX_LOCALENUMPATTERN_Decimal;
-          for (const auto& data : g_FXLocaleNumSubCatData) {
+          LocaleIface::NumSubcategory eSubCategory =
+              LocaleIface::NumSubcategory::kDecimal;
+          for (const auto& data : kLocaleNumSubcategoryData) {
             if (data.uHash == dwSubHash) {
               eSubCategory = data.eSubCategory;
               break;
@@ -1016,9 +1017,8 @@ LocaleIface* CFGAS_StringFormatter::GetNumericFormat(
             *dwStyle |= FX_NUMSTYLE_DotVorv;
           }
           *wsPurgePattern += wsSubCategory;
-          if (eSubCategory == FX_LOCALENUMPATTERN_Percent)
+          if (eSubCategory == LocaleIface::NumSubcategory::kPercent)
             *dwStyle |= FX_NUMSTYLE_Percent;
-
           continue;
         }
         ccf++;
@@ -1539,13 +1539,13 @@ bool CFGAS_StringFormatter::ParseNum(const WideString& wsSrcNum,
   return true;
 }
 
-FX_DATETIMETYPE CFGAS_StringFormatter::GetDateTimeFormat(
+CFGAS_StringFormatter::DateTimeType CFGAS_StringFormatter::GetDateTimeFormat(
     LocaleIface** pLocale,
     WideString* wsDatePattern,
     WideString* wsTimePattern) const {
   *pLocale = nullptr;
   WideString wsTempPattern;
-  FX_LOCALECATEGORY eCategory = FX_LOCALECATEGORY_Unknown;
+  Category eCategory = Category::kUnknown;
   size_t ccf = 0;
   int32_t iFindCategory = 0;
   bool bBraceOpen = false;
@@ -1568,22 +1568,22 @@ FX_DATETIMETYPE CFGAS_StringFormatter::GetDateTimeFormat(
           if (!*pLocale)
             *pLocale = m_pLocaleMgr->GetDefLocale();
 
-          return FX_DATETIMETYPE_DateTime;
+          return DateTimeType::kDateTime;
         }
         wsCategory += m_spPattern[ccf];
         ccf++;
       }
       if (!(iFindCategory & 1) && wsCategory.EqualsASCII("date")) {
         iFindCategory |= 1;
-        eCategory = FX_LOCALECATEGORY_Date;
+        eCategory = Category::kDate;
         if (iFindCategory & 2)
           iFindCategory = 4;
       } else if (!(iFindCategory & 2) && wsCategory.EqualsASCII("time")) {
         iFindCategory |= 2;
-        eCategory = FX_LOCALECATEGORY_Time;
+        eCategory = Category::kTime;
       } else if (wsCategory.EqualsASCII("datetime")) {
         iFindCategory = 3;
-        eCategory = FX_LOCALECATEGORY_DateTime;
+        eCategory = Category::kDateTime;
       } else {
         continue;
       }
@@ -1608,9 +1608,9 @@ FX_DATETIMETYPE CFGAS_StringFormatter::GetDateTimeFormat(
 
           uint32_t dwSubHash =
               FX_HashCode_GetW(wsSubCategory.AsStringView(), false);
-          FX_LOCALEDATETIMESUBCATEGORY eSubCategory =
-              FX_LOCALEDATETIMESUBCATEGORY_Medium;
-          for (const auto& data : g_FXLocaleDateTimeSubCatData) {
+          LocaleIface::DateTimeSubcategory eSubCategory =
+              LocaleIface::DateTimeSubcategory::kMedium;
+          for (const auto& data : kLocaleDateTimeSubcategoryData) {
             if (data.uHash == dwSubHash) {
               eSubCategory = data.eSubCategory;
               break;
@@ -1621,15 +1621,15 @@ FX_DATETIMETYPE CFGAS_StringFormatter::GetDateTimeFormat(
           ASSERT(*pLocale);
 
           switch (eCategory) {
-            case FX_LOCALECATEGORY_Date:
+            case Category::kDate:
               *wsDatePattern =
                   wsTempPattern + (*pLocale)->GetDatePattern(eSubCategory);
               break;
-            case FX_LOCALECATEGORY_Time:
+            case Category::kTime:
               *wsTimePattern =
                   wsTempPattern + (*pLocale)->GetTimePattern(eSubCategory);
               break;
-            case FX_LOCALECATEGORY_DateTime:
+            case Category::kDateTime:
               *wsDatePattern =
                   wsTempPattern + (*pLocale)->GetDatePattern(eSubCategory);
               *wsTimePattern = (*pLocale)->GetTimePattern(eSubCategory);
@@ -1645,9 +1645,9 @@ FX_DATETIMETYPE CFGAS_StringFormatter::GetDateTimeFormat(
     } else if (m_spPattern[ccf] == '}') {
       bBraceOpen = false;
       if (!wsTempPattern.IsEmpty()) {
-        if (eCategory == FX_LOCALECATEGORY_Time)
+        if (eCategory == Category::kTime)
           *wsTimePattern = std::move(wsTempPattern);
-        else if (eCategory == FX_LOCALECATEGORY_Date)
+        else if (eCategory == Category::kDate)
           *wsDatePattern = std::move(wsTempPattern);
         else
           wsTempPattern.clear();
@@ -1659,7 +1659,7 @@ FX_DATETIMETYPE CFGAS_StringFormatter::GetDateTimeFormat(
   }
 
   if (!wsTempPattern.IsEmpty()) {
-    if (eCategory == FX_LOCALECATEGORY_Date)
+    if (eCategory == Category::kDate)
       *wsDatePattern += wsTempPattern;
     else
       *wsTimePattern += wsTempPattern;
@@ -1670,11 +1670,11 @@ FX_DATETIMETYPE CFGAS_StringFormatter::GetDateTimeFormat(
     wsTimePattern->clear();
     *wsDatePattern = m_wsPattern;
   }
-  return (FX_DATETIMETYPE)iFindCategory;
+  return static_cast<DateTimeType>(iFindCategory);
 }
 
 bool CFGAS_StringFormatter::ParseDateTime(const WideString& wsSrcDateTime,
-                                          FX_DATETIMETYPE eDateTimeType,
+                                          DateTimeType eDateTimeType,
                                           CFX_DateTime* dtValue) const {
   dtValue->Reset();
   if (wsSrcDateTime.IsEmpty() || m_spPattern.empty())
@@ -1683,33 +1683,33 @@ bool CFGAS_StringFormatter::ParseDateTime(const WideString& wsSrcDateTime,
   LocaleIface* pLocale = nullptr;
   WideString wsDatePattern;
   WideString wsTimePattern;
-  FX_DATETIMETYPE eCategory =
+  DateTimeType eCategory =
       GetDateTimeFormat(&pLocale, &wsDatePattern, &wsTimePattern);
   if (!pLocale)
     return false;
 
-  if (eCategory == FX_DATETIMETYPE_Unknown)
+  if (eCategory == DateTimeType::kUnknown)
     eCategory = eDateTimeType;
 
   size_t iStart = 0;
   switch (eCategory) {
-    case FX_DATETIMETYPE_Date:
+    case DateTimeType::kDate:
       return ParseLocaleDate(wsSrcDateTime, wsDatePattern, pLocale, dtValue,
                              &iStart);
-    case FX_DATETIMETYPE_Time:
+    case DateTimeType::kTime:
       return ParseLocaleTime(wsSrcDateTime, wsTimePattern, pLocale, dtValue,
                              &iStart);
-    case FX_DATETIMETYPE_DateTime:
+    case DateTimeType::kDateTime:
       return ParseLocaleDate(wsSrcDateTime, wsTimePattern, pLocale, dtValue,
                              &iStart) &&
              ParseLocaleTime(wsSrcDateTime, wsDatePattern, pLocale, dtValue,
                              &iStart);
-    case FX_DATETIMETYPE_TimeDate:
+    case DateTimeType::kTimeDate:
       return ParseLocaleTime(wsSrcDateTime, wsTimePattern, pLocale, dtValue,
                              &iStart) &&
              ParseLocaleDate(wsSrcDateTime, wsDatePattern, pLocale, dtValue,
                              &iStart);
-    case FX_DATETIMETYPE_Unknown:
+    case DateTimeType::kUnknown:
     default:
       return false;
   }
@@ -2175,7 +2175,7 @@ bool CFGAS_StringFormatter::FormatNum(const WideString& wsInputNum,
 }
 
 bool CFGAS_StringFormatter::FormatDateTime(const WideString& wsSrcDateTime,
-                                           FX_DATETIMETYPE eDateTimeType,
+                                           DateTimeType eDateTimeType,
                                            WideString* wsOutput) const {
   if (wsSrcDateTime.IsEmpty() || m_spPattern.empty())
     return false;
@@ -2183,31 +2183,31 @@ bool CFGAS_StringFormatter::FormatDateTime(const WideString& wsSrcDateTime,
   WideString wsDatePattern;
   WideString wsTimePattern;
   LocaleIface* pLocale = nullptr;
-  FX_DATETIMETYPE eCategory =
+  DateTimeType eCategory =
       GetDateTimeFormat(&pLocale, &wsDatePattern, &wsTimePattern);
   if (!pLocale)
     return false;
 
-  if (eCategory == FX_DATETIMETYPE_Unknown) {
-    if (eDateTimeType == FX_DATETIMETYPE_Time) {
+  if (eCategory == DateTimeType::kUnknown) {
+    if (eDateTimeType == DateTimeType::kTime) {
       wsTimePattern = std::move(wsDatePattern);
       wsDatePattern = WideString();
     }
     eCategory = eDateTimeType;
-    if (eCategory == FX_DATETIMETYPE_Unknown)
+    if (eCategory == DateTimeType::kUnknown)
       return false;
   }
 
   CFX_DateTime dt;
   auto iT = wsSrcDateTime.Find(L"T");
   if (!iT.has_value()) {
-    if (eCategory == FX_DATETIMETYPE_Date &&
+    if (eCategory == DateTimeType::kDate &&
         FX_DateFromCanonical(wsSrcDateTime.span(), &dt)) {
       *wsOutput = FormatDateTimeInternal(dt, wsDatePattern, wsTimePattern, true,
                                          pLocale);
       return true;
     }
-    if (eCategory == FX_DATETIMETYPE_Time &&
+    if (eCategory == DateTimeType::kTime &&
         FX_TimeFromCanonical(pLocale, wsSrcDateTime.span(), &dt)) {
       *wsOutput = FormatDateTimeInternal(dt, wsDatePattern, wsTimePattern, true,
                                          pLocale);
@@ -2223,9 +2223,9 @@ bool CFGAS_StringFormatter::FormatDateTime(const WideString& wsSrcDateTime,
 
     if (FX_DateFromCanonical(wsSrcDate, &dt) &&
         FX_TimeFromCanonical(pLocale, wsSrcTime, &dt)) {
-      *wsOutput = FormatDateTimeInternal(dt, wsDatePattern, wsTimePattern,
-                                         eCategory != FX_DATETIMETYPE_TimeDate,
-                                         pLocale);
+      *wsOutput =
+          FormatDateTimeInternal(dt, wsDatePattern, wsTimePattern,
+                                 eCategory != DateTimeType::kTimeDate, pLocale);
       return true;
     }
   }

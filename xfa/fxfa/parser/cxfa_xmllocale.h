@@ -38,9 +38,9 @@ class CXFA_XMLLocale final : public LocaleIface {
   FX_TIMEZONE GetTimeZone() const override;
   WideString GetEraName(bool bAD) const override;
 
-  WideString GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY eType) const override;
-  WideString GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY eType) const override;
-  WideString GetNumPattern(FX_LOCALENUMSUBCATEGORY eType) const override;
+  WideString GetDatePattern(DateTimeSubcategory eType) const override;
+  WideString GetTimePattern(DateTimeSubcategory eType) const override;
+  WideString GetNumPattern(NumSubcategory eType) const override;
 
  private:
   WideString GetPattern(CFX_XMLElement* pElement,

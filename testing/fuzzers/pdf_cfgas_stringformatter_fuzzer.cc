@@ -15,9 +15,11 @@
 namespace {
 
 const wchar_t* const kLocales[] = {L"en", L"fr", L"jp", L"zh"};
-const FX_DATETIMETYPE kTypes[] = {FX_DATETIMETYPE_Date, FX_DATETIMETYPE_Time,
-                                  FX_DATETIMETYPE_DateTime,
-                                  FX_DATETIMETYPE_TimeDate};
+const CFGAS_StringFormatter::DateTimeType kTypes[] = {
+    CFGAS_StringFormatter::DateTimeType::kDate,
+    CFGAS_StringFormatter::DateTimeType::kTime,
+    CFGAS_StringFormatter::DateTimeType::kDateTime,
+    CFGAS_StringFormatter::DateTimeType::kTimeDate};
 
 }  // namespace
 

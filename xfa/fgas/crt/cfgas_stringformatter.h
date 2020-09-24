@@ -22,18 +22,38 @@ bool FX_TimeFromCanonical(const LocaleIface* pLocale,
 
 class CFGAS_StringFormatter {
  public:
+  enum class Category {
+    kUnknown,
+    kDate,
+    kTime,
+    kDateTime,
+    kNum,
+    kText,
+    kZero,
+    kNull,
+  };
+
+  // Note: arithmetic depends on explicit values that do not change.
+  enum class DateTimeType {
+    kUnknown = 0,
+    kDate,
+    kTime,
+    kDateTime,
+    kTimeDate,
+  };
+
   CFGAS_StringFormatter(LocaleMgrIface* pLocaleMgr,
                         const WideString& wsPattern);
   ~CFGAS_StringFormatter();
 
   static std::vector<WideString> SplitOnBars(const WideString& wsFormatString);
 
-  FX_LOCALECATEGORY GetCategory() const;
+  Category GetCategory() const;
 
   bool ParseText(const WideString& wsSrcText, WideString* wsValue) const;
   bool ParseNum(const WideString& wsSrcNum, WideString* wsValue) const;
   bool ParseDateTime(const WideString& wsSrcDateTime,
-                     FX_DATETIMETYPE eDateTimeType,
+                     DateTimeType eDateTimeType,
                      CFX_DateTime* dtValue) const;
   bool ParseZero(const WideString& wsSrcText) const;
   bool ParseNull(const WideString& wsSrcText) const;
@@ -41,7 +61,7 @@ class CFGAS_StringFormatter {
   bool FormatText(const WideString& wsSrcText, WideString* wsOutput) const;
   bool FormatNum(const WideString& wsSrcNum, WideString* wsOutput) const;
   bool FormatDateTime(const WideString& wsSrcDateTime,
-                      FX_DATETIMETYPE eDateTimeType,
+                      DateTimeType eDateTimeType,
                       WideString* wsOutput) const;
   bool FormatZero(WideString* wsOutput) const;
   bool FormatNull(WideString* wsOutput) const;
@@ -51,9 +71,9 @@ class CFGAS_StringFormatter {
   LocaleIface* GetNumericFormat(size_t* iDotIndex,
                                 uint32_t* dwStyle,
                                 WideString* wsPurgePattern) const;
-  FX_DATETIMETYPE GetDateTimeFormat(LocaleIface** pLocale,
-                                    WideString* wsDatePattern,
-                                    WideString* wsTimePattern) const;
+  DateTimeType GetDateTimeFormat(LocaleIface** pLocale,
+                                 WideString* wsDatePattern,
+                                 WideString* wsTimePattern) const;
 
   UnownedPtr<LocaleMgrIface> const m_pLocaleMgr;
   const WideString m_wsPattern;                   // keep pattern string alive.

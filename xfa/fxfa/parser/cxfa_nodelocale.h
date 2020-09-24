@@ -13,7 +13,7 @@
 
 class CXFA_Node;
 
-WideString XFA_PatternToString(FX_LOCALENUMSUBCATEGORY category);
+WideString XFA_PatternToString(LocaleIface::NumSubcategory category);
 
 class CXFA_NodeLocale final : public LocaleIface {
  public:
@@ -34,9 +34,9 @@ class CXFA_NodeLocale final : public LocaleIface {
   FX_TIMEZONE GetTimeZone() const override;
   WideString GetEraName(bool bAD) const override;
 
-  WideString GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY eType) const override;
-  WideString GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY eType) const override;
-  WideString GetNumPattern(FX_LOCALENUMSUBCATEGORY eType) const override;
+  WideString GetDatePattern(DateTimeSubcategory eType) const override;
+  WideString GetTimePattern(DateTimeSubcategory eType) const override;
+  WideString GetNumPattern(NumSubcategory eType) const override;
 
  private:
   CXFA_Node* GetNodeByName(CXFA_Node* pParent, WideStringView wsName) const;

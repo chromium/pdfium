@@ -10,42 +10,23 @@
 #include "core/fxcrt/cfx_datetime.h"
 #include "core/fxcrt/fx_string.h"
 
-enum FX_LOCALEDATETIMESUBCATEGORY {
-  FX_LOCALEDATETIMESUBCATEGORY_Default,
-  FX_LOCALEDATETIMESUBCATEGORY_Short,
-  FX_LOCALEDATETIMESUBCATEGORY_Medium,
-  FX_LOCALEDATETIMESUBCATEGORY_Full,
-  FX_LOCALEDATETIMESUBCATEGORY_Long,
-};
-
-enum FX_LOCALENUMSUBCATEGORY {
-  FX_LOCALENUMPATTERN_Percent,
-  FX_LOCALENUMPATTERN_Currency,
-  FX_LOCALENUMPATTERN_Decimal,
-  FX_LOCALENUMPATTERN_Integer,
-};
-
-enum FX_LOCALECATEGORY {
-  FX_LOCALECATEGORY_Unknown,
-  FX_LOCALECATEGORY_Date,
-  FX_LOCALECATEGORY_Time,
-  FX_LOCALECATEGORY_DateTime,
-  FX_LOCALECATEGORY_Num,
-  FX_LOCALECATEGORY_Text,
-  FX_LOCALECATEGORY_Zero,
-  FX_LOCALECATEGORY_Null,
-};
-
-enum FX_DATETIMETYPE {
-  FX_DATETIMETYPE_Unknown,
-  FX_DATETIMETYPE_Date,
-  FX_DATETIMETYPE_Time,
-  FX_DATETIMETYPE_DateTime,
-  FX_DATETIMETYPE_TimeDate,
-};
-
 class LocaleIface {
  public:
+  enum class DateTimeSubcategory {
+    kDefault,
+    kShort,
+    kMedium,
+    kFull,
+    kLong,
+  };
+
+  enum class NumSubcategory {
+    kPercent,
+    kCurrency,
+    kDecimal,
+    kInteger,
+  };
+
   virtual ~LocaleIface() = default;
 
   virtual WideString GetName() const = 0;
@@ -60,11 +41,9 @@ class LocaleIface {
   virtual WideString GetMeridiemName(bool bAM) const = 0;
   virtual FX_TIMEZONE GetTimeZone() const = 0;
   virtual WideString GetEraName(bool bAD) const = 0;
-  virtual WideString GetDatePattern(
-      FX_LOCALEDATETIMESUBCATEGORY eType) const = 0;
-  virtual WideString GetTimePattern(
-      FX_LOCALEDATETIMESUBCATEGORY eType) const = 0;
-  virtual WideString GetNumPattern(FX_LOCALENUMSUBCATEGORY eType) const = 0;
+  virtual WideString GetDatePattern(DateTimeSubcategory eType) const = 0;
+  virtual WideString GetTimePattern(DateTimeSubcategory eType) const = 0;
+  virtual WideString GetNumPattern(NumSubcategory eType) const = 0;
 };
 
 #endif  // XFA_FGAS_CRT_LOCALE_IFACE_H_

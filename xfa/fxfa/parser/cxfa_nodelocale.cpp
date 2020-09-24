@@ -24,15 +24,15 @@ const wchar_t g_FX_Integer[] = L"z,zzz,zzz,zzz,zzz,zzz";
 
 }  // namespace
 
-WideString XFA_PatternToString(FX_LOCALENUMSUBCATEGORY category) {
+WideString XFA_PatternToString(LocaleIface::NumSubcategory category) {
   switch (category) {
-    case FX_LOCALENUMPATTERN_Percent:
+    case LocaleIface::NumSubcategory::kPercent:
       return g_FX_Percent;
-    case FX_LOCALENUMPATTERN_Currency:
+    case LocaleIface::NumSubcategory::kCurrency:
       return g_FX_Currency;
-    case FX_LOCALENUMPATTERN_Decimal:
+    case LocaleIface::NumSubcategory::kDecimal:
       return g_FX_Decimal;
-    case FX_LOCALENUMPATTERN_Integer:
+    case LocaleIface::NumSubcategory::kInteger:
       return g_FX_Integer;
   }
   return WideString();
@@ -96,39 +96,37 @@ WideString CXFA_NodeLocale::GetEraName(bool bAD) const {
   return GetCalendarSymbol(XFA_Element::EraNames, bAD ? 1 : 0, false);
 }
 
-WideString CXFA_NodeLocale::GetDatePattern(
-    FX_LOCALEDATETIMESUBCATEGORY eType) const {
+WideString CXFA_NodeLocale::GetDatePattern(DateTimeSubcategory eType) const {
   switch (eType) {
-    case FX_LOCALEDATETIMESUBCATEGORY_Short:
+    case DateTimeSubcategory::kShort:
       return GetSymbol(XFA_Element::DatePatterns, L"short");
-    case FX_LOCALEDATETIMESUBCATEGORY_Medium:
-    case FX_LOCALEDATETIMESUBCATEGORY_Default:
+    case DateTimeSubcategory::kMedium:
+    case DateTimeSubcategory::kDefault:
       return GetSymbol(XFA_Element::DatePatterns, L"med");
-    case FX_LOCALEDATETIMESUBCATEGORY_Full:
+    case DateTimeSubcategory::kFull:
       return GetSymbol(XFA_Element::DatePatterns, L"full");
-    case FX_LOCALEDATETIMESUBCATEGORY_Long:
+    case DateTimeSubcategory::kLong:
       return GetSymbol(XFA_Element::DatePatterns, L"long");
   }
   return WideString();
 }
 
-WideString CXFA_NodeLocale::GetTimePattern(
-    FX_LOCALEDATETIMESUBCATEGORY eType) const {
+WideString CXFA_NodeLocale::GetTimePattern(DateTimeSubcategory eType) const {
   switch (eType) {
-    case FX_LOCALEDATETIMESUBCATEGORY_Short:
+    case DateTimeSubcategory::kShort:
       return GetSymbol(XFA_Element::TimePatterns, L"short");
-    case FX_LOCALEDATETIMESUBCATEGORY_Medium:
-    case FX_LOCALEDATETIMESUBCATEGORY_Default:
+    case DateTimeSubcategory::kMedium:
+    case DateTimeSubcategory::kDefault:
       return GetSymbol(XFA_Element::TimePatterns, L"med");
-    case FX_LOCALEDATETIMESUBCATEGORY_Full:
+    case DateTimeSubcategory::kFull:
       return GetSymbol(XFA_Element::TimePatterns, L"full");
-    case FX_LOCALEDATETIMESUBCATEGORY_Long:
+    case DateTimeSubcategory::kLong:
       return GetSymbol(XFA_Element::TimePatterns, L"long");
   }
   return WideString();
 }
 
-WideString CXFA_NodeLocale::GetNumPattern(FX_LOCALENUMSUBCATEGORY eType) const {
+WideString CXFA_NodeLocale::GetNumPattern(NumSubcategory eType) const {
   return XFA_PatternToString(eType);
 }
 

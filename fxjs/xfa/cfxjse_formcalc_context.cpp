@@ -425,21 +425,21 @@ WideString FormatFromString(LocaleIface* pLocale, ByteStringView bsFormat) {
   if (!bsFormat.IsEmpty())
     return WideString::FromUTF8(bsFormat);
 
-  return pLocale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Default);
+  return pLocale->GetDatePattern(LocaleIface::DateTimeSubcategory::kDefault);
 }
 
-FX_LOCALEDATETIMESUBCATEGORY SubCategoryFromInt(int32_t iStyle) {
+LocaleIface::DateTimeSubcategory SubCategoryFromInt(int32_t iStyle) {
   switch (iStyle) {
     case 1:
-      return FX_LOCALEDATETIMESUBCATEGORY_Short;
+      return LocaleIface::DateTimeSubcategory::kShort;
     case 3:
-      return FX_LOCALEDATETIMESUBCATEGORY_Long;
+      return LocaleIface::DateTimeSubcategory::kLong;
     case 4:
-      return FX_LOCALEDATETIMESUBCATEGORY_Full;
+      return LocaleIface::DateTimeSubcategory::kFull;
     case 0:
     case 2:
     default:
-      return FX_LOCALEDATETIMESUBCATEGORY_Medium;
+      return LocaleIface::DateTimeSubcategory::kMedium;
   }
 }
 
@@ -453,7 +453,7 @@ ByteString GetLocalDateTimeFormat(CXFA_Document* pDoc,
   if (!pLocale)
     return ByteString();
 
-  FX_LOCALEDATETIMESUBCATEGORY category = SubCategoryFromInt(iStyle);
+  LocaleIface::DateTimeSubcategory category = SubCategoryFromInt(iStyle);
   WideString wsLocal = bIsDate ? pLocale->GetDatePattern(category)
                                : pLocale->GetTimePattern(category);
   if (!bStandard)
@@ -2382,11 +2382,12 @@ void CFXJSE_FormCalcContext::Time2Num(
   }
 
   WideString wsFormat;
-  if (bsFormat.IsEmpty())
-    wsFormat = pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Default);
-  else
+  if (bsFormat.IsEmpty()) {
+    wsFormat =
+        pLocale->GetTimePattern(LocaleIface::DateTimeSubcategory::kDefault);
+  } else {
     wsFormat = WideString::FromUTF8(bsFormat.AsStringView());
-
+  }
   wsFormat = L"time{" + wsFormat + L"}";
   CXFA_LocaleValue localeValue(XFA_VT_TIME,
                                WideString::FromUTF8(bsTime.AsStringView()),

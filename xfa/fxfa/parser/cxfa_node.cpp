@@ -4726,13 +4726,17 @@ WideString CXFA_Node::GetPictureContent(XFA_VALUEPICTURE ePicture) {
       uint32_t dwType = widgetValue.GetType();
       switch (dwType) {
         case XFA_VT_DATE:
-          return pLocale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Medium);
+          return pLocale->GetDatePattern(
+              LocaleIface::DateTimeSubcategory::kMedium);
         case XFA_VT_TIME:
-          return pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Medium);
+          return pLocale->GetTimePattern(
+              LocaleIface::DateTimeSubcategory::kMedium);
         case XFA_VT_DATETIME:
-          return pLocale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Medium) +
+          return pLocale->GetDatePattern(
+                     LocaleIface::DateTimeSubcategory::kMedium) +
                  L"T" +
-                 pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Medium);
+                 pLocale->GetTimePattern(
+                     LocaleIface::DateTimeSubcategory::kMedium);
         case XFA_VT_DECIMAL:
         case XFA_VT_FLOAT:
         default:
@@ -4758,13 +4762,17 @@ WideString CXFA_Node::GetPictureContent(XFA_VALUEPICTURE ePicture) {
       uint32_t dwType = widgetValue.GetType();
       switch (dwType) {
         case XFA_VT_DATE:
-          return pLocale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Short);
+          return pLocale->GetDatePattern(
+              LocaleIface::DateTimeSubcategory::kShort);
         case XFA_VT_TIME:
-          return pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Short);
+          return pLocale->GetTimePattern(
+              LocaleIface::DateTimeSubcategory::kShort);
         case XFA_VT_DATETIME:
-          return pLocale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Short) +
+          return pLocale->GetDatePattern(
+                     LocaleIface::DateTimeSubcategory::kShort) +
                  L"T" +
-                 pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Short);
+                 pLocale->GetTimePattern(
+                     LocaleIface::DateTimeSubcategory::kShort);
         default:
           return WideString();
       }
