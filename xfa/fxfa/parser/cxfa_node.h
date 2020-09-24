@@ -192,8 +192,9 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
   CXFA_Node* GetBindData();
   bool HasBindItems() const { return !binding_nodes_.empty(); }
   std::vector<CXFA_Node*> GetBindItemsCopy() const;
-  int32_t AddBindItem(CXFA_Node* pFormNode);
-  int32_t RemoveBindItem(CXFA_Node* pFormNode);
+  void AddBindItem(CXFA_Node* pFormNode);
+  // Returns true if there are still more items.
+  bool RemoveBindItem(CXFA_Node* pFormNode);
   bool HasBindItem() const;
   CXFA_Node* GetContainerNode();
   LocaleIface* GetLocale();

@@ -1289,38 +1289,30 @@ std::vector<CXFA_Node*> CXFA_Node::GetBindItemsCopy() const {
   return std::vector<CXFA_Node*>(binding_nodes_.begin(), binding_nodes_.end());
 }
 
-int32_t CXFA_Node::AddBindItem(CXFA_Node* pFormNode) {
+void CXFA_Node::AddBindItem(CXFA_Node* pFormNode) {
   ASSERT(pFormNode);
 
   if (BindsFormItems()) {
-    bool found = false;
-    for (const auto& v : binding_nodes_) {
-      if (v == pFormNode) {
-        found = true;
-        break;
-      }
-    }
-    if (!found)
+    if (!pdfium::Contains(binding_nodes_, pFormNode))
       binding_nodes_.emplace_back(pFormNode);
-    return pdfium::CollectionSize<int32_t>(binding_nodes_);
+    return;
   }
 
   CXFA_Node* pOldFormItem = GetBindingNode();
   if (!pOldFormItem) {
     SetBindingNode(pFormNode);
-    return 1;
+    return;
   }
   if (pOldFormItem == pFormNode)
-    return 1;
+    return;
 
   binding_nodes_.clear();
   binding_nodes_.push_back(pOldFormItem);
   binding_nodes_.push_back(pFormNode);
   m_uNodeFlags |= XFA_NodeFlag_BindFormItems;
-  return 2;
 }
 
-int32_t CXFA_Node::RemoveBindItem(CXFA_Node* pFormNode) {
+bool CXFA_Node::RemoveBindItem(CXFA_Node* pFormNode) {
   if (BindsFormItems()) {
     auto it =
         std::find(binding_nodes_.begin(), binding_nodes_.end(), pFormNode);
@@ -1329,17 +1321,17 @@ int32_t CXFA_Node::RemoveBindItem(CXFA_Node* pFormNode) {
 
     if (binding_nodes_.size() == 1) {
       m_uNodeFlags &= ~XFA_NodeFlag_BindFormItems;
-      return 1;
+      return true;
     }
-    return pdfium::CollectionSize<int32_t>(binding_nodes_);
+    return !binding_nodes_.empty();
   }
 
   CXFA_Node* pOldFormItem = GetBindingNode();
   if (pOldFormItem != pFormNode)
-    return pOldFormItem ? 1 : 0;
+    return !!pOldFormItem;
 
   SetBindingNode(nullptr);
-  return 0;
+  return false;
 }
 
 bool CXFA_Node::HasBindItem() const {
@@ -1983,7 +1975,7 @@ void CXFA_Node::RemoveItem(CXFA_Node* pRemoveInstance,
     if (!pDataNode)
       continue;
 
-    if (pDataNode->RemoveBindItem(pFormNode) == 0) {
+    if (!pDataNode->RemoveBindItem(pFormNode)) {
       if (CXFA_Node* pDataParent = pDataNode->GetParent()) {
         pDataParent->RemoveChildAndNotify(pDataNode, true);
       }
