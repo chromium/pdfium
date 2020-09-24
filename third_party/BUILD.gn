@@ -570,8 +570,6 @@ source_set("pdfium_base") {
     "base/allocator/partition_allocator/page_allocator.h",
     "base/allocator/partition_allocator/page_allocator_constants.h",
     "base/allocator/partition_allocator/page_allocator_internal.h",
-    "base/allocator/partition_allocator/page_allocator_internals_posix.h",
-    "base/allocator/partition_allocator/page_allocator_internals_win.h",
     "base/allocator/partition_allocator/partition_alloc.cc",
     "base/allocator/partition_allocator/partition_alloc.h",
     "base/allocator/partition_allocator/partition_alloc_constants.h",
@@ -621,8 +619,15 @@ source_set("pdfium_base") {
 
   if (is_win) {
     sources += [
+      "base/allocator/partition_allocator/page_allocator_internals_win.h",
       "base/win/win_util.cc",
       "base/win/win_util.h",
+    ]
+  }
+
+  if (is_posix) {
+    sources += [
+      "base/allocator/partition_allocator/page_allocator_internals_posix.h",
     ]
   }
 }
