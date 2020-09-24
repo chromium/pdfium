@@ -6,8 +6,6 @@
 
 #include "xfa/fxfa/parser/cxfa_object.h"
 
-#include <utility>
-
 #include "core/fxcrt/fx_extension.h"
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cfxjse_value.h"

@@ -7,8 +7,6 @@
 #ifndef XFA_FXFA_CXFA_FFWIDGET_H_
 #define XFA_FXFA_CXFA_FFWIDGET_H_
 
-#include <vector>
-
 #include "core/fpdfdoc/cpdf_formfield.h"
 #include "core/fxcodec/fx_codec_def.h"
 #include "core/fxge/cfx_graphstatedata.h"

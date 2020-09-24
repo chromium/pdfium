@@ -7,6 +7,7 @@
 #ifndef XFA_FXFA_PARSER_CXFA_NODELOCALE_H_
 #define XFA_FXFA_PARSER_CXFA_NODELOCALE_H_
 
+#include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fgas/crt/locale_iface.h"
 #include "xfa/fxfa/fxfa_basic.h"
 

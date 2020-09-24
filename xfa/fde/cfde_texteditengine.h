@@ -13,6 +13,7 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_dib.h"
 #include "xfa/fgas/layout/cfx_txtbreak.h"
 

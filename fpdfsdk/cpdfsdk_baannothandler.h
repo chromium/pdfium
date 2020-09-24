@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/ipdfsdk_annothandler.h"
 
 class CFFL_InteractiveFormFiller;

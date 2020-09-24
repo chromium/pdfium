@@ -13,6 +13,7 @@
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_RenderOptions;
 class CPDF_RenderStatus;

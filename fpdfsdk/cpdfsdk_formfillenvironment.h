@@ -16,6 +16,7 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/timerhandler_iface.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/pwl/ipwl_systemhandler.h"
 #include "public/fpdf_formfill.h"
