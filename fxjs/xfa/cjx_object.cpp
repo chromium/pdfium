@@ -265,11 +265,10 @@ void CJX_Object::SetMapModuleString(void* pKey, WideStringView wsValue) {
 }
 
 void CJX_Object::SetAttributeByString(WideStringView wsAttr,
-                                      WideStringView wsValue,
-                                      bool bNotify) {
+                                      WideStringView wsValue) {
   Optional<XFA_ATTRIBUTEINFO> attr = XFA_GetAttributeByName(wsAttr);
   if (attr.has_value()) {
-    SetAttributeByEnum(attr.value().attribute, wsValue, bNotify);
+    SetAttributeByEnum(attr.value().attribute, wsValue, true);
     return;
   }
   void* pKey = GetMapKey_Custom(wsAttr);

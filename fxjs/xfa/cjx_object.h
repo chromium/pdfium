@@ -141,9 +141,7 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
   void SetAttributeByEnum(XFA_Attribute eAttr,
                           WideStringView wsValue,
                           bool bNotify);
-  void SetAttributeByString(WideStringView wsAttr,
-                            WideStringView wsValue,
-                            bool bNotify);
+  void SetAttributeByString(WideStringView wsAttr, WideStringView wsValue);
   void RemoveAttribute(WideStringView wsAttr);
   WideString GetAttributeByString(WideStringView attr);
   WideString GetAttributeByEnum(XFA_Attribute attr);

@@ -434,8 +434,7 @@ CJS_Result CJX_Node::setAttribute(
   WideString attribute = runtime->ToWideString(params[1]);
 
   // Pass them to our method, however, in the more usual manner.
-  SetAttributeByString(attribute.AsStringView(), attributeValue.AsStringView(),
-                       true);
+  SetAttributeByString(attribute.AsStringView(), attributeValue.AsStringView());
   return CJS_Result::Success();
 }
 
