@@ -9,7 +9,9 @@
 XFAProcessState::XFAProcessState(v8::Platform* platform, v8::Isolate* isolate)
     : platform_(platform), isolate_(isolate), heap_(FXGC_CreateHeap()) {}
 
-XFAProcessState::~XFAProcessState() = default;
+XFAProcessState::~XFAProcessState() {
+  FXGC_ForceGarbageCollection(heap_.get());
+}
 
 cppgc::Heap* XFAProcessState::GetHeap() const {
   return heap_.get();
