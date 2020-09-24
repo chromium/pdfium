@@ -667,8 +667,8 @@ CXFA_Node* CXFA_DocumentBuilder::NormalLoader(CXFA_Node* pXFANode,
         if (!pXFAChild)
           return nullptr;
         if (ePacketID == XFA_PacketType::Config) {
-          pXFAChild->JSObject()->SetAttribute(XFA_Attribute::Name,
-                                              wsTagName.AsStringView(), false);
+          pXFAChild->JSObject()->SetAttributeByEnum(
+              XFA_Attribute::Name, wsTagName.AsStringView(), false);
         }
 
         bool IsNeedValue = true;
@@ -687,8 +687,8 @@ CXFA_Node* CXFA_DocumentBuilder::NormalLoader(CXFA_Node* pXFANode,
               attr.value().attribute != XFA_Attribute::Save) {
             continue;
           }
-          pXFAChild->JSObject()->SetAttribute(attr.value().attribute,
-                                              it.second.AsStringView(), false);
+          pXFAChild->JSObject()->SetAttributeByEnum(
+              attr.value().attribute, it.second.AsStringView(), false);
         }
         pXFANode->InsertChildAndNotify(pXFAChild, nullptr);
         if (eType == XFA_Element::Validate || eType == XFA_Element::Locale) {

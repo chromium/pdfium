@@ -134,8 +134,8 @@ void CJX_Form::checksumS(CFXJSE_Value* pValue,
                          bool bSetting,
                          XFA_Attribute eAttribute) {
   if (bSetting) {
-    SetAttribute(XFA_Attribute::Checksum, pValue->ToWideString().AsStringView(),
-                 false);
+    SetAttributeByEnum(XFA_Attribute::Checksum,
+                       pValue->ToWideString().AsStringView(), false);
     return;
   }
 

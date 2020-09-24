@@ -134,7 +134,7 @@ CXFA_Node* CXFA_NodeLocale::GetNodeByName(CXFA_Node* pParent,
                                           WideStringView wsName) const {
   CXFA_Node* pChild = pParent ? pParent->GetFirstChild() : nullptr;
   while (pChild) {
-    if (pChild->JSObject()->GetAttribute(XFA_Attribute::Name) == wsName)
+    if (pChild->JSObject()->GetAttributeByEnum(XFA_Attribute::Name) == wsName)
       return pChild;
 
     pChild = pChild->GetNextSibling();

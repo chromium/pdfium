@@ -138,14 +138,15 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
                        const std::vector<v8::Local<v8::Value>>& params);
 
   bool HasAttribute(XFA_Attribute eAttr);
-  void SetAttribute(XFA_Attribute eAttr, WideStringView wsValue, bool bNotify);
-  void SetAttribute(WideStringView wsAttr,
-                    WideStringView wsValue,
-                    bool bNotify);
+  void SetAttributeByEnum(XFA_Attribute eAttr,
+                          WideStringView wsValue,
+                          bool bNotify);
+  void SetAttributeByString(WideStringView wsAttr,
+                            WideStringView wsValue,
+                            bool bNotify);
   void RemoveAttribute(WideStringView wsAttr);
-  WideString GetAttribute(WideStringView attr);
-  WideString GetAttribute(XFA_Attribute attr);
-  Optional<WideString> TryAttribute(WideStringView wsAttr, bool bUseDefault);
+  WideString GetAttributeByString(WideStringView attr);
+  WideString GetAttributeByEnum(XFA_Attribute attr);
   Optional<WideString> TryAttribute(XFA_Attribute eAttr, bool bUseDefault);
 
   Optional<WideString> TryContent(bool bScriptModify, bool bProto);

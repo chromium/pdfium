@@ -104,8 +104,8 @@ bool CFXJSE_NodeHelper::CreateNode(const WideString& wsName,
     for (size_t i = 0; i < m_iCreateCount; ++i) {
       CXFA_Node* pNewNode = m_pCreateParent->CreateSamePacketNode(eClassType);
       if (pNewNode) {
-        pNewNode->JSObject()->SetAttribute(XFA_Attribute::Name, wsNameView,
-                                           false);
+        pNewNode->JSObject()->SetAttributeByEnum(XFA_Attribute::Name,
+                                                 wsNameView, false);
         pNewNode->CreateXMLMappingNode();
         m_pCreateParent->InsertChildAndNotify(pNewNode, nullptr);
         if (i == m_iCreateCount - 1) {

@@ -109,7 +109,7 @@ void CJX_Tree::all(CFXJSE_Value* pValue,
   }
 
   uint32_t dwFlag = XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_ALL;
-  WideString wsExpression = GetAttribute(XFA_Attribute::Name) + L"[*]";
+  WideString wsExpression = GetAttributeByEnum(XFA_Attribute::Name) + L"[*]";
   ResolveNodeList(pValue, wsExpression, dwFlag, nullptr);
 }
 

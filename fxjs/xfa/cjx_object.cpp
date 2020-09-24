@@ -229,9 +229,9 @@ bool CJX_Object::HasAttribute(XFA_Attribute eAttr) {
   return HasMapModuleKey(pKey);
 }
 
-void CJX_Object::SetAttribute(XFA_Attribute eAttr,
-                              WideStringView wsValue,
-                              bool bNotify) {
+void CJX_Object::SetAttributeByEnum(XFA_Attribute eAttr,
+                                    WideStringView wsValue,
+                                    bool bNotify) {
   switch (GetXFANode()->GetAttributeType(eAttr)) {
     case XFA_AttributeType::Enum: {
       Optional<XFA_AttributeValue> item = XFA_GetAttributeValueByName(wsValue);
@@ -264,23 +264,29 @@ void CJX_Object::SetMapModuleString(void* pKey, WideStringView wsValue) {
                      wsValue.GetLength() * sizeof(wchar_t), nullptr);
 }
 
-void CJX_Object::SetAttribute(WideStringView wsAttr,
-                              WideStringView wsValue,
-                              bool bNotify) {
+void CJX_Object::SetAttributeByString(WideStringView wsAttr,
+                                      WideStringView wsValue,
+                                      bool bNotify) {
   Optional<XFA_ATTRIBUTEINFO> attr = XFA_GetAttributeByName(wsAttr);
   if (attr.has_value()) {
-    SetAttribute(attr.value().attribute, wsValue, bNotify);
+    SetAttributeByEnum(attr.value().attribute, wsValue, bNotify);
     return;
   }
   void* pKey = GetMapKey_Custom(wsAttr);
   SetMapModuleString(pKey, wsValue);
 }
 
-WideString CJX_Object::GetAttribute(WideStringView attr) {
-  return TryAttribute(attr, true).value_or(WideString());
+WideString CJX_Object::GetAttributeByString(WideStringView attr) {
+  Optional<WideString> result;
+  Optional<XFA_ATTRIBUTEINFO> enum_attr = XFA_GetAttributeByName(attr);
+  if (enum_attr.has_value())
+    result = TryAttribute(enum_attr.value().attribute, true);
+  else
+    result = GetMapModuleString(GetMapKey_Custom(attr));
+  return result.value_or(WideString());
 }
 
-WideString CJX_Object::GetAttribute(XFA_Attribute attr) {
+WideString CJX_Object::GetAttributeByEnum(XFA_Attribute attr) {
   return TryAttribute(attr, true).value_or(WideString());
 }
 
@@ -319,14 +325,6 @@ Optional<WideString> CJX_Object::TryAttribute(XFA_Attribute eAttr,
       break;
   }
   return {};
-}
-
-Optional<WideString> CJX_Object::TryAttribute(WideStringView wsAttr,
-                                              bool bUseDefault) {
-  Optional<XFA_ATTRIBUTEINFO> attr = XFA_GetAttributeByName(wsAttr);
-  if (attr.has_value())
-    return TryAttribute(attr.value().attribute, bUseDefault);
-  return GetMapModuleString(GetMapKey_Custom(wsAttr));
 }
 
 void CJX_Object::RemoveAttribute(WideStringView wsAttr) {
@@ -651,8 +649,8 @@ void CJX_Object::SetContent(const WideString& wsContent,
           wsContentType = *ret;
         if (wsContentType.EqualsASCII("text/html")) {
           wsContentType.clear();
-          SetAttribute(XFA_Attribute::ContentType, wsContentType.AsStringView(),
-                       false);
+          SetAttributeByEnum(XFA_Attribute::ContentType,
+                             wsContentType.AsStringView(), false);
         }
       }
 
@@ -727,8 +725,8 @@ Optional<WideString> CJX_Object::TryContent(bool bScriptModify, bool bProto) {
 
         CXFA_Node* pChildValue = pValue->GetFirstChild();
         if (pChildValue && XFA_FieldIsMultiListBox(GetXFANode())) {
-          pChildValue->JSObject()->SetAttribute(XFA_Attribute::ContentType,
-                                                L"text/xml", false);
+          pChildValue->JSObject()->SetAttributeByEnum(
+              XFA_Attribute::ContentType, L"text/xml", false);
         }
         if (pChildValue)
           return pChildValue->JSObject()->TryContent(bScriptModify, bProto);
@@ -1086,12 +1084,12 @@ void CJX_Object::ScriptAttributeString(CFXJSE_Value* pValue,
                                        bool bSetting,
                                        XFA_Attribute eAttribute) {
   if (!bSetting) {
-    pValue->SetString(GetAttribute(eAttribute).ToUTF8().AsStringView());
+    pValue->SetString(GetAttributeByEnum(eAttribute).ToUTF8().AsStringView());
     return;
   }
 
   WideString wsValue = pValue->ToWideString();
-  SetAttribute(eAttribute, wsValue.AsStringView(), true);
+  SetAttributeByEnum(eAttribute, wsValue.AsStringView(), true);
   if (eAttribute != XFA_Attribute::Use ||
       GetXFAObject()->GetElementType() != XFA_Element::Desc) {
     return;

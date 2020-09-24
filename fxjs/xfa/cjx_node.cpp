@@ -195,7 +195,7 @@ CJS_Result CJX_Node::getAttribute(
 
   WideString expression = runtime->ToWideString(params[0]);
   return CJS_Result::Success(runtime->NewString(
-      GetAttribute(expression.AsStringView()).ToUTF8().AsStringView()));
+      GetAttributeByString(expression.AsStringView()).ToUTF8().AsStringView()));
 }
 
 CJS_Result CJX_Node::getElement(
@@ -434,7 +434,8 @@ CJS_Result CJX_Node::setAttribute(
   WideString attribute = runtime->ToWideString(params[1]);
 
   // Pass them to our method, however, in the more usual manner.
-  SetAttribute(attribute.AsStringView(), attributeValue.AsStringView(), true);
+  SetAttributeByString(attribute.AsStringView(), attributeValue.AsStringView(),
+                       true);
   return CJS_Result::Success();
 }
 
