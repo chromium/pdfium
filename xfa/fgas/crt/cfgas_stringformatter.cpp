@@ -707,6 +707,48 @@ WideString FormatDateTimeInternal(const CFX_DateTime& dt,
   return bDateFirst ? wsDateOut + wsTimeOut : wsTimeOut + wsDateOut;
 }
 
+bool HasDate(CFGAS_StringFormatter::DateTimeType type) {
+  return type == CFGAS_StringFormatter::DateTimeType::kDate ||
+         type == CFGAS_StringFormatter::DateTimeType::kDateTime ||
+         type == CFGAS_StringFormatter::DateTimeType::kTimeDate;
+}
+
+bool HasTime(CFGAS_StringFormatter::DateTimeType type) {
+  return type == CFGAS_StringFormatter::DateTimeType::kTime ||
+         type == CFGAS_StringFormatter::DateTimeType::kDateTime ||
+         type == CFGAS_StringFormatter::DateTimeType::kTimeDate;
+}
+
+CFGAS_StringFormatter::DateTimeType AddDateToDatelessType(
+    CFGAS_StringFormatter::DateTimeType type) {
+  switch (type) {
+    case CFGAS_StringFormatter::DateTimeType::kUnknown:
+      return CFGAS_StringFormatter::DateTimeType::kDate;
+    case CFGAS_StringFormatter::DateTimeType::kTime:
+      return CFGAS_StringFormatter::DateTimeType::kTimeDate;
+    case CFGAS_StringFormatter::DateTimeType::kDate:
+    case CFGAS_StringFormatter::DateTimeType::kDateTime:
+    case CFGAS_StringFormatter::DateTimeType::kTimeDate:
+      NOTREACHED();
+      return type;
+  }
+}
+
+CFGAS_StringFormatter::DateTimeType AddTimeToTimelessType(
+    CFGAS_StringFormatter::DateTimeType type) {
+  switch (type) {
+    case CFGAS_StringFormatter::DateTimeType::kUnknown:
+      return CFGAS_StringFormatter::DateTimeType::kTime;
+    case CFGAS_StringFormatter::DateTimeType::kDate:
+      return CFGAS_StringFormatter::DateTimeType::kDateTime;
+    case CFGAS_StringFormatter::DateTimeType::kTime:
+    case CFGAS_StringFormatter::DateTimeType::kDateTime:
+    case CFGAS_StringFormatter::DateTimeType::kTimeDate:
+      NOTREACHED();
+      return type;
+  }
+}
+
 }  // namespace
 
 bool FX_DateFromCanonical(pdfium::span<const wchar_t> spDate,
@@ -1546,8 +1588,8 @@ CFGAS_StringFormatter::DateTimeType CFGAS_StringFormatter::GetDateTimeFormat(
   *pLocale = nullptr;
   WideString wsTempPattern;
   Category eCategory = Category::kUnknown;
+  DateTimeType eDateTimeType = DateTimeType::kUnknown;
   size_t ccf = 0;
-  int32_t iFindCategory = 0;
   bool bBraceOpen = false;
   while (ccf < m_spPattern.size()) {
     if (m_spPattern[ccf] == '\'') {
@@ -1555,7 +1597,7 @@ CFGAS_StringFormatter::DateTimeType CFGAS_StringFormatter::GetDateTimeFormat(
       GetLiteralText(m_spPattern, &ccf);
       wsTempPattern +=
           WideStringView(m_spPattern.data() + iCurChar, ccf - iCurChar + 1);
-    } else if (!bBraceOpen && iFindCategory != 3 &&
+    } else if (!bBraceOpen && eDateTimeType != DateTimeType::kDateTime &&
                !pdfium::Contains(kConstChars, m_spPattern[ccf])) {
       WideString wsCategory(m_spPattern[ccf]);
       ccf++;
@@ -1573,16 +1615,14 @@ CFGAS_StringFormatter::DateTimeType CFGAS_StringFormatter::GetDateTimeFormat(
         wsCategory += m_spPattern[ccf];
         ccf++;
       }
-      if (!(iFindCategory & 1) && wsCategory.EqualsASCII("date")) {
-        iFindCategory |= 1;
+      if (!HasDate(eDateTimeType) && wsCategory.EqualsASCII("date")) {
+        eDateTimeType = AddDateToDatelessType(eDateTimeType);
         eCategory = Category::kDate;
-        if (iFindCategory & 2)
-          iFindCategory = 4;
-      } else if (!(iFindCategory & 2) && wsCategory.EqualsASCII("time")) {
-        iFindCategory |= 2;
+      } else if (!HasTime(eDateTimeType) && wsCategory.EqualsASCII("time")) {
+        eDateTimeType = AddTimeToTimelessType(eDateTimeType);
         eCategory = Category::kTime;
       } else if (wsCategory.EqualsASCII("datetime")) {
-        iFindCategory = 3;
+        eDateTimeType = DateTimeType::kDateTime;
         eCategory = Category::kDateTime;
       } else {
         continue;
@@ -1666,11 +1706,11 @@ CFGAS_StringFormatter::DateTimeType CFGAS_StringFormatter::GetDateTimeFormat(
   }
   if (!*pLocale)
     *pLocale = m_pLocaleMgr->GetDefLocale();
-  if (!iFindCategory) {
+  if (eDateTimeType == DateTimeType::kUnknown) {
     wsTimePattern->clear();
     *wsDatePattern = m_wsPattern;
   }
-  return static_cast<DateTimeType>(iFindCategory);
+  return eDateTimeType;
 }
 
 bool CFGAS_StringFormatter::ParseDateTime(const WideString& wsSrcDateTime,

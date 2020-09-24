@@ -33,9 +33,8 @@ class CFGAS_StringFormatter {
     kNull,
   };
 
-  // Note: arithmetic depends on explicit values that do not change.
   enum class DateTimeType {
-    kUnknown = 0,
+    kUnknown,
     kDate,
     kTime,
     kDateTime,
