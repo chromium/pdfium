@@ -38,14 +38,17 @@ WideString XFA_PatternToString(LocaleIface::NumSubcategory category) {
   return WideString();
 }
 
-CXFA_NodeLocale::CXFA_NodeLocale(CXFA_Node* pLocale) : m_pLocale(pLocale) {}
+CXFA_NodeLocale::CXFA_NodeLocale(CXFA_Node* pNode) : m_pNode(pNode) {}
 
 CXFA_NodeLocale::~CXFA_NodeLocale() = default;
 
+void CXFA_NodeLocale::Trace(cppgc::Visitor* visitor) const {
+  visitor->Trace(m_pNode);
+}
+
 WideString CXFA_NodeLocale::GetName() const {
-  return WideString(m_pLocale
-                        ? m_pLocale->JSObject()->GetCData(XFA_Attribute::Name)
-                        : nullptr);
+  return WideString(m_pNode ? m_pNode->JSObject()->GetCData(XFA_Attribute::Name)
+                            : nullptr);
 }
 
 WideString CXFA_NodeLocale::GetDecimalSymbol() const {
@@ -70,9 +73,9 @@ WideString CXFA_NodeLocale::GetCurrencySymbol() const {
 
 WideString CXFA_NodeLocale::GetDateTimeSymbols() const {
   CXFA_DateTimeSymbols* pSymbols =
-      m_pLocale ? m_pLocale->GetChild<CXFA_DateTimeSymbols>(
-                      0, XFA_Element::DateTimeSymbols, false)
-                : nullptr;
+      m_pNode ? m_pNode->GetChild<CXFA_DateTimeSymbols>(
+                    0, XFA_Element::DateTimeSymbols, false)
+              : nullptr;
   return pSymbols ? pSymbols->JSObject()->GetContent(false) : WideString();
 }
 
@@ -145,7 +148,7 @@ CXFA_Node* CXFA_NodeLocale::GetNodeByName(CXFA_Node* pParent,
 WideString CXFA_NodeLocale::GetSymbol(XFA_Element eElement,
                                       WideStringView symbol_type) const {
   CXFA_Node* pSymbols =
-      m_pLocale ? m_pLocale->GetChild<CXFA_Node>(0, eElement, false) : nullptr;
+      m_pNode ? m_pNode->GetChild<CXFA_Node>(0, eElement, false) : nullptr;
   CXFA_Node* pSymbol = GetNodeByName(pSymbols, symbol_type);
   return pSymbol ? pSymbol->JSObject()->GetContent(false) : WideString();
 }
@@ -154,9 +157,9 @@ WideString CXFA_NodeLocale::GetCalendarSymbol(XFA_Element eElement,
                                               int index,
                                               bool bAbbr) const {
   CXFA_CalendarSymbols* pCalendar =
-      m_pLocale ? m_pLocale->GetChild<CXFA_CalendarSymbols>(
-                      0, XFA_Element::CalendarSymbols, false)
-                : nullptr;
+      m_pNode ? m_pNode->GetChild<CXFA_CalendarSymbols>(
+                    0, XFA_Element::CalendarSymbols, false)
+              : nullptr;
   if (!pCalendar)
     return WideString();
 

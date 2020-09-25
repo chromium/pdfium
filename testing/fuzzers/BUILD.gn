@@ -256,10 +256,13 @@ if (pdf_enable_v8) {
     pdfium_fuzzer("pdf_cfgas_stringformatter_fuzzer") {
       sources = [ "pdf_cfgas_stringformatter_fuzzer.cc" ]
       deps = [
+        ":fuzzer_utils",
         "../../core/fxcrt",
+        "../../fxjs:gc",
         "../../xfa/fgas",
         "../../xfa/fxfa/parser",
       ]
+      public_fuzzer = true
     }
 
     pdfium_fuzzer("pdf_cfx_barcode_fuzzer") {

@@ -150,7 +150,7 @@ class CXFA_Document final : public cppgc::GarbageCollected<CXFA_Document> {
   cppgc::Member<CXFA_Node> m_pRootNode;
   std::unique_ptr<CFXJSE_Engine> m_pScriptContext;
   cppgc::Member<LayoutProcessorIface> m_pLayoutProcessor;
-  std::unique_ptr<CXFA_LocaleMgr> m_pLocaleMgr;
+  cppgc::Member<CXFA_LocaleMgr> m_pLocaleMgr;
   cppgc::Member<CScript_DataWindow> m_pScriptDataWindow;
   cppgc::Member<CScript_EventPseudoModel> m_pScriptEvent;
   cppgc::Member<CScript_HostPseudoModel> m_pScriptHost;

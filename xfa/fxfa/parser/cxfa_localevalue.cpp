@@ -65,6 +65,8 @@ bool ValueSplitDateTime(const WideString& wsDateTime,
 }
 
 class ScopedLocale {
+  CPPGC_STACK_ALLOCATED();  // Raw/Unowned pointers allowed.
+
  public:
   ScopedLocale(CXFA_LocaleMgr* pLocaleMgr, LocaleIface* pNewLocale)
       : m_pLocaleMgr(pLocaleMgr),
@@ -137,8 +139,7 @@ bool CXFA_LocaleValue::ValidateValue(const WideString& wsValue,
   size_t i = 0;
   for (; !bRet && i < wsPatterns.size(); i++) {
     const WideString& wsFormat = wsPatterns[i];
-    auto pFormat =
-        std::make_unique<CFGAS_StringFormatter>(m_pLocaleMgr.Get(), wsFormat);
+    auto pFormat = std::make_unique<CFGAS_StringFormatter>(wsFormat);
     switch (ValueCategory(pFormat->GetCategory(), m_dwType)) {
       case CFGAS_StringFormatter::Category::kNull:
         bRet = pFormat->ParseNull(wsValue);
@@ -152,9 +153,9 @@ bool CXFA_LocaleValue::ValidateValue(const WideString& wsValue,
         break;
       case CFGAS_StringFormatter::Category::kNum: {
         WideString fNum;
-        bRet = pFormat->ParseNum(wsValue, &fNum);
+        bRet = pFormat->ParseNum(m_pLocaleMgr.Get(), wsValue, &fNum);
         if (!bRet)
-          bRet = pFormat->FormatNum(wsValue, &wsOutput);
+          bRet = pFormat->FormatNum(m_pLocaleMgr.Get(), wsValue, &wsOutput);
         break;
       }
       case CFGAS_StringFormatter::Category::kText:
@@ -168,10 +169,12 @@ bool CXFA_LocaleValue::ValidateValue(const WideString& wsValue,
         bRet = ValidateCanonicalDate(wsValue, &dt);
         if (!bRet) {
           bRet = pFormat->ParseDateTime(
-              wsValue, CFGAS_StringFormatter::DateTimeType::kDate, &dt);
+              m_pLocaleMgr.Get(), wsValue,
+              CFGAS_StringFormatter::DateTimeType::kDate, &dt);
           if (!bRet) {
             bRet = pFormat->FormatDateTime(
-                wsValue, CFGAS_StringFormatter::DateTimeType::kDate, &wsOutput);
+                m_pLocaleMgr.Get(), wsValue,
+                CFGAS_StringFormatter::DateTimeType::kDate, &wsOutput);
           }
         }
         break;
@@ -179,21 +182,24 @@ bool CXFA_LocaleValue::ValidateValue(const WideString& wsValue,
       case CFGAS_StringFormatter::Category::kTime: {
         CFX_DateTime dt;
         bRet = pFormat->ParseDateTime(
-            wsValue, CFGAS_StringFormatter::DateTimeType::kTime, &dt);
+            m_pLocaleMgr.Get(), wsValue,
+            CFGAS_StringFormatter::DateTimeType::kTime, &dt);
         if (!bRet) {
           bRet = pFormat->FormatDateTime(
-              wsValue, CFGAS_StringFormatter::DateTimeType::kTime, &wsOutput);
+              m_pLocaleMgr.Get(), wsValue,
+              CFGAS_StringFormatter::DateTimeType::kTime, &wsOutput);
         }
         break;
       }
       case CFGAS_StringFormatter::Category::kDateTime: {
         CFX_DateTime dt;
         bRet = pFormat->ParseDateTime(
-            wsValue, CFGAS_StringFormatter::DateTimeType::kDateTime, &dt);
+            m_pLocaleMgr.Get(), wsValue,
+            CFGAS_StringFormatter::DateTimeType::kDateTime, &dt);
         if (!bRet) {
           bRet = pFormat->FormatDateTime(
-              wsValue, CFGAS_StringFormatter::DateTimeType::kDateTime,
-              &wsOutput);
+              m_pLocaleMgr.Get(), wsValue,
+              CFGAS_StringFormatter::DateTimeType::kDateTime, &wsOutput);
         }
         break;
       }
@@ -283,8 +289,7 @@ bool CXFA_LocaleValue::FormatSinglePattern(WideString& wsResult,
 
   wsResult.clear();
   bool bRet = false;
-  auto pFormat =
-      std::make_unique<CFGAS_StringFormatter>(m_pLocaleMgr.Get(), wsFormat);
+  auto pFormat = std::make_unique<CFGAS_StringFormatter>(wsFormat);
   CFGAS_StringFormatter::Category eCategory =
       ValueCategory(pFormat->GetCategory(), m_dwType);
   switch (eCategory) {
@@ -297,22 +302,25 @@ bool CXFA_LocaleValue::FormatSinglePattern(WideString& wsResult,
         bRet = pFormat->FormatZero(&wsResult);
       break;
     case CFGAS_StringFormatter::Category::kNum:
-      bRet = pFormat->FormatNum(m_wsValue, &wsResult);
+      bRet = pFormat->FormatNum(m_pLocaleMgr.Get(), m_wsValue, &wsResult);
       break;
     case CFGAS_StringFormatter::Category::kText:
       bRet = pFormat->FormatText(m_wsValue, &wsResult);
       break;
     case CFGAS_StringFormatter::Category::kDate:
-      bRet = pFormat->FormatDateTime(
-          m_wsValue, CFGAS_StringFormatter::DateTimeType::kDate, &wsResult);
+      bRet = pFormat->FormatDateTime(m_pLocaleMgr.Get(), m_wsValue,
+                                     CFGAS_StringFormatter::DateTimeType::kDate,
+                                     &wsResult);
       break;
     case CFGAS_StringFormatter::Category::kTime:
-      bRet = pFormat->FormatDateTime(
-          m_wsValue, CFGAS_StringFormatter::DateTimeType::kTime, &wsResult);
+      bRet = pFormat->FormatDateTime(m_pLocaleMgr.Get(), m_wsValue,
+                                     CFGAS_StringFormatter::DateTimeType::kTime,
+                                     &wsResult);
       break;
     case CFGAS_StringFormatter::Category::kDateTime:
       bRet = pFormat->FormatDateTime(
-          m_wsValue, CFGAS_StringFormatter::DateTimeType::kDateTime, &wsResult);
+          m_pLocaleMgr.Get(), m_wsValue,
+          CFGAS_StringFormatter::DateTimeType::kDateTime, &wsResult);
       break;
     default:
       wsResult = m_wsValue;
@@ -559,8 +567,7 @@ bool CXFA_LocaleValue::ParsePatternValue(const WideString& wsValue,
   bool bRet = false;
   for (size_t i = 0; !bRet && i < wsPatterns.size(); i++) {
     const WideString& wsFormat = wsPatterns[i];
-    auto pFormat =
-        std::make_unique<CFGAS_StringFormatter>(m_pLocaleMgr.Get(), wsFormat);
+    auto pFormat = std::make_unique<CFGAS_StringFormatter>(wsFormat);
     switch (ValueCategory(pFormat->GetCategory(), m_dwType)) {
       case CFGAS_StringFormatter::Category::kNull:
         bRet = pFormat->ParseNull(wsValue);
@@ -574,7 +581,7 @@ bool CXFA_LocaleValue::ParsePatternValue(const WideString& wsValue,
         break;
       case CFGAS_StringFormatter::Category::kNum: {
         WideString fNum;
-        bRet = pFormat->ParseNum(wsValue, &fNum);
+        bRet = pFormat->ParseNum(m_pLocaleMgr.Get(), wsValue, &fNum);
         if (bRet)
           m_wsValue = std::move(fNum);
         break;
@@ -587,7 +594,8 @@ bool CXFA_LocaleValue::ParsePatternValue(const WideString& wsValue,
         bRet = ValidateCanonicalDate(wsValue, &dt);
         if (!bRet) {
           bRet = pFormat->ParseDateTime(
-              wsValue, CFGAS_StringFormatter::DateTimeType::kDate, &dt);
+              m_pLocaleMgr.Get(), wsValue,
+              CFGAS_StringFormatter::DateTimeType::kDate, &dt);
         }
         if (bRet)
           SetDate(dt);
@@ -596,7 +604,8 @@ bool CXFA_LocaleValue::ParsePatternValue(const WideString& wsValue,
       case CFGAS_StringFormatter::Category::kTime: {
         CFX_DateTime dt;
         bRet = pFormat->ParseDateTime(
-            wsValue, CFGAS_StringFormatter::DateTimeType::kTime, &dt);
+            m_pLocaleMgr.Get(), wsValue,
+            CFGAS_StringFormatter::DateTimeType::kTime, &dt);
         if (bRet)
           SetTime(dt);
         break;
@@ -604,7 +613,8 @@ bool CXFA_LocaleValue::ParsePatternValue(const WideString& wsValue,
       case CFGAS_StringFormatter::Category::kDateTime: {
         CFX_DateTime dt;
         bRet = pFormat->ParseDateTime(
-            wsValue, CFGAS_StringFormatter::DateTimeType::kDateTime, &dt);
+            m_pLocaleMgr.Get(), wsValue,
+            CFGAS_StringFormatter::DateTimeType::kDateTime, &dt);
         if (bRet)
           SetDateTime(dt);
         break;

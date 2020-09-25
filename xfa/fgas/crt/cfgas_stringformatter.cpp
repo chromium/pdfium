@@ -15,6 +15,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fgas/crt/cfgas_decimal.h"
+#include "xfa/fgas/crt/locale_mgr_iface.h"
 
 // NOTE: Code uses the convention for backwards-looping with unsigned types
 // that exploits the well-defined behaviour for unsigned underflow (and hence
@@ -862,11 +863,8 @@ bool FX_TimeFromCanonical(const LocaleIface* pLocale,
   return true;
 }
 
-CFGAS_StringFormatter::CFGAS_StringFormatter(LocaleMgrIface* pLocaleMgr,
-                                             const WideString& wsPattern)
-    : m_pLocaleMgr(pLocaleMgr),
-      m_wsPattern(wsPattern),
-      m_spPattern(m_wsPattern.span()) {}
+CFGAS_StringFormatter::CFGAS_StringFormatter(const WideString& wsPattern)
+    : m_wsPattern(wsPattern), m_spPattern(m_wsPattern.span()) {}
 
 CFGAS_StringFormatter::~CFGAS_StringFormatter() = default;
 
@@ -988,6 +986,7 @@ WideString CFGAS_StringFormatter::GetTextFormat(
 }
 
 LocaleIface* CFGAS_StringFormatter::GetNumericFormat(
+    LocaleMgrIface* pLocaleMgr,
     size_t* iDotIndex,
     uint32_t* dwStyle,
     WideString* wsPurgePattern) const {
@@ -1027,7 +1026,7 @@ LocaleIface* CFGAS_StringFormatter::GetNumericFormat(
           while (ccf < m_spPattern.size() && m_spPattern[ccf] != ')')
             wsLCID += m_spPattern[ccf++];
 
-          pLocale = m_pLocaleMgr->GetLocaleByName(wsLCID);
+          pLocale = pLocaleMgr->GetLocaleByName(wsLCID);
         } else if (m_spPattern[ccf] == '.') {
           WideString wsSubCategory;
           ccf++;
@@ -1046,7 +1045,7 @@ LocaleIface* CFGAS_StringFormatter::GetNumericFormat(
             }
           }
           if (!pLocale)
-            pLocale = m_pLocaleMgr->GetDefLocale();
+            pLocale = pLocaleMgr->GetDefLocale();
 
           ASSERT(pLocale);
 
@@ -1086,7 +1085,7 @@ LocaleIface* CFGAS_StringFormatter::GetNumericFormat(
   if (!bFindDot)
     *iDotIndex = wsPurgePattern->GetLength();
   if (!pLocale)
-    pLocale = m_pLocaleMgr->GetDefLocale();
+    pLocale = pLocaleMgr->GetDefLocale();
   return pLocale;
 }
 
@@ -1161,7 +1160,8 @@ bool CFGAS_StringFormatter::ParseText(const WideString& wsSrcText,
   return iPattern == spTextFormat.size() && iText == spSrcText.size();
 }
 
-bool CFGAS_StringFormatter::ParseNum(const WideString& wsSrcNum,
+bool CFGAS_StringFormatter::ParseNum(LocaleMgrIface* pLocaleMgr,
+                                     const WideString& wsSrcNum,
                                      WideString* wsValue) const {
   wsValue->clear();
   if (wsSrcNum.IsEmpty() || m_spPattern.empty())
@@ -1171,7 +1171,7 @@ bool CFGAS_StringFormatter::ParseNum(const WideString& wsSrcNum,
   uint32_t dwFormatStyle = 0;
   WideString wsNumFormat;
   LocaleIface* pLocale =
-      GetNumericFormat(&dot_index_f, &dwFormatStyle, &wsNumFormat);
+      GetNumericFormat(pLocaleMgr, &dot_index_f, &dwFormatStyle, &wsNumFormat);
   if (!pLocale || wsNumFormat.IsEmpty())
     return false;
 
@@ -1582,6 +1582,7 @@ bool CFGAS_StringFormatter::ParseNum(const WideString& wsSrcNum,
 }
 
 CFGAS_StringFormatter::DateTimeType CFGAS_StringFormatter::GetDateTimeFormat(
+    LocaleMgrIface* pLocaleMgr,
     LocaleIface** pLocale,
     WideString* wsDatePattern,
     WideString* wsTimePattern) const {
@@ -1608,8 +1609,7 @@ CFGAS_StringFormatter::DateTimeType CFGAS_StringFormatter::GetDateTimeFormat(
           *wsTimePattern = m_wsPattern.Last(m_wsPattern.GetLength() - ccf);
           wsTimePattern->SetAt(0, ' ');
           if (!*pLocale)
-            *pLocale = m_pLocaleMgr->GetDefLocale();
-
+            *pLocale = pLocaleMgr->GetDefLocale();
           return DateTimeType::kDateTime;
         }
         wsCategory += m_spPattern[ccf];
@@ -1638,7 +1638,7 @@ CFGAS_StringFormatter::DateTimeType CFGAS_StringFormatter::GetDateTimeFormat(
           while (ccf < m_spPattern.size() && m_spPattern[ccf] != ')')
             wsLCID += m_spPattern[ccf++];
 
-          *pLocale = m_pLocaleMgr->GetLocaleByName(wsLCID);
+          *pLocale = pLocaleMgr->GetLocaleByName(wsLCID);
         } else if (m_spPattern[ccf] == '.') {
           WideString wsSubCategory;
           ccf++;
@@ -1657,7 +1657,7 @@ CFGAS_StringFormatter::DateTimeType CFGAS_StringFormatter::GetDateTimeFormat(
             }
           }
           if (!*pLocale)
-            *pLocale = m_pLocaleMgr->GetDefLocale();
+            *pLocale = pLocaleMgr->GetDefLocale();
           ASSERT(*pLocale);
 
           switch (eCategory) {
@@ -1705,7 +1705,7 @@ CFGAS_StringFormatter::DateTimeType CFGAS_StringFormatter::GetDateTimeFormat(
       *wsTimePattern += wsTempPattern;
   }
   if (!*pLocale)
-    *pLocale = m_pLocaleMgr->GetDefLocale();
+    *pLocale = pLocaleMgr->GetDefLocale();
   if (eDateTimeType == DateTimeType::kUnknown) {
     wsTimePattern->clear();
     *wsDatePattern = m_wsPattern;
@@ -1713,7 +1713,8 @@ CFGAS_StringFormatter::DateTimeType CFGAS_StringFormatter::GetDateTimeFormat(
   return eDateTimeType;
 }
 
-bool CFGAS_StringFormatter::ParseDateTime(const WideString& wsSrcDateTime,
+bool CFGAS_StringFormatter::ParseDateTime(LocaleMgrIface* pLocaleMgr,
+                                          const WideString& wsSrcDateTime,
                                           DateTimeType eDateTimeType,
                                           CFX_DateTime* dtValue) const {
   dtValue->Reset();
@@ -1724,7 +1725,7 @@ bool CFGAS_StringFormatter::ParseDateTime(const WideString& wsSrcDateTime,
   WideString wsDatePattern;
   WideString wsTimePattern;
   DateTimeType eCategory =
-      GetDateTimeFormat(&pLocale, &wsDatePattern, &wsTimePattern);
+      GetDateTimeFormat(pLocaleMgr, &pLocale, &wsDatePattern, &wsTimePattern);
   if (!pLocale)
     return false;
 
@@ -1869,7 +1870,8 @@ bool CFGAS_StringFormatter::FormatText(const WideString& wsSrcText,
   return iText == spSrcText.size();
 }
 
-bool CFGAS_StringFormatter::FormatNum(const WideString& wsInputNum,
+bool CFGAS_StringFormatter::FormatNum(LocaleMgrIface* pLocaleMgr,
+                                      const WideString& wsInputNum,
                                       WideString* wsOutput) const {
   if (wsInputNum.IsEmpty() || m_spPattern.empty())
     return false;
@@ -1878,7 +1880,7 @@ bool CFGAS_StringFormatter::FormatNum(const WideString& wsInputNum,
   uint32_t dwNumStyle = 0;
   WideString wsNumFormat;
   LocaleIface* pLocale =
-      GetNumericFormat(&dot_index_f, &dwNumStyle, &wsNumFormat);
+      GetNumericFormat(pLocaleMgr, &dot_index_f, &dwNumStyle, &wsNumFormat);
   if (!pLocale || wsNumFormat.IsEmpty())
     return false;
 
@@ -2214,7 +2216,8 @@ bool CFGAS_StringFormatter::FormatNum(const WideString& wsInputNum,
   return true;
 }
 
-bool CFGAS_StringFormatter::FormatDateTime(const WideString& wsSrcDateTime,
+bool CFGAS_StringFormatter::FormatDateTime(LocaleMgrIface* pLocaleMgr,
+                                           const WideString& wsSrcDateTime,
                                            DateTimeType eDateTimeType,
                                            WideString* wsOutput) const {
   if (wsSrcDateTime.IsEmpty() || m_spPattern.empty())
@@ -2224,7 +2227,7 @@ bool CFGAS_StringFormatter::FormatDateTime(const WideString& wsSrcDateTime,
   WideString wsTimePattern;
   LocaleIface* pLocale = nullptr;
   DateTimeType eCategory =
-      GetDateTimeFormat(&pLocale, &wsDatePattern, &wsTimePattern);
+      GetDateTimeFormat(pLocaleMgr, &pLocale, &wsDatePattern, &wsTimePattern);
   if (!pLocale)
     return false;
 

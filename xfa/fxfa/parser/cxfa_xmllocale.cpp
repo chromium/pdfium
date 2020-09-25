@@ -29,27 +29,23 @@ constexpr wchar_t kCurrencySymbol[] = L"currencySymbol";
 }  // namespace
 
 // static
-std::unique_ptr<CXFA_XMLLocale> CXFA_XMLLocale::Create(
-    pdfium::span<uint8_t> data) {
+CXFA_XMLLocale* CXFA_XMLLocale::Create(cppgc::Heap* heap,
+                                       pdfium::span<uint8_t> data) {
   auto stream = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(data);
   CFX_XMLParser parser(stream);
   auto doc = parser.Parse();
   if (!doc)
     return nullptr;
 
-  CFX_XMLElement* locale = nullptr;
   for (auto* child = doc->GetRoot()->GetFirstChild(); child;
        child = child->GetNextSibling()) {
     CFX_XMLElement* elem = ToXMLElement(child);
     if (elem && elem->GetName().EqualsASCII("locale")) {
-      locale = elem;
-      break;
+      return cppgc::MakeGarbageCollected<CXFA_XMLLocale>(
+          heap->GetAllocationHandle(), std::move(doc), elem);
     }
   }
-  if (!locale)
-    return nullptr;
-
-  return std::make_unique<CXFA_XMLLocale>(std::move(doc), locale);
+  return nullptr;
 }
 
 CXFA_XMLLocale::CXFA_XMLLocale(std::unique_ptr<CFX_XMLDocument> doc,
@@ -60,6 +56,8 @@ CXFA_XMLLocale::CXFA_XMLLocale(std::unique_ptr<CFX_XMLDocument> doc,
 }
 
 CXFA_XMLLocale::~CXFA_XMLLocale() = default;
+
+void CXFA_XMLLocale::Trace(cppgc::Visitor* visitor) const {}
 
 WideString CXFA_XMLLocale::GetName() const {
   return locale_->GetAttribute(L"name");

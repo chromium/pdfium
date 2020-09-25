@@ -7,7 +7,9 @@
 #ifndef XFA_FXFA_PARSER_CXFA_NODELOCALE_H_
 #define XFA_FXFA_PARSER_CXFA_NODELOCALE_H_
 
-#include "core/fxcrt/unowned_ptr.h"
+#include "fxjs/gc/heap.h"
+#include "v8/include/cppgc/garbage-collected.h"
+#include "v8/include/cppgc/member.h"
 #include "xfa/fgas/crt/locale_iface.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
@@ -15,10 +17,13 @@ class CXFA_Node;
 
 WideString XFA_PatternToString(LocaleIface::NumSubcategory category);
 
-class CXFA_NodeLocale final : public LocaleIface {
+class CXFA_NodeLocale final : public cppgc::GarbageCollected<CXFA_NodeLocale>,
+                              public LocaleIface {
  public:
-  explicit CXFA_NodeLocale(CXFA_Node* pLocale);
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_NodeLocale() override;
+
+  void Trace(cppgc::Visitor* visitor) const;
 
   // LocaleIface
   WideString GetName() const override;
@@ -39,13 +44,15 @@ class CXFA_NodeLocale final : public LocaleIface {
   WideString GetNumPattern(NumSubcategory eType) const override;
 
  private:
+  explicit CXFA_NodeLocale(CXFA_Node* pNode);
+
   CXFA_Node* GetNodeByName(CXFA_Node* pParent, WideStringView wsName) const;
   WideString GetSymbol(XFA_Element eElement, WideStringView symbol_type) const;
   WideString GetCalendarSymbol(XFA_Element eElement,
                                int index,
                                bool bAbbr) const;
 
-  UnownedPtr<CXFA_Node> const m_pLocale;
+  cppgc::Member<CXFA_Node> const m_pNode;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_NODELOCALE_H_

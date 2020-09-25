@@ -6,10 +6,15 @@
 
 #include <stdint.h>
 
-#include <memory>
+#include <vector>
 
 #include "core/fxcrt/fx_string.h"
+#include "public/fpdfview.h"
+#include "testing/fuzzers/pdfium_fuzzer_util.h"
+#include "testing/fuzzers/xfa_process_state.h"
 #include "third_party/base/stl_util.h"
+#include "v8/include/cppgc/heap.h"
+#include "v8/include/cppgc/persistent.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 
 namespace {
@@ -27,11 +32,15 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   if (size < 5 || size > 128)  // Big strings are unlikely to help.
     return 0;
 
+  auto* state = static_cast<XFAProcessState*>(FPDF_GetFuzzerPerProcessState());
+  cppgc::Heap* heap = state->GetHeap();
+
   // Static for speed.
-  static std::vector<std::unique_ptr<CXFA_LocaleMgr>> mgrs;
+  static std::vector<cppgc::Persistent<CXFA_LocaleMgr>> mgrs;
   if (mgrs.empty()) {
     for (const auto* locale : kLocales)
-      mgrs.push_back(std::make_unique<CXFA_LocaleMgr>(nullptr, locale));
+      mgrs.push_back(cppgc::MakeGarbageCollected<CXFA_LocaleMgr>(
+          heap->GetAllocationHandle(), heap, nullptr, locale));
   }
 
   uint8_t test_selector = data[0] % 10;
@@ -47,8 +56,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   WideString value =
       WideString::FromLatin1(ByteStringView(data + pattern_len, value_len));
 
-  auto fmt = std::make_unique<CFGAS_StringFormatter>(
-      mgrs[locale_selector].get(), pattern);
+  auto fmt = std::make_unique<CFGAS_StringFormatter>(pattern);
 
   WideString result;
   CFX_DateTime dt;
@@ -57,10 +65,11 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
       fmt->FormatText(value, &result);
       break;
     case 1:
-      fmt->FormatNum(value, &result);
+      fmt->FormatNum(mgrs[locale_selector], value, &result);
       break;
     case 2:
-      fmt->FormatDateTime(value, kTypes[type_selector], &result);
+      fmt->FormatDateTime(mgrs[locale_selector], value, kTypes[type_selector],
+                          &result);
       break;
     case 3:
       fmt->FormatNull(&result);
@@ -72,10 +81,11 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
       fmt->ParseText(value, &result);
       break;
     case 6:
-      fmt->ParseNum(value, &result);
+      fmt->ParseNum(mgrs[locale_selector], value, &result);
       break;
     case 7:
-      fmt->ParseDateTime(value, kTypes[type_selector], &dt);
+      fmt->ParseDateTime(mgrs[locale_selector], value, kTypes[type_selector],
+                         &dt);
       break;
     case 8:
       fmt->ParseNull(value);
@@ -84,5 +94,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
       fmt->ParseZero(value);
       break;
   }
+
+  state->MaybeForceGCAndPump();
   return 0;
 }

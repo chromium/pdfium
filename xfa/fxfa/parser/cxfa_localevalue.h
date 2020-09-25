@@ -10,6 +10,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "v8/include/cppgc/macros.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 class LocaleIface;
@@ -27,6 +28,8 @@ class CXFA_LocaleMgr;
 #define XFA_VT_DATETIME 128
 
 class CXFA_LocaleValue {
+  CPPGC_STACK_ALLOCATED();  // Raw/Unowned pointers allowed.
+
  public:
   CXFA_LocaleValue();
   CXFA_LocaleValue(uint32_t dwType, CXFA_LocaleMgr* pLocaleMgr);

@@ -6,6 +6,7 @@
 
 #include <memory>
 
+#include "testing/fxgc_unittest.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {
@@ -88,32 +89,35 @@ const char kXMLData[] =
     "</currencySymbols>"
     "</locale>";
 
-std::unique_ptr<CXFA_XMLLocale> CreateLocaleHelper() {
-  return CXFA_XMLLocale::Create(pdfium::as_writable_bytes(
-      pdfium::make_span(const_cast<char*>(kXMLData), strlen(kXMLData))));
+CXFA_XMLLocale* CreateLocaleHelper(cppgc::Heap* heap) {
+  return CXFA_XMLLocale::Create(
+      heap, pdfium::as_writable_bytes(pdfium::make_span(
+                const_cast<char*>(kXMLData), strlen(kXMLData))));
 }
 
 }  // namespace
 
-TEST(CXFA_XMLLocaleTest, Create) {
-  auto locale = CreateLocaleHelper();
+class CXFA_XMLLocaleTest : public FXGCUnitTest {};
+
+TEST_F(CXFA_XMLLocaleTest, Create) {
+  auto* locale = CreateLocaleHelper(heap());
   EXPECT_TRUE(locale != nullptr);
 }
 
-TEST(CXFA_XMLLocaleTest, CreateBadXML) {
-  auto locale = CXFA_XMLLocale::Create(pdfium::span<uint8_t>());
+TEST_F(CXFA_XMLLocaleTest, CreateBadXML) {
+  auto* locale = CXFA_XMLLocale::Create(heap(), pdfium::span<uint8_t>());
   EXPECT_TRUE(locale == nullptr);
 }
 
-TEST(CXFA_XMLLocaleTest, GetName) {
-  auto locale = CreateLocaleHelper();
+TEST_F(CXFA_XMLLocaleTest, GetName) {
+  auto* locale = CreateLocaleHelper(heap());
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"en_US", locale->GetName());
 }
 
-TEST(CXFA_XMLLocaleTest, GetNumericSymbols) {
-  auto locale = CreateLocaleHelper();
+TEST_F(CXFA_XMLLocaleTest, GetNumericSymbols) {
+  auto* locale = CreateLocaleHelper(heap());
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L".", locale->GetDecimalSymbol());
@@ -123,15 +127,15 @@ TEST(CXFA_XMLLocaleTest, GetNumericSymbols) {
   EXPECT_EQ(L"$", locale->GetCurrencySymbol());
 }
 
-TEST(CXFA_XMLLocaleTest, GetDateTimeSymbols) {
-  auto locale = CreateLocaleHelper();
+TEST_F(CXFA_XMLLocaleTest, GetDateTimeSymbols) {
+  auto* locale = CreateLocaleHelper(heap());
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"GyMdkHmsSEDFwWahKzZ", locale->GetDateTimeSymbols());
 }
 
-TEST(CXFA_XMLLocaleTest, GetMonthName) {
-  auto locale = CreateLocaleHelper();
+TEST_F(CXFA_XMLLocaleTest, GetMonthName) {
+  auto* locale = CreateLocaleHelper(heap());
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"", locale->GetMonthName(24, false));
@@ -140,8 +144,8 @@ TEST(CXFA_XMLLocaleTest, GetMonthName) {
   EXPECT_EQ(L"February", locale->GetMonthName(1, false));
 }
 
-TEST(CXFA_XMLLocaleTest, GetDayName) {
-  auto locale = CreateLocaleHelper();
+TEST_F(CXFA_XMLLocaleTest, GetDayName) {
+  auto* locale = CreateLocaleHelper(heap());
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"", locale->GetDayName(24, false));
@@ -150,24 +154,24 @@ TEST(CXFA_XMLLocaleTest, GetDayName) {
   EXPECT_EQ(L"Monday", locale->GetDayName(1, false));
 }
 
-TEST(CXFA_XMLLocaleTest, GetMeridiemName) {
-  auto locale = CreateLocaleHelper();
+TEST_F(CXFA_XMLLocaleTest, GetMeridiemName) {
+  auto* locale = CreateLocaleHelper(heap());
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"AM", locale->GetMeridiemName(true));
   EXPECT_EQ(L"PM", locale->GetMeridiemName(false));
 }
 
-TEST(CXFA_XMLLocaleTest, GetEraName) {
-  auto locale = CreateLocaleHelper();
+TEST_F(CXFA_XMLLocaleTest, GetEraName) {
+  auto* locale = CreateLocaleHelper(heap());
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"AD", locale->GetEraName(true));
   EXPECT_EQ(L"BC", locale->GetEraName(false));
 }
 
-TEST(CXFA_XMLLocaleTest, GetDatePattern) {
-  auto locale = CreateLocaleHelper();
+TEST_F(CXFA_XMLLocaleTest, GetDatePattern) {
+  auto* locale = CreateLocaleHelper(heap());
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"M/D/YY",
@@ -182,8 +186,8 @@ TEST(CXFA_XMLLocaleTest, GetDatePattern) {
             locale->GetDatePattern(LocaleIface::DateTimeSubcategory::kLong));
 }
 
-TEST(CXFA_XMLLocaleTest, GetTimePattern) {
-  auto locale = CreateLocaleHelper();
+TEST_F(CXFA_XMLLocaleTest, GetTimePattern) {
+  auto* locale = CreateLocaleHelper(heap());
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"h:MM A",
@@ -198,8 +202,8 @@ TEST(CXFA_XMLLocaleTest, GetTimePattern) {
             locale->GetTimePattern(LocaleIface::DateTimeSubcategory::kLong));
 }
 
-TEST(CXFA_XMLLocaleTest, GetNumPattern) {
-  auto locale = CreateLocaleHelper();
+TEST_F(CXFA_XMLLocaleTest, GetNumPattern) {
+  auto* locale = CreateLocaleHelper(heap());
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"z,zzz,zzz,zzz,zzz,zzz%",
