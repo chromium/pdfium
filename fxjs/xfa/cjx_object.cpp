@@ -494,9 +494,14 @@ void CJX_Object::SetCDataImpl(XFA_Attribute eAttr,
 }
 
 void CJX_Object::SetAttributeValue(const WideString& wsValue,
-                                   const WideString& wsXMLValue,
-                                   bool bNotify,
-                                   bool bScriptModify) {
+                                   const WideString& wsXMLValue) {
+  SetAttributeValueImpl(wsValue, wsXMLValue, false, false);
+}
+
+void CJX_Object::SetAttributeValueImpl(const WideString& wsValue,
+                                       const WideString& wsXMLValue,
+                                       bool bNotify,
+                                       bool bScriptModify) {
   auto* xfaObj = GetXFANode();
   void* pKey =
       GetMapKey_Element(xfaObj->GetElementType(), XFA_Attribute::Value);
@@ -603,8 +608,8 @@ void CJX_Object::SetContent(const WideString& wsContent,
           ASSERT(valueNodes.size() == wsSaveTextArray.size());
           size_t i = 0;
           for (CXFA_Node* pValueNode : valueNodes) {
-            pValueNode->JSObject()->SetAttributeValue(
-                wsSaveTextArray[i], wsSaveTextArray[i], false, false);
+            pValueNode->JSObject()->SetAttributeValue(wsSaveTextArray[i],
+                                                      wsSaveTextArray[i]);
             i++;
           }
           for (auto* pArrayNode : pBind->GetBindItemsCopy()) {
@@ -701,7 +706,7 @@ void CJX_Object::SetContent(const WideString& wsContent,
   if (!pNode)
     return;
 
-  SetAttributeValue(wsContent, wsXMLValue, bNotify, bScriptModify);
+  SetAttributeValueImpl(wsContent, wsXMLValue, bNotify, bScriptModify);
   if (pBindNode && bSyncData) {
     for (auto* pArrayNode : pBindNode->GetBindItemsCopy()) {
       pArrayNode->JSObject()->SetContent(wsContent, wsContent, bNotify,

@@ -511,7 +511,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
             ToXMLElement(pDataNode->GetXMLMappingNode());
         ASSERT(pXMLDataElement);
         pDataNode->JSObject()->SetAttributeValue(
-            wsValue, pFormNode->GetFormatDataValue(wsValue), false, false);
+            wsValue, pFormNode->GetFormatDataValue(wsValue));
         pDataNode->JSObject()->SetCData(XFA_Attribute::ContentType,
                                         wsContentType);
         if (!wsHref.IsEmpty())
@@ -540,7 +540,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
           }
         } else if (!wsValue.IsEmpty()) {
           pDataNode->JSObject()->SetAttributeValue(
-              wsValue, pFormNode->GetFormatDataValue(wsValue), false, false);
+              wsValue, pFormNode->GetFormatDataValue(wsValue));
         }
         break;
       case XFA_FFWidgetType::kCheckButton:
@@ -549,7 +549,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
           break;
 
         pDataNode->JSObject()->SetAttributeValue(
-            wsValue, pFormNode->GetFormatDataValue(wsValue), false, false);
+            wsValue, pFormNode->GetFormatDataValue(wsValue));
         break;
       case XFA_FFWidgetType::kExclGroup: {
         CXFA_Node* pChecked = nullptr;
@@ -579,8 +579,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
           WideString wsContent = pText->JSObject()->GetContent(false);
           if (wsContent == wsValue) {
             pChecked = pChild;
-            pDataNode->JSObject()->SetAttributeValue(wsValue, wsValue, false,
-                                                     false);
+            pDataNode->JSObject()->SetAttributeValue(wsValue, wsValue);
             pFormNode->JSObject()->SetCData(XFA_Attribute::Value, wsContent);
             break;
           }
@@ -619,7 +618,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
 
         wsValue = pFormNode->NormalizeNumStr(wsValue);
         pDataNode->JSObject()->SetAttributeValue(
-            wsValue, pFormNode->GetFormatDataValue(wsValue), false, false);
+            wsValue, pFormNode->GetFormatDataValue(wsValue));
         CXFA_Value* pValue =
             pFormNode->JSObject()->GetOrCreateProperty<CXFA_Value>(
                 0, XFA_Element::Value);
@@ -632,7 +631,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
           break;
 
         pDataNode->JSObject()->SetAttributeValue(
-            wsValue, pFormNode->GetFormatDataValue(wsValue), false, false);
+            wsValue, pFormNode->GetFormatDataValue(wsValue));
         break;
     }
     return;
@@ -641,8 +640,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
   WideString wsXMLValue = pDataNode->JSObject()->GetContent(false);
   WideString wsNormalizeValue = pFormNode->GetNormalizeDataValue(wsXMLValue);
 
-  pDataNode->JSObject()->SetAttributeValue(wsNormalizeValue, wsXMLValue, false,
-                                           false);
+  pDataNode->JSObject()->SetAttributeValue(wsNormalizeValue, wsXMLValue);
   switch (pFormNode->GetFFWidgetType()) {
     case XFA_FFWidgetType::kImageEdit: {
       FormValueNode_SetChildContent(defValue, wsNormalizeValue,

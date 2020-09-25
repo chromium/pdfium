@@ -168,9 +168,7 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
   }
 
   void SetAttributeValue(const WideString& wsValue,
-                         const WideString& wsXMLValue,
-                         bool bNotify,
-                         bool bScriptModify);
+                         const WideString& wsXMLValue);
 
   // Not actual properties, but invoked as property handlers to cover
   // a broad range of underlying properties.
@@ -235,6 +233,10 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
  protected:
   explicit CJX_Object(CXFA_Object* obj);
 
+  void SetAttributeValueImpl(const WideString& wsValue,
+                             const WideString& wsXMLValue,
+                             bool bNotify,
+                             bool bScriptModify);
   void SetCDataImpl(XFA_Attribute eAttr,
                     const WideString& wsValue,
                     bool bNotify,
