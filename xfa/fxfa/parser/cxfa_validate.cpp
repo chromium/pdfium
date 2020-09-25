@@ -140,8 +140,7 @@ void CXFA_Validate::SetMessageText(const WideString& wsMessageType,
 
   CXFA_Node* pTextNode = pNode->CreateSamePacketNode(XFA_Element::Text);
   pNode->InsertChildAndNotify(pTextNode, nullptr);
-  pTextNode->JSObject()->SetCData(XFA_Attribute::Name, wsMessageType, false,
-                                  false);
+  pTextNode->JSObject()->SetCData(XFA_Attribute::Name, wsMessageType);
   pTextNode->JSObject()->SetContent(wsMessage, wsMessage, false, false, true);
 }
 

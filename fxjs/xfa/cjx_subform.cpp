@@ -91,7 +91,7 @@ void CJX_Subform::locale(CFXJSE_Value* pValue,
                          bool bSetting,
                          XFA_Attribute eAttribute) {
   if (bSetting) {
-    SetCData(XFA_Attribute::Locale, pValue->ToWideString(), true, true);
+    SetCDataImpl(XFA_Attribute::Locale, pValue->ToWideString(), true, true);
     return;
   }
 

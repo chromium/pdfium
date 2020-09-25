@@ -56,5 +56,5 @@ void CXFA_Color::SetValue(FX_ARGB color) {
   int b;
   std::tie(a, r, g, b) = ArgbDecode(color);
   JSObject()->SetCData(XFA_Attribute::Value,
-                       WideString::Format(L"%d,%d,%d", r, g, b), false, false);
+                       WideString::Format(L"%d,%d,%d", r, g, b));
 }

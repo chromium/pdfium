@@ -3123,11 +3123,10 @@ void CXFA_Node::SetImageEdit(const WideString& wsContentType,
       image->SetTransferEncoding(XFA_AttributeValue::Base64);
     return;
   }
-  pBind->JSObject()->SetCData(XFA_Attribute::ContentType, wsContentType, false,
-                              false);
+  pBind->JSObject()->SetCData(XFA_Attribute::ContentType, wsContentType);
   CXFA_Node* pHrefNode = pBind->GetFirstChild();
   if (pHrefNode) {
-    pHrefNode->JSObject()->SetCData(XFA_Attribute::Value, wsHref, false, false);
+    pHrefNode->JSObject()->SetCData(XFA_Attribute::Value, wsHref);
     return;
   }
   CFX_XMLElement* pElement = ToXMLElement(pBind->GetXMLMappingNode());

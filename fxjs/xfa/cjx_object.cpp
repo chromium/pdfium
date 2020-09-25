@@ -240,7 +240,7 @@ void CJX_Object::SetAttributeByEnum(XFA_Attribute eAttr,
       break;
     }
     case XFA_AttributeType::CData:
-      SetCData(eAttr, WideString(wsValue), bNotify, false);
+      SetCDataImpl(eAttr, WideString(wsValue), bNotify, false);
       break;
     case XFA_AttributeType::Boolean:
       SetBoolean(eAttr, !wsValue.EqualsASCII("0"), bNotify);
@@ -447,10 +447,14 @@ WideString CJX_Object::GetCData(XFA_Attribute eAttr) const {
   return TryCData(eAttr, true).value_or(WideString());
 }
 
-void CJX_Object::SetCData(XFA_Attribute eAttr,
-                          const WideString& wsValue,
-                          bool bNotify,
-                          bool bScriptModify) {
+void CJX_Object::SetCData(XFA_Attribute eAttr, const WideString& wsValue) {
+  return SetCDataImpl(eAttr, wsValue, false, false);
+}
+
+void CJX_Object::SetCDataImpl(XFA_Attribute eAttr,
+                              const WideString& wsValue,
+                              bool bNotify,
+                              bool bScriptModify) {
   CXFA_Node* xfaObj = GetXFANode();
   void* pKey = GetMapKey_Element(xfaObj->GetElementType(), eAttr);
   OnChanging(eAttr, bNotify);
@@ -562,7 +566,7 @@ void CJX_Object::SetContent(const WideString& wsContent,
 
         CXFA_Node* pChildValue = pValue->GetFirstChild();
         pChildValue->JSObject()->SetCData(XFA_Attribute::ContentType,
-                                          L"text/xml", false, false);
+                                          L"text/xml");
         pChildValue->JSObject()->SetContent(wsContent, wsContent, bNotify,
                                             bScriptModify, false);
 
@@ -584,8 +588,8 @@ void CJX_Object::SetContent(const WideString& wsContent,
               while (iAddNodes-- > 0) {
                 CXFA_Node* pValueNodes =
                     pBind->CreateSamePacketNode(XFA_Element::DataValue);
-                pValueNodes->JSObject()->SetCData(XFA_Attribute::Name, L"value",
-                                                  false, false);
+                pValueNodes->JSObject()->SetCData(XFA_Attribute::Name,
+                                                  L"value");
                 pValueNodes->CreateXMLMappingNode();
                 pBind->InsertChildAndNotify(pValueNodes, nullptr);
               }

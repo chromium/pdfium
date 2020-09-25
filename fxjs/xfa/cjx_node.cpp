@@ -290,7 +290,7 @@ CJS_Result CJX_Node::loadXML(CFX_V8* runtime,
   WideString wsContentType = GetCData(XFA_Attribute::ContentType);
   if (!wsContentType.IsEmpty()) {
     pFakeRoot->JSObject()->SetCData(XFA_Attribute::ContentType,
-                                    WideString(wsContentType), false, false);
+                                    WideString(wsContentType));
   }
 
   CFX_XMLNode* pFakeXMLRoot = pFakeRoot->GetXMLMappingNode();

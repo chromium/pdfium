@@ -62,11 +62,11 @@ WideString CXFA_Image::GetContent() {
 }
 
 void CXFA_Image::SetContentType(const WideString& wsContentType) {
-  JSObject()->SetCData(XFA_Attribute::ContentType, wsContentType, false, false);
+  JSObject()->SetCData(XFA_Attribute::ContentType, wsContentType);
 }
 
 void CXFA_Image::SetHref(const WideString& wsHref) {
-  JSObject()->SetCData(XFA_Attribute::Href, wsHref, false, false);
+  JSObject()->SetCData(XFA_Attribute::Href, wsHref);
 }
 
 void CXFA_Image::SetTransferEncoding(XFA_AttributeValue iTransferEncoding) {

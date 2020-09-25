@@ -41,5 +41,5 @@ CXFA_ExData::CXFA_ExData(CXFA_Document* doc, XFA_PacketType packet)
 CXFA_ExData::~CXFA_ExData() = default;
 
 void CXFA_ExData::SetContentType(const WideString& wsContentType) {
-  JSObject()->SetCData(XFA_Attribute::ContentType, wsContentType, false, false);
+  JSObject()->SetCData(XFA_Attribute::ContentType, wsContentType);
 }

@@ -201,10 +201,7 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
   int32_t GetInteger(XFA_Attribute eAttr) const;
 
   Optional<WideString> TryCData(XFA_Attribute eAttr, bool bUseDefault) const;
-  void SetCData(XFA_Attribute eAttr,
-                const WideString& wsValue,
-                bool bNotify,
-                bool bScriptModify);
+  void SetCData(XFA_Attribute eAttr, const WideString& wsValue);
   WideString GetCData(XFA_Attribute eAttr) const;
 
   Optional<XFA_AttributeValue> TryEnum(XFA_Attribute eAttr,
@@ -238,6 +235,10 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
  protected:
   explicit CJX_Object(CXFA_Object* obj);
 
+  void SetCDataImpl(XFA_Attribute eAttr,
+                    const WideString& wsValue,
+                    bool bNotify,
+                    bool bScriptModify);
   void DefineMethods(pdfium::span<const CJX_MethodSpec> methods);
   void MoveBufferMapData(CXFA_Object* pSrcModule, CXFA_Object* pDstModule);
   void SetMapModuleString(void* pKey, WideStringView wsValue);
