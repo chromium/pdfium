@@ -13,6 +13,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxcrt/widestring.h"
 #include "fxjs/gc/heap.h"
+#include "third_party/base/optional.h"
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/member.h"
 #include "xfa/fgas/crt/locale_mgr_iface.h"
@@ -34,7 +35,7 @@ class CXFA_LocaleMgr : public cppgc::GarbageCollected<CXFA_LocaleMgr>,
   GCedLocaleIface* GetLocaleByName(const WideString& wsLocaleName) override;
 
   void SetDefLocale(GCedLocaleIface* pLocale);
-  WideString GetConfigLocaleName(CXFA_Node* pConfig);
+  Optional<WideString> GetConfigLocaleName(CXFA_Node* pConfig) const;
 
  private:
   CXFA_LocaleMgr(cppgc::Heap* pHeap,
@@ -49,9 +50,17 @@ class CXFA_LocaleMgr : public cppgc::GarbageCollected<CXFA_LocaleMgr>,
   std::vector<cppgc::Member<CXFA_XMLLocale>> m_XMLLocaleArray;
   cppgc::Member<GCedLocaleIface> m_pDefLocale;
 
-  WideString m_wsConfigLocale;
+  // Note: three possiblities
+  // 1. we might never have tried to determine |m_wsConfigLocale|.
+  // 2. we might have tried but gotten nothing and want to continue
+  //    to return nothing without ever trying again.
+  // 3. we might have tried and gotten something.
+  // So |m_bConfigLocaleCached| indicates whether we've already tried,
+  // and |m_wsConfigLocale| is the possibly nothing we got if we tried.
+  mutable Optional<WideString> m_wsConfigLocale;
+  mutable bool m_bConfigLocaleCached = false;
+
   uint16_t m_dwDeflcid;
-  bool m_hasSetLocaleName = false;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_LOCALEMGR_H_

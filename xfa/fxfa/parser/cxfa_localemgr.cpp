@@ -1231,32 +1231,40 @@ void CXFA_LocaleMgr::SetDefLocale(GCedLocaleIface* pLocale) {
   m_pDefLocale = pLocale;
 }
 
-WideString CXFA_LocaleMgr::GetConfigLocaleName(CXFA_Node* pConfig) {
-  if (m_hasSetLocaleName)
+Optional<WideString> CXFA_LocaleMgr::GetConfigLocaleName(
+    CXFA_Node* pConfig) const {
+  if (m_bConfigLocaleCached)
     return m_wsConfigLocale;
 
-  m_hasSetLocaleName = true;
-  m_wsConfigLocale.clear();
+  ASSERT(!m_wsConfigLocale.has_value());
+  m_bConfigLocaleCached = true;
   if (!pConfig)
     return m_wsConfigLocale;
 
-  CXFA_Node* pChildfConfig =
+  CXFA_Node* pChildConfig =
       pConfig->GetFirstChildByClass<CXFA_Acrobat>(XFA_Element::Acrobat);
-  if (!pChildfConfig) {
-    pChildfConfig =
+  if (!pChildConfig) {
+    pChildConfig =
         pConfig->GetFirstChildByClass<CXFA_Present>(XFA_Element::Present);
+    if (!pChildConfig)
+      return m_wsConfigLocale;
   }
-  CXFA_Common* pCommon = pChildfConfig
-                             ? pChildfConfig->GetFirstChildByClass<CXFA_Common>(
-                                   XFA_Element::Common)
-                             : nullptr;
+
+  CXFA_Common* pCommon =
+      pChildConfig->GetFirstChildByClass<CXFA_Common>(XFA_Element::Common);
+  if (!pCommon)
+    return m_wsConfigLocale;
+
   CXFA_Locale* pLocale =
-      pCommon ? pCommon->GetFirstChildByClass<CXFA_Locale>(XFA_Element::Locale)
-              : nullptr;
-  if (pLocale) {
-    m_wsConfigLocale = pLocale->JSObject()
-                           ->TryCData(XFA_Attribute::Value, false)
-                           .value_or(WideString());
-  }
+      pCommon->GetFirstChildByClass<CXFA_Locale>(XFA_Element::Locale);
+  if (!pLocale)
+    return m_wsConfigLocale;
+
+  Optional<WideString> wsMaybeLocale =
+      pLocale->JSObject()->TryCData(XFA_Attribute::Value, false);
+  if (!wsMaybeLocale.has_value() || wsMaybeLocale.value().IsEmpty())
+    return m_wsConfigLocale;
+
+  m_wsConfigLocale = wsMaybeLocale;
   return m_wsConfigLocale;
 }

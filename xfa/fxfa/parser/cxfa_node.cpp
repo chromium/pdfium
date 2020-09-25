@@ -1403,39 +1403,39 @@ GCedLocaleIface* CXFA_Node::GetLocale() {
 Optional<WideString> CXFA_Node::GetLocaleName() {
   CXFA_Node* pForm = ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form));
   if (!pForm)
-    return {};
+    return pdfium::nullopt;
 
   CXFA_Subform* pTopSubform =
       pForm->GetFirstChildByClass<CXFA_Subform>(XFA_Element::Subform);
   if (!pTopSubform)
-    return {};
+    return pdfium::nullopt;
 
+  Optional<WideString> localeName;
   CXFA_Node* pLocaleNode = this;
   do {
-    Optional<WideString> localeName =
+    localeName =
         pLocaleNode->JSObject()->TryCData(XFA_Attribute::Locale, false);
-    if (localeName)
+    if (localeName.has_value())
       return localeName;
 
     pLocaleNode = pLocaleNode->GetParent();
   } while (pLocaleNode && pLocaleNode != pTopSubform);
 
   CXFA_Node* pConfig = ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Config));
-  WideString wsLocaleName =
-      GetDocument()->GetLocaleMgr()->GetConfigLocaleName(pConfig);
-  if (!wsLocaleName.IsEmpty())
-    return wsLocaleName;
+  localeName = GetDocument()->GetLocaleMgr()->GetConfigLocaleName(pConfig);
+  if (localeName.has_value())
+    return localeName;
 
   if (pTopSubform) {
-    Optional<WideString> localeName =
+    localeName =
         pTopSubform->JSObject()->TryCData(XFA_Attribute::Locale, false);
-    if (localeName)
+    if (localeName.has_value())
       return localeName;
   }
 
   LocaleIface* pLocale = GetDocument()->GetLocaleMgr()->GetDefLocale();
   if (!pLocale)
-    return {};
+    return pdfium::nullopt;
 
   return pLocale->GetName();
 }
