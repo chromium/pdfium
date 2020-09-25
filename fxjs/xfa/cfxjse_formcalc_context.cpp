@@ -21,7 +21,6 @@
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fgas/crt/cfgas_decimal.h"
-#include "xfa/fgas/crt/locale_iface.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/fm2js/cxfa_fmparser.h"
 #include "xfa/fxfa/fm2js/cxfa_fmtojavascriptdepth.h"
@@ -30,6 +29,7 @@
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_thisproxy.h"
 #include "xfa/fxfa/parser/cxfa_timezoneprovider.h"
+#include "xfa/fxfa/parser/gced_locale_iface.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 using pdfium::fxjse::kClassTag;
@@ -411,9 +411,9 @@ CFXJSE_FormCalcContext* ToFormCalcContext(CFXJSE_HostObject* pHostObj) {
   return pHostObj ? pHostObj->AsFormCalcContext() : nullptr;
 }
 
-LocaleIface* LocaleFromString(CXFA_Document* pDoc,
-                              CXFA_LocaleMgr* pMgr,
-                              ByteStringView bsLocale) {
+GCedLocaleIface* LocaleFromString(CXFA_Document* pDoc,
+                                  CXFA_LocaleMgr* pMgr,
+                                  ByteStringView bsLocale) {
   if (!bsLocale.IsEmpty())
     return pMgr->GetLocaleByName(WideString::FromUTF8(bsLocale));
 
@@ -2372,7 +2372,7 @@ void CFXJSE_FormCalcContext::Time2Num(
 
   CXFA_Document* pDoc = ToFormCalcContext(pThis)->GetDocument();
   CXFA_LocaleMgr* pMgr = pDoc->GetLocaleMgr();
-  LocaleIface* pLocale = nullptr;
+  GCedLocaleIface* pLocale = nullptr;
   if (bsLocale.IsEmpty()) {
     CXFA_Node* pThisNode = ToNode(pDoc->GetScriptContext()->GetThisObject());
     pLocale = pThisNode->GetLocale();
@@ -2465,7 +2465,7 @@ ByteString CFXJSE_FormCalcContext::Local2IsoDate(CFXJSE_HostObject* pThis,
     return ByteString();
 
   CXFA_LocaleMgr* pMgr = pDoc->GetLocaleMgr();
-  LocaleIface* pLocale = LocaleFromString(pDoc, pMgr, bsLocale);
+  GCedLocaleIface* pLocale = LocaleFromString(pDoc, pMgr, bsLocale);
   if (!pLocale)
     return ByteString();
 
@@ -2488,7 +2488,7 @@ ByteString CFXJSE_FormCalcContext::IsoDate2Local(CFXJSE_HostObject* pThis,
     return ByteString();
 
   CXFA_LocaleMgr* pMgr = pDoc->GetLocaleMgr();
-  LocaleIface* pLocale = LocaleFromString(pDoc, pMgr, bsLocale);
+  GCedLocaleIface* pLocale = LocaleFromString(pDoc, pMgr, bsLocale);
   if (!pLocale)
     return ByteString();
 
@@ -2509,7 +2509,7 @@ ByteString CFXJSE_FormCalcContext::IsoTime2Local(CFXJSE_HostObject* pThis,
     return ByteString();
 
   CXFA_LocaleMgr* pMgr = pDoc->GetLocaleMgr();
-  LocaleIface* pLocale = LocaleFromString(pDoc, pMgr, bsLocale);
+  GCedLocaleIface* pLocale = LocaleFromString(pDoc, pMgr, bsLocale);
   if (!pLocale)
     return ByteString();
 
@@ -3698,7 +3698,7 @@ void CFXJSE_FormCalcContext::Format(
   CXFA_Document* pDoc = pContext->GetDocument();
   CXFA_LocaleMgr* pMgr = pDoc->GetLocaleMgr();
   CXFA_Node* pThisNode = ToNode(pDoc->GetScriptContext()->GetThisObject());
-  LocaleIface* pLocale = pThisNode->GetLocale();
+  GCedLocaleIface* pLocale = pThisNode->GetLocale();
   WideString wsPattern = WideString::FromUTF8(bsPattern.AsStringView());
   WideString wsValue = WideString::FromUTF8(bsValue.AsStringView());
   bool bPatternIsString;
@@ -3875,7 +3875,7 @@ void CFXJSE_FormCalcContext::Parse(
   CXFA_Document* pDoc = pContext->GetDocument();
   CXFA_LocaleMgr* pMgr = pDoc->GetLocaleMgr();
   CXFA_Node* pThisNode = ToNode(pDoc->GetScriptContext()->GetThisObject());
-  LocaleIface* pLocale = pThisNode->GetLocale();
+  GCedLocaleIface* pLocale = pThisNode->GetLocale();
   WideString wsPattern = WideString::FromUTF8(bsPattern.AsStringView());
   WideString wsValue = WideString::FromUTF8(bsValue.AsStringView());
   bool bPatternIsString;

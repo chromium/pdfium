@@ -68,7 +68,7 @@ class ScopedLocale {
   CPPGC_STACK_ALLOCATED();  // Raw/Unowned pointers allowed.
 
  public:
-  ScopedLocale(CXFA_LocaleMgr* pLocaleMgr, LocaleIface* pNewLocale)
+  ScopedLocale(CXFA_LocaleMgr* pLocaleMgr, GCedLocaleIface* pNewLocale)
       : m_pLocaleMgr(pLocaleMgr),
         m_pNewLocale(pNewLocale),
         m_pOrigLocale(pNewLocale ? m_pLocaleMgr->GetDefLocale() : nullptr) {
@@ -86,8 +86,8 @@ class ScopedLocale {
 
  private:
   UnownedPtr<CXFA_LocaleMgr> const m_pLocaleMgr;
-  LocaleIface* const m_pNewLocale;
-  LocaleIface* const m_pOrigLocale;
+  GCedLocaleIface* const m_pNewLocale;
+  GCedLocaleIface* const m_pOrigLocale;
 };
 
 }  // namespace
@@ -110,7 +110,7 @@ CXFA_LocaleValue::CXFA_LocaleValue(uint32_t dwType,
 CXFA_LocaleValue::CXFA_LocaleValue(uint32_t dwType,
                                    const WideString& wsValue,
                                    const WideString& wsFormat,
-                                   LocaleIface* pLocale,
+                                   GCedLocaleIface* pLocale,
                                    CXFA_LocaleMgr* pLocaleMgr)
     : m_pLocaleMgr(pLocaleMgr),
       m_dwType(dwType),
@@ -125,7 +125,7 @@ CXFA_LocaleValue::~CXFA_LocaleValue() = default;
 
 bool CXFA_LocaleValue::ValidateValue(const WideString& wsValue,
                                      const WideString& wsPattern,
-                                     LocaleIface* pLocale,
+                                     GCedLocaleIface* pLocale,
                                      WideString* pMatchFormat) {
   if (!m_pLocaleMgr)
     return false;
@@ -268,7 +268,7 @@ bool CXFA_LocaleValue::SetDateTime(const CFX_DateTime& dt) {
 
 bool CXFA_LocaleValue::FormatPatterns(WideString& wsResult,
                                       const WideString& wsFormat,
-                                      LocaleIface* pLocale,
+                                      GCedLocaleIface* pLocale,
                                       XFA_VALUEPICTURE eValueType) const {
   wsResult.clear();
   for (const auto& pattern : CFGAS_StringFormatter::SplitOnBars(wsFormat)) {
@@ -280,7 +280,7 @@ bool CXFA_LocaleValue::FormatPatterns(WideString& wsResult,
 
 bool CXFA_LocaleValue::FormatSinglePattern(WideString& wsResult,
                                            const WideString& wsFormat,
-                                           LocaleIface* pLocale,
+                                           GCedLocaleIface* pLocale,
                                            XFA_VALUEPICTURE eValueType) const {
   if (!m_pLocaleMgr)
     return false;
@@ -556,7 +556,7 @@ bool CXFA_LocaleValue::ValidateCanonicalTime(const WideString& wsTime) {
 
 bool CXFA_LocaleValue::ParsePatternValue(const WideString& wsValue,
                                          const WideString& wsPattern,
-                                         LocaleIface* pLocale) {
+                                         GCedLocaleIface* pLocale) {
   if (!m_pLocaleMgr)
     return false;
 
@@ -673,7 +673,7 @@ void CXFA_LocaleValue::GetNumericFormat(WideString& wsFormat,
 
 bool CXFA_LocaleValue::ValidateNumericTemp(const WideString& wsNumeric,
                                            const WideString& wsFormat,
-                                           LocaleIface* pLocale) {
+                                           GCedLocaleIface* pLocale) {
   if (wsFormat.IsEmpty() || wsNumeric.IsEmpty())
     return true;
 

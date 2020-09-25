@@ -10,22 +10,20 @@
 #include "fxjs/gc/heap.h"
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/member.h"
-#include "xfa/fgas/crt/locale_iface.h"
 #include "xfa/fxfa/fxfa_basic.h"
+#include "xfa/fxfa/parser/gced_locale_iface.h"
 
 class CXFA_Node;
 
 WideString XFA_PatternToString(LocaleIface::NumSubcategory category);
 
-class CXFA_NodeLocale final : public cppgc::GarbageCollected<CXFA_NodeLocale>,
-                              public LocaleIface {
+class CXFA_NodeLocale final : public GCedLocaleIface {
  public:
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_NodeLocale() override;
 
-  void Trace(cppgc::Visitor* visitor) const;
-
-  // LocaleIface
+  // GCedLocaleIface:
+  void Trace(cppgc::Visitor* visitor) const override;
   WideString GetName() const override;
   WideString GetDecimalSymbol() const override;
   WideString GetGroupingSymbol() const override;

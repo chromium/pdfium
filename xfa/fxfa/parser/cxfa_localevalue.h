@@ -13,9 +13,9 @@
 #include "v8/include/cppgc/macros.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class LocaleIface;
 class CFX_DateTime;
 class CXFA_LocaleMgr;
+class GCedLocaleIface;
 
 #define XFA_VT_NULL 0
 #define XFA_VT_BOOLEAN 1
@@ -39,7 +39,7 @@ class CXFA_LocaleValue {
   CXFA_LocaleValue(uint32_t dwType,
                    const WideString& wsValue,
                    const WideString& wsFormat,
-                   LocaleIface* pLocale,
+                   GCedLocaleIface* pLocale,
                    CXFA_LocaleMgr* pLocaleMgr);
   CXFA_LocaleValue(const CXFA_LocaleValue& that);
   ~CXFA_LocaleValue();
@@ -48,18 +48,18 @@ class CXFA_LocaleValue {
 
   bool ValidateValue(const WideString& wsValue,
                      const WideString& wsPattern,
-                     LocaleIface* pLocale,
+                     GCedLocaleIface* pLocale,
                      WideString* pMatchFormat);
 
   bool FormatPatterns(WideString& wsResult,
                       const WideString& wsFormat,
-                      LocaleIface* pLocale,
+                      GCedLocaleIface* pLocale,
                       XFA_VALUEPICTURE eValueType) const;
 
   void GetNumericFormat(WideString& wsFormat, int32_t nIntLen, int32_t nDecLen);
   bool ValidateNumericTemp(const WideString& wsNumeric,
                            const WideString& wsFormat,
-                           LocaleIface* pLocale);
+                           GCedLocaleIface* pLocale);
 
   bool IsValid() const { return m_bValid; }
   const WideString& GetValue() const { return m_wsValue; }
@@ -72,7 +72,7 @@ class CXFA_LocaleValue {
  private:
   bool FormatSinglePattern(WideString& wsResult,
                            const WideString& wsFormat,
-                           LocaleIface* pLocale,
+                           GCedLocaleIface* pLocale,
                            XFA_VALUEPICTURE eValueType) const;
   bool ValidateCanonicalValue(const WideString& wsValue, uint32_t dwVType);
   bool ValidateCanonicalDate(const WideString& wsDate, CFX_DateTime* unDate);
@@ -83,7 +83,7 @@ class CXFA_LocaleValue {
 
   bool ParsePatternValue(const WideString& wsValue,
                          const WideString& wsPattern,
-                         LocaleIface* pLocale);
+                         GCedLocaleIface* pLocale);
 
   UnownedPtr<CXFA_LocaleMgr> m_pLocaleMgr;
   WideString m_wsValue;

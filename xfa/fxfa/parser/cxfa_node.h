@@ -45,7 +45,7 @@ class CXFA_Ui;
 class CXFA_Validate;
 class CXFA_Value;
 class CXFA_WidgetLayoutData;
-class LocaleIface;
+class GCedLocaleIface;
 
 #define XFA_NODEFILTER_Children 0x01
 #define XFA_NODEFILTER_Properties 0x02
@@ -198,7 +198,7 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
   bool RemoveBindItem(CXFA_Node* pFormNode);
   bool HasBindItem() const;
   CXFA_Node* GetContainerNode();
-  LocaleIface* GetLocale();
+  GCedLocaleIface* GetLocale();
   Optional<WideString> GetLocaleName();
   XFA_AttributeValue GetIntact();
   WideString GetNameExpression();

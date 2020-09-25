@@ -668,6 +668,7 @@ source_set("parser") {
     "cxfa_xsl.h",
     "cxfa_zpl.cpp",
     "cxfa_zpl.h",
+    "gced_locale_iface.h",
     "xfa_basic_data.cpp",
     "xfa_basic_data.h",
     "xfa_document_datamerger_imp.cpp",

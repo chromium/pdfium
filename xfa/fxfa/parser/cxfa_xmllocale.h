@@ -13,13 +13,12 @@
 #include "fxjs/gc/heap.h"
 #include "third_party/base/span.h"
 #include "v8/include/cppgc/garbage-collected.h"
-#include "xfa/fgas/crt/locale_iface.h"
+#include "xfa/fxfa/parser/gced_locale_iface.h"
 
 class CFX_XMLDocument;
 class CFX_XMLElement;
 
-class CXFA_XMLLocale final : public cppgc::GarbageCollected<CXFA_XMLLocale>,
-                             public LocaleIface {
+class CXFA_XMLLocale final : public GCedLocaleIface {
  public:
   // Object is created on cppgc heap.
   static CXFA_XMLLocale* Create(cppgc::Heap* heap, pdfium::span<uint8_t> data);
@@ -27,9 +26,8 @@ class CXFA_XMLLocale final : public cppgc::GarbageCollected<CXFA_XMLLocale>,
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_XMLLocale() override;
 
-  void Trace(cppgc::Visitor* visitor) const;
-
-  // LocaleIface
+  // GCedLocaleIface:
+  void Trace(cppgc::Visitor* visitor) const override;
   WideString GetName() const override;
   WideString GetDecimalSymbol() const override;
   WideString GetGroupingSymbol() const override;

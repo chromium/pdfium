@@ -1146,9 +1146,10 @@ CXFA_LocaleMgr::~CXFA_LocaleMgr() = default;
 void CXFA_LocaleMgr::Trace(cppgc::Visitor* visitor) const {
   ContainerTrace(visitor, m_LocaleArray);
   ContainerTrace(visitor, m_XMLLocaleArray);
+  visitor->Trace(m_pDefLocale);
 }
 
-LocaleIface* CXFA_LocaleMgr::GetDefLocale() {
+GCedLocaleIface* CXFA_LocaleMgr::GetDefLocale() {
   if (m_pDefLocale)
     return m_pDefLocale;
 
@@ -1202,9 +1203,10 @@ CXFA_XMLLocale* CXFA_LocaleMgr::GetLocale(uint16_t lcid) {
   }
 }
 
-LocaleIface* CXFA_LocaleMgr::GetLocaleByName(const WideString& wsLocaleName) {
+GCedLocaleIface* CXFA_LocaleMgr::GetLocaleByName(
+    const WideString& wsLocaleName) {
   for (size_t i = 0; i < m_LocaleArray.size(); i++) {
-    LocaleIface* pLocale = m_LocaleArray[i];
+    GCedLocaleIface* pLocale = m_LocaleArray[i];
     if (pLocale->GetName() == wsLocaleName)
       return pLocale;
   }
@@ -1212,7 +1214,7 @@ LocaleIface* CXFA_LocaleMgr::GetLocaleByName(const WideString& wsLocaleName) {
     return nullptr;
 
   for (size_t i = 0; i < m_XMLLocaleArray.size(); i++) {
-    LocaleIface* pLocale = m_XMLLocaleArray[i];
+    GCedLocaleIface* pLocale = m_XMLLocaleArray[i];
     if (pLocale->GetName() == wsLocaleName)
       return pLocale;
   }
@@ -1225,7 +1227,7 @@ LocaleIface* CXFA_LocaleMgr::GetLocaleByName(const WideString& wsLocaleName) {
   return pLocale;
 }
 
-void CXFA_LocaleMgr::SetDefLocale(LocaleIface* pLocale) {
+void CXFA_LocaleMgr::SetDefLocale(GCedLocaleIface* pLocale) {
   m_pDefLocale = pLocale;
 }
 

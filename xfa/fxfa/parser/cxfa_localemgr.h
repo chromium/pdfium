@@ -16,11 +16,11 @@
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/member.h"
 #include "xfa/fgas/crt/locale_mgr_iface.h"
+#include "xfa/fxfa/parser/gced_locale_iface.h"
 
 class CXFA_Node;
 class CXFA_NodeLocale;
 class CXFA_XMLLocale;
-class LocaleIface;
 
 class CXFA_LocaleMgr : public cppgc::GarbageCollected<CXFA_LocaleMgr>,
                        public LocaleMgrIface {
@@ -30,10 +30,10 @@ class CXFA_LocaleMgr : public cppgc::GarbageCollected<CXFA_LocaleMgr>,
 
   void Trace(cppgc::Visitor* visitor) const;
 
-  LocaleIface* GetDefLocale() override;
-  LocaleIface* GetLocaleByName(const WideString& wsLocaleName) override;
+  GCedLocaleIface* GetDefLocale() override;
+  GCedLocaleIface* GetLocaleByName(const WideString& wsLocaleName) override;
 
-  void SetDefLocale(LocaleIface* pLocale);
+  void SetDefLocale(GCedLocaleIface* pLocale);
   WideString GetConfigLocaleName(CXFA_Node* pConfig);
 
  private:
@@ -47,9 +47,7 @@ class CXFA_LocaleMgr : public cppgc::GarbageCollected<CXFA_LocaleMgr>,
   UnownedPtr<cppgc::Heap> m_pHeap;
   std::vector<cppgc::Member<CXFA_NodeLocale>> m_LocaleArray;
   std::vector<cppgc::Member<CXFA_XMLLocale>> m_XMLLocaleArray;
-
-  // Raw, owned by m_LocaleArray or m_XMLLocaleArray, may be GC'd after them.
-  LocaleIface* m_pDefLocale = nullptr;
+  cppgc::Member<GCedLocaleIface> m_pDefLocale;
 
   WideString m_wsConfigLocale;
   uint16_t m_dwDeflcid;
