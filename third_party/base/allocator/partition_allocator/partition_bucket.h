@@ -50,7 +50,7 @@ struct PartitionBucket {
   ALWAYS_INLINE size_t get_bytes_per_span() const {
     // TODO(ajwong): Change to CheckedMul. https://crbug.com/787153
     // https://crbug.com/680657
-    return num_system_pages_per_slot_span * kSystemPageSize;
+    return num_system_pages_per_slot_span * SystemPageSize();
   }
   ALWAYS_INLINE uint16_t get_slots_per_span() const {
     // TODO(ajwong): Change to CheckedMul. https://crbug.com/787153
@@ -59,11 +59,11 @@ struct PartitionBucket {
   }
 
   static ALWAYS_INLINE size_t get_direct_map_size(size_t size) {
-    // Caller must check that the size is not above the kGenericMaxDirectMapped
+    // Caller must check that the size is not above the GenericMaxDirectMapped()
     // limit before calling. This also guards against integer overflow in the
     // calculation here.
-    DCHECK(size <= kGenericMaxDirectMapped);
-    return (size + kSystemPageOffsetMask) & kSystemPageBaseMask;
+    DCHECK(size <= GenericMaxDirectMapped());
+    return (size + SystemPageOffsetMask()) & SystemPageBaseMask();
   }
 
   // TODO(ajwong): Can this be made private?  https://crbug.com/787153

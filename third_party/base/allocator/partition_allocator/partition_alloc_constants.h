@@ -6,10 +6,15 @@
 #define THIRD_PARTY_BASE_ALLOCATOR_PARTITION_ALLOCATOR_PARTITION_ALLOC_CONSTANTS_H_
 
 #include <limits.h>
+#include <stddef.h>
 
 #include "build/build_config.h"
 #include "third_party/base/allocator/partition_allocator/page_allocator_constants.h"
 #include "third_party/base/logging.h"
+
+#if defined(OS_APPLE)
+#include <mach/vm_page_size.h>
+#endif
 
 namespace pdfium {
 namespace base {
@@ -36,17 +41,38 @@ static const size_t kBucketShift = (kAllocationGranularity == 8) ? 3 : 2;
 // perfectly up against the end of a system page.
 
 #if defined(_MIPS_ARCH_LOONGSON)
-static const size_t kPartitionPageShift = 16;  // 64 KiB
+PAGE_ALLOCATOR_CONSTANTS_DECLARE_CONSTEXPR ALWAYS_INLINE int
+PartitionPageShift() {
+  return 16;  // 64 KiB
+}
 #elif defined(ARCH_CPU_PPC64)
-static const size_t kPartitionPageShift = 18;  // 256 KiB
-#elif defined(OS_APPLE) && defined(ARCH_CPU_ARM64)
-static const size_t kPartitionPageShift = 16;  // 64 KiB
+PAGE_ALLOCATOR_CONSTANTS_DECLARE_CONSTEXPR ALWAYS_INLINE int
+PartitionPageShift() {
+  return 18;  // 256 KiB
+}
+#elif defined(OS_APPLE)
+PAGE_ALLOCATOR_CONSTANTS_DECLARE_CONSTEXPR ALWAYS_INLINE int
+PartitionPageShift() {
+  return vm_page_shift + 2;
+}
 #else
-static const size_t kPartitionPageShift = 14;  // 16 KiB
+PAGE_ALLOCATOR_CONSTANTS_DECLARE_CONSTEXPR ALWAYS_INLINE int
+PartitionPageShift() {
+  return 14;  // 16 KiB
+}
 #endif
-static const size_t kPartitionPageSize = 1 << kPartitionPageShift;
-static const size_t kPartitionPageOffsetMask = kPartitionPageSize - 1;
-static const size_t kPartitionPageBaseMask = ~kPartitionPageOffsetMask;
+PAGE_ALLOCATOR_CONSTANTS_DECLARE_CONSTEXPR ALWAYS_INLINE size_t
+PartitionPageSize() {
+  return 1ULL << PartitionPageShift();
+}
+PAGE_ALLOCATOR_CONSTANTS_DECLARE_CONSTEXPR ALWAYS_INLINE size_t
+PartitionPageOffsetMask() {
+  return PartitionPageSize() - 1;
+}
+PAGE_ALLOCATOR_CONSTANTS_DECLARE_CONSTEXPR ALWAYS_INLINE size_t
+PartitionPageBaseMask() {
+  return ~PartitionPageOffsetMask();
+}
 // TODO: Should this be 1 if defined(_MIPS_ARCH_LOONGSON)?
 static const size_t kMaxPartitionPagesPerSlotSpan = 4;
 
@@ -57,10 +83,15 @@ static const size_t kMaxPartitionPagesPerSlotSpan = 4;
 // dirty a private page, which is very wasteful if we never actually store
 // objects there.
 
-static const size_t kNumSystemPagesPerPartitionPage =
-    kPartitionPageSize / kSystemPageSize;
-static const size_t kMaxSystemPagesPerSlotSpan =
-    kNumSystemPagesPerPartitionPage * kMaxPartitionPagesPerSlotSpan;
+PAGE_ALLOCATOR_CONSTANTS_DECLARE_CONSTEXPR ALWAYS_INLINE size_t
+NumSystemPagesPerPartitionPage() {
+  return PartitionPageSize() / SystemPageSize();
+}
+
+PAGE_ALLOCATOR_CONSTANTS_DECLARE_CONSTEXPR ALWAYS_INLINE size_t
+MaxSystemPagesPerSlotSpan() {
+  return NumSystemPagesPerPartitionPage() * kMaxPartitionPagesPerSlotSpan;
+}
 
 // We reserve virtual address space in 2 MiB chunks (aligned to 2 MiB as well).
 // These chunks are called *super pages*. We do this so that we can store
@@ -126,8 +157,10 @@ static const size_t kSuperPageShift = 21;  // 2 MiB
 static const size_t kSuperPageSize = 1 << kSuperPageShift;
 static const size_t kSuperPageOffsetMask = kSuperPageSize - 1;
 static const size_t kSuperPageBaseMask = ~kSuperPageOffsetMask;
-static const size_t kNumPartitionPagesPerSuperPage =
-    kSuperPageSize / kPartitionPageSize;
+PAGE_ALLOCATOR_CONSTANTS_DECLARE_CONSTEXPR ALWAYS_INLINE size_t
+NumPartitionPagesPerSuperPage() {
+  return kSuperPageSize / PartitionPageSize();
+}
 
 // The following kGeneric* constants apply to the generic variants of the API.
 // The "order" of an allocation is closely related to the power-of-1 size of the
@@ -159,8 +192,10 @@ static const size_t kGenericMaxBucketed =
     ((kGenericNumBucketsPerOrder - 1) * kGenericMaxBucketSpacing);
 // Limit when downsizing a direct mapping using `realloc`:
 static const size_t kGenericMinDirectMappedDownsize = kGenericMaxBucketed + 1;
-static const size_t kGenericMaxDirectMapped =
-    (1UL << 31) + kPageAllocationGranularity;  // 2 GiB plus 1 more page.
+PAGE_ALLOCATOR_CONSTANTS_DECLARE_CONSTEXPR ALWAYS_INLINE size_t
+GenericMaxDirectMapped() {
+  return (1UL << 31) + PageAllocationGranularity();  // 2 GiB plus 1 more page.
+}
 static const size_t kBitsPerSizeT = sizeof(void*) * CHAR_BIT;
 
 // Constant for the memory reclaim logic.

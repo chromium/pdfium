@@ -166,7 +166,7 @@ ALWAYS_INLINE PartitionRootBase* PartitionRootBase::FromPage(
     PartitionPage* page) {
   PartitionSuperPageExtentEntry* extent_entry =
       reinterpret_cast<PartitionSuperPageExtentEntry*>(
-          reinterpret_cast<uintptr_t>(page) & kSystemPageBaseMask);
+          reinterpret_cast<uintptr_t>(page) & SystemPageBaseMask());
   return extent_entry->root;
 }
 

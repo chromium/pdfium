@@ -136,7 +136,7 @@ ALWAYS_INLINE char* PartitionSuperPageToMetadataArea(char* ptr) {
   DCHECK(!(pointer_as_uint & kSuperPageOffsetMask));
   // The metadata area is exactly one system page (the guard page) into the
   // super page.
-  return reinterpret_cast<char*>(pointer_as_uint + kSystemPageSize);
+  return reinterpret_cast<char*>(pointer_as_uint + SystemPageSize());
 }
 
 ALWAYS_INLINE PartitionPage* PartitionPage::FromPointerNoAlignmentCheck(
@@ -145,11 +145,11 @@ ALWAYS_INLINE PartitionPage* PartitionPage::FromPointerNoAlignmentCheck(
   char* super_page_ptr =
       reinterpret_cast<char*>(pointer_as_uint & kSuperPageBaseMask);
   uintptr_t partition_page_index =
-      (pointer_as_uint & kSuperPageOffsetMask) >> kPartitionPageShift;
+      (pointer_as_uint & kSuperPageOffsetMask) >> PartitionPageShift();
   // Index 0 is invalid because it is the metadata and guard area and
   // the last index is invalid because it is a guard page.
   DCHECK(partition_page_index);
-  DCHECK(partition_page_index < kNumPartitionPagesPerSuperPage - 1);
+  DCHECK(partition_page_index < NumPartitionPagesPerSuperPage() - 1);
   PartitionPage* page = reinterpret_cast<PartitionPage*>(
       PartitionSuperPageToMetadataArea(super_page_ptr) +
       (partition_page_index << kPageMetadataShift));
@@ -169,20 +169,21 @@ ALWAYS_INLINE void* PartitionPage::ToPointer(const PartitionPage* page) {
 
   // A valid |page| must be past the first guard System page and within
   // the following metadata region.
-  DCHECK(super_page_offset > kSystemPageSize);
+  DCHECK(super_page_offset > SystemPageSize());
   // Must be less than total metadata region.
-  DCHECK(super_page_offset < kSystemPageSize + (kNumPartitionPagesPerSuperPage *
-                                                kPageMetadataSize));
+  DCHECK(super_page_offset <
+         SystemPageSize() +
+             (NumPartitionPagesPerSuperPage() * kPageMetadataSize));
   uintptr_t partition_page_index =
-      (super_page_offset - kSystemPageSize) >> kPageMetadataShift;
+      (super_page_offset - SystemPageSize()) >> kPageMetadataShift;
   // Index 0 is invalid because it is the superpage extent metadata and the
   // last index is invalid because the whole PartitionPage is set as guard
   // pages for the metadata region.
   DCHECK(partition_page_index);
-  DCHECK(partition_page_index < kNumPartitionPagesPerSuperPage - 1);
+  DCHECK(partition_page_index < NumPartitionPagesPerSuperPage() - 1);
   uintptr_t super_page_base = (pointer_as_uint & kSuperPageBaseMask);
   void* ret = reinterpret_cast<void*>(
-      super_page_base + (partition_page_index << kPartitionPageShift));
+      super_page_base + (partition_page_index << PartitionPageShift()));
   return ret;
 }
 
@@ -199,10 +200,10 @@ ALWAYS_INLINE const size_t* PartitionPage::get_raw_size_ptr() const {
   // For single-slot buckets which span more than one partition page, we
   // have some spare metadata space to store the raw allocation size. We
   // can use this to report better statistics.
-  if (bucket->slot_size <= kMaxSystemPagesPerSlotSpan * kSystemPageSize)
+  if (bucket->slot_size <= MaxSystemPagesPerSlotSpan() * SystemPageSize())
     return nullptr;
 
-  DCHECK((bucket->slot_size % kSystemPageSize) == 0);
+  DCHECK((bucket->slot_size % SystemPageSize()) == 0);
   DCHECK(bucket->is_direct_mapped() || bucket->get_slots_per_span() == 1);
 
   const PartitionPage* the_next_page = this + 1;

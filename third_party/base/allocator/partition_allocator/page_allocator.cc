@@ -92,9 +92,9 @@ void* SystemAllocPages(void* hint,
                        PageAccessibilityConfiguration accessibility,
                        PageTag page_tag,
                        bool commit) {
-  DCHECK(!(length & kPageAllocationGranularityOffsetMask));
+  DCHECK(!(length & PageAllocationGranularityOffsetMask()));
   DCHECK(!(reinterpret_cast<uintptr_t>(hint) &
-           kPageAllocationGranularityOffsetMask));
+           PageAllocationGranularityOffsetMask()));
   DCHECK(commit || accessibility == PageInaccessible);
   return SystemAllocPagesInternal(hint, length, accessibility, page_tag,
                                   commit);
@@ -106,13 +106,13 @@ void* AllocPages(void* address,
                  PageAccessibilityConfiguration accessibility,
                  PageTag page_tag,
                  bool commit) {
-  DCHECK(length >= kPageAllocationGranularity);
-  DCHECK(!(length & kPageAllocationGranularityOffsetMask));
-  DCHECK(align >= kPageAllocationGranularity);
+  DCHECK(length >= PageAllocationGranularity());
+  DCHECK(!(length & PageAllocationGranularityOffsetMask()));
+  DCHECK(align >= PageAllocationGranularity());
   // Alignment must be power of 2 for masking math to work.
   DCHECK(pdfium::base::bits::IsPowerOfTwo(align));
   DCHECK(!(reinterpret_cast<uintptr_t>(address) &
-           kPageAllocationGranularityOffsetMask));
+           PageAllocationGranularityOffsetMask()));
   uintptr_t align_offset_mask = align - 1;
   uintptr_t align_base_mask = ~align_offset_mask;
   DCHECK(!(reinterpret_cast<uintptr_t>(address) & align_offset_mask));
@@ -164,7 +164,7 @@ void* AllocPages(void* address,
   }
 
   // Make a larger allocation so we can force alignment.
-  size_t try_length = length + (align - kPageAllocationGranularity);
+  size_t try_length = length + (align - PageAllocationGranularity());
   CHECK(try_length >= length);
   void* ret;
 
@@ -184,40 +184,40 @@ void* AllocPages(void* address,
 
 void FreePages(void* address, size_t length) {
   DCHECK(!(reinterpret_cast<uintptr_t>(address) &
-           kPageAllocationGranularityOffsetMask));
-  DCHECK(!(length & kPageAllocationGranularityOffsetMask));
+           PageAllocationGranularityOffsetMask()));
+  DCHECK(!(length & PageAllocationGranularityOffsetMask()));
   FreePagesInternal(address, length);
 }
 
 bool TrySetSystemPagesAccess(void* address,
                              size_t length,
                              PageAccessibilityConfiguration accessibility) {
-  DCHECK(!(length & kSystemPageOffsetMask));
+  DCHECK(!(length & SystemPageOffsetMask()));
   return TrySetSystemPagesAccessInternal(address, length, accessibility);
 }
 
 void SetSystemPagesAccess(void* address,
                           size_t length,
                           PageAccessibilityConfiguration accessibility) {
-  DCHECK(!(length & kSystemPageOffsetMask));
+  DCHECK(!(length & SystemPageOffsetMask()));
   SetSystemPagesAccessInternal(address, length, accessibility);
 }
 
 void DecommitSystemPages(void* address, size_t length) {
-  DCHECK_EQ(0UL, length & kSystemPageOffsetMask);
+  DCHECK_EQ(0UL, length & SystemPageOffsetMask());
   DecommitSystemPagesInternal(address, length);
 }
 
 bool RecommitSystemPages(void* address,
                          size_t length,
                          PageAccessibilityConfiguration accessibility) {
-  DCHECK_EQ(0UL, length & kSystemPageOffsetMask);
+  DCHECK_EQ(0UL, length & SystemPageOffsetMask());
   DCHECK(PageInaccessible != accessibility);
   return RecommitSystemPagesInternal(address, length, accessibility);
 }
 
 void DiscardSystemPages(void* address, size_t length) {
-  DCHECK_EQ(0UL, length & kSystemPageOffsetMask);
+  DCHECK_EQ(0UL, length & SystemPageOffsetMask());
   DiscardSystemPagesInternal(address, length);
 }
 
@@ -230,7 +230,7 @@ bool ReserveAddressSpace(size_t size) {
     if (mem != nullptr) {
       // We guarantee this alignment when reserving address space.
       DCHECK(!(reinterpret_cast<uintptr_t>(mem) &
-               kPageAllocationGranularityOffsetMask));
+               PageAllocationGranularityOffsetMask()));
       s_reservation_address = mem;
       s_reservation_size = size;
       return true;
