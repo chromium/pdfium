@@ -5392,14 +5392,14 @@ bool CFXJSE_FormCalcContext::GetObjectForName(CFXJSE_HostObject* pThis,
     return false;
 
   CFXJSE_Engine* pScriptContext = pDoc->GetScriptContext();
-  XFA_RESOLVENODE_RS resolveNodeRS;
+  XFA_ResolveNodeRS resolveNodeRS;
   uint32_t dwFlags = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
                      XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent;
   bool bRet = pScriptContext->ResolveObjects(
       pScriptContext->GetThisObject(),
       WideString::FromUTF8(bsAccessorName).AsStringView(), &resolveNodeRS,
       dwFlags, nullptr);
-  if (bRet && resolveNodeRS.dwFlags == XFA_ResolveNode_RSType_Nodes) {
+  if (bRet && resolveNodeRS.dwFlags == XFA_ResolveNodeRS::Type::kNodes) {
     accessorValue->Assign(pScriptContext->GetOrCreateJSBindingFromMap(
         resolveNodeRS.objects.front().Get()));
     return true;
@@ -5411,7 +5411,7 @@ bool CFXJSE_FormCalcContext::GetObjectForName(CFXJSE_HostObject* pThis,
 bool CFXJSE_FormCalcContext::ResolveObjects(CFXJSE_HostObject* pThis,
                                             CFXJSE_Value* pRefValue,
                                             ByteStringView bsSomExp,
-                                            XFA_RESOLVENODE_RS* resolveNodeRS,
+                                            XFA_ResolveNodeRS* resolveNodeRS,
                                             bool bDotAccessor,
                                             bool bHasNoResolveName) {
   CXFA_Document* pDoc = ToFormCalcContext(pThis)->GetDocument();
@@ -5462,7 +5462,7 @@ bool CFXJSE_FormCalcContext::ResolveObjects(CFXJSE_HostObject* pThis,
 // static
 void CFXJSE_FormCalcContext::ParseResolveResult(
     CFXJSE_HostObject* pThis,
-    const XFA_RESOLVENODE_RS& resolveNodeRS,
+    const XFA_ResolveNodeRS& resolveNodeRS,
     CFXJSE_Value* pParentValue,
     std::vector<std::unique_ptr<CFXJSE_Value>>* resultValues,
     bool* bAttribute) {
@@ -5473,7 +5473,7 @@ void CFXJSE_FormCalcContext::ParseResolveResult(
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
 
-  if (resolveNodeRS.dwFlags == XFA_ResolveNode_RSType_Nodes) {
+  if (resolveNodeRS.dwFlags == XFA_ResolveNodeRS::Type::kNodes) {
     *bAttribute = false;
     CFXJSE_Engine* pScriptContext = pContext->GetDocument()->GetScriptContext();
     for (auto& pObject : resolveNodeRS.objects) {
@@ -5738,7 +5738,7 @@ void CFXJSE_FormCalcContext::DotAccessorCommon(
     bool bAllEmpty = true;
     for (int32_t i = 2; i < iLength; i++) {
       argAccessor->GetObjectPropertyByIdx(i, hJSObjValue.get());
-      XFA_RESOLVENODE_RS resolveNodeRS;
+      XFA_ResolveNodeRS resolveNodeRS;
       if (ResolveObjects(pThis, hJSObjValue.get(), bsSomExp.AsStringView(),
                          &resolveNodeRS, bDotAccessor, bHasNoResolveName)) {
         ParseResolveResult(pThis, resolveNodeRS, hJSObjValue.get(),
@@ -5774,7 +5774,7 @@ void CFXJSE_FormCalcContext::DotAccessorCommon(
     return;
   }
 
-  XFA_RESOLVENODE_RS resolveNodeRS;
+  XFA_ResolveNodeRS resolveNodeRS;
   bool bRet = false;
   ByteString bsAccessorName =
       fxv8::ReentrantToByteStringHelper(info.GetIsolate(), info[1]);

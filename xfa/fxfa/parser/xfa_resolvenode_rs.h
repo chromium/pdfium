@@ -14,26 +14,23 @@
 
 class CXFA_Object;
 
-enum XFA_ResolveNode_RSType {
-  XFA_ResolveNode_RSType_Nodes,
-  XFA_ResolveNode_RSType_Attribute,
-  XFA_ResolveNode_RSType_CreateNodeOne,
-  XFA_ResolveNode_RSType_CreateNodeAll,
-  XFA_ResolveNode_RSType_CreateNodeMidAll,
-  XFA_ResolveNode_RSType_ExistNodes,
-};
+class XFA_ResolveNodeRS {
+ public:
+  enum class Type {
+    kNodes,
+    kAttribute,
+    kCreateNodeOne,
+    kCreateNodeAll,
+    kCreateNodeMidAll,
+    kExistNodes,
+  };
 
-struct XFA_RESOLVENODE_RS {
-  XFA_RESOLVENODE_RS();
-  ~XFA_RESOLVENODE_RS();
+  XFA_ResolveNodeRS();
+  ~XFA_ResolveNodeRS();
 
-  XFA_ResolveNode_RSType dwFlags = XFA_ResolveNode_RSType_Nodes;
+  Type dwFlags = Type::kNodes;
   XFA_SCRIPTATTRIBUTEINFO script_attribute;
   std::vector<UnownedPtr<CXFA_Object>> objects;
 };
-
-inline XFA_RESOLVENODE_RS::XFA_RESOLVENODE_RS() = default;
-
-inline XFA_RESOLVENODE_RS::~XFA_RESOLVENODE_RS() = default;
 
 #endif  // XFA_FXFA_PARSER_XFA_RESOLVENODE_RS_H_

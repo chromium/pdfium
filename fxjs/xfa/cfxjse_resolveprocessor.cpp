@@ -237,7 +237,7 @@ bool CFXJSE_ResolveProcessor::ResolveForAttributeRs(CXFA_Object* curNode,
 
   rnd.m_ScriptAttribute = info.value();
   rnd.m_Objects.emplace_back(curNode);
-  rnd.m_dwFlag = XFA_ResolveNode_RSType_Attribute;
+  rnd.m_dwFlag = XFA_ResolveNodeRS::Type::kAttribute;
   return true;
 }
 

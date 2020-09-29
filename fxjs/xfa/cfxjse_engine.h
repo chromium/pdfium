@@ -80,7 +80,7 @@ class CFXJSE_Engine final : public CFX_V8 {
 
   bool ResolveObjects(CXFA_Object* refObject,
                       WideStringView wsExpression,
-                      XFA_RESOLVENODE_RS* resolveNodeRS,
+                      XFA_ResolveNodeRS* resolveNodeRS,
                       uint32_t dwStyles,
                       CXFA_Node* bindNode);
 

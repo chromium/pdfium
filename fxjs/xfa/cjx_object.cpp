@@ -1122,7 +1122,7 @@ void CJX_Object::ScriptAttributeString(CFXJSE_Value* pValue,
 
   CXFA_Node* pProtoNode = nullptr;
   if (!wsSOM.IsEmpty()) {
-    XFA_RESOLVENODE_RS resolveNodeRS;
+    XFA_ResolveNodeRS resolveNodeRS;
     bool bRet = GetDocument()->GetScriptContext()->ResolveObjects(
         pProtoRoot, wsSOM.AsStringView(), &resolveNodeRS,
         XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Attributes |

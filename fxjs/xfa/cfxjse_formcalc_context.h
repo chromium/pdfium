@@ -282,12 +282,12 @@ class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
   static bool ResolveObjects(CFXJSE_HostObject* pThis,
                              CFXJSE_Value* pParentValue,
                              ByteStringView bsSomExp,
-                             XFA_RESOLVENODE_RS* resolveNodeRS,
+                             XFA_ResolveNodeRS* resolveNodeRS,
                              bool bdotAccessor,
                              bool bHasNoResolveName);
   static void ParseResolveResult(
       CFXJSE_HostObject* pThis,
-      const XFA_RESOLVENODE_RS& resolveNodeRS,
+      const XFA_ResolveNodeRS& resolveNodeRS,
       CFXJSE_Value* pParentValue,
       std::vector<std::unique_ptr<CFXJSE_Value>>* resultValues,
       bool* bAttribute);

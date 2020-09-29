@@ -349,16 +349,16 @@ CXFA_Node* FindDataRefDataNode(CXFA_Document* pDocument,
   if (bUpLevel || !wsRef.EqualsASCII("name"))
     dFlags |= (XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings);
 
-  XFA_RESOLVENODE_RS rs;
+  XFA_ResolveNodeRS rs;
   pDocument->GetScriptContext()->ResolveObjects(
       pDataScope, wsRef.AsStringView(), &rs, dFlags, pTemplateNode);
-  if (rs.dwFlags == XFA_ResolveNode_RSType_CreateNodeAll ||
-      rs.dwFlags == XFA_ResolveNode_RSType_CreateNodeMidAll ||
+  if (rs.dwFlags == XFA_ResolveNodeRS::Type::kCreateNodeAll ||
+      rs.dwFlags == XFA_ResolveNodeRS::Type::kCreateNodeMidAll ||
       rs.objects.size() > 1) {
     return pDocument->GetNotBindNode(rs.objects);
   }
 
-  if (rs.dwFlags == XFA_ResolveNode_RSType_CreateNodeOne) {
+  if (rs.dwFlags == XFA_ResolveNodeRS::Type::kCreateNodeOne) {
     CXFA_Object* pObject =
         !rs.objects.empty() ? rs.objects.front().Get() : nullptr;
     CXFA_Node* pNode = ToNode(pObject);
@@ -1191,15 +1191,16 @@ void UpdateBindingRelations(CXFA_Document* pDocument,
                   : WideString();
           uint32_t dFlags =
               XFA_RESOLVENODE_Children | XFA_RESOLVENODE_CreateNode;
-          XFA_RESOLVENODE_RS rs;
+          XFA_ResolveNodeRS rs;
           pDocument->GetScriptContext()->ResolveObjects(
               pDataScope, wsRef.AsStringView(), &rs, dFlags, pTemplateNode);
           CXFA_Object* pObject =
               !rs.objects.empty() ? rs.objects.front().Get() : nullptr;
           pDataNode = ToNode(pObject);
           if (pDataNode) {
-            CreateDataBinding(pFormNode, pDataNode,
-                              rs.dwFlags == XFA_ResolveNode_RSType_ExistNodes);
+            CreateDataBinding(
+                pFormNode, pDataNode,
+                rs.dwFlags == XFA_ResolveNodeRS::Type::kExistNodes);
           } else {
             FormValueNode_MatchNoneCreateChild(pFormNode);
           }
@@ -1566,7 +1567,7 @@ void CXFA_Document::DoProtoMerge() {
       uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Attributes |
                         XFA_RESOLVENODE_Properties | XFA_RESOLVENODE_Parent |
                         XFA_RESOLVENODE_Siblings;
-      XFA_RESOLVENODE_RS resolveNodeRS;
+      XFA_ResolveNodeRS resolveNodeRS;
       if (m_pScriptContext->ResolveObjects(pUseHrefNode, wsSOM, &resolveNodeRS,
                                            dwFlag, nullptr)) {
         auto* pFirstObject = resolveNodeRS.objects.front().Get();

@@ -50,14 +50,14 @@ CJS_Result CJX_Tree::resolveNode(
   uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Attributes |
                     XFA_RESOLVENODE_Properties | XFA_RESOLVENODE_Parent |
                     XFA_RESOLVENODE_Siblings;
-  XFA_RESOLVENODE_RS resolveNodeRS;
+  XFA_ResolveNodeRS resolveNodeRS;
   if (!pScriptContext->ResolveObjects(ToNode(refNode),
                                       expression.AsStringView(), &resolveNodeRS,
                                       dwFlag, nullptr)) {
     return CJS_Result::Success(runtime->NewNull());
   }
 
-  if (resolveNodeRS.dwFlags == XFA_ResolveNode_RSType_Nodes) {
+  if (resolveNodeRS.dwFlags == XFA_ResolveNodeRS::Type::kNodes) {
     CXFA_Object* pObject = resolveNodeRS.objects.front().Get();
     CFXJSE_Value* value =
         GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(pObject);
@@ -208,7 +208,7 @@ void CJX_Tree::ResolveNodeList(CFXJSE_Value* pValue,
   if (!refNode)
     refNode = GetXFANode();
 
-  XFA_RESOLVENODE_RS resolveNodeRS;
+  XFA_ResolveNodeRS resolveNodeRS;
   CXFA_Document* pDoc = GetDocument();
   CFXJSE_Engine* pScriptContext = pDoc->GetScriptContext();
   pScriptContext->ResolveObjects(refNode, wsExpression.AsStringView(),
@@ -218,7 +218,7 @@ void CJX_Tree::ResolveNodeList(CFXJSE_Value* pValue,
       pDoc->GetHeap()->GetAllocationHandle(), pDoc);
   pDoc->GetNodeOwner()->PersistList(pNodeList);
 
-  if (resolveNodeRS.dwFlags == XFA_ResolveNode_RSType_Nodes) {
+  if (resolveNodeRS.dwFlags == XFA_ResolveNodeRS::Type::kNodes) {
     for (auto& pObject : resolveNodeRS.objects) {
       if (pObject->IsNode())
         pNodeList->Append(pObject->AsNode());

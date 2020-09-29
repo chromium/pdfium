@@ -437,7 +437,7 @@ CXFA_FFWidget* CXFA_FFDocView::GetWidgetByName(const WideString& wsName,
   }
   WideString wsExpression = (!pRefNode ? L"$form." : L"") + wsName;
 
-  XFA_RESOLVENODE_RS resolveNodeRS;
+  XFA_ResolveNodeRS resolveNodeRS;
   constexpr uint32_t kStyle = XFA_RESOLVENODE_Children |
                               XFA_RESOLVENODE_Properties |
                               XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent;
@@ -446,7 +446,7 @@ CXFA_FFWidget* CXFA_FFDocView::GetWidgetByName(const WideString& wsName,
     return nullptr;
   }
 
-  if (resolveNodeRS.dwFlags == XFA_ResolveNode_RSType_Nodes) {
+  if (resolveNodeRS.dwFlags == XFA_ResolveNodeRS::Type::kNodes) {
     CXFA_Node* pNode = resolveNodeRS.objects.front()->AsNode();
     if (pNode && pNode->IsWidgetReady())
       return GetWidgetForNode(pNode);
@@ -637,11 +637,11 @@ void CXFA_FFDocView::RunBindItems() {
     constexpr uint32_t kStyle =
         XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
         XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_ALL;
-    XFA_RESOLVENODE_RS rs;
+    XFA_ResolveNodeRS rs;
     pScriptContext->ResolveObjects(pWidgetNode, wsRef.AsStringView(), &rs,
                                    kStyle, nullptr);
     pWidgetNode->DeleteItem(-1, false, false);
-    if (rs.dwFlags != XFA_ResolveNode_RSType_Nodes || rs.objects.empty())
+    if (rs.dwFlags != XFA_ResolveNodeRS::Type::kNodes || rs.objects.empty())
       continue;
 
     WideString wsValueRef = item->GetValueRef();

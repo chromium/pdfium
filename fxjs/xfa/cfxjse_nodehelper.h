@@ -28,7 +28,8 @@ class CFXJSE_NodeHelper {
   void SetCreateNodeType(CXFA_Node* refNode);
 
   XFA_Element m_eLastCreateType = XFA_Element::DataValue;
-  XFA_ResolveNode_RSType m_iCreateFlag = XFA_ResolveNode_RSType_CreateNodeOne;
+  XFA_ResolveNodeRS::Type m_iCreateFlag =
+      XFA_ResolveNodeRS::Type::kCreateNodeOne;
   size_t m_iCreateCount = 0;
   int32_t m_iCurAllStart = -1;
   cppgc::Persistent<CXFA_Node> m_pCreateParent;

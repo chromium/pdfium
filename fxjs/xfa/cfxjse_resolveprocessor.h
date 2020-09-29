@@ -34,7 +34,7 @@ class CFXJSE_ResolveNodeData {
   XFA_HashCode m_uHashName = XFA_HASHCODE_None;
   int32_t m_nLevel = 0;
   uint32_t m_dwStyles = XFA_RESOLVENODE_Children;
-  XFA_ResolveNode_RSType m_dwFlag = XFA_ResolveNode_RSType_Nodes;
+  XFA_ResolveNodeRS::Type m_dwFlag = XFA_ResolveNodeRS::Type::kNodes;
   std::vector<UnownedPtr<CXFA_Object>> m_Objects;
   XFA_SCRIPTATTRIBUTEINFO m_ScriptAttribute;
 };
