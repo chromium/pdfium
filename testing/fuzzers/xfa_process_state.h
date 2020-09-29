@@ -22,12 +22,11 @@ class XFAProcessState {
   ~XFAProcessState();
 
   cppgc::Heap* GetHeap() const;
-  void MaybeForceGCAndPump();
+  void ForceGCAndPump();
 
  private:
   v8::Platform* const platform_;
   v8::Isolate* const isolate_;
-  int iterations_ = 0;
   FXGCScopedHeap heap_;
 };
 

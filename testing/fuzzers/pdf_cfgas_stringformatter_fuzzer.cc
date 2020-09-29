@@ -95,6 +95,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
       break;
   }
 
-  state->MaybeForceGCAndPump();
+  state->ForceGCAndPump();
   return 0;
 }

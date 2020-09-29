@@ -16,6 +16,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   auto* state = static_cast<XFAProcessState*>(FPDF_GetFuzzerPerProcessState());
   WideString input = WideString::FromUTF8(ByteStringView(data, size));
   CFXJSE_FormCalcContext::Translate(state->GetHeap(), input.AsStringView());
-  state->MaybeForceGCAndPump();
+  state->ForceGCAndPump();
   return 0;
 }

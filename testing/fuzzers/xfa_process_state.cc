@@ -17,11 +17,8 @@ cppgc::Heap* XFAProcessState::GetHeap() const {
   return heap_.get();
 }
 
-void XFAProcessState::MaybeForceGCAndPump() {
-  if (++iterations_ > 1000) {
-    FXGC_ForceGarbageCollection(heap_.get());
-    iterations_ = 0;
-  }
+void XFAProcessState::ForceGCAndPump() {
+  FXGC_ForceGarbageCollection(heap_.get());
   while (v8::platform::PumpMessageLoop(platform_, isolate_))
     continue;
 }

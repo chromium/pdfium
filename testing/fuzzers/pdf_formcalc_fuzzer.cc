@@ -15,6 +15,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   CXFA_FMLexer lexer(input.AsStringView());
   CXFA_FMParser parser(state->GetHeap(), &lexer);
   parser.Parse();
-  state->MaybeForceGCAndPump();
+  state->ForceGCAndPump();
   return 0;
 }
