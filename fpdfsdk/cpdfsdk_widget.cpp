@@ -99,13 +99,9 @@ CXFA_FFWidgetHandler* CPDFSDK_Widget::GetXFAWidgetHandler() const {
   if (!pContext || !pContext->ContainsExtensionForegroundForm())
     return nullptr;
 
-  if (!m_pWidgetHandler) {
-    CXFA_FFDocView* pDocView =
-        static_cast<CPDFXFA_Context*>(pContext)->GetXFADocView();
-    if (pDocView)
-      m_pWidgetHandler = pDocView->GetWidgetHandler();
-  }
-  return m_pWidgetHandler.Get();
+  CXFA_FFDocView* pDocView =
+      static_cast<CPDFXFA_Context*>(pContext)->GetXFADocView();
+  return pDocView ? pDocView->GetWidgetHandler() : nullptr;
 }
 
 static XFA_EVENTTYPE GetXFAEventType(PDFSDK_XFAAActionType eXFAAAT) {
