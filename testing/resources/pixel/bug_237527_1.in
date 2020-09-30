@@ -1,0 +1,37 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Annots [4 0 R]
+  /MediaBox [0 0 300 300]
+>>
+endobj
+{{object 4 0}} <<
+  /Type /Annot
+  /Subtype /Link
+  /A <<
+    /Type /Action
+    /S /URI
+    /URI (www.google.com)
+  >>
+  /Border [0 0 1]
+  /C [0 1 1]
+  /H /I
+  /Rect [100 100 200 120]
+>>
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
