@@ -35,14 +35,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   auto* state = static_cast<XFAProcessState*>(FPDF_GetFuzzerPerProcessState());
   cppgc::Heap* heap = state->GetHeap();
 
-  // Static for speed.
-  static std::vector<cppgc::Persistent<CXFA_LocaleMgr>> mgrs;
-  if (mgrs.empty()) {
-    for (const auto* locale : kLocales)
-      mgrs.push_back(cppgc::MakeGarbageCollected<CXFA_LocaleMgr>(
-          heap->GetAllocationHandle(), heap, nullptr, locale));
-  }
-
   uint8_t test_selector = data[0] % 10;
   uint8_t locale_selector = data[1] % pdfium::size(kLocales);
   uint8_t type_selector = data[2] % pdfium::size(kTypes);
@@ -64,37 +56,55 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
     case 0:
       fmt->FormatText(value, &result);
       break;
-    case 1:
-      fmt->FormatNum(mgrs[locale_selector], value, &result);
+    case 1: {
+      auto* mgr = cppgc::MakeGarbageCollected<CXFA_LocaleMgr>(
+          heap->GetAllocationHandle(), heap, nullptr,
+          kLocales[locale_selector]);
+      fmt->FormatNum(mgr, value, &result);
       break;
-    case 2:
-      fmt->FormatDateTime(mgrs[locale_selector], value, kTypes[type_selector],
-                          &result);
+    }
+    case 2: {
+      auto* mgr = cppgc::MakeGarbageCollected<CXFA_LocaleMgr>(
+          heap->GetAllocationHandle(), heap, nullptr,
+          kLocales[locale_selector]);
+      fmt->FormatDateTime(mgr, value, kTypes[type_selector], &result);
       break;
-    case 3:
+    }
+    case 3: {
       fmt->FormatNull(&result);
       break;
-    case 4:
+    }
+    case 4: {
       fmt->FormatZero(&result);
       break;
-    case 5:
+    }
+    case 5: {
       fmt->ParseText(value, &result);
       break;
-    case 6:
-      fmt->ParseNum(mgrs[locale_selector], value, &result);
+    }
+    case 6: {
+      auto* mgr = cppgc::MakeGarbageCollected<CXFA_LocaleMgr>(
+          heap->GetAllocationHandle(), heap, nullptr,
+          kLocales[locale_selector]);
+      fmt->ParseNum(mgr, value, &result);
       break;
-    case 7:
-      fmt->ParseDateTime(mgrs[locale_selector], value, kTypes[type_selector],
-                         &dt);
+    }
+    case 7: {
+      auto* mgr = cppgc::MakeGarbageCollected<CXFA_LocaleMgr>(
+          heap->GetAllocationHandle(), heap, nullptr,
+          kLocales[locale_selector]);
+      fmt->ParseDateTime(mgr, value, kTypes[type_selector], &dt);
       break;
-    case 8:
+    }
+    case 8: {
       fmt->ParseNull(value);
       break;
-    case 9:
+    }
+    case 9: {
       fmt->ParseZero(value);
       break;
+    }
   }
-
   state->ForceGCAndPump();
   return 0;
 }
