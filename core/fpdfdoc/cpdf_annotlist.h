@@ -28,6 +28,7 @@ class CPDF_AnnotList : public CPDF_PageRenderContext::AnnotListIface {
   ~CPDF_AnnotList() override;
 
   void DisplayAnnots(CPDF_Page* pPage,
+                     CFX_RenderDevice* device,
                      CPDF_RenderContext* pContext,
                      bool bPrinting,
                      const CFX_Matrix* pMatrix,

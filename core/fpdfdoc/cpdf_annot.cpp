@@ -482,7 +482,7 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
   } else {
     ByteString style = pBS->GetStringFor("S");
     pDashArray = pBS->GetArrayFor("D");
-    style_char = style[1];
+    style_char = style[0];
     width = pBS->GetNumberFor("W");
   }
   if (width <= 0) {
@@ -498,6 +498,12 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
   }
   CFX_GraphStateData graph_state;
   graph_state.m_LineWidth = width;
+  if (style_char == 'U') {
+    // TODO(https://crbug.com/237527): Handle the "Underline" border style
+    // instead of drawing the rectangle border.
+    return;
+  }
+
   if (style_char == 'D') {
     if (pDashArray) {
       graph_state.m_DashArray =
