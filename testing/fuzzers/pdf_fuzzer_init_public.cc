@@ -73,7 +73,6 @@ PDFFuzzerInitPublic::PDFFuzzerInitPublic() {
   v8::Isolate::CreateParams create_params;
   create_params.array_buffer_allocator = allocator_.get();
   isolate_.reset(v8::Isolate::New(create_params));
-  FXGC_Initialize(platform_.get(), isolate_.get());
 #endif  // PDF_ENABLE_XFA
 #endif  // PDF_ENABLE_V8
 
