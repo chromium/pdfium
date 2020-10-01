@@ -727,9 +727,7 @@ CFGAS_StringFormatter::DateTimeType AddDateToDatelessType(
       return CFGAS_StringFormatter::DateTimeType::kDate;
     case CFGAS_StringFormatter::DateTimeType::kTime:
       return CFGAS_StringFormatter::DateTimeType::kTimeDate;
-    case CFGAS_StringFormatter::DateTimeType::kDate:
-    case CFGAS_StringFormatter::DateTimeType::kDateTime:
-    case CFGAS_StringFormatter::DateTimeType::kTimeDate:
+    default:
       NOTREACHED();
       return type;
   }
@@ -742,9 +740,7 @@ CFGAS_StringFormatter::DateTimeType AddTimeToTimelessType(
       return CFGAS_StringFormatter::DateTimeType::kTime;
     case CFGAS_StringFormatter::DateTimeType::kDate:
       return CFGAS_StringFormatter::DateTimeType::kDateTime;
-    case CFGAS_StringFormatter::DateTimeType::kTime:
-    case CFGAS_StringFormatter::DateTimeType::kDateTime:
-    case CFGAS_StringFormatter::DateTimeType::kTimeDate:
+    default:
       NOTREACHED();
       return type;
   }
