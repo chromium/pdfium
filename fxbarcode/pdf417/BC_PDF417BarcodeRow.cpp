@@ -33,7 +33,3 @@ void CBC_BarcodeRow::addBar(bool black, int32_t width) {
   std::fill_n(m_row.begin() + m_currentLocation, width, black ? 1 : 0);
   m_currentLocation += width;
 }
-
-std::vector<uint8_t, FxAllocAllocator<uint8_t>>& CBC_BarcodeRow::getRow() {
-  return m_row;
-}
