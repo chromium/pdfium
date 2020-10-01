@@ -2,14 +2,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# See https://bugs.chromium.org/p/webrtc/issues/detail?id=5453.
-# Some WebRTC targets require the 10.7 deployment version of the Mac SDK
-# and a 10.11 min SDK, but those targets are only used in non-Chromium
-# builds. We can remove this when Chromium drops 10.6 support and also
-# requires 10.7.
-mac_sdk_min_build_override = "10.10"
-mac_deployment_target_build_override = "10.7"
-
 # Variable that can be used to support multiple build scenarios, like having
 # Chromium specific targets in a client project's GN file etc.
 build_with_chromium = false
@@ -26,9 +18,6 @@ enable_java_templates = false
 if (current_cpu == "arm") {
   arm_use_neon = true
 }
-
-# PDFium builds don't use Chromium's third_party/binutils.
-linux_use_bundled_binutils_override = false
 
 # PDFium just uses the Chromium suppression files for now.
 asan_suppressions_file = "//build/sanitizers/asan_suppressions.cc"
