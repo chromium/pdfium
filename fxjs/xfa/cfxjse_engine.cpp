@@ -628,7 +628,7 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
   int32_t nStart = 0;
   int32_t nLevel = 0;
 
-  std::vector<UnownedPtr<CXFA_Object>> findObjects;
+  std::vector<cppgc::Member<CXFA_Object>> findObjects;
   findObjects.emplace_back(refObject ? refObject : m_pDocument->GetRoot());
   int32_t nNodes = 0;
   while (true) {
@@ -670,7 +670,7 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
       }
       break;
     }
-    std::vector<UnownedPtr<CXFA_Object>> retObjects;
+    std::vector<cppgc::Member<CXFA_Object>> retObjects;
     while (i < nNodes) {
       bool bDataBind = false;
       if (((dwStyles & XFA_RESOLVENODE_Bind) ||

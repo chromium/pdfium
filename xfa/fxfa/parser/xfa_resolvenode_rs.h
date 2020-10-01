@@ -9,12 +9,15 @@
 
 #include <vector>
 
-#include "core/fxcrt/unowned_ptr.h"
+#include "v8/include/cppgc/macros.h"
+#include "v8/include/cppgc/member.h"
 #include "xfa/fxfa/parser/xfa_basic_data.h"
 
 class CXFA_Object;
 
 class XFA_ResolveNodeRS {
+  CPPGC_STACK_ALLOCATED();  // Allow raw/unowned pointers.
+
  public:
   enum class Type {
     kNodes,
@@ -30,7 +33,10 @@ class XFA_ResolveNodeRS {
 
   Type dwFlags = Type::kNodes;
   XFA_SCRIPTATTRIBUTEINFO script_attribute;
-  std::vector<UnownedPtr<CXFA_Object>> objects;
+
+  // Vector of Member would be correct for stack-based vectors, if
+  // STL worked with cppgc.
+  std::vector<cppgc::Member<CXFA_Object>> objects;
 };
 
 #endif  // XFA_FXFA_PARSER_XFA_RESOLVENODE_RS_H_

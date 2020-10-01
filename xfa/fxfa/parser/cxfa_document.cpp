@@ -1628,7 +1628,7 @@ void CXFA_Document::DataMerge_UpdateBindingRelations(
 }
 
 CXFA_Node* CXFA_Document::GetNotBindNode(
-    const std::vector<UnownedPtr<CXFA_Object>>& arrayObjects) const {
+    pdfium::span<cppgc::Member<CXFA_Object>> arrayObjects) const {
   for (auto& pObject : arrayObjects) {
     CXFA_Node* pNode = pObject->AsNode();
     if (pNode && !pNode->HasBindItem())

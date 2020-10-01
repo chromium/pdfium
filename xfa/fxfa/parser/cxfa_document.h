@@ -14,6 +14,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/gc/heap.h"
 #include "third_party/base/optional.h"
+#include "third_party/base/span.h"
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/member.h"
 #include "v8/include/cppgc/persistent.h"
@@ -96,7 +97,7 @@ class CXFA_Document final : public cppgc::GarbageCollected<CXFA_Document> {
   CXFA_Object* GetXFAObject(XFA_HashCode wsNodeNameHash);
   CXFA_Node* GetNodeByID(CXFA_Node* pRoot, WideStringView wsID) const;
   CXFA_Node* GetNotBindNode(
-      const std::vector<UnownedPtr<CXFA_Object>>& arrayNodes) const;
+      pdfium::span<cppgc::Member<CXFA_Object>> arrayNodes) const;
 
   LayoutProcessorIface* GetLayoutProcessor() const {
     return m_pLayoutProcessor;
