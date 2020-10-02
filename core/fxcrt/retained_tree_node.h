@@ -7,7 +7,6 @@
 
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/tree_node.h"
-#include "third_party/base/logging.h"
 
 namespace fxcrt {
 

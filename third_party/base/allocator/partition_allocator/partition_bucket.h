@@ -10,6 +10,7 @@
 
 #include "third_party/base/allocator/partition_allocator/partition_alloc_constants.h"
 #include "third_party/base/base_export.h"
+#include "third_party/base/check.h"
 #include "third_party/base/compiler_specific.h"
 
 namespace pdfium {

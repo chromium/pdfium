@@ -16,7 +16,6 @@
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
-#include "third_party/base/logging.h"
 #include "third_party/base/numerics/safe_math.h"
 
 namespace fxcodec {

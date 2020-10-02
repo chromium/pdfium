@@ -13,7 +13,6 @@
 #include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_extension.h"
 #include "fxjs/gc/container_trace.h"
-#include "third_party/base/logging.h"
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fxfa/fm2js/cxfa_fmtojavascriptdepth.h"
 

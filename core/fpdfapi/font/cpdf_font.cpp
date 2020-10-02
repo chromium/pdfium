@@ -29,7 +29,6 @@
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
-#include "third_party/base/logging.h"
 #include "third_party/base/stl_util.h"
 
 namespace {

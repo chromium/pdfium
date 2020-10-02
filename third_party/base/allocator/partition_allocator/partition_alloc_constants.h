@@ -10,7 +10,6 @@
 
 #include "build/build_config.h"
 #include "third_party/base/allocator/partition_allocator/page_allocator_constants.h"
-#include "third_party/base/logging.h"
 
 #if defined(OS_APPLE)
 #include <mach/vm_page_size.h>
