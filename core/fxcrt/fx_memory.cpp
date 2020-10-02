@@ -48,7 +48,7 @@ void* FXMEM_DefaultAlloc(size_t byte_size) {
 }
 
 void* FXMEM_DefaultCalloc(size_t num_elems, size_t byte_size) {
-  return internal::Calloc(num_elems, byte_size);
+  return pdfium::internal::Calloc(num_elems, byte_size);
 }
 
 void* FXMEM_DefaultRealloc(void* pointer, size_t new_size) {
@@ -72,6 +72,7 @@ NOINLINE void FX_OutOfMemoryTerminate(size_t size) {
   abort();
 }
 
+namespace pdfium {
 namespace internal {
 
 void* Alloc(size_t num_members, size_t member_size) {
@@ -150,6 +151,7 @@ void* ReallocOrDie(void* ptr, size_t num_members, size_t member_size) {
 }
 
 }  // namespace internal
+}  // namespace pdfium
 
 void FX_Free(void* ptr) {
   // TODO(palmer): Removing this check exposes crashes when PDFium callers
