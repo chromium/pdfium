@@ -14,6 +14,7 @@
 #include "core/fxge/dib/cfx_imagestretcher.h"
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/compiler_specific.h"
+#include "third_party/base/notreached.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/stl_util.h"
 

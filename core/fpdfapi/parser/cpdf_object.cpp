@@ -14,7 +14,7 @@
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fxcrt/fx_string.h"
-#include "third_party/base/logging.h"
+#include "third_party/base/notreached.h"
 
 CPDF_Object::~CPDF_Object() = default;
 

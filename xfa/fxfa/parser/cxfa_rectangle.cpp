@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/notreached.h"
 #include "xfa/fxfa/parser/cxfa_corner.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_stroke.h"

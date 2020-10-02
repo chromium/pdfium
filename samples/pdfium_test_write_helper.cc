@@ -18,7 +18,7 @@
 #include "public/fpdf_thumbnail.h"
 #include "testing/fx_string_testhelpers.h"
 #include "testing/image_diff/image_diff_png.h"
-#include "third_party/base/logging.h"
+#include "third_party/base/notreached.h"
 
 namespace {
 

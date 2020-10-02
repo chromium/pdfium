@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_memory_wrappers.h"
+#include "third_party/base/notreached.h"
 #include "third_party/base/stl_util.h"
 
 namespace fxcodec {

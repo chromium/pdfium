@@ -13,6 +13,7 @@
 #include "build/build_config.h"
 #include "third_party/base/base_export.h"
 #include "third_party/base/bits.h"
+#include "third_party/base/check.h"
 
 #if defined(COMPILER_MSVC)
 #include <malloc.h>

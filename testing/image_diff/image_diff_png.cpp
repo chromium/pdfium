@@ -17,7 +17,7 @@
 #include <string>
 
 #include "third_party/base/compiler_specific.h"
-#include "third_party/base/logging.h"
+#include "third_party/base/notreached.h"
 
 #ifdef USE_SYSTEM_ZLIB
 #include <zlib.h>

@@ -37,7 +37,7 @@
 #include "core/fxcrt/autonuller.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_graphstatedata.h"
-#include "third_party/base/logging.h"
+#include "third_party/base/notreached.h"
 #include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
 

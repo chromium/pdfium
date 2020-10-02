@@ -5,7 +5,7 @@
 #include "third_party/base/allocator/partition_allocator/spin_lock.h"
 
 #include "build/build_config.h"
-#include "third_party/base/logging.h"
+#include "third_party/base/notreached.h"
 
 #if defined(OS_WIN)
 #include <windows.h>

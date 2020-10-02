@@ -10,6 +10,7 @@
 #include <utility>
 #include <vector>
 
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fde/cfde_textout.h"

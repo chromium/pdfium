@@ -16,7 +16,7 @@
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
 #include "fxjs/ijs_event_context.h"
 #include "fxjs/ijs_runtime.h"
-#include "third_party/base/logging.h"
+#include "third_party/base/notreached.h"
 #include "third_party/base/stl_util.h"
 
 bool CPDFSDK_ActionHandler::DoAction_DocOpen(

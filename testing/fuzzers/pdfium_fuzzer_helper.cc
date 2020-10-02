@@ -21,6 +21,7 @@
 #include "public/fpdf_dataavail.h"
 #include "public/fpdf_ext.h"
 #include "public/fpdf_text.h"
+#include "third_party/base/notreached.h"
 #include "third_party/base/span.h"
 
 namespace {

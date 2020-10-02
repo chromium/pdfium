@@ -23,6 +23,8 @@
 #endif
 
 #include "third_party/base/allocator/partition_allocator/page_allocator.h"
+#include "third_party/base/check.h"
+#include "third_party/base/notreached.h"
 
 #ifndef MAP_ANONYMOUS
 #define MAP_ANONYMOUS MAP_ANON

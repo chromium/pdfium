@@ -9,7 +9,7 @@
 #include <type_traits>
 #include <utility>
 
-#include "third_party/base/logging.h"
+#include "third_party/base/check.h"
 #include "third_party/base/template_util.h"
 
 namespace pdfium {

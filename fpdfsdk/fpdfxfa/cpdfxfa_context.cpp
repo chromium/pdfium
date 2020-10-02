@@ -25,6 +25,7 @@
 #include "fxjs/cjs_runtime.h"
 #include "fxjs/ijs_runtime.h"
 #include "public/fpdf_formfill.h"
+#include "third_party/base/notreached.h"
 #include "third_party/base/stl_util.h"
 #include "v8/include/cppgc/allocation.h"
 #include "xfa/fgas/font/cfgas_gemodule.h"

@@ -8,6 +8,7 @@
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
+#include "third_party/base/notreached.h"
 #include "third_party/base/stl_util.h"
 
 // static

@@ -14,7 +14,7 @@
 #include "core/fpdfapi/parser/cpdf_simple_parser.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_string.h"
-#include "third_party/base/logging.h"
+#include "third_party/base/notreached.h"
 
 namespace {
 

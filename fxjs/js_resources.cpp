@@ -6,6 +6,8 @@
 
 #include "fxjs/js_resources.h"
 
+#include "third_party/base/notreached.h"
+
 WideString JSGetStringFromID(JSMessage msg) {
   const char* msg_string = "";
   switch (msg) {

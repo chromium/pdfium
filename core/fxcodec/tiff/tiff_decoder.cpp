@@ -17,7 +17,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
-#include "third_party/base/logging.h"
+#include "third_party/base/notreached.h"
 
 extern "C" {
 #include "third_party/libtiff/tiffiop.h"

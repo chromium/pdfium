@@ -9,7 +9,7 @@
 #include <algorithm>
 
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
-#include "third_party/base/logging.h"
+#include "third_party/base/notreached.h"
 #include "third_party/base/stl_util.h"
 
 CPDF_SeekableMultiStream::CPDF_SeekableMultiStream(

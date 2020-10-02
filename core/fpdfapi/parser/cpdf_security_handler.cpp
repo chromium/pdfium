@@ -19,6 +19,8 @@
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcrt/fx_random.h"
+#include "third_party/base/logging.h"
+#include "third_party/base/notreached.h"
 #include "third_party/base/stl_util.h"
 
 namespace {

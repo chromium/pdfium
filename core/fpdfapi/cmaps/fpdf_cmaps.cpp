@@ -8,6 +8,8 @@
 
 #include <algorithm>
 
+#include "third_party/base/notreached.h"
+
 namespace {
 
 struct SingleCmap {

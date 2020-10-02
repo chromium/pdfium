@@ -4,6 +4,8 @@
 
 #include "core/fpdfapi/edit/cpdf_stringarchivestream.h"
 
+#include "third_party/base/notreached.h"
+
 CPDF_StringArchiveStream::CPDF_StringArchiveStream(std::ostringstream* stream)
     : stream_(stream) {}
 

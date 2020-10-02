@@ -11,6 +11,7 @@
 #include <utility>
 
 #include "fxjs/xfa/cjx_object.h"
+#include "third_party/base/notreached.h"
 #include "xfa/fxfa/parser/cxfa_corner.h"
 #include "xfa/fxfa/parser/cxfa_edge.h"
 #include "xfa/fxfa/parser/cxfa_fill.h"

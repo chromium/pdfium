@@ -10,6 +10,7 @@
 #include <memory>
 #include <utility>
 
+#include "third_party/base/notreached.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fwl/cfwl_datetimepicker.h"

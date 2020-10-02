@@ -6,7 +6,7 @@
 
 #include <string.h>
 
-#include "third_party/base/logging.h"
+#include "third_party/base/notreached.h"
 
 TestLoader::TestLoader(pdfium::span<const char> span) : m_Span(span) {}
 

@@ -19,7 +19,7 @@
 #include "core/fxge/dib/cfx_cmyk_to_srgb.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
-#include "third_party/base/logging.h"
+#include "third_party/base/notreached.h"
 
 #ifdef PDF_ENABLE_XFA_BMP
 #include "core/fxcodec/bmp/bmp_progressive_decoder.h"

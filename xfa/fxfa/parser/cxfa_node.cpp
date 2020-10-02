@@ -28,7 +28,7 @@
 #include "fxjs/xfa/cfxjse_value.h"
 #include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/compiler_specific.h"
-#include "third_party/base/logging.h"
+#include "third_party/base/notreached.h"
 #include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_textout.h"

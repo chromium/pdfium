@@ -29,6 +29,7 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
+#include "third_party/base/notreached.h"
 
 enum FPDF_TYPE { MAX, MIN };
 enum FPDF_VALUE { TOP, LEFT, RIGHT, BOTTOM };

@@ -22,6 +22,7 @@
 #include "core/fxcrt/xml/cfx_xmlinstruction.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
+#include "third_party/base/notreached.h"
 
 namespace {
 

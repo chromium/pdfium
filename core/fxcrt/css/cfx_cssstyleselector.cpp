@@ -20,7 +20,7 @@
 #include "core/fxcrt/css/cfx_csssyntaxparser.h"
 #include "core/fxcrt/css/cfx_cssvaluelist.h"
 #include "third_party/base/containers/adapters.h"
-#include "third_party/base/logging.h"
+#include "third_party/base/notreached.h"
 
 CFX_CSSStyleSelector::CFX_CSSStyleSelector() = default;
 

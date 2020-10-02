@@ -13,7 +13,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fxcrt/fx_codepage.h"
-#include "third_party/base/logging.h"
+#include "third_party/base/notreached.h"
 
 CPVT_FontMap::CPVT_FontMap(CPDF_Document* pDoc,
                            CPDF_Dictionary* pResDict,

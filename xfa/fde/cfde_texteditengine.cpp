@@ -12,6 +12,7 @@
 
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxge/text_char_pos.h"
+#include "third_party/base/notreached.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fde/cfde_wordbreak_data.h"
 #include "xfa/fgas/font/cfgas_gefont.h"

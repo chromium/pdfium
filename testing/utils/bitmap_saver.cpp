@@ -9,7 +9,7 @@
 
 #include "core/fxcrt/fx_safe_types.h"
 #include "testing/image_diff/image_diff_png.h"
-#include "third_party/base/logging.h"
+#include "third_party/base/check.h"
 
 // static
 void BitmapSaver::WriteBitmapToPng(FPDF_BITMAP bitmap,

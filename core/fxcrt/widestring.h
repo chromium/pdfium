@@ -16,7 +16,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/string_data_template.h"
 #include "core/fxcrt/string_view_template.h"
-#include "third_party/base/logging.h"
+#include "third_party/base/check.h"
 #include "third_party/base/optional.h"
 #include "third_party/base/span.h"
 

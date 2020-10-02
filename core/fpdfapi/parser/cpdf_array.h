@@ -17,6 +17,7 @@
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "third_party/base/check.h"
 
 class CPDF_Array final : public CPDF_Object {
  public:

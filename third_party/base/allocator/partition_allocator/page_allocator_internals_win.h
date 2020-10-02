@@ -7,6 +7,8 @@
 
 #include "third_party/base/allocator/partition_allocator/oom.h"
 #include "third_party/base/allocator/partition_allocator/page_allocator_internal.h"
+#include "third_party/base/logging.h"
+#include "third_party/base/notreached.h"
 
 namespace pdfium {
 namespace base {

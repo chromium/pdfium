@@ -11,7 +11,7 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "third_party/base/compiler_specific.h"
-#include "third_party/base/logging.h"
+#include "third_party/base/notreached.h"
 
 namespace {
 

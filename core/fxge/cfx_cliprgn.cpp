@@ -9,7 +9,7 @@
 #include <utility>
 
 #include "core/fxge/dib/cfx_dibitmap.h"
-#include "third_party/base/logging.h"
+#include "third_party/base/notreached.h"
 
 CFX_ClipRgn::CFX_ClipRgn(int width, int height)
     : m_Type(RectI), m_Box(0, 0, width, height) {}

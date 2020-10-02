@@ -20,6 +20,7 @@
 #include "core/fxge/cfx_textrenderoptions.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/text_char_pos.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/cfx_txtbreak.h"

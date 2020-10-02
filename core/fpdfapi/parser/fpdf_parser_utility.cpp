@@ -17,7 +17,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_stream.h"
-#include "third_party/base/logging.h"
+#include "third_party/base/notreached.h"
 
 // Indexed by 8-bit character code, contains either:
 //   'W' - for whitespace: NUL, TAB, CR, LF, FF, SPACE, 0x80, 0xff

@@ -23,6 +23,7 @@
 #include "core/fxge/text_char_pos.h"
 #include "core/fxge/win32/cpsoutput.h"
 #include "core/fxge/win32/win32_int.h"
+#include "third_party/base/notreached.h"
 #include "third_party/base/span.h"
 
 #if defined(PDFIUM_PRINT_TEXT_WITH_GDI)

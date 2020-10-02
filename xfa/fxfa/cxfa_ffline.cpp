@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/cxfa_ffline.h"
 
+#include "third_party/base/notreached.h"
 #include "xfa/fxfa/parser/cxfa_edge.h"
 #include "xfa/fxfa/parser/cxfa_line.h"
 #include "xfa/fxfa/parser/cxfa_value.h"

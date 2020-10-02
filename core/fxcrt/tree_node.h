@@ -6,7 +6,7 @@
 #define CORE_FXCRT_TREE_NODE_H_
 
 #include "core/fxcrt/fx_system.h"
-#include "third_party/base/logging.h"
+#include "third_party/base/check.h"
 
 namespace fxcrt {
 

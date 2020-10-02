@@ -12,8 +12,8 @@
 
 #include <type_traits>
 
+#include "third_party/base/check.h"
 #include "third_party/base/compiler_specific.h"
-#include "third_party/base/logging.h"
 
 #if defined(COMPILER_MSVC)
 #include <intrin.h>
