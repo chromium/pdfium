@@ -73,9 +73,13 @@ PDFFuzzerInitPublic::PDFFuzzerInitPublic() {
   v8::Isolate::CreateParams create_params;
   create_params.array_buffer_allocator = allocator_.get();
   isolate_.reset(v8::Isolate::New(create_params));
+#if defined(COMPONENT_BUILD)
+  // NOTE: FXGC_* calls are not exported, so we get a separate copy of FXGC
+  // instantiated in the _src targets of a component build. Initialize it, too.
+  FXGC_Initialize(platform_.get(), isolate_.get());
+#endif  // COMPONENT_BUILD
 #endif  // PDF_ENABLE_XFA
 #endif  // PDF_ENABLE_V8
-
   memset(&config_, '\0', sizeof(config_));
   config_.version = 3;
   config_.m_pUserFontPaths = nullptr;
