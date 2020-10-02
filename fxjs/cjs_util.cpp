@@ -23,7 +23,7 @@
 #include "fxjs/fx_date_helpers.h"
 #include "fxjs/js_define.h"
 #include "fxjs/js_resources.h"
-#include "third_party/base/logging.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/stl_util.h"
 
 #if defined(OS_ANDROID)

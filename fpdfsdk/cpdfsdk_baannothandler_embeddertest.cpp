@@ -10,7 +10,7 @@
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "testing/embedder_test.h"
-#include "third_party/base/logging.h"
+#include "third_party/base/check_op.h"
 
 class CPDFSDK_BAAnnotHandlerTest : public EmbedderTest {
  public:

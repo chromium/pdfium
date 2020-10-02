@@ -6,7 +6,7 @@
 #define THIRD_PARTY_BASE_ALLOCATOR_PARTITION_ALLOCATOR_PARTITION_ALLOC_CHECK_H_
 
 #include "third_party/base/allocator/partition_allocator/page_allocator_constants.h"
-#include "third_party/base/logging.h"
+#include "third_party/base/check.h"
 
 #if defined(PAGE_ALLOCATOR_CONSTANTS_ARE_CONSTEXPR)
 

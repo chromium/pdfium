@@ -8,7 +8,7 @@
 #include "third_party/base/allocator/partition_allocator/page_allocator.h"
 #include "third_party/base/allocator/partition_allocator/random.h"
 #include "third_party/base/allocator/partition_allocator/spin_lock.h"
-#include "third_party/base/logging.h"
+#include "third_party/base/check_op.h"
 
 #if defined(OS_WIN)
 #include <windows.h>  // Must be in front of other Windows header files.

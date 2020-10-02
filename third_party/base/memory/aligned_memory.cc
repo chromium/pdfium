@@ -5,7 +5,7 @@
 #include "third_party/base/memory/aligned_memory.h"
 
 #include "build/build_config.h"
-#include "third_party/base/logging.h"
+#include "third_party/base/check_op.h"
 
 #if defined(OS_ANDROID)
 #include <malloc.h>

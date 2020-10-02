@@ -5,8 +5,8 @@
 #ifndef THIRD_PARTY_BASE_ALLOCATOR_PARTITION_ALLOCATOR_PARTITION_COOKIE_H_
 #define THIRD_PARTY_BASE_ALLOCATOR_PARTITION_ALLOCATOR_PARTITION_COOKIE_H_
 
+#include "third_party/base/check.h"
 #include "third_party/base/compiler_specific.h"
-#include "third_party/base/logging.h"
 
 namespace pdfium {
 namespace base {

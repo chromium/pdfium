@@ -19,7 +19,7 @@
 #include "testing/embedder_test_timer_handling_delegate.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/logging.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/stl_util.h"
 
 using pdfium::kTextFormChecksum;

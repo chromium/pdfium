@@ -13,7 +13,7 @@
 #include "third_party/base/allocator/partition_allocator/page_allocator_internal.h"
 #include "third_party/base/allocator/partition_allocator/spin_lock.h"
 #include "third_party/base/bits.h"
-#include "third_party/base/logging.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/numerics/safe_math.h"
 
 #if defined(OS_WIN)

@@ -6,7 +6,7 @@
 #define THIRD_PARTY_BASE_ALLOCATOR_PARTITION_ALLOCATOR_OOM_H_
 
 #include "third_party/base/allocator/partition_allocator/oom_callback.h"
-#include "third_party/base/logging.h"
+#include "third_party/base/immediate_crash.h"
 
 #if defined(OS_WIN)
 #include <windows.h>

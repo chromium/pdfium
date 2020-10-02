@@ -4,7 +4,7 @@
 
 #include "third_party/base/allocator/partition_allocator/oom_callback.h"
 
-#include "third_party/base/logging.h"
+#include "third_party/base/check.h"
 
 namespace pdfium {
 namespace base {
