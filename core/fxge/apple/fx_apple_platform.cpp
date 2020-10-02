@@ -85,6 +85,8 @@ bool CGDrawGlyphRun(CGContextRef pContext,
 
 }  // namespace
 
+namespace pdfium {
+
 void CFX_AggDeviceDriver::InitPlatform() {
   CQuartz2D& quartz2d =
       static_cast<CApplePlatform*>(CFX_GEModule::Get()->GetPlatform())
@@ -162,6 +164,8 @@ bool CFX_AggDeviceDriver::DrawDeviceText(
   CGContextRestoreGState(ctx);
   return ret;
 }
+
+}  // namespace pdfium
 
 #endif  // !defined(_SKIA_SUPPORT_)
 

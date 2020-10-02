@@ -17,6 +17,8 @@
 #ifndef AGG_CURVES_INCLUDED
 #define AGG_CURVES_INCLUDED
 #include "agg_array.h"
+namespace pdfium
+{
 namespace agg
 {
 struct curve4_points  {
@@ -185,4 +187,5 @@ private:
     curve4_div m_curve_div;
 };
 }
+}  // namespace pdfium
 #endif

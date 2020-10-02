@@ -38,6 +38,7 @@
 #pragma GCC diagnostic pop
 #endif
 
+namespace pdfium {
 namespace {
 
 const float kMaxPos = 32000.0f;
@@ -251,8 +252,8 @@ void RasterizeStroke(agg::rasterizer_scanline_aa* rasterizer,
   }
   width = std::max(width, unit);
   if (!pGraphState->m_DashArray.empty()) {
-    typedef agg::conv_dash<agg::path_storage> dash_converter;
-    dash_converter dash(*path_data);
+    using DashConverter = agg::conv_dash<agg::path_storage>;
+    DashConverter dash(*path_data);
     for (size_t i = 0; i < (pGraphState->m_DashArray.size() + 1) / 2; i++) {
       float on = pGraphState->m_DashArray[i * 2];
       if (on <= 0.000001f)
@@ -264,8 +265,8 @@ void RasterizeStroke(agg::rasterizer_scanline_aa* rasterizer,
       dash.add_dash(on * scale, off * scale);
     }
     dash.dash_start(pGraphState->m_DashPhase * scale);
-    typedef agg::conv_stroke<dash_converter> dash_stroke;
-    dash_stroke stroke(dash);
+    using DashStroke = agg::conv_stroke<DashConverter>;
+    DashStroke stroke(dash);
     stroke.line_join(join);
     stroke.line_cap(cap);
     stroke.miter_limit(pGraphState->m_MiterLimit);
@@ -997,16 +998,12 @@ void CFX_Renderer::CompositeSpan1bppHelper(uint8_t* dest_scan,
   }
 }
 
-}  // namespace
-
-namespace agg {
-
 template <class BaseRenderer>
-class renderer_scanline_aa_offset {
+class RendererScanLineAaOffset {
  public:
   typedef BaseRenderer base_ren_type;
   typedef typename base_ren_type::color_type color_type;
-  renderer_scanline_aa_offset(base_ren_type& ren, unsigned left, unsigned top)
+  RendererScanLineAaOffset(base_ren_type& ren, unsigned left, unsigned top)
       : m_ren(&ren), m_left(left), m_top(top) {}
   void color(const color_type& c) { m_color = c; }
   const color_type& color() const { return m_color; }
@@ -1035,10 +1032,11 @@ class renderer_scanline_aa_offset {
  private:
   base_ren_type* m_ren;
   color_type m_color;
-  unsigned m_left, m_top;
+  unsigned m_left;
+  unsigned m_top;
 };
 
-}  // namespace agg
+}  // namespace
 
 void CAgg_PathData::BuildPath(const CFX_PathData* pPathData,
                               const CFX_Matrix* pObject2Device) {
@@ -1191,8 +1189,8 @@ void CFX_AggDeviceDriver::SetClipMask(agg::rasterizer_scanline_aa& rasterizer) {
                                 pThisLayer->GetPitch());
   agg::pixfmt_gray8 pixel_buf(raw_buf);
   agg::renderer_base<agg::pixfmt_gray8> base_buf(pixel_buf);
-  agg::renderer_scanline_aa_offset<agg::renderer_base<agg::pixfmt_gray8> >
-      final_render(base_buf, path_rect.left, path_rect.top);
+  RendererScanLineAaOffset<agg::renderer_base<agg::pixfmt_gray8>> final_render(
+      base_buf, path_rect.left, path_rect.top);
   final_render.color(agg::gray8(255));
   agg::scanline_u8 scanline;
   agg::render_scanlines(rasterizer, scanline, final_render,
@@ -1506,6 +1504,8 @@ bool CFX_AggDeviceDriver::ContinueDIBits(CFX_ImageRenderer* pHandle,
   return !m_pBitmap->GetBuffer() || pHandle->Continue(pPause);
 }
 
+}  // namespace pdfium
+
 #if !defined(_SKIA_SUPPORT_)
 CFX_DefaultRenderDevice::CFX_DefaultRenderDevice() {}
 
@@ -1520,7 +1520,7 @@ bool CFX_DefaultRenderDevice::Attach(
     return false;
 
   SetBitmap(pBitmap);
-  SetDeviceDriver(std::make_unique<CFX_AggDeviceDriver>(
+  SetDeviceDriver(std::make_unique<pdfium::CFX_AggDeviceDriver>(
       pBitmap, bRgbByteOrder, pBackdropBitmap, bGroupKnockout));
   return true;
 }
@@ -1535,7 +1535,7 @@ bool CFX_DefaultRenderDevice::Create(
     return false;
 
   SetBitmap(pBitmap);
-  SetDeviceDriver(std::make_unique<CFX_AggDeviceDriver>(
+  SetDeviceDriver(std::make_unique<pdfium::CFX_AggDeviceDriver>(
       pBitmap, false, pBackdropBitmap, false));
   return true;
 }

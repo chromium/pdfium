@@ -22,6 +22,8 @@
 #include "agg_curves.h"
 #include "agg_math.h"
 
+namespace pdfium
+{
 namespace agg
 {
 const float curve_collinearity_epsilon              = 1e-30f;
@@ -107,3 +109,4 @@ void curve4_div::bezier(float x1, float y1,
     m_points.add(point_type(x4, y4));
 }
 }
+}  // namespace pdfium

@@ -20,6 +20,8 @@
 #ifndef AGG_RENDERING_BUFFER_INCLUDED
 #define AGG_RENDERING_BUFFER_INCLUDED
 #include "agg_basics.h"
+namespace pdfium
+{
 namespace agg
 {
 class rendering_buffer 
@@ -142,4 +144,5 @@ private:
     unsigned m_max_height;
 };
 }
+}  // namespace pdfium
 #endif

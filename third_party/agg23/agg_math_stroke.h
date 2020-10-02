@@ -21,6 +21,8 @@
 #define AGG_STROKE_MATH_INCLUDED
 #include "agg_math.h"
 #include "agg_vertex_sequence.h"
+namespace pdfium
+{
 namespace agg
 {
 enum line_cap_e {
@@ -270,4 +272,5 @@ void stroke_calc_join(VertexConsumer& out_vertices,
     }
 }
 }
+}  // namespace pdfium
 #endif

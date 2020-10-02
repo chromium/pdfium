@@ -28,6 +28,8 @@
 #include "agg_math.h"
 #include "core/fxcrt/fx_memory.h"
 
+namespace pdfium
+{
 namespace agg
 {
 path_storage::~path_storage()
@@ -95,3 +97,4 @@ void path_storage::end_poly()
     }
 }
 }
+}  // namespace pdfium

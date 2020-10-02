@@ -21,6 +21,8 @@
 #include "agg_shorten_path.h"
 #include "agg_vcgen_dash.h"
 
+namespace pdfium
+{
 namespace agg
 {
 vcgen_dash::vcgen_dash() :
@@ -175,3 +177,4 @@ unsigned vcgen_dash::vertex(float* x, float* y)
     return path_cmd_stop;
 }
 }
+}  // namespace pdfium

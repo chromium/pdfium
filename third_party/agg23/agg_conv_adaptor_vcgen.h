@@ -16,6 +16,8 @@
 #ifndef AGG_CONV_ADAPTOR_VCGEN_INCLUDED
 #define AGG_CONV_ADAPTOR_VCGEN_INCLUDED
 #include "agg_basics.h"
+namespace pdfium
+{
 namespace agg
 {
 struct null_markers  {
@@ -135,4 +137,5 @@ unsigned conv_adaptor_vcgen<VertexSource, Generator, Markers>::vertex(float* x, 
     return cmd;
 }
 }
+}  // namespace pdfium
 #endif

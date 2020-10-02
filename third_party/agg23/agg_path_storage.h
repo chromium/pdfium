@@ -16,6 +16,8 @@
 #ifndef AGG_PATH_STORAGE_INCLUDED
 #define AGG_PATH_STORAGE_INCLUDED
 #include "agg_basics.h"
+namespace pdfium
+{
 namespace agg
 {
 class path_storage 
@@ -169,4 +171,5 @@ inline void path_storage::line_to(float x, float y)
     add_vertex(x, y, path_cmd_line_to);
 }
 }
+}  // namespace pdfium
 #endif

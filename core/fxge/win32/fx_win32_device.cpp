@@ -939,9 +939,9 @@ void CGdiDeviceDriver::DrawLine(float x1, float y1, float x2, float y2) {
       rect_base rect = {0.0f, 0.0f, (float)(m_Width), (float)(m_Height)};
       np = clip_liang_barsky(x1, y1, x2, y2, rect, x, y);
 #else
-      agg::rect_base<float> rect(0.0f, 0.0f, (float)(m_Width),
-                                 (float)(m_Height));
-      np = agg::clip_liang_barsky<float>(x1, y1, x2, y2, rect, x, y);
+      pdfium::agg::rect_base<float> rect(0.0f, 0.0f, (float)(m_Width),
+                                         (float)(m_Height));
+      np = pdfium::agg::clip_liang_barsky<float>(x1, y1, x2, y2, rect, x, y);
 #endif
       if (np == 0)
         return;

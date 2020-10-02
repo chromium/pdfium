@@ -16,6 +16,8 @@
 #ifndef AGG_RENDER_SCANLINES_INCLUDED
 #define AGG_RENDER_SCANLINES_INCLUDED
 #include "agg_basics.h"
+namespace pdfium
+{
 namespace agg
 {
 template<class Rasterizer, class Scanline, class Renderer>
@@ -47,4 +49,5 @@ void render_all_paths(Rasterizer& ras,
     }
 }
 }
+}  // namespace pdfium
 #endif

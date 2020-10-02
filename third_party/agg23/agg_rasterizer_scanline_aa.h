@@ -38,6 +38,8 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_memory.h"
 
+namespace pdfium
+{
 namespace agg
 {
 enum poly_base_scale_e {
@@ -495,4 +497,5 @@ private:
     int            m_cur_y;
 };
 }
+}  // namespace pdfium
 #endif

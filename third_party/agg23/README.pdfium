@@ -24,3 +24,4 @@ agg_array.h.
 sweep_scanline.
 0007-unused-struct.patch: Remove unused struct point_type_flag, which has a
 shadow variable.
+0008-namespace.patch: Wrap all AGG code in namespace pdfium.

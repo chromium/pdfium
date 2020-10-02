@@ -22,6 +22,8 @@ class CFX_GraphStateData;
 class CFX_Matrix;
 class CFX_PathData;
 
+namespace pdfium {
+
 class CAgg_PathData {
  public:
   CAgg_PathData() {}
@@ -29,7 +31,7 @@ class CAgg_PathData {
   void BuildPath(const CFX_PathData* pPathData,
                  const CFX_Matrix* pObject2Device);
 
-  agg::path_storage m_PathData;
+  pdfium::agg::path_storage m_PathData;
 };
 
 class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
@@ -102,12 +104,12 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
                       const CFX_TextRenderOptions& options) override;
   int GetDriverType() const override;
 
-  bool RenderRasterizer(agg::rasterizer_scanline_aa& rasterizer,
+  bool RenderRasterizer(pdfium::agg::rasterizer_scanline_aa& rasterizer,
                         uint32_t color,
                         bool bFullCover,
                         bool bGroupKnockout);
 
-  void SetClipMask(agg::rasterizer_scanline_aa& rasterizer);
+  void SetClipMask(pdfium::agg::rasterizer_scanline_aa& rasterizer);
 
   virtual uint8_t* GetBuffer() const;
 
@@ -123,5 +125,7 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
   const bool m_bGroupKnockout;
   RetainPtr<CFX_DIBitmap> m_pBackdropBitmap;
 };
+
+}  // namespace pdfium
 
 #endif  // CORE_FXGE_AGG_FX_AGG_DRIVER_H_

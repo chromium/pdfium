@@ -25,6 +25,8 @@
 
 #include "agg_vcgen_stroke.h"
 
+namespace pdfium
+{
 namespace agg
 {
 
@@ -212,3 +214,4 @@ unsigned vcgen_stroke::vertex(float* x, float* y)
     return cmd;
 }
 }
+}  // namespace pdfium

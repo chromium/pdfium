@@ -43,6 +43,8 @@
 
 #include "core/fxcrt/fx_system.h"
 
+namespace pdfium
+{
 namespace agg
 {
 typedef AGG_INT8   int8;
@@ -274,4 +276,5 @@ struct vertex_type  {
         x(x_), y(y_), cmd(cmd_) {}
 };
 }
+}  // namespace pdfium
 #endif

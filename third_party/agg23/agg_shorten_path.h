@@ -17,6 +17,8 @@
 #define AGG_SHORTEN_PATH_INCLUDED
 #include "agg_basics.h"
 #include "agg_vertex_sequence.h"
+namespace pdfium
+{
 namespace agg
 {
 template<class VertexSequence>
@@ -54,4 +56,5 @@ void shorten_path(VertexSequence& vs, float s, unsigned closed = 0)
     }
 }
 }
+}  // namespace pdfium
 #endif

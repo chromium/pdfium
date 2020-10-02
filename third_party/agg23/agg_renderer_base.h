@@ -21,6 +21,8 @@
 #define AGG_RENDERER_BASE_INCLUDED
 #include "agg_basics.h"
 #include "agg_rendering_buffer.h"
+namespace pdfium
+{
 namespace agg
 {
 template<class PixelFormat> class renderer_base 
@@ -160,4 +162,5 @@ private:
     rect         m_clip_box;
 };
 }
+}  // namespace pdfium
 #endif

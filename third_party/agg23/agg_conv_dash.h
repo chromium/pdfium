@@ -22,6 +22,8 @@
 #include "agg_basics.h"
 #include "agg_vcgen_dash.h"
 #include "agg_conv_adaptor_vcgen.h"
+namespace pdfium
+{
 namespace agg
 {
 template<class VertexSource, class Markers = null_markers>
@@ -58,4 +60,5 @@ private:
     operator = (const conv_dash<VertexSource, Markers>&);
 };
 }
+}  // namespace pdfium
 #endif

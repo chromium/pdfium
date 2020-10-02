@@ -49,6 +49,8 @@
 #include <limits.h>
 #include "agg_rasterizer_scanline_aa.h"
 #include "third_party/base/numerics/safe_math.h"
+namespace pdfium
+{
 namespace agg
 {
 AGG_INLINE void cell_aa::set_cover(int c, int a)
@@ -515,3 +517,4 @@ bool rasterizer_scanline_aa::safe_add(int* op1, int op2)
     return true;
 }
 }
+}  // namespace pdfium

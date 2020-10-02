@@ -16,6 +16,8 @@
 #ifndef AGG_VCGEN_STROKE_INCLUDED
 #define AGG_VCGEN_STROKE_INCLUDED
 #include "agg_math_stroke.h"
+namespace pdfium
+{
 namespace agg
 {
 class vcgen_stroke 
@@ -117,4 +119,5 @@ private:
     unsigned       m_out_vertex;
 };
 }
+}  // namespace pdfium
 #endif
