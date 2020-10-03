@@ -21,6 +21,7 @@
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
 #include "fxjs/xfa/cjx_object.h"
+#include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/optional.h"
 #include "xfa/fxfa/fxfa.h"
@@ -762,7 +763,7 @@ void CXFA_DocumentBuilder::ParseContentNode(CXFA_Node* pXFANode,
     if (pXFANode->IsContentNode()) {
       CXFA_Node* pContentRawDataNode =
           node_factory_->CreateNode(ePacketID, element);
-      ASSERT(pContentRawDataNode);
+      DCHECK(pContentRawDataNode);
       pContentRawDataNode->JSObject()->SetCData(XFA_Attribute::Value, wsValue);
       pXFANode->InsertChildAndNotify(pContentRawDataNode, nullptr);
     } else {

@@ -7,6 +7,7 @@
 #include "xfa/fxfa/cxfa_ffimageedit.h"
 
 #include "core/fxge/dib/cfx_dibitmap.h"
+#include "third_party/base/check.h"
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_messagemouse.h"
@@ -37,7 +38,7 @@ void CXFA_FFImageEdit::Trace(cppgc::Visitor* visitor) const {
 }
 
 bool CXFA_FFImageEdit::LoadWidget() {
-  ASSERT(!IsLoaded());
+  DCHECK(!IsLoaded());
 
   CFWL_PictureBox* pPictureBox = cppgc::MakeGarbageCollected<CFWL_PictureBox>(
       GetFWLApp()->GetHeap()->GetAllocationHandle(), GetFWLApp());

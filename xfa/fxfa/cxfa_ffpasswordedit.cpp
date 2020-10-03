@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/cxfa_ffpasswordedit.h"
 
+#include "third_party/base/check.h"
 #include "xfa/fwl/cfwl_edit.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
@@ -24,7 +25,7 @@ void CXFA_FFPasswordEdit::Trace(cppgc::Visitor* visitor) const {
 }
 
 bool CXFA_FFPasswordEdit::LoadWidget() {
-  ASSERT(!IsLoaded());
+  DCHECK(!IsLoaded());
 
   CFWL_Edit* pWidget = cppgc::MakeGarbageCollected<CFWL_Edit>(
       GetFWLApp()->GetHeap()->GetAllocationHandle(), GetFWLApp(),

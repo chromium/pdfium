@@ -11,6 +11,7 @@
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cfxjse_value.h"
 #include "fxjs/xfa/cjx_object.h"
+#include "third_party/base/check.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
@@ -35,7 +36,7 @@
 CXFA_TextProvider::CXFA_TextProvider(CXFA_Node* pNode,
                                      XFA_TEXTPROVIDERTYPE eType)
     : m_pNode(pNode), m_eType(eType) {
-  ASSERT(m_pNode);
+  DCHECK(m_pNode);
 }
 
 CXFA_TextProvider::~CXFA_TextProvider() = default;

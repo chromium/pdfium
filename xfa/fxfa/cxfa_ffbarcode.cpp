@@ -9,6 +9,7 @@
 #include <utility>
 
 #include "core/fxcrt/fx_extension.h"
+#include "third_party/base/check.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_barcode.h"
 #include "xfa/fwl/cfwl_notedriver.h"
@@ -143,7 +144,7 @@ void CXFA_FFBarcode::Trace(cppgc::Visitor* visitor) const {
 }
 
 bool CXFA_FFBarcode::LoadWidget() {
-  ASSERT(!IsLoaded());
+  DCHECK(!IsLoaded());
 
   CFWL_Barcode* pFWLBarcode = cppgc::MakeGarbageCollected<CFWL_Barcode>(
       GetFWLApp()->GetHeap()->GetAllocationHandle(), GetFWLApp());

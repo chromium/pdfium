@@ -9,6 +9,7 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
+#include "third_party/base/check.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
@@ -19,10 +20,7 @@ CXFA_DataExporter::~CXFA_DataExporter() = default;
 
 bool CXFA_DataExporter::Export(const RetainPtr<IFX_SeekableStream>& pStream,
                                CXFA_Node* pNode) {
-  ASSERT(pStream);
-
-  if (!pStream)
-    return false;
+  DCHECK(pStream);
 
   if (pNode->IsModelNode()) {
     switch (pNode->GetPacketType()) {
@@ -42,7 +40,7 @@ bool CXFA_DataExporter::Export(const RetainPtr<IFX_SeekableStream>& pStream,
           return false;
 
         CXFA_Node* pDataNode = pNode->GetFirstChild();
-        ASSERT(pDataNode);
+        DCHECK(pDataNode);
         XFA_DataExporter_DealWithDataGroupNode(pDataNode);
         pElement->Save(pStream);
         break;

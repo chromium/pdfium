@@ -27,6 +27,7 @@
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cfxjse_value.h"
 #include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/check.h"
 #include "third_party/base/compiler_specific.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/span.h"
@@ -753,8 +754,8 @@ void TraverseSiblings(CXFA_Node* parent,
                       std::vector<CXFA_Node*>* pSiblings,
                       bool bIsClassName,
                       bool bIsFindProperty) {
-  ASSERT(parent);
-  ASSERT(pSiblings);
+  DCHECK(parent);
+  DCHECK(pSiblings);
 
   if (bIsFindProperty) {
     for (CXFA_Node* child :
@@ -982,7 +983,7 @@ CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
       m_Attributes(attributes),
       m_ValidPackets(validPackets),
       m_ePacket(ePacket) {
-  ASSERT(m_pDocument);
+  DCHECK(m_pDocument);
 }
 
 CXFA_Node::~CXFA_Node() = default;
@@ -1075,7 +1076,7 @@ bool CXFA_Node::IsValidInPacket(XFA_PacketType packet) const {
 
 const CXFA_Node::PropertyData* CXFA_Node::GetPropertyData(
     XFA_Element property) const {
-  ASSERT(property != XFA_Element::Unknown);
+  DCHECK(property != XFA_Element::Unknown);
   for (const auto& prop : m_Properties) {
     if (prop.property == property)
       return &prop;
@@ -1157,7 +1158,7 @@ Optional<XFA_Element> CXFA_Node::GetFirstPropertyWithFlag(uint8_t flag) const {
 
 const CXFA_Node::AttributeData* CXFA_Node::GetAttributeData(
     XFA_Attribute attr) const {
-  ASSERT(attr != XFA_Attribute::Unknown);
+  DCHECK(attr != XFA_Attribute::Unknown);
   for (const auto& cur_attr : m_Attributes) {
     if (cur_attr.attribute == attr)
       return &cur_attr;
@@ -1252,7 +1253,7 @@ CXFA_Node* CXFA_Node::CreateSamePacketNode(XFA_Element eType) {
 }
 
 CXFA_Node* CXFA_Node::CloneTemplateToForm(bool bRecursive) {
-  ASSERT(m_ePacket == XFA_PacketType::Template);
+  DCHECK(m_ePacket == XFA_PacketType::Template);
   CXFA_Node* pClone =
       m_pDocument->CreateNode(XFA_PacketType::Form, m_elementType);
   if (!pClone)
@@ -1281,7 +1282,7 @@ void CXFA_Node::SetTemplateNode(CXFA_Node* pTemplateNode) {
 }
 
 CXFA_Node* CXFA_Node::GetBindData() {
-  ASSERT(GetPacketType() == XFA_PacketType::Form);
+  DCHECK(GetPacketType() == XFA_PacketType::Form);
   return GetBindingNode();
 }
 
@@ -1290,7 +1291,7 @@ std::vector<CXFA_Node*> CXFA_Node::GetBindItemsCopy() const {
 }
 
 void CXFA_Node::AddBindItem(CXFA_Node* pFormNode) {
-  ASSERT(pFormNode);
+  DCHECK(pFormNode);
 
   if (BindsFormItems()) {
     if (!pdfium::Contains(binding_nodes_, pFormNode))
@@ -1512,7 +1513,7 @@ CXFA_Node* CXFA_Node::GetDataDescriptionNode() {
 }
 
 void CXFA_Node::SetDataDescriptionNode(CXFA_Node* pDataDescriptionNode) {
-  ASSERT(m_ePacket == XFA_PacketType::Datasets);
+  DCHECK(m_ePacket == XFA_PacketType::Datasets);
   m_pAuxNode = pDataDescriptionNode;
 }
 
@@ -1589,7 +1590,7 @@ void CXFA_Node::InsertChildAndNotify(CXFA_Node* pNode, CXFA_Node* pBeforeNode) {
   if (!IsNeedSavingXMLNode() || !pNode->xml_node_)
     return;
 
-  ASSERT(!pNode->xml_node_->GetParent());
+  DCHECK(!pNode->xml_node_->GetParent());
   xml_node_->InsertBefore(pNode->xml_node_.Get(),
                           pBeforeNode ? pBeforeNode->xml_node_.Get() : nullptr);
 }
@@ -1611,7 +1612,7 @@ void CXFA_Node::RemoveChildAndNotify(CXFA_Node* pNode, bool bNotify) {
     return;
   }
 
-  ASSERT(pNode->xml_node_ == xml_node_);
+  DCHECK(pNode->xml_node_ == xml_node_);
   CFX_XMLElement* pXMLElement = ToXMLElement(pNode->xml_node_.Get());
   if (pXMLElement) {
     WideString wsAttributeName =
@@ -1777,7 +1778,7 @@ bool CXFA_Node::HasFlag(XFA_NodeFlag dwFlag) const {
 }
 
 void CXFA_Node::SetFlagAndNotify(uint32_t dwFlag) {
-  ASSERT(dwFlag == XFA_NodeFlag_Initialized);
+  DCHECK(dwFlag == XFA_NodeFlag_Initialized);
 
   if (!IsInitialized()) {
     CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
@@ -2001,7 +2002,7 @@ CXFA_Node* CXFA_Node::CreateInstanceIfPossible(bool bDataMerge) {
   }
   if (!pDataScope) {
     pDataScope = ToNode(pDocument->GetXFAObject(XFA_HASHCODE_Record));
-    ASSERT(pDataScope);
+    DCHECK(pDataScope);
   }
 
   CXFA_Node* pInstance = pDocument->DataMerge_CopyContainer(
@@ -2731,7 +2732,7 @@ std::pair<XFA_EventError, bool> CXFA_Node::ExecuteBoolScript(
   if (m_ExecuteRecursionDepth > kMaxExecuteRecursion)
     return {XFA_EventError::kSuccess, false};
 
-  ASSERT(pEventParam);
+  DCHECK(pEventParam);
   if (!script)
     return {XFA_EventError::kNotExist, false};
   if (script->GetRunAt() == XFA_AttributeValue::Server)
@@ -2805,12 +2806,12 @@ std::pair<XFA_EventError, bool> CXFA_Node::ExecuteBoolScript(
 std::pair<XFA_FFWidgetType, CXFA_Ui*>
 CXFA_Node::CreateChildUIAndValueNodesIfNeeded() {
   XFA_Element eType = GetElementType();
-  ASSERT(eType == XFA_Element::Field || eType == XFA_Element::Draw);
+  DCHECK(eType == XFA_Element::Field || eType == XFA_Element::Draw);
 
   // Both Field and Draw have a UI property. We should always be able to
   // retrieve or create the UI element. If we can't something is wrong.
   CXFA_Ui* pUI = JSObject()->GetOrCreateProperty<CXFA_Ui>(0, XFA_Element::Ui);
-  ASSERT(pUI);
+  DCHECK(pUI);
 
   CXFA_Node* pUIChild = nullptr;
   // Search through the children of the UI node to see if we have any of our
@@ -2831,7 +2832,7 @@ CXFA_Node::CreateChildUIAndValueNodesIfNeeded() {
   // reason something has gone really wrong.
   CXFA_Value* value =
       JSObject()->GetOrCreateProperty<CXFA_Value>(0, XFA_Element::Value);
-  ASSERT(value);
+  DCHECK(value);
 
   // The Value nodes only have One-Of children. So, if we have a first child
   // that child must be the type we want to use.
@@ -2944,7 +2945,7 @@ XFA_Element CXFA_Node::GetValueNodeType() const {
 }
 
 CXFA_Node* CXFA_Node::GetUIChildNode() {
-  ASSERT(HasCreatedUIWidget());
+  DCHECK(HasCreatedUIWidget());
 
   if (ff_widget_type_ != XFA_FFWidgetType::kNone)
     return ui_ ? ui_->GetFirstChild() : nullptr;

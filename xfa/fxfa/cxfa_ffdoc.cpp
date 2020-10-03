@@ -22,6 +22,7 @@
 #include "core/fxcrt/xml/cfx_xmlparser.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "fxjs/xfa/cjx_object.h"
+#include "third_party/base/check.h"
 #include "third_party/base/ptr_util.h"
 #include "v8/include/cppgc/allocation.h"
 #include "v8/include/cppgc/heap.h"
@@ -309,7 +310,7 @@ RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(WideStringView wsName,
 
 bool CXFA_FFDoc::SavePackage(CXFA_Node* pNode,
                              const RetainPtr<IFX_SeekableStream>& pFile) {
-  ASSERT(pNode || GetXFADoc()->GetRoot());
+  DCHECK(pNode || GetXFADoc()->GetRoot());
 
   CXFA_DataExporter exporter;
   return exporter.Export(pFile, pNode ? pNode : GetXFADoc()->GetRoot());

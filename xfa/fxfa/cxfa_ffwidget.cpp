@@ -18,6 +18,7 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
+#include "third_party/base/check.h"
 #include "xfa/fwl/fwl_widgethit.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
@@ -581,7 +582,7 @@ void CXFA_FFWidget::DisplayCaret(bool bVisible, const CFX_RectF* pRtAnchor) {
 }
 
 void CXFA_FFWidget::GetBorderColorAndThickness(FX_ARGB* cr, float* fWidth) {
-  ASSERT(GetNode()->IsWidgetReady());
+  DCHECK(GetNode()->IsWidgetReady());
   CXFA_Border* borderUI = GetNode()->GetUIBorder();
   if (!borderUI)
     return;

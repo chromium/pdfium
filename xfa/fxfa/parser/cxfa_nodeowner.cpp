@@ -7,6 +7,7 @@
 #include "xfa/fxfa/parser/cxfa_nodeowner.h"
 
 #include "fxjs/gc/container_trace.h"
+#include "third_party/base/check.h"
 #include "xfa/fxfa/parser/cxfa_list.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
@@ -19,6 +20,6 @@ void CXFA_NodeOwner::Trace(cppgc::Visitor* visitor) const {
 }
 
 void CXFA_NodeOwner::PersistList(CXFA_List* list) {
-  ASSERT(list);
+  DCHECK(list);
   lists_.emplace_back(list);
 }

@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 #include "xfa/fxfa/parser/cxfa_corner.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
@@ -460,8 +461,8 @@ void CXFA_Rectangle::GetPath(const std::vector<CXFA_Stroke*>& strokes,
                              int32_t nIndex,
                              bool bStart,
                              bool bCorner) {
-  ASSERT(nIndex >= 0);
-  ASSERT(nIndex < 8);
+  DCHECK(nIndex >= 0);
+  DCHECK(nIndex < 8);
 
   int32_t n = (nIndex & 1) ? nIndex - 1 : nIndex;
   CXFA_Stroke* corner1 = strokes[n];

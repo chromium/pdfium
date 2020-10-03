@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/cxfa_ffnumericedit.h"
 
+#include "third_party/base/check.h"
 #include "xfa/fwl/cfwl_edit.h"
 #include "xfa/fwl/cfwl_eventvalidate.h"
 #include "xfa/fwl/cfwl_notedriver.h"
@@ -20,7 +21,7 @@ CXFA_FFNumericEdit::CXFA_FFNumericEdit(CXFA_Node* pNode)
 CXFA_FFNumericEdit::~CXFA_FFNumericEdit() = default;
 
 bool CXFA_FFNumericEdit::LoadWidget() {
-  ASSERT(!IsLoaded());
+  DCHECK(!IsLoaded());
 
   CFWL_Edit* pWidget = cppgc::MakeGarbageCollected<CFWL_Edit>(
       GetFWLApp()->GetHeap()->GetAllocationHandle(), GetFWLApp(),

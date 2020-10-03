@@ -20,6 +20,7 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/text_char_pos.h"
 #include "fxjs/xfa/cjx_object.h"
+#include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_textout.h"
@@ -87,7 +88,7 @@ CXFA_TextLayout::CXFA_TextLayout(CXFA_FFDoc* doc,
       m_pTextProvider(pTextProvider),
       m_pTextParser(cppgc::MakeGarbageCollected<CXFA_TextParser>(
           doc->GetHeap()->GetAllocationHandle())) {
-  ASSERT(m_pTextProvider);
+  DCHECK(m_pTextProvider);
 }
 
 CXFA_TextLayout::~CXFA_TextLayout() = default;
@@ -484,7 +485,7 @@ float CXFA_TextLayout::Layout(const CFX_SizeF& size) {
 }
 
 bool CXFA_TextLayout::LayoutInternal(size_t szBlockIndex) {
-  ASSERT(szBlockIndex < CountBlocks());
+  DCHECK(szBlockIndex < CountBlocks());
 
   if (!m_pLoader || m_pLoader->fWidth < 1)
     return false;

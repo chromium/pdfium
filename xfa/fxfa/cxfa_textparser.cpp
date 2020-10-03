@@ -18,6 +18,7 @@
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "core/fxge/fx_font.h"
+#include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
@@ -175,7 +176,7 @@ RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::CreateRootStyle(
 RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::CreateStyle(
     const CFX_CSSComputedStyle* pParentStyle) {
   auto pNewStyle = m_pSelector->CreateComputedStyle(pParentStyle);
-  ASSERT(pNewStyle);
+  DCHECK(pNewStyle);
   if (!pParentStyle)
     return pNewStyle;
 

@@ -9,6 +9,7 @@
 #include <memory>
 #include <utility>
 
+#include "third_party/base/check.h"
 #include "xfa/fwl/cfwl_datetimepicker.h"
 #include "xfa/fwl/cfwl_edit.h"
 #include "xfa/fwl/cfwl_eventtextwillchange.h"
@@ -50,7 +51,7 @@ void CXFA_FFTextEdit::Trace(cppgc::Visitor* visitor) const {
 }
 
 bool CXFA_FFTextEdit::LoadWidget() {
-  ASSERT(!IsLoaded());
+  DCHECK(!IsLoaded());
 
   CFWL_Edit* pFWLEdit = cppgc::MakeGarbageCollected<CFWL_Edit>(
       GetFWLApp()->GetHeap()->GetAllocationHandle(), GetFWLApp(),

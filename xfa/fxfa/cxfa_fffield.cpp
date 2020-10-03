@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <utility>
 
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fwl/cfwl_edit.h"
 #include "xfa/fwl/cfwl_eventmouse.h"
@@ -711,7 +712,7 @@ bool CXFA_FFField::IsDataChanged() {
 }
 
 void CXFA_FFField::SendMessageToFWLWidget(CFWL_Message* pMessage) {
-  ASSERT(pMessage);
+  DCHECK(pMessage);
   GetApp()->GetFWLWidgetMgr()->OnProcessMessageToForm(pMessage);
 }
 

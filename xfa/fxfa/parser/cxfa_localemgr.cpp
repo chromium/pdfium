@@ -15,6 +15,7 @@
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "fxjs/gc/container_trace.h"
 #include "fxjs/xfa/cjx_object.h"
+#include "third_party/base/check.h"
 #include "xfa/fxfa/parser/cxfa_acrobat.h"
 #include "xfa/fxfa/parser/cxfa_common.h"
 #include "xfa/fxfa/parser/cxfa_locale.h"
@@ -1236,7 +1237,7 @@ Optional<WideString> CXFA_LocaleMgr::GetConfigLocaleName(
   if (m_bConfigLocaleCached)
     return m_wsConfigLocale;
 
-  ASSERT(!m_wsConfigLocale.has_value());
+  DCHECK(!m_wsConfigLocale.has_value());
   m_bConfigLocaleCached = true;
   if (!pConfig)
     return m_wsConfigLocale;

@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/cxfa_ffsignature.h"
 
+#include "third_party/base/check.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_fffield.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
@@ -17,7 +18,7 @@ CXFA_FFSignature::CXFA_FFSignature(CXFA_Node* pNode) : CXFA_FFField(pNode) {}
 CXFA_FFSignature::~CXFA_FFSignature() = default;
 
 bool CXFA_FFSignature::LoadWidget() {
-  ASSERT(!IsLoaded());
+  DCHECK(!IsLoaded());
   return CXFA_FFField::LoadWidget();
 }
 

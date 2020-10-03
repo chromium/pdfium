@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_extension.h"
+#include "third_party/base/check.h"
 #include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fgas/crt/cfgas_stringformatter.h"
@@ -634,9 +635,9 @@ bool CXFA_LocaleValue::ParsePatternValue(const WideString& wsValue,
 void CXFA_LocaleValue::GetNumericFormat(WideString& wsFormat,
                                         int32_t nIntLen,
                                         int32_t nDecLen) {
-  ASSERT(wsFormat.IsEmpty());
-  ASSERT(nIntLen >= -1);
-  ASSERT(nDecLen >= -1);
+  DCHECK(wsFormat.IsEmpty());
+  DCHECK(nIntLen >= -1);
+  DCHECK(nDecLen >= -1);
 
   int32_t nTotalLen = (nIntLen >= 0 ? nIntLen : 2) + 1 +
                       (nDecLen >= 0 ? nDecLen : 2) + (nDecLen == 0 ? 0 : 1);
@@ -710,7 +711,7 @@ bool CXFA_LocaleValue::ValidateNumericTemp(const WideString& wsNumeric,
     return false;
 
   while (nf < nCountFmt && (cf = spFmt[nf]) != L'.') {
-    ASSERT(cf == L'z' || cf == L'*');
+    DCHECK(cf == L'z' || cf == L'*');
     ++nf;
   }
 

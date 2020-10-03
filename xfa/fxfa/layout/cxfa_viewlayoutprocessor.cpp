@@ -11,6 +11,7 @@
 #include "fxjs/gc/container_trace.h"
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cjx_object.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
@@ -381,7 +382,7 @@ bool CXFA_ViewLayoutProcessor::InitLayoutPage(CXFA_Node* pFormNode) {
 
   m_pPageSetNode = pTemplateNode->JSObject()->GetOrCreateProperty<CXFA_PageSet>(
       0, XFA_Element::PageSet);
-  ASSERT(m_pPageSetNode);
+  DCHECK(m_pPageSetNode);
 
   if (m_pPageSetRootLayoutItem) {
     m_pPageSetRootLayoutItem->RemoveSelfIfParented();
@@ -597,7 +598,7 @@ void CXFA_ViewLayoutProcessor::AppendNewRecord(CXFA_ViewRecord* pNewRecord) {
 CXFA_ViewLayoutProcessor::CXFA_ViewRecord*
 CXFA_ViewLayoutProcessor::CreateViewRecord(CXFA_Node* pPageNode,
                                            bool bCreateNew) {
-  ASSERT(pPageNode);
+  DCHECK(pPageNode);
   auto* pNewRecord = cppgc::MakeGarbageCollected<CXFA_ViewRecord>(
       GetHeap()->GetAllocationHandle());
   if (!HasCurrentViewRecord()) {
@@ -1679,7 +1680,7 @@ void CXFA_ViewLayoutProcessor::MergePageSetContents() {
     CXFA_Node* pPendingPageSet = nullptr;
     ViewLayoutItemIterator iterator(pRootLayout);
     CXFA_ViewLayoutItem* pRootPageSetViewItem = iterator.GetCurrent();
-    ASSERT(pRootPageSetViewItem->GetFormNode()->GetElementType() ==
+    DCHECK(pRootPageSetViewItem->GetFormNode()->GetElementType() ==
            XFA_Element::PageSet);
     if (pending_index < pDocument->GetPendingNodesCount()) {
       pPendingPageSet = pDocument->GetPendingNodeAtIndex(pending_index);

@@ -8,6 +8,7 @@
 
 #include <utility>
 
+#include "third_party/base/check.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffarc.h"
 #include "xfa/fxfa/cxfa_ffbarcode.h"
@@ -93,8 +94,8 @@ CXFA_FFPageView* CXFA_FFNotify::OnCreateViewLayoutItem(CXFA_Node* pNode) {
 }
 
 CXFA_FFWidget* CXFA_FFNotify::OnCreateContentLayoutItem(CXFA_Node* pNode) {
-  ASSERT(pNode->GetElementType() != XFA_Element::ContentArea);
-  ASSERT(pNode->GetElementType() != XFA_Element::PageArea);
+  DCHECK(pNode->GetElementType() != XFA_Element::ContentArea);
+  DCHECK(pNode->GetElementType() != XFA_Element::PageArea);
 
   // We only need to create the widget for certain types of objects.
   if (!pNode->HasCreatedUIWidget())
@@ -203,7 +204,6 @@ CXFA_FFWidget* CXFA_FFNotify::OnCreateContentLayoutItem(CXFA_Node* pNode) {
     case XFA_FFWidgetType::kNone:
       return nullptr;
   }
-  ASSERT(pWidget);
   auto* pLayout = CXFA_LayoutProcessor::FromDocument(m_pDoc->GetXFADoc());
   pWidget->SetDocView(m_pDoc->GetDocView(pLayout));
   return pWidget;

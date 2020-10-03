@@ -12,6 +12,7 @@
 
 #include "fxjs/gc/container_trace.h"
 #include "fxjs/xfa/cjx_object.h"
+#include "third_party/base/check.h"
 #include "third_party/base/compiler_specific.h"
 #include "third_party/base/containers/adapters.h"
 #include "third_party/base/notreached.h"
@@ -622,8 +623,8 @@ CXFA_ContentLayoutProcessor::CXFA_ContentLayoutProcessor(
     : m_pHeap(pHeap),
       m_pFormNode(pNode),
       m_pViewLayoutProcessor(pViewLayoutProcessor) {
-  ASSERT(GetFormNode());
-  ASSERT(GetFormNode()->IsContainerNode() ||
+  DCHECK(GetFormNode());
+  DCHECK(GetFormNode()->IsContainerNode() ||
          GetFormNode()->GetElementType() == XFA_Element::Form);
   m_pOldLayoutItem =
       ToContentLayoutItem(GetFormNode()->JSObject()->GetLayoutItem());
@@ -670,7 +671,7 @@ CXFA_ContentLayoutItem* CXFA_ContentLayoutProcessor::CreateContentLayoutItem(
 }
 
 float CXFA_ContentLayoutProcessor::FindSplitPos(float fProposedSplitPos) {
-  ASSERT(m_pLayoutItem);
+  DCHECK(m_pLayoutItem);
   auto value = GetFormNode()->JSObject()->TryEnum(XFA_Attribute::Layout, true);
   XFA_AttributeValue eLayout = value.value_or(XFA_AttributeValue::Position);
   bool bCalculateMargin = eLayout != XFA_AttributeValue::Position;
@@ -811,7 +812,7 @@ void CXFA_ContentLayoutProcessor::SplitLayoutItem(
 }
 
 void CXFA_ContentLayoutProcessor::SplitLayoutItem(float fSplitPos) {
-  ASSERT(m_pLayoutItem);
+  DCHECK(m_pLayoutItem);
   SplitLayoutItem(m_pLayoutItem.Get(), nullptr, fSplitPos);
 }
 
@@ -1153,7 +1154,7 @@ void CXFA_ContentLayoutProcessor::DoLayoutTableContainer(
   if (!pLayoutNode)
     pLayoutNode = GetFormNode();
 
-  ASSERT(!m_pCurChildNode);
+  DCHECK(!m_pCurChildNode);
 
   m_pLayoutItem = CreateContentLayoutItem(GetFormNode());
   bool bContainerWidthAutoSize = true;
@@ -1800,7 +1801,7 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
           break;
         }
         case Stage::kContainer: {
-          ASSERT(m_pCurChildNode->IsContainerNode());
+          DCHECK(m_pCurChildNode->IsContainerNode());
           if (m_pCurChildNode->GetElementType() == XFA_Element::Variables)
             break;
           if (fContentCurRowY >= fHeightLimit + kXFALayoutPrecision &&
@@ -2055,7 +2056,7 @@ void CXFA_ContentLayoutProcessor::DoLayoutField() {
   if (m_pLayoutItem)
     return;
 
-  ASSERT(!m_pCurChildNode);
+  DCHECK(!m_pCurChildNode);
   m_pLayoutItem = CreateContentLayoutItem(GetFormNode());
   if (!m_pLayoutItem)
     return;

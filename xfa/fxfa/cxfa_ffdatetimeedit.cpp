@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/cxfa_ffdatetimeedit.h"
 
+#include "third_party/base/check.h"
 #include "xfa/fwl/cfwl_datetimepicker.h"
 #include "xfa/fwl/cfwl_eventselectchanged.h"
 #include "xfa/fwl/cfwl_notedriver.h"
@@ -39,7 +40,7 @@ bool CXFA_FFDateTimeEdit::PtInActiveRect(const CFX_PointF& point) {
 }
 
 bool CXFA_FFDateTimeEdit::LoadWidget() {
-  ASSERT(!IsLoaded());
+  DCHECK(!IsLoaded());
 
   CFWL_DateTimePicker* pWidget =
       cppgc::MakeGarbageCollected<CFWL_DateTimePicker>(

@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/cxfa_ffpushbutton.h"
 
+#include "third_party/base/check.h"
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fwl/cfwl_pushbutton.h"
@@ -58,7 +59,7 @@ void CXFA_FFPushButton::RenderWidget(CXFA_Graphics* pGS,
 }
 
 bool CXFA_FFPushButton::LoadWidget() {
-  ASSERT(!IsLoaded());
+  DCHECK(!IsLoaded());
 
   CFWL_PushButton* pPushButton = cppgc::MakeGarbageCollected<CFWL_PushButton>(
       GetFWLApp()->GetHeap()->GetAllocationHandle(), GetFWLApp());

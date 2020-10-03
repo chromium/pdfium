@@ -13,6 +13,7 @@
 #include "fxjs/gc/container_trace.h"
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cjx_object.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffbarcode.h"
@@ -506,7 +507,7 @@ void CXFA_FFDocView::AddNewFormNode(CXFA_Node* pNode) {
 }
 
 void CXFA_FFDocView::AddIndexChangedSubform(CXFA_Node* pNode) {
-  ASSERT(pNode->GetElementType() == XFA_Element::Subform);
+  DCHECK(pNode->GetElementType() == XFA_Element::Subform);
   if (!pdfium::Contains(m_IndexChangedSubforms, pNode))
     m_IndexChangedSubforms.push_back(pNode);
 }

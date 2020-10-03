@@ -13,6 +13,7 @@
 #include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_extension.h"
 #include "fxjs/gc/container_trace.h"
+#include "third_party/base/check.h"
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fxfa/fm2js/cxfa_fmtojavascriptdepth.h"
 
@@ -720,7 +721,7 @@ CXFA_FMFunctionDefinition::CXFA_FMFunctionDefinition(
     : m_wsName(std::move(wsName)),
       m_pArguments(std::move(arguments)),
       m_pExpressions(std::move(expressions)) {
-  ASSERT(!m_wsName.IsEmpty());
+  DCHECK(!m_wsName.IsEmpty());
 }
 
 CXFA_FMFunctionDefinition::~CXFA_FMFunctionDefinition() = default;
@@ -952,7 +953,7 @@ CXFA_FMIfExpression::CXFA_FMIfExpression(
       m_pIfExpression(pIfExpression),
       m_pElseIfExpressions(std::move(pElseIfExpressions)),
       m_pElseExpression(pElseExpression) {
-  ASSERT(m_pExpression);
+  DCHECK(m_pExpression);
 }
 
 CXFA_FMIfExpression::~CXFA_FMIfExpression() = default;

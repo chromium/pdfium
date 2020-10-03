@@ -12,6 +12,7 @@
 
 #include "fxjs/gc/container_trace.h"
 #include "fxjs/xfa/cjx_object.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffcheckbutton.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
@@ -30,8 +31,8 @@ namespace {
 CFX_Matrix GetPageMatrix(const CFX_RectF& docPageRect,
                          const FX_RECT& devicePageRect,
                          int32_t iRotate) {
-  ASSERT(iRotate >= 0);
-  ASSERT(iRotate <= 3);
+  DCHECK(iRotate >= 0);
+  DCHECK(iRotate <= 3);
 
   CFX_Matrix m;
   if (iRotate == 0 || iRotate == 2) {

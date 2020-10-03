@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/cxfa_ffcheckbutton.h"
 
+#include "third_party/base/check.h"
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fwl/cfwl_checkbox.h"
 #include "xfa/fwl/cfwl_messagemouse.h"
@@ -36,7 +37,7 @@ void CXFA_FFCheckButton::Trace(cppgc::Visitor* visitor) const {
 }
 
 bool CXFA_FFCheckButton::LoadWidget() {
-  ASSERT(!IsLoaded());
+  DCHECK(!IsLoaded());
 
   CFWL_CheckBox* pCheckBox = cppgc::MakeGarbageCollected<CFWL_CheckBox>(
       GetFWLApp()->GetHeap()->GetAllocationHandle(), GetFWLApp());

@@ -9,6 +9,7 @@
 #include <utility>
 #include <vector>
 
+#include "third_party/base/check.h"
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fwl/cfwl_combobox.h"
 #include "xfa/fwl/cfwl_eventselectchanged.h"
@@ -54,7 +55,7 @@ bool CXFA_FFComboBox::PtInActiveRect(const CFX_PointF& point) {
 }
 
 bool CXFA_FFComboBox::LoadWidget() {
-  ASSERT(!IsLoaded());
+  DCHECK(!IsLoaded());
 
   CFWL_ComboBox* pComboBox = cppgc::MakeGarbageCollected<CFWL_ComboBox>(
       GetFWLApp()->GetHeap()->GetAllocationHandle(), GetFWLApp());

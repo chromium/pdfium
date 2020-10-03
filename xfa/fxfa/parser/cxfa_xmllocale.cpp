@@ -13,6 +13,7 @@
 #include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlparser.h"
+#include "third_party/base/check.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/cxfa_nodelocale.h"
@@ -51,8 +52,8 @@ CXFA_XMLLocale* CXFA_XMLLocale::Create(cppgc::Heap* heap,
 CXFA_XMLLocale::CXFA_XMLLocale(std::unique_ptr<CFX_XMLDocument> doc,
                                CFX_XMLElement* locale)
     : xml_doc_(std::move(doc)), locale_(locale) {
-  ASSERT(xml_doc_);
-  ASSERT(locale_);
+  DCHECK(xml_doc_);
+  DCHECK(locale_);
 }
 
 CXFA_XMLLocale::~CXFA_XMLLocale() = default;

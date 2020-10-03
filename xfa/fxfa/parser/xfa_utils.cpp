@@ -18,6 +18,7 @@
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
 #include "fxjs/xfa/cjx_object.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
@@ -118,7 +119,7 @@ bool ContentNodeNeedtoExport(CXFA_Node* pContentNode) {
   if (!wsContent)
     return false;
 
-  ASSERT(pContentNode->IsContentNode());
+  DCHECK(pContentNode->IsContentNode());
   CXFA_Node* pParentNode = pContentNode->GetParent();
   if (!pParentNode || pParentNode->GetElementType() != XFA_Element::Value)
     return true;
