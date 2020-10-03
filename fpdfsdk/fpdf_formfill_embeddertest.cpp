@@ -1320,9 +1320,9 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_765384) {
 TEST_F(FPDFFormFillEmbedderTest, FormText) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   const char kFocusedTextFormWithAbcChecksum[] =
-      "42af2135e20deb09cbdbfb6418d86382";
+      "e2e2b4e4c7ebd6485a2c0745e41c0115";
   const char kUnfocusedTextFormWithAbcChecksum[] =
-      "4a961599a512a08468b26b89d389c30a";
+      "84e808922efcceb82f36d55ed4b2752e";
 #else
 #if defined(OS_APPLE)
   const char kFocusedTextFormWithAbcChecksum[] =
