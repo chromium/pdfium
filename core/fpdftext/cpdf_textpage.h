@@ -61,6 +61,7 @@ class CPDF_TextPage {
   // These methods CHECK() to make sure |index| is within bounds.
   const CharInfo& GetCharInfo(size_t index) const;
   float GetCharFontSize(size_t index) const;
+  CFX_FloatRect GetCharLooseBounds(size_t index) const;
 
   std::vector<CFX_FloatRect> GetRectArray(int start, int nCount) const;
   int GetIndexAtPos(const CFX_PointF& point, const CFX_SizeF& tolerance) const;

@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/fpdfapi/font/cpdf_cidfont.h"
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/page/cpdf_formobject.h"
@@ -225,6 +226,51 @@ CFX_Matrix GetPageMatrix(const CPDF_Page* pPage) {
   const FX_RECT rect(0, 0, static_cast<int>(pPage->GetPageWidth()),
                      static_cast<int>(pPage->GetPageHeight()));
   return pPage->GetDisplayMatrix(rect, 0);
+}
+
+float GetFontSize(const CPDF_TextObject* text_object) {
+  bool has_font = text_object && text_object->GetFont();
+  return has_font ? text_object->GetFontSize() : kDefaultFontSize;
+}
+
+CFX_FloatRect GetLooseBounds(const CPDF_TextPage::CharInfo& charinfo) {
+  float font_size = GetFontSize(charinfo.m_pTextObj.Get());
+  if (charinfo.m_pTextObj && !IsFloatZero(font_size)) {
+    bool is_vert_writing = charinfo.m_pTextObj->GetFont()->IsVertWriting();
+    if (is_vert_writing && charinfo.m_pTextObj->GetFont()->IsCIDFont()) {
+      CPDF_CIDFont* pCIDFont = charinfo.m_pTextObj->GetFont()->AsCIDFont();
+      uint16_t cid = pCIDFont->CIDFromCharCode(charinfo.m_CharCode);
+
+      CFX_Point16 vertical_origin = pCIDFont->GetVertOrigin(cid);
+      double offsetx = (vertical_origin.x - 500) * font_size / 1000.0;
+      double offsety = vertical_origin.y * font_size / 1000.0;
+      int16_t vert_width = pCIDFont->GetVertWidth(cid);
+      double height = vert_width * font_size / 1000.0;
+
+      float left = charinfo.m_Origin.x + offsetx;
+      float right = left + font_size;
+      float bottom = charinfo.m_Origin.y + offsety;
+      float top = bottom + height;
+      return CFX_FloatRect(left, bottom, right, top);
+    }
+
+    int ascent = charinfo.m_pTextObj->GetFont()->GetTypeAscent();
+    int descent = charinfo.m_pTextObj->GetFont()->GetTypeDescent();
+    if (ascent != descent) {
+      float width = charinfo.m_Matrix.a *
+                    charinfo.m_pTextObj->GetCharWidth(charinfo.m_CharCode);
+      float font_scale = charinfo.m_Matrix.a * font_size / (ascent - descent);
+
+      float left = charinfo.m_Origin.x;
+      float right = charinfo.m_Origin.x + (is_vert_writing ? -width : width);
+      float bottom = charinfo.m_Origin.y + descent * font_scale;
+      float top = charinfo.m_Origin.y + ascent * font_scale;
+      return CFX_FloatRect(left, bottom, right, top);
+    }
+  }
+
+  // Fallback to the tight bounds in empty text scenarios, or bad font metrics
+  return charinfo.m_CharBox;
 }
 
 }  // namespace
@@ -443,9 +489,11 @@ const CPDF_TextPage::CharInfo& CPDF_TextPage::GetCharInfo(size_t index) const {
 
 float CPDF_TextPage::GetCharFontSize(size_t index) const {
   CHECK(index < m_CharList.size());
-  const CPDF_TextObject* text_object = m_CharList[index].m_pTextObj.Get();
-  bool has_font = text_object && text_object->GetFont();
-  return has_font ? text_object->GetFontSize() : kDefaultFontSize;
+  return GetFontSize(m_CharList[index].m_pTextObj.Get());
+}
+
+CFX_FloatRect CPDF_TextPage::GetCharLooseBounds(size_t index) const {
+  return GetLooseBounds(GetCharInfo(index));
 }
 
 WideString CPDF_TextPage::GetPageText(int start, int count) const {
