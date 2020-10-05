@@ -13,8 +13,6 @@
 #include "build/build_config.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/renderdevicedriver_iface.h"
-#include "third_party/agg23/agg_clip_liang_barsky.h"
-#include "third_party/agg23/agg_path_storage.h"
 #include "third_party/agg23/agg_rasterizer_scanline_aa.h"
 
 class CFX_ClipRgn;
@@ -23,16 +21,6 @@ class CFX_Matrix;
 class CFX_PathData;
 
 namespace pdfium {
-
-class CAgg_PathData {
- public:
-  CAgg_PathData() {}
-  ~CAgg_PathData() {}
-  void BuildPath(const CFX_PathData* pPathData,
-                 const CFX_Matrix* pObject2Device);
-
-  pdfium::agg::path_storage m_PathData;
-};
 
 class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
  public:

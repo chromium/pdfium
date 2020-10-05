@@ -26,6 +26,7 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
 #endif
+#include "third_party/agg23/agg_clip_liang_barsky.h"
 #include "third_party/agg23/agg_conv_dash.h"
 #include "third_party/agg23/agg_conv_stroke.h"
 #include "third_party/agg23/agg_curves.h"
@@ -1036,7 +1037,16 @@ class RendererScanLineAaOffset {
   unsigned m_top;
 };
 
-}  // namespace
+class CAgg_PathData {
+ public:
+  CAgg_PathData() = default;
+  ~CAgg_PathData() = default;
+
+  void BuildPath(const CFX_PathData* pPathData,
+                 const CFX_Matrix* pObject2Device);
+
+  agg::path_storage m_PathData;
+};
 
 void CAgg_PathData::BuildPath(const CFX_PathData* pPathData,
                               const CFX_Matrix* pObject2Device) {
@@ -1081,6 +1091,8 @@ void CAgg_PathData::BuildPath(const CFX_PathData* pPathData,
       m_PathData.end_poly();
   }
 }
+
+}  // namespace
 
 CFX_AggDeviceDriver::CFX_AggDeviceDriver(
     const RetainPtr<CFX_DIBitmap>& pBitmap,
