@@ -63,7 +63,7 @@ class CPDF_TextPage {
   float GetCharFontSize(size_t index) const;
   CFX_FloatRect GetCharLooseBounds(size_t index) const;
 
-  std::vector<CFX_FloatRect> GetRectArray(int start, int nCount) const;
+  std::vector<CFX_FloatRect> GetRectArray(int start, int count) const;
   int GetIndexAtPos(const CFX_PointF& point, const CFX_SizeF& tolerance) const;
   WideString GetTextByRect(const CFX_FloatRect& rect) const;
   WideString GetTextByObject(const CPDF_TextObject* pTextObj) const;

@@ -356,45 +356,45 @@ int CPDF_TextPage::TextIndexFromCharIndex(int char_index) const {
 }
 
 std::vector<CFX_FloatRect> CPDF_TextPage::GetRectArray(int start,
-                                                       int nCount) const {
+                                                       int count) const {
   std::vector<CFX_FloatRect> rects;
-  if (start < 0 || nCount == 0)
+  if (start < 0 || count == 0)
     return rects;
 
-  const int nCharListSize = CountChars();
-  if (start >= nCharListSize)
+  const int number_of_chars = CountChars();
+  if (start >= number_of_chars)
     return rects;
 
-  if (nCount < 0 || start + nCount > nCharListSize)
-    nCount = nCharListSize - start;
-  ASSERT(nCount > 0);
+  if (count < 0 || start + count > number_of_chars)
+    count = number_of_chars - start;
+  ASSERT(count > 0);
 
-  CPDF_TextObject* pCurObj = nullptr;
+  CPDF_TextObject* text_object = nullptr;
   CFX_FloatRect rect;
-  int curPos = start;
-  bool bFlagNewRect = true;
-  while (nCount--) {
-    const CharInfo& info_curchar = m_CharList[curPos++];
-    if (info_curchar.m_CharType == CPDF_TextPage::CharType::kGenerated)
+  int pos = start;
+  bool is_new_rect = true;
+  while (count--) {
+    const CharInfo& charinfo = m_CharList[pos++];
+    if (charinfo.m_CharType == CPDF_TextPage::CharType::kGenerated)
       continue;
-    if (info_curchar.m_CharBox.Width() < kSizeEpsilon ||
-        info_curchar.m_CharBox.Height() < kSizeEpsilon) {
+    if (charinfo.m_CharBox.Width() < kSizeEpsilon ||
+        charinfo.m_CharBox.Height() < kSizeEpsilon) {
       continue;
     }
-    if (!pCurObj)
-      pCurObj = info_curchar.m_pTextObj.Get();
-    if (pCurObj != info_curchar.m_pTextObj) {
+    if (!text_object)
+      text_object = charinfo.m_pTextObj.Get();
+    if (text_object != charinfo.m_pTextObj) {
       rects.push_back(rect);
-      pCurObj = info_curchar.m_pTextObj.Get();
-      bFlagNewRect = true;
+      text_object = charinfo.m_pTextObj.Get();
+      is_new_rect = true;
     }
-    if (bFlagNewRect) {
-      bFlagNewRect = false;
-      rect = info_curchar.m_CharBox;
+    if (is_new_rect) {
+      is_new_rect = false;
+      rect = charinfo.m_CharBox;
       rect.Normalize();
       continue;
     }
-    rect.Union(info_curchar.m_CharBox);
+    rect.Union(charinfo.m_CharBox);
   }
   rects.push_back(rect);
   return rects;
