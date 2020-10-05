@@ -6,6 +6,7 @@
 
 #include "xfa/fwl/cfwl_combolist.h"
 
+#include "third_party/base/check.h"
 #include "xfa/fwl/cfwl_combobox.h"
 #include "xfa/fwl/cfwl_comboedit.h"
 #include "xfa/fwl/cfwl_listbox.h"
@@ -18,7 +19,7 @@ CFWL_ComboList::CFWL_ComboList(CFWL_App* app,
                                const Properties& properties,
                                CFWL_Widget* pOuter)
     : CFWL_ListBox(app, properties, pOuter) {
-  ASSERT(pOuter);
+  DCHECK(pOuter);
 }
 
 CFWL_ComboList::~CFWL_ComboList() = default;

@@ -1044,8 +1044,6 @@ LocaleIface* CFGAS_StringFormatter::GetNumericFormat(
           if (!pLocale)
             pLocale = pLocaleMgr->GetDefLocale();
 
-          ASSERT(pLocale);
-
           wsSubCategory = pLocale->GetNumPattern(eSubCategory);
           auto result = wsSubCategory.Find('.');
           if (result.has_value() && result.value() != 0) {
@@ -1655,7 +1653,6 @@ CFGAS_StringFormatter::DateTimeType CFGAS_StringFormatter::GetDateTimeFormat(
           }
           if (!*pLocale)
             *pLocale = pLocaleMgr->GetDefLocale();
-          ASSERT(*pLocale);
 
           switch (eCategory) {
             case Category::kDate:

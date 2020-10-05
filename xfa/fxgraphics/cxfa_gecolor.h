@@ -9,6 +9,7 @@
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_dib.h"
+#include "third_party/base/check.h"
 
 class CXFA_GEPattern;
 class CXFA_GEShading;
@@ -25,15 +26,15 @@ class CXFA_GEColor {
 
   Type GetType() const { return m_type; }
   FX_ARGB GetArgb() const {
-    ASSERT(m_type == Solid || m_type == Pattern);
+    DCHECK(m_type == Solid || m_type == Pattern);
     return m_argb;
   }
   CXFA_GEPattern* GetPattern() const {
-    ASSERT(m_type == Pattern);
+    DCHECK(m_type == Pattern);
     return m_pPattern.Get();
   }
   CXFA_GEShading* GetShading() const {
-    ASSERT(m_type == Shading);
+    DCHECK(m_type == Shading);
     return m_pShading.Get();
   }
 

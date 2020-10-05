@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include "core/fxcrt/fx_extension.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -237,36 +238,36 @@ FX_BIDICLASS GetResolvedNeutrals(int32_t iAction) {
 }
 
 FX_BIDIWEAKSTATE GetWeakState(FX_BIDIWEAKSTATE eState, FX_BIDICLASS eClass) {
-  ASSERT(static_cast<size_t>(eState) < pdfium::size(kWeakStates));
-  ASSERT(static_cast<size_t>(eClass) < pdfium::size(kWeakStates[0]));
+  DCHECK(static_cast<size_t>(eState) < pdfium::size(kWeakStates));
+  DCHECK(static_cast<size_t>(eClass) < pdfium::size(kWeakStates[0]));
   return kWeakStates[static_cast<size_t>(eState)][static_cast<size_t>(eClass)];
 }
 
 FX_BIDIWEAKACTION GetWeakAction(FX_BIDIWEAKSTATE eState, FX_BIDICLASS eClass) {
-  ASSERT(static_cast<size_t>(eState) < pdfium::size(kWeakActions));
-  ASSERT(static_cast<size_t>(eClass) < pdfium::size(kWeakActions[0]));
+  DCHECK(static_cast<size_t>(eState) < pdfium::size(kWeakActions));
+  DCHECK(static_cast<size_t>(eClass) < pdfium::size(kWeakActions[0]));
   return kWeakActions[static_cast<size_t>(eState)][static_cast<size_t>(eClass)];
 }
 
 FX_BIDINEUTRALSTATE GetNeutralState(FX_BIDINEUTRALSTATE eState,
                                     FX_BIDICLASS eClass) {
-  ASSERT(static_cast<size_t>(eState) < pdfium::size(kNeutralStates));
-  ASSERT(static_cast<size_t>(eClass) < pdfium::size(kNeutralStates[0]));
+  DCHECK(static_cast<size_t>(eState) < pdfium::size(kNeutralStates));
+  DCHECK(static_cast<size_t>(eClass) < pdfium::size(kNeutralStates[0]));
   return kNeutralStates[static_cast<size_t>(eState)]
                        [static_cast<size_t>(eClass)];
 }
 
 FX_BIDINEUTRALACTION GetNeutralAction(FX_BIDINEUTRALSTATE eState,
                                       FX_BIDICLASS eClass) {
-  ASSERT(static_cast<size_t>(eState) < pdfium::size(kNeutralActions));
-  ASSERT(static_cast<size_t>(eClass) < pdfium::size(kNeutralActions[0]));
+  DCHECK(static_cast<size_t>(eState) < pdfium::size(kNeutralActions));
+  DCHECK(static_cast<size_t>(eClass) < pdfium::size(kNeutralActions[0]));
   return kNeutralActions[static_cast<size_t>(eState)]
                         [static_cast<size_t>(eClass)];
 }
 
 void ReverseString(std::vector<CFX_Char>* chars, size_t iStart, size_t iCount) {
-  ASSERT(pdfium::IndexInBounds(*chars, iStart));
-  ASSERT(iStart + iCount <= chars->size());
+  DCHECK(pdfium::IndexInBounds(*chars, iStart));
+  DCHECK(iStart + iCount <= chars->size());
 
   std::reverse(chars->begin() + iStart, chars->begin() + iStart + iCount);
 }
@@ -275,8 +276,8 @@ void SetDeferredRunClass(std::vector<CFX_Char>* chars,
                          size_t iStart,
                          size_t iCount,
                          FX_BIDICLASS eValue) {
-  ASSERT(iStart <= chars->size());
-  ASSERT(iStart >= iCount);
+  DCHECK(iStart <= chars->size());
+  DCHECK(iStart >= iCount);
 
   size_t iLast = iStart - iCount;
   for (size_t i = iStart; i > iLast; --i)
@@ -287,8 +288,8 @@ void SetDeferredRunLevel(std::vector<CFX_Char>* chars,
                          size_t iStart,
                          size_t iCount,
                          int32_t iValue) {
-  ASSERT(iStart <= chars->size());
-  ASSERT(iStart >= iCount);
+  DCHECK(iStart <= chars->size());
+  DCHECK(iStart >= iCount);
 
   size_t iLast = iStart - iCount;
   for (size_t i = iStart; i > iLast; --i)
@@ -489,9 +490,9 @@ size_t ReorderLevel(std::vector<CFX_Char>* chars,
                     int32_t iBaseLevel,
                     size_t iStart,
                     bool bReverse) {
-  ASSERT(iBaseLevel >= 0);
-  ASSERT(iBaseLevel <= kBidiMaxLevel);
-  ASSERT(iStart < iCount);
+  DCHECK(iBaseLevel >= 0);
+  DCHECK(iBaseLevel <= kBidiMaxLevel);
+  DCHECK(iStart < iCount);
 
   if (iCount < 1)
     return 0;
@@ -533,7 +534,7 @@ void Position(std::vector<CFX_Char>* chars, size_t iCount) {
 
 // static
 void CFX_Char::BidiLine(std::vector<CFX_Char>* chars, size_t iCount) {
-  ASSERT(iCount <= chars->size());
+  DCHECK(iCount <= chars->size());
   if (iCount < 2)
     return;
 

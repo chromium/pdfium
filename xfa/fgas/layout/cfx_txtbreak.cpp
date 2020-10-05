@@ -12,6 +12,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/text_char_pos.h"
+#include "third_party/base/check.h"
 #include "third_party/base/containers/adapters.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
@@ -37,12 +38,12 @@ CFX_TxtBreak::~CFX_TxtBreak() = default;
 
 void CFX_TxtBreak::SetLineWidth(float fLineWidth) {
   m_iLineWidth = FXSYS_roundf(fLineWidth * kConversionFactor);
-  ASSERT(m_iLineWidth >= 20000);
+  DCHECK(m_iLineWidth >= 20000);
 }
 
 void CFX_TxtBreak::SetAlignment(int32_t iAlignment) {
-  ASSERT(iAlignment >= CFX_TxtLineAlignment_Left);
-  ASSERT(iAlignment <= CFX_TxtLineAlignment_Justified);
+  DCHECK(iAlignment >= CFX_TxtLineAlignment_Left);
+  DCHECK(iAlignment <= CFX_TxtLineAlignment_Justified);
   m_iAlignment = iAlignment;
 }
 
@@ -485,7 +486,7 @@ void CFX_TxtBreak::EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
 }
 
 CFX_BreakType CFX_TxtBreak::EndBreak(CFX_BreakType dwStatus) {
-  ASSERT(dwStatus != CFX_BreakType::kNone);
+  DCHECK(dwStatus != CFX_BreakType::kNone);
 
   if (!m_pCurLine->m_LinePieces.empty()) {
     if (dwStatus != CFX_BreakType::kPiece)
@@ -614,8 +615,8 @@ int32_t CFX_TxtBreak::GetBreakPos(std::vector<CFX_Char>* pChars,
 void CFX_TxtBreak::SplitTextLine(CFX_BreakLine* pCurLine,
                                  CFX_BreakLine* pNextLine,
                                  bool bAllChars) {
-  ASSERT(pCurLine);
-  ASSERT(pNextLine);
+  DCHECK(pCurLine);
+  DCHECK(pNextLine);
 
   if (pCurLine->m_LineChars.size() < 2)
     return;

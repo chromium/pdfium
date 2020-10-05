@@ -7,6 +7,7 @@
 #include "xfa/fde/cfde_wordbreak_data.h"
 
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -2818,7 +2819,7 @@ const uint8_t kCodePointProperties[32768] = {
 
 bool FX_CheckStateChangeForWordBreak(WordBreakProperty from,
                                      WordBreakProperty to) {
-  ASSERT(static_cast<int>(from) < 13);
+  DCHECK(static_cast<int>(from) < 13);
   return !!(kWordBreakTable[static_cast<int>(from)] &
             static_cast<uint16_t>(1 << static_cast<int>(to)));
 }

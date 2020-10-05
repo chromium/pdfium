@@ -11,6 +11,7 @@
 
 #include "core/fxcrt/cfx_timer.h"
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/check.h"
 #include "xfa/fwl/cfwl_eventscroll.h"
 #include "xfa/fwl/cfwl_widget.h"
 
@@ -35,8 +36,8 @@ class CFWL_ScrollBar final : public CFWL_Widget,
   void OnTimerFired() override;
 
   void GetRange(float* fMin, float* fMax) const {
-    ASSERT(fMin);
-    ASSERT(fMax);
+    DCHECK(fMin);
+    DCHECK(fMax);
     *fMin = m_fRangeMin;
     *fMax = m_fRangeMax;
   }

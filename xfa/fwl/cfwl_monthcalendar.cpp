@@ -10,6 +10,7 @@
 #include <memory>
 #include <utility>
 
+#include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_textout.h"
@@ -585,7 +586,7 @@ void CFWL_MonthCalendar::RemoveSelDay() {
 }
 
 void CFWL_MonthCalendar::AddSelDay(int32_t iDay) {
-  ASSERT(iDay > 0);
+  DCHECK(iDay > 0);
   if (!pdfium::Contains(m_SelDayArray, iDay))
     return;
 
@@ -610,8 +611,8 @@ void CFWL_MonthCalendar::JumpToToday() {
 }
 
 WideString CFWL_MonthCalendar::GetHeadText(int32_t iYear, int32_t iMonth) {
-  ASSERT(iMonth > 0);
-  ASSERT(iMonth < 13);
+  DCHECK(iMonth > 0);
+  DCHECK(iMonth < 13);
 
   static const wchar_t* const pMonth[] = {L"January", L"February", L"March",
                                           L"April",   L"May",      L"June",

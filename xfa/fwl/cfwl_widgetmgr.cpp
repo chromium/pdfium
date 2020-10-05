@@ -7,13 +7,14 @@
 #include "xfa/fwl/cfwl_widgetmgr.h"
 
 #include "build/build_config.h"
+#include "third_party/base/check.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_message.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 
 CFWL_WidgetMgr::CFWL_WidgetMgr(AdapterIface* pAdapter, CFWL_App* pApp)
     : m_pAdapter(pAdapter), m_pApp(pApp) {
-  ASSERT(m_pAdapter);
+  DCHECK(m_pAdapter);
   m_mapWidgetItem[nullptr] = cppgc::MakeGarbageCollected<Item>(
       pApp->GetHeap()->GetAllocationHandle(), nullptr);
 }
@@ -100,7 +101,7 @@ void CFWL_WidgetMgr::InsertWidget(CFWL_Widget* pParent, CFWL_Widget* pChild) {
 }
 
 void CFWL_WidgetMgr::RemoveWidget(CFWL_Widget* pWidget) {
-  ASSERT(pWidget);
+  DCHECK(pWidget);
   Item* pItem = GetWidgetMgrItem(pWidget);
   if (!pItem)
     return;

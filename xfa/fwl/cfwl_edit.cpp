@@ -14,6 +14,7 @@
 #include "build/build_config.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/text_char_pos.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fde/cfde_textout.h"
@@ -422,7 +423,7 @@ void CFWL_Edit::DrawContent(CXFA_Graphics* pGraphics,
 void CFWL_Edit::RenderText(CFX_RenderDevice* pRenderDev,
                            const CFX_RectF& clipRect,
                            const CFX_Matrix& mt) {
-  ASSERT(pRenderDev);
+  DCHECK(pRenderDev);
 
   RetainPtr<CFGAS_GEFont> font = m_pEditEngine->GetFont();
   if (!font)

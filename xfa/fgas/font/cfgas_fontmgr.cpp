@@ -19,6 +19,7 @@
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/fx_font.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/font/fgas_fontutils.h"
@@ -578,7 +579,7 @@ int32_t CalcPenalty(CFX_FontDescriptor* pInstalled,
                       ? static_cast<uint16_t>(-1)
                       : FX_GetCodePageBit(wCodePage);
   if (wBit != static_cast<uint16_t>(-1)) {
-    ASSERT(wBit < 64);
+    DCHECK(wBit < 64);
     if ((pInstalled->m_dwCsb[wBit / 32] & (1 << (wBit % 32))) == 0)
       nPenalty += 0xFFFF;
     else
@@ -587,7 +588,7 @@ int32_t CalcPenalty(CFX_FontDescriptor* pInstalled,
   wBit = (wcUnicode == 0 || wcUnicode == 0xFFFE) ? static_cast<uint16_t>(999)
                                                  : FX_GetUnicodeBit(wcUnicode);
   if (wBit != static_cast<uint16_t>(999)) {
-    ASSERT(wBit < 128);
+    DCHECK(wBit < 128);
     if ((pInstalled->m_dwUsb[wBit / 32] & (1 << (wBit % 32))) == 0)
       nPenalty += 0xFFFF;
     else

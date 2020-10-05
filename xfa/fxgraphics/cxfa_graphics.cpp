@@ -13,6 +13,7 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/cfx_unicodeencoding.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxgraphics/cxfa_gecolor.h"
 #include "xfa/fxgraphics/cxfa_gepath.h"
@@ -111,7 +112,7 @@ const FX_HATCHDATA& GetHatchBitmapData(size_t index) {
 
 CXFA_Graphics::CXFA_Graphics(CFX_RenderDevice* renderDevice)
     : m_renderDevice(renderDevice) {
-  ASSERT(m_renderDevice);
+  DCHECK(m_renderDevice);
 }
 
 CXFA_Graphics::~CXFA_Graphics() = default;
@@ -138,8 +139,8 @@ void CXFA_Graphics::SetLineCap(CFX_GraphStateData::LineCap lineCap) {
 void CXFA_Graphics::SetLineDash(float dashPhase,
                                 const float* dashArray,
                                 size_t dashCount) {
-  ASSERT(dashArray);
-  ASSERT(dashCount);
+  DCHECK(dashArray);
+  DCHECK(dashCount);
 
   float scale = m_info.isActOnDash ? m_info.graphState.m_LineWidth : 1.0;
   m_info.graphState.m_DashPhase = dashPhase;

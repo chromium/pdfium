@@ -12,6 +12,7 @@
 
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxge/text_char_pos.h"
+#include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fde/cfde_wordbreak_data.h"
@@ -1153,8 +1154,8 @@ void CFDE_TextEditEngine::RebuildPieces() {
 
 std::pair<int32_t, CFX_RectF> CFDE_TextEditEngine::GetCharacterInfo(
     int32_t start_idx) {
-  ASSERT(start_idx >= 0);
-  ASSERT(static_cast<size_t>(start_idx) <= text_length_);
+  DCHECK(start_idx >= 0);
+  DCHECK(static_cast<size_t>(start_idx) <= text_length_);
 
   // Make sure the current available data is fresh.
   Layout();

@@ -11,6 +11,7 @@
 #include <utility>
 
 #include "core/fxcrt/fx_extension.h"
+#include "third_party/base/check.h"
 
 #define FXMATH_DECIMAL_SCALELIMIT 0x1c
 #define FXMATH_DECIMAL_RSHIFT32BIT(x) ((x) >> 0x10 >> 0x10)
@@ -118,7 +119,7 @@ inline void decimal_helper_raw_mul(uint64_t a[],
                                    uint8_t bl,
                                    uint64_t c[],
                                    uint8_t cl) {
-  ASSERT(al + bl <= cl);
+  DCHECK(al + bl <= cl);
   for (int i = 0; i < cl; i++)
     c[i] = 0;
 

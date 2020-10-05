@@ -6,6 +6,7 @@
 
 #include "xfa/fgas/layout/cfx_breakpiece.h"
 
+#include "third_party/base/check.h"
 #include "xfa/fgas/layout/cfx_textuserdata.h"
 
 CFX_BreakPiece::CFX_BreakPiece() = default;
@@ -19,9 +20,9 @@ int32_t CFX_BreakPiece::GetEndPos() const {
 }
 
 CFX_Char* CFX_BreakPiece::GetChar(int32_t index) const {
-  ASSERT(index >= 0);
-  ASSERT(index < m_iCharCount);
-  ASSERT(m_pChars);
+  DCHECK(index >= 0);
+  DCHECK(index < m_iCharCount);
+  DCHECK(m_pChars);
   return &(*m_pChars)[m_iStartChar + index];
 }
 

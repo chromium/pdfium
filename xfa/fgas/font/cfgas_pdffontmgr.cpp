@@ -13,6 +13,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxge/fx_font.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
@@ -29,7 +30,7 @@ const char* const g_XFAPDFFontName[][5] = {
 }  // namespace
 
 CFGAS_PDFFontMgr::CFGAS_PDFFontMgr(CPDF_Document* pDoc) : m_pDoc(pDoc) {
-  ASSERT(pDoc);
+  DCHECK(pDoc);
 }
 
 CFGAS_PDFFontMgr::~CFGAS_PDFFontMgr() = default;

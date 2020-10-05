@@ -12,6 +12,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/text_char_pos.h"
+#include "third_party/base/check.h"
 #include "third_party/base/containers/adapters.h"
 #include "third_party/base/numerics/safe_math.h"
 #include "third_party/base/stl_util.h"
@@ -68,7 +69,7 @@ bool CFX_RTFBreak::GetPositionedTab(int32_t* iTabPos) const {
 }
 
 CFX_BreakType CFX_RTFBreak::AppendChar(wchar_t wch) {
-  ASSERT(m_pCurLine);
+  DCHECK(m_pCurLine);
 
   FX_CHARTYPE chartype = FX_GetCharType(wch);
   m_pCurLine->m_LineChars.emplace_back(wch, m_iHorizontalScale,
@@ -160,7 +161,7 @@ void CFX_RTFBreak::AppendChar_Tab(CFX_Char* pCurChar) {
     iSafeCharWidth = iCharWidth;
   } else {
     // Tab width is >= 160000, so this part does not need to be checked.
-    ASSERT(m_iTabWidth >= kMinimumTabWidth);
+    DCHECK(m_iTabWidth >= kMinimumTabWidth);
     iSafeCharWidth = iLineWidth / m_iTabWidth + 1;
     iSafeCharWidth *= m_iTabWidth;
   }
@@ -301,7 +302,7 @@ CFX_BreakType CFX_RTFBreak::AppendChar_Others(CFX_Char* pCurChar) {
 }
 
 CFX_BreakType CFX_RTFBreak::EndBreak(CFX_BreakType dwStatus) {
-  ASSERT(dwStatus != CFX_BreakType::kNone);
+  DCHECK(dwStatus != CFX_BreakType::kNone);
 
   ++m_dwIdentity;
   if (!m_pCurLine->m_LinePieces.empty()) {
@@ -682,8 +683,8 @@ int32_t CFX_RTFBreak::GetBreakPos(std::vector<CFX_Char>& tca,
 void CFX_RTFBreak::SplitTextLine(CFX_BreakLine* pCurLine,
                                  CFX_BreakLine* pNextLine,
                                  bool bAllChars) {
-  ASSERT(pCurLine);
-  ASSERT(pNextLine);
+  DCHECK(pCurLine);
+  DCHECK(pNextLine);
 
   if (pCurLine->m_LineChars.size() < 2)
     return;
@@ -720,8 +721,8 @@ void CFX_RTFBreak::SplitTextLine(CFX_BreakLine* pCurLine,
 
 size_t CFX_RTFBreak::GetDisplayPos(const CFX_TextPiece* pPiece,
                                    std::vector<TextCharPos>* pCharPos) const {
-  ASSERT(pPiece->iChars > 0);
-  ASSERT(pPiece->pFont);
+  DCHECK(pPiece->iChars > 0);
+  DCHECK(pPiece->pFont);
 
   RetainPtr<CFGAS_GEFont> pFont = pPiece->pFont;
   CFX_RectF rtText(pPiece->rtPiece);

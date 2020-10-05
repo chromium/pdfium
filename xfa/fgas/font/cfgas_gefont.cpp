@@ -16,6 +16,7 @@
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/cfx_unicodeencodingex.h"
 #include "core/fxge/fx_font.h"
+#include "third_party/base/check.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_gemodule.h"
 #include "xfa/fgas/font/fgas_fontutils.h"
@@ -135,7 +136,7 @@ WideString CFGAS_GEFont::GetFamilyName() const {
 }
 
 uint32_t CFGAS_GEFont::GetFontStyles() const {
-  ASSERT(m_pFont);
+  DCHECK(m_pFont);
   if (m_dwLogFontStyle.has_value())
     return m_dwLogFontStyle.value();
 
