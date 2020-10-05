@@ -85,7 +85,7 @@ bool CPDF_Color::GetRGB(int* R, int* G, int* B) const {
     }
   } else {
     if (!m_Buffer.empty())
-      result = m_pCS->GetRGB(m_Buffer.data(), &r, &g, &b);
+      result = m_pCS->GetRGB(m_Buffer, &r, &g, &b);
   }
   if (!result)
     return false;

@@ -787,7 +787,7 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadMask() {
     float R;
     float G;
     float B;
-    m_pColorSpace->GetRGB(colors.data(), &R, &G, &B);
+    m_pColorSpace->GetRGB(colors, &R, &G, &B);
     m_MatteColor = ArgbEncode(0, FXSYS_roundf(R * 255), FXSYS_roundf(G * 255),
                               FXSYS_roundf(B * 255));
   }
@@ -906,9 +906,9 @@ void CPDF_DIB::LoadPalette() {
       std::vector<float> temp_buf(nComponents);
       for (int k = 0; k < nComponents; ++k)
         temp_buf[k] = color_values[0];
-      m_pColorSpace->GetRGB(temp_buf.data(), &R, &G, &B);
+      m_pColorSpace->GetRGB(temp_buf, &R, &G, &B);
     } else {
-      m_pColorSpace->GetRGB(color_values.data(), &R, &G, &B);
+      m_pColorSpace->GetRGB(color_values, &R, &G, &B);
     }
     SetPaletteArgb(i, ArgbEncode(255, FXSYS_roundf(R * 255),
                                  FXSYS_roundf(G * 255), FXSYS_roundf(B * 255)));
@@ -974,7 +974,7 @@ void CPDF_DIB::TranslateScanline24bpp(uint8_t* dest_scan,
       G = (1.0f - color_values[1]) * k;
       B = (1.0f - color_values[2]) * k;
     } else if (m_Family != PDFCS_PATTERN) {
-      m_pColorSpace->GetRGB(color_values.data(), &R, &G, &B);
+      m_pColorSpace->GetRGB(color_values, &R, &G, &B);
     }
     R = pdfium::clamp(R, 0.0f, 1.0f);
     G = pdfium::clamp(G, 0.0f, 1.0f);

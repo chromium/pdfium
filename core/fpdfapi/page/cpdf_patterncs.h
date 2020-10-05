@@ -24,7 +24,10 @@ class CPDF_PatternCS final : public CPDF_ColorSpace {
   void InitializeStockPattern();
 
   // CPDF_ColorSpace:
-  bool GetRGB(const float* pBuf, float* R, float* G, float* B) const override;
+  bool GetRGB(pdfium::span<const float> pBuf,
+              float* R,
+              float* G,
+              float* B) const override;
   bool GetPatternRGB(const PatternValue& value,
                      float* R,
                      float* G,

@@ -87,7 +87,7 @@ class CPDF_ColorSpace : public Retainable, public Observable {
            GetFamily() == PDFCS_INDEXED || GetFamily() == PDFCS_PATTERN;
   }
 
-  virtual bool GetRGB(const float* pBuf,
+  virtual bool GetRGB(pdfium::span<const float> pBuf,
                       float* R,
                       float* G,
                       float* B) const = 0;

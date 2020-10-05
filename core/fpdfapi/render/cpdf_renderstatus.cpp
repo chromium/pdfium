@@ -1510,7 +1510,7 @@ FX_ARGB CPDF_RenderStatus::GetBackColor(const CPDF_Dictionary* pSMaskDict,
   float R;
   float G;
   float B;
-  pCS->GetRGB(floats.data(), &R, &G, &B);
+  pCS->GetRGB(floats, &R, &G, &B);
   return ArgbEncode(255, static_cast<int>(R * 255), static_cast<int>(G * 255),
                     static_cast<int>(B * 255));
 }
