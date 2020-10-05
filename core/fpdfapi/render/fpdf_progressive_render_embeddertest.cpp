@@ -318,7 +318,13 @@ void FPDFProgressiveRenderEmbedderTest::VerifyRenderingWithColorScheme(
   UnloadPage(page);
 }
 
-TEST_F(FPDFProgressiveRenderEmbedderTest, RenderTextWithColorScheme) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_RenderTextWithColorScheme DISABLED_RenderTextWithColorScheme
+#else
+#define MAYBE_RenderTextWithColorScheme RenderTextWithColorScheme
+#endif
+TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderTextWithColorScheme) {
 // Test rendering of text with forced color scheme on.
 #if defined(OS_WIN)
   static constexpr char kMD5ContentWithText[] =
@@ -338,7 +344,13 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderTextWithColorScheme) {
                                  kBlack, 200, 200, kMD5ContentWithText);
 }
 
-TEST_F(FPDFProgressiveRenderEmbedderTest, RenderPathWithColorScheme) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_RenderPathWithColorScheme DISABLED_RenderPathWithColorScheme
+#else
+#define MAYBE_RenderPathWithColorScheme RenderPathWithColorScheme
+#endif
+TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderPathWithColorScheme) {
   // Test rendering of paths with forced color scheme on.
   static const char kMD5Rectangles[] = "249f59b0d066c4f6bd89782a80822219";
 
@@ -349,8 +361,16 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderPathWithColorScheme) {
                                  kBlack, 200, 300, kMD5Rectangles);
 }
 
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_RenderPathWithColorSchemeAndConvertFillToStroke \
+  DISABLED_RenderPathWithColorSchemeAndConvertFillToStroke
+#else
+#define MAYBE_RenderPathWithColorSchemeAndConvertFillToStroke \
+  RenderPathWithColorSchemeAndConvertFillToStroke
+#endif
 TEST_F(FPDFProgressiveRenderEmbedderTest,
-       RenderPathWithColorSchemeAndConvertFillToStroke) {
+       MAYBE_RenderPathWithColorSchemeAndConvertFillToStroke) {
   // Test rendering of paths with forced color scheme on and conversion from
   // fill to stroke enabled. The fill paths should be rendered as stroke.
   static const char kMD5Rectangles[] = "0ebcc11e617635eca1fa9ce475383a80";
@@ -363,7 +383,15 @@ TEST_F(FPDFProgressiveRenderEmbedderTest,
                                  kMD5Rectangles);
 }
 
-TEST_F(FPDFProgressiveRenderEmbedderTest, RenderHighlightWithColorScheme) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_RenderHighlightWithColorScheme \
+  DISABLED_RenderHighlightWithColorScheme
+#else
+#define MAYBE_RenderHighlightWithColorScheme RenderHighlightWithColorScheme
+#endif
+TEST_F(FPDFProgressiveRenderEmbedderTest,
+       MAYBE_RenderHighlightWithColorScheme) {
 // Test rendering of highlight with forced color scheme on.
 //
 // Note: The fill color rendered for highlight is different from the normal
@@ -384,8 +412,16 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderHighlightWithColorScheme) {
                                  kBlue, 612, 792, kMD5ContentWithHighlightFill);
 }
 
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_RenderHighlightWithColorSchemeAndConvertFillToStroke \
+  DISABLED_RenderHighlightWithColorSchemeAndConvertFillToStroke
+#else
+#define MAYBE_RenderHighlightWithColorSchemeAndConvertFillToStroke \
+  RenderHighlightWithColorSchemeAndConvertFillToStroke
+#endif
 TEST_F(FPDFProgressiveRenderEmbedderTest,
-       RenderHighlightWithColorSchemeAndConvertFillToStroke) {
+       MAYBE_RenderHighlightWithColorSchemeAndConvertFillToStroke) {
 // Test rendering of highlight with forced color and converting fill to
 // stroke. The highlight should be rendered as a stroke of the rect.
 //
@@ -408,7 +444,13 @@ TEST_F(FPDFProgressiveRenderEmbedderTest,
       kBlue, 612, 792, kMD5ContentWithHighlight);
 }
 
-TEST_F(FPDFProgressiveRenderEmbedderTest, RenderInkWithColorScheme) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_RenderInkWithColorScheme DISABLED_RenderInkWithColorScheme
+#else
+#define MAYBE_RenderInkWithColorScheme RenderInkWithColorScheme
+#endif
+TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderInkWithColorScheme) {
 // Test rendering of multiple ink with forced color scheme on.
 #if defined(OS_WIN)
   static constexpr char kMD5ContentWithInk[] =
@@ -425,7 +467,13 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderInkWithColorScheme) {
                                  kBlack, 612, 792, kMD5ContentWithInk);
 }
 
-TEST_F(FPDFProgressiveRenderEmbedderTest, RenderStampWithColorScheme) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_RenderStampWithColorScheme DISABLED_RenderStampWithColorScheme
+#else
+#define MAYBE_RenderStampWithColorScheme RenderStampWithColorScheme
+#endif
+TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderStampWithColorScheme) {
 // Test rendering of static annotation with forced color scheme on.
 #if defined(OS_WIN)
   static constexpr char kMD5ContentWithStamp[] =
@@ -445,7 +493,13 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderStampWithColorScheme) {
                                  kWhite, 595, 842, kMD5ContentWithStamp);
 }
 
-TEST_F(FPDFProgressiveRenderEmbedderTest, RenderFormWithColorScheme) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_RenderFormWithColorScheme DISABLED_RenderFormWithColorScheme
+#else
+#define MAYBE_RenderFormWithColorScheme RenderFormWithColorScheme
+#endif
+TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderFormWithColorScheme) {
   // Test rendering of form does not change with forced color scheme on.
   static constexpr char kMD5ContentWithForm[] =
       "080f7a4381606659301440e1b14dca35";

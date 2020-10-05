@@ -74,7 +74,13 @@ TEST_F(FPDFFlattenEmbedderTest, BUG_861842) {
   VerifySavedDocument(100, 120, kBlankPageHash);
 }
 
-TEST_F(FPDFFlattenEmbedderTest, BUG_889099) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_BUG_889099 DISABLED_BUG_889099
+#else
+#define MAYBE_BUG_889099 BUG_889099
+#endif
+TEST_F(FPDFFlattenEmbedderTest, MAYBE_BUG_889099) {
 #if defined(OS_WIN)
   constexpr char kPageHash[] = "8c6e1dab0a15072f2c9c0ca240fdc739";
   constexpr char kFlattenedPageHash[] = "9fb932ce7f370c0e68eec0a5d4d76271";

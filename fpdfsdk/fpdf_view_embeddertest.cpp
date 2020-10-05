@@ -1238,7 +1238,14 @@ TEST_F(FPDFViewEmbedderTest, LoadDocumentWithEmptyXRefConsistently) {
   }
 }
 
-TEST_F(FPDFViewEmbedderTest, RenderBug664284WithNoNativeText) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_RenderBug664284WithNoNativeText \
+  DISABLED_RenderBug664284WithNoNativeText
+#else
+#define MAYBE_RenderBug664284WithNoNativeText RenderBug664284WithNoNativeText
+#endif
+TEST_F(FPDFViewEmbedderTest, MAYBE_RenderBug664284WithNoNativeText) {
 // FPDF_NO_NATIVETEXT flag only disables native text support on macOS, therefore
 // Windows and Linux rendering results remain the same as rendering with no
 // flags, while the macOS rendering result doesn't.

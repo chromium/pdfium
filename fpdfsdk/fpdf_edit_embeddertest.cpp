@@ -658,7 +658,13 @@ TEST_F(FPDFEditEmbedderTest, SetText) {
   CloseSavedDocument();
 }
 
-TEST_F(FPDFEditEmbedderTest, SetTextKeepClippingPath) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_SetTextKeepClippingPath DISABLED_SetTextKeepClippingPath
+#else
+#define MAYBE_SetTextKeepClippingPath SetTextKeepClippingPath
+#endif
+TEST_F(FPDFEditEmbedderTest, MAYBE_SetTextKeepClippingPath) {
   // Load document with some text, with parts clipped.
   ASSERT_TRUE(OpenDocument("bug_1558.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -3386,7 +3392,15 @@ TEST_F(FPDFEditEmbedderTest, GetBitmapIgnoresSMask) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapHandlesSetMatrix) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_)
+#define MAYBE_GetRenderedBitmapHandlesSetMatrix \
+  DISABLED_GetRenderedBitmapHandlesSetMatrix
+#else
+#define MAYBE_GetRenderedBitmapHandlesSetMatrix \
+  GetRenderedBitmapHandlesSetMatrix
+#endif
+TEST_F(FPDFEditEmbedderTest, MAYBE_GetRenderedBitmapHandlesSetMatrix) {
   ASSERT_TRUE(OpenDocument("embedded_images.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -3443,7 +3457,14 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapHandlesSetMatrix) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapHandlesSMask) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_)
+#define MAYBE_GetRenderedBitmapHandlesSMask \
+  DISABLED_GetRenderedBitmapHandlesSMask
+#else
+#define MAYBE_GetRenderedBitmapHandlesSMask GetRenderedBitmapHandlesSMask
+#endif
+TEST_F(FPDFEditEmbedderTest, MAYBE_GetRenderedBitmapHandlesSMask) {
   ASSERT_TRUE(OpenDocument("matte.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
