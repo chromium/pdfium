@@ -13,6 +13,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_graphstatedata.h"
+#include "third_party/base/span.h"
 #include "xfa/fxgraphics/cxfa_gecolor.h"
 
 enum class FX_HatchStyle {
@@ -41,7 +42,7 @@ class CXFA_Graphics {
   CFX_RenderDevice* GetRenderDevice();
 
   void SetLineCap(CFX_GraphStateData::LineCap lineCap);
-  void SetLineDash(float dashPhase, const float* dashArray, size_t dashCount);
+  void SetLineDash(float dashPhase, pdfium::span<const float> dashArray);
   void SetSolidLineDash();
   void SetLineWidth(float lineWidth);
   void EnableActOnDash();

@@ -9,7 +9,6 @@
 #include <utility>
 
 #include "fxjs/xfa/cjx_object.h"
-#include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/parser/cxfa_color.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
@@ -28,7 +27,7 @@ void XFA_StrokeTypeSetLineDash(CXFA_Graphics* pGraphics,
         dashArray[1] = 2;
         dashArray[3] = 2;
       }
-      pGraphics->SetLineDash(0, dashArray, pdfium::size(dashArray));
+      pGraphics->SetLineDash(0, dashArray);
       break;
     }
     case XFA_AttributeValue::DashDotDot: {
@@ -38,7 +37,7 @@ void XFA_StrokeTypeSetLineDash(CXFA_Graphics* pGraphics,
         dashArray[3] = 2;
         dashArray[5] = 2;
       }
-      pGraphics->SetLineDash(0, dashArray, pdfium::size(dashArray));
+      pGraphics->SetLineDash(0, dashArray);
       break;
     }
     case XFA_AttributeValue::Dashed: {
@@ -46,7 +45,7 @@ void XFA_StrokeTypeSetLineDash(CXFA_Graphics* pGraphics,
       if (iCapType != XFA_AttributeValue::Butt)
         dashArray[1] = 2;
 
-      pGraphics->SetLineDash(0, dashArray, pdfium::size(dashArray));
+      pGraphics->SetLineDash(0, dashArray);
       break;
     }
     case XFA_AttributeValue::Dotted: {
@@ -54,7 +53,7 @@ void XFA_StrokeTypeSetLineDash(CXFA_Graphics* pGraphics,
       if (iCapType != XFA_AttributeValue::Butt)
         dashArray[1] = 2;
 
-      pGraphics->SetLineDash(0, dashArray, pdfium::size(dashArray));
+      pGraphics->SetLineDash(0, dashArray);
       break;
     }
     default:

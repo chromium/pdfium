@@ -9,7 +9,6 @@
 #include <algorithm>
 #include <utility>
 
-#include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
@@ -141,7 +140,7 @@ void CFWL_WidgetTP::DrawFocus(CXFA_Graphics* pGraphics,
   pGraphics->SaveGraphState();
   pGraphics->SetStrokeColor(CXFA_GEColor(0xFF000000));
   static constexpr float kDashPattern[2] = {1, 1};
-  pGraphics->SetLineDash(0.0f, kDashPattern, pdfium::size(kDashPattern));
+  pGraphics->SetLineDash(0.0f, kDashPattern);
   pGraphics->StrokePath(&path, &matrix);
   pGraphics->RestoreGraphState();
 }

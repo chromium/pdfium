@@ -137,15 +137,12 @@ void CXFA_Graphics::SetLineCap(CFX_GraphStateData::LineCap lineCap) {
 }
 
 void CXFA_Graphics::SetLineDash(float dashPhase,
-                                const float* dashArray,
-                                size_t dashCount) {
-  DCHECK(dashArray);
-  DCHECK(dashCount);
-
+                                pdfium::span<const float> dashArray) {
+  DCHECK(!dashArray.empty());
   float scale = m_info.isActOnDash ? m_info.graphState.m_LineWidth : 1.0;
   m_info.graphState.m_DashPhase = dashPhase;
-  m_info.graphState.m_DashArray.resize(dashCount);
-  for (size_t i = 0; i < dashCount; i++)
+  m_info.graphState.m_DashArray.resize(dashArray.size());
+  for (size_t i = 0; i < dashArray.size(); ++i)
     m_info.graphState.m_DashArray[i] = dashArray[i] * scale;
 }
 

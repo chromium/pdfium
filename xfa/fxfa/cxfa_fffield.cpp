@@ -10,7 +10,6 @@
 #include <utility>
 
 #include "third_party/base/check.h"
-#include "third_party/base/stl_util.h"
 #include "xfa/fwl/cfwl_edit.h"
 #include "xfa/fwl/cfwl_eventmouse.h"
 #include "xfa/fwl/cfwl_messagekey.h"
@@ -119,7 +118,7 @@ void CXFA_FFField::DrawFocus(CXFA_Graphics* pGS, CFX_Matrix* pMatrix) {
   pGS->SetStrokeColor(CXFA_GEColor(0xFF000000));
 
   static constexpr float kDashPattern[2] = {1, 1};
-  pGS->SetLineDash(0.0f, kDashPattern, pdfium::size(kDashPattern));
+  pGS->SetLineDash(0.0f, kDashPattern);
   pGS->SetLineWidth(0);
 
   CXFA_GEPath path;
