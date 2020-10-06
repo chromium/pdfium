@@ -41,11 +41,15 @@ bool CStretchEngine::CWeightTable::Calc(int dest_len,
                                         int src_min,
                                         int src_max,
                                         const FXDIB_ResampleOptions& options) {
+  // Help the compiler realize that these can't change during a loop iteration:
+  const bool bilinear = options.bInterpolateBilinear;
+  const bool bicubic = options.bInterpolateBicubic;
+
   m_WeightTables.clear();
   m_dwWeightTablesSize = 0;
   const double scale = static_cast<float>(src_len) / dest_len;
   const double base = dest_len < 0 ? src_len : 0;
-  const int ext_size = options.bInterpolateBicubic ? 3 : 1;
+  const int ext_size = bicubic ? 3 : 1;
   m_ItemSize =
       sizeof(int) * 2 +
       static_cast<int>(sizeof(int) *
@@ -61,7 +65,7 @@ bool CStretchEngine::CWeightTable::Calc(int dest_len,
     for (int dest_pixel = dest_min; dest_pixel < dest_max; ++dest_pixel) {
       PixelWeight& pixel_weights = *GetPixelWeight(dest_pixel);
       double src_pos = dest_pixel * scale + scale / 2 + base;
-      if (options.bInterpolateBilinear) {
+      if (bilinear) {
         pixel_weights.m_SrcStart =
             static_cast<int>(floor(static_cast<float>(src_pos) - 1.0f / 2));
         pixel_weights.m_SrcEnd =
@@ -77,7 +81,7 @@ bool CStretchEngine::CWeightTable::Calc(int dest_len,
                            65536);
           pixel_weights.m_Weights[0] = 65536 - pixel_weights.m_Weights[1];
         }
-      } else if (options.bInterpolateBicubic) {
+      } else if (bicubic) {
         pixel_weights.m_SrcStart =
             static_cast<int>(floor(static_cast<float>(src_pos) - 1.0f / 2));
         pixel_weights.m_SrcEnd =
@@ -350,6 +354,9 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
   if (m_pSource->SkipToScanline(m_CurRow, pPause))
     return true;
 
+  // Help the compiler realize that this can't change during a loop iteration:
+  const bool bicubic = m_ResampleOptions.bInterpolateBicubic;
+
   int Bpp = m_DestBpp / 8;
   static const int kStrechPauseRows = 10;
   int rows_to_go = kStrechPauseRows;
@@ -387,7 +394,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             if (src_scan[j / 8] & (1 << (7 - j % 8)))
               dest_a += pixel_weight * 255;
           }
-          if (m_ResampleOptions.bInterpolateBicubic)
+          if (bicubic)
             dest_a = pdfium::clamp(dest_a, 0, kMaxDestValue);
           *dest_scan++ = static_cast<uint8_t>(dest_a >> 16);
         }
@@ -405,7 +412,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             int pixel_weight = *pWeight;
             dest_a += pixel_weight * src_scan[j];
           }
-          if (m_ResampleOptions.bInterpolateBicubic)
+          if (bicubic)
             dest_a = pdfium::clamp(dest_a, 0, kMaxDestValue);
           *dest_scan++ = static_cast<uint8_t>(dest_a >> 16);
         }
@@ -426,7 +433,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             dest_r += pixel_weight * src_scan[j];
             dest_a += pixel_weight;
           }
-          if (m_ResampleOptions.bInterpolateBicubic) {
+          if (bicubic) {
             dest_r = pdfium::clamp(dest_r, 0, kMaxDestValue);
             dest_a = pdfium::clamp(dest_a, 0, 65536);
           }
@@ -458,7 +465,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
               dest_r_y += pixel_weight * static_cast<uint8_t>(argb_cmyk >> 8);
             }
           }
-          if (m_ResampleOptions.bInterpolateBicubic) {
+          if (bicubic) {
             dest_r_y = pdfium::clamp(dest_r_y, 0, kMaxDestValue);
             dest_g_m = pdfium::clamp(dest_g_m, 0, kMaxDestValue);
             dest_b_c = pdfium::clamp(dest_b_c, 0, kMaxDestValue);
@@ -495,7 +502,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             }
             dest_a += pixel_weight;
           }
-          if (m_ResampleOptions.bInterpolateBicubic) {
+          if (bicubic) {
             dest_b_c = pdfium::clamp(dest_b_c, 0, kMaxDestValue);
             dest_g_m = pdfium::clamp(dest_g_m, 0, kMaxDestValue);
             dest_r_y = pdfium::clamp(dest_r_y, 0, kMaxDestValue);
@@ -525,7 +532,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             dest_g_m += pixel_weight * (*src_pixel++);
             dest_r_y += pixel_weight * (*src_pixel);
           }
-          if (m_ResampleOptions.bInterpolateBicubic) {
+          if (bicubic) {
             dest_b_c = pdfium::clamp(dest_b_c, 0, kMaxDestValue);
             dest_g_m = pdfium::clamp(dest_g_m, 0, kMaxDestValue);
             dest_r_y = pdfium::clamp(dest_r_y, 0, kMaxDestValue);
@@ -561,7 +568,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             dest_r_y += pixel_weight * (*src_pixel);
             dest_a += pixel_weight;
           }
-          if (m_ResampleOptions.bInterpolateBicubic) {
+          if (bicubic) {
             dest_r_y = pdfium::clamp(dest_r_y, 0, kMaxDestValue);
             dest_g_m = pdfium::clamp(dest_g_m, 0, kMaxDestValue);
             dest_b_c = pdfium::clamp(dest_b_c, 0, kMaxDestValue);
@@ -595,6 +602,9 @@ void CStretchEngine::StretchVert() {
   if (!ret)
     return;
 
+  // Help the compiler realize that this can't change during a loop iteration:
+  const bool bicubic = m_ResampleOptions.bInterpolateBicubic;
+
   const int DestBpp = m_DestBpp / 8;
   for (int row = m_DestClip.top; row < m_DestClip.bottom; ++row) {
     unsigned char* dest_scan = m_DestScanline.data();
@@ -617,7 +627,7 @@ void CStretchEngine::StretchVert() {
             dest_a +=
                 pixel_weight * src_scan[(j - m_SrcClip.top) * m_InterPitch];
           }
-          if (m_ResampleOptions.bInterpolateBicubic)
+          if (bicubic)
             dest_a = pdfium::clamp(dest_a, 0, kMaxDestValue);
           *dest_scan = static_cast<uint8_t>(dest_a >> 16);
           dest_scan += DestBpp;
@@ -643,7 +653,7 @@ void CStretchEngine::StretchVert() {
             dest_a += pixel_weight *
                       src_scan_mask[(j - m_SrcClip.top) * m_ExtraMaskPitch];
           }
-          if (m_ResampleOptions.bInterpolateBicubic) {
+          if (bicubic) {
             dest_k = pdfium::clamp(dest_k, 0, kMaxDestValue);
             dest_a = pdfium::clamp(dest_a, 0, kMaxDestValue);
           }
@@ -673,7 +683,7 @@ void CStretchEngine::StretchVert() {
             dest_g_m += pixel_weight * (*src_pixel++);
             dest_r_y += pixel_weight * (*src_pixel);
           }
-          if (m_ResampleOptions.bInterpolateBicubic) {
+          if (bicubic) {
             dest_r_y = pdfium::clamp(dest_r_y, 0, kMaxDestValue);
             dest_g_m = pdfium::clamp(dest_g_m, 0, kMaxDestValue);
             dest_b_c = pdfium::clamp(dest_b_c, 0, kMaxDestValue);
@@ -716,7 +726,7 @@ void CStretchEngine::StretchVert() {
             else
               dest_a += pixel_weight * mask_v;
           }
-          if (m_ResampleOptions.bInterpolateBicubic) {
+          if (bicubic) {
             dest_r_y = pdfium::clamp(dest_r_y, 0, kMaxDestValue);
             dest_g_m = pdfium::clamp(dest_g_m, 0, kMaxDestValue);
             dest_b_c = pdfium::clamp(dest_b_c, 0, kMaxDestValue);
