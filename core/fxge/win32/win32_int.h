@@ -17,47 +17,16 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_windowsrenderdevice.h"
 #include "core/fxge/renderdevicedriver_iface.h"
+#include "core/fxge/win32/cgdi_plus_ext.h"
 #include "third_party/base/optional.h"
 
 class CFX_ImageRenderer;
 class TextCharPos;
 struct CFX_FillRenderOptions;
-struct WINDIB_Open_Args_;
 
 RetainPtr<CFX_DIBitmap> FX_WindowsDIB_LoadFromBuf(BITMAPINFO* pbmi,
                                                   LPVOID pData,
                                                   bool bAlpha);
-class CGdiplusExt {
- public:
-  CGdiplusExt();
-  ~CGdiplusExt();
-
-  void Load();
-  bool IsAvailable() { return !!m_hModule; }
-  bool StretchDIBits(HDC hDC,
-                     const RetainPtr<CFX_DIBitmap>& pBitmap,
-                     int dest_left,
-                     int dest_top,
-                     int dest_width,
-                     int dest_height,
-                     const FX_RECT* pClipRect,
-                     const FXDIB_ResampleOptions& options);
-  bool DrawPath(HDC hDC,
-                const CFX_PathData* pPathData,
-                const CFX_Matrix* pObject2Device,
-                const CFX_GraphStateData* pGraphState,
-                uint32_t fill_argb,
-                uint32_t stroke_argb,
-                const CFX_FillRenderOptions& fill_options);
-
-  RetainPtr<CFX_DIBitmap> LoadDIBitmap(WINDIB_Open_Args_ args);
-
-  std::vector<FARPROC> m_Functions;
-
- protected:
-  HMODULE m_hModule = nullptr;
-  HMODULE m_GdiModule = nullptr;
-};
 
 class CWin32Platform : public CFX_GEModule::PlatformIface {
  public:

@@ -185,6 +185,8 @@ source_set("fxge") {
       "win32/cfx_windowsdib.h",
       "win32/cgdi_display_driver.cpp",
       "win32/cgdi_display_driver.h",
+      "win32/cgdi_plus_ext.cpp",
+      "win32/cgdi_plus_ext.h",
       "win32/cgdi_printer_driver.cpp",
       "win32/cgdi_printer_driver.h",
       "win32/cps_printer_driver.cpp",
@@ -195,7 +197,6 @@ source_set("fxge") {
       "win32/ctext_only_printer_driver.h",
       "win32/fx_win32_device.cpp",
       "win32/fx_win32_dib.cpp",
-      "win32/fx_win32_gdipext.cpp",
       "win32/win32_int.h",
     ]
     configs -= [ "//build/config/win:lean_and_mean" ]

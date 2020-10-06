@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/fxge/win32/cgdi_plus_ext.h"
+
 #include <windows.h>
 
 #include <objidl.h>
