@@ -26,6 +26,7 @@
 #include "core/fxge/fx_freetype.h"
 #include "core/fxge/systemfontinfo_iface.h"
 #include "core/fxge/win32/cfx_windowsdib.h"
+#include "core/fxge/win32/cgdi_printer_driver.h"
 #include "core/fxge/win32/cps_printer_driver.h"
 #include "core/fxge/win32/ctext_only_printer_driver.h"
 #include "core/fxge/win32/win32_int.h"

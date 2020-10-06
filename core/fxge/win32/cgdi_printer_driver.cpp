@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/fxge/win32/cgdi_printer_driver.h"
+
 #include <windows.h>
 
 #include <algorithm>
@@ -16,7 +18,6 @@
 #include "core/fxge/dib/cfx_dibextractor.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/text_char_pos.h"
-#include "core/fxge/win32/win32_int.h"
 
 #if defined(PDFIUM_PRINT_TEXT_WITH_GDI)
 namespace {
