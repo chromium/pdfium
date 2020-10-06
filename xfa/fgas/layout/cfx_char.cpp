@@ -14,9 +14,9 @@
 
 namespace {
 
-#ifndef NDEBUG
+#if DCHECK_IS_ON()
 constexpr int32_t kBidiMaxLevel = 61;
-#endif  // NDEBUG
+#endif
 
 #undef PACK_NIBBLES
 #define PACK_NIBBLES(hi, lo) \
