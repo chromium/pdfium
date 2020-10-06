@@ -1037,19 +1037,11 @@ class RendererScanLineAaOffset {
   unsigned m_top;
 };
 
-class CAgg_PathData {
- public:
-  CAgg_PathData() = default;
-  ~CAgg_PathData() = default;
-
-  void BuildPath(const CFX_PathData* pPathData,
-                 const CFX_Matrix* pObject2Device);
-
-  agg::path_storage m_PathData;
-};
-
-void CAgg_PathData::BuildPath(const CFX_PathData* pPathData,
-                              const CFX_Matrix* pObject2Device) {
+// Note: BuildAggPath() has to take |agg_path| as an out-parameter. If it
+// returns the agg::path_storage instead, tests will fail with MSVC builds.
+void BuildAggPath(const CFX_PathData* pPathData,
+                  const CFX_Matrix* pObject2Device,
+                  agg::path_storage& agg_path) {
   pdfium::span<const FX_PATHPOINT> points = pPathData->GetPoints();
   for (size_t i = 0; i < points.size(); ++i) {
     CFX_PointF pos = points[i].m_Point;
@@ -1059,7 +1051,7 @@ void CAgg_PathData::BuildPath(const CFX_PathData* pPathData,
     pos = HardClip(pos);
     FXPT_TYPE point_type = points[i].m_Type;
     if (point_type == FXPT_TYPE::MoveTo) {
-      m_PathData.move_to(pos.x, pos.y);
+      agg_path.move_to(pos.x, pos.y);
     } else if (point_type == FXPT_TYPE::LineTo) {
       if (i > 0 && points[i - 1].IsTypeAndOpen(FXPT_TYPE::MoveTo) &&
           (i == points.size() - 1 ||
@@ -1067,7 +1059,7 @@ void CAgg_PathData::BuildPath(const CFX_PathData* pPathData,
           points[i].m_Point == points[i - 1].m_Point) {
         pos.x += 1;
       }
-      m_PathData.line_to(pos.x, pos.y);
+      agg_path.line_to(pos.x, pos.y);
     } else if (point_type == FXPT_TYPE::BezierTo) {
       if (i > 0 && i + 2 < points.size()) {
         CFX_PointF pos0 = points[i - 1].m_Point;
@@ -1084,11 +1076,11 @@ void CAgg_PathData::BuildPath(const CFX_PathData* pPathData,
         agg::curve4 curve(pos0.x, pos0.y, pos.x, pos.y, pos2.x, pos2.y, pos3.x,
                           pos3.y);
         i += 2;
-        m_PathData.add_path_curve(curve);
+        agg_path.add_path_curve(curve);
       }
     }
     if (points[i].m_CloseFigure)
-      m_PathData.end_poly();
+      agg_path.end_poly();
   }
 }
 
@@ -1234,14 +1226,14 @@ bool CFX_AggDeviceDriver::SetClip_PathFill(
       return true;
     }
   }
-  CAgg_PathData path_data;
-  path_data.BuildPath(pPathData, pObject2Device);
-  path_data.m_PathData.end_poly();
+  agg::path_storage path_data;
+  BuildAggPath(pPathData, pObject2Device, path_data);
+  path_data.end_poly();
   agg::rasterizer_scanline_aa rasterizer;
   rasterizer.clip_box(0.0f, 0.0f,
                       static_cast<float>(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
                       static_cast<float>(GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
-  rasterizer.add_path(path_data.m_PathData);
+  rasterizer.add_path(path_data);
   rasterizer.filling_rule(GetAlternateOrWindingFillType(fill_options));
   SetClipMask(rasterizer);
   return true;
@@ -1255,14 +1247,14 @@ bool CFX_AggDeviceDriver::SetClip_PathStroke(
     m_pClipRgn = std::make_unique<CFX_ClipRgn>(
         GetDeviceCaps(FXDC_PIXEL_WIDTH), GetDeviceCaps(FXDC_PIXEL_HEIGHT));
   }
-  CAgg_PathData path_data;
-  path_data.BuildPath(pPathData, nullptr);
+  agg::path_storage path_data;
+  BuildAggPath(pPathData, nullptr, path_data);
   agg::rasterizer_scanline_aa rasterizer;
   rasterizer.clip_box(0.0f, 0.0f,
                       static_cast<float>(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
                       static_cast<float>(GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
-  RasterizeStroke(&rasterizer, &path_data.m_PathData, pObject2Device,
-                  pGraphState, 1.0f, false);
+  RasterizeStroke(&rasterizer, &path_data, pObject2Device, pGraphState, 1.0f,
+                  false);
   rasterizer.filling_rule(agg::fill_non_zero);
   SetClipMask(rasterizer);
   return true;
@@ -1305,13 +1297,13 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
   m_FillOptions = fill_options;
   if (fill_options.fill_type != CFX_FillRenderOptions::FillType::kNoFill &&
       fill_color) {
-    CAgg_PathData path_data;
-    path_data.BuildPath(pPathData, pObject2Device);
+    agg::path_storage path_data;
+    BuildAggPath(pPathData, pObject2Device, path_data);
     agg::rasterizer_scanline_aa rasterizer;
     rasterizer.clip_box(0.0f, 0.0f,
                         static_cast<float>(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
                         static_cast<float>(GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
-    rasterizer.add_path(path_data.m_PathData);
+    rasterizer.add_path(path_data);
     rasterizer.filling_rule(GetAlternateOrWindingFillType(fill_options));
     if (!RenderRasterizer(rasterizer, fill_color, fill_options.full_cover,
                           false)) {
@@ -1323,13 +1315,13 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
     return true;
 
   if (fill_options.zero_area) {
-    CAgg_PathData path_data;
-    path_data.BuildPath(pPathData, pObject2Device);
+    agg::path_storage path_data;
+    BuildAggPath(pPathData, pObject2Device, path_data);
     agg::rasterizer_scanline_aa rasterizer;
     rasterizer.clip_box(0.0f, 0.0f,
                         static_cast<float>(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
                         static_cast<float>(GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
-    RasterizeStroke(&rasterizer, &path_data.m_PathData, nullptr, pGraphState, 1,
+    RasterizeStroke(&rasterizer, &path_data, nullptr, pGraphState, 1,
                     fill_options.stroke_text_mode);
     return RenderRasterizer(rasterizer, stroke_color, fill_options.full_cover,
                             m_bGroupKnockout);
@@ -1346,14 +1338,14 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
     matrix1 = *pObject2Device * matrix2.GetInverse();
   }
 
-  CAgg_PathData path_data;
-  path_data.BuildPath(pPathData, &matrix1);
+  agg::path_storage path_data;
+  BuildAggPath(pPathData, &matrix1, path_data);
   agg::rasterizer_scanline_aa rasterizer;
   rasterizer.clip_box(0.0f, 0.0f,
                       static_cast<float>(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
                       static_cast<float>(GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
-  RasterizeStroke(&rasterizer, &path_data.m_PathData, &matrix2, pGraphState,
-                  matrix1.a, fill_options.stroke_text_mode);
+  RasterizeStroke(&rasterizer, &path_data, &matrix2, pGraphState, matrix1.a,
+                  fill_options.stroke_text_mode);
   return RenderRasterizer(rasterizer, stroke_color, fill_options.full_cover,
                           m_bGroupKnockout);
 }
