@@ -1394,7 +1394,7 @@ TEST_F(FPDFViewEmbedderTest, RenderHelloWorldWithFlags) {
 #if defined(OS_WIN)
   static const char kLcdTextChecksum[] = "6e32f5a9c46e4e0730481081fe80617d";
   static const char kNoSmoothtextChecksum[] =
-      "a728a18c9515ecddf77cfcf45fb6c375";
+      "106cb0b6941feb3319e0e7391d02f61e";
 #elif defined(OS_APPLE)
   static const char kLcdTextChecksum[] = "c38b75e16a13852aee3b97d77a0f0ee7";
   static const char kNoSmoothtextChecksum[] =
@@ -1402,7 +1402,7 @@ TEST_F(FPDFViewEmbedderTest, RenderHelloWorldWithFlags) {
 #else
   static const char kLcdTextChecksum[] = "825e881f39e48254e64e2808987a6b8c";
   static const char kNoSmoothtextChecksum[] =
-      "3d01e234120b783a3fffb27273ea1ea8";
+      "40740e0f219f6834581119d2ceb48911";
 #endif
 #endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
