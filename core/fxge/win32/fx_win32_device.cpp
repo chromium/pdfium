@@ -34,6 +34,7 @@
 
 #if !defined(_SKIA_SUPPORT_)
 #include "core/fxge/agg/fx_agg_driver.h"
+#include "third_party/agg23/agg_clip_liang_barsky.h"
 #endif
 
 namespace {

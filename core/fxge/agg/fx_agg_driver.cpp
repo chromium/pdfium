@@ -1103,10 +1103,6 @@ CFX_AggDeviceDriver::~CFX_AggDeviceDriver() {
   DestroyPlatform();
 }
 
-uint8_t* CFX_AggDeviceDriver::GetBuffer() const {
-  return m_pBitmap->GetBuffer();
-}
-
 #if !defined(OS_APPLE)
 void CFX_AggDeviceDriver::InitPlatform() {}
 
@@ -1291,7 +1287,7 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
   if (blend_type != BlendMode::kNormal)
     return false;
 
-  if (!GetBuffer())
+  if (!m_pBitmap->GetBuffer())
     return true;
 
   m_FillOptions = fill_options;

@@ -13,7 +13,6 @@
 #include "build/build_config.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/renderdevicedriver_iface.h"
-#include "third_party/agg23/agg_rasterizer_scanline_aa.h"
 
 class CFX_ClipRgn;
 class CFX_GraphStateData;
@@ -21,6 +20,10 @@ class CFX_Matrix;
 class CFX_PathData;
 
 namespace pdfium {
+
+namespace agg {
+class rasterizer_scanline_aa;
+}  // namespace agg
 
 class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
  public:
@@ -92,6 +95,7 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
                       const CFX_TextRenderOptions& options) override;
   int GetDriverType() const override;
 
+ private:
   bool RenderRasterizer(pdfium::agg::rasterizer_scanline_aa& rasterizer,
                         uint32_t color,
                         bool bFullCover,
@@ -99,9 +103,6 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
 
   void SetClipMask(pdfium::agg::rasterizer_scanline_aa& rasterizer);
 
-  virtual uint8_t* GetBuffer() const;
-
- private:
   RetainPtr<CFX_DIBitmap> const m_pBitmap;
   std::unique_ptr<CFX_ClipRgn> m_pClipRgn;
   std::vector<std::unique_ptr<CFX_ClipRgn>> m_StateStack;
