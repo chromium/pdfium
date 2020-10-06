@@ -31,6 +31,7 @@ class CXFA_Document;
 class CXFA_LayoutItem;
 class CXFA_Node;
 class CXFA_Object;
+struct XFA_MAPDATABLOCKCALLBACKINFO;
 struct XFA_MAPMODULEDATA;
 
 typedef CJS_Result (*CJX_MethodCall)(
@@ -41,14 +42,6 @@ typedef CJS_Result (*CJX_MethodCall)(
 struct CJX_MethodSpec {
   const char* pName;
   CJX_MethodCall pMethodCall;
-};
-
-typedef void (*PD_CALLBACK_FREEDATA)(void* pData);
-typedef void (*PD_CALLBACK_DUPLICATEDATA)(void*& pData);
-
-struct XFA_MAPDATABLOCKCALLBACKINFO {
-  PD_CALLBACK_FREEDATA pFree;
-  PD_CALLBACK_DUPLICATEDATA pCopy;
 };
 
 enum XFA_SOM_MESSAGETYPE {
@@ -272,7 +265,7 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
   Optional<WideString> GetMapModuleString(void* pKey) const;
   void SetMapModuleBuffer(void* pKey,
                           void* pValue,
-                          int32_t iBytes,
+                          size_t iBytes,
                           const XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo);
   bool GetMapModuleBuffer(void* pKey, void** pValue, int32_t* pBytes) const;
   bool HasMapModuleKey(void* pKey);

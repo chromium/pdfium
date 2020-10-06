@@ -55,9 +55,6 @@ void XFA_CopyWideString(void*& pData) {
   pData = new WideString(*reinterpret_cast<WideString*>(pData));
 }
 
-const XFA_MAPDATABLOCKCALLBACKINFO deleteWideStringCallBack = {
-    XFA_DeleteWideString, XFA_CopyWideString};
-
 enum XFA_KEYTYPE {
   XFA_KEYTYPE_Custom,
   XFA_KEYTYPE_Element,
@@ -107,11 +104,19 @@ std::tuple<int32_t, int32_t, int32_t> StrToRGB(const WideString& strRGB) {
 
 }  // namespace
 
+struct XFA_MAPDATABLOCKCALLBACKINFO {
+  void (*pFree)(void* pData);
+  void (*pCopy)(void*& pData);
+};
+
 struct XFA_MAPDATABLOCK {
+  static size_t SizeForCapacity(size_t capacity) {
+    return sizeof(XFA_MAPDATABLOCK) + capacity;
+  }
   uint8_t* GetData() const { return (uint8_t*)this + sizeof(XFA_MAPDATABLOCK); }
 
   const XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo;
-  int32_t iBytes;
+  size_t iBytes;
 };
 
 struct XFA_MAPMODULEDATA {
@@ -121,6 +126,9 @@ struct XFA_MAPMODULEDATA {
   std::map<void*, void*> m_ValueMap;
   std::map<void*, XFA_MAPDATABLOCK*> m_BufferMap;
 };
+
+const XFA_MAPDATABLOCKCALLBACKINFO deleteWideStringCallBack = {
+    XFA_DeleteWideString, XFA_CopyWideString};
 
 CJX_Object::CJX_Object(CXFA_Object* obj) : object_(obj) {}
 
@@ -878,18 +886,18 @@ Optional<WideString> CJX_Object::GetMapModuleString(void* pKey) const {
 void CJX_Object::SetMapModuleBuffer(
     void* pKey,
     void* pValue,
-    int32_t iBytes,
+    size_t iBytes,
     const XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo) {
   XFA_MAPDATABLOCK*& pBuffer = CreateMapModuleData()->m_BufferMap[pKey];
   if (!pBuffer) {
     pBuffer = reinterpret_cast<XFA_MAPDATABLOCK*>(
-        FX_Alloc(uint8_t, sizeof(XFA_MAPDATABLOCK) + iBytes));
+        FX_Alloc(uint8_t, XFA_MAPDATABLOCK::SizeForCapacity(iBytes)));
   } else if (pBuffer->iBytes != iBytes) {
     if (pBuffer->pCallbackInfo && pBuffer->pCallbackInfo->pFree)
       pBuffer->pCallbackInfo->pFree(*(void**)pBuffer->GetData());
 
-    pBuffer = reinterpret_cast<XFA_MAPDATABLOCK*>(
-        FX_Realloc(uint8_t, pBuffer, sizeof(XFA_MAPDATABLOCK) + iBytes));
+    pBuffer = reinterpret_cast<XFA_MAPDATABLOCK*>(FX_Realloc(
+        uint8_t, pBuffer, XFA_MAPDATABLOCK::SizeForCapacity(iBytes)));
   } else if (pBuffer->pCallbackInfo && pBuffer->pCallbackInfo->pFree) {
     pBuffer->pCallbackInfo->pFree(
         *reinterpret_cast<void**>(pBuffer->GetData()));
@@ -1000,13 +1008,14 @@ void CJX_Object::MergeAllData(CXFA_Object* pDstModule) {
     }
     if (!pDstBuffer) {
       pDstBuffer = (XFA_MAPDATABLOCK*)FX_Alloc(
-          uint8_t, sizeof(XFA_MAPDATABLOCK) + pSrcBuffer->iBytes);
+          uint8_t, XFA_MAPDATABLOCK::SizeForCapacity(pSrcBuffer->iBytes));
     } else if (pDstBuffer->iBytes != pSrcBuffer->iBytes) {
       if (pDstBuffer->pCallbackInfo && pDstBuffer->pCallbackInfo->pFree) {
         pDstBuffer->pCallbackInfo->pFree(*(void**)pDstBuffer->GetData());
       }
       pDstBuffer = (XFA_MAPDATABLOCK*)FX_Realloc(
-          uint8_t, pDstBuffer, sizeof(XFA_MAPDATABLOCK) + pSrcBuffer->iBytes);
+          uint8_t, pDstBuffer,
+          XFA_MAPDATABLOCK::SizeForCapacity(pSrcBuffer->iBytes));
     } else if (pDstBuffer->pCallbackInfo && pDstBuffer->pCallbackInfo->pFree) {
       pDstBuffer->pCallbackInfo->pFree(*(void**)pDstBuffer->GetData());
     }
