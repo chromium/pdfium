@@ -435,7 +435,7 @@ Optional<float> CJX_Object::TryMeasureAsFloat(XFA_Attribute attr) const {
   Optional<CXFA_Measurement> measure = TryMeasure(attr, false);
   if (measure)
     return measure->ToUnit(XFA_Unit::Pt);
-  return {};
+  return pdfium::nullopt;
 }
 
 CXFA_Measurement CJX_Object::GetMeasure(XFA_Attribute eAttr) const {
@@ -443,8 +443,7 @@ CXFA_Measurement CJX_Object::GetMeasure(XFA_Attribute eAttr) const {
 }
 
 float CJX_Object::GetMeasureInUnit(XFA_Attribute eAttr, XFA_Unit unit) const {
-  auto measure = TryMeasure(eAttr, true).value_or(CXFA_Measurement());
-  return measure.ToUnit(unit);
+  return GetMeasure(eAttr).ToUnit(unit);
 }
 
 WideString CJX_Object::GetCData(XFA_Attribute eAttr) const {
