@@ -236,7 +236,6 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
                     bool bScriptModify);
   void DefineMethods(pdfium::span<const CJX_MethodSpec> methods);
   void MoveBufferMapData(CXFA_Object* pSrcModule, CXFA_Object* pDstModule);
-  void SetMapModuleString(void* pKey, WideStringView wsValue);
   void ThrowException(const WideString& str) const;
 
  private:
@@ -249,7 +248,7 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
 
   void OnChanged(XFA_Attribute eAttr, bool bNotify, bool bScriptModify);
   void OnChanging(XFA_Attribute eAttr, bool bNotify);
-  void SetUserData(void* pKey,
+  void SetUserData(uint32_t key,
                    void* pData,
                    const XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo);
 
@@ -260,17 +259,18 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
 
   XFA_MAPMODULEDATA* CreateMapModuleData();
   XFA_MAPMODULEDATA* GetMapModuleData() const;
-  void SetMapModuleValue(void* pKey, void* pValue);
-  Optional<void*> GetMapModuleValue(void* pKey) const;
-  Optional<WideString> GetMapModuleString(void* pKey) const;
-  void SetMapModuleBuffer(void* pKey,
+  void SetMapModuleValue(uint32_t key, void* pValue);
+  void SetMapModuleString(uint32_t key, WideStringView wsValue);
+  Optional<void*> GetMapModuleValue(uint32_t key) const;
+  Optional<WideString> GetMapModuleString(uint32_t key) const;
+  void SetMapModuleBuffer(uint32_t key,
                           void* pValue,
                           size_t iBytes,
                           const XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo);
-  bool GetMapModuleBuffer(void* pKey, void** pValue, int32_t* pBytes) const;
-  bool HasMapModuleKey(void* pKey);
+  bool GetMapModuleBuffer(uint32_t key, void** pValue, int32_t* pBytes) const;
+  bool HasMapModuleKey(uint32_t key);
+  void RemoveMapModuleKey(uint32_t key);
   void ClearMapModuleBuffer();
-  void RemoveMapModuleKey(void* pKey);
   void MoveBufferMapData(CXFA_Object* pDstModule);
 
   cppgc::Member<CXFA_Object> object_;
