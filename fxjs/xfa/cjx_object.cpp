@@ -463,7 +463,8 @@ void CJX_Object::SetCDataImpl(XFA_Attribute eAttr,
   OnChanging(eAttr, bNotify);
   if (eAttr == XFA_Attribute::Value) {
     WideString* pClone = new WideString(wsValue);
-    SetUserData(key, pClone, &deleteWideStringCallBack);
+    SetMapModuleBuffer(key, &pClone, sizeof(WideString*),
+                       &deleteWideStringCallBack);
   } else {
     SetMapModuleString(key, wsValue.AsStringView());
     if (eAttr == XFA_Attribute::Name)
@@ -510,7 +511,9 @@ void CJX_Object::SetAttributeValueImpl(const WideString& wsValue,
       GetMapKey_Element(xfaObj->GetElementType(), XFA_Attribute::Value);
 
   OnChanging(XFA_Attribute::Value, bNotify);
-  SetUserData(key, new WideString(wsValue), &deleteWideStringCallBack);
+  WideString* pClone = new WideString(wsValue);
+  SetMapModuleBuffer(key, &pClone, sizeof(WideString*),
+                     &deleteWideStringCallBack);
   OnChanged(XFA_Attribute::Value, bNotify, bScriptModify);
 
   if (!xfaObj->IsNeedSavingXMLNode())
@@ -821,14 +824,6 @@ std::pair<CXFA_Node*, int32_t> CJX_Object::GetPropertyInternal(
 CXFA_Node* CJX_Object::GetOrCreatePropertyInternal(int32_t index,
                                                    XFA_Element eProperty) {
   return GetXFANode()->GetOrCreateProperty(index, eProperty);
-}
-
-void CJX_Object::SetUserData(
-    uint32_t key,
-    void* pData,
-    const XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo) {
-  ASSERT(pCallbackInfo);
-  SetMapModuleBuffer(key, &pData, sizeof(void*), pCallbackInfo);
 }
 
 XFA_MAPMODULEDATA* CJX_Object::CreateMapModuleData() {

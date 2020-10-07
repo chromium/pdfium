@@ -248,9 +248,6 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
 
   void OnChanged(XFA_Attribute eAttr, bool bNotify, bool bScriptModify);
   void OnChanging(XFA_Attribute eAttr, bool bNotify);
-  void SetUserData(uint32_t key,
-                   void* pData,
-                   const XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo);
 
   // Returns a pointer to the XML node that needs to be updated with the new
   // attribute value. |nullptr| if no update is needed.
