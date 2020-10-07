@@ -254,14 +254,14 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
 
   // Returns a pointer to the XML node that needs to be updated with the new
   // attribute value. |nullptr| if no update is needed.
-  CFX_XMLElement* SetValue(XFA_Attribute eAttr, void* pValue, bool bNotify);
+  CFX_XMLElement* SetValue(XFA_Attribute eAttr, int32_t value, bool bNotify);
   int32_t Subform_and_SubformSet_InstanceIndex();
 
   XFA_MAPMODULEDATA* CreateMapModuleData();
   XFA_MAPMODULEDATA* GetMapModuleData() const;
-  void SetMapModuleValue(uint32_t key, void* pValue);
+  void SetMapModuleValue(uint32_t key, int32_t value);
   void SetMapModuleString(uint32_t key, WideStringView wsValue);
-  Optional<void*> GetMapModuleValue(uint32_t key) const;
+  Optional<int32_t> GetMapModuleValue(uint32_t key) const;
   Optional<WideString> GetMapModuleString(uint32_t key) const;
   void SetMapModuleBuffer(uint32_t key,
                           void* pValue,

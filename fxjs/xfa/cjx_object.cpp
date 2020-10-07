@@ -122,8 +122,8 @@ struct XFA_MAPMODULEDATA {
   XFA_MAPMODULEDATA() {}
   ~XFA_MAPMODULEDATA() {}
 
-  // Keyed by result of GetMapKey_*().
-  std::map<uint32_t, void*> m_ValueMap;
+  // These two are keyed by result of GetMapKey_*().
+  std::map<uint32_t, int32_t> m_ValueMap;  // int/enum/bool represented as int.
   std::map<uint32_t, XFA_MAPDATABLOCK*> m_BufferMap;
 };
 
@@ -340,16 +340,16 @@ void CJX_Object::RemoveAttribute(WideStringView wsAttr) {
 
 Optional<bool> CJX_Object::TryBoolean(XFA_Attribute eAttr, bool bUseDefault) {
   uint32_t key = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
-  Optional<void*> value = GetMapModuleValue(key);
+  Optional<int32_t> value = GetMapModuleValue(key);
   if (value.has_value())
     return !!value.value();
   if (!bUseDefault)
-    return {};
+    return pdfium::nullopt;
   return GetXFANode()->GetDefaultBoolean(eAttr);
 }
 
 void CJX_Object::SetBoolean(XFA_Attribute eAttr, bool bValue, bool bNotify) {
-  CFX_XMLElement* elem = SetValue(eAttr, (void*)(uintptr_t)bValue, bNotify);
+  CFX_XMLElement* elem = SetValue(eAttr, static_cast<int32_t>(bValue), bNotify);
   if (elem) {
     elem->SetAttribute(WideString::FromASCII(XFA_AttributeToName(eAttr)),
                        bValue ? L"1" : L"0");
@@ -361,7 +361,7 @@ bool CJX_Object::GetBoolean(XFA_Attribute eAttr) {
 }
 
 void CJX_Object::SetInteger(XFA_Attribute eAttr, int32_t iValue, bool bNotify) {
-  CFX_XMLElement* elem = SetValue(eAttr, (void*)(uintptr_t)iValue, bNotify);
+  CFX_XMLElement* elem = SetValue(eAttr, iValue, bNotify);
   if (elem) {
     elem->SetAttribute(WideString::FromASCII(XFA_AttributeToName(eAttr)),
                        WideString::Format(L"%d", iValue));
@@ -375,31 +375,29 @@ int32_t CJX_Object::GetInteger(XFA_Attribute eAttr) const {
 Optional<int32_t> CJX_Object::TryInteger(XFA_Attribute eAttr,
                                          bool bUseDefault) const {
   uint32_t key = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
-  Optional<void*> value = GetMapModuleValue(key);
+  Optional<int32_t> value = GetMapModuleValue(key);
   if (value.has_value())
-    return static_cast<int32_t>(reinterpret_cast<uintptr_t>(value.value()));
+    return value.value();
   if (!bUseDefault)
-    return {};
+    return pdfium::nullopt;
   return GetXFANode()->GetDefaultInteger(eAttr);
 }
 
 Optional<XFA_AttributeValue> CJX_Object::TryEnum(XFA_Attribute eAttr,
                                                  bool bUseDefault) const {
   uint32_t key = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
-  Optional<void*> value = GetMapModuleValue(key);
-  if (value.has_value()) {
-    return static_cast<XFA_AttributeValue>(
-        reinterpret_cast<uintptr_t>(value.value()));
-  }
+  Optional<int32_t> value = GetMapModuleValue(key);
+  if (value.has_value())
+    return static_cast<XFA_AttributeValue>(value.value());
   if (!bUseDefault)
-    return {};
+    return pdfium::nullopt;
   return GetXFANode()->GetDefaultEnum(eAttr);
 }
 
 void CJX_Object::SetEnum(XFA_Attribute eAttr,
                          XFA_AttributeValue eValue,
                          bool bNotify) {
-  CFX_XMLElement* elem = SetValue(eAttr, (void*)(uintptr_t)eValue, bNotify);
+  CFX_XMLElement* elem = SetValue(eAttr, static_cast<int32_t>(eValue), bNotify);
   if (elem) {
     elem->SetAttribute(WideString::FromASCII(XFA_AttributeToName(eAttr)),
                        WideString::FromASCII(XFA_AttributeValueToName(eValue)));
@@ -546,11 +544,11 @@ Optional<WideString> CJX_Object::TryCData(XFA_Attribute eAttr,
 }
 
 CFX_XMLElement* CJX_Object::SetValue(XFA_Attribute eAttr,
-                                     void* pValue,
+                                     int32_t value,
                                      bool bNotify) {
   uint32_t key = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
   OnChanging(eAttr, bNotify);
-  SetMapModuleValue(key, pValue);
+  SetMapModuleValue(key, value);
   OnChanged(eAttr, bNotify, false);
 
   CXFA_Node* pNode = GetXFANode();
@@ -844,11 +842,11 @@ XFA_MAPMODULEDATA* CJX_Object::GetMapModuleData() const {
   return map_module_data_.get();
 }
 
-void CJX_Object::SetMapModuleValue(uint32_t key, void* pValue) {
-  CreateMapModuleData()->m_ValueMap[key] = pValue;
+void CJX_Object::SetMapModuleValue(uint32_t key, int32_t value) {
+  CreateMapModuleData()->m_ValueMap[key] = value;
 }
 
-Optional<void*> CJX_Object::GetMapModuleValue(uint32_t key) const {
+Optional<int32_t> CJX_Object::GetMapModuleValue(uint32_t key) const {
   std::set<const CXFA_Node*> visited;
   for (const CXFA_Node* pNode = GetXFANode(); pNode;
        pNode = pNode->GetTemplateNodeIfExists()) {
