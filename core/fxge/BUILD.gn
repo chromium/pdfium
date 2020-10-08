@@ -177,11 +177,13 @@ source_set("fxge") {
 
   if (is_win) {
     sources += [
+      "cfx_windowsrenderdevice.cpp",
       "cfx_windowsrenderdevice.h",
       "dib/cfx_dibextractor.cpp",
       "dib/cfx_dibextractor.h",
       "win32/cfx_psrenderer.cpp",
       "win32/cfx_psrenderer.h",
+      "win32/cfx_windowsdib.cpp",
       "win32/cfx_windowsdib.h",
       "win32/cgdi_device_driver.cpp",
       "win32/cgdi_device_driver.h",
@@ -199,8 +201,6 @@ source_set("fxge") {
       "win32/ctext_only_printer_driver.h",
       "win32/cwin32_platform.cpp",
       "win32/cwin32_platform.h",
-      "win32/fx_win32_device.cpp",
-      "win32/fx_win32_dib.cpp",
     ]
     configs -= [ "//build/config/win:lean_and_mean" ]
   }
@@ -240,7 +240,7 @@ pdfium_embeddertest_source_set("embeddertests") {
   }
 
   if (is_win) {
-    sources += [ "win32/fx_win32_device_embeddertest.cpp" ]
+    sources += [ "cfx_windowsrenderdevice_embeddertest.cpp" ]
     deps += [
       ":fxge",
       "../fxcodec",

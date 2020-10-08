@@ -4,11 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/fxge/cfx_windowsrenderdevice.h"
+
 #include <memory>
 
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_folderfontinfo.h"
-#include "core/fxge/cfx_windowsrenderdevice.h"
 #include "core/fxge/systemfontinfo_iface.h"
 #include "core/fxge/win32/cgdi_display_driver.h"
 #include "core/fxge/win32/cgdi_printer_driver.h"
