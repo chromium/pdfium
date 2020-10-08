@@ -55,8 +55,8 @@ const char szConsoleScript[] =
     "};";
 
 // Only address matters, values are for humans debuging here.
-char g_FXJSEHostObjectTag[] = "FXJSE Host Object";
-char g_FXJSEProxyObjectTag[] = "FXJSE Proxy Object";
+const char kFXJSEHostObjectTag[] = "FXJSE Host Object";
+const char kFXJSEProxyObjectTag[] = "FXJSE Proxy Object";
 
 v8::Local<v8::Object> CreateReturnValue(v8::Isolate* pIsolate,
                                         v8::TryCatch* trycatch) {
@@ -127,7 +127,8 @@ class CFXJSE_ScopeUtil_IsolateHandleContext {
 void FXJSE_UpdateProxyBinding(v8::Local<v8::Object> hObject) {
   ASSERT(!hObject.IsEmpty());
   ASSERT(hObject->InternalFieldCount() == 2);
-  hObject->SetAlignedPointerInInternalField(0, g_FXJSEProxyObjectTag);
+  hObject->SetAlignedPointerInInternalField(
+      0, const_cast<char*>(kFXJSEProxyObjectTag));
   hObject->SetAlignedPointerInInternalField(1, nullptr);
 }
 
@@ -137,7 +138,8 @@ void FXJSE_UpdateObjectBinding(v8::Local<v8::Object> hObject,
                                CFXJSE_HostObject* lpNewBinding) {
   ASSERT(!hObject.IsEmpty());
   ASSERT(hObject->InternalFieldCount() == 2);
-  hObject->SetAlignedPointerInInternalField(0, g_FXJSEHostObjectTag);
+  hObject->SetAlignedPointerInInternalField(
+      0, const_cast<char*>(kFXJSEHostObjectTag));
   hObject->SetAlignedPointerInInternalField(1, lpNewBinding);
 }
 
@@ -156,7 +158,7 @@ CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(
 
   v8::Local<v8::Object> hObject = hJSObject;
   if (hObject->InternalFieldCount() != 2 ||
-      hObject->GetAlignedPointerFromInternalField(0) == g_FXJSEProxyObjectTag) {
+      hObject->GetAlignedPointerFromInternalField(0) == kFXJSEProxyObjectTag) {
     v8::Local<v8::Value> hProtoObject = hObject->GetPrototype();
     if (hProtoObject.IsEmpty() || !hProtoObject->IsObject())
       return nullptr;
@@ -165,7 +167,7 @@ CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(
     if (hObject->InternalFieldCount() != 2)
       return nullptr;
   }
-  if (hObject->GetAlignedPointerFromInternalField(0) != g_FXJSEHostObjectTag)
+  if (hObject->GetAlignedPointerFromInternalField(0) != kFXJSEHostObjectTag)
     return nullptr;
 
   return static_cast<CFXJSE_HostObject*>(
