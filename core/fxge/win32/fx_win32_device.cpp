@@ -4,8 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/win32/win32_int.h"
-
 #include <memory>
 
 #include "core/fxcrt/fx_codepage.h"

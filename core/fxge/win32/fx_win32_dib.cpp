@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/fxge/win32/cfx_windowsdib.h"
+
 #include <windows.h>
 
 #include <vector>
@@ -11,9 +13,20 @@
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_gemodule.h"
-#include "core/fxge/win32/cfx_windowsdib.h"
 #include "core/fxge/win32/cwin32_platform.h"
 
+namespace {
+
+void GetBitmapSize(HBITMAP hBitmap, int& w, int& h) {
+  BITMAP bmp;
+  GetObject(hBitmap, sizeof bmp, &bmp);
+  w = bmp.bmWidth;
+  h = bmp.bmHeight;
+}
+
+}  // namespace
+
+// static
 ByteString CFX_WindowsDIB::GetBitmapInfo(
     const RetainPtr<CFX_DIBitmap>& pBitmap) {
   int len = sizeof(BITMAPINFOHEADER);
@@ -59,9 +72,10 @@ ByteString CFX_WindowsDIB::GetBitmapInfo(
   return result;
 }
 
-RetainPtr<CFX_DIBitmap> FX_WindowsDIB_LoadFromBuf(BITMAPINFO* pbmi,
-                                                  LPVOID pData,
-                                                  bool bAlpha) {
+// static
+RetainPtr<CFX_DIBitmap> CFX_WindowsDIB::LoadFromBuf(BITMAPINFO* pbmi,
+                                                    LPVOID pData,
+                                                    bool bAlpha) {
   int width = pbmi->bmiHeader.biWidth;
   int height = pbmi->bmiHeader.biHeight;
   BOOL bBottomUp = true;
@@ -102,11 +116,7 @@ RetainPtr<CFX_DIBitmap> FX_WindowsDIB_LoadFromBuf(BITMAPINFO* pbmi,
   return pBitmap;
 }
 
-RetainPtr<CFX_DIBitmap> CFX_WindowsDIB::LoadFromBuf(BITMAPINFO* pbmi,
-                                                    LPVOID pData) {
-  return FX_WindowsDIB_LoadFromBuf(pbmi, pData, false);
-}
-
+// static
 HBITMAP CFX_WindowsDIB::GetDDBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
                                     HDC hDC) {
   ByteString info = GetBitmapInfo(pBitmap);
@@ -115,13 +125,7 @@ HBITMAP CFX_WindowsDIB::GetDDBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
                         DIB_RGB_COLORS);
 }
 
-void GetBitmapSize(HBITMAP hBitmap, int& w, int& h) {
-  BITMAP bmp;
-  GetObject(hBitmap, sizeof bmp, &bmp);
-  w = bmp.bmWidth;
-  h = bmp.bmHeight;
-}
-
+// static
 RetainPtr<CFX_DIBitmap> CFX_WindowsDIB::LoadFromFile(const wchar_t* filename) {
   auto* pPlatform =
       static_cast<CWin32Platform*>(CFX_GEModule::Get()->GetPlatform());
@@ -154,10 +158,12 @@ RetainPtr<CFX_DIBitmap> CFX_WindowsDIB::LoadFromFile(const wchar_t* filename) {
   return pDIBitmap;
 }
 
+// static
 RetainPtr<CFX_DIBitmap> CFX_WindowsDIB::LoadFromFile(const char* filename) {
   return LoadFromFile(WideString::FromDefANSI(filename).c_str());
 }
 
+// static
 RetainPtr<CFX_DIBitmap> CFX_WindowsDIB::LoadDIBitmap(WINDIB_Open_Args_ args) {
   auto* pPlatform =
       static_cast<CWin32Platform*>(CFX_GEModule::Get()->GetPlatform());
@@ -212,6 +218,7 @@ CFX_WindowsDIB::~CFX_WindowsDIB() {
   DeleteObject(m_hBitmap);
 }
 
+// static
 void CFX_WindowsDIB::LoadFromDevice(HDC hDC, int left, int top) {
   ::BitBlt(m_hMemDC, 0, 0, m_Width, m_Height, hDC, left, top, SRCCOPY);
 }

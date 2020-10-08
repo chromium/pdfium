@@ -29,7 +29,9 @@ class CFX_WindowsDIB final : public CFX_DIBitmap {
   static ByteString GetBitmapInfo(const RetainPtr<CFX_DIBitmap>& pBitmap);
   static HBITMAP GetDDBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap, HDC hDC);
 
-  static RetainPtr<CFX_DIBitmap> LoadFromBuf(BITMAPINFO* pbmi, void* pData);
+  static RetainPtr<CFX_DIBitmap> LoadFromBuf(BITMAPINFO* pbmi,
+                                             void* pData,
+                                             bool bAlpha);
   static RetainPtr<CFX_DIBitmap> LoadFromFile(const wchar_t* filename);
   static RetainPtr<CFX_DIBitmap> LoadFromFile(const char* filename);
   static RetainPtr<CFX_DIBitmap> LoadDIBitmap(WINDIB_Open_Args_ args);

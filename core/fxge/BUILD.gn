@@ -201,7 +201,6 @@ source_set("fxge") {
       "win32/cwin32_platform.h",
       "win32/fx_win32_device.cpp",
       "win32/fx_win32_dib.cpp",
-      "win32/win32_int.h",
     ]
     configs -= [ "//build/config/win:lean_and_mean" ]
   }

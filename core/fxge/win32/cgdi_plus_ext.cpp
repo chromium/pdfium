@@ -24,7 +24,6 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/win32/cfx_windowsdib.h"
 #include "core/fxge/win32/cwin32_platform.h"
-#include "core/fxge/win32/win32_int.h"
 #include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
 
@@ -992,7 +991,7 @@ RetainPtr<CFX_DIBitmap> CGdiplusExt::LoadDIBitmap(WINDIB_Open_Args_ args) {
              dest_pitch);
     }
   }
-  RetainPtr<CFX_DIBitmap> pDIBitmap = FX_WindowsDIB_LoadFromBuf(
+  RetainPtr<CFX_DIBitmap> pDIBitmap = CFX_WindowsDIB::LoadFromBuf(
       pInfo->pbmi, pData, pInfo->pbmi->bmiHeader.biBitCount == 32);
   FX_Free(pData);
   FreeDIBitmap(pInfo);
