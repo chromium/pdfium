@@ -13,7 +13,7 @@
 #include <memory>
 
 #include "core/fxcrt/retain_ptr.h"
-#include "core/fxge/win32/win32_int.h"
+#include "core/fxge/win32/cgdi_device_driver.h"
 
 class CFX_DIBBase;
 struct FXDIB_ResampleOptions;

@@ -2,13 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "core/fxge/win32/win32_int.h"
+#include "core/fxge/cfx_windowsrenderdevice.h"
 
 #include <windows.h>
 
 #include <memory>
 
 #include "core/fxge/cfx_fillrenderoptions.h"
+#include "core/fxge/cfx_pathdata.h"
 #include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
 

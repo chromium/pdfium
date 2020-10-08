@@ -1,5 +1,5 @@
 specific_include_rules = {
-  'fx_win32_device.cpp': [
+  'cgdi_device_driver.cpp': [
     '+third_party/agg23/agg_clip_liang_barsky.h',
   ]
 }

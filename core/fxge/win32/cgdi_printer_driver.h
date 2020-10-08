@@ -11,7 +11,7 @@
 
 #include <memory>
 
-#include "core/fxge/win32/win32_int.h"
+#include "core/fxge/win32/cgdi_device_driver.h"
 
 class CGdiPrinterDriver final : public CGdiDeviceDriver {
  public:

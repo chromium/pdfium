@@ -10,6 +10,8 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/dib/cfx_dibextractor.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
+#include "core/fxge/render_defines.h"
+#include "core/fxge/win32/win32_int.h"
 
 CGdiDisplayDriver::CGdiDisplayDriver(HDC hDC)
     : CGdiDeviceDriver(hDC, DeviceType::kDisplay) {
