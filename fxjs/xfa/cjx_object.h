@@ -211,7 +211,7 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
   CXFA_Measurement GetMeasure(XFA_Attribute eAttr) const;
   float GetMeasureInUnit(XFA_Attribute eAttr, XFA_Unit unit) const;
 
-  void MergeAllData(CXFA_Object* pDstModule);
+  void MergeAllData(CXFA_Object* pDstObj);
 
   CalcData* GetCalcData() const { return calc_data_; }
   CalcData* GetOrCreateCalcData(cppgc::Heap* heap);
@@ -235,7 +235,7 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
                     bool bNotify,
                     bool bScriptModify);
   void DefineMethods(pdfium::span<const CJX_MethodSpec> methods);
-  void MoveBufferMapData(CXFA_Object* pSrcModule, CXFA_Object* pDstModule);
+  void MoveBufferMapData(CXFA_Object* pSrcObj, CXFA_Object* pDstObj);
   void ThrowException(const WideString& str) const;
 
  private:
@@ -268,7 +268,7 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
   bool HasMapModuleKey(uint32_t key);
   void RemoveMapModuleKey(uint32_t key);
   void ClearMapModuleBuffer();
-  void MoveBufferMapData(CXFA_Object* pDstModule);
+  void MoveBufferMapData(CXFA_Object* pDstObj);
 
   cppgc::Member<CXFA_Object> object_;
   cppgc::Member<CXFA_LayoutItem> layout_item_;

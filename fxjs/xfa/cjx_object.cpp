@@ -112,7 +112,36 @@ struct XFA_MAPDATABLOCK {
   static size_t SizeForCapacity(size_t capacity) {
     return sizeof(XFA_MAPDATABLOCK) + capacity;
   }
+
+  static XFA_MAPDATABLOCK* CreateForCapacity(size_t capacity) {
+    return reinterpret_cast<XFA_MAPDATABLOCK*>(
+        FX_Alloc(uint8_t, SizeForCapacity(capacity)));
+  }
+
+  static XFA_MAPDATABLOCK* RepurposeForCapacity(XFA_MAPDATABLOCK* ptr,
+                                                size_t capacity) {
+    if (!ptr)
+      return CreateForCapacity(capacity);
+
+    ptr->FreeInlineResources();
+    if (ptr->iBytes != capacity) {
+      ptr = reinterpret_cast<XFA_MAPDATABLOCK*>(
+          FX_Realloc(uint8_t, ptr, SizeForCapacity(capacity)));
+    }
+    return ptr;
+  }
+
   uint8_t* GetData() const { return (uint8_t*)this + sizeof(XFA_MAPDATABLOCK); }
+
+  void FreeInlineResources() {
+    if (pCallbackInfo && pCallbackInfo->pFree)
+      pCallbackInfo->pFree(*(void**)GetData());
+  }
+
+  void AdjustInlineResourcesAfterCopy() {
+    if (pCallbackInfo && pCallbackInfo->pCopy)
+      pCallbackInfo->pCopy(*(void**)GetData());
+  }
 
   const XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo;
   size_t iBytes;
@@ -123,6 +152,81 @@ class CXFA_MapModule {
   CXFA_MapModule() = default;
   ~CXFA_MapModule() = default;
 
+  void Clear() {
+    for (auto& pair : m_BufferMap) {
+      XFA_MAPDATABLOCK* pBuffer = pair.second;
+      if (pBuffer) {
+        pBuffer->FreeInlineResources();
+        FX_Free(pBuffer);
+      }
+    }
+    m_BufferMap.clear();
+    m_ValueMap.clear();
+  }
+
+  Optional<int32_t> GetValue(uint32_t key) const {
+    auto it = m_ValueMap.find(key);
+    if (it == m_ValueMap.end())
+      return pdfium::nullopt;
+    return it->second;
+  }
+
+  void SetValue(uint32_t key, int32_t value) { m_ValueMap[key] = value; }
+
+  XFA_MAPDATABLOCK* GetBlock(uint32_t key) const {
+    auto it = m_BufferMap.find(key);
+    if (it == m_BufferMap.end())
+      return nullptr;
+    return it->second;
+  }
+
+  void SetBlock(uint32_t key, XFA_MAPDATABLOCK* block) {
+    m_BufferMap[key] = block;
+  }
+
+  bool HasKey(uint32_t key) const {
+    return pdfium::Contains(m_ValueMap, key) ||
+           pdfium::Contains(m_BufferMap, key);
+  }
+
+  void RemoveKey(uint32_t key) {
+    auto it = m_BufferMap.find(key);
+    if (it != m_BufferMap.end()) {
+      XFA_MAPDATABLOCK* pBuffer = it->second;
+      if (pBuffer) {
+        pBuffer->FreeInlineResources();
+        FX_Free(pBuffer);
+      }
+      m_BufferMap.erase(it);
+    }
+    m_ValueMap.erase(key);
+  }
+
+  void MergeDataFrom(const CXFA_MapModule* pSrc) {
+    for (const auto& pair : pSrc->m_ValueMap)
+      m_ValueMap[pair.first] = pair.second;
+
+    for (const auto& pair : pSrc->m_BufferMap) {
+      XFA_MAPDATABLOCK* pSrcBuffer = pair.second;
+      XFA_MAPDATABLOCK*& pDstBuffer = m_BufferMap[pair.first];
+      if (pSrcBuffer->pCallbackInfo && pSrcBuffer->pCallbackInfo->pFree &&
+          !pSrcBuffer->pCallbackInfo->pCopy) {
+        if (pDstBuffer) {
+          pDstBuffer->FreeInlineResources();
+          m_BufferMap.erase(pair.first);
+        }
+        continue;
+      }
+      pDstBuffer = XFA_MAPDATABLOCK::RepurposeForCapacity(pDstBuffer,
+                                                          pSrcBuffer->iBytes);
+      pDstBuffer->pCallbackInfo = pSrcBuffer->pCallbackInfo;
+      pDstBuffer->iBytes = pSrcBuffer->iBytes;
+      memcpy(pDstBuffer->GetData(), pSrcBuffer->GetData(), pSrcBuffer->iBytes);
+      pDstBuffer->AdjustInlineResourcesAfterCopy();
+    }
+  }
+
+ private:
   // These two are keyed by result of GetMapKey_*().
   std::map<uint32_t, int32_t> m_ValueMap;  // int/enum/bool represented as int.
   std::map<uint32_t, XFA_MAPDATABLOCK*> m_BufferMap;
@@ -838,7 +942,7 @@ CXFA_MapModule* CJX_Object::GetMapModule() const {
 }
 
 void CJX_Object::SetMapModuleValue(uint32_t key, int32_t value) {
-  CreateMapModule()->m_ValueMap[key] = value;
+  CreateMapModule()->SetValue(key, value);
 }
 
 Optional<int32_t> CJX_Object::GetMapModuleValue(uint32_t key) const {
@@ -850,14 +954,14 @@ Optional<int32_t> CJX_Object::GetMapModuleValue(uint32_t key) const {
 
     CXFA_MapModule* pModule = pNode->JSObject()->GetMapModule();
     if (pModule) {
-      auto it = pModule->m_ValueMap.find(key);
-      if (it != pModule->m_ValueMap.end())
-        return it->second;
+      Optional<int32_t> result = pModule->GetValue(key);
+      if (result.has_value())
+        return result;
     }
     if (pNode->GetPacketType() == XFA_PacketType::Datasets)
       break;
   }
-  return {};
+  return pdfium::nullopt;
 }
 
 Optional<WideString> CJX_Object::GetMapModuleString(uint32_t key) const {
@@ -877,26 +981,13 @@ void CJX_Object::SetMapModuleBuffer(
     void* pValue,
     size_t iBytes,
     const XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo) {
-  XFA_MAPDATABLOCK*& pBuffer = CreateMapModule()->m_BufferMap[key];
-  if (!pBuffer) {
-    pBuffer = reinterpret_cast<XFA_MAPDATABLOCK*>(
-        FX_Alloc(uint8_t, XFA_MAPDATABLOCK::SizeForCapacity(iBytes)));
-  } else if (pBuffer->iBytes != iBytes) {
-    if (pBuffer->pCallbackInfo && pBuffer->pCallbackInfo->pFree)
-      pBuffer->pCallbackInfo->pFree(*(void**)pBuffer->GetData());
-
-    pBuffer = reinterpret_cast<XFA_MAPDATABLOCK*>(FX_Realloc(
-        uint8_t, pBuffer, XFA_MAPDATABLOCK::SizeForCapacity(iBytes)));
-  } else if (pBuffer->pCallbackInfo && pBuffer->pCallbackInfo->pFree) {
-    pBuffer->pCallbackInfo->pFree(
-        *reinterpret_cast<void**>(pBuffer->GetData()));
-  }
-  if (!pBuffer)
-    return;
-
+  CXFA_MapModule* pModule = CreateMapModule();
+  XFA_MAPDATABLOCK* pBuffer = pModule->GetBlock(key);
+  pBuffer = XFA_MAPDATABLOCK::RepurposeForCapacity(pBuffer, iBytes);
   pBuffer->pCallbackInfo = pCallbackInfo;
   pBuffer->iBytes = iBytes;
   memcpy(pBuffer->GetData(), pValue, iBytes);
+  pModule->SetBlock(key, pBuffer);
 }
 
 bool CJX_Object::GetMapModuleBuffer(uint32_t key,
@@ -911,11 +1002,9 @@ bool CJX_Object::GetMapModuleBuffer(uint32_t key,
 
     CXFA_MapModule* pModule = pNode->JSObject()->GetMapModule();
     if (pModule) {
-      auto it = pModule->m_BufferMap.find(key);
-      if (it != pModule->m_BufferMap.end()) {
-        pBuffer = it->second;
+      pBuffer = pModule->GetBlock(key);
+      if (pBuffer)
         break;
-      }
     }
     if (pNode->GetPacketType() == XFA_PacketType::Datasets)
       break;
@@ -930,129 +1019,62 @@ bool CJX_Object::GetMapModuleBuffer(uint32_t key,
 
 bool CJX_Object::HasMapModuleKey(uint32_t key) {
   CXFA_MapModule* pModule = GetMapModule();
-  return pModule && (pdfium::Contains(pModule->m_ValueMap, key) ||
-                     pdfium::Contains(pModule->m_BufferMap, key));
+  return pModule && pModule->HasKey(key);
 }
 
 void CJX_Object::ClearMapModuleBuffer() {
   CXFA_MapModule* pModule = GetMapModule();
-  if (!pModule)
-    return;
-
-  for (auto& pair : pModule->m_BufferMap) {
-    XFA_MAPDATABLOCK* pBuffer = pair.second;
-    if (pBuffer) {
-      if (pBuffer->pCallbackInfo && pBuffer->pCallbackInfo->pFree)
-        pBuffer->pCallbackInfo->pFree(*(void**)pBuffer->GetData());
-
-      FX_Free(pBuffer);
-    }
-  }
-  pModule->m_BufferMap.clear();
-  pModule->m_ValueMap.clear();
+  if (pModule)
+    pModule->Clear();
 }
 
 void CJX_Object::RemoveMapModuleKey(uint32_t key) {
   CXFA_MapModule* pModule = GetMapModule();
-  if (!pModule)
-    return;
-
-  auto it = pModule->m_BufferMap.find(key);
-  if (it != pModule->m_BufferMap.end()) {
-    XFA_MAPDATABLOCK* pBuffer = it->second;
-    if (pBuffer) {
-      if (pBuffer->pCallbackInfo && pBuffer->pCallbackInfo->pFree)
-        pBuffer->pCallbackInfo->pFree(*(void**)pBuffer->GetData());
-
-      FX_Free(pBuffer);
-    }
-    pModule->m_BufferMap.erase(it);
-  }
-  pModule->m_ValueMap.erase(key);
-  return;
+  if (pModule)
+    pModule->RemoveKey(key);
 }
 
-void CJX_Object::MergeAllData(CXFA_Object* pDstModule) {
-  CXFA_MapModule* pDstModuleData =
-      ToNode(pDstModule)->JSObject()->CreateMapModule();
-  CXFA_MapModule* pSrcModuleData = GetMapModule();
-  if (!pSrcModuleData)
+void CJX_Object::MergeAllData(CXFA_Object* pDstObj) {
+  CXFA_MapModule* pDstModule = ToNode(pDstObj)->JSObject()->CreateMapModule();
+  CXFA_MapModule* pSrcModule = GetMapModule();
+  if (!pSrcModule)
     return;
 
-  for (const auto& pair : pSrcModuleData->m_ValueMap)
-    pDstModuleData->m_ValueMap[pair.first] = pair.second;
-
-  for (const auto& pair : pSrcModuleData->m_BufferMap) {
-    XFA_MAPDATABLOCK* pSrcBuffer = pair.second;
-    XFA_MAPDATABLOCK*& pDstBuffer = pDstModuleData->m_BufferMap[pair.first];
-    if (pSrcBuffer->pCallbackInfo && pSrcBuffer->pCallbackInfo->pFree &&
-        !pSrcBuffer->pCallbackInfo->pCopy) {
-      if (pDstBuffer) {
-        pDstBuffer->pCallbackInfo->pFree(*(void**)pDstBuffer->GetData());
-        pDstModuleData->m_BufferMap.erase(pair.first);
-      }
-      continue;
-    }
-    if (!pDstBuffer) {
-      pDstBuffer = (XFA_MAPDATABLOCK*)FX_Alloc(
-          uint8_t, XFA_MAPDATABLOCK::SizeForCapacity(pSrcBuffer->iBytes));
-    } else if (pDstBuffer->iBytes != pSrcBuffer->iBytes) {
-      if (pDstBuffer->pCallbackInfo && pDstBuffer->pCallbackInfo->pFree) {
-        pDstBuffer->pCallbackInfo->pFree(*(void**)pDstBuffer->GetData());
-      }
-      pDstBuffer = (XFA_MAPDATABLOCK*)FX_Realloc(
-          uint8_t, pDstBuffer,
-          XFA_MAPDATABLOCK::SizeForCapacity(pSrcBuffer->iBytes));
-    } else if (pDstBuffer->pCallbackInfo && pDstBuffer->pCallbackInfo->pFree) {
-      pDstBuffer->pCallbackInfo->pFree(*(void**)pDstBuffer->GetData());
-    }
-    if (!pDstBuffer)
-      continue;
-
-    pDstBuffer->pCallbackInfo = pSrcBuffer->pCallbackInfo;
-    pDstBuffer->iBytes = pSrcBuffer->iBytes;
-    memcpy(pDstBuffer->GetData(), pSrcBuffer->GetData(), pSrcBuffer->iBytes);
-    if (pDstBuffer->pCallbackInfo && pDstBuffer->pCallbackInfo->pCopy) {
-      pDstBuffer->pCallbackInfo->pCopy(*(void**)pDstBuffer->GetData());
-    }
-  }
+  pDstModule->MergeDataFrom(pSrcModule);
 }
 
-void CJX_Object::MoveBufferMapData(CXFA_Object* pDstModule) {
-  if (!pDstModule)
+void CJX_Object::MoveBufferMapData(CXFA_Object* pDstObj) {
+  if (!pDstObj)
     return;
 
-  if (pDstModule->GetElementType() == GetXFAObject()->GetElementType())
-    ToNode(pDstModule)->JSObject()->TakeCalcDataFrom(this);
+  if (pDstObj->GetElementType() == GetXFAObject()->GetElementType())
+    ToNode(pDstObj)->JSObject()->TakeCalcDataFrom(this);
 
-  if (!pDstModule->IsNodeV())
+  if (!pDstObj->IsNodeV())
     return;
 
-  WideString wsValue = ToNode(pDstModule)->JSObject()->GetContent(false);
+  WideString wsValue = ToNode(pDstObj)->JSObject()->GetContent(false);
   WideString wsFormatValue(wsValue);
-  CXFA_Node* pNode = ToNode(pDstModule)->GetContainerNode();
+  CXFA_Node* pNode = ToNode(pDstObj)->GetContainerNode();
   if (pNode)
     wsFormatValue = pNode->GetFormatDataValue(wsValue);
 
-  ToNode(pDstModule)
-      ->JSObject()
-      ->SetContent(wsValue, wsFormatValue, true, true, true);
+  ToNode(pDstObj)->JSObject()->SetContent(wsValue, wsFormatValue, true, true,
+                                          true);
 }
 
-void CJX_Object::MoveBufferMapData(CXFA_Object* pSrcModule,
-                                   CXFA_Object* pDstModule) {
-  if (!pSrcModule || !pDstModule)
+void CJX_Object::MoveBufferMapData(CXFA_Object* pSrcObj, CXFA_Object* pDstObj) {
+  if (!pSrcObj || !pDstObj)
     return;
 
-  CXFA_Node* pSrcChild = ToNode(pSrcModule)->GetFirstChild();
-  CXFA_Node* pDstChild = ToNode(pDstModule)->GetFirstChild();
+  CXFA_Node* pSrcChild = ToNode(pSrcObj)->GetFirstChild();
+  CXFA_Node* pDstChild = ToNode(pDstObj)->GetFirstChild();
   while (pSrcChild && pDstChild) {
     MoveBufferMapData(pSrcChild, pDstChild);
-
     pSrcChild = pSrcChild->GetNextSibling();
     pDstChild = pDstChild->GetNextSibling();
   }
-  ToNode(pSrcModule)->JSObject()->MoveBufferMapData(pDstModule);
+  ToNode(pSrcObj)->JSObject()->MoveBufferMapData(pDstObj);
 }
 
 void CJX_Object::OnChanging(XFA_Attribute eAttr, bool bNotify) {
