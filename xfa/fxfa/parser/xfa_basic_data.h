@@ -14,6 +14,11 @@
 #include "third_party/base/optional.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
+typedef void (*XFA_ATTRIBUTE_CALLBACK)(CJX_Object* pNode,
+                                       CFXJSE_Value* pValue,
+                                       bool bSetting,
+                                       XFA_Attribute eAttribute);
+
 struct XFA_PACKETINFO {
   const wchar_t* name;
   XFA_PacketType packet_type;

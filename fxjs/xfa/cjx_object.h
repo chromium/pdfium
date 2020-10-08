@@ -279,9 +279,4 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
   size_t calc_recursion_count_ = 0;
 };
 
-typedef void (*XFA_ATTRIBUTE_CALLBACK)(CJX_Object* pNode,
-                                       CFXJSE_Value* pValue,
-                                       bool bSetting,
-                                       XFA_Attribute eAttribute);
-
 #endif  // FXJS_XFA_CJX_OBJECT_H_
