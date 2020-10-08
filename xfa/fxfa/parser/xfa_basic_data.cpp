@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/xfa_basic_data.h"
 
+#include <iterator>
 #include <utility>
 
 #include "fxjs/xfa/cjx_boolean.h"
@@ -39,6 +40,7 @@
 #include "fxjs/xfa/cjx_treelist.h"
 #include "fxjs/xfa/cjx_wsdlconnection.h"
 #include "fxjs/xfa/cjx_xfa.h"
+#include "third_party/base/stl_util.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
 namespace {
@@ -104,15 +106,27 @@ const AttributeValueRecord g_AttributeValueTable[] = {
 struct ElementAttributeRecord {
   XFA_Element element;
   XFA_Attribute attribute;
-  XFA_ATTRIBUTE_CALLBACK callback;
 };
 
-const ElementAttributeRecord g_ElementAttributeTable[] = {
+// Contains read-only data that do not require relocation.
+// Parts that require relocation are in `kElementAttributeCallbacks` below.
+constexpr ElementAttributeRecord kElementAttributeRecords[] = {
 #undef ELEM_ATTR____
-#define ELEM_ATTR____(a, b, c) {XFA_Element::a, XFA_Attribute::b, c##_static},
+#define ELEM_ATTR____(a, b, c) {XFA_Element::a, XFA_Attribute::b},
 #include "xfa/fxfa/parser/element_attributes.inc"
 #undef ELEM_ATTR____
 };
+
+constexpr XFA_ATTRIBUTE_CALLBACK kElementAttributeCallbacks[] = {
+#undef ELEM_ATTR____
+#define ELEM_ATTR____(a, b, c) c##_static,
+#include "xfa/fxfa/parser/element_attributes.inc"
+#undef ELEM_ATTR____
+};
+
+static_assert(pdfium::size(kElementAttributeRecords) ==
+                  pdfium::size(kElementAttributeCallbacks),
+              "Size mismatch");
 
 }  // namespace
 
@@ -189,18 +203,19 @@ Optional<XFA_SCRIPTATTRIBUTEINFO> XFA_GetScriptAttributeByName(
   while (element != XFA_Element::Unknown) {
     auto compound_key = std::make_pair(element, attr.value().attribute);
     auto* it = std::lower_bound(
-        std::begin(g_ElementAttributeTable), std::end(g_ElementAttributeTable),
-        compound_key,
+        std::begin(kElementAttributeRecords),
+        std::end(kElementAttributeRecords), compound_key,
         [](const ElementAttributeRecord& arg,
            const std::pair<XFA_Element, XFA_Attribute>& key) {
           return std::make_pair(arg.element, arg.attribute) < key;
         });
-    if (it != std::end(g_ElementAttributeTable) &&
+    if (it != std::end(kElementAttributeRecords) &&
         compound_key == std::make_pair(it->element, it->attribute)) {
       XFA_SCRIPTATTRIBUTEINFO result;
       result.attribute = attr.value().attribute;
       result.eValueType = attr.value().eValueType;
-      result.callback = it->callback;
+      size_t index = std::distance(std::begin(kElementAttributeRecords), it);
+      result.callback = kElementAttributeCallbacks[index];
       return result;
     }
     element = g_ElementTable[static_cast<size_t>(element)].parent;
