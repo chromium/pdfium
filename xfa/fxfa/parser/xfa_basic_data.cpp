@@ -91,15 +91,26 @@ struct AttributeRecord {
   uint32_t hash;  // Hashed as wide string.
   XFA_Attribute attribute;
   XFA_ScriptType script_type;
-  const char* name;
 };
 
-const AttributeRecord g_AttributeTable[] = {
+// Contains read-only data that do not require relocation.
+// Parts that require relocation are in `kAttributeNames` below.
+constexpr AttributeRecord kAttributeRecords[] = {
 #undef ATTR____
-#define ATTR____(a, b, c, d) {a, XFA_Attribute::c, XFA_ScriptType::d, b},
+#define ATTR____(a, b, c, d) {a, XFA_Attribute::c, XFA_ScriptType::d},
 #include "xfa/fxfa/parser/attributes.inc"
 #undef ATTR____
 };
+
+constexpr const char* kAttributeNames[] = {
+#undef ATTR____
+#define ATTR____(a, b, c, d) b,
+#include "xfa/fxfa/parser/attributes.inc"
+#undef ATTR____
+};
+
+static_assert(pdfium::size(kAttributeRecords) == pdfium::size(kAttributeNames),
+              "Size mismatch");
 
 struct AttributeValueRecord {
   uint32_t uHash;  // |pName| hashed as WideString.
@@ -174,21 +185,25 @@ XFA_Element XFA_GetElementByName(WideStringView name) {
 }
 
 ByteStringView XFA_AttributeToName(XFA_Attribute attr) {
-  return g_AttributeTable[static_cast<size_t>(attr)].name;
+  return kAttributeNames[static_cast<size_t>(attr)];
 }
 
 Optional<XFA_ATTRIBUTEINFO> XFA_GetAttributeByName(WideStringView name) {
   uint32_t hash = FX_HashCode_GetW(name, false);
   auto* elem = std::lower_bound(
-      std::begin(g_AttributeTable), std::end(g_AttributeTable), hash,
+      std::begin(kAttributeRecords), std::end(kAttributeRecords), hash,
       [](const AttributeRecord& a, uint32_t hash) { return a.hash < hash; });
-  if (elem != std::end(g_AttributeTable) && name.EqualsASCII(elem->name)) {
-    XFA_ATTRIBUTEINFO result;
-    result.attribute = elem->attribute;
-    result.eValueType = elem->script_type;
-    return result;
-  }
-  return {};
+  if (elem == std::end(kAttributeRecords))
+    return pdfium::nullopt;
+
+  size_t index = std::distance(std::begin(kAttributeRecords), elem);
+  if (!name.EqualsASCII(kAttributeNames[index]))
+    return pdfium::nullopt;
+
+  XFA_ATTRIBUTEINFO result;
+  result.attribute = elem->attribute;
+  result.eValueType = elem->script_type;
+  return result;
 }
 
 ByteStringView XFA_AttributeValueToName(XFA_AttributeValue item) {
