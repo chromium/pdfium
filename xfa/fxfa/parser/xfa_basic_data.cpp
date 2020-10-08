@@ -113,17 +113,30 @@ static_assert(pdfium::size(kAttributeRecords) == pdfium::size(kAttributeNames),
               "Size mismatch");
 
 struct AttributeValueRecord {
-  uint32_t uHash;  // |pName| hashed as WideString.
+  // Associated entry in `kAttributeValueNames` hashed as WideString.
+  uint32_t uHash;
   XFA_AttributeValue eName;
-  const char* pName;
 };
 
-const AttributeValueRecord g_AttributeValueTable[] = {
+// Contains read-only data that do not require relocation.
+// Parts that require relocation are in `kAttributeValueNames` below.
+constexpr AttributeValueRecord kAttributeValueRecords[] = {
 #undef VALUE____
-#define VALUE____(a, b, c) {a, XFA_AttributeValue::c, b},
+#define VALUE____(a, b, c) {a, XFA_AttributeValue::c},
 #include "xfa/fxfa/parser/attribute_values.inc"
 #undef VALUE____
 };
+
+constexpr const char* kAttributeValueNames[] = {
+#undef VALUE____
+#define VALUE____(a, b, c) b,
+#include "xfa/fxfa/parser/attribute_values.inc"
+#undef VALUE____
+};
+
+static_assert(pdfium::size(kAttributeValueRecords) ==
+                  pdfium::size(kAttributeValueNames),
+              "Size mismatch");
 
 struct ElementAttributeRecord {
   XFA_Element element;
@@ -207,19 +220,23 @@ Optional<XFA_ATTRIBUTEINFO> XFA_GetAttributeByName(WideStringView name) {
 }
 
 ByteStringView XFA_AttributeValueToName(XFA_AttributeValue item) {
-  return g_AttributeValueTable[static_cast<int32_t>(item)].pName;
+  return kAttributeValueNames[static_cast<int32_t>(item)];
 }
 
 Optional<XFA_AttributeValue> XFA_GetAttributeValueByName(WideStringView name) {
-  auto* it = std::lower_bound(std::begin(g_AttributeValueTable),
-                              std::end(g_AttributeValueTable),
+  auto* it = std::lower_bound(std::begin(kAttributeValueRecords),
+                              std::end(kAttributeValueRecords),
                               FX_HashCode_GetW(name, false),
                               [](const AttributeValueRecord& arg,
                                  uint32_t hash) { return arg.uHash < hash; });
-  if (it != std::end(g_AttributeValueTable) && name.EqualsASCII(it->pName))
-    return it->eName;
+  if (it == std::end(kAttributeValueRecords))
+    return pdfium::nullopt;
 
-  return {};
+  size_t index = std::distance(std::begin(kAttributeValueRecords), it);
+  if (!name.EqualsASCII(kAttributeValueNames[index]))
+    return pdfium::nullopt;
+
+  return it->eName;
 }
 
 Optional<XFA_SCRIPTATTRIBUTEINFO> XFA_GetScriptAttributeByName(
