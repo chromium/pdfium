@@ -66,15 +66,26 @@ struct ElementRecord {
   uint32_t hash;  // Hashed as wide string.
   XFA_Element element;
   XFA_Element parent;
-  const char* name;
 };
 
-const ElementRecord g_ElementTable[] = {
+// Contains read-only data that do not require relocation.
+// Parts that require relocation are in `kElementNames` below.
+constexpr ElementRecord kElementRecords[] = {
 #undef ELEM____
-#define ELEM____(a, b, c, d) {a, XFA_Element::c, XFA_Element::d, b},
+#define ELEM____(a, b, c, d) {a, XFA_Element::c, XFA_Element::d},
 #include "xfa/fxfa/parser/elements.inc"
 #undef ELEM____
 };
+
+constexpr const char* kElementNames[] = {
+#undef ELEM____
+#define ELEM____(a, b, c, d) b,
+#include "xfa/fxfa/parser/elements.inc"
+#undef ELEM____
+};
+
+static_assert(pdfium::size(kElementRecords) == pdfium::size(kElementNames),
+              "Size mismatch");
 
 struct AttributeRecord {
   uint32_t hash;  // Hashed as wide string.
@@ -146,17 +157,20 @@ Optional<XFA_PACKETINFO> XFA_GetPacketByName(WideStringView wsName) {
 }
 
 ByteStringView XFA_ElementToName(XFA_Element elem) {
-  return g_ElementTable[static_cast<size_t>(elem)].name;
+  return kElementNames[static_cast<size_t>(elem)];
 }
 
 XFA_Element XFA_GetElementByName(WideStringView name) {
   uint32_t hash = FX_HashCode_GetW(name, false);
   auto* elem = std::lower_bound(
-      std::begin(g_ElementTable), std::end(g_ElementTable), hash,
+      std::begin(kElementRecords), std::end(kElementRecords), hash,
       [](const ElementRecord& a, uint32_t hash) { return a.hash < hash; });
-  if (elem != std::end(g_ElementTable) && name.EqualsASCII(elem->name))
-    return elem->element;
-  return XFA_Element::Unknown;
+  if (elem == std::end(kElementRecords))
+    return XFA_Element::Unknown;
+
+  size_t index = std::distance(std::begin(kElementRecords), elem);
+  return name.EqualsASCII(kElementNames[index]) ? elem->element
+                                                : XFA_Element::Unknown;
 }
 
 ByteStringView XFA_AttributeToName(XFA_Attribute attr) {
@@ -218,7 +232,7 @@ Optional<XFA_SCRIPTATTRIBUTEINFO> XFA_GetScriptAttributeByName(
       result.callback = kElementAttributeCallbacks[index];
       return result;
     }
-    element = g_ElementTable[static_cast<size_t>(element)].parent;
+    element = kElementRecords[static_cast<size_t>(element)].parent;
   }
   return {};
 }
