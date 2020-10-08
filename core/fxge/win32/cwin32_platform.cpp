@@ -1,23 +1,19 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2020 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/win32/win32_int.h"
+#include "core/fxge/win32/cwin32_platform.h"
 
 #include <memory>
 
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_folderfontinfo.h"
-#include "core/fxge/cfx_windowsrenderdevice.h"
-#include "core/fxge/systemfontinfo_iface.h"
-#include "core/fxge/win32/cgdi_display_driver.h"
-#include "core/fxge/win32/cgdi_printer_driver.h"
-#include "core/fxge/win32/cps_printer_driver.h"
-#include "core/fxge/win32/ctext_only_printer_driver.h"
+#include "core/fxge/cfx_gemodule.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
+#include "third_party/base/win/win_util.h"
 
 namespace {
 
@@ -430,36 +426,40 @@ bool CFX_Win32FontInfo::GetFontCharset(void* hFont, int* charset) {
 
 }  // namespace
 
-WindowsPrintMode g_pdfium_print_mode = WindowsPrintMode::kModeEmf;
+CWin32Platform::CWin32Platform() = default;
 
-CFX_WindowsRenderDevice::CFX_WindowsRenderDevice(
-    HDC hDC,
-    const EncoderIface* pEncoderIface) {
-  SetDeviceDriver(pdfium::WrapUnique(CreateDriver(hDC, pEncoderIface)));
+CWin32Platform::~CWin32Platform() = default;
+
+void CWin32Platform::Init() {
+  OSVERSIONINFO ver;
+  ver.dwOSVersionInfoSize = sizeof(ver);
+  GetVersionEx(&ver);
+  m_bHalfTone = ver.dwMajorVersion >= 5;
+  if (pdfium::base::win::IsUser32AndGdi32Available())
+    m_GdiplusExt.Load();
 }
 
-CFX_WindowsRenderDevice::~CFX_WindowsRenderDevice() = default;
+std::unique_ptr<SystemFontInfoIface>
+CWin32Platform::CreateDefaultSystemFontInfo() {
+  if (pdfium::base::win::IsUser32AndGdi32Available())
+    return std::unique_ptr<SystemFontInfoIface>(new CFX_Win32FontInfo);
+
+  // Select the fallback font information class if GDI is disabled.
+  CFX_Win32FallbackFontInfo* pInfoFallback = new CFX_Win32FallbackFontInfo;
+  // Construct the font path manually, SHGetKnownFolderPath won't work under
+  // a restrictive sandbox.
+  CHAR windows_path[MAX_PATH] = {};
+  DWORD path_len = ::GetWindowsDirectoryA(windows_path, MAX_PATH);
+  if (path_len > 0 && path_len < MAX_PATH) {
+    ByteString fonts_path(windows_path);
+    fonts_path += "\\Fonts";
+    pInfoFallback->AddPath(fonts_path);
+  }
+  return std::unique_ptr<SystemFontInfoIface>(pInfoFallback);
+}
 
 // static
-RenderDeviceDriverIface* CFX_WindowsRenderDevice::CreateDriver(
-    HDC hDC,
-    const EncoderIface* pEncoderIface) {
-  int device_type = ::GetDeviceCaps(hDC, TECHNOLOGY);
-  int obj_type = ::GetObjectType(hDC);
-  bool use_printer = device_type == DT_RASPRINTER ||
-                     device_type == DT_PLOTTER ||
-                     device_type == DT_CHARSTREAM || obj_type == OBJ_ENHMETADC;
-
-  if (!use_printer)
-    return new CGdiDisplayDriver(hDC);
-
-  if (g_pdfium_print_mode == WindowsPrintMode::kModeEmf ||
-      g_pdfium_print_mode == WindowsPrintMode::kModeEmfImageMasks) {
-    return new CGdiPrinterDriver(hDC);
-  }
-
-  if (g_pdfium_print_mode == WindowsPrintMode::kModeTextOnly)
-    return new CTextOnlyPrinterDriver(hDC);
-
-  return new CPSPrinterDriver(hDC, g_pdfium_print_mode, false, pEncoderIface);
+std::unique_ptr<CFX_GEModule::PlatformIface>
+CFX_GEModule::PlatformIface::Create() {
+  return std::make_unique<CWin32Platform>();
 }

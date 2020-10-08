@@ -12,7 +12,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/win32/cfx_windowsdib.h"
-#include "core/fxge/win32/win32_int.h"
+#include "core/fxge/win32/cwin32_platform.h"
 
 ByteString CFX_WindowsDIB::GetBitmapInfo(
     const RetainPtr<CFX_DIBitmap>& pBitmap) {

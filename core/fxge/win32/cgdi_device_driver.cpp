@@ -15,7 +15,7 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/render_defines.h"
 #include "core/fxge/win32/cfx_windowsdib.h"
-#include "core/fxge/win32/win32_int.h"
+#include "core/fxge/win32/cwin32_platform.h"
 #include "third_party/base/notreached.h"
 
 #if !defined(_SKIA_SUPPORT_)
