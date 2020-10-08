@@ -32,7 +32,6 @@ class CXFA_LayoutItem;
 class CXFA_MapModule;
 class CXFA_Node;
 class CXFA_Object;
-struct XFA_MAPDATABLOCKCALLBACKINFO;
 
 typedef CJS_Result (*CJX_MethodCall)(
     CJX_Object* obj,
@@ -132,9 +131,9 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
 
   bool HasAttribute(XFA_Attribute eAttr);
   void SetAttributeByEnum(XFA_Attribute eAttr,
-                          WideStringView wsValue,
+                          const WideString& wsValue,
                           bool bNotify);
-  void SetAttributeByString(WideStringView wsAttr, WideStringView wsValue);
+  void SetAttributeByString(WideStringView wsAttr, const WideString& wsValue);
   void RemoveAttribute(WideStringView wsAttr);
   WideString GetAttributeByString(WideStringView attr);
   WideString GetAttributeByEnum(XFA_Attribute attr);
@@ -207,7 +206,9 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
   Optional<CXFA_Measurement> TryMeasure(XFA_Attribute eAttr,
                                         bool bUseDefault) const;
   Optional<float> TryMeasureAsFloat(XFA_Attribute attr) const;
-  void SetMeasure(XFA_Attribute eAttr, CXFA_Measurement mValue, bool bNotify);
+  void SetMeasure(XFA_Attribute eAttr,
+                  const CXFA_Measurement& mValue,
+                  bool bNotify);
   CXFA_Measurement GetMeasure(XFA_Attribute eAttr) const;
   float GetMeasureInUnit(XFA_Attribute eAttr, XFA_Unit unit) const;
 
@@ -257,17 +258,17 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
   CXFA_MapModule* CreateMapModule();
   CXFA_MapModule* GetMapModule() const;
   void SetMapModuleValue(uint32_t key, int32_t value);
-  void SetMapModuleString(uint32_t key, WideStringView wsValue);
+  void SetMapModuleString(uint32_t key, const WideString& wsValue);
+  void SetMapModuleMeasurement(uint32_t key, const CXFA_Measurement& value);
   Optional<int32_t> GetMapModuleValue(uint32_t key) const;
   Optional<WideString> GetMapModuleString(uint32_t key) const;
-  void SetMapModuleBuffer(uint32_t key,
-                          void* pValue,
-                          size_t iBytes,
-                          const XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo);
-  bool GetMapModuleBuffer(uint32_t key, void** pValue, int32_t* pBytes) const;
+  Optional<CXFA_Measurement> GetMapModuleMeasurement(uint32_t key) const;
+  Optional<int32_t> GetMapModuleValueFollowingChain(uint32_t key) const;
+  Optional<WideString> GetMapModuleStringFollowingChain(uint32_t key) const;
+  Optional<CXFA_Measurement> GetMapModuleMeasurementFollowingChain(
+      uint32_t key) const;
   bool HasMapModuleKey(uint32_t key);
   void RemoveMapModuleKey(uint32_t key);
-  void ClearMapModuleBuffer();
   void MoveBufferMapData(CXFA_Object* pDstObj);
 
   cppgc::Member<CXFA_Object> object_;

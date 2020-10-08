@@ -45,16 +45,6 @@
 
 namespace {
 
-void XFA_DeleteWideString(void* pData) {
-  delete static_cast<WideString*>(pData);
-}
-
-void XFA_CopyWideString(void*& pData) {
-  if (!pData)
-    return;
-  pData = new WideString(*reinterpret_cast<WideString*>(pData));
-}
-
 enum XFA_KEYTYPE {
   XFA_KEYTYPE_Custom,
   XFA_KEYTYPE_Element,
@@ -103,65 +93,27 @@ std::tuple<int32_t, int32_t, int32_t> StrToRGB(const WideString& strRGB) {
 
 }  // namespace
 
-struct XFA_MAPDATABLOCKCALLBACKINFO {
-  void (*pFree)(void* pData);
-  void (*pCopy)(void*& pData);
-};
-
-struct XFA_MAPDATABLOCK {
-  static size_t SizeForCapacity(size_t capacity) {
-    return sizeof(XFA_MAPDATABLOCK) + capacity;
-  }
-
-  static XFA_MAPDATABLOCK* CreateForCapacity(size_t capacity) {
-    return reinterpret_cast<XFA_MAPDATABLOCK*>(
-        FX_Alloc(uint8_t, SizeForCapacity(capacity)));
-  }
-
-  static XFA_MAPDATABLOCK* RepurposeForCapacity(XFA_MAPDATABLOCK* ptr,
-                                                size_t capacity) {
-    if (!ptr)
-      return CreateForCapacity(capacity);
-
-    ptr->FreeInlineResources();
-    if (ptr->iBytes != capacity) {
-      ptr = reinterpret_cast<XFA_MAPDATABLOCK*>(
-          FX_Realloc(uint8_t, ptr, SizeForCapacity(capacity)));
-    }
-    return ptr;
-  }
-
-  uint8_t* GetData() const { return (uint8_t*)this + sizeof(XFA_MAPDATABLOCK); }
-
-  void FreeInlineResources() {
-    if (pCallbackInfo && pCallbackInfo->pFree)
-      pCallbackInfo->pFree(*(void**)GetData());
-  }
-
-  void AdjustInlineResourcesAfterCopy() {
-    if (pCallbackInfo && pCallbackInfo->pCopy)
-      pCallbackInfo->pCopy(*(void**)GetData());
-  }
-
-  const XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo;
-  size_t iBytes;
-};
-
 class CXFA_MapModule {
  public:
   CXFA_MapModule() = default;
   ~CXFA_MapModule() = default;
 
-  void Clear() {
-    for (auto& pair : m_BufferMap) {
-      XFA_MAPDATABLOCK* pBuffer = pair.second;
-      if (pBuffer) {
-        pBuffer->FreeInlineResources();
-        FX_Free(pBuffer);
-      }
-    }
-    m_BufferMap.clear();
-    m_ValueMap.clear();
+  void SetValue(uint32_t key, int32_t value) {
+    m_StringMap.erase(key);
+    m_MeasurementMap.erase(key);
+    m_ValueMap[key] = value;
+  }
+
+  void SetString(uint32_t key, const WideString& wsString) {
+    m_ValueMap.erase(key);
+    m_MeasurementMap.erase(key);
+    m_StringMap[key] = wsString;
+  }
+
+  void SetMeasurement(uint32_t key, const CXFA_Measurement& measurement) {
+    m_ValueMap.erase(key);
+    m_StringMap.erase(key);
+    m_MeasurementMap[key] = measurement;
   }
 
   Optional<int32_t> GetValue(uint32_t key) const {
@@ -171,75 +123,53 @@ class CXFA_MapModule {
     return it->second;
   }
 
-  void SetValue(uint32_t key, int32_t value) { m_ValueMap[key] = value; }
-
-  XFA_MAPDATABLOCK* GetBlock(uint32_t key) const {
-    auto it = m_BufferMap.find(key);
-    if (it == m_BufferMap.end())
-      return nullptr;
+  Optional<WideString> GetString(uint32_t key) const {
+    auto it = m_StringMap.find(key);
+    if (it == m_StringMap.end())
+      return pdfium::nullopt;
     return it->second;
   }
 
-  void SetBlock(uint32_t key, XFA_MAPDATABLOCK* block) {
-    m_BufferMap[key] = block;
+  Optional<CXFA_Measurement> GetMeasurement(uint32_t key) const {
+    auto it = m_MeasurementMap.find(key);
+    if (it == m_MeasurementMap.end())
+      return pdfium::nullopt;
+    return it->second;
   }
 
   bool HasKey(uint32_t key) const {
     return pdfium::Contains(m_ValueMap, key) ||
-           pdfium::Contains(m_BufferMap, key);
+           pdfium::Contains(m_StringMap, key) ||
+           pdfium::Contains(m_MeasurementMap, key);
   }
 
   void RemoveKey(uint32_t key) {
-    auto it = m_BufferMap.find(key);
-    if (it != m_BufferMap.end()) {
-      XFA_MAPDATABLOCK* pBuffer = it->second;
-      if (pBuffer) {
-        pBuffer->FreeInlineResources();
-        FX_Free(pBuffer);
-      }
-      m_BufferMap.erase(it);
-    }
     m_ValueMap.erase(key);
+    m_StringMap.erase(key);
+    m_MeasurementMap.erase(key);
   }
 
   void MergeDataFrom(const CXFA_MapModule* pSrc) {
     for (const auto& pair : pSrc->m_ValueMap)
-      m_ValueMap[pair.first] = pair.second;
+      SetValue(pair.first, pair.second);
 
-    for (const auto& pair : pSrc->m_BufferMap) {
-      XFA_MAPDATABLOCK* pSrcBuffer = pair.second;
-      XFA_MAPDATABLOCK*& pDstBuffer = m_BufferMap[pair.first];
-      if (pSrcBuffer->pCallbackInfo && pSrcBuffer->pCallbackInfo->pFree &&
-          !pSrcBuffer->pCallbackInfo->pCopy) {
-        if (pDstBuffer) {
-          pDstBuffer->FreeInlineResources();
-          m_BufferMap.erase(pair.first);
-        }
-        continue;
-      }
-      pDstBuffer = XFA_MAPDATABLOCK::RepurposeForCapacity(pDstBuffer,
-                                                          pSrcBuffer->iBytes);
-      pDstBuffer->pCallbackInfo = pSrcBuffer->pCallbackInfo;
-      pDstBuffer->iBytes = pSrcBuffer->iBytes;
-      memcpy(pDstBuffer->GetData(), pSrcBuffer->GetData(), pSrcBuffer->iBytes);
-      pDstBuffer->AdjustInlineResourcesAfterCopy();
-    }
+    for (const auto& pair : pSrc->m_StringMap)
+      SetString(pair.first, pair.second);
+
+    for (const auto& pair : pSrc->m_MeasurementMap)
+      SetMeasurement(pair.first, pair.second);
   }
 
  private:
-  // These two are keyed by result of GetMapKey_*().
-  std::map<uint32_t, int32_t> m_ValueMap;  // int/enum/bool represented as int.
-  std::map<uint32_t, XFA_MAPDATABLOCK*> m_BufferMap;
+  // keyed by result of GetMapKey_*().
+  std::map<uint32_t, int32_t> m_ValueMap;
+  std::map<uint32_t, WideString> m_StringMap;
+  std::map<uint32_t, CXFA_Measurement> m_MeasurementMap;
 };
-
-const XFA_MAPDATABLOCKCALLBACKINFO deleteWideStringCallBack = {
-    XFA_DeleteWideString, XFA_CopyWideString};
 
 CJX_Object::CJX_Object(CXFA_Object* obj) : object_(obj) {}
 
-CJX_Object::~CJX_Object() {
-  ClearMapModuleBuffer();
-}
+CJX_Object::~CJX_Object() = default;
 
 CJX_Object* CJX_Object::AsCJXObject() {
   return this;
@@ -343,11 +273,12 @@ bool CJX_Object::HasAttribute(XFA_Attribute eAttr) {
 }
 
 void CJX_Object::SetAttributeByEnum(XFA_Attribute eAttr,
-                                    WideStringView wsValue,
+                                    const WideString& wsValue,
                                     bool bNotify) {
   switch (GetXFANode()->GetAttributeType(eAttr)) {
     case XFA_AttributeType::Enum: {
-      Optional<XFA_AttributeValue> item = XFA_GetAttributeValueByName(wsValue);
+      Optional<XFA_AttributeValue> item =
+          XFA_GetAttributeValueByName(wsValue.AsStringView());
       SetEnum(eAttr, item ? *item : *(GetXFANode()->GetDefaultEnum(eAttr)),
               bNotify);
       break;
@@ -360,25 +291,20 @@ void CJX_Object::SetAttributeByEnum(XFA_Attribute eAttr,
       break;
     case XFA_AttributeType::Integer:
       SetInteger(eAttr,
-                 FXSYS_roundf(FXSYS_wcstof(wsValue.unterminated_c_str(),
-                                           wsValue.GetLength(), nullptr)),
+                 FXSYS_roundf(FXSYS_wcstof(wsValue.c_str(), wsValue.GetLength(),
+                                           nullptr)),
                  bNotify);
       break;
     case XFA_AttributeType::Measure:
-      SetMeasure(eAttr, CXFA_Measurement(wsValue), bNotify);
+      SetMeasure(eAttr, CXFA_Measurement(wsValue.AsStringView()), bNotify);
       break;
     default:
       break;
   }
 }
 
-void CJX_Object::SetMapModuleString(uint32_t key, WideStringView wsValue) {
-  SetMapModuleBuffer(key, const_cast<wchar_t*>(wsValue.unterminated_c_str()),
-                     wsValue.GetLength() * sizeof(wchar_t), nullptr);
-}
-
 void CJX_Object::SetAttributeByString(WideStringView wsAttr,
-                                      WideStringView wsValue) {
+                                      const WideString& wsValue) {
   Optional<XFA_ATTRIBUTEINFO> attr = XFA_GetAttributeByName(wsAttr);
   if (attr.has_value()) {
     SetAttributeByEnum(attr.value().attribute, wsValue, true);
@@ -394,7 +320,7 @@ WideString CJX_Object::GetAttributeByString(WideStringView attr) {
   if (enum_attr.has_value())
     result = TryAttribute(enum_attr.value().attribute, true);
   else
-    result = GetMapModuleString(GetMapKey_Custom(attr));
+    result = GetMapModuleStringFollowingChain(GetMapKey_Custom(attr));
   return result.value_or(WideString());
 }
 
@@ -445,7 +371,7 @@ void CJX_Object::RemoveAttribute(WideStringView wsAttr) {
 
 Optional<bool> CJX_Object::TryBoolean(XFA_Attribute eAttr, bool bUseDefault) {
   uint32_t key = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
-  Optional<int32_t> value = GetMapModuleValue(key);
+  Optional<int32_t> value = GetMapModuleValueFollowingChain(key);
   if (value.has_value())
     return !!value.value();
   if (!bUseDefault)
@@ -480,7 +406,7 @@ int32_t CJX_Object::GetInteger(XFA_Attribute eAttr) const {
 Optional<int32_t> CJX_Object::TryInteger(XFA_Attribute eAttr,
                                          bool bUseDefault) const {
   uint32_t key = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
-  Optional<int32_t> value = GetMapModuleValue(key);
+  Optional<int32_t> value = GetMapModuleValueFollowingChain(key);
   if (value.has_value())
     return value.value();
   if (!bUseDefault)
@@ -491,7 +417,7 @@ Optional<int32_t> CJX_Object::TryInteger(XFA_Attribute eAttr,
 Optional<XFA_AttributeValue> CJX_Object::TryEnum(XFA_Attribute eAttr,
                                                  bool bUseDefault) const {
   uint32_t key = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
-  Optional<int32_t> value = GetMapModuleValue(key);
+  Optional<int32_t> value = GetMapModuleValueFollowingChain(key);
   if (value.has_value())
     return static_cast<XFA_AttributeValue>(value.value());
   if (!bUseDefault)
@@ -514,33 +440,31 @@ XFA_AttributeValue CJX_Object::GetEnum(XFA_Attribute eAttr) const {
 }
 
 void CJX_Object::SetMeasure(XFA_Attribute eAttr,
-                            CXFA_Measurement mValue,
+                            const CXFA_Measurement& mValue,
                             bool bNotify) {
   uint32_t key = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
   OnChanging(eAttr, bNotify);
-  SetMapModuleBuffer(key, &mValue, sizeof(CXFA_Measurement), nullptr);
+  SetMapModuleMeasurement(key, mValue);
   OnChanged(eAttr, bNotify, false);
 }
 
 Optional<CXFA_Measurement> CJX_Object::TryMeasure(XFA_Attribute eAttr,
                                                   bool bUseDefault) const {
   uint32_t key = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
-  void* pValue;
-  int32_t iBytes;
-  if (GetMapModuleBuffer(key, &pValue, &iBytes) &&
-      iBytes == sizeof(CXFA_Measurement)) {
-    return *static_cast<CXFA_Measurement*>(pValue);
-  }
+  Optional<CXFA_Measurement> result =
+      GetMapModuleMeasurementFollowingChain(key);
+  if (result.has_value())
+    return result.value();
   if (!bUseDefault)
-    return {};
+    return pdfium::nullopt;
   return GetXFANode()->GetDefaultMeasurement(eAttr);
 }
 
 Optional<float> CJX_Object::TryMeasureAsFloat(XFA_Attribute attr) const {
   Optional<CXFA_Measurement> measure = TryMeasure(attr, false);
-  if (measure)
-    return measure->ToUnit(XFA_Unit::Pt);
-  return pdfium::nullopt;
+  if (!measure)
+    return pdfium::nullopt;
+  return measure->ToUnit(XFA_Unit::Pt);
 }
 
 CXFA_Measurement CJX_Object::GetMeasure(XFA_Attribute eAttr) const {
@@ -566,15 +490,9 @@ void CJX_Object::SetCDataImpl(XFA_Attribute eAttr,
   CXFA_Node* xfaObj = GetXFANode();
   uint32_t key = GetMapKey_Element(xfaObj->GetElementType(), eAttr);
   OnChanging(eAttr, bNotify);
-  if (eAttr == XFA_Attribute::Value) {
-    WideString* pClone = new WideString(wsValue);
-    SetMapModuleBuffer(key, &pClone, sizeof(WideString*),
-                       &deleteWideStringCallBack);
-  } else {
-    SetMapModuleString(key, wsValue.AsStringView());
-    if (eAttr == XFA_Attribute::Name)
-      xfaObj->UpdateNameHash();
-  }
+  SetMapModuleString(key, wsValue);
+  if (eAttr == XFA_Attribute::Name)
+    xfaObj->UpdateNameHash();
   OnChanged(eAttr, bNotify, bScriptModify);
 
   if (!xfaObj->IsNeedSavingXMLNode() || eAttr == XFA_Attribute::QualifiedName ||
@@ -616,37 +534,21 @@ void CJX_Object::SetAttributeValueImpl(const WideString& wsValue,
       GetMapKey_Element(xfaObj->GetElementType(), XFA_Attribute::Value);
 
   OnChanging(XFA_Attribute::Value, bNotify);
-  WideString* pClone = new WideString(wsValue);
-  SetMapModuleBuffer(key, &pClone, sizeof(WideString*),
-                     &deleteWideStringCallBack);
+  SetMapModuleString(key, wsValue);
   OnChanged(XFA_Attribute::Value, bNotify, bScriptModify);
-
-  if (!xfaObj->IsNeedSavingXMLNode())
-    return;
-
-  xfaObj->SetToXML(wsXMLValue);
+  if (xfaObj->IsNeedSavingXMLNode())
+    xfaObj->SetToXML(wsXMLValue);
 }
 
 Optional<WideString> CJX_Object::TryCData(XFA_Attribute eAttr,
                                           bool bUseDefault) const {
   uint32_t key = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
-  if (eAttr == XFA_Attribute::Value) {
-    void* pData;
-    int32_t iBytes = 0;
-    WideString* pStr = nullptr;
-    if (GetMapModuleBuffer(key, &pData, &iBytes) && iBytes == sizeof(void*)) {
-      memcpy(&pData, pData, iBytes);
-      pStr = reinterpret_cast<WideString*>(pData);
-    }
-    if (pStr)
-      return *pStr;
-  } else {
-    Optional<WideString> value = GetMapModuleString(key);
-    if (value.has_value())
-      return value;
-  }
+  Optional<WideString> value = GetMapModuleStringFollowingChain(key);
+  if (value.has_value())
+    return value;
+
   if (!bUseDefault)
-    return {};
+    return pdfium::nullopt;
   return GetXFANode()->GetDefaultCData(eAttr);
 }
 
@@ -766,8 +668,7 @@ void CJX_Object::SetContent(const WideString& wsContent,
           wsContentType = *ret;
         if (wsContentType.EqualsASCII("text/html")) {
           wsContentType.clear();
-          SetAttributeByEnum(XFA_Attribute::ContentType,
-                             wsContentType.AsStringView(), false);
+          SetAttributeByEnum(XFA_Attribute::ContentType, wsContentType, false);
         }
       }
 
@@ -945,87 +846,95 @@ void CJX_Object::SetMapModuleValue(uint32_t key, int32_t value) {
   CreateMapModule()->SetValue(key, value);
 }
 
+void CJX_Object::SetMapModuleString(uint32_t key, const WideString& wsValue) {
+  CreateMapModule()->SetString(key, wsValue);
+}
+
+void CJX_Object::SetMapModuleMeasurement(uint32_t key,
+                                         const CXFA_Measurement& value) {
+  CreateMapModule()->SetMeasurement(key, value);
+}
+
 Optional<int32_t> CJX_Object::GetMapModuleValue(uint32_t key) const {
+  CXFA_MapModule* pModule = GetMapModule();
+  if (!pModule)
+    return pdfium::nullopt;
+  return pModule->GetValue(key);
+}
+
+Optional<WideString> CJX_Object::GetMapModuleString(uint32_t key) const {
+  CXFA_MapModule* pModule = GetMapModule();
+  if (!pModule)
+    return pdfium::nullopt;
+  return pModule->GetString(key);
+}
+
+Optional<CXFA_Measurement> CJX_Object::GetMapModuleMeasurement(
+    uint32_t key) const {
+  CXFA_MapModule* pModule = GetMapModule();
+  if (!pModule)
+    return pdfium::nullopt;
+  return pModule->GetMeasurement(key);
+}
+
+Optional<int32_t> CJX_Object::GetMapModuleValueFollowingChain(
+    uint32_t key) const {
   std::set<const CXFA_Node*> visited;
   for (const CXFA_Node* pNode = GetXFANode(); pNode;
        pNode = pNode->GetTemplateNodeIfExists()) {
     if (!visited.insert(pNode).second)
       break;
 
-    CXFA_MapModule* pModule = pNode->JSObject()->GetMapModule();
-    if (pModule) {
-      Optional<int32_t> result = pModule->GetValue(key);
-      if (result.has_value())
-        return result;
-    }
+    Optional<int32_t> result = pNode->JSObject()->GetMapModuleValue(key);
+    if (result.has_value())
+      return result;
+
     if (pNode->GetPacketType() == XFA_PacketType::Datasets)
       break;
   }
   return pdfium::nullopt;
 }
 
-Optional<WideString> CJX_Object::GetMapModuleString(uint32_t key) const {
-  void* pRawValue;
-  int32_t iBytes;
-  if (!GetMapModuleBuffer(key, &pRawValue, &iBytes))
-    return {};
-
-  // Defensive measure: no out-of-bounds pointers even if zero length.
-  int32_t iChars = iBytes / sizeof(wchar_t);
-  return WideString(iChars ? static_cast<const wchar_t*>(pRawValue) : nullptr,
-                    iChars);
-}
-
-void CJX_Object::SetMapModuleBuffer(
-    uint32_t key,
-    void* pValue,
-    size_t iBytes,
-    const XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo) {
-  CXFA_MapModule* pModule = CreateMapModule();
-  XFA_MAPDATABLOCK* pBuffer = pModule->GetBlock(key);
-  pBuffer = XFA_MAPDATABLOCK::RepurposeForCapacity(pBuffer, iBytes);
-  pBuffer->pCallbackInfo = pCallbackInfo;
-  pBuffer->iBytes = iBytes;
-  memcpy(pBuffer->GetData(), pValue, iBytes);
-  pModule->SetBlock(key, pBuffer);
-}
-
-bool CJX_Object::GetMapModuleBuffer(uint32_t key,
-                                    void** pValue,
-                                    int32_t* pBytes) const {
+Optional<WideString> CJX_Object::GetMapModuleStringFollowingChain(
+    uint32_t key) const {
   std::set<const CXFA_Node*> visited;
-  XFA_MAPDATABLOCK* pBuffer = nullptr;
   for (const CXFA_Node* pNode = GetXFANode(); pNode;
        pNode = pNode->GetTemplateNodeIfExists()) {
     if (!visited.insert(pNode).second)
       break;
 
-    CXFA_MapModule* pModule = pNode->JSObject()->GetMapModule();
-    if (pModule) {
-      pBuffer = pModule->GetBlock(key);
-      if (pBuffer)
-        break;
-    }
+    Optional<WideString> result = pNode->JSObject()->GetMapModuleString(key);
+    if (result.has_value())
+      return result;
+
     if (pNode->GetPacketType() == XFA_PacketType::Datasets)
       break;
   }
-  if (!pBuffer)
-    return false;
+  return pdfium::nullopt;
+}
 
-  *pValue = pBuffer->GetData();
-  *pBytes = pBuffer->iBytes;
-  return true;
+Optional<CXFA_Measurement> CJX_Object::GetMapModuleMeasurementFollowingChain(
+    uint32_t key) const {
+  std::set<const CXFA_Node*> visited;
+  for (const CXFA_Node* pNode = GetXFANode(); pNode;
+       pNode = pNode->GetTemplateNodeIfExists()) {
+    if (!visited.insert(pNode).second)
+      break;
+
+    Optional<CXFA_Measurement> result =
+        pNode->JSObject()->GetMapModuleMeasurement(key);
+    if (result.has_value())
+      return result;
+
+    if (pNode->GetPacketType() == XFA_PacketType::Datasets)
+      break;
+  }
+  return pdfium::nullopt;
 }
 
 bool CJX_Object::HasMapModuleKey(uint32_t key) {
   CXFA_MapModule* pModule = GetMapModule();
   return pModule && pModule->HasKey(key);
-}
-
-void CJX_Object::ClearMapModuleBuffer() {
-  CXFA_MapModule* pModule = GetMapModule();
-  if (pModule)
-    pModule->Clear();
 }
 
 void CJX_Object::RemoveMapModuleKey(uint32_t key) {
@@ -1115,7 +1024,7 @@ void CJX_Object::ScriptAttributeString(CFXJSE_Value* pValue,
   }
 
   WideString wsValue = pValue->ToWideString();
-  SetAttributeByEnum(eAttribute, wsValue.AsStringView(), true);
+  SetAttributeByEnum(eAttribute, wsValue, true);
   if (eAttribute != XFA_Attribute::Use ||
       GetXFAObject()->GetElementType() != XFA_Element::Desc) {
     return;

@@ -60,8 +60,7 @@ CJS_Result CJX_Model::createNode(
     if (!pNewNode->HasAttribute(XFA_Attribute::Name))
       return CJS_Result::Failure(JSMessage::kParamError);
 
-    pNewNode->JSObject()->SetAttributeByEnum(XFA_Attribute::Name,
-                                             name.AsStringView(), true);
+    pNewNode->JSObject()->SetAttributeByEnum(XFA_Attribute::Name, name, true);
     if (pNewNode->GetPacketType() == XFA_PacketType::Datasets)
       pNewNode->CreateXMLMappingNode();
   }
