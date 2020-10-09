@@ -526,19 +526,17 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractInkMultiple) {
     EXPECT_EQ(681.535034f, rect.top);
   }
   {
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#if defined(OS_APPLE)
+#if defined(_SKIA_SUPPORT_) && defined(OS_APPLE)
+    static constexpr char kExpectedHash[] = "fad91b9c968fe8019a774f5e2419b8fc";
+#elif defined(_SKIA_SUPPORT_PATHS_) && defined(OS_APPLE)
     static constexpr char kExpectedHash[] = "acddfe688a117ead56af7b249a2cf8a1";
-#else
+#elif defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
     static constexpr char kExpectedHash[] = "1fb0dd8dd5f0b9bb8d076e48eb59296d";
-#endif  // defined(OS_APPLE)
-#else
-#if defined(OS_WIN)
+#elif defined(OS_WIN)
     static constexpr char kExpectedHash[] = "49d0a81c636531a337429325273d0508";
 #else
     static constexpr char kExpectedHash[] = "354002e1c4386d38fdde29ef8d61074a";
-#endif  // defined(OS_WIN)
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#endif
     ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 612, 792, kExpectedHash);
   }
@@ -677,7 +675,11 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndSaveUnderlineAnnotation) {
   UnloadPage(page);
 
   // Open the saved document.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#if defined(_SKIA_SUPPORT_) && defined(OS_APPLE)
+  static const char kChecksum[] = "899387ae792390cd0d83cf7e2bbebfb5";
+#elif defined(_SKIA_SUPPORT_PATHS_) && defined(OS_APPLE)
+  static const char kChecksum[] = "e40e235ee35f47ff28dda009aaaf36df";
+#elif defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   static const char kChecksum[] = "798fa41303381c9ba6d99092f5cd4d2b";
 #else
   static const char kChecksum[] = "dba153419f67b7c0c0e3d22d3e8910d5";
