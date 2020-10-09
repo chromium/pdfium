@@ -80,7 +80,7 @@ static int NotConfigured(TIFF*, int);
 /*
  * Compression schemes statically built into the library.
  */
-#ifdef VMS
+#ifndef VMS
 const TIFFCodec _TIFFBuiltinCODECS[] = {
 #else
 TIFFCodec _TIFFBuiltinCODECS[] = {

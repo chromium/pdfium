@@ -1,0 +1,26 @@
+diff --git a/third_party/libtiff/tif_codec.c b/third_party/libtiff/tif_codec.c
+index b6c04f01d..f909b20c1 100644
+--- a/third_party/libtiff/tif_codec.c
++++ b/third_party/libtiff/tif_codec.c
+@@ -80,7 +80,7 @@ static int NotConfigured(TIFF*, int);
+ /*
+  * Compression schemes statically built into the library.
+  */
+-#ifdef VMS
++#ifndef VMS
+ const TIFFCodec _TIFFBuiltinCODECS[] = {
+ #else
+ TIFFCodec _TIFFBuiltinCODECS[] = {
+diff --git a/third_party/libtiff/tiffiop.h b/third_party/libtiff/tiffiop.h
+index ba7b2659a..b345996ab 100644
+--- a/third_party/libtiff/tiffiop.h
++++ b/third_party/libtiff/tiffiop.h
+@@ -452,7 +452,7 @@ extern int TIFFInitZSTD(TIFF*, int);
+ #ifdef WEBP_SUPPORT
+ extern int TIFFInitWebP(TIFF*, int);
+ #endif
+-#ifdef VMS
++#ifndef VMS
+ extern const TIFFCodec _TIFFBuiltinCODECS[];
+ #else
+ extern TIFFCodec _TIFFBuiltinCODECS[];
