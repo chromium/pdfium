@@ -42,8 +42,8 @@ struct TbConvert {
 // Map PDF-style directives lacking direct wcsftime directives to
 // the value with which they will be replaced.
 struct TbConvertAdditional {
-  const wchar_t* lpszJSMark;
-  int iValue;
+  wchar_t js_mark;
+  int value;
 };
 
 const TbConvert TbConvertTable[] = {
@@ -230,23 +230,23 @@ CJS_Result CJS_Util::printd(CJS_Runtime* pRuntime,
     return CJS_Result::Failure(JSMessage::kValueError);
 
   const TbConvertAdditional cTableAd[] = {
-      {L"m", month}, {L"d", day},
-      {L"H", hour},  {L"h", hour > 12 ? hour - 12 : hour},
-      {L"M", min},   {L"s", sec},
+      {L'm', month}, {L'd', day},
+      {L'H', hour},  {L'h', hour > 12 ? hour - 12 : hour},
+      {L'M', min},   {L's', sec},
   };
 
   for (size_t i = 0; i < pdfium::size(cTableAd); ++i) {
     int iStart = 0;
     int iEnd;
-    while ((iEnd = cFormat.find(cTableAd[i].lpszJSMark, iStart)) != -1) {
+    while ((iEnd = cFormat.find(cTableAd[i].js_mark, iStart)) != -1) {
       if (iEnd > 0) {
         if (cFormat[iEnd - 1] == L'%') {
           iStart = iEnd + 1;
           continue;
         }
       }
-      cFormat.replace(iEnd, wcslen(cTableAd[i].lpszJSMark),
-                      WideString::Format(L"%d", cTableAd[i].iValue).c_str());
+      cFormat.replace(iEnd, 1,
+                      WideString::Format(L"%d", cTableAd[i].value).c_str());
       iStart = iEnd;
     }
   }
