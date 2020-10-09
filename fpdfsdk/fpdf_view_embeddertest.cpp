@@ -1238,7 +1238,7 @@ TEST_F(FPDFViewEmbedderTest, LoadDocumentWithEmptyXRefConsistently) {
   }
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
+// TODO(crbug.com/pdfium/1500): Fix this test and enable.
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 #define MAYBE_RenderBug664284WithNoNativeText \
   DISABLED_RenderBug664284WithNoNativeText
@@ -1419,7 +1419,13 @@ TEST_F(FPDFViewEmbedderTest, RenderHelloWorldWithFlags) {
 }
 
 #if defined(OS_WIN)
-TEST_F(FPDFViewEmbedderTest, FPDFRenderPageEmf) {
+// TODO(crbug.com/pdfium/1500): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_FPDFRenderPageEmf DISABLED_FPDFRenderPageEmf
+#else
+#define MAYBE_FPDFRenderPageEmf FPDFRenderPageEmf
+#endif
+TEST_F(FPDFViewEmbedderTest, MAYBE_FPDFRenderPageEmf) {
   ASSERT_TRUE(OpenDocument("rectangles.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -1472,7 +1478,13 @@ class PostScriptLevel3EmbedderTest : public PostScriptRenderEmbedderTestBase {
   }
 };
 
-TEST_F(PostScriptLevel2EmbedderTest, Rectangles) {
+// TODO(crbug.com/pdfium/1500): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_Rectangles DISABLED_Rectangles
+#else
+#define MAYBE_Rectangles Rectangles
+#endif
+TEST_F(PostScriptLevel2EmbedderTest, MAYBE_Rectangles) {
   ASSERT_TRUE(OpenDocument("rectangles.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -1489,7 +1501,13 @@ TEST_F(PostScriptLevel2EmbedderTest, Rectangles) {
   UnloadPage(page);
 }
 
-TEST_F(PostScriptLevel3EmbedderTest, Rectangles) {
+// TODO(crbug.com/pdfium/1500): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_Rectangles DISABLED_Rectangles
+#else
+#define MAYBE_Rectangles Rectangles
+#endif
+TEST_F(PostScriptLevel3EmbedderTest, MAYBE_Rectangles) {
   ASSERT_TRUE(OpenDocument("rectangles.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -1506,7 +1524,13 @@ TEST_F(PostScriptLevel3EmbedderTest, Rectangles) {
   UnloadPage(page);
 }
 
-TEST_F(PostScriptLevel2EmbedderTest, Image) {
+// TODO(crbug.com/pdfium/1500): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_Image DISABLED_Image
+#else
+#define MAYBE_Image Image
+#endif
+TEST_F(PostScriptLevel2EmbedderTest, MAYBE_Image) {
   const char kExpected[] =
       "\n"
       "save\n"
@@ -1579,7 +1603,13 @@ TEST_F(PostScriptLevel2EmbedderTest, Image) {
   UnloadPage(page);
 }
 
-TEST_F(PostScriptLevel3EmbedderTest, Image) {
+// TODO(crbug.com/pdfium/1500): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_Image DISABLED_Image
+#else
+#define MAYBE_Image Image
+#endif
+TEST_F(PostScriptLevel3EmbedderTest, MAYBE_Image) {
   const char kExpected[] = R"(
 save
 /im/initmatrix load def
@@ -1623,7 +1653,13 @@ restore
   UnloadPage(page);
 }
 
-TEST_F(FPDFViewEmbedderTest, ImageMask) {
+// TODO(crbug.com/pdfium/1500): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_ImageMask DISABLED_ImageMask
+#else
+#define MAYBE_ImageMask ImageMask
+#endif
+TEST_F(FPDFViewEmbedderTest, MAYBE_ImageMask) {
   ASSERT_TRUE(OpenDocument("bug_674771.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
