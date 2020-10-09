@@ -16,6 +16,7 @@
 #include "fxjs/cjs_result.h"
 #include "fxjs/gc/container_trace.h"
 #include "fxjs/xfa/cfxjse_engine.h"
+#include "fxjs/xfa/cfxjse_mapmodule.h"
 #include "fxjs/xfa/cfxjse_value.h"
 #include "fxjs/xfa/cjx_boolean.h"
 #include "fxjs/xfa/cjx_draw.h"
@@ -92,80 +93,6 @@ std::tuple<int32_t, int32_t, int32_t> StrToRGB(const WideString& strRGB) {
 }
 
 }  // namespace
-
-class CXFA_MapModule {
- public:
-  CXFA_MapModule() = default;
-  ~CXFA_MapModule() = default;
-
-  void SetValue(uint32_t key, int32_t value) {
-    m_StringMap.erase(key);
-    m_MeasurementMap.erase(key);
-    m_ValueMap[key] = value;
-  }
-
-  void SetString(uint32_t key, const WideString& wsString) {
-    m_ValueMap.erase(key);
-    m_MeasurementMap.erase(key);
-    m_StringMap[key] = wsString;
-  }
-
-  void SetMeasurement(uint32_t key, const CXFA_Measurement& measurement) {
-    m_ValueMap.erase(key);
-    m_StringMap.erase(key);
-    m_MeasurementMap[key] = measurement;
-  }
-
-  Optional<int32_t> GetValue(uint32_t key) const {
-    auto it = m_ValueMap.find(key);
-    if (it == m_ValueMap.end())
-      return pdfium::nullopt;
-    return it->second;
-  }
-
-  Optional<WideString> GetString(uint32_t key) const {
-    auto it = m_StringMap.find(key);
-    if (it == m_StringMap.end())
-      return pdfium::nullopt;
-    return it->second;
-  }
-
-  Optional<CXFA_Measurement> GetMeasurement(uint32_t key) const {
-    auto it = m_MeasurementMap.find(key);
-    if (it == m_MeasurementMap.end())
-      return pdfium::nullopt;
-    return it->second;
-  }
-
-  bool HasKey(uint32_t key) const {
-    return pdfium::Contains(m_ValueMap, key) ||
-           pdfium::Contains(m_StringMap, key) ||
-           pdfium::Contains(m_MeasurementMap, key);
-  }
-
-  void RemoveKey(uint32_t key) {
-    m_ValueMap.erase(key);
-    m_StringMap.erase(key);
-    m_MeasurementMap.erase(key);
-  }
-
-  void MergeDataFrom(const CXFA_MapModule* pSrc) {
-    for (const auto& pair : pSrc->m_ValueMap)
-      SetValue(pair.first, pair.second);
-
-    for (const auto& pair : pSrc->m_StringMap)
-      SetString(pair.first, pair.second);
-
-    for (const auto& pair : pSrc->m_MeasurementMap)
-      SetMeasurement(pair.first, pair.second);
-  }
-
- private:
-  // keyed by result of GetMapKey_*().
-  std::map<uint32_t, int32_t> m_ValueMap;
-  std::map<uint32_t, WideString> m_StringMap;
-  std::map<uint32_t, CXFA_Measurement> m_MeasurementMap;
-};
 
 CJX_Object::CJX_Object(CXFA_Object* obj) : object_(obj) {}
 
@@ -832,13 +759,13 @@ CXFA_Node* CJX_Object::GetOrCreatePropertyInternal(int32_t index,
   return GetXFANode()->GetOrCreateProperty(index, eProperty);
 }
 
-CXFA_MapModule* CJX_Object::CreateMapModule() {
+CFXJSE_MapModule* CJX_Object::CreateMapModule() {
   if (!map_module_)
-    map_module_ = std::make_unique<CXFA_MapModule>();
+    map_module_ = std::make_unique<CFXJSE_MapModule>();
   return map_module_.get();
 }
 
-CXFA_MapModule* CJX_Object::GetMapModule() const {
+CFXJSE_MapModule* CJX_Object::GetMapModule() const {
   return map_module_.get();
 }
 
@@ -856,14 +783,14 @@ void CJX_Object::SetMapModuleMeasurement(uint32_t key,
 }
 
 Optional<int32_t> CJX_Object::GetMapModuleValue(uint32_t key) const {
-  CXFA_MapModule* pModule = GetMapModule();
+  CFXJSE_MapModule* pModule = GetMapModule();
   if (!pModule)
     return pdfium::nullopt;
   return pModule->GetValue(key);
 }
 
 Optional<WideString> CJX_Object::GetMapModuleString(uint32_t key) const {
-  CXFA_MapModule* pModule = GetMapModule();
+  CFXJSE_MapModule* pModule = GetMapModule();
   if (!pModule)
     return pdfium::nullopt;
   return pModule->GetString(key);
@@ -871,7 +798,7 @@ Optional<WideString> CJX_Object::GetMapModuleString(uint32_t key) const {
 
 Optional<CXFA_Measurement> CJX_Object::GetMapModuleMeasurement(
     uint32_t key) const {
-  CXFA_MapModule* pModule = GetMapModule();
+  CFXJSE_MapModule* pModule = GetMapModule();
   if (!pModule)
     return pdfium::nullopt;
   return pModule->GetMeasurement(key);
@@ -933,19 +860,19 @@ Optional<CXFA_Measurement> CJX_Object::GetMapModuleMeasurementFollowingChain(
 }
 
 bool CJX_Object::HasMapModuleKey(uint32_t key) {
-  CXFA_MapModule* pModule = GetMapModule();
+  CFXJSE_MapModule* pModule = GetMapModule();
   return pModule && pModule->HasKey(key);
 }
 
 void CJX_Object::RemoveMapModuleKey(uint32_t key) {
-  CXFA_MapModule* pModule = GetMapModule();
+  CFXJSE_MapModule* pModule = GetMapModule();
   if (pModule)
     pModule->RemoveKey(key);
 }
 
 void CJX_Object::MergeAllData(CXFA_Object* pDstObj) {
-  CXFA_MapModule* pDstModule = ToNode(pDstObj)->JSObject()->CreateMapModule();
-  CXFA_MapModule* pSrcModule = GetMapModule();
+  CFXJSE_MapModule* pDstModule = ToNode(pDstObj)->JSObject()->CreateMapModule();
+  CFXJSE_MapModule* pSrcModule = GetMapModule();
   if (!pSrcModule)
     return;
 

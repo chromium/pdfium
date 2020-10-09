@@ -124,6 +124,8 @@ source_set("fxjs") {
         "xfa/cfxjse_formcalc_context.h",
         "xfa/cfxjse_isolatetracker.cpp",
         "xfa/cfxjse_isolatetracker.h",
+        "xfa/cfxjse_mapmodule.cpp",
+        "xfa/cfxjse_mapmodule.h",
         "xfa/cfxjse_nodehelper.cpp",
         "xfa/cfxjse_nodehelper.h",
         "xfa/cfxjse_resolveprocessor.cpp",
@@ -253,8 +255,12 @@ if (pdf_enable_v8) {
         "gc/gced_tree_node_unittest.cpp",
         "gc/heap_unittest.cpp",
         "gc/move_unittest.cpp",
+        "xfa/cfxjse_mapmodule_unittest.cpp",
       ]
-      deps += [ ":gc" ]
+      deps += [
+        ":gc",
+        "../xfa/fxfa/parser",
+      ]
     }
   }
 
