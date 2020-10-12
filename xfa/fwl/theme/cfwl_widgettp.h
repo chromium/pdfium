@@ -76,26 +76,6 @@ class CFWL_WidgetTP {
   std::unique_ptr<CColorData> m_pColorData;
 };
 
-class CFWL_FontData final {
- public:
-  CFWL_FontData();
-  ~CFWL_FontData();
-
-  bool Equal(WideStringView wsFontFamily,
-             uint32_t dwFontStyles,
-             uint16_t wCodePage);
-  bool LoadFont(WideStringView wsFontFamily,
-                uint32_t dwFontStyles,
-                uint16_t wCodePage);
-  RetainPtr<CFGAS_GEFont> GetFont() const;
-
- protected:
-  WideString m_wsFamily;
-  uint32_t m_dwStyles;
-  uint32_t m_dwCodePage;
-  RetainPtr<CFGAS_GEFont> m_pFont;
-};
-
 class CFWL_FontManager final {
  public:
   static CFWL_FontManager* GetInstance();
@@ -106,10 +86,30 @@ class CFWL_FontManager final {
                                    uint16_t dwCodePage);
 
  private:
+  class FontData final {
+   public:
+    FontData();
+    ~FontData();
+
+    bool Equal(WideStringView wsFontFamily,
+               uint32_t dwFontStyles,
+               uint16_t wCodePage);
+    bool LoadFont(WideStringView wsFontFamily,
+                  uint32_t dwFontStyles,
+                  uint16_t wCodePage);
+    RetainPtr<CFGAS_GEFont> GetFont() const;
+
+   private:
+    WideString m_wsFamily;
+    uint32_t m_dwStyles = 0;
+    uint32_t m_dwCodePage = 0;
+    RetainPtr<CFGAS_GEFont> m_pFont;
+  };
+
   CFWL_FontManager();
   ~CFWL_FontManager();
 
-  std::vector<std::unique_ptr<CFWL_FontData>> m_FontsArray;
+  std::vector<std::unique_ptr<FontData>> m_FontsArray;
 };
 
 #endif  // XFA_FWL_THEME_CFWL_WIDGETTP_H_

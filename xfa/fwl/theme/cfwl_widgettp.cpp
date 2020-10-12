@@ -221,20 +221,20 @@ void CFWL_WidgetTP::DrawArrowBtn(CXFA_Graphics* pGraphics,
   DrawArrow(pGraphics, rect, eDict, m_pColorData->clrSign[eState - 1], matrix);
 }
 
-CFWL_FontData::CFWL_FontData() : m_dwStyles(0), m_dwCodePage(0) {}
+CFWL_FontManager::FontData::FontData() = default;
 
-CFWL_FontData::~CFWL_FontData() = default;
+CFWL_FontManager::FontData::~FontData() = default;
 
-bool CFWL_FontData::Equal(WideStringView wsFontFamily,
-                          uint32_t dwFontStyles,
-                          uint16_t wCodePage) {
+bool CFWL_FontManager::FontData::Equal(WideStringView wsFontFamily,
+                                       uint32_t dwFontStyles,
+                                       uint16_t wCodePage) {
   return m_wsFamily == wsFontFamily && m_dwStyles == dwFontStyles &&
          m_dwCodePage == wCodePage;
 }
 
-bool CFWL_FontData::LoadFont(WideStringView wsFontFamily,
-                             uint32_t dwFontStyles,
-                             uint16_t dwCodePage) {
+bool CFWL_FontManager::FontData::LoadFont(WideStringView wsFontFamily,
+                                          uint32_t dwFontStyles,
+                                          uint16_t dwCodePage) {
   m_wsFamily = wsFontFamily;
   m_dwStyles = dwFontStyles;
   m_dwCodePage = dwCodePage;
@@ -245,7 +245,7 @@ bool CFWL_FontData::LoadFont(WideStringView wsFontFamily,
   return !!m_pFont;
 }
 
-RetainPtr<CFGAS_GEFont> CFWL_FontData::GetFont() const {
+RetainPtr<CFGAS_GEFont> CFWL_FontManager::FontData::GetFont() const {
   return m_pFont;
 }
 
@@ -271,7 +271,7 @@ RetainPtr<CFGAS_GEFont> CFWL_FontManager::FindFont(WideStringView wsFontFamily,
     if (pData->Equal(wsFontFamily, dwFontStyles, wCodePage))
       return pData->GetFont();
   }
-  auto pFontData = std::make_unique<CFWL_FontData>();
+  auto pFontData = std::make_unique<FontData>();
   if (!pFontData->LoadFont(wsFontFamily, dwFontStyles, wCodePage))
     return nullptr;
 
