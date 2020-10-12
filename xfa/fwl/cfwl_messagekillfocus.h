@@ -21,7 +21,7 @@ class CFWL_MessageKillFocus final : public CFWL_Message {
   }
 
  private:
-  UnownedPtr<CFWL_Widget> m_pSetFocus;
+  UnownedPtr<CFWL_Widget> m_pSetFocus;  // Ok, stack-only.
 };
 
 #endif  // XFA_FWL_CFWL_MESSAGEKILLFOCUS_H_

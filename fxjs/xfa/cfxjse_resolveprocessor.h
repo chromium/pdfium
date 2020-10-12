@@ -28,14 +28,14 @@ class CFXJSE_ResolveNodeData {
   ~CFXJSE_ResolveNodeData();
 
   UnownedPtr<CFXJSE_Engine> const m_pSC;
-  UnownedPtr<CXFA_Object> m_CurObject;
+  UnownedPtr<CXFA_Object> m_CurObject;  // Ok, stack-only.
   WideString m_wsName;
   WideString m_wsCondition;
   XFA_HashCode m_uHashName = XFA_HASHCODE_None;
   int32_t m_nLevel = 0;
   uint32_t m_dwStyles = XFA_RESOLVENODE_Children;
   XFA_ResolveNodeRS::Type m_dwFlag = XFA_ResolveNodeRS::Type::kNodes;
-  std::vector<UnownedPtr<CXFA_Object>> m_Objects;
+  std::vector<UnownedPtr<CXFA_Object>> m_Objects;  // Ok, stack-only.
   XFA_SCRIPTATTRIBUTEINFO m_ScriptAttribute;
 };
 

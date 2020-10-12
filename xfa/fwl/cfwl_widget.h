@@ -79,7 +79,7 @@ class CFWL_Widget : public cppgc::GarbageCollected<CFWL_Widget>,
     ~ScopedUpdateLock();
 
    private:
-    UnownedPtr<CFWL_Widget> const widget_;
+    UnownedPtr<CFWL_Widget> const widget_;  // Ok, stack-only.
   };
 
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;

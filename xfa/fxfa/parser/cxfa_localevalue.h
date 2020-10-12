@@ -85,7 +85,7 @@ class CXFA_LocaleValue {
                          const WideString& wsPattern,
                          GCedLocaleIface* pLocale);
 
-  UnownedPtr<CXFA_LocaleMgr> m_pLocaleMgr;
+  UnownedPtr<CXFA_LocaleMgr> m_pLocaleMgr;  // Ok, stack-only.
   WideString m_wsValue;
   uint32_t m_dwType = XFA_VT_NULL;
   bool m_bValid = true;

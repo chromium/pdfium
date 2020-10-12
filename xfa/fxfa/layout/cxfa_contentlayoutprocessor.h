@@ -76,8 +76,8 @@ class CXFA_ContentLayoutProcessor
 
     Optional<float> m_fCurColumnWidth;
     UnownedPtr<std::vector<float>> m_prgSpecifiedColumnWidths;
-    UnownedPtr<CXFA_ContentLayoutProcessor> m_pOverflowProcessor;
-    UnownedPtr<CXFA_Node> m_pOverflowNode;
+    UnownedPtr<CXFA_ContentLayoutProcessor> m_pOverflowProcessor;  // OK, stack
+    UnownedPtr<CXFA_Node> m_pOverflowNode;                         // Ok, stack
   };
 
   CXFA_ContentLayoutProcessor(cppgc::Heap* pHeap,

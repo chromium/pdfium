@@ -71,7 +71,7 @@ class CXFA_EventParam {
   int32_t m_iCommitKey = 0;
   int32_t m_iSelEnd = 0;
   int32_t m_iSelStart = 0;
-  UnownedPtr<CXFA_Node> m_pTarget;
+  UnownedPtr<CXFA_Node> m_pTarget;  // OK, stack-only.
   WideString m_wsResult;
   WideString m_wsChange;
   WideString m_wsFullText;
