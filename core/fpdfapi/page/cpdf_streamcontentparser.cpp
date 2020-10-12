@@ -43,7 +43,7 @@
 
 namespace {
 
-const int kMaxFormLevel = 30;
+const int kMaxFormLevel = 40;
 
 const int kSingleCoordinatePair = 1;
 const int kTensorCoordinatePairs = 16;

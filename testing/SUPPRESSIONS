@@ -349,9 +349,6 @@ bug_237527_1.in * * *
 # TODO(chromium:451366): Remove after associated bug is fixed
 bug_451366.in * * *
 
-# TODO(chromium:972999): Remove after associated bug is fixed
-bug_972999.in * * *
-
 # TODO(chromium:1028991): Remove after associated bug is fixed
 reset_button.in * * *
 
