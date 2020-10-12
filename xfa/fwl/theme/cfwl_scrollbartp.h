@@ -9,14 +9,15 @@
 
 #include <memory>
 
+#include "fxjs/gc/heap.h"
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
 class CFWL_ScrollBarTP final : public CFWL_WidgetTP {
  public:
-  CFWL_ScrollBarTP();
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CFWL_ScrollBarTP() override;
 
-  // CFWL_WidgetTP
+  // CFWL_WidgetTP:
   void DrawBackground(const CFWL_ThemeBackground& pParams) override;
 
  private:
@@ -28,6 +29,8 @@ class CFWL_ScrollBarTP final : public CFWL_WidgetTP {
     FX_ARGB clrBtnBK[4][2];
     FX_ARGB clrBtnBorder[4];
   };
+
+  CFWL_ScrollBarTP();
 
   void DrawThumbBtn(CXFA_Graphics* pGraphics,
                     const CFX_RectF& rect,

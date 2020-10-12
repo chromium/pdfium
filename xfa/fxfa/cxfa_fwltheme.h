@@ -48,7 +48,7 @@ class CXFA_FWLTheme final : public cppgc::GarbageCollected<CXFA_FWLTheme>,
   bool LoadCalendarFont(CXFA_FFDoc* doc);
 
  private:
-  explicit CXFA_FWLTheme(CXFA_FFApp* pApp);
+  CXFA_FWLTheme(cppgc::Heap* pHeap, CXFA_FFApp* pApp);
 
   std::unique_ptr<CFDE_TextOut> m_pTextOut;
   RetainPtr<CFGAS_GEFont> m_pCalendarFont;

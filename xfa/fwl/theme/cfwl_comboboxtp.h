@@ -7,17 +7,20 @@
 #ifndef XFA_FWL_THEME_CFWL_COMBOBOXTP_H_
 #define XFA_FWL_THEME_CFWL_COMBOBOXTP_H_
 
+#include "fxjs/gc/heap.h"
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
 class CFWL_ComboBoxTP final : public CFWL_WidgetTP {
  public:
-  CFWL_ComboBoxTP();
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CFWL_ComboBoxTP() override;
 
-  // CFWL_WidgetTP
+  // CFWL_WidgetTP:
   void DrawBackground(const CFWL_ThemeBackground& pParams) override;
 
  private:
+  CFWL_ComboBoxTP();
+
   void DrawDropDownButton(const CFWL_ThemeBackground& pParams,
                           uint32_t dwStates,
                           const CFX_Matrix& matrix);

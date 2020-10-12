@@ -7,12 +7,12 @@
 #ifndef XFA_FWL_IFWL_THEMEPROVIDER_H_
 #define XFA_FWL_IFWL_THEMEPROVIDER_H_
 
-#include <memory>
-
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/fx_dib.h"
+#include "fxjs/gc/heap.h"
 #include "v8/include/cppgc/garbage-collected.h"
+#include "v8/include/cppgc/member.h"
 
 class CFGAS_GEFont;
 class CFWL_ThemeBackground;
@@ -24,6 +24,9 @@ class CFWL_WidgetTP;
 class IFWL_ThemeProvider : public cppgc::GarbageCollectedMixin {
  public:
   virtual ~IFWL_ThemeProvider();
+
+  // GarbageCollectedMixin:
+  void Trace(cppgc::Visitor* visitor) const override;
 
   virtual void DrawBackground(const CFWL_ThemeBackground& pParams) = 0;
   virtual void DrawText(const CFWL_ThemeText& pParams) = 0;
@@ -42,22 +45,22 @@ class IFWL_ThemeProvider : public cppgc::GarbageCollectedMixin {
       const CFWL_ThemePart& pThemePart) const = 0;
 
  protected:
-  IFWL_ThemeProvider();
+  explicit IFWL_ThemeProvider(cppgc::Heap* pHeap);
 
   CFWL_WidgetTP* GetTheme(const CFWL_Widget* pWidget) const;
 
  private:
-  std::unique_ptr<CFWL_WidgetTP> m_pCheckBoxTP;
-  std::unique_ptr<CFWL_WidgetTP> m_pListBoxTP;
-  std::unique_ptr<CFWL_WidgetTP> m_pPictureBoxTP;
-  std::unique_ptr<CFWL_WidgetTP> m_pSrollBarTP;
-  std::unique_ptr<CFWL_WidgetTP> m_pEditTP;
-  std::unique_ptr<CFWL_WidgetTP> m_pComboBoxTP;
-  std::unique_ptr<CFWL_WidgetTP> m_pMonthCalendarTP;
-  std::unique_ptr<CFWL_WidgetTP> m_pDateTimePickerTP;
-  std::unique_ptr<CFWL_WidgetTP> m_pPushButtonTP;
-  std::unique_ptr<CFWL_WidgetTP> m_pCaretTP;
-  std::unique_ptr<CFWL_WidgetTP> m_pBarcodeTP;
+  cppgc::Member<CFWL_WidgetTP> m_pCheckBoxTP;
+  cppgc::Member<CFWL_WidgetTP> m_pListBoxTP;
+  cppgc::Member<CFWL_WidgetTP> m_pPictureBoxTP;
+  cppgc::Member<CFWL_WidgetTP> m_pSrollBarTP;
+  cppgc::Member<CFWL_WidgetTP> m_pEditTP;
+  cppgc::Member<CFWL_WidgetTP> m_pComboBoxTP;
+  cppgc::Member<CFWL_WidgetTP> m_pMonthCalendarTP;
+  cppgc::Member<CFWL_WidgetTP> m_pDateTimePickerTP;
+  cppgc::Member<CFWL_WidgetTP> m_pPushButtonTP;
+  cppgc::Member<CFWL_WidgetTP> m_pCaretTP;
+  cppgc::Member<CFWL_WidgetTP> m_pBarcodeTP;
 };
 
 #endif  // XFA_FWL_IFWL_THEMEPROVIDER_H_

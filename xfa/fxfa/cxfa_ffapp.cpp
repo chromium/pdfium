@@ -33,7 +33,7 @@ void CXFA_FFApp::Trace(cppgc::Visitor* visitor) const {
 
 bool CXFA_FFApp::LoadFWLTheme(CXFA_FFDoc* doc) {
   auto* fwl_theme = cppgc::MakeGarbageCollected<CXFA_FWLTheme>(
-      GetHeap()->GetAllocationHandle(), this);
+      GetHeap()->GetAllocationHandle(), GetHeap(), this);
   if (!fwl_theme->LoadCalendarFont(doc))
     return false;
 

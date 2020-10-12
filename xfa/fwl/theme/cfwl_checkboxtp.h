@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "fxjs/gc/heap.h"
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
 class CFWL_Widget;
@@ -16,7 +17,7 @@ class CXFA_GEPath;
 
 class CFWL_CheckBoxTP final : public CFWL_WidgetTP {
  public:
-  CFWL_CheckBoxTP();
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CFWL_CheckBoxTP() override;
 
   // CFWL_WidgetTP
@@ -24,6 +25,8 @@ class CFWL_CheckBoxTP final : public CFWL_WidgetTP {
   void DrawText(const CFWL_ThemeText& pParams) override;
 
  private:
+  CFWL_CheckBoxTP();
+
   void DrawCheckSign(CFWL_Widget* pWidget,
                      CXFA_Graphics* pGraphics,
                      const CFX_RectF& pRtBox,

@@ -51,8 +51,10 @@ CXFA_FFWidget* GetOutmostFFWidget(CFWL_Widget* pWidget) {
 
 }  // namespace
 
-CXFA_FWLTheme::CXFA_FWLTheme(CXFA_FFApp* pApp)
-    : m_pTextOut(std::make_unique<CFDE_TextOut>()), m_pApp(pApp) {}
+CXFA_FWLTheme::CXFA_FWLTheme(cppgc::Heap* pHeap, CXFA_FFApp* pApp)
+    : IFWL_ThemeProvider(pHeap),
+      m_pTextOut(std::make_unique<CFDE_TextOut>()),
+      m_pApp(pApp) {}
 
 CXFA_FWLTheme::~CXFA_FWLTheme() = default;
 
@@ -62,6 +64,7 @@ void CXFA_FWLTheme::PreFinalize() {
 }
 
 void CXFA_FWLTheme::Trace(cppgc::Visitor* visitor) const {
+  IFWL_ThemeProvider::Trace(visitor);
   visitor->Trace(m_pApp);
 }
 

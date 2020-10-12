@@ -13,6 +13,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/fx_dib.h"
+#include "v8/include/cppgc/garbage-collected.h"
 #include "xfa/fwl/theme/cfwl_utils.h"
 
 class CFDE_TextOut;
@@ -21,7 +22,7 @@ class CFWL_ThemeBackground;
 class CFWL_ThemeText;
 class CXFA_Graphics;
 
-class CFWL_WidgetTP {
+class CFWL_WidgetTP : public cppgc::GarbageCollected<CFWL_WidgetTP> {
  public:
   virtual ~CFWL_WidgetTP();
 
@@ -29,6 +30,9 @@ class CFWL_WidgetTP {
   virtual void DrawText(const CFWL_ThemeText& pParams);
 
   const RetainPtr<CFGAS_GEFont>& GetFont() const;
+
+  // Non-virtual, nothing to trace in subclasses at present.
+  void Trace(cppgc::Visitor* visitor) const;
 
  protected:
   struct CColorData {

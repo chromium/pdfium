@@ -7,15 +7,19 @@
 #ifndef XFA_FWL_THEME_CFWL_PICTUREBOXTP_H_
 #define XFA_FWL_THEME_CFWL_PICTUREBOXTP_H_
 
+#include "fxjs/gc/heap.h"
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
 class CFWL_PictureBoxTP final : public CFWL_WidgetTP {
  public:
-  CFWL_PictureBoxTP();
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CFWL_PictureBoxTP() override;
 
-  // CFWL_WidgetTP
+  // CFWL_WidgetTP:
   void DrawBackground(const CFWL_ThemeBackground& pParams) override;
+
+ private:
+  CFWL_PictureBoxTP();
 };
 
 #endif  // XFA_FWL_THEME_CFWL_PICTUREBOXTP_H_

@@ -9,14 +9,15 @@
 
 #include <memory>
 
+#include "fxjs/gc/heap.h"
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
 class CFWL_PushButtonTP final : public CFWL_WidgetTP {
  public:
-  CFWL_PushButtonTP();
+  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CFWL_PushButtonTP() override;
 
-  // CFWL_WidgetTP
+  // CFWL_WidgetTP:
   void DrawBackground(const CFWL_ThemeBackground& pParams) override;
 
  private:
@@ -26,6 +27,8 @@ class CFWL_PushButtonTP final : public CFWL_WidgetTP {
     FX_ARGB clrEnd[5];
     FX_ARGB clrFill[5];
   };
+
+  CFWL_PushButtonTP();
 
   void SetTopLineColor(uint32_t* pData);
   void SetLeftLineColor(uint32_t* pData);

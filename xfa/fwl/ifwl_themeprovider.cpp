@@ -19,45 +19,70 @@
 #include "xfa/fwl/theme/cfwl_pushbuttontp.h"
 #include "xfa/fwl/theme/cfwl_scrollbartp.h"
 
-IFWL_ThemeProvider::IFWL_ThemeProvider()
-    : m_pCheckBoxTP(std::make_unique<CFWL_CheckBoxTP>()),
-      m_pListBoxTP(std::make_unique<CFWL_ListBoxTP>()),
-      m_pPictureBoxTP(std::make_unique<CFWL_PictureBoxTP>()),
-      m_pSrollBarTP(std::make_unique<CFWL_ScrollBarTP>()),
-      m_pEditTP(std::make_unique<CFWL_EditTP>()),
-      m_pComboBoxTP(std::make_unique<CFWL_ComboBoxTP>()),
-      m_pMonthCalendarTP(std::make_unique<CFWL_MonthCalendarTP>()),
-      m_pDateTimePickerTP(std::make_unique<CFWL_DateTimePickerTP>()),
-      m_pPushButtonTP(std::make_unique<CFWL_PushButtonTP>()),
-      m_pCaretTP(std::make_unique<CFWL_CaretTP>()),
-      m_pBarcodeTP(std::make_unique<CFWL_BarcodeTP>()) {}
+IFWL_ThemeProvider::IFWL_ThemeProvider(cppgc::Heap* pHeap)
+    : m_pCheckBoxTP(cppgc::MakeGarbageCollected<CFWL_CheckBoxTP>(
+          pHeap->GetAllocationHandle())),
+      m_pListBoxTP(cppgc::MakeGarbageCollected<CFWL_ListBoxTP>(
+          pHeap->GetAllocationHandle())),
+      m_pPictureBoxTP(cppgc::MakeGarbageCollected<CFWL_PictureBoxTP>(
+          pHeap->GetAllocationHandle())),
+      m_pSrollBarTP(cppgc::MakeGarbageCollected<CFWL_ScrollBarTP>(
+          pHeap->GetAllocationHandle())),
+      m_pEditTP(cppgc::MakeGarbageCollected<CFWL_EditTP>(
+          pHeap->GetAllocationHandle())),
+      m_pComboBoxTP(cppgc::MakeGarbageCollected<CFWL_ComboBoxTP>(
+          pHeap->GetAllocationHandle())),
+      m_pMonthCalendarTP(cppgc::MakeGarbageCollected<CFWL_MonthCalendarTP>(
+          pHeap->GetAllocationHandle())),
+      m_pDateTimePickerTP(cppgc::MakeGarbageCollected<CFWL_DateTimePickerTP>(
+          pHeap->GetAllocationHandle())),
+      m_pPushButtonTP(cppgc::MakeGarbageCollected<CFWL_PushButtonTP>(
+          pHeap->GetAllocationHandle())),
+      m_pCaretTP(cppgc::MakeGarbageCollected<CFWL_CaretTP>(
+          pHeap->GetAllocationHandle())),
+      m_pBarcodeTP(cppgc::MakeGarbageCollected<CFWL_BarcodeTP>(
+          pHeap->GetAllocationHandle())) {}
 
 IFWL_ThemeProvider::~IFWL_ThemeProvider() = default;
+
+void IFWL_ThemeProvider::Trace(cppgc::Visitor* visitor) const {
+  visitor->Trace(m_pCheckBoxTP);
+  visitor->Trace(m_pListBoxTP);
+  visitor->Trace(m_pPictureBoxTP);
+  visitor->Trace(m_pSrollBarTP);
+  visitor->Trace(m_pEditTP);
+  visitor->Trace(m_pComboBoxTP);
+  visitor->Trace(m_pMonthCalendarTP);
+  visitor->Trace(m_pDateTimePickerTP);
+  visitor->Trace(m_pPushButtonTP);
+  visitor->Trace(m_pCaretTP);
+  visitor->Trace(m_pBarcodeTP);
+}
 
 CFWL_WidgetTP* IFWL_ThemeProvider::GetTheme(const CFWL_Widget* pWidget) const {
   switch (pWidget->GetClassID()) {
     case FWL_Type::CheckBox:
-      return m_pCheckBoxTP.get();
+      return m_pCheckBoxTP;
     case FWL_Type::ListBox:
-      return m_pListBoxTP.get();
+      return m_pListBoxTP;
     case FWL_Type::PictureBox:
-      return m_pPictureBoxTP.get();
+      return m_pPictureBoxTP;
     case FWL_Type::ScrollBar:
-      return m_pSrollBarTP.get();
+      return m_pSrollBarTP;
     case FWL_Type::Edit:
-      return m_pEditTP.get();
+      return m_pEditTP;
     case FWL_Type::ComboBox:
-      return m_pComboBoxTP.get();
+      return m_pComboBoxTP;
     case FWL_Type::MonthCalendar:
-      return m_pMonthCalendarTP.get();
+      return m_pMonthCalendarTP;
     case FWL_Type::DateTimePicker:
-      return m_pDateTimePickerTP.get();
+      return m_pDateTimePickerTP;
     case FWL_Type::PushButton:
-      return m_pPushButtonTP.get();
+      return m_pPushButtonTP;
     case FWL_Type::Caret:
-      return m_pCaretTP.get();
+      return m_pCaretTP;
     case FWL_Type::Barcode:
-      return m_pBarcodeTP.get();
+      return m_pBarcodeTP;
     default:
       return nullptr;
   }
