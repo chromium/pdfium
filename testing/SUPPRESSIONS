@@ -331,6 +331,9 @@ bug_1331.in * * *
 # TODO(pdfium:1461): Remove after associated bug is fixed
 bug_1402.in win * *
 
+# TODO(pdfium:1466): Remove after associated bug is fixed
+bug_1449.in linux * *
+
 # TODO(pdfium:1457): Remove after associated bug is fixed
 bug_1457.in * * *
 
@@ -346,8 +349,8 @@ bug_237527_1.in * * *
 # TODO(chromium:451366): Remove after associated bug is fixed
 bug_451366.in * * *
 
-# TODO(pdfium:1466): Remove after associated bug is fixed
-bug_1449.in linux * *
+# TODO(chromium:972999): Remove after associated bug is fixed
+bug_972999.in * * *
 
 # TODO(chromium:1028991): Remove after associated bug is fixed
 reset_button.in * * *
