@@ -1317,7 +1317,14 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_765384) {
 }
 #endif  // PDF_ENABLE_V8
 
-TEST_F(FPDFFormFillEmbedderTest, FormText) {
+// TODO(crbug.com/pdfium/1500): Fix this test on Windows and enable.
+#if defined(OS_WIN) && \
+    (defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_))
+#define MAYBE_FormText DISABLED_FormText
+#else
+#define MAYBE_FormText FormText
+#endif
+TEST_F(FPDFFormFillEmbedderTest, MAYBE_FormText) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 #if defined(OS_APPLE)
   const char kFocusedTextFormWithAbcChecksum[] =
@@ -1331,16 +1338,16 @@ TEST_F(FPDFFormFillEmbedderTest, FormText) {
       "84e808922efcceb82f36d55ed4b2752e";
 #endif  // defined(OS_APPLE)
 #else
-#if defined(OS_APPLE)
-  const char kFocusedTextFormWithAbcChecksum[] =
-      "c6e4a2fb10661116771ee74f54d9c5e0";
-  const char kUnfocusedTextFormWithAbcChecksum[] =
-      "e0c8d5099301d7c10ed831a43e974d9d";
-#elif defined(OS_WIN)
+#if defined(OS_WIN)
   const char kFocusedTextFormWithAbcChecksum[] =
       "29d1c3fd226ca6a69597f75937690320";
   const char kUnfocusedTextFormWithAbcChecksum[] =
       "5e678a55912cb568fd677bf34abb8727";
+#elif defined(OS_APPLE)
+  const char kFocusedTextFormWithAbcChecksum[] =
+      "c6e4a2fb10661116771ee74f54d9c5e0";
+  const char kUnfocusedTextFormWithAbcChecksum[] =
+      "e0c8d5099301d7c10ed831a43e974d9d";
 #else
   const char kFocusedTextFormWithAbcChecksum[] =
       "11487d5597599a26e8912b9c1d9422cb";
