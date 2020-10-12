@@ -8,18 +8,18 @@
 #define XFA_FWL_THEME_CFWL_WIDGETTP_H_
 
 #include <memory>
-#include <vector>
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxge/fx_dib.h"
 #include "xfa/fwl/theme/cfwl_utils.h"
-#include "xfa/fxgraphics/cxfa_graphics.h"
 
 class CFDE_TextOut;
 class CFGAS_GEFont;
 class CFWL_ThemeBackground;
 class CFWL_ThemeText;
+class CXFA_Graphics;
 
 class CFWL_WidgetTP {
  public:
@@ -74,42 +74,6 @@ class CFWL_WidgetTP {
   std::unique_ptr<CFDE_TextOut> m_pTextOut;
   RetainPtr<CFGAS_GEFont> m_pFGASFont;
   std::unique_ptr<CColorData> m_pColorData;
-};
-
-class CFWL_FontManager final {
- public:
-  static CFWL_FontManager* GetInstance();
-  static void DestroyInstance();
-
-  RetainPtr<CFGAS_GEFont> FindFont(WideStringView wsFontFamily,
-                                   uint32_t dwFontStyles,
-                                   uint16_t dwCodePage);
-
- private:
-  class FontData final {
-   public:
-    FontData();
-    ~FontData();
-
-    bool Equal(WideStringView wsFontFamily,
-               uint32_t dwFontStyles,
-               uint16_t wCodePage);
-    bool LoadFont(WideStringView wsFontFamily,
-                  uint32_t dwFontStyles,
-                  uint16_t wCodePage);
-    RetainPtr<CFGAS_GEFont> GetFont() const;
-
-   private:
-    WideString m_wsFamily;
-    uint32_t m_dwStyles = 0;
-    uint32_t m_dwCodePage = 0;
-    RetainPtr<CFGAS_GEFont> m_pFont;
-  };
-
-  CFWL_FontManager();
-  ~CFWL_FontManager();
-
-  std::vector<std::unique_ptr<FontData>> m_FontsArray;
 };
 
 #endif  // XFA_FWL_THEME_CFWL_WIDGETTP_H_

@@ -25,6 +25,7 @@
 #include "xfa/fwl/cfwl_scrollbar.h"
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_themetext.h"
+#include "xfa/fwl/theme/cfwl_fontmanager.h"
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"

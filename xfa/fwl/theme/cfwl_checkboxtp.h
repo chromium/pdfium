@@ -12,6 +12,7 @@
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
 class CFWL_Widget;
+class CXFA_GEPath;
 
 class CFWL_CheckBoxTP final : public CFWL_WidgetTP {
  public:
