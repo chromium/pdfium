@@ -29,7 +29,7 @@ class CFX_GlobalData;
 
 class CJS_Global final : public CJS_Object {
  public:
-  static int GetObjDefnID();
+  static uint32_t GetObjDefnID();
   static void DefineJSObjects(CFXJS_Engine* pEngine);
   static void DefineAllProperties(CFXJS_Engine* pEngine);
 
@@ -71,7 +71,7 @@ class CJS_Global final : public CJS_Object {
     bool bDeleted = false;
   };
 
-  static int ObjDefnID;
+  static uint32_t ObjDefnID;
   static const JSMethodSpec MethodSpecs[];
 
   void UpdateGlobalPersistentVariables();

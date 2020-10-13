@@ -12,7 +12,7 @@ const JSConstSpec CJS_Display::ConstSpecs[] = {
     {"noPrint", JSConstSpec::Number, 2, 0},
     {"noView", JSConstSpec::Number, 3, 0}};
 
-int CJS_Display::ObjDefnID = -1;
+uint32_t CJS_Display::ObjDefnID = 0;
 
 // static
 void CJS_Display::DefineJSObjects(CFXJS_Engine* pEngine) {

@@ -16,7 +16,7 @@ class CJS_ScaleHow final : public CJS_Object {
   CJS_ScaleHow() = delete;
 
  private:
-  static int ObjDefnID;
+  static uint32_t ObjDefnID;
   static const JSConstSpec ConstSpecs[];
 };
 

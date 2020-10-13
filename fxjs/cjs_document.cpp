@@ -110,11 +110,11 @@ const JSMethodSpec CJS_Document::MethodSpecs[] = {
     {"submitForm", submitForm_static},
     {"syncAnnotScan", syncAnnotScan_static}};
 
-int CJS_Document::ObjDefnID = -1;
+uint32_t CJS_Document::ObjDefnID = 0;
 const char CJS_Document::kName[] = "Document";
 
 // static
-int CJS_Document::GetObjDefnID() {
+uint32_t CJS_Document::GetObjDefnID() {
   return ObjDefnID;
 }
 

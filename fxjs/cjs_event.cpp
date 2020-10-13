@@ -34,11 +34,11 @@ const JSPropertySpec CJS_Event::PropertySpecs[] = {
     {"value", get_value_static, set_value_static},
     {"willCommit", get_will_commit_static, set_will_commit_static}};
 
-int CJS_Event::ObjDefnID = -1;
+uint32_t CJS_Event::ObjDefnID = 0;
 const char CJS_Event::kName[] = "event";
 
 // static
-int CJS_Event::GetObjDefnID() {
+uint32_t CJS_Event::GetObjDefnID() {
   return ObjDefnID;
 }
 

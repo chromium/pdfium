@@ -586,11 +586,11 @@ const JSMethodSpec CJS_Field::MethodSpecs[] = {
     {"signatureSign", signatureSign_static},
     {"signatureValidate", signatureValidate_static}};
 
-int CJS_Field::ObjDefnID = -1;
+uint32_t CJS_Field::ObjDefnID = 0;
 const char CJS_Field::kName[] = "Field";
 
 // static
-int CJS_Field::GetObjDefnID() {
+uint32_t CJS_Field::GetObjDefnID() {
   return ObjDefnID;
 }
 

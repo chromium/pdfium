@@ -12,7 +12,7 @@ const JSConstSpec CJS_ScaleWhen::ConstSpecs[] = {
     {"tooBig", JSConstSpec::Number, 2, 0},
     {"tooSmall", JSConstSpec::Number, 3, 0}};
 
-int CJS_ScaleWhen::ObjDefnID = -1;
+uint32_t CJS_ScaleWhen::ObjDefnID = 0;
 
 // static
 void CJS_ScaleWhen::DefineJSObjects(CFXJS_Engine* pEngine) {

@@ -16,7 +16,7 @@ class CJS_Display final : public CJS_Object {
   CJS_Display() = delete;
 
  private:
-  static int ObjDefnID;
+  static uint32_t ObjDefnID;
   static const JSConstSpec ConstSpecs[];
 };
 

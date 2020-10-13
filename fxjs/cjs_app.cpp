@@ -63,12 +63,12 @@ const JSMethodSpec CJS_App::MethodSpecs[] = {
     {"setInterval", setInterval_static},
     {"setTimeOut", setTimeOut_static}};
 
-int CJS_App::ObjDefnID = -1;
+uint32_t CJS_App::ObjDefnID = 0;
 
 const char CJS_App::kName[] = "app";
 
 // static
-int CJS_App::GetObjDefnID() {
+uint32_t CJS_App::GetObjDefnID() {
   return ObjDefnID;
 }
 

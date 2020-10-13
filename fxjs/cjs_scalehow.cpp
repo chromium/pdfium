@@ -10,7 +10,7 @@ const JSConstSpec CJS_ScaleHow::ConstSpecs[] = {
     {"proportional", JSConstSpec::Number, 0, 0},
     {"anamorphic", JSConstSpec::Number, 1, 0}};
 
-int CJS_ScaleHow::ObjDefnID = -1;
+uint32_t CJS_ScaleHow::ObjDefnID = 0;
 
 // static
 void CJS_ScaleHow::DefineJSObjects(CFXJS_Engine* pEngine) {

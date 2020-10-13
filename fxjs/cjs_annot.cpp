@@ -18,12 +18,12 @@ const JSPropertySpec CJS_Annot::PropertySpecs[] = {
     {"name", get_name_static, set_name_static},
     {"type", get_type_static, set_type_static}};
 
-int CJS_Annot::ObjDefnID = -1;
+uint32_t CJS_Annot::ObjDefnID = 0;
 
 const char CJS_Annot::kName[] = "Annot";
 
 // static
-int CJS_Annot::GetObjDefnID() {
+uint32_t CJS_Annot::GetObjDefnID() {
   return ObjDefnID;
 }
 

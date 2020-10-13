@@ -121,7 +121,7 @@ CJS_Global::JSGlobalData::~JSGlobalData() = default;
 const JSMethodSpec CJS_Global::MethodSpecs[] = {
     {"setPersistent", setPersistent_static}};
 
-int CJS_Global::ObjDefnID = -1;
+uint32_t CJS_Global::ObjDefnID = 0;
 
 // static
 void CJS_Global::setPersistent_static(
@@ -183,7 +183,7 @@ void CJS_Global::DefineAllProperties(CFXJS_Engine* pEngine) {
 }
 
 // static
-int CJS_Global::GetObjDefnID() {
+uint32_t CJS_Global::GetObjDefnID() {
   return ObjDefnID;
 }
 

@@ -16,7 +16,7 @@ class CJS_Highlight final : public CJS_Object {
   CJS_Highlight() = delete;
 
  private:
-  static int ObjDefnID;
+  static uint32_t ObjDefnID;
   static const JSConstSpec ConstSpecs[];
 };
 

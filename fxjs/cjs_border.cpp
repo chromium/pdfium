@@ -13,7 +13,7 @@ const JSConstSpec CJS_Border::ConstSpecs[] = {
     {"i", JSConstSpec::String, 0, "inset"},
     {"u", JSConstSpec::String, 0, "underline"}};
 
-int CJS_Border::ObjDefnID = -1;
+uint32_t CJS_Border::ObjDefnID = 0;
 
 // static
 void CJS_Border::DefineJSObjects(CFXJS_Engine* pEngine) {

@@ -10,11 +10,11 @@
 
 // static
 void CJS_Object::DefineConsts(CFXJS_Engine* pEngine,
-                              int objId,
+                              uint32_t nObjDefnID,
                               pdfium::span<const JSConstSpec> consts) {
   for (const auto& item : consts) {
     pEngine->DefineObjConst(
-        objId, item.pName,
+        nObjDefnID, item.pName,
         item.eType == JSConstSpec::Number
             ? pEngine->NewNumber(item.number).As<v8::Value>()
             : pEngine->NewString(item.pStr).As<v8::Value>());
@@ -23,18 +23,19 @@ void CJS_Object::DefineConsts(CFXJS_Engine* pEngine,
 
 // static
 void CJS_Object::DefineProps(CFXJS_Engine* pEngine,
-                             int objId,
+                             uint32_t nObjDefnID,
                              pdfium::span<const JSPropertySpec> props) {
   for (const auto& item : props)
-    pEngine->DefineObjProperty(objId, item.pName, item.pPropGet, item.pPropPut);
+    pEngine->DefineObjProperty(nObjDefnID, item.pName, item.pPropGet,
+                               item.pPropPut);
 }
 
 // static
 void CJS_Object::DefineMethods(CFXJS_Engine* pEngine,
-                               int objId,
+                               uint32_t nObjDefnID,
                                pdfium::span<const JSMethodSpec> methods) {
   for (const auto& item : methods)
-    pEngine->DefineObjMethod(objId, item.pName, item.pMethodCall);
+    pEngine->DefineObjMethod(nObjDefnID, item.pName, item.pMethodCall);
 }
 
 CJS_Object::CJS_Object(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)

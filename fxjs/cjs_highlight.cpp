@@ -12,7 +12,7 @@ const JSConstSpec CJS_Highlight::ConstSpecs[] = {
     {"p", JSConstSpec::String, 0, "push"},
     {"o", JSConstSpec::String, 0, "outline"}};
 
-int CJS_Highlight::ObjDefnID = -1;
+uint32_t CJS_Highlight::ObjDefnID = 0;
 
 // static
 void CJS_Highlight::DefineJSObjects(CFXJS_Engine* pEngine) {

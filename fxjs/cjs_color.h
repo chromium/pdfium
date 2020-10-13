@@ -15,7 +15,7 @@
 
 class CJS_Color final : public CJS_Object {
  public:
-  static int GetObjDefnID();
+  static uint32_t GetObjDefnID();
   static void DefineJSObjects(CFXJS_Engine* pEngine);
   static v8::Local<v8::Array> ConvertPWLColorToArray(CJS_Runtime* pRuntime,
                                                      const CFX_Color& color);
@@ -42,7 +42,7 @@ class CJS_Color final : public CJS_Object {
   JS_STATIC_METHOD(equal, CJS_Color)
 
  private:
-  static int ObjDefnID;
+  static uint32_t ObjDefnID;
   static const char kName[];
   static const JSPropertySpec PropertySpecs[];
   static const JSMethodSpec MethodSpecs[];

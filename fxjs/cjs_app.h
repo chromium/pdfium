@@ -19,7 +19,7 @@ class GlobalTimer;
 
 class CJS_App final : public CJS_Object {
  public:
-  static int GetObjDefnID();
+  static uint32_t GetObjDefnID();
   static void DefineJSObjects(CFXJS_Engine* pEngine);
 
   CJS_App(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
@@ -66,7 +66,7 @@ class CJS_App final : public CJS_Object {
   JS_STATIC_METHOD(setTimeOut, CJS_App)
 
  private:
-  static int ObjDefnID;
+  static uint32_t ObjDefnID;
   static const char kName[];
   static const JSPropertySpec PropertySpecs[];
   static const JSMethodSpec MethodSpecs[];

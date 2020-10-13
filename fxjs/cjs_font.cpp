@@ -22,7 +22,7 @@ const JSConstSpec CJS_Font::ConstSpecs[] = {
     {"Symbol", JSConstSpec::String, 0, "Symbol"},
     {"ZapfD", JSConstSpec::String, 0, "ZapfDingbats"}};
 
-int CJS_Font::ObjDefnID = -1;
+uint32_t CJS_Font::ObjDefnID = 0;
 
 // static
 void CJS_Font::DefineJSObjects(CFXJS_Engine* pEngine) {

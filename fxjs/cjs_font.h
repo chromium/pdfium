@@ -16,7 +16,7 @@ class CJS_Font final : public CJS_Object {
   CJS_Font() = delete;
 
  private:
-  static int ObjDefnID;
+  static uint32_t ObjDefnID;
   static const JSConstSpec ConstSpecs[];
 };
 

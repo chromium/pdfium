@@ -33,11 +33,11 @@ const JSPropertySpec CJS_Color::PropertySpecs[] = {
 const JSMethodSpec CJS_Color::MethodSpecs[] = {{"convert", convert_static},
                                                {"equal", equal_static}};
 
-int CJS_Color::ObjDefnID = -1;
+uint32_t CJS_Color::ObjDefnID = 0;
 const char CJS_Color::kName[] = "color";
 
 // static
-int CJS_Color::GetObjDefnID() {
+uint32_t CJS_Color::GetObjDefnID() {
   return ObjDefnID;
 }
 

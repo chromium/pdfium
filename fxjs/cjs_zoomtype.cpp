@@ -15,7 +15,7 @@ const JSConstSpec CJS_Zoomtype::ConstSpecs[] = {
     {"pref", JSConstSpec::String, 0, "Preferred"},
     {"refW", JSConstSpec::String, 0, "ReflowWidth"}};
 
-int CJS_Zoomtype::ObjDefnID = -1;
+uint32_t CJS_Zoomtype::ObjDefnID = 0;
 
 // static
 void CJS_Zoomtype::DefineJSObjects(CFXJS_Engine* pEngine) {

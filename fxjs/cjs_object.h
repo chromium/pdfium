@@ -36,13 +36,13 @@ struct JSMethodSpec {
 class CJS_Object {
  public:
   static void DefineConsts(CFXJS_Engine* pEngine,
-                           int objId,
+                           uint32_t nObjDefnID,
                            pdfium::span<const JSConstSpec> consts);
   static void DefineProps(CFXJS_Engine* pEngine,
-                          int objId,
+                          uint32_t nObjDefnID,
                           pdfium::span<const JSPropertySpec> consts);
   static void DefineMethods(CFXJS_Engine* pEngine,
-                            int objId,
+                            uint32_t nObjDefnID,
                             pdfium::span<const JSMethodSpec> consts);
 
   CJS_Object(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);

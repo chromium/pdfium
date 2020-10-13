@@ -77,11 +77,11 @@ const JSMethodSpec CJS_Util::MethodSpecs[] = {
     {"scand", scand_static},
     {"byteToChar", byteToChar_static}};
 
-int CJS_Util::ObjDefnID = -1;
+uint32_t CJS_Util::ObjDefnID = 0;
 const char CJS_Util::kName[] = "util";
 
 // static
-int CJS_Util::GetObjDefnID() {
+uint32_t CJS_Util::GetObjDefnID() {
   return ObjDefnID;
 }
 

@@ -9,11 +9,11 @@
 const JSPropertySpec CJS_Icon::PropertySpecs[] = {
     {"name", get_name_static, set_name_static}};
 
-int CJS_Icon::ObjDefnID = -1;
+uint32_t CJS_Icon::ObjDefnID = 0;
 const char CJS_Icon::kName[] = "Icon";
 
 // static
-int CJS_Icon::GetObjDefnID() {
+uint32_t CJS_Icon::GetObjDefnID() {
   return ObjDefnID;
 }
 
