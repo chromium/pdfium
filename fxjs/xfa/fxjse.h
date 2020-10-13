@@ -14,6 +14,8 @@
 namespace pdfium {
 namespace fxjse {
 
+// These are strings by design. With ASLR, their addresses should be random, so
+// it should be very unlikely for an object to accidentally have the same tag.
 extern const char kFuncTag[];
 extern const char kClassTag[];
 
@@ -59,13 +61,13 @@ enum FXJSE_ClassPropTypes {
 };
 
 struct FXJSE_FUNCTION_DESCRIPTOR {
-  const char* tag;  // pdfium::kFuncTag always.
+  const char* tag;  // `pdfium::fxjse::kFuncTag` always.
   const char* name;
   FXJSE_FuncCallback callbackProc;
 };
 
 struct FXJSE_CLASS_DESCRIPTOR {
-  const char* tag;  // pdfium::kClassTag always.
+  const char* tag;  // `pdfium::fxjse::kClassTag` always.
   const char* name;
   const FXJSE_FUNCTION_DESCRIPTOR* methods;
   int32_t methNum;
