@@ -67,7 +67,7 @@ CXFA_Rectangle::~CXFA_Rectangle() = default;
 
 void CXFA_Rectangle::GetFillPath(const std::vector<CXFA_Stroke*>& strokes,
                                  const CFX_RectF& rtWidget,
-                                 CXFA_GEPath* fillPath) {
+                                 CFGAS_GEPath* fillPath) {
   bool bSameStyles = true;
   CXFA_Stroke* stroke1 = strokes[0];
   for (int32_t i = 1; i < 8; i++) {
@@ -212,7 +212,7 @@ void CXFA_Rectangle::GetFillPath(const std::vector<CXFA_Stroke*>& strokes,
 }
 
 void CXFA_Rectangle::Draw(const std::vector<CXFA_Stroke*>& strokes,
-                          CXFA_Graphics* pGS,
+                          CFGAS_GEGraphics* pGS,
                           CFX_RectF rtWidget,
                           const CFX_Matrix& matrix) {
   bool bVisible = false;
@@ -268,7 +268,7 @@ void CXFA_Rectangle::Draw(const std::vector<CXFA_Stroke*>& strokes,
 }
 
 void CXFA_Rectangle::Stroke(const std::vector<CXFA_Stroke*>& strokes,
-                            CXFA_Graphics* pGS,
+                            CFGAS_GEGraphics* pGS,
                             CFX_RectF rtWidget,
                             const CFX_Matrix& matrix) {
   bool bVisible;
@@ -332,7 +332,7 @@ void CXFA_Rectangle::Stroke(const std::vector<CXFA_Stroke*>& strokes,
   }
 
   bool bStart = true;
-  CXFA_GEPath path;
+  CFGAS_GEPath path;
   for (int32_t i = 0; i < 8; i++) {
     CXFA_Stroke* stroke = strokes[i];
     if ((i % 1) == 0 && stroke->GetRadius() < 0) {
@@ -364,7 +364,7 @@ void CXFA_Rectangle::Stroke(const std::vector<CXFA_Stroke*>& strokes,
   }
 }
 
-void CXFA_Rectangle::StrokeRect(CXFA_Graphics* pGraphic,
+void CXFA_Rectangle::StrokeRect(CFGAS_GEGraphics* pGraphic,
                                 const CFX_RectF& rt,
                                 float fLineWidth,
                                 const CFX_Matrix& matrix,
@@ -372,7 +372,7 @@ void CXFA_Rectangle::StrokeRect(CXFA_Graphics* pGraphic,
                                 FX_ARGB argbBottomRight) {
   float fBottom = rt.bottom();
   float fRight = rt.right();
-  CXFA_GEPath pathLT;
+  CFGAS_GEPath pathLT;
   pathLT.MoveTo(CFX_PointF(rt.left, fBottom));
   pathLT.LineTo(CFX_PointF(rt.left, rt.top));
   pathLT.LineTo(CFX_PointF(fRight, rt.top));
@@ -380,11 +380,11 @@ void CXFA_Rectangle::StrokeRect(CXFA_Graphics* pGraphic,
   pathLT.LineTo(CFX_PointF(rt.left + fLineWidth, rt.top + fLineWidth));
   pathLT.LineTo(CFX_PointF(rt.left + fLineWidth, fBottom - fLineWidth));
   pathLT.LineTo(CFX_PointF(rt.left, fBottom));
-  pGraphic->SetFillColor(CXFA_GEColor(argbTopLeft));
+  pGraphic->SetFillColor(CFGAS_GEColor(argbTopLeft));
   pGraphic->FillPath(&pathLT, CFX_FillRenderOptions::FillType::kWinding,
                      &matrix);
 
-  CXFA_GEPath pathRB;
+  CFGAS_GEPath pathRB;
   pathRB.MoveTo(CFX_PointF(fRight, rt.top));
   pathRB.LineTo(CFX_PointF(fRight, fBottom));
   pathRB.LineTo(CFX_PointF(rt.left, fBottom));
@@ -392,12 +392,12 @@ void CXFA_Rectangle::StrokeRect(CXFA_Graphics* pGraphic,
   pathRB.LineTo(CFX_PointF(fRight - fLineWidth, fBottom - fLineWidth));
   pathRB.LineTo(CFX_PointF(fRight - fLineWidth, rt.top + fLineWidth));
   pathRB.LineTo(CFX_PointF(fRight, rt.top));
-  pGraphic->SetFillColor(CXFA_GEColor(argbBottomRight));
+  pGraphic->SetFillColor(CFGAS_GEColor(argbBottomRight));
   pGraphic->FillPath(&pathRB, CFX_FillRenderOptions::FillType::kWinding,
                      &matrix);
 }
 
-void CXFA_Rectangle::StrokeLowered(CXFA_Graphics* pGS,
+void CXFA_Rectangle::StrokeLowered(CFGAS_GEGraphics* pGS,
                                    CFX_RectF rt,
                                    float fThickness,
                                    const CFX_Matrix& matrix) {
@@ -405,16 +405,16 @@ void CXFA_Rectangle::StrokeLowered(CXFA_Graphics* pGS,
   CFX_RectF rtInner(rt);
   rtInner.Deflate(fHalfWidth, fHalfWidth);
 
-  CXFA_GEPath path;
+  CFGAS_GEPath path;
   path.AddRectangle(rt.left, rt.top, rt.width, rt.height);
   path.AddRectangle(rtInner.left, rtInner.top, rtInner.width, rtInner.height);
-  pGS->SetFillColor(CXFA_GEColor(0xFF000000));
+  pGS->SetFillColor(CFGAS_GEColor(0xFF000000));
   pGS->FillPath(&path, CFX_FillRenderOptions::FillType::kEvenOdd, &matrix);
 
   StrokeRect(pGS, rtInner, fHalfWidth, matrix, 0xFF808080, 0xFFC0C0C0);
 }
 
-void CXFA_Rectangle::StrokeRaised(CXFA_Graphics* pGS,
+void CXFA_Rectangle::StrokeRaised(CFGAS_GEGraphics* pGS,
                                   CFX_RectF rt,
                                   float fThickness,
                                   const CFX_Matrix& matrix) {
@@ -422,16 +422,16 @@ void CXFA_Rectangle::StrokeRaised(CXFA_Graphics* pGS,
   CFX_RectF rtInner(rt);
   rtInner.Deflate(fHalfWidth, fHalfWidth);
 
-  CXFA_GEPath path;
+  CFGAS_GEPath path;
   path.AddRectangle(rt.left, rt.top, rt.width, rt.height);
   path.AddRectangle(rtInner.left, rtInner.top, rtInner.width, rtInner.height);
-  pGS->SetFillColor(CXFA_GEColor(0xFF000000));
+  pGS->SetFillColor(CFGAS_GEColor(0xFF000000));
   pGS->FillPath(&path, CFX_FillRenderOptions::FillType::kEvenOdd, &matrix);
 
   StrokeRect(pGS, rtInner, fHalfWidth, matrix, 0xFFFFFFFF, 0xFF808080);
 }
 
-void CXFA_Rectangle::StrokeEtched(CXFA_Graphics* pGS,
+void CXFA_Rectangle::StrokeEtched(CFGAS_GEGraphics* pGS,
                                   CFX_RectF rt,
                                   float fThickness,
                                   const CFX_Matrix& matrix) {
@@ -443,7 +443,7 @@ void CXFA_Rectangle::StrokeEtched(CXFA_Graphics* pGS,
   StrokeRect(pGS, rtInner, fHalfWidth, matrix, 0xFFFFFFFF, 0xFF808080);
 }
 
-void CXFA_Rectangle::StrokeEmbossed(CXFA_Graphics* pGS,
+void CXFA_Rectangle::StrokeEmbossed(CFGAS_GEGraphics* pGS,
                                     CFX_RectF rt,
                                     float fThickness,
                                     const CFX_Matrix& matrix) {
@@ -457,7 +457,7 @@ void CXFA_Rectangle::StrokeEmbossed(CXFA_Graphics* pGS,
 
 void CXFA_Rectangle::GetPath(const std::vector<CXFA_Stroke*>& strokes,
                              CFX_RectF rtWidget,
-                             CXFA_GEPath& path,
+                             CFGAS_GEPath& path,
                              int32_t nIndex,
                              bool bStart,
                              bool bCorner) {

@@ -10,16 +10,16 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fwl/cfwl_themepart.h"
 
-class CXFA_Graphics;
-class CXFA_GEPath;
+class CFGAS_GEGraphics;
+class CFGAS_GEPath;
 
 class CFWL_ThemeBackground final : public CFWL_ThemePart {
  public:
   CFWL_ThemeBackground();
   ~CFWL_ThemeBackground();
 
-  UnownedPtr<CXFA_Graphics> m_pGraphics;
-  UnownedPtr<CXFA_GEPath> m_pPath;
+  UnownedPtr<CFGAS_GEGraphics> m_pGraphics;
+  UnownedPtr<CFGAS_GEPath> m_pPath;
 };
 
 inline CFWL_ThemeBackground::CFWL_ThemeBackground() = default;

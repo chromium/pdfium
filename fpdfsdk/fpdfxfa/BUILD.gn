@@ -30,10 +30,10 @@ source_set("fpdfxfa") {
     "../../fxjs",
     "../../fxjs:gc",
     "../../xfa/fgas",
+    "../../xfa/fgas/graphics",
     "../../xfa/fwl",
     "../../xfa/fxfa",
     "../../xfa/fxfa/parser",
-    "../../xfa/fxgraphics",
   ]
   configs += [ "../../:pdfium_core_config" ]
   visibility = [ "../../*" ]

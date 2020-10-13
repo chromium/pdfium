@@ -8,11 +8,11 @@
 #define XFA_FXFA_PARSER_CXFA_LINEAR_H_
 
 #include "core/fxcrt/fx_coordinates.h"
+#include "xfa/fgas/graphics/cfgas_gepath.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
-#include "xfa/fxgraphics/cxfa_gepath.h"
 
+class CFGAS_GEGraphics;
 class CXFA_Color;
-class CXFA_Graphics;
 
 class CXFA_Linear final : public CXFA_Node {
  public:
@@ -22,8 +22,8 @@ class CXFA_Linear final : public CXFA_Node {
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Linear() override;
 
-  void Draw(CXFA_Graphics* pGS,
-            CXFA_GEPath* fillPath,
+  void Draw(CFGAS_GEGraphics* pGS,
+            CFGAS_GEPath* fillPath,
             FX_ARGB crStart,
             const CFX_RectF& rtFill,
             const CFX_Matrix& matrix);

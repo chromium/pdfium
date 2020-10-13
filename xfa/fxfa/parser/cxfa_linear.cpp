@@ -7,9 +7,9 @@
 #include "xfa/fxfa/parser/cxfa_linear.h"
 
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fgas/graphics/cfgas_geshading.h"
 #include "xfa/fxfa/parser/cxfa_color.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
-#include "xfa/fxgraphics/cxfa_geshading.h"
 
 namespace {
 
@@ -52,8 +52,8 @@ CXFA_Color* CXFA_Linear::GetColorIfExists() {
   return GetChild<CXFA_Color>(0, XFA_Element::Color, false);
 }
 
-void CXFA_Linear::Draw(CXFA_Graphics* pGS,
-                       CXFA_GEPath* fillPath,
+void CXFA_Linear::Draw(CFGAS_GEGraphics* pGS,
+                       CFGAS_GEPath* fillPath,
                        FX_ARGB crStart,
                        const CFX_RectF& rtFill,
                        const CFX_Matrix& matrix) {
@@ -83,10 +83,10 @@ void CXFA_Linear::Draw(CXFA_Graphics* pGS,
       break;
   }
 
-  CXFA_GEShading shading(ptStart, ptEnd, false, false, crStart, crEnd);
+  CFGAS_GEShading shading(ptStart, ptEnd, false, false, crStart, crEnd);
 
   pGS->SaveGraphState();
-  pGS->SetFillColor(CXFA_GEColor(&shading));
+  pGS->SetFillColor(CFGAS_GEColor(&shading));
   pGS->FillPath(fillPath, CFX_FillRenderOptions::FillType::kWinding, &matrix);
   pGS->RestoreGraphState();
 }

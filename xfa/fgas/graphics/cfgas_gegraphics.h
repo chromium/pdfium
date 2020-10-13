@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXGRAPHICS_CXFA_GRAPHICS_H_
-#define XFA_FXGRAPHICS_CXFA_GRAPHICS_H_
+#ifndef XFA_FGAS_GRAPHICS_CFGAS_GEGRAPHICS_H_
+#define XFA_FGAS_GRAPHICS_CFGAS_GEGRAPHICS_H_
 
 #include <memory>
 #include <vector>
@@ -14,7 +14,7 @@
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "third_party/base/span.h"
-#include "xfa/fxgraphics/cxfa_gecolor.h"
+#include "xfa/fgas/graphics/cfgas_gecolor.h"
 
 enum class FX_HatchStyle {
   Horizontal = 0,
@@ -25,14 +25,14 @@ enum class FX_HatchStyle {
   DiagonalCross = 5
 };
 
+class CFGAS_GEPath;
 class CFX_DIBBase;
 class CFX_RenderDevice;
-class CXFA_GEPath;
 
-class CXFA_Graphics {
+class CFGAS_GEGraphics {
  public:
-  explicit CXFA_Graphics(CFX_RenderDevice* renderDevice);
-  ~CXFA_Graphics();
+  explicit CFGAS_GEGraphics(CFX_RenderDevice* renderDevice);
+  ~CFGAS_GEGraphics();
 
   void SaveGraphState();
   void RestoreGraphState();
@@ -46,11 +46,11 @@ class CXFA_Graphics {
   void SetSolidLineDash();
   void SetLineWidth(float lineWidth);
   void EnableActOnDash();
-  void SetStrokeColor(const CXFA_GEColor& color);
-  void SetFillColor(const CXFA_GEColor& color);
+  void SetStrokeColor(const CFGAS_GEColor& color);
+  void SetFillColor(const CFGAS_GEColor& color);
   void SetClipRect(const CFX_RectF& rect);
-  void StrokePath(CXFA_GEPath* path, const CFX_Matrix* matrix);
-  void FillPath(CXFA_GEPath* path,
+  void StrokePath(CFGAS_GEPath* path, const CFX_Matrix* matrix);
+  void FillPath(CFGAS_GEPath* path,
                 CFX_FillRenderOptions::FillType fill_type,
                 const CFX_Matrix* matrix);
   void ConcatMatrix(const CFX_Matrix* matrix);
@@ -64,19 +64,19 @@ class CXFA_Graphics {
     CFX_GraphStateData graphState;
     CFX_Matrix CTM;
     bool isActOnDash = false;
-    CXFA_GEColor strokeColor{nullptr};
-    CXFA_GEColor fillColor{nullptr};
+    CFGAS_GEColor strokeColor{nullptr};
+    CFGAS_GEColor fillColor{nullptr};
   };
 
-  void RenderDeviceStrokePath(const CXFA_GEPath* path,
+  void RenderDeviceStrokePath(const CFGAS_GEPath* path,
                               const CFX_Matrix* matrix);
-  void RenderDeviceFillPath(const CXFA_GEPath* path,
+  void RenderDeviceFillPath(const CFGAS_GEPath* path,
                             CFX_FillRenderOptions::FillType fill_type,
                             const CFX_Matrix* matrix);
-  void FillPathWithPattern(const CXFA_GEPath* path,
+  void FillPathWithPattern(const CFGAS_GEPath* path,
                            const CFX_FillRenderOptions& fill_options,
                            const CFX_Matrix& matrix);
-  void FillPathWithShading(const CXFA_GEPath* path,
+  void FillPathWithShading(const CFGAS_GEPath* path,
                            const CFX_FillRenderOptions& fill_options,
                            const CFX_Matrix& matrix);
   void SetDIBitsWithMatrix(const RetainPtr<CFX_DIBBase>& source,
@@ -87,4 +87,4 @@ class CXFA_Graphics {
   std::vector<std::unique_ptr<TInfo>> m_infoStack;
 };
 
-#endif  // XFA_FXGRAPHICS_CXFA_GRAPHICS_H_
+#endif  // XFA_FGAS_GRAPHICS_CFGAS_GEGRAPHICS_H_

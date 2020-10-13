@@ -9,15 +9,15 @@
 #include <utility>
 
 #include "fxjs/xfa/cjx_object.h"
+#include "xfa/fgas/graphics/cfgas_gegraphics.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/parser/cxfa_color.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
-#include "xfa/fxgraphics/cxfa_graphics.h"
 
-void XFA_StrokeTypeSetLineDash(CXFA_Graphics* pGraphics,
+void XFA_StrokeTypeSetLineDash(CFGAS_GEGraphics* pGraphics,
                                XFA_AttributeValue iStrokeType,
                                XFA_AttributeValue iCapType) {
   switch (iStrokeType) {
@@ -167,8 +167,8 @@ bool CXFA_Stroke::SameStyles(CXFA_Stroke* stroke, uint32_t dwFlags) {
   return true;
 }
 
-void CXFA_Stroke::Stroke(CXFA_GEPath* pPath,
-                         CXFA_Graphics* pGS,
+void CXFA_Stroke::Stroke(CFGAS_GEPath* pPath,
+                         CFGAS_GEGraphics* pGS,
                          const CFX_Matrix& matrix) {
   if (!IsVisible())
     return;
@@ -185,7 +185,7 @@ void CXFA_Stroke::Stroke(CXFA_GEPath* pPath,
   pGS->EnableActOnDash();
   pGS->SetLineCap(CFX_GraphStateData::LineCapButt);
   XFA_StrokeTypeSetLineDash(pGS, GetStrokeType(), XFA_AttributeValue::Butt);
-  pGS->SetStrokeColor(CXFA_GEColor(GetColor()));
+  pGS->SetStrokeColor(CFGAS_GEColor(GetColor()));
   pGS->StrokePath(pPath, &matrix);
   pGS->RestoreGraphState();
 }

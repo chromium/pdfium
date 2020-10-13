@@ -99,13 +99,13 @@ class CFWL_Widget : public cppgc::GarbageCollected<CFWL_Widget>,
   virtual void RemoveStates(uint32_t dwStates);
   virtual void Update() = 0;
   virtual FWL_WidgetHit HitTest(const CFX_PointF& point);
-  virtual void DrawWidget(CXFA_Graphics* pGraphics,
+  virtual void DrawWidget(CFGAS_GEGraphics* pGraphics,
                           const CFX_Matrix& matrix) = 0;
 
   // IFWL_WidgetDelegate:
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
-  void OnDrawWidget(CXFA_Graphics* pGraphics,
+  void OnDrawWidget(CFGAS_GEGraphics* pGraphics,
                     const CFX_Matrix& matrix) override;
 
   void InflateWidgetRect(CFX_RectF& rect);
@@ -163,7 +163,7 @@ class CFWL_Widget : public cppgc::GarbageCollected<CFWL_Widget>,
   void RegisterEventTarget(CFWL_Widget* pEventSource);
   void UnregisterEventTarget();
   void DispatchEvent(CFWL_Event* pEvent);
-  void DrawBorder(CXFA_Graphics* pGraphics,
+  void DrawBorder(CFGAS_GEGraphics* pGraphics,
                   CFWL_Part iPartBorder,
                   const CFX_Matrix& pMatrix);
 
@@ -179,7 +179,7 @@ class CFWL_Widget : public cppgc::GarbageCollected<CFWL_Widget>,
 
   CFWL_Widget* GetParent() const { return m_pWidgetMgr->GetParentWidget(this); }
   CFX_SizeF GetOffsetFromParent(CFWL_Widget* pParent);
-  void DrawBackground(CXFA_Graphics* pGraphics,
+  void DrawBackground(CFGAS_GEGraphics* pGraphics,
                       CFWL_Part iPartBk,
                       const CFX_Matrix* pMatrix);
   void NotifyDriver();

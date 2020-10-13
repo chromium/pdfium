@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/cxfa_fftext.h"
 
+#include "xfa/fgas/graphics/cfgas_gegraphics.h"
 #include "xfa/fgas/layout/cfx_linkuserdata.h"
 #include "xfa/fwl/fwl_widgethit.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
@@ -14,13 +15,12 @@
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/cxfa_textlayout.h"
 #include "xfa/fxfa/parser/cxfa_margin.h"
-#include "xfa/fxgraphics/cxfa_graphics.h"
 
 CXFA_FFText::CXFA_FFText(CXFA_Node* pNode) : CXFA_FFWidget(pNode) {}
 
 CXFA_FFText::~CXFA_FFText() = default;
 
-void CXFA_FFText::RenderWidget(CXFA_Graphics* pGS,
+void CXFA_FFText::RenderWidget(CFGAS_GEGraphics* pGS,
                                const CFX_Matrix& matrix,
                                HighlightOption highlight) {
   if (!HasVisibleStatus())

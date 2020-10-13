@@ -6,12 +6,12 @@
 
 #include "xfa/fwl/theme/cfwl_comboboxtp.h"
 
+#include "xfa/fgas/graphics/cfgas_gecolor.h"
+#include "xfa/fgas/graphics/cfgas_gepath.h"
 #include "xfa/fwl/cfwl_combobox.h"
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
-#include "xfa/fxgraphics/cxfa_gecolor.h"
-#include "xfa/fxgraphics/cxfa_gepath.h"
 
 CFWL_ComboBoxTP::CFWL_ComboBoxTP() = default;
 
@@ -25,7 +25,7 @@ void CFWL_ComboBoxTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
       break;
     }
     case CFWL_Part::Background: {
-      CXFA_GEPath path;
+      CFGAS_GEPath path;
       const CFX_RectF& rect = pParams.m_PartRect;
       path.AddRectangle(rect.left, rect.top, rect.width, rect.height);
       FX_ARGB argb_color;
@@ -40,7 +40,7 @@ void CFWL_ComboBoxTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
           argb_color = 0xFFFFFFFF;
       }
       pParams.m_pGraphics->SaveGraphState();
-      pParams.m_pGraphics->SetFillColor(CXFA_GEColor(argb_color));
+      pParams.m_pGraphics->SetFillColor(CFGAS_GEColor(argb_color));
       pParams.m_pGraphics->FillPath(
           &path, CFX_FillRenderOptions::FillType::kWinding, &pParams.m_matrix);
       pParams.m_pGraphics->RestoreGraphState();

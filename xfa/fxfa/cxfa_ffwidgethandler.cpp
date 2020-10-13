@@ -190,7 +190,7 @@ FWL_WidgetHit CXFA_FFWidgetHandler::HitTest(CXFA_FFWidget* pWidget,
 }
 
 void CXFA_FFWidgetHandler::RenderWidget(CXFA_FFWidget* hWidget,
-                                        CXFA_Graphics* pGS,
+                                        CFGAS_GEGraphics* pGS,
                                         const CFX_Matrix& matrix,
                                         bool bHighlight) {
   hWidget->RenderWidget(

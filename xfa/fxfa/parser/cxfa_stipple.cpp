@@ -50,8 +50,8 @@ int32_t CXFA_Stipple::GetRate() {
       .value_or(GetDefaultRate());
 }
 
-void CXFA_Stipple::Draw(CXFA_Graphics* pGS,
-                        CXFA_GEPath* fillPath,
+void CXFA_Stipple::Draw(CFGAS_GEGraphics* pGS,
+                        CFGAS_GEPath* fillPath,
                         const CFX_RectF& rtFill,
                         const CFX_Matrix& matrix) {
   int32_t iRate = GetRate();
@@ -67,7 +67,7 @@ void CXFA_Stipple::Draw(CXFA_Graphics* pGS,
   FX_ARGB cr = AlphaAndColorRefToArgb(iRate * alpha / 100, colorref);
 
   pGS->SaveGraphState();
-  pGS->SetFillColor(CXFA_GEColor(cr));
+  pGS->SetFillColor(CFGAS_GEColor(cr));
   pGS->FillPath(fillPath, CFX_FillRenderOptions::FillType::kWinding, &matrix);
   pGS->RestoreGraphState();
 }

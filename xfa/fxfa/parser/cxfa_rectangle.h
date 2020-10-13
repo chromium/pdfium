@@ -9,8 +9,8 @@
 
 #include <vector>
 
+#include "xfa/fgas/graphics/cfgas_gepath.h"
 #include "xfa/fxfa/parser/cxfa_box.h"
-#include "xfa/fxgraphics/cxfa_gepath.h"
 
 class CXFA_Rectangle : public CXFA_Box {
  public:
@@ -19,9 +19,9 @@ class CXFA_Rectangle : public CXFA_Box {
 
   void GetFillPath(const std::vector<CXFA_Stroke*>& strokes,
                    const CFX_RectF& rtWidget,
-                   CXFA_GEPath* fillPath);
+                   CFGAS_GEPath* fillPath);
   void Draw(const std::vector<CXFA_Stroke*>& strokes,
-            CXFA_Graphics* pGS,
+            CFGAS_GEGraphics* pGS,
             CFX_RectF rtWidget,
             const CFX_Matrix& matrix);
 
@@ -37,26 +37,26 @@ class CXFA_Rectangle : public CXFA_Box {
                  CJX_Object* js_node);
 
   void Stroke(const std::vector<CXFA_Stroke*>& strokes,
-              CXFA_Graphics* pGS,
+              CFGAS_GEGraphics* pGS,
               CFX_RectF rtWidget,
               const CFX_Matrix& matrix);
-  void StrokeEmbossed(CXFA_Graphics* pGS,
+  void StrokeEmbossed(CFGAS_GEGraphics* pGS,
                       CFX_RectF rt,
                       float fThickness,
                       const CFX_Matrix& matrix);
-  void StrokeLowered(CXFA_Graphics* pGS,
+  void StrokeLowered(CFGAS_GEGraphics* pGS,
                      CFX_RectF rt,
                      float fThickness,
                      const CFX_Matrix& matrix);
-  void StrokeRaised(CXFA_Graphics* pGS,
+  void StrokeRaised(CFGAS_GEGraphics* pGS,
                     CFX_RectF rt,
                     float fThickness,
                     const CFX_Matrix& matrix);
-  void StrokeEtched(CXFA_Graphics* pGS,
+  void StrokeEtched(CFGAS_GEGraphics* pGS,
                     CFX_RectF rt,
                     float fThickness,
                     const CFX_Matrix& matrix);
-  void StrokeRect(CXFA_Graphics* pGraphic,
+  void StrokeRect(CFGAS_GEGraphics* pGraphic,
                   const CFX_RectF& rt,
                   float fLineWidth,
                   const CFX_Matrix& matrix,
@@ -64,7 +64,7 @@ class CXFA_Rectangle : public CXFA_Box {
                   FX_ARGB argbBottomRight);
   void GetPath(const std::vector<CXFA_Stroke*>& strokes,
                CFX_RectF rtWidget,
-               CXFA_GEPath& path,
+               CFGAS_GEPath& path,
                int32_t nIndex,
                bool bStart,
                bool bCorner);

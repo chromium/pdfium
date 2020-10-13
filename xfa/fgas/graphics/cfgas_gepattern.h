@@ -4,30 +4,30 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXGRAPHICS_CXFA_GEPATTERN_H_
-#define XFA_FXGRAPHICS_CXFA_GEPATTERN_H_
+#ifndef XFA_FGAS_GRAPHICS_CFGAS_GEPATTERN_H_
+#define XFA_FGAS_GRAPHICS_CFGAS_GEPATTERN_H_
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
-#include "xfa/fxgraphics/cxfa_graphics.h"
+#include "xfa/fgas/graphics/cfgas_gegraphics.h"
 
 class CFX_DIBitmap;
 class CFX_Matrix;
 
-class CXFA_GEPattern final {
+class CFGAS_GEPattern final {
  public:
-  CXFA_GEPattern(FX_HatchStyle hatchStyle,
-                 const FX_ARGB foreArgb,
-                 const FX_ARGB backArgb);
+  CFGAS_GEPattern(FX_HatchStyle hatchStyle,
+                  const FX_ARGB foreArgb,
+                  const FX_ARGB backArgb);
 
-  ~CXFA_GEPattern();
+  ~CFGAS_GEPattern();
 
  private:
-  friend class CXFA_Graphics;
+  friend class CFGAS_GEGraphics;
 
   const FX_HatchStyle m_hatchStyle;
   const FX_ARGB m_foreArgb;
   const FX_ARGB m_backArgb;
 };
 
-#endif  // XFA_FXGRAPHICS_CXFA_GEPATTERN_H_
+#endif  // XFA_FGAS_GRAPHICS_CFGAS_GEPATTERN_H_

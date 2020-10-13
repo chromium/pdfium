@@ -22,7 +22,7 @@ class CXFA_FFCheckButton final : public CXFA_FFField {
   void Trace(cppgc::Visitor* visitor) const override;
 
   // CXFA_FFField
-  void RenderWidget(CXFA_Graphics* pGS,
+  void RenderWidget(CFGAS_GEGraphics* pGS,
                     const CFX_Matrix& matrix,
                     HighlightOption highlight) override;
 
@@ -33,7 +33,7 @@ class CXFA_FFCheckButton final : public CXFA_FFField {
   bool OnLButtonUp(uint32_t dwFlags, const CFX_PointF& point) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
-  void OnDrawWidget(CXFA_Graphics* pGraphics,
+  void OnDrawWidget(CFGAS_GEGraphics* pGraphics,
                     const CFX_Matrix& matrix) override;
   FormFieldType GetFormFieldType() override;
 

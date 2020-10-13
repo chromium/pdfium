@@ -18,7 +18,7 @@ class CXFA_FFImageEdit final : public CXFA_FFField {
   // CXFA_FFField:
   void PreFinalize() override;
   void Trace(cppgc::Visitor* visitor) const override;
-  void RenderWidget(CXFA_Graphics* pGS,
+  void RenderWidget(CFGAS_GEGraphics* pGS,
                     const CFX_Matrix& matrix,
                     HighlightOption highlight) override;
   bool LoadWidget() override;
@@ -28,7 +28,7 @@ class CXFA_FFImageEdit final : public CXFA_FFField {
   bool OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
-  void OnDrawWidget(CXFA_Graphics* pGraphics,
+  void OnDrawWidget(CFGAS_GEGraphics* pGraphics,
                     const CFX_Matrix& matrix) override;
   FormFieldType GetFormFieldType() override;
 

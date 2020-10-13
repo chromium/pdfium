@@ -13,7 +13,7 @@ CXFA_FFArc::CXFA_FFArc(CXFA_Node* pNode) : CXFA_FFWidget(pNode) {}
 
 CXFA_FFArc::~CXFA_FFArc() = default;
 
-void CXFA_FFArc::RenderWidget(CXFA_Graphics* pGS,
+void CXFA_FFArc::RenderWidget(CFGAS_GEGraphics* pGS,
                               const CFX_Matrix& matrix,
                               HighlightOption highlight) {
   if (!HasVisibleStatus())

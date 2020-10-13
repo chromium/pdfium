@@ -31,7 +31,7 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   void Trace(cppgc::Visitor* visitor) const override;
   CXFA_FFField* AsField() override;
   CFX_RectF GetBBox(FocusOption focus) override;
-  void RenderWidget(CXFA_Graphics* pGS,
+  void RenderWidget(CFGAS_GEGraphics* pGS,
                     const CFX_Matrix& matrix,
                     HighlightOption highlight) override;
   bool IsLoaded() override;
@@ -62,7 +62,7 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   // IFWL_WidgetDelegate:
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
-  void OnDrawWidget(CXFA_Graphics* pGraphics,
+  void OnDrawWidget(CFGAS_GEGraphics* pGraphics,
                     const CFX_Matrix& matrix) override;
 
   void UpdateFWL();
@@ -82,16 +82,16 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   void SetNormalWidget(CFWL_Widget* widget);
   CFX_PointF FWLToClient(const CFX_PointF& point);
   void LayoutCaption();
-  void RenderCaption(CXFA_Graphics* pGS, CFX_Matrix* pMatrix);
+  void RenderCaption(CFGAS_GEGraphics* pGS, CFX_Matrix* pMatrix);
 
   int32_t CalculateOverride();
   int32_t CalculateNode(CXFA_Node* pNode);
   bool ProcessCommittedData();
-  void DrawHighlight(CXFA_Graphics* pGS,
+  void DrawHighlight(CFGAS_GEGraphics* pGS,
                      CFX_Matrix* pMatrix,
                      HighlightOption highlight,
                      ShapeOption shape);
-  void DrawFocus(CXFA_Graphics* pGS, CFX_Matrix* pMatrix);
+  void DrawFocus(CFGAS_GEGraphics* pGS, CFX_Matrix* pMatrix);
   void SendMessageToFWLWidget(CFWL_Message* pMessage);
   void CapPlacement();
   void CapTopBottomPlacement(const CXFA_Margin* margin,

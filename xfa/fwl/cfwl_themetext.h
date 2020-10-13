@@ -16,7 +16,7 @@ class CFWL_ThemeText final : public CFWL_ThemePart {
   CFWL_ThemeText() = default;
 
   FDE_TextAlignment m_iTTOAlign = FDE_TextAlignment::kTopLeft;
-  CXFA_Graphics* m_pGraphics = nullptr;
+  CFGAS_GEGraphics* m_pGraphics = nullptr;
   WideString m_wsText;
   FDE_TextStyle m_dwTTOStyles;
 };

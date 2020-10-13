@@ -21,6 +21,7 @@
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
 
+class CFGAS_GEGraphics;
 class CFX_DIBitmap;
 class CXFA_Box;
 class CXFA_FFApp;
@@ -29,7 +30,6 @@ class CXFA_FFDocView;
 class CXFA_FFField;
 class CXFA_FFPageView;
 class CXFA_FFWidgetHandler;
-class CXFA_Graphics;
 class CXFA_Image;
 class CXFA_Margin;
 enum class FWL_WidgetHit;
@@ -40,7 +40,7 @@ inline float XFA_UnitPx2Pt(float fPx, float fDpi) {
 
 constexpr float kXFAWidgetPrecision = 0.001f;
 
-void XFA_DrawImage(CXFA_Graphics* pGS,
+void XFA_DrawImage(CFGAS_GEGraphics* pGS,
                    const CFX_RectF& rtImage,
                    const CFX_Matrix& matrix,
                    const RetainPtr<CFX_DIBitmap>& pDIBitmap,
@@ -80,7 +80,7 @@ class CXFA_FFWidget : public cppgc::GarbageCollected<CXFA_FFWidget>,
 
   virtual CXFA_FFField* AsField();
   virtual CFX_RectF GetBBox(FocusOption focus);
-  virtual void RenderWidget(CXFA_Graphics* pGS,
+  virtual void RenderWidget(CFGAS_GEGraphics* pGS,
                             const CFX_Matrix& matrix,
                             HighlightOption highlight);
   virtual bool IsLoaded();
@@ -174,11 +174,11 @@ class CXFA_FFWidget : public cppgc::GarbageCollected<CXFA_FFWidget>,
   explicit CXFA_FFWidget(CXFA_Node* pNode);
   virtual bool PtInActiveRect(const CFX_PointF& point);
 
-  void DrawBorder(CXFA_Graphics* pGS,
+  void DrawBorder(CFGAS_GEGraphics* pGS,
                   CXFA_Box* box,
                   const CFX_RectF& rtBorder,
                   const CFX_Matrix& matrix);
-  void DrawBorderWithFlag(CXFA_Graphics* pGS,
+  void DrawBorderWithFlag(CFGAS_GEGraphics* pGS,
                           CXFA_Box* box,
                           const CFX_RectF& rtBorder,
                           const CFX_Matrix& matrix,

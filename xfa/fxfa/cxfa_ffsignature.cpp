@@ -22,7 +22,7 @@ bool CXFA_FFSignature::LoadWidget() {
   return CXFA_FFField::LoadWidget();
 }
 
-void CXFA_FFSignature::RenderWidget(CXFA_Graphics* pGS,
+void CXFA_FFSignature::RenderWidget(CFGAS_GEGraphics* pGS,
                                     const CFX_Matrix& matrix,
                                     HighlightOption highlight) {
   if (!HasVisibleStatus())

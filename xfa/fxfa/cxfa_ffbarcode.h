@@ -100,7 +100,7 @@ class CXFA_FFBarcode final : public CXFA_FFTextEdit {
 
   // CXFA_FFTextEdit
   bool LoadWidget() override;
-  void RenderWidget(CXFA_Graphics* pGS,
+  void RenderWidget(CFGAS_GEGraphics* pGS,
                     const CFX_Matrix& matrix,
                     HighlightOption highlight) override;
   void UpdateWidgetProperty() override;

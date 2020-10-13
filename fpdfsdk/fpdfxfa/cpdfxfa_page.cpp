@@ -15,11 +15,11 @@
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_widget.h"
 #include "third_party/base/notreached.h"
+#include "xfa/fgas/graphics/cfgas_gegraphics.h"
 #include "xfa/fxfa/cxfa_ffdocview.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/cxfa_ffwidgethandler.h"
-#include "xfa/fxgraphics/cxfa_graphics.h"
 
 namespace {
 
@@ -262,7 +262,7 @@ void CPDFXFA_Page::DrawFocusAnnot(CFX_RenderDevice* pDevice,
                                   const CFX_Matrix& mtUser2Device,
                                   const FX_RECT& rtClip) {
   CFX_RectF rectClip(rtClip);
-  CXFA_Graphics gs(pDevice);
+  CFGAS_GEGraphics gs(pDevice);
   gs.SetClipRect(rectClip);
 
   CXFA_FFPageView* xfaView = GetXFAPageView();

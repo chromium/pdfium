@@ -12,8 +12,8 @@
 #include "fxjs/gc/heap.h"
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
+class CFGAS_GEPath;
 class CFWL_Widget;
-class CXFA_GEPath;
 
 class CFWL_CheckBoxTP final : public CFWL_WidgetTP {
  public:
@@ -28,38 +28,38 @@ class CFWL_CheckBoxTP final : public CFWL_WidgetTP {
   CFWL_CheckBoxTP();
 
   void DrawCheckSign(CFWL_Widget* pWidget,
-                     CXFA_Graphics* pGraphics,
+                     CFGAS_GEGraphics* pGraphics,
                      const CFX_RectF& pRtBox,
                      int32_t iState,
                      const CFX_Matrix& matrix);
-  void DrawSignCheck(CXFA_Graphics* pGraphics,
+  void DrawSignCheck(CFGAS_GEGraphics* pGraphics,
                      const CFX_RectF& rtSign,
                      FX_ARGB argbFill,
                      const CFX_Matrix& matrix);
-  void DrawSignCircle(CXFA_Graphics* pGraphics,
+  void DrawSignCircle(CFGAS_GEGraphics* pGraphics,
                       const CFX_RectF& rtSign,
                       FX_ARGB argbFill,
                       const CFX_Matrix& matrix);
-  void DrawSignCross(CXFA_Graphics* pGraphics,
+  void DrawSignCross(CFGAS_GEGraphics* pGraphics,
                      const CFX_RectF& rtSign,
                      FX_ARGB argbFill,
                      const CFX_Matrix& matrix);
-  void DrawSignDiamond(CXFA_Graphics* pGraphics,
+  void DrawSignDiamond(CFGAS_GEGraphics* pGraphics,
                        const CFX_RectF& rtSign,
                        FX_ARGB argbFill,
                        const CFX_Matrix& matrix);
-  void DrawSignSquare(CXFA_Graphics* pGraphics,
+  void DrawSignSquare(CFGAS_GEGraphics* pGraphics,
                       const CFX_RectF& rtSign,
                       FX_ARGB argbFill,
                       const CFX_Matrix& matrix);
-  void DrawSignStar(CXFA_Graphics* pGraphics,
+  void DrawSignStar(CFGAS_GEGraphics* pGraphics,
                     const CFX_RectF& rtSign,
                     FX_ARGB argbFill,
                     const CFX_Matrix& matrix);
 
   void InitCheckPath(float fCheckLen);
 
-  std::unique_ptr<CXFA_GEPath> m_pCheckPath;
+  std::unique_ptr<CFGAS_GEPath> m_pCheckPath;
 };
 
 #endif  // XFA_FWL_THEME_CFWL_CHECKBOXTP_H_

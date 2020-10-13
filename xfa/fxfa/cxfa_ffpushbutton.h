@@ -26,7 +26,7 @@ class CXFA_FFPushButton final : public CXFA_FFField {
   void Trace(cppgc::Visitor* visitor) const override;
 
   // CXFA_FFField
-  void RenderWidget(CXFA_Graphics* pGS,
+  void RenderWidget(CFGAS_GEGraphics* pGS,
                     const CFX_Matrix& matrix,
                     HighlightOption highlight) override;
   bool LoadWidget() override;
@@ -34,7 +34,7 @@ class CXFA_FFPushButton final : public CXFA_FFField {
   void UpdateWidgetProperty() override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
-  void OnDrawWidget(CXFA_Graphics* pGraphics,
+  void OnDrawWidget(CFGAS_GEGraphics* pGraphics,
                     const CFX_Matrix& matrix) override;
   FormFieldType GetFormFieldType() override;
 
@@ -43,7 +43,7 @@ class CXFA_FFPushButton final : public CXFA_FFField {
 
   void LoadHighlightCaption();
   void LayoutHighlightCaption();
-  void RenderHighlightCaption(CXFA_Graphics* pGS, CFX_Matrix* pMatrix);
+  void RenderHighlightCaption(CFGAS_GEGraphics* pGS, CFX_Matrix* pMatrix);
   float GetLineWidth();
   FX_ARGB GetLineColor();
   FX_ARGB GetFillColor();

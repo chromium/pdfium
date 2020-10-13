@@ -50,7 +50,7 @@ void CFWL_CheckBox::Update() {
   Layout();
 }
 
-void CFWL_CheckBox::DrawWidget(CXFA_Graphics* pGraphics,
+void CFWL_CheckBox::DrawWidget(CFGAS_GEGraphics* pGraphics,
                                const CFX_Matrix& matrix) {
   if (!pGraphics)
     return;
@@ -227,7 +227,7 @@ void CFWL_CheckBox::OnProcessMessage(CFWL_Message* pMessage) {
     CFWL_Widget::OnProcessMessage(pMessage);
 }
 
-void CFWL_CheckBox::OnDrawWidget(CXFA_Graphics* pGraphics,
+void CFWL_CheckBox::OnDrawWidget(CFGAS_GEGraphics* pGraphics,
                                  const CFX_Matrix& matrix) {
   DrawWidget(pGraphics, matrix);
 }

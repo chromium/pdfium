@@ -83,7 +83,7 @@ FWL_WidgetHit CFWL_ListBox::HitTest(const CFX_PointF& point) {
   return FWL_WidgetHit::Unknown;
 }
 
-void CFWL_ListBox::DrawWidget(CXFA_Graphics* pGraphics,
+void CFWL_ListBox::DrawWidget(CFGAS_GEGraphics* pGraphics,
                               const CFX_Matrix& matrix) {
   if (!pGraphics)
     return;
@@ -327,7 +327,7 @@ bool CFWL_ListBox::ScrollToVisible(Item* pItem) {
   return true;
 }
 
-void CFWL_ListBox::DrawBkground(CXFA_Graphics* pGraphics,
+void CFWL_ListBox::DrawBkground(CFGAS_GEGraphics* pGraphics,
                                 const CFX_Matrix* pMatrix) {
   if (!pGraphics)
     return;
@@ -346,7 +346,7 @@ void CFWL_ListBox::DrawBkground(CXFA_Graphics* pGraphics,
   GetThemeProvider()->DrawBackground(param);
 }
 
-void CFWL_ListBox::DrawItems(CXFA_Graphics* pGraphics,
+void CFWL_ListBox::DrawItems(CFGAS_GEGraphics* pGraphics,
                              const CFX_Matrix* pMatrix) {
   float fPosX = 0.0f;
   if (m_pHorzScrollBar)
@@ -378,7 +378,7 @@ void CFWL_ListBox::DrawItems(CXFA_Graphics* pGraphics,
   }
 }
 
-void CFWL_ListBox::DrawItem(CXFA_Graphics* pGraphics,
+void CFWL_ListBox::DrawItem(CFGAS_GEGraphics* pGraphics,
                             Item* pItem,
                             int32_t Index,
                             const CFX_RectF& rtItem,
@@ -669,7 +669,7 @@ void CFWL_ListBox::OnProcessEvent(CFWL_Event* pEvent) {
   }
 }
 
-void CFWL_ListBox::OnDrawWidget(CXFA_Graphics* pGraphics,
+void CFWL_ListBox::OnDrawWidget(CFGAS_GEGraphics* pGraphics,
                                 const CFX_Matrix& matrix) {
   DrawWidget(pGraphics, matrix);
 }

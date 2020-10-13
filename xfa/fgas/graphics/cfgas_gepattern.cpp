@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxgraphics/cxfa_gepattern.h"
+#include "xfa/fgas/graphics/cfgas_gepattern.h"
 
-CXFA_GEPattern::CXFA_GEPattern(FX_HatchStyle hatchStyle,
-                               const FX_ARGB foreArgb,
-                               const FX_ARGB backArgb)
+CFGAS_GEPattern::CFGAS_GEPattern(FX_HatchStyle hatchStyle,
+                                 const FX_ARGB foreArgb,
+                                 const FX_ARGB backArgb)
     : m_hatchStyle(hatchStyle), m_foreArgb(foreArgb), m_backArgb(backArgb) {}
 
-CXFA_GEPattern::~CXFA_GEPattern() = default;
+CFGAS_GEPattern::~CFGAS_GEPattern() = default;

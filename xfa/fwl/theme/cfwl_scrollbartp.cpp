@@ -6,12 +6,12 @@
 
 #include "xfa/fwl/theme/cfwl_scrollbartp.h"
 
+#include "xfa/fgas/graphics/cfgas_gecolor.h"
+#include "xfa/fgas/graphics/cfgas_gepath.h"
 #include "xfa/fwl/cfwl_scrollbar.h"
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
-#include "xfa/fxgraphics/cxfa_gecolor.h"
-#include "xfa/fxgraphics/cxfa_gepath.h"
 
 namespace {
 
@@ -35,7 +35,7 @@ void CFWL_ScrollBarTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   else if (pParams.m_dwStates & CFWL_PartState_Disabled)
     eState = FWLTHEME_STATE_Disable;
 
-  CXFA_Graphics* pGraphics = pParams.m_pGraphics.Get();
+  CFGAS_GEGraphics* pGraphics = pParams.m_pGraphics.Get();
   bool bVert = !!pWidget->GetStylesEx();
   switch (pParams.m_iPart) {
     case CFWL_Part::ForeArrow: {
@@ -70,7 +70,7 @@ void CFWL_ScrollBarTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   }
 }
 
-void CFWL_ScrollBarTP::DrawThumbBtn(CXFA_Graphics* pGraphics,
+void CFWL_ScrollBarTP::DrawThumbBtn(CFGAS_GEGraphics* pGraphics,
                                     const CFX_RectF& input_rect,
                                     bool bVert,
                                     FWLTHEME_STATE eState,
@@ -92,20 +92,20 @@ void CFWL_ScrollBarTP::DrawThumbBtn(CXFA_Graphics* pGraphics,
 
   pGraphics->SaveGraphState();
 
-  CXFA_GEPath path;
+  CFGAS_GEPath path;
   path.AddRectangle(rect.left, rect.top, rect.width, rect.height);
   pGraphics->SetStrokeColor(
-      CXFA_GEColor(m_pThemeData->clrBtnBorder[eState - 1]));
+      CFGAS_GEColor(m_pThemeData->clrBtnBorder[eState - 1]));
   pGraphics->StrokePath(&path, &matrix);
   pGraphics->RestoreGraphState();
 }
 
-void CFWL_ScrollBarTP::DrawPaw(CXFA_Graphics* pGraphics,
+void CFWL_ScrollBarTP::DrawPaw(CFGAS_GEGraphics* pGraphics,
                                const CFX_RectF& rect,
                                bool bVert,
                                FWLTHEME_STATE eState,
                                const CFX_Matrix& matrix) {
-  CXFA_GEPath path;
+  CFGAS_GEPath path;
   if (bVert) {
     float fPawLen = kPawLength;
     if (rect.width / 2 <= fPawLen) {
@@ -125,7 +125,7 @@ void CFWL_ScrollBarTP::DrawPaw(CXFA_Graphics* pGraphics,
 
     pGraphics->SetLineWidth(1);
     pGraphics->SetStrokeColor(
-        CXFA_GEColor(m_pThemeData->clrPawColorLight[eState - 1]));
+        CFGAS_GEColor(m_pThemeData->clrPawColorLight[eState - 1]));
     pGraphics->StrokePath(&path, nullptr);
     fX++;
 
@@ -141,7 +141,7 @@ void CFWL_ScrollBarTP::DrawPaw(CXFA_Graphics* pGraphics,
 
     pGraphics->SetLineWidth(1);
     pGraphics->SetStrokeColor(
-        CXFA_GEColor(m_pThemeData->clrPawColorDark[eState - 1]));
+        CFGAS_GEColor(m_pThemeData->clrPawColorDark[eState - 1]));
     pGraphics->StrokePath(&path, &matrix);
   } else {
     float fPawLen = kPawLength;
@@ -162,7 +162,7 @@ void CFWL_ScrollBarTP::DrawPaw(CXFA_Graphics* pGraphics,
 
     pGraphics->SetLineWidth(1);
     pGraphics->SetStrokeColor(
-        CXFA_GEColor(m_pThemeData->clrPawColorLight[eState - 1]));
+        CFGAS_GEColor(m_pThemeData->clrPawColorLight[eState - 1]));
     pGraphics->StrokePath(&path, &matrix);
     fY++;
 
@@ -178,12 +178,12 @@ void CFWL_ScrollBarTP::DrawPaw(CXFA_Graphics* pGraphics,
 
     pGraphics->SetLineWidth(1);
     pGraphics->SetStrokeColor(
-        CXFA_GEColor(m_pThemeData->clrPawColorDark[eState - 1]));
+        CFGAS_GEColor(m_pThemeData->clrPawColorDark[eState - 1]));
     pGraphics->StrokePath(&path, &matrix);
   }
 }
 
-void CFWL_ScrollBarTP::DrawTrack(CXFA_Graphics* pGraphics,
+void CFWL_ScrollBarTP::DrawTrack(CFGAS_GEGraphics* pGraphics,
                                  const CFX_RectF& rect,
                                  bool bVert,
                                  FWLTHEME_STATE eState,
@@ -193,7 +193,7 @@ void CFWL_ScrollBarTP::DrawTrack(CXFA_Graphics* pGraphics,
     return;
 
   pGraphics->SaveGraphState();
-  CXFA_GEPath path;
+  CFGAS_GEPath path;
   float fRight = rect.right();
   float fBottom = rect.bottom();
   if (bVert) {
@@ -203,7 +203,7 @@ void CFWL_ScrollBarTP::DrawTrack(CXFA_Graphics* pGraphics,
     path.AddRectangle(rect.left, rect.top, rect.width, 1);
     path.AddRectangle(rect.left, fBottom - 1, rect.width, 1);
   }
-  pGraphics->SetFillColor(CXFA_GEColor(ArgbEncode(255, 238, 237, 229)));
+  pGraphics->SetFillColor(CFGAS_GEColor(ArgbEncode(255, 238, 237, 229)));
   pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding,
                       &matrix);
   path.Clear();
@@ -212,7 +212,7 @@ void CFWL_ScrollBarTP::DrawTrack(CXFA_Graphics* pGraphics,
   FillSolidRect(pGraphics, m_pThemeData->clrTrackBKEnd, rect, matrix);
 }
 
-void CFWL_ScrollBarTP::DrawMaxMinBtn(CXFA_Graphics* pGraphics,
+void CFWL_ScrollBarTP::DrawMaxMinBtn(CFGAS_GEGraphics* pGraphics,
                                      const CFX_RectF& rect,
                                      FWLTHEME_DIRECTION eDict,
                                      FWLTHEME_STATE eState,

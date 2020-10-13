@@ -9,12 +9,12 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_textout.h"
+#include "xfa/fgas/graphics/cfgas_gecolor.h"
+#include "xfa/fgas/graphics/cfgas_gepath.h"
 #include "xfa/fwl/cfwl_checkbox.h"
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_themetext.h"
 #include "xfa/fwl/cfwl_widget.h"
-#include "xfa/fxgraphics/cxfa_gecolor.h"
-#include "xfa/fxgraphics/cxfa_gepath.h"
 
 namespace {
 
@@ -41,7 +41,7 @@ void CFWL_CheckBoxTP::DrawText(const CFWL_ThemeText& pParams) {
   CFWL_WidgetTP::DrawText(pParams);
 }
 
-void CFWL_CheckBoxTP::DrawSignCheck(CXFA_Graphics* pGraphics,
+void CFWL_CheckBoxTP::DrawSignCheck(CFGAS_GEGraphics* pGraphics,
                                     const CFX_RectF& rtSign,
                                     FX_ARGB argbFill,
                                     const CFX_Matrix& matrix) {
@@ -52,30 +52,30 @@ void CFWL_CheckBoxTP::DrawSignCheck(CXFA_Graphics* pGraphics,
   mt.Translate(rtSign.left, rtSign.top);
   mt.Concat(matrix);
   pGraphics->SaveGraphState();
-  pGraphics->SetFillColor(CXFA_GEColor(argbFill));
+  pGraphics->SetFillColor(CFGAS_GEColor(argbFill));
   pGraphics->FillPath(m_pCheckPath.get(),
                       CFX_FillRenderOptions::FillType::kWinding, &mt);
   pGraphics->RestoreGraphState();
 }
 
-void CFWL_CheckBoxTP::DrawSignCircle(CXFA_Graphics* pGraphics,
+void CFWL_CheckBoxTP::DrawSignCircle(CFGAS_GEGraphics* pGraphics,
                                      const CFX_RectF& rtSign,
                                      FX_ARGB argbFill,
                                      const CFX_Matrix& matrix) {
-  CXFA_GEPath path;
+  CFGAS_GEPath path;
   path.AddEllipse(rtSign);
   pGraphics->SaveGraphState();
-  pGraphics->SetFillColor(CXFA_GEColor(argbFill));
+  pGraphics->SetFillColor(CFGAS_GEColor(argbFill));
   pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding,
                       &matrix);
   pGraphics->RestoreGraphState();
 }
 
-void CFWL_CheckBoxTP::DrawSignCross(CXFA_Graphics* pGraphics,
+void CFWL_CheckBoxTP::DrawSignCross(CFGAS_GEGraphics* pGraphics,
                                     const CFX_RectF& rtSign,
                                     FX_ARGB argbFill,
                                     const CFX_Matrix& matrix) {
-  CXFA_GEPath path;
+  CFGAS_GEPath path;
   float fRight = rtSign.right();
   float fBottom = rtSign.bottom();
   path.AddLine(rtSign.TopLeft(), CFX_PointF(fRight, fBottom));
@@ -83,17 +83,17 @@ void CFWL_CheckBoxTP::DrawSignCross(CXFA_Graphics* pGraphics,
                CFX_PointF(fRight, rtSign.top));
 
   pGraphics->SaveGraphState();
-  pGraphics->SetStrokeColor(CXFA_GEColor(argbFill));
+  pGraphics->SetStrokeColor(CFGAS_GEColor(argbFill));
   pGraphics->SetLineWidth(1.0f);
   pGraphics->StrokePath(&path, &matrix);
   pGraphics->RestoreGraphState();
 }
 
-void CFWL_CheckBoxTP::DrawSignDiamond(CXFA_Graphics* pGraphics,
+void CFWL_CheckBoxTP::DrawSignDiamond(CFGAS_GEGraphics* pGraphics,
                                       const CFX_RectF& rtSign,
                                       FX_ARGB argbFill,
                                       const CFX_Matrix& matrix) {
-  CXFA_GEPath path;
+  CFGAS_GEPath path;
   float fWidth = rtSign.width;
   float fHeight = rtSign.height;
   float fBottom = rtSign.bottom();
@@ -104,30 +104,30 @@ void CFWL_CheckBoxTP::DrawSignDiamond(CXFA_Graphics* pGraphics,
   path.LineTo(CFX_PointF(rtSign.left + fWidth / 2, rtSign.top));
 
   pGraphics->SaveGraphState();
-  pGraphics->SetFillColor(CXFA_GEColor(argbFill));
+  pGraphics->SetFillColor(CFGAS_GEColor(argbFill));
   pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding,
                       &matrix);
   pGraphics->RestoreGraphState();
 }
 
-void CFWL_CheckBoxTP::DrawSignSquare(CXFA_Graphics* pGraphics,
+void CFWL_CheckBoxTP::DrawSignSquare(CFGAS_GEGraphics* pGraphics,
                                      const CFX_RectF& rtSign,
                                      FX_ARGB argbFill,
                                      const CFX_Matrix& matrix) {
-  CXFA_GEPath path;
+  CFGAS_GEPath path;
   path.AddRectangle(rtSign.left, rtSign.top, rtSign.width, rtSign.height);
   pGraphics->SaveGraphState();
-  pGraphics->SetFillColor(CXFA_GEColor(argbFill));
+  pGraphics->SetFillColor(CFGAS_GEColor(argbFill));
   pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding,
                       &matrix);
   pGraphics->RestoreGraphState();
 }
 
-void CFWL_CheckBoxTP::DrawSignStar(CXFA_Graphics* pGraphics,
+void CFWL_CheckBoxTP::DrawSignStar(CFGAS_GEGraphics* pGraphics,
                                    const CFX_RectF& rtSign,
                                    FX_ARGB argbFill,
                                    const CFX_Matrix& matrix) {
-  CXFA_GEPath path;
+  CFGAS_GEPath path;
   float fBottom = rtSign.bottom();
   float fRadius = (rtSign.top - fBottom) / (1 + cosf(FX_PI / 5.0f));
   CFX_PointF ptCenter((rtSign.left + rtSign.right()) / 2.0f,
@@ -148,7 +148,7 @@ void CFWL_CheckBoxTP::DrawSignStar(CXFA_Graphics* pGraphics,
     path.LineTo(points[next]);
   }
   pGraphics->SaveGraphState();
-  pGraphics->SetFillColor(CXFA_GEColor(argbFill));
+  pGraphics->SetFillColor(CFGAS_GEColor(argbFill));
   pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding,
                       &matrix);
   pGraphics->RestoreGraphState();
@@ -156,7 +156,7 @@ void CFWL_CheckBoxTP::DrawSignStar(CXFA_Graphics* pGraphics,
 
 void CFWL_CheckBoxTP::InitCheckPath(float fCheckLen) {
   if (!m_pCheckPath) {
-    m_pCheckPath = std::make_unique<CXFA_GEPath>();
+    m_pCheckPath = std::make_unique<CFGAS_GEPath>();
 
     float fWidth = kSignPath;
     float fHeight = -kSignPath;
@@ -220,7 +220,7 @@ void CFWL_CheckBoxTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
 }
 
 void CFWL_CheckBoxTP::DrawCheckSign(CFWL_Widget* pWidget,
-                                    CXFA_Graphics* pGraphics,
+                                    CFGAS_GEGraphics* pGraphics,
                                     const CFX_RectF& pRtBox,
                                     int32_t iState,
                                     const CFX_Matrix& matrix) {

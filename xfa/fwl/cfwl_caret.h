@@ -10,8 +10,8 @@
 #include <memory>
 
 #include "core/fxcrt/cfx_timer.h"
+#include "xfa/fgas/graphics/cfgas_gecolor.h"
 #include "xfa/fwl/cfwl_widget.h"
-#include "xfa/fxgraphics/cxfa_gecolor.h"
 
 class CFWL_Caret final : public CFWL_Widget, public CFX_Timer::CallbackIface {
  public:
@@ -20,9 +20,10 @@ class CFWL_Caret final : public CFWL_Widget, public CFX_Timer::CallbackIface {
 
   // CFWL_Widget:
   FWL_Type GetClassID() const override;
-  void DrawWidget(CXFA_Graphics* pGraphics, const CFX_Matrix& matrix) override;
+  void DrawWidget(CFGAS_GEGraphics* pGraphics,
+                  const CFX_Matrix& matrix) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
-  void OnDrawWidget(CXFA_Graphics* pGraphics,
+  void OnDrawWidget(CFGAS_GEGraphics* pGraphics,
                     const CFX_Matrix& matrix) override;
   void Update() override;
 
@@ -35,7 +36,7 @@ class CFWL_Caret final : public CFWL_Widget, public CFX_Timer::CallbackIface {
  private:
   CFWL_Caret(CFWL_App* app, const Properties& properties, CFWL_Widget* pOuter);
 
-  void DrawCaretBK(CXFA_Graphics* pGraphics, const CFX_Matrix* pMatrix);
+  void DrawCaretBK(CFGAS_GEGraphics* pGraphics, const CFX_Matrix* pMatrix);
 
   std::unique_ptr<CFX_Timer> m_pTimer;
 };

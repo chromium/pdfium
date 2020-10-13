@@ -4,14 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxgraphics/cxfa_geshading.h"
+#include "xfa/fgas/graphics/cfgas_geshading.h"
 
-CXFA_GEShading::CXFA_GEShading(const CFX_PointF& beginPoint,
-                               const CFX_PointF& endPoint,
-                               bool isExtendedBegin,
-                               bool isExtendedEnd,
-                               const FX_ARGB beginArgb,
-                               const FX_ARGB endArgb)
+CFGAS_GEShading::CFGAS_GEShading(const CFX_PointF& beginPoint,
+                                 const CFX_PointF& endPoint,
+                                 bool isExtendedBegin,
+                                 bool isExtendedEnd,
+                                 const FX_ARGB beginArgb,
+                                 const FX_ARGB endArgb)
     : m_type(FX_SHADING_Axial),
       m_beginPoint(beginPoint),
       m_endPoint(endPoint),
@@ -24,14 +24,14 @@ CXFA_GEShading::CXFA_GEShading(const CFX_PointF& beginPoint,
   InitArgbArray();
 }
 
-CXFA_GEShading::CXFA_GEShading(const CFX_PointF& beginPoint,
-                               const CFX_PointF& endPoint,
-                               const float beginRadius,
-                               const float endRadius,
-                               bool isExtendedBegin,
-                               bool isExtendedEnd,
-                               const FX_ARGB beginArgb,
-                               const FX_ARGB endArgb)
+CFGAS_GEShading::CFGAS_GEShading(const CFX_PointF& beginPoint,
+                                 const CFX_PointF& endPoint,
+                                 const float beginRadius,
+                                 const float endRadius,
+                                 bool isExtendedBegin,
+                                 bool isExtendedEnd,
+                                 const FX_ARGB beginArgb,
+                                 const FX_ARGB endArgb)
     : m_type(FX_SHADING_Radial),
       m_beginPoint(beginPoint),
       m_endPoint(endPoint),
@@ -44,9 +44,9 @@ CXFA_GEShading::CXFA_GEShading(const CFX_PointF& beginPoint,
   InitArgbArray();
 }
 
-CXFA_GEShading::~CXFA_GEShading() = default;
+CFGAS_GEShading::~CFGAS_GEShading() = default;
 
-void CXFA_GEShading::InitArgbArray() {
+void CFGAS_GEShading::InitArgbArray() {
   int32_t a1;
   int32_t r1;
   int32_t g1;

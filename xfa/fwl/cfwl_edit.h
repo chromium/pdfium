@@ -11,10 +11,10 @@
 #include <utility>
 
 #include "xfa/fde/cfde_texteditengine.h"
+#include "xfa/fgas/graphics/cfgas_gepath.h"
 #include "xfa/fwl/cfwl_event.h"
 #include "xfa/fwl/cfwl_scrollbar.h"
 #include "xfa/fwl/cfwl_widget.h"
-#include "xfa/fxgraphics/cxfa_gepath.h"
 
 #define FWL_STYLEEXT_EDT_ReadOnly (1L << 0)
 #define FWL_STYLEEXT_EDT_MultiLine (1L << 1)
@@ -56,10 +56,11 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   void Update() override;
   FWL_WidgetHit HitTest(const CFX_PointF& point) override;
   void SetStates(uint32_t dwStates) override;
-  void DrawWidget(CXFA_Graphics* pGraphics, const CFX_Matrix& matrix) override;
+  void DrawWidget(CFGAS_GEGraphics* pGraphics,
+                  const CFX_Matrix& matrix) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
-  void OnDrawWidget(CXFA_Graphics* pGraphics,
+  void OnDrawWidget(CFGAS_GEGraphics* pGraphics,
                     const CFX_Matrix& matrix) override;
 
   virtual void SetText(const WideString& wsText);
@@ -107,10 +108,8 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   void RenderText(CFX_RenderDevice* pRenderDev,
                   const CFX_RectF& clipRect,
                   const CFX_Matrix& mt);
-  void DrawTextBk(CXFA_Graphics* pGraphics,
-                  const CFX_Matrix* pMatrix);
-  void DrawContent(CXFA_Graphics* pGraphics,
-                   const CFX_Matrix* pMatrix);
+  void DrawTextBk(CFGAS_GEGraphics* pGraphics, const CFX_Matrix* pMatrix);
+  void DrawContent(CFGAS_GEGraphics* pGraphics, const CFX_Matrix* pMatrix);
 
   void UpdateEditEngine();
   void UpdateEditParams();

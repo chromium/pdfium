@@ -11,12 +11,12 @@
 #include <vector>
 
 #include "core/fxcrt/fx_coordinates.h"
+#include "xfa/fgas/graphics/cfgas_gepath.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
-#include "xfa/fxgraphics/cxfa_gepath.h"
 
+class CFGAS_GEGraphics;
 class CXFA_Edge;
 class CXFA_Fill;
-class CXFA_Graphics;
 class CXFA_Margin;
 class CXFA_Stroke;
 
@@ -34,7 +34,7 @@ class CXFA_Box : public CXFA_Node {
 
   std::vector<CXFA_Stroke*> GetStrokes();
 
-  void Draw(CXFA_Graphics* pGS,
+  void Draw(CFGAS_GEGraphics* pGS,
             const CFX_RectF& rtWidget,
             const CFX_Matrix& matrix,
             bool forceRound);
@@ -58,17 +58,17 @@ class CXFA_Box : public CXFA_Node {
 
   std::vector<CXFA_Stroke*> GetStrokesInternal(bool bNull);
   void DrawFill(const std::vector<CXFA_Stroke*>& strokes,
-                CXFA_Graphics* pGS,
+                CFGAS_GEGraphics* pGS,
                 CFX_RectF rtWidget,
                 const CFX_Matrix& matrix,
                 bool forceRound);
-  void StrokeArcOrRounded(CXFA_Graphics* pGS,
+  void StrokeArcOrRounded(CFGAS_GEGraphics* pGS,
                           CFX_RectF rtWidget,
                           const CFX_Matrix& matrix,
                           bool forceRound);
   void GetPathArcOrRounded(CFX_RectF rtDraw,
                            bool forceRound,
-                           CXFA_GEPath* fillPath);
+                           CFGAS_GEPath* fillPath);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_BOX_H_

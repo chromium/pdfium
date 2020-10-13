@@ -57,7 +57,7 @@ bool CXFA_FFImageEdit::LoadWidget() {
   return true;
 }
 
-void CXFA_FFImageEdit::RenderWidget(CXFA_Graphics* pGS,
+void CXFA_FFImageEdit::RenderWidget(CFGAS_GEGraphics* pGS,
                                     const CFX_Matrix& matrix,
                                     HighlightOption highlight) {
   if (!HasVisibleStatus())
@@ -147,7 +147,7 @@ void CXFA_FFImageEdit::OnProcessEvent(CFWL_Event* pEvent) {
   m_pOldDelegate->OnProcessEvent(pEvent);
 }
 
-void CXFA_FFImageEdit::OnDrawWidget(CXFA_Graphics* pGraphics,
+void CXFA_FFImageEdit::OnDrawWidget(CFGAS_GEGraphics* pGraphics,
                                     const CFX_Matrix& matrix) {
   m_pOldDelegate->OnDrawWidget(pGraphics, matrix);
 }

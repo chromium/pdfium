@@ -12,6 +12,10 @@
 
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/notreached.h"
+#include "xfa/fgas/graphics/cfgas_gegraphics.h"
+#include "xfa/fgas/graphics/cfgas_gepath.h"
+#include "xfa/fgas/graphics/cfgas_gepattern.h"
+#include "xfa/fgas/graphics/cfgas_geshading.h"
 #include "xfa/fxfa/parser/cxfa_corner.h"
 #include "xfa/fxfa/parser/cxfa_edge.h"
 #include "xfa/fxfa/parser/cxfa_fill.h"
@@ -19,10 +23,6 @@
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_rectangle.h"
-#include "xfa/fxgraphics/cxfa_gepath.h"
-#include "xfa/fxgraphics/cxfa_gepattern.h"
-#include "xfa/fxgraphics/cxfa_geshading.h"
-#include "xfa/fxgraphics/cxfa_graphics.h"
 
 namespace {
 
@@ -180,7 +180,7 @@ std::vector<CXFA_Stroke*> CXFA_Box::GetStrokesInternal(bool bNull) {
   return strokes;
 }
 
-void CXFA_Box::Draw(CXFA_Graphics* pGS,
+void CXFA_Box::Draw(CFGAS_GEGraphics* pGS,
                     const CFX_RectF& rtWidget,
                     const CFX_Matrix& matrix,
                     bool forceRound) {
@@ -208,7 +208,7 @@ void CXFA_Box::Draw(CXFA_Graphics* pGS,
 }
 
 void CXFA_Box::DrawFill(const std::vector<CXFA_Stroke*>& strokes,
-                        CXFA_Graphics* pGS,
+                        CFGAS_GEGraphics* pGS,
                         CFX_RectF rtWidget,
                         const CFX_Matrix& matrix,
                         bool forceRound) {
@@ -218,7 +218,7 @@ void CXFA_Box::DrawFill(const std::vector<CXFA_Stroke*>& strokes,
 
   pGS->SaveGraphState();
 
-  CXFA_GEPath fillPath;
+  CFGAS_GEPath fillPath;
   XFA_Element type = GetElementType();
   if (type == XFA_Element::Arc || forceRound) {
     CXFA_Edge* edge = GetEdgeIfExists(0);
@@ -244,7 +244,7 @@ void CXFA_Box::DrawFill(const std::vector<CXFA_Stroke*>& strokes,
 
 void CXFA_Box::GetPathArcOrRounded(CFX_RectF rtDraw,
                                    bool forceRound,
-                                   CXFA_GEPath* fillPath) {
+                                   CFGAS_GEPath* fillPath) {
   float a, b;
   a = rtDraw.width / 2.0f;
   b = rtDraw.height / 2.0f;
@@ -268,7 +268,7 @@ void CXFA_Box::GetPathArcOrRounded(CFX_RectF rtDraw,
                    -sweepAngle.value_or(360) * FX_PI / 180.0f);
 }
 
-void CXFA_Box::StrokeArcOrRounded(CXFA_Graphics* pGS,
+void CXFA_Box::StrokeArcOrRounded(CFGAS_GEGraphics* pGS,
                                   CFX_RectF rtWidget,
                                   const CFX_Matrix& matrix,
                                   bool forceRound) {
@@ -301,7 +301,7 @@ void CXFA_Box::StrokeArcOrRounded(CXFA_Graphics* pGS,
     if (fHalf < 0.001f)
       return;
 
-    CXFA_GEPath arcPath;
+    CFGAS_GEPath arcPath;
     GetPathArcOrRounded(rtWidget, forceRound, &arcPath);
     if (edge)
       edge->Stroke(&arcPath, pGS, matrix);
@@ -324,30 +324,30 @@ void CXFA_Box::StrokeArcOrRounded(CXFA_Graphics* pGS,
   rtWidget.width = a + a;
   rtWidget.height = b + b;
 
-  CXFA_GEPath arcPath;
+  CFGAS_GEPath arcPath;
   arcPath.AddArc(rtWidget.TopLeft(), rtWidget.Size(), 3.0f * FX_PI / 4.0f,
                  FX_PI);
 
-  pGS->SetStrokeColor(CXFA_GEColor(0xFF808080));
+  pGS->SetStrokeColor(CFGAS_GEColor(0xFF808080));
   pGS->StrokePath(&arcPath, &matrix);
   arcPath.Clear();
   arcPath.AddArc(rtWidget.TopLeft(), rtWidget.Size(), -1.0f * FX_PI / 4.0f,
                  FX_PI);
 
-  pGS->SetStrokeColor(CXFA_GEColor(0xFFFFFFFF));
+  pGS->SetStrokeColor(CFGAS_GEColor(0xFFFFFFFF));
   pGS->StrokePath(&arcPath, &matrix);
   rtWidget.Deflate(fHalf, fHalf);
   arcPath.Clear();
   arcPath.AddArc(rtWidget.TopLeft(), rtWidget.Size(), 3.0f * FX_PI / 4.0f,
                  FX_PI);
 
-  pGS->SetStrokeColor(CXFA_GEColor(0xFF404040));
+  pGS->SetStrokeColor(CFGAS_GEColor(0xFF404040));
   pGS->StrokePath(&arcPath, &matrix);
   arcPath.Clear();
   arcPath.AddArc(rtWidget.TopLeft(), rtWidget.Size(), -1.0f * FX_PI / 4.0f,
                  FX_PI);
 
-  pGS->SetStrokeColor(CXFA_GEColor(0xFFC0C0C0));
+  pGS->SetStrokeColor(CFGAS_GEColor(0xFFC0C0C0));
   pGS->StrokePath(&arcPath, &matrix);
   pGS->RestoreGraphState();
 }

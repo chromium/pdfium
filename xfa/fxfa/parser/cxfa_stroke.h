@@ -17,11 +17,11 @@ enum StrokeSameStyle {
   XFA_STROKE_SAMESTYLE_Corner = 2
 };
 
-class CXFA_GEPath;
-class CXFA_Graphics;
+class CFGAS_GEGraphics;
+class CFGAS_GEPath;
 class CXFA_Node;
 
-void XFA_StrokeTypeSetLineDash(CXFA_Graphics* pGraphics,
+void XFA_StrokeTypeSetLineDash(CFGAS_GEGraphics* pGraphics,
                                XFA_AttributeValue iStrokeType,
                                XFA_AttributeValue iCapType);
 
@@ -48,7 +48,9 @@ class CXFA_Stroke : public CXFA_Node {
 
   bool SameStyles(CXFA_Stroke* stroke, uint32_t dwFlags);
 
-  void Stroke(CXFA_GEPath* pPath, CXFA_Graphics* pGS, const CFX_Matrix& matrix);
+  void Stroke(CFGAS_GEPath* pPath,
+              CFGAS_GEGraphics* pGS,
+              const CFX_Matrix& matrix);
 
  protected:
   CXFA_Stroke(CXFA_Document* pDoc,

@@ -96,9 +96,9 @@ source_set("fxfa") {
     "../../fxjs:gc",
     "../fde",
     "../fgas",
+    "../fgas/graphics",
     "../fgas/layout",
     "../fwl",
-    "../fxgraphics",
     "layout",
     "parser",
   ]

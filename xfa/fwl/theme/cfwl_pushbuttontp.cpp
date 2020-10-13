@@ -6,12 +6,12 @@
 
 #include "xfa/fwl/theme/cfwl_pushbuttontp.h"
 
+#include "xfa/fgas/graphics/cfgas_gecolor.h"
+#include "xfa/fgas/graphics/cfgas_gepath.h"
 #include "xfa/fwl/cfwl_pushbutton.h"
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
-#include "xfa/fxgraphics/cxfa_gecolor.h"
-#include "xfa/fxgraphics/cxfa_gepath.h"
 
 #define PUSHBUTTON_SIZE_Corner 2
 
@@ -33,7 +33,7 @@ void CFWL_PushButtonTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
       float fRight = rect.right();
       float fBottom = rect.bottom();
 
-      CXFA_GEPath strokePath;
+      CFGAS_GEPath strokePath;
       strokePath.MoveTo(
           CFX_PointF(rect.left + PUSHBUTTON_SIZE_Corner, rect.top));
       strokePath.LineTo(CFX_PointF(fRight - PUSHBUTTON_SIZE_Corner, rect.top));
@@ -49,10 +49,10 @@ void CFWL_PushButtonTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
       strokePath.LineTo(
           CFX_PointF(rect.left + PUSHBUTTON_SIZE_Corner, rect.top));
 
-      CXFA_GEPath fillPath;
+      CFGAS_GEPath fillPath;
       fillPath.AddSubpath(&strokePath);
 
-      CXFA_Graphics* pGraphics = pParams.m_pGraphics.Get();
+      CFGAS_GEGraphics* pGraphics = pParams.m_pGraphics.Get();
       pGraphics->SaveGraphState();
 
       CFX_RectF rtInner(rect);
@@ -65,14 +65,14 @@ void CFWL_PushButtonTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
       FillSolidRect(pGraphics, m_pThemeData->clrEnd[iColor], rect,
                     pParams.m_matrix);
 
-      pGraphics->SetStrokeColor(CXFA_GEColor(m_pThemeData->clrBorder[iColor]));
+      pGraphics->SetStrokeColor(CFGAS_GEColor(m_pThemeData->clrBorder[iColor]));
       pGraphics->StrokePath(&strokePath, &pParams.m_matrix);
 
       fillPath.Clear();
       fillPath.AddRectangle(rtInner.left, rtInner.top, rtInner.width,
                             rtInner.height);
 
-      pGraphics->SetFillColor(CXFA_GEColor(m_pThemeData->clrFill[iColor]));
+      pGraphics->SetFillColor(CFGAS_GEColor(m_pThemeData->clrFill[iColor]));
       pGraphics->FillPath(&fillPath, CFX_FillRenderOptions::FillType::kWinding,
                           &pParams.m_matrix);
       if (pParams.m_dwStates & CFWL_PartState_Focused) {

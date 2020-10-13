@@ -39,9 +39,10 @@ class CFWL_DateTimePicker final : public CFWL_Widget {
   FWL_Type GetClassID() const override;
   void Update() override;
   FWL_WidgetHit HitTest(const CFX_PointF& point) override;
-  void DrawWidget(CXFA_Graphics* pGraphics, const CFX_Matrix& matrix) override;
+  void DrawWidget(CFGAS_GEGraphics* pGraphics,
+                  const CFX_Matrix& matrix) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
-  void OnDrawWidget(CXFA_Graphics* pGraphics,
+  void OnDrawWidget(CFGAS_GEGraphics* pGraphics,
                     const CFX_Matrix& matrix) override;
 
   void GetCurSel(int32_t& iYear, int32_t& iMonth, int32_t& iDay);
@@ -78,7 +79,8 @@ class CFWL_DateTimePicker final : public CFWL_Widget {
  private:
   explicit CFWL_DateTimePicker(CFWL_App* pApp);
 
-  void DrawDropDownButton(CXFA_Graphics* pGraphics, const CFX_Matrix* pMatrix);
+  void DrawDropDownButton(CFGAS_GEGraphics* pGraphics,
+                          const CFX_Matrix* pMatrix);
   WideString FormatDateString(int32_t iYear, int32_t iMonth, int32_t iDay);
   void ResetEditAlignment();
   void GetPopupPos(float fMinHeight,

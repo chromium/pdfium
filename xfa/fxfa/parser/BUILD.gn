@@ -686,7 +686,7 @@ source_set("parser") {
     "../../../fxjs:gc",
     "../../fde",
     "../../fgas",
-    "../../fxgraphics",
+    "../../fgas/graphics",
   ]
   allow_circular_includes_from = [ "../../../fxjs" ]
   configs += [

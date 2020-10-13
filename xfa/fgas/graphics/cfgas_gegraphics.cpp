@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxgraphics/cxfa_graphics.h"
+#include "xfa/fgas/graphics/cfgas_gegraphics.h"
 
 #include <cmath>
 #include <memory>
@@ -15,10 +15,10 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fxgraphics/cxfa_gecolor.h"
-#include "xfa/fxgraphics/cxfa_gepath.h"
-#include "xfa/fxgraphics/cxfa_gepattern.h"
-#include "xfa/fxgraphics/cxfa_geshading.h"
+#include "xfa/fgas/graphics/cfgas_gecolor.h"
+#include "xfa/fgas/graphics/cfgas_gepath.h"
+#include "xfa/fgas/graphics/cfgas_gepattern.h"
+#include "xfa/fgas/graphics/cfgas_geshading.h"
 
 namespace {
 
@@ -110,19 +110,19 @@ const FX_HATCHDATA& GetHatchBitmapData(size_t index) {
 
 }  // namespace
 
-CXFA_Graphics::CXFA_Graphics(CFX_RenderDevice* renderDevice)
+CFGAS_GEGraphics::CFGAS_GEGraphics(CFX_RenderDevice* renderDevice)
     : m_renderDevice(renderDevice) {
   DCHECK(m_renderDevice);
 }
 
-CXFA_Graphics::~CXFA_Graphics() = default;
+CFGAS_GEGraphics::~CFGAS_GEGraphics() = default;
 
-void CXFA_Graphics::SaveGraphState() {
+void CFGAS_GEGraphics::SaveGraphState() {
   m_renderDevice->SaveState();
   m_infoStack.push_back(std::make_unique<TInfo>(m_info));
 }
 
-void CXFA_Graphics::RestoreGraphState() {
+void CFGAS_GEGraphics::RestoreGraphState() {
   m_renderDevice->RestoreState(false);
   if (m_infoStack.empty())
     return;
@@ -132,12 +132,12 @@ void CXFA_Graphics::RestoreGraphState() {
   return;
 }
 
-void CXFA_Graphics::SetLineCap(CFX_GraphStateData::LineCap lineCap) {
+void CFGAS_GEGraphics::SetLineCap(CFX_GraphStateData::LineCap lineCap) {
   m_info.graphState.m_LineCap = lineCap;
 }
 
-void CXFA_Graphics::SetLineDash(float dashPhase,
-                                pdfium::span<const float> dashArray) {
+void CFGAS_GEGraphics::SetLineDash(float dashPhase,
+                                   pdfium::span<const float> dashArray) {
   DCHECK(!dashArray.empty());
   float scale = m_info.isActOnDash ? m_info.graphState.m_LineWidth : 1.0;
   m_info.graphState.m_DashPhase = dashPhase;
@@ -146,65 +146,66 @@ void CXFA_Graphics::SetLineDash(float dashPhase,
     m_info.graphState.m_DashArray[i] = dashArray[i] * scale;
 }
 
-void CXFA_Graphics::SetSolidLineDash() {
+void CFGAS_GEGraphics::SetSolidLineDash() {
   m_info.graphState.m_DashArray.clear();
 }
 
-void CXFA_Graphics::SetLineWidth(float lineWidth) {
+void CFGAS_GEGraphics::SetLineWidth(float lineWidth) {
   m_info.graphState.m_LineWidth = lineWidth;
 }
 
-void CXFA_Graphics::EnableActOnDash() {
+void CFGAS_GEGraphics::EnableActOnDash() {
   m_info.isActOnDash = true;
 }
 
-void CXFA_Graphics::SetStrokeColor(const CXFA_GEColor& color) {
+void CFGAS_GEGraphics::SetStrokeColor(const CFGAS_GEColor& color) {
   m_info.strokeColor = color;
 }
 
-void CXFA_Graphics::SetFillColor(const CXFA_GEColor& color) {
+void CFGAS_GEGraphics::SetFillColor(const CFGAS_GEColor& color) {
   m_info.fillColor = color;
 }
 
-void CXFA_Graphics::StrokePath(CXFA_GEPath* path, const CFX_Matrix* matrix) {
+void CFGAS_GEGraphics::StrokePath(CFGAS_GEPath* path,
+                                  const CFX_Matrix* matrix) {
   if (path)
     RenderDeviceStrokePath(path, matrix);
 }
 
-void CXFA_Graphics::FillPath(CXFA_GEPath* path,
-                             CFX_FillRenderOptions::FillType fill_type,
-                             const CFX_Matrix* matrix) {
+void CFGAS_GEGraphics::FillPath(CFGAS_GEPath* path,
+                                CFX_FillRenderOptions::FillType fill_type,
+                                const CFX_Matrix* matrix) {
   if (path)
     RenderDeviceFillPath(path, fill_type, matrix);
 }
 
-void CXFA_Graphics::ConcatMatrix(const CFX_Matrix* matrix) {
+void CFGAS_GEGraphics::ConcatMatrix(const CFX_Matrix* matrix) {
   if (matrix)
     m_info.CTM.Concat(*matrix);
 }
 
-const CFX_Matrix* CXFA_Graphics::GetMatrix() const {
+const CFX_Matrix* CFGAS_GEGraphics::GetMatrix() const {
   return &m_info.CTM;
 }
 
-CFX_RectF CXFA_Graphics::GetClipRect() const {
+CFX_RectF CFGAS_GEGraphics::GetClipRect() const {
   FX_RECT r = m_renderDevice->GetClipBox();
   return CFX_RectF(r.left, r.top, r.Width(), r.Height());
 }
 
-void CXFA_Graphics::SetClipRect(const CFX_RectF& rect) {
+void CFGAS_GEGraphics::SetClipRect(const CFX_RectF& rect) {
   m_renderDevice->SetClip_Rect(
       FX_RECT(FXSYS_roundf(rect.left), FXSYS_roundf(rect.top),
               FXSYS_roundf(rect.right()), FXSYS_roundf(rect.bottom())));
 }
 
-CFX_RenderDevice* CXFA_Graphics::GetRenderDevice() {
+CFX_RenderDevice* CFGAS_GEGraphics::GetRenderDevice() {
   return m_renderDevice;
 }
 
-void CXFA_Graphics::RenderDeviceStrokePath(const CXFA_GEPath* path,
-                                           const CFX_Matrix* matrix) {
-  if (m_info.strokeColor.GetType() != CXFA_GEColor::Solid)
+void CFGAS_GEGraphics::RenderDeviceStrokePath(const CFGAS_GEPath* path,
+                                              const CFX_Matrix* matrix) {
+  if (m_info.strokeColor.GetType() != CFGAS_GEColor::Solid)
     return;
 
   CFX_Matrix m = m_info.CTM;
@@ -216,8 +217,8 @@ void CXFA_Graphics::RenderDeviceStrokePath(const CXFA_GEPath* path,
                            CFX_FillRenderOptions());
 }
 
-void CXFA_Graphics::RenderDeviceFillPath(
-    const CXFA_GEPath* path,
+void CFGAS_GEGraphics::RenderDeviceFillPath(
+    const CFGAS_GEPath* path,
     CFX_FillRenderOptions::FillType fill_type,
     const CFX_Matrix* matrix) {
   CFX_Matrix m = m_info.CTM;
@@ -226,14 +227,14 @@ void CXFA_Graphics::RenderDeviceFillPath(
 
   const CFX_FillRenderOptions fill_options(fill_type);
   switch (m_info.fillColor.GetType()) {
-    case CXFA_GEColor::Solid:
+    case CFGAS_GEColor::Solid:
       m_renderDevice->DrawPath(path->GetPathData(), &m, &m_info.graphState,
                                m_info.fillColor.GetArgb(), 0x0, fill_options);
       return;
-    case CXFA_GEColor::Pattern:
+    case CFGAS_GEColor::Pattern:
       FillPathWithPattern(path, fill_options, m);
       return;
-    case CXFA_GEColor::Shading:
+    case CFGAS_GEColor::Shading:
       FillPathWithShading(path, fill_options, m);
       return;
     default:
@@ -241,8 +242,8 @@ void CXFA_Graphics::RenderDeviceFillPath(
   }
 }
 
-void CXFA_Graphics::FillPathWithPattern(
-    const CXFA_GEPath* path,
+void CFGAS_GEGraphics::FillPathWithPattern(
+    const CFGAS_GEPath* path,
     const CFX_FillRenderOptions& fill_options,
     const CFX_Matrix& matrix) {
   RetainPtr<CFX_DIBitmap> bitmap = m_renderDevice->GetBitmap();
@@ -275,8 +276,8 @@ void CXFA_Graphics::FillPathWithPattern(
   SetDIBitsWithMatrix(bmp, CFX_Matrix());
 }
 
-void CXFA_Graphics::FillPathWithShading(
-    const CXFA_GEPath* path,
+void CFGAS_GEGraphics::FillPathWithShading(
+    const CFGAS_GEPath* path,
     const CFX_FillRenderOptions& fill_options,
     const CFX_Matrix& matrix) {
   RetainPtr<CFX_DIBitmap> bitmap = m_renderDevice->GetBitmap();
@@ -395,8 +396,8 @@ void CXFA_Graphics::FillPathWithShading(
   }
 }
 
-void CXFA_Graphics::SetDIBitsWithMatrix(const RetainPtr<CFX_DIBBase>& source,
-                                        const CFX_Matrix& matrix) {
+void CFGAS_GEGraphics::SetDIBitsWithMatrix(const RetainPtr<CFX_DIBBase>& source,
+                                           const CFX_Matrix& matrix) {
   if (matrix.IsIdentity()) {
     m_renderDevice->SetDIBits(source, 0, 0);
   } else {
@@ -411,16 +412,17 @@ void CXFA_Graphics::SetDIBitsWithMatrix(const RetainPtr<CFX_DIBBase>& source,
   }
 }
 
-CXFA_Graphics::TInfo::TInfo() = default;
+CFGAS_GEGraphics::TInfo::TInfo() = default;
 
-CXFA_Graphics::TInfo::TInfo(const TInfo& info)
+CFGAS_GEGraphics::TInfo::TInfo(const TInfo& info)
     : graphState(info.graphState),
       CTM(info.CTM),
       isActOnDash(info.isActOnDash),
       strokeColor(info.strokeColor),
       fillColor(info.fillColor) {}
 
-CXFA_Graphics::TInfo& CXFA_Graphics::TInfo::operator=(const TInfo& other) {
+CFGAS_GEGraphics::TInfo& CFGAS_GEGraphics::TInfo::operator=(
+    const TInfo& other) {
   graphState = other.graphState;
   CTM = other.CTM;
   isActOnDash = other.isActOnDash;

@@ -4,47 +4,47 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXGRAPHICS_CXFA_GECOLOR_H_
-#define XFA_FXGRAPHICS_CXFA_GECOLOR_H_
+#ifndef XFA_FGAS_GRAPHICS_CFGAS_GECOLOR_H_
+#define XFA_FGAS_GRAPHICS_CFGAS_GECOLOR_H_
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/check.h"
 
-class CXFA_GEPattern;
-class CXFA_GEShading;
+class CFGAS_GEPattern;
+class CFGAS_GEShading;
 
-class CXFA_GEColor {
+class CFGAS_GEColor {
  public:
   enum Type { Invalid, Solid, Pattern, Shading };
 
-  explicit CXFA_GEColor(const FX_ARGB argb);
-  explicit CXFA_GEColor(CXFA_GEShading* shading);
-  CXFA_GEColor(CXFA_GEPattern* pattern, const FX_ARGB argb);
-  CXFA_GEColor(const CXFA_GEColor& that);
-  ~CXFA_GEColor();
+  explicit CFGAS_GEColor(const FX_ARGB argb);
+  explicit CFGAS_GEColor(CFGAS_GEShading* shading);
+  CFGAS_GEColor(CFGAS_GEPattern* pattern, const FX_ARGB argb);
+  CFGAS_GEColor(const CFGAS_GEColor& that);
+  ~CFGAS_GEColor();
 
   Type GetType() const { return m_type; }
   FX_ARGB GetArgb() const {
     DCHECK(m_type == Solid || m_type == Pattern);
     return m_argb;
   }
-  CXFA_GEPattern* GetPattern() const {
+  CFGAS_GEPattern* GetPattern() const {
     DCHECK(m_type == Pattern);
     return m_pPattern.Get();
   }
-  CXFA_GEShading* GetShading() const {
+  CFGAS_GEShading* GetShading() const {
     DCHECK(m_type == Shading);
     return m_pShading.Get();
   }
 
-  CXFA_GEColor& operator=(const CXFA_GEColor& that);
+  CFGAS_GEColor& operator=(const CFGAS_GEColor& that);
 
  private:
   Type m_type = Invalid;
   FX_ARGB m_argb = 0;
-  UnownedPtr<CXFA_GEPattern> m_pPattern;
-  UnownedPtr<CXFA_GEShading> m_pShading;
+  UnownedPtr<CFGAS_GEPattern> m_pPattern;
+  UnownedPtr<CFGAS_GEShading> m_pShading;
 };
 
-#endif  // XFA_FXGRAPHICS_CXFA_GECOLOR_H_
+#endif  // XFA_FGAS_GRAPHICS_CFGAS_GECOLOR_H_

@@ -165,7 +165,7 @@ bool CXFA_FFBarcode::LoadWidget() {
   return CXFA_FFField::LoadWidget();
 }
 
-void CXFA_FFBarcode::RenderWidget(CXFA_Graphics* pGS,
+void CXFA_FFBarcode::RenderWidget(CFGAS_GEGraphics* pGS,
                                   const CFX_Matrix& matrix,
                                   HighlightOption highlight) {
   if (!HasVisibleStatus())

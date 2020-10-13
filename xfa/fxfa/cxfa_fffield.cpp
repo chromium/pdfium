@@ -10,6 +10,8 @@
 #include <utility>
 
 #include "third_party/base/check.h"
+#include "xfa/fgas/graphics/cfgas_gecolor.h"
+#include "xfa/fgas/graphics/cfgas_gepath.h"
 #include "xfa/fwl/cfwl_edit.h"
 #include "xfa/fwl/cfwl_eventmouse.h"
 #include "xfa/fwl/cfwl_messagekey.h"
@@ -33,8 +35,6 @@
 #include "xfa/fxfa/parser/cxfa_margin.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_script.h"
-#include "xfa/fxgraphics/cxfa_gecolor.h"
-#include "xfa/fxgraphics/cxfa_gepath.h"
 
 CXFA_FFField::CXFA_FFField(CXFA_Node* pNode) : CXFA_FFWidget(pNode) {}
 
@@ -69,7 +69,7 @@ CFX_RectF CXFA_FFField::GetBBox(FocusOption focus) {
   }
 }
 
-void CXFA_FFField::RenderWidget(CXFA_Graphics* pGS,
+void CXFA_FFField::RenderWidget(CFGAS_GEGraphics* pGS,
                                 const CFX_Matrix& matrix,
                                 HighlightOption highlight) {
   if (!HasVisibleStatus())
@@ -89,7 +89,7 @@ void CXFA_FFField::RenderWidget(CXFA_Graphics* pGS,
   GetApp()->GetFWLWidgetMgr()->OnDrawWidget(GetNormalWidget(), pGS, mt);
 }
 
-void CXFA_FFField::DrawHighlight(CXFA_Graphics* pGS,
+void CXFA_FFField::DrawHighlight(CFGAS_GEGraphics* pGS,
                                  CFX_Matrix* pMatrix,
                                  HighlightOption highlight,
                                  ShapeOption shape) {
@@ -100,8 +100,8 @@ void CXFA_FFField::DrawHighlight(CXFA_Graphics* pGS,
       !m_pNode->IsOpenAccess()) {
     return;
   }
-  pGS->SetFillColor(CXFA_GEColor(GetDoc()->GetHighlightColor()));
-  CXFA_GEPath path;
+  pGS->SetFillColor(CFGAS_GEColor(GetDoc()->GetHighlightColor()));
+  CFGAS_GEPath path;
   if (shape == kRoundShape)
     path.AddEllipse(m_UIRect);
   else
@@ -111,17 +111,17 @@ void CXFA_FFField::DrawHighlight(CXFA_Graphics* pGS,
   pGS->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding, pMatrix);
 }
 
-void CXFA_FFField::DrawFocus(CXFA_Graphics* pGS, CFX_Matrix* pMatrix) {
+void CXFA_FFField::DrawFocus(CFGAS_GEGraphics* pGS, CFX_Matrix* pMatrix) {
   if (!GetLayoutItem()->TestStatusBits(XFA_WidgetStatus_Focused))
     return;
 
-  pGS->SetStrokeColor(CXFA_GEColor(0xFF000000));
+  pGS->SetStrokeColor(CFGAS_GEColor(0xFF000000));
 
   static constexpr float kDashPattern[2] = {1, 1};
   pGS->SetLineDash(0.0f, kDashPattern);
   pGS->SetLineWidth(0);
 
-  CXFA_GEPath path;
+  CFGAS_GEPath path;
   path.AddRectangle(m_UIRect.left, m_UIRect.top, m_UIRect.width,
                     m_UIRect.height);
   pGS->StrokePath(&path, pMatrix);
@@ -582,7 +582,7 @@ void CXFA_FFField::LayoutCaption() {
   m_CaptionRect.height = std::max(m_CaptionRect.height, fHeight);
 }
 
-void CXFA_FFField::RenderCaption(CXFA_Graphics* pGS, CFX_Matrix* pMatrix) {
+void CXFA_FFField::RenderCaption(CFGAS_GEGraphics* pGS, CFX_Matrix* pMatrix) {
   CXFA_TextLayout* pCapTextLayout = m_pNode->GetCaptionTextLayout();
   if (!pCapTextLayout)
     return;
@@ -760,5 +760,5 @@ void CXFA_FFField::OnProcessEvent(CFWL_Event* pEvent) {
   }
 }
 
-void CXFA_FFField::OnDrawWidget(CXFA_Graphics* pGraphics,
+void CXFA_FFField::OnDrawWidget(CFGAS_GEGraphics* pGraphics,
                                 const CFX_Matrix& matrix) {}

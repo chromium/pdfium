@@ -87,8 +87,8 @@ XFA_Element CXFA_Fill::GetType() const {
   return XFA_Element::Solid;
 }
 
-void CXFA_Fill::Draw(CXFA_Graphics* pGS,
-                     CXFA_GEPath* fillPath,
+void CXFA_Fill::Draw(CFGAS_GEGraphics* pGS,
+                     CFGAS_GEPath* fillPath,
                      const CFX_RectF& rtWidget,
                      const CFX_Matrix& matrix) {
   pGS->SaveGraphState();
@@ -107,7 +107,7 @@ void CXFA_Fill::Draw(CXFA_Graphics* pGS,
       DrawStipple(pGS, fillPath, rtWidget, matrix);
       break;
     default:
-      pGS->SetFillColor(CXFA_GEColor(GetColor(false)));
+      pGS->SetFillColor(CFGAS_GEColor(GetColor(false)));
       pGS->FillPath(fillPath, CFX_FillRenderOptions::FillType::kWinding,
                     &matrix);
       break;
@@ -116,8 +116,8 @@ void CXFA_Fill::Draw(CXFA_Graphics* pGS,
   pGS->RestoreGraphState();
 }
 
-void CXFA_Fill::DrawStipple(CXFA_Graphics* pGS,
-                            CXFA_GEPath* fillPath,
+void CXFA_Fill::DrawStipple(CFGAS_GEGraphics* pGS,
+                            CFGAS_GEPath* fillPath,
                             const CFX_RectF& rtWidget,
                             const CFX_Matrix& matrix) {
   CXFA_Stipple* stipple =
@@ -126,8 +126,8 @@ void CXFA_Fill::DrawStipple(CXFA_Graphics* pGS,
     stipple->Draw(pGS, fillPath, rtWidget, matrix);
 }
 
-void CXFA_Fill::DrawRadial(CXFA_Graphics* pGS,
-                           CXFA_GEPath* fillPath,
+void CXFA_Fill::DrawRadial(CFGAS_GEGraphics* pGS,
+                           CFGAS_GEPath* fillPath,
                            const CFX_RectF& rtWidget,
                            const CFX_Matrix& matrix) {
   CXFA_Radial* radial =
@@ -136,8 +136,8 @@ void CXFA_Fill::DrawRadial(CXFA_Graphics* pGS,
     radial->Draw(pGS, fillPath, GetColor(false), rtWidget, matrix);
 }
 
-void CXFA_Fill::DrawLinear(CXFA_Graphics* pGS,
-                           CXFA_GEPath* fillPath,
+void CXFA_Fill::DrawLinear(CFGAS_GEGraphics* pGS,
+                           CFGAS_GEPath* fillPath,
                            const CFX_RectF& rtWidget,
                            const CFX_Matrix& matrix) {
   CXFA_Linear* linear =
@@ -146,8 +146,8 @@ void CXFA_Fill::DrawLinear(CXFA_Graphics* pGS,
     linear->Draw(pGS, fillPath, GetColor(false), rtWidget, matrix);
 }
 
-void CXFA_Fill::DrawPattern(CXFA_Graphics* pGS,
-                            CXFA_GEPath* fillPath,
+void CXFA_Fill::DrawPattern(CFGAS_GEGraphics* pGS,
+                            CFGAS_GEPath* fillPath,
                             const CFX_RectF& rtWidget,
                             const CFX_Matrix& matrix) {
   CXFA_Pattern* pattern =

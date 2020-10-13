@@ -35,7 +35,7 @@ bool CXFA_FFImage::LoadWidget() {
   return GetNode()->LoadImageImage(GetDoc()) && CXFA_FFWidget::LoadWidget();
 }
 
-void CXFA_FFImage::RenderWidget(CXFA_Graphics* pGS,
+void CXFA_FFImage::RenderWidget(CFGAS_GEGraphics* pGS,
                                 const CFX_Matrix& matrix,
                                 HighlightOption highlight) {
   if (!HasVisibleStatus())

@@ -101,7 +101,7 @@ FWL_WidgetHit CFWL_ComboBox::HitTest(const CFX_PointF& point) {
   return FWL_WidgetHit::Unknown;
 }
 
-void CFWL_ComboBox::DrawWidget(CXFA_Graphics* pGraphics,
+void CFWL_ComboBox::DrawWidget(CFGAS_GEGraphics* pGraphics,
                                const CFX_Matrix& matrix) {
   pGraphics->SaveGraphState();
   pGraphics->ConcatMatrix(&matrix);
@@ -448,7 +448,7 @@ void CFWL_ComboBox::OnProcessEvent(CFWL_Event* pEvent) {
   }
 }
 
-void CFWL_ComboBox::OnDrawWidget(CXFA_Graphics* pGraphics,
+void CFWL_ComboBox::OnDrawWidget(CFGAS_GEGraphics* pGraphics,
                                  const CFX_Matrix& matrix) {
   DrawWidget(pGraphics, matrix);
 }

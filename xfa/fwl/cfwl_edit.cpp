@@ -19,6 +19,7 @@
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
+#include "xfa/fgas/graphics/cfgas_gepath.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_caret.h"
 #include "xfa/fwl/cfwl_event.h"
@@ -32,7 +33,6 @@
 #include "xfa/fwl/fwl_widgetdef.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
 #include "xfa/fwl/theme/cfwl_utils.h"
-#include "xfa/fxgraphics/cxfa_gepath.h"
 
 namespace {
 
@@ -140,7 +140,8 @@ FWL_WidgetHit CFWL_Edit::HitTest(const CFX_PointF& point) {
   return FWL_WidgetHit::Unknown;
 }
 
-void CFWL_Edit::DrawWidget(CXFA_Graphics* pGraphics, const CFX_Matrix& matrix) {
+void CFWL_Edit::DrawWidget(CFGAS_GEGraphics* pGraphics,
+                           const CFX_Matrix& matrix) {
   if (!pGraphics)
     return;
 
@@ -321,7 +322,7 @@ void CFWL_Edit::SetScrollOffset(float fScrollOffset) {
   m_fScrollOffsetY = fScrollOffset;
 }
 
-void CFWL_Edit::DrawTextBk(CXFA_Graphics* pGraphics,
+void CFWL_Edit::DrawTextBk(CFGAS_GEGraphics* pGraphics,
                            const CFX_Matrix* pMatrix) {
   CFWL_ThemeBackground param;
   param.m_pWidget = this;
@@ -352,7 +353,7 @@ void CFWL_Edit::DrawTextBk(CXFA_Graphics* pGraphics,
   GetThemeProvider()->DrawBackground(param);
 }
 
-void CFWL_Edit::DrawContent(CXFA_Graphics* pGraphics,
+void CFWL_Edit::DrawContent(CFGAS_GEGraphics* pGraphics,
                             const CFX_Matrix* pMatrix) {
   pGraphics->SaveGraphState();
   if (m_Properties.m_dwStyleExes & FWL_STYLEEXT_EDT_CombText)
@@ -376,7 +377,7 @@ void CFWL_Edit::DrawContent(CXFA_Graphics* pGraphics,
     std::vector<CFX_RectF> rects =
         m_pEditEngine->GetCharacterRectsInRange(sel_start, count);
 
-    CXFA_GEPath path;
+    CFGAS_GEPath path;
     for (auto& rect : rects) {
       rect.left += fOffSetX;
       rect.top += fOffSetY;
@@ -399,7 +400,7 @@ void CFWL_Edit::DrawContent(CXFA_Graphics* pGraphics,
   if (m_Properties.m_dwStyleExes & FWL_STYLEEXT_EDT_CombText) {
     pGraphics->RestoreGraphState();
 
-    CXFA_GEPath path;
+    CFGAS_GEPath path;
     int32_t iLimit = m_nLimit > 0 ? m_nLimit : 1;
     float fStep = m_EngineRect.width / iLimit;
     float fLeft = m_EngineRect.left + 1;
@@ -1028,7 +1029,7 @@ void CFWL_Edit::OnProcessEvent(CFWL_Event* pEvent) {
   }
 }
 
-void CFWL_Edit::OnDrawWidget(CXFA_Graphics* pGraphics,
+void CFWL_Edit::OnDrawWidget(CFGAS_GEGraphics* pGraphics,
                              const CFX_Matrix& matrix) {
   DrawWidget(pGraphics, matrix);
 }

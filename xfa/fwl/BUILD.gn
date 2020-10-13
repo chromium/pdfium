@@ -113,7 +113,7 @@ source_set("fwl") {
     "../../fxjs:gc",
     "../fde",
     "../fgas",
-    "../fxgraphics",
+    "../fgas/graphics",
   ]
   configs += [
     "../../:pdfium_core_config",

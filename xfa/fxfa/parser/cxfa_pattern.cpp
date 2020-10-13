@@ -7,9 +7,9 @@
 #include "xfa/fxfa/parser/cxfa_pattern.h"
 
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fgas/graphics/cfgas_gepattern.h"
 #include "xfa/fxfa/parser/cxfa_color.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
-#include "xfa/fxgraphics/cxfa_gepattern.h"
 
 namespace {
 
@@ -50,8 +50,8 @@ XFA_AttributeValue CXFA_Pattern::GetType() {
   return JSObject()->GetEnum(XFA_Attribute::Type);
 }
 
-void CXFA_Pattern::Draw(CXFA_Graphics* pGS,
-                        CXFA_GEPath* fillPath,
+void CXFA_Pattern::Draw(CFGAS_GEGraphics* pGS,
+                        CFGAS_GEPath* fillPath,
                         FX_ARGB crStart,
                         const CFX_RectF& rtFill,
                         const CFX_Matrix& matrix) {
@@ -79,10 +79,10 @@ void CXFA_Pattern::Draw(CXFA_Graphics* pGS,
       break;
   }
 
-  CXFA_GEPattern pattern(iHatch, crEnd, crStart);
+  CFGAS_GEPattern pattern(iHatch, crEnd, crStart);
 
   pGS->SaveGraphState();
-  pGS->SetFillColor(CXFA_GEColor(&pattern, 0x0));
+  pGS->SetFillColor(CFGAS_GEColor(&pattern, 0x0));
   pGS->FillPath(fillPath, CFX_FillRenderOptions::FillType::kWinding, &matrix);
   pGS->RestoreGraphState();
 }

@@ -4,51 +4,51 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxgraphics/cxfa_gepath.h"
+#include "xfa/fgas/graphics/cfgas_gepath.h"
 
 #include "core/fxge/cfx_pathdata.h"
 
-CXFA_GEPath::CXFA_GEPath() = default;
+CFGAS_GEPath::CFGAS_GEPath() = default;
 
-CXFA_GEPath::~CXFA_GEPath() = default;
+CFGAS_GEPath::~CFGAS_GEPath() = default;
 
-void CXFA_GEPath::Clear() {
+void CFGAS_GEPath::Clear() {
   data_.Clear();
 }
 
-void CXFA_GEPath::Close() {
+void CFGAS_GEPath::Close() {
   data_.ClosePath();
 }
 
-void CXFA_GEPath::MoveTo(const CFX_PointF& point) {
+void CFGAS_GEPath::MoveTo(const CFX_PointF& point) {
   data_.AppendPoint(point, FXPT_TYPE::MoveTo);
 }
 
-void CXFA_GEPath::LineTo(const CFX_PointF& point) {
+void CFGAS_GEPath::LineTo(const CFX_PointF& point) {
   data_.AppendPoint(point, FXPT_TYPE::LineTo);
 }
 
-void CXFA_GEPath::BezierTo(const CFX_PointF& c1,
-                           const CFX_PointF& c2,
-                           const CFX_PointF& to) {
+void CFGAS_GEPath::BezierTo(const CFX_PointF& c1,
+                            const CFX_PointF& c2,
+                            const CFX_PointF& to) {
   data_.AppendPoint(c1, FXPT_TYPE::BezierTo);
   data_.AppendPoint(c2, FXPT_TYPE::BezierTo);
   data_.AppendPoint(to, FXPT_TYPE::BezierTo);
 }
 
-void CXFA_GEPath::ArcTo(const CFX_PointF& pos,
-                        const CFX_SizeF& size,
-                        float start_angle,
-                        float sweep_angle) {
+void CFGAS_GEPath::ArcTo(const CFX_PointF& pos,
+                         const CFX_SizeF& size,
+                         float start_angle,
+                         float sweep_angle) {
   CFX_SizeF new_size = size / 2.0f;
   ArcToInternal(CFX_PointF(pos.x + new_size.width, pos.y + new_size.height),
                 new_size, start_angle, sweep_angle);
 }
 
-void CXFA_GEPath::ArcToInternal(const CFX_PointF& pos,
-                                const CFX_SizeF& size,
-                                float start_angle,
-                                float sweep_angle) {
+void CFGAS_GEPath::ArcToInternal(const CFX_PointF& pos,
+                                 const CFX_SizeF& size,
+                                 float start_angle,
+                                 float sweep_angle) {
   float x0 = cos(sweep_angle / 2);
   float y0 = sin(sweep_angle / 2);
   float tx = ((1.0f - x0) * 4) / (3 * 1.0f);
@@ -72,26 +72,26 @@ void CXFA_GEPath::ArcToInternal(const CFX_PointF& pos,
   data_.AppendPoint(bezier, FXPT_TYPE::BezierTo);
 }
 
-void CXFA_GEPath::AddLine(const CFX_PointF& p1, const CFX_PointF& p2) {
+void CFGAS_GEPath::AddLine(const CFX_PointF& p1, const CFX_PointF& p2) {
   data_.AppendPoint(p1, FXPT_TYPE::MoveTo);
   data_.AppendPoint(p2, FXPT_TYPE::LineTo);
 }
 
-void CXFA_GEPath::AddRectangle(float left,
-                               float top,
-                               float width,
-                               float height) {
+void CFGAS_GEPath::AddRectangle(float left,
+                                float top,
+                                float width,
+                                float height) {
   data_.AppendRect(left, top, left + width, top + height);
 }
 
-void CXFA_GEPath::AddEllipse(const CFX_RectF& rect) {
+void CFGAS_GEPath::AddEllipse(const CFX_RectF& rect) {
   AddArc(rect.TopLeft(), rect.Size(), 0, FX_PI * 2);
 }
 
-void CXFA_GEPath::AddArc(const CFX_PointF& original_pos,
-                         const CFX_SizeF& original_size,
-                         float start_angle,
-                         float sweep_angle) {
+void CFGAS_GEPath::AddArc(const CFX_PointF& original_pos,
+                          const CFX_SizeF& original_size,
+                          float start_angle,
+                          float sweep_angle) {
   if (sweep_angle == 0)
     return;
 
@@ -139,12 +139,12 @@ void CXFA_GEPath::AddArc(const CFX_PointF& original_pos,
   } while (!done);
 }
 
-void CXFA_GEPath::AddSubpath(CXFA_GEPath* path) {
+void CFGAS_GEPath::AddSubpath(CFGAS_GEPath* path) {
   if (!path)
     return;
   data_.Append(&path->data_, nullptr);
 }
 
-void CXFA_GEPath::TransformBy(const CFX_Matrix& mt) {
+void CFGAS_GEPath::TransformBy(const CFX_Matrix& mt) {
   data_.Transform(mt);
 }

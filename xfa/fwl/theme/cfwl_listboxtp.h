@@ -21,7 +21,7 @@ class CFWL_ListBoxTP final : public CFWL_WidgetTP {
  private:
   CFWL_ListBoxTP();
 
-  void DrawListBoxItem(CXFA_Graphics* pGraphics,
+  void DrawListBoxItem(CFGAS_GEGraphics* pGraphics,
                        uint32_t dwStates,
                        const CFX_RectF& rtItem,
                        const CFX_RectF* pData,

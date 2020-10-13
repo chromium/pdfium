@@ -13,6 +13,7 @@
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_widget.h"
 #include "public/fpdf_fwlevent.h"
+#include "xfa/fgas/graphics/cfgas_gegraphics.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/fwl_widgetdef.h"
 #include "xfa/fwl/fwl_widgethit.h"
@@ -22,7 +23,6 @@
 #include "xfa/fxfa/cxfa_ffwidgethandler.h"
 #include "xfa/fxfa/fxfa_basic.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
-#include "xfa/fxgraphics/cxfa_graphics.h"
 
 #define CHECK_FWL_VKEY_ENUM____(name)                                   \
   static_assert(static_cast<int>(name) == static_cast<int>(XFA_##name), \
@@ -239,7 +239,7 @@ void CPDFXFA_WidgetHandler::OnDraw(CPDFSDK_PageView* pPageView,
   if (pPageView->GetFormFillEnv()->GetFocusAnnot() != pAnnot)
     bIsHighlight = true;
 
-  CXFA_Graphics gs(pDevice);
+  CFGAS_GEGraphics gs(pDevice);
   GetXFAFFWidgetHandler(pXFAWidget)
       ->RenderWidget(pXFAWidget->GetXFAFFWidget(), &gs, mtUser2Device,
                      bIsHighlight);

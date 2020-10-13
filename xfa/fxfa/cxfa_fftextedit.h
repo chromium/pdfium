@@ -39,7 +39,7 @@ class CXFA_FFTextEdit : public CXFA_FFField {
   bool OnKillFocus(CXFA_FFWidget* pNewWidget) override WARN_UNUSED_RESULT;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
-  void OnDrawWidget(CXFA_Graphics* pGraphics,
+  void OnDrawWidget(CFGAS_GEGraphics* pGraphics,
                     const CFX_Matrix& matrix) override;
 
   void OnTextWillChange(CFWL_Widget* pWidget, CFWL_EventTextWillChange* change);

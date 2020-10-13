@@ -6,11 +6,11 @@
 
 #include "xfa/fwl/theme/cfwl_carettp.h"
 
+#include "xfa/fgas/graphics/cfgas_gecolor.h"
+#include "xfa/fgas/graphics/cfgas_gepath.h"
 #include "xfa/fwl/cfwl_caret.h"
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_widget.h"
-#include "xfa/fxgraphics/cxfa_gecolor.h"
-#include "xfa/fxgraphics/cxfa_gepath.h"
 
 CFWL_CaretTP::CFWL_CaretTP() = default;
 
@@ -31,13 +31,13 @@ void CFWL_CaretTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   }
 }
 
-void CFWL_CaretTP::DrawCaretBK(CXFA_Graphics* pGraphics,
+void CFWL_CaretTP::DrawCaretBK(CFGAS_GEGraphics* pGraphics,
                                uint32_t dwStates,
                                const CFX_RectF& rect,
                                const CFX_Matrix& matrix) {
-  CXFA_GEPath path;
+  CFGAS_GEPath path;
   path.AddRectangle(rect.left, rect.top, rect.width, rect.height);
-  pGraphics->SetFillColor(CXFA_GEColor(ArgbEncode(255, 0, 0, 0)));
+  pGraphics->SetFillColor(CFGAS_GEColor(ArgbEncode(255, 0, 0, 0)));
   pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding,
                       &matrix);
 }
