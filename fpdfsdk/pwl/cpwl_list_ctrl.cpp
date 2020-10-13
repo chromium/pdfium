@@ -50,15 +50,15 @@ WideString CPWL_ListCtrl::Item::GetText() const {
   return m_pEdit->GetText();
 }
 
-CPLST_Select::CPLST_Select() {}
+CPWL_ListCtrl::SelectState::SelectState() = default;
 
-CPLST_Select::~CPLST_Select() = default;
+CPWL_ListCtrl::SelectState::~SelectState() = default;
 
-void CPLST_Select::Add(int32_t nItemIndex) {
+void CPWL_ListCtrl::SelectState::Add(int32_t nItemIndex) {
   m_Items[nItemIndex] = SELECTING;
 }
 
-void CPLST_Select::Add(int32_t nBeginIndex, int32_t nEndIndex) {
+void CPWL_ListCtrl::SelectState::Add(int32_t nBeginIndex, int32_t nEndIndex) {
   if (nBeginIndex > nEndIndex)
     std::swap(nBeginIndex, nEndIndex);
 
@@ -66,13 +66,13 @@ void CPLST_Select::Add(int32_t nBeginIndex, int32_t nEndIndex) {
     Add(i);
 }
 
-void CPLST_Select::Sub(int32_t nItemIndex) {
+void CPWL_ListCtrl::SelectState::Sub(int32_t nItemIndex) {
   auto it = m_Items.find(nItemIndex);
   if (it != m_Items.end())
     it->second = DESELECTING;
 }
 
-void CPLST_Select::Sub(int32_t nBeginIndex, int32_t nEndIndex) {
+void CPWL_ListCtrl::SelectState::Sub(int32_t nBeginIndex, int32_t nEndIndex) {
   if (nBeginIndex > nEndIndex)
     std::swap(nBeginIndex, nEndIndex);
 
@@ -80,12 +80,12 @@ void CPLST_Select::Sub(int32_t nBeginIndex, int32_t nEndIndex) {
     Sub(i);
 }
 
-void CPLST_Select::DeselectAll() {
+void CPWL_ListCtrl::SelectState::DeselectAll() {
   for (auto& item : m_Items)
     item.second = DESELECTING;
 }
 
-void CPLST_Select::Done() {
+void CPWL_ListCtrl::SelectState::Done() {
   auto it = m_Items.begin();
   while (it != m_Items.end()) {
     if (it->second == DESELECTING)
@@ -157,23 +157,23 @@ void CPWL_ListCtrl::OnMouseDown(const CFX_PointF& point,
   if (IsMultipleSel()) {
     if (bCtrl) {
       if (IsItemSelected(nHitIndex)) {
-        m_aSelItems.Sub(nHitIndex);
+        m_SelectState.Sub(nHitIndex);
         SelectItems();
         m_bCtrlSel = false;
       } else {
-        m_aSelItems.Add(nHitIndex);
+        m_SelectState.Add(nHitIndex);
         SelectItems();
         m_bCtrlSel = true;
       }
 
       m_nFootIndex = nHitIndex;
     } else if (bShift) {
-      m_aSelItems.DeselectAll();
-      m_aSelItems.Add(m_nFootIndex, nHitIndex);
+      m_SelectState.DeselectAll();
+      m_SelectState.Add(m_nFootIndex, nHitIndex);
       SelectItems();
     } else {
-      m_aSelItems.DeselectAll();
-      m_aSelItems.Add(nHitIndex);
+      m_SelectState.DeselectAll();
+      m_SelectState.Add(nHitIndex);
       SelectItems();
 
       m_nFootIndex = nHitIndex;
@@ -196,14 +196,14 @@ void CPWL_ListCtrl::OnMouseMove(const CFX_PointF& point,
   if (IsMultipleSel()) {
     if (bCtrl) {
       if (m_bCtrlSel)
-        m_aSelItems.Add(m_nFootIndex, nHitIndex);
+        m_SelectState.Add(m_nFootIndex, nHitIndex);
       else
-        m_aSelItems.Sub(m_nFootIndex, nHitIndex);
+        m_SelectState.Sub(m_nFootIndex, nHitIndex);
 
       SelectItems();
     } else {
-      m_aSelItems.DeselectAll();
-      m_aSelItems.Add(m_nFootIndex, nHitIndex);
+      m_SelectState.DeselectAll();
+      m_SelectState.Add(m_nFootIndex, nHitIndex);
       SelectItems();
     }
 
@@ -221,12 +221,12 @@ void CPWL_ListCtrl::OnVK(int32_t nItemIndex, bool bShift, bool bCtrl) {
     if (nItemIndex >= 0 && nItemIndex < GetCount()) {
       if (bCtrl) {
       } else if (bShift) {
-        m_aSelItems.DeselectAll();
-        m_aSelItems.Add(m_nFootIndex, nItemIndex);
+        m_SelectState.DeselectAll();
+        m_SelectState.Add(m_nFootIndex, nItemIndex);
         SelectItems();
       } else {
-        m_aSelItems.DeselectAll();
-        m_aSelItems.Add(nItemIndex);
+        m_SelectState.DeselectAll();
+        m_SelectState.Add(nItemIndex);
         SelectItems();
         m_nFootIndex = nItemIndex;
       }
@@ -375,11 +375,11 @@ void CPWL_ListCtrl::InvalidateItem(int32_t nItemIndex) {
 }
 
 void CPWL_ListCtrl::SelectItems() {
-  for (const auto& item : m_aSelItems) {
-    if (item.second != CPLST_Select::NORMAL)
-      SetMultipleSelect(item.first, item.second == CPLST_Select::SELECTING);
+  for (const auto& item : m_SelectState) {
+    if (item.second != SelectState::NORMAL)
+      SetMultipleSelect(item.first, item.second == SelectState::SELECTING);
   }
-  m_aSelItems.Done();
+  m_SelectState.Done();
 }
 
 void CPWL_ListCtrl::Select(int32_t nItemIndex) {
@@ -387,7 +387,7 @@ void CPWL_ListCtrl::Select(int32_t nItemIndex) {
     return;
 
   if (IsMultipleSel()) {
-    m_aSelItems.Add(nItemIndex);
+    m_SelectState.Add(nItemIndex);
     SelectItems();
   } else {
     SetSingleSelect(nItemIndex);
@@ -521,7 +521,7 @@ void CPWL_ListCtrl::Clear() {
 }
 
 void CPWL_ListCtrl::Cancel() {
-  m_aSelItems.DeselectAll();
+  m_SelectState.DeselectAll();
 }
 
 int32_t CPWL_ListCtrl::GetItemIndex(const CFX_PointF& point) const {

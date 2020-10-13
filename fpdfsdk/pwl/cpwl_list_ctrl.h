@@ -20,28 +20,6 @@ class CPWL_EditImpl_Iterator;
 class CPWL_List_Notify;
 class IPVT_FontMap;
 
-class CPLST_Select final {
- public:
-  enum State { DESELECTING = -1, NORMAL = 0, SELECTING = 1 };
-  using const_iterator = std::map<int32_t, State>::const_iterator;
-
-  CPLST_Select();
-  ~CPLST_Select();
-
-  void Add(int32_t nItemIndex);
-  void Add(int32_t nBeginIndex, int32_t nEndIndex);
-  void Sub(int32_t nItemIndex);
-  void Sub(int32_t nBeginIndex, int32_t nEndIndex);
-  void DeselectAll();
-  void Done();
-
-  const_iterator begin() const { return m_Items.begin(); }
-  const_iterator end() const { return m_Items.end(); }
-
- private:
-  std::map<int32_t, State> m_Items;
-};
-
 class CPWL_ListCtrl {
  public:
   CPWL_ListCtrl();
@@ -120,6 +98,28 @@ class CPWL_ListCtrl {
     std::unique_ptr<CPWL_EditImpl> const m_pEdit;
   };
 
+  class SelectState {
+   public:
+    enum State { DESELECTING = -1, NORMAL = 0, SELECTING = 1 };
+    using const_iterator = std::map<int32_t, State>::const_iterator;
+
+    SelectState();
+    ~SelectState();
+
+    void Add(int32_t nItemIndex);
+    void Add(int32_t nBeginIndex, int32_t nEndIndex);
+    void Sub(int32_t nItemIndex);
+    void Sub(int32_t nBeginIndex, int32_t nEndIndex);
+    void DeselectAll();
+    void Done();
+
+    const_iterator begin() const { return m_Items.begin(); }
+    const_iterator end() const { return m_Items.end(); }
+
+   private:
+    std::map<int32_t, State> m_Items;
+  };
+
   CFX_PointF InToOut(const CFX_PointF& point) const;
   CFX_PointF OutToIn(const CFX_PointF& point) const;
   CFX_FloatRect InToOut(const CFX_FloatRect& rect) const;
@@ -160,7 +160,7 @@ class CPWL_ListCtrl {
   int32_t m_nSelItem = -1;
 
   // For multiple:
-  CPLST_Select m_aSelItems;
+  SelectState m_SelectState;
   int32_t m_nFootIndex = -1;
   int32_t m_nCaretIndex = -1;
   bool m_bCtrlSel = false;
