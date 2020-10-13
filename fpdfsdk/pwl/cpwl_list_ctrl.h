@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_PWL_CPWL_LIST_IMPL_H_
-#define FPDFSDK_PWL_CPWL_LIST_IMPL_H_
+#ifndef FPDFSDK_PWL_CPWL_LIST_CTRL_H_
+#define FPDFSDK_PWL_CPWL_LIST_CTRL_H_
 
 #include <map>
 #include <memory>
@@ -172,4 +172,4 @@ class CPWL_ListCtrl {
   UnownedPtr<IPVT_FontMap> m_pFontMap;
 };
 
-#endif  // FPDFSDK_PWL_CPWL_LIST_IMPL_H_
+#endif  // FPDFSDK_PWL_CPWL_LIST_CTRL_H_
