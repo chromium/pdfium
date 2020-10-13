@@ -7,7 +7,7 @@
 #ifndef XFA_FWL_CFWL_APP_H_
 #define XFA_FWL_CFWL_APP_H_
 
-#include "core/fxcrt/timerhandler_iface.h"
+#include "core/fxcrt/cfx_timer.h"
 #include "fxjs/gc/heap.h"
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/member.h"
@@ -33,7 +33,7 @@ class CFWL_App final : public cppgc::GarbageCollected<CFWL_App> {
    public:
     virtual ~AdapterIface() = default;
     virtual CFWL_WidgetMgr::AdapterIface* GetWidgetMgrAdapter() = 0;
-    virtual TimerHandlerIface* GetTimerHandler() = 0;
+    virtual CFX_Timer::HandlerIface* GetTimerHandler() = 0;
     virtual IFWL_ThemeProvider* GetThemeProvider() = 0;
     virtual cppgc::Heap* GetHeap() = 0;
   };
@@ -46,7 +46,7 @@ class CFWL_App final : public cppgc::GarbageCollected<CFWL_App> {
   CFWL_WidgetMgr::AdapterIface* GetWidgetMgrAdapter() const {
     return m_pAdapter->GetWidgetMgrAdapter();
   }
-  TimerHandlerIface* GetTimerHandler() const {
+  CFX_Timer::HandlerIface* GetTimerHandler() const {
     return m_pAdapter->GetTimerHandler();
   }
   IFWL_ThemeProvider* GetThemeProvider() const {

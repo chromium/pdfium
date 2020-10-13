@@ -49,7 +49,7 @@ CFWL_WidgetMgr::AdapterIface* CXFA_FFApp::GetWidgetMgrAdapter() {
   return m_pAdapterWidgetMgr;
 }
 
-TimerHandlerIface* CXFA_FFApp::GetTimerHandler() {
+CFX_Timer::HandlerIface* CXFA_FFApp::GetTimerHandler() {
   return m_pProvider->GetTimerHandler();
 }
 

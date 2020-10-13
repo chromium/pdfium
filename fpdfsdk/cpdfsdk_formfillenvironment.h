@@ -14,8 +14,8 @@
 #include "core/fpdfapi/page/cpdf_occontext.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fxcrt/cfx_timer.h"
 #include "core/fxcrt/observed_ptr.h"
-#include "core/fxcrt/timerhandler_iface.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/pwl/ipwl_systemhandler.h"
@@ -43,8 +43,7 @@ FPDF_WIDESTRING AsFPDFWideString(ByteString* bsUTF16LE);
 // hierarcy back to the form fill environment itself, so as to flag any
 // lingering lifetime issues via the memory tools.
 
-class CPDFSDK_FormFillEnvironment final : public Observable,
-                                          public TimerHandlerIface,
+class CPDFSDK_FormFillEnvironment final : public CFX_Timer::HandlerIface,
                                           public IPWL_SystemHandler {
  public:
   CPDFSDK_FormFillEnvironment(
@@ -196,7 +195,7 @@ class CPDFSDK_FormFillEnvironment final : public Observable,
 
   WideString GetFilePath() const;
   ByteString GetAppName() const { return ByteString(); }
-  TimerHandlerIface* GetTimerHandler() { return this; }
+  CFX_Timer::HandlerIface* GetTimerHandler() { return this; }
   IPWL_SystemHandler* GetSysHandler() { return this; }
   FPDF_FORMFILLINFO* GetFormFillInfo() const { return m_pInfo; }
   void SubmitForm(pdfium::span<uint8_t> form_data, const WideString& URL);

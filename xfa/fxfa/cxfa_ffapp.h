@@ -29,7 +29,7 @@ class CXFA_FFApp : public cppgc::GarbageCollected<CXFA_FFApp>,
   // CFWL_App::AdapterIface:
   void Trace(cppgc::Visitor* visitor) const override;
   CFWL_WidgetMgr::AdapterIface* GetWidgetMgrAdapter() override;
-  TimerHandlerIface* GetTimerHandler() override;
+  CFX_Timer::HandlerIface* GetTimerHandler() override;
   IFWL_ThemeProvider* GetThemeProvider() override;
   cppgc::Heap* GetHeap() override;
 

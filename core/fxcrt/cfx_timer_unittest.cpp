@@ -6,7 +6,6 @@
 
 #include <memory>
 
-#include "core/fxcrt/timerhandler_iface.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
@@ -15,7 +14,7 @@ using testing::DoAll;
 using testing::Return;
 using testing::SaveArg;
 
-class MockTimerScheduler : public TimerHandlerIface {
+class MockTimerScheduler : public CFX_Timer::HandlerIface {
  public:
   MOCK_METHOD2(SetTimer, int(int32_t uElapse, TimerCallback lpTimerFunc));
   MOCK_METHOD1(KillTimer, void(int32_t nID));
@@ -27,8 +26,8 @@ class MockTimerCallback : public CFX_Timer::CallbackIface {
 };
 
 TEST(CFX_Timer, ValidTimers) {
-  TimerHandlerIface::TimerCallback fn1 = nullptr;
-  TimerHandlerIface::TimerCallback fn2 = nullptr;
+  CFX_Timer::HandlerIface::TimerCallback fn1 = nullptr;
+  CFX_Timer::HandlerIface::TimerCallback fn2 = nullptr;
 
   MockTimerScheduler scheduler;
   EXPECT_CALL(scheduler, SetTimer(100, _))
@@ -58,7 +57,7 @@ TEST(CFX_Timer, ValidTimers) {
 }
 
 TEST(CFX_Timer, MisbehavingEmbedder) {
-  TimerHandlerIface::TimerCallback fn1 = nullptr;
+  CFX_Timer::HandlerIface::TimerCallback fn1 = nullptr;
 
   MockTimerScheduler scheduler;
   EXPECT_CALL(scheduler, SetTimer(100, _))

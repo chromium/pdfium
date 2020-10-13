@@ -12,8 +12,8 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/cfx_timer.h"
 #include "core/fxcrt/observed_ptr.h"
-#include "core/fxcrt/timerhandler_iface.h"
 #include "fxjs/cfxjs_engine.h"
 #include "fxjs/cjs_eventrecorder.h"
 #include "fxjs/ijs_runtime.h"
@@ -39,7 +39,7 @@ class CJS_Runtime final : public IJS_Runtime,
       const WideString& script) override;
 
   CJS_EventContext* GetCurrentEventContext() const;
-  TimerHandlerIface* GetTimerHandler() const;
+  CFX_Timer::HandlerIface* GetTimerHandler() const;
 
   // Returns true if the event isn't already found in the set.
   bool AddEventToSet(const FieldEvent& event);

@@ -1,0 +1,338 @@
+{{header}}
+{{include ../../xfa_catalog_1_0.fragment}}
+{{include ../../xfa_object_2_0.fragment}}
+{{include ../../xfa_preamble_3_0.fragment}}
+{{include ../../xfa_config_4_0.fragment}}
+{{object 5 0}} <<
+  {{streamlen}}
+>>
+stream
+<template>
+  <subform name="s1">
+    <subform name="s5">
+      <subform name="s6">
+        <event activity="enter">
+          <script contentType="application/x-javascript">
+            xfa.template.remerge();
+            xfa.form.remerge();
+          </script>
+        </event>
+        <field name="field_31">
+          <ui>
+            <button highlight="push"/>
+          </ui>
+          <caption>
+            <value>
+              <text>
+                Button
+              </text>
+            </value>
+          </caption>
+          <items>
+            <text name="down">
+              Down Text
+            </text>
+            <text name="rollover">
+              Rollover Text
+            </text>
+          </items>
+        </field>
+        <field name="field_32">
+          <ui>
+            <barcode/>
+          </ui>
+          <value>
+            <text>
+              test
+            </text>
+          </value>
+        </field>
+        <field name="field_33">
+          <ui>
+            <checkButton shape="round">
+              <border>
+                <edge/>
+              </border>
+            </checkButton>
+          </ui>
+          <items>
+            <integer>
+              2
+            </integer>
+          </items>
+          <value>
+            <text>
+              Select 2
+            </text>
+          </value>
+          <caption placement="left">
+            <value>
+              <text>
+                Option 2
+              </text>
+            </value>
+          </caption>
+        </field>
+        <field name="field_34">
+          <ui>
+            <textEdit/>
+          </ui>
+          <value>
+            <text>
+              CLGT.
+            </text>
+          </value>
+          <event activity="ready">
+            <script contentType="application/x-javascript">
+            </script>
+          </event>
+          <event activity="enter">
+            <script contentType="application/x-javascript">
+            </script>
+          </event>
+          <event activity="initialize">
+            <script contentType="application/x-javascript">
+            </script>
+          </event>
+        </field>
+        <field name="field_35">
+          <validate>
+            <script contentType="application/x-javascript">
+            </script>
+          </validate>
+          <calculate>
+            <script contentType="application/x-javascript">
+            </script>
+          </calculate>
+          <ui>
+            <choiceList open="onEntry">
+              <border><edge/></border>
+            </choiceList>
+          </ui>
+          <items save="1">
+            <text>apples</text>
+            <text>bananas</text>
+            <text>pears</text>
+          </items>
+          <value>
+            <text>apples</text>
+          </value>
+          <event activity="docClose">
+            <script contentType="application/x-javascript">
+            </script>
+          </event>
+          <event activity="initialize">
+            <script contentType="application/x-javascript">
+            </script>
+          </event>
+          <event activity="change">
+            <script contentType="application/x-javascript">
+            </script>
+          </event>
+        </field>
+        <subform name="s7">
+          <field name="field_36">
+            <ui>
+              <dateTimeEdit>
+                <comb numberOfCells="8"/>
+                <border hand="right">
+                  <edge/>
+                </border>
+              </dateTimeEdit>
+            </ui>
+          </field>
+          <field name="field_37">
+            <validate>
+              <script contentType="application/x-javascript">
+              </script>
+            </validate>
+            <calculate>
+              <script contentType="application/x-javascript">
+              </script>
+            </calculate>
+            <ui>
+              <button highlight="push"/>
+            </ui>
+            <caption>
+              <value>
+                <text>
+                  Button
+                </text>
+              </value>
+            </caption>
+            <items>
+              <text name="down">
+                Down Text
+              </text>
+              <text name="rollover">
+                Rollover Text
+              </text>
+            </items>
+            <event activity="docClose">
+              <script contentType="application/x-javascript">
+              </script>
+            </event>
+            <event activity="change">
+              <script contentType="application/x-javascript">
+              </script>
+            </event>
+            <event activity="exit">
+              <script contentType="application/x-javascript">
+              </script>
+            </event>
+          </field>
+          <field name="field_38">
+            <validate>
+              <script contentType="application/x-javascript">
+              </script>
+            </validate>
+            <calculate>
+              <script contentType="application/x-javascript">
+              </script>
+            </calculate>
+            <ui>
+              <barcode/>
+            </ui>
+            <value>
+              <text>
+                test
+              </text>
+            </value>
+            <event activity="initialize">
+              <script contentType="application/x-javascript">
+              </script>
+            </event>
+            <event activity="change">
+              <script contentType="application/x-javascript">
+              </script>
+            </event>
+            <event activity="ready">
+              <script contentType="application/x-javascript">
+              </script>
+            </event>
+          </field>
+          <field name="field_39">
+            <validate>
+              <script contentType="application/x-javascript">
+              </script>
+            </validate>
+            <calculate>
+              <script contentType="application/x-javascript">
+              </script>
+            </calculate>
+            <ui>
+              <checkButton shape="round">
+                <border>
+                  <edge/>
+                </border>
+              </checkButton>
+            </ui>
+            <items>
+              <integer>
+                2
+              </integer>
+            </items>
+            <value>
+              <text>
+                Select 2
+              </text>
+            </value>
+            <caption placement="left">
+              <value>
+                <text>
+                  Option 2
+                </text>
+              </value>
+            </caption>
+            <event activity="enter">
+              <script contentType="application/x-javascript">
+              </script>
+            </event>
+            <event activity="ready">
+              <script contentType="application/x-javascript">
+              </script>
+            </event>
+            <event activity="change">
+              <script contentType="application/x-javascript">
+              </script>
+            </event>
+          </field>
+          <field name="field_40">
+            <validate>
+              <script contentType="application/x-javascript">
+              </script>
+            </validate>
+            <calculate>
+              <script contentType="application/x-javascript">
+              </script>
+            </calculate>
+            <ui>
+              <textEdit/>
+            </ui>
+            <value>
+              <text>
+                CLGT.
+              </text>
+            </value>
+            <event activity="ready">
+              <script contentType="application/x-javascript">
+              </script>
+            </event>
+            <event activity="docClose">
+              <script contentType="application/x-javascript">
+              </script>
+            </event>
+            <event activity="exit">
+              <script contentType="application/x-javascript">
+              </script>
+            </event>
+          </field>
+          <field name="field_41">
+            <validate>
+              <script contentType="application/x-javascript">
+              </script>
+            </validate>
+            <calculate>
+              <script contentType="application/x-javascript">
+              </script>
+            </calculate>
+            <ui>
+              <choiceList open="onEntry">
+                <border><edge/></border>
+              </choiceList>
+            </ui>
+            <items save="1">
+              <text>apples</text>
+              <text>bananas</text>
+              <text>pears</text>
+            </items>
+            <value>
+              <text>apples</text>
+            </value>
+            <event activity="docClose">
+              <script contentType="application/x-javascript">
+              </script>
+            </event>
+            <event activity="initialize">
+              <script contentType="application/x-javascript">
+              </script>
+            </event>
+            <event activity="initialize">
+              <script contentType="application/x-javascript">
+              </script>
+            </event>
+          </field>
+        </subform>
+      </subform>
+    </subform>
+  </subform>
+</template>
+endstream
+endobj
+{{include ../../xfa_locale_6_0.fragment}}
+{{include ../../xfa_postamble_7_0.fragment}}
+{{include ../../xfa_pages_8_0.fragment}}
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

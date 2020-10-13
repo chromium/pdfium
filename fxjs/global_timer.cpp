@@ -8,7 +8,7 @@
 
 #include <map>
 
-#include "core/fxcrt/timerhandler_iface.h"
+#include "core/fxcrt/cfx_timer.h"
 #include "fxjs/cjs_app.h"
 #include "third_party/base/no_destructor.h"
 #include "third_party/base/stl_util.h"
@@ -88,5 +88,5 @@ void GlobalTimer::Cancel(int32_t nTimerID) {
 }
 
 bool GlobalTimer::HasValidID() const {
-  return m_nTimerID != TimerHandlerIface::kInvalidTimerID;
+  return m_nTimerID != CFX_Timer::HandlerIface::kInvalidTimerID;
 }

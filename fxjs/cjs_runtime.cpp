@@ -136,7 +136,7 @@ CJS_EventContext* CJS_Runtime::GetCurrentEventContext() const {
                                      : m_EventContextArray.back().get();
 }
 
-TimerHandlerIface* CJS_Runtime::GetTimerHandler() const {
+CFX_Timer::HandlerIface* CJS_Runtime::GetTimerHandler() const {
   return m_pFormFillEnv ? m_pFormFillEnv->GetTimerHandler() : nullptr;
 }
 

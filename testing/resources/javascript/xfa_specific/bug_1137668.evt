@@ -1,0 +1,9 @@
+keycode,9,shift
+mousedown,left,50,50
+keycode,9
+mousemove,50,50
+mousedown,left,50,50
+keycode,9
+mousemove,20,20
+mousedown,left,20,20
+mousedown,right,20,20
