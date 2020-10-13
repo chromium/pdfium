@@ -750,7 +750,7 @@ void FreeDIBitmap(PREVIEW3_DIBITMAP* pInfo) {
 
 }  // namespace
 
-CGdiplusExt::CGdiplusExt() {}
+CGdiplusExt::CGdiplusExt() = default;
 
 CGdiplusExt::~CGdiplusExt() {
   FreeLibrary(m_GdiModule);

@@ -1628,6 +1628,6 @@ ByteStringView CPDF_StreamContentParser::FindValueAbbreviationForTesting(
   return FindFullName(kInlineValueAbbr, pdfium::size(kInlineValueAbbr), abbr);
 }
 
-CPDF_StreamContentParser::ContentParam::ContentParam() {}
+CPDF_StreamContentParser::ContentParam::ContentParam() = default;
 
 CPDF_StreamContentParser::ContentParam::~ContentParam() = default;

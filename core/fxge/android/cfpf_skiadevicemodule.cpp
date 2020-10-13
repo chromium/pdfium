@@ -22,7 +22,7 @@ CFPF_SkiaDeviceModule* CFPF_GetSkiaDeviceModule() {
   return gs_pPFModule;
 }
 
-CFPF_SkiaDeviceModule::CFPF_SkiaDeviceModule() {}
+CFPF_SkiaDeviceModule::CFPF_SkiaDeviceModule() = default;
 
 CFPF_SkiaDeviceModule::~CFPF_SkiaDeviceModule() = default;
 

@@ -8,7 +8,7 @@
 
 #include "core/fxcrt/fx_stream.h"
 
-CPDF_Number::CPDF_Number() {}
+CPDF_Number::CPDF_Number() = default;
 
 CPDF_Number::CPDF_Number(int value) : m_Number(value) {}
 

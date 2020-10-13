@@ -2716,7 +2716,7 @@ void CFX_SkiaDeviceDriver::DebugVerifyBitmapIsPreMultiplied() const {
 }
 #endif
 
-CFX_DefaultRenderDevice::CFX_DefaultRenderDevice() {}
+CFX_DefaultRenderDevice::CFX_DefaultRenderDevice() = default;
 
 #if defined(_SKIA_SUPPORT_)
 void CFX_DefaultRenderDevice::Clear(uint32_t color) {

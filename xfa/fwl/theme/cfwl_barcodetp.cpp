@@ -10,7 +10,7 @@
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_widget.h"
 
-CFWL_BarcodeTP::CFWL_BarcodeTP() {}
+CFWL_BarcodeTP::CFWL_BarcodeTP() = default;
 
 CFWL_BarcodeTP::~CFWL_BarcodeTP() = default;
 

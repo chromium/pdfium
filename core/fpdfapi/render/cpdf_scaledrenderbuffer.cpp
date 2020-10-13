@@ -17,7 +17,7 @@ constexpr size_t kImageSizeLimitBytes = 30 * 1024 * 1024;
 
 }  // namespace
 
-CPDF_ScaledRenderBuffer::CPDF_ScaledRenderBuffer() {}
+CPDF_ScaledRenderBuffer::CPDF_ScaledRenderBuffer() = default;
 
 CPDF_ScaledRenderBuffer::~CPDF_ScaledRenderBuffer() = default;
 

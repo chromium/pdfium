@@ -1507,7 +1507,7 @@ bool CFX_AggDeviceDriver::ContinueDIBits(CFX_ImageRenderer* pHandle,
 }  // namespace pdfium
 
 #if !defined(_SKIA_SUPPORT_)
-CFX_DefaultRenderDevice::CFX_DefaultRenderDevice() {}
+CFX_DefaultRenderDevice::CFX_DefaultRenderDevice() = default;
 
 CFX_DefaultRenderDevice::~CFX_DefaultRenderDevice() = default;
 

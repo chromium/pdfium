@@ -322,7 +322,7 @@ WideString WideString::Format(const wchar_t* pFormat, ...) {
   return ret;
 }
 
-WideString::WideString() {}
+WideString::WideString() = default;
 
 WideString::WideString(const WideString& other) : m_pData(other.m_pData) {}
 

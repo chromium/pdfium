@@ -137,7 +137,7 @@ bool CFX_CSSDeclaration::ParseCSSColor(const wchar_t* pszValue,
   return true;
 }
 
-CFX_CSSDeclaration::CFX_CSSDeclaration() {}
+CFX_CSSDeclaration::CFX_CSSDeclaration() = default;
 
 CFX_CSSDeclaration::~CFX_CSSDeclaration() = default;
 

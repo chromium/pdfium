@@ -11,7 +11,7 @@
 #include "core/fpdfapi/page/cpdf_tilingpattern.h"
 #include "core/fxge/fx_dib.h"
 
-CPDF_ColorState::CPDF_ColorState() {}
+CPDF_ColorState::CPDF_ColorState() = default;
 
 CPDF_ColorState::CPDF_ColorState(const CPDF_ColorState& that)
     : m_Ref(that.m_Ref) {}

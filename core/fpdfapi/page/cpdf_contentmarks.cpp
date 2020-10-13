@@ -95,7 +95,7 @@ size_t CPDF_ContentMarks::FindFirstDifference(
   return min_len;
 }
 
-CPDF_ContentMarks::MarkData::MarkData() {}
+CPDF_ContentMarks::MarkData::MarkData() = default;
 
 CPDF_ContentMarks::MarkData::MarkData(const MarkData& src)
     : m_Marks(src.m_Marks) {}

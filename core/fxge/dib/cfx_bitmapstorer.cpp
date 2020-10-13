@@ -10,7 +10,7 @@
 
 #include "core/fxge/dib/cfx_dibitmap.h"
 
-CFX_BitmapStorer::CFX_BitmapStorer() {}
+CFX_BitmapStorer::CFX_BitmapStorer() = default;
 
 CFX_BitmapStorer::~CFX_BitmapStorer() = default;
 

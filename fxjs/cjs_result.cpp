@@ -6,7 +6,7 @@
 
 #include "fxjs/cjs_result.h"
 
-CJS_Result::CJS_Result() {}
+CJS_Result::CJS_Result() = default;
 
 CJS_Result::CJS_Result(v8::Local<v8::Value> ret) : return_(ret) {}
 

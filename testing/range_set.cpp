@@ -8,7 +8,8 @@
 
 #include "core/fxcrt/fx_system.h"
 
-RangeSet::RangeSet() {}
+RangeSet::RangeSet() = default;
+
 RangeSet::~RangeSet() = default;
 
 bool RangeSet::Contains(const Range& range) const {

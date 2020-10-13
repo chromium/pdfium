@@ -10,7 +10,7 @@
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_widget.h"
 
-CFWL_PictureBoxTP::CFWL_PictureBoxTP() {}
+CFWL_PictureBoxTP::CFWL_PictureBoxTP() = default;
 
 CFWL_PictureBoxTP::~CFWL_PictureBoxTP() = default;
 

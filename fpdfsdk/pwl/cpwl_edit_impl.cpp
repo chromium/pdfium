@@ -149,7 +149,7 @@ bool CPWL_EditImpl_Provider::IsLatinWord(uint16_t word) {
   return FX_EDIT_ISLATINWORD(word);
 }
 
-CPWL_EditImpl_Refresh::CPWL_EditImpl_Refresh() {}
+CPWL_EditImpl_Refresh::CPWL_EditImpl_Refresh() = default;
 
 CPWL_EditImpl_Refresh::~CPWL_EditImpl_Refresh() = default;
 
@@ -1889,7 +1889,7 @@ ByteString CPWL_EditImpl::GetPDFWordString(int32_t nFontIndex,
   return sWord;
 }
 
-CPWL_EditImpl_Select::CPWL_EditImpl_Select() {}
+CPWL_EditImpl_Select::CPWL_EditImpl_Select() = default;
 
 CPWL_EditImpl_Select::CPWL_EditImpl_Select(const CPVT_WordRange& range) {
   Set(range.BeginPos, range.EndPos);

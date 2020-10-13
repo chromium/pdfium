@@ -346,7 +346,7 @@ CFX_CTTGSUBTable::TCoverageFormat2::TCoverageFormat2() {
 
 CFX_CTTGSUBTable::TCoverageFormat2::~TCoverageFormat2() = default;
 
-CFX_CTTGSUBTable::TSubTableBase::TSubTableBase() {}
+CFX_CTTGSUBTable::TSubTableBase::TSubTableBase() = default;
 
 CFX_CTTGSUBTable::TSubTableBase::~TSubTableBase() = default;
 

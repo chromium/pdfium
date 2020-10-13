@@ -12,6 +12,6 @@
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fxge/cfx_renderdevice.h"
 
-CPDF_PageRenderContext::CPDF_PageRenderContext() {}
+CPDF_PageRenderContext::CPDF_PageRenderContext() = default;
 
 CPDF_PageRenderContext::~CPDF_PageRenderContext() = default;

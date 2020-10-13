@@ -8,7 +8,7 @@
 
 #include "core/fxcrt/fx_stream.h"
 
-CPDF_Null::CPDF_Null() {}
+CPDF_Null::CPDF_Null() = default;
 
 CPDF_Object::Type CPDF_Null::GetType() const {
   return kNullobj;

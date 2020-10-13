@@ -111,7 +111,8 @@ bool CPDF_PSEngine::Execute() {
   return m_MainProc.Execute(this);
 }
 
-CPDF_PSProc::CPDF_PSProc() {}
+CPDF_PSProc::CPDF_PSProc() = default;
+
 CPDF_PSProc::~CPDF_PSProc() = default;
 
 bool CPDF_PSProc::Parse(CPDF_SimpleParser* parser, int depth) {

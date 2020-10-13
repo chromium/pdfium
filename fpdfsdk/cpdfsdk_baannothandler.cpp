@@ -39,7 +39,7 @@ void UpdateAnnotRects(CPDFSDK_PageView* pPageView, CPDFSDK_BAAnnot* pBAAnnot) {
 
 }  // namespace
 
-CPDFSDK_BAAnnotHandler::CPDFSDK_BAAnnotHandler() {}
+CPDFSDK_BAAnnotHandler::CPDFSDK_BAAnnotHandler() = default;
 
 CPDFSDK_BAAnnotHandler::~CPDFSDK_BAAnnotHandler() = default;
 

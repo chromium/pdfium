@@ -6,7 +6,7 @@
 
 #include "core/fpdfapi/page/cpdf_graphicstates.h"
 
-CPDF_GraphicStates::CPDF_GraphicStates() {}
+CPDF_GraphicStates::CPDF_GraphicStates() = default;
 
 CPDF_GraphicStates::~CPDF_GraphicStates() = default;
 

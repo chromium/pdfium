@@ -6,6 +6,6 @@
 
 #include "core/fxcrt/css/cfx_csspropertyholder.h"
 
-CFX_CSSPropertyHolder::CFX_CSSPropertyHolder() {}
+CFX_CSSPropertyHolder::CFX_CSSPropertyHolder() = default;
 
 CFX_CSSPropertyHolder::~CFX_CSSPropertyHolder() = default;

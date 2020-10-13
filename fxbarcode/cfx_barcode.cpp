@@ -55,7 +55,7 @@ std::unique_ptr<CBC_CodeBase> CreateBarCodeEngineObject(BC_TYPE type) {
 
 }  // namespace
 
-CFX_Barcode::CFX_Barcode() {}
+CFX_Barcode::CFX_Barcode() = default;
 
 CFX_Barcode::~CFX_Barcode() = default;
 

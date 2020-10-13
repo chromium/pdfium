@@ -8,7 +8,7 @@
 
 #include "core/fxge/cfx_pathdata.h"
 
-CXFA_GEPath::CXFA_GEPath() {}
+CXFA_GEPath::CXFA_GEPath() = default;
 
 CXFA_GEPath::~CXFA_GEPath() = default;
 
