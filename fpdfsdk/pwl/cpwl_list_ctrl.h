@@ -22,10 +22,24 @@ class IPVT_FontMap;
 
 class CPWL_ListCtrl {
  public:
+  class NotifyIface {
+   public:
+    virtual ~NotifyIface();
+
+    virtual void OnSetScrollInfoY(float fPlateMin,
+                                  float fPlateMax,
+                                  float fContentMin,
+                                  float fContentMax,
+                                  float fSmallStep,
+                                  float fBigStep) = 0;
+    virtual void OnSetScrollPosY(float fy) = 0;
+    virtual void OnInvalidateRect(CFX_FloatRect* pRect) = 0;
+  };
+
   CPWL_ListCtrl();
   ~CPWL_ListCtrl();
 
-  void SetNotify(CPWL_List_Notify* pNotify) { m_pNotify = pNotify; }
+  void SetNotify(NotifyIface* pNotify) { m_pNotify = pNotify; }
   void OnMouseDown(const CFX_PointF& point, bool bShift, bool bCtrl);
   void OnMouseMove(const CFX_PointF& point, bool bShift, bool bCtrl);
   void OnVK_UP(bool bShift, bool bCtrl);
@@ -167,7 +181,7 @@ class CPWL_ListCtrl {
 
   bool m_bMultiple = false;
   bool m_bNotifyFlag = false;
-  UnownedPtr<CPWL_List_Notify> m_pNotify;
+  UnownedPtr<NotifyIface> m_pNotify;
   std::vector<std::unique_ptr<Item>> m_ListItems;
   UnownedPtr<IPVT_FontMap> m_pFontMap;
 };

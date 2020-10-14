@@ -10,40 +10,20 @@
 #include <memory>
 
 #include "core/fxcrt/unowned_ptr.h"
+#include "fpdfsdk/pwl/cpwl_list_ctrl.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 
-class CPWL_ListCtrl;
-class CPWL_List_Notify;
-class CPWL_ListBox;
 class IPWL_Filler_Notify;
 struct CPVT_WordPlace;
 
-class CPWL_List_Notify {
- public:
-  explicit CPWL_List_Notify(CPWL_ListBox* pList);
-  ~CPWL_List_Notify();
-
-  void IOnSetScrollInfoY(float fPlateMin,
-                         float fPlateMax,
-                         float fContentMin,
-                         float fContentMax,
-                         float fSmallStep,
-                         float fBigStep);
-  void IOnSetScrollPosY(float fy);
-  void IOnInvalidateRect(CFX_FloatRect* pRect);
-
- private:
-  UnownedPtr<CPWL_ListBox> m_pList;
-};
-
-class CPWL_ListBox : public CPWL_Wnd {
+class CPWL_ListBox : public CPWL_Wnd, public CPWL_ListCtrl::NotifyIface {
  public:
   CPWL_ListBox(
       const CreateParams& cp,
       std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData);
   ~CPWL_ListBox() override;
 
-  // CPWL_Wnd
+  // CPWL_Wnd:
   void OnCreated() override;
   void OnDestroy() override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
@@ -64,6 +44,16 @@ class CPWL_ListBox : public CPWL_Wnd {
   CFX_FloatRect GetFocusRect() const override;
   void SetFontSize(float fFontSize) override;
   float GetFontSize() const override;
+
+  // CPWL_ListCtrl::NotifyIface:
+  void OnSetScrollInfoY(float fPlateMin,
+                        float fPlateMax,
+                        float fContentMin,
+                        float fContentMax,
+                        float fSmallStep,
+                        float fBigStep) override;
+  void OnSetScrollPosY(float fy) override;
+  void OnInvalidateRect(CFX_FloatRect* pRect) override;
 
   bool OnNotifySelectionChanged(bool bKeyDown, uint32_t nFlag);
 
@@ -97,8 +87,7 @@ class CPWL_ListBox : public CPWL_Wnd {
  protected:
   bool m_bMouseDown = false;
   bool m_bHoverSel = false;
-  std::unique_ptr<CPWL_List_Notify> m_pListNotify;  // Must outlive |m_pList|.
-  std::unique_ptr<CPWL_ListCtrl> m_pList;
+  std::unique_ptr<CPWL_ListCtrl> m_pListCtrl;
   UnownedPtr<IPWL_Filler_Notify> m_pFillerNotify;
 
  private:

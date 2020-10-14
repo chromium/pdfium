@@ -15,6 +15,8 @@
 #include "fpdfsdk/pwl/cpwl_list_box.h"
 #include "third_party/base/stl_util.h"
 
+CPWL_ListCtrl::NotifyIface::~NotifyIface() = default;
+
 CPWL_ListCtrl::Item::Item() : m_pEdit(std::make_unique<CPWL_EditImpl>()) {
   m_pEdit->SetAlignmentV(1, true);
   m_pEdit->Initialize();
@@ -355,7 +357,7 @@ void CPWL_ListCtrl::InvalidateItem(int32_t nItemIndex) {
       if (!m_bNotifyFlag) {
         m_bNotifyFlag = true;
         CFX_FloatRect rcRefresh = m_rcPlate;
-        m_pNotify->IOnInvalidateRect(&rcRefresh);
+        m_pNotify->OnInvalidateRect(&rcRefresh);
         m_bNotifyFlag = false;
       }
     } else {
@@ -367,7 +369,7 @@ void CPWL_ListCtrl::InvalidateItem(int32_t nItemIndex) {
         rcRefresh.bottom -= 1.0f;
         rcRefresh.top += 1.0f;
 
-        m_pNotify->IOnInvalidateRect(&rcRefresh);
+        m_pNotify->OnInvalidateRect(&rcRefresh);
         m_bNotifyFlag = false;
       }
     }
@@ -437,9 +439,9 @@ void CPWL_ListCtrl::SetScrollInfo() {
 
     if (!m_bNotifyFlag) {
       m_bNotifyFlag = true;
-      m_pNotify->IOnSetScrollInfoY(rcPlate.bottom, rcPlate.top,
-                                   rcContent.bottom, rcContent.top,
-                                   GetFirstHeight(), rcPlate.Height());
+      m_pNotify->OnSetScrollInfoY(rcPlate.bottom, rcPlate.top, rcContent.bottom,
+                                  rcContent.top, GetFirstHeight(),
+                                  rcPlate.Height());
       m_bNotifyFlag = false;
     }
   }
@@ -470,7 +472,7 @@ void CPWL_ListCtrl::SetScrollPosY(float fy) {
     if (m_pNotify) {
       if (!m_bNotifyFlag) {
         m_bNotifyFlag = true;
-        m_pNotify->IOnSetScrollPosY(fy);
+        m_pNotify->OnSetScrollPosY(fy);
         m_bNotifyFlag = false;
       }
     }
