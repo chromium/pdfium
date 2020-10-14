@@ -271,7 +271,7 @@ test("pdfium_unittests") {
         "core/fxcrt/css:unittests",
         "fxbarcode:unittests",
         "xfa/fde:unittests",
-        "xfa/fgas:unittests",
+        "xfa/fgas/crt:unittests",
         "xfa/fgas/layout:unittests",
         "xfa/fxfa:unittests",
         "xfa/fxfa/fm2js:unittests",

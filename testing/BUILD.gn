@@ -91,7 +91,7 @@ source_set("test_environments") {
     ]
     deps += [
       "../fxjs:gc",
-      "../xfa/fgas",
+      "../xfa/fgas/font",
     ]
   }
 }

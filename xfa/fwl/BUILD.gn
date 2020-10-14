@@ -112,7 +112,7 @@ source_set("fwl") {
     "../../fxbarcode",
     "../../fxjs:gc",
     "../fde",
-    "../fgas",
+    "../fgas/font",
     "../fgas/graphics",
   ]
   configs += [

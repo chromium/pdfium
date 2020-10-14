@@ -208,7 +208,7 @@ source_set("fxjs") {
       ]
       deps += [
         ":gc",
-        "../xfa/fgas",
+        "../xfa/fgas/crt",
         "../xfa/fxfa/fm2js",
       ]
     }
