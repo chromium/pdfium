@@ -11,41 +11,14 @@
 #include <utility>
 
 #include "core/fxcrt/unowned_ptr.h"
-#include "fpdfsdk/pwl/cpwl_edit.h"
-#include "fpdfsdk/pwl/cpwl_list_box.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
+#include "fpdfsdk/pwl/ipwl_systemhandler.h"
 
+class CFFL_FormFiller;
+class CPWL_Edit;
+class CPWL_CBButton;
+class CPWL_CBListBox;
 class IPWL_FillerNotify;
-
-class CPWL_CBListBox final : public CPWL_ListBox {
- public:
-  CPWL_CBListBox(
-      const CreateParams& cp,
-      std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData);
-  ~CPWL_CBListBox() override;
-
-  // CPWL_ListBox
-  bool OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) override;
-
-  bool IsMovementKey(uint16_t nChar) const;
-  bool OnMovementKeyDown(uint16_t nChar, uint32_t nFlag);
-  bool IsChar(uint16_t nChar, uint32_t nFlag) const;
-  bool OnCharNotify(uint16_t nChar, uint32_t nFlag);
-};
-
-class CPWL_CBButton final : public CPWL_Wnd {
- public:
-  CPWL_CBButton(
-      const CreateParams& cp,
-      std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData);
-  ~CPWL_CBButton() override;
-
-  // CPWL_Wnd
-  void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                          const CFX_Matrix& mtUser2Device) override;
-  bool OnLButtonDown(uint32_t nFlag, const CFX_PointF& point) override;
-  bool OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) override;
-};
 
 class CPWL_ComboBox final : public CPWL_Wnd {
  public:
