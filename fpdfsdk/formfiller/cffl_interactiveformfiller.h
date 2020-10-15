@@ -149,7 +149,7 @@ class CFFL_InteractiveFormFiller final : public IPWL_FillerNotify {
   bool OnClick(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                CPDFSDK_PageView* pPageView,
                uint32_t nFlag);
-  bool OnFull(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  bool OnFull(ObservedPtr<CPDFSDK_Widget>* pAnnot,
               CPDFSDK_PageView* pPageView,
               uint32_t nFlag);
   bool OnPreOpen(ObservedPtr<CPDFSDK_Annot>* pAnnot,
