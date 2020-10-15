@@ -15,6 +15,8 @@
 #include "fpdfsdk/pwl/cpwl_list_box.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 
+class IPWL_FillerNotify;
+
 class CPWL_CBListBox final : public CPWL_ListBox {
  public:
   CPWL_CBListBox(
@@ -74,7 +76,7 @@ class CPWL_ComboBox final : public CPWL_Wnd {
   bool Undo() override;
   bool Redo() override;
 
-  void SetFillerNotify(IPWL_Filler_Notify* pNotify);
+  void SetFillerNotify(IPWL_FillerNotify* pNotify);
 
   void SetText(const WideString& text);
   void AddString(const WideString& str);
@@ -104,7 +106,7 @@ class CPWL_ComboBox final : public CPWL_Wnd {
   bool m_bPopup = false;
   bool m_bBottom = true;
   int32_t m_nSelectItem = -1;
-  UnownedPtr<IPWL_Filler_Notify> m_pFillerNotify;
+  UnownedPtr<IPWL_FillerNotify> m_pFillerNotify;
   UnownedPtr<CFFL_FormFiller> m_pFormFiller;
 };
 

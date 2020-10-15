@@ -13,9 +13,8 @@
 #include "fpdfsdk/pwl/cpwl_edit.h"
 #include "fpdfsdk/pwl/cpwl_edit_ctrl.h"
 #include "fpdfsdk/pwl/cpwl_edit_impl.h"
-#include "fpdfsdk/pwl/cpwl_list_ctrl.h"
 #include "fpdfsdk/pwl/cpwl_scroll_bar.h"
-#include "fpdfsdk/pwl/cpwl_wnd.h"
+#include "fpdfsdk/pwl/ipwl_fillernotify.h"
 #include "public/fpdf_fwlevent.h"
 
 CPWL_ListBox::CPWL_ListBox(

@@ -25,6 +25,7 @@
 #include "fpdfsdk/pwl/cpwl_edit_impl.h"
 #include "fpdfsdk/pwl/cpwl_scroll_bar.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
+#include "fpdfsdk/pwl/ipwl_fillernotify.h"
 #include "public/fpdf_fwlevent.h"
 
 CPWL_Edit::CPWL_Edit(

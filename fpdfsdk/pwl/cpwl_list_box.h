@@ -13,7 +13,7 @@
 #include "fpdfsdk/pwl/cpwl_list_ctrl.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 
-class IPWL_Filler_Notify;
+class IPWL_FillerNotify;
 struct CPVT_WordPlace;
 
 class CPWL_ListBox : public CPWL_Wnd, public CPWL_ListCtrl::NotifyIface {
@@ -78,7 +78,7 @@ class CPWL_ListBox : public CPWL_Wnd, public CPWL_ListCtrl::NotifyIface {
   float GetFirstHeight() const;
   CFX_FloatRect GetListRect() const;
 
-  void SetFillerNotify(IPWL_Filler_Notify* pNotify) {
+  void SetFillerNotify(IPWL_FillerNotify* pNotify) {
     m_pFillerNotify = pNotify;
   }
 
@@ -88,7 +88,7 @@ class CPWL_ListBox : public CPWL_Wnd, public CPWL_ListCtrl::NotifyIface {
   bool m_bMouseDown = false;
   bool m_bHoverSel = false;
   std::unique_ptr<CPWL_ListCtrl> m_pListCtrl;
-  UnownedPtr<IPWL_Filler_Notify> m_pFillerNotify;
+  UnownedPtr<IPWL_FillerNotify> m_pFillerNotify;
 
  private:
   UnownedPtr<CFFL_FormFiller> m_pFormFiller;
