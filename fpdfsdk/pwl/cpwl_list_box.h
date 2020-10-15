@@ -53,7 +53,7 @@ class CPWL_ListBox : public CPWL_Wnd, public CPWL_ListCtrl::NotifyIface {
                         float fSmallStep,
                         float fBigStep) override;
   void OnSetScrollPosY(float fy) override;
-  void OnInvalidateRect(CFX_FloatRect* pRect) override;
+  void OnInvalidateRect(const CFX_FloatRect& pRect) override;
 
   bool OnNotifySelectionChanged(bool bKeyDown, uint32_t nFlag);
 

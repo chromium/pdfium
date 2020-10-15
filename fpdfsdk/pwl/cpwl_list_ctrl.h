@@ -33,7 +33,7 @@ class CPWL_ListCtrl {
                                   float fSmallStep,
                                   float fBigStep) = 0;
     virtual void OnSetScrollPosY(float fy) = 0;
-    virtual void OnInvalidateRect(CFX_FloatRect* pRect) = 0;
+    virtual void OnInvalidateRect(const CFX_FloatRect& rect) = 0;
   };
 
   CPWL_ListCtrl();

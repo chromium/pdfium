@@ -357,7 +357,7 @@ void CPWL_ListCtrl::InvalidateItem(int32_t nItemIndex) {
       if (!m_bNotifyFlag) {
         m_bNotifyFlag = true;
         CFX_FloatRect rcRefresh = m_rcPlate;
-        m_pNotify->OnInvalidateRect(&rcRefresh);
+        m_pNotify->OnInvalidateRect(rcRefresh);
         m_bNotifyFlag = false;
       }
     } else {
@@ -369,7 +369,7 @@ void CPWL_ListCtrl::InvalidateItem(int32_t nItemIndex) {
         rcRefresh.bottom -= 1.0f;
         rcRefresh.top += 1.0f;
 
-        m_pNotify->OnInvalidateRect(&rcRefresh);
+        m_pNotify->OnInvalidateRect(rcRefresh);
         m_bNotifyFlag = false;
       }
     }

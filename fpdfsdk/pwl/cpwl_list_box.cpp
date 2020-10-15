@@ -286,8 +286,8 @@ void CPWL_ListBox::OnSetScrollPosY(float fy) {
   SetScrollPosition(fy);
 }
 
-void CPWL_ListBox::OnInvalidateRect(CFX_FloatRect* pRect) {
-  InvalidateRect(pRect);
+void CPWL_ListBox::OnInvalidateRect(const CFX_FloatRect& rect) {
+  InvalidateRect(&rect);
 }
 
 void CPWL_ListBox::Select(int32_t nItemIndex) {

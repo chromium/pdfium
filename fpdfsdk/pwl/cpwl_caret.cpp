@@ -109,10 +109,9 @@ void CPWL_Caret::SetCaret(bool bVisible,
   // needs to be done, check the return value of Move().
 }
 
-bool CPWL_Caret::InvalidateRect(CFX_FloatRect* pRect) {
-  if (!pRect) {
+bool CPWL_Caret::InvalidateRect(const CFX_FloatRect* pRect) {
+  if (!pRect)
     return CPWL_Wnd::InvalidateRect(nullptr);
-  }
 
   CFX_FloatRect rcRefresh = *pRect;
   if (!rcRefresh.IsEmpty()) {

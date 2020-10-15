@@ -249,7 +249,7 @@ void CPWL_Wnd::DrawChildAppearance(CFX_RenderDevice* pDevice,
   }
 }
 
-bool CPWL_Wnd::InvalidateRect(CFX_FloatRect* pRect) {
+bool CPWL_Wnd::InvalidateRect(const CFX_FloatRect* pRect) {
   if (!IsValid())
     return true;
 

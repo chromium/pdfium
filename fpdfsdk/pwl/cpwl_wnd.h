@@ -144,7 +144,7 @@ class CPWL_Wnd : public Observable {
   virtual ~CPWL_Wnd();
 
   // Returns |true| iff this instance is still allocated.
-  virtual bool InvalidateRect(CFX_FloatRect* pRect);
+  virtual bool InvalidateRect(const CFX_FloatRect* pRect);
 
   virtual bool OnKeyDown(uint16_t nChar, uint32_t nFlag);
   virtual bool OnChar(uint16_t nChar, uint32_t nFlag);

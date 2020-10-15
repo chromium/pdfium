@@ -21,7 +21,7 @@ class CPWL_Caret final : public CPWL_Wnd, public CFX_Timer::CallbackIface {
   // CPWL_Wnd:
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           const CFX_Matrix& mtUser2Device) override;
-  bool InvalidateRect(CFX_FloatRect* pRect) override;
+  bool InvalidateRect(const CFX_FloatRect* pRect) override;
   bool SetVisible(bool bVisible) override;
 
   // CFX_Timer::CallbackIface:
