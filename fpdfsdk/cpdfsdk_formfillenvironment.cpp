@@ -23,6 +23,7 @@
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
+#include "fpdfsdk/formfiller/cffl_privatedata.h"
 #include "fxjs/ijs_runtime.h"
 #include "third_party/base/stl_util.h"
 
@@ -69,7 +70,7 @@ CPDFSDK_FormFillEnvironment::~CPDFSDK_FormFillEnvironment() {
 void CPDFSDK_FormFillEnvironment::InvalidateRect(PerWindowData* pWidgetData,
                                                  const CFX_FloatRect& rect) {
   auto* pPrivateData = static_cast<CFFL_PrivateData*>(pWidgetData);
-  CPDFSDK_Widget* widget = pPrivateData->pWidget.Get();
+  CPDFSDK_Widget* widget = pPrivateData->GetWidget();
   if (!widget)
     return;
 

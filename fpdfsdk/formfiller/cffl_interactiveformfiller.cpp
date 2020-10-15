@@ -19,6 +19,7 @@
 #include "fpdfsdk/formfiller/cffl_combobox.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 #include "fpdfsdk/formfiller/cffl_listbox.h"
+#include "fpdfsdk/formfiller/cffl_privatedata.h"
 #include "fpdfsdk/formfiller/cffl_pushbutton.h"
 #include "fpdfsdk/formfiller/cffl_radiobutton.h"
 #include "fpdfsdk/formfiller/cffl_textfield.h"
@@ -575,7 +576,7 @@ void CFFL_InteractiveFormFiller::QueryWherePopup(
     bool* bBottom,
     float* fPopupRet) {
   auto* pData = static_cast<const CFFL_PrivateData*>(pAttached);
-  CPDFSDK_Widget* pWidget = pData->pWidget.Get();
+  CPDFSDK_Widget* pWidget = pData->GetWidget();
   CPDF_Page* pPage = pWidget->GetPDFPage();
 
   CFX_FloatRect rcPageView(0, pPage->GetPageHeight(), pPage->GetPageWidth(), 0);
@@ -872,30 +873,31 @@ std::pair<bool, bool> CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
   // Copy the private data since the window owning it may not survive.
   CFFL_PrivateData privateData =
       *static_cast<const CFFL_PrivateData*>(pAttached);
-  ASSERT(privateData.pWidget);
+  ASSERT(privateData.GetWidget());
 
   CFFL_FormFiller* pFormFiller = GetFormFiller(privateData.GetWidget());
 
 #ifdef PDF_ENABLE_XFA
-  if (pFormFiller->IsFieldFull(privateData.pPageView)) {
+  if (pFormFiller->IsFieldFull(privateData.GetPageView())) {
     ObservedPtr<CPDFSDK_Annot> pObserved(privateData.GetWidget());
-    if (OnFull(&pObserved, privateData.pPageView, nFlag) || !pObserved)
+    if (OnFull(&pObserved, privateData.GetPageView(), nFlag) || !pObserved)
       return {true, true};
   }
 #endif  // PDF_ENABLE_XFA
 
-  if (m_bNotifying ||
-      !privateData.pWidget->GetAAction(CPDF_AAction::kKeyStroke).GetDict()) {
+  if (m_bNotifying || !privateData.GetWidget()
+                           ->GetAAction(CPDF_AAction::kKeyStroke)
+                           .GetDict()) {
     return {true, false};
   }
 
   AutoRestorer<bool> restorer(&m_bNotifying);
   m_bNotifying = true;
 
-  uint32_t nAge = privateData.pWidget->GetAppearanceAge();
-  uint32_t nValueAge = privateData.pWidget->GetValueAge();
+  uint32_t nAge = privateData.GetWidget()->GetAppearanceAge();
+  uint32_t nValueAge = privateData.GetWidget()->GetValueAge();
   CPDFSDK_FormFillEnvironment* pFormFillEnv =
-      privateData.pPageView->GetFormFillEnv();
+      privateData.GetPageView()->GetFormFillEnv();
 
   CPDFSDK_FieldAction fa;
   fa.bModifier = CPWL_Wnd::IsCTRLKeyDown(nFlag);
@@ -907,25 +909,26 @@ std::pair<bool, bool> CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
   fa.bRC = true;
   fa.nSelStart = nSelStart;
   fa.nSelEnd = nSelEnd;
-  pFormFiller->GetActionData(privateData.pPageView, CPDF_AAction::kKeyStroke,
-                             fa);
-  pFormFiller->SaveState(privateData.pPageView);
+  pFormFiller->GetActionData(privateData.GetPageView(),
+                             CPDF_AAction::kKeyStroke, fa);
+  pFormFiller->SaveState(privateData.GetPageView());
 
   ObservedPtr<CPDFSDK_Annot> pObserved(privateData.GetWidget());
-  bool action_status = privateData.pWidget->OnAAction(
-      CPDF_AAction::kKeyStroke, &fa, privateData.pPageView);
+  bool action_status = privateData.GetWidget()->OnAAction(
+      CPDF_AAction::kKeyStroke, &fa, privateData.GetPageView());
 
   if (!pObserved ||
-      !IsValidAnnot(privateData.pPageView, privateData.GetWidget())) {
+      !IsValidAnnot(privateData.GetPageView(), privateData.GetWidget())) {
     return {true, true};
   }
   if (!action_status)
     return {true, false};
 
   bool bExit = false;
-  if (nAge != privateData.pWidget->GetAppearanceAge()) {
+  if (nAge != privateData.GetWidget()->GetAppearanceAge()) {
     CPWL_Wnd* pWnd = pFormFiller->ResetPWLWindow(
-        privateData.pPageView, nValueAge == privateData.pWidget->GetValueAge());
+        privateData.GetPageView(),
+        nValueAge == privateData.GetWidget()->GetValueAge());
     if (!pWnd)
       return {true, true};
     privateData =
@@ -933,15 +936,15 @@ std::pair<bool, bool> CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
     bExit = true;
   }
   if (fa.bRC) {
-    pFormFiller->SetActionData(privateData.pPageView, CPDF_AAction::kKeyStroke,
-                               fa);
+    pFormFiller->SetActionData(privateData.GetPageView(),
+                               CPDF_AAction::kKeyStroke, fa);
   } else {
-    pFormFiller->RestoreState(privateData.pPageView);
+    pFormFiller->RestoreState(privateData.GetPageView());
   }
   if (pFormFillEnv->GetFocusAnnot() == privateData.GetWidget())
     return {false, bExit};
 
-  pFormFiller->CommitData(privateData.pPageView, nFlag);
+  pFormFiller->CommitData(privateData.GetPageView(), nFlag);
   return {false, true};
 }
 
@@ -950,10 +953,10 @@ bool CFFL_InteractiveFormFiller::OnPopupPreOpen(
     uint32_t nFlag) {
 #ifdef PDF_ENABLE_XFA
   auto* pData = static_cast<const CFFL_PrivateData*>(pAttached);
-  ASSERT(pData->pWidget);
+  ASSERT(pData->GetWidget());
 
   ObservedPtr<CPDFSDK_Annot> pObserved(pData->GetWidget());
-  return OnPreOpen(&pObserved, pData->pPageView, nFlag) || !pObserved;
+  return OnPreOpen(&pObserved, pData->GetPageView(), nFlag) || !pObserved;
 #else
   return false;
 #endif
@@ -964,22 +967,11 @@ bool CFFL_InteractiveFormFiller::OnPopupPostOpen(
     uint32_t nFlag) {
 #ifdef PDF_ENABLE_XFA
   auto* pData = static_cast<const CFFL_PrivateData*>(pAttached);
-  ASSERT(pData->pWidget);
+  ASSERT(pData->GetWidget());
 
   ObservedPtr<CPDFSDK_Annot> pObserved(pData->GetWidget());
-  return OnPostOpen(&pObserved, pData->pPageView, nFlag) || !pObserved;
+  return OnPostOpen(&pObserved, pData->GetPageView(), nFlag) || !pObserved;
 #else
   return false;
 #endif
-}
-
-CFFL_PrivateData::CFFL_PrivateData() = default;
-
-CFFL_PrivateData::CFFL_PrivateData(const CFFL_PrivateData& that) = default;
-
-CFFL_PrivateData::~CFFL_PrivateData() = default;
-
-std::unique_ptr<IPWL_SystemHandler::PerWindowData> CFFL_PrivateData::Clone()
-    const {
-  return std::make_unique<CFFL_PrivateData>(*this);
 }

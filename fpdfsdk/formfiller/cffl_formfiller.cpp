@@ -14,6 +14,7 @@
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
+#include "fpdfsdk/formfiller/cffl_privatedata.h"
 
 CFFL_FormFiller::CFFL_FormFiller(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                                  CPDFSDK_Widget* pWidget)
@@ -350,11 +351,9 @@ CPWL_Wnd* CFFL_FormFiller::GetPWLWindow(CPDFSDK_PageView* pPageView,
       return nullptr;
 
     CPWL_Wnd::CreateParams cp = GetCreateParam();
-    auto pPrivateData = std::make_unique<CFFL_PrivateData>();
-    pPrivateData->pWidget.Reset(m_pWidget.Get());
-    pPrivateData->pPageView = pPageView;
-    pPrivateData->nWidgetAppearanceAge = m_pWidget->GetAppearanceAge();
-    pPrivateData->nWidgetValueAge = 0;
+    // TODO(tsepez): maybe pass widget's value age as 4th arg.
+    auto pPrivateData = std::make_unique<CFFL_PrivateData>(
+        m_pWidget.Get(), pPageView, m_pWidget->GetAppearanceAge(), 0);
     m_Maps[pPageView] = NewPWLWindow(cp, std::move(pPrivateData));
     return m_Maps[pPageView].get();
   }
@@ -365,11 +364,11 @@ CPWL_Wnd* CFFL_FormFiller::GetPWLWindow(CPDFSDK_PageView* pPageView,
 
   const auto* pPrivateData =
       static_cast<const CFFL_PrivateData*>(pWnd->GetAttachedData());
-  if (pPrivateData->nWidgetAppearanceAge == m_pWidget->GetAppearanceAge())
+  if (pPrivateData->AppearanceAgeEquals(m_pWidget->GetAppearanceAge()))
     return pWnd;
 
-  return ResetPWLWindow(
-      pPageView, pPrivateData->nWidgetValueAge == m_pWidget->GetValueAge());
+  return ResetPWLWindow(pPageView,
+                        pPrivateData->ValueAgeEquals(m_pWidget->GetValueAge()));
 }
 
 void CFFL_FormFiller::DestroyPWLWindow(CPDFSDK_PageView* pPageView) {
@@ -385,10 +384,14 @@ void CFFL_FormFiller::DestroyPWLWindow(CPDFSDK_PageView* pPageView) {
 CFX_Matrix CFFL_FormFiller::GetWindowMatrix(
     const IPWL_SystemHandler::PerWindowData* pAttached) {
   const auto* pPrivateData = static_cast<const CFFL_PrivateData*>(pAttached);
-  if (!pPrivateData || !pPrivateData->pPageView)
+  if (!pPrivateData)
     return CFX_Matrix();
 
-  return GetCurMatrix() * pPrivateData->pPageView->GetCurrentMatrix();
+  CPDFSDK_PageView* pPageView = pPrivateData->GetPageView();
+  if (!pPageView)
+    return CFX_Matrix();
+
+  return GetCurMatrix() * pPageView->GetCurrentMatrix();
 }
 
 CFX_Matrix CFFL_FormFiller::GetCurMatrix() {
