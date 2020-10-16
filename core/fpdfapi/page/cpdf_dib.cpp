@@ -1120,12 +1120,13 @@ const uint8_t* CPDF_DIB::GetScanline(int line) const {
 
     uint8_t* pDestPixel = m_pMaskedLine.get();
     const uint8_t* pSrcPixel = m_pLineBuf.get();
+    pdfium::span<const uint32_t> palette = GetPaletteSpan();
     for (int col = 0; col < m_Width; col++) {
       uint8_t index = *pSrcPixel++;
       if (HasPalette()) {
-        *pDestPixel++ = FXARGB_B(GetPaletteData()[index]);
-        *pDestPixel++ = FXARGB_G(GetPaletteData()[index]);
-        *pDestPixel++ = FXARGB_R(GetPaletteData()[index]);
+        *pDestPixel++ = FXARGB_B(palette[index]);
+        *pDestPixel++ = FXARGB_G(palette[index]);
+        *pDestPixel++ = FXARGB_R(palette[index]);
       } else {
         *pDestPixel++ = index;
         *pDestPixel++ = index;
@@ -1261,8 +1262,8 @@ void CPDF_DIB::DownSampleScanline1Bit(int orig_Bpp,
       reset_argb = 0xFFFFFFFF;
     }
   } else if (HasPalette() && dest_Bpp != 1) {
-    reset_argb = GetPaletteData()[0];
-    set_argb = GetPaletteData()[1];
+    reset_argb = GetPaletteSpan()[0];
+    set_argb = GetPaletteSpan()[1];
   }
   for (int i = 0; i < clip_width; i++) {
     uint32_t src_x = (clip_left + i) * src_width / dest_width;
@@ -1306,6 +1307,7 @@ void CPDF_DIB::DownSampleScanline8Bit(int orig_Bpp,
     pSrcLine = m_pLineBuf.get();
   }
   if (m_bColorKey) {
+    pdfium::span<const uint32_t> palette = GetPaletteSpan();
     for (int i = 0; i < clip_width; i++) {
       uint32_t src_x = (clip_left + i) * src_width / dest_width;
       if (bFlipX) {
@@ -1315,9 +1317,9 @@ void CPDF_DIB::DownSampleScanline8Bit(int orig_Bpp,
       uint8_t* pDestPixel = dest_scan + i * 4;
       uint8_t index = pSrcLine[src_x];
       if (HasPalette()) {
-        *pDestPixel++ = FXARGB_B(GetPaletteData()[index]);
-        *pDestPixel++ = FXARGB_G(GetPaletteData()[index]);
-        *pDestPixel++ = FXARGB_R(GetPaletteData()[index]);
+        *pDestPixel++ = FXARGB_B(palette[index]);
+        *pDestPixel++ = FXARGB_G(palette[index]);
+        *pDestPixel++ = FXARGB_R(palette[index]);
       } else {
         *pDestPixel++ = index;
         *pDestPixel++ = index;
@@ -1330,6 +1332,8 @@ void CPDF_DIB::DownSampleScanline8Bit(int orig_Bpp,
     }
     return;
   }
+
+  pdfium::span<const uint32_t> palette = GetPaletteSpan();
   for (int i = 0; i < clip_width; i++) {
     uint32_t src_x = (clip_left + i) * src_width / dest_width;
     if (bFlipX)
@@ -1340,7 +1344,7 @@ void CPDF_DIB::DownSampleScanline8Bit(int orig_Bpp,
       dest_scan[i] = index;
     } else {
       int dest_pos = i * dest_Bpp;
-      FX_ARGB argb = GetPaletteData()[index];
+      FX_ARGB argb = palette[index];
       dest_scan[dest_pos] = FXARGB_B(argb);
       dest_scan[dest_pos + 1] = FXARGB_G(argb);
       dest_scan[dest_pos + 2] = FXARGB_R(argb);
@@ -1461,11 +1465,11 @@ void CPDF_DIB::SetMaskProperties() {
 uint32_t CPDF_DIB::Get1BitSetValue() const {
   if (m_CompData[0].m_ColorKeyMax == 1)
     return 0x00000000;
-  return HasPalette() ? GetPaletteData()[1] : 0xFFFFFFFF;
+  return HasPalette() ? GetPaletteSpan()[1] : 0xFFFFFFFF;
 }
 
 uint32_t CPDF_DIB::Get1BitResetValue() const {
   if (m_CompData[0].m_ColorKeyMin == 0)
     return 0x00000000;
-  return HasPalette() ? GetPaletteData()[0] : 0xFF000000;
+  return HasPalette() ? GetPaletteSpan()[0] : 0xFF000000;
 }

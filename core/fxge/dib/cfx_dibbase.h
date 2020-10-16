@@ -13,6 +13,7 @@
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/fx_dib.h"
+#include "third_party/base/span.h"
 
 enum FXDIB_Channel {
   FXDIB_Red = 1,
@@ -56,6 +57,7 @@ class CFX_DIBBase : public Retainable {
   }
   uint32_t GetPitch() const { return m_Pitch; }
   bool HasPalette() const { return !m_palette.empty(); }
+  pdfium::span<const uint32_t> GetPaletteSpan() const { return m_palette; }
   const uint32_t* GetPaletteData() const { return m_palette.data(); }
   int GetBPP() const { return m_bpp; }
 

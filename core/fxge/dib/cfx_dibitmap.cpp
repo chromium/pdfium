@@ -547,14 +547,14 @@ uint32_t CFX_DIBitmap::GetPixel(int x, int y) const {
     }
     case FXDIB_1bppRgb: {
       if ((*pos) & (1 << (7 - x % 8))) {
-        return HasPalette() ? GetPaletteData()[1] : 0xffffffff;
+        return HasPalette() ? GetPaletteSpan()[1] : 0xffffffff;
       }
-      return HasPalette() ? GetPaletteData()[0] : 0xff000000;
+      return HasPalette() ? GetPaletteSpan()[0] : 0xff000000;
     }
     case FXDIB_8bppMask:
       return (*pos) << 24;
     case FXDIB_8bppRgb:
-      return HasPalette() ? GetPaletteData()[*pos]
+      return HasPalette() ? GetPaletteSpan()[*pos]
                           : (0xff000000 | ((*pos) * 0x10101));
     case FXDIB_Rgb:
     case FXDIB_Rgba:
@@ -588,7 +588,7 @@ void CFX_DIBitmap::SetPixel(int x, int y, uint32_t color) {
       break;
     case FXDIB_1bppRgb:
       if (HasPalette()) {
-        if (color == GetPaletteData()[1]) {
+        if (color == GetPaletteSpan()[1]) {
           *pos |= 1 << (7 - x % 8);
         } else {
           *pos &= ~(1 << (7 - x % 8));
@@ -606,8 +606,9 @@ void CFX_DIBitmap::SetPixel(int x, int y, uint32_t color) {
       break;
     case FXDIB_8bppRgb: {
       if (HasPalette()) {
+        pdfium::span<const uint32_t> palette = GetPaletteSpan();
         for (int i = 0; i < 256; i++) {
-          if (GetPaletteData()[i] == color) {
+          if (palette[i] == color) {
             *pos = (uint8_t)i;
             return;
           }
@@ -664,6 +665,7 @@ void CFX_DIBitmap::DownSampleScanline(int line,
       dest_scan[i] = (scanline[src_x / 8] & (1 << (7 - src_x % 8))) ? 255 : 0;
     }
   } else if (src_Bpp == 1) {
+    pdfium::span<const uint32_t> palette = GetPaletteSpan();
     for (int i = 0; i < clip_width; i++) {
       uint32_t dest_x = clip_left + i;
       uint32_t src_x = dest_x * m_Width / dest_width;
@@ -675,13 +677,13 @@ void CFX_DIBitmap::DownSampleScanline(int line,
       if (HasPalette()) {
         if (!IsCmykImage()) {
           dest_pos *= 3;
-          FX_ARGB argb = GetPaletteData()[scanline[src_x]];
+          FX_ARGB argb = palette[scanline[src_x]];
           dest_scan[dest_pos] = FXARGB_B(argb);
           dest_scan[dest_pos + 1] = FXARGB_G(argb);
           dest_scan[dest_pos + 2] = FXARGB_R(argb);
         } else {
           dest_pos *= 4;
-          FX_CMYK cmyk = GetPaletteData()[scanline[src_x]];
+          FX_CMYK cmyk = palette[scanline[src_x]];
           dest_scan[dest_pos] = FXSYS_GetCValue(cmyk);
           dest_scan[dest_pos + 1] = FXSYS_GetMValue(cmyk);
           dest_scan[dest_pos + 2] = FXSYS_GetYValue(cmyk);
@@ -1070,7 +1072,7 @@ bool CFX_DIBitmap::CompositeRect(int left,
     int index = 0;
     if (HasPalette()) {
       for (int i = 0; i < 2; i++) {
-        if (GetPaletteData()[i] == color)
+        if (GetPaletteSpan()[i] == color)
           index = i;
       }
     } else {

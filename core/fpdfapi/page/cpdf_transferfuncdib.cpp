@@ -87,11 +87,11 @@ void CPDF_TransferFuncDIB::TranslateScanline(
       break;
     }
     case FXDIB_8bppRgb: {
-      const FX_ARGB* pPal = m_pSrc->GetPaletteData();
+      pdfium::span<const uint32_t> src_palette = m_pSrc->GetPaletteSpan();
       int index = 0;
       for (int i = 0; i < m_Width; i++) {
-        if (pPal) {
-          FX_ARGB src_argb = pPal[*src_buf];
+        if (m_pSrc->HasPalette()) {
+          FX_ARGB src_argb = src_palette[*src_buf];
           (*dest_buf)[index++] = m_RampB[FXARGB_R(src_argb)];
           (*dest_buf)[index++] = m_RampG[FXARGB_G(src_argb)];
           (*dest_buf)[index++] = m_RampR[FXARGB_B(src_argb)];

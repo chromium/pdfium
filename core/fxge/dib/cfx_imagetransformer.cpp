@@ -513,10 +513,11 @@ void CFX_ImageTransformer::CalcAlpha(const CalcData& cdata) {
 void CFX_ImageTransformer::CalcMono(const CalcData& cdata,
                                     FXDIB_Format format) {
   uint32_t argb[256];
-  const FX_ARGB* pPal = m_Storer.GetBitmap()->GetPaletteData();
-  if (pPal) {
+  if (m_Storer.GetBitmap()->HasPalette()) {
+    pdfium::span<const uint32_t> palette =
+        m_Storer.GetBitmap()->GetPaletteSpan();
     for (size_t i = 0; i < pdfium::size(argb); i++)
-      argb[i] = pPal[i];
+      argb[i] = palette[i];
   } else if (m_Storer.GetBitmap()->IsCmykImage()) {
     for (size_t i = 0; i < pdfium::size(argb); i++)
       argb[i] = 255 - i;
