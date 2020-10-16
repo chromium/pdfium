@@ -19,7 +19,8 @@
 namespace {
 
 struct PDF_PSOpName {
-  const char* name;
+  // Inline string data reduces size for small strings.
+  const char name[9];
   PDF_PSOP op;
 };
 
