@@ -171,7 +171,6 @@ FX_ARGB StringToFXARGB(WideStringView view);
   ((uint8_t*)(p))[0] = (uint8_t)((argb) >> 16), \
   ((uint8_t*)(p))[1] = (uint8_t)((argb) >> 8),  \
   ((uint8_t*)(p))[2] = (uint8_t)(argb)
-#define FXARGB_TODIB(argb) (argb)
 #define FXCMYK_TODIB(cmyk)                                    \
   ((uint8_t)((cmyk) >> 24) | ((uint8_t)((cmyk) >> 16)) << 8 | \
    ((uint8_t)((cmyk) >> 8)) << 16 | ((uint8_t)(cmyk) << 24))

@@ -901,7 +901,7 @@ bool CFX_Renderer::Init(const RetainPtr<CFX_DIBitmap>& pDevice,
   if (m_bRgbByteOrder)
     m_Color = FXARGB_TOBGRORDERDIB(color);
   else
-    m_Color = FXARGB_TODIB(color);
+    m_Color = color;
   std::tie(m_Alpha, m_Red, m_Green, m_Blue) = ArgbDecode(color);
   if (m_pDevice->GetBPP() == 1)
     composite_span = &CFX_Renderer::CompositeSpan1bpp;
@@ -980,7 +980,7 @@ void CFX_Renderer::CompositeSpan1bppHelper(uint8_t* dest_scan,
   int index = 0;
   if (m_pDevice->GetPalette()) {
     for (int i = 0; i < 2; i++) {
-      if (FXARGB_TODIB(m_pDevice->GetPalette()[i]) == m_Color)
+      if (m_pDevice->GetPalette()[i] == m_Color)
         index = i;
     }
   } else {

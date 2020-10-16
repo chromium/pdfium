@@ -1097,8 +1097,6 @@ const uint8_t* CPDF_DIB::GetScanline(int line) const {
       reset_argb = 0;
     if (m_CompData[0].m_ColorKeyMax == 1)
       set_argb = 0;
-    set_argb = FXARGB_TODIB(set_argb);
-    reset_argb = FXARGB_TODIB(reset_argb);
     uint32_t* dest_scan = reinterpret_cast<uint32_t*>(m_pMaskedLine.get());
     for (int col = 0; col < m_Width; col++) {
       *dest_scan = GetBitValue(pSrcLine, col) ? set_argb : reset_argb;
@@ -1252,8 +1250,6 @@ void CPDF_DIB::DownSampleScanline1Bit(int orig_Bpp,
       reset_argb = 0;
     if (m_CompData[0].m_ColorKeyMax == 1)
       set_argb = 0;
-    set_argb = FXARGB_TODIB(set_argb);
-    reset_argb = FXARGB_TODIB(reset_argb);
     uint32_t* dest_scan_dword = reinterpret_cast<uint32_t*>(dest_scan);
     for (int i = 0; i < clip_width; i++) {
       uint32_t src_x = (clip_left + i) * src_width / dest_width;
@@ -1449,7 +1445,7 @@ void CPDF_DIB::DownSampleScanline32Bit(int orig_Bpp,
       last_argb = argb;
     }
     if (dest_Bpp == 4) {
-      *reinterpret_cast<uint32_t*>(pDestPixel) = FXARGB_TODIB(argb);
+      *reinterpret_cast<uint32_t*>(pDestPixel) = argb;
     } else {
       *pDestPixel++ = FXARGB_B(argb);
       *pDestPixel++ = FXARGB_G(argb);

@@ -72,7 +72,6 @@ void CFGAS_GEShading::InitArgbArray() {
     int32_t b3 = static_cast<int32_t>(i * bScale);
 
     // TODO(dsinclair): Add overloads for FX_ARGB. pdfium:437
-    m_argbArray[i] =
-        FXARGB_TODIB(ArgbEncode(a1 + a3, r1 + r3, g1 + g3, b1 + b3));
+    m_argbArray[i] = ArgbEncode(a1 + a3, r1 + r3, g1 + g3, b1 + b3);
   }
 }

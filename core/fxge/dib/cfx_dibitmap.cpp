@@ -161,7 +161,7 @@ void CFX_DIBitmap::Clear(uint32_t color) {
     }
     case FXDIB_Rgb32:
     case FXDIB_Argb: {
-      color = IsCmykImage() ? FXCMYK_TODIB(color) : FXARGB_TODIB(color);
+      color = IsCmykImage() ? FXCMYK_TODIB(color) : color;
 #if defined(_SKIA_SUPPORT_)
       if (FXDIB_Rgb32 == GetFormat() && !IsCmykImage())
         color |= 0xFF000000;
@@ -1034,7 +1034,7 @@ bool CFX_DIBitmap::CompositeRect(int left,
   if (alpha_flag >> 8)
     dst_color = FXCMYK_TODIB(color);
   else
-    dst_color = FXARGB_TODIB(color);
+    dst_color = color;
   uint8_t* color_p = reinterpret_cast<uint8_t*>(&dst_color);
   if (m_bpp == 8) {
     uint8_t gray = 255;

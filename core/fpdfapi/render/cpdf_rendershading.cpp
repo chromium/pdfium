@@ -79,9 +79,8 @@ std::array<FX_ARGB, kShadingSteps> GetShadingSteps(
     float G = 0.0f;
     float B = 0.0f;
     pCS->GetRGB(result_array, &R, &G, &B);
-    shading_steps[i] =
-        FXARGB_TODIB(ArgbEncode(alpha, FXSYS_roundf(R * 255),
-                                FXSYS_roundf(G * 255), FXSYS_roundf(B * 255)));
+    shading_steps[i] = ArgbEncode(alpha, FXSYS_roundf(R * 255),
+                                  FXSYS_roundf(G * 255), FXSYS_roundf(B * 255));
   }
   return shading_steps;
 }
@@ -308,8 +307,8 @@ void DrawFuncShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
       float G = 0.0f;
       float B = 0.0f;
       pCS->GetRGB(result_array, &R, &G, &B);
-      dib_buf[column] = FXARGB_TODIB(ArgbEncode(
-          alpha, (int32_t)(R * 255), (int32_t)(G * 255), (int32_t)(B * 255)));
+      dib_buf[column] = ArgbEncode(alpha, (int32_t)(R * 255),
+                                   (int32_t)(G * 255), (int32_t)(B * 255));
     }
   }
 }
