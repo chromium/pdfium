@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/fxcodec/gif/cfx_gif.h"
+#include "core/fxcrt/fx_memory_wrappers.h"
 
 class CFX_LZWDecompressor {
  public:
