@@ -2726,7 +2726,7 @@ CFX_ScanlineCompositor::~CFX_ScanlineCompositor() = default;
 bool CFX_ScanlineCompositor::Init(FXDIB_Format dest_format,
                                   FXDIB_Format src_format,
                                   int32_t width,
-                                  uint32_t* pSrcPalette,
+                                  const uint32_t* pSrcPalette,
                                   uint32_t mask_color,
                                   BlendMode blend_type,
                                   bool bClip,

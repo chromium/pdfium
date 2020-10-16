@@ -142,7 +142,7 @@ void ConvertBuffer_1bppPlt2Gray(uint8_t* dest_buf,
                                 const RetainPtr<CFX_DIBBase>& pSrcBitmap,
                                 int src_left,
                                 int src_top) {
-  uint32_t* src_plt = pSrcBitmap->GetPalette();
+  const uint32_t* src_plt = pSrcBitmap->GetPalette();
   uint8_t gray[2];
   uint8_t reset_r;
   uint8_t reset_g;
@@ -187,7 +187,7 @@ void ConvertBuffer_8bppPlt2Gray(uint8_t* dest_buf,
                                 const RetainPtr<CFX_DIBBase>& pSrcBitmap,
                                 int src_left,
                                 int src_top) {
-  uint32_t* src_plt = pSrcBitmap->GetPalette();
+  const uint32_t* src_plt = pSrcBitmap->GetPalette();
   uint8_t gray[256];
   if (pSrcBitmap->IsCmykImage()) {
     uint8_t r;
@@ -294,7 +294,7 @@ void ConvertBuffer_Plt2PltRgb8(uint8_t* dest_buf,
                                uint32_t* dst_plt) {
   ConvertBuffer_IndexCopy(dest_buf, dest_pitch, width, height, pSrcBitmap,
                           src_left, src_top);
-  uint32_t* src_plt = pSrcBitmap->GetPalette();
+  const uint32_t* src_plt = pSrcBitmap->GetPalette();
   size_t plt_size = pSrcBitmap->GetPaletteSize();
   if (pSrcBitmap->IsCmykImage()) {
     for (size_t i = 0; i < plt_size; ++i) {
@@ -421,7 +421,7 @@ void ConvertBuffer_1bppPlt2Rgb(FXDIB_Format dest_format,
                                int src_left,
                                int src_top) {
   int comps = GetCompsFromFormat(dest_format);
-  uint32_t* src_plt = pSrcBitmap->GetPalette();
+  const uint32_t* src_plt = pSrcBitmap->GetPalette();
   uint32_t plt[2];
   uint8_t* bgr_ptr = reinterpret_cast<uint8_t*>(plt);
   if (pSrcBitmap->IsCmykImage()) {
@@ -465,7 +465,7 @@ void ConvertBuffer_8bppPlt2Rgb(FXDIB_Format dest_format,
                                int src_left,
                                int src_top) {
   int comps = GetCompsFromFormat(dest_format);
-  uint32_t* src_plt = pSrcBitmap->GetPalette();
+  const uint32_t* src_plt = pSrcBitmap->GetPalette();
   uint32_t plt[256];
   uint8_t* bgr_ptr = reinterpret_cast<uint8_t*>(plt);
   if (!pSrcBitmap->IsCmykImage()) {
