@@ -11,6 +11,7 @@
 #include "build/build_config.h"
 #include "core/fpdfapi/page/cpdf_transferfunc.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "third_party/base/check.h"
 #include "third_party/base/compiler_specific.h"
 
 CPDF_TransferFuncDIB::CPDF_TransferFuncDIB(
@@ -27,8 +28,8 @@ CPDF_TransferFuncDIB::CPDF_TransferFuncDIB(
   m_bpp = GetBppFromFormat(format);
   m_AlphaFlag = GetAlphaFlagFromFormat(format);
   m_Pitch = (m_Width * m_bpp + 31) / 32 * 4;
-  m_palette.clear();
   m_Scanline.resize(m_Pitch);
+  DCHECK(m_palette.empty());
 }
 
 CPDF_TransferFuncDIB::~CPDF_TransferFuncDIB() = default;
