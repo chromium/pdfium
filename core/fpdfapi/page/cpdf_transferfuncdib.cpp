@@ -27,7 +27,7 @@ CPDF_TransferFuncDIB::CPDF_TransferFuncDIB(
   m_bpp = GetBppFromFormat(format);
   m_AlphaFlag = GetAlphaFlagFromFormat(format);
   m_Pitch = (m_Width * m_bpp + 31) / 32 * 4;
-  m_pPalette.reset();
+  m_palette.clear();
   m_Scanline.resize(m_Pitch);
 }
 

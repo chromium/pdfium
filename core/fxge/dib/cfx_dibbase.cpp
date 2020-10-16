@@ -20,6 +20,7 @@
 #include "core/fxge/dib/cfx_imagestretcher.h"
 #include "core/fxge/dib/cfx_imagetransformer.h"
 #include "third_party/base/notreached.h"
+#include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -291,7 +292,7 @@ void ConvertBuffer_Plt2PltRgb8(uint8_t* dest_buf,
                                const RetainPtr<CFX_DIBBase>& pSrcBitmap,
                                int src_left,
                                int src_top,
-                               uint32_t* dst_plt) {
+                               pdfium::span<uint32_t> dst_plt) {
   ConvertBuffer_IndexCopy(dest_buf, dest_pitch, width, height, pSrcBitmap,
                           src_left, src_top);
   const uint32_t* src_plt = pSrcBitmap->GetPaletteData();
@@ -307,7 +308,8 @@ void ConvertBuffer_Plt2PltRgb8(uint8_t* dest_buf,
       dst_plt[i] = ArgbEncode(0xff, r, g, b);
     }
   } else {
-    memcpy(dst_plt, src_plt, plt_size * 4);
+    for (size_t i = 0; i < plt_size; ++i)
+      dst_plt[i] = src_plt[i];
   }
 }
 
@@ -318,7 +320,7 @@ void ConvertBuffer_Rgb2PltRgb8(uint8_t* dest_buf,
                                const RetainPtr<CFX_DIBBase>& pSrcBitmap,
                                int src_left,
                                int src_top,
-                               uint32_t* dst_plt) {
+                               pdfium::span<uint32_t> dst_plt) {
   int bpp = pSrcBitmap->GetBPP() / 8;
   CFX_Palette palette(pSrcBitmap);
   const std::pair<uint32_t, uint32_t>* Luts = palette.GetLuts();
@@ -366,7 +368,8 @@ void ConvertBuffer_Rgb2PltRgb8(uint8_t* dest_buf,
         }
     }
   }
-  memcpy(dst_plt, pal, sizeof(uint32_t) * 256);
+  for (size_t i = 0; i < 256; ++i)
+    dst_plt[i] = pal[i];
 }
 
 void ConvertBuffer_1bppMask2Rgb(FXDIB_Format dest_format,
@@ -755,22 +758,18 @@ void CFX_DIBBase::BuildPalette() {
     return;
 
   if (GetBPP() == 1) {
-    m_pPalette.reset(FX_Alloc(uint32_t, 2));
-    if (IsCmykImage()) {
-      m_pPalette.get()[0] = 0xff;
-      m_pPalette.get()[1] = 0;
-    } else {
-      m_pPalette.get()[0] = 0xff000000;
-      m_pPalette.get()[1] = 0xffffffff;
-    }
+    if (IsCmykImage())
+      m_palette = {0xff, 0x00};
+    else
+      m_palette = {0xff000000, 0xffffffff};
   } else if (GetBPP() == 8) {
-    m_pPalette.reset(FX_Alloc(uint32_t, 256));
+    m_palette.resize(256);
     if (IsCmykImage()) {
       for (int i = 0; i < 256; ++i)
-        m_pPalette.get()[i] = 0xff - i;
+        m_palette[i] = 0xff - i;
     } else {
       for (int i = 0; i < 256; ++i)
-        m_pPalette.get()[i] = 0xff000000 | (i * 0x10101);
+        m_palette[i] = 0xff000000 | (i * 0x10101);
     }
   }
 }
@@ -823,7 +822,7 @@ uint32_t CFX_DIBBase::GetPaletteArgb(int index) const {
 void CFX_DIBBase::SetPaletteArgb(int index, uint32_t color) {
   ASSERT((GetBPP() == 1 || GetBPP() == 8) && !IsAlphaMask());
   BuildPalette();
-  m_pPalette.get()[index] = color;
+  m_palette[index] = color;
 }
 
 int CFX_DIBBase::FindPalette(uint32_t color) const {
@@ -902,14 +901,14 @@ bool CFX_DIBBase::GetOverlapRect(int& dest_left,
 void CFX_DIBBase::SetPalette(const uint32_t* pSrc) {
   static const uint32_t kPaletteSize = 256;
   if (!pSrc || GetBPP() > 8) {
-    m_pPalette.reset();
+    m_palette.clear();
     return;
   }
   uint32_t pal_size = 1 << GetBPP();
-  if (!m_pPalette)
-    m_pPalette.reset(FX_Alloc(uint32_t, pal_size));
+  if (m_palette.empty())
+    m_palette.resize(pal_size);
   pal_size = std::min(pal_size, kPaletteSize);
-  memcpy(m_pPalette.get(), pSrc, pal_size * sizeof(uint32_t));
+  std::copy(pSrc, pSrc + pal_size, m_palette.begin());
 }
 
 void CFX_DIBBase::GetPalette(uint32_t* pal, int alpha) const {
@@ -1078,13 +1077,13 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::CloneConvert(FXDIB_Format dest_format) {
   }
 
   RetainPtr<CFX_DIBBase> holder(this);
-  std::unique_ptr<uint32_t, FxFreeDeleter> pal_8bpp;
+  std::vector<uint32_t, FxAllocAllocator<uint32_t>> pal_8bpp;
   if (!ConvertBuffer(dest_format, pClone->GetBuffer(), pClone->GetPitch(),
                      m_Width, m_Height, holder, 0, 0, &pal_8bpp)) {
     return nullptr;
   }
-  if (pal_8bpp)
-    pClone->SetPalette(pal_8bpp.get());
+  if (!pal_8bpp.empty())
+    pClone->SetPalette(pal_8bpp.data());
 
   return pClone;
 }
@@ -1226,7 +1225,7 @@ bool CFX_DIBBase::ConvertBuffer(
     const RetainPtr<CFX_DIBBase>& pSrcBitmap,
     int src_left,
     int src_top,
-    std::unique_ptr<uint32_t, FxFreeDeleter>* p_pal) {
+    std::vector<uint32_t, FxAllocAllocator<uint32_t>>* pal) {
   FXDIB_Format src_format = pSrcBitmap->GetFormat();
   const int bpp = GetBppFromFormat(src_format);
   switch (dest_format) {
@@ -1239,17 +1238,17 @@ bool CFX_DIBBase::ConvertBuffer(
       const bool bpp_1_or_8 = (bpp == 1 || bpp == 8);
       if (bpp_1_or_8 && !pSrcBitmap->HasPalette()) {
         return ConvertBuffer(FXDIB_8bppMask, dest_buf, dest_pitch, width,
-                             height, pSrcBitmap, src_left, src_top, p_pal);
+                             height, pSrcBitmap, src_left, src_top, pal);
       }
-      p_pal->reset(FX_Alloc(uint32_t, 256));
+      pal->resize(256);
       if (bpp_1_or_8 && pSrcBitmap->HasPalette()) {
         ConvertBuffer_Plt2PltRgb8(dest_buf, dest_pitch, width, height,
-                                  pSrcBitmap, src_left, src_top, p_pal->get());
+                                  pSrcBitmap, src_left, src_top, *pal);
         return true;
       }
       if (bpp >= 24) {
         ConvertBuffer_Rgb2PltRgb8(dest_buf, dest_pitch, width, height,
-                                  pSrcBitmap, src_left, src_top, p_pal->get());
+                                  pSrcBitmap, src_left, src_top, *pal);
         return true;
       }
       return false;

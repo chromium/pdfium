@@ -104,7 +104,7 @@ const uint8_t* CFX_DIBitmap::GetScanline(int line) const {
 
 void CFX_DIBitmap::TakeOver(RetainPtr<CFX_DIBitmap>&& pSrcBitmap) {
   m_pBuffer = std::move(pSrcBitmap->m_pBuffer);
-  m_pPalette = std::move(pSrcBitmap->m_pPalette);
+  m_palette = std::move(pSrcBitmap->m_palette);
   m_pAlphaMask = pSrcBitmap->m_pAlphaMask;
   pSrcBitmap->m_pBuffer = nullptr;
   pSrcBitmap->m_pAlphaMask = nullptr;
@@ -228,12 +228,9 @@ bool CFX_DIBitmap::TransferWithUnequalFormats(
 
   uint8_t* dest_buf =
       m_pBuffer.Get() + dest_top * m_Pitch + dest_left * GetBPP() / 8;
-  std::unique_ptr<uint32_t, FxFreeDeleter> d_plt;
-  if (!ConvertBuffer(dest_format, dest_buf, m_Pitch, width, height, pSrcBitmap,
-                     src_left, src_top, &d_plt)) {
-    return false;
-  }
-  return true;
+  std::vector<uint32_t, FxAllocAllocator<uint32_t>> d_plt;
+  return ConvertBuffer(dest_format, dest_buf, m_Pitch, width, height,
+                       pSrcBitmap, src_left, src_top, &d_plt);
 }
 
 void CFX_DIBitmap::TransferWithMultipleBPP(
@@ -724,10 +721,9 @@ void CFX_DIBitmap::ConvertBGRColorScale(uint32_t forecolor,
     BuildPalette();
     int size = 1 << m_bpp;
     for (int i = 0; i < size; ++i) {
-      int gray = FXRGB2GRAY(FXARGB_R(m_pPalette.get()[i]),
-                            FXARGB_G(m_pPalette.get()[i]),
-                            FXARGB_B(m_pPalette.get()[i]));
-      m_pPalette.get()[i] =
+      int gray = FXRGB2GRAY(FXARGB_R(m_palette[i]), FXARGB_G(m_palette[i]),
+                            FXARGB_B(m_palette[i]));
+      m_palette[i] =
           ArgbEncode(0xff, br + (fr - br) * gray / 255,
                      bg + (fg - bg) * gray / 255, bb + (fb - bb) * gray / 255);
     }
@@ -780,13 +776,11 @@ void CFX_DIBitmap::ConvertCMYKColorScale(uint32_t forecolor,
       uint8_t r;
       uint8_t g;
       uint8_t b;
-      std::tie(r, g, b) =
-          AdobeCMYK_to_sRGB1(FXSYS_GetCValue(m_pPalette.get()[i]),
-                             FXSYS_GetMValue(m_pPalette.get()[i]),
-                             FXSYS_GetYValue(m_pPalette.get()[i]),
-                             FXSYS_GetKValue(m_pPalette.get()[i]));
+      std::tie(r, g, b) = AdobeCMYK_to_sRGB1(
+          FXSYS_GetCValue(m_palette[i]), FXSYS_GetMValue(m_palette[i]),
+          FXSYS_GetYValue(m_palette[i]), FXSYS_GetKValue(m_palette[i]));
       int gray = 255 - FXRGB2GRAY(r, g, b);
-      m_pPalette.get()[i] =
+      m_palette[i] =
           CmykEncode(bc + (fc - bc) * gray / 255, bm + (fm - bm) * gray / 255,
                      by + (fy - by) * gray / 255, bk + (fk - bk) * gray / 255);
     }
@@ -1267,14 +1261,14 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
   }
   bool ret = false;
   RetainPtr<CFX_DIBBase> holder(this);
-  std::unique_ptr<uint32_t, FxFreeDeleter> pal_8bpp;
+  std::vector<uint32_t, FxAllocAllocator<uint32_t>> pal_8bpp;
   ret = ConvertBuffer(dest_format, dest_buf.get(), dest_pitch, m_Width,
                       m_Height, holder, 0, 0, &pal_8bpp);
   if (!ret)
     return false;
 
   m_pAlphaMask = pAlphaMask;
-  m_pPalette = std::move(pal_8bpp);
+  m_palette = std::move(pal_8bpp);
   m_pBuffer = std::move(dest_buf);
   m_bpp = GetBppFromFormat(dest_format);
   m_AlphaFlag = GetAlphaFlagFromFormat(dest_format);

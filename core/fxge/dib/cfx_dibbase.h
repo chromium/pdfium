@@ -7,7 +7,7 @@
 #ifndef CORE_FXGE_DIB_CFX_DIBBASE_H_
 #define CORE_FXGE_DIB_CFX_DIBBASE_H_
 
-#include <memory>
+#include <vector>
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
@@ -55,8 +55,8 @@ class CFX_DIBBase : public Retainable {
     return static_cast<FXDIB_Format>(m_AlphaFlag * 0x100 + m_bpp);
   }
   uint32_t GetPitch() const { return m_Pitch; }
-  bool HasPalette() const { return !!m_pPalette; }
-  const uint32_t* GetPaletteData() const { return m_pPalette.get(); }
+  bool HasPalette() const { return !m_palette.empty(); }
+  const uint32_t* GetPaletteData() const { return m_palette.data(); }
   int GetBPP() const { return m_bpp; }
 
   bool IsAlphaMask() const { return !!(m_AlphaFlag & 1); }
@@ -109,15 +109,16 @@ class CFX_DIBBase : public Retainable {
  protected:
   CFX_DIBBase();
 
-  static bool ConvertBuffer(FXDIB_Format dest_format,
-                            uint8_t* dest_buf,
-                            int dest_pitch,
-                            int width,
-                            int height,
-                            const RetainPtr<CFX_DIBBase>& pSrcBitmap,
-                            int src_left,
-                            int src_top,
-                            std::unique_ptr<uint32_t, FxFreeDeleter>* pal);
+  static bool ConvertBuffer(
+      FXDIB_Format dest_format,
+      uint8_t* dest_buf,
+      int dest_pitch,
+      int width,
+      int height,
+      const RetainPtr<CFX_DIBBase>& pSrcBitmap,
+      int src_left,
+      int src_top,
+      std::vector<uint32_t, FxAllocAllocator<uint32_t>>* pal);
 
   void BuildPalette();
   bool BuildAlphaMask();
@@ -129,8 +130,7 @@ class CFX_DIBBase : public Retainable {
   int m_bpp;
   uint32_t m_AlphaFlag;
   uint32_t m_Pitch;
-  // TODO(weili): Use std::vector for this.
-  std::unique_ptr<uint32_t, FxFreeDeleter> m_pPalette;
+  std::vector<uint32_t, FxAllocAllocator<uint32_t>> m_palette;
 };
 
 #endif  // CORE_FXGE_DIB_CFX_DIBBASE_H_
