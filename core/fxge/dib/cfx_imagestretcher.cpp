@@ -114,7 +114,7 @@ bool CFX_ImageStretcher::Start() {
       return false;
     }
   } else if (!m_pDest->SetInfo(m_ClipRect.Width(), m_ClipRect.Height(),
-                               m_DestFormat, nullptr)) {
+                               m_DestFormat, {})) {
     return false;
   }
   return StartStretch();

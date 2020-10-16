@@ -72,7 +72,7 @@ class CFX_DIBBase : public Retainable {
   void SetPaletteArgb(int index, uint32_t color);
 
   // Copies into internally-owned palette.
-  void SetPalette(const uint32_t* pSrcPal);
+  void SetPalette(pdfium::span<const uint32_t> src_palette);
 
   RetainPtr<CFX_DIBitmap> Clone(const FX_RECT* pClip) const;
   RetainPtr<CFX_DIBitmap> CloneConvert(FXDIB_Format format);

@@ -85,7 +85,7 @@ bool CFX_DIBitmap::Copy(const RetainPtr<CFX_DIBBase>& pSrc) {
   if (!Create(pSrc->GetWidth(), pSrc->GetHeight(), pSrc->GetFormat()))
     return false;
 
-  SetPalette(pSrc->GetPaletteData());
+  SetPalette(pSrc->GetPaletteSpan());
   SetAlphaMask(pSrc->m_pAlphaMask, nullptr);
   for (int row = 0; row < pSrc->GetHeight(); row++)
     memcpy(m_pBuffer.Get() + row * m_Pitch, pSrc->GetScanline(row), m_Pitch);

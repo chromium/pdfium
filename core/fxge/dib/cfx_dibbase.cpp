@@ -723,7 +723,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::Clone(const FX_RECT* pClip) const {
   if (!pNewBitmap->Create(rect.Width(), rect.Height(), GetFormat()))
     return nullptr;
 
-  pNewBitmap->SetPalette(GetPaletteData());
+  pNewBitmap->SetPalette(GetPaletteSpan());
   pNewBitmap->SetAlphaMask(m_pAlphaMask, pClip);
   if (GetBPP() == 1 && rect.left % 8 != 0) {
     int left_shift = rect.left % 32;
@@ -899,9 +899,9 @@ bool CFX_DIBBase::GetOverlapRect(int& dest_left,
   return width != 0 && height != 0;
 }
 
-void CFX_DIBBase::SetPalette(const uint32_t* pSrc) {
+void CFX_DIBBase::SetPalette(pdfium::span<const uint32_t> src_palette) {
   static const uint32_t kPaletteSize = 256;
-  if (!pSrc || GetBPP() > 8) {
+  if (src_palette.empty() || GetBPP() > 8) {
     m_palette.clear();
     return;
   }
@@ -909,7 +909,8 @@ void CFX_DIBBase::SetPalette(const uint32_t* pSrc) {
   if (m_palette.empty())
     m_palette.resize(pal_size);
   pal_size = std::min(pal_size, kPaletteSize);
-  std::copy(pSrc, pSrc + pal_size, m_palette.begin());
+  for (size_t i = 0; i < pal_size; ++i)
+    m_palette[i] = src_palette[i];
 }
 
 void CFX_DIBBase::GetPalette(uint32_t* pal, int alpha) const {
@@ -984,7 +985,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::FlipImage(bool bXFlip, bool bYFlip) const {
   if (!pFlipped->Create(m_Width, m_Height, GetFormat()))
     return nullptr;
 
-  pFlipped->SetPalette(GetPaletteData());
+  pFlipped->SetPalette(GetPaletteSpan());
   uint8_t* pDestBuffer = pFlipped->GetBuffer();
   int Bpp = m_bpp / 8;
   for (int row = 0; row < m_Height; ++row) {
@@ -1085,7 +1086,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::CloneConvert(FXDIB_Format dest_format) {
     return nullptr;
   }
   if (!pal_8bpp.empty())
-    pClone->SetPalette(pal_8bpp.data());
+    pClone->SetPalette(pal_8bpp);
 
   return pClone;
 }
@@ -1101,7 +1102,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::SwapXY(bool bXFlip, bool bYFlip) const {
   if (!pTransBitmap->Create(result_width, result_height, GetFormat()))
     return nullptr;
 
-  pTransBitmap->SetPalette(GetPaletteData());
+  pTransBitmap->SetPalette(GetPaletteSpan());
   int dest_pitch = pTransBitmap->GetPitch();
   uint8_t* dest_buf = pTransBitmap->GetBuffer();
   int row_start = bXFlip ? m_Height - dest_clip.right : dest_clip.left;
