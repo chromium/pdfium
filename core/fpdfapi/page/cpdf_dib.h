@@ -132,6 +132,9 @@ class CPDF_DIB final : public CFX_DIBBase {
   bool TransMask() const;
   void SetMaskProperties();
 
+  uint32_t Get1BitSetValue() const;
+  uint32_t Get1BitResetValue() const;
+
   UnownedPtr<CPDF_Document> m_pDocument;
   RetainPtr<const CPDF_Stream> m_pStream;
   RetainPtr<const CPDF_Dictionary> m_pDict;

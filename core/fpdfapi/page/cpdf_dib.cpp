@@ -1091,12 +1091,8 @@ const uint8_t* CPDF_DIB::GetScanline(int line) const {
       return m_pLineBuf.get();
     }
 
-    uint32_t reset_argb = HasPalette() ? GetPaletteData()[0] : 0xFF000000;
-    uint32_t set_argb = HasPalette() ? GetPaletteData()[1] : 0xFFFFFFFF;
-    if (m_CompData[0].m_ColorKeyMin == 0)
-      reset_argb = 0;
-    if (m_CompData[0].m_ColorKeyMax == 1)
-      set_argb = 0;
+    uint32_t reset_argb = Get1BitResetValue();
+    uint32_t set_argb = Get1BitSetValue();
     uint32_t* dest_scan = reinterpret_cast<uint32_t*>(m_pMaskedLine.get());
     for (int col = 0; col < m_Width; col++) {
       *dest_scan = GetBitValue(pSrcLine, col) ? set_argb : reset_argb;
@@ -1244,12 +1240,8 @@ void CPDF_DIB::DownSampleScanline1Bit(int orig_Bpp,
                                       int clip_left,
                                       int clip_width) const {
   if (m_bColorKey && !m_bImageMask) {
-    uint32_t reset_argb = HasPalette() ? GetPaletteData()[0] : 0xFF000000;
-    uint32_t set_argb = HasPalette() ? GetPaletteData()[1] : 0xFFFFFFFF;
-    if (m_CompData[0].m_ColorKeyMin == 0)
-      reset_argb = 0;
-    if (m_CompData[0].m_ColorKeyMax == 1)
-      set_argb = 0;
+    uint32_t reset_argb = Get1BitResetValue();
+    uint32_t set_argb = Get1BitSetValue();
     uint32_t* dest_scan_dword = reinterpret_cast<uint32_t*>(dest_scan);
     for (int i = 0; i < clip_width; i++) {
       uint32_t src_x = (clip_left + i) * src_width / dest_width;
@@ -1464,4 +1456,16 @@ void CPDF_DIB::SetMaskProperties() {
   m_bpc = 1;
   m_nComponents = 1;
   m_AlphaFlag = 1;
+}
+
+uint32_t CPDF_DIB::Get1BitSetValue() const {
+  if (m_CompData[0].m_ColorKeyMax == 1)
+    return 0x00000000;
+  return HasPalette() ? GetPaletteData()[1] : 0xFFFFFFFF;
+}
+
+uint32_t CPDF_DIB::Get1BitResetValue() const {
+  if (m_CompData[0].m_ColorKeyMin == 0)
+    return 0x00000000;
+  return HasPalette() ? GetPaletteData()[0] : 0xFF000000;
 }
