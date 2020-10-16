@@ -327,7 +327,7 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
   int height = pSource->GetHeight();
   buf << width << " " << height;
 
-  if (pSource->GetBPP() == 1 && !pSource->GetPalette()) {
+  if (pSource->GetBPP() == 1 && !pSource->HasPalette()) {
     int pitch = (width + 7) / 8;
     uint32_t src_size = height * pitch;
     std::unique_ptr<uint8_t, FxFreeDeleter> src_buf(
@@ -373,17 +373,15 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
         pConverted = pConverted->CloneConvert(FXDIB_Rgb);
         break;
       case FXDIB_8bppRgb:
-        if (pSource->GetPalette()) {
+        if (pSource->HasPalette())
           pConverted = pConverted->CloneConvert(FXDIB_Rgb);
-        }
         break;
       case FXDIB_1bppCmyk:
         pConverted = pConverted->CloneConvert(FXDIB_Cmyk);
         break;
       case FXDIB_8bppCmyk:
-        if (pSource->GetPalette()) {
+        if (pSource->HasPalette())
           pConverted = pConverted->CloneConvert(FXDIB_Cmyk);
-        }
         break;
       default:
         break;

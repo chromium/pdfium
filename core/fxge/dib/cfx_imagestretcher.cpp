@@ -30,7 +30,7 @@ FXDIB_Format GetStretchedFormat(const CFX_DIBBase& src) {
     return FXDIB_8bppMask;
   if (format == FXDIB_1bppRgb)
     return FXDIB_8bppRgb;
-  if (format == FXDIB_8bppRgb && src.GetPalette())
+  if (format == FXDIB_8bppRgb && src.HasPalette())
     return FXDIB_Rgb;
   return format;
 }
@@ -66,7 +66,7 @@ bool CFX_ImageStretcher::Start() {
   if (m_DestWidth == 0 || m_DestHeight == 0)
     return false;
 
-  if (m_pSource->GetFormat() == FXDIB_1bppRgb && m_pSource->GetPalette()) {
+  if (m_pSource->GetFormat() == FXDIB_1bppRgb && m_pSource->HasPalette()) {
     FX_ARGB pal[256];
     int a0;
     int r0;
@@ -90,7 +90,7 @@ bool CFX_ImageStretcher::Start() {
       return false;
     }
   } else if (m_pSource->GetFormat() == FXDIB_1bppCmyk &&
-             m_pSource->GetPalette()) {
+             m_pSource->HasPalette()) {
     FX_CMYK pal[256];
     int c0;
     int m0;

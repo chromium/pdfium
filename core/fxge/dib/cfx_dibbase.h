@@ -55,7 +55,8 @@ class CFX_DIBBase : public Retainable {
     return static_cast<FXDIB_Format>(m_AlphaFlag * 0x100 + m_bpp);
   }
   uint32_t GetPitch() const { return m_Pitch; }
-  const uint32_t* GetPalette() const { return m_pPalette.get(); }
+  bool HasPalette() const { return !!m_pPalette; }
+  const uint32_t* GetPaletteData() const { return m_pPalette.get(); }
   int GetBPP() const { return m_bpp; }
 
   bool IsAlphaMask() const { return !!(m_AlphaFlag & 1); }

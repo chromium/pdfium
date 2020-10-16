@@ -142,7 +142,7 @@ void ConvertBuffer_1bppPlt2Gray(uint8_t* dest_buf,
                                 const RetainPtr<CFX_DIBBase>& pSrcBitmap,
                                 int src_left,
                                 int src_top) {
-  const uint32_t* src_plt = pSrcBitmap->GetPalette();
+  const uint32_t* src_plt = pSrcBitmap->GetPaletteData();
   uint8_t gray[2];
   uint8_t reset_r;
   uint8_t reset_g;
@@ -187,7 +187,7 @@ void ConvertBuffer_8bppPlt2Gray(uint8_t* dest_buf,
                                 const RetainPtr<CFX_DIBBase>& pSrcBitmap,
                                 int src_left,
                                 int src_top) {
-  const uint32_t* src_plt = pSrcBitmap->GetPalette();
+  const uint32_t* src_plt = pSrcBitmap->GetPaletteData();
   uint8_t gray[256];
   if (pSrcBitmap->IsCmykImage()) {
     uint8_t r;
@@ -294,7 +294,7 @@ void ConvertBuffer_Plt2PltRgb8(uint8_t* dest_buf,
                                uint32_t* dst_plt) {
   ConvertBuffer_IndexCopy(dest_buf, dest_pitch, width, height, pSrcBitmap,
                           src_left, src_top);
-  const uint32_t* src_plt = pSrcBitmap->GetPalette();
+  const uint32_t* src_plt = pSrcBitmap->GetPaletteData();
   size_t plt_size = pSrcBitmap->GetPaletteSize();
   if (pSrcBitmap->IsCmykImage()) {
     for (size_t i = 0; i < plt_size; ++i) {
@@ -421,7 +421,7 @@ void ConvertBuffer_1bppPlt2Rgb(FXDIB_Format dest_format,
                                int src_left,
                                int src_top) {
   int comps = GetCompsFromFormat(dest_format);
-  const uint32_t* src_plt = pSrcBitmap->GetPalette();
+  const uint32_t* src_plt = pSrcBitmap->GetPaletteData();
   uint32_t plt[2];
   uint8_t* bgr_ptr = reinterpret_cast<uint8_t*>(plt);
   if (pSrcBitmap->IsCmykImage()) {
@@ -465,7 +465,7 @@ void ConvertBuffer_8bppPlt2Rgb(FXDIB_Format dest_format,
                                int src_left,
                                int src_top) {
   int comps = GetCompsFromFormat(dest_format);
-  const uint32_t* src_plt = pSrcBitmap->GetPalette();
+  const uint32_t* src_plt = pSrcBitmap->GetPaletteData();
   uint32_t plt[256];
   uint8_t* bgr_ptr = reinterpret_cast<uint8_t*>(plt);
   if (!pSrcBitmap->IsCmykImage()) {
@@ -582,7 +582,7 @@ bool ConvertBuffer_8bppMask(int bpp,
                             int src_top) {
   switch (bpp) {
     case 1:
-      if (pSrcBitmap->GetPalette()) {
+      if (pSrcBitmap->HasPalette()) {
         ConvertBuffer_1bppPlt2Gray(dest_buf, dest_pitch, width, height,
                                    pSrcBitmap, src_left, src_top);
       } else {
@@ -591,7 +591,7 @@ bool ConvertBuffer_8bppMask(int bpp,
       }
       return true;
     case 8:
-      if (pSrcBitmap->GetPalette()) {
+      if (pSrcBitmap->HasPalette()) {
         ConvertBuffer_8bppPlt2Gray(dest_buf, dest_pitch, width, height,
                                    pSrcBitmap, src_left, src_top);
       } else {
@@ -620,7 +620,7 @@ bool ConvertBuffer_Rgb(int bpp,
                        int src_top) {
   switch (bpp) {
     case 1:
-      if (pSrcBitmap->GetPalette()) {
+      if (pSrcBitmap->HasPalette()) {
         ConvertBuffer_1bppPlt2Rgb(dest_format, dest_buf, dest_pitch, width,
                                   height, pSrcBitmap, src_left, src_top);
       } else {
@@ -629,7 +629,7 @@ bool ConvertBuffer_Rgb(int bpp,
       }
       return true;
     case 8:
-      if (pSrcBitmap->GetPalette()) {
+      if (pSrcBitmap->HasPalette()) {
         ConvertBuffer_8bppPlt2Rgb(dest_format, dest_buf, dest_pitch, width,
                                   height, pSrcBitmap, src_left, src_top);
       } else {
@@ -662,7 +662,7 @@ bool ConvertBuffer_Argb(int bpp,
                         int src_top) {
   switch (bpp) {
     case 1:
-      if (pSrcBitmap->GetPalette()) {
+      if (pSrcBitmap->HasPalette()) {
         ConvertBuffer_1bppPlt2Rgb(dest_format, dest_buf, dest_pitch, width,
                                   height, pSrcBitmap, src_left, src_top);
       } else {
@@ -671,7 +671,7 @@ bool ConvertBuffer_Argb(int bpp,
       }
       return true;
     case 8:
-      if (pSrcBitmap->GetPalette()) {
+      if (pSrcBitmap->HasPalette()) {
         ConvertBuffer_8bppPlt2Rgb(dest_format, dest_buf, dest_pitch, width,
                                   height, pSrcBitmap, src_left, src_top);
       } else {
@@ -720,7 +720,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::Clone(const FX_RECT* pClip) const {
   if (!pNewBitmap->Create(rect.Width(), rect.Height(), GetFormat()))
     return nullptr;
 
-  pNewBitmap->SetPalette(m_pPalette.get());
+  pNewBitmap->SetPalette(GetPaletteData());
   pNewBitmap->SetAlphaMask(m_pAlphaMask, pClip);
   if (GetBPP() == 1 && rect.left % 8 != 0) {
     int left_shift = rect.left % 32;
@@ -751,7 +751,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::Clone(const FX_RECT* pClip) const {
 }
 
 void CFX_DIBBase::BuildPalette() {
-  if (m_pPalette)
+  if (HasPalette())
     return;
 
   if (GetBPP() == 1) {
@@ -805,8 +805,8 @@ size_t CFX_DIBBase::GetPaletteSize() const {
 
 uint32_t CFX_DIBBase::GetPaletteArgb(int index) const {
   ASSERT((GetBPP() == 1 || GetBPP() == 8) && !IsAlphaMask());
-  if (m_pPalette)
-    return m_pPalette.get()[index];
+  if (HasPalette())
+    return GetPaletteData()[index];
 
   if (IsCmykImage()) {
     if (GetBPP() == 1)
@@ -822,32 +822,30 @@ uint32_t CFX_DIBBase::GetPaletteArgb(int index) const {
 
 void CFX_DIBBase::SetPaletteArgb(int index, uint32_t color) {
   ASSERT((GetBPP() == 1 || GetBPP() == 8) && !IsAlphaMask());
-  if (!m_pPalette) {
-    BuildPalette();
-  }
+  BuildPalette();
   m_pPalette.get()[index] = color;
 }
 
 int CFX_DIBBase::FindPalette(uint32_t color) const {
   ASSERT((GetBPP() == 1 || GetBPP() == 8) && !IsAlphaMask());
-  if (!m_pPalette) {
-    if (IsCmykImage()) {
-      if (GetBPP() == 1)
-        return (static_cast<uint8_t>(color) == 0xff) ? 0 : 1;
-
-      return 0xff - static_cast<uint8_t>(color);
+  if (HasPalette()) {
+    int palsize = (1 << GetBPP());
+    for (int i = 0; i < palsize; ++i) {
+      if (GetPaletteData()[i] == color)
+        return i;
     }
-    if (GetBPP() == 1)
-      return (static_cast<uint8_t>(color) == 0xff) ? 1 : 0;
+    return -1;
+  }
 
-    return static_cast<uint8_t>(color);
+  if (IsCmykImage()) {
+    if (GetBPP() == 1)
+      return (static_cast<uint8_t>(color) == 0xff) ? 0 : 1;
+    return 0xff - static_cast<uint8_t>(color);
   }
-  int palsize = (1 << GetBPP());
-  for (int i = 0; i < palsize; ++i) {
-    if (m_pPalette.get()[i] == color)
-      return i;
-  }
-  return -1;
+
+  if (GetBPP() == 1)
+    return (static_cast<uint8_t>(color) == 0xff) ? 1 : 0;
+  return static_cast<uint8_t>(color);
 }
 
 bool CFX_DIBBase::GetOverlapRect(int& dest_left,
@@ -919,15 +917,15 @@ void CFX_DIBBase::GetPalette(uint32_t* pal, int alpha) const {
   ASSERT(!IsCmykImage());
 
   if (GetBPP() == 1) {
-    pal[0] = ((m_pPalette ? m_pPalette.get()[0] : 0xff000000) & 0xffffff) |
+    pal[0] = ((HasPalette() ? GetPaletteData()[0] : 0xff000000) & 0xffffff) |
              (alpha << 24);
-    pal[1] = ((m_pPalette ? m_pPalette.get()[1] : 0xffffffff) & 0xffffff) |
+    pal[1] = ((HasPalette() ? GetPaletteData()[1] : 0xffffffff) & 0xffffff) |
              (alpha << 24);
     return;
   }
-  if (m_pPalette) {
+  if (HasPalette()) {
     for (int i = 0; i < 256; ++i)
-      pal[i] = (m_pPalette.get()[i] & 0x00ffffff) | (alpha << 24);
+      pal[i] = (GetPaletteData()[i] & 0x00ffffff) | (alpha << 24);
   } else {
     for (int i = 0; i < 256; ++i)
       pal[i] = (i * 0x10101) | (alpha << 24);
@@ -985,7 +983,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::FlipImage(bool bXFlip, bool bYFlip) const {
   if (!pFlipped->Create(m_Width, m_Height, GetFormat()))
     return nullptr;
 
-  pFlipped->SetPalette(m_pPalette.get());
+  pFlipped->SetPalette(GetPaletteData());
   uint8_t* pDestBuffer = pFlipped->GetBuffer();
   int Bpp = m_bpp / 8;
   for (int row = 0; row < m_Height; ++row) {
@@ -1102,7 +1100,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::SwapXY(bool bXFlip, bool bYFlip) const {
   if (!pTransBitmap->Create(result_width, result_height, GetFormat()))
     return nullptr;
 
-  pTransBitmap->SetPalette(m_pPalette.get());
+  pTransBitmap->SetPalette(GetPaletteData());
   int dest_pitch = pTransBitmap->GetPitch();
   uint8_t* dest_buf = pTransBitmap->GetBuffer();
   int row_start = bXFlip ? m_Height - dest_clip.right : dest_clip.left;
@@ -1239,12 +1237,12 @@ bool CFX_DIBBase::ConvertBuffer(
     case FXDIB_8bppRgb:
     case FXDIB_8bppRgba: {
       const bool bpp_1_or_8 = (bpp == 1 || bpp == 8);
-      if (bpp_1_or_8 && !pSrcBitmap->GetPalette()) {
+      if (bpp_1_or_8 && !pSrcBitmap->HasPalette()) {
         return ConvertBuffer(FXDIB_8bppMask, dest_buf, dest_pitch, width,
                              height, pSrcBitmap, src_left, src_top, p_pal);
       }
       p_pal->reset(FX_Alloc(uint32_t, 256));
-      if (bpp_1_or_8 && pSrcBitmap->GetPalette()) {
+      if (bpp_1_or_8 && pSrcBitmap->HasPalette()) {
         ConvertBuffer_Plt2PltRgb8(dest_buf, dest_pitch, width, height,
                                   pSrcBitmap, src_left, src_top, p_pal->get());
         return true;

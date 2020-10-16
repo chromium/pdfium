@@ -337,9 +337,9 @@ bool ProgressiveDecoder::PngAskScanlineBuf(int line, uint8_t** pSrcBuf) {
           return false;
         case FXDIB_8bppMask:
         case FXDIB_8bppRgb: {
-          if (pDIBitmap->GetPalette()) {
+          if (pDIBitmap->HasPalette())
             return false;
-          }
+
           uint32_t dest_g = 0;
           dest_g += pPixelWeights->m_Weights[0] * src_scan[src_col];
           dest_scan[pPixelWeights->m_SrcStart] = (uint8_t)(dest_g >> 16);
@@ -647,9 +647,9 @@ void ProgressiveDecoder::ResampleVertBT(
           return;
         case FXDIB_8bppMask:
         case FXDIB_8bppRgb: {
-          if (pDeviceBitmap->GetPalette()) {
+          if (pDeviceBitmap->HasPalette())
             return;
-          }
+
           int dest_g = 0;
           dest_g += pWeight->m_Weights[0] * (*scan_src1++);
           dest_g += pWeight->m_Weights[1] * (*scan_src2++);
@@ -922,9 +922,9 @@ void ProgressiveDecoder::GifDoubleLineResampleVert(
           return;
         case FXDIB_8bppMask:
         case FXDIB_8bppRgb: {
-          if (pDeviceBitmap->GetPalette()) {
+          if (pDeviceBitmap->HasPalette())
             return;
-          }
+
           int dest_g = 0;
           dest_g += pWeight->m_Weights[0] * (*scan_src1++);
           dest_g += pWeight->m_Weights[1] * (*scan_src2++);
@@ -1132,9 +1132,9 @@ void ProgressiveDecoder::PngOneOneMapResampleHorz(
         return;
       case FXDIB_8bppMask:
       case FXDIB_8bppRgb: {
-        if (pDeviceBitmap->GetPalette()) {
+        if (pDeviceBitmap->HasPalette())
           return;
-        }
+
         uint32_t dest_g = 0;
         dest_g +=
             pPixelWeights->m_Weights[0] * src_scan[pPixelWeights->m_SrcStart];
@@ -2008,9 +2008,9 @@ void ProgressiveDecoder::ResampleVert(
           return;
         case FXDIB_8bppMask:
         case FXDIB_8bppRgb: {
-          if (pDeviceBitmap->GetPalette()) {
+          if (pDeviceBitmap->HasPalette())
             return;
-          }
+
           int dest_g = 0;
           dest_g += pWeight->m_Weights[0] * (*scan_src1++);
           dest_g += pWeight->m_Weights[1] * (*scan_src2++);

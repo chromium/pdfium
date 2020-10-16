@@ -85,7 +85,7 @@ bool CFX_DIBitmap::Copy(const RetainPtr<CFX_DIBBase>& pSrc) {
   if (!Create(pSrc->GetWidth(), pSrc->GetHeight(), pSrc->GetFormat()))
     return false;
 
-  SetPalette(pSrc->GetPalette());
+  SetPalette(pSrc->GetPaletteData());
   SetAlphaMask(pSrc->m_pAlphaMask, nullptr);
   for (int row = 0; row < pSrc->GetHeight(); row++)
     memcpy(m_pBuffer.Get() + row * m_Pitch, pSrc->GetScanline(row), m_Pitch);
@@ -220,7 +220,7 @@ bool CFX_DIBitmap::TransferWithUnequalFormats(
     const RetainPtr<CFX_DIBBase>& pSrcBitmap,
     int src_left,
     int src_top) {
-  if (m_pPalette)
+  if (HasPalette())
     return false;
 
   if (m_bpp == 8)
@@ -550,15 +550,15 @@ uint32_t CFX_DIBitmap::GetPixel(int x, int y) const {
     }
     case FXDIB_1bppRgb: {
       if ((*pos) & (1 << (7 - x % 8))) {
-        return m_pPalette ? m_pPalette.get()[1] : 0xffffffff;
+        return HasPalette() ? GetPaletteData()[1] : 0xffffffff;
       }
-      return m_pPalette ? m_pPalette.get()[0] : 0xff000000;
+      return HasPalette() ? GetPaletteData()[0] : 0xff000000;
     }
     case FXDIB_8bppMask:
       return (*pos) << 24;
     case FXDIB_8bppRgb:
-      return m_pPalette ? m_pPalette.get()[*pos]
-                        : (0xff000000 | ((*pos) * 0x10101));
+      return HasPalette() ? GetPaletteData()[*pos]
+                          : (0xff000000 | ((*pos) * 0x10101));
     case FXDIB_Rgb:
     case FXDIB_Rgba:
     case FXDIB_Rgb32:
@@ -590,8 +590,8 @@ void CFX_DIBitmap::SetPixel(int x, int y, uint32_t color) {
       }
       break;
     case FXDIB_1bppRgb:
-      if (m_pPalette) {
-        if (color == m_pPalette.get()[1]) {
+      if (HasPalette()) {
+        if (color == GetPaletteData()[1]) {
           *pos |= 1 << (7 - x % 8);
         } else {
           *pos &= ~(1 << (7 - x % 8));
@@ -608,9 +608,9 @@ void CFX_DIBitmap::SetPixel(int x, int y, uint32_t color) {
       *pos = (uint8_t)(color >> 24);
       break;
     case FXDIB_8bppRgb: {
-      if (m_pPalette) {
+      if (HasPalette()) {
         for (int i = 0; i < 256; i++) {
-          if (m_pPalette.get()[i] == color) {
+          if (GetPaletteData()[i] == color) {
             *pos = (uint8_t)i;
             return;
           }
@@ -675,16 +675,16 @@ void CFX_DIBitmap::DownSampleScanline(int line,
       }
       src_x %= m_Width;
       int dest_pos = i;
-      if (m_pPalette) {
+      if (HasPalette()) {
         if (!IsCmykImage()) {
           dest_pos *= 3;
-          FX_ARGB argb = m_pPalette.get()[scanline[src_x]];
+          FX_ARGB argb = GetPaletteData()[scanline[src_x]];
           dest_scan[dest_pos] = FXARGB_B(argb);
           dest_scan[dest_pos + 1] = FXARGB_G(argb);
           dest_scan[dest_pos + 2] = FXARGB_R(argb);
         } else {
           dest_pos *= 4;
-          FX_CMYK cmyk = m_pPalette.get()[scanline[src_x]];
+          FX_CMYK cmyk = GetPaletteData()[scanline[src_x]];
           dest_scan[dest_pos] = FXSYS_GetCValue(cmyk);
           dest_scan[dest_pos + 1] = FXSYS_GetMValue(cmyk);
           dest_scan[dest_pos + 2] = FXSYS_GetYValue(cmyk);
@@ -718,10 +718,10 @@ void CFX_DIBitmap::ConvertBGRColorScale(uint32_t forecolor,
   int bg = FXSYS_GetGValue(backcolor);
   int bb = FXSYS_GetBValue(backcolor);
   if (m_bpp <= 8) {
-    if (forecolor == 0 && backcolor == 0xffffff && !m_pPalette)
+    if (forecolor == 0 && backcolor == 0xffffff && !HasPalette())
       return;
-    if (!m_pPalette)
-      BuildPalette();
+
+    BuildPalette();
     int size = 1 << m_bpp;
     for (int i = 0; i < size; ++i) {
       int gray = FXRGB2GRAY(FXARGB_R(m_pPalette.get()[i]),
@@ -771,10 +771,10 @@ void CFX_DIBitmap::ConvertCMYKColorScale(uint32_t forecolor,
   int by = FXSYS_GetYValue(backcolor);
   int bk = FXSYS_GetKValue(backcolor);
   if (m_bpp <= 8) {
-    if (forecolor == 0xff && backcolor == 0 && !m_pPalette)
+    if (forecolor == 0xff && backcolor == 0 && !HasPalette())
       return;
-    if (!m_pPalette)
-      BuildPalette();
+
+    BuildPalette();
     int size = 1 << m_bpp;
     for (int i = 0; i < size; ++i) {
       uint8_t r;
@@ -905,7 +905,7 @@ bool CFX_DIBitmap::CompositeBitmap(int dest_left,
   }
   CFX_ScanlineCompositor compositor;
   if (!compositor.Init(GetFormat(), pSrcBitmap->GetFormat(), width,
-                       pSrcBitmap->GetPalette(), 0, blend_type,
+                       pSrcBitmap->GetPaletteData(), 0, blend_type,
                        pClipMask != nullptr, bRgbByteOrder)) {
     return false;
   }
@@ -1074,9 +1074,9 @@ bool CFX_DIBitmap::CompositeRect(int left,
     int right_shift = rect.right % 8;
     int new_width = rect.right / 8 - rect.left / 8;
     int index = 0;
-    if (m_pPalette) {
+    if (HasPalette()) {
       for (int i = 0; i < 2; i++) {
-        if (m_pPalette.get()[i] == color)
+        if (GetPaletteData()[i] == color)
           index = i;
       }
     } else {
@@ -1215,7 +1215,7 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
     return true;
 
   if (dest_format == FXDIB_8bppMask && src_format == FXDIB_8bppRgb &&
-      !m_pPalette) {
+      !HasPalette()) {
     m_AlphaFlag = 1;
     return true;
   }

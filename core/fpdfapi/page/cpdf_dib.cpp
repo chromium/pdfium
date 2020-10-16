@@ -1091,8 +1091,8 @@ const uint8_t* CPDF_DIB::GetScanline(int line) const {
       return m_pLineBuf.get();
     }
 
-    uint32_t reset_argb = m_pPalette ? m_pPalette.get()[0] : 0xFF000000;
-    uint32_t set_argb = m_pPalette ? m_pPalette.get()[1] : 0xFFFFFFFF;
+    uint32_t reset_argb = HasPalette() ? GetPaletteData()[0] : 0xFF000000;
+    uint32_t set_argb = HasPalette() ? GetPaletteData()[1] : 0xFFFFFFFF;
     if (m_CompData[0].m_ColorKeyMin == 0)
       reset_argb = 0;
     if (m_CompData[0].m_ColorKeyMax == 1)
@@ -1126,10 +1126,10 @@ const uint8_t* CPDF_DIB::GetScanline(int line) const {
     const uint8_t* pSrcPixel = m_pLineBuf.get();
     for (int col = 0; col < m_Width; col++) {
       uint8_t index = *pSrcPixel++;
-      if (m_pPalette) {
-        *pDestPixel++ = FXARGB_B(m_pPalette.get()[index]);
-        *pDestPixel++ = FXARGB_G(m_pPalette.get()[index]);
-        *pDestPixel++ = FXARGB_R(m_pPalette.get()[index]);
+      if (HasPalette()) {
+        *pDestPixel++ = FXARGB_B(GetPaletteData()[index]);
+        *pDestPixel++ = FXARGB_G(GetPaletteData()[index]);
+        *pDestPixel++ = FXARGB_R(GetPaletteData()[index]);
       } else {
         *pDestPixel++ = index;
         *pDestPixel++ = index;
@@ -1244,8 +1244,8 @@ void CPDF_DIB::DownSampleScanline1Bit(int orig_Bpp,
                                       int clip_left,
                                       int clip_width) const {
   if (m_bColorKey && !m_bImageMask) {
-    uint32_t reset_argb = m_pPalette ? m_pPalette.get()[0] : 0xFF000000;
-    uint32_t set_argb = m_pPalette ? m_pPalette.get()[1] : 0xFFFFFFFF;
+    uint32_t reset_argb = HasPalette() ? GetPaletteData()[0] : 0xFF000000;
+    uint32_t set_argb = HasPalette() ? GetPaletteData()[1] : 0xFFFFFFFF;
     if (m_CompData[0].m_ColorKeyMin == 0)
       reset_argb = 0;
     if (m_CompData[0].m_ColorKeyMax == 1)
@@ -1268,9 +1268,9 @@ void CPDF_DIB::DownSampleScanline1Bit(int orig_Bpp,
       set_argb = 0;
       reset_argb = 0xFFFFFFFF;
     }
-  } else if (m_pPalette && dest_Bpp != 1) {
-    reset_argb = m_pPalette.get()[0];
-    set_argb = m_pPalette.get()[1];
+  } else if (HasPalette() && dest_Bpp != 1) {
+    reset_argb = GetPaletteData()[0];
+    set_argb = GetPaletteData()[1];
   }
   for (int i = 0; i < clip_width; i++) {
     uint32_t src_x = (clip_left + i) * src_width / dest_width;
@@ -1322,10 +1322,10 @@ void CPDF_DIB::DownSampleScanline8Bit(int orig_Bpp,
       src_x %= src_width;
       uint8_t* pDestPixel = dest_scan + i * 4;
       uint8_t index = pSrcLine[src_x];
-      if (m_pPalette) {
-        *pDestPixel++ = FXARGB_B(m_pPalette.get()[index]);
-        *pDestPixel++ = FXARGB_G(m_pPalette.get()[index]);
-        *pDestPixel++ = FXARGB_R(m_pPalette.get()[index]);
+      if (HasPalette()) {
+        *pDestPixel++ = FXARGB_B(GetPaletteData()[index]);
+        *pDestPixel++ = FXARGB_G(GetPaletteData()[index]);
+        *pDestPixel++ = FXARGB_R(GetPaletteData()[index]);
       } else {
         *pDestPixel++ = index;
         *pDestPixel++ = index;
@@ -1348,7 +1348,7 @@ void CPDF_DIB::DownSampleScanline8Bit(int orig_Bpp,
       dest_scan[i] = index;
     } else {
       int dest_pos = i * dest_Bpp;
-      FX_ARGB argb = m_pPalette.get()[index];
+      FX_ARGB argb = GetPaletteData()[index];
       dest_scan[dest_pos] = FXARGB_B(argb);
       dest_scan[dest_pos + 1] = FXARGB_G(argb);
       dest_scan[dest_pos + 2] = FXARGB_R(argb);

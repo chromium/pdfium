@@ -86,7 +86,7 @@ void CPDF_TransferFuncDIB::TranslateScanline(
       break;
     }
     case FXDIB_8bppRgb: {
-      const FX_ARGB* pPal = m_pSrc->GetPalette();
+      const FX_ARGB* pPal = m_pSrc->GetPaletteData();
       int index = 0;
       for (int i = 0; i < m_Width; i++) {
         if (pPal) {

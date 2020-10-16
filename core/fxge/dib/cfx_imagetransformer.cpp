@@ -513,7 +513,7 @@ void CFX_ImageTransformer::CalcAlpha(const CalcData& cdata) {
 void CFX_ImageTransformer::CalcMono(const CalcData& cdata,
                                     FXDIB_Format format) {
   uint32_t argb[256];
-  const FX_ARGB* pPal = m_Storer.GetBitmap()->GetPalette();
+  const FX_ARGB* pPal = m_Storer.GetBitmap()->GetPaletteData();
   if (pPal) {
     for (size_t i = 0; i < pdfium::size(argb); i++)
       argb[i] = pPal[i];

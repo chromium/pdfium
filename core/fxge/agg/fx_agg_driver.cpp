@@ -978,9 +978,9 @@ void CFX_Renderer::CompositeSpan1bppHelper(uint8_t* dest_scan,
                                            const uint8_t* clip_scan,
                                            int span_left) {
   int index = 0;
-  if (m_pDevice->GetPalette()) {
+  if (m_pDevice->HasPalette()) {
     for (int i = 0; i < 2; i++) {
-      if (m_pDevice->GetPalette()[i] == m_Color)
+      if (m_pDevice->GetPaletteData()[i] == m_Color)
         index = i;
     }
   } else {

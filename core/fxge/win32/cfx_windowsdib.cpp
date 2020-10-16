@@ -47,9 +47,9 @@ ByteString CFX_WindowsDIB::GetBitmapInfo(
     pbmih->biWidth = pBitmap->GetWidth();
     if (pBitmap->GetBPP() == 8) {
       uint32_t* pPalette = (uint32_t*)(pbmih + 1);
-      if (pBitmap->GetPalette()) {
+      if (pBitmap->HasPalette()) {
         for (int i = 0; i < 256; i++) {
-          pPalette[i] = pBitmap->GetPalette()[i];
+          pPalette[i] = pBitmap->GetPaletteData()[i];
         }
       } else {
         for (int i = 0; i < 256; i++) {
@@ -59,9 +59,9 @@ ByteString CFX_WindowsDIB::GetBitmapInfo(
     }
     if (pBitmap->GetBPP() == 1) {
       uint32_t* pPalette = (uint32_t*)(pbmih + 1);
-      if (pBitmap->GetPalette()) {
-        pPalette[0] = pBitmap->GetPalette()[0];
-        pPalette[1] = pBitmap->GetPalette()[1];
+      if (pBitmap->HasPalette()) {
+        pPalette[0] = pBitmap->GetPaletteData()[0];
+        pPalette[1] = pBitmap->GetPaletteData()[1];
       } else {
         pPalette[0] = 0;
         pPalette[1] = 0xffffff;

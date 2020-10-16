@@ -664,10 +664,10 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
     }
     case 8:
       // we upscale ctables to 32bit.
-      if (pSource->GetPalette()) {
+      if (pSource->HasPalette()) {
         dst32Storage.reset(FX_Alloc2D(uint32_t, width, height));
         SkPMColor* dst32Pixels = dst32Storage.get();
-        const SkPMColor* ctable = pSource->GetPalette();
+        const SkPMColor* ctable = pSource->GetPaletteData();
         const unsigned ctableSize = pSource->GetPaletteSize();
         for (int y = 0; y < height; ++y) {
           const uint8_t* srcRow =
