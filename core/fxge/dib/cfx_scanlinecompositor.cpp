@@ -2727,7 +2727,7 @@ CFX_ScanlineCompositor::~CFX_ScanlineCompositor() = default;
 bool CFX_ScanlineCompositor::Init(FXDIB_Format dest_format,
                                   FXDIB_Format src_format,
                                   int32_t width,
-                                  const uint32_t* pSrcPalette,
+                                  pdfium::span<const uint32_t> src_palette,
                                   uint32_t mask_color,
                                   BlendMode blend_type,
                                   bool bClip,
@@ -2748,7 +2748,7 @@ bool CFX_ScanlineCompositor::Init(FXDIB_Format dest_format,
     if (dest_format == FXDIB_8bppMask)
       return true;
 
-    InitSourcePalette(src_format, dest_format, pSrcPalette);
+    InitSourcePalette(src_format, dest_format, src_palette);
     m_iTransparency = (dest_format == FXDIB_Argb ? 1 : 0) +
                       (GetIsAlphaFromFormat(dest_format) ? 2 : 0) +
                       (GetIsCmykFromFormat(dest_format) ? 4 : 0) +
@@ -2779,9 +2779,10 @@ void CFX_ScanlineCompositor::InitSourceMask(uint32_t mask_color) {
   }
 }
 
-void CFX_ScanlineCompositor::InitSourcePalette(FXDIB_Format src_format,
-                                               FXDIB_Format dest_format,
-                                               const uint32_t* pSrcPalette) {
+void CFX_ScanlineCompositor::InitSourcePalette(
+    FXDIB_Format src_format,
+    FXDIB_Format dest_format,
+    pdfium::span<const uint32_t> src_palette) {
   m_SrcPalette.Reset();
   const bool bIsSrcCmyk = GetIsCmykFromFormat(src_format);
   const bool bIsDstCmyk = GetIsCmykFromFormat(dest_format);
@@ -2789,12 +2790,12 @@ void CFX_ScanlineCompositor::InitSourcePalette(FXDIB_Format src_format,
   const size_t pal_count = static_cast<size_t>(1)
                            << GetBppFromFormat(src_format);
 
-  if (pSrcPalette) {
+  if (!src_palette.empty()) {
     if (bIsDestBpp8) {
       pdfium::span<uint8_t> gray_pal = m_SrcPalette.Make8BitPalette(pal_count);
       if (bIsSrcCmyk) {
         for (size_t i = 0; i < pal_count; ++i) {
-          FX_CMYK cmyk = pSrcPalette[i];
+          FX_CMYK cmyk = src_palette[i];
           uint8_t r;
           uint8_t g;
           uint8_t b;
@@ -2805,7 +2806,7 @@ void CFX_ScanlineCompositor::InitSourcePalette(FXDIB_Format src_format,
         }
       } else {
         for (size_t i = 0; i < pal_count; ++i) {
-          FX_ARGB argb = pSrcPalette[i];
+          FX_ARGB argb = src_palette[i];
           gray_pal[i] =
               FXRGB2GRAY(FXARGB_R(argb), FXARGB_G(argb), FXARGB_B(argb));
         }
@@ -2814,10 +2815,11 @@ void CFX_ScanlineCompositor::InitSourcePalette(FXDIB_Format src_format,
     }
     pdfium::span<uint32_t> pPalette = m_SrcPalette.Make32BitPalette(pal_count);
     if (bIsDstCmyk == bIsSrcCmyk) {
-      memcpy(pPalette.data(), pSrcPalette, pal_count * sizeof(uint32_t));
+      for (size_t i = 0; i < pal_count; ++i)
+        pPalette[i] = src_palette[i];
     } else {
       for (size_t i = 0; i < pal_count; ++i) {
-        FX_CMYK cmyk = pSrcPalette[i];
+        FX_CMYK cmyk = src_palette[i];
         uint8_t r;
         uint8_t g;
         uint8_t b;

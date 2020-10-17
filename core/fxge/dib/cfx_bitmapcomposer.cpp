@@ -46,8 +46,8 @@ bool CFX_BitmapComposer::SetInfo(int width,
                                  FXDIB_Format src_format,
                                  pdfium::span<const uint32_t> src_palette) {
   m_SrcFormat = src_format;
-  if (!m_Compositor.Init(m_pBitmap->GetFormat(), src_format, width,
-                         src_palette.data(), m_MaskColor, BlendMode::kNormal,
+  if (!m_Compositor.Init(m_pBitmap->GetFormat(), src_format, width, src_palette,
+                         m_MaskColor, BlendMode::kNormal,
                          m_pClipMask != nullptr || (m_BitmapAlpha < 255),
                          m_bRgbByteOrder)) {
     return false;

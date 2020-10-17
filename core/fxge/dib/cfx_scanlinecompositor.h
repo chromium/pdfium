@@ -21,7 +21,7 @@ class CFX_ScanlineCompositor {
   bool Init(FXDIB_Format dest_format,
             FXDIB_Format src_format,
             int32_t width,
-            const uint32_t* pSrcPalette,
+            pdfium::span<const uint32_t> src_palette,
             uint32_t mask_color,
             BlendMode blend_type,
             bool bClip,
@@ -80,7 +80,7 @@ class CFX_ScanlineCompositor {
 
   void InitSourcePalette(FXDIB_Format src_format,
                          FXDIB_Format dest_format,
-                         const uint32_t* pSrcPalette);
+                         pdfium::span<const uint32_t> src_palette);
 
   void InitSourceMask(uint32_t mask_color);
 
