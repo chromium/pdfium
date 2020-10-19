@@ -390,11 +390,6 @@ bool CFX_RenderDevice::CreateCompatibleBitmap(
     const RetainPtr<CFX_DIBitmap>& pDIB,
     int width,
     int height) const {
-  if (m_RenderCaps & FXRC_CMYK_OUTPUT) {
-    return pDIB->Create(
-        width, height,
-        m_RenderCaps & FXRC_ALPHA_OUTPUT ? FXDIB_Cmyka : FXDIB_Cmyk);
-  }
   if (m_RenderCaps & FXRC_BYTEMASK_OUTPUT)
     return pDIB->Create(width, height, FXDIB_8bppMask);
 #if defined(OS_APPLE) || defined(_SKIA_SUPPORT_PATHS_)
@@ -716,14 +711,12 @@ bool CFX_RenderDevice::SetDIBitsWithBlend(const RetainPtr<CFX_DIBBase>& pBitmap,
   int bg_pixel_width = dest_rect.Width();
   int bg_pixel_height = dest_rect.Height();
   auto background = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!background->Create(
-          bg_pixel_width, bg_pixel_height,
-          (m_RenderCaps & FXRC_CMYK_OUTPUT) ? FXDIB_Cmyk : FXDIB_Rgb32)) {
+  if (!background->Create(bg_pixel_width, bg_pixel_height, FXDIB_Rgb32))
     return false;
-  }
-  if (!m_pDeviceDriver->GetDIBits(background, dest_rect.left, dest_rect.top)) {
+
+  if (!m_pDeviceDriver->GetDIBits(background, dest_rect.left, dest_rect.top))
     return false;
-  }
+
   if (!background->CompositeBitmap(0, 0, bg_pixel_width, bg_pixel_height,
                                    pBitmap, src_rect.left, src_rect.top,
                                    blend_mode, nullptr, false)) {
@@ -848,7 +841,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
         // anti-aliasing as well.
         text_options.aliasing_type = CFX_TextRenderOptions::kAntiAliasing;
 #endif
-      } else if ((m_RenderCaps & (FXRC_ALPHA_OUTPUT | FXRC_CMYK_OUTPUT))) {
+      } else if ((m_RenderCaps & FXRC_ALPHA_OUTPUT)) {
         // Whether Skia uses LCD optimization should strictly follow the
         // rendering options provided by |text_options|. No change needs to be
         // done for |text_options| here.
