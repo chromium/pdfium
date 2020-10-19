@@ -909,9 +909,12 @@ bool CFX_DIBitmap::CompositeBitmap(int dest_left,
                        pClipMask != nullptr, bRgbByteOrder)) {
     return false;
   }
-  int dest_Bpp = m_bpp / 8;
-  int src_Bpp = pSrcBitmap->GetBPP() / 8;
-  bool bRgb = src_Bpp > 1 && !pSrcBitmap->IsCmykImage();
+  const int dest_Bpp = m_bpp / 8;
+  const int src_Bpp = pSrcBitmap->GetBPP() / 8;
+  const bool bRgb = src_Bpp > 1 && !pSrcBitmap->IsCmykImage();
+  if (!bRgb && !pSrcBitmap->HasPalette())
+    return false;
+
   RetainPtr<CFX_DIBitmap> pSrcAlphaMask = pSrcBitmap->m_pAlphaMask;
   for (int row = 0; row < height; row++) {
     uint8_t* dest_scan =
