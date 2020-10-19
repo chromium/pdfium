@@ -292,8 +292,29 @@ agg::filling_rule_e GetAlternateOrWindingFillType(
 
 class CFX_Renderer {
  public:
+  bool Init(const RetainPtr<CFX_DIBitmap>& pDevice,
+            const RetainPtr<CFX_DIBitmap>& pBackdropDevice,
+            const CFX_ClipRgn* pClipRgn,
+            uint32_t color,
+            bool bFullCover,
+            bool bRgbByteOrder);
+
   // Needed for agg caller
   void prepare(unsigned) {}
+
+  template <class Scanline>
+  void render(const Scanline& sl);
+
+ private:
+  typedef void (CFX_Renderer::*CompositeSpanFunc)(uint8_t*,
+                                                  int,
+                                                  int,
+                                                  int,
+                                                  uint8_t*,
+                                                  int,
+                                                  int,
+                                                  uint8_t*,
+                                                  uint8_t*);
 
   void CompositeSpan(uint8_t* dest_scan,
                      uint8_t* backdrop_scan,
@@ -356,27 +377,6 @@ class CFX_Renderer {
                          uint8_t* clip_scan,
                          uint8_t* dest_extra_alpha_scan);
 
-  bool Init(const RetainPtr<CFX_DIBitmap>& pDevice,
-            const RetainPtr<CFX_DIBitmap>& pBackdropDevice,
-            const CFX_ClipRgn* pClipRgn,
-            uint32_t color,
-            bool bFullCover,
-            bool bRgbByteOrder);
-
-  template <class Scanline>
-  void render(const Scanline& sl);
-
- private:
-  void (CFX_Renderer::*composite_span)(uint8_t*,
-                                       int,
-                                       int,
-                                       int,
-                                       uint8_t*,
-                                       int,
-                                       int,
-                                       uint8_t*,
-                                       uint8_t*);
-
   void CompositeSpan1bppHelper(uint8_t* dest_scan,
                                int col_start,
                                int col_end,
@@ -417,6 +417,7 @@ class CFX_Renderer {
   RetainPtr<CFX_DIBitmap> m_pClipMask;
   RetainPtr<CFX_DIBitmap> m_pDevice;
   UnownedPtr<const CFX_ClipRgn> m_pClipRgn;
+  CompositeSpanFunc m_CompositeSpanFunc;
 };
 
 void CFX_Renderer::CompositeSpan(uint8_t* dest_scan,
@@ -865,7 +866,7 @@ bool CFX_Renderer::Init(const RetainPtr<CFX_DIBitmap>& pDevice,
                         bool bRgbByteOrder) {
   m_pDevice = pDevice;
   m_pClipRgn = pClipRgn;
-  composite_span = nullptr;
+  m_CompositeSpanFunc = nullptr;
   m_bRgbByteOrder = bRgbByteOrder;
   m_pBackdropDevice = pBackdropDevice;
   if (m_pClipRgn) {
@@ -883,7 +884,7 @@ bool CFX_Renderer::Init(const RetainPtr<CFX_DIBitmap>& pDevice,
   m_Alpha = FXARGB_A(color);
   if (m_pDevice->GetBPP() == 8) {
     ASSERT(!m_bRgbByteOrder);
-    composite_span = &CFX_Renderer::CompositeSpanGray;
+    m_CompositeSpanFunc = &CFX_Renderer::CompositeSpanGray;
     if (m_pDevice->IsAlphaMask())
       m_Gray = 255;
     else
@@ -892,25 +893,25 @@ bool CFX_Renderer::Init(const RetainPtr<CFX_DIBitmap>& pDevice,
   }
   if (bDeviceCMYK) {
     ASSERT(!m_bRgbByteOrder);
-    composite_span = &CFX_Renderer::CompositeSpanCMYK;
+    m_CompositeSpanFunc = &CFX_Renderer::CompositeSpanCMYK;
     return false;
   }
-  composite_span = (pDevice->GetFormat() == FXDIB_Argb)
-                       ? &CFX_Renderer::CompositeSpanARGB
-                       : &CFX_Renderer::CompositeSpanRGB;
+  m_CompositeSpanFunc = (pDevice->GetFormat() == FXDIB_Argb)
+                            ? &CFX_Renderer::CompositeSpanARGB
+                            : &CFX_Renderer::CompositeSpanRGB;
   if (m_bRgbByteOrder)
     m_Color = FXARGB_TOBGRORDERDIB(color);
   else
     m_Color = color;
   std::tie(m_Alpha, m_Red, m_Green, m_Blue) = ArgbDecode(color);
   if (m_pDevice->GetBPP() == 1)
-    composite_span = &CFX_Renderer::CompositeSpan1bpp;
+    m_CompositeSpanFunc = &CFX_Renderer::CompositeSpan1bpp;
   return true;
 }
 
 template <class Scanline>
 void CFX_Renderer::render(const Scanline& sl) {
-  if (!m_pBackdropDevice && !composite_span)
+  if (!m_pBackdropDevice && !m_CompositeSpanFunc)
     return;
 
   int y = sl.y();
@@ -960,9 +961,9 @@ void CFX_Renderer::render(const Scanline& sl) {
       CompositeSpan(dest_pos, backdrop_pos, Bpp, bDestAlpha, x, span->len,
                     span->covers, m_ClipBox.left, m_ClipBox.right, clip_pos);
     } else {
-      (this->*composite_span)(dest_pos, Bpp, x, span->len, span->covers,
-                              m_ClipBox.left, m_ClipBox.right, clip_pos,
-                              dest_extra_alpha_pos);
+      (this->*m_CompositeSpanFunc)(dest_pos, Bpp, x, span->len, span->covers,
+                                   m_ClipBox.left, m_ClipBox.right, clip_pos,
+                                   dest_extra_alpha_pos);
     }
     if (--num_spans == 0)
       break;
