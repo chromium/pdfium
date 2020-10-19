@@ -878,13 +878,17 @@ bool CFX_DIBitmap::CompositeBitmap(int dest_left,
                                    BlendMode blend_type,
                                    const CFX_ClipRgn* pClipRgn,
                                    bool bRgbByteOrder) {
-  if (!m_pBuffer)
-    return false;
-
-  if (pSrcBitmap->IsAlphaMask() || m_bpp < 8) {
+  if (pSrcBitmap->IsAlphaMask()) {
+    // Should have called CompositeMask().
     NOTREACHED();
     return false;
   }
+
+  if (!m_pBuffer)
+    return false;
+
+  if (m_bpp < 8)
+    return false;
 
   if (!GetOverlapRect(dest_left, dest_top, width, height,
                       pSrcBitmap->GetWidth(), pSrcBitmap->GetHeight(), src_left,
@@ -951,13 +955,17 @@ bool CFX_DIBitmap::CompositeMask(int dest_left,
                                  BlendMode blend_type,
                                  const CFX_ClipRgn* pClipRgn,
                                  bool bRgbByteOrder) {
-  if (!m_pBuffer)
-    return false;
-
-  if (!pMask->IsAlphaMask() || m_bpp < 8) {
+  if (!pMask->IsAlphaMask()) {
+    // Should have called CompositeBitmap().
     NOTREACHED();
     return false;
   }
+
+  if (!m_pBuffer)
+    return false;
+
+  if (m_bpp < 8)
+    return false;
 
   if (!GetOverlapRect(dest_left, dest_top, width, height, pMask->GetWidth(),
                       pMask->GetHeight(), src_left, src_top, pClipRgn)) {
