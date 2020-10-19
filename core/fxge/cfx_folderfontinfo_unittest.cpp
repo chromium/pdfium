@@ -28,7 +28,7 @@ class CFX_FolderFontInfoTest : public ::testing::Test {
     auto arial_info = std::make_unique<CFX_FolderFontInfo::FontFaceInfo>(
         /*filePath=*/"", kArial, /*fontTables=*/"",
         /*fontOffset=*/0, /*fileSize=*/0);
-    arial_info->m_Charsets = CHARSET_FLAG_SYMBOL;
+    arial_info->m_Charsets = CHARSET_FLAG_ANSI;
     auto times_new_roman_info =
         std::make_unique<CFX_FolderFontInfo::FontFaceInfo>(
             /*filePath=*/"", kTimesNewRoman, /*fontTables=*/"",
@@ -90,5 +90,5 @@ TEST_F(CFX_FolderFontInfoTest, TestFindFont) {
   font = FindFont(/*weight=*/0, /*bItalic=*/false, FX_CHARSET_Symbol,
                   FXFONT_FF_ROMAN, kSymbol, /*bMatchName=*/false);
   ASSERT_TRUE(font);
-  EXPECT_EQ(GetFaceName(font), kArial);
+  EXPECT_EQ(GetFaceName(font), kBookshelfSymbol7);
 }
