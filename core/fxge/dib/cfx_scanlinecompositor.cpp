@@ -1277,16 +1277,16 @@ void CompositeRow_1bppRgb2Rgb_NoBlend(uint8_t* dest_scan,
                                       int pixel_count,
                                       int DestBpp,
                                       const uint8_t* clip_scan) {
-  int reset_r, reset_g, reset_b;
-  int set_r, set_g, set_b;
-  reset_r = FXARGB_R(pPalette[0]);
-  reset_g = FXARGB_G(pPalette[0]);
-  reset_b = FXARGB_B(pPalette[0]);
-  set_r = FXARGB_R(pPalette[1]);
-  set_g = FXARGB_G(pPalette[1]);
-  set_b = FXARGB_B(pPalette[1]);
+  int reset_r = FXARGB_R(pPalette[0]);
+  int reset_g = FXARGB_G(pPalette[0]);
+  int reset_b = FXARGB_B(pPalette[0]);
+  int set_r = FXARGB_R(pPalette[1]);
+  int set_g = FXARGB_G(pPalette[1]);
+  int set_b = FXARGB_B(pPalette[1]);
   for (int col = 0; col < pixel_count; col++) {
-    int src_r, src_g, src_b;
+    int src_r;
+    int src_g;
+    int src_b;
     if (src_scan[(col + src_left) / 8] & (1 << (7 - (col + src_left) % 8))) {
       src_r = set_r;
       src_g = set_g;
@@ -1401,16 +1401,16 @@ void CompositeRow_1bppRgb2Argb_NoBlend(uint8_t* dest_scan,
                                        int width,
                                        const uint32_t* pPalette,
                                        const uint8_t* clip_scan) {
-  int reset_r, reset_g, reset_b;
-  int set_r, set_g, set_b;
-  reset_r = FXARGB_R(pPalette[0]);
-  reset_g = FXARGB_G(pPalette[0]);
-  reset_b = FXARGB_B(pPalette[0]);
-  set_r = FXARGB_R(pPalette[1]);
-  set_g = FXARGB_G(pPalette[1]);
-  set_b = FXARGB_B(pPalette[1]);
+  int reset_r = FXARGB_R(pPalette[0]);
+  int reset_g = FXARGB_G(pPalette[0]);
+  int reset_b = FXARGB_B(pPalette[0]);
+  int set_r = FXARGB_R(pPalette[1]);
+  int set_g = FXARGB_G(pPalette[1]);
+  int set_b = FXARGB_B(pPalette[1]);
   for (int col = 0; col < width; col++) {
-    int src_r, src_g, src_b;
+    int src_r;
+    int src_g;
+    int src_b;
     if (src_scan[(col + src_left) / 8] & (1 << (7 - (col + src_left) % 8))) {
       src_r = set_r;
       src_g = set_g;
@@ -1453,16 +1453,16 @@ void CompositeRow_1bppRgb2Rgba_NoBlend(uint8_t* dest_scan,
                                        const uint32_t* pPalette,
                                        const uint8_t* clip_scan,
                                        uint8_t* dest_alpha_scan) {
-  int reset_r, reset_g, reset_b;
-  int set_r, set_g, set_b;
-  reset_r = FXARGB_R(pPalette[0]);
-  reset_g = FXARGB_G(pPalette[0]);
-  reset_b = FXARGB_B(pPalette[0]);
-  set_r = FXARGB_R(pPalette[1]);
-  set_g = FXARGB_G(pPalette[1]);
-  set_b = FXARGB_B(pPalette[1]);
+  int reset_r = FXARGB_R(pPalette[0]);
+  int reset_g = FXARGB_G(pPalette[0]);
+  int reset_b = FXARGB_B(pPalette[0]);
+  int set_r = FXARGB_R(pPalette[1]);
+  int set_g = FXARGB_G(pPalette[1]);
+  int set_b = FXARGB_B(pPalette[1]);
   for (int col = 0; col < width; col++) {
-    int src_r, src_g, src_b;
+    int src_r;
+    int src_g;
+    int src_b;
     if (src_scan[(col + src_left) / 8] & (1 << (7 - (col + src_left) % 8))) {
       src_r = set_r;
       src_g = set_g;
@@ -2347,8 +2347,12 @@ void CompositeRow_1bppRgb2Rgb_NoBlend_RgbByteOrder(uint8_t* dest_scan,
                                                    int pixel_count,
                                                    int DestBpp,
                                                    const uint8_t* clip_scan) {
-  int reset_r, reset_g, reset_b;
-  int set_r, set_g, set_b;
+  int reset_r;
+  int reset_g;
+  int reset_b;
+  int set_r;
+  int set_g;
+  int set_b;
   if (pPalette) {
     reset_r = FXARGB_R(pPalette[0]);
     reset_g = FXARGB_G(pPalette[0]);
@@ -2361,7 +2365,9 @@ void CompositeRow_1bppRgb2Rgb_NoBlend_RgbByteOrder(uint8_t* dest_scan,
     set_r = set_g = set_b = 255;
   }
   for (int col = 0; col < pixel_count; col++) {
-    int src_r, src_g, src_b;
+    int src_r;
+    int src_g;
+    int src_b;
     if (src_scan[(col + src_left) / 8] & (1 << (7 - (col + src_left) % 8))) {
       src_r = set_r;
       src_g = set_g;
@@ -2390,7 +2396,9 @@ void CompositeRow_8bppRgb2Argb_NoBlend_RgbByteOrder(uint8_t* dest_scan,
                                                     const FX_ARGB* pPalette,
                                                     const uint8_t* clip_scan) {
   for (int col = 0; col < width; col++) {
-    int src_r, src_g, src_b;
+    int src_r;
+    int src_g;
+    int src_b;
     if (pPalette) {
       FX_ARGB argb = pPalette[*src_scan];
       src_r = FXARGB_R(argb);
@@ -2432,8 +2440,12 @@ void CompositeRow_1bppRgb2Argb_NoBlend_RgbByteOrder(uint8_t* dest_scan,
                                                     int width,
                                                     const FX_ARGB* pPalette,
                                                     const uint8_t* clip_scan) {
-  int reset_r, reset_g, reset_b;
-  int set_r, set_g, set_b;
+  int reset_r;
+  int reset_g;
+  int reset_b;
+  int set_r;
+  int set_g;
+  int set_b;
   if (pPalette) {
     reset_r = FXARGB_R(pPalette[0]);
     reset_g = FXARGB_G(pPalette[0]);
@@ -2446,7 +2458,9 @@ void CompositeRow_1bppRgb2Argb_NoBlend_RgbByteOrder(uint8_t* dest_scan,
     set_r = set_g = set_b = 255;
   }
   for (int col = 0; col < width; col++) {
-    int src_r, src_g, src_b;
+    int src_r;
+    int src_g;
+    int src_b;
     if (src_scan[(col + src_left) / 8] & (1 << (7 - (col + src_left) % 8))) {
       src_r = set_r;
       src_g = set_g;
