@@ -57,8 +57,7 @@ class CFX_PSRenderer {
   void Init(const RetainPtr<IFX_RetainableWriteStream>& stream,
             int pslevel,
             int width,
-            int height,
-            bool bCmykOutput);
+            int height);
   bool StartRendering();
   void EndRendering();
   void SaveState();
@@ -123,7 +122,6 @@ class CFX_PSRenderer {
 
   bool m_bInited = false;
   bool m_bGraphStateSet = false;
-  bool m_bCmykOutput;
   bool m_bColorSet = false;
   int m_PSLevel = 0;
   uint32_t m_LastColor = 0;

@@ -46,15 +46,13 @@ CFX_PSRenderer::~CFX_PSRenderer() = default;
 void CFX_PSRenderer::Init(const RetainPtr<IFX_RetainableWriteStream>& pStream,
                           int pslevel,
                           int width,
-                          int height,
-                          bool bCmykOutput) {
+                          int height) {
   m_PSLevel = pslevel;
   m_pStream = pStream;
   m_ClipBox.left = 0;
   m_ClipBox.top = 0;
   m_ClipBox.right = width;
   m_ClipBox.bottom = height;
-  m_bCmykOutput = bCmykOutput;
 }
 
 bool CFX_PSRenderer::StartRendering() {
@@ -446,24 +444,15 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
 }
 
 void CFX_PSRenderer::SetColor(uint32_t color) {
-  bool bCMYK = false;
-  if (bCMYK != m_bCmykOutput || !m_bColorSet || m_LastColor != color) {
-    std::ostringstream buf;
-    if (bCMYK) {
-      buf << FXSYS_GetCValue(color) / 255.0 << " "
-          << FXSYS_GetMValue(color) / 255.0 << " "
-          << FXSYS_GetYValue(color) / 255.0 << " "
-          << FXSYS_GetKValue(color) / 255.0 << " k\n";
-    } else {
-      buf << FXARGB_R(color) / 255.0 << " " << FXARGB_G(color) / 255.0 << " "
-          << FXARGB_B(color) / 255.0 << " rg\n";
-    }
-    if (bCMYK == m_bCmykOutput) {
-      m_bColorSet = true;
-      m_LastColor = color;
-    }
-    WriteToStream(&buf);
-  }
+  if (m_bColorSet && m_LastColor == color)
+    return;
+
+  std::ostringstream buf;
+  buf << FXARGB_R(color) / 255.0 << " " << FXARGB_G(color) / 255.0 << " "
+      << FXARGB_B(color) / 255.0 << " rg\n";
+  m_bColorSet = true;
+  m_LastColor = color;
+  WriteToStream(&buf);
 }
 
 void CFX_PSRenderer::FindPSFontGlyph(CFX_GlyphCache* pGlyphCache,

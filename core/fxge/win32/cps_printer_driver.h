@@ -19,7 +19,6 @@ class CPSPrinterDriver final : public RenderDeviceDriverIface {
  public:
   CPSPrinterDriver(HDC hDC,
                    WindowsPrintMode mode,
-                   bool bCmykOutput,
                    const EncoderIface* pEncoderIface);
   ~CPSPrinterDriver() override;
 
@@ -74,7 +73,6 @@ class CPSPrinterDriver final : public RenderDeviceDriverIface {
                       const CFX_TextRenderOptions& options) override;
 
   HDC m_hDC;
-  const bool m_bCmykOutput;
   int m_Width;
   int m_Height;
   int m_nBitsPerPixel;

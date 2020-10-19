@@ -20,9 +20,8 @@
 
 CPSPrinterDriver::CPSPrinterDriver(HDC hDC,
                                    WindowsPrintMode mode,
-                                   bool bCmykOutput,
                                    const EncoderIface* pEncoderIface)
-    : m_hDC(hDC), m_bCmykOutput(bCmykOutput), m_PSRenderer(pEncoderIface) {
+    : m_hDC(hDC), m_PSRenderer(pEncoderIface) {
   // |mode| should be PostScript.
   ASSERT(mode == WindowsPrintMode::kModePostScript2 ||
          mode == WindowsPrintMode::kModePostScript3 ||
@@ -45,7 +44,7 @@ CPSPrinterDriver::CPSPrinterDriver(HDC hDC,
   m_nBitsPerPixel = ::GetDeviceCaps(m_hDC, BITSPIXEL);
 
   m_PSRenderer.Init(pdfium::MakeRetain<CPSOutput>(m_hDC, output_mode), pslevel,
-                    m_Width, m_Height, bCmykOutput);
+                    m_Width, m_Height);
   HRGN hRgn = ::CreateRectRgn(0, 0, 1, 1);
   if (::GetClipRgn(m_hDC, hRgn) == 1) {
     DWORD dwCount = ::GetRegionData(hRgn, 0, nullptr);
@@ -87,7 +86,7 @@ int CPSPrinterDriver::GetDeviceCaps(int caps_id) const {
     case FXDC_BITS_PIXEL:
       return m_nBitsPerPixel;
     case FXDC_RENDER_CAPS:
-      return m_bCmykOutput ? FXRC_BIT_MASK | FXRC_CMYK_OUTPUT : FXRC_BIT_MASK;
+      return FXRC_BIT_MASK;
     case FXDC_HORZ_SIZE:
       return m_HorzSize;
     case FXDC_VERT_SIZE:
