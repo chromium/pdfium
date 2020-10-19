@@ -33,6 +33,7 @@
 #include "core/fxge/dib/cfx_imagerenderer.h"
 #include "core/fxge/dib/cfx_imagestretcher.h"
 #include "core/fxge/text_char_pos.h"
+#include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/span.h"
@@ -1634,6 +1635,8 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
 #endif
       m_bRgbByteOrder(bRgbByteOrder),
       m_bGroupKnockout(bGroupKnockout) {
+  DCHECK(!m_pBitmap->IsCmykImage());
+
   SkBitmap skBitmap;
   SkColorType color_type;
   const int bpp = pBitmap->GetBPP();
@@ -1884,9 +1887,6 @@ int CFX_SkiaDeviceDriver::GetDeviceCaps(int caps_id) const {
         } else {
           flags |= FXRC_BYTEMASK_OUTPUT;
         }
-      }
-      if (m_pBitmap->IsCmykImage()) {
-        flags |= FXRC_CMYK_OUTPUT;
       }
       return flags;
     }
