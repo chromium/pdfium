@@ -17,6 +17,7 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_imagerenderer.h"
 #include "core/fxge/dib/cfx_imagestretcher.h"
+#include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
@@ -367,16 +368,6 @@ class CFX_Renderer {
                         uint8_t* clip_scan,
                         uint8_t* dest_extra_alpha_scan);
 
-  void CompositeSpanCMYK(uint8_t* dest_scan,
-                         int Bpp,
-                         int span_left,
-                         int span_len,
-                         uint8_t* cover_scan,
-                         int clip_left,
-                         int clip_right,
-                         uint8_t* clip_scan,
-                         uint8_t* dest_extra_alpha_scan);
-
   void CompositeSpan1bppHelper(uint8_t* dest_scan,
                                int col_start,
                                int col_end,
@@ -430,7 +421,6 @@ void CFX_Renderer::CompositeSpan(uint8_t* dest_scan,
                                  int clip_left,
                                  int clip_right,
                                  uint8_t* clip_scan) {
-  ASSERT(!m_pDevice->IsCmykImage());
   int col_start = GetColStart(span_left, clip_left);
   int col_end = GetColEnd(span_left, span_len, clip_right);
   if (Bpp) {
@@ -575,7 +565,6 @@ void CFX_Renderer::CompositeSpan1bpp(uint8_t* dest_scan,
                                      uint8_t* clip_scan,
                                      uint8_t* dest_extra_alpha_scan) {
   ASSERT(!m_bRgbByteOrder);
-  ASSERT(!m_pDevice->IsCmykImage());
   int col_start = GetColStart(span_left, clip_left);
   int col_end = GetColEnd(span_left, span_len, clip_right);
   dest_scan += col_start / 8;
@@ -795,75 +784,14 @@ void CFX_Renderer::CompositeSpanRGB(uint8_t* dest_scan,
   }
 }
 
-void CFX_Renderer::CompositeSpanCMYK(uint8_t* dest_scan,
-                                     int Bpp,
-                                     int span_left,
-                                     int span_len,
-                                     uint8_t* cover_scan,
-                                     int clip_left,
-                                     int clip_right,
-                                     uint8_t* clip_scan,
-                                     uint8_t* dest_extra_alpha_scan) {
-  ASSERT(!m_bRgbByteOrder);
-  int col_start = GetColStart(span_left, clip_left);
-  int col_end = GetColEnd(span_left, span_len, clip_right);
-  dest_scan += col_start * 4;
-  if (dest_extra_alpha_scan) {
-    for (int col = col_start; col < col_end; col++) {
-      int src_alpha = m_bFullCover ? GetSrcAlpha(clip_scan, col)
-                                   : GetSourceAlpha(cover_scan, clip_scan, col);
-      if (src_alpha) {
-        if (src_alpha == 255) {
-          *(reinterpret_cast<FX_CMYK*>(dest_scan)) = m_Color;
-          *dest_extra_alpha_scan = static_cast<uint8_t>(m_Alpha);
-        } else {
-          uint8_t dest_alpha = (*dest_extra_alpha_scan) + src_alpha -
-                               (*dest_extra_alpha_scan) * src_alpha / 255;
-          *dest_extra_alpha_scan++ = dest_alpha;
-          int alpha_ratio = src_alpha * 255 / dest_alpha;
-          *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, m_Red, alpha_ratio);
-          dest_scan++;
-          *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, m_Green, alpha_ratio);
-          dest_scan++;
-          *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, m_Blue, alpha_ratio);
-          dest_scan++;
-          *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, m_Gray, alpha_ratio);
-          dest_scan++;
-          continue;
-        }
-      }
-      dest_extra_alpha_scan++;
-      dest_scan += 4;
-    }
-    return;
-  }
-  for (int col = col_start; col < col_end; col++) {
-    int src_alpha = GetSourceAlpha(cover_scan, clip_scan, col);
-    if (src_alpha) {
-      if (src_alpha == 255) {
-        *(reinterpret_cast<FX_CMYK*>(dest_scan)) = m_Color;
-      } else {
-        *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, m_Red, src_alpha);
-        dest_scan++;
-        *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, m_Green, src_alpha);
-        dest_scan++;
-        *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, m_Blue, src_alpha);
-        dest_scan++;
-        *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, m_Gray, src_alpha);
-        dest_scan++;
-        continue;
-      }
-    }
-    dest_scan += 4;
-  }
-}
-
 bool CFX_Renderer::Init(const RetainPtr<CFX_DIBitmap>& pDevice,
                         const RetainPtr<CFX_DIBitmap>& pBackdropDevice,
                         const CFX_ClipRgn* pClipRgn,
                         uint32_t color,
                         bool bFullCover,
                         bool bRgbByteOrder) {
+  DCHECK(!pDevice->IsCmykImage());
+
   m_pDevice = pDevice;
   m_pClipRgn = pClipRgn;
   m_CompositeSpanFunc = nullptr;
@@ -880,7 +808,6 @@ bool CFX_Renderer::Init(const RetainPtr<CFX_DIBitmap>& pDevice,
   if (m_pClipRgn && m_pClipRgn->GetType() == CFX_ClipRgn::MaskF)
     m_pClipMask = m_pClipRgn->GetMask();
   m_bFullCover = bFullCover;
-  bool bDeviceCMYK = pDevice->IsCmykImage();
   m_Alpha = FXARGB_A(color);
   if (m_pDevice->GetBPP() == 8) {
     ASSERT(!m_bRgbByteOrder);
@@ -890,11 +817,6 @@ bool CFX_Renderer::Init(const RetainPtr<CFX_DIBitmap>& pDevice,
     else
       m_Gray = FXRGB2GRAY(FXARGB_R(color), FXARGB_G(color), FXARGB_B(color));
     return true;
-  }
-  if (bDeviceCMYK) {
-    ASSERT(!m_bRgbByteOrder);
-    m_CompositeSpanFunc = &CFX_Renderer::CompositeSpanCMYK;
-    return false;
   }
   m_CompositeSpanFunc = (pDevice->GetFormat() == FXDIB_Argb)
                             ? &CFX_Renderer::CompositeSpanARGB
@@ -1096,7 +1018,8 @@ CFX_AggDeviceDriver::CFX_AggDeviceDriver(
       m_bRgbByteOrder(bRgbByteOrder),
       m_bGroupKnockout(bGroupKnockout),
       m_pBackdropBitmap(pBackdropBitmap) {
-  ASSERT(m_pBitmap);
+  DCHECK(m_pBitmap);
+  DCHECK(!m_pBitmap->IsCmykImage());
   InitPlatform();
 }
 
@@ -1146,8 +1069,6 @@ int CFX_AggDeviceDriver::GetDeviceCaps(int caps_id) const {
         else
           flags |= FXRC_BYTEMASK_OUTPUT;
       }
-      if (m_pBitmap->IsCmykImage())
-        flags |= FXRC_CMYK_OUTPUT;
       return flags;
     }
     default:
