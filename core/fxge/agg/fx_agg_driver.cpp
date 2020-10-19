@@ -291,14 +291,25 @@ agg::filling_rule_e GetAlternateOrWindingFillType(
              : agg::fill_even_odd;
 }
 
+RetainPtr<CFX_DIBitmap> GetClipMaskFromRegion(const CFX_ClipRgn* r) {
+  return (r && r->GetType() == CFX_ClipRgn::MaskF) ? r->GetMask() : nullptr;
+}
+
+FX_RECT GetClipBoxFromRegion(const RetainPtr<CFX_DIBitmap>& device,
+                             const CFX_ClipRgn* region) {
+  if (region)
+    return region->GetBox();
+  return FX_RECT(0, 0, device->GetWidth(), device->GetHeight());
+}
+
 class CFX_Renderer {
  public:
-  bool Init(const RetainPtr<CFX_DIBitmap>& pDevice,
-            const RetainPtr<CFX_DIBitmap>& pBackdropDevice,
-            const CFX_ClipRgn* pClipRgn,
-            uint32_t color,
-            bool bFullCover,
-            bool bRgbByteOrder);
+  CFX_Renderer(const RetainPtr<CFX_DIBitmap>& pDevice,
+               const RetainPtr<CFX_DIBitmap>& pBackdropDevice,
+               const CFX_ClipRgn* pClipRgn,
+               uint32_t color,
+               bool bFullCover,
+               bool bRgbByteOrder);
 
   // Needed for agg caller
   void prepare(unsigned) {}
@@ -375,6 +386,17 @@ class CFX_Renderer {
                                const uint8_t* clip_scan,
                                int span_left);
 
+  static CompositeSpanFunc GetCompositeSpanFunc(
+      const RetainPtr<CFX_DIBitmap>& device) {
+    if (device->GetBPP() == 1)
+      return &CFX_Renderer::CompositeSpan1bpp;
+    if (device->GetBPP() == 8)
+      return &CFX_Renderer::CompositeSpanGray;
+    if (device->GetFormat() == FXDIB_Argb)
+      return &CFX_Renderer::CompositeSpanARGB;
+    return &CFX_Renderer::CompositeSpanRGB;
+  }
+
   inline int GetSrcAlpha(const uint8_t* clip_scan, int col) const {
     return clip_scan ? m_Alpha * clip_scan[col] / 255 : m_Alpha;
   }
@@ -400,15 +422,15 @@ class CFX_Renderer {
   int m_Green;
   int m_Blue;
   int m_Gray;
-  uint32_t m_Color;
-  bool m_bFullCover;
-  bool m_bRgbByteOrder;
-  FX_RECT m_ClipBox;
-  RetainPtr<CFX_DIBitmap> m_pBackdropDevice;
-  RetainPtr<CFX_DIBitmap> m_pClipMask;
-  RetainPtr<CFX_DIBitmap> m_pDevice;
+  const uint32_t m_Color;
+  const bool m_bFullCover;
+  const bool m_bRgbByteOrder;
+  const FX_RECT m_ClipBox;
+  RetainPtr<CFX_DIBitmap> const m_pBackdropDevice;
+  RetainPtr<CFX_DIBitmap> const m_pClipMask;
+  RetainPtr<CFX_DIBitmap> const m_pDevice;
   UnownedPtr<const CFX_ClipRgn> m_pClipRgn;
-  CompositeSpanFunc m_CompositeSpanFunc;
+  const CompositeSpanFunc m_CompositeSpanFunc;
 };
 
 void CFX_Renderer::CompositeSpan(uint8_t* dest_scan,
@@ -784,58 +806,38 @@ void CFX_Renderer::CompositeSpanRGB(uint8_t* dest_scan,
   }
 }
 
-bool CFX_Renderer::Init(const RetainPtr<CFX_DIBitmap>& pDevice,
-                        const RetainPtr<CFX_DIBitmap>& pBackdropDevice,
-                        const CFX_ClipRgn* pClipRgn,
-                        uint32_t color,
-                        bool bFullCover,
-                        bool bRgbByteOrder) {
-  DCHECK(!pDevice->IsCmykImage());
+CFX_Renderer::CFX_Renderer(const RetainPtr<CFX_DIBitmap>& pDevice,
+                           const RetainPtr<CFX_DIBitmap>& pBackdropDevice,
+                           const CFX_ClipRgn* pClipRgn,
+                           uint32_t color,
+                           bool bFullCover,
+                           bool bRgbByteOrder)
+    : m_Alpha(FXARGB_A(color)),
+      m_Color(bRgbByteOrder ? FXARGB_TOBGRORDERDIB(color) : color),
+      m_bFullCover(bFullCover),
+      m_bRgbByteOrder(bRgbByteOrder),
+      m_ClipBox(GetClipBoxFromRegion(pDevice, pClipRgn)),
+      m_pBackdropDevice(pBackdropDevice),
+      m_pClipMask(GetClipMaskFromRegion(pClipRgn)),
+      m_pDevice(pDevice),
+      m_pClipRgn(pClipRgn),
+      m_CompositeSpanFunc(GetCompositeSpanFunc(m_pDevice)) {
+  DCHECK(!m_pDevice->IsCmykImage());
 
-  m_pDevice = pDevice;
-  m_pClipRgn = pClipRgn;
-  m_CompositeSpanFunc = nullptr;
-  m_bRgbByteOrder = bRgbByteOrder;
-  m_pBackdropDevice = pBackdropDevice;
-  if (m_pClipRgn) {
-    m_ClipBox = m_pClipRgn->GetBox();
-  } else {
-    m_ClipBox.left = m_ClipBox.top = 0;
-    m_ClipBox.right = m_pDevice->GetWidth();
-    m_ClipBox.bottom = m_pDevice->GetHeight();
-  }
-  m_pClipMask = nullptr;
-  if (m_pClipRgn && m_pClipRgn->GetType() == CFX_ClipRgn::MaskF)
-    m_pClipMask = m_pClipRgn->GetMask();
-  m_bFullCover = bFullCover;
-  m_Alpha = FXARGB_A(color);
   if (m_pDevice->GetBPP() == 8) {
     ASSERT(!m_bRgbByteOrder);
-    m_CompositeSpanFunc = &CFX_Renderer::CompositeSpanGray;
     if (m_pDevice->IsAlphaMask())
       m_Gray = 255;
     else
       m_Gray = FXRGB2GRAY(FXARGB_R(color), FXARGB_G(color), FXARGB_B(color));
-    return true;
+    return;
   }
-  m_CompositeSpanFunc = (pDevice->GetFormat() == FXDIB_Argb)
-                            ? &CFX_Renderer::CompositeSpanARGB
-                            : &CFX_Renderer::CompositeSpanRGB;
-  if (m_bRgbByteOrder)
-    m_Color = FXARGB_TOBGRORDERDIB(color);
-  else
-    m_Color = color;
+
   std::tie(m_Alpha, m_Red, m_Green, m_Blue) = ArgbDecode(color);
-  if (m_pDevice->GetBPP() == 1)
-    m_CompositeSpanFunc = &CFX_Renderer::CompositeSpan1bpp;
-  return true;
 }
 
 template <class Scanline>
 void CFX_Renderer::render(const Scanline& sl) {
-  if (!m_pBackdropDevice && !m_CompositeSpanFunc)
-    return;
-
   int y = sl.y();
   if (y < m_ClipBox.top || y >= m_ClipBox.bottom)
     return;
@@ -1182,21 +1184,17 @@ int CFX_AggDeviceDriver::GetDriverType() const {
   return 1;
 }
 
-bool CFX_AggDeviceDriver::RenderRasterizer(
+void CFX_AggDeviceDriver::RenderRasterizer(
     agg::rasterizer_scanline_aa& rasterizer,
     uint32_t color,
     bool bFullCover,
     bool bGroupKnockout) {
   RetainPtr<CFX_DIBitmap> pt = bGroupKnockout ? m_pBackdropBitmap : nullptr;
-  CFX_Renderer render;
-  if (!render.Init(m_pBitmap, pt, m_pClipRgn.get(), color, bFullCover,
-                   m_bRgbByteOrder)) {
-    return false;
-  }
+  CFX_Renderer render(m_pBitmap, pt, m_pClipRgn.get(), color, bFullCover,
+                      m_bRgbByteOrder);
   agg::scanline_u8 scanline;
   agg::render_scanlines(rasterizer, scanline, render,
                         m_FillOptions.aliased_path);
-  return true;
 }
 
 bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
@@ -1223,10 +1221,8 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
                         static_cast<float>(GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
     rasterizer.add_path(path_data);
     rasterizer.filling_rule(GetAlternateOrWindingFillType(fill_options));
-    if (!RenderRasterizer(rasterizer, fill_color, fill_options.full_cover,
-                          false)) {
-      return false;
-    }
+    RenderRasterizer(rasterizer, fill_color, fill_options.full_cover,
+                     /*bGroupKnockout=*/false);
   }
   int stroke_alpha = FXARGB_A(stroke_color);
   if (!pGraphState || !stroke_alpha)
@@ -1241,8 +1237,9 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
                         static_cast<float>(GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
     RasterizeStroke(&rasterizer, &path_data, nullptr, pGraphState, 1,
                     fill_options.stroke_text_mode);
-    return RenderRasterizer(rasterizer, stroke_color, fill_options.full_cover,
-                            m_bGroupKnockout);
+    RenderRasterizer(rasterizer, stroke_color, fill_options.full_cover,
+                     m_bGroupKnockout);
+    return true;
   }
   CFX_Matrix matrix1;
   CFX_Matrix matrix2;
@@ -1264,8 +1261,9 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
                       static_cast<float>(GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
   RasterizeStroke(&rasterizer, &path_data, &matrix2, pGraphState, matrix1.a,
                   fill_options.stroke_text_mode);
-  return RenderRasterizer(rasterizer, stroke_color, fill_options.full_cover,
-                          m_bGroupKnockout);
+  RenderRasterizer(rasterizer, stroke_color, fill_options.full_cover,
+                   m_bGroupKnockout);
+  return true;
 }
 
 bool CFX_AggDeviceDriver::FillRectWithBlend(const FX_RECT& rect,

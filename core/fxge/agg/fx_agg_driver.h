@@ -96,7 +96,7 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
   int GetDriverType() const override;
 
  private:
-  bool RenderRasterizer(pdfium::agg::rasterizer_scanline_aa& rasterizer,
+  void RenderRasterizer(pdfium::agg::rasterizer_scanline_aa& rasterizer,
                         uint32_t color,
                         bool bFullCover,
                         bool bGroupKnockout);
