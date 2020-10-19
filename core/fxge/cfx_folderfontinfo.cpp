@@ -328,11 +328,9 @@ void* CFX_FolderFontInfo::FindFont(int weight,
     if (bMatchName && !FindFamilyNameMatch(bsFamily, bsName))
       continue;
 
-    size_t familyNameLength = strlen(family);
-    size_t bsNameLength = bsName.GetLength();
     int32_t iSimilarValue =
         GetSimilarValue(weight, bItalic, pitch_family, pFont->m_Styles,
-                        bMatchName, familyNameLength, bsNameLength);
+                        bMatchName, bsFamily.GetLength(), bsName.GetLength());
     if (iSimilarValue > iBestSimilar) {
       iBestSimilar = iSimilarValue;
       pFind = pFont;
