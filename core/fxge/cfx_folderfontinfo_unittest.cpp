@@ -6,6 +6,7 @@
 
 #include <utility>
 
+#include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/fx_font.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/stl_util.h"
@@ -27,7 +28,7 @@ class CFX_FolderFontInfoTest : public ::testing::Test {
     auto arial_info = std::make_unique<CFX_FolderFontInfo::FontFaceInfo>(
         /*filePath=*/"", kArial, /*fontTables=*/"",
         /*fontOffset=*/0, /*fileSize=*/0);
-    arial_info->m_Charsets = 2;
+    arial_info->m_Charsets = CHARSET_FLAG_SYMBOL;
     auto times_new_roman_info =
         std::make_unique<CFX_FolderFontInfo::FontFaceInfo>(
             /*filePath=*/"", kTimesNewRoman, /*fontTables=*/"",
@@ -36,11 +37,11 @@ class CFX_FolderFontInfoTest : public ::testing::Test {
         std::make_unique<CFX_FolderFontInfo::FontFaceInfo>(
             /*filePath=*/"", kBookshelfSymbol7, /*fontTables=*/"",
             /*fontOffset=*/0, /*fileSize=*/0);
-    bookshelf_symbol7_info->m_Charsets = 2;
+    bookshelf_symbol7_info->m_Charsets = CHARSET_FLAG_SYMBOL;
     auto symbol_info = std::make_unique<CFX_FolderFontInfo::FontFaceInfo>(
         /*filePath=*/"", kSymbol, /*fontTables=*/"",
         /*fontOffset=*/0, /*fileSize=*/0);
-    symbol_info->m_Charsets = 2;
+    symbol_info->m_Charsets = CHARSET_FLAG_SYMBOL;
 
     font_info_.m_FontList[kArial] = std::move(arial_info);
     font_info_.m_FontList[kTimesNewRoman] = std::move(times_new_roman_info);
@@ -69,24 +70,24 @@ class CFX_FolderFontInfoTest : public ::testing::Test {
 
 TEST_F(CFX_FolderFontInfoTest, TestFindFont) {
   // Find "Symbol" font
-  void* font = FindFont(/*weight=*/0, /*bItalic=*/false, /*charset=*/2,
+  void* font = FindFont(/*weight=*/0, /*bItalic=*/false, FX_CHARSET_Symbol,
                         FXFONT_FF_ROMAN, kSymbol, /*bMatchName=*/true);
   ASSERT_TRUE(font);
   EXPECT_EQ(GetFaceName(font), kSymbol);
 
   // Find "Calibri" font that is not present in the installed fonts
-  EXPECT_FALSE(FindFont(/*weight=*/0, /*bItalic=*/false, /*charset=*/2,
+  EXPECT_FALSE(FindFont(/*weight=*/0, /*bItalic=*/false, FX_CHARSET_Symbol,
                         FXFONT_FF_ROMAN, kCalibri, /*bMatchName=*/true));
 
   // Find the closest matching font to "Bookself" font that is present in the
   // installed fonts
-  font = FindFont(/*weight=*/0, /*bItalic=*/false, /*charset=*/2,
+  font = FindFont(/*weight=*/0, /*bItalic=*/false, FX_CHARSET_Symbol,
                   FXFONT_FF_ROMAN, kBookshelf, /*bMatchName=*/true);
   ASSERT_TRUE(font);
   EXPECT_EQ(GetFaceName(font), kBookshelfSymbol7);
 
   // Find "Symbol" font when name matching is false
-  font = FindFont(/*weight=*/0, /*bItalic=*/false, /*charset=*/2,
+  font = FindFont(/*weight=*/0, /*bItalic=*/false, FX_CHARSET_Symbol,
                   FXFONT_FF_ROMAN, kSymbol, /*bMatchName=*/false);
   ASSERT_TRUE(font);
   EXPECT_EQ(GetFaceName(font), kArial);

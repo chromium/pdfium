@@ -15,6 +15,13 @@
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/systemfontinfo_iface.h"
 
+#define CHARSET_FLAG_ANSI (1 << 0)
+#define CHARSET_FLAG_SYMBOL (1 << 1)
+#define CHARSET_FLAG_SHIFTJIS (1 << 2)
+#define CHARSET_FLAG_BIG5 (1 << 3)
+#define CHARSET_FLAG_GB (1 << 4)
+#define CHARSET_FLAG_KOREAN (1 << 5)
+
 class CFX_FolderFontInfo : public SystemFontInfoIface {
  public:
   CFX_FolderFontInfo();

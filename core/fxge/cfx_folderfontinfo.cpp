@@ -18,13 +18,6 @@
 #include "core/fxge/fx_font.h"
 #include "third_party/base/stl_util.h"
 
-#define CHARSET_FLAG_ANSI (1 << 0)
-#define CHARSET_FLAG_SYMBOL (1 << 1)
-#define CHARSET_FLAG_SHIFTJIS (1 << 2)
-#define CHARSET_FLAG_BIG5 (1 << 3)
-#define CHARSET_FLAG_GB (1 << 4)
-#define CHARSET_FLAG_KOREAN (1 << 5)
-
 namespace {
 
 const struct {
