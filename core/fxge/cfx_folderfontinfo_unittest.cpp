@@ -33,47 +33,13 @@ constexpr char kOxygen[] = "Oxygen";
 class CFX_FolderFontInfoTest : public ::testing::Test {
  public:
   CFX_FolderFontInfoTest() {
-    auto arial_info = std::make_unique<CFX_FolderFontInfo::FontFaceInfo>(
-        /*filePath=*/"", kArial, /*fontTables=*/"",
-        /*fontOffset=*/0, /*fileSize=*/0);
-    arial_info->m_Charsets = CHARSET_FLAG_ANSI;
-    auto times_new_roman_info =
-        std::make_unique<CFX_FolderFontInfo::FontFaceInfo>(
-            /*filePath=*/"", kTimesNewRoman, /*fontTables=*/"",
-            /*fontOffset=*/0, /*fileSize=*/0);
-    auto bookshelf_symbol7_info =
-        std::make_unique<CFX_FolderFontInfo::FontFaceInfo>(
-            /*filePath=*/"", kBookshelfSymbol7, /*fontTables=*/"",
-            /*fontOffset=*/0, /*fileSize=*/0);
-    bookshelf_symbol7_info->m_Charsets = CHARSET_FLAG_SYMBOL;
-    auto symbol_info = std::make_unique<CFX_FolderFontInfo::FontFaceInfo>(
-        /*filePath=*/"", kSymbol, /*fontTables=*/"",
-        /*fontOffset=*/0, /*fileSize=*/0);
-    symbol_info->m_Charsets = CHARSET_FLAG_SYMBOL;
-    auto tofu_bold_info = std::make_unique<CFX_FolderFontInfo::FontFaceInfo>(
-        /*filePath=*/"", kTofuBold, /*fontTables=*/"",
-        /*fontOffset=*/0, /*fileSize=*/0);
-    tofu_bold_info->m_Charsets = CHARSET_FLAG_SYMBOL;
-    auto lato_ultra_bold_info =
-        std::make_unique<CFX_FolderFontInfo::FontFaceInfo>(
-            /*filePath=*/"", kLatoUltraBold, /*fontTables=*/"",
-            /*fontOffset=*/0, /*fileSize=*/0);
-    lato_ultra_bold_info->m_Charsets = CHARSET_FLAG_ANSI;
-    auto oxygen_sans_sans_bold_info =
-        std::make_unique<CFX_FolderFontInfo::FontFaceInfo>(
-            /*filePath=*/"", kOxygenSansSansBold, /*fontTables=*/"",
-            /*fontOffset=*/0, /*fileSize=*/0);
-    oxygen_sans_sans_bold_info->m_Charsets = CHARSET_FLAG_ANSI;
-
-    font_info_.m_FontList[kArial] = std::move(arial_info);
-    font_info_.m_FontList[kTimesNewRoman] = std::move(times_new_roman_info);
-    font_info_.m_FontList[kBookshelfSymbol7] =
-        std::move(bookshelf_symbol7_info);
-    font_info_.m_FontList[kSymbol] = std::move(symbol_info);
-    font_info_.m_FontList[kTofuBold] = std::move(tofu_bold_info);
-    font_info_.m_FontList[kLatoUltraBold] = std::move(lato_ultra_bold_info);
-    font_info_.m_FontList[kOxygenSansSansBold] =
-        std::move(oxygen_sans_sans_bold_info);
+    AddDummyFont(kArial, CHARSET_FLAG_ANSI);
+    AddDummyFont(kTimesNewRoman, 0);
+    AddDummyFont(kBookshelfSymbol7, CHARSET_FLAG_SYMBOL);
+    AddDummyFont(kSymbol, CHARSET_FLAG_SYMBOL);
+    AddDummyFont(kTofuBold, CHARSET_FLAG_SYMBOL);
+    AddDummyFont(kLatoUltraBold, CHARSET_FLAG_ANSI);
+    AddDummyFont(kOxygenSansSansBold, CHARSET_FLAG_ANSI);
   }
 
   void* FindFont(int weight,
@@ -91,6 +57,14 @@ class CFX_FolderFontInfoTest : public ::testing::Test {
   }
 
  private:
+  void AddDummyFont(const char* font_name, uint32_t charsets) {
+    auto info = std::make_unique<CFX_FolderFontInfo::FontFaceInfo>(
+        /*filePath=*/"", font_name, /*fontTables=*/"",
+        /*fontOffset=*/0, /*fileSize=*/0);
+    info->m_Charsets = charsets;
+    font_info_.m_FontList[font_name] = std::move(info);
+  }
+
   CFX_FolderFontInfo font_info_;
 };
 
