@@ -6,6 +6,7 @@
 
 #include <utility>
 
+#include "core/fxge/fx_font.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/stl_util.h"
 
@@ -69,25 +70,24 @@ class CFX_FolderFontInfoTest : public ::testing::Test {
 TEST_F(CFX_FolderFontInfoTest, TestFindFont) {
   // Find "Symbol" font
   void* font = FindFont(/*weight=*/0, /*bItalic=*/false, /*charset=*/2,
-                        /*pitch_family=*/2, kSymbol, /*bMatchName=*/true);
+                        FXFONT_FF_ROMAN, kSymbol, /*bMatchName=*/true);
   ASSERT_TRUE(font);
   EXPECT_EQ(GetFaceName(font), kSymbol);
 
   // Find "Calibri" font that is not present in the installed fonts
   EXPECT_FALSE(FindFont(/*weight=*/0, /*bItalic=*/false, /*charset=*/2,
-                        /*pitch_family=*/2, kCalibri,
-                        /*bMatchName=*/true));
+                        FXFONT_FF_ROMAN, kCalibri, /*bMatchName=*/true));
 
   // Find the closest matching font to "Bookself" font that is present in the
   // installed fonts
   font = FindFont(/*weight=*/0, /*bItalic=*/false, /*charset=*/2,
-                  /*pitch_family=*/2, kBookshelf, /*bMatchName=*/true);
+                  FXFONT_FF_ROMAN, kBookshelf, /*bMatchName=*/true);
   ASSERT_TRUE(font);
   EXPECT_EQ(GetFaceName(font), kBookshelfSymbol7);
 
   // Find "Symbol" font when name matching is false
   font = FindFont(/*weight=*/0, /*bItalic=*/false, /*charset=*/2,
-                  /*pitch_family=*/2, kSymbol, /*bMatchName=*/false);
+                  FXFONT_FF_ROMAN, kSymbol, /*bMatchName=*/false);
   ASSERT_TRUE(font);
   EXPECT_EQ(GetFaceName(font), kArial);
 }
