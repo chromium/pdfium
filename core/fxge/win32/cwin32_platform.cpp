@@ -442,10 +442,10 @@ void CWin32Platform::Init() {
 std::unique_ptr<SystemFontInfoIface>
 CWin32Platform::CreateDefaultSystemFontInfo() {
   if (pdfium::base::win::IsUser32AndGdi32Available())
-    return std::unique_ptr<SystemFontInfoIface>(new CFX_Win32FontInfo);
+    return std::make_unique<CFX_Win32FontInfo>();
 
   // Select the fallback font information class if GDI is disabled.
-  CFX_Win32FallbackFontInfo* pInfoFallback = new CFX_Win32FallbackFontInfo;
+  auto fallback_info = std::make_unique<CFX_Win32FallbackFontInfo>();
   // Construct the font path manually, SHGetKnownFolderPath won't work under
   // a restrictive sandbox.
   CHAR windows_path[MAX_PATH] = {};
@@ -453,9 +453,9 @@ CWin32Platform::CreateDefaultSystemFontInfo() {
   if (path_len > 0 && path_len < MAX_PATH) {
     ByteString fonts_path(windows_path);
     fonts_path += "\\Fonts";
-    pInfoFallback->AddPath(fonts_path);
+    fallback_info->AddPath(fonts_path);
   }
-  return std::unique_ptr<SystemFontInfoIface>(pInfoFallback);
+  return fallback_info;
 }
 
 // static

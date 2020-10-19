@@ -39,11 +39,6 @@ class CFX_WindowsRenderDevice : public CFX_RenderDevice {
  public:
   CFX_WindowsRenderDevice(HDC hDC, const EncoderIface* pEncoderIface);
   ~CFX_WindowsRenderDevice() override;
-
- private:
-  static RenderDeviceDriverIface* CreateDriver(
-      HDC hDC,
-      const EncoderIface* pEncoderIface);
 };
 
 #endif  // CORE_FXGE_CFX_WINDOWSRENDERDEVICE_H_
