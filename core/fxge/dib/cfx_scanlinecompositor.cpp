@@ -2738,6 +2738,10 @@ bool CFX_ScanlineCompositor::Init(FXDIB_Format dest_format,
   m_bRgbByteOrder = bRgbByteOrder;
   if (GetBppFromFormat(dest_format) == 1)
     return false;
+
+  if (m_bRgbByteOrder && m_DestFormat == FXDIB_8bppMask)
+    return false;
+
   if (m_SrcFormat == FXDIB_1bppMask || m_SrcFormat == FXDIB_8bppMask) {
     InitSourceMask(mask_color);
     return true;
