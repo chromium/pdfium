@@ -8,7 +8,7 @@
 #define CORE_FXGE_CFX_DEFAULTRENDERDEVICE_H_
 
 #include "core/fxge/cfx_renderdevice.h"
-#include "core/fxge/fx_dib.h"
+#include "core/fxge/dib/fx_dib.h"
 
 class SkPictureRecorder;
 

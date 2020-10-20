@@ -18,7 +18,7 @@
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxge/dib/cfx_cmyk_to_srgb.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
-#include "core/fxge/fx_dib.h"
+#include "core/fxge/dib/fx_dib.h"
 #include "third_party/base/notreached.h"
 
 #ifdef PDF_ENABLE_XFA_BMP

@@ -8,7 +8,7 @@
 #define XFA_FGAS_GRAPHICS_CFGAS_GECOLOR_H_
 
 #include "core/fxcrt/unowned_ptr.h"
-#include "core/fxge/fx_dib.h"
+#include "core/fxge/dib/fx_dib.h"
 #include "third_party/base/check.h"
 
 class CFGAS_GEPattern;

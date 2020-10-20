@@ -7,7 +7,7 @@
 #ifndef CORE_FXGE_DIB_SCANLINECOMPOSER_IFACE_H_
 #define CORE_FXGE_DIB_SCANLINECOMPOSER_IFACE_H_
 
-#include "core/fxge/fx_dib.h"
+#include "core/fxge/dib/fx_dib.h"
 #include "third_party/base/span.h"
 
 class ScanlineComposerIface {

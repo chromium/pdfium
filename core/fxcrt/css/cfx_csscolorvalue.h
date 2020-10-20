@@ -8,7 +8,7 @@
 #define CORE_FXCRT_CSS_CFX_CSSCOLORVALUE_H_
 
 #include "core/fxcrt/css/cfx_cssvalue.h"
-#include "core/fxge/fx_dib.h"
+#include "core/fxge/dib/fx_dib.h"
 
 class CFX_CSSColorValue final : public CFX_CSSValue {
  public:

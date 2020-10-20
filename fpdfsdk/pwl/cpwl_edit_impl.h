@@ -15,7 +15,7 @@
 #include "core/fpdfdoc/cpdf_variabletext.h"
 #include "core/fpdfdoc/cpvt_wordrange.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "core/fxge/fx_dib.h"
+#include "core/fxge/dib/fx_dib.h"
 
 #define FX_EDIT_ISLATINWORD(u)                  \
   (u == 0x2D || (u <= 0x005A && u >= 0x0041) || \

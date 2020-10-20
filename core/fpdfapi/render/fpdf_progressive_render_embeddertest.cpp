@@ -6,7 +6,7 @@
 
 #include "build/build_config.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/fx_dib.h"
+#include "core/fxge/dib/fx_dib.h"
 #include "public/fpdf_progressive.h"
 #include "testing/embedder_test.h"
 #include "testing/embedder_test_constants.h"

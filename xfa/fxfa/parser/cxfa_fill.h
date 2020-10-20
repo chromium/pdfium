@@ -8,7 +8,7 @@
 #define XFA_FXFA_PARSER_CXFA_FILL_H_
 
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxge/fx_dib.h"
+#include "core/fxge/dib/fx_dib.h"
 #include "xfa/fgas/graphics/cfgas_gepath.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 

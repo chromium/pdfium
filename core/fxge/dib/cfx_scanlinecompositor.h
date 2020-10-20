@@ -10,7 +10,7 @@
 #include <memory>
 
 #include "core/fxcrt/fx_memory_wrappers.h"
-#include "core/fxge/fx_dib.h"
+#include "core/fxge/dib/fx_dib.h"
 #include "third_party/base/span.h"
 
 class CFX_ScanlineCompositor {

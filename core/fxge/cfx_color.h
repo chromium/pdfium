@@ -7,7 +7,7 @@
 #ifndef CORE_FXGE_CFX_COLOR_H_
 #define CORE_FXGE_CFX_COLOR_H_
 
-#include "core/fxge/fx_dib.h"
+#include "core/fxge/dib/fx_dib.h"
 
 struct CFX_Color {
   // Ordered by increasing number of components.

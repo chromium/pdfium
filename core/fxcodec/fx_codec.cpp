@@ -9,7 +9,7 @@
 #include <algorithm>
 
 #include "core/fxcrt/fx_memory.h"
-#include "core/fxge/fx_dib.h"
+#include "core/fxge/dib/fx_dib.h"
 
 namespace fxcodec {
 

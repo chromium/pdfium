@@ -7,7 +7,7 @@
 #ifndef FXBARCODE_BC_WRITER_H_
 #define FXBARCODE_BC_WRITER_H_
 
-#include "core/fxge/fx_dib.h"
+#include "core/fxge/dib/fx_dib.h"
 #include "fxbarcode/BC_Library.h"
 
 class CBC_Writer {

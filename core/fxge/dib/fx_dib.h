@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_FX_DIB_H_
-#define CORE_FXGE_FX_DIB_H_
+#ifndef CORE_FXGE_DIB_FX_DIB_H_
+#define CORE_FXGE_DIB_FX_DIB_H_
 
 #include <tuple>
 #include <utility>
@@ -197,4 +197,4 @@ inline void ReverseCopy3Bytes(uint8_t* dest, const uint8_t* src) {
   dest[0] = src[2];
 }
 
-#endif  // CORE_FXGE_FX_DIB_H_
+#endif  // CORE_FXGE_DIB_FX_DIB_H_
