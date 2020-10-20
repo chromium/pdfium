@@ -55,6 +55,53 @@ const int16_t SDP_Table[513] = {
     0,   0,   0,
 };
 
+FXDIB_Format MakeRGBFormat(int bpp) {
+  switch (bpp) {
+    case 1:
+      return FXDIB_Format::k1bppRgb;
+    case 8:
+      return FXDIB_Format::k8bppRgb;
+    case 24:
+      return FXDIB_Format::kRgb;
+    case 32:
+      return FXDIB_Format::kRgb32;
+    default:
+      return FXDIB_Format::kInvalid;
+  }
+}
+
+FXDIB_Format MakeARGBFormat(int bpp) {
+  switch (bpp) {
+    case 8:
+      return FXDIB_Format::k8bppRgba;
+    case 24:
+      return FXDIB_Format::kRgba;
+    case 32:
+      return FXDIB_Format::kArgb;
+    default:
+      return FXDIB_Format::kInvalid;
+  }
+}
+
+FXDIB_Format MakeMaybeAlphaRGBFormat(bool alpha, int bpp) {
+  return alpha ? MakeARGBFormat(bpp) : MakeRGBFormat(bpp);
+}
+
+FXDIB_Format AddAlphaToCmykFormat(FXDIB_Format format) {
+  switch (format) {
+    case FXDIB_Format::k8bppCmyk:
+      return FXDIB_Format::k8bppCmyka;
+    case FXDIB_Format::kCmyk:
+      return FXDIB_Format::kCmyka;
+    case FXDIB_Format::k8bppCmyka:
+      return FXDIB_Format::k8bppCmyka;
+    case FXDIB_Format::kCmyka:
+      return FXDIB_Format::kCmyka;
+    default:
+      return FXDIB_Format::kInvalid;
+  }
+}
+
 FXDIB_ResampleOptions::FXDIB_ResampleOptions() = default;
 
 bool FXDIB_ResampleOptions::HasAnyOptions() const {

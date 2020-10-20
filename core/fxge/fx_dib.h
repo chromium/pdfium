@@ -130,52 +130,10 @@ inline bool HasNoFlags(FXDIB_Format format) {
   return (static_cast<uint16_t>(format) & 0x700) == 0;
 }
 
-inline FXDIB_Format AddAlphaToCmykFormat(FXDIB_Format format) {
-  switch (format) {
-    case FXDIB_Format::k8bppCmyk:
-      return FXDIB_Format::k8bppCmyka;
-    case FXDIB_Format::kCmyk:
-      return FXDIB_Format::kCmyka;
-    case FXDIB_Format::k8bppCmyka:
-      return FXDIB_Format::k8bppCmyka;
-    case FXDIB_Format::kCmyka:
-      return FXDIB_Format::kCmyka;
-    default:
-      return FXDIB_Format::kInvalid;
-  }
-}
-
-inline FXDIB_Format MakeRGBFormat(int bpp) {
-  switch (bpp) {
-    case 1:
-      return FXDIB_Format::k1bppRgb;
-    case 8:
-      return FXDIB_Format::k8bppRgb;
-    case 24:
-      return FXDIB_Format::kRgb;
-    case 32:
-      return FXDIB_Format::kRgb32;
-    default:
-      return FXDIB_Format::kInvalid;
-  }
-}
-
-inline FXDIB_Format MakeARGBFormat(int bpp) {
-  switch (bpp) {
-    case 8:
-      return FXDIB_Format::k8bppRgba;
-    case 24:
-      return FXDIB_Format::kRgba;
-    case 32:
-      return FXDIB_Format::kArgb;
-    default:
-      return FXDIB_Format::kInvalid;
-  }
-}
-
-inline FXDIB_Format MakeMaybeAlphaRGBFormat(bool alpha, int bpp) {
-  return alpha ? MakeARGBFormat(bpp) : MakeRGBFormat(bpp);
-}
+FXDIB_Format MakeRGBFormat(int bpp);
+FXDIB_Format MakeARGBFormat(int bpp);
+FXDIB_Format MakeMaybeAlphaRGBFormat(bool alpha, int bpp);
+FXDIB_Format AddAlphaToCmykFormat(FXDIB_Format format);
 
 inline FX_CMYK CmykEncode(int c, int m, int y, int k) {
   return (c << 24) | (m << 16) | (y << 8) | k;
@@ -195,7 +153,6 @@ constexpr FX_ARGB ArgbEncode(int a, int r, int g, int b) {
 }
 
 FX_ARGB AlphaAndColorRefToArgb(int a, FX_COLORREF colorref);
-
 FX_ARGB StringToFXARGB(WideStringView view);
 
 #define FXARGB_A(argb) ((uint8_t)((argb) >> 24))
