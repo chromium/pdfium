@@ -22,7 +22,7 @@ void CFX_BitmapComposer::Compose(const RetainPtr<CFX_DIBitmap>& pDest,
                                  bool bFlipX,
                                  bool bFlipY,
                                  bool bRgbByteOrder,
-                                 BlendMode blend_type) {
+                                 BlendMode blend_mode) {
   m_pBitmap = pDest;
   m_pClipRgn = pClipRgn;
   m_DestLeft = dest_rect.left;
@@ -38,7 +38,7 @@ void CFX_BitmapComposer::Compose(const RetainPtr<CFX_DIBitmap>& pDest,
   m_bFlipX = bFlipX;
   m_bFlipY = bFlipY;
   m_bRgbByteOrder = bRgbByteOrder;
-  m_BlendType = blend_type;
+  m_BlendMode = blend_mode;
 }
 
 bool CFX_BitmapComposer::SetInfo(int width,
@@ -47,7 +47,7 @@ bool CFX_BitmapComposer::SetInfo(int width,
                                  pdfium::span<const uint32_t> src_palette) {
   m_SrcFormat = src_format;
   if (!m_Compositor.Init(m_pBitmap->GetFormat(), src_format, width, src_palette,
-                         m_MaskColor, BlendMode::kNormal,
+                         m_MaskColor, m_BlendMode,
                          m_pClipMask != nullptr || (m_BitmapAlpha < 255),
                          m_bRgbByteOrder)) {
     return false;
