@@ -41,7 +41,7 @@ namespace {
 FXDIB_Format XFA_GetDIBFormat(FXCODEC_IMAGE_TYPE type,
                               int32_t iComponents,
                               int32_t iBitsPerComponent) {
-  FXDIB_Format dibFormat = FXDIB_Argb;
+  FXDIB_Format dibFormat = FXDIB_Format::kArgb;
   switch (type) {
     case FXCODEC_IMAGE_JPG:
 #ifdef PDF_ENABLE_XFA_BMP
@@ -51,10 +51,10 @@ FXDIB_Format XFA_GetDIBFormat(FXCODEC_IMAGE_TYPE type,
     case FXCODEC_IMAGE_TIFF:
 #endif  // PDF_ENABLE_XFA_TIFF
     {
-      dibFormat = FXDIB_Rgb32;
+      dibFormat = FXDIB_Format::kRgb32;
       int32_t bpp = iComponents * iBitsPerComponent;
       if (bpp <= 24) {
-        dibFormat = FXDIB_Rgb;
+        dibFormat = FXDIB_Format::kRgb;
       }
     } break;
 #ifdef PDF_ENABLE_XFA_PNG

@@ -699,8 +699,7 @@ bool ConvertBuffer_Argb(int bpp,
 
 }  // namespace
 
-CFX_DIBBase::CFX_DIBBase()
-    : m_Width(0), m_Height(0), m_bpp(0), m_AlphaFlag(0), m_Pitch(0) {}
+CFX_DIBBase::CFX_DIBBase() = default;
 
 CFX_DIBBase::~CFX_DIBBase() = default;
 
@@ -745,7 +744,8 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::Clone(const FX_RECT* pClip) const {
       copy_len = m_Pitch;
 
     for (int row = rect.top; row < rect.bottom; ++row) {
-      const uint8_t* src_scan = GetScanline(row) + rect.left * m_bpp / 8;
+      const uint8_t* src_scan =
+          GetScanline(row) + rect.left * GetBppFromFormat(m_Format) / 8;
       uint8_t* dest_scan = pNewBitmap->GetWritableScanline(row - rect.top);
       memcpy(dest_scan, src_scan, copy_len);
     }
@@ -779,7 +779,7 @@ bool CFX_DIBBase::BuildAlphaMask() {
     return true;
 
   m_pAlphaMask = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!m_pAlphaMask->Create(m_Width, m_Height, FXDIB_8bppMask)) {
+  if (!m_pAlphaMask->Create(m_Width, m_Height, FXDIB_Format::k8bppMask)) {
     m_pAlphaMask = nullptr;
     return false;
   }
@@ -792,7 +792,7 @@ size_t CFX_DIBBase::GetPaletteSize() const {
   if (IsAlphaMask())
     return 0;
 
-  switch (m_bpp) {
+  switch (GetBppFromFormat(m_Format)) {
     case 1:
       return 2;
     case 8:
@@ -935,10 +935,10 @@ void CFX_DIBBase::GetPalette(uint32_t* pal, int alpha) const {
 }
 
 RetainPtr<CFX_DIBitmap> CFX_DIBBase::CloneAlphaMask() const {
-  ASSERT(GetFormat() == FXDIB_Argb);
+  ASSERT(GetFormat() == FXDIB_Format::kArgb);
   FX_RECT rect(0, 0, m_Width, m_Height);
   auto pMask = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!pMask->Create(rect.Width(), rect.Height(), FXDIB_8bppMask))
+  if (!pMask->Create(rect.Width(), rect.Height(), FXDIB_Format::k8bppMask))
     return nullptr;
 
   for (int row = rect.top; row < rect.bottom; ++row) {
@@ -954,7 +954,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::CloneAlphaMask() const {
 
 bool CFX_DIBBase::SetAlphaMask(const RetainPtr<CFX_DIBBase>& pAlphaMask,
                                const FX_RECT* pClip) {
-  if (!HasAlpha() || GetFormat() == FXDIB_Argb)
+  if (!HasAlpha() || GetFormat() == FXDIB_Format::kArgb)
     return false;
 
   if (!pAlphaMask) {
@@ -987,7 +987,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::FlipImage(bool bXFlip, bool bYFlip) const {
 
   pFlipped->SetPalette(GetPaletteSpan());
   uint8_t* pDestBuffer = pFlipped->GetBuffer();
-  int Bpp = m_bpp / 8;
+  int Bpp = GetBppFromFormat(m_Format) / 8;
   for (int row = 0; row < m_Height; ++row) {
     const uint8_t* src_scan = GetScanline(row);
     uint8_t* dest_scan =
@@ -996,7 +996,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::FlipImage(bool bXFlip, bool bYFlip) const {
       memcpy(dest_scan, src_scan, m_Pitch);
       continue;
     }
-    if (m_bpp == 1) {
+    if (GetBppFromFormat(m_Format) == 1) {
       memset(dest_scan, 0, m_Pitch);
       for (int col = 0; col < m_Width; ++col) {
         if (src_scan[col / 8] & (1 << (7 - col % 8))) {
@@ -1063,13 +1063,14 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::CloneConvert(FXDIB_Format dest_format) {
 
   RetainPtr<CFX_DIBitmap> pSrcAlpha;
   if (HasAlpha()) {
-    pSrcAlpha = (GetFormat() == FXDIB_Argb) ? CloneAlphaMask() : m_pAlphaMask;
+    pSrcAlpha =
+        (GetFormat() == FXDIB_Format::kArgb) ? CloneAlphaMask() : m_pAlphaMask;
     if (!pSrcAlpha)
       return nullptr;
   }
   if (GetIsAlphaFromFormat(dest_format)) {
     bool ret;
-    if (dest_format == FXDIB_Argb) {
+    if (dest_format == FXDIB_Format::kArgb) {
       ret = pSrcAlpha ? pClone->LoadChannelFromAlpha(FXDIB_Alpha, pSrcAlpha)
                       : pClone->LoadChannel(FXDIB_Alpha, 0xff);
     } else {
@@ -1232,16 +1233,16 @@ bool CFX_DIBBase::ConvertBuffer(
   FXDIB_Format src_format = pSrcBitmap->GetFormat();
   const int bpp = GetBppFromFormat(src_format);
   switch (dest_format) {
-    case FXDIB_8bppMask: {
+    case FXDIB_Format::k8bppMask: {
       return ConvertBuffer_8bppMask(bpp, dest_buf, dest_pitch, width, height,
                                     pSrcBitmap, src_left, src_top);
     }
-    case FXDIB_8bppRgb:
-    case FXDIB_8bppRgba: {
+    case FXDIB_Format::k8bppRgb:
+    case FXDIB_Format::k8bppRgba: {
       const bool bpp_1_or_8 = (bpp == 1 || bpp == 8);
       if (bpp_1_or_8 && !pSrcBitmap->HasPalette()) {
-        return ConvertBuffer(FXDIB_8bppMask, dest_buf, dest_pitch, width,
-                             height, pSrcBitmap, src_left, src_top, pal);
+        return ConvertBuffer(FXDIB_Format::k8bppMask, dest_buf, dest_pitch,
+                             width, height, pSrcBitmap, src_left, src_top, pal);
       }
       pal->resize(256);
       if (bpp_1_or_8 && pSrcBitmap->HasPalette()) {
@@ -1256,13 +1257,13 @@ bool CFX_DIBBase::ConvertBuffer(
       }
       return false;
     }
-    case FXDIB_Rgb:
-    case FXDIB_Rgba: {
+    case FXDIB_Format::kRgb:
+    case FXDIB_Format::kRgba: {
       return ConvertBuffer_Rgb(bpp, dest_format, dest_buf, dest_pitch, width,
                                height, pSrcBitmap, src_left, src_top);
     }
-    case FXDIB_Argb:
-    case FXDIB_Rgb32: {
+    case FXDIB_Format::kArgb:
+    case FXDIB_Format::kRgb32: {
       return ConvertBuffer_Argb(bpp, GetIsCmykFromFormat(src_format),
                                 dest_format, dest_buf, dest_pitch, width,
                                 height, pSrcBitmap, src_left, src_top);

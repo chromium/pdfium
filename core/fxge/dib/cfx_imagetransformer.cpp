@@ -103,18 +103,18 @@ void bicubic_get_pos_weight(int pos_pixel[],
 
 FXDIB_Format GetTransformedFormat(const RetainPtr<CFX_DIBBase>& pDrc) {
   if (pDrc->IsAlphaMask())
-    return FXDIB_8bppMask;
+    return FXDIB_Format::k8bppMask;
 
   FXDIB_Format format = pDrc->GetFormat();
-  if (format >= 1025)
-    return FXDIB_Cmyka;
-  if (format <= 32 || format == FXDIB_Argb)
-    return FXDIB_Argb;
-  return FXDIB_Rgba;
+  if (GetIsCmykFromFormat(format))
+    return FXDIB_Format::kCmyka;
+  if (HasNoFlags(format) || format == FXDIB_Format::kArgb)
+    return FXDIB_Format::kArgb;
+  return FXDIB_Format::kRgba;
 }
 
 void WriteMonoResult(uint32_t r_bgra_cmyk, FXDIB_Format format, uint8_t* dest) {
-  if (format == FXDIB_Rgba) {
+  if (format == FXDIB_Format::kRgba) {
     dest[0] = static_cast<uint8_t>(r_bgra_cmyk >> 24);
     dest[1] = static_cast<uint8_t>(r_bgra_cmyk >> 16);
     dest[2] = static_cast<uint8_t>(r_bgra_cmyk >> 8);
@@ -136,9 +136,9 @@ void WriteColorResult(const F& func,
 
   uint32_t* dest32 = reinterpret_cast<uint32_t*>(dest);
   if (bHasAlpha) {
-    if (format == FXDIB_Argb) {
+    if (format == FXDIB_Format::kArgb) {
       *dest32 = ArgbEncode(func(3), red_y, green_m, blue_c);
-    } else if (format == FXDIB_Rgba) {
+    } else if (format == FXDIB_Format::kRgba) {
       dest[0] = blue_c;
       dest[1] = green_m;
       dest[2] = red_y;
@@ -148,7 +148,7 @@ void WriteColorResult(const F& func,
     return;
   }
 
-  if (format == FXDIB_Cmyka) {
+  if (format == FXDIB_Format::kCmyka) {
     *dest32 = FXCMYK_TODIB(CmykEncode(blue_c, green_m, red_y, func(3)));
   } else {
     *dest32 = ArgbEncode(kOpaqueAlpha, red_y, green_m, blue_c);

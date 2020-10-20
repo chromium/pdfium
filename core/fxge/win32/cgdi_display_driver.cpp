@@ -53,7 +53,7 @@ bool CGdiDisplayDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
                       DIB_RGB_COLORS) == height;
   } else {
     auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-    if (bitmap->Create(width, height, FXDIB_Rgb)) {
+    if (bitmap->Create(width, height, FXDIB_Format::kRgb)) {
       bmi.bmiHeader.biBitCount = 24;
       ::GetDIBits(hDCMemory, hbmp, 0, height, bitmap->GetBuffer(), &bmi,
                   DIB_RGB_COLORS);
@@ -82,7 +82,7 @@ bool CGdiDisplayDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pSource,
     int alpha = FXARGB_A(color);
     if (pSource->GetBPP() != 1 || alpha != 255) {
       auto background = pdfium::MakeRetain<CFX_DIBitmap>();
-      if (!background->Create(width, height, FXDIB_Rgb32) ||
+      if (!background->Create(width, height, FXDIB_Format::kRgb32) ||
           !GetDIBits(background, left, top) ||
           !background->CompositeMask(0, 0, width, height, pSource, color, 0, 0,
                                      BlendMode::kNormal, nullptr, false)) {
@@ -102,7 +102,7 @@ bool CGdiDisplayDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pSource,
   int height = src_rect.Height();
   if (pSource->HasAlpha()) {
     auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-    if (!bitmap->Create(width, height, FXDIB_Rgb) ||
+    if (!bitmap->Create(width, height, FXDIB_Format::kRgb) ||
         !GetDIBits(bitmap, left, top) ||
         !bitmap->CompositeBitmap(0, 0, width, height, pSource, src_rect.left,
                                  src_rect.top, BlendMode::kNormal, nullptr,
@@ -179,7 +179,7 @@ bool CGdiDisplayDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
       return true;
 
     auto background = pdfium::MakeRetain<CFX_DIBitmap>();
-    if (!background->Create(clip_width, clip_height, FXDIB_Rgb32) ||
+    if (!background->Create(clip_width, clip_height, FXDIB_Format::kRgb32) ||
         !GetDIBits(background, image_rect.left + clip_rect.left,
                    image_rect.top + clip_rect.top) ||
         !background->CompositeMask(0, 0, clip_width, clip_height, pStretched,

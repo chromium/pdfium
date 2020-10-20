@@ -113,8 +113,8 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
   }
 
   uint8_t* dest_buf = buffer + dest_top * pitch + dest_left * Bpp;
-  if (dest_format == FXDIB_Rgb) {
-    if (src_format == FXDIB_Rgb32) {
+  if (dest_format == FXDIB_Format::kRgb) {
+    if (src_format == FXDIB_Format::kRgb32) {
       for (int row = 0; row < height; row++) {
         uint8_t* dest_scan = dest_buf + row * pitch;
         const uint8_t* src_scan =
@@ -132,8 +132,9 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
     return;
   }
 
-  if (dest_format == FXDIB_Argb || dest_format == FXDIB_Rgb32) {
-    if (src_format == FXDIB_Rgb) {
+  if (dest_format == FXDIB_Format::kArgb ||
+      dest_format == FXDIB_Format::kRgb32) {
+    if (src_format == FXDIB_Format::kRgb) {
       for (int row = 0; row < height; row++) {
         uint8_t* dest_scan = (uint8_t*)(dest_buf + row * pitch);
         const uint8_t* src_scan =
@@ -145,8 +146,8 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
           src_scan += 3;
         }
       }
-    } else if (src_format == FXDIB_Rgb32) {
-      ASSERT(dest_format == FXDIB_Argb);
+    } else if (src_format == FXDIB_Format::kRgb32) {
+      ASSERT(dest_format == FXDIB_Format::kArgb);
       for (int row = 0; row < height; row++) {
         uint8_t* dest_scan = dest_buf + row * pitch;
         const uint8_t* src_scan =
@@ -1951,7 +1952,8 @@ void CFX_SkiaDeviceDriver::SetClipMask(const FX_RECT& clipBox,
                     clipBox.bottom + 1);
   path_rect.Intersect(m_pClipRgn->GetBox());
   auto pThisLayer = pdfium::MakeRetain<CFX_DIBitmap>();
-  pThisLayer->Create(path_rect.Width(), path_rect.Height(), FXDIB_8bppMask);
+  pThisLayer->Create(path_rect.Width(), path_rect.Height(),
+                     FXDIB_Format::k8bppMask);
   pThisLayer->Clear(0);
 
   SkImageInfo imageInfo =

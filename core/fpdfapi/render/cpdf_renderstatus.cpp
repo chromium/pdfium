@@ -649,7 +649,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
       return true;
     m_pDevice->GetDIBits(backdrop, rect.left, rect.top);
   }
-  if (!bitmap_device.Create(width, height, FXDIB_Argb, backdrop))
+  if (!bitmap_device.Create(width, height, FXDIB_Format::kArgb, backdrop))
     return true;
 
   RetainPtr<CFX_DIBitmap> bitmap = bitmap_device.GetBitmap();
@@ -661,7 +661,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   RetainPtr<CFX_DIBitmap> pTextMask;
   if (bTextClip) {
     pTextMask = pdfium::MakeRetain<CFX_DIBitmap>();
-    if (!pTextMask->Create(width, height, FXDIB_8bppMask))
+    if (!pTextMask->Create(width, height, FXDIB_Format::k8bppMask))
       return true;
 
     pTextMask->Clear(0);
@@ -740,7 +740,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::GetBackdrop(
   int height = bbox.Height();
   auto pBackdrop = pdfium::MakeRetain<CFX_DIBitmap>();
   if (bBackAlphaRequired && !m_bDropObjects)
-    pBackdrop->Create(width, height, FXDIB_Argb);
+    pBackdrop->Create(width, height, FXDIB_Format::kArgb);
   else
     m_pDevice->CreateCompatibleBitmap(pBackdrop, width, height);
 
@@ -981,8 +981,8 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
           continue;
 
         CFX_DefaultRenderDevice bitmap_device;
-        if (!bitmap_device.Create(rect.Width(), rect.Height(), FXDIB_Argb,
-                                  nullptr)) {
+        if (!bitmap_device.Create(rect.Width(), rect.Height(),
+                                  FXDIB_Format::kArgb, nullptr)) {
           return true;
         }
         bitmap_device.GetBitmap()->Clear(0);
@@ -1049,7 +1049,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
 
   FX_RECT rect = GetGlyphsBBox(glyphs, 0);
   auto pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!pBitmap->Create(rect.Width(), rect.Height(), FXDIB_8bppMask))
+  if (!pBitmap->Create(rect.Width(), rect.Height(), FXDIB_Format::k8bppMask))
     return true;
 
   pBitmap->Clear(0);
@@ -1358,7 +1358,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(
 
   auto pBackdrop1 = pdfium::MakeRetain<CFX_DIBitmap>();
   pBackdrop1->Create(pBackdrop->GetWidth(), pBackdrop->GetHeight(),
-                     FXDIB_Rgb32);
+                     FXDIB_Format::kRgb32);
   pBackdrop1->Clear((uint32_t)-1);
   pBackdrop1->CompositeBitmap(0, 0, pBackdrop->GetWidth(),
                               pBackdrop->GetHeight(), pBackdrop, 0, 0,
@@ -1400,9 +1400,9 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
   FXDIB_Format format;
 #if defined(OS_APPLE) || defined(_SKIA_SUPPORT_) || \
     defined(_SKIA_SUPPORT_PATHS_)
-  format = bLuminosity ? FXDIB_Rgb32 : FXDIB_8bppMask;
+  format = bLuminosity ? FXDIB_Format::kRgb32 : FXDIB_Format::k8bppMask;
 #else
-  format = bLuminosity ? FXDIB_Rgb : FXDIB_8bppMask;
+  format = bLuminosity ? FXDIB_Format::kRgb : FXDIB_Format::k8bppMask;
 #endif
   if (!bitmap_device.Create(width, height, format, nullptr))
     return nullptr;
@@ -1433,7 +1433,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
   status.RenderObjectList(&form, matrix);
 
   auto pMask = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!pMask->Create(width, height, FXDIB_8bppMask))
+  if (!pMask->Create(width, height, FXDIB_Format::k8bppMask))
     return nullptr;
 
   uint8_t* dest_buf = pMask->GetBuffer();

@@ -52,18 +52,16 @@ class CFX_DIBBase : public Retainable {
   int GetWidth() const { return m_Width; }
   int GetHeight() const { return m_Height; }
 
-  FXDIB_Format GetFormat() const {
-    return static_cast<FXDIB_Format>(m_AlphaFlag * 0x100 + m_bpp);
-  }
+  FXDIB_Format GetFormat() const { return m_Format; }
   uint32_t GetPitch() const { return m_Pitch; }
   bool HasPalette() const { return !m_palette.empty(); }
   pdfium::span<const uint32_t> GetPaletteSpan() const { return m_palette; }
   const uint32_t* GetPaletteData() const { return m_palette.data(); }
-  int GetBPP() const { return m_bpp; }
+  int GetBPP() const { return GetBppFromFormat(m_Format); }
 
-  bool IsAlphaMask() const { return !!(m_AlphaFlag & 1); }
-  bool HasAlpha() const { return !!(m_AlphaFlag & 2); }
-  bool IsCmykImage() const { return !!(m_AlphaFlag & 4); }
+  bool IsAlphaMask() const { return GetIsMaskFromFormat(m_Format); }
+  bool HasAlpha() const { return GetIsAlphaFromFormat(m_Format); }
+  bool IsCmykImage() const { return GetIsCmykFromFormat(m_Format); }
   bool IsOpaqueImage() const { return !IsAlphaMask() && !HasAlpha(); }
 
   size_t GetPaletteSize() const;
@@ -127,11 +125,10 @@ class CFX_DIBBase : public Retainable {
   int FindPalette(uint32_t color) const;
   void GetPalette(uint32_t* pal, int alpha) const;
 
-  int m_Width;
-  int m_Height;
-  int m_bpp;
-  uint32_t m_AlphaFlag;
-  uint32_t m_Pitch;
+  int m_Width = 0;
+  int m_Height = 0;
+  uint32_t m_Pitch = 0;
+  FXDIB_Format m_Format = FXDIB_Format::kInvalid;
   std::vector<uint32_t, FxAllocAllocator<uint32_t>> m_palette;
 };
 

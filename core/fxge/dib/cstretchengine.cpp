@@ -253,7 +253,7 @@ CStretchEngine::CStretchEngine(ScanlineComposerIface* pDestBitmap,
 
   size = GetPitchRoundUpTo4Bytes(size);
   m_DestScanline.resize(size);
-  if (dest_format == FXDIB_Rgb32)
+  if (dest_format == FXDIB_Format::kRgb32)
     std::fill(m_DestScanline.begin(), m_DestScanline.end(), 255);
   m_InterPitch = GetPitchRoundUpTo4Bytes(m_DestClip.Width() * m_DestBpp);
   m_ExtraMaskPitch = GetPitchRoundUpTo4Bytes(m_DestClip.Width() * 8);
@@ -455,7 +455,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
 
             int pixel_weight = *pWeight;
             unsigned long argb_cmyk = m_pSrcPalette[src_scan[j]];
-            if (m_DestFormat == FXDIB_Rgb) {
+            if (m_DestFormat == FXDIB_Format::kRgb) {
               dest_r_y += pixel_weight * static_cast<uint8_t>(argb_cmyk >> 16);
               dest_g_m += pixel_weight * static_cast<uint8_t>(argb_cmyk >> 8);
               dest_b_c += pixel_weight * static_cast<uint8_t>(argb_cmyk);
@@ -491,7 +491,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             int pixel_weight = *pWeight;
             pixel_weight = pixel_weight * src_scan_mask[j] / 255;
             unsigned long argb_cmyk = m_pSrcPalette[src_scan[j]];
-            if (m_DestFormat == FXDIB_Rgba) {
+            if (m_DestFormat == FXDIB_Format::kRgba) {
               dest_r_y += pixel_weight * static_cast<uint8_t>(argb_cmyk >> 16);
               dest_g_m += pixel_weight * static_cast<uint8_t>(argb_cmyk >> 8);
               dest_b_c += pixel_weight * static_cast<uint8_t>(argb_cmyk);
@@ -558,7 +558,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
 
             int pixel_weight = *pWeight;
             const uint8_t* src_pixel = src_scan + j * Bpp;
-            if (m_DestFormat == FXDIB_Argb) {
+            if (m_DestFormat == FXDIB_Format::kArgb) {
               pixel_weight = pixel_weight * src_pixel[3] / 255;
             } else {
               pixel_weight = pixel_weight * src_scan_mask[j] / 255;
@@ -577,7 +577,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
           *dest_scan++ = static_cast<uint8_t>((dest_b_c) >> 16);
           *dest_scan++ = static_cast<uint8_t>((dest_g_m) >> 16);
           *dest_scan++ = static_cast<uint8_t>((dest_r_y) >> 16);
-          if (m_DestFormat == FXDIB_Argb)
+          if (m_DestFormat == FXDIB_Format::kArgb)
             *dest_scan = static_cast<uint8_t>((dest_a * 255) >> 16);
           if (dest_scan_mask)
             *dest_scan_mask++ = static_cast<uint8_t>((dest_a * 255) >> 16);
@@ -701,7 +701,7 @@ void CStretchEngine::StretchVert() {
           unsigned char* src_scan =
               m_InterBuf.data() + (col - m_DestClip.left) * DestBpp;
           unsigned char* src_scan_mask = nullptr;
-          if (m_DestFormat != FXDIB_Argb)
+          if (m_DestFormat != FXDIB_Format::kArgb)
             src_scan_mask = m_ExtraAlphaBuf.data() + (col - m_DestClip.left);
           int dest_a = 0;
           int dest_r_y = 0;
@@ -721,7 +721,7 @@ void CStretchEngine::StretchVert() {
             dest_b_c += pixel_weight * (*src_pixel++);
             dest_g_m += pixel_weight * (*src_pixel++);
             dest_r_y += pixel_weight * (*src_pixel);
-            if (m_DestFormat == FXDIB_Argb)
+            if (m_DestFormat == FXDIB_Format::kArgb)
               dest_a += pixel_weight * (*(src_pixel + 1));
             else
               dest_a += pixel_weight * mask_v;
@@ -740,7 +740,7 @@ void CStretchEngine::StretchVert() {
             dest_scan[1] = pdfium::clamp(g, 0, 255);
             dest_scan[2] = pdfium::clamp(r, 0, 255);
           }
-          if (m_DestFormat == FXDIB_Argb)
+          if (m_DestFormat == FXDIB_Format::kArgb)
             dest_scan[3] = static_cast<uint8_t>((dest_a) >> 16);
           else
             *dest_scan_mask = static_cast<uint8_t>((dest_a) >> 16);

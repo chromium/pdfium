@@ -344,19 +344,19 @@ void OutputImage(Gdiplus::GpGraphics* pGraphics,
                    pBitmap->GetBPP() * pSrcRect->left / 8;
   Gdiplus::GpBitmap* bitmap = nullptr;
   switch (pBitmap->GetFormat()) {
-    case FXDIB_Argb:
+    case FXDIB_Format::kArgb:
       CallFunc(GdipCreateBitmapFromScan0)(src_width, src_height, src_pitch,
                                           PixelFormat32bppARGB, scan0, &bitmap);
       break;
-    case FXDIB_Rgb32:
+    case FXDIB_Format::kRgb32:
       CallFunc(GdipCreateBitmapFromScan0)(src_width, src_height, src_pitch,
                                           PixelFormat32bppRGB, scan0, &bitmap);
       break;
-    case FXDIB_Rgb:
+    case FXDIB_Format::kRgb:
       CallFunc(GdipCreateBitmapFromScan0)(src_width, src_height, src_pitch,
                                           PixelFormat24bppRGB, scan0, &bitmap);
       break;
-    case FXDIB_8bppRgb: {
+    case FXDIB_Format::k8bppRgb: {
       CallFunc(GdipCreateBitmapFromScan0)(src_width, src_height, src_pitch,
                                           PixelFormat8bppIndexed, scan0,
                                           &bitmap);
@@ -368,7 +368,7 @@ void OutputImage(Gdiplus::GpGraphics* pGraphics,
       CallFunc(GdipSetImagePalette)(bitmap, (Gdiplus::ColorPalette*)pal);
       break;
     }
-    case FXDIB_1bppRgb: {
+    case FXDIB_Format::k1bppRgb: {
       CallFunc(GdipCreateBitmapFromScan0)(src_width, src_height, src_pitch,
                                           PixelFormat1bppIndexed, scan0,
                                           &bitmap);

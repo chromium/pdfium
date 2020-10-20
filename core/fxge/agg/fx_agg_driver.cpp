@@ -169,8 +169,8 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
   }
 
   uint8_t* dest_buf = buffer + dest_top * pitch + dest_left * Bpp;
-  if (dest_format == FXDIB_Rgb) {
-    ASSERT(src_format == FXDIB_Rgb32);
+  if (dest_format == FXDIB_Format::kRgb) {
+    ASSERT(src_format == FXDIB_Format::kRgb32);
     for (int row = 0; row < height; row++) {
       uint8_t* dest_scan = dest_buf + row * pitch;
       const uint8_t* src_scan =
@@ -185,8 +185,9 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
     return;
   }
 
-  ASSERT(dest_format == FXDIB_Argb || dest_format == FXDIB_Rgb32);
-  if (src_format == FXDIB_Rgb) {
+  ASSERT(dest_format == FXDIB_Format::kArgb ||
+         dest_format == FXDIB_Format::kRgb32);
+  if (src_format == FXDIB_Format::kRgb) {
     for (int row = 0; row < height; row++) {
       uint8_t* dest_scan = dest_buf + row * pitch;
       const uint8_t* src_scan =
@@ -200,9 +201,9 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
     }
     return;
   }
-  if (src_format != FXDIB_Rgb32)
+  if (src_format != FXDIB_Format::kRgb32)
     return;
-  ASSERT(dest_format == FXDIB_Argb);
+  ASSERT(dest_format == FXDIB_Format::kArgb);
   for (int row = 0; row < height; row++) {
     uint8_t* dest_scan = dest_buf + row * pitch;
     const uint8_t* src_scan =
@@ -392,7 +393,7 @@ class CFX_Renderer {
       return &CFX_Renderer::CompositeSpan1bpp;
     if (device->GetBPP() == 8)
       return &CFX_Renderer::CompositeSpanGray;
-    if (device->GetFormat() == FXDIB_Argb)
+    if (device->GetFormat() == FXDIB_Format::kArgb)
       return &CFX_Renderer::CompositeSpanARGB;
     return &CFX_Renderer::CompositeSpanRGB;
   }
@@ -1106,7 +1107,8 @@ void CFX_AggDeviceDriver::SetClipMask(agg::rasterizer_scanline_aa& rasterizer) {
                     rasterizer.max_x() + 1, rasterizer.max_y() + 1);
   path_rect.Intersect(m_pClipRgn->GetBox());
   auto pThisLayer = pdfium::MakeRetain<CFX_DIBitmap>();
-  pThisLayer->Create(path_rect.Width(), path_rect.Height(), FXDIB_8bppMask);
+  pThisLayer->Create(path_rect.Width(), path_rect.Height(),
+                     FXDIB_Format::k8bppMask);
   pThisLayer->Clear(0);
   agg::rendering_buffer raw_buf(pThisLayer->GetBuffer(), pThisLayer->GetWidth(),
                                 pThisLayer->GetHeight(),

@@ -382,7 +382,8 @@ TEST(ProgressiveDecoder, BUG_895009) {
     ASSERT_EQ(6945, decoder->GetHeight());
 
     auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-    bitmap->Create(decoder->GetWidth(), decoder->GetHeight(), FXDIB_Argb);
+    bitmap->Create(decoder->GetWidth(), decoder->GetHeight(),
+                   FXDIB_Format::kArgb);
 
     size_t frames;
     std::tie(status, frames) = decoder->GetFrames();

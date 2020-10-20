@@ -264,7 +264,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
         CreateXObjectImageDict(maskWidth, maskHeight);
     pMaskDict->SetNewFor<CPDF_Name>("ColorSpace", "DeviceGray");
     pMaskDict->SetNewFor<CPDF_Number>("BitsPerComponent", 8);
-    if (pMaskBitmap->GetFormat() != FXDIB_1bppMask) {
+    if (pMaskBitmap->GetFormat() != FXDIB_Format::k1bppMask) {
       mask_buf.reset(FX_AllocUninit2D(uint8_t, maskHeight, maskWidth));
       mask_size = maskHeight * maskWidth;  // Safe since checked alloc returned.
       for (int32_t a = 0; a < maskHeight; a++) {

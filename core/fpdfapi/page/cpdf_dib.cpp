@@ -195,18 +195,18 @@ bool CPDF_DIB::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream) {
   if (m_bImageMask)
     SetMaskProperties();
   else
-    m_bpp = CalculateBitsPerPixel(m_bpc, m_nComponents);
+    m_Format = MakeRGBFormat(CalculateBitsPerPixel(m_bpc, m_nComponents));
 
-  FX_SAFE_UINT32 pitch = fxcodec::CalculatePitch32(m_bpp, m_Width);
+  FX_SAFE_UINT32 pitch =
+      fxcodec::CalculatePitch32(GetBppFromFormat(m_Format), m_Width);
   if (!pitch.IsValid())
     return false;
 
   m_pLineBuf.reset(FX_Alloc(uint8_t, pitch.ValueOrDie()));
   LoadPalette();
   if (m_bColorKey) {
-    m_bpp = 32;
-    m_AlphaFlag = 2;
-    pitch = fxcodec::CalculatePitch32(m_bpp, m_Width);
+    m_Format = FXDIB_Format::kArgb;
+    pitch = fxcodec::CalculatePitch32(GetBppFromFormat(m_Format), m_Width);
     if (!pitch.IsValid())
       return false;
 
@@ -223,10 +223,11 @@ bool CPDF_DIB::ContinueToLoadMask() {
     if (!m_bpc || !m_nComponents)
       return false;
 
-    m_bpp = CalculateBitsPerPixel(m_bpc, m_nComponents);
+    m_Format = MakeRGBFormat(CalculateBitsPerPixel(m_bpc, m_nComponents));
   }
 
-  FX_SAFE_UINT32 pitch = fxcodec::CalculatePitch32(m_bpp, m_Width);
+  FX_SAFE_UINT32 pitch =
+      fxcodec::CalculatePitch32(GetBppFromFormat(m_Format), m_Width);
   if (!pitch.IsValid())
     return false;
 
@@ -236,9 +237,8 @@ bool CPDF_DIB::ContinueToLoadMask() {
   }
   LoadPalette();
   if (m_bColorKey) {
-    m_bpp = 32;
-    m_AlphaFlag = 2;
-    pitch = fxcodec::CalculatePitch32(m_bpp, m_Width);
+    m_Format = FXDIB_Format::kArgb;
+    pitch = fxcodec::CalculatePitch32(GetBppFromFormat(m_Format), m_Width);
     if (!pitch.IsValid())
       return false;
     m_pMaskedLine.reset(FX_Alloc(uint8_t, pitch.ValueOrDie()));
@@ -512,7 +512,8 @@ CPDF_DIB::LoadState CPDF_DIB::CreateDecoder() {
   if (decoder == "JBIG2Decode") {
     m_pCachedBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
     if (!m_pCachedBitmap->Create(
-            m_Width, m_Height, m_bImageMask ? FXDIB_1bppMask : FXDIB_1bppRgb)) {
+            m_Width, m_Height,
+            m_bImageMask ? FXDIB_Format::k1bppMask : FXDIB_Format::k1bppRgb)) {
       m_pCachedBitmap.Reset();
       return LoadState::kFail;
     }
@@ -676,14 +677,14 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap() {
 
   FXDIB_Format format;
   if (image_info.components == 1) {
-    format = FXDIB_8bppRgb;
+    format = FXDIB_Format::k8bppRgb;
   } else if (image_info.components <= 3) {
-    format = FXDIB_Rgb;
+    format = FXDIB_Format::kRgb;
   } else if (image_info.components == 4) {
-    format = FXDIB_Rgb32;
+    format = FXDIB_Format::kRgb32;
   } else {
     image_info.width = (image_info.width * image_info.components + 2) / 3;
-    format = FXDIB_Rgb;
+    format = FXDIB_Format::kRgb;
   }
 
   auto result_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
@@ -699,9 +700,10 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap() {
   if (convert_argb_to_rgb) {
     DCHECK_EQ(3, m_nComponents);
     auto rgb_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-    if (!rgb_bitmap->Create(image_info.width, image_info.height, FXDIB_Rgb))
+    if (!rgb_bitmap->Create(image_info.width, image_info.height,
+                            FXDIB_Format::kRgb)) {
       return nullptr;
-
+    }
     if (m_pDict->GetIntegerFor("SMaskInData") == 1) {
       // TODO(thestig): Acrobat does not support "/SMaskInData 1" combined with
       // filters. Check for that and fail early.
@@ -1456,10 +1458,9 @@ bool CPDF_DIB::TransMask() const {
 }
 
 void CPDF_DIB::SetMaskProperties() {
-  m_bpp = 1;
   m_bpc = 1;
   m_nComponents = 1;
-  m_AlphaFlag = 1;
+  m_Format = FXDIB_Format::k1bppMask;
 }
 
 uint32_t CPDF_DIB::Get1BitSetValue() const {

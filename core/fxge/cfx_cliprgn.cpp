@@ -45,7 +45,7 @@ void CFX_ClipRgn::IntersectMaskRect(FX_RECT rect,
   }
   RetainPtr<CFX_DIBitmap> pOldMask(pMask);
   m_Mask = pdfium::MakeRetain<CFX_DIBitmap>();
-  m_Mask->Create(m_Box.Width(), m_Box.Height(), FXDIB_8bppMask);
+  m_Mask->Create(m_Box.Width(), m_Box.Height(), FXDIB_Format::k8bppMask);
   for (int row = m_Box.top; row < m_Box.bottom; row++) {
     uint8_t* dest_scan =
         m_Mask->GetBuffer() + m_Mask->GetPitch() * (row - m_Box.top);
@@ -59,7 +59,7 @@ void CFX_ClipRgn::IntersectMaskRect(FX_RECT rect,
 void CFX_ClipRgn::IntersectMaskF(int left,
                                  int top,
                                  const RetainPtr<CFX_DIBitmap>& pMask) {
-  ASSERT(pMask->GetFormat() == FXDIB_8bppMask);
+  ASSERT(pMask->GetFormat() == FXDIB_Format::k8bppMask);
   FX_RECT mask_box(left, top, left + pMask->GetWidth(),
                    top + pMask->GetHeight());
   if (m_Type == RectI) {
@@ -76,7 +76,7 @@ void CFX_ClipRgn::IntersectMaskF(int left,
       return;
     }
     auto new_dib = pdfium::MakeRetain<CFX_DIBitmap>();
-    new_dib->Create(new_box.Width(), new_box.Height(), FXDIB_8bppMask);
+    new_dib->Create(new_box.Width(), new_box.Height(), FXDIB_Format::k8bppMask);
     for (int row = new_box.top; row < new_box.bottom; row++) {
       uint8_t* old_scan =
           m_Mask->GetBuffer() + (row - m_Box.top) * m_Mask->GetPitch();

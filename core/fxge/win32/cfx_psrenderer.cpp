@@ -366,20 +366,20 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
     if (!pConverted)
       return false;
     switch (pSource->GetFormat()) {
-      case FXDIB_1bppRgb:
-      case FXDIB_Rgb32:
-        pConverted = pConverted->CloneConvert(FXDIB_Rgb);
+      case FXDIB_Format::k1bppRgb:
+      case FXDIB_Format::kRgb32:
+        pConverted = pConverted->CloneConvert(FXDIB_Format::kRgb);
         break;
-      case FXDIB_8bppRgb:
+      case FXDIB_Format::k8bppRgb:
         if (pSource->HasPalette())
-          pConverted = pConverted->CloneConvert(FXDIB_Rgb);
+          pConverted = pConverted->CloneConvert(FXDIB_Format::kRgb);
         break;
-      case FXDIB_1bppCmyk:
-        pConverted = pConverted->CloneConvert(FXDIB_Cmyk);
+      case FXDIB_Format::k1bppCmyk:
+        pConverted = pConverted->CloneConvert(FXDIB_Format::kCmyk);
         break;
-      case FXDIB_8bppCmyk:
+      case FXDIB_Format::k8bppCmyk:
         if (pSource->HasPalette())
-          pConverted = pConverted->CloneConvert(FXDIB_Cmyk);
+          pConverted = pConverted->CloneConvert(FXDIB_Format::kCmyk);
         break;
       default:
         break;

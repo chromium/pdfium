@@ -189,9 +189,10 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_GlyphCache::RenderGlyph(
   auto pGlyphBitmap =
       std::make_unique<CFX_GlyphBitmap>(FXFT_Get_Glyph_BitmapLeft(GetFaceRec()),
                                         FXFT_Get_Glyph_BitmapTop(GetFaceRec()));
-  pGlyphBitmap->GetBitmap()->Create(
-      dib_width, bmheight,
-      anti_alias == FT_RENDER_MODE_MONO ? FXDIB_1bppMask : FXDIB_8bppMask);
+  pGlyphBitmap->GetBitmap()->Create(dib_width, bmheight,
+                                    anti_alias == FT_RENDER_MODE_MONO
+                                        ? FXDIB_Format::k1bppMask
+                                        : FXDIB_Format::k8bppMask);
   int dest_pitch = pGlyphBitmap->GetBitmap()->GetPitch();
   int src_pitch = FXFT_Get_Bitmap_Pitch(FXFT_Get_Glyph_Bitmap(GetFaceRec()));
   uint8_t* pDestBuf = pGlyphBitmap->GetBitmap()->GetBuffer();

@@ -220,7 +220,7 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
                           int r,
                           int g,
                           int b) {
-  const bool has_alpha = bitmap->GetFormat() == FXDIB_Argb;
+  const bool has_alpha = bitmap->GetFormat() == FXDIB_Format::kArgb;
   uint8_t* src_buf = pGlyph->GetBuffer();
   int src_pitch = pGlyph->GetPitch();
   uint8_t* dest_buf = bitmap->GetBuffer();
@@ -391,15 +391,15 @@ bool CFX_RenderDevice::CreateCompatibleBitmap(
     int width,
     int height) const {
   if (m_RenderCaps & FXRC_BYTEMASK_OUTPUT)
-    return pDIB->Create(width, height, FXDIB_8bppMask);
+    return pDIB->Create(width, height, FXDIB_Format::k8bppMask);
 #if defined(OS_APPLE) || defined(_SKIA_SUPPORT_PATHS_)
-  constexpr FXDIB_Format kPlatformFormat = FXDIB_Rgb32;
+  constexpr FXDIB_Format kPlatformFormat = FXDIB_Format::kRgb32;
 #else
-  constexpr FXDIB_Format kPlatformFormat = FXDIB_Rgb;
+  constexpr FXDIB_Format kPlatformFormat = FXDIB_Format::kRgb;
 #endif
   return pDIB->Create(
       width, height,
-      m_RenderCaps & FXRC_ALPHA_OUTPUT ? FXDIB_Argb : kPlatformFormat);
+      m_RenderCaps & FXRC_ALPHA_OUTPUT ? FXDIB_Format::kArgb : kPlatformFormat);
 }
 
 void CFX_RenderDevice::SetBaseClip(const FX_RECT& rect) {
@@ -711,9 +711,10 @@ bool CFX_RenderDevice::SetDIBitsWithBlend(const RetainPtr<CFX_DIBBase>& pBitmap,
   int bg_pixel_width = dest_rect.Width();
   int bg_pixel_height = dest_rect.Height();
   auto background = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!background->Create(bg_pixel_width, bg_pixel_height, FXDIB_Rgb32))
+  if (!background->Create(bg_pixel_width, bg_pixel_height,
+                          FXDIB_Format::kRgb32)) {
     return false;
-
+  }
   if (!m_pDeviceDriver->GetDIBits(background, dest_rect.left, dest_rect.top))
     return false;
 
@@ -932,7 +933,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
   int pixel_top = bmp_rect.top;
   if (anti_alias == FT_RENDER_MODE_MONO) {
     auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-    if (!bitmap->Create(pixel_width, pixel_height, FXDIB_1bppMask))
+    if (!bitmap->Create(pixel_width, pixel_height, FXDIB_Format::k1bppMask))
       return false;
     bitmap->Clear(0);
     for (const TextGlyphPos& glyph : glyphs) {
@@ -952,7 +953,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
   }
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   if (m_bpp == 8) {
-    if (!bitmap->Create(pixel_width, pixel_height, FXDIB_8bppMask))
+    if (!bitmap->Create(pixel_width, pixel_height, FXDIB_Format::k8bppMask))
       return false;
   } else {
     if (!CreateCompatibleBitmap(bitmap, pixel_width, pixel_height))

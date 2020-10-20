@@ -67,7 +67,7 @@ bool CPDF_DeviceBuffer::Initialize() {
   FX_RECT bitmap_rect =
       m_Matrix.TransformRect(CFX_FloatRect(m_Rect)).GetOuterRect();
   return m_pBitmap->Create(bitmap_rect.Width(), bitmap_rect.Height(),
-                           FXDIB_Argb);
+                           FXDIB_Format::kArgb);
 }
 
 void CPDF_DeviceBuffer::OutputToDevice() {

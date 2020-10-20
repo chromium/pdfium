@@ -81,7 +81,7 @@ void CFX_BitmapComposer::DoCompose(uint8_t* dest_scan,
     }
     clip_scan = pAddClipScan;
   }
-  if (m_SrcFormat == FXDIB_8bppMask) {
+  if (m_SrcFormat == FXDIB_Format::k8bppMask) {
     m_Compositor.CompositeByteMaskLine(dest_scan, src_scan, dest_width,
                                        clip_scan, dst_extra_alpha);
   } else if (GetBppFromFormat(m_SrcFormat) == 8) {

@@ -211,7 +211,7 @@ FPDFImageObj_GetBitmap(FPDF_PAGEOBJECT image_object) {
   // concept of bits. Otherwise, convert the source image to a bitmap directly,
   // retaining its color representation.
   if (pSource->GetBPP() == 1)
-    pBitmap = pSource->CloneConvert(FXDIB_8bppRgb);
+    pBitmap = pSource->CloneConvert(FXDIB_Format::k8bppRgb);
   else
     pBitmap = pSource->Clone(nullptr);
 
@@ -239,7 +239,7 @@ FPDFImageObj_GetRenderedBitmap(FPDF_DOCUMENT document,
   int output_width = image_matrix.a;
   int output_height = image_matrix.d;
   auto result_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!result_bitmap->Create(output_width, output_height, FXDIB_Argb))
+  if (!result_bitmap->Create(output_width, output_height, FXDIB_Format::kArgb))
     return nullptr;
 
   // Set up all the rendering code.

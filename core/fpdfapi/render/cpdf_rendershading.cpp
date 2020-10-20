@@ -91,7 +91,7 @@ void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
                       const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
                       const RetainPtr<CPDF_ColorSpace>& pCS,
                       int alpha) {
-  ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
+  ASSERT(pBitmap->GetFormat() == FXDIB_Format::kArgb);
 
   const uint32_t total_results = GetValidatedOutputsCount(funcs, pCS);
   if (total_results == 0)
@@ -159,7 +159,7 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
                        const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
                        const RetainPtr<CPDF_ColorSpace>& pCS,
                        int alpha) {
-  ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
+  ASSERT(pBitmap->GetFormat() == FXDIB_Format::kArgb);
 
   const uint32_t total_results = GetValidatedOutputsCount(funcs, pCS);
   if (total_results == 0)
@@ -258,7 +258,7 @@ void DrawFuncShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
                      const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
                      const RetainPtr<CPDF_ColorSpace>& pCS,
                      int alpha) {
-  ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
+  ASSERT(pBitmap->GetFormat() == FXDIB_Format::kArgb);
 
   const uint32_t total_results = GetValidatedOutputsCount(funcs, pCS);
   if (total_results == 0)
@@ -418,7 +418,7 @@ void DrawFreeGouraudShading(
     const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
     const RetainPtr<CPDF_ColorSpace>& pCS,
     int alpha) {
-  ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
+  ASSERT(pBitmap->GetFormat() == FXDIB_Format::kArgb);
 
   CPDF_MeshStream stream(kFreeFormGouraudTriangleMeshShading, funcs,
                          pShadingStream, pCS);
@@ -457,7 +457,7 @@ void DrawLatticeGouraudShading(
     const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
     const RetainPtr<CPDF_ColorSpace>& pCS,
     int alpha) {
-  ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
+  ASSERT(pBitmap->GetFormat() == FXDIB_Format::kArgb);
 
   int row_verts = pShadingStream->GetDict()->GetIntegerFor("VerticesPerRow");
   if (row_verts < 2)
@@ -770,7 +770,7 @@ void DrawCoonPatchMeshes(
     const RetainPtr<CPDF_ColorSpace>& pCS,
     bool bNoPathSmooth,
     int alpha) {
-  ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
+  ASSERT(pBitmap->GetFormat() == FXDIB_Format::kArgb);
   ASSERT(type == kCoonsPatchMeshShading ||
          type == kTensorProductPatchMeshShading);
 

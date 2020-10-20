@@ -14,10 +14,11 @@
 namespace {
 
 constexpr FXDIB_Format kFormat[] = {
-    FXDIB_Invalid, FXDIB_1bppRgb,   FXDIB_8bppRgb,  FXDIB_Rgb,
-    FXDIB_Rgb32,   FXDIB_1bppMask,  FXDIB_8bppMask, FXDIB_8bppRgba,
-    FXDIB_Rgba,    FXDIB_Argb,      FXDIB_1bppCmyk, FXDIB_8bppCmyk,
-    FXDIB_Cmyk,    FXDIB_8bppCmyka, FXDIB_Cmyka};
+    FXDIB_Format::kInvalid,  FXDIB_Format::k1bppRgb,   FXDIB_Format::k8bppRgb,
+    FXDIB_Format::kRgb,      FXDIB_Format::kRgb32,     FXDIB_Format::k1bppMask,
+    FXDIB_Format::k8bppMask, FXDIB_Format::k8bppRgba,  FXDIB_Format::kRgba,
+    FXDIB_Format::kArgb,     FXDIB_Format::k1bppCmyk,  FXDIB_Format::k8bppCmyk,
+    FXDIB_Format::kCmyk,     FXDIB_Format::k8bppCmyka, FXDIB_Format::kCmyka};
 
 }  // namespace
 

@@ -86,9 +86,8 @@ RetainPtr<CFX_DIBitmap> CFX_WindowsDIB::LoadFromBuf(BITMAPINFO* pbmi,
   }
   int pitch = (width * pbmi->bmiHeader.biBitCount + 31) / 32 * 4;
   auto pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  FXDIB_Format format = bAlpha
-                            ? (FXDIB_Format)(pbmi->bmiHeader.biBitCount + 0x200)
-                            : (FXDIB_Format)pbmi->bmiHeader.biBitCount;
+  FXDIB_Format format =
+      MakeMaybeAlphaRGBFormat(bAlpha, pbmi->bmiHeader.biBitCount);
   if (!pBitmap->Create(width, height, format))
     return nullptr;
 
@@ -146,7 +145,7 @@ RetainPtr<CFX_DIBitmap> CFX_WindowsDIB::LoadFromFile(const wchar_t* filename) {
   int height;
   GetBitmapSize(hBitmap, width, height);
   auto pDIBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!pDIBitmap->Create(width, height, FXDIB_Rgb)) {
+  if (!pDIBitmap->Create(width, height, FXDIB_Format::kRgb)) {
     DeleteDC(hDC);
     return nullptr;
   }
@@ -183,7 +182,7 @@ RetainPtr<CFX_DIBitmap> CFX_WindowsDIB::LoadDIBitmap(WINDIB_Open_Args_ args) {
   int width, height;
   GetBitmapSize(hBitmap, width, height);
   auto pDIBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!pDIBitmap->Create(width, height, FXDIB_Rgb)) {
+  if (!pDIBitmap->Create(width, height, FXDIB_Format::kRgb)) {
     DeleteDC(hDC);
     return nullptr;
   }
@@ -197,7 +196,7 @@ RetainPtr<CFX_DIBitmap> CFX_WindowsDIB::LoadDIBitmap(WINDIB_Open_Args_ args) {
 }
 
 CFX_WindowsDIB::CFX_WindowsDIB(HDC hDC, int width, int height) {
-  Create(width, height, FXDIB_Rgb, (uint8_t*)1, 0);
+  Create(width, height, FXDIB_Format::kRgb, (uint8_t*)1, 0);
   BITMAPINFOHEADER bmih;
   memset(&bmih, 0, sizeof bmih);
   bmih.biSize = sizeof bmih;

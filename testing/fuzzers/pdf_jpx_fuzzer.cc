@@ -51,14 +51,14 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
 
   FXDIB_Format format;
   if (image_info.components == 1) {
-    format = FXDIB_8bppRgb;
+    format = FXDIB_Format::k8bppRgb;
   } else if (image_info.components <= 3) {
-    format = FXDIB_Rgb;
+    format = FXDIB_Format::kRgb;
   } else if (image_info.components == 4) {
-    format = FXDIB_Rgb32;
+    format = FXDIB_Format::kRgb32;
   } else {
     image_info.width = (image_info.width * image_info.components + 2) / 3;
-    format = FXDIB_Rgb;
+    format = FXDIB_Format::kRgb;
   }
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!bitmap->Create(image_info.width, image_info.height, format))

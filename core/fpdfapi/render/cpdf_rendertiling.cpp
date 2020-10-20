@@ -32,7 +32,8 @@ RetainPtr<CFX_DIBitmap> DrawPatternBitmap(
     const CPDF_RenderOptions::Options& draw_options) {
   auto pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!pBitmap->Create(width, height,
-                       pPattern->colored() ? FXDIB_Argb : FXDIB_8bppMask)) {
+                       pPattern->colored() ? FXDIB_Format::kArgb
+                                           : FXDIB_Format::k8bppMask)) {
     return nullptr;
   }
   CFX_DefaultRenderDevice bitmap_device;
@@ -189,7 +190,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderTiling::Draw(
   int clip_width = clip_box.right - clip_box.left;
   int clip_height = clip_box.bottom - clip_box.top;
   auto pScreen = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!pScreen->Create(clip_width, clip_height, FXDIB_Argb))
+  if (!pScreen->Create(clip_width, clip_height, FXDIB_Format::kArgb))
     return nullptr;
 
   pScreen->Clear(0);
