@@ -183,19 +183,17 @@ bool CPDF_ImageRenderer::Start(CPDF_RenderStatus* pStatus,
 bool CPDF_ImageRenderer::Start(CPDF_RenderStatus* pStatus,
                                const RetainPtr<CFX_DIBBase>& pDIBBase,
                                FX_ARGB bitmap_argb,
-                               int bitmap_alpha,
                                const CFX_Matrix& mtImage2Device,
                                const FXDIB_ResampleOptions& options,
-                               bool bStdCS,
-                               BlendMode blendType) {
+                               bool bStdCS) {
   m_pRenderStatus = pStatus;
   m_pDIBBase = pDIBBase;
   m_FillArgb = bitmap_argb;
-  m_BitmapAlpha = bitmap_alpha;
+  m_BitmapAlpha = 255;
   m_ImageMatrix = mtImage2Device;
   m_ResampleOptions = options;
   m_bStdCS = bStdCS;
-  m_BlendType = blendType;
+  m_BlendType = BlendMode::kNormal;
   return StartDIBBase();
 }
 
@@ -230,8 +228,8 @@ void CPDF_ImageRenderer::CalculateDrawImage(
   bitmap_render.Initialize(nullptr, nullptr);
 
   CPDF_ImageRenderer image_render;
-  if (image_render.Start(&bitmap_render, pDIBBase, 0xffffffff, 255, mtNewMatrix,
-                         m_ResampleOptions, true, BlendMode::kNormal)) {
+  if (image_render.Start(&bitmap_render, pDIBBase, 0xffffffff, mtNewMatrix,
+                         m_ResampleOptions, true)) {
     image_render.Continue(nullptr);
   }
   if (m_Loader.MatteColor() == 0xffffffff)
@@ -343,8 +341,8 @@ bool CPDF_ImageRenderer::DrawMaskedImage() {
   bitmap_render.SetStdCS(true);
   bitmap_render.Initialize(nullptr, nullptr);
   CPDF_ImageRenderer image_render;
-  if (image_render.Start(&bitmap_render, m_pDIBBase, 0, 255, new_matrix,
-                         m_ResampleOptions, true, BlendMode::kNormal)) {
+  if (image_render.Start(&bitmap_render, m_pDIBBase, 0, new_matrix,
+                         m_ResampleOptions, true)) {
     image_render.Continue(nullptr);
   }
   CFX_DefaultRenderDevice bitmap_device2;
