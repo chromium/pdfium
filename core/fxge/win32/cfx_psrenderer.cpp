@@ -374,10 +374,6 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
         if (pSource->HasPalette())
           pConverted = pConverted->CloneConvert(FXDIB_Format::kRgb);
         break;
-      case FXDIB_Format::k8bppCmyk:
-        if (pSource->HasPalette())
-          pConverted = pConverted->CloneConvert(FXDIB_Format::kCmyk);
-        break;
       default:
         break;
     }

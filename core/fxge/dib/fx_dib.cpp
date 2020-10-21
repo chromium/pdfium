@@ -72,12 +72,8 @@ FXDIB_Format MakeRGBFormat(int bpp) {
 
 FXDIB_Format AddAlphaToCmykFormat(FXDIB_Format format) {
   switch (format) {
-    case FXDIB_Format::k8bppCmyk:
-      return FXDIB_Format::k8bppCmyka;
     case FXDIB_Format::kCmyk:
       return FXDIB_Format::kCmyka;
-    case FXDIB_Format::k8bppCmyka:
-      return FXDIB_Format::k8bppCmyka;
     case FXDIB_Format::kCmyka:
       return FXDIB_Format::kCmyka;
     default:
