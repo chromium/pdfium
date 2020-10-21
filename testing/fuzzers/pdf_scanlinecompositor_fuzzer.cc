@@ -13,12 +13,24 @@
 
 namespace {
 
+// Some unused formats were removed, and their slots have been filled in
+// `FXDIB_Format::kInvalid` to keep the fuzzer input stable.
 constexpr FXDIB_Format kFormat[] = {
-    FXDIB_Format::kInvalid,  FXDIB_Format::k1bppRgb,   FXDIB_Format::k8bppRgb,
-    FXDIB_Format::kRgb,      FXDIB_Format::kRgb32,     FXDIB_Format::k1bppMask,
-    FXDIB_Format::k8bppMask, FXDIB_Format::k8bppRgba,  FXDIB_Format::kRgba,
-    FXDIB_Format::kArgb,     FXDIB_Format::k1bppCmyk,  FXDIB_Format::k8bppCmyk,
-    FXDIB_Format::kCmyk,     FXDIB_Format::k8bppCmyka, FXDIB_Format::kCmyka};
+    FXDIB_Format::kInvalid,
+    FXDIB_Format::k1bppRgb,
+    FXDIB_Format::k8bppRgb,
+    FXDIB_Format::kRgb,
+    FXDIB_Format::kRgb32,
+    FXDIB_Format::k1bppMask,
+    FXDIB_Format::k8bppMask,
+    FXDIB_Format::k8bppRgba,
+    FXDIB_Format::kRgba,
+    FXDIB_Format::kArgb,
+    FXDIB_Format::kInvalid /* Was FXDIB_Format::k1bppCmyk */,
+    FXDIB_Format::k8bppCmyk,
+    FXDIB_Format::kCmyk,
+    FXDIB_Format::k8bppCmyka,
+    FXDIB_Format::kCmyka};
 
 }  // namespace
 

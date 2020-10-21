@@ -24,7 +24,6 @@ enum class FXDIB_Format : uint16_t {
   k8bppRgba = 0x208,
   kRgba = 0x218,
   kArgb = 0x220,
-  k1bppCmyk = 0x401,
   k8bppCmyk = 0x408,
   kCmyk = 0x420,
   k8bppCmyka = 0x608,

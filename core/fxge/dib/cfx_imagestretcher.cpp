@@ -7,8 +7,6 @@
 #include "core/fxge/dib/cfx_imagestretcher.h"
 
 #include <climits>
-#include <tuple>
-
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
@@ -33,12 +31,6 @@ FXDIB_Format GetStretchedFormat(const CFX_DIBBase& src) {
   if (format == FXDIB_Format::k8bppRgb && src.HasPalette())
     return FXDIB_Format::kRgb;
   return format;
-}
-
-// Returns tuple c, m, y, k
-std::tuple<int, int, int, int> CmykDecode(const uint32_t cmyk) {
-  return std::make_tuple(FXSYS_GetCValue(cmyk), FXSYS_GetMValue(cmyk),
-                         FXSYS_GetYValue(cmyk), FXSYS_GetKValue(cmyk));
 }
 
 }  // namespace
@@ -85,30 +77,6 @@ bool CFX_ImageStretcher::Start() {
       int g = g0 + (g1 - g0) * i / 255;
       int b = b0 + (b1 - b0) * i / 255;
       pal[i] = ArgbEncode(a, r, g, b);
-    }
-    if (!m_pDest->SetInfo(m_ClipRect.Width(), m_ClipRect.Height(), m_DestFormat,
-                          pal)) {
-      return false;
-    }
-  } else if (m_pSource->GetFormat() == FXDIB_Format::k1bppCmyk &&
-             m_pSource->HasPalette()) {
-    FX_CMYK pal[256];
-    int c0;
-    int m0;
-    int y0;
-    int k0;
-    std::tie(c0, m0, y0, k0) = CmykDecode(m_pSource->GetPaletteArgb(0));
-    int c1;
-    int m1;
-    int y1;
-    int k1;
-    std::tie(c1, m1, y1, k1) = CmykDecode(m_pSource->GetPaletteArgb(1));
-    for (int i = 0; i < 256; ++i) {
-      int c = c0 + (c1 - c0) * i / 255;
-      int m = m0 + (m1 - m0) * i / 255;
-      int y = y0 + (y1 - y0) * i / 255;
-      int k = k0 + (k1 - k0) * i / 255;
-      pal[i] = CmykEncode(c, m, y, k);
     }
     if (!m_pDest->SetInfo(m_ClipRect.Width(), m_ClipRect.Height(), m_DestFormat,
                           pal)) {
