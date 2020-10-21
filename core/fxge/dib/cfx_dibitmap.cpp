@@ -438,7 +438,7 @@ bool CFX_DIBitmap::MultiplyAlpha(const RetainPtr<CFX_DIBBase>& pSrcBitmap) {
     return false;
   }
 
-  if (!IsMask() && !HasAlpha())
+  if (IsOpaqueImage())
     return LoadChannelFromAlpha(FXDIB_Alpha, pSrcBitmap);
 
   RetainPtr<CFX_DIBitmap> pSrcClone = pSrcBitmap.As<CFX_DIBitmap>();
