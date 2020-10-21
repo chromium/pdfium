@@ -293,10 +293,9 @@ bool CFX_DIBitmap::LoadChannelFromAlpha(
       if (!ConvertFormat(FXDIB_Format::k8bppMask))
         return false;
     } else {
-      if (!ConvertFormat(IsCmykImage() ? FXDIB_Format::kCmyka
-                                       : FXDIB_Format::kArgb)) {
+      if (!ConvertFormat(FXDIB_Format::kArgb))
         return false;
-      }
+
       if (GetFormat() == FXDIB_Format::kArgb)
         destOffset = 3;
     }
@@ -306,8 +305,7 @@ bool CFX_DIBitmap::LoadChannelFromAlpha(
 
     if (GetBPP() < 24) {
       if (HasAlpha()) {
-        if (!ConvertFormat(IsCmykImage() ? FXDIB_Format::kCmyka
-                                         : FXDIB_Format::kArgb))
+        if (!ConvertFormat(FXDIB_Format::kArgb))
           return false;
       } else {
 #if defined(OS_APPLE)
@@ -315,10 +313,8 @@ bool CFX_DIBitmap::LoadChannelFromAlpha(
 #else
         constexpr FXDIB_Format kPlatformFormat = FXDIB_Format::kRgb;
 #endif
-        if (!ConvertFormat(IsCmykImage() ? FXDIB_Format::kCmyk
-                                         : kPlatformFormat)) {
+        if (!ConvertFormat(kPlatformFormat))
           return false;
-        }
       }
     }
     destOffset = kChannelOffset[destChannel];
@@ -377,13 +373,11 @@ bool CFX_DIBitmap::LoadChannel(FXDIB_Channel destChannel, int value) {
       destOffset = 0;
     } else {
       destOffset = 0;
-      if (!ConvertFormat(IsCmykImage() ? FXDIB_Format::kCmyka
-                                       : FXDIB_Format::kArgb)) {
+      if (!ConvertFormat(FXDIB_Format::kArgb))
         return false;
-      }
-      if (GetFormat() == FXDIB_Format::kArgb) {
+
+      if (GetFormat() == FXDIB_Format::kArgb)
         destOffset = 3;
-      }
     }
   } else {
     if (IsMask()) {
@@ -391,20 +385,16 @@ bool CFX_DIBitmap::LoadChannel(FXDIB_Channel destChannel, int value) {
     }
     if (GetBPP() < 24) {
       if (HasAlpha()) {
-        if (!ConvertFormat(IsCmykImage() ? FXDIB_Format::kCmyka
-                                         : FXDIB_Format::kArgb)) {
+        if (!ConvertFormat(FXDIB_Format::kArgb))
           return false;
-        }
       } else {
 #if defined(OS_APPLE)
         constexpr FXDIB_Format kPlatformFormat = FXDIB_Format::kRgb;
 #else
         constexpr FXDIB_Format kPlatformFormat = FXDIB_Format::kRgb32;
 #endif
-        if (!ConvertFormat(IsCmykImage() ? FXDIB_Format::kCmyk
-                                         : kPlatformFormat)) {
+        if (!ConvertFormat(kPlatformFormat))
           return false;
-        }
       }
     }
     destOffset = kChannelOffset[destChannel];

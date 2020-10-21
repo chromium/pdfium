@@ -120,7 +120,7 @@ inline bool GetIsAlphaFromFormat(FXDIB_Format format) {
 }
 
 inline bool GetIsCmykFromFormat(FXDIB_Format format) {
-  return !!(static_cast<uint16_t>(format) & 0x400);
+  return false;
 }
 
 inline bool HasNoFlags(FXDIB_Format format) {

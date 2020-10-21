@@ -28,9 +28,9 @@ constexpr FXDIB_Format kFormat[] = {
     FXDIB_Format::kArgb,
     FXDIB_Format::kInvalid /* Was FXDIB_Format::k1bppCmyk */,
     FXDIB_Format::kInvalid /* Was FXDIB_Format::k8bppCmyk */,
-    FXDIB_Format::kCmyk,
+    FXDIB_Format::kInvalid /* Was FXDIB_Format::kCmyk */,
     FXDIB_Format::kInvalid /* Was FXDIB_Format::k8bppCmyka */,
-    FXDIB_Format::kCmyka};
+    FXDIB_Format::kInvalid /* Was FXDIB_Format::kCmyka */};
 
 }  // namespace
 

@@ -106,8 +106,6 @@ FXDIB_Format GetTransformedFormat(const RetainPtr<CFX_DIBBase>& pDrc) {
     return FXDIB_Format::k8bppMask;
 
   FXDIB_Format format = pDrc->GetFormat();
-  if (GetIsCmykFromFormat(format))
-    return FXDIB_Format::kCmyka;
   if (HasNoFlags(format) || format == FXDIB_Format::kArgb)
     return FXDIB_Format::kArgb;
   return FXDIB_Format::kRgba;
@@ -148,11 +146,7 @@ void WriteColorResult(const F& func,
     return;
   }
 
-  if (format == FXDIB_Format::kCmyka) {
-    *dest32 = FXCMYK_TODIB(CmykEncode(blue_c, green_m, red_y, func(3)));
-  } else {
-    *dest32 = ArgbEncode(kOpaqueAlpha, red_y, green_m, blue_c);
-  }
+  *dest32 = ArgbEncode(kOpaqueAlpha, red_y, green_m, blue_c);
 }
 
 class CPDF_FixedMatrix {
