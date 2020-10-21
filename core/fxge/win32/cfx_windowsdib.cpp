@@ -24,6 +24,23 @@ void GetBitmapSize(HBITMAP hBitmap, int& w, int& h) {
   h = bmp.bmHeight;
 }
 
+FXDIB_Format MakeARGBFormat(int bpp) {
+  switch (bpp) {
+    case 8:
+      return FXDIB_Format::k8bppRgba;
+    case 24:
+      return FXDIB_Format::kRgba;
+    case 32:
+      return FXDIB_Format::kArgb;
+    default:
+      return FXDIB_Format::kInvalid;
+  }
+}
+
+FXDIB_Format MakeMaybeAlphaRGBFormat(bool alpha, int bpp) {
+  return alpha ? MakeARGBFormat(bpp) : MakeRGBFormat(bpp);
+}
+
 }  // namespace
 
 // static

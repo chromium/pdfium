@@ -131,8 +131,6 @@ inline bool HasNoFlags(FXDIB_Format format) {
 }
 
 FXDIB_Format MakeRGBFormat(int bpp);
-FXDIB_Format MakeARGBFormat(int bpp);
-FXDIB_Format MakeMaybeAlphaRGBFormat(bool alpha, int bpp);
 FXDIB_Format AddAlphaToCmykFormat(FXDIB_Format format);
 
 inline FX_CMYK CmykEncode(int c, int m, int y, int k) {
