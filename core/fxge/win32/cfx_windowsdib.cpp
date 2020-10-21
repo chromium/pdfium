@@ -24,21 +24,8 @@ void GetBitmapSize(HBITMAP hBitmap, int& w, int& h) {
   h = bmp.bmHeight;
 }
 
-FXDIB_Format MakeARGBFormat(int bpp) {
-  switch (bpp) {
-    case 8:
-      return FXDIB_Format::k8bppRgba;
-    case 24:
-      return FXDIB_Format::kRgba;
-    case 32:
-      return FXDIB_Format::kArgb;
-    default:
-      return FXDIB_Format::kInvalid;
-  }
-}
-
-FXDIB_Format MakeMaybeAlphaRGBFormat(bool alpha, int bpp) {
-  return alpha ? MakeARGBFormat(bpp) : MakeRGBFormat(bpp);
+FXDIB_Format GetBitmapFormat(int bpp) {
+  return bpp == 32 ? FXDIB_Format::kArgb : MakeRGBFormat(bpp);
 }
 
 }  // namespace
@@ -92,8 +79,7 @@ ByteString CFX_WindowsDIB::GetBitmapInfo(
 
 // static
 RetainPtr<CFX_DIBitmap> CFX_WindowsDIB::LoadFromBuf(BITMAPINFO* pbmi,
-                                                    LPVOID pData,
-                                                    bool bAlpha) {
+                                                    void* pData) {
   int width = pbmi->bmiHeader.biWidth;
   int height = pbmi->bmiHeader.biHeight;
   BOOL bBottomUp = true;
@@ -103,8 +89,7 @@ RetainPtr<CFX_DIBitmap> CFX_WindowsDIB::LoadFromBuf(BITMAPINFO* pbmi,
   }
   int pitch = (width * pbmi->bmiHeader.biBitCount + 31) / 32 * 4;
   auto pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  FXDIB_Format format =
-      MakeMaybeAlphaRGBFormat(bAlpha, pbmi->bmiHeader.biBitCount);
+  FXDIB_Format format = GetBitmapFormat(pbmi->bmiHeader.biBitCount);
   if (!pBitmap->Create(width, height, format))
     return nullptr;
 

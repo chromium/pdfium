@@ -991,8 +991,8 @@ RetainPtr<CFX_DIBitmap> CGdiplusExt::LoadDIBitmap(WINDIB_Open_Args_ args) {
              dest_pitch);
     }
   }
-  RetainPtr<CFX_DIBitmap> pDIBitmap = CFX_WindowsDIB::LoadFromBuf(
-      pInfo->pbmi, pData, pInfo->pbmi->bmiHeader.biBitCount == 32);
+  RetainPtr<CFX_DIBitmap> pDIBitmap =
+      CFX_WindowsDIB::LoadFromBuf(pInfo->pbmi, pData);
   FX_Free(pData);
   FreeDIBitmap(pInfo);
   return pDIBitmap;
