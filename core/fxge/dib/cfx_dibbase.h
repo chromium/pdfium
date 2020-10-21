@@ -59,10 +59,10 @@ class CFX_DIBBase : public Retainable {
   const uint32_t* GetPaletteData() const { return m_palette.data(); }
   int GetBPP() const { return GetBppFromFormat(m_Format); }
 
-  bool IsAlphaMask() const { return GetIsMaskFromFormat(m_Format); }
+  bool IsMask() const { return GetIsMaskFromFormat(m_Format); }
   bool HasAlpha() const { return GetIsAlphaFromFormat(m_Format); }
   bool IsCmykImage() const { return GetIsCmykFromFormat(m_Format); }
-  bool IsOpaqueImage() const { return !IsAlphaMask() && !HasAlpha(); }
+  bool IsOpaqueImage() const { return !IsMask() && !HasAlpha(); }
 
   size_t GetPaletteSize() const;
 

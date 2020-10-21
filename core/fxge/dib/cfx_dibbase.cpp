@@ -789,7 +789,7 @@ bool CFX_DIBBase::BuildAlphaMask() {
 }
 
 size_t CFX_DIBBase::GetPaletteSize() const {
-  if (IsAlphaMask())
+  if (IsMask())
     return 0;
 
   switch (GetBppFromFormat(m_Format)) {
@@ -803,7 +803,7 @@ size_t CFX_DIBBase::GetPaletteSize() const {
 }
 
 uint32_t CFX_DIBBase::GetPaletteArgb(int index) const {
-  ASSERT((GetBPP() == 1 || GetBPP() == 8) && !IsAlphaMask());
+  ASSERT((GetBPP() == 1 || GetBPP() == 8) && !IsMask());
   if (HasPalette())
     return GetPaletteSpan()[index];
 
@@ -820,13 +820,13 @@ uint32_t CFX_DIBBase::GetPaletteArgb(int index) const {
 }
 
 void CFX_DIBBase::SetPaletteArgb(int index, uint32_t color) {
-  ASSERT((GetBPP() == 1 || GetBPP() == 8) && !IsAlphaMask());
+  ASSERT((GetBPP() == 1 || GetBPP() == 8) && !IsMask());
   BuildPalette();
   m_palette[index] = color;
 }
 
 int CFX_DIBBase::FindPalette(uint32_t color) const {
-  ASSERT((GetBPP() == 1 || GetBPP() == 8) && !IsAlphaMask());
+  ASSERT((GetBPP() == 1 || GetBPP() == 8) && !IsMask());
   if (HasPalette()) {
     int palsize = (1 << GetBPP());
     pdfium::span<const uint32_t> palette = GetPaletteSpan();

@@ -827,7 +827,7 @@ CFX_Renderer::CFX_Renderer(const RetainPtr<CFX_DIBitmap>& pDevice,
 
   if (m_pDevice->GetBPP() == 8) {
     ASSERT(!m_bRgbByteOrder);
-    if (m_pDevice->IsAlphaMask())
+    if (m_pDevice->IsMask())
       m_Gray = 255;
     else
       m_Gray = FXRGB2GRAY(FXARGB_R(color), FXARGB_G(color), FXARGB_B(color));
@@ -856,7 +856,7 @@ void CFX_Renderer::render(const Scanline& sl) {
         m_pBackdropDevice->GetBuffer() + m_pBackdropDevice->GetPitch() * y;
   }
   int Bpp = m_pDevice->GetBPP() / 8;
-  bool bDestAlpha = m_pDevice->HasAlpha() || m_pDevice->IsAlphaMask();
+  bool bDestAlpha = m_pDevice->HasAlpha() || m_pDevice->IsMask();
   unsigned num_spans = sl.num_spans();
   typename Scanline::const_iterator span = sl.begin();
   while (1) {
@@ -1066,7 +1066,7 @@ int CFX_AggDeviceDriver::GetDeviceCaps(int caps_id) const {
                   FXRC_BLEND_MODE | FXRC_SOFT_CLIP;
       if (m_pBitmap->HasAlpha()) {
         flags |= FXRC_ALPHA_OUTPUT;
-      } else if (m_pBitmap->IsAlphaMask()) {
+      } else if (m_pBitmap->IsMask()) {
         if (m_pBitmap->GetBPP() == 1)
           flags |= FXRC_BITMASK_OUTPUT;
         else
@@ -1360,7 +1360,7 @@ bool CFX_AggDeviceDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
   if (!m_pBitmap->GetBuffer())
     return true;
 
-  if (pBitmap->IsAlphaMask()) {
+  if (pBitmap->IsMask()) {
     return m_pBitmap->CompositeMask(left, top, src_rect.Width(),
                                     src_rect.Height(), pBitmap, argb,
                                     src_rect.left, src_rect.top, blend_type,

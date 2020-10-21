@@ -91,7 +91,7 @@ bool CPDF_ImageRenderer::StartRenderDIBBase() {
   m_FillArgb = 0;
   m_bPatternColor = false;
   m_pPattern = nullptr;
-  if (m_pDIBBase->IsAlphaMask()) {
+  if (m_pDIBBase->IsMask()) {
     const CPDF_Color* pColor = m_pImageObject->m_ColorState.GetFillColor();
     if (pColor && pColor->IsPattern()) {
       m_pPattern.Reset(pColor->GetPattern());
@@ -450,7 +450,7 @@ bool CPDF_ImageRenderer::StartDIBBase() {
       return false;
     }
   }
-  if (m_pDIBBase->IsAlphaMask()) {
+  if (m_pDIBBase->IsMask()) {
     if (m_BitmapAlpha != 255)
       m_FillArgb = FXARGB_MUL_ALPHA(m_FillArgb, m_BitmapAlpha);
     if (m_pRenderStatus->GetRenderDevice()->StretchBitMaskWithFlags(
@@ -493,7 +493,7 @@ bool CPDF_ImageRenderer::StartBitmapAlpha() {
     return false;
   }
   RetainPtr<CFX_DIBBase> pAlphaMask;
-  if (m_pDIBBase->IsAlphaMask())
+  if (m_pDIBBase->IsMask())
     pAlphaMask = m_pDIBBase;
   else
     pAlphaMask = m_pDIBBase->CloneAlphaMask();
@@ -572,7 +572,7 @@ bool CPDF_ImageRenderer::ContinueTransform(PauseIndicatorIface* pPause) {
   if (!pBitmap)
     return false;
 
-  if (pBitmap->IsAlphaMask()) {
+  if (pBitmap->IsMask()) {
     if (m_BitmapAlpha != 255)
       m_FillArgb = FXARGB_MUL_ALPHA(m_FillArgb, m_BitmapAlpha);
     m_Result = m_pRenderStatus->GetRenderDevice()->SetBitMask(

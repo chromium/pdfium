@@ -102,7 +102,7 @@ void bicubic_get_pos_weight(int pos_pixel[],
 }
 
 FXDIB_Format GetTransformedFormat(const RetainPtr<CFX_DIBBase>& pDrc) {
-  if (pDrc->IsAlphaMask())
+  if (pDrc->IsMask())
     return FXDIB_Format::k8bppMask;
 
   FXDIB_Format format = pDrc->GetFormat();
@@ -448,7 +448,7 @@ void CFX_ImageTransformer::ContinueOther(PauseIndicatorIface* pPause) {
   CalcData cdata = {pTransformed.Get(), result2stretch,
                     m_Storer.GetBitmap()->GetBuffer(),
                     m_Storer.GetBitmap()->GetPitch()};
-  if (m_Storer.GetBitmap()->IsAlphaMask()) {
+  if (m_Storer.GetBitmap()->IsMask()) {
     CalcAlpha(cdata);
   } else {
     int Bpp = m_Storer.GetBitmap()->GetBPP() / 8;

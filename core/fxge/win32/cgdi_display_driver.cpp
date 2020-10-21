@@ -77,7 +77,7 @@ bool CGdiDisplayDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                   int top,
                                   BlendMode blend_type) {
   ASSERT(blend_type == BlendMode::kNormal);
-  if (pSource->IsAlphaMask()) {
+  if (pSource->IsMask()) {
     int width = pSource->GetWidth(), height = pSource->GetHeight();
     int alpha = FXARGB_A(color);
     if (pSource->GetBPP() != 1 || alpha != 255) {
@@ -163,7 +163,7 @@ bool CGdiDisplayDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
     return UseFoxitStretchEngine(pSource, color, dest_left, dest_top,
                                  dest_width, dest_height, pClipRect, options);
   }
-  if (pSource->IsAlphaMask()) {
+  if (pSource->IsMask()) {
     FX_RECT image_rect;
     image_rect.left = dest_width > 0 ? dest_left : dest_left + dest_width;
     image_rect.right = dest_width > 0 ? dest_left + dest_width : dest_left;

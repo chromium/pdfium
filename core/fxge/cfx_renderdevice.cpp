@@ -690,7 +690,7 @@ bool CFX_RenderDevice::SetDIBitsWithBlend(const RetainPtr<CFX_DIBBase>& pBitmap,
                                           int left,
                                           int top,
                                           BlendMode blend_mode) {
-  ASSERT(!pBitmap->IsAlphaMask());
+  ASSERT(!pBitmap->IsMask());
   FX_RECT dest_rect(left, top, left + pBitmap->GetWidth(),
                     top + pBitmap->GetHeight());
   dest_rect.Intersect(m_ClipBox);
@@ -959,7 +959,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
     if (!CreateCompatibleBitmap(bitmap, pixel_width, pixel_height))
       return false;
   }
-  if (!bitmap->HasAlpha() && !bitmap->IsAlphaMask()) {
+  if (!bitmap->HasAlpha() && !bitmap->IsMask()) {
     bitmap->Clear(0xFFFFFFFF);
     if (!GetDIBits(bitmap, bmp_rect.left, bmp_rect.top))
       return false;
@@ -1010,7 +1010,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
     DrawNormalTextHelper(bitmap, pGlyph, nrows, point->x, point->y, start_col,
                          end_col, normalize, x_subpixel, a, r, g, b);
   }
-  if (bitmap->IsAlphaMask())
+  if (bitmap->IsMask())
     SetBitMask(bitmap, bmp_rect.left, bmp_rect.top, fill_color);
   else
     SetDIBits(bitmap, bmp_rect.left, bmp_rect.top);

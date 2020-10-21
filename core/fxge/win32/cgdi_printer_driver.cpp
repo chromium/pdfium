@@ -75,7 +75,7 @@ bool CGdiPrinterDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                   int left,
                                   int top,
                                   BlendMode blend_type) {
-  if (pSource->IsAlphaMask()) {
+  if (pSource->IsMask()) {
     FX_RECT clip_rect(left, top, left + src_rect.Width(),
                       top + src_rect.Height());
     return StretchDIBits(pSource, color, left - src_rect.left,
@@ -84,7 +84,7 @@ bool CGdiPrinterDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                          FXDIB_ResampleOptions(), BlendMode::kNormal);
   }
   ASSERT(pSource);
-  ASSERT(!pSource->IsAlphaMask());
+  ASSERT(!pSource->IsMask());
   ASSERT(blend_type == BlendMode::kNormal);
   if (pSource->HasAlpha())
     return false;
@@ -106,7 +106,7 @@ bool CGdiPrinterDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                       const FX_RECT* pClipRect,
                                       const FXDIB_ResampleOptions& options,
                                       BlendMode blend_type) {
-  if (pSource->IsAlphaMask()) {
+  if (pSource->IsMask()) {
     int alpha = FXARGB_A(color);
     if (pSource->GetBPP() != 1 || alpha != 255)
       return false;
@@ -168,7 +168,7 @@ bool CGdiPrinterDriver::StartDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                     std::unique_ptr<CFX_ImageRenderer>* handle,
                                     BlendMode blend_type) {
   if (bitmap_alpha < 255 || pSource->HasAlpha() ||
-      (pSource->IsAlphaMask() && (pSource->GetBPP() != 1))) {
+      (pSource->IsMask() && (pSource->GetBPP() != 1))) {
     return false;
   }
   CFX_FloatRect unit_rect = matrix.GetUnitRect();

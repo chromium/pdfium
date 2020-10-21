@@ -33,7 +33,7 @@ CPDF_TransferFuncDIB::CPDF_TransferFuncDIB(
 CPDF_TransferFuncDIB::~CPDF_TransferFuncDIB() = default;
 
 FXDIB_Format CPDF_TransferFuncDIB::GetDestFormat() const {
-  if (m_pSrc->IsAlphaMask())
+  if (m_pSrc->IsMask())
     return FXDIB_Format::k8bppMask;
 
 #if defined(OS_APPLE)
