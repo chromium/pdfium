@@ -659,28 +659,45 @@ struct PREVIEW3_DIBITMAP {
   GpStream* pStream;
 };
 
-PREVIEW3_DIBITMAP* LoadDIBitmap(WINDIB_Open_Args_ args) {
+struct DIBitmapDeleter {
+  void operator()(PREVIEW3_DIBITMAP* bitmap) const {
+    const CGdiplusExt& GdiplusExt = GetGdiplusExt();
+    CallFunc(GdipBitmapUnlockBits)(bitmap->pBitmap, bitmap->pBitmapData);
+    CallFunc(GdipDisposeImage)(bitmap->pBitmap);
+    FX_Free(bitmap->pBitmapData);
+    FX_Free((LPBYTE)bitmap->pbmi);
+    if (bitmap->pStream)
+      bitmap->pStream->Release();
+    FX_Free(bitmap);
+  }
+};
+
+using ScopedDIBitmap = std::unique_ptr<PREVIEW3_DIBITMAP, DIBitmapDeleter>;
+
+ScopedDIBitmap LoadDIBitmapImpl(WINDIB_Open_Args_ args) {
   Gdiplus::GpBitmap* pBitmap;
   GpStream* pStream = nullptr;
   const CGdiplusExt& GdiplusExt = GetGdiplusExt();
-  Gdiplus::Status status = Gdiplus::Ok;
   if (args.flags == WINDIB_OPEN_PATHNAME) {
-    status = CallFunc(GdipCreateBitmapFromFileICM)(args.path_name, &pBitmap);
+    if (CallFunc(GdipCreateBitmapFromFileICM)(args.path_name, &pBitmap) !=
+        Gdiplus::Ok) {
+      return nullptr;
+    }
   } else {
     if (args.memory_size == 0 || !args.memory_base)
       return nullptr;
 
     pStream = new GpStream;
     pStream->Write(args.memory_base, (ULONG)args.memory_size, nullptr);
-    status = CallFunc(GdipCreateBitmapFromStreamICM)(pStream, &pBitmap);
-  }
-  if (status != Gdiplus::Ok) {
-    if (pStream)
+    if (CallFunc(GdipCreateBitmapFromStreamICM)(pStream, &pBitmap) !=
+        Gdiplus::Ok) {
       pStream->Release();
-
-    return nullptr;
+      return nullptr;
+    }
   }
-  UINT height, width;
+
+  UINT height;
+  UINT width;
   CallFunc(GdipGetImageHeight)(pBitmap, &height);
   CallFunc(GdipGetImageWidth)(pBitmap, &width);
   Gdiplus::PixelFormat pixel_format;
@@ -727,7 +744,7 @@ PREVIEW3_DIBITMAP* LoadDIBitmap(WINDIB_Open_Args_ args) {
       ppal[i] = pal.Entries[i] & 0x00ffffff;
     }
   }
-  PREVIEW3_DIBITMAP* pInfo = FX_Alloc(PREVIEW3_DIBITMAP, 1);
+  ScopedDIBitmap pInfo(FX_Alloc(PREVIEW3_DIBITMAP, 1));
   pInfo->pbmi = (BITMAPINFO*)buf;
   pInfo->pScan0 = (LPBYTE)pBitmapData->Scan0;
   pInfo->Stride = pBitmapData->Stride;
@@ -735,17 +752,6 @@ PREVIEW3_DIBITMAP* LoadDIBitmap(WINDIB_Open_Args_ args) {
   pInfo->pBitmapData = pBitmapData;
   pInfo->pStream = pStream;
   return pInfo;
-}
-
-void FreeDIBitmap(PREVIEW3_DIBITMAP* pInfo) {
-  const CGdiplusExt& GdiplusExt = GetGdiplusExt();
-  CallFunc(GdipBitmapUnlockBits)(pInfo->pBitmap, pInfo->pBitmapData);
-  CallFunc(GdipDisposeImage)(pInfo->pBitmap);
-  FX_Free(pInfo->pBitmapData);
-  FX_Free((LPBYTE)pInfo->pbmi);
-  if (pInfo->pStream)
-    pInfo->pStream->Release();
-  FX_Free(pInfo);
 }
 
 }  // namespace
@@ -975,7 +981,7 @@ bool CGdiplusExt::DrawPath(HDC hDC,
 }
 
 RetainPtr<CFX_DIBitmap> CGdiplusExt::LoadDIBitmap(WINDIB_Open_Args_ args) {
-  PREVIEW3_DIBITMAP* pInfo = ::LoadDIBitmap(args);
+  ScopedDIBitmap pInfo = LoadDIBitmapImpl(args);
   if (!pInfo)
     return nullptr;
 
@@ -994,6 +1000,5 @@ RetainPtr<CFX_DIBitmap> CGdiplusExt::LoadDIBitmap(WINDIB_Open_Args_ args) {
   RetainPtr<CFX_DIBitmap> pDIBitmap =
       CFX_WindowsDIB::LoadFromBuf(pInfo->pbmi, pData);
   FX_Free(pData);
-  FreeDIBitmap(pInfo);
   return pDIBitmap;
 }
