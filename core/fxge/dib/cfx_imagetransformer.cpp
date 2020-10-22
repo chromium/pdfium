@@ -13,6 +13,7 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_imagestretcher.h"
 #include "core/fxge/dib/fx_dib.h"
+#include "third_party/base/check.h"
 #include "third_party/base/compiler_specific.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/numerics/safe_conversions.h"
@@ -99,10 +100,6 @@ void bicubic_get_pos_weight(int pos_pixel[],
   v_w[1] = SDP_Table[res_y];
   v_w[2] = SDP_Table[256 - res_y];
   v_w[3] = SDP_Table[512 - res_y];
-}
-
-FXDIB_Format GetTransformedFormat(const RetainPtr<CFX_DIBBase>& pSrc) {
-  return pSrc->IsMask() ? FXDIB_Format::k8bppMask : FXDIB_Format::kArgb;
 }
 
 // Let the compiler deduce the type for |func|, which cheaper than specifying it
@@ -391,7 +388,9 @@ void CFX_ImageTransformer::ContinueOther(PauseIndicatorIface* pPause) {
     return;
 
   auto pTransformed = pdfium::MakeRetain<CFX_DIBitmap>();
-  FXDIB_Format format = GetTransformedFormat(m_Stretcher->source());
+  FXDIB_Format format = m_Stretcher->source()->IsMask()
+                            ? FXDIB_Format::k8bppMask
+                            : FXDIB_Format::kArgb;
   if (!pTransformed->Create(m_result.Width(), m_result.Height(), format))
     return;
 
@@ -427,7 +426,7 @@ void CFX_ImageTransformer::ContinueOther(PauseIndicatorIface* pPause) {
   } else {
     int Bpp = m_Storer.GetBitmap()->GetBPP() / 8;
     if (Bpp == 1)
-      CalcMono(cdata, format);
+      CalcMono(cdata);
     else
       CalcColor(cdata, format, Bpp);
   }
@@ -484,8 +483,7 @@ void CFX_ImageTransformer::CalcAlpha(const CalcData& cdata) {
   }
 }
 
-void CFX_ImageTransformer::CalcMono(const CalcData& cdata,
-                                    FXDIB_Format format) {
+void CFX_ImageTransformer::CalcMono(const CalcData& cdata) {
   uint32_t argb[256];
   if (m_Storer.GetBitmap()->HasPalette()) {
     pdfium::span<const uint32_t> palette =
@@ -527,6 +525,7 @@ void CFX_ImageTransformer::CalcMono(const CalcData& cdata,
 void CFX_ImageTransformer::CalcColor(const CalcData& cdata,
                                      FXDIB_Format format,
                                      int Bpp) {
+  DCHECK(format == FXDIB_Format::k8bppMask || format == FXDIB_Format::kArgb);
   bool bHasAlpha = m_Storer.GetBitmap()->HasAlpha();
   int destBpp = cdata.bitmap->GetBPP() / 8;
   if (IsBilinear()) {

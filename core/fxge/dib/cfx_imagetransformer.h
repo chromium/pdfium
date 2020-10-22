@@ -79,7 +79,7 @@ class CFX_ImageTransformer {
 
   void CalcMask(const CalcData& cdata);
   void CalcAlpha(const CalcData& cdata);
-  void CalcMono(const CalcData& cdata, FXDIB_Format format);
+  void CalcMono(const CalcData& cdata);
   void CalcColor(const CalcData& cdata, FXDIB_Format format, int Bpp);
 
   bool IsBilinear() const;
