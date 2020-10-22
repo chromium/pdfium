@@ -947,7 +947,7 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
     }
   }
   if (bAlphaMode)
-    pBitmap->LoadChannelFromAlpha(CFX_DIBitmap::Channel::kRed, pBitmap);
+    pBitmap->SetRedFromBitmap(pBitmap);
 
   if (options.ColorModeIs(CPDF_RenderOptions::kGray))
     pBitmap->ConvertColorScale(0, 0xffffff);

@@ -17,17 +17,6 @@
 
 class CFX_DIBitmap : public CFX_DIBBase {
  public:
-  enum class Channel : uint8_t {
-    kRed = 1,
-    kGreen,
-    kBlue,
-    kCyan,
-    kMagenta,
-    kYellow,
-    kBlack,
-    kAlpha
-  };
-
   struct PitchAndSize {
     uint32_t pitch;
     uint32_t size;
@@ -66,8 +55,8 @@ class CFX_DIBitmap : public CFX_DIBBase {
   void SetPixel(int x, int y, uint32_t color);
 #endif
 
-  bool LoadChannelFromAlpha(Channel destChannel,
-                            const RetainPtr<CFX_DIBBase>& pSrcBitmap);
+  bool SetRedFromBitmap(const RetainPtr<CFX_DIBBase>& pSrcBitmap);
+  bool SetAlphaFromBitmap(const RetainPtr<CFX_DIBBase>& pSrcBitmap);
   bool SetUniformOpaqueAlpha();
 
   bool MultiplyAlpha(int alpha);
@@ -146,6 +135,10 @@ class CFX_DIBitmap : public CFX_DIBBase {
 #endif
 
  private:
+  enum class Channel : uint8_t { kRed, kAlpha };
+
+  bool SetChannelFromBitmap(Channel destChannel,
+                            const RetainPtr<CFX_DIBBase>& pSrcBitmap);
   void ConvertBGRColorScale(uint32_t forecolor, uint32_t backcolor);
   bool TransferWithUnequalFormats(FXDIB_Format dest_format,
                                   int dest_left,
