@@ -491,15 +491,9 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             int pixel_weight = *pWeight;
             pixel_weight = pixel_weight * src_scan_mask[j] / 255;
             unsigned long argb_cmyk = m_pSrcPalette[src_scan[j]];
-            if (m_DestFormat == FXDIB_Format::kRgba) {
-              dest_r_y += pixel_weight * static_cast<uint8_t>(argb_cmyk >> 16);
-              dest_g_m += pixel_weight * static_cast<uint8_t>(argb_cmyk >> 8);
-              dest_b_c += pixel_weight * static_cast<uint8_t>(argb_cmyk);
-            } else {
-              dest_b_c += pixel_weight * static_cast<uint8_t>(argb_cmyk >> 24);
-              dest_g_m += pixel_weight * static_cast<uint8_t>(argb_cmyk >> 16);
-              dest_r_y += pixel_weight * static_cast<uint8_t>(argb_cmyk >> 8);
-            }
+            dest_b_c += pixel_weight * static_cast<uint8_t>(argb_cmyk >> 24);
+            dest_g_m += pixel_weight * static_cast<uint8_t>(argb_cmyk >> 16);
+            dest_r_y += pixel_weight * static_cast<uint8_t>(argb_cmyk >> 8);
             dest_a += pixel_weight;
           }
           if (bicubic) {

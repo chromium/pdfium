@@ -101,24 +101,8 @@ void bicubic_get_pos_weight(int pos_pixel[],
   v_w[3] = SDP_Table[512 - res_y];
 }
 
-FXDIB_Format GetTransformedFormat(const RetainPtr<CFX_DIBBase>& pDrc) {
-  if (pDrc->IsMask())
-    return FXDIB_Format::k8bppMask;
-
-  FXDIB_Format format = pDrc->GetFormat();
-  if (HasNoFlags(format) || format == FXDIB_Format::kArgb)
-    return FXDIB_Format::kArgb;
-  return FXDIB_Format::kRgba;
-}
-
-void WriteMonoResult(uint32_t r_bgra_cmyk, FXDIB_Format format, uint8_t* dest) {
-  if (format == FXDIB_Format::kRgba) {
-    dest[0] = static_cast<uint8_t>(r_bgra_cmyk >> 24);
-    dest[1] = static_cast<uint8_t>(r_bgra_cmyk >> 16);
-    dest[2] = static_cast<uint8_t>(r_bgra_cmyk >> 8);
-  } else {
-    *reinterpret_cast<uint32_t*>(dest) = r_bgra_cmyk;
-  }
+FXDIB_Format GetTransformedFormat(const RetainPtr<CFX_DIBBase>& pSrc) {
+  return pSrc->IsMask() ? FXDIB_Format::k8bppMask : FXDIB_Format::kArgb;
 }
 
 // Let the compiler deduce the type for |func|, which cheaper than specifying it
@@ -136,10 +120,6 @@ void WriteColorResult(const F& func,
   if (bHasAlpha) {
     if (format == FXDIB_Format::kArgb) {
       *dest32 = ArgbEncode(func(3), red_y, green_m, blue_c);
-    } else if (format == FXDIB_Format::kRgba) {
-      dest[0] = blue_c;
-      dest[1] = green_m;
-      dest[2] = red_y;
     } else {
       *dest32 = FXCMYK_TODIB(CmykEncode(blue_c, green_m, red_y, func(3)));
     }
@@ -518,30 +498,27 @@ void CFX_ImageTransformer::CalcMono(const CalcData& cdata,
   }
   int destBpp = cdata.bitmap->GetBPP() / 8;
   if (IsBilinear()) {
-    auto func = [&cdata, format, &argb](const BilinearData& data,
-                                        uint8_t* dest) {
+    auto func = [&cdata, &argb](const BilinearData& data, uint8_t* dest) {
       uint8_t idx = bilinear_interpol(
           cdata.buf, data.row_offset_l, data.row_offset_r, data.src_col_l,
           data.src_col_r, data.res_x, data.res_y, 1, 0);
       uint32_t r_bgra_cmyk = argb[idx];
-      WriteMonoResult(r_bgra_cmyk, format, dest);
+      *reinterpret_cast<uint32_t*>(dest) = r_bgra_cmyk;
     };
     DoBilinearLoop(cdata, m_result, m_StretchClip, destBpp, func);
   } else if (IsBiCubic()) {
-    auto func = [&cdata, format, &argb](const BicubicData& data,
-                                        uint8_t* dest) {
+    auto func = [&cdata, &argb](const BicubicData& data, uint8_t* dest) {
       uint32_t r_bgra_cmyk = argb[bicubic_interpol(
           cdata.buf, cdata.pitch, data.pos_pixel, data.u_w, data.v_w,
           data.res_x, data.res_y, 1, 0)];
-      WriteMonoResult(r_bgra_cmyk, format, dest);
+      *reinterpret_cast<uint32_t*>(dest) = r_bgra_cmyk;
     };
     DoBicubicLoop(cdata, m_result, m_StretchClip, destBpp, func);
   } else {
-    auto func = [&cdata, format, &argb](const DownSampleData& data,
-                                        uint8_t* dest) {
+    auto func = [&cdata, &argb](const DownSampleData& data, uint8_t* dest) {
       uint32_t r_bgra_cmyk =
           argb[cdata.buf[data.src_row * cdata.pitch + data.src_col]];
-      WriteMonoResult(r_bgra_cmyk, format, dest);
+      *reinterpret_cast<uint32_t*>(dest) = r_bgra_cmyk;
     };
     DoDownSampleLoop(cdata, m_result, m_StretchClip, destBpp, func);
   }

@@ -1558,73 +1558,6 @@ void CompositeRow_ByteMask2Argb(uint8_t* dest_scan,
   }
 }
 
-void CompositeRow_ByteMask2Rgba(uint8_t* dest_scan,
-                                const uint8_t* src_scan,
-                                int mask_alpha,
-                                int src_r,
-                                int src_g,
-                                int src_b,
-                                int pixel_count,
-                                BlendMode blend_type,
-                                const uint8_t* clip_scan,
-                                uint8_t* dest_alpha_scan) {
-  for (int col = 0; col < pixel_count; col++) {
-    int src_alpha = GetAlphaWithSrc(mask_alpha, clip_scan, src_scan, col);
-    uint8_t back_alpha = *dest_alpha_scan;
-    if (back_alpha == 0) {
-      *dest_scan++ = src_b;
-      *dest_scan++ = src_g;
-      *dest_scan++ = src_r;
-      *dest_alpha_scan++ = src_alpha;
-      continue;
-    }
-    if (src_alpha == 0) {
-      dest_scan += 3;
-      dest_alpha_scan++;
-      continue;
-    }
-    uint8_t dest_alpha = back_alpha + src_alpha - back_alpha * src_alpha / 255;
-    *dest_alpha_scan++ = dest_alpha;
-    int alpha_ratio = src_alpha * 255 / dest_alpha;
-    if (IsNonSeparableBlendMode(blend_type)) {
-      int blended_colors[3];
-      uint8_t scan[3] = {static_cast<uint8_t>(src_b),
-                         static_cast<uint8_t>(src_g),
-                         static_cast<uint8_t>(src_r)};
-      RGB_Blend(blend_type, scan, dest_scan, blended_colors);
-      *dest_scan =
-          FXDIB_ALPHA_MERGE(*dest_scan, blended_colors[0], alpha_ratio);
-      dest_scan++;
-      *dest_scan =
-          FXDIB_ALPHA_MERGE(*dest_scan, blended_colors[1], alpha_ratio);
-      dest_scan++;
-      *dest_scan =
-          FXDIB_ALPHA_MERGE(*dest_scan, blended_colors[2], alpha_ratio);
-      dest_scan++;
-    } else if (blend_type != BlendMode::kNormal) {
-      int blended = Blend(blend_type, *dest_scan, src_b);
-      blended = FXDIB_ALPHA_MERGE(src_b, blended, back_alpha);
-      *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, blended, alpha_ratio);
-      dest_scan++;
-      blended = Blend(blend_type, *dest_scan, src_g);
-      blended = FXDIB_ALPHA_MERGE(src_g, blended, back_alpha);
-      *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, blended, alpha_ratio);
-      dest_scan++;
-      blended = Blend(blend_type, *dest_scan, src_r);
-      blended = FXDIB_ALPHA_MERGE(src_r, blended, back_alpha);
-      *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, blended, alpha_ratio);
-      dest_scan++;
-    } else {
-      *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, src_b, alpha_ratio);
-      dest_scan++;
-      *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, src_g, alpha_ratio);
-      dest_scan++;
-      *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, src_r, alpha_ratio);
-      dest_scan++;
-    }
-  }
-}
-
 void CompositeRow_ByteMask2Rgb(uint8_t* dest_scan,
                                const uint8_t* src_scan,
                                int mask_alpha,
@@ -3120,10 +3053,6 @@ void CFX_ScanlineCompositor::CompositeByteMaskLine(uint8_t* dest_scan,
     CompositeRow_ByteMask2Rgb(dest_scan, src_scan, m_MaskAlpha, m_MaskRed,
                               m_MaskGreen, m_MaskBlue, width, m_BlendType,
                               GetCompsFromFormat(m_DestFormat), clip_scan);
-  } else if (m_DestFormat == FXDIB_Format::kRgba) {
-    CompositeRow_ByteMask2Rgba(dest_scan, src_scan, m_MaskAlpha, m_MaskRed,
-                               m_MaskGreen, m_MaskBlue, width, m_BlendType,
-                               clip_scan, dst_extra_alpha);
   }
 }
 

@@ -135,8 +135,7 @@ void CFX_DIBitmap::Clear(uint32_t color) {
       memset(pBuffer, index, m_Pitch * m_Height);
       break;
     }
-    case FXDIB_Format::kRgb:
-    case FXDIB_Format::kRgba: {
+    case FXDIB_Format::kRgb: {
       int a;
       int r;
       int g;
@@ -547,7 +546,6 @@ uint32_t CFX_DIBitmap::GetPixel(int x, int y) const {
       return HasPalette() ? GetPaletteSpan()[*pos]
                           : (0xff000000 | ((*pos) * 0x10101));
     case FXDIB_Format::kRgb:
-    case FXDIB_Format::kRgba:
     case FXDIB_Format::kRgb32:
       return FXARGB_GETDIB(pos) | 0xff000000;
     case FXDIB_Format::kArgb:
@@ -615,12 +613,6 @@ void CFX_DIBitmap::SetPixel(int x, int y, uint32_t color) {
       pos[0] = (FXARGB_B(color) * alpha + pos[0] * (255 - alpha)) / 255;
       pos[1] = (FXARGB_G(color) * alpha + pos[1] * (255 - alpha)) / 255;
       pos[2] = (FXARGB_R(color) * alpha + pos[2] * (255 - alpha)) / 255;
-      break;
-    }
-    case FXDIB_Format::kRgba: {
-      pos[0] = FXARGB_B(color);
-      pos[1] = FXARGB_G(color);
-      pos[2] = FXARGB_R(color);
       break;
     }
     case FXDIB_Format::kArgb:

@@ -21,7 +21,6 @@ enum class FXDIB_Format : uint16_t {
   kRgb32 = 0x020,
   k1bppMask = 0x101,
   k8bppMask = 0x108,
-  kRgba = 0x218,
   kArgb = 0x220,
 };
 
@@ -114,10 +113,6 @@ inline bool GetIsMaskFromFormat(FXDIB_Format format) {
 
 inline bool GetIsAlphaFromFormat(FXDIB_Format format) {
   return !!(static_cast<uint16_t>(format) & 0x200);
-}
-
-inline bool HasNoFlags(FXDIB_Format format) {
-  return (static_cast<uint16_t>(format) & 0x300) == 0;
 }
 
 FXDIB_Format MakeRGBFormat(int bpp);
