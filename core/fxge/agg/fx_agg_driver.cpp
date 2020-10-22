@@ -1288,7 +1288,7 @@ bool CFX_AggDeviceDriver::FillRectWithBlend(const FX_RECT& rect,
                                 fill_color);
     } else {
       m_pBitmap->CompositeRect(draw_rect.left, draw_rect.top, draw_rect.Width(),
-                               draw_rect.Height(), fill_color, 0);
+                               draw_rect.Height(), fill_color);
     }
     return true;
   }

@@ -98,8 +98,7 @@ class CFX_DIBitmap : public CFX_DIBBase {
                      int dest_top,
                      int width,
                      int height,
-                     uint32_t color,
-                     int alpha_flag);
+                     uint32_t color);
 
   bool ConvertColorScale(uint32_t forecolor, uint32_t backcolor);
 

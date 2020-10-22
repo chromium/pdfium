@@ -647,10 +647,9 @@ bool CFX_RenderDevice::FillRectWithBlend(const FX_RECT& rect,
   if (!m_pDeviceDriver->GetDIBits(bitmap, rect.left, rect.top))
     return false;
 
-  if (!bitmap->CompositeRect(0, 0, rect.Width(), rect.Height(), fill_color,
-                             0)) {
+  if (!bitmap->CompositeRect(0, 0, rect.Width(), rect.Height(), fill_color))
     return false;
-  }
+
   FX_RECT src_rect(0, 0, rect.Width(), rect.Height());
   m_pDeviceDriver->SetDIBits(bitmap, 0, src_rect, rect.left, rect.top,
                              BlendMode::kNormal);

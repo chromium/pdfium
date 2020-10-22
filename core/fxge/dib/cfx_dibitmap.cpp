@@ -928,12 +928,11 @@ bool CFX_DIBitmap::CompositeRect(int left,
                                  int top,
                                  int width,
                                  int height,
-                                 uint32_t color,
-                                 int alpha_flag) {
+                                 uint32_t color) {
   if (!m_pBuffer)
     return false;
 
-  int src_alpha = (alpha_flag >> 8) ? (alpha_flag & 0xff) : FXARGB_A(color);
+  int src_alpha = FXARGB_A(color);
   if (src_alpha == 0)
     return true;
 
@@ -943,26 +942,12 @@ bool CFX_DIBitmap::CompositeRect(int left,
     return true;
 
   width = rect.Width();
-  uint32_t dst_color;
-  if (alpha_flag >> 8)
-    dst_color = FXCMYK_TODIB(color);
-  else
-    dst_color = color;
+  uint32_t dst_color = color;
   uint8_t* color_p = reinterpret_cast<uint8_t*>(&dst_color);
   if (GetBppFromFormat(m_Format) == 8) {
-    uint8_t gray = 255;
-    if (!IsMask()) {
-      if (alpha_flag >> 8) {
-        uint8_t r;
-        uint8_t g;
-        uint8_t b;
-        std::tie(r, g, b) =
-            AdobeCMYK_to_sRGB1(color_p[0], color_p[1], color_p[2], color_p[3]);
-        gray = FXRGB2GRAY(r, g, b);
-      } else {
-        gray = (uint8_t)FXRGB2GRAY((int)color_p[2], color_p[1], color_p[0]);
-      }
-    }
+    uint8_t gray =
+        IsMask() ? 255
+                 : (uint8_t)FXRGB2GRAY((int)color_p[2], color_p[1], color_p[0]);
     for (int row = rect.top; row < rect.bottom; row++) {
       uint8_t* dest_scan = m_pBuffer.Get() + row * m_Pitch + rect.left;
       if (src_alpha == 255) {
@@ -977,8 +962,6 @@ bool CFX_DIBitmap::CompositeRect(int left,
     return true;
   }
   if (GetBppFromFormat(m_Format) == 1) {
-    ASSERT(static_cast<uint8_t>(alpha_flag >> 8) == 0);
-
     int left_shift = rect.left % 8;
     int right_shift = rect.right % 8;
     int new_width = rect.right / 8 - rect.left / 8;
@@ -1021,11 +1004,6 @@ bool CFX_DIBitmap::CompositeRect(int left,
     return false;
   }
 
-  if (alpha_flag >> 8) {
-    std::tie(color_p[2], color_p[1], color_p[0]) =
-        AdobeCMYK_to_sRGB1(FXSYS_GetCValue(color), FXSYS_GetMValue(color),
-                           FXSYS_GetYValue(color), FXSYS_GetKValue(color));
-  }
   color_p[3] = static_cast<uint8_t>(src_alpha);
   int Bpp = GetBppFromFormat(m_Format) / 8;
   bool bAlpha = HasAlpha();
