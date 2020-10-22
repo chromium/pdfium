@@ -988,17 +988,17 @@ RetainPtr<CFX_DIBitmap> CGdiplusExt::LoadDIBitmap(WINDIB_Open_Args_ args) {
   int height = abs(pInfo->pbmi->bmiHeader.biHeight);
   int width = pInfo->pbmi->bmiHeader.biWidth;
   int dest_pitch = (width * pInfo->pbmi->bmiHeader.biBitCount + 31) / 32 * 4;
-  LPBYTE pData = FX_Alloc2D(BYTE, dest_pitch, height);
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> data =
+      pdfium::Vector2D<uint8_t, FxAllocAllocator<uint8_t>>(dest_pitch, height);
   if (dest_pitch == pInfo->Stride) {
-    memcpy(pData, pInfo->pScan0, dest_pitch * height);
+    memcpy(data.data(), pInfo->pScan0, dest_pitch * height);
   } else {
     for (int i = 0; i < height; i++) {
-      memcpy(pData + dest_pitch * i, pInfo->pScan0 + pInfo->Stride * i,
+      memcpy(data.data() + dest_pitch * i, pInfo->pScan0 + pInfo->Stride * i,
              dest_pitch);
     }
   }
   RetainPtr<CFX_DIBitmap> pDIBitmap =
-      CFX_WindowsDIB::LoadFromBuf(pInfo->pbmi, pData);
-  FX_Free(pData);
+      CFX_WindowsDIB::LoadFromBuf(pInfo->pbmi, data.data());
   return pDIBitmap;
 }
