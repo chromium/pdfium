@@ -10,7 +10,6 @@
 #include <memory>
 
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
@@ -42,14 +41,11 @@ class CFX_ImageStretcher {
   UnownedPtr<ScanlineComposerIface> const m_pDest;
   RetainPtr<CFX_DIBBase> m_pSource;
   std::unique_ptr<CStretchEngine> m_pStretchEngine;
-  std::unique_ptr<uint8_t, FxFreeDeleter> m_pScanline;
-  std::unique_ptr<uint8_t, FxFreeDeleter> m_pMaskScanline;
   const FXDIB_ResampleOptions m_ResampleOptions;
-  int m_DestWidth;
-  int m_DestHeight;
+  const int m_DestWidth;
+  const int m_DestHeight;
   const FX_RECT m_ClipRect;
   const FXDIB_Format m_DestFormat;
-  const int m_DestBPP;
 };
 
 #endif  // CORE_FXGE_DIB_CFX_IMAGESTRETCHER_H_
