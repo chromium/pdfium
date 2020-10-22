@@ -1148,8 +1148,7 @@ bool CFX_DIBBase::ConvertBuffer(
       return ConvertBuffer_8bppMask(bpp, dest_buf, dest_pitch, width, height,
                                     pSrcBitmap, src_left, src_top);
     }
-    case FXDIB_Format::k8bppRgb:
-    case FXDIB_Format::k8bppRgba: {
+    case FXDIB_Format::k8bppRgb: {
       const bool bpp_1_or_8 = (bpp == 1 || bpp == 8);
       if (bpp_1_or_8 && !pSrcBitmap->HasPalette()) {
         return ConvertBuffer(FXDIB_Format::k8bppMask, dest_buf, dest_pitch,
