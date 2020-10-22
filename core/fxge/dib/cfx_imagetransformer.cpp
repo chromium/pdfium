@@ -500,23 +500,20 @@ void CFX_ImageTransformer::CalcMono(const CalcData& cdata) {
       uint8_t idx = bilinear_interpol(
           cdata.buf, data.row_offset_l, data.row_offset_r, data.src_col_l,
           data.src_col_r, data.res_x, data.res_y, 1, 0);
-      uint32_t r_bgra_cmyk = argb[idx];
-      *reinterpret_cast<uint32_t*>(dest) = r_bgra_cmyk;
+      *reinterpret_cast<uint32_t*>(dest) = argb[idx];
     };
     DoBilinearLoop(cdata, m_result, m_StretchClip, destBpp, func);
   } else if (IsBiCubic()) {
     auto func = [&cdata, &argb](const BicubicData& data, uint8_t* dest) {
-      uint32_t r_bgra_cmyk = argb[bicubic_interpol(
+      *reinterpret_cast<uint32_t*>(dest) = argb[bicubic_interpol(
           cdata.buf, cdata.pitch, data.pos_pixel, data.u_w, data.v_w,
           data.res_x, data.res_y, 1, 0)];
-      *reinterpret_cast<uint32_t*>(dest) = r_bgra_cmyk;
     };
     DoBicubicLoop(cdata, m_result, m_StretchClip, destBpp, func);
   } else {
     auto func = [&cdata, &argb](const DownSampleData& data, uint8_t* dest) {
-      uint32_t r_bgra_cmyk =
+      *reinterpret_cast<uint32_t*>(dest) =
           argb[cdata.buf[data.src_row * cdata.pitch + data.src_col]];
-      *reinterpret_cast<uint32_t*>(dest) = r_bgra_cmyk;
     };
     DoDownSampleLoop(cdata, m_result, m_StretchClip, destBpp, func);
   }

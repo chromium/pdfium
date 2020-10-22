@@ -15,7 +15,6 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/dib/cfx_bitmapstorer.h"
-#include "core/fxge/dib/cfx_cmyk_to_srgb.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_imagestretcher.h"
 #include "core/fxge/dib/cfx_imagetransformer.h"
@@ -188,13 +187,13 @@ void ConvertBuffer_8bppPlt2Gray(uint8_t* dest_buf,
   }
 }
 
-void ConvertBuffer_RgbOrCmyk2Gray(uint8_t* dest_buf,
-                                  int dest_pitch,
-                                  int width,
-                                  int height,
-                                  const RetainPtr<CFX_DIBBase>& pSrcBitmap,
-                                  int src_left,
-                                  int src_top) {
+void ConvertBuffer_Rgb2Gray(uint8_t* dest_buf,
+                            int dest_pitch,
+                            int width,
+                            int height,
+                            const RetainPtr<CFX_DIBBase>& pSrcBitmap,
+                            int src_left,
+                            int src_top) {
   int Bpp = pSrcBitmap->GetBPP() / 8;
   for (int row = 0; row < height; ++row) {
     uint8_t* dest_scan = dest_buf + row * dest_pitch;
@@ -499,8 +498,8 @@ bool ConvertBuffer_8bppMask(int bpp,
       return true;
     case 24:
     case 32:
-      ConvertBuffer_RgbOrCmyk2Gray(dest_buf, dest_pitch, width, height,
-                                   pSrcBitmap, src_left, src_top);
+      ConvertBuffer_Rgb2Gray(dest_buf, dest_pitch, width, height, pSrcBitmap,
+                             src_left, src_top);
       return true;
     default:
       return false;

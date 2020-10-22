@@ -445,34 +445,34 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
       case TransformMethod::k8BppToManyBpp: {
         for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
           PixelWeight* pWeights = m_WeightTable.GetPixelWeight(col);
-          int dest_r_y = 0;
-          int dest_g_m = 0;
-          int dest_b_c = 0;
+          int dest_r = 0;
+          int dest_g = 0;
+          int dest_b = 0;
           for (int j = pWeights->m_SrcStart; j <= pWeights->m_SrcEnd; ++j) {
             int* pWeight = m_WeightTable.GetValueFromPixelWeight(pWeights, j);
             if (!pWeight)
               return false;
 
             int pixel_weight = *pWeight;
-            unsigned long argb_cmyk = m_pSrcPalette[src_scan[j]];
+            unsigned long argb = m_pSrcPalette[src_scan[j]];
             if (m_DestFormat == FXDIB_Format::kRgb) {
-              dest_r_y += pixel_weight * static_cast<uint8_t>(argb_cmyk >> 16);
-              dest_g_m += pixel_weight * static_cast<uint8_t>(argb_cmyk >> 8);
-              dest_b_c += pixel_weight * static_cast<uint8_t>(argb_cmyk);
+              dest_r += pixel_weight * static_cast<uint8_t>(argb >> 16);
+              dest_g += pixel_weight * static_cast<uint8_t>(argb >> 8);
+              dest_b += pixel_weight * static_cast<uint8_t>(argb);
             } else {
-              dest_b_c += pixel_weight * static_cast<uint8_t>(argb_cmyk >> 24);
-              dest_g_m += pixel_weight * static_cast<uint8_t>(argb_cmyk >> 16);
-              dest_r_y += pixel_weight * static_cast<uint8_t>(argb_cmyk >> 8);
+              dest_b += pixel_weight * static_cast<uint8_t>(argb >> 24);
+              dest_g += pixel_weight * static_cast<uint8_t>(argb >> 16);
+              dest_r += pixel_weight * static_cast<uint8_t>(argb >> 8);
             }
           }
           if (bicubic) {
-            dest_r_y = pdfium::clamp(dest_r_y, 0, kMaxDestValue);
-            dest_g_m = pdfium::clamp(dest_g_m, 0, kMaxDestValue);
-            dest_b_c = pdfium::clamp(dest_b_c, 0, kMaxDestValue);
+            dest_r = pdfium::clamp(dest_r, 0, kMaxDestValue);
+            dest_g = pdfium::clamp(dest_g, 0, kMaxDestValue);
+            dest_b = pdfium::clamp(dest_b, 0, kMaxDestValue);
           }
-          *dest_scan++ = static_cast<uint8_t>(dest_b_c >> 16);
-          *dest_scan++ = static_cast<uint8_t>(dest_g_m >> 16);
-          *dest_scan++ = static_cast<uint8_t>(dest_r_y >> 16);
+          *dest_scan++ = static_cast<uint8_t>(dest_b >> 16);
+          *dest_scan++ = static_cast<uint8_t>(dest_g >> 16);
+          *dest_scan++ = static_cast<uint8_t>(dest_r >> 16);
         }
         break;
       }
@@ -480,9 +480,9 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
         for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
           PixelWeight* pWeights = m_WeightTable.GetPixelWeight(col);
           int dest_a = 0;
-          int dest_r_y = 0;
-          int dest_g_m = 0;
-          int dest_b_c = 0;
+          int dest_r = 0;
+          int dest_g = 0;
+          int dest_b = 0;
           for (int j = pWeights->m_SrcStart; j <= pWeights->m_SrcEnd; ++j) {
             int* pWeight = m_WeightTable.GetValueFromPixelWeight(pWeights, j);
             if (!pWeight)
@@ -490,21 +490,21 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
 
             int pixel_weight = *pWeight;
             pixel_weight = pixel_weight * src_scan_mask[j] / 255;
-            unsigned long argb_cmyk = m_pSrcPalette[src_scan[j]];
-            dest_b_c += pixel_weight * static_cast<uint8_t>(argb_cmyk >> 24);
-            dest_g_m += pixel_weight * static_cast<uint8_t>(argb_cmyk >> 16);
-            dest_r_y += pixel_weight * static_cast<uint8_t>(argb_cmyk >> 8);
+            unsigned long argb = m_pSrcPalette[src_scan[j]];
+            dest_b += pixel_weight * static_cast<uint8_t>(argb >> 24);
+            dest_g += pixel_weight * static_cast<uint8_t>(argb >> 16);
+            dest_r += pixel_weight * static_cast<uint8_t>(argb >> 8);
             dest_a += pixel_weight;
           }
           if (bicubic) {
-            dest_b_c = pdfium::clamp(dest_b_c, 0, kMaxDestValue);
-            dest_g_m = pdfium::clamp(dest_g_m, 0, kMaxDestValue);
-            dest_r_y = pdfium::clamp(dest_r_y, 0, kMaxDestValue);
+            dest_b = pdfium::clamp(dest_b, 0, kMaxDestValue);
+            dest_g = pdfium::clamp(dest_g, 0, kMaxDestValue);
+            dest_r = pdfium::clamp(dest_r, 0, kMaxDestValue);
             dest_a = pdfium::clamp(dest_a, 0, 65536);
           }
-          *dest_scan++ = static_cast<uint8_t>(dest_b_c >> 16);
-          *dest_scan++ = static_cast<uint8_t>(dest_g_m >> 16);
-          *dest_scan++ = static_cast<uint8_t>(dest_r_y >> 16);
+          *dest_scan++ = static_cast<uint8_t>(dest_b >> 16);
+          *dest_scan++ = static_cast<uint8_t>(dest_g >> 16);
+          *dest_scan++ = static_cast<uint8_t>(dest_r >> 16);
           *dest_scan_mask++ = static_cast<uint8_t>((dest_a * 255) >> 16);
         }
         break;
@@ -512,9 +512,9 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
       case TransformMethod::kManyBpptoManyBpp: {
         for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
           PixelWeight* pWeights = m_WeightTable.GetPixelWeight(col);
-          int dest_r_y = 0;
-          int dest_g_m = 0;
-          int dest_b_c = 0;
+          int dest_r = 0;
+          int dest_g = 0;
+          int dest_b = 0;
           for (int j = pWeights->m_SrcStart; j <= pWeights->m_SrcEnd; ++j) {
             int* pWeight = m_WeightTable.GetValueFromPixelWeight(pWeights, j);
             if (!pWeight)
@@ -522,18 +522,18 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
 
             int pixel_weight = *pWeight;
             const uint8_t* src_pixel = src_scan + j * Bpp;
-            dest_b_c += pixel_weight * (*src_pixel++);
-            dest_g_m += pixel_weight * (*src_pixel++);
-            dest_r_y += pixel_weight * (*src_pixel);
+            dest_b += pixel_weight * (*src_pixel++);
+            dest_g += pixel_weight * (*src_pixel++);
+            dest_r += pixel_weight * (*src_pixel);
           }
           if (bicubic) {
-            dest_b_c = pdfium::clamp(dest_b_c, 0, kMaxDestValue);
-            dest_g_m = pdfium::clamp(dest_g_m, 0, kMaxDestValue);
-            dest_r_y = pdfium::clamp(dest_r_y, 0, kMaxDestValue);
+            dest_b = pdfium::clamp(dest_b, 0, kMaxDestValue);
+            dest_g = pdfium::clamp(dest_g, 0, kMaxDestValue);
+            dest_r = pdfium::clamp(dest_r, 0, kMaxDestValue);
           }
-          *dest_scan++ = static_cast<uint8_t>((dest_b_c) >> 16);
-          *dest_scan++ = static_cast<uint8_t>((dest_g_m) >> 16);
-          *dest_scan++ = static_cast<uint8_t>((dest_r_y) >> 16);
+          *dest_scan++ = static_cast<uint8_t>(dest_b >> 16);
+          *dest_scan++ = static_cast<uint8_t>(dest_g >> 16);
+          *dest_scan++ = static_cast<uint8_t>(dest_r >> 16);
           dest_scan += Bpp - 3;
         }
         break;
@@ -542,9 +542,9 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
         for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
           PixelWeight* pWeights = m_WeightTable.GetPixelWeight(col);
           int dest_a = 0;
-          int dest_r_y = 0;
-          int dest_g_m = 0;
-          int dest_b_c = 0;
+          int dest_r = 0;
+          int dest_g = 0;
+          int dest_b = 0;
           for (int j = pWeights->m_SrcStart; j <= pWeights->m_SrcEnd; ++j) {
             int* pWeight = m_WeightTable.GetValueFromPixelWeight(pWeights, j);
             if (!pWeight)
@@ -557,20 +557,20 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             } else {
               pixel_weight = pixel_weight * src_scan_mask[j] / 255;
             }
-            dest_b_c += pixel_weight * (*src_pixel++);
-            dest_g_m += pixel_weight * (*src_pixel++);
-            dest_r_y += pixel_weight * (*src_pixel);
+            dest_b += pixel_weight * (*src_pixel++);
+            dest_g += pixel_weight * (*src_pixel++);
+            dest_r += pixel_weight * (*src_pixel);
             dest_a += pixel_weight;
           }
           if (bicubic) {
-            dest_r_y = pdfium::clamp(dest_r_y, 0, kMaxDestValue);
-            dest_g_m = pdfium::clamp(dest_g_m, 0, kMaxDestValue);
-            dest_b_c = pdfium::clamp(dest_b_c, 0, kMaxDestValue);
+            dest_r = pdfium::clamp(dest_r, 0, kMaxDestValue);
+            dest_g = pdfium::clamp(dest_g, 0, kMaxDestValue);
+            dest_b = pdfium::clamp(dest_b, 0, kMaxDestValue);
             dest_a = pdfium::clamp(dest_a, 0, 65536);
           }
-          *dest_scan++ = static_cast<uint8_t>((dest_b_c) >> 16);
-          *dest_scan++ = static_cast<uint8_t>((dest_g_m) >> 16);
-          *dest_scan++ = static_cast<uint8_t>((dest_r_y) >> 16);
+          *dest_scan++ = static_cast<uint8_t>(dest_b >> 16);
+          *dest_scan++ = static_cast<uint8_t>(dest_g >> 16);
+          *dest_scan++ = static_cast<uint8_t>(dest_r >> 16);
           if (m_DestFormat == FXDIB_Format::kArgb)
             *dest_scan = static_cast<uint8_t>((dest_a * 255) >> 16);
           if (dest_scan_mask)
@@ -662,9 +662,9 @@ void CStretchEngine::StretchVert() {
         for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
           unsigned char* src_scan =
               m_InterBuf.data() + (col - m_DestClip.left) * DestBpp;
-          int dest_r_y = 0;
-          int dest_g_m = 0;
-          int dest_b_c = 0;
+          int dest_r = 0;
+          int dest_g = 0;
+          int dest_b = 0;
           for (int j = pWeights->m_SrcStart; j <= pWeights->m_SrcEnd; ++j) {
             int* pWeight = table.GetValueFromPixelWeight(pWeights, j);
             if (!pWeight)
@@ -673,18 +673,18 @@ void CStretchEngine::StretchVert() {
             int pixel_weight = *pWeight;
             const uint8_t* src_pixel =
                 src_scan + (j - m_SrcClip.top) * m_InterPitch;
-            dest_b_c += pixel_weight * (*src_pixel++);
-            dest_g_m += pixel_weight * (*src_pixel++);
-            dest_r_y += pixel_weight * (*src_pixel);
+            dest_b += pixel_weight * (*src_pixel++);
+            dest_g += pixel_weight * (*src_pixel++);
+            dest_r += pixel_weight * (*src_pixel);
           }
           if (bicubic) {
-            dest_r_y = pdfium::clamp(dest_r_y, 0, kMaxDestValue);
-            dest_g_m = pdfium::clamp(dest_g_m, 0, kMaxDestValue);
-            dest_b_c = pdfium::clamp(dest_b_c, 0, kMaxDestValue);
+            dest_r = pdfium::clamp(dest_r, 0, kMaxDestValue);
+            dest_g = pdfium::clamp(dest_g, 0, kMaxDestValue);
+            dest_b = pdfium::clamp(dest_b, 0, kMaxDestValue);
           }
-          dest_scan[0] = static_cast<uint8_t>((dest_b_c) >> 16);
-          dest_scan[1] = static_cast<uint8_t>((dest_g_m) >> 16);
-          dest_scan[2] = static_cast<uint8_t>((dest_r_y) >> 16);
+          dest_scan[0] = static_cast<uint8_t>(dest_b >> 16);
+          dest_scan[1] = static_cast<uint8_t>(dest_g >> 16);
+          dest_scan[2] = static_cast<uint8_t>(dest_r >> 16);
           dest_scan += DestBpp;
         }
         break;
@@ -698,9 +698,9 @@ void CStretchEngine::StretchVert() {
           if (m_DestFormat != FXDIB_Format::kArgb)
             src_scan_mask = m_ExtraAlphaBuf.data() + (col - m_DestClip.left);
           int dest_a = 0;
-          int dest_r_y = 0;
-          int dest_g_m = 0;
-          int dest_b_c = 0;
+          int dest_r = 0;
+          int dest_g = 0;
+          int dest_b = 0;
           for (int j = pWeights->m_SrcStart; j <= pWeights->m_SrcEnd; ++j) {
             int* pWeight = table.GetValueFromPixelWeight(pWeights, j);
             if (!pWeight)
@@ -712,24 +712,24 @@ void CStretchEngine::StretchVert() {
             int mask_v = 255;
             if (src_scan_mask)
               mask_v = src_scan_mask[(j - m_SrcClip.top) * m_ExtraMaskPitch];
-            dest_b_c += pixel_weight * (*src_pixel++);
-            dest_g_m += pixel_weight * (*src_pixel++);
-            dest_r_y += pixel_weight * (*src_pixel);
+            dest_b += pixel_weight * (*src_pixel++);
+            dest_g += pixel_weight * (*src_pixel++);
+            dest_r += pixel_weight * (*src_pixel);
             if (m_DestFormat == FXDIB_Format::kArgb)
               dest_a += pixel_weight * (*(src_pixel + 1));
             else
               dest_a += pixel_weight * mask_v;
           }
           if (bicubic) {
-            dest_r_y = pdfium::clamp(dest_r_y, 0, kMaxDestValue);
-            dest_g_m = pdfium::clamp(dest_g_m, 0, kMaxDestValue);
-            dest_b_c = pdfium::clamp(dest_b_c, 0, kMaxDestValue);
+            dest_r = pdfium::clamp(dest_r, 0, kMaxDestValue);
+            dest_g = pdfium::clamp(dest_g, 0, kMaxDestValue);
+            dest_b = pdfium::clamp(dest_b, 0, kMaxDestValue);
             dest_a = pdfium::clamp(dest_a, 0, kMaxDestValue);
           }
           if (dest_a) {
-            int r = static_cast<uint32_t>(dest_r_y) * 255 / dest_a;
-            int g = static_cast<uint32_t>(dest_g_m) * 255 / dest_a;
-            int b = static_cast<uint32_t>(dest_b_c) * 255 / dest_a;
+            int r = static_cast<uint32_t>(dest_r) * 255 / dest_a;
+            int g = static_cast<uint32_t>(dest_g) * 255 / dest_a;
+            int b = static_cast<uint32_t>(dest_b) * 255 / dest_a;
             dest_scan[0] = pdfium::clamp(b, 0, 255);
             dest_scan[1] = pdfium::clamp(g, 0, 255);
             dest_scan[2] = pdfium::clamp(r, 0, 255);

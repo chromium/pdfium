@@ -8,7 +8,6 @@
 
 #include <algorithm>
 
-#include "core/fxge/dib/cfx_cmyk_to_srgb.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "third_party/base/check.h"
 
