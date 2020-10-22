@@ -15,17 +15,6 @@
 #include "core/fxge/dib/fx_dib.h"
 #include "third_party/base/span.h"
 
-enum FXDIB_Channel {
-  FXDIB_Red = 1,
-  FXDIB_Green,
-  FXDIB_Blue,
-  FXDIB_Cyan,
-  FXDIB_Magenta,
-  FXDIB_Yellow,
-  FXDIB_Black,
-  FXDIB_Alpha
-};
-
 class CFX_ClipRgn;
 class CFX_DIBitmap;
 class PauseIndicatorIface;

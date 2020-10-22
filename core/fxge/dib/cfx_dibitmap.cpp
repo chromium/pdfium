@@ -270,7 +270,7 @@ void CFX_DIBitmap::TransferEqualFormatsOneBPP(
 }
 
 bool CFX_DIBitmap::LoadChannelFromAlpha(
-    FXDIB_Channel destChannel,
+    Channel destChannel,
     const RetainPtr<CFX_DIBBase>& pSrcBitmap) {
   if (!m_pBuffer)
     return false;
@@ -286,7 +286,7 @@ bool CFX_DIBitmap::LoadChannelFromAlpha(
   }
   int srcOffset = pSrcBitmap->GetFormat() == FXDIB_Format::kArgb ? 3 : 0;
   int destOffset = 0;
-  if (destChannel == FXDIB_Alpha) {
+  if (destChannel == CFX_DIBitmap::Channel::kAlpha) {
     if (IsMask()) {
       if (!ConvertFormat(FXDIB_Format::k8bppMask))
         return false;
@@ -315,7 +315,7 @@ bool CFX_DIBitmap::LoadChannelFromAlpha(
           return false;
       }
     }
-    destOffset = kChannelOffset[destChannel];
+    destOffset = kChannelOffset[static_cast<size_t>(destChannel)];
   }
   if (pSrcClone->m_pAlphaMask) {
     RetainPtr<CFX_DIBBase> pAlphaMask = pSrcClone->m_pAlphaMask;
@@ -340,7 +340,7 @@ bool CFX_DIBitmap::LoadChannelFromAlpha(
     pSrcClone = pSrcMatched;
   }
   RetainPtr<CFX_DIBitmap> pDst(this);
-  if (destChannel == FXDIB_Alpha && m_pAlphaMask) {
+  if (destChannel == CFX_DIBitmap::Channel::kAlpha && m_pAlphaMask) {
     pDst = m_pAlphaMask;
     destOffset = 0;
   }
@@ -358,12 +358,12 @@ bool CFX_DIBitmap::LoadChannelFromAlpha(
   return true;
 }
 
-bool CFX_DIBitmap::LoadChannel(FXDIB_Channel destChannel, int value) {
+bool CFX_DIBitmap::LoadChannel(Channel destChannel, int value) {
   if (!m_pBuffer)
     return false;
 
   int destOffset;
-  if (destChannel == FXDIB_Alpha) {
+  if (destChannel == CFX_DIBitmap::Channel::kAlpha) {
     if (IsMask()) {
       if (!ConvertFormat(FXDIB_Format::k8bppMask)) {
         return false;
@@ -395,14 +395,14 @@ bool CFX_DIBitmap::LoadChannel(FXDIB_Channel destChannel, int value) {
           return false;
       }
     }
-    destOffset = kChannelOffset[destChannel];
+    destOffset = kChannelOffset[static_cast<size_t>(destChannel)];
   }
   int Bpp = GetBPP() / 8;
   if (Bpp == 1) {
     memset(m_pBuffer.Get(), value, m_Height * m_Pitch);
     return true;
   }
-  if (destChannel == FXDIB_Alpha && m_pAlphaMask) {
+  if (destChannel == CFX_DIBitmap::Channel::kAlpha && m_pAlphaMask) {
     memset(m_pAlphaMask->GetBuffer(), value,
            m_pAlphaMask->GetHeight() * m_pAlphaMask->GetPitch());
     return true;
@@ -427,7 +427,7 @@ bool CFX_DIBitmap::MultiplyAlpha(const RetainPtr<CFX_DIBBase>& pSrcBitmap) {
   }
 
   if (IsOpaqueImage())
-    return LoadChannelFromAlpha(FXDIB_Alpha, pSrcBitmap);
+    return LoadChannelFromAlpha(CFX_DIBitmap::Channel::kAlpha, pSrcBitmap);
 
   RetainPtr<CFX_DIBitmap> pSrcClone = pSrcBitmap.As<CFX_DIBitmap>();
   if (pSrcBitmap->GetWidth() != m_Width ||

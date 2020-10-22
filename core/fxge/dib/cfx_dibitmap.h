@@ -17,6 +17,17 @@
 
 class CFX_DIBitmap : public CFX_DIBBase {
  public:
+  enum class Channel : uint8_t {
+    kRed = 1,
+    kGreen,
+    kBlue,
+    kCyan,
+    kMagenta,
+    kYellow,
+    kBlack,
+    kAlpha
+  };
+
   struct PitchAndSize {
     uint32_t pitch;
     uint32_t size;
@@ -25,7 +36,6 @@ class CFX_DIBitmap : public CFX_DIBBase {
   CONSTRUCT_VIA_MAKE_RETAIN;
 
   bool Create(int width, int height, FXDIB_Format format);
-
   bool Create(int width,
               int height,
               FXDIB_Format format,
@@ -56,9 +66,9 @@ class CFX_DIBitmap : public CFX_DIBBase {
   void SetPixel(int x, int y, uint32_t color);
 #endif
 
-  bool LoadChannelFromAlpha(FXDIB_Channel destChannel,
+  bool LoadChannelFromAlpha(Channel destChannel,
                             const RetainPtr<CFX_DIBBase>& pSrcBitmap);
-  bool LoadChannel(FXDIB_Channel destChannel, int value);
+  bool LoadChannel(Channel destChannel, int value);
 
   bool MultiplyAlpha(int alpha);
   bool MultiplyAlpha(const RetainPtr<CFX_DIBBase>& pSrcBitmap);
