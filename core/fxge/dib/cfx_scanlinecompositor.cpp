@@ -12,7 +12,6 @@
 #include "core/fxge/dib/fx_dib.h"
 #include "third_party/base/check.h"
 
-#define FX_CCOLOR(val) (255 - (val))
 #define FXDIB_ALPHA_UNION(dest, src) ((dest) + (src) - (dest) * (src) / 255)
 #define FXARGB_RGBORDERCOPY(dest, src)                  \
   *((dest) + 3) = *((src) + 3), *(dest) = *((src) + 2), \
@@ -2761,8 +2760,6 @@ bool CFX_ScanlineCompositor::Init(FXDIB_Format dest_format,
     InitSourceMask(mask_color);
     return true;
   }
-  if (!GetIsCmykFromFormat(src_format) && GetIsCmykFromFormat(dest_format))
-    return false;
   if (GetBppFromFormat(m_SrcFormat) <= 8) {
     if (dest_format == FXDIB_Format::k8bppMask)
       return true;
@@ -2770,16 +2767,13 @@ bool CFX_ScanlineCompositor::Init(FXDIB_Format dest_format,
     InitSourcePalette(src_format, dest_format, src_palette);
     m_iTransparency = (dest_format == FXDIB_Format::kArgb ? 1 : 0) +
                       (GetIsAlphaFromFormat(dest_format) ? 2 : 0) +
-                      (GetIsCmykFromFormat(dest_format) ? 4 : 0) +
                       (GetBppFromFormat(src_format) == 1 ? 8 : 0);
     return true;
   }
   m_iTransparency = (GetIsAlphaFromFormat(src_format) ? 0 : 1) +
                     (GetIsAlphaFromFormat(dest_format) ? 0 : 2) +
                     (blend_type == BlendMode::kNormal ? 4 : 0) +
-                    (bClip ? 8 : 0) +
-                    (GetIsCmykFromFormat(src_format) ? 16 : 0) +
-                    (GetIsCmykFromFormat(dest_format) ? 32 : 0);
+                    (bClip ? 8 : 0);
   return true;
 }
 
@@ -2791,11 +2785,8 @@ void CFX_ScanlineCompositor::InitSourceMask(uint32_t mask_color) {
   if (m_DestFormat == FXDIB_Format::k8bppMask)
     return;
 
-  if (GetBppFromFormat(m_DestFormat) == 8) {
+  if (GetBppFromFormat(m_DestFormat) == 8)
     m_MaskRed = FXRGB2GRAY(m_MaskRed, m_MaskGreen, m_MaskBlue);
-    if (GetIsCmykFromFormat(m_DestFormat))
-      m_MaskRed = FX_CCOLOR(m_MaskRed);
-  }
 }
 
 void CFX_ScanlineCompositor::InitSourcePalette(
@@ -2803,8 +2794,6 @@ void CFX_ScanlineCompositor::InitSourcePalette(
     FXDIB_Format dest_format,
     pdfium::span<const uint32_t> src_palette) {
   m_SrcPalette.Reset();
-  const bool bIsSrcCmyk = GetIsCmykFromFormat(src_format);
-  const bool bIsDstCmyk = GetIsCmykFromFormat(dest_format);
   const bool bIsDestBpp8 = GetBppFromFormat(dest_format) == 8;
   const size_t pal_count = static_cast<size_t>(1)
                            << GetBppFromFormat(src_format);
@@ -2812,42 +2801,16 @@ void CFX_ScanlineCompositor::InitSourcePalette(
   if (!src_palette.empty()) {
     if (bIsDestBpp8) {
       pdfium::span<uint8_t> gray_pal = m_SrcPalette.Make8BitPalette(pal_count);
-      if (bIsSrcCmyk) {
-        for (size_t i = 0; i < pal_count; ++i) {
-          FX_CMYK cmyk = src_palette[i];
-          uint8_t r;
-          uint8_t g;
-          uint8_t b;
-          std::tie(r, g, b) =
-              AdobeCMYK_to_sRGB1(FXSYS_GetCValue(cmyk), FXSYS_GetMValue(cmyk),
-                                 FXSYS_GetYValue(cmyk), FXSYS_GetKValue(cmyk));
-          gray_pal[i] = FXRGB2GRAY(r, g, b);
-        }
-      } else {
-        for (size_t i = 0; i < pal_count; ++i) {
-          FX_ARGB argb = src_palette[i];
-          gray_pal[i] =
-              FXRGB2GRAY(FXARGB_R(argb), FXARGB_G(argb), FXARGB_B(argb));
-        }
+      for (size_t i = 0; i < pal_count; ++i) {
+        FX_ARGB argb = src_palette[i];
+        gray_pal[i] =
+            FXRGB2GRAY(FXARGB_R(argb), FXARGB_G(argb), FXARGB_B(argb));
       }
       return;
     }
     pdfium::span<uint32_t> pPalette = m_SrcPalette.Make32BitPalette(pal_count);
-    if (bIsDstCmyk == bIsSrcCmyk) {
-      for (size_t i = 0; i < pal_count; ++i)
-        pPalette[i] = src_palette[i];
-    } else {
-      for (size_t i = 0; i < pal_count; ++i) {
-        FX_CMYK cmyk = src_palette[i];
-        uint8_t r;
-        uint8_t g;
-        uint8_t b;
-        std::tie(r, g, b) =
-            AdobeCMYK_to_sRGB1(FXSYS_GetCValue(cmyk), FXSYS_GetMValue(cmyk),
-                               FXSYS_GetYValue(cmyk), FXSYS_GetKValue(cmyk));
-        pPalette[i] = ArgbEncode(0xff, r, g, b);
-      }
-    }
+    for (size_t i = 0; i < pal_count; ++i)
+      pPalette[i] = src_palette[i];
     return;
   }
   if (bIsDestBpp8) {
@@ -2863,23 +2826,11 @@ void CFX_ScanlineCompositor::InitSourcePalette(
   }
   pdfium::span<uint32_t> pPalette = m_SrcPalette.Make32BitPalette(pal_count);
   if (pal_count == 2) {
-    pPalette[0] = bIsSrcCmyk ? 0xff : 0xff000000;
-    pPalette[1] = bIsSrcCmyk ? 0x00 : 0xffffffff;
+    pPalette[0] = 0xff000000;
+    pPalette[1] = 0xffffffff;
   } else {
     for (size_t i = 0; i < pal_count; ++i)
-      pPalette[i] = bIsSrcCmyk ? FX_CCOLOR(i) : (i * 0x10101);
-  }
-  if (bIsSrcCmyk != bIsDstCmyk) {
-    for (size_t i = 0; i < pal_count; ++i) {
-      FX_CMYK cmyk = pPalette[i];
-      uint8_t r;
-      uint8_t g;
-      uint8_t b;
-      std::tie(r, g, b) =
-          AdobeCMYK_to_sRGB1(FXSYS_GetCValue(cmyk), FXSYS_GetMValue(cmyk),
-                             FXSYS_GetYValue(cmyk), FXSYS_GetKValue(cmyk));
-      pPalette[i] = ArgbEncode(0xff, r, g, b);
-    }
+      pPalette[i] = i * 0x10101;
   }
 }
 
@@ -2959,12 +2910,6 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
       CompositeRow_Rgb2Mask(dest_scan, src_scan, width, clip_scan);
     }
   } else if (GetBppFromFormat(m_DestFormat) == 8) {
-    if (GetIsCmykFromFormat(m_DestFormat)) {
-      for (int i = 0; i < width; ++i) {
-        *dest_scan = ~*dest_scan;
-        dest_scan++;
-      }
-    }
     if (GetIsAlphaFromFormat(m_SrcFormat)) {
       if (GetIsAlphaFromFormat(m_DestFormat)) {
         CompositeRow_Argb2Graya(dest_scan, src_scan, width, m_BlendType,
@@ -2980,12 +2925,6 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
       } else {
         CompositeRow_Rgb2Gray(dest_scan, src_scan, src_Bpp, width, m_BlendType,
                               clip_scan);
-      }
-    }
-    if (GetIsCmykFromFormat(m_DestFormat)) {
-      for (int i = 0; i < width; ++i) {
-        *dest_scan = ~*dest_scan;
-        dest_scan++;
       }
     }
   } else {

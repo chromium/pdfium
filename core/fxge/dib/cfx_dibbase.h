@@ -61,7 +61,6 @@ class CFX_DIBBase : public Retainable {
 
   bool IsMask() const { return GetIsMaskFromFormat(m_Format); }
   bool HasAlpha() const { return GetIsAlphaFromFormat(m_Format); }
-  bool IsCmykImage() const { return GetIsCmykFromFormat(m_Format); }
   bool IsOpaqueImage() const { return !IsMask() && !HasAlpha(); }
 
   size_t GetPaletteSize() const;

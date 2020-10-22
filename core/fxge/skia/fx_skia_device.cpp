@@ -1636,8 +1636,6 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
 #endif
       m_bRgbByteOrder(bRgbByteOrder),
       m_bGroupKnockout(bGroupKnockout) {
-  DCHECK(!m_pBitmap->IsCmykImage());
-
   SkBitmap skBitmap;
   SkColorType color_type;
   const int bpp = pBitmap->GetBPP();

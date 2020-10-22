@@ -419,7 +419,7 @@ bool JpegModule::JpegEncode(const RetainPtr<CFX_DIBBase>& pSource,
   cinfo.err = &jerr;
   jpeg_create_compress(&cinfo);
   int Bpp = pSource->GetBPP() / 8;
-  uint32_t nComponents = Bpp >= 3 ? (pSource->IsCmykImage() ? 4 : 3) : 1;
+  uint32_t nComponents = Bpp >= 3 ? 3 : 1;
   uint32_t pitch = pSource->GetPitch();
   uint32_t width = pdfium::base::checked_cast<uint32_t>(pSource->GetWidth());
   uint32_t height = pdfium::base::checked_cast<uint32_t>(pSource->GetHeight());

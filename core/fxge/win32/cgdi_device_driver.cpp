@@ -326,9 +326,6 @@ bool CGdiDeviceDriver::GDI_SetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap1,
     if (!pBitmap)
       return false;
 
-    if (pBitmap->IsCmykImage() && !pBitmap->ConvertFormat(FXDIB_Format::kRgb))
-      return false;
-
     LPBYTE pBuffer = pBitmap->GetBuffer();
     ByteString info = CFX_WindowsDIB::GetBitmapInfo(pBitmap);
     ((BITMAPINFOHEADER*)info.c_str())->biHeight *= -1;
@@ -343,11 +340,6 @@ bool CGdiDeviceDriver::GDI_SetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap1,
   }
 
   RetainPtr<CFX_DIBitmap> pBitmap = pBitmap1;
-  if (pBitmap->IsCmykImage()) {
-    pBitmap = pBitmap->CloneConvert(FXDIB_Format::kRgb);
-    if (!pBitmap)
-      return false;
-  }
   LPBYTE pBuffer = pBitmap->GetBuffer();
   ByteString info = CFX_WindowsDIB::GetBitmapInfo(pBitmap);
   ::SetDIBitsToDevice(m_hDC, left, top, src_rect.Width(), src_rect.Height(),
@@ -366,9 +358,6 @@ bool CGdiDeviceDriver::GDI_StretchDIBits(
     const FXDIB_ResampleOptions& options) {
   RetainPtr<CFX_DIBitmap> pBitmap = pBitmap1;
   if (!pBitmap || dest_width == 0 || dest_height == 0)
-    return false;
-
-  if (pBitmap->IsCmykImage() && !pBitmap->ConvertFormat(FXDIB_Format::kRgb))
     return false;
 
   ByteString info = CFX_WindowsDIB::GetBitmapInfo(pBitmap);

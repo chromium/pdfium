@@ -138,7 +138,6 @@ class CFX_DIBitmap : public CFX_DIBBase {
 
  private:
   void ConvertBGRColorScale(uint32_t forecolor, uint32_t backcolor);
-  void ConvertCMYKColorScale(uint32_t forecolor, uint32_t backcolor);
   bool TransferWithUnequalFormats(FXDIB_Format dest_format,
                                   int dest_left,
                                   int dest_top,

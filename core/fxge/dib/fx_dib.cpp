@@ -70,10 +70,6 @@ FXDIB_Format MakeRGBFormat(int bpp) {
   }
 }
 
-FXDIB_Format AddAlphaToCmykFormat(FXDIB_Format format) {
-  return FXDIB_Format::kInvalid;
-}
-
 FXDIB_ResampleOptions::FXDIB_ResampleOptions() = default;
 
 bool FXDIB_ResampleOptions::HasAnyOptions() const {

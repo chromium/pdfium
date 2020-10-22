@@ -512,9 +512,6 @@ void CFX_ImageTransformer::CalcMono(const CalcData& cdata,
         m_Storer.GetBitmap()->GetPaletteSpan();
     for (size_t i = 0; i < pdfium::size(argb); i++)
       argb[i] = palette[i];
-  } else if (m_Storer.GetBitmap()->IsCmykImage()) {
-    for (size_t i = 0; i < pdfium::size(argb); i++)
-      argb[i] = 255 - i;
   } else {
     for (size_t i = 0; i < pdfium::size(argb); i++)
       argb[i] = 0xff000000 | (i * 0x010101);

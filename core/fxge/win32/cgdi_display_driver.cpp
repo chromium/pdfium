@@ -48,7 +48,7 @@ bool CGdiDisplayDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
   bmi.bmiHeader.biHeight = -height;
   bmi.bmiHeader.biPlanes = 1;
   bmi.bmiHeader.biWidth = width;
-  if (pBitmap->GetBPP() > 8 && !pBitmap->IsCmykImage()) {
+  if (pBitmap->GetBPP() > 8) {
     ret = ::GetDIBits(hDCMemory, hbmp, 0, height, pBitmap->GetBuffer(), &bmi,
                       DIB_RGB_COLORS) == height;
   } else {
@@ -195,7 +195,7 @@ bool CGdiDisplayDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
   if (pSource->HasAlpha()) {
     auto* pPlatform =
         static_cast<CWin32Platform*>(CFX_GEModule::Get()->GetPlatform());
-    if (pPlatform->m_GdiplusExt.IsAvailable() && !pSource->IsCmykImage()) {
+    if (pPlatform->m_GdiplusExt.IsAvailable()) {
       CFX_DIBExtractor temp(pSource);
       RetainPtr<CFX_DIBitmap> pBitmap = temp.GetBitmap();
       if (!pBitmap)

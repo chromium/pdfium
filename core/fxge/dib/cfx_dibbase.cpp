@@ -144,28 +144,13 @@ void ConvertBuffer_1bppPlt2Gray(uint8_t* dest_buf,
                                 int src_left,
                                 int src_top) {
   pdfium::span<const uint32_t> src_palette = pSrcBitmap->GetPaletteSpan();
+  uint8_t reset_r = FXARGB_R(src_palette[0]);
+  uint8_t reset_g = FXARGB_G(src_palette[0]);
+  uint8_t reset_b = FXARGB_B(src_palette[0]);
+  uint8_t set_r = FXARGB_R(src_palette[1]);
+  uint8_t set_g = FXARGB_G(src_palette[1]);
+  uint8_t set_b = FXARGB_B(src_palette[1]);
   uint8_t gray[2];
-  uint8_t reset_r;
-  uint8_t reset_g;
-  uint8_t reset_b;
-  uint8_t set_r;
-  uint8_t set_g;
-  uint8_t set_b;
-  if (pSrcBitmap->IsCmykImage()) {
-    std::tie(reset_r, reset_g, reset_b) = AdobeCMYK_to_sRGB1(
-        FXSYS_GetCValue(src_palette[0]), FXSYS_GetMValue(src_palette[0]),
-        FXSYS_GetYValue(src_palette[0]), FXSYS_GetKValue(src_palette[0]));
-    std::tie(set_r, set_g, set_b) = AdobeCMYK_to_sRGB1(
-        FXSYS_GetCValue(src_palette[1]), FXSYS_GetMValue(src_palette[1]),
-        FXSYS_GetYValue(src_palette[1]), FXSYS_GetKValue(src_palette[1]));
-  } else {
-    reset_r = FXARGB_R(src_palette[0]);
-    reset_g = FXARGB_G(src_palette[0]);
-    reset_b = FXARGB_B(src_palette[0]);
-    set_r = FXARGB_R(src_palette[1]);
-    set_g = FXARGB_G(src_palette[1]);
-    set_b = FXARGB_B(src_palette[1]);
-  }
   gray[0] = FXRGB2GRAY(reset_r, reset_g, reset_b);
   gray[1] = FXRGB2GRAY(set_r, set_g, set_b);
 
@@ -190,21 +175,9 @@ void ConvertBuffer_8bppPlt2Gray(uint8_t* dest_buf,
                                 int src_top) {
   pdfium::span<const uint32_t> src_palette = pSrcBitmap->GetPaletteSpan();
   uint8_t gray[256];
-  if (pSrcBitmap->IsCmykImage()) {
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
-    for (size_t i = 0; i < pdfium::size(gray); ++i) {
-      std::tie(r, g, b) = AdobeCMYK_to_sRGB1(
-          FXSYS_GetCValue(src_palette[i]), FXSYS_GetMValue(src_palette[i]),
-          FXSYS_GetYValue(src_palette[i]), FXSYS_GetKValue(src_palette[i]));
-      gray[i] = FXRGB2GRAY(r, g, b);
-    }
-  } else {
-    for (size_t i = 0; i < pdfium::size(gray); ++i) {
-      gray[i] = FXRGB2GRAY(FXARGB_R(src_palette[i]), FXARGB_G(src_palette[i]),
-                           FXARGB_B(src_palette[i]));
-    }
+  for (size_t i = 0; i < pdfium::size(gray); ++i) {
+    gray[i] = FXRGB2GRAY(FXARGB_R(src_palette[i]), FXARGB_G(src_palette[i]),
+                         FXARGB_B(src_palette[i]));
   }
 
   for (int row = 0; row < height; ++row) {
@@ -223,33 +196,13 @@ void ConvertBuffer_RgbOrCmyk2Gray(uint8_t* dest_buf,
                                   int src_left,
                                   int src_top) {
   int Bpp = pSrcBitmap->GetBPP() / 8;
-  if (pSrcBitmap->IsCmykImage()) {
-    for (int row = 0; row < height; ++row) {
-      uint8_t* dest_scan = dest_buf + row * dest_pitch;
-      const uint8_t* src_scan =
-          pSrcBitmap->GetScanline(src_top + row) + src_left * 4;
-      for (int col = 0; col < width; ++col) {
-        uint8_t r;
-        uint8_t g;
-        uint8_t b;
-        std::tie(r, g, b) = AdobeCMYK_to_sRGB1(
-            FXSYS_GetCValue(static_cast<uint32_t>(src_scan[0])),
-            FXSYS_GetMValue(static_cast<uint32_t>(src_scan[1])),
-            FXSYS_GetYValue(static_cast<uint32_t>(src_scan[2])),
-            FXSYS_GetKValue(static_cast<uint32_t>(src_scan[3])));
-        *dest_scan++ = FXRGB2GRAY(r, g, b);
-        src_scan += 4;
-      }
-    }
-  } else {
-    for (int row = 0; row < height; ++row) {
-      uint8_t* dest_scan = dest_buf + row * dest_pitch;
-      const uint8_t* src_scan =
-          pSrcBitmap->GetScanline(src_top + row) + src_left * Bpp;
-      for (int col = 0; col < width; ++col) {
-        *dest_scan++ = FXRGB2GRAY(src_scan[2], src_scan[1], src_scan[0]);
-        src_scan += Bpp;
-      }
+  for (int row = 0; row < height; ++row) {
+    uint8_t* dest_scan = dest_buf + row * dest_pitch;
+    const uint8_t* src_scan =
+        pSrcBitmap->GetScanline(src_top + row) + src_left * Bpp;
+    for (int col = 0; col < width; ++col) {
+      *dest_scan++ = FXRGB2GRAY(src_scan[2], src_scan[1], src_scan[0]);
+      src_scan += Bpp;
     }
   }
 }
@@ -297,20 +250,8 @@ void ConvertBuffer_Plt2PltRgb8(uint8_t* dest_buf,
                           src_left, src_top);
   const uint32_t* src_plt = pSrcBitmap->GetPaletteData();
   size_t plt_size = pSrcBitmap->GetPaletteSize();
-  if (pSrcBitmap->IsCmykImage()) {
-    for (size_t i = 0; i < plt_size; ++i) {
-      uint8_t r;
-      uint8_t g;
-      uint8_t b;
-      std::tie(r, g, b) = AdobeCMYK_to_sRGB1(
-          FXSYS_GetCValue(src_plt[i]), FXSYS_GetMValue(src_plt[i]),
-          FXSYS_GetYValue(src_plt[i]), FXSYS_GetKValue(src_plt[i]));
-      dst_plt[i] = ArgbEncode(0xff, r, g, b);
-    }
-  } else {
-    for (size_t i = 0; i < plt_size; ++i)
-      dst_plt[i] = src_plt[i];
-  }
+  for (size_t i = 0; i < plt_size; ++i)
+    dst_plt[i] = src_plt[i];
 }
 
 void ConvertBuffer_Rgb2PltRgb8(uint8_t* dest_buf,
@@ -427,26 +368,12 @@ void ConvertBuffer_1bppPlt2Rgb(FXDIB_Format dest_format,
   pdfium::span<const uint32_t> src_palette = pSrcBitmap->GetPaletteSpan();
   uint32_t plt[2];
   uint8_t* bgr_ptr = reinterpret_cast<uint8_t*>(plt);
-  if (pSrcBitmap->IsCmykImage()) {
-    plt[0] = FXCMYK_TODIB(src_palette[0]);
-    plt[1] = FXCMYK_TODIB(src_palette[1]);
-  } else {
-    bgr_ptr[0] = FXARGB_B(src_palette[0]);
-    bgr_ptr[1] = FXARGB_G(src_palette[0]);
-    bgr_ptr[2] = FXARGB_R(src_palette[0]);
-    bgr_ptr[3] = FXARGB_B(src_palette[1]);
-    bgr_ptr[4] = FXARGB_G(src_palette[1]);
-    bgr_ptr[5] = FXARGB_R(src_palette[1]);
-  }
-
-  if (pSrcBitmap->IsCmykImage()) {
-    std::tie(bgr_ptr[2], bgr_ptr[1], bgr_ptr[0]) = AdobeCMYK_to_sRGB1(
-        FXSYS_GetCValue(src_palette[0]), FXSYS_GetMValue(src_palette[0]),
-        FXSYS_GetYValue(src_palette[0]), FXSYS_GetKValue(src_palette[0]));
-    std::tie(bgr_ptr[5], bgr_ptr[4], bgr_ptr[3]) = AdobeCMYK_to_sRGB1(
-        FXSYS_GetCValue(src_palette[1]), FXSYS_GetMValue(src_palette[1]),
-        FXSYS_GetYValue(src_palette[1]), FXSYS_GetKValue(src_palette[1]));
-  }
+  bgr_ptr[0] = FXARGB_B(src_palette[0]);
+  bgr_ptr[1] = FXARGB_G(src_palette[0]);
+  bgr_ptr[2] = FXARGB_R(src_palette[0]);
+  bgr_ptr[3] = FXARGB_B(src_palette[1]);
+  bgr_ptr[4] = FXARGB_G(src_palette[1]);
+  bgr_ptr[5] = FXARGB_R(src_palette[1]);
 
   for (int row = 0; row < height; ++row) {
     uint8_t* dest_scan = dest_buf + row * dest_pitch;
@@ -471,24 +398,12 @@ void ConvertBuffer_8bppPlt2Rgb(FXDIB_Format dest_format,
   pdfium::span<const uint32_t> src_palette = pSrcBitmap->GetPaletteSpan();
   uint32_t plt[256];
   uint8_t* bgr_ptr = reinterpret_cast<uint8_t*>(plt);
-  if (!pSrcBitmap->IsCmykImage()) {
-    for (int i = 0; i < 256; ++i) {
-      *bgr_ptr++ = FXARGB_B(src_palette[i]);
-      *bgr_ptr++ = FXARGB_G(src_palette[i]);
-      *bgr_ptr++ = FXARGB_R(src_palette[i]);
-    }
-    bgr_ptr = reinterpret_cast<uint8_t*>(plt);
+  for (int i = 0; i < 256; ++i) {
+    *bgr_ptr++ = FXARGB_B(src_palette[i]);
+    *bgr_ptr++ = FXARGB_G(src_palette[i]);
+    *bgr_ptr++ = FXARGB_R(src_palette[i]);
   }
-
-  if (pSrcBitmap->IsCmykImage()) {
-    for (int i = 0; i < 256; ++i) {
-      std::tie(bgr_ptr[2], bgr_ptr[1], bgr_ptr[0]) = AdobeCMYK_to_sRGB1(
-          FXSYS_GetCValue(src_palette[i]), FXSYS_GetMValue(src_palette[i]),
-          FXSYS_GetYValue(src_palette[i]), FXSYS_GetKValue(src_palette[i]));
-      bgr_ptr += 3;
-    }
-    bgr_ptr = reinterpret_cast<uint8_t*>(plt);
-  }
+  bgr_ptr = reinterpret_cast<uint8_t*>(plt);
 
   for (int row = 0; row < height; ++row) {
     uint8_t* dest_scan = dest_buf + row * dest_pitch;
@@ -551,26 +466,6 @@ void ConvertBuffer_Rgb2Rgb32(uint8_t* dest_buf,
       memcpy(dest_scan, src_scan, 3);
       dest_scan += 4;
       src_scan += comps;
-    }
-  }
-}
-
-void ConvertBuffer_32bppCmyk2Rgb32(uint8_t* dest_buf,
-                                   int dest_pitch,
-                                   int width,
-                                   int height,
-                                   const RetainPtr<CFX_DIBBase>& pSrcBitmap,
-                                   int src_left,
-                                   int src_top) {
-  for (int row = 0; row < height; ++row) {
-    uint8_t* dest_scan = dest_buf + row * dest_pitch;
-    const uint8_t* src_scan =
-        pSrcBitmap->GetScanline(src_top + row) + src_left * 4;
-    for (int col = 0; col < width; ++col) {
-      std::tie(dest_scan[2], dest_scan[1], dest_scan[0]) = AdobeCMYK_to_sRGB1(
-          src_scan[0], src_scan[1], src_scan[2], src_scan[3]);
-      dest_scan += 4;
-      src_scan += 4;
     }
   }
 }
@@ -654,7 +549,6 @@ bool ConvertBuffer_Rgb(int bpp,
 }
 
 bool ConvertBuffer_Argb(int bpp,
-                        bool cmyk,
                         FXDIB_Format dest_format,
                         uint8_t* dest_buf,
                         int dest_pitch,
@@ -684,13 +578,8 @@ bool ConvertBuffer_Argb(int bpp,
       return true;
     case 24:
     case 32:
-      if (cmyk) {
-        ConvertBuffer_32bppCmyk2Rgb32(dest_buf, dest_pitch, width, height,
-                                      pSrcBitmap, src_left, src_top);
-      } else {
-        ConvertBuffer_Rgb2Rgb32(dest_buf, dest_pitch, width, height, pSrcBitmap,
-                                src_left, src_top);
-      }
+      ConvertBuffer_Rgb2Rgb32(dest_buf, dest_pitch, width, height, pSrcBitmap,
+                              src_left, src_top);
       return true;
     default:
       return false;
@@ -758,19 +647,11 @@ void CFX_DIBBase::BuildPalette() {
     return;
 
   if (GetBPP() == 1) {
-    if (IsCmykImage())
-      m_palette = {0xff, 0x00};
-    else
-      m_palette = {0xff000000, 0xffffffff};
+    m_palette = {0xff000000, 0xffffffff};
   } else if (GetBPP() == 8) {
     m_palette.resize(256);
-    if (IsCmykImage()) {
-      for (int i = 0; i < 256; ++i)
-        m_palette[i] = 0xff - i;
-    } else {
-      for (int i = 0; i < 256; ++i)
-        m_palette[i] = 0xff000000 | (i * 0x10101);
-    }
+    for (int i = 0; i < 256; ++i)
+      m_palette[i] = 0xff000000 | (i * 0x10101);
   }
 }
 
@@ -807,12 +688,6 @@ uint32_t CFX_DIBBase::GetPaletteArgb(int index) const {
   if (HasPalette())
     return GetPaletteSpan()[index];
 
-  if (IsCmykImage()) {
-    if (GetBPP() == 1)
-      return index ? 0 : 0xff;
-
-    return 0xff - index;
-  }
   if (GetBPP() == 1)
     return index ? 0xffffffff : 0xff000000;
 
@@ -835,12 +710,6 @@ int CFX_DIBBase::FindPalette(uint32_t color) const {
         return i;
     }
     return -1;
-  }
-
-  if (IsCmykImage()) {
-    if (GetBPP() == 1)
-      return (static_cast<uint8_t>(color) == 0xff) ? 0 : 1;
-    return 0xff - static_cast<uint8_t>(color);
   }
 
   if (GetBPP() == 1)
@@ -958,7 +827,6 @@ void CFX_DIBBase::SetPalette(pdfium::span<const uint32_t> src_palette) {
 
 void CFX_DIBBase::GetPalette(uint32_t* pal, int alpha) const {
   ASSERT(GetBPP() <= 8);
-  ASSERT(!IsCmykImage());
 
   if (GetBPP() == 1) {
     pal[0] = ((HasPalette() ? GetPaletteSpan()[0] : 0xff000000) & 0xffffff) |
@@ -1307,8 +1175,7 @@ bool CFX_DIBBase::ConvertBuffer(
     }
     case FXDIB_Format::kArgb:
     case FXDIB_Format::kRgb32: {
-      return ConvertBuffer_Argb(bpp, GetIsCmykFromFormat(src_format),
-                                dest_format, dest_buf, dest_pitch, width,
+      return ConvertBuffer_Argb(bpp, dest_format, dest_buf, dest_pitch, width,
                                 height, pSrcBitmap, src_left, src_top);
     }
     default:

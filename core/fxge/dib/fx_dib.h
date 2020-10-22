@@ -24,8 +24,6 @@ enum class FXDIB_Format : uint16_t {
   k8bppRgba = 0x208,
   kRgba = 0x218,
   kArgb = 0x220,
-  kCmyk = 0x420,
-  kCmyka = 0x620,
 };
 
 struct PixelWeight {
@@ -119,16 +117,11 @@ inline bool GetIsAlphaFromFormat(FXDIB_Format format) {
   return !!(static_cast<uint16_t>(format) & 0x200);
 }
 
-inline bool GetIsCmykFromFormat(FXDIB_Format format) {
-  return false;
-}
-
 inline bool HasNoFlags(FXDIB_Format format) {
-  return (static_cast<uint16_t>(format) & 0x700) == 0;
+  return (static_cast<uint16_t>(format) & 0x300) == 0;
 }
 
 FXDIB_Format MakeRGBFormat(int bpp);
-FXDIB_Format AddAlphaToCmykFormat(FXDIB_Format format);
 
 inline FX_CMYK CmykEncode(int c, int m, int y, int k) {
   return (c << 24) | (m << 16) | (y << 8) | k;

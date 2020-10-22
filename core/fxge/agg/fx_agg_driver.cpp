@@ -823,8 +823,6 @@ CFX_Renderer::CFX_Renderer(const RetainPtr<CFX_DIBitmap>& pDevice,
       m_pDevice(pDevice),
       m_pClipRgn(pClipRgn),
       m_CompositeSpanFunc(GetCompositeSpanFunc(m_pDevice)) {
-  DCHECK(!m_pDevice->IsCmykImage());
-
   if (m_pDevice->GetBPP() == 8) {
     ASSERT(!m_bRgbByteOrder);
     if (m_pDevice->IsMask())
@@ -1022,7 +1020,6 @@ CFX_AggDeviceDriver::CFX_AggDeviceDriver(
       m_bGroupKnockout(bGroupKnockout),
       m_pBackdropBitmap(pBackdropBitmap) {
   DCHECK(m_pBitmap);
-  DCHECK(!m_pBitmap->IsCmykImage());
   InitPlatform();
 }
 

@@ -159,9 +159,8 @@ void CFX_DIBitmap::Clear(uint32_t color) {
     }
     case FXDIB_Format::kRgb32:
     case FXDIB_Format::kArgb: {
-      color = IsCmykImage() ? FXCMYK_TODIB(color) : color;
 #if defined(_SKIA_SUPPORT_)
-      if (FXDIB_Format::kRgb32 == GetFormat() && !IsCmykImage())
+      if (FXDIB_Format::kRgb32 == GetFormat())
         color |= 0xFF000000;
 #endif
       for (int i = 0; i < m_Width; i++)
@@ -512,11 +511,6 @@ bool CFX_DIBitmap::MultiplyAlpha(int alpha) {
     default:
       if (HasAlpha()) {
         m_pAlphaMask->MultiplyAlpha(alpha);
-      } else if (IsCmykImage()) {
-        if (!ConvertFormat(AddAlphaToCmykFormat(GetFormat()))) {
-          return false;
-        }
-        m_pAlphaMask->MultiplyAlpha(alpha);
       } else {
         if (!ConvertFormat(FXDIB_Format::kArgb)) {
           return false;
@@ -671,20 +665,11 @@ void CFX_DIBitmap::DownSampleScanline(int line,
       src_x %= m_Width;
       int dest_pos = i;
       if (HasPalette()) {
-        if (!IsCmykImage()) {
-          dest_pos *= 3;
-          FX_ARGB argb = palette[scanline[src_x]];
-          dest_scan[dest_pos] = FXARGB_B(argb);
-          dest_scan[dest_pos + 1] = FXARGB_G(argb);
-          dest_scan[dest_pos + 2] = FXARGB_R(argb);
-        } else {
-          dest_pos *= 4;
-          FX_CMYK cmyk = palette[scanline[src_x]];
-          dest_scan[dest_pos] = FXSYS_GetCValue(cmyk);
-          dest_scan[dest_pos + 1] = FXSYS_GetMValue(cmyk);
-          dest_scan[dest_pos + 2] = FXSYS_GetYValue(cmyk);
-          dest_scan[dest_pos + 3] = FXSYS_GetKValue(cmyk);
-        }
+        dest_pos *= 3;
+        FX_ARGB argb = palette[scanline[src_x]];
+        dest_scan[dest_pos] = FXARGB_B(argb);
+        dest_scan[dest_pos + 1] = FXARGB_G(argb);
+        dest_scan[dest_pos + 2] = FXARGB_R(argb);
       } else {
         dest_scan[dest_pos] = scanline[src_x];
       }
@@ -754,78 +739,11 @@ void CFX_DIBitmap::ConvertBGRColorScale(uint32_t forecolor,
   }
 }
 
-void CFX_DIBitmap::ConvertCMYKColorScale(uint32_t forecolor,
-                                         uint32_t backcolor) {
-  int fc = FXSYS_GetCValue(forecolor);
-  int fm = FXSYS_GetMValue(forecolor);
-  int fy = FXSYS_GetYValue(forecolor);
-  int fk = FXSYS_GetKValue(forecolor);
-  int bc = FXSYS_GetCValue(backcolor);
-  int bm = FXSYS_GetMValue(backcolor);
-  int by = FXSYS_GetYValue(backcolor);
-  int bk = FXSYS_GetKValue(backcolor);
-  if (GetBppFromFormat(m_Format) <= 8) {
-    if (forecolor == 0xff && backcolor == 0 && !HasPalette())
-      return;
-
-    BuildPalette();
-    int size = 1 << GetBppFromFormat(m_Format);
-    for (int i = 0; i < size; ++i) {
-      uint8_t r;
-      uint8_t g;
-      uint8_t b;
-      std::tie(r, g, b) = AdobeCMYK_to_sRGB1(
-          FXSYS_GetCValue(m_palette[i]), FXSYS_GetMValue(m_palette[i]),
-          FXSYS_GetYValue(m_palette[i]), FXSYS_GetKValue(m_palette[i]));
-      int gray = 255 - FXRGB2GRAY(r, g, b);
-      m_palette[i] =
-          CmykEncode(bc + (fc - bc) * gray / 255, bm + (fm - bm) * gray / 255,
-                     by + (fy - by) * gray / 255, bk + (fk - bk) * gray / 255);
-    }
-    return;
-  }
-  if (forecolor == 0xff && backcolor == 0x00) {
-    for (int row = 0; row < m_Height; ++row) {
-      uint8_t* scanline = m_pBuffer.Get() + row * m_Pitch;
-      for (int col = 0; col < m_Width; ++col) {
-        uint8_t r;
-        uint8_t g;
-        uint8_t b;
-        std::tie(r, g, b) = AdobeCMYK_to_sRGB1(scanline[0], scanline[1],
-                                               scanline[2], scanline[3]);
-        *scanline++ = 0;
-        *scanline++ = 0;
-        *scanline++ = 0;
-        *scanline++ = 255 - FXRGB2GRAY(r, g, b);
-      }
-    }
-    return;
-  }
-  for (int row = 0; row < m_Height; ++row) {
-    uint8_t* scanline = m_pBuffer.Get() + row * m_Pitch;
-    for (int col = 0; col < m_Width; ++col) {
-      uint8_t r;
-      uint8_t g;
-      uint8_t b;
-      std::tie(r, g, b) = AdobeCMYK_to_sRGB1(scanline[0], scanline[1],
-                                             scanline[2], scanline[3]);
-      int gray = 255 - FXRGB2GRAY(r, g, b);
-      *scanline++ = bc + (fc - bc) * gray / 255;
-      *scanline++ = bm + (fm - bm) * gray / 255;
-      *scanline++ = by + (fy - by) * gray / 255;
-      *scanline++ = bk + (fk - bk) * gray / 255;
-    }
-  }
-}
-
 bool CFX_DIBitmap::ConvertColorScale(uint32_t forecolor, uint32_t backcolor) {
   if (!m_pBuffer || IsMask())
     return false;
 
-  if (IsCmykImage())
-    ConvertCMYKColorScale(forecolor, backcolor);
-  else
-    ConvertBGRColorScale(forecolor, backcolor);
+  ConvertBGRColorScale(forecolor, backcolor);
   return true;
 }
 
@@ -907,7 +825,7 @@ bool CFX_DIBitmap::CompositeBitmap(int dest_left,
   }
   const int dest_Bpp = GetBppFromFormat(m_Format) / 8;
   const int src_Bpp = pSrcBitmap->GetBPP() / 8;
-  const bool bRgb = src_Bpp > 1 && !pSrcBitmap->IsCmykImage();
+  const bool bRgb = src_Bpp > 1;
   if (!bRgb && !pSrcBitmap->HasPalette())
     return false;
 
@@ -1052,9 +970,6 @@ bool CFX_DIBitmap::CompositeRect(int left,
       } else {
         gray = (uint8_t)FXRGB2GRAY((int)color_p[2], color_p[1], color_p[0]);
       }
-      if (IsCmykImage()) {
-        gray = ~gray;
-      }
     }
     for (int row = rect.top; row < rect.bottom; row++) {
       uint8_t* dest_scan = m_pBuffer.Get() + row * m_Pitch + rect.left;
@@ -1070,7 +985,6 @@ bool CFX_DIBitmap::CompositeRect(int left,
     return true;
   }
   if (GetBppFromFormat(m_Format) == 1) {
-    ASSERT(!IsCmykImage());
     ASSERT(static_cast<uint8_t>(alpha_flag >> 8) == 0);
 
     int left_shift = rect.left % 8;
@@ -1115,16 +1029,12 @@ bool CFX_DIBitmap::CompositeRect(int left,
     return false;
   }
 
-  if (!(alpha_flag >> 8) && IsCmykImage())
-    return false;
-
-  if (alpha_flag >> 8 && !IsCmykImage()) {
+  if (alpha_flag >> 8) {
     std::tie(color_p[2], color_p[1], color_p[0]) =
         AdobeCMYK_to_sRGB1(FXSYS_GetCValue(color), FXSYS_GetMValue(color),
                            FXSYS_GetYValue(color), FXSYS_GetKValue(color));
   }
-  if (!IsCmykImage())
-    color_p[3] = static_cast<uint8_t>(src_alpha);
+  color_p[3] = static_cast<uint8_t>(src_alpha);
   int Bpp = GetBppFromFormat(m_Format) / 8;
   bool bAlpha = HasAlpha();
   bool bArgb = GetFormat() == FXDIB_Format::kArgb;
