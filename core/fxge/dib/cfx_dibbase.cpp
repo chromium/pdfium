@@ -982,10 +982,9 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::CloneConvert(FXDIB_Format dest_format) {
   if (GetIsAlphaFromFormat(dest_format)) {
     bool ret;
     if (dest_format == FXDIB_Format::kArgb) {
-      ret = pSrcAlpha
-                ? pClone->LoadChannelFromAlpha(CFX_DIBitmap::Channel::kAlpha,
-                                               pSrcAlpha)
-                : pClone->LoadChannel(CFX_DIBitmap::Channel::kAlpha, 0xff);
+      ret = pSrcAlpha ? pClone->LoadChannelFromAlpha(
+                            CFX_DIBitmap::Channel::kAlpha, pSrcAlpha)
+                      : pClone->SetUniformOpaqueAlpha();
     } else {
       ret = pClone->SetAlphaMask(pSrcAlpha, nullptr);
     }

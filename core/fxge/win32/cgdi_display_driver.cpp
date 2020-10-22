@@ -62,8 +62,8 @@ bool CGdiDisplayDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
       ret = false;
     }
   }
-  if (pBitmap->HasAlpha() && ret)
-    pBitmap->LoadChannel(CFX_DIBitmap::Channel::kAlpha, 0xff);
+  if (ret && pBitmap->HasAlpha())
+    pBitmap->SetUniformOpaqueAlpha();
 
   DeleteObject(hbmp);
   DeleteObject(hDCMemory);

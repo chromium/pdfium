@@ -358,59 +358,32 @@ bool CFX_DIBitmap::LoadChannelFromAlpha(
   return true;
 }
 
-bool CFX_DIBitmap::LoadChannel(Channel destChannel, int value) {
+bool CFX_DIBitmap::SetUniformOpaqueAlpha() {
   if (!m_pBuffer)
     return false;
 
-  int destOffset;
-  if (destChannel == CFX_DIBitmap::Channel::kAlpha) {
-    if (IsMask()) {
-      if (!ConvertFormat(FXDIB_Format::k8bppMask)) {
-        return false;
-      }
-      destOffset = 0;
-    } else {
-      destOffset = 0;
-      if (!ConvertFormat(FXDIB_Format::kArgb))
-        return false;
-
-      if (GetFormat() == FXDIB_Format::kArgb)
-        destOffset = 3;
-    }
-  } else {
-    if (IsMask()) {
+  if (IsMask()) {
+    if (!ConvertFormat(FXDIB_Format::k8bppMask))
       return false;
-    }
-    if (GetBPP() < 24) {
-      if (HasAlpha()) {
-        if (!ConvertFormat(FXDIB_Format::kArgb))
-          return false;
-      } else {
-#if defined(OS_APPLE)
-        constexpr FXDIB_Format kPlatformFormat = FXDIB_Format::kRgb;
-#else
-        constexpr FXDIB_Format kPlatformFormat = FXDIB_Format::kRgb32;
-#endif
-        if (!ConvertFormat(kPlatformFormat))
-          return false;
-      }
-    }
-    destOffset = kChannelOffset[static_cast<size_t>(destChannel)];
+  } else {
+    if (!ConvertFormat(FXDIB_Format::kArgb))
+      return false;
   }
-  int Bpp = GetBPP() / 8;
+  const int Bpp = GetBPP() / 8;
   if (Bpp == 1) {
-    memset(m_pBuffer.Get(), value, m_Height * m_Pitch);
+    memset(m_pBuffer.Get(), 0xff, m_Height * m_Pitch);
     return true;
   }
-  if (destChannel == CFX_DIBitmap::Channel::kAlpha && m_pAlphaMask) {
-    memset(m_pAlphaMask->GetBuffer(), value,
+  if (m_pAlphaMask) {
+    memset(m_pAlphaMask->GetBuffer(), 0xff,
            m_pAlphaMask->GetHeight() * m_pAlphaMask->GetPitch());
     return true;
   }
+  const int destOffset = GetFormat() == FXDIB_Format::kArgb ? 3 : 0;
   for (int row = 0; row < m_Height; row++) {
     uint8_t* scan_line = m_pBuffer.Get() + row * m_Pitch + destOffset;
     for (int col = 0; col < m_Width; col++) {
-      *scan_line = value;
+      *scan_line = 0xff;
       scan_line += Bpp;
     }
   }
