@@ -22,6 +22,13 @@ class PauseIndicatorIface;
 // Base class for all Device-Independent Bitmaps.
 class CFX_DIBBase : public Retainable {
  public:
+#if defined(OS_APPLE)
+  // Matches Apple's kCGBitmapByteOrder32Little in fx_quartz_device.cpp.
+  static constexpr FXDIB_Format kPlatformRGBFormat = FXDIB_Format::kRgb32;
+#else   // defined(OS_APPLE)
+  static constexpr FXDIB_Format kPlatformRGBFormat = FXDIB_Format::kRgb;
+#endif  // defined(OS_APPLE)
+
   ~CFX_DIBBase() override;
 
   virtual uint8_t* GetBuffer() const;

@@ -300,12 +300,7 @@ bool CFX_DIBitmap::SetChannelFromBitmap(
         if (!ConvertFormat(FXDIB_Format::kArgb))
           return false;
       } else {
-#if defined(OS_APPLE)
-        constexpr FXDIB_Format kPlatformFormat = FXDIB_Format::kRgb32;
-#else
-        constexpr FXDIB_Format kPlatformFormat = FXDIB_Format::kRgb;
-#endif
-        if (!ConvertFormat(kPlatformFormat))
+        if (!ConvertFormat(kPlatformRGBFormat))
           return false;
       }
     }

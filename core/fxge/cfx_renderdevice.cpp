@@ -392,14 +392,14 @@ bool CFX_RenderDevice::CreateCompatibleBitmap(
     int height) const {
   if (m_RenderCaps & FXRC_BYTEMASK_OUTPUT)
     return pDIB->Create(width, height, FXDIB_Format::k8bppMask);
-#if defined(OS_APPLE) || defined(_SKIA_SUPPORT_PATHS_)
-  constexpr FXDIB_Format kPlatformFormat = FXDIB_Format::kRgb32;
+#if defined(_SKIA_SUPPORT_PATHS_)
+  constexpr FXDIB_Format kFormat = FXDIB_Format::kRgb32;
 #else
-  constexpr FXDIB_Format kPlatformFormat = FXDIB_Format::kRgb;
+  constexpr FXDIB_Format kFormat = CFX_DIBBase::kPlatformRGBFormat;
 #endif
   return pDIB->Create(
       width, height,
-      m_RenderCaps & FXRC_ALPHA_OUTPUT ? FXDIB_Format::kArgb : kPlatformFormat);
+      m_RenderCaps & FXRC_ALPHA_OUTPUT ? FXDIB_Format::kArgb : kFormat);
 }
 
 void CFX_RenderDevice::SetBaseClip(const FX_RECT& rect) {
