@@ -88,12 +88,6 @@ class ProgressiveDecoder :
 
   FXCODEC_STATUS ContinueDecode();
 
-  struct PixelWeight {
-    int m_SrcStart;
-    int m_SrcEnd;
-    int m_Weights[1];
-  };
-
   class CFXCODEC_WeightTable {
    public:
     CFXCODEC_WeightTable();
