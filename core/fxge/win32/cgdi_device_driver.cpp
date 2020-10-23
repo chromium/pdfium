@@ -6,6 +6,8 @@
 
 #include "core/fxge/win32/cgdi_device_driver.h"
 
+#include <windows.h>
+
 #include <algorithm>
 #include <vector>
 
@@ -13,8 +15,8 @@
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/render_defines.h"
-#include "core/fxge/win32/cfx_windowsdib.h"
 #include "core/fxge/win32/cwin32_platform.h"
 #include "third_party/base/notreached.h"
 
@@ -147,6 +149,51 @@ void SetPathToDC(HDC hDC,
       CloseFigure(hDC);
   }
   EndPath(hDC);
+}
+
+ByteString GetBitmapInfo(const RetainPtr<CFX_DIBitmap>& pBitmap) {
+  int len = sizeof(BITMAPINFOHEADER);
+  if (pBitmap->GetBPP() == 1 || pBitmap->GetBPP() == 8)
+    len += sizeof(DWORD) * (int)(1 << pBitmap->GetBPP());
+
+  ByteString result;
+  {
+    // Span's lifetime must end before ReleaseBuffer() below.
+    pdfium::span<char> cspan = result.GetBuffer(len);
+    BITMAPINFOHEADER* pbmih = reinterpret_cast<BITMAPINFOHEADER*>(cspan.data());
+    memset(pbmih, 0, sizeof(BITMAPINFOHEADER));
+    pbmih->biSize = sizeof(BITMAPINFOHEADER);
+    pbmih->biBitCount = pBitmap->GetBPP();
+    pbmih->biCompression = BI_RGB;
+    pbmih->biHeight = -(int)pBitmap->GetHeight();
+    pbmih->biPlanes = 1;
+    pbmih->biWidth = pBitmap->GetWidth();
+    if (pBitmap->GetBPP() == 8) {
+      uint32_t* pPalette = (uint32_t*)(pbmih + 1);
+      if (pBitmap->HasPalette()) {
+        pdfium::span<const uint32_t> palette = pBitmap->GetPaletteSpan();
+        for (int i = 0; i < 256; i++) {
+          pPalette[i] = palette[i];
+        }
+      } else {
+        for (int i = 0; i < 256; i++) {
+          pPalette[i] = i * 0x010101;
+        }
+      }
+    }
+    if (pBitmap->GetBPP() == 1) {
+      uint32_t* pPalette = (uint32_t*)(pbmih + 1);
+      if (pBitmap->HasPalette()) {
+        pPalette[0] = pBitmap->GetPaletteSpan()[0];
+        pPalette[1] = pBitmap->GetPaletteSpan()[1];
+      } else {
+        pPalette[0] = 0;
+        pPalette[1] = 0xffffff;
+      }
+    }
+  }
+  result.ReleaseBuffer(len);
+  return result;
 }
 
 #if defined(_SKIA_SUPPORT_)
@@ -327,7 +374,7 @@ bool CGdiDeviceDriver::GDI_SetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap1,
       return false;
 
     LPBYTE pBuffer = pBitmap->GetBuffer();
-    ByteString info = CFX_WindowsDIB::GetBitmapInfo(pBitmap);
+    ByteString info = GetBitmapInfo(pBitmap);
     ((BITMAPINFOHEADER*)info.c_str())->biHeight *= -1;
     FX_RECT dst_rect(0, 0, src_rect.Width(), src_rect.Height());
     dst_rect.Intersect(0, 0, pBitmap->GetWidth(), pBitmap->GetHeight());
@@ -341,7 +388,7 @@ bool CGdiDeviceDriver::GDI_SetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap1,
 
   RetainPtr<CFX_DIBitmap> pBitmap = pBitmap1;
   LPBYTE pBuffer = pBitmap->GetBuffer();
-  ByteString info = CFX_WindowsDIB::GetBitmapInfo(pBitmap);
+  ByteString info = GetBitmapInfo(pBitmap);
   ::SetDIBitsToDevice(m_hDC, left, top, src_rect.Width(), src_rect.Height(),
                       src_rect.left, pBitmap->GetHeight() - src_rect.bottom, 0,
                       pBitmap->GetHeight(), pBuffer, (BITMAPINFO*)info.c_str(),
@@ -360,7 +407,7 @@ bool CGdiDeviceDriver::GDI_StretchDIBits(
   if (!pBitmap || dest_width == 0 || dest_height == 0)
     return false;
 
-  ByteString info = CFX_WindowsDIB::GetBitmapInfo(pBitmap);
+  ByteString info = GetBitmapInfo(pBitmap);
   if ((int64_t)abs(dest_width) * abs(dest_height) <
           (int64_t)pBitmap1->GetWidth() * pBitmap1->GetHeight() * 4 ||
       options.bInterpolateBilinear) {
@@ -375,8 +422,7 @@ bool CGdiDeviceDriver::GDI_StretchDIBits(
     pToStrechBitmap = pBitmap->StretchTo(dest_width, dest_height,
                                          FXDIB_ResampleOptions(), nullptr);
   }
-  ByteString toStrechBitmapInfo =
-      CFX_WindowsDIB::GetBitmapInfo(pToStrechBitmap);
+  ByteString toStrechBitmapInfo = GetBitmapInfo(pToStrechBitmap);
   ::StretchDIBits(m_hDC, dest_left, dest_top, dest_width, dest_height, 0, 0,
                   pToStrechBitmap->GetWidth(), pToStrechBitmap->GetHeight(),
                   pToStrechBitmap->GetBuffer(),

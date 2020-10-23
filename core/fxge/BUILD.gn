@@ -183,8 +183,6 @@ source_set("fxge") {
       "dib/cfx_dibextractor.h",
       "win32/cfx_psrenderer.cpp",
       "win32/cfx_psrenderer.h",
-      "win32/cfx_windowsdib.cpp",
-      "win32/cfx_windowsdib.h",
       "win32/cgdi_device_driver.cpp",
       "win32/cgdi_device_driver.h",
       "win32/cgdi_display_driver.cpp",
