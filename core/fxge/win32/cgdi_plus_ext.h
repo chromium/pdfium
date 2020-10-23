@@ -21,7 +21,6 @@ class CFX_PathData;
 struct CFX_FillRenderOptions;
 struct FXDIB_ResampleOptions;
 struct FX_RECT;
-struct WINDIB_Open_Args_;
 
 class CGdiplusExt {
  public:
@@ -45,8 +44,6 @@ class CGdiplusExt {
                 uint32_t fill_argb,
                 uint32_t stroke_argb,
                 const CFX_FillRenderOptions& fill_options);
-
-  RetainPtr<CFX_DIBitmap> LoadDIBitmap(WINDIB_Open_Args_ args);
 
   std::vector<FARPROC> m_Functions;
 

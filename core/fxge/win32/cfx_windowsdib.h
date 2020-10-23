@@ -7,45 +7,16 @@
 #ifndef CORE_FXGE_WIN32_CFX_WINDOWSDIB_H_
 #define CORE_FXGE_WIN32_CFX_WINDOWSDIB_H_
 
-#include <windows.h>
-
 #include "core/fxcrt/bytestring.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 
-#define WINDIB_OPEN_MEMORY 0x1
-#define WINDIB_OPEN_PATHNAME 0x2
-
-struct WINDIB_Open_Args_ {
-  int flags;
-  const uint8_t* memory_base;
-  size_t memory_size;
-  const wchar_t* path_name;
-};
-
-class CFX_WindowsDIB final : public CFX_DIBitmap {
+class CFX_WindowsDIB {
  public:
-  CONSTRUCT_VIA_MAKE_RETAIN;
-
   static ByteString GetBitmapInfo(const RetainPtr<CFX_DIBitmap>& pBitmap);
-  static HBITMAP GetDDBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap, HDC hDC);
 
-  static RetainPtr<CFX_DIBitmap> LoadFromBuf(BITMAPINFO* pbmi, void* pData);
-  static RetainPtr<CFX_DIBitmap> LoadFromFile(const wchar_t* filename);
-  static RetainPtr<CFX_DIBitmap> LoadFromFile(const char* filename);
-  static RetainPtr<CFX_DIBitmap> LoadDIBitmap(WINDIB_Open_Args_ args);
-
-  HBITMAP GetWindowsBitmap() const { return m_hBitmap; }
-
-  void LoadFromDevice(HDC hDC, int left, int top);
-  void SetToDevice(HDC hDC, int left, int top);
-
- private:
-  CFX_WindowsDIB(HDC hDC, int width, int height);
-  ~CFX_WindowsDIB() override;
-
-  HDC m_hMemDC;
-  HBITMAP m_hBitmap;
-  HBITMAP m_hOldBitmap;
+  CFX_WindowsDIB() = delete;
+  CFX_WindowsDIB(const CFX_WindowsDIB&) = delete;
+  CFX_WindowsDIB& operator=(const CFX_WindowsDIB&) = delete;
 };
 
 #endif  // CORE_FXGE_WIN32_CFX_WINDOWSDIB_H_
