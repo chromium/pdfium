@@ -60,10 +60,10 @@ class CFX_ImageTransformer {
   void ContinueRotate(PauseIndicatorIface* pPause);
   void ContinueOther(PauseIndicatorIface* pPause);
 
-  void CalcMask(const CalcData& cdata);
-  void CalcAlpha(const CalcData& cdata);
-  void CalcMono(const CalcData& cdata);
-  void CalcColor(const CalcData& cdata, FXDIB_Format format, int Bpp);
+  void CalcMask(const CalcData& calc_data);
+  void CalcAlpha(const CalcData& calc_data);
+  void CalcMono(const CalcData& calc_data);
+  void CalcColor(const CalcData& calc_data, FXDIB_Format format, int Bpp);
 
   RetainPtr<CFX_DIBBase> const m_pSrc;
   const CFX_Matrix m_matrix;
