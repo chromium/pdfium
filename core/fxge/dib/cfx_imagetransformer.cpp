@@ -48,31 +48,6 @@ uint8_t bilinear_interpol(const uint8_t* buf,
   return (r_pos_0 * (255 - res_y) + r_pos_1 * res_y) >> 8;
 }
 
-
-// Let the compiler deduce the type for |func|, which cheaper than specifying it
-// with std::function.
-template <typename F>
-void WriteColorResult(const F& func,
-                      bool bHasAlpha,
-                      FXDIB_Format format,
-                      uint8_t* dest) {
-  uint8_t blue_c = func(0);
-  uint8_t green_m = func(1);
-  uint8_t red_y = func(2);
-
-  uint32_t* dest32 = reinterpret_cast<uint32_t*>(dest);
-  if (bHasAlpha) {
-    if (format == FXDIB_Format::kArgb) {
-      *dest32 = ArgbEncode(func(3), red_y, green_m, blue_c);
-    } else {
-      *dest32 = FXCMYK_TODIB(CmykEncode(blue_c, green_m, red_y, func(3)));
-    }
-    return;
-  }
-
-  *dest32 = ArgbEncode(kOpaqueAlpha, red_y, green_m, blue_c);
-}
-
 class CPDF_FixedMatrix {
  public:
   explicit CPDF_FixedMatrix(const CFX_Matrix& src)
@@ -375,12 +350,29 @@ void CFX_ImageTransformer::CalcColor(const CalcData& cdata,
   int destBpp = cdata.bitmap->GetBPP() / 8;
   auto func = [&cdata, format, Bpp, bHasAlpha](const BilinearData& data,
                                                uint8_t* dest) {
-    auto bilinear_interpol_func = [&cdata, &data, Bpp](int offset) {
-      return bilinear_interpol(cdata.buf, data.row_offset_l, data.row_offset_r,
-                               data.src_col_l, data.src_col_r, data.res_x,
-                               data.res_y, Bpp, offset);
-    };
-    WriteColorResult(bilinear_interpol_func, bHasAlpha, format, dest);
+    uint8_t blue_c = bilinear_interpol(
+        cdata.buf, data.row_offset_l, data.row_offset_r, data.src_col_l,
+        data.src_col_r, data.res_x, data.res_y, Bpp, 0);
+    uint8_t green_m = bilinear_interpol(
+        cdata.buf, data.row_offset_l, data.row_offset_r, data.src_col_l,
+        data.src_col_r, data.res_x, data.res_y, Bpp, 1);
+    uint8_t red_y = bilinear_interpol(
+        cdata.buf, data.row_offset_l, data.row_offset_r, data.src_col_l,
+        data.src_col_r, data.res_x, data.res_y, Bpp, 2);
+
+    uint32_t* dest32 = reinterpret_cast<uint32_t*>(dest);
+    if (bHasAlpha) {
+      uint8_t alpha_k = bilinear_interpol(
+          cdata.buf, data.row_offset_l, data.row_offset_r, data.src_col_l,
+          data.src_col_r, data.res_x, data.res_y, Bpp, 3);
+      if (format == FXDIB_Format::kArgb) {
+        *dest32 = ArgbEncode(alpha_k, red_y, green_m, blue_c);
+      } else {
+        *dest32 = FXCMYK_TODIB(CmykEncode(blue_c, green_m, red_y, alpha_k));
+      }
+    } else {
+      *dest32 = ArgbEncode(kOpaqueAlpha, red_y, green_m, blue_c);
+    }
   };
   DoBilinearLoop(cdata, m_result, m_StretchClip, destBpp, func);
 }
