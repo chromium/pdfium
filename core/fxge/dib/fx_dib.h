@@ -36,15 +36,12 @@ using FX_CMYK = uint32_t;
 // FX_COLORREF, like win32 COLORREF, is BGR.
 using FX_COLORREF = uint32_t;
 
-extern const int16_t SDP_Table[513];
-
 struct FXDIB_ResampleOptions {
   FXDIB_ResampleOptions();
 
   bool HasAnyOptions() const;
 
   bool bInterpolateBilinear = false;
-  bool bInterpolateBicubic = false;
   bool bHalftone = false;
   bool bNoSmoothing = false;
   bool bLossy = false;

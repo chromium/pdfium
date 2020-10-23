@@ -18,8 +18,6 @@
 
 namespace {
 
-constexpr int kMaxDestValue = 16711680;
-
 int GetPitchRoundUpTo4Bytes(int bits_per_pixel) {
   return (bits_per_pixel + 31) / 32 * 4;
 }
@@ -43,17 +41,14 @@ bool CStretchEngine::CWeightTable::Calc(int dest_len,
                                         const FXDIB_ResampleOptions& options) {
   // Help the compiler realize that these can't change during a loop iteration:
   const bool bilinear = options.bInterpolateBilinear;
-  const bool bicubic = options.bInterpolateBicubic;
 
   m_WeightTables.clear();
   m_dwWeightTablesSize = 0;
   const double scale = static_cast<float>(src_len) / dest_len;
   const double base = dest_len < 0 ? src_len : 0;
-  const int ext_size = bicubic ? 3 : 1;
-  m_ItemSize =
-      sizeof(int) * 2 +
-      static_cast<int>(sizeof(int) *
-                       (ceil(fabs(static_cast<float>(scale))) + ext_size));
+  m_ItemSize = sizeof(int) * 2 +
+               static_cast<int>(sizeof(int) *
+                                (ceil(fabs(static_cast<float>(scale))) + 1));
 
   m_DestMin = dest_min;
   if (dest_max - dest_min > static_cast<int>((1U << 30) - 4) / m_ItemSize)
@@ -80,85 +75,6 @@ bool CStretchEngine::CWeightTable::Calc(int dest_len,
                                src_pos - pixel_weights.m_SrcStart - 1.0f / 2) *
                            65536);
           pixel_weights.m_Weights[0] = 65536 - pixel_weights.m_Weights[1];
-        }
-      } else if (bicubic) {
-        pixel_weights.m_SrcStart =
-            static_cast<int>(floor(static_cast<float>(src_pos) - 1.0f / 2));
-        pixel_weights.m_SrcEnd =
-            static_cast<int>(floor(static_cast<float>(src_pos) + 1.0f / 2));
-        int start = pixel_weights.m_SrcStart - 1;
-        int end = pixel_weights.m_SrcEnd + 1;
-        start = std::max(start, src_min);
-        end = std::min(end, src_max - 1);
-        if (pixel_weights.m_SrcStart < src_min) {
-          src_pos += src_min - pixel_weights.m_SrcStart;
-          pixel_weights.m_SrcStart = src_min;
-        }
-        pixel_weights.m_SrcEnd = std::min(pixel_weights.m_SrcEnd, src_max - 1);
-        int weight = FXSYS_roundf(
-            static_cast<float>(src_pos - pixel_weights.m_SrcStart - 1.0f / 2) *
-            256);
-        if (start == end) {
-          pixel_weights.m_Weights[0] =
-              (SDP_Table[256 + weight] + SDP_Table[weight] +
-               SDP_Table[256 - weight] + SDP_Table[512 - weight])
-              << 8;
-        } else if ((start == pixel_weights.m_SrcStart &&
-                    (pixel_weights.m_SrcStart == pixel_weights.m_SrcEnd ||
-                     end == pixel_weights.m_SrcEnd) &&
-                    start < end) ||
-                   (start < pixel_weights.m_SrcStart &&
-                    pixel_weights.m_SrcStart == pixel_weights.m_SrcEnd &&
-                    end == pixel_weights.m_SrcEnd)) {
-          if (start < pixel_weights.m_SrcStart) {
-            pixel_weights.m_Weights[0] = SDP_Table[256 + weight] << 8;
-            pixel_weights.m_Weights[1] =
-                (SDP_Table[weight] + SDP_Table[256 - weight] +
-                 SDP_Table[512 - weight])
-                << 8;
-          } else {
-            if (pixel_weights.m_SrcStart == pixel_weights.m_SrcEnd) {
-              pixel_weights.m_Weights[0] =
-                  (SDP_Table[256 + weight] + SDP_Table[weight] +
-                   SDP_Table[256 - weight])
-                  << 8;
-              pixel_weights.m_Weights[1] = SDP_Table[512 - weight] << 8;
-            } else {
-              pixel_weights.m_Weights[0] =
-                  (SDP_Table[256 + weight] + SDP_Table[weight]) << 8;
-              pixel_weights.m_Weights[1] =
-                  (SDP_Table[256 - weight] + SDP_Table[512 - weight]) << 8;
-            }
-          }
-          if (pixel_weights.m_SrcStart == pixel_weights.m_SrcEnd) {
-            pixel_weights.m_SrcEnd = end;
-          }
-          if (start < pixel_weights.m_SrcStart) {
-            pixel_weights.m_SrcStart = start;
-          }
-        } else if (start == pixel_weights.m_SrcStart &&
-                   start < pixel_weights.m_SrcEnd &&
-                   pixel_weights.m_SrcEnd < end) {
-          pixel_weights.m_Weights[0] =
-              (SDP_Table[256 + weight] + SDP_Table[weight]) << 8;
-          pixel_weights.m_Weights[1] = SDP_Table[256 - weight] << 8;
-          pixel_weights.m_Weights[2] = SDP_Table[512 - weight] << 8;
-          pixel_weights.m_SrcEnd = end;
-        } else if (start < pixel_weights.m_SrcStart &&
-                   pixel_weights.m_SrcStart < pixel_weights.m_SrcEnd &&
-                   pixel_weights.m_SrcEnd == end) {
-          pixel_weights.m_Weights[0] = SDP_Table[256 + weight] << 8;
-          pixel_weights.m_Weights[1] = SDP_Table[weight] << 8;
-          pixel_weights.m_Weights[2] =
-              (SDP_Table[256 - weight] + SDP_Table[512 - weight]) << 8;
-          pixel_weights.m_SrcStart = start;
-        } else {
-          pixel_weights.m_Weights[0] = SDP_Table[256 + weight] << 8;
-          pixel_weights.m_Weights[1] = SDP_Table[weight] << 8;
-          pixel_weights.m_Weights[2] = SDP_Table[256 - weight] << 8;
-          pixel_weights.m_Weights[3] = SDP_Table[512 - weight] << 8;
-          pixel_weights.m_SrcStart = start;
-          pixel_weights.m_SrcEnd = end;
         }
       } else {
         int pixel_pos = static_cast<int>(floor(static_cast<float>(src_pos)));
@@ -260,9 +176,7 @@ CStretchEngine::CStretchEngine(ScanlineComposerIface* pDestBitmap,
   if (options.bNoSmoothing) {
     m_ResampleOptions.bNoSmoothing = true;
   } else {
-    bool bInterpol =
-        options.bInterpolateBilinear || options.bInterpolateBicubic;
-    if (!bInterpol && abs(dest_width) != 0 &&
+    if (!options.bInterpolateBilinear && abs(dest_width) != 0 &&
         abs(dest_height) / 8 < static_cast<long long>(m_SrcWidth) *
                                    m_SrcHeight / abs(dest_width)) {
       m_ResampleOptions.bInterpolateBilinear = true;
@@ -354,9 +268,6 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
   if (m_pSource->SkipToScanline(m_CurRow, pPause))
     return true;
 
-  // Help the compiler realize that this can't change during a loop iteration:
-  const bool bicubic = m_ResampleOptions.bInterpolateBicubic;
-
   int Bpp = m_DestBpp / 8;
   static const int kStrechPauseRows = 10;
   int rows_to_go = kStrechPauseRows;
@@ -394,8 +305,6 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             if (src_scan[j / 8] & (1 << (7 - j % 8)))
               dest_a += pixel_weight * 255;
           }
-          if (bicubic)
-            dest_a = pdfium::clamp(dest_a, 0, kMaxDestValue);
           *dest_scan++ = static_cast<uint8_t>(dest_a >> 16);
         }
         break;
@@ -412,8 +321,6 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             int pixel_weight = *pWeight;
             dest_a += pixel_weight * src_scan[j];
           }
-          if (bicubic)
-            dest_a = pdfium::clamp(dest_a, 0, kMaxDestValue);
           *dest_scan++ = static_cast<uint8_t>(dest_a >> 16);
         }
         break;
@@ -432,10 +339,6 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             pixel_weight = pixel_weight * src_scan_mask[j] / 255;
             dest_r += pixel_weight * src_scan[j];
             dest_a += pixel_weight;
-          }
-          if (bicubic) {
-            dest_r = pdfium::clamp(dest_r, 0, kMaxDestValue);
-            dest_a = pdfium::clamp(dest_a, 0, 65536);
           }
           *dest_scan++ = static_cast<uint8_t>(dest_r >> 16);
           *dest_scan_mask++ = static_cast<uint8_t>((dest_a * 255) >> 16);
@@ -465,11 +368,6 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
               dest_r += pixel_weight * static_cast<uint8_t>(argb >> 8);
             }
           }
-          if (bicubic) {
-            dest_r = pdfium::clamp(dest_r, 0, kMaxDestValue);
-            dest_g = pdfium::clamp(dest_g, 0, kMaxDestValue);
-            dest_b = pdfium::clamp(dest_b, 0, kMaxDestValue);
-          }
           *dest_scan++ = static_cast<uint8_t>(dest_b >> 16);
           *dest_scan++ = static_cast<uint8_t>(dest_g >> 16);
           *dest_scan++ = static_cast<uint8_t>(dest_r >> 16);
@@ -496,12 +394,6 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             dest_r += pixel_weight * static_cast<uint8_t>(argb >> 8);
             dest_a += pixel_weight;
           }
-          if (bicubic) {
-            dest_b = pdfium::clamp(dest_b, 0, kMaxDestValue);
-            dest_g = pdfium::clamp(dest_g, 0, kMaxDestValue);
-            dest_r = pdfium::clamp(dest_r, 0, kMaxDestValue);
-            dest_a = pdfium::clamp(dest_a, 0, 65536);
-          }
           *dest_scan++ = static_cast<uint8_t>(dest_b >> 16);
           *dest_scan++ = static_cast<uint8_t>(dest_g >> 16);
           *dest_scan++ = static_cast<uint8_t>(dest_r >> 16);
@@ -525,11 +417,6 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             dest_b += pixel_weight * (*src_pixel++);
             dest_g += pixel_weight * (*src_pixel++);
             dest_r += pixel_weight * (*src_pixel);
-          }
-          if (bicubic) {
-            dest_b = pdfium::clamp(dest_b, 0, kMaxDestValue);
-            dest_g = pdfium::clamp(dest_g, 0, kMaxDestValue);
-            dest_r = pdfium::clamp(dest_r, 0, kMaxDestValue);
           }
           *dest_scan++ = static_cast<uint8_t>(dest_b >> 16);
           *dest_scan++ = static_cast<uint8_t>(dest_g >> 16);
@@ -562,12 +449,6 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             dest_r += pixel_weight * (*src_pixel);
             dest_a += pixel_weight;
           }
-          if (bicubic) {
-            dest_r = pdfium::clamp(dest_r, 0, kMaxDestValue);
-            dest_g = pdfium::clamp(dest_g, 0, kMaxDestValue);
-            dest_b = pdfium::clamp(dest_b, 0, kMaxDestValue);
-            dest_a = pdfium::clamp(dest_a, 0, 65536);
-          }
           *dest_scan++ = static_cast<uint8_t>(dest_b >> 16);
           *dest_scan++ = static_cast<uint8_t>(dest_g >> 16);
           *dest_scan++ = static_cast<uint8_t>(dest_r >> 16);
@@ -596,9 +477,6 @@ void CStretchEngine::StretchVert() {
   if (!ret)
     return;
 
-  // Help the compiler realize that this can't change during a loop iteration:
-  const bool bicubic = m_ResampleOptions.bInterpolateBicubic;
-
   const int DestBpp = m_DestBpp / 8;
   for (int row = m_DestClip.top; row < m_DestClip.bottom; ++row) {
     unsigned char* dest_scan = m_DestScanline.data();
@@ -621,8 +499,6 @@ void CStretchEngine::StretchVert() {
             dest_a +=
                 pixel_weight * src_scan[(j - m_SrcClip.top) * m_InterPitch];
           }
-          if (bicubic)
-            dest_a = pdfium::clamp(dest_a, 0, kMaxDestValue);
           *dest_scan = static_cast<uint8_t>(dest_a >> 16);
           dest_scan += DestBpp;
         }
@@ -646,10 +522,6 @@ void CStretchEngine::StretchVert() {
                 pixel_weight * src_scan[(j - m_SrcClip.top) * m_InterPitch];
             dest_a += pixel_weight *
                       src_scan_mask[(j - m_SrcClip.top) * m_ExtraMaskPitch];
-          }
-          if (bicubic) {
-            dest_k = pdfium::clamp(dest_k, 0, kMaxDestValue);
-            dest_a = pdfium::clamp(dest_a, 0, kMaxDestValue);
           }
           *dest_scan = static_cast<uint8_t>(dest_k >> 16);
           dest_scan += DestBpp;
@@ -676,11 +548,6 @@ void CStretchEngine::StretchVert() {
             dest_b += pixel_weight * (*src_pixel++);
             dest_g += pixel_weight * (*src_pixel++);
             dest_r += pixel_weight * (*src_pixel);
-          }
-          if (bicubic) {
-            dest_r = pdfium::clamp(dest_r, 0, kMaxDestValue);
-            dest_g = pdfium::clamp(dest_g, 0, kMaxDestValue);
-            dest_b = pdfium::clamp(dest_b, 0, kMaxDestValue);
           }
           dest_scan[0] = static_cast<uint8_t>(dest_b >> 16);
           dest_scan[1] = static_cast<uint8_t>(dest_g >> 16);
@@ -719,12 +586,6 @@ void CStretchEngine::StretchVert() {
               dest_a += pixel_weight * (*(src_pixel + 1));
             else
               dest_a += pixel_weight * mask_v;
-          }
-          if (bicubic) {
-            dest_r = pdfium::clamp(dest_r, 0, kMaxDestValue);
-            dest_g = pdfium::clamp(dest_g, 0, kMaxDestValue);
-            dest_b = pdfium::clamp(dest_b, 0, kMaxDestValue);
-            dest_a = pdfium::clamp(dest_a, 0, kMaxDestValue);
           }
           if (dest_a) {
             int r = static_cast<uint32_t>(dest_r) * 255 / dest_a;

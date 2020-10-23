@@ -363,7 +363,7 @@ bool CGdiDeviceDriver::GDI_StretchDIBits(
   ByteString info = CFX_WindowsDIB::GetBitmapInfo(pBitmap);
   if ((int64_t)abs(dest_width) * abs(dest_height) <
           (int64_t)pBitmap1->GetWidth() * pBitmap1->GetHeight() * 4 ||
-      options.bInterpolateBilinear || options.bInterpolateBicubic) {
+      options.bInterpolateBilinear) {
     SetStretchBltMode(m_hDC, HALFTONE);
   } else {
     SetStretchBltMode(m_hDC, COLORONCOLOR);
