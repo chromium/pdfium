@@ -54,15 +54,6 @@ enum {
   FuncId_GdipDeletePen,
   FuncId_GdipDeletePath,
   FuncId_GdipDeleteGraphics,
-  FuncId_GdipCreateBitmapFromFileICM,
-  FuncId_GdipCreateBitmapFromStreamICM,
-  FuncId_GdipGetImageHeight,
-  FuncId_GdipGetImageWidth,
-  FuncId_GdipGetImagePixelFormat,
-  FuncId_GdipBitmapLockBits,
-  FuncId_GdipGetImagePaletteSize,
-  FuncId_GdipGetImagePalette,
-  FuncId_GdipBitmapUnlockBits,
   FuncId_GdipDisposeImage,
   FuncId_GdipCreateBitmapFromScan0,
   FuncId_GdipSetImagePalette,
@@ -101,15 +92,6 @@ LPCSTR g_GdipFuncNames[] = {
     "GdipDeletePen",
     "GdipDeletePath",
     "GdipDeleteGraphics",
-    "GdipCreateBitmapFromFileICM",
-    "GdipCreateBitmapFromStreamICM",
-    "GdipGetImageHeight",
-    "GdipGetImageWidth",
-    "GdipGetImagePixelFormat",
-    "GdipBitmapLockBits",
-    "GdipGetImagePaletteSize",
-    "GdipGetImagePalette",
-    "GdipBitmapUnlockBits",
     "GdipDisposeImage",
     "GdipCreateBitmapFromScan0",
     "GdipSetImagePalette",
@@ -184,37 +166,6 @@ typedef Gdiplus::GpStatus(WINGDIPAPI* FuncType_GdipDeletePath)(
     Gdiplus::GpPath* path);
 typedef Gdiplus::GpStatus(WINGDIPAPI* FuncType_GdipDeleteGraphics)(
     Gdiplus::GpGraphics* graphics);
-typedef Gdiplus::GpStatus(WINGDIPAPI* FuncType_GdipCreateBitmapFromFileICM)(
-    GDIPCONST WCHAR* filename,
-    Gdiplus::GpBitmap** bitmap);
-typedef Gdiplus::GpStatus(WINGDIPAPI* FuncType_GdipCreateBitmapFromStreamICM)(
-    IStream* stream,
-    Gdiplus::GpBitmap** bitmap);
-typedef Gdiplus::GpStatus(WINGDIPAPI* FuncType_GdipGetImageWidth)(
-    Gdiplus::GpImage* image,
-    UINT* width);
-typedef Gdiplus::GpStatus(WINGDIPAPI* FuncType_GdipGetImageHeight)(
-    Gdiplus::GpImage* image,
-    UINT* height);
-typedef Gdiplus::GpStatus(WINGDIPAPI* FuncType_GdipGetImagePixelFormat)(
-    Gdiplus::GpImage* image,
-    Gdiplus::PixelFormat* format);
-typedef Gdiplus::GpStatus(WINGDIPAPI* FuncType_GdipBitmapLockBits)(
-    Gdiplus::GpBitmap* bitmap,
-    GDIPCONST Gdiplus::GpRect* rect,
-    UINT flags,
-    Gdiplus::PixelFormat format,
-    Gdiplus::BitmapData* lockedBitmapData);
-typedef Gdiplus::GpStatus(WINGDIPAPI* FuncType_GdipGetImagePalette)(
-    Gdiplus::GpImage* image,
-    Gdiplus::ColorPalette* palette,
-    INT size);
-typedef Gdiplus::GpStatus(WINGDIPAPI* FuncType_GdipGetImagePaletteSize)(
-    Gdiplus::GpImage* image,
-    INT* size);
-typedef Gdiplus::GpStatus(WINGDIPAPI* FuncType_GdipBitmapUnlockBits)(
-    Gdiplus::GpBitmap* bitmap,
-    Gdiplus::BitmapData* lockedBitmapData);
 typedef Gdiplus::GpStatus(WINGDIPAPI* FuncType_GdipDisposeImage)(
     Gdiplus::GpImage* image);
 typedef Gdiplus::GpStatus(WINGDIPAPI* FuncType_GdipCreateBitmapFromScan0)(
