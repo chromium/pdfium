@@ -25,27 +25,22 @@ constexpr int kBase = 256;
 constexpr float kFix16 = 0.05f;
 constexpr uint8_t kOpaqueAlpha = 0xff;
 
-uint8_t bilinear_interpol(const uint8_t* buf,
-                          int row_offset_l,
-                          int row_offset_r,
-                          int src_col_l,
-                          int src_col_r,
-                          int res_x,
-                          int res_y,
-                          int bpp,
-                          int c_offset) {
-  int i_resx = 255 - res_x;
-  int col_bpp_l = src_col_l * bpp;
-  int col_bpp_r = src_col_r * bpp;
-  const uint8_t* buf_u = buf + row_offset_l + c_offset;
-  const uint8_t* buf_d = buf + row_offset_r + c_offset;
+uint8_t BilinearInterpolate(const uint8_t* buf,
+                            const CFX_ImageTransformer::BilinearData& data,
+                            int bpp,
+                            int c_offset) {
+  int i_resx = 255 - data.res_x;
+  int col_bpp_l = data.src_col_l * bpp;
+  int col_bpp_r = data.src_col_r * bpp;
+  const uint8_t* buf_u = buf + data.row_offset_l + c_offset;
+  const uint8_t* buf_d = buf + data.row_offset_r + c_offset;
   const uint8_t* src_pos0 = buf_u + col_bpp_l;
   const uint8_t* src_pos1 = buf_u + col_bpp_r;
   const uint8_t* src_pos2 = buf_d + col_bpp_l;
   const uint8_t* src_pos3 = buf_d + col_bpp_r;
-  uint8_t r_pos_0 = (*src_pos0 * i_resx + *src_pos1 * res_x) >> 8;
-  uint8_t r_pos_1 = (*src_pos2 * i_resx + *src_pos3 * res_x) >> 8;
-  return (r_pos_0 * (255 - res_y) + r_pos_1 * res_y) >> 8;
+  uint8_t r_pos_0 = (*src_pos0 * i_resx + *src_pos1 * data.res_x) >> 8;
+  uint8_t r_pos_1 = (*src_pos2 * i_resx + *src_pos3 * data.res_x) >> 8;
+  return (r_pos_0 * (255 - data.res_y) + r_pos_1 * data.res_y) >> 8;
 }
 
 class CFX_BilinearMatrix {
@@ -293,18 +288,14 @@ RetainPtr<CFX_DIBitmap> CFX_ImageTransformer::DetachBitmap() {
 
 void CFX_ImageTransformer::CalcMask(const CalcData& calc_data) {
   auto func = [&calc_data](const BilinearData& data, uint8_t* dest) {
-    *dest = bilinear_interpol(calc_data.buf, data.row_offset_l,
-                              data.row_offset_r, data.src_col_l, data.src_col_r,
-                              data.res_x, data.res_y, 1, 0);
+    *dest = BilinearInterpolate(calc_data.buf, data, 1, 0);
   };
   DoBilinearLoop(calc_data, m_result, m_StretchClip, 1, func);
 }
 
 void CFX_ImageTransformer::CalcAlpha(const CalcData& calc_data) {
   auto func = [&calc_data](const BilinearData& data, uint8_t* dest) {
-    *dest = bilinear_interpol(calc_data.buf, data.row_offset_l,
-                              data.row_offset_r, data.src_col_l, data.src_col_r,
-                              data.res_x, data.res_y, 1, 0);
+    *dest = BilinearInterpolate(calc_data.buf, data, 1, 0);
   };
   DoBilinearLoop(calc_data, m_result, m_StretchClip, 1, func);
 }
@@ -322,9 +313,7 @@ void CFX_ImageTransformer::CalcMono(const CalcData& calc_data) {
   }
   int destBpp = calc_data.bitmap->GetBPP() / 8;
   auto func = [&calc_data, &argb](const BilinearData& data, uint8_t* dest) {
-    uint8_t idx = bilinear_interpol(
-        calc_data.buf, data.row_offset_l, data.row_offset_r, data.src_col_l,
-        data.src_col_r, data.res_x, data.res_y, 1, 0);
+    uint8_t idx = BilinearInterpolate(calc_data.buf, data, 1, 0);
     *reinterpret_cast<uint32_t*>(dest) = argb[idx];
   };
   DoBilinearLoop(calc_data, m_result, m_StretchClip, destBpp, func);
@@ -338,21 +327,13 @@ void CFX_ImageTransformer::CalcColor(const CalcData& calc_data,
   int destBpp = calc_data.bitmap->GetBPP() / 8;
   auto func = [&calc_data, format, Bpp, bHasAlpha](const BilinearData& data,
                                                    uint8_t* dest) {
-    uint8_t blue_c = bilinear_interpol(
-        calc_data.buf, data.row_offset_l, data.row_offset_r, data.src_col_l,
-        data.src_col_r, data.res_x, data.res_y, Bpp, 0);
-    uint8_t green_m = bilinear_interpol(
-        calc_data.buf, data.row_offset_l, data.row_offset_r, data.src_col_l,
-        data.src_col_r, data.res_x, data.res_y, Bpp, 1);
-    uint8_t red_y = bilinear_interpol(
-        calc_data.buf, data.row_offset_l, data.row_offset_r, data.src_col_l,
-        data.src_col_r, data.res_x, data.res_y, Bpp, 2);
+    uint8_t blue_c = BilinearInterpolate(calc_data.buf, data, Bpp, 0);
+    uint8_t green_m = BilinearInterpolate(calc_data.buf, data, Bpp, 1);
+    uint8_t red_y = BilinearInterpolate(calc_data.buf, data, Bpp, 2);
 
     uint32_t* dest32 = reinterpret_cast<uint32_t*>(dest);
     if (bHasAlpha) {
-      uint8_t alpha_k = bilinear_interpol(
-          calc_data.buf, data.row_offset_l, data.row_offset_r, data.src_col_l,
-          data.src_col_r, data.res_x, data.res_y, Bpp, 3);
+      uint8_t alpha_k = BilinearInterpolate(calc_data.buf, data, Bpp, 3);
       if (format == FXDIB_Format::kArgb) {
         *dest32 = ArgbEncode(alpha_k, red_y, green_m, blue_c);
       } else {
