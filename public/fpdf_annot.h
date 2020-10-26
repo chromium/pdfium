@@ -47,6 +47,7 @@ extern "C" {
 #define FPDF_ANNOT_THREED 25
 #define FPDF_ANNOT_RICHMEDIA 26
 #define FPDF_ANNOT_XFAWIDGET 27
+#define FPDF_ANNOT_REDACT 28
 
 // Refer to PDF Reference (6th edition) table 8.16 for all annotation flags.
 #define FPDF_ANNOT_FLAG_NONE 0

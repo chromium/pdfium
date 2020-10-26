@@ -48,6 +48,7 @@ bool PopupAppearsForAnnotType(CPDF_Annot::Subtype subtype) {
     case CPDF_Annot::Subtype::CARET:
     case CPDF_Annot::Subtype::INK:
     case CPDF_Annot::Subtype::FILEATTACHMENT:
+    case CPDF_Annot::Subtype::REDACT:
       return true;
     case CPDF_Annot::Subtype::UNKNOWN:
     case CPDF_Annot::Subtype::LINK:

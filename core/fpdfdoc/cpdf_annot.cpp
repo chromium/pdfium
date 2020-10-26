@@ -313,6 +313,8 @@ CPDF_Annot::Subtype CPDF_Annot::StringToAnnotSubtype(
     return CPDF_Annot::Subtype::RICHMEDIA;
   if (sSubtype == "XFAWidget")
     return CPDF_Annot::Subtype::XFAWIDGET;
+  if (sSubtype == "Redact")
+    return CPDF_Annot::Subtype::REDACT;
   return CPDF_Annot::Subtype::UNKNOWN;
 }
 
@@ -372,6 +374,8 @@ ByteString CPDF_Annot::AnnotSubtypeToString(CPDF_Annot::Subtype nSubtype) {
     return "RichMedia";
   if (nSubtype == CPDF_Annot::Subtype::XFAWIDGET)
     return "XFAWidget";
+  if (nSubtype == CPDF_Annot::Subtype::REDACT)
+    return "Redact";
   return ByteString();
 }
 

@@ -1,0 +1,44 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+  /MediaBox [0 0 612 792]
+  /Annots [
+    5 0 R
+  ]
+  /Tabs /R
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /Annot
+  /Subtype /Redact
+  /NM (Redact-1)
+  /F 4
+  /QuadPoints [293 542 349 542 293 530 349 530]
+  /P 3 0 R
+  /C [1 0.90196 0]
+  /Rect [293 530 349 542]
+>>
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

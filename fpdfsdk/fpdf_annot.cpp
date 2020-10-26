@@ -115,6 +115,9 @@ static_assert(static_cast<int>(CPDF_Annot::Subtype::RICHMEDIA) ==
 static_assert(static_cast<int>(CPDF_Annot::Subtype::XFAWIDGET) ==
                   FPDF_ANNOT_XFAWIDGET,
               "CPDF_Annot::XFAWIDGET value mismatch");
+static_assert(static_cast<int>(CPDF_Annot::Subtype::REDACT) ==
+                  FPDF_ANNOT_REDACT,
+              "CPDF_Annot::REDACT value mismatch");
 
 // These checks ensure the consistency of annotation appearance mode values
 // across core/ and public.

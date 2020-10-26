@@ -3208,3 +3208,18 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormFieldExportValueInvalidAnnotation) {
 
   UnloadPage(page);
 }
+
+TEST_F(FPDFAnnotEmbedderTest, Redactannotation) {
+  ASSERT_TRUE(OpenDocument("redact_annot.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+  EXPECT_EQ(1, FPDFPage_GetAnnotCount(page));
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+    EXPECT_EQ(FPDF_ANNOT_REDACT, FPDFAnnot_GetSubtype(annot.get()));
+  }
+
+  UnloadPage(page);
+}

@@ -57,7 +57,8 @@ class CPDF_Annot {
     WATERMARK,
     THREED,
     RICHMEDIA,
-    XFAWIDGET
+    XFAWIDGET,
+    REDACT
   };
 
   static CPDF_Annot::Subtype StringToAnnotSubtype(const ByteString& sSubtype);
