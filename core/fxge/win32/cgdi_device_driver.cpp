@@ -172,13 +172,11 @@ ByteString GetBitmapInfo(const RetainPtr<CFX_DIBitmap>& pBitmap) {
       uint32_t* pPalette = (uint32_t*)(pbmih + 1);
       if (pBitmap->HasPalette()) {
         pdfium::span<const uint32_t> palette = pBitmap->GetPaletteSpan();
-        for (int i = 0; i < 256; i++) {
+        for (int i = 0; i < 256; i++)
           pPalette[i] = palette[i];
-        }
       } else {
-        for (int i = 0; i < 256; i++) {
-          pPalette[i] = i * 0x010101;
-        }
+        for (int i = 0; i < 256; i++)
+          pPalette[i] = ArgbEncode(0, i, i, i);
       }
     }
     if (pBitmap->GetBPP() == 1) {

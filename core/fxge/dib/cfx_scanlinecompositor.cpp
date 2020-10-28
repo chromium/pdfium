@@ -2253,7 +2253,8 @@ void CompositeRow_8bppRgb2Rgb_NoBlend_RgbByteOrder(uint8_t* dest_scan,
                                                    int DestBpp,
                                                    const uint8_t* clip_scan) {
   for (int col = 0; col < pixel_count; col++) {
-    FX_ARGB argb = pPalette ? pPalette[*src_scan] : (*src_scan) * 0x010101;
+    FX_ARGB argb = pPalette ? pPalette[*src_scan]
+                            : ArgbEncode(0, *src_scan, *src_scan, *src_scan);
     int src_r = FXARGB_R(argb);
     int src_g = FXARGB_G(argb);
     int src_b = FXARGB_B(argb);
@@ -2764,7 +2765,7 @@ void CFX_ScanlineCompositor::InitSourcePalette(
     pPalette[1] = 0xffffffff;
   } else {
     for (size_t i = 0; i < pal_count; ++i)
-      pPalette[i] = i * 0x10101;
+      pPalette[i] = ArgbEncode(0, i, i, i);
   }
 }
 

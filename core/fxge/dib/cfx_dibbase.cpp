@@ -650,7 +650,7 @@ void CFX_DIBBase::BuildPalette() {
   } else if (GetBPP() == 8) {
     m_palette.resize(256);
     for (int i = 0; i < 256; ++i)
-      m_palette[i] = 0xff000000 | (i * 0x10101);
+      m_palette[i] = ArgbEncode(0xff, i, i, i);
   }
 }
 
@@ -690,7 +690,7 @@ uint32_t CFX_DIBBase::GetPaletteArgb(int index) const {
   if (GetBPP() == 1)
     return index ? 0xffffffff : 0xff000000;
 
-  return index * 0x10101 | 0xff000000;
+  return ArgbEncode(0xff, index, index, index);
 }
 
 void CFX_DIBBase::SetPaletteArgb(int index, uint32_t color) {
@@ -840,7 +840,7 @@ void CFX_DIBBase::GetPalette(uint32_t* pal, int alpha) const {
       pal[i] = (palette[i] & 0x00ffffff) | (alpha << 24);
   } else {
     for (int i = 0; i < 256; ++i)
-      pal[i] = (i * 0x10101) | (alpha << 24);
+      pal[i] = ArgbEncode(alpha, i, i, i);
   }
 }
 

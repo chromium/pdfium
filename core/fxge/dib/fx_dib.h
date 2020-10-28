@@ -122,7 +122,7 @@ std::pair<int, FX_COLORREF> ArgbToAlphaAndColorRef(FX_ARGB argb);
 // Returns FX_COLORREF.
 FX_COLORREF ArgbToColorRef(FX_ARGB argb);
 
-constexpr FX_ARGB ArgbEncode(int a, int r, int g, int b) {
+constexpr FX_ARGB ArgbEncode(uint32_t a, uint32_t r, uint32_t g, uint32_t b) {
   return (a << 24) | (r << 16) | (g << 8) | b;
 }
 

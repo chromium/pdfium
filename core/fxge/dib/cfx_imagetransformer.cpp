@@ -309,7 +309,7 @@ void CFX_ImageTransformer::CalcMono(const CalcData& calc_data) {
       argb[i] = palette[i];
   } else {
     for (size_t i = 0; i < pdfium::size(argb); i++)
-      argb[i] = 0xff000000 | (i * 0x010101);
+      argb[i] = ArgbEncode(0xff, i, i, i);
   }
   int destBpp = calc_data.bitmap->GetBPP() / 8;
   auto func = [&calc_data, &argb](const BilinearData& data, uint8_t* dest) {

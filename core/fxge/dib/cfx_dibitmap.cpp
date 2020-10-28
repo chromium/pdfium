@@ -515,7 +515,7 @@ uint32_t CFX_DIBitmap::GetPixel(int x, int y) const {
       return (*pos) << 24;
     case FXDIB_Format::k8bppRgb:
       return HasPalette() ? GetPaletteSpan()[*pos]
-                          : (0xff000000 | ((*pos) * 0x10101));
+                          : ArgbEncode(0xff, *pos, *pos, *pos);
     case FXDIB_Format::kRgb:
     case FXDIB_Format::kRgb32:
       return FXARGB_GETDIB(pos) | 0xff000000;
