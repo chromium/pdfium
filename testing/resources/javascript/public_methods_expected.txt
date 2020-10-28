@@ -21,11 +21,11 @@ Alert: PASS: AFDate_Keystroke('blooey') = 04/19/15
 Alert: **********************
 Alert: PASS: AFDate_KeystrokeEx() threw AFDate_KeystrokeEx: AFDate_KeystrokeEx's parameter size not correct
 Alert: PASS: AFDate_KeystrokeEx(1, 2) threw AFDate_KeystrokeEx: AFDate_KeystrokeEx's parameter size not correct
-[icon=3,type=0]: The input value can't be parsed as a valid date/time (2).
+AFDate_KeystrokeEx[icon=3,type=0]: The input value can't be parsed as a valid date/time (2).
 Alert: PASS: AFDate_KeystrokeEx(2) = x
-[icon=3,type=0]: The input value can't be parsed as a valid date/time (blooey).
+AFDate_KeystrokeEx[icon=3,type=0]: The input value can't be parsed as a valid date/time (blooey).
 Alert: PASS: AFDate_KeystrokeEx('blooey') = x
-[icon=3,type=0]: The input value can't be parsed as a valid date/time (m/d).
+AFDate_KeystrokeEx[icon=3,type=0]: The input value can't be parsed as a valid date/time (m/d).
 Alert: PASS: AFDate_KeystrokeEx('m/d') = x
 Alert: **********************
 Alert: PASS: AFExtractNums() threw AFExtractNums: Incorrect number of parameters passed to function.
@@ -50,7 +50,7 @@ Alert: PASS: AFNumber_Format(0, 1, 0, 0, '', false) = 12
 Alert: **********************
 Alert: PASS: AFNumber_Keystroke() threw AFNumber_Keystroke: Incorrect number of parameters passed to function.
 Alert: PASS: AFNumber_Keystroke(1) threw AFNumber_Keystroke: Incorrect number of parameters passed to function.
-[icon=3,type=0]: The input value is invalid.
+AFNumber_Keystroke[icon=3,type=0]: The input value is invalid.
 Alert: PASS: AFNumber_Keystroke(1, 2) threw AFNumber_Keystroke: The input value is invalid.
 Alert: PASS: AFNumber_Keystroke(1, 2) = 123
 Alert: PASS: AFNumber_Keystroke(1, 2, 3) = 123
@@ -277,19 +277,19 @@ Alert: PASS: AFPercent_Format(513, 0) = %
 Alert: **********************
 Alert: PASS: AFPercent_Keystroke() threw AFPercent_Keystroke: Incorrect number of parameters passed to function.
 Alert: PASS: AFPercent_Keystroke(1) threw AFPercent_Keystroke: Incorrect number of parameters passed to function.
-[icon=3,type=0]: The input value is invalid.
+AFNumber_Keystroke[icon=3,type=0]: The input value is invalid.
 Alert: PASS: AFPercent_Keystroke(1, 0) threw AFPercent_Keystroke: The input value is invalid.
 Alert: PASS: AFPercent_Keystroke(1, 0) = .123
 Alert: **********************
 Alert: PASS: AFRange_Validate() threw AFRange_Validate: Incorrect number of parameters passed to function.
 Alert: PASS: AFRange_Validate(1, 2, 3, 4, 5) threw AFRange_Validate: Incorrect number of parameters passed to function.
-[icon=3,type=0]: The input value must be greater than or equal to 2 and less than or equal to 4.
+AFRange_Validate[icon=3,type=0]: The input value must be greater than or equal to 2 and less than or equal to 4.
 Alert: PASS: AFRange_Validate(true, 2, true, 4) = 1
-[icon=3,type=0]: The input value must be greater than or equal to 2 and less than or equal to 4.
+AFRange_Validate[icon=3,type=0]: The input value must be greater than or equal to 2 and less than or equal to 4.
 Alert: PASS: AFRange_Validate(true, 2, true, 4) = 5
-[icon=3,type=0]: The input value must be greater than or equal to 2.
+AFRange_Validate[icon=3,type=0]: The input value must be greater than or equal to 2.
 Alert: PASS: AFRange_Validate(true, 2, false, 4) = 1
-[icon=3,type=0]: The input value must be less than or equal to 4.
+AFRange_Validate[icon=3,type=0]: The input value must be less than or equal to 4.
 Alert: PASS: AFRange_Validate(false, 2, true, 4) = 5
 Alert: PASS: AFRange_Validate(true, 2, true, 4) = 3
 Alert: PASS: AFRange_Validate(false, 2, true, 4) = 1
@@ -345,11 +345,11 @@ Alert: PASS: AFSpecial_Keystroke(65) = abc
 Alert: **********************
 Alert: PASS: AFSpecial_KeystrokeEx() threw AFSpecial_KeystrokeEx: Incorrect number of parameters passed to function.
 Alert: PASS: AFSpecial_KeystrokeEx('') = 12345
-[icon=3,type=0]: The input value is invalid.
+AFSpecial_KeystrokeEx[icon=3,type=0]: The input value is invalid.
 Alert: PASS: AFSpecial_KeystrokeEx('9999') = 123
-[icon=3,type=0]: The input value is too long.
+AFSpecial_KeystrokeEx[icon=3,type=0]: The input value is too long.
 Alert: PASS: AFSpecial_KeystrokeEx('9999') = 12345
-[icon=3,type=0]: The input value is invalid.
+AFSpecial_KeystrokeEx[icon=3,type=0]: The input value is invalid.
 Alert: PASS: AFSpecial_KeystrokeEx('9999') = abcd
 Alert: PASS: AFSpecial_KeystrokeEx('9999') = 1234
 Alert: PASS: AFSpecial_KeystrokeEx('XXXX') = abcd
@@ -385,13 +385,13 @@ Alert: **********************
 Alert: PASS: AFSpecial_KeystrokeEx() threw AFSpecial_KeystrokeEx: Incorrect number of parameters passed to function.
 Alert: PASS: AFSpecial_KeystrokeEx('') = 12345
 Alert: PASS: AFSpecial_KeystrokeEx('9999') = 123
-[icon=3,type=0]: The input value is too long.
+AFSpecial_KeystrokeEx[icon=3,type=0]: The input value is too long.
 Alert: PASS: AFSpecial_KeystrokeEx('9999') = 12345
-[icon=3,type=0]: The input value is too long.
+AFSpecial_KeystrokeEx[icon=3,type=0]: The input value is too long.
 Alert: PASS: AFSpecial_KeystrokeEx('9999') = abcd
-[icon=3,type=0]: The input value is too long.
+AFSpecial_KeystrokeEx[icon=3,type=0]: The input value is too long.
 Alert: PASS: AFSpecial_KeystrokeEx('9999') = 1234
-[icon=3,type=0]: The input value is too long.
+AFSpecial_KeystrokeEx[icon=3,type=0]: The input value is too long.
 Alert: PASS: AFSpecial_KeystrokeEx('XXXX') = abcd
 Alert: **********************
 Alert: PASS: AFMergeChange() threw AFMergeChange: Incorrect number of parameters passed to function.
