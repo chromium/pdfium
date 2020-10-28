@@ -1,0 +1,78 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 5 0 R
+  /AcroForm <<
+    /Fields [
+      3 0 R
+      2 0 R
+    ]
+  >>
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Tx
+  /T (tf1)
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Tx
+  /T (tf0)
+  /AA <<
+    /F 10 0 R
+  >>
+>>
+endobj
+{{object 5 0}} <<
+  /Type /Pages
+  /Count 2
+  /Kids [
+    8 0 R
+    9 0 R
+  ]
+>>
+endobj
+{{object 8 0}} <<
+  /Type /Page
+  /Parent 5 0 R
+  /Annots [3 0 R]
+>>
+endobj
+{{object 9 0}} <<
+  /Type /Page
+  /Parent 5 0 R
+  /Annots [2 0 R]
+>>
+endobj
+{{object 10 0}} <<
+  /Type /Action
+  /S /JavaScript
+  /JS 13 0 R
+>>
+{{object 13 0}} <<
+  {{streamlen}}
+>>
+stream
+function f3() {
+  // Setup dubious values in event recorder.
+  try { AFSpecial_Format(2); } catch(e) {}
+  try { AFNumber_Format(-302907477,0,1,-6,"",true); } catch(e) {}
+
+  // Exhaust call stack, then do work upon exiting each frame. The
+  // objective is to get any call() made under the covers to throw
+  // with a stack size exception.
+  try { f3(); } catch(e) {}
+  try { AFDate_Keystroke("yymm-dd"); } catch(e) {}
+}
+f3();
+app.alert('Done.');
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

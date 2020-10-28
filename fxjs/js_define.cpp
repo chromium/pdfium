@@ -29,30 +29,29 @@ double JS_DateParse(const WideString& str) {
   v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
 
   // Use the built-in object method.
-  v8::Local<v8::Value> v =
-      context->Global()
-          ->Get(context, fxv8::NewStringHelper(pIsolate, "Date"))
-          .ToLocalChecked();
-  if (v->IsObject()) {
-    v8::Local<v8::Object> o = v->ToObject(context).ToLocalChecked();
-    v = o->Get(context, fxv8::NewStringHelper(pIsolate, "parse"))
-            .ToLocalChecked();
-    if (v->IsFunction()) {
-      v8::Local<v8::Function> funC = v8::Local<v8::Function>::Cast(v);
-      const int argc = 1;
-      v8::Local<v8::String> timeStr =
-          fxv8::NewStringHelper(pIsolate, str.AsStringView());
-      v8::Local<v8::Value> argv[argc] = {timeStr};
-      v = funC->Call(context, context->Global(), argc, argv).ToLocalChecked();
-      if (v->IsNumber()) {
-        double date = v->ToNumber(context).ToLocalChecked()->Value();
-        if (!std::isfinite(date))
-          return date;
-        return FX_LocalTime(date);
-      }
-    }
-  }
-  return 0;
+  v8::MaybeLocal<v8::Value> maybe_value =
+      context->Global()->Get(context, fxv8::NewStringHelper(pIsolate, "Date"));
+
+  v8::Local<v8::Value> value;
+  if (!maybe_value.ToLocal(&value) || !value->IsObject())
+    return 0;
+
+  v8::Local<v8::Object> obj = value.As<v8::Object>();
+  maybe_value = obj->Get(context, fxv8::NewStringHelper(pIsolate, "parse"));
+  if (!maybe_value.ToLocal(&value) || !value->IsFunction())
+    return 0;
+
+  v8::Local<v8::Function> func = value.As<v8::Function>();
+  static constexpr int argc = 1;
+  v8::Local<v8::Value> argv[argc] = {
+      fxv8::NewStringHelper(pIsolate, str.AsStringView()),
+  };
+  maybe_value = func->Call(context, context->Global(), argc, argv);
+  if (!maybe_value.ToLocal(&value) || !value->IsNumber())
+    return 0;
+
+  double date = value.As<v8::Number>()->Value();
+  return std::isfinite(date) ? FX_LocalTime(date) : date;
 }
 
 std::vector<v8::Local<v8::Value>> ExpandKeywordParams(
