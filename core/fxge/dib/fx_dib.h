@@ -7,6 +7,8 @@
 #ifndef CORE_FXGE_DIB_FX_DIB_H_
 #define CORE_FXGE_DIB_FX_DIB_H_
 
+#include <stdint.h>
+
 #include <tuple>
 #include <utility>
 
@@ -109,7 +111,7 @@ inline bool GetIsAlphaFromFormat(FXDIB_Format format) {
 
 FXDIB_Format MakeRGBFormat(int bpp);
 
-inline FX_CMYK CmykEncode(int c, int m, int y, int k) {
+constexpr FX_CMYK CmykEncode(uint32_t c, uint32_t m, uint32_t y, uint32_t k) {
   return (c << 24) | (m << 16) | (y << 8) | k;
 }
 
