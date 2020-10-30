@@ -108,7 +108,6 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   void RenderText(CFX_RenderDevice* pRenderDev,
                   const CFX_RectF& clipRect,
                   const CFX_Matrix& mt);
-  void DrawTextBk(CFGAS_GEGraphics* pGraphics, const CFX_Matrix* pMatrix);
   void DrawContent(CFGAS_GEGraphics* pGraphics, const CFX_Matrix* pMatrix);
 
   void UpdateEditEngine();
@@ -126,7 +125,6 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   void InitHorizontalScrollBar();
   void InitEngine();
   void InitCaret();
-  bool ValidateNumberChar(wchar_t cNum);
   bool IsShowScrollBar(bool bVert);
   bool IsContentHeightOverflow();
   void SetCursorPosition(size_t position);
@@ -149,9 +147,7 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   CFX_RectF m_StaticRect;
   CFX_RectF m_CaretRect;
   bool m_bLButtonDown = false;
-  bool m_bSetRange = false;
   int32_t m_nLimit = -1;
-  int32_t m_iMax = 0xFFFFFFF;
   float m_fVAlignOffset = 0.0f;
   float m_fScrollOffsetX = 0.0f;
   float m_fScrollOffsetY = 0.0f;
