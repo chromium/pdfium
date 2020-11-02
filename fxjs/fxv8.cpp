@@ -8,6 +8,46 @@
 
 namespace fxv8 {
 
+bool IsUndefined(v8::Local<v8::Value> value) {
+  return !value.IsEmpty() && value->IsUndefined();
+}
+
+bool IsNull(v8::Local<v8::Value> value) {
+  return !value.IsEmpty() && value->IsNull();
+}
+
+bool IsBoolean(v8::Local<v8::Value> value) {
+  return !value.IsEmpty() && value->IsBoolean();
+}
+
+bool IsString(v8::Local<v8::Value> value) {
+  return !value.IsEmpty() && value->IsString();
+}
+
+bool IsNumber(v8::Local<v8::Value> value) {
+  return !value.IsEmpty() && value->IsNumber();
+}
+
+bool IsInteger(v8::Local<v8::Value> value) {
+  return !value.IsEmpty() && value->IsInt32();
+}
+
+bool IsObject(v8::Local<v8::Value> value) {
+  return !value.IsEmpty() && value->IsObject();
+}
+
+bool IsArray(v8::Local<v8::Value> value) {
+  return !value.IsEmpty() && value->IsArray();
+}
+
+bool IsDate(v8::Local<v8::Value> value) {
+  return !value.IsEmpty() && value->IsDate();
+}
+
+bool IsFunction(v8::Local<v8::Value> value) {
+  return !value.IsEmpty() && value->IsFunction();
+}
+
 v8::Local<v8::Value> NewNullHelper(v8::Isolate* pIsolate) {
   return v8::Null(pIsolate);
 }
@@ -113,7 +153,7 @@ ByteString ReentrantToByteStringHelper(v8::Isolate* pIsolate,
 
 v8::Local<v8::Object> ReentrantToObjectHelper(v8::Isolate* pIsolate,
                                               v8::Local<v8::Value> pValue) {
-  if (pValue.IsEmpty() || !pValue->IsObject())
+  if (!fxv8::IsObject(pValue))
     return v8::Local<v8::Object>();
 
   v8::TryCatch squash_exceptions(pIsolate);
@@ -123,7 +163,7 @@ v8::Local<v8::Object> ReentrantToObjectHelper(v8::Isolate* pIsolate,
 
 v8::Local<v8::Array> ReentrantToArrayHelper(v8::Isolate* pIsolate,
                                             v8::Local<v8::Value> pValue) {
-  if (pValue.IsEmpty() || !pValue->IsArray())
+  if (!fxv8::IsArray(pValue))
     return v8::Local<v8::Array>();
 
   v8::TryCatch squash_exceptions(pIsolate);

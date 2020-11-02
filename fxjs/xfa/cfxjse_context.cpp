@@ -160,7 +160,7 @@ CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(
   if (hObject->InternalFieldCount() != 2 ||
       hObject->GetAlignedPointerFromInternalField(0) == kFXJSEProxyObjectTag) {
     v8::Local<v8::Value> hProtoObject = hObject->GetPrototype();
-    if (hProtoObject.IsEmpty() || !hProtoObject->IsObject())
+    if (!fxv8::IsObject(hProtoObject))
       return nullptr;
 
     hObject = hProtoObject.As<v8::Object>();

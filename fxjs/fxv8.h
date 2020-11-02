@@ -12,7 +12,21 @@
 #include "core/fxcrt/fx_string.h"
 #include "v8/include/v8.h"
 
+// The fxv8 functions soften up the interface to the V8 API.
+
 namespace fxv8 {
+
+// These first check for empty locals.
+bool IsUndefined(v8::Local<v8::Value> value);
+bool IsNull(v8::Local<v8::Value> value);
+bool IsBoolean(v8::Local<v8::Value> value);
+bool IsString(v8::Local<v8::Value> value);
+bool IsNumber(v8::Local<v8::Value> value);
+bool IsInteger(v8::Local<v8::Value> value);
+bool IsObject(v8::Local<v8::Value> value);
+bool IsArray(v8::Local<v8::Value> value);
+bool IsDate(v8::Local<v8::Value> value);
+bool IsFunction(v8::Local<v8::Value> value);
 
 v8::Local<v8::Value> NewNullHelper(v8::Isolate* pIsolate);
 v8::Local<v8::Value> NewUndefinedHelper(v8::Isolate* pIsolate);

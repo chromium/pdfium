@@ -216,7 +216,7 @@ bool CFXJSE_Value::SetFunctionBind(CFXJSE_Value* lpOldFunction,
   v8::Local<v8::Value> rgArgs[2];
   v8::Local<v8::Value> hOldFunction =
       v8::Local<v8::Value>::New(GetIsolate(), lpOldFunction->DirectGetValue());
-  if (hOldFunction.IsEmpty() || !hOldFunction->IsFunction())
+  if (!fxv8::IsFunction(hOldFunction))
     return false;
 
   rgArgs[0] = hOldFunction;
@@ -240,7 +240,7 @@ bool CFXJSE_Value::SetFunctionBind(CFXJSE_Value* lpOldFunction,
   v8::Local<v8::Value> hBoundFunction =
       hBinderFunc->Call(hContext, hContext->Global(), 2, rgArgs)
           .ToLocalChecked();
-  if (hBoundFunction.IsEmpty() || !hBoundFunction->IsFunction())
+  if (!fxv8::IsFunction(hBoundFunction))
     return false;
 
   m_hValue.Reset(GetIsolate(), hBoundFunction);

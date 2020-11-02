@@ -12,6 +12,7 @@
 #include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_extension.h"
 #include "fxjs/cjs_runtime.h"
+#include "fxjs/fxv8.h"
 #include "fxjs/xfa/cfxjse_class.h"
 #include "fxjs/xfa/cfxjse_context.h"
 #include "fxjs/xfa/cfxjse_formcalc_context.h"
@@ -794,7 +795,7 @@ void CFXJSE_Engine::AddNodesOfRunScript(CXFA_Node* pNode) {
 }
 
 CXFA_Object* CFXJSE_Engine::ToXFAObject(v8::Local<v8::Value> obj) {
-  if (obj.IsEmpty() || !obj->IsObject())
+  if (!fxv8::IsObject(obj))
     return nullptr;
 
   CFXJSE_HostObject* pHostObj =

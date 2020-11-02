@@ -21,6 +21,7 @@
 #include "fxjs/cjs_publicmethods.h"
 #include "fxjs/cjs_runtime.h"
 #include "fxjs/fx_date_helpers.h"
+#include "fxjs/fxv8.h"
 #include "fxjs/js_define.h"
 #include "fxjs/js_resources.h"
 #include "third_party/base/check_op.h"
@@ -165,7 +166,7 @@ CJS_Result CJS_Util::printd(CJS_Runtime* pRuntime,
   if (iSize < 2)
     return CJS_Result::Failure(JSMessage::kParamError);
 
-  if (params[1].IsEmpty() || !params[1]->IsDate())
+  if (!fxv8::IsDate(params[1]))
     return CJS_Result::Failure(JSMessage::kSecondParamNotDateError);
 
   v8::Local<v8::Date> v8_date = params[1].As<v8::Date>();
