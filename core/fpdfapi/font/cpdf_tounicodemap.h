@@ -37,7 +37,7 @@ class CPDF_ToUnicodeMap {
   uint32_t GetUnicode() const;
   void SetCode(uint32_t srccode, WideString destcode);
 
-  std::map<uint32_t, uint32_t> m_Map;
+  std::multimap<uint32_t, uint32_t> m_Multimap;
   UnownedPtr<const CPDF_CID2UnicodeMap> m_pBaseMap;
   CFX_WideTextBuf m_MultiCharBuf;
 };

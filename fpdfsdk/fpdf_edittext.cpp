@@ -157,7 +157,7 @@ void AddUnicode(std::ostringstream* pBuffer, uint32_t unicode) {
 
 // Loads the charcode to unicode mapping into a stream
 CPDF_Stream* LoadUnicode(CPDF_Document* pDoc,
-                         const std::map<uint32_t, uint32_t>& to_unicode) {
+                         const std::multimap<uint32_t, uint32_t>& to_unicode) {
   // A map charcode->unicode
   std::map<uint32_t, uint32_t> char_to_uni;
   // A map <char_start, char_end> to vector v of unicode characters of size (end
@@ -355,7 +355,7 @@ RetainPtr<CPDF_Font> LoadCompositeFont(CPDF_Document* pDoc,
   if (dwGlyphIndex == 0 || dwCurrentChar > kMaxUnicode)
     return nullptr;
 
-  std::map<uint32_t, uint32_t> to_unicode;
+  std::multimap<uint32_t, uint32_t> to_unicode;
   std::map<uint32_t, uint32_t> widths;
   while (true) {
     if (dwCurrentChar > kMaxUnicode)
@@ -363,7 +363,7 @@ RetainPtr<CPDF_Font> LoadCompositeFont(CPDF_Document* pDoc,
 
     if (!pdfium::Contains(widths, dwGlyphIndex))
       widths[dwGlyphIndex] = pFont->GetGlyphWidth(dwGlyphIndex);
-    to_unicode[dwGlyphIndex] = dwCurrentChar;
+    to_unicode.emplace(dwGlyphIndex, dwCurrentChar);
     dwCurrentChar =
         FT_Get_Next_Char(pFont->GetFaceRec(), dwCurrentChar, &dwGlyphIndex);
     if (dwGlyphIndex == 0)

@@ -44,8 +44,8 @@ CPDF_ToUnicodeMap::CPDF_ToUnicodeMap(const CPDF_Stream* pStream) {
 CPDF_ToUnicodeMap::~CPDF_ToUnicodeMap() = default;
 
 WideString CPDF_ToUnicodeMap::Lookup(uint32_t charcode) const {
-  auto it = m_Map.find(charcode);
-  if (it == m_Map.end()) {
+  auto it = m_Multimap.find(charcode);
+  if (it == m_Multimap.end()) {
     if (!m_pBaseMap)
       return WideString();
     return m_pBaseMap->UnicodeFromCID(static_cast<uint16_t>(charcode));
@@ -64,7 +64,7 @@ WideString CPDF_ToUnicodeMap::Lookup(uint32_t charcode) const {
 }
 
 uint32_t CPDF_ToUnicodeMap::ReverseLookup(wchar_t unicode) const {
-  for (const auto& pair : m_Map) {
+  for (const auto& pair : m_Multimap) {
     if (pair.second == static_cast<uint32_t>(unicode))
       return pair.first;
   }
@@ -190,12 +190,12 @@ void CPDF_ToUnicodeMap::HandleBeginBFRange(CPDF_SimpleParser* pParser) {
 
       uint32_t value = value_or_error.value();
       for (uint32_t code = lowcode; code <= highcode; code++)
-        m_Map[code] = value++;
+        m_Multimap.emplace(code, value++);
     } else {
       for (uint32_t code = lowcode; code <= highcode; code++) {
         WideString retcode =
             code == lowcode ? destcode : StringDataAdd(destcode);
-        m_Map[code] = GetUnicode();
+        m_Multimap.emplace(code, GetUnicode());
         m_MultiCharBuf.AppendChar(retcode.GetLength());
         m_MultiCharBuf << retcode;
         destcode = std::move(retcode);
@@ -216,9 +216,9 @@ void CPDF_ToUnicodeMap::SetCode(uint32_t srccode, WideString destcode) {
     return;
 
   if (len == 1) {
-    m_Map[srccode] = destcode[0];
+    m_Multimap.emplace(srccode, destcode[0]);
   } else {
-    m_Map[srccode] = GetUnicode();
+    m_Multimap.emplace(srccode, GetUnicode());
     m_MultiCharBuf.AppendChar(len);
     m_MultiCharBuf << destcode;
   }
