@@ -320,6 +320,7 @@ int CheckPDFiumCApi() {
     // fpdf_signature.h
     CHK(FPDFSignatureObj_GetByteRange);
     CHK(FPDFSignatureObj_GetContents);
+    CHK(FPDFSignatureObj_GetDocMDPPermission);
     CHK(FPDFSignatureObj_GetReason);
     CHK(FPDFSignatureObj_GetSubFilter);
     CHK(FPDFSignatureObj_GetTime);
