@@ -52,7 +52,7 @@ class CFXJSE_Value {
   void SetString(ByteStringView szString);
   void SetFloat(float fFloat);
 
-  void SetHostObject(CFXJSE_HostObject* lpObject, CFXJSE_Class* pClass);
+  void SetHostObject(CFXJSE_HostObject* pObject, CFXJSE_Class* pClass);
   void ClearHostObject();
 
   void SetArray(const std::vector<std::unique_ptr<CFXJSE_Value>>& values);

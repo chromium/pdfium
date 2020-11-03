@@ -45,6 +45,5 @@ CJS_Result CJX_Container::getDeltas(
   pDoc->GetNodeOwner()->PersistList(pList);
 
   auto* pEngine = static_cast<CFXJSE_Engine*>(runtime);
-  return CJS_Result::Success(pEngine->NewXFAObject(
-      pList, pEngine->GetJseNormalClass()->GetTemplate()));
+  return CJS_Result::Success(pEngine->NewNormalXFAObject(pList));
 }

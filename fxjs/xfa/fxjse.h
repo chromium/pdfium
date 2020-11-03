@@ -37,6 +37,9 @@ class CFXJSE_HostObject {
   virtual CFXJSE_FormCalcContext* AsFormCalcContext();
   virtual CJX_Object* AsCJXObject();
 
+  v8::Local<v8::Object> NewBoundV8Object(v8::Isolate* pIsolate,
+                                         v8::Local<v8::FunctionTemplate> tmpl);
+
  protected:
   CFXJSE_HostObject();
 };

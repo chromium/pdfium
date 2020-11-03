@@ -188,11 +188,8 @@ std::unique_ptr<CFXJSE_Context> CFXJSE_Context::Create(
   if (pGlobalClass) {
     CFXJSE_Class* pGlobalClassObj =
         CFXJSE_Class::Create(pContext.get(), pGlobalClass, true);
-    ASSERT(pGlobalClassObj);
-    v8::Local<v8::FunctionTemplate> hFunctionTemplate =
-        v8::Local<v8::FunctionTemplate>::New(pIsolate,
-                                             pGlobalClassObj->m_hTemplate);
-    hObjectTemplate = hFunctionTemplate->InstanceTemplate();
+    hObjectTemplate =
+        pGlobalClassObj->GetTemplate(pIsolate)->InstanceTemplate();
   } else {
     hObjectTemplate = v8::ObjectTemplate::New(pIsolate);
     hObjectTemplate->SetInternalFieldCount(2);
@@ -243,7 +240,7 @@ CFXJSE_Class* CFXJSE_Context::GetClassByName(ByteStringView szName) const {
   auto pClass =
       std::find_if(m_rgClasses.begin(), m_rgClasses.end(),
                    [szName](const std::unique_ptr<CFXJSE_Class>& item) {
-                     return szName == item->m_szClassName;
+                     return item->IsName(szName);
                    });
   return pClass != m_rgClasses.end() ? pClass->get() : nullptr;
 }

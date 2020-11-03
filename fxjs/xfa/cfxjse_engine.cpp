@@ -807,15 +807,9 @@ CXFA_Object* CFXJSE_Engine::ToXFAObject(v8::Local<v8::Value> obj) {
   return pJSObject ? pJSObject->GetXFAObject() : nullptr;
 }
 
-v8::Local<v8::Value> CFXJSE_Engine::NewXFAObject(
-    CXFA_Object* obj,
-    v8::Global<v8::FunctionTemplate>& tmpl) {
+v8::Local<v8::Object> CFXJSE_Engine::NewNormalXFAObject(CXFA_Object* obj) {
   v8::EscapableHandleScope scope(GetIsolate());
-  v8::Local<v8::FunctionTemplate> klass =
-      v8::Local<v8::FunctionTemplate>::New(GetIsolate(), tmpl);
-  v8::Local<v8::Object> object = klass->InstanceTemplate()
-                                     ->NewInstance(m_JsContext->GetContext())
-                                     .ToLocalChecked();
-  FXJSE_UpdateObjectBinding(object, obj->JSObject());
+  v8::Local<v8::Object> object = obj->JSObject()->NewBoundV8Object(
+      GetIsolate(), GetJseNormalClass()->GetTemplate(GetIsolate()));
   return scope.Escape(object);
 }

@@ -92,9 +92,9 @@ CJS_Result CJX_List::item(CFX_V8* runtime,
   if (index < 0 || cast_index >= GetXFAList()->GetLength())
     return CJS_Result::Failure(JSMessage::kInvalidInputError);
 
-  return CJS_Result::Success(static_cast<CFXJSE_Engine*>(runtime)->NewXFAObject(
-      GetXFAList()->Item(cast_index),
-      GetDocument()->GetScriptContext()->GetJseNormalClass()->GetTemplate()));
+  auto* pEngine = static_cast<CFXJSE_Engine*>(runtime);
+  return CJS_Result::Success(
+      pEngine->NewNormalXFAObject(GetXFAList()->Item(cast_index)));
 }
 
 void CJX_List::length(CFXJSE_Value* pValue,

@@ -102,8 +102,7 @@ class CFXJSE_Engine final : public CFX_V8 {
   CXFA_Document* GetDocument() const { return m_pDocument.Get(); }
 
   CXFA_Object* ToXFAObject(v8::Local<v8::Value> obj);
-  v8::Local<v8::Value> NewXFAObject(CXFA_Object* obj,
-                                    v8::Global<v8::FunctionTemplate>& tmpl);
+  v8::Local<v8::Object> NewNormalXFAObject(CXFA_Object* obj);
 
  private:
   CFXJSE_Context* CreateVariablesContext(CXFA_Node* pScriptNode,

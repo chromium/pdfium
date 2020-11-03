@@ -12,7 +12,6 @@
 #include "v8/include/v8.h"
 
 class CFXJSE_Context;
-class CFXJSE_Value;
 struct FXJSE_CLASS_DESCRIPTOR;
 
 class CFXJSE_Class {
@@ -24,13 +23,11 @@ class CFXJSE_Class {
   explicit CFXJSE_Class(CFXJSE_Context* lpContext);
   ~CFXJSE_Class();
 
+  bool IsName(ByteStringView name) const { return name == m_szClassName; }
   CFXJSE_Context* GetContext() const { return m_pContext.Get(); }
-  v8::Global<v8::FunctionTemplate>& GetTemplate() { return m_hTemplate; }
+  v8::Local<v8::FunctionTemplate> GetTemplate(v8::Isolate* pIsolate);
 
  protected:
-  friend class CFXJSE_Context;
-  friend class CFXJSE_Value;
-
   ByteString m_szClassName;
   UnownedPtr<const FXJSE_CLASS_DESCRIPTOR> m_lpClassDefinition;
   UnownedPtr<CFXJSE_Context> const m_pContext;

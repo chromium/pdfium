@@ -322,3 +322,8 @@ CFXJSE_Class* CFXJSE_Class::Create(
 CFXJSE_Class::CFXJSE_Class(CFXJSE_Context* lpContext) : m_pContext(lpContext) {}
 
 CFXJSE_Class::~CFXJSE_Class() = default;
+
+v8::Local<v8::FunctionTemplate> CFXJSE_Class::GetTemplate(
+    v8::Isolate* pIsolate) {
+  return v8::Local<v8::FunctionTemplate>::New(pIsolate, m_hTemplate);
+}
