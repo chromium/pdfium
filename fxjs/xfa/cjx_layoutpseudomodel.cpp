@@ -62,7 +62,8 @@ bool CJX_LayoutPseudoModel::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
 }
 
-void CJX_LayoutPseudoModel::ready(CFXJSE_Value* pValue,
+void CJX_LayoutPseudoModel::ready(v8::Isolate* pIsolate,
+                                  CFXJSE_Value* pValue,
                                   bool bSetting,
                                   XFA_Attribute eAttribute) {
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
@@ -74,7 +75,7 @@ void CJX_LayoutPseudoModel::ready(CFXJSE_Value* pValue,
   }
 
   int32_t iStatus = pNotify->GetLayoutStatus();
-  pValue->SetBoolean(iStatus >= 2);
+  pValue->SetBoolean(pIsolate, iStatus >= 2);
 }
 
 CJS_Result CJX_LayoutPseudoModel::HWXY(

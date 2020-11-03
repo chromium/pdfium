@@ -59,13 +59,13 @@ bool XFAJSEmbedderTest::Execute(ByteStringView input) {
     return true;
 
   CFXJSE_Value msg(isolate());
-  value_->GetObjectPropertyByIdx(1, &msg);
+  value_->GetObjectPropertyByIdx(isolate(), 1, &msg);
   fprintf(stderr, "FormCalc: %.*s\n", static_cast<int>(input.GetLength()),
           input.unterminated_c_str());
   // If the parsing of the input fails, then v8 will not run, so there will be
   // no value here to print.
-  if (msg.IsString() && !msg.ToWideString().IsEmpty())
-    fprintf(stderr, "JS ERROR: %ls\n", msg.ToWideString().c_str());
+  if (msg.IsString(isolate()) && !msg.ToWideString(isolate()).IsEmpty())
+    fprintf(stderr, "JS ERROR: %ls\n", msg.ToWideString(isolate()).c_str());
   return false;
 }
 

@@ -17,32 +17,33 @@ bool CJX_Draw::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
 }
 
-void CJX_Draw::rawValue(CFXJSE_Value* pValue,
+void CJX_Draw::rawValue(v8::Isolate* pIsolate,
+                        CFXJSE_Value* pValue,
                         bool bSetting,
                         XFA_Attribute eAttribute) {
-  defaultValue(pValue, bSetting, eAttribute);
+  defaultValue(pIsolate, pValue, bSetting, eAttribute);
 }
 
-void CJX_Draw::defaultValue(CFXJSE_Value* pValue,
+void CJX_Draw::defaultValue(v8::Isolate* pIsolate,
+                            CFXJSE_Value* pValue,
                             bool bSetting,
                             XFA_Attribute eAttribute) {
   if (!bSetting) {
     WideString content = GetContent(true);
     if (content.IsEmpty())
-      pValue->SetNull();
+      pValue->SetNull(pIsolate);
     else
-      pValue->SetString(content.ToUTF8().AsStringView());
-
+      pValue->SetString(pIsolate, content.ToUTF8().AsStringView());
     return;
   }
 
-  if (!pValue || !pValue->IsString())
+  if (!pValue || !pValue->IsString(pIsolate))
     return;
 
   ASSERT(GetXFANode()->IsWidgetReady());
   if (GetXFANode()->GetFFWidgetType() != XFA_FFWidgetType::kText)
     return;
 
-  WideString wsNewValue = pValue->ToWideString();
+  WideString wsNewValue = pValue->ToWideString(pIsolate);
   SetContent(wsNewValue, wsNewValue, true, true, true);
 }

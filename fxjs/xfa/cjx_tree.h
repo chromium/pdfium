@@ -43,7 +43,8 @@ class CJX_Tree : public CJX_Object {
   static const TypeTag static_type__ = TypeTag::Tree;
   static const CJX_MethodSpec MethodSpecs[];
 
-  void ResolveNodeList(CFXJSE_Value* pValue,
+  void ResolveNodeList(v8::Isolate* pIsolate,
+                       CFXJSE_Value* pValue,
                        WideString wsExpression,
                        uint32_t dwFlag,
                        CXFA_Node* refNode);

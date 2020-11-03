@@ -87,19 +87,22 @@ CJS_Result CJX_Subform::execValidate(
       runtime->NewBoolean(iRet != XFA_EventError::kError));
 }
 
-void CJX_Subform::locale(CFXJSE_Value* pValue,
+void CJX_Subform::locale(v8::Isolate* pIsolate,
+                         CFXJSE_Value* pValue,
                          bool bSetting,
                          XFA_Attribute eAttribute) {
   if (bSetting) {
-    SetCDataImpl(XFA_Attribute::Locale, pValue->ToWideString(), true, true);
+    SetCDataImpl(XFA_Attribute::Locale, pValue->ToWideString(pIsolate), true,
+                 true);
     return;
   }
 
   WideString wsLocaleName = GetXFANode()->GetLocaleName().value_or(L"");
-  pValue->SetString(wsLocaleName.ToUTF8().AsStringView());
+  pValue->SetString(pIsolate, wsLocaleName.ToUTF8().AsStringView());
 }
 
-void CJX_Subform::instanceManager(CFXJSE_Value* pValue,
+void CJX_Subform::instanceManager(v8::Isolate* pIsolate,
+                                  CFXJSE_Value* pValue,
                                   bool bSetting,
                                   XFA_Attribute eAttribute) {
   if (bSetting) {
@@ -122,10 +125,11 @@ void CJX_Subform::instanceManager(CFXJSE_Value* pValue,
     }
   }
   if (!pInstanceMgr) {
-    pValue->SetNull();
+    pValue->SetNull(pIsolate);
     return;
   }
 
-  pValue->Assign(GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
-      pInstanceMgr));
+  pValue->Assign(pIsolate,
+                 GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
+                     pInstanceMgr));
 }

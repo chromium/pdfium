@@ -32,14 +32,17 @@ CJS_Result CJX_Delta::restore(CFX_V8* runtime,
   return CJS_Result::Success();
 }
 
-void CJX_Delta::currentValue(CFXJSE_Value* pValue,
+void CJX_Delta::currentValue(v8::Isolate* pIsolate,
+                             CFXJSE_Value* pValue,
                              bool bSetting,
                              XFA_Attribute eAttribute) {}
 
-void CJX_Delta::savedValue(CFXJSE_Value* pValue,
+void CJX_Delta::savedValue(v8::Isolate* pIsolate,
+                           CFXJSE_Value* pValue,
                            bool bSetting,
                            XFA_Attribute eAttribute) {}
 
-void CJX_Delta::target(CFXJSE_Value* pValue,
+void CJX_Delta::target(v8::Isolate* pIsolate,
+                       CFXJSE_Value* pValue,
                        bool bSetting,
                        XFA_Attribute eAttribute) {}

@@ -97,7 +97,8 @@ CJS_Result CJX_List::item(CFX_V8* runtime,
       pEngine->NewNormalXFAObject(GetXFAList()->Item(cast_index)));
 }
 
-void CJX_List::length(CFXJSE_Value* pValue,
+void CJX_List::length(v8::Isolate* pIsolate,
+                      CFXJSE_Value* pValue,
                       bool bSetting,
                       XFA_Attribute eAttribute) {
   if (bSetting) {
@@ -105,5 +106,5 @@ void CJX_List::length(CFXJSE_Value* pValue,
     return;
   }
   pValue->SetInteger(
-      pdfium::base::checked_cast<int32_t>(GetXFAList()->GetLength()));
+      pIsolate, pdfium::base::checked_cast<int32_t>(GetXFAList()->GetLength()));
 }

@@ -19,7 +19,8 @@ bool CJX_Xfa::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
 }
 
-void CJX_Xfa::thisValue(CFXJSE_Value* pValue,
+void CJX_Xfa::thisValue(v8::Isolate* pIsolate,
+                        CFXJSE_Value* pValue,
                         bool bSetting,
                         XFA_Attribute eAttribute) {
   if (bSetting)
@@ -28,8 +29,8 @@ void CJX_Xfa::thisValue(CFXJSE_Value* pValue,
   auto* pScriptContext = GetDocument()->GetScriptContext();
   CXFA_Object* pThis = pScriptContext->GetThisObject();
   if (!pThis) {
-    pValue->SetNull();
+    pValue->SetNull(pIsolate);
     return;
   }
-  pValue->Assign(pScriptContext->GetOrCreateJSBindingFromMap(pThis));
+  pValue->Assign(pIsolate, pScriptContext->GetOrCreateJSBindingFromMap(pThis));
 }

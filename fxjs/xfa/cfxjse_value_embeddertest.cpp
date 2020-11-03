@@ -19,14 +19,14 @@ TEST_F(CFXJSE_ValueEmbedderTest, Empty) {
 
   auto pValue = std::make_unique<CFXJSE_Value>(isolate());
   EXPECT_TRUE(pValue->IsEmpty());
-  EXPECT_FALSE(pValue->IsUndefined());
-  EXPECT_FALSE(pValue->IsNull());
-  EXPECT_FALSE(pValue->IsBoolean());
-  EXPECT_FALSE(pValue->IsString());
-  EXPECT_FALSE(pValue->IsNumber());
-  EXPECT_FALSE(pValue->IsObject());
-  EXPECT_FALSE(pValue->IsArray());
-  EXPECT_FALSE(pValue->IsFunction());
+  EXPECT_FALSE(pValue->IsUndefined(isolate()));
+  EXPECT_FALSE(pValue->IsNull(isolate()));
+  EXPECT_FALSE(pValue->IsBoolean(isolate()));
+  EXPECT_FALSE(pValue->IsString(isolate()));
+  EXPECT_FALSE(pValue->IsNumber(isolate()));
+  EXPECT_FALSE(pValue->IsObject(isolate()));
+  EXPECT_FALSE(pValue->IsArray(isolate()));
+  EXPECT_FALSE(pValue->IsFunction(isolate()));
 }
 
 TEST_F(CFXJSE_ValueEmbedderTest, EmptyArrayInsert) {
@@ -38,6 +38,6 @@ TEST_F(CFXJSE_ValueEmbedderTest, EmptyArrayInsert) {
   vec.push_back(std::move(pValue));
 
   CFXJSE_Value array(isolate());
-  array.SetArray(vec);
-  EXPECT_TRUE(array.IsArray());
+  array.SetArray(isolate(), vec);
+  EXPECT_TRUE(array.IsArray(isolate()));
 }

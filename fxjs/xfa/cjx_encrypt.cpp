@@ -16,6 +16,7 @@ bool CJX_Encrypt::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
 }
 
-void CJX_Encrypt::format(CFXJSE_Value* pValue,
+void CJX_Encrypt::format(v8::Isolate* pIsolate,
+                         CFXJSE_Value* pValue,
                          bool bSetting,
                          XFA_Attribute eAttribute) {}

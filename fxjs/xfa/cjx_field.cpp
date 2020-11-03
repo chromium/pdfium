@@ -242,7 +242,8 @@ CJS_Result CJX_Field::execValidate(
       runtime->NewBoolean(iRet != XFA_EventError::kError));
 }
 
-void CJX_Field::defaultValue(CFXJSE_Value* pValue,
+void CJX_Field::defaultValue(v8::Isolate* pIsolate,
+                             CFXJSE_Value* pValue,
                              bool bSetting,
                              XFA_Attribute eAttribute) {
   CXFA_Node* xfaNode = GetXFANode();
@@ -252,12 +253,12 @@ void CJX_Field::defaultValue(CFXJSE_Value* pValue,
   if (bSetting) {
     if (pValue) {
       xfaNode->SetPreNull(xfaNode->IsNull());
-      xfaNode->SetIsNull(pValue->IsNull());
+      xfaNode->SetIsNull(pValue->IsNull(pIsolate));
     }
 
     WideString wsNewText;
-    if (pValue && !(pValue->IsNull() || pValue->IsUndefined()))
-      wsNewText = pValue->ToWideString();
+    if (pValue && !(pValue->IsNull(pIsolate) || pValue->IsUndefined(pIsolate)))
+      wsNewText = pValue->ToWideString(pIsolate);
     if (xfaNode->GetUIChildNode()->GetElementType() == XFA_Element::NumericEdit)
       wsNewText = xfaNode->NumericLimit(wsNewText);
 
@@ -272,7 +273,7 @@ void CJX_Field::defaultValue(CFXJSE_Value* pValue,
 
   WideString content = GetContent(true);
   if (content.IsEmpty()) {
-    pValue->SetNull();
+    pValue->SetNull(pIsolate);
     return;
   }
 
@@ -282,24 +283,25 @@ void CJX_Field::defaultValue(CFXJSE_Value* pValue,
     if (xfaNode->GetUIChildNode()->GetElementType() ==
             XFA_Element::NumericEdit &&
         (pNode->JSObject()->GetInteger(XFA_Attribute::FracDigits) == -1)) {
-      pValue->SetString(content.ToUTF8().AsStringView());
+      pValue->SetString(pIsolate, content.ToUTF8().AsStringView());
     } else {
       CFGAS_Decimal decimal(content.AsStringView());
-      pValue->SetFloat(decimal.ToFloat());
+      pValue->SetFloat(pIsolate, decimal.ToFloat());
     }
   } else if (pNode && pNode->GetElementType() == XFA_Element::Integer) {
-    pValue->SetInteger(FXSYS_wtoi(content.c_str()));
+    pValue->SetInteger(pIsolate, FXSYS_wtoi(content.c_str()));
   } else if (pNode && pNode->GetElementType() == XFA_Element::Boolean) {
-    pValue->SetBoolean(FXSYS_wtoi(content.c_str()) != 0);
+    pValue->SetBoolean(pIsolate, FXSYS_wtoi(content.c_str()) != 0);
   } else if (pNode && pNode->GetElementType() == XFA_Element::Float) {
     CFGAS_Decimal decimal(content.AsStringView());
-    pValue->SetFloat(decimal.ToFloat());
+    pValue->SetFloat(pIsolate, decimal.ToFloat());
   } else {
-    pValue->SetString(content.ToUTF8().AsStringView());
+    pValue->SetString(pIsolate, content.ToUTF8().AsStringView());
   }
 }
 
-void CJX_Field::editValue(CFXJSE_Value* pValue,
+void CJX_Field::editValue(v8::Isolate* pIsolate,
+                          CFXJSE_Value* pValue,
                           bool bSetting,
                           XFA_Attribute eAttribute) {
   CXFA_Node* node = GetXFANode();
@@ -307,20 +309,22 @@ void CJX_Field::editValue(CFXJSE_Value* pValue,
     return;
 
   if (bSetting) {
-    node->SetValue(XFA_VALUEPICTURE_Edit, pValue->ToWideString());
+    node->SetValue(XFA_VALUEPICTURE_Edit, pValue->ToWideString(pIsolate));
     return;
   }
   pValue->SetString(
-      node->GetValue(XFA_VALUEPICTURE_Edit).ToUTF8().AsStringView());
+      pIsolate, node->GetValue(XFA_VALUEPICTURE_Edit).ToUTF8().AsStringView());
 }
 
-void CJX_Field::formatMessage(CFXJSE_Value* pValue,
+void CJX_Field::formatMessage(v8::Isolate* pIsolate,
+                              CFXJSE_Value* pValue,
                               bool bSetting,
                               XFA_Attribute eAttribute) {
-  ScriptSomMessage(pValue, bSetting, XFA_SOM_FormatMessage);
+  ScriptSomMessage(pIsolate, pValue, bSetting, XFA_SOM_FormatMessage);
 }
 
-void CJX_Field::formattedValue(CFXJSE_Value* pValue,
+void CJX_Field::formattedValue(v8::Isolate* pIsolate,
+                               CFXJSE_Value* pValue,
                                bool bSetting,
                                XFA_Attribute eAttribute) {
   CXFA_Node* node = GetXFANode();
@@ -328,14 +332,16 @@ void CJX_Field::formattedValue(CFXJSE_Value* pValue,
     return;
 
   if (bSetting) {
-    node->SetValue(XFA_VALUEPICTURE_Display, pValue->ToWideString());
+    node->SetValue(XFA_VALUEPICTURE_Display, pValue->ToWideString(pIsolate));
     return;
   }
   pValue->SetString(
+      pIsolate,
       node->GetValue(XFA_VALUEPICTURE_Display).ToUTF8().AsStringView());
 }
 
-void CJX_Field::length(CFXJSE_Value* pValue,
+void CJX_Field::length(v8::Isolate* pIsolate,
+                       CFXJSE_Value* pValue,
                        bool bSetting,
                        XFA_Attribute eAttribute) {
   if (bSetting) {
@@ -345,23 +351,25 @@ void CJX_Field::length(CFXJSE_Value* pValue,
 
   CXFA_Node* node = GetXFANode();
   if (!node->IsWidgetReady()) {
-    pValue->SetInteger(0);
+    pValue->SetInteger(pIsolate, 0);
     return;
   }
-  pValue->SetInteger(node->CountChoiceListItems(true));
+  pValue->SetInteger(pIsolate, node->CountChoiceListItems(true));
 }
 
-void CJX_Field::parentSubform(CFXJSE_Value* pValue,
+void CJX_Field::parentSubform(v8::Isolate* pIsolate,
+                              CFXJSE_Value* pValue,
                               bool bSetting,
                               XFA_Attribute eAttribute) {
   if (bSetting) {
     ThrowInvalidPropertyException();
     return;
   }
-  pValue->SetNull();
+  pValue->SetNull(pIsolate);
 }
 
-void CJX_Field::selectedIndex(CFXJSE_Value* pValue,
+void CJX_Field::selectedIndex(v8::Isolate* pIsolate,
+                              CFXJSE_Value* pValue,
                               bool bSetting,
                               XFA_Attribute eAttribute) {
   CXFA_Node* node = GetXFANode();
@@ -369,11 +377,11 @@ void CJX_Field::selectedIndex(CFXJSE_Value* pValue,
     return;
 
   if (!bSetting) {
-    pValue->SetInteger(node->GetSelectedItem(0));
+    pValue->SetInteger(pIsolate, node->GetSelectedItem(0));
     return;
   }
 
-  int32_t iIndex = pValue->ToInteger();
+  int32_t iIndex = pValue->ToInteger(pIsolate);
   if (iIndex == -1) {
     node->ClearAllSelections();
     return;
@@ -382,8 +390,9 @@ void CJX_Field::selectedIndex(CFXJSE_Value* pValue,
   node->SetItemState(iIndex, true, true, true, true);
 }
 
-void CJX_Field::rawValue(CFXJSE_Value* pValue,
+void CJX_Field::rawValue(v8::Isolate* pIsolate,
+                         CFXJSE_Value* pValue,
                          bool bSetting,
                          XFA_Attribute eAttribute) {
-  defaultValue(pValue, bSetting, eAttribute);
+  defaultValue(pIsolate, pValue, bSetting, eAttribute);
 }

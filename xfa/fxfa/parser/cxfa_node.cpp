@@ -2771,9 +2771,10 @@ std::pair<XFA_EventError, bool> CXFA_Node::ExecuteBoolScript(
     iRet = XFA_EventError::kSuccess;
     if (pEventParam->m_eType == XFA_EVENT_Calculate ||
         pEventParam->m_eType == XFA_EVENT_InitCalculate) {
-      if (!pTmpRetValue->IsUndefined()) {
-        if (!pTmpRetValue->IsNull())
-          pEventParam->m_wsResult = pTmpRetValue->ToWideString();
+      if (!pTmpRetValue->IsUndefined(pContext->GetIsolate())) {
+        if (!pTmpRetValue->IsNull(pContext->GetIsolate()))
+          pEventParam->m_wsResult =
+              pTmpRetValue->ToWideString(pContext->GetIsolate());
 
         iRet = XFA_EventError::kSuccess;
       } else {
@@ -2800,7 +2801,8 @@ std::pair<XFA_EventError, bool> CXFA_Node::ExecuteBoolScript(
   pContext->SetNodesOfRunScript(nullptr);
   pContext->SetEventParam(nullptr);
 
-  return {iRet, pTmpRetValue->IsBoolean() && pTmpRetValue->ToBoolean()};
+  return {iRet, pTmpRetValue->IsBoolean(pContext->GetIsolate()) &&
+                    pTmpRetValue->ToBoolean(pContext->GetIsolate())};
 }
 
 std::pair<XFA_FFWidgetType, CXFA_Ui*>

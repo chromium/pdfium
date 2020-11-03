@@ -130,14 +130,17 @@ CJS_Result CJX_Form::execValidate(
       runtime->NewBoolean(iRet != XFA_EventError::kError));
 }
 
-void CJX_Form::checksumS(CFXJSE_Value* pValue,
+void CJX_Form::checksumS(v8::Isolate* pIsolate,
+                         CFXJSE_Value* pValue,
                          bool bSetting,
                          XFA_Attribute eAttribute) {
   if (bSetting) {
-    SetAttributeByEnum(XFA_Attribute::Checksum, pValue->ToWideString(), false);
+    SetAttributeByEnum(XFA_Attribute::Checksum, pValue->ToWideString(pIsolate),
+                       false);
     return;
   }
 
   Optional<WideString> checksum = TryAttribute(XFA_Attribute::Checksum, false);
-  pValue->SetString(checksum ? checksum->ToUTF8().AsStringView() : "");
+  pValue->SetString(pIsolate,
+                    checksum ? checksum->ToUTF8().AsStringView() : "");
 }

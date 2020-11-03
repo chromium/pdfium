@@ -17,24 +17,26 @@ bool CJX_Occur::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
 }
 
-void CJX_Occur::max(CFXJSE_Value* pValue,
+void CJX_Occur::max(v8::Isolate* pIsolate,
+                    CFXJSE_Value* pValue,
                     bool bSetting,
                     XFA_Attribute eAttribute) {
   CXFA_Occur* occur = static_cast<CXFA_Occur*>(GetXFANode());
   if (!bSetting) {
-    pValue->SetInteger(occur->GetMax());
+    pValue->SetInteger(pIsolate, occur->GetMax());
     return;
   }
-  occur->SetMax(pValue->ToInteger());
+  occur->SetMax(pValue->ToInteger(pIsolate));
 }
 
-void CJX_Occur::min(CFXJSE_Value* pValue,
+void CJX_Occur::min(v8::Isolate* pIsolate,
+                    CFXJSE_Value* pValue,
                     bool bSetting,
                     XFA_Attribute eAttribute) {
   CXFA_Occur* occur = static_cast<CXFA_Occur*>(GetXFANode());
   if (!bSetting) {
-    pValue->SetInteger(occur->GetMin());
+    pValue->SetInteger(pIsolate, occur->GetMin());
     return;
   }
-  occur->SetMin(pValue->ToInteger());
+  occur->SetMin(pValue->ToInteger(pIsolate));
 }

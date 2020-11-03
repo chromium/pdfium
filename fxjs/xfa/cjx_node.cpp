@@ -448,7 +448,8 @@ CJS_Result CJX_Node::setElement(
   return CJS_Result::Success();
 }
 
-void CJX_Node::ns(CFXJSE_Value* pValue,
+void CJX_Node::ns(v8::Isolate* pIsolate,
+                  CFXJSE_Value* pValue,
                   bool bSetting,
                   XFA_Attribute eAttribute) {
   if (bSetting) {
@@ -456,31 +457,35 @@ void CJX_Node::ns(CFXJSE_Value* pValue,
     return;
   }
   pValue->SetString(
-      TryNamespace().value_or(WideString()).ToUTF8().AsStringView());
+      pIsolate, TryNamespace().value_or(WideString()).ToUTF8().AsStringView());
 }
 
-void CJX_Node::model(CFXJSE_Value* pValue,
+void CJX_Node::model(v8::Isolate* pIsolate,
+                     CFXJSE_Value* pValue,
                      bool bSetting,
                      XFA_Attribute eAttribute) {
   if (bSetting) {
     ThrowInvalidPropertyException();
     return;
   }
-  pValue->Assign(GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
-      GetXFANode()->GetModelNode()));
+  pValue->Assign(pIsolate,
+                 GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
+                     GetXFANode()->GetModelNode()));
 }
 
-void CJX_Node::isContainer(CFXJSE_Value* pValue,
+void CJX_Node::isContainer(v8::Isolate* pIsolate,
+                           CFXJSE_Value* pValue,
                            bool bSetting,
                            XFA_Attribute eAttribute) {
   if (bSetting) {
     ThrowInvalidPropertyException();
     return;
   }
-  pValue->SetBoolean(GetXFANode()->IsContainerNode());
+  pValue->SetBoolean(pIsolate, GetXFANode()->IsContainerNode());
 }
 
-void CJX_Node::isNull(CFXJSE_Value* pValue,
+void CJX_Node::isNull(v8::Isolate* pIsolate,
+                      CFXJSE_Value* pValue,
                       bool bSetting,
                       XFA_Attribute eAttribute) {
   if (bSetting) {
@@ -488,13 +493,14 @@ void CJX_Node::isNull(CFXJSE_Value* pValue,
     return;
   }
   if (GetXFANode()->GetElementType() == XFA_Element::Subform) {
-    pValue->SetBoolean(false);
+    pValue->SetBoolean(pIsolate, false);
     return;
   }
-  pValue->SetBoolean(GetContent(false).IsEmpty());
+  pValue->SetBoolean(pIsolate, GetContent(false).IsEmpty());
 }
 
-void CJX_Node::oneOfChild(CFXJSE_Value* pValue,
+void CJX_Node::oneOfChild(v8::Isolate* pIsolate,
+                          CFXJSE_Value* pValue,
                           bool bSetting,
                           XFA_Attribute eAttribute) {
   if (bSetting) {
@@ -506,6 +512,7 @@ void CJX_Node::oneOfChild(CFXJSE_Value* pValue,
       GetXFANode()->GetNodeListWithFilter(XFA_NODEFILTER_OneOfProperty);
   if (!properties.empty()) {
     pValue->Assign(
+        pIsolate,
         GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
             properties.front()));
   }

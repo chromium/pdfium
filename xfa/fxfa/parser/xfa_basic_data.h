@@ -14,7 +14,8 @@
 #include "third_party/base/optional.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
-typedef void (*XFA_ATTRIBUTE_CALLBACK)(CJX_Object* pNode,
+typedef void (*XFA_ATTRIBUTE_CALLBACK)(v8::Isolate* pIsolate,
+                                       CJX_Object* pNode,
                                        CFXJSE_Value* pValue,
                                        bool bSetting,
                                        XFA_Attribute eAttribute);

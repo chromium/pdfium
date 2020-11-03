@@ -115,7 +115,8 @@ CJS_Result CJX_ExclGroup::selectedMember(
       value->DirectGetValue().Get(runtime->GetIsolate()));
 }
 
-void CJX_ExclGroup::defaultValue(CFXJSE_Value* pValue,
+void CJX_ExclGroup::defaultValue(v8::Isolate* pIsolate,
+                                 CFXJSE_Value* pValue,
                                  bool bSetting,
                                  XFA_Attribute eAttribute) {
   CXFA_Node* node = GetXFANode();
@@ -123,31 +124,34 @@ void CJX_ExclGroup::defaultValue(CFXJSE_Value* pValue,
     return;
 
   if (bSetting) {
-    node->SetSelectedMemberByValue(pValue->ToWideString().AsStringView(), true,
-                                   true, true);
+    node->SetSelectedMemberByValue(
+        pValue->ToWideString(pIsolate).AsStringView(), true, true, true);
     return;
   }
 
   WideString wsValue = GetContent(true);
   XFA_VERSION curVersion = GetDocument()->GetCurVersionMode();
   if (wsValue.IsEmpty() && curVersion >= XFA_VERSION_300) {
-    pValue->SetNull();
+    pValue->SetNull(pIsolate);
     return;
   }
-  pValue->SetString(wsValue.ToUTF8().AsStringView());
+  pValue->SetString(pIsolate, wsValue.ToUTF8().AsStringView());
 }
 
-void CJX_ExclGroup::rawValue(CFXJSE_Value* pValue,
+void CJX_ExclGroup::rawValue(v8::Isolate* pIsolate,
+                             CFXJSE_Value* pValue,
                              bool bSetting,
                              XFA_Attribute eAttribute) {
-  defaultValue(pValue, bSetting, eAttribute);
+  defaultValue(pIsolate, pValue, bSetting, eAttribute);
 }
 
-void CJX_ExclGroup::transient(CFXJSE_Value* pValue,
+void CJX_ExclGroup::transient(v8::Isolate* pIsolate,
+                              CFXJSE_Value* pValue,
                               bool bSetting,
                               XFA_Attribute eAttribute) {}
 
-void CJX_ExclGroup::errorText(CFXJSE_Value* pValue,
+void CJX_ExclGroup::errorText(v8::Isolate* pIsolate,
+                              CFXJSE_Value* pValue,
                               bool bSetting,
                               XFA_Attribute eAttribute) {
   if (bSetting)
