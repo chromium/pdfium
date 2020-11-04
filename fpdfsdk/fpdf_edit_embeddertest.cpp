@@ -240,9 +240,8 @@ TEST_F(FPDFEditEmbedderTest, EmbedNotoSansSCFont) {
   EXPECT_TRUE(CreateEmptyDocument());
   ScopedFPDFPage page(FPDFPage_New(document(), 0, 400, 400));
   std::string font_path;
-  ASSERT_TRUE(PathService::GetTestFilePath(
-      "fonts/third_party/NotoSansSC/NotoSansSC-Regular.subset.otf",
-      &font_path));
+  ASSERT_TRUE(PathService::GetThirdPartyFilePath(
+      "NotoSansCJK/NotoSansSC-Regular.subset.otf", &font_path));
 
   size_t file_length = 0;
   std::unique_ptr<char, pdfium::FreeDeleter> font_data =

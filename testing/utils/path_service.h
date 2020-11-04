@@ -37,5 +37,9 @@ class PathService {
 
   // Get the full path for a test file under the test data directory.
   static bool GetTestFilePath(const std::string& file_name, std::string* path);
+
+  // Get the full path for a file under the third-party directory.
+  static bool GetThirdPartyFilePath(const std::string& file_name,
+                                    std::string* path);
 };
 #endif  // TESTING_UTILS_PATH_SERVICE_H_

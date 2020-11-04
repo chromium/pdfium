@@ -160,3 +160,35 @@ bool PathService::GetTestFilePath(const std::string& file_name,
   path->append(file_name);
   return true;
 }
+
+// static
+bool PathService::GetThirdPartyFilePath(const std::string& file_name,
+                                        std::string* path) {
+  if (!GetSourceDir(path))
+    return false;
+
+  if (!EndsWithSeparator(*path))
+    path->push_back(PATH_SEPARATOR);
+
+  std::string potential_path = *path;
+  potential_path.append("third_party");
+  if (PathService::DirectoryExists(potential_path)) {
+    *path = potential_path;
+    path->append(PATH_SEPARATOR + file_name);
+    return true;
+  }
+
+  potential_path = *path;
+  potential_path.append("third_party");
+  potential_path.push_back(PATH_SEPARATOR);
+  potential_path.append("pdfium");
+  potential_path.push_back(PATH_SEPARATOR);
+  potential_path.append("third_party");
+  if (PathService::DirectoryExists(potential_path)) {
+    *path = potential_path;
+    path->append(PATH_SEPARATOR + file_name);
+    return true;
+  }
+
+  return false;
+}
