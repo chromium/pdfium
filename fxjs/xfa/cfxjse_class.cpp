@@ -189,7 +189,7 @@ void NamedPropertyQueryCallback(
   v8::HandleScope scope(info.GetIsolate());
   v8::String::Utf8Value szPropName(info.GetIsolate(), property);
   ByteStringView szFxPropName(*szPropName, szPropName.length());
-  auto lpThisValue = std::make_unique<CFXJSE_Value>(info.GetIsolate());
+  auto lpThisValue = std::make_unique<CFXJSE_Value>();
   lpThisValue->ForceSetValue(info.GetIsolate(), thisObject);
   if (DynPropQueryAdapter(info.GetIsolate(), lpClass, lpThisValue.get(),
                           szFxPropName)) {
@@ -211,9 +211,9 @@ void NamedPropertyGetterCallback(
 
   v8::String::Utf8Value szPropName(info.GetIsolate(), property);
   ByteStringView szFxPropName(*szPropName, szPropName.length());
-  auto lpThisValue = std::make_unique<CFXJSE_Value>(info.GetIsolate());
+  auto lpThisValue = std::make_unique<CFXJSE_Value>();
   lpThisValue->ForceSetValue(info.GetIsolate(), thisObject);
-  auto lpNewValue = std::make_unique<CFXJSE_Value>(info.GetIsolate());
+  auto lpNewValue = std::make_unique<CFXJSE_Value>();
   DynPropGetterAdapter(info.GetIsolate(), lpClass, lpThisValue.get(),
                        szFxPropName, lpNewValue.get());
   info.GetReturnValue().Set(lpNewValue->DirectGetValue());
@@ -231,9 +231,9 @@ void NamedPropertySetterCallback(
 
   v8::String::Utf8Value szPropName(info.GetIsolate(), property);
   ByteStringView szFxPropName(*szPropName, szPropName.length());
-  auto lpThisValue = std::make_unique<CFXJSE_Value>(info.GetIsolate());
+  auto lpThisValue = std::make_unique<CFXJSE_Value>();
   lpThisValue->ForceSetValue(info.GetIsolate(), thisObject);
-  auto lpNewValue = std::make_unique<CFXJSE_Value>(info.GetIsolate());
+  auto lpNewValue = std::make_unique<CFXJSE_Value>();
   lpNewValue->ForceSetValue(info.GetIsolate(), value);
   DynPropSetterAdapter(info.GetIsolate(), lpClass, lpThisValue.get(),
                        szFxPropName, lpNewValue.get());

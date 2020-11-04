@@ -65,7 +65,7 @@ void FXJSE_ThrowMessage(ByteStringView utf8Message) {
   pIsolate->ThrowException(hError);
 }
 
-CFXJSE_Value::CFXJSE_Value(v8::Isolate* pIsolate) {}
+CFXJSE_Value::CFXJSE_Value() = default;
 
 CFXJSE_Value::CFXJSE_Value(v8::Isolate* pIsolate, v8::Local<v8::Value> value) {
   ForceSetValue(pIsolate, value);

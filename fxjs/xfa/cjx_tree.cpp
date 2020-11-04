@@ -71,7 +71,7 @@ CJS_Result CJX_Tree::resolveNode(
     return CJS_Result::Success(runtime->NewNull());
   }
 
-  auto pValue = std::make_unique<CFXJSE_Value>(pScriptContext->GetIsolate());
+  auto pValue = std::make_unique<CFXJSE_Value>();
   CJX_Object* jsObject = resolveNodeRS.objects.front()->JSObject();
   (*resolveNodeRS.script_attribute.callback)(
       runtime->GetIsolate(), jsObject, pValue.get(), false,
@@ -91,7 +91,7 @@ CJS_Result CJX_Tree::resolveNodes(
     refNode = GetDocument()->GetScriptContext()->GetThisObject();
 
   CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
-  auto pValue = std::make_unique<CFXJSE_Value>(pScriptContext->GetIsolate());
+  auto pValue = std::make_unique<CFXJSE_Value>();
   ResolveNodeList(pScriptContext->GetIsolate(), pValue.get(),
                   runtime->ToWideString(params[0]),
                   XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Attributes |
@@ -239,8 +239,7 @@ void CJX_Tree::ResolveNodeList(v8::Isolate* pIsolate,
     if (resolveNodeRS.script_attribute.callback &&
         resolveNodeRS.script_attribute.eValueType == XFA_ScriptType::Object) {
       for (auto& pObject : resolveNodeRS.objects) {
-        auto innerValue =
-            std::make_unique<CFXJSE_Value>(pScriptContext->GetIsolate());
+        auto innerValue = std::make_unique<CFXJSE_Value>();
         CJX_Object* jsObject = pObject->JSObject();
         (*resolveNodeRS.script_attribute.callback)(
             pIsolate, jsObject, innerValue.get(), false,

@@ -42,7 +42,7 @@ void DoPredicateFilter(v8::Isolate* pIsolate,
 
   wsExpression = wsCondition.Substr(2, wsCondition.GetLength() - 3);
   for (size_t i = iFoundCount; i > 0; --i) {
-    auto pRetValue = std::make_unique<CFXJSE_Value>(pRnd->m_pSC->GetIsolate());
+    auto pRetValue = std::make_unique<CFXJSE_Value>();
     bool bRet =
         pRnd->m_pSC->RunScript(eLangType, wsExpression.AsStringView(),
                                pRetValue.get(), pRnd->m_Objects[i - 1].Get());

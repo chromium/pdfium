@@ -554,7 +554,7 @@ bool CFXJSE_Engine::RunVariablesScript(CXFA_Node* pScriptNode) {
     return false;
 
   ByteString btScript = wsScript->ToUTF8();
-  auto hRetValue = std::make_unique<CFXJSE_Value>(GetIsolate());
+  auto hRetValue = std::make_unique<CFXJSE_Value>();
   CXFA_Node* pThisObject = pParent->GetParent();
   CFXJSE_Context* pVariablesContext =
       CreateVariablesContext(pScriptNode, pThisObject);
@@ -582,7 +582,7 @@ bool CFXJSE_Engine::QueryVariableValue(CXFA_Node* pScriptNode,
 
   CFXJSE_Context* pVariableContext = it->second.get();
   std::unique_ptr<CFXJSE_Value> pObject = pVariableContext->GetGlobalObject();
-  auto hVariableValue = std::make_unique<CFXJSE_Value>(GetIsolate());
+  auto hVariableValue = std::make_unique<CFXJSE_Value>();
   if (!bGetter) {
     pObject->SetObjectOwnProperty(GetIsolate(), szPropName, pValue);
     return true;
@@ -604,7 +604,7 @@ bool CFXJSE_Engine::QueryVariableValue(CXFA_Node* pScriptNode,
 void CFXJSE_Engine::RemoveBuiltInObjs(CFXJSE_Context* pContext) const {
   const ByteStringView kObjNames[2] = {"Number", "Date"};
   std::unique_ptr<CFXJSE_Value> pObject = pContext->GetGlobalObject();
-  auto hProp = std::make_unique<CFXJSE_Value>(GetIsolate());
+  auto hProp = std::make_unique<CFXJSE_Value>();
   for (const auto& obj : kObjNames) {
     if (pObject->GetObjectProperty(GetIsolate(), obj, hProp.get()))
       pObject->DeleteObjectProperty(GetIsolate(), obj);
@@ -703,7 +703,7 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
           rndFind.m_ScriptAttribute.callback &&
           nStart <
               pdfium::base::checked_cast<int32_t>(wsExpression.GetLength())) {
-        auto pValue = std::make_unique<CFXJSE_Value>(GetIsolate());
+        auto pValue = std::make_unique<CFXJSE_Value>();
         CJX_Object* jsObject = rndFind.m_Objects.front()->JSObject();
         (*rndFind.m_ScriptAttribute.callback)(
             GetIsolate(), jsObject, pValue.get(), false,
@@ -788,7 +788,7 @@ CFXJSE_Value* CFXJSE_Engine::GetOrCreateJSBindingFromMap(CXFA_Object* pObject) {
   if (iter != m_mapObjectToValue.end())
     return iter->second.get();
 
-  auto jsValue = std::make_unique<CFXJSE_Value>(GetIsolate());
+  auto jsValue = std::make_unique<CFXJSE_Value>();
   jsValue->SetHostObject(GetIsolate(), pCJXObject, m_pJsClass.Get());
 
   CFXJSE_Value* pValue = jsValue.get();

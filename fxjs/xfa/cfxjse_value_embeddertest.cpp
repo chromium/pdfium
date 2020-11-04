@@ -17,7 +17,7 @@ class CFXJSE_ValueEmbedderTest : public XFAJSEmbedderTest {};
 TEST_F(CFXJSE_ValueEmbedderTest, Empty) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  auto pValue = std::make_unique<CFXJSE_Value>(isolate());
+  auto pValue = std::make_unique<CFXJSE_Value>();
   EXPECT_TRUE(pValue->IsEmpty());
   EXPECT_FALSE(pValue->IsUndefined(isolate()));
   EXPECT_FALSE(pValue->IsNull(isolate()));
@@ -33,11 +33,11 @@ TEST_F(CFXJSE_ValueEmbedderTest, EmptyArrayInsert) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   // Test inserting empty values into arrays.
-  auto pValue = std::make_unique<CFXJSE_Value>(isolate());
+  auto pValue = std::make_unique<CFXJSE_Value>();
   std::vector<std::unique_ptr<CFXJSE_Value>> vec;
   vec.push_back(std::move(pValue));
 
-  CFXJSE_Value array(isolate());
+  CFXJSE_Value array;
   array.SetArray(isolate(), vec);
   EXPECT_TRUE(array.IsArray(isolate()));
 }

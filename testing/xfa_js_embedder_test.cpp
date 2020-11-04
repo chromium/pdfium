@@ -58,7 +58,7 @@ bool XFAJSEmbedderTest::Execute(ByteStringView input) {
   if (ExecuteHelper(input))
     return true;
 
-  CFXJSE_Value msg(isolate());
+  CFXJSE_Value msg;
   value_->GetObjectPropertyByIdx(isolate(), 1, &msg);
   fprintf(stderr, "FormCalc: %.*s\n", static_cast<int>(input.GetLength()),
           input.unterminated_c_str());
@@ -74,7 +74,7 @@ bool XFAJSEmbedderTest::ExecuteSilenceFailure(ByteStringView input) {
 }
 
 bool XFAJSEmbedderTest::ExecuteHelper(ByteStringView input) {
-  value_ = std::make_unique<CFXJSE_Value>(isolate());
+  value_ = std::make_unique<CFXJSE_Value>();
   return script_context_->RunScript(CXFA_Script::Type::Formcalc,
                                     WideString::FromUTF8(input).AsStringView(),
                                     value_.get(), GetXFADocument()->GetRoot());

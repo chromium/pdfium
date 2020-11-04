@@ -218,7 +218,7 @@ CFXJSE_Context::CFXJSE_Context(v8::Isolate* pIsolate, CXFA_ThisProxy* pProxy)
 CFXJSE_Context::~CFXJSE_Context() = default;
 
 std::unique_ptr<CFXJSE_Value> CFXJSE_Context::GetGlobalObject() {
-  auto pValue = std::make_unique<CFXJSE_Value>(GetIsolate());
+  auto pValue = std::make_unique<CFXJSE_Value>();
   CFXJSE_ScopeUtil_IsolateHandleContext scope(this);
   v8::Local<v8::Context> hContext =
       v8::Local<v8::Context>::New(GetIsolate(), m_hContext);

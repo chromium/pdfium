@@ -2757,7 +2757,7 @@ std::pair<XFA_EventError, bool> CXFA_Node::ExecuteBoolScript(
     pContext->SetNodesOfRunScript(&refNodes);
   }
 
-  auto pTmpRetValue = std::make_unique<CFXJSE_Value>(pContext->GetIsolate());
+  auto pTmpRetValue = std::make_unique<CFXJSE_Value>();
   bool bRet = false;
   {
     AutoRestorer<uint8_t> restorer(&m_ExecuteRecursionDepth);
