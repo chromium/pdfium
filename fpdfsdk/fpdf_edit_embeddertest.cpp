@@ -67,6 +67,9 @@ const char kFirstRemovedChecksum[] = "b76df015fe88009c3c342395df96abf1";
 
 const wchar_t kLoadedFontText[] = L"I am testing my loaded font, WEE.";
 
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+const char kLoadedFontTextChecksum[] = "a1dffe52c1b9ded5fe8d77eb10d8cc19";
+#else
 #if defined(OS_WIN)
 const char kLoadedFontTextChecksum[] = "d60ba39f9698e32360d99e727dd93165";
 #elif defined(OS_APPLE)
@@ -74,6 +77,7 @@ const char kLoadedFontTextChecksum[] = "fc921c0bbdde73986ac13c15a85db4c3";
 #else
 const char kLoadedFontTextChecksum[] = "70592859010ffbf532a2237b8118bcc4";
 #endif
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
 const char kRedRectangleChecksum[] = "66d02eaa6181e2c069ce2ea99beda497";
 
@@ -2702,13 +2706,7 @@ TEST_F(FPDFEditEmbedderTest, NormalizeNegativeRotation) {
   UnloadPage(page);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_AddTrueTypeFontText DISABLED_AddTrueTypeFontText
-#else
-#define MAYBE_AddTrueTypeFontText AddTrueTypeFontText
-#endif
-TEST_F(FPDFEditEmbedderTest, MAYBE_AddTrueTypeFontText) {
+TEST_F(FPDFEditEmbedderTest, AddTrueTypeFontText) {
   // Start with a blank page
   FPDF_PAGE page = FPDFPage_New(CreateNewDocument(), 0, 612, 792);
   {
@@ -2739,6 +2737,13 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_AddTrueTypeFontText) {
     FPDFPage_InsertObject(page, text_object2);
   }
   ScopedFPDFBitmap page_bitmap2 = RenderPage(page);
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#if defined(OS_WIN)
+  const char kInsertTrueTypeChecksum[] = "c80411cb051a9d45c4b7a8ec8a72637d";
+#else
+  const char kInsertTrueTypeChecksum[] = "f2ee263957a5584f3c72424e8683ac8c";
+#endif  // defined(OS_WIN)
+#else
 #if defined(OS_WIN)
   const char kInsertTrueTypeChecksum[] = "2199b579c49ab5f80c246a586a80ee90";
 #elif defined(OS_APPLE)
@@ -2746,6 +2751,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_AddTrueTypeFontText) {
 #else
   const char kInsertTrueTypeChecksum[] = "c1d10cce1761c4a998a16b2562030568";
 #endif
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   CompareBitmap(page_bitmap2.get(), 612, 792, kInsertTrueTypeChecksum);
 
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
@@ -3015,13 +3021,7 @@ TEST_F(FPDFEditEmbedderTest, SetMarkParam) {
   CloseSavedDocument();
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_AddMarkedText DISABLED_AddMarkedText
-#else
-#define MAYBE_AddMarkedText AddMarkedText
-#endif
-TEST_F(FPDFEditEmbedderTest, MAYBE_AddMarkedText) {
+TEST_F(FPDFEditEmbedderTest, AddMarkedText) {
   // Start with a blank page.
   FPDF_PAGE page = FPDFPage_New(CreateNewDocument(), 0, 612, 792);
 
