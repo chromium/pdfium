@@ -52,9 +52,8 @@ CJS_Result CJX_Form::formNodes(
       pDoc->GetHeap()->GetAllocationHandle(), pDoc);
   pDoc->GetNodeOwner()->PersistList(pFormNodes);
 
-  CFXJSE_Value* value = pEngine->GetOrCreateJSBindingFromMap(pFormNodes);
-  return CJS_Result::Success(
-      value->DirectGetValue().Get(runtime->GetIsolate()));
+  v8::Local<v8::Value> value = pEngine->GetOrCreateJSBindingFromMap(pFormNodes);
+  return CJS_Result::Success(value);
 }
 
 CJS_Result CJX_Form::remerge(CFX_V8* runtime,

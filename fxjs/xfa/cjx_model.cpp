@@ -65,11 +65,10 @@ CJS_Result CJX_Model::createNode(
       pNewNode->CreateXMLMappingNode();
   }
 
-  CFXJSE_Value* value =
+  v8::Local<v8::Value> value =
       GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(pNewNode);
 
-  return CJS_Result::Success(
-      value->DirectGetValue().Get(runtime->GetIsolate()));
+  return CJS_Result::Success(value);
 }
 
 CJS_Result CJX_Model::isCompatibleNS(

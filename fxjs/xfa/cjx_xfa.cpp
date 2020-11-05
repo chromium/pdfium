@@ -32,5 +32,6 @@ void CJX_Xfa::thisValue(v8::Isolate* pIsolate,
     pValue->SetNull(pIsolate);
     return;
   }
-  pValue->Assign(pIsolate, pScriptContext->GetOrCreateJSBindingFromMap(pThis));
+  pValue->ForceSetValue(pIsolate,
+                        pScriptContext->GetOrCreateJSBindingFromMap(pThis));
 }

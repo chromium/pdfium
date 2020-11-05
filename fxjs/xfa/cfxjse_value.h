@@ -55,7 +55,6 @@ class CFXJSE_Value {
   void SetHostObject(v8::Isolate* pIsolate,
                      CFXJSE_HostObject* lpObject,
                      CFXJSE_Class* pClass);
-  void ClearHostObject(v8::Isolate* pIsolate);
 
   void SetArray(v8::Isolate* pIsolate,
                 const std::vector<std::unique_ptr<CFXJSE_Value>>& values);

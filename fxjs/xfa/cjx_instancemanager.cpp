@@ -249,12 +249,9 @@ CJS_Result CJX_InstanceManager::addInstance(
         ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form)));
   }
 
-  CFXJSE_Value* value =
-      GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
-          pNewInstance);
-
   return CJS_Result::Success(
-      value->DirectGetValue().Get(runtime->GetIsolate()));
+      GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
+          pNewInstance));
 }
 
 CJS_Result CJX_InstanceManager::insertInstance(
@@ -294,12 +291,9 @@ CJS_Result CJX_InstanceManager::insertInstance(
         ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form)));
   }
 
-  CFXJSE_Value* value =
-      GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
-          pNewInstance);
-
   return CJS_Result::Success(
-      value->DirectGetValue().Get(runtime->GetIsolate()));
+      GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
+          pNewInstance));
 }
 
 void CJX_InstanceManager::max(v8::Isolate* pIsolate,

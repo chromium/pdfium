@@ -107,23 +107,6 @@ v8::Local<v8::Object> CreateReturnValue(v8::Isolate* pIsolate,
   return hReturnValue;
 }
 
-class CFXJSE_ScopeUtil_IsolateHandleContext {
- public:
-  explicit CFXJSE_ScopeUtil_IsolateHandleContext(CFXJSE_Context* pContext)
-      : m_parent(pContext->GetIsolate()), m_cscope(pContext->GetContext()) {}
-  CFXJSE_ScopeUtil_IsolateHandleContext(
-      const CFXJSE_ScopeUtil_IsolateHandleContext&) = delete;
-  CFXJSE_ScopeUtil_IsolateHandleContext& operator=(
-      const CFXJSE_ScopeUtil_IsolateHandleContext&) = delete;
-
- private:
-  void* operator new(size_t size) = delete;
-  void operator delete(void*, size_t) = delete;
-
-  CFXJSE_ScopeUtil_IsolateHandle m_parent;
-  v8::Context::Scope m_cscope;
-};
-
 void FXJSE_UpdateProxyBinding(v8::Local<v8::Object> hObject) {
   ASSERT(!hObject.IsEmpty());
   ASSERT(hObject->InternalFieldCount() == 2);
@@ -244,19 +227,19 @@ CFXJSE_Class* CFXJSE_Context::GetClassByName(ByteStringView szName) const {
 }
 
 void CFXJSE_Context::EnableCompatibleMode() {
-  ExecuteScript(szCompatibleModeScript, nullptr, nullptr);
-  ExecuteScript(szConsoleScript, nullptr, nullptr);
+  ExecuteScript(szCompatibleModeScript, nullptr, v8::Local<v8::Object>());
+  ExecuteScript(szConsoleScript, nullptr, v8::Local<v8::Object>());
 }
 
 bool CFXJSE_Context::ExecuteScript(const char* szScript,
                                    CFXJSE_Value* lpRetValue,
-                                   CFXJSE_Value* lpNewThisObject) {
+                                   v8::Local<v8::Object> hNewThis) {
   CFXJSE_ScopeUtil_IsolateHandleContext scope(this);
   v8::Local<v8::Context> hContext = GetIsolate()->GetCurrentContext();
   v8::TryCatch trycatch(GetIsolate());
   v8::Local<v8::String> hScriptString =
       fxv8::NewStringHelper(GetIsolate(), szScript);
-  if (!lpNewThisObject) {
+  if (hNewThis.IsEmpty()) {
     v8::Local<v8::Script> hScript;
     if (v8::Script::Compile(hContext, hScriptString).ToLocal(&hScript)) {
       ASSERT(!trycatch.HasCaught());
@@ -274,9 +257,6 @@ bool CFXJSE_Context::ExecuteScript(const char* szScript,
     return false;
   }
 
-  v8::Local<v8::Value> hNewThis = v8::Local<v8::Value>::New(
-      GetIsolate(), lpNewThisObject->DirectGetValue());
-  ASSERT(!hNewThis.IsEmpty());
   v8::Local<v8::String> hEval = fxv8::NewStringHelper(
       GetIsolate(), "(function () { return eval(arguments[0]); })");
   v8::Local<v8::Script> hWrapper =

@@ -179,12 +179,9 @@ CJS_Result CJX_Node::clone(CFX_V8* runtime,
     return CJS_Result::Failure(JSMessage::kParamError);
 
   CXFA_Node* pCloneNode = GetXFANode()->Clone(runtime->ToBoolean(params[0]));
-  CFXJSE_Value* value =
-      GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
-          pCloneNode);
-
   return CJS_Result::Success(
-      value->DirectGetValue().Get(runtime->GetIsolate()));
+      GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
+          pCloneNode));
 }
 
 CJS_Result CJX_Node::getAttribute(
@@ -214,11 +211,8 @@ CJS_Result CJX_Node::getElement(
   if (!pNode)
     return CJS_Result::Success(runtime->NewNull());
 
-  CFXJSE_Value* value =
-      GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(pNode);
-
   return CJS_Result::Success(
-      value->DirectGetValue().Get(runtime->GetIsolate()));
+      GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(pNode));
 }
 
 CJS_Result CJX_Node::isPropertySpecified(
@@ -468,9 +462,9 @@ void CJX_Node::model(v8::Isolate* pIsolate,
     ThrowInvalidPropertyException();
     return;
   }
-  pValue->Assign(pIsolate,
-                 GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
-                     GetXFANode()->GetModelNode()));
+  pValue->ForceSetValue(
+      pIsolate, GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
+                    GetXFANode()->GetModelNode()));
 }
 
 void CJX_Node::isContainer(v8::Isolate* pIsolate,
@@ -511,7 +505,7 @@ void CJX_Node::oneOfChild(v8::Isolate* pIsolate,
   std::vector<CXFA_Node*> properties =
       GetXFANode()->GetNodeListWithFilter(XFA_NODEFILTER_OneOfProperty);
   if (!properties.empty()) {
-    pValue->Assign(
+    pValue->ForceSetValue(
         pIsolate,
         GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
             properties.front()));

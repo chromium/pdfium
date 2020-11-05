@@ -1330,9 +1330,9 @@ void CJX_Object::ScriptSomDataNode(v8::Isolate* pIsolate,
     return;
   }
 
-  pValue->Assign(pIsolate,
-                 GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
-                     pDataNode));
+  pValue->ForceSetValue(
+      pIsolate, GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
+                    pDataNode));
 }
 
 void CJX_Object::ScriptSomMandatory(v8::Isolate* pIsolate,

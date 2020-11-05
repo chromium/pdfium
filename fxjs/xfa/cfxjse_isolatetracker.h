@@ -9,6 +9,8 @@
 
 #include "v8/include/v8.h"
 
+class CFXJSE_Context;
+
 class CFXJSE_ScopeUtil_IsolateHandle {
  public:
   explicit CFXJSE_ScopeUtil_IsolateHandle(v8::Isolate* pIsolate);
@@ -24,6 +26,23 @@ class CFXJSE_ScopeUtil_IsolateHandle {
 
   v8::Isolate::Scope m_iscope;
   v8::HandleScope m_hscope;
+};
+
+class CFXJSE_ScopeUtil_IsolateHandleContext {
+ public:
+  explicit CFXJSE_ScopeUtil_IsolateHandleContext(CFXJSE_Context* pContext);
+  CFXJSE_ScopeUtil_IsolateHandleContext(
+      const CFXJSE_ScopeUtil_IsolateHandleContext&) = delete;
+  CFXJSE_ScopeUtil_IsolateHandleContext& operator=(
+      const CFXJSE_ScopeUtil_IsolateHandleContext&) = delete;
+  ~CFXJSE_ScopeUtil_IsolateHandleContext();
+
+ private:
+  void* operator new(size_t size) = delete;
+  void operator delete(void*, size_t) = delete;
+
+  CFXJSE_ScopeUtil_IsolateHandle m_parent;
+  v8::Context::Scope m_cscope;
 };
 
 class CFXJSE_ScopeUtil_IsolateHandleRootContext final

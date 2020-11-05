@@ -59,11 +59,9 @@ CJS_Result CJX_Tree::resolveNode(
 
   if (resolveNodeRS.dwFlags == XFA_ResolveNodeRS::Type::kNodes) {
     CXFA_Object* pObject = resolveNodeRS.objects.front().Get();
-    CFXJSE_Value* value =
-        GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(pObject);
-
     return CJS_Result::Success(
-        value->DirectGetValue().Get(runtime->GetIsolate()));
+        GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
+            pObject));
   }
 
   if (!resolveNodeRS.script_attribute.callback ||
@@ -166,7 +164,7 @@ void CJX_Tree::parent(v8::Isolate* pIsolate,
     return;
   }
 
-  pValue->Assign(
+  pValue->ForceSetValue(
       pIsolate,
       GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(pParent));
 }

@@ -469,11 +469,10 @@ CJS_Result CJX_HostPseudoModel::getFocus(
   if (!pNode)
     return CJS_Result::Success();
 
-  CFXJSE_Value* value =
+  v8::Local<v8::Value> value =
       GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(pNode);
 
-  return CJS_Result::Success(
-      value->DirectGetValue().Get(runtime->GetIsolate()));
+  return CJS_Result::Success(value);
 }
 
 CJS_Result CJX_HostPseudoModel::messageBox(

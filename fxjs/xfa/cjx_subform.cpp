@@ -129,7 +129,7 @@ void CJX_Subform::instanceManager(v8::Isolate* pIsolate,
     return;
   }
 
-  pValue->Assign(pIsolate,
-                 GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
-                     pInstanceMgr));
+  pValue->ForceSetValue(
+      pIsolate, GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
+                    pInstanceMgr));
 }

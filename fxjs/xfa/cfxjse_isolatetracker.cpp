@@ -6,6 +6,7 @@
 
 #include "fxjs/xfa/cfxjse_isolatetracker.h"
 
+#include "fxjs/xfa/cfxjse_context.h"
 #include "fxjs/xfa/cfxjse_runtimedata.h"
 
 CFXJSE_ScopeUtil_IsolateHandle::CFXJSE_ScopeUtil_IsolateHandle(
@@ -13,6 +14,13 @@ CFXJSE_ScopeUtil_IsolateHandle::CFXJSE_ScopeUtil_IsolateHandle(
     : m_iscope(pIsolate), m_hscope(pIsolate) {}
 
 CFXJSE_ScopeUtil_IsolateHandle::~CFXJSE_ScopeUtil_IsolateHandle() = default;
+
+CFXJSE_ScopeUtil_IsolateHandleContext::CFXJSE_ScopeUtil_IsolateHandleContext(
+    CFXJSE_Context* pContext)
+    : m_parent(pContext->GetIsolate()), m_cscope(pContext->GetContext()) {}
+
+CFXJSE_ScopeUtil_IsolateHandleContext::
+    ~CFXJSE_ScopeUtil_IsolateHandleContext() = default;
 
 CFXJSE_ScopeUtil_IsolateHandleRootContext::
     CFXJSE_ScopeUtil_IsolateHandleRootContext(v8::Isolate* pIsolate)

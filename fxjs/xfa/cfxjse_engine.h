@@ -91,7 +91,7 @@ class CFXJSE_Engine final : public CFX_V8 {
                       uint32_t dwStyles,
                       CXFA_Node* bindNode);
 
-  CFXJSE_Value* GetOrCreateJSBindingFromMap(CXFA_Object* pObject);
+  v8::Local<v8::Object> GetOrCreateJSBindingFromMap(CXFA_Object* pObject);
 
   CXFA_Object* GetThisObject() const { return m_pThisObject; }
   CFXJSE_Class* GetJseNormalClass() const { return m_pJsClass.Get(); }
@@ -136,7 +136,7 @@ class CFXJSE_Engine final : public CFX_V8 {
   CXFA_Script::Type m_eScriptType = CXFA_Script::Type::Unknown;
   // |m_mapObjectToValue| is what ensures the v8 object bound to a
   // CJX_Object remains valid for the lifetime of the engine.
-  std::map<CJX_Object*, std::unique_ptr<CFXJSE_Value>> m_mapObjectToValue;
+  std::map<CJX_Object*, v8::Global<v8::Object>> m_mapObjectToObject;
   std::map<CJX_Object*, std::unique_ptr<CFXJSE_Context>> m_mapVariableToContext;
   UnownedPtr<CXFA_EventParam> m_eventParam;
   std::vector<cppgc::Persistent<CXFA_Node>> m_upObjectArray;

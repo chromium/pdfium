@@ -87,13 +87,6 @@ void CFXJSE_Value::SetHostObject(v8::Isolate* pIsolate,
                                pIsolate, pClass->GetTemplate(pIsolate)));
 }
 
-void CFXJSE_Value::ClearHostObject(v8::Isolate* pIsolate) {
-  CFXJSE_ScopeUtil_IsolateHandleRootContext scope(pIsolate);
-  FXJSE_ClearObjectBinding(m_hValue.Get(pIsolate).As<v8::Object>());
-  v8::Local<v8::Value> hValue = v8::Null(pIsolate);
-  m_hValue.Reset(pIsolate, hValue);
-}
-
 void CFXJSE_Value::SetArray(
     v8::Isolate* pIsolate,
     const std::vector<std::unique_ptr<CFXJSE_Value>>& values) {

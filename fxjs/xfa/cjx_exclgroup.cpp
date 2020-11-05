@@ -107,12 +107,9 @@ CJS_Result CJX_ExclGroup::selectedMember(
   if (!pReturnNode)
     return CJS_Result::Success(runtime->NewNull());
 
-  CFXJSE_Value* value =
-      GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
-          pReturnNode);
-
   return CJS_Result::Success(
-      value->DirectGetValue().Get(runtime->GetIsolate()));
+      GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
+          pReturnNode));
 }
 
 void CJX_ExclGroup::defaultValue(v8::Isolate* pIsolate,

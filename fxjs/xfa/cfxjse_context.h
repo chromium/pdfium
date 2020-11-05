@@ -37,9 +37,11 @@ class CFXJSE_Context {
   void AddClass(std::unique_ptr<CFXJSE_Class> pClass);
   CFXJSE_Class* GetClassByName(ByteStringView szName) const;
   void EnableCompatibleMode();
+
+  // Note: `lpNewThisObject` may be empty.
   bool ExecuteScript(const char* szScript,
                      CFXJSE_Value* lpRetValue,
-                     CFXJSE_Value* lpNewThisObject);
+                     v8::Local<v8::Object> lpNewThisObject);
 
  private:
   CFXJSE_Context(v8::Isolate* pIsolate, CXFA_ThisProxy* pProxy);
