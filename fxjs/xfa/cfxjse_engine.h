@@ -95,6 +95,7 @@ class CFXJSE_Engine final : public CFX_V8 {
 
   CXFA_Object* GetThisObject() const { return m_pThisObject; }
   CFXJSE_Class* GetJseNormalClass() const { return m_pJsClass.Get(); }
+  CFXJSE_Context* GetJseContext() const { return m_JsContext.get(); }
 
   void SetNodesOfRunScript(std::vector<cppgc::Persistent<CXFA_Node>>* pArray);
   void AddNodesOfRunScript(CXFA_Node* pNode);

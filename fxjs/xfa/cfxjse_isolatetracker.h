@@ -10,6 +10,7 @@
 #include "v8/include/v8.h"
 
 class CFXJSE_Context;
+class CFXJSE_Engine;
 
 class CFXJSE_ScopeUtil_IsolateHandle {
  public:
@@ -31,6 +32,7 @@ class CFXJSE_ScopeUtil_IsolateHandle {
 class CFXJSE_ScopeUtil_IsolateHandleContext {
  public:
   explicit CFXJSE_ScopeUtil_IsolateHandleContext(CFXJSE_Context* pContext);
+  explicit CFXJSE_ScopeUtil_IsolateHandleContext(CFXJSE_Engine* pEngine);
   CFXJSE_ScopeUtil_IsolateHandleContext(
       const CFXJSE_ScopeUtil_IsolateHandleContext&) = delete;
   CFXJSE_ScopeUtil_IsolateHandleContext& operator=(
