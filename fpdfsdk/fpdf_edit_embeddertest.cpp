@@ -1368,13 +1368,7 @@ TEST_F(FPDFEditEmbedderTest, GetContentStream) {
   UnloadPage(page);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_RemoveAllFromStream DISABLED_RemoveAllFromStream
-#else
-#define MAYBE_RemoveAllFromStream RemoveAllFromStream
-#endif
-TEST_F(FPDFEditEmbedderTest, MAYBE_RemoveAllFromStream) {
+TEST_F(FPDFEditEmbedderTest, RemoveAllFromStream) {
   // Load document with some text split across streams.
   ASSERT_TRUE(OpenDocument("split_streams.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -1432,16 +1426,20 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_RemoveAllFromStream) {
       EXPECT_EQ(1, cpdf_page_object->GetContentStream()) << i;
   }
 
-#if defined(OS_APPLE)
-  const char kStream1RemovedMD5[] = "0e8856ca9abc7049412e64f9230c7c43";
-#elif defined(OS_WIN)
-  const char kStream1RemovedMD5[] = "b4140f203523e38793283a5943d8075b";
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+  const char kStream1RemovedChecksum[] = "89358c444a398b0b56b35738edd8fe43";
 #else
-  const char kStream1RemovedMD5[] = "e86a3efc160ede6cfcb1f59bcacf1105";
+#if defined(OS_WIN)
+  const char kStream1RemovedChecksum[] = "b4140f203523e38793283a5943d8075b";
+#elif defined(OS_APPLE)
+  const char kStream1RemovedChecksum[] = "0e8856ca9abc7049412e64f9230c7c43";
+#else
+  const char kStream1RemovedChecksum[] = "e86a3efc160ede6cfcb1f59bcacf1105";
 #endif
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-    CompareBitmap(page_bitmap.get(), 200, 200, kStream1RemovedMD5);
+    CompareBitmap(page_bitmap.get(), 200, 200, kStream1RemovedChecksum);
   }
 
   // Save the file
@@ -1469,7 +1467,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_RemoveAllFromStream) {
 
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(saved_page);
-    CompareBitmap(page_bitmap.get(), 200, 200, kStream1RemovedMD5);
+    CompareBitmap(page_bitmap.get(), 200, 200, kStream1RemovedChecksum);
   }
 
   CloseSavedPage(saved_page);
