@@ -329,8 +329,8 @@ class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
   void ThrowParamCountMismatchException(const WideString& method) const;
   void ThrowException(const WideString& str) const;
 
-  UnownedPtr<v8::Isolate> m_pIsolate;
-  std::unique_ptr<CFXJSE_Value> m_pValue;
+  UnownedPtr<v8::Isolate> const m_pIsolate;
+  v8::Global<v8::Value> m_Value;
   UnownedPtr<CXFA_Document> const m_pDocument;
 };
 

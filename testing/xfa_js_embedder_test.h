@@ -10,9 +10,9 @@
 
 #include "core/fxcrt/string_view_template.h"
 #include "testing/js_embedder_test.h"
+#include "v8/include/v8.h"
 
 class CFXJSE_Engine;
-class CFXJSE_Value;
 class CXFA_Document;
 
 class XFAJSEmbedderTest : public JSEmbedderTest {
@@ -30,7 +30,7 @@ class XFAJSEmbedderTest : public JSEmbedderTest {
 
   CXFA_Document* GetXFADocument() const;
   CFXJSE_Engine* GetScriptContext() const { return script_context_; }
-  CFXJSE_Value* GetValue() const { return value_.get(); }
+  v8::Local<v8::Value> GetValue() const;
 
   bool Execute(ByteStringView input);
   bool ExecuteSilenceFailure(ByteStringView input);
@@ -38,7 +38,7 @@ class XFAJSEmbedderTest : public JSEmbedderTest {
  private:
   bool ExecuteHelper(ByteStringView input);
 
-  std::unique_ptr<CFXJSE_Value> value_;
+  v8::Global<v8::Value> value_;
   CFXJSE_Engine* script_context_ = nullptr;
 };
 

@@ -113,6 +113,11 @@ bool ReentrantToBooleanHelper(v8::Isolate* pIsolate,
   return pValue->BooleanValue(pIsolate);
 }
 
+float ReentrantToFloatHelper(v8::Isolate* pIsolate,
+                             v8::Local<v8::Value> pValue) {
+  return static_cast<float>(ReentrantToDoubleHelper(pIsolate, pValue));
+}
+
 double ReentrantToDoubleHelper(v8::Isolate* pIsolate,
                                v8::Local<v8::Value> pValue) {
   if (pValue.IsEmpty())

@@ -4,6 +4,7 @@
 
 #include "fxjs/fxv8.h"
 #include "fxjs/xfa/cfxjse_engine.h"
+#include "fxjs/xfa/cfxjse_isolatetracker.h"
 #include "fxjs/xfa/cfxjse_value.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/xfa_js_embedder_test.h"
@@ -23,34 +24,40 @@ class CFXJSE_FormCalcContextEmbedderTest : public XFAJSEmbedderTest {
   void ExecuteExpectNull(ByteStringView input) {
     EXPECT_TRUE(Execute(input)) << "Program: " << input;
 
-    CFXJSE_Value* value = GetValue();
-    EXPECT_TRUE(value->IsNull(isolate())) << "Program: " << input;
+    CFXJSE_ScopeUtil_IsolateHandleContext scope(GetScriptContext());
+    EXPECT_TRUE(fxv8::IsNull(GetValue())) << "Program: " << input;
   }
 
   void ExecuteExpectBool(ByteStringView input, bool expected) {
     EXPECT_TRUE(Execute(input)) << "Program: " << input;
 
-    CFXJSE_Value* value = GetValue();
+    CFXJSE_ScopeUtil_IsolateHandleContext scope(GetScriptContext());
+    v8::Local<v8::Value> value = GetValue();
+
     // Yes, bools might be integers, somehow.
-    EXPECT_TRUE(value->IsBoolean(isolate()) || value->IsInteger(isolate()))
+    EXPECT_TRUE(fxv8::IsBoolean(value) || fxv8::IsInteger(value))
         << "Program: " << input;
-    EXPECT_EQ(expected, value->ToBoolean(isolate())) << "Program: " << input;
+    EXPECT_EQ(expected, fxv8::ReentrantToBooleanHelper(isolate(), value))
+        << "Program: " << input;
   }
 
   void ExecuteExpectInt32(ByteStringView input, int32_t expected) {
     EXPECT_TRUE(Execute(input)) << "Program: " << input;
 
-    CFXJSE_Value* value = GetValue();
-    EXPECT_TRUE(value->IsInteger(isolate())) << "Program: " << input;
-    EXPECT_EQ(expected, value->ToInteger(isolate())) << "Program: " << input;
+    CFXJSE_ScopeUtil_IsolateHandleContext scope(GetScriptContext());
+    v8::Local<v8::Value> value = GetValue();
+    EXPECT_TRUE(fxv8::IsInteger(value)) << "Program: " << input;
+    EXPECT_EQ(expected, fxv8::ReentrantToInt32Helper(isolate(), value))
+        << "Program: " << input;
   }
 
   void ExecuteExpectFloat(ByteStringView input, float expected) {
     EXPECT_TRUE(Execute(input)) << "Program: " << input;
 
-    CFXJSE_Value* value = GetValue();
-    EXPECT_TRUE(value->IsNumber(isolate())) << "Program: " << input;
-    EXPECT_FLOAT_EQ(expected, value->ToFloat(isolate()))
+    CFXJSE_ScopeUtil_IsolateHandleContext scope(GetScriptContext());
+    v8::Local<v8::Value> value = GetValue();
+    EXPECT_TRUE(fxv8::IsNumber(value));
+    EXPECT_FLOAT_EQ(expected, fxv8::ReentrantToFloatHelper(isolate(), value))
         << "Program: " << input;
   }
 
@@ -59,18 +66,22 @@ class CFXJSE_FormCalcContextEmbedderTest : public XFAJSEmbedderTest {
                               float precision) {
     EXPECT_TRUE(Execute(input)) << "Program: " << input;
 
-    CFXJSE_Value* value = GetValue();
-    EXPECT_TRUE(value->IsNumber(isolate())) << "Program: " << input;
-    EXPECT_NEAR(expected, value->ToFloat(isolate()), precision)
+    CFXJSE_ScopeUtil_IsolateHandleContext scope(GetScriptContext());
+    v8::Local<v8::Value> value = GetValue();
+    EXPECT_TRUE(fxv8::IsNumber(value));
+    EXPECT_NEAR(expected, fxv8::ReentrantToFloatHelper(isolate(), value),
+                precision)
         << "Program: " << input;
   }
 
   void ExecuteExpectString(ByteStringView input, const char* expected) {
     EXPECT_TRUE(Execute(input)) << "Program: " << input;
 
-    CFXJSE_Value* value = GetValue();
-    EXPECT_TRUE(value->IsString(isolate())) << "Program: " << input;
-    EXPECT_STREQ(expected, value->ToString(isolate()).c_str())
+    CFXJSE_ScopeUtil_IsolateHandleContext scope(GetScriptContext());
+    v8::Local<v8::Value> value = GetValue();
+    EXPECT_TRUE(fxv8::IsString(value));
+    EXPECT_STREQ(expected,
+                 fxv8::ReentrantToByteStringHelper(isolate(), value).c_str())
         << "Program: " << input;
   }
 };
@@ -1103,8 +1114,9 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Uuid) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
   EXPECT_TRUE(Execute("Uuid()"));
 
-  CFXJSE_Value* value = GetValue();
-  EXPECT_TRUE(value->IsString(isolate()));
+  CFXJSE_ScopeUtil_IsolateHandleContext scope(GetScriptContext());
+  v8::Local<v8::Value> value = GetValue();
+  EXPECT_TRUE(fxv8::IsString(value));
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Upper) {

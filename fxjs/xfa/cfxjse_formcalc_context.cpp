@@ -5766,11 +5766,13 @@ CFXJSE_FormCalcContext::CFXJSE_FormCalcContext(v8::Isolate* pIsolate,
                                                CFXJSE_Context* pScriptContext,
                                                CXFA_Document* pDoc)
     : m_pIsolate(pIsolate),
-      m_pValue(std::make_unique<CFXJSE_Value>()),
       m_pDocument(pDoc) {
-  m_pValue->SetHostObject(
-      pIsolate, this,
-      CFXJSE_Class::Create(pScriptContext, &kFormCalcFM2JSDescriptor, false));
+  m_Value.Reset(
+      m_pIsolate,
+      NewBoundV8Object(
+          m_pIsolate,
+          CFXJSE_Class::Create(pScriptContext, &kFormCalcFM2JSDescriptor, false)
+              ->GetTemplate(m_pIsolate)));
 }
 
 CFXJSE_FormCalcContext::~CFXJSE_FormCalcContext() = default;
@@ -5780,7 +5782,8 @@ CFXJSE_FormCalcContext* CFXJSE_FormCalcContext::AsFormCalcContext() {
 }
 
 void CFXJSE_FormCalcContext::GlobalPropertyGetter(CFXJSE_Value* pValue) {
-  pValue->Assign(GetIsolate(), m_pValue.get());
+  pValue->ForceSetValue(GetIsolate(),
+                        v8::Local<v8::Value>::New(m_pIsolate, m_Value));
 }
 
 // static

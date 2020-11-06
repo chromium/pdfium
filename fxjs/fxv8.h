@@ -42,9 +42,12 @@ v8::Local<v8::Array> NewArrayHelper(v8::Isolate* pIsolate);
 v8::Local<v8::Object> NewObjectHelper(v8::Isolate* pIsolate);
 v8::Local<v8::Date> NewDateHelper(v8::Isolate* pIsolate, double d);
 
-int ReentrantToInt32Helper(v8::Isolate* pIsolate, v8::Local<v8::Value> pValue);
+int32_t ReentrantToInt32Helper(v8::Isolate* pIsolate,
+                               v8::Local<v8::Value> pValue);
 bool ReentrantToBooleanHelper(v8::Isolate* pIsolate,
                               v8::Local<v8::Value> pValue);
+float ReentrantToFloatHelper(v8::Isolate* pIsolate,
+                             v8::Local<v8::Value> pValue);
 double ReentrantToDoubleHelper(v8::Isolate* pIsolate,
                                v8::Local<v8::Value> pValue);
 WideString ReentrantToWideStringHelper(v8::Isolate* pIsolate,
