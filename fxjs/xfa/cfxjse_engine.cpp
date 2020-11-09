@@ -616,14 +616,9 @@ bool CFXJSE_Engine::QueryVariableValue(CXFA_Node* pScriptNode,
 
 void CFXJSE_Engine::RemoveBuiltInObjs(CFXJSE_Context* pContext) {
   CFXJSE_ScopeUtil_IsolateHandleContext scope(this);
-  const ByteStringView kObjNames[2] = {"Number", "Date"};
   v8::Local<v8::Object> pObject = pContext->GetGlobalObject();
-  for (const auto& name : kObjNames) {
-    if (!fxv8::ReentrantGetObjectPropertyHelper(GetIsolate(), pObject, name)
-             .IsEmpty()) {
-      fxv8::ReentrantDeleteObjectPropertyHelper(GetIsolate(), pObject, name);
-    }
-  }
+  fxv8::ReentrantDeleteObjectPropertyHelper(GetIsolate(), pObject, "Number");
+  fxv8::ReentrantDeleteObjectPropertyHelper(GetIsolate(), pObject, "Date");
 }
 
 bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
