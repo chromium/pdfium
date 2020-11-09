@@ -51,11 +51,11 @@ typedef void (*FXJSE_FuncCallback)(
     CFXJSE_HostObject* pThis,
     const v8::FunctionCallbackInfo<v8::Value>& info);
 typedef void (*FXJSE_PropAccessor)(v8::Isolate* pIsolate,
-                                   CFXJSE_Value* pObject,
+                                   v8::Local<v8::Object> pObject,
                                    ByteStringView szPropName,
                                    CFXJSE_Value* pValue);
 typedef int32_t (*FXJSE_PropTypeGetter)(v8::Isolate* pIsolate,
-                                        CFXJSE_Value* pObject,
+                                        v8::Local<v8::Object> pObject,
                                         ByteStringView szPropName,
                                         bool bQueryIn);
 

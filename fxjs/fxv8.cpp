@@ -227,6 +227,15 @@ bool ReentrantPutObjectPropertyHelper(v8::Isolate* pIsolate,
   return result.IsJust() && result.FromJust();
 }
 
+void ReentrantDeleteObjectPropertyHelper(v8::Isolate* pIsolate,
+                                         v8::Local<v8::Object> pObj,
+                                         ByteStringView bsUTF8PropertyName) {
+  v8::TryCatch squash_exceptions(pIsolate);
+  pObj->Delete(pIsolate->GetCurrentContext(),
+               fxv8::NewStringHelper(pIsolate, bsUTF8PropertyName))
+      .FromJust();
+}
+
 bool ReentrantPutArrayElementHelper(v8::Isolate* pIsolate,
                                     v8::Local<v8::Array> pArray,
                                     unsigned index,

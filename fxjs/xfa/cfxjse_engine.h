@@ -48,30 +48,30 @@ class CFXJSE_Engine final : public CFX_V8 {
   static CXFA_Object* ToObject(v8::Isolate* pIsolate, CFXJSE_Value* pValue);
   static CXFA_Object* ToObject(CFXJSE_HostObject* pHostObj);
   static void GlobalPropertyGetter(v8::Isolate* pIsolate,
-                                   CFXJSE_Value* pObject,
+                                   v8::Local<v8::Object> pObject,
                                    ByteStringView szPropName,
                                    CFXJSE_Value* pValue);
   static void GlobalPropertySetter(v8::Isolate* pIsolate,
-                                   CFXJSE_Value* pObject,
+                                   v8::Local<v8::Object> pObject,
                                    ByteStringView szPropName,
                                    CFXJSE_Value* pValue);
   static void NormalPropertyGetter(v8::Isolate* pIsolate,
-                                   CFXJSE_Value* pObject,
+                                   v8::Local<v8::Object> pObject,
                                    ByteStringView szPropName,
                                    CFXJSE_Value* pValue);
   static void NormalPropertySetter(v8::Isolate* pIsolate,
-                                   CFXJSE_Value* pObject,
+                                   v8::Local<v8::Object> pObject,
                                    ByteStringView szPropName,
                                    CFXJSE_Value* pValue);
   static CJS_Result NormalMethodCall(
       const v8::FunctionCallbackInfo<v8::Value>& info,
       const WideString& functionName);
   static int32_t NormalPropTypeGetter(v8::Isolate* pIsolate,
-                                      CFXJSE_Value* pObject,
+                                      v8::Local<v8::Object> pObject,
                                       ByteStringView szPropName,
                                       bool bQueryIn);
   static int32_t GlobalPropTypeGetter(v8::Isolate* pIsolate,
-                                      CFXJSE_Value* pObject,
+                                      v8::Local<v8::Object> pObject,
                                       ByteStringView szPropName,
                                       bool bQueryIn);
 

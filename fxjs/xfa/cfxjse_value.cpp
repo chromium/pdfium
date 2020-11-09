@@ -151,15 +151,14 @@ bool CFXJSE_Value::GetObjectPropertyByIdx(v8::Isolate* pIsolate,
   return true;
 }
 
-bool CFXJSE_Value::DeleteObjectProperty(v8::Isolate* pIsolate,
+void CFXJSE_Value::DeleteObjectProperty(v8::Isolate* pIsolate,
                                         ByteStringView szPropName) {
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(pIsolate);
   v8::Local<v8::Value> hObject = v8::Local<v8::Value>::New(pIsolate, m_hValue);
-  return hObject->IsObject() &&
-         hObject.As<v8::Object>()
-             ->Delete(pIsolate->GetCurrentContext(),
-                      fxv8::NewStringHelper(pIsolate, szPropName))
-             .FromJust();
+  if (hObject->IsObject()) {
+    fxv8::ReentrantDeleteObjectPropertyHelper(
+        pIsolate, hObject.As<v8::Object>(), szPropName);
+  }
 }
 
 bool CFXJSE_Value::HasObjectOwnProperty(v8::Isolate* pIsolate,

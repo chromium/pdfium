@@ -114,7 +114,7 @@ void DynPropGetterAdapter_MethodCallback(
 
 void DynPropGetterAdapter(v8::Isolate* pIsolate,
                           const FXJSE_CLASS_DESCRIPTOR* lpClass,
-                          CFXJSE_Value* pObject,
+                          v8::Local<v8::Object> pObject,
                           ByteStringView szPropName,
                           CFXJSE_Value* pValue) {
   ASSERT(lpClass);
@@ -151,7 +151,7 @@ void DynPropGetterAdapter(v8::Isolate* pIsolate,
 
 void DynPropSetterAdapter(v8::Isolate* pIsolate,
                           const FXJSE_CLASS_DESCRIPTOR* lpClass,
-                          CFXJSE_Value* pObject,
+                          v8::Local<v8::Object> pObject,
                           ByteStringView szPropName,
                           CFXJSE_Value* pValue) {
   ASSERT(lpClass);
@@ -167,7 +167,7 @@ void DynPropSetterAdapter(v8::Isolate* pIsolate,
 
 bool DynPropQueryAdapter(v8::Isolate* pIsolate,
                          const FXJSE_CLASS_DESCRIPTOR* lpClass,
-                         CFXJSE_Value* pObject,
+                         v8::Local<v8::Object> pObject,
                          ByteStringView szPropName) {
   ASSERT(lpClass);
   int32_t nPropType =
@@ -180,7 +180,6 @@ bool DynPropQueryAdapter(v8::Isolate* pIsolate,
 void NamedPropertyQueryCallback(
     v8::Local<v8::Name> property,
     const v8::PropertyCallbackInfo<v8::Integer>& info) {
-  v8::Local<v8::Object> thisObject = info.Holder();
   const FXJSE_CLASS_DESCRIPTOR* pClass =
       AsClassDescriptor(info.Data().As<v8::External>()->Value());
   if (!pClass)
@@ -189,9 +188,7 @@ void NamedPropertyQueryCallback(
   v8::HandleScope scope(info.GetIsolate());
   v8::String::Utf8Value szPropName(info.GetIsolate(), property);
   ByteStringView szFxPropName(*szPropName, szPropName.length());
-  auto pThisValue =
-      std::make_unique<CFXJSE_Value>(info.GetIsolate(), thisObject);
-  if (DynPropQueryAdapter(info.GetIsolate(), pClass, pThisValue.get(),
+  if (DynPropQueryAdapter(info.GetIsolate(), pClass, info.Holder(),
                           szFxPropName)) {
     info.GetReturnValue().Set(v8::DontDelete);
     return;
@@ -203,7 +200,6 @@ void NamedPropertyQueryCallback(
 void NamedPropertyGetterCallback(
     v8::Local<v8::Name> property,
     const v8::PropertyCallbackInfo<v8::Value>& info) {
-  v8::Local<v8::Object> thisObject = info.Holder();
   const FXJSE_CLASS_DESCRIPTOR* pClass =
       AsClassDescriptor(info.Data().As<v8::External>()->Value());
   if (!pClass)
@@ -211,11 +207,9 @@ void NamedPropertyGetterCallback(
 
   v8::String::Utf8Value szPropName(info.GetIsolate(), property);
   ByteStringView szFxPropName(*szPropName, szPropName.length());
-  auto pThisValue =
-      std::make_unique<CFXJSE_Value>(info.GetIsolate(), thisObject);
   auto pNewValue = std::make_unique<CFXJSE_Value>();
-  DynPropGetterAdapter(info.GetIsolate(), pClass, pThisValue.get(),
-                       szFxPropName, pNewValue.get());
+  DynPropGetterAdapter(info.GetIsolate(), pClass, info.Holder(), szFxPropName,
+                       pNewValue.get());
   info.GetReturnValue().Set(pNewValue->DirectGetValue());
 }
 
@@ -223,7 +217,6 @@ void NamedPropertySetterCallback(
     v8::Local<v8::Name> property,
     v8::Local<v8::Value> value,
     const v8::PropertyCallbackInfo<v8::Value>& info) {
-  v8::Local<v8::Object> thisObject = info.Holder();
   const FXJSE_CLASS_DESCRIPTOR* pClass =
       AsClassDescriptor(info.Data().As<v8::External>()->Value());
   if (!pClass)
@@ -231,11 +224,9 @@ void NamedPropertySetterCallback(
 
   v8::String::Utf8Value szPropName(info.GetIsolate(), property);
   ByteStringView szFxPropName(*szPropName, szPropName.length());
-  auto pThisValue =
-      std::make_unique<CFXJSE_Value>(info.GetIsolate(), thisObject);
   auto pNewValue = std::make_unique<CFXJSE_Value>(info.GetIsolate(), value);
-  DynPropSetterAdapter(info.GetIsolate(), pClass, pThisValue.get(),
-                       szFxPropName, pNewValue.get());
+  DynPropSetterAdapter(info.GetIsolate(), pClass, info.Holder(), szFxPropName,
+                       pNewValue.get());
   info.GetReturnValue().Set(value);
 }
 

@@ -68,7 +68,7 @@ class CFXJSE_Value {
   bool GetObjectPropertyByIdx(v8::Isolate* pIsolate,
                               uint32_t uPropIdx,
                               CFXJSE_Value* lpPropValue);
-  bool DeleteObjectProperty(v8::Isolate* pIsolate, ByteStringView szPropName);
+  void DeleteObjectProperty(v8::Isolate* pIsolate, ByteStringView szPropName);
   bool HasObjectOwnProperty(v8::Isolate* pIsolate,
                             ByteStringView szPropName,
                             bool bUseTypeGetter);

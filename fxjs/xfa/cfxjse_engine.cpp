@@ -197,7 +197,7 @@ bool CFXJSE_Engine::QueryNodeByFlag(CXFA_Node* refNode,
 
 // static
 void CFXJSE_Engine::GlobalPropertySetter(v8::Isolate* pIsolate,
-                                         CFXJSE_Value* pObject,
+                                         v8::Local<v8::Object> pObject,
                                          ByteStringView szPropName,
                                          CFXJSE_Value* pValue) {
   CXFA_Object* lpOrginalNode = ToObject(pIsolate, pObject);
@@ -217,7 +217,8 @@ void CFXJSE_Engine::GlobalPropertySetter(v8::Isolate* pIsolate,
     return;
   }
   if (lpOrginalNode->IsThisProxy() && pValue && pValue->IsUndefined(pIsolate)) {
-    pObject->DeleteObjectProperty(lpScriptContext->GetIsolate(), szPropName);
+    fxv8::ReentrantDeleteObjectPropertyHelper(lpScriptContext->GetIsolate(),
+                                              pObject, szPropName);
     return;
   }
   CXFA_FFNotify* pNotify = pDoc->GetNotify();
@@ -238,7 +239,7 @@ void CFXJSE_Engine::GlobalPropertySetter(v8::Isolate* pIsolate,
 
 // static
 void CFXJSE_Engine::GlobalPropertyGetter(v8::Isolate* pIsolate,
-                                         CFXJSE_Value* pObject,
+                                         v8::Local<v8::Object> pObject,
                                          ByteStringView szPropName,
                                          CFXJSE_Value* pValue) {
   CXFA_Object* pOriginalObject = ToObject(pIsolate, pObject);
@@ -312,10 +313,10 @@ void CFXJSE_Engine::GlobalPropertyGetter(v8::Isolate* pIsolate,
 
 // static
 int32_t CFXJSE_Engine::GlobalPropTypeGetter(v8::Isolate* pIsolate,
-                                            CFXJSE_Value* pOriginalValue,
+                                            v8::Local<v8::Object> pHolder,
                                             ByteStringView szPropName,
                                             bool bQueryIn) {
-  CXFA_Object* pObject = ToObject(pIsolate, pOriginalValue);
+  CXFA_Object* pObject = ToObject(pIsolate, pHolder);
   if (!pObject)
     return FXJSE_ClassPropType_None;
 
@@ -330,11 +331,11 @@ int32_t CFXJSE_Engine::GlobalPropTypeGetter(v8::Isolate* pIsolate,
 
 // static
 void CFXJSE_Engine::NormalPropertyGetter(v8::Isolate* pIsolate,
-                                         CFXJSE_Value* pOriginalValue,
+                                         v8::Local<v8::Object> pHolder,
                                          ByteStringView szPropName,
                                          CFXJSE_Value* pReturnValue) {
   pReturnValue->SetUndefined(pIsolate);  // Assume failure.
-  CXFA_Object* pOriginalObject = ToObject(pIsolate, pOriginalValue);
+  CXFA_Object* pOriginalObject = ToObject(pIsolate, pHolder);
   if (!pOriginalObject)
     return;
 
@@ -409,10 +410,10 @@ void CFXJSE_Engine::NormalPropertyGetter(v8::Isolate* pIsolate,
 
 // static
 void CFXJSE_Engine::NormalPropertySetter(v8::Isolate* pIsolate,
-                                         CFXJSE_Value* pOriginalValue,
+                                         v8::Local<v8::Object> pHolder,
                                          ByteStringView szPropName,
                                          CFXJSE_Value* pReturnValue) {
-  CXFA_Object* pOriginalObject = ToObject(pIsolate, pOriginalValue);
+  CXFA_Object* pOriginalObject = ToObject(pIsolate, pHolder);
   if (!pOriginalObject)
     return;
 
@@ -464,10 +465,10 @@ void CFXJSE_Engine::NormalPropertySetter(v8::Isolate* pIsolate,
 }
 
 int32_t CFXJSE_Engine::NormalPropTypeGetter(v8::Isolate* pIsolate,
-                                            CFXJSE_Value* pOriginalValue,
+                                            v8::Local<v8::Object> pHolder,
                                             ByteStringView szPropName,
                                             bool bQueryIn) {
-  CXFA_Object* pObject = ToObject(pIsolate, pOriginalValue);
+  CXFA_Object* pObject = ToObject(pIsolate, pHolder);
   if (!pObject)
     return FXJSE_ClassPropType_None;
 
