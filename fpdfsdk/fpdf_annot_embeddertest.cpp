@@ -1985,15 +1985,13 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormAnnotAndCheckFlagsComboBox) {
   UnloadPage(page);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
+TEST_F(FPDFAnnotEmbedderTest, BUG_1206) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_BUG_1206 DISABLED_BUG_1206
+  static const char kExpectedBitmap[] = "a1ea1ceebb26922fae576cb79ce63af0";
 #else
-#define MAYBE_BUG_1206 BUG_1206
-#endif
-TEST_F(FPDFAnnotEmbedderTest, MAYBE_BUG_1206) {
-  static constexpr size_t kExpectedSize = 1609;
   static const char kExpectedBitmap[] = "0d9fc05c6762fd788bd23fd87a4967bc";
+#endif
+  static constexpr size_t kExpectedSize = 1609;
 
   ASSERT_TRUE(OpenDocument("bug_1206.pdf"));
 
