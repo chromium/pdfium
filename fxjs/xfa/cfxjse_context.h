@@ -33,7 +33,8 @@ class CFXJSE_Context {
 
   v8::Isolate* GetIsolate() const { return m_pIsolate.Get(); }
   v8::Local<v8::Context> GetContext();
-  std::unique_ptr<CFXJSE_Value> GetGlobalObject();
+  v8::Local<v8::Object> GetGlobalObject();
+
   void AddClass(std::unique_ptr<CFXJSE_Class> pClass);
   CFXJSE_Class* GetClassByName(ByteStringView szName) const;
   void EnableCompatibleMode();

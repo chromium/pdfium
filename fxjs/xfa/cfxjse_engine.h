@@ -115,7 +115,7 @@ class CFXJSE_Engine final : public CFX_V8 {
  private:
   CFXJSE_Context* CreateVariablesContext(CXFA_Node* pScriptNode,
                                          CXFA_Node* pSubform);
-  void RemoveBuiltInObjs(CFXJSE_Context* pContext) const;
+  void RemoveBuiltInObjs(CFXJSE_Context* pContext);
   bool QueryNodeByFlag(CXFA_Node* refNode,
                        WideStringView propname,
                        CFXJSE_Value* pValue,

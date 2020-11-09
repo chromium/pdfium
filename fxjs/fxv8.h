@@ -66,6 +66,14 @@ v8::Local<v8::Value> ReentrantGetObjectPropertyHelper(
 std::vector<WideString> ReentrantGetObjectPropertyNamesHelper(
     v8::Isolate* pIsolate,
     v8::Local<v8::Object> pObj);
+bool ReentrantHasObjectOwnPropertyHelper(v8::Isolate* pIsolate,
+                                         v8::Local<v8::Object> pObj,
+                                         ByteStringView bsUTF8PropertyName,
+                                         bool bUseTypeGetter);
+bool ReentrantSetObjectOwnPropertyHelper(v8::Isolate* pIsolate,
+                                         v8::Local<v8::Object> pObj,
+                                         ByteStringView bsUTF8PropertyName,
+                                         v8::Local<v8::Value> pValue);
 bool ReentrantPutObjectPropertyHelper(v8::Isolate* pIsolate,
                                       v8::Local<v8::Object> pObj,
                                       ByteStringView bsUTF8PropertyName,

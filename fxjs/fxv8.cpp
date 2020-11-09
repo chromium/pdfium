@@ -213,6 +213,36 @@ std::vector<WideString> ReentrantGetObjectPropertyNamesHelper(
   return result;
 }
 
+bool ReentrantHasObjectOwnPropertyHelper(v8::Isolate* pIsolate,
+                                         v8::Local<v8::Object> pObj,
+                                         ByteStringView bsUTF8PropertyName,
+                                         bool bUseTypeGetter) {
+  if (pObj.IsEmpty())
+    return false;
+
+  v8::TryCatch squash_exceptions(pIsolate);
+  v8::Local<v8::Context> pContext = pIsolate->GetCurrentContext();
+  v8::Local<v8::String> hKey =
+      fxv8::NewStringHelper(pIsolate, bsUTF8PropertyName);
+  return pObj->HasRealNamedProperty(pContext, hKey).FromJust() ||
+         (bUseTypeGetter &&
+          pObj->HasOwnProperty(pContext, hKey).FromMaybe(false));
+}
+
+bool ReentrantSetObjectOwnPropertyHelper(v8::Isolate* pIsolate,
+                                         v8::Local<v8::Object> pObj,
+                                         ByteStringView bsUTF8PropertyName,
+                                         v8::Local<v8::Value> pValue) {
+  ASSERT(!pValue.IsEmpty());
+  if (pObj.IsEmpty())
+    return false;
+
+  v8::TryCatch squash_exceptions(pIsolate);
+  v8::Local<v8::String> name = NewStringHelper(pIsolate, bsUTF8PropertyName);
+  return pObj->DefineOwnProperty(pIsolate->GetCurrentContext(), name, pValue)
+      .FromMaybe(false);
+}
+
 bool ReentrantPutObjectPropertyHelper(v8::Isolate* pIsolate,
                                       v8::Local<v8::Object> pObj,
                                       ByteStringView bsUTF8PropertyName,

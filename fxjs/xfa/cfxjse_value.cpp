@@ -181,40 +181,27 @@ bool CFXJSE_Value::HasObjectOwnProperty(v8::Isolate* pIsolate,
 
 bool CFXJSE_Value::SetObjectOwnProperty(v8::Isolate* pIsolate,
                                         ByteStringView szPropName,
-                                        CFXJSE_Value* lpPropValue) {
-  ASSERT(lpPropValue);
+                                        CFXJSE_Value* pPropValue) {
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(pIsolate);
   v8::Local<v8::Value> hObject = v8::Local<v8::Value>::New(pIsolate, m_hValue);
   if (!hObject->IsObject())
     return false;
 
-  v8::Local<v8::String> hPropName = fxv8::NewStringHelper(pIsolate, szPropName);
   v8::Local<v8::Value> pValue =
-      v8::Local<v8::Value>::New(pIsolate, lpPropValue->m_hValue);
-  return hObject.As<v8::Object>()
-      ->DefineOwnProperty(pIsolate->GetCurrentContext(), hPropName, pValue)
-      .FromMaybe(false);
+      v8::Local<v8::Value>::New(pIsolate, pPropValue->m_hValue);
+  return fxv8::ReentrantSetObjectOwnPropertyHelper(
+      pIsolate, hObject.As<v8::Object>(), szPropName, pValue);
 }
 
-bool CFXJSE_Value::SetFunctionBind(v8::Isolate* pIsolate,
-                                   CFXJSE_Value* lpOldFunction,
-                                   CFXJSE_Value* lpNewThis) {
-  ASSERT(lpOldFunction);
-  ASSERT(lpNewThis);
+bool CFXJSE_Value::SetBoundFunction(v8::Isolate* pIsolate,
+                                    v8::Local<v8::Function> hOldFunction,
+                                    v8::Local<v8::Object> hNewThis) {
+  ASSERT(!hOldFunction.IsEmpty());
+  ASSERT(!hNewThis.IsEmpty());
 
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(pIsolate);
   v8::Local<v8::Value> rgArgs[2];
-  v8::Local<v8::Value> hOldFunction =
-      v8::Local<v8::Value>::New(pIsolate, lpOldFunction->DirectGetValue());
-  if (!fxv8::IsFunction(hOldFunction))
-    return false;
-
   rgArgs[0] = hOldFunction;
-  v8::Local<v8::Value> hNewThis =
-      v8::Local<v8::Value>::New(pIsolate, lpNewThis->DirectGetValue());
-  if (hNewThis.IsEmpty())
-    return false;
-
   rgArgs[1] = hNewThis;
   v8::Local<v8::String> hBinderFuncSource =
       fxv8::NewStringHelper(pIsolate,

@@ -582,41 +582,47 @@ bool CFXJSE_Engine::QueryVariableValue(CXFA_Node* pScriptNode,
 
   CXFA_Node* variablesNode = pScriptNode->GetParent();
   if (!variablesNode ||
-      variablesNode->GetElementType() != XFA_Element::Variables)
+      variablesNode->GetElementType() != XFA_Element::Variables) {
     return false;
+  }
 
   auto it = m_mapVariableToContext.find(pScriptNode->JSObject());
   if (it == m_mapVariableToContext.end() || !it->second)
     return false;
 
   CFXJSE_Context* pVariableContext = it->second.get();
-  std::unique_ptr<CFXJSE_Value> pObject = pVariableContext->GetGlobalObject();
-  auto hVariableValue = std::make_unique<CFXJSE_Value>();
+  v8::Local<v8::Object> pObject = pVariableContext->GetGlobalObject();
   if (!bGetter) {
-    pObject->SetObjectOwnProperty(GetIsolate(), szPropName, pValue);
+    fxv8::ReentrantSetObjectOwnPropertyHelper(GetIsolate(), pObject, szPropName,
+                                              pValue->GetValue(GetIsolate()));
     return true;
   }
 
-  if (!pObject->HasObjectOwnProperty(GetIsolate(), szPropName, false))
+  if (!fxv8::ReentrantHasObjectOwnPropertyHelper(GetIsolate(), pObject,
+                                                 szPropName, false)) {
     return false;
+  }
 
-  pObject->GetObjectProperty(GetIsolate(), szPropName, hVariableValue.get());
-  if (hVariableValue->IsFunction(GetIsolate()))
-    pValue->SetFunctionBind(GetIsolate(), hVariableValue.get(), pObject.get());
-  else if (bGetter)
-    pValue->Assign(GetIsolate(), hVariableValue.get());
-  else
-    hVariableValue.get()->Assign(GetIsolate(), pValue);
+  v8::Local<v8::Value> hVariableValue =
+      fxv8::ReentrantGetObjectPropertyHelper(GetIsolate(), pObject, szPropName);
+  if (fxv8::IsFunction(hVariableValue)) {
+    pValue->SetBoundFunction(GetIsolate(), hVariableValue.As<v8::Function>(),
+                             pObject);
+  } else {
+    pValue->ForceSetValue(GetIsolate(), hVariableValue);
+  }
   return true;
 }
 
-void CFXJSE_Engine::RemoveBuiltInObjs(CFXJSE_Context* pContext) const {
+void CFXJSE_Engine::RemoveBuiltInObjs(CFXJSE_Context* pContext) {
+  CFXJSE_ScopeUtil_IsolateHandleContext scope(this);
   const ByteStringView kObjNames[2] = {"Number", "Date"};
-  std::unique_ptr<CFXJSE_Value> pObject = pContext->GetGlobalObject();
-  auto hProp = std::make_unique<CFXJSE_Value>();
-  for (const auto& obj : kObjNames) {
-    if (pObject->GetObjectProperty(GetIsolate(), obj, hProp.get()))
-      pObject->DeleteObjectProperty(GetIsolate(), obj);
+  v8::Local<v8::Object> pObject = pContext->GetGlobalObject();
+  for (const auto& name : kObjNames) {
+    if (!fxv8::ReentrantGetObjectPropertyHelper(GetIsolate(), pObject, name)
+             .IsEmpty()) {
+      fxv8::ReentrantDeleteObjectPropertyHelper(GetIsolate(), pObject, name);
+    }
   }
 }
 
