@@ -39,6 +39,10 @@ class CFX_WindowsRenderDevice : public CFX_RenderDevice {
  public:
   CFX_WindowsRenderDevice(HDC hDC, const EncoderIface* pEncoderIface);
   ~CFX_WindowsRenderDevice() override;
+
+#if defined(_SKIA_SUPPORT_)
+  void DebugVerifyBitmapIsPreMultiplied() const override;
+#endif
 };
 
 #endif  // CORE_FXGE_CFX_WINDOWSRENDERDEVICE_H_
