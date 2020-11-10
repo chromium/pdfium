@@ -396,6 +396,22 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetRect(FPDF_ANNOTATION annot,
                                                       FS_RECTF* rect);
 
 // Experimental API.
+// Get the vertices of a polygon or polyline annotation. |buffer| is an array of
+// points of the annotation. If |length| is less than the returned length, or
+// |annot| or |buffer| is NULL, |buffer| will not be modified.
+//
+//   annot  - handle to an annotation, as returned by e.g. FPDFPage_GetAnnot()
+//   buffer - buffer for holding the points.
+//   length - length of the buffer in points.
+//
+// Returns the number of points if the annotation is of type polygon or
+// polyline, 0 otherwise.
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFAnnot_GetVertices(FPDF_ANNOTATION annot,
+                      FS_POINTF* buffer,
+                      unsigned long length);
+
+// Experimental API.
 // Check if |annot|'s dictionary has |key| as a key.
 //
 //   annot  - handle to an annotation.

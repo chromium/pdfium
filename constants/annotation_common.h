@@ -26,6 +26,9 @@ constexpr char kC[] = "C";
 constexpr char kStructParent[] = "StructParent";
 constexpr char kOC[] = "OC";
 
+// Entries for polygon and polyline annotations.
+constexpr char kVertices[] = "Vertices";
+
 }  // namespace annotation
 }  // namespace pdfium
 

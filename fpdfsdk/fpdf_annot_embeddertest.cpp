@@ -3221,3 +3221,70 @@ TEST_F(FPDFAnnotEmbedderTest, Redactannotation) {
 
   UnloadPage(page);
 }
+
+TEST_F(FPDFAnnotEmbedderTest, PolygonAnnotation) {
+  ASSERT_TRUE(OpenDocument("polygon_annot.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+  EXPECT_EQ(2, FPDFPage_GetAnnotCount(page));
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+
+    // FPDFSignatureObj_GetTime() positive testing.
+    unsigned long size = FPDFAnnot_GetVertices(annot.get(), nullptr, 0);
+    const size_t kExpectedSize = 3;
+    ASSERT_EQ(kExpectedSize, size);
+    std::vector<FS_POINTF> vertices_buffer(size);
+    EXPECT_EQ(size,
+              FPDFAnnot_GetVertices(annot.get(), vertices_buffer.data(), size));
+    EXPECT_FLOAT_EQ(159.0f, vertices_buffer[0].x);
+    EXPECT_FLOAT_EQ(296.0f, vertices_buffer[0].y);
+    EXPECT_FLOAT_EQ(350.0f, vertices_buffer[1].x);
+    EXPECT_FLOAT_EQ(411.0f, vertices_buffer[1].y);
+    EXPECT_FLOAT_EQ(472.0f, vertices_buffer[2].x);
+    EXPECT_FLOAT_EQ(243.42f, vertices_buffer[2].y);
+
+    // FPDFAnnot_GetVertices() negative testing.
+    EXPECT_EQ(0U, FPDFAnnot_GetVertices(nullptr, nullptr, 0));
+
+    // vertices_buffer is not overwritten if it is too small.
+    vertices_buffer.resize(1);
+    vertices_buffer[0].x = 42;
+    vertices_buffer[0].y = 43;
+    size = FPDFAnnot_GetVertices(annot.get(), vertices_buffer.data(),
+                                 vertices_buffer.size());
+    EXPECT_EQ(kExpectedSize, size);
+    EXPECT_FLOAT_EQ(42, vertices_buffer[0].x);
+    EXPECT_FLOAT_EQ(43, vertices_buffer[0].y);
+  }
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 1));
+    ASSERT_TRUE(annot);
+
+    // This has an odd number of elements in the vertices array, ignore the last
+    // element.
+    unsigned long size = FPDFAnnot_GetVertices(annot.get(), nullptr, 0);
+    const size_t kExpectedSize = 3;
+    ASSERT_EQ(kExpectedSize, size);
+    std::vector<FS_POINTF> vertices_buffer(size);
+    EXPECT_EQ(size,
+              FPDFAnnot_GetVertices(annot.get(), vertices_buffer.data(), size));
+    EXPECT_FLOAT_EQ(259.0f, vertices_buffer[0].x);
+    EXPECT_FLOAT_EQ(396.0f, vertices_buffer[0].y);
+    EXPECT_FLOAT_EQ(450.0f, vertices_buffer[1].x);
+    EXPECT_FLOAT_EQ(511.0f, vertices_buffer[1].y);
+    EXPECT_FLOAT_EQ(572.0f, vertices_buffer[2].x);
+    EXPECT_FLOAT_EQ(343.0f, vertices_buffer[2].y);
+  }
+
+  {
+    // Wrong annotation type.
+    ScopedFPDFAnnotation ink_annot(FPDFPage_CreateAnnot(page, FPDF_ANNOT_INK));
+    EXPECT_EQ(0U, FPDFAnnot_GetVertices(ink_annot.get(), nullptr, 0));
+  }
+
+  UnloadPage(page);
+}

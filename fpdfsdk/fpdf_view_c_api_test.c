@@ -70,6 +70,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFAnnot_GetStringValue);
     CHK(FPDFAnnot_GetSubtype);
     CHK(FPDFAnnot_GetValueType);
+    CHK(FPDFAnnot_GetVertices);
     CHK(FPDFAnnot_HasAttachmentPoints);
     CHK(FPDFAnnot_HasKey);
     CHK(FPDFAnnot_IsChecked);
