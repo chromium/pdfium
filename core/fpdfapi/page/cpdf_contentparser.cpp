@@ -167,7 +167,9 @@ CPDF_ContentParser::Stage CPDF_ContentParser::PrepareContent() {
 
   m_Size = safeSize.ValueOrDie();
   m_pData.Reset(
-      std::unique_ptr<uint8_t, FxFreeDeleter>(FX_Alloc(uint8_t, m_Size)));
+      std::unique_ptr<uint8_t, FxFreeDeleter>(FX_TryAlloc(uint8_t, m_Size)));
+  if (!m_pData)
+    return Stage::kComplete;
 
   uint32_t pos = 0;
   for (const auto& stream : m_StreamArray) {
