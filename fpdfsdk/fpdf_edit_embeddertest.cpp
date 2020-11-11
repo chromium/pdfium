@@ -41,13 +41,21 @@ const char kAllRemovedChecksum[] = "eee4600ac08b458ac7ac2320e225674c";
 
 const wchar_t kBottomText[] = L"I'm at the bottom of the page";
 
-#if defined(OS_WIN)
-const char kBottomTextChecksum[] = "08d1ff3e5a42801bee6077fd366bef00";
-#elif defined(OS_APPLE)
-const char kBottomTextChecksum[] = "324e1db8164a040cf6104538baa95ba6";
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+static constexpr char kBottomTextChecksum[] =
+    "5df7be86df1e18819723cdd9c81c2c7d";
 #else
-const char kBottomTextChecksum[] = "eacaa24573b8ce997b3882595f096f00";
+#if defined(OS_WIN)
+static constexpr char kBottomTextChecksum[] =
+    "08d1ff3e5a42801bee6077fd366bef00";
+#elif defined(OS_APPLE)
+static constexpr char kBottomTextChecksum[] =
+    "324e1db8164a040cf6104538baa95ba6";
+#else
+static constexpr char kBottomTextChecksum[] =
+    "eacaa24573b8ce997b3882595f096f00";
 #endif
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 #if defined(OS_WIN)
@@ -712,26 +720,27 @@ TEST_F(FPDFEditEmbedderTest, SetText) {
   CloseSavedDocument();
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_SetTextKeepClippingPath DISABLED_SetTextKeepClippingPath
-#else
-#define MAYBE_SetTextKeepClippingPath SetTextKeepClippingPath
-#endif
-TEST_F(FPDFEditEmbedderTest, MAYBE_SetTextKeepClippingPath) {
+TEST_F(FPDFEditEmbedderTest, SetTextKeepClippingPath) {
   // Load document with some text, with parts clipped.
   ASSERT_TRUE(OpenDocument("bug_1558.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   static constexpr char kOriginalChecksum[] =
+      "1e08d555f4863ff34a90f849c9464ed2";
+#else
 #if defined(OS_WIN)
+  static constexpr char kOriginalChecksum[] =
       "220bf2086398fc46ac094952b244c8d9";
 #elif defined(OS_APPLE)
+  static constexpr char kOriginalChecksum[] =
       "53cbaad93551ef2ccc27ddd63f2ca2b3";
 #else
+  static constexpr char kOriginalChecksum[] =
       "ba1936fa8ca1e8cca108da76ff3500a6";
 #endif
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   {
     // When opened before any editing and saving, the clipping path is rendered.
     ScopedFPDFBitmap original_bitmap = RenderPage(page);
@@ -2084,13 +2093,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_AddStrokedPaths) {
 }
 
 // Tests adding text from standard font using FPDFPageObj_NewTextObj.
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_AddStandardFontText DISABLED_AddStandardFontText
-#else
-#define MAYBE_AddStandardFontText AddStandardFontText
-#endif
-TEST_F(FPDFEditEmbedderTest, MAYBE_AddStandardFontText) {
+TEST_F(FPDFEditEmbedderTest, AddStandardFontText) {
   // Start with a blank page
   FPDF_PAGE page = FPDFPage_New(CreateNewDocument(), 0, 612, 792);
 
@@ -2123,13 +2126,17 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_AddStandardFontText) {
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-#if defined(OS_APPLE)
-    const char md5[] = "26a516d923b0a18fbea0a24e3aca5562";
-#elif defined(OS_WIN)
-    const char md5[] = "3755dd35abd4c605755369401ee85b2d";
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+    static constexpr char md5[] = "285cf09ca5600fc4ec061dc5ad5c6400";
 #else
-    const char md5[] = "76fcc7d08aa15445efd2e2ceb7c6cc3b";
+#if defined(OS_WIN)
+    static constexpr char md5[] = "3755dd35abd4c605755369401ee85b2d";
+#elif defined(OS_APPLE)
+    static constexpr char md5[] = "26a516d923b0a18fbea0a24e3aca5562";
+#else
+    static constexpr char md5[] = "76fcc7d08aa15445efd2e2ceb7c6cc3b";
 #endif
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
     CompareBitmap(page_bitmap.get(), 612, 792, md5);
 
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
@@ -2147,13 +2154,21 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_AddStandardFontText) {
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-#if defined(OS_APPLE)
-    const char md5[] = "532024c9ded47843313bb64a060118f3";
-#elif defined(OS_WIN)
-    const char md5[] = "5ded49fe157f89627903553771431e3d";
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#if defined(OS_WIN)
+    static constexpr char md5[] = "03c4d98eae4fda51ca67743665ab61f4";
 #else
-    const char md5[] = "344534539aa7c5cc78404cfff4bde7fb";
+    static constexpr char md5[] = "177285dd8cdaf476683173fce64034ea";
+#endif  // defined(OS_WIN)
+#else
+#if defined(OS_WIN)
+    static constexpr char md5[] = "5ded49fe157f89627903553771431e3d";
+#elif defined(OS_APPLE)
+    static constexpr char md5[] = "532024c9ded47843313bb64a060118f3";
+#else
+    static constexpr char md5[] = "344534539aa7c5cc78404cfff4bde7fb";
 #endif
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
     CompareBitmap(page_bitmap.get(), 612, 792, md5);
 
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
@@ -2362,13 +2377,7 @@ TEST_F(FPDFEditEmbedderTest, TestFormGetObjects) {
 }
 
 // Tests adding text from standard font using FPDFText_LoadStandardFont.
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_AddStandardFontText2 DISABLED_AddStandardFontText2
-#else
-#define MAYBE_AddStandardFontText2 AddStandardFontText2
-#endif
-TEST_F(FPDFEditEmbedderTest, MAYBE_AddStandardFontText2) {
+TEST_F(FPDFEditEmbedderTest, AddStandardFontText2) {
   // Start with a blank page
   ScopedFPDFPage page(FPDFPage_New(CreateNewDocument(), 0, 612, 792));
 
@@ -2780,13 +2789,7 @@ TEST_F(FPDFEditEmbedderTest, TransformAnnot) {
 
 // TODO(npm): Add tests using Japanese fonts in other OS.
 #if defined(OS_LINUX) || defined(OS_CHROMEOS)
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_AddCIDFontText DISABLED_AddCIDFontText
-#else
-#define MAYBE_AddCIDFontText AddCIDFontText
-#endif
-TEST_F(FPDFEditEmbedderTest, MAYBE_AddCIDFontText) {
+TEST_F(FPDFEditEmbedderTest, AddCIDFontText) {
   // Start with a blank page
   FPDF_PAGE page = FPDFPage_New(CreateNewDocument(), 0, 612, 792);
   CFX_Font CIDfont;
@@ -2825,7 +2828,11 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_AddCIDFontText) {
   }
 
   // Check that the text renders properly.
-  const char md5[] = "5159a72903fe57bf0cf645c894de8a74";
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+  static constexpr char md5[] = "683eefd6c31206de23b7f709b66e6daf";
+#else
+  static constexpr char md5[] = "5159a72903fe57bf0cf645c894de8a74";
+#endif
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
     CompareBitmap(page_bitmap.get(), 612, 792, md5);
