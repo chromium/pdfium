@@ -1394,105 +1394,64 @@ bool ValueIsNull(v8::Isolate* pIsolate,
     return true;
 
   std::unique_ptr<CFXJSE_Value> extracted = GetExtractedValue(pIsolate, arg);
-  return !extracted || extracted->IsNull(pIsolate);
+  return extracted->IsNull(pIsolate);
 }
 
-int32_t ValueToInteger(CFXJSE_HostObject* pHostObject, CFXJSE_Value* pValue) {
-  if (!pValue || pValue->IsEmpty())
-    return 0;
-
-  v8::Isolate* pIsolate = ToFormCalcContext(pHostObject)->GetIsolate();
-  if (pValue->IsArray(pIsolate)) {
-    auto propertyValue = std::make_unique<CFXJSE_Value>();
-    auto jsObjectValue = std::make_unique<CFXJSE_Value>();
-    auto newPropertyValue = std::make_unique<CFXJSE_Value>();
-    pValue->GetObjectPropertyByIdx(pIsolate, 1, propertyValue.get());
-    pValue->GetObjectPropertyByIdx(pIsolate, 2, jsObjectValue.get());
-    if (propertyValue->IsNull(pIsolate)) {
-      GetObjectDefaultValue(pIsolate, jsObjectValue.get(),
-                            newPropertyValue.get());
-      return ValueToInteger(pHostObject, newPropertyValue.get());
-    }
-
-    jsObjectValue->GetObjectProperty(
-        pIsolate, propertyValue->ToString(pIsolate).AsStringView(),
-        newPropertyValue.get());
-    return ValueToInteger(pHostObject, newPropertyValue.get());
-  }
-  if (pValue->IsObject(pIsolate)) {
-    auto newPropertyValue = std::make_unique<CFXJSE_Value>();
-    GetObjectDefaultValue(pIsolate, pValue, newPropertyValue.get());
-    return ValueToInteger(pHostObject, newPropertyValue.get());
-  }
-  if (pValue->IsString(pIsolate))
-    return FXSYS_atoi(pValue->ToString(pIsolate).c_str());
-  return pValue->ToInteger(pIsolate);
-}
-
-float ValueToFloat(CFXJSE_HostObject* pHostObject, CFXJSE_Value* arg) {
-  if (!arg)
-    return 0.0f;
-
-  v8::Isolate* pIsolate = ToFormCalcContext(pHostObject)->GetIsolate();
-  if (arg->IsArray(pIsolate)) {
-    auto propertyValue = std::make_unique<CFXJSE_Value>();
-    auto jsObjectValue = std::make_unique<CFXJSE_Value>();
-    auto newPropertyValue = std::make_unique<CFXJSE_Value>();
-    arg->GetObjectPropertyByIdx(pIsolate, 1, propertyValue.get());
-    arg->GetObjectPropertyByIdx(pIsolate, 2, jsObjectValue.get());
-    if (propertyValue->IsNull(pIsolate)) {
-      GetObjectDefaultValue(pIsolate, jsObjectValue.get(),
-                            newPropertyValue.get());
-      return ValueToFloat(pHostObject, newPropertyValue.get());
-    }
-    jsObjectValue->GetObjectProperty(
-        pIsolate, propertyValue->ToString(pIsolate).AsStringView(),
-        newPropertyValue.get());
-    return ValueToFloat(pHostObject, newPropertyValue.get());
-  }
-  if (arg->IsObject(pIsolate)) {
-    auto newPropertyValue = std::make_unique<CFXJSE_Value>();
-    GetObjectDefaultValue(pIsolate, arg, newPropertyValue.get());
-    return ValueToFloat(pHostObject, newPropertyValue.get());
-  }
-  if (arg->IsString(pIsolate))
-    return strtof(arg->ToString(pIsolate).c_str(), nullptr);
-  if (arg->IsUndefined(pIsolate) || arg->IsEmpty())
-    return 0.0f;
-  return arg->ToFloat(pIsolate);
-}
-
-double ValueToDouble(CFXJSE_HostObject* pHostObject, CFXJSE_Value* arg) {
+int32_t ValueToInteger(v8::Isolate* pIsolate, CFXJSE_Value* arg) {
   if (!arg)
     return 0;
 
-  v8::Isolate* pIsolate = ToFormCalcContext(pHostObject)->GetIsolate();
-  if (arg->IsArray(pIsolate)) {
-    auto propertyValue = std::make_unique<CFXJSE_Value>();
-    auto jsObjectValue = std::make_unique<CFXJSE_Value>();
-    auto newPropertyValue = std::make_unique<CFXJSE_Value>();
-    arg->GetObjectPropertyByIdx(pIsolate, 1, propertyValue.get());
-    arg->GetObjectPropertyByIdx(pIsolate, 2, jsObjectValue.get());
-    if (propertyValue->IsNull(pIsolate)) {
-      GetObjectDefaultValue(pIsolate, jsObjectValue.get(),
-                            newPropertyValue.get());
-      return ValueToDouble(pHostObject, newPropertyValue.get());
-    }
-    jsObjectValue->GetObjectProperty(
-        pIsolate, propertyValue->ToString(pIsolate).AsStringView(),
-        newPropertyValue.get());
-    return ValueToDouble(pHostObject, newPropertyValue.get());
-  }
-  if (arg->IsObject(pIsolate)) {
-    auto newPropertyValue = std::make_unique<CFXJSE_Value>();
-    GetObjectDefaultValue(pIsolate, arg, newPropertyValue.get());
-    return ValueToDouble(pHostObject, newPropertyValue.get());
-  }
-  if (arg->IsString(pIsolate))
-    return strtod(arg->ToString(pIsolate).c_str(), nullptr);
-  if (arg->IsUndefined(pIsolate) || arg->IsEmpty())
+  std::unique_ptr<CFXJSE_Value> extracted = GetExtractedValue(pIsolate, arg);
+  if (extracted->IsEmpty())
     return 0;
-  return arg->ToDouble(pIsolate);
+
+  if (extracted->IsObject(pIsolate) || extracted->IsArray(pIsolate))
+    return ValueToInteger(pIsolate, extracted.get());
+
+  if (extracted->IsString(pIsolate))
+    return FXSYS_atoi(extracted->ToString(pIsolate).c_str());
+
+  return extracted->ToInteger(pIsolate);
+}
+
+float ValueToFloat(v8::Isolate* pIsolate, CFXJSE_Value* arg) {
+  if (!arg)
+    return 0.0f;
+
+  std::unique_ptr<CFXJSE_Value> extracted = GetExtractedValue(pIsolate, arg);
+  if (extracted->IsEmpty())
+    return 0.0f;
+
+  if (extracted->IsObject(pIsolate) || extracted->IsArray(pIsolate))
+    return ValueToFloat(pIsolate, extracted.get());
+
+  if (extracted->IsString(pIsolate))
+    return strtof(extracted->ToString(pIsolate).c_str(), nullptr);
+
+  if (extracted->IsUndefined(pIsolate) || extracted->IsEmpty())
+    return 0.0f;
+
+  return extracted->ToFloat(pIsolate);
+}
+
+double ValueToDouble(v8::Isolate* pIsolate, CFXJSE_Value* arg) {
+  if (!arg)
+    return 0.0;
+
+  std::unique_ptr<CFXJSE_Value> extracted = GetExtractedValue(pIsolate, arg);
+  if (extracted->IsEmpty())
+    return 0.0;
+
+  if (extracted->IsObject(pIsolate) || extracted->IsArray(pIsolate))
+    return ValueToDouble(pIsolate, extracted.get());
+
+  if (extracted->IsString(pIsolate))
+    return strtod(extracted->ToString(pIsolate).c_str(), nullptr);
+
+  if (extracted->IsUndefined(pIsolate) || extracted->IsEmpty())
+    return 0.0;
+
+  return extracted->ToDouble(pIsolate);
 }
 
 double ExtractDouble(CFXJSE_HostObject* pHostObject,
@@ -1506,7 +1465,7 @@ double ExtractDouble(CFXJSE_HostObject* pHostObject,
 
   v8::Isolate* pIsolate = ToFormCalcContext(pHostObject)->GetIsolate();
   if (!src->IsArray(pIsolate))
-    return ValueToDouble(pHostObject, src);
+    return ValueToDouble(pIsolate, src);
 
   auto lengthValue = std::make_unique<CFXJSE_Value>();
   src->GetObjectProperty(pIsolate, "length", lengthValue.get());
@@ -1521,13 +1480,13 @@ double ExtractDouble(CFXJSE_HostObject* pHostObject,
   src->GetObjectPropertyByIdx(pIsolate, 1, propertyValue.get());
   src->GetObjectPropertyByIdx(pIsolate, 2, jsObjectValue.get());
   if (propertyValue->IsNull(pIsolate))
-    return ValueToDouble(pHostObject, jsObjectValue.get());
+    return ValueToDouble(pIsolate, jsObjectValue.get());
 
   auto newPropertyValue = std::make_unique<CFXJSE_Value>();
   jsObjectValue->GetObjectProperty(
       pIsolate, propertyValue->ToString(pIsolate).AsStringView(),
       newPropertyValue.get());
-  return ValueToDouble(pHostObject, newPropertyValue.get());
+  return ValueToDouble(pIsolate, newPropertyValue.get());
 }
 
 ByteString ValueToUTF8String(CFXJSE_HostObject* pHostObject,
@@ -1554,8 +1513,8 @@ bool SimpleValueCompare(CFXJSE_HostObject* pHostObject,
     return bsFirst == bsSecond;
   }
   if (firstValue->IsNumber(pIsolate)) {
-    float first = ValueToFloat(pHostObject, firstValue);
-    float second = ValueToFloat(pHostObject, secondValue);
+    float first = ValueToFloat(pIsolate, firstValue);
+    float second = ValueToFloat(pIsolate, secondValue);
     return first == second;
   }
   if (firstValue->IsBoolean(pIsolate))
@@ -1756,7 +1715,7 @@ void CFXJSE_FormCalcContext::Abs(
     info.GetReturnValue().SetNull();
     return;
   }
-  double dValue = ValueToDouble(pThis, argOne.get());
+  double dValue = ValueToDouble(info.GetIsolate(), argOne.get());
   if (dValue < 0)
     dValue = -dValue;
 
@@ -1782,7 +1741,7 @@ void CFXJSE_FormCalcContext::Avg(
       continue;
 
     if (!argValue->IsArray(pIsolate)) {
-      dSum += ValueToDouble(pThis, argValue.get());
+      dSum += ValueToDouble(pIsolate, argValue.get());
       uCount++;
       continue;
     }
@@ -1805,7 +1764,7 @@ void CFXJSE_FormCalcContext::Avg(
           if (defaultPropValue->IsNull(pIsolate))
             continue;
 
-          dSum += ValueToDouble(pThis, defaultPropValue.get());
+          dSum += ValueToDouble(pIsolate, defaultPropValue.get());
           uCount++;
         }
       } else {
@@ -1818,7 +1777,7 @@ void CFXJSE_FormCalcContext::Avg(
           if (newPropertyValue->IsNull(pIsolate))
             continue;
 
-          dSum += ValueToDouble(pThis, newPropertyValue.get());
+          dSum += ValueToDouble(pIsolate, newPropertyValue.get());
           uCount++;
         }
       }
@@ -1847,7 +1806,8 @@ void CFXJSE_FormCalcContext::Ceil(
     return;
   }
 
-  info.GetReturnValue().Set(ceil(ValueToFloat(pThis, argValue.get())));
+  info.GetReturnValue().Set(
+      ceil(ValueToFloat(info.GetIsolate(), argValue.get())));
 }
 
 // static
@@ -1921,7 +1881,8 @@ void CFXJSE_FormCalcContext::Floor(
     return;
   }
 
-  info.GetReturnValue().Set(floor(ValueToFloat(pThis, argValue.get())));
+  info.GetReturnValue().Set(
+      floor(ValueToFloat(info.GetIsolate(), argValue.get())));
 }
 
 // static
@@ -1961,7 +1922,7 @@ void CFXJSE_FormCalcContext::Max(
             continue;
 
           uCount++;
-          double dValue = ValueToDouble(pThis, newPropertyValue.get());
+          double dValue = ValueToDouble(pIsolate, newPropertyValue.get());
           dMaxValue = (uCount == 1) ? dValue : std::max(dMaxValue, dValue);
         }
       } else {
@@ -1974,7 +1935,7 @@ void CFXJSE_FormCalcContext::Max(
             continue;
 
           uCount++;
-          double dValue = ValueToDouble(pThis, newPropertyValue.get());
+          double dValue = ValueToDouble(pIsolate, newPropertyValue.get());
           dMaxValue = (uCount == 1) ? dValue : std::max(dMaxValue, dValue);
         }
       }
@@ -1985,11 +1946,11 @@ void CFXJSE_FormCalcContext::Max(
         continue;
 
       uCount++;
-      double dValue = ValueToDouble(pThis, newPropertyValue.get());
+      double dValue = ValueToDouble(pIsolate, newPropertyValue.get());
       dMaxValue = (uCount == 1) ? dValue : std::max(dMaxValue, dValue);
     } else {
       uCount++;
-      double dValue = ValueToDouble(pThis, argValue.get());
+      double dValue = ValueToDouble(pIsolate, argValue.get());
       dMaxValue = (uCount == 1) ? dValue : std::max(dMaxValue, dValue);
     }
   }
@@ -2036,7 +1997,7 @@ void CFXJSE_FormCalcContext::Min(
             continue;
 
           uCount++;
-          double dValue = ValueToDouble(pThis, newPropertyValue.get());
+          double dValue = ValueToDouble(pIsolate, newPropertyValue.get());
           dMinValue = uCount == 1 ? dValue : std::min(dMinValue, dValue);
         }
       } else {
@@ -2049,7 +2010,7 @@ void CFXJSE_FormCalcContext::Min(
             continue;
 
           uCount++;
-          double dValue = ValueToDouble(pThis, newPropertyValue.get());
+          double dValue = ValueToDouble(pIsolate, newPropertyValue.get());
           dMinValue = uCount == 1 ? dValue : std::min(dMinValue, dValue);
         }
       }
@@ -2060,11 +2021,11 @@ void CFXJSE_FormCalcContext::Min(
         continue;
 
       uCount++;
-      double dValue = ValueToDouble(pThis, newPropertyValue.get());
+      double dValue = ValueToDouble(pIsolate, newPropertyValue.get());
       dMinValue = uCount == 1 ? dValue : std::min(dMinValue, dValue);
     } else {
       uCount++;
-      double dValue = ValueToDouble(pThis, argValue.get());
+      double dValue = ValueToDouble(pIsolate, argValue.get());
       dMinValue = uCount == 1 ? dValue : std::min(dMinValue, dValue);
     }
   }
@@ -2199,7 +2160,7 @@ void CFXJSE_FormCalcContext::Sum(
           if (newPropertyValue->IsNull(info.GetIsolate()))
             continue;
 
-          dSum += ValueToDouble(pThis, jsObjectValue.get());
+          dSum += ValueToDouble(info.GetIsolate(), jsObjectValue.get());
           uCount++;
         }
       } else {
@@ -2213,7 +2174,7 @@ void CFXJSE_FormCalcContext::Sum(
           if (newPropertyValue->IsNull(info.GetIsolate()))
             continue;
 
-          dSum += ValueToDouble(pThis, newPropertyValue.get());
+          dSum += ValueToDouble(info.GetIsolate(), newPropertyValue.get());
           uCount++;
         }
       }
@@ -2224,10 +2185,10 @@ void CFXJSE_FormCalcContext::Sum(
       if (newPropertyValue->IsNull(info.GetIsolate()))
         continue;
 
-      dSum += ValueToDouble(pThis, argValue.get());
+      dSum += ValueToDouble(info.GetIsolate(), argValue.get());
       uCount++;
     } else {
-      dSum += ValueToDouble(pThis, argValue.get());
+      dSum += ValueToDouble(info.GetIsolate(), argValue.get());
       uCount++;
     }
   }
@@ -2319,7 +2280,7 @@ void CFXJSE_FormCalcContext::DateFmt(
       return;
     }
 
-    iStyle = (int32_t)ValueToFloat(pThis, infotyle.get());
+    iStyle = (int32_t)ValueToFloat(info.GetIsolate(), infotyle.get());
     if (iStyle < 0 || iStyle > 4)
       iStyle = 0;
   }
@@ -2428,7 +2389,7 @@ void CFXJSE_FormCalcContext::LocalDateFmt(
       info.GetReturnValue().SetNull();
       return;
     }
-    iStyle = (int32_t)ValueToFloat(pThis, infotyle.get());
+    iStyle = (int32_t)ValueToFloat(info.GetIsolate(), infotyle.get());
     if (iStyle > 4 || iStyle < 0)
       iStyle = 0;
   }
@@ -2466,7 +2427,7 @@ void CFXJSE_FormCalcContext::LocalTimeFmt(
       info.GetReturnValue().SetNull();
       return;
     }
-    iStyle = (int32_t)ValueToFloat(pThis, infotyle.get());
+    iStyle = (int32_t)ValueToFloat(info.GetIsolate(), infotyle.get());
     if (iStyle > 4 || iStyle < 0)
       iStyle = 0;
   }
@@ -2502,7 +2463,7 @@ void CFXJSE_FormCalcContext::Num2Date(
     info.GetReturnValue().SetNull();
     return;
   }
-  int32_t dDate = (int32_t)ValueToFloat(pThis, dateValue.get());
+  int32_t dDate = (int32_t)ValueToFloat(info.GetIsolate(), dateValue.get());
   if (dDate < 1) {
     info.GetReturnValue().SetNull();
     return;
@@ -2643,7 +2604,7 @@ void CFXJSE_FormCalcContext::Num2GMTime(
     info.GetReturnValue().SetNull();
     return;
   }
-  int32_t iTime = (int32_t)ValueToFloat(pThis, timeValue.get());
+  int32_t iTime = (int32_t)ValueToFloat(info.GetIsolate(), timeValue.get());
   if (abs(iTime) < 1.0) {
     info.GetReturnValue().SetNull();
     return;
@@ -2690,7 +2651,7 @@ void CFXJSE_FormCalcContext::Num2Time(
     info.GetReturnValue().SetNull();
     return;
   }
-  float fTime = ValueToFloat(pThis, timeValue.get());
+  float fTime = ValueToFloat(info.GetIsolate(), timeValue.get());
   if (fabs(fTime) < 1.0) {
     info.GetReturnValue().SetNull();
     return;
@@ -2841,7 +2802,7 @@ void CFXJSE_FormCalcContext::TimeFmt(
       info.GetReturnValue().SetNull();
       return;
     }
-    iStyle = (int32_t)ValueToFloat(pThis, infotyle.get());
+    iStyle = (int32_t)ValueToFloat(info.GetIsolate(), infotyle.get());
     if (iStyle > 4 || iStyle < 0)
       iStyle = 0;
   }
@@ -3020,9 +2981,9 @@ void CFXJSE_FormCalcContext::Apr(
     return;
   }
 
-  double nPrincipal = ValueToDouble(pThis, argOne.get());
-  double nPayment = ValueToDouble(pThis, argTwo.get());
-  double nPeriods = ValueToDouble(pThis, argThree.get());
+  double nPrincipal = ValueToDouble(info.GetIsolate(), argOne.get());
+  double nPayment = ValueToDouble(info.GetIsolate(), argTwo.get());
+  double nPeriods = ValueToDouble(info.GetIsolate(), argThree.get());
   if (nPrincipal <= 0 || nPayment <= 0 || nPeriods <= 0) {
     pContext->ThrowArgumentMismatchException();
     return;
@@ -3074,9 +3035,9 @@ void CFXJSE_FormCalcContext::CTerm(
     return;
   }
 
-  float nRate = ValueToFloat(pThis, argOne.get());
-  float nFutureValue = ValueToFloat(pThis, argTwo.get());
-  float nInitAmount = ValueToFloat(pThis, argThree.get());
+  float nRate = ValueToFloat(info.GetIsolate(), argOne.get());
+  float nFutureValue = ValueToFloat(info.GetIsolate(), argTwo.get());
+  float nInitAmount = ValueToFloat(info.GetIsolate(), argThree.get());
   if ((nRate <= 0) || (nFutureValue <= 0) || (nInitAmount <= 0)) {
     pContext->ThrowArgumentMismatchException();
     return;
@@ -3106,9 +3067,9 @@ void CFXJSE_FormCalcContext::FV(
     return;
   }
 
-  double nAmount = ValueToDouble(pThis, argOne.get());
-  double nRate = ValueToDouble(pThis, argTwo.get());
-  double nPeriod = ValueToDouble(pThis, argThree.get());
+  double nAmount = ValueToDouble(info.GetIsolate(), argOne.get());
+  double nRate = ValueToDouble(info.GetIsolate(), argTwo.get());
+  double nPeriod = ValueToDouble(info.GetIsolate(), argThree.get());
   if ((nRate < 0) || (nPeriod <= 0) || (nAmount <= 0)) {
     pContext->ThrowArgumentMismatchException();
     return;
@@ -3152,11 +3113,11 @@ void CFXJSE_FormCalcContext::IPmt(
     return;
   }
 
-  float nPrincipalAmount = ValueToFloat(pThis, argOne.get());
-  float nRate = ValueToFloat(pThis, argTwo.get());
-  float nPayment = ValueToFloat(pThis, argThree.get());
-  float nFirstMonth = ValueToFloat(pThis, argFour.get());
-  float nNumberOfMonths = ValueToFloat(pThis, argFive.get());
+  float nPrincipalAmount = ValueToFloat(info.GetIsolate(), argOne.get());
+  float nRate = ValueToFloat(info.GetIsolate(), argTwo.get());
+  float nPayment = ValueToFloat(info.GetIsolate(), argThree.get());
+  float nFirstMonth = ValueToFloat(info.GetIsolate(), argFour.get());
+  float nNumberOfMonths = ValueToFloat(info.GetIsolate(), argFive.get());
   if ((nPrincipalAmount <= 0) || (nRate <= 0) || (nPayment <= 0) ||
       (nFirstMonth < 0) || (nNumberOfMonths < 0)) {
     pContext->ThrowArgumentMismatchException();
@@ -3204,7 +3165,7 @@ void CFXJSE_FormCalcContext::NPV(
     return;
   }
 
-  double nRate = ValueToDouble(pThis, argValue.get());
+  double nRate = ValueToDouble(info.GetIsolate(), argValue.get());
   if (nRate <= 0) {
     pContext->ThrowArgumentMismatchException();
     return;
@@ -3217,7 +3178,7 @@ void CFXJSE_FormCalcContext::NPV(
       info.GetReturnValue().SetNull();
       return;
     }
-    data.push_back(ValueToDouble(pThis, argValue.get()));
+    data.push_back(ValueToDouble(info.GetIsolate(), argValue.get()));
   }
 
   double nSum = 0;
@@ -3250,9 +3211,9 @@ void CFXJSE_FormCalcContext::Pmt(
     return;
   }
 
-  float nPrincipal = ValueToFloat(pThis, argOne.get());
-  float nRate = ValueToFloat(pThis, argTwo.get());
-  float nPeriods = ValueToFloat(pThis, argThree.get());
+  float nPrincipal = ValueToFloat(info.GetIsolate(), argOne.get());
+  float nRate = ValueToFloat(info.GetIsolate(), argTwo.get());
+  float nPeriods = ValueToFloat(info.GetIsolate(), argThree.get());
   if ((nPrincipal <= 0) || (nRate <= 0) || (nPeriods <= 0)) {
     pContext->ThrowArgumentMismatchException();
     return;
@@ -3290,11 +3251,11 @@ void CFXJSE_FormCalcContext::PPmt(
     return;
   }
 
-  float nPrincipalAmount = ValueToFloat(pThis, argOne.get());
-  float nRate = ValueToFloat(pThis, argTwo.get());
-  float nPayment = ValueToFloat(pThis, argThree.get());
-  float nFirstMonth = ValueToFloat(pThis, argFour.get());
-  float nNumberOfMonths = ValueToFloat(pThis, argFive.get());
+  float nPrincipalAmount = ValueToFloat(info.GetIsolate(), argOne.get());
+  float nRate = ValueToFloat(info.GetIsolate(), argTwo.get());
+  float nPayment = ValueToFloat(info.GetIsolate(), argThree.get());
+  float nFirstMonth = ValueToFloat(info.GetIsolate(), argFour.get());
+  float nNumberOfMonths = ValueToFloat(info.GetIsolate(), argFive.get());
   if ((nPrincipalAmount <= 0) || (nRate <= 0) || (nPayment <= 0) ||
       (nFirstMonth < 0) || (nNumberOfMonths < 0)) {
     pContext->ThrowArgumentMismatchException();
@@ -3346,9 +3307,9 @@ void CFXJSE_FormCalcContext::PV(
     return;
   }
 
-  double nAmount = ValueToDouble(pThis, argOne.get());
-  double nRate = ValueToDouble(pThis, argTwo.get());
-  double nPeriod = ValueToDouble(pThis, argThree.get());
+  double nAmount = ValueToDouble(info.GetIsolate(), argOne.get());
+  double nRate = ValueToDouble(info.GetIsolate(), argTwo.get());
+  double nPeriod = ValueToDouble(info.GetIsolate(), argThree.get());
   if ((nAmount <= 0) || (nRate < 0) || (nPeriod <= 0)) {
     pContext->ThrowArgumentMismatchException();
     return;
@@ -3382,9 +3343,9 @@ void CFXJSE_FormCalcContext::Rate(
     return;
   }
 
-  float nFuture = ValueToFloat(pThis, argOne.get());
-  float nPresent = ValueToFloat(pThis, argTwo.get());
-  float nTotalNumber = ValueToFloat(pThis, argThree.get());
+  float nFuture = ValueToFloat(info.GetIsolate(), argOne.get());
+  float nPresent = ValueToFloat(info.GetIsolate(), argTwo.get());
+  float nTotalNumber = ValueToFloat(info.GetIsolate(), argThree.get());
   if ((nFuture <= 0) || (nPresent < 0) || (nTotalNumber <= 0)) {
     pContext->ThrowArgumentMismatchException();
     return;
@@ -3414,9 +3375,9 @@ void CFXJSE_FormCalcContext::Term(
     return;
   }
 
-  float nMount = ValueToFloat(pThis, argOne.get());
-  float nRate = ValueToFloat(pThis, argTwo.get());
-  float nFuture = ValueToFloat(pThis, argThree.get());
+  float nMount = ValueToFloat(info.GetIsolate(), argOne.get());
+  float nRate = ValueToFloat(info.GetIsolate(), argTwo.get());
+  float nFuture = ValueToFloat(info.GetIsolate(), argThree.get());
   if ((nMount <= 0) || (nRate <= 0) || (nFuture <= 0)) {
     pContext->ThrowArgumentMismatchException();
     return;
@@ -3443,7 +3404,7 @@ void CFXJSE_FormCalcContext::Choose(
     return;
   }
 
-  int32_t iIndex = (int32_t)ValueToFloat(pThis, argOne.get());
+  int32_t iIndex = (int32_t)ValueToFloat(info.GetIsolate(), argOne.get());
   if (iIndex < 1) {
     info.GetReturnValue().SetEmptyString();
     return;
@@ -3575,9 +3536,9 @@ void CFXJSE_FormCalcContext::Within(
   std::unique_ptr<CFXJSE_Value> argLow = GetSimpleValue(info, 1);
   std::unique_ptr<CFXJSE_Value> argHigh = GetSimpleValue(info, 2);
   if (argOne->IsNumber(info.GetIsolate())) {
-    float oneNumber = ValueToFloat(pThis, argOne.get());
-    float lowNumber = ValueToFloat(pThis, argLow.get());
-    float heightNumber = ValueToFloat(pThis, argHigh.get());
+    float oneNumber = ValueToFloat(info.GetIsolate(), argOne.get());
+    float lowNumber = ValueToFloat(info.GetIsolate(), argLow.get());
+    float heightNumber = ValueToFloat(info.GetIsolate(), argHigh.get());
     info.GetReturnValue().Set(static_cast<int>((oneNumber >= lowNumber) &&
                                                (oneNumber <= heightNumber)));
     return;
@@ -4205,7 +4166,7 @@ void CFXJSE_FormCalcContext::Left(
   }
 
   ByteString bsSource = ValueToUTF8String(pThis, argOne.get());
-  int32_t count = std::max(0, ValueToInteger(pThis, argTwo.get()));
+  int32_t count = std::max(0, ValueToInteger(info.GetIsolate(), argTwo.get()));
   info.GetReturnValue().Set(fxv8::NewStringHelper(
       info.GetIsolate(), bsSource.First(count).AsStringView()));
 }
@@ -4474,7 +4435,7 @@ void CFXJSE_FormCalcContext::Right(
   }
 
   ByteString bsSource = ValueToUTF8String(pThis, argOne.get());
-  int32_t count = std::max(0, ValueToInteger(pThis, argTwo.get()));
+  int32_t count = std::max(0, ValueToInteger(info.GetIsolate(), argTwo.get()));
   info.GetReturnValue().Set(fxv8::NewStringHelper(
       info.GetIsolate(), bsSource.Last(count).AsStringView()));
 }
@@ -4515,7 +4476,7 @@ void CFXJSE_FormCalcContext::Space(
     return;
   }
 
-  int32_t count = std::max(0, ValueToInteger(pThis, argOne.get()));
+  int32_t count = std::max(0, ValueToInteger(info.GetIsolate(), argOne.get()));
   std::ostringstream spaceString;
   int32_t index = 0;
   while (index < count) {
@@ -4542,19 +4503,20 @@ void CFXJSE_FormCalcContext::Str(
     info.GetReturnValue().SetNull();
     return;
   }
-  float fNumber = ValueToFloat(pThis, numberValue.get());
+  float fNumber = ValueToFloat(info.GetIsolate(), numberValue.get());
 
   int32_t iWidth = 10;
   if (argc > 1) {
     std::unique_ptr<CFXJSE_Value> widthValue = GetSimpleValue(info, 1);
-    iWidth = static_cast<int32_t>(ValueToFloat(pThis, widthValue.get()));
+    iWidth =
+        static_cast<int32_t>(ValueToFloat(info.GetIsolate(), widthValue.get()));
   }
 
   int32_t iPrecision = 0;
   if (argc > 2) {
     std::unique_ptr<CFXJSE_Value> precisionValue = GetSimpleValue(info, 2);
-    iPrecision = std::max(
-        0, static_cast<int32_t>(ValueToFloat(pThis, precisionValue.get())));
+    iPrecision = std::max(0, static_cast<int32_t>(ValueToFloat(
+                                 info.GetIsolate(), precisionValue.get())));
   }
 
   ByteString bsFormat = "%";
@@ -4668,10 +4630,10 @@ void CFXJSE_FormCalcContext::Stuff(
     bsSource = ValueToUTF8String(pThis, sourceValue.get());
     iLength = bsSource.GetLength();
     iStart = pdfium::clamp(
-        static_cast<int32_t>(ValueToFloat(pThis, startValue.get())), 1,
-        iLength);
-    iDelete = std::max(
-        0, static_cast<int32_t>(ValueToFloat(pThis, deleteValue.get())));
+        static_cast<int32_t>(ValueToFloat(info.GetIsolate(), startValue.get())),
+        1, iLength);
+    iDelete = std::max(0, static_cast<int32_t>(ValueToFloat(
+                              info.GetIsolate(), deleteValue.get())));
   }
 
   if (argc > 3) {
@@ -4725,14 +4687,16 @@ void CFXJSE_FormCalcContext::Substr(
 
   // |start_value| is 1-based. Assume first character if |start_value| is less
   // than 1, per spec. Subtract 1 since |iStart| is 0-based.
-  size_t iStart = std::max(ValueToInteger(pThis, start_value.get()), 1) - 1;
+  size_t iStart =
+      std::max(ValueToInteger(info.GetIsolate(), start_value.get()), 1) - 1;
   if (iStart >= iLength) {
     info.GetReturnValue().SetEmptyString();
     return;
   }
 
   // Negative values are treated as 0. Can't clamp() due to sign mismatches.
-  size_t iCount = std::max(ValueToInteger(pThis, end_value.get()), 0);
+  size_t iCount =
+      std::max(ValueToInteger(info.GetIsolate(), end_value.get()), 0);
   iCount = std::min(iCount, iLength - iStart);
   info.GetReturnValue().Set(fxv8::NewStringHelper(
       info.GetIsolate(), bsSource.Substr(iStart, iCount).AsStringView()));
@@ -4751,7 +4715,7 @@ void CFXJSE_FormCalcContext::Uuid(
   int32_t iNum = 0;
   if (argc > 0) {
     std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-    iNum = static_cast<int32_t>(ValueToFloat(pThis, argOne.get()));
+    iNum = static_cast<int32_t>(ValueToFloat(info.GetIsolate(), argOne.get()));
   }
   info.GetReturnValue().Set(fxv8::NewStringHelper(
       info.GetIsolate(), GUIDString(!!iNum).AsStringView()));
@@ -4808,7 +4772,7 @@ void CFXJSE_FormCalcContext::WordNum(
     info.GetReturnValue().SetNull();
     return;
   }
-  float fNumber = ValueToFloat(pThis, numberValue.get());
+  float fNumber = ValueToFloat(info.GetIsolate(), numberValue.get());
 
   int32_t iIdentifier = 0;
   if (argc > 1) {
@@ -4817,8 +4781,8 @@ void CFXJSE_FormCalcContext::WordNum(
       info.GetReturnValue().SetNull();
       return;
     }
-    iIdentifier =
-        static_cast<int32_t>(ValueToFloat(pThis, identifierValue.get()));
+    iIdentifier = static_cast<int32_t>(
+        ValueToFloat(info.GetIsolate(), identifierValue.get()));
   }
 
   ByteString bsLocale;
@@ -5036,8 +5000,8 @@ void CFXJSE_FormCalcContext::logical_or_operator(
     return;
   }
 
-  float first = ValueToFloat(pThis, argFirst.get());
-  float second = ValueToFloat(pThis, infoecond.get());
+  float first = ValueToFloat(info.GetIsolate(), argFirst.get());
+  float second = ValueToFloat(info.GetIsolate(), infoecond.get());
   info.GetReturnValue().Set(static_cast<int>(first || second));
 }
 
@@ -5058,8 +5022,8 @@ void CFXJSE_FormCalcContext::logical_and_operator(
     return;
   }
 
-  float first = ValueToFloat(pThis, argFirst.get());
-  float second = ValueToFloat(pThis, infoecond.get());
+  float first = ValueToFloat(info.GetIsolate(), argFirst.get());
+  float second = ValueToFloat(info.GetIsolate(), infoecond.get());
   info.GetReturnValue().Set(static_cast<int>(first && second));
 }
 
@@ -5095,8 +5059,8 @@ void CFXJSE_FormCalcContext::equality_operator(
     return;
   }
 
-  double first = ValueToDouble(pThis, argFirst.get());
-  double second = ValueToDouble(pThis, infoecond.get());
+  double first = ValueToDouble(info.GetIsolate(), argFirst.get());
+  double second = ValueToDouble(info.GetIsolate(), infoecond.get());
   info.GetReturnValue().Set(static_cast<int>(first == second));
 }
 
@@ -5132,8 +5096,8 @@ void CFXJSE_FormCalcContext::notequality_operator(
     return;
   }
 
-  double first = ValueToDouble(pThis, argFirst.get());
-  double second = ValueToDouble(pThis, infoecond.get());
+  double first = ValueToDouble(info.GetIsolate(), argFirst.get());
+  double second = ValueToDouble(info.GetIsolate(), infoecond.get());
   info.GetReturnValue().Set(static_cast<int>(first != second));
 }
 
@@ -5194,8 +5158,8 @@ void CFXJSE_FormCalcContext::less_operator(
     return;
   }
 
-  double first = ValueToDouble(pThis, argFirst.get());
-  double second = ValueToDouble(pThis, argSecond.get());
+  double first = ValueToDouble(info.GetIsolate(), argFirst.get());
+  double second = ValueToDouble(info.GetIsolate(), argSecond.get());
   info.GetReturnValue().Set(static_cast<int>(first < second));
 }
 
@@ -5228,8 +5192,8 @@ void CFXJSE_FormCalcContext::lessequal_operator(
     return;
   }
 
-  double first = ValueToDouble(pThis, argFirst.get());
-  double second = ValueToDouble(pThis, argSecond.get());
+  double first = ValueToDouble(info.GetIsolate(), argFirst.get());
+  double second = ValueToDouble(info.GetIsolate(), argSecond.get());
   info.GetReturnValue().Set(static_cast<int>(first <= second));
 }
 
@@ -5259,8 +5223,8 @@ void CFXJSE_FormCalcContext::greater_operator(
     return;
   }
 
-  double first = ValueToDouble(pThis, argFirst.get());
-  double second = ValueToDouble(pThis, argSecond.get());
+  double first = ValueToDouble(info.GetIsolate(), argFirst.get());
+  double second = ValueToDouble(info.GetIsolate(), argSecond.get());
   info.GetReturnValue().Set(static_cast<int>(first > second));
 }
 
@@ -5293,8 +5257,8 @@ void CFXJSE_FormCalcContext::greaterequal_operator(
     return;
   }
 
-  double first = ValueToDouble(pThis, argFirst.get());
-  double second = ValueToDouble(pThis, argSecond.get());
+  double first = ValueToDouble(info.GetIsolate(), argFirst.get());
+  double second = ValueToDouble(info.GetIsolate(), argSecond.get());
   info.GetReturnValue().Set(static_cast<int>(first >= second));
 }
 
@@ -5315,8 +5279,8 @@ void CFXJSE_FormCalcContext::plus_operator(
     return;
   }
 
-  double first = ValueToDouble(pThis, argFirst.get());
-  double second = ValueToDouble(pThis, argSecond.get());
+  double first = ValueToDouble(info.GetIsolate(), argFirst.get());
+  double second = ValueToDouble(info.GetIsolate(), argSecond.get());
   info.GetReturnValue().Set(first + second);
 }
 
@@ -5337,8 +5301,8 @@ void CFXJSE_FormCalcContext::minus_operator(
     return;
   }
 
-  double first = ValueToDouble(pThis, argFirst.get());
-  double second = ValueToDouble(pThis, argSecond.get());
+  double first = ValueToDouble(info.GetIsolate(), argFirst.get());
+  double second = ValueToDouble(info.GetIsolate(), argSecond.get());
   info.GetReturnValue().Set(first - second);
 }
 
@@ -5359,8 +5323,8 @@ void CFXJSE_FormCalcContext::multiple_operator(
     return;
   }
 
-  double first = ValueToDouble(pThis, argFirst.get());
-  double second = ValueToDouble(pThis, argSecond.get());
+  double first = ValueToDouble(info.GetIsolate(), argFirst.get());
+  double second = ValueToDouble(info.GetIsolate(), argSecond.get());
   info.GetReturnValue().Set(first * second);
 }
 
@@ -5382,13 +5346,13 @@ void CFXJSE_FormCalcContext::divide_operator(
     return;
   }
 
-  double second = ValueToDouble(pThis, argSecond.get());
+  double second = ValueToDouble(info.GetIsolate(), argSecond.get());
   if (second == 0.0) {
     pContext->ThrowDivideByZeroException();
     return;
   }
 
-  double first = ValueToDouble(pThis, argFirst.get());
+  double first = ValueToDouble(info.GetIsolate(), argFirst.get());
   info.GetReturnValue().Set(first / second);
 }
 
@@ -5406,7 +5370,8 @@ void CFXJSE_FormCalcContext::positive_operator(
     info.GetReturnValue().SetNull();
     return;
   }
-  info.GetReturnValue().Set(0.0 + ValueToDouble(pThis, argOne.get()));
+  info.GetReturnValue().Set(0.0 +
+                            ValueToDouble(info.GetIsolate(), argOne.get()));
 }
 
 // static
@@ -5423,7 +5388,8 @@ void CFXJSE_FormCalcContext::negative_operator(
     info.GetReturnValue().SetNull();
     return;
   }
-  info.GetReturnValue().Set(0.0 - ValueToDouble(pThis, argOne.get()));
+  info.GetReturnValue().Set(0.0 -
+                            ValueToDouble(info.GetIsolate(), argOne.get()));
 }
 
 // static
@@ -5441,7 +5407,7 @@ void CFXJSE_FormCalcContext::logical_not_operator(
     return;
   }
 
-  double first = ValueToDouble(pThis, argOne.get());
+  double first = ValueToDouble(info.GetIsolate(), argOne.get());
   info.GetReturnValue().Set((first == 0.0) ? 1 : 0);
 }
 
@@ -5746,7 +5712,7 @@ void CFXJSE_FormCalcContext::DotAccessorCommon(
   if (argc > 4) {
     bIsStar = false;
     auto temp = std::make_unique<CFXJSE_Value>(info.GetIsolate(), info[4]);
-    iIndexValue = ValueToInteger(pThis, temp.get());
+    iIndexValue = ValueToInteger(info.GetIsolate(), temp.get());
   }
 
   const ByteString bsName =
