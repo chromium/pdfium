@@ -1176,6 +1176,10 @@ int main(int argc, const char* argv[]) {
 #else   // V8_USE_EXTERNAL_STARTUP_DATA
     platform = InitializeV8ForPDFium(options.exe_path, options.js_flags);
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
+    if (!platform) {
+      fprintf(stderr, "V8 initialization failed.\n");
+      return 1;
+    }
     config.m_pPlatform = platform.get();
 
     v8::Isolate::CreateParams params;
