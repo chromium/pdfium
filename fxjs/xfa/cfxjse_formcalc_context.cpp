@@ -1319,185 +1319,176 @@ ByteString WordUS(const ByteString& bsData, int32_t iStyle) {
   return ByteString(strBuf);
 }
 
-void GetObjectDefaultValue(v8::Isolate* pIsolate,
-                           CFXJSE_Value* pValue,
-                           CFXJSE_Value* pDefaultValue) {
-  CXFA_Node* pNode = ToNode(CFXJSE_Engine::ToObject(pIsolate, pValue));
-  if (!pNode) {
-    pDefaultValue->SetNull(pIsolate);
-    return;
-  }
-  pNode->JSObject()->ScriptSomDefaultValue(pIsolate, pDefaultValue, false,
+v8::Local<v8::Value> GetObjectDefaultValue(v8::Isolate* pIsolate,
+                                           v8::Local<v8::Object> pObject) {
+  CXFA_Node* pNode = ToNode(CFXJSE_Engine::ToObject(pIsolate, pObject));
+  if (!pNode)
+    return fxv8::NewNullHelper(pIsolate);
+
+  auto value = std::make_unique<CFXJSE_Value>();
+  pNode->JSObject()->ScriptSomDefaultValue(pIsolate, value.get(), false,
                                            XFA_Attribute::Unknown);
+  return value->GetValue(pIsolate);
 }
 
 bool SetObjectDefaultValue(v8::Isolate* pIsolate,
-                           CFXJSE_Value* pValue,
-                           CFXJSE_Value* hNewValue) {
-  CXFA_Node* pNode = ToNode(CFXJSE_Engine::ToObject(pIsolate, pValue));
+                           v8::Local<v8::Object> pObject,
+                           v8::Local<v8::Value> hNewValue) {
+  CXFA_Node* pNode = ToNode(CFXJSE_Engine::ToObject(pIsolate, pObject));
   if (!pNode)
     return false;
 
-  pNode->JSObject()->ScriptSomDefaultValue(pIsolate, hNewValue, true,
+  auto value = std::make_unique<CFXJSE_Value>(pIsolate, hNewValue);
+  pNode->JSObject()->ScriptSomDefaultValue(pIsolate, value.get(), true,
                                            XFA_Attribute::Unknown);
   return true;
 }
 
-std::unique_ptr<CFXJSE_Value> GetExtractedValue(v8::Isolate* pIsolate,
-                                                CFXJSE_Value* pValue) {
-  if (pValue->IsArray(pIsolate)) {
-    auto lengthValue = std::make_unique<CFXJSE_Value>();
-    pValue->GetObjectProperty(pIsolate, "length", lengthValue.get());
-    int32_t iLength = lengthValue->ToInteger(pIsolate);
-    auto simpleValue = std::make_unique<CFXJSE_Value>();
-    if (iLength < 3) {
-      simpleValue.get()->SetUndefined(pIsolate);
-      return simpleValue;
-    }
+v8::Local<v8::Value> GetExtractedValue(v8::Isolate* pIsolate,
+                                       v8::Local<v8::Value> pValue) {
+  if (pValue.IsEmpty())
+    return v8::Local<v8::Value>();
 
-    auto propertyValue = std::make_unique<CFXJSE_Value>();
-    auto jsObjectValue = std::make_unique<CFXJSE_Value>();
-    pValue->GetObjectPropertyByIdx(pIsolate, 1, propertyValue.get());
-    pValue->GetObjectPropertyByIdx(pIsolate, 2, jsObjectValue.get());
-    if (propertyValue->IsNull(pIsolate)) {
-      GetObjectDefaultValue(pIsolate, jsObjectValue.get(), simpleValue.get());
-      return simpleValue;
-    }
+  if (fxv8::IsArray(pValue)) {
+    v8::Local<v8::Array> arr = pValue.As<v8::Array>();
+    uint32_t iLength = fxv8::GetArrayLengthHelper(arr);
+    if (iLength < 3)
+      return fxv8::NewUndefinedHelper(pIsolate);
 
-    jsObjectValue->GetObjectProperty(
-        pIsolate, propertyValue->ToString(pIsolate).AsStringView(),
-        simpleValue.get());
-    return simpleValue;
+    v8::Local<v8::Value> propertyValue =
+        fxv8::ReentrantGetArrayElementHelper(pIsolate, arr, 1);
+    v8::Local<v8::Value> jsValue =
+        fxv8::ReentrantGetArrayElementHelper(pIsolate, arr, 2);
+    if (!fxv8::IsObject(jsValue))
+      return fxv8::NewUndefinedHelper(pIsolate);
+
+    v8::Local<v8::Object> jsObjectValue = jsValue.As<v8::Object>();
+    if (fxv8::IsNull(propertyValue))
+      return GetObjectDefaultValue(pIsolate, jsObjectValue);
+
+    ByteString bsName =
+        fxv8::ReentrantToByteStringHelper(pIsolate, propertyValue);
+    return fxv8::ReentrantGetObjectPropertyHelper(pIsolate, jsObjectValue,
+                                                  bsName.AsStringView());
   }
 
-  if (pValue->IsObject(pIsolate)) {
-    auto defaultValue = std::make_unique<CFXJSE_Value>();
-    GetObjectDefaultValue(pIsolate, pValue, defaultValue.get());
-    return defaultValue;
-  }
+  if (fxv8::IsObject(pValue))
+    return GetObjectDefaultValue(pIsolate, pValue.As<v8::Object>());
 
-  return std::make_unique<CFXJSE_Value>(pIsolate, pValue->GetValue(pIsolate));
+  return pValue;
 }
 
-std::unique_ptr<CFXJSE_Value> GetSimpleValue(
+v8::Local<v8::Value> GetSimpleValue(
     const v8::FunctionCallbackInfo<v8::Value>& info,
     uint32_t index) {
   ASSERT(index < static_cast<uint32_t>(info.Length()));
-  auto value = std::make_unique<CFXJSE_Value>(info.GetIsolate(), info[index]);
-  return GetExtractedValue(info.GetIsolate(), value.get());
+  return GetExtractedValue(info.GetIsolate(), info[index]);
 }
 
-bool ValueIsNull(v8::Isolate* pIsolate,
-                 CFXJSE_HostObject* pHostObject,
-                 CFXJSE_Value* arg) {
-  if (!arg)
-    return true;
-
-  std::unique_ptr<CFXJSE_Value> extracted = GetExtractedValue(pIsolate, arg);
-  return extracted->IsNull(pIsolate);
+bool ValueIsNull(v8::Isolate* pIsolate, v8::Local<v8::Value> arg) {
+  v8::Local<v8::Value> extracted = GetExtractedValue(pIsolate, arg);
+  return extracted.IsEmpty() || fxv8::IsNull(extracted);
 }
 
-int32_t ValueToInteger(v8::Isolate* pIsolate, CFXJSE_Value* arg) {
-  if (!arg)
+int32_t ValueToInteger(v8::Isolate* pIsolate, v8::Local<v8::Value> arg) {
+  v8::Local<v8::Value> extracted = GetExtractedValue(pIsolate, arg);
+  if (extracted.IsEmpty())
     return 0;
 
-  std::unique_ptr<CFXJSE_Value> extracted = GetExtractedValue(pIsolate, arg);
-  if (extracted->IsEmpty())
-    return 0;
+  if (fxv8::IsObject(extracted) || fxv8::IsArray(extracted))
+    return ValueToInteger(pIsolate, extracted);
 
-  if (extracted->IsObject(pIsolate) || extracted->IsArray(pIsolate))
-    return ValueToInteger(pIsolate, extracted.get());
+  if (fxv8::IsString(extracted)) {
+    ByteString bsValue = fxv8::ReentrantToByteStringHelper(pIsolate, extracted);
+    return FXSYS_atoi(bsValue.c_str());
+  }
 
-  if (extracted->IsString(pIsolate))
-    return FXSYS_atoi(extracted->ToString(pIsolate).c_str());
-
-  return extracted->ToInteger(pIsolate);
+  return fxv8::ReentrantToInt32Helper(pIsolate, extracted);
 }
 
-float ValueToFloat(v8::Isolate* pIsolate, CFXJSE_Value* arg) {
-  if (!arg)
+float ValueToFloat(v8::Isolate* pIsolate, v8::Local<v8::Value> arg) {
+  v8::Local<v8::Value> extracted = GetExtractedValue(pIsolate, arg);
+  if (extracted.IsEmpty())
     return 0.0f;
 
-  std::unique_ptr<CFXJSE_Value> extracted = GetExtractedValue(pIsolate, arg);
-  if (extracted->IsEmpty())
+  if (fxv8::IsUndefined(extracted))
     return 0.0f;
 
-  if (extracted->IsObject(pIsolate) || extracted->IsArray(pIsolate))
-    return ValueToFloat(pIsolate, extracted.get());
+  if (fxv8::IsObject(extracted) || fxv8::IsArray(extracted))
+    return ValueToFloat(pIsolate, extracted);
 
-  if (extracted->IsString(pIsolate))
-    return strtof(extracted->ToString(pIsolate).c_str(), nullptr);
+  if (fxv8::IsString(extracted)) {
+    ByteString bsValue = fxv8::ReentrantToByteStringHelper(pIsolate, extracted);
+    return strtof(bsValue.c_str(), nullptr);
+  }
 
-  if (extracted->IsUndefined(pIsolate) || extracted->IsEmpty())
-    return 0.0f;
-
-  return extracted->ToFloat(pIsolate);
+  return fxv8::ReentrantToFloatHelper(pIsolate, extracted);
 }
 
-double ValueToDouble(v8::Isolate* pIsolate, CFXJSE_Value* arg) {
-  if (!arg)
+double ValueToDouble(v8::Isolate* pIsolate, v8::Local<v8::Value> arg) {
+  v8::Local<v8::Value> extracted = GetExtractedValue(pIsolate, arg);
+  if (extracted.IsEmpty())
     return 0.0;
 
-  std::unique_ptr<CFXJSE_Value> extracted = GetExtractedValue(pIsolate, arg);
-  if (extracted->IsEmpty())
+  if (fxv8::IsUndefined(extracted))
     return 0.0;
 
-  if (extracted->IsObject(pIsolate) || extracted->IsArray(pIsolate))
-    return ValueToDouble(pIsolate, extracted.get());
+  if (fxv8::IsObject(extracted) || fxv8::IsArray(extracted))
+    return ValueToDouble(pIsolate, extracted);
 
-  if (extracted->IsString(pIsolate))
-    return strtod(extracted->ToString(pIsolate).c_str(), nullptr);
+  if (fxv8::IsString(extracted)) {
+    ByteString bsValue = fxv8::ReentrantToByteStringHelper(pIsolate, extracted);
+    return strtod(bsValue.c_str(), nullptr);
+  }
 
-  if (extracted->IsUndefined(pIsolate) || extracted->IsEmpty())
-    return 0.0;
-
-  return extracted->ToDouble(pIsolate);
+  return fxv8::ReentrantToDoubleHelper(pIsolate, extracted);
 }
 
-double ExtractDouble(CFXJSE_HostObject* pHostObject,
-                     CFXJSE_Value* src,
+// TODO(tsepez): return Optional<double>.
+double ExtractDouble(v8::Isolate* pIsolate,
+                     v8::Local<v8::Value> src,
                      bool* ret) {
   ASSERT(ret);
   *ret = true;
 
-  if (!src)
+  if (src.IsEmpty())
     return 0;
 
-  v8::Isolate* pIsolate = ToFormCalcContext(pHostObject)->GetIsolate();
-  if (!src->IsArray(pIsolate))
+  if (!fxv8::IsArray(src))
     return ValueToDouble(pIsolate, src);
 
-  auto lengthValue = std::make_unique<CFXJSE_Value>();
-  src->GetObjectProperty(pIsolate, "length", lengthValue.get());
-  int32_t iLength = lengthValue->ToInteger(pIsolate);
-  if (iLength <= 2) {
+  v8::Local<v8::Array> arr = src.As<v8::Array>();
+  uint32_t iLength = fxv8::GetArrayLengthHelper(arr);
+  if (iLength < 3) {
     *ret = false;
     return 0.0;
   }
 
-  auto propertyValue = std::make_unique<CFXJSE_Value>();
-  auto jsObjectValue = std::make_unique<CFXJSE_Value>();
-  src->GetObjectPropertyByIdx(pIsolate, 1, propertyValue.get());
-  src->GetObjectPropertyByIdx(pIsolate, 2, jsObjectValue.get());
-  if (propertyValue->IsNull(pIsolate))
-    return ValueToDouble(pIsolate, jsObjectValue.get());
+  v8::Local<v8::Value> propertyValue =
+      fxv8::ReentrantGetArrayElementHelper(pIsolate, arr, 1);
+  v8::Local<v8::Value> jsValue =
+      fxv8::ReentrantGetArrayElementHelper(pIsolate, arr, 2);
+  if (fxv8::IsNull(propertyValue) || !fxv8::IsObject(jsValue))
+    return ValueToDouble(pIsolate, jsValue);
 
-  auto newPropertyValue = std::make_unique<CFXJSE_Value>();
-  jsObjectValue->GetObjectProperty(
-      pIsolate, propertyValue->ToString(pIsolate).AsStringView(),
-      newPropertyValue.get());
-  return ValueToDouble(pIsolate, newPropertyValue.get());
+  ByteString bsName =
+      fxv8::ReentrantToByteStringHelper(pIsolate, propertyValue);
+  return ValueToDouble(
+      pIsolate, fxv8::ReentrantGetObjectPropertyHelper(
+                    pIsolate, jsValue.As<v8::Object>(), bsName.AsStringView()));
 }
 
-ByteString ValueToUTF8String(CFXJSE_HostObject* pHostObject,
-                             CFXJSE_Value* arg) {
-  v8::Isolate* pIsolate = ToFormCalcContext(pHostObject)->GetIsolate();
-  if (!arg || arg->IsNull(pIsolate) || arg->IsUndefined(pIsolate) ||
-      arg->IsEmpty())
+ByteString ValueToUTF8String(v8::Isolate* pIsolate, v8::Local<v8::Value> arg) {
+  if (arg.IsEmpty())
     return ByteString();
-  if (arg->IsBoolean(pIsolate))
-    return arg->ToBoolean(pIsolate) ? "1" : "0";
-  return arg->ToString(pIsolate);
+
+  if (fxv8::IsNull(arg) || fxv8::IsUndefined(arg))
+    return ByteString();
+
+  if (fxv8::IsBoolean(arg))
+    return fxv8::ReentrantToBooleanHelper(pIsolate, arg) ? "1" : "0";
+
+  return fxv8::ReentrantToByteStringHelper(pIsolate, arg);
 }
 
 bool SimpleValueCompare(CFXJSE_HostObject* pHostObject,
@@ -1508,13 +1499,16 @@ bool SimpleValueCompare(CFXJSE_HostObject* pHostObject,
 
   v8::Isolate* pIsolate = ToFormCalcContext(pHostObject)->GetIsolate();
   if (firstValue->IsString(pIsolate)) {
-    ByteString bsFirst = ValueToUTF8String(pHostObject, firstValue);
-    ByteString bsSecond = ValueToUTF8String(pHostObject, secondValue);
+    const ByteString bsFirst =
+        ValueToUTF8String(pIsolate, firstValue->GetValue(pIsolate));
+    const ByteString bsSecond =
+        ValueToUTF8String(pIsolate, secondValue->GetValue(pIsolate));
     return bsFirst == bsSecond;
   }
   if (firstValue->IsNumber(pIsolate)) {
-    float first = ValueToFloat(pIsolate, firstValue);
-    float second = ValueToFloat(pIsolate, secondValue);
+    const float first = ValueToFloat(pIsolate, firstValue->GetValue(pIsolate));
+    const float second =
+        ValueToFloat(pIsolate, secondValue->GetValue(pIsolate));
     return first == second;
   }
   if (firstValue->IsBoolean(pIsolate))
@@ -1544,19 +1538,29 @@ std::vector<std::unique_ptr<CFXJSE_Value>> UnfoldArgs(
       for (int32_t j = 2; j < iLength; j++) {
         auto jsObjectValue = std::make_unique<CFXJSE_Value>();
         arg->GetObjectPropertyByIdx(pIsolate, j, jsObjectValue.get());
-        results.push_back(std::make_unique<CFXJSE_Value>());
-        if (propertyValue->IsNull(pIsolate)) {
-          GetObjectDefaultValue(pIsolate, jsObjectValue.get(),
-                                results.back().get());
+        if (!jsObjectValue->IsObject(pIsolate)) {
+          results.push_back(std::make_unique<CFXJSE_Value>(
+              pIsolate, fxv8::NewUndefinedHelper(pIsolate)));
+        } else if (propertyValue->IsNull(pIsolate)) {
+          results.push_back(std::make_unique<CFXJSE_Value>(
+              pIsolate,
+              GetObjectDefaultValue(
+                  pIsolate,
+                  jsObjectValue->GetValue(pIsolate).As<v8::Object>())));
         } else {
-          jsObjectValue->GetObjectProperty(
-              pIsolate, propertyValue->ToString(pIsolate).AsStringView(),
-              results.back().get());
+          ByteString bsName = fxv8::ReentrantToByteStringHelper(
+              pIsolate, propertyValue->GetValue(pIsolate));
+          results.push_back(std::make_unique<CFXJSE_Value>(
+              pIsolate,
+              fxv8::ReentrantGetObjectPropertyHelper(
+                  pIsolate, jsObjectValue->GetValue(pIsolate).As<v8::Object>(),
+                  bsName.AsStringView())));
         }
       }
     } else if (arg->IsObject(pIsolate)) {
-      results.push_back(std::make_unique<CFXJSE_Value>());
-      GetObjectDefaultValue(pIsolate, arg.get(), results.back().get());
+      results.push_back(std::make_unique<CFXJSE_Value>(
+          pIsolate, GetObjectDefaultValue(
+                        pIsolate, arg->GetValue(pIsolate).As<v8::Object>())));
     } else {
       results.push_back(std::make_unique<CFXJSE_Value>());
       results.back()->Assign(pIsolate, arg.get());
@@ -1710,12 +1714,11 @@ void CFXJSE_FormCalcContext::Abs(
     return;
   }
 
-  auto argOne = std::make_unique<CFXJSE_Value>(info.GetIsolate(), info[0]);
-  if (ValueIsNull(info.GetIsolate(), pThis, argOne.get())) {
+  if (ValueIsNull(info.GetIsolate(), info[0])) {
     info.GetReturnValue().SetNull();
     return;
   }
-  double dValue = ValueToDouble(info.GetIsolate(), argOne.get());
+  double dValue = ValueToDouble(info.GetIsolate(), info[0]);
   if (dValue < 0)
     dValue = -dValue;
 
@@ -1741,7 +1744,7 @@ void CFXJSE_FormCalcContext::Avg(
       continue;
 
     if (!argValue->IsArray(pIsolate)) {
-      dSum += ValueToDouble(pIsolate, argValue.get());
+      dSum += ValueToDouble(pIsolate, argValue->GetValue(pIsolate));
       uCount++;
       continue;
     }
@@ -1758,13 +1761,18 @@ void CFXJSE_FormCalcContext::Avg(
       if (propertyValue->IsNull(pIsolate)) {
         for (int32_t j = 2; j < iLength; j++) {
           argValue->GetObjectPropertyByIdx(pIsolate, j, jsObjectValue.get());
-          auto defaultPropValue = std::make_unique<CFXJSE_Value>();
-          GetObjectDefaultValue(pIsolate, jsObjectValue.get(),
-                                defaultPropValue.get());
+          if (!jsObjectValue->IsObject(pIsolate))
+            continue;
+
+          auto defaultPropValue = std::make_unique<CFXJSE_Value>(
+              pIsolate,
+              GetObjectDefaultValue(
+                  pIsolate,
+                  jsObjectValue->GetValue(pIsolate).As<v8::Object>()));
           if (defaultPropValue->IsNull(pIsolate))
             continue;
 
-          dSum += ValueToDouble(pIsolate, defaultPropValue.get());
+          dSum += ValueToDouble(pIsolate, defaultPropValue->GetValue(pIsolate));
           uCount++;
         }
       } else {
@@ -1777,7 +1785,7 @@ void CFXJSE_FormCalcContext::Avg(
           if (newPropertyValue->IsNull(pIsolate))
             continue;
 
-          dSum += ValueToDouble(pIsolate, newPropertyValue.get());
+          dSum += ValueToDouble(pIsolate, newPropertyValue->GetValue(pIsolate));
           uCount++;
         }
       }
@@ -1800,14 +1808,13 @@ void CFXJSE_FormCalcContext::Ceil(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argValue = GetSimpleValue(info, 0);
-  if (ValueIsNull(info.GetIsolate(), pThis, argValue.get())) {
+  v8::Local<v8::Value> argValue = GetSimpleValue(info, 0);
+  if (ValueIsNull(info.GetIsolate(), argValue)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  info.GetReturnValue().Set(
-      ceil(ValueToFloat(info.GetIsolate(), argValue.get())));
+  info.GetReturnValue().Set(ceil(ValueToFloat(info.GetIsolate(), argValue)));
 }
 
 // static
@@ -1840,8 +1847,14 @@ void CFXJSE_FormCalcContext::Count(
       if (propertyValue->IsNull(pIsolate)) {
         for (int32_t j = 2; j < iLength; j++) {
           argValue->GetObjectPropertyByIdx(pIsolate, j, jsObjectValue.get());
-          GetObjectDefaultValue(pIsolate, jsObjectValue.get(),
-                                newPropertyValue.get());
+          if (!jsObjectValue->IsObject(pIsolate))
+            continue;
+
+          newPropertyValue->ForceSetValue(
+              pIsolate,
+              GetObjectDefaultValue(
+                  pIsolate,
+                  jsObjectValue->GetValue(pIsolate).As<v8::Object>()));
           if (!newPropertyValue->IsNull(pIsolate))
             iCount++;
         }
@@ -1855,8 +1868,10 @@ void CFXJSE_FormCalcContext::Count(
         }
       }
     } else if (argValue->IsObject(pIsolate)) {
-      auto newPropertyValue = std::make_unique<CFXJSE_Value>();
-      GetObjectDefaultValue(pIsolate, argValue.get(), newPropertyValue.get());
+      auto newPropertyValue = std::make_unique<CFXJSE_Value>(
+          pIsolate,
+          GetObjectDefaultValue(pIsolate,
+                                argValue->GetValue(pIsolate).As<v8::Object>()));
       if (!newPropertyValue->IsNull(pIsolate))
         iCount++;
     } else {
@@ -1875,14 +1890,13 @@ void CFXJSE_FormCalcContext::Floor(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argValue = GetSimpleValue(info, 0);
-  if (ValueIsNull(info.GetIsolate(), pThis, argValue.get())) {
+  v8::Local<v8::Value> argValue = GetSimpleValue(info, 0);
+  if (ValueIsNull(info.GetIsolate(), argValue)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  info.GetReturnValue().Set(
-      floor(ValueToFloat(info.GetIsolate(), argValue.get())));
+  info.GetReturnValue().Set(floor(ValueToFloat(info.GetIsolate(), argValue)));
 }
 
 // static
@@ -1916,13 +1930,20 @@ void CFXJSE_FormCalcContext::Max(
       if (propertyValue->IsNull(pIsolate)) {
         for (int32_t j = 2; j < iLength; j++) {
           argValue->GetObjectPropertyByIdx(pIsolate, j, jsObjectValue.get());
-          GetObjectDefaultValue(pIsolate, jsObjectValue.get(),
-                                newPropertyValue.get());
+          if (!jsObjectValue->IsObject(pIsolate))
+            continue;
+
+          newPropertyValue->ForceSetValue(
+              pIsolate,
+              GetObjectDefaultValue(
+                  pIsolate,
+                  jsObjectValue->GetValue(pIsolate).As<v8::Object>()));
           if (newPropertyValue->IsNull(pIsolate))
             continue;
 
           uCount++;
-          double dValue = ValueToDouble(pIsolate, newPropertyValue.get());
+          double dValue =
+              ValueToDouble(pIsolate, newPropertyValue->GetValue(pIsolate));
           dMaxValue = (uCount == 1) ? dValue : std::max(dMaxValue, dValue);
         }
       } else {
@@ -1935,22 +1956,26 @@ void CFXJSE_FormCalcContext::Max(
             continue;
 
           uCount++;
-          double dValue = ValueToDouble(pIsolate, newPropertyValue.get());
+          double dValue =
+              ValueToDouble(pIsolate, newPropertyValue->GetValue(pIsolate));
           dMaxValue = (uCount == 1) ? dValue : std::max(dMaxValue, dValue);
         }
       }
     } else if (argValue->IsObject(pIsolate)) {
-      auto newPropertyValue = std::make_unique<CFXJSE_Value>();
-      GetObjectDefaultValue(pIsolate, argValue.get(), newPropertyValue.get());
+      auto newPropertyValue = std::make_unique<CFXJSE_Value>(
+          pIsolate,
+          GetObjectDefaultValue(pIsolate,
+                                argValue->GetValue(pIsolate).As<v8::Object>()));
       if (newPropertyValue->IsNull(pIsolate))
         continue;
 
       uCount++;
-      double dValue = ValueToDouble(pIsolate, newPropertyValue.get());
+      double dValue =
+          ValueToDouble(pIsolate, newPropertyValue->GetValue(pIsolate));
       dMaxValue = (uCount == 1) ? dValue : std::max(dMaxValue, dValue);
     } else {
       uCount++;
-      double dValue = ValueToDouble(pIsolate, argValue.get());
+      double dValue = ValueToDouble(pIsolate, argValue->GetValue(pIsolate));
       dMaxValue = (uCount == 1) ? dValue : std::max(dMaxValue, dValue);
     }
   }
@@ -1991,13 +2016,20 @@ void CFXJSE_FormCalcContext::Min(
       if (propertyValue->IsNull(pIsolate)) {
         for (int32_t j = 2; j < iLength; j++) {
           argValue->GetObjectPropertyByIdx(pIsolate, j, jsObjectValue.get());
-          GetObjectDefaultValue(pIsolate, jsObjectValue.get(),
-                                newPropertyValue.get());
+          if (!jsObjectValue->IsObject(pIsolate))
+            continue;
+
+          newPropertyValue->ForceSetValue(
+              pIsolate,
+              GetObjectDefaultValue(
+                  pIsolate,
+                  jsObjectValue->GetValue(pIsolate).As<v8::Object>()));
           if (newPropertyValue->IsNull(pIsolate))
             continue;
 
           uCount++;
-          double dValue = ValueToDouble(pIsolate, newPropertyValue.get());
+          double dValue =
+              ValueToDouble(pIsolate, newPropertyValue->GetValue(pIsolate));
           dMinValue = uCount == 1 ? dValue : std::min(dMinValue, dValue);
         }
       } else {
@@ -2010,22 +2042,26 @@ void CFXJSE_FormCalcContext::Min(
             continue;
 
           uCount++;
-          double dValue = ValueToDouble(pIsolate, newPropertyValue.get());
+          double dValue =
+              ValueToDouble(pIsolate, newPropertyValue->GetValue(pIsolate));
           dMinValue = uCount == 1 ? dValue : std::min(dMinValue, dValue);
         }
       }
     } else if (argValue->IsObject(pIsolate)) {
-      auto newPropertyValue = std::make_unique<CFXJSE_Value>();
-      GetObjectDefaultValue(pIsolate, argValue.get(), newPropertyValue.get());
+      auto newPropertyValue = std::make_unique<CFXJSE_Value>(
+          pIsolate,
+          GetObjectDefaultValue(pIsolate,
+                                argValue->GetValue(pIsolate).As<v8::Object>()));
       if (newPropertyValue->IsNull(pIsolate))
         continue;
 
       uCount++;
-      double dValue = ValueToDouble(pIsolate, newPropertyValue.get());
+      double dValue =
+          ValueToDouble(pIsolate, newPropertyValue->GetValue(pIsolate));
       dMinValue = uCount == 1 ? dValue : std::min(dMinValue, dValue);
     } else {
       uCount++;
-      double dValue = ValueToDouble(pIsolate, argValue.get());
+      double dValue = ValueToDouble(pIsolate, argValue->GetValue(pIsolate));
       dMinValue = uCount == 1 ? dValue : std::min(dMinValue, dValue);
     }
   }
@@ -2055,9 +2091,11 @@ void CFXJSE_FormCalcContext::Mod(
   }
 
   bool argOneResult;
-  double dDividend = ExtractDouble(pThis, argOne.get(), &argOneResult);
+  double dDividend = ExtractDouble(
+      info.GetIsolate(), argOne->GetValue(info.GetIsolate()), &argOneResult);
   bool argTwoResult;
-  double dDivisor = ExtractDouble(pThis, argTwo.get(), &argTwoResult);
+  double dDivisor = ExtractDouble(
+      info.GetIsolate(), argTwo->GetValue(info.GetIsolate()), &argTwoResult);
   if (!argOneResult || !argTwoResult) {
     pContext->ThrowArgumentMismatchException();
     return;
@@ -2090,7 +2128,8 @@ void CFXJSE_FormCalcContext::Round(
   }
 
   bool dValueRet;
-  double dValue = ExtractDouble(pThis, argOne.get(), &dValueRet);
+  double dValue = ExtractDouble(
+      info.GetIsolate(), argOne->GetValue(info.GetIsolate()), &dValueRet);
   if (!dValueRet) {
     pContext->ThrowArgumentMismatchException();
     return;
@@ -2105,7 +2144,8 @@ void CFXJSE_FormCalcContext::Round(
     }
 
     bool dPrecisionRet;
-    double dPrecision = ExtractDouble(pThis, argTwo.get(), &dPrecisionRet);
+    double dPrecision = ExtractDouble(
+        info.GetIsolate(), argTwo->GetValue(info.GetIsolate()), &dPrecisionRet);
     if (!dPrecisionRet) {
       pContext->ThrowArgumentMismatchException();
       return;
@@ -2155,12 +2195,19 @@ void CFXJSE_FormCalcContext::Sum(
         for (int32_t j = 2; j < iLength; j++) {
           argValue->GetObjectPropertyByIdx(info.GetIsolate(), j,
                                            jsObjectValue.get());
-          GetObjectDefaultValue(info.GetIsolate(), jsObjectValue.get(),
-                                newPropertyValue.get());
+          if (!jsObjectValue->IsObject(info.GetIsolate()))
+            continue;
+
+          newPropertyValue->ForceSetValue(
+              info.GetIsolate(),
+              GetObjectDefaultValue(
+                  info.GetIsolate(),
+                  jsObjectValue->GetValue(info.GetIsolate()).As<v8::Object>()));
           if (newPropertyValue->IsNull(info.GetIsolate()))
             continue;
 
-          dSum += ValueToDouble(info.GetIsolate(), jsObjectValue.get());
+          dSum += ValueToDouble(info.GetIsolate(),
+                                jsObjectValue->GetValue(info.GetIsolate()));
           uCount++;
         }
       } else {
@@ -2174,21 +2221,26 @@ void CFXJSE_FormCalcContext::Sum(
           if (newPropertyValue->IsNull(info.GetIsolate()))
             continue;
 
-          dSum += ValueToDouble(info.GetIsolate(), newPropertyValue.get());
+          dSum += ValueToDouble(info.GetIsolate(),
+                                newPropertyValue->GetValue(info.GetIsolate()));
           uCount++;
         }
       }
     } else if (argValue->IsObject(info.GetIsolate())) {
-      auto newPropertyValue = std::make_unique<CFXJSE_Value>();
-      GetObjectDefaultValue(info.GetIsolate(), argValue.get(),
-                            newPropertyValue.get());
+      auto newPropertyValue = std::make_unique<CFXJSE_Value>(
+          info.GetIsolate(),
+          GetObjectDefaultValue(
+              info.GetIsolate(),
+              argValue->GetValue(info.GetIsolate()).As<v8::Object>()));
       if (newPropertyValue->IsNull(info.GetIsolate()))
         continue;
 
-      dSum += ValueToDouble(info.GetIsolate(), argValue.get());
+      dSum += ValueToDouble(info.GetIsolate(),
+                            argValue->GetValue(info.GetIsolate()));
       uCount++;
     } else {
-      dSum += ValueToDouble(info.GetIsolate(), argValue.get());
+      dSum += ValueToDouble(info.GetIsolate(),
+                            argValue->GetValue(info.GetIsolate()));
       uCount++;
     }
   }
@@ -2229,31 +2281,31 @@ void CFXJSE_FormCalcContext::Date2Num(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> dateValue = GetSimpleValue(info, 0);
-  if (ValueIsNull(info.GetIsolate(), pThis, dateValue.get())) {
+  v8::Local<v8::Value> dateValue = GetSimpleValue(info, 0);
+  if (ValueIsNull(info.GetIsolate(), dateValue)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  ByteString bsDate = ValueToUTF8String(pThis, dateValue.get());
+  ByteString bsDate = ValueToUTF8String(info.GetIsolate(), dateValue);
   ByteString bsFormat;
   if (argc > 1) {
-    std::unique_ptr<CFXJSE_Value> formatValue = GetSimpleValue(info, 1);
-    if (ValueIsNull(info.GetIsolate(), pThis, formatValue.get())) {
+    v8::Local<v8::Value> formatValue = GetSimpleValue(info, 1);
+    if (ValueIsNull(info.GetIsolate(), formatValue)) {
       info.GetReturnValue().SetNull();
       return;
     }
-    bsFormat = ValueToUTF8String(pThis, formatValue.get());
+    bsFormat = ValueToUTF8String(info.GetIsolate(), formatValue);
   }
 
   ByteString bsLocale;
   if (argc > 2) {
-    std::unique_ptr<CFXJSE_Value> localeValue = GetSimpleValue(info, 2);
-    if (ValueIsNull(info.GetIsolate(), pThis, localeValue.get())) {
+    v8::Local<v8::Value> localeValue = GetSimpleValue(info, 2);
+    if (ValueIsNull(info.GetIsolate(), localeValue)) {
       info.GetReturnValue().SetNull();
       return;
     }
-    bsLocale = ValueToUTF8String(pThis, localeValue.get());
+    bsLocale = ValueToUTF8String(info.GetIsolate(), localeValue);
   }
 
   ByteString bsIsoDate =
@@ -2274,25 +2326,25 @@ void CFXJSE_FormCalcContext::DateFmt(
 
   int32_t iStyle = 0;
   if (argc > 0) {
-    std::unique_ptr<CFXJSE_Value> infotyle = GetSimpleValue(info, 0);
-    if (infotyle->IsNull(info.GetIsolate())) {
+    v8::Local<v8::Value> infotyle = GetSimpleValue(info, 0);
+    if (fxv8::IsNull(infotyle)) {
       info.GetReturnValue().SetNull();
       return;
     }
 
-    iStyle = (int32_t)ValueToFloat(info.GetIsolate(), infotyle.get());
+    iStyle = (int32_t)ValueToFloat(info.GetIsolate(), infotyle);
     if (iStyle < 0 || iStyle > 4)
       iStyle = 0;
   }
 
   ByteString bsLocale;
   if (argc > 1) {
-    std::unique_ptr<CFXJSE_Value> argLocale = GetSimpleValue(info, 1);
-    if (argLocale->IsNull(info.GetIsolate())) {
+    v8::Local<v8::Value> argLocale = GetSimpleValue(info, 1);
+    if (fxv8::IsNull(argLocale)) {
       info.GetReturnValue().SetNull();
       return;
     }
-    bsLocale = ValueToUTF8String(pThis, argLocale.get());
+    bsLocale = ValueToUTF8String(info.GetIsolate(), argLocale);
   }
 
   ByteString bsFormat =
@@ -2309,12 +2361,12 @@ void CFXJSE_FormCalcContext::IsoDate2Num(
     ToFormCalcContext(pThis)->ThrowParamCountMismatchException(L"IsoDate2Num");
     return;
   }
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  if (argOne->IsNull(info.GetIsolate())) {
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  if (fxv8::IsNull(argOne)) {
     info.GetReturnValue().SetNull();
     return;
   }
-  ByteString bsArg = ValueToUTF8String(pThis, argOne.get());
+  ByteString bsArg = ValueToUTF8String(info.GetIsolate(), argOne);
   info.GetReturnValue().Set(DateString2Num(bsArg.AsStringView()));
 }
 
@@ -2328,15 +2380,15 @@ void CFXJSE_FormCalcContext::IsoTime2Num(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  if (ValueIsNull(info.GetIsolate(), pThis, argOne.get())) {
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  if (ValueIsNull(info.GetIsolate(), argOne)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
   CXFA_Document* pDoc = pContext->GetDocument();
   CXFA_LocaleMgr* pMgr = pDoc->GetLocaleMgr();
-  ByteString bsArg = ValueToUTF8String(pThis, argOne.get());
+  ByteString bsArg = ValueToUTF8String(info.GetIsolate(), argOne);
   auto pos = bsArg.Find('T', 0);
   if (!pos.has_value() || pos.value() == bsArg.GetLength() - 1) {
     info.GetReturnValue().Set(0);
@@ -2384,24 +2436,24 @@ void CFXJSE_FormCalcContext::LocalDateFmt(
 
   int32_t iStyle = 0;
   if (argc > 0) {
-    std::unique_ptr<CFXJSE_Value> infotyle = GetSimpleValue(info, 0);
-    if (infotyle->IsNull(info.GetIsolate())) {
+    v8::Local<v8::Value> infotyle = GetSimpleValue(info, 0);
+    if (fxv8::IsNull(infotyle)) {
       info.GetReturnValue().SetNull();
       return;
     }
-    iStyle = (int32_t)ValueToFloat(info.GetIsolate(), infotyle.get());
+    iStyle = (int32_t)ValueToFloat(info.GetIsolate(), infotyle);
     if (iStyle > 4 || iStyle < 0)
       iStyle = 0;
   }
 
   ByteString bsLocale;
   if (argc > 1) {
-    std::unique_ptr<CFXJSE_Value> argLocale = GetSimpleValue(info, 1);
-    if (argLocale->IsNull(info.GetIsolate())) {
+    v8::Local<v8::Value> argLocale = GetSimpleValue(info, 1);
+    if (fxv8::IsNull(argLocale)) {
       info.GetReturnValue().SetNull();
       return;
     }
-    bsLocale = ValueToUTF8String(pThis, argLocale.get());
+    bsLocale = ValueToUTF8String(info.GetIsolate(), argLocale);
   }
 
   ByteString bsFormat =
@@ -2422,24 +2474,24 @@ void CFXJSE_FormCalcContext::LocalTimeFmt(
 
   int32_t iStyle = 0;
   if (argc > 0) {
-    std::unique_ptr<CFXJSE_Value> infotyle = GetSimpleValue(info, 0);
-    if (infotyle->IsNull(info.GetIsolate())) {
+    v8::Local<v8::Value> infotyle = GetSimpleValue(info, 0);
+    if (fxv8::IsNull(infotyle)) {
       info.GetReturnValue().SetNull();
       return;
     }
-    iStyle = (int32_t)ValueToFloat(info.GetIsolate(), infotyle.get());
+    iStyle = (int32_t)ValueToFloat(info.GetIsolate(), infotyle);
     if (iStyle > 4 || iStyle < 0)
       iStyle = 0;
   }
 
   ByteString bsLocale;
   if (argc > 1) {
-    std::unique_ptr<CFXJSE_Value> argLocale = GetSimpleValue(info, 1);
-    if (argLocale->IsNull(info.GetIsolate())) {
+    v8::Local<v8::Value> argLocale = GetSimpleValue(info, 1);
+    if (fxv8::IsNull(argLocale)) {
       info.GetReturnValue().SetNull();
       return;
     }
-    bsLocale = ValueToUTF8String(pThis, argLocale.get());
+    bsLocale = ValueToUTF8String(info.GetIsolate(), argLocale);
   }
 
   ByteString bsFormat =
@@ -2458,12 +2510,12 @@ void CFXJSE_FormCalcContext::Num2Date(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> dateValue = GetSimpleValue(info, 0);
-  if (ValueIsNull(info.GetIsolate(), pThis, dateValue.get())) {
+  v8::Local<v8::Value> dateValue = GetSimpleValue(info, 0);
+  if (ValueIsNull(info.GetIsolate(), dateValue)) {
     info.GetReturnValue().SetNull();
     return;
   }
-  int32_t dDate = (int32_t)ValueToFloat(info.GetIsolate(), dateValue.get());
+  int32_t dDate = (int32_t)ValueToFloat(info.GetIsolate(), dateValue);
   if (dDate < 1) {
     info.GetReturnValue().SetNull();
     return;
@@ -2471,22 +2523,22 @@ void CFXJSE_FormCalcContext::Num2Date(
 
   ByteString bsFormat;
   if (argc > 1) {
-    std::unique_ptr<CFXJSE_Value> formatValue = GetSimpleValue(info, 1);
-    if (ValueIsNull(info.GetIsolate(), pThis, formatValue.get())) {
+    v8::Local<v8::Value> formatValue = GetSimpleValue(info, 1);
+    if (ValueIsNull(info.GetIsolate(), formatValue)) {
       info.GetReturnValue().SetNull();
       return;
     }
-    bsFormat = ValueToUTF8String(pThis, formatValue.get());
+    bsFormat = ValueToUTF8String(info.GetIsolate(), formatValue);
   }
 
   ByteString bsLocale;
   if (argc > 2) {
-    std::unique_ptr<CFXJSE_Value> localeValue = GetSimpleValue(info, 2);
-    if (ValueIsNull(info.GetIsolate(), pThis, localeValue.get())) {
+    v8::Local<v8::Value> localeValue = GetSimpleValue(info, 2);
+    if (ValueIsNull(info.GetIsolate(), localeValue)) {
       info.GetReturnValue().SetNull();
       return;
     }
-    bsLocale = ValueToUTF8String(pThis, localeValue.get());
+    bsLocale = ValueToUTF8String(info.GetIsolate(), localeValue);
   }
 
   int32_t iYear = 1900;
@@ -2599,12 +2651,12 @@ void CFXJSE_FormCalcContext::Num2GMTime(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> timeValue = GetSimpleValue(info, 0);
-  if (timeValue->IsNull(info.GetIsolate())) {
+  v8::Local<v8::Value> timeValue = GetSimpleValue(info, 0);
+  if (fxv8::IsNull(timeValue)) {
     info.GetReturnValue().SetNull();
     return;
   }
-  int32_t iTime = (int32_t)ValueToFloat(info.GetIsolate(), timeValue.get());
+  int32_t iTime = (int32_t)ValueToFloat(info.GetIsolate(), timeValue);
   if (abs(iTime) < 1.0) {
     info.GetReturnValue().SetNull();
     return;
@@ -2612,22 +2664,22 @@ void CFXJSE_FormCalcContext::Num2GMTime(
 
   ByteString bsFormat;
   if (argc > 1) {
-    std::unique_ptr<CFXJSE_Value> formatValue = GetSimpleValue(info, 1);
-    if (formatValue->IsNull(info.GetIsolate())) {
+    v8::Local<v8::Value> formatValue = GetSimpleValue(info, 1);
+    if (fxv8::IsNull(formatValue)) {
       info.GetReturnValue().SetNull();
       return;
     }
-    bsFormat = ValueToUTF8String(pThis, formatValue.get());
+    bsFormat = ValueToUTF8String(info.GetIsolate(), formatValue);
   }
 
   ByteString bsLocale;
   if (argc > 2) {
-    std::unique_ptr<CFXJSE_Value> localeValue = GetSimpleValue(info, 2);
-    if (localeValue->IsNull(info.GetIsolate())) {
+    v8::Local<v8::Value> localeValue = GetSimpleValue(info, 2);
+    if (fxv8::IsNull(localeValue)) {
       info.GetReturnValue().SetNull();
       return;
     }
-    bsLocale = ValueToUTF8String(pThis, localeValue.get());
+    bsLocale = ValueToUTF8String(info.GetIsolate(), localeValue);
   }
 
   ByteString bsGMTTime = Num2AllTime(pThis, iTime, bsFormat.AsStringView(),
@@ -2646,12 +2698,12 @@ void CFXJSE_FormCalcContext::Num2Time(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> timeValue = GetSimpleValue(info, 0);
-  if (timeValue->IsNull(info.GetIsolate())) {
+  v8::Local<v8::Value> timeValue = GetSimpleValue(info, 0);
+  if (fxv8::IsNull(timeValue)) {
     info.GetReturnValue().SetNull();
     return;
   }
-  float fTime = ValueToFloat(info.GetIsolate(), timeValue.get());
+  float fTime = ValueToFloat(info.GetIsolate(), timeValue);
   if (fabs(fTime) < 1.0) {
     info.GetReturnValue().SetNull();
     return;
@@ -2659,22 +2711,22 @@ void CFXJSE_FormCalcContext::Num2Time(
 
   ByteString bsFormat;
   if (argc > 1) {
-    std::unique_ptr<CFXJSE_Value> formatValue = GetSimpleValue(info, 1);
-    if (formatValue->IsNull(info.GetIsolate())) {
+    v8::Local<v8::Value> formatValue = GetSimpleValue(info, 1);
+    if (fxv8::IsNull(formatValue)) {
       info.GetReturnValue().SetNull();
       return;
     }
-    bsFormat = ValueToUTF8String(pThis, formatValue.get());
+    bsFormat = ValueToUTF8String(info.GetIsolate(), formatValue);
   }
 
   ByteString bsLocale;
   if (argc > 2) {
-    std::unique_ptr<CFXJSE_Value> localeValue = GetSimpleValue(info, 2);
-    if (localeValue->IsNull(info.GetIsolate())) {
+    v8::Local<v8::Value> localeValue = GetSimpleValue(info, 2);
+    if (fxv8::IsNull(localeValue)) {
       info.GetReturnValue().SetNull();
       return;
     }
-    bsLocale = ValueToUTF8String(pThis, localeValue.get());
+    bsLocale = ValueToUTF8String(info.GetIsolate(), localeValue);
   }
 
   ByteString bsLocalTime =
@@ -2711,31 +2763,31 @@ void CFXJSE_FormCalcContext::Time2Num(
   }
 
   ByteString bsTime;
-  std::unique_ptr<CFXJSE_Value> timeValue = GetSimpleValue(info, 0);
-  if (ValueIsNull(info.GetIsolate(), pThis, timeValue.get())) {
+  v8::Local<v8::Value> timeValue = GetSimpleValue(info, 0);
+  if (ValueIsNull(info.GetIsolate(), timeValue)) {
     info.GetReturnValue().SetNull();
     return;
   }
-  bsTime = ValueToUTF8String(pThis, timeValue.get());
+  bsTime = ValueToUTF8String(info.GetIsolate(), timeValue);
 
   ByteString bsFormat;
   if (argc > 1) {
-    std::unique_ptr<CFXJSE_Value> formatValue = GetSimpleValue(info, 1);
-    if (ValueIsNull(info.GetIsolate(), pThis, formatValue.get())) {
+    v8::Local<v8::Value> formatValue = GetSimpleValue(info, 1);
+    if (ValueIsNull(info.GetIsolate(), formatValue)) {
       info.GetReturnValue().SetNull();
       return;
     }
-    bsFormat = ValueToUTF8String(pThis, formatValue.get());
+    bsFormat = ValueToUTF8String(info.GetIsolate(), formatValue);
   }
 
   ByteString bsLocale;
   if (argc > 2) {
-    std::unique_ptr<CFXJSE_Value> localeValue = GetSimpleValue(info, 2);
-    if (ValueIsNull(info.GetIsolate(), pThis, localeValue.get())) {
+    v8::Local<v8::Value> localeValue = GetSimpleValue(info, 2);
+    if (ValueIsNull(info.GetIsolate(), localeValue)) {
       info.GetReturnValue().SetNull();
       return;
     }
-    bsLocale = ValueToUTF8String(pThis, localeValue.get());
+    bsLocale = ValueToUTF8String(info.GetIsolate(), localeValue);
   }
 
   CXFA_Document* pDoc = ToFormCalcContext(pThis)->GetDocument();
@@ -2797,24 +2849,24 @@ void CFXJSE_FormCalcContext::TimeFmt(
 
   int32_t iStyle = 0;
   if (argc > 0) {
-    std::unique_ptr<CFXJSE_Value> infotyle = GetSimpleValue(info, 0);
-    if (infotyle->IsNull(info.GetIsolate())) {
+    v8::Local<v8::Value> infotyle = GetSimpleValue(info, 0);
+    if (fxv8::IsNull(infotyle)) {
       info.GetReturnValue().SetNull();
       return;
     }
-    iStyle = (int32_t)ValueToFloat(info.GetIsolate(), infotyle.get());
+    iStyle = (int32_t)ValueToFloat(info.GetIsolate(), infotyle);
     if (iStyle > 4 || iStyle < 0)
       iStyle = 0;
   }
 
   ByteString bsLocale;
   if (argc > 1) {
-    std::unique_ptr<CFXJSE_Value> argLocale = GetSimpleValue(info, 1);
-    if (argLocale->IsNull(info.GetIsolate())) {
+    v8::Local<v8::Value> argLocale = GetSimpleValue(info, 1);
+    if (fxv8::IsNull(argLocale)) {
       info.GetReturnValue().SetNull();
       return;
     }
-    bsLocale = ValueToUTF8String(pThis, argLocale.get());
+    bsLocale = ValueToUTF8String(info.GetIsolate(), argLocale);
   }
 
   ByteString bsFormat =
@@ -2971,19 +3023,19 @@ void CFXJSE_FormCalcContext::Apr(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  std::unique_ptr<CFXJSE_Value> argTwo = GetSimpleValue(info, 1);
-  std::unique_ptr<CFXJSE_Value> argThree = GetSimpleValue(info, 2);
-  if (ValueIsNull(info.GetIsolate(), pThis, argOne.get()) ||
-      ValueIsNull(info.GetIsolate(), pThis, argTwo.get()) ||
-      ValueIsNull(info.GetIsolate(), pThis, argThree.get())) {
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  v8::Local<v8::Value> argTwo = GetSimpleValue(info, 1);
+  v8::Local<v8::Value> argThree = GetSimpleValue(info, 2);
+  if (ValueIsNull(info.GetIsolate(), argOne) ||
+      ValueIsNull(info.GetIsolate(), argTwo) ||
+      ValueIsNull(info.GetIsolate(), argThree)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  double nPrincipal = ValueToDouble(info.GetIsolate(), argOne.get());
-  double nPayment = ValueToDouble(info.GetIsolate(), argTwo.get());
-  double nPeriods = ValueToDouble(info.GetIsolate(), argThree.get());
+  double nPrincipal = ValueToDouble(info.GetIsolate(), argOne);
+  double nPayment = ValueToDouble(info.GetIsolate(), argTwo);
+  double nPeriods = ValueToDouble(info.GetIsolate(), argThree);
   if (nPrincipal <= 0 || nPayment <= 0 || nPeriods <= 0) {
     pContext->ThrowArgumentMismatchException();
     return;
@@ -3025,19 +3077,19 @@ void CFXJSE_FormCalcContext::CTerm(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  std::unique_ptr<CFXJSE_Value> argTwo = GetSimpleValue(info, 1);
-  std::unique_ptr<CFXJSE_Value> argThree = GetSimpleValue(info, 2);
-  if (ValueIsNull(info.GetIsolate(), pThis, argOne.get()) ||
-      ValueIsNull(info.GetIsolate(), pThis, argTwo.get()) ||
-      ValueIsNull(info.GetIsolate(), pThis, argThree.get())) {
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  v8::Local<v8::Value> argTwo = GetSimpleValue(info, 1);
+  v8::Local<v8::Value> argThree = GetSimpleValue(info, 2);
+  if (ValueIsNull(info.GetIsolate(), argOne) ||
+      ValueIsNull(info.GetIsolate(), argTwo) ||
+      ValueIsNull(info.GetIsolate(), argThree)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  float nRate = ValueToFloat(info.GetIsolate(), argOne.get());
-  float nFutureValue = ValueToFloat(info.GetIsolate(), argTwo.get());
-  float nInitAmount = ValueToFloat(info.GetIsolate(), argThree.get());
+  float nRate = ValueToFloat(info.GetIsolate(), argOne);
+  float nFutureValue = ValueToFloat(info.GetIsolate(), argTwo);
+  float nInitAmount = ValueToFloat(info.GetIsolate(), argThree);
   if ((nRate <= 0) || (nFutureValue <= 0) || (nInitAmount <= 0)) {
     pContext->ThrowArgumentMismatchException();
     return;
@@ -3057,19 +3109,19 @@ void CFXJSE_FormCalcContext::FV(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  std::unique_ptr<CFXJSE_Value> argTwo = GetSimpleValue(info, 1);
-  std::unique_ptr<CFXJSE_Value> argThree = GetSimpleValue(info, 2);
-  if (ValueIsNull(info.GetIsolate(), pThis, argOne.get()) ||
-      ValueIsNull(info.GetIsolate(), pThis, argTwo.get()) ||
-      ValueIsNull(info.GetIsolate(), pThis, argThree.get())) {
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  v8::Local<v8::Value> argTwo = GetSimpleValue(info, 1);
+  v8::Local<v8::Value> argThree = GetSimpleValue(info, 2);
+  if (ValueIsNull(info.GetIsolate(), argOne) ||
+      ValueIsNull(info.GetIsolate(), argTwo) ||
+      ValueIsNull(info.GetIsolate(), argThree)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  double nAmount = ValueToDouble(info.GetIsolate(), argOne.get());
-  double nRate = ValueToDouble(info.GetIsolate(), argTwo.get());
-  double nPeriod = ValueToDouble(info.GetIsolate(), argThree.get());
+  double nAmount = ValueToDouble(info.GetIsolate(), argOne);
+  double nRate = ValueToDouble(info.GetIsolate(), argTwo);
+  double nPeriod = ValueToDouble(info.GetIsolate(), argThree);
   if ((nRate < 0) || (nPeriod <= 0) || (nAmount <= 0)) {
     pContext->ThrowArgumentMismatchException();
     return;
@@ -3099,25 +3151,25 @@ void CFXJSE_FormCalcContext::IPmt(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  std::unique_ptr<CFXJSE_Value> argTwo = GetSimpleValue(info, 1);
-  std::unique_ptr<CFXJSE_Value> argThree = GetSimpleValue(info, 2);
-  std::unique_ptr<CFXJSE_Value> argFour = GetSimpleValue(info, 3);
-  std::unique_ptr<CFXJSE_Value> argFive = GetSimpleValue(info, 4);
-  if (ValueIsNull(info.GetIsolate(), pThis, argOne.get()) ||
-      ValueIsNull(info.GetIsolate(), pThis, argTwo.get()) ||
-      ValueIsNull(info.GetIsolate(), pThis, argThree.get()) ||
-      ValueIsNull(info.GetIsolate(), pThis, argFour.get()) ||
-      ValueIsNull(info.GetIsolate(), pThis, argFive.get())) {
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  v8::Local<v8::Value> argTwo = GetSimpleValue(info, 1);
+  v8::Local<v8::Value> argThree = GetSimpleValue(info, 2);
+  v8::Local<v8::Value> argFour = GetSimpleValue(info, 3);
+  v8::Local<v8::Value> argFive = GetSimpleValue(info, 4);
+  if (ValueIsNull(info.GetIsolate(), argOne) ||
+      ValueIsNull(info.GetIsolate(), argTwo) ||
+      ValueIsNull(info.GetIsolate(), argThree) ||
+      ValueIsNull(info.GetIsolate(), argFour) ||
+      ValueIsNull(info.GetIsolate(), argFive)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  float nPrincipalAmount = ValueToFloat(info.GetIsolate(), argOne.get());
-  float nRate = ValueToFloat(info.GetIsolate(), argTwo.get());
-  float nPayment = ValueToFloat(info.GetIsolate(), argThree.get());
-  float nFirstMonth = ValueToFloat(info.GetIsolate(), argFour.get());
-  float nNumberOfMonths = ValueToFloat(info.GetIsolate(), argFive.get());
+  float nPrincipalAmount = ValueToFloat(info.GetIsolate(), argOne);
+  float nRate = ValueToFloat(info.GetIsolate(), argTwo);
+  float nPayment = ValueToFloat(info.GetIsolate(), argThree);
+  float nFirstMonth = ValueToFloat(info.GetIsolate(), argFour);
+  float nNumberOfMonths = ValueToFloat(info.GetIsolate(), argFive);
   if ((nPrincipalAmount <= 0) || (nRate <= 0) || (nPayment <= 0) ||
       (nFirstMonth < 0) || (nNumberOfMonths < 0)) {
     pContext->ThrowArgumentMismatchException();
@@ -3159,13 +3211,13 @@ void CFXJSE_FormCalcContext::NPV(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argValue = GetSimpleValue(info, 0);
-  if (ValueIsNull(info.GetIsolate(), pThis, argValue.get())) {
+  v8::Local<v8::Value> argValue = GetSimpleValue(info, 0);
+  if (ValueIsNull(info.GetIsolate(), argValue)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  double nRate = ValueToDouble(info.GetIsolate(), argValue.get());
+  double nRate = ValueToDouble(info.GetIsolate(), argValue);
   if (nRate <= 0) {
     pContext->ThrowArgumentMismatchException();
     return;
@@ -3174,11 +3226,11 @@ void CFXJSE_FormCalcContext::NPV(
   std::vector<double> data;
   for (int32_t i = 1; i < argc; i++) {
     argValue = GetSimpleValue(info, i);
-    if (ValueIsNull(info.GetIsolate(), pThis, argValue.get())) {
+    if (ValueIsNull(info.GetIsolate(), argValue)) {
       info.GetReturnValue().SetNull();
       return;
     }
-    data.push_back(ValueToDouble(info.GetIsolate(), argValue.get()));
+    data.push_back(ValueToDouble(info.GetIsolate(), argValue));
   }
 
   double nSum = 0;
@@ -3201,19 +3253,19 @@ void CFXJSE_FormCalcContext::Pmt(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  std::unique_ptr<CFXJSE_Value> argTwo = GetSimpleValue(info, 1);
-  std::unique_ptr<CFXJSE_Value> argThree = GetSimpleValue(info, 2);
-  if (ValueIsNull(info.GetIsolate(), pThis, argOne.get()) ||
-      ValueIsNull(info.GetIsolate(), pThis, argTwo.get()) ||
-      ValueIsNull(info.GetIsolate(), pThis, argThree.get())) {
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  v8::Local<v8::Value> argTwo = GetSimpleValue(info, 1);
+  v8::Local<v8::Value> argThree = GetSimpleValue(info, 2);
+  if (ValueIsNull(info.GetIsolate(), argOne) ||
+      ValueIsNull(info.GetIsolate(), argTwo) ||
+      ValueIsNull(info.GetIsolate(), argThree)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  float nPrincipal = ValueToFloat(info.GetIsolate(), argOne.get());
-  float nRate = ValueToFloat(info.GetIsolate(), argTwo.get());
-  float nPeriods = ValueToFloat(info.GetIsolate(), argThree.get());
+  float nPrincipal = ValueToFloat(info.GetIsolate(), argOne);
+  float nRate = ValueToFloat(info.GetIsolate(), argTwo);
+  float nPeriods = ValueToFloat(info.GetIsolate(), argThree);
   if ((nPrincipal <= 0) || (nRate <= 0) || (nPeriods <= 0)) {
     pContext->ThrowArgumentMismatchException();
     return;
@@ -3237,25 +3289,25 @@ void CFXJSE_FormCalcContext::PPmt(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  std::unique_ptr<CFXJSE_Value> argTwo = GetSimpleValue(info, 1);
-  std::unique_ptr<CFXJSE_Value> argThree = GetSimpleValue(info, 2);
-  std::unique_ptr<CFXJSE_Value> argFour = GetSimpleValue(info, 3);
-  std::unique_ptr<CFXJSE_Value> argFive = GetSimpleValue(info, 4);
-  if (ValueIsNull(info.GetIsolate(), pThis, argOne.get()) ||
-      ValueIsNull(info.GetIsolate(), pThis, argTwo.get()) ||
-      ValueIsNull(info.GetIsolate(), pThis, argThree.get()) ||
-      ValueIsNull(info.GetIsolate(), pThis, argFour.get()) ||
-      ValueIsNull(info.GetIsolate(), pThis, argFive.get())) {
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  v8::Local<v8::Value> argTwo = GetSimpleValue(info, 1);
+  v8::Local<v8::Value> argThree = GetSimpleValue(info, 2);
+  v8::Local<v8::Value> argFour = GetSimpleValue(info, 3);
+  v8::Local<v8::Value> argFive = GetSimpleValue(info, 4);
+  if (ValueIsNull(info.GetIsolate(), argOne) ||
+      ValueIsNull(info.GetIsolate(), argTwo) ||
+      ValueIsNull(info.GetIsolate(), argThree) ||
+      ValueIsNull(info.GetIsolate(), argFour) ||
+      ValueIsNull(info.GetIsolate(), argFive)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  float nPrincipalAmount = ValueToFloat(info.GetIsolate(), argOne.get());
-  float nRate = ValueToFloat(info.GetIsolate(), argTwo.get());
-  float nPayment = ValueToFloat(info.GetIsolate(), argThree.get());
-  float nFirstMonth = ValueToFloat(info.GetIsolate(), argFour.get());
-  float nNumberOfMonths = ValueToFloat(info.GetIsolate(), argFive.get());
+  float nPrincipalAmount = ValueToFloat(info.GetIsolate(), argOne);
+  float nRate = ValueToFloat(info.GetIsolate(), argTwo);
+  float nPayment = ValueToFloat(info.GetIsolate(), argThree);
+  float nFirstMonth = ValueToFloat(info.GetIsolate(), argFour);
+  float nNumberOfMonths = ValueToFloat(info.GetIsolate(), argFive);
   if ((nPrincipalAmount <= 0) || (nRate <= 0) || (nPayment <= 0) ||
       (nFirstMonth < 0) || (nNumberOfMonths < 0)) {
     pContext->ThrowArgumentMismatchException();
@@ -3297,19 +3349,19 @@ void CFXJSE_FormCalcContext::PV(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  std::unique_ptr<CFXJSE_Value> argTwo = GetSimpleValue(info, 1);
-  std::unique_ptr<CFXJSE_Value> argThree = GetSimpleValue(info, 2);
-  if (ValueIsNull(info.GetIsolate(), pThis, argOne.get()) ||
-      ValueIsNull(info.GetIsolate(), pThis, argTwo.get()) ||
-      ValueIsNull(info.GetIsolate(), pThis, argThree.get())) {
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  v8::Local<v8::Value> argTwo = GetSimpleValue(info, 1);
+  v8::Local<v8::Value> argThree = GetSimpleValue(info, 2);
+  if (ValueIsNull(info.GetIsolate(), argOne) ||
+      ValueIsNull(info.GetIsolate(), argTwo) ||
+      ValueIsNull(info.GetIsolate(), argThree)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  double nAmount = ValueToDouble(info.GetIsolate(), argOne.get());
-  double nRate = ValueToDouble(info.GetIsolate(), argTwo.get());
-  double nPeriod = ValueToDouble(info.GetIsolate(), argThree.get());
+  double nAmount = ValueToDouble(info.GetIsolate(), argOne);
+  double nRate = ValueToDouble(info.GetIsolate(), argTwo);
+  double nPeriod = ValueToDouble(info.GetIsolate(), argThree);
   if ((nAmount <= 0) || (nRate < 0) || (nPeriod <= 0)) {
     pContext->ThrowArgumentMismatchException();
     return;
@@ -3333,19 +3385,19 @@ void CFXJSE_FormCalcContext::Rate(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  std::unique_ptr<CFXJSE_Value> argTwo = GetSimpleValue(info, 1);
-  std::unique_ptr<CFXJSE_Value> argThree = GetSimpleValue(info, 2);
-  if (ValueIsNull(info.GetIsolate(), pThis, argOne.get()) ||
-      ValueIsNull(info.GetIsolate(), pThis, argTwo.get()) ||
-      ValueIsNull(info.GetIsolate(), pThis, argThree.get())) {
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  v8::Local<v8::Value> argTwo = GetSimpleValue(info, 1);
+  v8::Local<v8::Value> argThree = GetSimpleValue(info, 2);
+  if (ValueIsNull(info.GetIsolate(), argOne) ||
+      ValueIsNull(info.GetIsolate(), argTwo) ||
+      ValueIsNull(info.GetIsolate(), argThree)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  float nFuture = ValueToFloat(info.GetIsolate(), argOne.get());
-  float nPresent = ValueToFloat(info.GetIsolate(), argTwo.get());
-  float nTotalNumber = ValueToFloat(info.GetIsolate(), argThree.get());
+  float nFuture = ValueToFloat(info.GetIsolate(), argOne);
+  float nPresent = ValueToFloat(info.GetIsolate(), argTwo);
+  float nTotalNumber = ValueToFloat(info.GetIsolate(), argThree);
   if ((nFuture <= 0) || (nPresent < 0) || (nTotalNumber <= 0)) {
     pContext->ThrowArgumentMismatchException();
     return;
@@ -3365,19 +3417,19 @@ void CFXJSE_FormCalcContext::Term(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  std::unique_ptr<CFXJSE_Value> argTwo = GetSimpleValue(info, 1);
-  std::unique_ptr<CFXJSE_Value> argThree = GetSimpleValue(info, 2);
-  if (ValueIsNull(info.GetIsolate(), pThis, argOne.get()) ||
-      ValueIsNull(info.GetIsolate(), pThis, argTwo.get()) ||
-      ValueIsNull(info.GetIsolate(), pThis, argThree.get())) {
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  v8::Local<v8::Value> argTwo = GetSimpleValue(info, 1);
+  v8::Local<v8::Value> argThree = GetSimpleValue(info, 2);
+  if (ValueIsNull(info.GetIsolate(), argOne) ||
+      ValueIsNull(info.GetIsolate(), argTwo) ||
+      ValueIsNull(info.GetIsolate(), argThree)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  float nMount = ValueToFloat(info.GetIsolate(), argOne.get());
-  float nRate = ValueToFloat(info.GetIsolate(), argTwo.get());
-  float nFuture = ValueToFloat(info.GetIsolate(), argThree.get());
+  float nMount = ValueToFloat(info.GetIsolate(), argOne);
+  float nRate = ValueToFloat(info.GetIsolate(), argTwo);
+  float nFuture = ValueToFloat(info.GetIsolate(), argThree);
   if ((nMount <= 0) || (nRate <= 0) || (nFuture <= 0)) {
     pContext->ThrowArgumentMismatchException();
     return;
@@ -3398,13 +3450,12 @@ void CFXJSE_FormCalcContext::Choose(
     return;
   }
 
-  auto argOne = std::make_unique<CFXJSE_Value>(info.GetIsolate(), info[0]);
-  if (ValueIsNull(info.GetIsolate(), pThis, argOne.get())) {
+  if (ValueIsNull(info.GetIsolate(), info[0])) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  int32_t iIndex = (int32_t)ValueToFloat(info.GetIsolate(), argOne.get());
+  int32_t iIndex = (int32_t)ValueToFloat(info.GetIsolate(), info[0]);
   if (iIndex < 1) {
     info.GetReturnValue().SetEmptyString();
     return;
@@ -3436,15 +3487,21 @@ void CFXJSE_FormCalcContext::Choose(
             info.GetIsolate(), (iLength - 1) - (iValueIndex - iIndex),
             jsObjectValue.get());
         if (propertyValue->IsNull(info.GetIsolate())) {
-          GetObjectDefaultValue(info.GetIsolate(), jsObjectValue.get(),
-                                newPropertyValue.get());
+          if (jsObjectValue->IsObject(info.GetIsolate())) {
+            newPropertyValue->ForceSetValue(
+                info.GetIsolate(),
+                GetObjectDefaultValue(info.GetIsolate(),
+                                      jsObjectValue->GetValue(info.GetIsolate())
+                                          .As<v8::Object>()));
+          }
         } else {
           jsObjectValue->GetObjectProperty(
               info.GetIsolate(),
               propertyValue->ToString(info.GetIsolate()).AsStringView(),
               newPropertyValue.get());
         }
-        ByteString bsChosen = ValueToUTF8String(pThis, newPropertyValue.get());
+        ByteString bsChosen = ValueToUTF8String(
+            info.GetIsolate(), newPropertyValue->GetValue(info.GetIsolate()));
         info.GetReturnValue().Set(
             fxv8::NewStringHelper(info.GetIsolate(), bsChosen.AsStringView()));
         bFound = true;
@@ -3452,7 +3509,8 @@ void CFXJSE_FormCalcContext::Choose(
     } else {
       iValueIndex++;
       if (iValueIndex == iIndex) {
-        ByteString bsChosen = ValueToUTF8String(pThis, argIndexValue.get());
+        ByteString bsChosen = ValueToUTF8String(
+            info.GetIsolate(), argIndexValue->GetValue(info.GetIsolate()));
         info.GetReturnValue().Set(
             fxv8::NewStringHelper(info.GetIsolate(), bsChosen.AsStringView()));
         bFound = true;
@@ -3486,15 +3544,15 @@ void CFXJSE_FormCalcContext::HasValue(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  if (!argOne->IsString(info.GetIsolate())) {
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  if (!fxv8::IsString(argOne)) {
     info.GetReturnValue().Set(
-        static_cast<int>(argOne->IsNumber(info.GetIsolate()) ||
-                         argOne->IsBoolean(info.GetIsolate())));
+        static_cast<int>(fxv8::IsNumber(argOne) || fxv8::IsBoolean(argOne)));
     return;
   }
 
-  ByteString bsValue = argOne->ToString(info.GetIsolate());
+  ByteString bsValue =
+      fxv8::ReentrantToByteStringHelper(info.GetIsolate(), argOne);
   bsValue.TrimLeft();
   info.GetReturnValue().Set(static_cast<int>(!bsValue.IsEmpty()));
 }
@@ -3508,7 +3566,8 @@ void CFXJSE_FormCalcContext::Oneof(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
+  auto argOne = std::make_unique<CFXJSE_Value>(info.GetIsolate(),
+                                               GetSimpleValue(info, 0));
   for (const auto& value : UnfoldArgs(pThis, info)) {
     if (SimpleValueCompare(pThis, argOne.get(), value.get())) {
       info.GetReturnValue().Set(1);
@@ -3527,26 +3586,26 @@ void CFXJSE_FormCalcContext::Within(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  if (argOne->IsNull(info.GetIsolate())) {
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  if (fxv8::IsNull(argOne)) {
     info.GetReturnValue().SetUndefined();
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argLow = GetSimpleValue(info, 1);
-  std::unique_ptr<CFXJSE_Value> argHigh = GetSimpleValue(info, 2);
-  if (argOne->IsNumber(info.GetIsolate())) {
-    float oneNumber = ValueToFloat(info.GetIsolate(), argOne.get());
-    float lowNumber = ValueToFloat(info.GetIsolate(), argLow.get());
-    float heightNumber = ValueToFloat(info.GetIsolate(), argHigh.get());
+  v8::Local<v8::Value> argLow = GetSimpleValue(info, 1);
+  v8::Local<v8::Value> argHigh = GetSimpleValue(info, 2);
+  if (fxv8::IsNumber(argOne)) {
+    float oneNumber = ValueToFloat(info.GetIsolate(), argOne);
+    float lowNumber = ValueToFloat(info.GetIsolate(), argLow);
+    float heightNumber = ValueToFloat(info.GetIsolate(), argHigh);
     info.GetReturnValue().Set(static_cast<int>((oneNumber >= lowNumber) &&
                                                (oneNumber <= heightNumber)));
     return;
   }
 
-  ByteString bsOne = ValueToUTF8String(pThis, argOne.get());
-  ByteString bsLow = ValueToUTF8String(pThis, argLow.get());
-  ByteString bsHeight = ValueToUTF8String(pThis, argHigh.get());
+  ByteString bsOne = ValueToUTF8String(info.GetIsolate(), argOne);
+  ByteString bsLow = ValueToUTF8String(info.GetIsolate(), argLow);
+  ByteString bsHeight = ValueToUTF8String(info.GetIsolate(), argHigh);
   info.GetReturnValue().Set(
       static_cast<int>((bsOne.Compare(bsLow.AsStringView()) >= 0) &&
                        (bsOne.Compare(bsHeight.AsStringView()) <= 0)));
@@ -3561,12 +3620,10 @@ void CFXJSE_FormCalcContext::If(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> value =
-      GetSimpleValue(info, 0)->ToBoolean(info.GetIsolate())
-          ? GetSimpleValue(info, 1)
-          : GetSimpleValue(info, 2);
+  const bool condition = fxv8::ReentrantToBooleanHelper(
+      info.GetIsolate(), GetSimpleValue(info, 0));
 
-  info.GetReturnValue().Set(value->DirectGetValue());
+  info.GetReturnValue().Set(GetSimpleValue(info, condition ? 1 : 2));
 }
 
 // static
@@ -3580,8 +3637,8 @@ void CFXJSE_FormCalcContext::Eval(
   }
 
   v8::Isolate* pIsolate = pContext->GetIsolate();
-  std::unique_ptr<CFXJSE_Value> scriptValue = GetSimpleValue(info, 0);
-  ByteString bsUtf8Script = ValueToUTF8String(pThis, scriptValue.get());
+  v8::Local<v8::Value> scriptValue = GetSimpleValue(info, 0);
+  ByteString bsUtf8Script = ValueToUTF8String(info.GetIsolate(), scriptValue);
   if (bsUtf8Script.IsEmpty()) {
     info.GetReturnValue().SetNull();
     return;
@@ -3676,13 +3733,13 @@ void CFXJSE_FormCalcContext::UnitType(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> unitspanValue = GetSimpleValue(info, 0);
-  if (unitspanValue->IsNull(info.GetIsolate())) {
+  v8::Local<v8::Value> unitspanValue = GetSimpleValue(info, 0);
+  if (fxv8::IsNull(unitspanValue)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  ByteString bsUnitspan = ValueToUTF8String(pThis, unitspanValue.get());
+  ByteString bsUnitspan = ValueToUTF8String(info.GetIsolate(), unitspanValue);
   if (bsUnitspan.IsEmpty()) {
     info.GetReturnValue().SetEmptyString();
     return;
@@ -3784,13 +3841,13 @@ void CFXJSE_FormCalcContext::UnitValue(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> unitspanValue = GetSimpleValue(info, 0);
-  if (unitspanValue->IsNull(info.GetIsolate())) {
+  v8::Local<v8::Value> unitspanValue = GetSimpleValue(info, 0);
+  if (fxv8::IsNull(unitspanValue)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  ByteString bsUnitspan = ValueToUTF8String(pThis, unitspanValue.get());
+  ByteString bsUnitspan = ValueToUTF8String(info.GetIsolate(), unitspanValue);
   const char* pData = bsUnitspan.c_str();
   if (!pData) {
     info.GetReturnValue().Set(0);
@@ -3825,8 +3882,8 @@ void CFXJSE_FormCalcContext::UnitValue(
 
   ByteString bsUnit;
   if (argc > 1) {
-    std::unique_ptr<CFXJSE_Value> unitValue = GetSimpleValue(info, 1);
-    ByteString bsUnitTemp = ValueToUTF8String(pThis, unitValue.get());
+    v8::Local<v8::Value> unitValue = GetSimpleValue(info, 1);
+    ByteString bsUnitTemp = ValueToUTF8String(info.GetIsolate(), unitValue);
     const char* pChar = bsUnitTemp.c_str();
     size_t uVal = 0;
     while (IsWhitespace(pChar[uVal]))
@@ -3922,21 +3979,21 @@ void CFXJSE_FormCalcContext::At(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  std::unique_ptr<CFXJSE_Value> argTwo = GetSimpleValue(info, 1);
-  if (ValueIsNull(info.GetIsolate(), pThis, argOne.get()) ||
-      ValueIsNull(info.GetIsolate(), pThis, argTwo.get())) {
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  v8::Local<v8::Value> argTwo = GetSimpleValue(info, 1);
+  if (ValueIsNull(info.GetIsolate(), argOne) ||
+      ValueIsNull(info.GetIsolate(), argTwo)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  ByteString stringTwo = ValueToUTF8String(pThis, argTwo.get());
+  ByteString stringTwo = ValueToUTF8String(info.GetIsolate(), argTwo);
   if (stringTwo.IsEmpty()) {
     info.GetReturnValue().Set(1);
     return;
   }
 
-  ByteString stringOne = ValueToUTF8String(pThis, argOne.get());
+  ByteString stringOne = ValueToUTF8String(info.GetIsolate(), argOne);
   auto pos = stringOne.Find(stringTwo.AsStringView());
   info.GetReturnValue().Set(
       static_cast<int>(pos.has_value() ? pos.value() + 1 : 0));
@@ -3955,12 +4012,12 @@ void CFXJSE_FormCalcContext::Concat(
   ByteString bsResult;
   bool bAllNull = true;
   for (int32_t i = 0; i < argc; i++) {
-    std::unique_ptr<CFXJSE_Value> value = GetSimpleValue(info, i);
-    if (ValueIsNull(info.GetIsolate(), pThis, value.get()))
+    v8::Local<v8::Value> value = GetSimpleValue(info, i);
+    if (ValueIsNull(info.GetIsolate(), value))
       continue;
 
     bAllNull = false;
-    bsResult += ValueToUTF8String(pThis, value.get());
+    bsResult += ValueToUTF8String(info.GetIsolate(), value);
   }
 
   if (bAllNull) {
@@ -3982,30 +4039,30 @@ void CFXJSE_FormCalcContext::Decode(
   }
 
   if (argc == 1) {
-    std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-    if (ValueIsNull(info.GetIsolate(), pThis, argOne.get())) {
+    v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+    if (ValueIsNull(info.GetIsolate(), argOne)) {
       info.GetReturnValue().SetNull();
       return;
     }
 
     WideString decoded = DecodeURL(WideString::FromUTF8(
-        ValueToUTF8String(pThis, argOne.get()).AsStringView()));
+        ValueToUTF8String(info.GetIsolate(), argOne).AsStringView()));
     auto result = FX_UTF8Encode(decoded.AsStringView());
     info.GetReturnValue().Set(
         fxv8::NewStringHelper(info.GetIsolate(), result.AsStringView()));
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  std::unique_ptr<CFXJSE_Value> argTwo = GetSimpleValue(info, 1);
-  if (ValueIsNull(info.GetIsolate(), pThis, argOne.get()) ||
-      ValueIsNull(info.GetIsolate(), pThis, argTwo.get())) {
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  v8::Local<v8::Value> argTwo = GetSimpleValue(info, 1);
+  if (ValueIsNull(info.GetIsolate(), argOne) ||
+      ValueIsNull(info.GetIsolate(), argTwo)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  ByteString bsToDecode = ValueToUTF8String(pThis, argOne.get());
-  ByteString bsIdentify = ValueToUTF8String(pThis, argTwo.get());
+  ByteString bsToDecode = ValueToUTF8String(info.GetIsolate(), argOne);
+  ByteString bsIdentify = ValueToUTF8String(info.GetIsolate(), argTwo);
   WideString decoded;
 
   WideString wsToDecode = WideString::FromUTF8(bsToDecode.AsStringView());
@@ -4033,28 +4090,29 @@ void CFXJSE_FormCalcContext::Encode(
   }
 
   if (argc == 1) {
-    std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-    if (ValueIsNull(info.GetIsolate(), pThis, argOne.get())) {
+    v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+    if (ValueIsNull(info.GetIsolate(), argOne)) {
       info.GetReturnValue().SetNull();
       return;
     }
-    WideString encoded = EncodeURL(ValueToUTF8String(pThis, argOne.get()));
+    WideString encoded =
+        EncodeURL(ValueToUTF8String(info.GetIsolate(), argOne));
     auto result = FX_UTF8Encode(encoded.AsStringView());
     info.GetReturnValue().Set(
         fxv8::NewStringHelper(info.GetIsolate(), result.AsStringView()));
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  std::unique_ptr<CFXJSE_Value> argTwo = GetSimpleValue(info, 1);
-  if (ValueIsNull(info.GetIsolate(), pThis, argOne.get()) ||
-      ValueIsNull(info.GetIsolate(), pThis, argTwo.get())) {
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  v8::Local<v8::Value> argTwo = GetSimpleValue(info, 1);
+  if (ValueIsNull(info.GetIsolate(), argOne) ||
+      ValueIsNull(info.GetIsolate(), argTwo)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  ByteString bsToEncode = ValueToUTF8String(pThis, argOne.get());
-  ByteString bsIdentify = ValueToUTF8String(pThis, argTwo.get());
+  ByteString bsToEncode = ValueToUTF8String(info.GetIsolate(), argOne);
+  ByteString bsIdentify = ValueToUTF8String(info.GetIsolate(), argTwo);
   WideString encoded;
   if (bsIdentify.EqualNoCase("html"))
     encoded = EncodeHTML(bsToEncode);
@@ -4078,11 +4136,11 @@ void CFXJSE_FormCalcContext::Format(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  ByteString bsPattern = ValueToUTF8String(pThis, argOne.get());
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  ByteString bsPattern = ValueToUTF8String(info.GetIsolate(), argOne);
 
-  std::unique_ptr<CFXJSE_Value> argTwo = GetSimpleValue(info, 1);
-  ByteString bsValue = ValueToUTF8String(pThis, argTwo.get());
+  v8::Local<v8::Value> argTwo = GetSimpleValue(info, 1);
+  ByteString bsValue = ValueToUTF8String(info.GetIsolate(), argTwo);
 
   CXFA_Document* pDoc = pContext->GetDocument();
   CXFA_LocaleMgr* pMgr = pDoc->GetLocaleMgr();
@@ -4157,16 +4215,16 @@ void CFXJSE_FormCalcContext::Left(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  std::unique_ptr<CFXJSE_Value> argTwo = GetSimpleValue(info, 1);
-  if ((ValueIsNull(info.GetIsolate(), pThis, argOne.get())) ||
-      (ValueIsNull(info.GetIsolate(), pThis, argTwo.get()))) {
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  v8::Local<v8::Value> argTwo = GetSimpleValue(info, 1);
+  if ((ValueIsNull(info.GetIsolate(), argOne)) ||
+      (ValueIsNull(info.GetIsolate(), argTwo))) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  ByteString bsSource = ValueToUTF8String(pThis, argOne.get());
-  int32_t count = std::max(0, ValueToInteger(info.GetIsolate(), argTwo.get()));
+  ByteString bsSource = ValueToUTF8String(info.GetIsolate(), argOne);
+  int32_t count = std::max(0, ValueToInteger(info.GetIsolate(), argTwo));
   info.GetReturnValue().Set(fxv8::NewStringHelper(
       info.GetIsolate(), bsSource.First(count).AsStringView()));
 }
@@ -4180,13 +4238,13 @@ void CFXJSE_FormCalcContext::Len(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  if (ValueIsNull(info.GetIsolate(), pThis, argOne.get())) {
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  if (ValueIsNull(info.GetIsolate(), argOne)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  ByteString bsSource = ValueToUTF8String(pThis, argOne.get());
+  ByteString bsSource = ValueToUTF8String(info.GetIsolate(), argOne);
   info.GetReturnValue().Set(static_cast<int>(bsSource.GetLength()));
 }
 
@@ -4200,14 +4258,14 @@ void CFXJSE_FormCalcContext::Lower(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  if (ValueIsNull(info.GetIsolate(), pThis, argOne.get())) {
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  if (ValueIsNull(info.GetIsolate(), argOne)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
   CFX_WideTextBuf szLowBuf;
-  ByteString bsArg = ValueToUTF8String(pThis, argOne.get());
+  ByteString bsArg = ValueToUTF8String(info.GetIsolate(), argOne);
   WideString wsArg = WideString::FromUTF8(bsArg.AsStringView());
   for (wchar_t ch : wsArg) {
     if ((ch >= 0x41 && ch <= 0x5A) || (ch >= 0xC0 && ch <= 0xDE))
@@ -4230,13 +4288,13 @@ void CFXJSE_FormCalcContext::Ltrim(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  if (ValueIsNull(info.GetIsolate(), pThis, argOne.get())) {
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  if (ValueIsNull(info.GetIsolate(), argOne)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  ByteString bsSource = ValueToUTF8String(pThis, argOne.get());
+  ByteString bsSource = ValueToUTF8String(info.GetIsolate(), argOne);
   bsSource.TrimLeft();
   info.GetReturnValue().Set(
       fxv8::NewStringHelper(info.GetIsolate(), bsSource.AsStringView()));
@@ -4252,15 +4310,15 @@ void CFXJSE_FormCalcContext::Parse(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  std::unique_ptr<CFXJSE_Value> argTwo = GetSimpleValue(info, 1);
-  if (ValueIsNull(info.GetIsolate(), pThis, argTwo.get())) {
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  v8::Local<v8::Value> argTwo = GetSimpleValue(info, 1);
+  if (ValueIsNull(info.GetIsolate(), argTwo)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  ByteString bsPattern = ValueToUTF8String(pThis, argOne.get());
-  ByteString bsValue = ValueToUTF8String(pThis, argTwo.get());
+  ByteString bsPattern = ValueToUTF8String(info.GetIsolate(), argOne);
+  ByteString bsValue = ValueToUTF8String(info.GetIsolate(), argTwo);
   CXFA_Document* pDoc = pContext->GetDocument();
   CXFA_LocaleMgr* pMgr = pDoc->GetLocaleMgr();
   CXFA_Node* pThisNode = ToNode(pDoc->GetScriptContext()->GetThisObject());
@@ -4396,20 +4454,20 @@ void CFXJSE_FormCalcContext::Replace(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  std::unique_ptr<CFXJSE_Value> argTwo = GetSimpleValue(info, 1);
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  v8::Local<v8::Value> argTwo = GetSimpleValue(info, 1);
   ByteString bsOne;
   ByteString bsTwo;
-  if (!ValueIsNull(info.GetIsolate(), pThis, argOne.get()) &&
-      !ValueIsNull(info.GetIsolate(), pThis, argTwo.get())) {
-    bsOne = ValueToUTF8String(pThis, argOne.get());
-    bsTwo = ValueToUTF8String(pThis, argTwo.get());
+  if (!ValueIsNull(info.GetIsolate(), argOne) &&
+      !ValueIsNull(info.GetIsolate(), argTwo)) {
+    bsOne = ValueToUTF8String(info.GetIsolate(), argOne);
+    bsTwo = ValueToUTF8String(info.GetIsolate(), argTwo);
   }
 
   ByteString bsThree;
   if (argc > 2) {
-    std::unique_ptr<CFXJSE_Value> argThree = GetSimpleValue(info, 2);
-    bsThree = ValueToUTF8String(pThis, argThree.get());
+    v8::Local<v8::Value> argThree = GetSimpleValue(info, 2);
+    bsThree = ValueToUTF8String(info.GetIsolate(), argThree);
   }
 
   bsOne.Replace(bsTwo.AsStringView(), bsThree.AsStringView());
@@ -4426,16 +4484,16 @@ void CFXJSE_FormCalcContext::Right(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  std::unique_ptr<CFXJSE_Value> argTwo = GetSimpleValue(info, 1);
-  if ((ValueIsNull(info.GetIsolate(), pThis, argOne.get())) ||
-      (ValueIsNull(info.GetIsolate(), pThis, argTwo.get()))) {
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  v8::Local<v8::Value> argTwo = GetSimpleValue(info, 1);
+  if ((ValueIsNull(info.GetIsolate(), argOne)) ||
+      (ValueIsNull(info.GetIsolate(), argTwo))) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  ByteString bsSource = ValueToUTF8String(pThis, argOne.get());
-  int32_t count = std::max(0, ValueToInteger(info.GetIsolate(), argTwo.get()));
+  ByteString bsSource = ValueToUTF8String(info.GetIsolate(), argOne);
+  int32_t count = std::max(0, ValueToInteger(info.GetIsolate(), argTwo));
   info.GetReturnValue().Set(fxv8::NewStringHelper(
       info.GetIsolate(), bsSource.Last(count).AsStringView()));
 }
@@ -4449,13 +4507,13 @@ void CFXJSE_FormCalcContext::Rtrim(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  if (ValueIsNull(info.GetIsolate(), pThis, argOne.get())) {
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  if (ValueIsNull(info.GetIsolate(), argOne)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  ByteString bsSource = ValueToUTF8String(pThis, argOne.get());
+  ByteString bsSource = ValueToUTF8String(info.GetIsolate(), argOne);
   bsSource.TrimRight();
   info.GetReturnValue().Set(
       fxv8::NewStringHelper(info.GetIsolate(), bsSource.AsStringView()));
@@ -4470,13 +4528,13 @@ void CFXJSE_FormCalcContext::Space(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  if (argOne->IsNull(info.GetIsolate())) {
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  if (fxv8::IsNull(argOne)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  int32_t count = std::max(0, ValueToInteger(info.GetIsolate(), argOne.get()));
+  int32_t count = std::max(0, ValueToInteger(info.GetIsolate(), argOne));
   std::ostringstream spaceString;
   int32_t index = 0;
   while (index < count) {
@@ -4498,25 +4556,24 @@ void CFXJSE_FormCalcContext::Str(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> numberValue = GetSimpleValue(info, 0);
-  if (numberValue->IsNull(info.GetIsolate())) {
+  v8::Local<v8::Value> numberValue = GetSimpleValue(info, 0);
+  if (fxv8::IsNull(numberValue)) {
     info.GetReturnValue().SetNull();
     return;
   }
-  float fNumber = ValueToFloat(info.GetIsolate(), numberValue.get());
+  float fNumber = ValueToFloat(info.GetIsolate(), numberValue);
 
   int32_t iWidth = 10;
   if (argc > 1) {
-    std::unique_ptr<CFXJSE_Value> widthValue = GetSimpleValue(info, 1);
-    iWidth =
-        static_cast<int32_t>(ValueToFloat(info.GetIsolate(), widthValue.get()));
+    v8::Local<v8::Value> widthValue = GetSimpleValue(info, 1);
+    iWidth = static_cast<int32_t>(ValueToFloat(info.GetIsolate(), widthValue));
   }
 
   int32_t iPrecision = 0;
   if (argc > 2) {
-    std::unique_ptr<CFXJSE_Value> precisionValue = GetSimpleValue(info, 2);
+    v8::Local<v8::Value> precisionValue = GetSimpleValue(info, 2);
     iPrecision = std::max(0, static_cast<int32_t>(ValueToFloat(
-                                 info.GetIsolate(), precisionValue.get())));
+                                 info.GetIsolate(), precisionValue)));
   }
 
   ByteString bsFormat = "%";
@@ -4621,24 +4678,23 @@ void CFXJSE_FormCalcContext::Stuff(
   int32_t iLength = 0;
   int32_t iStart = 0;
   int32_t iDelete = 0;
-  std::unique_ptr<CFXJSE_Value> sourceValue = GetSimpleValue(info, 0);
-  std::unique_ptr<CFXJSE_Value> startValue = GetSimpleValue(info, 1);
-  std::unique_ptr<CFXJSE_Value> deleteValue = GetSimpleValue(info, 2);
-  if (!sourceValue->IsNull(info.GetIsolate()) &&
-      !startValue->IsNull(info.GetIsolate()) &&
-      !deleteValue->IsNull(info.GetIsolate())) {
-    bsSource = ValueToUTF8String(pThis, sourceValue.get());
+  v8::Local<v8::Value> sourceValue = GetSimpleValue(info, 0);
+  v8::Local<v8::Value> startValue = GetSimpleValue(info, 1);
+  v8::Local<v8::Value> deleteValue = GetSimpleValue(info, 2);
+  if (!fxv8::IsNull(sourceValue) && !fxv8::IsNull(startValue) &&
+      !fxv8::IsNull(deleteValue)) {
+    bsSource = ValueToUTF8String(info.GetIsolate(), sourceValue);
     iLength = bsSource.GetLength();
     iStart = pdfium::clamp(
-        static_cast<int32_t>(ValueToFloat(info.GetIsolate(), startValue.get())),
-        1, iLength);
-    iDelete = std::max(0, static_cast<int32_t>(ValueToFloat(
-                              info.GetIsolate(), deleteValue.get())));
+        static_cast<int32_t>(ValueToFloat(info.GetIsolate(), startValue)), 1,
+        iLength);
+    iDelete = std::max(
+        0, static_cast<int32_t>(ValueToFloat(info.GetIsolate(), deleteValue)));
   }
 
   if (argc > 3) {
-    std::unique_ptr<CFXJSE_Value> insertValue = GetSimpleValue(info, 3);
-    bsInsert = ValueToUTF8String(pThis, insertValue.get());
+    v8::Local<v8::Value> insertValue = GetSimpleValue(info, 3);
+    bsInsert = ValueToUTF8String(info.GetIsolate(), insertValue);
   }
 
   --iStart;
@@ -4668,17 +4724,17 @@ void CFXJSE_FormCalcContext::Substr(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> string_value = GetSimpleValue(info, 0);
-  std::unique_ptr<CFXJSE_Value> start_value = GetSimpleValue(info, 1);
-  std::unique_ptr<CFXJSE_Value> end_value = GetSimpleValue(info, 2);
-  if (ValueIsNull(info.GetIsolate(), pThis, string_value.get()) ||
-      ValueIsNull(info.GetIsolate(), pThis, start_value.get()) ||
-      ValueIsNull(info.GetIsolate(), pThis, end_value.get())) {
+  v8::Local<v8::Value> string_value = GetSimpleValue(info, 0);
+  v8::Local<v8::Value> start_value = GetSimpleValue(info, 1);
+  v8::Local<v8::Value> end_value = GetSimpleValue(info, 2);
+  if (ValueIsNull(info.GetIsolate(), string_value) ||
+      ValueIsNull(info.GetIsolate(), start_value) ||
+      ValueIsNull(info.GetIsolate(), end_value)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  ByteString bsSource = ValueToUTF8String(pThis, string_value.get());
+  ByteString bsSource = ValueToUTF8String(info.GetIsolate(), string_value);
   size_t iLength = bsSource.GetLength();
   if (iLength == 0) {
     info.GetReturnValue().SetEmptyString();
@@ -4688,15 +4744,14 @@ void CFXJSE_FormCalcContext::Substr(
   // |start_value| is 1-based. Assume first character if |start_value| is less
   // than 1, per spec. Subtract 1 since |iStart| is 0-based.
   size_t iStart =
-      std::max(ValueToInteger(info.GetIsolate(), start_value.get()), 1) - 1;
+      std::max(ValueToInteger(info.GetIsolate(), start_value), 1) - 1;
   if (iStart >= iLength) {
     info.GetReturnValue().SetEmptyString();
     return;
   }
 
   // Negative values are treated as 0. Can't clamp() due to sign mismatches.
-  size_t iCount =
-      std::max(ValueToInteger(info.GetIsolate(), end_value.get()), 0);
+  size_t iCount = std::max(ValueToInteger(info.GetIsolate(), end_value), 0);
   iCount = std::min(iCount, iLength - iStart);
   info.GetReturnValue().Set(fxv8::NewStringHelper(
       info.GetIsolate(), bsSource.Substr(iStart, iCount).AsStringView()));
@@ -4714,8 +4769,8 @@ void CFXJSE_FormCalcContext::Uuid(
 
   int32_t iNum = 0;
   if (argc > 0) {
-    std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-    iNum = static_cast<int32_t>(ValueToFloat(info.GetIsolate(), argOne.get()));
+    v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+    iNum = static_cast<int32_t>(ValueToFloat(info.GetIsolate(), argOne));
   }
   info.GetReturnValue().Set(fxv8::NewStringHelper(
       info.GetIsolate(), GUIDString(!!iNum).AsStringView()));
@@ -4731,14 +4786,14 @@ void CFXJSE_FormCalcContext::Upper(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  if (ValueIsNull(info.GetIsolate(), pThis, argOne.get())) {
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  if (ValueIsNull(info.GetIsolate(), argOne)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
   CFX_WideTextBuf upperStringBuf;
-  ByteString bsArg = ValueToUTF8String(pThis, argOne.get());
+  ByteString bsArg = ValueToUTF8String(info.GetIsolate(), argOne);
   WideString wsArg = WideString::FromUTF8(bsArg.AsStringView());
   const wchar_t* pData = wsArg.c_str();
   size_t i = 0;
@@ -4767,32 +4822,32 @@ void CFXJSE_FormCalcContext::WordNum(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> numberValue = GetSimpleValue(info, 0);
-  if (numberValue->IsNull(info.GetIsolate())) {
+  v8::Local<v8::Value> numberValue = GetSimpleValue(info, 0);
+  if (fxv8::IsNull(numberValue)) {
     info.GetReturnValue().SetNull();
     return;
   }
-  float fNumber = ValueToFloat(info.GetIsolate(), numberValue.get());
+  float fNumber = ValueToFloat(info.GetIsolate(), numberValue);
 
   int32_t iIdentifier = 0;
   if (argc > 1) {
-    std::unique_ptr<CFXJSE_Value> identifierValue = GetSimpleValue(info, 1);
-    if (identifierValue->IsNull(info.GetIsolate())) {
+    v8::Local<v8::Value> identifierValue = GetSimpleValue(info, 1);
+    if (fxv8::IsNull(identifierValue)) {
       info.GetReturnValue().SetNull();
       return;
     }
-    iIdentifier = static_cast<int32_t>(
-        ValueToFloat(info.GetIsolate(), identifierValue.get()));
+    iIdentifier =
+        static_cast<int32_t>(ValueToFloat(info.GetIsolate(), identifierValue));
   }
 
   ByteString bsLocale;
   if (argc > 2) {
-    std::unique_ptr<CFXJSE_Value> localeValue = GetSimpleValue(info, 2);
-    if (localeValue->IsNull(info.GetIsolate())) {
+    v8::Local<v8::Value> localeValue = GetSimpleValue(info, 2);
+    if (fxv8::IsNull(localeValue)) {
       info.GetReturnValue().SetNull();
       return;
     }
-    bsLocale = ValueToUTF8String(pThis, localeValue.get());
+    bsLocale = ValueToUTF8String(info.GetIsolate(), localeValue);
   }
 
   if (std::isnan(fNumber) || fNumber < 0.0f ||
@@ -4824,8 +4879,8 @@ void CFXJSE_FormCalcContext::Get(
   if (!pAppProvider)
     return;
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  ByteString bsUrl = ValueToUTF8String(pThis, argOne.get());
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  ByteString bsUrl = ValueToUTF8String(info.GetIsolate(), argOne);
   RetainPtr<IFX_SeekableReadStream> pFile =
       pAppProvider->DownloadURL(WideString::FromUTF8(bsUrl.AsStringView()));
   if (!pFile)
@@ -4857,28 +4912,28 @@ void CFXJSE_FormCalcContext::Post(
   if (!pAppProvider)
     return;
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  ByteString bsURL = ValueToUTF8String(pThis, argOne.get());
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  ByteString bsURL = ValueToUTF8String(info.GetIsolate(), argOne);
 
-  std::unique_ptr<CFXJSE_Value> argTwo = GetSimpleValue(info, 1);
-  ByteString bsData = ValueToUTF8String(pThis, argTwo.get());
+  v8::Local<v8::Value> argTwo = GetSimpleValue(info, 1);
+  ByteString bsData = ValueToUTF8String(info.GetIsolate(), argTwo);
 
   ByteString bsContentType;
   if (argc > 2) {
-    std::unique_ptr<CFXJSE_Value> argThree = GetSimpleValue(info, 2);
-    bsContentType = ValueToUTF8String(pThis, argThree.get());
+    v8::Local<v8::Value> argThree = GetSimpleValue(info, 2);
+    bsContentType = ValueToUTF8String(info.GetIsolate(), argThree);
   }
 
   ByteString bsEncode;
   if (argc > 3) {
-    std::unique_ptr<CFXJSE_Value> argFour = GetSimpleValue(info, 3);
-    bsEncode = ValueToUTF8String(pThis, argFour.get());
+    v8::Local<v8::Value> argFour = GetSimpleValue(info, 3);
+    bsEncode = ValueToUTF8String(info.GetIsolate(), argFour);
   }
 
   ByteString bsHeader;
   if (argc > 4) {
-    std::unique_ptr<CFXJSE_Value> argFive = GetSimpleValue(info, 4);
-    bsHeader = ValueToUTF8String(pThis, argFive.get());
+    v8::Local<v8::Value> argFive = GetSimpleValue(info, 4);
+    bsHeader = ValueToUTF8String(info.GetIsolate(), argFive);
   }
 
   WideString decodedResponse;
@@ -4914,16 +4969,16 @@ void CFXJSE_FormCalcContext::Put(
   if (!pAppProvider)
     return;
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  ByteString bsURL = ValueToUTF8String(pThis, argOne.get());
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  ByteString bsURL = ValueToUTF8String(info.GetIsolate(), argOne);
 
-  std::unique_ptr<CFXJSE_Value> argTwo = GetSimpleValue(info, 1);
-  ByteString bsData = ValueToUTF8String(pThis, argTwo.get());
+  v8::Local<v8::Value> argTwo = GetSimpleValue(info, 1);
+  ByteString bsData = ValueToUTF8String(info.GetIsolate(), argTwo);
 
   ByteString bsEncode;
   if (argc > 2) {
-    std::unique_ptr<CFXJSE_Value> argThree = GetSimpleValue(info, 2);
-    bsEncode = ValueToUTF8String(pThis, argThree.get());
+    v8::Local<v8::Value> argThree = GetSimpleValue(info, 2);
+    bsEncode = ValueToUTF8String(info.GetIsolate(), argThree);
   }
   if (!pAppProvider->PutRequestURL(
           WideString::FromUTF8(bsURL.AsStringView()),
@@ -4946,7 +5001,8 @@ void CFXJSE_FormCalcContext::assign_value_operator(
   }
   ByteStringView bsFuncName("asgn_val_op");
   auto lValue = std::make_unique<CFXJSE_Value>(info.GetIsolate(), info[0]);
-  std::unique_ptr<CFXJSE_Value> rValue = GetSimpleValue(info, 1);
+  auto rValue = std::make_unique<CFXJSE_Value>(info.GetIsolate(),
+                                               GetSimpleValue(info, 1));
   if (lValue->IsArray(info.GetIsolate())) {
     v8::Isolate* pIsolate = pContext->GetIsolate();
     auto leftLengthValue = std::make_unique<CFXJSE_Value>();
@@ -4960,8 +5016,11 @@ void CFXJSE_FormCalcContext::assign_value_operator(
       for (int32_t i = 2; i < iLeftLength; i++) {
         lValue->GetObjectPropertyByIdx(info.GetIsolate(), i,
                                        jsObjectValue.get());
-        if (!SetObjectDefaultValue(info.GetIsolate(), jsObjectValue.get(),
-                                   rValue.get())) {
+        if (!jsObjectValue->IsObject(info.GetIsolate()) ||
+            !SetObjectDefaultValue(
+                info.GetIsolate(),
+                jsObjectValue->GetValue(info.GetIsolate()).As<v8::Object>(),
+                rValue->GetValue(info.GetIsolate()))) {
           pContext->ThrowNoDefaultPropertyException(bsFuncName);
           return;
         }
@@ -4975,7 +5034,10 @@ void CFXJSE_FormCalcContext::assign_value_operator(
       }
     }
   } else if (lValue->IsObject(info.GetIsolate())) {
-    if (!SetObjectDefaultValue(info.GetIsolate(), lValue.get(), rValue.get())) {
+    if (!SetObjectDefaultValue(
+            info.GetIsolate(),
+            lValue->GetValue(info.GetIsolate()).As<v8::Object>(),
+            rValue->GetValue(info.GetIsolate()))) {
       pContext->ThrowNoDefaultPropertyException(bsFuncName);
       return;
     }
@@ -4992,16 +5054,15 @@ void CFXJSE_FormCalcContext::logical_or_operator(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argFirst = GetSimpleValue(info, 0);
-  std::unique_ptr<CFXJSE_Value> infoecond = GetSimpleValue(info, 1);
-  if (argFirst->IsNull(info.GetIsolate()) &&
-      infoecond->IsNull(info.GetIsolate())) {
+  v8::Local<v8::Value> argFirst = GetSimpleValue(info, 0);
+  v8::Local<v8::Value> argSecond = GetSimpleValue(info, 1);
+  if (fxv8::IsNull(argFirst) && fxv8::IsNull(argSecond)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  float first = ValueToFloat(info.GetIsolate(), argFirst.get());
-  float second = ValueToFloat(info.GetIsolate(), infoecond.get());
+  float first = ValueToFloat(info.GetIsolate(), argFirst);
+  float second = ValueToFloat(info.GetIsolate(), argSecond);
   info.GetReturnValue().Set(static_cast<int>(first || second));
 }
 
@@ -5014,16 +5075,15 @@ void CFXJSE_FormCalcContext::logical_and_operator(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argFirst = GetSimpleValue(info, 0);
-  std::unique_ptr<CFXJSE_Value> infoecond = GetSimpleValue(info, 1);
-  if (argFirst->IsNull(info.GetIsolate()) &&
-      infoecond->IsNull(info.GetIsolate())) {
+  v8::Local<v8::Value> argFirst = GetSimpleValue(info, 0);
+  v8::Local<v8::Value> argSecond = GetSimpleValue(info, 1);
+  if (fxv8::IsNull(argFirst) && fxv8::IsNull(argSecond)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  float first = ValueToFloat(info.GetIsolate(), argFirst.get());
-  float second = ValueToFloat(info.GetIsolate(), infoecond.get());
+  float first = ValueToFloat(info.GetIsolate(), argFirst);
+  float second = ValueToFloat(info.GetIsolate(), argSecond);
   info.GetReturnValue().Set(static_cast<int>(first && second));
 }
 
@@ -5041,26 +5101,23 @@ void CFXJSE_FormCalcContext::equality_operator(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argFirst = GetSimpleValue(info, 0);
-  std::unique_ptr<CFXJSE_Value> infoecond = GetSimpleValue(info, 1);
-  if (argFirst->IsNull(info.GetIsolate()) ||
-      infoecond->IsNull(info.GetIsolate())) {
+  v8::Local<v8::Value> argFirst = GetSimpleValue(info, 0);
+  v8::Local<v8::Value> argSecond = GetSimpleValue(info, 1);
+  if (fxv8::IsNull(argFirst) || fxv8::IsNull(argSecond)) {
     info.GetReturnValue().Set(
-        static_cast<int>(argFirst->IsNull(info.GetIsolate()) &&
-                         infoecond->IsNull(info.GetIsolate())));
+        static_cast<int>(fxv8::IsNull(argFirst) && fxv8::IsNull(argSecond)));
     return;
   }
 
-  if (argFirst->IsString(info.GetIsolate()) &&
-      infoecond->IsString(info.GetIsolate())) {
-    info.GetReturnValue().Set(
-        static_cast<int>(argFirst->ToString(info.GetIsolate()) ==
-                         infoecond->ToString(info.GetIsolate())));
+  if (fxv8::IsString(argFirst) && fxv8::IsString(argSecond)) {
+    info.GetReturnValue().Set(static_cast<int>(
+        fxv8::ReentrantToByteStringHelper(info.GetIsolate(), argFirst) ==
+        fxv8::ReentrantToByteStringHelper(info.GetIsolate(), argSecond)));
     return;
   }
 
-  double first = ValueToDouble(info.GetIsolate(), argFirst.get());
-  double second = ValueToDouble(info.GetIsolate(), infoecond.get());
+  double first = ValueToDouble(info.GetIsolate(), argFirst);
+  double second = ValueToDouble(info.GetIsolate(), argSecond);
   info.GetReturnValue().Set(static_cast<int>(first == second));
 }
 
@@ -5078,26 +5135,23 @@ void CFXJSE_FormCalcContext::notequality_operator(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argFirst = GetSimpleValue(info, 0);
-  std::unique_ptr<CFXJSE_Value> infoecond = GetSimpleValue(info, 1);
-  if (argFirst->IsNull(info.GetIsolate()) ||
-      infoecond->IsNull(info.GetIsolate())) {
+  v8::Local<v8::Value> argFirst = GetSimpleValue(info, 0);
+  v8::Local<v8::Value> argSecond = GetSimpleValue(info, 1);
+  if (fxv8::IsNull(argFirst) || fxv8::IsNull(argSecond)) {
     info.GetReturnValue().Set(
-        static_cast<int>(!argFirst->IsNull(info.GetIsolate()) ||
-                         !infoecond->IsNull(info.GetIsolate())));
+        static_cast<int>(!fxv8::IsNull(argFirst) || !fxv8::IsNull(argSecond)));
     return;
   }
 
-  if (argFirst->IsString(info.GetIsolate()) &&
-      infoecond->IsString(info.GetIsolate())) {
-    info.GetReturnValue().Set(
-        static_cast<int>(argFirst->ToString(info.GetIsolate()) !=
-                         infoecond->ToString(info.GetIsolate())));
+  if (fxv8::IsString(argFirst) && fxv8::IsString(argSecond)) {
+    info.GetReturnValue().Set(static_cast<int>(
+        fxv8::ReentrantToByteStringHelper(info.GetIsolate(), argFirst) !=
+        fxv8::ReentrantToByteStringHelper(info.GetIsolate(), argSecond)));
     return;
   }
 
-  double first = ValueToDouble(info.GetIsolate(), argFirst.get());
-  double second = ValueToDouble(info.GetIsolate(), infoecond.get());
+  double first = ValueToDouble(info.GetIsolate(), argFirst);
+  double second = ValueToDouble(info.GetIsolate(), argSecond);
   info.GetReturnValue().Set(static_cast<int>(first != second));
 }
 
@@ -5141,25 +5195,24 @@ void CFXJSE_FormCalcContext::less_operator(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argFirst = GetSimpleValue(info, 0);
-  std::unique_ptr<CFXJSE_Value> argSecond = GetSimpleValue(info, 1);
-  if (argFirst->IsNull(info.GetIsolate()) ||
-      argSecond->IsNull(info.GetIsolate())) {
+  v8::Local<v8::Value> argFirst = GetSimpleValue(info, 0);
+  v8::Local<v8::Value> argSecond = GetSimpleValue(info, 1);
+  if (fxv8::IsNull(argFirst) || fxv8::IsNull(argSecond)) {
     info.GetReturnValue().Set(0);
     return;
   }
 
-  if (argFirst->IsString(info.GetIsolate()) &&
-      argSecond->IsString(info.GetIsolate())) {
-    int result =
-        argFirst->ToString(info.GetIsolate())
-            .Compare(argSecond->ToString(info.GetIsolate()).AsStringView()) < 0;
-    info.GetReturnValue().Set(result);
+  if (fxv8::IsString(argFirst) && fxv8::IsString(argSecond)) {
+    ByteString bs1 =
+        fxv8::ReentrantToByteStringHelper(info.GetIsolate(), argFirst);
+    ByteString bs2 =
+        fxv8::ReentrantToByteStringHelper(info.GetIsolate(), argSecond);
+    info.GetReturnValue().Set(bs1.Compare(bs2.AsStringView()) < 0);
     return;
   }
 
-  double first = ValueToDouble(info.GetIsolate(), argFirst.get());
-  double second = ValueToDouble(info.GetIsolate(), argSecond.get());
+  double first = ValueToDouble(info.GetIsolate(), argFirst);
+  double second = ValueToDouble(info.GetIsolate(), argSecond);
   info.GetReturnValue().Set(static_cast<int>(first < second));
 }
 
@@ -5172,28 +5225,23 @@ void CFXJSE_FormCalcContext::lessequal_operator(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argFirst = GetSimpleValue(info, 0);
-  std::unique_ptr<CFXJSE_Value> argSecond = GetSimpleValue(info, 1);
-  if (argFirst->IsNull(info.GetIsolate()) ||
-      argSecond->IsNull(info.GetIsolate())) {
+  v8::Local<v8::Value> argFirst = GetSimpleValue(info, 0);
+  v8::Local<v8::Value> argSecond = GetSimpleValue(info, 1);
+  if (fxv8::IsNull(argFirst) || fxv8::IsNull(argSecond)) {
     info.GetReturnValue().Set(
-        static_cast<int>(argFirst->IsNull(info.GetIsolate()) &&
-                         argSecond->IsNull(info.GetIsolate())));
+        static_cast<int>(fxv8::IsNull(argFirst) && fxv8::IsNull(argSecond)));
     return;
   }
 
-  if (argFirst->IsString(info.GetIsolate()) &&
-      argSecond->IsString(info.GetIsolate())) {
-    int result =
-        argFirst->ToString(info.GetIsolate())
-            .Compare(argSecond->ToString(info.GetIsolate()).AsStringView()) <=
-        0;
-    info.GetReturnValue().Set(result);
+  if (fxv8::IsString(argFirst) && fxv8::IsString(argSecond)) {
+    auto bs1 = fxv8::ReentrantToByteStringHelper(info.GetIsolate(), argFirst);
+    auto bs2 = fxv8::ReentrantToByteStringHelper(info.GetIsolate(), argSecond);
+    info.GetReturnValue().Set(bs1.Compare(bs2.AsStringView()) <= 0);
     return;
   }
 
-  double first = ValueToDouble(info.GetIsolate(), argFirst.get());
-  double second = ValueToDouble(info.GetIsolate(), argSecond.get());
+  double first = ValueToDouble(info.GetIsolate(), argFirst);
+  double second = ValueToDouble(info.GetIsolate(), argSecond);
   info.GetReturnValue().Set(static_cast<int>(first <= second));
 }
 
@@ -5206,25 +5254,22 @@ void CFXJSE_FormCalcContext::greater_operator(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argFirst = GetSimpleValue(info, 0);
-  std::unique_ptr<CFXJSE_Value> argSecond = GetSimpleValue(info, 1);
-  if (argFirst->IsNull(info.GetIsolate()) ||
-      argSecond->IsNull(info.GetIsolate())) {
+  v8::Local<v8::Value> argFirst = GetSimpleValue(info, 0);
+  v8::Local<v8::Value> argSecond = GetSimpleValue(info, 1);
+  if (fxv8::IsNull(argFirst) || fxv8::IsNull(argSecond)) {
     info.GetReturnValue().Set(0);
     return;
   }
 
-  if (argFirst->IsString(info.GetIsolate()) &&
-      argSecond->IsString(info.GetIsolate())) {
-    int result =
-        argFirst->ToString(info.GetIsolate())
-            .Compare(argSecond->ToString(info.GetIsolate()).AsStringView()) > 0;
-    info.GetReturnValue().Set(result);
+  if (fxv8::IsString(argFirst) && fxv8::IsString(argSecond)) {
+    auto bs1 = fxv8::ReentrantToByteStringHelper(info.GetIsolate(), argFirst);
+    auto bs2 = fxv8::ReentrantToByteStringHelper(info.GetIsolate(), argSecond);
+    info.GetReturnValue().Set(bs1.Compare(bs2.AsStringView()) > 0);
     return;
   }
 
-  double first = ValueToDouble(info.GetIsolate(), argFirst.get());
-  double second = ValueToDouble(info.GetIsolate(), argSecond.get());
+  double first = ValueToDouble(info.GetIsolate(), argFirst);
+  double second = ValueToDouble(info.GetIsolate(), argSecond);
   info.GetReturnValue().Set(static_cast<int>(first > second));
 }
 
@@ -5237,28 +5282,23 @@ void CFXJSE_FormCalcContext::greaterequal_operator(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argFirst = GetSimpleValue(info, 0);
-  std::unique_ptr<CFXJSE_Value> argSecond = GetSimpleValue(info, 1);
-  if (argFirst->IsNull(info.GetIsolate()) ||
-      argSecond->IsNull(info.GetIsolate())) {
+  v8::Local<v8::Value> argFirst = GetSimpleValue(info, 0);
+  v8::Local<v8::Value> argSecond = GetSimpleValue(info, 1);
+  if (fxv8::IsNull(argFirst) || fxv8::IsNull(argSecond)) {
     info.GetReturnValue().Set(
-        static_cast<int>(argFirst->IsNull(info.GetIsolate()) &&
-                         argSecond->IsNull(info.GetIsolate())));
+        static_cast<int>(fxv8::IsNull(argFirst) && fxv8::IsNull(argSecond)));
     return;
   }
 
-  if (argFirst->IsString(info.GetIsolate()) &&
-      argSecond->IsString(info.GetIsolate())) {
-    int result =
-        argFirst->ToString(info.GetIsolate())
-            .Compare(argSecond->ToString(info.GetIsolate()).AsStringView()) >=
-        0;
-    info.GetReturnValue().Set(result);
+  if (fxv8::IsString(argFirst) && fxv8::IsString(argSecond)) {
+    auto bs1 = fxv8::ReentrantToByteStringHelper(info.GetIsolate(), argFirst);
+    auto bs2 = fxv8::ReentrantToByteStringHelper(info.GetIsolate(), argSecond);
+    info.GetReturnValue().Set(bs1.Compare(bs2.AsStringView()) >= 0);
     return;
   }
 
-  double first = ValueToDouble(info.GetIsolate(), argFirst.get());
-  double second = ValueToDouble(info.GetIsolate(), argSecond.get());
+  double first = ValueToDouble(info.GetIsolate(), argFirst);
+  double second = ValueToDouble(info.GetIsolate(), argSecond);
   info.GetReturnValue().Set(static_cast<int>(first >= second));
 }
 
@@ -5271,16 +5311,14 @@ void CFXJSE_FormCalcContext::plus_operator(
     return;
   }
 
-  auto argFirst = std::make_unique<CFXJSE_Value>(info.GetIsolate(), info[0]);
-  auto argSecond = std::make_unique<CFXJSE_Value>(info.GetIsolate(), info[1]);
-  if (ValueIsNull(info.GetIsolate(), pThis, argFirst.get()) &&
-      ValueIsNull(info.GetIsolate(), pThis, argSecond.get())) {
+  if (ValueIsNull(info.GetIsolate(), info[0]) &&
+      ValueIsNull(info.GetIsolate(), info[1])) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  double first = ValueToDouble(info.GetIsolate(), argFirst.get());
-  double second = ValueToDouble(info.GetIsolate(), argSecond.get());
+  const double first = ValueToDouble(info.GetIsolate(), info[0]);
+  const double second = ValueToDouble(info.GetIsolate(), info[1]);
   info.GetReturnValue().Set(first + second);
 }
 
@@ -5293,16 +5331,15 @@ void CFXJSE_FormCalcContext::minus_operator(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argFirst = GetSimpleValue(info, 0);
-  std::unique_ptr<CFXJSE_Value> argSecond = GetSimpleValue(info, 1);
-  if (argFirst->IsNull(info.GetIsolate()) &&
-      argSecond->IsNull(info.GetIsolate())) {
+  v8::Local<v8::Value> argFirst = GetSimpleValue(info, 0);
+  v8::Local<v8::Value> argSecond = GetSimpleValue(info, 1);
+  if (fxv8::IsNull(argFirst) && fxv8::IsNull(argSecond)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  double first = ValueToDouble(info.GetIsolate(), argFirst.get());
-  double second = ValueToDouble(info.GetIsolate(), argSecond.get());
+  double first = ValueToDouble(info.GetIsolate(), argFirst);
+  double second = ValueToDouble(info.GetIsolate(), argSecond);
   info.GetReturnValue().Set(first - second);
 }
 
@@ -5315,16 +5352,15 @@ void CFXJSE_FormCalcContext::multiple_operator(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argFirst = GetSimpleValue(info, 0);
-  std::unique_ptr<CFXJSE_Value> argSecond = GetSimpleValue(info, 1);
-  if (argFirst->IsNull(info.GetIsolate()) &&
-      argSecond->IsNull(info.GetIsolate())) {
+  v8::Local<v8::Value> argFirst = GetSimpleValue(info, 0);
+  v8::Local<v8::Value> argSecond = GetSimpleValue(info, 1);
+  if (fxv8::IsNull(argFirst) && fxv8::IsNull(argSecond)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  double first = ValueToDouble(info.GetIsolate(), argFirst.get());
-  double second = ValueToDouble(info.GetIsolate(), argSecond.get());
+  double first = ValueToDouble(info.GetIsolate(), argFirst);
+  double second = ValueToDouble(info.GetIsolate(), argSecond);
   info.GetReturnValue().Set(first * second);
 }
 
@@ -5338,21 +5374,20 @@ void CFXJSE_FormCalcContext::divide_operator(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argFirst = GetSimpleValue(info, 0);
-  std::unique_ptr<CFXJSE_Value> argSecond = GetSimpleValue(info, 1);
-  if (argFirst->IsNull(info.GetIsolate()) &&
-      argSecond->IsNull(info.GetIsolate())) {
+  v8::Local<v8::Value> argFirst = GetSimpleValue(info, 0);
+  v8::Local<v8::Value> argSecond = GetSimpleValue(info, 1);
+  if (fxv8::IsNull(argFirst) && fxv8::IsNull(argSecond)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  double second = ValueToDouble(info.GetIsolate(), argSecond.get());
+  double second = ValueToDouble(info.GetIsolate(), argSecond);
   if (second == 0.0) {
     pContext->ThrowDivideByZeroException();
     return;
   }
 
-  double first = ValueToDouble(info.GetIsolate(), argFirst.get());
+  double first = ValueToDouble(info.GetIsolate(), argFirst);
   info.GetReturnValue().Set(first / second);
 }
 
@@ -5365,13 +5400,12 @@ void CFXJSE_FormCalcContext::positive_operator(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  if (argOne->IsNull(info.GetIsolate())) {
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  if (fxv8::IsNull(argOne)) {
     info.GetReturnValue().SetNull();
     return;
   }
-  info.GetReturnValue().Set(0.0 +
-                            ValueToDouble(info.GetIsolate(), argOne.get()));
+  info.GetReturnValue().Set(0.0 + ValueToDouble(info.GetIsolate(), argOne));
 }
 
 // static
@@ -5383,13 +5417,12 @@ void CFXJSE_FormCalcContext::negative_operator(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  if (argOne->IsNull(info.GetIsolate())) {
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  if (fxv8::IsNull(argOne)) {
     info.GetReturnValue().SetNull();
     return;
   }
-  info.GetReturnValue().Set(0.0 -
-                            ValueToDouble(info.GetIsolate(), argOne.get()));
+  info.GetReturnValue().Set(0.0 - ValueToDouble(info.GetIsolate(), argOne));
 }
 
 // static
@@ -5401,13 +5434,13 @@ void CFXJSE_FormCalcContext::logical_not_operator(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  if (argOne->IsNull(info.GetIsolate())) {
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  if (fxv8::IsNull(argOne)) {
     info.GetReturnValue().SetNull();
     return;
   }
 
-  double first = ValueToDouble(info.GetIsolate(), argOne.get());
+  double first = ValueToDouble(info.GetIsolate(), argOne);
   info.GetReturnValue().Set((first == 0.0) ? 1 : 0);
 }
 
@@ -5435,8 +5468,8 @@ void CFXJSE_FormCalcContext::eval_translation(
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(info, 0);
-  ByteString bsArg = ValueToUTF8String(pThis, argOne.get());
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  ByteString bsArg = ValueToUTF8String(info.GetIsolate(), argOne);
   if (bsArg.IsEmpty()) {
     pContext->ThrowArgumentMismatchException();
     return;
@@ -5497,10 +5530,13 @@ void CFXJSE_FormCalcContext::get_fm_value(
     argOne->GetObjectPropertyByIdx(info.GetIsolate(), 1, propertyValue.get());
     argOne->GetObjectPropertyByIdx(info.GetIsolate(), 2, jsObjectValue.get());
     if (propertyValue->IsNull(info.GetIsolate())) {
-      auto pReturn = std::make_unique<CFXJSE_Value>();
-      GetObjectDefaultValue(info.GetIsolate(), jsObjectValue.get(),
-                            pReturn.get());
-      info.GetReturnValue().Set(pReturn->DirectGetValue());
+      if (!jsObjectValue->IsObject(info.GetIsolate())) {
+        info.GetReturnValue().Set(fxv8::NewUndefinedHelper(info.GetIsolate()));
+        return;
+      }
+      info.GetReturnValue().Set(GetObjectDefaultValue(
+          info.GetIsolate(),
+          jsObjectValue->GetValue(info.GetIsolate()).As<v8::Object>()));
       return;
     }
 
@@ -5514,9 +5550,9 @@ void CFXJSE_FormCalcContext::get_fm_value(
   }
 
   if (argOne->IsObject(info.GetIsolate())) {
-    auto pReturn = std::make_unique<CFXJSE_Value>();
-    GetObjectDefaultValue(info.GetIsolate(), argOne.get(), pReturn.get());
-    info.GetReturnValue().Set(pReturn->DirectGetValue());
+    info.GetReturnValue().Set(GetObjectDefaultValue(
+        info.GetIsolate(),
+        argOne->GetValue(info.GetIsolate()).As<v8::Object>()));
     return;
   }
 
@@ -5555,8 +5591,7 @@ void CFXJSE_FormCalcContext::fm_var_filter(
 
   auto argOne = std::make_unique<CFXJSE_Value>(info.GetIsolate(), info[0]);
   if (!argOne->IsArray(info.GetIsolate())) {
-    std::unique_ptr<CFXJSE_Value> simpleValue = GetSimpleValue(info, 0);
-    info.GetReturnValue().Set(simpleValue->DirectGetValue());
+    info.GetReturnValue().Set(GetSimpleValue(info, 0));
     return;
   }
 
@@ -5564,8 +5599,7 @@ void CFXJSE_FormCalcContext::fm_var_filter(
   argOne->GetObjectPropertyByIdx(info.GetIsolate(), 0, flagsValue.get());
   int32_t iFlags = flagsValue->ToInteger(info.GetIsolate());
   if (iFlags != 3 && iFlags != 4) {
-    std::unique_ptr<CFXJSE_Value> simpleValue = GetSimpleValue(info, 0);
-    info.GetReturnValue().Set(simpleValue->DirectGetValue());
+    info.GetReturnValue().Set(GetSimpleValue(info, 0));
     return;
   }
 
@@ -5711,8 +5745,7 @@ void CFXJSE_FormCalcContext::DotAccessorCommon(
   int32_t iIndexValue = 0;
   if (argc > 4) {
     bIsStar = false;
-    auto temp = std::make_unique<CFXJSE_Value>(info.GetIsolate(), info[4]);
-    iIndexValue = ValueToInteger(info.GetIsolate(), temp.get());
+    iIndexValue = ValueToInteger(info.GetIsolate(), info[4]);
   }
 
   const ByteString bsName =
