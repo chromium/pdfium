@@ -164,12 +164,14 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageFromBuffer(
   pProgressiveDecoder->LoadImageInfo(pImageFileRead, type, &dibAttr, false);
   switch (dibAttr.m_wDPIUnit) {
     case FXCODEC_RESUNIT_CENTIMETER:
-      dibAttr.m_nXDPI = (int32_t)(dibAttr.m_nXDPI * 2.54f);
-      dibAttr.m_nYDPI = (int32_t)(dibAttr.m_nYDPI * 2.54f);
+      dibAttr.m_nXDPI = static_cast<int32_t>(dibAttr.m_nXDPI * 2.54f);
+      dibAttr.m_nYDPI = static_cast<int32_t>(dibAttr.m_nYDPI * 2.54f);
       break;
     case FXCODEC_RESUNIT_METER:
-      dibAttr.m_nXDPI = (int32_t)(dibAttr.m_nXDPI / (float)100 * 2.54f);
-      dibAttr.m_nYDPI = (int32_t)(dibAttr.m_nYDPI / (float)100 * 2.54f);
+      dibAttr.m_nXDPI =
+          static_cast<int32_t>(dibAttr.m_nXDPI / (float)100 * 2.54f);
+      dibAttr.m_nYDPI =
+          static_cast<int32_t>(dibAttr.m_nYDPI / (float)100 * 2.54f);
       break;
     default:
       break;

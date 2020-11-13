@@ -315,7 +315,8 @@ bool ProgressiveDecoder::PngAskScanlineBuf(int line, uint8_t** pSrcBuf) {
   }
   if (line >= m_clipBox.top && line < m_clipBox.bottom) {
     double scale_y = static_cast<double>(m_sizeY) / m_clipBox.Height();
-    int32_t row = (int32_t)((line - m_clipBox.top) * scale_y) + m_startY;
+    int32_t row =
+        static_cast<int32_t>((line - m_clipBox.top) * scale_y) + m_startY;
     const uint8_t* src_scan = pDIBitmap->GetScanline(row);
     uint8_t* dest_scan = m_pDecodeBuf.get();
     *pSrcBuf = m_pDecodeBuf.get();
@@ -2176,19 +2177,21 @@ FXCODEC_STATUS ProgressiveDecoder::StartDecode(
   if (start_x < 0 || out_range_x > 0) {
     float scaleX = (float)m_clipBox.Width() / (float)size_x;
     if (start_x < 0) {
-      m_clipBox.left -= (int32_t)ceil((float)start_x * scaleX);
+      m_clipBox.left -= static_cast<int32_t>(ceil((float)start_x * scaleX));
     }
     if (out_range_x > 0) {
-      m_clipBox.right -= (int32_t)floor((float)out_range_x * scaleX);
+      m_clipBox.right -=
+          static_cast<int32_t>(floor((float)out_range_x * scaleX));
     }
   }
   if (start_y < 0 || out_range_y > 0) {
     float scaleY = (float)m_clipBox.Height() / (float)size_y;
     if (start_y < 0) {
-      m_clipBox.top -= (int32_t)ceil((float)start_y * scaleY);
+      m_clipBox.top -= static_cast<int32_t>(ceil((float)start_y * scaleY));
     }
     if (out_range_y > 0) {
-      m_clipBox.bottom -= (int32_t)floor((float)out_range_y * scaleY);
+      m_clipBox.bottom -=
+          static_cast<int32_t>(floor((float)out_range_y * scaleY));
     }
   }
   if (m_clipBox.IsEmpty()) {

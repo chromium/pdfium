@@ -169,7 +169,7 @@ void CBC_OneDimWriter::ShowDeviceChars(CFX_RenderDevice* device,
                                        float locX,
                                        float locY,
                                        int32_t barWidth) {
-  int32_t iFontSize = (int32_t)fabs(m_fFontSize);
+  int32_t iFontSize = static_cast<int32_t>(fabs(m_fFontSize));
   int32_t iTextHeight = iFontSize + 1;
   CFX_FloatRect rect((float)locX, (float)locY, (float)(locX + geWidth),
                      (float)(locY + iTextHeight));
@@ -207,7 +207,7 @@ bool CBC_OneDimWriter::ShowChars(WideStringView contents,
              m_locTextLoc == BC_TEXT_LOC_BELOW) {
     geWidth = (float)barWidth;
   }
-  int32_t iFontSize = (int32_t)fabs(m_fFontSize);
+  int32_t iFontSize = static_cast<int32_t>(fabs(m_fFontSize));
   int32_t iTextHeight = iFontSize + 1;
   CalcTextInfo(str, charpos.data(), m_pFont.Get(), geWidth, iFontSize,
                charsLen);
@@ -218,7 +218,7 @@ bool CBC_OneDimWriter::ShowChars(WideStringView contents,
   int32_t locY = 0;
   switch (m_locTextLoc) {
     case BC_TEXT_LOC_ABOVEEMBED:
-      locX = (int32_t)(barWidth - charsLen) / 2;
+      locX = static_cast<int32_t>(barWidth - charsLen) / 2;
       locY = 0;
       geWidth = charsLen;
       break;
@@ -228,7 +228,7 @@ bool CBC_OneDimWriter::ShowChars(WideStringView contents,
       geWidth = (float)barWidth;
       break;
     case BC_TEXT_LOC_BELOWEMBED:
-      locX = (int32_t)(barWidth - charsLen) / 2;
+      locX = static_cast<int32_t>(barWidth - charsLen) / 2;
       locY = m_Height - iTextHeight;
       geWidth = charsLen;
       break;

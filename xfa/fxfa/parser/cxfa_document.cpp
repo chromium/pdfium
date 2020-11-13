@@ -1475,7 +1475,8 @@ XFA_VERSION CXFA_Document::RecognizeXFAVersionNumber(
                      .Substr(nDotPos.value() + 1,
                              wsTemplateNS.GetLength() - nDotPos.value() - 2)
                      .c_str());
-  XFA_VERSION eVersion = (XFA_VERSION)((int32_t)iMajor * 100 + iMinor);
+  XFA_VERSION eVersion =
+      static_cast<XFA_VERSION>(static_cast<int32_t>(iMajor) * 100 + iMinor);
   if (eVersion < XFA_VERSION_MIN || eVersion > XFA_VERSION_MAX)
     return XFA_VERSION_UNKNOWN;
 

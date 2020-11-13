@@ -3660,7 +3660,7 @@ Optional<float> CXFA_Node::FindSplitPos(CXFA_FFDocView* pDocView,
     return pdfium::nullopt;
 
   for (size_t i = 0; i < szBlockIndex * 3; i += 3) {
-    iLinesCount -= (int32_t)(*pFieldArray)[i + 1];
+    iLinesCount -= static_cast<int32_t>((*pFieldArray)[i + 1]);
     fHeight -= (*pFieldArray)[i + 2];
   }
   if (iLinesCount == 0)
@@ -3758,8 +3758,8 @@ Optional<float> CXFA_Node::FindSplitPos(CXFA_FFDocView* pDocView,
 
   float fTextNum =
       fCalcHeight + kXFAWidgetPrecision - fCapReserve - fStartOffset;
-  int32_t iLineNum =
-      (int32_t)((fTextNum + (fLineHeight - fFontSize)) / fLineHeight);
+  int32_t iLineNum = static_cast<int32_t>(
+      (fTextNum + (fLineHeight - fFontSize)) / fLineHeight);
   if (iLineNum >= iLinesCount) {
     if (fCalcHeight - fStartOffset - fTextHeight >= fFontSize) {
       if (szFieldSplitCount / 3 == (szBlockIndex + 1)) {
@@ -3776,7 +3776,7 @@ Optional<float> CXFA_Node::FindSplitPos(CXFA_FFDocView* pDocView,
       if (iLineNum == 0)
         return 0.0f;
     } else {
-      iLineNum = (int32_t)(fTextNum / fLineHeight);
+      iLineNum = static_cast<int32_t>(fTextNum / fLineHeight);
     }
   }
   if (iLineNum <= 0)

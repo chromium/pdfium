@@ -495,9 +495,9 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
   CPDF_Array* pColor = m_pAnnotDict->GetArrayFor(pdfium::annotation::kC);
   uint32_t argb = 0xff000000;
   if (pColor) {
-    int R = (int32_t)(pColor->GetNumberAt(0) * 255);
-    int G = (int32_t)(pColor->GetNumberAt(1) * 255);
-    int B = (int32_t)(pColor->GetNumberAt(2) * 255);
+    int R = static_cast<int32_t>(pColor->GetNumberAt(0) * 255);
+    int G = static_cast<int32_t>(pColor->GetNumberAt(1) * 255);
+    int B = static_cast<int32_t>(pColor->GetNumberAt(2) * 255);
     argb = ArgbEncode(0xff, R, G, B);
   }
   CFX_GraphStateData graph_state;

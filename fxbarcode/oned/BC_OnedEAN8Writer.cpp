@@ -144,7 +144,7 @@ bool CBC_OnedEAN8Writer::ShowChars(WideStringView contents,
   int32_t strWidth = 7 * multiple * 4;
   float blank = 0.0;
 
-  int32_t iFontSize = (int32_t)fabs(m_fFontSize);
+  int32_t iFontSize = static_cast<int32_t>(fabs(m_fFontSize));
   int32_t iTextHeight = iFontSize + 1;
 
   CFX_Matrix matr(m_outputHScale, 0.0, 0.0, 1.0, 0.0, 0.0);
@@ -160,7 +160,7 @@ bool CBC_OnedEAN8Writer::ShowChars(WideStringView contents,
   matr1.Concat(*matrix);
   re = matr1.TransformRect(rect1).GetOuterRect();
   device->FillRect(re, kBackgroundColor);
-  strWidth = (int32_t)(strWidth * m_outputHScale);
+  strWidth = static_cast<int32_t>(strWidth * m_outputHScale);
 
   CalcTextInfo(tempStr, charpos.data(), m_pFont.Get(), (float)strWidth,
                iFontSize, blank);

@@ -825,8 +825,8 @@ bool CPDF_SyntaxParser::IsWholeWord(FX_FILESIZE startpos,
                      !PDFCharIsWhitespace(tag[taglen - 1]);
 
   uint8_t ch;
-  if (bCheckRight && startpos + (int32_t)taglen <= limit &&
-      GetCharAt(startpos + (int32_t)taglen, ch)) {
+  if (bCheckRight && startpos + static_cast<int32_t>(taglen) <= limit &&
+      GetCharAt(startpos + static_cast<int32_t>(taglen), ch)) {
     if (PDFCharIsNumeric(ch) || PDFCharIsOther(ch) ||
         (checkKeyword && PDFCharIsDelimiter(ch))) {
       return false;

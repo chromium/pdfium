@@ -6,8 +6,10 @@
 
 #include "fxjs/xfa/cfxjse_formcalc_context.h"
 
+#include <stdlib.h>
+
 #include <algorithm>
-#include <cstdlib>
+#include <cctype>
 #include <utility>
 
 #include "core/fxcrt/cfx_widetextbuf.h"
@@ -819,7 +821,7 @@ int32_t DateString2Num(ByteStringView bsDate) {
     ++dDays;
     ++i;
   }
-  return (int32_t)dDays;
+  return static_cast<int32_t>(dDays);
 }
 
 void GetLocalTimeZone(int32_t* pHour, int32_t* pMin, int32_t* pSec) {
@@ -2106,8 +2108,8 @@ void CFXJSE_FormCalcContext::Mod(
     return;
   }
 
-  info.GetReturnValue().Set(dDividend -
-                            dDivisor * (int32_t)(dDividend / dDivisor));
+  info.GetReturnValue().Set(
+      dDividend - dDivisor * static_cast<int32_t>(dDividend / dDivisor));
 }
 
 // static
@@ -2332,7 +2334,7 @@ void CFXJSE_FormCalcContext::DateFmt(
       return;
     }
 
-    iStyle = (int32_t)ValueToFloat(info.GetIsolate(), infotyle);
+    iStyle = static_cast<int32_t>(ValueToFloat(info.GetIsolate(), infotyle));
     if (iStyle < 0 || iStyle > 4)
       iStyle = 0;
   }
@@ -2441,7 +2443,7 @@ void CFXJSE_FormCalcContext::LocalDateFmt(
       info.GetReturnValue().SetNull();
       return;
     }
-    iStyle = (int32_t)ValueToFloat(info.GetIsolate(), infotyle);
+    iStyle = static_cast<int32_t>(ValueToFloat(info.GetIsolate(), infotyle));
     if (iStyle > 4 || iStyle < 0)
       iStyle = 0;
   }
@@ -2479,7 +2481,7 @@ void CFXJSE_FormCalcContext::LocalTimeFmt(
       info.GetReturnValue().SetNull();
       return;
     }
-    iStyle = (int32_t)ValueToFloat(info.GetIsolate(), infotyle);
+    iStyle = static_cast<int32_t>(ValueToFloat(info.GetIsolate(), infotyle));
     if (iStyle > 4 || iStyle < 0)
       iStyle = 0;
   }
@@ -2515,7 +2517,8 @@ void CFXJSE_FormCalcContext::Num2Date(
     info.GetReturnValue().SetNull();
     return;
   }
-  int32_t dDate = (int32_t)ValueToFloat(info.GetIsolate(), dateValue);
+  int32_t dDate =
+      static_cast<int32_t>(ValueToFloat(info.GetIsolate(), dateValue));
   if (dDate < 1) {
     info.GetReturnValue().SetNull();
     return;
@@ -2656,7 +2659,8 @@ void CFXJSE_FormCalcContext::Num2GMTime(
     info.GetReturnValue().SetNull();
     return;
   }
-  int32_t iTime = (int32_t)ValueToFloat(info.GetIsolate(), timeValue);
+  int32_t iTime =
+      static_cast<int32_t>(ValueToFloat(info.GetIsolate(), timeValue));
   if (abs(iTime) < 1.0) {
     info.GetReturnValue().SetNull();
     return;
@@ -2854,7 +2858,7 @@ void CFXJSE_FormCalcContext::TimeFmt(
       info.GetReturnValue().SetNull();
       return;
     }
-    iStyle = (int32_t)ValueToFloat(info.GetIsolate(), infotyle);
+    iStyle = static_cast<int32_t>(ValueToFloat(info.GetIsolate(), infotyle));
     if (iStyle > 4 || iStyle < 0)
       iStyle = 0;
   }
@@ -3177,11 +3181,12 @@ void CFXJSE_FormCalcContext::IPmt(
   }
 
   float nRateOfMonth = nRate / 12;
-  int32_t iNums =
-      (int32_t)((log10((float)(nPayment / nPrincipalAmount)) -
-                 log10((float)(nPayment / nPrincipalAmount - nRateOfMonth))) /
-                log10((float)(1 + nRateOfMonth)));
-  int32_t iEnd = std::min((int32_t)(nFirstMonth + nNumberOfMonths - 1), iNums);
+  int32_t iNums = static_cast<int32_t>(
+      (log10((float)(nPayment / nPrincipalAmount)) -
+       log10((float)(nPayment / nPrincipalAmount - nRateOfMonth))) /
+      log10((float)(1 + nRateOfMonth)));
+  int32_t iEnd =
+      std::min(static_cast<int32_t>(nFirstMonth + nNumberOfMonths - 1), iNums);
 
   if (nPayment < nPrincipalAmount * nRateOfMonth) {
     info.GetReturnValue().Set(0);
@@ -3315,11 +3320,12 @@ void CFXJSE_FormCalcContext::PPmt(
   }
 
   float nRateOfMonth = nRate / 12;
-  int32_t iNums =
-      (int32_t)((log10((float)(nPayment / nPrincipalAmount)) -
-                 log10((float)(nPayment / nPrincipalAmount - nRateOfMonth))) /
-                log10((float)(1 + nRateOfMonth)));
-  int32_t iEnd = std::min((int32_t)(nFirstMonth + nNumberOfMonths - 1), iNums);
+  int32_t iNums = static_cast<int32_t>(
+      (log10((float)(nPayment / nPrincipalAmount)) -
+       log10((float)(nPayment / nPrincipalAmount - nRateOfMonth))) /
+      log10((float)(1 + nRateOfMonth)));
+  int32_t iEnd =
+      std::min(static_cast<int32_t>(nFirstMonth + nNumberOfMonths - 1), iNums);
   if (nPayment < nPrincipalAmount * nRateOfMonth) {
     pContext->ThrowArgumentMismatchException();
     return;
@@ -3455,7 +3461,8 @@ void CFXJSE_FormCalcContext::Choose(
     return;
   }
 
-  int32_t iIndex = (int32_t)ValueToFloat(info.GetIsolate(), info[0]);
+  int32_t iIndex =
+      static_cast<int32_t>(ValueToFloat(info.GetIsolate(), info[0]));
   if (iIndex < 1) {
     info.GetReturnValue().SetEmptyString();
     return;

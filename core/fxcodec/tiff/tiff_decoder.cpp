@@ -14,6 +14,7 @@
 #include "core/fxcodec/fx_codec_def.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
@@ -263,13 +264,13 @@ bool CTiffContext::LoadFrameInfo(int32_t frame,
                                pAttribute)) {
     void* val = pAttribute->m_Exif[TIFFTAG_XRESOLUTION];
     float fDpi = val ? *reinterpret_cast<float*>(val) : 0;
-    pAttribute->m_nXDPI = (int32_t)(fDpi + 0.5f);
+    pAttribute->m_nXDPI = static_cast<int32_t>(fDpi + 0.5f);
   }
   if (Tiff_Exif_GetInfo<float>(m_tif_ctx.get(), TIFFTAG_YRESOLUTION,
                                pAttribute)) {
     void* val = pAttribute->m_Exif[TIFFTAG_YRESOLUTION];
     float fDpi = val ? *reinterpret_cast<float*>(val) : 0;
-    pAttribute->m_nYDPI = (int32_t)(fDpi + 0.5f);
+    pAttribute->m_nYDPI = static_cast<int32_t>(fDpi + 0.5f);
   }
   Tiff_Exif_GetStringInfo(m_tif_ctx.get(), TIFFTAG_IMAGEDESCRIPTION,
                           pAttribute);
@@ -358,7 +359,7 @@ bool CTiffContext::Decode1bppRGB(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
     return false;
   }
   SetPalette(pDIBitmap, bps);
-  int32_t size = (int32_t)TIFFScanlineSize(m_tif_ctx.get());
+  int32_t size = static_cast<int32_t>(TIFFScanlineSize(m_tif_ctx.get()));
   uint8_t* buf = (uint8_t*)_TIFFmalloc(size);
   if (!buf) {
     TIFFError(TIFFFileName(m_tif_ctx.get()), "No space for scanline buffer");
@@ -386,7 +387,7 @@ bool CTiffContext::Decode8bppRGB(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
     return false;
   }
   SetPalette(pDIBitmap, bps);
-  int32_t size = (int32_t)TIFFScanlineSize(m_tif_ctx.get());
+  int32_t size = static_cast<int32_t>(TIFFScanlineSize(m_tif_ctx.get()));
   uint8_t* buf = (uint8_t*)_TIFFmalloc(size);
   if (!buf) {
     TIFFError(TIFFFileName(m_tif_ctx.get()), "No space for scanline buffer");
@@ -420,7 +421,7 @@ bool CTiffContext::Decode24bppRGB(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
   if (pDIBitmap->GetBPP() != 24 || !IsSupport(pDIBitmap))
     return false;
 
-  int32_t size = (int32_t)TIFFScanlineSize(m_tif_ctx.get());
+  int32_t size = static_cast<int32_t>(TIFFScanlineSize(m_tif_ctx.get()));
   uint8_t* buf = (uint8_t*)_TIFFmalloc(size);
   if (!buf) {
     TIFFError(TIFFFileName(m_tif_ctx.get()), "No space for scanline buffer");

@@ -136,7 +136,7 @@ void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
       float scale =
           (((pos.x - start_x) * x_span) + ((pos.y - start_y) * y_span)) /
           axis_len_square;
-      int index = (int32_t)(scale * (kShadingSteps - 1));
+      int index = static_cast<int32_t>(scale * (kShadingSteps - 1));
       if (index < 0) {
         if (!bStartExtend)
           continue;
@@ -307,8 +307,9 @@ void DrawFuncShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
       float G = 0.0f;
       float B = 0.0f;
       pCS->GetRGB(result_array, &R, &G, &B);
-      dib_buf[column] = ArgbEncode(alpha, (int32_t)(R * 255),
-                                   (int32_t)(G * 255), (int32_t)(B * 255));
+      dib_buf[column] = ArgbEncode(alpha, static_cast<int32_t>(R * 255),
+                                   static_cast<int32_t>(G * 255),
+                                   static_cast<int32_t>(B * 255));
     }
   }
 }
@@ -825,9 +826,9 @@ void DrawCoonPatchMeshes(
       float b;
       std::tie(r, g, b) = stream.ReadColor();
 
-      patch.patch_colors[i].comp[0] = (int32_t)(r * 255);
-      patch.patch_colors[i].comp[1] = (int32_t)(g * 255);
-      patch.patch_colors[i].comp[2] = (int32_t)(b * 255);
+      patch.patch_colors[i].comp[0] = static_cast<int32_t>(r * 255);
+      patch.patch_colors[i].comp[1] = static_cast<int32_t>(g * 255);
+      patch.patch_colors[i].comp[2] = static_cast<int32_t>(b * 255);
     }
     CFX_FloatRect bbox = CFX_FloatRect::GetBBox(coords, point_count);
     if (bbox.right <= 0 || bbox.left >= (float)pBitmap->GetWidth() ||
@@ -875,8 +876,9 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
       float G = 0.0f;
       float B = 0.0f;
       pColorSpace->GetRGB(comps, &R, &G, &B);
-      background = ArgbEncode(255, (int32_t)(R * 255), (int32_t)(G * 255),
-                              (int32_t)(B * 255));
+      background = ArgbEncode(255, static_cast<int32_t>(R * 255),
+                              static_cast<int32_t>(G * 255),
+                              static_cast<int32_t>(B * 255));
     }
   }
   FX_RECT clip_rect_bbox = clip_rect;

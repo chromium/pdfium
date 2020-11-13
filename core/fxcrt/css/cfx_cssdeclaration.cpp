@@ -18,6 +18,7 @@
 #include "core/fxcrt/css/cfx_cssvaluelist.h"
 #include "core/fxcrt/css/cfx_cssvaluelistparser.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_system.h"
 #include "third_party/base/notreached.h"
 
 namespace {
@@ -576,7 +577,7 @@ void CFX_CSSDeclaration::ParseFontProperty(const wchar_t* pszValue,
         if (!ParseCSSNumber(pszValue, iValueLen, &fValue, &eNumType))
           break;
         if (eType == CFX_CSSPrimitiveType::Number) {
-          switch ((int32_t)fValue) {
+          switch (static_cast<int32_t>(fValue)) {
             case 100:
             case 200:
             case 300:

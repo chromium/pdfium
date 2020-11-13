@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "fxjs/gc/gced_tree_node_mixin.h"

@@ -12,6 +12,7 @@
 
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/string_pool_template.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxcrt/weak_ptr.h"

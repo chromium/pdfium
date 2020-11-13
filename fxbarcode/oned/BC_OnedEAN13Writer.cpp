@@ -140,7 +140,7 @@ bool CBC_OnedEAN13Writer::ShowChars(WideStringView contents,
   ByteString str = FX_UTF8Encode(contents);
   size_t length = str.GetLength();
   std::vector<TextCharPos> charpos(length);
-  int32_t iFontSize = (int32_t)fabs(m_fFontSize);
+  int32_t iFontSize = static_cast<int32_t>(fabs(m_fFontSize));
   int32_t iTextHeight = iFontSize + 1;
   ByteString tempStr = str.Substr(1, 6);
   int32_t strWidth = multiple * 42;
@@ -168,7 +168,7 @@ bool CBC_OnedEAN13Writer::ShowChars(WideStringView contents,
 
   float blank = 0.0;
   length = tempStr.GetLength();
-  strWidth = (int32_t)(strWidth * m_outputHScale);
+  strWidth = static_cast<int32_t>(strWidth * m_outputHScale);
 
   CalcTextInfo(tempStr, &charpos[1], m_pFont.Get(), (float)strWidth, iFontSize,
                blank);
@@ -200,7 +200,7 @@ bool CBC_OnedEAN13Writer::ShowChars(WideStringView contents,
   tempStr = str.First(1);
   length = tempStr.GetLength();
   strWidth = multiple * 7;
-  strWidth = (int32_t)(strWidth * m_outputHScale);
+  strWidth = static_cast<int32_t>(strWidth * m_outputHScale);
 
   CalcTextInfo(tempStr, charpos.data(), m_pFont.Get(), (float)strWidth,
                iFontSize, blank);

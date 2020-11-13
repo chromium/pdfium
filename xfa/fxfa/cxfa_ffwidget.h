@@ -9,6 +9,7 @@
 
 #include "core/fpdfdoc/cpdf_formfield.h"
 #include "core/fxcodec/fx_codec_def.h"
+#include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "fxjs/gc/heap.h"
 #include "v8/include/cppgc/garbage-collected.h"

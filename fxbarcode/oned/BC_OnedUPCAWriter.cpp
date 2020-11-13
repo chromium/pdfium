@@ -119,7 +119,7 @@ bool CBC_OnedUPCAWriter::ShowChars(WideStringView contents,
   float blank = 0.0;
 
   length = tempStr.GetLength();
-  int32_t iFontSize = (int32_t)fabs(m_fFontSize);
+  int32_t iFontSize = static_cast<int32_t>(fabs(m_fFontSize));
   int32_t iTextHeight = iFontSize + 1;
 
   CFX_Matrix matr(m_outputHScale, 0.0, 0.0, 1.0, 0.0, 0.0);

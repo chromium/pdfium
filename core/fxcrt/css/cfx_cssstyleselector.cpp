@@ -219,7 +219,8 @@ void CFX_CSSStyleSelector::ApplyProperty(CFX_CSSProperty eProperty,
               ToFontWeight(pValue.As<CFX_CSSEnumValue>()->Value());
         } else if (eType == CFX_CSSPrimitiveType::Number) {
           int32_t iValue =
-              (int32_t)pValue.As<CFX_CSSNumberValue>()->Value() / 100;
+              static_cast<int32_t>(pValue.As<CFX_CSSNumberValue>()->Value()) /
+              100;
           if (iValue >= 1 && iValue <= 9) {
             pComputedStyle->m_InheritedData.m_wFontWeight = iValue * 100;
           }
