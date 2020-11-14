@@ -277,14 +277,22 @@ class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
   v8::Isolate* GetIsolate() const { return m_pIsolate.Get(); }
   CXFA_Document* GetDocument() const { return m_pDocument.Get(); }
 
-  bool ApplyToExpansion(std::function<void(v8::Isolate*, CFXJSE_Value*)> fn,
-                        const v8::FunctionCallbackInfo<v8::Value>& info,
-                        bool bStrict);
-
  private:
   static void DotAccessorCommon(CFXJSE_HostObject* pThis,
                                 const v8::FunctionCallbackInfo<v8::Value>& info,
                                 bool bDotAccessor);
+
+  bool ApplyToExpansion(std::function<void(v8::Isolate*, CFXJSE_Value*)> fn,
+                        const v8::FunctionCallbackInfo<v8::Value>& info,
+                        bool bStrict);
+
+  bool ApplyToArray(v8::Isolate* pIsolate,
+                    std::function<void(v8::Isolate*, CFXJSE_Value*)> fn,
+                    CFXJSE_Value* pArray);
+
+  void ApplyToObject(v8::Isolate* pIsolate,
+                     std::function<void(v8::Isolate*, CFXJSE_Value*)> fn,
+                     CFXJSE_Value* pObject);
 
   void ThrowArgumentMismatchException() const;
   void ThrowNoDefaultPropertyException(ByteStringView name) const;
