@@ -7,6 +7,7 @@
 #ifndef FXJS_XFA_CFXJSE_FORMCALC_CONTEXT_H_
 #define FXJS_XFA_CFXJSE_FORMCALC_CONTEXT_H_
 
+#include <functional>
 #include <memory>
 #include <vector>
 
@@ -276,18 +277,22 @@ class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
   v8::Isolate* GetIsolate() const { return m_pIsolate.Get(); }
   CXFA_Document* GetDocument() const { return m_pDocument.Get(); }
 
+  bool ApplyToExpansion(std::function<void(v8::Isolate*, CFXJSE_Value*)> fn,
+                        const v8::FunctionCallbackInfo<v8::Value>& info,
+                        bool bStrict);
+
  private:
   static void DotAccessorCommon(CFXJSE_HostObject* pThis,
                                 const v8::FunctionCallbackInfo<v8::Value>& info,
                                 bool bDotAccessor);
 
+  void ThrowArgumentMismatchException() const;
   void ThrowNoDefaultPropertyException(ByteStringView name) const;
   void ThrowCompilerErrorException() const;
   void ThrowDivideByZeroException() const;
   void ThrowServerDeniedException() const;
   void ThrowPropertyNotInObjectException(const WideString& name,
                                          const WideString& exp) const;
-  void ThrowArgumentMismatchException() const;
   void ThrowParamCountMismatchException(const WideString& method) const;
   void ThrowException(const WideString& str) const;
 

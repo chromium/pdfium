@@ -1731,73 +1731,19 @@ void CFXJSE_FormCalcContext::Abs(
 void CFXJSE_FormCalcContext::Avg(
     CFXJSE_HostObject* pThis,
     const v8::FunctionCallbackInfo<v8::Value>& info) {
-  int32_t argc = info.Length();
-  if (argc < 1) {
-    info.GetReturnValue().SetNull();
-    return;
-  }
-
-  v8::Isolate* pIsolate = ToFormCalcContext(pThis)->GetIsolate();
   uint32_t uCount = 0;
   double dSum = 0.0;
-  for (int32_t i = 0; i < argc; i++) {
-    auto argValue = std::make_unique<CFXJSE_Value>(info.GetIsolate(), info[i]);
-    if (argValue->IsNull(pIsolate))
-      continue;
+  auto fn = [&uCount, &dSum](v8::Isolate* pIsolate, CFXJSE_Value* pValue) {
+    dSum += ValueToDouble(pIsolate, pValue->GetValue(pIsolate));
+    uCount++;
+  };
+  if (!ToFormCalcContext(pThis)->ApplyToExpansion(fn, info, /*bStrict=*/false))
+    return;
 
-    if (!argValue->IsArray(pIsolate)) {
-      dSum += ValueToDouble(pIsolate, argValue->GetValue(pIsolate));
-      uCount++;
-      continue;
-    }
-
-    auto lengthValue = std::make_unique<CFXJSE_Value>();
-    argValue->GetObjectProperty(pIsolate, "length", lengthValue.get());
-    int32_t iLength = lengthValue->ToInteger(pIsolate);
-
-    if (iLength > 2) {
-      auto propertyValue = std::make_unique<CFXJSE_Value>();
-      argValue->GetObjectPropertyByIdx(pIsolate, 1, propertyValue.get());
-
-      auto jsObjectValue = std::make_unique<CFXJSE_Value>();
-      if (propertyValue->IsNull(pIsolate)) {
-        for (int32_t j = 2; j < iLength; j++) {
-          argValue->GetObjectPropertyByIdx(pIsolate, j, jsObjectValue.get());
-          if (!jsObjectValue->IsObject(pIsolate))
-            continue;
-
-          auto defaultPropValue = std::make_unique<CFXJSE_Value>(
-              pIsolate,
-              GetObjectDefaultValue(
-                  pIsolate,
-                  jsObjectValue->GetValue(pIsolate).As<v8::Object>()));
-          if (defaultPropValue->IsNull(pIsolate))
-            continue;
-
-          dSum += ValueToDouble(pIsolate, defaultPropValue->GetValue(pIsolate));
-          uCount++;
-        }
-      } else {
-        for (int32_t j = 2; j < iLength; j++) {
-          argValue->GetObjectPropertyByIdx(pIsolate, j, jsObjectValue.get());
-          auto newPropertyValue = std::make_unique<CFXJSE_Value>();
-          jsObjectValue->GetObjectProperty(
-              pIsolate, propertyValue->ToString(pIsolate).AsStringView(),
-              newPropertyValue.get());
-          if (newPropertyValue->IsNull(pIsolate))
-            continue;
-
-          dSum += ValueToDouble(pIsolate, newPropertyValue->GetValue(pIsolate));
-          uCount++;
-        }
-      }
-    }
-  }
   if (uCount == 0) {
     info.GetReturnValue().SetNull();
     return;
   }
-
   info.GetReturnValue().Set(dSum / uCount);
 }
 
@@ -1823,63 +1769,13 @@ void CFXJSE_FormCalcContext::Ceil(
 void CFXJSE_FormCalcContext::Count(
     CFXJSE_HostObject* pThis,
     const v8::FunctionCallbackInfo<v8::Value>& info) {
-  CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
-  v8::Isolate* pIsolate = pContext->GetIsolate();
-  int32_t iCount = 0;
-  for (int32_t i = 0; i < info.Length(); i++) {
-    auto argValue = std::make_unique<CFXJSE_Value>(info.GetIsolate(), info[i]);
-    if (argValue->IsNull(pIsolate))
-      continue;
+  uint32_t iCount = 0;
+  auto fn = [&iCount](v8::Isolate* pIsolate, CFXJSE_Value* pvalue) {
+    ++iCount;
+  };
+  if (!ToFormCalcContext(pThis)->ApplyToExpansion(fn, info, /*bStrict=*/true))
+    return;
 
-    if (argValue->IsArray(pIsolate)) {
-      auto lengthValue = std::make_unique<CFXJSE_Value>();
-      argValue->GetObjectProperty(pIsolate, "length", lengthValue.get());
-
-      int32_t iLength = lengthValue->ToInteger(pIsolate);
-      if (iLength <= 2) {
-        pContext->ThrowArgumentMismatchException();
-        return;
-      }
-
-      auto propertyValue = std::make_unique<CFXJSE_Value>();
-      auto jsObjectValue = std::make_unique<CFXJSE_Value>();
-      auto newPropertyValue = std::make_unique<CFXJSE_Value>();
-      argValue->GetObjectPropertyByIdx(pIsolate, 1, propertyValue.get());
-      argValue->GetObjectPropertyByIdx(pIsolate, 2, jsObjectValue.get());
-      if (propertyValue->IsNull(pIsolate)) {
-        for (int32_t j = 2; j < iLength; j++) {
-          argValue->GetObjectPropertyByIdx(pIsolate, j, jsObjectValue.get());
-          if (!jsObjectValue->IsObject(pIsolate))
-            continue;
-
-          newPropertyValue->ForceSetValue(
-              pIsolate,
-              GetObjectDefaultValue(
-                  pIsolate,
-                  jsObjectValue->GetValue(pIsolate).As<v8::Object>()));
-          if (!newPropertyValue->IsNull(pIsolate))
-            iCount++;
-        }
-      } else {
-        for (int32_t j = 2; j < iLength; j++) {
-          argValue->GetObjectPropertyByIdx(pIsolate, j, jsObjectValue.get());
-          jsObjectValue->GetObjectProperty(
-              pIsolate, propertyValue->ToString(pIsolate).AsStringView(),
-              newPropertyValue.get());
-          iCount += newPropertyValue->IsNull(pIsolate) ? 0 : 1;
-        }
-      }
-    } else if (argValue->IsObject(pIsolate)) {
-      auto newPropertyValue = std::make_unique<CFXJSE_Value>(
-          pIsolate,
-          GetObjectDefaultValue(pIsolate,
-                                argValue->GetValue(pIsolate).As<v8::Object>()));
-      if (!newPropertyValue->IsNull(pIsolate))
-        iCount++;
-    } else {
-      iCount++;
-    }
-  }
   info.GetReturnValue().Set(iCount);
 }
 
@@ -1905,82 +1801,16 @@ void CFXJSE_FormCalcContext::Floor(
 void CFXJSE_FormCalcContext::Max(
     CFXJSE_HostObject* pThis,
     const v8::FunctionCallbackInfo<v8::Value>& info) {
-  CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
-  v8::Isolate* pIsolate = pContext->GetIsolate();
   uint32_t uCount = 0;
   double dMaxValue = 0.0;
-  for (int32_t i = 0; i < info.Length(); i++) {
-    auto argValue = std::make_unique<CFXJSE_Value>(info.GetIsolate(), info[i]);
-    if (argValue->IsNull(info.GetIsolate()))
-      continue;
+  auto fn = [&uCount, &dMaxValue](v8::Isolate* pIsolate, CFXJSE_Value* pValue) {
+    ++uCount;
+    double dValue = ValueToDouble(pIsolate, pValue->GetValue(pIsolate));
+    dMaxValue = uCount == 1 ? dValue : std::max(dMaxValue, dValue);
+  };
+  if (!ToFormCalcContext(pThis)->ApplyToExpansion(fn, info, /*bStrict=*/true))
+    return;
 
-    if (argValue->IsArray(info.GetIsolate())) {
-      auto lengthValue = std::make_unique<CFXJSE_Value>();
-      argValue->GetObjectProperty(info.GetIsolate(), "length",
-                                  lengthValue.get());
-      int32_t iLength = lengthValue->ToInteger(info.GetIsolate());
-      if (iLength <= 2) {
-        pContext->ThrowArgumentMismatchException();
-        return;
-      }
-
-      auto propertyValue = std::make_unique<CFXJSE_Value>();
-      auto jsObjectValue = std::make_unique<CFXJSE_Value>();
-      auto newPropertyValue = std::make_unique<CFXJSE_Value>();
-      argValue->GetObjectPropertyByIdx(pIsolate, 1, propertyValue.get());
-      argValue->GetObjectPropertyByIdx(pIsolate, 2, jsObjectValue.get());
-      if (propertyValue->IsNull(pIsolate)) {
-        for (int32_t j = 2; j < iLength; j++) {
-          argValue->GetObjectPropertyByIdx(pIsolate, j, jsObjectValue.get());
-          if (!jsObjectValue->IsObject(pIsolate))
-            continue;
-
-          newPropertyValue->ForceSetValue(
-              pIsolate,
-              GetObjectDefaultValue(
-                  pIsolate,
-                  jsObjectValue->GetValue(pIsolate).As<v8::Object>()));
-          if (newPropertyValue->IsNull(pIsolate))
-            continue;
-
-          uCount++;
-          double dValue =
-              ValueToDouble(pIsolate, newPropertyValue->GetValue(pIsolate));
-          dMaxValue = (uCount == 1) ? dValue : std::max(dMaxValue, dValue);
-        }
-      } else {
-        for (int32_t j = 2; j < iLength; j++) {
-          argValue->GetObjectPropertyByIdx(pIsolate, j, jsObjectValue.get());
-          jsObjectValue->GetObjectProperty(
-              pIsolate, propertyValue->ToString(pIsolate).AsStringView(),
-              newPropertyValue.get());
-          if (newPropertyValue->IsNull(pIsolate))
-            continue;
-
-          uCount++;
-          double dValue =
-              ValueToDouble(pIsolate, newPropertyValue->GetValue(pIsolate));
-          dMaxValue = (uCount == 1) ? dValue : std::max(dMaxValue, dValue);
-        }
-      }
-    } else if (argValue->IsObject(pIsolate)) {
-      auto newPropertyValue = std::make_unique<CFXJSE_Value>(
-          pIsolate,
-          GetObjectDefaultValue(pIsolate,
-                                argValue->GetValue(pIsolate).As<v8::Object>()));
-      if (newPropertyValue->IsNull(pIsolate))
-        continue;
-
-      uCount++;
-      double dValue =
-          ValueToDouble(pIsolate, newPropertyValue->GetValue(pIsolate));
-      dMaxValue = (uCount == 1) ? dValue : std::max(dMaxValue, dValue);
-    } else {
-      uCount++;
-      double dValue = ValueToDouble(pIsolate, argValue->GetValue(pIsolate));
-      dMaxValue = (uCount == 1) ? dValue : std::max(dMaxValue, dValue);
-    }
-  }
   if (uCount == 0) {
     info.GetReturnValue().SetNull();
     return;
@@ -1992,86 +1822,20 @@ void CFXJSE_FormCalcContext::Max(
 void CFXJSE_FormCalcContext::Min(
     CFXJSE_HostObject* pThis,
     const v8::FunctionCallbackInfo<v8::Value>& info) {
-  CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
-  v8::Isolate* pIsolate = pContext->GetIsolate();
   uint32_t uCount = 0;
   double dMinValue = 0.0;
-  for (int32_t i = 0; i < info.Length(); i++) {
-    auto argValue = std::make_unique<CFXJSE_Value>(info.GetIsolate(), info[i]);
-    if (argValue->IsNull(pIsolate))
-      continue;
+  auto fn = [&uCount, &dMinValue](v8::Isolate* pIsolate, CFXJSE_Value* pValue) {
+    ++uCount;
+    double dValue = ValueToDouble(pIsolate, pValue->GetValue(pIsolate));
+    dMinValue = uCount == 1 ? dValue : std::min(dMinValue, dValue);
+  };
+  if (!ToFormCalcContext(pThis)->ApplyToExpansion(fn, info, /*bStrict=*/true))
+    return;
 
-    if (argValue->IsArray(pIsolate)) {
-      auto lengthValue = std::make_unique<CFXJSE_Value>();
-      argValue->GetObjectProperty(pIsolate, "length", lengthValue.get());
-      int32_t iLength = lengthValue->ToInteger(pIsolate);
-      if (iLength <= 2) {
-        pContext->ThrowArgumentMismatchException();
-        return;
-      }
-
-      auto propertyValue = std::make_unique<CFXJSE_Value>();
-      auto jsObjectValue = std::make_unique<CFXJSE_Value>();
-      auto newPropertyValue = std::make_unique<CFXJSE_Value>();
-      argValue->GetObjectPropertyByIdx(pIsolate, 1, propertyValue.get());
-      argValue->GetObjectPropertyByIdx(pIsolate, 2, jsObjectValue.get());
-      if (propertyValue->IsNull(pIsolate)) {
-        for (int32_t j = 2; j < iLength; j++) {
-          argValue->GetObjectPropertyByIdx(pIsolate, j, jsObjectValue.get());
-          if (!jsObjectValue->IsObject(pIsolate))
-            continue;
-
-          newPropertyValue->ForceSetValue(
-              pIsolate,
-              GetObjectDefaultValue(
-                  pIsolate,
-                  jsObjectValue->GetValue(pIsolate).As<v8::Object>()));
-          if (newPropertyValue->IsNull(pIsolate))
-            continue;
-
-          uCount++;
-          double dValue =
-              ValueToDouble(pIsolate, newPropertyValue->GetValue(pIsolate));
-          dMinValue = uCount == 1 ? dValue : std::min(dMinValue, dValue);
-        }
-      } else {
-        for (int32_t j = 2; j < iLength; j++) {
-          argValue->GetObjectPropertyByIdx(pIsolate, j, jsObjectValue.get());
-          jsObjectValue->GetObjectProperty(
-              pIsolate, propertyValue->ToString(pIsolate).AsStringView(),
-              newPropertyValue.get());
-          if (newPropertyValue->IsNull(pIsolate))
-            continue;
-
-          uCount++;
-          double dValue =
-              ValueToDouble(pIsolate, newPropertyValue->GetValue(pIsolate));
-          dMinValue = uCount == 1 ? dValue : std::min(dMinValue, dValue);
-        }
-      }
-    } else if (argValue->IsObject(pIsolate)) {
-      auto newPropertyValue = std::make_unique<CFXJSE_Value>(
-          pIsolate,
-          GetObjectDefaultValue(pIsolate,
-                                argValue->GetValue(pIsolate).As<v8::Object>()));
-      if (newPropertyValue->IsNull(pIsolate))
-        continue;
-
-      uCount++;
-      double dValue =
-          ValueToDouble(pIsolate, newPropertyValue->GetValue(pIsolate));
-      dMinValue = uCount == 1 ? dValue : std::min(dMinValue, dValue);
-    } else {
-      uCount++;
-      double dValue = ValueToDouble(pIsolate, argValue->GetValue(pIsolate));
-      dMinValue = uCount == 1 ? dValue : std::min(dMinValue, dValue);
-    }
-  }
   if (uCount == 0) {
     info.GetReturnValue().SetNull();
     return;
   }
-
   info.GetReturnValue().Set(dMinValue);
 }
 
@@ -2164,93 +1928,19 @@ void CFXJSE_FormCalcContext::Round(
 void CFXJSE_FormCalcContext::Sum(
     CFXJSE_HostObject* pThis,
     const v8::FunctionCallbackInfo<v8::Value>& info) {
-  int32_t argc = info.Length();
-  if (argc == 0) {
-    info.GetReturnValue().SetNull();
-    return;
-  }
-
-  CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   uint32_t uCount = 0;
   double dSum = 0.0;
-  for (int32_t i = 0; i < argc; i++) {
-    auto argValue = std::make_unique<CFXJSE_Value>(info.GetIsolate(), info[i]);
-    if (argValue->IsNull(info.GetIsolate()))
-      continue;
+  auto fn = [&uCount, &dSum](v8::Isolate* pIsolate, CFXJSE_Value* pValue) {
+    ++uCount;
+    dSum += ValueToDouble(pIsolate, pValue->GetValue(pIsolate));
+  };
+  if (!ToFormCalcContext(pThis)->ApplyToExpansion(fn, info, /*bStrict=*/true))
+    return;
 
-    if (argValue->IsArray(info.GetIsolate())) {
-      auto lengthValue = std::make_unique<CFXJSE_Value>();
-      argValue->GetObjectProperty(info.GetIsolate(), "length",
-                                  lengthValue.get());
-      int32_t iLength = lengthValue->ToInteger(info.GetIsolate());
-      if (iLength <= 2) {
-        pContext->ThrowArgumentMismatchException();
-        return;
-      }
-
-      auto propertyValue = std::make_unique<CFXJSE_Value>();
-      argValue->GetObjectPropertyByIdx(info.GetIsolate(), 1,
-                                       propertyValue.get());
-      auto jsObjectValue = std::make_unique<CFXJSE_Value>();
-      auto newPropertyValue = std::make_unique<CFXJSE_Value>();
-      if (propertyValue->IsNull(info.GetIsolate())) {
-        for (int32_t j = 2; j < iLength; j++) {
-          argValue->GetObjectPropertyByIdx(info.GetIsolate(), j,
-                                           jsObjectValue.get());
-          if (!jsObjectValue->IsObject(info.GetIsolate()))
-            continue;
-
-          newPropertyValue->ForceSetValue(
-              info.GetIsolate(),
-              GetObjectDefaultValue(
-                  info.GetIsolate(),
-                  jsObjectValue->GetValue(info.GetIsolate()).As<v8::Object>()));
-          if (newPropertyValue->IsNull(info.GetIsolate()))
-            continue;
-
-          dSum += ValueToDouble(info.GetIsolate(),
-                                jsObjectValue->GetValue(info.GetIsolate()));
-          uCount++;
-        }
-      } else {
-        for (int32_t j = 2; j < iLength; j++) {
-          argValue->GetObjectPropertyByIdx(info.GetIsolate(), j,
-                                           jsObjectValue.get());
-          jsObjectValue->GetObjectProperty(
-              info.GetIsolate(),
-              propertyValue->ToString(info.GetIsolate()).AsStringView(),
-              newPropertyValue.get());
-          if (newPropertyValue->IsNull(info.GetIsolate()))
-            continue;
-
-          dSum += ValueToDouble(info.GetIsolate(),
-                                newPropertyValue->GetValue(info.GetIsolate()));
-          uCount++;
-        }
-      }
-    } else if (argValue->IsObject(info.GetIsolate())) {
-      auto newPropertyValue = std::make_unique<CFXJSE_Value>(
-          info.GetIsolate(),
-          GetObjectDefaultValue(
-              info.GetIsolate(),
-              argValue->GetValue(info.GetIsolate()).As<v8::Object>()));
-      if (newPropertyValue->IsNull(info.GetIsolate()))
-        continue;
-
-      dSum += ValueToDouble(info.GetIsolate(),
-                            argValue->GetValue(info.GetIsolate()));
-      uCount++;
-    } else {
-      dSum += ValueToDouble(info.GetIsolate(),
-                            argValue->GetValue(info.GetIsolate()));
-      uCount++;
-    }
-  }
   if (uCount == 0) {
     info.GetReturnValue().SetNull();
     return;
   }
-
   info.GetReturnValue().Set(dSum);
 }
 
@@ -5860,6 +5550,76 @@ void CFXJSE_FormCalcContext::DotAccessorCommon(
   auto pReturn = std::make_unique<CFXJSE_Value>();
   pReturn->SetArray(pIsolate, values);
   info.GetReturnValue().Set(pReturn->DirectGetValue());
+}
+
+bool CFXJSE_FormCalcContext::ApplyToExpansion(
+    std::function<void(v8::Isolate*, CFXJSE_Value*)> fn,
+    const v8::FunctionCallbackInfo<v8::Value>& info,
+    bool bStrict) {
+  v8::Isolate* pIsolate = info.GetIsolate();
+  for (int32_t i = 0; i < info.Length(); i++) {
+    auto argValue = std::make_unique<CFXJSE_Value>(pIsolate, info[i]);
+    if (argValue->IsNull(pIsolate))
+      continue;
+
+    if (argValue->IsArray(pIsolate)) {
+      auto lengthValue = std::make_unique<CFXJSE_Value>();
+      argValue->GetObjectProperty(pIsolate, "length", lengthValue.get());
+
+      int32_t iLength = lengthValue->ToInteger(pIsolate);
+      if (iLength <= 2) {
+        if (!bStrict)
+          continue;
+
+        ThrowArgumentMismatchException();
+        return false;
+      }
+
+      auto propertyValue = std::make_unique<CFXJSE_Value>();
+      auto jsObjectValue = std::make_unique<CFXJSE_Value>();
+      auto newPropertyValue = std::make_unique<CFXJSE_Value>();
+      argValue->GetObjectPropertyByIdx(pIsolate, 1, propertyValue.get());
+      argValue->GetObjectPropertyByIdx(pIsolate, 2, jsObjectValue.get());
+      if (propertyValue->IsNull(pIsolate)) {
+        for (int32_t j = 2; j < iLength; j++) {
+          argValue->GetObjectPropertyByIdx(pIsolate, j, jsObjectValue.get());
+          if (!jsObjectValue->IsObject(pIsolate))
+            continue;
+
+          newPropertyValue->ForceSetValue(
+              pIsolate,
+              GetObjectDefaultValue(
+                  pIsolate,
+                  jsObjectValue->GetValue(pIsolate).As<v8::Object>()));
+          if (!newPropertyValue->IsNull(pIsolate))
+            fn(pIsolate, newPropertyValue.get());
+        }
+      } else {
+        for (int32_t j = 2; j < iLength; j++) {
+          argValue->GetObjectPropertyByIdx(pIsolate, j, jsObjectValue.get());
+          jsObjectValue->GetObjectProperty(
+              pIsolate, propertyValue->ToString(pIsolate).AsStringView(),
+              newPropertyValue.get());
+          if (!newPropertyValue->IsNull(pIsolate))
+            fn(pIsolate, newPropertyValue.get());
+        }
+      }
+      continue;
+    }
+
+    if (argValue->IsObject(pIsolate)) {
+      auto newPropertyValue = std::make_unique<CFXJSE_Value>(
+          pIsolate,
+          GetObjectDefaultValue(pIsolate,
+                                argValue->GetValue(pIsolate).As<v8::Object>()));
+      if (!newPropertyValue->IsNull(pIsolate))
+        fn(pIsolate, newPropertyValue.get());
+      continue;
+    }
+
+    fn(pIsolate, argValue.get());
+  }
+  return true;
 }
 
 void CFXJSE_FormCalcContext::ThrowNoDefaultPropertyException(
