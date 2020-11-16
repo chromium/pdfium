@@ -282,17 +282,18 @@ class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
                                 const v8::FunctionCallbackInfo<v8::Value>& info,
                                 bool bDotAccessor);
 
-  bool ApplyToExpansion(std::function<void(v8::Isolate*, CFXJSE_Value*)> fn,
-                        const v8::FunctionCallbackInfo<v8::Value>& info,
-                        bool bStrict);
+  bool ApplyToExpansion(
+      std::function<void(v8::Isolate*, v8::Local<v8::Value>)> fn,
+      const v8::FunctionCallbackInfo<v8::Value>& info,
+      bool bStrict);
 
   bool ApplyToArray(v8::Isolate* pIsolate,
-                    std::function<void(v8::Isolate*, CFXJSE_Value*)> fn,
-                    CFXJSE_Value* pArray);
+                    std::function<void(v8::Isolate*, v8::Local<v8::Value>)> fn,
+                    v8::Local<v8::Array> pArray);
 
   void ApplyToObject(v8::Isolate* pIsolate,
-                     std::function<void(v8::Isolate*, CFXJSE_Value*)> fn,
-                     CFXJSE_Value* pObject);
+                     std::function<void(v8::Isolate*, v8::Local<v8::Value>)> fn,
+                     v8::Local<v8::Object> pObject);
 
   void ThrowArgumentMismatchException() const;
   void ThrowNoDefaultPropertyException(ByteStringView name) const;
