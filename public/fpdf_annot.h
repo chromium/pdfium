@@ -412,6 +412,34 @@ FPDFAnnot_GetVertices(FPDF_ANNOTATION annot,
                       unsigned long length);
 
 // Experimental API.
+// Get the number of paths in the ink list of an ink annotation.
+//
+//   annot  - handle to an annotation, as returned by e.g. FPDFPage_GetAnnot()
+//
+// Returns the number of paths in the ink list if the annotation is of type ink,
+// 0 otherwise.
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFAnnot_GetInkListCount(FPDF_ANNOTATION annot);
+
+// Experimental API.
+// Get a path in the ink list of an ink annotation. |buffer| is an array of
+// points of the path. If |length| is less than the returned length, or |annot|
+// or |buffer| is NULL, |buffer| will not be modified.
+//
+//   annot  - handle to an annotation, as returned by e.g. FPDFPage_GetAnnot()
+//   path_index - index of the path
+//   buffer - buffer for holding the points.
+//   length - length of the buffer in points.
+//
+// Returns the number of points of the path if the annotation is of type ink, 0
+// otherwise.
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFAnnot_GetInkListPath(FPDF_ANNOTATION annot,
+                         unsigned long path_index,
+                         FS_POINTF* buffer,
+                         unsigned long length);
+
+// Experimental API.
 // Check if |annot|'s dictionary has |key| as a key.
 //
 //   annot  - handle to an annotation.

@@ -1,0 +1,48 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [0 0 612 792]
+  /Annots [
+    4 0 R 5 0 R
+  ]
+  /Tabs /R
+>>
+endobj
+{{object 4 0}} <<
+  /Type /Annot
+  /Subtype /Ink
+  /NM (Ink-1)
+  /F 4
+  /InkList [[159 296 350 411 472 243.42]]
+  /P 3 0 R
+  /C [1 0.90196 0]
+  /Rect [293 530 349 542]
+>>
+endobj
+{{object 5 0}} <<
+  /Type /Annot
+  /Subtype /Ink
+  /NM (Ink-2)
+  /F 4
+  /InkList [[259 396 450 511 572 343 42]]
+  /P 3 0 R
+  /C [1 0.90196 0]
+  /Rect [293 530 349 542]
+>>
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

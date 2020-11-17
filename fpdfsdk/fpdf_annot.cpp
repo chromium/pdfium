@@ -296,6 +296,18 @@ CPDFSDK_Widget* GetRadioButtonOrCheckBoxWidget(FPDF_FORMHANDLE hHandle,
   return pFormControl ? pForm->GetWidget(pFormControl) : nullptr;
 }
 
+CPDF_Array* GetInkList(FPDF_ANNOTATION annot) {
+  FPDF_ANNOTATION_SUBTYPE subtype = FPDFAnnot_GetSubtype(annot);
+  if (subtype != FPDF_ANNOT_INK)
+    return 0;
+
+  CPDF_Dictionary* annot_dict = GetAnnotDictFromFPDFAnnotation(annot);
+  if (!annot_dict)
+    return 0;
+
+  return annot_dict->GetArrayFor(pdfium::annotation::kInkList);
+}
+
 }  // namespace
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -831,6 +843,44 @@ FPDFAnnot_GetVertices(FPDF_ANNOTATION annot,
     for (unsigned long i = 0; i < points_len; ++i) {
       buffer[i].x = vertices->GetNumberAt(i * 2);
       buffer[i].y = vertices->GetNumberAt(i * 2 + 1);
+    }
+  }
+
+  return points_len;
+}
+
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFAnnot_GetInkListCount(FPDF_ANNOTATION annot) {
+  CPDF_Array* ink_list = GetInkList(annot);
+  if (!ink_list)
+    return 0;
+
+  return ink_list->size();
+}
+
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFAnnot_GetInkListPath(FPDF_ANNOTATION annot,
+                         unsigned long path_index,
+                         FS_POINTF* buffer,
+                         unsigned long length) {
+  unsigned long path_count = FPDFAnnot_GetInkListCount(annot);
+  if (path_index >= path_count)
+    return 0;
+
+  CPDF_Array* ink_list = GetInkList(annot);
+  if (!ink_list)
+    return 0;
+
+  CPDF_Array* path = ink_list->GetArrayAt(path_index);
+  if (!path)
+    return 0;
+
+  // Truncate to an even number.
+  unsigned long points_len = path->size() / 2;
+  if (buffer && length >= points_len) {
+    for (unsigned long i = 0; i < points_len; ++i) {
+      buffer[i].x = path->GetNumberAt(i * 2);
+      buffer[i].y = path->GetNumberAt(i * 2 + 1);
     }
   }
 

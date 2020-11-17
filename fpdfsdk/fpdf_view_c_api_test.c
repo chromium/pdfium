@@ -59,6 +59,8 @@ int CheckPDFiumCApi() {
     CHK(FPDFAnnot_GetFormFieldName);
     CHK(FPDFAnnot_GetFormFieldType);
     CHK(FPDFAnnot_GetFormFieldValue);
+    CHK(FPDFAnnot_GetInkListCount);
+    CHK(FPDFAnnot_GetInkListPath);
     CHK(FPDFAnnot_GetLink);
     CHK(FPDFAnnot_GetLinkedAnnot);
     CHK(FPDFAnnot_GetNumberValue);
