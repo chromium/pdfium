@@ -1382,12 +1382,10 @@ TEST_F(FPDFViewEmbedderTest, RenderHelloWorldWithFlags) {
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 #if defined(OS_WIN)
-  static const char kLcdTextChecksum[] = "fa4b12e9db8316f699624250307e5106";
-#elif defined(OS_APPLE)
-  static const char kLcdTextChecksum[] = "b0a33a2ab9f26d225bbad1c714d95beb";
+  static const char kLcdTextChecksum[] = "7fca5790ce81c715d74d955ea9939fd8";
 #else
-  static const char kLcdTextChecksum[] = "693563ed2a3f1f6545856377be4bf3b3";
-#endif
+  static const char kLcdTextChecksum[] = "66ecb880a880dd263ff495b28aeda0d1";
+#endif  // defined(OS_WIN)
   static const char kNoSmoothtextChecksum[] =
       "18156d2a55ae142c3870da7229650890";
 #else

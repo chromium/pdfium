@@ -40,13 +40,7 @@ TEST_F(FPDFFlattenEmbedderTest, FlatPrint) {
 
 TEST_F(FPDFFlattenEmbedderTest, BUG_861842) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#if defined(OS_WIN)
-  constexpr char kCheckboxChecksum[] = "ec7d1600d179aca614f2231c1f77ccb9";
-#elif defined(OS_APPLE)
-  constexpr char kCheckboxChecksum[] = "c7c687f93fb34a4174bdae33535e0627";
-#else
-  constexpr char kCheckboxChecksum[] = "b8aecddfece463096d51596537a20b61";
-#endif
+  constexpr char kCheckboxChecksum[] = "95fdaa000e81c80892b8d370f77be970";
 #else
 #if defined(OS_WIN)
   constexpr char kCheckboxChecksum[] = "95fba3cb7bce7e0d3c94279f60984e17";
