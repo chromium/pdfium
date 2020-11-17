@@ -1417,13 +1417,7 @@ TEST_F(FPDFViewEmbedderTest, RenderHelloWorldWithFlags) {
 }
 
 #if defined(OS_WIN)
-// TODO(crbug.com/pdfium/1500): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_FPDFRenderPageEmf DISABLED_FPDFRenderPageEmf
-#else
-#define MAYBE_FPDFRenderPageEmf FPDFRenderPageEmf
-#endif
-TEST_F(FPDFViewEmbedderTest, MAYBE_FPDFRenderPageEmf) {
+TEST_F(FPDFViewEmbedderTest, FPDFRenderPageEmf) {
   ASSERT_TRUE(OpenDocument("rectangles.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -1510,13 +1504,7 @@ TEST_F(PostScriptLevel3EmbedderTest, Rectangles) {
   UnloadPage(page);
 }
 
-// TODO(crbug.com/pdfium/1500): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_Image DISABLED_Image
-#else
-#define MAYBE_Image Image
-#endif
-TEST_F(PostScriptLevel2EmbedderTest, MAYBE_Image) {
+TEST_F(PostScriptLevel2EmbedderTest, Image) {
   const char kExpected[] =
       "\n"
       "save\n"
@@ -1589,13 +1577,7 @@ TEST_F(PostScriptLevel2EmbedderTest, MAYBE_Image) {
   UnloadPage(page);
 }
 
-// TODO(crbug.com/pdfium/1500): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_Image DISABLED_Image
-#else
-#define MAYBE_Image Image
-#endif
-TEST_F(PostScriptLevel3EmbedderTest, MAYBE_Image) {
+TEST_F(PostScriptLevel3EmbedderTest, Image) {
   const char kExpected[] = R"(
 save
 /im/initmatrix load def
@@ -1640,7 +1622,7 @@ restore
 }
 
 // TODO(crbug.com/pdfium/1500): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#if defined(_SKIA_SUPPORT_)
 #define MAYBE_ImageMask DISABLED_ImageMask
 #else
 #define MAYBE_ImageMask ImageMask
