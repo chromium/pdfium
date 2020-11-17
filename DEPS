@@ -3,7 +3,6 @@ use_relative_paths = True
 gclient_gn_args_file = 'build/config/gclient_args.gni'
 gclient_gn_args = [
   'checkout_google_benchmark',
-  'mac_xcode_version',
 ]
 
 vars = {
@@ -19,11 +18,6 @@ vars = {
   'checkout_google_benchmark': False,
 
   'checkout_instrumented_libraries': 'checkout_linux and checkout_configuration != "small"',
-
-  # This can be overridden, e.g. with custom_vars, to download a nonstandard
-  # Xcode version in build/mac_toolchain.py
-  # instead of downloading the prebuilt pinned revision.
-  'mac_xcode_version': 'default',
 
   'chromium_git': 'https://chromium.googlesource.com',
   'pdfium_git': 'https://pdfium.googlesource.com',
@@ -270,8 +264,7 @@ hooks = [
     'name': 'mac_toolchain',
     'pattern': '.',
     'condition': 'checkout_mac',
-    'action': ['python', 'build/mac_toolchain.py',
-               '--xcode-version', Var('mac_xcode_version')],
+    'action': ['python', 'build/mac_toolchain.py'],
   },
   # Pull clang-format binaries using checked-in hashes.
   {
