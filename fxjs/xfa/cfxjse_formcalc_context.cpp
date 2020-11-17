@@ -1487,79 +1487,65 @@ ByteString ValueToUTF8String(v8::Isolate* pIsolate, v8::Local<v8::Value> arg) {
   return fxv8::ReentrantToByteStringHelper(pIsolate, arg);
 }
 
-bool SimpleValueCompare(CFXJSE_HostObject* pHostObject,
-                        CFXJSE_Value* firstValue,
-                        CFXJSE_Value* secondValue) {
-  if (!firstValue)
+bool SimpleValueCompare(v8::Isolate* pIsolate,
+                        v8::Local<v8::Value> firstValue,
+                        v8::Local<v8::Value> secondValue) {
+  if (firstValue.IsEmpty())
     return false;
 
-  v8::Isolate* pIsolate = ToFormCalcContext(pHostObject)->GetIsolate();
-  if (firstValue->IsString(pIsolate)) {
-    const ByteString bsFirst =
-        ValueToUTF8String(pIsolate, firstValue->GetValue(pIsolate));
-    const ByteString bsSecond =
-        ValueToUTF8String(pIsolate, secondValue->GetValue(pIsolate));
-    return bsFirst == bsSecond;
-  }
-  if (firstValue->IsNumber(pIsolate)) {
-    const float first = ValueToFloat(pIsolate, firstValue->GetValue(pIsolate));
-    const float second =
-        ValueToFloat(pIsolate, secondValue->GetValue(pIsolate));
+  if (fxv8::IsString(firstValue)) {
+    const ByteString first = ValueToUTF8String(pIsolate, firstValue);
+    const ByteString second = ValueToUTF8String(pIsolate, secondValue);
     return first == second;
   }
-  if (firstValue->IsBoolean(pIsolate))
-    return firstValue->ToBoolean(pIsolate) == secondValue->ToBoolean(pIsolate);
-
-  return firstValue->IsNull(pIsolate) && secondValue &&
-         secondValue->IsNull(pIsolate);
+  if (fxv8::IsNumber(firstValue)) {
+    const float first = ValueToFloat(pIsolate, firstValue);
+    const float second = ValueToFloat(pIsolate, secondValue);
+    return first == second;
+  }
+  if (fxv8::IsBoolean(firstValue)) {
+    const bool first = fxv8::ReentrantToBooleanHelper(pIsolate, firstValue);
+    const bool second = fxv8::ReentrantToBooleanHelper(pIsolate, secondValue);
+    return first == second;
+  }
+  return fxv8::IsNull(firstValue) && fxv8::IsNull(secondValue);
 }
 
-std::vector<std::unique_ptr<CFXJSE_Value>> UnfoldArgs(
-    CFXJSE_HostObject* pHostObject,
+std::vector<v8::Local<v8::Value>> UnfoldArgs(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
-  std::vector<std::unique_ptr<CFXJSE_Value>> results;
-  v8::Isolate* pIsolate = ToFormCalcContext(pHostObject)->GetIsolate();
-  for (int32_t i = 1; i < info.Length(); ++i) {
-    auto arg = std::make_unique<CFXJSE_Value>(pIsolate, info[i]);
-    if (arg->IsArray(pIsolate)) {
-      auto lengthValue = std::make_unique<CFXJSE_Value>();
-      arg->GetObjectProperty(pIsolate, "length", lengthValue.get());
-      int32_t iLength = lengthValue->ToInteger(pIsolate);
+  std::vector<v8::Local<v8::Value>> results;
+  v8::Isolate* pIsolate = info.GetIsolate();
+  for (int i = 1; i < info.Length(); ++i) {
+    v8::Local<v8::Value> arg = info[i];
+    if (fxv8::IsArray(arg)) {
+      v8::Local<v8::Array> arr = arg.As<v8::Array>();
+      uint32_t iLength = fxv8::GetArrayLengthHelper(arr);
       if (iLength < 3)
         continue;
 
-      auto propertyValue = std::make_unique<CFXJSE_Value>();
-      arg->GetObjectPropertyByIdx(pIsolate, 1, propertyValue.get());
+      v8::Local<v8::Value> propertyValue =
+          fxv8::ReentrantGetArrayElementHelper(pIsolate, arr, 1);
 
-      for (int32_t j = 2; j < iLength; j++) {
-        auto jsObjectValue = std::make_unique<CFXJSE_Value>();
-        arg->GetObjectPropertyByIdx(pIsolate, j, jsObjectValue.get());
-        if (!jsObjectValue->IsObject(pIsolate)) {
-          results.push_back(std::make_unique<CFXJSE_Value>(
-              pIsolate, fxv8::NewUndefinedHelper(pIsolate)));
-        } else if (propertyValue->IsNull(pIsolate)) {
-          results.push_back(std::make_unique<CFXJSE_Value>(
-              pIsolate,
-              GetObjectDefaultValue(
-                  pIsolate,
-                  jsObjectValue->GetValue(pIsolate).As<v8::Object>())));
+      for (uint32_t j = 2; j < iLength; j++) {
+        v8::Local<v8::Value> jsValue =
+            fxv8::ReentrantGetArrayElementHelper(pIsolate, arr, j);
+
+        if (!fxv8::IsObject(jsValue)) {
+          results.push_back(fxv8::NewUndefinedHelper(pIsolate));
+        } else if (fxv8::IsNull(propertyValue)) {
+          results.push_back(
+              GetObjectDefaultValue(pIsolate, jsValue.As<v8::Object>()));
         } else {
-          ByteString bsName = fxv8::ReentrantToByteStringHelper(
-              pIsolate, propertyValue->GetValue(pIsolate));
-          results.push_back(std::make_unique<CFXJSE_Value>(
-              pIsolate,
-              fxv8::ReentrantGetObjectPropertyHelper(
-                  pIsolate, jsObjectValue->GetValue(pIsolate).As<v8::Object>(),
-                  bsName.AsStringView())));
+          ByteString bsName =
+              fxv8::ReentrantToByteStringHelper(pIsolate, propertyValue);
+          results.push_back(fxv8::ReentrantGetObjectPropertyHelper(
+              pIsolate, jsValue.As<v8::Object>(), bsName.AsStringView()));
         }
       }
-    } else if (arg->IsObject(pIsolate)) {
-      results.push_back(std::make_unique<CFXJSE_Value>(
-          pIsolate, GetObjectDefaultValue(
-                        pIsolate, arg->GetValue(pIsolate).As<v8::Object>())));
+    } else if (fxv8::IsObject(arg)) {
+      results.push_back(GetObjectDefaultValue(pIsolate, arg.As<v8::Object>()));
     } else {
-      results.push_back(std::make_unique<CFXJSE_Value>());
-      results.back()->Assign(pIsolate, arg.get());
+      results.push_back(arg);
     }
   }
   return results;
@@ -3252,10 +3238,9 @@ void CFXJSE_FormCalcContext::Oneof(
     return;
   }
 
-  auto argOne = std::make_unique<CFXJSE_Value>(info.GetIsolate(),
-                                               GetSimpleValue(info, 0));
-  for (const auto& value : UnfoldArgs(pThis, info)) {
-    if (SimpleValueCompare(pThis, argOne.get(), value.get())) {
+  v8::Local<v8::Value> argOne = GetSimpleValue(info, 0);
+  for (const auto& value : UnfoldArgs(info)) {
+    if (SimpleValueCompare(info.GetIsolate(), argOne, value)) {
       info.GetReturnValue().Set(1);
       return;
     }
