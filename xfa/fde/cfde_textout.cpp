@@ -451,32 +451,29 @@ void CFDE_TextOut::Reload(const CFX_RectF& rect) {
   }
 }
 
-void CFDE_TextOut::ReloadLinePiece(Line* pLine, const CFX_RectF& rect) {
+void CFDE_TextOut::ReloadLinePiece(Line* line, const CFX_RectF& rect) {
   pdfium::span<const wchar_t> text_span = m_wsText.span();
-  size_t iPieceIndex = 0;
-  size_t iPieceCount = pLine->GetSize();
-  const Piece* pPiece = pLine->GetPieceAtIndex(0);
-  size_t start_char = pPiece->start_char;
-  int32_t iPieceWidths = 0;
-  CFX_BreakType dwBreakStatus = CFX_BreakType::kNone;
-  m_fLinePos = pPiece->bounds.top;
-  while (iPieceIndex < iPieceCount) {
-    size_t start = start_char;
-    size_t end = pPiece->char_count + start;
-    while (start < end) {
-      dwBreakStatus = m_pTxtBreak->AppendChar(text_span[start]);
-      if (!CFX_BreakTypeNoneOrPiece(dwBreakStatus))
-        RetrievePieces(dwBreakStatus, true, rect, &start_char, &iPieceWidths);
-
-      ++start;
+  size_t start_char = 0;
+  size_t piece_count = line->GetSize();
+  int32_t piece_widths = 0;
+  CFX_BreakType break_status = CFX_BreakType::kNone;
+  for (size_t piece_index = 0; piece_index < piece_count; ++piece_index) {
+    const Piece* piece = line->GetPieceAtIndex(piece_index);
+    if (piece_index == 0) {
+      start_char = piece->start_char;
+      m_fLinePos = piece->bounds.top;
     }
-    ++iPieceIndex;
-    pPiece = pLine->GetPieceAtIndex(iPieceIndex);
+    size_t end = start_char + piece->char_count;
+    for (size_t start = start_char; start < end; ++start) {
+      break_status = m_pTxtBreak->AppendChar(text_span[start]);
+      if (!CFX_BreakTypeNoneOrPiece(break_status))
+        RetrievePieces(break_status, true, rect, &start_char, &piece_widths);
+    }
   }
 
-  dwBreakStatus = m_pTxtBreak->EndBreak(CFX_BreakType::kParagraph);
-  if (!CFX_BreakTypeNoneOrPiece(dwBreakStatus))
-    RetrievePieces(dwBreakStatus, true, rect, &start_char, &iPieceWidths);
+  break_status = m_pTxtBreak->EndBreak(CFX_BreakType::kParagraph);
+  if (!CFX_BreakTypeNoneOrPiece(break_status))
+    RetrievePieces(break_status, true, rect, &start_char, &piece_widths);
 
   m_pTxtBreak->Reset();
 }
