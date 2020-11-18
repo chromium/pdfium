@@ -88,6 +88,17 @@ v8::Local<v8::Array> NewArrayHelper(v8::Isolate* pIsolate) {
   return v8::Array::New(pIsolate);
 }
 
+v8::Local<v8::Array> NewArrayHelper(v8::Isolate* pIsolate,
+                                    pdfium::span<v8::Local<v8::Value>> values) {
+  v8::Local<v8::Array> result = NewArrayHelper(pIsolate);
+  for (size_t i = 0; i < values.size(); ++i) {
+    fxv8::ReentrantPutArrayElementHelper(
+        pIsolate, result, i,
+        values[i].IsEmpty() ? fxv8::NewUndefinedHelper(pIsolate) : values[i]);
+  }
+  return result;
+}
+
 v8::Local<v8::Object> NewObjectHelper(v8::Isolate* pIsolate) {
   return v8::Object::New(pIsolate);
 }

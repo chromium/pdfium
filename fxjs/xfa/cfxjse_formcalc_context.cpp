@@ -1551,33 +1551,32 @@ std::vector<v8::Local<v8::Value>> UnfoldArgs(
   return results;
 }
 
-bool GetObjectForName(CFXJSE_HostObject* pHostObject,
-                      CFXJSE_Value* accessorValue,
-                      ByteStringView bsAccessorName) {
+// Returns empty value on failure.
+v8::Local<v8::Value> GetObjectForName(CFXJSE_HostObject* pHostObject,
+                                      ByteStringView bsAccessorName) {
   CXFA_Document* pDoc = ToFormCalcContext(pHostObject)->GetDocument();
   if (!pDoc)
-    return false;
+    return v8::Local<v8::Value>();
 
   CFXJSE_Engine* pScriptContext = pDoc->GetScriptContext();
   XFA_ResolveNodeRS resolveNodeRS;
   uint32_t dwFlags = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
                      XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent;
-  bool bRet = pScriptContext->ResolveObjects(
-      pScriptContext->GetThisObject(),
-      WideString::FromUTF8(bsAccessorName).AsStringView(), &resolveNodeRS,
-      dwFlags, nullptr);
-  if (bRet && resolveNodeRS.dwFlags == XFA_ResolveNodeRS::Type::kNodes) {
-    v8::Isolate* pIsolate = ToFormCalcContext(pHostObject)->GetIsolate();
-    accessorValue->ForceSetValue(pIsolate,
-                                 pScriptContext->GetOrCreateJSBindingFromMap(
-                                     resolveNodeRS.objects.front().Get()));
-    return true;
+  if (!pScriptContext->ResolveObjects(
+          pScriptContext->GetThisObject(),
+          WideString::FromUTF8(bsAccessorName).AsStringView(), &resolveNodeRS,
+          dwFlags, /*bindNode=*/nullptr)) {
+    return v8::Local<v8::Value>();
   }
-  return false;
+  if (resolveNodeRS.dwFlags != XFA_ResolveNodeRS::Type::kNodes)
+    return v8::Local<v8::Value>();
+
+  return pScriptContext->GetOrCreateJSBindingFromMap(
+      resolveNodeRS.objects.front().Get());
 }
 
 bool ResolveObjects(CFXJSE_HostObject* pHostObject,
-                    CFXJSE_Value* pRefValue,
+                    v8::Local<v8::Value> pRefValue,
                     ByteStringView bsSomExp,
                     XFA_ResolveNodeRS* resolveNodeRS,
                     bool bDotAccessor,
@@ -1592,7 +1591,7 @@ bool ResolveObjects(CFXJSE_HostObject* pHostObject,
   CXFA_Object* pNode = nullptr;
   uint32_t dFlags = 0UL;
   if (bDotAccessor) {
-    if (pRefValue && pRefValue->IsNull(pIsolate)) {
+    if (fxv8::IsNull(pRefValue)) {
       pNode = pScriptContext->GetThisObject();
       dFlags = XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent;
     } else {
@@ -1628,14 +1627,11 @@ bool ResolveObjects(CFXJSE_HostObject* pHostObject,
                                         resolveNodeRS, dFlags, nullptr);
 }
 
-void ParseResolveResult(
-    CFXJSE_HostObject* pHostObject,
-    const XFA_ResolveNodeRS& resolveNodeRS,
-    CFXJSE_Value* pParentValue,
-    std::vector<std::unique_ptr<CFXJSE_Value>>* resultValues,
-    bool* bAttribute) {
-  ASSERT(bAttribute);
-
+void ParseResolveResult(CFXJSE_HostObject* pHostObject,
+                        const XFA_ResolveNodeRS& resolveNodeRS,
+                        v8::Local<v8::Value> pParentValue,
+                        std::vector<v8::Local<v8::Value>>* resultValues,
+                        bool* bAttribute) {
   resultValues->clear();
 
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pHostObject);
@@ -1645,9 +1641,8 @@ void ParseResolveResult(
     *bAttribute = false;
     CFXJSE_Engine* pScriptContext = pContext->GetDocument()->GetScriptContext();
     for (auto& pObject : resolveNodeRS.objects) {
-      resultValues->push_back(std::make_unique<CFXJSE_Value>());
-      resultValues->back()->ForceSetValue(
-          pIsolate, pScriptContext->GetOrCreateJSBindingFromMap(pObject.Get()));
+      resultValues->push_back(
+          pScriptContext->GetOrCreateJSBindingFromMap(pObject.Get()));
     }
     return;
   }
@@ -1661,17 +1656,12 @@ void ParseResolveResult(
       (*resolveNodeRS.script_attribute.callback)(
           pIsolate, jsObject, pValue.get(), false,
           resolveNodeRS.script_attribute.attribute);
-      resultValues->push_back(std::move(pValue));
+      resultValues->push_back(pValue->GetValue(pIsolate));
       *bAttribute = false;
     }
   }
-  if (!*bAttribute)
-    return;
-  if (!pParentValue || !pParentValue->IsObject(pIsolate))
-    return;
-
-  resultValues->push_back(std::make_unique<CFXJSE_Value>());
-  resultValues->back()->Assign(pIsolate, pParentValue);
+  if (*bAttribute && fxv8::IsObject(pParentValue))
+    resultValues->push_back(pParentValue);
 }
 
 }  // namespace
@@ -5427,29 +5417,26 @@ void CFXJSE_FormCalcContext::DotAccessorCommon(
       fxv8::ReentrantToInt32Helper(info.GetIsolate(), info[3]), iIndexValue,
       bIsStar);
 
-  auto argAccessor = std::make_unique<CFXJSE_Value>(info.GetIsolate(), info[0]);
-  if (argAccessor->IsArray(info.GetIsolate())) {
-    auto pLengthValue = std::make_unique<CFXJSE_Value>();
-    argAccessor->GetObjectProperty(info.GetIsolate(), "length",
-                                   pLengthValue.get());
-    int32_t iLength = pLengthValue->ToInteger(info.GetIsolate());
+  v8::Local<v8::Value> argAccessor = info[0];
+  if (fxv8::IsArray(argAccessor)) {
+    v8::Local<v8::Array> arr = argAccessor.As<v8::Array>();
+    uint32_t iLength = fxv8::GetArrayLengthHelper(arr);
     if (iLength < 3) {
       pContext->ThrowArgumentMismatchException();
       return;
     }
 
-    auto hJSObjValue = std::make_unique<CFXJSE_Value>();
-    std::vector<std::vector<std::unique_ptr<CFXJSE_Value>>> resolveValues(
-        iLength - 2);
+    std::vector<std::vector<v8::Local<v8::Value>>> resolveValues(iLength - 2);
     bool bAttribute = false;
     bool bAllEmpty = true;
-    for (int32_t i = 2; i < iLength; i++) {
-      argAccessor->GetObjectPropertyByIdx(info.GetIsolate(), i,
-                                          hJSObjValue.get());
+    for (uint32_t i = 2; i < iLength; i++) {
+      v8::Local<v8::Value> hJSObjValue =
+          fxv8::ReentrantGetArrayElementHelper(info.GetIsolate(), arr, i);
+
       XFA_ResolveNodeRS resolveNodeRS;
-      if (ResolveObjects(pThis, hJSObjValue.get(), bsSomExp.AsStringView(),
+      if (ResolveObjects(pThis, hJSObjValue, bsSomExp.AsStringView(),
                          &resolveNodeRS, bDotAccessor, bHasNoResolveName)) {
-        ParseResolveResult(pThis, resolveNodeRS, hJSObjValue.get(),
+        ParseResolveResult(pThis, resolveNodeRS, hJSObjValue,
                            &resolveValues[i - 2], &bAttribute);
         bAllEmpty = bAllEmpty && resolveValues[i - 2].empty();
       }
@@ -5470,10 +5457,10 @@ void CFXJSE_FormCalcContext::DotAccessorCommon(
     else
       values.back()->SetNull(pIsolate);
 
-    for (int32_t i = 0; i < iLength - 2; i++) {
+    for (uint32_t i = 0; i < iLength - 2; i++) {
       for (size_t j = 0; j < resolveValues[i].size(); j++) {
-        values.push_back(std::make_unique<CFXJSE_Value>());
-        values.back()->Assign(pIsolate, resolveValues[i][j].get());
+        values.push_back(
+            std::make_unique<CFXJSE_Value>(pIsolate, resolveValues[i][j]));
       }
     }
     auto pReturn = std::make_unique<CFXJSE_Value>();
@@ -5486,15 +5473,18 @@ void CFXJSE_FormCalcContext::DotAccessorCommon(
   bool bRet = false;
   ByteString bsAccessorName =
       fxv8::ReentrantToByteStringHelper(info.GetIsolate(), info[1]);
-  if (argAccessor->IsObject(pIsolate) ||
-      (argAccessor->IsNull(pIsolate) && bsAccessorName.IsEmpty())) {
-    bRet = ResolveObjects(pThis, argAccessor.get(), bsSomExp.AsStringView(),
+  if (fxv8::IsObject(argAccessor) ||
+      (fxv8::IsNull(argAccessor) && bsAccessorName.IsEmpty())) {
+    bRet = ResolveObjects(pThis, argAccessor, bsSomExp.AsStringView(),
                           &resolveNodeRS, bDotAccessor, bHasNoResolveName);
-  } else if (!argAccessor->IsObject(pIsolate) && !bsAccessorName.IsEmpty() &&
-             GetObjectForName(pThis, argAccessor.get(),
-                              bsAccessorName.AsStringView())) {
-    bRet = ResolveObjects(pThis, argAccessor.get(), bsSomExp.AsStringView(),
-                          &resolveNodeRS, bDotAccessor, bHasNoResolveName);
+  } else if (!fxv8::IsObject(argAccessor) && !bsAccessorName.IsEmpty()) {
+    v8::Local<v8::Value> obj =
+        GetObjectForName(pThis, bsAccessorName.AsStringView());
+    if (!obj.IsEmpty()) {
+      argAccessor = obj;
+      bRet = ResolveObjects(pThis, argAccessor, bsSomExp.AsStringView(),
+                            &resolveNodeRS, bDotAccessor, bHasNoResolveName);
+    }
   }
   if (!bRet) {
     pContext->ThrowPropertyNotInObjectException(
@@ -5503,27 +5493,22 @@ void CFXJSE_FormCalcContext::DotAccessorCommon(
     return;
   }
 
-  std::vector<std::unique_ptr<CFXJSE_Value>> resolveValues;
+  std::vector<v8::Local<v8::Value>> resolveValues;
   bool bAttribute = false;
-  ParseResolveResult(pThis, resolveNodeRS, argAccessor.get(), &resolveValues,
+  ParseResolveResult(pThis, resolveNodeRS, argAccessor, &resolveValues,
                      &bAttribute);
 
-  std::vector<std::unique_ptr<CFXJSE_Value>> values;
-  for (size_t i = 0; i < resolveValues.size() + 2; i++)
-    values.push_back(std::make_unique<CFXJSE_Value>());
-
-  values[0]->SetInteger(pIsolate, 1);
-  if (bAttribute)
-    values[1]->SetString(pIsolate, bsName.AsStringView());
-  else
-    values[1]->SetNull(pIsolate);
+  std::vector<v8::Local<v8::Value>> values(resolveValues.size() + 2);
+  values[0] = fxv8::NewNumberHelper(pIsolate, 1);
+  values[1] = bAttribute
+                  ? fxv8::NewStringHelper(pIsolate, bsName.AsStringView())
+                        .As<v8::Value>()
+                  : fxv8::NewNullHelper(pIsolate).As<v8::Value>();
 
   for (size_t i = 0; i < resolveValues.size(); i++)
-    values[i + 2]->Assign(pIsolate, resolveValues[i].get());
+    values[i + 2] = resolveValues[i];
 
-  auto pReturn = std::make_unique<CFXJSE_Value>();
-  pReturn->SetArray(pIsolate, values);
-  info.GetReturnValue().Set(pReturn->DirectGetValue());
+  info.GetReturnValue().Set(fxv8::NewArrayHelper(pIsolate, values));
 }
 
 bool CFXJSE_FormCalcContext::ApplyToExpansion(
