@@ -133,13 +133,11 @@ void FXJSE_ClearObjectBinding(v8::Local<v8::Object> hObject) {
   hObject->SetAlignedPointerInInternalField(1, nullptr);
 }
 
-CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(
-    v8::Local<v8::Object> hJSObject) {
-  ASSERT(!hJSObject.IsEmpty());
-  if (!hJSObject->IsObject())
+CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(v8::Local<v8::Value> hValue) {
+  if (!fxv8::IsObject(hValue))
     return nullptr;
 
-  v8::Local<v8::Object> hObject = hJSObject;
+  v8::Local<v8::Object> hObject = hValue.As<v8::Object>();
   if (hObject->InternalFieldCount() != 2 ||
       hObject->GetAlignedPointerFromInternalField(0) == kFXJSEProxyObjectTag) {
     v8::Local<v8::Value> hProtoObject = hObject->GetPrototype();
