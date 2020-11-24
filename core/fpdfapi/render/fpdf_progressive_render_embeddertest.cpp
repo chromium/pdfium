@@ -318,69 +318,71 @@ void FPDFProgressiveRenderEmbedderTest::VerifyRenderingWithColorScheme(
   UnloadPage(page);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_RenderTextWithColorScheme DISABLED_RenderTextWithColorScheme
-#else
-#define MAYBE_RenderTextWithColorScheme RenderTextWithColorScheme
-#endif
-TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderTextWithColorScheme) {
+TEST_F(FPDFProgressiveRenderEmbedderTest, RenderTextWithColorScheme) {
 // Test rendering of text with forced color scheme on.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 #if defined(OS_WIN)
-  static constexpr char kMD5ContentWithText[] =
+  static constexpr char kContentWithTextChecksum[] =
+      "b018d045f83513a47b03b742d091ca4c";
+#else
+  static constexpr char kContentWithTextChecksum[] =
+      "f6d0e8b9e508d4e993bae678f5f3baa7";
+#endif  // defined(OS_WIN)
+#else
+#if defined(OS_WIN)
+  static constexpr char kContentWithTextChecksum[] =
       "4245f32cc11748a00fd69852a5e5808d";
 #elif defined(OS_APPLE)
-  static constexpr char kMD5ContentWithText[] =
+  static constexpr char kContentWithTextChecksum[] =
       "754a742f10ce0926b766dc3dd47d1f64";
 #else
-  static constexpr char kMD5ContentWithText[] =
+  static constexpr char kContentWithTextChecksum[] =
       "f14d3caba5a973a28be8653aac9e4df3";
 #endif
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
 
   FPDF_COLORSCHEME color_scheme{kBlack, kWhite, kWhite, kWhite};
   VerifyRenderingWithColorScheme(/*page_num=*/0, /*flags=*/0, &color_scheme,
-                                 kBlack, 200, 200, kMD5ContentWithText);
+                                 kBlack, 200, 200, kContentWithTextChecksum);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_RenderPathWithColorScheme DISABLED_RenderPathWithColorScheme
-#else
-#define MAYBE_RenderPathWithColorScheme RenderPathWithColorScheme
-#endif
-TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderPathWithColorScheme) {
+TEST_F(FPDFProgressiveRenderEmbedderTest, RenderPathWithColorScheme) {
   // Test rendering of paths with forced color scheme on.
-  static const char kMD5Rectangles[] = "249f59b0d066c4f6bd89782a80822219";
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+  static constexpr char kRectanglesChecksum[] =
+      "4b0f850a94698d07b6cd2814d1b4ccb7";
+#else
+  static constexpr char kRectanglesChecksum[] =
+      "249f59b0d066c4f6bd89782a80822219";
+#endif
 
   ASSERT_TRUE(OpenDocument("rectangles.pdf"));
 
   FPDF_COLORSCHEME color_scheme{kWhite, kRed, kBlue, kBlue};
   VerifyRenderingWithColorScheme(/*page_num=*/0, /*flags=*/0, &color_scheme,
-                                 kBlack, 200, 300, kMD5Rectangles);
+                                 kBlack, 200, 300, kRectanglesChecksum);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_RenderPathWithColorSchemeAndConvertFillToStroke \
-  DISABLED_RenderPathWithColorSchemeAndConvertFillToStroke
-#else
-#define MAYBE_RenderPathWithColorSchemeAndConvertFillToStroke \
-  RenderPathWithColorSchemeAndConvertFillToStroke
-#endif
 TEST_F(FPDFProgressiveRenderEmbedderTest,
-       MAYBE_RenderPathWithColorSchemeAndConvertFillToStroke) {
+       RenderPathWithColorSchemeAndConvertFillToStroke) {
   // Test rendering of paths with forced color scheme on and conversion from
   // fill to stroke enabled. The fill paths should be rendered as stroke.
-  static const char kMD5Rectangles[] = "0ebcc11e617635eca1fa9ce475383a80";
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+  static constexpr char kRectanglesChecksum[] =
+      "c1cbbd2ce6921f608a3c55140592419b";
+#else
+  static constexpr char kRectanglesChecksum[] =
+      "0ebcc11e617635eca1fa9ce475383a80";
+#endif
 
   ASSERT_TRUE(OpenDocument("rectangles.pdf"));
 
   FPDF_COLORSCHEME color_scheme{kWhite, kRed, kBlue, kBlue};
   VerifyRenderingWithColorScheme(/*page_num=*/0, FPDF_CONVERT_FILL_TO_STROKE,
                                  &color_scheme, kBlack, 200, 300,
-                                 kMD5Rectangles);
+                                 kRectanglesChecksum);
 }
 
 // TODO(crbug.com/pdfium/11): Fix this test and enable.
@@ -444,74 +446,89 @@ TEST_F(FPDFProgressiveRenderEmbedderTest,
       kBlue, 612, 792, kMD5ContentWithHighlight);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+// TODO(crbug.com/pdfium/1500): When Skia is enabled, the rendering result is
+// acceptable but the test fails due to assertion failure. Fix the assertion
+// failure for Skia and enable this test.
+#if defined(_SKIA_SUPPORT_)
 #define MAYBE_RenderInkWithColorScheme DISABLED_RenderInkWithColorScheme
 #else
 #define MAYBE_RenderInkWithColorScheme RenderInkWithColorScheme
 #endif
 TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderInkWithColorScheme) {
 // Test rendering of multiple ink with forced color scheme on.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#if defined(OS_APPLE)
+  static constexpr char kContentWithInkChecksum[] =
+      "ebc57721e4c8da34156e09b9b2e62fb0";
+#else
+  static constexpr char kContentWithInkChecksum[] =
+      "b39d9f68ff71963d82c43eb20caa8f4d";
+#endif  // defined(OS_APPLE)
+#else
 #if defined(OS_WIN)
-  static constexpr char kMD5ContentWithInk[] =
+  static constexpr char kContentWithInkChecksum[] =
       "1933e4ab19b9108ddcecd1a6abb20c85";
 #else
-  static constexpr char kMD5ContentWithInk[] =
+  static constexpr char kContentWithInkChecksum[] =
       "797bce7dc6c50ee86b095405df9fe5aa";
-#endif
+#endif  // defined(OS_WIN)
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
   ASSERT_TRUE(OpenDocument("annotation_ink_multiple.pdf"));
 
   FPDF_COLORSCHEME color_scheme{kBlack, kGreen, kRed, kRed};
   VerifyRenderingWithColorScheme(/*page_num=*/0, FPDF_ANNOT, &color_scheme,
-                                 kBlack, 612, 792, kMD5ContentWithInk);
+                                 kBlack, 612, 792, kContentWithInkChecksum);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_RenderStampWithColorScheme DISABLED_RenderStampWithColorScheme
-#else
-#define MAYBE_RenderStampWithColorScheme RenderStampWithColorScheme
-#endif
-TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderStampWithColorScheme) {
+TEST_F(FPDFProgressiveRenderEmbedderTest, RenderStampWithColorScheme) {
 // Test rendering of static annotation with forced color scheme on.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#if defined(OS_WIN) || defined(OS_APPLE)
+  static constexpr char kContentWithStampChecksum[] =
+      "77cd4865c3780d69a61d4225ee10c41f";
+#else
+  static constexpr char kContentWithStampChecksum[] =
+      "6d8cb124dee49ebda757f8872a7bbef2";
+#endif  // defined(OS_WIN) || defined(OS_APPLE)
+#else
 #if defined(OS_WIN)
-  static constexpr char kMD5ContentWithStamp[] =
+  static constexpr char kContentWithStampChecksum[] =
       "71dce8f1221e1d2fe59d74258c3afd54";
 #elif defined(OS_APPLE)
-  static constexpr char kMD5ContentWithStamp[] =
+  static constexpr char kContentWithStampChecksum[] =
       "e2d9bef817d366021e5727d9350bde43";
 #else
-  static constexpr char kMD5ContentWithStamp[] =
+  static constexpr char kContentWithStampChecksum[] =
       "d5518b1d9765fa62897a24d12244080f";
 #endif
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
 
   FPDF_COLORSCHEME color_scheme{kBlue, kGreen, kRed, kRed};
   VerifyRenderingWithColorScheme(/*page_num=*/0, FPDF_ANNOT, &color_scheme,
-                                 kWhite, 595, 842, kMD5ContentWithStamp);
+                                 kWhite, 595, 842, kContentWithStampChecksum);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_RenderFormWithColorScheme DISABLED_RenderFormWithColorScheme
-#else
-#define MAYBE_RenderFormWithColorScheme RenderFormWithColorScheme
-#endif
-TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderFormWithColorScheme) {
+TEST_F(FPDFProgressiveRenderEmbedderTest, RenderFormWithColorScheme) {
   // Test rendering of form does not change with forced color scheme on.
-  static constexpr char kMD5ContentWithForm[] =
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+  static constexpr char kContentWithFormChecksum[] =
+      "9f75d98afc6d6313bd87e6562ea6df15";
+#else
+  static constexpr char kContentWithFormChecksum[] =
       "080f7a4381606659301440e1b14dca35";
+#endif
 
   ASSERT_TRUE(OpenDocument("annotiter.pdf"));
 
   FPDF_COLORSCHEME color_scheme{kGreen, kGreen, kRed, kRed};
   VerifyRenderingWithColorScheme(/*page_num=*/0, FPDF_ANNOT, &color_scheme,
-                                 kWhite, 612, 792, kMD5ContentWithForm);
+                                 kWhite, 612, 792, kContentWithFormChecksum);
 
   // Verify that the MD5 hash matches when rendered without |color_scheme|.
   VerifyRenderingWithColorScheme(/*page_num=*/0, FPDF_ANNOT,
                                  /*color_scheme=*/nullptr, kWhite, 612, 792,
-                                 kMD5ContentWithForm);
+                                 kContentWithFormChecksum);
 }
