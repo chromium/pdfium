@@ -385,8 +385,9 @@ TEST_F(FPDFProgressiveRenderEmbedderTest,
                                  kRectanglesChecksum);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+// TODO(crbug.com/pdfium/1500): When Skia is enabled, the hightlighted area is
+// not rendered. Fix this issue and enable the test.
+#if defined(_SKIA_SUPPORT_)
 #define MAYBE_RenderHighlightWithColorScheme \
   DISABLED_RenderHighlightWithColorScheme
 #else
@@ -399,19 +400,25 @@ TEST_F(FPDFProgressiveRenderEmbedderTest,
 // Note: The fill color rendered for highlight is different from the normal
 // path since highlights have Multiply blend mode, while the other path has
 // Normal blend mode.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+  static constexpr char kContentWithHighlightFillChecksum[] =
+      "fa25846c61d0253e86e8512d3be06ebb";
+#else
 #if defined(OS_APPLE)
-  static constexpr char kMD5ContentWithHighlightFill[] =
+  static constexpr char kContentWithHighlightFillChecksum[] =
       "a820afec9b99d3d3f2e9e9382bbad7c1";
 #else
-  static constexpr char kMD5ContentWithHighlightFill[] =
+  static constexpr char kContentWithHighlightFillChecksum[] =
       "a08a0639f89446f66f3689ee8e08b9fe";
-#endif
+#endif  // defined(OS_APPLE)
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
   ASSERT_TRUE(OpenDocument("annotation_highlight_square_with_ap.pdf"));
 
   FPDF_COLORSCHEME color_scheme{kRed, kGreen, kWhite, kWhite};
   VerifyRenderingWithColorScheme(/*page_num=*/0, FPDF_ANNOT, &color_scheme,
-                                 kBlue, 612, 792, kMD5ContentWithHighlightFill);
+                                 kBlue, 612, 792,
+                                 kContentWithHighlightFillChecksum);
 }
 
 // TODO(crbug.com/pdfium/11): Fix this test and enable.
