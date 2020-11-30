@@ -109,6 +109,16 @@ v8::Local<v8::Date> NewDateHelper(v8::Isolate* pIsolate, double d) {
       .As<v8::Date>();
 }
 
+WideString ToWideString(v8::Isolate* pIsolate, v8::Local<v8::String> pValue) {
+  v8::String::Utf8Value s(pIsolate, pValue);
+  return WideString::FromUTF8(ByteStringView(*s, s.length()));
+}
+
+ByteString ToByteString(v8::Isolate* pIsolate, v8::Local<v8::String> pValue) {
+  v8::String::Utf8Value s(pIsolate, pValue);
+  return ByteString(*s, s.length());
+}
+
 int ReentrantToInt32Helper(v8::Isolate* pIsolate, v8::Local<v8::Value> pValue) {
   if (pValue.IsEmpty())
     return 0;
@@ -148,8 +158,7 @@ WideString ReentrantToWideStringHelper(v8::Isolate* pIsolate,
   if (maybe_string.IsEmpty())
     return WideString();
 
-  v8::String::Utf8Value s(pIsolate, maybe_string.ToLocalChecked());
-  return WideString::FromUTF8(ByteStringView(*s, s.length()));
+  return ToWideString(pIsolate, maybe_string.ToLocalChecked());
 }
 
 ByteString ReentrantToByteStringHelper(v8::Isolate* pIsolate,
@@ -163,8 +172,7 @@ ByteString ReentrantToByteStringHelper(v8::Isolate* pIsolate,
   if (maybe_string.IsEmpty())
     return ByteString();
 
-  v8::String::Utf8Value s(pIsolate, maybe_string.ToLocalChecked());
-  return ByteString(*s);
+  return ToByteString(pIsolate, maybe_string.ToLocalChecked());
 }
 
 v8::Local<v8::Object> ReentrantToObjectHelper(v8::Isolate* pIsolate,
