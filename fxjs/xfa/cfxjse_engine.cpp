@@ -31,7 +31,6 @@
 #include "xfa/fxfa/parser/cxfa_object.h"
 #include "xfa/fxfa/parser/cxfa_thisproxy.h"
 #include "xfa/fxfa/parser/xfa_basic_data.h"
-#include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 using pdfium::fxjse::kClassTag;
@@ -74,6 +73,16 @@ namespace {
 const char kFormCalcRuntime[] = "pfm_rt";
 
 }  // namespace
+
+CFXJSE_Engine::ResolveResult::ResolveResult() = default;
+
+CFXJSE_Engine::ResolveResult::ResolveResult(const ResolveResult& that) =
+    default;
+
+CFXJSE_Engine::ResolveResult& CFXJSE_Engine::ResolveResult::operator=(
+    const ResolveResult& that) = default;
+
+CFXJSE_Engine::ResolveResult::~ResolveResult() = default;
 
 // static
 CXFA_Object* CFXJSE_Engine::ToObject(
@@ -177,20 +186,23 @@ bool CFXJSE_Engine::QueryNodeByFlag(CXFA_Node* refNode,
   if (!refNode)
     return false;
 
-  XFA_ResolveNodeRS resolveRs;
-  if (!ResolveObjects(refNode, propname, &resolveRs, dwFlag, nullptr))
+  Optional<CFXJSE_Engine::ResolveResult> maybeResult =
+      ResolveObjects(refNode, propname, dwFlag);
+  if (!maybeResult.has_value())
     return false;
-  if (resolveRs.dwFlags == XFA_ResolveNodeRS::Type::kNodes) {
-    pValue->ForceSetValue(GetIsolate(), GetOrCreateJSBindingFromMap(
-                                            resolveRs.objects.front().Get()));
+
+  if (maybeResult.value().type == ResolveResult::Type::kNodes) {
+    pValue->ForceSetValue(
+        GetIsolate(),
+        GetOrCreateJSBindingFromMap(maybeResult.value().objects.front().Get()));
     return true;
   }
-  if (resolveRs.dwFlags == XFA_ResolveNodeRS::Type::kAttribute &&
-      resolveRs.script_attribute.callback) {
-    CJX_Object* jsObject = resolveRs.objects.front()->JSObject();
-    (*resolveRs.script_attribute.callback)(
+  if (maybeResult.value().type == ResolveResult::Type::kAttribute &&
+      maybeResult.value().script_attribute.callback) {
+    CJX_Object* jsObject = maybeResult.value().objects.front()->JSObject();
+    (*maybeResult.value().script_attribute.callback)(
         GetIsolate(), jsObject, pValue, bSetting,
-        resolveRs.script_attribute.attribute);
+        maybeResult.value().script_attribute.attribute);
   }
   return true;
 }
@@ -621,14 +633,22 @@ void CFXJSE_Engine::RemoveBuiltInObjs(CFXJSE_Context* pContext) {
   fxv8::ReentrantDeleteObjectPropertyHelper(GetIsolate(), pObject, "Date");
 }
 
-bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
-                                   WideStringView wsExpression,
-                                   XFA_ResolveNodeRS* resolveNodeRS,
-                                   uint32_t dwStyles,
-                                   CXFA_Node* bindNode) {
-  if (wsExpression.IsEmpty())
-    return false;
+Optional<CFXJSE_Engine::ResolveResult> CFXJSE_Engine::ResolveObjects(
+    CXFA_Object* refObject,
+    WideStringView wsExpression,
+    uint32_t dwStyles) {
+  return ResolveObjectsWithBindNode(refObject, wsExpression, dwStyles, nullptr);
+}
 
+Optional<CFXJSE_Engine::ResolveResult>
+CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
+                                          WideStringView wsExpression,
+                                          uint32_t dwStyles,
+                                          CXFA_Node* bindNode) {
+  if (wsExpression.IsEmpty())
+    return pdfium::nullopt;
+
+  ResolveResult result;
   if (m_eScriptType != CXFA_Script::Type::Formcalc ||
       (dwStyles & (XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings))) {
     m_upObjectArray.clear();
@@ -705,27 +725,29 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
       }
       rndFind.m_CurObject = findObjects[i++].Get();
       rndFind.m_nLevel = nLevel;
-      rndFind.m_dwFlag = XFA_ResolveNodeRS::Type::kNodes;
+      rndFind.m_Result.type = ResolveResult::Type::kNodes;
       if (!m_ResolveProcessor->Resolve(GetIsolate(), rndFind))
         continue;
 
-      if (rndFind.m_dwFlag == XFA_ResolveNodeRS::Type::kAttribute &&
-          rndFind.m_ScriptAttribute.callback &&
+      if (rndFind.m_Result.type == ResolveResult::Type::kAttribute &&
+          rndFind.m_Result.script_attribute.callback &&
           nStart <
               pdfium::base::checked_cast<int32_t>(wsExpression.GetLength())) {
         auto pValue = std::make_unique<CFXJSE_Value>();
-        CJX_Object* jsObject = rndFind.m_Objects.front()->JSObject();
-        (*rndFind.m_ScriptAttribute.callback)(
+        CJX_Object* jsObject = rndFind.m_Result.objects.front()->JSObject();
+        (*rndFind.m_Result.script_attribute.callback)(
             GetIsolate(), jsObject, pValue.get(), false,
-            rndFind.m_ScriptAttribute.attribute);
-        if (!pValue->IsEmpty())
-          rndFind.m_Objects.front() = ToObject(GetIsolate(), pValue.get());
+            rndFind.m_Result.script_attribute.attribute);
+        if (!pValue->IsEmpty()) {
+          rndFind.m_Result.objects.front() =
+              ToObject(GetIsolate(), pValue.get());
+        }
       }
       if (!m_upObjectArray.empty())
         m_upObjectArray.pop_back();
-      retObjects.insert(retObjects.end(), rndFind.m_Objects.begin(),
-                        rndFind.m_Objects.end());
-      rndFind.m_Objects.clear();
+      retObjects.insert(retObjects.end(), rndFind.m_Result.objects.begin(),
+                        rndFind.m_Result.objects.end());
+      rndFind.m_Result.objects.clear();
       if (bDataBind)
         break;
     }
@@ -750,7 +772,7 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
     }
 
     findObjects = std::move(retObjects);
-    rndFind.m_Objects.clear();
+    rndFind.m_Result.objects.clear();
     if (nLevel == 0)
       dwStyles &= ~(XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings);
 
@@ -758,35 +780,41 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
   }
 
   if (!bNextCreate) {
-    resolveNodeRS->dwFlags = rndFind.m_dwFlag;
+    result.type = rndFind.m_Result.type;
     if (nNodes > 0) {
-      resolveNodeRS->objects.insert(resolveNodeRS->objects.end(),
-                                    findObjects.begin(), findObjects.end());
+      result.objects.insert(result.objects.end(), findObjects.begin(),
+                            findObjects.end());
     }
-    if (rndFind.m_dwFlag == XFA_ResolveNodeRS::Type::kAttribute) {
-      resolveNodeRS->script_attribute = rndFind.m_ScriptAttribute;
-      return true;
+    if (rndFind.m_Result.type == ResolveResult::Type::kAttribute) {
+      result.script_attribute = rndFind.m_Result.script_attribute;
+      return result;
     }
   }
   if (dwStyles & (XFA_RESOLVENODE_CreateNode | XFA_RESOLVENODE_Bind |
                   XFA_RESOLVENODE_BindNew)) {
     if (pNodeHelper->m_pCreateParent)
-      resolveNodeRS->objects.emplace_back(pNodeHelper->m_pCreateParent.Get());
+      result.objects.emplace_back(pNodeHelper->m_pCreateParent.Get());
     else
       pNodeHelper->CreateNodeForCondition(rndFind.m_wsCondition);
 
-    resolveNodeRS->dwFlags = pNodeHelper->m_iCreateFlag;
-    if (resolveNodeRS->dwFlags == XFA_ResolveNodeRS::Type::kCreateNodeOne) {
+    result.type = pNodeHelper->m_iCreateFlag;
+    if (result.type == ResolveResult::Type::kCreateNodeOne) {
       if (pNodeHelper->m_iCurAllStart != -1)
-        resolveNodeRS->dwFlags = XFA_ResolveNodeRS::Type::kCreateNodeMidAll;
+        result.type = ResolveResult::Type::kCreateNodeMidAll;
     }
 
     if (!bNextCreate && (dwStyles & XFA_RESOLVENODE_CreateNode))
-      resolveNodeRS->dwFlags = XFA_ResolveNodeRS::Type::kExistNodes;
+      result.type = ResolveResult::Type::kExistNodes;
 
-    return !resolveNodeRS->objects.empty();
+    if (result.objects.empty())
+      return pdfium::nullopt;
+
+    return result;
   }
-  return nNodes > 0;
+  if (nNodes == 0)
+    return pdfium::nullopt;
+
+  return result;
 }
 
 v8::Local<v8::Object> CFXJSE_Engine::GetOrCreateJSBindingFromMap(

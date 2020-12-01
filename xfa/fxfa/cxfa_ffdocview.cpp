@@ -40,7 +40,6 @@
 #include "xfa/fxfa/parser/cxfa_present.h"
 #include "xfa/fxfa/parser/cxfa_subform.h"
 #include "xfa/fxfa/parser/cxfa_validate.h"
-#include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 const XFA_AttributeValue gs_EventActivity[] = {
@@ -438,17 +437,17 @@ CXFA_FFWidget* CXFA_FFDocView::GetWidgetByName(const WideString& wsName,
   }
   WideString wsExpression = (!pRefNode ? L"$form." : L"") + wsName;
 
-  XFA_ResolveNodeRS resolveNodeRS;
   constexpr uint32_t kStyle = XFA_RESOLVENODE_Children |
                               XFA_RESOLVENODE_Properties |
                               XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent;
-  if (!pScriptContext->ResolveObjects(pRefNode, wsExpression.AsStringView(),
-                                      &resolveNodeRS, kStyle, nullptr)) {
+  Optional<CFXJSE_Engine::ResolveResult> maybeResult =
+      pScriptContext->ResolveObjects(pRefNode, wsExpression.AsStringView(),
+                                     kStyle);
+  if (!maybeResult.has_value())
     return nullptr;
-  }
 
-  if (resolveNodeRS.dwFlags == XFA_ResolveNodeRS::Type::kNodes) {
-    CXFA_Node* pNode = resolveNodeRS.objects.front()->AsNode();
+  if (maybeResult.value().type == CFXJSE_Engine::ResolveResult::Type::kNodes) {
+    CXFA_Node* pNode = maybeResult.value().objects.front()->AsNode();
     if (pNode && pNode->IsWidgetReady())
       return GetWidgetForNode(pNode);
   }
@@ -638,13 +637,15 @@ void CXFA_FFDocView::RunBindItems() {
     constexpr uint32_t kStyle =
         XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
         XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_ALL;
-    XFA_ResolveNodeRS rs;
-    pScriptContext->ResolveObjects(pWidgetNode, wsRef.AsStringView(), &rs,
-                                   kStyle, nullptr);
+    Optional<CFXJSE_Engine::ResolveResult> maybeRS =
+        pScriptContext->ResolveObjects(pWidgetNode, wsRef.AsStringView(),
+                                       kStyle);
     pWidgetNode->DeleteItem(-1, false, false);
-    if (rs.dwFlags != XFA_ResolveNodeRS::Type::kNodes || rs.objects.empty())
+    if (!maybeRS.has_value() ||
+        maybeRS.value().type != CFXJSE_Engine::ResolveResult::Type::kNodes ||
+        maybeRS.value().objects.empty()) {
       continue;
-
+    }
     WideString wsValueRef = item->GetValueRef();
     WideString wsLabelRef = item->GetLabelRef();
     const bool bUseValue = wsLabelRef.IsEmpty() || wsLabelRef == wsValueRef;
@@ -655,7 +656,7 @@ void CXFA_FFDocView::RunBindItems() {
     WideString wsValue;
     WideString wsLabel;
     uint32_t uValueHash = FX_HashCode_GetW(wsValueRef.AsStringView(), false);
-    for (auto& refObject : rs.objects) {
+    for (auto& refObject : maybeRS.value().objects) {
       CXFA_Node* refNode = refObject->AsNode();
       if (!refNode)
         continue;

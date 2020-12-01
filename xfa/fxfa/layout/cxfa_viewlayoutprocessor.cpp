@@ -34,7 +34,6 @@
 #include "xfa/fxfa/parser/cxfa_traversestrategy_xfacontainernode.h"
 #include "xfa/fxfa/parser/cxfa_traversestrategy_xfanode.h"
 #include "xfa/fxfa/parser/xfa_document_datamerger_imp.h"
-#include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
 namespace {
 
@@ -208,15 +207,16 @@ CXFA_Node* ResolveBreakTarget(CXFA_Node* pPageSetRoot,
       if (wsExpr.First(4).EqualsASCII("som(") && wsExpr.Back() == L')')
         wsProcessedTarget = wsExpr.Substr(4, wsExpr.GetLength() - 5);
 
-      XFA_ResolveNodeRS rs;
-      bool bRet = pDocument->GetScriptContext()->ResolveObjects(
-          pPageSetRoot, wsProcessedTarget.AsStringView(), &rs,
+      constexpr uint32_t dwFlag =
           XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
-              XFA_RESOLVENODE_Attributes | XFA_RESOLVENODE_Siblings |
-              XFA_RESOLVENODE_Parent,
-          nullptr);
-      if (bRet && rs.objects.front()->IsNode())
-        return rs.objects.front()->AsNode();
+          XFA_RESOLVENODE_Attributes | XFA_RESOLVENODE_Siblings |
+          XFA_RESOLVENODE_Parent;
+      Optional<CFXJSE_Engine::ResolveResult> maybeResult =
+          pDocument->GetScriptContext()->ResolveObjects(
+              pPageSetRoot, wsProcessedTarget.AsStringView(), dwFlag);
+      if (maybeResult.has_value() &&
+          maybeResult.value().objects.front()->IsNode())
+        return maybeResult.value().objects.front()->AsNode();
     }
     iSplitIndex = iSplitNextIndex.value();
   }

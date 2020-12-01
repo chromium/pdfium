@@ -46,7 +46,6 @@
 #include "xfa/fxfa/parser/cxfa_traversestrategy_xfanode.h"
 #include "xfa/fxfa/parser/cxfa_value.h"
 #include "xfa/fxfa/parser/xfa_document_datamerger_imp.h"
-#include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 namespace {
@@ -351,18 +350,25 @@ CXFA_Node* FindDataRefDataNode(CXFA_Document* pDocument,
   if (bUpLevel || !wsRef.EqualsASCII("name"))
     dFlags |= (XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings);
 
-  XFA_ResolveNodeRS rs;
-  pDocument->GetScriptContext()->ResolveObjects(
-      pDataScope, wsRef.AsStringView(), &rs, dFlags, pTemplateNode);
-  if (rs.dwFlags == XFA_ResolveNodeRS::Type::kCreateNodeAll ||
-      rs.dwFlags == XFA_ResolveNodeRS::Type::kCreateNodeMidAll ||
-      rs.objects.size() > 1) {
-    return pDocument->GetNotBindNode(rs.objects);
+  Optional<CFXJSE_Engine::ResolveResult> maybeResult =
+      pDocument->GetScriptContext()->ResolveObjectsWithBindNode(
+          pDataScope, wsRef.AsStringView(), dFlags, pTemplateNode);
+  if (!maybeResult.has_value())
+    return nullptr;
+
+  if (maybeResult.value().type ==
+          CFXJSE_Engine::ResolveResult::Type::kCreateNodeAll ||
+      maybeResult.value().type ==
+          CFXJSE_Engine::ResolveResult::Type::kCreateNodeMidAll ||
+      maybeResult.value().objects.size() > 1) {
+    return pDocument->GetNotBindNode(maybeResult.value().objects);
   }
 
-  if (rs.dwFlags == XFA_ResolveNodeRS::Type::kCreateNodeOne) {
-    CXFA_Object* pObject =
-        !rs.objects.empty() ? rs.objects.front().Get() : nullptr;
+  if (maybeResult.value().type ==
+      CFXJSE_Engine::ResolveResult::Type::kCreateNodeOne) {
+    CXFA_Object* pObject = !maybeResult.value().objects.empty()
+                               ? maybeResult.value().objects.front().Get()
+                               : nullptr;
     CXFA_Node* pNode = ToNode(pObject);
     return (bForceBind || !pNode || !pNode->HasBindItem()) ? pNode : nullptr;
   }
@@ -1193,16 +1199,19 @@ void UpdateBindingRelations(CXFA_Document* pDocument,
                   : WideString();
           uint32_t dFlags =
               XFA_RESOLVENODE_Children | XFA_RESOLVENODE_CreateNode;
-          XFA_ResolveNodeRS rs;
-          pDocument->GetScriptContext()->ResolveObjects(
-              pDataScope, wsRef.AsStringView(), &rs, dFlags, pTemplateNode);
+          Optional<CFXJSE_Engine::ResolveResult> maybeResult =
+              pDocument->GetScriptContext()->ResolveObjectsWithBindNode(
+                  pDataScope, wsRef.AsStringView(), dFlags, pTemplateNode);
           CXFA_Object* pObject =
-              !rs.objects.empty() ? rs.objects.front().Get() : nullptr;
+              maybeResult.has_value() && !maybeResult.value().objects.empty()
+                  ? maybeResult.value().objects.front().Get()
+                  : nullptr;
           pDataNode = ToNode(pObject);
           if (pDataNode) {
             CreateDataBinding(
                 pFormNode, pDataNode,
-                rs.dwFlags == XFA_ResolveNodeRS::Type::kExistNodes);
+                maybeResult.value().type ==
+                    CFXJSE_Engine::ResolveResult::Type::kExistNodes);
           } else {
             FormValueNode_MatchNoneCreateChild(pFormNode);
           }
@@ -1567,13 +1576,14 @@ void CXFA_Document::DoProtoMerge() {
 
     CXFA_Node* pProtoNode = nullptr;
     if (!wsSOM.IsEmpty()) {
-      uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Attributes |
-                        XFA_RESOLVENODE_Properties | XFA_RESOLVENODE_Parent |
-                        XFA_RESOLVENODE_Siblings;
-      XFA_ResolveNodeRS resolveNodeRS;
-      if (m_pScriptContext->ResolveObjects(pUseHrefNode, wsSOM, &resolveNodeRS,
-                                           dwFlag, nullptr)) {
-        auto* pFirstObject = resolveNodeRS.objects.front().Get();
+      constexpr uint32_t dwFlag =
+          XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Attributes |
+          XFA_RESOLVENODE_Properties | XFA_RESOLVENODE_Parent |
+          XFA_RESOLVENODE_Siblings;
+      Optional<CFXJSE_Engine::ResolveResult> maybeResult =
+          m_pScriptContext->ResolveObjects(pUseHrefNode, wsSOM, dwFlag);
+      if (maybeResult.has_value()) {
+        auto* pFirstObject = maybeResult.value().objects.front().Get();
         if (pFirstObject && pFirstObject->IsNode())
           pProtoNode = pFirstObject->AsNode();
       }

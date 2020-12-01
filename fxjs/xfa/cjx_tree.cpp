@@ -19,7 +19,6 @@
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
-#include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
 const CJX_MethodSpec CJX_Tree::MethodSpecs[] = {
     {"resolveNode", resolveNode_static},
@@ -50,30 +49,29 @@ CJS_Result CJX_Tree::resolveNode(
   uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Attributes |
                     XFA_RESOLVENODE_Properties | XFA_RESOLVENODE_Parent |
                     XFA_RESOLVENODE_Siblings;
-  XFA_ResolveNodeRS resolveNodeRS;
-  if (!pScriptContext->ResolveObjects(ToNode(refNode),
-                                      expression.AsStringView(), &resolveNodeRS,
-                                      dwFlag, nullptr)) {
+  Optional<CFXJSE_Engine::ResolveResult> maybeResult =
+      pScriptContext->ResolveObjects(ToNode(refNode), expression.AsStringView(),
+                                     dwFlag);
+  if (!maybeResult.has_value())
     return CJS_Result::Success(runtime->NewNull());
-  }
 
-  if (resolveNodeRS.dwFlags == XFA_ResolveNodeRS::Type::kNodes) {
-    CXFA_Object* pObject = resolveNodeRS.objects.front().Get();
+  if (maybeResult.value().type == CFXJSE_Engine::ResolveResult::Type::kNodes) {
     return CJS_Result::Success(
         GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
-            pObject));
+            maybeResult.value().objects.front().Get()));
   }
 
-  if (!resolveNodeRS.script_attribute.callback ||
-      resolveNodeRS.script_attribute.eValueType != XFA_ScriptType::Object) {
+  if (!maybeResult.value().script_attribute.callback ||
+      maybeResult.value().script_attribute.eValueType !=
+          XFA_ScriptType::Object) {
     return CJS_Result::Success(runtime->NewNull());
   }
 
   auto pValue = std::make_unique<CFXJSE_Value>();
-  CJX_Object* jsObject = resolveNodeRS.objects.front()->JSObject();
-  (*resolveNodeRS.script_attribute.callback)(
+  CJX_Object* jsObject = maybeResult.value().objects.front()->JSObject();
+  (*maybeResult.value().script_attribute.callback)(
       runtime->GetIsolate(), jsObject, pValue.get(), false,
-      resolveNodeRS.script_attribute.attribute);
+      maybeResult.value().script_attribute.attribute);
   return CJS_Result::Success(
       pValue->DirectGetValue().Get(runtime->GetIsolate()));
 }
@@ -218,34 +216,38 @@ void CJX_Tree::ResolveNodeList(v8::Isolate* pIsolate,
   if (!refNode)
     refNode = GetXFANode();
 
-  XFA_ResolveNodeRS resolveNodeRS;
   CXFA_Document* pDoc = GetDocument();
   CFXJSE_Engine* pScriptContext = pDoc->GetScriptContext();
-  pScriptContext->ResolveObjects(refNode, wsExpression.AsStringView(),
-                                 &resolveNodeRS, dwFlag, nullptr);
+  Optional<CFXJSE_Engine::ResolveResult> maybeResult =
+      pScriptContext->ResolveObjects(refNode, wsExpression.AsStringView(),
+                                     dwFlag);
 
   auto* pNodeList = cppgc::MakeGarbageCollected<CXFA_ArrayNodeList>(
       pDoc->GetHeap()->GetAllocationHandle(), pDoc);
   pDoc->GetNodeOwner()->PersistList(pNodeList);
 
-  if (resolveNodeRS.dwFlags == XFA_ResolveNodeRS::Type::kNodes) {
-    for (auto& pObject : resolveNodeRS.objects) {
-      if (pObject->IsNode())
-        pNodeList->Append(pObject->AsNode());
-    }
-  } else {
-    if (resolveNodeRS.script_attribute.callback &&
-        resolveNodeRS.script_attribute.eValueType == XFA_ScriptType::Object) {
-      for (auto& pObject : resolveNodeRS.objects) {
-        auto innerValue = std::make_unique<CFXJSE_Value>();
-        CJX_Object* jsObject = pObject->JSObject();
-        (*resolveNodeRS.script_attribute.callback)(
-            pIsolate, jsObject, innerValue.get(), false,
-            resolveNodeRS.script_attribute.attribute);
-        CXFA_Object* obj = CFXJSE_Engine::ToObject(pScriptContext->GetIsolate(),
-                                                   innerValue.get());
-        if (obj->IsNode())
-          pNodeList->Append(obj->AsNode());
+  if (maybeResult.has_value()) {
+    if (maybeResult.value().type ==
+        CFXJSE_Engine::ResolveResult::Type::kNodes) {
+      for (auto& pObject : maybeResult.value().objects) {
+        if (pObject->IsNode())
+          pNodeList->Append(pObject->AsNode());
+      }
+    } else {
+      if (maybeResult.value().script_attribute.callback &&
+          maybeResult.value().script_attribute.eValueType ==
+              XFA_ScriptType::Object) {
+        for (auto& pObject : maybeResult.value().objects) {
+          auto innerValue = std::make_unique<CFXJSE_Value>();
+          CJX_Object* jsObject = pObject->JSObject();
+          (*maybeResult.value().script_attribute.callback)(
+              pIsolate, jsObject, innerValue.get(), false,
+              maybeResult.value().script_attribute.attribute);
+          CXFA_Object* obj = CFXJSE_Engine::ToObject(
+              pScriptContext->GetIsolate(), innerValue.get());
+          if (obj->IsNode())
+            pNodeList->Append(obj->AsNode());
+        }
       }
     }
   }

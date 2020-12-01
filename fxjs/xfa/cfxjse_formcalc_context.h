@@ -15,7 +15,6 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/xfa/fxjse.h"
 #include "third_party/base/optional.h"
-#include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
 class CFXJSE_Context;
 class CFX_WideTextBuf;

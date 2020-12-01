@@ -16,7 +16,6 @@
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cscript_hostpseudomodel.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
-#include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
 namespace {
 
@@ -296,16 +295,15 @@ CJS_Result CJX_HostPseudoModel::openList(
 
     uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Parent |
                       XFA_RESOLVENODE_Siblings;
-    XFA_ResolveNodeRS resolveNodeRS;
-    bool bRet = pScriptContext->ResolveObjects(
-        pObject, runtime->ToWideString(params[0]).AsStringView(),
-        &resolveNodeRS, dwFlag, nullptr);
-    if (!bRet || !resolveNodeRS.objects.front()->IsNode())
+    Optional<CFXJSE_Engine::ResolveResult> maybeResult =
+        pScriptContext->ResolveObjects(
+            pObject, runtime->ToWideString(params[0]).AsStringView(), dwFlag);
+    if (!maybeResult.has_value() ||
+        !maybeResult.value().objects.front()->IsNode()) {
       return CJS_Result::Success();
-
-    pNode = resolveNodeRS.objects.front()->AsNode();
+    }
+    pNode = maybeResult.value().objects.front()->AsNode();
   }
-
   if (pNode)
     pNotify->OpenDropDownList(pNode);
 
@@ -382,13 +380,13 @@ CJS_Result CJX_HostPseudoModel::resetData(
 
     uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Parent |
                       XFA_RESOLVENODE_Siblings;
-    XFA_ResolveNodeRS resolveNodeRS;
-    bool bRet = pScriptContext->ResolveObjects(pObject, wsName.AsStringView(),
-                                               &resolveNodeRS, dwFlag, nullptr);
-    if (!bRet || !resolveNodeRS.objects.front()->IsNode())
+    Optional<CFXJSE_Engine::ResolveResult> maybeResult =
+        pScriptContext->ResolveObjects(pObject, wsName.AsStringView(), dwFlag);
+    if (!maybeResult.has_value() ||
+        !maybeResult.value().objects.front()->IsNode())
       continue;
 
-    pNode = resolveNodeRS.objects.front()->AsNode();
+    pNode = maybeResult.value().objects.front()->AsNode();
     pNotify->ResetData(pNode->IsWidgetReady() ? pNode : nullptr);
   }
   if (!pNode)
@@ -444,14 +442,14 @@ CJS_Result CJX_HostPseudoModel::setFocus(
 
       uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Parent |
                         XFA_RESOLVENODE_Siblings;
-      XFA_ResolveNodeRS resolveNodeRS;
-      bool bRet = pScriptContext->ResolveObjects(
-          pObject, runtime->ToWideString(params[0]).AsStringView(),
-          &resolveNodeRS, dwFlag, nullptr);
-      if (!bRet || !resolveNodeRS.objects.front()->IsNode())
+      Optional<CFXJSE_Engine::ResolveResult> maybeResult =
+          pScriptContext->ResolveObjects(
+              pObject, runtime->ToWideString(params[0]).AsStringView(), dwFlag);
+      if (!maybeResult.has_value() ||
+          !maybeResult.value().objects.front()->IsNode()) {
         return CJS_Result::Success();
-
-      pNode = resolveNodeRS.objects.front()->AsNode();
+      }
+      pNode = maybeResult.value().objects.front()->AsNode();
     }
   }
   pNotify->SetFocusWidgetNode(pNode);

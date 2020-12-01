@@ -673,8 +673,6 @@ source_set("parser") {
     "xfa_basic_data.h",
     "xfa_document_datamerger_imp.cpp",
     "xfa_document_datamerger_imp.h",
-    "xfa_resolvenode_rs.cpp",
-    "xfa_resolvenode_rs.h",
     "xfa_utils.cpp",
     "xfa_utils.h",
   ]
