@@ -19,6 +19,10 @@ class CFXJSE_FormCalcContextEmbedderTest : public XFAJSEmbedderTest {
   ~CFXJSE_FormCalcContextEmbedderTest() override = default;
 
  protected:
+  CFXJSE_Context* GetJseContext() {
+    return GetScriptContext()->GetJseContext();
+  }
+
   void ExecuteExpectError(ByteStringView input) {
     EXPECT_FALSE(Execute(input)) << "Program: " << input;
   }
@@ -26,14 +30,14 @@ class CFXJSE_FormCalcContextEmbedderTest : public XFAJSEmbedderTest {
   void ExecuteExpectNull(ByteStringView input) {
     EXPECT_TRUE(Execute(input)) << "Program: " << input;
 
-    CFXJSE_ScopeUtil_IsolateHandleContext scope(GetScriptContext());
+    CFXJSE_ScopeUtil_IsolateHandleContext scope(GetJseContext());
     EXPECT_TRUE(fxv8::IsNull(GetValue())) << "Program: " << input;
   }
 
   void ExecuteExpectBool(ByteStringView input, bool expected) {
     EXPECT_TRUE(Execute(input)) << "Program: " << input;
 
-    CFXJSE_ScopeUtil_IsolateHandleContext scope(GetScriptContext());
+    CFXJSE_ScopeUtil_IsolateHandleContext scope(GetJseContext());
     v8::Local<v8::Value> value = GetValue();
 
     // Yes, bools might be integers, somehow.
@@ -46,7 +50,7 @@ class CFXJSE_FormCalcContextEmbedderTest : public XFAJSEmbedderTest {
   void ExecuteExpectInt32(ByteStringView input, int32_t expected) {
     EXPECT_TRUE(Execute(input)) << "Program: " << input;
 
-    CFXJSE_ScopeUtil_IsolateHandleContext scope(GetScriptContext());
+    CFXJSE_ScopeUtil_IsolateHandleContext scope(GetJseContext());
     v8::Local<v8::Value> value = GetValue();
     EXPECT_TRUE(fxv8::IsInteger(value)) << "Program: " << input;
     EXPECT_EQ(expected, fxv8::ReentrantToInt32Helper(isolate(), value))
@@ -56,7 +60,7 @@ class CFXJSE_FormCalcContextEmbedderTest : public XFAJSEmbedderTest {
   void ExecuteExpectFloat(ByteStringView input, float expected) {
     EXPECT_TRUE(Execute(input)) << "Program: " << input;
 
-    CFXJSE_ScopeUtil_IsolateHandleContext scope(GetScriptContext());
+    CFXJSE_ScopeUtil_IsolateHandleContext scope(GetJseContext());
     v8::Local<v8::Value> value = GetValue();
     EXPECT_TRUE(fxv8::IsNumber(value));
     EXPECT_FLOAT_EQ(expected, fxv8::ReentrantToFloatHelper(isolate(), value))
@@ -68,7 +72,7 @@ class CFXJSE_FormCalcContextEmbedderTest : public XFAJSEmbedderTest {
                               float precision) {
     EXPECT_TRUE(Execute(input)) << "Program: " << input;
 
-    CFXJSE_ScopeUtil_IsolateHandleContext scope(GetScriptContext());
+    CFXJSE_ScopeUtil_IsolateHandleContext scope(GetJseContext());
     v8::Local<v8::Value> value = GetValue();
     EXPECT_TRUE(fxv8::IsNumber(value));
     EXPECT_NEAR(expected, fxv8::ReentrantToFloatHelper(isolate(), value),
@@ -79,7 +83,7 @@ class CFXJSE_FormCalcContextEmbedderTest : public XFAJSEmbedderTest {
   void ExecuteExpectNaN(ByteStringView input) {
     EXPECT_TRUE(Execute(input)) << "Program: " << input;
 
-    CFXJSE_ScopeUtil_IsolateHandleContext scope(GetScriptContext());
+    CFXJSE_ScopeUtil_IsolateHandleContext scope(GetJseContext());
     v8::Local<v8::Value> value = GetValue();
     EXPECT_TRUE(fxv8::IsNumber(value));
     EXPECT_TRUE(std::isnan(fxv8::ReentrantToDoubleHelper(isolate(), value)));
@@ -88,7 +92,7 @@ class CFXJSE_FormCalcContextEmbedderTest : public XFAJSEmbedderTest {
   void ExecuteExpectString(ByteStringView input, const char* expected) {
     EXPECT_TRUE(Execute(input)) << "Program: " << input;
 
-    CFXJSE_ScopeUtil_IsolateHandleContext scope(GetScriptContext());
+    CFXJSE_ScopeUtil_IsolateHandleContext scope(GetJseContext());
     v8::Local<v8::Value> value = GetValue();
     EXPECT_TRUE(fxv8::IsString(value));
     EXPECT_STREQ(expected,
@@ -1128,7 +1132,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Uuid) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
   EXPECT_TRUE(Execute("Uuid()"));
 
-  CFXJSE_ScopeUtil_IsolateHandleContext scope(GetScriptContext());
+  CFXJSE_ScopeUtil_IsolateHandleContext scope(GetJseContext());
   v8::Local<v8::Value> value = GetValue();
   EXPECT_TRUE(fxv8::IsString(value));
 }

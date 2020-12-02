@@ -136,7 +136,7 @@ CFXJSE_Engine::CFXJSE_Engine(CXFA_Document* pDocument,
 CFXJSE_Engine::~CFXJSE_Engine() {
   // This is what ensures that the v8 object bound to a CJX_Object
   // no longer retains that binding since it will outlive that object.
-  CFXJSE_ScopeUtil_IsolateHandleContext scope(this);
+  CFXJSE_ScopeUtil_IsolateHandleContext scope(GetJseContext());
   for (const auto& pair : m_mapObjectToObject) {
     const v8::Global<v8::Object>& binding = pair.second;
     FXJSE_ClearObjectBinding(v8::Local<v8::Object>::New(GetIsolate(), binding));
@@ -147,7 +147,7 @@ bool CFXJSE_Engine::RunScript(CXFA_Script::Type eScriptType,
                               WideStringView wsScript,
                               CFXJSE_Value* hRetValue,
                               CXFA_Object* pThisObject) {
-  CFXJSE_ScopeUtil_IsolateHandleContext scope(this);
+  CFXJSE_ScopeUtil_IsolateHandleContext scope(GetJseContext());
   AutoRestorer<CXFA_Script::Type> typeRestorer(&m_eScriptType);
   m_eScriptType = eScriptType;
 
@@ -627,7 +627,7 @@ bool CFXJSE_Engine::QueryVariableValue(CXFA_Node* pScriptNode,
 }
 
 void CFXJSE_Engine::RemoveBuiltInObjs(CFXJSE_Context* pContext) {
-  CFXJSE_ScopeUtil_IsolateHandleContext scope(this);
+  CFXJSE_ScopeUtil_IsolateHandleContext scope(GetJseContext());
   v8::Local<v8::Object> pObject = pContext->GetGlobalObject();
   fxv8::ReentrantDeleteObjectPropertyHelper(GetIsolate(), pObject, "Number");
   fxv8::ReentrantDeleteObjectPropertyHelper(GetIsolate(), pObject, "Date");
