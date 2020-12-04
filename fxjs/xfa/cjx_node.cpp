@@ -30,7 +30,7 @@
 
 namespace {
 
-enum class EventAppliesToo : uint8_t {
+enum class EventAppliesTo : uint8_t {
   kNone = 0,
   kAll = 1,
   kAllNonRecursive = 2,
@@ -41,90 +41,48 @@ enum class EventAppliesToo : uint8_t {
   kChoiceList = 7
 };
 
-struct XFA_ExecEventParaInfo {
+struct ExecEventParaInfo {
  public:
   uint32_t m_uHash;  // hashed as wide string.
   XFA_EVENTTYPE m_eventType;
-  EventAppliesToo m_validFlags;
+  EventAppliesTo m_validFlags;
 };
 
 #undef PARA
-#define PARA(a, b, c, d) a, c, d
-const XFA_ExecEventParaInfo gs_eventParaInfos[] = {
-    {PARA(0x109d7ce7,
-          "mouseEnter",
-          XFA_EVENT_MouseEnter,
-          EventAppliesToo::kField)},
-    {PARA(0x1bfc72d9,
-          "preOpen",
-          XFA_EVENT_PreOpen,
-          EventAppliesToo::kChoiceList)},
-    {PARA(0x2196a452,
-          "initialize",
-          XFA_EVENT_Initialize,
-          EventAppliesToo::kAll)},
-    {PARA(0x27410f03,
-          "mouseExit",
-          XFA_EVENT_MouseExit,
-          EventAppliesToo::kField)},
-    {PARA(0x36f1c6d8,
-          "preSign",
-          XFA_EVENT_PreSign,
-          EventAppliesToo::kSignature)},
-    {PARA(0x4731d6ba,
-          "exit",
-          XFA_EVENT_Exit,
-          EventAppliesToo::kAllNonRecursive)},
-    {PARA(0x7233018a, "validate", XFA_EVENT_Validate, EventAppliesToo::kAll)},
-    {PARA(0x8808385e,
-          "indexChange",
-          XFA_EVENT_IndexChange,
-          EventAppliesToo::kSubform)},
-    {PARA(0x891f4606,
-          "change",
-          XFA_EVENT_Change,
-          EventAppliesToo::kFieldOrExclusion)},
-    {PARA(0x9f693b21,
-          "mouseDown",
-          XFA_EVENT_MouseDown,
-          EventAppliesToo::kField)},
-    {PARA(0xcdce56b3,
-          "full",
-          XFA_EVENT_Full,
-          EventAppliesToo::kFieldOrExclusion)},
-    {PARA(0xd576d08e, "mouseUp", XFA_EVENT_MouseUp, EventAppliesToo::kField)},
-    {PARA(0xd95657a6,
-          "click",
-          XFA_EVENT_Click,
-          EventAppliesToo::kFieldOrExclusion)},
-    {PARA(0xdbfbe02e, "calculate", XFA_EVENT_Calculate, EventAppliesToo::kAll)},
-    {PARA(0xe25fa7b8,
-          "postOpen",
-          XFA_EVENT_PostOpen,
-          EventAppliesToo::kChoiceList)},
-    {PARA(0xe28dce7e,
-          "enter",
-          XFA_EVENT_Enter,
-          EventAppliesToo::kAllNonRecursive)},
-    {PARA(0xfd54fbb7,
-          "postSign",
-          XFA_EVENT_PostSign,
-          EventAppliesToo::kSignature)},
+#define PARA(a, b, c, d) a, c, EventAppliesTo::d
+const ExecEventParaInfo kExecEventParaInfoTable[] = {
+    {PARA(0x109d7ce7, "mouseEnter", XFA_EVENT_MouseEnter, kField)},
+    {PARA(0x1bfc72d9, "preOpen", XFA_EVENT_PreOpen, kChoiceList)},
+    {PARA(0x2196a452, "initialize", XFA_EVENT_Initialize, kAll)},
+    {PARA(0x27410f03, "mouseExit", XFA_EVENT_MouseExit, kField)},
+    {PARA(0x36f1c6d8, "preSign", XFA_EVENT_PreSign, kSignature)},
+    {PARA(0x4731d6ba, "exit", XFA_EVENT_Exit, kAllNonRecursive)},
+    {PARA(0x7233018a, "validate", XFA_EVENT_Validate, kAll)},
+    {PARA(0x8808385e, "indexChange", XFA_EVENT_IndexChange, kSubform)},
+    {PARA(0x891f4606, "change", XFA_EVENT_Change, kFieldOrExclusion)},
+    {PARA(0x9f693b21, "mouseDown", XFA_EVENT_MouseDown, kField)},
+    {PARA(0xcdce56b3, "full", XFA_EVENT_Full, kFieldOrExclusion)},
+    {PARA(0xd576d08e, "mouseUp", XFA_EVENT_MouseUp, kField)},
+    {PARA(0xd95657a6, "click", XFA_EVENT_Click, kFieldOrExclusion)},
+    {PARA(0xdbfbe02e, "calculate", XFA_EVENT_Calculate, kAll)},
+    {PARA(0xe25fa7b8, "postOpen", XFA_EVENT_PostOpen, kChoiceList)},
+    {PARA(0xe28dce7e, "enter", XFA_EVENT_Enter, kAllNonRecursive)},
+    {PARA(0xfd54fbb7, "postSign", XFA_EVENT_PostSign, kSignature)},
 };
 #undef PARA
 
-const XFA_ExecEventParaInfo* GetEventParaInfoByName(
+const ExecEventParaInfo* GetExecEventParaInfoByName(
     WideStringView wsEventName) {
   if (wsEventName.IsEmpty())
     return nullptr;
 
   uint32_t uHash = FX_HashCode_GetW(wsEventName, false);
   auto* result = std::lower_bound(
-      std::begin(gs_eventParaInfos), std::end(gs_eventParaInfos), uHash,
-      [](const XFA_ExecEventParaInfo& iter, const uint16_t& hash) {
+      std::begin(kExecEventParaInfoTable), std::end(kExecEventParaInfoTable),
+      uHash, [](const ExecEventParaInfo& iter, const uint16_t& hash) {
         return iter.m_uHash < hash;
       });
-  if (result != std::end(gs_eventParaInfos) && result->m_uHash == uHash)
+  if (result != std::end(kExecEventParaInfoTable) && result->m_uHash == uHash)
     return result;
   return nullptr;
 }
@@ -518,26 +476,26 @@ XFA_EventError CJX_Node::execSingleEventByName(WideStringView wsEventName,
   if (!pNotify)
     return XFA_EventError::kNotExist;
 
-  const XFA_ExecEventParaInfo* eventParaInfo =
-      GetEventParaInfoByName(wsEventName);
+  const ExecEventParaInfo* eventParaInfo =
+      GetExecEventParaInfoByName(wsEventName);
   if (!eventParaInfo)
     return XFA_EventError::kNotExist;
 
   switch (eventParaInfo->m_validFlags) {
-    case EventAppliesToo::kNone:
+    case EventAppliesTo::kNone:
       return XFA_EventError::kNotExist;
-    case EventAppliesToo::kAll:
-    case EventAppliesToo::kAllNonRecursive:
+    case EventAppliesTo::kAll:
+    case EventAppliesTo::kAllNonRecursive:
       return pNotify->ExecEventByDeepFirst(
           GetXFANode(), eventParaInfo->m_eventType, false,
-          eventParaInfo->m_validFlags == EventAppliesToo::kAll);
-    case EventAppliesToo::kSubform:
+          eventParaInfo->m_validFlags == EventAppliesTo::kAll);
+    case EventAppliesTo::kSubform:
       if (eType != XFA_Element::Subform)
         return XFA_EventError::kNotExist;
 
       return pNotify->ExecEventByDeepFirst(
           GetXFANode(), eventParaInfo->m_eventType, false, false);
-    case EventAppliesToo::kFieldOrExclusion: {
+    case EventAppliesTo::kFieldOrExclusion: {
       if (eType != XFA_Element::ExclGroup && eType != XFA_Element::Field)
         return XFA_EventError::kNotExist;
 
@@ -551,13 +509,13 @@ XFA_EventError CJX_Node::execSingleEventByName(WideStringView wsEventName,
       return pNotify->ExecEventByDeepFirst(
           GetXFANode(), eventParaInfo->m_eventType, false, false);
     }
-    case EventAppliesToo::kField:
+    case EventAppliesTo::kField:
       if (eType != XFA_Element::Field)
         return XFA_EventError::kNotExist;
 
       return pNotify->ExecEventByDeepFirst(
           GetXFANode(), eventParaInfo->m_eventType, false, false);
-    case EventAppliesToo::kSignature: {
+    case EventAppliesTo::kSignature: {
       if (!GetXFANode()->IsWidgetReady())
         return XFA_EventError::kNotExist;
       if (GetXFANode()->GetUIChildNode()->GetElementType() !=
@@ -567,7 +525,7 @@ XFA_EventError CJX_Node::execSingleEventByName(WideStringView wsEventName,
       return pNotify->ExecEventByDeepFirst(
           GetXFANode(), eventParaInfo->m_eventType, false, false);
     }
-    case EventAppliesToo::kChoiceList: {
+    case EventAppliesTo::kChoiceList: {
       if (!GetXFANode()->IsWidgetReady())
         return XFA_EventError::kNotExist;
       if (GetXFANode()->GetUIChildNode()->GetElementType() !=
