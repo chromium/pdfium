@@ -440,6 +440,19 @@ FPDFAnnot_GetInkListPath(FPDF_ANNOTATION annot,
                          unsigned long length);
 
 // Experimental API.
+// Get the starting and ending coordinates of a line annotation.
+//
+//   annot  - handle to an annotation, as returned by e.g. FPDFPage_GetAnnot()
+//   start - starting point
+//   end - ending point
+//
+// Returns true if the annotation is of type line, |start| and |end| are not
+// NULL, false otherwise.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetLine(FPDF_ANNOTATION annot,
+                                                      FS_POINTF* start,
+                                                      FS_POINTF* end);
+
+// Experimental API.
 // Check if |annot|'s dictionary has |key| as a key.
 //
 //   annot  - handle to an annotation.

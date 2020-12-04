@@ -887,6 +887,32 @@ FPDFAnnot_GetInkListPath(FPDF_ANNOTATION annot,
   return points_len;
 }
 
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetLine(FPDF_ANNOTATION annot,
+                                                      FS_POINTF* start,
+                                                      FS_POINTF* end) {
+  if (!start || !end)
+    return false;
+
+  FPDF_ANNOTATION_SUBTYPE subtype = FPDFAnnot_GetSubtype(annot);
+  if (subtype != FPDF_ANNOT_LINE)
+    return false;
+
+  CPDF_Dictionary* annot_dict = GetAnnotDictFromFPDFAnnotation(annot);
+  if (!annot_dict)
+    return false;
+
+  CPDF_Array* line = annot_dict->GetArrayFor(pdfium::annotation::kL);
+  if (!line || line->size() < 4)
+    return false;
+
+  start->x = line->GetNumberAt(0);
+  start->y = line->GetNumberAt(1);
+  end->x = line->GetNumberAt(2);
+  end->y = line->GetNumberAt(3);
+
+  return true;
+}
+
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_HasKey(FPDF_ANNOTATION annot,
                                                      FPDF_BYTESTRING key) {
   CPDF_Dictionary* pAnnotDict = GetAnnotDictFromFPDFAnnotation(annot);

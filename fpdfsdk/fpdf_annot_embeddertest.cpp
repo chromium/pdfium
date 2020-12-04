@@ -3377,3 +3377,48 @@ TEST_F(FPDFAnnotEmbedderTest, InkAnnotation) {
 
   UnloadPage(page);
 }
+
+TEST_F(FPDFAnnotEmbedderTest, LineAnnotation) {
+  ASSERT_TRUE(OpenDocument("line_annot.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+  EXPECT_EQ(2, FPDFPage_GetAnnotCount(page));
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+
+    // FPDFAnnot_GetVertices() positive testing.
+    FS_POINTF start;
+    FS_POINTF end;
+    ASSERT_TRUE(FPDFAnnot_GetLine(annot.get(), &start, &end));
+    EXPECT_FLOAT_EQ(159.0f, start.x);
+    EXPECT_FLOAT_EQ(296.0f, start.y);
+    EXPECT_FLOAT_EQ(472.0f, end.x);
+    EXPECT_FLOAT_EQ(243.42f, end.y);
+
+    // FPDFAnnot_GetVertices() negative testing.
+    EXPECT_FALSE(FPDFAnnot_GetLine(nullptr, nullptr, nullptr));
+    EXPECT_FALSE(FPDFAnnot_GetLine(annot.get(), nullptr, nullptr));
+  }
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 1));
+    ASSERT_TRUE(annot);
+
+    // Too few elements in the line array.
+    FS_POINTF start;
+    FS_POINTF end;
+    EXPECT_FALSE(FPDFAnnot_GetLine(annot.get(), &start, &end));
+  }
+
+  {
+    // Wrong annotation type.
+    ScopedFPDFAnnotation ink_annot(FPDFPage_CreateAnnot(page, FPDF_ANNOT_INK));
+    FS_POINTF start;
+    FS_POINTF end;
+    EXPECT_FALSE(FPDFAnnot_GetLine(ink_annot.get(), &start, &end));
+  }
+
+  UnloadPage(page);
+}
