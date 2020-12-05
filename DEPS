@@ -29,7 +29,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling build
   # and whatever else without interference from each other.
-  'build_revision': '182e4cef2f063db426b06835cb0f339369f35248',
+  'build_revision': '33d5eb7739531ae630f8c6cf1d6df37d6c04c651',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling buildtools
   # and whatever else without interference from each other.
@@ -97,7 +97,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling tools_memory
   # and whatever else without interference from each other.
-  'tools_memory_revision': 'f685c086bde38d670a7a3b30ebe1a076d404c140',
+  'tools_memory_revision': '71214b910decfe2e7cfc8b0ffc072a1b97da2d36',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling trace_event
   # and whatever else without interference from each other.
