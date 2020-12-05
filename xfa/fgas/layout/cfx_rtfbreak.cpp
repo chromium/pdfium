@@ -721,8 +721,8 @@ void CFX_RTFBreak::SplitTextLine(CFX_BreakLine* pCurLine,
 
 size_t CFX_RTFBreak::GetDisplayPos(const CFX_TextPiece* pPiece,
                                    std::vector<TextCharPos>* pCharPos) const {
-  DCHECK(pPiece->iChars > 0);
-  DCHECK(pPiece->pFont);
+  if (pPiece->iChars == 0 || !pPiece->pFont)
+    return 0;
 
   RetainPtr<CFGAS_GEFont> pFont = pPiece->pFont;
   CFX_RectF rtText(pPiece->rtPiece);
