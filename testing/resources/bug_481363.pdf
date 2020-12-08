@@ -30,7 +30,7 @@ endobj
 100 500 100 100 re b
 endstream
 endobj
-{{object 5 0)) <<
+5 0 obj <<
   /Type /Font
   /Subtype /Type1
   /BaseFont /He
@@ -51,12 +51,12 @@ xref
 0000000078 00000 n 
 0000000253 00000 n 
 0000000306 00000 n 
-0000000000 65535 f 
-0000000517 00000 n 
+0000000400 00000 n 
+0000000510 00000 n 
 trailer <<
   /Size 0
   /Root 3 0 R
 >>
 startxref
-621
+614
 %%EOF
