@@ -173,7 +173,7 @@ bool CPDF_DataAvail::LoadAllFile() {
 
 bool CPDF_DataAvail::CheckAndLoadAllXref() {
   if (!m_pCrossRefAvail) {
-    const CPDF_ReadValidator::Session read_session(GetValidator());
+    CPDF_ReadValidator::ScopedSession read_session(GetValidator());
     const FX_FILESIZE last_xref_offset = m_parser.ParseStartXRef();
     if (GetValidator()->has_read_problems())
       return false;
@@ -221,7 +221,7 @@ RetainPtr<CPDF_Object> CPDF_DataAvail::GetObject(uint32_t objnum,
 
   RetainPtr<CPDF_Object> pRet;
   if (pParser) {
-    const CPDF_ReadValidator::Session read_session(GetValidator());
+    CPDF_ReadValidator::ScopedSession read_session(GetValidator());
     pRet = pParser->ParseIndirectObject(objnum);
     if (GetValidator()->has_read_problems())
       return nullptr;
@@ -240,7 +240,7 @@ bool CPDF_DataAvail::CheckInfo() {
     return true;
   }
 
-  const CPDF_ReadValidator::Session read_session(GetValidator());
+  CPDF_ReadValidator::ScopedSession read_session(GetValidator());
   m_parser.ParseIndirectObject(dwInfoObjNum);
   if (GetValidator()->has_read_problems())
     return false;
@@ -256,7 +256,7 @@ bool CPDF_DataAvail::CheckRoot() {
     return true;
   }
 
-  const CPDF_ReadValidator::Session read_session(GetValidator());
+  CPDF_ReadValidator::ScopedSession read_session(GetValidator());
   m_pRoot = ToDictionary(m_parser.ParseIndirectObject(dwRootObjNum));
   if (GetValidator()->has_read_problems())
     return false;
@@ -435,7 +435,7 @@ bool CPDF_DataAvail::CheckFirstPage() {
 }
 
 bool CPDF_DataAvail::CheckHintTables() {
-  const CPDF_ReadValidator::Session read_session(GetValidator());
+  CPDF_ReadValidator::ScopedSession read_session(GetValidator());
   m_pHintTables =
       CPDF_HintTables::Parse(GetSyntaxParser(), m_pLinearized.get());
 
@@ -483,7 +483,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckHeaderAndLinearized() {
   if (m_bHeaderAvail)
     return DocAvailStatus::DataAvailable;
 
-  const CPDF_ReadValidator::Session read_session(GetValidator());
+  CPDF_ReadValidator::ScopedSession read_session(GetValidator());
   const Optional<FX_FILESIZE> header_offset = GetHeaderOffset(GetValidator());
   if (GetValidator()->has_read_problems())
     return DocAvailStatus::DataNotAvailable;
@@ -882,7 +882,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
 CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckResources(
     CPDF_Dictionary* page) {
   ASSERT(page);
-  const CPDF_ReadValidator::Session read_session(GetValidator());
+  CPDF_ReadValidator::ScopedSession read_session(GetValidator());
   CPDF_Object* resources = GetResourceObject(page);
   if (GetValidator()->has_read_problems())
     return DocAvailStatus::DataNotAvailable;
@@ -1010,7 +1010,7 @@ CPDF_DataAvail::ParseDocument(
                                                   std::move(pPageData));
   document->AddObserver(this);
 
-  CPDF_ReadValidator::Session read_session(GetValidator());
+  CPDF_ReadValidator::ScopedSession read_session(GetValidator());
   CPDF_Parser::Error error =
       document->LoadLinearizedDoc(GetValidator(), password);
 

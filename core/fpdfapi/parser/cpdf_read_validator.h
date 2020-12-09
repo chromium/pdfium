@@ -11,15 +11,21 @@
 
 class CPDF_ReadValidator : public IFX_SeekableReadStream {
  public:
-  class Session {
+  class ScopedSession {
    public:
-    explicit Session(const RetainPtr<CPDF_ReadValidator>& validator);
-    ~Session();
+    explicit ScopedSession(RetainPtr<CPDF_ReadValidator> validator);
+    ScopedSession(const ScopedSession& that) = delete;
+    ScopedSession& operator=(const ScopedSession& that) = delete;
+    ~ScopedSession();
 
    private:
-    UnownedPtr<CPDF_ReadValidator> validator_;
-    bool saved_read_error_;
-    bool saved_has_unavailable_data_;
+    // Make stack-allocated.
+    void* operator new(size_t) = delete;
+    void* operator new(size_t, void*) = delete;
+
+    RetainPtr<CPDF_ReadValidator> const validator_;
+    const bool saved_read_error_;
+    const bool saved_has_unavailable_data_;
   };
 
   CONSTRUCT_VIA_MAKE_RETAIN;
@@ -34,9 +40,7 @@ class CPDF_ReadValidator : public IFX_SeekableReadStream {
   }
 
   void ResetErrors();
-
   bool IsWholeFileAvailable();
-
   bool CheckDataRangeAndRequestIfUnavailable(FX_FILESIZE offset, size_t size);
   bool CheckWholeFileAndRequestIfUnavailable();
 
@@ -55,14 +59,12 @@ class CPDF_ReadValidator : public IFX_SeekableReadStream {
   void ScheduleDownload(FX_FILESIZE offset, size_t size);
   bool IsDataRangeAvailable(FX_FILESIZE offset, size_t size) const;
 
-  RetainPtr<IFX_SeekableReadStream> file_read_;
-  UnownedPtr<CPDF_DataAvail::FileAvail> file_avail_;
-
+  RetainPtr<IFX_SeekableReadStream> const file_read_;
+  UnownedPtr<CPDF_DataAvail::FileAvail> const file_avail_;
   UnownedPtr<CPDF_DataAvail::DownloadHints> hints_;
-
-  bool read_error_;
-  bool has_unavailable_data_;
-  bool whole_file_already_available_;
+  bool read_error_ = false;
+  bool has_unavailable_data_ = false;
+  bool whole_file_already_available_ = false;
   const FX_FILESIZE file_size_;
 };
 

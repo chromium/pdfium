@@ -169,7 +169,7 @@ TEST(CPDF_ReadValidatorTest, Session) {
   auto validator = pdfium::MakeRetain<CPDF_ReadValidator>(file, &file_avail);
   validator->SetDownloadHints(&hints);
 
-  const CPDF_ReadValidator::Session read_session(validator);
+  CPDF_ReadValidator::ScopedSession read_session(validator);
   ASSERT_FALSE(validator->has_read_problems());
 
   // Data is unavailable
@@ -180,7 +180,7 @@ TEST(CPDF_ReadValidatorTest, Session) {
   EXPECT_FALSE(validator->read_error());
 
   {
-    const CPDF_ReadValidator::Session read_subsession(validator);
+    CPDF_ReadValidator::ScopedSession read_subsession(validator);
     // The read problems should be hidden.
     EXPECT_FALSE(validator->has_read_problems());
 
@@ -207,7 +207,7 @@ TEST(CPDF_ReadValidatorTest, SessionReset) {
   auto validator = pdfium::MakeRetain<CPDF_ReadValidator>(file, &file_avail);
   validator->SetDownloadHints(&hints);
 
-  const CPDF_ReadValidator::Session read_session(validator);
+  CPDF_ReadValidator::ScopedSession read_session(validator);
   ASSERT_FALSE(validator->has_read_problems());
 
   // Data is unavailable
@@ -218,7 +218,7 @@ TEST(CPDF_ReadValidatorTest, SessionReset) {
   EXPECT_FALSE(validator->read_error());
 
   {
-    const CPDF_ReadValidator::Session read_subsession(validator);
+    CPDF_ReadValidator::ScopedSession read_subsession(validator);
     // The read problems should be hidden.
     EXPECT_FALSE(validator->has_read_problems());
 
