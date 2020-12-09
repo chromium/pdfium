@@ -795,6 +795,14 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
   memset(m_WordBuffer, 0, kEndObjStr.GetLength() + 1);
   GetNextWordInternal(nullptr);
 
+  // Allow whitespace after endstream and before a newline.
+  unsigned char ch = 0;
+  while (GetNextChar(ch)) {
+    if (!PDFCharIsWhitespace(ch) || PDFCharIsLineEnding(ch))
+      break;
+  }
+  SetPos(GetPos() - 1);
+
   int numMarkers = ReadEOLMarkers(GetPos());
   if (m_WordSize == static_cast<unsigned int>(kEndObjStr.GetLength()) &&
       numMarkers != 0 &&

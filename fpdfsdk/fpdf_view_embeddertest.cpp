@@ -1714,3 +1714,17 @@ TEST_F(FPDFViewEmbedderTest, GetTrailerEndsLinearized) {
   ASSERT_EQ(size, FPDF_GetTrailerEnds(document(), ends.data(), size));
   ASSERT_EQ(kExpectedEnds, ends);
 }
+
+TEST_F(FPDFViewEmbedderTest, GetTrailerEndsWhitespace) {
+  // Whitespace between 'endstream'/'endobj' and the newline.
+  ASSERT_TRUE(OpenDocument("trailer_end_trailing_space.pdf"));
+
+  unsigned long size = FPDF_GetTrailerEnds(document(), nullptr, 0);
+  const std::vector<unsigned int> kExpectedEnds{1193};
+  // Without the accompanying fix in place, this test would have failed, as the
+  // size was 0, not 1, i.e. no trailer ends were found.
+  ASSERT_EQ(kExpectedEnds.size(), size);
+  std::vector<unsigned int> ends(size);
+  ASSERT_EQ(size, FPDF_GetTrailerEnds(document(), ends.data(), size));
+  EXPECT_EQ(kExpectedEnds, ends);
+}
