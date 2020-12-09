@@ -30,8 +30,7 @@ endobj
 >>
 stream
 try {
-  // TODO(tsepez): figure out why .then() doesn't fire.
-  gc({type: 'major', execution: 'async'}).then(() => { app.alert('resolved') });
+  gc({type: 'major', execution: 'async'}).then(() => { app.alert('Resolved') });
   app.alert('Posted');
 } catch (e) {
   app.alert('Error: ' + e);

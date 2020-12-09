@@ -5,6 +5,7 @@
 #ifndef SAMPLES_PDFIUM_TEST_EVENT_HELPER_H_
 #define SAMPLES_PDFIUM_TEST_EVENT_HELPER_H_
 
+#include <functional>
 #include <string>
 
 #include "public/fpdf_formfill.h"
@@ -12,6 +13,7 @@
 
 void SendPageEvents(FPDF_FORMHANDLE form,
                     FPDF_PAGE page,
-                    const std::string& events);
+                    const std::string& events,
+                    const std::function<void()>& idler);
 
 #endif  // SAMPLES_PDFIUM_TEST_EVENT_HELPER_H_

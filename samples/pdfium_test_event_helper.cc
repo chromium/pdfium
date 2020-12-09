@@ -156,7 +156,8 @@ void SendFocusEvent(FPDF_FORMHANDLE form,
 
 void SendPageEvents(FPDF_FORMHANDLE form,
                     FPDF_PAGE page,
-                    const std::string& events) {
+                    const std::string& events,
+                    const std::function<void()>& idler) {
   auto lines = StringSplit(events, '\n');
   for (const auto& line : lines) {
     auto command = StringSplit(line, '#');
@@ -182,5 +183,6 @@ void SendPageEvents(FPDF_FORMHANDLE form,
     } else {
       fprintf(stderr, "Unrecognized event: %s\n", tokens[0].c_str());
     }
+    idler();
   }
 }

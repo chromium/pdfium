@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <functional>
 #include <iterator>
 #include <map>
 #include <memory>
@@ -730,12 +731,13 @@ bool ProcessPage(const std::string& name,
                  FPDF_FORMFILLINFO_PDFiumTest* form_fill_info,
                  const int page_index,
                  const Options& options,
-                 const std::string& events) {
+                 const std::string& events,
+                 const std::function<void()>& idler) {
   FPDF_PAGE page = GetPageForIndex(form_fill_info, doc, page_index);
   if (!page)
     return false;
   if (options.send_events)
-    SendPageEvents(form, page, events);
+    SendPageEvents(form, page, events, idler);
   if (options.save_images)
     WriteImages(page, name.c_str(), page_index);
   if (options.save_rendered_images)
@@ -795,9 +797,12 @@ bool ProcessPage(const std::string& name,
     }
 
     FPDF_FFLDraw(form, bitmap.get(), page, 0, 0, width, height, 0, flags);
+    idler();
 
-    if (!options.render_oneshot)
+    if (!options.render_oneshot) {
       FPDF_RenderPage_Close(page);
+      idler();
+    }
 
     int stride = FPDFBitmap_GetStride(bitmap.get());
     void* buffer = FPDFBitmap_GetBuffer(bitmap.get());
@@ -861,7 +866,11 @@ bool ProcessPage(const std::string& name,
   }
 
   FORM_DoPageAAction(page, form, FPDFPAGE_AACTION_CLOSE);
+  idler();
+
   FORM_OnBeforeClosePage(page, form);
+  idler();
+
   return !!bitmap;
 }
 
@@ -869,7 +878,8 @@ void ProcessPdf(const std::string& name,
                 const char* buf,
                 size_t len,
                 const Options& options,
-                const std::string& events) {
+                const std::string& events,
+                const std::function<void()>& idler) {
   TestLoader loader({buf, len});
 
   FPDF_FILEACCESS file_access = {};
@@ -1013,14 +1023,17 @@ void ProcessPdf(const std::string& name,
       }
     }
     if (ProcessPage(name, doc.get(), form.get(), &form_callbacks, i, options,
-                    events)) {
+                    events, idler)) {
       ++processed_pages;
     } else {
       ++bad_pages;
     }
+    idler();
   }
 
   FORM_DoDocumentAAction(form.get(), FPDFDOC_AACTION_WC);
+  idler();
+
   fprintf(stderr, "Processed %d pages.\n", processed_pages);
   if (bad_pages)
     fprintf(stderr, "Skipped %d bad pages.\n", bad_pages);
@@ -1163,6 +1176,7 @@ int main(int argc, const char* argv[]) {
   config.m_v8EmbedderSlot = 0;
   config.m_pPlatform = nullptr;
 
+  std::function<void()> idler = []() {};
 #ifdef PDF_ENABLE_V8
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
   v8::StartupData snapshot;
@@ -1187,6 +1201,14 @@ int main(int argc, const char* argv[]) {
         FPDF_GetArrayBufferAllocatorSharedInstance());
     isolate.reset(v8::Isolate::New(params));
     config.m_pIsolate = isolate.get();
+
+    idler = [&platform, &isolate]() {
+      int task_count = 0;
+      while (v8::platform::PumpMessageLoop(platform.get(), isolate.get()))
+        ++task_count;
+      if (task_count)
+        fprintf(stderr, "Pumped %d tasks\n", task_count);
+    };
   }
 #endif  // PDF_ENABLE_V8
 
@@ -1245,18 +1267,10 @@ int main(int argc, const char* argv[]) {
         }
       }
     }
-    ProcessPdf(filename, file_contents.get(), file_length, options, events);
 
-#ifdef PDF_ENABLE_V8
-    if (!options.disable_javascript) {
-      int task_count = 0;
-      while (v8::platform::PumpMessageLoop(platform.get(), isolate.get()))
-        ++task_count;
-
-      if (task_count)
-        fprintf(stderr, "Pumped %d tasks\n", task_count);
-    }
-#endif  // PDF_ENABLE_V8
+    ProcessPdf(filename, file_contents.get(), file_length, options, events,
+               idler);
+    idler();
 
 #ifdef ENABLE_CALLGRIND
     if (options.callgrind_delimiters)
