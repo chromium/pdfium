@@ -73,7 +73,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling jinja2
   # and whatever else without interference from each other.
-  'jinja2_revision': 'a82a4944a7f2496639f34a89c9923be5908b80aa',
+  'jinja2_revision': '11b6b3e5971d760bd2d310f77643f55a818a6d25',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling jpeg_turbo
   # and whatever else without interference from each other.
