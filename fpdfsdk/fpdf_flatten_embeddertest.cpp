@@ -68,23 +68,26 @@ TEST_F(FPDFFlattenEmbedderTest, BUG_861842) {
   VerifySavedDocument(100, 120, kBlankPageHash);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
+TEST_F(FPDFFlattenEmbedderTest, BUG_889099) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_BUG_889099 DISABLED_BUG_889099
+  static constexpr char kPageHash[] = "ee08bafede5faf129e866cbf173bb0f3";
+  static constexpr char kFlattenedPageHash[] =
+      "e4b95ee3d450cf9ede225a2d16d101f0";
 #else
-#define MAYBE_BUG_889099 BUG_889099
-#endif
-TEST_F(FPDFFlattenEmbedderTest, MAYBE_BUG_889099) {
 #if defined(OS_WIN)
-  constexpr char kPageHash[] = "8c6e1dab0a15072f2c9c0ca240fdc739";
-  constexpr char kFlattenedPageHash[] = "9fb932ce7f370c0e68eec0a5d4d76271";
+  static constexpr char kPageHash[] = "8c6e1dab0a15072f2c9c0ca240fdc739";
+  static constexpr char kFlattenedPageHash[] =
+      "9fb932ce7f370c0e68eec0a5d4d76271";
 #elif defined(OS_APPLE)
-  constexpr char kPageHash[] = "d43f54c60b325726392a558f861402a9";
-  constexpr char kFlattenedPageHash[] = "627f143efb920a5e7ddd311e963b9c66";
+  static constexpr char kPageHash[] = "d43f54c60b325726392a558f861402a9";
+  static constexpr char kFlattenedPageHash[] =
+      "627f143efb920a5e7ddd311e963b9c66";
 #else
-  constexpr char kPageHash[] = "51f35e80dbc8a69a024b5a02aa64d463";
-  constexpr char kFlattenedPageHash[] = "ef01f57507662ec9aef7cc7cff92f96c";
+  static constexpr char kPageHash[] = "51f35e80dbc8a69a024b5a02aa64d463";
+  static constexpr char kFlattenedPageHash[] =
+      "ef01f57507662ec9aef7cc7cff92f96c";
 #endif
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
   ASSERT_TRUE(OpenDocument("bug_889099.pdf"));
   FPDF_PAGE page = LoadPage(0);
