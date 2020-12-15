@@ -207,7 +207,7 @@ int CPDFXFA_Context::GetPageCount() const {
   return 0;
 }
 
-RetainPtr<CPDFXFA_Page> CPDFXFA_Context::GetXFAPage(int page_index) {
+RetainPtr<CPDFXFA_Page> CPDFXFA_Context::GetOrCreateXFAPage(int page_index) {
   if (page_index < 0)
     return nullptr;
 
@@ -227,6 +227,13 @@ RetainPtr<CPDFXFA_Page> CPDFXFA_Context::GetXFAPage(int page_index) {
     m_XFAPageList[page_index] = pPage;
 
   return pPage;
+}
+
+RetainPtr<CPDFXFA_Page> CPDFXFA_Context::GetXFAPage(int page_index) {
+  if (!pdfium::IndexInBounds(m_XFAPageList, page_index))
+    return nullptr;
+
+  return m_XFAPageList[page_index];
 }
 
 RetainPtr<CPDFXFA_Page> CPDFXFA_Context::GetXFAPage(

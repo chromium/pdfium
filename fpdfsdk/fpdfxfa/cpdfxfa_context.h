@@ -58,11 +58,9 @@ class CPDFXFA_Context final : public CPDF_Document::Extension,
     return m_pFormFillEnv.Get();
   }
   void SetFormFillEnv(CPDFSDK_FormFillEnvironment* pFormFillEnv);
+  RetainPtr<CPDFXFA_Page> GetOrCreateXFAPage(int page_index);
   RetainPtr<CPDFXFA_Page> GetXFAPage(int page_index);
   RetainPtr<CPDFXFA_Page> GetXFAPage(CXFA_FFPageView* pPage) const;
-  std::vector<RetainPtr<CPDFXFA_Page>>* GetXFAPageList() {
-    return &m_XFAPageList;
-  }
   void ClearChangeMark();
 
   // CPDF_Document::Extension:

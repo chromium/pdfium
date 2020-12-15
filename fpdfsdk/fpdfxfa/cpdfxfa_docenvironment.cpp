@@ -288,14 +288,13 @@ void CPDFXFA_DocEnvironment::PageViewEvent(CXFA_FFPageView* pPageView,
   if (!pXFADocView)
     return;
 
-  for (int iPageIter = 0; iPageIter < m_pContext->GetOriginalPageCount();
-       iPageIter++) {
-    RetainPtr<CPDFXFA_Page> pPage = (*m_pContext->GetXFAPageList())[iPageIter];
+  for (int i = 0; i < m_pContext->GetOriginalPageCount(); ++i) {
+    RetainPtr<CPDFXFA_Page> pPage = m_pContext->GetXFAPage(i);
     if (!pPage)
       continue;
 
     m_pContext->GetFormFillEnv()->RemovePageView(pPage.Get());
-    pPage->SetXFAPageViewIndex(iPageIter);
+    pPage->SetXFAPageViewIndex(i);
   }
 
   int flag = (nNewCount < m_pContext->GetOriginalPageCount())
