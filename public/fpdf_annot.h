@@ -453,6 +453,22 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetLine(FPDF_ANNOTATION annot,
                                                       FS_POINTF* end);
 
 // Experimental API.
+// Get the characteristics of the annotation's border (rounded rectangle).
+//
+//   annot  - handle to an annotation, as returned by e.g. FPDFPage_GetAnnot()
+//   horizontal_radius - horizontal corner radius, in default user space units
+//   vertical_radius - vertical corner radius, in default user space units
+//   border_width - border width, in default user space units
+//
+// Returns true if |horizontal_radius|, |vertical_radius| and |border_width| are
+// not NULL, false otherwise.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFAnnot_GetBorder(FPDF_ANNOTATION annot,
+                    float* horizontal_radius,
+                    float* vertical_radius,
+                    float* border_width);
+
+// Experimental API.
 // Check if |annot|'s dictionary has |key| as a key.
 //
 //   annot  - handle to an annotation.

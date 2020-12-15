@@ -3422,3 +3422,43 @@ TEST_F(FPDFAnnotEmbedderTest, LineAnnotation) {
 
   UnloadPage(page);
 }
+
+TEST_F(FPDFAnnotEmbedderTest, AnnotationBorder) {
+  ASSERT_TRUE(OpenDocument("line_annot.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+  EXPECT_EQ(2, FPDFPage_GetAnnotCount(page));
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+
+    // FPDFAnnot_GetBorder() positive testing.
+    float horizontal_radius;
+    float vertical_radius;
+    float border_width;
+    ASSERT_TRUE(FPDFAnnot_GetBorder(annot.get(), &horizontal_radius,
+                                    &vertical_radius, &border_width));
+    EXPECT_FLOAT_EQ(0.25f, horizontal_radius);
+    EXPECT_FLOAT_EQ(0.5f, vertical_radius);
+    EXPECT_FLOAT_EQ(2.0f, border_width);
+
+    // FPDFAnnot_GetBorder() negative testing.
+    EXPECT_FALSE(FPDFAnnot_GetBorder(nullptr, nullptr, nullptr, nullptr));
+    EXPECT_FALSE(FPDFAnnot_GetBorder(annot.get(), nullptr, nullptr, nullptr));
+  }
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 1));
+    ASSERT_TRUE(annot);
+
+    // Too few elements in the border array.
+    float horizontal_radius;
+    float vertical_radius;
+    float border_width;
+    EXPECT_FALSE(FPDFAnnot_GetBorder(annot.get(), &horizontal_radius,
+                                     &vertical_radius, &border_width));
+  }
+
+  UnloadPage(page);
+}

@@ -913,6 +913,29 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetLine(FPDF_ANNOTATION annot,
   return true;
 }
 
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFAnnot_GetBorder(FPDF_ANNOTATION annot,
+                    float* horizontal_radius,
+                    float* vertical_radius,
+                    float* border_width) {
+  if (!horizontal_radius || !vertical_radius || !border_width)
+    return false;
+
+  CPDF_Dictionary* annot_dict = GetAnnotDictFromFPDFAnnotation(annot);
+  if (!annot_dict)
+    return false;
+
+  CPDF_Array* border = annot_dict->GetArrayFor(pdfium::annotation::kBorder);
+  if (!border || border->size() < 3)
+    return false;
+
+  *horizontal_radius = border->GetNumberAt(0);
+  *vertical_radius = border->GetNumberAt(1);
+  *border_width = border->GetNumberAt(2);
+
+  return true;
+}
+
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_HasKey(FPDF_ANNOTATION annot,
                                                      FPDF_BYTESTRING key) {
   CPDF_Dictionary* pAnnotDict = GetAnnotDictFromFPDFAnnotation(annot);
