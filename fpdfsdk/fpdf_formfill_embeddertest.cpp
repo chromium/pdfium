@@ -1317,14 +1317,7 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_765384) {
 }
 #endif  // PDF_ENABLE_V8
 
-// TODO(crbug.com/pdfium/1500): Fix this test on Windows and enable.
-#if defined(OS_WIN) && \
-    (defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_))
-#define MAYBE_FormText DISABLED_FormText
-#else
-#define MAYBE_FormText FormText
-#endif
-TEST_F(FPDFFormFillEmbedderTest, MAYBE_FormText) {
+TEST_F(FPDFFormFillEmbedderTest, FormText) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   const char kFocusedTextFormWithAbcChecksum[] =
       "42af2135e20deb09cbdbfb6418d86382";
