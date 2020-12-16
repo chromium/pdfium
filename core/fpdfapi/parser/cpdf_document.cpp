@@ -303,6 +303,12 @@ void CPDF_Document::SetPageObjNum(int iPage, uint32_t objNum) {
   m_PageList[iPage] = objNum;
 }
 
+JBig2_DocumentContext* CPDF_Document::GetOrCreateCodecContext() {
+  if (!m_pCodecContext)
+    m_pCodecContext = std::make_unique<JBig2_DocumentContext>();
+  return m_pCodecContext.get();
+}
+
 int CPDF_Document::GetPageIndex(uint32_t objnum) {
   uint32_t skip_count = 0;
   bool bSkipped = false;

@@ -31,13 +31,6 @@ FXCODEC_STATUS Decode(Jbig2Context* pJbig2Context, bool decode_success) {
 
 }  // namespace
 
-JBig2_DocumentContext* GetJBig2DocumentContext(
-    std::unique_ptr<JBig2_DocumentContext>* pContextHolder) {
-  if (!*pContextHolder)
-    *pContextHolder = std::make_unique<JBig2_DocumentContext>();
-  return pContextHolder->get();
-}
-
 Jbig2Context::Jbig2Context() = default;
 
 Jbig2Context::~Jbig2Context() = default;
@@ -45,7 +38,7 @@ Jbig2Context::~Jbig2Context() = default;
 // static
 FXCODEC_STATUS Jbig2Decoder::StartDecode(
     Jbig2Context* pJbig2Context,
-    std::unique_ptr<JBig2_DocumentContext>* pContextHolder,
+    JBig2_DocumentContext* pJBig2DocumentContext,
     uint32_t width,
     uint32_t height,
     pdfium::span<const uint8_t> src_span,
@@ -55,10 +48,6 @@ FXCODEC_STATUS Jbig2Decoder::StartDecode(
     uint8_t* dest_buf,
     uint32_t dest_pitch,
     PauseIndicatorIface* pPause) {
-  ASSERT(pJbig2Context);
-
-  JBig2_DocumentContext* pJBig2DocumentContext =
-      GetJBig2DocumentContext(pContextHolder);
   pJbig2Context->m_width = width;
   pJbig2Context->m_height = height;
   pJbig2Context->m_pSrcSpan = src_span;

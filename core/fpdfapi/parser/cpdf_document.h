@@ -105,9 +105,7 @@ class CPDF_Document : public Observable,
 
   void SetPageObjNum(int iPage, uint32_t objNum);
 
-  std::unique_ptr<JBig2_DocumentContext>* CodecContext() {
-    return &m_pCodecContext;
-  }
+  JBig2_DocumentContext* GetOrCreateCodecContext();
   LinkListIface* GetLinksContext() const { return m_pLinksContext.get(); }
   void SetLinksContext(std::unique_ptr<LinkListIface> pContext) {
     m_pLinksContext = std::move(pContext);

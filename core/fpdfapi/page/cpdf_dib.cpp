@@ -348,8 +348,8 @@ CPDF_DIB::LoadState CPDF_DIB::ContinueLoadDIBBase(PauseIndicatorIface* pPause) {
         nGlobalObjNum = m_pGlobalAcc->GetStream()->GetObjNum();
     }
     iDecodeStatus = Jbig2Decoder::StartDecode(
-        m_pJbig2Context.get(), m_pDocument->CodecContext(), m_Width, m_Height,
-        pSrcSpan, nSrcObjNum, pGlobalSpan, nGlobalObjNum,
+        m_pJbig2Context.get(), m_pDocument->GetOrCreateCodecContext(), m_Width,
+        m_Height, pSrcSpan, nSrcObjNum, pGlobalSpan, nGlobalObjNum,
         m_pCachedBitmap->GetBuffer(), m_pCachedBitmap->GetPitch(), pPause);
   } else {
     iDecodeStatus = Jbig2Decoder::ContinueDecode(m_pJbig2Context.get(), pPause);

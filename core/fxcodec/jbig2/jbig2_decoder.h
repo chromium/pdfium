@@ -37,18 +37,17 @@ class Jbig2Context {
 
 class Jbig2Decoder {
  public:
-  static FXCODEC_STATUS StartDecode(
-      Jbig2Context* pJbig2Context,
-      std::unique_ptr<JBig2_DocumentContext>* pContextHolder,
-      uint32_t width,
-      uint32_t height,
-      pdfium::span<const uint8_t> src_span,
-      uint32_t src_objnum,
-      pdfium::span<const uint8_t> global_span,
-      uint32_t global_objnum,
-      uint8_t* dest_buf,
-      uint32_t dest_pitch,
-      PauseIndicatorIface* pPause);
+  static FXCODEC_STATUS StartDecode(Jbig2Context* pJbig2Context,
+                                    JBig2_DocumentContext* pDocumentContext,
+                                    uint32_t width,
+                                    uint32_t height,
+                                    pdfium::span<const uint8_t> src_span,
+                                    uint32_t src_objnum,
+                                    pdfium::span<const uint8_t> global_span,
+                                    uint32_t global_objnum,
+                                    uint8_t* dest_buf,
+                                    uint32_t dest_pitch,
+                                    PauseIndicatorIface* pPause);
 
   static FXCODEC_STATUS ContinueDecode(Jbig2Context* pJbig2Context,
                                        PauseIndicatorIface* pPause);
