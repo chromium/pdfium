@@ -60,7 +60,8 @@ class CPDF_PageContentGenerator {
 
   // Add buffer as a stream in page's 'Contents'
   void UpdateContentStreams(
-      std::map<int32_t, std::unique_ptr<std::ostringstream>>* new_stream_data);
+      const std::map<int32_t, std::unique_ptr<std::ostringstream>>&
+          new_stream_data);
 
   // Set the stream index of all page objects with stream index ==
   // |CPDF_PageObject::kNoContentStream|. These are new objects that had not

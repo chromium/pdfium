@@ -67,11 +67,7 @@ CPDF_PageContentGenerator::~CPDF_PageContentGenerator() = default;
 
 void CPDF_PageContentGenerator::GenerateContent() {
   ASSERT(m_pObjHolder->IsPage());
-
-  std::map<int32_t, std::unique_ptr<std::ostringstream>> stream =
-      GenerateModifiedStreams();
-
-  UpdateContentStreams(&stream);
+  UpdateContentStreams(GenerateModifiedStreams());
 }
 
 std::map<int32_t, std::unique_ptr<std::ostringstream>>
@@ -144,14 +140,15 @@ CPDF_PageContentGenerator::GenerateModifiedStreams() {
 }
 
 void CPDF_PageContentGenerator::UpdateContentStreams(
-    std::map<int32_t, std::unique_ptr<std::ostringstream>>* new_stream_data) {
+    const std::map<int32_t, std::unique_ptr<std::ostringstream>>&
+        new_stream_data) {
   // If no streams were regenerated or removed, nothing to do here.
-  if (new_stream_data->empty())
+  if (new_stream_data.empty())
     return;
 
   CPDF_PageContentManager page_content_manager(m_pObjHolder.Get());
 
-  for (auto& pair : *new_stream_data) {
+  for (auto& pair : new_stream_data) {
     int32_t stream_index = pair.first;
     std::ostringstream* buf = pair.second.get();
 
