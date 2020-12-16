@@ -28,9 +28,9 @@ class CFX_CTTGSUBTable {
     TLangSysRecord();
     ~TLangSysRecord();
 
-    uint32_t LangSysTag;
-    uint16_t LookupOrder;
-    uint16_t ReqFeatureIndex;
+    uint32_t LangSysTag = 0;
+    uint16_t LookupOrder = 0;
+    uint16_t ReqFeatureIndex = 0;
     std::vector<uint16_t, FxAllocAllocator<uint16_t>> FeatureIndices;
   };
 
@@ -38,8 +38,8 @@ class CFX_CTTGSUBTable {
     TScriptRecord();
     ~TScriptRecord();
 
-    uint32_t ScriptTag;
-    uint16_t DefaultLangSys;
+    uint32_t ScriptTag = 0;
+    uint16_t DefaultLangSys = 0;
     std::vector<TLangSysRecord> LangSysRecords;
   };
 
@@ -47,52 +47,54 @@ class CFX_CTTGSUBTable {
     TFeatureRecord();
     ~TFeatureRecord();
 
-    uint32_t FeatureTag;
-    uint16_t FeatureParams;
+    uint32_t FeatureTag = 0;
+    uint16_t FeatureParams = 0;
     std::vector<uint16_t, FxAllocAllocator<uint16_t>> LookupListIndices;
   };
 
   struct TRangeRecord {
     TRangeRecord();
 
-    uint16_t Start;
-    uint16_t End;
-    uint16_t StartCoverageIndex;
+    uint16_t Start = 0;
+    uint16_t End = 0;
+    uint16_t StartCoverageIndex = 0;
   };
 
   struct TCoverageFormatBase {
+    TCoverageFormatBase(uint16_t format) : CoverageFormat(format) {}
     virtual ~TCoverageFormatBase() = default;
-    uint16_t CoverageFormat;
+
+    const uint16_t CoverageFormat;
   };
 
   struct TCoverageFormat1 final : public TCoverageFormatBase {
-    TCoverageFormat1();
+    TCoverageFormat1(size_t initial_size);
     ~TCoverageFormat1() override;
 
     std::vector<uint16_t, FxAllocAllocator<uint16_t>> GlyphArray;
   };
 
   struct TCoverageFormat2 final : public TCoverageFormatBase {
-    TCoverageFormat2();
+    TCoverageFormat2(size_t initial_size);
     ~TCoverageFormat2() override;
 
     std::vector<TRangeRecord> RangeRecords;
   };
 
   struct TDevice {
-    TDevice() : StartSize(0), EndSize(0), DeltaFormat(0) {}
+    TDevice();
 
-    uint16_t StartSize;
-    uint16_t EndSize;
-    uint16_t DeltaFormat;
+    uint16_t StartSize = 0;
+    uint16_t EndSize = 0;
+    uint16_t DeltaFormat = 0;
   };
 
   struct TSubTableBase {
-    TSubTableBase();
+    TSubTableBase(uint16_t format);
     virtual ~TSubTableBase();
 
+    const uint16_t SubstFormat;
     std::unique_ptr<TCoverageFormatBase> Coverage;
-    uint16_t SubstFormat;
   };
 
   struct TSubTable1 final : public TSubTableBase {
@@ -113,8 +115,8 @@ class CFX_CTTGSUBTable {
     TLookup();
     ~TLookup();
 
-    uint16_t LookupType;
-    uint16_t LookupFlag;
+    uint16_t LookupType = 0;
+    uint16_t LookupFlag = 0;
     std::vector<std::unique_ptr<TSubTableBase>> SubTables;
   };
 
@@ -128,11 +130,11 @@ class CFX_CTTGSUBTable {
   void ParseLookupList(FT_Bytes raw);
   void ParseLookup(FT_Bytes raw, TLookup* rec);
   std::unique_ptr<TCoverageFormatBase> ParseCoverage(FT_Bytes raw);
-  void ParseCoverageFormat1(FT_Bytes raw, TCoverageFormat1* rec);
-  void ParseCoverageFormat2(FT_Bytes raw, TCoverageFormat2* rec);
-  void ParseSingleSubst(FT_Bytes raw, std::unique_ptr<TSubTableBase>* rec);
-  void ParseSingleSubstFormat1(FT_Bytes raw, TSubTable1* rec);
-  void ParseSingleSubstFormat2(FT_Bytes raw, TSubTable2* rec);
+  std::unique_ptr<TCoverageFormat1> ParseCoverageFormat1(FT_Bytes raw);
+  std::unique_ptr<TCoverageFormat2> ParseCoverageFormat2(FT_Bytes raw);
+  std::unique_ptr<TSubTableBase> ParseSingleSubst(FT_Bytes raw);
+  std::unique_ptr<TSubTable1> ParseSingleSubstFormat1(FT_Bytes raw);
+  std::unique_ptr<TSubTable2> ParseSingleSubstFormat2(FT_Bytes raw);
 
   bool GetVerticalGlyphSub(const TFeatureRecord& feature,
                            uint32_t glyphnum,
