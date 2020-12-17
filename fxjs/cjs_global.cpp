@@ -358,11 +358,10 @@ void CJS_Global::CommitGlobalPersisitentVariables(CJS_Runtime* pRuntime) {
         m_pGlobalData->SetGlobalVariablePersistent(name, pData->bPersistent);
         break;
       case CFX_Value::DataType::kObject: {
-        std::vector<std::unique_ptr<CFX_KeyValue>> array;
         v8::Local<v8::Object> obj =
             v8::Local<v8::Object>::New(GetIsolate(), pData->pData);
-        ObjectToArray(pRuntime, obj, &array);
-        m_pGlobalData->SetGlobalVariableObject(name, std::move(array));
+        m_pGlobalData->SetGlobalVariableObject(name,
+                                               ObjectToArray(pRuntime, obj));
         m_pGlobalData->SetGlobalVariablePersistent(name, pData->bPersistent);
       } break;
       case CFX_Value::DataType::kNull:
@@ -373,10 +372,10 @@ void CJS_Global::CommitGlobalPersisitentVariables(CJS_Runtime* pRuntime) {
   }
 }
 
-void CJS_Global::ObjectToArray(
+std::vector<std::unique_ptr<CFX_KeyValue>> CJS_Global::ObjectToArray(
     CJS_Runtime* pRuntime,
-    v8::Local<v8::Object> pObj,
-    std::vector<std::unique_ptr<CFX_KeyValue>>* pArray) {
+    v8::Local<v8::Object> pObj) {
+  std::vector<std::unique_ptr<CFX_KeyValue>> array;
   std::vector<WideString> pKeyList = pRuntime->GetObjectPropertyNames(pObj);
   for (const auto& ws : pKeyList) {
     ByteString sKey = ws.ToUTF8();
@@ -387,7 +386,7 @@ void CJS_Global::ObjectToArray(
       pObjElement->nType = CFX_Value::DataType::kNumber;
       pObjElement->sKey = sKey;
       pObjElement->dData = pRuntime->ToDouble(v);
-      pArray->push_back(std::move(pObjElement));
+      array.push_back(std::move(pObjElement));
       continue;
     }
     if (v->IsBoolean()) {
@@ -395,7 +394,7 @@ void CJS_Global::ObjectToArray(
       pObjElement->nType = CFX_Value::DataType::kBoolean;
       pObjElement->sKey = sKey;
       pObjElement->dData = pRuntime->ToBoolean(v);
-      pArray->push_back(std::move(pObjElement));
+      array.push_back(std::move(pObjElement));
       continue;
     }
     if (v->IsString()) {
@@ -404,24 +403,25 @@ void CJS_Global::ObjectToArray(
       pObjElement->nType = CFX_Value::DataType::kString;
       pObjElement->sKey = sKey;
       pObjElement->sData = sValue;
-      pArray->push_back(std::move(pObjElement));
+      array.push_back(std::move(pObjElement));
       continue;
     }
     if (v->IsObject()) {
       auto pObjElement = std::make_unique<CFX_KeyValue>();
       pObjElement->nType = CFX_Value::DataType::kObject;
       pObjElement->sKey = sKey;
-      ObjectToArray(pRuntime, pRuntime->ToObject(v), &pObjElement->objData);
-      pArray->push_back(std::move(pObjElement));
+      pObjElement->objData = ObjectToArray(pRuntime, pRuntime->ToObject(v));
+      array.push_back(std::move(pObjElement));
       continue;
     }
     if (v->IsNull()) {
       auto pObjElement = std::make_unique<CFX_KeyValue>();
       pObjElement->nType = CFX_Value::DataType::kNull;
       pObjElement->sKey = sKey;
-      pArray->push_back(std::move(pObjElement));
+      array.push_back(std::move(pObjElement));
     }
   }
+  return array;
 }
 
 void CJS_Global::PutObjectProperty(v8::Local<v8::Object> pObj,
