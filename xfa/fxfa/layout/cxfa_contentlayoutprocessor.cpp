@@ -190,22 +190,25 @@ void RelocateTableRowCells(CXFA_ContentLayoutItem* pLayoutRow,
                            XFA_AttributeValue eLayout) {
   bool bContainerWidthAutoSize = true;
   bool bContainerHeightAutoSize = true;
-  CFX_SizeF containerSize = CalculateContainerSpecifiedSize(
+  const CFX_SizeF containerSize = CalculateContainerSpecifiedSize(
       pLayoutRow->GetFormNode(), &bContainerWidthAutoSize,
       &bContainerHeightAutoSize);
+
   CXFA_Margin* pMargin =
       pLayoutRow->GetFormNode()->GetFirstChildByClass<CXFA_Margin>(
           XFA_Element::Margin);
-  CFX_FloatRect inset = GetMarginInset(pMargin);
-  float fContentWidthLimit =
+  const CFX_FloatRect inset = GetMarginInset(pMargin);
+
+  const float fContentWidthLimit =
       bContainerWidthAutoSize ? FLT_MAX
                               : containerSize.width - inset.left - inset.right;
-  float fContentCurrentHeight =
+  const float fContentCurrentHeight =
       pLayoutRow->m_sSize.height - inset.top - inset.bottom;
+
   float fContentCalculatedWidth = 0;
   float fContentCalculatedHeight = 0;
   float fCurrentColX = 0;
-  int32_t nCurrentColIdx = 0;
+  size_t nCurrentColIdx = 0;
   bool bMetWholeRowCell = false;
 
   for (CXFA_LayoutItem* pIter = pLayoutRow->GetFirstChild(); pIter;
@@ -214,24 +217,28 @@ void RelocateTableRowCells(CXFA_ContentLayoutItem* pLayoutRow,
     if (!pLayoutChild)
       continue;
 
-    int32_t nOriginalColSpan =
+    const int32_t nOriginalColSpan =
         pLayoutChild->GetFormNode()->JSObject()->GetInteger(
             XFA_Attribute::ColSpan);
-    if (nOriginalColSpan <= 0 && nOriginalColSpan != -1)
+
+    size_t nColSpan;
+    if (nOriginalColSpan > 0)
+      nColSpan = static_cast<size_t>(nOriginalColSpan);
+    else if (nOriginalColSpan == -1)
+      nColSpan = rgSpecifiedColumnWidths.size();
+    else
       continue;
 
-    int32_t nColSpan = nOriginalColSpan;
+    CHECK(nCurrentColIdx <= rgSpecifiedColumnWidths.size());
+    const size_t remaining = rgSpecifiedColumnWidths.size() - nCurrentColIdx;
+    nColSpan = std::min(nColSpan, remaining);
+
     float fColSpanWidth = 0;
-    if (nColSpan == -1 ||
-        nCurrentColIdx + nColSpan >
-            pdfium::CollectionSize<int32_t>(rgSpecifiedColumnWidths)) {
-      nColSpan = pdfium::CollectionSize<int32_t>(rgSpecifiedColumnWidths) -
-                 nCurrentColIdx;
-    }
-    for (int32_t i = 0; i < nColSpan; i++)
+    for (size_t i = 0; i < nColSpan; i++)
       fColSpanWidth += rgSpecifiedColumnWidths[nCurrentColIdx + i];
 
-    if (nColSpan != nOriginalColSpan) {
+    if (nOriginalColSpan == -1 ||
+        nColSpan != static_cast<size_t>(nOriginalColSpan)) {
       fColSpanWidth = bMetWholeRowCell ? 0
                                        : std::max(fColSpanWidth,
                                                   pLayoutChild->m_sSize.height);
