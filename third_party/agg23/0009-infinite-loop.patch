@@ -1,0 +1,25 @@
+diff --git a/third_party/agg23/agg_math_stroke.h b/third_party/agg23/agg_math_stroke.h
+index 8515d2b16..70d1f2cf9 100644
+--- a/third_party/agg23/agg_math_stroke.h
++++ b/third_party/agg23/agg_math_stroke.h
+@@ -173,6 +173,9 @@ void stroke_calc_cap(VertexConsumer& out_vertices,
+       float a1 = atan2(dy1, -dx1);
+       float a2 = a1 + FX_PI;
+       float da = acos(width / (width + ((1.0f / 8) / approximation_scale))) * 2;
++      if (da < stroke_theta) {
++        da = stroke_theta;
++      }
+       out_vertices.add(coord_type(v0.x - dx1, v0.y + dy1));
+       a1 += da;
+       a2 -= da / 4;
+@@ -180,8 +183,8 @@ void stroke_calc_cap(VertexConsumer& out_vertices,
+         out_vertices.add(
+             coord_type(v0.x + (width * cos(a1)), v0.y + (width * sin(a1))));
+         a1 += da;
+-        }
+-        out_vertices.add(coord_type(v0.x + dx1, v0.y - dy1));
++      }
++      out_vertices.add(coord_type(v0.x + dx1, v0.y - dy1));
+     }
+ }
+ template<class VertexConsumer>
