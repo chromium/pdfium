@@ -214,7 +214,7 @@ bool CPDF_OCContext::GetOCGVE(const CPDF_Array* pExpression, int nLevel) const {
 
   bool bValue = false;
   for (size_t i = 1; i < pExpression->size(); i++) {
-    const CPDF_Object* pOCGObj = pExpression->GetDirectObjectAt(1);
+    const CPDF_Object* pOCGObj = pExpression->GetDirectObjectAt(i);
     if (!pOCGObj)
       continue;
 
