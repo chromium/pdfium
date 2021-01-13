@@ -136,7 +136,7 @@ const FX_ARASHADDA gs_FX_ShaddaTable[] = {
 const FX_ARBFORMTABLE* GetArabicFormTable(wchar_t unicode) {
   if (unicode < 0x622 || unicode > 0x6d5)
     return nullptr;
-  return g_FX_ArabicFormTables + unicode - 0x622;
+  return g_FX_ArabicFormTables + (unicode - 0x622);
 }
 
 const FX_ARBFORMTABLE* ParseChar(const CFX_Char* pTC,
