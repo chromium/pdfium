@@ -13,6 +13,7 @@
 #include "fxjs/cjs_object.h"
 #include "fxjs/fxv8.h"
 #include "fxjs/xfa/cfxjse_runtimedata.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 #include "v8/include/v8-util.h"
 
@@ -25,7 +26,11 @@ v8::Isolate* g_isolate = nullptr;
 size_t g_isolate_ref_count = 0;
 CFX_V8ArrayBufferAllocator* g_arrayBufferAllocator = nullptr;
 v8::Global<v8::ObjectTemplate>* g_DefaultGlobalObjectTemplate = nullptr;
-const wchar_t kPerObjectDataTag[] = L"CFXJS_PerObjectData";
+
+// Only the address matters, values are for humans debugging. ASLR should
+// ensure that these values are unlikely to arise otherwise.
+const char kPerObjectDataTag[] = "CFXJS_PerObjectData";
+const char kPerIsolateDataTag[] = "FXJS_PerIsolateData";
 
 void* GetAlignedPointerForPerObjectDataTag() {
   return const_cast<void*>(static_cast<const void*>(kPerObjectDataTag));
@@ -307,8 +312,6 @@ size_t FXJS_GlobalIsolateRefCount() {
   return g_isolate_ref_count;
 }
 
-FXJS_PerIsolateData::~FXJS_PerIsolateData() = default;
-
 // static
 void FXJS_PerIsolateData::SetUp(v8::Isolate* pIsolate) {
   if (!pIsolate->GetData(g_embedderDataSlot))
@@ -317,16 +320,21 @@ void FXJS_PerIsolateData::SetUp(v8::Isolate* pIsolate) {
 
 // static
 FXJS_PerIsolateData* FXJS_PerIsolateData::Get(v8::Isolate* pIsolate) {
-  return static_cast<FXJS_PerIsolateData*>(
-      pIsolate->GetData(g_embedderDataSlot));
+  auto* result =
+      static_cast<FXJS_PerIsolateData*>(pIsolate->GetData(g_embedderDataSlot));
+  CHECK(result->m_Tag == kPerIsolateDataTag);
+  return result;
 }
+
+FXJS_PerIsolateData::FXJS_PerIsolateData(v8::Isolate* pIsolate)
+    : m_Tag(kPerIsolateDataTag),
+      m_pDynamicObjsMap(std::make_unique<V8TemplateMap>(pIsolate)) {}
+
+FXJS_PerIsolateData::~FXJS_PerIsolateData() = default;
 
 uint32_t FXJS_PerIsolateData::CurrentMaxObjDefinitionID() const {
   return pdfium::CollectionSize<uint32_t>(m_ObjectDefnArray);
 }
-
-FXJS_PerIsolateData::FXJS_PerIsolateData(v8::Isolate* pIsolate)
-    : m_pDynamicObjsMap(std::make_unique<V8TemplateMap>(pIsolate)) {}
 
 CFXJS_ObjDefinition* FXJS_PerIsolateData::ObjDefinitionForID(
     uint32_t id) const {

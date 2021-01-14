@@ -55,6 +55,7 @@ class FXJS_PerIsolateData {
   CFXJS_ObjDefinition* ObjDefinitionForID(uint32_t id) const;
   uint32_t AssignIDForObjDefinition(std::unique_ptr<CFXJS_ObjDefinition> pDefn);
 
+  const char* const m_Tag;
   std::vector<std::unique_ptr<CFXJS_ObjDefinition>> m_ObjectDefnArray;
   std::unique_ptr<V8TemplateMap> m_pDynamicObjsMap;
   std::unique_ptr<ExtensionIface> m_pFXJSERuntimeData;
