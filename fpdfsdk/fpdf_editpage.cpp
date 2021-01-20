@@ -174,10 +174,6 @@ FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV FPDF_CreateNewDocument() {
     pInfoDict->SetNewFor<CPDF_String>("Creator", L"PDFium");
   }
 
-#ifdef PDF_ENABLE_XFA
-  pDoc->SetExtension(std::make_unique<CPDFXFA_Context>(pDoc.get()));
-#endif  // PDF_ENABLE_XFA
-
   // Caller takes ownership of pDoc.
   return FPDFDocumentFromCPDFDocument(pDoc.release());
 }

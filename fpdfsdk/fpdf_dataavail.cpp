@@ -170,10 +170,6 @@ FPDFAvail_GetDocument(FPDF_AVAIL avail, FPDF_BYTESTRING password) {
     return nullptr;
   }
 
-#ifdef PDF_ENABLE_XFA
-  document->SetExtension(std::make_unique<CPDFXFA_Context>(document.get()));
-#endif  // PDF_ENABLE_XFA
-
   ReportUnsupportedFeatures(document.get());
   return FPDFDocumentFromCPDFDocument(document.release());
 }
