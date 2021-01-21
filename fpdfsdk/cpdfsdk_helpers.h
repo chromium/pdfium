@@ -19,11 +19,6 @@
 #include "core/fxcrt/fx_stream.h"
 #endif  // PDF_ENABLE_XFA
 
-#if defined(OS_WIN)
-#include <math.h>
-#include <tchar.h>
-#endif
-
 class CPDF_Annot;
 class CPDF_AnnotContext;
 class CPDF_ClipPath;

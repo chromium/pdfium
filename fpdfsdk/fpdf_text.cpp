@@ -22,10 +22,6 @@
 #include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/stl_util.h"
 
-#if defined(OS_WIN)
-#include <tchar.h>
-#endif
-
 namespace {
 
 constexpr size_t kBytesPerCharacter = sizeof(unsigned short);
