@@ -6,8 +6,8 @@
 
 #include "fxjs/xfa/cjx_xfa.h"
 
+#include "fxjs/fxv8.h"
 #include "fxjs/xfa/cfxjse_engine.h"
-#include "fxjs/xfa/cfxjse_value.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_xfa.h"
 
@@ -20,7 +20,7 @@ bool CJX_Xfa::DynamicTypeIs(TypeTag eType) const {
 }
 
 void CJX_Xfa::thisValue(v8::Isolate* pIsolate,
-                        CFXJSE_Value* pValue,
+                        v8::Local<v8::Value>* pValue,
                         bool bSetting,
                         XFA_Attribute eAttribute) {
   if (bSetting)
@@ -28,10 +28,7 @@ void CJX_Xfa::thisValue(v8::Isolate* pIsolate,
 
   auto* pScriptContext = GetDocument()->GetScriptContext();
   CXFA_Object* pThis = pScriptContext->GetThisObject();
-  if (!pThis) {
-    pValue->SetNull(pIsolate);
-    return;
-  }
-  pValue->ForceSetValue(pIsolate,
-                        pScriptContext->GetOrCreateJSBindingFromMap(pThis));
+  *pValue =
+      pThis ? pScriptContext->GetOrCreateJSBindingFromMap(pThis).As<v8::Value>()
+            : fxv8::NewNullHelper(pIsolate);
 }

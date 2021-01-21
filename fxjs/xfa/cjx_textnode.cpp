@@ -18,14 +18,14 @@ bool CJX_TextNode::DynamicTypeIs(TypeTag eType) const {
 }
 
 void CJX_TextNode::defaultValue(v8::Isolate* pIsolate,
-                                CFXJSE_Value* pValue,
+                                v8::Local<v8::Value>* pValue,
                                 bool bSetting,
                                 XFA_Attribute attr) {
   ScriptSomDefaultValue(pIsolate, pValue, bSetting, attr);
 }
 
 void CJX_TextNode::value(v8::Isolate* pIsolate,
-                         CFXJSE_Value* pValue,
+                         v8::Local<v8::Value>* pValue,
                          bool bSetting,
                          XFA_Attribute attr) {
   ScriptSomDefaultValue(pIsolate, pValue, bSetting, attr);

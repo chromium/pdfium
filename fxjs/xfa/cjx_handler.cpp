@@ -17,6 +17,6 @@ bool CJX_Handler::DynamicTypeIs(TypeTag eType) const {
 }
 
 void CJX_Handler::version(v8::Isolate* pIsolate,
-                          CFXJSE_Value* pValue,
+                          v8::Local<v8::Value>* pValue,
                           bool bSetting,
                           XFA_Attribute eAttribute) {}

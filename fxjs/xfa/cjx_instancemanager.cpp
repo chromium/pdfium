@@ -9,9 +9,9 @@
 #include <algorithm>
 #include <vector>
 
+#include "fxjs/fxv8.h"
 #include "fxjs/js_resources.h"
 #include "fxjs/xfa/cfxjse_engine.h"
-#include "fxjs/xfa/cfxjse_value.h"
 #include "third_party/base/notreached.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
@@ -297,7 +297,7 @@ CJS_Result CJX_InstanceManager::insertInstance(
 }
 
 void CJX_InstanceManager::max(v8::Isolate* pIsolate,
-                              CFXJSE_Value* pValue,
+                              v8::Local<v8::Value>* pValue,
                               bool bSetting,
                               XFA_Attribute eAttribute) {
   if (bSetting) {
@@ -305,12 +305,12 @@ void CJX_InstanceManager::max(v8::Isolate* pIsolate,
     return;
   }
   CXFA_Occur* occur = GetXFANode()->GetOccurIfExists();
-  pValue->SetInteger(pIsolate,
-                     occur ? occur->GetMax() : CXFA_Occur::kDefaultMax);
+  *pValue = fxv8::NewNumberHelper(
+      pIsolate, occur ? occur->GetMax() : CXFA_Occur::kDefaultMax);
 }
 
 void CJX_InstanceManager::min(v8::Isolate* pIsolate,
-                              CFXJSE_Value* pValue,
+                              v8::Local<v8::Value>* pValue,
                               bool bSetting,
                               XFA_Attribute eAttribute) {
   if (bSetting) {
@@ -318,17 +318,17 @@ void CJX_InstanceManager::min(v8::Isolate* pIsolate,
     return;
   }
   CXFA_Occur* occur = GetXFANode()->GetOccurIfExists();
-  pValue->SetInteger(pIsolate,
-                     occur ? occur->GetMin() : CXFA_Occur::kDefaultMin);
+  *pValue = fxv8::NewNumberHelper(
+      pIsolate, occur ? occur->GetMin() : CXFA_Occur::kDefaultMin);
 }
 
 void CJX_InstanceManager::count(v8::Isolate* pIsolate,
-                                CFXJSE_Value* pValue,
+                                v8::Local<v8::Value>* pValue,
                                 bool bSetting,
                                 XFA_Attribute eAttribute) {
   if (bSetting) {
-    SetInstances(pValue->ToInteger(pIsolate));
+    SetInstances(fxv8::ReentrantToInt32Helper(pIsolate, *pValue));
     return;
   }
-  pValue->SetInteger(pIsolate, GetXFANode()->GetCount());
+  *pValue = fxv8::NewNumberHelper(pIsolate, GetXFANode()->GetCount());
 }

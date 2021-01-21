@@ -193,20 +193,19 @@ bool CFXJSE_Value::SetObjectOwnProperty(v8::Isolate* pIsolate,
       pIsolate, hObject.As<v8::Object>(), szPropName, pValue);
 }
 
-bool CFXJSE_Value::SetBoundFunction(v8::Isolate* pIsolate,
-                                    v8::Local<v8::Function> hOldFunction,
-                                    v8::Local<v8::Object> hNewThis) {
+v8::Local<v8::Function> CFXJSE_Value::NewBoundFunction(
+    v8::Isolate* pIsolate,
+    v8::Local<v8::Function> hOldFunction,
+    v8::Local<v8::Object> hNewThis) {
   ASSERT(!hOldFunction.IsEmpty());
   ASSERT(!hNewThis.IsEmpty());
 
-  CFXJSE_ScopeUtil_IsolateHandleRootContext scope(pIsolate);
+  CFXJSE_ScopeUtil_RootContext scope(pIsolate);
   v8::Local<v8::Value> rgArgs[2];
   rgArgs[0] = hOldFunction;
   rgArgs[1] = hNewThis;
-  v8::Local<v8::String> hBinderFuncSource =
-      fxv8::NewStringHelper(pIsolate,
-                            "(function (oldfunction, newthis) { return "
-                            "oldfunction.bind(newthis); })");
+  v8::Local<v8::String> hBinderFuncSource = fxv8::NewStringHelper(
+      pIsolate, "(function (fn, obj) { return fn.bind(obj); })");
   v8::Local<v8::Context> hContext = pIsolate->GetCurrentContext();
   v8::Local<v8::Function> hBinderFunc =
       v8::Script::Compile(hContext, hBinderFuncSource)
@@ -218,10 +217,9 @@ bool CFXJSE_Value::SetBoundFunction(v8::Isolate* pIsolate,
       hBinderFunc->Call(hContext, hContext->Global(), 2, rgArgs)
           .ToLocalChecked();
   if (!fxv8::IsFunction(hBoundFunction))
-    return false;
+    return v8::Local<v8::Function>();
 
-  m_hValue.Reset(pIsolate, hBoundFunction);
-  return true;
+  return hBoundFunction.As<v8::Function>();
 }
 
 v8::Local<v8::Value> CFXJSE_Value::GetValue(v8::Isolate* pIsolate) const {

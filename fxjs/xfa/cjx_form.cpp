@@ -8,9 +8,9 @@
 
 #include <vector>
 
+#include "fxjs/fxv8.h"
 #include "fxjs/js_resources.h"
 #include "fxjs/xfa/cfxjse_engine.h"
-#include "fxjs/xfa/cfxjse_value.h"
 #include "v8/include/cppgc/allocation.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
@@ -130,16 +130,18 @@ CJS_Result CJX_Form::execValidate(
 }
 
 void CJX_Form::checksumS(v8::Isolate* pIsolate,
-                         CFXJSE_Value* pValue,
+                         v8::Local<v8::Value>* pValue,
                          bool bSetting,
                          XFA_Attribute eAttribute) {
   if (bSetting) {
-    SetAttributeByEnum(XFA_Attribute::Checksum, pValue->ToWideString(pIsolate),
+    SetAttributeByEnum(XFA_Attribute::Checksum,
+                       fxv8::ReentrantToWideStringHelper(pIsolate, *pValue),
                        false);
     return;
   }
 
   Optional<WideString> checksum = TryAttribute(XFA_Attribute::Checksum, false);
-  pValue->SetString(pIsolate,
-                    checksum ? checksum->ToUTF8().AsStringView() : "");
+  *pValue = fxv8::NewStringHelper(
+      pIsolate,
+      checksum.has_value() ? checksum.value().ToUTF8().AsStringView() : "");
 }

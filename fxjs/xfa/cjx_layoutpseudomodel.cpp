@@ -10,10 +10,10 @@
 #include <utility>
 
 #include "core/fxcrt/fx_coordinates.h"
+#include "fxjs/fxv8.h"
 #include "fxjs/js_resources.h"
 #include "fxjs/xfa/cfxjse_class.h"
 #include "fxjs/xfa/cfxjse_engine.h"
-#include "fxjs/xfa/cfxjse_value.h"
 #include "third_party/base/stl_util.h"
 #include "v8/include/cppgc/allocation.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
@@ -63,7 +63,7 @@ bool CJX_LayoutPseudoModel::DynamicTypeIs(TypeTag eType) const {
 }
 
 void CJX_LayoutPseudoModel::ready(v8::Isolate* pIsolate,
-                                  CFXJSE_Value* pValue,
+                                  v8::Local<v8::Value>* pValue,
                                   bool bSetting,
                                   XFA_Attribute eAttribute) {
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
@@ -75,7 +75,7 @@ void CJX_LayoutPseudoModel::ready(v8::Isolate* pIsolate,
   }
 
   int32_t iStatus = pNotify->GetLayoutStatus();
-  pValue->SetBoolean(pIsolate, iStatus >= 2);
+  *pValue = fxv8::NewBooleanHelper(pIsolate, iStatus >= 2);
 }
 
 CJS_Result CJX_LayoutPseudoModel::HWXY(

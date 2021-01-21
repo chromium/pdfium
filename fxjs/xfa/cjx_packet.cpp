@@ -13,8 +13,8 @@
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
 #include "fxjs/cfx_v8.h"
+#include "fxjs/fxv8.h"
 #include "fxjs/js_resources.h"
-#include "fxjs/xfa/cfxjse_value.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_packet.h"
@@ -79,7 +79,7 @@ CJS_Result CJX_Packet::removeAttribute(
 }
 
 void CJX_Packet::content(v8::Isolate* pIsolate,
-                         CFXJSE_Value* pValue,
+                         v8::Local<v8::Value>* pValue,
                          bool bSetting,
                          XFA_Attribute eAttribute) {
   CFX_XMLElement* element = ToXMLElement(GetXFANode()->GetXMLMappingNode());
@@ -91,7 +91,8 @@ void CJX_Packet::content(v8::Isolate* pIsolate,
               ->GetNotify()
               ->GetFFDoc()
               ->GetXMLDocument()
-              ->CreateNode<CFX_XMLText>(pValue->ToWideString(pIsolate)));
+              ->CreateNode<CFX_XMLText>(
+                  fxv8::ReentrantToWideStringHelper(pIsolate, *pValue)));
     }
     return;
   }
@@ -100,5 +101,5 @@ void CJX_Packet::content(v8::Isolate* pIsolate,
   if (element)
     wsTextData = element->GetTextData();
 
-  pValue->SetString(pIsolate, wsTextData.ToUTF8().AsStringView());
+  *pValue = fxv8::NewStringHelper(pIsolate, wsTextData.ToUTF8().AsStringView());
 }

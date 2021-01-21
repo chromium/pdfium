@@ -181,7 +181,7 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
   JSE_PROP(ScriptSubmitFormatMode);
 
   void ScriptSomMessage(v8::Isolate* pIsolate,
-                        CFXJSE_Value* pValue,
+                        v8::Local<v8::Value>* pValue,
                         bool bSetting,
                         XFA_SOM_MESSAGETYPE iMessageType);
 

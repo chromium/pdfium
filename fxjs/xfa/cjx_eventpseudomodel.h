@@ -72,7 +72,7 @@ class CJX_EventPseudoModel final : public CJX_Object {
   static const CJX_MethodSpec MethodSpecs[];
 
   void Property(v8::Isolate* pIsolate,
-                CFXJSE_Value* pValue,
+                v8::Local<v8::Value>* pValue,
                 XFA_Event dwFlag,
                 bool bSetting);
 };

@@ -86,11 +86,11 @@ CJS_Result CJX_Model::isCompatibleNS(
 }
 
 void CJX_Model::context(v8::Isolate* pIsolate,
-                        CFXJSE_Value* pValue,
+                        v8::Local<v8::Value>* pValue,
                         bool bSetting,
                         XFA_Attribute eAttribute) {}
 
 void CJX_Model::aliasNode(v8::Isolate* pIsolate,
-                          CFXJSE_Value* pValue,
+                          v8::Local<v8::Value>* pValue,
                           bool bSetting,
                           XFA_Attribute eAttribute) {}

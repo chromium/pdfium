@@ -53,21 +53,21 @@ CJS_Result CJX_DataWindow::isRecordGroup(
 }
 
 void CJX_DataWindow::recordsBefore(v8::Isolate* pIsolate,
-                                   CFXJSE_Value* pValue,
+                                   v8::Local<v8::Value>* pValue,
                                    bool bSetting,
                                    XFA_Attribute eAttribute) {}
 
 void CJX_DataWindow::currentRecordNumber(v8::Isolate* pIsolate,
-                                         CFXJSE_Value* pValue,
+                                         v8::Local<v8::Value>* pValue,
                                          bool bSetting,
                                          XFA_Attribute eAttribute) {}
 
 void CJX_DataWindow::recordsAfter(v8::Isolate* pIsolate,
-                                  CFXJSE_Value* pValue,
+                                  v8::Local<v8::Value>* pValue,
                                   bool bSetting,
                                   XFA_Attribute eAttribute) {}
 
 void CJX_DataWindow::isDefined(v8::Isolate* pIsolate,
-                               CFXJSE_Value* pValue,
+                               v8::Local<v8::Value>* pValue,
                                bool bSetting,
                                XFA_Attribute eAttribute) {}

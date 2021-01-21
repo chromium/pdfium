@@ -184,6 +184,6 @@ CJS_Result CJX_Source::hasDataChanged(
 }
 
 void CJX_Source::db(v8::Isolate* pIsolate,
-                    CFXJSE_Value* pValue,
+                    v8::Local<v8::Value>* pValue,
                     bool bSetting,
                     XFA_Attribute eAttribute) {}

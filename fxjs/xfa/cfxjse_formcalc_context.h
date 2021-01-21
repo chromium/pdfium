@@ -272,7 +272,7 @@ class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
   static Optional<CFX_WideTextBuf> Translate(cppgc::Heap* pHeap,
                                              WideStringView wsFormcalc);
 
-  void GlobalPropertyGetter(CFXJSE_Value* pValue);
+  v8::Local<v8::Value> GlobalPropertyGetter();
   v8::Isolate* GetIsolate() const { return m_pIsolate.Get(); }
   CXFA_Document* GetDocument() const { return m_pDocument.Get(); }
 

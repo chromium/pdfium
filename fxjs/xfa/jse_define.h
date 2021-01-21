@@ -24,15 +24,15 @@ class CFX_V8;
   CJS_Result method_name(CFX_V8* runtime,                            \
                          const std::vector<v8::Local<v8::Value>>& params)
 
-#define JSE_PROP(prop_name)                                                  \
-  static void prop_name##_static(v8::Isolate* pIsolate, CJX_Object* node,    \
-                                 CFXJSE_Value* value, bool setting,          \
-                                 XFA_Attribute attribute) {                  \
-    if (node->DynamicTypeIs(static_type__))                                  \
-      static_cast<Type__*>(node)->prop_name(pIsolate, value, setting,        \
-                                            attribute);                      \
-  }                                                                          \
-  void prop_name(v8::Isolate* pIsolate, CFXJSE_Value* pValue, bool bSetting, \
-                 XFA_Attribute eAttribute)
+#define JSE_PROP(prop_name)                                                 \
+  static void prop_name##_static(v8::Isolate* pIsolate, CJX_Object* node,   \
+                                 v8::Local<v8::Value>* value, bool setting, \
+                                 XFA_Attribute attribute) {                 \
+    if (node->DynamicTypeIs(static_type__))                                 \
+      static_cast<Type__*>(node)->prop_name(pIsolate, value, setting,       \
+                                            attribute);                     \
+  }                                                                         \
+  void prop_name(v8::Isolate* pIsolate, v8::Local<v8::Value>* pValue,       \
+                 bool bSetting, XFA_Attribute eAttribute)
 
 #endif  // FXJS_XFA_JSE_DEFINE_H_

@@ -6,6 +6,7 @@
 
 #include "fxjs/xfa/cjx_boolean.h"
 
+#include "fxjs/fxv8.h"
 #include "fxjs/xfa/cfxjse_value.h"
 #include "xfa/fxfa/parser/cxfa_boolean.h"
 
@@ -18,17 +19,18 @@ bool CJX_Boolean::DynamicTypeIs(TypeTag eType) const {
 }
 
 void CJX_Boolean::defaultValue(v8::Isolate* pIsolate,
-                               CFXJSE_Value* pValue,
+                               v8::Local<v8::Value>* pValue,
                                bool bSetting,
                                XFA_Attribute eAttribute) {
   if (!bSetting) {
-    pValue->SetBoolean(pIsolate, GetContent(true).EqualsASCII("1"));
+    *pValue =
+        fxv8::NewBooleanHelper(pIsolate, GetContent(true).EqualsASCII("1"));
     return;
   }
 
   ByteString newValue;
-  if (pValue && !(pValue->IsNull(pIsolate) || pValue->IsUndefined(pIsolate)))
-    newValue = pValue->ToString(pIsolate);
+  if (pValue && !(fxv8::IsNull(*pValue) || fxv8::IsUndefined(*pValue)))
+    newValue = fxv8::ReentrantToByteStringHelper(pIsolate, *pValue);
 
   int32_t iValue = FXSYS_atoi(newValue.c_str());
   WideString wsNewValue(iValue == 0 ? L"0" : L"1");
@@ -41,7 +43,7 @@ void CJX_Boolean::defaultValue(v8::Isolate* pIsolate,
 }
 
 void CJX_Boolean::value(v8::Isolate* pIsolate,
-                        CFXJSE_Value* pValue,
+                        v8::Local<v8::Value>* pValue,
                         bool bSetting,
                         XFA_Attribute eAttribute) {
   defaultValue(pIsolate, pValue, bSetting, eAttribute);

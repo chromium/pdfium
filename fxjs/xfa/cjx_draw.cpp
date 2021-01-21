@@ -6,6 +6,7 @@
 
 #include "fxjs/xfa/cjx_draw.h"
 
+#include "fxjs/fxv8.h"
 #include "fxjs/xfa/cfxjse_value.h"
 #include "xfa/fxfa/parser/cxfa_draw.h"
 
@@ -18,32 +19,32 @@ bool CJX_Draw::DynamicTypeIs(TypeTag eType) const {
 }
 
 void CJX_Draw::rawValue(v8::Isolate* pIsolate,
-                        CFXJSE_Value* pValue,
+                        v8::Local<v8::Value>* pValue,
                         bool bSetting,
                         XFA_Attribute eAttribute) {
   defaultValue(pIsolate, pValue, bSetting, eAttribute);
 }
 
 void CJX_Draw::defaultValue(v8::Isolate* pIsolate,
-                            CFXJSE_Value* pValue,
+                            v8::Local<v8::Value>* pValue,
                             bool bSetting,
                             XFA_Attribute eAttribute) {
   if (!bSetting) {
-    WideString content = GetContent(true);
-    if (content.IsEmpty())
-      pValue->SetNull(pIsolate);
-    else
-      pValue->SetString(pIsolate, content.ToUTF8().AsStringView());
+    ByteString content = GetContent(true).ToUTF8();
+    *pValue = content.IsEmpty()
+                  ? fxv8::NewNullHelper(pIsolate).As<v8::Value>()
+                  : fxv8::NewStringHelper(pIsolate, content.AsStringView())
+                        .As<v8::Value>();
     return;
   }
 
-  if (!pValue || !pValue->IsString(pIsolate))
+  if (!pValue || !fxv8::IsString(*pValue))
     return;
 
   ASSERT(GetXFANode()->IsWidgetReady());
   if (GetXFANode()->GetFFWidgetType() != XFA_FFWidgetType::kText)
     return;
 
-  WideString wsNewValue = pValue->ToWideString(pIsolate);
+  WideString wsNewValue = fxv8::ReentrantToWideStringHelper(pIsolate, *pValue);
   SetContent(wsNewValue, wsNewValue, true, true, true);
 }

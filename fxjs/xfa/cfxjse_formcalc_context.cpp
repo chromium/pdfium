@@ -1328,10 +1328,10 @@ v8::Local<v8::Value> GetObjectDefaultValue(v8::Isolate* pIsolate,
   if (!pNode)
     return fxv8::NewNullHelper(pIsolate);
 
-  auto value = std::make_unique<CFXJSE_Value>();
-  pNode->JSObject()->ScriptSomDefaultValue(pIsolate, value.get(), false,
+  v8::Local<v8::Value> value;
+  pNode->JSObject()->ScriptSomDefaultValue(pIsolate, &value, false,
                                            XFA_Attribute::Unknown);
-  return value->GetValue(pIsolate);
+  return value;
 }
 
 bool SetObjectDefaultValue(v8::Isolate* pIsolate,
@@ -1341,8 +1341,7 @@ bool SetObjectDefaultValue(v8::Isolate* pIsolate,
   if (!pNode)
     return false;
 
-  auto value = std::make_unique<CFXJSE_Value>(pIsolate, hNewValue);
-  pNode->JSObject()->ScriptSomDefaultValue(pIsolate, value.get(), true,
+  pNode->JSObject()->ScriptSomDefaultValue(pIsolate, &hNewValue, true,
                                            XFA_Attribute::Unknown);
   return true;
 }
@@ -1649,12 +1648,12 @@ std::vector<v8::Local<v8::Value>> ParseResolveResult(
   if (resolveNodeRS.script_attribute.callback &&
       resolveNodeRS.script_attribute.eValueType == XFA_ScriptType::Object) {
     for (auto& pObject : resolveNodeRS.objects) {
-      auto pValue = std::make_unique<CFXJSE_Value>();
+      v8::Local<v8::Value> pValue;
       CJX_Object* jsObject = pObject->JSObject();
       (*resolveNodeRS.script_attribute.callback)(
-          pIsolate, jsObject, pValue.get(), false,
+          pIsolate, jsObject, &pValue, false,
           resolveNodeRS.script_attribute.attribute);
-      resultValues.push_back(pValue->GetValue(pIsolate));
+      resultValues.push_back(pValue);
       *bAttribute = false;
     }
   }
@@ -5329,9 +5328,8 @@ CFXJSE_FormCalcContext* CFXJSE_FormCalcContext::AsFormCalcContext() {
   return this;
 }
 
-void CFXJSE_FormCalcContext::GlobalPropertyGetter(CFXJSE_Value* pValue) {
-  pValue->ForceSetValue(GetIsolate(),
-                        v8::Local<v8::Value>::New(m_pIsolate, m_Value));
+v8::Local<v8::Value> CFXJSE_FormCalcContext::GlobalPropertyGetter() {
+  return v8::Local<v8::Value>::New(m_pIsolate, m_Value);
 }
 
 // static

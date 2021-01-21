@@ -16,7 +16,7 @@
 
 typedef void (*XFA_ATTRIBUTE_CALLBACK)(v8::Isolate* pIsolate,
                                        CJX_Object* pNode,
-                                       CFXJSE_Value* pValue,
+                                       v8::Local<v8::Value>* pValue,
                                        bool bSetting,
                                        XFA_Attribute eAttribute);
 

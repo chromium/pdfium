@@ -16,9 +16,9 @@
 #include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlparser.h"
+#include "fxjs/fxv8.h"
 #include "fxjs/js_resources.h"
 #include "fxjs/xfa/cfxjse_engine.h"
-#include "fxjs/xfa/cfxjse_value.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
@@ -401,43 +401,42 @@ CJS_Result CJX_Node::setElement(
 }
 
 void CJX_Node::ns(v8::Isolate* pIsolate,
-                  CFXJSE_Value* pValue,
+                  v8::Local<v8::Value>* pValue,
                   bool bSetting,
                   XFA_Attribute eAttribute) {
   if (bSetting) {
     ThrowInvalidPropertyException();
     return;
   }
-  pValue->SetString(
+  *pValue = fxv8::NewStringHelper(
       pIsolate, TryNamespace().value_or(WideString()).ToUTF8().AsStringView());
 }
 
 void CJX_Node::model(v8::Isolate* pIsolate,
-                     CFXJSE_Value* pValue,
+                     v8::Local<v8::Value>* pValue,
                      bool bSetting,
                      XFA_Attribute eAttribute) {
   if (bSetting) {
     ThrowInvalidPropertyException();
     return;
   }
-  pValue->ForceSetValue(
-      pIsolate, GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
-                    GetXFANode()->GetModelNode()));
+  *pValue = GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
+      GetXFANode()->GetModelNode());
 }
 
 void CJX_Node::isContainer(v8::Isolate* pIsolate,
-                           CFXJSE_Value* pValue,
+                           v8::Local<v8::Value>* pValue,
                            bool bSetting,
                            XFA_Attribute eAttribute) {
   if (bSetting) {
     ThrowInvalidPropertyException();
     return;
   }
-  pValue->SetBoolean(pIsolate, GetXFANode()->IsContainerNode());
+  *pValue = fxv8::NewBooleanHelper(pIsolate, GetXFANode()->IsContainerNode());
 }
 
 void CJX_Node::isNull(v8::Isolate* pIsolate,
-                      CFXJSE_Value* pValue,
+                      v8::Local<v8::Value>* pValue,
                       bool bSetting,
                       XFA_Attribute eAttribute) {
   if (bSetting) {
@@ -445,14 +444,14 @@ void CJX_Node::isNull(v8::Isolate* pIsolate,
     return;
   }
   if (GetXFANode()->GetElementType() == XFA_Element::Subform) {
-    pValue->SetBoolean(pIsolate, false);
+    *pValue = fxv8::NewBooleanHelper(pIsolate, false);
     return;
   }
-  pValue->SetBoolean(pIsolate, GetContent(false).IsEmpty());
+  *pValue = fxv8::NewBooleanHelper(pIsolate, GetContent(false).IsEmpty());
 }
 
 void CJX_Node::oneOfChild(v8::Isolate* pIsolate,
-                          CFXJSE_Value* pValue,
+                          v8::Local<v8::Value>* pValue,
                           bool bSetting,
                           XFA_Attribute eAttribute) {
   if (bSetting) {
@@ -463,10 +462,8 @@ void CJX_Node::oneOfChild(v8::Isolate* pIsolate,
   std::vector<CXFA_Node*> properties =
       GetXFANode()->GetNodeListWithFilter(XFA_NODEFILTER_OneOfProperty);
   if (!properties.empty()) {
-    pValue->ForceSetValue(
-        pIsolate,
-        GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
-            properties.front()));
+    *pValue = GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
+        properties.front());
   }
 }
 

@@ -124,8 +124,10 @@ void DynPropGetterAdapter(v8::Isolate* pIsolate,
           ? FXJSE_ClassPropType_Property
           : lpClass->dynPropTypeGetter(pIsolate, pObject, szPropName, false);
   if (nPropType == FXJSE_ClassPropType_Property) {
-    if (lpClass->dynPropGetter)
-      lpClass->dynPropGetter(pIsolate, pObject, szPropName, pValue);
+    if (lpClass->dynPropGetter) {
+      pValue->ForceSetValue(
+          pIsolate, lpClass->dynPropGetter(pIsolate, pObject, szPropName));
+    }
   } else if (nPropType == FXJSE_ClassPropType_Method) {
     if (lpClass->dynMethodCall && pValue) {
       v8::HandleScope hscope(pIsolate);
@@ -160,8 +162,10 @@ void DynPropSetterAdapter(v8::Isolate* pIsolate,
           ? FXJSE_ClassPropType_Property
           : lpClass->dynPropTypeGetter(pIsolate, pObject, szPropName, false);
   if (nPropType != FXJSE_ClassPropType_Method) {
-    if (lpClass->dynPropSetter)
-      lpClass->dynPropSetter(pIsolate, pObject, szPropName, pValue);
+    if (lpClass->dynPropSetter) {
+      lpClass->dynPropSetter(pIsolate, pObject, szPropName,
+                             pValue->GetValue(pIsolate));
+    }
   }
 }
 

@@ -73,22 +73,22 @@ class CFXJSE_Engine final : public CFX_V8 {
                                v8::Local<v8::Value> value);
   static CXFA_Object* ToObject(v8::Isolate* pIsolate, CFXJSE_Value* pValue);
   static CXFA_Object* ToObject(CFXJSE_HostObject* pHostObj);
-  static void GlobalPropertyGetter(v8::Isolate* pIsolate,
-                                   v8::Local<v8::Object> pObject,
-                                   ByteStringView szPropName,
-                                   CFXJSE_Value* pValue);
+  static v8::Local<v8::Value> GlobalPropertyGetter(
+      v8::Isolate* pIsolate,
+      v8::Local<v8::Object> pObject,
+      ByteStringView szPropName);
   static void GlobalPropertySetter(v8::Isolate* pIsolate,
                                    v8::Local<v8::Object> pObject,
                                    ByteStringView szPropName,
-                                   CFXJSE_Value* pValue);
-  static void NormalPropertyGetter(v8::Isolate* pIsolate,
-                                   v8::Local<v8::Object> pObject,
-                                   ByteStringView szPropName,
-                                   CFXJSE_Value* pValue);
+                                   v8::Local<v8::Value> pValue);
+  static v8::Local<v8::Value> NormalPropertyGetter(
+      v8::Isolate* pIsolate,
+      v8::Local<v8::Object> pObject,
+      ByteStringView szPropName);
   static void NormalPropertySetter(v8::Isolate* pIsolate,
                                    v8::Local<v8::Object> pObject,
                                    ByteStringView szPropName,
-                                   CFXJSE_Value* pValue);
+                                   v8::Local<v8::Value> pValue);
   static CJS_Result NormalMethodCall(
       const v8::FunctionCallbackInfo<v8::Value>& info,
       const WideString& functionName);
@@ -148,7 +148,7 @@ class CFXJSE_Engine final : public CFX_V8 {
   void RemoveBuiltInObjs(CFXJSE_Context* pContext);
   bool QueryNodeByFlag(CXFA_Node* refNode,
                        WideStringView propname,
-                       CFXJSE_Value* pValue,
+                       v8::Local<v8::Value>* pValue,
                        uint32_t dwFlag,
                        bool bSetting);
   bool IsStrictScopeInJavaScript();
@@ -156,7 +156,7 @@ class CFXJSE_Engine final : public CFX_V8 {
   CXFA_Object* GetVariablesScript(CXFA_Object* pObject);
   bool QueryVariableValue(CXFA_Node* pScriptNode,
                           ByteStringView szPropName,
-                          CFXJSE_Value* pValue,
+                          v8::Local<v8::Value>* pValue,
                           bool bGetter);
   bool RunVariablesScript(CXFA_Node* pScriptNode);
 

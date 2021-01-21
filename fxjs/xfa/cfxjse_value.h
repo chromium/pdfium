@@ -75,9 +75,12 @@ class CFXJSE_Value {
   bool SetObjectOwnProperty(v8::Isolate* pIsolate,
                             ByteStringView szPropName,
                             CFXJSE_Value* lpPropValue);
-  bool SetBoundFunction(v8::Isolate* pIsolate,
-                        v8::Local<v8::Function> hOldFunction,
-                        v8::Local<v8::Object> lpNewThis);
+
+  // Return empty local on error.
+  static v8::Local<v8::Function> NewBoundFunction(
+      v8::Isolate* pIsolate,
+      v8::Local<v8::Function> hOldFunction,
+      v8::Local<v8::Object> lpNewThis);
 
   v8::Local<v8::Value> GetValue(v8::Isolate* pIsolate) const;
   const v8::Global<v8::Value>& DirectGetValue() const { return m_hValue; }

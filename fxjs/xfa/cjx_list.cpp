@@ -8,10 +8,10 @@
 
 #include <vector>
 
+#include "fxjs/fxv8.h"
 #include "fxjs/js_resources.h"
 #include "fxjs/xfa/cfxjse_class.h"
 #include "fxjs/xfa/cfxjse_engine.h"
-#include "fxjs/xfa/cfxjse_value.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_list.h"
@@ -98,13 +98,13 @@ CJS_Result CJX_List::item(CFX_V8* runtime,
 }
 
 void CJX_List::length(v8::Isolate* pIsolate,
-                      CFXJSE_Value* pValue,
+                      v8::Local<v8::Value>* pValue,
                       bool bSetting,
                       XFA_Attribute eAttribute) {
   if (bSetting) {
     ThrowInvalidPropertyException();
     return;
   }
-  pValue->SetInteger(
+  *pValue = fxv8::NewNumberHelper(
       pIsolate, pdfium::base::checked_cast<int32_t>(GetXFAList()->GetLength()));
 }
