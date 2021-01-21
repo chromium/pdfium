@@ -77,9 +77,7 @@ FXGCScopedHeap FXGC_CreateHeap() {
           {},
           cppgc::Heap::StackSupport::kNoConservativeStackScan,
           cppgc::Heap::MarkingType::kAtomic,
-          // TODO(tsepez): switch to incremental sweeping when the issue
-          // in https://crbug.com/1156170 is resolved.
-          cppgc::Heap::SweepingType::kAtomic,
+          cppgc::Heap::SweepingType::kIncrementalAndConcurrent,
           {}});
   return FXGCScopedHeap(heap.release());
 }
