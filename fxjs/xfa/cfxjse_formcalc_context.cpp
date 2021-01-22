@@ -2451,12 +2451,13 @@ void CFXJSE_FormCalcContext::Time2Num(
   CXFA_Document* pDoc = ToFormCalcContext(pThis)->GetDocument();
   CXFA_LocaleMgr* pMgr = pDoc->GetLocaleMgr();
   GCedLocaleIface* pLocale = nullptr;
-  if (bsLocale.IsEmpty()) {
-    CXFA_Node* pThisNode = ToNode(pDoc->GetScriptContext()->GetThisObject());
-    pLocale = pThisNode->GetLocale();
-  } else {
+  if (!bsLocale.IsEmpty()) {
     pLocale =
         pMgr->GetLocaleByName(WideString::FromUTF8(bsLocale.AsStringView()));
+  }
+  if (!pLocale) {
+    CXFA_Node* pThisNode = ToNode(pDoc->GetScriptContext()->GetThisObject());
+    pLocale = pThisNode->GetLocale();
   }
 
   WideString wsFormat;

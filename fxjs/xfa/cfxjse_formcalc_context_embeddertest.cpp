@@ -515,7 +515,9 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Time2Num) {
     int result;
   } tests[] = {
       // {"Time2Num(\"00:00:00 GMT\", \"HH:MM:SS Z\")", 1},
-      {"Time2Num(\"13:13:13 GMT\", \"HH:MM:SS Z\", \"fr_FR\")", 47593001}};
+      {"Time2Num(\"\", \"\", 1)", 0},  // https://crbug.com/pdfium/1257
+      {"Time2Num(\"13:13:13 GMT\", \"HH:MM:SS Z\", \"fr_FR\")", 47593001},
+  };
 
   for (size_t i = 0; i < pdfium::size(tests); ++i)
     ExecuteExpectInt32(tests[i].program, tests[i].result);
