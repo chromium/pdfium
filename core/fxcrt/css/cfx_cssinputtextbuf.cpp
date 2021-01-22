@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcrt/css/cfx_cssexttextbuf.h"
+#include "core/fxcrt/css/cfx_cssinputtextbuf.h"
 
-CFX_CSSExtTextBuf::CFX_CSSExtTextBuf(WideStringView str) : m_Buffer(str) {}
+CFX_CSSInputTextBuf::CFX_CSSInputTextBuf(WideStringView str) : m_Buffer(str) {}
 
-CFX_CSSExtTextBuf::~CFX_CSSExtTextBuf() = default;
+CFX_CSSInputTextBuf::~CFX_CSSInputTextBuf() = default;

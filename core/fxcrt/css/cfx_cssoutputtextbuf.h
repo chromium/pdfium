@@ -4,18 +4,18 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_CSS_CFX_CSSTEXTBUF_H_
-#define CORE_FXCRT_CSS_CFX_CSSTEXTBUF_H_
+#ifndef CORE_FXCRT_CSS_CFX_CSSOUTPUTTEXTBUF_H_
+#define CORE_FXCRT_CSS_CFX_CSSOUTPUTTEXTBUF_H_
 
 #include <vector>
 
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_string.h"
 
-class CFX_CSSTextBuf {
+class CFX_CSSOutputTextBuf {
  public:
-  CFX_CSSTextBuf();
-  ~CFX_CSSTextBuf();
+  CFX_CSSOutputTextBuf();
+  ~CFX_CSSOutputTextBuf();
 
   void Clear() { m_Buffer.clear(); }
   bool IsEmpty() const { return m_Buffer.empty(); }
@@ -26,4 +26,4 @@ class CFX_CSSTextBuf {
   std::vector<wchar_t, FxAllocAllocator<wchar_t>> m_Buffer;
 };
 
-#endif  // CORE_FXCRT_CSS_CFX_CSSTEXTBUF_H_
+#endif  // CORE_FXCRT_CSS_CFX_CSSOUTPUTTEXTBUF_H_

@@ -4,15 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_CSS_CFX_CSSEXTTEXTBUF_H_
-#define CORE_FXCRT_CSS_CFX_CSSEXTTEXTBUF_H_
+#ifndef CORE_FXCRT_CSS_CFX_CSSINPUTTEXTBUF_H_
+#define CORE_FXCRT_CSS_CFX_CSSINPUTTEXTBUF_H_
 
 #include "core/fxcrt/fx_string.h"
 
-class CFX_CSSExtTextBuf {
+class CFX_CSSInputTextBuf {
  public:
-  explicit CFX_CSSExtTextBuf(WideStringView str);
-  ~CFX_CSSExtTextBuf();
+  explicit CFX_CSSInputTextBuf(WideStringView str);
+  ~CFX_CSSInputTextBuf();
 
   bool IsEOF() const { return m_iPos >= m_Buffer.GetLength(); }
   void MoveNext() { m_iPos++; }
@@ -26,4 +26,4 @@ class CFX_CSSExtTextBuf {
   size_t m_iPos = 0;
 };
 
-#endif  // CORE_FXCRT_CSS_CFX_CSSEXTTEXTBUF_H_
+#endif  // CORE_FXCRT_CSS_CFX_CSSINPUTTEXTBUF_H_
