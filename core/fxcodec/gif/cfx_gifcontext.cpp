@@ -461,7 +461,7 @@ CFX_GifDecodeStatus CFX_GifContext::DecodeImageInfo() {
     return CFX_GifDecodeStatus::Error;
 
   size_t read_marker = input_buffer_->GetPosition();
-  CFX_CFX_GifImageInfo img_info;
+  CFX_GifImageInfo img_info;
   if (!ReadAllOrNone(reinterpret_cast<uint8_t*>(&img_info), sizeof(img_info)))
     return CFX_GifDecodeStatus::Unfinished;
 

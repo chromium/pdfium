@@ -17,8 +17,8 @@ static_assert(sizeof(CFX_GifHeader) == 6,
               "CFX_GifHeader should have a size of 6");
 static_assert(sizeof(CFX_GifLocalScreenDescriptor) == 7,
               "CFX_GifLocalScreenDescriptor should have a size of 7");
-static_assert(sizeof(CFX_CFX_GifImageInfo) == 9,
-              "CFX_CFX_GifImageInfo should have a size of 9");
+static_assert(sizeof(CFX_GifImageInfo) == 9,
+              "CFX_GifImageInfo should have a size of 9");
 static_assert(sizeof(CFX_GifControlExtensionFlags) == 1,
               "CFX_GifControlExtensionFlags should have a size of 1");
 static_assert(sizeof(CFX_GifPlainTextExtension) == 13,
