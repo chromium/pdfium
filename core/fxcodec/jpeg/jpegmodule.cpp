@@ -20,12 +20,13 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/fx_dib.h"
+#include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/optional.h"
 
 static pdfium::span<const uint8_t> JpegScanSOI(
     pdfium::span<const uint8_t> src_span) {
-  ASSERT(!src_span.empty());
+  DCHECK(!src_span.empty());
 
   for (size_t offset = 0; offset < src_span.size() - 1; ++offset) {
     if (src_span[offset] == 0xff && src_span[offset + 1] == 0xd8)
@@ -358,7 +359,7 @@ bool JpegDecoder::IsSofSegment(size_t marker_offset) const {
 
 void JpegDecoder::PatchUpKnownBadHeaderWithInvalidHeight(
     size_t dimension_offset) {
-  ASSERT(m_SrcSpan.size() > dimension_offset + 1u);
+  DCHECK(m_SrcSpan.size() > dimension_offset + 1u);
   uint8_t* pData = GetWritableSrcData() + dimension_offset;
   pData[0] = (m_OrigHeight >> 8) & 0xff;
   pData[1] = m_OrigHeight & 0xff;
@@ -383,7 +384,7 @@ std::unique_ptr<ScanlineDecoder> JpegModule::CreateDecoder(
     int height,
     int nComps,
     bool ColorTransform) {
-  ASSERT(!src_span.empty());
+  DCHECK(!src_span.empty());
 
   auto pDecoder = std::make_unique<JpegDecoder>();
   if (!pDecoder->Create(src_span, width, height, nComps, ColorTransform))

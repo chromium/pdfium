@@ -15,6 +15,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "third_party/base/check.h"
 
 #define JBIG2_GETDWORD(buf)                  \
   ((static_cast<uint32_t>((buf)[0]) << 24) | \
@@ -266,7 +267,7 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
                                      int32_t y,
                                      JBig2ComposeOp op,
                                      const FX_RECT& rtSrc) {
-  ASSERT(m_pData);
+  DCHECK(m_pData);
 
   // TODO(weili): Check whether the range check is correct. Should x>=1048576?
   if (x < -1048576 || x > 1048576 || y < -1048576 || y > 1048576)

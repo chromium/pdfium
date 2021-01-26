@@ -11,6 +11,7 @@
 #include "core/fxcodec/jbig2/JBig2_BitStream.h"
 #include "core/fxcodec/jbig2/JBig2_Context.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -129,13 +130,13 @@ static_assert(CJBig2_HuffmanTable::kNumHuffmanTables ==
 }  // namespace
 
 CJBig2_HuffmanTable::CJBig2_HuffmanTable(size_t idx) {
-  ASSERT(idx > 0);
-  ASSERT(idx < kNumHuffmanTables);
+  DCHECK(idx > 0);
+  DCHECK(idx < kNumHuffmanTables);
   const HuffmanTable& table = kHuffmanTables[idx];
   HTOOB = table.HTOOB;
   NTEMP = table.size;
   m_bOK = ParseFromStandardTable(idx);
-  ASSERT(m_bOK);
+  DCHECK(m_bOK);
 }
 
 CJBig2_HuffmanTable::CJBig2_HuffmanTable(CJBig2_BitStream* pStream)
@@ -233,7 +234,7 @@ void CJBig2_HuffmanTable::ExtendBuffers(bool increment) {
     return;
 
   size += 16;
-  ASSERT(NTEMP < size);
+  DCHECK(NTEMP < size);
   CODES.resize(size);
   RANGELEN.resize(size);
   RANGELOW.resize(size);

@@ -9,6 +9,7 @@
 
 #include "core/fxcodec/scanlinedecoder.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "third_party/base/check.h"
 
 namespace fxcodec {
 
@@ -170,7 +171,7 @@ void RLScanlineDecoder::UpdateOperator(uint8_t used_bytes) {
     return;
   }
   if (m_Operator < 128) {
-    ASSERT((uint32_t)m_Operator + 1 >= used_bytes);
+    DCHECK((uint32_t)m_Operator + 1 >= used_bytes);
     if (used_bytes == m_Operator + 1) {
       m_SrcOffset += used_bytes;
       GetNextOperator();
@@ -184,7 +185,7 @@ void RLScanlineDecoder::UpdateOperator(uint8_t used_bytes) {
     return;
   }
   uint8_t count = 257 - m_Operator;
-  ASSERT((uint32_t)count >= used_bytes);
+  DCHECK((uint32_t)count >= used_bytes);
   if (used_bytes == count) {
     m_SrcOffset++;
     GetNextOperator();

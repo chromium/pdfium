@@ -13,6 +13,7 @@
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/fx_codec_def.h"
 #include "core/fxge/dib/fx_dib.h"
+#include "third_party/base/check.h"
 
 namespace fxcodec {
 
@@ -32,7 +33,7 @@ BmpDecoder::Status BmpDecoder::ReadHeader(
     int32_t* pal_num,
     const std::vector<uint32_t>** palette,
     CFX_DIBAttribute* pAttribute) {
-  ASSERT(pAttribute);
+  DCHECK(pAttribute);
 
   auto* ctx = static_cast<CFX_BmpContext*>(pContext);
   Status status = ctx->m_Bmp.ReadHeader();

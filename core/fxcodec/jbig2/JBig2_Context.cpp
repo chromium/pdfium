@@ -25,6 +25,7 @@
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/pauseindicator_iface.h"
+#include "third_party/base/check.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -1195,8 +1196,8 @@ std::vector<JBig2HuffmanCode> CJBig2_Context::DecodeSymbolIDHuffmanTable(
 }
 
 const CJBig2_HuffmanTable* CJBig2_Context::GetHuffmanTable(size_t idx) {
-  ASSERT(idx > 0);
-  ASSERT(idx < CJBig2_HuffmanTable::kNumHuffmanTables);
+  DCHECK(idx > 0);
+  DCHECK(idx < CJBig2_HuffmanTable::kNumHuffmanTables);
   if (!m_HuffmanTables[idx].get())
     m_HuffmanTables[idx] = std::make_unique<CJBig2_HuffmanTable>(idx);
   return m_HuffmanTables[idx].get();

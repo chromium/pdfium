@@ -18,6 +18,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
+#include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 
 extern "C" {
@@ -502,7 +503,7 @@ bool TiffDecoder::LoadFrameInfo(ProgressiveDecoderIface::Context* pContext,
                                 int32_t* comps,
                                 int32_t* bpc,
                                 CFX_DIBAttribute* pAttribute) {
-  ASSERT(pAttribute);
+  DCHECK(pAttribute);
 
   auto* ctx = static_cast<CTiffContext*>(pContext);
   return ctx->LoadFrameInfo(frame, width, height, comps, bpc, pAttribute);

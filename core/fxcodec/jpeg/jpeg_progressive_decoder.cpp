@@ -16,6 +16,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/fx_dib.h"
+#include "third_party/base/check.h"
 #include "third_party/base/optional.h"
 #include "third_party/base/ptr_util.h"
 
@@ -116,7 +117,7 @@ int JpegProgressiveDecoder::ReadHeader(Context* pContext,
                                        int* height,
                                        int* nComps,
                                        CFX_DIBAttribute* pAttribute) {
-  ASSERT(pAttribute);
+  DCHECK(pAttribute);
 
   auto* ctx = static_cast<CJpegContext*>(pContext);
   int ret = jpeg_read_header(&ctx->m_Info, TRUE);

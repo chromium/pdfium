@@ -16,6 +16,7 @@
 #include "core/fxcodec/scanlinedecoder.h"
 #include "core/fxcrt/cfx_binarybuf.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 namespace fxcodec {
@@ -43,7 +44,7 @@ constexpr int kFaxBpc = 1;
 constexpr int kFaxComps = 1;
 
 int FindBit(const uint8_t* data_buf, int max_pos, int start_pos, bool bit) {
-  ASSERT(start_pos >= 0);
+  DCHECK(start_pos >= 0);
   if (start_pos >= max_pos)
     return max_pos;
 
@@ -561,8 +562,8 @@ uint32_t FaxDecoder::GetSrcOffset() {
 }
 
 void FaxDecoder::InvertBuffer() {
-  ASSERT(m_Pitch == m_ScanlineBuf.size());
-  ASSERT(m_Pitch % 4 == 0);
+  DCHECK(m_Pitch == m_ScanlineBuf.size());
+  DCHECK(m_Pitch % 4 == 0);
   uint32_t* data = reinterpret_cast<uint32_t*>(m_ScanlineBuf.data());
   for (size_t i = 0; i < m_ScanlineBuf.size() / 4; ++i)
     data[i] = ~data[i];
@@ -606,7 +607,7 @@ int FaxModule::FaxG4Decode(const uint8_t* src_buf,
                            int height,
                            int pitch,
                            uint8_t* dest_buf) {
-  ASSERT(pitch != 0);
+  DCHECK(pitch != 0);
 
   std::vector<uint8_t, FxAllocAllocator<uint8_t>> ref_buf(pitch, 0xff);
   int bitpos = starting_bitpos;
