@@ -18,6 +18,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/string_pool_template.h"
+#include "third_party/base/check.h"
 #include "third_party/base/numerics/safe_math.h"
 #include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
@@ -381,7 +382,7 @@ void ByteString::ReleaseBuffer(size_t nNewLength) {
     return;
   }
 
-  ASSERT(m_pData->m_nRefs == 1);
+  DCHECK(m_pData->m_nRefs == 1);
   m_pData->m_nDataLength = nNewLength;
   m_pData->m_String[nNewLength] = 0;
   if (m_pData->m_nAllocLength - nNewLength >= 32) {
@@ -514,7 +515,7 @@ void ByteString::AllocCopy(ByteString& dest,
 }
 
 void ByteString::SetAt(size_t index, char c) {
-  ASSERT(IsValidIndex(index));
+  DCHECK(IsValidIndex(index));
   ReallocBeforeWrite(m_pData->m_nDataLength);
   m_pData->m_String[index] = c;
 }

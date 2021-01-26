@@ -7,13 +7,14 @@
 #include "core/fxcrt/css/cfx_cssvaluelistparser.h"
 
 #include "core/fxcrt/fx_extension.h"
+#include "third_party/base/check.h"
 
 CFX_CSSValueListParser::CFX_CSSValueListParser(const wchar_t* psz,
                                                int32_t iLen,
                                                wchar_t separator)
     : m_Separator(separator), m_pCur(psz), m_pEnd(psz + iLen) {
-  ASSERT(psz);
-  ASSERT(iLen > 0);
+  DCHECK(psz);
+  DCHECK(iLen > 0);
 }
 
 bool CFX_CSSValueListParser::NextValue(CFX_CSSPrimitiveType* eType,

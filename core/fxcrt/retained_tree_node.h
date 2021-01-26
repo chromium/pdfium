@@ -7,6 +7,7 @@
 
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/tree_node.h"
+#include "third_party/base/check.h"
 
 namespace fxcrt {
 
@@ -65,7 +66,7 @@ class RetainedTreeNode : public TreeNode<T> {
 
   void Retain() { ++m_nRefCount; }
   void Release() {
-    ASSERT(m_nRefCount > 0);
+    DCHECK(m_nRefCount > 0);
     if (--m_nRefCount == 0 && !TreeNode<T>::GetParent())
       delete this;
   }

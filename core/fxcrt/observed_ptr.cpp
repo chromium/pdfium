@@ -4,6 +4,7 @@
 
 #include "core/fxcrt/observed_ptr.h"
 
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 namespace fxcrt {
@@ -15,12 +16,12 @@ Observable::~Observable() {
 }
 
 void Observable::AddObserver(ObserverIface* pObserver) {
-  ASSERT(!pdfium::Contains(m_Observers, pObserver));
+  DCHECK(!pdfium::Contains(m_Observers, pObserver));
   m_Observers.insert(pObserver);
 }
 
 void Observable::RemoveObserver(ObserverIface* pObserver) {
-  ASSERT(pdfium::Contains(m_Observers, pObserver));
+  DCHECK(pdfium::Contains(m_Observers, pObserver));
   m_Observers.erase(pObserver);
 }
 

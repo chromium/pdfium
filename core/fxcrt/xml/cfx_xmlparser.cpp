@@ -22,6 +22,7 @@
 #include "core/fxcrt/xml/cfx_xmlinstruction.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
+#include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 
 namespace {
@@ -61,7 +62,7 @@ bool CFX_XMLParser::IsXMLNameChar(wchar_t ch, bool bFirstChar) {
 }
 
 CFX_XMLParser::CFX_XMLParser(const RetainPtr<IFX_SeekableReadStream>& pStream) {
-  ASSERT(pStream);
+  DCHECK(pStream);
 
   auto proxy = pdfium::MakeRetain<CFX_SeekableStreamProxy>(pStream);
   uint16_t wCodePage = proxy->GetCodePage();

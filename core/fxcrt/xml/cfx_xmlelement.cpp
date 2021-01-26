@@ -11,9 +11,10 @@
 #include "core/fxcrt/xml/cfx_xmlchardata.h"
 #include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
+#include "third_party/base/check.h"
 
 CFX_XMLElement::CFX_XMLElement(const WideString& wsTag) : name_(wsTag) {
-  ASSERT(!name_.IsEmpty());
+  DCHECK(!name_.IsEmpty());
 }
 
 CFX_XMLElement::~CFX_XMLElement() = default;

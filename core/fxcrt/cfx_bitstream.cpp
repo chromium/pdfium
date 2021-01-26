@@ -10,10 +10,11 @@
 
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/check.h"
 
 CFX_BitStream::CFX_BitStream(pdfium::span<const uint8_t> pData)
     : m_BitPos(0), m_BitSize(pData.size() * 8), m_pData(pData.data()) {
-  ASSERT(pData.size() <= std::numeric_limits<uint32_t>::max() / 8);
+  DCHECK(pData.size() <= std::numeric_limits<uint32_t>::max() / 8);
 }
 
 CFX_BitStream::~CFX_BitStream() = default;
@@ -23,8 +24,8 @@ void CFX_BitStream::ByteAlign() {
 }
 
 uint32_t CFX_BitStream::GetBits(uint32_t nBits) {
-  ASSERT(nBits > 0);
-  ASSERT(nBits <= 32);
+  DCHECK(nBits > 0);
+  DCHECK(nBits <= 32);
   if (nBits > m_BitSize || m_BitPos > m_BitSize - nBits)
     return 0;
 

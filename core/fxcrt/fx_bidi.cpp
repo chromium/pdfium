@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include "core/fxcrt/fx_unicode.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 CFX_BidiChar::CFX_BidiChar()
@@ -77,7 +78,7 @@ CFX_BidiString::CFX_BidiString(const WideString& str) : m_Str(str) {
 CFX_BidiString::~CFX_BidiString() = default;
 
 CFX_BidiChar::Direction CFX_BidiString::OverallDirection() const {
-  ASSERT(m_eOverallDirection != CFX_BidiChar::NEUTRAL);
+  DCHECK(m_eOverallDirection != CFX_BidiChar::NEUTRAL);
   return m_eOverallDirection;
 }
 

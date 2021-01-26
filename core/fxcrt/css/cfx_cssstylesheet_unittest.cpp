@@ -15,6 +15,7 @@
 #include "core/fxcrt/css/cfx_cssstylerule.h"
 #include "core/fxcrt/css/cfx_cssvaluelist.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "third_party/base/check.h"
 
 class CFX_CSSStyleSheetTest : public testing::Test {
  public:
@@ -26,12 +27,12 @@ class CFX_CSSStyleSheetTest : public testing::Test {
   void TearDown() override { decl_ = nullptr; }
 
   void VerifyLoadFails(WideStringView buf) {
-    ASSERT(sheet_);
+    DCHECK(sheet_);
     EXPECT_FALSE(sheet_->LoadBuffer(buf));
   }
 
   void LoadAndVerifyRuleCount(WideStringView buf, size_t rule_count) {
-    ASSERT(sheet_);
+    DCHECK(sheet_);
     EXPECT_TRUE(sheet_->LoadBuffer(buf));
     EXPECT_EQ(sheet_->CountRules(), rule_count);
   }
@@ -55,7 +56,7 @@ class CFX_CSSStyleSheetTest : public testing::Test {
   }
 
   void VerifyFloat(CFX_CSSProperty prop, float val, CFX_CSSNumberType type) {
-    ASSERT(decl_);
+    DCHECK(decl_);
 
     bool important;
     RetainPtr<CFX_CSSValue> v = decl_->GetProperty(prop, &important);
@@ -65,7 +66,7 @@ class CFX_CSSStyleSheetTest : public testing::Test {
   }
 
   void VerifyEnum(CFX_CSSProperty prop, CFX_CSSPropertyValue val) {
-    ASSERT(decl_);
+    DCHECK(decl_);
 
     bool important;
     RetainPtr<CFX_CSSValue> v = decl_->GetProperty(prop, &important);
@@ -75,7 +76,7 @@ class CFX_CSSStyleSheetTest : public testing::Test {
 
   void VerifyList(CFX_CSSProperty prop,
                   std::vector<CFX_CSSPropertyValue> expected_values) {
-    ASSERT(decl_);
+    DCHECK(decl_);
 
     bool important;
     RetainPtr<CFX_CSSValueList> list =

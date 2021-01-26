@@ -19,6 +19,7 @@
 #include "core/fxcrt/css/cfx_cssstylesheet.h"
 #include "core/fxcrt/css/cfx_csssyntaxparser.h"
 #include "core/fxcrt/css/cfx_cssvaluelist.h"
+#include "third_party/base/check.h"
 #include "third_party/base/containers/adapters.h"
 #include "third_party/base/notreached.h"
 
@@ -27,7 +28,7 @@ CFX_CSSStyleSelector::CFX_CSSStyleSelector() = default;
 CFX_CSSStyleSelector::~CFX_CSSStyleSelector() = default;
 
 void CFX_CSSStyleSelector::SetDefaultFontSize(float fFontSize) {
-  ASSERT(fFontSize > 0);
+  DCHECK(fFontSize > 0);
   m_fDefaultFontSize = fFontSize;
 }
 
@@ -137,8 +138,8 @@ void CFX_CSSStyleSelector::ExtractValues(
 
 void CFX_CSSStyleSelector::AppendInlineStyle(CFX_CSSDeclaration* pDecl,
                                              const WideString& style) {
-  ASSERT(pDecl);
-  ASSERT(!style.IsEmpty());
+  DCHECK(pDecl);
+  DCHECK(!style.IsEmpty());
 
   auto pSyntax = std::make_unique<CFX_CSSSyntaxParser>(style.AsStringView());
   pSyntax->SetParseOnlyDeclarations();

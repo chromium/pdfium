@@ -9,6 +9,7 @@
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/allocator/partition_allocator/partition_alloc.h"
+#include "third_party/base/check.h"
 
 namespace fxcrt {
 
@@ -16,7 +17,7 @@ namespace fxcrt {
 template <typename CharType>
 StringDataTemplate<CharType>* StringDataTemplate<CharType>::Create(
     size_t nLen) {
-  ASSERT(nLen > 0);
+  DCHECK(nLen > 0);
 
   // Calculate space needed for the fixed portion of the struct plus the
   // NUL char that is not included in |m_nAllocLength|.
@@ -33,7 +34,7 @@ StringDataTemplate<CharType>* StringDataTemplate<CharType>::Create(
   nSize &= ~15;
   size_t totalSize = nSize.ValueOrDie();
   size_t usableLen = (totalSize - overhead) / sizeof(CharType);
-  ASSERT(usableLen >= nLen);
+  DCHECK(usableLen >= nLen);
 
   void* pData = GetStringPartitionAllocator().root()->Alloc(
       totalSize, "StringDataTemplate");
@@ -59,7 +60,7 @@ void StringDataTemplate<CharType>::Release() {
 template <typename CharType>
 void StringDataTemplate<CharType>::CopyContents(
     const StringDataTemplate& other) {
-  ASSERT(other.m_nDataLength <= m_nAllocLength);
+  DCHECK(other.m_nDataLength <= m_nAllocLength);
   memcpy(m_String, other.m_String,
          (other.m_nDataLength + 1) * sizeof(CharType));
 }
@@ -67,8 +68,8 @@ void StringDataTemplate<CharType>::CopyContents(
 template <typename CharType>
 void StringDataTemplate<CharType>::CopyContents(const CharType* pStr,
                                                 size_t nLen) {
-  ASSERT(nLen >= 0);
-  ASSERT(nLen <= m_nAllocLength);
+  DCHECK(nLen >= 0);
+  DCHECK(nLen <= m_nAllocLength);
 
   memcpy(m_String, pStr, nLen * sizeof(CharType));
   m_String[nLen] = 0;
@@ -78,9 +79,9 @@ template <typename CharType>
 void StringDataTemplate<CharType>::CopyContentsAt(size_t offset,
                                                   const CharType* pStr,
                                                   size_t nLen) {
-  ASSERT(offset >= 0);
-  ASSERT(nLen >= 0);
-  ASSERT(offset + nLen <= m_nAllocLength);
+  DCHECK(offset >= 0);
+  DCHECK(nLen >= 0);
+  DCHECK(offset + nLen <= m_nAllocLength);
 
   memcpy(m_String + offset, pStr, nLen * sizeof(CharType));
   m_String[offset + nLen] = 0;
@@ -90,8 +91,8 @@ template <typename CharType>
 StringDataTemplate<CharType>::StringDataTemplate(size_t dataLen,
                                                  size_t allocLen)
     : m_nRefs(0), m_nDataLength(dataLen), m_nAllocLength(allocLen) {
-  ASSERT(dataLen >= 0);
-  ASSERT(dataLen <= allocLen);
+  DCHECK(dataLen >= 0);
+  DCHECK(dataLen <= allocLen);
   m_String[dataLen] = 0;
 }
 

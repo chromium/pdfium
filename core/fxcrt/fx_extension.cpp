@@ -11,6 +11,7 @@
 #include <limits>
 
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/check.h"
 #include "third_party/base/compiler_specific.h"
 
 namespace {
@@ -29,7 +30,7 @@ struct tm* (*g_localtime_func)(const time_t*) = DefaultLocaltimeFunction;
 }  // namespace
 
 float FXSYS_wcstof(const wchar_t* pwsStr, int32_t iLength, int32_t* pUsedLen) {
-  ASSERT(pwsStr);
+  DCHECK(pwsStr);
 
   if (iLength < 0)
     iLength = static_cast<int32_t>(wcslen(pwsStr));
@@ -117,9 +118,9 @@ float FXSYS_wcstof(const wchar_t* pwsStr, int32_t iLength, int32_t* pUsedLen) {
 }
 
 wchar_t* FXSYS_wcsncpy(wchar_t* dstStr, const wchar_t* srcStr, size_t count) {
-  ASSERT(dstStr);
-  ASSERT(srcStr);
-  ASSERT(count > 0);
+  DCHECK(dstStr);
+  DCHECK(srcStr);
+  DCHECK(count > 0);
 
   for (size_t i = 0; i < count; ++i)
     if ((dstStr[i] = srcStr[i]) == L'\0')
@@ -128,9 +129,9 @@ wchar_t* FXSYS_wcsncpy(wchar_t* dstStr, const wchar_t* srcStr, size_t count) {
 }
 
 int32_t FXSYS_wcsnicmp(const wchar_t* s1, const wchar_t* s2, size_t count) {
-  ASSERT(s1);
-  ASSERT(s2);
-  ASSERT(count > 0);
+  DCHECK(s1);
+  DCHECK(s2);
+  DCHECK(count > 0);
 
   wchar_t wch1 = 0, wch2 = 0;
   while (count-- > 0) {
@@ -154,7 +155,7 @@ void FXSYS_IntToFourHexChars(uint16_t n, char* buf) {
 }
 
 size_t FXSYS_ToUTF16BE(uint32_t unicode, char* buf) {
-  ASSERT(unicode <= 0xD7FF || (unicode > 0xDFFF && unicode <= 0x10FFFF));
+  DCHECK(unicode <= 0xD7FF || (unicode > 0xDFFF && unicode <= 0x10FFFF));
   if (unicode <= 0xFFFF) {
     FXSYS_IntToFourHexChars(unicode, buf);
     return 4;

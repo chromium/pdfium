@@ -6,6 +6,7 @@
 
 #include "core/fxcrt/fx_unicode.h"
 
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -139,14 +140,14 @@ wchar_t FX_GetMirrorChar(wchar_t wch) {
   size_t idx = prop >> kMirrorBitPos;
   if (idx == kMirrorMax)
     return wch;
-  ASSERT(idx < kFXTextLayoutBidiMirrorSize);
+  DCHECK(idx < kFXTextLayoutBidiMirrorSize);
   return kFXTextLayoutBidiMirror[idx];
 }
 
 FX_BIDICLASS FX_GetBidiClass(wchar_t wch) {
   uint16_t prop = GetUnicodeProperties(wch);
   uint16_t result = (prop & kBidiClassBitMask) >> kBidiClassBitPos;
-  ASSERT(result <= static_cast<uint16_t>(FX_BIDICLASS::kPDF));
+  DCHECK(result <= static_cast<uint16_t>(FX_BIDICLASS::kPDF));
   return static_cast<FX_BIDICLASS>(result);
 }
 
@@ -154,14 +155,14 @@ FX_BIDICLASS FX_GetBidiClass(wchar_t wch) {
 FX_CHARTYPE FX_GetCharType(wchar_t wch) {
   uint16_t prop = GetExtendedUnicodeProperties(wch);
   uint16_t result = (prop & kCharTypeBitMask) >> kCharTypeBitPos;
-  ASSERT(result <= static_cast<uint16_t>(FX_CHARTYPE::kArabic));
+  DCHECK(result <= static_cast<uint16_t>(FX_CHARTYPE::kArabic));
   return static_cast<FX_CHARTYPE>(result);
 }
 
 FX_BREAKPROPERTY FX_GetBreakProperty(wchar_t wch) {
   uint16_t prop = GetExtendedUnicodeProperties(wch);
   uint16_t result = (prop & kBreakTypeBitMask) >> kBreakTypeBitPos;
-  ASSERT(result <= static_cast<uint16_t>(FX_BREAKPROPERTY::kTB));
+  DCHECK(result <= static_cast<uint16_t>(FX_BREAKPROPERTY::kTB));
   return static_cast<FX_BREAKPROPERTY>(result);
 }
 #endif  // PDF_ENABLE_XFA

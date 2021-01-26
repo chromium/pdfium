@@ -8,6 +8,7 @@
 
 #include <map>
 
+#include "third_party/base/check.h"
 #include "third_party/base/no_destructor.h"
 
 namespace {
@@ -24,7 +25,7 @@ CFX_Timer::CFX_Timer(HandlerIface* pHandlerIface,
                      CallbackIface* pCallbackIface,
                      int32_t nInterval)
     : m_pHandlerIface(pHandlerIface), m_pCallbackIface(pCallbackIface) {
-  ASSERT(m_pCallbackIface);
+  DCHECK(m_pCallbackIface);
   if (m_pHandlerIface) {
     m_nTimerID = m_pHandlerIface->SetTimer(nInterval, TimerProc);
     if (HasValidID())

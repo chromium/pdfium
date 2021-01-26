@@ -8,6 +8,7 @@
 #include <set>
 
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/check.h"
 
 namespace fxcrt {
 
@@ -58,7 +59,7 @@ class ObservedPtr final : public Observable::ObserverIface {
       m_pObservable->AddObserver(this);
   }
   void OnObservableDestroyed() override {
-    ASSERT(m_pObservable);
+    DCHECK(m_pObservable);
     m_pObservable = nullptr;
   }
   bool HasObservable() const { return !!m_pObservable; }
