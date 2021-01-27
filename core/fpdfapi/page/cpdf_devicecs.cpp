@@ -15,6 +15,7 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxge/dib/cfx_cmyk_to_srgb.h"
+#include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/stl_util.h"
 
@@ -27,7 +28,7 @@ float NormalizeChannel(float fVal) {
 }  // namespace
 
 CPDF_DeviceCS::CPDF_DeviceCS(int family) : CPDF_ColorSpace(nullptr, family) {
-  ASSERT(family == PDFCS_DEVICEGRAY || family == PDFCS_DEVICERGB ||
+  DCHECK(family == PDFCS_DEVICEGRAY || family == PDFCS_DEVICERGB ||
          family == PDFCS_DEVICECMYK);
   SetComponentsForStockCS(ComponentsForFamily(GetFamily()));
 }

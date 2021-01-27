@@ -28,6 +28,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/stl_util.h"
 
@@ -87,7 +88,7 @@ FX_FILESIZE CPDF_Parser::GetObjectPositionOrZero(uint32_t objnum) const {
 }
 
 CPDF_Parser::ObjectType CPDF_Parser::GetObjectType(uint32_t objnum) const {
-  ASSERT(IsValidObjectNumber(objnum));
+  DCHECK(IsValidObjectNumber(objnum));
   const auto* info = m_CrossRefTable->GetObjectInfo(objnum);
   return info ? info->type : ObjectType::kFree;
 }
@@ -153,8 +154,8 @@ CPDF_Parser::Error CPDF_Parser::StartParse(
 }
 
 CPDF_Parser::Error CPDF_Parser::StartParseInternal() {
-  ASSERT(!m_bHasParsed);
-  ASSERT(!m_bXRefTableRebuilt);
+  DCHECK(!m_bHasParsed);
+  DCHECK(!m_bXRefTableRebuilt);
   m_bHasParsed = true;
   m_bXRefStream = false;
 
@@ -781,7 +782,7 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
         continue;
       }
 
-      ASSERT(type == ObjectType::kCompressed);
+      DCHECK(type == ObjectType::kCompressed);
       const uint32_t archive_obj_num = entry_value;
       if (!IsValidObjectNumber(archive_obj_num))
         return false;
@@ -962,8 +963,8 @@ std::unique_ptr<CPDF_LinearizedHeader> CPDF_Parser::ParseLinearizedHeader() {
 CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(
     const RetainPtr<CPDF_ReadValidator>& validator,
     const char* password) {
-  ASSERT(!m_bHasParsed);
-  ASSERT(!m_bXRefTableRebuilt);
+  DCHECK(!m_bHasParsed);
+  DCHECK(!m_bXRefTableRebuilt);
   SetPassword(password);
   m_bXRefStream = false;
   m_LastXRefOffset = 0;

@@ -14,6 +14,7 @@
 #include "core/fpdfapi/font/cpdf_cmapparser.h"
 #include "core/fpdfapi/font/cpdf_fontglobals.h"
 #include "core/fpdfapi/parser/cpdf_simple_parser.h"
+#include "third_party/base/check.h"
 
 namespace {
 
@@ -466,7 +467,7 @@ int CPDF_CMap::AppendChar(char* str, uint32_t charcode) const {
 }
 
 void CPDF_CMap::SetAdditionalMappings(std::vector<CIDRange> mappings) {
-  ASSERT(m_AdditionalCharcodeToCIDMappings.empty());
+  DCHECK(m_AdditionalCharcodeToCIDMappings.empty());
   if (m_CodingScheme != MixedFourBytes || mappings.empty())
     return;
 

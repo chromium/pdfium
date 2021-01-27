@@ -20,10 +20,11 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/pauseindicator_iface.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
+#include "third_party/base/check.h"
 
 CPDF_ContentParser::CPDF_ContentParser(CPDF_Page* pPage)
     : m_CurrentStage(Stage::kGetContent), m_pObjectHolder(pPage) {
-  ASSERT(pPage);
+  DCHECK(pPage);
   if (!pPage->GetDocument()) {
     m_CurrentStage = Stage::kComplete;
     return;
@@ -57,7 +58,7 @@ CPDF_ContentParser::CPDF_ContentParser(CPDF_Form* pForm,
     : m_CurrentStage(Stage::kParse),
       m_pObjectHolder(pForm),
       m_pType3Char(pType3Char) {
-  ASSERT(pForm);
+  DCHECK(pForm);
   CFX_Matrix form_matrix = pForm->GetDict()->GetMatrixFor("Matrix");
   if (pGraphicStates)
     form_matrix.Concat(pGraphicStates->m_CTM);
@@ -126,13 +127,13 @@ bool CPDF_ContentParser::Continue(PauseIndicatorIface* pPause) {
   if (m_CurrentStage == Stage::kCheckClip)
     m_CurrentStage = CheckClip();
 
-  ASSERT(m_CurrentStage == Stage::kComplete);
+  DCHECK(m_CurrentStage == Stage::kComplete);
   return false;
 }
 
 CPDF_ContentParser::Stage CPDF_ContentParser::GetContent() {
-  ASSERT(m_CurrentStage == Stage::kGetContent);
-  ASSERT(m_pObjectHolder->IsPage());
+  DCHECK(m_CurrentStage == Stage::kGetContent);
+  DCHECK(m_pObjectHolder->IsPage());
   CPDF_Array* pContent =
       m_pObjectHolder->GetDict()->GetArrayFor(pdfium::page_object::kContents);
   CPDF_Stream* pStreamObj = ToStream(

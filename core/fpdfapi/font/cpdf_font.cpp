@@ -29,6 +29,7 @@
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -371,7 +372,7 @@ const char* CPDF_Font::GetAdobeCharName(
   if (!name)
     return nullptr;
 
-  ASSERT(name[0]);
+  DCHECK(name[0]);
   return name;
 }
 

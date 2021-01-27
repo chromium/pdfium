@@ -26,6 +26,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "third_party/base/check.h"
 #include "third_party/base/compiler_specific.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/numerics/safe_conversions.h"
@@ -59,7 +60,7 @@ class HintsScope {
   HintsScope(RetainPtr<CPDF_ReadValidator> validator,
              CPDF_DataAvail::DownloadHints* hints)
       : validator_(std::move(validator)) {
-    ASSERT(validator_);
+    DCHECK(validator_);
     validator_->SetDownloadHints(hints);
   }
 
@@ -740,7 +741,7 @@ bool CPDF_DataAvail::LoadPages() {
 CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckLinearizedData() {
   if (m_bLinearedDataOK)
     return DataAvailable;
-  ASSERT(m_pLinearized);
+  DCHECK(m_pLinearized);
   if (!m_pLinearized->GetMainXRefTableFirstEntryOffset() || !m_pDocument ||
       !m_pDocument->GetParser() || !m_pDocument->GetParser()->GetTrailer()) {
     return DataError;
@@ -881,7 +882,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
 
 CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckResources(
     CPDF_Dictionary* page) {
-  ASSERT(page);
+  DCHECK(page);
   CPDF_ReadValidator::ScopedSession read_session(GetValidator());
   CPDF_Object* resources = GetResourceObject(page);
   if (GetValidator()->has_read_problems())

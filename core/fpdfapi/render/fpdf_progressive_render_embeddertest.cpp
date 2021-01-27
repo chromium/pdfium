@@ -11,6 +11,7 @@
 #include "testing/embedder_test.h"
 #include "testing/embedder_test_constants.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "third_party/base/check.h"
 
 namespace {
 
@@ -175,7 +176,7 @@ bool FPDFProgressiveRenderEmbedderTest::
   int alpha = FPDFPage_HasTransparency(page) ? 1 : 0;
   progressive_render_bitmap_ =
       ScopedFPDFBitmap(FPDFBitmap_Create(width, height, alpha));
-  ASSERT(progressive_render_bitmap_);
+  DCHECK(progressive_render_bitmap_);
   FPDFBitmap_FillRect(progressive_render_bitmap_.get(), 0, 0, width, height,
                       background_color);
   int rv = FPDF_RenderPageBitmapWithColorScheme_Start(
@@ -186,7 +187,7 @@ bool FPDFProgressiveRenderEmbedderTest::
 
 bool FPDFProgressiveRenderEmbedderTest::ContinueRenderPage(FPDF_PAGE page,
                                                            IFSDK_PAUSE* pause) {
-  ASSERT(progressive_render_bitmap_);
+  DCHECK(progressive_render_bitmap_);
 
   int rv = FPDF_RenderPage_Continue(page, pause);
   return rv != FPDF_RENDER_TOBECONTINUED;
@@ -200,7 +201,7 @@ ScopedFPDFBitmap FPDFProgressiveRenderEmbedderTest::FinishRenderPage(
 ScopedFPDFBitmap FPDFProgressiveRenderEmbedderTest::FinishRenderPageWithForms(
     FPDF_PAGE page,
     FPDF_FORMHANDLE handle) {
-  ASSERT(progressive_render_bitmap_);
+  DCHECK(progressive_render_bitmap_);
 
   int width = static_cast<int>(FPDF_GetPageWidth(page));
   int height = static_cast<int>(FPDF_GetPageHeight(page));

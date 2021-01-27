@@ -98,7 +98,7 @@ CPDF_SyntaxParser::CPDF_SyntaxParser(
     : m_pFileAccess(validator),
       m_HeaderOffset(HeaderOffset),
       m_FileLen(m_pFileAccess->GetSize()) {
-  ASSERT(m_HeaderOffset <= m_FileLen);
+  DCHECK(m_HeaderOffset <= m_FileLen);
 }
 
 CPDF_SyntaxParser::~CPDF_SyntaxParser() = default;
@@ -768,7 +768,7 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
       return nullptr;
 
     len = streamEndPos - streamStartPos;
-    ASSERT(len >= 0);
+    DCHECK(len >= 0);
     if (len > 0) {
       SetPos(streamStartPos);
       // Check data availability first to allow the Validator to request data
@@ -887,7 +887,7 @@ bool CPDF_SyntaxParser::BackwardsSearchToWord(ByteStringView word,
 FX_FILESIZE CPDF_SyntaxParser::FindTag(ByteStringView tag) {
   const FX_FILESIZE startpos = GetPos();
   const int32_t taglen = tag.GetLength();
-  ASSERT(taglen > 0);
+  DCHECK(taglen > 0);
 
   int32_t match = 0;
   while (1) {

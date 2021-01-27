@@ -16,6 +16,7 @@
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 
 namespace {
@@ -33,7 +34,7 @@ CPDF_ShadingPattern::CPDF_ShadingPattern(CPDF_Document* pDoc,
                                          bool bShading,
                                          const CFX_Matrix& parentMatrix)
     : CPDF_Pattern(pDoc, pPatternObj, parentMatrix), m_bShading(bShading) {
-  ASSERT(document());
+  DCHECK(document());
   if (!bShading)
     SetPatternToFormMatrix();
 }

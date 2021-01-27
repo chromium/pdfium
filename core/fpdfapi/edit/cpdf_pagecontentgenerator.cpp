@@ -34,6 +34,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
+#include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
@@ -66,7 +67,7 @@ CPDF_PageContentGenerator::CPDF_PageContentGenerator(
 CPDF_PageContentGenerator::~CPDF_PageContentGenerator() = default;
 
 void CPDF_PageContentGenerator::GenerateContent() {
-  ASSERT(m_pObjHolder->IsPage());
+  DCHECK(m_pObjHolder->IsPage());
   UpdateContentStreams(GenerateModifiedStreams());
 }
 
@@ -160,7 +161,7 @@ void CPDF_PageContentGenerator::UpdateContentStreams(
 
     CPDF_Stream* old_stream =
         page_content_manager.GetStreamByIndex(stream_index);
-    ASSERT(old_stream);
+    DCHECK(old_stream);
 
     // If buf is now empty, remove the stream instead of setting the data.
     if (buf->tellp() <= 0)
@@ -175,7 +176,7 @@ void CPDF_PageContentGenerator::UpdateContentStreams(
 ByteString CPDF_PageContentGenerator::RealizeResource(
     const CPDF_Object* pResource,
     const ByteString& bsType) const {
-  ASSERT(pResource);
+  DCHECK(pResource);
   if (!m_pObjHolder->m_pResources) {
     m_pObjHolder->m_pResources.Reset(
         m_pDocument->NewIndirect<CPDF_Dictionary>());

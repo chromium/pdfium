@@ -16,6 +16,7 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fxcodec/jbig2/JBig2_DocumentContext.h"
 #include "core/fxcrt/fx_codepage.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -173,7 +174,7 @@ void CPDF_Document::LoadPages() {
 
   uint32_t first_page_num = linearized_header->GetFirstPageNo();
   uint32_t page_count = linearized_header->GetPageCount();
-  ASSERT(first_page_num < page_count);
+  DCHECK(first_page_num < page_count);
   m_PageList.resize(page_count);
   m_PageList[first_page_num] = objnum;
 }
@@ -250,7 +251,7 @@ void CPDF_Document::ResetTraversal() {
 }
 
 void CPDF_Document::SetParser(std::unique_ptr<CPDF_Parser> pParser) {
-  ASSERT(!m_pParser);
+  DCHECK(!m_pParser);
   m_pParser = std::move(pParser);
 }
 
@@ -363,8 +364,8 @@ uint32_t CPDF_Document::GetUserPermissions() const {
 }
 
 void CPDF_Document::CreateNewDoc() {
-  ASSERT(!m_pRootDict);
-  ASSERT(!m_pInfoDict);
+  DCHECK(!m_pRootDict);
+  DCHECK(!m_pInfoDict);
   m_pRootDict.Reset(NewIndirect<CPDF_Dictionary>());
   m_pRootDict->SetNewFor<CPDF_Name>("Type", "Catalog");
 

@@ -17,6 +17,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_stream.h"
+#include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 
 // Indexed by 8-bit character code, contains either:
@@ -151,8 +152,8 @@ ByteString PDF_NameEncode(const ByteString& orig) {
 
 std::vector<float> ReadArrayElementsToVector(const CPDF_Array* pArray,
                                              size_t nCount) {
-  ASSERT(pArray);
-  ASSERT(pArray->size() >= nCount);
+  DCHECK(pArray);
+  DCHECK(pArray->size() >= nCount);
   std::vector<float> ret(nCount);
   for (size_t i = 0; i < nCount; ++i)
     ret[i] = pArray->GetNumberAt(i);
@@ -160,7 +161,7 @@ std::vector<float> ReadArrayElementsToVector(const CPDF_Array* pArray,
 }
 
 bool ValidateDictType(const CPDF_Dictionary* dict, const ByteString& type) {
-  ASSERT(!type.IsEmpty());
+  DCHECK(!type.IsEmpty());
   return dict->GetNameFor("Type") == type;
 }
 

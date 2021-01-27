@@ -12,6 +12,7 @@
 #include "core/fpdfapi/cmaps/Korea1/cmaps_korea1.h"
 #include "core/fpdfapi/font/cfx_stockfontarray.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -22,20 +23,20 @@ CPDF_FontGlobals* g_FontGlobals = nullptr;
 
 // static
 void CPDF_FontGlobals::Create() {
-  ASSERT(!g_FontGlobals);
+  DCHECK(!g_FontGlobals);
   g_FontGlobals = new CPDF_FontGlobals();
 }
 
 // static
 void CPDF_FontGlobals::Destroy() {
-  ASSERT(g_FontGlobals);
+  DCHECK(g_FontGlobals);
   delete g_FontGlobals;
   g_FontGlobals = nullptr;
 }
 
 // static
 CPDF_FontGlobals* CPDF_FontGlobals::GetInstance() {
-  ASSERT(g_FontGlobals);
+  DCHECK(g_FontGlobals);
   return g_FontGlobals;
 }
 

@@ -7,13 +7,14 @@
 #include "core/fpdfapi/page/cpdf_pattern.h"
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "third_party/base/check.h"
 
 CPDF_Pattern::CPDF_Pattern(CPDF_Document* pDoc,
                            CPDF_Object* pObj,
                            const CFX_Matrix& parentMatrix)
     : m_pDocument(pDoc), m_pPatternObj(pObj), m_ParentMatrix(parentMatrix) {
-  ASSERT(m_pDocument);
-  ASSERT(m_pPatternObj);
+  DCHECK(m_pDocument);
+  DCHECK(m_pPatternObj);
 }
 
 CPDF_Pattern::~CPDF_Pattern() = default;

@@ -33,6 +33,7 @@
 #include "core/fxcodec/icc/iccmodule.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/maybe_owned.h"
+#include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/stl_util.h"
 
@@ -592,7 +593,7 @@ bool CPDF_ColorSpace::IsValidIccComponents(int components) {
 }
 
 std::vector<float> CPDF_ColorSpace::CreateBufAndSetDefaultColor() const {
-  ASSERT(m_Family != PDFCS_PATTERN);
+  DCHECK(m_Family != PDFCS_PATTERN);
 
   float min;
   float max;
@@ -674,7 +675,7 @@ CPDF_ColorSpace::CPDF_ColorSpace(CPDF_Document* pDoc, int family)
 CPDF_ColorSpace::~CPDF_ColorSpace() = default;
 
 void CPDF_ColorSpace::SetComponentsForStockCS(uint32_t nComponents) {
-  ASSERT(!m_pDocument);  // Stock colorspace is not associated with a document.
+  DCHECK(!m_pDocument);  // Stock colorspace is not associated with a document.
   m_nComponents = nComponents;
 }
 
@@ -822,7 +823,7 @@ void CPDF_LabCS::GetDefaultValue(int iComponent,
                                  float* value,
                                  float* min,
                                  float* max) const {
-  ASSERT(iComponent < 3);
+  DCHECK(iComponent < 3);
   if (iComponent == 0) {
     *min = 0.0f;
     *max = 100 * 1.0f;
@@ -953,7 +954,7 @@ uint32_t CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc,
       !FindAlternateProfile(pDoc, pDict, pVisited, nComponents)) {
     // If there is no alternate profile, use a stock profile as mentioned in
     // the PDF 1.7 spec in table 4.16 in the "Alternate" key description.
-    ASSERT(!m_pAlterCS);
+    DCHECK(!m_pAlterCS);
     m_pAlterCS = GetStockAlternateProfile(nComponents);
   }
 
@@ -965,7 +966,7 @@ bool CPDF_ICCBasedCS::GetRGB(pdfium::span<const float> pBuf,
                              float* R,
                              float* G,
                              float* B) const {
-  ASSERT(m_pProfile);
+  DCHECK(m_pProfile);
   if (m_pProfile->IsSRGB()) {
     *R = pBuf[0];
     *G = pBuf[1];
@@ -1017,7 +1018,7 @@ void CPDF_ICCBasedCS::TranslateImageLine(uint8_t* pDestBuf,
 
   // |nMaxColors| will not overflow since |nComponents| is limited in size.
   const uint32_t nComponents = CountComponents();
-  ASSERT(IsValidIccComponents(nComponents));
+  DCHECK(IsValidIccComponents(nComponents));
   int nMaxColors = 1;
   for (uint32_t i = 0; i < nComponents; i++)
     nMaxColors *= 52;
@@ -1115,7 +1116,7 @@ RetainPtr<CPDF_ColorSpace> CPDF_ICCBasedCS::GetStockAlternateProfile(
 // static
 std::vector<float> CPDF_ICCBasedCS::GetRanges(const CPDF_Dictionary* pDict,
                                               uint32_t nComponents) {
-  ASSERT(IsValidIccComponents(nComponents));
+  DCHECK(IsValidIccComponents(nComponents));
 
   std::vector<float> ranges;
   const CPDF_Array* pRanges = pDict->GetArrayFor("Range");
@@ -1207,7 +1208,7 @@ bool CPDF_IndexedCS::GetRGB(pdfium::span<const float> pBuf,
         m_pCompMinMax[i * 2] +
         m_pCompMinMax[i * 2 + 1] * pTable[index * m_nBaseComponents + i] / 255;
   }
-  ASSERT(m_nBaseComponents == m_pBaseCS->CountComponents());
+  DCHECK(m_nBaseComponents == m_pBaseCS->CountComponents());
   return m_pBaseCS->GetRGB(comps, R, G, B);
 }
 

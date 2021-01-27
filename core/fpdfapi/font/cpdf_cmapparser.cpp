@@ -13,6 +13,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/fx_freetype.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -33,7 +34,7 @@ CPDF_CMapParser::~CPDF_CMapParser() {
 }
 
 void CPDF_CMapParser::ParseWord(ByteStringView word) {
-  ASSERT(!word.IsEmpty());
+  DCHECK(!word.IsEmpty());
 
   if (word == "begincidchar") {
     m_Status = kProcessingCidChar;
@@ -76,7 +77,7 @@ void CPDF_CMapParser::ParseWord(ByteStringView word) {
 }
 
 void CPDF_CMapParser::HandleCid(ByteStringView word) {
-  ASSERT(m_Status == kProcessingCidChar || m_Status == kProcessingCidRange);
+  DCHECK(m_Status == kProcessingCidChar || m_Status == kProcessingCidRange);
   bool bChar = m_Status == kProcessingCidChar;
 
   m_CodePoints[m_CodeSeq] = GetCode(word);

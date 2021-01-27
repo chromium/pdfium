@@ -15,6 +15,7 @@
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 #include "core/fxcrt/cfx_readonlymemorystream.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "third_party/base/check.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
@@ -63,7 +64,7 @@ std::unique_ptr<CPDF_ObjectStream> CPDF_ObjectStream::Create(
 CPDF_ObjectStream::CPDF_ObjectStream(const CPDF_Stream* obj_stream)
     : obj_num_(obj_stream->GetObjNum()),
       first_object_offset_(obj_stream->GetDict()->GetIntegerFor("First")) {
-  ASSERT(IsObjectsStreamObject(obj_stream));
+  DCHECK(IsObjectsStreamObject(obj_stream));
   if (const auto* extends_ref =
           ToReference(obj_stream->GetDict()->GetObjectFor("Extends"))) {
     extends_obj_num_ = extends_ref->GetRefObjNum();

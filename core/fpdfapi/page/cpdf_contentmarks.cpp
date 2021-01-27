@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "third_party/base/check.h"
 
 CPDF_ContentMarks::CPDF_ContentMarks() = default;
 
@@ -36,7 +37,7 @@ CPDF_ContentMarkItem* CPDF_ContentMarks::GetItem(size_t index) {
 }
 
 const CPDF_ContentMarkItem* CPDF_ContentMarks::GetItem(size_t index) const {
-  ASSERT(index < CountItems());
+  DCHECK(index < CountItems());
   return m_pMarkData->GetItem(index);
 }
 

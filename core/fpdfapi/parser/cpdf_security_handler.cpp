@@ -19,6 +19,7 @@
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcrt/fx_random.h"
+#include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/stl_util.h"
@@ -320,8 +321,8 @@ bool CPDF_SecurityHandler::LoadDict(const CPDF_Dictionary* pEncryptDict,
 
 bool CPDF_SecurityHandler::AES256_CheckPassword(const ByteString& password,
                                                 bool bOwner) {
-  ASSERT(m_pEncryptDict);
-  ASSERT(m_Revision >= 5);
+  DCHECK(m_pEncryptDict);
+  DCHECK(m_Revision >= 5);
 
   ByteString okey = m_pEncryptDict->GetStringFor("O");
   if (okey.GetLength() < 48)
@@ -541,7 +542,7 @@ void CPDF_SecurityHandler::OnCreateInternal(CPDF_Dictionary* pEncryptDict,
                                             const ByteString& user_password,
                                             const ByteString& owner_password,
                                             bool bDefault) {
-  ASSERT(pEncryptDict);
+  DCHECK(pEncryptDict);
 
   int cipher = FXCIPHER_NONE;
   size_t key_len = 0;

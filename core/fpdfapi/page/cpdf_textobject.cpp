@@ -11,6 +11,7 @@
 
 #include "core/fpdfapi/font/cpdf_cidfont.h"
 #include "core/fpdfapi/font/cpdf_font.h"
+#include "third_party/base/check.h"
 
 #define ISLATINWORD(u) (u != 0x20 && u <= 0x28FF)
 
@@ -35,7 +36,7 @@ size_t CPDF_TextObject::CountItems() const {
 
 void CPDF_TextObject::GetItemInfo(size_t index,
                                   CPDF_TextObjectItem* pInfo) const {
-  ASSERT(index < m_CharCodes.size());
+  DCHECK(index < m_CharCodes.size());
   pInfo->m_CharCode = m_CharCodes[index];
   pInfo->m_Origin = CFX_PointF(index > 0 ? m_CharPos[index - 1] : 0, 0);
   if (pInfo->m_CharCode == CPDF_Font::kInvalidCharCode)
@@ -199,7 +200,7 @@ void CPDF_TextObject::SetSegments(const ByteString* pStrs,
     ByteStringView segment = pStrs[i].AsStringView();
     size_t offset = 0;
     while (offset < segment.GetLength()) {
-      ASSERT(index < m_CharCodes.size());
+      DCHECK(index < m_CharCodes.size());
       m_CharCodes[index++] = pFont->GetNextChar(segment, &offset);
     }
     if (i != nSegs - 1) {

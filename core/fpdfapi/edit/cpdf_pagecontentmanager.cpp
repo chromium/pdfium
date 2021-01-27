@@ -15,6 +15,7 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "third_party/base/check.h"
 #include "third_party/base/containers/adapters.h"
 
 CPDF_PageContentManager::CPDF_PageContentManager(
@@ -107,7 +108,7 @@ void CPDF_PageContentManager::ExecuteScheduledRemovals() {
   // updated.
   // Since this is only called by CPDF_PageContentGenerator::GenerateContent(),
   // which cleans up the dirty streams first, this should always be true.
-  ASSERT(!obj_holder_->HasDirtyStreams());
+  DCHECK(!obj_holder_->HasDirtyStreams());
 
   if (contents_stream_) {
     // Only stream that can be removed is 0.

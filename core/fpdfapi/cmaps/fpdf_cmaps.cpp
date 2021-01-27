@@ -8,6 +8,7 @@
 
 #include <algorithm>
 
+#include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 
 namespace {
@@ -39,7 +40,7 @@ const FXCMAP_CMap* FindEmbeddedCMap(pdfium::span<const FXCMAP_CMap> pCMaps,
 }
 
 uint16_t CIDFromCharCode(const FXCMAP_CMap* pMap, uint32_t charcode) {
-  ASSERT(pMap);
+  DCHECK(pMap);
   const uint16_t loword = static_cast<uint16_t>(charcode);
   if (charcode >> 16) {
     while (pMap) {
@@ -107,7 +108,7 @@ uint32_t CharCodeFromCID(const FXCMAP_CMap* pMap, uint16_t cid) {
   // the first always returns. Investigate and determine how this should
   // really be working. (https://codereview.chromium.org/2235743003 removed the
   // second while loop.)
-  ASSERT(pMap);
+  DCHECK(pMap);
   while (pMap) {
     switch (pMap->m_WordMapType) {
       case FXCMAP_CMap::Single: {

@@ -15,6 +15,7 @@
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
+#include "third_party/base/check.h"
 
 CPDF_ImageLoader::CPDF_ImageLoader() = default;
 
@@ -50,8 +51,8 @@ bool CPDF_ImageLoader::Continue(PauseIndicatorIface* pPause,
 
 RetainPtr<CFX_DIBBase> CPDF_ImageLoader::TranslateImage(
     const RetainPtr<CPDF_TransferFunc>& pTransferFunc) {
-  ASSERT(pTransferFunc);
-  ASSERT(!pTransferFunc->GetIdentity());
+  DCHECK(pTransferFunc);
+  DCHECK(!pTransferFunc->GetIdentity());
 
   m_pBitmap = pTransferFunc->TranslateImage(m_pBitmap);
   if (m_bCached && m_pMask)

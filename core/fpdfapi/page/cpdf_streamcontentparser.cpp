@@ -37,6 +37,7 @@
 #include "core/fxcrt/autonuller.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_graphstatedata.h"
+#include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
@@ -818,12 +819,12 @@ CPDF_ImageObject* CPDF_StreamContentParser::AddImageObject(
 }
 
 std::vector<float> CPDF_StreamContentParser::GetColors() const {
-  ASSERT(m_ParamCount > 0);
+  DCHECK(m_ParamCount > 0);
   return GetNumbers(m_ParamCount);
 }
 
 std::vector<float> CPDF_StreamContentParser::GetNamedColors() const {
-  ASSERT(m_ParamCount > 0);
+  DCHECK(m_ParamCount > 0);
   const uint32_t nvalues = m_ParamCount - 1;
   std::vector<float> values(nvalues);
   for (size_t i = 0; i < nvalues; ++i)
@@ -1482,7 +1483,7 @@ uint32_t CPDF_StreamContentParser::Parse(
     uint32_t start_offset,
     uint32_t max_cost,
     const std::vector<uint32_t>& stream_start_offsets) {
-  ASSERT(start_offset < dwSize);
+  DCHECK(start_offset < dwSize);
 
   // Parsing will be done from |pDataStart|, for at most |size_left| bytes.
   const uint8_t* pDataStart = pData + start_offset;

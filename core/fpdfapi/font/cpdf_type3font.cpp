@@ -16,6 +16,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -28,7 +29,7 @@ CPDF_Type3Font::CPDF_Type3Font(CPDF_Document* pDocument,
                                CPDF_Dictionary* pFontDict,
                                FormFactoryIface* pFormFactory)
     : CPDF_SimpleFont(pDocument, pFontDict), m_pFormFactory(pFormFactory) {
-  ASSERT(GetDocument());
+  DCHECK(GetDocument());
 }
 
 CPDF_Type3Font::~CPDF_Type3Font() = default;

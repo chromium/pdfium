@@ -9,6 +9,7 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "third_party/base/check.h"
 
 namespace {
 
@@ -21,8 +22,8 @@ class StreamIterator final : public CPDF_ObjectWalker::SubobjectIterator {
   bool IsFinished() const override { return IsStarted() && is_finished_; }
 
   const CPDF_Object* IncrementImpl() override {
-    ASSERT(IsStarted());
-    ASSERT(!IsFinished());
+    DCHECK(IsStarted());
+    DCHECK(!IsFinished());
     is_finished_ = true;
     return object()->GetDict();
   }
@@ -44,8 +45,8 @@ class DictionaryIterator final : public CPDF_ObjectWalker::SubobjectIterator {
   }
 
   const CPDF_Object* IncrementImpl() override {
-    ASSERT(IsStarted());
-    ASSERT(!IsFinished());
+    DCHECK(IsStarted());
+    DCHECK(!IsFinished());
     const CPDF_Object* result = dict_iterator_->second.Get();
     dict_key_ = dict_iterator_->first;
     ++dict_iterator_;
@@ -53,7 +54,7 @@ class DictionaryIterator final : public CPDF_ObjectWalker::SubobjectIterator {
   }
 
   void Start() override {
-    ASSERT(!IsStarted());
+    DCHECK(!IsStarted());
     dict_iterator_ = locker_.begin();
   }
 
@@ -77,8 +78,8 @@ class ArrayIterator final : public CPDF_ObjectWalker::SubobjectIterator {
   }
 
   const CPDF_Object* IncrementImpl() override {
-    ASSERT(IsStarted());
-    ASSERT(!IsFinished());
+    DCHECK(IsStarted());
+    DCHECK(!IsFinished());
     const CPDF_Object* result = arr_iterator_->Get();
     ++arr_iterator_;
     return result;
@@ -111,7 +112,7 @@ const CPDF_Object* CPDF_ObjectWalker::SubobjectIterator::Increment() {
 CPDF_ObjectWalker::SubobjectIterator::SubobjectIterator(
     const CPDF_Object* object)
     : object_(object) {
-  ASSERT(object_);
+  DCHECK(object_);
 }
 
 // static

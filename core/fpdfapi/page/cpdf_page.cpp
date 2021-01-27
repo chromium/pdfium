@@ -15,13 +15,14 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 CPDF_Page::CPDF_Page(CPDF_Document* pDocument, CPDF_Dictionary* pPageDict)
     : CPDF_PageObjectHolder(pDocument, pPageDict, nullptr, nullptr),
       m_PageSize(100, 100),
       m_pPDFDocument(pDocument) {
-  ASSERT(pPageDict);
+  DCHECK(pPageDict);
 
   // Cannot initialize |m_pResources| and |m_pPageResources| via the
   // CPDF_PageObjectHolder ctor because GetPageAttr() requires
@@ -68,7 +69,7 @@ void CPDF_Page::ParseContent() {
   if (GetParseState() == ParseState::kNotParsed)
     StartParse(std::make_unique<CPDF_ContentParser>(this));
 
-  ASSERT(GetParseState() == ParseState::kParsing);
+  DCHECK(GetParseState() == ParseState::kParsing);
   ContinueParse(nullptr);
 }
 

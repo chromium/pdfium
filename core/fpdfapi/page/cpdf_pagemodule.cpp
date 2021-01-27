@@ -10,6 +10,7 @@
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fpdfapi/page/cpdf_devicecs.h"
 #include "core/fpdfapi/page/cpdf_patterncs.h"
+#include "third_party/base/check.h"
 
 namespace {
 
@@ -19,20 +20,20 @@ CPDF_PageModule* g_PageModule = nullptr;
 
 // static
 void CPDF_PageModule::Create() {
-  ASSERT(!g_PageModule);
+  DCHECK(!g_PageModule);
   g_PageModule = new CPDF_PageModule();
 }
 
 // static
 void CPDF_PageModule::Destroy() {
-  ASSERT(g_PageModule);
+  DCHECK(g_PageModule);
   delete g_PageModule;
   g_PageModule = nullptr;
 }
 
 // static
 CPDF_PageModule* CPDF_PageModule::GetInstance() {
-  ASSERT(g_PageModule);
+  DCHECK(g_PageModule);
   return g_PageModule;
 }
 

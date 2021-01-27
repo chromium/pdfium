@@ -21,6 +21,7 @@
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/path_service.h"
+#include "third_party/base/check.h"
 
 namespace {
 
@@ -28,7 +29,7 @@ RetainPtr<CPDF_ReadValidator> MakeValidatorFromFile(
     const std::string& file_name) {
   std::string file_path;
   PathService::GetTestFilePath(file_name, &file_path);
-  ASSERT(!file_path.empty());
+  DCHECK(!file_path.empty());
   return pdfium::MakeRetain<CPDF_ReadValidator>(
       IFX_SeekableReadStream::CreateFromFilename(file_path.c_str()), nullptr);
 }
@@ -51,7 +52,7 @@ class TestLinearizedHeader final : public CPDF_LinearizedHeader {
         pdfium::as_bytes(pdfium::make_span(inline_data))));
     RetainPtr<CPDF_Dictionary> dict =
         ToDictionary(parser.GetObjectBody(nullptr));
-    ASSERT(dict);
+    DCHECK(dict);
     return std::make_unique<TestLinearizedHeader>(dict.Get(), 0);
   }
 };

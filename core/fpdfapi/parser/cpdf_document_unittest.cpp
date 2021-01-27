@@ -20,6 +20,7 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/render/cpdf_docrenderdata.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "third_party/base/check.h"
 
 namespace {
 
@@ -257,7 +258,7 @@ TEST_F(cpdf_document_test, UseCachedPageObjNumIfHaveNotPagesDict) {
 
   {
     CPDF_Object* first_page = document.AddIndirectObject(CreateNumberedPage(0));
-    ASSERT(first_page);
+    DCHECK(first_page);
     int first_page_obj_num = first_page->GetObjNum();
     ASSERT_NE(kTestPageNum, first_page_obj_num);
 

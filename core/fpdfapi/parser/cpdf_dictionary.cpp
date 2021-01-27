@@ -215,7 +215,7 @@ CPDF_Object* CPDF_Dictionary::SetFor(const ByteString& key,
     m_Map.erase(key);
     return nullptr;
   }
-  ASSERT(pObj->IsInline());
+  DCHECK(pObj->IsInline());
   CPDF_Object* pRet = pObj.Get();
   m_Map[MaybeIntern(key)] = std::move(pObj);
   return pRet;

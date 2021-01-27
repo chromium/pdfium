@@ -23,6 +23,7 @@
 #include "core/fxcodec/scanlinedecoder.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -387,7 +388,7 @@ Optional<DecoderArray> GetDecoderArray(const CPDF_Dictionary* pDict) {
            pParamsArray ? pParamsArray->GetDictAt(i) : nullptr});
     }
   } else {
-    ASSERT(pFilter->IsName());
+    DCHECK(pFilter->IsName());
     decoder_array.push_back(
         {pFilter->GetString(), pParams ? pParams->GetDict() : nullptr});
   }

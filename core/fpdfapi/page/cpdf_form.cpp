@@ -15,6 +15,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
+#include "third_party/base/check.h"
 
 // static
 CPDF_Dictionary* CPDF_Form::ChooseResourcesDict(
@@ -79,7 +80,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
         this, pGraphicStates, pParentMatrix, pType3Char, pParsedSet));
   }
 
-  ASSERT(GetParseState() == ParseState::kParsing);
+  DCHECK(GetParseState() == ParseState::kParsing);
   ContinueParse(nullptr);
 }
 

@@ -75,7 +75,7 @@ CPDF_Object* CPDF_IndirectObjectHolder::AddIndirectObject(
 bool CPDF_IndirectObjectHolder::ReplaceIndirectObjectIfHigherGeneration(
     uint32_t objnum,
     RetainPtr<CPDF_Object> pObj) {
-  ASSERT(objnum);
+  DCHECK(objnum);
   if (!pObj || objnum == CPDF_Object::kInvalidObjNum)
     return false;
 

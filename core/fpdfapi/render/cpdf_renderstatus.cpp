@@ -62,6 +62,7 @@
 #include "core/fxge/renderdevicedriver_iface.h"
 #include "core/fxge/text_char_pos.h"
 #include "core/fxge/text_glyph_pos.h"
+#include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/stl_util.h"
 
@@ -432,7 +433,7 @@ bool CPDF_RenderStatus::ProcessPath(CPDF_PathObject* path_obj,
 
 RetainPtr<CPDF_TransferFunc> CPDF_RenderStatus::GetTransferFunc(
     const CPDF_Object* pObj) const {
-  ASSERT(pObj);
+  DCHECK(pObj);
   auto* pDocCache = CPDF_DocRenderData::FromDocument(m_pContext->GetDocument());
   return pDocCache ? pDocCache->GetTransferFunc(pObj) : nullptr;
 }
@@ -1214,8 +1215,8 @@ void CPDF_RenderStatus::ProcessPathPattern(
     const CFX_Matrix& mtObj2Device,
     CFX_FillRenderOptions::FillType* fill_type,
     bool* stroke) {
-  ASSERT(fill_type);
-  ASSERT(stroke);
+  DCHECK(fill_type);
+  DCHECK(stroke);
 
   if (*fill_type != CFX_FillRenderOptions::FillType::kNoFill) {
     const CPDF_Color& FillColor = *path_obj->m_ColorState.GetFillColor();

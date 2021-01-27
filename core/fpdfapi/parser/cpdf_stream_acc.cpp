@@ -13,6 +13,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
+#include "third_party/base/check.h"
 
 CPDF_StreamAcc::CPDF_StreamAcc(const CPDF_Stream* pStream)
     : m_pStream(pStream) {}
@@ -23,8 +24,8 @@ void CPDF_StreamAcc::LoadAllData(bool bRawAccess,
                                  uint32_t estimated_size,
                                  bool bImageAcc) {
   if (bRawAccess) {
-    ASSERT(!estimated_size);
-    ASSERT(!bImageAcc);
+    DCHECK(!estimated_size);
+    DCHECK(!bImageAcc);
   }
 
   if (!m_pStream)
@@ -147,7 +148,7 @@ void CPDF_StreamAcc::ProcessFilteredData(uint32_t estimated_size,
   }
 
   if (pDecodedData) {
-    ASSERT(pDecodedData.get() != pSrcData.Get());
+    DCHECK(pDecodedData.get() != pSrcData.Get());
     m_pData = std::move(pDecodedData);
     m_dwSize = dwDecodedSize;
   } else {
@@ -157,11 +158,11 @@ void CPDF_StreamAcc::ProcessFilteredData(uint32_t estimated_size,
 }
 
 std::unique_ptr<uint8_t, FxFreeDeleter> CPDF_StreamAcc::ReadRawStream() const {
-  ASSERT(m_pStream);
-  ASSERT(!m_pStream->IsMemoryBased());
+  DCHECK(m_pStream);
+  DCHECK(!m_pStream->IsMemoryBased());
 
   uint32_t dwSrcSize = m_pStream->GetRawSize();
-  ASSERT(dwSrcSize);
+  DCHECK(dwSrcSize);
   std::unique_ptr<uint8_t, FxFreeDeleter> pSrcData(
       FX_Alloc(uint8_t, dwSrcSize));
   if (!m_pStream->ReadRawData(0, pSrcData.get(), dwSrcSize))

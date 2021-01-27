@@ -24,6 +24,7 @@
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_random.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -58,7 +59,7 @@ CFX_FileBufferArchive::CFX_FileBufferArchive(
       current_length_(0),
       buffer_(kArchiveBufferSize),
       backing_file_(file) {
-  ASSERT(file);
+  DCHECK(file);
 }
 
 CFX_FileBufferArchive::~CFX_FileBufferArchive() {
@@ -76,8 +77,8 @@ bool CFX_FileBufferArchive::Flush() {
 }
 
 bool CFX_FileBufferArchive::WriteBlock(const void* pBuf, size_t size) {
-  ASSERT(pBuf);
-  ASSERT(size > 0);
+  DCHECK(pBuf);
+  DCHECK(size > 0);
 
   const uint8_t* buffer = reinterpret_cast<const uint8_t*>(pBuf);
   size_t temp_size = size;
@@ -227,7 +228,7 @@ void CPDF_Creator::InitNewObjNumOffsets() {
 }
 
 CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage1() {
-  ASSERT(m_iStage > Stage::kInvalid || m_iStage < Stage::kInitWriteObjs20);
+  DCHECK(m_iStage > Stage::kInvalid || m_iStage < Stage::kInitWriteObjs20);
   if (m_iStage == Stage::kInit0) {
     if (!m_pParser || (m_bSecurityChanged && m_IsOriginal))
       m_IsIncremental = false;
@@ -289,7 +290,7 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage1() {
 }
 
 CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage2() {
-  ASSERT(m_iStage >= Stage::kInitWriteObjs20 ||
+  DCHECK(m_iStage >= Stage::kInitWriteObjs20 ||
          m_iStage < Stage::kInitWriteXRefs80);
   if (m_iStage == Stage::kInitWriteObjs20) {
     if (!m_IsIncremental && m_pParser) {
@@ -332,7 +333,7 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage2() {
 }
 
 CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage3() {
-  ASSERT(m_iStage >= Stage::kInitWriteXRefs80 ||
+  DCHECK(m_iStage >= Stage::kInitWriteXRefs80 ||
          m_iStage < Stage::kWriteTrailerAndFinish90);
 
   uint32_t dwLastObjNum = m_dwLastObjNum;
@@ -430,7 +431,7 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage3() {
 }
 
 CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage4() {
-  ASSERT(m_iStage >= Stage::kWriteTrailerAndFinish90);
+  DCHECK(m_iStage >= Stage::kWriteTrailerAndFinish90);
 
   bool bXRefStream = m_IsIncremental && m_pParser->IsXRefStream();
   if (!bXRefStream) {
@@ -590,7 +591,7 @@ bool CPDF_Creator::Create(uint32_t flags) {
 }
 
 void CPDF_Creator::InitID() {
-  ASSERT(!m_pIDArray);
+  DCHECK(!m_pIDArray);
 
   m_pIDArray = pdfium::MakeRetain<CPDF_Array>();
   const CPDF_Array* pOldIDArray = m_pParser ? m_pParser->GetIDArray() : nullptr;
@@ -617,7 +618,7 @@ void CPDF_Creator::InitID() {
 
   m_pIDArray->Append(m_pIDArray->GetObjectAt(0)->Clone());
   if (m_pEncryptDict) {
-    ASSERT(m_pParser);
+    DCHECK(m_pParser);
     int revision = m_pEncryptDict->GetIntegerFor("R");
     if ((revision == 2 || revision == 3) &&
         m_pEncryptDict->GetStringFor("Filter") == "Standard") {

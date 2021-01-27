@@ -23,6 +23,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
+#include "third_party/base/check.h"
 
 namespace {
 
@@ -93,7 +94,7 @@ void CPDF_CryptoHandler::CryptBlock(bool bEncrypt,
       dest_size -= dest_buf[dest_size - 1];
     }
   } else {
-    ASSERT(dest_size == source.size());
+    DCHECK(dest_size == source.size());
     if (dest_buf != source.data())
       memcpy(dest_buf, source.data(), source.size());
     CRYPT_ArcFourCryptBlock({dest_buf, dest_size}, {realkey, realkeylen});
@@ -381,10 +382,10 @@ CPDF_CryptoHandler::CPDF_CryptoHandler(int cipher,
                                        const uint8_t* key,
                                        size_t keylen)
     : m_KeyLen(std::min<size_t>(keylen, 32)), m_Cipher(cipher) {
-  ASSERT(cipher != FXCIPHER_AES || keylen == 16 || keylen == 24 ||
+  DCHECK(cipher != FXCIPHER_AES || keylen == 16 || keylen == 24 ||
          keylen == 32);
-  ASSERT(cipher != FXCIPHER_AES2 || keylen == 32);
-  ASSERT(cipher != FXCIPHER_RC4 || (keylen >= 5 && keylen <= 16));
+  DCHECK(cipher != FXCIPHER_AES2 || keylen == 32);
+  DCHECK(cipher != FXCIPHER_RC4 || (keylen >= 5 && keylen <= 16));
 
   if (m_Cipher != FXCIPHER_NONE)
     memcpy(m_EncryptKey, key, m_KeyLen);

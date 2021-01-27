@@ -28,6 +28,7 @@
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
+#include "third_party/base/check.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
 // static
@@ -41,19 +42,19 @@ bool CPDF_Image::IsValidJpegBitsPerComponent(int32_t bpc) {
 }
 
 CPDF_Image::CPDF_Image(CPDF_Document* pDoc) : m_pDocument(pDoc) {
-  ASSERT(m_pDocument);
+  DCHECK(m_pDocument);
 }
 
 CPDF_Image::CPDF_Image(CPDF_Document* pDoc, RetainPtr<CPDF_Stream> pStream)
     : m_bIsInline(true), m_pDocument(pDoc), m_pStream(std::move(pStream)) {
-  ASSERT(m_pDocument);
+  DCHECK(m_pDocument);
   FinishInitialization(m_pStream->GetDict());
 }
 
 CPDF_Image::CPDF_Image(CPDF_Document* pDoc, uint32_t dwStreamObjNum)
     : m_pDocument(pDoc),
       m_pStream(ToStream(pDoc->GetIndirectObject(dwStreamObjNum))) {
-  ASSERT(m_pDocument);
+  DCHECK(m_pDocument);
   FinishInitialization(m_pStream->GetDict());
 }
 
@@ -218,7 +219,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
   } else if (bpp == 8) {
     size_t palette_size = pBitmap->GetPaletteSize();
     if (palette_size > 0) {
-      ASSERT(palette_size <= 256);
+      DCHECK(palette_size <= 256);
       CPDF_Array* pCS = m_pDocument->NewIndirect<CPDF_Array>();
       pCS->AppendNew<CPDF_Name>("Indexed");
       pCS->AppendNew<CPDF_Name>("DeviceRGB");
