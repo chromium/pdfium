@@ -25,6 +25,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_unicode.h"
+#include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/stl_util.h"
 
@@ -38,8 +39,8 @@ const uint16_t* const g_UnicodeData_Normalization_Maps[] = {
     g_UnicodeData_Normalization_Map4};
 
 float NormalizeThreshold(float threshold, int t1, int t2, int t3) {
-  ASSERT(t1 < t2);
-  ASSERT(t2 < t3);
+  DCHECK(t1 < t2);
+  DCHECK(t2 < t3);
   if (threshold < t1)
     return threshold / 2.0f;
   if (threshold < t2)
@@ -367,7 +368,7 @@ std::vector<CFX_FloatRect> CPDF_TextPage::GetRectArray(int start,
 
   if (count < 0 || start + count > number_of_chars)
     count = number_of_chars - start;
-  ASSERT(count > 0);
+  DCHECK(count > 0);
 
   CPDF_TextObject* text_object = nullptr;
   CFX_FloatRect rect;
@@ -943,7 +944,7 @@ void CPDF_TextPage::FindPreviousTextObject() {
 
 void CPDF_TextPage::SwapTempTextBuf(int iCharListStartAppend,
                                     int iBufStartAppend) {
-  ASSERT(!m_TempCharList.empty());
+  DCHECK(!m_TempCharList.empty());
   int i = iCharListStartAppend;
   int j = pdfium::CollectionSize<int>(m_TempCharList) - 1;
   for (; i < j; ++i, --j) {
@@ -952,7 +953,7 @@ void CPDF_TextPage::SwapTempTextBuf(int iCharListStartAppend,
   }
 
   pdfium::span<wchar_t> temp_span = m_TempTextBuf.GetWideSpan();
-  ASSERT(!temp_span.empty());
+  DCHECK(!temp_span.empty());
   i = iBufStartAppend;
   j = pdfium::CollectionSize<int>(temp_span) - 1;
   for (; i < j; ++i, --j)

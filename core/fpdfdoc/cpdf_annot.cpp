@@ -26,6 +26,7 @@
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
+#include "third_party/base/check.h"
 
 namespace {
 
@@ -179,13 +180,13 @@ bool CPDF_Annot::IsHidden() const {
 
 CPDF_Stream* GetAnnotAP(CPDF_Dictionary* pAnnotDict,
                         CPDF_Annot::AppearanceMode eMode) {
-  ASSERT(pAnnotDict);
+  DCHECK(pAnnotDict);
   return GetAnnotAPInternal(pAnnotDict, eMode, true);
 }
 
 CPDF_Stream* GetAnnotAPNoFallback(CPDF_Dictionary* pAnnotDict,
                                   CPDF_Annot::AppearanceMode eMode) {
-  ASSERT(pAnnotDict);
+  DCHECK(pAnnotDict);
   return GetAnnotAPInternal(pAnnotDict, eMode, false);
 }
 
@@ -210,8 +211,8 @@ CPDF_Form* CPDF_Annot::GetAPForm(const CPDF_Page* pPage, AppearanceMode mode) {
 // static
 CFX_FloatRect CPDF_Annot::RectFromQuadPointsArray(const CPDF_Array* pArray,
                                                   size_t nIndex) {
-  ASSERT(pArray);
-  ASSERT(nIndex < pArray->size() / 8);
+  DCHECK(pArray);
+  DCHECK(nIndex < pArray->size() / 8);
 
   // QuadPoints are defined with 4 pairs of numbers
   // ([ pair0, pair1, pair2, pair3 ]), where

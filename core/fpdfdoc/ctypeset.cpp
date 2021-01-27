@@ -12,6 +12,7 @@
 #include "core/fpdfdoc/cpdf_variabletext.h"
 #include "core/fpdfdoc/cpvt_wordinfo.h"
 #include "core/fpdfdoc/csection.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -259,14 +260,14 @@ CPVT_FloatRect CTypeset::CharArray() {
 }
 
 CFX_SizeF CTypeset::GetEditSize(float fFontSize) {
-  ASSERT(m_pSection);
-  ASSERT(m_pVT);
+  DCHECK(m_pSection);
+  DCHECK(m_pVT);
   SplitLines(false, fFontSize);
   return CFX_SizeF(m_rcRet.Width(), m_rcRet.Height());
 }
 
 CPVT_FloatRect CTypeset::Typeset() {
-  ASSERT(m_pVT);
+  DCHECK(m_pVT);
   m_pSection->m_LineArray.clear();
   SplitLines(true, 0.0f);
   OutputLines();
@@ -274,8 +275,8 @@ CPVT_FloatRect CTypeset::Typeset() {
 }
 
 void CTypeset::SplitLines(bool bTypeset, float fFontSize) {
-  ASSERT(m_pVT);
-  ASSERT(m_pSection);
+  DCHECK(m_pVT);
+  DCHECK(m_pSection);
 
   CPVT_LineInfo line;
   if (m_pSection->m_WordArray.empty()) {
@@ -427,8 +428,8 @@ void CTypeset::SplitLines(bool bTypeset, float fFontSize) {
 }
 
 void CTypeset::OutputLines() {
-  ASSERT(m_pVT);
-  ASSERT(m_pSection);
+  DCHECK(m_pVT);
+  DCHECK(m_pSection);
   float fMinX;
   float fLineIndent = m_pVT->GetLineIndent();
   float fTypesetWidth = std::max(m_pVT->GetPlateWidth() - fLineIndent, 0.0f);

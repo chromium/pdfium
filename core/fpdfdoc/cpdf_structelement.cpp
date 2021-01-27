@@ -16,6 +16,7 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfdoc/cpdf_structtree.h"
+#include "third_party/base/check.h"
 
 namespace {
 
@@ -78,7 +79,7 @@ void CPDF_StructElement::LoadKids(const CPDF_Dictionary* pDict) {
   if (!pKids)
     return;
 
-  ASSERT(m_Kids.empty());
+  DCHECK(m_Kids.empty());
   if (const CPDF_Array* pArray = pKids->AsArray()) {
     m_Kids.resize(pArray->size());
     for (size_t i = 0; i < pArray->size(); ++i) {

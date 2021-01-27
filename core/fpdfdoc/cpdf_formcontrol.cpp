@@ -15,6 +15,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -48,7 +49,7 @@ CFX_FloatRect CPDF_FormControl::GetRect() const {
 }
 
 ByteString CPDF_FormControl::GetOnStateName() const {
-  ASSERT(GetType() == CPDF_FormField::kCheckBox ||
+  DCHECK(GetType() == CPDF_FormField::kCheckBox ||
          GetType() == CPDF_FormField::kRadioButton);
   CPDF_Dictionary* pAP = m_pWidgetDict->GetDictFor("AP");
   if (!pAP)
@@ -67,7 +68,7 @@ ByteString CPDF_FormControl::GetOnStateName() const {
 }
 
 ByteString CPDF_FormControl::GetCheckedAPState() const {
-  ASSERT(GetType() == CPDF_FormField::kCheckBox ||
+  DCHECK(GetType() == CPDF_FormField::kCheckBox ||
          GetType() == CPDF_FormField::kRadioButton);
   ByteString csOn = GetOnStateName();
   if (ToArray(CPDF_FormField::GetFieldAttr(m_pField->GetDict(), "Opt")))
@@ -78,7 +79,7 @@ ByteString CPDF_FormControl::GetCheckedAPState() const {
 }
 
 WideString CPDF_FormControl::GetExportValue() const {
-  ASSERT(GetType() == CPDF_FormField::kCheckBox ||
+  DCHECK(GetType() == CPDF_FormField::kCheckBox ||
          GetType() == CPDF_FormField::kRadioButton);
   ByteString csOn = GetOnStateName();
   CPDF_Array* pArray =
@@ -91,7 +92,7 @@ WideString CPDF_FormControl::GetExportValue() const {
 }
 
 bool CPDF_FormControl::IsChecked() const {
-  ASSERT(GetType() == CPDF_FormField::kCheckBox ||
+  DCHECK(GetType() == CPDF_FormField::kCheckBox ||
          GetType() == CPDF_FormField::kRadioButton);
   ByteString csOn = GetOnStateName();
   ByteString csAS = m_pWidgetDict->GetStringFor("AS");
@@ -99,7 +100,7 @@ bool CPDF_FormControl::IsChecked() const {
 }
 
 bool CPDF_FormControl::IsDefaultChecked() const {
-  ASSERT(GetType() == CPDF_FormField::kCheckBox ||
+  DCHECK(GetType() == CPDF_FormField::kCheckBox ||
          GetType() == CPDF_FormField::kRadioButton);
   CPDF_Object* pDV = CPDF_FormField::GetFieldAttr(m_pField->GetDict(), "DV");
   if (!pDV)
@@ -111,7 +112,7 @@ bool CPDF_FormControl::IsDefaultChecked() const {
 }
 
 void CPDF_FormControl::CheckControl(bool bChecked) {
-  ASSERT(GetType() == CPDF_FormField::kCheckBox ||
+  DCHECK(GetType() == CPDF_FormField::kCheckBox ||
          GetType() == CPDF_FormField::kRadioButton);
   ByteString csOldAS = m_pWidgetDict->GetStringFor("AS", "Off");
   ByteString csAS = "Off";

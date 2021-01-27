@@ -16,6 +16,7 @@
 #include "core/fpdfdoc/csection.h"
 #include "core/fpdfdoc/ipvt_fontmap.h"
 #include "core/fxcrt/fx_codepage.h"
+#include "third_party/base/check.h"
 #include "third_party/base/compiler_specific.h"
 #include "third_party/base/stl_util.h"
 
@@ -32,7 +33,7 @@ const uint8_t gFontSizeSteps[] = {4,  6,  8,   9,   10,  12,  14, 18, 20,
 
 CPDF_VariableText::Provider::Provider(IPVT_FontMap* pFontMap)
     : m_pFontMap(pFontMap) {
-  ASSERT(m_pFontMap);
+  DCHECK(m_pFontMap);
 }
 
 CPDF_VariableText::Provider::~Provider() = default;
@@ -93,7 +94,7 @@ void CPDF_VariableText::Iterator::SetAt(int32_t nWordIndex) {
 }
 
 void CPDF_VariableText::Iterator::SetAt(const CPVT_WordPlace& place) {
-  ASSERT(m_pVT);
+  DCHECK(m_pVT);
   m_CurPos = place;
 }
 
@@ -157,7 +158,7 @@ bool CPDF_VariableText::Iterator::GetWord(CPVT_Word& word) const {
 }
 
 bool CPDF_VariableText::Iterator::GetLine(CPVT_Line& line) const {
-  ASSERT(m_pVT);
+  DCHECK(m_pVT);
   line.lineplace = CPVT_WordPlace(m_CurPos.nSecIndex, m_CurPos.nLineIndex, -1);
   if (!pdfium::IndexInBounds(m_pVT->m_SectionArray, m_CurPos.nSecIndex))
     return false;

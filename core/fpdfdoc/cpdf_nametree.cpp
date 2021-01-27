@@ -15,6 +15,7 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
+#include "third_party/base/check.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -22,7 +23,7 @@ namespace {
 constexpr int kNameTreeMaxRecursion = 32;
 
 std::pair<WideString, WideString> GetNodeLimitsMaybeSwap(CPDF_Array* pLimits) {
-  ASSERT(pLimits);
+  DCHECK(pLimits);
   WideString csLeft = pLimits->GetUnicodeTextAt(0);
   WideString csRight = pLimits->GetUnicodeTextAt(1);
   // If the lower limit is greater than the upper limit, swap them.
@@ -136,7 +137,7 @@ bool UpdateNodesAndLimitsUponDeletion(CPDF_Dictionary* pNode,
     WideString csNewRight = csLeft;
     for (size_t j = 0; j < pKids->size(); ++j) {
       CPDF_Array* pKidLimits = pKids->GetDictAt(j)->GetArrayFor("Limits");
-      ASSERT(pKidLimits);
+      DCHECK(pKidLimits);
       if (pKidLimits->GetUnicodeTextAt(0).Compare(csNewLeft) < 0)
         csNewLeft = pKidLimits->GetUnicodeTextAt(0);
       if (pKidLimits->GetUnicodeTextAt(1).Compare(csNewRight) > 0)
@@ -319,7 +320,7 @@ CPDF_Array* LookupOldStyleNamedDest(CPDF_Document* pDoc,
 }  // namespace
 
 CPDF_NameTree::CPDF_NameTree(CPDF_Dictionary* pRoot) : m_pRoot(pRoot) {
-  ASSERT(m_pRoot);
+  DCHECK(m_pRoot);
 }
 
 CPDF_NameTree::~CPDF_NameTree() = default;

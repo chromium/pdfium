@@ -15,6 +15,7 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/stl_util.h"
 
@@ -55,12 +56,12 @@ WideString ChangeSlashToPDF(const wchar_t* str) {
 }  // namespace
 
 CPDF_FileSpec::CPDF_FileSpec(const CPDF_Object* pObj) : m_pObj(pObj) {
-  ASSERT(m_pObj);
+  DCHECK(m_pObj);
 }
 
 CPDF_FileSpec::CPDF_FileSpec(CPDF_Object* pObj)
     : m_pObj(pObj), m_pWritableObj(pObj) {
-  ASSERT(m_pObj);
+  DCHECK(m_pObj);
 }
 
 CPDF_FileSpec::~CPDF_FileSpec() = default;

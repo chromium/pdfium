@@ -14,6 +14,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/check.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
@@ -91,7 +92,7 @@ WideString GetStringCase(const WideString& wsOriginal, bool bMatchCase) {
 
 Optional<WideString> ExtractSubString(const wchar_t* lpszFullString,
                                       int iSubString) {
-  ASSERT(lpszFullString);
+  DCHECK(lpszFullString);
 
   while (iSubString--) {
     lpszFullString = std::wcschr(lpszFullString, L' ');

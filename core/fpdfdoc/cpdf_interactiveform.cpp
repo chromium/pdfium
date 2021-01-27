@@ -29,6 +29,7 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fx_font.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -125,7 +126,7 @@ ByteString GenerateNewFontResourceName(const CPDF_Dictionary* pResDict,
   }
 
   const CPDF_Dictionary* pDict = pResDict->GetDictFor("Font");
-  ASSERT(pDict);
+  DCHECK(pDict);
 
   int num = 0;
   ByteString bsNum;
@@ -150,7 +151,7 @@ RetainPtr<CPDF_Font> AddStandardFont(CPDF_Document* pDocument) {
 }
 
 RetainPtr<CPDF_Font> AddNativeFont(uint8_t charSet, CPDF_Document* pDocument) {
-  ASSERT(pDocument);
+  DCHECK(pDocument);
 
 #if defined(OS_WIN)
   LOGFONTA lf;
@@ -238,8 +239,8 @@ void AddFont(CPDF_Dictionary*& pFormDict,
              CPDF_Document* pDocument,
              const RetainPtr<CPDF_Font>& pFont,
              ByteString* csNameTag) {
-  ASSERT(pFormDict);
-  ASSERT(pFont);
+  DCHECK(pFormDict);
+  DCHECK(pFont);
 
   ByteString csTag;
   if (FindFont(pFormDict, pFont.Get(), &csTag)) {
@@ -269,7 +270,7 @@ uint8_t GetNativeCharSet() {
 }
 
 void InitDict(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument) {
-  ASSERT(pDocument);
+  DCHECK(pDocument);
 
   if (!pFormDict) {
     pFormDict = pDocument->NewIndirect<CPDF_Dictionary>();
@@ -577,12 +578,12 @@ RetainPtr<CPDF_Font> CPDF_InteractiveForm::AddNativeInteractiveFormFont(
     CPDF_Dictionary*& pFormDict,
     CPDF_Document* pDocument,
     ByteString* csNameTag) {
-  ASSERT(pDocument);
-  ASSERT(csNameTag);
+  DCHECK(pDocument);
+  DCHECK(csNameTag);
 
   if (!pFormDict)
     InitDict(pFormDict, pDocument);
-  ASSERT(pFormDict);
+  DCHECK(pFormDict);
 
   uint8_t charSet = GetNativeCharSet();
   ByteString csTemp;
