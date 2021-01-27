@@ -20,6 +20,7 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/render_defines.h"
 #include "core/fxge/text_char_pos.h"
+#include "third_party/base/check.h"
 
 #if defined(PDFIUM_PRINT_TEXT_WITH_GDI)
 namespace {
@@ -83,9 +84,9 @@ bool CGdiPrinterDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                          pSource->GetHeight(), &clip_rect,
                          FXDIB_ResampleOptions(), BlendMode::kNormal);
   }
-  ASSERT(pSource);
-  ASSERT(!pSource->IsMask());
-  ASSERT(blend_type == BlendMode::kNormal);
+  DCHECK(pSource);
+  DCHECK(!pSource->IsMask());
+  DCHECK(blend_type == BlendMode::kNormal);
   if (pSource->HasAlpha())
     return false;
 
@@ -296,11 +297,11 @@ bool CGdiPrinterDriver::DrawDeviceText(
     // Only works with PDFs from Skia's PDF generator. Cannot handle arbitrary
     // values from PDFs.
     const TextCharPos& charpos = pCharPos[i];
-    ASSERT(charpos.m_AdjustMatrix[0] == 0);
-    ASSERT(charpos.m_AdjustMatrix[1] == 0);
-    ASSERT(charpos.m_AdjustMatrix[2] == 0);
-    ASSERT(charpos.m_AdjustMatrix[3] == 0);
-    ASSERT(charpos.m_Origin.y == 0);
+    DCHECK(charpos.m_AdjustMatrix[0] == 0);
+    DCHECK(charpos.m_AdjustMatrix[1] == 0);
+    DCHECK(charpos.m_AdjustMatrix[2] == 0);
+    DCHECK(charpos.m_AdjustMatrix[3] == 0);
+    DCHECK(charpos.m_Origin.y == 0);
 
     // Round the spacing to the nearest integer, but keep track of the rounding
     // error for calculating the next spacing value.

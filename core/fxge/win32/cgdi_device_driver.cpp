@@ -18,6 +18,7 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/render_defines.h"
 #include "core/fxge/win32/cwin32_platform.h"
+#include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 
 #if !defined(_SKIA_SUPPORT_)
@@ -42,7 +43,7 @@ static_assert(
 HPEN CreateExtPen(const CFX_GraphStateData* pGraphState,
                   const CFX_Matrix* pMatrix,
                   uint32_t argb) {
-  ASSERT(pGraphState);
+  DCHECK(pGraphState);
 
   float scale = 1.0f;
   if (pMatrix) {
@@ -523,7 +524,7 @@ void CGdiDeviceDriver::DrawLine(float x1, float y1, float x2, float y2) {
         x2 = x[0];
         y2 = y[0];
       } else {
-        ASSERT(np == 2);
+        DCHECK(np == 2);
         x1 = x[0];
         y1 = y[0];
         x2 = x[1];

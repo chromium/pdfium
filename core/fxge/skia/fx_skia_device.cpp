@@ -147,7 +147,7 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
         }
       }
     } else if (src_format == FXDIB_Format::kRgb32) {
-      ASSERT(dest_format == FXDIB_Format::kArgb);
+      DCHECK(dest_format == FXDIB_Format::kArgb);
       for (int row = 0; row < height; row++) {
         uint8_t* dest_scan = dest_buf + row * pitch;
         const uint8_t* src_scan =
@@ -278,13 +278,13 @@ void DebugDrawSkiaClipPath(SkCanvas* canvas, const SkPath& path) {}
 static void DebugValidate(const RetainPtr<CFX_DIBitmap>& bitmap,
                           const RetainPtr<CFX_DIBitmap>& device) {
   if (bitmap) {
-    ASSERT(bitmap->GetBPP() == 8 || bitmap->GetBPP() == 32);
+    DCHECK(bitmap->GetBPP() == 8 || bitmap->GetBPP() == 32);
     if (bitmap->GetBPP() == 32) {
       bitmap->DebugVerifyBitmapIsPreMultiplied(nullptr);
     }
   }
   if (device) {
-    ASSERT(device->GetBPP() == 8 || device->GetBPP() == 32);
+    DCHECK(device->GetBPP() == 8 || device->GetBPP() == 32);
     if (device->GetBPP() == 32) {
       device->DebugVerifyBitmapIsPreMultiplied(nullptr);
     }
@@ -312,7 +312,7 @@ SkFont::Edging GetFontEdgingType(const CFX_TextRenderOptions& text_options) {
   if (text_options.aliasing_type == CFX_TextRenderOptions::kAntiAliasing)
     return SkFont::Edging::kAntiAlias;
 
-  ASSERT(text_options.aliasing_type == CFX_TextRenderOptions::kLcd);
+  DCHECK(text_options.aliasing_type == CFX_TextRenderOptions::kLcd);
   return SkFont::Edging::kSubpixelAntiAlias;
 }
 
@@ -427,8 +427,8 @@ bool AddColors(const CPDF_ExpIntFunc* pFunc,
 }
 
 uint8_t FloatToByte(float f) {
-  ASSERT(f >= 0);
-  ASSERT(f <= 1);
+  DCHECK(f >= 0);
+  DCHECK(f <= 1);
   return (uint8_t)(f * 255.99f);
 }
 
@@ -1087,7 +1087,7 @@ class SkiaState {
     while (m_clipIndex > m_commandIndex) {
       do {
         --m_clipIndex;
-        ASSERT(m_clipIndex >= 0);
+        DCHECK(m_clipIndex >= 0);
       } while (m_commands[m_clipIndex] != Clip::kSave);
       m_pDriver->SkiaCanvas()->restore();
     }
@@ -1239,7 +1239,7 @@ class SkiaState {
     while (m_clipIndex > limit) {
       do {
         --m_clipIndex;
-        ASSERT(m_clipIndex >= 0);
+        DCHECK(m_clipIndex >= 0);
       } while (m_commands[m_clipIndex] != Clip::kSave);
       m_pDriver->SkiaCanvas()->restore();
     }
@@ -1247,7 +1247,7 @@ class SkiaState {
       if (Clip::kSave == m_commands[m_clipIndex]) {
         m_pDriver->SkiaCanvas()->save();
       } else {
-        ASSERT(Clip::kPath == m_commands[m_clipIndex]);
+        DCHECK(Clip::kPath == m_commands[m_clipIndex]);
         m_pDriver->SkiaCanvas()->clipPath(m_clips[m_clipIndex],
                                           SkClipOp::kIntersect, true);
       }
@@ -1337,10 +1337,10 @@ class SkiaState {
     DumpEndPrefix();
     int skCanvasSaveCount = m_pDriver->SkiaCanvas()->getSaveCount();
     int cacheSaveCount = 1;
-    ASSERT(m_clipIndex <= m_commands.count());
+    DCHECK(m_clipIndex <= m_commands.count());
     for (int index = 0; index < m_clipIndex; ++index)
       cacheSaveCount += Clip::kSave == m_commands[index];
-    ASSERT(skCanvasSaveCount == cacheSaveCount);
+    DCHECK(skCanvasSaveCount == cacheSaveCount);
 #endif  // SHOW_SKIA_PATH
   }
 
@@ -1397,7 +1397,7 @@ class SkiaState {
       return;
     int aggSaveCount = AggSaveCount(m_pDriver);
     int cacheSaveCount = CacheSaveCount(m_commands, m_commandIndex);
-    ASSERT(m_clipIndex <= m_commands.count());
+    DCHECK(m_clipIndex <= m_commands.count());
     if (aggSaveCount != cacheSaveCount) {
       // may not signify a bug if counts don't match
       printf("aggSaveCount %d != cacheSaveCount %d\n", aggSaveCount,
@@ -1501,11 +1501,11 @@ class SkiaState {
       m_fontCharWidths[index] = width;
     }
     int Count() const {
-      ASSERT(m_positions.count() == m_glyphs.count());
+      DCHECK(m_positions.count() == m_glyphs.count());
       return m_glyphs.count();
     }
     void SetCount(int count) {
-      ASSERT(count >= 0);
+      DCHECK(count >= 0);
       m_positions.setCount(count);
       m_glyphs.setCount(count);
       m_fontCharWidths.setCount(count);
@@ -1644,7 +1644,7 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
                      ? kAlpha_8_SkColorType
                      : kGray_8_SkColorType;
   } else {
-    ASSERT(bpp == 32);
+    DCHECK(bpp == 32);
     color_type = Get32BitSkColorType(bRgbByteOrder);
   }
 
@@ -2280,7 +2280,7 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
     skPath.addRect(skRect);
     skPath.transform(inverse);
   } else {
-    ASSERT(kCoonsPatchMeshShading == shadingType);
+    DCHECK(kCoonsPatchMeshShading == shadingType);
     const CPDF_Stream* pStream = ToStream(pPattern->GetShadingObject());
     if (!pStream)
       return false;
@@ -2375,7 +2375,7 @@ bool CFX_SkiaDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
   SkBitmap skSrcBitmap;
   skSrcBitmap.installPixels(srcImageInfo, srcBuffer, srcRowBytes);
   uint8_t* dstBuffer = pBitmap->GetBuffer();
-  ASSERT(dstBuffer);
+  DCHECK(dstBuffer);
   int dstWidth = pBitmap->GetWidth();
   int dstHeight = pBitmap->GetHeight();
   size_t dstRowBytes = pBitmap->GetPitch();
@@ -2802,7 +2802,7 @@ bool CFX_DefaultRenderDevice::SetBitsWithMask(
 
 void CFX_DIBBase::DebugVerifyBitmapIsPreMultiplied(void* opt) const {
 #ifdef SK_DEBUG
-  ASSERT(GetBPP() == 32);
+  DCHECK(GetBPP() == 32);
   const uint32_t* buffer = (const uint32_t*)(opt ? opt : GetBuffer());
   int width = GetWidth();
   int height = GetHeight();
@@ -2815,9 +2815,9 @@ void CFX_DIBBase::DebugVerifyBitmapIsPreMultiplied(void* opt) const {
       uint8_t g = SkGetPackedG32(srcRow[x]);
       uint8_t b = SkGetPackedB32(srcRow[x]);
       SkA32Assert(a);
-      ASSERT(r <= a);
-      ASSERT(g <= a);
-      ASSERT(b <= a);
+      DCHECK(r <= a);
+      DCHECK(g <= a);
+      DCHECK(b <= a);
     }
   }
 #endif  // SK_DEBUG

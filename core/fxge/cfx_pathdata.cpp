@@ -7,6 +7,7 @@
 #include "core/fxge/cfx_pathdata.h"
 
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/check.h"
 #include "third_party/base/numerics/safe_math.h"
 
 namespace {
@@ -391,7 +392,7 @@ bool CFX_PathData::GetZeroAreaPath(const CFX_Matrix* pMatrix,
       continue;
     }
 
-    ASSERT(point_type == FXPT_TYPE::LineTo);
+    DCHECK(point_type == FXPT_TYPE::LineTo);
     int next_index =
         (i + 1 - startPoint) % (m_Points.size() - startPoint) + startPoint;
     const FX_PATHPOINT& next = m_Points[next_index];

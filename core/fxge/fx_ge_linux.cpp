@@ -14,6 +14,7 @@
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/systemfontinfo_iface.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 #if !defined(OS_LINUX) && !defined(OS_CHROMEOS) && !defined(OS_ASMJS)
@@ -105,7 +106,7 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
   switch (charset) {
     case FX_CHARSET_ShiftJIS: {
       uint8_t index = GetJapanesePreference(family, weight, pitch_family);
-      ASSERT(index < pdfium::size(g_LinuxJpFontList));
+      DCHECK(index < pdfium::size(g_LinuxJpFontList));
       for (const char* name : g_LinuxJpFontList[index]) {
         auto it = m_FontList.find(name);
         if (it != m_FontList.end())

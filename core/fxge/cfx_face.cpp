@@ -4,6 +4,8 @@
 
 #include "core/fxge/cfx_face.h"
 
+#include "third_party/base/check.h"
+
 // static
 RetainPtr<CFX_Face> CFX_Face::New(FT_Library library,
                                   const RetainPtr<Retainable>& pDesc,
@@ -30,7 +32,7 @@ RetainPtr<CFX_Face> CFX_Face::Open(FT_Library library,
 
 CFX_Face::CFX_Face(FXFT_FaceRec* rec, const RetainPtr<Retainable>& pDesc)
     : m_pRec(rec), m_pDesc(pDesc) {
-  ASSERT(m_pRec);
+  DCHECK(m_pRec);
 }
 
 CFX_Face::~CFX_Face() = default;

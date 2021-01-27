@@ -23,6 +23,7 @@
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/scoped_font_transform.h"
+#include "third_party/base/check.h"
 #include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
 
@@ -592,7 +593,7 @@ void CFX_Font::ClearGlyphCache() {
 void CFX_Font::AdjustMMParams(int glyph_index,
                               int dest_width,
                               int weight) const {
-  ASSERT(dest_width >= 0);
+  DCHECK(dest_width >= 0);
   FXFT_MM_VarPtr pMasters = nullptr;
   FT_Get_MM_Var(m_Face->GetRec(), &pMasters);
   if (!pMasters)

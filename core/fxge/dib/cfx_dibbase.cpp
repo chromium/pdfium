@@ -18,6 +18,7 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_imagestretcher.h"
 #include "core/fxge/dib/cfx_imagetransformer.h"
+#include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
@@ -683,7 +684,7 @@ size_t CFX_DIBBase::GetPaletteSize() const {
 }
 
 uint32_t CFX_DIBBase::GetPaletteArgb(int index) const {
-  ASSERT((GetBPP() == 1 || GetBPP() == 8) && !IsMask());
+  DCHECK((GetBPP() == 1 || GetBPP() == 8) && !IsMask());
   if (HasPalette())
     return GetPaletteSpan()[index];
 
@@ -694,13 +695,13 @@ uint32_t CFX_DIBBase::GetPaletteArgb(int index) const {
 }
 
 void CFX_DIBBase::SetPaletteArgb(int index, uint32_t color) {
-  ASSERT((GetBPP() == 1 || GetBPP() == 8) && !IsMask());
+  DCHECK((GetBPP() == 1 || GetBPP() == 8) && !IsMask());
   BuildPalette();
   m_palette[index] = color;
 }
 
 int CFX_DIBBase::FindPalette(uint32_t color) const {
-  ASSERT((GetBPP() == 1 || GetBPP() == 8) && !IsMask());
+  DCHECK((GetBPP() == 1 || GetBPP() == 8) && !IsMask());
   if (HasPalette()) {
     int palsize = (1 << GetBPP());
     pdfium::span<const uint32_t> palette = GetPaletteSpan();
@@ -728,8 +729,8 @@ bool CFX_DIBBase::GetOverlapRect(int& dest_left,
   if (width == 0 || height == 0)
     return false;
 
-  ASSERT(width > 0);
-  ASSERT(height > 0);
+  DCHECK(width > 0);
+  DCHECK(height > 0);
 
   if (dest_left > m_Width || dest_top > m_Height)
     return false;
@@ -825,7 +826,7 @@ void CFX_DIBBase::SetPalette(pdfium::span<const uint32_t> src_palette) {
 }
 
 void CFX_DIBBase::GetPalette(uint32_t* pal, int alpha) const {
-  ASSERT(GetBPP() <= 8);
+  DCHECK(GetBPP() <= 8);
 
   if (GetBPP() == 1) {
     pal[0] = ((HasPalette() ? GetPaletteSpan()[0] : 0xff000000) & 0xffffff) |
@@ -845,7 +846,7 @@ void CFX_DIBBase::GetPalette(uint32_t* pal, int alpha) const {
 }
 
 RetainPtr<CFX_DIBitmap> CFX_DIBBase::CloneAlphaMask() const {
-  ASSERT(GetFormat() == FXDIB_Format::kArgb);
+  DCHECK(GetFormat() == FXDIB_Format::kArgb);
   FX_RECT rect(0, 0, m_Width, m_Height);
   auto pMask = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!pMask->Create(rect.Width(), rect.Height(), FXDIB_Format::k8bppMask))
@@ -931,7 +932,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::FlipImage(bool bXFlip, bool bYFlip) const {
         src_scan += 3;
       }
     } else {
-      ASSERT(Bpp == 4);
+      DCHECK(Bpp == 4);
       for (int col = 0; col < m_Width; ++col) {
         const auto* src_scan32 = reinterpret_cast<const uint32_t*>(src_scan);
         uint32_t* dest_scan32 = reinterpret_cast<uint32_t*>(dest_scan);

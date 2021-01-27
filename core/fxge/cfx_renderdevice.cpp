@@ -29,6 +29,7 @@
 #include "core/fxge/renderdevicedriver_iface.h"
 #include "core/fxge/text_char_pos.h"
 #include "core/fxge/text_glyph_pos.h"
+#include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/span.h"
 
@@ -39,7 +40,7 @@
 namespace {
 
 void AdjustGlyphSpace(std::vector<TextGlyphPos>* pGlyphAndPos) {
-  ASSERT(pGlyphAndPos->size() > 1);
+  DCHECK(pGlyphAndPos->size() > 1);
   std::vector<TextGlyphPos>& glyphs = *pGlyphAndPos;
   bool bVertical = glyphs.back().m_Origin.x == glyphs.front().m_Origin.x;
   if (!bVertical && (glyphs.back().m_Origin.y != glyphs.front().m_Origin.y))
@@ -98,8 +99,8 @@ const uint8_t g_TextGammaAdjust[256] = {
 };
 
 int TextGammaAdjust(int value) {
-  ASSERT(value >= 0);
-  ASSERT(value <= 255);
+  DCHECK(value >= 0);
+  DCHECK(value <= 255);
   return g_TextGammaAdjust[value];
 }
 
@@ -343,8 +344,8 @@ void CFX_RenderDevice::Flush(bool release) {
 
 void CFX_RenderDevice::SetDeviceDriver(
     std::unique_ptr<RenderDeviceDriverIface> pDriver) {
-  ASSERT(pDriver);
-  ASSERT(!m_pDeviceDriver);
+  DCHECK(pDriver);
+  DCHECK(!m_pDeviceDriver);
   m_pDeviceDriver = std::move(pDriver);
   InitDeviceInfo();
 }
@@ -689,7 +690,7 @@ bool CFX_RenderDevice::SetDIBitsWithBlend(const RetainPtr<CFX_DIBBase>& pBitmap,
                                           int left,
                                           int top,
                                           BlendMode blend_mode) {
-  ASSERT(!pBitmap->IsMask());
+  DCHECK(!pBitmap->IsMask());
   FX_RECT dest_rect(left, top, left + pBitmap->GetWidth(),
                     top + pBitmap->GetHeight());
   dest_rect.Intersect(m_ClipBox);
@@ -1075,7 +1076,7 @@ void CFX_RenderDevice::DrawFillRect(const CFX_Matrix* pUser2Device,
 void CFX_RenderDevice::DrawFillArea(const CFX_Matrix& mtUser2Device,
                                     const std::vector<CFX_PointF>& points,
                                     const FX_COLORREF& color) {
-  ASSERT(!points.empty());
+  DCHECK(!points.empty());
   CFX_PathData path;
   path.AppendPoint(points[0], FXPT_TYPE::MoveTo);
   for (size_t i = 1; i < points.size(); ++i)

@@ -16,6 +16,7 @@
 #include "core/fxge/win32/cgdi_printer_driver.h"
 #include "core/fxge/win32/cps_printer_driver.h"
 #include "core/fxge/win32/ctext_only_printer_driver.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -465,6 +466,6 @@ CFX_WindowsRenderDevice::~CFX_WindowsRenderDevice() = default;
 
 #if defined(_SKIA_SUPPORT_)
 void CFX_WindowsRenderDevice::DebugVerifyBitmapIsPreMultiplied() const {
-  ASSERT(GetDeviceCaps(FXDC_BITS_PIXEL) == 32);
+  DCHECK(GetDeviceCaps(FXDC_BITS_PIXEL) == 32);
 }
 #endif

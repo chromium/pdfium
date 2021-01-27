@@ -12,6 +12,7 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cstretchengine.h"
 #include "core/fxge/dib/fx_dib.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -48,7 +49,7 @@ CFX_ImageStretcher::CFX_ImageStretcher(ScanlineComposerIface* pDest,
       m_DestHeight(dest_height),
       m_ClipRect(bitmap_rect),
       m_DestFormat(GetStretchedFormat(*pSource)) {
-  ASSERT(m_ClipRect.Valid());
+  DCHECK(m_ClipRect.Valid());
 }
 
 CFX_ImageStretcher::~CFX_ImageStretcher() = default;

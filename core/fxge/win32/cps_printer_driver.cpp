@@ -16,6 +16,7 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/dib/cfx_imagerenderer.h"
 #include "core/fxge/win32/cpsoutput.h"
+#include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 
 CPSPrinterDriver::CPSPrinterDriver(HDC hDC,
@@ -23,7 +24,7 @@ CPSPrinterDriver::CPSPrinterDriver(HDC hDC,
                                    const EncoderIface* pEncoderIface)
     : m_hDC(hDC), m_PSRenderer(pEncoderIface) {
   // |mode| should be PostScript.
-  ASSERT(mode == WindowsPrintMode::kModePostScript2 ||
+  DCHECK(mode == WindowsPrintMode::kModePostScript2 ||
          mode == WindowsPrintMode::kModePostScript3 ||
          mode == WindowsPrintMode::kModePostScript2PassThrough ||
          mode == WindowsPrintMode::kModePostScript3PassThrough);

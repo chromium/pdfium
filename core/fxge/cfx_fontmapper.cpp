@@ -21,6 +21,7 @@
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/systemfontinfo_iface.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -735,7 +736,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::GetCachedTTCFace(void* hFont,
     pFontDesc = m_pFontMgr->AddCachedTTCFontDesc(
         ttc_size, checksum, std::move(pFontData), ttc_size);
   }
-  ASSERT(ttc_size >= font_size);
+  DCHECK(ttc_size >= font_size);
   uint32_t font_offset = ttc_size - font_size;
   int face_index =
       GetTTCIndex(pFontDesc->FontData().first(ttc_size), font_offset);

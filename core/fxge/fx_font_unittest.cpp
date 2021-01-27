@@ -10,6 +10,7 @@
 #include "core/fxge/fx_font.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/path_service.h"
+#include "third_party/base/check.h"
 
 TEST(FXFontTest, PDF_UnicodeFromAdobeName) {
   EXPECT_EQ(static_cast<wchar_t>(0x0000), PDF_UnicodeFromAdobeName("nonesuch"));
@@ -35,7 +36,7 @@ TEST(FXFontTest, PDF_AdobeNameFromUnicode) {
 TEST(FXFontTest, ReadFontNameFromMicrosoftEntries) {
   std::string test_data_dir;
   PathService::GetTestDataDir(&test_data_dir);
-  ASSERT(!test_data_dir.empty());
+  DCHECK(!test_data_dir.empty());
 
   CFX_FontMapper font_mapper(nullptr);
 

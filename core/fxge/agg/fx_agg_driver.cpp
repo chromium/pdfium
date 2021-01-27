@@ -170,7 +170,7 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
 
   uint8_t* dest_buf = buffer + dest_top * pitch + dest_left * Bpp;
   if (dest_format == FXDIB_Format::kRgb) {
-    ASSERT(src_format == FXDIB_Format::kRgb32);
+    DCHECK(src_format == FXDIB_Format::kRgb32);
     for (int row = 0; row < height; row++) {
       uint8_t* dest_scan = dest_buf + row * pitch;
       const uint8_t* src_scan =
@@ -185,7 +185,7 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
     return;
   }
 
-  ASSERT(dest_format == FXDIB_Format::kArgb ||
+  DCHECK(dest_format == FXDIB_Format::kArgb ||
          dest_format == FXDIB_Format::kRgb32);
   if (src_format == FXDIB_Format::kRgb) {
     for (int row = 0; row < height; row++) {
@@ -203,7 +203,7 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
   }
   if (src_format != FXDIB_Format::kRgb32)
     return;
-  ASSERT(dest_format == FXDIB_Format::kArgb);
+  DCHECK(dest_format == FXDIB_Format::kArgb);
   for (int row = 0; row < height; row++) {
     uint8_t* dest_scan = dest_buf + row * pitch;
     const uint8_t* src_scan =
@@ -587,7 +587,7 @@ void CFX_Renderer::CompositeSpan1bpp(uint8_t* dest_scan,
                                      int clip_right,
                                      uint8_t* clip_scan,
                                      uint8_t* dest_extra_alpha_scan) {
-  ASSERT(!m_bRgbByteOrder);
+  DCHECK(!m_bRgbByteOrder);
   int col_start = GetColStart(span_left, clip_left);
   int col_end = GetColEnd(span_left, span_len, clip_right);
   dest_scan += col_start / 8;
@@ -604,7 +604,7 @@ void CFX_Renderer::CompositeSpanGray(uint8_t* dest_scan,
                                      int clip_right,
                                      uint8_t* clip_scan,
                                      uint8_t* dest_extra_alpha_scan) {
-  ASSERT(!m_bRgbByteOrder);
+  DCHECK(!m_bRgbByteOrder);
   int col_start = GetColStart(span_left, clip_left);
   int col_end = GetColEnd(span_left, span_len, clip_right);
   dest_scan += col_start;
@@ -824,7 +824,7 @@ CFX_Renderer::CFX_Renderer(const RetainPtr<CFX_DIBitmap>& pDevice,
       m_pClipRgn(pClipRgn),
       m_CompositeSpanFunc(GetCompositeSpanFunc(m_pDevice)) {
   if (m_pDevice->GetBPP() == 8) {
-    ASSERT(!m_bRgbByteOrder);
+    DCHECK(!m_bRgbByteOrder);
     if (m_pDevice->IsMask())
       m_Gray = 255;
     else
@@ -1125,7 +1125,7 @@ bool CFX_AggDeviceDriver::SetClip_PathFill(
     const CFX_PathData* pPathData,
     const CFX_Matrix* pObject2Device,
     const CFX_FillRenderOptions& fill_options) {
-  ASSERT(fill_options.fill_type != CFX_FillRenderOptions::FillType::kNoFill);
+  DCHECK(fill_options.fill_type != CFX_FillRenderOptions::FillType::kNoFill);
 
   m_FillOptions = fill_options;
   if (!m_pClipRgn) {

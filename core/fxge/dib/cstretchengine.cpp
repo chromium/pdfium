@@ -14,6 +14,7 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "core/fxge/dib/scanlinecomposer_iface.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -126,7 +127,7 @@ bool CStretchEngine::CWeightTable::Calc(int dest_len,
 
 const PixelWeight* CStretchEngine::CWeightTable::GetPixelWeight(
     int pixel) const {
-  ASSERT(pixel >= m_DestMin);
+  DCHECK(pixel >= m_DestMin);
   return reinterpret_cast<const PixelWeight*>(
       &m_WeightTables[(pixel - m_DestMin) * m_ItemSize]);
 }

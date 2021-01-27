@@ -10,6 +10,7 @@
 #include <tuple>
 
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/check.h"
 
 namespace fxge {
 
@@ -1740,10 +1741,10 @@ std::tuple<float, float, float> AdobeCMYK_to_sRGB(float c,
   uint8_t y1 = static_cast<int>(y * 255.f + rounding_offset);
   uint8_t k1 = static_cast<int>(k * 255.f + rounding_offset);
 
-  ASSERT(c1 == FXSYS_roundf(c * 255));
-  ASSERT(m1 == FXSYS_roundf(m * 255));
-  ASSERT(y1 == FXSYS_roundf(y * 255));
-  ASSERT(k1 == FXSYS_roundf(k * 255));
+  DCHECK(c1 == FXSYS_roundf(c * 255));
+  DCHECK(m1 == FXSYS_roundf(m * 255));
+  DCHECK(y1 == FXSYS_roundf(y * 255));
+  DCHECK(k1 == FXSYS_roundf(k * 255));
 
   uint8_t r;
   uint8_t g;

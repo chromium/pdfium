@@ -10,12 +10,13 @@
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
+#include "third_party/base/check.h"
 
 // static
 void CFX_DrawUtils::DrawFocusRect(CFX_RenderDevice* render_device,
                                   const CFX_Matrix& user_to_device,
                                   const CFX_FloatRect& view_bounding_box) {
-  ASSERT(render_device);
+  DCHECK(render_device);
   CFX_PathData path;
   path.AppendPoint(CFX_PointF(view_bounding_box.left, view_bounding_box.top),
                    FXPT_TYPE::MoveTo);
