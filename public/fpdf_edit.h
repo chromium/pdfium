@@ -896,7 +896,6 @@ FPDFPageObj_GetFillColor(FPDF_PAGEOBJECT page_object,
                          unsigned int* B,
                          unsigned int* A);
 
-// Experimental API.
 // Get number of segments inside |path|.
 //
 //   path - handle to a path.
@@ -907,7 +906,6 @@ FPDFPageObj_GetFillColor(FPDF_PAGEOBJECT page_object,
 // Returns the number of objects in |path| or -1 on failure.
 FPDF_EXPORT int FPDF_CALLCONV FPDFPath_CountSegments(FPDF_PAGEOBJECT path);
 
-// Experimental API.
 // Get segment in |path| at |index|.
 //
 //   path  - handle to a path.
@@ -917,7 +915,6 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPath_CountSegments(FPDF_PAGEOBJECT path);
 FPDF_EXPORT FPDF_PATHSEGMENT FPDF_CALLCONV
 FPDFPath_GetPathSegment(FPDF_PAGEOBJECT path, int index);
 
-// Experimental API.
 // Get coordinates of |segment|.
 //
 //   segment  - handle to a segment.
@@ -928,7 +925,6 @@ FPDFPath_GetPathSegment(FPDF_PAGEOBJECT path, int index);
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPathSegment_GetPoint(FPDF_PATHSEGMENT segment, float* x, float* y);
 
-// Experimental API.
 // Get type of |segment|.
 //
 //   segment - handle to a segment.
@@ -937,7 +933,6 @@ FPDFPathSegment_GetPoint(FPDF_PATHSEGMENT segment, float* x, float* y);
 // FPDF_SEGMENT_UNKNOWN on error.
 FPDF_EXPORT int FPDF_CALLCONV FPDFPathSegment_GetType(FPDF_PATHSEGMENT segment);
 
-// Experimental API.
 // Gets if the |segment| closes the current subpath of a given path.
 //
 //   segment - handle to a segment.
