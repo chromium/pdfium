@@ -8,6 +8,7 @@
 
 #include "fxjs/fxv8.h"
 #include "fxjs/xfa/cfxjse_value.h"
+#include "third_party/base/check.h"
 #include "xfa/fxfa/parser/cxfa_draw.h"
 
 CJX_Draw::CJX_Draw(CXFA_Draw* node) : CJX_Container(node) {}
@@ -41,7 +42,7 @@ void CJX_Draw::defaultValue(v8::Isolate* pIsolate,
   if (!pValue || !fxv8::IsString(*pValue))
     return;
 
-  ASSERT(GetXFANode()->IsWidgetReady());
+  DCHECK(GetXFANode()->IsWidgetReady());
   if (GetXFANode()->GetFFWidgetType() != XFA_FFWidgetType::kText)
     return;
 

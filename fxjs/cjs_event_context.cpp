@@ -12,11 +12,12 @@
 #include "fxjs/cjs_runtime.h"
 #include "fxjs/js_define.h"
 #include "fxjs/js_resources.h"
+#include "third_party/base/check.h"
 
 CJS_EventContext::CJS_EventContext(CJS_Runtime* pRuntime)
     : m_pRuntime(pRuntime),
       m_pEventRecorder(std::make_unique<CJS_EventRecorder>()) {
-  ASSERT(pRuntime);
+  DCHECK(pRuntime);
 }
 
 CJS_EventContext::~CJS_EventContext() = default;
@@ -40,7 +41,7 @@ Optional<IJS_Runtime::JS_Error> CJS_EventContext::RunScript(
   AutoRestorer<bool> restorer(&m_bBusy);
   m_bBusy = true;
 
-  ASSERT(m_pEventRecorder->IsValid());
+  DCHECK(m_pEventRecorder->IsValid());
   CJS_Runtime::FieldEvent event(m_pEventRecorder->TargetName(),
                                 m_pEventRecorder->EventType());
   if (!m_pRuntime->AddEventToSet(event)) {

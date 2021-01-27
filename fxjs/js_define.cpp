@@ -16,6 +16,7 @@
 #include "fxjs/cjs_object.h"
 #include "fxjs/fx_date_helpers.h"
 #include "fxjs/fxv8.h"
+#include "third_party/base/check.h"
 
 void JSDestructor(v8::Local<v8::Object> obj) {
   CFXJS_Engine::SetObjectPrivate(obj, nullptr);
@@ -59,7 +60,7 @@ std::vector<v8::Local<v8::Value>> ExpandKeywordParams(
     const std::vector<v8::Local<v8::Value>>& originals,
     size_t nKeywords,
     ...) {
-  ASSERT(nKeywords);
+  DCHECK(nKeywords);
 
   std::vector<v8::Local<v8::Value>> result(nKeywords, v8::Local<v8::Value>());
   size_t size = std::min(originals.size(), nKeywords);

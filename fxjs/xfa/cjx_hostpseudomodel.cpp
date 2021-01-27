@@ -12,6 +12,7 @@
 #include "fxjs/fxv8.h"
 #include "fxjs/js_resources.h"
 #include "fxjs/xfa/cfxjse_engine.h"
+#include "third_party/base/check.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cscript_hostpseudomodel.h"
@@ -22,7 +23,7 @@ namespace {
 int32_t FilterName(WideStringView wsExpression,
                    int32_t nStart,
                    WideString& wsFilter) {
-  ASSERT(nStart > -1);
+  DCHECK(nStart > -1);
   int32_t iLength = wsExpression.GetLength();
   if (nStart >= iLength)
     return iLength;

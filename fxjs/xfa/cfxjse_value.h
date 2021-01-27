@@ -13,6 +13,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "third_party/base/check.h"
 #include "v8/include/v8.h"
 
 class CFXJSE_Class;
@@ -88,7 +89,7 @@ class CFXJSE_Value {
     m_hValue.Reset(pIsolate, hValue);
   }
   void Assign(v8::Isolate* pIsolate, const CFXJSE_Value* lpValue) {
-    ASSERT(lpValue);
+    DCHECK(lpValue);
     if (lpValue) {
       m_hValue.Reset(pIsolate, lpValue->m_hValue);
     } else {

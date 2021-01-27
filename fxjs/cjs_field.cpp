@@ -26,6 +26,7 @@
 #include "fxjs/cjs_icon.h"
 #include "fxjs/fxv8.h"
 #include "fxjs/js_resources.h"
+#include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 
 namespace {
@@ -102,7 +103,7 @@ void UpdateFormControl(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                        bool bChangeMark,
                        bool bResetAP,
                        bool bRefresh) {
-  ASSERT(pFormControl);
+  DCHECK(pFormControl);
 
   CPDFSDK_InteractiveForm* pForm = pFormFillEnv->GetInteractiveForm();
   CPDFSDK_Widget* pWidget = pForm->GetWidget(pFormControl);
@@ -220,7 +221,7 @@ void SetBorderStyle(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                     const WideString& swFieldName,
                     int nControlIndex,
                     const ByteString& string) {
-  ASSERT(pFormFillEnv);
+  DCHECK(pFormFillEnv);
 
   BorderStyle nBorderStyle = BorderStyle::kSolid;
   if (string == "solid")
@@ -274,7 +275,7 @@ void SetCurrentValueIndices(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                             const WideString& swFieldName,
                             int nControlIndex,
                             const std::vector<uint32_t>& array) {
-  ASSERT(pFormFillEnv);
+  DCHECK(pFormFillEnv);
   std::vector<CPDF_FormField*> FieldArray =
       GetFormFieldsForName(pFormFillEnv, swFieldName);
 
@@ -309,7 +310,7 @@ void SetDisplay(CPDFSDK_FormFillEnvironment* pFormFillEnv,
       bool bAnySet = false;
       for (int i = 0, sz = pFormField->CountControls(); i < sz; ++i) {
         CPDF_FormControl* pFormControl = pFormField->GetControl(i);
-        ASSERT(pFormControl);
+        DCHECK(pFormControl);
 
         CPDFSDK_Widget* pWidget = pForm->GetWidget(pFormControl);
         if (SetWidgetDisplayStatus(pWidget, number))
@@ -353,7 +354,7 @@ void SetLineWidth(CPDFSDK_FormFillEnvironment* pFormFillEnv,
       bool bSet = false;
       for (int i = 0, sz = pFormField->CountControls(); i < sz; ++i) {
         CPDF_FormControl* pFormControl = pFormField->GetControl(i);
-        ASSERT(pFormControl);
+        DCHECK(pFormControl);
 
         if (CPDFSDK_Widget* pWidget = pForm->GetWidget(pFormControl)) {
           if (number != pWidget->GetBorderWidth()) {
@@ -392,7 +393,7 @@ void SetRect(CPDFSDK_FormFillEnvironment* pFormFillEnv,
       bool bSet = false;
       for (int i = 0, sz = pFormField->CountControls(); i < sz; ++i) {
         CPDF_FormControl* pFormControl = pFormField->GetControl(i);
-        ASSERT(pFormControl);
+        DCHECK(pFormControl);
 
         if (CPDFSDK_Widget* pWidget = pForm->GetWidget(pFormControl)) {
           CFX_FloatRect crRect = rect;
@@ -442,7 +443,7 @@ void SetFieldValue(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                    const WideString& swFieldName,
                    int nControlIndex,
                    const std::vector<WideString>& strArray) {
-  ASSERT(pFormFillEnv);
+  DCHECK(pFormFillEnv);
   if (strArray.empty())
     return;
 
@@ -659,7 +660,7 @@ CPDF_FormControl* CJS_Field::GetSmartFieldControl(CPDF_FormField* pFormField) {
 }
 
 CJS_Result CJS_Field::get_alignment(CJS_Runtime* pRuntime) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
 
   CPDF_FormField* pFormField = GetFirstFormField();
   if (!pFormField)
@@ -685,7 +686,7 @@ CJS_Result CJS_Field::get_alignment(CJS_Runtime* pRuntime) {
 
 CJS_Result CJS_Field::set_alignment(CJS_Runtime* pRuntime,
                                     v8::Local<v8::Value> vp) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
   if (!m_bCanSet)
     return CJS_Result::Failure(JSMessage::kReadOnlyError);
 
@@ -693,7 +694,7 @@ CJS_Result CJS_Field::set_alignment(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Field::get_border_style(CJS_Runtime* pRuntime) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
 
   CPDF_FormField* pFormField = GetFirstFormField();
   if (!pFormField)
@@ -721,7 +722,7 @@ CJS_Result CJS_Field::get_border_style(CJS_Runtime* pRuntime) {
 
 CJS_Result CJS_Field::set_border_style(CJS_Runtime* pRuntime,
                                        v8::Local<v8::Value> vp) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
   if (!m_bCanSet)
     return CJS_Result::Failure(JSMessage::kReadOnlyError);
 
@@ -736,7 +737,7 @@ CJS_Result CJS_Field::set_border_style(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Field::get_button_align_x(CJS_Runtime* pRuntime) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
 
   CPDF_FormField* pFormField = GetFirstFormField();
   if (!pFormField)
@@ -756,14 +757,14 @@ CJS_Result CJS_Field::get_button_align_x(CJS_Runtime* pRuntime) {
 
 CJS_Result CJS_Field::set_button_align_x(CJS_Runtime* pRuntime,
                                          v8::Local<v8::Value> vp) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
   if (!m_bCanSet)
     return CJS_Result::Failure(JSMessage::kReadOnlyError);
   return CJS_Result::Success();
 }
 
 CJS_Result CJS_Field::get_button_align_y(CJS_Runtime* pRuntime) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
 
   CPDF_FormField* pFormField = GetFirstFormField();
   if (!pFormField)
@@ -783,14 +784,14 @@ CJS_Result CJS_Field::get_button_align_y(CJS_Runtime* pRuntime) {
 
 CJS_Result CJS_Field::set_button_align_y(CJS_Runtime* pRuntime,
                                          v8::Local<v8::Value> vp) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
   if (!m_bCanSet)
     return CJS_Result::Failure(JSMessage::kReadOnlyError);
   return CJS_Result::Success();
 }
 
 CJS_Result CJS_Field::get_button_fit_bounds(CJS_Runtime* pRuntime) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
 
   CPDF_FormField* pFormField = GetFirstFormField();
   if (!pFormField)
@@ -809,14 +810,14 @@ CJS_Result CJS_Field::get_button_fit_bounds(CJS_Runtime* pRuntime) {
 
 CJS_Result CJS_Field::set_button_fit_bounds(CJS_Runtime* pRuntime,
                                             v8::Local<v8::Value> vp) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
   if (!m_bCanSet)
     return CJS_Result::Failure(JSMessage::kReadOnlyError);
   return CJS_Result::Success();
 }
 
 CJS_Result CJS_Field::get_button_position(CJS_Runtime* pRuntime) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
 
   CPDF_FormField* pFormField = GetFirstFormField();
   if (!pFormField)
@@ -835,14 +836,14 @@ CJS_Result CJS_Field::get_button_position(CJS_Runtime* pRuntime) {
 
 CJS_Result CJS_Field::set_button_position(CJS_Runtime* pRuntime,
                                           v8::Local<v8::Value> vp) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
   if (!m_bCanSet)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
   return CJS_Result::Success();
 }
 
 CJS_Result CJS_Field::get_button_scale_how(CJS_Runtime* pRuntime) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
 
   CPDF_FormField* pFormField = GetFirstFormField();
   if (!pFormField)
@@ -861,14 +862,14 @@ CJS_Result CJS_Field::get_button_scale_how(CJS_Runtime* pRuntime) {
 
 CJS_Result CJS_Field::set_button_scale_how(CJS_Runtime* pRuntime,
                                            v8::Local<v8::Value> vp) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
   if (!m_bCanSet)
     return CJS_Result::Failure(JSMessage::kReadOnlyError);
   return CJS_Result::Success();
 }
 
 CJS_Result CJS_Field::get_button_scale_when(CJS_Runtime* pRuntime) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
 
   CPDF_FormField* pFormField = GetFirstFormField();
   if (!pFormField)
@@ -900,14 +901,14 @@ CJS_Result CJS_Field::get_button_scale_when(CJS_Runtime* pRuntime) {
 
 CJS_Result CJS_Field::set_button_scale_when(CJS_Runtime* pRuntime,
                                             v8::Local<v8::Value> vp) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
   if (!m_bCanSet)
     return CJS_Result::Failure(JSMessage::kReadOnlyError);
   return CJS_Result::Success();
 }
 
 CJS_Result CJS_Field::get_calc_order_index(CJS_Runtime* pRuntime) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
 
   CPDF_FormField* pFormField = GetFirstFormField();
   if (!pFormField)
@@ -924,14 +925,14 @@ CJS_Result CJS_Field::get_calc_order_index(CJS_Runtime* pRuntime) {
 
 CJS_Result CJS_Field::set_calc_order_index(CJS_Runtime* pRuntime,
                                            v8::Local<v8::Value> vp) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
   if (!m_bCanSet)
     return CJS_Result::Failure(JSMessage::kReadOnlyError);
   return CJS_Result::Success();
 }
 
 CJS_Result CJS_Field::get_char_limit(CJS_Runtime* pRuntime) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
 
   CPDF_FormField* pFormField = GetFirstFormField();
   if (!pFormField)
@@ -945,14 +946,14 @@ CJS_Result CJS_Field::get_char_limit(CJS_Runtime* pRuntime) {
 
 CJS_Result CJS_Field::set_char_limit(CJS_Runtime* pRuntime,
                                      v8::Local<v8::Value> vp) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
   if (!m_bCanSet)
     return CJS_Result::Failure(JSMessage::kReadOnlyError);
   return CJS_Result::Success();
 }
 
 CJS_Result CJS_Field::get_comb(CJS_Runtime* pRuntime) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
 
   CPDF_FormField* pFormField = GetFirstFormField();
   if (!pFormField)
@@ -966,14 +967,14 @@ CJS_Result CJS_Field::get_comb(CJS_Runtime* pRuntime) {
 }
 
 CJS_Result CJS_Field::set_comb(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
   if (!m_bCanSet)
     return CJS_Result::Failure(JSMessage::kReadOnlyError);
   return CJS_Result::Success();
 }
 
 CJS_Result CJS_Field::get_commit_on_sel_change(CJS_Runtime* pRuntime) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
 
   CPDF_FormField* pFormField = GetFirstFormField();
   if (!pFormField)
@@ -989,7 +990,7 @@ CJS_Result CJS_Field::get_commit_on_sel_change(CJS_Runtime* pRuntime) {
 
 CJS_Result CJS_Field::set_commit_on_sel_change(CJS_Runtime* pRuntime,
                                                v8::Local<v8::Value> vp) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
   if (!m_bCanSet)
     return CJS_Result::Failure(JSMessage::kReadOnlyError);
   return CJS_Result::Success();
@@ -1055,7 +1056,7 @@ CJS_Result CJS_Field::set_default_style(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Field::get_default_value(CJS_Runtime* pRuntime) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
 
   CPDF_FormField* pFormField = GetFirstFormField();
   if (!pFormField)
@@ -1072,14 +1073,14 @@ CJS_Result CJS_Field::get_default_value(CJS_Runtime* pRuntime) {
 
 CJS_Result CJS_Field::set_default_value(CJS_Runtime* pRuntime,
                                         v8::Local<v8::Value> vp) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
   if (!m_bCanSet)
     return CJS_Result::Failure(JSMessage::kReadOnlyError);
   return CJS_Result::Success();
 }
 
 CJS_Result CJS_Field::get_do_not_scroll(CJS_Runtime* pRuntime) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
 
   CPDF_FormField* pFormField = GetFirstFormField();
   if (!pFormField)
@@ -1094,14 +1095,14 @@ CJS_Result CJS_Field::get_do_not_scroll(CJS_Runtime* pRuntime) {
 
 CJS_Result CJS_Field::set_do_not_scroll(CJS_Runtime* pRuntime,
                                         v8::Local<v8::Value> vp) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
   if (!m_bCanSet)
     return CJS_Result::Failure(JSMessage::kReadOnlyError);
   return CJS_Result::Success();
 }
 
 CJS_Result CJS_Field::get_do_not_spell_check(CJS_Runtime* pRuntime) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
 
   CPDF_FormField* pFormField = GetFirstFormField();
   if (!pFormField)
@@ -1117,7 +1118,7 @@ CJS_Result CJS_Field::get_do_not_spell_check(CJS_Runtime* pRuntime) {
 
 CJS_Result CJS_Field::set_do_not_spell_check(CJS_Runtime* pRuntime,
                                              v8::Local<v8::Value> vp) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
   if (!m_bCanSet)
     return CJS_Result::Failure(JSMessage::kReadOnlyError);
   return CJS_Result::Success();
@@ -1370,7 +1371,7 @@ CJS_Result CJS_Field::set_hidden(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Field::get_highlight(CJS_Runtime* pRuntime) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
 
   CPDF_FormField* pFormField = GetFirstFormField();
   if (!pFormField)
@@ -1401,7 +1402,7 @@ CJS_Result CJS_Field::get_highlight(CJS_Runtime* pRuntime) {
 
 CJS_Result CJS_Field::set_highlight(CJS_Runtime* pRuntime,
                                     v8::Local<v8::Value> vp) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
   if (!m_bCanSet)
     return CJS_Result::Failure(JSMessage::kReadOnlyError);
   return CJS_Result::Success();
@@ -1442,7 +1443,7 @@ CJS_Result CJS_Field::set_line_width(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Field::get_multiline(CJS_Runtime* pRuntime) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
 
   CPDF_FormField* pFormField = GetFirstFormField();
   if (!pFormField)
@@ -1457,14 +1458,14 @@ CJS_Result CJS_Field::get_multiline(CJS_Runtime* pRuntime) {
 
 CJS_Result CJS_Field::set_multiline(CJS_Runtime* pRuntime,
                                     v8::Local<v8::Value> vp) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
   if (!m_bCanSet)
     return CJS_Result::Failure(JSMessage::kReadOnlyError);
   return CJS_Result::Success();
 }
 
 CJS_Result CJS_Field::get_multiple_selection(CJS_Runtime* pRuntime) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
   CPDF_FormField* pFormField = GetFirstFormField();
   if (!pFormField)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
@@ -1479,7 +1480,7 @@ CJS_Result CJS_Field::get_multiple_selection(CJS_Runtime* pRuntime) {
 
 CJS_Result CJS_Field::set_multiple_selection(CJS_Runtime* pRuntime,
                                              v8::Local<v8::Value> vp) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
   if (!m_bCanSet)
     return CJS_Result::Failure(JSMessage::kReadOnlyError);
   return CJS_Result::Success();
@@ -1543,7 +1544,7 @@ CJS_Result CJS_Field::set_page(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
 }
 
 CJS_Result CJS_Field::get_password(CJS_Runtime* pRuntime) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
 
   CPDF_FormField* pFormField = GetFirstFormField();
   if (!pFormField)
@@ -1558,7 +1559,7 @@ CJS_Result CJS_Field::get_password(CJS_Runtime* pRuntime) {
 
 CJS_Result CJS_Field::set_password(CJS_Runtime* pRuntime,
                                    v8::Local<v8::Value> vp) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
   if (!m_bCanSet)
     return CJS_Result::Failure(JSMessage::kReadOnlyError);
   return CJS_Result::Success();
@@ -1755,7 +1756,7 @@ CJS_Result CJS_Field::set_required(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Field::get_rich_text(CJS_Runtime* pRuntime) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
 
   CPDF_FormField* pFormField = GetFirstFormField();
   if (!pFormField)
@@ -1770,7 +1771,7 @@ CJS_Result CJS_Field::get_rich_text(CJS_Runtime* pRuntime) {
 
 CJS_Result CJS_Field::set_rich_text(CJS_Runtime* pRuntime,
                                     v8::Local<v8::Value> vp) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
   if (!m_bCanSet)
     return CJS_Result::Failure(JSMessage::kReadOnlyError);
   return CJS_Result::Success();
@@ -1786,7 +1787,7 @@ CJS_Result CJS_Field::set_rich_value(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Field::get_rotation(CJS_Runtime* pRuntime) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
 
   CPDF_FormField* pFormField = GetFirstFormField();
   if (!pFormField)
@@ -1801,7 +1802,7 @@ CJS_Result CJS_Field::get_rotation(CJS_Runtime* pRuntime) {
 
 CJS_Result CJS_Field::set_rotation(CJS_Runtime* pRuntime,
                                    v8::Local<v8::Value> vp) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
   if (!m_bCanSet)
     return CJS_Result::Failure(JSMessage::kReadOnlyError);
   return CJS_Result::Success();
@@ -1864,7 +1865,7 @@ CJS_Result CJS_Field::set_stroke_color(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Field::get_style(CJS_Runtime* pRuntime) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
 
   CPDF_FormField* pFormField = GetFirstFormField();
   if (!pFormField)
@@ -1907,7 +1908,7 @@ CJS_Result CJS_Field::get_style(CJS_Runtime* pRuntime) {
 
 CJS_Result CJS_Field::set_style(CJS_Runtime* pRuntime,
                                 v8::Local<v8::Value> vp) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
   if (!m_bCanSet)
     return CJS_Result::Failure(JSMessage::kReadOnlyError);
   return CJS_Result::Success();
@@ -1965,7 +1966,7 @@ CJS_Result CJS_Field::set_text_color(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Field::get_text_font(CJS_Runtime* pRuntime) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
 
   CPDF_FormField* pFormField = GetFirstFormField();
   if (!pFormField)
@@ -1993,7 +1994,7 @@ CJS_Result CJS_Field::get_text_font(CJS_Runtime* pRuntime) {
 
 CJS_Result CJS_Field::set_text_font(CJS_Runtime* pRuntime,
                                     v8::Local<v8::Value> vp) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
 
   if (!m_bCanSet)
     return CJS_Result::Failure(JSMessage::kReadOnlyError);
@@ -2003,7 +2004,7 @@ CJS_Result CJS_Field::set_text_font(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Field::get_text_size(CJS_Runtime* pRuntime) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
 
   CPDF_FormField* pFormField = GetFirstFormField();
   if (!pFormField)
@@ -2021,7 +2022,7 @@ CJS_Result CJS_Field::get_text_size(CJS_Runtime* pRuntime) {
 
 CJS_Result CJS_Field::set_text_size(CJS_Runtime* pRuntime,
                                     v8::Local<v8::Value> vp) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
   if (!m_bCanSet)
     return CJS_Result::Failure(JSMessage::kReadOnlyError);
   return CJS_Result::Success();
@@ -2059,7 +2060,7 @@ CJS_Result CJS_Field::set_type(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
 }
 
 CJS_Result CJS_Field::get_user_name(CJS_Runtime* pRuntime) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
 
   CPDF_FormField* pFormField = GetFirstFormField();
   if (!pFormField)
@@ -2071,7 +2072,7 @@ CJS_Result CJS_Field::get_user_name(CJS_Runtime* pRuntime) {
 
 CJS_Result CJS_Field::set_user_name(CJS_Runtime* pRuntime,
                                     v8::Local<v8::Value> vp) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
   if (!m_bCanSet)
     return CJS_Result::Failure(JSMessage::kReadOnlyError);
   return CJS_Result::Success();
@@ -2624,7 +2625,7 @@ void CJS_Field::AddDelay_WideStringArray(FIELD_PROP prop,
 
 void CJS_Field::DoDelay(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                         CJS_DelayData* pData) {
-  ASSERT(pFormFillEnv);
+  DCHECK(pFormFillEnv);
   switch (pData->eProp) {
     case FP_BORDERSTYLE:
       SetBorderStyle(pFormFillEnv, pData->sFieldName, pData->nControlIndex,

@@ -22,6 +22,7 @@
 #include "fxjs/xfa/cjx_draw.h"
 #include "fxjs/xfa/cjx_field.h"
 #include "fxjs/xfa/cjx_instancemanager.h"
+#include "third_party/base/check.h"
 #include "third_party/base/compiler_specific.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fgas/crt/cfgas_decimal.h"
@@ -191,7 +192,7 @@ void CJX_Object::ThrowArgumentMismatchException() const {
 }
 
 void CJX_Object::ThrowException(const WideString& str) const {
-  ASSERT(!str.IsEmpty());
+  DCHECK(!str.IsEmpty());
   FXJSE_ThrowMessage(str.ToUTF8().AsStringView());
 }
 
@@ -544,7 +545,7 @@ void CJX_Object::SetContent(const WideString& wsContent,
             }
             valueNodes = pBind->GetNodeListForType(XFA_Element::DataValue);
           }
-          ASSERT(valueNodes.size() == wsSaveTextArray.size());
+          DCHECK(valueNodes.size() == wsSaveTextArray.size());
           size_t i = 0;
           for (CXFA_Node* pValueNode : valueNodes) {
             pValueNode->JSObject()->SetAttributeValue(wsSaveTextArray[i],
@@ -569,7 +570,7 @@ void CJX_Object::SetContent(const WideString& wsContent,
           break;
 
         CXFA_Node* pChildValue = pValue->GetFirstChild();
-        ASSERT(pChildValue);
+        DCHECK(pChildValue);
         pChildValue->JSObject()->SetContent(wsContent, wsContent, bNotify,
                                             bScriptModify, false);
       }

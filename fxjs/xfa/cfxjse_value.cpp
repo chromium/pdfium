@@ -13,6 +13,7 @@
 #include "fxjs/xfa/cfxjse_class.h"
 #include "fxjs/xfa/cfxjse_context.h"
 #include "fxjs/xfa/cfxjse_isolatetracker.h"
+#include "third_party/base/check.h"
 
 namespace {
 
@@ -57,7 +58,7 @@ double ftod(float fNumber) {
 
 void FXJSE_ThrowMessage(ByteStringView utf8Message) {
   v8::Isolate* pIsolate = v8::Isolate::GetCurrent();
-  ASSERT(pIsolate);
+  DCHECK(pIsolate);
 
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(pIsolate);
   v8::Local<v8::String> hMessage = fxv8::NewStringHelper(pIsolate, utf8Message);
@@ -197,8 +198,8 @@ v8::Local<v8::Function> CFXJSE_Value::NewBoundFunction(
     v8::Isolate* pIsolate,
     v8::Local<v8::Function> hOldFunction,
     v8::Local<v8::Object> hNewThis) {
-  ASSERT(!hOldFunction.IsEmpty());
-  ASSERT(!hNewThis.IsEmpty());
+  DCHECK(!hOldFunction.IsEmpty());
+  DCHECK(!hNewThis.IsEmpty());
 
   CFXJSE_ScopeUtil_RootContext scope(pIsolate);
   v8::Local<v8::Value> rgArgs[2];
@@ -312,7 +313,7 @@ bool CFXJSE_Value::IsFunction(v8::Isolate* pIsolate) const {
 }
 
 bool CFXJSE_Value::ToBoolean(v8::Isolate* pIsolate) const {
-  ASSERT(!IsEmpty());
+  DCHECK(!IsEmpty());
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(pIsolate);
   return fxv8::ReentrantToBooleanHelper(
       pIsolate, v8::Local<v8::Value>::New(pIsolate, m_hValue));
@@ -323,21 +324,21 @@ float CFXJSE_Value::ToFloat(v8::Isolate* pIsolate) const {
 }
 
 double CFXJSE_Value::ToDouble(v8::Isolate* pIsolate) const {
-  ASSERT(!IsEmpty());
+  DCHECK(!IsEmpty());
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(pIsolate);
   return fxv8::ReentrantToDoubleHelper(
       pIsolate, v8::Local<v8::Value>::New(pIsolate, m_hValue));
 }
 
 int32_t CFXJSE_Value::ToInteger(v8::Isolate* pIsolate) const {
-  ASSERT(!IsEmpty());
+  DCHECK(!IsEmpty());
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(pIsolate);
   return fxv8::ReentrantToInt32Helper(
       pIsolate, v8::Local<v8::Value>::New(pIsolate, m_hValue));
 }
 
 ByteString CFXJSE_Value::ToString(v8::Isolate* pIsolate) const {
-  ASSERT(!IsEmpty());
+  DCHECK(!IsEmpty());
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(pIsolate);
   return fxv8::ReentrantToByteStringHelper(
       pIsolate, v8::Local<v8::Value>::New(pIsolate, m_hValue));

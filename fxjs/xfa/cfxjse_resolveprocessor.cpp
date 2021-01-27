@@ -15,6 +15,7 @@
 #include "fxjs/xfa/cfxjse_nodehelper.h"
 #include "fxjs/xfa/cfxjse_value.h"
 #include "fxjs/xfa/cjx_object.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
@@ -29,7 +30,7 @@ void DoPredicateFilter(v8::Isolate* pIsolate,
                        WideString wsCondition,
                        size_t iFoundCount,
                        CFXJSE_ResolveNodeData* pRnd) {
-  ASSERT(iFoundCount == pRnd->m_Result.objects.size());
+  DCHECK(iFoundCount == pRnd->m_Result.objects.size());
   WideString wsExpression;
   CXFA_Script::Type eLangType = CXFA_Script::Type::Unknown;
   if (wsCondition.First(2).EqualsASCII(".[") && wsCondition.Back() == L']')
@@ -528,7 +529,7 @@ bool CFXJSE_ResolveProcessor::ResolveAsterisk(CFXJSE_ResolveNodeData& rnd) {
 int32_t CFXJSE_ResolveProcessor::GetFilter(WideStringView wsExpression,
                                            int32_t nStart,
                                            CFXJSE_ResolveNodeData& rnd) {
-  ASSERT(nStart > -1);
+  DCHECK(nStart > -1);
 
   int32_t iLength = wsExpression.GetLength();
   if (nStart >= iLength)

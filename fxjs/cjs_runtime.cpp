@@ -38,6 +38,7 @@
 #include "fxjs/cjs_zoomtype.h"
 #include "fxjs/fxv8.h"
 #include "fxjs/js_define.h"
+#include "third_party/base/check.h"
 
 CJS_Runtime::CJS_Runtime(CPDFSDK_FormFillEnvironment* pFormFillEnv)
     : m_pFormFillEnv(pFormFillEnv) {
@@ -127,7 +128,7 @@ IJS_EventContext* CJS_Runtime::NewEventContext() {
 }
 
 void CJS_Runtime::ReleaseEventContext(IJS_EventContext* pContext) {
-  ASSERT(pContext == m_EventContextArray.back().get());
+  DCHECK(pContext == m_EventContextArray.back().get());
   m_EventContextArray.pop_back();
 }
 

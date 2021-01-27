@@ -89,7 +89,7 @@ class V8TemplateMap {
   ~V8TemplateMap() = default;
 
   void SetAndMakeWeak(WeakCallbackDataType* key, v8::Local<v8::Object> handle) {
-    ASSERT(!m_map.Contains(key));
+    DCHECK(!m_map.Contains(key));
 
     // Inserting an object into a GlobalValueMap with the appropriate traits
     // has the side-effect of making the object weak deep in the guts of V8,
@@ -169,7 +169,7 @@ class CFXJS_ObjDefinition {
       return;
     }
     v8::Local<v8::Object> holder = info.Holder();
-    ASSERT(holder->InternalFieldCount() == 2);
+    DCHECK(holder->InternalFieldCount() == 2);
     holder->SetAlignedPointerInInternalField(0, nullptr);
     holder->SetAlignedPointerInInternalField(1, nullptr);
   }
@@ -276,8 +276,8 @@ V8TemplateMapTraits::MapType* V8TemplateMapTraits::MapFromWeakCallbackInfo(
 
 void FXJS_Initialize(unsigned int embedderDataSlot, v8::Isolate* pIsolate) {
   if (g_isolate) {
-    ASSERT(g_embedderDataSlot == embedderDataSlot);
-    ASSERT(g_isolate == pIsolate);
+    DCHECK(g_embedderDataSlot == embedderDataSlot);
+    DCHECK(g_isolate == pIsolate);
     return;
   }
   g_embedderDataSlot = embedderDataSlot;
@@ -285,7 +285,7 @@ void FXJS_Initialize(unsigned int embedderDataSlot, v8::Isolate* pIsolate) {
 }
 
 void FXJS_Release() {
-  ASSERT(!g_isolate || g_isolate_ref_count == 0);
+  DCHECK(!g_isolate || g_isolate_ref_count == 0);
   delete g_DefaultGlobalObjectTemplate;
   g_DefaultGlobalObjectTemplate = nullptr;
   g_isolate = nullptr;

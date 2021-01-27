@@ -21,6 +21,7 @@
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cfxjse_value.h"
 #include "fxjs/xfa/cjx_object.h"
+#include "third_party/base/check.h"
 #include "third_party/base/optional.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fgas/crt/cfgas_decimal.h"
@@ -1383,7 +1384,7 @@ v8::Local<v8::Value> GetExtractedValue(v8::Isolate* pIsolate,
 v8::Local<v8::Value> GetSimpleValue(
     const v8::FunctionCallbackInfo<v8::Value>& info,
     uint32_t index) {
-  ASSERT(index < static_cast<uint32_t>(info.Length()));
+  DCHECK(index < static_cast<uint32_t>(info.Length()));
   return GetExtractedValue(info.GetIsolate(), info[index]);
 }
 
@@ -5550,6 +5551,6 @@ void CFXJSE_FormCalcContext::ThrowArgumentMismatchException() const {
 }
 
 void CFXJSE_FormCalcContext::ThrowException(const WideString& str) const {
-  ASSERT(!str.IsEmpty());
+  DCHECK(!str.IsEmpty());
   FXJSE_ThrowMessage(str.ToUTF8().AsStringView());
 }

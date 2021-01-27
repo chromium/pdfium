@@ -8,6 +8,7 @@
 
 #include "core/fpdfdoc/cpdf_bookmark.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
+#include "third_party/base/check.h"
 
 CJS_EventRecorder::CJS_EventRecorder() = default;
 
@@ -123,7 +124,7 @@ void CJS_EventRecorder::OnField_Focus(bool bModifier,
                                       bool bShift,
                                       CPDF_FormField* pTarget,
                                       WideString* pValue) {
-  ASSERT(pValue);
+  DCHECK(pValue);
   Initialize(JET_FIELD_FOCUS);
 
   m_bModifier = bModifier;
@@ -136,7 +137,7 @@ void CJS_EventRecorder::OnField_Blur(bool bModifier,
                                      bool bShift,
                                      CPDF_FormField* pTarget,
                                      WideString* pValue) {
-  ASSERT(pValue);
+  DCHECK(pValue);
   Initialize(JET_FIELD_BLUR);
 
   m_bModifier = bModifier;
@@ -157,10 +158,10 @@ void CJS_EventRecorder::OnField_Keystroke(WideString* strChange,
                                           bool bWillCommit,
                                           bool bFieldFull,
                                           bool* pbRc) {
-  ASSERT(pValue);
-  ASSERT(pbRc);
-  ASSERT(pSelStart);
-  ASSERT(pSelEnd);
+  DCHECK(pValue);
+  DCHECK(pbRc);
+  DCHECK(pSelStart);
+  DCHECK(pSelEnd);
 
   Initialize(JET_FIELD_KEYSTROKE);
 
@@ -187,8 +188,8 @@ void CJS_EventRecorder::OnField_Validate(WideString* strChange,
                                          CPDF_FormField* pTarget,
                                          WideString* pValue,
                                          bool* pbRc) {
-  ASSERT(pValue);
-  ASSERT(pbRc);
+  DCHECK(pValue);
+  DCHECK(pbRc);
 
   Initialize(JET_FIELD_VALIDATE);
 
@@ -206,8 +207,8 @@ void CJS_EventRecorder::OnField_Calculate(CPDF_FormField* pSource,
                                           CPDF_FormField* pTarget,
                                           WideString* pValue,
                                           bool* pRc) {
-  ASSERT(pValue);
-  ASSERT(pRc);
+  DCHECK(pValue);
+  DCHECK(pRc);
 
   Initialize(JET_FIELD_CALCULATE);
 
@@ -220,7 +221,7 @@ void CJS_EventRecorder::OnField_Calculate(CPDF_FormField* pSource,
 
 void CJS_EventRecorder::OnField_Format(CPDF_FormField* pTarget,
                                        WideString* pValue) {
-  ASSERT(pValue);
+  DCHECK(pValue);
   Initialize(JET_FIELD_FORMAT);
 
   m_nCommitKey = 0;

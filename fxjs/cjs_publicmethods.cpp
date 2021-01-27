@@ -34,6 +34,7 @@
 #include "fxjs/fx_date_helpers.h"
 #include "fxjs/js_define.h"
 #include "fxjs/js_resources.h"
+#include "third_party/base/check.h"
 #include "third_party/base/optional.h"
 #include "third_party/base/stl_util.h"
 
@@ -181,7 +182,7 @@ bool IsStyleWithDigitSeparator(int style) {
 }
 
 char DigitSeparatorForStyle(int style) {
-  ASSERT(IsStyleWithDigitSeparator(style));
+  DCHECK(IsStyleWithDigitSeparator(style));
   return style == 0 ? ',' : '.';
 }
 
@@ -317,11 +318,11 @@ bool CJS_PublicMethods::IsReservedMaskChar(wchar_t ch) {
 v8::Local<v8::Array> CJS_PublicMethods::AF_MakeArrayFromList(
     CJS_Runtime* pRuntime,
     v8::Local<v8::Value> val) {
-  ASSERT(!val.IsEmpty());
+  DCHECK(!val.IsEmpty());
   if (val->IsArray())
     return pRuntime->ToArray(val);
 
-  ASSERT(val->IsString());
+  DCHECK(val->IsString());
   WideString wsStr = pRuntime->ToWideString(val);
   ByteString t = wsStr.ToDefANSI();
   const char* p = t.c_str();
@@ -625,7 +626,7 @@ CJS_Result CJS_PublicMethods::AFNumber_Format(
       iDec2 = 1;
     }
   }
-  ASSERT(iDec2 >= 0);
+  DCHECK(iDec2 >= 0);
 
   // Processing separator style
   if (static_cast<size_t>(iDec2) < strValue.GetLength()) {
