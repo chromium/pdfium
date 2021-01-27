@@ -354,7 +354,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
   ByteString lastString =
       textString.Last(textString.GetLength() - firstResourceAt.value());
   // q and Q must be outside the BT .. ET operations
-  ByteString compareString1 = "q 0 0 5 4 re W* n 0 g BT 1 0 0 1 0 0 Tm /";
+  ByteString compareString1 = "q 0 0 5 4 re W* n BT 1 0 0 1 0 0 Tm /";
   ByteString compareString2 =
       " 15.5 Tf 4 Tr <4920616D20696E646972656374> Tj ET Q\n";
   EXPECT_LT(compareString1.GetLength() + compareString2.GetLength(),

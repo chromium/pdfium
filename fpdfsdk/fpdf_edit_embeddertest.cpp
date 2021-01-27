@@ -849,13 +849,9 @@ TEST_F(FPDFEditEmbedderTest, BUG_1574) {
   FPDF_PAGE saved_page = LoadSavedPage(0);
   ASSERT_TRUE(saved_page);
 
-  // TODO(crbug.com/pdfium/1578): The regenerated text object should not be
-  // covered by a black rectangle. The expected bitmap should still be
-  // |kOriginalChecksum|.
-  static constexpr char kChangedChecksum[] = "bb3606ecbe252f867bc51d65f9d56503";
   {
     ScopedFPDFBitmap saved_bitmap = RenderSavedPage(saved_page);
-    CompareBitmap(saved_bitmap.get(), 200, 300, kChangedChecksum);
+    CompareBitmap(saved_bitmap.get(), 200, 300, kOriginalChecksum);
   }
 
   CloseSavedPage(saved_page);
