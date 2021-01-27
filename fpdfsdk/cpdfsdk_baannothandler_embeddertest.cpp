@@ -10,6 +10,7 @@
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "testing/embedder_test.h"
+#include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 
 class CPDFSDK_BAAnnotHandlerTest : public EmbedderTest {
@@ -54,11 +55,11 @@ class CPDFSDK_BAAnnotHandlerTest : public EmbedderTest {
     CPDFSDK_AnnotIterator ai(GetPageView(),
                              m_pFormFillEnv->GetFocusableAnnotSubtypes());
     CPDFSDK_Annot* pAnnot = ai.GetFirstAnnot();
-    ASSERT(pAnnot);
+    DCHECK(pAnnot);
 
     for (size_t i = 1; i < n; i++) {
       pAnnot = ai.GetNextAnnot(pAnnot);
-      ASSERT(pAnnot);
+      DCHECK(pAnnot);
     }
 
     return pAnnot;

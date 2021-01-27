@@ -33,6 +33,7 @@
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/pwl/cpwl_edit.h"
+#include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 
 #ifdef PDF_ENABLE_XFA
@@ -624,13 +625,13 @@ void CPDFSDK_Widget::ResetAppearance(Optional<WideString> sValue,
 
 Optional<WideString> CPDFSDK_Widget::OnFormat() {
   CPDF_FormField* pFormField = GetFormField();
-  ASSERT(pFormField);
+  DCHECK(pFormField);
   return m_pInteractiveForm->OnFormat(pFormField);
 }
 
 void CPDFSDK_Widget::ResetFieldAppearance() {
   CPDF_FormField* pFormField = GetFormField();
-  ASSERT(pFormField);
+  DCHECK(pFormField);
   m_pInteractiveForm->ResetFieldAppearance(pFormField, pdfium::nullopt);
 }
 
@@ -658,7 +659,7 @@ void CPDFSDK_Widget::DrawAppearance(CFX_RenderDevice* pDevice,
 
 void CPDFSDK_Widget::UpdateField() {
   CPDF_FormField* pFormField = GetFormField();
-  ASSERT(pFormField);
+  DCHECK(pFormField);
   m_pInteractiveForm->UpdateField(pFormField);
 }
 

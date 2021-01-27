@@ -19,6 +19,7 @@
 #include "testing/embedder_test_timer_handling_delegate.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/stl_util.h"
 
@@ -110,7 +111,7 @@ class FPDFFormFillInteractiveEmbedderTest : public FPDFFormFillEmbedderTest {
 
   // Uses the mouse to navigate to text field and select text.
   void SelectTextWithMouse(const CFX_PointF& start, const CFX_PointF& end) {
-    ASSERT(start.y == end.y);
+    DCHECK(start.y == end.y);
 
     // Navigate to starting position and click mouse.
     FORM_OnMouseMove(form_handle(), page_, 0, start.x, start.y);
@@ -238,14 +239,14 @@ class FPDFFormFillTextFormEmbedderTest
   }
 
   static CFX_PointF CharLimitFormAtX(float x) {
-    ASSERT(x >= kFormBeginX);
-    ASSERT(x <= kFormEndX);
+    DCHECK(x >= kFormBeginX);
+    DCHECK(x <= kFormEndX);
     return CFX_PointF(x, kCharLimitFormY);
   }
 
   static CFX_PointF RegularFormAtX(float x) {
-    ASSERT(x >= kFormBeginX);
-    ASSERT(x <= kFormEndX);
+    DCHECK(x >= kFormBeginX);
+    DCHECK(x <= kFormEndX);
     return CFX_PointF(x, kRegularFormY);
   }
 
@@ -282,14 +283,14 @@ class FPDFFormFillComboBoxFormEmbedderTest
   }
 
   void SelectEditableFormOption(int item_index) {
-    ASSERT(item_index >= 0);
-    ASSERT(item_index < 3);
+    DCHECK(item_index >= 0);
+    DCHECK(item_index < 3);
     SelectOption(item_index, EditableFormDropDown());
   }
 
   void SelectNonEditableFormOption(int item_index) {
-    ASSERT(item_index >= 0);
-    ASSERT(item_index < 26);
+    DCHECK(item_index >= 0);
+    DCHECK(item_index < 26);
     SelectOption(item_index, NonEditableFormDropDown());
   }
 
@@ -332,14 +333,14 @@ class FPDFFormFillComboBoxFormEmbedderTest
   }
 
   static CFX_PointF EditableFormAtX(float x) {
-    ASSERT(x >= kFormBeginX);
-    ASSERT(x <= kFormEndX);
+    DCHECK(x >= kFormBeginX);
+    DCHECK(x <= kFormEndX);
     return CFX_PointF(x, kEditableFormY);
   }
 
   static CFX_PointF NonEditableFormAtX(float x) {
-    ASSERT(x >= kFormBeginX);
-    ASSERT(x <= kFormEndX);
+    DCHECK(x >= kFormBeginX);
+    DCHECK(x <= kFormEndX);
     return CFX_PointF(x, kNonEditableFormY);
   }
 
@@ -428,8 +429,8 @@ class FPDFFormFillListBoxFormEmbedderTest
   void ClickOnSingleSelectFormOption(int item_index) {
     // Only the first two indices are visible so can only click on those
     // without scrolling.
-    ASSERT(item_index >= 0);
-    ASSERT(item_index < 2);
+    DCHECK(item_index >= 0);
+    DCHECK(item_index < 2);
     if (item_index == 0) {
       ClickOnFormFieldAtPoint(SingleSelectFirstVisibleOption());
     } else {
@@ -440,8 +441,8 @@ class FPDFFormFillListBoxFormEmbedderTest
   void ClickOnMultiSelectFormOption(int item_index) {
     // Only the first two indices are visible so can only click on those
     // without scrolling.
-    ASSERT(item_index >= 0);
-    ASSERT(item_index < 2);
+    DCHECK(item_index >= 0);
+    DCHECK(item_index < 2);
     if (item_index == 0) {
       ClickOnFormFieldAtPoint(MultiSelectFirstVisibleOption());
     } else {
@@ -452,8 +453,8 @@ class FPDFFormFillListBoxFormEmbedderTest
   void ClickOnMultiSelectMultipleValuesFormOption(int item_index) {
     // Only two indices are visible so can only click on those
     // without scrolling.
-    ASSERT(item_index >= 0);
-    ASSERT(item_index < 2);
+    DCHECK(item_index >= 0);
+    DCHECK(item_index < 2);
     if (item_index == 0) {
       ClickOnFormFieldAtPoint(MultiSelectMultipleValuesFirstVisibleOption());
     } else {
@@ -464,8 +465,8 @@ class FPDFFormFillListBoxFormEmbedderTest
   void ClickOnSingleSelectLastSelectedFormOption(int item_index) {
     // Only two indices are visible so can only click on those
     // without scrolling.
-    ASSERT(item_index >= 0);
-    ASSERT(item_index < 2);
+    DCHECK(item_index >= 0);
+    DCHECK(item_index < 2);
     if (item_index == 0) {
       ClickOnFormFieldAtPoint(SingleSelectLastSelectedFirstVisibleOption());
     } else {

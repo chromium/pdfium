@@ -19,6 +19,7 @@
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 CPDFSDK_WidgetHandler::CPDFSDK_WidgetHandler() = default;
@@ -70,7 +71,7 @@ std::unique_ptr<CPDFSDK_Annot> CPDFSDK_WidgetHandler::NewAnnot(
 
 void CPDFSDK_WidgetHandler::ReleaseAnnot(
     std::unique_ptr<CPDFSDK_Annot> pAnnot) {
-  ASSERT(pAnnot);
+  DCHECK(pAnnot);
   m_pFormFiller->OnDelete(pAnnot.get());
 
   std::unique_ptr<CPDFSDK_Widget> pWidget(ToCPDFSDKWidget(pAnnot.release()));
@@ -299,14 +300,14 @@ bool CPDFSDK_WidgetHandler::Redo(CPDFSDK_Annot* pAnnot) {
 bool CPDFSDK_WidgetHandler::HitTest(CPDFSDK_PageView* pPageView,
                                     CPDFSDK_Annot* pAnnot,
                                     const CFX_PointF& point) {
-  ASSERT(pPageView);
-  ASSERT(pAnnot);
+  DCHECK(pPageView);
+  DCHECK(pAnnot);
   return GetViewBBox(pPageView, pAnnot).Contains(point);
 }
 
 bool CPDFSDK_WidgetHandler::IsFocusableAnnot(
     const CPDF_Annot::Subtype& annot_type) const {
-  ASSERT(annot_type == CPDF_Annot::Subtype::WIDGET);
+  DCHECK(annot_type == CPDF_Annot::Subtype::WIDGET);
 
   return pdfium::Contains(m_pFormFillEnv->GetFocusableAnnotSubtypes(),
                           annot_type);

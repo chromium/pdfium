@@ -26,6 +26,7 @@
 #include "core/fxge/fx_font.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/fpdf_edit.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 // These checks are here because core/ and public/ cannot depend on each other.
@@ -132,7 +133,7 @@ const char ToUnicodeEnd[] =
     "end\n";
 
 void AddCharcode(std::ostringstream* pBuffer, uint32_t number) {
-  ASSERT(number <= 0xFFFF);
+  DCHECK(number <= 0xFFFF);
   *pBuffer << "<";
   char ans[4];
   FXSYS_IntToFourHexChars(number, ans);
@@ -203,7 +204,7 @@ CPDF_Stream* LoadUnicode(CPDF_Document* pDoc,
         unicodes.push_back(iter->second);
         next_it = std::next(iter);
       }
-      ASSERT(iter->first - firstCharcode + 1 == unicodes.size());
+      DCHECK(iter->first - firstCharcode + 1 == unicodes.size());
       map_range_vector[std::make_pair(firstCharcode, iter->first)] = unicodes;
       continue;
     }

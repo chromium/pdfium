@@ -13,12 +13,13 @@
 #include "core/fpdfdoc/cpdf_icon.h"
 #include "core/fpdfdoc/cpdf_iconfit.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
+#include "third_party/base/check.h"
 
 CPWL_Icon::CPWL_Icon(const CreateParams& cp,
                      std::unique_ptr<CPDF_Icon> pIcon,
                      CPDF_IconFit* pFit)
     : CPWL_Wnd(cp, nullptr), m_pIcon(std::move(pIcon)), m_pIconFit(pFit) {
-  ASSERT(m_pIcon);
+  DCHECK(m_pIcon);
 }
 
 CPWL_Icon::~CPWL_Icon() = default;

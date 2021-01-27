@@ -15,6 +15,7 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -614,8 +615,8 @@ void CPWL_ScrollBar::SetScrollStep(float fBigStep, float fSmallStep) {
 }
 
 bool CPWL_ScrollBar::MovePosButton(bool bRefresh) {
-  ASSERT(m_pMinButton);
-  ASSERT(m_pMaxButton);
+  DCHECK(m_pMinButton);
+  DCHECK(m_pMaxButton);
 
   if (m_pPosButton->IsVisible()) {
     CFX_FloatRect rcClient;

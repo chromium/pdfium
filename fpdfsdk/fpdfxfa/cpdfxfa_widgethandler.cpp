@@ -13,6 +13,7 @@
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_widget.h"
 #include "public/fpdf_fwlevent.h"
+#include "third_party/base/check.h"
 #include "xfa/fgas/graphics/cfgas_gegraphics.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/fwl_widgetdef.h"
@@ -233,7 +234,7 @@ void CPDFXFA_WidgetHandler::OnDraw(CPDFSDK_PageView* pPageView,
                                    const CFX_Matrix& mtUser2Device,
                                    bool bDrawAnnots) {
   CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
-  ASSERT(pXFAWidget);
+  DCHECK(pXFAWidget);
 
   bool bIsHighlight = false;
   if (pPageView->GetFormFillEnv()->GetFocusAnnot() != pAnnot)
@@ -256,7 +257,7 @@ CFX_FloatRect CPDFXFA_WidgetHandler::GetViewBBox(CPDFSDK_PageView* pPageView,
                                                  CPDFSDK_Annot* pAnnot) {
   CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
   CXFA_Node* node = pXFAWidget->GetXFAFFWidget()->GetNode();
-  ASSERT(node->IsWidgetReady());
+  DCHECK(node->IsWidgetReady());
 
   CFX_RectF rcBBox = pXFAWidget->GetXFAFFWidget()->GetBBox(
       node->GetFFWidgetType() == XFA_FFWidgetType::kSignature

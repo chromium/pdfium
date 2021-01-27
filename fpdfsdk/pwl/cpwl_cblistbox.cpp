@@ -11,6 +11,7 @@
 #include "fpdfsdk/pwl/cpwl_combo_box.h"
 #include "fpdfsdk/pwl/cpwl_list_ctrl.h"
 #include "public/fpdf_fwlevent.h"
+#include "third_party/base/check.h"
 
 CPWL_CBListBox::CPWL_CBListBox(
     const CreateParams& cp,
@@ -51,7 +52,7 @@ bool CPWL_CBListBox::IsMovementKey(uint16_t nChar) const {
 }
 
 bool CPWL_CBListBox::OnMovementKeyDown(uint16_t nChar, uint32_t nFlag) {
-  ASSERT(IsMovementKey(nChar));
+  DCHECK(IsMovementKey(nChar));
 
   switch (nChar) {
     case FWL_VKEY_Up:

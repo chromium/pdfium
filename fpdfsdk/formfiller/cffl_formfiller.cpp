@@ -15,11 +15,12 @@
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cffl_privatedata.h"
+#include "third_party/base/check.h"
 
 CFFL_FormFiller::CFFL_FormFiller(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                                  CPDFSDK_Widget* pWidget)
     : m_pFormFillEnv(pFormFillEnv), m_pWidget(pWidget) {
-  ASSERT(m_pFormFillEnv);
+  DCHECK(m_pFormFillEnv);
 }
 
 CFFL_FormFiller::~CFFL_FormFiller() {
@@ -82,7 +83,7 @@ void CFFL_FormFiller::OnMouseEnter(CPDFSDK_PageView* pPageView) {}
 
 void CFFL_FormFiller::OnMouseExit(CPDFSDK_PageView* pPageView) {
   m_pTimer.reset();
-  ASSERT(m_pWidget);
+  DCHECK(m_pWidget);
 }
 
 bool CFFL_FormFiller::OnLButtonDown(CPDFSDK_PageView* pPageView,
@@ -344,7 +345,7 @@ CPWL_Wnd::CreateParams CFFL_FormFiller::GetCreateParam() {
 
 CPWL_Wnd* CFFL_FormFiller::GetPWLWindow(CPDFSDK_PageView* pPageView,
                                         bool bNew) {
-  ASSERT(pPageView);
+  DCHECK(pPageView);
   auto it = m_Maps.find(pPageView);
   if (it == m_Maps.end()) {
     if (!bNew)

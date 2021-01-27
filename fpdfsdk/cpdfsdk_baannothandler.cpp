@@ -20,6 +20,7 @@
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 #include "public/fpdf_fwlevent.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -176,7 +177,7 @@ bool CPDFSDK_BAAnnotHandler::OnChar(CPDFSDK_Annot* pAnnot,
 bool CPDFSDK_BAAnnotHandler::OnKeyDown(CPDFSDK_Annot* pAnnot,
                                        int nKeyCode,
                                        int nFlag) {
-  ASSERT(pAnnot);
+  DCHECK(pAnnot);
 
   // OnKeyDown() is implemented only for link annotations for now. As
   // OnKeyDown() is implemented for other subtypes, following check should be
@@ -208,7 +209,7 @@ void CPDFSDK_BAAnnotHandler::OnLoad(CPDFSDK_Annot* pAnnot) {}
 
 bool CPDFSDK_BAAnnotHandler::IsFocusableAnnot(
     const CPDF_Annot::Subtype& annot_type) const {
-  ASSERT(annot_type != CPDF_Annot::Subtype::WIDGET);
+  DCHECK(annot_type != CPDF_Annot::Subtype::WIDGET);
 
   return pdfium::Contains(form_fill_environment_->GetFocusableAnnotSubtypes(),
                           annot_type);
@@ -297,7 +298,7 @@ bool CPDFSDK_BAAnnotHandler::Redo(CPDFSDK_Annot* pAnnot) {
 bool CPDFSDK_BAAnnotHandler::HitTest(CPDFSDK_PageView* pPageView,
                                      CPDFSDK_Annot* pAnnot,
                                      const CFX_PointF& point) {
-  ASSERT(pPageView);
-  ASSERT(pAnnot);
+  DCHECK(pPageView);
+  DCHECK(pAnnot);
   return GetViewBBox(pPageView, pAnnot).Contains(point);
 }

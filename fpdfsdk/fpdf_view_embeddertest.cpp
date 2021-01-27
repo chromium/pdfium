@@ -22,6 +22,7 @@
 #include "testing/utils/file_util.h"
 #include "testing/utils/hash.h"
 #include "testing/utils/path_service.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 using pdfium::kManyRectanglesChecksum;
@@ -348,7 +349,7 @@ TEST_F(FPDFViewEmbedderTest, LoadDocument64) {
   size_t file_length = 0;
   std::unique_ptr<char, pdfium::FreeDeleter> file_contents =
       GetFileContents(file_path.c_str(), &file_length);
-  ASSERT(file_contents);
+  DCHECK(file_contents);
   ScopedFPDFDocument doc(
       FPDF_LoadMemDocument64(file_contents.get(), file_length, nullptr));
   ASSERT_TRUE(doc);
@@ -1230,7 +1231,7 @@ TEST_F(FPDFViewEmbedderTest, LoadDocumentWithEmptyXRefConsistently) {
     size_t file_length = 0;
     std::unique_ptr<char, pdfium::FreeDeleter> file_contents =
         GetFileContents(file_path.c_str(), &file_length);
-    ASSERT(file_contents);
+    DCHECK(file_contents);
     ScopedFPDFDocument doc(
         FPDF_LoadMemDocument(file_contents.get(), file_length, ""));
     ASSERT_TRUE(doc);

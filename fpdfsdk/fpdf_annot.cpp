@@ -33,6 +33,7 @@
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
+#include "third_party/base/check.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
@@ -164,8 +165,8 @@ bool HasAPStream(CPDF_Dictionary* pAnnotDict) {
 }
 
 void UpdateContentStream(CPDF_Form* pForm, CPDF_Stream* pStream) {
-  ASSERT(pForm);
-  ASSERT(pStream);
+  DCHECK(pForm);
+  DCHECK(pStream);
 
   CPDF_PageContentGenerator generator(pForm);
   std::ostringstream buf;
@@ -176,9 +177,9 @@ void UpdateContentStream(CPDF_Form* pForm, CPDF_Stream* pStream) {
 void SetQuadPointsAtIndex(CPDF_Array* array,
                           size_t quad_index,
                           const FS_QUADPOINTSF* quad_points) {
-  ASSERT(array);
-  ASSERT(quad_points);
-  ASSERT(IsValidQuadPointsIndex(array, quad_index));
+  DCHECK(array);
+  DCHECK(quad_points);
+  DCHECK(IsValidQuadPointsIndex(array, quad_index));
 
   size_t nIndex = quad_index * 8;
   array->SetNewAt<CPDF_Number>(nIndex, quad_points->x1);
@@ -192,8 +193,8 @@ void SetQuadPointsAtIndex(CPDF_Array* array,
 }
 
 void AppendQuadPoints(CPDF_Array* array, const FS_QUADPOINTSF* quad_points) {
-  ASSERT(quad_points);
-  ASSERT(array);
+  DCHECK(quad_points);
+  DCHECK(array);
 
   array->AppendNew<CPDF_Number>(quad_points->x1);
   array->AppendNew<CPDF_Number>(quad_points->y1);
@@ -206,7 +207,7 @@ void AppendQuadPoints(CPDF_Array* array, const FS_QUADPOINTSF* quad_points) {
 }
 
 void UpdateBBox(CPDF_Dictionary* annot_dict) {
-  ASSERT(annot_dict);
+  DCHECK(annot_dict);
   // Update BBox entry in appearance stream based on the bounding rectangle
   // of the annotation's quadpoints.
   CPDF_Stream* pStream =

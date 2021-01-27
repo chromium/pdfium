@@ -14,6 +14,7 @@
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_widget.h"
+#include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 #include "xfa/fgas/graphics/cfgas_gegraphics.h"
 #include "xfa/fxfa/cxfa_ffdocview.h"
@@ -31,8 +32,8 @@ constexpr uint32_t kIteratorFilter = XFA_WidgetStatus_Visible |
 
 CPDFXFA_Page::CPDFXFA_Page(CPDF_Document* pDocument, int page_index)
     : m_pDocument(pDocument), m_iPageIndex(page_index) {
-  ASSERT(m_pDocument->GetExtension());
-  ASSERT(m_iPageIndex >= 0);
+  DCHECK(m_pDocument->GetExtension());
+  DCHECK(m_iPageIndex >= 0);
 }
 
 CPDFXFA_Page::~CPDFXFA_Page() = default;
@@ -82,7 +83,7 @@ bool CPDFXFA_Page::LoadPage() {
 }
 
 void CPDFXFA_Page::LoadPDFPageFromDict(CPDF_Dictionary* pPageDict) {
-  ASSERT(pPageDict);
+  DCHECK(pPageDict);
   m_pPDFPage = pdfium::MakeRetain<CPDF_Page>(GetDocument(), pPageDict);
   m_pPDFPage->SetRenderCache(
       std::make_unique<CPDF_PageRenderCache>(m_pPDFPage.Get()));

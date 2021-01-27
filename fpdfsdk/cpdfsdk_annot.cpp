@@ -7,10 +7,11 @@
 #include "fpdfsdk/cpdfsdk_annot.h"
 
 #include "fpdfsdk/cpdfsdk_pageview.h"
+#include "third_party/base/check.h"
 
 CPDFSDK_Annot::CPDFSDK_Annot(CPDFSDK_PageView* pPageView)
     : m_pPageView(pPageView) {
-  ASSERT(m_pPageView);
+  DCHECK(m_pPageView);
 }
 
 CPDFSDK_Annot::~CPDFSDK_Annot() = default;

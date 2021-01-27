@@ -27,6 +27,7 @@
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "fpdfsdk/pwl/ipwl_fillernotify.h"
 #include "public/fpdf_fwlevent.h"
+#include "third_party/base/check.h"
 
 CPWL_Edit::CPWL_Edit(
     const CreateParams& cp,
@@ -34,7 +35,7 @@ CPWL_Edit::CPWL_Edit(
     : CPWL_EditCtrl(cp, std::move(pAttachedData)) {}
 
 CPWL_Edit::~CPWL_Edit() {
-  ASSERT(!m_bFocus);
+  DCHECK(!m_bFocus);
 }
 
 void CPWL_Edit::SetText(const WideString& csText) {

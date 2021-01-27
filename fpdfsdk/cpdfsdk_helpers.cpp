@@ -19,6 +19,7 @@
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fpdfdoc/cpdf_metadata.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
+#include "third_party/base/check.h"
 
 namespace {
 
@@ -52,7 +53,7 @@ unsigned long GetStreamMaybeCopyAndReturnLengthImpl(const CPDF_Stream* stream,
                                                     void* buffer,
                                                     unsigned long buflen,
                                                     bool decode) {
-  ASSERT(stream);
+  DCHECK(stream);
   auto stream_acc = pdfium::MakeRetain<CPDF_StreamAcc>(stream);
 
   if (decode)
@@ -239,8 +240,8 @@ bool IsValidQuadPointsIndex(const CPDF_Array* array, size_t index) {
 bool GetQuadPointsAtIndex(const CPDF_Array* array,
                           size_t quad_index,
                           FS_QUADPOINTSF* quad_points) {
-  ASSERT(quad_points);
-  ASSERT(array);
+  DCHECK(quad_points);
+  DCHECK(array);
 
   if (!IsValidQuadPointsIndex(array, quad_index))
     return false;

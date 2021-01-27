@@ -13,6 +13,7 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/pwl/cpwl_scroll_bar.h"
 #include "public/fpdf_fwlevent.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -119,11 +120,11 @@ CPWL_Wnd::CPWL_Wnd(
     : m_CreationParams(cp), m_pAttachedData(std::move(pAttachedData)) {}
 
 CPWL_Wnd::~CPWL_Wnd() {
-  ASSERT(!m_bCreated);
+  DCHECK(!m_bCreated);
 }
 
 void CPWL_Wnd::Realize() {
-  ASSERT(!m_bCreated);
+  DCHECK(!m_bCreated);
 
   m_CreationParams.rcRectWnd.Normalize();
   m_rcWindow = m_CreationParams.rcRectWnd;
@@ -372,13 +373,13 @@ bool CPWL_Wnd::OnMouseWheel(uint32_t nFlag,
 }
 
 void CPWL_Wnd::AddChild(std::unique_ptr<CPWL_Wnd> pWnd) {
-  ASSERT(!pWnd->m_pParent);
+  DCHECK(!pWnd->m_pParent);
   pWnd->m_pParent = this;
   m_Children.push_back(std::move(pWnd));
 }
 
 void CPWL_Wnd::RemoveChild(CPWL_Wnd* pWnd) {
-  ASSERT(pWnd->m_pParent == this);
+  DCHECK(pWnd->m_pParent == this);
   auto it = std::find(m_Children.begin(), m_Children.end(),
                       pdfium::FakeUniquePtr<CPWL_Wnd>(pWnd));
   if (it == m_Children.end())

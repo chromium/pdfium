@@ -20,6 +20,7 @@
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
+#include "third_party/base/check.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
@@ -33,7 +34,7 @@
 CPDFSDK_PageView::CPDFSDK_PageView(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                                    IPDF_Page* page)
     : m_page(page), m_pFormFillEnv(pFormFillEnv) {
-  ASSERT(m_page);
+  DCHECK(m_page);
   CPDF_Page* pPDFPage = ToPDFPage(page);
   if (pPDFPage) {
     CPDFSDK_InteractiveForm* pForm = pFormFillEnv->GetInteractiveForm();
@@ -128,7 +129,7 @@ CPDFSDK_Annot* CPDFSDK_PageView::AddAnnot(CXFA_FFWidget* pPDFAnnot) {
   CPDFSDK_AnnotHandlerMgr* pAnnotHandler = m_pFormFillEnv->GetAnnotHandlerMgr();
   std::unique_ptr<CPDFSDK_Annot> pNewAnnot =
       pAnnotHandler->NewXFAAnnot(pPDFAnnot, this);
-  ASSERT(pNewAnnot);
+  DCHECK(pNewAnnot);
   pSDKAnnot = pNewAnnot.get();
   // TODO(thestig): See if |m_SDKAnnotArray|, which takes ownership of
   // |pNewAnnot|, can hold std::unique_ptrs instead of raw pointers.
@@ -504,7 +505,7 @@ void CPDFSDK_PageView::LoadFXAnnots() {
     while (CXFA_FFWidget* pXFAAnnot = pWidgetHandler->MoveToNext()) {
       std::unique_ptr<CPDFSDK_Annot> pNewAnnot =
           pAnnotHandlerMgr->NewXFAAnnot(pXFAAnnot, this);
-      ASSERT(pNewAnnot);
+      DCHECK(pNewAnnot);
       CPDFSDK_Annot* pAnnot = pNewAnnot.get();
       m_SDKAnnotArray.push_back(pNewAnnot.release());
       pAnnotHandlerMgr->Annot_OnLoad(pAnnot);
@@ -515,7 +516,7 @@ void CPDFSDK_PageView::LoadFXAnnots() {
 #endif  // PDF_ENABLE_XFA
 
   CPDF_Page* pPage = GetPDFPage();
-  ASSERT(pPage);
+  DCHECK(pPage);
   bool bUpdateAP = CPDF_InteractiveForm::IsUpdateAPEnabled();
   // Disable the default AP construction.
   CPDF_InteractiveForm::SetUpdateAP(false);

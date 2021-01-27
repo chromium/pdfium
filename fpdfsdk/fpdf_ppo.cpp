@@ -31,6 +31,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/cpp/fpdf_scopers.h"
+#include "third_party/base/check.h"
 
 namespace {
 
@@ -86,10 +87,10 @@ NupState::NupState(const CFX_SizeF& pagesize,
       m_nPagesOnXAxis(nPagesOnXAxis),
       m_nPagesOnYAxis(nPagesOnYAxis),
       m_nPagesPerSheet(nPagesOnXAxis * nPagesOnYAxis) {
-  ASSERT(m_nPagesOnXAxis > 0);
-  ASSERT(m_nPagesOnYAxis > 0);
-  ASSERT(m_destPageSize.width > 0);
-  ASSERT(m_destPageSize.height > 0);
+  DCHECK(m_nPagesOnXAxis > 0);
+  DCHECK(m_nPagesOnYAxis > 0);
+  DCHECK(m_destPageSize.width > 0);
+  DCHECK(m_destPageSize.height > 0);
 
   m_subPageSize.width = m_destPageSize.width / m_nPagesOnXAxis;
   m_subPageSize.height = m_destPageSize.height / m_nPagesOnYAxis;
@@ -310,8 +311,8 @@ CPDF_PageOrganizer::CPDF_PageOrganizer(CPDF_Document* pDestDoc,
 CPDF_PageOrganizer::~CPDF_PageOrganizer() = default;
 
 bool CPDF_PageOrganizer::Init() {
-  ASSERT(m_pDestDoc);
-  ASSERT(m_pSrcDoc);
+  DCHECK(m_pDestDoc);
+  DCHECK(m_pSrcDoc);
 
   CPDF_Dictionary* pNewRoot = dest()->GetRoot();
   if (!pNewRoot)
@@ -658,7 +659,7 @@ ByteString CPDF_NPageToOneExporter::AddSubPage(
 
 ByteString CPDF_NPageToOneExporter::MakeXObjectFromPage(
     const CPDF_Dictionary* pSrcPageDict) {
-  ASSERT(pSrcPageDict);
+  DCHECK(pSrcPageDict);
 
   const CPDF_Object* pSrcContentObj =
       pSrcPageDict->GetDirectObjectFor(pdfium::page_object::kContents);
@@ -711,7 +712,7 @@ ByteString CPDF_NPageToOneExporter::MakeXObjectFromPage(
 
 void CPDF_NPageToOneExporter::FinishPage(CPDF_Dictionary* pDestPageDict,
                                          const ByteString& bsContent) {
-  ASSERT(pDestPageDict);
+  DCHECK(pDestPageDict);
 
   CPDF_Dictionary* pRes =
       pDestPageDict->GetDictFor(pdfium::page_object::kResources);
@@ -777,7 +778,7 @@ FPDF_ImportNPagesToOne(FPDF_DOCUMENT src_doc,
     return nullptr;
 
   CPDF_Document* pDestDoc = CPDFDocumentFromFPDFDocument(output_doc.get());
-  ASSERT(pDestDoc);
+  DCHECK(pDestDoc);
 
   std::vector<uint32_t> page_numbers = GetPageNumbers(*pSrcDoc, ByteString());
   if (page_numbers.empty())

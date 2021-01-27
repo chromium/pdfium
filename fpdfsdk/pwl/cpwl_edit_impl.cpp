@@ -26,6 +26,7 @@
 #include "fpdfsdk/pwl/cpwl_edit_ctrl.h"
 #include "fpdfsdk/pwl/cpwl_scroll_bar.h"
 #include "fpdfsdk/pwl/ipwl_systemhandler.h"
+#include "third_party/base/check.h"
 #include "third_party/base/compiler_specific.h"
 
 namespace {
@@ -44,7 +45,7 @@ void DrawTextString(CFX_RenderDevice* pDevice,
 
   CFX_PointF pos = mtUser2Device.Transform(pt);
   CPDF_RenderOptions ro;
-  ASSERT(ro.GetOptions().bClearType);
+  DCHECK(ro.GetOptions().bClearType);
   ro.SetColorMode(CPDF_RenderOptions::kNormal);
   CPDF_TextRenderer::DrawTextString(pDevice, pos.x, pos.y, pFont, fFontSize,
                                     mtUser2Device, str, crTextFill, ro);
@@ -68,7 +69,7 @@ bool CPWL_EditImpl_Iterator::PrevWord() {
 }
 
 bool CPWL_EditImpl_Iterator::GetWord(CPVT_Word& word) const {
-  ASSERT(m_pEdit);
+  DCHECK(m_pEdit);
 
   if (m_pVTIterator->GetWord(word)) {
     word.ptWord = m_pEdit->VTToEdit(word.ptWord);
@@ -78,7 +79,7 @@ bool CPWL_EditImpl_Iterator::GetWord(CPVT_Word& word) const {
 }
 
 bool CPWL_EditImpl_Iterator::GetLine(CPVT_Line& line) const {
-  ASSERT(m_pEdit);
+  DCHECK(m_pEdit);
 
   if (m_pVTIterator->GetLine(line)) {
     line.ptLine = m_pEdit->VTToEdit(line.ptLine);
@@ -101,7 +102,7 @@ const CPVT_WordPlace& CPWL_EditImpl_Iterator::GetAt() const {
 
 CPWL_EditImpl_Provider::CPWL_EditImpl_Provider(IPVT_FontMap* pFontMap)
     : CPDF_VariableText::Provider(pFontMap), m_pFontMap(pFontMap) {
-  ASSERT(m_pFontMap);
+  DCHECK(m_pFontMap);
 }
 
 CPWL_EditImpl_Provider::~CPWL_EditImpl_Provider() = default;
@@ -199,7 +200,7 @@ bool CPWL_EditImpl_Undo::CanUndo() const {
 }
 
 void CPWL_EditImpl_Undo::Undo() {
-  ASSERT(!m_bWorking);
+  DCHECK(!m_bWorking);
   m_bWorking = true;
   int nUndoRemain = 1;
   while (CanUndo() && nUndoRemain > 0) {
@@ -207,8 +208,8 @@ void CPWL_EditImpl_Undo::Undo() {
     m_nCurUndoPos--;
     nUndoRemain--;
   }
-  ASSERT(nUndoRemain == 0);
-  ASSERT(m_bWorking);
+  DCHECK(nUndoRemain == 0);
+  DCHECK(m_bWorking);
   m_bWorking = false;
 }
 
@@ -217,7 +218,7 @@ bool CPWL_EditImpl_Undo::CanRedo() const {
 }
 
 void CPWL_EditImpl_Undo::Redo() {
-  ASSERT(!m_bWorking);
+  DCHECK(!m_bWorking);
   m_bWorking = true;
   int nRedoRemain = 1;
   while (CanRedo() && nRedoRemain > 0) {
@@ -225,14 +226,14 @@ void CPWL_EditImpl_Undo::Redo() {
     m_nCurUndoPos++;
     nRedoRemain--;
   }
-  ASSERT(nRedoRemain == 0);
-  ASSERT(m_bWorking);
+  DCHECK(nRedoRemain == 0);
+  DCHECK(m_bWorking);
   m_bWorking = false;
 }
 
 void CPWL_EditImpl_Undo::AddItem(std::unique_ptr<IFX_Edit_UndoItem> pItem) {
-  ASSERT(!m_bWorking);
-  ASSERT(pItem);
+  DCHECK(!m_bWorking);
+  DCHECK(pItem);
   if (CanRedo())
     RemoveTails();
 
@@ -244,7 +245,7 @@ void CPWL_EditImpl_Undo::AddItem(std::unique_ptr<IFX_Edit_UndoItem> pItem) {
 }
 
 void CPWL_EditImpl_Undo::RemoveHeads() {
-  ASSERT(m_UndoItemStack.size() > 1);
+  DCHECK(m_UndoItemStack.size() > 1);
   m_UndoItemStack.pop_front();
 }
 
@@ -263,7 +264,7 @@ CFXEU_InsertWord::CFXEU_InsertWord(CPWL_EditImpl* pEdit,
       m_wpNew(wpNewPlace),
       m_Word(word),
       m_nCharset(charset) {
-  ASSERT(m_pEdit);
+  DCHECK(m_pEdit);
 }
 
 CFXEU_InsertWord::~CFXEU_InsertWord() = default;
@@ -286,7 +287,7 @@ CFXEU_InsertReturn::CFXEU_InsertReturn(CPWL_EditImpl* pEdit,
                                        const CPVT_WordPlace& wpOldPlace,
                                        const CPVT_WordPlace& wpNewPlace)
     : m_pEdit(pEdit), m_wpOld(wpOldPlace), m_wpNew(wpNewPlace) {
-  ASSERT(m_pEdit);
+  DCHECK(m_pEdit);
 }
 
 CFXEU_InsertReturn::~CFXEU_InsertReturn() = default;
@@ -308,7 +309,7 @@ int CFXEU_InsertReturn::Undo() {
 CFXEU_ReplaceSelection::CFXEU_ReplaceSelection(CPWL_EditImpl* pEdit,
                                                bool bIsEnd)
     : m_pEdit(pEdit), m_bEnd(bIsEnd) {
-  ASSERT(m_pEdit);
+  DCHECK(m_pEdit);
 }
 
 CFXEU_ReplaceSelection::~CFXEU_ReplaceSelection() = default;
@@ -340,7 +341,7 @@ CFXEU_Backspace::CFXEU_Backspace(CPWL_EditImpl* pEdit,
       m_wpNew(wpNewPlace),
       m_Word(word),
       m_nCharset(charset) {
-  ASSERT(m_pEdit);
+  DCHECK(m_pEdit);
 }
 
 CFXEU_Backspace::~CFXEU_Backspace() = default;
@@ -374,7 +375,7 @@ CFXEU_Delete::CFXEU_Delete(CPWL_EditImpl* pEdit,
       m_Word(word),
       m_nCharset(charset),
       m_bSecEnd(bSecEnd) {
-  ASSERT(m_pEdit);
+  DCHECK(m_pEdit);
 }
 
 CFXEU_Delete::~CFXEU_Delete() = default;
@@ -400,7 +401,7 @@ CFXEU_Clear::CFXEU_Clear(CPWL_EditImpl* pEdit,
                          const CPVT_WordRange& wrSel,
                          const WideString& swText)
     : m_pEdit(pEdit), m_wrSel(wrSel), m_swText(swText) {
-  ASSERT(m_pEdit);
+  DCHECK(m_pEdit);
 }
 
 CFXEU_Clear::~CFXEU_Clear() = default;
@@ -430,7 +431,7 @@ CFXEU_InsertText::CFXEU_InsertText(CPWL_EditImpl* pEdit,
       m_wpNew(wpNewPlace),
       m_swText(swText),
       m_nCharset(charset) {
-  ASSERT(m_pEdit);
+  DCHECK(m_pEdit);
 }
 
 CFXEU_InsertText::~CFXEU_InsertText() = default;
