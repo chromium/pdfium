@@ -7,6 +7,7 @@
 #include <algorithm>
 
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/check.h"
 
 RangeSet::RangeSet() = default;
 
@@ -60,7 +61,7 @@ void RangeSet::Union(const Range& range) {
 }
 
 void RangeSet::Union(const RangeSet& range_set) {
-  ASSERT(&range_set != this);
+  DCHECK(&range_set != this);
   for (const auto& it : range_set.ranges())
     Union(it);
 }

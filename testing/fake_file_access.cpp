@@ -9,6 +9,7 @@
 #include <utility>
 
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/check.h"
 
 namespace {
 
@@ -77,7 +78,7 @@ FakeFileAccess::FakeFileAccess(FPDF_FILEACCESS* file_access)
       file_access_wrapper_(std::make_unique<FileAccessWrapper>(this)),
       file_avail_(std::make_unique<FileAvailImpl>(this)),
       download_hints_(std::make_unique<DownloadHintsImpl>(this)) {
-  ASSERT(file_access_);
+  DCHECK(file_access_);
 }
 
 FakeFileAccess::~FakeFileAccess() = default;

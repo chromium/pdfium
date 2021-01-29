@@ -6,6 +6,7 @@
 
 #include "core/fxcrt/fx_system.h"
 #include "public/fpdfview.h"
+#include "third_party/base/check.h"
 
 #ifdef PDF_ENABLE_V8
 #include "testing/v8_test_environment.h"
@@ -18,12 +19,12 @@ EmbedderTestEnvironment* g_environment = nullptr;
 }  // namespace
 
 EmbedderTestEnvironment::EmbedderTestEnvironment() {
-  ASSERT(!g_environment);
+  DCHECK(!g_environment);
   g_environment = this;
 }
 
 EmbedderTestEnvironment::~EmbedderTestEnvironment() {
-  ASSERT(g_environment);
+  DCHECK(g_environment);
   g_environment = nullptr;
 }
 

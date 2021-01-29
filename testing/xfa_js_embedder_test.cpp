@@ -13,6 +13,7 @@
 #include "fxjs/xfa/cfxjse_isolatetracker.h"
 #include "fxjs/xfa/cfxjse_value.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "third_party/base/check.h"
 
 XFAJSEmbedderTest::XFAJSEmbedderTest() = default;
 
@@ -51,7 +52,7 @@ bool XFAJSEmbedderTest::OpenDocumentWithOptions(
     LinearizeOption linearize_option,
     JavaScriptOption javascript_option) {
   // JS required for XFA.
-  ASSERT(javascript_option == JavaScriptOption::kEnableJavaScript);
+  DCHECK(javascript_option == JavaScriptOption::kEnableJavaScript);
   if (!EmbedderTest::OpenDocumentWithOptions(
           filename, password, linearize_option, javascript_option)) {
     return false;

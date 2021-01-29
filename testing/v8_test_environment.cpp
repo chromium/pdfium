@@ -9,6 +9,7 @@
 
 #include "core/fxcrt/fx_system.h"
 #include "testing/v8_initializer.h"
+#include "third_party/base/check.h"
 #include "v8/include/libplatform/libplatform.h"
 #include "v8/include/v8-platform.h"
 #include "v8/include/v8.h"
@@ -22,12 +23,12 @@ V8TestEnvironment* g_environment = nullptr;
 V8TestEnvironment::V8TestEnvironment(const char* exe_name)
     : exe_path_(exe_name),
       array_buffer_allocator_(std::make_unique<CFX_V8ArrayBufferAllocator>()) {
-  ASSERT(!g_environment);
+  DCHECK(!g_environment);
   g_environment = this;
 }
 
 V8TestEnvironment::~V8TestEnvironment() {
-  ASSERT(g_environment);
+  DCHECK(g_environment);
 
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
   if (startup_data_)

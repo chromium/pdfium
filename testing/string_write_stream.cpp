@@ -3,8 +3,10 @@
 // found in the LICENSE file.
 
 #include "testing/string_write_stream.h"
+
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/widestring.h"
+#include "third_party/base/check.h"
 
 StringWriteStream::StringWriteStream() = default;
 
@@ -21,7 +23,7 @@ bool StringWriteStream::Flush() {
 bool StringWriteStream::WriteBlockAtOffset(const void* pData,
                                            FX_FILESIZE offset,
                                            size_t size) {
-  ASSERT(offset == 0);
+  DCHECK(offset == 0);
   stream_.write(static_cast<const char*>(pData), size);
   return true;
 }
