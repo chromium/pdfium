@@ -39,6 +39,7 @@
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
 #include "fxbarcode/datamatrix/BC_TextEncoder.h"
 #include "fxbarcode/datamatrix/BC_X12Encoder.h"
+#include "third_party/base/check.h"
 
 namespace {
 
@@ -111,7 +112,7 @@ bool IsNativeEDIFACT(wchar_t ch) {
 }
 
 size_t EncoderIndex(CBC_HighLevelEncoder::Encoding encoding) {
-  ASSERT(encoding != CBC_HighLevelEncoder::Encoding::UNKNOWN);
+  DCHECK(encoding != CBC_HighLevelEncoder::Encoding::UNKNOWN);
   return static_cast<size_t>(encoding);
 }
 
@@ -176,7 +177,7 @@ WideString CBC_HighLevelEncoder::EncodeHighLevel(const WideString& msg) {
   while (codewords.GetLength() < capacity)
     codewords += Randomize253State(kPad, codewords.GetLength() + 1);
 
-  ASSERT(!codewords.IsEmpty());
+  DCHECK(!codewords.IsEmpty());
   return codewords;
 }
 

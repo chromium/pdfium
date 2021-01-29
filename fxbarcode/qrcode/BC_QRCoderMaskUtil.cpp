@@ -25,6 +25,7 @@
 #include "fxbarcode/common/BC_CommonByteMatrix.h"
 #include "fxbarcode/qrcode/BC_QRCoder.h"
 #include "fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"
+#include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 
 namespace {
@@ -164,7 +165,7 @@ int32_t CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule4(
 bool CBC_QRCoderMaskUtil::GetDataMaskBit(int32_t maskPattern,
                                          int32_t x,
                                          int32_t y) {
-  ASSERT(CBC_QRCoder::IsValidMaskPattern(maskPattern));
+  DCHECK(CBC_QRCoder::IsValidMaskPattern(maskPattern));
 
   int32_t intermediate = 0, temp = 0;
   switch (maskPattern) {

@@ -41,6 +41,7 @@
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
 #include "fxbarcode/datamatrix/BC_TextEncoder.h"
 #include "fxbarcode/datamatrix/BC_X12Encoder.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -49,13 +50,13 @@ std::unique_ptr<CBC_CommonByteMatrix> encodeLowLevel(
     CBC_DefaultPlacement* placement,
     const CBC_SymbolInfo* symbolInfo) {
   int32_t symbolWidth = symbolInfo->GetSymbolDataWidth();
-  ASSERT(symbolWidth);
+  DCHECK(symbolWidth);
   int32_t symbolHeight = symbolInfo->GetSymbolDataHeight();
-  ASSERT(symbolHeight);
+  DCHECK(symbolHeight);
   int32_t width = symbolInfo->GetSymbolWidth();
-  ASSERT(width);
+  DCHECK(width);
   int32_t height = symbolInfo->GetSymbolHeight();
-  ASSERT(height);
+  DCHECK(height);
 
   auto matrix = std::make_unique<CBC_CommonByteMatrix>(width, height);
   int32_t matrixY = 0;
@@ -126,9 +127,9 @@ std::vector<uint8_t, FxAllocAllocator<uint8_t>> CBC_DataMatrixWriter::Encode(
     return results;
 
   int32_t width = pSymbolInfo->GetSymbolDataWidth();
-  ASSERT(width);
+  DCHECK(width);
   int32_t height = pSymbolInfo->GetSymbolDataHeight();
-  ASSERT(height);
+  DCHECK(height);
 
   auto placement =
       std::make_unique<CBC_DefaultPlacement>(codewords, width, height);

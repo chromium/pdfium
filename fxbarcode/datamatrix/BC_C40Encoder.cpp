@@ -28,6 +28,7 @@
 #include "fxbarcode/datamatrix/BC_EncoderContext.h"
 #include "fxbarcode/datamatrix/BC_HighLevelEncoder.h"
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -191,7 +192,7 @@ int32_t CBC_C40Encoder::EncodeChar(wchar_t c, WideString* sb) {
 int32_t CBC_C40Encoder::BacktrackOneCharacter(CBC_EncoderContext* context,
                                               WideString* buffer,
                                               int32_t lastCharSize) {
-  ASSERT(lastCharSize >= 0);
+  DCHECK(lastCharSize >= 0);
 
   if (context->m_pos < 1)
     return -1;

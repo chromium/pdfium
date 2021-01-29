@@ -44,7 +44,7 @@ size_t CBC_QRCoderBitVector::Size() const {
 }
 
 void CBC_QRCoderBitVector::AppendBit(int32_t bit) {
-  ASSERT(bit == 0 || bit == 1);
+  DCHECK(bit == 0 || bit == 1);
   int32_t numBitsInLastByte = m_sizeInBits & 0x7;
   if (numBitsInLastByte == 0) {
     AppendByte(0);
@@ -55,8 +55,8 @@ void CBC_QRCoderBitVector::AppendBit(int32_t bit) {
 }
 
 void CBC_QRCoderBitVector::AppendBits(int32_t value, int32_t numBits) {
-  ASSERT(numBits > 0);
-  ASSERT(numBits <= 32);
+  DCHECK(numBits > 0);
+  DCHECK(numBits <= 32);
 
   int32_t numBitsLeft = numBits;
   while (numBitsLeft > 0) {

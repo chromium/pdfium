@@ -27,6 +27,7 @@
 #include "fxbarcode/qrcode/BC_QRCoderBitVector.h"
 #include "fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"
 #include "fxbarcode/qrcode/BC_QRCoderMaskUtil.h"
+#include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -121,7 +122,7 @@ bool EmbedDataBits(CBC_QRCoderBitVector* dataBits,
         } else {
           bit = 0;
         }
-        ASSERT(CBC_QRCoder::IsValidMaskPattern(maskPattern));
+        DCHECK(CBC_QRCoder::IsValidMaskPattern(maskPattern));
         if (CBC_QRCoderMaskUtil::GetDataMaskBit(maskPattern, xx, y))
           bit ^= 0x01;
         matrix->Set(xx, y, bit);
@@ -159,7 +160,7 @@ bool MakeTypeInfoBits(const CBC_QRCoderErrorCorrectionLevel* ecLevel,
   if (!bits->XOR(&maskBits))
     return false;
 
-  ASSERT(bits->Size() == 15);
+  DCHECK(bits->Size() == 15);
   return true;
 }
 
@@ -167,7 +168,7 @@ void MakeVersionInfoBits(int32_t version, CBC_QRCoderBitVector* bits) {
   bits->AppendBits(version, 6);
   int32_t bchCode = CalculateBCHCode(version, VERSION_INFO_POLY);
   bits->AppendBits(bchCode, 12);
-  ASSERT(bits->Size() == 18);
+  DCHECK(bits->Size() == 18);
 }
 
 bool EmbedTypeInfo(const CBC_QRCoderErrorCorrectionLevel* ecLevel,

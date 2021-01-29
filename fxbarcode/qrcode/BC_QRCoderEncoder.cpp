@@ -38,6 +38,7 @@
 #include "fxbarcode/qrcode/BC_QRCoderMatrixUtil.h"
 #include "fxbarcode/qrcode/BC_QRCoderMode.h"
 #include "fxbarcode/qrcode/BC_QRCoderVersion.h"
+#include "third_party/base/check.h"
 #include "third_party/base/optional.h"
 #include "third_party/base/stl_util.h"
 
@@ -229,7 +230,7 @@ std::vector<uint8_t, FxAllocAllocator<uint8_t>> GenerateECBytes(
     pdfium::span<const uint8_t> dataBytes,
     size_t numEcBytesInBlock) {
   // If |numEcBytesInBlock| is 0, the encoder will fail anyway.
-  ASSERT(numEcBytesInBlock > 0);
+  DCHECK(numEcBytesInBlock > 0);
   std::vector<int32_t> toEncode(dataBytes.size() + numEcBytesInBlock);
   std::copy(dataBytes.begin(), dataBytes.end(), toEncode.begin());
 
@@ -238,7 +239,7 @@ std::vector<uint8_t, FxAllocAllocator<uint8_t>> GenerateECBytes(
   if (encoder.Encode(&toEncode, numEcBytesInBlock)) {
     ecBytes = std::vector<uint8_t, FxAllocAllocator<uint8_t>>(
         toEncode.begin() + dataBytes.size(), toEncode.end());
-    ASSERT(ecBytes.size() == static_cast<size_t>(numEcBytesInBlock));
+    DCHECK(ecBytes.size() == static_cast<size_t>(numEcBytesInBlock));
   }
   return ecBytes;
 }
@@ -349,8 +350,8 @@ bool InterleaveWithECBytes(CBC_QRCoderBitVector* bits,
                            int32_t numDataBytes,
                            int32_t numRSBlocks,
                            CBC_QRCoderBitVector* result) {
-  ASSERT(numTotalBytes >= 0);
-  ASSERT(numDataBytes >= 0);
+  DCHECK(numTotalBytes >= 0);
+  DCHECK(numDataBytes >= 0);
   if (bits->sizeInBytes() != static_cast<size_t>(numDataBytes))
     return false;
 

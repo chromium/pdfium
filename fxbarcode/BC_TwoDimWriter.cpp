@@ -15,6 +15,7 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "fxbarcode/BC_Writer.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
+#include "third_party/base/check.h"
 #include "third_party/base/numerics/safe_math.h"
 
 CBC_TwoDimWriter::CBC_TwoDimWriter(bool bFixedSize)
@@ -85,7 +86,7 @@ bool CBC_TwoDimWriter::RenderResult(pdfium::span<const uint8_t> code,
 
 void CBC_TwoDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
                                           const CFX_Matrix* matrix) {
-  ASSERT(m_output);
+  DCHECK(m_output);
 
   CFX_GraphStateData stateData;
   CFX_PathData path;
