@@ -879,47 +879,90 @@ bool CFX_DIBBase::GetOverlapRect(int& dest_left,
                                  int src_height,
                                  int& src_left,
                                  int& src_top,
-                                 const CFX_ClipRgn* pClipRgn) {
+                                 const CFX_ClipRgn* pClipRgn) const {
   if (width == 0 || height == 0)
     return false;
 
   ASSERT(width > 0);
   ASSERT(height > 0);
 
-  if (dest_left > m_Width || dest_top > m_Height) {
-    width = 0;
-    height = 0;
+  if (dest_left > m_Width || dest_top > m_Height)
     return false;
-  }
-  int x_offset = dest_left - src_left;
-  int y_offset = dest_top - src_top;
-  FX_RECT src_rect(src_left, src_top, src_left + width, src_top + height);
+
+  FX_SAFE_INT32 safe_src_width = src_left;
+  safe_src_width += width;
+  if (!safe_src_width.IsValid())
+    return false;
+
+  FX_SAFE_INT32 safe_src_height = src_top;
+  safe_src_height += height;
+  if (!safe_src_height.IsValid())
+    return false;
+
+  FX_RECT src_rect(src_left, src_top, safe_src_width.ValueOrDie(),
+                   safe_src_height.ValueOrDie());
   FX_RECT src_bound(0, 0, src_width, src_height);
   src_rect.Intersect(src_bound);
-  FX_RECT dest_rect(src_rect.left + x_offset, src_rect.top + y_offset,
-                    src_rect.right + x_offset, src_rect.bottom + y_offset);
+
+  FX_SAFE_INT32 safe_x_offset = dest_left;
+  safe_x_offset -= src_left;
+  if (!safe_x_offset.IsValid())
+    return false;
+
+  FX_SAFE_INT32 safe_y_offset = dest_top;
+  safe_y_offset -= src_top;
+  if (!safe_y_offset.IsValid())
+    return false;
+
+  FX_SAFE_INT32 safe_dest_left = safe_x_offset;
+  safe_dest_left += src_rect.left;
+  if (!safe_dest_left.IsValid())
+    return false;
+
+  FX_SAFE_INT32 safe_dest_top = safe_y_offset;
+  safe_dest_top += src_rect.top;
+  if (!safe_dest_top.IsValid())
+    return false;
+
+  FX_SAFE_INT32 safe_dest_right = safe_x_offset;
+  safe_dest_right += src_rect.right;
+  if (!safe_dest_right.IsValid())
+    return false;
+
+  FX_SAFE_INT32 safe_dest_bottom = safe_y_offset;
+  safe_dest_bottom += src_rect.bottom;
+  if (!safe_dest_bottom.IsValid())
+    return false;
+
+  FX_RECT dest_rect(safe_dest_left.ValueOrDie(), safe_dest_top.ValueOrDie(),
+                    safe_dest_right.ValueOrDie(),
+                    safe_dest_bottom.ValueOrDie());
   FX_RECT dest_bound(0, 0, m_Width, m_Height);
   dest_rect.Intersect(dest_bound);
+
   if (pClipRgn)
     dest_rect.Intersect(pClipRgn->GetBox());
   dest_left = dest_rect.left;
   dest_top = dest_rect.top;
 
-  FX_SAFE_INT32 safe_src_left = dest_left;
-  safe_src_left -= x_offset;
-  if (!safe_src_left.IsValid())
+  FX_SAFE_INT32 safe_new_src_left = dest_left;
+  safe_new_src_left -= safe_x_offset;
+  if (!safe_new_src_left.IsValid())
     return false;
-  src_left = safe_src_left.ValueOrDie();
+  src_left = safe_new_src_left.ValueOrDie();
 
-  FX_SAFE_INT32 safe_src_top = dest_top;
-  safe_src_top -= y_offset;
-  if (!safe_src_top.IsValid())
+  FX_SAFE_INT32 safe_new_src_top = dest_top;
+  safe_new_src_top -= safe_y_offset;
+  if (!safe_new_src_top.IsValid())
     return false;
-  src_top = safe_src_top.ValueOrDie();
+  src_top = safe_new_src_top.ValueOrDie();
 
-  width = dest_rect.right - dest_rect.left;
-  height = dest_rect.bottom - dest_rect.top;
-  return width != 0 && height != 0;
+  if (dest_rect.IsEmpty())
+    return false;
+
+  width = dest_rect.Width();
+  height = dest_rect.Height();
+  return true;
 }
 
 void CFX_DIBBase::SetPalette(const uint32_t* pSrc) {
