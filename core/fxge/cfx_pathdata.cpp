@@ -359,20 +359,20 @@ bool CFX_PathData::GetZeroAreaPath(const CFX_Matrix* matrix,
 
   if (((m_Points.size() > 3) && (m_Points.size() % 2))) {
     int mid = m_Points.size() / 2;
-    bool zero_area = false;
+    bool zero_area = true;
     CFX_PathData temp_path;
     for (int i = 0; i < mid; i++) {
       if (!(m_Points[mid - i - 1].m_Point == m_Points[mid + i + 1].m_Point &&
             m_Points[mid - i - 1].m_Type != FXPT_TYPE::BezierTo &&
             m_Points[mid + i + 1].m_Type != FXPT_TYPE::BezierTo)) {
-        zero_area = true;
+        zero_area = false;
         break;
       }
 
       temp_path.AppendPoint(m_Points[mid - i].m_Point, FXPT_TYPE::MoveTo);
       temp_path.AppendPoint(m_Points[mid - i - 1].m_Point, FXPT_TYPE::LineTo);
     }
-    if (!zero_area) {
+    if (zero_area) {
       new_path->Append(&temp_path, nullptr);
       *thin = true;
       return true;
