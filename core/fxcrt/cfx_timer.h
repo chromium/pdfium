@@ -33,7 +33,7 @@ class CFX_Timer {
     virtual void OnTimerFired() = 0;
   };
 
-  CFX_Timer(HandlerIface* pTimerHandler,
+  CFX_Timer(HandlerIface* pHandlerIface,
             CallbackIface* pCallbackIface,
             int32_t nInterval);
   ~CFX_Timer();

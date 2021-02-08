@@ -621,7 +621,7 @@ bool ParseCommandLine(const std::vector<std::string>& args,
       }
       options->pages = true;
       const std::string pages_string = value;
-      size_t first_dash = pages_string.find("-");
+      size_t first_dash = pages_string.find('-');
       if (first_dash == std::string::npos) {
         std::stringstream(pages_string) >> options->first_page;
         options->last_page = options->first_page;
