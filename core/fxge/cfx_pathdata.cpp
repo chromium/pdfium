@@ -204,18 +204,18 @@ void CFX_PathData::ClosePath() {
   m_Points.back().m_CloseFigure = true;
 }
 
-void CFX_PathData::Append(const CFX_PathData* pSrc, const CFX_Matrix* pMatrix) {
-  if (pSrc->m_Points.empty())
+void CFX_PathData::Append(const CFX_PathData* src, const CFX_Matrix* matrix) {
+  if (src->m_Points.empty())
     return;
 
   size_t cur_size = m_Points.size();
-  m_Points.insert(m_Points.end(), pSrc->m_Points.begin(), pSrc->m_Points.end());
+  m_Points.insert(m_Points.end(), src->m_Points.begin(), src->m_Points.end());
 
-  if (!pMatrix)
+  if (!matrix)
     return;
 
   for (size_t i = cur_size; i < m_Points.size(); i++)
-    m_Points[i].m_Point = pMatrix->Transform(m_Points[i].m_Point);
+    m_Points[i].m_Point = matrix->Transform(m_Points[i].m_Point);
 }
 
 void CFX_PathData::AppendPoint(const CFX_PointF& point, FXPT_TYPE type) {
@@ -321,12 +321,12 @@ void CFX_PathData::Transform(const CFX_Matrix& matrix) {
     point.m_Point = matrix.Transform(point.m_Point);
 }
 
-bool CFX_PathData::GetZeroAreaPath(const CFX_Matrix* pMatrix,
-                                   bool bAdjust,
-                                   CFX_PathData* NewPath,
-                                   bool* bThin,
-                                   bool* setIdentity) const {
-  *setIdentity = false;
+bool CFX_PathData::GetZeroAreaPath(const CFX_Matrix* matrix,
+                                   bool adjust,
+                                   CFX_PathData* new_path,
+                                   bool* thin,
+                                   bool* set_identity) const {
+  *set_identity = false;
   if (m_Points.size() < 3)
     return false;
 
@@ -336,54 +336,54 @@ bool CFX_PathData::GetZeroAreaPath(const CFX_Matrix* pMatrix,
       m_Points[0].m_Point == m_Points[2].m_Point) {
     for (size_t i = 0; i < 2; i++) {
       CFX_PointF point = m_Points[i].m_Point;
-      if (bAdjust) {
-        if (pMatrix)
-          point = pMatrix->Transform(point);
+      if (adjust) {
+        if (matrix)
+          point = matrix->Transform(point);
 
         point = CFX_PointF(static_cast<int>(point.x) + 0.5f,
                            static_cast<int>(point.y) + 0.5f);
       }
-      NewPath->AppendPoint(point,
-                           i == 0 ? FXPT_TYPE::MoveTo : FXPT_TYPE::LineTo);
+      new_path->AppendPoint(point,
+                            i == 0 ? FXPT_TYPE::MoveTo : FXPT_TYPE::LineTo);
     }
-    if (bAdjust && pMatrix)
-      *setIdentity = true;
+    if (adjust && matrix)
+      *set_identity = true;
 
     // Note, they both have to be not equal.
     if (m_Points[0].m_Point.x != m_Points[1].m_Point.x &&
         m_Points[0].m_Point.y != m_Points[1].m_Point.y) {
-      *bThin = true;
+      *thin = true;
     }
     return true;
   }
 
   if (((m_Points.size() > 3) && (m_Points.size() % 2))) {
     int mid = m_Points.size() / 2;
-    bool bZeroArea = false;
-    CFX_PathData t_path;
+    bool zero_area = false;
+    CFX_PathData temp_path;
     for (int i = 0; i < mid; i++) {
       if (!(m_Points[mid - i - 1].m_Point == m_Points[mid + i + 1].m_Point &&
             m_Points[mid - i - 1].m_Type != FXPT_TYPE::BezierTo &&
             m_Points[mid + i + 1].m_Type != FXPT_TYPE::BezierTo)) {
-        bZeroArea = true;
+        zero_area = true;
         break;
       }
 
-      t_path.AppendPoint(m_Points[mid - i].m_Point, FXPT_TYPE::MoveTo);
-      t_path.AppendPoint(m_Points[mid - i - 1].m_Point, FXPT_TYPE::LineTo);
+      temp_path.AppendPoint(m_Points[mid - i].m_Point, FXPT_TYPE::MoveTo);
+      temp_path.AppendPoint(m_Points[mid - i - 1].m_Point, FXPT_TYPE::LineTo);
     }
-    if (!bZeroArea) {
-      NewPath->Append(&t_path, nullptr);
-      *bThin = true;
+    if (!zero_area) {
+      new_path->Append(&temp_path, nullptr);
+      *thin = true;
       return true;
     }
   }
 
-  int startPoint = 0;
+  int start_point = 0;
   for (size_t i = 0; i < m_Points.size(); i++) {
     FXPT_TYPE point_type = m_Points[i].m_Type;
     if (point_type == FXPT_TYPE::MoveTo) {
-      startPoint = i;
+      start_point = i;
       continue;
     }
 
@@ -394,7 +394,7 @@ bool CFX_PathData::GetZeroAreaPath(const CFX_Matrix* pMatrix,
 
     DCHECK(point_type == FXPT_TYPE::LineTo);
     int next_index =
-        (i + 1 - startPoint) % (m_Points.size() - startPoint) + startPoint;
+        (i + 1 - start_point) % (m_Points.size() - start_point) + start_point;
     const FX_PATHPOINT& next = m_Points[next_index];
     if (next.m_Type == FXPT_TYPE::BezierTo || next.m_Type == FXPT_TYPE::MoveTo)
       continue;
@@ -406,8 +406,8 @@ bool CFX_PathData::GetZeroAreaPath(const CFX_Matrix* pMatrix,
                       fabs(cur.m_Point.y - next.m_Point.y);
       const FX_PATHPOINT& start = use_prev ? prev : cur;
       const FX_PATHPOINT& end = use_prev ? m_Points[next_index - 1] : next;
-      NewPath->AppendPoint(start.m_Point, FXPT_TYPE::MoveTo);
-      NewPath->AppendPoint(end.m_Point, FXPT_TYPE::LineTo);
+      new_path->AppendPoint(start.m_Point, FXPT_TYPE::MoveTo);
+      new_path->AppendPoint(end.m_Point, FXPT_TYPE::LineTo);
       continue;
     }
 
@@ -417,15 +417,15 @@ bool CFX_PathData::GetZeroAreaPath(const CFX_Matrix* pMatrix,
                       fabs(cur.m_Point.x - next.m_Point.x);
       const FX_PATHPOINT& start = use_prev ? prev : cur;
       const FX_PATHPOINT& end = use_prev ? m_Points[next_index - 1] : next;
-      NewPath->AppendPoint(start.m_Point, FXPT_TYPE::MoveTo);
-      NewPath->AppendPoint(end.m_Point, FXPT_TYPE::LineTo);
+      new_path->AppendPoint(start.m_Point, FXPT_TYPE::MoveTo);
+      new_path->AppendPoint(end.m_Point, FXPT_TYPE::LineTo);
       continue;
     }
   }
 
-  size_t new_path_size = NewPath->GetPoints().size();
+  size_t new_path_size = new_path->GetPoints().size();
   if (m_Points.size() > 3 && new_path_size > 0)
-    *bThin = true;
+    *thin = true;
   return new_path_size != 0;
 }
 
@@ -456,8 +456,8 @@ bool CFX_PathData::IsRect() const {
   return m_Points.size() == 5 || m_Points[3].m_CloseFigure;
 }
 
-Optional<CFX_FloatRect> CFX_PathData::GetRect(const CFX_Matrix* pMatrix) const {
-  if (!pMatrix) {
+Optional<CFX_FloatRect> CFX_PathData::GetRect(const CFX_Matrix* matrix) const {
+  if (!matrix) {
     if (!IsRect())
       return pdfium::nullopt;
 
@@ -482,7 +482,7 @@ Optional<CFX_FloatRect> CFX_PathData::GetRect(const CFX_Matrix* pMatrix) const {
 
   CFX_PointF points[5];
   for (size_t i = 0; i < m_Points.size(); i++) {
-    points[i] = pMatrix->Transform(m_Points[i].m_Point);
+    points[i] = matrix->Transform(m_Points[i].m_Point);
 
     if (i == 0)
       continue;

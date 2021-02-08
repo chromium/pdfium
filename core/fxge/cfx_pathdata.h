@@ -55,14 +55,14 @@ class CFX_PathData {
 
   void Transform(const CFX_Matrix& matrix);
   bool IsRect() const;
-  bool GetZeroAreaPath(const CFX_Matrix* pMatrix,
-                       bool bAdjust,
-                       CFX_PathData* NewPath,
-                       bool* bThin,
-                       bool* setIdentity) const;
-  Optional<CFX_FloatRect> GetRect(const CFX_Matrix* pMatrix) const;
+  bool GetZeroAreaPath(const CFX_Matrix* matrix,
+                       bool adjust,
+                       CFX_PathData* new_path,
+                       bool* thin,
+                       bool* set_identity) const;
+  Optional<CFX_FloatRect> GetRect(const CFX_Matrix* matrix) const;
 
-  void Append(const CFX_PathData* pSrc, const CFX_Matrix* pMatrix);
+  void Append(const CFX_PathData* src, const CFX_Matrix* matrix);
   void AppendFloatRect(const CFX_FloatRect& rect);
   void AppendRect(float left, float bottom, float right, float top);
   void AppendLine(const CFX_PointF& pt1, const CFX_PointF& pt2);
