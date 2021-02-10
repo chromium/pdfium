@@ -12,6 +12,77 @@
 
 namespace {
 
+// Returns true if the simple path contains 3 points which draw a line from
+// A->B->A and form a zero area.
+bool CheckSimpleLinePath(const std::vector<FX_PATHPOINT>& points,
+                         const CFX_Matrix* matrix,
+                         bool adjust,
+                         CFX_PathData* new_path,
+                         bool* thin,
+                         bool* set_identity) {
+  if (points.size() != 3)
+    return false;
+
+  if (points[0].m_Type != FXPT_TYPE::MoveTo ||
+      points[1].m_Type != FXPT_TYPE::LineTo ||
+      points[2].m_Type != FXPT_TYPE::LineTo ||
+      points[0].m_Point != points[2].m_Point) {
+    return false;
+  }
+
+  for (size_t i = 0; i < 2; i++) {
+    CFX_PointF point = points[i].m_Point;
+    if (adjust) {
+      if (matrix)
+        point = matrix->Transform(point);
+
+      point = CFX_PointF(static_cast<int>(point.x) + 0.5f,
+                         static_cast<int>(point.y) + 0.5f);
+    }
+    new_path->AppendPoint(point,
+                          i == 0 ? FXPT_TYPE::MoveTo : FXPT_TYPE::LineTo);
+  }
+  if (adjust && matrix)
+    *set_identity = true;
+
+  // Note, both x and y coordinates of the end points need to be different.
+  if (points[0].m_Point.x != points[1].m_Point.x &&
+      points[0].m_Point.y != points[1].m_Point.y) {
+    *thin = true;
+  }
+  return true;
+}
+
+// Returns true if `points` is palindromic and forms zero area. Otherwise,
+// returns false.
+bool CheckPalindromicPath(const std::vector<FX_PATHPOINT>& points,
+                          CFX_PathData* new_path,
+                          bool* thin) {
+  if (points.size() <= 3 || !(points.size() % 2))
+    return false;
+
+  const int mid = points.size() / 2;
+  bool zero_area = true;
+  CFX_PathData temp_path;
+  for (int i = 0; i < mid; i++) {
+    if (!(points[mid - i - 1].m_Point == points[mid + i + 1].m_Point &&
+          points[mid - i - 1].m_Type != FXPT_TYPE::BezierTo &&
+          points[mid + i + 1].m_Type != FXPT_TYPE::BezierTo)) {
+      zero_area = false;
+      break;
+    }
+
+    temp_path.AppendPoint(points[mid - i].m_Point, FXPT_TYPE::MoveTo);
+    temp_path.AppendPoint(points[mid - i - 1].m_Point, FXPT_TYPE::LineTo);
+  }
+  if (!zero_area)
+    return false;
+
+  new_path->Append(&temp_path, nullptr);
+  *thin = true;
+  return true;
+}
+
 bool IsFoldingVerticalLine(const CFX_PointF& a,
                            const CFX_PointF& b,
                            const CFX_PointF& c) {
@@ -327,57 +398,19 @@ bool CFX_PathData::GetZeroAreaPath(const CFX_Matrix* matrix,
                                    bool* thin,
                                    bool* set_identity) const {
   *set_identity = false;
+
+  // TODO(crbug.com/pdfium/1639): Need to handle the case when there are
+  // only 2 points in the path that forms a zero area.
   if (m_Points.size() < 3)
     return false;
 
-  if (m_Points.size() == 3 && m_Points[0].m_Type == FXPT_TYPE::MoveTo &&
-      m_Points[1].m_Type == FXPT_TYPE::LineTo &&
-      m_Points[2].m_Type == FXPT_TYPE::LineTo &&
-      m_Points[0].m_Point == m_Points[2].m_Point) {
-    for (size_t i = 0; i < 2; i++) {
-      CFX_PointF point = m_Points[i].m_Point;
-      if (adjust) {
-        if (matrix)
-          point = matrix->Transform(point);
-
-        point = CFX_PointF(static_cast<int>(point.x) + 0.5f,
-                           static_cast<int>(point.y) + 0.5f);
-      }
-      new_path->AppendPoint(point,
-                            i == 0 ? FXPT_TYPE::MoveTo : FXPT_TYPE::LineTo);
-    }
-    if (adjust && matrix)
-      *set_identity = true;
-
-    // Note, they both have to be not equal.
-    if (m_Points[0].m_Point.x != m_Points[1].m_Point.x &&
-        m_Points[0].m_Point.y != m_Points[1].m_Point.y) {
-      *thin = true;
-    }
+  if (CheckSimpleLinePath(m_Points, matrix, adjust, new_path, thin,
+                          set_identity)) {
     return true;
   }
 
-  if (((m_Points.size() > 3) && (m_Points.size() % 2))) {
-    int mid = m_Points.size() / 2;
-    bool zero_area = true;
-    CFX_PathData temp_path;
-    for (int i = 0; i < mid; i++) {
-      if (!(m_Points[mid - i - 1].m_Point == m_Points[mid + i + 1].m_Point &&
-            m_Points[mid - i - 1].m_Type != FXPT_TYPE::BezierTo &&
-            m_Points[mid + i + 1].m_Type != FXPT_TYPE::BezierTo)) {
-        zero_area = false;
-        break;
-      }
-
-      temp_path.AppendPoint(m_Points[mid - i].m_Point, FXPT_TYPE::MoveTo);
-      temp_path.AppendPoint(m_Points[mid - i - 1].m_Point, FXPT_TYPE::LineTo);
-    }
-    if (zero_area) {
-      new_path->Append(&temp_path, nullptr);
-      *thin = true;
-      return true;
-    }
-  }
+  if (CheckPalindromicPath(m_Points, new_path, thin))
+    return true;
 
   int start_point = 0;
   for (size_t i = 0; i < m_Points.size(); i++) {
