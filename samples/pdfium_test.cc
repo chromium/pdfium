@@ -1283,7 +1283,7 @@ int main(int argc, const char* argv[]) {
 #ifdef PDF_ENABLE_V8
   if (!options.disable_javascript) {
     isolate.reset();
-    v8::V8::ShutdownPlatform();
+    ShutdownV8ForPDFium();
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
     free(const_cast<char*>(snapshot.data));
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA

@@ -51,13 +51,11 @@ void FXGC_Initialize(v8::Platform* platform, v8::Isolate* isolate) {
     DCHECK(!g_platform);
     g_platform = platform;
     g_isolate = isolate;
-    cppgc::InitializeProcess(platform->GetPageAllocator());
   }
 }
 
 void FXGC_Release() {
   if (g_platform && g_platform_ref_count == 0) {
-    cppgc::ShutdownProcess();
     g_platform = nullptr;
     g_isolate = nullptr;
   }

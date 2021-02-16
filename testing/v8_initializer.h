@@ -31,5 +31,5 @@ std::unique_ptr<v8::Platform> InitializeV8ForPDFium(
     const std::string& js_flags,
     const std::string& exe_path);
 #endif
-
+void ShutdownV8ForPDFium();
 #endif  // TESTING_V8_INITIALIZER_H_

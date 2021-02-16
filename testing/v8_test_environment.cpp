@@ -71,5 +71,5 @@ void V8TestEnvironment::SetUp() {
 
 void V8TestEnvironment::TearDown() {
   isolate_.reset();
-  v8::V8::ShutdownPlatform();
+  ShutdownV8ForPDFium();
 }
