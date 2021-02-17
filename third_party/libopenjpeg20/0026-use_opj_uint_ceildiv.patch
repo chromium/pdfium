@@ -1,8 +1,8 @@
 diff --git a/third_party/libopenjpeg20/j2k.c b/third_party/libopenjpeg20/j2k.c
-index c5f9dd53e..1869833f7 100644
+index 889c2cfc8..711dd73e8 100644
 --- a/third_party/libopenjpeg20/j2k.c
 +++ b/third_party/libopenjpeg20/j2k.c
-@@ -2311,10 +2311,8 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
+@@ -2299,10 +2299,8 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
      }
  
      /* Compute the number of tiles */
@@ -15,7 +15,7 @@ index c5f9dd53e..1869833f7 100644
  
      /* Check that the number of tiles is valid */
      if (l_cp->tw == 0 || l_cp->th == 0 || l_cp->tw > 65535 / l_cp->th) {
-@@ -2331,12 +2329,10 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
+@@ -2319,12 +2317,10 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
              (p_j2k->m_specific_param.m_decoder.m_start_tile_x - l_cp->tx0) / l_cp->tdx;
          p_j2k->m_specific_param.m_decoder.m_start_tile_y =
              (p_j2k->m_specific_param.m_decoder.m_start_tile_y - l_cp->ty0) / l_cp->tdy;
@@ -32,10 +32,10 @@ index c5f9dd53e..1869833f7 100644
      } else {
          p_j2k->m_specific_param.m_decoder.m_start_tile_x = 0;
          p_j2k->m_specific_param.m_decoder.m_start_tile_y = 0;
-@@ -6922,10 +6918,8 @@ OPJ_BOOL opj_j2k_setup_encoder(opj_j2k_t *p_j2k,
-     */
- 
-     if (parameters->tile_size_on) {
+@@ -7839,10 +7835,8 @@ OPJ_BOOL opj_j2k_setup_encoder(opj_j2k_t *p_j2k,
+             opj_event_msg(p_manager, EVT_ERROR, "Invalid tile height\n");
+             return OPJ_FALSE;
+         }
 -        cp->tw = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)(image->x1 - cp->tx0),
 -                                             (OPJ_INT32)cp->tdx);
 -        cp->th = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)(image->y1 - cp->ty0),
@@ -45,9 +45,9 @@ index c5f9dd53e..1869833f7 100644
      } else {
          cp->tdx = image->x1 - cp->tx0;
          cp->tdy = image->y1 - cp->ty0;
-@@ -9237,10 +9231,8 @@ OPJ_BOOL opj_j2k_set_decode_area(opj_j2k_t *p_j2k,
-     for (it_comp = 0; it_comp < p_image->numcomps; ++it_comp) {
-         OPJ_INT32 l_h, l_w;
+@@ -10035,10 +10029,8 @@ static OPJ_BOOL opj_j2k_update_image_dimensions(opj_image_t* p_image,
+             return OPJ_FALSE;
+         }
  
 -        l_img_comp->x0 = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)p_image->x0,
 -                         (OPJ_INT32)l_img_comp->dx);
@@ -58,7 +58,7 @@ index c5f9dd53e..1869833f7 100644
          l_comp_x1 = opj_int_ceildiv((OPJ_INT32)p_image->x1, (OPJ_INT32)l_img_comp->dx);
          l_comp_y1 = opj_int_ceildiv((OPJ_INT32)p_image->y1, (OPJ_INT32)l_img_comp->dy);
  
-@@ -10848,10 +10840,8 @@ OPJ_BOOL opj_j2k_get_tile(opj_j2k_t *p_j2k,
+@@ -11950,10 +11942,8 @@ OPJ_BOOL opj_j2k_get_tile(opj_j2k_t *p_j2k,
  
          l_img_comp->factor = p_j2k->m_private_image->comps[compno].factor;
  
@@ -71,7 +71,7 @@ index c5f9dd53e..1869833f7 100644
          l_comp_x1 = opj_int_ceildiv((OPJ_INT32)p_image->x1, (OPJ_INT32)l_img_comp->dx);
          l_comp_y1 = opj_int_ceildiv((OPJ_INT32)p_image->y1, (OPJ_INT32)l_img_comp->dy);
  
-@@ -11161,10 +11151,8 @@ static void opj_get_tile_dimensions(opj_image_t * l_image,
+@@ -12304,10 +12294,8 @@ static void opj_get_tile_dimensions(opj_image_t * l_image,
  
      *l_width  = (OPJ_UINT32)(l_tilec->x1 - l_tilec->x0);
      *l_height = (OPJ_UINT32)(l_tilec->y1 - l_tilec->y0);
