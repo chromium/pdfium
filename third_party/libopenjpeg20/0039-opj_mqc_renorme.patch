@@ -1,0 +1,16 @@
+diff --git a/third_party/libopenjpeg20/mqc.c b/third_party/libopenjpeg20/mqc.c
+index 4cbfabd03..3caab9e7c 100644
+--- a/third_party/libopenjpeg20/mqc.c
++++ b/third_party/libopenjpeg20/mqc.c
+@@ -370,11 +370,6 @@ void opj_mqc_erterm_enc(opj_mqc_t *mqc)
+     }
+ }
+ 
+-static INLINE void opj_mqc_renorme(opj_mqc_t *mqc)
+-{
+-    opj_mqc_renorme_macro(mqc, mqc->a, mqc->c, mqc->ct);
+-}
+-
+ /**
+ Encode the most probable symbol
+ @param mqc MQC handle

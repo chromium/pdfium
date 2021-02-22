@@ -1,8 +1,8 @@
 diff --git a/third_party/libopenjpeg20/jp2.c b/third_party/libopenjpeg20/jp2.c
-index 8dc1ecbe6..61b3f5821 100644
+index 7c065ba74..a5790b267 100644
 --- a/third_party/libopenjpeg20/jp2.c
 +++ b/third_party/libopenjpeg20/jp2.c
-@@ -1073,8 +1073,8 @@ static OPJ_BOOL opj_jp2_apply_pclr(opj_image_t *image,
+@@ -1079,8 +1079,8 @@ static OPJ_BOOL opj_jp2_apply_pclr(opj_image_t *image,
              assert(pcol == 0);
              new_comps[i] = old_comps[cmp];
          } else {
@@ -13,7 +13,7 @@ index 8dc1ecbe6..61b3f5821 100644
          }
  
          /* Palette mapping: */
-@@ -1102,7 +1102,7 @@ static OPJ_BOOL opj_jp2_apply_pclr(opj_image_t *image,
+@@ -1108,7 +1108,7 @@ static OPJ_BOOL opj_jp2_apply_pclr(opj_image_t *image,
          pcol = cmap[i].pcol;
          src = old_comps[cmp].data;
          assert(src); /* verified above */
@@ -22,7 +22,7 @@ index 8dc1ecbe6..61b3f5821 100644
  
          /* Direct use: */
          if (cmap[i].mtyp == 0) {
-@@ -1112,8 +1112,8 @@ static OPJ_BOOL opj_jp2_apply_pclr(opj_image_t *image,
+@@ -1118,8 +1118,8 @@ static OPJ_BOOL opj_jp2_apply_pclr(opj_image_t *image,
                  dst[j] = src[j];
              }
          } else {

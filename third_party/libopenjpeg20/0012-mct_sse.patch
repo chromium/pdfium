@@ -1,8 +1,8 @@
 diff --git a/third_party/libopenjpeg20/mct.c b/third_party/libopenjpeg20/mct.c
-index b79d4b87c..81ec223d8 100644
+index 88c8f4092..c4c2e732e 100644
 --- a/third_party/libopenjpeg20/mct.c
 +++ b/third_party/libopenjpeg20/mct.c
-@@ -37,13 +37,16 @@
+@@ -37,13 +37,15 @@
   * POSSIBILITY OF SUCH DAMAGE.
   */
  
@@ -18,11 +18,10 @@ index b79d4b87c..81ec223d8 100644
  #endif
 -#ifdef __SSE4_1__
 +#if defined(__SSE4_1__) && !defined(_M_IX86) && !defined(__i386)
-+#define USE_SSE4
  #include <smmintrin.h>
  #endif
  
-@@ -72,7 +75,7 @@ const OPJ_FLOAT64 * opj_mct_get_mct_norms_real()
+@@ -72,7 +74,7 @@ const OPJ_FLOAT64 * opj_mct_get_mct_norms_real()
  /* <summary> */
  /* Forward reversible MCT. */
  /* </summary> */
@@ -31,7 +30,7 @@ index b79d4b87c..81ec223d8 100644
  void opj_mct_encode(
      OPJ_INT32* OPJ_RESTRICT c0,
      OPJ_INT32* OPJ_RESTRICT c1,
-@@ -141,7 +144,7 @@ void opj_mct_encode(
+@@ -141,7 +143,7 @@ void opj_mct_encode(
  /* <summary> */
  /* Inverse reversible MCT. */
  /* </summary> */
@@ -40,19 +39,19 @@ index b79d4b87c..81ec223d8 100644
  void opj_mct_decode(
      OPJ_INT32* OPJ_RESTRICT c0,
      OPJ_INT32* OPJ_RESTRICT c1,
-@@ -209,7 +212,7 @@ OPJ_FLOAT64 opj_mct_getnorm(OPJ_UINT32 compno)
- /* <summary> */
- /* Forward irreversible MCT. */
- /* </summary> */
--#ifdef __SSE4_1__
-+#ifdef USE_SSE4
- void opj_mct_encode_real(
-     OPJ_INT32* OPJ_RESTRICT c0,
-     OPJ_INT32* OPJ_RESTRICT c1,
-@@ -389,7 +392,7 @@ void opj_mct_decode_real(
+@@ -216,7 +218,7 @@ void opj_mct_encode_real(
      OPJ_SIZE_T n)
  {
-     OPJ_UINT32 i;
+     OPJ_SIZE_T i;
+-#ifdef __SSE__
++#ifdef USE_SSE
+     const __m128 YR = _mm_set1_ps(0.299f);
+     const __m128 YG = _mm_set1_ps(0.587f);
+     const __m128 YB = _mm_set1_ps(0.114f);
+@@ -286,7 +288,7 @@ void opj_mct_decode_real(
+     OPJ_SIZE_T n)
+ {
+     OPJ_SIZE_T i;
 -#ifdef __SSE__
 +#ifdef USE_SSE
      __m128 vrv, vgu, vgv, vbu;
