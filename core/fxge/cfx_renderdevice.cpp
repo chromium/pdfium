@@ -30,6 +30,7 @@
 #include "core/fxge/text_char_pos.h"
 #include "core/fxge/text_glyph_pos.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/span.h"
 
@@ -332,6 +333,11 @@ bool CheckSimpleLinePath(pdfium::span<const FX_PATHPOINT> points,
     return false;
   }
 
+  // A special case that all points are identical, zero area is formed and no
+  // thin line needs to be drawn.
+  if (points[0].m_Point == points[1].m_Point)
+    return true;
+
   for (size_t i = 0; i < 2; i++) {
     CFX_PointF point = points[i].m_Point;
     if (adjust) {
@@ -425,22 +431,21 @@ bool GetZeroAreaPath(pdfium::span<const FX_PATHPOINT> points,
   if (CheckPalindromicPath(points, new_path, thin))
     return true;
 
-  int start_point = 0;
   for (size_t i = 0; i < points.size(); i++) {
     FXPT_TYPE point_type = points[i].m_Type;
     if (point_type == FXPT_TYPE::MoveTo) {
-      start_point = i;
+      DCHECK_EQ(0, i);
       continue;
     }
 
     if (point_type == FXPT_TYPE::BezierTo) {
       i += 2;
+      DCHECK(i < points.size());
       continue;
     }
 
     DCHECK(point_type == FXPT_TYPE::LineTo);
-    int next_index =
-        (i + 1 - start_point) % (points.size() - start_point) + start_point;
+    int next_index = (i + 1) % (points.size());
     const FX_PATHPOINT& next = points[next_index];
     if (next.m_Type == FXPT_TYPE::BezierTo || next.m_Type == FXPT_TYPE::MoveTo)
       continue;
@@ -691,12 +696,39 @@ bool CFX_RenderDevice::DrawPathWithBlend(
         return true;
     }
   }
+
   if (fill && stroke_alpha == 0 && !fill_options.stroke &&
       !fill_options.text_mode) {
-    // TODO(crbug.com/pdfium/1638): Make DrawZeroAreaPath() only process a sub
-    // path instead the whole path.
-    DrawZeroAreaPath(pPathData->GetPoints(), pObject2Device,
-                     !!m_pDeviceDriver->GetDriverType(),
+    bool adjust = !!m_pDeviceDriver->GetDriverType();
+    std::vector<FX_PATHPOINT> sub_path;
+    for (size_t i = 0; i < points.size(); i++) {
+      FXPT_TYPE point_type = points[i].m_Type;
+      if (point_type == FXPT_TYPE::MoveTo) {
+        // Process the exisitng sub path.
+        DrawZeroAreaPath(sub_path, pObject2Device, adjust,
+                         fill_options.aliased_path, fill_color, fill_alpha,
+                         blend_type);
+        sub_path.clear();
+
+        // Start forming the next sub path.
+        sub_path.push_back(points[i]);
+        continue;
+      }
+
+      if (point_type == FXPT_TYPE::BezierTo) {
+        sub_path.push_back(points[i]);
+        sub_path.push_back(points[i + 1]);
+        sub_path.push_back(points[i + 2]);
+        i += 2;
+        continue;
+      }
+
+      DCHECK(point_type == FXPT_TYPE::LineTo);
+      sub_path.push_back(points[i]);
+      continue;
+    }
+    // Process the last sub paths.
+    DrawZeroAreaPath(sub_path, pObject2Device, adjust,
                      fill_options.aliased_path, fill_color, fill_alpha,
                      blend_type);
   }

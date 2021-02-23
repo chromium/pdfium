@@ -1,0 +1,57 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+  /MediaBox [0 0 400 400]
+  /Resources <<
+    /ExtGState <<
+      /GS1 <<
+        /ca 1.0
+      >>
+    >>
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+/GS1 gs
+0 0 1 rg
+% The 1st sub path.
+50 350 m
+200 320 l
+50 350 l
+% The 2nd sub path.
+100 300 m
+50 300 l
+200 300 l
+300 200 l
+270 230 l
+% The 3rd sub path.
+200 50 m
+350 50 l
+200 50 l
+200 100 l
+200 50 l
+f
+Q
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
