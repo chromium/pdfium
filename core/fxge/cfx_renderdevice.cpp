@@ -314,6 +314,167 @@ bool ShouldDrawDeviceText(const CFX_Font* pFont,
   return true;
 }
 
+// Returns true if the simple path contains 3 points which draw a line from
+// A->B->A and form a zero area.
+bool CheckSimpleLinePath(pdfium::span<const FX_PATHPOINT> points,
+                         const CFX_Matrix* matrix,
+                         bool adjust,
+                         CFX_PathData* new_path,
+                         bool* thin,
+                         bool* set_identity) {
+  if (points.size() != 3)
+    return false;
+
+  if (points[0].m_Type != FXPT_TYPE::MoveTo ||
+      points[1].m_Type != FXPT_TYPE::LineTo ||
+      points[2].m_Type != FXPT_TYPE::LineTo ||
+      points[0].m_Point != points[2].m_Point) {
+    return false;
+  }
+
+  for (size_t i = 0; i < 2; i++) {
+    CFX_PointF point = points[i].m_Point;
+    if (adjust) {
+      if (matrix)
+        point = matrix->Transform(point);
+
+      point = CFX_PointF(static_cast<int>(point.x) + 0.5f,
+                         static_cast<int>(point.y) + 0.5f);
+    }
+    new_path->AppendPoint(point,
+                          i == 0 ? FXPT_TYPE::MoveTo : FXPT_TYPE::LineTo);
+  }
+  if (adjust && matrix)
+    *set_identity = true;
+
+  // Note, both x and y coordinates of the end points need to be different.
+  if (points[0].m_Point.x != points[1].m_Point.x &&
+      points[0].m_Point.y != points[1].m_Point.y) {
+    *thin = true;
+  }
+  return true;
+}
+
+// Returns true if `points` is palindromic and forms zero area. Otherwise,
+// returns false.
+bool CheckPalindromicPath(pdfium::span<const FX_PATHPOINT> points,
+                          CFX_PathData* new_path,
+                          bool* thin) {
+  if (points.size() <= 3 || !(points.size() % 2))
+    return false;
+
+  const int mid = points.size() / 2;
+  bool zero_area = true;
+  CFX_PathData temp_path;
+  for (int i = 0; i < mid; i++) {
+    if (!(points[mid - i - 1].m_Point == points[mid + i + 1].m_Point &&
+          points[mid - i - 1].m_Type != FXPT_TYPE::BezierTo &&
+          points[mid + i + 1].m_Type != FXPT_TYPE::BezierTo)) {
+      zero_area = false;
+      break;
+    }
+
+    temp_path.AppendPoint(points[mid - i].m_Point, FXPT_TYPE::MoveTo);
+    temp_path.AppendPoint(points[mid - i - 1].m_Point, FXPT_TYPE::LineTo);
+  }
+  if (!zero_area)
+    return false;
+
+  new_path->Append(&temp_path, nullptr);
+  *thin = true;
+  return true;
+}
+
+bool IsFoldingVerticalLine(const CFX_PointF& a,
+                           const CFX_PointF& b,
+                           const CFX_PointF& c) {
+  return a.x == b.x && b.x == c.x && (b.y - a.y) * (b.y - c.y) > 0;
+}
+
+bool IsFoldingHorizontalLine(const CFX_PointF& a,
+                             const CFX_PointF& b,
+                             const CFX_PointF& c) {
+  return a.y == b.y && b.y == c.y && (b.x - a.x) * (b.x - c.x) > 0;
+}
+
+bool IsFoldingDiagonalLine(const CFX_PointF& a,
+                           const CFX_PointF& b,
+                           const CFX_PointF& c) {
+  return a.x != b.x && c.x != b.x && a.y != b.y && c.y != b.y &&
+         (a.y - b.y) * (c.x - b.x) == (c.y - b.y) * (a.x - b.x);
+}
+
+bool GetZeroAreaPath(pdfium::span<const FX_PATHPOINT> points,
+                     const CFX_Matrix* matrix,
+                     bool adjust,
+                     CFX_PathData* new_path,
+                     bool* thin,
+                     bool* set_identity) {
+  *set_identity = false;
+
+  // TODO(crbug.com/pdfium/1639): Need to handle the case when there are
+  // only 2 points in the path that forms a zero area.
+  if (points.size() < 3)
+    return false;
+
+  if (CheckSimpleLinePath(points, matrix, adjust, new_path, thin,
+                          set_identity)) {
+    return true;
+  }
+
+  if (CheckPalindromicPath(points, new_path, thin))
+    return true;
+
+  int start_point = 0;
+  for (size_t i = 0; i < points.size(); i++) {
+    FXPT_TYPE point_type = points[i].m_Type;
+    if (point_type == FXPT_TYPE::MoveTo) {
+      start_point = i;
+      continue;
+    }
+
+    if (point_type == FXPT_TYPE::BezierTo) {
+      i += 2;
+      continue;
+    }
+
+    DCHECK(point_type == FXPT_TYPE::LineTo);
+    int next_index =
+        (i + 1 - start_point) % (points.size() - start_point) + start_point;
+    const FX_PATHPOINT& next = points[next_index];
+    if (next.m_Type == FXPT_TYPE::BezierTo || next.m_Type == FXPT_TYPE::MoveTo)
+      continue;
+
+    const FX_PATHPOINT& prev = points[i - 1];
+    const FX_PATHPOINT& cur = points[i];
+    if (IsFoldingVerticalLine(prev.m_Point, cur.m_Point, next.m_Point)) {
+      bool use_prev = fabs(cur.m_Point.y - prev.m_Point.y) <
+                      fabs(cur.m_Point.y - next.m_Point.y);
+      const FX_PATHPOINT& start = use_prev ? prev : cur;
+      const FX_PATHPOINT& end = use_prev ? points[next_index - 1] : next;
+      new_path->AppendPoint(start.m_Point, FXPT_TYPE::MoveTo);
+      new_path->AppendPoint(end.m_Point, FXPT_TYPE::LineTo);
+      continue;
+    }
+
+    if (IsFoldingHorizontalLine(prev.m_Point, cur.m_Point, next.m_Point) ||
+        IsFoldingDiagonalLine(prev.m_Point, cur.m_Point, next.m_Point)) {
+      bool use_prev = fabs(cur.m_Point.x - prev.m_Point.x) <
+                      fabs(cur.m_Point.x - next.m_Point.x);
+      const FX_PATHPOINT& start = use_prev ? prev : cur;
+      const FX_PATHPOINT& end = use_prev ? points[next_index - 1] : next;
+      new_path->AppendPoint(start.m_Point, FXPT_TYPE::MoveTo);
+      new_path->AppendPoint(end.m_Point, FXPT_TYPE::LineTo);
+      continue;
+    }
+  }
+
+  size_t new_path_size = new_path->GetPoints().size();
+  if (points.size() > 3 && new_path_size > 0)
+    *thin = true;
+  return new_path_size != 0;
+}
+
 }  // namespace
 
 CFX_RenderDevice::CFX_RenderDevice() = default;
@@ -535,9 +696,11 @@ bool CFX_RenderDevice::DrawPathWithBlend(
     CFX_PathData newPath;
     bool bThin = false;
     bool setIdentity = false;
-    if (pPathData->GetZeroAreaPath(pObject2Device,
-                                   !!m_pDeviceDriver->GetDriverType(), &newPath,
-                                   &bThin, &setIdentity)) {
+    // TODO(crbug.com/pdfium/1638): GetZeroAreaPath() should only process a sub
+    // path instead the whole path.
+    if (GetZeroAreaPath(pPathData->GetPoints(), pObject2Device,
+                        !!m_pDeviceDriver->GetDriverType(), &newPath, &bThin,
+                        &setIdentity)) {
       CFX_GraphStateData graphState;
       graphState.m_LineWidth = 0.0f;
 
