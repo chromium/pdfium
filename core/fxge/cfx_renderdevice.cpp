@@ -693,33 +693,12 @@ bool CFX_RenderDevice::DrawPathWithBlend(
   }
   if (fill && stroke_alpha == 0 && !fill_options.stroke &&
       !fill_options.text_mode) {
-    CFX_PathData newPath;
-    bool bThin = false;
-    bool setIdentity = false;
-    // TODO(crbug.com/pdfium/1638): GetZeroAreaPath() should only process a sub
+    // TODO(crbug.com/pdfium/1638): Make DrawZeroAreaPath() only process a sub
     // path instead the whole path.
-    if (GetZeroAreaPath(pPathData->GetPoints(), pObject2Device,
-                        !!m_pDeviceDriver->GetDriverType(), &newPath, &bThin,
-                        &setIdentity)) {
-      CFX_GraphStateData graphState;
-      graphState.m_LineWidth = 0.0f;
-
-      uint32_t strokecolor = fill_color;
-      if (bThin)
-        strokecolor = (((fill_alpha >> 2) << 24) | (strokecolor & 0x00ffffff));
-
-      const CFX_Matrix* pMatrix = nullptr;
-      if (pObject2Device && !pObject2Device->IsIdentity() && !setIdentity)
-        pMatrix = pObject2Device;
-
-      CFX_FillRenderOptions path_options;
-      path_options.zero_area = true;
-      if (fill_options.aliased_path)
-        path_options.aliased_path = true;
-
-      m_pDeviceDriver->DrawPath(&newPath, pMatrix, &graphState, 0, strokecolor,
-                                path_options, blend_type);
-    }
+    DrawZeroAreaPath(pPathData->GetPoints(), pObject2Device,
+                     !!m_pDeviceDriver->GetDriverType(),
+                     fill_options.aliased_path, fill_color, fill_alpha,
+                     blend_type);
   }
 
   if (fill && fill_alpha && stroke_alpha < 0xff && fill_options.stroke) {
@@ -836,6 +815,43 @@ bool CFX_RenderDevice::DrawCosmeticLine(
   path.AppendPoint(ptLineTo, FXPT_TYPE::LineTo);
   return m_pDeviceDriver->DrawPath(&path, nullptr, &graph_state, 0, color,
                                    fill_options, blend_type);
+}
+
+void CFX_RenderDevice::DrawZeroAreaPath(const std::vector<FX_PATHPOINT>& path,
+                                        const CFX_Matrix* matrix,
+                                        bool adjust,
+                                        bool aliased_path,
+                                        uint32_t fill_color,
+                                        uint8_t fill_alpha,
+                                        BlendMode blend_type) {
+  if (path.empty())
+    return;
+
+  CFX_PathData new_path;
+  bool thin = false;
+  bool set_identity = false;
+
+  if (!GetZeroAreaPath(path, matrix, adjust, &new_path, &thin, &set_identity))
+    return;
+
+  CFX_GraphStateData graph_state;
+  graph_state.m_LineWidth = 0.0f;
+
+  uint32_t stroke_color = fill_color;
+  if (thin)
+    stroke_color = (((fill_alpha >> 2) << 24) | (stroke_color & 0x00ffffff));
+
+  const CFX_Matrix* new_matrix = nullptr;
+  if (matrix && !matrix->IsIdentity() && !set_identity)
+    new_matrix = matrix;
+
+  CFX_FillRenderOptions path_options;
+  path_options.zero_area = true;
+  if (aliased_path)
+    path_options.aliased_path = true;
+
+  m_pDeviceDriver->DrawPath(&new_path, new_matrix, &graph_state, 0,
+                            stroke_color, path_options, blend_type);
 }
 
 bool CFX_RenderDevice::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
