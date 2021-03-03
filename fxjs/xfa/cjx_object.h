@@ -248,8 +248,8 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
                                                      XFA_Element eType) const;
   CXFA_Node* GetOrCreatePropertyInternal(int32_t index, XFA_Element eType);
 
-  void OnChanged(XFA_Attribute eAttr, bool bNotify, bool bScriptModify);
-  void OnChanging(XFA_Attribute eAttr, bool bNotify);
+  void OnChanging(XFA_Attribute eAttr);
+  void OnChanged(XFA_Attribute eAttr, bool bScriptModify);
 
   // Returns a pointer to the XML node that needs to be updated with the new
   // attribute value. |nullptr| if no update is needed.

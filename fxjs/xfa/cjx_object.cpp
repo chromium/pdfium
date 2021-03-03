@@ -371,10 +371,14 @@ XFA_AttributeValue CJX_Object::GetEnum(XFA_Attribute eAttr) const {
 void CJX_Object::SetMeasure(XFA_Attribute eAttr,
                             const CXFA_Measurement& mValue,
                             bool bNotify) {
+  // Can't short-circuit update here when the value is the same since it
+  // might have come from further up the chain from where we are setting it.
   uint32_t key = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
-  OnChanging(eAttr, bNotify);
+  if (bNotify)
+    OnChanging(eAttr);
   SetMapModuleMeasurement(key, mValue);
-  OnChanged(eAttr, bNotify, false);
+  if (bNotify)
+    OnChanged(eAttr, false);
 }
 
 Optional<CXFA_Measurement> CJX_Object::TryMeasure(XFA_Attribute eAttr,
@@ -418,11 +422,16 @@ void CJX_Object::SetCDataImpl(XFA_Attribute eAttr,
                               bool bScriptModify) {
   CXFA_Node* xfaObj = GetXFANode();
   uint32_t key = GetMapKey_Element(xfaObj->GetElementType(), eAttr);
-  OnChanging(eAttr, bNotify);
-  SetMapModuleString(key, wsValue);
-  if (eAttr == XFA_Attribute::Name)
-    xfaObj->UpdateNameHash();
-  OnChanged(eAttr, bNotify, bScriptModify);
+  Optional<WideString> old_value = GetMapModuleString(key);
+  if (!old_value.has_value() || old_value.value() != wsValue) {
+    if (bNotify)
+      OnChanging(eAttr);
+    SetMapModuleString(key, wsValue);
+    if (eAttr == XFA_Attribute::Name)
+      xfaObj->UpdateNameHash();
+    if (bNotify)
+      OnChanged(eAttr, bScriptModify);
+  }
 
   if (!xfaObj->IsNeedSavingXMLNode() || eAttr == XFA_Attribute::QualifiedName ||
       eAttr == XFA_Attribute::BindingNode) {
@@ -461,12 +470,16 @@ void CJX_Object::SetAttributeValueImpl(const WideString& wsValue,
   auto* xfaObj = GetXFANode();
   uint32_t key =
       GetMapKey_Element(xfaObj->GetElementType(), XFA_Attribute::Value);
-
-  OnChanging(XFA_Attribute::Value, bNotify);
-  SetMapModuleString(key, wsValue);
-  OnChanged(XFA_Attribute::Value, bNotify, bScriptModify);
-  if (xfaObj->IsNeedSavingXMLNode())
-    xfaObj->SetToXML(wsXMLValue);
+  Optional<WideString> old_value = GetMapModuleString(key);
+  if (!old_value.has_value() || old_value.value() != wsValue) {
+    if (bNotify)
+      OnChanging(XFA_Attribute::Value);
+    SetMapModuleString(key, wsValue);
+    if (bNotify)
+      OnChanged(XFA_Attribute::Value, bScriptModify);
+    if (xfaObj->IsNeedSavingXMLNode())
+      xfaObj->SetToXML(wsXMLValue);
+  }
 }
 
 Optional<WideString> CJX_Object::TryCData(XFA_Attribute eAttr,
@@ -478,6 +491,7 @@ Optional<WideString> CJX_Object::TryCData(XFA_Attribute eAttr,
 
   if (!bUseDefault)
     return pdfium::nullopt;
+
   return GetXFANode()->GetDefaultCData(eAttr);
 }
 
@@ -485,10 +499,14 @@ CFX_XMLElement* CJX_Object::SetValue(XFA_Attribute eAttr,
                                      int32_t value,
                                      bool bNotify) {
   uint32_t key = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
-  OnChanging(eAttr, bNotify);
-  SetMapModuleValue(key, value);
-  OnChanged(eAttr, bNotify, false);
-
+  Optional<int32_t> old_value = GetMapModuleValue(key);
+  if (!old_value.has_value() || old_value.value() != value) {
+    if (bNotify)
+      OnChanging(eAttr);
+    SetMapModuleValue(key, value);
+    if (bNotify)
+      OnChanged(eAttr, false);
+  }
   CXFA_Node* pNode = GetXFANode();
   return pNode->IsNeedSavingXMLNode() ? ToXMLElement(pNode->GetXMLMappingNode())
                                       : nullptr;
@@ -915,20 +933,23 @@ void CJX_Object::MoveBufferMapData(CXFA_Object* pSrcObj, CXFA_Object* pDstObj) {
   ToNode(pSrcObj)->JSObject()->MoveBufferMapData(pDstObj);
 }
 
-void CJX_Object::OnChanging(XFA_Attribute eAttr, bool bNotify) {
-  if (!bNotify || !GetXFANode()->IsInitialized())
+void CJX_Object::OnChanging(XFA_Attribute eAttr) {
+  if (!GetXFANode()->IsInitialized())
     return;
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
-  if (pNotify)
-    pNotify->OnValueChanging(GetXFANode(), eAttr);
+  if (!pNotify)
+    return;
+
+  pNotify->OnValueChanging(GetXFANode(), eAttr);
 }
 
 void CJX_Object::OnChanged(XFA_Attribute eAttr,
-                           bool bNotify,
                            bool bScriptModify) {
-  if (bNotify && GetXFANode()->IsInitialized())
-    GetXFANode()->SendAttributeChangeMessage(eAttr, bScriptModify);
+  if (!GetXFANode()->IsInitialized())
+    return;
+
+  GetXFANode()->SendAttributeChangeMessage(eAttr, bScriptModify);
 }
 
 CJX_Object::CalcData* CJX_Object::GetOrCreateCalcData(cppgc::Heap* heap) {
