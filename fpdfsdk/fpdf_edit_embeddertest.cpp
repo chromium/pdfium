@@ -2937,23 +2937,27 @@ TEST_F(FPDFEditEmbedderTest, AddCIDFontText) {
 }
 #endif  // defined(OS_LINUX) || defined(OS_CHROMEOS)
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+// TODO(crbug.com/pdfium/1651): Fix this issue and enable the test for Skia.
+#if defined(_SKIA_SUPPORT_)
 #define MAYBE_SaveAndRender DISABLED_SaveAndRender
 #else
 #define MAYBE_SaveAndRender SaveAndRender
 #endif
 TEST_F(FPDFEditEmbedderTest, MAYBE_SaveAndRender) {
-  const char md5[] = "3c20472b0552c0c22b88ab1ed8c6202b";
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+  static constexpr char kChecksum[] = "0e8b079e349e34f64211c495845a3529";
+#else
+  static constexpr char kChecksum[] = "3c20472b0552c0c22b88ab1ed8c6202b";
+#endif
   {
     ASSERT_TRUE(OpenDocument("bug_779.pdf"));
     FPDF_PAGE page = LoadPage(0);
     ASSERT_NE(nullptr, page);
 
-    // Now add a more complex blue path.
+    // Now add a more complex green path.
     FPDF_PAGEOBJECT green_path = FPDFPageObj_CreateNewPath(20, 20);
     EXPECT_TRUE(FPDFPageObj_SetFillColor(green_path, 0, 255, 0, 200));
-    // TODO(npm): stroking will cause the MD5s to differ.
+    // TODO(npm): stroking will cause the checksums to differ.
     EXPECT_TRUE(FPDFPath_SetDrawMode(green_path, FPDF_FILLMODE_WINDING, 0));
     EXPECT_TRUE(FPDFPath_LineTo(green_path, 20, 63));
     EXPECT_TRUE(FPDFPath_BezierTo(green_path, 55, 55, 78, 78, 90, 90));
@@ -2963,7 +2967,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_SaveAndRender) {
     EXPECT_TRUE(FPDFPath_Close(green_path));
     FPDFPage_InsertObject(page, green_path);
     ScopedFPDFBitmap page_bitmap = RenderLoadedPage(page);
-    CompareBitmap(page_bitmap.get(), 612, 792, md5);
+    CompareBitmap(page_bitmap.get(), 612, 792, kChecksum);
 
     // Now save the result, closing the page and document
     EXPECT_TRUE(FPDFPage_GenerateContent(page));
@@ -2971,7 +2975,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_SaveAndRender) {
     UnloadPage(page);
   }
 
-  VerifySavedDocument(612, 792, md5);
+  VerifySavedDocument(612, 792, kChecksum);
 }
 
 TEST_F(FPDFEditEmbedderTest, AddMark) {
