@@ -21,6 +21,7 @@
 /tools/clang
 /tools/code_coverage
 /tools/memory
+/tools/skia_goldctl
 /v8
 /xcodebuild
 .DS_Store

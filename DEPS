@@ -203,6 +203,40 @@ deps = {
     Var('chromium_git') + '/chromium/src/tools/memory@' +
         Var('tools_memory_revision'),
 
+  # TODO(crbug.com/pdfium/1650): Set up autorollers for goldctl.
+  'tools/skia_goldctl/linux': {
+    'packages': [
+      {
+        'package': 'skia/tools/goldctl/linux-amd64',
+        'version': 'git_revision:9476457a4a8acb6b45c61c11fa49dd2e9fccc10b',
+      }
+    ],
+    'dep_type': 'cipd',
+    'condition': 'checkout_linux',
+  },
+
+  'tools/skia_goldctl/mac': {
+    'packages': [
+      {
+        'package': 'skia/tools/goldctl/mac-amd64',
+        'version': 'git_revision:9476457a4a8acb6b45c61c11fa49dd2e9fccc10b',
+      }
+    ],
+    'dep_type': 'cipd',
+    'condition': 'checkout_mac',
+  },
+
+  'tools/skia_goldctl/win': {
+    'packages': [
+      {
+        'package': 'skia/tools/goldctl/windows-amd64',
+        'version': 'git_revision:9476457a4a8acb6b45c61c11fa49dd2e9fccc10b',
+      }
+    ],
+    'dep_type': 'cipd',
+    'condition': 'checkout_win',
+  },
+
   'v8':
     Var('chromium_git') + '/v8/v8.git@' + Var('v8_revision'),
 }
