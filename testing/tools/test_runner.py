@@ -424,7 +424,7 @@ class TestRunner:
     self.result_suppressed_cases = []
 
     gold_results = []
-    if self.test_type not in TEXT_TESTS:
+    if self.test_type not in TEXT_TESTS and self.options.gold_output_dir:
       # Clear out and create top level gold output directory before starting
       skia_gold.clear_gold_output_dir(self.options.gold_output_dir)
 
