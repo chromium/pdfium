@@ -38,6 +38,7 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
+#include "third_party/skia/include/core/SkBitmap.h"
 #include "third_party/skia/include/core/SkCanvas.h"
 #include "third_party/skia/include/core/SkClipOp.h"
 #include "third_party/skia/include/core/SkColorPriv.h"
@@ -45,6 +46,8 @@
 #include "third_party/skia/include/core/SkPaint.h"
 #include "third_party/skia/include/core/SkPath.h"
 #include "third_party/skia/include/core/SkRSXform.h"
+#include "third_party/skia/include/core/SkRect.h"
+#include "third_party/skia/include/core/SkSamplingOptions.h"
 #include "third_party/skia/include/core/SkShader.h"
 #include "third_party/skia/include/core/SkStream.h"
 #include "third_party/skia/include/core/SkTextBlob.h"
@@ -2385,7 +2388,9 @@ bool CFX_SkiaDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
   SkBitmap skDstBitmap;
   skDstBitmap.installPixels(dstImageInfo, dstBuffer, dstRowBytes);
   SkCanvas canvas(skDstBitmap);
-  canvas.drawBitmap(skSrcBitmap, left, top, nullptr);
+  canvas.drawImageRect(skSrcBitmap.asImage(),
+                       SkRect::MakeXYWH(left, top, dstWidth, dstHeight),
+                       SkSamplingOptions(), /*paint=*/nullptr);
   return true;
 #endif  // defined(_SKIA_SUPPORT_)
 
@@ -2548,7 +2553,9 @@ bool CFX_SkiaDeviceDriver::StartDIBits(
         }
       }
     } else {
-      m_pCanvas->drawBitmap(skBitmap, 0, 0, &paint);
+      m_pCanvas->drawImageRect(skBitmap.asImage(),
+                               SkRect::MakeWH(width, height),
+                               SkSamplingOptions(), &paint);
     }
   }
   DebugValidate(m_pBitmap, m_pBackdropBitmap);
