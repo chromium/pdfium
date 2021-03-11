@@ -229,6 +229,8 @@ class TestRunner:
     except Exception as e:
       return e
 
+  # TODO(crbug.com/pdfium/1656): Remove when ready to fully switch over to
+  # Skia Gold
   def TestPixel(self, pdf_path, use_ahem):
     cmd_to_run = [
         self.pdfium_test_path, '--send-events', '--png', '--md5',
@@ -299,13 +301,6 @@ class TestRunner:
         action='store_true',
         default=False,
         help='When flag is on, skia gold tests will be run.')
-
-    parser.add_argument(
-        '--run-skia-gold-parallel',
-        action='store_true',
-        default=False,
-        help='When flag is on, skia gold tests will be run in parallel with '
-        '--num_workers amount of processes.')
 
     # TODO: Remove when pdfium recipe stops passing this argument
     parser.add_argument(
@@ -424,17 +419,18 @@ class TestRunner:
     self.result_suppressed_cases = []
 
     gold_results = []
-    if self.test_type not in TEXT_TESTS and self.options.gold_output_dir:
+    if self.test_type not in TEXT_TESTS and self.options.run_skia_gold:
+      assert self.options.gold_output_dir
       # Clear out and create top level gold output directory before starting
       skia_gold.clear_gold_output_dir(self.options.gold_output_dir)
 
     if self.options.num_workers > 1 and len(self.test_cases) > 1:
+      skia_gold_parallel_inputs = []
       try:
         pool = multiprocessing.Pool(self.options.num_workers)
         worker_func = functools.partial(TestOneFileParallel, self)
 
         worker_results = pool.imap(worker_func, self.test_cases)
-        skia_gold_parallel_inputs = []
         for worker_result in worker_results:
           result, input_filename, source_dir = worker_result
           input_path = os.path.join(source_dir, input_filename)
@@ -444,25 +440,27 @@ class TestRunner:
           if self.test_type not in TEXT_TESTS and self.options.run_skia_gold:
             _, image_paths = result
             if image_paths:
-              if self.options.run_skia_gold_parallel:
-                path_filename_tuples = [
-                    (path, input_filename) for path, _ in image_paths
-                ]
-                skia_gold_parallel_inputs.extend(path_filename_tuples)
-              else:
-                for img_path, _ in image_paths:
-                  test_name, skia_success = self.RunSkia(img_path)
-                  gold_results.append((test_name, skia_success, input_filename))
-
-        if skia_gold_parallel_inputs:
-          gold_worker_func = functools.partial(RunSkiaWrapper, self)
-          gold_results = pool.imap(gold_worker_func, skia_gold_parallel_inputs)
+              path_filename_tuples = [
+                  (path, input_filename) for path, _ in image_paths
+              ]
+              skia_gold_parallel_inputs.extend(path_filename_tuples)
 
       except KeyboardInterrupt:
         pool.terminate()
       finally:
         pool.close()
         pool.join()
+
+      if skia_gold_parallel_inputs and self.test_type not in TEXT_TESTS:
+        try:
+          pool = multiprocessing.Pool(self.options.num_workers)
+          gold_worker_func = functools.partial(RunSkiaWrapper, self)
+          gold_results = pool.imap(gold_worker_func, skia_gold_parallel_inputs)
+        except KeyboardInterrupt:
+          pool.terminate()
+        finally:
+          pool.close()
+          pool.join()
     else:
       for test_case in self.test_cases:
         input_filename, input_file_dir = test_case
@@ -487,6 +485,12 @@ class TestRunner:
       else:
         self.skia_gold_failures.append(test_name)
 
+    # For some reason, summary will be cut off from stdout on windows if
+    # _PrintSummary() is called at the end
+    # TODO(crbug.com/pdfium/1657): Once resolved, move _PrintSummary() back
+    # down to the end
+    self._PrintSummary()
+
     if self.surprises:
       self.surprises.sort()
       print('\nUnexpected Successes:')
@@ -500,7 +504,7 @@ class TestRunner:
         print(failure)
 
     if self.skia_gold_unexpected_successes:
-      self.skia_gold_failures.sort()
+      self.skia_gold_unexpected_successes.sort()
       print('\nUnexpected Skia Gold Successes:')
       for surprise in self.skia_gold_unexpected_successes:
         print(surprise)
@@ -510,8 +514,6 @@ class TestRunner:
       print('\nSummary of Skia Gold Failures:')
       for failure in self.skia_gold_failures:
         print(failure)
-
-    self._PrintSummary()
 
     if self.failures:
       if not self.options.ignore_errors:

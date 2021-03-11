@@ -88,7 +88,7 @@ def add_skia_gold_args(parser):
       dest="gold_output_dir",
       help='Path to the dir where diff output image files are saved, '
       'if running locally. If this is a tryjob run, will contain link to skia '
-      'gold CL triage link.')
+      'gold CL triage link. Required with --run-skia-gold.')
 
 
 def clear_gold_output_dir(output_dir):
