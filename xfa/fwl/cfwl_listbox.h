@@ -24,10 +24,8 @@
 #define FWL_ITEMSTATE_LTB_Selected (1L << 0)
 #define FWL_ITEMSTATE_LTB_Focused (1L << 1)
 
-class CFWL_MessageKillFocus;
 class CFWL_MessageMouse;
 class CFWL_MessageMouseWheel;
-class CFX_DIBitmap;
 
 class CFWL_ListBox : public CFWL_Widget {
  public:

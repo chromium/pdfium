@@ -26,6 +26,7 @@
 #define FWL_STATE_CKB_Neutral (2 << (FWL_WGTSTATE_MAX + 2))
 #define FWL_STATE_CKB_CheckMask (3L << (FWL_WGTSTATE_MAX + 2))
 
+class CFWL_MessageKey;
 class CFWL_MessageMouse;
 
 class CFWL_CheckBox final : public CFWL_Widget {

@@ -23,11 +23,8 @@
 #include "xfa/fwl/ifwl_widgetdelegate.h"
 
 class CFWL_App;
-class CFWL_AppImp;
 class CFWL_Event;
-class CFWL_MessageKey;
 class CFWL_Widget;
-class CFWL_WidgetMgr;
 class IFWL_ThemeProvider;
 
 enum class FWL_Type {

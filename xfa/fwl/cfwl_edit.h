@@ -38,7 +38,7 @@
 #define FWL_STYLEEXT_EDT_ShowScrollbarFocus (1L << 25)
 #define FWL_STYLEEXT_EDT_OuterScrollbar (1L << 26)
 
-class CFWL_Edit;
+class CFWL_MessageKey;
 class CFWL_MessageMouse;
 class CFWL_Caret;
 

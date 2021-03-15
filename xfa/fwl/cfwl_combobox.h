@@ -13,9 +13,6 @@
 #include "xfa/fwl/cfwl_listbox.h"
 #include "xfa/fwl/cfwl_widget.h"
 
-class CFWL_ComboBox;
-class CFWL_ListBox;
-
 #define FWL_STYLEEXT_CMB_DropDown (1L << 0)
 #define FWL_STYLEEXT_CMB_Sort (1L << 1)
 #define FWL_STYLEEXT_CMB_OwnerDraw (1L << 3)

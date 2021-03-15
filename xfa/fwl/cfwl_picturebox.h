@@ -9,9 +9,6 @@
 
 #include "xfa/fwl/cfwl_widget.h"
 
-class CFX_DIBitmap;
-class CFWL_Widget;
-
 class CFWL_PictureBox final : public CFWL_Widget {
  public:
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
