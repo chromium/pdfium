@@ -1242,9 +1242,11 @@ class SkiaState {
     while (m_clipIndex > limit) {
       do {
         --m_clipIndex;
-        DCHECK(m_clipIndex >= 0);
-      } while (m_commands[m_clipIndex] != Clip::kSave);
-      m_pDriver->SkiaCanvas()->restore();
+      } while (m_clipIndex >= 0 && m_commands[m_clipIndex] != Clip::kSave);
+      if (m_clipIndex >= 0)
+        m_pDriver->SkiaCanvas()->restore();
+      else
+        m_clipIndex = 0;
     }
     while (m_clipIndex < limit) {
       if (Clip::kSave == m_commands[m_clipIndex]) {
