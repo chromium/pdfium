@@ -17,7 +17,6 @@
 
 class CPDFSDK_InteractiveForm;
 class CPDF_InteractiveForm;
-class CPDF_TextObject;
 struct CJS_DelayData;
 
 class CJS_Document final : public CJS_Object, public Observable {

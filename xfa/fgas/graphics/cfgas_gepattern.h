@@ -11,9 +11,6 @@
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fgas/graphics/cfgas_gegraphics.h"
 
-class CFX_DIBitmap;
-class CFX_Matrix;
-
 class CFGAS_GEPattern final {
  public:
   CFGAS_GEPattern(FX_HatchStyle hatchStyle,

@@ -16,8 +16,6 @@
 #include "third_party/base/optional.h"
 #include "third_party/base/span.h"
 
-class CPDFSDK_FormFillEnvironment;
-
 class CFX_GlobalData {
  public:
   class Delegate {

@@ -12,7 +12,6 @@
 #include "core/fxcrt/unowned_ptr.h"
 
 class CBC_QRCoderErrorCorrectionLevel;
-class CBC_QRCoderMode;
 class CBC_CommonByteMatrix;
 
 class CBC_QRCoder final {

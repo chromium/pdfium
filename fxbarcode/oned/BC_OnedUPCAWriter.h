@@ -14,7 +14,6 @@
 #include "fxbarcode/oned/BC_OnedEANWriter.h"
 
 class CBC_OnedEAN13Writer;
-class CFX_DIBitmap;
 class CFX_Matrix;
 class CFX_RenderDevice;
 

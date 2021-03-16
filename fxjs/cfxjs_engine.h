@@ -28,10 +28,6 @@ class CFXJS_ObjDefinition;
 class CJS_Object;
 class V8TemplateMap;
 
-// CFXJS_ENGINE places no restrictions on this class; it merely passes it
-// on to caller-provided methods.
-class IJS_EventContext;  // A description of the event that caused JS execution.
-
 enum FXJSOBJTYPE {
   FXJSOBJTYPE_DYNAMIC = 0,  // Created by native method and returned to JS.
   FXJSOBJTYPE_STATIC,       // Created by init and hung off of global object.

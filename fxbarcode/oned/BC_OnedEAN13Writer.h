@@ -11,7 +11,6 @@
 #include "core/fxcrt/fx_system.h"
 #include "fxbarcode/oned/BC_OnedEANWriter.h"
 
-class CFX_DIBitmap;
 class CFX_RenderDevice;
 
 class CBC_OnedEAN13Writer final : public CBC_OneDimEANWriter {

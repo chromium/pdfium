@@ -14,9 +14,7 @@
 #include "core/fxge/dib/fx_dib.h"
 #include "fxbarcode/BC_Library.h"
 
-class CBC_Reader;
 class CBC_Writer;
-class CFX_DIBitmap;
 class CFX_Matrix;
 class CFX_RenderDevice;
 

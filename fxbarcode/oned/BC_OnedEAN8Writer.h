@@ -12,7 +12,6 @@
 #include "fxbarcode/BC_Library.h"
 #include "fxbarcode/oned/BC_OnedEANWriter.h"
 
-class CFX_DIBitmap;
 class CFX_RenderDevice;
 
 class CBC_OnedEAN8Writer final : public CBC_OneDimEANWriter {

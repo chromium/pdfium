@@ -21,7 +21,6 @@
 #include "core/fxge/fx_freetype.h"
 
 class CFGAS_GEFont;
-class CFX_FontMapper;
 class IFX_SeekableReadStream;
 
 #if defined(OS_WIN)

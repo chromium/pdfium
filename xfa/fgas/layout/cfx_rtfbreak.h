@@ -15,7 +15,6 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "xfa/fgas/layout/cfx_break.h"
 
-class CFGAS_GEFont;
 class CFX_TextUserData;
 class CFX_TextPiece;
 class TextCharPos;
