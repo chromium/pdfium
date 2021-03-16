@@ -13,7 +13,6 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/ipdfsdk_annothandler.h"
 
-class CFFL_InteractiveFormFiller;
 class CFX_Matrix;
 class CFX_RenderDevice;
 class CPDF_Annot;

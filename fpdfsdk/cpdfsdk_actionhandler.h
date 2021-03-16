@@ -15,7 +15,6 @@
 #include "core/fxcrt/fx_string.h"
 #include "fpdfsdk/cpdfsdk_fieldaction.h"
 
-class CPDFSDK_Annot;
 class CPDFSDK_FormFillEnvironment;
 class CPDF_Dictionary;
 class CPDF_FormField;

@@ -16,7 +16,6 @@
 
 class CPWL_EditImpl;
 class CPWL_Caret;
-struct CPVT_WordPlace;
 
 enum PWL_EDIT_ALIGNFORMAT_H { PEAH_LEFT = 0, PEAH_MIDDLE, PEAH_RIGHT };
 

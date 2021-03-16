@@ -17,7 +17,6 @@
 
 class CPWL_EditImpl;
 class CPWL_EditImpl_Iterator;
-class CPWL_List_Notify;
 class IPVT_FontMap;
 
 class CPWL_ListCtrl {

@@ -14,7 +14,6 @@
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 
 class IPWL_FillerNotify;
-struct CPVT_WordPlace;
 
 class CPWL_ListBox : public CPWL_Wnd, public CPWL_ListCtrl::NotifyIface {
  public:

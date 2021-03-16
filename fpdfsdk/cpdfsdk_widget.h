@@ -20,11 +20,9 @@
 
 class CFX_RenderDevice;
 class CPDF_Annot;
-class CPDF_Dictionary;
 class CPDF_FormControl;
 class CPDF_FormField;
 class CPDF_RenderOptions;
-class CPDF_Stream;
 class CPDFSDK_InteractiveForm;
 class CPDFSDK_PageView;
 struct CPDFSDK_FieldAction;
