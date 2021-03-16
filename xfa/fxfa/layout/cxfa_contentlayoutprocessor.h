@@ -27,8 +27,6 @@
 constexpr float kXFALayoutPrecision = 0.0005f;
 
 class CXFA_ContentLayoutItem;
-class CXFA_ContentLayoutProcessor;
-class CXFA_LayoutProcessor;
 class CXFA_Node;
 class CXFA_ViewLayoutItem;
 class CXFA_ViewLayoutProcessor;

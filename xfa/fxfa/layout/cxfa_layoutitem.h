@@ -15,7 +15,6 @@
 #include "v8/include/cppgc/visitor.h"
 
 class CXFA_ContentLayoutItem;
-class CXFA_LayoutProcessor;
 class CXFA_Node;
 class CXFA_ViewLayoutItem;
 

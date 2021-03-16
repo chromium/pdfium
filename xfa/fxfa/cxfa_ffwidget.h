@@ -31,7 +31,6 @@ class CXFA_FFDocView;
 class CXFA_FFField;
 class CXFA_FFPageView;
 class CXFA_FFWidgetHandler;
-class CXFA_Image;
 class CXFA_Margin;
 enum class FWL_WidgetHit;
 

@@ -38,6 +38,7 @@ class CXFA_FFDocView;
 class CXFA_Font;
 class CXFA_Keep;
 class CXFA_Margin;
+class CXFA_Measurement;
 class CXFA_Occur;
 class CXFA_Para;
 class CXFA_Script;

@@ -14,7 +14,6 @@
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fxfa/fxfa.h"
 
-class CFGAS_FontMgr;
 class CFWL_WidgetMgr;
 class CXFA_FontMgr;
 class CXFA_FWLAdapterWidgetMgr;

@@ -24,7 +24,6 @@ class CXFA_BindItems;
 class CXFA_FFDoc;
 class CXFA_FFWidgetHandler;
 class CXFA_Node;
-class CXFA_Subform;
 class CXFA_ViewLayoutItem;
 
 extern const XFA_AttributeValue gs_EventActivity[];

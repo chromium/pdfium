@@ -15,7 +15,6 @@
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 
-class CXFA_ContentLayoutItem;
 class CXFA_FFWidgetHandler;
 class CXFA_LayoutItem;
 class CXFA_LayoutProcessor;

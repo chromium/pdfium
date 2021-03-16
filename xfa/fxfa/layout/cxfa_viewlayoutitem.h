@@ -13,6 +13,7 @@
 #include "xfa/fxfa/layout/cxfa_layoutitem.h"
 
 class CXFA_FFPageView;
+class CXFA_LayoutProcessor;
 
 class CXFA_ViewLayoutItem final : public CXFA_LayoutItem {
  public:

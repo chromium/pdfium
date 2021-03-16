@@ -21,7 +21,6 @@
 #include "xfa/fxfa/parser/cxfa_document.h"
 
 class CFGAS_PDFFontMgr;
-class CFX_ChecksumContext;
 class CFX_DIBBase;
 class CFX_DIBitmap;
 class CFX_XMLDocument;

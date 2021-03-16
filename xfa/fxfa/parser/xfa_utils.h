@@ -12,7 +12,6 @@
 #include "xfa/fxfa/fxfa_basic.h"
 
 class CFX_XMLElement;
-class CFX_XMLNode;
 class CXFA_LocaleValue;
 class CXFA_Node;
 

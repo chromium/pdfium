@@ -23,6 +23,7 @@
 #include "xfa/fxfa/layout/cxfa_contentlayoutprocessor.h"
 
 class CXFA_LayoutItem;
+class CXFA_LayoutProcessor;
 class CXFA_Node;
 
 class CXFA_ViewLayoutProcessor

@@ -9,10 +9,6 @@
 
 #include <stdint.h>
 
-class CXFA_Measurement;
-enum class XFA_ObjectType;
-struct XFA_SCRIPTATTRIBUTEINFO;
-
 enum XFA_HashCode : uint32_t {
   XFA_HASHCODE_None = 0,
 
