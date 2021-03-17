@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 from __future__ import print_function
+from __future__ import division
 
 import argparse
 import functools
@@ -51,13 +52,17 @@ def TestOneFileParallel(this, test_case):
     raise KeyboardInterruptError()
 
 
-def RunSkiaWrapper(this, img_path_input_filename):
+def RunSkiaWrapper(this, input_chunk):
   """Wrapper to call RunSkia() and redirect output to stdout"""
-  img_path, input_filename = img_path_input_filename
-  multiprocessing_name = multiprocessing.current_process().name
   try:
-    test_name, skia_success = this.RunSkia(img_path, multiprocessing_name)
-    return test_name, skia_success, input_filename
+    results = []
+    for img_path_input_filename in input_chunk:
+      img_path, input_filename = img_path_input_filename
+      multiprocessing_name = multiprocessing.current_process().name
+
+      test_name, skia_success = this.RunSkia(img_path, multiprocessing_name)
+      results.append((test_name, skia_success, input_filename))
+    return results
   except KeyboardInterrupt:
     raise KeyboardInterruptError()
 
@@ -455,7 +460,18 @@ class TestRunner:
         try:
           pool = multiprocessing.Pool(self.options.num_workers)
           gold_worker_func = functools.partial(RunSkiaWrapper, self)
-          gold_results = pool.imap(gold_worker_func, skia_gold_parallel_inputs)
+
+          def chunk_input(whole_list):
+            chunked = []
+            size = len(whole_list) // self.options.num_workers
+            for i in range(0, len(whole_list), size):
+              chunked.append(whole_list[i:i + size])
+            return chunked
+
+          chunked_input = chunk_input(skia_gold_parallel_inputs)
+          pool_results = pool.imap(gold_worker_func, chunked_input)
+          for r in pool_results:
+            gold_results.extend(r)
         except KeyboardInterrupt:
           pool.terminate()
         finally:
