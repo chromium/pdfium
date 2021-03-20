@@ -16,16 +16,16 @@
 #include "xfa/fgas/layout/cfx_textuserdata.h"
 #include "xfa/fgas/layout/fx_linebreak.h"
 
-enum class CFX_BreakType : uint8_t {
-  kNone = 0,
-  kPiece,
-  kLine,
-  kParagraph,
-  kPage
-};
-
 class CFX_Char {
  public:
+  enum class BreakType : uint8_t {
+    kNone = 0,
+    kPiece,
+    kLine,
+    kParagraph,
+    kPage
+  };
+
   static void BidiLine(std::vector<CFX_Char>* chars, size_t iCount);
 
   explicit CFX_Char(uint16_t wCharCode);
@@ -36,12 +36,11 @@ class CFX_Char {
   ~CFX_Char();
 
   FX_CHARTYPE GetCharType() const;
-
   uint16_t char_code() const { return m_wCharCode; }
   int16_t horizonal_scale() const { return m_iHorizontalScale; }
   int16_t vertical_scale() const { return m_iVerticalScale; }
 
-  CFX_BreakType m_dwStatus = CFX_BreakType::kNone;
+  BreakType m_dwStatus = BreakType::kNone;
   FX_BIDICLASS m_iBidiClass = FX_BIDICLASS::kON;
   FX_LINEBREAKTYPE m_eLineBreakType = FX_LINEBREAKTYPE::kUNKNOWN;
   uint32_t m_dwCharStyles = 0;

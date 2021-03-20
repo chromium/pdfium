@@ -81,7 +81,7 @@ class CFDE_TextOut {
     std::deque<Piece> pieces_;
   };
 
-  bool RetrieveLineWidth(CFX_BreakType dwBreakStatus,
+  bool RetrieveLineWidth(CFX_Char::BreakType dwBreakStatus,
                          float* pStartPos,
                          float* pWidth,
                          float* pHeight);
@@ -89,7 +89,7 @@ class CFDE_TextOut {
 
   void Reload(const CFX_RectF& rect);
   void ReloadLinePiece(Line* pLine, const CFX_RectF& rect);
-  bool RetrievePieces(CFX_BreakType dwBreakStatus,
+  bool RetrievePieces(CFX_Char::BreakType dwBreakStatus,
                       bool bReload,
                       const CFX_RectF& rect,
                       size_t* pStartChar,

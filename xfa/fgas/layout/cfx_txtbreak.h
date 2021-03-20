@@ -27,8 +27,9 @@ enum CFX_TxtLineAlignment {
   CFX_TxtLineAlignment_Justified = 1 << 2
 };
 
-inline bool CFX_BreakTypeNoneOrPiece(CFX_BreakType type) {
-  return type == CFX_BreakType::kNone || type == CFX_BreakType::kPiece;
+inline bool CFX_BreakTypeNoneOrPiece(CFX_Char::BreakType type) {
+  return type == CFX_Char::BreakType::kNone ||
+         type == CFX_Char::BreakType::kPiece;
 }
 
 class CFX_TxtBreak final : public CFX_Break {
@@ -68,25 +69,26 @@ class CFX_TxtBreak final : public CFX_Break {
   void SetLineWidth(float fLineWidth);
   void SetAlignment(int32_t iAlignment);
   void SetCombWidth(float fCombWidth);
-  CFX_BreakType EndBreak(CFX_BreakType dwStatus);
+  CFX_Char::BreakType EndBreak(CFX_Char::BreakType dwStatus);
 
   size_t GetDisplayPos(const Run* pTxtRun, TextCharPos* pCharPos) const;
   std::vector<CFX_RectF> GetCharRects(const Run* pTxtRun, bool bCharBBox) const;
-  CFX_BreakType AppendChar(wchar_t wch);
+  CFX_Char::BreakType AppendChar(wchar_t wch);
 
  private:
   void AppendChar_Combination(CFX_Char* pCurChar);
   void AppendChar_Tab(CFX_Char* pCurChar);
-  CFX_BreakType AppendChar_Control(CFX_Char* pCurChar);
-  CFX_BreakType AppendChar_Arabic(CFX_Char* pCurChar);
-  CFX_BreakType AppendChar_Others(CFX_Char* pCurChar);
+  CFX_Char::BreakType AppendChar_Control(CFX_Char* pCurChar);
+  CFX_Char::BreakType AppendChar_Arabic(CFX_Char* pCurChar);
+  CFX_Char::BreakType AppendChar_Others(CFX_Char* pCurChar);
 
   void ResetContextCharStyles();
   void EndBreak_SplitLine(CFX_BreakLine* pNextLine, bool bAllChars);
-  void EndBreak_BidiLine(std::deque<FX_TPO>* tpos, CFX_BreakType dwStatus);
+  void EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
+                         CFX_Char::BreakType dwStatus);
   void EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
                           bool bAllChars,
-                          CFX_BreakType dwStatus);
+                          CFX_Char::BreakType dwStatus);
   int32_t GetBreakPos(std::vector<CFX_Char>* pChars,
                       bool bAllChars,
                       bool bOnlyBrk,

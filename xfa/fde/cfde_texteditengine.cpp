@@ -1072,7 +1072,7 @@ std::vector<TextCharPos> CFDE_TextEditEngine::GetDisplayPos(
 }
 
 void CFDE_TextEditEngine::RebuildPieces() {
-  text_break_.EndBreak(CFX_BreakType::kParagraph);
+  text_break_.EndBreak(CFX_Char::BreakType::kParagraph);
   text_break_.ClearBreakPieces();
 
   char_widths_.clear();
@@ -1091,10 +1091,10 @@ void CFDE_TextEditEngine::RebuildPieces() {
   while (!iter.IsEOF(false)) {
     iter.Next(false);
 
-    CFX_BreakType break_status = text_break_.AppendChar(
+    CFX_Char::BreakType break_status = text_break_.AppendChar(
         password_mode_ ? password_alias_ : iter.GetChar());
     if (iter.IsEOF(false) && CFX_BreakTypeNoneOrPiece(break_status))
-      break_status = text_break_.EndBreak(CFX_BreakType::kParagraph);
+      break_status = text_break_.EndBreak(CFX_Char::BreakType::kParagraph);
 
     if (CFX_BreakTypeNoneOrPiece(break_status))
       continue;

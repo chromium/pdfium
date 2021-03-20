@@ -147,11 +147,11 @@ class CXFA_TextLayout final : public cppgc::GarbageCollected<CXFA_TextLayout> {
                   float* pLinePos,
                   float fSpaceAbove,
                   bool bSavePieces);
-  void AppendTextLine(CFX_BreakType dwStatus,
+  void AppendTextLine(CFX_Char::BreakType dwStatus,
                       float* pLinePos,
                       bool bSavePieces,
                       bool bEndBreak);
-  void EndBreak(CFX_BreakType dwStatus, float* pLinePos, bool bDefault);
+  void EndBreak(CFX_Char::BreakType dwStatus, float* pLinePos, bool bDefault);
   bool IsEnd(bool bSavePieces);
   void UpdateAlign(float fHeight, float fBottom);
   void RenderString(CFX_RenderDevice* pDevice,
