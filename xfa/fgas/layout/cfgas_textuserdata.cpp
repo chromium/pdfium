@@ -4,20 +4,20 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fgas/layout/cfx_textuserdata.h"
+#include "xfa/fgas/layout/cfgas_textuserdata.h"
 
 #include "core/fxcrt/css/cfx_css.h"
 #include "core/fxcrt/css/cfx_csscomputedstyle.h"
 #include "core/fxcrt/css/cfx_cssstyleselector.h"
-#include "xfa/fgas/layout/cfx_linkuserdata.h"
+#include "xfa/fgas/layout/cfgas_linkuserdata.h"
 
-CFX_TextUserData::CFX_TextUserData(
+CFGAS_TextUserData::CFGAS_TextUserData(
     const RetainPtr<CFX_CSSComputedStyle>& pStyle)
     : m_pStyle(pStyle) {}
 
-CFX_TextUserData::CFX_TextUserData(
+CFGAS_TextUserData::CFGAS_TextUserData(
     const RetainPtr<CFX_CSSComputedStyle>& pStyle,
-    const RetainPtr<CFX_LinkUserData>& pLinkData)
+    const RetainPtr<CFGAS_LinkUserData>& pLinkData)
     : m_pStyle(pStyle), m_pLinkData(pLinkData) {}
 
-CFX_TextUserData::~CFX_TextUserData() = default;
+CFGAS_TextUserData::~CFGAS_TextUserData() = default;

@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fgas/layout/cfx_linkuserdata.h"
+#include "xfa/fgas/layout/cfgas_linkuserdata.h"
 
-CFX_LinkUserData::CFX_LinkUserData(const WideString& wsText)
+CFGAS_LinkUserData::CFGAS_LinkUserData(const WideString& wsText)
     : m_wsURLContent(wsText) {}
 
-CFX_LinkUserData::~CFX_LinkUserData() = default;
+CFGAS_LinkUserData::~CFGAS_LinkUserData() = default;

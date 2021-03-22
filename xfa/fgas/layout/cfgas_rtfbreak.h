@@ -16,7 +16,7 @@
 #include "xfa/fgas/layout/cfgas_break.h"
 
 class CFGAS_TextPiece;
-class CFX_TextUserData;
+class CFGAS_TextUserData;
 class TextCharPos;
 
 enum class CFX_RTFLineAlignment {
@@ -35,7 +35,7 @@ class CFGAS_RTFBreak final : public CFGAS_Break {
   void SetLineStartPos(float fLinePos);
 
   void SetAlignment(CFX_RTFLineAlignment align) { m_iAlignment = align; }
-  void SetUserData(const RetainPtr<CFX_TextUserData>& pUserData);
+  void SetUserData(const RetainPtr<CFGAS_TextUserData>& pUserData);
 
   void AddPositionedTab(float fTabPos);
 
@@ -73,7 +73,7 @@ class CFGAS_RTFBreak final : public CFGAS_Break {
   bool m_bPagination;
   std::vector<int32_t> m_PositionedTabs;
   CFX_RTFLineAlignment m_iAlignment;
-  RetainPtr<CFX_TextUserData> m_pUserData;
+  RetainPtr<CFGAS_TextUserData> m_pUserData;
 };
 
 #endif  // XFA_FGAS_LAYOUT_CFGAS_RTFBREAK_H_

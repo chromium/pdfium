@@ -13,7 +13,7 @@
 
 #include "core/fxcrt/fx_unicode.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "xfa/fgas/layout/cfx_textuserdata.h"
+#include "xfa/fgas/layout/cfgas_textuserdata.h"
 #include "xfa/fgas/layout/fx_linebreak.h"
 
 class CFGAS_Char {
@@ -50,7 +50,7 @@ class CFGAS_Char {
   uint16_t m_iBidiOrder = 0;
   int32_t m_iFontSize = 0;
   uint32_t m_dwIdentity = 0;
-  RetainPtr<CFX_TextUserData> m_pUserData;
+  RetainPtr<CFGAS_TextUserData> m_pUserData;
 
  private:
   uint16_t m_wCharCode;

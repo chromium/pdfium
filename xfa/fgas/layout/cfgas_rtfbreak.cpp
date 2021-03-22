@@ -19,7 +19,7 @@
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/cfgas_char.h"
 #include "xfa/fgas/layout/cfgas_textpiece.h"
-#include "xfa/fgas/layout/cfx_textuserdata.h"
+#include "xfa/fgas/layout/cfgas_textuserdata.h"
 #include "xfa/fgas/layout/fx_arabic.h"
 #include "xfa/fgas/layout/fx_linebreak.h"
 
@@ -50,7 +50,8 @@ void CFGAS_RTFBreak::AddPositionedTab(float fTabPos) {
   m_PositionedTabs.insert(it, iTabPos);
 }
 
-void CFGAS_RTFBreak::SetUserData(const RetainPtr<CFX_TextUserData>& pUserData) {
+void CFGAS_RTFBreak::SetUserData(
+    const RetainPtr<CFGAS_TextUserData>& pUserData) {
   if (m_pUserData == pUserData)
     return;
 

@@ -7,7 +7,7 @@
 #include "xfa/fgas/layout/cfgas_breakpiece.h"
 
 #include "third_party/base/check.h"
-#include "xfa/fgas/layout/cfx_textuserdata.h"
+#include "xfa/fgas/layout/cfgas_textuserdata.h"
 
 CFGAS_BreakPiece::CFGAS_BreakPiece() = default;
 

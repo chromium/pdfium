@@ -24,9 +24,9 @@
 #include "xfa/fgas/layout/cfgas_textpiece.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
-class CFX_CSSComputedStyle;
-class CFX_LinkUserData;
+class CFGAS_LinkUserData;
 class CFGAS_RTFBreak;
+class CFX_CSSComputedStyle;
 class CFX_RenderDevice;
 class CFX_XMLNode;
 class CXFA_FFDoc;
@@ -74,7 +74,7 @@ class CXFA_TextLayout final : public cppgc::GarbageCollected<CXFA_TextLayout> {
     int32_t iLineThrough = 0;
     XFA_AttributeValue iPeriod = XFA_AttributeValue::All;
     FX_ARGB dwColor = 0;
-    RetainPtr<CFX_LinkUserData> pLinkData;
+    RetainPtr<CFGAS_LinkUserData> pLinkData;
   };
 
   class PieceLine {
@@ -139,7 +139,7 @@ class CXFA_TextLayout final : public cppgc::GarbageCollected<CXFA_TextLayout> {
                     float* pLinePos,
                     const RetainPtr<CFX_CSSComputedStyle>& pParentStyle,
                     bool bSavePieces,
-                    RetainPtr<CFX_LinkUserData> pLinkData,
+                    RetainPtr<CFGAS_LinkUserData> pLinkData,
                     bool bEndBreak,
                     bool bIsOl,
                     int32_t iLiCount);

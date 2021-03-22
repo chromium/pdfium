@@ -14,7 +14,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fgas/layout/cfgas_char.h"
 
-class CFX_TextUserData;
+class CFGAS_TextUserData;
 
 class CFGAS_BreakPiece {
  public:
@@ -42,7 +42,7 @@ class CFGAS_BreakPiece {
   uint32_t m_dwIdentity = 0;
   uint32_t m_dwCharStyles = 0;
   UnownedPtr<std::vector<CFGAS_Char>> m_pChars;
-  RetainPtr<CFX_TextUserData> m_pUserData;
+  RetainPtr<CFGAS_TextUserData> m_pUserData;
 };
 
 #endif  // XFA_FGAS_LAYOUT_CFGAS_BREAKPIECE_H_

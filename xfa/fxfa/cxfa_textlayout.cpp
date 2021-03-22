@@ -25,9 +25,9 @@
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
+#include "xfa/fgas/layout/cfgas_linkuserdata.h"
 #include "xfa/fgas/layout/cfgas_rtfbreak.h"
-#include "xfa/fgas/layout/cfx_linkuserdata.h"
-#include "xfa/fgas/layout/cfx_textuserdata.h"
+#include "xfa/fgas/layout/cfgas_textuserdata.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_textparser.h"
 #include "xfa/fxfa/cxfa_textprovider.h"
@@ -731,7 +731,7 @@ bool CXFA_TextLayout::LoadRichText(
     float* pLinePos,
     const RetainPtr<CFX_CSSComputedStyle>& pParentStyle,
     bool bSavePieces,
-    RetainPtr<CFX_LinkUserData> pLinkData,
+    RetainPtr<CFGAS_LinkUserData> pLinkData,
     bool bEndBreak,
     bool bIsOl,
     int32_t iLiCount) {
@@ -787,7 +787,7 @@ bool CXFA_TextLayout::LoadRichText(
       if (wsName.EqualsASCII("a")) {
         WideString wsLinkContent = pElement->GetAttribute(L"href");
         if (!wsLinkContent.IsEmpty())
-          pLinkData = pdfium::MakeRetain<CFX_LinkUserData>(wsLinkContent);
+          pLinkData = pdfium::MakeRetain<CFGAS_LinkUserData>(wsLinkContent);
       }
 
       int32_t iTabCount = m_pTextParser->CountTabs(
@@ -839,7 +839,7 @@ bool CXFA_TextLayout::LoadRichText(
 
       if (wsText.GetLength() > 0) {
         if (!m_pLoader || m_pLoader->iChar == 0) {
-          auto pUserData = pdfium::MakeRetain<CFX_TextUserData>(
+          auto pUserData = pdfium::MakeRetain<CFGAS_TextUserData>(
               bContentNode ? pParentStyle : pStyle, pLinkData);
           m_pBreak->SetUserData(pUserData);
         }
@@ -1028,7 +1028,7 @@ void CXFA_TextLayout::AppendTextLine(CFGAS_Char::BreakType dwStatus,
     int32_t i = 0;
     for (i = 0; i < iPieces; i++) {
       const CFGAS_BreakPiece* pPiece = m_pBreak->GetBreakPieceUnstable(i);
-      CFX_TextUserData* pUserData = pPiece->m_pUserData.Get();
+      CFGAS_TextUserData* pUserData = pPiece->m_pUserData.Get();
       if (pUserData)
         pStyle = pUserData->m_pStyle;
       float fVerScale = pPiece->m_iVerticalScale / 100.0f;
@@ -1083,7 +1083,7 @@ void CXFA_TextLayout::AppendTextLine(CFGAS_Char::BreakType dwStatus,
     float fLineWidth = 0;
     for (int32_t i = 0; i < iPieces; i++) {
       const CFGAS_BreakPiece* pPiece = m_pBreak->GetBreakPieceUnstable(i);
-      CFX_TextUserData* pUserData = pPiece->m_pUserData.Get();
+      CFGAS_TextUserData* pUserData = pPiece->m_pUserData.Get();
       if (pUserData)
         pStyle = pUserData->m_pStyle;
       float fVerScale = pPiece->m_iVerticalScale / 100.0f;
