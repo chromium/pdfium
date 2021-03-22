@@ -26,7 +26,7 @@
 
 class CFX_CSSComputedStyle;
 class CFX_LinkUserData;
-class CFX_RTFBreak;
+class CFGAS_RTFBreak;
 class CFX_RenderDevice;
 class CFX_XMLNode;
 class CXFA_FFDoc;
@@ -122,7 +122,7 @@ class CXFA_TextLayout final : public cppgc::GarbageCollected<CXFA_TextLayout> {
 
   void GetTextDataNode();
   CFX_XMLNode* GetXMLContainerNode();
-  std::unique_ptr<CFX_RTFBreak> CreateBreak(bool bDefault);
+  std::unique_ptr<CFGAS_RTFBreak> CreateBreak(bool bDefault);
   void InitBreak(float fLineWidth);
   void InitBreak(CFX_CSSComputedStyle* pStyle,
                  CFX_CSSDisplay eDisplay,
@@ -181,7 +181,7 @@ class CXFA_TextLayout final : public cppgc::GarbageCollected<CXFA_TextLayout> {
   cppgc::Member<CXFA_TextProvider> const m_pTextProvider;
   cppgc::Member<CXFA_Node> m_pTextDataNode;
   cppgc::Member<CXFA_TextParser> m_pTextParser;
-  std::unique_ptr<CFX_RTFBreak> m_pBreak;
+  std::unique_ptr<CFGAS_RTFBreak> m_pBreak;
   std::unique_ptr<LoaderContext> m_pLoader;
   std::vector<std::unique_ptr<PieceLine>> m_pieceLines;
   std::unique_ptr<CXFA_TextTabstopsContext> m_pTabstopContext;

@@ -17,8 +17,8 @@
 #include "xfa/fgas/layout/cfgas_char.h"
 
 class CFGAS_GEFont;
+class CFGAS_TxtBreak;
 class CFX_RenderDevice;
-class CFX_TxtBreak;
 class TextCharPos;
 
 class CFDE_TextOut {
@@ -98,7 +98,7 @@ class CFDE_TextOut {
   void DoAlignment(const CFX_RectF& rect);
   size_t GetDisplayPos(const Piece* pPiece);
 
-  std::unique_ptr<CFX_TxtBreak> const m_pTxtBreak;
+  std::unique_ptr<CFGAS_TxtBreak> const m_pTxtBreak;
   RetainPtr<CFGAS_GEFont> m_pFont;
   float m_fFontSize = 12.0f;
   float m_fLineSpace = 12.0f;

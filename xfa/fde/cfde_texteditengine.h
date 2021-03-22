@@ -15,7 +15,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
-#include "xfa/fgas/layout/cfx_txtbreak.h"
+#include "xfa/fgas/layout/cfgas_txtbreak.h"
 
 class CFGAS_GEFont;
 class TextCharPos;
@@ -37,7 +37,7 @@ inline FDE_TEXTEDITPIECE::FDE_TEXTEDITPIECE(const FDE_TEXTEDITPIECE& that) =
     default;
 inline FDE_TEXTEDITPIECE::~FDE_TEXTEDITPIECE() = default;
 
-class CFDE_TextEditEngine : public CFX_TxtBreak::Engine {
+class CFDE_TextEditEngine : public CFGAS_TxtBreak::Engine {
  public:
   class Iterator {
    public:
@@ -87,7 +87,7 @@ class CFDE_TextEditEngine : public CFX_TxtBreak::Engine {
   CFDE_TextEditEngine();
   ~CFDE_TextEditEngine() override;
 
-  // CFX_TxtBreak::Engine:
+  // CFGAS_TxtBreak::Engine:
   wchar_t GetChar(size_t idx) const override;
   size_t GetWidthOfChar(size_t idx) override;
 
@@ -207,7 +207,7 @@ class CFDE_TextEditEngine : public CFX_TxtBreak::Engine {
   UnownedPtr<Delegate> delegate_;
   std::vector<FDE_TEXTEDITPIECE> text_piece_info_;
   std::vector<size_t> char_widths_;
-  CFX_TxtBreak text_break_;
+  CFGAS_TxtBreak text_break_;
   RetainPtr<CFGAS_GEFont> font_;
   FX_ARGB font_color_;
   float font_size_;

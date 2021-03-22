@@ -25,8 +25,8 @@
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
+#include "xfa/fgas/layout/cfgas_rtfbreak.h"
 #include "xfa/fgas/layout/cfx_linkuserdata.h"
-#include "xfa/fgas/layout/cfx_rtfbreak.h"
 #include "xfa/fgas/layout/cfx_textuserdata.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_textparser.h"
@@ -145,12 +145,12 @@ CFX_XMLNode* CXFA_TextLayout::GetXMLContainerNode() {
   return nullptr;
 }
 
-std::unique_ptr<CFX_RTFBreak> CXFA_TextLayout::CreateBreak(bool bDefault) {
+std::unique_ptr<CFGAS_RTFBreak> CXFA_TextLayout::CreateBreak(bool bDefault) {
   uint32_t dwStyle = FX_LAYOUTSTYLE_ExpandTab;
   if (!bDefault)
     dwStyle |= FX_LAYOUTSTYLE_Pagination;
 
-  auto pBreak = std::make_unique<CFX_RTFBreak>(dwStyle);
+  auto pBreak = std::make_unique<CFGAS_RTFBreak>(dwStyle);
   pBreak->SetLineBreakTolerance(1);
   pBreak->SetFont(
       m_pTextParser->GetFont(m_pDoc.Get(), m_pTextProvider, nullptr));

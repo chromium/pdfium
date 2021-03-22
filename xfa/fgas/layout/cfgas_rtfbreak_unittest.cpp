@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fgas/layout/cfx_rtfbreak.h"
+#include "xfa/fgas/layout/cfgas_rtfbreak.h"
 
 #include <memory>
 #include <utility>
@@ -23,8 +23,8 @@ class CFX_RTFBreakTest : public testing::Test {
     ASSERT_TRUE(font_);
   }
 
-  std::unique_ptr<CFX_RTFBreak> CreateBreak(uint32_t layout_styles) {
-    auto rtf_break = std::make_unique<CFX_RTFBreak>(layout_styles);
+  std::unique_ptr<CFGAS_RTFBreak> CreateBreak(uint32_t layout_styles) {
+    auto rtf_break = std::make_unique<CFGAS_RTFBreak>(layout_styles);
     rtf_break->SetFont(font_);
     return rtf_break;
   }

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FGAS_LAYOUT_CFX_TXTBREAK_H_
-#define XFA_FGAS_LAYOUT_CFX_TXTBREAK_H_
+#ifndef XFA_FGAS_LAYOUT_CFGAS_TXTBREAK_H_
+#define XFA_FGAS_LAYOUT_CFGAS_TXTBREAK_H_
 
 #include <deque>
 #include <vector>
@@ -32,7 +32,7 @@ inline bool CFX_BreakTypeNoneOrPiece(CFGAS_Char::BreakType type) {
          type == CFGAS_Char::BreakType::kPiece;
 }
 
-class CFX_TxtBreak final : public CFGAS_Break {
+class CFGAS_TxtBreak final : public CFGAS_Break {
  public:
   class Engine {
    public:
@@ -47,7 +47,7 @@ class CFX_TxtBreak final : public CFGAS_Break {
     Run(const Run& other);
     ~Run();
 
-    CFX_TxtBreak::Engine* pEdtEngine = nullptr;
+    CFGAS_TxtBreak::Engine* pEdtEngine = nullptr;
     WideString wsStr;
     int32_t* pWidths = nullptr;
     // TODO(thestig): These 2 members probably should be size_t.
@@ -63,8 +63,8 @@ class CFX_TxtBreak final : public CFGAS_Break {
     bool bSkipSpace = true;
   };
 
-  CFX_TxtBreak();
-  ~CFX_TxtBreak() override;
+  CFGAS_TxtBreak();
+  ~CFGAS_TxtBreak() override;
 
   void SetLineWidth(float fLineWidth);
   void SetAlignment(int32_t iAlignment);
@@ -101,4 +101,4 @@ class CFX_TxtBreak final : public CFGAS_Break {
   int32_t m_iCombWidth;
 };
 
-#endif  // XFA_FGAS_LAYOUT_CFX_TXTBREAK_H_
+#endif  // XFA_FGAS_LAYOUT_CFGAS_TXTBREAK_H_

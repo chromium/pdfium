@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "xfa/fgas/layout/cfx_txtbreak.h"
+#include "xfa/fgas/layout/cfgas_txtbreak.h"
 
 #include <memory>
 #include <utility>
@@ -20,8 +20,8 @@ class CFX_TxtBreakTest : public testing::Test {
     ASSERT_TRUE(font_);
   }
 
-  std::unique_ptr<CFX_TxtBreak> CreateBreak() {
-    auto txt_break = std::make_unique<CFX_TxtBreak>();
+  std::unique_ptr<CFGAS_TxtBreak> CreateBreak() {
+    auto txt_break = std::make_unique<CFGAS_TxtBreak>();
     txt_break->SetFont(font_);
     return txt_break;
   }

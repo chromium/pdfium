@@ -23,7 +23,7 @@
 #include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
-#include "xfa/fgas/layout/cfx_txtbreak.h"
+#include "xfa/fgas/layout/cfgas_txtbreak.h"
 
 namespace {
 
@@ -131,7 +131,7 @@ CFDE_TextOut::Piece::Piece(const Piece& that) = default;
 CFDE_TextOut::Piece::~Piece() = default;
 
 CFDE_TextOut::CFDE_TextOut()
-    : m_pTxtBreak(std::make_unique<CFX_TxtBreak>()), m_ttoLines(5) {}
+    : m_pTxtBreak(std::make_unique<CFGAS_TxtBreak>()), m_ttoLines(5) {}
 
 CFDE_TextOut::~CFDE_TextOut() = default;
 
@@ -505,7 +505,7 @@ size_t CFDE_TextOut::GetDisplayPos(const Piece* pPiece) {
   if (m_CharPos.size() < pPiece->char_count)
     m_CharPos.resize(pPiece->char_count, TextCharPos());
 
-  CFX_TxtBreak::Run tr;
+  CFGAS_TxtBreak::Run tr;
   tr.wsStr = m_wsText + pPiece->start_char;
   tr.pWidths = &m_CharWidths[pPiece->start_char];
   tr.iLength = pPiece->char_count;

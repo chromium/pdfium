@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FGAS_LAYOUT_CFX_RTFBREAK_H_
-#define XFA_FGAS_LAYOUT_CFX_RTFBREAK_H_
+#ifndef XFA_FGAS_LAYOUT_CFGAS_RTFBREAK_H_
+#define XFA_FGAS_LAYOUT_CFGAS_RTFBREAK_H_
 
 #include <deque>
 #include <vector>
@@ -27,10 +27,10 @@ enum class CFX_RTFLineAlignment {
   Distributed
 };
 
-class CFX_RTFBreak final : public CFGAS_Break {
+class CFGAS_RTFBreak final : public CFGAS_Break {
  public:
-  explicit CFX_RTFBreak(uint32_t dwLayoutStyles);
-  ~CFX_RTFBreak() override;
+  explicit CFGAS_RTFBreak(uint32_t dwLayoutStyles);
+  ~CFGAS_RTFBreak() override;
 
   void SetLineStartPos(float fLinePos);
 
@@ -76,4 +76,4 @@ class CFX_RTFBreak final : public CFGAS_Break {
   RetainPtr<CFX_TextUserData> m_pUserData;
 };
 
-#endif  // XFA_FGAS_LAYOUT_CFX_RTFBREAK_H_
+#endif  // XFA_FGAS_LAYOUT_CFGAS_RTFBREAK_H_

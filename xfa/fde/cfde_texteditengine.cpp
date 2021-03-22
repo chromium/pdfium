@@ -1039,7 +1039,7 @@ std::vector<CFX_RectF> CFDE_TextEditEngine::GetCharRects(
   if (piece.nCount < 1)
     return std::vector<CFX_RectF>();
 
-  CFX_TxtBreak::Run tr;
+  CFGAS_TxtBreak::Run tr;
   tr.pEdtEngine = this;
   tr.iStart = piece.nStart;
   tr.iLength = piece.nCount;
@@ -1056,7 +1056,7 @@ std::vector<TextCharPos> CFDE_TextEditEngine::GetDisplayPos(
   if (piece.nCount < 1)
     return std::vector<TextCharPos>();
 
-  CFX_TxtBreak::Run tr;
+  CFGAS_TxtBreak::Run tr;
   tr.pEdtEngine = this;
   tr.iStart = piece.nStart;
   tr.iLength = piece.nCount;
