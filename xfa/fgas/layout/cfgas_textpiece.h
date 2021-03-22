@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FGAS_LAYOUT_CFX_TEXTPIECE_H_
-#define XFA_FGAS_LAYOUT_CFX_TEXTPIECE_H_
+#ifndef XFA_FGAS_LAYOUT_CFGAS_TEXTPIECE_H_
+#define XFA_FGAS_LAYOUT_CFGAS_TEXTPIECE_H_
 
 #include <vector>
 
@@ -15,10 +15,10 @@
 
 class CFGAS_GEFont;
 
-class CFX_TextPiece {
+class CFGAS_TextPiece {
  public:
-  CFX_TextPiece();
-  ~CFX_TextPiece();
+  CFGAS_TextPiece();
+  ~CFGAS_TextPiece();
 
   WideString szText;
   std::vector<int32_t> Widths;
@@ -31,4 +31,4 @@ class CFX_TextPiece {
   RetainPtr<CFGAS_GEFont> pFont;
 };
 
-#endif  // XFA_FGAS_LAYOUT_CFX_TEXTPIECE_H_
+#endif  // XFA_FGAS_LAYOUT_CFGAS_TEXTPIECE_H_

@@ -15,8 +15,8 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "xfa/fgas/layout/cfgas_break.h"
 
+class CFGAS_TextPiece;
 class CFX_TextUserData;
-class CFX_TextPiece;
 class TextCharPos;
 
 enum class CFX_RTFLineAlignment {
@@ -41,7 +41,7 @@ class CFGAS_RTFBreak final : public CFGAS_Break {
 
   CFGAS_Char::BreakType EndBreak(CFGAS_Char::BreakType dwStatus);
 
-  size_t GetDisplayPos(const CFX_TextPiece* pPiece,
+  size_t GetDisplayPos(const CFGAS_TextPiece* pPiece,
                        std::vector<TextCharPos>* pCharPos) const;
 
   CFGAS_Char::BreakType AppendChar(wchar_t wch);
@@ -58,10 +58,10 @@ class CFGAS_RTFBreak final : public CFGAS_Break {
                       bool bAllChars,
                       bool bOnlyBrk,
                       int32_t* pEndPos);
-  void SplitTextLine(CFX_BreakLine* pCurLine,
-                     CFX_BreakLine* pNextLine,
+  void SplitTextLine(CFGAS_BreakLine* pCurLine,
+                     CFGAS_BreakLine* pNextLine,
                      bool bAllChars);
-  bool EndBreak_SplitLine(CFX_BreakLine* pNextLine,
+  bool EndBreak_SplitLine(CFGAS_BreakLine* pNextLine,
                           bool bAllChars,
                           CFGAS_Char::BreakType dwStatus);
   void EndBreak_BidiLine(std::deque<FX_TPO>* tpos,

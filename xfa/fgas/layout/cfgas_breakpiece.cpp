@@ -4,29 +4,29 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fgas/layout/cfx_breakpiece.h"
+#include "xfa/fgas/layout/cfgas_breakpiece.h"
 
 #include "third_party/base/check.h"
 #include "xfa/fgas/layout/cfx_textuserdata.h"
 
-CFX_BreakPiece::CFX_BreakPiece() = default;
+CFGAS_BreakPiece::CFGAS_BreakPiece() = default;
 
-CFX_BreakPiece::CFX_BreakPiece(const CFX_BreakPiece& other) = default;
+CFGAS_BreakPiece::CFGAS_BreakPiece(const CFGAS_BreakPiece& other) = default;
 
-CFX_BreakPiece::~CFX_BreakPiece() = default;
+CFGAS_BreakPiece::~CFGAS_BreakPiece() = default;
 
-int32_t CFX_BreakPiece::GetEndPos() const {
+int32_t CFGAS_BreakPiece::GetEndPos() const {
   return m_iWidth < 0 ? m_iStartPos : m_iStartPos + m_iWidth;
 }
 
-CFGAS_Char* CFX_BreakPiece::GetChar(int32_t index) const {
+CFGAS_Char* CFGAS_BreakPiece::GetChar(int32_t index) const {
   DCHECK(index >= 0);
   DCHECK(index < m_iCharCount);
   DCHECK(m_pChars);
   return &(*m_pChars)[m_iStartChar + index];
 }
 
-WideString CFX_BreakPiece::GetString() const {
+WideString CFGAS_BreakPiece::GetString() const {
   WideString ret;
   ret.Reserve(m_iCharCount);
   for (int32_t i = m_iStartChar; i < m_iStartChar + m_iCharCount; i++)
@@ -34,7 +34,7 @@ WideString CFX_BreakPiece::GetString() const {
   return ret;
 }
 
-std::vector<int32_t> CFX_BreakPiece::GetWidths() const {
+std::vector<int32_t> CFGAS_BreakPiece::GetWidths() const {
   std::vector<int32_t> ret;
   ret.reserve(m_iCharCount);
   for (int32_t i = m_iStartChar; i < m_iStartChar + m_iCharCount; i++)

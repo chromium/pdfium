@@ -1100,7 +1100,7 @@ void CFDE_TextEditEngine::RebuildPieces() {
       continue;
     int32_t piece_count = text_break_.CountBreakPieces();
     for (int32_t i = 0; i < piece_count; ++i) {
-      const CFX_BreakPiece* piece = text_break_.GetBreakPieceUnstable(i);
+      const CFGAS_BreakPiece* piece = text_break_.GetBreakPieceUnstable(i);
 
       FDE_TEXTEDITPIECE txtEdtPiece;
       txtEdtPiece.rtPiece.left = piece->m_iStartPos / 20000.0f;

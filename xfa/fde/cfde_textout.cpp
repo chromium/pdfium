@@ -254,7 +254,7 @@ bool CFDE_TextOut::RetrieveLineWidth(CFGAS_Char::BreakType dwBreakStatus,
   float fLineStep = std::max(m_fLineSpace, m_fFontSize);
   float fLineWidth = 0.0f;
   for (int32_t i = 0; i < m_pTxtBreak->CountBreakPieces(); i++) {
-    const CFX_BreakPiece* pPiece = m_pTxtBreak->GetBreakPieceUnstable(i);
+    const CFGAS_BreakPiece* pPiece = m_pTxtBreak->GetBreakPieceUnstable(i);
     fLineWidth += static_cast<float>(pPiece->m_iWidth) / 20000.0f;
     *pStartPos = std::min(*pStartPos,
                           static_cast<float>(pPiece->m_iStartPos) / 20000.0f);
@@ -371,7 +371,7 @@ bool CFDE_TextOut::RetrievePieces(CFGAS_Char::BreakType dwBreakStatus,
   int32_t iLineWidth = FXSYS_roundf(rect.Width() * 20000.0f);
   int32_t iCount = m_pTxtBreak->CountBreakPieces();
   for (int32_t i = 0; i < iCount; i++) {
-    const CFX_BreakPiece* pPiece = m_pTxtBreak->GetBreakPieceUnstable(i);
+    const CFGAS_BreakPiece* pPiece = m_pTxtBreak->GetBreakPieceUnstable(i);
     int32_t iPieceChars = pPiece->GetLength();
     int32_t iChar = *pStartChar;
     int32_t iWidth = 0;

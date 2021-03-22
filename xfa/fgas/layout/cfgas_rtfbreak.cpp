@@ -18,7 +18,7 @@
 #include "third_party/base/stl_util.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/cfgas_char.h"
-#include "xfa/fgas/layout/cfx_textpiece.h"
+#include "xfa/fgas/layout/cfgas_textpiece.h"
 #include "xfa/fgas/layout/cfx_textuserdata.h"
 #include "xfa/fgas/layout/fx_arabic.h"
 #include "xfa/fgas/layout/fx_linebreak.h"
@@ -329,7 +329,7 @@ CFGAS_Char::BreakType CFGAS_RTFBreak::EndBreak(CFGAS_Char::BreakType dwStatus) {
     return dwStatus;
 
   m_iReadyLineIndex = m_pCurLine == &m_Lines[0] ? 0 : 1;
-  CFX_BreakLine* pNextLine = &m_Lines[1 - m_iReadyLineIndex];
+  CFGAS_BreakLine* pNextLine = &m_Lines[1 - m_iReadyLineIndex];
   bool bAllChars = m_iAlignment == CFX_RTFLineAlignment::Justified ||
                    m_iAlignment == CFX_RTFLineAlignment::Distributed;
 
@@ -347,7 +347,7 @@ CFGAS_Char::BreakType CFGAS_RTFBreak::EndBreak(CFGAS_Char::BreakType dwStatus) {
   return dwStatus;
 }
 
-bool CFGAS_RTFBreak::EndBreak_SplitLine(CFX_BreakLine* pNextLine,
+bool CFGAS_RTFBreak::EndBreak_SplitLine(CFGAS_BreakLine* pNextLine,
                                         bool bAllChars,
                                         CFGAS_Char::BreakType dwStatus) {
   bool bDone = false;
@@ -375,7 +375,7 @@ bool CFGAS_RTFBreak::EndBreak_SplitLine(CFX_BreakLine* pNextLine,
   }
 
   const CFGAS_Char* pCurChars = m_pCurLine->m_LineChars.data();
-  CFX_BreakPiece tp;
+  CFGAS_BreakPiece tp;
   tp.m_pChars = &m_pCurLine->m_LineChars;
   bool bNew = true;
   uint32_t dwIdentity = static_cast<uint32_t>(-1);
@@ -441,7 +441,7 @@ void CFGAS_RTFBreak::EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
     }
   }
 
-  CFX_BreakPiece tp;
+  CFGAS_BreakPiece tp;
   tp.m_dwStatus = CFGAS_Char::BreakType::kPiece;
   tp.m_iStartPos = m_pCurLine->m_iStart;
   tp.m_pChars = &chars;
@@ -501,7 +501,7 @@ void CFGAS_RTFBreak::EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
   std::sort(tpos->begin(), tpos->end());
   int32_t iStartPos = m_pCurLine->m_iStart;
   for (const auto& it : *tpos) {
-    CFX_BreakPiece& ttp = m_pCurLine->m_LinePieces[it.index];
+    CFGAS_BreakPiece& ttp = m_pCurLine->m_LinePieces[it.index];
     ttp.m_iStartPos = iStartPos;
     iStartPos += ttp.m_iWidth;
   }
@@ -514,7 +514,7 @@ void CFGAS_RTFBreak::EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
   int32_t iGapChars = 0;
   bool bFind = false;
   for (const FX_TPO& pos : pdfium::base::Reversed(tpos)) {
-    const CFX_BreakPiece& ttp = m_pCurLine->m_LinePieces[pos.index];
+    const CFGAS_BreakPiece& ttp = m_pCurLine->m_LinePieces[pos.index];
     if (!bFind)
       iNetWidth = ttp.GetEndPos();
 
@@ -552,7 +552,7 @@ void CFGAS_RTFBreak::EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
                          dwStatus != CFGAS_Char::BreakType::kParagraph))) {
     int32_t iStart = -1;
     for (const auto& tpo : tpos) {
-      CFX_BreakPiece& ttp = m_pCurLine->m_LinePieces[tpo.index];
+      CFGAS_BreakPiece& ttp = m_pCurLine->m_LinePieces[tpo.index];
       if (iStart < 0)
         iStart = ttp.m_iStartPos;
       else
@@ -680,8 +680,8 @@ int32_t CFGAS_RTFBreak::GetBreakPos(std::vector<CFGAS_Char>& tca,
   return 0;
 }
 
-void CFGAS_RTFBreak::SplitTextLine(CFX_BreakLine* pCurLine,
-                                   CFX_BreakLine* pNextLine,
+void CFGAS_RTFBreak::SplitTextLine(CFGAS_BreakLine* pCurLine,
+                                   CFGAS_BreakLine* pNextLine,
                                    bool bAllChars) {
   DCHECK(pCurLine);
   DCHECK(pNextLine);
@@ -719,7 +719,7 @@ void CFGAS_RTFBreak::SplitTextLine(CFX_BreakLine* pCurLine,
   }
 }
 
-size_t CFGAS_RTFBreak::GetDisplayPos(const CFX_TextPiece* pPiece,
+size_t CFGAS_RTFBreak::GetDisplayPos(const CFGAS_TextPiece* pPiece,
                                      std::vector<TextCharPos>* pCharPos) const {
   if (pPiece->iChars == 0 || !pPiece->pFont)
     return 0;

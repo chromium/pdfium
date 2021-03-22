@@ -287,7 +287,7 @@ CFGAS_Char::BreakType CFGAS_TxtBreak::AppendChar(wchar_t wch) {
   return std::max(dwRet1, dwRet2);
 }
 
-void CFGAS_TxtBreak::EndBreak_SplitLine(CFX_BreakLine* pNextLine,
+void CFGAS_TxtBreak::EndBreak_SplitLine(CFGAS_BreakLine* pNextLine,
                                         bool bAllChars) {
   bool bDone = false;
   CFGAS_Char* pTC;
@@ -312,7 +312,7 @@ void CFGAS_TxtBreak::EndBreak_SplitLine(CFX_BreakLine* pNextLine,
 
 void CFGAS_TxtBreak::EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
                                        CFGAS_Char::BreakType dwStatus) {
-  CFX_BreakPiece tp;
+  CFGAS_BreakPiece tp;
   FX_TPO tpo;
   CFGAS_Char* pTC;
   std::vector<CFGAS_Char>& chars = m_pCurLine->m_LineChars;
@@ -403,7 +403,7 @@ void CFGAS_TxtBreak::EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
       int32_t iStartPos = 0;
       for (i = 0; i <= j; i++) {
         tpo = (*tpos)[i];
-        CFX_BreakPiece& ttp = m_pCurLine->m_LinePieces[tpo.index];
+        CFGAS_BreakPiece& ttp = m_pCurLine->m_LinePieces[tpo.index];
         ttp.m_iStartPos = iStartPos;
         iStartPos += ttp.m_iWidth;
       }
@@ -419,7 +419,7 @@ void CFGAS_TxtBreak::EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
   int32_t iGapChars = 0;
   bool bFind = false;
   for (const FX_TPO& pos : pdfium::base::Reversed(tpos)) {
-    const CFX_BreakPiece& ttp = m_pCurLine->m_LinePieces[pos.index];
+    const CFGAS_BreakPiece& ttp = m_pCurLine->m_LinePieces[pos.index];
     if (!bFind)
       iNetWidth = ttp.GetEndPos();
 
@@ -452,7 +452,7 @@ void CFGAS_TxtBreak::EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
       dwStatus != CFGAS_Char::BreakType::kParagraph) {
     int32_t iStart = -1;
     for (auto& tpo : tpos) {
-      CFX_BreakPiece& ttp = m_pCurLine->m_LinePieces[tpo.index];
+      CFGAS_BreakPiece& ttp = m_pCurLine->m_LinePieces[tpo.index];
       if (iStart < -1)
         iStart = ttp.m_iStartPos;
       else
@@ -511,7 +511,7 @@ CFGAS_Char::BreakType CFGAS_TxtBreak::EndBreak(CFGAS_Char::BreakType dwStatus) {
     return dwStatus;
 
   m_iReadyLineIndex = m_pCurLine == &m_Lines[0] ? 0 : 1;
-  CFX_BreakLine* pNextLine = &m_Lines[1 - m_iReadyLineIndex];
+  CFGAS_BreakLine* pNextLine = &m_Lines[1 - m_iReadyLineIndex];
   bool bAllChars = m_iAlignment > CFX_TxtLineAlignment_Right;
   EndBreak_SplitLine(pNextLine, bAllChars);
 
@@ -612,8 +612,8 @@ int32_t CFGAS_TxtBreak::GetBreakPos(std::vector<CFGAS_Char>* pChars,
   return 0;
 }
 
-void CFGAS_TxtBreak::SplitTextLine(CFX_BreakLine* pCurLine,
-                                   CFX_BreakLine* pNextLine,
+void CFGAS_TxtBreak::SplitTextLine(CFGAS_BreakLine* pCurLine,
+                                   CFGAS_BreakLine* pNextLine,
                                    bool bAllChars) {
   DCHECK(pCurLine);
   DCHECK(pNextLine);

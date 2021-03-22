@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fgas/layout/cfx_textpiece.h"
+#include "xfa/fgas/layout/cfgas_textpiece.h"
 
 #include "xfa/fgas/font/cfgas_gefont.h"
 
-CFX_TextPiece::CFX_TextPiece() = default;
+CFGAS_TextPiece::CFGAS_TextPiece() = default;
 
-CFX_TextPiece::~CFX_TextPiece() = default;
+CFGAS_TextPiece::~CFGAS_TextPiece() = default;

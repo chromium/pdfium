@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FGAS_LAYOUT_CFX_BREAKPIECE_H_
-#define XFA_FGAS_LAYOUT_CFX_BREAKPIECE_H_
+#ifndef XFA_FGAS_LAYOUT_CFGAS_BREAKPIECE_H_
+#define XFA_FGAS_LAYOUT_CFGAS_BREAKPIECE_H_
 
 #include <vector>
 
@@ -16,11 +16,11 @@
 
 class CFX_TextUserData;
 
-class CFX_BreakPiece {
+class CFGAS_BreakPiece {
  public:
-  CFX_BreakPiece();
-  CFX_BreakPiece(const CFX_BreakPiece& other);
-  ~CFX_BreakPiece();
+  CFGAS_BreakPiece();
+  CFGAS_BreakPiece(const CFGAS_BreakPiece& other);
+  ~CFGAS_BreakPiece();
 
   int32_t GetEndPos() const;
   int32_t GetLength() const { return m_iCharCount; }
@@ -45,4 +45,4 @@ class CFX_BreakPiece {
   RetainPtr<CFX_TextUserData> m_pUserData;
 };
 
-#endif  // XFA_FGAS_LAYOUT_CFX_BREAKPIECE_H_
+#endif  // XFA_FGAS_LAYOUT_CFGAS_BREAKPIECE_H_

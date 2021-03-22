@@ -11,7 +11,7 @@
 
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "xfa/fgas/layout/cfx_breakline.h"
+#include "xfa/fgas/layout/cfgas_breakline.h"
 
 class CFGAS_GEFont;
 
@@ -53,11 +53,11 @@ class CFGAS_Break {
   void SetParagraphBreakChar(wchar_t wch);
 
   int32_t CountBreakPieces() const;
-  const CFX_BreakPiece* GetBreakPieceUnstable(int32_t index) const;
+  const CFGAS_BreakPiece* GetBreakPieceUnstable(int32_t index) const;
   void ClearBreakPieces();
 
   CFGAS_Char* GetLastChar(int32_t index, bool bOmitChar, bool bRichText) const;
-  const CFX_BreakLine* GetCurrentLineForTesting() const {
+  const CFGAS_BreakLine* GetCurrentLineForTesting() const {
     return m_pCurLine.Get();
   }
 
@@ -87,9 +87,9 @@ class CFGAS_Break {
   int32_t m_iTolerance = 0;
   int32_t m_iCharSpace = 0;
   RetainPtr<CFGAS_GEFont> m_pFont;
-  UnownedPtr<CFX_BreakLine> m_pCurLine;
+  UnownedPtr<CFGAS_BreakLine> m_pCurLine;
   int8_t m_iReadyLineIndex = -1;
-  CFX_BreakLine m_Lines[2];
+  CFGAS_BreakLine m_Lines[2];
 };
 
 #endif  // XFA_FGAS_LAYOUT_CFGAS_BREAK_H_

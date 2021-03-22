@@ -21,7 +21,7 @@
 #include "v8/include/cppgc/member.h"
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fgas/layout/cfgas_char.h"
-#include "xfa/fgas/layout/cfx_textpiece.h"
+#include "xfa/fgas/layout/cfgas_textpiece.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
 class CFX_CSSComputedStyle;
@@ -65,7 +65,7 @@ class CXFA_TextLayout final : public cppgc::GarbageCollected<CXFA_TextLayout> {
   const wchar_t* GetLinkURLAtPoint(const CFX_PointF& point);
 
  private:
-  class TextPiece : public CFX_TextPiece {
+  class TextPiece : public CFGAS_TextPiece {
    public:
     TextPiece();
     ~TextPiece();

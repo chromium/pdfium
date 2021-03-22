@@ -4,36 +4,36 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fgas/layout/cfx_breakline.h"
+#include "xfa/fgas/layout/cfgas_breakline.h"
 
 #include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
-CFX_BreakLine::CFX_BreakLine() = default;
+CFGAS_BreakLine::CFGAS_BreakLine() = default;
 
-CFX_BreakLine::~CFX_BreakLine() = default;
+CFGAS_BreakLine::~CFGAS_BreakLine() = default;
 
-CFGAS_Char* CFX_BreakLine::GetChar(int32_t index) {
+CFGAS_Char* CFGAS_BreakLine::GetChar(int32_t index) {
   DCHECK(pdfium::IndexInBounds(m_LineChars, index));
   return &m_LineChars[index];
 }
 
-int32_t CFX_BreakLine::GetLineEnd() const {
+int32_t CFGAS_BreakLine::GetLineEnd() const {
   return m_iStart + m_iWidth;
 }
 
-void CFX_BreakLine::Clear() {
+void CFGAS_BreakLine::Clear() {
   m_LineChars.clear();
   m_LinePieces.clear();
   m_iWidth = 0;
   m_iArabicChars = 0;
 }
 
-void CFX_BreakLine::IncrementArabicCharCount() {
+void CFGAS_BreakLine::IncrementArabicCharCount() {
   ++m_iArabicChars;
 }
 
-void CFX_BreakLine::DecrementArabicCharCount() {
+void CFGAS_BreakLine::DecrementArabicCharCount() {
   DCHECK(m_iArabicChars > 0);
   --m_iArabicChars;
 }

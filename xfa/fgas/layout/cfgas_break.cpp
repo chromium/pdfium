@@ -23,7 +23,7 @@ CFGAS_Break::~CFGAS_Break() = default;
 
 void CFGAS_Break::Reset() {
   m_eCharType = FX_CHARTYPE::kUnknown;
-  for (CFX_BreakLine& line : m_Lines)
+  for (CFGAS_BreakLine& line : m_Lines)
     line.Clear();
 }
 
@@ -147,7 +147,8 @@ int32_t CFGAS_Break::CountBreakPieces() const {
                    : 0;
 }
 
-const CFX_BreakPiece* CFGAS_Break::GetBreakPieceUnstable(int32_t index) const {
+const CFGAS_BreakPiece* CFGAS_Break::GetBreakPieceUnstable(
+    int32_t index) const {
   if (!HasLine())
     return nullptr;
   if (!pdfium::IndexInBounds(m_Lines[m_iReadyLineIndex].m_LinePieces, index))

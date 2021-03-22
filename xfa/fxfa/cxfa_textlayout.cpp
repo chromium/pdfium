@@ -1027,7 +1027,7 @@ void CXFA_TextLayout::AppendTextLine(CFGAS_Char::BreakType dwStatus,
     float fLineStep = 0, fBaseLine = 0;
     int32_t i = 0;
     for (i = 0; i < iPieces; i++) {
-      const CFX_BreakPiece* pPiece = m_pBreak->GetBreakPieceUnstable(i);
+      const CFGAS_BreakPiece* pPiece = m_pBreak->GetBreakPieceUnstable(i);
       CFX_TextUserData* pUserData = pPiece->m_pUserData.Get();
       if (pUserData)
         pStyle = pUserData->m_pStyle;
@@ -1082,7 +1082,7 @@ void CXFA_TextLayout::AppendTextLine(CFGAS_Char::BreakType dwStatus,
     float fLineStep = 0;
     float fLineWidth = 0;
     for (int32_t i = 0; i < iPieces; i++) {
-      const CFX_BreakPiece* pPiece = m_pBreak->GetBreakPieceUnstable(i);
+      const CFGAS_BreakPiece* pPiece = m_pBreak->GetBreakPieceUnstable(i);
       CFX_TextUserData* pUserData = pPiece->m_pUserData.Get();
       if (pUserData)
         pStyle = pUserData->m_pStyle;
