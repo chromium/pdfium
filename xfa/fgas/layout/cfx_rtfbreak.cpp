@@ -24,7 +24,7 @@
 #include "xfa/fgas/layout/fx_linebreak.h"
 
 CFX_RTFBreak::CFX_RTFBreak(uint32_t dwLayoutStyles)
-    : CFX_Break(dwLayoutStyles),
+    : CFGAS_Break(dwLayoutStyles),
       m_bPagination(false),
       m_iAlignment(CFX_RTFLineAlignment::Left) {
   SetBreakStatus();

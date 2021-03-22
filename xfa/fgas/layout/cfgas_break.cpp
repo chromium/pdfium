@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fgas/layout/cfx_break.h"
+#include "xfa/fgas/layout/cfgas_break.h"
 
 #include <algorithm>
 #include <vector>
@@ -13,27 +13,27 @@
 #include "third_party/base/stl_util.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 
-const float CFX_Break::kConversionFactor = 20000.0f;
-const int CFX_Break::kMinimumTabWidth = 160000;
+const float CFGAS_Break::kConversionFactor = 20000.0f;
+const int CFGAS_Break::kMinimumTabWidth = 160000;
 
-CFX_Break::CFX_Break(uint32_t dwLayoutStyles)
+CFGAS_Break::CFGAS_Break(uint32_t dwLayoutStyles)
     : m_dwLayoutStyles(dwLayoutStyles), m_pCurLine(&m_Lines[0]) {}
 
-CFX_Break::~CFX_Break() = default;
+CFGAS_Break::~CFGAS_Break() = default;
 
-void CFX_Break::Reset() {
+void CFGAS_Break::Reset() {
   m_eCharType = FX_CHARTYPE::kUnknown;
   for (CFX_BreakLine& line : m_Lines)
     line.Clear();
 }
 
-void CFX_Break::SetLayoutStyles(uint32_t dwLayoutStyles) {
+void CFGAS_Break::SetLayoutStyles(uint32_t dwLayoutStyles) {
   m_dwLayoutStyles = dwLayoutStyles;
   m_bSingleLine = (m_dwLayoutStyles & FX_LAYOUTSTYLE_SingleLine) != 0;
   m_bCombText = (m_dwLayoutStyles & FX_LAYOUTSTYLE_CombText) != 0;
 }
 
-void CFX_Break::SetHorizontalScale(int32_t iScale) {
+void CFGAS_Break::SetHorizontalScale(int32_t iScale) {
   iScale = std::max(iScale, 0);
   if (m_iHorizontalScale == iScale)
     return;
@@ -42,7 +42,7 @@ void CFX_Break::SetHorizontalScale(int32_t iScale) {
   m_iHorizontalScale = iScale;
 }
 
-void CFX_Break::SetVerticalScale(int32_t iScale) {
+void CFGAS_Break::SetVerticalScale(int32_t iScale) {
   if (iScale < 0)
     iScale = 0;
   if (m_iVerticalScale == iScale)
@@ -52,7 +52,7 @@ void CFX_Break::SetVerticalScale(int32_t iScale) {
   m_iVerticalScale = iScale;
 }
 
-void CFX_Break::SetFont(const RetainPtr<CFGAS_GEFont>& pFont) {
+void CFGAS_Break::SetFont(const RetainPtr<CFGAS_GEFont>& pFont) {
   if (!pFont || pFont == m_pFont)
     return;
 
@@ -60,7 +60,7 @@ void CFX_Break::SetFont(const RetainPtr<CFGAS_GEFont>& pFont) {
   m_pFont = pFont;
 }
 
-void CFX_Break::SetFontSize(float fFontSize) {
+void CFGAS_Break::SetFontSize(float fFontSize) {
   int32_t iFontSize = FXSYS_roundf(fFontSize * 20.0f);
   if (m_iFontSize == iFontSize)
     return;
@@ -69,7 +69,7 @@ void CFX_Break::SetFontSize(float fFontSize) {
   m_iFontSize = iFontSize;
 }
 
-void CFX_Break::SetBreakStatus() {
+void CFGAS_Break::SetBreakStatus() {
   ++m_dwIdentity;
   if (m_pCurLine->m_LineChars.empty())
     return;
@@ -79,17 +79,17 @@ void CFX_Break::SetBreakStatus() {
     tc->m_dwStatus = CFGAS_Char::BreakType::kPiece;
 }
 
-bool CFX_Break::IsGreaterThanLineWidth(int32_t width) const {
+bool CFGAS_Break::IsGreaterThanLineWidth(int32_t width) const {
   FX_SAFE_INT32 line_width = m_iLineWidth;
   line_width += m_iTolerance;
   return line_width.IsValid() && width > line_width.ValueOrDie();
 }
 
-FX_CHARTYPE CFX_Break::GetUnifiedCharType(FX_CHARTYPE chartype) const {
+FX_CHARTYPE CFGAS_Break::GetUnifiedCharType(FX_CHARTYPE chartype) const {
   return chartype >= FX_CHARTYPE::kArabicAlef ? FX_CHARTYPE::kArabic : chartype;
 }
 
-void CFX_Break::SetTabWidth(float fTabWidth) {
+void CFGAS_Break::SetTabWidth(float fTabWidth) {
   // Note, the use of max here was only done in the TxtBreak code. Leaving this
   // in for the RTFBreak code for consistency. If we see issues with tab widths
   // we may need to fix this.
@@ -97,21 +97,21 @@ void CFX_Break::SetTabWidth(float fTabWidth) {
       std::max(FXSYS_roundf(fTabWidth * kConversionFactor), kMinimumTabWidth);
 }
 
-void CFX_Break::SetParagraphBreakChar(wchar_t wch) {
+void CFGAS_Break::SetParagraphBreakChar(wchar_t wch) {
   if (wch != L'\r' && wch != L'\n')
     return;
   m_wParagraphBreakChar = wch;
 }
 
-void CFX_Break::SetLineBreakTolerance(float fTolerance) {
+void CFGAS_Break::SetLineBreakTolerance(float fTolerance) {
   m_iTolerance = FXSYS_roundf(fTolerance * kConversionFactor);
 }
 
-void CFX_Break::SetCharSpace(float fCharSpace) {
+void CFGAS_Break::SetCharSpace(float fCharSpace) {
   m_iCharSpace = FXSYS_roundf(fCharSpace * kConversionFactor);
 }
 
-void CFX_Break::SetLineBoundary(float fLineStart, float fLineEnd) {
+void CFGAS_Break::SetLineBoundary(float fLineStart, float fLineEnd) {
   if (fLineStart > fLineEnd)
     return;
 
@@ -121,9 +121,9 @@ void CFX_Break::SetLineBoundary(float fLineStart, float fLineEnd) {
   m_pCurLine->m_iStart = std::max(m_pCurLine->m_iStart, m_iLineStart);
 }
 
-CFGAS_Char* CFX_Break::GetLastChar(int32_t index,
-                                   bool bOmitChar,
-                                   bool bRichText) const {
+CFGAS_Char* CFGAS_Break::GetLastChar(int32_t index,
+                                     bool bOmitChar,
+                                     bool bRichText) const {
   std::vector<CFGAS_Char>& tca = m_pCurLine->m_LineChars;
   if (!pdfium::IndexInBounds(tca, index))
     return nullptr;
@@ -141,13 +141,13 @@ CFGAS_Char* CFX_Break::GetLastChar(int32_t index,
   return nullptr;
 }
 
-int32_t CFX_Break::CountBreakPieces() const {
+int32_t CFGAS_Break::CountBreakPieces() const {
   return HasLine() ? pdfium::CollectionSize<int32_t>(
                          m_Lines[m_iReadyLineIndex].m_LinePieces)
                    : 0;
 }
 
-const CFX_BreakPiece* CFX_Break::GetBreakPieceUnstable(int32_t index) const {
+const CFX_BreakPiece* CFGAS_Break::GetBreakPieceUnstable(int32_t index) const {
   if (!HasLine())
     return nullptr;
   if (!pdfium::IndexInBounds(m_Lines[m_iReadyLineIndex].m_LinePieces, index))
@@ -155,7 +155,7 @@ const CFX_BreakPiece* CFX_Break::GetBreakPieceUnstable(int32_t index) const {
   return &m_Lines[m_iReadyLineIndex].m_LinePieces[index];
 }
 
-void CFX_Break::ClearBreakPieces() {
+void CFGAS_Break::ClearBreakPieces() {
   if (HasLine())
     m_Lines[m_iReadyLineIndex].Clear();
   m_iReadyLineIndex = -1;

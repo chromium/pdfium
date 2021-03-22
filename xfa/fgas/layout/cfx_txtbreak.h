@@ -11,8 +11,8 @@
 #include <vector>
 
 #include "core/fxcrt/fx_coordinates.h"
+#include "xfa/fgas/layout/cfgas_break.h"
 #include "xfa/fgas/layout/cfgas_char.h"
-#include "xfa/fgas/layout/cfx_break.h"
 
 class CFGAS_GEFont;
 class TextCharPos;
@@ -32,7 +32,7 @@ inline bool CFX_BreakTypeNoneOrPiece(CFGAS_Char::BreakType type) {
          type == CFGAS_Char::BreakType::kPiece;
 }
 
-class CFX_TxtBreak final : public CFX_Break {
+class CFX_TxtBreak final : public CFGAS_Break {
  public:
   class Engine {
    public:

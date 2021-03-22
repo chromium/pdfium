@@ -13,7 +13,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_unicode.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "xfa/fgas/layout/cfx_break.h"
+#include "xfa/fgas/layout/cfgas_break.h"
 
 class CFX_TextUserData;
 class CFX_TextPiece;
@@ -27,7 +27,7 @@ enum class CFX_RTFLineAlignment {
   Distributed
 };
 
-class CFX_RTFBreak final : public CFX_Break {
+class CFX_RTFBreak final : public CFGAS_Break {
  public:
   explicit CFX_RTFBreak(uint32_t dwLayoutStyles);
   ~CFX_RTFBreak() override;

@@ -9,10 +9,10 @@ assert(pdf_enable_xfa)
 
 source_set("layout") {
   sources = [
+    "cfgas_break.cpp",
+    "cfgas_break.h",
     "cfgas_char.cpp",
     "cfgas_char.h",
-    "cfx_break.cpp",
-    "cfx_break.h",
     "cfx_breakline.cpp",
     "cfx_breakline.h",
     "cfx_breakpiece.cpp",

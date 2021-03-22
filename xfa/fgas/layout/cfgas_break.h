@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FGAS_LAYOUT_CFX_BREAK_H_
-#define XFA_FGAS_LAYOUT_CFX_BREAK_H_
+#ifndef XFA_FGAS_LAYOUT_CFGAS_BREAK_H_
+#define XFA_FGAS_LAYOUT_CFGAS_BREAK_H_
 
 #include <stdint.h>
 
@@ -30,9 +30,9 @@ enum FX_LAYOUTSTYLE {
   FX_LAYOUTSTYLE_CombText = 0x400
 };
 
-class CFX_Break {
+class CFGAS_Break {
  public:
-  virtual ~CFX_Break();
+  virtual ~CFGAS_Break();
 
   void Reset();
 
@@ -65,7 +65,7 @@ class CFX_Break {
   static const int kMinimumTabWidth;
   static const float kConversionFactor;
 
-  explicit CFX_Break(uint32_t dwLayoutStyles);
+  explicit CFGAS_Break(uint32_t dwLayoutStyles);
 
   void SetBreakStatus();
   bool HasLine() const { return m_iReadyLineIndex >= 0; }
@@ -92,4 +92,4 @@ class CFX_Break {
   CFX_BreakLine m_Lines[2];
 };
 
-#endif  // XFA_FGAS_LAYOUT_CFX_BREAK_H_
+#endif  // XFA_FGAS_LAYOUT_CFGAS_BREAK_H_

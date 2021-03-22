@@ -30,7 +30,7 @@ bool IsCtrlCode(wchar_t wch) {
 }  // namespace
 
 CFX_TxtBreak::CFX_TxtBreak()
-    : CFX_Break(FX_LAYOUTSTYLE_None),
+    : CFGAS_Break(FX_LAYOUTSTYLE_None),
       m_iAlignment(CFX_TxtLineAlignment_Left),
       m_iCombWidth(360000) {}
 
