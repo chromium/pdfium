@@ -14,7 +14,7 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
-#include "xfa/fgas/layout/cfx_char.h"
+#include "xfa/fgas/layout/cfgas_char.h"
 
 class CFX_RTFBreakTest : public testing::Test {
  public:
@@ -41,9 +41,9 @@ TEST_F(CFX_RTFBreakTest, AddChars) {
 
   WideString str(L"Input String.");
   for (wchar_t ch : str)
-    EXPECT_EQ(CFX_Char::BreakType::kNone, rtf_break->AppendChar(ch));
+    EXPECT_EQ(CFGAS_Char::BreakType::kNone, rtf_break->AppendChar(ch));
 
-  EXPECT_EQ(CFX_Char::BreakType::kParagraph, rtf_break->AppendChar(L'\n'));
+  EXPECT_EQ(CFGAS_Char::BreakType::kParagraph, rtf_break->AppendChar(L'\n'));
   ASSERT_EQ(1, rtf_break->CountBreakPieces());
   EXPECT_EQ(str + L"\n", rtf_break->GetBreakPieceUnstable(0)->GetString());
 
@@ -53,22 +53,22 @@ TEST_F(CFX_RTFBreakTest, AddChars) {
 
   str = L"Second str.";
   for (wchar_t ch : str)
-    EXPECT_EQ(CFX_Char::BreakType::kNone, rtf_break->AppendChar(ch));
+    EXPECT_EQ(CFGAS_Char::BreakType::kNone, rtf_break->AppendChar(ch));
 
   // Force the end of the break at the end of the string.
-  rtf_break->EndBreak(CFX_Char::BreakType::kParagraph);
+  rtf_break->EndBreak(CFGAS_Char::BreakType::kParagraph);
   ASSERT_EQ(1, rtf_break->CountBreakPieces());
   EXPECT_EQ(str, rtf_break->GetBreakPieceUnstable(0)->GetString());
 }
 
 TEST_F(CFX_RTFBreakTest, ControlCharacters) {
   auto rtf_break = CreateBreak(FX_LAYOUTSTYLE_ExpandTab);
-  EXPECT_EQ(CFX_Char::BreakType::kLine, rtf_break->AppendChar(L'\v'));
-  EXPECT_EQ(CFX_Char::BreakType::kPage, rtf_break->AppendChar(L'\f'));
+  EXPECT_EQ(CFGAS_Char::BreakType::kLine, rtf_break->AppendChar(L'\v'));
+  EXPECT_EQ(CFGAS_Char::BreakType::kPage, rtf_break->AppendChar(L'\f'));
   const wchar_t kUnicodeParagraphSeparator = 0x2029;
-  EXPECT_EQ(CFX_Char::BreakType::kParagraph,
+  EXPECT_EQ(CFGAS_Char::BreakType::kParagraph,
             rtf_break->AppendChar(kUnicodeParagraphSeparator));
-  EXPECT_EQ(CFX_Char::BreakType::kParagraph, rtf_break->AppendChar(L'\n'));
+  EXPECT_EQ(CFGAS_Char::BreakType::kParagraph, rtf_break->AppendChar(L'\n'));
 
   ASSERT_EQ(1, rtf_break->CountBreakPieces());
   EXPECT_EQ(L"\v", rtf_break->GetBreakPieceUnstable(0)->GetString());
@@ -83,8 +83,8 @@ TEST_F(CFX_RTFBreakTest, BidiLine) {
   for (wchar_t ch : input)
     rtf_break->AppendChar(ch);
 
-  std::vector<CFX_Char> chars =
+  std::vector<CFGAS_Char> chars =
       rtf_break->GetCurrentLineForTesting()->m_LineChars;
-  CFX_Char::BidiLine(&chars, chars.size());
+  CFGAS_Char::BidiLine(&chars, chars.size());
   EXPECT_EQ(3u, chars.size());
 }

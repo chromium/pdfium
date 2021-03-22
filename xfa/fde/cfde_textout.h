@@ -14,7 +14,7 @@
 #include "core/fxge/dib/fx_dib.h"
 #include "third_party/base/span.h"
 #include "xfa/fde/cfde_data.h"
-#include "xfa/fgas/layout/cfx_char.h"
+#include "xfa/fgas/layout/cfgas_char.h"
 
 class CFGAS_GEFont;
 class CFX_RenderDevice;
@@ -81,7 +81,7 @@ class CFDE_TextOut {
     std::deque<Piece> pieces_;
   };
 
-  bool RetrieveLineWidth(CFX_Char::BreakType dwBreakStatus,
+  bool RetrieveLineWidth(CFGAS_Char::BreakType dwBreakStatus,
                          float* pStartPos,
                          float* pWidth,
                          float* pHeight);
@@ -89,7 +89,7 @@ class CFDE_TextOut {
 
   void Reload(const CFX_RectF& rect);
   void ReloadLinePiece(Line* pLine, const CFX_RectF& rect);
-  bool RetrievePieces(CFX_Char::BreakType dwBreakStatus,
+  bool RetrievePieces(CFGAS_Char::BreakType dwBreakStatus,
                       bool bReload,
                       const CFX_RectF& rect,
                       size_t* pStartChar,

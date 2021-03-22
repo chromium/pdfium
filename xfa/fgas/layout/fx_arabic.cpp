@@ -139,7 +139,7 @@ const FX_ARBFORMTABLE* GetArabicFormTable(wchar_t unicode) {
   return g_FX_ArabicFormTables + (unicode - 0x622);
 }
 
-const FX_ARBFORMTABLE* ParseChar(const CFX_Char* pTC,
+const FX_ARBFORMTABLE* ParseChar(const CFGAS_Char* pTC,
                                  wchar_t* wChar,
                                  FX_CHARTYPE* eType) {
   if (!pTC) {
@@ -173,15 +173,15 @@ namespace pdfium {
 namespace arabic {
 
 wchar_t GetFormChar(wchar_t wch, wchar_t prev, wchar_t next) {
-  CFX_Char c(wch);
-  CFX_Char p(prev);
-  CFX_Char n(next);
+  CFGAS_Char c(wch);
+  CFGAS_Char p(prev);
+  CFGAS_Char n(next);
   return GetFormChar(&c, &p, &n);
 }
 
-wchar_t GetFormChar(const CFX_Char* cur,
-                    const CFX_Char* prev,
-                    const CFX_Char* next) {
+wchar_t GetFormChar(const CFGAS_Char* cur,
+                    const CFGAS_Char* prev,
+                    const CFGAS_Char* next) {
   FX_CHARTYPE eCur;
   wchar_t wCur;
   const FX_ARBFORMTABLE* ft = ParseChar(cur, &wCur, &eCur);

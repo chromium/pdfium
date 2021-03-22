@@ -56,7 +56,7 @@ class CFX_Break {
   const CFX_BreakPiece* GetBreakPieceUnstable(int32_t index) const;
   void ClearBreakPieces();
 
-  CFX_Char* GetLastChar(int32_t index, bool bOmitChar, bool bRichText) const;
+  CFGAS_Char* GetLastChar(int32_t index, bool bOmitChar, bool bRichText) const;
   const CFX_BreakLine* GetCurrentLineForTesting() const {
     return m_pCurLine.Get();
   }

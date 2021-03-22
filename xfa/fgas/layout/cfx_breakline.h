@@ -9,15 +9,15 @@
 
 #include <vector>
 
+#include "xfa/fgas/layout/cfgas_char.h"
 #include "xfa/fgas/layout/cfx_breakpiece.h"
-#include "xfa/fgas/layout/cfx_char.h"
 
 class CFX_BreakLine {
  public:
   CFX_BreakLine();
   ~CFX_BreakLine();
 
-  CFX_Char* GetChar(int32_t index);
+  CFGAS_Char* GetChar(int32_t index);
   int32_t GetLineEnd() const;
 
   void Clear();
@@ -26,7 +26,7 @@ class CFX_BreakLine {
   void DecrementArabicCharCount();
   bool HasArabicChar() const { return m_iArabicChars > 0; }
 
-  std::vector<CFX_Char> m_LineChars;
+  std::vector<CFGAS_Char> m_LineChars;
   std::vector<CFX_BreakPiece> m_LinePieces;
   int32_t m_iStart = 0;
   int32_t m_iWidth = 0;

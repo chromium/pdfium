@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FGAS_LAYOUT_CFX_CHAR_H_
-#define XFA_FGAS_LAYOUT_CFX_CHAR_H_
+#ifndef XFA_FGAS_LAYOUT_CFGAS_CHAR_H_
+#define XFA_FGAS_LAYOUT_CFGAS_CHAR_H_
 
 #include <stdint.h>
 
@@ -16,7 +16,7 @@
 #include "xfa/fgas/layout/cfx_textuserdata.h"
 #include "xfa/fgas/layout/fx_linebreak.h"
 
-class CFX_Char {
+class CFGAS_Char {
  public:
   enum class BreakType : uint8_t {
     kNone = 0,
@@ -26,14 +26,14 @@ class CFX_Char {
     kPage
   };
 
-  static void BidiLine(std::vector<CFX_Char>* chars, size_t iCount);
+  static void BidiLine(std::vector<CFGAS_Char>* chars, size_t iCount);
 
-  explicit CFX_Char(uint16_t wCharCode);
-  CFX_Char(uint16_t wCharCode,
-           int32_t iHorizontalScale,
-           int32_t iVerticalScale);
-  CFX_Char(const CFX_Char& other);
-  ~CFX_Char();
+  explicit CFGAS_Char(uint16_t wCharCode);
+  CFGAS_Char(uint16_t wCharCode,
+             int32_t iHorizontalScale,
+             int32_t iVerticalScale);
+  CFGAS_Char(const CFGAS_Char& other);
+  ~CFGAS_Char();
 
   FX_CHARTYPE GetCharType() const;
   uint16_t char_code() const { return m_wCharCode; }
@@ -58,4 +58,4 @@ class CFX_Char {
   int32_t m_iVerticalScale;
 };
 
-#endif  // XFA_FGAS_LAYOUT_CFX_CHAR_H_
+#endif  // XFA_FGAS_LAYOUT_CFGAS_CHAR_H_

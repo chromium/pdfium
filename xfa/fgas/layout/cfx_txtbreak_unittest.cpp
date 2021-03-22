@@ -11,7 +11,7 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
-#include "xfa/fgas/layout/cfx_char.h"
+#include "xfa/fgas/layout/cfgas_char.h"
 
 class CFX_TxtBreakTest : public testing::Test {
  public:
@@ -39,8 +39,8 @@ TEST_F(CFX_TxtBreakTest, BidiLine) {
   for (wchar_t ch : input)
     txt_break->AppendChar(ch);
 
-  std::vector<CFX_Char> chars =
+  std::vector<CFGAS_Char> chars =
       txt_break->GetCurrentLineForTesting()->m_LineChars;
-  CFX_Char::BidiLine(&chars, chars.size());
+  CFGAS_Char::BidiLine(&chars, chars.size());
   EXPECT_EQ(3u, chars.size());
 }

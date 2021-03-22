@@ -13,7 +13,7 @@ CFX_BreakLine::CFX_BreakLine() = default;
 
 CFX_BreakLine::~CFX_BreakLine() = default;
 
-CFX_Char* CFX_BreakLine::GetChar(int32_t index) {
+CFGAS_Char* CFX_BreakLine::GetChar(int32_t index) {
   DCHECK(pdfium::IndexInBounds(m_LineChars, index));
   return &m_LineChars[index];
 }

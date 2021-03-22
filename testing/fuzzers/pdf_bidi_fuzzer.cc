@@ -9,7 +9,7 @@
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/fx_font.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
-#include "xfa/fgas/layout/cfx_char.h"
+#include "xfa/fgas/layout/cfgas_char.h"
 #include "xfa/fgas/layout/cfx_rtfbreak.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
@@ -31,8 +31,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   for (wchar_t ch : input)
     rtf_break.AppendChar(ch);
 
-  std::vector<CFX_Char> chars =
+  std::vector<CFGAS_Char> chars =
       rtf_break.GetCurrentLineForTesting()->m_LineChars;
-  CFX_Char::BidiLine(&chars, chars.size());
+  CFGAS_Char::BidiLine(&chars, chars.size());
   return 0;
 }

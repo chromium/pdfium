@@ -12,7 +12,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "xfa/fgas/layout/cfx_char.h"
+#include "xfa/fgas/layout/cfgas_char.h"
 
 class CFX_TextUserData;
 
@@ -25,11 +25,11 @@ class CFX_BreakPiece {
   int32_t GetEndPos() const;
   int32_t GetLength() const { return m_iCharCount; }
 
-  CFX_Char* GetChar(int32_t index) const;
+  CFGAS_Char* GetChar(int32_t index) const;
   WideString GetString() const;
   std::vector<int32_t> GetWidths() const;
 
-  CFX_Char::BreakType m_dwStatus = CFX_Char::BreakType::kPiece;
+  CFGAS_Char::BreakType m_dwStatus = CFGAS_Char::BreakType::kPiece;
   int32_t m_iStartPos = 0;
   int32_t m_iWidth = -1;
   int32_t m_iStartChar = 0;
@@ -41,7 +41,7 @@ class CFX_BreakPiece {
   int32_t m_iVerticalScale = 100;
   uint32_t m_dwIdentity = 0;
   uint32_t m_dwCharStyles = 0;
-  UnownedPtr<std::vector<CFX_Char>> m_pChars;
+  UnownedPtr<std::vector<CFGAS_Char>> m_pChars;
   RetainPtr<CFX_TextUserData> m_pUserData;
 };
 

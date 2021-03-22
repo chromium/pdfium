@@ -74,9 +74,9 @@ void CFX_Break::SetBreakStatus() {
   if (m_pCurLine->m_LineChars.empty())
     return;
 
-  CFX_Char* tc = m_pCurLine->GetChar(m_pCurLine->m_LineChars.size() - 1);
-  if (tc->m_dwStatus == CFX_Char::BreakType::kNone)
-    tc->m_dwStatus = CFX_Char::BreakType::kPiece;
+  CFGAS_Char* tc = m_pCurLine->GetChar(m_pCurLine->m_LineChars.size() - 1);
+  if (tc->m_dwStatus == CFGAS_Char::BreakType::kNone)
+    tc->m_dwStatus = CFGAS_Char::BreakType::kPiece;
 }
 
 bool CFX_Break::IsGreaterThanLineWidth(int32_t width) const {
@@ -121,16 +121,16 @@ void CFX_Break::SetLineBoundary(float fLineStart, float fLineEnd) {
   m_pCurLine->m_iStart = std::max(m_pCurLine->m_iStart, m_iLineStart);
 }
 
-CFX_Char* CFX_Break::GetLastChar(int32_t index,
-                                 bool bOmitChar,
-                                 bool bRichText) const {
-  std::vector<CFX_Char>& tca = m_pCurLine->m_LineChars;
+CFGAS_Char* CFX_Break::GetLastChar(int32_t index,
+                                   bool bOmitChar,
+                                   bool bRichText) const {
+  std::vector<CFGAS_Char>& tca = m_pCurLine->m_LineChars;
   if (!pdfium::IndexInBounds(tca, index))
     return nullptr;
 
   int32_t iStart = pdfium::CollectionSize<int32_t>(tca) - 1;
   while (iStart > -1) {
-    CFX_Char* pTC = &tca[iStart--];
+    CFGAS_Char* pTC = &tca[iStart--];
     if (((bRichText && pTC->m_iCharWidth < 0) || bOmitChar) &&
         pTC->GetCharType() == FX_CHARTYPE::kCombination) {
       continue;

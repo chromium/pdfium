@@ -19,7 +19,7 @@ int32_t CFX_BreakPiece::GetEndPos() const {
   return m_iWidth < 0 ? m_iStartPos : m_iStartPos + m_iWidth;
 }
 
-CFX_Char* CFX_BreakPiece::GetChar(int32_t index) const {
+CFGAS_Char* CFX_BreakPiece::GetChar(int32_t index) const {
   DCHECK(index >= 0);
   DCHECK(index < m_iCharCount);
   DCHECK(m_pChars);
