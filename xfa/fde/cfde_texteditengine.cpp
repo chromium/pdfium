@@ -301,7 +301,7 @@ void CFDE_TextEditEngine::Insert(size_t idx,
       // Raise the limit to allow subsequent changes to expanded text.
       character_limit_ = text_length_ + length;
     } else {
-      // Trucate the text to comply with the limit.
+      // Truncate the text to comply with the limit.
       CHECK(text_length_ <= character_limit_);
       length = character_limit_ - text_length_;
       exceeded_limit = true;
