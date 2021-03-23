@@ -104,7 +104,8 @@ class CFX_Font {
   void SetSubData(uint8_t* data) { m_pGsubData.reset(data); }
   pdfium::span<uint8_t> GetFontSpan() const { return m_FontData; }
   void AdjustMMParams(int glyph_index, int dest_width, int weight) const;
-  CFX_PathData* LoadGlyphPathImpl(uint32_t glyph_index, int dest_width) const;
+  std::unique_ptr<CFX_PathData> LoadGlyphPathImpl(uint32_t glyph_index,
+                                                  int dest_width) const;
 #if defined(OS_APPLE)
   void* GetPlatformFont() const { return m_pPlatformFont; }
   void SetPlatformFont(void* font) { m_pPlatformFont = font; }

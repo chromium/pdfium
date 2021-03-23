@@ -235,9 +235,8 @@ const CFX_PathData* CFX_GlyphCache::LoadGlyphPath(const CFX_Font* pFont,
   if (it != m_PathMap.end())
     return it->second.get();
 
-  CFX_PathData* pGlyphPath = pFont->LoadGlyphPathImpl(glyph_index, dest_width);
-  m_PathMap[key] = std::unique_ptr<CFX_PathData>(pGlyphPath);
-  return pGlyphPath;
+  m_PathMap[key] = pFont->LoadGlyphPathImpl(glyph_index, dest_width);
+  return m_PathMap[key].get();
 }
 
 const CFX_GlyphBitmap* CFX_GlyphCache::LoadGlyphBitmap(

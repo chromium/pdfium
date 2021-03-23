@@ -634,8 +634,9 @@ void CFX_Font::AdjustMMParams(int glyph_index,
   FT_Set_MM_Design_Coordinates(m_Face->GetRec(), 2, coords);
 }
 
-CFX_PathData* CFX_Font::LoadGlyphPathImpl(uint32_t glyph_index,
-                                          int dest_width) const {
+std::unique_ptr<CFX_PathData> CFX_Font::LoadGlyphPathImpl(
+    uint32_t glyph_index,
+    int dest_width) const {
   if (!m_Face)
     return nullptr;
 
@@ -692,8 +693,7 @@ CFX_PathData* CFX_Font::LoadGlyphPathImpl(uint32_t glyph_index,
 
   Outline_CheckEmptyContour(&params);
   pPath->ClosePath();
-
-  return pPath.release();
+  return pPath;
 }
 
 const CFX_GlyphBitmap* CFX_Font::LoadGlyphBitmap(
