@@ -8,7 +8,6 @@
 #define CORE_FPDFAPI_EDIT_CPDF_PAGECONTENTGENERATOR_H_
 
 #include <map>
-#include <memory>
 #include <sstream>
 #include <vector>
 
@@ -55,13 +54,11 @@ class CPDF_PageContentGenerator {
 
   // Returns a map from content stream index to new stream data. Unmodified
   // streams are not touched.
-  std::map<int32_t, std::unique_ptr<std::ostringstream>>
-  GenerateModifiedStreams();
+  std::map<int32_t, std::ostringstream> GenerateModifiedStreams();
 
   // Add buffer as a stream in page's 'Contents'
   void UpdateContentStreams(
-      const std::map<int32_t, std::unique_ptr<std::ostringstream>>&
-          new_stream_data);
+      std::map<int32_t, std::ostringstream>&& new_stream_data);
 
   // Set the stream index of all page objects with stream index ==
   // |CPDF_PageObject::kNoContentStream|. These are new objects that had not

@@ -71,7 +71,7 @@ void CPDF_PageContentGenerator::GenerateContent() {
   UpdateContentStreams(GenerateModifiedStreams());
 }
 
-std::map<int32_t, std::unique_ptr<std::ostringstream>>
+std::map<int32_t, std::ostringstream>
 CPDF_PageContentGenerator::GenerateModifiedStreams() {
   // Make sure default graphics are created.
   GetOrCreateDefaultGraphics();
@@ -87,23 +87,21 @@ CPDF_PageContentGenerator::GenerateModifiedStreams() {
                            marked_dirty_streams.end());
 
   // Start regenerating dirty streams.
-  std::map<int32_t, std::unique_ptr<std::ostringstream>> streams;
+  std::map<int32_t, std::ostringstream> streams;
   std::set<int32_t> empty_streams;
   std::unique_ptr<const CPDF_ContentMarks> empty_content_marks =
       std::make_unique<CPDF_ContentMarks>();
   std::map<int32_t, const CPDF_ContentMarks*> current_content_marks;
 
   for (int32_t dirty_stream : all_dirty_streams) {
-    std::unique_ptr<std::ostringstream> buf =
-        std::make_unique<std::ostringstream>();
+    std::ostringstream buf;
 
     // Set the default graphic state values
-    *buf << "q\n";
+    buf << "q\n";
     if (!m_pObjHolder->GetLastCTM().IsIdentity())
-      *buf << m_pObjHolder->GetLastCTM().GetInverse() << " cm\n";
+      buf << m_pObjHolder->GetLastCTM().GetInverse() << " cm\n";
 
-    ProcessDefaultGraphics(buf.get());
-
+    ProcessDefaultGraphics(&buf);
     streams[dirty_stream] = std::move(buf);
     empty_streams.insert(dirty_stream);
     current_content_marks[dirty_stream] = empty_content_marks.get();
@@ -116,7 +114,7 @@ CPDF_PageContentGenerator::GenerateModifiedStreams() {
     if (it == streams.end())
       continue;
 
-    std::ostringstream* buf = it->second.get();
+    std::ostringstream* buf = &it->second;
     empty_streams.erase(stream_index);
     current_content_marks[stream_index] = ProcessContentMarks(
         buf, pPageObj.Get(), current_content_marks[stream_index]);
@@ -125,7 +123,7 @@ CPDF_PageContentGenerator::GenerateModifiedStreams() {
 
   // Finish dirty streams.
   for (int32_t dirty_stream : all_dirty_streams) {
-    std::ostringstream* buf = streams[dirty_stream].get();
+    std::ostringstream* buf = &streams[dirty_stream];
     if (pdfium::Contains(empty_streams, dirty_stream)) {
       // Clear to show that this stream needs to be deleted.
       buf->str("");
@@ -141,8 +139,7 @@ CPDF_PageContentGenerator::GenerateModifiedStreams() {
 }
 
 void CPDF_PageContentGenerator::UpdateContentStreams(
-    const std::map<int32_t, std::unique_ptr<std::ostringstream>>&
-        new_stream_data) {
+    std::map<int32_t, std::ostringstream>&& new_stream_data) {
   // If no streams were regenerated or removed, nothing to do here.
   if (new_stream_data.empty())
     return;
@@ -151,7 +148,7 @@ void CPDF_PageContentGenerator::UpdateContentStreams(
 
   for (auto& pair : new_stream_data) {
     int32_t stream_index = pair.first;
-    std::ostringstream* buf = pair.second.get();
+    std::ostringstream* buf = &pair.second;
 
     if (stream_index == CPDF_PageObject::kNoContentStream) {
       int new_stream_index = page_content_manager.AddStream(buf);
