@@ -19,6 +19,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_face.h"
 #include "core/fxge/fx_freetype.h"
+#include "third_party/base/optional.h"
 
 class CFGAS_GEFont;
 class IFX_SeekableReadStream;
@@ -131,11 +132,10 @@ class CFGAS_FontMgr {
   void RegisterFace(RetainPtr<CFX_Face> pFace, const WideString* pFaceName);
   void RegisterFaces(const RetainPtr<IFX_SeekableReadStream>& pFontStream,
                      const WideString* pFaceName);
-  void MatchFonts(std::vector<CFGAS_FontDescriptorInfo>* MatchedFonts,
-                  uint16_t wCodePage,
-                  uint32_t dwFontStyles,
-                  const WideString& FontName,
-                  wchar_t wcUnicode);
+  std::vector<CFGAS_FontDescriptorInfo> MatchFonts(uint16_t wCodePage,
+                                                   uint32_t dwFontStyles,
+                                                   const WideString& FontName,
+                                                   wchar_t wcUnicode);
   RetainPtr<CFGAS_GEFont> LoadFontInternal(const WideString& wsFaceName,
                                            int32_t iFaceIndex);
 #endif  // defined(OS_WIN)
@@ -147,7 +147,7 @@ class CFGAS_FontMgr {
   std::deque<FX_FONTDESCRIPTOR> m_FontFaces;
 #else
   std::vector<std::unique_ptr<CFGAS_FontDescriptor>> m_InstalledFonts;
-  std::map<uint32_t, std::unique_ptr<std::vector<CFGAS_FontDescriptorInfo>>>
+  std::map<uint32_t, Optional<std::vector<CFGAS_FontDescriptorInfo>>>
       m_Hash2CandidateList;
 #endif  // defined(OS_WIN)
 };

@@ -637,17 +637,12 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByUnicodeImpl(
     const wchar_t* pszFontFamily,
     uint32_t dwHash,
     uint16_t wCodePage,
-    uint16_t /* wBitField */) {
-  std::vector<CFGAS_FontDescriptorInfo>* sortedFontInfos =
-      m_Hash2CandidateList[dwHash].get();
-  if (!sortedFontInfos) {
-    auto pNewFonts = std::make_unique<std::vector<CFGAS_FontDescriptorInfo>>();
-    sortedFontInfos = pNewFonts.get();
-    MatchFonts(sortedFontInfos, wCodePage, dwFontStyles,
-               WideString(pszFontFamily), wUnicode);
-    m_Hash2CandidateList[dwHash] = std::move(pNewFonts);
+    uint16_t /* wBitField*/) {
+  if (!m_Hash2CandidateList[dwHash].has_value()) {
+    m_Hash2CandidateList[dwHash] =
+        MatchFonts(wCodePage, dwFontStyles, pszFontFamily, wUnicode);
   }
-  for (const auto& info : *sortedFontInfos) {
+  for (const auto& info : m_Hash2CandidateList[dwHash].value()) {
     CFGAS_FontDescriptor* pDesc = info.pFont;
     if (!VerifyUnicodeForFontDescriptor(pDesc, wUnicode))
       continue;
@@ -679,23 +674,23 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::LoadFontInternal(
   return CFGAS_GEFont::LoadFont(std::move(pInternalFont));
 }
 
-void CFGAS_FontMgr::MatchFonts(
-    std::vector<CFGAS_FontDescriptorInfo>* pMatchedFonts,
+std::vector<CFGAS_FontDescriptorInfo> CFGAS_FontMgr::MatchFonts(
     uint16_t wCodePage,
     uint32_t dwFontStyles,
     const WideString& FontName,
     wchar_t wcUnicode) {
-  pMatchedFonts->clear();
+  std::vector<CFGAS_FontDescriptorInfo> matched_fonts;
   for (const auto& pFont : m_InstalledFonts) {
     int32_t nPenalty =
         CalcPenalty(pFont.get(), wCodePage, dwFontStyles, FontName, wcUnicode);
     if (nPenalty >= 0xffff)
       continue;
-    pMatchedFonts->push_back({pFont.get(), nPenalty});
-    if (pMatchedFonts->size() == 0xffff)
+    matched_fonts.push_back({pFont.get(), nPenalty});
+    if (matched_fonts.size() == 0xffff)
       break;
   }
-  std::sort(pMatchedFonts->begin(), pMatchedFonts->end());
+  std::sort(matched_fonts.begin(), matched_fonts.end());
+  return matched_fonts;
 }
 
 void CFGAS_FontMgr::RegisterFace(RetainPtr<CFX_Face> pFace,
@@ -780,15 +775,12 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByCodePage(
   RetainPtr<CFGAS_GEFont> pFont =
       CFGAS_GEFont::LoadFont(pFD->wsFontFace, dwFontStyles, wCodePage);
 #else   // defined(OS_WIN)
-  std::vector<CFGAS_FontDescriptorInfo>* sortedFontInfos =
-      m_Hash2CandidateList[dwHash].get();
-  if (!sortedFontInfos) {
-    auto pNewFonts = std::make_unique<std::vector<CFGAS_FontDescriptorInfo>>();
-    sortedFontInfos = pNewFonts.get();
-    MatchFonts(sortedFontInfos, wCodePage, dwFontStyles,
-               WideString(pszFontFamily), 0);
-    m_Hash2CandidateList[dwHash] = std::move(pNewFonts);
+  if (!m_Hash2CandidateList[dwHash].has_value()) {
+    m_Hash2CandidateList[dwHash] =
+        MatchFonts(wCodePage, dwFontStyles, WideString(pszFontFamily), 0);
   }
+  std::vector<CFGAS_FontDescriptorInfo>* sortedFontInfos =
+      &m_Hash2CandidateList[dwHash].value();
   if (sortedFontInfos->empty())
     return nullptr;
 
