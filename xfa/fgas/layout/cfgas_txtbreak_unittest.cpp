@@ -13,7 +13,7 @@
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/cfgas_char.h"
 
-class CFX_TxtBreakTest : public testing::Test {
+class CFGAS_TxtBreakTest : public testing::Test {
  public:
   void SetUp() override {
     font_ = CFGAS_GEFont::LoadFont(L"Arial Black", 0, 0);
@@ -30,7 +30,7 @@ class CFX_TxtBreakTest : public testing::Test {
   RetainPtr<CFGAS_GEFont> font_;
 };
 
-TEST_F(CFX_TxtBreakTest, BidiLine) {
+TEST_F(CFGAS_TxtBreakTest, BidiLine) {
   auto txt_break = CreateBreak();
   txt_break->SetLineBreakTolerance(1);
   txt_break->SetFontSize(12);

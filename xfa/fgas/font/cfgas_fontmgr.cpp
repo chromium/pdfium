@@ -502,7 +502,7 @@ RetainPtr<CFX_Face> LoadFace(
   return pFace;
 }
 
-bool VerifyUnicodeForFontDescriptor(CFX_FontDescriptor* pDesc,
+bool VerifyUnicodeForFontDescriptor(CFGAS_FontDescriptor* pDesc,
                                     wchar_t wcUnicode) {
   RetainPtr<IFX_SeekableReadStream> pFileRead =
       CreateFontStream(pDesc->m_wsFaceName.ToUTF8());
@@ -527,7 +527,7 @@ bool IsPartName(const WideString& name1, const WideString& name2) {
   return name1.Contains(name2.AsStringView());
 }
 
-int32_t CalcPenalty(CFX_FontDescriptor* pInstalled,
+int32_t CalcPenalty(CFGAS_FontDescriptor* pInstalled,
                     uint16_t wCodePage,
                     uint32_t dwFontStyles,
                     const WideString& FontName,
@@ -599,10 +599,10 @@ int32_t CalcPenalty(CFX_FontDescriptor* pInstalled,
 
 }  // namespace
 
-CFX_FontDescriptor::CFX_FontDescriptor()
+CFGAS_FontDescriptor::CFGAS_FontDescriptor()
     : m_nFaceIndex(0), m_dwFontStyles(0), m_dwUsb(), m_dwCsb() {}
 
-CFX_FontDescriptor::~CFX_FontDescriptor() = default;
+CFGAS_FontDescriptor::~CFGAS_FontDescriptor() = default;
 
 CFGAS_FontMgr::CFGAS_FontMgr() = default;
 
@@ -638,17 +638,17 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByUnicodeImpl(
     uint32_t dwHash,
     uint16_t wCodePage,
     uint16_t /* wBitField */) {
-  std::vector<CFX_FontDescriptorInfo>* sortedFontInfos =
+  std::vector<CFGAS_FontDescriptorInfo>* sortedFontInfos =
       m_Hash2CandidateList[dwHash].get();
   if (!sortedFontInfos) {
-    auto pNewFonts = std::make_unique<std::vector<CFX_FontDescriptorInfo>>();
+    auto pNewFonts = std::make_unique<std::vector<CFGAS_FontDescriptorInfo>>();
     sortedFontInfos = pNewFonts.get();
     MatchFonts(sortedFontInfos, wCodePage, dwFontStyles,
                WideString(pszFontFamily), wUnicode);
     m_Hash2CandidateList[dwHash] = std::move(pNewFonts);
   }
   for (const auto& info : *sortedFontInfos) {
-    CFX_FontDescriptor* pDesc = info.pFont;
+    CFGAS_FontDescriptor* pDesc = info.pFont;
     if (!VerifyUnicodeForFontDescriptor(pDesc, wUnicode))
       continue;
     RetainPtr<CFGAS_GEFont> pFont =
@@ -680,7 +680,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::LoadFontInternal(
 }
 
 void CFGAS_FontMgr::MatchFonts(
-    std::vector<CFX_FontDescriptorInfo>* pMatchedFonts,
+    std::vector<CFGAS_FontDescriptorInfo>* pMatchedFonts,
     uint16_t wCodePage,
     uint32_t dwFontStyles,
     const WideString& FontName,
@@ -703,7 +703,7 @@ void CFGAS_FontMgr::RegisterFace(RetainPtr<CFX_Face> pFace,
   if ((pFace->GetRec()->face_flags & FT_FACE_FLAG_SCALABLE) == 0)
     return;
 
-  auto pFont = std::make_unique<CFX_FontDescriptor>();
+  auto pFont = std::make_unique<CFGAS_FontDescriptor>();
   pFont->m_dwFontStyles |= GetFlags(pFace->GetRec());
 
   GetUSBCSB(pFace->GetRec(), pFont->m_dwUsb, pFont->m_dwCsb);
@@ -780,10 +780,10 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByCodePage(
   RetainPtr<CFGAS_GEFont> pFont =
       CFGAS_GEFont::LoadFont(pFD->wsFontFace, dwFontStyles, wCodePage);
 #else   // defined(OS_WIN)
-  std::vector<CFX_FontDescriptorInfo>* sortedFontInfos =
+  std::vector<CFGAS_FontDescriptorInfo>* sortedFontInfos =
       m_Hash2CandidateList[dwHash].get();
   if (!sortedFontInfos) {
-    auto pNewFonts = std::make_unique<std::vector<CFX_FontDescriptorInfo>>();
+    auto pNewFonts = std::make_unique<std::vector<CFGAS_FontDescriptorInfo>>();
     sortedFontInfos = pNewFonts.get();
     MatchFonts(sortedFontInfos, wCodePage, dwFontStyles,
                WideString(pszFontFamily), 0);
@@ -792,7 +792,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByCodePage(
   if (sortedFontInfos->empty())
     return nullptr;
 
-  CFX_FontDescriptor* pDesc = (*sortedFontInfos)[0].pFont;
+  CFGAS_FontDescriptor* pDesc = (*sortedFontInfos)[0].pFont;
   RetainPtr<CFGAS_GEFont> pFont =
       LoadFontInternal(pDesc->m_wsFaceName, pDesc->m_nFaceIndex);
 #endif  // defined(OS_WIN)

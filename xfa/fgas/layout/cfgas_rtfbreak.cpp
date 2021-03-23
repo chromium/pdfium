@@ -24,9 +24,7 @@
 #include "xfa/fgas/layout/fx_linebreak.h"
 
 CFGAS_RTFBreak::CFGAS_RTFBreak(uint32_t dwLayoutStyles)
-    : CFGAS_Break(dwLayoutStyles),
-      m_bPagination(false),
-      m_iAlignment(CFX_RTFLineAlignment::Left) {
+    : CFGAS_Break(dwLayoutStyles) {
   SetBreakStatus();
   m_bPagination = !!(m_dwLayoutStyles & FX_LAYOUTSTYLE_Pagination);
 }
@@ -331,13 +329,13 @@ CFGAS_Char::BreakType CFGAS_RTFBreak::EndBreak(CFGAS_Char::BreakType dwStatus) {
 
   m_iReadyLineIndex = m_pCurLine == &m_Lines[0] ? 0 : 1;
   CFGAS_BreakLine* pNextLine = &m_Lines[1 - m_iReadyLineIndex];
-  bool bAllChars = m_iAlignment == CFX_RTFLineAlignment::Justified ||
-                   m_iAlignment == CFX_RTFLineAlignment::Distributed;
+  bool bAllChars = m_iAlignment == LineAlignment::Justified ||
+                   m_iAlignment == LineAlignment::Distributed;
 
   if (!EndBreak_SplitLine(pNextLine, bAllChars, dwStatus)) {
     std::deque<FX_TPO> tpos;
     EndBreak_BidiLine(&tpos, dwStatus);
-    if (!m_bPagination && m_iAlignment != CFX_RTFLineAlignment::Left)
+    if (!m_bPagination && m_iAlignment != LineAlignment::Left)
       EndBreak_Alignment(tpos, bAllChars, dwStatus);
   }
   m_pCurLine = pNextLine;
@@ -548,8 +546,8 @@ void CFGAS_RTFBreak::EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
   }
 
   int32_t iOffset = m_iLineWidth - iNetWidth;
-  if (iGapChars > 0 && (m_iAlignment == CFX_RTFLineAlignment::Distributed ||
-                        (m_iAlignment == CFX_RTFLineAlignment::Justified &&
+  if (iGapChars > 0 && (m_iAlignment == LineAlignment::Distributed ||
+                        (m_iAlignment == LineAlignment::Justified &&
                          dwStatus != CFGAS_Char::BreakType::kParagraph))) {
     int32_t iStart = -1;
     for (const auto& tpo : tpos) {
@@ -575,9 +573,9 @@ void CFGAS_RTFBreak::EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
       }
       iStart += ttp.m_iWidth;
     }
-  } else if (m_iAlignment == CFX_RTFLineAlignment::Right ||
-             m_iAlignment == CFX_RTFLineAlignment::Center) {
-    if (m_iAlignment == CFX_RTFLineAlignment::Center)
+  } else if (m_iAlignment == LineAlignment::Right ||
+             m_iAlignment == LineAlignment::Center) {
+    if (m_iAlignment == LineAlignment::Center)
       iOffset /= 2;
     if (iOffset > 0) {
       for (auto& ttp : m_pCurLine->m_LinePieces)

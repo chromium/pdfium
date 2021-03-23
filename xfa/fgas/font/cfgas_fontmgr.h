@@ -62,10 +62,10 @@ inline bool operator==(const FX_FONTDESCRIPTOR& left,
 
 #else  // defined(OS_WIN)
 
-class CFX_FontDescriptor {
+class CFGAS_FontDescriptor {
  public:
-  CFX_FontDescriptor();
-  ~CFX_FontDescriptor();
+  CFGAS_FontDescriptor();
+  ~CFGAS_FontDescriptor();
 
   int32_t m_nFaceIndex;
   uint32_t m_dwFontStyles;
@@ -75,18 +75,18 @@ class CFX_FontDescriptor {
   uint32_t m_dwCsb[2];
 };
 
-class CFX_FontDescriptorInfo {
+class CFGAS_FontDescriptorInfo {
  public:
-  CFX_FontDescriptor* pFont;
+  CFGAS_FontDescriptor* pFont;
   int32_t nPenalty;
 
-  bool operator>(const CFX_FontDescriptorInfo& other) const {
+  bool operator>(const CFGAS_FontDescriptorInfo& other) const {
     return nPenalty > other.nPenalty;
   }
-  bool operator<(const CFX_FontDescriptorInfo& other) const {
+  bool operator<(const CFGAS_FontDescriptorInfo& other) const {
     return nPenalty < other.nPenalty;
   }
-  bool operator==(const CFX_FontDescriptorInfo& other) const {
+  bool operator==(const CFGAS_FontDescriptorInfo& other) const {
     return nPenalty == other.nPenalty;
   }
 };
@@ -131,7 +131,7 @@ class CFGAS_FontMgr {
   void RegisterFace(RetainPtr<CFX_Face> pFace, const WideString* pFaceName);
   void RegisterFaces(const RetainPtr<IFX_SeekableReadStream>& pFontStream,
                      const WideString* pFaceName);
-  void MatchFonts(std::vector<CFX_FontDescriptorInfo>* MatchedFonts,
+  void MatchFonts(std::vector<CFGAS_FontDescriptorInfo>* MatchedFonts,
                   uint16_t wCodePage,
                   uint32_t dwFontStyles,
                   const WideString& FontName,
@@ -146,8 +146,8 @@ class CFGAS_FontMgr {
 #if defined(OS_WIN)
   std::deque<FX_FONTDESCRIPTOR> m_FontFaces;
 #else
-  std::vector<std::unique_ptr<CFX_FontDescriptor>> m_InstalledFonts;
-  std::map<uint32_t, std::unique_ptr<std::vector<CFX_FontDescriptorInfo>>>
+  std::vector<std::unique_ptr<CFGAS_FontDescriptor>> m_InstalledFonts;
+  std::map<uint32_t, std::unique_ptr<std::vector<CFGAS_FontDescriptorInfo>>>
       m_Hash2CandidateList;
 #endif  // defined(OS_WIN)
 };

@@ -163,19 +163,19 @@ void CXFA_TextLayout::InitBreak(float fLineWidth) {
   float fStart = 0;
   float fStartPos = 0;
   if (para) {
-    CFX_RTFLineAlignment iAlign = CFX_RTFLineAlignment::Left;
+    CFGAS_RTFBreak::LineAlignment iAlign = CFGAS_RTFBreak::LineAlignment::Left;
     switch (para->GetHorizontalAlign()) {
       case XFA_AttributeValue::Center:
-        iAlign = CFX_RTFLineAlignment::Center;
+        iAlign = CFGAS_RTFBreak::LineAlignment::Center;
         break;
       case XFA_AttributeValue::Right:
-        iAlign = CFX_RTFLineAlignment::Right;
+        iAlign = CFGAS_RTFBreak::LineAlignment::Right;
         break;
       case XFA_AttributeValue::Justify:
-        iAlign = CFX_RTFLineAlignment::Justified;
+        iAlign = CFGAS_RTFBreak::LineAlignment::Justified;
         break;
       case XFA_AttributeValue::JustifyAll:
-        iAlign = CFX_RTFLineAlignment::Distributed;
+        iAlign = CFGAS_RTFBreak::LineAlignment::Distributed;
         break;
       case XFA_AttributeValue::Left:
       case XFA_AttributeValue::Radix:
@@ -188,7 +188,7 @@ void CXFA_TextLayout::InitBreak(float fLineWidth) {
 
     fStart = para->GetMarginLeft();
     if (m_pTextProvider->IsCheckButtonAndAutoWidth()) {
-      if (iAlign != CFX_RTFLineAlignment::Left)
+      if (iAlign != CFGAS_RTFBreak::LineAlignment::Left)
         fLineWidth -= para->GetMarginRight();
     } else {
       fLineWidth -= para->GetMarginRight();
@@ -232,19 +232,19 @@ void CXFA_TextLayout::InitBreak(CFX_CSSComputedStyle* pStyle,
 
   if (eDisplay == CFX_CSSDisplay::Block ||
       eDisplay == CFX_CSSDisplay::ListItem) {
-    CFX_RTFLineAlignment iAlign = CFX_RTFLineAlignment::Left;
+    CFGAS_RTFBreak::LineAlignment iAlign = CFGAS_RTFBreak::LineAlignment::Left;
     switch (pStyle->GetTextAlign()) {
       case CFX_CSSTextAlign::Right:
-        iAlign = CFX_RTFLineAlignment::Right;
+        iAlign = CFGAS_RTFBreak::LineAlignment::Right;
         break;
       case CFX_CSSTextAlign::Center:
-        iAlign = CFX_RTFLineAlignment::Center;
+        iAlign = CFGAS_RTFBreak::LineAlignment::Center;
         break;
       case CFX_CSSTextAlign::Justify:
-        iAlign = CFX_RTFLineAlignment::Justified;
+        iAlign = CFGAS_RTFBreak::LineAlignment::Justified;
         break;
       case CFX_CSSTextAlign::JustifyAll:
-        iAlign = CFX_RTFLineAlignment::Distributed;
+        iAlign = CFGAS_RTFBreak::LineAlignment::Distributed;
         break;
       default:
         break;

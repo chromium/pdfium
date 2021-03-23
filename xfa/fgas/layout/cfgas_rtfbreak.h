@@ -19,22 +19,22 @@ class CFGAS_TextPiece;
 class CFGAS_TextUserData;
 class TextCharPos;
 
-enum class CFX_RTFLineAlignment {
-  Left = 0,
-  Center,
-  Right,
-  Justified,
-  Distributed
-};
-
 class CFGAS_RTFBreak final : public CFGAS_Break {
  public:
+  enum class LineAlignment : uint8_t {
+    Left = 0,
+    Center,
+    Right,
+    Justified,
+    Distributed
+  };
+
   explicit CFGAS_RTFBreak(uint32_t dwLayoutStyles);
   ~CFGAS_RTFBreak() override;
 
   void SetLineStartPos(float fLinePos);
 
-  void SetAlignment(CFX_RTFLineAlignment align) { m_iAlignment = align; }
+  void SetAlignment(LineAlignment align) { m_iAlignment = align; }
   void SetUserData(const RetainPtr<CFGAS_TextUserData>& pUserData);
 
   void AddPositionedTab(float fTabPos);
@@ -70,9 +70,9 @@ class CFGAS_RTFBreak final : public CFGAS_Break {
                           bool bAllChars,
                           CFGAS_Char::BreakType dwStatus);
 
-  bool m_bPagination;
+  bool m_bPagination = false;
+  LineAlignment m_iAlignment = LineAlignment::Left;
   std::vector<int32_t> m_PositionedTabs;
-  CFX_RTFLineAlignment m_iAlignment;
   RetainPtr<CFGAS_TextUserData> m_pUserData;
 };
 

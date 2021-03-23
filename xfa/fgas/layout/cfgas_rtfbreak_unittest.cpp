@@ -16,7 +16,7 @@
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/cfgas_char.h"
 
-class CFX_RTFBreakTest : public testing::Test {
+class CFGAS_RTFBreakTest : public testing::Test {
  public:
   void SetUp() override {
     font_ = CFGAS_GEFont::LoadFont(L"Arial Black", 0, 0);
@@ -36,7 +36,7 @@ class CFX_RTFBreakTest : public testing::Test {
 // As soon as you get one of the control characters the break is complete
 // and must be consumed before you get any more characters ....
 
-TEST_F(CFX_RTFBreakTest, AddChars) {
+TEST_F(CFGAS_RTFBreakTest, AddChars) {
   auto rtf_break = CreateBreak(FX_LAYOUTSTYLE_ExpandTab);
 
   WideString str(L"Input String.");
@@ -61,7 +61,7 @@ TEST_F(CFX_RTFBreakTest, AddChars) {
   EXPECT_EQ(str, rtf_break->GetBreakPieceUnstable(0)->GetString());
 }
 
-TEST_F(CFX_RTFBreakTest, ControlCharacters) {
+TEST_F(CFGAS_RTFBreakTest, ControlCharacters) {
   auto rtf_break = CreateBreak(FX_LAYOUTSTYLE_ExpandTab);
   EXPECT_EQ(CFGAS_Char::BreakType::kLine, rtf_break->AppendChar(L'\v'));
   EXPECT_EQ(CFGAS_Char::BreakType::kPage, rtf_break->AppendChar(L'\f'));
@@ -74,7 +74,7 @@ TEST_F(CFX_RTFBreakTest, ControlCharacters) {
   EXPECT_EQ(L"\v", rtf_break->GetBreakPieceUnstable(0)->GetString());
 }
 
-TEST_F(CFX_RTFBreakTest, BidiLine) {
+TEST_F(CFGAS_RTFBreakTest, BidiLine) {
   auto rtf_break = CreateBreak(FX_LAYOUTSTYLE_ExpandTab);
   rtf_break->SetLineBreakTolerance(1);
   rtf_break->SetFontSize(12);
