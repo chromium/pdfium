@@ -1227,10 +1227,8 @@ void CPDF_StreamContentParser::AddTextObject(const ByteString* pStrs,
 
     m_pCurStates->m_TextPos +=
         pText->CalcPositionData(m_pCurStates->m_TextHorzScale);
-    if (TextRenderingModeIsClipMode(text_mode)) {
-      m_ClipTextList.push_back(
-          std::unique_ptr<CPDF_TextObject>(pText->Clone()));
-    }
+    if (TextRenderingModeIsClipMode(text_mode))
+      m_ClipTextList.push_back(pText->Clone());
     m_pObjectHolder->AppendPageObject(std::move(pText));
   }
   if (!kernings.empty() && kernings[nSegs - 1] != 0) {

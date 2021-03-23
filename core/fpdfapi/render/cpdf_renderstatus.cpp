@@ -1079,7 +1079,7 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
                                                 bool stroke) {
   if (!stroke) {
     std::vector<std::unique_ptr<CPDF_TextObject>> pCopy;
-    pCopy.push_back(std::unique_ptr<CPDF_TextObject>(textobj->Clone()));
+    pCopy.push_back(textobj->Clone());
 
     CPDF_PathObject path;
     path.set_filltype(CFX_FillRenderOptions::FillType::kWinding);
