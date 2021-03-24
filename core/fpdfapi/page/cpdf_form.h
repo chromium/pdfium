@@ -7,12 +7,12 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_FORM_H_
 #define CORE_FPDFAPI_PAGE_CPDF_FORM_H_
 
-#include <memory>
 #include <set>
 #include <utility>
 
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CFX_Matrix;
 class CPDF_AllStates;
@@ -59,7 +59,7 @@ class CPDF_Form final : public CPDF_PageObjectHolder,
                             CPDF_Type3Char* pType3Char,
                             std::set<const uint8_t*>* pParsedSet);
 
-  std::unique_ptr<std::set<const uint8_t*>> m_ParsedSet;
+  std::set<const uint8_t*> m_ParsedSet;
   RetainPtr<CPDF_Stream> const m_pFormStream;
 };
 
