@@ -2479,22 +2479,22 @@ void CFXJSE_FormCalcContext::Time2Num(
 
   CFX_DateTime uniTime = localeValue.GetTime();
   int32_t hour = uniTime.GetHour();
-  int32_t min = uniTime.GetMinute();
-  int32_t second = uniTime.GetSecond();
-  int32_t milSecond = uniTime.GetMillisecond();
-  int32_t mins = hour * 60 + min;
+  int32_t minute = uniTime.GetMinute();
+  const int32_t second = uniTime.GetSecond();
+  const int32_t millisecond = uniTime.GetMillisecond();
 
-  mins -= (CXFA_TimeZoneProvider().GetTimeZone().tzHour * 60);
-  while (mins > 1440)
-    mins -= 1440;
+  int32_t minutes_with_tz =
+      hour * 60 + minute - (CXFA_TimeZoneProvider().GetTimeZone().tzHour * 60);
+  while (minutes_with_tz > 1440)
+    minutes_with_tz -= 1440;
 
-  while (mins < 0)
-    mins += 1440;
+  while (minutes_with_tz < 0)
+    minutes_with_tz += 1440;
 
-  hour = mins / 60;
-  min = mins % 60;
-  info.GetReturnValue().Set(hour * 3600000 + min * 60000 + second * 1000 +
-                            milSecond + 1);
+  hour = minutes_with_tz / 60;
+  minute = minutes_with_tz % 60;
+  info.GetReturnValue().Set(hour * 3600000 + minute * 60000 + second * 1000 +
+                            millisecond + 1);
 }
 
 // static
