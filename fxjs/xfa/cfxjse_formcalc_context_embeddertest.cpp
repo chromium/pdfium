@@ -514,10 +514,8 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Time2Num) {
     const char* program;
     int result;
   } tests[] = {
-      // TODO(thestig): Should be 1.
-      {"Time2Num(\"00:00:00 GMT\", \"HH:MM:SS Z\")", 86400001},
-      // TODO(thestig): Should be 1001.
-      {"Time2Num(\"00:00:01 GMT\", \"HH:MM:SS Z\")", 86401001},
+      {"Time2Num(\"00:00:00 GMT\", \"HH:MM:SS Z\")", 1},
+      {"Time2Num(\"00:00:01 GMT\", \"HH:MM:SS Z\")", 1001},
       {"Time2Num(\"00:01:00 GMT\", \"HH:MM:SS Z\")", 60001},
       {"Time2Num(\"01:00:00 GMT\", \"HH:MM:SS Z\")", 3600001},
       {"Time2Num(\"23:59:59 GMT\", \"HH:MM:SS Z\")", 86399001},

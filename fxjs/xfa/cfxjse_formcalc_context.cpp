@@ -2483,13 +2483,12 @@ void CFXJSE_FormCalcContext::Time2Num(
   const int32_t second = uniTime.GetSecond();
   const int32_t millisecond = uniTime.GetMillisecond();
 
+  constexpr int kMinutesInDay = 24 * 60;
   int32_t minutes_with_tz =
       hour * 60 + minute - (CXFA_TimeZoneProvider().GetTimeZone().tzHour * 60);
-  while (minutes_with_tz > 1440)
-    minutes_with_tz -= 1440;
-
-  while (minutes_with_tz < 0)
-    minutes_with_tz += 1440;
+  minutes_with_tz %= kMinutesInDay;
+  if (minutes_with_tz < 0)
+    minutes_with_tz += kMinutesInDay;
 
   hour = minutes_with_tz / 60;
   minute = minutes_with_tz % 60;
