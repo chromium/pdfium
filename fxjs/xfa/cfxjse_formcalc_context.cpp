@@ -12,6 +12,7 @@
 #include <cctype>
 #include <utility>
 
+#include "core/fxcrt/cfx_datetime.h"
 #include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_random.h"
@@ -2485,7 +2486,8 @@ void CFXJSE_FormCalcContext::Time2Num(
 
   constexpr int kMinutesInDay = 24 * 60;
   int32_t minutes_with_tz =
-      hour * 60 + minute - (CXFA_TimeZoneProvider().GetTimeZone().tzHour * 60);
+      hour * 60 + minute -
+      FX_TimeZoneOffsetInMinutes(CXFA_TimeZoneProvider().GetTimeZone());
   minutes_with_tz %= kMinutesInDay;
   if (minutes_with_tz < 0)
     minutes_with_tz += kMinutesInDay;
