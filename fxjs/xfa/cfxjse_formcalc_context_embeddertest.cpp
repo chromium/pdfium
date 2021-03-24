@@ -514,7 +514,13 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Time2Num) {
     const char* program;
     int result;
   } tests[] = {
-      // {"Time2Num(\"00:00:00 GMT\", \"HH:MM:SS Z\")", 1},
+      // TODO(thestig): Should be 1.
+      {"Time2Num(\"00:00:00 GMT\", \"HH:MM:SS Z\")", 86400001},
+      // TODO(thestig): Should be 1001.
+      {"Time2Num(\"00:00:01 GMT\", \"HH:MM:SS Z\")", 86401001},
+      {"Time2Num(\"00:01:00 GMT\", \"HH:MM:SS Z\")", 60001},
+      {"Time2Num(\"01:00:00 GMT\", \"HH:MM:SS Z\")", 3600001},
+      {"Time2Num(\"23:59:59 GMT\", \"HH:MM:SS Z\")", 86399001},
       {"Time2Num(\"\", \"\", 1)", 0},  // https://crbug.com/pdfium/1257
       {"Time2Num(\"13:13:13 GMT\", \"HH:MM:SS Z\", \"fr_FR\")", 47593001},
   };
