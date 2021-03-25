@@ -29,7 +29,7 @@ class CTypeset final {
 
   CPVT_FloatRect m_rcRet;
   UnownedPtr<CPDF_VariableText> const m_pVT;
-  CSection* const m_pSection;
+  UnownedPtr<CSection> const m_pSection;
 };
 
 #endif  // CORE_FPDFDOC_CTYPESET_H_

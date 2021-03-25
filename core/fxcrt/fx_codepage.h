@@ -93,7 +93,7 @@
 // Hi-bytes to unicode codepoint mapping for various code pages.
 struct FX_CharsetUnicodes {
   uint8_t m_Charset;
-  const uint16_t* m_pUnicodes;
+  const uint16_t* m_pUnicodes;  // Raw, POD struct.
 };
 
 extern const FX_CharsetUnicodes g_FX_CharsetUnicodes[8];
