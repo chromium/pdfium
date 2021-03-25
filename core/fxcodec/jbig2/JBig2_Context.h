@@ -16,6 +16,7 @@
 #include "core/fxcodec/jbig2/JBig2_Page.h"
 #include "core/fxcodec/jbig2/JBig2_Segment.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/span.h"
 
 class CJBig2_ArithDecoder;
@@ -103,7 +104,7 @@ class CJBig2_Context {
   std::unique_ptr<CJBig2_Segment> m_pSegment;
   FX_SAFE_UINT32 m_dwOffset = 0;
   JBig2RegionInfo m_ri;
-  std::list<CJBig2_CachePair>* const m_pSymbolDictCache;
+  UnownedPtr<std::list<CJBig2_CachePair>> const m_pSymbolDictCache;
 };
 
 #endif  // CORE_FXCODEC_JBIG2_JBIG2_CONTEXT_H_
