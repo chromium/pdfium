@@ -183,7 +183,7 @@ CJS_Global::CJS_Global(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
 
 CJS_Global::~CJS_Global() {
   DestroyGlobalPersisitentVariables();
-  m_pGlobalData->Release();
+  m_pGlobalData.Release()->Release();
 }
 
 CJS_Result CJS_Global::QueryProperty(const wchar_t* propname) {

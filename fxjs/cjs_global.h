@@ -11,6 +11,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/cfx_keyvalue.h"
 #include "fxjs/cjs_object.h"
 #include "fxjs/cjs_result.h"
@@ -90,7 +91,7 @@ class CJS_Global final : public CJS_Object {
   void PutObjectProperty(v8::Local<v8::Object> obj, CFX_KeyValue* pData);
 
   std::map<ByteString, std::unique_ptr<JSGlobalData>> m_MapGlobal;
-  CFX_GlobalData* m_pGlobalData;
+  UnownedPtr<CFX_GlobalData> m_pGlobalData;
   ObservedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
 };
 

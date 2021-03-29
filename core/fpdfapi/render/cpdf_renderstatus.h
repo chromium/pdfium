@@ -189,8 +189,7 @@ class CPDF_RenderStatus {
   RetainPtr<CPDF_Dictionary> m_pPageResource;
   std::vector<CPDF_Type3Font*> m_Type3FontCache;
   UnownedPtr<CPDF_RenderContext> const m_pContext;
-  bool m_bStopped = false;
-  CFX_RenderDevice* const m_pDevice;
+  UnownedPtr<CFX_RenderDevice> const m_pDevice;
   CFX_Matrix m_DeviceMatrix;
   CPDF_ClipPath m_LastClipPath;
   UnownedPtr<const CPDF_PageObject> m_pCurObj;
@@ -198,6 +197,7 @@ class CPDF_RenderStatus {
   CPDF_GraphicStates m_InitialStates;
   std::unique_ptr<CPDF_ImageRenderer> m_pImageRenderer;
   CPDF_Transparency m_Transparency;
+  bool m_bStopped = false;
   bool m_bPrint = false;
   bool m_bDropObjects = false;
   bool m_bStdCS = false;
