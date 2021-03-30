@@ -12,6 +12,8 @@ source_set("test_support") {
     "invalid_seekable_read_stream.cpp",
     "invalid_seekable_read_stream.h",
     "pseudo_retainable.h",
+    "scoped_set_tz.cpp",
+    "scoped_set_tz.h",
     "string_write_stream.cpp",
     "string_write_stream.h",
     "test_loader.cpp",
