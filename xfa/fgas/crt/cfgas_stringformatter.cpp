@@ -82,9 +82,8 @@ const wchar_t kTimeSymbols[] = L"hHkKMSFAzZ";
 const wchar_t kDateSymbols[] = L"DJMEeGgYwW";
 const wchar_t kConstChars[] = L",-:/. ";
 
-size_t ParseTimeZone(pdfium::span<const wchar_t> spStr, FX_TIMEZONE* tz) {
-  tz->tzHour = 0;
-  tz->tzMinute = 0;
+size_t ParseTimeZone(pdfium::span<const wchar_t> spStr, int* tz) {
+  *tz = 0;
   if (spStr.empty())
     return 0;
 
@@ -93,18 +92,21 @@ size_t ParseTimeZone(pdfium::span<const wchar_t> spStr, FX_TIMEZONE* tz) {
 
   size_t iStart = 1;
   size_t iEnd = iStart + 2;
+  int tz_hour = 0;
   while (iStart < spStr.size() && iStart < iEnd)
-    tz->tzHour = tz->tzHour * 10 + FXSYS_DecimalCharToInt(spStr[iStart++]);
+    tz_hour = tz_hour * 10 + FXSYS_DecimalCharToInt(spStr[iStart++]);
 
   if (iStart < spStr.size() && spStr[iStart] == ':')
     iStart++;
 
   iEnd = iStart + 2;
+  int tz_minute = 0;
   while (iStart < spStr.size() && iStart < iEnd)
-    tz->tzMinute = tz->tzMinute * 10 + FXSYS_DecimalCharToInt(spStr[iStart++]);
+    tz_minute = tz_minute * 10 + FXSYS_DecimalCharToInt(spStr[iStart++]);
 
+  *tz = tz_hour * 60 + tz_minute;
   if (bNegative)
-    tz->tzHour = -tz->tzHour;
+    *tz *= -1;
 
   return iStart;
 }
@@ -334,16 +336,13 @@ bool ParseLocaleDate(const WideString& wsDate,
   return !!(*cc);
 }
 
-void ResolveZone(FX_TIMEZONE tzDiff,
+void ResolveZone(int tz_diff_minutes,
                  const LocaleIface* pLocale,
                  uint32_t* wHour,
                  uint32_t* wMinute) {
   int32_t iMinuteDiff = *wHour * 60 + *wMinute;
-  FX_TIMEZONE tzLocale = pLocale->GetTimeZone();
-  iMinuteDiff += tzLocale.tzHour * 60 +
-                 (tzLocale.tzHour < 0 ? -tzLocale.tzMinute : tzLocale.tzMinute);
-  iMinuteDiff -= tzDiff.tzHour * 60 +
-                 (tzDiff.tzHour < 0 ? -tzDiff.tzMinute : tzDiff.tzMinute);
+  iMinuteDiff += pLocale->GetTimeZoneInMinutes();
+  iMinuteDiff -= tz_diff_minutes;
 
   iMinuteDiff %= 1440;
   if (iMinuteDiff < 0)
@@ -448,13 +447,10 @@ bool ParseLocaleTime(const WideString& wsTime,
       tz += spTime[(*cc)++];
       tz += spTime[(*cc)++];
       if (tz.EqualsASCII("GMT")) {
-        FX_TIMEZONE tzDiff;
-        tzDiff.tzHour = 0;
-        tzDiff.tzMinute = 0;
-        if (*cc < spTime.size() && (spTime[*cc] == '-' || spTime[*cc] == '+')) {
-          *cc += ParseTimeZone(spTime.subspan(*cc), &tzDiff);
-        }
-        ResolveZone(tzDiff, pLocale, &hour, &minute);
+        int tz_diff_minutes = 0;
+        if (*cc < spTime.size() && (spTime[*cc] == '-' || spTime[*cc] == '+'))
+          *cc += ParseTimeZone(spTime.subspan(*cc), &tz_diff_minutes);
+        ResolveZone(tz_diff_minutes, pLocale, &hour, &minute);
       } else {
         // Search the timezone list. There are only 8 of them, so linear scan.
         for (size_t i = 0; i < pdfium::size(g_FXLocaleTimeZoneData); ++i) {
@@ -469,9 +465,9 @@ bool ParseLocaleTime(const WideString& wsTime,
       }
     } else if (symbol.EqualsASCII("z")) {
       if (spTime[*cc] != 'Z') {
-        FX_TIMEZONE tzDiff;
-        *cc += ParseTimeZone(spTime.subspan(*cc), &tzDiff);
-        ResolveZone(tzDiff, pLocale, &hour, &minute);
+        int tz_diff_minutes = 0;
+        *cc += ParseTimeZone(spTime.subspan(*cc), &tz_diff_minutes);
+        ResolveZone(tz_diff_minutes, pLocale, &hour, &minute);
       } else {
         (*cc)++;
       }
@@ -683,11 +679,12 @@ WideString TimeFormat(const WideString& wsTimePattern,
     } else if (symbol.EqualsASCIINoCase("z")) {
       if (symbol.EqualsASCII("Z"))
         wsResult += L"GMT";
-      FX_TIMEZONE tz = pLocale->GetTimeZone();
-      if (tz.tzHour != 0 || tz.tzMinute != 0) {
-        wsResult += tz.tzHour < 0 ? L"-" : L"+";
-        wsResult +=
-            WideString::Format(L"%02d:%02d", abs(tz.tzHour), tz.tzMinute);
+      int tz_minutes = pLocale->GetTimeZoneInMinutes();
+      if (tz_minutes != 0) {
+        wsResult += tz_minutes < 0 ? L"-" : L"+";
+        int abs_tz_minutes = abs(tz_minutes);
+        wsResult += WideString::Format(L"%02d:%02d", abs_tz_minutes / 60,
+                                       abs_tz_minutes % 60);
       }
     }
   }
@@ -849,12 +846,10 @@ bool FX_TimeFromCanonical(const LocaleIface* pLocale,
   }
 
   if (cc < spTime.size()) {
-    FX_TIMEZONE tzDiff;
-    tzDiff.tzHour = 0;
-    tzDiff.tzMinute = 0;
+    int tz_diff_minutes = 0;
     if (spTime[cc] != 'Z')
-      cc += ParseTimeZone(spTime.subspan(cc), &tzDiff);
-    ResolveZone(tzDiff, pLocale, &hour, &minute);
+      cc += ParseTimeZone(spTime.subspan(cc), &tz_diff_minutes);
+    ResolveZone(tz_diff_minutes, pLocale, &hour, &minute);
   }
 
   datetime->SetTime(hour, minute, second, millisecond);

@@ -91,8 +91,8 @@ WideString CXFA_NodeLocale::GetMeridiemName(bool bAM) const {
   return GetCalendarSymbol(XFA_Element::MeridiemNames, bAM ? 0 : 1, false);
 }
 
-FX_TIMEZONE CXFA_NodeLocale::GetTimeZone() const {
-  return CXFA_TimeZoneProvider().GetTimeZone();
+int CXFA_NodeLocale::GetTimeZoneInMinutes() const {
+  return CXFA_TimeZoneProvider().GetTimeZoneInMinutes();
 }
 
 WideString CXFA_NodeLocale::GetEraName(bool bAD) const {

@@ -38,7 +38,7 @@ class CXFA_XMLLocale final : public GCedLocaleIface {
   WideString GetMonthName(int32_t nMonth, bool bAbbr) const override;
   WideString GetDayName(int32_t nWeek, bool bAbbr) const override;
   WideString GetMeridiemName(bool bAM) const override;
-  FX_TIMEZONE GetTimeZone() const override;
+  int GetTimeZoneInMinutes() const override;
   WideString GetEraName(bool bAD) const override;
 
   WideString GetDatePattern(DateTimeSubcategory eType) const override;

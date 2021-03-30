@@ -26,9 +26,7 @@ CXFA_TimeZoneProvider::CXFA_TimeZoneProvider() {
     g_bProviderTimeZoneSet = true;
     TZSET();
   }
-  m_tz.tzHour = static_cast<int8_t>(TIMEZONE / -3600);
-  m_tz.tzMinute =
-      static_cast<int8_t>((abs(static_cast<int>(TIMEZONE)) % 3600) / 60);
+  tz_minutes_ = TIMEZONE / -60;
 }
 
 CXFA_TimeZoneProvider::~CXFA_TimeZoneProvider() = default;

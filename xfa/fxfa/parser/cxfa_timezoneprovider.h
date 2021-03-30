@@ -7,17 +7,15 @@
 #ifndef XFA_FXFA_PARSER_CXFA_TIMEZONEPROVIDER_H_
 #define XFA_FXFA_PARSER_CXFA_TIMEZONEPROVIDER_H_
 
-#include "xfa/fgas/crt/fx_timezone.h"
-
 class CXFA_TimeZoneProvider {
  public:
   CXFA_TimeZoneProvider();
   ~CXFA_TimeZoneProvider();
 
-  FX_TIMEZONE GetTimeZone() const { return m_tz; }
+  int GetTimeZoneInMinutes() const { return tz_minutes_; }
 
  private:
-  FX_TIMEZONE m_tz;
+  int tz_minutes_;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_TIMEZONEPROVIDER_H_

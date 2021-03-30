@@ -2070,7 +2070,7 @@ void CFXJSE_FormCalcContext::IsoTime2Num(
   // TODO(dsinclair): See if there is other time conversion code in pdfium and
   //   consolidate.
   int32_t mins = hour * 60 + min;
-  mins -= (pMgr->GetDefLocale()->GetTimeZone().tzHour * 60);
+  mins -= pMgr->GetDefLocale()->GetTimeZoneInMinutes();
   while (mins > 1440)
     mins -= 1440;
   while (mins < 0)
@@ -2486,8 +2486,7 @@ void CFXJSE_FormCalcContext::Time2Num(
 
   constexpr int kMinutesInDay = 24 * 60;
   int32_t minutes_with_tz =
-      hour * 60 + minute -
-      FX_TimeZoneOffsetInMinutes(CXFA_TimeZoneProvider().GetTimeZone());
+      hour * 60 + minute - CXFA_TimeZoneProvider().GetTimeZoneInMinutes();
   minutes_with_tz %= kMinutesInDay;
   if (minutes_with_tz < 0)
     minutes_with_tz += kMinutesInDay;
