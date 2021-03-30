@@ -33,6 +33,10 @@ void CPWL_EditCtrl::OnCreated() {
   m_pEdit->Initialize();
 }
 
+void CPWL_EditCtrl::OnDestroy() {
+  m_pEditCaret.Release();
+}
+
 bool CPWL_EditCtrl::IsWndHorV() const {
   CFX_Matrix mt = GetWindowMatrix();
   return mt.Transform(CFX_PointF(1, 1)).y == mt.Transform(CFX_PointF(0, 1)).y;

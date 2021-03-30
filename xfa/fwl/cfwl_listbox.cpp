@@ -395,6 +395,7 @@ void CFWL_ListBox::DrawItem(CFGAS_GEGraphics* pGraphics,
     dwPartStates |= CFWL_PartState_Focused;
   }
 
+  CFX_RectF rtFocus(rtItem);  // Must outlive |bg_param|.
   CFWL_ThemeBackground bg_param;
   bg_param.m_pWidget = this;
   bg_param.m_iPart = CFWL_Part::ListItem;
@@ -403,7 +404,6 @@ void CFWL_ListBox::DrawItem(CFGAS_GEGraphics* pGraphics,
   bg_param.m_matrix.Concat(*pMatrix);
   bg_param.m_PartRect = rtItem;
   bg_param.m_bMaximize = true;
-  CFX_RectF rtFocus(rtItem);
   bg_param.m_pRtData = &rtFocus;
   if (m_pVertScrollBar && !m_pHorzScrollBar &&
       (dwPartStates & CFWL_PartState_Focused)) {

@@ -8,17 +8,21 @@
 #define XFA_FWL_CFWL_THEMETEXT_H_
 
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/unowned_ptr.h"
+#include "xfa/fde/cfde_data.h"
 #include "xfa/fwl/cfwl_themepart.h"
+
+class CFGAS_GEGraphics;
 
 class CFWL_ThemeText final : public CFWL_ThemePart {
  public:
-  CFWL_ThemeText() = default;
+  CFWL_ThemeText();
+  ~CFWL_ThemeText();
 
   FDE_TextAlignment m_iTTOAlign = FDE_TextAlignment::kTopLeft;
-  CFGAS_GEGraphics* m_pGraphics = nullptr;
-  WideString m_wsText;
   FDE_TextStyle m_dwTTOStyles;
+  UnownedPtr<CFGAS_GEGraphics> m_pGraphics;
+  WideString m_wsText;
 };
 
 #endif  // XFA_FWL_CFWL_THEMETEXT_H_

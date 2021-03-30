@@ -9,6 +9,7 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 enum class CFWL_Part : uint8_t {
   None = 0,
@@ -79,11 +80,12 @@ class CFWL_Widget;
 class CFWL_ThemePart {
  public:
   CFWL_ThemePart();
+  ~CFWL_ThemePart();
 
   CFX_Matrix m_matrix;
   CFX_RectF m_PartRect;
-  CFWL_Widget* m_pWidget = nullptr;
-  CFX_RectF* m_pRtData = nullptr;
+  UnownedPtr<CFWL_Widget> m_pWidget;
+  UnownedPtr<CFX_RectF> m_pRtData;
   uint32_t m_dwStates = CFWL_PartState_Normal;
   CFWL_Part m_iPart = CFWL_Part::None;
   bool m_bMaximize = false;

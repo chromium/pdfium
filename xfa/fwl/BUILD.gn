@@ -68,6 +68,7 @@ source_set("fwl") {
     "cfwl_themebackground.h",
     "cfwl_themepart.cpp",
     "cfwl_themepart.h",
+    "cfwl_themetext.cpp",
     "cfwl_themetext.h",
     "cfwl_widget.cpp",
     "cfwl_widget.h",

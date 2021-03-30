@@ -42,6 +42,7 @@ class CPWL_EditCtrl : public CPWL_Wnd {
 
   // CPWL_Wnd:
   void OnCreated() override;
+  void OnDestroy() override;
   bool OnKeyDown(uint16_t nChar, uint32_t nFlag) override;
   bool OnChar(uint16_t nChar, uint32_t nFlag) override;
   bool OnLButtonDown(uint32_t nFlag, const CFX_PointF& point) override;
@@ -81,7 +82,7 @@ class CPWL_EditCtrl : public CPWL_Wnd {
   void SetEditCaret(bool bVisible);
 
   std::unique_ptr<CPWL_EditImpl> const m_pEdit;
-  CPWL_Caret* m_pEditCaret = nullptr;
+  UnownedPtr<CPWL_Caret> m_pEditCaret;
   bool m_bMouseDown = false;
 
  private:
