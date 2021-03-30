@@ -72,7 +72,7 @@ class CPDF_ContentParser {
   uint32_t m_CurrentOffset = 0;
   std::set<const uint8_t*> m_ParsedSet;  // Only used when parsing pages.
 
-  // Must outlive |m_pParsedSet|.
+  // Must not outlive |m_pParsedSet|.
   std::unique_ptr<CPDF_StreamContentParser> m_pParser;
 };
 
