@@ -6,50 +6,32 @@
 
 #include "xfa/fgas/crt/cfgas_stringformatter.h"
 
-#include <time.h>
-
-#include <memory>
-
 #include "build/build_config.h"
 #include "core/fpdfapi/page/cpdf_pagemodule.h"
 #include "core/fxcrt/cfx_datetime.h"
 #include "testing/fx_string_testhelpers.h"
 #include "testing/fxgc_unittest.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "testing/scoped_set_tz.h"
 #include "third_party/base/stl_util.h"
 #include "v8/include/cppgc/persistent.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 
-namespace {
-
-void SetTZ(const char* tz) {
-#if defined(OS_WIN)
-    _putenv_s("TZ", tz);
-    _tzset();
-#else
-    setenv("TZ", tz, 1);
-    tzset();
-#endif
-}
-
-}  // namespace
-
 class CFGAS_StringFormatterTest : public FXGCUnitTest {
  public:
-  CFGAS_StringFormatterTest() {
-    SetTZ("UTC");
-    CPDF_PageModule::Create();
-  }
+  CFGAS_StringFormatterTest() : scoped_tz_("UTC") { CPDF_PageModule::Create(); }
 
   ~CFGAS_StringFormatterTest() override {
     CPDF_PageModule::Destroy();
-    SetTZ("UTC");
   }
 
   CXFA_LocaleMgr* Mgr(const WideString& locale) {
     return cppgc::MakeGarbageCollected<CXFA_LocaleMgr>(
         heap()->GetAllocationHandle(), heap(), nullptr, locale);
   }
+
+ private:
+  ScopedSetTZ scoped_tz_;
 };
 
 // TODO(dsinclair): Looks like the formatter/parser does not handle the various
@@ -157,18 +139,18 @@ TEST_F(CFGAS_StringFormatterTest, TimeFormat) {
   // list the symbol.
 
   // The z modifier only appends if the TZ is outside of +0
-  SetTZ("UTC+2");
+  {
+    ScopedSetTZ scoped_tz("UTC+2");
 
-  for (size_t i = 0; i < pdfium::size(tests); ++i) {
-    WideString result;
-    CFGAS_StringFormatter fmt(tests[i].pattern);
-    EXPECT_TRUE(fmt.FormatDateTime(Mgr(tests[i].locale), tests[i].input,
-                                   CFGAS_StringFormatter::DateTimeType::kTime,
-                                   &result));
-    EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
+    for (size_t i = 0; i < pdfium::size(tests); ++i) {
+      WideString result;
+      CFGAS_StringFormatter fmt(tests[i].pattern);
+      EXPECT_TRUE(fmt.FormatDateTime(Mgr(tests[i].locale), tests[i].input,
+                                     CFGAS_StringFormatter::DateTimeType::kTime,
+                                     &result));
+      EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
+    }
   }
-
-  SetTZ("UTC");
 }
 
 TEST_F(CFGAS_StringFormatterTest, DateTimeFormat) {
