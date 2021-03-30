@@ -437,7 +437,7 @@ class CPWL_EditImpl_Iterator {
 
  private:
   UnownedPtr<CPWL_EditImpl> m_pEdit;
-  CPDF_VariableText::Iterator* m_pVTIterator;
+  UnownedPtr<CPDF_VariableText::Iterator> m_pVTIterator;
 };
 
 class CPWL_EditImpl_Provider final : public CPDF_VariableText::Provider {
@@ -458,7 +458,7 @@ class CPWL_EditImpl_Provider final : public CPDF_VariableText::Provider {
   bool IsLatinWord(uint16_t word) override;
 
  private:
-  IPVT_FontMap* m_pFontMap;
+  UnownedPtr<IPVT_FontMap> m_pFontMap;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_EDIT_IMPL_H_

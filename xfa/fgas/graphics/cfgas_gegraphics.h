@@ -82,7 +82,7 @@ class CFGAS_GEGraphics {
   void SetDIBitsWithMatrix(const RetainPtr<CFX_DIBBase>& source,
                            const CFX_Matrix& matrix);
 
-  CFX_RenderDevice* const m_renderDevice;  // Not owned.
+  UnownedPtr<CFX_RenderDevice> const m_renderDevice;
   TInfo m_info;
   std::vector<std::unique_ptr<TInfo>> m_infoStack;
 };

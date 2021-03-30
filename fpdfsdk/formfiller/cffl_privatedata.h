@@ -8,6 +8,7 @@
 #define FPDFSDK_FORMFILLER_CFFL_PRIVATEDATA_H_
 
 #include "core/fxcrt/observed_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/pwl/ipwl_systemhandler.h"
 
 class CPDFSDK_PageView;
@@ -36,7 +37,7 @@ class CFFL_PrivateData final : public IPWL_SystemHandler::PerWindowData {
   CFFL_PrivateData(const CFFL_PrivateData& that);
 
   ObservedPtr<CPDFSDK_Widget> m_pWidget;
-  CPDFSDK_PageView* const m_pPageView;
+  UnownedPtr<CPDFSDK_PageView> const m_pPageView;
   const uint32_t m_nAppearanceAge;
   const uint32_t m_nValueAge;
 };

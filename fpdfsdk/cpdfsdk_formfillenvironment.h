@@ -220,7 +220,7 @@ class CPDFSDK_FormFillEnvironment final : public CFX_Timer::HandlerIface,
   IPDF_Page* GetPage(int nIndex);
   void SendOnFocusChange(ObservedPtr<CPDFSDK_Annot>* pAnnot);
 
-  FPDF_FORMFILLINFO* const m_pInfo;
+  UnownedPtr<FPDF_FORMFILLINFO> const m_pInfo;
   std::unique_ptr<CPDFSDK_ActionHandler> m_pActionHandler;
   std::unique_ptr<IJS_Runtime> m_pIJSRuntime;
   std::map<IPDF_Page*, std::unique_ptr<CPDFSDK_PageView>> m_PageMap;
