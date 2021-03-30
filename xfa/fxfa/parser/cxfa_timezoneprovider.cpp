@@ -13,23 +13,22 @@
 
 static bool g_bProviderTimeZoneSet = false;
 
-CXFA_TimeZoneProvider::CXFA_TimeZoneProvider() {
 #if defined(OS_WIN)
-  if (!g_bProviderTimeZoneSet) {
-    g_bProviderTimeZoneSet = true;
-    _tzset();
-  }
-  m_tz.tzHour = static_cast<int8_t>(_timezone / 3600 * -1);
-  m_tz.tzMinute = static_cast<int8_t>((abs(_timezone) % 3600) / 60);
+#define TIMEZONE _timezone
+#define TZSET _tzset
 #else
+#define TZSET tzset
+#define TIMEZONE timezone
+#endif
+
+CXFA_TimeZoneProvider::CXFA_TimeZoneProvider() {
   if (!g_bProviderTimeZoneSet) {
     g_bProviderTimeZoneSet = true;
-    tzset();
+    TZSET();
   }
-  m_tz.tzHour = static_cast<int8_t>(timezone / 3600 * -1);
+  m_tz.tzHour = static_cast<int8_t>(TIMEZONE / -3600);
   m_tz.tzMinute =
-      static_cast<int8_t>((abs(static_cast<int>(timezone)) % 3600) / 60);
-#endif
+      static_cast<int8_t>((abs(static_cast<int>(TIMEZONE)) % 3600) / 60);
 }
 
 CXFA_TimeZoneProvider::~CXFA_TimeZoneProvider() = default;
