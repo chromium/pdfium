@@ -10,6 +10,7 @@
 #include <memory>
 #include <utility>
 
+#include "core/fxcrt/cfx_datetime.h"
 #include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/stl_util.h"
