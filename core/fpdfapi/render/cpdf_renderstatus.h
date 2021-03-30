@@ -187,7 +187,7 @@ class CPDF_RenderStatus {
   CPDF_RenderOptions m_Options;
   RetainPtr<const CPDF_Dictionary> m_pFormResource;
   RetainPtr<CPDF_Dictionary> m_pPageResource;
-  std::vector<CPDF_Type3Font*> m_Type3FontCache;
+  std::vector<UnownedPtr<CPDF_Type3Font>> m_Type3FontCache;
   UnownedPtr<CPDF_RenderContext> const m_pContext;
   UnownedPtr<CFX_RenderDevice> const m_pDevice;
   CFX_Matrix m_DeviceMatrix;

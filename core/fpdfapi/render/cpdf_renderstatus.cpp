@@ -971,7 +971,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         status.SetFormResource(pFormResource);
         status.Initialize(this, pStates.get());
         status.m_Type3FontCache = m_Type3FontCache;
-        status.m_Type3FontCache.push_back(pType3Font);
+        status.m_Type3FontCache.emplace_back(pType3Font);
 
         CFX_RenderDevice::StateRestorer restorer(m_pDevice);
         status.RenderObjectList(pForm, matrix);
@@ -996,7 +996,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         status.SetFormResource(pFormResource);
         status.Initialize(this, pStates.get());
         status.m_Type3FontCache = m_Type3FontCache;
-        status.m_Type3FontCache.push_back(pType3Font);
+        status.m_Type3FontCache.emplace_back(pType3Font);
         matrix.Translate(-rect.left, -rect.top);
         status.RenderObjectList(pForm, matrix);
         m_pDevice->SetDIBits(bitmap_device.GetBitmap(), rect.left, rect.top);

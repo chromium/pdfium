@@ -39,7 +39,7 @@ class CPWL_MsgControl final : public Observable {
   }
 
   bool IsWndCaptureMouse(const CPWL_Wnd* pWnd) const {
-    return pWnd && pdfium::Contains(m_aMousePath, pWnd);
+    return pWnd && pdfium::Contains(m_MousePaths, pWnd);
   }
 
   bool IsMainCaptureKeyboard(const CPWL_Wnd* pWnd) const {
@@ -47,18 +47,18 @@ class CPWL_MsgControl final : public Observable {
   }
 
   bool IsWndCaptureKeyboard(const CPWL_Wnd* pWnd) const {
-    return pWnd && pdfium::Contains(m_aKeyboardPath, pWnd);
+    return pWnd && pdfium::Contains(m_KeyboardPaths, pWnd);
   }
 
   void SetFocus(CPWL_Wnd* pWnd) {
-    m_aKeyboardPath.clear();
+    m_KeyboardPaths.clear();
     if (!pWnd)
       return;
 
     m_pMainKeyboardWnd = pWnd;
     CPWL_Wnd* pParent = pWnd;
     while (pParent) {
-      m_aKeyboardPath.push_back(pParent);
+      m_KeyboardPaths.emplace_back(pParent);
       pParent = pParent->GetParentWindow();
     }
     // Note, pWnd may get destroyed in the OnSetFocus call.
@@ -67,34 +67,33 @@ class CPWL_MsgControl final : public Observable {
 
   void KillFocus() {
     ObservedPtr<CPWL_MsgControl> observed_ptr(this);
-    if (!m_aKeyboardPath.empty())
-      if (CPWL_Wnd* pWnd = m_aKeyboardPath[0])
+    if (!m_KeyboardPaths.empty()) {
+      CPWL_Wnd* pWnd = m_KeyboardPaths.front().Get();
+      if (pWnd)
         pWnd->OnKillFocus();
+    }
     if (!observed_ptr)
       return;
 
     m_pMainKeyboardWnd = nullptr;
-    m_aKeyboardPath.clear();
+    m_KeyboardPaths.clear();
   }
 
   void SetCapture(CPWL_Wnd* pWnd) {
-    m_aMousePath.clear();
-    if (pWnd) {
-      CPWL_Wnd* pParent = pWnd;
-      while (pParent) {
-        m_aMousePath.push_back(pParent);
-        pParent = pParent->GetParentWindow();
-      }
+    m_MousePaths.clear();
+    while (pWnd) {
+      m_MousePaths.emplace_back(pWnd);
+      pWnd = pWnd->GetParentWindow();
     }
   }
 
-  void ReleaseCapture() { m_aMousePath.clear(); }
+  void ReleaseCapture() { m_MousePaths.clear(); }
 
   CPWL_Wnd* GetFocusedWindow() const { return m_pMainKeyboardWnd.Get(); }
 
  private:
-  std::vector<CPWL_Wnd*> m_aMousePath;
-  std::vector<CPWL_Wnd*> m_aKeyboardPath;
+  std::vector<UnownedPtr<CPWL_Wnd>> m_MousePaths;
+  std::vector<UnownedPtr<CPWL_Wnd>> m_KeyboardPaths;
   UnownedPtr<CPWL_Wnd> m_pCreatedWnd;
   UnownedPtr<CPWL_Wnd> m_pMainKeyboardWnd;
 };
