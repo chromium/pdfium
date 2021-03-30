@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/cfx_datetime.h"
 #include "core/fxcrt/fx_extension.h"
 #include "third_party/base/check.h"
 #include "third_party/base/span.h"

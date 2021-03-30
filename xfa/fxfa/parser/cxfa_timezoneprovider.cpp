@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_timezoneprovider.h"
 
+#include <stdlib.h>
 #include <time.h>
 
 #include "build/build_config.h"

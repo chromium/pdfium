@@ -8,6 +8,7 @@
 
 #include <vector>
 
+#include "core/fxcrt/cfx_datetime.h"
 #include "core/fxcrt/fx_string.h"
 #include "public/fpdfview.h"
 #include "testing/fuzzers/pdfium_fuzzer_util.h"

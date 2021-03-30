@@ -9,14 +9,8 @@
 
 #include "core/fxcrt/fx_system.h"
 
-struct FX_TIMEZONE {
-  int8_t tzHour;
-  uint8_t tzMinute;
-};
-
 bool FX_IsLeapYear(int32_t iYear);
 uint8_t FX_DaysInMonth(int32_t iYear, uint8_t iMonth);
-int FX_TimeZoneOffsetInMinutes(const FX_TIMEZONE& tz);
 
 class CFX_DateTime {
  public:

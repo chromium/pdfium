@@ -7,8 +7,8 @@
 #ifndef XFA_FGAS_CRT_LOCALE_IFACE_H_
 #define XFA_FGAS_CRT_LOCALE_IFACE_H_
 
-#include "core/fxcrt/cfx_datetime.h"
 #include "core/fxcrt/fx_string.h"
+#include "xfa/fgas/crt/fx_timezone.h"
 
 class LocaleIface {
  public:

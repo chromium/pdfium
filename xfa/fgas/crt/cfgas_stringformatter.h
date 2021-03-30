@@ -13,6 +13,7 @@
 #include "third_party/base/span.h"
 #include "xfa/fgas/crt/locale_iface.h"
 
+class CFX_DateTime;
 class LocaleMgrIface;
 
 bool FX_DateFromCanonical(pdfium::span<const wchar_t> wsTime,

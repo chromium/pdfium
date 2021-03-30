@@ -7,7 +7,7 @@
 #ifndef XFA_FXFA_PARSER_CXFA_TIMEZONEPROVIDER_H_
 #define XFA_FXFA_PARSER_CXFA_TIMEZONEPROVIDER_H_
 
-#include "core/fxcrt/cfx_datetime.h"
+#include "xfa/fgas/crt/fx_timezone.h"
 
 class CXFA_TimeZoneProvider {
  public:

@@ -97,10 +97,6 @@ bool FX_IsLeapYear(int32_t iYear) {
   return ((iYear % 4) == 0 && (iYear % 100) != 0) || (iYear % 400) == 0;
 }
 
-int FX_TimeZoneOffsetInMinutes(const FX_TIMEZONE& tz) {
-  return tz.tzHour * 60 + tz.tzMinute;
-}
-
 // static
 CFX_DateTime CFX_DateTime::Now() {
   FXUT_SYSTEMTIME utLocal;

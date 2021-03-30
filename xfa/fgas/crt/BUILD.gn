@@ -13,6 +13,8 @@ source_set("crt") {
     "cfgas_decimal.h",
     "cfgas_stringformatter.cpp",
     "cfgas_stringformatter.h",
+    "fx_timezone.cpp",
+    "fx_timezone.h",
     "locale_iface.h",
     "locale_mgr_iface.h",
   ]
