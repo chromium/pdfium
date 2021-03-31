@@ -216,7 +216,7 @@ class CFXJS_ObjDefinition {
     return scope.Escape(m_Signature.Get(GetIsolate()));
   }
 
-  const char* const m_ObjName;
+  UnownedPtr<const char> const m_ObjName;
   const FXJSOBJTYPE m_ObjType;
   const CFXJS_Engine::Constructor m_pConstructor;
   const CFXJS_Engine::Destructor m_pDestructor;
@@ -503,7 +503,7 @@ void CFXJS_Engine::InitializeEngine() {
                                           .ToLocalChecked());
       }
     } else if (pObjDef->m_ObjType == FXJSOBJTYPE_STATIC) {
-      v8::Local<v8::String> pObjName = NewString(pObjDef->m_ObjName);
+      v8::Local<v8::String> pObjName = NewString(pObjDef->m_ObjName.Get());
       v8::Local<v8::Object> obj = NewFXJSBoundObject(i, FXJSOBJTYPE_STATIC);
       if (!obj.IsEmpty()) {
         v8Context->Global()->Set(v8Context, pObjName, obj).FromJust();

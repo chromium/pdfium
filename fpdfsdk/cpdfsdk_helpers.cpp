@@ -18,6 +18,7 @@
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fpdfdoc/cpdf_metadata.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "third_party/base/check.h"
 
@@ -93,14 +94,12 @@ class FPDF_FileHandlerContext final : public IFX_SeekableStream {
   explicit FPDF_FileHandlerContext(FPDF_FILEHANDLER* pFS);
   ~FPDF_FileHandlerContext() override;
 
-  FPDF_FILEHANDLER* m_pFS;
-  FX_FILESIZE m_nCurPos;
+  UnownedPtr<FPDF_FILEHANDLER> const m_pFS;
+  FX_FILESIZE m_nCurPos = 0;
 };
 
-FPDF_FileHandlerContext::FPDF_FileHandlerContext(FPDF_FILEHANDLER* pFS) {
-  m_pFS = pFS;
-  m_nCurPos = 0;
-}
+FPDF_FileHandlerContext::FPDF_FileHandlerContext(FPDF_FILEHANDLER* pFS)
+    : m_pFS(pFS) {}
 
 FPDF_FileHandlerContext::~FPDF_FileHandlerContext() {
   if (m_pFS && m_pFS->Release)
@@ -109,7 +108,7 @@ FPDF_FileHandlerContext::~FPDF_FileHandlerContext() {
 
 FX_FILESIZE FPDF_FileHandlerContext::GetSize() {
   if (m_pFS && m_pFS->GetSize)
-    return (FX_FILESIZE)m_pFS->GetSize(m_pFS->clientData);
+    return static_cast<FX_FILESIZE>(m_pFS->GetSize(m_pFS->clientData));
   return 0;
 }
 

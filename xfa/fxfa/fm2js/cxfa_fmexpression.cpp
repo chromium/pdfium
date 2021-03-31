@@ -47,7 +47,7 @@ const wchar_t* const g_BuiltInFuncs[] = {
 const size_t g_BuiltInFuncsMaxLen = 12;
 
 struct XFA_FMSOMMethod {
-  const wchar_t* m_wsSomMethodName;
+  const wchar_t* m_wsSomMethodName;  // Ok, POD struct.
   uint32_t m_dParameters;
 };
 

@@ -16,6 +16,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/fpdf_formfill.h"
 
@@ -95,12 +96,10 @@ class FPDF_FileAccessContext final : public IFX_SeekableReadStream {
 
 class FPDF_DownloadHintsContext final : public CPDF_DataAvail::DownloadHints {
  public:
-  explicit FPDF_DownloadHintsContext(FX_DOWNLOADHINTS* pDownloadHints) {
-    m_pDownloadHints = pDownloadHints;
-  }
+  explicit FPDF_DownloadHintsContext(FX_DOWNLOADHINTS* pDownloadHints)
+      : m_pDownloadHints(pDownloadHints) {}
   ~FPDF_DownloadHintsContext() override {}
 
- public:
   // IFX_DownloadHints
   void AddSegment(FX_FILESIZE offset, size_t size) override {
     if (m_pDownloadHints)
@@ -108,7 +107,7 @@ class FPDF_DownloadHintsContext final : public CPDF_DataAvail::DownloadHints {
   }
 
  private:
-  FX_DOWNLOADHINTS* m_pDownloadHints;
+  UnownedPtr<FX_DOWNLOADHINTS> m_pDownloadHints;
 };
 
 class FPDF_AvailContext {

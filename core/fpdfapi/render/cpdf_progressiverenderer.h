@@ -48,7 +48,7 @@ class CPDF_ProgressiveRenderer {
   Status m_Status = kReady;
   UnownedPtr<CPDF_RenderContext> const m_pContext;
   UnownedPtr<CFX_RenderDevice> const m_pDevice;
-  const CPDF_RenderOptions* const m_pOptions;
+  UnownedPtr<const CPDF_RenderOptions> const m_pOptions;
   std::unique_ptr<CPDF_RenderStatus> m_pRenderStatus;
   CFX_FloatRect m_ClipRect;
   uint32_t m_LayerIndex = 0;

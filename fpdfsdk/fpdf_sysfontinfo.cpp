@@ -11,6 +11,7 @@
 #include <memory>
 
 #include "core/fxcrt/fx_codepage.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/cfx_fontmgr.h"
@@ -117,7 +118,7 @@ class CFX_ExternalFontInfo final : public SystemFontInfoIface {
   }
 
  private:
-  FPDF_SYSFONTINFO* const m_pInfo;
+  UnownedPtr<FPDF_SYSFONTINFO> const m_pInfo;
 };
 
 FPDF_EXPORT void FPDF_CALLCONV FPDF_AddInstalledFont(void* mapper,

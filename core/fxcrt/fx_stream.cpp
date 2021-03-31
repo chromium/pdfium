@@ -13,6 +13,7 @@
 #include "build/build_config.h"
 #include "core/fxcrt/fileaccess_iface.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 #if defined(OS_WIN)
 #include <direct.h>
@@ -30,7 +31,7 @@ struct FX_FolderHandle {
 
 struct FX_FolderHandle {
   ByteString m_Path;
-  DIR* m_Dir;
+  UnownedPtr<DIR> m_Dir;
 };
 #endif
 
@@ -178,7 +179,7 @@ void FX_CloseFolder(FX_FolderHandle* handle) {
 #if defined(OS_WIN)
   FindClose(handle->m_Handle);
 #else
-  closedir(handle->m_Dir);
+  closedir(handle->m_Dir.Release());
 #endif
   delete handle;
 }

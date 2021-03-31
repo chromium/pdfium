@@ -53,6 +53,7 @@
 #include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_glyphbitmap.h"
@@ -154,7 +155,7 @@ class ScopedSkiaDeviceFlush {
   ~ScopedSkiaDeviceFlush() { m_pDevice->Flush(/*release=*/false); }
 
  private:
-  CFX_RenderDevice* const m_pDevice;
+  UnownedPtr<CFX_RenderDevice> const m_pDevice;
 };
 #endif
 
