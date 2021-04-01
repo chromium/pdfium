@@ -32,13 +32,13 @@ class CPDF_Page final : public IPDF_Page, public CPDF_PageObjectHolder {
   // Data for the render layer to attach to this page.
   class RenderContextIface {
    public:
-    virtual ~RenderContextIface() {}
+    virtual ~RenderContextIface() = default;
   };
 
   // Cache for the render layer to attach to this page.
   class RenderCacheIface {
    public:
-    virtual ~RenderCacheIface() {}
+    virtual ~RenderCacheIface() = default;
     virtual void ResetBitmapForImage(const RetainPtr<CPDF_Image>& pImage) = 0;
   };
 

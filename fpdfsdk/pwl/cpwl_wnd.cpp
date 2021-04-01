@@ -32,7 +32,7 @@ CPWL_Wnd::CreateParams::~CreateParams() = default;
 class CPWL_MsgControl final : public Observable {
  public:
   explicit CPWL_MsgControl(CPWL_Wnd* pWnd) : m_pCreatedWnd(pWnd) {}
-  ~CPWL_MsgControl() {}
+  ~CPWL_MsgControl() = default;
 
   bool IsWndCreated(const CPWL_Wnd* pWnd) const {
     return m_pCreatedWnd == pWnd;

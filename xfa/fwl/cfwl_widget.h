@@ -55,7 +55,7 @@ class CFWL_Widget : public cppgc::GarbageCollected<CFWL_Widget>,
  public:
   class AdapterIface {
    public:
-    virtual ~AdapterIface() {}
+    virtual ~AdapterIface() = default;
     virtual CFX_Matrix GetRotateMatrix() = 0;
     virtual void DisplayCaret(bool bVisible, const CFX_RectF* pRtAnchor) = 0;
     virtual void GetBorderColorAndThickness(FX_ARGB* cr, float* fWidth) = 0;

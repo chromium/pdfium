@@ -98,7 +98,7 @@ class FPDF_DownloadHintsContext final : public CPDF_DataAvail::DownloadHints {
  public:
   explicit FPDF_DownloadHintsContext(FX_DOWNLOADHINTS* pDownloadHints)
       : m_pDownloadHints(pDownloadHints) {}
-  ~FPDF_DownloadHintsContext() override {}
+  ~FPDF_DownloadHintsContext() override = default;
 
   // IFX_DownloadHints
   void AddSegment(FX_FILESIZE offset, size_t size) override {

@@ -17,7 +17,7 @@
 
 class CPDF_DefaultAppearance {
  public:
-  CPDF_DefaultAppearance() {}
+  CPDF_DefaultAppearance() = default;
   explicit CPDF_DefaultAppearance(const ByteString& csDA) : m_csDA(csDA) {}
   CPDF_DefaultAppearance(const CPDF_DefaultAppearance& cDA)
       : m_csDA(cDA.m_csDA) {}

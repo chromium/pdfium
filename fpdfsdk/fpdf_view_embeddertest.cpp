@@ -91,7 +91,7 @@ class MockDownloadHints final : public FX_DOWNLOADHINTS {
     FX_DOWNLOADHINTS::AddSegment = SAddSegment;
   }
 
-  ~MockDownloadHints() {}
+  ~MockDownloadHints() = default;
 };
 
 }  // namespace

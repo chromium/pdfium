@@ -27,7 +27,7 @@ class HintTableForFuzzing final : public CPDF_HintTables {
                       int shared_hint_table_offset)
       : CPDF_HintTables(nullptr, pLinearized),
         shared_hint_table_offset_(shared_hint_table_offset) {}
-  ~HintTableForFuzzing() {}
+  ~HintTableForFuzzing() = default;
 
   void Fuzz(const uint8_t* data, size_t size) {
     if (shared_hint_table_offset_ <= 0)

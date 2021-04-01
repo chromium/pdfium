@@ -63,7 +63,7 @@ class CFX_CRTFileStream final : public IFX_SeekableStream {
  private:
   explicit CFX_CRTFileStream(std::unique_ptr<FileAccessIface> pFA)
       : m_pFile(std::move(pFA)) {}
-  ~CFX_CRTFileStream() override {}
+  ~CFX_CRTFileStream() override = default;
 
   std::unique_ptr<FileAccessIface> m_pFile;
 };

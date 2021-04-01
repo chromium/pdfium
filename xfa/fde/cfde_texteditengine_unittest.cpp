@@ -33,8 +33,8 @@ class CFDE_TextEditEngineTest : public testing::Test {
     bool text_is_full = false;
   };
 
-  CFDE_TextEditEngineTest() {}
-  ~CFDE_TextEditEngineTest() override {}
+  CFDE_TextEditEngineTest() = default;
+  ~CFDE_TextEditEngineTest() override = default;
 
   void SetUp() override {
     font_ = CFGAS_GEFont::LoadFont(L"Arial Black", 0, 0);

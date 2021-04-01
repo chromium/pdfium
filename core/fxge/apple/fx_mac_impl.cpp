@@ -37,8 +37,8 @@ const struct {
 
 class CFX_MacFontInfo final : public CFX_FolderFontInfo {
  public:
-  CFX_MacFontInfo() {}
-  ~CFX_MacFontInfo() override {}
+  CFX_MacFontInfo() = default;
+  ~CFX_MacFontInfo() override = default;
 
   // CFX_FolderFontInfo
   void* MapFont(int weight,

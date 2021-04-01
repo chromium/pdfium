@@ -33,8 +33,8 @@ CPDF_CrossRefTable::ObjectInfo GetObjInfo(const CPDF_Parser& parser,
 // A wrapper class to help test member functions of CPDF_Parser.
 class CPDF_TestParser final : public CPDF_Parser {
  public:
-  CPDF_TestParser() {}
-  ~CPDF_TestParser() {}
+  CPDF_TestParser() = default;
+  ~CPDF_TestParser() = default;
 
   // Setup reading from a file and initial states.
   bool InitTestFromFile(const char* path) {

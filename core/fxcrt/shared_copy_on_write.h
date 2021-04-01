@@ -20,10 +20,10 @@ namespace fxcrt {
 template <class ObjClass>
 class SharedCopyOnWrite {
  public:
-  SharedCopyOnWrite() {}
+  SharedCopyOnWrite() = default;
   SharedCopyOnWrite(const SharedCopyOnWrite& other)
       : m_pObject(other.m_pObject) {}
-  ~SharedCopyOnWrite() {}
+  ~SharedCopyOnWrite() = default;
 
   template <typename... Args>
   ObjClass* Emplace(Args... params) {

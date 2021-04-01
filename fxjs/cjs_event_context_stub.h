@@ -11,8 +11,8 @@
 
 class CJS_EventContextStub final : public IJS_EventContext {
  public:
-  CJS_EventContextStub() {}
-  ~CJS_EventContextStub() override {}
+  CJS_EventContextStub();
+  ~CJS_EventContextStub() override;
 
   // IJS_EventContext:
   Optional<IJS_Runtime::JS_Error> RunScript(const WideString& script) override;

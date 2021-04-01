@@ -37,7 +37,7 @@ class CPDF_Font : public Retainable, public Observable {
   // Callback mechanism for Type3 fonts to get pixels from forms.
   class FormIface {
    public:
-    virtual ~FormIface() {}
+    virtual ~FormIface() = default;
 
     virtual void ParseContentForType3Char(CPDF_Type3Char* pChar) = 0;
     virtual bool HasPageObjects() const = 0;
@@ -49,7 +49,7 @@ class CPDF_Font : public Retainable, public Observable {
   // Callback mechanism for Type3 fonts to get new forms from upper layers.
   class FormFactoryIface {
    public:
-    virtual ~FormFactoryIface() {}
+    virtual ~FormFactoryIface() = default;
 
     virtual std::unique_ptr<FormIface> CreateForm(
         CPDF_Document* pDocument,

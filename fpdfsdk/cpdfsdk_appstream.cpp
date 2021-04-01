@@ -101,7 +101,7 @@ class AutoClosedQCommand final : public AutoClosedCommand {
  public:
   explicit AutoClosedQCommand(std::ostringstream* stream)
       : AutoClosedCommand(stream, kStateSaveOperator, kStateRestoreOperator) {}
-  ~AutoClosedQCommand() override {}
+  ~AutoClosedQCommand() override = default;
 };
 
 ByteString GetColorAppStream(const CFX_Color& color,

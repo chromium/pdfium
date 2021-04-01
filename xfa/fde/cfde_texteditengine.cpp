@@ -31,7 +31,7 @@ class InsertOperation final : public CFDE_TextEditEngine::Operation {
                   const WideString& added_text)
       : engine_(engine), start_idx_(start_idx), added_text_(added_text) {}
 
-  ~InsertOperation() override {}
+  ~InsertOperation() override = default;
 
   void Redo() const override {
     engine_->Insert(start_idx_, added_text_,
@@ -56,7 +56,7 @@ class DeleteOperation final : public CFDE_TextEditEngine::Operation {
                   const WideString& removed_text)
       : engine_(engine), start_idx_(start_idx), removed_text_(removed_text) {}
 
-  ~DeleteOperation() override {}
+  ~DeleteOperation() override = default;
 
   void Redo() const override {
     engine_->Delete(start_idx_, removed_text_.GetLength(),
@@ -83,7 +83,7 @@ class ReplaceOperation final : public CFDE_TextEditEngine::Operation {
       : insert_op_(engine, start_idx, added_text),
         delete_op_(engine, start_idx, removed_text) {}
 
-  ~ReplaceOperation() override {}
+  ~ReplaceOperation() override = default;
 
   void Redo() const override {
     delete_op_.Redo();

@@ -32,7 +32,7 @@ class TestReadValidator final : public CPDF_ReadValidator {
   TestReadValidator()
       : CPDF_ReadValidator(pdfium::MakeRetain<InvalidSeekableReadStream>(100),
                            nullptr) {}
-  ~TestReadValidator() override {}
+  ~TestReadValidator() override = default;
 };
 
 class TestHolder final : public CPDF_IndirectObjectHolder {
@@ -42,7 +42,7 @@ class TestHolder final : public CPDF_IndirectObjectHolder {
     Available,
   };
   TestHolder() : validator_(pdfium::MakeRetain<TestReadValidator>()) {}
-  ~TestHolder() override {}
+  ~TestHolder() override = default;
 
   // CPDF_IndirectObjectHolder overrides:
   CPDF_Object* GetOrParseIndirectObject(uint32_t objnum) override {

@@ -18,7 +18,7 @@ class CFX_GEModule {
   class PlatformIface {
    public:
     static std::unique_ptr<PlatformIface> Create();
-    virtual ~PlatformIface() {}
+    virtual ~PlatformIface() = default;
 
     virtual void Init() = 0;
     virtual std::unique_ptr<SystemFontInfoIface>

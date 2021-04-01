@@ -182,7 +182,7 @@ enum CFX_CSSTEXTDECORATION {
 
 class CFX_CSSLength {
  public:
-  CFX_CSSLength() {}
+  CFX_CSSLength() = default;
 
   CFX_CSSLength(CFX_CSSLengthUnit eUnit, float fValue)
       : m_unit(eUnit), m_fValue(fValue) {}
@@ -210,7 +210,7 @@ class CFX_CSSLength {
 
 class CFX_CSSRect {
  public:
-  CFX_CSSRect() {}
+  CFX_CSSRect() = default;
 
   CFX_CSSRect(CFX_CSSLengthUnit eUnit, float val)
       : left(eUnit, val),

@@ -17,7 +17,7 @@ class StreamIterator final : public CPDF_ObjectWalker::SubobjectIterator {
  public:
   explicit StreamIterator(const CPDF_Stream* stream)
       : SubobjectIterator(stream) {}
-  ~StreamIterator() override {}
+  ~StreamIterator() override = default;
 
   bool IsFinished() const override { return IsStarted() && is_finished_; }
 
@@ -38,7 +38,7 @@ class DictionaryIterator final : public CPDF_ObjectWalker::SubobjectIterator {
  public:
   explicit DictionaryIterator(const CPDF_Dictionary* dictionary)
       : SubobjectIterator(dictionary), locker_(dictionary) {}
-  ~DictionaryIterator() override {}
+  ~DictionaryIterator() override = default;
 
   bool IsFinished() const override {
     return IsStarted() && dict_iterator_ == locker_.end();
@@ -71,7 +71,7 @@ class ArrayIterator final : public CPDF_ObjectWalker::SubobjectIterator {
   explicit ArrayIterator(const CPDF_Array* array)
       : SubobjectIterator(array), locker_(array) {}
 
-  ~ArrayIterator() override {}
+  ~ArrayIterator() override = default;
 
   bool IsFinished() const override {
     return IsStarted() && arr_iterator_ == locker_.end();

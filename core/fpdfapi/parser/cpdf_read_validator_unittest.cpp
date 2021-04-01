@@ -23,7 +23,7 @@ std::pair<FX_FILESIZE, FX_FILESIZE> MakeRange(uint32_t start, uint32_t end) {
 class MockFileAvail final : public CPDF_DataAvail::FileAvail {
  public:
   MockFileAvail() : available_range_(0, 0) {}
-  ~MockFileAvail() override {}
+  ~MockFileAvail() override = default;
 
   bool IsDataAvail(FX_FILESIZE offset, size_t size) override {
     return available_range_.first <= offset &&
@@ -45,7 +45,7 @@ class MockFileAvail final : public CPDF_DataAvail::FileAvail {
 class MockDownloadHints final : public CPDF_DataAvail::DownloadHints {
  public:
   MockDownloadHints() : last_requested_range_(0, 0) {}
-  ~MockDownloadHints() override {}
+  ~MockDownloadHints() override = default;
 
   void AddSegment(FX_FILESIZE offset, size_t size) override {
     last_requested_range_.first = offset;

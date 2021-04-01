@@ -22,7 +22,7 @@ class CPDF_PageRenderContext final : public CPDF_Page::RenderContextIface {
   // Context merely manages the lifetime for callers.
   class AnnotListIface {
    public:
-    virtual ~AnnotListIface() {}
+    virtual ~AnnotListIface() = default;
   };
 
   CPDF_PageRenderContext();
