@@ -98,9 +98,9 @@ class CFX_Win32FontInfo final : public SystemFontInfoIface {
 
   bool IsOpenTypeFromDiv(const LOGFONTA* plf);
   bool IsSupportFontFormDiv(const LOGFONTA* plf);
-  void AddInstalledFont(const LOGFONTA* plf, uint32_t FontType);
-  void GetGBPreference(ByteString& face, int weight, int picth_family);
-  void GetJapanesePreference(ByteString& face, int weight, int picth_family);
+  void AddInstalledFont(const LOGFONTA* plf, uint32_t font_type);
+  void GetGBPreference(ByteString& face, int weight, int pitch_family);
+  void GetJapanesePreference(ByteString& face, int weight, int pitch_family);
   ByteString FindFont(const ByteString& name);
 
   const HDC m_hDC;
@@ -112,10 +112,10 @@ class CFX_Win32FontInfo final : public SystemFontInfoIface {
 
 int CALLBACK FontEnumProc(const LOGFONTA* plf,
                           const TEXTMETRICA* lpntme,
-                          uint32_t FontType,
+                          uint32_t font_type,
                           LPARAM lParam) {
   CFX_Win32FontInfo* pFontInfo = reinterpret_cast<CFX_Win32FontInfo*>(lParam);
-  pFontInfo->AddInstalledFont(plf, FontType);
+  pFontInfo->AddInstalledFont(plf, font_type);
   return 1;
 }
 
@@ -170,7 +170,7 @@ bool CFX_Win32FontInfo::IsSupportFontFormDiv(const LOGFONTA* plf) {
 }
 
 void CFX_Win32FontInfo::AddInstalledFont(const LOGFONTA* plf,
-                                         uint32_t FontType) {
+                                         uint32_t font_type) {
   ByteString name(plf->lfFaceName);
   if (name.GetLength() > 0 && name[0] == '@')
     return;
@@ -179,8 +179,8 @@ void CFX_Win32FontInfo::AddInstalledFont(const LOGFONTA* plf,
     m_pMapper->AddInstalledFont(name, plf->lfCharSet);
     return;
   }
-  if (!(FontType & TRUETYPE_FONTTYPE)) {
-    if (!(FontType & DEVICE_FONTTYPE) || !IsSupportFontFormDiv(plf))
+  if (!(font_type & TRUETYPE_FONTTYPE)) {
+    if (!(font_type & DEVICE_FONTTYPE) || !IsSupportFontFormDiv(plf))
       return;
   }
 
@@ -242,7 +242,7 @@ void* CFX_Win32FallbackFontInfo::MapFont(int weight,
 
 void CFX_Win32FontInfo::GetGBPreference(ByteString& face,
                                         int weight,
-                                        int picth_family) {
+                                        int pitch_family) {
   if (face.Contains("KaiTi") || face.Contains("\xbf\xac")) {
     if (m_KaiTi.IsEmpty()) {
       m_KaiTi = FindFont("KaiTi");
@@ -263,7 +263,7 @@ void CFX_Win32FontInfo::GetGBPreference(ByteString& face,
     face = "SimSun";
   } else if (face.Contains("SimHei") || face.Contains("\xba\xda")) {
     face = "SimHei";
-  } else if (!(picth_family & FF_ROMAN) && weight > 550) {
+  } else if (!(pitch_family & FF_ROMAN) && weight > 550) {
     face = "SimHei";
   } else {
     face = "SimSun";
@@ -272,7 +272,7 @@ void CFX_Win32FontInfo::GetGBPreference(ByteString& face,
 
 void CFX_Win32FontInfo::GetJapanesePreference(ByteString& face,
                                               int weight,
-                                              int picth_family) {
+                                              int pitch_family) {
   if (face.Contains("Gothic") ||
       face.Contains("\x83\x53\x83\x56\x83\x62\x83\x4e")) {
     if (face.Contains("PGothic") ||
@@ -300,7 +300,7 @@ void CFX_Win32FontInfo::GetJapanesePreference(ByteString& face,
   if (GetSubFontName(&face))
     return;
 
-  if (!(picth_family & FF_ROMAN) && weight > 400) {
+  if (!(pitch_family & FF_ROMAN) && weight > 400) {
     face = "MS PGothic";
   } else {
     face = "MS PMincho";
