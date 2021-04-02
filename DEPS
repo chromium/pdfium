@@ -29,19 +29,23 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling build
   # and whatever else without interference from each other.
-  'build_revision': 'b82484b6b8b667f89be4970c8140f80ab7c9f6fa',
+  'build_revision': 'b962cf81840a112aab61443824f8afd6791fda31',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling buildtools
   # and whatever else without interference from each other.
-  'buildtools_revision': '4a34f37bff3a60256a9d25b5e22e401c4e77be4b',
+  'buildtools_revision': '5dbd89c9d9c0b0ff47cefdc2bc421b8c9a1c5a21',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling catapult
   # and whatever else without interference from each other.
   'catapult_revision': '4f82770e78a801033e58a1e6ce6ff941c0ff21e8',
   # Three lines of non-changing comments so that
+  # the commit queue can handle CLs rolling clang format
+  # and whatever else without interference from each other.
+  'clang_format_revision': '99803d74e35962f63a775f29477882afd4d57d94',
+  # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling clang
   # and whatever else without interference from each other.
-  'clang_revision': '630ab8a35c3ee7c8ba1ca53daf13e105f0f10857',
+  'clang_revision': '15a4172c51d9c03bdb09637aa2ef611d26e260b9',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling clang_dsymutil
   # and whatever else without interference from each other.
@@ -58,6 +62,10 @@ vars = {
   # the commit queue can handle CLs rolling freetype
   # and whatever else without interference from each other.
   'freetype_revision': 'fedd945c3ea10a86321c7503945b80454ce18956',
+  # Three lines of non-changing comments so that
+  # the commit queue can handle CLs rolling GN CIPD package version
+  # and whatever else without interference from each other.
+  'gn_version': 'git_revision:5667cc61018864b17542e0baff8b790f245583b0',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling gtest
   # and whatever else without interference from each other.
@@ -78,6 +86,20 @@ vars = {
   # the commit queue can handle CLs rolling jpeg_turbo
   # and whatever else without interference from each other.
   'jpeg_turbo_revision': '7b4981b6500ccba10733c352b9ed2dad14ce3c73',
+  # Three lines of non-changing comments so that
+  # the commit queue can handle CLs rolling libc++
+  # and whatever else without interference from each other.
+  # If you change this, also update the libc++ revision in
+  # //buildtools/deps_revisions.gni.
+  'libcxx_revision': '8fa87946779682841e21e2da977eccfb6cb3bded',
+  # Three lines of non-changing comments so that
+  # the commit queue can handle CLs rolling libc++abi
+  # and whatever else without interference from each other.
+  'libcxxabi_revision': '77b3c6ba9b261df3d5f3af5f3df9f4885bae9f21',
+  # Three lines of non-changing comments so that
+  # the commit queue can handle CLs rolling libunwind
+  # and whatever else without interference from each other.
+  'libunwind_revision': 'c9174a6e03db1cc74d42a28f877b77b7d966ca50',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling markupsafe
   # and whatever else without interference from each other.
@@ -123,6 +145,55 @@ deps = {
   'buildtools':
     Var('chromium_git') + '/chromium/src/buildtools.git@' +
         Var('buildtools_revision'),
+
+  'buildtools/clang_format/script':
+    Var('chromium_git') + '/external/github.com/llvm/llvm-project/clang/tools/clang-format.git@' +
+    Var('clang_format_revision'),
+
+  'buildtools/linux64': {
+    'packages': [
+      {
+        'package': 'gn/gn/linux-amd64',
+        'version': Var('gn_version'),
+      }
+    ],
+    'dep_type': 'cipd',
+    'condition': 'host_os == "linux"',
+  },
+
+  'buildtools/mac': {
+    'packages': [
+      {
+        'package': 'gn/gn/mac-${{arch}}',
+        'version': Var('gn_version'),
+      }
+    ],
+    'dep_type': 'cipd',
+    'condition': 'host_os == "mac"',
+  },
+
+  'buildtools/third_party/libc++/trunk':
+    Var('chromium_git') + '/external/github.com/llvm/llvm-project/libcxx.git' + '@' +
+    Var('libcxx_revision'),
+
+  'buildtools/third_party/libc++abi/trunk':
+    Var('chromium_git') + '/external/github.com/llvm/llvm-project/libcxxabi.git' + '@' +
+    Var('libcxxabi_revision'),
+
+  'buildtools/third_party/libunwind/trunk':
+    Var('chromium_git') + '/external/github.com/llvm/llvm-project/libunwind.git' + '@' +
+    Var('libunwind_revision'),
+
+  'buildtools/win': {
+    'packages': [
+      {
+        'package': 'gn/gn/windows-amd64',
+        'version': Var('gn_version'),
+      }
+    ],
+    'dep_type': 'cipd',
+    'condition': 'host_os == "win"',
+  },
 
   'testing/corpus':
     Var('pdfium_git') + '/pdfium_tests@' + Var('pdfium_tests_revision'),
@@ -241,10 +312,7 @@ deps = {
     Var('chromium_git') + '/v8/v8.git@' + Var('v8_revision'),
 }
 
-recursedeps = [
-  # buildtools provides clang_format, libc++, and libc++abi
-  'buildtools',
-]
+recursedeps = []
 
 include_rules = [
   # Basic stuff that everyone can use.
