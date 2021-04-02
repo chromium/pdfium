@@ -29,8 +29,6 @@ class CPDF_LinkList : public CPDF_Document::LinkListIface {
 
  private:
   const std::vector<RetainPtr<CPDF_Dictionary>>* GetPageLinks(CPDF_Page* pPage);
-  void LoadPageLinks(CPDF_Page* pPage,
-                     std::vector<RetainPtr<CPDF_Dictionary>>* pList);
 
   std::map<uint32_t, std::vector<RetainPtr<CPDF_Dictionary>>> m_PageMap;
 };

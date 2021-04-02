@@ -14,22 +14,6 @@ CPDF_LinkList::CPDF_LinkList() = default;
 
 CPDF_LinkList::~CPDF_LinkList() = default;
 
-const std::vector<RetainPtr<CPDF_Dictionary>>* CPDF_LinkList::GetPageLinks(
-    CPDF_Page* pPage) {
-  uint32_t objnum = pPage->GetDict()->GetObjNum();
-  if (objnum == 0)
-    return nullptr;
-
-  auto it = m_PageMap.find(objnum);
-  if (it != m_PageMap.end())
-    return &it->second;
-
-  // std::map::operator[] forces the creation of a map entry.
-  auto& page_link_list = m_PageMap[objnum];
-  LoadPageLinks(pPage, &page_link_list);
-  return &page_link_list;
-}
-
 CPDF_Link CPDF_LinkList::GetLinkAtPoint(CPDF_Page* pPage,
                                         const CFX_PointF& point,
                                         int* z_order) {
@@ -55,17 +39,27 @@ CPDF_Link CPDF_LinkList::GetLinkAtPoint(CPDF_Page* pPage,
   return CPDF_Link();
 }
 
-void CPDF_LinkList::LoadPageLinks(
-    CPDF_Page* pPage,
-    std::vector<RetainPtr<CPDF_Dictionary>>* pList) {
+const std::vector<RetainPtr<CPDF_Dictionary>>* CPDF_LinkList::GetPageLinks(
+    CPDF_Page* pPage) {
+  uint32_t objnum = pPage->GetDict()->GetObjNum();
+  if (objnum == 0)
+    return nullptr;
+
+  auto it = m_PageMap.find(objnum);
+  if (it != m_PageMap.end())
+    return &it->second;
+
+  // std::map::operator[] forces the creation of a map entry.
+  auto* page_link_list = &m_PageMap[objnum];
   CPDF_Array* pAnnotList = pPage->GetDict()->GetArrayFor("Annots");
   if (!pAnnotList)
-    return;
+    return page_link_list;
 
   for (size_t i = 0; i < pAnnotList->size(); ++i) {
     CPDF_Dictionary* pAnnot = pAnnotList->GetDictAt(i);
     bool add_link = (pAnnot && pAnnot->GetStringFor("Subtype") == "Link");
     // Add non-links as nullptrs to preserve z-order.
-    pList->emplace_back(add_link ? pAnnot : nullptr);
+    page_link_list->emplace_back(add_link ? pAnnot : nullptr);
   }
+  return page_link_list;
 }
