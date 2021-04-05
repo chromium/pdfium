@@ -36,15 +36,16 @@ class CPDFSDK_AnnotIterator {
 
  private:
   void GenerateResults();
-  void CollectAnnots(std::vector<CPDFSDK_Annot*>* pArray);
-  CFX_FloatRect AddToAnnotsList(std::vector<CPDFSDK_Annot*>* sa, size_t idx);
-  void AddSelectedToAnnots(std::vector<CPDFSDK_Annot*>* sa,
+  void CollectAnnots(std::vector<UnownedPtr<CPDFSDK_Annot>>* pArray);
+  CFX_FloatRect AddToAnnotsList(std::vector<UnownedPtr<CPDFSDK_Annot>>* sa,
+                                size_t idx);
+  void AddSelectedToAnnots(std::vector<UnownedPtr<CPDFSDK_Annot>>* sa,
                            std::vector<size_t>* aSelect);
 
   UnownedPtr<CPDFSDK_PageView> const m_pPageView;
   const std::vector<CPDF_Annot::Subtype> m_subtypes;
   const TabOrder m_eTabOrder;
-  std::vector<CPDFSDK_Annot*> m_Annots;
+  std::vector<UnownedPtr<CPDFSDK_Annot>> m_Annots;
 };
 
 #endif  // FPDFSDK_CPDFSDK_ANNOTITERATOR_H_
