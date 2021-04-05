@@ -239,8 +239,7 @@ bool ParsePageRangeString(const ByteString& bsPageRange,
 
       uint32_t nEndPageNum = pdfium::base::checked_cast<uint32_t>(
           atoi(cbMidRange.Substr(nMid, nEnd).c_str()));
-      if (nStartPageNum < 0 || nStartPageNum > nEndPageNum ||
-          nEndPageNum > nCount) {
+      if (nStartPageNum > nEndPageNum || nEndPageNum > nCount) {
         return false;
       }
       for (uint32_t i = nStartPageNum; i <= nEndPageNum; ++i) {
