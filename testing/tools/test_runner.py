@@ -205,7 +205,10 @@ class TestRunner:
         cmd_to_run.append('--disable-xfa')
 
       cmd_to_run.append(pdf_path)
-      subprocess.check_call(cmd_to_run, stdout=outfile)
+      try:
+        subprocess.check_call(cmd_to_run, stdout=outfile)
+      except subprocess.CalledProcessError as e:
+        return e
 
     # If the expected file does not exist, the output is expected to be empty.
     if not os.path.exists(expected_txt_path):
