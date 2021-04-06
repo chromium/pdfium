@@ -7,6 +7,8 @@
 #ifndef FPDFSDK_CPDFSDK_HELPERS_H_
 #define FPDFSDK_CPDFSDK_HELPERS_H_
 
+#include <vector>
+
 #include "build/build_config.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
@@ -277,5 +279,8 @@ void CheckForUnsupportedAnnot(const CPDF_Annot* pAnnot);
 void ProcessParseError(CPDF_Parser::Error err);
 void SetColorFromScheme(const FPDF_COLORSCHEME* pColorScheme,
                         CPDF_RenderOptions* pRenderOptions);
+
+std::vector<uint32_t> ParsePageRangeString(const ByteString& bsPageRange,
+                                           uint32_t nCount);
 
 #endif  // FPDFSDK_CPDFSDK_HELPERS_H_
