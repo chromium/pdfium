@@ -20,8 +20,8 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
 
+class CPVT_Section;
 class CPVT_Word;
-class CSection;
 class IPVT_FontMap;
 struct CPVT_WordInfo;
 
@@ -201,7 +201,7 @@ class CPDF_VariableText {
   float m_fLineLeading = 0.0f;
   float m_fCharSpace = 0.0f;
   float m_fFontSize = 0.0f;
-  std::vector<std::unique_ptr<CSection>> m_SectionArray;
+  std::vector<std::unique_ptr<CPVT_Section>> m_SectionArray;
   UnownedPtr<CPDF_VariableText::Provider> m_pVTProvider;
   std::unique_ptr<CPDF_VariableText::Iterator> m_pVTIterator;
   CFX_FloatRect m_rcPlate;

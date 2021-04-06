@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfdoc/csection.h"
+#include "core/fpdfdoc/cpvt_section.h"
 
 #include <algorithm>
 
@@ -13,20 +13,21 @@
 #include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
-CSection::Line::Line(const CPVT_LineInfo& lineinfo) : m_LineInfo(lineinfo) {}
+CPVT_Section::Line::Line(const CPVT_LineInfo& lineinfo)
+    : m_LineInfo(lineinfo) {}
 
-CSection::Line::~Line() = default;
+CPVT_Section::Line::~Line() = default;
 
-CPVT_WordPlace CSection::Line::GetBeginWordPlace() const {
+CPVT_WordPlace CPVT_Section::Line::GetBeginWordPlace() const {
   return CPVT_WordPlace(LinePlace.nSecIndex, LinePlace.nLineIndex, -1);
 }
 
-CPVT_WordPlace CSection::Line::GetEndWordPlace() const {
+CPVT_WordPlace CPVT_Section::Line::GetEndWordPlace() const {
   return CPVT_WordPlace(LinePlace.nSecIndex, LinePlace.nLineIndex,
                         m_LineInfo.nEndWordIndex);
 }
 
-CPVT_WordPlace CSection::Line::GetPrevWordPlace(
+CPVT_WordPlace CPVT_Section::Line::GetPrevWordPlace(
     const CPVT_WordPlace& place) const {
   if (place.nWordIndex > m_LineInfo.nEndWordIndex) {
     return CPVT_WordPlace(place.nSecIndex, place.nLineIndex,
@@ -36,7 +37,7 @@ CPVT_WordPlace CSection::Line::GetPrevWordPlace(
                         place.nWordIndex - 1);
 }
 
-CPVT_WordPlace CSection::Line::GetNextWordPlace(
+CPVT_WordPlace CPVT_Section::Line::GetNextWordPlace(
     const CPVT_WordPlace& place) const {
   if (place.nWordIndex < m_LineInfo.nBeginWordIndex) {
     return CPVT_WordPlace(place.nSecIndex, place.nLineIndex,
@@ -46,13 +47,13 @@ CPVT_WordPlace CSection::Line::GetNextWordPlace(
                         place.nWordIndex + 1);
 }
 
-CSection::CSection(CPDF_VariableText* pVT) : m_pVT(pVT) {
+CPVT_Section::CPVT_Section(CPDF_VariableText* pVT) : m_pVT(pVT) {
   DCHECK(m_pVT);
 }
 
-CSection::~CSection() = default;
+CPVT_Section::~CPVT_Section() = default;
 
-void CSection::ResetLinePlace() {
+void CPVT_Section::ResetLinePlace() {
   int32_t i = 0;
   for (auto& pLine : m_LineArray) {
     pLine->LinePlace = CPVT_WordPlace(SecPlace.nSecIndex, i, -1);
@@ -60,8 +61,8 @@ void CSection::ResetLinePlace() {
   }
 }
 
-CPVT_WordPlace CSection::AddWord(const CPVT_WordPlace& place,
-                                 const CPVT_WordInfo& wordinfo) {
+CPVT_WordPlace CPVT_Section::AddWord(const CPVT_WordPlace& place,
+                                     const CPVT_WordInfo& wordinfo) {
   int32_t nWordIndex = pdfium::clamp(
       place.nWordIndex, 0, pdfium::CollectionSize<int32_t>(m_WordArray));
   m_WordArray.insert(m_WordArray.begin() + nWordIndex,
@@ -69,34 +70,35 @@ CPVT_WordPlace CSection::AddWord(const CPVT_WordPlace& place,
   return place;
 }
 
-CPVT_WordPlace CSection::AddLine(const CPVT_LineInfo& lineinfo) {
+CPVT_WordPlace CPVT_Section::AddLine(const CPVT_LineInfo& lineinfo) {
   m_LineArray.push_back(std::make_unique<Line>(lineinfo));
   return CPVT_WordPlace(SecPlace.nSecIndex, m_LineArray.size() - 1, -1);
 }
 
-CPVT_FloatRect CSection::Rearrange() {
+CPVT_FloatRect CPVT_Section::Rearrange() {
   if (m_pVT->GetCharArray() > 0)
-    return CTypeset(this).CharArray();
-  return CTypeset(this).Typeset();
+    return CPVT_Typeset(this).CharArray();
+  return CPVT_Typeset(this).Typeset();
 }
 
-CFX_SizeF CSection::GetSectionSize(float fFontSize) {
-  return CTypeset(this).GetEditSize(fFontSize);
+CFX_SizeF CPVT_Section::GetSectionSize(float fFontSize) {
+  return CPVT_Typeset(this).GetEditSize(fFontSize);
 }
 
-CPVT_WordPlace CSection::GetBeginWordPlace() const {
+CPVT_WordPlace CPVT_Section::GetBeginWordPlace() const {
   if (m_LineArray.empty())
     return SecPlace;
   return m_LineArray.front()->GetBeginWordPlace();
 }
 
-CPVT_WordPlace CSection::GetEndWordPlace() const {
+CPVT_WordPlace CPVT_Section::GetEndWordPlace() const {
   if (m_LineArray.empty())
     return SecPlace;
   return m_LineArray.back()->GetEndWordPlace();
 }
 
-CPVT_WordPlace CSection::GetPrevWordPlace(const CPVT_WordPlace& place) const {
+CPVT_WordPlace CPVT_Section::GetPrevWordPlace(
+    const CPVT_WordPlace& place) const {
   if (place.nLineIndex < 0)
     return GetBeginWordPlace();
 
@@ -116,7 +118,8 @@ CPVT_WordPlace CSection::GetPrevWordPlace(const CPVT_WordPlace& place) const {
   return m_LineArray[place.nLineIndex - 1]->GetEndWordPlace();
 }
 
-CPVT_WordPlace CSection::GetNextWordPlace(const CPVT_WordPlace& place) const {
+CPVT_WordPlace CPVT_Section::GetNextWordPlace(
+    const CPVT_WordPlace& place) const {
   if (place.nLineIndex < 0)
     return GetBeginWordPlace();
 
@@ -133,7 +136,7 @@ CPVT_WordPlace CSection::GetNextWordPlace(const CPVT_WordPlace& place) const {
   return m_LineArray[place.nLineIndex + 1]->GetBeginWordPlace();
 }
 
-void CSection::UpdateWordPlace(CPVT_WordPlace& place) const {
+void CPVT_Section::UpdateWordPlace(CPVT_WordPlace& place) const {
   int32_t nLeft = 0;
   int32_t nRight = pdfium::CollectionSize<int32_t>(m_LineArray) - 1;
   int32_t nMid = (nLeft + nRight) / 2;
@@ -152,7 +155,7 @@ void CSection::UpdateWordPlace(CPVT_WordPlace& place) const {
   }
 }
 
-CPVT_WordPlace CSection::SearchWordPlace(const CFX_PointF& point) const {
+CPVT_WordPlace CPVT_Section::SearchWordPlace(const CFX_PointF& point) const {
   CPVT_WordPlace place = GetBeginWordPlace();
   bool bUp = true;
   bool bDown = true;
@@ -192,7 +195,7 @@ CPVT_WordPlace CSection::SearchWordPlace(const CFX_PointF& point) const {
   return place;
 }
 
-CPVT_WordPlace CSection::SearchWordPlace(
+CPVT_WordPlace CPVT_Section::SearchWordPlace(
     float fx,
     const CPVT_WordPlace& lineplace) const {
   if (!pdfium::IndexInBounds(m_LineArray, lineplace.nLineIndex))
@@ -205,8 +208,9 @@ CPVT_WordPlace CSection::SearchWordPlace(
                      pLine->GetEndWordPlace()));
 }
 
-CPVT_WordPlace CSection::SearchWordPlace(float fx,
-                                         const CPVT_WordRange& range) const {
+CPVT_WordPlace CPVT_Section::SearchWordPlace(
+    float fx,
+    const CPVT_WordRange& range) const {
   CPVT_WordPlace wordplace = range.BeginPos;
   wordplace.nWordIndex = -1;
 
@@ -239,14 +243,14 @@ CPVT_WordPlace CSection::SearchWordPlace(float fx,
   return wordplace;
 }
 
-void CSection::ClearLeftWords(int32_t nWordIndex) {
+void CPVT_Section::ClearLeftWords(int32_t nWordIndex) {
   for (int32_t i = nWordIndex; i >= 0; i--) {
     if (pdfium::IndexInBounds(m_WordArray, i))
       m_WordArray.erase(m_WordArray.begin() + i);
   }
 }
 
-void CSection::ClearRightWords(int32_t nWordIndex) {
+void CPVT_Section::ClearRightWords(int32_t nWordIndex) {
   int32_t sz = pdfium::CollectionSize<int32_t>(m_WordArray);
   for (int32_t i = sz - 1; i > nWordIndex; i--) {
     if (pdfium::IndexInBounds(m_WordArray, i))
@@ -254,14 +258,14 @@ void CSection::ClearRightWords(int32_t nWordIndex) {
   }
 }
 
-void CSection::ClearMidWords(int32_t nBeginIndex, int32_t nEndIndex) {
+void CPVT_Section::ClearMidWords(int32_t nBeginIndex, int32_t nEndIndex) {
   for (int32_t i = nEndIndex; i > nBeginIndex; i--) {
     if (pdfium::IndexInBounds(m_WordArray, i))
       m_WordArray.erase(m_WordArray.begin() + i);
   }
 }
 
-void CSection::ClearWords(const CPVT_WordRange& PlaceRange) {
+void CPVT_Section::ClearWords(const CPVT_WordRange& PlaceRange) {
   CPVT_WordPlace SecBeginPos = GetBeginWordPlace();
   CPVT_WordPlace SecEndPos = GetEndWordPlace();
   if (PlaceRange.BeginPos >= SecBeginPos) {
@@ -278,7 +282,7 @@ void CSection::ClearWords(const CPVT_WordRange& PlaceRange) {
   }
 }
 
-void CSection::ClearWord(const CPVT_WordPlace& place) {
+void CPVT_Section::ClearWord(const CPVT_WordPlace& place) {
   if (pdfium::IndexInBounds(m_WordArray, place.nWordIndex))
     m_WordArray.erase(m_WordArray.begin() + place.nWordIndex);
 }

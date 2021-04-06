@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfdoc/ctypeset.h"
+#include "core/fpdfdoc/cpvt_typeset.h"
 
 #include <algorithm>
 
 #include "core/fpdfdoc/cpdf_variabletext.h"
+#include "core/fpdfdoc/cpvt_section.h"
 #include "core/fpdfdoc/cpvt_wordinfo.h"
-#include "core/fpdfdoc/csection.h"
 #include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
@@ -173,12 +173,12 @@ bool NeedDivision(uint16_t prevWord, uint16_t curWord) {
 
 }  // namespace
 
-CTypeset::CTypeset(CSection* pSection)
+CPVT_Typeset::CPVT_Typeset(CPVT_Section* pSection)
     : m_pVT(pSection->m_pVT), m_pSection(pSection) {}
 
-CTypeset::~CTypeset() = default;
+CPVT_Typeset::~CPVT_Typeset() = default;
 
-CPVT_FloatRect CTypeset::CharArray() {
+CPVT_FloatRect CPVT_Typeset::CharArray() {
   m_rcRet = CPVT_FloatRect();
   if (m_pSection->m_LineArray.empty())
     return m_rcRet;
@@ -192,7 +192,7 @@ CPVT_FloatRect CTypeset::CharArray() {
   float x = 0.0f;
   float y = m_pVT->GetLineLeading() + fLineAscent;
   int32_t nStart = 0;
-  CSection::Line* pLine = m_pSection->m_LineArray.front().get();
+  CPVT_Section::Line* pLine = m_pSection->m_LineArray.front().get();
   switch (m_pVT->GetAlignment()) {
     case 0:
       pLine->m_LineInfo.fLineX = fNodeWidth * VARIABLETEXT_HALF;
@@ -258,14 +258,14 @@ CPVT_FloatRect CTypeset::CharArray() {
   return m_rcRet;
 }
 
-CFX_SizeF CTypeset::GetEditSize(float fFontSize) {
+CFX_SizeF CPVT_Typeset::GetEditSize(float fFontSize) {
   DCHECK(m_pSection);
   DCHECK(m_pVT);
   SplitLines(false, fFontSize);
   return CFX_SizeF(m_rcRet.Width(), m_rcRet.Height());
 }
 
-CPVT_FloatRect CTypeset::Typeset() {
+CPVT_FloatRect CPVT_Typeset::Typeset() {
   DCHECK(m_pVT);
   m_pSection->m_LineArray.clear();
   SplitLines(true, 0.0f);
@@ -273,7 +273,7 @@ CPVT_FloatRect CTypeset::Typeset() {
   return m_rcRet;
 }
 
-void CTypeset::SplitLines(bool bTypeset, float fFontSize) {
+void CPVT_Typeset::SplitLines(bool bTypeset, float fFontSize) {
   DCHECK(m_pVT);
   DCHECK(m_pSection);
 
@@ -426,7 +426,7 @@ void CTypeset::SplitLines(bool bTypeset, float fFontSize) {
   m_rcRet = CPVT_FloatRect(0, 0, fMaxX, fMaxY);
 }
 
-void CTypeset::OutputLines() {
+void CPVT_Typeset::OutputLines() {
   DCHECK(m_pVT);
   DCHECK(m_pSection);
   float fMinX;
@@ -453,7 +453,7 @@ void CTypeset::OutputLines() {
     float fPosX = 0.0f;
     float fPosY = 0.0f;
     for (int32_t l = 0; l < nTotalLines; l++) {
-      CSection::Line* pLine = m_pSection->m_LineArray[l].get();
+      CPVT_Section::Line* pLine = m_pSection->m_LineArray[l].get();
       switch (m_pVT->GetAlignment()) {
         default:
         case 0:

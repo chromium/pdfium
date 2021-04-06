@@ -4,16 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFDOC_CSECTION_H_
-#define CORE_FPDFDOC_CSECTION_H_
+#ifndef CORE_FPDFDOC_CPVT_SECTION_H_
+#define CORE_FPDFDOC_CPVT_SECTION_H_
 
 #include <memory>
 #include <vector>
 
 #include "core/fpdfdoc/cpvt_lineinfo.h"
+#include "core/fpdfdoc/cpvt_typeset.h"
 #include "core/fpdfdoc/cpvt_wordinfo.h"
 #include "core/fpdfdoc/cpvt_wordrange.h"
-#include "core/fpdfdoc/ctypeset.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -23,7 +23,7 @@ struct CPVT_LineInfo;
 struct CPVT_WordLine;
 struct CPVT_WordPlace;
 
-class CSection final {
+class CPVT_Section final {
  public:
   class Line {
    public:
@@ -38,8 +38,8 @@ class CSection final {
     CPVT_LineInfo m_LineInfo;
   };
 
-  explicit CSection(CPDF_VariableText* pVT);
-  ~CSection();
+  explicit CPVT_Section(CPDF_VariableText* pVT);
+  ~CPVT_Section();
 
   void ResetLinePlace();
   CPVT_WordPlace AddWord(const CPVT_WordPlace& place,
@@ -65,7 +65,7 @@ class CSection final {
   std::vector<std::unique_ptr<CPVT_WordInfo>> m_WordArray;
 
  private:
-  friend class CTypeset;
+  friend class CPVT_Typeset;
 
   void ClearLeftWords(int32_t nWordIndex);
   void ClearRightWords(int32_t nWordIndex);
@@ -74,4 +74,4 @@ class CSection final {
   UnownedPtr<CPDF_VariableText> const m_pVT;
 };
 
-#endif  // CORE_FPDFDOC_CSECTION_H_
+#endif  // CORE_FPDFDOC_CPVT_SECTION_H_

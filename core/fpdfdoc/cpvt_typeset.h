@@ -4,20 +4,20 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFDOC_CTYPESET_H_
-#define CORE_FPDFDOC_CTYPESET_H_
+#ifndef CORE_FPDFDOC_CPVT_TYPESET_H_
+#define CORE_FPDFDOC_CPVT_TYPESET_H_
 
 #include "core/fpdfdoc/cpvt_floatrect.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_VariableText;
-class CSection;
+class CPVT_Section;
 
-class CTypeset final {
+class CPVT_Typeset final {
  public:
-  explicit CTypeset(CSection* pSection);
-  ~CTypeset();
+  explicit CPVT_Typeset(CPVT_Section* pSection);
+  ~CPVT_Typeset();
 
   CFX_SizeF GetEditSize(float fFontSize);
   CPVT_FloatRect Typeset();
@@ -29,7 +29,7 @@ class CTypeset final {
 
   CPVT_FloatRect m_rcRet;
   UnownedPtr<CPDF_VariableText> const m_pVT;
-  UnownedPtr<CSection> const m_pSection;
+  UnownedPtr<CPVT_Section> const m_pSection;
 };
 
-#endif  // CORE_FPDFDOC_CTYPESET_H_
+#endif  // CORE_FPDFDOC_CPVT_TYPESET_H_

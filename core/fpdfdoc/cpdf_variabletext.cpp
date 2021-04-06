@@ -10,9 +10,9 @@
 #include <utility>
 
 #include "core/fpdfapi/font/cpdf_font.h"
+#include "core/fpdfdoc/cpvt_section.h"
 #include "core/fpdfdoc/cpvt_word.h"
 #include "core/fpdfdoc/cpvt_wordinfo.h"
-#include "core/fpdfdoc/csection.h"
 #include "core/fpdfdoc/ipvt_fontmap.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "third_party/base/check.h"
@@ -117,7 +117,7 @@ bool CPDF_VariableText::Iterator::NextLine() {
   if (!pdfium::IndexInBounds(m_pVT->m_SectionArray, m_CurPos.nSecIndex))
     return false;
 
-  CSection* pSection = m_pVT->m_SectionArray[m_CurPos.nSecIndex].get();
+  CPVT_Section* pSection = m_pVT->m_SectionArray[m_CurPos.nSecIndex].get();
   if (m_CurPos.nLineIndex <
       pdfium::CollectionSize<int32_t>(pSection->m_LineArray) - 1) {
     m_CurPos = CPVT_WordPlace(m_CurPos.nSecIndex, m_CurPos.nLineIndex + 1, -1);
@@ -136,7 +136,7 @@ bool CPDF_VariableText::Iterator::GetWord(CPVT_Word& word) const {
   if (!pdfium::IndexInBounds(m_pVT->m_SectionArray, m_CurPos.nSecIndex))
     return false;
 
-  CSection* pSection = m_pVT->m_SectionArray[m_CurPos.nSecIndex].get();
+  CPVT_Section* pSection = m_pVT->m_SectionArray[m_CurPos.nSecIndex].get();
   if (!pdfium::IndexInBounds(pSection->m_LineArray, m_CurPos.nLineIndex) ||
       !pdfium::IndexInBounds(pSection->m_WordArray, m_CurPos.nWordIndex)) {
     return false;
@@ -162,11 +162,11 @@ bool CPDF_VariableText::Iterator::GetLine(CPVT_Line& line) const {
   if (!pdfium::IndexInBounds(m_pVT->m_SectionArray, m_CurPos.nSecIndex))
     return false;
 
-  CSection* pSection = m_pVT->m_SectionArray[m_CurPos.nSecIndex].get();
+  CPVT_Section* pSection = m_pVT->m_SectionArray[m_CurPos.nSecIndex].get();
   if (!pdfium::IndexInBounds(pSection->m_LineArray, m_CurPos.nLineIndex))
     return false;
 
-  CSection::Line* pLine = pSection->m_LineArray[m_CurPos.nLineIndex].get();
+  CPVT_Section::Line* pLine = pSection->m_LineArray[m_CurPos.nLineIndex].get();
   line.ptLine = m_pVT->InToOut(
       CFX_PointF(pLine->m_LineInfo.fLineX + pSection->m_Rect.left,
                  pLine->m_LineInfo.fLineY + pSection->m_Rect.top));
@@ -231,12 +231,12 @@ CPVT_WordPlace CPDF_VariableText::InsertSection(const CPVT_WordPlace& place) {
   if (!pdfium::IndexInBounds(m_SectionArray, wordplace.nSecIndex))
     return place;
 
-  CSection* pSection = m_SectionArray[wordplace.nSecIndex].get();
+  CPVT_Section* pSection = m_SectionArray[wordplace.nSecIndex].get();
   CPVT_WordPlace NewPlace(wordplace.nSecIndex + 1, 0, -1);
   AddSection(NewPlace);
   CPVT_WordPlace result = NewPlace;
   if (pdfium::IndexInBounds(m_SectionArray, NewPlace.nSecIndex)) {
-    CSection* pNewSection = m_SectionArray[NewPlace.nSecIndex].get();
+    CPVT_Section* pNewSection = m_SectionArray[NewPlace.nSecIndex].get();
     for (int32_t w = wordplace.nWordIndex + 1;
          w < pdfium::CollectionSize<int32_t>(pSection->m_WordArray); ++w) {
       NewPlace.nWordIndex++;
@@ -333,7 +333,7 @@ int32_t CPDF_VariableText::WordPlaceToWordIndex(
   int32_t sz = 0;
   for (i = 0, sz = pdfium::CollectionSize<int32_t>(m_SectionArray);
        i < sz && i < newplace.nSecIndex; i++) {
-    CSection* pSection = m_SectionArray[i].get();
+    CPVT_Section* pSection = m_SectionArray[i].get();
     nIndex += pdfium::CollectionSize<int32_t>(pSection->m_WordArray);
     if (i != sz - 1)
       nIndex += kReturnLength;
@@ -350,7 +350,7 @@ CPVT_WordPlace CPDF_VariableText::WordIndexToWordPlace(int32_t index) const {
   bool bFound = false;
   for (int32_t i = 0, sz = pdfium::CollectionSize<int32_t>(m_SectionArray);
        i < sz; i++) {
-    CSection* pSection = m_SectionArray[i].get();
+    CPVT_Section* pSection = m_SectionArray[i].get();
     nIndex += pdfium::CollectionSize<int32_t>(pSection->m_WordArray);
     if (nIndex == index) {
       place = pSection->GetEndWordPlace();
@@ -390,7 +390,7 @@ CPVT_WordPlace CPDF_VariableText::GetPrevWordPlace(
   if (place.nSecIndex >= pdfium::CollectionSize<int32_t>(m_SectionArray))
     return GetEndWordPlace();
 
-  CSection* pSection = m_SectionArray[place.nSecIndex].get();
+  CPVT_Section* pSection = m_SectionArray[place.nSecIndex].get();
   if (place > pSection->GetBeginWordPlace())
     return pSection->GetPrevWordPlace(place);
   if (!pdfium::IndexInBounds(m_SectionArray, place.nSecIndex - 1))
@@ -405,7 +405,7 @@ CPVT_WordPlace CPDF_VariableText::GetNextWordPlace(
   if (place.nSecIndex >= pdfium::CollectionSize<int32_t>(m_SectionArray))
     return GetEndWordPlace();
 
-  CSection* pSection = m_SectionArray[place.nSecIndex].get();
+  CPVT_Section* pSection = m_SectionArray[place.nSecIndex].get();
   if (place < pSection->GetEndWordPlace())
     return pSection->GetNextWordPlace(place);
   if (!pdfium::IndexInBounds(m_SectionArray, place.nSecIndex + 1))
@@ -425,7 +425,7 @@ CPVT_WordPlace CPDF_VariableText::SearchWordPlace(
   while (nLeft <= nRight) {
     if (!pdfium::IndexInBounds(m_SectionArray, nMid))
       break;
-    CSection* pSection = m_SectionArray[nMid].get();
+    CPVT_Section* pSection = m_SectionArray[nMid].get();
     if (IsFloatBigger(pt.y, pSection->m_Rect.top))
       bUp = false;
     if (IsFloatBigger(pSection->m_Rect.bottom, pt.y))
@@ -458,7 +458,7 @@ CPVT_WordPlace CPDF_VariableText::GetUpWordPlace(
   if (!pdfium::IndexInBounds(m_SectionArray, place.nSecIndex))
     return place;
 
-  CSection* pSection = m_SectionArray[place.nSecIndex].get();
+  CPVT_Section* pSection = m_SectionArray[place.nSecIndex].get();
   CPVT_WordPlace temp = place;
   CFX_PointF pt = OutToIn(point);
   if (temp.nLineIndex-- > 0) {
@@ -466,7 +466,7 @@ CPVT_WordPlace CPDF_VariableText::GetUpWordPlace(
   }
   if (temp.nSecIndex-- > 0) {
     if (pdfium::IndexInBounds(m_SectionArray, temp.nSecIndex)) {
-      CSection* pLastSection = m_SectionArray[temp.nSecIndex].get();
+      CPVT_Section* pLastSection = m_SectionArray[temp.nSecIndex].get();
       temp.nLineIndex =
           pdfium::CollectionSize<int32_t>(pLastSection->m_LineArray) - 1;
       return pLastSection->SearchWordPlace(pt.x - pLastSection->m_Rect.left,
@@ -482,7 +482,7 @@ CPVT_WordPlace CPDF_VariableText::GetDownWordPlace(
   if (!pdfium::IndexInBounds(m_SectionArray, place.nSecIndex))
     return place;
 
-  CSection* pSection = m_SectionArray[place.nSecIndex].get();
+  CPVT_Section* pSection = m_SectionArray[place.nSecIndex].get();
   CPVT_WordPlace temp = place;
   CFX_PointF pt = OutToIn(point);
   if (temp.nLineIndex++ <
@@ -507,7 +507,7 @@ CPVT_WordPlace CPDF_VariableText::GetLineEndPlace(
   if (!pdfium::IndexInBounds(m_SectionArray, place.nSecIndex))
     return place;
 
-  CSection* pSection = m_SectionArray[place.nSecIndex].get();
+  CPVT_Section* pSection = m_SectionArray[place.nSecIndex].get();
   if (!pdfium::IndexInBounds(pSection->m_LineArray, place.nLineIndex))
     return place;
 
@@ -543,7 +543,7 @@ CPVT_WordPlace CPDF_VariableText::AddSection(const CPVT_WordPlace& place) {
   int32_t nSecIndex = pdfium::clamp(
       place.nSecIndex, 0, pdfium::CollectionSize<int32_t>(m_SectionArray));
 
-  auto pSection = std::make_unique<CSection>(this);
+  auto pSection = std::make_unique<CPVT_Section>(this);
   pSection->m_Rect = CPVT_FloatRect();
   pSection->SecPlace.nSecIndex = nSecIndex;
   m_SectionArray.insert(m_SectionArray.begin() + nSecIndex,
@@ -657,7 +657,7 @@ void CPDF_VariableText::ClearSectionRightWords(const CPVT_WordPlace& place) {
   if (!pdfium::IndexInBounds(m_SectionArray, place.nSecIndex))
     return;
 
-  CSection* pSection = m_SectionArray[place.nSecIndex].get();
+  CPVT_Section* pSection = m_SectionArray[place.nSecIndex].get();
   if (!pdfium::IndexInBounds(pSection->m_WordArray, wordplace.nWordIndex + 1))
     return;
 
@@ -701,9 +701,9 @@ void CPDF_VariableText::LinkLatterSection(const CPVT_WordPlace& place) {
   if (!pdfium::IndexInBounds(m_SectionArray, place.nSecIndex + 1))
     return;
 
-  CSection* pNextSection = m_SectionArray[place.nSecIndex + 1].get();
+  CPVT_Section* pNextSection = m_SectionArray[place.nSecIndex + 1].get();
   if (pdfium::IndexInBounds(m_SectionArray, oldplace.nSecIndex)) {
-    CSection* pSection = m_SectionArray[oldplace.nSecIndex].get();
+    CPVT_Section* pSection = m_SectionArray[oldplace.nSecIndex].get();
     for (auto& pWord : pNextSection->m_WordArray) {
       oldplace.nWordIndex++;
       pSection->AddWord(oldplace, *pWord);
@@ -727,7 +727,7 @@ CPVT_WordPlace CPDF_VariableText::ClearLeftWord(const CPVT_WordPlace& place) {
   if (!pdfium::IndexInBounds(m_SectionArray, place.nSecIndex))
     return place;
 
-  CSection* pSection = m_SectionArray[place.nSecIndex].get();
+  CPVT_Section* pSection = m_SectionArray[place.nSecIndex].get();
   CPVT_WordPlace leftplace = GetPrevWordPlace(place);
   if (leftplace == place)
     return place;
@@ -747,7 +747,7 @@ CPVT_WordPlace CPDF_VariableText::ClearRightWord(const CPVT_WordPlace& place) {
   if (!pdfium::IndexInBounds(m_SectionArray, place.nSecIndex))
     return place;
 
-  CSection* pSection = m_SectionArray[place.nSecIndex].get();
+  CPVT_Section* pSection = m_SectionArray[place.nSecIndex].get();
   CPVT_WordPlace rightplace = AdjustLineHeader(GetNextWordPlace(place), false);
   if (rightplace == place)
     return place;
@@ -829,7 +829,7 @@ CPVT_FloatRect CPDF_VariableText::RearrangeSections(
   for (int32_t s = 0, sz = pdfium::CollectionSize<int32_t>(m_SectionArray);
        s < sz; s++) {
     place.nSecIndex = s;
-    CSection* pSection = m_SectionArray[s].get();
+    CPVT_Section* pSection = m_SectionArray[s].get();
     pSection->SecPlace = place;
     CPVT_FloatRect rcSec = pSection->m_Rect;
     if (s >= nSSecIndex) {
