@@ -19,7 +19,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_VariableText;
-class CPVT_LineInfo;
+struct CPVT_LineInfo;
 struct CPVT_WordLine;
 struct CPVT_WordPlace;
 

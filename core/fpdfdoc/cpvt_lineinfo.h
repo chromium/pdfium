@@ -7,30 +7,17 @@
 #ifndef CORE_FPDFDOC_CPVT_LINEINFO_H_
 #define CORE_FPDFDOC_CPVT_LINEINFO_H_
 
-#include "core/fxcrt/fx_system.h"
+#include <stdint.h>
 
-class CPVT_LineInfo {
- public:
-  CPVT_LineInfo();
-
-  int32_t nTotalWord;
-  int32_t nBeginWordIndex;
-  int32_t nEndWordIndex;
-  float fLineX;
-  float fLineY;
-  float fLineWidth;
-  float fLineAscent;
-  float fLineDescent;
+struct CPVT_LineInfo {
+  int32_t nTotalWord = 0;
+  int32_t nBeginWordIndex = -1;
+  int32_t nEndWordIndex = -1;
+  float fLineX = 0.0f;
+  float fLineY = 0.0f;
+  float fLineWidth = 0.0f;
+  float fLineAscent = 0.0f;
+  float fLineDescent = 0.0f;
 };
-
-inline CPVT_LineInfo::CPVT_LineInfo()
-    : nTotalWord(0),
-      nBeginWordIndex(-1),
-      nEndWordIndex(-1),
-      fLineX(0.0f),
-      fLineY(0.0f),
-      fLineWidth(0.0f),
-      fLineAscent(0.0f),
-      fLineDescent(0.0f) {}
 
 #endif  // CORE_FPDFDOC_CPVT_LINEINFO_H_
