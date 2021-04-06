@@ -8,7 +8,6 @@
 
 #include <algorithm>
 
-#include "core/fpdfdoc/cline.h"
 #include "core/fpdfdoc/cpdf_variabletext.h"
 #include "core/fpdfdoc/cpvt_wordinfo.h"
 #include "core/fpdfdoc/csection.h"
@@ -193,7 +192,7 @@ CPVT_FloatRect CTypeset::CharArray() {
   float x = 0.0f;
   float y = m_pVT->GetLineLeading() + fLineAscent;
   int32_t nStart = 0;
-  CLine* pLine = m_pSection->m_LineArray.front().get();
+  CSection::Line* pLine = m_pSection->m_LineArray.front().get();
   switch (m_pVT->GetAlignment()) {
     case 0:
       pLine->m_LineInfo.fLineX = fNodeWidth * VARIABLETEXT_HALF;
@@ -454,7 +453,7 @@ void CTypeset::OutputLines() {
     float fPosX = 0.0f;
     float fPosY = 0.0f;
     for (int32_t l = 0; l < nTotalLines; l++) {
-      CLine* pLine = m_pSection->m_LineArray[l].get();
+      CSection::Line* pLine = m_pSection->m_LineArray[l].get();
       switch (m_pVT->GetAlignment()) {
         default:
         case 0:

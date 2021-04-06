@@ -10,7 +10,7 @@
 #include <memory>
 #include <vector>
 
-#include "core/fpdfdoc/cline.h"
+#include "core/fpdfdoc/cpvt_lineinfo.h"
 #include "core/fpdfdoc/cpvt_wordinfo.h"
 #include "core/fpdfdoc/cpvt_wordrange.h"
 #include "core/fpdfdoc/ctypeset.h"
@@ -25,6 +25,19 @@ struct CPVT_WordPlace;
 
 class CSection final {
  public:
+  class Line {
+   public:
+    explicit Line(const CPVT_LineInfo& lineinfo);
+    ~Line();
+
+    CPVT_WordPlace GetBeginWordPlace() const;
+    CPVT_WordPlace GetEndWordPlace() const;
+    CPVT_WordPlace GetPrevWordPlace(const CPVT_WordPlace& place) const;
+    CPVT_WordPlace GetNextWordPlace(const CPVT_WordPlace& place) const;
+    CPVT_WordPlace LinePlace;
+    CPVT_LineInfo m_LineInfo;
+  };
+
   explicit CSection(CPDF_VariableText* pVT);
   ~CSection();
 
@@ -48,7 +61,7 @@ class CSection final {
 
   CPVT_WordPlace SecPlace;
   CPVT_FloatRect m_Rect;
-  std::vector<std::unique_ptr<CLine>> m_LineArray;
+  std::vector<std::unique_ptr<Line>> m_LineArray;
   std::vector<std::unique_ptr<CPVT_WordInfo>> m_WordArray;
 
  private:

@@ -10,7 +10,6 @@
 #include <utility>
 
 #include "core/fpdfapi/font/cpdf_font.h"
-#include "core/fpdfdoc/cline.h"
 #include "core/fpdfdoc/cpvt_word.h"
 #include "core/fpdfdoc/cpvt_wordinfo.h"
 #include "core/fpdfdoc/csection.h"
@@ -167,7 +166,7 @@ bool CPDF_VariableText::Iterator::GetLine(CPVT_Line& line) const {
   if (!pdfium::IndexInBounds(pSection->m_LineArray, m_CurPos.nLineIndex))
     return false;
 
-  CLine* pLine = pSection->m_LineArray[m_CurPos.nLineIndex].get();
+  CSection::Line* pLine = pSection->m_LineArray[m_CurPos.nLineIndex].get();
   line.ptLine = m_pVT->InToOut(
       CFX_PointF(pLine->m_LineInfo.fLineX + pSection->m_Rect.left,
                  pLine->m_LineInfo.fLineY + pSection->m_Rect.top));

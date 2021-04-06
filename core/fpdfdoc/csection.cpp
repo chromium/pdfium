@@ -8,11 +8,43 @@
 
 #include <algorithm>
 
-#include "core/fpdfdoc/cline.h"
 #include "core/fpdfdoc/cpdf_variabletext.h"
 #include "core/fpdfdoc/cpvt_wordinfo.h"
 #include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
+
+CSection::Line::Line(const CPVT_LineInfo& lineinfo) : m_LineInfo(lineinfo) {}
+
+CSection::Line::~Line() = default;
+
+CPVT_WordPlace CSection::Line::GetBeginWordPlace() const {
+  return CPVT_WordPlace(LinePlace.nSecIndex, LinePlace.nLineIndex, -1);
+}
+
+CPVT_WordPlace CSection::Line::GetEndWordPlace() const {
+  return CPVT_WordPlace(LinePlace.nSecIndex, LinePlace.nLineIndex,
+                        m_LineInfo.nEndWordIndex);
+}
+
+CPVT_WordPlace CSection::Line::GetPrevWordPlace(
+    const CPVT_WordPlace& place) const {
+  if (place.nWordIndex > m_LineInfo.nEndWordIndex) {
+    return CPVT_WordPlace(place.nSecIndex, place.nLineIndex,
+                          m_LineInfo.nEndWordIndex);
+  }
+  return CPVT_WordPlace(place.nSecIndex, place.nLineIndex,
+                        place.nWordIndex - 1);
+}
+
+CPVT_WordPlace CSection::Line::GetNextWordPlace(
+    const CPVT_WordPlace& place) const {
+  if (place.nWordIndex < m_LineInfo.nBeginWordIndex) {
+    return CPVT_WordPlace(place.nSecIndex, place.nLineIndex,
+                          m_LineInfo.nBeginWordIndex);
+  }
+  return CPVT_WordPlace(place.nSecIndex, place.nLineIndex,
+                        place.nWordIndex + 1);
+}
 
 CSection::CSection(CPDF_VariableText* pVT) : m_pVT(pVT) {
   DCHECK(m_pVT);
@@ -38,7 +70,7 @@ CPVT_WordPlace CSection::AddWord(const CPVT_WordPlace& place,
 }
 
 CPVT_WordPlace CSection::AddLine(const CPVT_LineInfo& lineinfo) {
-  m_LineArray.push_back(std::make_unique<CLine>(lineinfo));
+  m_LineArray.push_back(std::make_unique<Line>(lineinfo));
   return CPVT_WordPlace(SecPlace.nSecIndex, m_LineArray.size() - 1, -1);
 }
 
@@ -71,7 +103,7 @@ CPVT_WordPlace CSection::GetPrevWordPlace(const CPVT_WordPlace& place) const {
   if (place.nLineIndex >= pdfium::CollectionSize<int32_t>(m_LineArray))
     return GetEndWordPlace();
 
-  CLine* pLine = m_LineArray[place.nLineIndex].get();
+  Line* pLine = m_LineArray[place.nLineIndex].get();
   if (place.nWordIndex == pLine->m_LineInfo.nBeginWordIndex)
     return CPVT_WordPlace(place.nSecIndex, place.nLineIndex, -1);
 
@@ -91,7 +123,7 @@ CPVT_WordPlace CSection::GetNextWordPlace(const CPVT_WordPlace& place) const {
   if (place.nLineIndex >= pdfium::CollectionSize<int32_t>(m_LineArray))
     return GetEndWordPlace();
 
-  CLine* pLine = m_LineArray[place.nLineIndex].get();
+  Line* pLine = m_LineArray[place.nLineIndex].get();
   if (place.nWordIndex < pLine->m_LineInfo.nEndWordIndex)
     return pLine->GetNextWordPlace(place);
 
@@ -106,7 +138,7 @@ void CSection::UpdateWordPlace(CPVT_WordPlace& place) const {
   int32_t nRight = pdfium::CollectionSize<int32_t>(m_LineArray) - 1;
   int32_t nMid = (nLeft + nRight) / 2;
   while (nLeft <= nRight) {
-    CLine* pLine = m_LineArray[nMid].get();
+    Line* pLine = m_LineArray[nMid].get();
     if (place.nWordIndex < pLine->m_LineInfo.nBeginWordIndex) {
       nRight = nMid - 1;
       nMid = (nLeft + nRight) / 2;
@@ -128,7 +160,7 @@ CPVT_WordPlace CSection::SearchWordPlace(const CFX_PointF& point) const {
   int32_t nRight = pdfium::CollectionSize<int32_t>(m_LineArray) - 1;
   int32_t nMid = pdfium::CollectionSize<int32_t>(m_LineArray) / 2;
   while (nLeft <= nRight) {
-    CLine* pLine = m_LineArray[nMid].get();
+    Line* pLine = m_LineArray[nMid].get();
     float fTop = pLine->m_LineInfo.fLineY - pLine->m_LineInfo.fLineAscent -
                  m_pVT->GetLineLeading();
     float fBottom = pLine->m_LineInfo.fLineY - pLine->m_LineInfo.fLineDescent;
@@ -166,7 +198,7 @@ CPVT_WordPlace CSection::SearchWordPlace(
   if (!pdfium::IndexInBounds(m_LineArray, lineplace.nLineIndex))
     return GetBeginWordPlace();
 
-  CLine* pLine = m_LineArray[lineplace.nLineIndex].get();
+  Line* pLine = m_LineArray[lineplace.nLineIndex].get();
   return SearchWordPlace(
       fx - m_Rect.left,
       CPVT_WordRange(pLine->GetNextWordPlace(pLine->GetBeginWordPlace()),

@@ -9,8 +9,6 @@ source_set("fpdfdoc") {
   sources = [
     "cba_fontmap.cpp",
     "cba_fontmap.h",
-    "cline.cpp",
-    "cline.h",
     "cpdf_aaction.cpp",
     "cpdf_aaction.h",
     "cpdf_action.cpp",
