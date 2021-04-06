@@ -72,7 +72,6 @@ class CPDF_VariableText {
   void SetProvider(CPDF_VariableText::Provider* pProvider);
   CPDF_VariableText::Iterator* GetIterator();
 
-  void SetContentRect(const CPVT_FloatRect& rect);
   CFX_FloatRect GetContentRect() const;
   void SetPlateRect(const CFX_FloatRect& rect);
   const CFX_FloatRect& GetPlateRect() const;

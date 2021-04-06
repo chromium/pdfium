@@ -498,7 +498,7 @@ void CPWL_ListCtrl::ReArrange(int32_t nItemIndex) {
         CFX_FloatRect(0.0f, fPosY + fListItemHeight, 0.0f, fPosY));
     fPosY += fListItemHeight;
   }
-  SetContentRect(CFX_FloatRect(0.0f, fPosY, 0.0f, 0.0f));
+  m_rcContent = CFX_FloatRect(0.0f, fPosY, 0.0f, 0.0f);
   SetScrollInfo();
 }
 

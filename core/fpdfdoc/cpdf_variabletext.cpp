@@ -576,12 +576,8 @@ void CPDF_VariableText::SetPlateRect(const CFX_FloatRect& rect) {
   m_rcPlate = rect;
 }
 
-void CPDF_VariableText::SetContentRect(const CPVT_FloatRect& rect) {
-  m_rcContent = rect;
-}
-
 CFX_FloatRect CPDF_VariableText::GetContentRect() const {
-  return InToOut(CPVT_FloatRect(m_rcContent));
+  return InToOut(m_rcContent);
 }
 
 const CFX_FloatRect& CPDF_VariableText::GetPlateRect() const {
@@ -783,7 +779,7 @@ CPVT_FloatRect CPDF_VariableText::Rearrange(const CPVT_WordRange& PlaceRange) {
       rcRet = RearrangeSections(PlaceRange);
     }
   }
-  SetContentRect(rcRet);
+  m_rcContent = rcRet;
   return rcRet;
 }
 
