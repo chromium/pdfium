@@ -74,11 +74,6 @@ int32_t CPDF_VariableText::Provider::GetWordFontIndex(uint16_t word,
   return -1;
 }
 
-bool CPDF_VariableText::Provider::IsLatinWord(uint16_t word) {
-  return (word >= 0x61 && word <= 0x7A) || (word >= 0x41 && word <= 0x5A) ||
-         word == 0x2D || word == 0x27;
-}
-
 int32_t CPDF_VariableText::Provider::GetDefaultFontIndex() {
   return 0;
 }
@@ -868,10 +863,6 @@ int32_t CPDF_VariableText::GetWordFontIndex(uint16_t word,
 
 int32_t CPDF_VariableText::GetDefaultFontIndex() {
   return m_pVTProvider ? m_pVTProvider->GetDefaultFontIndex() : -1;
-}
-
-bool CPDF_VariableText::IsLatinWord(uint16_t word) {
-  return m_pVTProvider && m_pVTProvider->IsLatinWord(word);
 }
 
 CPDF_VariableText::Iterator* CPDF_VariableText::GetIterator() {

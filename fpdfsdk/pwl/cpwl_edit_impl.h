@@ -17,10 +17,6 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
 
-#define FX_EDIT_ISLATINWORD(u)                  \
-  (u == 0x2D || (u <= 0x005A && u >= 0x0041) || \
-   (u <= 0x007A && u >= 0x0061) || (u <= 0x02AF && u >= 0x00C0))
-
 class CFFL_FormFiller;
 class CPWL_EditImpl;
 class CPWL_EditImpl_Iterator;
@@ -450,7 +446,6 @@ class CPWL_EditImpl_Provider final : public CPDF_VariableText::Provider {
   int32_t GetWordFontIndex(uint16_t word,
                            int32_t charset,
                            int32_t nFontIndex) override;
-  bool IsLatinWord(uint16_t word) override;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_EDIT_IMPL_H_

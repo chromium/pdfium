@@ -59,7 +59,6 @@ class CPDF_VariableText {
     virtual int32_t GetWordFontIndex(uint16_t word,
                                      int32_t charset,
                                      int32_t nFontIndex);
-    virtual bool IsLatinWord(uint16_t word);
     virtual int32_t GetDefaultFontIndex();
 
     IPVT_FontMap* GetFontMap() { return m_pFontMap.Get(); }
@@ -166,7 +165,6 @@ class CPDF_VariableText {
  private:
   int GetCharWidth(int32_t nFontIndex, uint16_t Word, uint16_t SubWord);
   int32_t GetWordFontIndex(uint16_t word, int32_t charset, int32_t nFontIndex);
-  bool IsLatinWord(uint16_t word);
 
   CPVT_WordPlace AddSection(const CPVT_WordPlace& place);
   CPVT_WordPlace AddLine(const CPVT_WordPlace& place,

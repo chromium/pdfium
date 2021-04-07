@@ -125,10 +125,6 @@ int32_t CPWL_EditImpl_Provider::GetWordFontIndex(uint16_t word,
   return GetFontMap()->GetWordFontIndex(word, charset, nFontIndex);
 }
 
-bool CPWL_EditImpl_Provider::IsLatinWord(uint16_t word) {
-  return FX_EDIT_ISLATINWORD(word);
-}
-
 CPWL_EditImpl_Refresh::CPWL_EditImpl_Refresh() = default;
 
 CPWL_EditImpl_Refresh::~CPWL_EditImpl_Refresh() = default;
