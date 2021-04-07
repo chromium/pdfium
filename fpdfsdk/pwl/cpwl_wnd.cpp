@@ -270,7 +270,7 @@ bool CPWL_Wnd::InvalidateRect(const CFX_FloatRect* pRect) {
 
 #define PWL_IMPLEMENT_KEY_METHOD(key_method_name)                  \
   bool CPWL_Wnd::key_method_name(uint16_t nChar, uint32_t nFlag) { \
-    if (!IsValid() || !IsVisible() || !IsEnabled())                \
+    if (!IsValid() || !IsVisible())                                \
       return false;                                                \
     if (!IsWndCaptureKeyboard(this))                               \
       return false;                                                \
@@ -287,7 +287,7 @@ PWL_IMPLEMENT_KEY_METHOD(OnChar)
 
 #define PWL_IMPLEMENT_MOUSE_METHOD(mouse_method_name)                          \
   bool CPWL_Wnd::mouse_method_name(uint32_t nFlag, const CFX_PointF& point) {  \
-    if (!IsValid() || !IsVisible() || !IsEnabled())                            \
+    if (!IsValid() || !IsVisible())                                            \
       return false;                                                            \
     if (IsWndCaptureMouse(this)) {                                             \
       for (const auto& pChild : m_Children) {                                  \
@@ -357,7 +357,7 @@ bool CPWL_Wnd::Redo() {
 bool CPWL_Wnd::OnMouseWheel(uint32_t nFlag,
                             const CFX_PointF& point,
                             const CFX_Vector& delta) {
-  if (!IsValid() || !IsVisible() || !IsEnabled())
+  if (!IsValid() || !IsVisible())
     return false;
 
   SetCursor();
@@ -750,14 +750,4 @@ void CPWL_Wnd::SetChildMatrix(const CFX_Matrix& mt) {
 const CPWL_Wnd* CPWL_Wnd::GetFocused() const {
   CPWL_MsgControl* pMsgCtrl = GetMsgControl();
   return pMsgCtrl ? pMsgCtrl->GetFocusedWindow() : nullptr;
-}
-
-void CPWL_Wnd::EnableWindow(bool bEnable) {
-  if (m_bEnabled == bEnable)
-    return;
-
-  for (const auto& pChild : m_Children)
-    pChild->EnableWindow(bEnable);
-
-  m_bEnabled = bEnable;
 }

@@ -233,8 +233,6 @@ class CPWL_Wnd : public Observable {
   bool ClientHitTest(const CFX_PointF& point) const;
   bool IsCaptureMouse() const;
 
-  void EnableWindow(bool bEnable);
-  bool IsEnabled() const { return m_bEnabled; }
   const CPWL_Wnd* GetFocused() const;
   bool IsFocused() const;
   bool IsReadOnly() const;
@@ -326,7 +324,6 @@ class CPWL_Wnd : public Observable {
   bool m_bCreated = false;
   bool m_bVisible = false;
   bool m_bNotifying = false;
-  bool m_bEnabled = true;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_WND_H_
