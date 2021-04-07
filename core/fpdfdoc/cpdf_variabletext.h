@@ -62,6 +62,8 @@ class CPDF_VariableText {
     virtual bool IsLatinWord(uint16_t word);
     virtual int32_t GetDefaultFontIndex();
 
+    IPVT_FontMap* GetFontMap() { return m_pFontMap.Get(); }
+
    private:
     UnownedPtr<IPVT_FontMap> const m_pFontMap;
   };

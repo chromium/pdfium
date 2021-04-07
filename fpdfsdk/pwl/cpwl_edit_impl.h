@@ -445,20 +445,12 @@ class CPWL_EditImpl_Provider final : public CPDF_VariableText::Provider {
   explicit CPWL_EditImpl_Provider(IPVT_FontMap* pFontMap);
   ~CPWL_EditImpl_Provider() override;
 
-  IPVT_FontMap* GetFontMap() const;
-
   // CPDF_VariableText::Provider:
   int GetCharWidth(int32_t nFontIndex, uint16_t word) override;
-  int32_t GetTypeAscent(int32_t nFontIndex) override;
-  int32_t GetTypeDescent(int32_t nFontIndex) override;
   int32_t GetWordFontIndex(uint16_t word,
                            int32_t charset,
                            int32_t nFontIndex) override;
-  int32_t GetDefaultFontIndex() override;
   bool IsLatinWord(uint16_t word) override;
-
- private:
-  UnownedPtr<IPVT_FontMap> m_pFontMap;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_EDIT_IMPL_H_

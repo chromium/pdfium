@@ -101,49 +101,28 @@ const CPVT_WordPlace& CPWL_EditImpl_Iterator::GetAt() const {
 }
 
 CPWL_EditImpl_Provider::CPWL_EditImpl_Provider(IPVT_FontMap* pFontMap)
-    : CPDF_VariableText::Provider(pFontMap), m_pFontMap(pFontMap) {
-  DCHECK(m_pFontMap);
-}
+    : CPDF_VariableText::Provider(pFontMap) {}
 
 CPWL_EditImpl_Provider::~CPWL_EditImpl_Provider() = default;
 
-IPVT_FontMap* CPWL_EditImpl_Provider::GetFontMap() const {
-  return m_pFontMap;
-}
-
 int CPWL_EditImpl_Provider::GetCharWidth(int32_t nFontIndex, uint16_t word) {
-  RetainPtr<CPDF_Font> pPDFFont = m_pFontMap->GetPDFFont(nFontIndex);
+  RetainPtr<CPDF_Font> pPDFFont = GetFontMap()->GetPDFFont(nFontIndex);
   if (!pPDFFont)
     return 0;
 
   uint32_t charcode = pPDFFont->IsUnicodeCompatible()
                           ? pPDFFont->CharCodeFromUnicode(word)
-                          : m_pFontMap->CharCodeFromUnicode(nFontIndex, word);
-
+                          : GetFontMap()->CharCodeFromUnicode(nFontIndex, word);
   if (charcode == CPDF_Font::kInvalidCharCode)
     return 0;
 
   return pPDFFont->GetCharWidthF(charcode);
 }
 
-int32_t CPWL_EditImpl_Provider::GetTypeAscent(int32_t nFontIndex) {
-  RetainPtr<CPDF_Font> pPDFFont = m_pFontMap->GetPDFFont(nFontIndex);
-  return pPDFFont ? pPDFFont->GetTypeAscent() : 0;
-}
-
-int32_t CPWL_EditImpl_Provider::GetTypeDescent(int32_t nFontIndex) {
-  RetainPtr<CPDF_Font> pPDFFont = m_pFontMap->GetPDFFont(nFontIndex);
-  return pPDFFont ? pPDFFont->GetTypeDescent() : 0;
-}
-
 int32_t CPWL_EditImpl_Provider::GetWordFontIndex(uint16_t word,
                                                  int32_t charset,
                                                  int32_t nFontIndex) {
-  return m_pFontMap->GetWordFontIndex(word, charset, nFontIndex);
-}
-
-int32_t CPWL_EditImpl_Provider::GetDefaultFontIndex() {
-  return 0;
+  return GetFontMap()->GetWordFontIndex(word, charset, nFontIndex);
 }
 
 bool CPWL_EditImpl_Provider::IsLatinWord(uint16_t word) {
