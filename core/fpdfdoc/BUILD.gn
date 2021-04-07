@@ -70,8 +70,6 @@ source_set("fpdfdoc") {
     "cpvt_lineinfo.h",
     "cpvt_section.cpp",
     "cpvt_section.h",
-    "cpvt_typeset.cpp",
-    "cpvt_typeset.h",
     "cpvt_word.h",
     "cpvt_wordinfo.cpp",
     "cpvt_wordinfo.h",

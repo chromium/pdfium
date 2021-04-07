@@ -10,8 +10,8 @@
 #include <memory>
 #include <vector>
 
+#include "core/fpdfdoc/cpvt_floatrect.h"
 #include "core/fpdfdoc/cpvt_lineinfo.h"
-#include "core/fpdfdoc/cpvt_typeset.h"
 #include "core/fpdfdoc/cpvt_wordinfo.h"
 #include "core/fpdfdoc/cpvt_wordrange.h"
 #include "core/fxcrt/fx_coordinates.h"
@@ -65,7 +65,10 @@ class CPVT_Section final {
   std::vector<std::unique_ptr<CPVT_WordInfo>> m_WordArray;
 
  private:
-  friend class CPVT_Typeset;
+  CPVT_FloatRect RearrangeCharArray() const;
+  CPVT_FloatRect RearrangeTypeset();
+  CPVT_FloatRect SplitLines(bool bTypeset, float fFontSize);
+  CPVT_FloatRect OutputLines(const CPVT_FloatRect& rect) const;
 
   void ClearLeftWords(int32_t nWordIndex);
   void ClearRightWords(int32_t nWordIndex);
