@@ -215,7 +215,7 @@ CPVT_Section::~CPVT_Section() = default;
 void CPVT_Section::ResetLinePlace() {
   int32_t i = 0;
   for (auto& pLine : m_LineArray) {
-    pLine->LinePlace = CPVT_WordPlace(SecPlace.nSecIndex, i, -1);
+    pLine->LinePlace = CPVT_WordPlace(m_SecPlace.nSecIndex, i, -1);
     ++i;
   }
 }
@@ -231,7 +231,7 @@ CPVT_WordPlace CPVT_Section::AddWord(const CPVT_WordPlace& place,
 
 CPVT_WordPlace CPVT_Section::AddLine(const CPVT_LineInfo& lineinfo) {
   m_LineArray.push_back(std::make_unique<Line>(lineinfo));
-  return CPVT_WordPlace(SecPlace.nSecIndex, m_LineArray.size() - 1, -1);
+  return CPVT_WordPlace(m_SecPlace.nSecIndex, m_LineArray.size() - 1, -1);
 }
 
 CPVT_FloatRect CPVT_Section::Rearrange() {
@@ -247,13 +247,13 @@ CFX_SizeF CPVT_Section::GetSectionSize(float fFontSize) {
 
 CPVT_WordPlace CPVT_Section::GetBeginWordPlace() const {
   if (m_LineArray.empty())
-    return SecPlace;
+    return m_SecPlace;
   return m_LineArray.front()->GetBeginWordPlace();
 }
 
 CPVT_WordPlace CPVT_Section::GetEndWordPlace() const {
   if (m_LineArray.empty())
-    return SecPlace;
+    return m_SecPlace;
   return m_LineArray.back()->GetEndWordPlace();
 }
 

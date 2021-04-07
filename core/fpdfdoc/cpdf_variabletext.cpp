@@ -545,7 +545,7 @@ CPVT_WordPlace CPDF_VariableText::AddSection(const CPVT_WordPlace& place) {
 
   auto pSection = std::make_unique<CPVT_Section>(this);
   pSection->m_Rect = CPVT_FloatRect();
-  pSection->SecPlace.nSecIndex = nSecIndex;
+  pSection->m_SecPlace.nSecIndex = nSecIndex;
   m_SectionArray.insert(m_SectionArray.begin() + nSecIndex,
                         std::move(pSection));
   return place;
@@ -830,7 +830,7 @@ CPVT_FloatRect CPDF_VariableText::RearrangeSections(
        s < sz; s++) {
     place.nSecIndex = s;
     CPVT_Section* pSection = m_SectionArray[s].get();
-    pSection->SecPlace = place;
+    pSection->m_SecPlace = place;
     CPVT_FloatRect rcSec = pSection->m_Rect;
     if (s >= nSSecIndex) {
       if (s <= nESecIndex) {

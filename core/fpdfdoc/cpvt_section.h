@@ -59,7 +59,7 @@ class CPVT_Section final {
                                  const CPVT_WordPlace& lineplace) const;
   CPVT_WordPlace SearchWordPlace(float fx, const CPVT_WordRange& range) const;
 
-  CPVT_WordPlace SecPlace;
+  CPVT_WordPlace m_SecPlace;
   CPVT_FloatRect m_Rect;
   std::vector<std::unique_ptr<Line>> m_LineArray;
   std::vector<std::unique_ptr<CPVT_WordInfo>> m_WordArray;
