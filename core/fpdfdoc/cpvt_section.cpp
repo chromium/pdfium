@@ -403,6 +403,13 @@ CPVT_WordPlace CPVT_Section::SearchWordPlace(
   return wordplace;
 }
 
+void CPVT_Section::EraseWordsFrom(int32_t index) {
+  if (!pdfium::IndexInBounds(m_WordArray, index))
+    return;
+
+  m_WordArray.erase(m_WordArray.begin() + index, m_WordArray.end());
+}
+
 CPVT_FloatRect CPVT_Section::RearrangeCharArray() const {
   if (m_LineArray.empty())
     return CPVT_FloatRect();
