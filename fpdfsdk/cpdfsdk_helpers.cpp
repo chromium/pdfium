@@ -454,54 +454,38 @@ void SetColorFromScheme(const FPDF_COLORSCHEME* pColorScheme,
 
 std::vector<uint32_t> ParsePageRangeString(const ByteString& bsPageRange,
                                            uint32_t nCount) {
-  ByteString bsStrippedPageRange = bsPageRange;
-  bsStrippedPageRange.Remove(' ');
-  size_t nLength = bsStrippedPageRange.GetLength();
-  if (nLength == 0)
-    return std::vector<uint32_t>();
-
-  static const ByteString cbCompareString("0123456789-,");
-  for (size_t i = 0; i < nLength; ++i) {
-    if (!cbCompareString.Contains(bsStrippedPageRange[i]))
+  ByteStringView alphabet(" 0123456789-,");
+  for (const auto& ch : bsPageRange) {
+    if (!alphabet.Contains(ch))
       return std::vector<uint32_t>();
   }
 
-  ByteString cbMidRange;
-  size_t nStringFrom = 0;
-  size_t nStringTo = 0;
-  std::vector<uint32_t> pageArray;
-  while (nStringTo < nLength) {
-    nStringTo = bsStrippedPageRange.Find(',', nStringFrom).value_or(nLength);
-    cbMidRange =
-        bsStrippedPageRange.Substr(nStringFrom, nStringTo - nStringFrom);
-    Optional<size_t> nDashPosition = cbMidRange.Find('-');
-    if (nDashPosition) {
-      size_t nMid = nDashPosition.value();
-      uint32_t nStartPageNum = pdfium::base::checked_cast<uint32_t>(
-          atoi(cbMidRange.First(nMid).c_str()));
-      if (nStartPageNum == 0)
-        return std::vector<uint32_t>();
+  ByteString bsStrippedPageRange = bsPageRange;
+  bsStrippedPageRange.Remove(' ');
 
-      ++nMid;
-      size_t nEnd = cbMidRange.GetLength() - nMid;
-      if (nEnd == 0)
+  std::vector<uint32_t> results;
+  for (const auto& entry : fxcrt::Split(bsStrippedPageRange, ',')) {
+    std::vector<ByteString> args = fxcrt::Split(entry, '-');
+    if (args.size() == 1) {
+      uint32_t page_num =
+          pdfium::base::checked_cast<uint32_t>(atoi(args[0].c_str()));
+      if (page_num == 0 || page_num > nCount)
         return std::vector<uint32_t>();
-
-      uint32_t nEndPageNum = pdfium::base::checked_cast<uint32_t>(
-          atoi(cbMidRange.Substr(nMid, nEnd).c_str()));
-      if (nStartPageNum > nEndPageNum || nEndPageNum > nCount)
+      results.push_back(page_num);
+    } else if (args.size() == 2) {
+      uint32_t first_num =
+          pdfium::base::checked_cast<uint32_t>(atoi(args[0].c_str()));
+      if (first_num == 0)
         return std::vector<uint32_t>();
-
-      for (uint32_t i = nStartPageNum; i <= nEndPageNum; ++i)
-        pageArray.push_back(i);
+      uint32_t last_num =
+          pdfium::base::checked_cast<uint32_t>(atoi(args[1].c_str()));
+      if (last_num == 0 || first_num > last_num || last_num > nCount)
+        return std::vector<uint32_t>();
+      for (uint32_t i = first_num; i <= last_num; ++i)
+        results.push_back(i);
     } else {
-      uint32_t nPageNum =
-          pdfium::base::checked_cast<uint32_t>(atoi(cbMidRange.c_str()));
-      if (nPageNum <= 0 || nPageNum > nCount)
-        return std::vector<uint32_t>();
-      pageArray.push_back(nPageNum);
+      return std::vector<uint32_t>();
     }
-    nStringFrom = nStringTo + 1;
   }
-  return pageArray;
+  return results;
 }

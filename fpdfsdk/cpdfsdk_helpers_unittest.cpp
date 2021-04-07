@@ -63,6 +63,7 @@ TEST(CPDFSDK_HelpersTest, ParsePageRangeString) {
   EXPECT_EQ(std::vector<uint32_t>({}), ParsePageRangeString("0,1", 10));
   EXPECT_EQ(std::vector<uint32_t>({}), ParsePageRangeString("1,0", 10));
   EXPECT_EQ(std::vector<uint32_t>({}), ParsePageRangeString("1-2,,,,3-4", 10));
+  EXPECT_EQ(std::vector<uint32_t>({}), ParsePageRangeString("1-2-", 10));
   EXPECT_EQ(std::vector<uint32_t>({1}), ParsePageRangeString("1-1", 10));
   EXPECT_EQ(std::vector<uint32_t>{1}, ParsePageRangeString("1", 1));
   EXPECT_EQ(std::vector<uint32_t>({1, 2, 3, 4}),
@@ -71,7 +72,6 @@ TEST(CPDFSDK_HelpersTest, ParsePageRangeString) {
             ParsePageRangeString("1- 4", 4));
   EXPECT_EQ(std::vector<uint32_t>({1, 2, 3, 4}),
             ParsePageRangeString("1 -4", 4));
-  EXPECT_EQ(std::vector<uint32_t>({1, 2}), ParsePageRangeString("1-2-", 10));
   EXPECT_EQ(std::vector<uint32_t>({1, 2}), ParsePageRangeString("1,2", 10));
   EXPECT_EQ(std::vector<uint32_t>({2, 1}), ParsePageRangeString("2,1", 10));
   EXPECT_EQ(std::vector<uint32_t>({1, 50, 2}),
