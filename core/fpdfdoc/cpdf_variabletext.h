@@ -185,7 +185,7 @@ class CPDF_VariableText {
   CPVT_WordPlace ClearLeftWord(const CPVT_WordPlace& place);
   CPVT_WordPlace ClearRightWord(const CPVT_WordPlace& place);
 
-  CPVT_FloatRect Rearrange(const CPVT_WordRange& PlaceRange);
+  void Rearrange(const CPVT_WordRange& PlaceRange);
   float GetAutoFontSize();
   bool IsBigger(float fFontSize) const;
   CPVT_FloatRect RearrangeSections(const CPVT_WordRange& PlaceRange);

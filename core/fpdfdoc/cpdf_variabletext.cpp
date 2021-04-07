@@ -764,7 +764,7 @@ void CPDF_VariableText::RearrangePart(const CPVT_WordRange& PlaceRange) {
   Rearrange(PlaceRange);
 }
 
-CPVT_FloatRect CPDF_VariableText::Rearrange(const CPVT_WordRange& PlaceRange) {
+void CPDF_VariableText::Rearrange(const CPVT_WordRange& PlaceRange) {
   CPVT_FloatRect rcRet;
   if (IsValid()) {
     if (m_bAutoFontSize) {
@@ -776,7 +776,6 @@ CPVT_FloatRect CPDF_VariableText::Rearrange(const CPVT_WordRange& PlaceRange) {
     }
   }
   m_rcContent = rcRet;
-  return rcRet;
 }
 
 float CPDF_VariableText::GetAutoFontSize() {
@@ -817,25 +816,22 @@ bool CPDF_VariableText::IsBigger(float fFontSize) const {
 
 CPVT_FloatRect CPDF_VariableText::RearrangeSections(
     const CPVT_WordRange& PlaceRange) {
-  CPVT_WordPlace place;
   float fPosY = 0;
-  float fOldHeight;
-  int32_t nSSecIndex = PlaceRange.BeginPos.nSecIndex;
-  int32_t nESecIndex = PlaceRange.EndPos.nSecIndex;
   CPVT_FloatRect rcRet;
   for (int32_t s = 0, sz = pdfium::CollectionSize<int32_t>(m_SectionArray);
        s < sz; s++) {
+    CPVT_WordPlace place;
     place.nSecIndex = s;
     CPVT_Section* pSection = m_SectionArray[s].get();
     pSection->SetPlace(place);
     CPVT_FloatRect rcSec = pSection->GetRect();
-    if (s >= nSSecIndex) {
-      if (s <= nESecIndex) {
+    if (s >= PlaceRange.BeginPos.nSecIndex) {
+      if (s <= PlaceRange.EndPos.nSecIndex) {
         rcSec = pSection->Rearrange();
         rcSec.top += fPosY;
         rcSec.bottom += fPosY;
       } else {
-        fOldHeight = pSection->GetRect().bottom - pSection->GetRect().top;
+        float fOldHeight = pSection->GetRect().bottom - pSection->GetRect().top;
         rcSec.top = fPosY;
         rcSec.bottom = fPosY + fOldHeight;
       }
