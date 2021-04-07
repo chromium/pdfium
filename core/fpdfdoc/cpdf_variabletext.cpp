@@ -21,12 +21,12 @@
 
 namespace {
 
-const float kFontScale = 0.001f;
-const uint8_t kReturnLength = 1;
+constexpr float kFontScale = 0.001f;
+constexpr uint8_t kReturnLength = 1;
 
-const uint8_t gFontSizeSteps[] = {4,  6,  8,   9,   10,  12,  14, 18, 20,
-                                  25, 30, 35,  40,  45,  50,  55, 60, 70,
-                                  80, 90, 100, 110, 120, 130, 144};
+constexpr uint8_t kFontSizeSteps[] = {4,  6,  8,   9,   10,  12,  14, 18, 20,
+                                      25, 30, 35,  40,  45,  50,  55, 60, 70,
+                                      80, 90, 100, 110, 120, 130, 144};
 
 }  // namespace
 
@@ -152,7 +152,7 @@ bool CPDF_VariableText::Iterator::GetWord(CPVT_Word& word) const {
                                 pWord->fWordY + pSection->GetRect().top));
   word.fAscent = m_pVT->GetWordAscent(*pWord);
   word.fDescent = m_pVT->GetWordDescent(*pWord);
-  word.nFontIndex = m_pVT->GetWordFontIndex(*pWord);
+  word.nFontIndex = pWord->nFontIndex;
   word.fFontSize = m_pVT->GetWordFontSize();
   return true;
 }
@@ -589,10 +589,6 @@ float CPDF_VariableText::GetWordFontSize() {
   return GetFontSize();
 }
 
-int32_t CPDF_VariableText::GetWordFontIndex(const CPVT_WordInfo& WordInfo) {
-  return WordInfo.nFontIndex;
-}
-
 float CPDF_VariableText::GetWordWidth(int32_t nFontIndex,
                                       uint16_t Word,
                                       uint16_t SubWord,
@@ -604,7 +600,7 @@ float CPDF_VariableText::GetWordWidth(int32_t nFontIndex,
 }
 
 float CPDF_VariableText::GetWordWidth(const CPVT_WordInfo& WordInfo) {
-  return GetWordWidth(GetWordFontIndex(WordInfo), WordInfo.Word, GetSubWord(),
+  return GetWordWidth(WordInfo.nFontIndex, WordInfo.Word, GetSubWord(),
                       GetCharSpace(), GetWordFontSize(), WordInfo.fWordTail);
 }
 
@@ -617,29 +613,31 @@ float CPDF_VariableText::GetLineDescent() {
 }
 
 float CPDF_VariableText::GetFontAscent(int32_t nFontIndex, float fFontSize) {
-  return (float)GetTypeAscent(nFontIndex) * fFontSize * kFontScale;
+  float ascent = m_pVTProvider ? m_pVTProvider->GetTypeAscent(nFontIndex) : 0;
+  return ascent * fFontSize * kFontScale;
 }
 
 float CPDF_VariableText::GetFontDescent(int32_t nFontIndex, float fFontSize) {
-  return (float)GetTypeDescent(nFontIndex) * fFontSize * kFontScale;
+  float descent = m_pVTProvider ? m_pVTProvider->GetTypeDescent(nFontIndex) : 0;
+  return descent * fFontSize * kFontScale;
 }
 
 float CPDF_VariableText::GetWordAscent(const CPVT_WordInfo& WordInfo,
                                        float fFontSize) {
-  return GetFontAscent(GetWordFontIndex(WordInfo), fFontSize);
+  return GetFontAscent(WordInfo.nFontIndex, fFontSize);
 }
 
 float CPDF_VariableText::GetWordDescent(const CPVT_WordInfo& WordInfo,
                                         float fFontSize) {
-  return GetFontDescent(GetWordFontIndex(WordInfo), fFontSize);
+  return GetFontDescent(WordInfo.nFontIndex, fFontSize);
 }
 
 float CPDF_VariableText::GetWordAscent(const CPVT_WordInfo& WordInfo) {
-  return GetFontAscent(GetWordFontIndex(WordInfo), GetWordFontSize());
+  return GetFontAscent(WordInfo.nFontIndex, GetWordFontSize());
 }
 
 float CPDF_VariableText::GetWordDescent(const CPVT_WordInfo& WordInfo) {
-  return GetFontDescent(GetWordFontIndex(WordInfo), GetWordFontSize());
+  return GetFontDescent(WordInfo.nFontIndex, GetWordFontSize());
 }
 
 float CPDF_VariableText::GetLineLeading() {
@@ -779,7 +777,7 @@ void CPDF_VariableText::Rearrange(const CPVT_WordRange& PlaceRange) {
 }
 
 float CPDF_VariableText::GetAutoFontSize() {
-  int32_t nTotal = sizeof(gFontSizeSteps) / sizeof(uint8_t);
+  int32_t nTotal = sizeof(kFontSizeSteps) / sizeof(uint8_t);
   if (IsMultiLine())
     nTotal /= 4;
   if (nTotal <= 0)
@@ -791,13 +789,13 @@ float CPDF_VariableText::GetAutoFontSize() {
   int32_t nRight = nTotal - 1;
   int32_t nMid = nTotal / 2;
   while (nLeft <= nRight) {
-    if (IsBigger(gFontSizeSteps[nMid]))
+    if (IsBigger(kFontSizeSteps[nMid]))
       nRight = nMid - 1;
     else
       nLeft = nMid + 1;
     nMid = (nLeft + nRight) / 2;
   }
-  return (float)gFontSizeSteps[nMid];
+  return (float)kFontSizeSteps[nMid];
 }
 
 bool CPDF_VariableText::IsBigger(float fFontSize) const {
@@ -858,14 +856,6 @@ int CPDF_VariableText::GetCharWidth(int32_t nFontIndex,
     return 0;
   uint16_t word = SubWord ? SubWord : Word;
   return m_pVTProvider->GetCharWidth(nFontIndex, word);
-}
-
-int32_t CPDF_VariableText::GetTypeAscent(int32_t nFontIndex) {
-  return m_pVTProvider ? m_pVTProvider->GetTypeAscent(nFontIndex) : 0;
-}
-
-int32_t CPDF_VariableText::GetTypeDescent(int32_t nFontIndex) {
-  return m_pVTProvider ? m_pVTProvider->GetTypeDescent(nFontIndex) : 0;
 }
 
 int32_t CPDF_VariableText::GetWordFontIndex(uint16_t word,

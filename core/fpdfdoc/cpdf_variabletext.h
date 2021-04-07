@@ -163,8 +163,6 @@ class CPDF_VariableText {
 
  private:
   int GetCharWidth(int32_t nFontIndex, uint16_t Word, uint16_t SubWord);
-  int32_t GetTypeAscent(int32_t nFontIndex);
-  int32_t GetTypeDescent(int32_t nFontIndex);
   int32_t GetWordFontIndex(uint16_t word, int32_t charset, int32_t nFontIndex);
   bool IsLatinWord(uint16_t word);
 
@@ -174,7 +172,6 @@ class CPDF_VariableText {
   CPVT_WordPlace AddWord(const CPVT_WordPlace& place,
                          const CPVT_WordInfo& wordinfo);
   float GetWordFontSize();
-  int32_t GetWordFontIndex(const CPVT_WordInfo& WordInfo);
 
   void ClearSectionRightWords(const CPVT_WordPlace& place);
 
