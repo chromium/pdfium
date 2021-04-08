@@ -2,6 +2,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import("//build/config/clang/clang.gni")
 import("//testing/test.gni")
 import("pdfium.gni")
 
@@ -47,6 +48,16 @@ config("pdfium_common_config") {
   if (is_clang) {
     # Override -Wno-c++11-narrowing.
     cflags += [ "-Wc++11-narrowing" ]
+
+    # Catch misuse of cppgc in XFA.
+    if (pdf_enable_xfa && clang_use_chrome_plugins) {
+      cflags += [
+        "-Xclang",
+        "-add-plugin",
+        "-Xclang",
+        "blink-gc-plugin",
+      ]
+    }
   }
 
   if (!is_win && !is_clang) {
