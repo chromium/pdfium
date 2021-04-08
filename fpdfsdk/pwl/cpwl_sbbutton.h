@@ -12,14 +12,14 @@
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "fpdfsdk/pwl/ipwl_systemhandler.h"
 
-enum PWL_SBBUTTON_TYPE { PSBT_MIN, PSBT_MAX, PSBT_POS };
-
 class CPWL_SBButton final : public CPWL_Wnd {
  public:
+  enum class Type : uint8_t { kMinButton, kMaxButton, kPosButton };
+
   CPWL_SBButton(
       const CreateParams& cp,
       std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData,
-      PWL_SBBUTTON_TYPE eButtonType);
+      Type eButtonType);
   ~CPWL_SBButton() override;
 
   // CPWL_Wnd
@@ -30,7 +30,7 @@ class CPWL_SBButton final : public CPWL_Wnd {
   bool OnMouseMove(uint32_t nFlag, const CFX_PointF& point) override;
 
  private:
-  PWL_SBBUTTON_TYPE m_eSBButtonType;
+  const Type m_eSBButtonType;
   bool m_bMouseDown = false;
 };
 

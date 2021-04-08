@@ -15,7 +15,7 @@
 CPWL_SBButton::CPWL_SBButton(
     const CreateParams& cp,
     std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData,
-    PWL_SBBUTTON_TYPE eButtonType)
+    Type eButtonType)
     : CPWL_Wnd(cp, std::move(pAttachedData)), m_eSBButtonType(eButtonType) {
   GetCreationParams()->eCursorType = FXCT_ARROW;
 }
@@ -40,7 +40,7 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
   pDevice->DrawStrokeRect(mtUser2Device, rectWnd.GetDeflated(0.5f, 0.5f),
                           ArgbEncode(nTransparency, 255, 255, 255), 1.0f);
 
-  if (m_eSBButtonType != PSBT_POS) {
+  if (m_eSBButtonType != Type::kPosButton) {
     // draw background
     pDevice->DrawShadow(mtUser2Device, true, false,
                         rectWnd.GetDeflated(1.0f, 1.0f), nTransparency, 80,
@@ -61,7 +61,7 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
       static_assert(pdfium::size(kOffsetsX) == pdfium::size(kOffsetsMinY),
                     "Wrong offset count");
       const float* pOffsetsY =
-          m_eSBButtonType == PSBT_MIN ? kOffsetsMinY : kOffsetsY;
+          m_eSBButtonType == Type::kMinButton ? kOffsetsMinY : kOffsetsY;
       for (size_t i = 0; i < pdfium::size(kOffsetsX); ++i)
         pts.push_back(CFX_PointF(fX + kOffsetsX[i], fY + pOffsetsY[i]));
       pDevice->DrawFillArea(mtUser2Device, pts,

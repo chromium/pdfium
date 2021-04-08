@@ -291,24 +291,24 @@ void CPWL_ScrollBar::CreateButtons(const CreateParams& cp) {
       PWS_VISIBLE | PWS_CHILD | PWS_BORDER | PWS_BACKGROUND | PWS_NOREFRESHCLIP;
 
   if (!m_pMinButton) {
-    auto pButton =
-        std::make_unique<CPWL_SBButton>(scp, CloneAttachedData(), PSBT_MIN);
+    auto pButton = std::make_unique<CPWL_SBButton>(
+        scp, CloneAttachedData(), CPWL_SBButton::Type::kMinButton);
     m_pMinButton = pButton.get();
     AddChild(std::move(pButton));
     m_pMinButton->Realize();
   }
 
   if (!m_pMaxButton) {
-    auto pButton =
-        std::make_unique<CPWL_SBButton>(scp, CloneAttachedData(), PSBT_MAX);
+    auto pButton = std::make_unique<CPWL_SBButton>(
+        scp, CloneAttachedData(), CPWL_SBButton::Type::kMaxButton);
     m_pMaxButton = pButton.get();
     AddChild(std::move(pButton));
     m_pMaxButton->Realize();
   }
 
   if (!m_pPosButton) {
-    auto pButton =
-        std::make_unique<CPWL_SBButton>(scp, CloneAttachedData(), PSBT_POS);
+    auto pButton = std::make_unique<CPWL_SBButton>(
+        scp, CloneAttachedData(), CPWL_SBButton::Type::kPosButton);
     m_pPosButton = pButton.get();
     ObservedPtr<CPWL_ScrollBar> thisObserved(this);
     if (m_pPosButton->SetVisible(false) && thisObserved) {
