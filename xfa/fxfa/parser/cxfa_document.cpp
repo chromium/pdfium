@@ -53,8 +53,8 @@ namespace {
 const wchar_t kTemplateNS[] = L"http://www.xfa.org/schema/xfa-template/";
 
 struct RecurseRecord {
-  CXFA_Node* pTemplateChild;
-  CXFA_Node* pDataChild;
+  cppgc::Persistent<CXFA_Node> pTemplateChild;
+  cppgc::Persistent<CXFA_Node> pDataChild;
 };
 
 class CXFA_TraverseStrategy_DDGroup {
