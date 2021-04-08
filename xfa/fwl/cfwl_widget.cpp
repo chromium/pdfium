@@ -223,8 +223,7 @@ CFX_RectF CFWL_Widget::GetRelativeRect() const {
   return CFX_RectF(0, 0, m_WidgetRect.width, m_WidgetRect.height);
 }
 
-CFX_SizeF CFWL_Widget::CalcTextSize(const WideString& wsText,
-                                    bool bMultiLine) {
+CFX_SizeF CFWL_Widget::CalcTextSize(const WideString& wsText, bool bMultiLine) {
   CFWL_ThemeText calPart;
   calPart.m_pWidget = this;
   calPart.m_wsText = wsText;

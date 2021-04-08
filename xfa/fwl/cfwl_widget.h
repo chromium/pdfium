@@ -150,8 +150,7 @@ class CFWL_Widget : public cppgc::GarbageCollected<CFWL_Widget>,
   float GetCXBorderSize() const;
   float GetCYBorderSize() const;
   CFX_RectF GetRelativeRect() const;
-  CFX_SizeF CalcTextSize(const WideString& wsText,
-                         bool bMultiLine);
+  CFX_SizeF CalcTextSize(const WideString& wsText, bool bMultiLine);
   void CalcTextRect(const WideString& wsText,
                     const FDE_TextStyle& dwTTOStyles,
                     FDE_TextAlignment iTTOAlign,

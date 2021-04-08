@@ -5314,8 +5314,7 @@ Optional<CFX_WideTextBuf> CFXJSE_FormCalcContext::Translate(
 CFXJSE_FormCalcContext::CFXJSE_FormCalcContext(v8::Isolate* pIsolate,
                                                CFXJSE_Context* pScriptContext,
                                                CXFA_Document* pDoc)
-    : m_pIsolate(pIsolate),
-      m_pDocument(pDoc) {
+    : m_pIsolate(pIsolate), m_pDocument(pDoc) {
   m_Value.Reset(
       m_pIsolate,
       NewBoundV8Object(

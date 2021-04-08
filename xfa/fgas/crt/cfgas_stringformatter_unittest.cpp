@@ -21,9 +21,7 @@ class CFGAS_StringFormatterTest : public FXGCUnitTest {
  public:
   CFGAS_StringFormatterTest() : scoped_tz_("UTC") { CPDF_PageModule::Create(); }
 
-  ~CFGAS_StringFormatterTest() override {
-    CPDF_PageModule::Destroy();
-  }
+  ~CFGAS_StringFormatterTest() override { CPDF_PageModule::Destroy(); }
 
   CXFA_LocaleMgr* Mgr(const WideString& locale) {
     return cppgc::MakeGarbageCollected<CXFA_LocaleMgr>(

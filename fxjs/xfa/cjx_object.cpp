@@ -944,8 +944,7 @@ void CJX_Object::OnChanging(XFA_Attribute eAttr) {
   pNotify->OnValueChanging(GetXFANode(), eAttr);
 }
 
-void CJX_Object::OnChanged(XFA_Attribute eAttr,
-                           bool bScriptModify) {
+void CJX_Object::OnChanged(XFA_Attribute eAttr, bool bScriptModify) {
   if (!GetXFANode()->IsInitialized())
     return;
 

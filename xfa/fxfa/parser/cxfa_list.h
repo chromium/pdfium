@@ -7,7 +7,6 @@
 #ifndef XFA_FXFA_PARSER_CXFA_LIST_H_
 #define XFA_FXFA_PARSER_CXFA_LIST_H_
 
-
 #include "fxjs/gc/heap.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
 
