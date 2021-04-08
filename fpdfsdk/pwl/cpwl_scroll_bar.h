@@ -11,6 +11,7 @@
 
 #include "core/fxcrt/cfx_timer.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "fpdfsdk/pwl/cpwl_sbbutton.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 
 struct PWL_SCROLL_INFO {
@@ -36,28 +37,6 @@ struct PWL_SCROLL_INFO {
   float fPlateWidth;
   float fBigStep;
   float fSmallStep;
-};
-
-enum PWL_SBBUTTON_TYPE { PSBT_MIN, PSBT_MAX, PSBT_POS };
-
-class CPWL_SBButton final : public CPWL_Wnd {
- public:
-  CPWL_SBButton(
-      const CreateParams& cp,
-      std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData,
-      PWL_SBBUTTON_TYPE eButtonType);
-  ~CPWL_SBButton() override;
-
-  // CPWL_Wnd
-  void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                          const CFX_Matrix& mtUser2Device) override;
-  bool OnLButtonDown(uint32_t nFlag, const CFX_PointF& point) override;
-  bool OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) override;
-  bool OnMouseMove(uint32_t nFlag, const CFX_PointF& point) override;
-
- private:
-  PWL_SBBUTTON_TYPE m_eSBButtonType;
-  bool m_bMouseDown = false;
 };
 
 struct PWL_FLOATRANGE {
