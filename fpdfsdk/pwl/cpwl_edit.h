@@ -91,11 +91,7 @@ class CPWL_Edit final : public CPWL_EditCtrl {
 
   CPVT_WordRange CombineWordRange(const CPVT_WordRange& wr1,
                                   const CPVT_WordRange& wr2);
-  CPVT_WordRange GetLatinWordsRange(const CFX_PointF& point) const;
   CPVT_WordRange GetLatinWordsRange(const CPVT_WordPlace& place) const;
-  CPVT_WordRange GetSameWordsRange(const CPVT_WordPlace& place,
-                                   bool bLatin,
-                                   bool bArabic) const;
 
   bool m_bFocus = false;
   CFX_FloatRect m_rcOldWindow;
