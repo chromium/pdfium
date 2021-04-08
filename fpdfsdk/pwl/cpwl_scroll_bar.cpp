@@ -22,7 +22,6 @@ namespace {
 
 constexpr float kButtonWidth = 9.0f;
 constexpr float kPosButtonMinWidth = 2.0f;
-constexpr float kScrollBarTriangleHalfLength = 2.0f;
 
 }  // namespace
 
@@ -109,11 +108,8 @@ void PWL_SCROLL_PRIVATEDATA::SubBig() {
 CPWL_SBButton::CPWL_SBButton(
     const CreateParams& cp,
     std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData,
-    PWL_SCROLLBAR_TYPE eScrollBarType,
     PWL_SBBUTTON_TYPE eButtonType)
-    : CPWL_Wnd(cp, std::move(pAttachedData)),
-      m_eScrollBarType(eScrollBarType),
-      m_eSBButtonType(eButtonType) {
+    : CPWL_Wnd(cp, std::move(pAttachedData)), m_eSBButtonType(eButtonType) {
   GetCreationParams()->eCursorType = FXCT_ARROW;
 }
 
@@ -130,45 +126,6 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
 
   CFX_PointF ptCenter = GetCenterPoint();
   int32_t nTransparency = GetTransparency();
-
-  if (m_eScrollBarType == PWL_SCROLLBAR_TYPE::HSCROLL) {
-    CPWL_Wnd::DrawThisAppearance(pDevice, mtUser2Device);
-
-    CFX_PointF pt1;
-    CFX_PointF pt2;
-    CFX_PointF pt3;
-    static constexpr float kScrollBarTriangleQuarterLength =
-        kScrollBarTriangleHalfLength * 0.5;
-    if (m_eSBButtonType == PSBT_MIN) {
-      pt1 =
-          CFX_PointF(ptCenter.x - kScrollBarTriangleQuarterLength, ptCenter.y);
-      pt2 = CFX_PointF(ptCenter.x + kScrollBarTriangleQuarterLength,
-                       ptCenter.y + kScrollBarTriangleHalfLength);
-      pt3 = CFX_PointF(ptCenter.x + kScrollBarTriangleQuarterLength,
-                       ptCenter.y - kScrollBarTriangleHalfLength);
-    } else if (m_eSBButtonType == PSBT_MAX) {
-      pt1 =
-          CFX_PointF(ptCenter.x + kScrollBarTriangleQuarterLength, ptCenter.y);
-      pt2 = CFX_PointF(ptCenter.x - kScrollBarTriangleQuarterLength,
-                       ptCenter.y + kScrollBarTriangleHalfLength);
-      pt3 = CFX_PointF(ptCenter.x - kScrollBarTriangleQuarterLength,
-                       ptCenter.y - kScrollBarTriangleHalfLength);
-    }
-
-    if (rectWnd.right - rectWnd.left > kScrollBarTriangleHalfLength * 2 &&
-        rectWnd.top - rectWnd.bottom > kScrollBarTriangleHalfLength) {
-      CFX_PathData path;
-      path.AppendPoint(pt1, FXPT_TYPE::MoveTo);
-      path.AppendPoint(pt2, FXPT_TYPE::LineTo);
-      path.AppendPoint(pt3, FXPT_TYPE::LineTo);
-      path.AppendPoint(pt1, FXPT_TYPE::LineTo);
-
-      pDevice->DrawPath(&path, &mtUser2Device, nullptr,
-                        PWL_DEFAULT_BLACKCOLOR.ToFXColor(nTransparency), 0,
-                        CFX_FillRenderOptions::EvenOddOptions());
-    }
-    return;
-  }
 
   // draw border
   pDevice->DrawStrokeRect(mtUser2Device, rectWnd,
@@ -284,9 +241,8 @@ bool CPWL_SBButton::OnMouseMove(uint32_t nFlag, const CFX_PointF& point) {
 
 CPWL_ScrollBar::CPWL_ScrollBar(
     const CreateParams& cp,
-    std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData,
-    PWL_SCROLLBAR_TYPE sbType)
-    : CPWL_Wnd(cp, std::move(pAttachedData)), m_sbType(sbType) {
+    std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData)
+    : CPWL_Wnd(cp, std::move(pAttachedData)) {
   GetCreationParams()->eCursorType = FXCT_ARROW;
 }
 
@@ -305,55 +261,26 @@ void CPWL_ScrollBar::OnDestroy() {
 
 bool CPWL_ScrollBar::RePosChildWnd() {
   CFX_FloatRect rcClient = GetClientRect();
-  CFX_FloatRect rcMinButton, rcMaxButton;
-  float fBWidth = 0;
-
-  switch (m_sbType) {
-    case PWL_SCROLLBAR_TYPE::HSCROLL:
-      if (rcClient.right - rcClient.left >
-          kButtonWidth * 2 + kPosButtonMinWidth + 2) {
-        rcMinButton = CFX_FloatRect(rcClient.left, rcClient.bottom,
-                                    rcClient.left + kButtonWidth, rcClient.top);
-        rcMaxButton =
-            CFX_FloatRect(rcClient.right - kButtonWidth, rcClient.bottom,
-                          rcClient.right, rcClient.top);
-      } else {
-        fBWidth = (rcClient.right - rcClient.left - kPosButtonMinWidth - 2) / 2;
-
-        if (fBWidth > 0) {
-          rcMinButton = CFX_FloatRect(rcClient.left, rcClient.bottom,
-                                      rcClient.left + fBWidth, rcClient.top);
-          rcMaxButton = CFX_FloatRect(rcClient.right - fBWidth, rcClient.bottom,
-                                      rcClient.right, rcClient.top);
-        } else {
-          if (!SetVisible(false))
-            return false;
-        }
-      }
-      break;
-    case PWL_SCROLLBAR_TYPE::VSCROLL:
-      if (IsFloatBigger(rcClient.top - rcClient.bottom,
-                        kButtonWidth * 2 + kPosButtonMinWidth + 2)) {
-        rcMinButton = CFX_FloatRect(rcClient.left, rcClient.top - kButtonWidth,
-                                    rcClient.right, rcClient.top);
-        rcMaxButton =
-            CFX_FloatRect(rcClient.left, rcClient.bottom, rcClient.right,
-                          rcClient.bottom + kButtonWidth);
-      } else {
-        fBWidth = (rcClient.top - rcClient.bottom - kPosButtonMinWidth - 2) / 2;
-
-        if (IsFloatBigger(fBWidth, 0)) {
-          rcMinButton = CFX_FloatRect(rcClient.left, rcClient.top - fBWidth,
-                                      rcClient.right, rcClient.top);
-          rcMaxButton =
-              CFX_FloatRect(rcClient.left, rcClient.bottom, rcClient.right,
-                            rcClient.bottom + fBWidth);
-        } else {
-          if (!SetVisible(false))
-            return false;
-        }
-      }
-      break;
+  CFX_FloatRect rcMinButton;
+  CFX_FloatRect rcMaxButton;
+  if (IsFloatBigger(rcClient.top - rcClient.bottom,
+                    kButtonWidth * 2 + kPosButtonMinWidth + 2)) {
+    rcMinButton = CFX_FloatRect(rcClient.left, rcClient.top - kButtonWidth,
+                                rcClient.right, rcClient.top);
+    rcMaxButton = CFX_FloatRect(rcClient.left, rcClient.bottom, rcClient.right,
+                                rcClient.bottom + kButtonWidth);
+  } else {
+    float fBWidth =
+        (rcClient.top - rcClient.bottom - kPosButtonMinWidth - 2) / 2;
+    if (IsFloatBigger(fBWidth, 0)) {
+      rcMinButton = CFX_FloatRect(rcClient.left, rcClient.top - fBWidth,
+                                  rcClient.right, rcClient.top);
+      rcMaxButton = CFX_FloatRect(rcClient.left, rcClient.bottom,
+                                  rcClient.right, rcClient.bottom + fBWidth);
+    } else {
+      if (!SetVisible(false))
+        return false;
+    }
   }
 
   ObservedPtr<CPWL_ScrollBar> thisObserved(this);
@@ -367,10 +294,8 @@ bool CPWL_ScrollBar::RePosChildWnd() {
     if (!thisObserved)
       return false;
   }
-  if (!MovePosButton(false))
-    return false;
 
-  return true;
+  return MovePosButton(false);
 }
 
 void CPWL_ScrollBar::DrawThisAppearance(CFX_RenderDevice* pDevice,
@@ -404,27 +329,15 @@ bool CPWL_ScrollBar::OnLButtonDown(uint32_t nFlag, const CFX_PointF& point) {
     }
   }
 
-  CFX_FloatRect rcMinArea, rcMaxArea;
-
   if (m_pPosButton && m_pPosButton->IsVisible()) {
     CFX_FloatRect rcClient = GetClientRect();
     CFX_FloatRect rcPosButton = m_pPosButton->GetWindowRect();
-
-    switch (m_sbType) {
-      case PWL_SCROLLBAR_TYPE::HSCROLL:
-        rcMinArea = CFX_FloatRect(rcClient.left + kButtonWidth, rcClient.bottom,
-                                  rcPosButton.left, rcClient.top);
-        rcMaxArea = CFX_FloatRect(rcPosButton.right, rcClient.bottom,
-                                  rcClient.right - kButtonWidth, rcClient.top);
-
-        break;
-      case PWL_SCROLLBAR_TYPE::VSCROLL:
-        rcMinArea = CFX_FloatRect(rcClient.left, rcPosButton.top,
-                                  rcClient.right, rcClient.top - kButtonWidth);
-        rcMaxArea = CFX_FloatRect(rcClient.left, rcClient.bottom + kButtonWidth,
-                                  rcClient.right, rcPosButton.bottom);
-        break;
-    }
+    CFX_FloatRect rcMinArea =
+        CFX_FloatRect(rcClient.left, rcPosButton.top, rcClient.right,
+                      rcClient.top - kButtonWidth);
+    CFX_FloatRect rcMaxArea =
+        CFX_FloatRect(rcClient.left, rcClient.bottom + kButtonWidth,
+                      rcClient.right, rcPosButton.bottom);
 
     rcMinArea.Normalize();
     rcMaxArea.Normalize();
@@ -475,14 +388,7 @@ void CPWL_ScrollBar::SetScrollInfo(const PWL_SCROLL_INFO& info) {
 }
 
 void CPWL_ScrollBar::SetScrollPosition(float pos) {
-  switch (m_sbType) {
-    case PWL_SCROLLBAR_TYPE::HSCROLL:
-      pos = pos - m_OriginInfo.fContentMin;
-      break;
-    case PWL_SCROLLBAR_TYPE::VSCROLL:
-      pos = m_OriginInfo.fContentMax - pos;
-      break;
-  }
+  pos = m_OriginInfo.fContentMax - pos;
   SetScrollPos(pos);
 }
 
@@ -521,24 +427,24 @@ void CPWL_ScrollBar::CreateButtons(const CreateParams& cp) {
       PWS_VISIBLE | PWS_CHILD | PWS_BORDER | PWS_BACKGROUND | PWS_NOREFRESHCLIP;
 
   if (!m_pMinButton) {
-    auto pButton = std::make_unique<CPWL_SBButton>(scp, CloneAttachedData(),
-                                                   m_sbType, PSBT_MIN);
+    auto pButton =
+        std::make_unique<CPWL_SBButton>(scp, CloneAttachedData(), PSBT_MIN);
     m_pMinButton = pButton.get();
     AddChild(std::move(pButton));
     m_pMinButton->Realize();
   }
 
   if (!m_pMaxButton) {
-    auto pButton = std::make_unique<CPWL_SBButton>(scp, CloneAttachedData(),
-                                                   m_sbType, PSBT_MAX);
+    auto pButton =
+        std::make_unique<CPWL_SBButton>(scp, CloneAttachedData(), PSBT_MAX);
     m_pMaxButton = pButton.get();
     AddChild(std::move(pButton));
     m_pMaxButton->Realize();
   }
 
   if (!m_pPosButton) {
-    auto pButton = std::make_unique<CPWL_SBButton>(scp, CloneAttachedData(),
-                                                   m_sbType, PSBT_POS);
+    auto pButton =
+        std::make_unique<CPWL_SBButton>(scp, CloneAttachedData(), PSBT_POS);
     m_pPosButton = pButton.get();
     ObservedPtr<CPWL_ScrollBar> thisObserved(this);
     if (m_pPosButton->SetVisible(false) && thisObserved) {
@@ -600,48 +506,20 @@ bool CPWL_ScrollBar::MovePosButton(bool bRefresh) {
   DCHECK(m_pMaxButton);
 
   if (m_pPosButton->IsVisible()) {
-    CFX_FloatRect rcClient;
-    CFX_FloatRect rcPosArea, rcPosButton;
+    CFX_FloatRect rcPosArea = GetScrollArea();
+    float fBottom = TrueToFace(m_sData.fScrollPos + m_sData.fClientWidth);
+    float fTop = TrueToFace(m_sData.fScrollPos);
 
-    rcClient = GetClientRect();
-    rcPosArea = GetScrollArea();
+    if (IsFloatSmaller(fTop - fBottom, kPosButtonMinWidth))
+      fBottom = fTop - kPosButtonMinWidth;
 
-    float fLeft, fRight, fTop, fBottom;
-
-    switch (m_sbType) {
-      case PWL_SCROLLBAR_TYPE::HSCROLL:
-        fLeft = TrueToFace(m_sData.fScrollPos);
-        fRight = TrueToFace(m_sData.fScrollPos + m_sData.fClientWidth);
-
-        if (fRight - fLeft < kPosButtonMinWidth)
-          fRight = fLeft + kPosButtonMinWidth;
-
-        if (fRight > rcPosArea.right) {
-          fRight = rcPosArea.right;
-          fLeft = fRight - kPosButtonMinWidth;
-        }
-
-        rcPosButton =
-            CFX_FloatRect(fLeft, rcPosArea.bottom, fRight, rcPosArea.top);
-
-        break;
-      case PWL_SCROLLBAR_TYPE::VSCROLL:
-        fBottom = TrueToFace(m_sData.fScrollPos + m_sData.fClientWidth);
-        fTop = TrueToFace(m_sData.fScrollPos);
-
-        if (IsFloatSmaller(fTop - fBottom, kPosButtonMinWidth))
-          fBottom = fTop - kPosButtonMinWidth;
-
-        if (IsFloatSmaller(fBottom, rcPosArea.bottom)) {
-          fBottom = rcPosArea.bottom;
-          fTop = fBottom + kPosButtonMinWidth;
-        }
-
-        rcPosButton =
-            CFX_FloatRect(rcPosArea.left, fBottom, rcPosArea.right, fTop);
-
-        break;
+    if (IsFloatSmaller(fBottom, rcPosArea.bottom)) {
+      fBottom = rcPosArea.bottom;
+      fTop = fBottom + kPosButtonMinWidth;
     }
+
+    CFX_FloatRect rcPosButton =
+        CFX_FloatRect(rcPosArea.left, fBottom, rcPosArea.right, fTop);
 
     ObservedPtr<CPWL_ScrollBar> thisObserved(this);
     m_pPosButton->Move(rcPosButton, true, bRefresh);
@@ -685,17 +563,8 @@ void CPWL_ScrollBar::OnPosButtonLBDown(const CFX_PointF& point) {
 
   if (m_pPosButton) {
     CFX_FloatRect rcPosButton = m_pPosButton->GetWindowRect();
-
-    switch (m_sbType) {
-      case PWL_SCROLLBAR_TYPE::HSCROLL:
-        m_nOldPos = point.x;
-        m_fOldPosButton = rcPosButton.left;
-        break;
-      case PWL_SCROLLBAR_TYPE::VSCROLL:
-        m_nOldPos = point.y;
-        m_fOldPosButton = rcPosButton.top;
-        break;
-    }
+    m_nOldPos = point.y;
+    m_fOldPosButton = rcPosButton.top;
   }
 }
 
@@ -708,52 +577,21 @@ void CPWL_ScrollBar::OnPosButtonLBUp(const CFX_PointF& point) {
 }
 
 void CPWL_ScrollBar::OnPosButtonMouseMove(const CFX_PointF& point) {
+  if (fabs(point.y - m_nOldPos) < 1)
+    return;
+
   float fOldScrollPos = m_sData.fScrollPos;
-
-  float fNewPos = 0;
-
-  switch (m_sbType) {
-    case PWL_SCROLLBAR_TYPE::HSCROLL:
-      if (fabs(point.x - m_nOldPos) < 1)
-        return;
-      fNewPos = FaceToTrue(m_fOldPosButton + point.x - m_nOldPos);
-      break;
-    case PWL_SCROLLBAR_TYPE::VSCROLL:
-      if (fabs(point.y - m_nOldPos) < 1)
-        return;
-      fNewPos = FaceToTrue(m_fOldPosButton + point.y - m_nOldPos);
-      break;
-  }
-
+  float fNewPos = FaceToTrue(m_fOldPosButton + point.y - m_nOldPos);
   if (m_bMouseDown) {
-    switch (m_sbType) {
-      case PWL_SCROLLBAR_TYPE::HSCROLL:
-
-        if (IsFloatSmaller(fNewPos, m_sData.ScrollRange.fMin)) {
-          fNewPos = m_sData.ScrollRange.fMin;
-        }
-
-        if (IsFloatBigger(fNewPos, m_sData.ScrollRange.fMax)) {
-          fNewPos = m_sData.ScrollRange.fMax;
-        }
-
-        m_sData.SetPos(fNewPos);
-
-        break;
-      case PWL_SCROLLBAR_TYPE::VSCROLL:
-
-        if (IsFloatSmaller(fNewPos, m_sData.ScrollRange.fMin)) {
-          fNewPos = m_sData.ScrollRange.fMin;
-        }
-
-        if (IsFloatBigger(fNewPos, m_sData.ScrollRange.fMax)) {
-          fNewPos = m_sData.ScrollRange.fMax;
-        }
-
-        m_sData.SetPos(fNewPos);
-
-        break;
+    if (IsFloatSmaller(fNewPos, m_sData.ScrollRange.fMin)) {
+      fNewPos = m_sData.ScrollRange.fMin;
     }
+
+    if (IsFloatBigger(fNewPos, m_sData.ScrollRange.fMax)) {
+      fNewPos = m_sData.ScrollRange.fMax;
+    }
+
+    m_sData.SetPos(fNewPos);
 
     if (!IsFloatEqual(fOldScrollPos, m_sData.fScrollPos)) {
       if (!MovePosButton(true))
@@ -767,7 +605,7 @@ void CPWL_ScrollBar::OnPosButtonMouseMove(const CFX_PointF& point) {
 
 void CPWL_ScrollBar::NotifyScrollWindow() {
   CPWL_Wnd* pParent = GetParentWindow();
-  if (!pParent || m_sbType != PWL_SCROLLBAR_TYPE::VSCROLL)
+  if (!pParent)
     return;
 
   pParent->ScrollWindowVertically(m_OriginInfo.fContentMax -
@@ -776,90 +614,41 @@ void CPWL_ScrollBar::NotifyScrollWindow() {
 
 CFX_FloatRect CPWL_ScrollBar::GetScrollArea() const {
   CFX_FloatRect rcClient = GetClientRect();
-  CFX_FloatRect rcArea;
-
   if (!m_pMinButton || !m_pMaxButton)
     return rcClient;
 
   CFX_FloatRect rcMin = m_pMinButton->GetWindowRect();
   CFX_FloatRect rcMax = m_pMaxButton->GetWindowRect();
-
-  float fMinWidth = rcMin.Width();
   float fMinHeight = rcMin.Height();
-  float fMaxWidth = rcMax.Width();
   float fMaxHeight = rcMax.Height();
 
-  switch (m_sbType) {
-    case PWL_SCROLLBAR_TYPE::HSCROLL:
-      if (rcClient.right - rcClient.left > fMinWidth + fMaxWidth + 2) {
-        rcArea = CFX_FloatRect(rcClient.left + fMinWidth + 1, rcClient.bottom,
-                               rcClient.right - fMaxWidth - 1, rcClient.top);
-      } else {
-        rcArea = CFX_FloatRect(rcClient.left + fMinWidth + 1, rcClient.bottom,
-                               rcClient.left + fMinWidth + 1, rcClient.top);
-      }
-      break;
-    case PWL_SCROLLBAR_TYPE::VSCROLL:
-      if (rcClient.top - rcClient.bottom > fMinHeight + fMaxHeight + 2) {
-        rcArea = CFX_FloatRect(rcClient.left, rcClient.bottom + fMinHeight + 1,
-                               rcClient.right, rcClient.top - fMaxHeight - 1);
-      } else {
-        rcArea =
-            CFX_FloatRect(rcClient.left, rcClient.bottom + fMinHeight + 1,
-                          rcClient.right, rcClient.bottom + fMinHeight + 1);
-      }
-      break;
+  CFX_FloatRect rcArea;
+  if (rcClient.top - rcClient.bottom > fMinHeight + fMaxHeight + 2) {
+    rcArea = CFX_FloatRect(rcClient.left, rcClient.bottom + fMinHeight + 1,
+                           rcClient.right, rcClient.top - fMaxHeight - 1);
+  } else {
+    rcArea = CFX_FloatRect(rcClient.left, rcClient.bottom + fMinHeight + 1,
+                           rcClient.right, rcClient.bottom + fMinHeight + 1);
   }
 
   rcArea.Normalize();
-
   return rcArea;
 }
 
 float CPWL_ScrollBar::TrueToFace(float fTrue) {
-  CFX_FloatRect rcPosArea;
-  rcPosArea = GetScrollArea();
-
+  CFX_FloatRect rcPosArea = GetScrollArea();
   float fFactWidth = m_sData.ScrollRange.GetWidth() + m_sData.fClientWidth;
   fFactWidth = fFactWidth == 0 ? 1 : fFactWidth;
-
-  float fFace = 0;
-
-  switch (m_sbType) {
-    case PWL_SCROLLBAR_TYPE::HSCROLL:
-      fFace = rcPosArea.left +
-              fTrue * (rcPosArea.right - rcPosArea.left) / fFactWidth;
-      break;
-    case PWL_SCROLLBAR_TYPE::VSCROLL:
-      fFace = rcPosArea.top -
-              fTrue * (rcPosArea.top - rcPosArea.bottom) / fFactWidth;
-      break;
-  }
-
-  return fFace;
+  return rcPosArea.top -
+         fTrue * (rcPosArea.top - rcPosArea.bottom) / fFactWidth;
 }
 
 float CPWL_ScrollBar::FaceToTrue(float fFace) {
-  CFX_FloatRect rcPosArea;
-  rcPosArea = GetScrollArea();
-
+  CFX_FloatRect rcPosArea = GetScrollArea();
   float fFactWidth = m_sData.ScrollRange.GetWidth() + m_sData.fClientWidth;
   fFactWidth = fFactWidth == 0 ? 1 : fFactWidth;
-
-  float fTrue = 0;
-
-  switch (m_sbType) {
-    case PWL_SCROLLBAR_TYPE::HSCROLL:
-      fTrue = (fFace - rcPosArea.left) * fFactWidth /
-              (rcPosArea.right - rcPosArea.left);
-      break;
-    case PWL_SCROLLBAR_TYPE::VSCROLL:
-      fTrue = (rcPosArea.top - fFace) * fFactWidth /
-              (rcPosArea.top - rcPosArea.bottom);
-      break;
-  }
-
-  return fTrue;
+  return (rcPosArea.top - fFace) * fFactWidth /
+         (rcPosArea.top - rcPosArea.bottom);
 }
 
 void CPWL_ScrollBar::CreateChildWnd(const CreateParams& cp) {

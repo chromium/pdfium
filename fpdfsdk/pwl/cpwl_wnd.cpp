@@ -491,8 +491,7 @@ void CPWL_Wnd::CreateVScrollBar(const CreateParams& cp) {
   scp.eCursorType = FXCT_ARROW;
   scp.nTransparency = PWL_SCROLLBAR_TRANSPARENCY;
 
-  auto pBar = std::make_unique<CPWL_ScrollBar>(scp, CloneAttachedData(),
-                                               PWL_SCROLLBAR_TYPE::VSCROLL);
+  auto pBar = std::make_unique<CPWL_ScrollBar>(scp, CloneAttachedData());
   m_pVScrollBar = pBar.get();
   AddChild(std::move(pBar));
   m_pVScrollBar->Realize();

@@ -38,8 +38,6 @@ struct PWL_SCROLL_INFO {
   float fSmallStep;
 };
 
-enum class PWL_SCROLLBAR_TYPE { HSCROLL, VSCROLL };
-
 enum PWL_SBBUTTON_TYPE { PSBT_MIN, PSBT_MAX, PSBT_POS };
 
 class CPWL_SBButton final : public CPWL_Wnd {
@@ -47,7 +45,6 @@ class CPWL_SBButton final : public CPWL_Wnd {
   CPWL_SBButton(
       const CreateParams& cp,
       std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData,
-      PWL_SCROLLBAR_TYPE eScrollBarType,
       PWL_SBBUTTON_TYPE eButtonType);
   ~CPWL_SBButton() override;
 
@@ -59,7 +56,6 @@ class CPWL_SBButton final : public CPWL_Wnd {
   bool OnMouseMove(uint32_t nFlag, const CFX_PointF& point) override;
 
  private:
-  PWL_SCROLLBAR_TYPE m_eScrollBarType;
   PWL_SBBUTTON_TYPE m_eSBButtonType;
   bool m_bMouseDown = false;
 };
@@ -118,8 +114,7 @@ class CPWL_ScrollBar final : public CPWL_Wnd, public CFX_Timer::CallbackIface {
  public:
   CPWL_ScrollBar(
       const CreateParams& cp,
-      std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData,
-      PWL_SCROLLBAR_TYPE sbType);
+      std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData);
   ~CPWL_ScrollBar() override;
 
   // CPWL_Wnd:
@@ -140,8 +135,6 @@ class CPWL_ScrollBar final : public CPWL_Wnd, public CFX_Timer::CallbackIface {
   void OnTimerFired() override;
 
   float GetScrollBarWidth() const;
-  PWL_SCROLLBAR_TYPE GetScrollBarType() const { return m_sbType; }
-
   void SetNotifyForever(bool bForever) { m_bNotifyForever = bForever; }
 
  private:
@@ -171,7 +164,6 @@ class CPWL_ScrollBar final : public CPWL_Wnd, public CFX_Timer::CallbackIface {
   float TrueToFace(float);
   float FaceToTrue(float);
 
-  PWL_SCROLLBAR_TYPE m_sbType;
   PWL_SCROLL_INFO m_OriginInfo;
   UnownedPtr<CPWL_SBButton> m_pMinButton;
   UnownedPtr<CPWL_SBButton> m_pMaxButton;
