@@ -89,13 +89,13 @@ bool CPWL_Edit::CanSelectAll() const {
 }
 
 bool CPWL_Edit::CanCopy() const {
-  return !HasFlag(PES_PASSWORD) && !HasFlag(PES_NOREAD) &&
-         m_pEdit->IsSelected();
+  return !HasFlag(PES_PASSWORD) && m_pEdit->IsSelected();
 }
 
 bool CPWL_Edit::CanCut() const {
   return CanCopy() && !IsReadOnly();
 }
+
 void CPWL_Edit::CutText() {
   if (!CanCut())
     return;
@@ -126,9 +126,7 @@ void CPWL_Edit::SetParamByFlag() {
     m_pEdit->SetAlignmentH(0, false);
   }
 
-  if (HasFlag(PES_BOTTOM)) {
-    m_pEdit->SetAlignmentV(2, false);
-  } else if (HasFlag(PES_CENTER)) {
+  if (HasFlag(PES_CENTER)) {
     m_pEdit->SetAlignmentV(1, false);
   } else {
     m_pEdit->SetAlignmentV(0, false);
@@ -521,54 +519,6 @@ bool CPWL_Edit::OnMouseWheel(uint32_t nFlag,
     ptScroll.y -= GetFontSize();
   SetScrollPos(ptScroll);
   return true;
-}
-
-void CPWL_Edit::OnInsertReturn(const CPVT_WordPlace& place,
-                               const CPVT_WordPlace& oldplace) {
-  if (HasFlag(PES_SPELLCHECK)) {
-    m_pEdit->RefreshWordRange(CombineWordRange(GetLatinWordsRange(oldplace),
-                                               GetLatinWordsRange(place)));
-  }
-}
-
-void CPWL_Edit::OnBackSpace(const CPVT_WordPlace& place,
-                            const CPVT_WordPlace& oldplace) {
-  if (HasFlag(PES_SPELLCHECK)) {
-    m_pEdit->RefreshWordRange(CombineWordRange(GetLatinWordsRange(oldplace),
-                                               GetLatinWordsRange(place)));
-  }
-}
-
-void CPWL_Edit::OnDelete(const CPVT_WordPlace& place,
-                         const CPVT_WordPlace& oldplace) {
-  if (HasFlag(PES_SPELLCHECK)) {
-    m_pEdit->RefreshWordRange(CombineWordRange(GetLatinWordsRange(oldplace),
-                                               GetLatinWordsRange(place)));
-  }
-}
-
-void CPWL_Edit::OnClear(const CPVT_WordPlace& place,
-                        const CPVT_WordPlace& oldplace) {
-  if (HasFlag(PES_SPELLCHECK)) {
-    m_pEdit->RefreshWordRange(CombineWordRange(GetLatinWordsRange(oldplace),
-                                               GetLatinWordsRange(place)));
-  }
-}
-
-void CPWL_Edit::OnInsertWord(const CPVT_WordPlace& place,
-                             const CPVT_WordPlace& oldplace) {
-  if (HasFlag(PES_SPELLCHECK)) {
-    m_pEdit->RefreshWordRange(CombineWordRange(GetLatinWordsRange(oldplace),
-                                               GetLatinWordsRange(place)));
-  }
-}
-
-void CPWL_Edit::OnInsertText(const CPVT_WordPlace& place,
-                             const CPVT_WordPlace& oldplace) {
-  if (HasFlag(PES_SPELLCHECK)) {
-    m_pEdit->RefreshWordRange(CombineWordRange(GetLatinWordsRange(oldplace),
-                                               GetLatinWordsRange(place)));
-  }
 }
 
 CPVT_WordRange CPWL_Edit::CombineWordRange(const CPVT_WordRange& wr1,

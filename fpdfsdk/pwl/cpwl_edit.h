@@ -67,16 +67,6 @@ class CPWL_Edit final : public CPWL_EditCtrl {
 
   void AttachFFLData(CFFL_FormFiller* pData) { m_pFormFiller = pData; }
 
-  void OnInsertWord(const CPVT_WordPlace& place,
-                    const CPVT_WordPlace& oldplace);
-  void OnInsertReturn(const CPVT_WordPlace& place,
-                      const CPVT_WordPlace& oldplace);
-  void OnBackSpace(const CPVT_WordPlace& place, const CPVT_WordPlace& oldplace);
-  void OnDelete(const CPVT_WordPlace& place, const CPVT_WordPlace& oldplace);
-  void OnClear(const CPVT_WordPlace& place, const CPVT_WordPlace& oldplace);
-  void OnInsertText(const CPVT_WordPlace& place,
-                    const CPVT_WordPlace& oldplace);
-
  private:
   // In case of implementation swallow the OnKeyDown event. If the event is
   // swallowed, implementation may do other unexpected things, which is not the

@@ -26,7 +26,6 @@ CPWL_ComboBox::CPWL_ComboBox(
     const CreateParams& cp,
     std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData)
     : CPWL_Wnd(cp, std::move(pAttachedData)) {
-  GetCreationParams()->dwFlags &= ~PWS_HSCROLL;
   GetCreationParams()->dwFlags &= ~PWS_VSCROLL;
 }
 

@@ -1519,9 +1519,6 @@ bool CPWL_EditImpl::InsertWord(uint16_t word,
   if (bPaint)
     PaintInsertText(m_wpOldCaret, m_wpCaret);
 
-  if (m_pOperationNotify)
-    m_pOperationNotify->OnInsertWord(m_wpCaret, m_wpOldCaret);
-
   return true;
 }
 
@@ -1546,9 +1543,6 @@ bool CPWL_EditImpl::InsertReturn(bool bAddUndo, bool bPaint) {
     SetCaretOrigin();
     SetCaretInfo();
   }
-  if (m_pOperationNotify)
-    m_pOperationNotify->OnInsertReturn(m_wpCaret, m_wpOldCaret);
-
   return true;
 }
 
@@ -1579,9 +1573,6 @@ bool CPWL_EditImpl::Backspace(bool bAddUndo, bool bPaint) {
     SetCaretOrigin();
     SetCaretInfo();
   }
-  if (m_pOperationNotify)
-    m_pOperationNotify->OnBackSpace(m_wpCaret, m_wpOldCaret);
-
   return true;
 }
 
@@ -1615,9 +1606,6 @@ bool CPWL_EditImpl::Delete(bool bAddUndo, bool bPaint) {
     SetCaretOrigin();
     SetCaretInfo();
   }
-  if (m_pOperationNotify)
-    m_pOperationNotify->OnDelete(m_wpCaret, m_wpOldCaret);
-
   return true;
 }
 
@@ -1652,9 +1640,6 @@ bool CPWL_EditImpl::Clear(bool bAddUndo, bool bPaint) {
     SetCaretOrigin();
     SetCaretInfo();
   }
-  if (m_pOperationNotify)
-    m_pOperationNotify->OnClear(m_wpCaret, m_wpOldCaret);
-
   return true;
 }
 
@@ -1677,9 +1662,6 @@ bool CPWL_EditImpl::InsertText(const WideString& sText,
   }
   if (bPaint)
     PaintInsertText(m_wpOldCaret, m_wpCaret);
-
-  if (m_pOperationNotify)
-    m_pOperationNotify->OnInsertText(m_wpCaret, m_wpOldCaret);
 
   return true;
 }
