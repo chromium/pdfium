@@ -1,6 +1,6 @@
 # CONTRIBUTING
 In general, we follow the
-[Chromium Contributing](https://chromium.googlesource.com/chromium/src/+/master/docs/contributing.md)
+[Chromium Contributing](https://chromium.googlesource.com/chromium/src/+/main/docs/contributing.md)
 guidelines in PDFium. The code review process, and the build tools are all very
 similar to Chromium. The PDFium
 [README](https://pdfium.googlesource.com/pdfium/+/refs/heads/master/README.md)
@@ -145,7 +145,7 @@ the people in the top-level OWNERS file (or another of the owners if already
 discussing with a top-level owner). If the disagreement has moved up through
 all the OWNERS files in the PDFium repo, the escalation should then proceed to
 the Chromium
-[ENG_REVIEW_OWNERS](https://chromium.googlesource.com/chromium/src/+/refs/heads/master/ENG_REVIEW_OWNERS)
+[ENG_REVIEW_OWNERS](https://chromium.googlesource.com/chromium/src/+/refs/heads/main/ENG_REVIEW_OWNERS)
 as the final deciders.
 
 The

@@ -419,7 +419,7 @@ using RemoveCvRefT = std::remove_cv_t<std::remove_reference_t<T>>;
 // std::optional documentation:
 // http://en.cppreference.com/w/cpp/utility/optional
 // Chromium documentation:
-// https://chromium.googlesource.com/chromium/src/+/master/docs/optional.md
+// https://chromium.googlesource.com/chromium/src/+/main/docs/optional.md
 //
 // These are the differences between the specification and the implementation:
 // - Constructors do not use 'constexpr' as it is a C++14 extension.

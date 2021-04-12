@@ -16,7 +16,7 @@ PDFium uses the same build tool as Chromium:
 
 #### Open source contributors
 Please refer to
-[Chromium's Visual Studio set up](https://chromium.googlesource.com/chromium/src/+/master/docs/windows_build_instructions.md#visual-studio)
+[Chromium's Visual Studio set up](https://chromium.googlesource.com/chromium/src/+/main/docs/windows_build_instructions.md#visual-studio)
 for requirements and instructions on build environment configuration.
 
 Run `set DEPOT_TOOLS_WIN_TOOLCHAIN=0`, or set that variable in your global
