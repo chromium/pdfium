@@ -214,45 +214,6 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
                           m_pFormFiller.Get());
 }
 
-bool CPWL_Edit::OnLButtonDown(uint32_t nFlag, const CFX_PointF& point) {
-  CPWL_Wnd::OnLButtonDown(nFlag, point);
-
-  if (HasFlag(PES_TEXTOVERFLOW) || ClientHitTest(point)) {
-    if (m_bMouseDown && !InvalidateRect(nullptr))
-      return true;
-
-    m_bMouseDown = true;
-    SetCapture();
-
-    m_pEdit->OnMouseDown(point, IsSHIFTpressed(nFlag), IsCTRLpressed(nFlag));
-  }
-
-  return true;
-}
-
-bool CPWL_Edit::OnLButtonDblClk(uint32_t nFlag, const CFX_PointF& point) {
-  CPWL_Wnd::OnLButtonDblClk(nFlag, point);
-
-  if (HasFlag(PES_TEXTOVERFLOW) || ClientHitTest(point)) {
-    m_pEdit->SelectAll();
-  }
-
-  return true;
-}
-
-bool CPWL_Edit::OnRButtonUp(uint32_t nFlag, const CFX_PointF& point) {
-  if (m_bMouseDown)
-    return false;
-
-  CPWL_Wnd::OnRButtonUp(nFlag, point);
-
-  if (!HasFlag(PES_TEXTOVERFLOW) && !ClientHitTest(point))
-    return true;
-
-  SetFocus();
-
-  return false;
-}
 
 void CPWL_Edit::OnSetFocus() {
   ObservedPtr<CPWL_Edit> observed_ptr(this);

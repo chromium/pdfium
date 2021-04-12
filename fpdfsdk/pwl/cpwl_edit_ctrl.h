@@ -47,6 +47,8 @@ class CPWL_EditCtrl : public CPWL_Wnd {
   bool OnChar(uint16_t nChar, uint32_t nFlag) override;
   bool OnLButtonDown(uint32_t nFlag, const CFX_PointF& point) override;
   bool OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) override;
+  bool OnLButtonDblClk(uint32_t nFlag, const CFX_PointF& point) override;
+  bool OnRButtonUp(uint32_t nFlag, const CFX_PointF& point) override;
   bool OnMouseMove(uint32_t nFlag, const CFX_PointF& point) override;
   void SetScrollInfo(const PWL_SCROLL_INFO& info) override;
   void SetScrollPosition(float pos) override;

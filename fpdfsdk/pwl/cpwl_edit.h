@@ -30,9 +30,6 @@ class CPWL_Edit final : public CPWL_EditCtrl {
   CFX_FloatRect GetClientRect() const override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           const CFX_Matrix& mtUser2Device) override;
-  bool OnLButtonDown(uint32_t nFlag, const CFX_PointF& point) override;
-  bool OnLButtonDblClk(uint32_t nFlag, const CFX_PointF& point) override;
-  bool OnRButtonUp(uint32_t nFlag, const CFX_PointF& point) override;
   bool OnMouseWheel(uint32_t nFlag,
                     const CFX_PointF& point,
                     const CFX_Vector& delta) override;
@@ -50,11 +47,8 @@ class CPWL_Edit final : public CPWL_EditCtrl {
   bool CanSelectAll() const;
   bool CanCopy() const;
   bool CanCut() const;
-
   void CutText();
-
   void SetText(const WideString& csText);
-
   bool IsTextFull() const;
 
   static float GetCharArrayAutoFontSize(const CPDF_Font* pFont,
