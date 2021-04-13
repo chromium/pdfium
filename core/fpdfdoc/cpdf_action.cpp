@@ -42,7 +42,7 @@ CPDF_Action::Type CPDF_Action::GetType() const {
       return Type::kUnknown;
   }
 
-  ByteString csType = m_pDict->GetStringFor("S");
+  ByteString csType = m_pDict->GetNameFor("S");
   if (csType.IsEmpty())
     return Type::kUnknown;
 

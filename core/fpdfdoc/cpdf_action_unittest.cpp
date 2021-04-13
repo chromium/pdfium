@@ -109,16 +109,14 @@ TEST(CPDFActionTest, GetType) {
       RetainPtr<CPDF_Dictionary> dict =
           CreateInvalidActionDictWithType(test_case.action_type);
       CPDF_Action action(dict.Get());
-      // TODO(thestig): Should return `CPDF_Action::Type::kUnknown`.
-      EXPECT_EQ(test_case.expected_type, action.GetType());
+      EXPECT_EQ(CPDF_Action::Type::kUnknown, action.GetType());
     }
     {
       // The action type (/S) must be a name.
       RetainPtr<CPDF_Dictionary> dict =
           CreateInvalidActionDictWithoutType(test_case.action_type);
       CPDF_Action action(dict.Get());
-      // TODO(thestig): Should return `CPDF_Action::Type::kUnknown`.
-      EXPECT_EQ(test_case.expected_type, action.GetType());
+      EXPECT_EQ(CPDF_Action::Type::kUnknown, action.GetType());
     }
   }
 
