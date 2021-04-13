@@ -11,7 +11,6 @@
 
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/pwl/cpwl_edit.h"
-#include "fpdfsdk/pwl/cpwl_edit_ctrl.h"
 #include "fpdfsdk/pwl/cpwl_edit_impl.h"
 #include "fpdfsdk/pwl/cpwl_scroll_bar.h"
 #include "fpdfsdk/pwl/ipwl_fillernotify.h"

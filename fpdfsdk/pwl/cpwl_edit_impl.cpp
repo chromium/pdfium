@@ -23,7 +23,6 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/pwl/cpwl_edit.h"
-#include "fpdfsdk/pwl/cpwl_edit_ctrl.h"
 #include "fpdfsdk/pwl/cpwl_scroll_bar.h"
 #include "fpdfsdk/pwl/ipwl_systemhandler.h"
 #include "third_party/base/check.h"
@@ -561,12 +560,8 @@ void CPWL_EditImpl::SetFontMap(IPVT_FontMap* pFontMap) {
   m_pVT->SetProvider(m_pVTProvider.get());
 }
 
-void CPWL_EditImpl::SetNotify(CPWL_EditCtrl* pNotify) {
+void CPWL_EditImpl::SetNotify(CPWL_Edit* pNotify) {
   m_pNotify = pNotify;
-}
-
-void CPWL_EditImpl::SetOperationNotify(CPWL_Edit* pOperationNotify) {
-  m_pOperationNotify = pOperationNotify;
 }
 
 CPWL_EditImpl_Iterator* CPWL_EditImpl::GetIterator() {

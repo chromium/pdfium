@@ -23,7 +23,6 @@ class CPWL_EditImpl_Iterator;
 class CPWL_EditImpl_Provider;
 class CFX_RenderDevice;
 class CPWL_Edit;
-class CPWL_EditCtrl;
 class IPWL_SystemHandler;
 class IFX_Edit_UndoItem;
 
@@ -265,8 +264,7 @@ class CPWL_EditImpl {
   ~CPWL_EditImpl();
 
   void SetFontMap(IPVT_FontMap* pFontMap);
-  void SetNotify(CPWL_EditCtrl* pNotify);
-  void SetOperationNotify(CPWL_Edit* pOperationNotify);
+  void SetNotify(CPWL_Edit* pNotify);
 
   // Returns an iterator for the contents. Should not be released.
   CPWL_EditImpl_Iterator* GetIterator();
@@ -397,8 +395,7 @@ class CPWL_EditImpl {
 
   std::unique_ptr<CPWL_EditImpl_Provider> m_pVTProvider;
   std::unique_ptr<CPDF_VariableText> m_pVT;  // Must outlive |m_pVTProvider|.
-  UnownedPtr<CPWL_EditCtrl> m_pNotify;
-  UnownedPtr<CPWL_Edit> m_pOperationNotify;
+  UnownedPtr<CPWL_Edit> m_pNotify;
   CPVT_WordPlace m_wpCaret;
   CPVT_WordPlace m_wpOldCaret;
   CPWL_EditImpl_Select m_SelState;

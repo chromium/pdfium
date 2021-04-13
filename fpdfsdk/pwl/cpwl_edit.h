@@ -11,21 +11,28 @@
 #include <utility>
 
 #include "core/fpdfdoc/cpvt_wordrange.h"
+#include "core/fxcrt/fx_codepage.h"
+#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "fpdfsdk/pwl/cpwl_edit_ctrl.h"
+#include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "fpdfsdk/pwl/ipwl_systemhandler.h"
 
 class CPDF_Font;
+class CPWL_Caret;
+class CPWL_EditImpl;
 class IPWL_FillerNotify;
 
-class CPWL_Edit final : public CPWL_EditCtrl {
+enum PWL_EDIT_ALIGNFORMAT_H { PEAH_LEFT = 0, PEAH_MIDDLE, PEAH_RIGHT };
+
+enum PWL_EDIT_ALIGNFORMAT_V { PEAV_TOP = 0, PEAV_CENTER, PEAV_BOTTOM };
+
+class CPWL_Edit final : public CPWL_Wnd {
  public:
   CPWL_Edit(const CreateParams& cp,
             std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData);
   ~CPWL_Edit() override;
 
-  // CPWL_EditCtrl
-  void OnCreated() override;
+  // CPWL_Wnd:
   bool RePosChildWnd() override;
   CFX_FloatRect GetClientRect() const override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
@@ -38,12 +45,44 @@ class CPWL_Edit final : public CPWL_EditCtrl {
   CFX_FloatRect GetFocusRect() const override;
   void OnSetFocus() override;
   void OnKillFocus() override;
+  void OnCreated() override;
+  void OnDestroy() override;
+  bool OnLButtonDown(uint32_t nFlag, const CFX_PointF& point) override;
+  bool OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) override;
+  bool OnLButtonDblClk(uint32_t nFlag, const CFX_PointF& point) override;
+  bool OnRButtonUp(uint32_t nFlag, const CFX_PointF& point) override;
+  bool OnMouseMove(uint32_t nFlag, const CFX_PointF& point) override;
+  void SetScrollInfo(const PWL_SCROLL_INFO& info) override;
+  void SetScrollPosition(float pos) override;
+  void ScrollWindowVertically(float pos) override;
+  void CreateChildWnd(const CreateParams& cp) override;
+  void SetFontSize(float fFontSize) override;
+  float GetFontSize() const override;
+  void SetCursor() override;
+  WideString GetText() override;
+  WideString GetSelectedText() override;
+  void ReplaceSelection(const WideString& text) override;
+  bool SelectAllText() override;
+  bool CanUndo() override;
+  bool CanRedo() override;
+  bool Undo() override;
+  bool Redo() override;
 
+  void SetSelection(int32_t nStartChar, int32_t nEndChar);
+  std::pair<int32_t, int32_t> GetSelection() const;
+  void ClearSelection();
+
+  CFX_PointF GetScrollPos() const;
+  void SetScrollPos(const CFX_PointF& point);
+
+  void SetCharSet(uint8_t nCharSet) { m_nCharSet = nCharSet; }
+  int32_t GetCharSet() const;
+
+  void SetReadyToInput();
   void SetAlignFormatVerticalCenter();
   void SetCharArray(int32_t nCharArray);
   void SetLimitChar(int32_t nLimitChar);
   void SetCharSpace(float fCharSpace);
-
   bool CanSelectAll() const;
   bool CanCopy() const;
   bool CanCut() const;
@@ -60,6 +99,9 @@ class CPWL_Edit final : public CPWL_EditCtrl {
   }
 
   void AttachFFLData(CFFL_FormFiller* pData) { m_pFormFiller = pData; }
+  bool SetCaret(bool bVisible,
+                const CFX_PointF& ptHead,
+                const CFX_PointF& ptFoot);
 
  private:
   // In case of implementation swallow the OnKeyDown event. If the event is
@@ -67,12 +109,31 @@ class CPWL_Edit final : public CPWL_EditCtrl {
   // control means to do.
   static bool IsProceedtoOnChar(uint16_t nKeyCode, uint32_t nFlag);
 
+  bool OnKeyDownInternal(uint16_t nChar, uint32_t nFlag);
+  bool OnCharInternal(uint16_t nChar, uint32_t nFlag);
+
+  void CopyText();
+  void PasteText();
+  void InsertWord(uint16_t word, int32_t nCharset);
+  void InsertReturn();
+  bool IsWndHorV() const;
+  void Delete();
+  void Backspace();
+  void GetCaretInfo(CFX_PointF* ptHead, CFX_PointF* ptFoot) const;
+  void SetEditCaret(bool bVisible);
+
+  void CreateEditCaret(const CreateParams& cp);
+
   CPVT_WordRange GetSelectWordRange() const;
   bool IsVScrollBarVisible() const;
   void SetParamByFlag();
 
+  bool m_bMouseDown = false;
   bool m_bFocus = false;
+  int32_t m_nCharSet = FX_CHARSET_Default;
   CFX_FloatRect m_rcOldWindow;
+  std::unique_ptr<CPWL_EditImpl> const m_pEdit;
+  UnownedPtr<CPWL_Caret> m_pEditCaret;
   UnownedPtr<IPWL_FillerNotify> m_pFillerNotify;
   UnownedPtr<CFFL_FormFiller> m_pFormFiller;
 };
