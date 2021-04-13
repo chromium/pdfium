@@ -132,8 +132,8 @@ class CPWL_Edit final : public CPWL_Wnd {
   bool m_bFocus = false;
   uint8_t m_nCharSet = FX_CHARSET_Default;
   CFX_FloatRect m_rcOldWindow;
-  std::unique_ptr<CPWL_EditImpl> const m_pEdit;
-  UnownedPtr<CPWL_Caret> m_pEditCaret;
+  std::unique_ptr<CPWL_EditImpl> const m_pEditImpl;
+  UnownedPtr<CPWL_Caret> m_pCaret;
   UnownedPtr<IPWL_FillerNotify> m_pFillerNotify;
   UnownedPtr<CFFL_FormFiller> m_pFormFiller;
 };
