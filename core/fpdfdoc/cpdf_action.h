@@ -39,7 +39,8 @@ class CPDF_Action {
     kSetOCGState,
     kRendition,
     kTrans,
-    kGoTo3DView
+    kGoTo3DView,
+    kLast = kGoTo3DView
   };
 
   explicit CPDF_Action(const CPDF_Dictionary* pDict);

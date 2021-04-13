@@ -12,14 +12,15 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfdoc/cpdf_filespec.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
-const char* const g_sATypes[] = {
-    "Unknown",     "GoTo",       "GoToR",     "GoToE",      "Launch",
-    "Thread",      "URI",        "Sound",     "Movie",      "Hide",
-    "Named",       "SubmitForm", "ResetForm", "ImportData", "JavaScript",
-    "SetOCGState", "Rendition",  "Trans",     "GoTo3DView", nullptr};
+const char* const kActionTypeStrings[] = {
+    "GoTo",       "GoToR",     "GoToE",      "Launch",     "Thread",
+    "URI",        "Sound",     "Movie",      "Hide",       "Named",
+    "SubmitForm", "ResetForm", "ImportData", "JavaScript", "SetOCGState",
+    "Rendition",  "Trans",     "GoTo3DView"};
 
 }  // namespace
 
@@ -45,9 +46,12 @@ CPDF_Action::Type CPDF_Action::GetType() const {
   if (csType.IsEmpty())
     return Type::kUnknown;
 
-  for (int i = 0; g_sATypes[i]; ++i) {
-    if (csType == g_sATypes[i])
-      return static_cast<Type>(i);
+  static_assert(
+      pdfium::size(kActionTypeStrings) == static_cast<size_t>(Type::kLast),
+      "Type mismatch");
+  for (size_t i = 0; i < pdfium::size(kActionTypeStrings); ++i) {
+    if (csType == kActionTypeStrings[i])
+      return static_cast<Type>(i + 1);
   }
   return Type::kUnknown;
 }
