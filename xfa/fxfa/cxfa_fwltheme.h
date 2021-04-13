@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/widestring.h"
 #include "fxjs/gc/heap.h"
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/member.h"

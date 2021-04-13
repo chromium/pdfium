@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/widestring.h"
 #include "fxbarcode/BC_TwoDimWriter.h"
 
 class CBC_DataMatrixWriter final : public CBC_TwoDimWriter {

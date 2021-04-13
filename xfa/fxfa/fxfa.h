@@ -10,6 +10,7 @@
 #include "core/fxcrt/cfx_timer.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/widestring.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
