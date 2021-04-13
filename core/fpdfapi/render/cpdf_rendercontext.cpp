@@ -42,11 +42,8 @@ void CPDF_RenderContext::GetBackground(const RetainPtr<CFX_DIBitmap>& pBuffer,
 }
 
 void CPDF_RenderContext::AppendLayer(CPDF_PageObjectHolder* pObjectHolder,
-                                     const CFX_Matrix* pObject2Device) {
-  m_Layers.emplace_back();
-  m_Layers.back().m_pObjectHolder = pObjectHolder;
-  if (pObject2Device)
-    m_Layers.back().m_Matrix = *pObject2Device;
+                                     const CFX_Matrix& mtObject2Device) {
+  m_Layers.emplace_back(pObjectHolder, mtObject2Device);
 }
 
 void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,
@@ -82,7 +79,9 @@ void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,
   }
 }
 
-CPDF_RenderContext::Layer::Layer() = default;
+CPDF_RenderContext::Layer::Layer(CPDF_PageObjectHolder* pHolder,
+                                 const CFX_Matrix& matrix)
+    : m_pObjectHolder(pHolder), m_Matrix(matrix) {}
 
 CPDF_RenderContext::Layer::Layer(const Layer& that) = default;
 

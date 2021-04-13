@@ -42,7 +42,7 @@ bool IsTextMarkupAnnotation(CPDF_Annot::Subtype type) {
 CPDF_Form* AnnotGetMatrix(const CPDF_Page* pPage,
                           CPDF_Annot* pAnnot,
                           CPDF_Annot::AppearanceMode mode,
-                          const CFX_Matrix* pUser2Device,
+                          const CFX_Matrix& mtUser2Device,
                           CFX_Matrix* matrix) {
   CPDF_Form* pForm = pAnnot->GetAPForm(pPage, mode);
   if (!pForm)
@@ -52,7 +52,7 @@ CPDF_Form* AnnotGetMatrix(const CPDF_Page* pPage,
   CFX_FloatRect form_bbox =
       form_matrix.TransformRect(pForm->GetDict()->GetRectFor("BBox"));
   matrix->MatchRect(pAnnot->GetRect(), form_bbox);
-  matrix->Concat(*pUser2Device);
+  matrix->Concat(mtUser2Device);
   return pForm;
 }
 
@@ -401,21 +401,21 @@ bool CPDF_Annot::DrawAppearance(CPDF_Page* pPage,
   GenerateAPIfNeeded();
 
   CFX_Matrix matrix;
-  CPDF_Form* pForm = AnnotGetMatrix(pPage, this, mode, &mtUser2Device, &matrix);
+  CPDF_Form* pForm = AnnotGetMatrix(pPage, this, mode, mtUser2Device, &matrix);
   if (!pForm)
     return false;
 
   CPDF_RenderContext context(
       pPage->GetDocument(), pPage->m_pPageResources.Get(),
       static_cast<CPDF_PageRenderCache*>(pPage->GetRenderCache()));
-  context.AppendLayer(pForm, &matrix);
+  context.AppendLayer(pForm, matrix);
   context.Render(pDevice, pOptions, nullptr);
   return true;
 }
 
 bool CPDF_Annot::DrawInContext(const CPDF_Page* pPage,
                                CPDF_RenderContext* pContext,
-                               const CFX_Matrix* pUser2Device,
+                               const CFX_Matrix& mtUser2Device,
                                AppearanceMode mode) {
   if (!ShouldDrawAnnotation())
     return false;
@@ -428,11 +428,11 @@ bool CPDF_Annot::DrawInContext(const CPDF_Page* pPage,
   GenerateAPIfNeeded();
 
   CFX_Matrix matrix;
-  CPDF_Form* pForm = AnnotGetMatrix(pPage, this, mode, pUser2Device, &matrix);
+  CPDF_Form* pForm = AnnotGetMatrix(pPage, this, mode, mtUser2Device, &matrix);
   if (!pForm)
     return false;
 
-  pContext->AppendLayer(pForm, &matrix);
+  pContext->AppendLayer(pForm, matrix);
   return true;
 }
 

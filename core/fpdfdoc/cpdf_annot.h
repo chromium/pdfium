@@ -93,7 +93,7 @@ class CPDF_Annot {
                       const CPDF_RenderOptions* pOptions);
   bool DrawInContext(const CPDF_Page* pPage,
                      CPDF_RenderContext* pContext,
-                     const CFX_Matrix* pUser2Device,
+                     const CFX_Matrix& mtUser2Device,
                      AppearanceMode mode);
 
   void ClearCachedAP();

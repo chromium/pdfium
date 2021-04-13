@@ -225,7 +225,7 @@ void CPDF_AnnotList::DisplayPass(CPDF_Page* pPage,
                                  CFX_RenderDevice* pDevice,
                                  CPDF_RenderContext* pContext,
                                  bool bPrinting,
-                                 const CFX_Matrix* pMatrix,
+                                 const CFX_Matrix& mtMatrix,
                                  bool bWidgetPass,
                                  CPDF_RenderOptions* pOptions,
                                  FX_RECT* clip_rect) {
@@ -254,7 +254,7 @@ void CPDF_AnnotList::DisplayPass(CPDF_Page* pPage,
       }
     }
 
-    CFX_Matrix matrix = *pMatrix;
+    CFX_Matrix matrix = mtMatrix;
     if (clip_rect) {
       FX_RECT annot_rect =
           matrix.TransformRect(pAnnot->GetRect()).GetOuterRect();
@@ -263,7 +263,7 @@ void CPDF_AnnotList::DisplayPass(CPDF_Page* pPage,
         continue;
     }
     if (pContext) {
-      pAnnot->DrawInContext(pPage, pContext, &matrix, CPDF_Annot::Normal);
+      pAnnot->DrawInContext(pPage, pContext, matrix, CPDF_Annot::Normal);
     } else if (!pAnnot->DrawAppearance(pPage, pDevice, matrix,
                                        CPDF_Annot::Normal, pOptions)) {
       pAnnot->DrawBorder(pDevice, &matrix, pOptions);
@@ -275,16 +275,16 @@ void CPDF_AnnotList::DisplayAnnots(CPDF_Page* pPage,
                                    CFX_RenderDevice* pDevice,
                                    CPDF_RenderContext* pContext,
                                    bool bPrinting,
-                                   const CFX_Matrix* pUser2Device,
+                                   const CFX_Matrix& mtUser2Device,
                                    uint32_t dwAnnotFlags,
                                    CPDF_RenderOptions* pOptions,
                                    FX_RECT* pClipRect) {
   if (dwAnnotFlags & pdfium::annotation_flags::kInvisible) {
-    DisplayPass(pPage, pDevice, pContext, bPrinting, pUser2Device, false,
+    DisplayPass(pPage, pDevice, pContext, bPrinting, mtUser2Device, false,
                 pOptions, pClipRect);
   }
   if (dwAnnotFlags & pdfium::annotation_flags::kHidden) {
-    DisplayPass(pPage, pDevice, pContext, bPrinting, pUser2Device, true,
+    DisplayPass(pPage, pDevice, pContext, bPrinting, mtUser2Device, true,
                 pOptions, pClipRect);
   }
 }
@@ -293,12 +293,12 @@ void CPDF_AnnotList::DisplayAnnots(CPDF_Page* pPage,
                                    CFX_RenderDevice* device,
                                    CPDF_RenderContext* pContext,
                                    bool bPrinting,
-                                   const CFX_Matrix* pMatrix,
+                                   const CFX_Matrix& mtMatrix,
                                    bool bShowWidget,
                                    CPDF_RenderOptions* pOptions) {
   uint32_t dwAnnotFlags = bShowWidget ? pdfium::annotation_flags::kInvisible |
                                             pdfium::annotation_flags::kHidden
                                       : pdfium::annotation_flags::kInvisible;
-  DisplayAnnots(pPage, device, pContext, bPrinting, pMatrix, dwAnnotFlags,
+  DisplayAnnots(pPage, device, pContext, bPrinting, mtMatrix, dwAnnotFlags,
                 pOptions, nullptr);
 }

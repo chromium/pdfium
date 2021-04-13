@@ -86,11 +86,11 @@ CPDF_Type3Cache::CPDF_Type3Cache(CPDF_Type3Font* pFont) : m_pFont(pFont) {}
 CPDF_Type3Cache::~CPDF_Type3Cache() = default;
 
 const CFX_GlyphBitmap* CPDF_Type3Cache::LoadGlyph(uint32_t charcode,
-                                                  const CFX_Matrix* pMatrix) {
+                                                  const CFX_Matrix& mtMatrix) {
   CPDF_UniqueKeyGen keygen;
   keygen.Generate(
-      4, FXSYS_roundf(pMatrix->a * 10000), FXSYS_roundf(pMatrix->b * 10000),
-      FXSYS_roundf(pMatrix->c * 10000), FXSYS_roundf(pMatrix->d * 10000));
+      4, FXSYS_roundf(mtMatrix.a * 10000), FXSYS_roundf(mtMatrix.b * 10000),
+      FXSYS_roundf(mtMatrix.c * 10000), FXSYS_roundf(mtMatrix.d * 10000));
   ByteString FaceGlyphsKey(keygen.m_Key, keygen.m_KeyLen);
   CPDF_Type3GlyphMap* pSizeCache;
   auto it = m_SizeMap.find(FaceGlyphsKey);
@@ -106,7 +106,7 @@ const CFX_GlyphBitmap* CPDF_Type3Cache::LoadGlyph(uint32_t charcode,
     return pExisting;
 
   std::unique_ptr<CFX_GlyphBitmap> pNewBitmap =
-      RenderGlyph(pSizeCache, charcode, pMatrix);
+      RenderGlyph(pSizeCache, charcode, mtMatrix);
   CFX_GlyphBitmap* pGlyphBitmap = pNewBitmap.get();
   pSizeCache->SetBitmap(charcode, std::move(pNewBitmap));
   return pGlyphBitmap;
@@ -115,12 +115,12 @@ const CFX_GlyphBitmap* CPDF_Type3Cache::LoadGlyph(uint32_t charcode,
 std::unique_ptr<CFX_GlyphBitmap> CPDF_Type3Cache::RenderGlyph(
     CPDF_Type3GlyphMap* pSize,
     uint32_t charcode,
-    const CFX_Matrix* pMatrix) {
+    const CFX_Matrix& mtMatrix) {
   const CPDF_Type3Char* pChar = m_pFont->LoadChar(charcode);
   if (!pChar || !pChar->GetBitmap())
     return nullptr;
 
-  CFX_Matrix text_matrix(pMatrix->a, pMatrix->b, pMatrix->c, pMatrix->d, 0, 0);
+  CFX_Matrix text_matrix(mtMatrix.a, mtMatrix.b, mtMatrix.c, mtMatrix.d, 0, 0);
   CFX_Matrix image_matrix = pChar->matrix() * text_matrix;
 
   RetainPtr<CFX_DIBitmap> pBitmap = pChar->GetBitmap();

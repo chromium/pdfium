@@ -700,7 +700,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
     CFX_Matrix smask_matrix =
         *pPageObj->m_GeneralState.GetSMaskMatrix() * mtObj2Device;
     RetainPtr<CFX_DIBBase> pSMaskSource =
-        LoadSMask(pSMaskDict, &rect, &smask_matrix);
+        LoadSMask(pSMaskDict, &rect, smask_matrix);
     if (pSMaskSource)
       bitmap->MultiplyAlpha(pSMaskSource);
   }
@@ -870,7 +870,7 @@ bool CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
   float font_size = textobj->m_TextState.GetFontSize();
   if (bPattern) {
     DrawTextPathWithPattern(textobj, mtObj2Device, pFont.Get(), font_size,
-                            &text_matrix, is_fill, is_stroke);
+                            text_matrix, is_fill, is_stroke);
     return true;
   }
   if (is_clip || is_stroke) {
@@ -1017,7 +1017,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         RetainPtr<CPDF_Type3Cache> pCache =
             CPDF_DocRenderData::FromDocument(pDoc)->GetCachedType3(pType3Font);
 
-        const CFX_GlyphBitmap* pBitmap = pCache->LoadGlyph(charcode, &matrix);
+        const CFX_GlyphBitmap* pBitmap = pCache->LoadGlyph(charcode, matrix);
         if (!pBitmap)
           continue;
 
@@ -1075,7 +1075,7 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
                                                 const CFX_Matrix& mtObj2Device,
                                                 CPDF_Font* pFont,
                                                 float font_size,
-                                                const CFX_Matrix* pTextMatrix,
+                                                const CFX_Matrix& mtTextMatrix,
                                                 bool fill,
                                                 bool stroke) {
   if (!stroke) {
@@ -1123,7 +1123,7 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
     path.set_filltype(fill ? CFX_FillRenderOptions::FillType::kWinding
                            : CFX_FillRenderOptions::FillType::kNoFill);
     path.path().Append(pPath, &matrix);
-    path.set_matrix(*pTextMatrix);
+    path.set_matrix(mtTextMatrix);
     path.CalcBoundingBox();
     ProcessPath(&path, mtObj2Device);
   }
@@ -1371,7 +1371,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(
 RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
     CPDF_Dictionary* pSMaskDict,
     FX_RECT* pClipRect,
-    const CFX_Matrix* pMatrix) {
+    const CFX_Matrix& mtMatrix) {
   if (!pSMaskDict)
     return nullptr;
 
@@ -1385,7 +1385,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
   if (pFuncObj && (pFuncObj->IsDictionary() || pFuncObj->IsStream()))
     pFunc = CPDF_Function::Load(pFuncObj);
 
-  CFX_Matrix matrix = *pMatrix;
+  CFX_Matrix matrix = mtMatrix;
   matrix.Translate(-pClipRect->left, -pClipRect->top);
 
   CPDF_Form form(m_pContext->GetDocument(), m_pContext->GetPageResources(),

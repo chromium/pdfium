@@ -163,7 +163,7 @@ class CPDF_RenderStatus {
                                const CFX_Matrix& mtObj2Device,
                                CPDF_Font* pFont,
                                float font_size,
-                               const CFX_Matrix* pTextMatrix,
+                               const CFX_Matrix& mtTextMatrix,
                                bool fill,
                                bool stroke);
   bool ProcessForm(const CPDF_FormObject* pFormObj,
@@ -175,7 +175,7 @@ class CPDF_RenderStatus {
                                       int* top);
   RetainPtr<CFX_DIBitmap> LoadSMask(CPDF_Dictionary* pSMaskDict,
                                     FX_RECT* pClipRect,
-                                    const CFX_Matrix* pMatrix);
+                                    const CFX_Matrix& mtMatrix);
   // Optionally write the colorspace family value into |pCSFamily|.
   FX_ARGB GetBackColor(const CPDF_Dictionary* pSMaskDict,
                        const CPDF_Dictionary* pGroupDict,
