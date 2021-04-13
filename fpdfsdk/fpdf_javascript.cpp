@@ -45,7 +45,7 @@ FPDFDoc_GetJavaScriptAction(FPDF_DOCUMENT document, int index) {
 
   // Validate |obj|. Type is optional, but must be valid if present.
   CPDF_Action action(obj);
-  if (action.GetType() != CPDF_Action::JavaScript)
+  if (action.GetType() != CPDF_Action::Type::kJavaScript)
     return nullptr;
 
   Optional<WideString> script = action.MaybeGetJavaScript();

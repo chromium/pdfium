@@ -20,26 +20,26 @@ class CPDF_Object;
 
 class CPDF_Action {
  public:
-  enum ActionType {
-    Unknown = 0,
-    GoTo,
-    GoToR,
-    GoToE,
-    Launch,
-    Thread,
-    URI,
-    Sound,
-    Movie,
-    Hide,
-    Named,
-    SubmitForm,
-    ResetForm,
-    ImportData,
-    JavaScript,
-    SetOCGState,
-    Rendition,
-    Trans,
-    GoTo3DView
+  enum class Type {
+    kUnknown = 0,
+    kGoTo,
+    kGoToR,
+    kGoToE,
+    kLaunch,
+    kThread,
+    kURI,
+    kSound,
+    kMovie,
+    kHide,
+    kNamed,
+    kSubmitForm,
+    kResetForm,
+    kImportData,
+    kJavaScript,
+    kSetOCGState,
+    kRendition,
+    kTrans,
+    kGoTo3DView
   };
 
   explicit CPDF_Action(const CPDF_Dictionary* pDict);
@@ -48,7 +48,7 @@ class CPDF_Action {
 
   const CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
 
-  ActionType GetType() const;
+  Type GetType() const;
   CPDF_Dest GetDest(CPDF_Document* pDoc) const;
   WideString GetFilePath() const;
   ByteString GetURI(const CPDF_Document* pDoc) const;

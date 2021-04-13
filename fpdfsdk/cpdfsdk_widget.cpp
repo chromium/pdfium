@@ -827,7 +827,7 @@ bool CPDFSDK_Widget::OnAAction(CPDF_AAction::AActionType type,
 #endif  // PDF_ENABLE_XFA
 
   CPDF_Action action = GetAAction(type);
-  if (action.GetType() != CPDF_Action::Unknown) {
+  if (action.GetType() != CPDF_Action::Type::kUnknown) {
     pFormFillEnv->GetActionHandler()->DoAction_Field(action, type, pFormFillEnv,
                                                      GetFormField(), data);
   }

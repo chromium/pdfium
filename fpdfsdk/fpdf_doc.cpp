@@ -161,17 +161,16 @@ FPDF_EXPORT unsigned long FPDF_CALLCONV FPDFAction_GetType(FPDF_ACTION action) {
     return PDFACTION_UNSUPPORTED;
 
   CPDF_Action cAction(CPDFDictionaryFromFPDFAction(action));
-  CPDF_Action::ActionType type = cAction.GetType();
-  switch (type) {
-    case CPDF_Action::GoTo:
+  switch (cAction.GetType()) {
+    case CPDF_Action::Type::kGoTo:
       return PDFACTION_GOTO;
-    case CPDF_Action::GoToR:
+    case CPDF_Action::Type::kGoToR:
       return PDFACTION_REMOTEGOTO;
-    case CPDF_Action::GoToE:
+    case CPDF_Action::Type::kGoToE:
       return PDFACTION_EMBEDDEDGOTO;
-    case CPDF_Action::URI:
+    case CPDF_Action::Type::kURI:
       return PDFACTION_URI;
-    case CPDF_Action::Launch:
+    case CPDF_Action::Type::kLaunch:
       return PDFACTION_LAUNCH;
     default:
       return PDFACTION_UNSUPPORTED;

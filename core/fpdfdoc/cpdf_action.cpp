@@ -29,41 +29,41 @@ CPDF_Action::CPDF_Action(const CPDF_Action& that) = default;
 
 CPDF_Action::~CPDF_Action() = default;
 
-CPDF_Action::ActionType CPDF_Action::GetType() const {
+CPDF_Action::Type CPDF_Action::GetType() const {
   if (!m_pDict)
-    return Unknown;
+    return Type::kUnknown;
 
   // Validate |m_pDict|. Type is optional, but must be valid if present.
   const CPDF_Object* pType = m_pDict->GetObjectFor("Type");
   if (pType) {
     const CPDF_Name* pName = pType->AsName();
     if (!pName || pName->GetString() != "Action")
-      return Unknown;
+      return Type::kUnknown;
   }
 
   ByteString csType = m_pDict->GetStringFor("S");
   if (csType.IsEmpty())
-    return Unknown;
+    return Type::kUnknown;
 
   for (int i = 0; g_sATypes[i]; ++i) {
     if (csType == g_sATypes[i])
-      return static_cast<ActionType>(i);
+      return static_cast<Type>(i);
   }
-  return Unknown;
+  return Type::kUnknown;
 }
 
 CPDF_Dest CPDF_Action::GetDest(CPDF_Document* pDoc) const {
-  ActionType type = GetType();
-  if (type != GoTo && type != GoToR && type != GoToE) {
+  Type type = GetType();
+  if (type != Type::kGoTo && type != Type::kGoToR && type != Type::kGoToE) {
     return CPDF_Dest(nullptr);
   }
   return CPDF_Dest::Create(pDoc, m_pDict->GetDirectObjectFor("D"));
 }
 
 WideString CPDF_Action::GetFilePath() const {
-  ActionType type = GetType();
-  if (type != GoToR && type != GoToE && type != Launch && type != SubmitForm &&
-      type != ImportData) {
+  Type type = GetType();
+  if (type != Type::kGoToR && type != Type::kGoToE && type != Type::kLaunch &&
+      type != Type::kSubmitForm && type != Type::kImportData) {
     return WideString();
   }
 
@@ -71,7 +71,7 @@ WideString CPDF_Action::GetFilePath() const {
   if (pFile)
     return CPDF_FileSpec(pFile).GetFileName();
 
-  if (type != Launch)
+  if (type != Type::kLaunch)
     return WideString();
 
   const CPDF_Dictionary* pWinDict = m_pDict->GetDictFor("Win");
@@ -83,8 +83,7 @@ WideString CPDF_Action::GetFilePath() const {
 }
 
 ByteString CPDF_Action::GetURI(const CPDF_Document* pDoc) const {
-  ActionType type = GetType();
-  if (type != URI)
+  if (GetType() != Type::kURI)
     return ByteString();
 
   ByteString csURI = m_pDict->GetStringFor("URI");

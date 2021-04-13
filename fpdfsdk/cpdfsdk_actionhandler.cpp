@@ -31,7 +31,7 @@ bool CPDFSDK_ActionHandler::DoAction_JavaScript(
     const CPDF_Action& JsAction,
     WideString csJSName,
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
-  if (JsAction.GetType() == CPDF_Action::JavaScript) {
+  if (JsAction.GetType() == CPDF_Action::Type::kJavaScript) {
     WideString swJS = JsAction.GetJavaScript();
     if (!swJS.IsEmpty()) {
       RunDocumentOpenJavaScript(pFormFillEnv, csJSName, swJS);
@@ -50,7 +50,7 @@ bool CPDFSDK_ActionHandler::DoAction_FieldJavaScript(
     CPDFSDK_FieldAction* data) {
   DCHECK(pFormFillEnv);
   if (pFormFillEnv->IsJSPlatformPresent() &&
-      JsAction.GetType() == CPDF_Action::JavaScript) {
+      JsAction.GetType() == CPDF_Action::Type::kJavaScript) {
     WideString swJS = JsAction.GetJavaScript();
     if (!swJS.IsEmpty()) {
       RunFieldJavaScript(pFormFillEnv, pFormField, type, data, swJS);
@@ -71,10 +71,10 @@ bool CPDFSDK_ActionHandler::DoAction_Link(
     return false;
 
   switch (action.GetType()) {
-    case CPDF_Action::GoTo:
+    case CPDF_Action::Type::kGoTo:
       DoAction_GoTo(form_fill_env, action);
       return true;
-    case CPDF_Action::URI:
+    case CPDF_Action::Type::kURI:
       DoAction_URI(form_fill_env, action, modifiers);
       return true;
     default:
@@ -142,7 +142,7 @@ bool CPDFSDK_ActionHandler::ExecuteDocumentOpenAction(
   visited->insert(pDict);
 
   DCHECK(pFormFillEnv);
-  if (action.GetType() == CPDF_Action::JavaScript) {
+  if (action.GetType() == CPDF_Action::Type::kJavaScript) {
     if (pFormFillEnv->IsJSPlatformPresent()) {
       WideString swJS = action.GetJavaScript();
       if (!swJS.IsEmpty())
@@ -174,7 +174,7 @@ bool CPDFSDK_ActionHandler::ExecuteDocumentPageAction(
   visited->insert(pDict);
 
   DCHECK(pFormFillEnv);
-  if (action.GetType() == CPDF_Action::JavaScript) {
+  if (action.GetType() == CPDF_Action::Type::kJavaScript) {
     if (pFormFillEnv->IsJSPlatformPresent()) {
       WideString swJS = action.GetJavaScript();
       if (!swJS.IsEmpty())
@@ -219,7 +219,7 @@ bool CPDFSDK_ActionHandler::ExecuteFieldAction(
   visited->insert(pDict);
 
   DCHECK(pFormFillEnv);
-  if (action.GetType() == CPDF_Action::JavaScript) {
+  if (action.GetType() == CPDF_Action::Type::kJavaScript) {
     if (pFormFillEnv->IsJSPlatformPresent()) {
       WideString swJS = action.GetJavaScript();
       if (!swJS.IsEmpty()) {
@@ -250,40 +250,40 @@ void CPDFSDK_ActionHandler::DoAction_NoJs(
   DCHECK(pFormFillEnv);
 
   switch (action.GetType()) {
-    case CPDF_Action::GoTo:
+    case CPDF_Action::Type::kGoTo:
       DoAction_GoTo(pFormFillEnv, action);
       break;
-    case CPDF_Action::URI:
+    case CPDF_Action::Type::kURI:
       if (CPDF_AAction::IsUserInput(type))
         DoAction_URI(pFormFillEnv, action, modifiers);
       break;
-    case CPDF_Action::Hide:
+    case CPDF_Action::Type::kHide:
       DoAction_Hide(action, pFormFillEnv);
       break;
-    case CPDF_Action::Named:
+    case CPDF_Action::Type::kNamed:
       DoAction_Named(pFormFillEnv, action);
       break;
-    case CPDF_Action::SubmitForm:
+    case CPDF_Action::Type::kSubmitForm:
       if (CPDF_AAction::IsUserInput(type))
         DoAction_SubmitForm(action, pFormFillEnv);
       break;
-    case CPDF_Action::ResetForm:
+    case CPDF_Action::Type::kResetForm:
       DoAction_ResetForm(action, pFormFillEnv);
       break;
-    case CPDF_Action::JavaScript:
+    case CPDF_Action::Type::kJavaScript:
       NOTREACHED();
       break;
-    case CPDF_Action::SetOCGState:
-    case CPDF_Action::Thread:
-    case CPDF_Action::Sound:
-    case CPDF_Action::Movie:
-    case CPDF_Action::Rendition:
-    case CPDF_Action::Trans:
-    case CPDF_Action::GoTo3DView:
-    case CPDF_Action::GoToR:
-    case CPDF_Action::GoToE:
-    case CPDF_Action::Launch:
-    case CPDF_Action::ImportData:
+    case CPDF_Action::Type::kSetOCGState:
+    case CPDF_Action::Type::kThread:
+    case CPDF_Action::Type::kSound:
+    case CPDF_Action::Type::kMovie:
+    case CPDF_Action::Type::kRendition:
+    case CPDF_Action::Type::kTrans:
+    case CPDF_Action::Type::kGoTo3DView:
+    case CPDF_Action::Type::kGoToR:
+    case CPDF_Action::Type::kGoToE:
+    case CPDF_Action::Type::kLaunch:
+    case CPDF_Action::Type::kImportData:
       // Unimplemented
       break;
     default:
