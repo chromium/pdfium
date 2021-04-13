@@ -13,7 +13,10 @@
 #include <utility>
 
 #include "core/fxcrt/fx_coordinates.h"
+
+#if defined(PDF_ENABLE_XFA)
 #include "core/fxcrt/widestring.h"
+#endif
 
 enum class FXDIB_Format : uint16_t {
   kInvalid = 0,
@@ -129,7 +132,10 @@ constexpr FX_ARGB ArgbEncode(uint32_t a, uint32_t r, uint32_t g, uint32_t b) {
 }
 
 FX_ARGB AlphaAndColorRefToArgb(int a, FX_COLORREF colorref);
+
+#if defined(PDF_ENABLE_XFA)
 FX_ARGB StringToFXARGB(WideStringView view);
+#endif
 
 #define FXARGB_A(argb) ((uint8_t)((argb) >> 24))
 #define FXARGB_R(argb) ((uint8_t)((argb) >> 16))

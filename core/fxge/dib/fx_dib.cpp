@@ -80,6 +80,7 @@ FX_ARGB AlphaAndColorRefToArgb(int a, FX_COLORREF colorref) {
                     FXSYS_GetBValue(colorref));
 }
 
+#if defined(PDF_ENABLE_XFA)
 FX_ARGB StringToFXARGB(WideStringView view) {
   static constexpr FX_ARGB kDefaultValue = 0xff000000;
   if (view.IsEmpty())
@@ -130,5 +131,6 @@ FX_ARGB StringToFXARGB(WideStringView view) {
       }
     }
   }
-  return (0xffU << 24) | (r << 16) | (g << 8) | b;
+  return ArgbEncode(0xFF, r, g, b);
 }
+#endif  // defined(PDF_ENABLE_XFA)
