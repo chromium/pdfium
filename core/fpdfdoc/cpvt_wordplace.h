@@ -10,7 +10,7 @@
 #include "core/fxcrt/fx_system.h"
 
 struct CPVT_WordPlace {
-  CPVT_WordPlace() : nSecIndex(-1), nLineIndex(-1), nWordIndex(-1) {}
+  CPVT_WordPlace() = default;
 
   CPVT_WordPlace(int32_t other_nSecIndex,
                  int32_t other_nLineIndex,
@@ -65,9 +65,9 @@ struct CPVT_WordPlace {
     return nLineIndex - wp.nLineIndex;
   }
 
-  int32_t nSecIndex;
-  int32_t nLineIndex;
-  int32_t nWordIndex;
+  int32_t nSecIndex = -1;
+  int32_t nLineIndex = -1;
+  int32_t nWordIndex = -1;
 };
 
 #endif  // CORE_FPDFDOC_CPVT_WORDPLACE_H_

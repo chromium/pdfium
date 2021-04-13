@@ -78,8 +78,9 @@ int32_t CPDF_VariableText::Provider::GetDefaultFontIndex() {
   return 0;
 }
 
-CPDF_VariableText::Iterator::Iterator(CPDF_VariableText* pVT)
-    : m_CurPos(-1, -1, -1), m_pVT(pVT) {}
+CPDF_VariableText::Iterator::Iterator(CPDF_VariableText* pVT) : m_pVT(pVT) {
+  DCHECK(m_pVT);
+}
 
 CPDF_VariableText::Iterator::~Iterator() = default;
 
@@ -88,7 +89,6 @@ void CPDF_VariableText::Iterator::SetAt(int32_t nWordIndex) {
 }
 
 void CPDF_VariableText::Iterator::SetAt(const CPVT_WordPlace& place) {
-  DCHECK(m_pVT);
   m_CurPos = place;
 }
 
