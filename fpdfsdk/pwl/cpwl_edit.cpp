@@ -854,10 +854,6 @@ bool CPWL_Edit::Redo() {
   return CanRedo() && m_pEdit->Redo();
 }
 
-int32_t CPWL_Edit::GetCharSet() const {
-  return m_nCharSet < 0 ? FX_CHARSET_Default : m_nCharSet;
-}
-
 void CPWL_Edit::SetReadyToInput() {
   if (m_bMouseDown) {
     ReleaseCapture();

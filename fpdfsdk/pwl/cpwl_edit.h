@@ -76,7 +76,7 @@ class CPWL_Edit final : public CPWL_Wnd {
   void SetScrollPos(const CFX_PointF& point);
 
   void SetCharSet(uint8_t nCharSet) { m_nCharSet = nCharSet; }
-  int32_t GetCharSet() const;
+  uint8_t GetCharSet() const { return m_nCharSet; }
 
   void SetReadyToInput();
   void SetAlignFormatVerticalCenter();
@@ -130,7 +130,7 @@ class CPWL_Edit final : public CPWL_Wnd {
 
   bool m_bMouseDown = false;
   bool m_bFocus = false;
-  int32_t m_nCharSet = FX_CHARSET_Default;
+  uint8_t m_nCharSet = FX_CHARSET_Default;
   CFX_FloatRect m_rcOldWindow;
   std::unique_ptr<CPWL_EditImpl> const m_pEdit;
   UnownedPtr<CPWL_Caret> m_pEditCaret;
