@@ -13,6 +13,7 @@
 #include "core/fxcrt/css/cfx_css.h"
 #include "core/fxcrt/css/cfx_cssrulecollection.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CFX_CSSComputedStyle;
 class CFX_CSSCustomProperty;

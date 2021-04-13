@@ -13,6 +13,7 @@
 #include "core/fxcodec/gif/cfx_gif.h"
 #include "core/fxcodec/gif/cfx_lzwdecompressor.h"
 #include "core/fxcodec/gif/gif_decoder.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 class CFX_CodecMemory;

@@ -11,6 +11,7 @@
 #include <memory>
 
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_glyphcache.h"
 #include "core/fxge/fx_freetype.h"
 

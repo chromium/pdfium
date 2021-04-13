@@ -10,6 +10,7 @@
 #include <Carbon/Carbon.h>
 
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/dib/fx_dib.h"
 

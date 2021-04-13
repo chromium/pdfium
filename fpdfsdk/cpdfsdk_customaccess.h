@@ -8,6 +8,7 @@
 #define FPDFSDK_CPDFSDK_CUSTOMACCESS_H_
 
 #include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "public/fpdfview.h"
 
 class CPDFSDK_CustomAccess final : public IFX_SeekableReadStream {

@@ -6,6 +6,7 @@
 #define TESTING_INVALID_SEEKABLE_READ_STREAM_H_
 
 #include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/retain_ptr.h"
 
 // A stream used for testing where reads always fail.
 class InvalidSeekableReadStream final : public IFX_SeekableReadStream {

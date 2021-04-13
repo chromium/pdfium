@@ -12,6 +12,7 @@
 #include "core/fpdfapi/page/cpdf_pattern.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CPDF_Document;
 class CPDF_Form;

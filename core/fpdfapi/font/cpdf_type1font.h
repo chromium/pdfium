@@ -10,6 +10,7 @@
 #include "build/build_config.h"
 #include "core/fpdfapi/font/cpdf_simplefont.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_fontmapper.h"
 
 class CPDF_Type1Font final : public CPDF_SimpleFont {

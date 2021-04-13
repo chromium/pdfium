@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "core/fxcodec/progressive_decoder_iface.h"
+#include "core/fxcrt/retain_ptr.h"
 
 #ifndef PDF_ENABLE_XFA_PNG
 #error "PNG must be enabled"

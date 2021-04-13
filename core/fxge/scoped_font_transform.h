@@ -7,6 +7,7 @@
 #ifndef CORE_FXGE_SCOPED_FONT_TRANSFORM_H_
 #define CORE_FXGE_SCOPED_FONT_TRANSFORM_H_
 
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_face.h"
 #include "core/fxge/fx_freetype.h"
 

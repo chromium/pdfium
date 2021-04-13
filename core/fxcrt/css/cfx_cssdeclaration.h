@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/fxcrt/css/cfx_cssdata.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CFX_CSSPropertyHolder;
 class CFX_CSSCustomProperty;
