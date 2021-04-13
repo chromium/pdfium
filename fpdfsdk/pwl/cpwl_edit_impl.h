@@ -421,7 +421,6 @@ class CPWL_EditImpl_Iterator {
   ~CPWL_EditImpl_Iterator();
 
   bool NextWord();
-  bool PrevWord();
   bool GetWord(CPVT_Word& word) const;
   bool GetLine(CPVT_Line& line) const;
   void SetAt(int32_t nWordIndex);

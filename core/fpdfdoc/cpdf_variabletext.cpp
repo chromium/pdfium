@@ -100,13 +100,6 @@ bool CPDF_VariableText::Iterator::NextWord() {
   return true;
 }
 
-bool CPDF_VariableText::Iterator::PrevWord() {
-  if (m_CurPos == m_pVT->GetBeginWordPlace())
-    return false;
-
-  m_CurPos = m_pVT->GetPrevWordPlace(m_CurPos);
-  return true;
-}
 
 bool CPDF_VariableText::Iterator::NextLine() {
   if (!pdfium::IndexInBounds(m_pVT->m_SectionArray, m_CurPos.nSecIndex))

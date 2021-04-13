@@ -63,10 +63,6 @@ bool CPWL_EditImpl_Iterator::NextWord() {
   return m_pVTIterator->NextWord();
 }
 
-bool CPWL_EditImpl_Iterator::PrevWord() {
-  return m_pVTIterator->PrevWord();
-}
-
 bool CPWL_EditImpl_Iterator::GetWord(CPVT_Word& word) const {
   DCHECK(m_pEdit);
 

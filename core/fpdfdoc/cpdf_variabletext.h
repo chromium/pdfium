@@ -35,7 +35,6 @@ class CPDF_VariableText {
     ~Iterator();
 
     bool NextWord();
-    bool PrevWord();
     bool NextLine();
     bool GetWord(CPVT_Word& word) const;
     bool GetLine(CPVT_Line& line) const;
