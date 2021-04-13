@@ -670,7 +670,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndSaveUnderlineAnnotation) {
     ASSERT_TRUE(FPDFAnnot_AppendAttachmentPoints(annot.get(), &quadpoints));
   }
 
-  // Save the document, closing the page and document.
+  // Save the document and close the page.
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   UnloadPage(page);
 
@@ -687,6 +687,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndSaveUnderlineAnnotation) {
 
   ASSERT_TRUE(OpenSavedDocument());
   page = LoadSavedPage(0);
+  ASSERT_TRUE(page);
   VerifySavedRendering(page, 612, 792, kChecksum);
 
   // Check that the saved document has 2 annotations on the first page
@@ -979,7 +980,7 @@ TEST_F(FPDFAnnotEmbedderTest, RemoveAnnotation) {
   EXPECT_EQ(2, FPDFPage_GetAnnotCount(page));
   EXPECT_FALSE(FPDFPage_GetAnnot(page, 2));
 
-  // Save the document, closing the page and document.
+  // Save the document and close the page.
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   UnloadPageNoEvents(page);
 
@@ -1143,13 +1144,14 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
     EXPECT_EQ(rect.top, new_rect.top);
   }
 
-  // Save the document, closing the page and document.
+  // Save the document and close the page.
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   UnloadPage(page);
 
   // Open the saved document.
   ASSERT_TRUE(OpenSavedDocument());
   page = LoadSavedPage(0);
+  ASSERT_TRUE(page);
   VerifySavedRendering(page, 595, 842, kMd5NewAnnot);
 
   // Check that the document has a correct count of annotations and objects.
@@ -1316,7 +1318,7 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_AddAndModifyImage) {
     EXPECT_TRUE(FPDFAnnot_UpdateObject(annot.get(), image_object));
   }
 
-  // Save the document, closing the page and document.
+  // Save the document and close the page.
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   UnloadPage(page);
   FPDFBitmap_Destroy(image_bitmap);
@@ -1469,7 +1471,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
                                          text.get()));
   }
 
-  // Save the document, closing the page and document.
+  // Save the document and close the page.
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   UnloadPage(page);
 
@@ -1492,6 +1494,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
   // Open the saved annotation.
   ASSERT_TRUE(OpenSavedDocument());
   page = LoadSavedPage(0);
+  ASSERT_TRUE(page);
   VerifySavedRendering(page, 595, 842, kMd5);
   {
     ScopedFPDFAnnotation new_annot(FPDFPage_GetAnnot(page, 0));
@@ -1651,6 +1654,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetAP) {
 
   ASSERT_TRUE(OpenSavedDocument());
   page = LoadSavedPage(0);
+  ASSERT_TRUE(page);
   {
     ScopedFPDFAnnotation new_annot(FPDFPage_GetAnnot(page, 0));
 

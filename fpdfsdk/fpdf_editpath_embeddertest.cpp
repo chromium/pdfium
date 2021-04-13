@@ -34,7 +34,7 @@ TEST_F(FPDFEditPathEmbedderTest, VerifyCorrectColoursReturned) {
 
   ASSERT_TRUE(OpenSavedDocument());
   page = LoadSavedPage(0);
-  DCHECK(page);
+  ASSERT_TRUE(page);
 
   for (size_t i = 0; i < kObjectCount; ++i) {
     FPDF_PAGEOBJECT path = FPDFPage_GetObject(page, i);

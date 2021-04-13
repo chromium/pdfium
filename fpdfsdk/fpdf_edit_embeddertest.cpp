@@ -709,6 +709,7 @@ TEST_F(FPDFEditEmbedderTest, SetText) {
   // Re-open the file and check the changes were kept in the saved .pdf.
   ASSERT_TRUE(OpenSavedDocument());
   FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
   EXPECT_EQ(2, FPDFPage_CountObjects(saved_page));
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(saved_page);
@@ -1095,6 +1096,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveMarkedObjectsPrime) {
   // Re-open the file and check the prime marks are not there anymore.
   ASSERT_TRUE(OpenSavedDocument());
   FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
   EXPECT_EQ(11, FPDFPage_CountObjects(saved_page));
 
   {
@@ -1152,6 +1154,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveMarks) {
   // Re-open the file and check the prime marks are not there anymore.
   ASSERT_TRUE(OpenSavedDocument());
   FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
 
   CheckMarkCounts(saved_page, 1, kExpectedObjectCount, 0, 4, 9, 1);
 
@@ -1208,6 +1211,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveMarkParam) {
   // Re-open the file and check the "Factor" parameters are still gone.
   ASSERT_TRUE(OpenSavedDocument());
   FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
 
   size_t square_count = 0;
   for (int i = 0; i < kExpectedObjectCount; ++i) {
@@ -1267,6 +1271,7 @@ TEST_F(FPDFEditEmbedderTest, MaintainMarkedObjects) {
 
   ASSERT_TRUE(OpenSavedDocument());
   FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
 
   CheckMarkCounts(saved_page, 2, 18, 8, 3, 9, 1);
 
@@ -1298,6 +1303,7 @@ TEST_F(FPDFEditEmbedderTest, MaintainIndirectMarkedObjects) {
 
   ASSERT_TRUE(OpenSavedDocument());
   FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
 
   CheckMarkCounts(saved_page, 2, 18, 8, 3, 9, 1);
 
@@ -1329,6 +1335,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveExistingPageObject) {
   // Re-open the file and check the page object count is still 1.
   ASSERT_TRUE(OpenSavedDocument());
   FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
   EXPECT_EQ(1, FPDFPage_CountObjects(saved_page));
   CloseSavedPage(saved_page);
   CloseSavedDocument();
@@ -1378,6 +1385,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveExistingPageObjectSplitStreamsNotLonely) {
   // Re-open the file and check the page object count is still 2.
   ASSERT_TRUE(OpenSavedDocument());
   FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
 
   EXPECT_EQ(2, FPDFPage_CountObjects(saved_page));
   {
@@ -1418,6 +1426,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveExistingPageObjectSplitStreamsLonely) {
   // Re-open the file and check the page object count is still 2.
   ASSERT_TRUE(OpenSavedDocument());
   FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
 
   EXPECT_EQ(2, FPDFPage_CountObjects(saved_page));
   {
@@ -1537,6 +1546,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveAllFromStream) {
   // content stream 1 was removed.
   ASSERT_TRUE(OpenSavedDocument());
   FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
 
   // Content stream 0: page objects 0-14.
   // Content stream 1: page object 15.
@@ -1603,6 +1613,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveAllFromSingleStream) {
   // Re-open the file and check the page object count is still 0.
   ASSERT_TRUE(OpenSavedDocument());
   FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
 
   EXPECT_EQ(0, FPDFPage_CountObjects(saved_page));
   {
@@ -1660,6 +1671,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveFirstFromSingleStream) {
   // Re-open the file and check the page object count is still 0.
   ASSERT_TRUE(OpenSavedDocument());
   FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
 
   ASSERT_EQ(1, FPDFPage_CountObjects(saved_page));
   page_object = FPDFPage_GetObject(saved_page, 0);
@@ -1722,6 +1734,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveLastFromSingleStream) {
   // Re-open the file and check the page object count is still 0.
   ASSERT_TRUE(OpenSavedDocument());
   FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
 
   ASSERT_EQ(1, FPDFPage_CountObjects(saved_page));
   page_object = FPDFPage_GetObject(saved_page, 0);
@@ -1777,6 +1790,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveAllFromMultipleStreams) {
   // Re-open the file and check the page object count is still 0.
   ASSERT_TRUE(OpenSavedDocument());
   FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
 
   EXPECT_EQ(0, FPDFPage_CountObjects(saved_page));
   {
@@ -1812,6 +1826,7 @@ TEST_F(FPDFEditEmbedderTest, InsertPageObjectAndSave) {
   // Re-open the file and check the page object count is still 3.
   ASSERT_TRUE(OpenSavedDocument());
   FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
   EXPECT_EQ(3, FPDFPage_CountObjects(saved_page));
   CloseSavedPage(saved_page);
   CloseSavedDocument();
@@ -1845,6 +1860,7 @@ TEST_F(FPDFEditEmbedderTest, InsertPageObjectEditAndSave) {
   // Re-open the file and check the page object count is still 3.
   ASSERT_TRUE(OpenSavedDocument());
   FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
   EXPECT_EQ(3, FPDFPage_CountObjects(saved_page));
   CloseSavedPage(saved_page);
   CloseSavedDocument();
@@ -1891,6 +1907,7 @@ TEST_F(FPDFEditEmbedderTest, InsertAndRemoveLargeFile) {
   // Re-open the file and check the rectangle added is still there.
   ASSERT_TRUE(OpenSavedDocument());
   FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
   EXPECT_EQ(kOriginalObjectCount + 1, FPDFPage_CountObjects(saved_page));
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(saved_page);
@@ -1919,6 +1936,7 @@ TEST_F(FPDFEditEmbedderTest, InsertAndRemoveLargeFile) {
   // rest is intact.
   ASSERT_TRUE(OpenSavedDocument());
   saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
   EXPECT_EQ(kOriginalObjectCount, FPDFPage_CountObjects(saved_page));
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(saved_page);
@@ -2072,6 +2090,7 @@ TEST_F(FPDFEditEmbedderTest, EditOverExistingContent) {
 
   ASSERT_TRUE(OpenSavedDocument());
   FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
   VerifySavedRendering(saved_page, 612, 792, kOriginalChecksum);
 
   ClearString();
@@ -3003,6 +3022,7 @@ TEST_F(FPDFEditEmbedderTest, AddMark) {
   // Re-open the file and check the new mark is present.
   ASSERT_TRUE(OpenSavedDocument());
   FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
 
   CheckMarkCounts(saved_page, 1, 19, 8, 4, 9, 2);
 
@@ -3045,6 +3065,7 @@ TEST_F(FPDFEditEmbedderTest, AddMarkCompressedStream) {
   // Re-open the file and check the new mark is present.
   ASSERT_TRUE(OpenSavedDocument());
   FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
 
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(saved_page);
@@ -3107,6 +3128,7 @@ TEST_F(FPDFEditEmbedderTest, SetMarkParam) {
   // Re-open the file and cerify "Position" still maps to "End".
   ASSERT_TRUE(OpenSavedDocument());
   FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
 
   CheckMarkCounts(saved_page, 1, kExpectedObjectCount, 8, 4, 9, 1);
   page_object = FPDFPage_GetObject(saved_page, 18);
@@ -3212,6 +3234,7 @@ TEST_F(FPDFEditEmbedderTest, AddMarkedText) {
   // Re-open the file and check the changes were kept in the saved .pdf.
   ASSERT_TRUE(OpenSavedDocument());
   FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
   EXPECT_EQ(1, FPDFPage_CountObjects(saved_page));
 
   text_object = FPDFPage_GetObject(saved_page, 0);

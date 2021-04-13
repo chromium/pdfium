@@ -184,6 +184,7 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, PasswordAfterGenerateSave) {
   for (const auto& test : tests) {
     ASSERT_TRUE(OpenSavedDocumentWithPassword(test.password));
     FPDF_PAGE page = LoadSavedPage(0);
+    ASSERT_TRUE(page);
     VerifySavedRendering(page, 612, 792, kChecksum);
     EXPECT_EQ(test.permissions, FPDF_GetDocPermissions(saved_document_));
 
