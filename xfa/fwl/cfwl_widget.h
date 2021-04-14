@@ -54,7 +54,7 @@ class CFWL_Widget : public cppgc::GarbageCollected<CFWL_Widget>,
   CPPGC_USING_PRE_FINALIZER(CFWL_Widget, PreFinalize);
 
  public:
-  class AdapterIface {
+  class AdapterIface : public cppgc::GarbageCollectedMixin {
    public:
     virtual ~AdapterIface() = default;
     virtual CFX_Matrix GetRotateMatrix() = 0;
@@ -184,7 +184,7 @@ class CFWL_Widget : public cppgc::GarbageCollected<CFWL_Widget>,
 
   int32_t m_iLock = 0;
   uint64_t m_nEventKey = 0;
-  AdapterIface* m_pAdapterIface = nullptr;
+  cppgc::Member<AdapterIface> m_pAdapterIface;
   cppgc::Member<CFWL_App> const m_pFWLApp;
   cppgc::Member<CFWL_WidgetMgr> const m_pWidgetMgr;
   cppgc::Member<IFWL_WidgetDelegate> m_pDelegate;

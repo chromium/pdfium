@@ -72,7 +72,7 @@ class CXFA_FFWidget : public cppgc::GarbageCollected<CXFA_FFWidget>,
   ~CXFA_FFWidget() override;
 
   virtual void PreFinalize();
-  virtual void Trace(cppgc::Visitor* visitor) const;
+  void Trace(cppgc::Visitor* visitor) const override;
 
   // CFWL_Widget::AdapterIface:
   CFX_Matrix GetRotateMatrix() override;

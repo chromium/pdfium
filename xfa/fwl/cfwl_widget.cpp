@@ -53,6 +53,7 @@ void CFWL_Widget::PreFinalize() {
 }
 
 void CFWL_Widget::Trace(cppgc::Visitor* visitor) const {
+  visitor->Trace(m_pAdapterIface);
   visitor->Trace(m_pFWLApp);
   visitor->Trace(m_pWidgetMgr);
   visitor->Trace(m_pDelegate);
