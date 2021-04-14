@@ -90,19 +90,19 @@ class CFWL_MonthCalendar final : public CFWL_Widget {
                      const Properties& properties,
                      CFWL_Widget* pOuter);
 
-  void DrawBackground(CFGAS_GEGraphics* pGraphics, const CFX_Matrix* pMatrix);
-  void DrawHeadBK(CFGAS_GEGraphics* pGraphics, const CFX_Matrix* pMatrix);
-  void DrawLButton(CFGAS_GEGraphics* pGraphics, const CFX_Matrix* pMatrix);
-  void DrawRButton(CFGAS_GEGraphics* pGraphics, const CFX_Matrix* pMatrix);
-  void DrawCaption(CFGAS_GEGraphics* pGraphics, const CFX_Matrix* pMatrix);
-  void DrawSeparator(CFGAS_GEGraphics* pGraphics, const CFX_Matrix* pMatrix);
-  void DrawDatesInBK(CFGAS_GEGraphics* pGraphics, const CFX_Matrix* pMatrix);
-  void DrawWeek(CFGAS_GEGraphics* pGraphics, const CFX_Matrix* pMatrix);
-  void DrawToday(CFGAS_GEGraphics* pGraphics, const CFX_Matrix* pMatrix);
-  void DrawDatesIn(CFGAS_GEGraphics* pGraphics, const CFX_Matrix* pMatrix);
-  void DrawDatesOut(CFGAS_GEGraphics* pGraphics, const CFX_Matrix* pMatrix);
+  void DrawBackground(CFGAS_GEGraphics* pGraphics, const CFX_Matrix& mtMatrix);
+  void DrawHeadBK(CFGAS_GEGraphics* pGraphics, const CFX_Matrix& mtMatrix);
+  void DrawLButton(CFGAS_GEGraphics* pGraphics, const CFX_Matrix& mtMatrix);
+  void DrawRButton(CFGAS_GEGraphics* pGraphics, const CFX_Matrix& mtMatrix);
+  void DrawCaption(CFGAS_GEGraphics* pGraphics, const CFX_Matrix& mtMatrix);
+  void DrawSeparator(CFGAS_GEGraphics* pGraphics, const CFX_Matrix& mtMatrix);
+  void DrawDatesInBK(CFGAS_GEGraphics* pGraphics, const CFX_Matrix& mtMatrix);
+  void DrawWeek(CFGAS_GEGraphics* pGraphics, const CFX_Matrix& mtMatrix);
+  void DrawToday(CFGAS_GEGraphics* pGraphics, const CFX_Matrix& mtMatrix);
+  void DrawDatesIn(CFGAS_GEGraphics* pGraphics, const CFX_Matrix& mtMatrix);
+  void DrawDatesOut(CFGAS_GEGraphics* pGraphics, const CFX_Matrix& mtMatrix);
   void DrawDatesInCircle(CFGAS_GEGraphics* pGraphics,
-                         const CFX_Matrix* pMatrix);
+                         const CFX_Matrix& mtMatrix);
   CFX_SizeF CalcSize();
   void Layout();
   void CalcHeadSize();

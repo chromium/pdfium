@@ -80,7 +80,7 @@ class CFWL_DateTimePicker final : public CFWL_Widget {
   explicit CFWL_DateTimePicker(CFWL_App* pApp);
 
   void DrawDropDownButton(CFGAS_GEGraphics* pGraphics,
-                          const CFX_Matrix* pMatrix);
+                          const CFX_Matrix& mtMatrix);
   WideString FormatDateString(int32_t iYear, int32_t iMonth, int32_t iDay);
   void ResetEditAlignment();
   void GetPopupPos(float fMinHeight,

@@ -36,7 +36,7 @@ class CFWL_Caret final : public CFWL_Widget, public CFX_Timer::CallbackIface {
  private:
   CFWL_Caret(CFWL_App* app, const Properties& properties, CFWL_Widget* pOuter);
 
-  void DrawCaretBK(CFGAS_GEGraphics* pGraphics, const CFX_Matrix* pMatrix);
+  void DrawCaretBK(CFGAS_GEGraphics* pGraphics, const CFX_Matrix& mtMatrix);
 
   std::unique_ptr<CFX_Timer> m_pTimer;
 };

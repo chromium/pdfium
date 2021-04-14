@@ -64,11 +64,11 @@ class CFWL_ScrollBar final : public CFWL_Widget,
   }
   void DrawTrack(CFGAS_GEGraphics* pGraphics,
                  bool bLower,
-                 const CFX_Matrix* pMatrix);
+                 const CFX_Matrix& mtMatrix);
   void DrawArrowBtn(CFGAS_GEGraphics* pGraphics,
                     bool bMinBtn,
-                    const CFX_Matrix* pMatrix);
-  void DrawThumb(CFGAS_GEGraphics* pGraphics, const CFX_Matrix* pMatrix);
+                    const CFX_Matrix& mtMatrix);
+  void DrawThumb(CFGAS_GEGraphics* pGraphics, const CFX_Matrix& mtMatrix);
   void Layout();
   void CalcButtonLen();
   CFX_RectF CalcMinButtonRect();

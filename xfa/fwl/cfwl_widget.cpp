@@ -281,13 +281,12 @@ void CFWL_Widget::RepaintRect(const CFX_RectF& pRect) {
 
 void CFWL_Widget::DrawBackground(CFGAS_GEGraphics* pGraphics,
                                  CFWL_Part iPartBk,
-                                 const CFX_Matrix* pMatrix) {
+                                 const CFX_Matrix& mtMatrix) {
   CFWL_ThemeBackground param;
   param.m_pWidget = this;
   param.m_iPart = iPartBk;
   param.m_pGraphics = pGraphics;
-  if (pMatrix)
-    param.m_matrix = *pMatrix;
+  param.m_matrix = mtMatrix;
   param.m_PartRect = GetRelativeRect();
   GetThemeProvider()->DrawBackground(param);
 }

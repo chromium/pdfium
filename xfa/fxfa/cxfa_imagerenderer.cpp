@@ -14,8 +14,8 @@
 
 CXFA_ImageRenderer::CXFA_ImageRenderer(CFX_RenderDevice* pDevice,
                                        const RetainPtr<CFX_DIBBase>& pDIBBase,
-                                       const CFX_Matrix* pImage2Device)
-    : m_pDevice(pDevice), m_ImageMatrix(*pImage2Device), m_pDIBBase(pDIBBase) {}
+                                       const CFX_Matrix& pImage2Device)
+    : m_pDevice(pDevice), m_ImageMatrix(pImage2Device), m_pDIBBase(pDIBBase) {}
 
 CXFA_ImageRenderer::~CXFA_ImageRenderer() = default;
 
@@ -148,8 +148,7 @@ void CXFA_ImageRenderer::CompositeDIBitmap(
   if (!pCloneConvert)
     return;
 
-  CXFA_ImageRenderer imageRender(m_pDevice.Get(), pCloneConvert,
-                                 &m_ImageMatrix);
+  CXFA_ImageRenderer imageRender(m_pDevice.Get(), pCloneConvert, m_ImageMatrix);
   if (!imageRender.Start())
     return;
 

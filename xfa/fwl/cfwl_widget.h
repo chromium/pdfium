@@ -178,7 +178,7 @@ class CFWL_Widget : public cppgc::GarbageCollected<CFWL_Widget>,
   CFX_SizeF GetOffsetFromParent(CFWL_Widget* pParent);
   void DrawBackground(CFGAS_GEGraphics* pGraphics,
                       CFWL_Part iPartBk,
-                      const CFX_Matrix* pMatrix);
+                      const CFX_Matrix& mtMatrix);
   void NotifyDriver();
   bool IsParent(CFWL_Widget* pParent);
 

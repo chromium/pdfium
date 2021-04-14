@@ -93,7 +93,7 @@ class CFWL_WidgetMgr final : public cppgc::GarbageCollected<CFWL_WidgetMgr> {
   void DrawChildren(CFWL_Widget* pParent,
                     const CFX_RectF& rtClip,
                     CFGAS_GEGraphics* pGraphics,
-                    const CFX_Matrix* pMatrix);
+                    const CFX_Matrix& mtMatrix);
 
   cppgc::Member<AdapterIface> const m_pAdapter;
   cppgc::Member<CFWL_App> const m_pApp;

@@ -148,7 +148,7 @@ void CFWL_Edit::DrawWidget(CFGAS_GEGraphics* pGraphics,
   if (m_ClientRect.IsEmpty())
     return;
 
-  DrawContent(pGraphics, &matrix);
+  DrawContent(pGraphics, matrix);
   if (HasBorder())
     DrawBorder(pGraphics, CFWL_Part::Border, matrix);
 }
@@ -323,7 +323,7 @@ void CFWL_Edit::SetScrollOffset(float fScrollOffset) {
 }
 
 void CFWL_Edit::DrawContent(CFGAS_GEGraphics* pGraphics,
-                            const CFX_Matrix* pMatrix) {
+                            const CFX_Matrix& mtMatrix) {
   pGraphics->SaveGraphState();
   if (m_Properties.m_dwStyleExes & FWL_STYLEEXT_EDT_CombText)
     pGraphics->SaveGraphState();
@@ -333,10 +333,8 @@ void CFWL_Edit::DrawContent(CFGAS_GEGraphics* pGraphics,
   float fOffSetY = m_EngineRect.top - m_fScrollOffsetY + m_fVAlignOffset;
 
   CFX_Matrix mt(1, 0, 0, 1, fOffSetX, fOffSetY);
-  if (pMatrix) {
-    rtClip = pMatrix->TransformRect(rtClip);
-    mt.Concat(*pMatrix);
-  }
+  rtClip = mtMatrix.TransformRect(rtClip);
+  mt.Concat(mtMatrix);
 
   bool bShowSel = !!(m_Properties.m_dwStates & FWL_WGTSTATE_Focused);
   if (bShowSel && m_pEditEngine->HasSelection()) {
@@ -356,7 +354,7 @@ void CFWL_Edit::DrawContent(CFGAS_GEGraphics* pGraphics,
 
     CFWL_ThemeBackground param;
     param.m_pGraphics = pGraphics;
-    param.m_matrix = *pMatrix;
+    param.m_matrix = mtMatrix;
     param.m_pWidget = this;
     param.m_iPart = CFWL_Part::Background;
     param.m_pPath = &path;
@@ -381,7 +379,7 @@ void CFWL_Edit::DrawContent(CFGAS_GEGraphics* pGraphics,
 
     CFWL_ThemeBackground param;
     param.m_pGraphics = pGraphics;
-    param.m_matrix = *pMatrix;
+    param.m_matrix = mtMatrix;
     param.m_pWidget = this;
     param.m_iPart = CFWL_Part::CombTextLine;
     param.m_pPath = &path;
