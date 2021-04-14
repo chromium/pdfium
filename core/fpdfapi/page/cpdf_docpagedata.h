@@ -100,7 +100,6 @@ class CPDF_DocPageData : public CPDF_Document::PageDataIface,
       int charset,
       ByteString basefont,
       std::function<void(wchar_t, wchar_t, CPDF_Array*)> Insert);
-  void Clear(bool bForceRelease);
 
   bool m_bForceClear = false;
 
