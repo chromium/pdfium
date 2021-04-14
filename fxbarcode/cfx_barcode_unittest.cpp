@@ -46,9 +46,7 @@ class BarcodeTest : public testing::Test {
     barcode_->SetWidth(418);
   }
 
-  bool RenderDevice() {
-    return barcode_->RenderDevice(device_.get(), &matrix_);
-  }
+  bool RenderDevice() { return barcode_->RenderDevice(device_.get(), matrix_); }
 
   std::string BitmapChecksum() {
     return GenerateMD5Base16(bitmap_->GetBuffer(),

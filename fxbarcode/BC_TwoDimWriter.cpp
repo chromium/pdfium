@@ -85,23 +85,23 @@ bool CBC_TwoDimWriter::RenderResult(pdfium::span<const uint8_t> code,
 }
 
 void CBC_TwoDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
-                                          const CFX_Matrix* matrix) {
+                                          const CFX_Matrix& matrix) {
   DCHECK(m_output);
 
   CFX_GraphStateData stateData;
   CFX_PathData path;
   path.AppendRect(0, 0, m_Width, m_Height);
-  device->DrawPath(&path, matrix, &stateData, kBackgroundColor,
+  device->DrawPath(&path, &matrix, &stateData, kBackgroundColor,
                    kBackgroundColor, CFX_FillRenderOptions::EvenOddOptions());
   int32_t leftPos = m_leftPadding;
   int32_t topPos = m_topPadding;
 
-  CFX_Matrix matri = *matrix;
+  CFX_Matrix matri = matrix;
   if (m_Width < m_outputWidth && m_Height < m_outputHeight) {
     CFX_Matrix matriScale(static_cast<float>(m_Width) / m_outputWidth, 0.0, 0.0,
                           static_cast<float>(m_Height) / m_outputHeight, 0.0,
                           0.0);
-    matriScale.Concat(*matrix);
+    matriScale.Concat(matrix);
     matri = matriScale;
   }
 

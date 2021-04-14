@@ -49,7 +49,7 @@ class CBC_OneDimWriter : public CBC_Writer {
                   int32_t& outWidth,
                   int32_t& outHeight);
   bool RenderDeviceResult(CFX_RenderDevice* device,
-                          const CFX_Matrix* matrix,
+                          const CFX_Matrix& matrix,
                           WideStringView contents);
   bool SetFont(CFX_Font* cFont);
 
@@ -63,11 +63,11 @@ class CBC_OneDimWriter : public CBC_Writer {
                               int32_t& outLength) = 0;
   virtual bool ShowChars(WideStringView contents,
                          CFX_RenderDevice* device,
-                         const CFX_Matrix* matrix,
+                         const CFX_Matrix& matrix,
                          int32_t barWidth,
                          int32_t multiple);
   void ShowDeviceChars(CFX_RenderDevice* device,
-                       const CFX_Matrix* matrix,
+                       const CFX_Matrix& matrix,
                        const ByteString str,
                        float geWidth,
                        TextCharPos* pCharPos,

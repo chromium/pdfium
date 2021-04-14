@@ -45,7 +45,8 @@ void CFWL_Barcode::DrawWidget(CFGAS_GEGraphics* pGraphics,
     mt.f = GetRTClient().top;
     mt.Concat(matrix);
 
-    m_pBarcodeEngine->RenderDevice(pGraphics->GetRenderDevice(), &matrix);
+    // TODO(tsepez): Curious as to why |mt| is unused?
+    m_pBarcodeEngine->RenderDevice(pGraphics->GetRenderDevice(), matrix);
     return;
   }
   CFWL_Edit::DrawWidget(pGraphics, matrix);

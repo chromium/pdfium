@@ -23,7 +23,7 @@ class CBC_Code39 final : public CBC_OneCode {
   BC_TYPE GetType() override;
   bool Encode(WideStringView contents) override;
   bool RenderDevice(CFX_RenderDevice* device,
-                    const CFX_Matrix* matrix) override;
+                    const CFX_Matrix& matrix) override;
 
  private:
   CBC_OnedCode39Writer* GetOnedCode39Writer();

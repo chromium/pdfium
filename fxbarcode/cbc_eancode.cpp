@@ -38,7 +38,7 @@ bool CBC_EANCode::Encode(WideStringView contents) {
 }
 
 bool CBC_EANCode::RenderDevice(CFX_RenderDevice* device,
-                               const CFX_Matrix* matrix) {
+                               const CFX_Matrix& matrix) {
   return GetOneDimEANWriter()->RenderDeviceResult(
       device, matrix, m_renderContents.AsStringView());
 }

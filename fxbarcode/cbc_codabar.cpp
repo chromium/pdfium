@@ -48,7 +48,7 @@ bool CBC_Codabar::Encode(WideStringView contents) {
 }
 
 bool CBC_Codabar::RenderDevice(CFX_RenderDevice* device,
-                               const CFX_Matrix* matrix) {
+                               const CFX_Matrix& matrix) {
   auto* pWriter = GetOnedCodaBarWriter();
   WideString renderCon =
       pWriter->encodedContents(m_renderContents.AsStringView());

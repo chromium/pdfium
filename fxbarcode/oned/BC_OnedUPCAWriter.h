@@ -37,7 +37,7 @@ class CBC_OnedUPCAWriter final : public CBC_OneDimEANWriter {
  private:
   bool ShowChars(WideStringView contents,
                  CFX_RenderDevice* device,
-                 const CFX_Matrix* matrix,
+                 const CFX_Matrix& matrix,
                  int32_t barWidth,
                  int32_t multiple) override;
 

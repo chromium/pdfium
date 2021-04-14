@@ -41,7 +41,7 @@ bool CBC_QRCode::Encode(WideStringView contents) {
 }
 
 bool CBC_QRCode::RenderDevice(CFX_RenderDevice* device,
-                              const CFX_Matrix* matrix) {
+                              const CFX_Matrix& matrix) {
   GetQRCodeWriter()->RenderDeviceResult(device, matrix);
   return true;
 }

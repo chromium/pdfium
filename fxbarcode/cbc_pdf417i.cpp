@@ -53,7 +53,7 @@ bool CBC_PDF417I::Encode(WideStringView contents) {
 }
 
 bool CBC_PDF417I::RenderDevice(CFX_RenderDevice* device,
-                               const CFX_Matrix* matrix) {
+                               const CFX_Matrix& matrix) {
   GetPDF417Writer()->RenderDeviceResult(device, matrix);
   return true;
 }

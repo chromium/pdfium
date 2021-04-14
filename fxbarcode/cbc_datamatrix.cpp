@@ -42,7 +42,7 @@ bool CBC_DataMatrix::Encode(WideStringView contents) {
 }
 
 bool CBC_DataMatrix::RenderDevice(CFX_RenderDevice* device,
-                                  const CFX_Matrix* matrix) {
+                                  const CFX_Matrix& matrix) {
   GetDataMatrixWriter()->RenderDeviceResult(device, matrix);
   return true;
 }

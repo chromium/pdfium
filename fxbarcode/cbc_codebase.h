@@ -26,7 +26,7 @@ class CBC_CodeBase {
   virtual BC_TYPE GetType() = 0;
   virtual bool Encode(WideStringView contents) = 0;
   virtual bool RenderDevice(CFX_RenderDevice* device,
-                            const CFX_Matrix* matrix) = 0;
+                            const CFX_Matrix& matrix) = 0;
 
   bool SetTextLocation(BC_TEXT_LOC location);
   bool SetWideNarrowRatio(int8_t ratio);
