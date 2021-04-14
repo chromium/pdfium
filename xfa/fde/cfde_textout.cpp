@@ -515,7 +515,7 @@ size_t CFDE_TextOut::GetDisplayPos(const Piece* pPiece) {
   tr.dwCharStyles = pPiece->char_styles;
   tr.pRect = &pPiece->bounds;
 
-  return m_pTxtBreak->GetDisplayPos(&tr, m_CharPos.data());
+  return m_pTxtBreak->GetDisplayPos(tr, m_CharPos.data());
 }
 
 CFDE_TextOut::Line::Line() = default;

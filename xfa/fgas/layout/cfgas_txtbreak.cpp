@@ -659,20 +659,20 @@ struct FX_FORMCHAR {
   int32_t iWidth;
 };
 
-size_t CFGAS_TxtBreak::GetDisplayPos(const Run* pTxtRun,
+size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
                                      TextCharPos* pCharPos) const {
-  if (!pTxtRun || pTxtRun->iLength < 1)
+  if (run.iLength < 1)
     return 0;
 
-  Engine* pEngine = pTxtRun->pEdtEngine;
-  const wchar_t* pStr = pTxtRun->wsStr.c_str();
-  int32_t* pWidths = pTxtRun->pWidths;
-  int32_t iLength = pTxtRun->iLength - 1;
-  RetainPtr<CFGAS_GEFont> pFont = pTxtRun->pFont;
-  uint32_t dwStyles = pTxtRun->dwStyles;
-  CFX_RectF rtText(*pTxtRun->pRect);
-  bool bRTLPiece = (pTxtRun->dwCharStyles & FX_TXTCHARSTYLE_OddBidiLevel) != 0;
-  float fFontSize = pTxtRun->fFontSize;
+  Engine* pEngine = run.pEdtEngine;
+  const wchar_t* pStr = run.wsStr.c_str();
+  int32_t* pWidths = run.pWidths;
+  int32_t iLength = run.iLength - 1;
+  RetainPtr<CFGAS_GEFont> pFont = run.pFont;
+  uint32_t dwStyles = run.dwStyles;
+  CFX_RectF rtText(*run.pRect);
+  bool bRTLPiece = (run.dwCharStyles & FX_TXTCHARSTYLE_OddBidiLevel) != 0;
+  float fFontSize = run.fFontSize;
   int32_t iFontSize = FXSYS_roundf(fFontSize * 20.0f);
   int32_t iAscent = pFont->GetAscent();
   int32_t iDescent = pFont->GetDescent();
@@ -682,9 +682,9 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run* pTxtRun,
   float fX = rtText.left;
   float fY;
   float fCharWidth;
-  int32_t iHorScale = pTxtRun->iHorizontalScale;
-  int32_t iVerScale = pTxtRun->iVerticalScale;
-  bool bSkipSpace = pTxtRun->bSkipSpace;
+  int32_t iHorScale = run.iHorizontalScale;
+  int32_t iVerScale = run.iVerticalScale;
+  bool bSkipSpace = run.bSkipSpace;
   FX_FORMCHAR formChars[3];
   float fYBase;
 
@@ -703,7 +703,7 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run* pTxtRun,
   bool bShadda = false;
   bool bLam = false;
   for (int32_t i = 0; i <= iLength; i++) {
-    int32_t iAbsolute = i + pTxtRun->iStart;
+    int32_t iAbsolute = i + run.iStart;
     int32_t iWidth;
     wchar_t wch;
     if (pEngine) {
@@ -726,7 +726,7 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run* pTxtRun,
         if (pEngine) {
           iNext = i + 1;
           while (iNext <= iLength) {
-            int32_t iNextAbsolute = iNext + pTxtRun->iStart;
+            int32_t iNextAbsolute = iNext + run.iStart;
             wNext = pEngine->GetChar(iNextAbsolute);
             if (FX_GetCharType(wNext) != FX_CHARTYPE::kCombination)
               break;
@@ -764,7 +764,7 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run* pTxtRun,
           if (pEngine) {
             iNext = i + 1;
             if (iNext <= iLength) {
-              int32_t iNextAbsolute = iNext + pTxtRun->iStart;
+              int32_t iNextAbsolute = iNext + run.iStart;
               wNext = pEngine->GetChar(iNextAbsolute);
             }
           } else {
@@ -910,47 +910,33 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run* pTxtRun,
   return szCount;
 }
 
-std::vector<CFX_RectF> CFGAS_TxtBreak::GetCharRects(const Run* pTxtRun,
-                                                    bool bCharBBox) const {
-  if (!pTxtRun || pTxtRun->iLength < 1)
+std::vector<CFX_RectF> CFGAS_TxtBreak::GetCharRects(const Run& run) const {
+  if (run.iLength < 1)
     return std::vector<CFX_RectF>();
 
-  Engine* pEngine = pTxtRun->pEdtEngine;
-  const wchar_t* pStr = pTxtRun->wsStr.c_str();
-  int32_t* pWidths = pTxtRun->pWidths;
-  int32_t iLength = pTxtRun->iLength;
-  CFX_RectF rect(*pTxtRun->pRect);
-  float fFontSize = pTxtRun->fFontSize;
-  float fScale = fFontSize / 1000.0f;
-  RetainPtr<CFGAS_GEFont> pFont = pTxtRun->pFont;
-  if (!pFont)
-    bCharBBox = false;
-
-  FX_RECT bbox;
-  if (bCharBBox)
-    bCharBBox = pFont->GetBBox(&bbox);
-
-  float fLeft = std::max(0.0f, bbox.left * fScale);
-  float fHeight = fabs(bbox.Height() * fScale);
-  bool bRTLPiece = !!(pTxtRun->dwCharStyles & FX_TXTCHARSTYLE_OddBidiLevel);
-  bool bSingleLine = !!(pTxtRun->dwStyles & FX_LAYOUTSTYLE_SingleLine);
-  bool bCombText = !!(pTxtRun->dwStyles & FX_LAYOUTSTYLE_CombText);
-  wchar_t wch;
-  int32_t iCharSize;
-  float fCharSize;
+  Engine* pEngine = run.pEdtEngine;
+  const wchar_t* pStr = run.wsStr.c_str();
+  int32_t* pWidths = run.pWidths;
+  int32_t iLength = run.iLength;
+  CFX_RectF rect(*run.pRect);
+  float fFontSize = run.fFontSize;
+  bool bRTLPiece = !!(run.dwCharStyles & FX_TXTCHARSTYLE_OddBidiLevel);
+  bool bSingleLine = !!(run.dwStyles & FX_LAYOUTSTYLE_SingleLine);
   float fStart = bRTLPiece ? rect.right() : rect.left;
 
   std::vector<CFX_RectF> rtArray(iLength);
   for (int32_t i = 0; i < iLength; i++) {
-    int32_t iAbsolute = i + pTxtRun->iStart;
+    wchar_t wch;
+    int32_t iCharSize;
     if (pEngine) {
+      int32_t iAbsolute = i + run.iStart;
       wch = pEngine->GetChar(iAbsolute);
       iCharSize = pEngine->GetWidthOfChar(iAbsolute);
     } else {
       wch = *pStr++;
       iCharSize = *pWidths++;
     }
-    fCharSize = static_cast<float>(iCharSize) / kConversionFactor;
+    float fCharSize = static_cast<float>(iCharSize) / kConversionFactor;
     bool bRet = (!bSingleLine && IsCtrlCode(wch));
     if (!(wch == L'\v' || wch == L'\f' || wch == 0x2028 || wch == 0x2029 ||
           wch == L'\n')) {
@@ -966,26 +952,6 @@ std::vector<CFX_RectF> CFGAS_TxtBreak::GetCharRects(const Run* pTxtRun,
       fStart += fCharSize;
     }
     rect.width = fCharSize;
-
-    if (bCharBBox && !bRet) {
-      int32_t iCharWidth = 1000;
-      pFont->GetCharWidth(wch, &iCharWidth);
-      float fRTLeft = 0, fCharWidth = 0;
-      if (iCharWidth > 0) {
-        fCharWidth = iCharWidth * fScale;
-        fRTLeft = fLeft;
-        if (bCombText)
-          fRTLeft = (rect.width - fCharWidth) / 2.0f;
-      }
-      CFX_RectF rtBBoxF;
-      rtBBoxF.left = rect.left + fRTLeft;
-      rtBBoxF.top = rect.top + (rect.height - fHeight) / 2.0f;
-      rtBBoxF.width = fCharWidth;
-      rtBBoxF.height = fHeight;
-      rtBBoxF.top = std::max(rtBBoxF.top, 0.0f);
-      rtArray[i] = rtBBoxF;
-      continue;
-    }
     rtArray[i] = rect;
   }
   return rtArray;

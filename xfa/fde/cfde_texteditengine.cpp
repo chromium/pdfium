@@ -1048,7 +1048,7 @@ std::vector<CFX_RectF> CFDE_TextEditEngine::GetCharRects(
   tr.dwStyles = text_break_.GetLayoutStyles();
   tr.dwCharStyles = piece.dwCharStyles;
   tr.pRect = &piece.rtPiece;
-  return text_break_.GetCharRects(&tr, false);
+  return text_break_.GetCharRects(tr);
 }
 
 std::vector<TextCharPos> CFDE_TextEditEngine::GetDisplayPos(
@@ -1066,8 +1066,8 @@ std::vector<TextCharPos> CFDE_TextEditEngine::GetDisplayPos(
   tr.dwCharStyles = piece.dwCharStyles;
   tr.pRect = &piece.rtPiece;
 
-  std::vector<TextCharPos> data(text_break_.GetDisplayPos(&tr, nullptr));
-  text_break_.GetDisplayPos(&tr, data.data());
+  std::vector<TextCharPos> data(text_break_.GetDisplayPos(tr, nullptr));
+  text_break_.GetDisplayPos(tr, data.data());
   return data;
 }
 
