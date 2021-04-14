@@ -34,8 +34,8 @@ void CXFA_FFSignature::RenderWidget(CFGAS_GEGraphics* pGS,
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, highlight);
 
   DrawBorder(pGS, m_pNode->GetUIBorder(), m_UIRect, mtRotate);
-  RenderCaption(pGS, &mtRotate);
-  DrawHighlight(pGS, &mtRotate, highlight, kSquareShape);
+  RenderCaption(pGS, mtRotate);
+  DrawHighlight(pGS, mtRotate, highlight, kSquareShape);
 }
 
 bool CXFA_FFSignature::OnMouseEnter() {

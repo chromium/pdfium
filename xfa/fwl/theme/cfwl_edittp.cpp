@@ -42,7 +42,7 @@ void CFWL_EditTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
         pGraphics->SetFillColor(CFGAS_GEColor(FWLTHEME_COLOR_BKSelected));
         pGraphics->FillPath(pParams.m_pPath.Get(),
                             CFX_FillRenderOptions::FillType::kWinding,
-                            &pParams.m_matrix);
+                            pParams.m_matrix);
         pGraphics->RestoreGraphState();
       } else {
         CFGAS_GEPath path;
@@ -59,9 +59,8 @@ void CFWL_EditTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
         }
         pParams.m_pGraphics->SaveGraphState();
         pParams.m_pGraphics->SetFillColor(cr);
-        pParams.m_pGraphics->FillPath(&path,
-                                      CFX_FillRenderOptions::FillType::kWinding,
-                                      &pParams.m_matrix);
+        pParams.m_pGraphics->FillPath(
+            &path, CFX_FillRenderOptions::FillType::kWinding, pParams.m_matrix);
         pParams.m_pGraphics->RestoreGraphState();
       }
       break;

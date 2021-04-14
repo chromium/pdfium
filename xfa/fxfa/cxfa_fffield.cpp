@@ -80,8 +80,8 @@ void CXFA_FFField::RenderWidget(CFGAS_GEGraphics* pGS,
 
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, highlight);
   DrawBorder(pGS, m_pNode->GetUIBorder(), m_UIRect, mtRotate);
-  RenderCaption(pGS, &mtRotate);
-  DrawHighlight(pGS, &mtRotate, highlight, kSquareShape);
+  RenderCaption(pGS, mtRotate);
+  DrawHighlight(pGS, mtRotate, highlight, kSquareShape);
 
   CFX_RectF rtWidget = GetNormalWidget()->GetWidgetRect();
   CFX_Matrix mt(1, 0, 0, 1, rtWidget.left, rtWidget.top);
@@ -90,7 +90,7 @@ void CXFA_FFField::RenderWidget(CFGAS_GEGraphics* pGS,
 }
 
 void CXFA_FFField::DrawHighlight(CFGAS_GEGraphics* pGS,
-                                 CFX_Matrix* pMatrix,
+                                 const CFX_Matrix& pMatrix,
                                  HighlightOption highlight,
                                  ShapeOption shape) {
   if (highlight == kNoHighlight)
@@ -582,7 +582,8 @@ void CXFA_FFField::LayoutCaption() {
   m_CaptionRect.height = std::max(m_CaptionRect.height, fHeight);
 }
 
-void CXFA_FFField::RenderCaption(CFGAS_GEGraphics* pGS, CFX_Matrix* pMatrix) {
+void CXFA_FFField::RenderCaption(CFGAS_GEGraphics* pGS,
+                                 const CFX_Matrix& pMatrix) {
   CXFA_TextLayout* pCapTextLayout = m_pNode->GetCaptionTextLayout();
   if (!pCapTextLayout)
     return;
@@ -598,10 +599,8 @@ void CXFA_FFField::RenderCaption(CFGAS_GEGraphics* pGS, CFX_Matrix* pMatrix) {
   rtClip.Intersect(GetRectWithoutRotate());
   CFX_RenderDevice* pRenderDevice = pGS->GetRenderDevice();
   CFX_Matrix mt(1, 0, 0, 1, m_CaptionRect.left, m_CaptionRect.top);
-  if (pMatrix) {
-    rtClip = pMatrix->TransformRect(rtClip);
-    mt.Concat(*pMatrix);
-  }
+  rtClip = pMatrix.TransformRect(rtClip);
+  mt.Concat(pMatrix);
   pCapTextLayout->DrawString(pRenderDevice, mt, rtClip, 0);
 }
 

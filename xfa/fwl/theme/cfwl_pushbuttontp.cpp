@@ -74,7 +74,7 @@ void CFWL_PushButtonTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
 
       pGraphics->SetFillColor(CFGAS_GEColor(m_pThemeData->clrFill[iColor]));
       pGraphics->FillPath(&fillPath, CFX_FillRenderOptions::FillType::kWinding,
-                          &pParams.m_matrix);
+                          pParams.m_matrix);
       if (pParams.m_dwStates & CFWL_PartState_Focused) {
         rtInner.Inflate(1, 1, 0, 0);
         DrawFocus(pGraphics, rtInner, pParams.m_matrix);

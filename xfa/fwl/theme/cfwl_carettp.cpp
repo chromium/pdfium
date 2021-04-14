@@ -38,6 +38,5 @@ void CFWL_CaretTP::DrawCaretBK(CFGAS_GEGraphics* pGraphics,
   CFGAS_GEPath path;
   path.AddRectangle(rect.left, rect.top, rect.width, rect.height);
   pGraphics->SetFillColor(CFGAS_GEColor(ArgbEncode(255, 0, 0, 0)));
-  pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding,
-                      &matrix);
+  pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding, matrix);
 }

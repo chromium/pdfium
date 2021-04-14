@@ -82,13 +82,13 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   void SetNormalWidget(CFWL_Widget* widget);
   CFX_PointF FWLToClient(const CFX_PointF& point);
   void LayoutCaption();
-  void RenderCaption(CFGAS_GEGraphics* pGS, CFX_Matrix* pMatrix);
+  void RenderCaption(CFGAS_GEGraphics* pGS, const CFX_Matrix& pMatrix);
 
   int32_t CalculateOverride();
   int32_t CalculateNode(CXFA_Node* pNode);
   bool ProcessCommittedData();
   void DrawHighlight(CFGAS_GEGraphics* pGS,
-                     CFX_Matrix* pMatrix,
+                     const CFX_Matrix& pMatrix,
                      HighlightOption highlight,
                      ShapeOption shape);
   void DrawFocus(CFGAS_GEGraphics* pGS, CFX_Matrix* pMatrix);

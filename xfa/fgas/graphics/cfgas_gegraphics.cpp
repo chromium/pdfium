@@ -174,14 +174,13 @@ void CFGAS_GEGraphics::StrokePath(CFGAS_GEPath* path,
 
 void CFGAS_GEGraphics::FillPath(CFGAS_GEPath* path,
                                 CFX_FillRenderOptions::FillType fill_type,
-                                const CFX_Matrix* matrix) {
+                                const CFX_Matrix& matrix) {
   if (path)
     RenderDeviceFillPath(path, fill_type, matrix);
 }
 
-void CFGAS_GEGraphics::ConcatMatrix(const CFX_Matrix* matrix) {
-  if (matrix)
-    m_info.CTM.Concat(*matrix);
+void CFGAS_GEGraphics::ConcatMatrix(const CFX_Matrix& matrix) {
+  m_info.CTM.Concat(matrix);
 }
 
 const CFX_Matrix* CFGAS_GEGraphics::GetMatrix() const {
@@ -220,10 +219,9 @@ void CFGAS_GEGraphics::RenderDeviceStrokePath(const CFGAS_GEPath* path,
 void CFGAS_GEGraphics::RenderDeviceFillPath(
     const CFGAS_GEPath* path,
     CFX_FillRenderOptions::FillType fill_type,
-    const CFX_Matrix* matrix) {
+    const CFX_Matrix& matrix) {
   CFX_Matrix m = m_info.CTM;
-  if (matrix)
-    m.Concat(*matrix);
+  m.Concat(matrix);
 
   const CFX_FillRenderOptions fill_options(fill_type);
   switch (m_info.fillColor.GetType()) {

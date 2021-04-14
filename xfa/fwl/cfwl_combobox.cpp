@@ -104,7 +104,7 @@ FWL_WidgetHit CFWL_ComboBox::HitTest(const CFX_PointF& point) {
 void CFWL_ComboBox::DrawWidget(CFGAS_GEGraphics* pGraphics,
                                const CFX_Matrix& matrix) {
   pGraphics->SaveGraphState();
-  pGraphics->ConcatMatrix(&matrix);
+  pGraphics->ConcatMatrix(matrix);
   if (!m_BtnRect.IsEmpty(0.1f)) {
     CFWL_ThemeBackground param;
     param.m_pWidget = this;

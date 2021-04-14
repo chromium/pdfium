@@ -53,8 +53,8 @@ class CFGAS_GEGraphics {
   void StrokePath(CFGAS_GEPath* path, const CFX_Matrix* matrix);
   void FillPath(CFGAS_GEPath* path,
                 CFX_FillRenderOptions::FillType fill_type,
-                const CFX_Matrix* matrix);
-  void ConcatMatrix(const CFX_Matrix* matrix);
+                const CFX_Matrix& matrix);
+  void ConcatMatrix(const CFX_Matrix& matrix);
 
  private:
   struct TInfo {
@@ -73,7 +73,7 @@ class CFGAS_GEGraphics {
                               const CFX_Matrix* matrix);
   void RenderDeviceFillPath(const CFGAS_GEPath* path,
                             CFX_FillRenderOptions::FillType fill_type,
-                            const CFX_Matrix* matrix);
+                            const CFX_Matrix& matrix);
   void FillPathWithPattern(const CFGAS_GEPath* path,
                            const CFX_FillRenderOptions& fill_options,
                            const CFX_Matrix& matrix);

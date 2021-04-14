@@ -71,6 +71,6 @@ void CXFA_Radial::Draw(CFGAS_GEGraphics* pGS,
 
   pGS->SaveGraphState();
   pGS->SetFillColor(CFGAS_GEColor(&shading));
-  pGS->FillPath(fillPath, CFX_FillRenderOptions::FillType::kWinding, &matrix);
+  pGS->FillPath(fillPath, CFX_FillRenderOptions::FillType::kWinding, matrix);
   pGS->RestoreGraphState();
 }

@@ -176,7 +176,7 @@ void CXFA_FFBarcode::RenderWidget(CFGAS_GEGraphics* pGS,
 
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, highlight);
   DrawBorder(pGS, m_pNode->GetUIBorder(), m_UIRect, mtRotate);
-  RenderCaption(pGS, &mtRotate);
+  RenderCaption(pGS, mtRotate);
   CFX_RectF rtWidget = GetNormalWidget()->GetWidgetRect();
 
   CFX_Matrix mt(1, 0, 0, 1, rtWidget.left, rtWidget.top);

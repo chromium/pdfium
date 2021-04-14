@@ -109,7 +109,7 @@ void CXFA_Fill::Draw(CFGAS_GEGraphics* pGS,
     default:
       pGS->SetFillColor(CFGAS_GEColor(GetColor(false)));
       pGS->FillPath(fillPath, CFX_FillRenderOptions::FillType::kWinding,
-                    &matrix);
+                    matrix);
       break;
   }
 

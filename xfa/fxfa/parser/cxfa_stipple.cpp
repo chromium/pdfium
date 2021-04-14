@@ -68,6 +68,6 @@ void CXFA_Stipple::Draw(CFGAS_GEGraphics* pGS,
 
   pGS->SaveGraphState();
   pGS->SetFillColor(CFGAS_GEColor(cr));
-  pGS->FillPath(fillPath, CFX_FillRenderOptions::FillType::kWinding, &matrix);
+  pGS->FillPath(fillPath, CFX_FillRenderOptions::FillType::kWinding, matrix);
   pGS->RestoreGraphState();
 }

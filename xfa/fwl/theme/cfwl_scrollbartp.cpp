@@ -204,8 +204,7 @@ void CFWL_ScrollBarTP::DrawTrack(CFGAS_GEGraphics* pGraphics,
     path.AddRectangle(rect.left, fBottom - 1, rect.width, 1);
   }
   pGraphics->SetFillColor(CFGAS_GEColor(ArgbEncode(255, 238, 237, 229)));
-  pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding,
-                      &matrix);
+  pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding, matrix);
   path.Clear();
   path.AddRectangle(rect.left + 1, rect.top, rect.width - 2, rect.height);
   pGraphics->RestoreGraphState();

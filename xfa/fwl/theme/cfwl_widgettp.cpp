@@ -97,8 +97,7 @@ void CFWL_WidgetTP::DrawBorder(CFGAS_GEGraphics* pGraphics,
                     rect.height - 2);
   pGraphics->SaveGraphState();
   pGraphics->SetFillColor(CFGAS_GEColor(ArgbEncode(255, 0, 0, 0)));
-  pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kEvenOdd,
-                      &matrix);
+  pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kEvenOdd, matrix);
   pGraphics->RestoreGraphState();
 }
 
@@ -119,8 +118,7 @@ void CFWL_WidgetTP::FillSolidRect(CFGAS_GEGraphics* pGraphics,
   path.AddRectangle(rect.left, rect.top, rect.width, rect.height);
   pGraphics->SaveGraphState();
   pGraphics->SetFillColor(CFGAS_GEColor(fillColor));
-  pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding,
-                      &matrix);
+  pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding, matrix);
   pGraphics->RestoreGraphState();
 }
 
@@ -189,8 +187,7 @@ void CFWL_WidgetTP::DrawArrow(CFGAS_GEGraphics* pGraphics,
     }
   }
   pGraphics->SetFillColor(CFGAS_GEColor(argSign));
-  pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding,
-                      &matrix);
+  pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding, matrix);
 }
 
 void CFWL_WidgetTP::DrawBtn(CFGAS_GEGraphics* pGraphics,

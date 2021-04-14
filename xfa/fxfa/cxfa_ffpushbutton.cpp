@@ -223,7 +223,7 @@ void CXFA_FFPushButton::OnDrawWidget(CFGAS_GEGraphics* pGraphics,
       path.AddRectangle(rtFill.left, rtFill.top, rtFill.width, rtFill.height);
       pGraphics->SetFillColor(CFGAS_GEColor(ArgbEncode(128, 128, 255, 255)));
       pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding,
-                          &matrix);
+                          matrix);
     }
     return;
   }

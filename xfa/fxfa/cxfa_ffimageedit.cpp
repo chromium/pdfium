@@ -68,7 +68,7 @@ void CXFA_FFImageEdit::RenderWidget(CFGAS_GEGraphics* pGS,
 
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, highlight);
   DrawBorder(pGS, m_pNode->GetUIBorder(), m_UIRect, mtRotate);
-  RenderCaption(pGS, &mtRotate);
+  RenderCaption(pGS, mtRotate);
   RetainPtr<CFX_DIBitmap> pDIBitmap = m_pNode->GetImageEditImage();
   if (!pDIBitmap)
     return;

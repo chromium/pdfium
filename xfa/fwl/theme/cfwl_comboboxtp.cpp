@@ -42,7 +42,7 @@ void CFWL_ComboBoxTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
       pParams.m_pGraphics->SaveGraphState();
       pParams.m_pGraphics->SetFillColor(CFGAS_GEColor(argb_color));
       pParams.m_pGraphics->FillPath(
-          &path, CFX_FillRenderOptions::FillType::kWinding, &pParams.m_matrix);
+          &path, CFX_FillRenderOptions::FillType::kWinding, pParams.m_matrix);
       pParams.m_pGraphics->RestoreGraphState();
       break;
     }

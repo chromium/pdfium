@@ -70,7 +70,7 @@ void CFWL_ListBoxTP::DrawListBoxItem(CFGAS_GEGraphics* pGraphics,
     path.AddRectangle(rtItem.left, rtItem.top, rtItem.width, rtItem.height);
 #endif
     pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding,
-                        &matrix);
+                        matrix);
     pGraphics->RestoreGraphState();
   }
   if ((dwStates & CFWL_PartState_Focused) && pData)
