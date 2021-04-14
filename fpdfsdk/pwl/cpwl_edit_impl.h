@@ -356,15 +356,12 @@ class CPWL_EditImpl {
 
   void SetSelection(const CPVT_WordPlace& begin, const CPVT_WordPlace& end);
 
-  bool Delete(bool bAddUndo, bool bPaint);
-  bool Clear(bool bAddUndo, bool bPaint);
-  bool InsertText(const WideString& sText,
-                  int32_t charset,
-                  bool bAddUndo,
-                  bool bPaint);
-  bool InsertWord(uint16_t word, int32_t charset, bool bAddUndo, bool bPaint);
-  bool InsertReturn(bool bAddUndo, bool bPaint);
-  bool Backspace(bool bAddUndo, bool bPaint);
+  bool Delete(bool bAddUndo);
+  bool Clear(bool bAddUndo);
+  bool InsertText(const WideString& sText, int32_t charset, bool bAddUndo);
+  bool InsertWord(uint16_t word, int32_t charset, bool bAddUndo);
+  bool InsertReturn(bool bAddUndo);
+  bool Backspace(bool bAddUndo);
   void SetCaret(const CPVT_WordPlace& place);
 
   CFX_PointF VTToEdit(const CFX_PointF& point) const;
