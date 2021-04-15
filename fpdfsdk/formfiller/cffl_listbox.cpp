@@ -110,15 +110,14 @@ void CFFL_ListBox::SaveData(CPDFSDK_PageView* pPageView) {
     return;
 
   int32_t nNewTopIndex = pListBox->GetTopVisibleIndex();
-  m_pWidget->ClearSelection(NotificationOption::kDoNotNotify);
+  m_pWidget->ClearSelection();
   if (m_pWidget->GetFieldFlags() & pdfium::form_flags::kChoiceMultiSelect) {
     for (int32_t i = 0, sz = pListBox->GetCount(); i < sz; i++) {
       if (pListBox->IsItemSelected(i))
-        m_pWidget->SetOptionSelection(i, NotificationOption::kDoNotNotify);
+        m_pWidget->SetOptionSelection(i);
     }
   } else {
-    m_pWidget->SetOptionSelection(pListBox->GetCurSel(),
-                                  NotificationOption::kDoNotNotify);
+    m_pWidget->SetOptionSelection(pListBox->GetCurSel());
   }
   ObservedPtr<CPDFSDK_Widget> observed_widget(m_pWidget.Get());
   ObservedPtr<CFFL_ListBox> observed_this(this);

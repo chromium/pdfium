@@ -117,7 +117,7 @@ void CFFL_CheckBox::SaveData(CPDFSDK_PageView* pPageView) {
   }
   ObservedPtr<CPDFSDK_Widget> observed_widget(m_pWidget.Get());
   ObservedPtr<CFFL_CheckBox> observed_this(this);
-  m_pWidget->SetCheck(bNewChecked, NotificationOption::kDoNotNotify);
+  m_pWidget->SetCheck(bNewChecked);
   if (!observed_widget)
     return;
 

@@ -75,10 +75,10 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
   int GetAlignment() const;
   int GetMaxLen() const;
 
-  void SetCheck(bool bChecked, NotificationOption notify);
-  void SetValue(const WideString& sValue, NotificationOption notify);
-  void SetOptionSelection(int index, NotificationOption notify);
-  void ClearSelection(NotificationOption notify);
+  void SetCheck(bool bChecked);
+  void SetValue(const WideString& sValue);
+  void SetOptionSelection(int index);
+  void ClearSelection();
   void SetTopVisibleIndex(int index);
 
 #ifdef PDF_ENABLE_XFA

@@ -155,7 +155,7 @@ void CFFL_TextField::SaveData(CPDFSDK_PageView* pPageView) {
   WideString sNewValue = pWnd->GetText();
   ObservedPtr<CPDFSDK_Widget> observed_widget(m_pWidget.Get());
   ObservedPtr<CFFL_TextField> observed_this(this);
-  m_pWidget->SetValue(sNewValue, NotificationOption::kDoNotNotify);
+  m_pWidget->SetValue(sNewValue);
   if (!observed_widget)
     return;
 

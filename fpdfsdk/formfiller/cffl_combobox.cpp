@@ -99,10 +99,10 @@ void CFFL_ComboBox::SaveData(CPDFSDK_PageView* pPageView) {
     bSetValue = (nCurSel < 0) || (swText != m_pWidget->GetOptionLabel(nCurSel));
 
   if (bSetValue) {
-    m_pWidget->SetValue(swText, NotificationOption::kDoNotNotify);
+    m_pWidget->SetValue(swText);
   } else {
     m_pWidget->GetSelectedIndex(0);
-    m_pWidget->SetOptionSelection(nCurSel, NotificationOption::kDoNotNotify);
+    m_pWidget->SetOptionSelection(nCurSel);
   }
   ObservedPtr<CPDFSDK_Widget> observed_widget(m_pWidget.Get());
   ObservedPtr<CFFL_ComboBox> observed_this(this);
