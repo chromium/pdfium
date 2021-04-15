@@ -290,7 +290,7 @@ void SetCurrentValueIndices(CPDFSDK_FormFillEnvironment* pFormFillEnv,
         break;
       if (array[i] < static_cast<uint32_t>(pFormField->CountOptions()) &&
           !pFormField->IsItemSelected(array[i])) {
-        pFormField->SetItemSelection(array[i], true,
+        pFormField->SetItemSelection(array[i],
                                      NotificationOption::kDoNotNotify);
       }
     }
@@ -482,8 +482,7 @@ void SetFieldValue(CPDFSDK_FormFillEnvironment* pFormFillEnv,
           for (const auto& str : strArray) {
             int index = pFormField->FindOption(str);
             if (!pFormField->IsItemSelected(index))
-              pFormField->SetItemSelection(index, true,
-                                           NotificationOption::kNotify);
+              pFormField->SetItemSelection(index, NotificationOption::kNotify);
           }
           UpdateFormField(pFormFillEnv, pFormField, true, false, true);
         }

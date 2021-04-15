@@ -540,10 +540,9 @@ void CPDFSDK_Widget::SetValue(const WideString& sValue,
 }
 
 void CPDFSDK_Widget::SetOptionSelection(int index,
-                                        bool bSelected,
                                         NotificationOption notify) {
   CPDF_FormField* pFormField = GetFormField();
-  pFormField->SetItemSelection(index, bSelected, notify);
+  pFormField->SetItemSelection(index, notify);
 #ifdef PDF_ENABLE_XFA
   if (notify == NotificationOption::kDoNotNotify)
     Synchronize(true);

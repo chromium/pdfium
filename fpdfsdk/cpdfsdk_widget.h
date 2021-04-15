@@ -77,7 +77,7 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
 
   void SetCheck(bool bChecked, NotificationOption notify);
   void SetValue(const WideString& sValue, NotificationOption notify);
-  void SetOptionSelection(int index, bool bSelected, NotificationOption notify);
+  void SetOptionSelection(int index, NotificationOption notify);
   void ClearSelection(NotificationOption notify);
   void SetTopVisibleIndex(int index);
 

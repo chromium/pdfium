@@ -113,7 +113,7 @@ class CPDF_FormField {
 
   bool ClearSelection(NotificationOption notify);
   bool IsItemSelected(int index) const;
-  bool SetItemSelection(int index, bool bSelected, NotificationOption notify);
+  bool SetItemSelection(int index, NotificationOption notify);
 
   bool IsItemDefaultSelected(int index) const;
 
@@ -161,7 +161,6 @@ class CPDF_FormField {
                      bool bDefault,
                      NotificationOption notify);
   void SetItemSelectionSelected(int index, const WideString& opt_value);
-  void SetItemSelectionUnselected(int index, const WideString& opt_value);
   bool NotifyBeforeSelectionChange(const WideString& value);
   void NotifyAfterSelectionChange();
   bool NotifyBeforeValueChange(const WideString& value);
