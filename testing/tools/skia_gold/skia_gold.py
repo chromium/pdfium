@@ -8,9 +8,8 @@ import logging
 import shlex
 import shutil
 
-# pylint: disable=relative-import
-import pdfium_skia_gold_properties
-import pdfium_skia_gold_session_manager
+from . import pdfium_skia_gold_properties
+from . import pdfium_skia_gold_session_manager
 
 GS_BUCKET = 'skia-pdfium-gm'
 

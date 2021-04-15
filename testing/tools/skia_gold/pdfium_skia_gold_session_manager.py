@@ -5,8 +5,7 @@
 """PDFium implementation of
 //build/skia_gold_common/skia_gold_session_manager.py."""
 
-# pylint: disable=relative-import
-import pdfium_skia_gold_session
+from . import pdfium_skia_gold_session
 from skia_gold_common import skia_gold_session_manager as sgsm
 
 SKIA_PDF_INSTANCE = 'pdfium'

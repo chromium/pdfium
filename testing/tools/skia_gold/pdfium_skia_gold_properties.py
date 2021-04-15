@@ -4,11 +4,10 @@
 # found in the LICENSE file.
 """PDFium implementation of //build/skia_gold_common/skia_gold_properties.py."""
 
-# pylint: disable=relative-import
 import subprocess
 import sys
 
-import path_util
+from . import path_util
 from skia_gold_common import skia_gold_properties
 
 
