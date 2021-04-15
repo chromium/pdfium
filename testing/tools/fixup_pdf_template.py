@@ -19,8 +19,7 @@ script replaces {{name}}-style variables in the input with calculated results
 
 from __future__ import print_function
 
-# TODO(thestig): Figure out what to do with cStringIO.
-import cStringIO
+import io
 import optparse
 import os
 import re
@@ -46,31 +45,31 @@ class StreamLenState:
 
 
 class TemplateProcessor:
-  HEADER_TOKEN = '{{header}}'
-  HEADER_REPLACEMENT = '%PDF-1.7\n%\xa0\xf2\xa4\xf4'
+  HEADER_TOKEN = b'{{header}}'
+  HEADER_REPLACEMENT = b'%PDF-1.7\n%\xa0\xf2\xa4\xf4'
 
-  XREF_TOKEN = '{{xref}}'
-  XREF_REPLACEMENT = 'xref\n%d %d\n'
+  XREF_TOKEN = b'{{xref}}'
+  XREF_REPLACEMENT = b'xref\n%d %d\n'
 
-  XREF_REPLACEMENT_N = '%010d %05d n \n'
-  XREF_REPLACEMENT_F = '0000000000 65535 f \n'
+  XREF_REPLACEMENT_N = b'%010d %05d n \n'
+  XREF_REPLACEMENT_F = b'0000000000 65535 f \n'
   # XREF rows must be exactly 20 bytes - space required.
   assert len(XREF_REPLACEMENT_F) == 20
 
-  TRAILER_TOKEN = '{{trailer}}'
-  TRAILER_REPLACEMENT = 'trailer <<\n  /Root 1 0 R\n  /Size %d\n>>'
+  TRAILER_TOKEN = b'{{trailer}}'
+  TRAILER_REPLACEMENT = b'trailer <<\n  /Root 1 0 R\n  /Size %d\n>>'
 
-  TRAILERSIZE_TOKEN = '{{trailersize}}'
-  TRAILERSIZE_REPLACEMENT = '/Size %d'
+  TRAILERSIZE_TOKEN = b'{{trailersize}}'
+  TRAILERSIZE_REPLACEMENT = b'/Size %d'
 
-  STARTXREF_TOKEN = '{{startxref}}'
-  STARTXREF_REPLACEMENT = 'startxref\n%d'
+  STARTXREF_TOKEN = b'{{startxref}}'
+  STARTXREF_REPLACEMENT = b'startxref\n%d'
 
-  OBJECT_PATTERN = r'\{\{object\s+(\d+)\s+(\d+)\}\}'
-  OBJECT_REPLACEMENT = r'\1 \2 obj'
+  OBJECT_PATTERN = b'\{\{object\s+(\d+)\s+(\d+)\}\}'
+  OBJECT_REPLACEMENT = b'\g<1> \g<2> obj'
 
-  STREAMLEN_TOKEN = '{{streamlen}}'
-  STREAMLEN_REPLACEMENT = '/Length %d'
+  STREAMLEN_TOKEN = b'{{streamlen}}'
+  STREAMLEN_REPLACEMENT = b'/Length %d'
 
   def __init__(self):
     self.streamlen_state = StreamLenState.START
@@ -101,12 +100,12 @@ class TemplateProcessor:
       return
 
     if (self.streamlen_state == StreamLenState.FIND_STREAM and
-        line.rstrip() == 'stream'):
+        line.rstrip() == b'stream'):
       self.streamlen_state = StreamLenState.FIND_ENDSTREAM
       return
 
     if self.streamlen_state == StreamLenState.FIND_ENDSTREAM:
-      if line.rstrip() == 'endstream':
+      if line.rstrip() == b'endstream':
         self.streamlen_state = StreamLenState.START
       else:
         self.streamlens[-1] += len(line)
@@ -141,7 +140,7 @@ def expand_file(infile, output_path):
   processor = TemplateProcessor()
   try:
     with open(output_path, 'wb') as outfile:
-      preprocessed = cStringIO.StringIO()
+      preprocessed = io.BytesIO()
       for line in infile:
         preprocessed.write(line)
         processor.preprocess_line(line)
@@ -161,16 +160,18 @@ def insert_includes(input_path, output_file, visited_set):
   try:
     with open(input_path, 'rb') as infile:
       for line in infile:
-        match = re.match(r'\s*\{\{include\s+(.+)\}\}', line)
+        match = re.match(b'\s*\{\{include\s+(.+)\}\}', line)
         if match:
           insert_includes(
-              os.path.join(os.path.dirname(input_path), match.group(1)),
-              output_file, visited_set)
+              os.path.join(
+                  os.path.dirname(input_path),
+                  match.group(1).decode('utf-8')), output_file, visited_set)
         else:
           # Replace CRLF with LF line endings for .in files.
           _, file_extension = os.path.splitext(input_path)
-          if file_extension in EXTENSION_OVERRIDE_LINE_ENDINGS:
-            line = line.replace(WINDOWS_LINE_ENDING, UNIX_LINE_ENDING)
+          if (file_extension in EXTENSION_OVERRIDE_LINE_ENDINGS and
+              line.endswith(WINDOWS_LINE_ENDING)):
+            line = line.removesuffix(WINDOWS_LINE_ENDING) + UNIX_LINE_ENDING
           output_file.write(line)
   except IOError:
     print('failed to include %s' % input_path, file=sys.stderr)
@@ -188,7 +189,7 @@ def main():
     output_dir = os.path.dirname(testcase_path)
     if options.output_dir:
       output_dir = options.output_dir
-    intermediate_stream = cStringIO.StringIO()
+    intermediate_stream = io.BytesIO()
     insert_includes(testcase_path, intermediate_stream, set())
     intermediate_stream.seek(0)
     output_path = os.path.join(output_dir, testcase_root + '.pdf')
