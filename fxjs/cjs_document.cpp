@@ -606,7 +606,7 @@ CJS_Result CJS_Document::submitForm(
   if (pRuntime->GetArrayLength(aFields) == 0 && bEmpty) {
     if (pPDFForm->CheckRequiredFields(nullptr, true)) {
       pRuntime->BeginBlock();
-      GetSDKInteractiveForm()->SubmitForm(strURL, false);
+      GetSDKInteractiveForm()->SubmitForm(strURL);
       pRuntime->EndBlock();
     }
     return CJS_Result::Success();

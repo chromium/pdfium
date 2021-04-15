@@ -433,7 +433,7 @@ bool CPDFSDK_InteractiveForm::DoAction_SubmitForm(const CPDF_Action& action) {
   if (!m_pInteractiveForm->CheckRequiredFields(nullptr, true))
     return false;
 
-  return SubmitForm(sDestination, false);
+  return SubmitForm(sDestination);
 }
 
 bool CPDFSDK_InteractiveForm::SubmitFields(
@@ -463,8 +463,7 @@ ByteString CPDFSDK_InteractiveForm::ExportFieldsToFDFTextBuf(
   return pFDF ? pFDF->WriteToString() : ByteString();
 }
 
-bool CPDFSDK_InteractiveForm::SubmitForm(const WideString& sDestination,
-                                         bool bUrlEncoded) {
+bool CPDFSDK_InteractiveForm::SubmitForm(const WideString& sDestination) {
   if (sDestination.IsEmpty())
     return false;
 
@@ -479,9 +478,6 @@ bool CPDFSDK_InteractiveForm::SubmitForm(const WideString& sDestination,
 
   std::vector<uint8_t, FxAllocAllocator<uint8_t>> buffer(fdfBuffer.begin(),
                                                          fdfBuffer.end());
-  if (bUrlEncoded && !FDFToURLEncodedData(&buffer))
-    return false;
-
   m_pFormFillEnv->SubmitForm(buffer, sDestination);
   return true;
 }

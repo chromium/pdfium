@@ -76,7 +76,7 @@ class CPDFSDK_InteractiveForm final
                     const std::vector<CPDF_FormField*>& fields,
                     bool bIncludeOrExclude,
                     bool bUrlEncoded);
-  bool SubmitForm(const WideString& sDestination, bool bUrlEncoded);
+  bool SubmitForm(const WideString& sDestination);
   ByteString ExportFormToFDFTextBuf();
   ByteString ExportFieldsToFDFTextBuf(
       const std::vector<CPDF_FormField*>& fields,
