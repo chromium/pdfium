@@ -217,15 +217,11 @@ void CFWL_DateTimePicker::ShowMonthCalendar(bool bActivate) {
     if (m_iYear > 0 && m_iMonth > 0 && m_iDay > 0)
       m_pMonthCal->SetSelect(m_iYear, m_iMonth, m_iDay);
     m_pMonthCal->Update();
-  }
-  if (bActivate)
     m_pMonthCal->RemoveStates(FWL_WGTSTATE_Invisible);
-  else
-    m_pMonthCal->SetStates(FWL_WGTSTATE_Invisible);
-
-  if (bActivate) {
     CFWL_MessageSetFocus msg(m_pEdit, m_pMonthCal);
     m_pEdit->GetDelegate()->OnProcessMessage(&msg);
+  } else {
+    m_pMonthCal->SetStates(FWL_WGTSTATE_Invisible);
   }
 
   CFX_RectF rtInvalidate(0, 0, m_WidgetRect.width, m_WidgetRect.height);
