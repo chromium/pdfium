@@ -97,12 +97,9 @@ uint32_t CPDFSDK_BAAnnot::GetFlags() const {
   return GetAnnotDict()->GetIntegerFor(pdfium::annotation::kF);
 }
 
-void CPDFSDK_BAAnnot::SetAppState(const ByteString& str) {
+void CPDFSDK_BAAnnot::SetAppStateOff() {
   CPDF_Dictionary* pDict = GetAnnotDict();
-  if (str.IsEmpty())
-    pDict->RemoveFor(pdfium::annotation::kAS);
-  else
-    pDict->SetNewFor<CPDF_String>(pdfium::annotation::kAS, str, false);
+  pDict->SetNewFor<CPDF_String>(pdfium::annotation::kAS, "Off", false);
 }
 
 ByteString CPDFSDK_BAAnnot::GetAppState() const {

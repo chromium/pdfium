@@ -50,7 +50,7 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
   void SetFlags(uint32_t nFlags);
   uint32_t GetFlags() const;
 
-  void SetAppState(const ByteString& str);
+  void SetAppStateOff();
   ByteString GetAppState() const;
 
   void SetBorderWidth(int nWidth);

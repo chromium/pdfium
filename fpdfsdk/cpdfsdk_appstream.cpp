@@ -1422,7 +1422,7 @@ void CPDFSDK_AppStream::SetAsCheckBox() {
 
   ByteString csAS = widget_->GetAppState();
   if (csAS.IsEmpty())
-    widget_->SetAppState("Off");
+    widget_->SetAppStateOff();
 }
 
 void CPDFSDK_AppStream::SetAsRadioButton() {
@@ -1554,7 +1554,7 @@ void CPDFSDK_AppStream::SetAsRadioButton() {
 
   ByteString csAS = widget_->GetAppState();
   if (csAS.IsEmpty())
-    widget_->SetAppState("Off");
+    widget_->SetAppStateOff();
 }
 
 void CPDFSDK_AppStream::SetAsComboBox(Optional<WideString> sValue) {
