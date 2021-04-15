@@ -433,10 +433,6 @@ void CPWL_ScrollBar::OnPosButtonLBDown(const CFX_PointF& point) {
 }
 
 void CPWL_ScrollBar::OnPosButtonLBUp(const CFX_PointF& point) {
-  if (m_bMouseDown) {
-    if (!m_bNotifyForever)
-      NotifyScrollWindow();
-  }
   m_bMouseDown = false;
 }
 
@@ -461,8 +457,7 @@ void CPWL_ScrollBar::OnPosButtonMouseMove(const CFX_PointF& point) {
       if (!MovePosButton(true))
         return;
 
-      if (m_bNotifyForever)
-        NotifyScrollWindow();
+      NotifyScrollWindow();
     }
   }
 }

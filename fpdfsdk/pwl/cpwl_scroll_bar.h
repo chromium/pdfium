@@ -114,7 +114,6 @@ class CPWL_ScrollBar final : public CPWL_Wnd, public CFX_Timer::CallbackIface {
   void OnTimerFired() override;
 
   float GetScrollBarWidth() const;
-  void SetNotifyForever(bool bForever) { m_bNotifyForever = bForever; }
 
  private:
   void SetScrollRange(float fMin, float fMax, float fClientWidth);
@@ -151,7 +150,6 @@ class CPWL_ScrollBar final : public CPWL_Wnd, public CFX_Timer::CallbackIface {
   PWL_SCROLL_PRIVATEDATA m_sData;
   bool m_bMouseDown = false;
   bool m_bMinOrMax = false;
-  bool m_bNotifyForever = true;
   float m_nOldPos = 0.0f;
   float m_fOldPosButton = 0.0f;
 };
