@@ -145,7 +145,7 @@ WideString CPDF_FormField::GetFullName() const {
   return GetFullNameForDict(m_pDict.Get());
 }
 
-bool CPDF_FormField::ResetField(NotificationOption notify) {
+bool CPDF_FormField::ResetField() {
   switch (m_Type) {
     case kCheckBox:
     case kRadioButton: {
@@ -156,7 +156,7 @@ bool CPDF_FormField::ResetField(NotificationOption notify) {
         CheckControl(i, GetControl(i)->IsDefaultChecked(),
                      NotificationOption::kDoNotNotify);
       }
-      if (notify == NotificationOption::kNotify && m_pForm->GetFormNotify())
+      if (m_pForm->GetFormNotify())
         m_pForm->GetFormNotify()->AfterCheckedStatusChange(this);
       break;
     }
@@ -167,13 +167,11 @@ bool CPDF_FormField::ResetField(NotificationOption notify) {
       int iIndex = GetDefaultSelectedItem();
       if (iIndex >= 0)
         csValue = GetOptionLabel(iIndex);
-      if (notify == NotificationOption::kNotify &&
-          !NotifyListOrComboBoxBeforeChange(csValue)) {
+      if (!NotifyListOrComboBoxBeforeChange(csValue)) {
         return false;
       }
       SetItemSelection(iIndex, NotificationOption::kDoNotNotify);
-      if (notify == NotificationOption::kNotify)
-        NotifyListOrComboBoxAfterChange();
+      NotifyListOrComboBoxAfterChange();
       break;
     }
     case kText:
@@ -197,8 +195,7 @@ bool CPDF_FormField::ResetField(NotificationOption notify) {
       if (!bHasRV && (csDValue == csValue))
         return false;
 
-      if (notify == NotificationOption::kNotify &&
-          !NotifyBeforeValueChange(csDValue)) {
+      if (!NotifyBeforeValueChange(csDValue)) {
         return false;
       }
       if (pDV) {
@@ -214,8 +211,7 @@ bool CPDF_FormField::ResetField(NotificationOption notify) {
         m_pDict->RemoveFor(pdfium::form_fields::kV);
         m_pDict->RemoveFor("RV");
       }
-      if (notify == NotificationOption::kNotify)
-        NotifyAfterValueChange();
+      NotifyAfterValueChange();
       break;
     }
   }

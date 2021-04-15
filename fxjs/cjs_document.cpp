@@ -523,7 +523,7 @@ CJS_Result CJS_Document::resetForm(
 
   CPDF_InteractiveForm* pPDFForm = GetCoreInteractiveForm();
   if (params.empty()) {
-    pPDFForm->ResetForm(NotificationOption::kNotify);
+    pPDFForm->ResetForm();
     m_pFormFillEnv->SetChangeMark();
     return CJS_Result::Success();
   }
@@ -545,7 +545,7 @@ CJS_Result CJS_Document::resetForm(
   }
 
   if (!aFields.empty()) {
-    pPDFForm->ResetForm(aFields, true, NotificationOption::kNotify);
+    pPDFForm->ResetForm(aFields, true);
     m_pFormFillEnv->SetChangeMark();
   }
 

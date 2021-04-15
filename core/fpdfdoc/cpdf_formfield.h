@@ -85,7 +85,7 @@ class CPDF_FormField {
   Type GetType() const { return m_Type; }
 
   CPDF_Dictionary* GetFieldDict() const { return m_pDict.Get(); }
-  bool ResetField(NotificationOption notify);
+  bool ResetField();
 
   int CountControls() const;
   CPDF_FormControl* GetControl(int index) const;

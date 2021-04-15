@@ -84,12 +84,11 @@ class CPDF_InteractiveForm {
       bool bIncludeOrExclude,
       bool bSimpleFileSpec) const;
 
-  void ResetForm(NotificationOption notify);
+  void ResetForm();
 
   // TODO(tsepez): Use a span.
   void ResetForm(const std::vector<CPDF_FormField*>& fields,
-                 bool bIncludeOrExclude,
-                 NotificationOption notify);
+                 bool bIncludeOrExclude);
 
   void SetNotifierIface(NotifierIface* pNotify);
   void FixPageFields(CPDF_Page* pPage);
