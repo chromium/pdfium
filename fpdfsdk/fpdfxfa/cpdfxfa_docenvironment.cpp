@@ -629,12 +629,12 @@ RetainPtr<IFX_SeekableReadStream> CPDFXFA_DocEnvironment::OpenLinkedFile(
 
 #ifdef PDF_XFA_ELEMENT_SUBMIT_ENABLED
 bool CPDFXFA_DocEnvironment::Submit(CXFA_FFDoc* hDoc, CXFA_Submit* submit) {
-  if (!NotifySubmit(true) || !m_pContext->GetXFADocView())
+  if (!OnBeforeNotifySubmit() || !m_pContext->GetXFADocView())
     return false;
 
   m_pContext->GetXFADocView()->UpdateDocView();
   bool ret = SubmitInternal(hDoc, submit);
-  NotifySubmit(false);
+  OnAfterNotifySubmit();
   return ret;
 }
 
@@ -885,14 +885,6 @@ void CPDFXFA_DocEnvironment::OnAfterNotifySubmit() {
     pNode = it->MoveToNext();
   }
   m_pContext->GetXFADocView()->UpdateDocView();
-}
-
-bool CPDFXFA_DocEnvironment::NotifySubmit(bool bPrevOrPost) {
-  if (bPrevOrPost)
-    return OnBeforeNotifySubmit();
-
-  OnAfterNotifySubmit();
-  return true;
 }
 
 bool CPDFXFA_DocEnvironment::SubmitInternal(CXFA_FFDoc* hDoc,

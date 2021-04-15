@@ -80,7 +80,6 @@ class CPDFXFA_DocEnvironment final : public IXFA_DocEnvironment {
   void ToXFAContentFlags(WideString csSrcContent, FPDF_DWORD& flag);
   bool OnBeforeNotifySubmit();
   void OnAfterNotifySubmit();
-  bool NotifySubmit(bool bPrevOrPost);
   bool SubmitInternal(CXFA_FFDoc* hDoc, CXFA_Submit* submit);
 #endif  // PDF_XFA_ELEMENT_SUBMIT_ENABLED
 
