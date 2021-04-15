@@ -102,7 +102,7 @@ CJS_Result CJX_ExclGroup::selectedMember(
     pReturnNode = node->GetSelectedMember();
   } else {
     pReturnNode = node->SetSelectedMember(
-        runtime->ToWideString(params[0]).AsStringView(), true);
+        runtime->ToWideString(params[0]).AsStringView());
   }
   if (!pReturnNode)
     return CJS_Result::Success(runtime->NewNull());

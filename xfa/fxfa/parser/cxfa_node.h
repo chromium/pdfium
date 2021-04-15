@@ -330,10 +330,10 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
   float GetCheckButtonSize();
 
   XFA_CHECKSTATE GetCheckState();
-  void SetCheckState(XFA_CHECKSTATE eCheckState, bool bNotify);
+  void SetCheckState(XFA_CHECKSTATE eCheckState);
 
   CXFA_Node* GetSelectedMember();
-  CXFA_Node* SetSelectedMember(WideStringView wsName, bool bNotify);
+  CXFA_Node* SetSelectedMember(WideStringView wsName);
   void SetSelectedMemberByValue(WideStringView wsValue,
                                 bool bNotify,
                                 bool bScriptModify,

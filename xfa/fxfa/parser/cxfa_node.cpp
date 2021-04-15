@@ -3994,7 +3994,7 @@ XFA_CHECKSTATE CXFA_Node::GetCheckState() {
   return XFA_CHECKSTATE_Off;
 }
 
-void CXFA_Node::SetCheckState(XFA_CHECKSTATE eCheckState, bool bNotify) {
+void CXFA_Node::SetCheckState(XFA_CHECKSTATE eCheckState) {
   CXFA_Node* node = GetExclGroupIfExists();
   if (!node) {
     CXFA_Items* pItems = GetChild<CXFA_Items>(0, XFA_Element::Items, false);
@@ -4012,7 +4012,7 @@ void CXFA_Node::SetCheckState(XFA_CHECKSTATE eCheckState, bool bNotify) {
       }
       pText = pText->GetNextSibling();
     }
-    SyncValue(wsContent, bNotify);
+    SyncValue(wsContent, true);
 
     return;
   }
@@ -4049,9 +4049,9 @@ void CXFA_Node::SetCheckState(XFA_CHECKSTATE eCheckState, bool bNotify) {
       else
         wsChildValue.clear();
     }
-    pChild->SyncValue(wsChildValue, bNotify);
+    pChild->SyncValue(wsChildValue, true);
   }
-  node->SyncValue(wsValue, bNotify);
+  node->SyncValue(wsValue, true);
 }
 
 CXFA_Node* CXFA_Node::GetSelectedMember() {
@@ -4070,12 +4070,12 @@ CXFA_Node* CXFA_Node::GetSelectedMember() {
   return pSelectedMember;
 }
 
-CXFA_Node* CXFA_Node::SetSelectedMember(WideStringView wsName, bool bNotify) {
+CXFA_Node* CXFA_Node::SetSelectedMember(WideStringView wsName) {
   uint32_t nameHash = FX_HashCode_GetW(wsName, false);
   for (CXFA_Node* pNode = ToNode(GetFirstChild()); pNode;
        pNode = pNode->GetNextSibling()) {
     if (pNode->GetNameHash() == nameHash) {
-      pNode->SetCheckState(XFA_CHECKSTATE_On, bNotify);
+      pNode->SetCheckState(XFA_CHECKSTATE_On);
       return pNode;
     }
   }

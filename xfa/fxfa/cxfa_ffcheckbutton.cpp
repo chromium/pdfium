@@ -274,8 +274,7 @@ XFA_CHECKSTATE CXFA_FFCheckButton::FWLState2XFAState() {
 }
 
 bool CXFA_FFCheckButton::CommitData() {
-  XFA_CHECKSTATE eCheckState = FWLState2XFAState();
-  m_pNode->SetCheckState(eCheckState, true);
+  m_pNode->SetCheckState(FWLState2XFAState());
   return true;
 }
 

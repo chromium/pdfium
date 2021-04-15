@@ -267,7 +267,7 @@ void CPDFSDK_Widget::Synchronize(bool bSynchronizeElse) {
       CPDF_FormControl* pFormCtrl = GetFormControl();
       XFA_CHECKSTATE eCheckState =
           pFormCtrl->IsChecked() ? XFA_CHECKSTATE_On : XFA_CHECKSTATE_Off;
-      node->SetCheckState(eCheckState, true);
+      node->SetCheckState(eCheckState);
       break;
     }
     case FormFieldType::kTextField:
