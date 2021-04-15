@@ -914,6 +914,22 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetLine(FPDF_ANNOTATION annot,
   return true;
 }
 
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetBorder(FPDF_ANNOTATION annot,
+                                                        float horizontal_radius,
+                                                        float vertical_radius,
+                                                        float border_width) {
+  CPDF_Dictionary* annot_dict = GetAnnotDictFromFPDFAnnotation(annot);
+  if (!annot_dict)
+    return false;
+
+  CPDF_Array* border =
+      annot_dict->SetNewFor<CPDF_Array>(pdfium::annotation::kBorder);
+  border->AppendNew<CPDF_Number>(horizontal_radius);
+  border->AppendNew<CPDF_Number>(vertical_radius);
+  border->AppendNew<CPDF_Number>(border_width);
+  return true;
+}
+
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFAnnot_GetBorder(FPDF_ANNOTATION annot,
                     float* horizontal_radius,

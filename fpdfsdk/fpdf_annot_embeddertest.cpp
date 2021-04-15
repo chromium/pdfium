@@ -3462,6 +3462,22 @@ TEST_F(FPDFAnnotEmbedderTest, AnnotationBorder) {
     float border_width;
     EXPECT_FALSE(FPDFAnnot_GetBorder(annot.get(), &horizontal_radius,
                                      &vertical_radius, &border_width));
+
+    // FPDFAnnot_SetBorder() positive testing.
+    EXPECT_TRUE(FPDFAnnot_SetBorder(annot.get(), /*horizontal_radius=*/2.0f,
+                                    /*vertical_radius=*/3.5f,
+                                    /*border_width=*/4.0f));
+
+    EXPECT_TRUE(FPDFAnnot_GetBorder(annot.get(), &horizontal_radius,
+                                    &vertical_radius, &border_width));
+    EXPECT_FLOAT_EQ(2.0f, horizontal_radius);
+    EXPECT_FLOAT_EQ(3.5f, vertical_radius);
+    EXPECT_FLOAT_EQ(4.0f, border_width);
+
+    // FPDFAnnot_SetBorder() negative testing.
+    EXPECT_FALSE(FPDFAnnot_SetBorder(nullptr, /*horizontal_radius=*/1.0f,
+                                     /*vertical_radius=*/2.5f,
+                                     /*border_width=*/3.0f));
   }
 
   UnloadPage(page);
