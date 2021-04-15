@@ -39,8 +39,8 @@ void CXFA_LayoutProcessor::Trace(cppgc::Visitor* visitor) const {
   ContainerTrace(visitor, m_rgChangedContainers);
 }
 
-void CXFA_LayoutProcessor::SetForceRelayout(bool bForceRestart) {
-  m_bNeedLayout = bForceRestart;
+void CXFA_LayoutProcessor::SetForceRelayout() {
+  m_bNeedLayout = true;
 }
 
 int32_t CXFA_LayoutProcessor::StartLayout(bool bForceRestart) {

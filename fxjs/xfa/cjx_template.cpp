@@ -47,7 +47,7 @@ CJS_Result CJX_Template::remerge(
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);
 
-  GetDocument()->DoDataRemerge(true);
+  GetDocument()->DoDataRemerge();
   return CJS_Result::Success();
 }
 

@@ -1821,7 +1821,7 @@ void CXFA_Document::DoDataMerge() {
   }
 }
 
-void CXFA_Document::DoDataRemerge(bool bDoDataMerge) {
+void CXFA_Document::DoDataRemerge() {
   CXFA_Node* pFormRoot = ToNode(GetXFAObject(XFA_HASHCODE_Form));
   if (pFormRoot) {
     while (CXFA_Node* pNode = pFormRoot->GetFirstChild())
@@ -1830,11 +1830,8 @@ void CXFA_Document::DoDataRemerge(bool bDoDataMerge) {
     pFormRoot->SetBindingNode(nullptr);
   }
   m_rgGlobalBinding.clear();
-
-  if (bDoDataMerge)
-    DoDataMerge();
-
-  GetLayoutProcessor()->SetForceRelayout(true);
+  DoDataMerge();
+  GetLayoutProcessor()->SetForceRelayout();
 }
 
 CXFA_Node* CXFA_Document::GetGlobalBinding(uint32_t dwNameHash) {

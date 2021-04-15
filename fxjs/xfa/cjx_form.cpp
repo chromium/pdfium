@@ -61,7 +61,7 @@ CJS_Result CJX_Form::remerge(CFX_V8* runtime,
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);
 
-  GetDocument()->DoDataRemerge(true);
+  GetDocument()->DoDataRemerge();
   return CJS_Result::Success();
 }
 

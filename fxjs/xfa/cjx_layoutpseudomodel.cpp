@@ -412,7 +412,7 @@ CJS_Result CJX_LayoutPseudoModel::relayout(
     if (pContentRootNode)
       pLayoutProcessor->AddChangedContainer(pContentRootNode);
   }
-  pLayoutProcessor->SetForceRelayout(true);
+  pLayoutProcessor->SetForceRelayout();
   return CJS_Result::Success();
 }
 

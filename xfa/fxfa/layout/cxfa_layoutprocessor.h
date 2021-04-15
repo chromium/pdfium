@@ -37,7 +37,7 @@ class CXFA_LayoutProcessor : public CXFA_Document::LayoutProcessorIface {
   void Trace(cppgc::Visitor* visitor) const override;
 
   // CXFA_Document::LayoutProcessorIface:
-  void SetForceRelayout(bool bForceRestart) override;
+  void SetForceRelayout() override;
   void AddChangedContainer(CXFA_Node* pContainer) override;
 
   cppgc::Heap* GetHeap() { return m_pHeap.Get(); }
