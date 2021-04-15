@@ -8,6 +8,8 @@ Requires that 'use_clang_coverage = true' is set in args.gn.
 Prefers that 'is_component_build = false' is set in args.gn.
 """
 
+from __future__ import print_function
+
 import argparse
 from collections import namedtuple
 import fnmatch
@@ -115,38 +117,38 @@ class CoverageExecutor(object):
   def check_output(self, args, dry_run=False, env=None):
     """Dry run aware wrapper of subprocess.check_output()"""
     if dry_run:
-      print "Would have run '%s'" % ' '.join(args)
+      print("Would have run '%s'" % ' '.join(args))
       return ''
 
     output = subprocess.check_output(args, env=env)
 
     if self.verbose:
-      print "check_output(%s) returned '%s'" % (args, output)
+      print("check_output(%s) returned '%s'" % (args, output))
     return output
 
   def call(self, args, dry_run=False, env=None):
     """Dry run aware wrapper of subprocess.call()"""
     if dry_run:
-      print "Would have run '%s'" % ' '.join(args)
+      print("Would have run '%s'" % ' '.join(args))
       return 0
 
     output = subprocess.call(args, env=env)
 
     if self.verbose:
-      print 'call(%s) returned %s' % (args, output)
+      print('call(%s) returned %s' % (args, output))
     return output
 
   def call_silent(self, args, dry_run=False, env=None):
     """Dry run aware wrapper of subprocess.call() that eats output from call"""
     if dry_run:
-      print "Would have run '%s'" % ' '.join(args)
+      print("Would have run '%s'" % ' '.join(args))
       return 0
 
     with open(os.devnull, 'w') as f:
       output = subprocess.call(args, env=env, stdout=f)
 
     if self.verbose:
-      print 'call_silent(%s) returned %s' % (args, output)
+      print('call_silent(%s) returned %s' % (args, output))
     return output
 
   def calculate_coverage_tests(self, args):
@@ -192,10 +194,10 @@ class CoverageExecutor(object):
         spec: Tuple containing the TestSpec.
     """
     if self.verbose:
-      print "Generating coverage for test '%s', using data '%s'" % (name, spec)
+      print("Generating coverage for test '%s', using data '%s'" % (name, spec))
     if not os.path.exists(spec.binary):
       print('Unable to generate coverage for %s, since it appears to not exist'
-            ' @ %s') % (name, spec.binary)
+            ' @ %s' % (name, spec.binary))
       return False
 
     binary_args = [spec.binary]
@@ -218,7 +220,7 @@ class CoverageExecutor(object):
       binary_args.extend(['-j', '8', '--build-dir', self.build_directory])
     if self.call(binary_args, dry_run=self.dry_run, env=env) and self.verbose:
       print('Running %s appears to have failed, which might affect '
-            'results') % spec.binary
+            'results' % spec.binary)
 
     return True
 
@@ -267,24 +269,24 @@ class CoverageExecutor(object):
   def run(self):
     """Setup environment, execute the tests and generate coverage report"""
     if not self.fetch_profiling_tools():
-      print 'Unable to fetch profiling tools'
+      print('Unable to fetch profiling tools')
       return False
 
     if not self.build_binaries():
-      print 'Failed to successfully build binaries'
+      print('Failed to successfully build binaries')
       return False
 
     for name in self.coverage_tests.keys():
       if not self.generate_coverage(name, self.coverage_tests[name]):
-        print 'Failed to successfully generate coverage data'
+        print('Failed to successfully generate coverage data')
         return False
 
     if not self.merge_raw_coverage_results():
-      print 'Failed to successfully merge raw coverage results'
+      print('Failed to successfully merge raw coverage results')
       return False
 
     if not self.generate_html_report():
-      print 'Failed to successfully generate HTML report'
+      print('Failed to successfully generate HTML report')
       return False
 
     return True

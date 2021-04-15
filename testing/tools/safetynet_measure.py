@@ -7,6 +7,8 @@
 The output is a number that is a metric which depends on the profiler specified.
 """
 
+from __future__ import print_function
+
 import argparse
 import os
 import re
@@ -65,7 +67,7 @@ class PerformanceRun(object):
     if time is None:
       return 1
 
-    print time
+    print(time)
     return 0
 
   def _RunCallgrind(self):

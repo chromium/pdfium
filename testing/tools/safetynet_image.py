@@ -4,6 +4,8 @@
 """Compares pairs of page images and generates an HTML to look at differences.
 """
 
+from __future__ import print_function
+
 import functools
 import glob
 import multiprocessing
@@ -63,7 +65,7 @@ class ImageComparison(object):
     # pylint: disable=attribute-defined-outside-init
 
     if len(self.two_labels) != 2:
-      print >> sys.stderr, 'two_labels must be a tuple of length 2'
+      print('two_labels must be a tuple of length 2', file=sys.stderr)
       return 1
 
     finder = DirectoryFinder(self.build_dir)
@@ -88,7 +90,7 @@ class ImageComparison(object):
       for image in self.image_locations.Images():
         diff = difference[image]
         if diff is None:
-          print >> sys.stderr, 'Failed to compare image %s' % image
+          print('Failed to compare image %s' % image, file=sys.stderr)
         elif diff > self.threshold:
           self._WriteImageRows(f, image, diff)
         else:
@@ -170,7 +172,7 @@ class ImageComparison(object):
     except subprocess.CalledProcessError as e:
       return image, percentage_change
     else:
-      print >> sys.stderr, 'Warning: Should have failed the previous diff.'
+      print('Warning: Should have failed the previous diff.', file=sys.stderr)
       return image, 0
 
   def _GetRelativePath(self, absolute_path):

@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from __future__ import print_function
+
 import os
 
 # pylint: disable=relative-import
@@ -49,18 +51,18 @@ class Suppressor:
 
   def IsResultSuppressed(self, input_filename):
     if input_filename in self.suppression_set:
-      print "%s result is suppressed" % input_filename
+      print("%s result is suppressed" % input_filename)
       return True
     return False
 
   def IsExecutionSuppressed(self, input_filepath):
     if "xfa_specific" in input_filepath and not self.has_xfa:
-      print "%s execution is suppressed" % input_filepath
+      print("%s execution is suppressed" % input_filepath)
       return True
     return False
 
   def IsImageDiffSuppressed(self, input_filename):
     if input_filename in self.image_suppression_set:
-      print "%s image diff comparison is suppressed" % input_filename
+      print("%s image diff comparison is suppressed" % input_filename)
       return True
     return False

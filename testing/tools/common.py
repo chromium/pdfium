@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from __future__ import print_function
+
 import datetime
 import glob
 import os
@@ -139,20 +141,21 @@ def GetBooleanGnArg(arg_name, build_dir, verbose=False):
   cwd = os.getcwd()
   os.chdir(build_dir)
   gn_args_output = subprocess.check_output(
-      ['gn', 'args', '.', '--list=%s' % arg_name, '--short'])
+      ['gn', 'args', '.', '--list=%s' % arg_name, '--short']).decode('utf8')
   os.chdir(cwd)
   arg_match_output = re.search('%s = (.*)' % arg_name, gn_args_output).group(1)
   if verbose:
-    print >> sys.stderr, "Found '%s' for value of %s" % (arg_match_output,
-                                                         arg_name)
+    print(
+        "Found '%s' for value of %s" % (arg_match_output, arg_name),
+        file=sys.stderr)
   return arg_match_output == 'true'
 
 
 def PrintWithTime(s):
   """Prints s prepended by a timestamp."""
-  print '[%s] %s' % (datetime.datetime.now().strftime("%Y%m%d %H:%M:%S"), s)
+  print('[%s] %s' % (datetime.datetime.now().strftime("%Y%m%d %H:%M:%S"), s))
 
 
 def PrintErr(s):
   """Prints s to stderr."""
-  print >> sys.stderr, s
+  print(s, file=sys.stderr)

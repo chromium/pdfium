@@ -3,6 +3,8 @@
 # found in the LICENSE file.
 """Classes that draw conclusions out of a comparison and represent them."""
 
+from __future__ import print_function
+
 from collections import Counter
 
 FORMAT_RED = '\033[01;31m{0}\033[00m'
@@ -245,9 +247,9 @@ def PrintConclusionsDictHumanReadable(conclusions_dict, colored, key=None):
     key: String with the CaseResult dictionary key to sort the cases.
   """
   # Print header
-  print '=' * 80
-  print '{0:>11s} {1:>15s}  {2}'.format('% Change', 'Time after', 'Test case')
-  print '-' * 80
+  print('=' * 80)
+  print('{0:>11s} {1:>15s}  {2}'.format('% Change', 'Time after', 'Test case'))
+  print('-' * 80)
 
   color = FORMAT_NORMAL
 
@@ -264,18 +266,18 @@ def PrintConclusionsDictHumanReadable(conclusions_dict, colored, key=None):
       color = RATING_TO_COLOR[case_dict['rating']]
 
     if case_dict['rating'] == RATING_FAILURE:
-      print u'{} to measure time for {}'.format(
-          color.format('Failed'), case_name).encode('utf-8')
+      print(u'{} to measure time for {}'.format(
+          color.format('Failed'), case_name).encode('utf-8'))
       continue
 
-    print u'{0} {1:15,d}  {2}'.format(
+    print(u'{0} {1:15,d}  {2}'.format(
         color.format('{:+11.4%}'.format(case_dict['ratio'])),
-        case_dict['after'], case_name).encode('utf-8')
+        case_dict['after'], case_name).encode('utf-8'))
 
   # Print totals
   totals = conclusions_dict['summary']
-  print '=' * 80
-  print 'Test cases run: %d' % totals['total']
+  print('=' * 80)
+  print('Test cases run: %d' % totals['total'])
 
   if colored:
     color = FORMAT_MAGENTA if totals[RATING_FAILURE] else FORMAT_GREEN

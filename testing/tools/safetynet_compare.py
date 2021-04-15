@@ -4,6 +4,8 @@
 # found in the LICENSE file.
 """Compares the performance of two versions of the pdfium code."""
 
+from __future__ import print_function
+
 import argparse
 import functools
 import glob
@@ -564,7 +566,7 @@ class CompareRun(object):
           ComparisonConclusions.GetOutputDict().
     """
     if self.args.machine_readable:
-      print json.dumps(conclusions_dict)
+      print(json.dumps(conclusions_dict))
     else:
       PrintConclusionsDictHumanReadable(
           conclusions_dict, colored=True, key=self.args.case_order)

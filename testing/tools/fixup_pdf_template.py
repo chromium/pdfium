@@ -17,6 +17,9 @@ script replaces {{name}}-style variables in the input with calculated results
   {{streamlen}} - expands to |/Length n|.
 """
 
+from __future__ import print_function
+
+# TODO(thestig): Figure out what to do with cStringIO.
 import cStringIO
 import optparse
 import os
@@ -146,13 +149,13 @@ def expand_file(infile, output_path):
       for line in preprocessed:
         outfile.write(processor.process_line(line))
   except IOError:
-    print >> sys.stderr, 'failed to process %s' % input_path
+    print('failed to process %s' % input_path, file=sys.stderr)
 
 
 def insert_includes(input_path, output_file, visited_set):
   input_path = os.path.normpath(input_path)
   if input_path in visited_set:
-    print >> sys.stderr, 'Circular inclusion %s, ignoring' % input_path
+    print('Circular inclusion %s, ignoring' % input_path, file=sys.stderr)
     return
   visited_set.add(input_path)
   try:
@@ -170,7 +173,7 @@ def insert_includes(input_path, output_file, visited_set):
             line = line.replace(WINDOWS_LINE_ENDING, UNIX_LINE_ENDING)
           output_file.write(line)
   except IOError:
-    print >> sys.stderr, 'failed to include %s' % input_path
+    print('failed to include %s' % input_path, file=sys.stderr)
     raise
   visited_set.discard(input_path)
 

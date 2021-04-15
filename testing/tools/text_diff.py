@@ -3,13 +3,15 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from __future__ import print_function
+
 import difflib
 import sys
 
 
 def main(argv):
   if len(argv) != 3:
-    print '%s: invalid arguments' % argv[0]
+    print('%s: invalid arguments' % argv[0])
     return 2
   filename1 = argv[1]
   filename2 = argv[2]
@@ -21,7 +23,7 @@ def main(argv):
     diffs = difflib.unified_diff(
         str1, str2, fromfile=filename1, tofile=filename2)
   except Exception as e:
-    print "something went astray: %s" % e
+    print("something went astray: %s" % e)
     return 1
   status_code = 0
   for diff in diffs:

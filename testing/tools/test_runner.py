@@ -379,7 +379,8 @@ class TestRunner:
     os.makedirs(self.working_dir)
 
     self.features = subprocess.check_output(
-        [self.pdfium_test_path, '--show-config']).strip().split(',')
+        [self.pdfium_test_path,
+         '--show-config']).decode('utf-8').strip().split(',')
     self.test_suppressor = suppressor.Suppressor(
         finder, self.features, self.options.disable_javascript,
         self.options.disable_xfa)
