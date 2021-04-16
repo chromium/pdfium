@@ -91,7 +91,7 @@ typedef enum FPDFANNOT_COLORTYPE {
 
 // Experimental API.
 // Check if an annotation subtype is currently supported for creation.
-// Currently supported subtypes: circle, highlight, ink, popup, square,
+// Currently supported subtypes: circle, highlight, ink, link, popup, square,
 // squiggly, stamp, strikeout, text, and underline.
 //
 //   subtype   - the subtype to be checked.
@@ -890,6 +890,16 @@ FPDFAnnot_GetFormFieldExportValue(FPDF_FORMHANDLE hHandle,
                                   FPDF_ANNOTATION annot,
                                   FPDF_WCHAR* buffer,
                                   unsigned long buflen);
+
+// Experimental API.
+// Add a URI action to |annot|, overwriting the existing action, if any.
+//
+//   annot  - handle to a link annotation.
+//   uri    - the URI to be set, encoded in 7-bit ASCII.
+//
+// Returns true if successful.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetURI(FPDF_ANNOTATION annot,
+                                                     const char* uri);
 
 #ifdef __cplusplus
 }  // extern "C"

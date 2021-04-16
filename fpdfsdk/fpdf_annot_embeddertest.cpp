@@ -659,6 +659,84 @@ TEST_F(FPDFAnnotEmbedderTest, AddFirstTextAnnotation) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFAnnotEmbedderTest, AddAndSaveLinkAnnotation) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+  {
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    CompareBitmap(bitmap.get(), 200, 200, pdfium::kHelloWorldChecksum);
+  }
+  EXPECT_EQ(0, FPDFPage_GetAnnotCount(page));
+
+  constexpr char kUri[] = "https://pdfium.org/";
+
+  {
+    // Add a link annotation to the page and set its URI.
+    ScopedFPDFAnnotation annot(FPDFPage_CreateAnnot(page, FPDF_ANNOT_LINK));
+    ASSERT_TRUE(annot);
+    EXPECT_EQ(1, FPDFPage_GetAnnotCount(page));
+    EXPECT_EQ(FPDF_ANNOT_LINK, FPDFAnnot_GetSubtype(annot.get()));
+    EXPECT_TRUE(FPDFAnnot_SetURI(annot.get(), kUri));
+    VerifyUriActionInLink(document(), FPDFAnnot_GetLink(annot.get()), kUri);
+
+    // Negative tests:
+    EXPECT_FALSE(FPDFAnnot_SetURI(nullptr, nullptr));
+    VerifyUriActionInLink(document(), FPDFAnnot_GetLink(annot.get()), kUri);
+    EXPECT_FALSE(FPDFAnnot_SetURI(annot.get(), nullptr));
+    VerifyUriActionInLink(document(), FPDFAnnot_GetLink(annot.get()), kUri);
+    EXPECT_FALSE(FPDFAnnot_SetURI(nullptr, kUri));
+    VerifyUriActionInLink(document(), FPDFAnnot_GetLink(annot.get()), kUri);
+
+    // Position the link on top of "Hello, world!" without a border.
+    const FS_RECTF kRect = {19.0f, 48.0f, 85.0f, 60.0f};
+    EXPECT_TRUE(FPDFAnnot_SetRect(annot.get(), &kRect));
+    EXPECT_TRUE(FPDFAnnot_SetBorder(annot.get(), /*horizontal_radius=*/0.0f,
+                                    /*vertical_radius=*/0.0f,
+                                    /*border_width=*/0.0f));
+
+    VerifyUriActionInLink(document(), FPDFLink_GetLinkAtPoint(page, 40.0, 50.0),
+                          kUri);
+  }
+
+  {
+    // Add an ink annotation to the page. Trying to add a link to it fails.
+    ScopedFPDFAnnotation annot(FPDFPage_CreateAnnot(page, FPDF_ANNOT_INK));
+    ASSERT_TRUE(annot);
+    EXPECT_EQ(2, FPDFPage_GetAnnotCount(page));
+    EXPECT_EQ(FPDF_ANNOT_INK, FPDFAnnot_GetSubtype(annot.get()));
+    EXPECT_FALSE(FPDFAnnot_SetURI(annot.get(), kUri));
+  }
+
+  // Remove the ink annotation added above for negative testing.
+  EXPECT_TRUE(FPDFPage_RemoveAnnot(page, 1));
+  EXPECT_EQ(1, FPDFPage_GetAnnotCount(page));
+
+  // Save the document, closing the page.
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  UnloadPage(page);
+
+  // Reopen the document and make sure it still renders the same. Since the link
+  // does not have a border, it does not affect the rendering.
+  ASSERT_TRUE(OpenSavedDocument());
+  page = LoadSavedPage(0);
+  ASSERT_TRUE(page);
+  VerifySavedRendering(page, 200, 200, pdfium::kHelloWorldChecksum);
+  EXPECT_EQ(1, FPDFPage_GetAnnotCount(page));
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+    EXPECT_EQ(FPDF_ANNOT_LINK, FPDFAnnot_GetSubtype(annot.get()));
+    VerifyUriActionInLink(document(), FPDFAnnot_GetLink(annot.get()), kUri);
+    VerifyUriActionInLink(document(), FPDFLink_GetLinkAtPoint(page, 40.0, 50.0),
+                          kUri);
+  }
+
+  CloseSavedPage(page);
+  CloseSavedDocument();
+}
+
 TEST_F(FPDFAnnotEmbedderTest, AddAndSaveUnderlineAnnotation) {
   // Open a file with one annotation and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_highlight_long_content.pdf"));

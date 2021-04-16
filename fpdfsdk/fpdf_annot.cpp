@@ -316,10 +316,10 @@ FPDFAnnot_IsSupportedSubtype(FPDF_ANNOTATION_SUBTYPE subtype) {
   // The supported subtypes must also be communicated in the user doc.
   return subtype == FPDF_ANNOT_CIRCLE || subtype == FPDF_ANNOT_FREETEXT ||
          subtype == FPDF_ANNOT_HIGHLIGHT || subtype == FPDF_ANNOT_INK ||
-         subtype == FPDF_ANNOT_POPUP || subtype == FPDF_ANNOT_SQUARE ||
-         subtype == FPDF_ANNOT_SQUIGGLY || subtype == FPDF_ANNOT_STAMP ||
-         subtype == FPDF_ANNOT_STRIKEOUT || subtype == FPDF_ANNOT_TEXT ||
-         subtype == FPDF_ANNOT_UNDERLINE;
+         subtype == FPDF_ANNOT_LINK || subtype == FPDF_ANNOT_POPUP ||
+         subtype == FPDF_ANNOT_SQUARE || subtype == FPDF_ANNOT_SQUIGGLY ||
+         subtype == FPDF_ANNOT_STAMP || subtype == FPDF_ANNOT_STRIKEOUT ||
+         subtype == FPDF_ANNOT_TEXT || subtype == FPDF_ANNOT_UNDERLINE;
 }
 
 FPDF_EXPORT FPDF_ANNOTATION FPDF_CALLCONV
@@ -1379,4 +1379,17 @@ FPDFAnnot_GetFormFieldExportValue(FPDF_FORMHANDLE hHandle,
 
   return Utf16EncodeMaybeCopyAndReturnLength(pWidget->GetExportValue(), buffer,
                                              buflen);
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetURI(FPDF_ANNOTATION annot,
+                                                     const char* uri) {
+  if (!uri || FPDFAnnot_GetSubtype(annot) != FPDF_ANNOT_LINK)
+    return false;
+
+  CPDF_Dictionary* annot_dict = GetAnnotDictFromFPDFAnnotation(annot);
+  CPDF_Dictionary* action = annot_dict->SetNewFor<CPDF_Dictionary>("A");
+  action->SetNewFor<CPDF_Name>("Type", "Action");
+  action->SetNewFor<CPDF_Name>("S", "URI");
+  action->SetNewFor<CPDF_String>("URI", uri, /*bHex=*/false);
+  return true;
 }

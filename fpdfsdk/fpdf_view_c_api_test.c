@@ -91,6 +91,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFAnnot_SetFocusableSubtypes);
     CHK(FPDFAnnot_SetRect);
     CHK(FPDFAnnot_SetStringValue);
+    CHK(FPDFAnnot_SetURI);
     CHK(FPDFAnnot_UpdateObject);
     CHK(FPDFPage_CloseAnnot);
     CHK(FPDFPage_CreateAnnot);
