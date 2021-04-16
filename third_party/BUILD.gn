@@ -4,6 +4,7 @@
 
 import("//build/config/arm.gni")
 import("//build/config/linux/pkg_config.gni")
+import("//build/config/mips.gni")
 import("//build_overrides/build.gni")
 import("../pdfium.gni")
 
