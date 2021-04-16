@@ -290,10 +290,6 @@ CXFA_FFPageWidgetIterator::CXFA_FFPageWidgetIterator(CXFA_FFPageView* pPageView,
 
 CXFA_FFPageWidgetIterator::~CXFA_FFPageWidgetIterator() = default;
 
-void CXFA_FFPageWidgetIterator::Reset() {
-  m_sIterator.Reset();
-}
-
 CXFA_FFWidget* CXFA_FFPageWidgetIterator::MoveToFirst() {
   m_sIterator.Reset();
   for (CXFA_LayoutItem* pLayoutItem = m_sIterator.GetCurrent(); pLayoutItem;
@@ -348,7 +344,7 @@ CXFA_FFTabOrderPageWidgetIterator::CXFA_FFTabOrderPageWidgetIterator(
     : m_pPageViewLayout(pPageView->GetLayoutItem()),
       m_dwFilter(dwFilter),
       m_bIgnoreRelevant(IsDocVersionBelow205(GetDocForPageView(pPageView))) {
-  Reset();
+  CreateTabOrderWidgetArray();
 }
 
 CXFA_FFTabOrderPageWidgetIterator::~CXFA_FFTabOrderPageWidgetIterator() =
@@ -357,11 +353,6 @@ CXFA_FFTabOrderPageWidgetIterator::~CXFA_FFTabOrderPageWidgetIterator() =
 void CXFA_FFTabOrderPageWidgetIterator::Trace(cppgc::Visitor* visitor) const {
   visitor->Trace(m_pPageViewLayout);
   ContainerTrace(visitor, m_TabOrderWidgetArray);
-}
-
-void CXFA_FFTabOrderPageWidgetIterator::Reset() {
-  CreateTabOrderWidgetArray();
-  m_iCurWidget = -1;
 }
 
 CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::MoveToFirst() {

@@ -257,7 +257,6 @@ class IXFA_WidgetIterator {
  public:
   virtual ~IXFA_WidgetIterator() = default;
 
-  virtual void Reset() = 0;
   virtual CXFA_FFWidget* MoveToFirst() = 0;
   virtual CXFA_FFWidget* MoveToLast() = 0;
   virtual CXFA_FFWidget* MoveToNext() = 0;
