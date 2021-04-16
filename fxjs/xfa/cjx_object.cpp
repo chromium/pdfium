@@ -23,6 +23,7 @@
 #include "fxjs/xfa/cjx_field.h"
 #include "fxjs/xfa/cjx_instancemanager.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/compiler_specific.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fgas/crt/cfgas_decimal.h"
@@ -563,7 +564,7 @@ void CJX_Object::SetContent(const WideString& wsContent,
             }
             valueNodes = pBind->GetNodeListForType(XFA_Element::DataValue);
           }
-          DCHECK(valueNodes.size() == wsSaveTextArray.size());
+          DCHECK_EQ(valueNodes.size(), wsSaveTextArray.size());
           size_t i = 0;
           for (CXFA_Node* pValueNode : valueNodes) {
             pValueNode->JSObject()->SetAttributeValue(wsSaveTextArray[i],

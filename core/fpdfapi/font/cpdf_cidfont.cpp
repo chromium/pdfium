@@ -25,6 +25,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/fx_font.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
 
@@ -707,7 +708,7 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
       if (iBaseEncoding == PDFFONT_ENCODING_WINANSI) {
         index = FT_Get_Char_Index(face, name_unicode);
       } else {
-        DCHECK(iBaseEncoding == PDFFONT_ENCODING_MACROMAN);
+        DCHECK_EQ(iBaseEncoding, PDFFONT_ENCODING_MACROMAN);
         uint32_t maccode =
             FT_CharCodeFromUnicode(FT_ENCODING_APPLE_ROMAN, name_unicode);
         index = maccode ? FT_Get_Char_Index(face, maccode)

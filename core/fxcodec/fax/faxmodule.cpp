@@ -17,6 +17,7 @@
 #include "core/fxcrt/cfx_binarybuf.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/stl_util.h"
 
 namespace fxcodec {
@@ -562,8 +563,8 @@ uint32_t FaxDecoder::GetSrcOffset() {
 }
 
 void FaxDecoder::InvertBuffer() {
-  DCHECK(m_Pitch == m_ScanlineBuf.size());
-  DCHECK(m_Pitch % 4 == 0);
+  DCHECK_EQ(m_Pitch, m_ScanlineBuf.size());
+  DCHECK_EQ(m_Pitch % 4, 0);
   uint32_t* data = reinterpret_cast<uint32_t*>(m_ScanlineBuf.data());
   for (size_t i = 0; i < m_ScanlineBuf.size() / 4; ++i)
     data[i] = ~data[i];

@@ -19,6 +19,7 @@
 #include "core/fxge/dib/cfx_imagestretcher.h"
 #include "core/fxge/dib/cfx_imagetransformer.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
@@ -846,7 +847,7 @@ void CFX_DIBBase::GetPalette(uint32_t* pal, int alpha) const {
 }
 
 RetainPtr<CFX_DIBitmap> CFX_DIBBase::CloneAlphaMask() const {
-  DCHECK(GetFormat() == FXDIB_Format::kArgb);
+  DCHECK_EQ(GetFormat(), FXDIB_Format::kArgb);
   FX_RECT rect(0, 0, m_Width, m_Height);
   auto pMask = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!pMask->Create(rect.Width(), rect.Height(), FXDIB_Format::k8bppMask))
@@ -932,7 +933,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::FlipImage(bool bXFlip, bool bYFlip) const {
         src_scan += 3;
       }
     } else {
-      DCHECK(Bpp == 4);
+      DCHECK_EQ(Bpp, 4);
       for (int col = 0; col < m_Width; ++col) {
         const auto* src_scan32 = reinterpret_cast<const uint32_t*>(src_scan);
         uint32_t* dest_scan32 = reinterpret_cast<uint32_t*>(dest_scan);

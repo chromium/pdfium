@@ -28,6 +28,7 @@
 #include "fxjs/xfa/cfxjse_value.h"
 #include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/compiler_specific.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/span.h"
@@ -1253,7 +1254,7 @@ CXFA_Node* CXFA_Node::CreateSamePacketNode(XFA_Element eType) {
 }
 
 CXFA_Node* CXFA_Node::CloneTemplateToForm(bool bRecursive) {
-  DCHECK(m_ePacket == XFA_PacketType::Template);
+  DCHECK_EQ(m_ePacket, XFA_PacketType::Template);
   CXFA_Node* pClone =
       m_pDocument->CreateNode(XFA_PacketType::Form, m_elementType);
   if (!pClone)
@@ -1282,7 +1283,7 @@ void CXFA_Node::SetTemplateNode(CXFA_Node* pTemplateNode) {
 }
 
 CXFA_Node* CXFA_Node::GetBindData() {
-  DCHECK(GetPacketType() == XFA_PacketType::Form);
+  DCHECK_EQ(GetPacketType(), XFA_PacketType::Form);
   return GetBindingNode();
 }
 
@@ -1513,7 +1514,7 @@ CXFA_Node* CXFA_Node::GetDataDescriptionNode() {
 }
 
 void CXFA_Node::SetDataDescriptionNode(CXFA_Node* pDataDescriptionNode) {
-  DCHECK(m_ePacket == XFA_PacketType::Datasets);
+  DCHECK_EQ(m_ePacket, XFA_PacketType::Datasets);
   m_pAuxNode = pDataDescriptionNode;
 }
 
@@ -1612,7 +1613,7 @@ void CXFA_Node::RemoveChildAndNotify(CXFA_Node* pNode, bool bNotify) {
     return;
   }
 
-  DCHECK(pNode->xml_node_ == xml_node_);
+  DCHECK_EQ(pNode->xml_node_, xml_node_);
   CFX_XMLElement* pXMLElement = ToXMLElement(pNode->xml_node_.Get());
   if (pXMLElement) {
     WideString wsAttributeName =
@@ -1778,7 +1779,7 @@ bool CXFA_Node::HasFlag(XFA_NodeFlag dwFlag) const {
 }
 
 void CXFA_Node::SetFlagAndNotify(uint32_t dwFlag) {
-  DCHECK(dwFlag == XFA_NodeFlag_Initialized);
+  DCHECK_EQ(dwFlag, XFA_NodeFlag_Initialized);
 
   if (!IsInitialized()) {
     CXFA_FFNotify* pNotify = m_pDocument->GetNotify();

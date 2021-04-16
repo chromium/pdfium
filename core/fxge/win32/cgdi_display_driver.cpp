@@ -13,6 +13,7 @@
 #include "core/fxge/render_defines.h"
 #include "core/fxge/win32/cwin32_platform.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 
 CGdiDisplayDriver::CGdiDisplayDriver(HDC hDC)
     : CGdiDeviceDriver(hDC, DeviceType::kDisplay) {
@@ -77,7 +78,7 @@ bool CGdiDisplayDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                   int left,
                                   int top,
                                   BlendMode blend_type) {
-  DCHECK(blend_type == BlendMode::kNormal);
+  DCHECK_EQ(blend_type, BlendMode::kNormal);
   if (pSource->IsMask()) {
     int width = pSource->GetWidth(), height = pSource->GetHeight();
     int alpha = FXARGB_A(color);

@@ -19,6 +19,7 @@
 #include "core/fxge/render_defines.h"
 #include "core/fxge/win32/cwin32_platform.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/notreached.h"
 
 #if !defined(_SKIA_SUPPORT_)
@@ -524,7 +525,7 @@ void CGdiDeviceDriver::DrawLine(float x1, float y1, float x2, float y2) {
         x2 = x[0];
         y2 = y[0];
       } else {
-        DCHECK(np == 2);
+        DCHECK_EQ(np, 2);
         x1 = x[0];
         y1 = y[0];
         x2 = x[1];

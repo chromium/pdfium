@@ -9,7 +9,7 @@
 #include <utility>
 
 #include "core/fxge/dib/cfx_dibitmap.h"
-#include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/notreached.h"
 
 CFX_ClipRgn::CFX_ClipRgn(int width, int height)
@@ -60,7 +60,7 @@ void CFX_ClipRgn::IntersectMaskRect(FX_RECT rect,
 void CFX_ClipRgn::IntersectMaskF(int left,
                                  int top,
                                  const RetainPtr<CFX_DIBitmap>& pMask) {
-  DCHECK(pMask->GetFormat() == FXDIB_Format::k8bppMask);
+  DCHECK_EQ(pMask->GetFormat(), FXDIB_Format::k8bppMask);
   FX_RECT mask_box(left, top, left + pMask->GetWidth(),
                    top + pMask->GetHeight());
   if (m_Type == RectI) {

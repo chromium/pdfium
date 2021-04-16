@@ -17,6 +17,7 @@
 #include "fxjs/xfa/cfxjse_isolatetracker.h"
 #include "fxjs/xfa/cfxjse_value.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 
 using pdfium::fxjse::kClassTag;
 using pdfium::fxjse::kFuncTag;
@@ -53,7 +54,7 @@ void V8ConstructorCallback_Wrapper(
   if (!lpClassDefinition)
     return;
 
-  DCHECK(info.Holder()->InternalFieldCount() == 2);
+  DCHECK_EQ(info.Holder()->InternalFieldCount(), 2);
   info.Holder()->SetAlignedPointerInInternalField(0, nullptr);
   info.Holder()->SetAlignedPointerInInternalField(1, nullptr);
 }

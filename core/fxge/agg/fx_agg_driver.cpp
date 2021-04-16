@@ -18,6 +18,7 @@
 #include "core/fxge/dib/cfx_imagerenderer.h"
 #include "core/fxge/dib/cfx_imagestretcher.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
@@ -170,7 +171,7 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
 
   uint8_t* dest_buf = buffer + dest_top * pitch + dest_left * Bpp;
   if (dest_format == FXDIB_Format::kRgb) {
-    DCHECK(src_format == FXDIB_Format::kRgb32);
+    DCHECK_EQ(src_format, FXDIB_Format::kRgb32);
     for (int row = 0; row < height; row++) {
       uint8_t* dest_scan = dest_buf + row * pitch;
       const uint8_t* src_scan =
@@ -203,7 +204,7 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
   }
   if (src_format != FXDIB_Format::kRgb32)
     return;
-  DCHECK(dest_format == FXDIB_Format::kArgb);
+  DCHECK_EQ(dest_format, FXDIB_Format::kArgb);
   for (int row = 0; row < height; row++) {
     uint8_t* dest_scan = dest_buf + row * pitch;
     const uint8_t* src_scan =

@@ -17,6 +17,7 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/fx_extension.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/stl_util.h"
 
 bool GraphicsData::operator<(const GraphicsData& other) const {
@@ -52,7 +53,7 @@ bool CPDF_PageObjectHolder::IsPage() const {
 
 void CPDF_PageObjectHolder::StartParse(
     std::unique_ptr<CPDF_ContentParser> pParser) {
-  DCHECK(m_ParseState == ParseState::kNotParsed);
+  DCHECK_EQ(m_ParseState, ParseState::kNotParsed);
   m_pParser = std::move(pParser);
   m_ParseState = ParseState::kParsing;
 }
@@ -61,7 +62,7 @@ void CPDF_PageObjectHolder::ContinueParse(PauseIndicatorIface* pPause) {
   if (m_ParseState == ParseState::kParsed)
     return;
 
-  DCHECK(m_ParseState == ParseState::kParsing);
+  DCHECK_EQ(m_ParseState, ParseState::kParsing);
   if (m_pParser->Continue(pPause))
     return;
 

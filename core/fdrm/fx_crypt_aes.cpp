@@ -7,6 +7,7 @@
 #include "core/fdrm/fx_crypt.h"
 
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 
 #define mulby2(x) (((x & 0x7F) << 1) ^ (x & 0x80 ? 0x1B : 0))
 #define GET_32BIT_MSB_FIRST(cp)                    \
@@ -583,7 +584,7 @@ void aes_decrypt_cbc(unsigned char* dest,
                      CRYPT_aes_context* ctx) {
   unsigned int iv[4], x[4], ct[4];
   int i;
-  DCHECK((len & 15) == 0);
+  DCHECK_EQ((len & 15), 0);
   memcpy(iv, ctx->iv, sizeof(iv));
   while (len > 0) {
     for (i = 0; i < 4; i++) {
@@ -611,7 +612,7 @@ void aes_encrypt_cbc(unsigned char* dest,
                      CRYPT_aes_context* ctx) {
   unsigned int iv[4];
   int i;
-  DCHECK((len & 15) == 0);
+  DCHECK_EQ((len & 15), 0);
   memcpy(iv, ctx->iv, sizeof(iv));
   while (len > 0) {
     for (i = 0; i < 4; i++) {

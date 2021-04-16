@@ -24,6 +24,7 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 
 namespace {
 
@@ -94,7 +95,7 @@ void CPDF_CryptoHandler::CryptBlock(bool bEncrypt,
       dest_size -= dest_buf[dest_size - 1];
     }
   } else {
-    DCHECK(dest_size == source.size());
+    DCHECK_EQ(dest_size, source.size());
     if (dest_buf != source.data())
       memcpy(dest_buf, source.data(), source.size());
     CRYPT_ArcFourCryptBlock({dest_buf, dest_size}, {realkey, realkeylen});

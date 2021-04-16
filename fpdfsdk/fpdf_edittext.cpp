@@ -27,6 +27,7 @@
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/fpdf_edit.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/stl_util.h"
 
 // These checks are here because core/ and public/ cannot depend on each other.
@@ -204,7 +205,7 @@ CPDF_Stream* LoadUnicode(CPDF_Document* pDoc,
         unicodes.push_back(iter->second);
         next_it = std::next(iter);
       }
-      DCHECK(iter->first - firstCharcode + 1 == unicodes.size());
+      DCHECK_EQ(iter->first - firstCharcode + 1, unicodes.size());
       map_range_vector[std::make_pair(firstCharcode, iter->first)] = unicodes;
       continue;
     }

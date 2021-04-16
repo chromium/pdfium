@@ -111,7 +111,7 @@ class FPDFFormFillInteractiveEmbedderTest : public FPDFFormFillEmbedderTest {
 
   // Uses the mouse to navigate to text field and select text.
   void SelectTextWithMouse(const CFX_PointF& start, const CFX_PointF& end) {
-    DCHECK(start.y == end.y);
+    DCHECK_EQ(start.y, end.y);
 
     // Navigate to starting position and click mouse.
     FORM_OnMouseMove(form_handle(), page_, 0, start.x, start.y);

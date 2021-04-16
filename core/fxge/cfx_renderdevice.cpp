@@ -438,7 +438,7 @@ bool GetZeroAreaPath(pdfium::span<const FX_PATHPOINT> points,
       continue;
     }
 
-    DCHECK(point_type == FXPT_TYPE::LineTo);
+    DCHECK_EQ(point_type, FXPT_TYPE::LineTo);
     int next_index = (i + 1) % (points.size());
     const FX_PATHPOINT& next = points[next_index];
     if (next.m_Type == FXPT_TYPE::BezierTo || next.m_Type == FXPT_TYPE::MoveTo)
@@ -717,7 +717,7 @@ bool CFX_RenderDevice::DrawPathWithBlend(
         continue;
       }
 
-      DCHECK(point_type == FXPT_TYPE::LineTo);
+      DCHECK_EQ(point_type, FXPT_TYPE::LineTo);
       sub_path.push_back(points[i]);
       continue;
     }

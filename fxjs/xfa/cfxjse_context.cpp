@@ -16,6 +16,7 @@
 #include "fxjs/xfa/cfxjse_value.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_thisproxy.h"
 
@@ -110,7 +111,7 @@ v8::Local<v8::Object> CreateReturnValue(v8::Isolate* pIsolate,
 
 void FXJSE_UpdateProxyBinding(v8::Local<v8::Object> hObject) {
   DCHECK(!hObject.IsEmpty());
-  DCHECK(hObject->InternalFieldCount() == 2);
+  DCHECK_EQ(hObject->InternalFieldCount(), 2);
   hObject->SetAlignedPointerInInternalField(
       0, const_cast<char*>(kFXJSEProxyObjectTag));
   hObject->SetAlignedPointerInInternalField(1, nullptr);
@@ -121,7 +122,7 @@ void FXJSE_UpdateProxyBinding(v8::Local<v8::Object> hObject) {
 void FXJSE_UpdateObjectBinding(v8::Local<v8::Object> hObject,
                                CFXJSE_HostObject* lpNewBinding) {
   DCHECK(!hObject.IsEmpty());
-  DCHECK(hObject->InternalFieldCount() == 2);
+  DCHECK_EQ(hObject->InternalFieldCount(), 2);
   hObject->SetAlignedPointerInInternalField(
       0, const_cast<char*>(kFXJSEHostObjectTag));
   hObject->SetAlignedPointerInInternalField(1, lpNewBinding);
@@ -129,7 +130,7 @@ void FXJSE_UpdateObjectBinding(v8::Local<v8::Object> hObject,
 
 void FXJSE_ClearObjectBinding(v8::Local<v8::Object> hObject) {
   DCHECK(!hObject.IsEmpty());
-  DCHECK(hObject->InternalFieldCount() == 2);
+  DCHECK_EQ(hObject->InternalFieldCount(), 2);
   hObject->SetAlignedPointerInInternalField(0, nullptr);
   hObject->SetAlignedPointerInInternalField(1, nullptr);
 }

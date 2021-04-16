@@ -16,6 +16,7 @@
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/compiler_specific.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/stl_util.h"
@@ -94,7 +95,7 @@ void FormValueNode_SetChildContent(CXFA_Node* pValueNode,
   if (!pValueNode)
     return;
 
-  DCHECK(pValueNode->GetPacketType() == XFA_PacketType::Form);
+  DCHECK_EQ(pValueNode->GetPacketType(), XFA_PacketType::Form);
   CXFA_Node* pChildNode = FormValueNode_CreateChild(pValueNode, iType);
   if (!pChildNode)
     return;

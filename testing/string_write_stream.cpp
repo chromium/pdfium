@@ -6,7 +6,7 @@
 
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/widestring.h"
-#include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 
 StringWriteStream::StringWriteStream() = default;
 
@@ -23,7 +23,7 @@ bool StringWriteStream::Flush() {
 bool StringWriteStream::WriteBlockAtOffset(const void* pData,
                                            FX_FILESIZE offset,
                                            size_t size) {
-  DCHECK(offset == 0);
+  DCHECK_EQ(offset, 0);
   stream_.write(static_cast<const char*>(pData), size);
   return true;
 }

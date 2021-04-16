@@ -14,6 +14,7 @@
 #include "fpdfsdk/pwl/cpwl_scroll_bar.h"
 #include "public/fpdf_fwlevent.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -378,7 +379,7 @@ void CPWL_Wnd::AddChild(std::unique_ptr<CPWL_Wnd> pWnd) {
 }
 
 void CPWL_Wnd::RemoveChild(CPWL_Wnd* pWnd) {
-  DCHECK(pWnd->m_pParent == this);
+  DCHECK_EQ(pWnd->m_pParent, this);
   auto it = std::find(m_Children.begin(), m_Children.end(),
                       pdfium::FakeUniquePtr<CPWL_Wnd>(pWnd));
   if (it == m_Children.end())

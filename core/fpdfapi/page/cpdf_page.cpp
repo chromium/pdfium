@@ -16,6 +16,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/stl_util.h"
 
 CPDF_Page::CPDF_Page(CPDF_Document* pDocument, CPDF_Dictionary* pPageDict)
@@ -69,7 +70,7 @@ void CPDF_Page::ParseContent() {
   if (GetParseState() == ParseState::kNotParsed)
     StartParse(std::make_unique<CPDF_ContentParser>(this));
 
-  DCHECK(GetParseState() == ParseState::kParsing);
+  DCHECK_EQ(GetParseState(), ParseState::kParsing);
   ContinueParse(nullptr);
 }
 

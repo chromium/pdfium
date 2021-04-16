@@ -34,6 +34,7 @@
 #include "core/fxge/dib/cfx_imagestretcher.h"
 #include "core/fxge/text_char_pos.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/span.h"
@@ -150,7 +151,7 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
         }
       }
     } else if (src_format == FXDIB_Format::kRgb32) {
-      DCHECK(dest_format == FXDIB_Format::kArgb);
+      DCHECK_EQ(dest_format, FXDIB_Format::kArgb);
       for (int row = 0; row < height; row++) {
         uint8_t* dest_scan = dest_buf + row * pitch;
         const uint8_t* src_scan =
@@ -315,7 +316,7 @@ SkFont::Edging GetFontEdgingType(const CFX_TextRenderOptions& text_options) {
   if (text_options.aliasing_type == CFX_TextRenderOptions::kAntiAliasing)
     return SkFont::Edging::kAntiAlias;
 
-  DCHECK(text_options.aliasing_type == CFX_TextRenderOptions::kLcd);
+  DCHECK_EQ(text_options.aliasing_type, CFX_TextRenderOptions::kLcd);
   return SkFont::Edging::kSubpixelAntiAlias;
 }
 
@@ -1252,7 +1253,7 @@ class SkiaState {
       if (Clip::kSave == m_commands[m_clipIndex]) {
         m_pDriver->SkiaCanvas()->save();
       } else {
-        DCHECK(Clip::kPath == m_commands[m_clipIndex]);
+        DCHECK_EQ(Clip::kPath, m_commands[m_clipIndex]);
         m_pDriver->SkiaCanvas()->clipPath(m_clips[m_clipIndex],
                                           SkClipOp::kIntersect, true);
       }
@@ -1345,7 +1346,7 @@ class SkiaState {
     DCHECK(m_clipIndex <= m_commands.count());
     for (int index = 0; index < m_clipIndex; ++index)
       cacheSaveCount += Clip::kSave == m_commands[index];
-    DCHECK(skCanvasSaveCount == cacheSaveCount);
+    DCHECK_EQ(skCanvasSaveCount, cacheSaveCount);
 #endif  // SHOW_SKIA_PATH
   }
 
@@ -1506,7 +1507,7 @@ class SkiaState {
       m_fontCharWidths[index] = width;
     }
     int Count() const {
-      DCHECK(m_positions.count() == m_glyphs.count());
+      DCHECK_EQ(m_positions.count(), m_glyphs.count());
       return m_glyphs.count();
     }
     void SetCount(int count) {
@@ -1649,7 +1650,7 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
                      ? kAlpha_8_SkColorType
                      : kGray_8_SkColorType;
   } else {
-    DCHECK(bpp == 32);
+    DCHECK_EQ(bpp, 32);
     color_type = Get32BitSkColorType(bRgbByteOrder);
   }
 
@@ -2285,7 +2286,7 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
     skPath.addRect(skRect);
     skPath.transform(inverse);
   } else {
-    DCHECK(kCoonsPatchMeshShading == shadingType);
+    DCHECK_EQ(kCoonsPatchMeshShading, shadingType);
     const CPDF_Stream* pStream = ToStream(pPattern->GetShadingObject());
     if (!pStream)
       return false;
@@ -2811,7 +2812,7 @@ bool CFX_DefaultRenderDevice::SetBitsWithMask(
 
 void CFX_DIBBase::DebugVerifyBitmapIsPreMultiplied(void* opt) const {
 #ifdef SK_DEBUG
-  DCHECK(GetBPP() == 32);
+  DCHECK_EQ(GetBPP(), 32);
   const uint32_t* buffer = (const uint32_t*)(opt ? opt : GetBuffer());
   int width = GetWidth();
   int height = GetHeight();

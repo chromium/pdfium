@@ -46,7 +46,7 @@ bool IsValidDimension(int value) {
 
 unsigned int GetBits8(const uint8_t* pData, uint64_t bitpos, size_t nbits) {
   DCHECK(nbits == 1 || nbits == 2 || nbits == 4 || nbits == 8 || nbits == 16);
-  DCHECK((bitpos & (nbits - 1)) == 0);
+  DCHECK_EQ((bitpos & (nbits - 1)), 0);
   unsigned int byte = pData[bitpos / 8];
   if (nbits == 8)
     return byte;
@@ -302,8 +302,8 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadDIBBase(
     return LoadState::kContinue;
   }
 
-  DCHECK(iCreatedDecoder == LoadState::kSuccess);
-  DCHECK(iLoadedMask == LoadState::kSuccess);
+  DCHECK_EQ(iCreatedDecoder, LoadState::kSuccess);
+  DCHECK_EQ(iLoadedMask, LoadState::kSuccess);
   if (m_pColorSpace && m_bStdCS)
     m_pColorSpace->EnableStdConversion(false);
   return LoadState::kSuccess;

@@ -16,6 +16,7 @@
 #include "fxjs/xfa/cfxjse_value.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
@@ -30,7 +31,7 @@ void DoPredicateFilter(v8::Isolate* pIsolate,
                        WideString wsCondition,
                        size_t iFoundCount,
                        CFXJSE_ResolveNodeData* pRnd) {
-  DCHECK(iFoundCount == pRnd->m_Result.objects.size());
+  DCHECK_EQ(iFoundCount, pRnd->m_Result.objects.size());
   WideString wsExpression;
   CXFA_Script::Type eLangType = CXFA_Script::Type::Unknown;
   if (wsCondition.First(2).EqualsASCII(".[") && wsCondition.Back() == L']')

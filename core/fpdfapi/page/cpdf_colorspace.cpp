@@ -34,6 +34,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/maybe_owned.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/stl_util.h"
 
@@ -1208,7 +1209,7 @@ bool CPDF_IndexedCS::GetRGB(pdfium::span<const float> pBuf,
         m_pCompMinMax[i * 2] +
         m_pCompMinMax[i * 2 + 1] * pTable[index * m_nBaseComponents + i] / 255;
   }
-  DCHECK(m_nBaseComponents == m_pBaseCS->CountComponents());
+  DCHECK_EQ(m_nBaseComponents, m_pBaseCS->CountComponents());
   return m_pBaseCS->GetRGB(comps, R, G, B);
 }
 

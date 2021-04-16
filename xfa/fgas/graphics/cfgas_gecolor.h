@@ -10,6 +10,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 
 class CFGAS_GEPattern;
 class CFGAS_GEShading;
@@ -30,11 +31,11 @@ class CFGAS_GEColor {
     return m_argb;
   }
   CFGAS_GEPattern* GetPattern() const {
-    DCHECK(m_type == Pattern);
+    DCHECK_EQ(m_type, Pattern);
     return m_pPattern.Get();
   }
   CFGAS_GEShading* GetShading() const {
-    DCHECK(m_type == Shading);
+    DCHECK_EQ(m_type, Shading);
     return m_pShading.Get();
   }
 

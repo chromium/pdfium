@@ -26,6 +26,7 @@
 #include "fpdfsdk/pwl/cpwl_scroll_bar.h"
 #include "fpdfsdk/pwl/ipwl_systemhandler.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/compiler_specific.h"
 
 namespace {
@@ -178,7 +179,7 @@ void CPWL_EditImpl_Undo::Undo() {
     m_nCurUndoPos--;
     nUndoRemain--;
   }
-  DCHECK(nUndoRemain == 0);
+  DCHECK_EQ(nUndoRemain, 0);
   DCHECK(m_bWorking);
   m_bWorking = false;
 }
@@ -196,7 +197,7 @@ void CPWL_EditImpl_Undo::Redo() {
     m_nCurUndoPos++;
     nRedoRemain--;
   }
-  DCHECK(nRedoRemain == 0);
+  DCHECK_EQ(nRedoRemain, 0);
   DCHECK(m_bWorking);
   m_bWorking = false;
 }

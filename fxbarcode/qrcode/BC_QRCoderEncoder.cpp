@@ -39,6 +39,7 @@
 #include "fxbarcode/qrcode/BC_QRCoderMode.h"
 #include "fxbarcode/qrcode/BC_QRCoderVersion.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/optional.h"
 #include "third_party/base/stl_util.h"
 
@@ -239,7 +240,7 @@ std::vector<uint8_t, FxAllocAllocator<uint8_t>> GenerateECBytes(
   if (encoder.Encode(&toEncode, numEcBytesInBlock)) {
     ecBytes = std::vector<uint8_t, FxAllocAllocator<uint8_t>>(
         toEncode.begin() + dataBytes.size(), toEncode.end());
-    DCHECK(ecBytes.size() == static_cast<size_t>(numEcBytesInBlock));
+    DCHECK_EQ(ecBytes.size(), static_cast<size_t>(numEcBytesInBlock));
   }
   return ecBytes;
 }

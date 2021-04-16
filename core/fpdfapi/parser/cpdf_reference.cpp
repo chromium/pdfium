@@ -8,7 +8,7 @@
 
 #include "core/fpdfapi/parser/cpdf_indirect_object_holder.h"
 #include "core/fxcrt/fx_stream.h"
-#include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/stl_util.h"
 
 CPDF_Reference::CPDF_Reference(CPDF_IndirectObjectHolder* pDoc, uint32_t objnum)
@@ -107,7 +107,7 @@ bool CPDF_Reference::WriteTo(IFX_ArchiveStream* archive,
 
 RetainPtr<CPDF_Object> CPDF_Reference::MakeReference(
     CPDF_IndirectObjectHolder* holder) const {
-  DCHECK(holder == m_pObjList);
+  DCHECK_EQ(holder, m_pObjList);
   // Do not allow reference to reference, just create other reference for same
   // object.
   return pdfium::MakeRetain<CPDF_Reference>(holder, GetRefObjNum());

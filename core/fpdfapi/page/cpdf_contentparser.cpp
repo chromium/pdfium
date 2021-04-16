@@ -21,6 +21,7 @@
 #include "core/fxcrt/pauseindicator_iface.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 
 CPDF_ContentParser::CPDF_ContentParser(CPDF_Page* pPage)
     : m_CurrentStage(Stage::kGetContent), m_pObjectHolder(pPage) {
@@ -127,12 +128,12 @@ bool CPDF_ContentParser::Continue(PauseIndicatorIface* pPause) {
   if (m_CurrentStage == Stage::kCheckClip)
     m_CurrentStage = CheckClip();
 
-  DCHECK(m_CurrentStage == Stage::kComplete);
+  DCHECK_EQ(m_CurrentStage, Stage::kComplete);
   return false;
 }
 
 CPDF_ContentParser::Stage CPDF_ContentParser::GetContent() {
-  DCHECK(m_CurrentStage == Stage::kGetContent);
+  DCHECK_EQ(m_CurrentStage, Stage::kGetContent);
   DCHECK(m_pObjectHolder->IsPage());
   CPDF_Array* pContent =
       m_pObjectHolder->GetDict()->GetArrayFor(pdfium::page_object::kContents);

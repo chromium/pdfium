@@ -11,7 +11,7 @@
 #include "core/fpdfapi/page/cpdf_transferfuncdib.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxge/dib/cfx_dibbase.h"
-#include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 
 CPDF_TransferFunc::CPDF_TransferFunc(
     CPDF_Document* pDoc,
@@ -24,9 +24,9 @@ CPDF_TransferFunc::CPDF_TransferFunc(
       m_SamplesR(std::move(samples_r)),
       m_SamplesG(std::move(samples_g)),
       m_SamplesB(std::move(samples_b)) {
-  DCHECK(m_SamplesR.size() == kChannelSampleSize);
-  DCHECK(m_SamplesG.size() == kChannelSampleSize);
-  DCHECK(m_SamplesB.size() == kChannelSampleSize);
+  DCHECK_EQ(m_SamplesR.size(), kChannelSampleSize);
+  DCHECK_EQ(m_SamplesG.size(), kChannelSampleSize);
+  DCHECK_EQ(m_SamplesB.size(), kChannelSampleSize);
 }
 
 CPDF_TransferFunc::~CPDF_TransferFunc() = default;

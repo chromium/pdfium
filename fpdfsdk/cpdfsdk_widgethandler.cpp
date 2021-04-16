@@ -20,6 +20,7 @@
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/stl_util.h"
 
 CPDFSDK_WidgetHandler::CPDFSDK_WidgetHandler() = default;
@@ -307,7 +308,7 @@ bool CPDFSDK_WidgetHandler::HitTest(CPDFSDK_PageView* pPageView,
 
 bool CPDFSDK_WidgetHandler::IsFocusableAnnot(
     const CPDF_Annot::Subtype& annot_type) const {
-  DCHECK(annot_type == CPDF_Annot::Subtype::WIDGET);
+  DCHECK_EQ(annot_type, CPDF_Annot::Subtype::WIDGET);
 
   return pdfium::Contains(m_pFormFillEnv->GetFocusableAnnotSubtypes(),
                           annot_type);

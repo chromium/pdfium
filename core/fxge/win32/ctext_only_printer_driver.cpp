@@ -15,7 +15,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/text_char_pos.h"
-#include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/notreached.h"
 
 CTextOnlyPrinterDriver::CTextOnlyPrinterDriver(HDC hDC)
@@ -157,11 +157,11 @@ bool CTextOnlyPrinterDriver::DrawDeviceText(
     // Only works with PDFs from Skia's PDF generator. Cannot handle arbitrary
     // values from PDFs.
     const TextCharPos& charpos = pCharPos[i];
-    DCHECK(charpos.m_AdjustMatrix[0] == 0);
-    DCHECK(charpos.m_AdjustMatrix[1] == 0);
-    DCHECK(charpos.m_AdjustMatrix[2] == 0);
-    DCHECK(charpos.m_AdjustMatrix[3] == 0);
-    DCHECK(charpos.m_Origin.y == 0);
+    DCHECK_EQ(charpos.m_AdjustMatrix[0], 0);
+    DCHECK_EQ(charpos.m_AdjustMatrix[1], 0);
+    DCHECK_EQ(charpos.m_AdjustMatrix[2], 0);
+    DCHECK_EQ(charpos.m_AdjustMatrix[3], 0);
+    DCHECK_EQ(charpos.m_Origin.y, 0);
 
     wsText += charpos.m_Unicode;
   }

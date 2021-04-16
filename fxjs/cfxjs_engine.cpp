@@ -14,6 +14,7 @@
 #include "fxjs/fxv8.h"
 #include "fxjs/xfa/cfxjse_runtimedata.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/stl_util.h"
 #include "v8/include/v8-util.h"
 
@@ -169,7 +170,7 @@ class CFXJS_ObjDefinition {
       return;
     }
     v8::Local<v8::Object> holder = info.Holder();
-    DCHECK(holder->InternalFieldCount() == 2);
+    DCHECK_EQ(holder->InternalFieldCount(), 2);
     holder->SetAlignedPointerInInternalField(0, nullptr);
     holder->SetAlignedPointerInInternalField(1, nullptr);
   }
@@ -276,8 +277,8 @@ V8TemplateMapTraits::MapType* V8TemplateMapTraits::MapFromWeakCallbackInfo(
 
 void FXJS_Initialize(unsigned int embedderDataSlot, v8::Isolate* pIsolate) {
   if (g_isolate) {
-    DCHECK(g_embedderDataSlot == embedderDataSlot);
-    DCHECK(g_isolate == pIsolate);
+    DCHECK_EQ(g_embedderDataSlot, embedderDataSlot);
+    DCHECK_EQ(g_isolate, pIsolate);
     return;
   }
   g_embedderDataSlot = embedderDataSlot;

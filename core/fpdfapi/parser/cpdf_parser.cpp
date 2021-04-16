@@ -29,6 +29,7 @@
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/stl_util.h"
 
@@ -782,7 +783,7 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
         continue;
       }
 
-      DCHECK(type == ObjectType::kCompressed);
+      DCHECK_EQ(type, ObjectType::kCompressed);
       const uint32_t archive_obj_num = entry_value;
       if (!IsValidObjectNumber(archive_obj_num))
         return false;
