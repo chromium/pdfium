@@ -88,6 +88,25 @@ void VerifyAnnotationSubtypesAndFocusability(
   }
 }
 
+void VerifyUriActionInLink(FPDF_DOCUMENT doc,
+                           FPDF_LINK link,
+                           const std::string& expected_uri) {
+  ASSERT_TRUE(link);
+
+  FPDF_ACTION action = FPDFLink_GetAction(link);
+  ASSERT_TRUE(action);
+  EXPECT_EQ(static_cast<unsigned long>(PDFACTION_URI),
+            FPDFAction_GetType(action));
+
+  unsigned long bufsize = FPDFAction_GetURIPath(doc, action, nullptr, 0);
+  ASSERT_EQ(expected_uri.size() + 1, bufsize);
+
+  std::vector<char> buffer(bufsize);
+  EXPECT_EQ(bufsize,
+            FPDFAction_GetURIPath(doc, action, buffer.data(), bufsize));
+  EXPECT_STREQ(expected_uri.c_str(), buffer.data());
+}
+
 }  // namespace
 
 class FPDFAnnotEmbedderTest : public EmbedderTest {};
@@ -2993,29 +3012,15 @@ TEST_F(FPDFAnnotEmbedderTest, GetLinkFromAnnotation) {
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 3));
-    ASSERT_TRUE(annot);
-    EXPECT_EQ(FPDF_ANNOT_LINK, FPDFAnnot_GetSubtype(annot.get()));
-    FPDF_LINK link_annot = FPDFAnnot_GetLink(annot.get());
-    ASSERT_TRUE(link_annot);
-
-    FPDF_ACTION action = FPDFLink_GetAction(link_annot);
-    ASSERT_TRUE(action);
-    EXPECT_EQ(static_cast<unsigned long>(PDFACTION_URI),
-              FPDFAction_GetType(action));
-
     constexpr char kExpectedResult[] =
         "https://cs.chromium.org/chromium/src/third_party/pdfium/public/"
         "fpdf_text.h";
-    constexpr unsigned long kExpectedLength = pdfium::size(kExpectedResult);
-    unsigned long bufsize =
-        FPDFAction_GetURIPath(document(), action, nullptr, 0);
-    ASSERT_EQ(kExpectedLength, bufsize);
 
-    char buffer[1024];
-    EXPECT_EQ(bufsize,
-              FPDFAction_GetURIPath(document(), action, buffer, bufsize));
-    EXPECT_STREQ(kExpectedResult, buffer);
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 3));
+    ASSERT_TRUE(annot);
+    EXPECT_EQ(FPDF_ANNOT_LINK, FPDFAnnot_GetSubtype(annot.get()));
+    VerifyUriActionInLink(document(), FPDFAnnot_GetLink(annot.get()),
+                          kExpectedResult);
   }
 
   {
