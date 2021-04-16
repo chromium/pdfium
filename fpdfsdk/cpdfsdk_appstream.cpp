@@ -1255,33 +1255,38 @@ void CPDFSDK_AppStream::SetAsPushButton() {
   SetDefaultIconName(pRolloverIcon, "ImgB");
   SetDefaultIconName(pDownIcon, "ImgC");
 
-  CBA_FontMap font_map(widget_->GetPDFPage()->GetDocument(),
-                       widget_->GetPDFAnnot()->GetAnnotDict());
-  font_map.SetAPType("N");
-
   CPDF_IconFit iconFit = pControl->GetIconFit();
-  ByteString csAP =
-      GetRectFillAppStream(rcWindow, crBackground) +
-      GetBorderAppStreamInternal(rcWindow, fBorderWidth, crBorder, crLeftTop,
-                                 crRightBottom, nBorderStyle, dsBorder) +
-      GetPushButtonAppStream(iconFit.GetFittingBounds() ? rcWindow : rcClient,
-                             &font_map, pNormalIcon, iconFit, csNormalCaption,
-                             crText, fFontSize, nLayout);
+  {
+    CBA_FontMap font_map(widget_->GetPDFPage()->GetDocument(),
+                         widget_->GetPDFAnnot()->GetAnnotDict(), "N");
+    ByteString csAP =
+        GetRectFillAppStream(rcWindow, crBackground) +
+        GetBorderAppStreamInternal(rcWindow, fBorderWidth, crBorder, crLeftTop,
+                                   crRightBottom, nBorderStyle, dsBorder) +
+        GetPushButtonAppStream(iconFit.GetFittingBounds() ? rcWindow : rcClient,
+                               &font_map, pNormalIcon, iconFit, csNormalCaption,
+                               crText, fFontSize, nLayout);
 
-  Write("N", csAP, ByteString());
-  if (pNormalIcon)
-    AddImage("N", pNormalIcon);
+    Write("N", csAP, ByteString());
+    if (pNormalIcon)
+      AddImage("N", pNormalIcon);
 
-  CPDF_FormControl::HighlightingMode eHLM = pControl->GetHighlightingMode();
-  if (eHLM == CPDF_FormControl::Push || eHLM == CPDF_FormControl::Toggle) {
+    CPDF_FormControl::HighlightingMode eHLM = pControl->GetHighlightingMode();
+    if (eHLM != CPDF_FormControl::Push && eHLM != CPDF_FormControl::Toggle) {
+      Remove("D");
+      Remove("R");
+      return;
+    }
+
     if (csRolloverCaption.IsEmpty() && !pRolloverIcon) {
       csRolloverCaption = csNormalCaption;
       pRolloverIcon = pNormalIcon;
     }
-
-    font_map.SetAPType("R");
-
-    csAP =
+  }
+  {
+    CBA_FontMap font_map(widget_->GetPDFPage()->GetDocument(),
+                         widget_->GetPDFAnnot()->GetAnnotDict(), "R");
+    ByteString csAP =
         GetRectFillAppStream(rcWindow, crBackground) +
         GetBorderAppStreamInternal(rcWindow, fBorderWidth, crBorder, crLeftTop,
                                    crRightBottom, nBorderStyle, dsBorder) +
@@ -1313,10 +1318,11 @@ void CPDFSDK_AppStream::SetAsPushButton() {
       default:
         break;
     }
-
-    font_map.SetAPType("D");
-
-    csAP =
+  }
+  {
+    CBA_FontMap font_map(widget_->GetPDFPage()->GetDocument(),
+                         widget_->GetPDFAnnot()->GetAnnotDict(), "D");
+    ByteString csAP =
         GetRectFillAppStream(rcWindow, crBackground - 0.25f) +
         GetBorderAppStreamInternal(rcWindow, fBorderWidth, crBorder, crLeftTop,
                                    crRightBottom, nBorderStyle, dsBorder) +
@@ -1327,9 +1333,6 @@ void CPDFSDK_AppStream::SetAsPushButton() {
     Write("D", csAP, ByteString());
     if (pDownIcon)
       AddImage("D", pDownIcon);
-  } else {
-    Remove("D");
-    Remove("R");
   }
 }
 
@@ -1569,7 +1572,7 @@ void CPDFSDK_AppStream::SetAsComboBox(Optional<WideString> sValue) {
 
   // Font map must outlive |pEdit|.
   CBA_FontMap font_map(widget_->GetPDFPage()->GetDocument(),
-                       widget_->GetPDFAnnot()->GetAnnotDict());
+                       widget_->GetPDFAnnot()->GetAnnotDict(), "N");
 
   auto pEdit = std::make_unique<CPWL_EditImpl>();
   pEdit->EnableRefresh(false);
@@ -1635,7 +1638,7 @@ void CPDFSDK_AppStream::SetAsListBox() {
 
   // Font map must outlive |pEdit|.
   CBA_FontMap font_map(widget_->GetPDFPage()->GetDocument(),
-                       widget_->GetPDFAnnot()->GetAnnotDict());
+                       widget_->GetPDFAnnot()->GetAnnotDict(), "N");
 
   auto pEdit = std::make_unique<CPWL_EditImpl>();
   pEdit->EnableRefresh(false);
@@ -1719,7 +1722,7 @@ void CPDFSDK_AppStream::SetAsTextField(Optional<WideString> sValue) {
 
   // Font map must outlive |pEdit|.
   CBA_FontMap font_map(widget_->GetPDFPage()->GetDocument(),
-                       widget_->GetPDFAnnot()->GetAnnotDict());
+                       widget_->GetPDFAnnot()->GetAnnotDict(), "N");
 
   auto pEdit = std::make_unique<CPWL_EditImpl>();
   pEdit->EnableRefresh(false);

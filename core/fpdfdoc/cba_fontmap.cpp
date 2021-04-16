@@ -68,14 +68,14 @@ CBA_FontMap::Data::Data() = default;
 
 CBA_FontMap::Data::~Data() = default;
 
-CBA_FontMap::CBA_FontMap(CPDF_Document* pDocument, CPDF_Dictionary* pAnnotDict)
-    : m_pDocument(pDocument), m_pAnnotDict(pAnnotDict) {
+CBA_FontMap::CBA_FontMap(CPDF_Document* pDocument,
+                         CPDF_Dictionary* pAnnotDict,
+                         const ByteString& sAPType)
+    : m_pDocument(pDocument), m_pAnnotDict(pAnnotDict), m_sAPType(sAPType) {
   Initialize();
 }
 
-CBA_FontMap::~CBA_FontMap() {
-  Clear();
-}
+CBA_FontMap::~CBA_FontMap() = default;
 
 RetainPtr<CPDF_Font> CBA_FontMap::GetPDFFont(int32_t nFontIndex) {
   if (pdfium::IndexInBounds(m_Data, nFontIndex))
@@ -149,19 +149,6 @@ int32_t CBA_FontMap::CharSetFromUnicode(uint16_t word, int32_t nOldCharset) {
 
 int32_t CBA_FontMap::GetNativeCharset() {
   return FX_GetCharsetFromCodePage(FXSYS_GetACP());
-}
-
-void CBA_FontMap::Reset() {
-  Clear();
-  m_pDefaultFont = nullptr;
-  m_sDefaultFontName.clear();
-}
-
-void CBA_FontMap::SetAPType(const ByteString& sAPType) {
-  m_sAPType = sAPType;
-
-  Reset();
-  Initialize();
 }
 
 void CBA_FontMap::Initialize() {
@@ -350,11 +337,6 @@ void CBA_FontMap::AddFontToAnnotDict(const RetainPtr<CPDF_Font>& pFont,
 bool CBA_FontMap::KnowWord(int32_t nFontIndex, uint16_t word) {
   return pdfium::IndexInBounds(m_Data, nFontIndex) &&
          CharCodeFromUnicode(nFontIndex, word) >= 0;
-}
-
-void CBA_FontMap::Clear() {
-  m_Data.clear();
-  m_NativeFont.clear();
 }
 
 int32_t CBA_FontMap::GetFontIndex(const ByteString& sFontName,

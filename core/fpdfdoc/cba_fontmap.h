@@ -22,7 +22,9 @@ class CBA_FontMap final : public IPVT_FontMap {
  public:
   static int32_t GetNativeCharset();
 
-  CBA_FontMap(CPDF_Document* pDocument, CPDF_Dictionary* pAnnotDict);
+  CBA_FontMap(CPDF_Document* pDocument,
+              CPDF_Dictionary* pAnnotDict,
+              const ByteString& sAPType);
   ~CBA_FontMap() override;
 
   // IPVT_FontMap
@@ -33,9 +35,6 @@ class CBA_FontMap final : public IPVT_FontMap {
                            int32_t nFontIndex) override;
   int32_t CharCodeFromUnicode(int32_t nFontIndex, uint16_t word) override;
   int32_t CharSetFromUnicode(uint16_t word, int32_t nOldCharset) override;
-
-  void Reset();
-  void SetAPType(const ByteString& sAPType);
 
  private:
   struct Data {
@@ -64,7 +63,6 @@ class CBA_FontMap final : public IPVT_FontMap {
 
   bool KnowWord(int32_t nFontIndex, uint16_t word);
 
-  void Clear();
   int32_t GetFontIndex(const ByteString& sFontName,
                        int32_t nCharset,
                        bool bFind);
@@ -90,7 +88,7 @@ class CBA_FontMap final : public IPVT_FontMap {
   RetainPtr<CPDF_Dictionary> const m_pAnnotDict;
   RetainPtr<CPDF_Font> m_pDefaultFont;
   ByteString m_sDefaultFontName;
-  ByteString m_sAPType = "N";
+  const ByteString m_sAPType;
 };
 
 #endif  // CORE_FPDFDOC_CBA_FONTMAP_H_
