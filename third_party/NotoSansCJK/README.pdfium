@@ -3,9 +3,10 @@ URL: https://github.com/googlefonts/noto-cjk
 Version: Noto Sans CJK V2.001
 License: SIL Open Font License v1.1
 License File: LICENSE
+Security Critical: no
 
 Description:
-NotoSansSC-Regular.subset.otf constains a subset of NotoSansSC-Regular font.
+NotoSansSC-Regular.subset.otf contains a subset of NotoSansSC-Regular font.
 This font file is used for the test FPDFEditEmbedderTest.EmbedNotoSansSCFont,
 and it is included as a real-world example for testing PDFium's API to embed a
 CJK font into a PDF file, which contains multiple unicodes mapped to the same
@@ -19,4 +20,4 @@ $ pyftsubset NotoSansSC-Regular.otf --unicodes="U+0000884C,U+0000FA08, \
 U+0000F906,U+000053E5,U+00008FD9,U+0000662F,U+00007B2C,U+00004E00,U+00003002, \
 U+00004E8C,U+00002F00,U+00002F06"
 
-where pyftsubset comes from https://github.com/behdad/fonttools
+where pyftsubset comes from https://github.com/behdad/fonttools (version 4.16.1).
