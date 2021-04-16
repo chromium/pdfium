@@ -296,6 +296,46 @@ void CPDFSDK_Widget::Synchronize(bool bSynchronizeElse) {
     context->GetXFADocView()->ProcessValueChanged(node);
   }
 }
+
+bool CPDFSDK_Widget::HandleXFAAAction(
+    CPDF_AAction::AActionType type,
+    CPDFSDK_FieldAction* data,
+    CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+  auto* pContext =
+      static_cast<CPDFXFA_Context*>(pFormFillEnv->GetDocExtension());
+  if (!pContext)
+    return false;
+
+  CXFA_FFWidget* hWidget = GetMixXFAWidget();
+  if (!hWidget)
+    return false;
+
+  XFA_EVENTTYPE eEventType = GetXFAEventType(type, data->bWillCommit);
+  if (eEventType == XFA_EVENT_Unknown)
+    return false;
+
+  CXFA_FFWidgetHandler* pXFAWidgetHandler = GetXFAWidgetHandler();
+  if (!pXFAWidgetHandler)
+    return false;
+
+  CXFA_EventParam param;
+  param.m_eType = eEventType;
+  param.m_wsChange = data->sChange;
+  param.m_iCommitKey = 0;
+  param.m_bShift = data->bShift;
+  param.m_iSelStart = data->nSelStart;
+  param.m_iSelEnd = data->nSelEnd;
+  param.m_wsFullText = data->sValue;
+  param.m_bKeyDown = data->bKeyDown;
+  param.m_bModifier = data->bModifier;
+  param.m_wsPrevText = data->sValue;
+  bool ret = hWidget->ProcessEventUnderHandler(&param, pXFAWidgetHandler);
+  CXFA_FFDocView* pDocView = pContext->GetXFADocView();
+  if (pDocView)
+    pDocView->UpdateDocView();
+
+  return ret;
+}
 #endif  // PDF_ENABLE_XFA
 
 bool CPDFSDK_Widget::IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode mode) {
@@ -783,35 +823,8 @@ bool CPDFSDK_Widget::OnAAction(CPDF_AAction::AActionType type,
   CPDFSDK_FormFillEnvironment* pFormFillEnv = pPageView->GetFormFillEnv();
 
 #ifdef PDF_ENABLE_XFA
-  auto* pContext =
-      static_cast<CPDFXFA_Context*>(pFormFillEnv->GetDocExtension());
-  if (pContext) {
-    CXFA_FFWidget* hWidget = GetMixXFAWidget();
-    if (hWidget) {
-      XFA_EVENTTYPE eEventType = GetXFAEventType(type, data->bWillCommit);
-      if (eEventType != XFA_EVENT_Unknown) {
-        if (CXFA_FFWidgetHandler* pXFAWidgetHandler = GetXFAWidgetHandler()) {
-          CXFA_EventParam param;
-          param.m_eType = eEventType;
-          param.m_wsChange = data->sChange;
-          param.m_iCommitKey = 0;
-          param.m_bShift = data->bShift;
-          param.m_iSelStart = data->nSelStart;
-          param.m_iSelEnd = data->nSelEnd;
-          param.m_wsFullText = data->sValue;
-          param.m_bKeyDown = data->bKeyDown;
-          param.m_bModifier = data->bModifier;
-          param.m_wsPrevText = data->sValue;
-          bool ret =
-              hWidget->ProcessEventUnderHandler(&param, pXFAWidgetHandler);
-          if (CXFA_FFDocView* pDocView = pContext->GetXFADocView())
-            pDocView->UpdateDocView();
-          if (ret)
-            return true;
-        }
-      }
-    }
-  }
+  if (HandleXFAAAction(type, data, pFormFillEnv))
+    return true;
 #endif  // PDF_ENABLE_XFA
 
   CPDF_Action action = GetAAction(type);
