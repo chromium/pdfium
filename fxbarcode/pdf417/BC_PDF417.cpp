@@ -432,19 +432,19 @@ void CBC_PDF417::encodeChar(int32_t pattern,
                             CBC_BarcodeRow* logic) {
   int32_t map = 1 << (len - 1);
   bool last = ((pattern & map) != 0);
-  int32_t width = 0;
+  size_t width = 0;
   for (int32_t i = 0; i < len; i++) {
     bool black = ((pattern & map) != 0);
     if (last == black) {
       width++;
     } else {
-      logic->addBar(last, width);
+      logic->AddBar(last, width);
       last = black;
       width = 1;
     }
     map >>= 1;
   }
-  logic->addBar(last, width);
+  logic->AddBar(last, width);
 }
 
 void CBC_PDF417::encodeLowLevel(WideString fullCodewords,
