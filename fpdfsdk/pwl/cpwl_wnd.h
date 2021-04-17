@@ -202,8 +202,6 @@ class CPWL_Wnd : public Observable {
   void SetTextColor(const CFX_Color& color);
   CFX_Color GetBorderLeftTopColor(BorderStyle nBorderStyle) const;
   CFX_Color GetBorderRightBottomColor(BorderStyle nBorderStyle) const;
-
-  void SetBorderStyle(BorderStyle nBorderStyle);
   BorderStyle GetBorderStyle() const;
   const CPWL_Dash& GetBorderDash() const;
 
@@ -248,7 +246,6 @@ class CPWL_Wnd : public Observable {
 
   CFX_Matrix GetChildToRoot() const;
   CFX_Matrix GetChildMatrix() const;
-  void SetChildMatrix(const CFX_Matrix& mt);
   CFX_Matrix GetWindowMatrix() const;
 
   virtual void OnSetFocus();

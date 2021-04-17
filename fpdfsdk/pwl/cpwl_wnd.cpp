@@ -452,11 +452,6 @@ BorderStyle CPWL_Wnd::GetBorderStyle() const {
   return m_CreationParams.nBorderStyle;
 }
 
-void CPWL_Wnd::SetBorderStyle(BorderStyle nBorderStyle) {
-  if (HasFlag(PWS_BORDER))
-    m_CreationParams.nBorderStyle = nBorderStyle;
-}
-
 int32_t CPWL_Wnd::GetBorderWidth() const {
   return HasFlag(PWS_BORDER) ? m_CreationParams.dwBorderWidth : 0;
 }
@@ -741,10 +736,6 @@ CFX_Matrix CPWL_Wnd::GetChildToRoot() const {
 
 CFX_Matrix CPWL_Wnd::GetChildMatrix() const {
   return HasFlag(PWS_CHILD) ? m_CreationParams.mtChild : CFX_Matrix();
-}
-
-void CPWL_Wnd::SetChildMatrix(const CFX_Matrix& mt) {
-  m_CreationParams.mtChild = mt;
 }
 
 const CPWL_Wnd* CPWL_Wnd::GetFocused() const {
