@@ -240,13 +240,7 @@ void CPWL_Wnd::DrawThisAppearance(CFX_RenderDevice* pDevice,
 void CPWL_Wnd::DrawChildAppearance(CFX_RenderDevice* pDevice,
                                    const CFX_Matrix& mtUser2Device) {
   for (const auto& pChild : m_Children) {
-    CFX_Matrix mt = pChild->GetChildMatrix();
-    if (mt.IsIdentity()) {
-      pChild->DrawAppearance(pDevice, mtUser2Device);
-      continue;
-    }
-    mt.Concat(mtUser2Device);
-    pChild->DrawAppearance(pDevice, mt);
+    pChild->DrawAppearance(pDevice, mtUser2Device);
   }
 }
 
@@ -286,28 +280,27 @@ PWL_IMPLEMENT_KEY_METHOD(OnKeyDown)
 PWL_IMPLEMENT_KEY_METHOD(OnChar)
 #undef PWL_IMPLEMENT_KEY_METHOD
 
-#define PWL_IMPLEMENT_MOUSE_METHOD(mouse_method_name)                          \
-  bool CPWL_Wnd::mouse_method_name(uint32_t nFlag, const CFX_PointF& point) {  \
-    if (!IsValid() || !IsVisible())                                            \
-      return false;                                                            \
-    if (IsWndCaptureMouse(this)) {                                             \
-      for (const auto& pChild : m_Children) {                                  \
-        if (IsWndCaptureMouse(pChild.get())) {                                 \
-          return pChild->mouse_method_name(nFlag,                              \
-                                           pChild->ParentToChild(point));      \
-        }                                                                      \
-      }                                                                        \
-      SetCursor();                                                             \
-      return false;                                                            \
-    }                                                                          \
-    for (const auto& pChild : m_Children) {                                    \
-      if (pChild->WndHitTest(pChild->ParentToChild(point))) {                  \
-        return pChild->mouse_method_name(nFlag, pChild->ParentToChild(point)); \
-      }                                                                        \
-    }                                                                          \
-    if (WndHitTest(point))                                                     \
-      SetCursor();                                                             \
-    return false;                                                              \
+#define PWL_IMPLEMENT_MOUSE_METHOD(mouse_method_name)                         \
+  bool CPWL_Wnd::mouse_method_name(uint32_t nFlag, const CFX_PointF& point) { \
+    if (!IsValid() || !IsVisible())                                           \
+      return false;                                                           \
+    if (IsWndCaptureMouse(this)) {                                            \
+      for (const auto& pChild : m_Children) {                                 \
+        if (IsWndCaptureMouse(pChild.get())) {                                \
+          return pChild->mouse_method_name(nFlag, point);                     \
+        }                                                                     \
+      }                                                                       \
+      SetCursor();                                                            \
+      return false;                                                           \
+    }                                                                         \
+    for (const auto& pChild : m_Children) {                                   \
+      if (pChild->WndHitTest(point)) {                                        \
+        return pChild->mouse_method_name(nFlag, point);                       \
+      }                                                                       \
+    }                                                                         \
+    if (WndHitTest(point))                                                    \
+      SetCursor();                                                            \
+    return false;                                                             \
   }
 
 PWL_IMPLEMENT_MOUSE_METHOD(OnLButtonDblClk)
@@ -367,7 +360,7 @@ bool CPWL_Wnd::OnMouseWheel(uint32_t nFlag,
 
   for (const auto& pChild : m_Children) {
     if (IsWndCaptureKeyboard(pChild.get()))
-      return pChild->OnMouseWheel(nFlag, pChild->ParentToChild(point), delta);
+      return pChild->OnMouseWheel(nFlag, point, delta);
   }
   return false;
 }
@@ -688,7 +681,7 @@ void CPWL_Wnd::SetTransparency(int32_t nTransparency) {
 }
 
 CFX_Matrix CPWL_Wnd::GetWindowMatrix() const {
-  CFX_Matrix mt = GetChildToRoot();
+  CFX_Matrix mt;
   if (ProviderIface* pProvider = GetProvider())
     mt.Concat(pProvider->GetWindowMatrix(GetAttachedData()));
   return mt;
@@ -697,45 +690,6 @@ CFX_Matrix CPWL_Wnd::GetWindowMatrix() const {
 CFX_FloatRect CPWL_Wnd::PWLtoWnd(const CFX_FloatRect& rect) const {
   CFX_Matrix mt = GetWindowMatrix();
   return mt.TransformRect(rect);
-}
-
-CFX_PointF CPWL_Wnd::ParentToChild(const CFX_PointF& point) const {
-  CFX_Matrix mt = GetChildMatrix();
-  if (mt.IsIdentity())
-    return point;
-
-  CFX_Matrix inverse = mt.GetInverse();
-  if (!inverse.IsIdentity())
-    mt = inverse;
-  return mt.Transform(point);
-}
-
-CFX_FloatRect CPWL_Wnd::ParentToChild(const CFX_FloatRect& rect) const {
-  CFX_Matrix mt = GetChildMatrix();
-  if (mt.IsIdentity())
-    return rect;
-
-  CFX_Matrix inverse = mt.GetInverse();
-  if (!inverse.IsIdentity())
-    mt = inverse;
-
-  return mt.TransformRect(rect);
-}
-
-CFX_Matrix CPWL_Wnd::GetChildToRoot() const {
-  CFX_Matrix mt;
-  if (HasFlag(PWS_CHILD)) {
-    const CPWL_Wnd* pParent = this;
-    while (pParent) {
-      mt.Concat(pParent->GetChildMatrix());
-      pParent = pParent->GetParentWindow();
-    }
-  }
-  return mt;
-}
-
-CFX_Matrix CPWL_Wnd::GetChildMatrix() const {
-  return HasFlag(PWS_CHILD) ? m_CreationParams.mtChild : CFX_Matrix();
 }
 
 const CPWL_Wnd* CPWL_Wnd::GetFocused() const {

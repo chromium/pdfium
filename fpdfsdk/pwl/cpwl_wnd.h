@@ -129,7 +129,6 @@ class CPWL_Wnd : public Observable {
     // Ignore:
     CPWL_MsgControl* pMsgControl = nullptr;
     int32_t eCursorType = FXCT_ARROW;
-    CFX_Matrix mtChild;
   };
 
   static bool IsSHIFTKeyDown(uint32_t nFlag);
@@ -244,8 +243,6 @@ class CPWL_Wnd : public Observable {
   int32_t GetTransparency();
   void SetTransparency(int32_t nTransparency);
 
-  CFX_Matrix GetChildToRoot() const;
-  CFX_Matrix GetChildMatrix() const;
   CFX_Matrix GetWindowMatrix() const;
 
   virtual void OnSetFocus();
@@ -291,9 +288,6 @@ class CPWL_Wnd : public Observable {
   }
 
  private:
-  CFX_PointF ParentToChild(const CFX_PointF& point) const;
-  CFX_FloatRect ParentToChild(const CFX_FloatRect& rect) const;
-
   void DrawChildAppearance(CFX_RenderDevice* pDevice,
                            const CFX_Matrix& mtUser2Device);
 
