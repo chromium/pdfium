@@ -139,8 +139,8 @@ void CPWL_ComboBox::CreateEdit(const CreateParams& cp) {
     return;
 
   CreateParams ecp = cp;
-  ecp.dwFlags = PWS_VISIBLE | PWS_CHILD | PWS_BORDER | PES_CENTER |
-                PES_AUTOSCROLL | PES_UNDO;
+  ecp.dwFlags =
+      PWS_VISIBLE | PWS_BORDER | PES_CENTER | PES_AUTOSCROLL | PES_UNDO;
 
   if (HasFlag(PWS_AUTOFONTSIZE))
     ecp.dwFlags |= PWS_AUTOFONTSIZE;
@@ -164,7 +164,7 @@ void CPWL_ComboBox::CreateButton(const CreateParams& cp) {
     return;
 
   CreateParams bcp = cp;
-  bcp.dwFlags = PWS_VISIBLE | PWS_CHILD | PWS_BORDER | PWS_BACKGROUND;
+  bcp.dwFlags = PWS_VISIBLE | PWS_BORDER | PWS_BACKGROUND;
   bcp.sBackgroundColor = CFX_Color(CFX_Color::kRGB, 220.0f / 255.0f,
                                    220.0f / 255.0f, 220.0f / 255.0f);
   bcp.sBorderColor = PWL_DEFAULT_BLACKCOLOR;
@@ -183,8 +183,7 @@ void CPWL_ComboBox::CreateListBox(const CreateParams& cp) {
     return;
 
   CreateParams lcp = cp;
-  lcp.dwFlags =
-      PWS_CHILD | PWS_BORDER | PWS_BACKGROUND | PLBS_HOVERSEL | PWS_VSCROLL;
+  lcp.dwFlags = PWS_BORDER | PWS_BACKGROUND | PLBS_HOVERSEL | PWS_VSCROLL;
   lcp.nBorderStyle = BorderStyle::kSolid;
   lcp.dwBorderWidth = 1;
   lcp.eCursorType = FXCT_ARROW;

@@ -25,7 +25,6 @@ class IPVT_FontMap;
 struct PWL_SCROLL_INFO;
 
 // window styles
-#define PWS_CHILD 0x80000000L
 #define PWS_BORDER 0x40000000L
 #define PWS_BACKGROUND 0x20000000L
 #define PWS_VSCROLL 0x08000000L

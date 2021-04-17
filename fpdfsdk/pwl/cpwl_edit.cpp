@@ -523,7 +523,7 @@ void CPWL_Edit::CreateEditCaret(const CreateParams& cp) {
     return;
 
   CreateParams ecp = cp;
-  ecp.dwFlags = PWS_CHILD | PWS_NOREFRESHCLIP;
+  ecp.dwFlags = PWS_NOREFRESHCLIP;
   ecp.dwBorderWidth = 0;
   ecp.nBorderStyle = BorderStyle::kSolid;
   ecp.rcRectWnd = CFX_FloatRect();

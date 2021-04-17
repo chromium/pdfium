@@ -287,8 +287,7 @@ void CPWL_ScrollBar::CreateButtons(const CreateParams& cp) {
   CreateParams scp = cp;
   scp.dwBorderWidth = 2;
   scp.nBorderStyle = BorderStyle::kBeveled;
-  scp.dwFlags =
-      PWS_VISIBLE | PWS_CHILD | PWS_BORDER | PWS_BACKGROUND | PWS_NOREFRESHCLIP;
+  scp.dwFlags = PWS_VISIBLE | PWS_BORDER | PWS_BACKGROUND | PWS_NOREFRESHCLIP;
 
   if (!m_pMinButton) {
     auto pButton = std::make_unique<CPWL_SBButton>(
