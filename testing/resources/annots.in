@@ -41,7 +41,7 @@ endobj
   /Type /Page
   /Parent 2 0 R
   /Contents 6 0 R
-  /Annots [15 0 R 16 0 R]
+  /Annots [15 0 R 16 0 R 26 0 R]
 >>
 endobj
 {{object 5 0}} <<
@@ -344,6 +344,16 @@ endobj
   /CA 1
   /AIS false
   /BM /Multiply
+>>
+endobj
+{{object 26 0}} <<
+  /Type /Annot
+  /Subtype /Square
+  /Border [0 0 2]
+  /C [1 0 0]
+  /F 4
+  /P 3 0 R
+  /Rect [50 100 60 120]
 >>
 endobj
 {{xref}}

@@ -3565,3 +3565,59 @@ TEST_F(FPDFAnnotEmbedderTest, AnnotationBorder) {
 
   UnloadPage(page);
 }
+
+// Due to https://crbug.com/pdfium/570, the AnnotationBorder test above cannot
+// actually render the line annotations inside line_annot.pdf. For now, use a
+// square annotation in annots.pdf for testing.
+TEST_F(FPDFAnnotEmbedderTest, AnnotationBorderRendering) {
+  ASSERT_TRUE(OpenDocument("annots.pdf"));
+  FPDF_PAGE page = LoadPage(1);
+  ASSERT_TRUE(page);
+  EXPECT_EQ(3, FPDFPage_GetAnnotCount(page));
+
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+  constexpr char kOriginalChecksum[] = "bc9ba381d6d46ff93ed0b5288b763b60";
+  constexpr char kModifiedChecksum[] = "0f3e10336f67cb6a8731a06d26d01e50";
+#elif defined(OS_WIN)
+  constexpr char kOriginalChecksum[] = "f9fcab6ac610ee2347c4eba6be86a90c";
+  constexpr char kModifiedChecksum[] = "e0e9ad5b67ef84288d446861265898b3";
+#elif defined(OS_APPLE)
+  constexpr char kOriginalChecksum[] = "1839f5df5fb4fae10cf3793568e73ede";
+  constexpr char kModifiedChecksum[] = "abd4f5d1c3b8d8cfc572b389e589da5a";
+#else
+  constexpr char kOriginalChecksum[] = "ccf6667b34ec2452bea0b5f1a0194191";
+  constexpr char kModifiedChecksum[] = "1bbdb473d0757843e82053b0bd3298bc";
+#endif
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 2));
+    ASSERT_TRUE(annot);
+    EXPECT_EQ(FPDF_ANNOT_SQUARE, FPDFAnnot_GetSubtype(annot.get()));
+
+    {
+      ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+      CompareBitmap(bitmap.get(), 612, 792, kOriginalChecksum);
+    }
+
+    EXPECT_TRUE(FPDFAnnot_SetBorder(annot.get(), /*horizontal_radius=*/2.0f,
+                                    /*vertical_radius=*/3.5f,
+                                    /*border_width=*/4.0f));
+
+    {
+      ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+      CompareBitmap(bitmap.get(), 612, 792, kModifiedChecksum);
+    }
+  }
+
+  // Save the document and close the page.
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  UnloadPage(page);
+
+  ASSERT_TRUE(OpenSavedDocument());
+  page = LoadSavedPage(1);
+  ASSERT_TRUE(page);
+  VerifySavedRendering(page, 612, 792, kModifiedChecksum);
+
+  CloseSavedPage(page);
+  CloseSavedDocument();
+}

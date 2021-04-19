@@ -471,7 +471,10 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetLine(FPDF_ANNOTATION annot,
 //   vertical_radius    - vertical corner radius, in default user space units
 //   border_width       - border width, in default user space units
 //
-// Returns true if |annot| is valid, false otherwise.
+// Returns true if setting the border for |annot| succeeds, false otherwise.
+//
+// If |annot| contains an appearance stream that overrides the border values,
+// then the appearance stream will be removed on success.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetBorder(FPDF_ANNOTATION annot,
                                                         float horizontal_radius,
                                                         float vertical_radius,

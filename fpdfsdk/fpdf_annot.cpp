@@ -933,6 +933,10 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetBorder(FPDF_ANNOTATION annot,
   if (!annot_dict)
     return false;
 
+  // Remove the appearance stream. Otherwise PDF viewers will render that and
+  // not use the border values.
+  annot_dict->RemoveFor(pdfium::annotation::kAP);
+
   CPDF_Array* border =
       annot_dict->SetNewFor<CPDF_Array>(pdfium::annotation::kBorder);
   border->AppendNew<CPDF_Number>(horizontal_radius);
