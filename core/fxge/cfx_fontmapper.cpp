@@ -798,11 +798,7 @@ Optional<CFX_FontMapper::StandardFont> CFX_FontMapper::GetStandardFontName(
 
 // static
 bool CFX_FontMapper::IsStandardFontName(const ByteString& name) {
-  for (const char* standard_name : kBase14FontNames) {
-    if (name == standard_name)
-      return true;
-  }
-  return false;
+  return pdfium::Contains(kBase14FontNames, name);
 }
 
 // static
