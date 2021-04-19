@@ -422,32 +422,10 @@ ByteString CBA_FontMap::GetCachedNativeFontName(int32_t nCharset) {
 
 RetainPtr<CPDF_Font> CBA_FontMap::AddFontToDocument(ByteString sFontName,
                                                     uint8_t nCharset) {
-  if (IsStandardFont(sFontName))
+  if (CFX_FontMapper::IsStandardFontName(sFontName))
     return AddStandardFont(sFontName);
 
   return AddSystemFont(sFontName, nCharset);
-}
-
-bool CBA_FontMap::IsStandardFont(const ByteString& sFontName) {
-  static const char* const kStandardFontNames[] = {"Courier",
-                                                   "Courier-Bold",
-                                                   "Courier-BoldOblique",
-                                                   "Courier-Oblique",
-                                                   "Helvetica",
-                                                   "Helvetica-Bold",
-                                                   "Helvetica-BoldOblique",
-                                                   "Helvetica-Oblique",
-                                                   "Times-Roman",
-                                                   "Times-Bold",
-                                                   "Times-Italic",
-                                                   "Times-BoldItalic",
-                                                   "Symbol",
-                                                   "ZapfDingbats"};
-  for (const char* name : kStandardFontNames) {
-    if (sFontName == name)
-      return true;
-  }
-  return false;
 }
 
 RetainPtr<CPDF_Font> CBA_FontMap::AddStandardFont(ByteString sFontName) {

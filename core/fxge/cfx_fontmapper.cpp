@@ -26,11 +26,11 @@
 
 namespace {
 
-const int kNumStandardFonts = 14;
-static_assert(CFX_FontMapper::kDingbats + 1 == kNumStandardFonts,
+constexpr int kNumStandardFonts = 14;
+static_assert(CFX_FontMapper::kLast + 1 == kNumStandardFonts,
               "StandardFont enum count mismatch");
 
-const char* const g_Base14FontNames[kNumStandardFonts] = {
+const char* const kBase14FontNames[kNumStandardFonts] = {
     "Courier",
     "Courier-Bold",
     "Courier-BoldOblique",
@@ -448,7 +448,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
     }
   }
   for (; iBaseFont < 12; iBaseFont++) {
-    if (family == ByteStringView(g_Base14FontNames[iBaseFont]))
+    if (family == kBase14FontNames[iBaseFont])
       break;
   }
   int PitchFamily = 0;
@@ -594,7 +594,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
         else if (FontStyleIsItalic(nStyle))
           iBaseFont += 3;
       }
-      family = g_Base14FontNames[iBaseFont];
+      family = kBase14FontNames[iBaseFont];
     }
   } else if (FontStyleIsItalic(flags)) {
     bItalic = true;
@@ -790,10 +790,19 @@ Optional<CFX_FontMapper::StandardFont> CFX_FontMapper::GetStandardFontName(
                          return FXSYS_stricmp(element.m_pName, name) < 0;
                        });
   if (found == end || FXSYS_stricmp(found->m_pName, name->c_str()))
-    return {};
+    return pdfium::nullopt;
 
-  *name = g_Base14FontNames[static_cast<size_t>(found->m_Index)];
+  *name = kBase14FontNames[static_cast<size_t>(found->m_Index)];
   return found->m_Index;
+}
+
+// static
+bool CFX_FontMapper::IsStandardFontName(const ByteString& name) {
+  for (const char* standard_name : kBase14FontNames) {
+    if (name == standard_name)
+      return true;
+  }
+  return false;
 }
 
 // static

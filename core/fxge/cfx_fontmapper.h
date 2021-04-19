@@ -39,12 +39,14 @@ class CFX_FontMapper {
     kTimesOblique,
     kSymbol,
     kDingbats,
+    kLast = kDingbats
   };
 
   explicit CFX_FontMapper(CFX_FontMgr* mgr);
   ~CFX_FontMapper();
 
   static Optional<StandardFont> GetStandardFontName(ByteString* name);
+  static bool IsStandardFontName(const ByteString& name);
   static bool IsSymbolicFont(StandardFont font);
   static bool IsFixedFont(StandardFont font);
   static constexpr uint32_t MakeTag(char c1, char c2, char c3, char c4) {
