@@ -314,12 +314,23 @@ CPDF_Array* GetInkList(FPDF_ANNOTATION annot) {
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFAnnot_IsSupportedSubtype(FPDF_ANNOTATION_SUBTYPE subtype) {
   // The supported subtypes must also be communicated in the user doc.
-  return subtype == FPDF_ANNOT_CIRCLE || subtype == FPDF_ANNOT_FREETEXT ||
-         subtype == FPDF_ANNOT_HIGHLIGHT || subtype == FPDF_ANNOT_INK ||
-         subtype == FPDF_ANNOT_LINK || subtype == FPDF_ANNOT_POPUP ||
-         subtype == FPDF_ANNOT_SQUARE || subtype == FPDF_ANNOT_SQUIGGLY ||
-         subtype == FPDF_ANNOT_STAMP || subtype == FPDF_ANNOT_STRIKEOUT ||
-         subtype == FPDF_ANNOT_TEXT || subtype == FPDF_ANNOT_UNDERLINE;
+  switch (subtype) {
+    case FPDF_ANNOT_CIRCLE:
+    case FPDF_ANNOT_FREETEXT:
+    case FPDF_ANNOT_HIGHLIGHT:
+    case FPDF_ANNOT_INK:
+    case FPDF_ANNOT_LINK:
+    case FPDF_ANNOT_POPUP:
+    case FPDF_ANNOT_SQUARE:
+    case FPDF_ANNOT_SQUIGGLY:
+    case FPDF_ANNOT_STAMP:
+    case FPDF_ANNOT_STRIKEOUT:
+    case FPDF_ANNOT_TEXT:
+    case FPDF_ANNOT_UNDERLINE:
+      return true;
+    default:
+      return false;
+  }
 }
 
 FPDF_EXPORT FPDF_ANNOTATION FPDF_CALLCONV
