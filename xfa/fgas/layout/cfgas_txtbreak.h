@@ -98,8 +98,8 @@ class CFGAS_TxtBreak final : public CFGAS_Break {
                      CFGAS_BreakLine* pNextLine,
                      bool bAllChars);
 
-  int32_t m_iAlignment;
-  int32_t m_iCombWidth;
+  int32_t m_iAlignment = CFX_TxtLineAlignment_Left;
+  int32_t m_iCombWidth = 360000;
 };
 
 #endif  // XFA_FGAS_LAYOUT_CFGAS_TXTBREAK_H_

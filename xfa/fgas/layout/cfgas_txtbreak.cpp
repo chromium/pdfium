@@ -29,10 +29,7 @@ bool IsCtrlCode(wchar_t wch) {
 
 }  // namespace
 
-CFGAS_TxtBreak::CFGAS_TxtBreak()
-    : CFGAS_Break(FX_LAYOUTSTYLE_None),
-      m_iAlignment(CFX_TxtLineAlignment_Left),
-      m_iCombWidth(360000) {}
+CFGAS_TxtBreak::CFGAS_TxtBreak() : CFGAS_Break(FX_LAYOUTSTYLE_None) {}
 
 CFGAS_TxtBreak::~CFGAS_TxtBreak() = default;
 

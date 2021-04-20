@@ -47,8 +47,8 @@ class CFFL_Button : public CFFL_FormFiller {
                       const CFX_Matrix& mtUser2Device) override;
 
  private:
-  bool m_bMouseIn;
-  bool m_bMouseDown;
+  bool m_bMouseIn = false;
+  bool m_bMouseDown = false;
 };
 
 #endif  // FPDFSDK_FORMFILLER_CFFL_BUTTON_H_

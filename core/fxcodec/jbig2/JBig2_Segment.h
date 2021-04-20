@@ -36,25 +36,24 @@ class CJBig2_Segment {
   CJBig2_Segment();
   ~CJBig2_Segment();
 
-  uint32_t m_dwNumber;
+  uint32_t m_dwNumber = 0;
   union {
     struct {
       uint8_t type : 6;
       uint8_t page_association_size : 1;
       uint8_t deferred_non_retain : 1;
     } s;
-    uint8_t c;
+    uint8_t c = 0;
   } m_cFlags;
-  int32_t m_nReferred_to_segment_count;
+  int32_t m_nReferred_to_segment_count = 0;
   std::vector<uint32_t> m_Referred_to_segment_numbers;
-  uint32_t m_dwPage_association;
-  uint32_t m_dwData_length;
-
-  uint32_t m_dwHeader_Length;
-  uint32_t m_dwObjNum;
-  uint32_t m_dwDataOffset;
-  JBig2_SegmentState m_State;
-  JBig2_ResultType m_nResultType;
+  uint32_t m_dwPage_association = 0;
+  uint32_t m_dwData_length = 0;
+  uint32_t m_dwHeader_Length = 0;
+  uint32_t m_dwObjNum = 0;
+  uint32_t m_dwDataOffset = 0;
+  JBig2_SegmentState m_State = JBIG2_SEGMENT_HEADER_UNPARSED;
+  JBig2_ResultType m_nResultType = JBIG2_VOID_POINTER;
   std::unique_ptr<CJBig2_SymbolDict> m_SymbolDict;
   std::unique_ptr<CJBig2_PatternDict> m_PatternDict;
   std::unique_ptr<CJBig2_Image> m_Image;

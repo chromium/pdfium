@@ -11,9 +11,7 @@
 
 CFFL_Button::CFFL_Button(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                          CPDFSDK_Widget* pWidget)
-    : CFFL_FormFiller(pFormFillEnv, pWidget),
-      m_bMouseIn(false),
-      m_bMouseDown(false) {}
+    : CFFL_FormFiller(pFormFillEnv, pWidget) {}
 
 CFFL_Button::~CFFL_Button() = default;
 

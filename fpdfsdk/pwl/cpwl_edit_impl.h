@@ -86,8 +86,8 @@ class CPWL_EditImpl_Undo {
   void RemoveTails();
 
   std::deque<std::unique_ptr<IFX_Edit_UndoItem>> m_UndoItemStack;
-  size_t m_nCurUndoPos;
-  bool m_bWorking;
+  size_t m_nCurUndoPos = 0;
+  bool m_bWorking = false;
 };
 
 class IFX_Edit_UndoItem {
@@ -390,6 +390,12 @@ class CPWL_EditImpl {
 
   void AddEditUndoItem(std::unique_ptr<IFX_Edit_UndoItem> pEditUndoItem);
 
+  bool m_bEnableScroll = false;
+  bool m_bNotifyFlag = false;
+  bool m_bEnableOverflow = false;
+  bool m_bEnableRefresh = true;
+  bool m_bEnableUndo = true;
+  int32_t m_nAlignment = 0;
   std::unique_ptr<CPWL_EditImpl_Provider> m_pVTProvider;
   std::unique_ptr<CPDF_VariableText> m_pVT;  // Must outlive |m_pVTProvider|.
   UnownedPtr<CPWL_Edit> m_pNotify;
@@ -398,17 +404,11 @@ class CPWL_EditImpl {
   CPWL_EditImpl_Select m_SelState;
   CFX_PointF m_ptScrollPos;
   CFX_PointF m_ptRefreshScrollPos;
-  bool m_bEnableScroll;
   std::unique_ptr<CPWL_EditImpl_Iterator> m_pIterator;
   CPWL_EditImpl_Refresh m_Refresh;
   CFX_PointF m_ptCaret;
   CPWL_EditImpl_Undo m_Undo;
-  int32_t m_nAlignment;
-  bool m_bNotifyFlag;
-  bool m_bEnableOverflow;
-  bool m_bEnableRefresh;
   CFX_FloatRect m_rcOldContent;
-  bool m_bEnableUndo;
 };
 
 class CPWL_EditImpl_Iterator {

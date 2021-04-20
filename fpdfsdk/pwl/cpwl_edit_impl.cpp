@@ -161,8 +161,7 @@ void CPWL_EditImpl_Refresh::Add(const CFX_FloatRect& new_rect) {
   m_RefreshRects.emplace_back(CFX_FloatRect(new_rect));
 }
 
-CPWL_EditImpl_Undo::CPWL_EditImpl_Undo()
-    : m_nCurUndoPos(0), m_bWorking(false) {}
+CPWL_EditImpl_Undo::CPWL_EditImpl_Undo() = default;
 
 CPWL_EditImpl_Undo::~CPWL_EditImpl_Undo() = default;
 
@@ -535,14 +534,7 @@ void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
   }
 }
 
-CPWL_EditImpl::CPWL_EditImpl()
-    : m_pVT(std::make_unique<CPDF_VariableText>()),
-      m_bEnableScroll(false),
-      m_nAlignment(0),
-      m_bNotifyFlag(false),
-      m_bEnableOverflow(false),
-      m_bEnableRefresh(true),
-      m_bEnableUndo(true) {}
+CPWL_EditImpl::CPWL_EditImpl() : m_pVT(std::make_unique<CPDF_VariableText>()) {}
 
 CPWL_EditImpl::~CPWL_EditImpl() = default;
 
