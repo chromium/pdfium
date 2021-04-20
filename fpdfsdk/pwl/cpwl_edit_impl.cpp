@@ -55,7 +55,7 @@ void DrawTextString(CFX_RenderDevice* pDevice,
 
 CPWL_EditImpl_Iterator::CPWL_EditImpl_Iterator(
     CPWL_EditImpl* pEdit,
-    CPDF_VariableText::Iterator* pVTIterator)
+    CPVT_VariableText::Iterator* pVTIterator)
     : m_pEdit(pEdit), m_pVTIterator(pVTIterator) {}
 
 CPWL_EditImpl_Iterator::~CPWL_EditImpl_Iterator() = default;
@@ -97,7 +97,7 @@ const CPVT_WordPlace& CPWL_EditImpl_Iterator::GetAt() const {
 }
 
 CPWL_EditImpl_Provider::CPWL_EditImpl_Provider(IPVT_FontMap* pFontMap)
-    : CPDF_VariableText::Provider(pFontMap) {}
+    : CPVT_VariableText::Provider(pFontMap) {}
 
 CPWL_EditImpl_Provider::~CPWL_EditImpl_Provider() = default;
 
@@ -534,7 +534,7 @@ void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
   }
 }
 
-CPWL_EditImpl::CPWL_EditImpl() : m_pVT(std::make_unique<CPDF_VariableText>()) {}
+CPWL_EditImpl::CPWL_EditImpl() : m_pVT(std::make_unique<CPVT_VariableText>()) {}
 
 CPWL_EditImpl::~CPWL_EditImpl() = default;
 
@@ -703,7 +703,7 @@ WideString CPWL_EditImpl::GetText() const {
   if (!m_pVT->IsValid())
     return swRet;
 
-  CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator();
+  CPVT_VariableText::Iterator* pIterator = m_pVT->GetIterator();
   pIterator->SetAt(0);
 
   CPVT_Word wordinfo;
@@ -724,7 +724,7 @@ WideString CPWL_EditImpl::GetRangeText(const CPVT_WordRange& range) const {
   if (!m_pVT->IsValid())
     return swRet;
 
-  CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator();
+  CPVT_VariableText::Iterator* pIterator = m_pVT->GetIterator();
   CPVT_WordRange wrTemp = range;
   m_pVT->UpdateWordPlace(wrTemp.BeginPos);
   m_pVT->UpdateWordPlace(wrTemp.EndPos);
@@ -752,7 +752,7 @@ WideString CPWL_EditImpl::GetSelectedText() const {
 int32_t CPWL_EditImpl::GetTotalLines() const {
   int32_t nLines = 1;
 
-  CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator();
+  CPVT_VariableText::Iterator* pIterator = m_pVT->GetIterator();
   pIterator->SetAt(0);
   while (pIterator->NextLine())
     ++nLines;
@@ -1060,7 +1060,7 @@ void CPWL_EditImpl::ScrollToCaret() {
   if (!m_pVT->IsValid())
     return;
 
-  CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator();
+  CPVT_VariableText::Iterator* pIterator = m_pVT->GetIterator();
   pIterator->SetAt(m_wpCaret);
 
   CFX_PointF ptHead;
@@ -1132,7 +1132,7 @@ void CPWL_EditImpl::RefreshPushLineRects(const CPVT_WordRange& wr) {
   if (!m_pVT->IsValid())
     return;
 
-  CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator();
+  CPVT_VariableText::Iterator* pIterator = m_pVT->GetIterator();
   CPVT_WordPlace wpBegin = wr.BeginPos;
   m_pVT->UpdateWordPlace(wpBegin);
   CPVT_WordPlace wpEnd = wr.EndPos;
@@ -1157,7 +1157,7 @@ void CPWL_EditImpl::RefreshPushLineRects(const CPVT_WordRange& wr) {
 }
 
 void CPWL_EditImpl::RefreshWordRange(const CPVT_WordRange& wr) {
-  CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator();
+  CPVT_VariableText::Iterator* pIterator = m_pVT->GetIterator();
   CPVT_WordRange wrTemp = wr;
 
   m_pVT->UpdateWordPlace(wrTemp.BeginPos);
@@ -1218,7 +1218,7 @@ void CPWL_EditImpl::SetCaret(const CPVT_WordPlace& place) {
 void CPWL_EditImpl::SetCaretInfo() {
   if (m_pNotify) {
     if (!m_bNotifyFlag) {
-      CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator();
+      CPVT_VariableText::Iterator* pIterator = m_pVT->GetIterator();
       pIterator->SetAt(m_wpCaret);
 
       CFX_PointF ptHead;
@@ -1529,7 +1529,7 @@ bool CPWL_EditImpl::Backspace(bool bAddUndo) {
 
   CPVT_Word word;
   if (bAddUndo) {
-    CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator();
+    CPVT_VariableText::Iterator* pIterator = m_pVT->GetIterator();
     pIterator->SetAt(m_wpCaret);
     pIterator->GetWord(word);
   }
@@ -1557,7 +1557,7 @@ bool CPWL_EditImpl::Delete(bool bAddUndo) {
 
   CPVT_Word word;
   if (bAddUndo) {
-    CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator();
+    CPVT_VariableText::Iterator* pIterator = m_pVT->GetIterator();
     pIterator->SetAt(m_pVT->GetNextWordPlace(m_wpCaret));
     pIterator->GetWord(word);
   }
@@ -1677,7 +1677,7 @@ void CPWL_EditImpl::SetCaretOrigin() {
   if (!m_pVT->IsValid())
     return;
 
-  CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator();
+  CPVT_VariableText::Iterator* pIterator = m_pVT->GetIterator();
   pIterator->SetAt(m_wpCaret);
   CPVT_Word word;
   CPVT_Line line;

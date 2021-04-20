@@ -26,8 +26,8 @@
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fpdfdoc/cpdf_color_utils.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
+#include "core/fpdfdoc/cpdf_generateap.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
-#include "core/fpdfdoc/cpvt_generateap.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_color.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
@@ -536,7 +536,7 @@ FPDFAnnot_AppendObject(FPDF_ANNOTATION annot, FPDF_PAGEOBJECT obj) {
   CPDF_Stream* pStream =
       GetAnnotAP(pAnnotDict, CPDF_Annot::AppearanceMode::Normal);
   if (!pStream) {
-    CPVT_GenerateAP::GenerateEmptyAP(pAnnot->GetPage()->GetDocument(),
+    CPDF_GenerateAP::GenerateEmptyAP(pAnnot->GetPage()->GetDocument(),
                                      pAnnotDict);
     pStream = GetAnnotAP(pAnnotDict, CPDF_Annot::AppearanceMode::Normal);
     if (!pStream)
@@ -685,7 +685,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetColor(FPDF_ANNOTATION annot,
   if (!pColor) {
     // Use default color. The default colors must be consistent with the ones
     // used to generate AP. See calls to GetColorStringWithDefault() in
-    // CPVT_GenerateAP::Generate*AP().
+    // CPDF_GenerateAP::Generate*AP().
     if (pAnnotDict->GetNameFor(pdfium::annotation::kSubtype) == "Highlight") {
       *R = 255;
       *G = 255;

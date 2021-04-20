@@ -26,8 +26,8 @@
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
+#include "core/fpdfdoc/cpdf_generateap.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
-#include "core/fpdfdoc/cpvt_generateap.h"
 #include "core/fxge/cfx_renderdevice.h"
 
 namespace {
@@ -135,8 +135,8 @@ void GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
 
   ByteString field_type = pFieldTypeObj->GetString();
   if (field_type == pdfium::form_fields::kTx) {
-    CPVT_GenerateAP::GenerateFormAP(pDoc, pAnnotDict,
-                                    CPVT_GenerateAP::kTextField);
+    CPDF_GenerateAP::GenerateFormAP(pDoc, pAnnotDict,
+                                    CPDF_GenerateAP::kTextField);
     return;
   }
 
@@ -145,9 +145,9 @@ void GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
   uint32_t flags = pFieldFlagsObj ? pFieldFlagsObj->GetInteger() : 0;
   if (field_type == pdfium::form_fields::kCh) {
     auto type = (flags & pdfium::form_flags::kChoiceCombo)
-                    ? CPVT_GenerateAP::kComboBox
-                    : CPVT_GenerateAP::kListBox;
-    CPVT_GenerateAP::GenerateFormAP(pDoc, pAnnotDict, type);
+                    ? CPDF_GenerateAP::kComboBox
+                    : CPDF_GenerateAP::kListBox;
+    CPDF_GenerateAP::GenerateFormAP(pDoc, pAnnotDict, type);
     return;
   }
 

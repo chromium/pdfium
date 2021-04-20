@@ -25,8 +25,8 @@
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fpdfdoc/cpdf_defaultappearance.h"
 #include "core/fpdfdoc/cpdf_formcontrol.h"
+#include "core/fpdfdoc/cpdf_generateap.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
-#include "core/fpdfdoc/cpvt_generateap.h"
 #include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
@@ -480,8 +480,7 @@ bool CPDF_FormField::IsItemSelected(int index) const {
                                : IsSelectedOption(GetOptionValue(index));
 }
 
-bool CPDF_FormField::SetItemSelection(int index,
-                                      NotificationOption notify) {
+bool CPDF_FormField::SetItemSelection(int index, NotificationOption notify) {
   DCHECK(GetType() == kComboBox || GetType() == kListBox);
   if (index < 0 || index >= CountOptions())
     return false;

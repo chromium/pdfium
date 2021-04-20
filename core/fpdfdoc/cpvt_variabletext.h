@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFDOC_CPDF_VARIABLETEXT_H_
-#define CORE_FPDFDOC_CPDF_VARIABLETEXT_H_
+#ifndef CORE_FPDFDOC_CPVT_VARIABLETEXT_H_
+#define CORE_FPDFDOC_CPVT_VARIABLETEXT_H_
 
 #include <memory>
 #include <vector>
@@ -27,11 +27,11 @@ struct CPVT_WordInfo;
 
 #define VARIABLETEXT_HALF 0.5f
 
-class CPDF_VariableText {
+class CPVT_VariableText {
  public:
   class Iterator {
    public:
-    explicit Iterator(CPDF_VariableText* pVT);
+    explicit Iterator(CPVT_VariableText* pVT);
     ~Iterator();
 
     bool NextWord();
@@ -44,7 +44,7 @@ class CPDF_VariableText {
 
    private:
     CPVT_WordPlace m_CurPos;
-    UnownedPtr<CPDF_VariableText> const m_pVT;
+    UnownedPtr<CPVT_VariableText> const m_pVT;
   };
 
   class Provider {
@@ -66,11 +66,11 @@ class CPDF_VariableText {
     UnownedPtr<IPVT_FontMap> const m_pFontMap;
   };
 
-  CPDF_VariableText();
-  ~CPDF_VariableText();
+  CPVT_VariableText();
+  ~CPVT_VariableText();
 
-  void SetProvider(CPDF_VariableText::Provider* pProvider);
-  CPDF_VariableText::Iterator* GetIterator();
+  void SetProvider(CPVT_VariableText::Provider* pProvider);
+  CPVT_VariableText::Iterator* GetIterator();
 
   CFX_FloatRect GetContentRect() const;
   void SetPlateRect(const CFX_FloatRect& rect);
@@ -198,10 +198,10 @@ class CPDF_VariableText {
   float m_fCharSpace = 0.0f;
   float m_fFontSize = 0.0f;
   std::vector<std::unique_ptr<CPVT_Section>> m_SectionArray;
-  UnownedPtr<CPDF_VariableText::Provider> m_pVTProvider;
-  std::unique_ptr<CPDF_VariableText::Iterator> m_pVTIterator;
+  UnownedPtr<CPVT_VariableText::Provider> m_pVTProvider;
+  std::unique_ptr<CPVT_VariableText::Iterator> m_pVTIterator;
   CFX_FloatRect m_rcPlate;
   CPVT_FloatRect m_rcContent;
 };
 
-#endif  // CORE_FPDFDOC_CPDF_VARIABLETEXT_H_
+#endif  // CORE_FPDFDOC_CPVT_VARIABLETEXT_H_

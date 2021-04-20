@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfdoc/cpvt_generateap.h"
+#include "core/fpdfdoc/cpdf_generateap.h"
 
 #include <algorithm>
 #include <memory>
@@ -30,8 +30,8 @@
 #include "core/fpdfdoc/cpdf_color_utils.h"
 #include "core/fpdfdoc/cpdf_defaultappearance.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
-#include "core/fpdfdoc/cpdf_variabletext.h"
 #include "core/fpdfdoc/cpvt_fontmap.h"
+#include "core/fpdfdoc/cpvt_variabletext.h"
 #include "core/fpdfdoc/cpvt_word.h"
 #include "core/fxge/cfx_renderdevice.h"
 
@@ -94,7 +94,7 @@ ByteString GetFontSetString(IPVT_FontMap* pFontMap,
 }
 
 ByteString GenerateEditAP(IPVT_FontMap* pFontMap,
-                          CPDF_VariableText::Iterator* pIterator,
+                          CPVT_VariableText::Iterator* pIterator,
                           const CFX_PointF& ptOffset,
                           bool bContinuous,
                           uint16_t SubWord) {
@@ -374,8 +374,8 @@ ByteString GetPopupContentsString(CPDF_Document* pDoc,
   swValue += pAnnotDict.GetUnicodeTextFor(pdfium::annotation::kContents);
   CPVT_FontMap map(pDoc, nullptr, pDefFont, sFontName);
 
-  CPDF_VariableText::Provider prd(&map);
-  CPDF_VariableText vt;
+  CPVT_VariableText::Provider prd(&map);
+  CPVT_VariableText vt;
   vt.SetProvider(&prd);
   vt.SetPlateRect(pAnnotDict.GetRectFor(pdfium::annotation::kRect));
   vt.SetFontSize(12);
@@ -915,7 +915,7 @@ bool GenerateStrikeOutAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
 }  // namespace
 
 // static
-void CPVT_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
+void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
                                      CPDF_Dictionary* pAnnotDict,
                                      FormType type) {
   CPDF_Dictionary* pRootDict = pDoc->GetRoot();
@@ -1092,7 +1092,7 @@ void CPVT_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
     pStreamDict->SetRectFor("BBox", rcBBox);
   }
   switch (type) {
-    case CPVT_GenerateAP::kTextField: {
+    case CPDF_GenerateAP::kTextField: {
       const CPDF_Object* pV =
           CPDF_FormField::GetFieldAttr(pAnnotDict, pdfium::form_fields::kV);
       WideString swValue = pV ? pV->GetUnicodeText() : WideString();
@@ -1107,8 +1107,8 @@ void CPVT_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
       CPVT_FontMap map(
           pDoc, pStreamDict ? pStreamDict->GetDictFor("Resources") : nullptr,
           pDefFont, font_name);
-      CPDF_VariableText::Provider prd(&map);
-      CPDF_VariableText vt;
+      CPVT_VariableText::Provider prd(&map);
+      CPVT_VariableText vt;
       vt.SetProvider(&prd);
       vt.SetPlateRect(rcBody);
       vt.SetAlignment(nAlign);
@@ -1160,15 +1160,15 @@ void CPVT_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
       }
       break;
     }
-    case CPVT_GenerateAP::kComboBox: {
+    case CPDF_GenerateAP::kComboBox: {
       const CPDF_Object* pV =
           CPDF_FormField::GetFieldAttr(pAnnotDict, pdfium::form_fields::kV);
       WideString swValue = pV ? pV->GetUnicodeText() : WideString();
       CPVT_FontMap map(
           pDoc, pStreamDict ? pStreamDict->GetDictFor("Resources") : nullptr,
           pDefFont, font_name);
-      CPDF_VariableText::Provider prd(&map);
-      CPDF_VariableText vt;
+      CPVT_VariableText::Provider prd(&map);
+      CPVT_VariableText vt;
       vt.SetProvider(&prd);
       CFX_FloatRect rcButton = rcBody;
       rcButton.left = rcButton.right - 13;
@@ -1231,11 +1231,11 @@ void CPVT_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
       }
       break;
     }
-    case CPVT_GenerateAP::kListBox: {
+    case CPDF_GenerateAP::kListBox: {
       CPVT_FontMap map(
           pDoc, pStreamDict ? pStreamDict->GetDictFor("Resources") : nullptr,
           pDefFont, font_name);
-      CPDF_VariableText::Provider prd(&map);
+      CPVT_VariableText::Provider prd(&map);
       CPDF_Array* pOpts =
           ToArray(CPDF_FormField::GetFieldAttr(pAnnotDict, "Opt"));
       CPDF_Array* pSels =
@@ -1268,7 +1268,7 @@ void CPVT_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
                 }
               }
             }
-            CPDF_VariableText vt;
+            CPVT_VariableText vt;
             vt.SetProvider(&prd);
             vt.SetPlateRect(
                 CFX_FloatRect(rcBody.left, 0.0f, rcBody.right, 0.0f));
@@ -1347,7 +1347,7 @@ void CPVT_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
 }
 
 // static
-void CPVT_GenerateAP::GenerateEmptyAP(CPDF_Document* pDoc,
+void CPDF_GenerateAP::GenerateEmptyAP(CPDF_Document* pDoc,
                                       CPDF_Dictionary* pAnnotDict) {
   auto pExtGStateDict = GenerateExtGStateDict(*pAnnotDict, "GS", "Normal");
   auto pResourceDict =
@@ -1359,7 +1359,7 @@ void CPVT_GenerateAP::GenerateEmptyAP(CPDF_Document* pDoc,
 }
 
 // static
-bool CPVT_GenerateAP::GenerateAnnotAP(CPDF_Document* pDoc,
+bool CPDF_GenerateAP::GenerateAnnotAP(CPDF_Document* pDoc,
                                       CPDF_Dictionary* pAnnotDict,
                                       CPDF_Annot::Subtype subtype) {
   switch (subtype) {

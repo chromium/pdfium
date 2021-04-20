@@ -12,7 +12,7 @@
 #include <utility>
 #include <vector>
 
-#include "core/fpdfdoc/cpdf_variabletext.h"
+#include "core/fpdfdoc/cpvt_variabletext.h"
 #include "core/fpdfdoc/cpvt_wordrange.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
@@ -397,7 +397,7 @@ class CPWL_EditImpl {
   bool m_bEnableUndo = true;
   int32_t m_nAlignment = 0;
   std::unique_ptr<CPWL_EditImpl_Provider> m_pVTProvider;
-  std::unique_ptr<CPDF_VariableText> m_pVT;  // Must outlive |m_pVTProvider|.
+  std::unique_ptr<CPVT_VariableText> m_pVT;  // Must outlive |m_pVTProvider|.
   UnownedPtr<CPWL_Edit> m_pNotify;
   CPVT_WordPlace m_wpCaret;
   CPVT_WordPlace m_wpOldCaret;
@@ -414,7 +414,7 @@ class CPWL_EditImpl {
 class CPWL_EditImpl_Iterator {
  public:
   CPWL_EditImpl_Iterator(CPWL_EditImpl* pEdit,
-                         CPDF_VariableText::Iterator* pVTIterator);
+                         CPVT_VariableText::Iterator* pVTIterator);
   ~CPWL_EditImpl_Iterator();
 
   bool NextWord();
@@ -426,15 +426,15 @@ class CPWL_EditImpl_Iterator {
 
  private:
   UnownedPtr<CPWL_EditImpl> m_pEdit;
-  UnownedPtr<CPDF_VariableText::Iterator> m_pVTIterator;
+  UnownedPtr<CPVT_VariableText::Iterator> m_pVTIterator;
 };
 
-class CPWL_EditImpl_Provider final : public CPDF_VariableText::Provider {
+class CPWL_EditImpl_Provider final : public CPVT_VariableText::Provider {
  public:
   explicit CPWL_EditImpl_Provider(IPVT_FontMap* pFontMap);
   ~CPWL_EditImpl_Provider() override;
 
-  // CPDF_VariableText::Provider:
+  // CPVT_VariableText::Provider:
   int GetCharWidth(int32_t nFontIndex, uint16_t word) override;
   int32_t GetWordFontIndex(uint16_t word,
                            int32_t charset,

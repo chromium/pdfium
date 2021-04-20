@@ -8,7 +8,7 @@
 
 #include <algorithm>
 
-#include "core/fpdfdoc/cpdf_variabletext.h"
+#include "core/fpdfdoc/cpvt_variabletext.h"
 #include "core/fpdfdoc/cpvt_wordinfo.h"
 #include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
@@ -206,7 +206,7 @@ CPVT_WordPlace CPVT_Section::Line::GetNextWordPlace(
                         place.nWordIndex + 1);
 }
 
-CPVT_Section::CPVT_Section(CPDF_VariableText* pVT) : m_pVT(pVT) {
+CPVT_Section::CPVT_Section(CPVT_VariableText* pVT) : m_pVT(pVT) {
   DCHECK(m_pVT);
 }
 

@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfdoc/cpdf_variabletext.h"
+#include "core/fpdfdoc/cpvt_variabletext.h"
 
 #include <algorithm>
 #include <utility>
@@ -30,14 +30,14 @@ constexpr uint8_t kFontSizeSteps[] = {4,  6,  8,   9,   10,  12,  14, 18, 20,
 
 }  // namespace
 
-CPDF_VariableText::Provider::Provider(IPVT_FontMap* pFontMap)
+CPVT_VariableText::Provider::Provider(IPVT_FontMap* pFontMap)
     : m_pFontMap(pFontMap) {
   DCHECK(m_pFontMap);
 }
 
-CPDF_VariableText::Provider::~Provider() = default;
+CPVT_VariableText::Provider::~Provider() = default;
 
-int CPDF_VariableText::Provider::GetCharWidth(int32_t nFontIndex,
+int CPVT_VariableText::Provider::GetCharWidth(int32_t nFontIndex,
                                               uint16_t word) {
   RetainPtr<CPDF_Font> pPDFFont = m_pFontMap->GetPDFFont(nFontIndex);
   if (!pPDFFont)
@@ -50,17 +50,17 @@ int CPDF_VariableText::Provider::GetCharWidth(int32_t nFontIndex,
   return pPDFFont->GetCharWidthF(charcode);
 }
 
-int32_t CPDF_VariableText::Provider::GetTypeAscent(int32_t nFontIndex) {
+int32_t CPVT_VariableText::Provider::GetTypeAscent(int32_t nFontIndex) {
   RetainPtr<CPDF_Font> pPDFFont = m_pFontMap->GetPDFFont(nFontIndex);
   return pPDFFont ? pPDFFont->GetTypeAscent() : 0;
 }
 
-int32_t CPDF_VariableText::Provider::GetTypeDescent(int32_t nFontIndex) {
+int32_t CPVT_VariableText::Provider::GetTypeDescent(int32_t nFontIndex) {
   RetainPtr<CPDF_Font> pPDFFont = m_pFontMap->GetPDFFont(nFontIndex);
   return pPDFFont ? pPDFFont->GetTypeDescent() : 0;
 }
 
-int32_t CPDF_VariableText::Provider::GetWordFontIndex(uint16_t word,
+int32_t CPVT_VariableText::Provider::GetWordFontIndex(uint16_t word,
                                                       int32_t charset,
                                                       int32_t nFontIndex) {
   if (RetainPtr<CPDF_Font> pDefFont = m_pFontMap->GetPDFFont(0)) {
@@ -74,25 +74,25 @@ int32_t CPDF_VariableText::Provider::GetWordFontIndex(uint16_t word,
   return -1;
 }
 
-int32_t CPDF_VariableText::Provider::GetDefaultFontIndex() {
+int32_t CPVT_VariableText::Provider::GetDefaultFontIndex() {
   return 0;
 }
 
-CPDF_VariableText::Iterator::Iterator(CPDF_VariableText* pVT) : m_pVT(pVT) {
+CPVT_VariableText::Iterator::Iterator(CPVT_VariableText* pVT) : m_pVT(pVT) {
   DCHECK(m_pVT);
 }
 
-CPDF_VariableText::Iterator::~Iterator() = default;
+CPVT_VariableText::Iterator::~Iterator() = default;
 
-void CPDF_VariableText::Iterator::SetAt(int32_t nWordIndex) {
+void CPVT_VariableText::Iterator::SetAt(int32_t nWordIndex) {
   m_CurPos = m_pVT->WordIndexToWordPlace(nWordIndex);
 }
 
-void CPDF_VariableText::Iterator::SetAt(const CPVT_WordPlace& place) {
+void CPVT_VariableText::Iterator::SetAt(const CPVT_WordPlace& place) {
   m_CurPos = place;
 }
 
-bool CPDF_VariableText::Iterator::NextWord() {
+bool CPVT_VariableText::Iterator::NextWord() {
   if (m_CurPos == m_pVT->GetEndWordPlace())
     return false;
 
@@ -100,8 +100,7 @@ bool CPDF_VariableText::Iterator::NextWord() {
   return true;
 }
 
-
-bool CPDF_VariableText::Iterator::NextLine() {
+bool CPVT_VariableText::Iterator::NextLine() {
   if (!pdfium::IndexInBounds(m_pVT->m_SectionArray, m_CurPos.nSecIndex))
     return false;
 
@@ -119,7 +118,7 @@ bool CPDF_VariableText::Iterator::NextLine() {
   return false;
 }
 
-bool CPDF_VariableText::Iterator::GetWord(CPVT_Word& word) const {
+bool CPVT_VariableText::Iterator::GetWord(CPVT_Word& word) const {
   word.WordPlace = m_CurPos;
   if (!pdfium::IndexInBounds(m_pVT->m_SectionArray, m_CurPos.nSecIndex))
     return false;
@@ -145,7 +144,7 @@ bool CPDF_VariableText::Iterator::GetWord(CPVT_Word& word) const {
   return true;
 }
 
-bool CPDF_VariableText::Iterator::GetLine(CPVT_Line& line) const {
+bool CPVT_VariableText::Iterator::GetLine(CPVT_Line& line) const {
   DCHECK(m_pVT);
   line.lineplace = CPVT_WordPlace(m_CurPos.nSecIndex, m_CurPos.nLineIndex, -1);
   if (!pdfium::IndexInBounds(m_pVT->m_SectionArray, m_CurPos.nSecIndex))
@@ -167,11 +166,11 @@ bool CPDF_VariableText::Iterator::GetLine(CPVT_Line& line) const {
   return true;
 }
 
-CPDF_VariableText::CPDF_VariableText() = default;
+CPVT_VariableText::CPVT_VariableText() = default;
 
-CPDF_VariableText::~CPDF_VariableText() = default;
+CPVT_VariableText::~CPVT_VariableText() = default;
 
-void CPDF_VariableText::Initialize() {
+void CPVT_VariableText::Initialize() {
   if (m_bInitialized)
     return;
 
@@ -190,7 +189,7 @@ void CPDF_VariableText::Initialize() {
   m_bInitialized = true;
 }
 
-CPVT_WordPlace CPDF_VariableText::InsertWord(const CPVT_WordPlace& place,
+CPVT_WordPlace CPVT_VariableText::InsertWord(const CPVT_WordPlace& place,
                                              uint16_t word,
                                              int32_t charset) {
   int32_t nTotalWords = GetTotalWords();
@@ -207,7 +206,7 @@ CPVT_WordPlace CPDF_VariableText::InsertWord(const CPVT_WordPlace& place,
   return AddWord(newplace, CPVT_WordInfo(word, charset, nFontIndex));
 }
 
-CPVT_WordPlace CPDF_VariableText::InsertSection(const CPVT_WordPlace& place) {
+CPVT_WordPlace CPVT_VariableText::InsertSection(const CPVT_WordPlace& place) {
   int32_t nTotalWords = GetTotalWords();
   if (m_nLimitChar > 0 && nTotalWords >= m_nLimitChar)
     return place;
@@ -237,7 +236,7 @@ CPVT_WordPlace CPDF_VariableText::InsertSection(const CPVT_WordPlace& place) {
   return result;
 }
 
-CPVT_WordPlace CPDF_VariableText::DeleteWords(
+CPVT_WordPlace CPVT_VariableText::DeleteWords(
     const CPVT_WordRange& PlaceRange) {
   bool bLastSecPos =
       pdfium::IndexInBounds(m_SectionArray, PlaceRange.EndPos.nSecIndex) &&
@@ -253,15 +252,15 @@ CPVT_WordPlace CPDF_VariableText::DeleteWords(
   return PlaceRange.BeginPos;
 }
 
-CPVT_WordPlace CPDF_VariableText::DeleteWord(const CPVT_WordPlace& place) {
+CPVT_WordPlace CPVT_VariableText::DeleteWord(const CPVT_WordPlace& place) {
   return ClearRightWord(AdjustLineHeader(place, true));
 }
 
-CPVT_WordPlace CPDF_VariableText::BackSpaceWord(const CPVT_WordPlace& place) {
+CPVT_WordPlace CPVT_VariableText::BackSpaceWord(const CPVT_WordPlace& place) {
   return ClearLeftWord(AdjustLineHeader(place, true));
 }
 
-void CPDF_VariableText::SetText(const WideString& swText) {
+void CPVT_VariableText::SetText(const WideString& swText) {
   DeleteWords(CPVT_WordRange(GetBeginWordPlace(), GetEndWordPlace()));
   CPVT_WordPlace wp(0, 0, -1);
   if (!m_SectionArray.empty())
@@ -303,7 +302,7 @@ void CPDF_VariableText::SetText(const WideString& swText) {
   }
 }
 
-void CPDF_VariableText::UpdateWordPlace(CPVT_WordPlace& place) const {
+void CPVT_VariableText::UpdateWordPlace(CPVT_WordPlace& place) const {
   if (place.nSecIndex < 0)
     place = GetBeginWordPlace();
   if (place.nSecIndex >= pdfium::CollectionSize<int32_t>(m_SectionArray))
@@ -314,7 +313,7 @@ void CPDF_VariableText::UpdateWordPlace(CPVT_WordPlace& place) const {
     m_SectionArray[place.nSecIndex]->UpdateWordPlace(place);
 }
 
-int32_t CPDF_VariableText::WordPlaceToWordIndex(
+int32_t CPVT_VariableText::WordPlaceToWordIndex(
     const CPVT_WordPlace& place) const {
   CPVT_WordPlace newplace = place;
   UpdateWordPlace(newplace);
@@ -333,7 +332,7 @@ int32_t CPDF_VariableText::WordPlaceToWordIndex(
   return nIndex;
 }
 
-CPVT_WordPlace CPDF_VariableText::WordIndexToWordPlace(int32_t index) const {
+CPVT_WordPlace CPVT_VariableText::WordIndexToWordPlace(int32_t index) const {
   CPVT_WordPlace place = GetBeginWordPlace();
   int32_t nOldIndex = 0;
   int32_t nIndex = 0;
@@ -363,17 +362,17 @@ CPVT_WordPlace CPDF_VariableText::WordIndexToWordPlace(int32_t index) const {
   return place;
 }
 
-CPVT_WordPlace CPDF_VariableText::GetBeginWordPlace() const {
+CPVT_WordPlace CPVT_VariableText::GetBeginWordPlace() const {
   return m_bInitialized ? CPVT_WordPlace(0, 0, -1) : CPVT_WordPlace();
 }
 
-CPVT_WordPlace CPDF_VariableText::GetEndWordPlace() const {
+CPVT_WordPlace CPVT_VariableText::GetEndWordPlace() const {
   if (m_SectionArray.empty())
     return CPVT_WordPlace();
   return m_SectionArray.back()->GetEndWordPlace();
 }
 
-CPVT_WordPlace CPDF_VariableText::GetPrevWordPlace(
+CPVT_WordPlace CPVT_VariableText::GetPrevWordPlace(
     const CPVT_WordPlace& place) const {
   if (place.nSecIndex < 0)
     return GetBeginWordPlace();
@@ -388,7 +387,7 @@ CPVT_WordPlace CPDF_VariableText::GetPrevWordPlace(
   return m_SectionArray[place.nSecIndex - 1]->GetEndWordPlace();
 }
 
-CPVT_WordPlace CPDF_VariableText::GetNextWordPlace(
+CPVT_WordPlace CPVT_VariableText::GetNextWordPlace(
     const CPVT_WordPlace& place) const {
   if (place.nSecIndex < 0)
     return GetBeginWordPlace();
@@ -403,7 +402,7 @@ CPVT_WordPlace CPDF_VariableText::GetNextWordPlace(
   return m_SectionArray[place.nSecIndex + 1]->GetBeginWordPlace();
 }
 
-CPVT_WordPlace CPDF_VariableText::SearchWordPlace(
+CPVT_WordPlace CPVT_VariableText::SearchWordPlace(
     const CFX_PointF& point) const {
   CFX_PointF pt = OutToIn(point);
   CPVT_WordPlace place = GetBeginWordPlace();
@@ -442,7 +441,7 @@ CPVT_WordPlace CPDF_VariableText::SearchWordPlace(
   return place;
 }
 
-CPVT_WordPlace CPDF_VariableText::GetUpWordPlace(
+CPVT_WordPlace CPVT_VariableText::GetUpWordPlace(
     const CPVT_WordPlace& place,
     const CFX_PointF& point) const {
   if (!pdfium::IndexInBounds(m_SectionArray, place.nSecIndex))
@@ -466,7 +465,7 @@ CPVT_WordPlace CPDF_VariableText::GetUpWordPlace(
   return place;
 }
 
-CPVT_WordPlace CPDF_VariableText::GetDownWordPlace(
+CPVT_WordPlace CPVT_VariableText::GetDownWordPlace(
     const CPVT_WordPlace& place,
     const CFX_PointF& point) const {
   if (!pdfium::IndexInBounds(m_SectionArray, place.nSecIndex))
@@ -487,12 +486,12 @@ CPVT_WordPlace CPDF_VariableText::GetDownWordPlace(
       pt.x - pSection->GetRect().left, temp);
 }
 
-CPVT_WordPlace CPDF_VariableText::GetLineBeginPlace(
+CPVT_WordPlace CPVT_VariableText::GetLineBeginPlace(
     const CPVT_WordPlace& place) const {
   return CPVT_WordPlace(place.nSecIndex, place.nLineIndex, -1);
 }
 
-CPVT_WordPlace CPDF_VariableText::GetLineEndPlace(
+CPVT_WordPlace CPVT_VariableText::GetLineEndPlace(
     const CPVT_WordPlace& place) const {
   if (!pdfium::IndexInBounds(m_SectionArray, place.nSecIndex))
     return place;
@@ -504,12 +503,12 @@ CPVT_WordPlace CPDF_VariableText::GetLineEndPlace(
   return pSection->GetLineArray()[place.nLineIndex]->GetEndWordPlace();
 }
 
-CPVT_WordPlace CPDF_VariableText::GetSectionBeginPlace(
+CPVT_WordPlace CPVT_VariableText::GetSectionBeginPlace(
     const CPVT_WordPlace& place) const {
   return CPVT_WordPlace(place.nSecIndex, 0, -1);
 }
 
-CPVT_WordPlace CPDF_VariableText::GetSectionEndPlace(
+CPVT_WordPlace CPVT_VariableText::GetSectionEndPlace(
     const CPVT_WordPlace& place) const {
   if (!pdfium::IndexInBounds(m_SectionArray, place.nSecIndex))
     return place;
@@ -517,7 +516,7 @@ CPVT_WordPlace CPDF_VariableText::GetSectionEndPlace(
   return m_SectionArray[place.nSecIndex]->GetEndWordPlace();
 }
 
-int32_t CPDF_VariableText::GetTotalWords() const {
+int32_t CPVT_VariableText::GetTotalWords() const {
   int32_t nTotal = 0;
   for (const auto& pSection : m_SectionArray) {
     nTotal += pdfium::CollectionSize<int32_t>(pSection->GetWordArray()) +
@@ -526,7 +525,7 @@ int32_t CPDF_VariableText::GetTotalWords() const {
   return nTotal - kReturnLength;
 }
 
-CPVT_WordPlace CPDF_VariableText::AddSection(const CPVT_WordPlace& place) {
+CPVT_WordPlace CPVT_VariableText::AddSection(const CPVT_WordPlace& place) {
   if (IsValid() && !m_bMultiLine)
     return place;
 
@@ -541,7 +540,7 @@ CPVT_WordPlace CPDF_VariableText::AddSection(const CPVT_WordPlace& place) {
   return place;
 }
 
-CPVT_WordPlace CPDF_VariableText::AddLine(const CPVT_WordPlace& place,
+CPVT_WordPlace CPVT_VariableText::AddLine(const CPVT_WordPlace& place,
                                           const CPVT_LineInfo& lineinfo) {
   if (!pdfium::IndexInBounds(m_SectionArray, place.nSecIndex))
     return place;
@@ -549,7 +548,7 @@ CPVT_WordPlace CPDF_VariableText::AddLine(const CPVT_WordPlace& place,
   return m_SectionArray[place.nSecIndex]->AddLine(lineinfo);
 }
 
-CPVT_WordPlace CPDF_VariableText::AddWord(const CPVT_WordPlace& place,
+CPVT_WordPlace CPVT_VariableText::AddWord(const CPVT_WordPlace& place,
                                           const CPVT_WordInfo& wordinfo) {
   if (m_SectionArray.empty())
     return place;
@@ -561,23 +560,23 @@ CPVT_WordPlace CPDF_VariableText::AddWord(const CPVT_WordPlace& place,
   return m_SectionArray[newplace.nSecIndex]->AddWord(newplace, wordinfo);
 }
 
-void CPDF_VariableText::SetPlateRect(const CFX_FloatRect& rect) {
+void CPVT_VariableText::SetPlateRect(const CFX_FloatRect& rect) {
   m_rcPlate = rect;
 }
 
-CFX_FloatRect CPDF_VariableText::GetContentRect() const {
+CFX_FloatRect CPVT_VariableText::GetContentRect() const {
   return InToOut(m_rcContent);
 }
 
-const CFX_FloatRect& CPDF_VariableText::GetPlateRect() const {
+const CFX_FloatRect& CPVT_VariableText::GetPlateRect() const {
   return m_rcPlate;
 }
 
-float CPDF_VariableText::GetWordFontSize() {
+float CPVT_VariableText::GetWordFontSize() {
   return GetFontSize();
 }
 
-float CPDF_VariableText::GetWordWidth(int32_t nFontIndex,
+float CPVT_VariableText::GetWordWidth(int32_t nFontIndex,
                                       uint16_t Word,
                                       uint16_t SubWord,
                                       float fCharSpace,
@@ -587,60 +586,60 @@ float CPDF_VariableText::GetWordWidth(int32_t nFontIndex,
          fCharSpace + fWordTail;
 }
 
-float CPDF_VariableText::GetWordWidth(const CPVT_WordInfo& WordInfo) {
+float CPVT_VariableText::GetWordWidth(const CPVT_WordInfo& WordInfo) {
   return GetWordWidth(WordInfo.nFontIndex, WordInfo.Word, GetSubWord(),
                       GetCharSpace(), GetWordFontSize(), WordInfo.fWordTail);
 }
 
-float CPDF_VariableText::GetLineAscent() {
+float CPVT_VariableText::GetLineAscent() {
   return GetFontAscent(GetDefaultFontIndex(), GetFontSize());
 }
 
-float CPDF_VariableText::GetLineDescent() {
+float CPVT_VariableText::GetLineDescent() {
   return GetFontDescent(GetDefaultFontIndex(), GetFontSize());
 }
 
-float CPDF_VariableText::GetFontAscent(int32_t nFontIndex, float fFontSize) {
+float CPVT_VariableText::GetFontAscent(int32_t nFontIndex, float fFontSize) {
   float ascent = m_pVTProvider ? m_pVTProvider->GetTypeAscent(nFontIndex) : 0;
   return ascent * fFontSize * kFontScale;
 }
 
-float CPDF_VariableText::GetFontDescent(int32_t nFontIndex, float fFontSize) {
+float CPVT_VariableText::GetFontDescent(int32_t nFontIndex, float fFontSize) {
   float descent = m_pVTProvider ? m_pVTProvider->GetTypeDescent(nFontIndex) : 0;
   return descent * fFontSize * kFontScale;
 }
 
-float CPDF_VariableText::GetWordAscent(const CPVT_WordInfo& WordInfo,
+float CPVT_VariableText::GetWordAscent(const CPVT_WordInfo& WordInfo,
                                        float fFontSize) {
   return GetFontAscent(WordInfo.nFontIndex, fFontSize);
 }
 
-float CPDF_VariableText::GetWordDescent(const CPVT_WordInfo& WordInfo,
+float CPVT_VariableText::GetWordDescent(const CPVT_WordInfo& WordInfo,
                                         float fFontSize) {
   return GetFontDescent(WordInfo.nFontIndex, fFontSize);
 }
 
-float CPDF_VariableText::GetWordAscent(const CPVT_WordInfo& WordInfo) {
+float CPVT_VariableText::GetWordAscent(const CPVT_WordInfo& WordInfo) {
   return GetFontAscent(WordInfo.nFontIndex, GetWordFontSize());
 }
 
-float CPDF_VariableText::GetWordDescent(const CPVT_WordInfo& WordInfo) {
+float CPVT_VariableText::GetWordDescent(const CPVT_WordInfo& WordInfo) {
   return GetFontDescent(WordInfo.nFontIndex, GetWordFontSize());
 }
 
-float CPDF_VariableText::GetLineLeading() {
+float CPVT_VariableText::GetLineLeading() {
   return m_fLineLeading;
 }
 
-float CPDF_VariableText::GetLineIndent() {
+float CPVT_VariableText::GetLineIndent() {
   return 0.0f;
 }
 
-int32_t CPDF_VariableText::GetAlignment() {
+int32_t CPVT_VariableText::GetAlignment() {
   return m_nAlignment;
 }
 
-void CPDF_VariableText::ClearSectionRightWords(const CPVT_WordPlace& place) {
+void CPVT_VariableText::ClearSectionRightWords(const CPVT_WordPlace& place) {
   CPVT_WordPlace wordplace = AdjustLineHeader(place, true);
   if (!pdfium::IndexInBounds(m_SectionArray, place.nSecIndex))
     return;
@@ -649,14 +648,14 @@ void CPDF_VariableText::ClearSectionRightWords(const CPVT_WordPlace& place) {
   pSection->EraseWordsFrom(wordplace.nWordIndex + 1);
 }
 
-CPVT_WordPlace CPDF_VariableText::AdjustLineHeader(const CPVT_WordPlace& place,
+CPVT_WordPlace CPVT_VariableText::AdjustLineHeader(const CPVT_WordPlace& place,
                                                    bool bPrevOrNext) const {
   if (place.nWordIndex < 0 && place.nLineIndex > 0)
     return bPrevOrNext ? GetPrevWordPlace(place) : GetNextWordPlace(place);
   return place;
 }
 
-bool CPDF_VariableText::ClearEmptySection(const CPVT_WordPlace& place) {
+bool CPVT_VariableText::ClearEmptySection(const CPVT_WordPlace& place) {
   if (place.nSecIndex == 0 && m_SectionArray.size() == 1)
     return false;
 
@@ -670,7 +669,7 @@ bool CPDF_VariableText::ClearEmptySection(const CPVT_WordPlace& place) {
   return true;
 }
 
-void CPDF_VariableText::ClearEmptySections(const CPVT_WordRange& PlaceRange) {
+void CPVT_VariableText::ClearEmptySections(const CPVT_WordRange& PlaceRange) {
   CPVT_WordPlace wordplace;
   for (int32_t s = PlaceRange.EndPos.nSecIndex;
        s > PlaceRange.BeginPos.nSecIndex; s--) {
@@ -679,7 +678,7 @@ void CPDF_VariableText::ClearEmptySections(const CPVT_WordRange& PlaceRange) {
   }
 }
 
-void CPDF_VariableText::LinkLatterSection(const CPVT_WordPlace& place) {
+void CPVT_VariableText::LinkLatterSection(const CPVT_WordPlace& place) {
   CPVT_WordPlace oldplace = AdjustLineHeader(place, true);
   if (!pdfium::IndexInBounds(m_SectionArray, place.nSecIndex + 1))
     return;
@@ -695,7 +694,7 @@ void CPDF_VariableText::LinkLatterSection(const CPVT_WordPlace& place) {
   m_SectionArray.erase(m_SectionArray.begin() + place.nSecIndex + 1);
 }
 
-void CPDF_VariableText::ClearWords(const CPVT_WordRange& PlaceRange) {
+void CPVT_VariableText::ClearWords(const CPVT_WordRange& PlaceRange) {
   CPVT_WordRange NewRange;
   NewRange.BeginPos = AdjustLineHeader(PlaceRange.BeginPos, true);
   NewRange.EndPos = AdjustLineHeader(PlaceRange.EndPos, true);
@@ -706,7 +705,7 @@ void CPDF_VariableText::ClearWords(const CPVT_WordRange& PlaceRange) {
   }
 }
 
-CPVT_WordPlace CPDF_VariableText::ClearLeftWord(const CPVT_WordPlace& place) {
+CPVT_WordPlace CPVT_VariableText::ClearLeftWord(const CPVT_WordPlace& place) {
   if (!pdfium::IndexInBounds(m_SectionArray, place.nSecIndex))
     return place;
 
@@ -726,7 +725,7 @@ CPVT_WordPlace CPDF_VariableText::ClearLeftWord(const CPVT_WordPlace& place) {
   return leftplace;
 }
 
-CPVT_WordPlace CPDF_VariableText::ClearRightWord(const CPVT_WordPlace& place) {
+CPVT_WordPlace CPVT_VariableText::ClearRightWord(const CPVT_WordPlace& place) {
   if (!pdfium::IndexInBounds(m_SectionArray, place.nSecIndex))
     return place;
 
@@ -742,15 +741,15 @@ CPVT_WordPlace CPDF_VariableText::ClearRightWord(const CPVT_WordPlace& place) {
   return place;
 }
 
-void CPDF_VariableText::RearrangeAll() {
+void CPVT_VariableText::RearrangeAll() {
   Rearrange(CPVT_WordRange(GetBeginWordPlace(), GetEndWordPlace()));
 }
 
-void CPDF_VariableText::RearrangePart(const CPVT_WordRange& PlaceRange) {
+void CPVT_VariableText::RearrangePart(const CPVT_WordRange& PlaceRange) {
   Rearrange(PlaceRange);
 }
 
-void CPDF_VariableText::Rearrange(const CPVT_WordRange& PlaceRange) {
+void CPVT_VariableText::Rearrange(const CPVT_WordRange& PlaceRange) {
   CPVT_FloatRect rcRet;
   if (IsValid()) {
     if (m_bAutoFontSize) {
@@ -764,7 +763,7 @@ void CPDF_VariableText::Rearrange(const CPVT_WordRange& PlaceRange) {
   m_rcContent = rcRet;
 }
 
-float CPDF_VariableText::GetAutoFontSize() {
+float CPVT_VariableText::GetAutoFontSize() {
   int32_t nTotal = sizeof(kFontSizeSteps) / sizeof(uint8_t);
   if (IsMultiLine())
     nTotal /= 4;
@@ -786,7 +785,7 @@ float CPDF_VariableText::GetAutoFontSize() {
   return (float)kFontSizeSteps[nMid];
 }
 
-bool CPDF_VariableText::IsBigger(float fFontSize) const {
+bool CPVT_VariableText::IsBigger(float fFontSize) const {
   CFX_SizeF szTotal;
   for (const auto& pSection : m_SectionArray) {
     CFX_SizeF size = pSection->GetSectionSize(fFontSize);
@@ -800,7 +799,7 @@ bool CPDF_VariableText::IsBigger(float fFontSize) const {
   return false;
 }
 
-CPVT_FloatRect CPDF_VariableText::RearrangeSections(
+CPVT_FloatRect CPVT_VariableText::RearrangeSections(
     const CPVT_WordRange& PlaceRange) {
   float fPosY = 0;
   CPVT_FloatRect rcRet;
@@ -837,7 +836,7 @@ CPVT_FloatRect CPDF_VariableText::RearrangeSections(
   return rcRet;
 }
 
-int CPDF_VariableText::GetCharWidth(int32_t nFontIndex,
+int CPVT_VariableText::GetCharWidth(int32_t nFontIndex,
                                     uint16_t Word,
                                     uint16_t SubWord) {
   if (!m_pVTProvider)
@@ -846,7 +845,7 @@ int CPDF_VariableText::GetCharWidth(int32_t nFontIndex,
   return m_pVTProvider->GetCharWidth(nFontIndex, word);
 }
 
-int32_t CPDF_VariableText::GetWordFontIndex(uint16_t word,
+int32_t CPVT_VariableText::GetWordFontIndex(uint16_t word,
                                             int32_t charset,
                                             int32_t nFontIndex) {
   return m_pVTProvider
@@ -854,44 +853,44 @@ int32_t CPDF_VariableText::GetWordFontIndex(uint16_t word,
              : -1;
 }
 
-int32_t CPDF_VariableText::GetDefaultFontIndex() {
+int32_t CPVT_VariableText::GetDefaultFontIndex() {
   return m_pVTProvider ? m_pVTProvider->GetDefaultFontIndex() : -1;
 }
 
-CPDF_VariableText::Iterator* CPDF_VariableText::GetIterator() {
+CPVT_VariableText::Iterator* CPVT_VariableText::GetIterator() {
   if (!m_pVTIterator)
-    m_pVTIterator = std::make_unique<CPDF_VariableText::Iterator>(this);
+    m_pVTIterator = std::make_unique<CPVT_VariableText::Iterator>(this);
   return m_pVTIterator.get();
 }
 
-void CPDF_VariableText::SetProvider(CPDF_VariableText::Provider* pProvider) {
+void CPVT_VariableText::SetProvider(CPVT_VariableText::Provider* pProvider) {
   m_pVTProvider = pProvider;
 }
 
-CFX_PointF CPDF_VariableText::GetBTPoint() const {
+CFX_PointF CPVT_VariableText::GetBTPoint() const {
   return CFX_PointF(m_rcPlate.left, m_rcPlate.top);
 }
 
-CFX_PointF CPDF_VariableText::GetETPoint() const {
+CFX_PointF CPVT_VariableText::GetETPoint() const {
   return CFX_PointF(m_rcPlate.right, m_rcPlate.bottom);
 }
 
-CFX_PointF CPDF_VariableText::InToOut(const CFX_PointF& point) const {
+CFX_PointF CPVT_VariableText::InToOut(const CFX_PointF& point) const {
   return CFX_PointF(point.x + GetBTPoint().x, GetBTPoint().y - point.y);
 }
 
-CFX_PointF CPDF_VariableText::OutToIn(const CFX_PointF& point) const {
+CFX_PointF CPVT_VariableText::OutToIn(const CFX_PointF& point) const {
   return CFX_PointF(point.x - GetBTPoint().x, GetBTPoint().y - point.y);
 }
 
-CFX_FloatRect CPDF_VariableText::InToOut(const CPVT_FloatRect& rect) const {
+CFX_FloatRect CPVT_VariableText::InToOut(const CPVT_FloatRect& rect) const {
   CFX_PointF ptLeftTop = InToOut(CFX_PointF(rect.left, rect.top));
   CFX_PointF ptRightBottom = InToOut(CFX_PointF(rect.right, rect.bottom));
   return CFX_FloatRect(ptLeftTop.x, ptRightBottom.y, ptRightBottom.x,
                        ptLeftTop.y);
 }
 
-CPVT_FloatRect CPDF_VariableText::OutToIn(const CFX_FloatRect& rect) const {
+CPVT_FloatRect CPVT_VariableText::OutToIn(const CFX_FloatRect& rect) const {
   CFX_PointF ptLeftTop = OutToIn(CFX_PointF(rect.left, rect.top));
   CFX_PointF ptRightBottom = OutToIn(CFX_PointF(rect.right, rect.bottom));
   return CPVT_FloatRect(ptLeftTop.x, ptLeftTop.y, ptRightBottom.x,

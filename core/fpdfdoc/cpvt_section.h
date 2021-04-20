@@ -18,7 +18,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
 
-class CPDF_VariableText;
+class CPVT_VariableText;
 struct CPVT_LineInfo;
 struct CPVT_WordLine;
 struct CPVT_WordPlace;
@@ -38,7 +38,7 @@ class CPVT_Section final {
     CPVT_LineInfo m_LineInfo;
   };
 
-  explicit CPVT_Section(CPDF_VariableText* pVT);
+  explicit CPVT_Section(CPVT_VariableText* pVT);
   ~CPVT_Section();
 
   void ResetLinePlace();
@@ -85,7 +85,7 @@ class CPVT_Section final {
   CPVT_FloatRect m_Rect;
   std::vector<std::unique_ptr<Line>> m_LineArray;
   std::vector<std::unique_ptr<CPVT_WordInfo>> m_WordArray;
-  UnownedPtr<CPDF_VariableText> const m_pVT;
+  UnownedPtr<CPVT_VariableText> const m_pVT;
 };
 
 #endif  // CORE_FPDFDOC_CPVT_SECTION_H_

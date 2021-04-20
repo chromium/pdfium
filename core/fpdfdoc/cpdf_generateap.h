@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFDOC_CPVT_GENERATEAP_H_
-#define CORE_FPDFDOC_CPVT_GENERATEAP_H_
+#ifndef CORE_FPDFDOC_CPDF_GENERATEAP_H_
+#define CORE_FPDFDOC_CPDF_GENERATEAP_H_
 
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fxcrt/fx_system.h"
@@ -13,7 +13,7 @@
 class CPDF_Dictionary;
 class CPDF_Document;
 
-class CPVT_GenerateAP {
+class CPDF_GenerateAP {
  public:
   enum FormType { kTextField, kComboBox, kListBox };
 
@@ -27,9 +27,9 @@ class CPVT_GenerateAP {
                               CPDF_Dictionary* pAnnotDict,
                               CPDF_Annot::Subtype subtype);
 
-  CPVT_GenerateAP() = delete;
-  CPVT_GenerateAP(const CPVT_GenerateAP&) = delete;
-  CPVT_GenerateAP& operator=(const CPVT_GenerateAP&) = delete;
+  CPDF_GenerateAP() = delete;
+  CPDF_GenerateAP(const CPDF_GenerateAP&) = delete;
+  CPDF_GenerateAP& operator=(const CPDF_GenerateAP&) = delete;
 };
 
-#endif  // CORE_FPDFDOC_CPVT_GENERATEAP_H_
+#endif  // CORE_FPDFDOC_CPDF_GENERATEAP_H_

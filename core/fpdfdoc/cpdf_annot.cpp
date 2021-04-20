@@ -21,7 +21,7 @@
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
-#include "core/fpdfdoc/cpvt_generateap.h"
+#include "core/fpdfdoc/cpdf_generateap.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
@@ -122,7 +122,7 @@ void CPDF_Annot::Init() {
 void CPDF_Annot::GenerateAPIfNeeded() {
   if (!ShouldGenerateAP())
     return;
-  if (!CPVT_GenerateAP::GenerateAnnotAP(m_pDocument.Get(), m_pAnnotDict.Get(),
+  if (!CPDF_GenerateAP::GenerateAnnotAP(m_pDocument.Get(), m_pAnnotDict.Get(),
                                         m_nSubtype)) {
     return;
   }
@@ -394,7 +394,7 @@ bool CPDF_Annot::DrawAppearance(CPDF_Page* pPage,
     return false;
 
   // It might happen that by the time this annotation instance was created,
-  // it was flagged as "hidden" (e.g. /F 2), and hence CPVT_GenerateAP decided
+  // it was flagged as "hidden" (e.g. /F 2), and hence CPDF_GenerateAP decided
   // to not "generate" its AP.
   // If for a reason the object is no longer hidden, but still does not have
   // its "AP" generated, generate it now.
@@ -421,7 +421,7 @@ bool CPDF_Annot::DrawInContext(const CPDF_Page* pPage,
     return false;
 
   // It might happen that by the time this annotation instance was created,
-  // it was flagged as "hidden" (e.g. /F 2), and hence CPVT_GenerateAP decided
+  // it was flagged as "hidden" (e.g. /F 2), and hence CPDF_GenerateAP decided
   // to not "generate" its AP.
   // If for a reason the object is no longer hidden, but still does not have
   // its "AP" generated, generate it now.
