@@ -690,7 +690,7 @@ ByteString GenerateIconAppStream(CPDF_IconFit& fit,
   cp.dwFlags = PWS_VISIBLE;
 
   auto pPDFIcon = std::make_unique<CPDF_Icon>(pIconStream);
-  auto pIcon = std::make_unique<CPWL_Icon>(cp, pPDFIcon.get(), &fit);
+  auto pIcon = std::make_unique<CPWL_Icon>(cp);
   pIcon->Realize();
   if (!pIcon->Move(rcIcon, false, false))
     return ByteString();
@@ -700,15 +700,16 @@ ByteString GenerateIconAppStream(CPDF_IconFit& fit,
     return ByteString();
 
   CFX_FloatRect rcPlate = pIcon->GetClientRect();
+  CFX_SizeF image_size = pPDFIcon->GetImageSize();
   CFX_Matrix mt = pPDFIcon->GetImageMatrix().GetInverse();
 
   float fHScale;
   float fVScale;
-  std::tie(fHScale, fVScale) = pIcon->GetScale();
+  std::tie(fHScale, fVScale) = fit.GetScale(image_size, rcPlate);
 
   float fx;
   float fy;
-  std::tie(fx, fy) = pIcon->GetImageOffset();
+  std::tie(fx, fy) = fit.GetImageOffset(image_size, rcPlate);
 
   std::ostringstream str;
   {
