@@ -16,32 +16,14 @@
 #include "third_party/base/check.h"
 
 CPWL_Icon::CPWL_Icon(const CreateParams& cp,
-                     std::unique_ptr<CPDF_Icon> pIcon,
+                     CPDF_Icon* pIcon,
                      CPDF_IconFit* pFit)
-    : CPWL_Wnd(cp, nullptr), m_pIcon(std::move(pIcon)), m_pIconFit(pFit) {
+    : CPWL_Wnd(cp, nullptr), m_pIcon(pIcon), m_pIconFit(pFit) {
   DCHECK(m_pIcon);
+  DCHECK(m_pIconFit);
 }
 
 CPWL_Icon::~CPWL_Icon() = default;
-
-CFX_SizeF CPWL_Icon::GetImageSize() {
-  return m_pIcon->GetImageSize();
-}
-
-CFX_Matrix CPWL_Icon::GetImageMatrix() {
-  return m_pIcon->GetImageMatrix();
-}
-
-ByteString CPWL_Icon::GetImageAlias() {
-  return m_pIcon->GetImageAlias();
-}
-
-CFX_PointF CPWL_Icon::GetIconPosition() {
-  if (!m_pIconFit)
-    return CFX_PointF();
-
-  return m_pIconFit->GetIconPosition();
-}
 
 std::pair<float, float> CPWL_Icon::GetScale() {
   float fHScale = 1.0f;
@@ -51,13 +33,11 @@ std::pair<float, float> CPWL_Icon::GetScale() {
   float fPlateWidth = rcPlate.Width();
   float fPlateHeight = rcPlate.Height();
 
-  CFX_SizeF image_size = GetImageSize();
+  CFX_SizeF image_size = m_pIcon->GetImageSize();
   float fImageWidth = image_size.width;
   float fImageHeight = image_size.height;
-  CPDF_IconFit::ScaleMethod scale_method =
-      m_pIconFit ? m_pIconFit->GetScaleMethod()
-                 : CPDF_IconFit::ScaleMethod::kAlways;
 
+  CPDF_IconFit::ScaleMethod scale_method = m_pIconFit->GetScaleMethod();
   switch (scale_method) {
     case CPDF_IconFit::ScaleMethod::kAlways:
       fHScale = fPlateWidth / std::max(fImageWidth, 1.0f);
@@ -79,7 +59,7 @@ std::pair<float, float> CPWL_Icon::GetScale() {
       break;
   }
 
-  if (m_pIconFit && m_pIconFit->IsProportionalScale()) {
+  if (m_pIconFit->IsProportionalScale()) {
     float min_scale = std::min(fHScale, fVScale);
     fHScale = min_scale;
     fVScale = min_scale;
@@ -88,11 +68,11 @@ std::pair<float, float> CPWL_Icon::GetScale() {
 }
 
 std::pair<float, float> CPWL_Icon::GetImageOffset() {
-  CFX_PointF icon_position = GetIconPosition();
+  CFX_PointF icon_position = m_pIconFit->GetIconPosition();
   float fLeft = icon_position.x;
   float fBottom = icon_position.y;
 
-  CFX_SizeF image_size = GetImageSize();
+  CFX_SizeF image_size = m_pIcon->GetImageSize();
   float fImageWidth = image_size.width;
   float fImageHeight = image_size.height;
 
