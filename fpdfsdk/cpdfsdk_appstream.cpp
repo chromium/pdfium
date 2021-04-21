@@ -698,11 +698,11 @@ ByteString GenerateIconAppStream(CPDF_IconFit& fit,
   if (sAlias.GetLength() <= 0)
     return ByteString();
 
-  CFX_FloatRect rcPlate = pWnd->GetClientRect();
-  CFX_SizeF image_size = pPDFIcon->GetImageSize();
-  CFX_Matrix mt = pPDFIcon->GetImageMatrix().GetInverse();
-  CFX_VectorF scale = fit.GetScale(image_size, rcPlate);
-  CFX_VectorF offset = fit.GetImageOffset(image_size, rcPlate);
+  const CFX_FloatRect rcPlate = pWnd->GetClientRect();
+  const CFX_SizeF image_size = pPDFIcon->GetImageSize();
+  const CFX_Matrix mt = pPDFIcon->GetImageMatrix().GetInverse();
+  const CFX_VectorF scale = fit.GetScale(image_size, rcPlate);
+  const CFX_VectorF offset = fit.GetImageOffset(image_size, scale, rcPlate);
 
   std::ostringstream str;
   {
