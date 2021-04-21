@@ -29,7 +29,6 @@
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/pwl/cpwl_edit.h"
 #include "fpdfsdk/pwl/cpwl_edit_impl.h"
-#include "fpdfsdk/pwl/cpwl_icon.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "third_party/base/stl_util.h"
 
@@ -686,20 +685,20 @@ ByteString GenerateIconAppStream(CPDF_IconFit& fit,
   if (rcIcon.IsEmpty() || !pIconStream)
     return ByteString();
 
+  auto pPDFIcon = std::make_unique<CPDF_Icon>(pIconStream);
+
   CPWL_Wnd::CreateParams cp;
   cp.dwFlags = PWS_VISIBLE;
-
-  auto pPDFIcon = std::make_unique<CPDF_Icon>(pIconStream);
-  auto pIcon = std::make_unique<CPWL_Icon>(cp);
-  pIcon->Realize();
-  if (!pIcon->Move(rcIcon, false, false))
+  auto pWnd = std::make_unique<CPWL_Wnd>(cp, nullptr);
+  pWnd->Realize();
+  if (!pWnd->Move(rcIcon, false, false))
     return ByteString();
 
   ByteString sAlias = pPDFIcon->GetImageAlias();
   if (sAlias.GetLength() <= 0)
     return ByteString();
 
-  CFX_FloatRect rcPlate = pIcon->GetClientRect();
+  CFX_FloatRect rcPlate = pWnd->GetClientRect();
   CFX_SizeF image_size = pPDFIcon->GetImageSize();
   CFX_Matrix mt = pPDFIcon->GetImageMatrix().GetInverse();
 
@@ -728,8 +727,7 @@ ByteString GenerateIconAppStream(CPDF_IconFit& fit,
         << kSetLineWidthOperator << " /" << sAlias << " "
         << kInvokeNamedXObjectOperator << "\n";
   }
-  pIcon->Destroy();
-
+  pWnd->Destroy();
   return ByteString(str);
 }
 

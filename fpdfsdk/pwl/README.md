@@ -11,7 +11,6 @@ classes are controllers for each widget. The hierarchy is:
     * CPWL_Caret
     * CPWL_EditCtrl
         * CPWL_Edit
-    * CPWL_Icon
     * CPWL_ListBox
         * CPWL_CBListBox (combo box)
     * CPWL_ScrollBar
