@@ -7,8 +7,6 @@
 #ifndef CORE_FPDFDOC_CPDF_ICONFIT_H_
 #define CORE_FPDFDOC_CPDF_ICONFIT_H_
 
-#include <utility>
-
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -27,10 +25,10 @@ class CPDF_IconFit {
   bool IsProportionalScale() const;
   bool GetFittingBounds() const;
   CFX_PointF GetIconBottomLeftPosition() const;
-  std::pair<float, float> GetImageOffset(const CFX_SizeF& image_size,
-                                         const CFX_FloatRect& rcPlate) const;
-  std::pair<float, float> GetScale(const CFX_SizeF& image_size,
-                                   const CFX_FloatRect& rcPlate) const;
+  CFX_VectorF GetImageOffset(const CFX_SizeF& image_size,
+                             const CFX_FloatRect& rcPlate) const;
+  CFX_VectorF GetScale(const CFX_SizeF& image_size,
+                       const CFX_FloatRect& rcPlate) const;
 
  private:
   CFX_PointF GetIconPosition() const;

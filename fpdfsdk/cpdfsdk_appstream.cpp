@@ -701,14 +701,8 @@ ByteString GenerateIconAppStream(CPDF_IconFit& fit,
   CFX_FloatRect rcPlate = pWnd->GetClientRect();
   CFX_SizeF image_size = pPDFIcon->GetImageSize();
   CFX_Matrix mt = pPDFIcon->GetImageMatrix().GetInverse();
-
-  float fHScale;
-  float fVScale;
-  std::tie(fHScale, fVScale) = fit.GetScale(image_size, rcPlate);
-
-  float fx;
-  float fy;
-  std::tie(fx, fy) = fit.GetImageOffset(image_size, rcPlate);
+  CFX_VectorF scale = fit.GetScale(image_size, rcPlate);
+  CFX_VectorF offset = fit.GetImageOffset(image_size, rcPlate);
 
   std::ostringstream str;
   {
@@ -718,8 +712,9 @@ ByteString GenerateIconAppStream(CPDF_IconFit& fit,
         << " " << kAppendRectOperator << " " << kSetNonZeroWindingClipOperator
         << " " << kEndPathNoFillOrStrokeOperator << "\n";
 
-    str << fHScale << " 0 0 " << fVScale << " " << rcPlate.left + fx << " "
-        << rcPlate.bottom + fy << " " << kConcatMatrixOperator << "\n";
+    str << scale.x << " 0 0 " << scale.y << " " << rcPlate.left + offset.x
+        << " " << rcPlate.bottom + offset.y << " " << kConcatMatrixOperator
+        << "\n";
     str << mt.a << " " << mt.b << " " << mt.c << " " << mt.d << " " << mt.e
         << " " << mt.f << " " << kConcatMatrixOperator << "\n";
 

@@ -75,9 +75,8 @@ CFX_PointF CPDF_IconFit::GetIconPosition() const {
           dwCount > 1 ? pA->GetNumberAt(1) : 0.0f};
 }
 
-std::pair<float, float> CPDF_IconFit::GetScale(
-    const CFX_SizeF& image_size,
-    const CFX_FloatRect& rcPlate) const {
+CFX_VectorF CPDF_IconFit::GetScale(const CFX_SizeF& image_size,
+                                   const CFX_FloatRect& rcPlate) const {
   float fHScale = 1.0f;
   float fVScale = 1.0f;
   float fPlateWidth = rcPlate.Width();
@@ -114,20 +113,18 @@ std::pair<float, float> CPDF_IconFit::GetScale(
   return {fHScale, fVScale};
 }
 
-std::pair<float, float> CPDF_IconFit::GetImageOffset(
-    const CFX_SizeF& image_size,
-    const CFX_FloatRect& rcPlate) const {
+CFX_VectorF CPDF_IconFit::GetImageOffset(const CFX_SizeF& image_size,
+                                         const CFX_FloatRect& rcPlate) const {
   CFX_PointF icon_position = GetIconPosition();
   float fLeft = icon_position.x;
   float fBottom = icon_position.y;
   float fImageWidth = image_size.width;
   float fImageHeight = image_size.height;
 
-  float fHScale, fVScale;
-  std::tie(fHScale, fVScale) = GetScale(image_size, rcPlate);
+  CFX_VectorF scale = GetScale(image_size, rcPlate);
 
-  float fImageFactWidth = fImageWidth * fHScale;
-  float fImageFactHeight = fImageHeight * fVScale;
+  float fImageFactWidth = fImageWidth * scale.x;
+  float fImageFactHeight = fImageHeight * scale.y;
   float fPlateWidth = rcPlate.Width();
   float fPlateHeight = rcPlate.Height();
 
