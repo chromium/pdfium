@@ -32,6 +32,14 @@ using testing::StrEq;
 
 using FPDFFormFillEmbedderTest = EmbedderTest;
 
+namespace {
+
+int TranslateOnCharToModifierOnChar(int keychar) {
+  return keychar - FWL_VKEY_A + 1;
+}
+
+}  // namespace
+
 // A base class for many related tests that involve clicking and typing into
 // form fields.
 class FPDFFormFillInteractiveEmbedderTest : public FPDFFormFillEmbedderTest {
@@ -86,7 +94,7 @@ class FPDFFormFillInteractiveEmbedderTest : public FPDFFormFillEmbedderTest {
 
     // Type text starting with 'A' to as many chars as specified by |num_chars|.
     for (int i = 0; i < num_chars; ++i) {
-      FORM_OnChar(form_handle(), page_, 'A' + i, 0);
+      FORM_OnChar(form_handle(), page_, FWL_VKEY_A + i, 0);
     }
   }
 
@@ -1359,9 +1367,9 @@ TEST_F(FPDFFormFillEmbedderTest, FormText) {
     FORM_OnLButtonUp(form_handle(), page, 0, 120.0, 120.0);
 
     // Write "ABC"
-    FORM_OnChar(form_handle(), page, 65, 0);
-    FORM_OnChar(form_handle(), page, 66, 0);
-    FORM_OnChar(form_handle(), page, 67, 0);
+    FORM_OnChar(form_handle(), page, FWL_VKEY_A, 0);
+    FORM_OnChar(form_handle(), page, FWL_VKEY_B, 0);
+    FORM_OnChar(form_handle(), page, FWL_VKEY_C, 0);
     ScopedFPDFBitmap bitmap2 = RenderLoadedPage(page);
     CompareBitmap(bitmap2.get(), 300, 300, kFocusedTextFormWithAbcChecksum);
 
@@ -3124,6 +3132,30 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, ReplaceSelection) {
   CheckFocusedFieldText(L"XYZB");
   CheckCanUndo(true);
   CheckCanRedo(false);
+}
+
+TEST_F(FPDFFormFillTextFormEmbedderTest, SelectAllWithKeyboardShortcut) {
+  // Start with a couple of letters in the text form.
+  TypeTextIntoTextField(2, RegularFormBegin());
+  CheckFocusedFieldText(L"AB");
+  CheckSelection(L"");
+
+  // Select all with the keyboard shortcut.
+  // TODO(crbug.com/836074): Use the correct modifier for Mac.
+  FORM_OnChar(form_handle(), page(),
+              TranslateOnCharToModifierOnChar(FWL_VKEY_A),
+              FWL_EVENTFLAG_ControlKey);
+  CheckSelection(L"AB");
+
+  // Reset the selection again.
+  ClickOnFormFieldAtPoint(RegularFormBegin());
+  CheckSelection(L"");
+
+  // Select all with the keyboard shortcut using the wrong modifier key.
+  FORM_OnChar(form_handle(), page(),
+              TranslateOnCharToModifierOnChar(FWL_VKEY_A),
+              FWL_EVENTFLAG_MetaKey);
+  CheckSelection(L"");
 }
 
 class FPDFXFAFormBug1055869EmbedderTest
