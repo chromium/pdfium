@@ -10,6 +10,7 @@
 #include <utility>
 #include <vector>
 
+#include "build/build_config.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/pwl/cpwl_scroll_bar.h"
 #include "public/fpdf_fwlevent.h"
@@ -112,6 +113,20 @@ bool CPWL_Wnd::IsCTRLKeyDown(uint32_t nFlag) {
 // static
 bool CPWL_Wnd::IsALTKeyDown(uint32_t nFlag) {
   return !!(nFlag & FWL_EVENTFLAG_AltKey);
+}
+
+// static
+bool CPWL_Wnd::IsMETAKeyDown(uint32_t nFlag) {
+  return !!(nFlag & FWL_EVENTFLAG_MetaKey);
+}
+
+// static
+bool CPWL_Wnd::IsPlatformShortcutKey(uint32_t nFlag) {
+#if defined(OS_APPLE)
+  return IsMETAKeyDown(nFlag);
+#else
+  return IsCTRLKeyDown(nFlag);
+#endif
 }
 
 CPWL_Wnd::CPWL_Wnd(

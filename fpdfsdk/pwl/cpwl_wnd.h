@@ -133,6 +133,10 @@ class CPWL_Wnd : public Observable {
   static bool IsSHIFTKeyDown(uint32_t nFlag);
   static bool IsCTRLKeyDown(uint32_t nFlag);
   static bool IsALTKeyDown(uint32_t nFlag);
+  static bool IsMETAKeyDown(uint32_t nFlag);
+
+  // Selects between IsCTRLKeyDown() and IsMETAKeyDown() depending on platform.
+  static bool IsPlatformShortcutKey(uint32_t nFlag);
 
   CPWL_Wnd(const CreateParams& cp,
            std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData);

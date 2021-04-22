@@ -3141,10 +3141,13 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, SelectAllWithKeyboardShortcut) {
   CheckSelection(L"");
 
   // Select all with the keyboard shortcut.
-  // TODO(crbug.com/836074): Use the correct modifier for Mac.
+#if defined(OS_APPLE)
+  constexpr int kCorrectModifier = FWL_EVENTFLAG_MetaKey;
+#else
+  constexpr int kCorrectModifier = FWL_EVENTFLAG_ControlKey;
+#endif
   FORM_OnChar(form_handle(), page(),
-              TranslateOnCharToModifierOnChar(FWL_VKEY_A),
-              FWL_EVENTFLAG_ControlKey);
+              TranslateOnCharToModifierOnChar(FWL_VKEY_A), kCorrectModifier);
   CheckSelection(L"AB");
 
   // Reset the selection again.
@@ -3152,9 +3155,13 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, SelectAllWithKeyboardShortcut) {
   CheckSelection(L"");
 
   // Select all with the keyboard shortcut using the wrong modifier key.
+#if defined(OS_APPLE)
+  constexpr int kWrongModifier = FWL_EVENTFLAG_ControlKey;
+#else
+  constexpr int kWrongModifier = FWL_EVENTFLAG_MetaKey;
+#endif
   FORM_OnChar(form_handle(), page(),
-              TranslateOnCharToModifierOnChar(FWL_VKEY_A),
-              FWL_EVENTFLAG_MetaKey);
+              TranslateOnCharToModifierOnChar(FWL_VKEY_A), kWrongModifier);
   CheckSelection(L"");
 }
 

@@ -374,7 +374,7 @@ bool CPWL_Edit::OnKeyDown(uint16_t nChar, uint32_t nFlag) {
 
 // static
 bool CPWL_Edit::IsProceedtoOnChar(uint16_t nKeyCode, uint32_t nFlag) {
-  bool bCtrl = IsCTRLpressed(nFlag);
+  bool bCtrl = IsPlatformShortcutKey(nFlag);
   bool bAlt = IsALTpressed(nFlag);
   if (bCtrl && !bAlt) {
     // hot keys for edit control.
@@ -631,7 +631,7 @@ bool CPWL_Edit::OnCharInternal(uint16_t nChar, uint32_t nFlag) {
       break;
   }
 
-  bool bCtrl = IsCTRLpressed(nFlag);
+  bool bCtrl = IsPlatformShortcutKey(nFlag);
   bool bAlt = IsALTpressed(nFlag);
   bool bShift = IsSHIFTpressed(nFlag);
 
