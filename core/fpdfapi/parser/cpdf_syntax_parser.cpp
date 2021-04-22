@@ -411,7 +411,7 @@ enum class EofState {
 };
 
 void CPDF_SyntaxParser::RecordingToNextWord() {
-  assert(m_TrailerEnds);
+  DCHECK(m_TrailerEnds);
 
   EofState eof_state = EofState::kInitial;
   // Find the first character which is neither whitespace, nor part of a

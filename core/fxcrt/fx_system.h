@@ -7,7 +7,6 @@
 #ifndef CORE_FXCRT_FX_SYSTEM_H_
 #define CORE_FXCRT_FX_SYSTEM_H_
 
-#include <assert.h>
 #include <math.h>
 #include <stdarg.h>
 #include <stddef.h>

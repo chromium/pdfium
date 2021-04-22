@@ -8,7 +8,6 @@
 // The exact format of this tool's output to stdout is important, to match
 // what the run-webkit-tests script expects.
 
-#include <assert.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
