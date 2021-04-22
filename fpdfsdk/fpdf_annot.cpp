@@ -276,8 +276,8 @@ CPDF_FormField* GetFormField(FPDF_FORMHANDLE hHandle, FPDF_ANNOTATION annot) {
   return pPDFForm->GetFieldByDict(pAnnotDict);
 }
 
-CPDFSDK_Widget* GetRadioButtonOrCheckBoxWidget(FPDF_FORMHANDLE hHandle,
-                                               FPDF_ANNOTATION annot) {
+const CPDFSDK_Widget* GetRadioButtonOrCheckBoxWidget(FPDF_FORMHANDLE hHandle,
+                                                     FPDF_ANNOTATION annot) {
   CPDF_Dictionary* pAnnotDict = GetAnnotDictFromFPDFAnnotation(annot);
   if (!pAnnotDict)
     return nullptr;
@@ -355,11 +355,11 @@ FPDFPage_CreateAnnot(FPDF_PAGE page, FPDF_ANNOTATION_SUBTYPE subtype) {
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFPage_GetAnnotCount(FPDF_PAGE page) {
-  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  const CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage)
     return 0;
 
-  CPDF_Array* pAnnots = pPage->GetDict()->GetArrayFor("Annots");
+  const CPDF_Array* pAnnots = pPage->GetDict()->GetArrayFor("Annots");
   return pAnnots ? pAnnots->size() : 0;
 }
 
@@ -386,15 +386,15 @@ FPDF_EXPORT FPDF_ANNOTATION FPDF_CALLCONV FPDFPage_GetAnnot(FPDF_PAGE page,
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFPage_GetAnnotIndex(FPDF_PAGE page,
                                                      FPDF_ANNOTATION annot) {
-  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  const CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage)
     return -1;
 
-  CPDF_Dictionary* pAnnotDict = GetAnnotDictFromFPDFAnnotation(annot);
+  const CPDF_Dictionary* pAnnotDict = GetAnnotDictFromFPDFAnnotation(annot);
   if (!pAnnotDict)
     return -1;
 
-  CPDF_Array* pAnnots = pPage->GetDict()->GetArrayFor("Annots");
+  const CPDF_Array* pAnnots = pPage->GetDict()->GetArrayFor("Annots");
   if (!pAnnots)
     return -1;
 
@@ -514,7 +514,6 @@ FPDFAnnot_RemoveInkList(FPDF_ANNOTATION annot) {
   CPDF_Dictionary* annot_dict =
       CPDFAnnotContextFromFPDFAnnotation(annot)->GetAnnotDict();
   annot_dict->RemoveFor("InkList");
-
   return true;
 }
 
@@ -676,7 +675,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetColor(FPDF_ANNOTATION annot,
   if (HasAPStream(pAnnotDict))
     return false;
 
-  CPDF_Array* pColor = pAnnotDict->GetArrayFor(
+  const CPDF_Array* pColor = pAnnotDict->GetArrayFor(
       type == FPDFANNOT_COLORTYPE_InteriorColor ? "IC" : "C");
   *A =
       (pAnnotDict->KeyExist("CA") ? pAnnotDict->GetNumberFor("CA") : 1) * 255.f;
@@ -822,7 +821,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetRect(FPDF_ANNOTATION annot,
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetRect(FPDF_ANNOTATION annot,
                                                       FS_RECTF* rect) {
-  CPDF_Dictionary* pAnnotDict = GetAnnotDictFromFPDFAnnotation(annot);
+  const CPDF_Dictionary* pAnnotDict = GetAnnotDictFromFPDFAnnotation(annot);
   if (!pAnnotDict || !rect)
     return false;
 
@@ -839,11 +838,12 @@ FPDFAnnot_GetVertices(FPDF_ANNOTATION annot,
   if (subtype != FPDF_ANNOT_POLYGON && subtype != FPDF_ANNOT_POLYLINE)
     return 0;
 
-  CPDF_Dictionary* annot_dict = GetAnnotDictFromFPDFAnnotation(annot);
+  const CPDF_Dictionary* annot_dict = GetAnnotDictFromFPDFAnnotation(annot);
   if (!annot_dict)
     return 0;
 
-  CPDF_Array* vertices = annot_dict->GetArrayFor(pdfium::annotation::kVertices);
+  const CPDF_Array* vertices =
+      annot_dict->GetArrayFor(pdfium::annotation::kVertices);
   if (!vertices)
     return 0;
 
@@ -855,7 +855,6 @@ FPDFAnnot_GetVertices(FPDF_ANNOTATION annot,
       buffer[i].y = vertices->GetNumberAt(i * 2 + 1);
     }
   }
-
   return points_len;
 }
 
@@ -899,11 +898,11 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetLine(FPDF_ANNOTATION annot,
   if (subtype != FPDF_ANNOT_LINE)
     return false;
 
-  CPDF_Dictionary* annot_dict = GetAnnotDictFromFPDFAnnotation(annot);
+  const CPDF_Dictionary* annot_dict = GetAnnotDictFromFPDFAnnotation(annot);
   if (!annot_dict)
     return false;
 
-  CPDF_Array* line = annot_dict->GetArrayFor(pdfium::annotation::kL);
+  const CPDF_Array* line = annot_dict->GetArrayFor(pdfium::annotation::kL);
   if (!line || line->size() < 4)
     return false;
 
@@ -911,7 +910,6 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetLine(FPDF_ANNOTATION annot,
   start->y = line->GetNumberAt(1);
   end->x = line->GetNumberAt(2);
   end->y = line->GetNumberAt(3);
-
   return true;
 }
 
@@ -943,24 +941,24 @@ FPDFAnnot_GetBorder(FPDF_ANNOTATION annot,
   if (!horizontal_radius || !vertical_radius || !border_width)
     return false;
 
-  CPDF_Dictionary* annot_dict = GetAnnotDictFromFPDFAnnotation(annot);
+  const CPDF_Dictionary* annot_dict = GetAnnotDictFromFPDFAnnotation(annot);
   if (!annot_dict)
     return false;
 
-  CPDF_Array* border = annot_dict->GetArrayFor(pdfium::annotation::kBorder);
+  const CPDF_Array* border =
+      annot_dict->GetArrayFor(pdfium::annotation::kBorder);
   if (!border || border->size() < 3)
     return false;
 
   *horizontal_radius = border->GetNumberAt(0);
   *vertical_radius = border->GetNumberAt(1);
   *border_width = border->GetNumberAt(2);
-
   return true;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_HasKey(FPDF_ANNOTATION annot,
                                                      FPDF_BYTESTRING key) {
-  CPDF_Dictionary* pAnnotDict = GetAnnotDictFromFPDFAnnotation(annot);
+  const CPDF_Dictionary* pAnnotDict = GetAnnotDictFromFPDFAnnotation(annot);
   return pAnnotDict && pAnnotDict->KeyExist(key);
 }
 
@@ -969,8 +967,8 @@ FPDFAnnot_GetValueType(FPDF_ANNOTATION annot, FPDF_BYTESTRING key) {
   if (!FPDFAnnot_HasKey(annot, key))
     return FPDF_OBJECT_UNKNOWN;
 
-  auto* pAnnot = CPDFAnnotContextFromFPDFAnnotation(annot);
-  CPDF_Object* pObj = pAnnot->GetAnnotDict()->GetObjectFor(key);
+  const CPDF_AnnotContext* pAnnot = CPDFAnnotContextFromFPDFAnnotation(annot);
+  const CPDF_Object* pObj = pAnnot->GetAnnotDict()->GetObjectFor(key);
   return pObj ? pObj->GetType() : FPDF_OBJECT_UNKNOWN;
 }
 
@@ -991,7 +989,7 @@ FPDFAnnot_GetStringValue(FPDF_ANNOTATION annot,
                          FPDF_BYTESTRING key,
                          FPDF_WCHAR* buffer,
                          unsigned long buflen) {
-  CPDF_Dictionary* pAnnotDict = GetAnnotDictFromFPDFAnnotation(annot);
+  const CPDF_Dictionary* pAnnotDict = GetAnnotDictFromFPDFAnnotation(annot);
   if (!pAnnotDict)
     return 0;
 
@@ -1006,7 +1004,7 @@ FPDFAnnot_GetNumberValue(FPDF_ANNOTATION annot,
   if (!value)
     return false;
 
-  CPDF_Dictionary* pAnnotDict = GetAnnotDictFromFPDFAnnotation(annot);
+  const CPDF_Dictionary* pAnnotDict = GetAnnotDictFromFPDFAnnotation(annot);
   if (!pAnnotDict)
     return false;
 
@@ -1131,7 +1129,7 @@ FPDFAnnot_GetLinkedAnnot(FPDF_ANNOTATION annot, FPDF_BYTESTRING key) {
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFAnnot_GetFlags(FPDF_ANNOTATION annot) {
-  CPDF_Dictionary* pAnnotDict = GetAnnotDictFromFPDFAnnotation(annot);
+  const CPDF_Dictionary* pAnnotDict = GetAnnotDictFromFPDFAnnotation(annot);
   return pAnnotDict ? pAnnotDict->GetIntegerFor(pdfium::annotation::kF)
                     : FPDF_ANNOT_FLAG_NONE;
 }
@@ -1159,17 +1157,17 @@ FPDFAnnot_GetFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
   if (!point)
     return nullptr;
 
-  CPDFSDK_InteractiveForm* pForm = FormHandleToInteractiveForm(hHandle);
+  const CPDFSDK_InteractiveForm* pForm = FormHandleToInteractiveForm(hHandle);
   if (!pForm)
     return nullptr;
 
-  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  const CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage)
     return nullptr;
 
-  CPDF_InteractiveForm* pPDFForm = pForm->GetInteractiveForm();
+  const CPDF_InteractiveForm* pPDFForm = pForm->GetInteractiveForm();
   int annot_index = -1;
-  CPDF_FormControl* pFormCtrl = pPDFForm->GetControlAtPoint(
+  const CPDF_FormControl* pFormCtrl = pPDFForm->GetControlAtPoint(
       pPage, CFXPointFFromFSPointF(*point), &annot_index);
   if (!pFormCtrl || annot_index == -1)
     return nullptr;
@@ -1181,7 +1179,7 @@ FPDFAnnot_GetFormFieldName(FPDF_FORMHANDLE hHandle,
                            FPDF_ANNOTATION annot,
                            FPDF_WCHAR* buffer,
                            unsigned long buflen) {
-  CPDF_FormField* pFormField = GetFormField(hHandle, annot);
+  const CPDF_FormField* pFormField = GetFormField(hHandle, annot);
   if (!pFormField)
     return 0;
   return Utf16EncodeMaybeCopyAndReturnLength(pFormField->GetFullName(), buffer,
@@ -1190,7 +1188,7 @@ FPDFAnnot_GetFormFieldName(FPDF_FORMHANDLE hHandle,
 
 FPDF_EXPORT int FPDF_CALLCONV
 FPDFAnnot_GetFormFieldType(FPDF_FORMHANDLE hHandle, FPDF_ANNOTATION annot) {
-  CPDF_FormField* pFormField = GetFormField(hHandle, annot);
+  const CPDF_FormField* pFormField = GetFormField(hHandle, annot);
   return pFormField ? static_cast<int>(pFormField->GetFieldType()) : -1;
 }
 
@@ -1199,7 +1197,7 @@ FPDFAnnot_GetFormFieldValue(FPDF_FORMHANDLE hHandle,
                             FPDF_ANNOTATION annot,
                             FPDF_WCHAR* buffer,
                             unsigned long buflen) {
-  CPDF_FormField* pFormField = GetFormField(hHandle, annot);
+  const CPDF_FormField* pFormField = GetFormField(hHandle, annot);
   if (!pFormField)
     return 0;
   return Utf16EncodeMaybeCopyAndReturnLength(pFormField->GetValue(), buffer,
@@ -1208,7 +1206,7 @@ FPDFAnnot_GetFormFieldValue(FPDF_FORMHANDLE hHandle,
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFAnnot_GetOptionCount(FPDF_FORMHANDLE hHandle,
                                                        FPDF_ANNOTATION annot) {
-  CPDF_FormField* pFormField = GetFormField(hHandle, annot);
+  const CPDF_FormField* pFormField = GetFormField(hHandle, annot);
   return pFormField ? pFormField->CountOptions() : -1;
 }
 
@@ -1221,7 +1219,7 @@ FPDFAnnot_GetOptionLabel(FPDF_FORMHANDLE hHandle,
   if (index < 0)
     return 0;
 
-  CPDF_FormField* pFormField = GetFormField(hHandle, annot);
+  const CPDF_FormField* pFormField = GetFormField(hHandle, annot);
   if (!pFormField || index >= pFormField->CountOptions())
     return 0;
 
@@ -1236,7 +1234,7 @@ FPDFAnnot_IsOptionSelected(FPDF_FORMHANDLE handle,
   if (index < 0)
     return false;
 
-  CPDF_FormField* form_field = GetFormField(handle, annot);
+  const CPDF_FormField* form_field = GetFormField(handle, annot);
   if (!form_field || index >= form_field->CountOptions())
     return false;
 
@@ -1278,7 +1276,8 @@ FPDFAnnot_GetFontSize(FPDF_FORMHANDLE hHandle,
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_IsChecked(FPDF_FORMHANDLE hHandle,
                                                         FPDF_ANNOTATION annot) {
-  CPDFSDK_Widget* pWidget = GetRadioButtonOrCheckBoxWidget(hHandle, annot);
+  const CPDFSDK_Widget* pWidget =
+      GetRadioButtonOrCheckBoxWidget(hHandle, annot);
   return pWidget && pWidget->IsChecked();
 }
 
@@ -1378,7 +1377,8 @@ FPDFAnnot_GetFormFieldExportValue(FPDF_FORMHANDLE hHandle,
                                   FPDF_ANNOTATION annot,
                                   FPDF_WCHAR* buffer,
                                   unsigned long buflen) {
-  CPDFSDK_Widget* pWidget = GetRadioButtonOrCheckBoxWidget(hHandle, annot);
+  const CPDFSDK_Widget* pWidget =
+      GetRadioButtonOrCheckBoxWidget(hHandle, annot);
   if (!pWidget)
     return 0;
 

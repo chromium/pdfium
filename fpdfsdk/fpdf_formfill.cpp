@@ -248,25 +248,25 @@ FPDFPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
                              FPDF_PAGE page,
                              double page_x,
                              double page_y) {
-  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  const CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (pPage) {
     CPDFSDK_InteractiveForm* pForm = FormHandleToInteractiveForm(hHandle);
     if (!pForm)
       return -1;
 
-    CPDF_InteractiveForm* pPDFForm = pForm->GetInteractiveForm();
-    CPDF_FormControl* pFormCtrl = pPDFForm->GetControlAtPoint(
+    const CPDF_InteractiveForm* pPDFForm = pForm->GetInteractiveForm();
+    const CPDF_FormControl* pFormCtrl = pPDFForm->GetControlAtPoint(
         pPage,
         CFX_PointF(static_cast<float>(page_x), static_cast<float>(page_y)),
         nullptr);
     if (!pFormCtrl)
       return -1;
-    CPDF_FormField* pFormField = pFormCtrl->GetField();
+    const CPDF_FormField* pFormField = pFormCtrl->GetField();
     return pFormField ? static_cast<int>(pFormField->GetFieldType()) : -1;
   }
 
 #ifdef PDF_ENABLE_XFA
-  CPDFXFA_Page* pXFAPage = ToXFAPage(IPDFPageFromFPDFPage(page));
+  const CPDFXFA_Page* pXFAPage = ToXFAPage(IPDFPageFromFPDFPage(page));
   if (pXFAPage) {
     return pXFAPage->HasFormFieldAtPoint(
         CFX_PointF(static_cast<float>(page_x), static_cast<float>(page_y)));

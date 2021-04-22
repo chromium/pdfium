@@ -58,9 +58,9 @@ class CPDF_InteractiveForm {
   CPDF_FormField* GetField(uint32_t index, const WideString& csFieldName) const;
   CPDF_FormField* GetFieldByDict(CPDF_Dictionary* pFieldDict) const;
 
-  CPDF_FormControl* GetControlAtPoint(CPDF_Page* pPage,
-                                      const CFX_PointF& point,
-                                      int* z_order) const;
+  const CPDF_FormControl* GetControlAtPoint(const CPDF_Page* pPage,
+                                            const CFX_PointF& point,
+                                            int* z_order) const;
   CPDF_FormControl* GetControlByDict(const CPDF_Dictionary* pWidgetDict) const;
 
   bool NeedConstructAP() const;

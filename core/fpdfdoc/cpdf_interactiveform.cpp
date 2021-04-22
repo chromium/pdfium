@@ -632,12 +632,11 @@ CPDF_FormField* CPDF_InteractiveForm::GetFieldByDict(
   return m_pFieldTree->GetField(csWName);
 }
 
-CPDF_FormControl* CPDF_InteractiveForm::GetControlAtPoint(
-    CPDF_Page* pPage,
+const CPDF_FormControl* CPDF_InteractiveForm::GetControlAtPoint(
+    const CPDF_Page* pPage,
     const CFX_PointF& point,
-
     int* z_order) const {
-  CPDF_Array* pAnnotList = pPage->GetDict()->GetArrayFor("Annots");
+  const CPDF_Array* pAnnotList = pPage->GetDict()->GetArrayFor("Annots");
   if (!pAnnotList)
     return nullptr;
 
@@ -651,7 +650,7 @@ CPDF_FormControl* CPDF_InteractiveForm::GetControlAtPoint(
     if (it == m_ControlMap.end())
       continue;
 
-    CPDF_FormControl* pControl = it->second.get();
+    const CPDF_FormControl* pControl = it->second.get();
     if (!pControl->GetRect().Contains(point))
       continue;
 
