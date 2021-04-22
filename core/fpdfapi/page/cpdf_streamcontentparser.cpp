@@ -1500,32 +1500,33 @@ uint32_t CPDF_StreamContentParser::Parse(
                                                           pDataStart);
 
   uint32_t init_obj_count = m_pObjectHolder->GetPageObjectCount();
-  CPDF_StreamParser syntax(pdfium::make_span(pDataStart, size_left),
-                           m_pDocument->GetByteStringPool());
-  AutoNuller<UnownedPtr<CPDF_StreamParser>> auto_clearer(&m_pSyntax);
-  m_pSyntax = &syntax;
+  AutoNuller<std::unique_ptr<CPDF_StreamParser>> auto_clearer(&m_pSyntax);
+  m_pSyntax = std::make_unique<CPDF_StreamParser>(
+      pdfium::make_span(pDataStart, size_left),
+      m_pDocument->GetByteStringPool());
+
   while (1) {
     uint32_t cost = m_pObjectHolder->GetPageObjectCount() - init_obj_count;
     if (max_cost && cost >= max_cost) {
       break;
     }
-    switch (syntax.ParseNextElement()) {
+    switch (m_pSyntax->ParseNextElement()) {
       case CPDF_StreamParser::EndOfData:
         return m_pSyntax->GetPos();
       case CPDF_StreamParser::Keyword:
-        OnOperator(syntax.GetWord());
+        OnOperator(m_pSyntax->GetWord());
         ClearAllParams();
         break;
       case CPDF_StreamParser::Number:
-        AddNumberParam(syntax.GetWord());
+        AddNumberParam(m_pSyntax->GetWord());
         break;
       case CPDF_StreamParser::Name: {
-        auto word = syntax.GetWord();
+        auto word = m_pSyntax->GetWord();
         AddNameParam(word.Last(word.GetLength() - 1));
         break;
       }
       default:
-        AddObjectParam(syntax.GetObject());
+        AddObjectParam(m_pSyntax->GetObject());
     }
   }
   return m_pSyntax->GetPos();

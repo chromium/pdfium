@@ -214,7 +214,7 @@ class CPDF_StreamContentParser {
   const CFX_FloatRect m_BBox;
   uint32_t m_ParamStartPos = 0;
   uint32_t m_ParamCount = 0;
-  UnownedPtr<CPDF_StreamParser> m_pSyntax;
+  std::unique_ptr<CPDF_StreamParser> m_pSyntax;
   std::unique_ptr<CPDF_AllStates> m_pCurStates;
   std::stack<std::unique_ptr<CPDF_ContentMarks>> m_ContentMarksStack;
   std::vector<std::unique_ptr<CPDF_TextObject>> m_ClipTextList;
