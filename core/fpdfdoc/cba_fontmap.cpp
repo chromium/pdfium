@@ -72,7 +72,26 @@ CBA_FontMap::CBA_FontMap(CPDF_Document* pDocument,
                          CPDF_Dictionary* pAnnotDict,
                          const ByteString& sAPType)
     : m_pDocument(pDocument), m_pAnnotDict(pAnnotDict), m_sAPType(sAPType) {
-  Initialize();
+  int32_t nCharset = FX_CHARSET_Default;
+  m_pDefaultFont = GetAnnotDefaultFont(&m_sDefaultFontName);
+  if (m_pDefaultFont) {
+    const CFX_SubstFont* pSubstFont = m_pDefaultFont->GetSubstFont();
+    if (pSubstFont) {
+      nCharset = pSubstFont->m_Charset;
+    } else if (m_sDefaultFontName == "Wingdings" ||
+               m_sDefaultFontName == "Wingdings2" ||
+               m_sDefaultFontName == "Wingdings3" ||
+               m_sDefaultFontName == "Webdings") {
+      nCharset = FX_CHARSET_Symbol;
+    } else {
+      nCharset = FX_CHARSET_ANSI;
+    }
+    AddFontData(m_pDefaultFont, m_sDefaultFontName, nCharset);
+    AddFontToAnnotDict(m_pDefaultFont, m_sDefaultFontName);
+  }
+
+  if (nCharset != FX_CHARSET_ANSI)
+    GetFontIndex(CFX_Font::kDefaultAnsiFontName, FX_CHARSET_ANSI, false);
 }
 
 CBA_FontMap::~CBA_FontMap() = default;
@@ -149,32 +168,6 @@ int32_t CBA_FontMap::CharSetFromUnicode(uint16_t word, int32_t nOldCharset) {
 
 int32_t CBA_FontMap::GetNativeCharset() {
   return FX_GetCharsetFromCodePage(FXSYS_GetACP());
-}
-
-void CBA_FontMap::Initialize() {
-  int32_t nCharset = FX_CHARSET_Default;
-
-  if (!m_pDefaultFont) {
-    m_pDefaultFont = GetAnnotDefaultFont(&m_sDefaultFontName);
-    if (m_pDefaultFont) {
-      if (const CFX_SubstFont* pSubstFont = m_pDefaultFont->GetSubstFont()) {
-        nCharset = pSubstFont->m_Charset;
-      } else {
-        if (m_sDefaultFontName == "Wingdings" ||
-            m_sDefaultFontName == "Wingdings2" ||
-            m_sDefaultFontName == "Wingdings3" ||
-            m_sDefaultFontName == "Webdings")
-          nCharset = FX_CHARSET_Symbol;
-        else
-          nCharset = FX_CHARSET_ANSI;
-      }
-      AddFontData(m_pDefaultFont, m_sDefaultFontName, nCharset);
-      AddFontToAnnotDict(m_pDefaultFont, m_sDefaultFontName);
-    }
-  }
-
-  if (nCharset != FX_CHARSET_ANSI)
-    GetFontIndex(CFX_Font::kDefaultAnsiFontName, FX_CHARSET_ANSI, false);
 }
 
 RetainPtr<CPDF_Font> CBA_FontMap::FindFontSameCharset(ByteString* sFontAlias,
