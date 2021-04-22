@@ -20,7 +20,7 @@ class CPDF_Document;
 
 class CFGAS_PDFFontMgr final : public Observable {
  public:
-  explicit CFGAS_PDFFontMgr(CPDF_Document* pDoc);
+  explicit CFGAS_PDFFontMgr(const CPDF_Document* pDoc);
   ~CFGAS_PDFFontMgr();
 
   RetainPtr<CFGAS_GEFont> GetFont(WideStringView wsFontFamily,
@@ -41,7 +41,7 @@ class CFGAS_PDFFontMgr final : public Observable {
                              const ByteString& bsDRFontName,
                              bool bStrictMatch);
 
-  UnownedPtr<CPDF_Document> const m_pDoc;
+  UnownedPtr<const CPDF_Document> const m_pDoc;
   std::map<ByteString, RetainPtr<CFGAS_GEFont>> m_FontMap;
 };
 

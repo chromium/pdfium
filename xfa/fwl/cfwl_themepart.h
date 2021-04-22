@@ -85,7 +85,7 @@ class CFWL_ThemePart {
   CFX_Matrix m_matrix;
   CFX_RectF m_PartRect;
   UnownedPtr<CFWL_Widget> m_pWidget;
-  UnownedPtr<CFX_RectF> m_pRtData;
+  UnownedPtr<const CFX_RectF> m_pRtData;
   uint32_t m_dwStates = CFWL_PartState_Normal;
   CFWL_Part m_iPart = CFWL_Part::None;
   bool m_bMaximize = false;

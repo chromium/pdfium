@@ -166,13 +166,13 @@ void CFGAS_GEGraphics::SetFillColor(const CFGAS_GEColor& color) {
   m_info.fillColor = color;
 }
 
-void CFGAS_GEGraphics::StrokePath(CFGAS_GEPath* path,
+void CFGAS_GEGraphics::StrokePath(const CFGAS_GEPath* path,
                                   const CFX_Matrix* matrix) {
   if (path)
     RenderDeviceStrokePath(path, matrix);
 }
 
-void CFGAS_GEGraphics::FillPath(CFGAS_GEPath* path,
+void CFGAS_GEGraphics::FillPath(const CFGAS_GEPath* path,
                                 CFX_FillRenderOptions::FillType fill_type,
                                 const CFX_Matrix& matrix) {
   if (path)

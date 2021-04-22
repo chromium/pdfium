@@ -19,7 +19,7 @@ class CFWL_ThemeBackground final : public CFWL_ThemePart {
   ~CFWL_ThemeBackground();
 
   UnownedPtr<CFGAS_GEGraphics> m_pGraphics;
-  UnownedPtr<CFGAS_GEPath> m_pPath;
+  UnownedPtr<const CFGAS_GEPath> m_pPath;
 };
 
 inline CFWL_ThemeBackground::CFWL_ThemeBackground() = default;

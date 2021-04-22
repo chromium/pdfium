@@ -126,7 +126,7 @@ class CJS_EventRecorder {
   void OnScreen_InView(bool bModifier, bool bShift, CPDFSDK_Annot* pScreen);
   void OnScreen_OutView(bool bModifier, bool bShift, CPDFSDK_Annot* pScreen);
 
-  void OnBookmark_MouseUp(CPDF_Bookmark* pBookMark);
+  void OnBookmark_MouseUp(const CPDF_Bookmark* pBookMark);
   void OnLink_MouseUp(CPDFSDK_FormFillEnvironment* pFormFillEnv);
 
   void OnMenu_Exec(CPDFSDK_FormFillEnvironment* pFormFillEnv,
@@ -193,7 +193,7 @@ class CJS_EventRecorder {
   bool m_bFieldFull = false;
   bool m_bRcDu = false;
   UnownedPtr<bool> m_pbRc;
-  UnownedPtr<CPDF_Bookmark> m_pTargetBookMark;
+  UnownedPtr<const CPDF_Bookmark> m_pTargetBookMark;
   ObservedPtr<CPDFSDK_FormFillEnvironment> m_pTargetFormFillEnv;
   ObservedPtr<CPDFSDK_Annot> m_pTargetAnnot;
 };

@@ -50,8 +50,8 @@ class CFGAS_GEGraphics {
   void SetStrokeColor(const CFGAS_GEColor& color);
   void SetFillColor(const CFGAS_GEColor& color);
   void SetClipRect(const CFX_RectF& rect);
-  void StrokePath(CFGAS_GEPath* path, const CFX_Matrix* matrix);
-  void FillPath(CFGAS_GEPath* path,
+  void StrokePath(const CFGAS_GEPath* path, const CFX_Matrix* matrix);
+  void FillPath(const CFGAS_GEPath* path,
                 CFX_FillRenderOptions::FillType fill_type,
                 const CFX_Matrix& matrix);
   void ConcatMatrix(const CFX_Matrix& matrix);

@@ -334,7 +334,7 @@ void CJS_EventRecorder::OnLink_MouseUp(
   m_pTargetFormFillEnv.Reset(pTargetFormFillEnv);
 }
 
-void CJS_EventRecorder::OnBookmark_MouseUp(CPDF_Bookmark* pBookMark) {
+void CJS_EventRecorder::OnBookmark_MouseUp(const CPDF_Bookmark* pBookMark) {
   Initialize(JET_BOOKMARK_MOUSEUP);
   m_pTargetBookMark = pBookMark;
 }

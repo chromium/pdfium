@@ -319,7 +319,8 @@ CFXJSE_Class* CFXJSE_Class::Create(
   return pResult;
 }
 
-CFXJSE_Class::CFXJSE_Class(CFXJSE_Context* lpContext) : m_pContext(lpContext) {}
+CFXJSE_Class::CFXJSE_Class(const CFXJSE_Context* lpContext)
+    : m_pContext(lpContext) {}
 
 CFXJSE_Class::~CFXJSE_Class() = default;
 

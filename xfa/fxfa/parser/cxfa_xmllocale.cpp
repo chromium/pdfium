@@ -50,7 +50,7 @@ CXFA_XMLLocale* CXFA_XMLLocale::Create(cppgc::Heap* heap,
 }
 
 CXFA_XMLLocale::CXFA_XMLLocale(std::unique_ptr<CFX_XMLDocument> doc,
-                               CFX_XMLElement* locale)
+                               const CFX_XMLElement* locale)
     : xml_doc_(std::move(doc)), locale_(locale) {
   DCHECK(xml_doc_);
   DCHECK(locale_);

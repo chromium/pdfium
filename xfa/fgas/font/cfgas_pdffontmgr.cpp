@@ -29,7 +29,7 @@ const char* const g_XFAPDFFontName[][5] = {
 
 }  // namespace
 
-CFGAS_PDFFontMgr::CFGAS_PDFFontMgr(CPDF_Document* pDoc) : m_pDoc(pDoc) {
+CFGAS_PDFFontMgr::CFGAS_PDFFontMgr(const CPDF_Document* pDoc) : m_pDoc(pDoc) {
   DCHECK(pDoc);
 }
 
