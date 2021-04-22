@@ -9,7 +9,7 @@
 #include "core/fpdfapi/parser/cpdf_crypto_handler.h"
 #include "third_party/base/check.h"
 
-CPDF_Encryptor::CPDF_Encryptor(CPDF_CryptoHandler* pHandler, int objnum)
+CPDF_Encryptor::CPDF_Encryptor(const CPDF_CryptoHandler* pHandler, int objnum)
     : m_pHandler(pHandler), m_ObjNum(objnum) {
   DCHECK(m_pHandler);
 }

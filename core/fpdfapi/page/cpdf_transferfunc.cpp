@@ -14,7 +14,7 @@
 #include "third_party/base/check_op.h"
 
 CPDF_TransferFunc::CPDF_TransferFunc(
-    CPDF_Document* pDoc,
+    const CPDF_Document* pDoc,
     bool bIdentify,
     std::vector<uint8_t, FxAllocAllocator<uint8_t>> samples_r,
     std::vector<uint8_t, FxAllocAllocator<uint8_t>> samples_g,

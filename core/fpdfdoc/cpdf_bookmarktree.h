@@ -14,14 +14,14 @@ class CPDF_Document;
 
 class CPDF_BookmarkTree {
  public:
-  explicit CPDF_BookmarkTree(CPDF_Document* doc);
+  explicit CPDF_BookmarkTree(const CPDF_Document* doc);
   ~CPDF_BookmarkTree();
 
   CPDF_Bookmark GetFirstChild(const CPDF_Bookmark& parent) const;
   CPDF_Bookmark GetNextSibling(const CPDF_Bookmark& bookmark) const;
 
  private:
-  UnownedPtr<CPDF_Document> const document_;
+  UnownedPtr<const CPDF_Document> const document_;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_BOOKMARKTREE_H_

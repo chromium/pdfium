@@ -49,7 +49,7 @@ void CPDF_CryptoHandler::CryptBlock(bool bEncrypt,
                                     uint32_t gennum,
                                     pdfium::span<const uint8_t> source,
                                     uint8_t* dest_buf,
-                                    uint32_t& dest_size) {
+                                    uint32_t& dest_size) const {
   if (m_Cipher == FXCIPHER_NONE) {
     memcpy(dest_buf, source.data(), source.size());
     return;
@@ -374,7 +374,7 @@ bool CPDF_CryptoHandler::EncryptContent(uint32_t objnum,
                                         uint32_t gennum,
                                         pdfium::span<const uint8_t> source,
                                         uint8_t* dest_buf,
-                                        uint32_t& dest_size) {
+                                        uint32_t& dest_size) const {
   CryptBlock(true, objnum, gennum, source, dest_buf, dest_size);
   return true;
 }
@@ -399,7 +399,7 @@ CPDF_CryptoHandler::~CPDF_CryptoHandler() = default;
 
 void CPDF_CryptoHandler::PopulateKey(uint32_t objnum,
                                      uint32_t gennum,
-                                     uint8_t* key) {
+                                     uint8_t* key) const {
   memcpy(key, m_EncryptKey, m_KeyLen);
   key[m_KeyLen + 0] = (uint8_t)objnum;
   key[m_KeyLen + 1] = (uint8_t)(objnum >> 8);

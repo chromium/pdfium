@@ -21,7 +21,7 @@ CPDF_ImageLoader::CPDF_ImageLoader() = default;
 
 CPDF_ImageLoader::~CPDF_ImageLoader() = default;
 
-bool CPDF_ImageLoader::Start(CPDF_ImageObject* pImage,
+bool CPDF_ImageLoader::Start(const CPDF_ImageObject* pImage,
                              const CPDF_RenderStatus* pRenderStatus,
                              bool bStdCS) {
   m_pCache = pRenderStatus->GetContext()->GetPageCache();

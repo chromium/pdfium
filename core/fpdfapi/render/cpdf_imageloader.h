@@ -22,7 +22,7 @@ class CPDF_ImageLoader {
   CPDF_ImageLoader();
   ~CPDF_ImageLoader();
 
-  bool Start(CPDF_ImageObject* pImage,
+  bool Start(const CPDF_ImageObject* pImage,
              const CPDF_RenderStatus* pRenderStatus,
              bool bStdCS);
   bool Continue(PauseIndicatorIface* pPause, CPDF_RenderStatus* pRenderStatus);
@@ -42,7 +42,7 @@ class CPDF_ImageLoader {
   RetainPtr<CFX_DIBBase> m_pBitmap;
   RetainPtr<CFX_DIBBase> m_pMask;
   UnownedPtr<CPDF_PageRenderCache> m_pCache;
-  UnownedPtr<CPDF_ImageObject> m_pImageObject;
+  UnownedPtr<const CPDF_ImageObject> m_pImageObject;
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_IMAGELOADER_H_

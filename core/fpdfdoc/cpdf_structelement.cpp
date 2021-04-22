@@ -39,8 +39,8 @@ CPDF_StructKid::CPDF_StructKid(const CPDF_StructKid& that) = default;
 
 CPDF_StructKid::~CPDF_StructKid() = default;
 
-CPDF_StructElement::CPDF_StructElement(CPDF_StructTree* pTree,
-                                       CPDF_StructElement* pParent,
+CPDF_StructElement::CPDF_StructElement(const CPDF_StructTree* pTree,
+                                       const CPDF_StructElement* pParent,
                                        const CPDF_Dictionary* pDict)
     : m_pTree(pTree),
       m_pParent(pParent),

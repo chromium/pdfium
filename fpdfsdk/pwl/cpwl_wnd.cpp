@@ -33,7 +33,7 @@ CPWL_Wnd::CreateParams::~CreateParams() = default;
 
 class CPWL_MsgControl final : public Observable {
  public:
-  explicit CPWL_MsgControl(CPWL_Wnd* pWnd) : m_pCreatedWnd(pWnd) {}
+  explicit CPWL_MsgControl(const CPWL_Wnd* pWnd) : m_pCreatedWnd(pWnd) {}
   ~CPWL_MsgControl() = default;
 
   bool IsWndCreated(const CPWL_Wnd* pWnd) const {
@@ -91,13 +91,13 @@ class CPWL_MsgControl final : public Observable {
 
   void ReleaseCapture() { m_MousePaths.clear(); }
 
-  CPWL_Wnd* GetFocusedWindow() const { return m_pMainKeyboardWnd.Get(); }
+  const CPWL_Wnd* GetFocusedWindow() const { return m_pMainKeyboardWnd.Get(); }
 
  private:
   std::vector<UnownedPtr<CPWL_Wnd>> m_MousePaths;
   std::vector<UnownedPtr<CPWL_Wnd>> m_KeyboardPaths;
-  UnownedPtr<CPWL_Wnd> m_pCreatedWnd;
-  UnownedPtr<CPWL_Wnd> m_pMainKeyboardWnd;
+  UnownedPtr<const CPWL_Wnd> m_pCreatedWnd;
+  UnownedPtr<const CPWL_Wnd> m_pMainKeyboardWnd;
 };
 
 // static

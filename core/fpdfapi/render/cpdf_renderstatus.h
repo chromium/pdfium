@@ -187,7 +187,7 @@ class CPDF_RenderStatus {
   CPDF_RenderOptions m_Options;
   RetainPtr<const CPDF_Dictionary> m_pFormResource;
   RetainPtr<CPDF_Dictionary> m_pPageResource;
-  std::vector<UnownedPtr<CPDF_Type3Font>> m_Type3FontCache;
+  std::vector<UnownedPtr<const CPDF_Type3Font>> m_Type3FontCache;
   UnownedPtr<CPDF_RenderContext> const m_pContext;
   UnownedPtr<CFX_RenderDevice> const m_pDevice;
   CFX_Matrix m_DeviceMatrix;
@@ -196,6 +196,7 @@ class CPDF_RenderStatus {
   UnownedPtr<const CPDF_PageObject> m_pStopObj;
   CPDF_GraphicStates m_InitialStates;
   std::unique_ptr<CPDF_ImageRenderer> m_pImageRenderer;
+  UnownedPtr<const CPDF_Type3Char> m_pType3Char;
   CPDF_Transparency m_Transparency;
   bool m_bStopped = false;
   bool m_bPrint = false;
@@ -203,7 +204,6 @@ class CPDF_RenderStatus {
   bool m_bStdCS = false;
   bool m_bLoadMask = false;
   uint32_t m_GroupFamily = 0;
-  UnownedPtr<CPDF_Type3Char> m_pType3Char;
   FX_ARGB m_T3FillColor = 0;
   BlendMode m_curBlend = BlendMode::kNormal;
 };

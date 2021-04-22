@@ -23,7 +23,7 @@ class CFX_BmpContext;
 
 class CFX_BmpDecompressor {
  public:
-  explicit CFX_BmpDecompressor(CFX_BmpContext* context);
+  explicit CFX_BmpDecompressor(const CFX_BmpContext* context);
   ~CFX_BmpDecompressor();
 
   BmpDecoder::Status DecodeImage();
@@ -65,7 +65,7 @@ class CFX_BmpDecompressor {
   bool ValidateFlag() const;
   bool SetHeight(int32_t signed_height);
 
-  UnownedPtr<CFX_BmpContext> const context_;
+  UnownedPtr<const CFX_BmpContext> const context_;
   std::vector<uint8_t, FxAllocAllocator<uint8_t>> out_row_buffer_;
   std::vector<uint32_t> palette_;
   uint32_t header_offset_ = 0;

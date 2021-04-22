@@ -572,7 +572,7 @@ const CFX_FloatRect& CPVT_VariableText::GetPlateRect() const {
   return m_rcPlate;
 }
 
-float CPVT_VariableText::GetWordFontSize() {
+float CPVT_VariableText::GetWordFontSize() const {
   return GetFontSize();
 }
 
@@ -581,12 +581,12 @@ float CPVT_VariableText::GetWordWidth(int32_t nFontIndex,
                                       uint16_t SubWord,
                                       float fCharSpace,
                                       float fFontSize,
-                                      float fWordTail) {
+                                      float fWordTail) const {
   return GetCharWidth(nFontIndex, Word, SubWord) * fFontSize * kFontScale +
          fCharSpace + fWordTail;
 }
 
-float CPVT_VariableText::GetWordWidth(const CPVT_WordInfo& WordInfo) {
+float CPVT_VariableText::GetWordWidth(const CPVT_WordInfo& WordInfo) const {
   return GetWordWidth(WordInfo.nFontIndex, WordInfo.Word, GetSubWord(),
                       GetCharSpace(), GetWordFontSize(), WordInfo.fWordTail);
 }
@@ -599,31 +599,33 @@ float CPVT_VariableText::GetLineDescent() {
   return GetFontDescent(GetDefaultFontIndex(), GetFontSize());
 }
 
-float CPVT_VariableText::GetFontAscent(int32_t nFontIndex, float fFontSize) {
+float CPVT_VariableText::GetFontAscent(int32_t nFontIndex,
+                                       float fFontSize) const {
   float ascent = m_pVTProvider ? m_pVTProvider->GetTypeAscent(nFontIndex) : 0;
   return ascent * fFontSize * kFontScale;
 }
 
-float CPVT_VariableText::GetFontDescent(int32_t nFontIndex, float fFontSize) {
+float CPVT_VariableText::GetFontDescent(int32_t nFontIndex,
+                                        float fFontSize) const {
   float descent = m_pVTProvider ? m_pVTProvider->GetTypeDescent(nFontIndex) : 0;
   return descent * fFontSize * kFontScale;
 }
 
 float CPVT_VariableText::GetWordAscent(const CPVT_WordInfo& WordInfo,
-                                       float fFontSize) {
+                                       float fFontSize) const {
   return GetFontAscent(WordInfo.nFontIndex, fFontSize);
 }
 
 float CPVT_VariableText::GetWordDescent(const CPVT_WordInfo& WordInfo,
-                                        float fFontSize) {
+                                        float fFontSize) const {
   return GetFontDescent(WordInfo.nFontIndex, fFontSize);
 }
 
-float CPVT_VariableText::GetWordAscent(const CPVT_WordInfo& WordInfo) {
+float CPVT_VariableText::GetWordAscent(const CPVT_WordInfo& WordInfo) const {
   return GetFontAscent(WordInfo.nFontIndex, GetWordFontSize());
 }
 
-float CPVT_VariableText::GetWordDescent(const CPVT_WordInfo& WordInfo) {
+float CPVT_VariableText::GetWordDescent(const CPVT_WordInfo& WordInfo) const {
   return GetFontDescent(WordInfo.nFontIndex, GetWordFontSize());
 }
 
@@ -838,7 +840,7 @@ CPVT_FloatRect CPVT_VariableText::RearrangeSections(
 
 int CPVT_VariableText::GetCharWidth(int32_t nFontIndex,
                                     uint16_t Word,
-                                    uint16_t SubWord) {
+                                    uint16_t SubWord) const {
   if (!m_pVTProvider)
     return 0;
   uint16_t word = SubWord ? SubWord : Word;

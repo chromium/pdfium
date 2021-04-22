@@ -38,14 +38,14 @@ class CPDF_TransferFunc final : public Retainable, public Observable {
   bool GetIdentity() const { return m_bIdentity; }
 
  private:
-  CPDF_TransferFunc(CPDF_Document* pDoc,
+  CPDF_TransferFunc(const CPDF_Document* pDoc,
                     bool bIdentify,
                     std::vector<uint8_t, FxAllocAllocator<uint8_t>> samples_r,
                     std::vector<uint8_t, FxAllocAllocator<uint8_t>> samples_g,
                     std::vector<uint8_t, FxAllocAllocator<uint8_t>> samples_b);
   ~CPDF_TransferFunc() override;
 
-  UnownedPtr<CPDF_Document> const m_pPDFDoc;
+  UnownedPtr<const CPDF_Document> const m_pPDFDoc;
   const bool m_bIdentity;
   const std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_SamplesR;
   const std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_SamplesG;

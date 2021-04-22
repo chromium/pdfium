@@ -19,14 +19,14 @@ class CPDF_CryptoHandler;
 
 class CPDF_Encryptor {
  public:
-  CPDF_Encryptor(CPDF_CryptoHandler* pHandler, int objnum);
+  CPDF_Encryptor(const CPDF_CryptoHandler* pHandler, int objnum);
   ~CPDF_Encryptor();
 
   std::vector<uint8_t, FxAllocAllocator<uint8_t>> Encrypt(
       pdfium::span<const uint8_t> src_data) const;
 
  private:
-  UnownedPtr<CPDF_CryptoHandler> const m_pHandler;
+  UnownedPtr<const CPDF_CryptoHandler> const m_pHandler;
   const int m_ObjNum;
 };
 

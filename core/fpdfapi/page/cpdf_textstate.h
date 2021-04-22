@@ -70,7 +70,7 @@ class CPDF_TextState {
     float GetFontSizeH() const;
 
     RetainPtr<CPDF_Font> m_pFont;
-    UnownedPtr<CPDF_Document> m_pDocument;
+    UnownedPtr<const CPDF_Document> m_pDocument;
     float m_FontSize = 1.0f;
     float m_CharSpace = 0.0f;
     float m_WordSpace = 0.0f;

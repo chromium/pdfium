@@ -9,7 +9,8 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 
-CPDF_BookmarkTree::CPDF_BookmarkTree(CPDF_Document* doc) : document_(doc) {}
+CPDF_BookmarkTree::CPDF_BookmarkTree(const CPDF_Document* doc)
+    : document_(doc) {}
 
 CPDF_BookmarkTree::~CPDF_BookmarkTree() = default;
 
