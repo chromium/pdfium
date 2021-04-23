@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_PWL_IFWL_FILLERNOTIFY_H_
-#define FPDFSDK_PWL_IFWL_FILLERNOTIFY_H_
+#ifndef FPDFSDK_PWL_IPWL_FILLERNOTIFY_H_
+#define FPDFSDK_PWL_IPWL_FILLERNOTIFY_H_
 
 #include <utility>
 
@@ -42,4 +42,4 @@ class IPWL_FillerNotify {
       uint32_t nFlag) = 0;
 };
 
-#endif  // FPDFSDK_PWL_IFWL_FILLERNOTIFY_H_
+#endif  // FPDFSDK_PWL_IPWL_FILLERNOTIFY_H_
