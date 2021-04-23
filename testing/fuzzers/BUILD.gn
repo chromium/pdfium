@@ -197,11 +197,7 @@ template("pdfium_fuzzer") {
     if (defined(invoker.deps)) {
       deps += invoker.deps
     }
-    configs -= [ "//build/config/compiler:chromium_code" ]
-    configs += [
-      "//build/config/compiler:no_chromium_code",
-      ":fuzzer_config",
-    ]
+    configs += [ ":fuzzer_config" ]
     if (is_component_build) {
       # |export| should be consistent with FPDF_EXPORT In public/fpdfview.h.
       if (is_win) {

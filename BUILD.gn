@@ -354,8 +354,6 @@ executable("pdfium_diff") {
     "testing/image_diff",
     "//build/win:default_exe_manifest",
   ]
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [ "//build/config/compiler:no_chromium_code" ]
   configs += [ ":pdfium_core_config" ]
 }
 
