@@ -178,11 +178,11 @@ CPVT_Section::Line::Line(const CPVT_LineInfo& lineinfo)
 CPVT_Section::Line::~Line() = default;
 
 CPVT_WordPlace CPVT_Section::Line::GetBeginWordPlace() const {
-  return CPVT_WordPlace(LinePlace.nSecIndex, LinePlace.nLineIndex, -1);
+  return CPVT_WordPlace(m_LinePlace.nSecIndex, m_LinePlace.nLineIndex, -1);
 }
 
 CPVT_WordPlace CPVT_Section::Line::GetEndWordPlace() const {
-  return CPVT_WordPlace(LinePlace.nSecIndex, LinePlace.nLineIndex,
+  return CPVT_WordPlace(m_LinePlace.nSecIndex, m_LinePlace.nLineIndex,
                         m_LineInfo.nEndWordIndex);
 }
 
@@ -215,7 +215,7 @@ CPVT_Section::~CPVT_Section() = default;
 void CPVT_Section::ResetLinePlace() {
   int32_t i = 0;
   for (auto& pLine : m_LineArray) {
-    pLine->LinePlace = CPVT_WordPlace(m_SecPlace.nSecIndex, i, -1);
+    pLine->m_LinePlace = CPVT_WordPlace(m_SecPlace.nSecIndex, i, -1);
     ++i;
   }
 }
@@ -401,6 +401,28 @@ CPVT_WordPlace CPVT_Section::SearchWordPlace(
       wordplace.nWordIndex = nMid;
   }
   return wordplace;
+}
+
+int32_t CPVT_Section::GetLineArraySize() const {
+  return pdfium::CollectionSize<int32_t>(m_LineArray);
+}
+
+const CPVT_Section::Line* CPVT_Section::GetLineFromArray(int32_t index) const {
+  if (!pdfium::IndexInBounds(m_LineArray, index))
+    return nullptr;
+
+  return m_LineArray[index].get();
+}
+
+int32_t CPVT_Section::GetWordArraySize() const {
+  return pdfium::CollectionSize<int32_t>(m_WordArray);
+}
+
+const CPVT_WordInfo* CPVT_Section::GetWordFromArray(int32_t index) const {
+  if (!pdfium::IndexInBounds(m_WordArray, index))
+    return nullptr;
+
+  return m_WordArray[index].get();
 }
 
 void CPVT_Section::EraseWordsFrom(int32_t index) {
