@@ -64,7 +64,7 @@ bool IsPageObject(CPDF_Page* pPage) {
     return false;
 
   const CPDF_Object* pObject = pFormDict->GetObjectFor("Type")->GetDirect();
-  return pObject && !pObject->GetString().Compare("Page");
+  return pObject && pObject->GetString().Compare("Page") == 0;
 }
 
 void CalcBoundingBox(CPDF_PageObject* pPageObj) {
