@@ -1210,7 +1210,7 @@ void CPDF_StreamContentParser::AddTextObject(const ByteString* pStrs,
   {
     auto pText = std::make_unique<CPDF_TextObject>(GetCurrentStreamIndex());
     m_pLastTextObject = pText.get();
-    SetGraphicStates(m_pLastTextObject.Get(), true, true, true);
+    SetGraphicStates(pText.get(), true, true, true);
     if (TextRenderingModeIsStrokeMode(text_mode)) {
       float* pCTM = pText->m_TextState.GetMutableCTM();
       pCTM[0] = m_pCurStates->m_CTM.a;

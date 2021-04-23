@@ -45,7 +45,7 @@ CPDF_HintTables::PageInfo::~PageInfo() = default;
 //  static
 std::unique_ptr<CPDF_HintTables> CPDF_HintTables::Parse(
     CPDF_SyntaxParser* parser,
-    CPDF_LinearizedHeader* pLinearized) {
+    const CPDF_LinearizedHeader* pLinearized) {
   DCHECK(parser);
   if (!pLinearized || pLinearized->GetPageCount() <= 1 ||
       !pLinearized->HasHintTable()) {
@@ -76,11 +76,8 @@ std::unique_ptr<CPDF_HintTables> CPDF_HintTables::Parse(
 }
 
 CPDF_HintTables::CPDF_HintTables(CPDF_ReadValidator* pValidator,
-                                 CPDF_LinearizedHeader* pLinearized)
-    : m_pValidator(pValidator),
-      m_pLinearized(pLinearized),
-      m_nFirstPageSharedObjs(0),
-      m_szFirstPageObjOffset(0) {
+                                 const CPDF_LinearizedHeader* pLinearized)
+    : m_pValidator(pValidator), m_pLinearized(pLinearized) {
   DCHECK(m_pLinearized);
 }
 

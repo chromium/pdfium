@@ -370,7 +370,7 @@ std::vector<CFX_FloatRect> CPDF_TextPage::GetRectArray(int start,
     count = number_of_chars - start;
   DCHECK(count > 0);
 
-  CPDF_TextObject* text_object = nullptr;
+  const CPDF_TextObject* text_object = nullptr;
   CFX_FloatRect rect;
   int pos = start;
   bool is_new_rect = true;
@@ -893,8 +893,7 @@ CPDF_TextPage::MarkedContentState CPDF_TextPage::PreMarkedContent(
 }
 
 void CPDF_TextPage::ProcessMarkedContent(const TransformedTextObject& obj) {
-  CPDF_TextObject* pTextObj = obj.m_pTextObj.Get();
-
+  const CPDF_TextObject* pTextObj = obj.m_pTextObj.Get();
   size_t nContentMarks = pTextObj->m_ContentMarks.CountItems();
   if (nContentMarks == 0)
     return;
@@ -961,7 +960,7 @@ void CPDF_TextPage::SwapTempTextBuf(int iCharListStartAppend,
 }
 
 void CPDF_TextPage::ProcessTextObject(const TransformedTextObject& obj) {
-  CPDF_TextObject* const pTextObj = obj.m_pTextObj.Get();
+  const CPDF_TextObject* pTextObj = obj.m_pTextObj.Get();
   if (fabs(pTextObj->GetRect().Width()) < kSizeEpsilon)
     return;
 
