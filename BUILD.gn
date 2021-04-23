@@ -105,14 +105,12 @@ config("pdfium_core_config") {
     ":pdfium_common_config",
     ":pdfium_public_config",
     "//build/config/compiler:noshadowing",
+    "//build/config/compiler:no_size_t_to_int_warning",
   ]
   defines = []
   if (is_linux || is_chromeos) {
     if (current_cpu == "x64") {
       defines += [ "_FX_CPU_=_FX_X64_" ]
-      cflags += [ "-fPIC" ]
-    } else if (current_cpu == "x86") {
-      defines += [ "_FX_CPU_=_FX_X86_" ]
     }
   }
   if (is_win) {
@@ -121,7 +119,6 @@ config("pdfium_core_config") {
       "/wd4577",
     ]
   }
-  configs += [ "//build/config/compiler:no_size_t_to_int_warning" ]
 }
 
 source_set("pdfium_public_headers_impl") {
