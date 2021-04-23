@@ -11,8 +11,7 @@ Local Modifications:
 
 0000-build-config.patch: Local build configuration changes.
 0017-safe_skews_in_gtTileContig.patch: return error if to/from skews overflow from int32.
-0027-build-config.patch: #define variables so their value can be used by #if.
 0028-nstrips-OOM.patch: return error for excess number of tiles/strips.
 0031-safe_size_ingtStripContig.patch: return error if the size to read overflow from int32.
 0032-builtin-codecs.patch: make _TIFFBuiltinCODECS const data.
-0033-0033-avail-out-overflow.patch: signed comparison in PixarLogDecode().
+0033-avail-out-overflow.patch: signed comparison in PixarLogDecode().
