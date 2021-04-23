@@ -7,7 +7,7 @@
 #include "fpdfsdk/formfiller/cffl_textobject.h"
 
 #include "core/fpdfapi/page/cpdf_page.h"
-#include "core/fpdfdoc/cba_fontmap.h"
+#include "core/fpdfdoc/cpdf_bafontmap.h"
 
 CPWL_Wnd* CFFL_TextObject::ResetPWLWindow(CPDFSDK_PageView* pPageView,
                                           bool bRestoreValue) {
@@ -33,9 +33,9 @@ CFFL_TextObject::~CFFL_TextObject() {
   DestroyWindows();
 }
 
-CBA_FontMap* CFFL_TextObject::MaybeCreateFontMap() {
+CPDF_BAFontMap* CFFL_TextObject::MaybeCreateFontMap() {
   if (!m_pFontMap) {
-    m_pFontMap = std::make_unique<CBA_FontMap>(
+    m_pFontMap = std::make_unique<CPDF_BAFontMap>(
         m_pWidget->GetPDFPage()->GetDocument(),
         m_pWidget->GetPDFAnnot()->GetAnnotDict(), "N");
   }

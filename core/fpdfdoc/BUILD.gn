@@ -7,8 +7,6 @@ import("../../testing/test.gni")
 
 source_set("fpdfdoc") {
   sources = [
-    "cba_fontmap.cpp",
-    "cba_fontmap.h",
     "cpdf_aaction.cpp",
     "cpdf_aaction.h",
     "cpdf_action.cpp",
@@ -19,6 +17,8 @@ source_set("fpdfdoc") {
     "cpdf_annotlist.h",
     "cpdf_apsettings.cpp",
     "cpdf_apsettings.h",
+    "cpdf_bafontmap.cpp",
+    "cpdf_bafontmap.h",
     "cpdf_bookmark.cpp",
     "cpdf_bookmark.h",
     "cpdf_bookmarktree.cpp",

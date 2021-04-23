@@ -19,7 +19,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
-#include "core/fpdfdoc/cba_fontmap.h"
+#include "core/fpdfdoc/cpdf_bafontmap.h"
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "core/fpdfdoc/cpdf_icon.h"
 #include "core/fpdfdoc/cpvt_word.h"
@@ -1252,8 +1252,8 @@ void CPDFSDK_AppStream::SetAsPushButton() {
 
   CPDF_IconFit iconFit = pControl->GetIconFit();
   {
-    CBA_FontMap font_map(widget_->GetPDFPage()->GetDocument(),
-                         widget_->GetPDFAnnot()->GetAnnotDict(), "N");
+    CPDF_BAFontMap font_map(widget_->GetPDFPage()->GetDocument(),
+                            widget_->GetPDFAnnot()->GetAnnotDict(), "N");
     ByteString csAP =
         GetRectFillAppStream(rcWindow, crBackground) +
         GetBorderAppStreamInternal(rcWindow, fBorderWidth, crBorder, crLeftTop,
@@ -1279,8 +1279,8 @@ void CPDFSDK_AppStream::SetAsPushButton() {
     }
   }
   {
-    CBA_FontMap font_map(widget_->GetPDFPage()->GetDocument(),
-                         widget_->GetPDFAnnot()->GetAnnotDict(), "R");
+    CPDF_BAFontMap font_map(widget_->GetPDFPage()->GetDocument(),
+                            widget_->GetPDFAnnot()->GetAnnotDict(), "R");
     ByteString csAP =
         GetRectFillAppStream(rcWindow, crBackground) +
         GetBorderAppStreamInternal(rcWindow, fBorderWidth, crBorder, crLeftTop,
@@ -1315,8 +1315,8 @@ void CPDFSDK_AppStream::SetAsPushButton() {
     }
   }
   {
-    CBA_FontMap font_map(widget_->GetPDFPage()->GetDocument(),
-                         widget_->GetPDFAnnot()->GetAnnotDict(), "D");
+    CPDF_BAFontMap font_map(widget_->GetPDFPage()->GetDocument(),
+                            widget_->GetPDFAnnot()->GetAnnotDict(), "D");
     ByteString csAP =
         GetRectFillAppStream(rcWindow, crBackground - 0.25f) +
         GetBorderAppStreamInternal(rcWindow, fBorderWidth, crBorder, crLeftTop,
@@ -1566,8 +1566,8 @@ void CPDFSDK_AppStream::SetAsComboBox(Optional<WideString> sValue) {
   rcButton.Normalize();
 
   // Font map must outlive |pEdit|.
-  CBA_FontMap font_map(widget_->GetPDFPage()->GetDocument(),
-                       widget_->GetPDFAnnot()->GetAnnotDict(), "N");
+  CPDF_BAFontMap font_map(widget_->GetPDFPage()->GetDocument(),
+                          widget_->GetPDFAnnot()->GetAnnotDict(), "N");
 
   auto pEdit = std::make_unique<CPWL_EditImpl>();
   pEdit->EnableRefresh(false);
@@ -1632,8 +1632,8 @@ void CPDFSDK_AppStream::SetAsListBox() {
   std::ostringstream sBody;
 
   // Font map must outlive |pEdit|.
-  CBA_FontMap font_map(widget_->GetPDFPage()->GetDocument(),
-                       widget_->GetPDFAnnot()->GetAnnotDict(), "N");
+  CPDF_BAFontMap font_map(widget_->GetPDFPage()->GetDocument(),
+                          widget_->GetPDFAnnot()->GetAnnotDict(), "N");
 
   auto pEdit = std::make_unique<CPWL_EditImpl>();
   pEdit->EnableRefresh(false);
@@ -1716,8 +1716,8 @@ void CPDFSDK_AppStream::SetAsTextField(Optional<WideString> sValue) {
   std::ostringstream sLines;
 
   // Font map must outlive |pEdit|.
-  CBA_FontMap font_map(widget_->GetPDFPage()->GetDocument(),
-                       widget_->GetPDFAnnot()->GetAnnotDict(), "N");
+  CPDF_BAFontMap font_map(widget_->GetPDFPage()->GetDocument(),
+                          widget_->GetPDFAnnot()->GetAnnotDict(), "N");
 
   auto pEdit = std::make_unique<CPWL_EditImpl>();
   pEdit->EnableRefresh(false);

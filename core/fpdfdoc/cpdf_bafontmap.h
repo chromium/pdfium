@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFDOC_CBA_FONTMAP_H_
-#define CORE_FPDFDOC_CBA_FONTMAP_H_
+#ifndef CORE_FPDFDOC_CPDF_BAFONTMAP_H_
+#define CORE_FPDFDOC_CPDF_BAFONTMAP_H_
 
 #include <memory>
 #include <vector>
@@ -18,14 +18,14 @@
 class CPDF_Dictionary;
 class CPDF_Document;
 
-class CBA_FontMap final : public IPVT_FontMap {
+class CPDF_BAFontMap final : public IPVT_FontMap {
  public:
   static int32_t GetNativeCharset();
 
-  CBA_FontMap(CPDF_Document* pDocument,
-              CPDF_Dictionary* pAnnotDict,
-              const ByteString& sAPType);
-  ~CBA_FontMap() override;
+  CPDF_BAFontMap(CPDF_Document* pDocument,
+                 CPDF_Dictionary* pAnnotDict,
+                 const ByteString& sAPType);
+  ~CPDF_BAFontMap() override;
 
   // IPVT_FontMap
   RetainPtr<CPDF_Font> GetPDFFont(int32_t nFontIndex) override;
@@ -90,4 +90,4 @@ class CBA_FontMap final : public IPVT_FontMap {
   const ByteString m_sAPType;
 };
 
-#endif  // CORE_FPDFDOC_CBA_FONTMAP_H_
+#endif  // CORE_FPDFDOC_CPDF_BAFONTMAP_H_

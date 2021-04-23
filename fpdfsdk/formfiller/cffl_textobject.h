@@ -11,7 +11,7 @@
 
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 
-class CBA_FontMap;
+class CPDF_BAFontMap;
 
 // Class to implement common functionality for CFFL_FormFiller sub-classes with
 // text fields.
@@ -25,10 +25,10 @@ class CFFL_TextObject : public CFFL_FormFiller {
   CFFL_TextObject(CPDFSDK_FormFillEnvironment* pApp, CPDFSDK_Widget* pWidget);
   ~CFFL_TextObject() override;
 
-  CBA_FontMap* MaybeCreateFontMap();
+  CPDF_BAFontMap* MaybeCreateFontMap();
 
  private:
-  std::unique_ptr<CBA_FontMap> m_pFontMap;
+  std::unique_ptr<CPDF_BAFontMap> m_pFontMap;
 };
 
 #endif  // FPDFSDK_FORMFILLER_CFFL_TEXTOBJECT_H_
