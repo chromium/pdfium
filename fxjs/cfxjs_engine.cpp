@@ -29,9 +29,12 @@ CFX_V8ArrayBufferAllocator* g_arrayBufferAllocator = nullptr;
 v8::Global<v8::ObjectTemplate>* g_DefaultGlobalObjectTemplate = nullptr;
 
 // Only the address matters, values are for humans debugging. ASLR should
-// ensure that these values are unlikely to arise otherwise.
-const char kPerObjectDataTag[] = "CFXJS_PerObjectData";
-const char kPerIsolateDataTag[] = "FXJS_PerIsolateData";
+// ensure that these values are unlikely to arise otherwise. Keep these
+// wchar_t to prevent the compiler from doing something clever, like
+// aligning them on a byte boundary to save space, which would make them
+// incompatible for use as V8 aligned pointers.
+const wchar_t kPerObjectDataTag[] = L"CFXJS_PerObjectData";
+const wchar_t kPerIsolateDataTag[] = L"FXJS_PerIsolateData";
 
 void* GetAlignedPointerForPerObjectDataTag() {
   return const_cast<void*>(static_cast<const void*>(kPerObjectDataTag));

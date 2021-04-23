@@ -56,9 +56,12 @@ const char szConsoleScript[] =
     "  this.log(...args);\n"
     "};";
 
-// Only address matters, values are for humans debuging here.
-const char kFXJSEHostObjectTag[] = "FXJSE Host Object";
-const char kFXJSEProxyObjectTag[] = "FXJSE Proxy Object";
+// Only address matters, values are for humans debuging here.  Keep these
+// wchar_t to prevent the compiler from doing something clever, like
+// aligning them on a byte boundary to save space, which would make them
+// incompatible for use as V8 aligned pointers.
+const wchar_t kFXJSEHostObjectTag[] = L"FXJSE Host Object";
+const wchar_t kFXJSEProxyObjectTag[] = L"FXJSE Proxy Object";
 
 v8::Local<v8::Object> CreateReturnValue(v8::Isolate* pIsolate,
                                         v8::TryCatch* trycatch) {
@@ -113,7 +116,7 @@ void FXJSE_UpdateProxyBinding(v8::Local<v8::Object> hObject) {
   DCHECK(!hObject.IsEmpty());
   DCHECK_EQ(hObject->InternalFieldCount(), 2);
   hObject->SetAlignedPointerInInternalField(
-      0, const_cast<char*>(kFXJSEProxyObjectTag));
+      0, const_cast<wchar_t*>(kFXJSEProxyObjectTag));
   hObject->SetAlignedPointerInInternalField(1, nullptr);
 }
 
@@ -124,7 +127,7 @@ void FXJSE_UpdateObjectBinding(v8::Local<v8::Object> hObject,
   DCHECK(!hObject.IsEmpty());
   DCHECK_EQ(hObject->InternalFieldCount(), 2);
   hObject->SetAlignedPointerInInternalField(
-      0, const_cast<char*>(kFXJSEHostObjectTag));
+      0, const_cast<wchar_t*>(kFXJSEHostObjectTag));
   hObject->SetAlignedPointerInInternalField(1, lpNewBinding);
 }
 
