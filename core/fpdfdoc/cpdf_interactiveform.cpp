@@ -875,12 +875,8 @@ void CPDF_InteractiveForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
   if (pKids) {
     for (size_t i = 0; i < pKids->size(); i++) {
       CPDF_Dictionary* pKid = pKids->GetDictAt(i);
-      if (!pKid)
-        continue;
-      if (pKid->GetNameFor("Subtype") != "Widget")
-        continue;
-
-      AddControl(pField, pKid);
+      if (pKid && pKid->GetNameFor("Subtype") == "Widget")
+        AddControl(pField, pKid);
     }
   } else {
     if (pFieldDict->GetNameFor("Subtype") == "Widget")
@@ -891,6 +887,7 @@ void CPDF_InteractiveForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
 CPDF_FormControl* CPDF_InteractiveForm::AddControl(
     CPDF_FormField* pField,
     CPDF_Dictionary* pWidgetDict) {
+  DCHECK(pWidgetDict);
   const auto it = m_ControlMap.find(pWidgetDict);
   if (it != m_ControlMap.end())
     return it->second.get();
