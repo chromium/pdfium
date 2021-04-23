@@ -108,11 +108,6 @@ config("pdfium_core_config") {
     "//build/config/compiler:no_size_t_to_int_warning",
   ]
   defines = []
-  if (is_linux || is_chromeos) {
-    if (current_cpu == "x64") {
-      defines += [ "_FX_CPU_=_FX_X64_" ]
-    }
-  }
   if (is_win) {
     cflags += [
       "/wd4324",
