@@ -25,6 +25,7 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/render/cpdf_docrenderdata.h"
@@ -60,11 +61,12 @@ bool IsPageObject(CPDF_Page* pPage) {
     return false;
 
   const CPDF_Dictionary* pFormDict = pPage->GetDict();
-  if (!pFormDict->KeyExist("Type"))
+  if (!pFormDict->KeyExist(pdfium::page_object::kType))
     return false;
 
-  const CPDF_Object* pObject = pFormDict->GetObjectFor("Type")->GetDirect();
-  return pObject && pObject->GetString().Compare("Page") == 0;
+  const CPDF_Name* pName =
+      ToName(pFormDict->GetObjectFor(pdfium::page_object::kType)->GetDirect());
+  return pName && pName->GetString() == "Page";
 }
 
 void CalcBoundingBox(CPDF_PageObject* pPageObj) {

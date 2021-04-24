@@ -146,11 +146,9 @@ const CPDF_Object* PageDictGetInheritableTag(const CPDF_Dictionary* pDict,
     return nullptr;
   }
 
-  const CPDF_Object* pType =
-      pDict->GetObjectFor(pdfium::page_object::kType)->GetDirect();
-  if (!ToName(pType))
-    return nullptr;
-  if (pType->GetString().Compare("Page") != 0)
+  const CPDF_Name* pName =
+      ToName(pDict->GetObjectFor(pdfium::page_object::kType)->GetDirect());
+  if (!pName || pName->GetString() != "Page")
     return nullptr;
 
   const CPDF_Dictionary* pp = ToDictionary(
