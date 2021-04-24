@@ -451,7 +451,7 @@ void SetFieldValue(CPDFSDK_FormFillEnvironment* pFormFillEnv,
       GetFormFieldsForName(pFormFillEnv, swFieldName);
 
   for (CPDF_FormField* pFormField : FieldArray) {
-    if (pFormField->GetFullName().Compare(swFieldName) != 0)
+    if (pFormField->GetFullName() != swFieldName)
       continue;
 
     switch (pFormField->GetFieldType()) {
