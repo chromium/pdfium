@@ -15,7 +15,7 @@ source_set("fxjs") {
     "ijs_runtime.cpp",
     "ijs_runtime.h",
   ]
-  configs += [ "../:pdfium_core_config" ]
+  configs += [ "../:pdfium_strict_config" ]
   deps = [ "../core/fxcrt" ]
   visibility = [ "../*" ]
 

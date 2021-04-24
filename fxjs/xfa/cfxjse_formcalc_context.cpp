@@ -1174,20 +1174,17 @@ WideString EncodeXML(const ByteString& bsXML) {
 }
 
 ByteString TrillionUS(ByteStringView bsData) {
-  static const ByteStringView pUnits[] = {"zero",  "one",  "two", "three",
-                                          "four",  "five", "six", "seven",
-                                          "eight", "nine"};
-  static const ByteStringView pCapUnits[] = {"Zero",  "One",  "Two", "Three",
-                                             "Four",  "Five", "Six", "Seven",
-                                             "Eight", "Nine"};
-  static const ByteStringView pTens[] = {
+  static const char kUnits[][6] = {"zero", "one", "two",   "three", "four",
+                                   "five", "six", "seven", "eight", "nine"};
+  static const char kCapUnits[][6] = {"Zero", "One", "Two",   "Three", "Four",
+                                      "Five", "Six", "Seven", "Eight", "Nine"};
+  static const char kTens[][10] = {
       "Ten",     "Eleven",  "Twelve",    "Thirteen", "Fourteen",
       "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"};
-  static const ByteStringView pLastTens[] = {"Twenty", "Thirty", "Forty",
-                                             "Fifty",  "Sixty",  "Seventy",
-                                             "Eighty", "Ninety"};
-  static const ByteStringView pComm[] = {" Hundred ", " Thousand ", " Million ",
-                                         " Billion ", "Trillion"};
+  static const char kLastTens[][8] = {"Twenty", "Thirty",  "Forty",  "Fifty",
+                                      "Sixty",  "Seventy", "Eighty", "Ninety"};
+  static const char kComm[][11] = {" Hundred ", " Thousand ", " Million ",
+                                   " Billion ", "Trillion"};
   const char* pData = bsData.unterminated_c_str();
   int32_t iLength = bsData.GetLength();
   int32_t iComm = 0;
@@ -1208,66 +1205,66 @@ ByteString TrillionUS(ByteStringView bsData) {
   int32_t iIndex = 0;
   if (iFirstCount == 3) {
     if (pData[iIndex] != '0') {
-      strBuf << pCapUnits[pData[iIndex] - '0'];
-      strBuf << pComm[0];
+      strBuf << kCapUnits[pData[iIndex] - '0'];
+      strBuf << kComm[0];
     }
     if (pData[iIndex + 1] == '0') {
-      strBuf << pCapUnits[pData[iIndex + 2] - '0'];
+      strBuf << kCapUnits[pData[iIndex + 2] - '0'];
     } else {
       if (pData[iIndex + 1] > '1') {
-        strBuf << pLastTens[pData[iIndex + 1] - '2'];
+        strBuf << kLastTens[pData[iIndex + 1] - '2'];
         strBuf << "-";
-        strBuf << pUnits[pData[iIndex + 2] - '0'];
+        strBuf << kUnits[pData[iIndex + 2] - '0'];
       } else if (pData[iIndex + 1] == '1') {
-        strBuf << pTens[pData[iIndex + 2] - '0'];
+        strBuf << kTens[pData[iIndex + 2] - '0'];
       } else if (pData[iIndex + 1] == '0') {
-        strBuf << pCapUnits[pData[iIndex + 2] - '0'];
+        strBuf << kCapUnits[pData[iIndex + 2] - '0'];
       }
     }
     iIndex += 3;
   } else if (iFirstCount == 2) {
     if (pData[iIndex] == '0') {
-      strBuf << pCapUnits[pData[iIndex + 1] - '0'];
+      strBuf << kCapUnits[pData[iIndex + 1] - '0'];
     } else {
       if (pData[iIndex] > '1') {
-        strBuf << pLastTens[pData[iIndex] - '2'];
+        strBuf << kLastTens[pData[iIndex] - '2'];
         strBuf << "-";
-        strBuf << pUnits[pData[iIndex + 1] - '0'];
+        strBuf << kUnits[pData[iIndex + 1] - '0'];
       } else if (pData[iIndex] == '1') {
-        strBuf << pTens[pData[iIndex + 1] - '0'];
+        strBuf << kTens[pData[iIndex + 1] - '0'];
       } else if (pData[iIndex] == '0') {
-        strBuf << pCapUnits[pData[iIndex + 1] - '0'];
+        strBuf << kCapUnits[pData[iIndex + 1] - '0'];
       }
     }
     iIndex += 2;
   } else if (iFirstCount == 1) {
-    strBuf << pCapUnits[pData[iIndex] - '0'];
+    strBuf << kCapUnits[pData[iIndex] - '0'];
     ++iIndex;
   }
   if (iLength > 3 && iFirstCount > 0) {
-    strBuf << pComm[iComm];
+    strBuf << kComm[iComm];
     --iComm;
   }
   while (iIndex < iLength) {
     if (pData[iIndex] != '0') {
-      strBuf << pCapUnits[pData[iIndex] - '0'];
-      strBuf << pComm[0];
+      strBuf << kCapUnits[pData[iIndex] - '0'];
+      strBuf << kComm[0];
     }
     if (pData[iIndex + 1] == '0') {
-      strBuf << pCapUnits[pData[iIndex + 2] - '0'];
+      strBuf << kCapUnits[pData[iIndex + 2] - '0'];
     } else {
       if (pData[iIndex + 1] > '1') {
-        strBuf << pLastTens[pData[iIndex + 1] - '2'];
+        strBuf << kLastTens[pData[iIndex + 1] - '2'];
         strBuf << "-";
-        strBuf << pUnits[pData[iIndex + 2] - '0'];
+        strBuf << kUnits[pData[iIndex + 2] - '0'];
       } else if (pData[iIndex + 1] == '1') {
-        strBuf << pTens[pData[iIndex + 2] - '0'];
+        strBuf << kTens[pData[iIndex + 2] - '0'];
       } else if (pData[iIndex + 1] == '0') {
-        strBuf << pCapUnits[pData[iIndex + 2] - '0'];
+        strBuf << kCapUnits[pData[iIndex + 2] - '0'];
       }
     }
     if (iIndex < iLength - 3) {
-      strBuf << pComm[iComm];
+      strBuf << kComm[iComm];
       --iComm;
     }
     iIndex += 3;

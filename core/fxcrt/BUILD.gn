@@ -87,7 +87,7 @@ source_set("fxcrt") {
     "xml/cfx_xmltext.cpp",
     "xml/cfx_xmltext.h",
   ]
-  configs += [ "../../:pdfium_core_config" ]
+  configs += [ "../../:pdfium_strict_config" ]
   visibility = [
     "../*",
     "../../:*",

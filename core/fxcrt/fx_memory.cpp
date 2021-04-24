@@ -14,20 +14,24 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/allocator/partition_allocator/partition_alloc.h"
 #include "third_party/base/debug/alias.h"
+#include "third_party/base/no_destructor.h"
 
 pdfium::base::PartitionAllocatorGeneric& GetArrayBufferPartitionAllocator() {
-  static pdfium::base::PartitionAllocatorGeneric s_array_buffer_allocator;
-  return s_array_buffer_allocator;
+  static pdfium::base::NoDestructor<pdfium::base::PartitionAllocatorGeneric>
+      s_array_buffer_allocator;
+  return *s_array_buffer_allocator;
 }
 
 pdfium::base::PartitionAllocatorGeneric& GetGeneralPartitionAllocator() {
-  static pdfium::base::PartitionAllocatorGeneric s_general_allocator;
-  return s_general_allocator;
+  static pdfium::base::NoDestructor<pdfium::base::PartitionAllocatorGeneric>
+      s_general_allocator;
+  return *s_general_allocator;
 }
 
 pdfium::base::PartitionAllocatorGeneric& GetStringPartitionAllocator() {
-  static pdfium::base::PartitionAllocatorGeneric s_string_allocator;
-  return s_string_allocator;
+  static pdfium::base::NoDestructor<pdfium::base::PartitionAllocatorGeneric>
+      s_string_allocator;
+  return *s_string_allocator;
 }
 
 void FXMEM_InitializePartitionAlloc() {

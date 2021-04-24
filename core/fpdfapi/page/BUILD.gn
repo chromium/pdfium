@@ -99,7 +99,7 @@ source_set("page") {
     "cpdf_transparency.h",
     "ipdf_page.h",
   ]
-  configs += [ "../../../:pdfium_core_config" ]
+  configs += [ "../../../:pdfium_strict_config" ]
   deps = [
     "../../../constants",
     "../../fxcodec",

@@ -38,6 +38,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "third_party/base/check.h"
+#include "third_party/base/no_destructor.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
@@ -535,10 +536,11 @@ CPDF_StreamContentParser::InitializeOpCodes() {
 }
 
 void CPDF_StreamContentParser::OnOperator(ByteStringView op) {
-  static const OpCodes s_OpCodes = InitializeOpCodes();
+  static const pdfium::base::NoDestructor<OpCodes> s_OpCodes(
+      InitializeOpCodes());
 
-  auto it = s_OpCodes.find(op.GetID());
-  if (it != s_OpCodes.end())
+  auto it = s_OpCodes->find(op.GetID());
+  if (it != s_OpCodes->end())
     (this->*it->second)();
 }
 
