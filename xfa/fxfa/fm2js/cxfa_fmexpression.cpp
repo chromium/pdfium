@@ -450,7 +450,7 @@ uint32_t CXFA_FMCallExpression::IsMethodWithObjParam(
         return val.Compare(iter.m_wsSomMethodName) > 0;
       });
   if (result != std::end(gs_FMSomMethods) &&
-      methodName.Compare(result->m_wsSomMethodName) == 0) {
+      methodName == result->m_wsSomMethodName) {
     return result->m_dParameters;
   }
   return 0;

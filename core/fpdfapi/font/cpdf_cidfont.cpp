@@ -392,10 +392,9 @@ bool CPDF_CIDFont::Load() {
     return false;
 
   m_BaseFontName = pCIDFontDict->GetStringFor("BaseFont");
-  if ((m_BaseFontName.Compare("CourierStd") == 0 ||
-       m_BaseFontName.Compare("CourierStd-Bold") == 0 ||
-       m_BaseFontName.Compare("CourierStd-BoldOblique") == 0 ||
-       m_BaseFontName.Compare("CourierStd-Oblique") == 0) &&
+  if ((m_BaseFontName == "CourierStd" || m_BaseFontName == "CourierStd-Bold" ||
+       m_BaseFontName == "CourierStd-BoldOblique" ||
+       m_BaseFontName == "CourierStd-Oblique") &&
       !IsEmbedded()) {
     m_bAdobeCourierStd = true;
   }

@@ -929,7 +929,7 @@ double CJS_PublicMethods::ParseDateAsGMT(const WideString& strValue) {
   int nMonth = 1;
   sTemp = wsArray[1];
   for (size_t i = 0; i < pdfium::size(fxjs::kMonths); ++i) {
-    if (sTemp.Compare(fxjs::kMonths[i]) == 0) {
+    if (sTemp == fxjs::kMonths[i]) {
       nMonth = i + 1;
       break;
     }

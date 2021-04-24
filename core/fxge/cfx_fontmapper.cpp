@@ -232,10 +232,10 @@ std::tuple<bool, uint32_t, size_t> GetStyleType(const ByteString& bsStyle,
       continue;
 
     if (bReverse) {
-      if (bsStyle.Last(pStyle->len).Compare(pStyle->name) == 0)
+      if (bsStyle.Last(pStyle->len) == pStyle->name)
         return std::make_tuple(true, pStyle->style, pStyle->len);
     } else {
-      if (bsStyle.First(pStyle->len).Compare(pStyle->name) == 0)
+      if (bsStyle.First(pStyle->len) == pStyle->name)
         return std::make_tuple(true, pStyle->style, pStyle->len);
     }
   }

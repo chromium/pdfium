@@ -504,15 +504,15 @@ void CFX_XMLParser::ProcessTextChar(wchar_t character) {
         if (character != 0)
           current_text_.push_back(character);
       } else {
-        if (csEntity.Compare(L"amp") == 0) {
+        if (csEntity == L"amp") {
           current_text_.push_back(L'&');
-        } else if (csEntity.Compare(L"lt") == 0) {
+        } else if (csEntity == L"lt") {
           current_text_.push_back(L'<');
-        } else if (csEntity.Compare(L"gt") == 0) {
+        } else if (csEntity == L"gt") {
           current_text_.push_back(L'>');
-        } else if (csEntity.Compare(L"apos") == 0) {
+        } else if (csEntity == L"apos") {
           current_text_.push_back(L'\'');
-        } else if (csEntity.Compare(L"quot") == 0) {
+        } else if (csEntity == L"quot") {
           current_text_.push_back(L'"');
         }
       }

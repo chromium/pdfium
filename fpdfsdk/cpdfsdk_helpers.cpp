@@ -360,7 +360,7 @@ void ReportUnsupportedFeatures(const CPDF_Document* pDoc) {
       if (pArray) {
         for (size_t i = 0; i < pArray->size(); i++) {
           ByteString cbStr = pArray->GetStringAt(i);
-          if (cbStr.Compare("com.adobe.acrobat.SharedReview.Register") == 0) {
+          if (cbStr == "com.adobe.acrobat.SharedReview.Register") {
             RaiseUnsupportedError(FPDF_UNSP_DOC_SHAREDREVIEW);
             break;
           }

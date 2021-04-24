@@ -121,7 +121,7 @@ void CPDF_SimpleFont::LoadPDFEncoding(bool bEmbedded, bool bTrueType) {
       return;
     }
     ByteString bsEncoding = pEncoding->GetString();
-    if (bsEncoding.Compare("MacExpertEncoding") == 0) {
+    if (bsEncoding == "MacExpertEncoding") {
       bsEncoding = "WinAnsiEncoding";
     }
     GetPredefinedEncoding(bsEncoding, &m_BaseEncoding);
@@ -135,7 +135,7 @@ void CPDF_SimpleFont::LoadPDFEncoding(bool bEmbedded, bool bTrueType) {
   if (m_BaseEncoding != PDFFONT_ENCODING_ADOBE_SYMBOL &&
       m_BaseEncoding != PDFFONT_ENCODING_ZAPFDINGBATS) {
     ByteString bsEncoding = pDict->GetStringFor("BaseEncoding");
-    if (bTrueType && bsEncoding.Compare("MacExpertEncoding") == 0)
+    if (bTrueType && bsEncoding == "MacExpertEncoding")
       bsEncoding = "WinAnsiEncoding";
     GetPredefinedEncoding(bsEncoding, &m_BaseEncoding);
   }

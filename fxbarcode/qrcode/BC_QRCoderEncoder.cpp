@@ -325,7 +325,7 @@ bool TerminateBits(int32_t numDataBytes, CBC_QRCoderBitVector* bits) {
 }
 
 CBC_QRCoderMode* ChooseMode(const ByteString& content, ByteString encoding) {
-  if (encoding.Compare("SHIFT_JIS") == 0)
+  if (encoding == "SHIFT_JIS")
     return CBC_QRCoderMode::sKANJI;
 
   bool hasNumeric = false;

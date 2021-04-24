@@ -324,7 +324,7 @@ const CFX_CSSData::LengthUnit* CFX_CSSData::GetLengthUnitByName(
 
   for (auto* iter = std::begin(lengthUnitTable);
        iter != std::end(lengthUnitTable); ++iter) {
-    if (lowerName.Compare(iter->value) == 0)
+    if (lowerName == iter->value)
       return iter;
   }
 
@@ -340,7 +340,7 @@ const CFX_CSSData::Color* CFX_CSSData::GetColorByName(WideStringView wsName) {
 
   for (auto* iter = std::begin(colorTable); iter != std::end(colorTable);
        ++iter) {
-    if (lowerName.Compare(iter->name) == 0)
+    if (lowerName == iter->name)
       return iter;
   }
   return nullptr;

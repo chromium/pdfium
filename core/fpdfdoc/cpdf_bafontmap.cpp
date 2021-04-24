@@ -38,11 +38,11 @@ bool FindNativeTrueTypeFont(ByteStringView sFontFaceName) {
   pFontMapper->LoadInstalledFonts();
 
   for (const auto& font : pFontMapper->m_InstalledTTFonts) {
-    if (font.Compare(sFontFaceName) == 0)
+    if (font == sFontFaceName)
       return true;
   }
   for (const auto& fontPair : pFontMapper->m_LocalizedTTFonts) {
-    if (fontPair.first.Compare(sFontFaceName) == 0)
+    if (fontPair.first == sFontFaceName)
       return true;
   }
   return false;
