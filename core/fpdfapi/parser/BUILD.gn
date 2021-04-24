@@ -74,7 +74,7 @@ source_set("parser") {
     "fpdf_parser_utility.cpp",
     "fpdf_parser_utility.h",
   ]
-  configs += [ "../../../:pdfium_core_config" ]
+  configs += [ "../../../:pdfium_strict_config" ]
   deps = [
     "../../../constants",
     "../../fdrm",

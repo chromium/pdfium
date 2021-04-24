@@ -16,7 +16,7 @@ source_set("fpdftext") {
     "unicodenormalizationdata.cpp",
     "unicodenormalizationdata.h",
   ]
-  configs += [ "../../:pdfium_core_config" ]
+  configs += [ "../../:pdfium_strict_config" ]
   deps = [
     "../fpdfapi/font",
     "../fpdfapi/page",

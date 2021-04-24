@@ -69,7 +69,7 @@ source_set("fxcodec") {
     "scanlinedecoder.cpp",
     "scanlinedecoder.h",
   ]
-  configs += [ "../../:pdfium_core_config" ]
+  configs += [ "../../:pdfium_strict_config" ]
   include_dirs = []
   deps = [
     "../../third_party:lcms2",

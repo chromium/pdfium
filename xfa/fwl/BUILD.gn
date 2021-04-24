@@ -117,7 +117,7 @@ source_set("fwl") {
     "../fgas/graphics",
   ]
   configs += [
-    "../../:pdfium_core_config",
+    "../../:pdfium_strict_config",
     "../:xfa_warnings",
   ]
   visibility = [ "../../*" ]

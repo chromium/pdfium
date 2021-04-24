@@ -138,7 +138,7 @@ source_set("fxbarcode") {
     "../core/fxge",
     "../third_party:bigint",
   ]
-  configs += [ "../:pdfium_core_config" ]
+  configs += [ "../:pdfium_strict_config" ]
   visibility = [ "../*" ]
 }
 

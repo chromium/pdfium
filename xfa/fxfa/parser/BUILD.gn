@@ -689,7 +689,7 @@ source_set("parser") {
   ]
   allow_circular_includes_from = [ "../../../fxjs" ]
   configs += [
-    "../../../:pdfium_core_config",
+    "../../../:pdfium_strict_config",
     "../../:xfa_warnings",
   ]
   visibility = [ "../../../*" ]

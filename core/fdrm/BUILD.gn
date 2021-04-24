@@ -12,7 +12,7 @@ source_set("fdrm") {
     "fx_crypt_aes.cpp",
     "fx_crypt_sha.cpp",
   ]
-  configs += [ "../../:pdfium_core_config" ]
+  configs += [ "../../:pdfium_strict_config" ]
   deps = [ "../fxcrt" ]
   visibility = [ "../../*" ]
 }

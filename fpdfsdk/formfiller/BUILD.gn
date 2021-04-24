@@ -29,7 +29,7 @@ source_set("formfiller") {
     "cffl_textobject.cpp",
     "cffl_textobject.h",
   ]
-  configs += [ "../../:pdfium_core_config" ]
+  configs += [ "../../:pdfium_strict_config" ]
   deps = [
     "../../:pdfium_public_headers",
     "../../constants",

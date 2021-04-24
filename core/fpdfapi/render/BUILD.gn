@@ -44,7 +44,7 @@ source_set("render") {
     "cpdf_type3glyphmap.cpp",
     "cpdf_type3glyphmap.h",
   ]
-  configs += [ "../../../:pdfium_core_config" ]
+  configs += [ "../../../:pdfium_strict_config" ]
   deps = [
     "../../../constants",
     "../../fxcodec",

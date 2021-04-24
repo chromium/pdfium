@@ -30,7 +30,7 @@ source_set("font") {
     "../../../core/fxge",
   ]
   configs += [
-    "../../../:pdfium_core_config",
+    "../../../:pdfium_strict_config",
     "../../:xfa_warnings",
   ]
   visibility = [ "../../../*" ]

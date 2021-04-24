@@ -40,7 +40,7 @@ source_set("font") {
     "cpdf_type3font.cpp",
     "cpdf_type3font.h",
   ]
-  configs += [ "../../../:pdfium_core_config" ]
+  configs += [ "../../../:pdfium_strict_config" ]
   deps = [
     "../../fxcrt",
     "../../fxge",

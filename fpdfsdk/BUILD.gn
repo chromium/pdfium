@@ -72,7 +72,7 @@ source_set("fpdfsdk") {
     "ipdfsdk_annothandler.h",
   ]
 
-  configs += [ "../:pdfium_core_config" ]
+  configs += [ "../:pdfium_strict_config" ]
   deps = [
     "../:pdfium_public_headers",
     "../constants",

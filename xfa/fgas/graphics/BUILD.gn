@@ -20,7 +20,7 @@ source_set("graphics") {
     "cfgas_geshading.h",
   ]
   configs += [
-    "../../../:pdfium_core_config",
+    "../../../:pdfium_strict_config",
     "../../:xfa_warnings",
   ]
   deps = [

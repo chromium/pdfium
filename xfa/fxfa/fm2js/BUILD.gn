@@ -23,7 +23,7 @@ source_set("fm2js") {
     "../../../fxjs:gc",
   ]
   configs += [
-    "../../../:pdfium_core_config",
+    "../../../:pdfium_strict_config",
     "../../:xfa_warnings",
   ]
   visibility = [ "../../../*" ]

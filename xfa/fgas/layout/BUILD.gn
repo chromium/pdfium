@@ -39,7 +39,7 @@ source_set("layout") {
     "../font",
   ]
   configs += [
-    "../../../:pdfium_core_config",
+    "../../../:pdfium_strict_config",
     "../../:xfa_warnings",
   ]
   visibility = [ "../../../*" ]

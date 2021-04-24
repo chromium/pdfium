@@ -18,7 +18,7 @@ source_set("edit") {
     "cpdf_stringarchivestream.cpp",
     "cpdf_stringarchivestream.h",
   ]
-  configs += [ "../../../:pdfium_core_config" ]
+  configs += [ "../../../:pdfium_strict_config" ]
   deps = [
     "../../../constants",
     "../../../third_party:skia_shared",

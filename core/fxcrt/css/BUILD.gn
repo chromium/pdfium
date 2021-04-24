@@ -55,7 +55,7 @@ source_set("css") {
     "../",
     "../../fxge",
   ]
-  configs += [ "../../../:pdfium_core_config" ]
+  configs += [ "../../../:pdfium_strict_config" ]
   visibility = [ "../../../*" ]
 }
 

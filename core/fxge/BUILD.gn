@@ -115,7 +115,7 @@ source_set("fxge") {
 
   configs += [
     ":fxge_warnings",
-    "../../:pdfium_core_config",
+    "../../:pdfium_strict_config",
   ]
 
   deps = [ "../fxcrt" ]

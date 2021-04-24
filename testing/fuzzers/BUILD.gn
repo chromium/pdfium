@@ -5,7 +5,7 @@
 import("../../pdfium.gni")
 
 config("fuzzer_config") {
-  configs = [ "../..:pdfium_core_config" ]
+  configs = [ "../..:pdfium_strict_config" ]
 
   defines = [
     "PNG_PREFIX",
