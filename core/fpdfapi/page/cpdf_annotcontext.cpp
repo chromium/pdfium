@@ -31,7 +31,6 @@ void CPDF_AnnotContext::SetForm(CPDF_Stream* pStream) {
   pStream->GetDict()->SetMatrixFor("Matrix", CFX_Matrix());
 
   m_pAnnotForm = std::make_unique<CPDF_Form>(
-      m_pPage->GetDocument(), m_pPage->AsPDFPage()->m_pResources.Get(),
-      pStream);
+      m_pPage->GetDocument(), m_pPage->AsPDFPage()->GetResources(), pStream);
   m_pAnnotForm->ParseContent();
 }

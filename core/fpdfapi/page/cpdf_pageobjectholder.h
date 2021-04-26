@@ -14,15 +14,16 @@
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_transparency.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
+#include "third_party/base/optional.h"
 
 class CPDF_ContentParser;
-class CPDF_Dictionary;
 class CPDF_Document;
 class CPDF_PageObject;
 class CPDF_Stream;
@@ -66,8 +67,10 @@ class CPDF_PageObjectHolder {
   ParseState GetParseState() const { return m_ParseState; }
 
   CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
-
   CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
+  CPDF_Dictionary* GetResources() const { return m_pResources.Get(); }
+  void SetResources(CPDF_Dictionary* pDict) { m_pResources.Reset(pDict); }
+  CPDF_Dictionary* GetPageResources() const { return m_pPageResources.Get(); }
   size_t GetPageObjectCount() const { return m_PageObjectList.size(); }
   CPDF_PageObject* GetPageObjectByIndex(size_t index) const;
   void AppendPageObject(std::unique_ptr<CPDF_PageObject> pPageObj);
@@ -97,14 +100,19 @@ class CPDF_PageObjectHolder {
   bool HasDirtyStreams() const { return !m_DirtyStreams.empty(); }
   std::set<int32_t> TakeDirtyStreams();
 
-  RetainPtr<CPDF_Dictionary> m_pPageResources;
-  RetainPtr<CPDF_Dictionary> m_pResources;
-  std::map<GraphicsData, ByteString> m_GraphicsMap;
-  std::map<FontData, ByteString> m_FontsMap;
+  Optional<ByteString> GraphicsMapSearch(const GraphicsData& gd);
+  void GraphicsMapInsert(const GraphicsData& gd, const ByteString& str);
+
+  Optional<ByteString> FontsMapSearch(const FontData& fd);
+  void FontsMapInsert(const FontData& fd, const ByteString& str);
 
  protected:
   void LoadTransparencyInfo();
 
+  RetainPtr<CPDF_Dictionary> m_pPageResources;
+  RetainPtr<CPDF_Dictionary> m_pResources;
+  std::map<GraphicsData, ByteString> m_GraphicsMap;
+  std::map<FontData, ByteString> m_FontsMap;
   CFX_FloatRect m_BBox;
   CPDF_Transparency m_Transparency;
 

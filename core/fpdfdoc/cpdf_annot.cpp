@@ -199,8 +199,8 @@ CPDF_Form* CPDF_Annot::GetAPForm(const CPDF_Page* pPage, AppearanceMode mode) {
   if (it != m_APMap.end())
     return it->second.get();
 
-  auto pNewForm = std::make_unique<CPDF_Form>(
-      m_pDocument.Get(), pPage->m_pResources.Get(), pStream);
+  auto pNewForm = std::make_unique<CPDF_Form>(m_pDocument.Get(),
+                                              pPage->GetResources(), pStream);
   pNewForm->ParseContent();
 
   CPDF_Form* pResult = pNewForm.get();
@@ -406,7 +406,7 @@ bool CPDF_Annot::DrawAppearance(CPDF_Page* pPage,
     return false;
 
   CPDF_RenderContext context(
-      pPage->GetDocument(), pPage->m_pPageResources.Get(),
+      pPage->GetDocument(), pPage->GetPageResources(),
       static_cast<CPDF_PageRenderCache*>(pPage->GetRenderCache()));
   context.AppendLayer(pForm, matrix);
   context.Render(pDevice, pOptions, nullptr);

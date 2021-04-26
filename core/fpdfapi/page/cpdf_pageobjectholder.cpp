@@ -84,6 +84,33 @@ std::set<int32_t> CPDF_PageObjectHolder::TakeDirtyStreams() {
   return dirty_streams;
 }
 
+Optional<ByteString> CPDF_PageObjectHolder::GraphicsMapSearch(
+    const GraphicsData& gd) {
+  auto it = m_GraphicsMap.find(gd);
+  if (it == m_GraphicsMap.end())
+    return pdfium::nullopt;
+
+  return it->second;
+}
+
+void CPDF_PageObjectHolder::GraphicsMapInsert(const GraphicsData& gd,
+                                              const ByteString& str) {
+  m_GraphicsMap[gd] = str;
+}
+
+Optional<ByteString> CPDF_PageObjectHolder::FontsMapSearch(const FontData& fd) {
+  auto it = m_FontsMap.find(fd);
+  if (it == m_FontsMap.end())
+    return pdfium::nullopt;
+
+  return it->second;
+}
+
+void CPDF_PageObjectHolder::FontsMapInsert(const FontData& fd,
+                                           const ByteString& str) {
+  m_FontsMap[fd] = str;
+}
+
 void CPDF_PageObjectHolder::LoadTransparencyInfo() {
   CPDF_Dictionary* pGroup = m_pDict->GetDictFor("Group");
   if (!pGroup)

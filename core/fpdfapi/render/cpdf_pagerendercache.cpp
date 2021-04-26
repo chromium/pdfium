@@ -85,7 +85,7 @@ bool CPDF_PageRenderCache::StartGetCachedBitmap(
         std::make_unique<CPDF_ImageCacheEntry>(m_pPage->GetDocument(), pImage);
   }
   CPDF_DIB::LoadState ret = m_pCurImageCacheEntry->StartGetCachedBitmap(
-      m_pPage->m_pPageResources.Get(), pRenderStatus, bStdCS);
+      m_pPage->GetPageResources(), pRenderStatus, bStdCS);
   if (ret == CPDF_DIB::LoadState::kContinue)
     return true;
 

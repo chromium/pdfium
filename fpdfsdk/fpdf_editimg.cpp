@@ -244,7 +244,7 @@ FPDFImageObj_GetRenderedBitmap(FPDF_DOCUMENT document,
 
   // Set up all the rendering code.
   CPDF_Dictionary* page_resources =
-      optional_page ? optional_page->m_pPageResources.Get() : nullptr;
+      optional_page ? optional_page->GetPageResources() : nullptr;
   CPDF_RenderContext context(doc, page_resources, /*pPageCache=*/nullptr);
   CFX_DefaultRenderDevice device;
   device.Attach(result_bitmap, /*bRgbByteOrder=*/false,
@@ -389,7 +389,7 @@ FPDFImageObj_GetImageMetadata(FPDF_PAGEOBJECT image_object,
   auto pSource = pdfium::MakeRetain<CPDF_DIB>();
   CPDF_DIB::LoadState ret = pSource->StartLoadDIBBase(
       pPage->GetDocument(), pImg->GetStream(), false, nullptr,
-      pPage->m_pPageResources.Get(), false, 0, false);
+      pPage->GetPageResources(), false, 0, false);
   if (ret == CPDF_DIB::LoadState::kFail)
     return true;
 

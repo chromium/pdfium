@@ -2559,7 +2559,8 @@ TEST_F(FPDFEditEmbedderTest, GraphicsData) {
 
   // Check that the ExtGState was created
   CPDF_Page* cpage = CPDFPageFromFPDFPage(page.get());
-  CPDF_Dictionary* graphics_dict = cpage->m_pResources->GetDictFor("ExtGState");
+  const CPDF_Dictionary* graphics_dict =
+      cpage->GetResources()->GetDictFor("ExtGState");
   ASSERT_TRUE(graphics_dict);
   EXPECT_EQ(2u, graphics_dict->size());
 
@@ -2612,7 +2613,8 @@ TEST_F(FPDFEditEmbedderTest, DoubleGenerating) {
 
   // Check the ExtGState
   CPDF_Page* cpage = CPDFPageFromFPDFPage(page);
-  CPDF_Dictionary* graphics_dict = cpage->m_pResources->GetDictFor("ExtGState");
+  const CPDF_Dictionary* graphics_dict =
+      cpage->GetResources()->GetDictFor("ExtGState");
   ASSERT_TRUE(graphics_dict);
   EXPECT_EQ(2u, graphics_dict->size());
 
@@ -2653,7 +2655,7 @@ TEST_F(FPDFEditEmbedderTest, DoubleGenerating) {
   FPDFPageObj_Transform(text_object, 1, 0, 0, 1, 300, 300);
   FPDFPage_InsertObject(page, text_object);
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
-  CPDF_Dictionary* font_dict = cpage->m_pResources->GetDictFor("Font");
+  const CPDF_Dictionary* font_dict = cpage->GetResources()->GetDictFor("Font");
   ASSERT_TRUE(font_dict);
   EXPECT_EQ(1u, font_dict->size());
 
