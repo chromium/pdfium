@@ -50,7 +50,7 @@ void CPDF_PageRenderCache::CacheOptimization(int32_t dwLimitCacheSize) {
   uint32_t nTimeCount = m_nTimeCount;
   if (nTimeCount + 1 < nTimeCount) {
     for (size_t i = 0; i < nCount; i++)
-      m_ImageCache[cache_info[i].pStream]->m_dwTimeCount = i;
+      m_ImageCache[cache_info[i].pStream]->SetTimeCount(i);
     m_nTimeCount = nCount;
   }
 
