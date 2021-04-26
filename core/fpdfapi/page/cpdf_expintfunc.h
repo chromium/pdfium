@@ -22,6 +22,12 @@ class CPDF_ExpIntFunc final : public CPDF_Function {
               std::set<const CPDF_Object*>* pVisited) override;
   bool v_Call(const float* inputs, float* results) const override;
 
+  uint32_t GetOrigOutputs() const { return m_nOrigOutputs; }
+  float GetExponent() const { return m_Exponent; }
+  const std::vector<float>& GetBeginValues() const { return m_BeginValues; }
+  const std::vector<float>& GetEndValues() const { return m_EndValues; }
+
+ private:
   uint32_t m_nOrigOutputs = 0;
   float m_Exponent = 0.0f;
   std::vector<float> m_BeginValues;
