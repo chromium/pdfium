@@ -37,7 +37,7 @@ class CPDF_Image final : public Retainable {
 
   int32_t GetPixelHeight() const { return m_Height; }
   int32_t GetPixelWidth() const { return m_Width; }
-
+  uint32_t GetMatteColor() const { return m_MatteColor; }
   bool IsInline() const { return m_bIsInline; }
   bool IsMask() const { return m_bIsMask; }
   bool IsInterpol() const { return m_bInterpolate; }
@@ -63,10 +63,6 @@ class CPDF_Image final : public Retainable {
   RetainPtr<CFX_DIBBase> DetachBitmap();
   RetainPtr<CFX_DIBBase> DetachMask();
 
-  RetainPtr<CFX_DIBBase> m_pDIBBase;
-  RetainPtr<CFX_DIBBase> m_pMask;
-  uint32_t m_MatteColor = 0;
-
  private:
   explicit CPDF_Image(CPDF_Document* pDoc);
   CPDF_Image(CPDF_Document* pDoc, RetainPtr<CPDF_Stream> pStream);
@@ -75,15 +71,17 @@ class CPDF_Image final : public Retainable {
 
   void FinishInitialization(CPDF_Dictionary* pStreamDict);
   RetainPtr<CPDF_Dictionary> InitJPEG(pdfium::span<uint8_t> src_span);
-
   RetainPtr<CPDF_Dictionary> CreateXObjectImageDict(int width, int height);
 
   int32_t m_Height = 0;
   int32_t m_Width = 0;
+  uint32_t m_MatteColor = 0;
   bool m_bIsInline = false;
   bool m_bIsMask = false;
   bool m_bInterpolate = false;
   UnownedPtr<CPDF_Document> const m_pDocument;
+  RetainPtr<CFX_DIBBase> m_pDIBBase;
+  RetainPtr<CFX_DIBBase> m_pMask;
   RetainPtr<CPDF_Stream> m_pStream;
   RetainPtr<const CPDF_Dictionary> m_pOC;
 };
