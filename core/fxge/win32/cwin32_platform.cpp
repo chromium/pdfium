@@ -204,16 +204,16 @@ ByteString CFX_Win32FontInfo::FindFont(const ByteString& name) {
   if (!m_pMapper)
     return name;
 
-  for (size_t i = 0; i < m_pMapper->m_InstalledTTFonts.size(); ++i) {
-    ByteString thisname = m_pMapper->m_InstalledTTFonts[i];
-    if (thisname.First(name.GetLength()) == name)
-      return m_pMapper->m_InstalledTTFonts[i];
-  }
-  for (size_t i = 0; i < m_pMapper->m_LocalizedTTFonts.size(); ++i) {
-    ByteString thisname = m_pMapper->m_LocalizedTTFonts[i].first;
-    if (thisname.First(name.GetLength()) == name)
-      return m_pMapper->m_LocalizedTTFonts[i].second;
-  }
+  Optional<ByteString> maybe_installed =
+      m_pMapper->InstalledFontNameStartingWith(name);
+  if (maybe_installed.has_value())
+    return maybe_installed.value();
+
+  Optional<ByteString> maybe_localized =
+      m_pMapper->LocalizedFontNameStartingWith(name);
+  if (maybe_localized.has_value())
+    return maybe_localized.value();
+
   return ByteString();
 }
 

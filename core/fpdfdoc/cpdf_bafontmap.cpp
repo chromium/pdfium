@@ -36,16 +36,8 @@ bool FindNativeTrueTypeFont(ByteStringView sFontFaceName) {
   CFX_FontMgr* pFontMgr = CFX_GEModule::Get()->GetFontMgr();
   CFX_FontMapper* pFontMapper = pFontMgr->GetBuiltinMapper();
   pFontMapper->LoadInstalledFonts();
-
-  for (const auto& font : pFontMapper->m_InstalledTTFonts) {
-    if (font == sFontFaceName)
-      return true;
-  }
-  for (const auto& fontPair : pFontMapper->m_LocalizedTTFonts) {
-    if (fontPair.first == sFontFaceName)
-      return true;
-  }
-  return false;
+  return pFontMapper->HasInstalledFont(sFontFaceName) ||
+         pFontMapper->HasLocalizedFont(sFontFaceName);
 }
 
 RetainPtr<CPDF_Font> AddNativeTrueTypeFontToPDF(CPDF_Document* pDoc,

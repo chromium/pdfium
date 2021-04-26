@@ -687,6 +687,42 @@ int CFX_FontMapper::GetFaceSize() const {
   return pdfium::CollectionSize<int>(m_FaceArray);
 }
 
+bool CFX_FontMapper::HasInstalledFont(ByteStringView name) const {
+  for (const auto& font : m_InstalledTTFonts) {
+    if (font == name)
+      return true;
+  }
+  return false;
+}
+
+bool CFX_FontMapper::HasLocalizedFont(ByteStringView name) const {
+  for (const auto& fontPair : m_LocalizedTTFonts) {
+    if (fontPair.first == name)
+      return true;
+  }
+  return false;
+}
+
+#if defined(OS_WIN)
+Optional<ByteString> CFX_FontMapper::InstalledFontNameStartingWith(
+    const ByteString& name) const {
+  for (const auto& thisname : m_InstalledTTFonts) {
+    if (thisname.First(name.GetLength()) == name)
+      return thisname;
+  }
+  return pdfium::nullopt;
+}
+
+Optional<ByteString> CFX_FontMapper::LocalizedFontNameStartingWith(
+    const ByteString& name) const {
+  for (const auto& thispair : m_LocalizedTTFonts) {
+    if (thispair.first.First(name.GetLength()) == name)
+      return thispair.second;
+  }
+  return pdfium::nullopt;
+}
+#endif  // defined(OS_WIN)
+
 #ifdef PDF_ENABLE_XFA
 std::unique_ptr<uint8_t, FxFreeDeleter> CFX_FontMapper::RawBytesForIndex(
     uint32_t index,
