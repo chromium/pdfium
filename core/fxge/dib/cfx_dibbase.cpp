@@ -249,10 +249,11 @@ void ConvertBuffer_Plt2PltRgb8(uint8_t* dest_buf,
                                pdfium::span<uint32_t> dst_plt) {
   ConvertBuffer_IndexCopy(dest_buf, dest_pitch, width, height, pSrcBitmap,
                           src_left, src_top);
-  const uint32_t* src_plt = pSrcBitmap->GetPaletteData();
+  const size_t plt_size = pSrcBitmap->GetRequiredPaletteSize();
+  pdfium::span<const uint32_t> src_span = pSrcBitmap->GetPaletteSpan();
+  CHECK(plt_size <= src_span.size());
 
-  // TODO(tsepez): check against actual allocated span size.
-  size_t plt_size = pSrcBitmap->GetRequiredPaletteSize();
+  const uint32_t* src_plt = src_span.data();
   for (size_t i = 0; i < plt_size; ++i)
     dst_plt[i] = src_plt[i];
 }

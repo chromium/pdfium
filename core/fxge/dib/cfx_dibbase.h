@@ -57,7 +57,6 @@ class CFX_DIBBase : public Retainable {
 
   bool HasPalette() const { return !m_palette.empty(); }
   pdfium::span<const uint32_t> GetPaletteSpan() const { return m_palette; }
-  const uint32_t* GetPaletteData() const { return m_palette.data(); }
   size_t GetRequiredPaletteSize() const;
   uint32_t GetPaletteArgb(int index) const;
   void SetPaletteArgb(int index, uint32_t color);

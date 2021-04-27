@@ -14,6 +14,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
+#include "third_party/base/span.h"
 
 class CFX_DIBBase;
 class PauseIndicatorIface;
@@ -83,7 +84,7 @@ class CStretchEngine {
   const int m_SrcBpp;
   const int m_bHasAlpha;
   RetainPtr<CFX_DIBBase> const m_pSource;
-  const uint32_t* m_pSrcPalette;
+  pdfium::span<const uint32_t> m_pSrcPalette;
   const int m_SrcWidth;
   const int m_SrcHeight;
   UnownedPtr<ScanlineComposerIface> const m_pDestBitmap;
