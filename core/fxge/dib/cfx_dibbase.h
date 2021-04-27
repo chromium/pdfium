@@ -47,20 +47,18 @@ class CFX_DIBBase : public Retainable {
   }
   int GetWidth() const { return m_Width; }
   int GetHeight() const { return m_Height; }
+  uint32_t GetPitch() const { return m_Pitch; }
 
   FXDIB_Format GetFormat() const { return m_Format; }
-  uint32_t GetPitch() const { return m_Pitch; }
+  int GetBPP() const { return GetBppFromFormat(m_Format); }
+  bool IsMaskFormat() const { return GetIsMaskFromFormat(m_Format); }
+  bool IsAlphaFormat() const { return GetIsAlphaFromFormat(m_Format); }
+  bool IsOpaqueImage() const { return !IsMaskFormat() && !IsAlphaFormat(); }
+
   bool HasPalette() const { return !m_palette.empty(); }
   pdfium::span<const uint32_t> GetPaletteSpan() const { return m_palette; }
   const uint32_t* GetPaletteData() const { return m_palette.data(); }
-  int GetBPP() const { return GetBppFromFormat(m_Format); }
-
-  bool IsMask() const { return GetIsMaskFromFormat(m_Format); }
-  bool HasAlpha() const { return GetIsAlphaFromFormat(m_Format); }
-  bool IsOpaqueImage() const { return !IsMask() && !HasAlpha(); }
-
-  size_t GetPaletteSize() const;
-
+  size_t GetRequiredPaletteSize() const;
   uint32_t GetPaletteArgb(int index) const;
   void SetPaletteArgb(int index, uint32_t color);
 

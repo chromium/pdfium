@@ -182,7 +182,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
     int32_t set_r = 0;
     int32_t set_g = 0;
     int32_t set_b = 0;
-    if (!pBitmap->IsMask()) {
+    if (!pBitmap->IsMaskFormat()) {
       std::tie(reset_a, reset_r, reset_g, reset_b) =
           ArgbDecode(pBitmap->GetPaletteArgb(0));
       std::tie(set_a, set_r, set_g, set_b) =
@@ -217,7 +217,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
     pDict->SetNewFor<CPDF_Number>("BitsPerComponent", 1);
     dest_pitch = (BitmapWidth + 7) / 8;
   } else if (bpp == 8) {
-    size_t palette_size = pBitmap->GetPaletteSize();
+    size_t palette_size = pBitmap->GetRequiredPaletteSize();
     if (palette_size > 0) {
       DCHECK(palette_size <= 256);
       CPDF_Array* pCS = m_pDocument->NewIndirect<CPDF_Array>();
@@ -253,7 +253,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
   }
 
   RetainPtr<CFX_DIBitmap> pMaskBitmap;
-  if (pBitmap->HasAlpha())
+  if (pBitmap->IsAlphaFormat())
     pMaskBitmap = pBitmap->CloneAlphaMask();
 
   if (pMaskBitmap) {
@@ -318,7 +318,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
     m_pStream = pdfium::MakeRetain<CPDF_Stream>();
 
   m_pStream->InitStream(dest_span, std::move(pDict));
-  m_bIsMask = pBitmap->IsMask();
+  m_bIsMask = pBitmap->IsMaskFormat();
   m_Width = BitmapWidth;
   m_Height = BitmapHeight;
 }

@@ -462,7 +462,7 @@ bool ProgressiveDecoder::GifInputRecordPositionBuf(uint32_t rcd_pos,
     trans_index = -1;
   if (trans_index != -1) {
     m_pSrcPalette.get()[trans_index] &= 0x00ffffff;
-    if (pDevice->HasAlpha())
+    if (pDevice->IsAlphaFormat())
       pal_index = trans_index;
   }
   if (pal_index >= pal_num)
@@ -509,7 +509,7 @@ void ProgressiveDecoder::GifReadScanline(int32_t row_num, uint8_t* row_buf) {
   RetainPtr<CFX_DIBitmap> pDIBitmap = m_pDeviceBitmap;
   DCHECK(pDIBitmap);
   int32_t img_width = m_GifFrameRect.Width();
-  if (!pDIBitmap->HasAlpha()) {
+  if (!pDIBitmap->IsAlphaFormat()) {
     uint8_t* byte_ptr = row_buf;
     for (int i = 0; i < img_width; i++) {
       if (*byte_ptr == m_GifTransIndex) {
@@ -519,7 +519,7 @@ void ProgressiveDecoder::GifReadScanline(int32_t row_num, uint8_t* row_buf) {
     }
   }
   int32_t pal_index = m_GifBgIndex;
-  if (m_GifTransIndex != -1 && m_pDeviceBitmap->HasAlpha()) {
+  if (m_GifTransIndex != -1 && m_pDeviceBitmap->IsAlphaFormat()) {
     pal_index = m_GifTransIndex;
   }
   memset(m_pDecodeBuf.get(), pal_index, m_SrcWidth);

@@ -237,7 +237,7 @@ void CFX_ImageTransformer::ContinueOther(PauseIndicatorIface* pPause) {
     return;
 
   auto pTransformed = pdfium::MakeRetain<CFX_DIBitmap>();
-  FXDIB_Format format = m_Stretcher->source()->IsMask()
+  FXDIB_Format format = m_Stretcher->source()->IsMaskFormat()
                             ? FXDIB_Format::k8bppMask
                             : FXDIB_Format::kArgb;
   if (!pTransformed->Create(m_result.Width(), m_result.Height(), format))
@@ -270,7 +270,7 @@ void CFX_ImageTransformer::ContinueOther(PauseIndicatorIface* pPause) {
   CalcData calc_data = {pTransformed.Get(), result2stretch,
                         m_Storer.GetBitmap()->GetBuffer(),
                         m_Storer.GetBitmap()->GetPitch()};
-  if (m_Storer.GetBitmap()->IsMask()) {
+  if (m_Storer.GetBitmap()->IsMaskFormat()) {
     CalcAlpha(calc_data);
   } else {
     int Bpp = m_Storer.GetBitmap()->GetBPP() / 8;
@@ -324,7 +324,7 @@ void CFX_ImageTransformer::CalcColor(const CalcData& calc_data,
                                      int Bpp) {
   DCHECK(format == FXDIB_Format::k8bppMask || format == FXDIB_Format::kArgb);
   const int destBpp = calc_data.bitmap->GetBPP() / 8;
-  if (!m_Storer.GetBitmap()->HasAlpha()) {
+  if (!m_Storer.GetBitmap()->IsAlphaFormat()) {
     auto func = [&calc_data, Bpp](const BilinearData& data, uint8_t* dest) {
       uint8_t b = BilinearInterpolate(calc_data.buf, data, Bpp, 0);
       uint8_t g = BilinearInterpolate(calc_data.buf, data, Bpp, 1);

@@ -37,7 +37,7 @@ bool CXFA_ImageRenderer::Start() {
   if ((fabs(m_ImageMatrix.b) >= 0.5f || m_ImageMatrix.a == 0) ||
       (fabs(m_ImageMatrix.c) >= 0.5f || m_ImageMatrix.d == 0)) {
     RetainPtr<CFX_DIBBase> pDib = m_pDIBBase;
-    if (m_pDIBBase->HasAlpha() &&
+    if (m_pDIBBase->IsAlphaFormat() &&
         !(m_pDevice->GetRenderCaps() & FXRC_ALPHA_IMAGE) &&
         !(m_pDevice->GetRenderCaps() & FXRC_GET_BITS)) {
       m_pCloneConvert = m_pDIBBase->CloneConvert(FXDIB_Format::kRgb);
@@ -67,7 +67,7 @@ bool CXFA_ImageRenderer::Start() {
       return false;
     }
   }
-  if (m_pDIBBase->IsMask()) {
+  if (m_pDIBBase->IsMaskFormat()) {
     if (m_pDevice->StretchBitMaskWithFlags(m_pDIBBase, dest_left, dest_top,
                                            dest_width, dest_height, 0,
                                            options)) {
@@ -98,7 +98,7 @@ bool CXFA_ImageRenderer::Continue() {
     if (!pBitmap)
       return false;
 
-    if (pBitmap->IsMask()) {
+    if (pBitmap->IsMaskFormat()) {
       m_pDevice->SetBitMask(pBitmap, m_pTransformer->result().left,
                             m_pTransformer->result().top, 0);
     } else {
@@ -121,7 +121,7 @@ void CXFA_ImageRenderer::CompositeDIBitmap(
   if (!pDIBitmap)
     return;
 
-  if (!pDIBitmap->IsMask()) {
+  if (!pDIBitmap->IsMaskFormat()) {
     if (m_pDevice->SetDIBits(pDIBitmap, left, top))
       return;
   } else if (m_pDevice->SetBitMask(pDIBitmap, left, top, 0)) {
@@ -132,13 +132,13 @@ void CXFA_ImageRenderer::CompositeDIBitmap(
                         (!(m_pDevice->GetRenderCaps() & FXRC_ALPHA_OUTPUT) &&
                          (m_pDevice->GetRenderCaps() & FXRC_GET_BITS));
   if (bGetBackGround) {
-    if (pDIBitmap->IsMask())
+    if (pDIBitmap->IsMaskFormat())
       return;
 
     m_pDevice->SetDIBitsWithBlend(pDIBitmap, left, top, BlendMode::kNormal);
     return;
   }
-  if (!pDIBitmap->HasAlpha() ||
+  if (!pDIBitmap->IsAlphaFormat() ||
       (m_pDevice->GetRenderCaps() & FXRC_ALPHA_IMAGE)) {
     return;
   }

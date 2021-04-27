@@ -55,7 +55,7 @@ bool CFX_DIBitmap::Create(int width,
   m_Width = width;
   m_Height = height;
   m_Pitch = pitch_size.value().pitch;
-  if (!HasAlpha() || format == FXDIB_Format::kArgb)
+  if (!IsAlphaFormat() || format == FXDIB_Format::kArgb)
     return true;
 
   if (BuildAlphaMask())
@@ -270,7 +270,7 @@ bool CFX_DIBitmap::SetChannelFromBitmap(
     return false;
 
   RetainPtr<CFX_DIBBase> pSrcClone = pSrcBitmap;
-  if (!pSrcBitmap->HasAlpha() && !pSrcBitmap->IsMask())
+  if (!pSrcBitmap->IsAlphaFormat() && !pSrcBitmap->IsMaskFormat())
     return false;
 
   if (pSrcBitmap->GetBPP() == 1) {
@@ -281,7 +281,7 @@ bool CFX_DIBitmap::SetChannelFromBitmap(
   int srcOffset = pSrcBitmap->GetFormat() == FXDIB_Format::kArgb ? 3 : 0;
   int destOffset = 0;
   if (destChannel == Channel::kAlpha) {
-    if (IsMask()) {
+    if (IsMaskFormat()) {
       if (!ConvertFormat(FXDIB_Format::k8bppMask))
         return false;
     } else {
@@ -292,11 +292,11 @@ bool CFX_DIBitmap::SetChannelFromBitmap(
     }
   } else {
     DCHECK_EQ(destChannel, Channel::kRed);
-    if (IsMask())
+    if (IsMaskFormat())
       return false;
 
     if (GetBPP() < 24) {
-      if (HasAlpha()) {
+      if (IsAlphaFormat()) {
         if (!ConvertFormat(FXDIB_Format::kArgb))
           return false;
       } else {
@@ -360,7 +360,7 @@ bool CFX_DIBitmap::SetUniformOpaqueAlpha() {
   if (!m_pBuffer)
     return false;
 
-  if (IsMask()) {
+  if (IsMaskFormat()) {
     if (!ConvertFormat(FXDIB_Format::k8bppMask))
       return false;
   } else {
@@ -392,7 +392,7 @@ bool CFX_DIBitmap::MultiplyAlpha(const RetainPtr<CFX_DIBBase>& pSrcBitmap) {
   if (!m_pBuffer)
     return false;
 
-  if (!pSrcBitmap->IsMask()) {
+  if (!pSrcBitmap->IsMaskFormat()) {
     NOTREACHED();
     return false;
   }
@@ -408,7 +408,7 @@ bool CFX_DIBitmap::MultiplyAlpha(const RetainPtr<CFX_DIBBase>& pSrcBitmap) {
     if (!pSrcClone)
       return false;
   }
-  if (IsMask()) {
+  if (IsMaskFormat()) {
     if (!ConvertFormat(FXDIB_Format::k8bppMask))
       return false;
 
@@ -479,7 +479,7 @@ bool CFX_DIBitmap::MultiplyAlpha(int alpha) {
       break;
     }
     default:
-      if (HasAlpha()) {
+      if (IsAlphaFormat()) {
         m_pAlphaMask->MultiplyAlpha(alpha);
       } else {
         if (!ConvertFormat(FXDIB_Format::kArgb)) {
@@ -703,7 +703,7 @@ void CFX_DIBitmap::ConvertBGRColorScale(uint32_t forecolor,
 }
 
 bool CFX_DIBitmap::ConvertColorScale(uint32_t forecolor, uint32_t backcolor) {
-  if (!m_pBuffer || IsMask())
+  if (!m_pBuffer || IsMaskFormat())
     return false;
 
   ConvertBGRColorScale(forecolor, backcolor);
@@ -755,7 +755,7 @@ bool CFX_DIBitmap::CompositeBitmap(int dest_left,
                                    BlendMode blend_type,
                                    const CFX_ClipRgn* pClipRgn,
                                    bool bRgbByteOrder) {
-  if (pSrcBitmap->IsMask()) {
+  if (pSrcBitmap->IsMaskFormat()) {
     // Should have called CompositeMask().
     NOTREACHED();
     return false;
@@ -835,7 +835,7 @@ bool CFX_DIBitmap::CompositeMask(int dest_left,
                                  BlendMode blend_type,
                                  const CFX_ClipRgn* pClipRgn,
                                  bool bRgbByteOrder) {
-  if (!pMask->IsMask()) {
+  if (!pMask->IsMaskFormat()) {
     // Should have called CompositeBitmap().
     NOTREACHED();
     return false;
@@ -916,9 +916,9 @@ bool CFX_DIBitmap::CompositeRect(int left,
   uint32_t dst_color = color;
   uint8_t* color_p = reinterpret_cast<uint8_t*>(&dst_color);
   if (GetBppFromFormat(m_Format) == 8) {
-    uint8_t gray =
-        IsMask() ? 255
-                 : (uint8_t)FXRGB2GRAY((int)color_p[2], color_p[1], color_p[0]);
+    uint8_t gray = IsMaskFormat() ? 255
+                                  : (uint8_t)FXRGB2GRAY((int)color_p[2],
+                                                        color_p[1], color_p[0]);
     for (int row = rect.top; row < rect.bottom; row++) {
       uint8_t* dest_scan = m_pBuffer.Get() + row * m_Pitch + rect.left;
       if (src_alpha == 255) {
@@ -977,7 +977,7 @@ bool CFX_DIBitmap::CompositeRect(int left,
 
   color_p[3] = static_cast<uint8_t>(src_alpha);
   int Bpp = GetBppFromFormat(m_Format) / 8;
-  bool bAlpha = HasAlpha();
+  bool bAlpha = IsAlphaFormat();
   bool bArgb = GetFormat() == FXDIB_Format::kArgb;
   if (src_alpha == 255) {
     for (int row = rect.top; row < rect.bottom; row++) {

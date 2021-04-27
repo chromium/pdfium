@@ -860,7 +860,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFBitmap_FillRect(FPDF_BITMAP bitmap,
   CFX_DefaultRenderDevice device;
   RetainPtr<CFX_DIBitmap> pBitmap(CFXDIBitmapFromFPDFBitmap(bitmap));
   device.Attach(pBitmap, false, nullptr, false);
-  if (!pBitmap->HasAlpha())
+  if (!pBitmap->IsAlphaFormat())
     color |= 0xFF000000;
   device.FillRect(FX_RECT(left, top, left + width, top + height), color);
 }

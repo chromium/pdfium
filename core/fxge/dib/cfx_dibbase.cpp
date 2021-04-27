@@ -250,7 +250,9 @@ void ConvertBuffer_Plt2PltRgb8(uint8_t* dest_buf,
   ConvertBuffer_IndexCopy(dest_buf, dest_pitch, width, height, pSrcBitmap,
                           src_left, src_top);
   const uint32_t* src_plt = pSrcBitmap->GetPaletteData();
-  size_t plt_size = pSrcBitmap->GetPaletteSize();
+
+  // TODO(tsepez): check against actual allocated span size.
+  size_t plt_size = pSrcBitmap->GetRequiredPaletteSize();
   for (size_t i = 0; i < plt_size; ++i)
     dst_plt[i] = src_plt[i];
 }
@@ -670,8 +672,8 @@ bool CFX_DIBBase::BuildAlphaMask() {
   return true;
 }
 
-size_t CFX_DIBBase::GetPaletteSize() const {
-  if (IsMask())
+size_t CFX_DIBBase::GetRequiredPaletteSize() const {
+  if (IsMaskFormat())
     return 0;
 
   switch (GetBppFromFormat(m_Format)) {
@@ -685,7 +687,7 @@ size_t CFX_DIBBase::GetPaletteSize() const {
 }
 
 uint32_t CFX_DIBBase::GetPaletteArgb(int index) const {
-  DCHECK((GetBPP() == 1 || GetBPP() == 8) && !IsMask());
+  DCHECK((GetBPP() == 1 || GetBPP() == 8) && !IsMaskFormat());
   if (HasPalette())
     return GetPaletteSpan()[index];
 
@@ -696,13 +698,13 @@ uint32_t CFX_DIBBase::GetPaletteArgb(int index) const {
 }
 
 void CFX_DIBBase::SetPaletteArgb(int index, uint32_t color) {
-  DCHECK((GetBPP() == 1 || GetBPP() == 8) && !IsMask());
+  DCHECK((GetBPP() == 1 || GetBPP() == 8) && !IsMaskFormat());
   BuildPalette();
   m_palette[index] = color;
 }
 
 int CFX_DIBBase::FindPalette(uint32_t color) const {
-  DCHECK((GetBPP() == 1 || GetBPP() == 8) && !IsMask());
+  DCHECK((GetBPP() == 1 || GetBPP() == 8) && !IsMaskFormat());
   if (HasPalette()) {
     int palsize = (1 << GetBPP());
     pdfium::span<const uint32_t> palette = GetPaletteSpan();
@@ -866,7 +868,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::CloneAlphaMask() const {
 
 bool CFX_DIBBase::SetAlphaMask(const RetainPtr<CFX_DIBBase>& pAlphaMask,
                                const FX_RECT* pClip) {
-  if (!HasAlpha() || GetFormat() == FXDIB_Format::kArgb)
+  if (!IsAlphaFormat() || GetFormat() == FXDIB_Format::kArgb)
     return false;
 
   if (!pAlphaMask) {
@@ -974,7 +976,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::CloneConvert(FXDIB_Format dest_format) {
     return nullptr;
 
   RetainPtr<CFX_DIBitmap> pSrcAlpha;
-  if (HasAlpha()) {
+  if (IsAlphaFormat()) {
     pSrcAlpha =
         (GetFormat() == FXDIB_Format::kArgb) ? CloneAlphaMask() : m_pAlphaMask;
     if (!pSrcAlpha)

@@ -645,11 +645,11 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
   void* buffer = pSource->GetBuffer();
   if (!buffer)
     return false;
-  SkColorType colorType = forceAlpha || pSource->IsMask()
+  SkColorType colorType = forceAlpha || pSource->IsMaskFormat()
                               ? SkColorType::kAlpha_8_SkColorType
                               : SkColorType::kGray_8_SkColorType;
   SkAlphaType alphaType =
-      pSource->IsMask() ? kPremul_SkAlphaType : kOpaque_SkAlphaType;
+      pSource->IsMaskFormat() ? kPremul_SkAlphaType : kOpaque_SkAlphaType;
   int width = pSource->GetWidth();
   int height = pSource->GetHeight();
   int rowBytes = pSource->GetPitch();
@@ -674,7 +674,8 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
         dst32Storage.reset(FX_Alloc2D(uint32_t, width, height));
         SkPMColor* dst32Pixels = dst32Storage.get();
         pdfium::span<const uint32_t> src_palette = pSource->GetPaletteSpan();
-        const unsigned src_palette_size = pSource->GetPaletteSize();
+        // TODO(tsepez): check against actual allocated span size.
+        const unsigned src_palette_size = pSource->GetRequiredPaletteSize();
         for (int y = 0; y < height; ++y) {
           const uint8_t* srcRow =
               static_cast<const uint8_t*>(buffer) + y * rowBytes;
@@ -1884,9 +1885,9 @@ int CFX_SkiaDeviceDriver::GetDeviceCaps(int caps_id) const {
     case FXDC_RENDER_CAPS: {
       int flags = FXRC_GET_BITS | FXRC_ALPHA_PATH | FXRC_ALPHA_IMAGE |
                   FXRC_BLEND_MODE | FXRC_SOFT_CLIP | FXRC_SHADING;
-      if (m_pBitmap->HasAlpha()) {
+      if (m_pBitmap->IsAlphaFormat()) {
         flags |= FXRC_ALPHA_OUTPUT;
-      } else if (m_pBitmap->IsMask()) {
+      } else if (m_pBitmap->IsMaskFormat()) {
         if (m_pBitmap->GetBPP() == 1) {
           flags |= FXRC_BITMASK_OUTPUT;
         } else {
@@ -2453,7 +2454,7 @@ bool CFX_SkiaDeviceDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
 
 #if defined(_SKIA_SUPPORT_PATHS_)
   Flush();
-  if (pBitmap->IsMask()) {
+  if (pBitmap->IsMaskFormat()) {
     return m_pBitmap->CompositeMask(left, top, src_rect.Width(),
                                     src_rect.Height(), pBitmap, argb,
                                     src_rect.left, src_rect.top, blend_type,
@@ -2539,7 +2540,7 @@ bool CFX_SkiaDeviceDriver::StartDIBits(
     SetBitmapMatrix(matrix, width, height, &skMatrix);
     m_pCanvas->concat(skMatrix);
     SkPaint paint;
-    SetBitmapPaint(pSource->IsMask(), !m_FillOptions.aliased_path, argb,
+    SetBitmapPaint(pSource->IsMaskFormat(), !m_FillOptions.aliased_path, argb,
                    bitmap_alpha, blend_type, &paint);
     // TODO(caryclark) Once Skia supports 8 bit src to 8 bit dst remove this
     if (m_pBitmap && m_pBitmap->GetBPP() == 8 && pSource->GetBPP() == 8) {
@@ -2675,8 +2676,8 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
     SetBitmapMatrix(matrix, srcWidth, srcHeight, &skMatrix);
     m_pCanvas->concat(skMatrix);
     SkPaint paint;
-    SetBitmapPaint(pSource->IsMask(), !m_FillOptions.aliased_path, 0xFFFFFFFF,
-                   bitmap_alpha, blend_type, &paint);
+    SetBitmapPaint(pSource->IsMaskFormat(), !m_FillOptions.aliased_path,
+                   0xFFFFFFFF, bitmap_alpha, blend_type, &paint);
     sk_sp<SkImage> skSrc = SkImage::MakeFromBitmap(skBitmap);
     sk_sp<SkShader> skSrcShader = skSrc->makeShader(
         SkTileMode::kClamp, SkTileMode::kClamp, SkSamplingOptions());

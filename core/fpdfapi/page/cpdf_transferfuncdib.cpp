@@ -33,10 +33,10 @@ CPDF_TransferFuncDIB::CPDF_TransferFuncDIB(
 CPDF_TransferFuncDIB::~CPDF_TransferFuncDIB() = default;
 
 FXDIB_Format CPDF_TransferFuncDIB::GetDestFormat() const {
-  if (m_pSrc->IsMask())
+  if (m_pSrc->IsMaskFormat())
     return FXDIB_Format::k8bppMask;
 
-  if (m_pSrc->HasAlpha())
+  if (m_pSrc->IsAlphaFormat())
     return FXDIB_Format::kArgb;
 
   return CFX_DIBBase::kPlatformRGBFormat;
@@ -163,7 +163,7 @@ void CPDF_TransferFuncDIB::TranslateDownSamples(uint8_t* dest_buf,
     }
   } else {
 #if defined(OS_APPLE)
-    if (!m_pSrc->HasAlpha()) {
+    if (!m_pSrc->IsAlphaFormat()) {
       for (int i = 0; i < pixels; i++) {
         *dest_buf++ = m_RampB[*(src_buf++)];
         *dest_buf++ = m_RampG[*(src_buf++)];

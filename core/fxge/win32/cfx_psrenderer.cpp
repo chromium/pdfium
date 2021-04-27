@@ -308,11 +308,11 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
   if ((matrix.a == 0 && matrix.b == 0) || (matrix.c == 0 && matrix.d == 0))
     return true;
 
-  if (pSource->HasAlpha())
+  if (pSource->IsAlphaFormat())
     return false;
 
   int alpha = FXARGB_A(color);
-  if (pSource->IsMask() && (alpha < 255 || pSource->GetBPP() != 1))
+  if (pSource->IsMaskFormat() && (alpha < 255 || pSource->GetBPP() != 1))
     return false;
 
   m_pStream->WriteString("q\n");
@@ -339,7 +339,7 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
     uint32_t output_size;
     bool compressed = FaxCompressData(std::move(src_buf), width, height,
                                       &output_buf, &output_size);
-    if (pSource->IsMask()) {
+    if (pSource->IsMaskFormat()) {
       SetColor(color);
       m_bColorSet = false;
       buf << " true[";
@@ -353,7 +353,7 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
       buf << "<</K -1/EndOfBlock false/Columns " << width << "/Rows " << height
           << ">>/CCITTFaxDecode filter ";
     }
-    if (pSource->IsMask())
+    if (pSource->IsMaskFormat())
       buf << "iM\n";
     else
       buf << "false 1 colorimage\n";

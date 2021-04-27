@@ -96,7 +96,7 @@ bool CFX_ImageRenderer::Continue(PauseIndicatorIface* pPause) {
   if (!pBitmap || !pBitmap->GetBuffer())
     return false;
 
-  if (pBitmap->IsMask()) {
+  if (pBitmap->IsMaskFormat()) {
     if (m_BitmapAlpha != 255)
       m_MaskColor = FXARGB_MUL_ALPHA(m_MaskColor, m_BitmapAlpha);
     m_pDevice->CompositeMask(

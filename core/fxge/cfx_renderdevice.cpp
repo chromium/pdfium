@@ -772,7 +772,7 @@ bool CFX_RenderDevice::DrawFillStrokePath(
   if (!CreateCompatibleBitmap(bitmap, rect.Width(), rect.Height()))
     return false;
 
-  if (bitmap->HasAlpha()) {
+  if (bitmap->IsAlphaFormat()) {
     bitmap->Clear(0);
     backdrop->Copy(bitmap);
   } else {
@@ -895,7 +895,7 @@ bool CFX_RenderDevice::SetDIBitsWithBlend(const RetainPtr<CFX_DIBBase>& pBitmap,
                                           int left,
                                           int top,
                                           BlendMode blend_mode) {
-  DCHECK(!pBitmap->IsMask());
+  DCHECK(!pBitmap->IsMaskFormat());
   FX_RECT dest_rect(left, top, left + pBitmap->GetWidth(),
                     top + pBitmap->GetHeight());
   dest_rect.Intersect(m_ClipBox);
@@ -906,7 +906,7 @@ bool CFX_RenderDevice::SetDIBitsWithBlend(const RetainPtr<CFX_DIBBase>& pBitmap,
                    dest_rect.left - left + dest_rect.Width(),
                    dest_rect.top - top + dest_rect.Height());
   if ((blend_mode == BlendMode::kNormal || (m_RenderCaps & FXRC_BLEND_MODE)) &&
-      (!pBitmap->HasAlpha() || (m_RenderCaps & FXRC_ALPHA_IMAGE))) {
+      (!pBitmap->IsAlphaFormat() || (m_RenderCaps & FXRC_ALPHA_IMAGE))) {
     return m_pDeviceDriver->SetDIBits(pBitmap, 0, src_rect, dest_rect.left,
                                       dest_rect.top, blend_mode);
   }
@@ -1164,7 +1164,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
     if (!CreateCompatibleBitmap(bitmap, pixel_width, pixel_height))
       return false;
   }
-  if (!bitmap->HasAlpha() && !bitmap->IsMask()) {
+  if (!bitmap->IsAlphaFormat() && !bitmap->IsMaskFormat()) {
     bitmap->Clear(0xFFFFFFFF);
     if (!GetDIBits(bitmap, bmp_rect.left, bmp_rect.top))
       return false;
@@ -1215,7 +1215,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
     DrawNormalTextHelper(bitmap, pGlyph, nrows, point->x, point->y, start_col,
                          end_col, normalize, x_subpixel, a, r, g, b);
   }
-  if (bitmap->IsMask())
+  if (bitmap->IsMaskFormat())
     SetBitMask(bitmap, bmp_rect.left, bmp_rect.top, fill_color);
   else
     SetDIBits(bitmap, bmp_rect.left, bmp_rect.top);

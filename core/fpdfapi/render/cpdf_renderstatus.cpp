@@ -750,7 +750,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::GetBackdrop(
     return nullptr;
 
   bool bNeedDraw;
-  if (pBackdrop->HasAlpha())
+  if (pBackdrop->IsAlphaFormat())
     bNeedDraw = !(m_pDevice->GetRenderCaps() & FXRC_ALPHA_OUTPUT);
   else
     bNeedDraw = !(m_pDevice->GetRenderCaps() & FXRC_GET_BITS);
@@ -761,7 +761,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::GetBackdrop(
   }
   CFX_Matrix FinalMatrix = m_DeviceMatrix;
   FinalMatrix.Translate(-*left, -*top);
-  pBackdrop->Clear(pBackdrop->HasAlpha() ? 0 : 0xffffffff);
+  pBackdrop->Clear(pBackdrop->IsAlphaFormat() ? 0 : 0xffffffff);
 
   CFX_DefaultRenderDevice device;
   device.Attach(pBackdrop, false, nullptr, false);
@@ -1255,7 +1255,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(
     return;
 
   if (blend_mode == BlendMode::kNormal) {
-    if (!pDIBitmap->IsMask()) {
+    if (!pDIBitmap->IsMaskFormat()) {
       if (bitmap_alpha < 255) {
 #if defined(_SKIA_SUPPORT_)
         std::unique_ptr<CFX_ImageRenderer> dummy;
@@ -1294,7 +1294,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(
        (m_pDevice->GetRenderCaps() & FXRC_GET_BITS) && !bBackAlphaRequired);
   if (bGetBackGround) {
     if (bIsolated || !transparency.IsGroup()) {
-      if (!pDIBitmap->IsMask())
+      if (!pDIBitmap->IsMaskFormat())
         m_pDevice->SetDIBitsWithBlend(pDIBitmap, left, top, blend_mode);
       return;
     }
@@ -1314,7 +1314,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(
                               BlendMode::kNormal, nullptr, false);
       left = std::min(left, 0);
       top = std::min(top, 0);
-      if (pDIBitmap->IsMask()) {
+      if (pDIBitmap->IsMaskFormat()) {
         pClone->CompositeMask(0, 0, pClone->GetWidth(), pClone->GetHeight(),
                               pDIBitmap, mask_argb, left, top, blend_mode,
                               nullptr, false);
@@ -1329,7 +1329,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(
     if (m_pDevice->GetBackDrop()) {
       m_pDevice->SetDIBits(pClone, rect.left, rect.top);
     } else {
-      if (!pDIBitmap->IsMask()) {
+      if (!pDIBitmap->IsMaskFormat()) {
         m_pDevice->SetDIBitsWithBlend(pDIBitmap, rect.left, rect.top,
                                       blend_mode);
       }
@@ -1346,7 +1346,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(
   if (!pBackdrop)
     return;
 
-  if (pDIBitmap->IsMask()) {
+  if (pDIBitmap->IsMaskFormat()) {
     pBackdrop->CompositeMask(left - back_left, top - back_top,
                              pDIBitmap->GetWidth(), pDIBitmap->GetHeight(),
                              pDIBitmap, mask_argb, 0, 0, blend_mode, nullptr,
