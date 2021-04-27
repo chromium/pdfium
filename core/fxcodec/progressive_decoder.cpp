@@ -63,11 +63,11 @@ void RGB2BGR(uint8_t* buffer, int width = 1) {
 
 }  // namespace
 
-ProgressiveDecoder::CFXCODEC_WeightTable::CFXCODEC_WeightTable() = default;
+ProgressiveDecoder::WeightTable::WeightTable() = default;
 
-ProgressiveDecoder::CFXCODEC_WeightTable::~CFXCODEC_WeightTable() = default;
+ProgressiveDecoder::WeightTable::~WeightTable() = default;
 
-void ProgressiveDecoder::CFXCODEC_WeightTable::Calc(int dest_len, int src_len) {
+void ProgressiveDecoder::WeightTable::Calc(int dest_len, int src_len) {
   double scale = static_cast<double>(src_len) / dest_len;
   double base = dest_len < 0 ? src_len : 0.0;
   m_ItemSize = (int)(sizeof(int) * 2 + sizeof(int) * (ceil(fabs(scale)) + 1));
@@ -137,11 +137,11 @@ void ProgressiveDecoder::CFXCODEC_WeightTable::Calc(int dest_len, int src_len) {
   }
 }
 
-ProgressiveDecoder::CFXCODEC_HorzTable::CFXCODEC_HorzTable() = default;
+ProgressiveDecoder::HorzTable::HorzTable() = default;
 
-ProgressiveDecoder::CFXCODEC_HorzTable::~CFXCODEC_HorzTable() = default;
+ProgressiveDecoder::HorzTable::~HorzTable() = default;
 
-void ProgressiveDecoder::CFXCODEC_HorzTable::Calc(int dest_len, int src_len) {
+void ProgressiveDecoder::HorzTable::Calc(int dest_len, int src_len) {
   double scale = (double)dest_len / (double)src_len;
   m_ItemSize = sizeof(int) * 4;
   int size = dest_len * m_ItemSize + 4;
@@ -190,11 +190,11 @@ void ProgressiveDecoder::CFXCODEC_HorzTable::Calc(int dest_len, int src_len) {
   }
 }
 
-ProgressiveDecoder::CFXCODEC_VertTable::CFXCODEC_VertTable() = default;
+ProgressiveDecoder::VertTable::VertTable() = default;
 
-ProgressiveDecoder::CFXCODEC_VertTable::~CFXCODEC_VertTable() = default;
+ProgressiveDecoder::VertTable::~VertTable() = default;
 
-void ProgressiveDecoder::CFXCODEC_VertTable::Calc(int dest_len, int src_len) {
+void ProgressiveDecoder::VertTable::Calc(int dest_len, int src_len) {
   double scale = (double)dest_len / (double)src_len;
   m_ItemSize = sizeof(int) * 4;
   int size = dest_len * m_ItemSize + 4;
