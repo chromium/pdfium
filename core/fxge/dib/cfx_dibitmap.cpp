@@ -79,7 +79,7 @@ bool CFX_DIBitmap::Copy(const RetainPtr<CFX_DIBBase>& pSrc) {
     return false;
 
   SetPalette(pSrc->GetPaletteSpan());
-  SetAlphaMask(pSrc->m_pAlphaMask, nullptr);
+  SetAlphaMask(pSrc->GetAlphaMask(), nullptr);
   for (int row = 0; row < pSrc->GetHeight(); row++)
     memcpy(m_pBuffer.Get() + row * m_Pitch, pSrc->GetScanline(row), m_Pitch);
   return true;
@@ -306,8 +306,8 @@ bool CFX_DIBitmap::SetChannelFromBitmap(
     }
     destOffset = 2;
   }
-  if (pSrcClone->m_pAlphaMask) {
-    RetainPtr<CFX_DIBBase> pAlphaMask = pSrcClone->m_pAlphaMask;
+  if (pSrcClone->HasAlphaMask()) {
+    RetainPtr<CFX_DIBBase> pAlphaMask = pSrcClone->GetAlphaMask();
     if (pSrcClone->GetWidth() != m_Width ||
         pSrcClone->GetHeight() != m_Height) {
       if (pAlphaMask) {
@@ -792,7 +792,7 @@ bool CFX_DIBitmap::CompositeBitmap(int dest_left,
   if (!bRgb && !pSrcBitmap->HasPalette())
     return false;
 
-  RetainPtr<CFX_DIBitmap> pSrcAlphaMask = pSrcBitmap->m_pAlphaMask;
+  RetainPtr<CFX_DIBitmap> pSrcAlphaMask = pSrcBitmap->GetAlphaMask();
   for (int row = 0; row < height; row++) {
     uint8_t* dest_scan =
         m_pBuffer.Get() + (dest_top + row) * m_Pitch + dest_left * dest_Bpp;

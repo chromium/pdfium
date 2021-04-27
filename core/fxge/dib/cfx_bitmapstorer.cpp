@@ -26,17 +26,12 @@ void CFX_BitmapStorer::ComposeScanline(int line,
                                        const uint8_t* scanline,
                                        const uint8_t* scan_extra_alpha) {
   uint8_t* dest_buf = m_pBitmap->GetWritableScanline(line);
-  uint8_t* dest_alpha_buf =
-      m_pBitmap->m_pAlphaMask
-          ? m_pBitmap->m_pAlphaMask->GetWritableScanline(line)
-          : nullptr;
   if (dest_buf)
     memcpy(dest_buf, scanline, m_pBitmap->GetPitch());
 
-  if (dest_alpha_buf) {
-    memcpy(dest_alpha_buf, scan_extra_alpha,
-           m_pBitmap->m_pAlphaMask->GetPitch());
-  }
+  uint8_t* dest_alpha_buf = m_pBitmap->GetWritableAlphaMaskScanline(line);
+  if (dest_alpha_buf)
+    memcpy(dest_alpha_buf, scan_extra_alpha, m_pBitmap->GetAlphaMaskPitch());
 }
 
 bool CFX_BitmapStorer::SetInfo(int width,

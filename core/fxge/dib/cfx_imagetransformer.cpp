@@ -243,11 +243,9 @@ void CFX_ImageTransformer::ContinueOther(PauseIndicatorIface* pPause) {
   if (!pTransformed->Create(m_result.Width(), m_result.Height(), format))
     return;
 
-  const auto& pSrcMask = m_Storer.GetBitmap()->m_pAlphaMask;
-  const uint8_t* pSrcMaskBuf = pSrcMask ? pSrcMask->GetBuffer() : nullptr;
-
+  const uint8_t* pSrcMaskBuf = m_Storer.GetBitmap()->GetAlphaMaskBuffer();
   pTransformed->Clear(0);
-  auto& pDestMask = pTransformed->m_pAlphaMask;
+  RetainPtr<CFX_DIBitmap> pDestMask = pTransformed->GetAlphaMask();
   if (pDestMask)
     pDestMask->Clear(0);
 
@@ -262,7 +260,7 @@ void CFX_ImageTransformer::ContinueOther(PauseIndicatorIface* pPause) {
         pDestMask.Get(),
         result2stretch,
         pSrcMaskBuf,
-        m_Storer.GetBitmap()->m_pAlphaMask->GetPitch(),
+        m_Storer.GetBitmap()->GetAlphaMaskPitch(),
     };
     CalcMask(calc_data);
   }

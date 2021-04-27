@@ -1170,8 +1170,8 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
       return false;
   } else {
     bitmap->Clear(0);
-    if (bitmap->m_pAlphaMask)
-      bitmap->m_pAlphaMask->Clear(0);
+    if (bitmap->HasAlphaMask())
+      bitmap->GetAlphaMask()->Clear(0);
   }
   int dest_width = pixel_width;
   int a = 0;

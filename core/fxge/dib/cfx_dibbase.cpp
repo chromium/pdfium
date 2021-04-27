@@ -849,6 +849,26 @@ void CFX_DIBBase::GetPalette(uint32_t* pal, int alpha) const {
   }
 }
 
+uint32_t CFX_DIBBase::GetAlphaMaskPitch() const {
+  return m_pAlphaMask ? m_pAlphaMask->GetPitch() : 0;
+}
+
+const uint8_t* CFX_DIBBase::GetAlphaMaskScanline(int line) const {
+  return m_pAlphaMask ? m_pAlphaMask->GetScanline(line) : nullptr;
+}
+
+uint8_t* CFX_DIBBase::GetWritableAlphaMaskScanline(int line) {
+  return m_pAlphaMask ? m_pAlphaMask->GetWritableScanline(line) : nullptr;
+}
+
+uint8_t* CFX_DIBBase::GetAlphaMaskBuffer() {
+  return m_pAlphaMask ? m_pAlphaMask->GetBuffer() : nullptr;
+}
+
+RetainPtr<CFX_DIBitmap> CFX_DIBBase::GetAlphaMask() {
+  return m_pAlphaMask;
+}
+
 RetainPtr<CFX_DIBitmap> CFX_DIBBase::CloneAlphaMask() const {
   DCHECK_EQ(GetFormat(), FXDIB_Format::kArgb);
   FX_RECT rect(0, 0, m_Width, m_Height);

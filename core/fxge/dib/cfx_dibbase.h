@@ -76,6 +76,12 @@ class CFX_DIBBase : public Retainable {
   RetainPtr<CFX_DIBitmap> SwapXY(bool bXFlip, bool bYFlip) const;
   RetainPtr<CFX_DIBitmap> FlipImage(bool bXFlip, bool bYFlip) const;
 
+  bool HasAlphaMask() const { return !!m_pAlphaMask; }
+  uint32_t GetAlphaMaskPitch() const;
+  const uint8_t* GetAlphaMaskScanline(int line) const;
+  uint8_t* GetWritableAlphaMaskScanline(int line);
+  uint8_t* GetAlphaMaskBuffer();
+  RetainPtr<CFX_DIBitmap> GetAlphaMask();
   RetainPtr<CFX_DIBitmap> CloneAlphaMask() const;
 
   // Copies into internally-owned mask.
@@ -96,8 +102,6 @@ class CFX_DIBBase : public Retainable {
   void DebugVerifyBitmapIsPreMultiplied(void* buffer) const;
 #endif
 
-  RetainPtr<CFX_DIBitmap> m_pAlphaMask;
-
  protected:
   CFX_DIBBase();
 
@@ -117,10 +121,11 @@ class CFX_DIBBase : public Retainable {
   int FindPalette(uint32_t color) const;
   void GetPalette(uint32_t* pal, int alpha) const;
 
+  FXDIB_Format m_Format = FXDIB_Format::kInvalid;
   int m_Width = 0;
   int m_Height = 0;
   uint32_t m_Pitch = 0;
-  FXDIB_Format m_Format = FXDIB_Format::kInvalid;
+  RetainPtr<CFX_DIBitmap> m_pAlphaMask;
   std::vector<uint32_t, FxAllocAllocator<uint32_t>> m_palette;
 };
 

@@ -844,7 +844,7 @@ void CFX_Renderer::render(const Scanline& sl) {
 
   uint8_t* dest_scan = m_pDevice->GetBuffer() + m_pDevice->GetPitch() * y;
   uint8_t* dest_scan_extra_alpha = nullptr;
-  RetainPtr<CFX_DIBitmap> pAlphaMask = m_pDevice->m_pAlphaMask;
+  RetainPtr<CFX_DIBitmap> pAlphaMask = m_pDevice->GetAlphaMask();
   if (pAlphaMask) {
     dest_scan_extra_alpha =
         pAlphaMask->GetBuffer() + pAlphaMask->GetPitch() * y;
