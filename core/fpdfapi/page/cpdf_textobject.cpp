@@ -15,9 +15,11 @@
 
 #define ISLATINWORD(u) (u != 0x20 && u <= 0x28FF)
 
-CPDF_TextObjectItem::CPDF_TextObjectItem() = default;
+CPDF_TextObject::Item::Item() = default;
 
-CPDF_TextObjectItem::~CPDF_TextObjectItem() = default;
+CPDF_TextObject::Item::Item(const Item& that) = default;
+
+CPDF_TextObject::Item::~Item() = default;
 
 CPDF_TextObject::CPDF_TextObject(int32_t content_stream)
     : CPDF_PageObject(content_stream) {}
@@ -34,25 +36,27 @@ size_t CPDF_TextObject::CountItems() const {
   return m_CharCodes.size();
 }
 
-void CPDF_TextObject::GetItemInfo(size_t index,
-                                  CPDF_TextObjectItem* pInfo) const {
+CPDF_TextObject::Item CPDF_TextObject::GetItemInfo(size_t index) const {
   DCHECK(index < m_CharCodes.size());
-  pInfo->m_CharCode = m_CharCodes[index];
-  pInfo->m_Origin = CFX_PointF(index > 0 ? m_CharPos[index - 1] : 0, 0);
-  if (pInfo->m_CharCode == CPDF_Font::kInvalidCharCode)
-    return;
+
+  Item info;
+  info.m_CharCode = m_CharCodes[index];
+  info.m_Origin = CFX_PointF(index > 0 ? m_CharPos[index - 1] : 0, 0);
+  if (info.m_CharCode == CPDF_Font::kInvalidCharCode)
+    return info;
 
   RetainPtr<CPDF_Font> pFont = GetFont();
   if (!pFont->IsCIDFont() || !pFont->AsCIDFont()->IsVertWriting())
-    return;
+    return info;
 
-  uint16_t cid = pFont->AsCIDFont()->CIDFromCharCode(pInfo->m_CharCode);
-  pInfo->m_Origin = CFX_PointF(0, pInfo->m_Origin.x);
+  uint16_t cid = pFont->AsCIDFont()->CIDFromCharCode(info.m_CharCode);
+  info.m_Origin = CFX_PointF(0, info.m_Origin.x);
 
   CFX_Point16 vertical_origin = pFont->AsCIDFont()->GetVertOrigin(cid);
   float fontsize = GetFontSize();
-  pInfo->m_Origin.x -= fontsize * vertical_origin.x / 1000;
-  pInfo->m_Origin.y -= fontsize * vertical_origin.y / 1000;
+  info.m_Origin.x -= fontsize * vertical_origin.x / 1000;
+  info.m_Origin.y -= fontsize * vertical_origin.y / 1000;
+  return info;
 }
 
 size_t CPDF_TextObject::CountChars() const {
@@ -76,18 +80,16 @@ uint32_t CPDF_TextObject::GetCharCode(size_t index) const {
   return CPDF_Font::kInvalidCharCode;
 }
 
-void CPDF_TextObject::GetCharInfo(size_t index,
-                                  CPDF_TextObjectItem* pInfo) const {
+CPDF_TextObject::Item CPDF_TextObject::GetCharInfo(size_t index) const {
   size_t count = 0;
   for (size_t i = 0; i < m_CharCodes.size(); ++i) {
     uint32_t charcode = m_CharCodes[i];
     if (charcode == CPDF_Font::kInvalidCharCode)
       continue;
-    if (count++ != index)
-      continue;
-    GetItemInfo(i, pInfo);
-    break;
+    if (count++ == index)
+      return GetItemInfo(i);
   }
+  return Item();
 }
 
 int CPDF_TextObject::CountWords() const {

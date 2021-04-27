@@ -15,17 +15,17 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 
-class CPDF_TextObjectItem {
- public:
-  CPDF_TextObjectItem();
-  ~CPDF_TextObjectItem();
-
-  uint32_t m_CharCode = 0;
-  CFX_PointF m_Origin;
-};
-
 class CPDF_TextObject final : public CPDF_PageObject {
  public:
+  struct Item {
+    Item();
+    Item(const Item& that);
+    ~Item();
+
+    uint32_t m_CharCode = 0;
+    CFX_PointF m_Origin;
+  };
+
   explicit CPDF_TextObject(int32_t content_stream);
   CPDF_TextObject();
   ~CPDF_TextObject() override;
@@ -40,11 +40,11 @@ class CPDF_TextObject final : public CPDF_PageObject {
   std::unique_ptr<CPDF_TextObject> Clone() const;
 
   size_t CountItems() const;
-  void GetItemInfo(size_t index, CPDF_TextObjectItem* pInfo) const;
+  Item GetItemInfo(size_t index) const;
 
   size_t CountChars() const;
   uint32_t GetCharCode(size_t index) const;
-  void GetCharInfo(size_t index, CPDF_TextObjectItem* pInfo) const;
+  Item GetCharInfo(size_t index) const;
   float GetCharWidth(uint32_t charcode) const;
   int CountWords() const;
   WideString GetWordString(int nWordIndex) const;
