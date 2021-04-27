@@ -107,15 +107,9 @@ RetainPtr<CPDF_StructElement> CPDF_StructTree::AddPageNode(
   if (!pParentElement)
     return pElement;
 
-  bool bSave = false;
-  for (CPDF_StructKid& kid : *pParentElement->GetKids()) {
-    if (kid.m_Type == CPDF_StructKid::kElement && kid.m_pDict == pDict) {
-      kid.m_pElement = pElement;
-      bSave = true;
-    }
-  }
-  if (!bSave)
+  if (!pParentElement->UpdateKidIfElement(pDict, pElement.Get()))
     map->erase(pDict);
+
   return pElement;
 }
 
