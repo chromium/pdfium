@@ -15,7 +15,7 @@
 #include "core/fxcrt/css/cfx_cssstylesheet.h"
 #include "core/fxcrt/css/cfx_csssyntaxparser.h"
 
-CFX_CSSRuleCollection::CFX_CSSRuleCollection() : m_iSelectors(0) {}
+CFX_CSSRuleCollection::CFX_CSSRuleCollection() = default;
 
 CFX_CSSRuleCollection::~CFX_CSSRuleCollection() {
   Clear();

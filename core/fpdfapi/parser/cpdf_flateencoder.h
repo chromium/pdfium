@@ -34,7 +34,7 @@ class CPDF_FlateEncoder {
  private:
   RetainPtr<CPDF_StreamAcc> m_pAcc;
 
-  uint32_t m_dwSize;
+  uint32_t m_dwSize = 0;
   MaybeOwned<uint8_t, FxFreeDeleter> m_pData;
 
   // Only one of these two pointers is valid at any time.

@@ -20,7 +20,7 @@ class CPDF_TextObjectItem {
   CPDF_TextObjectItem();
   ~CPDF_TextObjectItem();
 
-  uint32_t m_CharCode;
+  uint32_t m_CharCode = 0;
   CFX_PointF m_Origin;
 };
 

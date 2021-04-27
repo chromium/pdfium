@@ -413,6 +413,4 @@ CFX_FolderFontInfo::FontFaceInfo::FontFaceInfo(ByteString filePath,
       m_FaceName(faceName),
       m_FontTables(fontTables),
       m_FontOffset(fontOffset),
-      m_FileSize(fileSize),
-      m_Styles(0),
-      m_Charsets(0) {}
+      m_FileSize(fileSize) {}

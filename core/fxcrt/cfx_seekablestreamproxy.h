@@ -7,6 +7,7 @@
 #ifndef CORE_FXCRT_CFX_SEEKABLESTREAMPROXY_H_
 #define CORE_FXCRT_CFX_SEEKABLESTREAMPROXY_H_
 
+#include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -38,10 +39,10 @@ class CFX_SeekableStreamProxy final : public Retainable {
   void Seek(From eSeek, FX_FILESIZE iOffset);
   size_t ReadData(uint8_t* pBuffer, size_t iBufferSize);
 
-  uint16_t m_wCodePage;
-  size_t m_wBOMLength;
-  FX_FILESIZE m_iPosition;
-  RetainPtr<IFX_SeekableReadStream> m_pStream;
+  uint16_t m_wCodePage = FX_CODEPAGE_DefANSI;
+  size_t m_wBOMLength = 0;
+  FX_FILESIZE m_iPosition = 0;
+  RetainPtr<IFX_SeekableReadStream> const m_pStream;
 };
 
 #endif  // CORE_FXCRT_CFX_SEEKABLESTREAMPROXY_H_

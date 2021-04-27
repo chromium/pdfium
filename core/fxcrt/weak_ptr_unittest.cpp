@@ -19,7 +19,7 @@ using UniqueTestPtr =
 
 class PseudoDeletable {
  public:
-  PseudoDeletable() : delete_count_(0) {}
+  PseudoDeletable() = default;
   void Release() {
     ++delete_count_;
     next_.Reset();
@@ -28,7 +28,7 @@ class PseudoDeletable {
   int delete_count() const { return delete_count_; }
 
  private:
-  int delete_count_;
+  int delete_count_ = 0;
   WeakTestPtr next_;
 };
 

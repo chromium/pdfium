@@ -60,8 +60,8 @@ class CFX_FolderFontInfo : public SystemFontInfoIface {
     const ByteString m_FontTables;
     const uint32_t m_FontOffset;
     const uint32_t m_FileSize;
-    uint32_t m_Styles;
-    uint32_t m_Charsets;
+    uint32_t m_Styles = 0;
+    uint32_t m_Charsets = 0;
   };
 
   void ScanPath(const ByteString& path);

@@ -47,18 +47,15 @@ class CFX_FileBufferArchive final : public IFX_ArchiveStream {
  private:
   bool Flush();
 
-  FX_FILESIZE offset_;
-  size_t current_length_;
+  FX_FILESIZE offset_ = 0;
+  size_t current_length_ = 0;
   std::vector<uint8_t, FxAllocAllocator<uint8_t>> buffer_;
   RetainPtr<IFX_RetainableWriteStream> backing_file_;
 };
 
 CFX_FileBufferArchive::CFX_FileBufferArchive(
     const RetainPtr<IFX_RetainableWriteStream>& file)
-    : offset_(0),
-      current_length_(0),
-      buffer_(kArchiveBufferSize),
-      backing_file_(file) {
+    : buffer_(kArchiveBufferSize), backing_file_(file) {
   DCHECK(file);
 }
 

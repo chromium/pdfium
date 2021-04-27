@@ -65,11 +65,11 @@ class CFX_Palette {
   std::vector<uint32_t> m_Palette;
   // (Amount, Color) pairs
   std::vector<std::pair<uint32_t, uint32_t>> m_Luts;
-  int m_lut;
+  int m_lut = 0;
 };
 
 CFX_Palette::CFX_Palette(const RetainPtr<CFX_DIBBase>& pBitmap)
-    : m_Palette(256), m_Luts(4096), m_lut(0) {
+    : m_Palette(256), m_Luts(4096) {
   int bpp = pBitmap->GetBPP() / 8;
   int width = pBitmap->GetWidth();
   int height = pBitmap->GetHeight();

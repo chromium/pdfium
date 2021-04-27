@@ -31,9 +31,9 @@ class CFX_BitStream {
   }
 
  private:
-  uint32_t m_BitPos;
-  uint32_t m_BitSize;
-  UnownedPtr<const uint8_t> m_pData;
+  uint32_t m_BitPos = 0;
+  const uint32_t m_BitSize;
+  UnownedPtr<const uint8_t> const m_pData;
 };
 
 #endif  // CORE_FXCRT_CFX_BITSTREAM_H_

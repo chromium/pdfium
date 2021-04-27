@@ -15,7 +15,7 @@
 
 #define ISLATINWORD(u) (u != 0x20 && u <= 0x28FF)
 
-CPDF_TextObjectItem::CPDF_TextObjectItem() : m_CharCode(0) {}
+CPDF_TextObjectItem::CPDF_TextObjectItem() = default;
 
 CPDF_TextObjectItem::~CPDF_TextObjectItem() = default;
 

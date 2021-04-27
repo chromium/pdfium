@@ -7,6 +7,7 @@
 #ifndef XFA_FDE_CFDE_TEXTEDITENGINE_H_
 #define XFA_FDE_CFDE_TEXTEDITENGINE_H_
 
+#include <limits>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -51,8 +52,8 @@ class CFDE_TextEditEngine : public CFGAS_TxtBreak::Engine {
     bool IsEOF(bool bPrev) const;
 
    private:
-    UnownedPtr<const CFDE_TextEditEngine> engine_;
-    int32_t current_position_;
+    UnownedPtr<const CFDE_TextEditEngine> const engine_;
+    int32_t current_position_ = -1;
   };
 
   class Operation {
@@ -183,6 +184,15 @@ class CFDE_TextEditEngine : public CFGAS_TxtBreak::Engine {
   void SetMaxEditOperationsForTesting(size_t max);
 
  private:
+  struct Selection {
+    size_t start_idx;
+    size_t count;
+  };
+
+  static constexpr size_t kGapSize = 128;
+  static constexpr size_t kMaxEditOperations = 128;
+  static constexpr size_t kPageWidthMax = 0xffff;
+
   void SetCombTextWidth();
   void AdjustGap(size_t idx, size_t length);
   void RebuildPieces();
@@ -198,50 +208,45 @@ class CFDE_TextEditEngine : public CFGAS_TxtBreak::Engine {
   }
   std::vector<CFX_RectF> GetCharRects(const FDE_TEXTEDITPIECE& piece);
 
-  struct Selection {
-    size_t start_idx;
-    size_t count;
-  };
-
   CFX_RectF contents_bounding_box_;
   UnownedPtr<Delegate> delegate_;
   std::vector<FDE_TEXTEDITPIECE> text_piece_info_;
   std::vector<size_t> char_widths_;
   CFGAS_TxtBreak text_break_;
   RetainPtr<CFGAS_GEFont> font_;
-  FX_ARGB font_color_;
-  float font_size_;
-  float line_spacing_;
+  FX_ARGB font_color_ = 0xff000000;
+  float font_size_ = 10.0f;
+  float line_spacing_ = 10.0f;
   std::vector<WideString::CharType> content_;
-  size_t text_length_;
+  size_t text_length_ = 0;
 
   // See e.g. https://en.wikipedia.org/wiki/Gap_buffer
-  size_t gap_position_;
-  size_t gap_size_;
+  size_t gap_position_ = 0;
+  size_t gap_size_ = kGapSize;
 
-  size_t available_width_;
-  size_t character_limit_;
-  size_t visible_line_count_;
+  size_t available_width_ = kPageWidthMax;
+  size_t character_limit_ = std::numeric_limits<size_t>::max();
+  size_t visible_line_count_ = 1;
   // Ring buffer of edit operations
   std::vector<std::unique_ptr<Operation>> operation_buffer_;
   // Next edit operation to undo.
-  size_t next_operation_index_to_undo_;
+  size_t next_operation_index_to_undo_ = kMaxEditOperations - 1;
   // Next index to insert an edit operation into.
-  size_t next_operation_index_to_insert_;
-  size_t max_edit_operations_;
-  uint32_t character_alignment_;
-  bool has_character_limit_;
-  bool is_comb_text_;
-  bool is_dirty_;
-  bool validation_enabled_;
-  bool is_multiline_;
-  bool is_linewrap_enabled_;
-  bool limit_horizontal_area_;
-  bool limit_vertical_area_;
-  bool password_mode_;
-  wchar_t password_alias_;
-  bool has_selection_;
-  Selection selection_;
+  size_t next_operation_index_to_insert_ = 0;
+  size_t max_edit_operations_ = kMaxEditOperations;
+  uint32_t character_alignment_ = CFX_TxtLineAlignment_Left;
+  bool has_character_limit_ = false;
+  bool is_comb_text_ = false;
+  bool is_dirty_ = false;
+  bool validation_enabled_ = false;
+  bool is_multiline_ = false;
+  bool is_linewrap_enabled_ = false;
+  bool limit_horizontal_area_ = false;
+  bool limit_vertical_area_ = false;
+  bool password_mode_ = false;
+  wchar_t password_alias_ = L'*';
+  bool has_selection_ = false;
+  Selection selection_{0, 0};
 };
 
 #endif  // XFA_FDE_CFDE_TEXTEDITENGINE_H_

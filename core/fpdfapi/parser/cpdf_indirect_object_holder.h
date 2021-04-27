@@ -76,7 +76,7 @@ class CPDF_IndirectObjectHolder {
   virtual RetainPtr<CPDF_Object> ParseIndirectObject(uint32_t objnum);
 
  private:
-  uint32_t m_LastObjNum;
+  uint32_t m_LastObjNum = 0;
   std::map<uint32_t, RetainPtr<CPDF_Object>> m_IndirectObjs;
   WeakPtr<ByteStringPool> m_pByteStringPool;
 };

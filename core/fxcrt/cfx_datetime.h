@@ -16,14 +16,7 @@ class CFX_DateTime {
  public:
   static CFX_DateTime Now();
 
-  CFX_DateTime()
-      : year_(0),
-        month_(0),
-        day_(0),
-        hour_(0),
-        minute_(0),
-        second_(0),
-        millisecond_(0) {}
+  CFX_DateTime() = default;
   CFX_DateTime(int32_t year,
                uint8_t month,
                uint8_t day,
@@ -82,13 +75,13 @@ class CFX_DateTime {
   bool operator==(const CFX_DateTime& other) const;
 
  private:
-  int32_t year_;
-  uint8_t month_;
-  uint8_t day_;
-  uint8_t hour_;
-  uint8_t minute_;
-  uint8_t second_;
-  uint16_t millisecond_;
+  int32_t year_ = 0;
+  uint8_t month_ = 0;
+  uint8_t day_ = 0;
+  uint8_t hour_ = 0;
+  uint8_t minute_ = 0;
+  uint8_t second_ = 0;
+  uint16_t millisecond_ = 0;
 };
 
 #endif  // CORE_FXCRT_CFX_DATETIME_H_

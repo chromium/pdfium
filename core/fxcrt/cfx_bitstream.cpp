@@ -13,7 +13,7 @@
 #include "third_party/base/check.h"
 
 CFX_BitStream::CFX_BitStream(pdfium::span<const uint8_t> pData)
-    : m_BitPos(0), m_BitSize(pData.size() * 8), m_pData(pData.data()) {
+    : m_BitSize(pData.size() * 8), m_pData(pData.data()) {
   DCHECK(pData.size() <= std::numeric_limits<uint32_t>::max() / 8);
 }
 

@@ -90,7 +90,7 @@ void StringDataTemplate<CharType>::CopyContentsAt(size_t offset,
 template <typename CharType>
 StringDataTemplate<CharType>::StringDataTemplate(size_t dataLen,
                                                  size_t allocLen)
-    : m_nRefs(0), m_nDataLength(dataLen), m_nAllocLength(allocLen) {
+    : m_nDataLength(dataLen), m_nAllocLength(allocLen) {
   DCHECK(dataLen >= 0);
   DCHECK(dataLen <= allocLen);
   m_String[dataLen] = 0;

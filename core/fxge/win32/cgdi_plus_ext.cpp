@@ -468,7 +468,7 @@ Optional<std::pair<size_t, size_t>> IsSmallTriangle(
 
 class GpStream final : public IStream {
  public:
-  GpStream() : m_RefCount(1), m_ReadPos(0) {}
+  GpStream() = default;
   ~GpStream() = default;
 
   // IUnknown
@@ -597,8 +597,8 @@ class GpStream final : public IStream {
   }
 
  private:
-  LONG m_RefCount;
-  std::streamoff m_ReadPos;
+  LONG m_RefCount = 1;
+  std::streamoff m_ReadPos = 0;
   std::ostringstream m_InterStream;
 };
 

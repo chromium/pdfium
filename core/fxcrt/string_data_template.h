@@ -33,13 +33,13 @@ class StringDataTemplate {
   // Since the count increments with each new pointer, the largest value is
   // the number of pointers that can fit into the address space. The size of
   // the address space itself is a good upper bound on it.
-  intptr_t m_nRefs;
+  intptr_t m_nRefs = 0;
 
   // These lengths are in terms of number of characters, not bytes, and do not
   // include the terminating NUL character, but the underlying buffer is sized
   // to be capable of holding it.
   size_t m_nDataLength;
-  size_t m_nAllocLength;
+  const size_t m_nAllocLength;
 
   // Not really 1, variable size.
   CharType m_String[1];

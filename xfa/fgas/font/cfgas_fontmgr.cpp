@@ -599,8 +599,7 @@ int32_t CalcPenalty(CFGAS_FontDescriptor* pInstalled,
 
 }  // namespace
 
-CFGAS_FontDescriptor::CFGAS_FontDescriptor()
-    : m_nFaceIndex(0), m_dwFontStyles(0), m_dwUsb(), m_dwCsb() {}
+CFGAS_FontDescriptor::CFGAS_FontDescriptor() = default;
 
 CFGAS_FontDescriptor::~CFGAS_FontDescriptor() = default;
 
