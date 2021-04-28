@@ -45,7 +45,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling clang
   # and whatever else without interference from each other.
-  'clang_revision': 'db6297931a88c9f8375259082b48302ee61ea152',
+  'clang_revision': 'ba668f13d135f1d01faf9b03c9a05f5877ac3f51',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling clang_dsymutil
   # and whatever else without interference from each other.
