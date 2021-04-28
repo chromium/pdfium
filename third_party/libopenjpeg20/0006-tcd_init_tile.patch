@@ -1,8 +1,8 @@
 diff --git a/third_party/libopenjpeg20/tcd.c b/third_party/libopenjpeg20/tcd.c
-index 1dd15405d..acc28dd55 100644
+index 6442669d6..4c728d4c6 100644
 --- a/third_party/libopenjpeg20/tcd.c
 +++ b/third_party/libopenjpeg20/tcd.c
-@@ -818,6 +818,11 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
+@@ -819,6 +819,11 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
          if (isEncoder) {
              OPJ_SIZE_T l_tile_data_size;
  

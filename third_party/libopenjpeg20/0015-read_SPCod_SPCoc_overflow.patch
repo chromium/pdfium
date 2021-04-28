@@ -1,8 +1,8 @@
 diff --git a/third_party/libopenjpeg20/j2k.c b/third_party/libopenjpeg20/j2k.c
-index 8e35b33ee..d95963a5c 100644
+index 5e1494394..413dbdd9f 100644
 --- a/third_party/libopenjpeg20/j2k.c
 +++ b/third_party/libopenjpeg20/j2k.c
-@@ -9527,6 +9527,10 @@ static OPJ_BOOL opj_j2k_read_SPCod_SPCoc(opj_j2k_t *p_j2k,
+@@ -10537,6 +10537,10 @@ static OPJ_BOOL opj_j2k_read_SPCod_SPCoc(opj_j2k_t *p_j2k,
              p_j2k->m_specific_param.m_decoder.m_default_tcp;
  
      /* precondition again */
