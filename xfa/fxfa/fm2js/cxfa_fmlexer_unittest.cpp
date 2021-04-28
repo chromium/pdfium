@@ -13,14 +13,14 @@
 TEST(CXFA_FMLexerTest, NullString) {
   WideStringView null_string;
   CXFA_FMLexer lexer(null_string);
-  CXFA_FMToken token = lexer.NextToken();
+  CXFA_FMLexer::Token token = lexer.NextToken();
   EXPECT_EQ(TOKeof, token.m_type);
   EXPECT_TRUE(lexer.IsComplete());
 }
 
 TEST(CXFA_FMLexerTest, EmptyString) {
   CXFA_FMLexer lexer(L"");
-  CXFA_FMToken token = lexer.NextToken();
+  CXFA_FMLexer::Token token = lexer.NextToken();
   EXPECT_EQ(TOKeof, token.m_type);
   EXPECT_TRUE(lexer.IsComplete());
 }
@@ -28,7 +28,7 @@ TEST(CXFA_FMLexerTest, EmptyString) {
 TEST(CXFA_FMLexerTest, Numbers) {
   {
     CXFA_FMLexer lexer(L"-12");
-    CXFA_FMToken token = lexer.NextToken();
+    CXFA_FMLexer::Token token = lexer.NextToken();
     // TODO(dsinclair): Should this return -12 instead of two tokens?
     EXPECT_EQ(TOKminus, token.m_type);
     token = lexer.NextToken();
@@ -38,31 +38,31 @@ TEST(CXFA_FMLexerTest, Numbers) {
   }
   {
     CXFA_FMLexer lexer(L"1.5362");
-    CXFA_FMToken token = lexer.NextToken();
+    CXFA_FMLexer::Token token = lexer.NextToken();
     EXPECT_EQ(TOKnumber, token.m_type);
     EXPECT_EQ(L"1.5362", token.m_string);
   }
   {
     CXFA_FMLexer lexer(L"0.875");
-    CXFA_FMToken token = lexer.NextToken();
+    CXFA_FMLexer::Token token = lexer.NextToken();
     EXPECT_EQ(TOKnumber, token.m_type);
     EXPECT_EQ(L"0.875", token.m_string);
   }
   {
     CXFA_FMLexer lexer(L"5.56e-2");
-    CXFA_FMToken token = lexer.NextToken();
+    CXFA_FMLexer::Token token = lexer.NextToken();
     EXPECT_EQ(TOKnumber, token.m_type);
     EXPECT_EQ(L"5.56e-2", token.m_string);
   }
   {
     CXFA_FMLexer lexer(L"1.234E10");
-    CXFA_FMToken token = lexer.NextToken();
+    CXFA_FMLexer::Token token = lexer.NextToken();
     EXPECT_EQ(TOKnumber, token.m_type);
     EXPECT_EQ(L"1.234E10", token.m_string);
   }
   {
     CXFA_FMLexer lexer(L"123456789.012345678");
-    CXFA_FMToken token = lexer.NextToken();
+    CXFA_FMLexer::Token token = lexer.NextToken();
     EXPECT_EQ(TOKnumber, token.m_type);
     // TODO(dsinclair): This should round as per IEEE 64-bit values.
     // EXPECT_EQ(L"123456789.01234567", token.m_string);
@@ -70,7 +70,7 @@ TEST(CXFA_FMLexerTest, Numbers) {
   }
   {
     CXFA_FMLexer lexer(L"99999999999999999");
-    CXFA_FMToken token = lexer.NextToken();
+    CXFA_FMLexer::Token token = lexer.NextToken();
     EXPECT_EQ(TOKnumber, token.m_type);
     // TODO(dsinclair): This is spec'd as rounding when > 16 significant digits
     // prior to the exponent.
@@ -84,7 +84,7 @@ TEST(CXFA_FMLexerTest, Numbers) {
 TEST(CXFA_FMLexerTest, Strings) {
   {
     CXFA_FMLexer lexer(L"\"The cat jumped over the fence.\"");
-    CXFA_FMToken token = lexer.NextToken();
+    CXFA_FMLexer::Token token = lexer.NextToken();
     EXPECT_EQ(TOKstring, token.m_type);
     EXPECT_EQ(L"\"The cat jumped over the fence.\"", token.m_string);
 
@@ -93,14 +93,14 @@ TEST(CXFA_FMLexerTest, Strings) {
   }
   {
     CXFA_FMLexer lexer(L"\"\"");
-    CXFA_FMToken token = lexer.NextToken();
+    CXFA_FMLexer::Token token = lexer.NextToken();
     EXPECT_EQ(TOKstring, token.m_type);
     EXPECT_EQ(L"\"\"", token.m_string);
   }
   {
     CXFA_FMLexer lexer(
         L"\"The message reads: \"\"Warning: Insufficient Memory\"\"\"");
-    CXFA_FMToken token = lexer.NextToken();
+    CXFA_FMLexer::Token token = lexer.NextToken();
     EXPECT_EQ(TOKstring, token.m_type);
     EXPECT_EQ(L"\"The message reads: \"\"Warning: Insufficient Memory\"\"\"",
               token.m_string);
@@ -108,7 +108,7 @@ TEST(CXFA_FMLexerTest, Strings) {
   {
     CXFA_FMLexer lexer(
         L"\"\\u0047\\u006f\\u0066\\u0069\\u0073\\u0068\\u0021\\u000d\\u000a\"");
-    CXFA_FMToken token = lexer.NextToken();
+    CXFA_FMLexer::Token token = lexer.NextToken();
     EXPECT_EQ(TOKstring, token.m_type);
     EXPECT_EQ(
         L"\"\\u0047\\u006f\\u0066\\u0069\\u0073\\u0068\\u0021\\u000d\\u000a\"",
@@ -184,7 +184,7 @@ TEST(CXFA_FMLexerTest, OperatorsAndKeywords) {
 
   for (size_t i = 0; i < pdfium::size(op); ++i) {
     CXFA_FMLexer lexer(op[i].op);
-    CXFA_FMToken token = lexer.NextToken();
+    CXFA_FMLexer::Token token = lexer.NextToken();
     EXPECT_EQ(op[i].token, token.m_type);
     EXPECT_TRUE(lexer.IsComplete());
   }
@@ -193,17 +193,17 @@ TEST(CXFA_FMLexerTest, OperatorsAndKeywords) {
 TEST(CXFA_FMLexerTest, Comments) {
   {
     CXFA_FMLexer lexer(L"// Empty.");
-    CXFA_FMToken token = lexer.NextToken();
+    CXFA_FMLexer::Token token = lexer.NextToken();
     EXPECT_EQ(TOKeof, token.m_type);
   }
   {
     CXFA_FMLexer lexer(L"//");
-    CXFA_FMToken token = lexer.NextToken();
+    CXFA_FMLexer::Token token = lexer.NextToken();
     EXPECT_EQ(TOKeof, token.m_type);
   }
   {
     CXFA_FMLexer lexer(L"123 // Empty.\n\"str\"");
-    CXFA_FMToken token = lexer.NextToken();
+    CXFA_FMLexer::Token token = lexer.NextToken();
     EXPECT_EQ(TOKnumber, token.m_type);
     EXPECT_EQ(L"123", token.m_string);
 
@@ -216,17 +216,17 @@ TEST(CXFA_FMLexerTest, Comments) {
   }
   {
     CXFA_FMLexer lexer(L";");
-    CXFA_FMToken token = lexer.NextToken();
+    CXFA_FMLexer::Token token = lexer.NextToken();
     EXPECT_EQ(TOKeof, token.m_type);
   }
   {
     CXFA_FMLexer lexer(L"; Empty.");
-    CXFA_FMToken token = lexer.NextToken();
+    CXFA_FMLexer::Token token = lexer.NextToken();
     EXPECT_EQ(TOKeof, token.m_type);
   }
   {
     CXFA_FMLexer lexer(L"123 ;Empty.\n\"str\"");
-    CXFA_FMToken token = lexer.NextToken();
+    CXFA_FMLexer::Token token = lexer.NextToken();
     EXPECT_EQ(TOKnumber, token.m_type);
     EXPECT_EQ(L"123", token.m_string);
 
@@ -245,7 +245,7 @@ TEST(CXFA_FMLexerTest, ValidIdentifiers) {
       L"a", L"an_identifier", L"_ident", L"$ident", L"!ident", L"GetAddr"};
   for (const auto* ident : identifiers) {
     CXFA_FMLexer lexer(ident);
-    CXFA_FMToken token = lexer.NextToken();
+    CXFA_FMLexer::Token token = lexer.NextToken();
     EXPECT_EQ(TOKidentifier, token.m_type);
     EXPECT_EQ(ident, token.m_string);
     EXPECT_TRUE(lexer.IsComplete());
@@ -255,17 +255,17 @@ TEST(CXFA_FMLexerTest, ValidIdentifiers) {
 TEST(CXFA_FMLexerTest, InvalidIdentifiers) {
   {
     CXFA_FMLexer lexer(L"#a");
-    CXFA_FMToken token = lexer.NextToken();
+    CXFA_FMLexer::Token token = lexer.NextToken();
     EXPECT_EQ(TOKreserver, token.m_type);
   }
   {
     CXFA_FMLexer lexer(L"1a");
-    CXFA_FMToken token = lexer.NextToken();
+    CXFA_FMLexer::Token token = lexer.NextToken();
     EXPECT_EQ(TOKreserver, token.m_type);
   }
   {
     CXFA_FMLexer lexer(L"an@identifier");
-    CXFA_FMToken token = lexer.NextToken();
+    CXFA_FMLexer::Token token = lexer.NextToken();
     EXPECT_NE(TOKreserver, token.m_type);
     token = lexer.NextToken();
     EXPECT_EQ(TOKreserver, token.m_type);
@@ -274,7 +274,7 @@ TEST(CXFA_FMLexerTest, InvalidIdentifiers) {
   }
   {
     CXFA_FMLexer lexer(L"_ident@");
-    CXFA_FMToken token = lexer.NextToken();
+    CXFA_FMLexer::Token token = lexer.NextToken();
     EXPECT_NE(TOKreserver, token.m_type);
     token = lexer.NextToken();
     EXPECT_EQ(TOKreserver, token.m_type);
@@ -285,12 +285,12 @@ TEST(CXFA_FMLexerTest, InvalidIdentifiers) {
 TEST(CXFA_FMLexerTest, Whitespace) {
   {
     CXFA_FMLexer lexer(L" \t\xc\x9\xb");
-    CXFA_FMToken token = lexer.NextToken();
+    CXFA_FMLexer::Token token = lexer.NextToken();
     EXPECT_EQ(TOKeof, token.m_type);
   }
   {
     CXFA_FMLexer lexer(L"123 \t\xc\x9\xb 456");
-    CXFA_FMToken token = lexer.NextToken();
+    CXFA_FMLexer::Token token = lexer.NextToken();
     EXPECT_EQ(TOKnumber, token.m_type);
     EXPECT_EQ(L"123", token.m_string);
 
@@ -306,7 +306,7 @@ TEST(CXFA_FMLexerTest, Whitespace) {
 
 TEST(CXFA_FMLexerTest, NullData) {
   CXFA_FMLexer lexer(WideStringView(L"\x2d\x32\x00\x2d\x32", 5));
-  CXFA_FMToken token = lexer.NextToken();
+  CXFA_FMLexer::Token token = lexer.NextToken();
   EXPECT_EQ(TOKminus, token.m_type);
 
   token = lexer.NextToken();

@@ -81,35 +81,34 @@ enum XFA_FM_TOKEN {
   TOKreserver
 };
 
-class CXFA_FMToken {
- public:
-  CXFA_FMToken();
-  explicit CXFA_FMToken(XFA_FM_TOKEN token);
-  CXFA_FMToken(const CXFA_FMToken&);
-  ~CXFA_FMToken();
-
-#ifndef NDEBUG
-  WideString ToDebugString() const;
-#endif  // NDEBUG
-
-  WideStringView m_string;
-  XFA_FM_TOKEN m_type;
-};
-
 class CXFA_FMLexer {
   CPPGC_STACK_ALLOCATED();  // Raw pointers allowed.
 
  public:
+  struct Token {
+    Token();
+    explicit Token(XFA_FM_TOKEN token);
+    Token(const Token& that);
+    ~Token();
+
+#ifndef NDEBUG
+    WideString ToDebugString() const;
+#endif  // NDEBUG
+
+    WideStringView m_string;
+    XFA_FM_TOKEN m_type;
+  };
+
   explicit CXFA_FMLexer(WideStringView wsFormcalc);
   ~CXFA_FMLexer();
 
-  CXFA_FMToken NextToken();
+  Token NextToken();
   bool IsComplete() const { return m_nCursor >= m_spInput.size(); }
 
  private:
-  CXFA_FMToken AdvanceForNumber();
-  CXFA_FMToken AdvanceForString();
-  CXFA_FMToken AdvanceForIdentifier();
+  Token AdvanceForNumber();
+  Token AdvanceForString();
+  Token AdvanceForIdentifier();
   void AdvanceForComment();
 
   void RaiseError() { m_bLexerError = true; }

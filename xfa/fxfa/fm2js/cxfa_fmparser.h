@@ -66,7 +66,7 @@ class CXFA_FMParser {
 
   UnownedPtr<cppgc::Heap> const m_heap;
   UnownedPtr<CXFA_FMLexer> m_lexer;
-  CXFA_FMToken m_token;
+  CXFA_FMLexer::Token m_token;
   bool m_error = false;
   unsigned long m_parse_depth = 0;
   unsigned long m_max_parse_depth;
