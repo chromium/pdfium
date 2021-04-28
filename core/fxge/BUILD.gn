@@ -166,11 +166,11 @@ source_set("fxge") {
 
   if (is_mac) {
     sources += [
+      "apple/fx_apple_impl.cpp",
+      "apple/fx_apple_platform.cpp",
+      "apple/fx_apple_platform.h",
       "apple/fx_quartz_device.cpp",
       "apple/fx_quartz_device.h",
-      "apple/fx_temp_impl.cpp",
-      "apple/fx_temp_impl.h",
-      "apple/fx_temp_platform.cpp",
     ]
     frameworks = [ "CoreGraphics.framework" ]
   }

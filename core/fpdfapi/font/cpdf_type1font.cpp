@@ -14,7 +14,7 @@
 #include "core/fxge/fx_freetype.h"
 
 #if defined(OS_APPLE)
-#include "core/fxge/apple/fx_temp_impl.h"
+#include "core/fxge/apple/fx_apple_platform.h"
 #endif
 
 namespace {

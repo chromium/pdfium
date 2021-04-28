@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/apple/fx_temp_impl.h"
+#include "core/fxge/apple/fx_apple_platform.h"
 
 #include <memory>
 #include <utility>

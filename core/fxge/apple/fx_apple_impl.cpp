@@ -9,7 +9,7 @@
 
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/apple/fx_temp_impl.h"
+#include "core/fxge/apple/fx_apple_platform.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_gemodule.h"
