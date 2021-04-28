@@ -187,3 +187,7 @@ source_set("embedder_test_support") {
     }
   }
 }
+
+# Dummy group to keep satisfy references from //build.
+group("test_scripts_shared") {
+}
