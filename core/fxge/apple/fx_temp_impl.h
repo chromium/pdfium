@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_APPLE_FX_MAC_IMPL_H_
-#define CORE_FXGE_APPLE_FX_MAC_IMPL_H_
+#ifndef CORE_FXGE_APPLE_FX_TEMP_IMPL_H_
+#define CORE_FXGE_APPLE_FX_TEMP_IMPL_H_
 
 #include "core/fxge/apple/fx_quartz_device.h"
 #include "core/fxge/cfx_gemodule.h"
@@ -22,4 +22,4 @@ class CApplePlatform : public CFX_GEModule::PlatformIface {
   CQuartz2D m_quartz2d;
 };
 
-#endif  // CORE_FXGE_APPLE_FX_MAC_IMPL_H_
+#endif  // CORE_FXGE_APPLE_FX_TEMP_IMPL_H_
