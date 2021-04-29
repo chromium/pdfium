@@ -157,7 +157,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
       if (bGotOne) {
 #if defined(OS_APPLE)
         if (!bCoreText)
-          memcpy(m_ExtGID, m_GlyphIndex, 256);
+          memcpy(m_ExtGID, m_GlyphIndex, sizeof(m_ExtGID));
 #endif
         return;
       }
@@ -188,7 +188,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
     }
 #if defined(OS_APPLE)
     if (!bCoreText)
-      memcpy(m_ExtGID, m_GlyphIndex, 256);
+      memcpy(m_ExtGID, m_GlyphIndex, sizeof(m_ExtGID));
 #endif
     return;
   }
@@ -288,8 +288,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
     }
 #if defined(OS_APPLE)
     if (!bCoreText)
-      memcpy(m_ExtGID, m_GlyphIndex, 256);
-
+      memcpy(m_ExtGID, m_GlyphIndex, sizeof(m_ExtGID));
 #endif
     return;
   }
@@ -317,7 +316,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
   }
 #if defined(OS_APPLE)
   if (!bCoreText)
-    memcpy(m_ExtGID, m_GlyphIndex, 256);
+    memcpy(m_ExtGID, m_GlyphIndex, sizeof(m_ExtGID));
 #endif
 }
 
