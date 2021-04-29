@@ -213,7 +213,6 @@ component("skia") {
   # Remove unused util files include in utils.gni
   sources -= [
     "//third_party/skia/src/utils/SkCamera.cpp",
-    "//third_party/skia/src/utils/SkInterpolator.cpp",
     "//third_party/skia/src/utils/SkParsePath.cpp",
   ]
 
