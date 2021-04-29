@@ -161,7 +161,7 @@ source_set("fxge") {
   }
 
   if (is_linux || is_chromeos) {
-    sources += [ "fx_ge_linux.cpp" ]
+    sources += [ "linux/fx_linux_impl.cpp" ]
   }
 
   if (is_mac) {
