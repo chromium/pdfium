@@ -6,10 +6,6 @@
 
 #include "core/fxcrt/cfx_seekablestreamproxy.h"
 
-#if defined(OS_WIN)
-#include <io.h>
-#endif
-
 #include <algorithm>
 #include <limits>
 #include <memory>
