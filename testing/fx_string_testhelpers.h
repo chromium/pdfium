@@ -5,8 +5,8 @@
 #ifndef TESTING_FX_STRING_TESTHELPERS_H_
 #define TESTING_FX_STRING_TESTHELPERS_H_
 
+#include <iosfwd>
 #include <memory>
-#include <ostream>
 #include <string>
 #include <vector>
 

@@ -13,6 +13,10 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/stl_util.h"
 
+#ifndef NDEBUG
+#include <ostream>
+#endif
+
 namespace {
 
 void MatchFloatRange(float f1, float f2, int* i1, int* i2) {

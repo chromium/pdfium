@@ -6,6 +6,7 @@
 
 #include <iomanip>
 #include <ios>
+#include <ostream>
 
 #include "core/fxcrt/cfx_datetime.h"
 #include "core/fxcrt/fx_string.h"

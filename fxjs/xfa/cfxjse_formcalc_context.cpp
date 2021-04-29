@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <sstream>
 #include <utility>
 
 #include "core/fxcrt/cfx_datetime.h"

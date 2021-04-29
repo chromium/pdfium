@@ -7,7 +7,7 @@
 #ifndef CORE_FPDFAPI_PARSER_FPDF_PARSER_UTILITY_H_
 #define CORE_FPDFAPI_PARSER_FPDF_PARSER_UTILITY_H_
 
-#include <ostream>
+#include <iosfwd>
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"

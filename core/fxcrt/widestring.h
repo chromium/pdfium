@@ -8,8 +8,8 @@
 #define CORE_FXCRT_WIDESTRING_H_
 
 #include <functional>
+#include <iosfwd>
 #include <iterator>
-#include <ostream>
 #include <utility>
 
 #include "core/fxcrt/fx_system.h"

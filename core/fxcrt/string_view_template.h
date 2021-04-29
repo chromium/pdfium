@@ -8,6 +8,7 @@
 #define CORE_FXCRT_STRING_VIEW_TEMPLATE_H_
 
 #include <algorithm>
+#include <cctype>
 #include <iterator>
 #include <type_traits>
 #include <vector>

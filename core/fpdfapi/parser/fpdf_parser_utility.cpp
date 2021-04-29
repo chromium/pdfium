@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 
+#include <ostream>
+
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_boolean.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"

@@ -5,7 +5,7 @@
 #ifndef CORE_FPDFAPI_EDIT_CPDF_CONTENTSTREAM_WRITE_UTILS_H_
 #define CORE_FPDFAPI_EDIT_CPDF_CONTENTSTREAM_WRITE_UTILS_H_
 
-#include <ostream>
+#include <iosfwd>
 
 #include "core/fxcrt/fx_coordinates.h"
 

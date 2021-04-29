@@ -12,7 +12,7 @@
 #include "core/fxcrt/fx_system.h"
 
 #ifndef NDEBUG
-#include <ostream>
+#include <iosfwd>
 #endif
 
 template <class BaseType>

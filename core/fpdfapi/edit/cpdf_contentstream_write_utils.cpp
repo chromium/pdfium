@@ -4,6 +4,8 @@
 
 #include "core/fpdfapi/edit/cpdf_contentstream_write_utils.h"
 
+#include <ostream>
+
 #include "third_party/skia_shared/SkFloatToDecimal.h"
 
 std::ostream& WriteFloat(std::ostream& stream, float value) {

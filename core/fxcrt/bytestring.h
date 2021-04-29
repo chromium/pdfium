@@ -8,9 +8,8 @@
 #define CORE_FXCRT_BYTESTRING_H_
 
 #include <functional>
+#include <iosfwd>
 #include <iterator>
-#include <ostream>
-#include <sstream>
 #include <utility>
 
 #include "core/fxcrt/fx_system.h"
