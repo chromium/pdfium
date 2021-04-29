@@ -147,6 +147,11 @@ CApplePlatform::CreateDefaultSystemFontInfo() {
   return std::move(pInfo);
 }
 
+void* CApplePlatform::CreatePlatformFont(
+    pdfium::span<const uint8_t> font_span) {
+  return m_quartz2d.CreateFont(font_span.data(), font_span.size());
+}
+
 // static
 std::unique_ptr<CFX_GEModule::PlatformIface>
 CFX_GEModule::PlatformIface::Create() {
