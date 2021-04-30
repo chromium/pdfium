@@ -228,9 +228,8 @@ const CPDF_ContentMarks* CPDF_PageContentGenerator::ProcessContentMarks(
     std::ostringstream* buf,
     const CPDF_PageObject* pPageObj,
     const CPDF_ContentMarks* pPrev) {
-  const CPDF_ContentMarks* pNext = &pPageObj->m_ContentMarks;
-
-  size_t first_different = pPrev->FindFirstDifference(pNext);
+  const CPDF_ContentMarks* pNext = pPageObj->GetContentMarks();
+  const size_t first_different = pPrev->FindFirstDifference(pNext);
 
   // Close all marks that are in prev but not in next.
   // Technically we should iterate backwards to close from the top to the

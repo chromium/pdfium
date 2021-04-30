@@ -402,7 +402,7 @@ void CPDF_StreamContentParser::SetGraphicStates(CPDF_PageObject* pObj,
                                                 bool bGraph) {
   pObj->m_GeneralState = m_pCurStates->m_GeneralState;
   pObj->m_ClipPath = m_pCurStates->m_ClipPath;
-  pObj->m_ContentMarks = *m_ContentMarksStack.top();
+  pObj->SetContentMarks(*m_ContentMarksStack.top());
   if (bColor) {
     pObj->m_ColorState = m_pCurStates->m_ColorState;
   }

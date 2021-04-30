@@ -364,7 +364,8 @@ FPDFImageObj_GetImageMetadata(FPDF_PAGEOBJECT image_object,
   if (!pImg)
     return false;
 
-  metadata->marked_content_id = pImgObj->m_ContentMarks.GetMarkedContentID();
+  metadata->marked_content_id =
+      pImgObj->GetContentMarks()->GetMarkedContentID();
 
   const int nPixelWidth = pImg->GetPixelWidth();
   const int nPixelHeight = pImg->GetPixelHeight();
