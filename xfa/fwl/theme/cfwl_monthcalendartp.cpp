@@ -105,8 +105,8 @@ void CFWL_MonthCalendarTP::DrawTotalBK(const CFWL_ThemeBackground& pParams,
   path.AddRectangle(rtTotal.left, rtTotal.top, rtTotal.width, rtTotal.height);
   pParams.m_pGraphics->SaveGraphState();
   pParams.m_pGraphics->SetFillColor(CFGAS_GEColor(kBackgroundColor));
-  pParams.m_pGraphics->FillPath(
-      &path, CFX_FillRenderOptions::FillType::kWinding, matrix);
+  pParams.m_pGraphics->FillPath(path, CFX_FillRenderOptions::FillType::kWinding,
+                                matrix);
   pParams.m_pGraphics->RestoreGraphState();
 }
 
@@ -117,8 +117,8 @@ void CFWL_MonthCalendarTP::DrawHeadBk(const CFWL_ThemeBackground& pParams,
   path.AddRectangle(rtHead.left, rtHead.top, rtHead.width, rtHead.height);
   pParams.m_pGraphics->SaveGraphState();
   pParams.m_pGraphics->SetFillColor(CFGAS_GEColor(kBackgroundColor));
-  pParams.m_pGraphics->FillPath(
-      &path, CFX_FillRenderOptions::FillType::kWinding, matrix);
+  pParams.m_pGraphics->FillPath(path, CFX_FillRenderOptions::FillType::kWinding,
+                                matrix);
   pParams.m_pGraphics->RestoreGraphState();
 }
 
@@ -130,17 +130,17 @@ void CFWL_MonthCalendarTP::DrawLButton(const CFWL_ThemeBackground& pParams,
   pParams.m_pGraphics->SaveGraphState();
   pParams.m_pGraphics->SetStrokeColor(
       CFGAS_GEColor(ArgbEncode(0xff, 205, 219, 243)));
-  pParams.m_pGraphics->StrokePath(&path, &matrix);
+  pParams.m_pGraphics->StrokePath(path, &matrix);
   if (pParams.m_dwStates & CFWL_PartState_Pressed) {
     pParams.m_pGraphics->SetFillColor(
         CFGAS_GEColor(ArgbEncode(0xff, 174, 198, 242)));
     pParams.m_pGraphics->FillPath(
-        &path, CFX_FillRenderOptions::FillType::kWinding, matrix);
+        path, CFX_FillRenderOptions::FillType::kWinding, matrix);
   } else {
     pParams.m_pGraphics->SetFillColor(
         CFGAS_GEColor(ArgbEncode(0xff, 227, 235, 249)));
     pParams.m_pGraphics->FillPath(
-        &path, CFX_FillRenderOptions::FillType::kWinding, matrix);
+        path, CFX_FillRenderOptions::FillType::kWinding, matrix);
   }
 
   path.Clear();
@@ -153,7 +153,7 @@ void CFWL_MonthCalendarTP::DrawLButton(const CFWL_ThemeBackground& pParams,
 
   pParams.m_pGraphics->SetStrokeColor(
       CFGAS_GEColor(ArgbEncode(0xff, 50, 104, 205)));
-  pParams.m_pGraphics->StrokePath(&path, &matrix);
+  pParams.m_pGraphics->StrokePath(path, &matrix);
   pParams.m_pGraphics->RestoreGraphState();
 }
 
@@ -165,17 +165,17 @@ void CFWL_MonthCalendarTP::DrawRButton(const CFWL_ThemeBackground& pParams,
   pParams.m_pGraphics->SaveGraphState();
   pParams.m_pGraphics->SetStrokeColor(
       CFGAS_GEColor(ArgbEncode(0xff, 205, 219, 243)));
-  pParams.m_pGraphics->StrokePath(&path, &matrix);
+  pParams.m_pGraphics->StrokePath(path, &matrix);
   if (pParams.m_dwStates & CFWL_PartState_Pressed) {
     pParams.m_pGraphics->SetFillColor(
         CFGAS_GEColor(ArgbEncode(0xff, 174, 198, 242)));
     pParams.m_pGraphics->FillPath(
-        &path, CFX_FillRenderOptions::FillType::kWinding, matrix);
+        path, CFX_FillRenderOptions::FillType::kWinding, matrix);
   } else {
     pParams.m_pGraphics->SetFillColor(
         CFGAS_GEColor(ArgbEncode(0xff, 227, 235, 249)));
     pParams.m_pGraphics->FillPath(
-        &path, CFX_FillRenderOptions::FillType::kWinding, matrix);
+        path, CFX_FillRenderOptions::FillType::kWinding, matrix);
   }
 
   path.Clear();
@@ -188,7 +188,7 @@ void CFWL_MonthCalendarTP::DrawRButton(const CFWL_ThemeBackground& pParams,
 
   pParams.m_pGraphics->SetStrokeColor(
       CFGAS_GEColor(ArgbEncode(0xff, 50, 104, 205)));
-  pParams.m_pGraphics->StrokePath(&path, &matrix);
+  pParams.m_pGraphics->StrokePath(path, &matrix);
   pParams.m_pGraphics->RestoreGraphState();
 }
 
@@ -200,7 +200,7 @@ void CFWL_MonthCalendarTP::DrawHSeparator(const CFWL_ThemeBackground& pParams,
   path.LineTo(CFX_PointF(rtHSep.right(), rtHSep.top + rtHSep.height / 2));
   pParams.m_pGraphics->SaveGraphState();
   pParams.m_pGraphics->SetStrokeColor(CFGAS_GEColor(kSeparatorColor));
-  pParams.m_pGraphics->StrokePath(&path, &matrix);
+  pParams.m_pGraphics->StrokePath(path, &matrix);
   pParams.m_pGraphics->RestoreGraphState();
 }
 
@@ -212,7 +212,7 @@ void CFWL_MonthCalendarTP::DrawWeekNumSep(const CFWL_ThemeBackground& pParams,
   path.LineTo(rtWeekSep.BottomLeft());
   pParams.m_pGraphics->SaveGraphState();
   pParams.m_pGraphics->SetStrokeColor(CFGAS_GEColor(kSeparatorColor));
-  pParams.m_pGraphics->StrokePath(&path, &matrix);
+  pParams.m_pGraphics->StrokePath(path, &matrix);
   pParams.m_pGraphics->RestoreGraphState();
 }
 
@@ -227,7 +227,7 @@ void CFWL_MonthCalendarTP::DrawDatesInBK(const CFWL_ThemeBackground& pParams,
     pParams.m_pGraphics->SetFillColor(
         CFGAS_GEColor(kDatesSelectedBackgroundColor));
     pParams.m_pGraphics->FillPath(
-        &path, CFX_FillRenderOptions::FillType::kWinding, matrix);
+        path, CFX_FillRenderOptions::FillType::kWinding, matrix);
   } else if (pParams.m_dwStates & CFWL_PartState_Hovered) {
     CFGAS_GEPath path;
     CFX_RectF rtSelDay = pParams.m_PartRect;
@@ -236,7 +236,7 @@ void CFWL_MonthCalendarTP::DrawDatesInBK(const CFWL_ThemeBackground& pParams,
     pParams.m_pGraphics->SetFillColor(
         CFGAS_GEColor(kDatesHoverBackgroundColor));
     pParams.m_pGraphics->FillPath(
-        &path, CFX_FillRenderOptions::FillType::kWinding, matrix);
+        path, CFX_FillRenderOptions::FillType::kWinding, matrix);
   }
   pParams.m_pGraphics->RestoreGraphState();
 }
@@ -250,7 +250,7 @@ void CFWL_MonthCalendarTP::DrawDatesInCircle(
                     rtSelDay.height);
   pParams.m_pGraphics->SaveGraphState();
   pParams.m_pGraphics->SetStrokeColor(CFGAS_GEColor(kDatesCircleColor));
-  pParams.m_pGraphics->StrokePath(&path, &matrix);
+  pParams.m_pGraphics->StrokePath(path, &matrix);
   pParams.m_pGraphics->RestoreGraphState();
 }
 
@@ -262,7 +262,7 @@ void CFWL_MonthCalendarTP::DrawTodayCircle(const CFWL_ThemeBackground& pParams,
                     rtTodayCircle.height);
   pParams.m_pGraphics->SaveGraphState();
   pParams.m_pGraphics->SetStrokeColor(CFGAS_GEColor(kDatesCircleColor));
-  pParams.m_pGraphics->StrokePath(&path, &matrix);
+  pParams.m_pGraphics->StrokePath(path, &matrix);
   pParams.m_pGraphics->RestoreGraphState();
 }
 

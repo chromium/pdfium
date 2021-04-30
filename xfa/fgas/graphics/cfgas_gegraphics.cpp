@@ -166,17 +166,15 @@ void CFGAS_GEGraphics::SetFillColor(const CFGAS_GEColor& color) {
   m_info.fillColor = color;
 }
 
-void CFGAS_GEGraphics::StrokePath(const CFGAS_GEPath* path,
+void CFGAS_GEGraphics::StrokePath(const CFGAS_GEPath& path,
                                   const CFX_Matrix* matrix) {
-  if (path)
-    RenderDeviceStrokePath(path, matrix);
+  RenderDeviceStrokePath(path, matrix);
 }
 
-void CFGAS_GEGraphics::FillPath(const CFGAS_GEPath* path,
+void CFGAS_GEGraphics::FillPath(const CFGAS_GEPath& path,
                                 CFX_FillRenderOptions::FillType fill_type,
                                 const CFX_Matrix& matrix) {
-  if (path)
-    RenderDeviceFillPath(path, fill_type, matrix);
+  RenderDeviceFillPath(path, fill_type, matrix);
 }
 
 void CFGAS_GEGraphics::ConcatMatrix(const CFX_Matrix& matrix) {
@@ -202,7 +200,7 @@ CFX_RenderDevice* CFGAS_GEGraphics::GetRenderDevice() {
   return m_renderDevice;
 }
 
-void CFGAS_GEGraphics::RenderDeviceStrokePath(const CFGAS_GEPath* path,
+void CFGAS_GEGraphics::RenderDeviceStrokePath(const CFGAS_GEPath& path,
                                               const CFX_Matrix* matrix) {
   if (m_info.strokeColor.GetType() != CFGAS_GEColor::Solid)
     return;
@@ -211,13 +209,13 @@ void CFGAS_GEGraphics::RenderDeviceStrokePath(const CFGAS_GEPath* path,
   if (matrix)
     m.Concat(*matrix);
 
-  m_renderDevice->DrawPath(path->GetPathData(), &m, &m_info.graphState, 0x0,
+  m_renderDevice->DrawPath(path.GetPathData(), &m, &m_info.graphState, 0x0,
                            m_info.strokeColor.GetArgb(),
                            CFX_FillRenderOptions());
 }
 
 void CFGAS_GEGraphics::RenderDeviceFillPath(
-    const CFGAS_GEPath* path,
+    const CFGAS_GEPath& path,
     CFX_FillRenderOptions::FillType fill_type,
     const CFX_Matrix& matrix) {
   CFX_Matrix m = m_info.CTM;
@@ -226,7 +224,7 @@ void CFGAS_GEGraphics::RenderDeviceFillPath(
   const CFX_FillRenderOptions fill_options(fill_type);
   switch (m_info.fillColor.GetType()) {
     case CFGAS_GEColor::Solid:
-      m_renderDevice->DrawPath(path->GetPathData(), &m, &m_info.graphState,
+      m_renderDevice->DrawPath(path.GetPathData(), &m, &m_info.graphState,
                                m_info.fillColor.GetArgb(), 0x0, fill_options);
       return;
     case CFGAS_GEColor::Pattern:
@@ -241,7 +239,7 @@ void CFGAS_GEGraphics::RenderDeviceFillPath(
 }
 
 void CFGAS_GEGraphics::FillPathWithPattern(
-    const CFGAS_GEPath* path,
+    const CFGAS_GEPath& path,
     const CFX_FillRenderOptions& fill_options,
     const CFX_Matrix& matrix) {
   RetainPtr<CFX_DIBitmap> bitmap = m_renderDevice->GetBitmap();
@@ -259,7 +257,7 @@ void CFGAS_GEGraphics::FillPathWithPattern(
   mask->Create(data.width, data.height, FXDIB_Format::k1bppMask);
   memcpy(mask->GetBuffer(), data.maskBits, mask->GetPitch() * data.height);
   const CFX_FloatRect rectf =
-      matrix.TransformRect(path->GetPathData()->GetBoundingBox());
+      matrix.TransformRect(path.GetPathData()->GetBoundingBox());
   const FX_RECT rect = rectf.ToRoundedFxRect();
 
   CFX_DefaultRenderDevice device;
@@ -270,12 +268,12 @@ void CFGAS_GEGraphics::FillPathWithPattern(
       device.SetBitMask(mask, i, j, m_info.fillColor.GetPattern()->m_foreArgb);
   }
   CFX_RenderDevice::StateRestorer restorer(m_renderDevice);
-  m_renderDevice->SetClip_PathFill(path->GetPathData(), &matrix, fill_options);
+  m_renderDevice->SetClip_PathFill(path.GetPathData(), &matrix, fill_options);
   SetDIBitsWithMatrix(bmp, CFX_Matrix());
 }
 
 void CFGAS_GEGraphics::FillPathWithShading(
-    const CFGAS_GEPath* path,
+    const CFGAS_GEPath& path,
     const CFX_FillRenderOptions& fill_options,
     const CFX_Matrix& matrix) {
   RetainPtr<CFX_DIBitmap> bitmap = m_renderDevice->GetBitmap();
@@ -388,8 +386,7 @@ void CFGAS_GEGraphics::FillPathWithShading(
   }
   if (result) {
     CFX_RenderDevice::StateRestorer restorer(m_renderDevice);
-    m_renderDevice->SetClip_PathFill(path->GetPathData(), &matrix,
-                                     fill_options);
+    m_renderDevice->SetClip_PathFill(path.GetPathData(), &matrix, fill_options);
     SetDIBitsWithMatrix(bmp, matrix);
   }
 }

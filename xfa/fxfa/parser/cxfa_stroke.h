@@ -47,8 +47,8 @@ class CXFA_Stroke : public CXFA_Node {
 
   bool SameStyles(CXFA_Stroke* stroke, uint32_t dwFlags);
 
-  void Stroke(CFGAS_GEPath* pPath,
-              CFGAS_GEGraphics* pGS,
+  void Stroke(CFGAS_GEGraphics* pGS,
+              const CFGAS_GEPath& pPath,
               const CFX_Matrix& matrix);
 
  protected:

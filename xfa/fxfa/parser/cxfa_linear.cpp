@@ -53,7 +53,7 @@ CXFA_Color* CXFA_Linear::GetColorIfExists() {
 }
 
 void CXFA_Linear::Draw(CFGAS_GEGraphics* pGS,
-                       CFGAS_GEPath* fillPath,
+                       const CFGAS_GEPath& fillPath,
                        FX_ARGB crStart,
                        const CFX_RectF& rtFill,
                        const CFX_Matrix& matrix) {
@@ -84,7 +84,6 @@ void CXFA_Linear::Draw(CFGAS_GEGraphics* pGS,
   }
 
   CFGAS_GEShading shading(ptStart, ptEnd, false, false, crStart, crEnd);
-
   pGS->SaveGraphState();
   pGS->SetFillColor(CFGAS_GEColor(&shading));
   pGS->FillPath(fillPath, CFX_FillRenderOptions::FillType::kWinding, matrix);

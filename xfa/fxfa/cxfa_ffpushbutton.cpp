@@ -222,7 +222,7 @@ void CXFA_FFPushButton::OnDrawWidget(CFGAS_GEGraphics* pGraphics,
       CFGAS_GEPath path;
       path.AddRectangle(rtFill.left, rtFill.top, rtFill.width, rtFill.height);
       pGraphics->SetFillColor(CFGAS_GEColor(ArgbEncode(128, 128, 255, 255)));
-      pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding,
+      pGraphics->FillPath(path, CFX_FillRenderOptions::FillType::kWinding,
                           matrix);
     }
     return;
@@ -238,7 +238,7 @@ void CXFA_FFPushButton::OnDrawWidget(CFGAS_GEGraphics* pGraphics,
       CFGAS_GEPath path;
       CFX_RectF rect = pWidget->GetWidgetRect();
       path.AddRectangle(0, 0, rect.width, rect.height);
-      pGraphics->StrokePath(&path, &matrix);
+      pGraphics->StrokePath(path, &matrix);
     }
   }
 }

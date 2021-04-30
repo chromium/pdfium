@@ -51,13 +51,12 @@ XFA_AttributeValue CXFA_Pattern::GetType() {
 }
 
 void CXFA_Pattern::Draw(CFGAS_GEGraphics* pGS,
-                        CFGAS_GEPath* fillPath,
+                        const CFGAS_GEPath& fillPath,
                         FX_ARGB crStart,
                         const CFX_RectF& rtFill,
                         const CFX_Matrix& matrix) {
   CXFA_Color* pColor = GetColorIfExists();
   FX_ARGB crEnd = pColor ? pColor->GetValue() : CXFA_Color::kBlackColor;
-
   FX_HatchStyle iHatch = FX_HatchStyle::Cross;
   switch (GetType()) {
     case XFA_AttributeValue::CrossDiagonal:
@@ -80,7 +79,6 @@ void CXFA_Pattern::Draw(CFGAS_GEGraphics* pGS,
   }
 
   CFGAS_GEPattern pattern(iHatch, crEnd, crStart);
-
   pGS->SaveGraphState();
   pGS->SetFillColor(CFGAS_GEColor(&pattern, 0x0));
   pGS->FillPath(fillPath, CFX_FillRenderOptions::FillType::kWinding, matrix);

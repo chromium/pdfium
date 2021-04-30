@@ -96,7 +96,7 @@ void CFWL_ScrollBarTP::DrawThumbBtn(CFGAS_GEGraphics* pGraphics,
   path.AddRectangle(rect.left, rect.top, rect.width, rect.height);
   pGraphics->SetStrokeColor(
       CFGAS_GEColor(m_pThemeData->clrBtnBorder[eState - 1]));
-  pGraphics->StrokePath(&path, &matrix);
+  pGraphics->StrokePath(path, &matrix);
   pGraphics->RestoreGraphState();
 }
 
@@ -126,7 +126,7 @@ void CFWL_ScrollBarTP::DrawPaw(CFGAS_GEGraphics* pGraphics,
     pGraphics->SetLineWidth(1);
     pGraphics->SetStrokeColor(
         CFGAS_GEColor(m_pThemeData->clrPawColorLight[eState - 1]));
-    pGraphics->StrokePath(&path, nullptr);
+    pGraphics->StrokePath(path, nullptr);
     fX++;
 
     path.Clear();
@@ -142,7 +142,7 @@ void CFWL_ScrollBarTP::DrawPaw(CFGAS_GEGraphics* pGraphics,
     pGraphics->SetLineWidth(1);
     pGraphics->SetStrokeColor(
         CFGAS_GEColor(m_pThemeData->clrPawColorDark[eState - 1]));
-    pGraphics->StrokePath(&path, &matrix);
+    pGraphics->StrokePath(path, &matrix);
   } else {
     float fPawLen = kPawLength;
     if (rect.height / 2 <= fPawLen) {
@@ -163,7 +163,7 @@ void CFWL_ScrollBarTP::DrawPaw(CFGAS_GEGraphics* pGraphics,
     pGraphics->SetLineWidth(1);
     pGraphics->SetStrokeColor(
         CFGAS_GEColor(m_pThemeData->clrPawColorLight[eState - 1]));
-    pGraphics->StrokePath(&path, &matrix);
+    pGraphics->StrokePath(path, &matrix);
     fY++;
 
     path.Clear();
@@ -179,7 +179,7 @@ void CFWL_ScrollBarTP::DrawPaw(CFGAS_GEGraphics* pGraphics,
     pGraphics->SetLineWidth(1);
     pGraphics->SetStrokeColor(
         CFGAS_GEColor(m_pThemeData->clrPawColorDark[eState - 1]));
-    pGraphics->StrokePath(&path, &matrix);
+    pGraphics->StrokePath(path, &matrix);
   }
 }
 
@@ -204,7 +204,7 @@ void CFWL_ScrollBarTP::DrawTrack(CFGAS_GEGraphics* pGraphics,
     path.AddRectangle(rect.left, fBottom - 1, rect.width, 1);
   }
   pGraphics->SetFillColor(CFGAS_GEColor(ArgbEncode(255, 238, 237, 229)));
-  pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding, matrix);
+  pGraphics->FillPath(path, CFX_FillRenderOptions::FillType::kWinding, matrix);
   path.Clear();
   path.AddRectangle(rect.left + 1, rect.top, rect.width - 2, rect.height);
   pGraphics->RestoreGraphState();

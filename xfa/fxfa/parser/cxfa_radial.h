@@ -20,7 +20,7 @@ class CXFA_Radial final : public CXFA_Node {
   ~CXFA_Radial() override;
 
   void Draw(CFGAS_GEGraphics* pGS,
-            CFGAS_GEPath* fillPath,
+            const CFGAS_GEPath& fillPath,
             FX_ARGB crStart,
             const CFX_RectF& rtFill,
             const CFX_Matrix& matrix);

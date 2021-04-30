@@ -22,7 +22,7 @@ class CXFA_Stipple final : public CXFA_Node {
   ~CXFA_Stipple() override;
 
   void Draw(CFGAS_GEGraphics* pGS,
-            CFGAS_GEPath* fillPath,
+            const CFGAS_GEPath& fillPath,
             const CFX_RectF& rtFill,
             const CFX_Matrix& matrix);
 

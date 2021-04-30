@@ -339,7 +339,7 @@ void CXFA_Rectangle::Stroke(const std::vector<CXFA_Stroke*>& strokes,
       bool bEmpty = path.IsEmpty();
       if (!bEmpty) {
         if (stroke)
-          stroke->Stroke(&path, pGS, matrix);
+          stroke->Stroke(pGS, path, matrix);
         path.Clear();
       }
       bStart = true;
@@ -350,7 +350,7 @@ void CXFA_Rectangle::Stroke(const std::vector<CXFA_Stroke*>& strokes,
     bStart = !stroke->SameStyles(strokes[(i + 1) % 8], 0);
     if (bStart) {
       if (stroke)
-        stroke->Stroke(&path, pGS, matrix);
+        stroke->Stroke(pGS, path, matrix);
       path.Clear();
     }
   }
@@ -360,7 +360,7 @@ void CXFA_Rectangle::Stroke(const std::vector<CXFA_Stroke*>& strokes,
       path.Close();
     }
     if (strokes[7])
-      strokes[7]->Stroke(&path, pGS, matrix);
+      strokes[7]->Stroke(pGS, path, matrix);
   }
 }
 
@@ -381,8 +381,7 @@ void CXFA_Rectangle::StrokeRect(CFGAS_GEGraphics* pGraphic,
   pathLT.LineTo(CFX_PointF(rt.left + fLineWidth, fBottom - fLineWidth));
   pathLT.LineTo(CFX_PointF(rt.left, fBottom));
   pGraphic->SetFillColor(CFGAS_GEColor(argbTopLeft));
-  pGraphic->FillPath(&pathLT, CFX_FillRenderOptions::FillType::kWinding,
-                     matrix);
+  pGraphic->FillPath(pathLT, CFX_FillRenderOptions::FillType::kWinding, matrix);
 
   CFGAS_GEPath pathRB;
   pathRB.MoveTo(CFX_PointF(fRight, rt.top));
@@ -393,8 +392,7 @@ void CXFA_Rectangle::StrokeRect(CFGAS_GEGraphics* pGraphic,
   pathRB.LineTo(CFX_PointF(fRight - fLineWidth, rt.top + fLineWidth));
   pathRB.LineTo(CFX_PointF(fRight, rt.top));
   pGraphic->SetFillColor(CFGAS_GEColor(argbBottomRight));
-  pGraphic->FillPath(&pathRB, CFX_FillRenderOptions::FillType::kWinding,
-                     matrix);
+  pGraphic->FillPath(pathRB, CFX_FillRenderOptions::FillType::kWinding, matrix);
 }
 
 void CXFA_Rectangle::StrokeLowered(CFGAS_GEGraphics* pGS,
@@ -409,7 +407,7 @@ void CXFA_Rectangle::StrokeLowered(CFGAS_GEGraphics* pGS,
   path.AddRectangle(rt.left, rt.top, rt.width, rt.height);
   path.AddRectangle(rtInner.left, rtInner.top, rtInner.width, rtInner.height);
   pGS->SetFillColor(CFGAS_GEColor(0xFF000000));
-  pGS->FillPath(&path, CFX_FillRenderOptions::FillType::kEvenOdd, matrix);
+  pGS->FillPath(path, CFX_FillRenderOptions::FillType::kEvenOdd, matrix);
   StrokeRect(pGS, rtInner, fHalfWidth, matrix, 0xFF808080, 0xFFC0C0C0);
 }
 
@@ -425,7 +423,7 @@ void CXFA_Rectangle::StrokeRaised(CFGAS_GEGraphics* pGS,
   path.AddRectangle(rt.left, rt.top, rt.width, rt.height);
   path.AddRectangle(rtInner.left, rtInner.top, rtInner.width, rtInner.height);
   pGS->SetFillColor(CFGAS_GEColor(0xFF000000));
-  pGS->FillPath(&path, CFX_FillRenderOptions::FillType::kEvenOdd, matrix);
+  pGS->FillPath(path, CFX_FillRenderOptions::FillType::kEvenOdd, matrix);
   StrokeRect(pGS, rtInner, fHalfWidth, matrix, 0xFFFFFFFF, 0xFF808080);
 }
 

@@ -238,7 +238,7 @@ void CXFA_Box::DrawFill(const std::vector<CXFA_Stroke*>& strokes,
   }
   fillPath.Close();
 
-  fill->Draw(pGS, &fillPath, rtWidget, matrix);
+  fill->Draw(pGS, fillPath, rtWidget, matrix);
   pGS->RestoreGraphState();
 }
 
@@ -304,7 +304,7 @@ void CXFA_Box::StrokeArcOrRounded(CFGAS_GEGraphics* pGS,
     CFGAS_GEPath arcPath;
     GetPathArcOrRounded(rtWidget, forceRound, &arcPath);
     if (edge)
-      edge->Stroke(&arcPath, pGS, matrix);
+      edge->Stroke(pGS, arcPath, matrix);
     return;
   }
   pGS->SaveGraphState();
@@ -329,25 +329,25 @@ void CXFA_Box::StrokeArcOrRounded(CFGAS_GEGraphics* pGS,
                  FX_PI);
 
   pGS->SetStrokeColor(CFGAS_GEColor(0xFF808080));
-  pGS->StrokePath(&arcPath, &matrix);
+  pGS->StrokePath(arcPath, &matrix);
   arcPath.Clear();
   arcPath.AddArc(rtWidget.TopLeft(), rtWidget.Size(), -1.0f * FX_PI / 4.0f,
                  FX_PI);
 
   pGS->SetStrokeColor(CFGAS_GEColor(0xFFFFFFFF));
-  pGS->StrokePath(&arcPath, &matrix);
+  pGS->StrokePath(arcPath, &matrix);
   rtWidget.Deflate(fHalf, fHalf);
   arcPath.Clear();
   arcPath.AddArc(rtWidget.TopLeft(), rtWidget.Size(), 3.0f * FX_PI / 4.0f,
                  FX_PI);
 
   pGS->SetStrokeColor(CFGAS_GEColor(0xFF404040));
-  pGS->StrokePath(&arcPath, &matrix);
+  pGS->StrokePath(arcPath, &matrix);
   arcPath.Clear();
   arcPath.AddArc(rtWidget.TopLeft(), rtWidget.Size(), -1.0f * FX_PI / 4.0f,
                  FX_PI);
 
   pGS->SetStrokeColor(CFGAS_GEColor(0xFFC0C0C0));
-  pGS->StrokePath(&arcPath, &matrix);
+  pGS->StrokePath(arcPath, &matrix);
   pGS->RestoreGraphState();
 }

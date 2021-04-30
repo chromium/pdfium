@@ -50,8 +50,8 @@ class CFGAS_GEGraphics {
   void SetStrokeColor(const CFGAS_GEColor& color);
   void SetFillColor(const CFGAS_GEColor& color);
   void SetClipRect(const CFX_RectF& rect);
-  void StrokePath(const CFGAS_GEPath* path, const CFX_Matrix* matrix);
-  void FillPath(const CFGAS_GEPath* path,
+  void StrokePath(const CFGAS_GEPath& path, const CFX_Matrix* matrix);
+  void FillPath(const CFGAS_GEPath& path,
                 CFX_FillRenderOptions::FillType fill_type,
                 const CFX_Matrix& matrix);
   void ConcatMatrix(const CFX_Matrix& matrix);
@@ -69,15 +69,15 @@ class CFGAS_GEGraphics {
     CFGAS_GEColor fillColor{nullptr};
   };
 
-  void RenderDeviceStrokePath(const CFGAS_GEPath* path,
+  void RenderDeviceStrokePath(const CFGAS_GEPath& path,
                               const CFX_Matrix* matrix);
-  void RenderDeviceFillPath(const CFGAS_GEPath* path,
+  void RenderDeviceFillPath(const CFGAS_GEPath& path,
                             CFX_FillRenderOptions::FillType fill_type,
                             const CFX_Matrix& matrix);
-  void FillPathWithPattern(const CFGAS_GEPath* path,
+  void FillPathWithPattern(const CFGAS_GEPath& path,
                            const CFX_FillRenderOptions& fill_options,
                            const CFX_Matrix& matrix);
-  void FillPathWithShading(const CFGAS_GEPath* path,
+  void FillPathWithShading(const CFGAS_GEPath& path,
                            const CFX_FillRenderOptions& fill_options,
                            const CFX_Matrix& matrix);
   void SetDIBitsWithMatrix(const RetainPtr<CFX_DIBBase>& source,

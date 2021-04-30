@@ -29,7 +29,7 @@ class CXFA_Fill final : public CXFA_Node {
   void SetColor(FX_ARGB color);
 
   void Draw(CFGAS_GEGraphics* pGS,
-            CFGAS_GEPath* fillPath,
+            const CFGAS_GEPath& fillPath,
             const CFX_RectF& rtWidget,
             const CFX_Matrix& matrix);
 
@@ -39,19 +39,19 @@ class CXFA_Fill final : public CXFA_Node {
   XFA_Element GetType() const;
 
   void DrawStipple(CFGAS_GEGraphics* pGS,
-                   CFGAS_GEPath* fillPath,
+                   const CFGAS_GEPath& fillPath,
                    const CFX_RectF& rtWidget,
                    const CFX_Matrix& matrix);
   void DrawRadial(CFGAS_GEGraphics* pGS,
-                  CFGAS_GEPath* fillPath,
+                  const CFGAS_GEPath& fillPath,
                   const CFX_RectF& rtWidget,
                   const CFX_Matrix& matrix);
   void DrawLinear(CFGAS_GEGraphics* pGS,
-                  CFGAS_GEPath* fillPath,
+                  const CFGAS_GEPath& fillPath,
                   const CFX_RectF& rtWidget,
                   const CFX_Matrix& matrix);
   void DrawPattern(CFGAS_GEGraphics* pGS,
-                   CFGAS_GEPath* fillPath,
+                   const CFGAS_GEPath& fillPath,
                    const CFX_RectF& rtWidget,
                    const CFX_Matrix& matrix);
 };

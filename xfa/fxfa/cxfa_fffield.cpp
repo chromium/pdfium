@@ -108,7 +108,7 @@ void CXFA_FFField::DrawHighlight(CFGAS_GEGraphics* pGS,
     path.AddRectangle(m_UIRect.left, m_UIRect.top, m_UIRect.width,
                       m_UIRect.height);
 
-  pGS->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding, pMatrix);
+  pGS->FillPath(path, CFX_FillRenderOptions::FillType::kWinding, pMatrix);
 }
 
 void CXFA_FFField::DrawFocus(CFGAS_GEGraphics* pGS, CFX_Matrix* pMatrix) {
@@ -124,7 +124,7 @@ void CXFA_FFField::DrawFocus(CFGAS_GEGraphics* pGS, CFX_Matrix* pMatrix) {
   CFGAS_GEPath path;
   path.AddRectangle(m_UIRect.left, m_UIRect.top, m_UIRect.width,
                     m_UIRect.height);
-  pGS->StrokePath(&path, pMatrix);
+  pGS->StrokePath(path, pMatrix);
 }
 
 CFWL_Widget* CXFA_FFField::GetNormalWidget() {

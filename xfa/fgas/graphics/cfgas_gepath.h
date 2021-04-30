@@ -41,7 +41,7 @@ class CFGAS_GEPath final {
               float startAngle,
               float sweepAngle);
 
-  void AddSubpath(CFGAS_GEPath* path);
+  void AddSubpath(const CFGAS_GEPath& path);
 
  private:
   void ArcToInternal(const CFX_PointF& pos,

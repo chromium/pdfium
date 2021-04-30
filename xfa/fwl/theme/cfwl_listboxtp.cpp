@@ -69,7 +69,7 @@ void CFWL_ListBoxTP::DrawListBoxItem(CFGAS_GEGraphics* pGraphics,
 #else
     path.AddRectangle(rtItem.left, rtItem.top, rtItem.width, rtItem.height);
 #endif
-    pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding,
+    pGraphics->FillPath(path, CFX_FillRenderOptions::FillType::kWinding,
                         matrix);
     pGraphics->RestoreGraphState();
   }

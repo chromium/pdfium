@@ -57,7 +57,7 @@ class CFWL_CheckBoxTP final : public CFWL_WidgetTP {
                     FX_ARGB argbFill,
                     const CFX_Matrix& matrix);
 
-  void InitCheckPath(float fCheckLen);
+  void EnsureCheckPathInitialized(float fCheckLen);
 
   std::unique_ptr<CFGAS_GEPath> m_pCheckPath;
 };

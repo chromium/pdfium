@@ -50,7 +50,7 @@ void CFWL_PushButtonTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
           CFX_PointF(rect.left + PUSHBUTTON_SIZE_Corner, rect.top));
 
       CFGAS_GEPath fillPath;
-      fillPath.AddSubpath(&strokePath);
+      fillPath.AddSubpath(strokePath);
 
       CFGAS_GEGraphics* pGraphics = pParams.m_pGraphics.Get();
       pGraphics->SaveGraphState();
@@ -66,14 +66,14 @@ void CFWL_PushButtonTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
                     pParams.m_matrix);
 
       pGraphics->SetStrokeColor(CFGAS_GEColor(m_pThemeData->clrBorder[iColor]));
-      pGraphics->StrokePath(&strokePath, &pParams.m_matrix);
+      pGraphics->StrokePath(strokePath, &pParams.m_matrix);
 
       fillPath.Clear();
       fillPath.AddRectangle(rtInner.left, rtInner.top, rtInner.width,
                             rtInner.height);
 
       pGraphics->SetFillColor(CFGAS_GEColor(m_pThemeData->clrFill[iColor]));
-      pGraphics->FillPath(&fillPath, CFX_FillRenderOptions::FillType::kWinding,
+      pGraphics->FillPath(fillPath, CFX_FillRenderOptions::FillType::kWinding,
                           pParams.m_matrix);
       if (pParams.m_dwStates & CFWL_PartState_Focused) {
         rtInner.Inflate(1, 1, 0, 0);

@@ -139,10 +139,8 @@ void CFGAS_GEPath::AddArc(const CFX_PointF& original_pos,
   } while (!done);
 }
 
-void CFGAS_GEPath::AddSubpath(CFGAS_GEPath* path) {
-  if (!path)
-    return;
-  data_.Append(path->data_, nullptr);
+void CFGAS_GEPath::AddSubpath(const CFGAS_GEPath& path) {
+  data_.Append(path.data_, nullptr);
 }
 
 void CFGAS_GEPath::TransformBy(const CFX_Matrix& mt) {

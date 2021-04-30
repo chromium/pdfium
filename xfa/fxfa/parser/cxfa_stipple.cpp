@@ -51,7 +51,7 @@ int32_t CXFA_Stipple::GetRate() {
 }
 
 void CXFA_Stipple::Draw(CFGAS_GEGraphics* pGS,
-                        CFGAS_GEPath* fillPath,
+                        const CFGAS_GEPath& fillPath,
                         const CFX_RectF& rtFill,
                         const CFX_Matrix& matrix) {
   int32_t iRate = GetRate();
