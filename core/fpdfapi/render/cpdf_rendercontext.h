@@ -31,6 +31,13 @@ class CPDF_RenderContext {
     Layer(const Layer& that);
     ~Layer();
 
+    CPDF_PageObjectHolder* GetObjectHolder() { return m_pObjectHolder.Get(); }
+    const CPDF_PageObjectHolder* GetObjectHolder() const {
+      return m_pObjectHolder.Get();
+    }
+    const CFX_Matrix& GetMatrix() const { return m_Matrix; }
+
+   private:
     UnownedPtr<CPDF_PageObjectHolder> const m_pObjectHolder;
     const CFX_Matrix m_Matrix;
   };

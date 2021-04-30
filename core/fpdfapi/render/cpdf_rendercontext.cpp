@@ -62,14 +62,14 @@ void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,
     if (pOptions)
       status.SetOptions(*pOptions);
     status.SetStopObject(pStopObj);
-    status.SetTransparency(layer.m_pObjectHolder->GetTransparency());
-    CFX_Matrix final_matrix = layer.m_Matrix;
+    status.SetTransparency(layer.GetObjectHolder()->GetTransparency());
+    CFX_Matrix final_matrix = layer.GetMatrix();
     if (pLastMatrix) {
       final_matrix *= *pLastMatrix;
       status.SetDeviceMatrix(*pLastMatrix);
     }
     status.Initialize(nullptr, nullptr);
-    status.RenderObjectList(layer.m_pObjectHolder.Get(), final_matrix);
+    status.RenderObjectList(layer.GetObjectHolder(), final_matrix);
     if (status.GetRenderOptions().GetOptions().bLimitedImageCache) {
       m_pPageCache->CacheOptimization(
           status.GetRenderOptions().GetCacheSizeLimit());
