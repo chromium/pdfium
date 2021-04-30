@@ -185,12 +185,12 @@ void CFX_PathData::ClosePath() {
   m_Points.back().m_CloseFigure = true;
 }
 
-void CFX_PathData::Append(const CFX_PathData* src, const CFX_Matrix* matrix) {
-  if (src->m_Points.empty())
+void CFX_PathData::Append(const CFX_PathData& src, const CFX_Matrix* matrix) {
+  if (src.m_Points.empty())
     return;
 
   size_t cur_size = m_Points.size();
-  m_Points.insert(m_Points.end(), src->m_Points.begin(), src->m_Points.end());
+  m_Points.insert(m_Points.end(), src.m_Points.begin(), src.m_Points.end());
 
   if (!matrix)
     return;

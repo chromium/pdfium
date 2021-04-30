@@ -57,7 +57,7 @@ class CFX_PathData {
   bool IsRect() const;
   Optional<CFX_FloatRect> GetRect(const CFX_Matrix* matrix) const;
 
-  void Append(const CFX_PathData* src, const CFX_Matrix* matrix);
+  void Append(const CFX_PathData& src, const CFX_Matrix* matrix);
   void AppendFloatRect(const CFX_FloatRect& rect);
   void AppendRect(float left, float bottom, float right, float top);
   void AppendLine(const CFX_PointF& pt1, const CFX_PointF& pt2);

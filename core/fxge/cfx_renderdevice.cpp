@@ -382,7 +382,7 @@ bool CheckPalindromicPath(pdfium::span<const FX_PATHPOINT> points,
   if (!zero_area)
     return false;
 
-  new_path->Append(&temp_path, nullptr);
+  new_path->Append(temp_path, nullptr);
   *thin = true;
   return true;
 }
@@ -1264,7 +1264,7 @@ bool CFX_RenderDevice::DrawTextPath(int nChars,
       }
     }
     if (pClippingPath)
-      pClippingPath->Append(&TransformedPath, pUser2Device);
+      pClippingPath->Append(TransformedPath, pUser2Device);
   }
   return true;
 }
