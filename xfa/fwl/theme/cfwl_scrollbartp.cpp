@@ -13,12 +13,6 @@
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
 
-namespace {
-
-const float kPawLength = 12.5f;
-
-}  // namespace
-
 CFWL_ScrollBarTP::CFWL_ScrollBarTP() : m_pThemeData(new SBThemeData) {
   SetThemeData();
 }
@@ -98,89 +92,6 @@ void CFWL_ScrollBarTP::DrawThumbBtn(CFGAS_GEGraphics* pGraphics,
       CFGAS_GEColor(m_pThemeData->clrBtnBorder[eState - 1]));
   pGraphics->StrokePath(path, &matrix);
   pGraphics->RestoreGraphState();
-}
-
-void CFWL_ScrollBarTP::DrawPaw(CFGAS_GEGraphics* pGraphics,
-                               const CFX_RectF& rect,
-                               bool bVert,
-                               FWLTHEME_STATE eState,
-                               const CFX_Matrix& matrix) {
-  CFGAS_GEPath path;
-  if (bVert) {
-    float fPawLen = kPawLength;
-    if (rect.width / 2 <= fPawLen) {
-      fPawLen = (rect.width - 6) / 2;
-    }
-
-    float fX = rect.left + rect.width / 4;
-    float fY = rect.top + rect.height / 2;
-    path.MoveTo(CFX_PointF(fX, fY - 4));
-    path.LineTo(CFX_PointF(fX + fPawLen, fY - 4));
-    path.MoveTo(CFX_PointF(fX, fY - 2));
-    path.LineTo(CFX_PointF(fX + fPawLen, fY - 2));
-    path.MoveTo(CFX_PointF(fX, fY));
-    path.LineTo(CFX_PointF(fX + fPawLen, fY));
-    path.MoveTo(CFX_PointF(fX, fY + 2));
-    path.LineTo(CFX_PointF(fX + fPawLen, fY + 2));
-
-    pGraphics->SetLineWidth(1);
-    pGraphics->SetStrokeColor(
-        CFGAS_GEColor(m_pThemeData->clrPawColorLight[eState - 1]));
-    pGraphics->StrokePath(path, nullptr);
-    fX++;
-
-    path.Clear();
-    path.MoveTo(CFX_PointF(fX, fY - 3));
-    path.LineTo(CFX_PointF(fX + fPawLen, fY - 3));
-    path.MoveTo(CFX_PointF(fX, fY - 1));
-    path.LineTo(CFX_PointF(fX + fPawLen, fY - 1));
-    path.MoveTo(CFX_PointF(fX, fY + 1));
-    path.LineTo(CFX_PointF(fX + fPawLen, fY + 1));
-    path.MoveTo(CFX_PointF(fX, fY + 3));
-    path.LineTo(CFX_PointF(fX + fPawLen, fY + 3));
-
-    pGraphics->SetLineWidth(1);
-    pGraphics->SetStrokeColor(
-        CFGAS_GEColor(m_pThemeData->clrPawColorDark[eState - 1]));
-    pGraphics->StrokePath(path, &matrix);
-  } else {
-    float fPawLen = kPawLength;
-    if (rect.height / 2 <= fPawLen) {
-      fPawLen = (rect.height - 6) / 2;
-    }
-
-    float fX = rect.left + rect.width / 2;
-    float fY = rect.top + rect.height / 4;
-    path.MoveTo(CFX_PointF(fX - 4, fY));
-    path.LineTo(CFX_PointF(fX - 4, fY + fPawLen));
-    path.MoveTo(CFX_PointF(fX - 2, fY));
-    path.LineTo(CFX_PointF(fX - 2, fY + fPawLen));
-    path.MoveTo(CFX_PointF(fX, fY));
-    path.LineTo(CFX_PointF(fX, fY + fPawLen));
-    path.MoveTo(CFX_PointF(fX + 2, fY));
-    path.LineTo(CFX_PointF(fX + 2, fY + fPawLen));
-
-    pGraphics->SetLineWidth(1);
-    pGraphics->SetStrokeColor(
-        CFGAS_GEColor(m_pThemeData->clrPawColorLight[eState - 1]));
-    pGraphics->StrokePath(path, &matrix);
-    fY++;
-
-    path.Clear();
-    path.MoveTo(CFX_PointF(fX - 3, fY));
-    path.LineTo(CFX_PointF(fX - 3, fY + fPawLen));
-    path.MoveTo(CFX_PointF(fX - 1, fY));
-    path.LineTo(CFX_PointF(fX - 1, fY + fPawLen));
-    path.MoveTo(CFX_PointF(fX + 1, fY));
-    path.LineTo(CFX_PointF(fX + 1, fY + fPawLen));
-    path.MoveTo(CFX_PointF(fX + 3, fY));
-    path.LineTo(CFX_PointF(fX + 3, fY + fPawLen));
-
-    pGraphics->SetLineWidth(1);
-    pGraphics->SetStrokeColor(
-        CFGAS_GEColor(m_pThemeData->clrPawColorDark[eState - 1]));
-    pGraphics->StrokePath(path, &matrix);
-  }
 }
 
 void CFWL_ScrollBarTP::DrawTrack(CFGAS_GEGraphics* pGraphics,

@@ -49,11 +49,6 @@ class CFWL_ScrollBarTP final : public CFWL_WidgetTP {
                      FWLTHEME_DIRECTION eDict,
                      FWLTHEME_STATE eState,
                      const CFX_Matrix& matrix);
-  void DrawPaw(CFGAS_GEGraphics* pGraphics,
-               const CFX_RectF& rect,
-               bool bVert,
-               FWLTHEME_STATE eState,
-               const CFX_Matrix& matrix);
   void SetThemeData();
 
   std::unique_ptr<SBThemeData> m_pThemeData;
