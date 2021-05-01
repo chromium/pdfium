@@ -238,7 +238,7 @@ void CXFA_FFPushButton::OnDrawWidget(CFGAS_GEGraphics* pGraphics,
       CFGAS_GEPath path;
       CFX_RectF rect = pWidget->GetWidgetRect();
       path.AddRectangle(0, 0, rect.width, rect.height);
-      pGraphics->StrokePath(path, &matrix);
+      pGraphics->StrokePath(path, matrix);
     }
   }
 }

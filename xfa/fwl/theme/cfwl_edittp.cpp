@@ -26,7 +26,7 @@ void CFWL_EditTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
     pParams.m_pGraphics->SetStrokeColor(CFGAS_GEColor(cr));
     pParams.m_pGraphics->SetLineWidth(fWidth);
     if (pParams.m_pPath)
-      pParams.m_pGraphics->StrokePath(*pParams.m_pPath, &pParams.m_matrix);
+      pParams.m_pGraphics->StrokePath(*pParams.m_pPath, pParams.m_matrix);
     return;
   }
 
@@ -72,7 +72,7 @@ void CFWL_EditTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
       pParams.m_pGraphics->SetStrokeColor(CFGAS_GEColor(0xFF000000));
       pParams.m_pGraphics->SetLineWidth(1.0f);
       if (pParams.m_pPath)
-        pParams.m_pGraphics->StrokePath(*pParams.m_pPath, &pParams.m_matrix);
+        pParams.m_pGraphics->StrokePath(*pParams.m_pPath, pParams.m_matrix);
       break;
     }
     default:

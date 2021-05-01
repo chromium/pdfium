@@ -84,7 +84,7 @@ void CFWL_CheckBoxTP::DrawSignCross(CFGAS_GEGraphics* pGraphics,
   pGraphics->SaveGraphState();
   pGraphics->SetStrokeColor(CFGAS_GEColor(argbFill));
   pGraphics->SetLineWidth(1.0f);
-  pGraphics->StrokePath(path, &matrix);
+  pGraphics->StrokePath(path, matrix);
   pGraphics->RestoreGraphState();
 }
 

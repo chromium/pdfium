@@ -135,6 +135,6 @@ void CXFA_FFLine::RenderWidget(CFGAS_GEGraphics* pGS,
 
   pGS->SetStrokeColor(CFGAS_GEColor(lineColor));
   pGS->SetLineCap(LineCapToFXGE(iCap));
-  pGS->StrokePath(linePath, &mtRotate);
+  pGS->StrokePath(linePath, mtRotate);
   pGS->RestoreGraphState();
 }

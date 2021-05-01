@@ -134,7 +134,7 @@ void CFWL_WidgetTP::DrawFocus(CFGAS_GEGraphics* pGraphics,
   pGraphics->SetStrokeColor(CFGAS_GEColor(0xFF000000));
   static constexpr float kDashPattern[2] = {1, 1};
   pGraphics->SetLineDash(0.0f, kDashPattern);
-  pGraphics->StrokePath(path, &matrix);
+  pGraphics->StrokePath(path, matrix);
   pGraphics->RestoreGraphState();
 }
 
@@ -200,7 +200,7 @@ void CFWL_WidgetTP::DrawBtn(CFGAS_GEGraphics* pGraphics,
   CFGAS_GEPath path;
   path.AddRectangle(rect.left, rect.top, rect.width, rect.height);
   pGraphics->SetStrokeColor(CFGAS_GEColor(m_pColorData->clrBorder[eState - 1]));
-  pGraphics->StrokePath(path, &matrix);
+  pGraphics->StrokePath(path, matrix);
 }
 
 void CFWL_WidgetTP::DrawArrowBtn(CFGAS_GEGraphics* pGraphics,

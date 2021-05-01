@@ -66,7 +66,7 @@ void CFWL_PushButtonTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
                     pParams.m_matrix);
 
       pGraphics->SetStrokeColor(CFGAS_GEColor(m_pThemeData->clrBorder[iColor]));
-      pGraphics->StrokePath(strokePath, &pParams.m_matrix);
+      pGraphics->StrokePath(strokePath, pParams.m_matrix);
 
       fillPath.Clear();
       fillPath.AddRectangle(rtInner.left, rtInner.top, rtInner.width,

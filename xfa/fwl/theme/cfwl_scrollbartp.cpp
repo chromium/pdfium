@@ -90,7 +90,7 @@ void CFWL_ScrollBarTP::DrawThumbBtn(CFGAS_GEGraphics* pGraphics,
   path.AddRectangle(rect.left, rect.top, rect.width, rect.height);
   pGraphics->SetStrokeColor(
       CFGAS_GEColor(m_pThemeData->clrBtnBorder[eState - 1]));
-  pGraphics->StrokePath(path, &matrix);
+  pGraphics->StrokePath(path, matrix);
   pGraphics->RestoreGraphState();
 }
 

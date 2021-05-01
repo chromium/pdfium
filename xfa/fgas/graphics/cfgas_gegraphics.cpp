@@ -167,7 +167,7 @@ void CFGAS_GEGraphics::SetFillColor(const CFGAS_GEColor& color) {
 }
 
 void CFGAS_GEGraphics::StrokePath(const CFGAS_GEPath& path,
-                                  const CFX_Matrix* matrix) {
+                                  const CFX_Matrix& matrix) {
   RenderDeviceStrokePath(path, matrix);
 }
 
@@ -201,14 +201,12 @@ CFX_RenderDevice* CFGAS_GEGraphics::GetRenderDevice() {
 }
 
 void CFGAS_GEGraphics::RenderDeviceStrokePath(const CFGAS_GEPath& path,
-                                              const CFX_Matrix* matrix) {
+                                              const CFX_Matrix& matrix) {
   if (m_info.strokeColor.GetType() != CFGAS_GEColor::Solid)
     return;
 
   CFX_Matrix m = m_info.CTM;
-  if (matrix)
-    m.Concat(*matrix);
-
+  m.Concat(matrix);
   m_renderDevice->DrawPath(path.GetPathData(), &m, &m_info.graphState, 0x0,
                            m_info.strokeColor.GetArgb(),
                            CFX_FillRenderOptions());
