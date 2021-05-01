@@ -17,19 +17,6 @@ CFWL_EditTP::CFWL_EditTP() = default;
 CFWL_EditTP::~CFWL_EditTP() = default;
 
 void CFWL_EditTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
-  if (CFWL_Part::CombTextLine == pParams.m_iPart) {
-    CFWL_Widget::AdapterIface* pWidget =
-        pParams.m_pWidget->GetOutmost()->GetAdapterIface();
-    FX_ARGB cr = 0xFF000000;
-    float fWidth = 1.0f;
-    pWidget->GetBorderColorAndThickness(&cr, &fWidth);
-    pParams.m_pGraphics->SetStrokeColor(CFGAS_GEColor(cr));
-    pParams.m_pGraphics->SetLineWidth(fWidth);
-    if (pParams.m_pPath)
-      pParams.m_pGraphics->StrokePath(*pParams.m_pPath, pParams.m_matrix);
-    return;
-  }
-
   switch (pParams.m_iPart) {
     case CFWL_Part::Border: {
       DrawBorder(pParams.m_pGraphics.Get(), pParams.m_PartRect,
@@ -69,8 +56,13 @@ void CFWL_EditTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
       break;
     }
     case CFWL_Part::CombTextLine: {
-      pParams.m_pGraphics->SetStrokeColor(CFGAS_GEColor(0xFF000000));
-      pParams.m_pGraphics->SetLineWidth(1.0f);
+      CFWL_Widget::AdapterIface* pWidget =
+          pParams.m_pWidget->GetOutmost()->GetAdapterIface();
+      FX_ARGB cr = 0xFF000000;
+      float fWidth = 1.0f;
+      pWidget->GetBorderColorAndThickness(&cr, &fWidth);
+      pParams.m_pGraphics->SetStrokeColor(CFGAS_GEColor(cr));
+      pParams.m_pGraphics->SetLineWidth(fWidth);
       if (pParams.m_pPath)
         pParams.m_pGraphics->StrokePath(*pParams.m_pPath, pParams.m_matrix);
       break;
