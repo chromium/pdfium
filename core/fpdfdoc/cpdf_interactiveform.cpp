@@ -11,6 +11,7 @@
 
 #include "build/build_config.h"
 #include "constants/form_fields.h"
+#include "constants/form_flags.h"
 #include "constants/stream_dict_common.h"
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/font/cpdf_fontencoding.h"
@@ -981,13 +982,13 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
       continue;
 
     uint32_t dwFlags = pField->GetFieldFlags();
-    if (dwFlags & 0x04)
+    if (dwFlags & pdfium::form_flags::kNoExport)
       continue;
 
     if (bIncludeOrExclude != pdfium::Contains(fields, pField))
       continue;
 
-    if ((dwFlags & 0x02) != 0 &&
+    if ((dwFlags & pdfium::form_flags::kRequired) != 0 &&
         pField->GetDict()->GetStringFor(pdfium::form_fields::kV).IsEmpty()) {
       continue;
     }
