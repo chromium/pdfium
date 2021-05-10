@@ -7,6 +7,7 @@
 #include "fpdfsdk/cpdfsdk_appstream.h"
 
 #include <memory>
+#include <sstream>
 #include <utility>
 
 #include "constants/form_flags.h"

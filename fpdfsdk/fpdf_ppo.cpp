@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <map>
 #include <memory>
+#include <sstream>
 #include <utility>
 #include <vector>
 

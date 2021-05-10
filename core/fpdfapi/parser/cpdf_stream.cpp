@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/parser/cpdf_stream.h"
 
+#include <sstream>
 #include <utility>
 #include <vector>
 

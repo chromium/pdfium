@@ -5,8 +5,8 @@
 #ifndef CORE_FPDFAPI_EDIT_CPDF_PAGECONTENTMANAGER_H_
 #define CORE_FPDFAPI_EDIT_CPDF_PAGECONTENTMANAGER_H_
 
+#include <iosfwd>
 #include <set>
-#include <sstream>
 
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
