@@ -210,7 +210,7 @@ void CFWL_CheckBoxTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
 
   if ((pParams.m_dwStates & CFWL_PartState_Checked) ||
       (pParams.m_dwStates & CFWL_PartState_Neutral)) {
-    DrawCheckSign(pParams.m_pWidget, pParams.m_pGraphics.Get(),
+    DrawCheckSign(pParams.GetWidget(), pParams.GetGraphics(),
                   pParams.m_PartRect, pParams.m_dwStates, pParams.m_matrix);
   }
 }

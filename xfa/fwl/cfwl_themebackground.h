@@ -15,15 +15,15 @@ class CFGAS_GEPath;
 
 class CFWL_ThemeBackground final : public CFWL_ThemePart {
  public:
-  CFWL_ThemeBackground();
+  CFWL_ThemeBackground(CFWL_Widget* pWidget, CFGAS_GEGraphics* pGraphics);
   ~CFWL_ThemeBackground();
 
-  UnownedPtr<CFGAS_GEGraphics> m_pGraphics;
+  CFGAS_GEGraphics* GetGraphics() const { return m_pGraphics.Get(); }
+
   UnownedPtr<const CFGAS_GEPath> m_pPath;
+
+ private:
+  UnownedPtr<CFGAS_GEGraphics> const m_pGraphics;
 };
-
-inline CFWL_ThemeBackground::CFWL_ThemeBackground() = default;
-
-inline CFWL_ThemeBackground::~CFWL_ThemeBackground() = default;
 
 #endif  // XFA_FWL_CFWL_THEMEBACKGROUND_H_

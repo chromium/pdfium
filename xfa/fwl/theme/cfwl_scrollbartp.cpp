@@ -20,7 +20,7 @@ CFWL_ScrollBarTP::CFWL_ScrollBarTP() : m_pThemeData(new SBThemeData) {
 CFWL_ScrollBarTP::~CFWL_ScrollBarTP() = default;
 
 void CFWL_ScrollBarTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
-  CFWL_Widget* pWidget = pParams.m_pWidget;
+  CFWL_Widget* pWidget = pParams.GetWidget();
   FWLTHEME_STATE eState = FWLTHEME_STATE_Normal;
   if (pParams.m_dwStates & CFWL_PartState_Hovered)
     eState = FWLTHEME_STATE_Hover;
@@ -29,7 +29,7 @@ void CFWL_ScrollBarTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   else if (pParams.m_dwStates & CFWL_PartState_Disabled)
     eState = FWLTHEME_STATE_Disable;
 
-  CFGAS_GEGraphics* pGraphics = pParams.m_pGraphics.Get();
+  CFGAS_GEGraphics* pGraphics = pParams.GetGraphics();
   bool bVert = !!pWidget->GetStylesEx();
   switch (pParams.m_iPart) {
     case CFWL_Part::ForeArrow: {

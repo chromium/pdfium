@@ -6,6 +6,6 @@
 
 #include "xfa/fwl/cfwl_themepart.h"
 
-CFWL_ThemePart::CFWL_ThemePart() = default;
+CFWL_ThemePart::CFWL_ThemePart(CFWL_Widget* pWidget) : m_pWidget(pWidget) {}
 
 CFWL_ThemePart::~CFWL_ThemePart() = default;

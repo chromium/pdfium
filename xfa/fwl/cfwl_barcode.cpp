@@ -156,8 +156,7 @@ void CFWL_Barcode::GenerateBarcodeImageCache() {
     return;
 
   IFWL_ThemeProvider* pTheme = GetThemeProvider();
-  CFWL_ThemePart part;
-  part.m_pWidget = this;
+  CFWL_ThemePart part(this);
   if (RetainPtr<CFGAS_GEFont> pFont = pTheme->GetFont(part)) {
     if (CFX_Font* pCXFont = pFont->GetDevFont())
       m_pBarcodeEngine->SetFont(pCXFont);

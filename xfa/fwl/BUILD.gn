@@ -65,6 +65,7 @@ source_set("fwl") {
     "cfwl_pushbutton.h",
     "cfwl_scrollbar.cpp",
     "cfwl_scrollbar.h",
+    "cfwl_themebackground.cpp",
     "cfwl_themebackground.h",
     "cfwl_themepart.cpp",
     "cfwl_themepart.h",

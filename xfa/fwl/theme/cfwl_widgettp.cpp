@@ -35,7 +35,7 @@ void CFWL_WidgetTP::DrawText(const CFWL_ThemeText& pParams) {
   if (iLen <= 0)
     return;
 
-  CFGAS_GEGraphics* pGraphics = pParams.m_pGraphics;
+  CFGAS_GEGraphics* pGraphics = pParams.GetGraphics();
   m_pTextOut->SetStyles(pParams.m_dwTTOStyles);
   m_pTextOut->SetAlignment(pParams.m_iTTOAlign);
 

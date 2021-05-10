@@ -19,13 +19,12 @@ CFWL_EditTP::~CFWL_EditTP() = default;
 void CFWL_EditTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   switch (pParams.m_iPart) {
     case CFWL_Part::Border: {
-      DrawBorder(pParams.m_pGraphics.Get(), pParams.m_PartRect,
-                 pParams.m_matrix);
+      DrawBorder(pParams.GetGraphics(), pParams.m_PartRect, pParams.m_matrix);
       break;
     }
     case CFWL_Part::Background: {
       if (pParams.m_pPath) {
-        CFGAS_GEGraphics* pGraphics = pParams.m_pGraphics.Get();
+        CFGAS_GEGraphics* pGraphics = pParams.GetGraphics();
         pGraphics->SaveGraphState();
         pGraphics->SetFillColor(CFGAS_GEColor(FWLTHEME_COLOR_BKSelected));
         if (pParams.m_pPath) {
@@ -47,24 +46,24 @@ void CFWL_EditTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
           else
             cr = CFGAS_GEColor(0xFFFFFFFF);
         }
-        pParams.m_pGraphics->SaveGraphState();
-        pParams.m_pGraphics->SetFillColor(cr);
-        pParams.m_pGraphics->FillPath(
+        pParams.GetGraphics()->SaveGraphState();
+        pParams.GetGraphics()->SetFillColor(cr);
+        pParams.GetGraphics()->FillPath(
             path, CFX_FillRenderOptions::FillType::kWinding, pParams.m_matrix);
-        pParams.m_pGraphics->RestoreGraphState();
+        pParams.GetGraphics()->RestoreGraphState();
       }
       break;
     }
     case CFWL_Part::CombTextLine: {
       CFWL_Widget::AdapterIface* pWidget =
-          pParams.m_pWidget->GetOutmost()->GetAdapterIface();
+          pParams.GetWidget()->GetOutmost()->GetAdapterIface();
       FX_ARGB cr = 0xFF000000;
       float fWidth = 1.0f;
       pWidget->GetBorderColorAndThickness(&cr, &fWidth);
-      pParams.m_pGraphics->SetStrokeColor(CFGAS_GEColor(cr));
-      pParams.m_pGraphics->SetLineWidth(fWidth);
+      pParams.GetGraphics()->SetStrokeColor(CFGAS_GEColor(cr));
+      pParams.GetGraphics()->SetLineWidth(fWidth);
       if (pParams.m_pPath)
-        pParams.m_pGraphics->StrokePath(*pParams.m_pPath, pParams.m_matrix);
+        pParams.GetGraphics()->StrokePath(*pParams.m_pPath, pParams.m_matrix);
       break;
     }
     default:

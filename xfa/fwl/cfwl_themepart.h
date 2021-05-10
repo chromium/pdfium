@@ -79,17 +79,21 @@ class CFWL_Widget;
 
 class CFWL_ThemePart {
  public:
-  CFWL_ThemePart();
+  CFWL_ThemePart(CFWL_Widget* pWidget);
   ~CFWL_ThemePart();
+
+  CFWL_Widget* GetWidget() const { return m_pWidget.Get(); }
 
   CFX_Matrix m_matrix;
   CFX_RectF m_PartRect;
-  UnownedPtr<CFWL_Widget> m_pWidget;
   UnownedPtr<const CFX_RectF> m_pRtData;
   uint32_t m_dwStates = CFWL_PartState_Normal;
   CFWL_Part m_iPart = CFWL_Part::None;
   bool m_bMaximize = false;
   bool m_bStaticBackground = false;
+
+ private:
+  UnownedPtr<CFWL_Widget> const m_pWidget;
 };
 
 #endif  // XFA_FWL_CFWL_THEMEPART_H_
