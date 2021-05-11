@@ -361,18 +361,16 @@ void CFWL_ComboBox::ProcessSelChanged(bool bLButtonUp) {
     RepaintRect(m_ClientRect);
     return;
   }
-
   CFWL_ListBox::Item* hItem = m_pListBox->GetItem(this, m_iCurSel);
   if (!hItem)
     return;
+
   if (m_pEdit) {
     m_pEdit->SetText(hItem->GetText());
     m_pEdit->Update();
     m_pEdit->SetSelected();
   }
-
-  CFWL_EventSelectChanged ev(this);
-  ev.bLButtonUp = bLButtonUp;
+  CFWL_EventSelectChanged ev(this, bLButtonUp);
   DispatchEvent(&ev);
 }
 
@@ -435,9 +433,8 @@ void CFWL_ComboBox::OnProcessEvent(CFWL_Event* pEvent) {
   CFWL_Event::Type type = pEvent->GetType();
   if (type == CFWL_Event::Type::Scroll) {
     CFWL_EventScroll* pScrollEvent = static_cast<CFWL_EventScroll*>(pEvent);
-    CFWL_EventScroll pScrollEv(this);
-    pScrollEv.m_iScrollCode = pScrollEvent->m_iScrollCode;
-    pScrollEv.m_fPos = pScrollEvent->m_fPos;
+    CFWL_EventScroll pScrollEv(this, pScrollEvent->GetScrollCode(),
+                               pScrollEvent->GetPos());
     DispatchEvent(&pScrollEv);
   } else if (type == CFWL_Event::Type::TextWillChange) {
     CFWL_Event pTemp(CFWL_Event::Type::EditChanged, this);

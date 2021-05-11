@@ -24,7 +24,7 @@ class CXFA_FFNumericEdit final : public CXFA_FFTextEdit {
   void OnProcessEvent(CFWL_Event* pEvent) override;
 
  private:
-  bool OnValidate(CFWL_Widget* pWidget, WideString& wsText);
+  bool OnValidate(CFWL_Widget* pWidget, const WideString& wsText);
 };
 
 #endif  // XFA_FXFA_CXFA_FFNUMERICEDIT_H_

@@ -6,7 +6,9 @@
 
 #include "xfa/fwl/cfwl_eventvalidate.h"
 
-CFWL_EventValidate::CFWL_EventValidate(CFWL_Widget* pSrcTarget)
-    : CFWL_Event(CFWL_Event::Type::Validate, pSrcTarget) {}
+CFWL_EventValidate::CFWL_EventValidate(CFWL_Widget* pSrcTarget,
+                                       const WideString& wsInsert)
+    : CFWL_Event(CFWL_Event::Type::Validate, pSrcTarget),
+      m_wsInsert(wsInsert) {}
 
 CFWL_EventValidate::~CFWL_EventValidate() = default;

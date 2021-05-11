@@ -656,7 +656,7 @@ void CFWL_ListBox::OnProcessEvent(CFWL_Event* pEvent) {
       (pSrcTarget == m_pHorzScrollBar && m_pHorzScrollBar)) {
     CFWL_EventScroll* pScrollEvent = static_cast<CFWL_EventScroll*>(pEvent);
     OnScroll(static_cast<CFWL_ScrollBar*>(pSrcTarget),
-             pScrollEvent->m_iScrollCode, pScrollEvent->m_fPos);
+             pScrollEvent->GetScrollCode(), pScrollEvent->GetPos());
   }
 }
 

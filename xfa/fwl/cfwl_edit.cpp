@@ -283,19 +283,15 @@ void CFWL_Edit::OnCaretChanged() {
 }
 
 void CFWL_Edit::OnTextWillChange(CFDE_TextEditEngine::TextChange* change) {
-  CFWL_EventTextWillChange event(this);
-  event.previous_text = change->previous_text;
-  event.change_text = change->text;
-  event.selection_start = change->selection_start;
-  event.selection_end = change->selection_end;
-  event.cancelled = false;
-
+  CFWL_EventTextWillChange event(this, change->text, change->previous_text,
+                                 change->selection_start,
+                                 change->selection_end);
   DispatchEvent(&event);
 
-  change->text = event.change_text;
-  change->selection_start = event.selection_start;
-  change->selection_end = event.selection_end;
-  change->cancelled = event.cancelled;
+  change->text = event.GetChangeText();
+  change->selection_start = event.GetSelectionStart();
+  change->selection_end = event.GetSelectionEnd();
+  change->cancelled = event.GetCancelled();
 }
 
 void CFWL_Edit::OnTextChanged() {
@@ -311,11 +307,9 @@ void CFWL_Edit::OnSelChanged() {
 }
 
 bool CFWL_Edit::OnValidate(const WideString& wsText) {
-  CFWL_EventValidate event(this);
-  event.wsInsert = wsText;
-  event.bValidate = true;
+  CFWL_EventValidate event(this, wsText);
   DispatchEvent(&event);
-  return event.bValidate;
+  return event.GetValidate();
 }
 
 void CFWL_Edit::SetScrollOffset(float fScrollOffset) {
@@ -961,7 +955,7 @@ void CFWL_Edit::OnProcessEvent(CFWL_Event* pEvent) {
       (pSrcTarget == m_pHorzScrollBar && m_pHorzScrollBar)) {
     CFWL_EventScroll* pScrollEvent = static_cast<CFWL_EventScroll*>(pEvent);
     OnScroll(static_cast<CFWL_ScrollBar*>(pSrcTarget),
-             pScrollEvent->m_iScrollCode, pScrollEvent->m_fPos);
+             pScrollEvent->GetScrollCode(), pScrollEvent->GetPos());
   }
 }
 

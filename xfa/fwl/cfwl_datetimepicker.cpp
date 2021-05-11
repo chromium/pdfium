@@ -284,10 +284,7 @@ void CFWL_DateTimePicker::ProcessSelChanged(int32_t iYear,
   m_pEdit->Update();
   RepaintRect(m_ClientRect);
 
-  CFWL_EventSelectChanged ev(this);
-  ev.iYear = m_iYear;
-  ev.iMonth = m_iMonth;
-  ev.iDay = m_iDay;
+  CFWL_EventSelectChanged ev(this, m_iYear, m_iMonth, m_iDay);
   DispatchEvent(&ev);
 }
 

@@ -279,9 +279,7 @@ bool CFWL_ScrollBar::SendEvent() {
 }
 
 bool CFWL_ScrollBar::OnScroll(CFWL_EventScroll::Code dwCode, float fPos) {
-  CFWL_EventScroll ev(this);
-  ev.m_iScrollCode = dwCode;
-  ev.m_fPos = fPos;
+  CFWL_EventScroll ev(this, dwCode, fPos);
   DispatchEvent(&ev);
   return true;
 }

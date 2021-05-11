@@ -12,11 +12,16 @@
 
 class CFWL_EventValidate final : public CFWL_Event {
  public:
-  explicit CFWL_EventValidate(CFWL_Widget* pSrcTarget);
+  CFWL_EventValidate(CFWL_Widget* pSrcTarget, const WideString& wsInsert);
   ~CFWL_EventValidate() override;
 
-  bool bValidate = false;
-  WideString wsInsert;
+  WideString GetInsert() const { return m_wsInsert; }
+  bool GetValidate() const { return m_bValidate; }
+  void SetValidate(bool bValidate) { m_bValidate = bValidate; }
+
+ protected:
+  const WideString m_wsInsert;
+  bool m_bValidate = true;
 };
 
 #endif  // XFA_FWL_CFWL_EVENTVALIDATE_H_

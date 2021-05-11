@@ -312,20 +312,19 @@ void CXFA_FFTextEdit::OnTextWillChange(CFWL_Widget* pWidget,
 
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Change;
-  eParam.m_wsChange = event->change_text;
+  eParam.m_wsChange = event->GetChangeText();
   eParam.m_pTarget = m_pNode.Get();
-  eParam.m_wsPrevText = event->previous_text;
-  eParam.m_iSelStart = static_cast<int32_t>(event->selection_start);
-  eParam.m_iSelEnd = static_cast<int32_t>(event->selection_end);
-
+  eParam.m_wsPrevText = event->GetPreviousText();
+  eParam.m_iSelStart = static_cast<int32_t>(event->GetSelectionStart());
+  eParam.m_iSelEnd = static_cast<int32_t>(event->GetSelectionEnd());
   m_pNode->ProcessEvent(GetDocView(), XFA_AttributeValue::Change, &eParam);
 
   // Copy the data back out of the EventParam and into the TextChanged event so
   // it can propagate back to the calling widget.
-  event->cancelled = eParam.m_bCancelAction;
-  event->change_text = std::move(eParam.m_wsChange);
-  event->selection_start = static_cast<size_t>(eParam.m_iSelStart);
-  event->selection_end = static_cast<size_t>(eParam.m_iSelEnd);
+  event->SetCancelled(eParam.m_bCancelAction);
+  event->SetChangeText(eParam.m_wsChange);
+  event->SetSelectionStart(static_cast<size_t>(eParam.m_iSelStart));
+  event->SetSelectionEnd(static_cast<size_t>(eParam.m_iSelEnd));
 }
 
 void CXFA_FFTextEdit::OnTextFull(CFWL_Widget* pWidget) {

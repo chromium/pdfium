@@ -350,7 +350,7 @@ void CXFA_FFComboBox::OnProcessEvent(CFWL_Event* pEvent) {
   switch (pEvent->GetType()) {
     case CFWL_Event::Type::SelectChanged: {
       auto* postEvent = static_cast<CFWL_EventSelectChanged*>(pEvent);
-      OnSelectChanged(GetNormalWidget(), postEvent->bLButtonUp);
+      OnSelectChanged(GetNormalWidget(), postEvent->GetLButtonUp());
       break;
     }
     case CFWL_Event::Type::EditChanged: {

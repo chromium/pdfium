@@ -6,7 +6,11 @@
 
 #include "xfa/fwl/cfwl_eventscroll.h"
 
-CFWL_EventScroll::CFWL_EventScroll(CFWL_Widget* pSrcTarget)
-    : CFWL_Event(CFWL_Event::Type::Scroll, pSrcTarget) {}
+CFWL_EventScroll::CFWL_EventScroll(CFWL_Widget* pSrcTarget,
+                                   Code code,
+                                   float pos)
+    : CFWL_Event(CFWL_Event::Type::Scroll, pSrcTarget),
+      m_iScrollCode(code),
+      m_fPos(pos) {}
 
 CFWL_EventScroll::~CFWL_EventScroll() = default;

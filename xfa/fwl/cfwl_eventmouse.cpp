@@ -6,11 +6,10 @@
 
 #include "xfa/fwl/cfwl_eventmouse.h"
 
-CFWL_EventMouse::CFWL_EventMouse(CFWL_Widget* pSrcTarget)
-    : CFWL_EventMouse(pSrcTarget, nullptr) {}
-
 CFWL_EventMouse::CFWL_EventMouse(CFWL_Widget* pSrcTarget,
-                                 CFWL_Widget* pDstTarget)
-    : CFWL_Event(CFWL_Event::Type::Mouse, pSrcTarget, pDstTarget) {}
+                                 CFWL_Widget* pDstTarget,
+                                 FWL_MouseCommand cmd)
+    : CFWL_Event(CFWL_Event::Type::Mouse, pSrcTarget, pDstTarget),
+      m_dwCmd(cmd) {}
 
 CFWL_EventMouse::~CFWL_EventMouse() = default;
