@@ -213,23 +213,19 @@ bool CPDF_DataAvail::CheckAndLoadAllXref() {
 
 RetainPtr<CPDF_Object> CPDF_DataAvail::GetObject(uint32_t objnum,
                                                  bool* pExistInFile) {
-  CPDF_Parser* pParser = nullptr;
+  *pExistInFile = false;
+  CPDF_Parser* pParser = m_pDocument ? m_pDocument->GetParser() : &m_parser;
+  if (!pParser)
+    return nullptr;
 
-  if (pExistInFile)
-    *pExistInFile = true;
+  CPDF_ReadValidator::ScopedSession read_session(GetValidator());
+  RetainPtr<CPDF_Object> pRet = pParser->ParseIndirectObject(objnum);
+  if (!pRet)
+    return nullptr;
 
-  pParser = m_pDocument ? m_pDocument->GetParser() : &m_parser;
-
-  RetainPtr<CPDF_Object> pRet;
-  if (pParser) {
-    CPDF_ReadValidator::ScopedSession read_session(GetValidator());
-    pRet = pParser->ParseIndirectObject(objnum);
-    if (GetValidator()->has_read_problems())
-      return nullptr;
-  }
-
-  if (!pRet && pExistInFile)
-    *pExistInFile = false;
+  *pExistInFile = true;
+  if (GetValidator()->has_read_problems())
+    return nullptr;
 
   return pRet;
 }
