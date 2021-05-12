@@ -38,7 +38,7 @@ class GCedTreeNodeUnitTest : public FXGCUnitTest {
 
   // FXGCUnitTest:
   void TearDown() override {
-    s_root = nullptr;  // Can't (yet) outlive |heap_|.
+    s_root = nullptr;  // Can't (yet) outlive |FXGCUnitTest::heap_|.
     FXGCUnitTest::TearDown();
   }
 
@@ -67,9 +67,6 @@ class GCedTreeNodeUnitTest : public FXGCUnitTest {
               heap()->GetAllocationHandle()));
     }
   }
-
- private:
-  FXGCScopedHeap heap_;
 };
 
 cppgc::Persistent<ObservableGCedTreeNodeForTest> GCedTreeNodeUnitTest::s_root;
