@@ -37,16 +37,17 @@ class ObservableGCedTreeNodeMixinForTest
 
 class GCedTreeNodeMixinUnitTest : public FXGCUnitTest {
  public:
-  static cppgc::Persistent<ObservableGCedTreeNodeMixinForTest> s_root;
-
   GCedTreeNodeMixinUnitTest() = default;
   ~GCedTreeNodeMixinUnitTest() override = default;
 
   // FXGCUnitTest:
   void TearDown() override {
-    s_root = nullptr;  // Can't (yet) outlive |FXGCUnitTest::heap_|.
+    root_ = nullptr;  // Can't (yet) outlive |FXGCUnitTest::heap_|.
     FXGCUnitTest::TearDown();
   }
+
+  ObservableGCedTreeNodeMixinForTest* root() const { return root_; }
+  void CreateRoot() { root_ = CreateNode(); }
 
   ObservableGCedTreeNodeMixinForTest* CreateNode() {
     return cppgc::MakeGarbageCollected<ObservableGCedTreeNodeMixinForTest>(
@@ -73,14 +74,14 @@ class GCedTreeNodeMixinUnitTest : public FXGCUnitTest {
               heap()->GetAllocationHandle()));
     }
   }
+
+ private:
+  cppgc::Persistent<ObservableGCedTreeNodeMixinForTest> root_;
 };
 
-cppgc::Persistent<ObservableGCedTreeNodeMixinForTest>
-    GCedTreeNodeMixinUnitTest::s_root;
-
 TEST_F(GCedTreeNodeMixinUnitTest, OneRefence) {
-  s_root = CreateNode();
-  ObservedPtr<ObservableGCedTreeNodeMixinForTest> watcher(s_root);
+  CreateRoot();
+  ObservedPtr<ObservableGCedTreeNodeMixinForTest> watcher(root());
   ForceGCAndPump();
   EXPECT_TRUE(watcher);
 }
@@ -92,57 +93,57 @@ TEST_F(GCedTreeNodeMixinUnitTest, NoReferences) {
 }
 
 TEST_F(GCedTreeNodeMixinUnitTest, FirstHasParent) {
-  s_root = CreateNode();
+  CreateRoot();
   ObservedPtr<ObservableGCedTreeNodeMixinForTest> watcher(CreateNode());
-  s_root->AppendFirstChild(watcher.Get());
+  root()->AppendFirstChild(watcher.Get());
   ForceGCAndPump();
-  ASSERT_TRUE(s_root);
+  ASSERT_TRUE(root());
   EXPECT_TRUE(watcher);
-  s_root->RemoveChild(watcher.Get());
+  root()->RemoveChild(watcher.Get());
   ForceGCAndPump();
-  ASSERT_TRUE(s_root);
+  ASSERT_TRUE(root());
   EXPECT_FALSE(watcher);
 
   // Now add some clutter.
   watcher.Reset(CreateNode());
-  s_root->AppendFirstChild(watcher.Get());
-  AddClutterToFront(s_root);
-  AddClutterToBack(s_root);
+  root()->AppendFirstChild(watcher.Get());
+  AddClutterToFront(root());
+  AddClutterToBack(root());
   ForceGCAndPump();
-  ASSERT_TRUE(s_root);
+  ASSERT_TRUE(root());
   EXPECT_TRUE(watcher);
-  s_root->RemoveChild(watcher.Get());
+  root()->RemoveChild(watcher.Get());
   ForceGCAndPump();
-  EXPECT_TRUE(s_root);
+  EXPECT_TRUE(root());
   EXPECT_FALSE(watcher);
 }
 
 TEST_F(GCedTreeNodeMixinUnitTest, RemoveSelf) {
-  s_root = CreateNode();
+  CreateRoot();
   ObservedPtr<ObservableGCedTreeNodeMixinForTest> watcher(CreateNode());
-  s_root->AppendFirstChild(watcher.Get());
+  root()->AppendFirstChild(watcher.Get());
   ForceGCAndPump();
-  EXPECT_TRUE(s_root);
+  EXPECT_TRUE(root());
   ASSERT_TRUE(watcher);
   watcher->RemoveSelfIfParented();
   ForceGCAndPump();
-  EXPECT_TRUE(s_root);
+  EXPECT_TRUE(root());
   EXPECT_FALSE(watcher);
 }
 
 TEST_F(GCedTreeNodeMixinUnitTest, InsertBeforeAfter) {
-  s_root = CreateNode();
-  AddClutterToFront(s_root);
+  CreateRoot();
+  AddClutterToFront(root());
   ObservedPtr<ObservableGCedTreeNodeMixinForTest> watcher(CreateNode());
-  s_root->AppendFirstChild(watcher.Get());
-  s_root->InsertBefore(s_root->GetFirstChild(), s_root->GetLastChild());
-  s_root->InsertAfter(s_root->GetLastChild(), s_root->GetFirstChild());
+  root()->AppendFirstChild(watcher.Get());
+  root()->InsertBefore(root()->GetFirstChild(), root()->GetLastChild());
+  root()->InsertAfter(root()->GetLastChild(), root()->GetFirstChild());
   ForceGCAndPump();
-  ASSERT_TRUE(s_root);
+  ASSERT_TRUE(root());
   EXPECT_TRUE(watcher);
-  s_root->RemoveChild(watcher.Get());
+  root()->RemoveChild(watcher.Get());
   ForceGCAndPump();
-  EXPECT_TRUE(s_root);
+  EXPECT_TRUE(root());
   EXPECT_FALSE(watcher);
 }
 

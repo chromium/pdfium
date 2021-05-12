@@ -7,7 +7,6 @@
 #include <memory>
 #include <set>
 
-#include "core/fxcrt/autorestorer.h"
 #include "testing/fxgc_unittest.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/stl_util.h"
@@ -18,8 +17,6 @@ namespace {
 
 class PseudoCollectible : public cppgc::GarbageCollected<PseudoCollectible> {
  public:
-  static cppgc::Persistent<PseudoCollectible> s_persistent_;
-
   static void ClearCounts() {
     s_live_.clear();
     s_dead_.clear();
@@ -44,7 +41,17 @@ class PseudoCollectible : public cppgc::GarbageCollected<PseudoCollectible> {
 
 std::set<const PseudoCollectible*> PseudoCollectible::s_live_;
 std::set<const PseudoCollectible*> PseudoCollectible::s_dead_;
-cppgc::Persistent<PseudoCollectible> PseudoCollectible::s_persistent_;
+
+class CollectibleHolder {
+ public:
+  explicit CollectibleHolder(PseudoCollectible* holdee) : holdee_(holdee) {}
+  ~CollectibleHolder() = default;
+
+  PseudoCollectible* holdee() const { return holdee_; }
+
+ private:
+  cppgc::Persistent<PseudoCollectible> holdee_;
+};
 
 }  // namespace
 
@@ -81,15 +88,11 @@ TEST_F(HeapUnitTest, NoReferences) {
   FXGCScopedHeap heap1 = FXGC_CreateHeap();
   ASSERT_TRUE(heap1);
   {
-    ASSERT_FALSE(PseudoCollectible::s_persistent_);
-    AutoRestorer<cppgc::Persistent<PseudoCollectible>> restorer(
-        &PseudoCollectible::s_persistent_);
-
-    PseudoCollectible::s_persistent_ =
+    auto holder = std::make_unique<CollectibleHolder>(
         cppgc::MakeGarbageCollected<PseudoCollectible>(
-            heap1->GetAllocationHandle());
+            heap1->GetAllocationHandle()));
 
-    EXPECT_TRUE(PseudoCollectible::s_persistent_->IsLive());
+    EXPECT_TRUE(holder->holdee()->IsLive());
     EXPECT_EQ(1u, PseudoCollectible::LiveCount());
     EXPECT_EQ(0u, PseudoCollectible::DeadCount());
   }
@@ -102,20 +105,16 @@ TEST_F(HeapUnitTest, HasReferences) {
   FXGCScopedHeap heap1 = FXGC_CreateHeap();
   ASSERT_TRUE(heap1);
   {
-    ASSERT_FALSE(PseudoCollectible::s_persistent_);
-    AutoRestorer<cppgc::Persistent<PseudoCollectible>> restorer(
-        &PseudoCollectible::s_persistent_);
-
-    PseudoCollectible::s_persistent_ =
+    auto holder = std::make_unique<CollectibleHolder>(
         cppgc::MakeGarbageCollected<PseudoCollectible>(
-            heap1->GetAllocationHandle());
+            heap1->GetAllocationHandle()));
 
-    EXPECT_TRUE(PseudoCollectible::s_persistent_->IsLive());
+    EXPECT_TRUE(holder->holdee()->IsLive());
     EXPECT_EQ(1u, PseudoCollectible::LiveCount());
     EXPECT_EQ(0u, PseudoCollectible::DeadCount());
 
     FXGC_ForceGarbageCollection(heap1.get());
-    EXPECT_TRUE(PseudoCollectible::s_persistent_->IsLive());
+    EXPECT_TRUE(holder->holdee()->IsLive());
     EXPECT_EQ(1u, PseudoCollectible::LiveCount());
     EXPECT_EQ(0u, PseudoCollectible::DeadCount());
   }
@@ -126,20 +125,18 @@ TEST_F(HeapUnitTest, DISABLED_DeleteHeapHasReferences) {
   FXGCScopedHeap heap1 = FXGC_CreateHeap();
   ASSERT_TRUE(heap1);
   {
-    ASSERT_FALSE(PseudoCollectible::s_persistent_);
-    AutoRestorer<cppgc::Persistent<PseudoCollectible>> restorer(
-        &PseudoCollectible::s_persistent_);
-
-    PseudoCollectible::s_persistent_ =
+    auto holder = std::make_unique<CollectibleHolder>(
         cppgc::MakeGarbageCollected<PseudoCollectible>(
-            heap1->GetAllocationHandle());
+            heap1->GetAllocationHandle()));
 
-    EXPECT_TRUE(PseudoCollectible::s_persistent_->IsLive());
+    EXPECT_TRUE(holder->holdee()->IsLive());
     EXPECT_EQ(1u, PseudoCollectible::LiveCount());
     EXPECT_EQ(0u, PseudoCollectible::DeadCount());
 
     heap1.reset();
-    EXPECT_FALSE(PseudoCollectible::s_persistent_);
+
+    // Maybe someday magically nulled by heap destruction.
+    EXPECT_FALSE(holder->holdee());
     EXPECT_EQ(1u, PseudoCollectible::LiveCount());
     EXPECT_EQ(0u, PseudoCollectible::DeadCount());
   }
@@ -149,15 +146,11 @@ TEST_F(HeapUnitTest, DeleteHeapNoReferences) {
   FXGCScopedHeap heap1 = FXGC_CreateHeap();
   ASSERT_TRUE(heap1);
   {
-    ASSERT_FALSE(PseudoCollectible::s_persistent_);
-    AutoRestorer<cppgc::Persistent<PseudoCollectible>> restorer(
-        &PseudoCollectible::s_persistent_);
-
-    PseudoCollectible::s_persistent_ =
+    auto holder = std::make_unique<CollectibleHolder>(
         cppgc::MakeGarbageCollected<PseudoCollectible>(
-            heap1->GetAllocationHandle());
+            heap1->GetAllocationHandle()));
 
-    EXPECT_TRUE(PseudoCollectible::s_persistent_->IsLive());
+    EXPECT_TRUE(holder->holdee()->IsLive());
     EXPECT_EQ(1u, PseudoCollectible::LiveCount());
     EXPECT_EQ(0u, PseudoCollectible::DeadCount());
   }
