@@ -30,6 +30,7 @@ TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocWithVersion) {
   EXPECT_THAT(GetString(), testing::StartsWith("%PDF-1.4\r\n"));
   EXPECT_EQ(805u, GetString().length());
 }
+
 TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocWithBadVersion) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   EXPECT_TRUE(FPDF_SaveWithVersion(document(), this, 0, -1));
@@ -42,6 +43,36 @@ TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocWithBadVersion) {
   ClearString();
   EXPECT_TRUE(FPDF_SaveWithVersion(document(), this, 0, 18));
   EXPECT_THAT(GetString(), testing::StartsWith("%PDF-1.7\r\n"));
+}
+
+TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocIncremental) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  EXPECT_TRUE(FPDF_SaveWithVersion(document(), this, FPDF_INCREMENTAL, 14));
+  // Version gets taken as-is from input document.
+  EXPECT_THAT(GetString(), testing::StartsWith("%PDF-1.7\n%\xa0\xf2\xa4\xf4"));
+  // Additional output produced vs. non incremental.
+  EXPECT_EQ(985u, GetString().length());
+}
+
+TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocNoIncremental) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  EXPECT_TRUE(FPDF_SaveWithVersion(document(), this, FPDF_NO_INCREMENTAL, 14));
+  EXPECT_THAT(GetString(), testing::StartsWith("%PDF-1.4\r\n"));
+  EXPECT_EQ(805u, GetString().length());
+}
+
+TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocRemoveSecurity) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  EXPECT_TRUE(FPDF_SaveWithVersion(document(), this, FPDF_REMOVE_SECURITY, 14));
+  EXPECT_THAT(GetString(), testing::StartsWith("%PDF-1.4\r\n"));
+  EXPECT_EQ(805u, GetString().length());
+}
+
+TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocBadFlags) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  EXPECT_TRUE(FPDF_SaveWithVersion(document(), this, 999999, 14));
+  EXPECT_THAT(GetString(), testing::StartsWith("%PDF-1.4\r\n"));
+  EXPECT_EQ(805u, GetString().length());
 }
 
 TEST_F(FPDFSaveEmbedderTest, SaveCopiedDoc) {
