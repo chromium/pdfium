@@ -41,13 +41,13 @@ CPDF_ObjectAvail::~CPDF_ObjectAvail() = default;
 
 CPDF_DataAvail::DocAvailStatus CPDF_ObjectAvail::CheckAvail() {
   if (!LoadRootObject())
-    return CPDF_DataAvail::DocAvailStatus::DataNotAvailable;
+    return CPDF_DataAvail::kDataNotAvailable;
 
   if (CheckObjects()) {
     CleanMemory();
-    return CPDF_DataAvail::DocAvailStatus::DataAvailable;
+    return CPDF_DataAvail::kDataAvailable;
   }
-  return CPDF_DataAvail::DocAvailStatus::DataNotAvailable;
+  return CPDF_DataAvail::kDataNotAvailable;
 }
 
 bool CPDF_ObjectAvail::LoadRootObject() {

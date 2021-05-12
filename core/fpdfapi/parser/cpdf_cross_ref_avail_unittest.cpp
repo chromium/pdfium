@@ -41,7 +41,7 @@ TEST(CPDF_CrossRefAvailTest, CheckCrossRefV4) {
   auto cross_ref_avail =
       std::make_unique<CPDF_CrossRefAvail>(parser.get(), last_crossref_offset);
 
-  EXPECT_EQ(CPDF_DataAvail::DataAvailable, cross_ref_avail->CheckAvail());
+  EXPECT_EQ(CPDF_DataAvail::kDataAvailable, cross_ref_avail->CheckAvail());
 }
 
 TEST(CPDF_CrossRefAvailTest, CheckCrossRefStream) {
@@ -58,7 +58,7 @@ TEST(CPDF_CrossRefAvailTest, CheckCrossRefStream) {
   auto cross_ref_avail =
       std::make_unique<CPDF_CrossRefAvail>(parser.get(), last_crossref_offset);
 
-  EXPECT_EQ(CPDF_DataAvail::DataAvailable, cross_ref_avail->CheckAvail());
+  EXPECT_EQ(CPDF_DataAvail::kDataAvailable, cross_ref_avail->CheckAvail());
 }
 
 TEST(CPDF_CrossRefAvailTest, IncorrectStartOffset) {
@@ -76,7 +76,7 @@ TEST(CPDF_CrossRefAvailTest, IncorrectStartOffset) {
   auto cross_ref_avail =
       std::make_unique<CPDF_CrossRefAvail>(parser.get(), last_crossref_offset);
 
-  EXPECT_EQ(CPDF_DataAvail::DataError, cross_ref_avail->CheckAvail());
+  EXPECT_EQ(CPDF_DataAvail::kDataError, cross_ref_avail->CheckAvail());
 }
 
 TEST(CPDF_CrossRefAvailTest, IncorrectPrevOffset) {
@@ -92,7 +92,7 @@ TEST(CPDF_CrossRefAvailTest, IncorrectPrevOffset) {
   auto parser = MakeParserForBuffer(xref_stream);
   auto cross_ref_avail =
       std::make_unique<CPDF_CrossRefAvail>(parser.get(), last_crossref_offset);
-  EXPECT_EQ(CPDF_DataAvail::DataError, cross_ref_avail->CheckAvail());
+  EXPECT_EQ(CPDF_DataAvail::kDataError, cross_ref_avail->CheckAvail());
 }
 
 TEST(CPDF_CrossRefAvailTest, IncorrectPrevStreamOffset) {
@@ -114,7 +114,7 @@ TEST(CPDF_CrossRefAvailTest, IncorrectPrevStreamOffset) {
   auto parser = MakeParserForBuffer(xref_table);
   auto cross_ref_avail =
       std::make_unique<CPDF_CrossRefAvail>(parser.get(), last_crossref_offset);
-  EXPECT_EQ(CPDF_DataAvail::DataError, cross_ref_avail->CheckAvail());
+  EXPECT_EQ(CPDF_DataAvail::kDataError, cross_ref_avail->CheckAvail());
 }
 
 TEST(CPDF_CrossRefAvailTest, IncorrectData) {
@@ -126,7 +126,7 @@ TEST(CPDF_CrossRefAvailTest, IncorrectData) {
   auto parser = MakeParserForBuffer(incorrect_data);
   auto cross_ref_avail =
       std::make_unique<CPDF_CrossRefAvail>(parser.get(), last_crossref_offset);
-  EXPECT_EQ(CPDF_DataAvail::DataError, cross_ref_avail->CheckAvail());
+  EXPECT_EQ(CPDF_DataAvail::kDataError, cross_ref_avail->CheckAvail());
 }
 
 TEST(CPDF_CrossRefAvailTest, ThreeCrossRefV4) {
@@ -174,7 +174,7 @@ TEST(CPDF_CrossRefAvailTest, ThreeCrossRefV4) {
   auto parser = MakeParserForBuffer(pdfium::as_bytes(pdfium::make_span(table)));
   auto cross_ref_avail =
       std::make_unique<CPDF_CrossRefAvail>(parser.get(), last_crossref_offset);
-  EXPECT_EQ(CPDF_DataAvail::DataAvailable, cross_ref_avail->CheckAvail());
+  EXPECT_EQ(CPDF_DataAvail::kDataAvailable, cross_ref_avail->CheckAvail());
 }
 
 TEST(CPDF_CrossRefAvailTest, ThreeCrossRefV5) {
@@ -218,7 +218,7 @@ TEST(CPDF_CrossRefAvailTest, ThreeCrossRefV5) {
   auto parser = MakeParserForBuffer(pdfium::as_bytes(pdfium::make_span(table)));
   auto cross_ref_avail =
       std::make_unique<CPDF_CrossRefAvail>(parser.get(), last_crossref_offset);
-  EXPECT_EQ(CPDF_DataAvail::DataAvailable, cross_ref_avail->CheckAvail());
+  EXPECT_EQ(CPDF_DataAvail::kDataAvailable, cross_ref_avail->CheckAvail());
 }
 
 TEST(CPDF_CrossRefAvailTest, Mixed) {
@@ -267,7 +267,7 @@ TEST(CPDF_CrossRefAvailTest, Mixed) {
   auto parser = MakeParserForBuffer(pdfium::as_bytes(pdfium::make_span(table)));
   auto cross_ref_avail =
       std::make_unique<CPDF_CrossRefAvail>(parser.get(), last_crossref_offset);
-  EXPECT_EQ(CPDF_DataAvail::DataAvailable, cross_ref_avail->CheckAvail());
+  EXPECT_EQ(CPDF_DataAvail::kDataAvailable, cross_ref_avail->CheckAvail());
 }
 
 TEST(CPDF_CrossRefAvailTest, CrossRefV5IsNotStream) {
@@ -281,7 +281,7 @@ TEST(CPDF_CrossRefAvailTest, CrossRefV5IsNotStream) {
   auto parser = MakeParserForBuffer(invalid_xref_stream);
   auto cross_ref_avail =
       std::make_unique<CPDF_CrossRefAvail>(parser.get(), last_crossref_offset);
-  EXPECT_EQ(CPDF_DataAvail::DataError, cross_ref_avail->CheckAvail());
+  EXPECT_EQ(CPDF_DataAvail::kDataError, cross_ref_avail->CheckAvail());
 }
 
 TEST(CPDF_CrossRefAvailTest, CrossRefV4WithEncryptRef) {
@@ -304,7 +304,7 @@ TEST(CPDF_CrossRefAvailTest, CrossRefV4WithEncryptRef) {
   auto parser = MakeParserForBuffer(xref_table);
   auto cross_ref_avail =
       std::make_unique<CPDF_CrossRefAvail>(parser.get(), last_crossref_offset);
-  EXPECT_EQ(CPDF_DataAvail::DataError, cross_ref_avail->CheckAvail());
+  EXPECT_EQ(CPDF_DataAvail::kDataError, cross_ref_avail->CheckAvail());
 }
 
 TEST(CPDF_CrossRefAvailTest, CrossRefStreamWithEncryptRef) {
@@ -320,5 +320,5 @@ TEST(CPDF_CrossRefAvailTest, CrossRefStreamWithEncryptRef) {
   auto parser = MakeParserForBuffer(xref_stream);
   auto cross_ref_avail =
       std::make_unique<CPDF_CrossRefAvail>(parser.get(), last_crossref_offset);
-  EXPECT_EQ(CPDF_DataAvail::DataError, cross_ref_avail->CheckAvail());
+  EXPECT_EQ(CPDF_DataAvail::kDataError, cross_ref_avail->CheckAvail());
 }

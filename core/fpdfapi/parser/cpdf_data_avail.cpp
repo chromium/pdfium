@@ -103,17 +103,17 @@ void CPDF_DataAvail::OnObservableDestroyed() {
 CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsDocAvail(
     DownloadHints* pHints) {
   if (!m_dwFileLen)
-    return DataError;
+    return kDataError;
 
   DCHECK(m_SeenPageObjList.empty());
   AutoRestorer<std::set<uint32_t>> seen_objects_restorer(&m_SeenPageObjList);
   const HintsScope hints_scope(GetValidator(), pHints);
   while (!m_bDocAvail) {
     if (!CheckDocStatus())
-      return DataNotAvailable;
+      return kDataNotAvailable;
   }
 
-  return DataAvailable;
+  return kDataAvailable;
 }
 
 bool CPDF_DataAvail::CheckDocStatus() {
@@ -192,11 +192,11 @@ bool CPDF_DataAvail::CheckAndLoadAllXref() {
   }
 
   switch (m_pCrossRefAvail->CheckAvail()) {
-    case DocAvailStatus::DataAvailable:
+    case kDataAvailable:
       break;
-    case DocAvailStatus::DataNotAvailable:
+    case kDataNotAvailable:
       return false;
-    case DocAvailStatus::DataError:
+    case kDataError:
       m_docStatus = PDF_DATAAVAIL_ERROR;
       return false;
     default:
@@ -405,13 +405,13 @@ bool CPDF_DataAvail::CheckPages() {
 
 bool CPDF_DataAvail::CheckHeader() {
   switch (CheckHeaderAndLinearized()) {
-    case DocAvailStatus::DataAvailable:
+    case kDataAvailable:
       m_docStatus = m_pLinearized ? PDF_DATAAVAIL_FIRSTPAGE
                                   : PDF_DATAAVAIL_LOADALLCROSSREF;
       return true;
-    case DocAvailStatus::DataNotAvailable:
+    case kDataNotAvailable:
       return false;
-    case DocAvailStatus::DataError:
+    case kDataError:
       m_docStatus = PDF_DATAAVAIL_ERROR;
       return true;
     default:
@@ -476,39 +476,38 @@ RetainPtr<CPDF_Object> CPDF_DataAvail::ParseIndirectObjectAt(
 
 CPDF_DataAvail::DocLinearizationStatus CPDF_DataAvail::IsLinearizedPDF() {
   switch (CheckHeaderAndLinearized()) {
-    case DocAvailStatus::DataAvailable:
-      return m_pLinearized ? DocLinearizationStatus::Linearized
-                           : DocLinearizationStatus::NotLinearized;
-    case DocAvailStatus::DataNotAvailable:
-      return DocLinearizationStatus::LinearizationUnknown;
-    case DocAvailStatus::DataError:
-      return DocLinearizationStatus::NotLinearized;
+    case kDataAvailable:
+      return m_pLinearized ? kLinearized : kNotLinearized;
+    case kDataNotAvailable:
+      return kLinearizationUnknown;
+    case kDataError:
+      return kNotLinearized;
     default:
       NOTREACHED();
-      return DocLinearizationStatus::LinearizationUnknown;
+      return kLinearizationUnknown;
   }
 }
 
 CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckHeaderAndLinearized() {
   if (m_bHeaderAvail)
-    return DocAvailStatus::DataAvailable;
+    return kDataAvailable;
 
   CPDF_ReadValidator::ScopedSession read_session(GetValidator());
   const Optional<FX_FILESIZE> header_offset = GetHeaderOffset(GetValidator());
   if (GetValidator()->has_read_problems())
-    return DocAvailStatus::DataNotAvailable;
+    return kDataNotAvailable;
 
   if (!header_offset)
-    return DocAvailStatus::DataError;
+    return kDataError;
 
   m_parser.m_pSyntax =
       std::make_unique<CPDF_SyntaxParser>(GetValidator(), *header_offset);
   m_pLinearized = m_parser.ParseLinearizedHeader();
   if (GetValidator()->has_read_problems())
-    return DocAvailStatus::DataNotAvailable;
+    return kDataNotAvailable;
 
   m_bHeaderAvail = true;
-  return DocAvailStatus::DataAvailable;
+  return kDataAvailable;
 }
 
 bool CPDF_DataAvail::CheckPage(uint32_t dwPage) {
@@ -749,11 +748,11 @@ bool CPDF_DataAvail::LoadPages() {
 
 CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckLinearizedData() {
   if (m_bLinearedDataOK)
-    return DataAvailable;
+    return kDataAvailable;
   DCHECK(m_pLinearized);
   if (!m_pLinearized->GetMainXRefTableFirstEntryOffset() || !m_pDocument ||
       !m_pDocument->GetParser() || !m_pDocument->GetParser()->GetTrailer()) {
-    return DataError;
+    return kDataError;
   }
 
   if (!m_bMainXRefLoadTried) {
@@ -761,46 +760,46 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckLinearizedData() {
         m_pDocument->GetParser()->GetTrailer()->GetIntegerFor("Prev");
     const FX_FILESIZE main_xref_offset = prev.ValueOrDefault(-1);
     if (main_xref_offset < 0)
-      return DataError;
+      return kDataError;
 
     if (main_xref_offset == 0)
-      return DataAvailable;
+      return kDataAvailable;
 
     FX_SAFE_SIZE_T data_size = m_dwFileLen;
     data_size -= main_xref_offset;
     if (!data_size.IsValid())
-      return DataError;
+      return kDataError;
 
     if (!GetValidator()->CheckDataRangeAndRequestIfUnavailable(
             main_xref_offset, data_size.ValueOrDie()))
-      return DataNotAvailable;
+      return kDataNotAvailable;
 
     CPDF_Parser::Error eRet =
         m_pDocument->GetParser()->LoadLinearizedMainXRefTable();
     m_bMainXRefLoadTried = true;
     if (eRet != CPDF_Parser::SUCCESS)
-      return DataError;
+      return kDataError;
 
     if (!PreparePageItem())
-      return DataNotAvailable;
+      return kDataNotAvailable;
 
     m_bMainXRefLoadedOK = true;
     m_bLinearedDataOK = true;
   }
 
-  return m_bLinearedDataOK ? DataAvailable : DataNotAvailable;
+  return m_bLinearedDataOK ? kDataAvailable : kDataNotAvailable;
 }
 
 CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
     uint32_t dwPage,
     DownloadHints* pHints) {
   if (!m_pDocument)
-    return DataError;
+    return kDataError;
 
   const int iPage = pdfium::base::checked_cast<int>(dwPage);
   if (iPage >= m_pDocument->GetPageCount()) {
     // This is XFA page.
-    return DataAvailable;
+    return kDataAvailable;
   }
 
   if (IsFirstCheck(dwPage)) {
@@ -808,14 +807,14 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
   }
 
   if (pdfium::Contains(m_pagesLoadState, dwPage))
-    return DataAvailable;
+    return kDataAvailable;
 
   const HintsScope hints_scope(GetValidator(), pHints);
   if (m_pLinearized) {
     if (dwPage == m_pLinearized->GetFirstPageNo()) {
       auto* pPageDict = m_pDocument->GetPageDictionary(iPage);
       if (!pPageDict)
-        return DataError;
+        return kDataError;
 
       auto page_num_obj = std::make_pair(
           dwPage, std::make_unique<CPDF_PageObjectAvail>(
@@ -828,45 +827,45 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
     }
 
     DocAvailStatus nResult = CheckLinearizedData();
-    if (nResult != DataAvailable)
+    if (nResult != kDataAvailable)
       return nResult;
 
     if (m_pHintTables) {
       nResult = m_pHintTables->CheckPage(dwPage);
-      if (nResult != DataAvailable)
+      if (nResult != kDataAvailable)
         return nResult;
       if (GetPageDictionary(dwPage)) {
         m_pagesLoadState.insert(dwPage);
-        return DataAvailable;
+        return kDataAvailable;
       }
     }
 
     if (!m_bMainXRefLoadedOK) {
       if (!LoadAllFile())
-        return DataNotAvailable;
+        return kDataNotAvailable;
       m_pDocument->GetParser()->RebuildCrossRef();
       ResetFirstCheck(dwPage);
-      return DataAvailable;
+      return kDataAvailable;
     }
     if (m_bTotalLoadPageTree) {
       if (!LoadPages())
-        return DataNotAvailable;
+        return kDataNotAvailable;
     } else {
       if (!m_bCurPageDictLoadOK && !CheckPage(dwPage))
-        return DataNotAvailable;
+        return kDataNotAvailable;
     }
   } else {
     if (!m_bTotalLoadPageTree && !m_bCurPageDictLoadOK && !CheckPage(dwPage)) {
-      return DataNotAvailable;
+      return kDataNotAvailable;
     }
   }
 
-  if (CheckAcroForm() == DocFormStatus::FormNotAvailable)
-    return DataNotAvailable;
+  if (CheckAcroForm() == kFormNotAvailable)
+    return kDataNotAvailable;
 
   auto* pPageDict = m_pDocument->GetPageDictionary(iPage);
   if (!pPageDict)
-    return DataError;
+    return kDataError;
 
   {
     auto page_num_obj = std::make_pair(
@@ -875,18 +874,18 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
     CPDF_PageObjectAvail* page_obj_avail =
         m_PagesObjAvail.insert(std::move(page_num_obj)).first->second.get();
     const DocAvailStatus status = page_obj_avail->CheckAvail();
-    if (status != DocAvailStatus::DataAvailable)
+    if (status != kDataAvailable)
       return status;
   }
 
   const DocAvailStatus resources_status = CheckResources(pPageDict);
-  if (resources_status != DocAvailStatus::DataAvailable)
+  if (resources_status != kDataAvailable)
     return resources_status;
 
   m_bCurPageDictLoadOK = false;
   ResetFirstCheck(dwPage);
   m_pagesLoadState.insert(dwPage);
-  return DataAvailable;
+  return kDataAvailable;
 }
 
 CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckResources(
@@ -895,10 +894,10 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckResources(
   CPDF_ReadValidator::ScopedSession read_session(GetValidator());
   CPDF_Object* resources = GetResourceObject(page);
   if (GetValidator()->has_read_problems())
-    return DocAvailStatus::DataNotAvailable;
+    return kDataNotAvailable;
 
   if (!resources)
-    return DocAvailStatus::DataAvailable;
+    return kDataAvailable;
 
   CPDF_PageObjectAvail* resource_avail =
       m_PagesResourcesAvail
@@ -963,39 +962,39 @@ CPDF_DataAvail::DocFormStatus CPDF_DataAvail::IsFormAvail(
 
 CPDF_DataAvail::DocFormStatus CPDF_DataAvail::CheckAcroForm() {
   if (!m_pDocument)
-    return FormAvailable;
+    return kFormAvailable;
 
   if (m_pLinearized) {
     DocAvailStatus nDocStatus = CheckLinearizedData();
-    if (nDocStatus == DataError)
-      return FormError;
-    if (nDocStatus == DataNotAvailable)
-      return FormNotAvailable;
+    if (nDocStatus == kDataError)
+      return kFormError;
+    if (nDocStatus == kDataNotAvailable)
+      return kFormNotAvailable;
   }
 
   if (!m_pFormAvail) {
     CPDF_Dictionary* pRoot = m_pDocument->GetRoot();
     if (!pRoot)
-      return FormAvailable;
+      return kFormAvailable;
 
     CPDF_Object* pAcroForm = pRoot->GetObjectFor("AcroForm");
     if (!pAcroForm)
-      return FormNotExist;
+      return kFormNotExist;
 
     m_pFormAvail = std::make_unique<CPDF_PageObjectAvail>(
         GetValidator(), m_pDocument.Get(), pAcroForm);
   }
   switch (m_pFormAvail->CheckAvail()) {
-    case DocAvailStatus::DataError:
-      return DocFormStatus::FormError;
-    case DocAvailStatus::DataNotAvailable:
-      return DocFormStatus::FormNotAvailable;
-    case DocAvailStatus::DataAvailable:
-      return DocFormStatus::FormAvailable;
+    case kDataError:
+      return kFormError;
+    case kDataNotAvailable:
+      return kFormNotAvailable;
+    case kDataAvailable:
+      return kFormAvailable;
     default:
       NOTREACHED();
   }
-  return DocFormStatus::FormError;
+  return kFormError;
 }
 
 bool CPDF_DataAvail::ValidatePage(uint32_t dwPage) const {
@@ -1004,7 +1003,7 @@ bool CPDF_DataAvail::ValidatePage(uint32_t dwPage) const {
   if (!pPageDict)
     return false;
   CPDF_PageObjectAvail obj_avail(GetValidator(), m_pDocument.Get(), pPageDict);
-  return obj_avail.CheckAvail() == DocAvailStatus::DataAvailable;
+  return obj_avail.CheckAvail() == kDataAvailable;
 }
 
 std::pair<CPDF_Parser::Error, std::unique_ptr<CPDF_Document>>

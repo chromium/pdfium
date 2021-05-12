@@ -119,5 +119,5 @@ TEST(CPDF_PageObjectAvailTest, ExcludePages) {
   CPDF_PageObjectAvail avail(holder.GetValidator(), &holder, 1);
   // Now object should be available, although the object '4' is not available,
   // because it is in skipped other page.
-  EXPECT_EQ(CPDF_DataAvail::DocAvailStatus::DataAvailable, avail.CheckAvail());
+  EXPECT_EQ(CPDF_DataAvail::kDataAvailable, avail.CheckAvail());
 }

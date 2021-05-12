@@ -45,7 +45,7 @@ class CPDF_CrossRefAvail {
 
   UnownedPtr<CPDF_SyntaxParser> const parser_;
   const FX_FILESIZE last_crossref_offset_;
-  CPDF_DataAvail::DocAvailStatus status_ = CPDF_DataAvail::DataNotAvailable;
+  CPDF_DataAvail::DocAvailStatus status_ = CPDF_DataAvail::kDataNotAvailable;
   State state_ = State::kCrossRefCheck;
   FX_FILESIZE offset_ = 0;
   std::queue<FX_FILESIZE> cross_refs_for_check_;

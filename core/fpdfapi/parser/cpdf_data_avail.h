@@ -56,28 +56,28 @@ class CPDF_DataAvail final : public Observable::ObserverIface {
   // #include that header. fpdfsdk/fpdf_dataavail.cpp has static_asserts
   // to make sure the two sets of values match.
   enum DocAvailStatus {
-    DataError = -1,        // PDF_DATA_ERROR
-    DataNotAvailable = 0,  // PDF_DATA_NOTAVAIL
-    DataAvailable = 1,     // PDF_DATA_AVAIL
+    kDataError = -1,        // PDF_DATA_ERROR
+    kDataNotAvailable = 0,  // PDF_DATA_NOTAVAIL
+    kDataAvailable = 1,     // PDF_DATA_AVAIL
   };
 
   // Must match PDF_*LINEAR* definitions in public/fpdf_dataavail.h, but cannot
   // #include that header. fpdfsdk/fpdf_dataavail.cpp has static_asserts
   // to make sure the two sets of values match.
   enum DocLinearizationStatus {
-    LinearizationUnknown = -1,  // PDF_LINEARIZATION_UNKNOWN
-    NotLinearized = 0,          // PDF_NOT_LINEARIZED
-    Linearized = 1,             // PDF_LINEARIZED
+    kLinearizationUnknown = -1,  // PDF_LINEARIZATION_UNKNOWN
+    kNotLinearized = 0,          // PDF_NOT_LINEARIZED
+    kLinearized = 1,             // PDF_LINEARIZED
   };
 
   // Must match PDF_FORM_* definitions in public/fpdf_dataavail.h, but cannot
   // #include that header. fpdfsdk/fpdf_dataavail.cpp has static_asserts
   // to make sure the two sets of values match.
   enum DocFormStatus {
-    FormError = -1,        // PDF_FORM_ERROR
-    FormNotAvailable = 0,  // PDF_FORM_NOTAVAIL
-    FormAvailable = 1,     // PDF_FORM_AVAIL
-    FormNotExist = 2,      // PDF_FORM_NOTEXIST
+    kFormError = -1,        // PDF_FORM_ERROR
+    kFormNotAvailable = 0,  // PDF_FORM_NOTAVAIL
+    kFormAvailable = 1,     // PDF_FORM_AVAIL
+    kFormNotExist = 2,      // PDF_FORM_NOTEXIST
   };
 
   class FileAvail {

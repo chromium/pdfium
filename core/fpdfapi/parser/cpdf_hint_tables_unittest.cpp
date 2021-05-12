@@ -71,8 +71,7 @@ class CPDF_HintTablesTest : public testing::Test {
 
 TEST_F(CPDF_HintTablesTest, Load) {
   auto data_avail = MakeDataAvailFromFile("feature_linearized_loading.pdf");
-  ASSERT_EQ(CPDF_DataAvail::DocAvailStatus::DataAvailable,
-            data_avail->IsDocAvail(nullptr));
+  ASSERT_EQ(CPDF_DataAvail::kDataAvailable, data_avail->IsDocAvail(nullptr));
 
   ASSERT_TRUE(data_avail->GetHintTables());
 
@@ -99,8 +98,7 @@ TEST_F(CPDF_HintTablesTest, Load) {
 
 TEST_F(CPDF_HintTablesTest, PageAndGroupInfos) {
   auto data_avail = MakeDataAvailFromFile("feature_linearized_loading.pdf");
-  ASSERT_EQ(CPDF_DataAvail::DocAvailStatus::DataAvailable,
-            data_avail->IsDocAvail(nullptr));
+  ASSERT_EQ(CPDF_DataAvail::kDataAvailable, data_avail->IsDocAvail(nullptr));
 
   const CPDF_HintTables* hint_tables = data_avail->GetHintTables();
   ASSERT_TRUE(hint_tables);
