@@ -305,21 +305,23 @@ bool CPDF_DataAvail::CheckPage() {
         UnavailObjList.push_back(dwPageObjNum);
       continue;
     }
-    CPDF_Array* pArray = ToArray(pObj.Get());
-    if (pArray) {
-      CPDF_ArrayLocker locker(pArray);
-      for (const auto& pArrayObj : locker) {
-        if (CPDF_Reference* pRef = ToReference(pArrayObj.Get()))
-          UnavailObjList.push_back(pRef->GetRefObjNum());
-      }
-    }
-    if (!pObj->IsDictionary())
-      continue;
 
-    ByteString type = pObj->GetDict()->GetNameFor("Type");
-    if (type == "Pages") {
-      m_PagesArray.push_back(std::move(pObj));
-      continue;
+    switch (pObj->GetType()) {
+      case CPDF_Object::kArray: {
+        CPDF_ArrayLocker locker(pObj->AsArray());
+        for (const auto& pArrayObj : locker) {
+          const CPDF_Reference* pRef = ToReference(pArrayObj.Get());
+          if (pRef)
+            UnavailObjList.push_back(pRef->GetRefObjNum());
+        }
+        break;
+      }
+      case CPDF_Object::kDictionary:
+        if (pObj->GetDict()->GetNameFor("Type") == "Pages")
+          m_PagesArray.push_back(std::move(pObj));
+        break;
+      default:
+        break;
     }
   }
   m_PageObjList.clear();
@@ -344,8 +346,8 @@ bool CPDF_DataAvail::CheckPage() {
 }
 
 bool CPDF_DataAvail::GetPageKids(CPDF_Object* pPages) {
-  CPDF_Dictionary* pDict = pPages->GetDict();
-  CPDF_Object* pKids = pDict ? pDict->GetObjectFor("Kids") : nullptr;
+  const CPDF_Dictionary* pDict = pPages->GetDict();
+  const CPDF_Object* pKids = pDict ? pDict->GetObjectFor("Kids") : nullptr;
   if (!pKids)
     return true;
 
@@ -357,7 +359,7 @@ bool CPDF_DataAvail::GetPageKids(CPDF_Object* pPages) {
     case CPDF_Object::kArray: {
       CPDF_ArrayLocker locker(pKids->AsArray());
       for (const auto& pArrayObj : locker) {
-        CPDF_Reference* pRef = ToReference(pArrayObj.Get());
+        const CPDF_Reference* pRef = ToReference(pArrayObj.Get());
         if (pRef)
           object_numbers.push_back(pRef->GetRefObjNum());
       }
