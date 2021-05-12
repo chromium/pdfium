@@ -129,7 +129,11 @@ class FPDF_AvailContext {
 };
 
 FPDF_AvailContext* FPDFAvailContextFromFPDFAvail(FPDF_AVAIL avail) {
-  return static_cast<FPDF_AvailContext*>(avail);
+  return reinterpret_cast<FPDF_AvailContext*>(avail);
+}
+
+FPDF_AVAIL FPDFAvailFromFPDFAvailContext(FPDF_AvailContext* pAvailContext) {
+  return reinterpret_cast<FPDF_AVAIL>(pAvailContext);
 }
 
 }  // namespace
@@ -137,7 +141,9 @@ FPDF_AvailContext* FPDFAvailContextFromFPDFAvail(FPDF_AVAIL avail) {
 FPDF_EXPORT FPDF_AVAIL FPDF_CALLCONV FPDFAvail_Create(FX_FILEAVAIL* file_avail,
                                                       FPDF_FILEACCESS* file) {
   auto pAvail = std::make_unique<FPDF_AvailContext>(file_avail, file);
-  return pAvail.release();  // Caller takes ownership.
+
+  // Caller takes ownership.
+  return FPDFAvailFromFPDFAvailContext(pAvail.release());
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FPDFAvail_Destroy(FPDF_AVAIL avail) {

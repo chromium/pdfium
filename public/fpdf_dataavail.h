@@ -50,7 +50,6 @@ typedef struct _FX_FILEAVAIL {
                            size_t offset,
                            size_t size);
 } FX_FILEAVAIL;
-typedef void* FPDF_AVAIL;
 
 // Create a document availability provider.
 //
