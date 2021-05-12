@@ -24,6 +24,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
+#include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/check.h"
@@ -104,6 +105,8 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsDocAvail(
   if (!m_dwFileLen)
     return DataError;
 
+  DCHECK(m_SeenPageObjList.empty());
+  AutoRestorer<std::set<uint32_t>> seen_objects_restorer(&m_SeenPageObjList);
   const HintsScope hints_scope(GetValidator(), pHints);
   while (!m_bDocAvail) {
     if (!CheckDocStatus())
@@ -346,21 +349,29 @@ bool CPDF_DataAvail::GetPageKids(CPDF_Object* pPages) {
   if (!pKids)
     return true;
 
+  std::vector<uint32_t> object_numbers;
   switch (pKids->GetType()) {
     case CPDF_Object::kReference:
-      m_PageObjList.push_back(pKids->AsReference()->GetRefObjNum());
+      object_numbers.push_back(pKids->AsReference()->GetRefObjNum());
       break;
     case CPDF_Object::kArray: {
-      CPDF_Array* pKidsArray = pKids->AsArray();
-      for (size_t i = 0; i < pKidsArray->size(); ++i) {
-        if (CPDF_Reference* pRef = ToReference(pKidsArray->GetObjectAt(i)))
-          m_PageObjList.push_back(pRef->GetRefObjNum());
+      CPDF_ArrayLocker locker(pKids->AsArray());
+      for (const auto& pArrayObj : locker) {
+        CPDF_Reference* pRef = ToReference(pArrayObj.Get());
+        if (pRef)
+          object_numbers.push_back(pRef->GetRefObjNum());
       }
       break;
     }
     default:
       m_docStatus = PDF_DATAAVAIL_ERROR;
       return false;
+  }
+
+  for (uint32_t num : object_numbers) {
+    bool inserted = m_SeenPageObjList.insert(num).second;
+    if (inserted)
+      m_PageObjList.push_back(num);
   }
   return true;
 }

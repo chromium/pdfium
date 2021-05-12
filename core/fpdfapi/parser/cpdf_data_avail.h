@@ -178,6 +178,7 @@ class CPDF_DataAvail final : public Observable::ObserverIface {
   const FX_FILESIZE m_dwFileLen;
   UnownedPtr<CPDF_Document> m_pDocument;
   std::vector<uint32_t> m_PageObjList;
+  std::set<uint32_t> m_SeenPageObjList;
   uint32_t m_PagesObjNum = 0;
   bool m_bLinearedDataOK = false;
   bool m_bMainXRefLoadTried = false;
