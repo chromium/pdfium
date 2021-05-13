@@ -51,6 +51,7 @@
 #include "core/fpdfapi/render/cpdf_textrenderer.h"
 #include "core/fpdfapi/render/cpdf_type3cache.h"
 #include "core/fxcrt/autorestorer.h"
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -146,6 +147,8 @@ bool Type3CharMissingStrokeColor(const CPDF_Type3Char* pChar,
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 class ScopedSkiaDeviceFlush {
  public:
+  FX_STACK_ALLOCATED();
+
   explicit ScopedSkiaDeviceFlush(CFX_RenderDevice* pDevice)
       : m_pDevice(pDevice) {}
 

@@ -7,6 +7,7 @@
 #ifndef CORE_FXGE_SCOPED_FONT_TRANSFORM_H_
 #define CORE_FXGE_SCOPED_FONT_TRANSFORM_H_
 
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_face.h"
 #include "core/fxge/fx_freetype.h"
@@ -15,6 +16,8 @@
 // goes out of scope.
 class ScopedFontTransform {
  public:
+  FX_STACK_ALLOCATED();
+
   ScopedFontTransform(RetainPtr<CFX_Face> face, FT_Matrix* matrix);
   ~ScopedFontTransform();
 

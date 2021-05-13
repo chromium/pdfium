@@ -58,6 +58,8 @@ NOINLINE void FX_OutOfMemoryTerminate(size_t size);
 #define FX_AllocUninit2D(type, w, h) \
   static_cast<type*>(pdfium::internal::AllocOrDie2D(w, h, sizeof(type)))
 
+void FX_Free(void* ptr);
+
 namespace pdfium {
 namespace internal {
 
@@ -74,7 +76,10 @@ void* ReallocOrDie(void* ptr, size_t num_members, size_t member_size);
 }  // namespace internal
 }  // namespace pdfium
 
-void FX_Free(void* ptr);
+// Force stack allocation of a class.
+#define FX_STACK_ALLOCATED()           \
+  void* operator new(size_t) = delete; \
+  void* operator new(size_t, void*) = delete
 
 // Round up to the power-of-two boundary N.
 template <int N, typename T>

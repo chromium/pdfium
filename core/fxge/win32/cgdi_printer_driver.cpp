@@ -12,6 +12,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_font.h"
@@ -28,6 +29,8 @@ namespace {
 
 class ScopedState {
  public:
+  FX_STACK_ALLOCATED();
+
   ScopedState(HDC hDC, HFONT hFont)
       : m_hDC(hDC),
         m_iState(SaveDC(m_hDC)),
