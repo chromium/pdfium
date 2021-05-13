@@ -36,6 +36,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcrt/autonuller.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/scoped_set_insertion.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "third_party/base/check.h"
 #include "third_party/base/no_destructor.h"
@@ -1498,8 +1499,8 @@ uint32_t CPDF_StreamContentParser::Parse(
 
   m_StreamStartOffsets = stream_start_offsets;
 
-  pdfium::ScopedSetInsertion<const uint8_t*> scopedInsert(m_ParsedSet.Get(),
-                                                          pDataStart);
+  ScopedSetInsertion<const uint8_t*> scopedInsert(m_ParsedSet.Get(),
+                                                  pDataStart);
 
   uint32_t init_obj_count = m_pObjectHolder->GetPageObjectCount();
   AutoNuller<std::unique_ptr<CPDF_StreamParser>> auto_clearer(&m_pSyntax);

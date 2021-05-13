@@ -8,12 +8,9 @@
 #include <algorithm>
 #include <iterator>
 #include <memory>
-#include <set>
 #include <type_traits>
-#include <utility>
 #include <vector>
 
-#include "third_party/base/check.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/numerics/safe_math.h"
 #include "third_party/base/template_util.h"
@@ -135,22 +132,6 @@ template <typename IndexType, typename Collection>
 bool IndexInBounds(const Collection& collection, IndexType index) {
   return index >= 0 && index < CollectionSize<IndexType>(collection);
 }
-
-// Track the addition of an object to a set, removing it automatically when
-// the ScopedSetInsertion goes out of scope.
-template <typename T>
-class ScopedSetInsertion {
- public:
-  ScopedSetInsertion(std::set<T>* org_set, const T& elem)
-      : set_(org_set), insert_results_(set_->insert(elem)) {
-    CHECK(insert_results_.second);
-  }
-  ~ScopedSetInsertion() { set_->erase(insert_results_.first); }
-
- private:
-  std::set<T>* const set_;
-  const std::pair<typename std::set<T>::iterator, bool> insert_results_;
-};
 
 // std::clamp(), some day.
 template <class T>

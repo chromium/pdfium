@@ -16,6 +16,7 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fxcodec/jbig2/JBig2_DocumentContext.h"
 #include "core/fxcrt/fx_codepage.h"
+#include "core/fxcrt/scoped_set_insertion.h"
 #include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
@@ -38,8 +39,7 @@ int CountPages(CPDF_Dictionary* pPages,
       continue;
     if (pKid->KeyExist("Kids")) {
       // Use |visited_pages| to help detect circular references of pages.
-      pdfium::ScopedSetInsertion<CPDF_Dictionary*> local_add(visited_pages,
-                                                             pKid);
+      ScopedSetInsertion<CPDF_Dictionary*> local_add(visited_pages, pKid);
       count += CountPages(pKid, visited_pages);
     } else {
       // This page is a leaf node.
@@ -424,7 +424,7 @@ bool CPDF_Document::InsertDeletePDFPage(CPDF_Dictionary* pPages,
     if (pdfium::Contains(*pVisited, pKid))
       return false;
 
-    pdfium::ScopedSetInsertion<CPDF_Dictionary*> insertion(pVisited, pKid);
+    ScopedSetInsertion<CPDF_Dictionary*> insertion(pVisited, pKid);
     if (!InsertDeletePDFPage(pKid, nPagesToGo, pPageDict, bInsert, pVisited))
       return false;
 

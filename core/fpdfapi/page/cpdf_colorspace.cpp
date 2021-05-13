@@ -33,6 +33,7 @@
 #include "core/fxcodec/icc/iccmodule.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/maybe_owned.h"
+#include "core/fxcrt/scoped_set_insertion.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/notreached.h"
@@ -500,7 +501,7 @@ RetainPtr<CPDF_ColorSpace> CPDF_ColorSpace::Load(
   if (pdfium::Contains(*pVisited, pObj))
     return nullptr;
 
-  pdfium::ScopedSetInsertion<const CPDF_Object*> insertion(pVisited, pObj);
+  ScopedSetInsertion<const CPDF_Object*> insertion(pVisited, pObj);
 
   if (pObj->IsName())
     return ColorspaceFromName(pObj->GetString());
