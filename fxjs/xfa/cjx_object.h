@@ -129,23 +129,24 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
   CJS_Result RunMethod(const WideString& func,
                        const std::vector<v8::Local<v8::Value>>& params);
 
-  bool HasAttribute(XFA_Attribute eAttr);
+  bool HasAttribute(XFA_Attribute eAttr) const;
+  WideString GetAttributeByString(WideStringView attr) const;
+  WideString GetAttributeByEnum(XFA_Attribute attr) const;
+  Optional<WideString> TryAttribute(XFA_Attribute eAttr,
+                                    bool bUseDefault) const;
   void SetAttributeByEnum(XFA_Attribute eAttr,
                           const WideString& wsValue,
                           bool bNotify);
   void SetAttributeByString(WideStringView wsAttr, const WideString& wsValue);
   void RemoveAttribute(WideStringView wsAttr);
-  WideString GetAttributeByString(WideStringView attr);
-  WideString GetAttributeByEnum(XFA_Attribute attr);
-  Optional<WideString> TryAttribute(XFA_Attribute eAttr, bool bUseDefault);
 
-  Optional<WideString> TryContent(bool bScriptModify, bool bProto);
+  WideString GetContent(bool bScriptModify) const;
+  Optional<WideString> TryContent(bool bScriptModify, bool bProto) const;
   void SetContent(const WideString& wsContent,
                   const WideString& wsXMLValue,
                   bool bNotify,
                   bool bScriptModify,
                   bool bSyncData);
-  WideString GetContent(bool bScriptModify);
 
   template <typename T>
   T* GetProperty(int32_t index, XFA_Element eType) const {
@@ -185,33 +186,33 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
                         bool bSetting,
                         XFA_SOM_MESSAGETYPE iMessageType);
 
-  Optional<WideString> TryNamespace();
+  Optional<WideString> TryNamespace() const;
 
+  int32_t GetInteger(XFA_Attribute eAttr) const;
   Optional<int32_t> TryInteger(XFA_Attribute eAttr, bool bUseDefault) const;
   void SetInteger(XFA_Attribute eAttr, int32_t iValue, bool bNotify);
-  int32_t GetInteger(XFA_Attribute eAttr) const;
 
+  WideString GetCData(XFA_Attribute eAttr) const;
   Optional<WideString> TryCData(XFA_Attribute eAttr, bool bUseDefault) const;
   void SetCData(XFA_Attribute eAttr, const WideString& wsValue);
-  WideString GetCData(XFA_Attribute eAttr) const;
 
+  XFA_AttributeValue GetEnum(XFA_Attribute eAttr) const;
   Optional<XFA_AttributeValue> TryEnum(XFA_Attribute eAttr,
                                        bool bUseDefault) const;
   void SetEnum(XFA_Attribute eAttr, XFA_AttributeValue eValue, bool bNotify);
-  XFA_AttributeValue GetEnum(XFA_Attribute eAttr) const;
 
-  Optional<bool> TryBoolean(XFA_Attribute eAttr, bool bUseDefault);
+  bool GetBoolean(XFA_Attribute eAttr) const;
+  Optional<bool> TryBoolean(XFA_Attribute eAttr, bool bUseDefault) const;
   void SetBoolean(XFA_Attribute eAttr, bool bValue, bool bNotify);
-  bool GetBoolean(XFA_Attribute eAttr);
 
+  CXFA_Measurement GetMeasure(XFA_Attribute eAttr) const;
+  float GetMeasureInUnit(XFA_Attribute eAttr, XFA_Unit unit) const;
   Optional<CXFA_Measurement> TryMeasure(XFA_Attribute eAttr,
                                         bool bUseDefault) const;
   Optional<float> TryMeasureAsFloat(XFA_Attribute attr) const;
   void SetMeasure(XFA_Attribute eAttr,
                   const CXFA_Measurement& mValue,
                   bool bNotify);
-  CXFA_Measurement GetMeasure(XFA_Attribute eAttr) const;
-  float GetMeasureInUnit(XFA_Attribute eAttr, XFA_Unit unit) const;
 
   void MergeAllData(CXFA_Object* pDstObj);
 
@@ -268,7 +269,7 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
   Optional<WideString> GetMapModuleStringFollowingChain(uint32_t key) const;
   Optional<CXFA_Measurement> GetMapModuleMeasurementFollowingChain(
       uint32_t key) const;
-  bool HasMapModuleKey(uint32_t key);
+  bool HasMapModuleKey(uint32_t key) const;
   void RemoveMapModuleKey(uint32_t key);
   void MoveBufferMapData(CXFA_Object* pDstObj);
 

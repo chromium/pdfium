@@ -197,7 +197,7 @@ void CJX_Object::ThrowException(const WideString& str) const {
   FXJSE_ThrowMessage(str.ToUTF8().AsStringView());
 }
 
-bool CJX_Object::HasAttribute(XFA_Attribute eAttr) {
+bool CJX_Object::HasAttribute(XFA_Attribute eAttr) const {
   uint32_t key = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
   return HasMapModuleKey(key);
 }
@@ -244,7 +244,7 @@ void CJX_Object::SetAttributeByString(WideStringView wsAttr,
   SetMapModuleString(key, wsValue);
 }
 
-WideString CJX_Object::GetAttributeByString(WideStringView attr) {
+WideString CJX_Object::GetAttributeByString(WideStringView attr) const {
   Optional<WideString> result;
   Optional<XFA_ATTRIBUTEINFO> enum_attr = XFA_GetAttributeByName(attr);
   if (enum_attr.has_value())
@@ -254,12 +254,12 @@ WideString CJX_Object::GetAttributeByString(WideStringView attr) {
   return result.value_or(WideString());
 }
 
-WideString CJX_Object::GetAttributeByEnum(XFA_Attribute attr) {
+WideString CJX_Object::GetAttributeByEnum(XFA_Attribute attr) const {
   return TryAttribute(attr, true).value_or(WideString());
 }
 
 Optional<WideString> CJX_Object::TryAttribute(XFA_Attribute eAttr,
-                                              bool bUseDefault) {
+                                              bool bUseDefault) const {
   switch (GetXFANode()->GetAttributeType(eAttr)) {
     case XFA_AttributeType::Enum: {
       Optional<XFA_AttributeValue> value = TryEnum(eAttr, bUseDefault);
@@ -299,7 +299,8 @@ void CJX_Object::RemoveAttribute(WideStringView wsAttr) {
   RemoveMapModuleKey(GetMapKey_Custom(wsAttr));
 }
 
-Optional<bool> CJX_Object::TryBoolean(XFA_Attribute eAttr, bool bUseDefault) {
+Optional<bool> CJX_Object::TryBoolean(XFA_Attribute eAttr,
+                                      bool bUseDefault) const {
   uint32_t key = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
   Optional<int32_t> value = GetMapModuleValueFollowingChain(key);
   if (value.has_value())
@@ -317,7 +318,7 @@ void CJX_Object::SetBoolean(XFA_Attribute eAttr, bool bValue, bool bNotify) {
   }
 }
 
-bool CJX_Object::GetBoolean(XFA_Attribute eAttr) {
+bool CJX_Object::GetBoolean(XFA_Attribute eAttr) const {
   return TryBoolean(eAttr, true).value_or(false);
 }
 
@@ -673,11 +674,12 @@ void CJX_Object::SetContent(const WideString& wsContent,
   }
 }
 
-WideString CJX_Object::GetContent(bool bScriptModify) {
+WideString CJX_Object::GetContent(bool bScriptModify) const {
   return TryContent(bScriptModify, true).value_or(WideString());
 }
 
-Optional<WideString> CJX_Object::TryContent(bool bScriptModify, bool bProto) {
+Optional<WideString> CJX_Object::TryContent(bool bScriptModify,
+                                            bool bProto) const {
   CXFA_Node* pNode = nullptr;
   switch (GetXFANode()->GetObjectType()) {
     case XFA_ObjectType::ContainerNode:
@@ -738,7 +740,7 @@ Optional<WideString> CJX_Object::TryContent(bool bScriptModify, bool bProto) {
   return {};
 }
 
-Optional<WideString> CJX_Object::TryNamespace() {
+Optional<WideString> CJX_Object::TryNamespace() const {
   if (GetXFANode()->IsModelNode() ||
       GetXFANode()->GetElementType() == XFA_Element::Packet) {
     CFX_XMLNode* pXMLNode = GetXFANode()->GetXMLMappingNode();
@@ -880,7 +882,7 @@ Optional<CXFA_Measurement> CJX_Object::GetMapModuleMeasurementFollowingChain(
   return pdfium::nullopt;
 }
 
-bool CJX_Object::HasMapModuleKey(uint32_t key) {
+bool CJX_Object::HasMapModuleKey(uint32_t key) const {
   CFXJSE_MapModule* pModule = GetMapModule();
   return pModule && pModule->HasKey(key);
 }
