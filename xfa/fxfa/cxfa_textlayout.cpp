@@ -1024,7 +1024,8 @@ void CXFA_TextLayout::AppendTextLine(CFGAS_Char::BreakType dwStatus,
     if (m_pTabstopContext)
       m_pTabstopContext->Reset();
 
-    float fLineStep = 0, fBaseLine = 0;
+    float fLineStep = 0;
+    float fBaseLine = 0;
     int32_t i = 0;
     for (i = 0; i < iPieces; i++) {
       const CFGAS_BreakPiece* pPiece = m_pBreak->GetBreakPieceUnstable(i);

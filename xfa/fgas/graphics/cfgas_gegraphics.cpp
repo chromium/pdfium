@@ -343,7 +343,8 @@ void CFGAS_GEGraphics::FillPathWithShading(
               continue;
             }
             float root = (sqrt(b2_4ac));
-            float s1, s2;
+            float s1;
+            float s2;
             if (a > 0) {
               s1 = (-b - root) / (2 * a);
               s2 = (-b + root) / (2 * a);

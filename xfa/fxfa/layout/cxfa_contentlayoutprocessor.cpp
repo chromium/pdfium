@@ -483,7 +483,8 @@ bool FindLayoutItemSplitPos(CXFA_ContentLayoutItem* pLayoutItem,
       bool bAnyChanged = false;
       CXFA_Document* pDocument = pFormNode->GetDocument();
       CXFA_FFNotify* pNotify = pDocument->GetNotify();
-      float fCurTopMargin = 0, fCurBottomMargin = 0;
+      float fCurTopMargin = 0;
+      float fCurBottomMargin = 0;
       CXFA_Margin* pMarginNode =
           pFormNode->GetFirstChildByClass<CXFA_Margin>(XFA_Element::Margin);
       if (pMarginNode && bCalculateMargin) {

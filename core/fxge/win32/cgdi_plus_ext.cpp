@@ -391,7 +391,8 @@ Gdiplus::GpPen* GdipCreatePenImpl(const CFX_GraphStateData* pGraphState,
     float* pDashArray =
         FX_Alloc(float, FxAlignToBoundary<2>(pGraphState->m_DashArray.size()));
     int nCount = 0;
-    float on_leftover = 0, off_leftover = 0;
+    float on_leftover = 0;
+    float off_leftover = 0;
     for (size_t i = 0; i < pGraphState->m_DashArray.size(); i += 2) {
       float on_phase = pGraphState->m_DashArray[i];
       float off_phase;

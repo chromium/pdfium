@@ -221,7 +221,8 @@ unsigned clip_liang_barsky(float x1,
   unsigned np = 0;
   if (deltax == 0)
     deltax = (x1 > clip_box.x1) ? -nearzero : nearzero;
-  float xin, xout;
+  float xin;
+  float xout;
   if (deltax > 0) {
     xin = clip_box.x1;
     xout = clip_box.x2;
@@ -232,7 +233,8 @@ unsigned clip_liang_barsky(float x1,
   float tinx = (xin - x1) / deltax;
   if (deltay == 0)
     deltay = (y1 > clip_box.y1) ? -nearzero : nearzero;
-  float yin, yout;
+  float yin;
+  float yout;
   if (deltay > 0) {
     yin = clip_box.y1;
     yout = clip_box.y2;
@@ -241,7 +243,8 @@ unsigned clip_liang_barsky(float x1,
     yout = clip_box.y1;
   }
   float tiny = (yin - y1) / deltay;
-  float tin1, tin2;
+  float tin1;
+  float tin2;
   if (tinx < tiny) {
     tin1 = tinx;
     tin2 = tiny;

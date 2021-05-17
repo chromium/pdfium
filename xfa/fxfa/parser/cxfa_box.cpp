@@ -245,9 +245,8 @@ void CXFA_Box::DrawFill(const std::vector<CXFA_Stroke*>& strokes,
 void CXFA_Box::GetPathArcOrRounded(CFX_RectF rtDraw,
                                    bool forceRound,
                                    CFGAS_GEPath* fillPath) {
-  float a, b;
-  a = rtDraw.width / 2.0f;
-  b = rtDraw.height / 2.0f;
+  float a = rtDraw.width / 2.0f;
+  float b = rtDraw.height / 2.0f;
   if (IsCircular() || forceRound)
     a = b = std::min(a, b);
 
@@ -310,9 +309,8 @@ void CXFA_Box::StrokeArcOrRounded(CFGAS_GEGraphics* pGS,
   pGS->SaveGraphState();
   pGS->SetLineWidth(fHalf);
 
-  float a, b;
-  a = rtWidget.width / 2.0f;
-  b = rtWidget.height / 2.0f;
+  float a = rtWidget.width / 2.0f;
+  float b = rtWidget.height / 2.0f;
   if (forceRound) {
     a = std::min(a, b);
     b = a;

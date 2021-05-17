@@ -496,7 +496,6 @@ void DrawLatticeGouraudShading(
 }
 
 struct Coon_BezierCoeff {
-  float a, b, c, d;
   void FromPoints(float p0, float p1, float p2, float p3) {
     a = -p0 + 3 * p1 - 3 * p2 + p3;
     b = 3 * p0 - 6 * p1 + 3 * p2;
@@ -539,6 +538,11 @@ struct Coon_BezierCoeff {
     float dis = a + b + c;
     return dis < 0 ? -dis : dis;
   }
+
+  float a;
+  float b;
+  float c;
+  float d;
 };
 
 struct Coon_Bezier {
