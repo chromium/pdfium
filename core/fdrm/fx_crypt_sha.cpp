@@ -48,12 +48,12 @@
   (SHA384_ROTR(x, 28) ^ SHA384_ROTR(x, 34) ^ SHA384_ROTR(x, 39))
 #define SHA384_S3(x) \
   (SHA384_ROTR(x, 14) ^ SHA384_ROTR(x, 18) ^ SHA384_ROTR(x, 41))
-#define SHA384_P(a, b, c, d, e, f, g, h, x, K)             \
-  {                                                        \
-    temp1 = h + SHA384_S3(e) + SHA384_F1(e, f, g) + K + x; \
-    temp2 = SHA384_S2(a) + SHA384_F0(a, b, c);             \
-    d += temp1;                                            \
-    h = temp1 + temp2;                                     \
+#define SHA384_P(a, b, c, d, e, f, g, h, x, K)                      \
+  {                                                                 \
+    uint64_t temp1 = h + SHA384_S3(e) + SHA384_F1(e, f, g) + K + x; \
+    uint64_t temp2 = SHA384_S2(a) + SHA384_F0(a, b, c);             \
+    d += temp1;                                                     \
+    h = temp1 + temp2;                                              \
   }
 #define SHA384_R(t) \
   (W[t] = SHA384_S1(W[t - 2]) + W[t - 7] + SHA384_S0(W[t - 15]) + W[t - 16])
@@ -68,12 +68,12 @@
 #define F0(x, y, z) ((x & y) | (z & (x | y)))
 #define F1(x, y, z) (z ^ (x & (y ^ z)))
 #define R(t) (W[t] = S1(W[t - 2]) + W[t - 7] + S0(W[t - 15]) + W[t - 16])
-#define PS(a, b, c, d, e, f, g, h, x, K)     \
-  {                                          \
-    temp1 = h + S3(e) + F1(e, f, g) + K + x; \
-    temp2 = S2(a) + F0(a, b, c);             \
-    d += temp1;                              \
-    h = temp1 + temp2;                       \
+#define PS(a, b, c, d, e, f, g, h, x, K)              \
+  {                                                   \
+    uint32_t temp1 = h + S3(e) + F1(e, f, g) + K + x; \
+    uint32_t temp2 = S2(a) + F0(a, b, c);             \
+    d += temp1;                                       \
+    h = temp1 + temp2;                                \
   }
 
 namespace {
@@ -88,7 +88,6 @@ void SHA_Core_Init(unsigned int h[5]) {
 
 void SHATransform(unsigned int* digest, unsigned int* block) {
   unsigned int w[80];
-  unsigned int a, b, c, d, e;
   int t;
   for (t = 0; t < 16; t++) {
     w[t] = block[t];
@@ -97,11 +96,11 @@ void SHATransform(unsigned int* digest, unsigned int* block) {
     unsigned int tmp = w[t - 3] ^ w[t - 8] ^ w[t - 14] ^ w[t - 16];
     w[t] = rol(tmp, 1);
   }
-  a = digest[0];
-  b = digest[1];
-  c = digest[2];
-  d = digest[3];
-  e = digest[4];
+  unsigned int a = digest[0];
+  unsigned int b = digest[1];
+  unsigned int c = digest[2];
+  unsigned int d = digest[3];
+  unsigned int e = digest[4];
   for (t = 0; t < 20; t++) {
     unsigned int tmp = rol(a, 5) + ((b & c) | (d & ~b)) + e + w[t] + 0x5a827999;
     e = d;
@@ -161,8 +160,6 @@ void sha256_process(CRYPT_sha2_context* ctx, const uint8_t data[64]) {
   SHA_GET_UINT32(W[14], data, 56);
   SHA_GET_UINT32(W[15], data, 60);
 
-  uint32_t temp1;
-  uint32_t temp2;
   uint32_t A = ctx->state[0];
   uint32_t B = ctx->state[1];
   uint32_t C = ctx->state[2];
@@ -290,8 +287,6 @@ uint64_t const constants[] = {
 };
 
 void sha384_process(CRYPT_sha2_context* ctx, const uint8_t data[128]) {
-  uint64_t temp1, temp2;
-  uint64_t A, B, C, D, E, F, G, H;
   uint64_t W[80];
   SHA_GET_UINT64(W[0], data, 0);
   SHA_GET_UINT64(W[1], data, 8);
@@ -309,14 +304,14 @@ void sha384_process(CRYPT_sha2_context* ctx, const uint8_t data[128]) {
   SHA_GET_UINT64(W[13], data, 104);
   SHA_GET_UINT64(W[14], data, 112);
   SHA_GET_UINT64(W[15], data, 120);
-  A = ctx->state[0];
-  B = ctx->state[1];
-  C = ctx->state[2];
-  D = ctx->state[3];
-  E = ctx->state[4];
-  F = ctx->state[5];
-  G = ctx->state[6];
-  H = ctx->state[7];
+  uint64_t A = ctx->state[0];
+  uint64_t B = ctx->state[1];
+  uint64_t C = ctx->state[2];
+  uint64_t D = ctx->state[3];
+  uint64_t E = ctx->state[4];
+  uint64_t F = ctx->state[5];
+  uint64_t G = ctx->state[6];
+  uint64_t H = ctx->state[7];
   for (int i = 0; i < 10; ++i) {
     uint64_t temp[8];
     if (i < 2) {

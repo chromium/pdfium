@@ -31,7 +31,7 @@ const uint8_t md5_padding[64] = {
     0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 void md5_process(CRYPT_md5_context* ctx, const uint8_t data[64]) {
-  uint32_t A, B, C, D, X[16];
+  uint32_t X[16];
   GET_UINT32(X[0], data, 0);
   GET_UINT32(X[1], data, 4);
   GET_UINT32(X[2], data, 8);
@@ -48,16 +48,16 @@ void md5_process(CRYPT_md5_context* ctx, const uint8_t data[64]) {
   GET_UINT32(X[13], data, 52);
   GET_UINT32(X[14], data, 56);
   GET_UINT32(X[15], data, 60);
+  uint32_t A = ctx->state[0];
+  uint32_t B = ctx->state[1];
+  uint32_t C = ctx->state[2];
+  uint32_t D = ctx->state[3];
 #define S(x, n) ((x << n) | ((x & 0xFFFFFFFF) >> (32 - n)))
 #define P(a, b, c, d, k, s, t)  \
   {                             \
     a += F(b, c, d) + X[k] + t; \
     a = S(a, s) + b;            \
   }
-  A = ctx->state[0];
-  B = ctx->state[1];
-  C = ctx->state[2];
-  D = ctx->state[3];
 #define F(x, y, z) (z ^ (x & (y ^ z)))
   P(A, B, C, D, 0, 7, 0xD76AA478);
   P(D, A, B, C, 1, 12, 0xE8C7B756);
