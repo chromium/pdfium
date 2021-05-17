@@ -71,7 +71,6 @@ class CPDF_BAFontMap final : public IPVT_FontMap {
                       int32_t nCharset);
 
   ByteString EncodeFontAlias(const ByteString& sFontName, int32_t nCharset);
-  ByteString EncodeFontAlias(const ByteString& sFontName);
 
   int32_t FindFont(const ByteString& sFontName, int32_t nCharset);
   ByteString GetNativeFontName(int32_t nCharset);

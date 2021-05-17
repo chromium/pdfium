@@ -356,12 +356,9 @@ int32_t CPDF_BAFontMap::AddFontData(const RetainPtr<CPDF_Font>& pFont,
 
 ByteString CPDF_BAFontMap::EncodeFontAlias(const ByteString& sFontName,
                                            int32_t nCharset) {
-  return EncodeFontAlias(sFontName) + ByteString::Format("_%02X", nCharset);
-}
-
-ByteString CPDF_BAFontMap::EncodeFontAlias(const ByteString& sFontName) {
   ByteString sRet = sFontName;
   sRet.Remove(' ');
+  sRet += ByteString::Format("_%02X", nCharset);
   return sRet;
 }
 
