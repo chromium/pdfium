@@ -1334,7 +1334,9 @@ void CPDFSDK_AppStream::SetAsPushButton() {
 
 void CPDFSDK_AppStream::SetAsCheckBox() {
   CPDF_FormControl* pControl = widget_->GetFormControl();
-  CFX_Color crBackground, crBorder, crText;
+  CFX_Color crBackground;
+  CFX_Color crBorder;
+  CFX_Color crText;
   int iColorType;
   float fc[4];
 
@@ -1348,8 +1350,8 @@ void CPDFSDK_AppStream::SetAsCheckBox() {
 
   float fBorderWidth = static_cast<float>(widget_->GetBorderWidth());
   CPWL_Dash dsBorder(3, 0, 0);
-  CFX_Color crLeftTop, crRightBottom;
-
+  CFX_Color crLeftTop;
+  CFX_Color crRightBottom;
   BorderStyle nBorderStyle = widget_->GetBorderStyle();
   switch (nBorderStyle) {
     case BorderStyle::kDash:
