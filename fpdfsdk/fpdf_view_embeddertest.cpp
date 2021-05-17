@@ -365,6 +365,11 @@ TEST_F(FPDFViewEmbedderTest, LoadNonexistentDocument) {
   EXPECT_EQ(static_cast<int>(FPDF_GetLastError()), FPDF_ERR_FILE);
 }
 
+TEST_F(FPDFViewEmbedderTest, DocumentWithNoPageCount) {
+  ASSERT_TRUE(OpenDocument("no_page_count.pdf"));
+  ASSERT_EQ(6, FPDF_GetPageCount(document()));
+}
+
 // See https://crbug.com/pdfium/465
 TEST_F(FPDFViewEmbedderTest, EmptyDocument) {
   EXPECT_TRUE(CreateEmptyDocument());
