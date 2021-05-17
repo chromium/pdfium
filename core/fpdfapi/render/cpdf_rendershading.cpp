@@ -799,7 +799,9 @@ void DrawCoonPatchMeshes(
     if (!stream.CanReadFlag())
       break;
     uint32_t flag = stream.ReadFlag();
-    int iStartPoint = 0, iStartColor = 0, i = 0;
+    int iStartPoint = 0;
+    int iStartColor = 0;
+    int i = 0;
     if (flag) {
       iStartPoint = 4;
       iStartColor = 2;

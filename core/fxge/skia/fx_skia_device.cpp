@@ -2529,7 +2529,8 @@ bool CFX_SkiaDeviceDriver::StartDIBits(
   std::unique_ptr<uint8_t, FxFreeDeleter> dst8Storage;
   std::unique_ptr<uint32_t, FxFreeDeleter> dst32Storage;
   SkBitmap skBitmap;
-  int width, height;
+  int width;
+  int height;
   if (!Upsample(pSource, dst8Storage, dst32Storage, &skBitmap, &width, &height,
                 false, m_bRgbByteOrder)) {
     return false;
@@ -2660,8 +2661,12 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
   DebugValidate(m_pBitmap, m_pBackdropBitmap);
   std::unique_ptr<uint8_t, FxFreeDeleter> src8Storage, mask8Storage;
   std::unique_ptr<uint32_t, FxFreeDeleter> src32Storage, mask32Storage;
-  SkBitmap skBitmap, skMask;
-  int srcWidth, srcHeight, maskWidth, maskHeight;
+  SkBitmap skBitmap;
+  SkBitmap skMask;
+  int srcWidth;
+  int srcHeight;
+  int maskWidth;
+  int maskHeight;
   if (!Upsample(pSource, src8Storage, src32Storage, &skBitmap, &srcWidth,
                 &srcHeight, false, m_bRgbByteOrder)) {
     return false;

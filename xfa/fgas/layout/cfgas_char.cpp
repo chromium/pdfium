@@ -340,11 +340,10 @@ void ResolveWeak(std::vector<CFGAS_Char>* chars, size_t iCount) {
         pTC->m_iBidiClass = eClsCur;
       } else if (i < iCount) {
         CFGAS_Char* pTCNext = &(*chars)[i + 1];
-        int32_t iLevelNext, iLevelNew;
         eClsNew = pTCNext->m_iBidiClass;
-        iLevelNext = pTCNext->m_iBidiLevel;
+        int32_t iLevelNext = pTCNext->m_iBidiLevel;
         if (eClsNew != FX_BIDICLASS::kBN && iLevelCur != iLevelNext) {
-          iLevelNew = std::max(iLevelNext, iLevelCur);
+          int32_t iLevelNew = std::max(iLevelNext, iLevelCur);
           pTC->m_iBidiLevel = static_cast<int16_t>(iLevelNew);
           eClsCur = Direction(iLevelNew);
           pTC->m_iBidiClass = eClsCur;

@@ -167,7 +167,8 @@ bool CBC_QRCoderMaskUtil::GetDataMaskBit(int32_t maskPattern,
                                          int32_t y) {
   DCHECK(CBC_QRCoder::IsValidMaskPattern(maskPattern));
 
-  int32_t intermediate = 0, temp = 0;
+  int32_t intermediate = 0;
+  int32_t temp = 0;
   switch (maskPattern) {
     case 0:
       intermediate = (y + x) & 0x1;

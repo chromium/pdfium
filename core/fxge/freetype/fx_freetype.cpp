@@ -13,8 +13,6 @@ static int xyq_search_node(char* glyph_name,
                            int name_offset,
                            int table_offset,
                            wchar_t unicode) {
-  int i, count;
-
   // copy letters
   while (1) {
     glyph_name[name_offset] = ft_adobe_glyph_list[table_offset] & 0x7f;
@@ -26,7 +24,7 @@ static int xyq_search_node(char* glyph_name,
   glyph_name[name_offset] = 0;
 
   // get child count
-  count = ft_adobe_glyph_list[table_offset] & 0x7f;
+  int count = ft_adobe_glyph_list[table_offset] & 0x7f;
 
   // check if we have value for this node
   if (ft_adobe_glyph_list[table_offset] & 0x80) {
@@ -42,7 +40,8 @@ static int xyq_search_node(char* glyph_name,
   // now search in sub-nodes
   if (count == 0)
     return 0;
-  for (i = 0; i < count; i++) {
+
+  for (int i = 0; i < count; i++) {
     int child_offset = ft_adobe_glyph_list[table_offset + i * 2] * 256 +
                        ft_adobe_glyph_list[table_offset + i * 2 + 1];
     if (xyq_search_node(glyph_name, name_offset, child_offset, unicode))
@@ -156,11 +155,9 @@ int FXFT_unicode_from_adobe_name(const char* glyph_name) {
 }
 
 void FXFT_adobe_name_from_unicode(char* glyph_name, wchar_t unicode) {
-  int i, count;
-
   // start from top level node
-  count = ft_adobe_glyph_list[1];
-  for (i = 0; i < count; i++) {
+  int count = ft_adobe_glyph_list[1];
+  for (int i = 0; i < count; i++) {
     int child_offset =
         ft_adobe_glyph_list[i * 2 + 2] * 256 + ft_adobe_glyph_list[i * 2 + 3];
     if (xyq_search_node(glyph_name, 0, child_offset, unicode))

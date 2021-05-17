@@ -4989,31 +4989,32 @@ void CXFA_Node::InsertListTextItem(CXFA_Node* pItems,
 WideString CXFA_Node::NumericLimit(const WideString& wsValue) {
   int32_t iLead = GetLeadDigits();
   int32_t iTread = GetFracDigits();
-
-  if ((iLead == -1) && (iTread == -1))
+  if (iLead == -1 && iTread == -1)
     return wsValue;
 
-  WideString wsRet;
-  int32_t iLead_ = 0, iTread_ = -1;
   int32_t iCount = wsValue.GetLength();
   if (iCount == 0)
     return wsValue;
 
+  WideString wsRet;
   int32_t i = 0;
   if (wsValue[i] == L'-') {
     wsRet += L'-';
     i++;
   }
+
+  int32_t iLead2 = 0;
+  int32_t iTread2 = -1;
   for (; i < iCount; i++) {
     wchar_t wc = wsValue[i];
     if (FXSYS_IsDecimalDigit(wc)) {
       if (iLead >= 0) {
-        iLead_++;
-        if (iLead_ > iLead)
+        iLead2++;
+        if (iLead2 > iLead)
           return L"0";
-      } else if (iTread_ >= 0) {
-        iTread_++;
-        if (iTread_ > iTread) {
+      } else if (iTread2 >= 0) {
+        iTread2++;
+        if (iTread2 > iTread) {
           if (iTread != -1) {
             CFGAS_Decimal wsDeci = CFGAS_Decimal(wsValue.AsStringView());
             wsDeci.SetScale(iTread);
@@ -5023,7 +5024,7 @@ WideString CXFA_Node::NumericLimit(const WideString& wsValue) {
         }
       }
     } else if (wc == L'.') {
-      iTread_ = 0;
+      iTread2 = 0;
       iLead = -1;
     }
     wsRet += wc;

@@ -250,7 +250,8 @@ bool CPDF_SimpleFont::LoadCommon() {
 
 void CPDF_SimpleFont::LoadSubstFont() {
   if (!m_bUseFontWidth && !FontStyleIsFixedPitch(m_Flags)) {
-    int width = 0, i;
+    int width = 0;
+    int i;
     for (i = 0; i < 256; i++) {
       if (m_CharWidth[i] == 0 || m_CharWidth[i] == 0xffff)
         continue;

@@ -57,9 +57,8 @@ bool CXFA_ImageRenderer::Start() {
     dest_width = -dest_width;
   if (m_ImageMatrix.d > 0)
     dest_height = -dest_height;
-  int dest_left, dest_top;
-  dest_left = dest_width > 0 ? image_rect.left : image_rect.right;
-  dest_top = dest_height > 0 ? image_rect.top : image_rect.bottom;
+  int dest_left = dest_width > 0 ? image_rect.left : image_rect.right;
+  int dest_top = dest_height > 0 ? image_rect.top : image_rect.bottom;
   if (m_pDIBBase->IsOpaqueImage()) {
     if (m_pDevice->StretchDIBitsWithFlagsAndBlend(
             m_pDIBBase, dest_left, dest_top, dest_width, dest_height, options,

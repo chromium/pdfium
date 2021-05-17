@@ -589,7 +589,8 @@ bool CFX_PSRenderer::DrawText(int nChars,
   RetainPtr<CFX_GlyphCache> pGlyphCache = pCache->GetGlyphCache(pFont);
   int last_fontnum = -1;
   for (int i = 0; i < nChars; i++) {
-    int ps_fontnum, ps_glyphindex;
+    int ps_fontnum;
+    int ps_glyphindex;
     FindPSFontGlyph(pGlyphCache.Get(), pFont, pCharPos[i], &ps_fontnum,
                     &ps_glyphindex);
     if (last_fontnum != ps_fontnum) {
