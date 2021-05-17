@@ -506,7 +506,7 @@ bool CJPX_Decoder::Decode(uint8_t* dest_buf, uint32_t pitch, bool swap_rgb) {
   if (m_Image->comps[0].w != m_Image->x1 || m_Image->comps[0].h != m_Image->y1)
     return false;
 
-  if (pitch<(m_Image->comps[0].w * 8 * m_Image->numcomps + 31)>> 5 << 2)
+  if (pitch < ((m_Image->comps[0].w * 8 * m_Image->numcomps + 31) >> 5) << 2)
     return false;
 
   if (swap_rgb && m_Image->numcomps < 3)
