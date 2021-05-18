@@ -34,21 +34,7 @@ CFX_Color CFXColorFromArray(const CPDF_Array& array) {
 
 CFX_Color CFXColorFromString(const ByteString& str) {
   CPDF_DefaultAppearance appearance(str);
-  float values[4];
-  Optional<CFX_Color::Type> color_type = appearance.GetColor(values);
-  if (!color_type || *color_type == CFX_Color::kTransparent)
-    return CFX_Color(CFX_Color::kTransparent);
-  if (*color_type == CFX_Color::kGray)
-    return CFX_Color(CFX_Color::kGray, values[0]);
-  if (*color_type == CFX_Color::kRGB)
-    return CFX_Color(CFX_Color::kRGB, values[0], values[1], values[2]);
-  if (*color_type == CFX_Color::kCMYK) {
-    return CFX_Color(CFX_Color::kCMYK, values[0], values[1], values[2],
-                     values[3]);
-  }
-
-  NOTREACHED();
-  return CFX_Color(CFX_Color::kTransparent);
+  return appearance.GetColor().value_or(CFX_Color());
 }
 
 }  // namespace fpdfdoc

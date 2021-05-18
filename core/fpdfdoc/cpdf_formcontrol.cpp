@@ -147,18 +147,18 @@ int CPDF_FormControl::GetRotation() const {
   return GetMK().GetRotation();
 }
 
-FX_ARGB CPDF_FormControl::GetColor(int& iColorType, const ByteString& csEntry) {
-  return GetMK().GetColor(iColorType, csEntry);
+FX_ARGB CPDF_FormControl::GetColorARGB(int& iColorType,
+                                       const ByteString& csEntry) {
+  return GetMK().GetColorARGB(iColorType, csEntry);
 }
 
-float CPDF_FormControl::GetOriginalColor(int index, const ByteString& csEntry) {
-  return GetMK().GetOriginalColor(index, csEntry);
+float CPDF_FormControl::GetOriginalColorComponent(int index,
+                                                  const ByteString& csEntry) {
+  return GetMK().GetOriginalColorComponent(index, csEntry);
 }
 
-void CPDF_FormControl::GetOriginalColor(int& iColorType,
-                                        float fc[4],
-                                        const ByteString& csEntry) {
-  GetMK().GetOriginalColor(iColorType, fc, csEntry);
+CFX_Color CPDF_FormControl::GetOriginalColor(const ByteString& csEntry) {
+  return GetMK().GetOriginalColor(csEntry);
 }
 
 WideString CPDF_FormControl::GetCaption(const ByteString& csEntry) const {

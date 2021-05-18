@@ -16,7 +16,7 @@ struct CFX_Color {
   explicit CFX_Color(FX_COLORREF ref)
       : CFX_Color(FXARGB_R(ref), FXARGB_G(ref), FXARGB_B(ref)) {}
 
-  CFX_Color(int32_t type = CFX_Color::kTransparent,
+  CFX_Color(Type type = CFX_Color::kTransparent,
             float color1 = 0.0f,
             float color2 = 0.0f,
             float color3 = 0.0f,
@@ -51,7 +51,7 @@ struct CFX_Color {
     fColor4 = 0.0f;
   }
 
-  int32_t nColorType;
+  Type nColorType;
   float fColor1;
   float fColor2;
   float fColor3;

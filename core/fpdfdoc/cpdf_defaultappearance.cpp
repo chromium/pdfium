@@ -69,59 +69,56 @@ Optional<ByteString> CPDF_DefaultAppearance::GetFont(float* fFontSize) {
   return {PDF_NameDecode(csFontNameTag.AsStringView())};
 }
 
-Optional<CFX_Color::Type> CPDF_DefaultAppearance::GetColor(float fc[4]) {
-  for (int c = 0; c < 4; c++)
-    fc[c] = 0;
-
+Optional<CFX_Color> CPDF_DefaultAppearance::GetColor() const {
   if (m_csDA.IsEmpty())
     return {};
 
+  float fc[4];
   CPDF_SimpleParser syntax(m_csDA.AsStringView().raw_span());
   if (FindTagParamFromStart(&syntax, "g", 1)) {
     fc[0] = StringToFloat(syntax.GetWord());
-    return {CFX_Color::kGray};
+    return CFX_Color(CFX_Color::kGray, fc[0]);
   }
   if (FindTagParamFromStart(&syntax, "rg", 3)) {
     fc[0] = StringToFloat(syntax.GetWord());
     fc[1] = StringToFloat(syntax.GetWord());
     fc[2] = StringToFloat(syntax.GetWord());
-    return {CFX_Color::kRGB};
+    return CFX_Color(CFX_Color::kRGB, fc[0], fc[1], fc[2]);
   }
   if (FindTagParamFromStart(&syntax, "k", 4)) {
     fc[0] = StringToFloat(syntax.GetWord());
     fc[1] = StringToFloat(syntax.GetWord());
     fc[2] = StringToFloat(syntax.GetWord());
     fc[3] = StringToFloat(syntax.GetWord());
-    return {CFX_Color::kCMYK};
+    return CFX_Color(CFX_Color::kCMYK, fc[0], fc[1], fc[2], fc[3]);
   }
-
   return {};
 }
 
 std::pair<Optional<CFX_Color::Type>, FX_ARGB>
-CPDF_DefaultAppearance::GetColor() {
-  float values[4];
-  Optional<CFX_Color::Type> type = GetColor(values);
-  if (!type)
-    return {type, 0};
+CPDF_DefaultAppearance::GetColorARGB() const {
+  Optional<CFX_Color> maybe_color = GetColor();
+  if (!maybe_color.has_value())
+    return {{}, 0};
 
-  if (*type == CFX_Color::kGray) {
-    int g = static_cast<int>(values[0] * 255 + 0.5f);
-    return {type, ArgbEncode(255, g, g, g)};
+  const CFX_Color& color = maybe_color.value();
+  if (color.nColorType == CFX_Color::kGray) {
+    int g = static_cast<int>(color.fColor1 * 255 + 0.5f);
+    return {CFX_Color::kGray, ArgbEncode(255, g, g, g)};
   }
-  if (*type == CFX_Color::kRGB) {
-    int r = static_cast<int>(values[0] * 255 + 0.5f);
-    int g = static_cast<int>(values[1] * 255 + 0.5f);
-    int b = static_cast<int>(values[2] * 255 + 0.5f);
-    return {type, ArgbEncode(255, r, g, b)};
+  if (color.nColorType == CFX_Color::kRGB) {
+    int r = static_cast<int>(color.fColor1 * 255 + 0.5f);
+    int g = static_cast<int>(color.fColor2 * 255 + 0.5f);
+    int b = static_cast<int>(color.fColor3 * 255 + 0.5f);
+    return {CFX_Color::kRGB, ArgbEncode(255, r, g, b)};
   }
-  if (*type == CFX_Color::kCMYK) {
-    float r = 1.0f - std::min(1.0f, values[0] + values[3]);
-    float g = 1.0f - std::min(1.0f, values[1] + values[3]);
-    float b = 1.0f - std::min(1.0f, values[2] + values[3]);
-    return {type, ArgbEncode(255, static_cast<int>(r * 255 + 0.5f),
-                             static_cast<int>(g * 255 + 0.5f),
-                             static_cast<int>(b * 255 + 0.5f))};
+  if (color.nColorType == CFX_Color::kCMYK) {
+    float r = 1.0f - std::min(1.0f, color.fColor1 + color.fColor4);
+    float g = 1.0f - std::min(1.0f, color.fColor2 + color.fColor4);
+    float b = 1.0f - std::min(1.0f, color.fColor3 + color.fColor4);
+    return {CFX_Color::kCMYK, ArgbEncode(255, static_cast<int>(r * 255 + 0.5f),
+                                         static_cast<int>(g * 255 + 0.5f),
+                                         static_cast<int>(b * 255 + 0.5f))};
   }
   NOTREACHED();
   return {{}, 0};

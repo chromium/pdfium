@@ -109,16 +109,18 @@ ByteString GetColorAppStream(const CFX_Color& color,
   std::ostringstream sColorStream;
 
   switch (color.nColorType) {
-    case CFX_Color::kRGB:
-      sColorStream << color.fColor1 << " " << color.fColor2 << " "
-                   << color.fColor3 << " "
-                   << (bFillOrStroke ? kSetRGBOperator : kSetRGBStrokedOperator)
-                   << "\n";
+    case CFX_Color::kTransparent:
       break;
     case CFX_Color::kGray:
       sColorStream << color.fColor1 << " "
                    << (bFillOrStroke ? kSetGrayOperator
                                      : kSetGrayStrokedOperator)
+                   << "\n";
+      break;
+    case CFX_Color::kRGB:
+      sColorStream << color.fColor1 << " " << color.fColor2 << " "
+                   << color.fColor3 << " "
+                   << (bFillOrStroke ? kSetRGBOperator : kSetRGBStrokedOperator)
                    << "\n";
       break;
     case CFX_Color::kCMYK:
@@ -1169,17 +1171,8 @@ void CPDFSDK_AppStream::SetAsPushButton() {
       break;
   }
 
-  CFX_Color crBackground;
-  CFX_Color crBorder;
-  int iColorType;
-  float fc[4];
-  pControl->GetOriginalBackgroundColor(iColorType, fc);
-  if (iColorType > 0)
-    crBackground = CFX_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
-
-  pControl->GetOriginalBorderColor(iColorType, fc);
-  if (iColorType > 0)
-    crBorder = CFX_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
+  CFX_Color crBackground = pControl->GetOriginalBackgroundColor();
+  CFX_Color crBorder = pControl->GetOriginalBorderColor();
 
   float fBorderWidth = static_cast<float>(widget_->GetBorderWidth());
   CPWL_Dash dsBorder(3, 0, 0);
@@ -1206,16 +1199,12 @@ void CPDFSDK_AppStream::SetAsPushButton() {
   }
 
   CFX_FloatRect rcClient = rcWindow.GetDeflated(fBorderWidth, fBorderWidth);
-  CFX_Color crText(CFX_Color::kGray, 0);
-  ByteString csNameTag;
   CPDF_DefaultAppearance da = pControl->GetDefaultAppearance();
-  Optional<CFX_Color::Type> color = da.GetColor(fc);
-  if (color) {
-    iColorType = *color;
-    crText = CFX_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
-  }
+  Optional<CFX_Color> color = da.GetColor();
+  CFX_Color crText = color.value_or(CFX_Color(CFX_Color::kGray, 0));
 
   float fFontSize;
+  ByteString csNameTag;
   Optional<ByteString> font = da.GetFont(&fFontSize);
   if (font)
     csNameTag = *font;
@@ -1334,24 +1323,13 @@ void CPDFSDK_AppStream::SetAsPushButton() {
 
 void CPDFSDK_AppStream::SetAsCheckBox() {
   CPDF_FormControl* pControl = widget_->GetFormControl();
-  CFX_Color crBackground;
-  CFX_Color crBorder;
-  CFX_Color crText;
-  int iColorType;
-  float fc[4];
-
-  pControl->GetOriginalBackgroundColor(iColorType, fc);
-  if (iColorType > 0)
-    crBackground = CFX_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
-
-  pControl->GetOriginalBorderColor(iColorType, fc);
-  if (iColorType > 0)
-    crBorder = CFX_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
-
+  CFX_Color crBackground = pControl->GetOriginalBackgroundColor();
+  CFX_Color crBorder = pControl->GetOriginalBorderColor();
   float fBorderWidth = static_cast<float>(widget_->GetBorderWidth());
   CPWL_Dash dsBorder(3, 0, 0);
   CFX_Color crLeftTop;
   CFX_Color crRightBottom;
+
   BorderStyle nBorderStyle = widget_->GetBorderStyle();
   switch (nBorderStyle) {
     case BorderStyle::kDash:
@@ -1373,12 +1351,8 @@ void CPDFSDK_AppStream::SetAsCheckBox() {
 
   CFX_FloatRect rcWindow = widget_->GetRotatedRect();
   CFX_FloatRect rcClient = rcWindow.GetDeflated(fBorderWidth, fBorderWidth);
-  CPDF_DefaultAppearance da = pControl->GetDefaultAppearance();
-  Optional<CFX_Color::Type> color = da.GetColor(fc);
-  if (color) {
-    iColorType = *color;
-    crText = CFX_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
-  }
+  Optional<CFX_Color> color = pControl->GetDefaultAppearance().GetColor();
+  CFX_Color crText = color.value_or(CFX_Color());
 
   CheckStyle nStyle = CheckStyleFromCaption(pControl->GetNormalCaption())
                           .value_or(CheckStyle::kCheck);
@@ -1428,24 +1402,13 @@ void CPDFSDK_AppStream::SetAsCheckBox() {
 
 void CPDFSDK_AppStream::SetAsRadioButton() {
   CPDF_FormControl* pControl = widget_->GetFormControl();
-  CFX_Color crBackground;
-  CFX_Color crBorder;
-  CFX_Color crText;
-  int iColorType;
-  float fc[4];
-
-  pControl->GetOriginalBackgroundColor(iColorType, fc);
-  if (iColorType > 0)
-    crBackground = CFX_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
-
-  pControl->GetOriginalBorderColor(iColorType, fc);
-  if (iColorType > 0)
-    crBorder = CFX_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
-
+  CFX_Color crBackground = pControl->GetOriginalBackgroundColor();
+  CFX_Color crBorder = pControl->GetOriginalBorderColor();
   float fBorderWidth = static_cast<float>(widget_->GetBorderWidth());
   CPWL_Dash dsBorder(3, 0, 0);
   CFX_Color crLeftTop;
   CFX_Color crRightBottom;
+
   BorderStyle nBorderStyle = widget_->GetBorderStyle();
   switch (nBorderStyle) {
     case BorderStyle::kDash:
@@ -1467,13 +1430,8 @@ void CPDFSDK_AppStream::SetAsRadioButton() {
 
   CFX_FloatRect rcWindow = widget_->GetRotatedRect();
   CFX_FloatRect rcClient = rcWindow.GetDeflated(fBorderWidth, fBorderWidth);
-  CPDF_DefaultAppearance da = pControl->GetDefaultAppearance();
-  Optional<CFX_Color::Type> color = da.GetColor(fc);
-  if (color) {
-    iColorType = *color;
-    crText = CFX_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
-  }
-
+  Optional<CFX_Color> color = pControl->GetDefaultAppearance().GetColor();
+  CFX_Color crText = color.value_or(CFX_Color());
   CheckStyle nStyle = CheckStyleFromCaption(pControl->GetNormalCaption())
                           .value_or(CheckStyle::kCircle);
 

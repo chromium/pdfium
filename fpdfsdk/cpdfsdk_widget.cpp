@@ -438,7 +438,7 @@ Optional<FX_COLORREF> CPDFSDK_Widget::GetFillColor() const {
 Optional<FX_COLORREF> CPDFSDK_Widget::GetBorderColor() const {
   CPDF_FormControl* pFormCtrl = GetFormControl();
   int iColorType = 0;
-  FX_COLORREF color = ArgbToColorRef(pFormCtrl->GetBorderColor(iColorType));
+  FX_COLORREF color = ArgbToColorRef(pFormCtrl->GetBorderColorARGB(iColorType));
   if (iColorType == CFX_Color::kTransparent)
     return {};
   return color;
@@ -449,7 +449,7 @@ Optional<FX_COLORREF> CPDFSDK_Widget::GetTextColor() const {
   CPDF_DefaultAppearance da = pFormCtrl->GetDefaultAppearance();
   FX_ARGB argb;
   Optional<CFX_Color::Type> iColorType;
-  std::tie(iColorType, argb) = da.GetColor();
+  std::tie(iColorType, argb) = da.GetColorARGB();
   if (!iColorType.has_value())
     return {};
 
@@ -778,43 +778,19 @@ CFX_Matrix CPDFSDK_Widget::GetMatrix() const {
 }
 
 CFX_Color CPDFSDK_Widget::GetTextPWLColor() const {
-  CFX_Color crText = CFX_Color(CFX_Color::kGray, 0);
-
   CPDF_FormControl* pFormCtrl = GetFormControl();
-  CPDF_DefaultAppearance da = pFormCtrl->GetDefaultAppearance();
-
-  float fc[4];
-  Optional<CFX_Color::Type> iColorType = da.GetColor(fc);
-  if (iColorType)
-    crText = CFX_Color(*iColorType, fc[0], fc[1], fc[2], fc[3]);
-
-  return crText;
+  Optional<CFX_Color> crText = pFormCtrl->GetDefaultAppearance().GetColor();
+  return crText.value_or(CFX_Color(CFX_Color::kGray, 0));
 }
 
 CFX_Color CPDFSDK_Widget::GetBorderPWLColor() const {
-  CFX_Color crBorder;
-
   CPDF_FormControl* pFormCtrl = GetFormControl();
-  int32_t iColorType;
-  float fc[4];
-  pFormCtrl->GetOriginalBorderColor(iColorType, fc);
-  if (iColorType > 0)
-    crBorder = CFX_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
-
-  return crBorder;
+  return pFormCtrl->GetOriginalBorderColor();
 }
 
 CFX_Color CPDFSDK_Widget::GetFillPWLColor() const {
-  CFX_Color crFill;
-
   CPDF_FormControl* pFormCtrl = GetFormControl();
-  int32_t iColorType;
-  float fc[4];
-  pFormCtrl->GetOriginalBackgroundColor(iColorType, fc);
-  if (iColorType > 0)
-    crFill = CFX_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
-
-  return crFill;
+  return pFormCtrl->GetOriginalBackgroundColor();
 }
 
 bool CPDFSDK_Widget::OnAAction(CPDF_AAction::AActionType type,
