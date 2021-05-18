@@ -708,7 +708,7 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
           nNodes > 1) {
         CFXJSE_ResolveNodeData rndBind(nullptr);
         m_ResolveProcessor->GetFilter(wsExpression, nStart, rndBind);
-        m_ResolveProcessor->SetIndexDataBind(rndBind.m_wsCondition, i, nNodes);
+        i = m_ResolveProcessor->IndexForDataBind(rndBind.m_wsCondition, nNodes);
         bDataBind = true;
       }
       rndFind.m_CurObject = findObjects[i++].Get();

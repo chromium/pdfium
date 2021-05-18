@@ -730,18 +730,13 @@ void CFXJSE_ResolveProcessor::SetStylesForChild(uint32_t dwParentStyles,
   rnd.m_dwStyles = dwSubStyles;
 }
 
-void CFXJSE_ResolveProcessor::SetIndexDataBind(WideString& wsNextCondition,
-                                               int32_t& iIndex,
-                                               int32_t iCount) {
-  if (m_pNodeHelper->CreateNodeForCondition(wsNextCondition)) {
-    if (m_pNodeHelper->m_eLastCreateType == XFA_Element::DataGroup) {
-      iIndex = 0;
-    } else {
-      iIndex = iCount - 1;
-    }
-  } else {
-    iIndex = iCount - 1;
+int32_t CFXJSE_ResolveProcessor::IndexForDataBind(WideString& wsNextCondition,
+                                                  int32_t iCount) {
+  if (m_pNodeHelper->CreateNodeForCondition(wsNextCondition) &&
+      m_pNodeHelper->m_eLastCreateType == XFA_Element::DataGroup) {
+    return 0;
   }
+  return iCount - 1;
 }
 
 CFXJSE_ResolveNodeData::CFXJSE_ResolveNodeData(CFXJSE_Engine* pSC)

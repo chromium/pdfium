@@ -45,9 +45,7 @@ class CFXJSE_ResolveProcessor {
   int32_t GetFilter(WideStringView wsExpression,
                     int32_t nStart,
                     CFXJSE_ResolveNodeData& rnd);
-  void SetIndexDataBind(WideString& wsNextCondition,
-                        int32_t& iIndex,
-                        int32_t iCount);
+  int32_t IndexForDataBind(WideString& wsNextCondition, int32_t iCount);
   void SetCurStart(int32_t start) { m_iCurStart = start; }
 
   CFXJSE_NodeHelper* GetNodeHelper() { return m_pNodeHelper.get(); }
