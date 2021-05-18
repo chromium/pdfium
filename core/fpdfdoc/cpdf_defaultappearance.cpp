@@ -54,6 +54,16 @@ bool FindTagParamFromStart(CPDF_SimpleParser* parser,
 
 }  // namespace
 
+CPDF_DefaultAppearance::CPDF_DefaultAppearance() = default;
+
+CPDF_DefaultAppearance::CPDF_DefaultAppearance(const ByteString& csDA)
+    : m_csDA(csDA) {}
+
+CPDF_DefaultAppearance::CPDF_DefaultAppearance(
+    const CPDF_DefaultAppearance& cDA) = default;
+
+CPDF_DefaultAppearance::~CPDF_DefaultAppearance() = default;
+
 Optional<ByteString> CPDF_DefaultAppearance::GetFont(float* fFontSize) {
   *fFontSize = 0.0f;
   if (m_csDA.IsEmpty())
@@ -95,33 +105,36 @@ Optional<CFX_Color> CPDF_DefaultAppearance::GetColor() const {
   return {};
 }
 
-std::pair<Optional<CFX_Color::Type>, FX_ARGB>
+Optional<std::pair<CFX_Color::Type, FX_ARGB>>
 CPDF_DefaultAppearance::GetColorARGB() const {
   Optional<CFX_Color> maybe_color = GetColor();
   if (!maybe_color.has_value())
-    return {{}, 0};
+    return pdfium::nullopt;
 
   const CFX_Color& color = maybe_color.value();
   if (color.nColorType == CFX_Color::kGray) {
     int g = static_cast<int>(color.fColor1 * 255 + 0.5f);
-    return {CFX_Color::kGray, ArgbEncode(255, g, g, g)};
+    return std::pair<CFX_Color::Type, FX_ARGB>(CFX_Color::kGray,
+                                               ArgbEncode(255, g, g, g));
   }
   if (color.nColorType == CFX_Color::kRGB) {
     int r = static_cast<int>(color.fColor1 * 255 + 0.5f);
     int g = static_cast<int>(color.fColor2 * 255 + 0.5f);
     int b = static_cast<int>(color.fColor3 * 255 + 0.5f);
-    return {CFX_Color::kRGB, ArgbEncode(255, r, g, b)};
+    return std::pair<CFX_Color::Type, FX_ARGB>(CFX_Color::kRGB,
+                                               ArgbEncode(255, r, g, b));
   }
   if (color.nColorType == CFX_Color::kCMYK) {
     float r = 1.0f - std::min(1.0f, color.fColor1 + color.fColor4);
     float g = 1.0f - std::min(1.0f, color.fColor2 + color.fColor4);
     float b = 1.0f - std::min(1.0f, color.fColor3 + color.fColor4);
-    return {CFX_Color::kCMYK, ArgbEncode(255, static_cast<int>(r * 255 + 0.5f),
-                                         static_cast<int>(g * 255 + 0.5f),
-                                         static_cast<int>(b * 255 + 0.5f))};
+    return std::pair<CFX_Color::Type, FX_ARGB>(
+        CFX_Color::kCMYK, ArgbEncode(255, static_cast<int>(r * 255 + 0.5f),
+                                     static_cast<int>(g * 255 + 0.5f),
+                                     static_cast<int>(b * 255 + 0.5f)));
   }
   NOTREACHED();
-  return {{}, 0};
+  return pdfium::nullopt;
 }
 
 bool CPDF_DefaultAppearance::FindTagParamFromStartForTesting(

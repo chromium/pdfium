@@ -17,15 +17,15 @@
 
 class CPDF_DefaultAppearance {
  public:
-  CPDF_DefaultAppearance() = default;
-  explicit CPDF_DefaultAppearance(const ByteString& csDA) : m_csDA(csDA) {}
-  CPDF_DefaultAppearance(const CPDF_DefaultAppearance& cDA)
-      : m_csDA(cDA.m_csDA) {}
+  CPDF_DefaultAppearance();
+  explicit CPDF_DefaultAppearance(const ByteString& csDA);
+  CPDF_DefaultAppearance(const CPDF_DefaultAppearance& cDA);
+  ~CPDF_DefaultAppearance();
 
   Optional<ByteString> GetFont(float* fFontSize);
 
   Optional<CFX_Color> GetColor() const;
-  std::pair<Optional<CFX_Color::Type>, FX_ARGB> GetColorARGB() const;
+  Optional<std::pair<CFX_Color::Type, FX_ARGB>> GetColorARGB() const;
 
   bool FindTagParamFromStartForTesting(CPDF_SimpleParser* parser,
                                        ByteStringView token,

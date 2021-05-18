@@ -147,9 +147,9 @@ int CPDF_FormControl::GetRotation() const {
   return GetMK().GetRotation();
 }
 
-FX_ARGB CPDF_FormControl::GetColorARGB(int& iColorType,
-                                       const ByteString& csEntry) {
-  return GetMK().GetColorARGB(iColorType, csEntry);
+std::pair<CFX_Color::Type, FX_ARGB> CPDF_FormControl::GetColorARGB(
+    const ByteString& csEntry) {
+  return GetMK().GetColorARGB(csEntry);
 }
 
 float CPDF_FormControl::GetOriginalColorComponent(int index,

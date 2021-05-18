@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFDOC_CPDF_APSETTINGS_H_
 #define CORE_FPDFDOC_CPDF_APSETTINGS_H_
 
+#include <utility>
+
 #include "core/fpdfdoc/cpdf_iconfit.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
@@ -41,7 +43,9 @@ class CPDF_ApSettings {
   // Returns one of the TEXTPOS_* values above.
   int GetTextPosition() const;
 
-  FX_ARGB GetColorARGB(int& iColorType, const ByteString& csEntry) const;
+  std::pair<CFX_Color::Type, FX_ARGB> GetColorARGB(
+      const ByteString& csEntry) const;
+
   float GetOriginalColorComponent(int index, const ByteString& csEntry) const;
   CFX_Color GetOriginalColor(const ByteString& csEntry) const;
 

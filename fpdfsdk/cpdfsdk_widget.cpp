@@ -427,36 +427,36 @@ WideString CPDFSDK_Widget::GetName() const {
 #endif  // PDF_ENABLE_XFA
 
 Optional<FX_COLORREF> CPDFSDK_Widget::GetFillColor() const {
-  CPDF_FormControl* pFormCtrl = GetFormControl();
-  int iColorType = 0;
-  FX_COLORREF color = ArgbToColorRef(pFormCtrl->GetBackgroundColor(iColorType));
-  if (iColorType == CFX_Color::kTransparent)
-    return {};
-  return color;
+  std::pair<CFX_Color::Type, FX_ARGB> type_argb_pair =
+      GetFormControl()->GetBackgroundColor();
+
+  if (type_argb_pair.first == CFX_Color::kTransparent)
+    return pdfium::nullopt;
+
+  return ArgbToColorRef(type_argb_pair.second);
 }
 
 Optional<FX_COLORREF> CPDFSDK_Widget::GetBorderColor() const {
-  CPDF_FormControl* pFormCtrl = GetFormControl();
-  int iColorType = 0;
-  FX_COLORREF color = ArgbToColorRef(pFormCtrl->GetBorderColorARGB(iColorType));
-  if (iColorType == CFX_Color::kTransparent)
-    return {};
-  return color;
+  std::pair<CFX_Color::Type, FX_ARGB> type_argb_pair =
+      GetFormControl()->GetBorderColorARGB();
+  if (type_argb_pair.first == CFX_Color::kTransparent)
+    return pdfium::nullopt;
+
+  return ArgbToColorRef(type_argb_pair.second);
 }
 
 Optional<FX_COLORREF> CPDFSDK_Widget::GetTextColor() const {
-  CPDF_FormControl* pFormCtrl = GetFormControl();
-  CPDF_DefaultAppearance da = pFormCtrl->GetDefaultAppearance();
-  FX_ARGB argb;
-  Optional<CFX_Color::Type> iColorType;
-  std::tie(iColorType, argb) = da.GetColorARGB();
-  if (!iColorType.has_value())
-    return {};
+  CPDF_DefaultAppearance da = GetFormControl()->GetDefaultAppearance();
+  Optional<std::pair<CFX_Color::Type, FX_ARGB>> maybe_type_argb_pair =
+      da.GetColorARGB();
 
-  FX_COLORREF color = ArgbToColorRef(argb);
-  if (iColorType.value() == CFX_Color::kTransparent)
-    return {};
-  return color;
+  if (!maybe_type_argb_pair.has_value())
+    return pdfium::nullopt;
+
+  if (maybe_type_argb_pair.value().first == CFX_Color::kTransparent)
+    return pdfium::nullopt;
+
+  return ArgbToColorRef(maybe_type_argb_pair.value().second);
 }
 
 float CPDFSDK_Widget::GetFontSize() const {
