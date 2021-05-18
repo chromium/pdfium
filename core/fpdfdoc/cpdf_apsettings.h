@@ -36,12 +36,6 @@ class CPDF_ApSettings {
   bool HasMKEntry(const ByteString& csEntry) const;
   int GetRotation() const;
 
-  WideString GetNormalCaption() const { return GetCaption("CA"); }
-  WideString GetRolloverCaption() const { return GetCaption("RC"); }
-  WideString GetDownCaption() const { return GetCaption("AC"); }
-  CPDF_Stream* GetNormalIcon() const { return GetIcon("I"); }
-  CPDF_Stream* GetRolloverIcon() const { return GetIcon("RI"); }
-  CPDF_Stream* GetDownIcon() const { return GetIcon("IX"); }
   CPDF_IconFit GetIconFit() const;
 
   // Returns one of the TEXTPOS_* values above.
