@@ -82,8 +82,8 @@ struct CPWL_Dash {
 
 #define PWL_SCROLLBAR_WIDTH 12.0f
 #define PWL_SCROLLBAR_TRANSPARENCY 150
-#define PWL_DEFAULT_BLACKCOLOR CFX_Color(CFX_Color::kGray, 0)
-#define PWL_DEFAULT_WHITECOLOR CFX_Color(CFX_Color::kGray, 1)
+#define PWL_DEFAULT_BLACKCOLOR CFX_Color(CFX_Color::Type::kGray, 0)
+#define PWL_DEFAULT_WHITECOLOR CFX_Color(CFX_Color::Type::kGray, 1)
 
 class CPWL_Wnd : public Observable {
  public:

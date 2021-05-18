@@ -312,7 +312,7 @@ CPWL_Wnd::CreateParams CFFL_FormFiller::GetCreateParam() {
   if (color.has_value())
     cp.sBorderColor = CFX_Color(color.value());
 
-  cp.sTextColor = CFX_Color(CFX_Color::kGray, 0);
+  cp.sTextColor = CFX_Color(CFX_Color::Type::kGray, 0);
 
   color = m_pWidget->GetTextColor();
   if (color.has_value())

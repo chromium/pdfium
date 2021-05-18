@@ -430,7 +430,7 @@ Optional<FX_COLORREF> CPDFSDK_Widget::GetFillColor() const {
   std::pair<CFX_Color::Type, FX_ARGB> type_argb_pair =
       GetFormControl()->GetBackgroundColor();
 
-  if (type_argb_pair.first == CFX_Color::kTransparent)
+  if (type_argb_pair.first == CFX_Color::Type::kTransparent)
     return pdfium::nullopt;
 
   return ArgbToColorRef(type_argb_pair.second);
@@ -439,7 +439,7 @@ Optional<FX_COLORREF> CPDFSDK_Widget::GetFillColor() const {
 Optional<FX_COLORREF> CPDFSDK_Widget::GetBorderColor() const {
   std::pair<CFX_Color::Type, FX_ARGB> type_argb_pair =
       GetFormControl()->GetBorderColorARGB();
-  if (type_argb_pair.first == CFX_Color::kTransparent)
+  if (type_argb_pair.first == CFX_Color::Type::kTransparent)
     return pdfium::nullopt;
 
   return ArgbToColorRef(type_argb_pair.second);
@@ -453,7 +453,7 @@ Optional<FX_COLORREF> CPDFSDK_Widget::GetTextColor() const {
   if (!maybe_type_argb_pair.has_value())
     return pdfium::nullopt;
 
-  if (maybe_type_argb_pair.value().first == CFX_Color::kTransparent)
+  if (maybe_type_argb_pair.value().first == CFX_Color::Type::kTransparent)
     return pdfium::nullopt;
 
   return ArgbToColorRef(maybe_type_argb_pair.value().second);
@@ -780,7 +780,7 @@ CFX_Matrix CPDFSDK_Widget::GetMatrix() const {
 CFX_Color CPDFSDK_Widget::GetTextPWLColor() const {
   CPDF_FormControl* pFormCtrl = GetFormControl();
   Optional<CFX_Color> crText = pFormCtrl->GetDefaultAppearance().GetColor();
-  return crText.value_or(CFX_Color(CFX_Color::kGray, 0));
+  return crText.value_or(CFX_Color(CFX_Color::Type::kGray, 0));
 }
 
 CFX_Color CPDFSDK_Widget::GetBorderPWLColor() const {

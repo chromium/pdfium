@@ -17,14 +17,14 @@ CFX_Color CFXColorFromArray(const CPDF_Array& array) {
   CFX_Color rt;
   switch (array.size()) {
     case 1:
-      rt = CFX_Color(CFX_Color::kGray, array.GetNumberAt(0));
+      rt = CFX_Color(CFX_Color::Type::kGray, array.GetNumberAt(0));
       break;
     case 3:
-      rt = CFX_Color(CFX_Color::kRGB, array.GetNumberAt(0),
+      rt = CFX_Color(CFX_Color::Type::kRGB, array.GetNumberAt(0),
                      array.GetNumberAt(1), array.GetNumberAt(2));
       break;
     case 4:
-      rt = CFX_Color(CFX_Color::kCMYK, array.GetNumberAt(0),
+      rt = CFX_Color(CFX_Color::Type::kCMYK, array.GetNumberAt(0),
                      array.GetNumberAt(1), array.GetNumberAt(2),
                      array.GetNumberAt(3));
       break;
