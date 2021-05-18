@@ -33,7 +33,7 @@ class CPDF_DeviceCS final : public CPDF_ColorSpace {
                   std::set<const CPDF_Object*>* pVisited) override;
 
  private:
-  explicit CPDF_DeviceCS(int family);
+  explicit CPDF_DeviceCS(Family family);
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_DEVICECS_H_

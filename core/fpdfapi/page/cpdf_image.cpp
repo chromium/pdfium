@@ -353,7 +353,7 @@ RetainPtr<CFX_DIBBase> CPDF_Image::DetachMask() {
 bool CPDF_Image::StartLoadDIBBase(const CPDF_Dictionary* pFormResource,
                                   const CPDF_Dictionary* pPageResource,
                                   bool bStdCS,
-                                  uint32_t GroupFamily,
+                                  CPDF_ColorSpace::Family GroupFamily,
                                   bool bLoadMask) {
   auto source = pdfium::MakeRetain<CPDF_DIB>();
   CPDF_DIB::LoadState ret = source->StartLoadDIBBase(

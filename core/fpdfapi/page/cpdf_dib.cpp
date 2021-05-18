@@ -98,7 +98,7 @@ CJPX_Decoder::ColorSpaceOption ColorSpaceOptionFromColorSpace(
     CPDF_ColorSpace* pCS) {
   if (!pCS)
     return CJPX_Decoder::kNoColorSpace;
-  if (pCS->GetFamily() == PDFCS_INDEXED)
+  if (pCS->GetFamily() == CPDF_ColorSpace::Family::kIndexed)
     return CJPX_Decoder::kIndexedColorSpace;
   return CJPX_Decoder::kNormalColorSpace;
 }
@@ -127,9 +127,10 @@ JpxDecodeAction GetJpxDecodeAction(const CJPX_Decoder::JpxImageInfo& jpx_info,
       return JpxDecodeAction::kFail;
     }
 
-    if (pdf_colorspace == CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB))
+    if (pdf_colorspace ==
+        CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceRGB)) {
       return JpxDecodeAction::kUseRgb;
-
+    }
     return JpxDecodeAction::kDoNothing;
   }
 
@@ -172,7 +173,7 @@ bool CPDF_DIB::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream) {
   if (!IsValidDimension(m_Width) || !IsValidDimension(m_Height))
     return false;
 
-  m_GroupFamily = 0;
+  m_GroupFamily = CPDF_ColorSpace::Family::kUnknown;
   m_bLoadMask = false;
   if (!LoadColorInfo(nullptr, nullptr))
     return false;
@@ -255,7 +256,7 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadDIBBase(
     const CPDF_Dictionary* pFormResources,
     const CPDF_Dictionary* pPageResources,
     bool bStdCS,
-    uint32_t GroupFamily,
+    CPDF_ColorSpace::Family GroupFamily,
     bool bLoadMask) {
   if (!pStream)
     return LoadState::kFail;
@@ -426,7 +427,7 @@ bool CPDF_DIB::LoadColorInfo(const CPDF_Dictionary* pFormResources,
   // decoded.
   m_nComponents = m_pColorSpace->CountComponents();
   m_Family = m_pColorSpace->GetFamily();
-  if (m_Family == PDFCS_ICCBASED && pCSObj->IsName()) {
+  if (m_Family == CPDF_ColorSpace::Family::kICCBased && pCSObj->IsName()) {
     ByteString cs = pCSObj->GetString();
     if (cs == "DeviceGray")
       m_nComponents = 1;
@@ -460,7 +461,7 @@ bool CPDF_DIB::GetDecodeAndMaskArray(bool* bDefaultDecode, bool* bColorKey) {
       float def_min;
       float def_max;
       m_pColorSpace->GetDefaultValue(i, &def_value, &def_min, &def_max);
-      if (m_Family == PDFCS_INDEXED)
+      if (m_Family == CPDF_ColorSpace::Family::kIndexed)
         def_max = max_data;
       if (def_min != m_CompData[i].m_DecodeMin || def_max != max)
         *bDefaultDecode = false;
@@ -470,7 +471,7 @@ bool CPDF_DIB::GetDecodeAndMaskArray(bool* bDefaultDecode, bool* bColorKey) {
       float def_value;
       m_pColorSpace->GetDefaultValue(i, &def_value, &m_CompData[i].m_DecodeMin,
                                      &m_CompData[i].m_DecodeStep);
-      if (m_Family == PDFCS_INDEXED)
+      if (m_Family == CPDF_ColorSpace::Family::kIndexed)
         m_CompData[i].m_DecodeStep = max_data;
       m_CompData[i].m_DecodeStep =
           (m_CompData[i].m_DecodeStep - m_CompData[i].m_DecodeMin) / max_data;
@@ -585,20 +586,20 @@ bool CPDF_DIB::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
   if (m_pColorSpace) {
     uint32_t colorspace_comps = m_pColorSpace->CountComponents();
     switch (m_Family) {
-      case PDFCS_DEVICEGRAY:
-      case PDFCS_DEVICERGB:
-      case PDFCS_DEVICECMYK: {
+      case CPDF_ColorSpace::Family::kDeviceGray:
+      case CPDF_ColorSpace::Family::kDeviceRGB:
+      case CPDF_ColorSpace::Family::kDeviceCMYK: {
         uint32_t dwMinComps = CPDF_ColorSpace::ComponentsForFamily(m_Family);
         if (colorspace_comps < dwMinComps || m_nComponents < dwMinComps)
           return false;
         break;
       }
-      case PDFCS_LAB: {
+      case CPDF_ColorSpace::Family::kLab: {
         if (m_nComponents != 3 || colorspace_comps < 3)
           return false;
         break;
       }
-      case PDFCS_ICCBASED: {
+      case CPDF_ColorSpace::Family::kICCBased: {
         if (!CPDF_ColorSpace::IsValidIccComponents(colorspace_comps) ||
             !CPDF_ColorSpace::IsValidIccComponents(m_nComponents) ||
             colorspace_comps < m_nComponents) {
@@ -613,7 +614,7 @@ bool CPDF_DIB::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
       }
     }
   } else {
-    if (m_Family == PDFCS_LAB && m_nComponents != 3)
+    if (m_Family == CPDF_ColorSpace::Family::kLab && m_nComponents != 3)
       return false;
   }
   if (!GetDecodeAndMaskArray(&m_bDefaultDecode, &m_bColorKey))
@@ -658,7 +659,8 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap() {
       break;
 
     case JpxDecodeAction::kUseCmyk:
-      m_pColorSpace = CPDF_ColorSpace::GetStockCS(PDFCS_DEVICECMYK);
+      m_pColorSpace =
+          CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceCMYK);
       break;
 
     case JpxDecodeAction::kConvertArgbToRgb:
@@ -742,7 +744,8 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap() {
       }
     }
     result_bitmap = std::move(rgb_bitmap);
-  } else if (m_pColorSpace && m_pColorSpace->GetFamily() == PDFCS_INDEXED &&
+  } else if (m_pColorSpace &&
+             m_pColorSpace->GetFamily() == CPDF_ColorSpace::Family::kIndexed &&
              m_bpc < 8) {
     int scale = 8 - m_bpc;
     for (uint32_t row = 0; row < image_info.height; ++row) {
@@ -781,7 +784,8 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadMask() {
   }
 
   const CPDF_Array* pMatte = mask->GetDict()->GetArrayFor("Matte");
-  if (pMatte && m_pColorSpace && m_Family != PDFCS_PATTERN &&
+  if (pMatte && m_pColorSpace &&
+      m_Family != CPDF_ColorSpace::Family::kPattern &&
       pMatte->size() == m_nComponents &&
       m_pColorSpace->CountComponents() <= m_nComponents) {
     std::vector<float> colors =
@@ -827,7 +831,8 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadMaskDIB(
     RetainPtr<const CPDF_Stream> mask) {
   m_pMask = pdfium::MakeRetain<CPDF_DIB>();
   LoadState ret = m_pMask->StartLoadDIBBase(
-      m_pDocument.Get(), mask.Get(), false, nullptr, nullptr, true, 0, false);
+      m_pDocument.Get(), mask.Get(), false, nullptr, nullptr, true,
+      CPDF_ColorSpace::Family::kUnknown, false);
   if (ret == LoadState::kContinue) {
     if (m_Status == LoadState::kFail)
       m_Status = LoadState::kContinue;
@@ -839,7 +844,7 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadMaskDIB(
 }
 
 void CPDF_DIB::LoadPalette() {
-  if (!m_pColorSpace || m_Family == PDFCS_PATTERN)
+  if (!m_pColorSpace || m_Family == CPDF_ColorSpace::Family::kPattern)
     return;
 
   if (m_bpc == 0)
@@ -854,8 +859,8 @@ void CPDF_DIB::LoadPalette() {
     return;
 
   if (bits == 1) {
-    if (m_bDefaultDecode &&
-        (m_Family == PDFCS_DEVICEGRAY || m_Family == PDFCS_DEVICERGB)) {
+    if (m_bDefaultDecode && (m_Family == CPDF_ColorSpace::Family::kDeviceGray ||
+                             m_Family == CPDF_ColorSpace::Family::kDeviceRGB)) {
       return;
     }
     if (m_pColorSpace->CountComponents() > 3) {
@@ -885,7 +890,8 @@ void CPDF_DIB::LoadPalette() {
     return;
   }
   if (m_bpc == 8 && m_bDefaultDecode &&
-      m_pColorSpace == CPDF_ColorSpace::GetStockCS(PDFCS_DEVICEGRAY)) {
+      m_pColorSpace ==
+          CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceGray)) {
     return;
   }
 
@@ -903,7 +909,7 @@ void CPDF_DIB::LoadPalette() {
     float R = 0;
     float G = 0;
     float B = 0;
-    if (m_nComponents == 1 && m_Family == PDFCS_ICCBASED &&
+    if (m_nComponents == 1 && m_Family == CPDF_ColorSpace::Family::kICCBased &&
         m_pColorSpace->CountComponents() > 1) {
       int nComponents = m_pColorSpace->CountComponents();
       std::vector<float> temp_buf(nComponents);
@@ -976,7 +982,7 @@ void CPDF_DIB::TranslateScanline24bpp(uint8_t* dest_scan,
       R = (1.0f - color_values[0]) * k;
       G = (1.0f - color_values[1]) * k;
       B = (1.0f - color_values[2]) * k;
-    } else if (m_Family != PDFCS_PATTERN) {
+    } else if (m_Family != CPDF_ColorSpace::Family::kPattern) {
       m_pColorSpace->GetRGB(color_values, &R, &G, &B);
     }
     R = pdfium::clamp(R, 0.0f, 1.0f);
@@ -995,7 +1001,8 @@ bool CPDF_DIB::TranslateScanline24bppDefaultDecode(
   if (!m_bDefaultDecode)
     return false;
 
-  if (m_Family != PDFCS_DEVICERGB && m_Family != PDFCS_CALRGB) {
+  if (m_Family != CPDF_ColorSpace::Family::kDeviceRGB &&
+      m_Family != CPDF_ColorSpace::Family::kCalRGB) {
     if (m_bpc != 8)
       return false;
 
@@ -1454,8 +1461,8 @@ void CPDF_DIB::DownSampleScanline32Bit(int orig_Bpp,
 }
 
 bool CPDF_DIB::TransMask() const {
-  return m_bLoadMask && m_GroupFamily == PDFCS_DEVICECMYK &&
-         m_Family == PDFCS_DEVICECMYK;
+  return m_bLoadMask && m_GroupFamily == CPDF_ColorSpace::Family::kDeviceCMYK &&
+         m_Family == CPDF_ColorSpace::Family::kDeviceCMYK;
 }
 
 void CPDF_DIB::SetMaskProperties() {

@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_clippath.h"
+#include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fpdfapi/page/cpdf_graphicstates.h"
 #include "core/fpdfapi/page/cpdf_transparency.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -59,7 +60,9 @@ class CPDF_RenderStatus {
   void SetDropObjects(bool bDropObjects) { m_bDropObjects = bDropObjects; }
   void SetLoadMask(bool bLoadMask) { m_bLoadMask = bLoadMask; }
   void SetStdCS(bool bStdCS) { m_bStdCS = bStdCS; }
-  void SetGroupFamily(uint32_t family) { m_GroupFamily = family; }
+  void SetGroupFamily(CPDF_ColorSpace::Family family) {
+    m_GroupFamily = family;
+  }
   void SetTransparency(const CPDF_Transparency& transparency) {
     m_Transparency = transparency;
   }
@@ -77,7 +80,7 @@ class CPDF_RenderStatus {
   void ProcessClipPath(const CPDF_ClipPath& ClipPath,
                        const CFX_Matrix& mtObj2Device);
 
-  uint32_t GetGroupFamily() const { return m_GroupFamily; }
+  CPDF_ColorSpace::Family GetGroupFamily() const { return m_GroupFamily; }
   bool GetLoadMask() const { return m_bLoadMask; }
   bool GetDropObjects() const { return m_bDropObjects; }
   bool IsPrint() const { return m_bPrint; }
@@ -179,7 +182,7 @@ class CPDF_RenderStatus {
   // Optionally write the colorspace family value into |pCSFamily|.
   FX_ARGB GetBackColor(const CPDF_Dictionary* pSMaskDict,
                        const CPDF_Dictionary* pGroupDict,
-                       int* pCSFamily);
+                       CPDF_ColorSpace::Family* pCSFamily);
   FX_ARGB GetStrokeArgb(CPDF_PageObject* pObj) const;
   FX_RECT GetObjectClippedRect(const CPDF_PageObject* pObj,
                                const CFX_Matrix& mtObj2Device) const;
@@ -203,7 +206,7 @@ class CPDF_RenderStatus {
   bool m_bDropObjects = false;
   bool m_bStdCS = false;
   bool m_bLoadMask = false;
-  uint32_t m_GroupFamily = 0;
+  CPDF_ColorSpace::Family m_GroupFamily = CPDF_ColorSpace::Family::kUnknown;
   FX_ARGB m_T3FillColor = 0;
   BlendMode m_curBlend = BlendMode::kNormal;
 };

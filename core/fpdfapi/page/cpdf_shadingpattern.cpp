@@ -75,7 +75,7 @@ bool CPDF_ShadingPattern::Load() {
 
   // The color space is required and cannot be a Pattern space, according to the
   // PDF 1.7 spec, page 305.
-  if (!m_pCS || m_pCS->GetFamily() == PDFCS_PATTERN)
+  if (!m_pCS || m_pCS->GetFamily() == CPDF_ColorSpace::Family::kPattern)
     return false;
 
   m_ShadingType = ToShadingType(pShadingDict->GetIntegerFor("ShadingType"));
@@ -100,7 +100,7 @@ bool CPDF_ShadingPattern::Validate() const {
     case kFunctionBasedShading:
     case kAxialShading:
     case kRadialShading: {
-      if (m_pCS->GetFamily() == PDFCS_INDEXED)
+      if (m_pCS->GetFamily() == CPDF_ColorSpace::Family::kIndexed)
         return false;
       break;
     }
@@ -108,8 +108,10 @@ bool CPDF_ShadingPattern::Validate() const {
     case kLatticeFormGouraudTriangleMeshShading:
     case kCoonsPatchMeshShading:
     case kTensorProductPatchMeshShading: {
-      if (!m_pFunctions.empty() && m_pCS->GetFamily() == PDFCS_INDEXED)
+      if (!m_pFunctions.empty() &&
+          m_pCS->GetFamily() == CPDF_ColorSpace::Family::kIndexed) {
         return false;
+      }
       break;
     }
     default: {

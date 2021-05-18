@@ -149,9 +149,10 @@ bool CPDF_ImageRenderer::StartRenderDIBBase() {
   RetainPtr<CPDF_ColorSpace> pColorSpace =
       pData->GetColorSpace(pCSObj, pPageResources);
   if (pColorSpace) {
-    int format = pColorSpace->GetFamily();
-    if (format == PDFCS_DEVICECMYK || format == PDFCS_SEPARATION ||
-        format == PDFCS_DEVICEN) {
+    CPDF_ColorSpace::Family format = pColorSpace->GetFamily();
+    if (format == CPDF_ColorSpace::Family::kDeviceCMYK ||
+        format == CPDF_ColorSpace::Family::kSeparation ||
+        format == CPDF_ColorSpace::Family::kDeviceN) {
       m_BlendType = BlendMode::kDarken;
     }
   }

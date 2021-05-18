@@ -65,7 +65,7 @@ class CPDF_DIB final : public CFX_DIBBase {
                              const CPDF_Dictionary* pFormResources,
                              const CPDF_Dictionary* pPageResources,
                              bool bStdCS,
-                             uint32_t GroupFamily,
+                             CPDF_ColorSpace::Family GroupFamily,
                              bool bLoadMask);
   LoadState ContinueLoadDIBBase(PauseIndicatorIface* pPause);
   RetainPtr<CPDF_DIB> DetachMask();
@@ -140,11 +140,11 @@ class CPDF_DIB final : public CFX_DIBBase {
   RetainPtr<const CPDF_Dictionary> m_pDict;
   RetainPtr<CPDF_StreamAcc> m_pStreamAcc;
   RetainPtr<CPDF_ColorSpace> m_pColorSpace;
-  uint32_t m_Family = 0;
   uint32_t m_bpc = 0;
   uint32_t m_bpc_orig = 0;
   uint32_t m_nComponents = 0;
-  uint32_t m_GroupFamily = 0;
+  CPDF_ColorSpace::Family m_Family = CPDF_ColorSpace::Family::kUnknown;
+  CPDF_ColorSpace::Family m_GroupFamily = CPDF_ColorSpace::Family::kUnknown;
   uint32_t m_MatteColor = 0;
   LoadState m_Status = LoadState::kFail;
   bool m_bLoadMask = false;

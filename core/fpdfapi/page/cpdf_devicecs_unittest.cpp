@@ -13,7 +13,8 @@ TEST(CPDF_DeviceCSTest, GetRGBFromGray) {
   float R;
   float G;
   float B;
-  auto device_gray = pdfium::MakeRetain<CPDF_DeviceCS>(PDFCS_DEVICEGRAY);
+  auto device_gray =
+      pdfium::MakeRetain<CPDF_DeviceCS>(CPDF_ColorSpace::Family::kDeviceGray);
 
   // Test normal values. For gray, only first value from buf should be used.
   float buf[3] = {0.43f, 0.11f, 0.34f};
@@ -56,7 +57,8 @@ TEST(CPDF_DeviceCSTest, GetRGBFromRGB) {
   float R;
   float G;
   float B;
-  auto device_rgb = pdfium::MakeRetain<CPDF_DeviceCS>(PDFCS_DEVICERGB);
+  auto device_rgb =
+      pdfium::MakeRetain<CPDF_DeviceCS>(CPDF_ColorSpace::Family::kDeviceRGB);
 
   // Test normal values
   float buf[3] = {0.13f, 1.0f, 0.652f};
@@ -85,7 +87,8 @@ TEST(CPDF_DeviceCSTest, GetRGBFromCMYK) {
   float R;
   float G;
   float B;
-  auto device_cmyk = pdfium::MakeRetain<CPDF_DeviceCS>(PDFCS_DEVICECMYK);
+  auto device_cmyk =
+      pdfium::MakeRetain<CPDF_DeviceCS>(CPDF_ColorSpace::Family::kDeviceCMYK);
 
   // Test normal values
   float buf[4] = {0.6f, 0.5f, 0.3f, 0.9f};

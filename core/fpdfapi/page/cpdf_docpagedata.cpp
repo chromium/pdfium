@@ -284,14 +284,16 @@ RetainPtr<CPDF_ColorSpace> CPDF_DocPageData::GetColorSpaceInternal(
 
     const CPDF_Object* pDefaultCS = nullptr;
     switch (pCS->GetFamily()) {
-      case PDFCS_DEVICERGB:
+      case CPDF_ColorSpace::Family::kDeviceRGB:
         pDefaultCS = pColorSpaces->GetDirectObjectFor("DefaultRGB");
         break;
-      case PDFCS_DEVICEGRAY:
+      case CPDF_ColorSpace::Family::kDeviceGray:
         pDefaultCS = pColorSpaces->GetDirectObjectFor("DefaultGray");
         break;
-      case PDFCS_DEVICECMYK:
+      case CPDF_ColorSpace::Family::kDeviceCMYK:
         pDefaultCS = pColorSpaces->GetDirectObjectFor("DefaultCMYK");
+        break;
+      default:
         break;
     }
     if (!pDefaultCS)

@@ -20,18 +20,6 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/span.h"
 
-#define PDFCS_DEVICEGRAY 1
-#define PDFCS_DEVICERGB 2
-#define PDFCS_DEVICECMYK 3
-#define PDFCS_CALGRAY 4
-#define PDFCS_CALRGB 5
-#define PDFCS_LAB 6
-#define PDFCS_ICCBASED 7
-#define PDFCS_SEPARATION 8
-#define PDFCS_DEVICEN 9
-#define PDFCS_INDEXED 10
-#define PDFCS_PATTERN 11
-
 class CPDF_Array;
 class CPDF_Document;
 class CPDF_Object;
@@ -63,7 +51,22 @@ class PatternValue {
 
 class CPDF_ColorSpace : public Retainable, public Observable {
  public:
-  static RetainPtr<CPDF_ColorSpace> GetStockCS(int Family);
+  enum class Family {
+    kUnknown = 0,
+    kDeviceGray = 1,
+    kDeviceRGB = 2,
+    kDeviceCMYK = 3,
+    kCalGray = 4,
+    kCalRGB = 5,
+    kLab = 6,
+    kICCBased = 7,
+    kSeparation = 8,
+    kDeviceN = 9,
+    kIndexed = 10,
+    kPattern = 11,
+  };
+
+  static RetainPtr<CPDF_ColorSpace> GetStockCS(Family family);
   static RetainPtr<CPDF_ColorSpace> ColorspaceFromName(const ByteString& name);
   static RetainPtr<CPDF_ColorSpace> Load(CPDF_Document* pDoc,
                                          CPDF_Object* pObj);
@@ -71,7 +74,8 @@ class CPDF_ColorSpace : public Retainable, public Observable {
       CPDF_Document* pDoc,
       const CPDF_Object* pObj,
       std::set<const CPDF_Object*>* pVisited);
-  static uint32_t ComponentsForFamily(int family);
+
+  static uint32_t ComponentsForFamily(Family family);
   static bool IsValidIccComponents(int components);
 
   const CPDF_Array* GetArray() const { return m_pArray.Get(); }
@@ -81,10 +85,11 @@ class CPDF_ColorSpace : public Retainable, public Observable {
   std::vector<float> CreateBufAndSetDefaultColor() const;
 
   uint32_t CountComponents() const;
-  int GetFamily() const { return m_Family; }
+  Family GetFamily() const { return m_Family; }
   bool IsSpecial() const {
-    return GetFamily() == PDFCS_SEPARATION || GetFamily() == PDFCS_DEVICEN ||
-           GetFamily() == PDFCS_INDEXED || GetFamily() == PDFCS_PATTERN;
+    return GetFamily() == Family::kSeparation ||
+           GetFamily() == Family::kDeviceN || GetFamily() == Family::kIndexed ||
+           GetFamily() == Family::kPattern;
   }
 
   virtual bool GetRGB(pdfium::span<const float> pBuf,
@@ -116,7 +121,7 @@ class CPDF_ColorSpace : public Retainable, public Observable {
                              float* B) const;
 
  protected:
-  CPDF_ColorSpace(CPDF_Document* pDoc, int family);
+  CPDF_ColorSpace(CPDF_Document* pDoc, Family family);
   ~CPDF_ColorSpace() override;
 
   // Returns the number of components, or 0 on failure.
@@ -130,7 +135,7 @@ class CPDF_ColorSpace : public Retainable, public Observable {
 
   UnownedPtr<const CPDF_Document> const m_pDocument;
   RetainPtr<const CPDF_Array> m_pArray;
-  const int m_Family;
+  const Family m_Family;
   uint32_t m_dwStdConversion = 0;
 
  private:

@@ -29,27 +29,39 @@ namespace {
 
 // These checks ensure the consistency of colorspace values across core/ and
 // public/.
-static_assert(PDFCS_DEVICEGRAY == FPDF_COLORSPACE_DEVICEGRAY,
-              "PDFCS_DEVICEGRAY value mismatch");
-static_assert(PDFCS_DEVICERGB == FPDF_COLORSPACE_DEVICERGB,
-              "PDFCS_DEVICERGB value mismatch");
-static_assert(PDFCS_DEVICECMYK == FPDF_COLORSPACE_DEVICECMYK,
-              "PDFCS_DEVICECMYK value mismatch");
-static_assert(PDFCS_CALGRAY == FPDF_COLORSPACE_CALGRAY,
-              "PDFCS_CALGRAY value mismatch");
-static_assert(PDFCS_CALRGB == FPDF_COLORSPACE_CALRGB,
-              "PDFCS_CALRGB value mismatch");
-static_assert(PDFCS_LAB == FPDF_COLORSPACE_LAB, "PDFCS_LAB value mismatch");
-static_assert(PDFCS_ICCBASED == FPDF_COLORSPACE_ICCBASED,
-              "PDFCS_ICCBASED value mismatch");
-static_assert(PDFCS_SEPARATION == FPDF_COLORSPACE_SEPARATION,
-              "PDFCS_SEPARATION value mismatch");
-static_assert(PDFCS_DEVICEN == FPDF_COLORSPACE_DEVICEN,
-              "PDFCS_DEVICEN value mismatch");
-static_assert(PDFCS_INDEXED == FPDF_COLORSPACE_INDEXED,
-              "PDFCS_INDEXED value mismatch");
-static_assert(PDFCS_PATTERN == FPDF_COLORSPACE_PATTERN,
-              "PDFCS_PATTERN value mismatch");
+static_assert(static_cast<int>(CPDF_ColorSpace::Family::kDeviceGray) ==
+                  FPDF_COLORSPACE_DEVICEGRAY,
+              "kDeviceGray value mismatch");
+static_assert(static_cast<int>(CPDF_ColorSpace::Family::kDeviceRGB) ==
+                  FPDF_COLORSPACE_DEVICERGB,
+              "kDeviceRGB value mismatch");
+static_assert(static_cast<int>(CPDF_ColorSpace::Family::kDeviceCMYK) ==
+                  FPDF_COLORSPACE_DEVICECMYK,
+              "kDeviceCMYK value mismatch");
+static_assert(static_cast<int>(CPDF_ColorSpace::Family::kCalGray) ==
+                  FPDF_COLORSPACE_CALGRAY,
+              "kCalGray value mismatch");
+static_assert(static_cast<int>(CPDF_ColorSpace::Family::kCalRGB) ==
+                  FPDF_COLORSPACE_CALRGB,
+              "kCalRGB value mismatch");
+static_assert(static_cast<int>(CPDF_ColorSpace::Family::kLab) ==
+                  FPDF_COLORSPACE_LAB,
+              "kLab value mismatch");
+static_assert(static_cast<int>(CPDF_ColorSpace::Family::kICCBased) ==
+                  FPDF_COLORSPACE_ICCBASED,
+              "kICCBased value mismatch");
+static_assert(static_cast<int>(CPDF_ColorSpace::Family::kSeparation) ==
+                  FPDF_COLORSPACE_SEPARATION,
+              "kSeparation value mismatch");
+static_assert(static_cast<int>(CPDF_ColorSpace::Family::kDeviceN) ==
+                  FPDF_COLORSPACE_DEVICEN,
+              "kDeviceN value mismatch");
+static_assert(static_cast<int>(CPDF_ColorSpace::Family::kIndexed) ==
+                  FPDF_COLORSPACE_INDEXED,
+              "kIndexed value mismatch");
+static_assert(static_cast<int>(CPDF_ColorSpace::Family::kPattern) ==
+                  FPDF_COLORSPACE_PATTERN,
+              "kPattern value mismatch");
 
 RetainPtr<IFX_SeekableReadStream> MakeSeekableReadStream(
     FPDF_FILEACCESS* pFileAccess) {
@@ -388,15 +400,17 @@ FPDFImageObj_GetImageMetadata(FPDF_PAGEOBJECT image_object,
     return true;
 
   auto pSource = pdfium::MakeRetain<CPDF_DIB>();
-  CPDF_DIB::LoadState ret = pSource->StartLoadDIBBase(
-      pPage->GetDocument(), pImg->GetStream(), false, nullptr,
-      pPage->GetPageResources(), false, 0, false);
+  CPDF_DIB::LoadState ret =
+      pSource->StartLoadDIBBase(pPage->GetDocument(), pImg->GetStream(), false,
+                                nullptr, pPage->GetPageResources(), false,
+                                CPDF_ColorSpace::Family::kUnknown, false);
   if (ret == CPDF_DIB::LoadState::kFail)
     return true;
 
   metadata->bits_per_pixel = pSource->GetBPP();
-  if (pSource->GetColorSpace())
-    metadata->colorspace = pSource->GetColorSpace()->GetFamily();
-
+  if (pSource->GetColorSpace()) {
+    metadata->colorspace =
+        static_cast<int>(pSource->GetColorSpace()->GetFamily());
+  }
   return true;
 }

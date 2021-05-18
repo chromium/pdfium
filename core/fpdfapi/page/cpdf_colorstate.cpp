@@ -102,11 +102,12 @@ void CPDF_ColorState::SetColor(const RetainPtr<CPDF_ColorSpace>& pCS,
   DCHECK(color);
   DCHECK(colorref);
 
-  if (pCS)
+  if (pCS) {
     color->SetColorSpace(pCS);
-  else if (color->IsNull())
-    color->SetColorSpace(CPDF_ColorSpace::GetStockCS(PDFCS_DEVICEGRAY));
-
+  } else if (color->IsNull()) {
+    color->SetColorSpace(
+        CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceGray));
+  }
   if (color->CountComponents() > values.size())
     return;
 
@@ -152,8 +153,10 @@ CPDF_ColorState::ColorData::~ColorData() = default;
 void CPDF_ColorState::ColorData::SetDefault() {
   m_FillColorRef = 0;
   m_StrokeColorRef = 0;
-  m_FillColor.SetColorSpace(CPDF_ColorSpace::GetStockCS(PDFCS_DEVICEGRAY));
-  m_StrokeColor.SetColorSpace(CPDF_ColorSpace::GetStockCS(PDFCS_DEVICEGRAY));
+  m_FillColor.SetColorSpace(
+      CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceGray));
+  m_StrokeColor.SetColorSpace(
+      CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceGray));
 }
 
 RetainPtr<CPDF_ColorState::ColorData> CPDF_ColorState::ColorData::Clone()

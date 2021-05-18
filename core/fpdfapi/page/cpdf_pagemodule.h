@@ -7,10 +7,10 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_PAGEMODULE_H_
 #define CORE_FPDFAPI_PAGE_CPDF_PAGEMODULE_H_
 
+#include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fxcrt/retain_ptr.h"
 
 class CPDF_Document;
-class CPDF_ColorSpace;
 class CPDF_DeviceCS;
 class CPDF_PatternCS;
 
@@ -21,7 +21,7 @@ class CPDF_PageModule {
   static void Destroy();
   static CPDF_PageModule* GetInstance();
 
-  RetainPtr<CPDF_ColorSpace> GetStockCS(int family);
+  RetainPtr<CPDF_ColorSpace> GetStockCS(CPDF_ColorSpace::Family family);
   void ClearStockFont(CPDF_Document* pDoc);
 
  private:

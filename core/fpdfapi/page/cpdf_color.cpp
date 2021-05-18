@@ -23,7 +23,7 @@ bool CPDF_Color::IsPattern() const {
 }
 
 bool CPDF_Color::IsPatternInternal() const {
-  return m_pCS->GetFamily() == PDFCS_PATTERN;
+  return m_pCS->GetFamily() == CPDF_ColorSpace::Family::kPattern;
 }
 
 void CPDF_Color::SetColorSpace(const RetainPtr<CPDF_ColorSpace>& pCS) {
@@ -48,9 +48,10 @@ void CPDF_Color::SetValueForPattern(const RetainPtr<CPDF_Pattern>& pPattern,
   if (values.size() > kMaxPatternColorComps)
     return;
 
-  if (!IsPattern())
-    SetColorSpace(CPDF_ColorSpace::GetStockCS(PDFCS_PATTERN));
-
+  if (!IsPattern()) {
+    SetColorSpace(
+        CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kPattern));
+  }
   m_pValue->SetPattern(pPattern);
   m_pValue->SetComps(values);
 }
@@ -71,7 +72,8 @@ uint32_t CPDF_Color::CountComponents() const {
 }
 
 bool CPDF_Color::IsColorSpaceRGB() const {
-  return m_pCS == CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB);
+  return m_pCS ==
+         CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceRGB);
 }
 
 bool CPDF_Color::GetRGB(int* R, int* G, int* B) const {

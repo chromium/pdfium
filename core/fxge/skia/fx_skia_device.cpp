@@ -2170,9 +2170,11 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
     // TODO(caryclark) more types
     return false;
   }
-  int csFamily = pPattern->GetCS()->GetFamily();
-  if (PDFCS_DEVICERGB != csFamily && PDFCS_DEVICEGRAY != csFamily)
+  CPDF_ColorSpace::Family csFamily = pPattern->GetCS()->GetFamily();
+  if (CPDF_ColorSpace::Family::kDeviceRGB != csFamily &&
+      CPDF_ColorSpace::Family::kDeviceGray != csFamily) {
     return false;
+  }
   const std::vector<std::unique_ptr<CPDF_Function>>& pFuncs =
       pPattern->GetFuncs();
   int nFuncs = pFuncs.size();

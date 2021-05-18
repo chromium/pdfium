@@ -1412,7 +1412,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
     return nullptr;
 
   RetainPtr<CFX_DIBitmap> bitmap = bitmap_device.GetBitmap();
-  int nCSFamily = 0;
+  CPDF_ColorSpace::Family nCSFamily = CPDF_ColorSpace::Family::kUnknown;
   if (bLuminosity) {
     FX_ARGB back_color =
         GetBackColor(pSMaskDict, pGroup->GetDict(), &nCSFamily);
@@ -1480,7 +1480,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
 
 FX_ARGB CPDF_RenderStatus::GetBackColor(const CPDF_Dictionary* pSMaskDict,
                                         const CPDF_Dictionary* pGroupDict,
-                                        int* pCSFamily) {
+                                        CPDF_ColorSpace::Family* pCSFamily) {
   static constexpr FX_ARGB kDefaultColor = ArgbEncode(255, 0, 0, 0);
   const CPDF_Array* pBC = pSMaskDict->GetArrayFor(pdfium::transparency::kBC);
   if (!pBC)
@@ -1497,9 +1497,9 @@ FX_ARGB CPDF_RenderStatus::GetBackColor(const CPDF_Dictionary* pSMaskDict,
   if (!pCS)
     return kDefaultColor;
 
-  int family = pCS->GetFamily();
-  if (family == PDFCS_LAB || pCS->IsSpecial() ||
-      (family == PDFCS_ICCBASED && !pCS->IsNormal())) {
+  CPDF_ColorSpace::Family family = pCS->GetFamily();
+  if (family == CPDF_ColorSpace::Family::kLab || pCS->IsSpecial() ||
+      (family == CPDF_ColorSpace::Family::kICCBased && !pCS->IsNormal())) {
     return kDefaultColor;
   }
 

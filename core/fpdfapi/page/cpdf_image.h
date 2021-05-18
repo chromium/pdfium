@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_IMAGE_H_
 #define CORE_FPDFAPI_PAGE_CPDF_IMAGE_H_
 
+#include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -54,7 +55,7 @@ class CPDF_Image final : public Retainable {
   bool StartLoadDIBBase(const CPDF_Dictionary* pFormResource,
                         const CPDF_Dictionary* pPageResource,
                         bool bStdCS,
-                        uint32_t GroupFamily,
+                        CPDF_ColorSpace::Family GroupFamily,
                         bool bLoadMask);
 
   // Returns whether to Continue() or not.

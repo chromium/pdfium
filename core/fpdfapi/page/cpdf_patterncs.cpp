@@ -12,7 +12,7 @@
 #include "third_party/base/notreached.h"
 
 CPDF_PatternCS::CPDF_PatternCS(CPDF_Document* pDoc)
-    : CPDF_ColorSpace(pDoc, PDFCS_PATTERN) {}
+    : CPDF_ColorSpace(pDoc, Family::kPattern) {}
 
 CPDF_PatternCS::~CPDF_PatternCS() = default;
 
@@ -32,7 +32,7 @@ uint32_t CPDF_PatternCS::v_Load(CPDF_Document* pDoc,
   if (!m_pBaseCS)
     return 1;
 
-  if (m_pBaseCS->GetFamily() == PDFCS_PATTERN)
+  if (m_pBaseCS->GetFamily() == Family::kPattern)
     return 0;
 
   if (m_pBaseCS->CountComponents() > kMaxPatternColorComps)

@@ -79,7 +79,8 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessRect) {
 
 TEST_F(CPDF_PageContentGeneratorTest, BUG_937) {
   static const std::vector<float> rgb = {0.000000000000000000001f, 0.7f, 0.35f};
-  RetainPtr<CPDF_ColorSpace> pCS = CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB);
+  RetainPtr<CPDF_ColorSpace> pCS =
+      CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceRGB);
   {
     auto pPathObj = std::make_unique<CPDF_PathObject>();
     pPathObj->set_filltype(CFX_FillRenderOptions::FillType::kWinding);
@@ -181,7 +182,8 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessGraphics) {
   pPathObj->path().AppendPointAndClose(CFX_PointF(5, 6), FXPT_TYPE::LineTo);
 
   static const std::vector<float> rgb = {0.5f, 0.7f, 0.35f};
-  RetainPtr<CPDF_ColorSpace> pCS = CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB);
+  RetainPtr<CPDF_ColorSpace> pCS =
+      CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceRGB);
   pPathObj->m_ColorState.SetFillColor(pCS, rgb);
 
   static const std::vector<float> rgb2 = {1, 0.9f, 0};
@@ -247,7 +249,8 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessStandardText) {
   pTextObj->m_TextState.SetFontSize(10.0f);
 
   static const std::vector<float> rgb = {0.5f, 0.7f, 0.35f};
-  RetainPtr<CPDF_ColorSpace> pCS = CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB);
+  RetainPtr<CPDF_ColorSpace> pCS =
+      CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceRGB);
   pTextObj->m_ColorState.SetFillColor(pCS, rgb);
 
   static const std::vector<float> rgb2 = {1, 0.9f, 0};
