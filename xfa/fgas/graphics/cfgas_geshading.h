@@ -13,33 +13,41 @@
 
 class CFGAS_GEShading final {
  public:
+  enum class Type { kAxial = 1, kRadial };
+
+  static constexpr size_t kSteps = 256;
+
   // Axial shading.
   CFGAS_GEShading(const CFX_PointF& beginPoint,
                   const CFX_PointF& endPoint,
                   bool isExtendedBegin,
                   bool isExtendedEnd,
-                  const FX_ARGB beginArgb,
-                  const FX_ARGB endArgb);
+                  FX_ARGB beginArgb,
+                  FX_ARGB endArgb);
 
   // Radial shading.
   CFGAS_GEShading(const CFX_PointF& beginPoint,
                   const CFX_PointF& endPoint,
-                  const float beginRadius,
-                  const float endRadius,
+                  float beginRadius,
+                  float endRadius,
                   bool isExtendedBegin,
                   bool isExtendedEnd,
-                  const FX_ARGB beginArgb,
-                  const FX_ARGB endArgb);
+                  FX_ARGB beginArgb,
+                  FX_ARGB endArgb);
 
   ~CFGAS_GEShading();
 
+  Type GetType() const { return m_type; }
+  CFX_PointF GetBeginPoint() const { return m_beginPoint; }
+  CFX_PointF GetEndPoint() const { return m_endPoint; }
+  float GetBeginRadius() const { return m_beginRadius; }
+  float GetEndRadius() const { return m_endRadius; }
+  bool IsExtendedBegin() const { return m_isExtendedBegin; }
+  bool IsExtendedEnd() const { return m_isExtendedEnd; }
+  FX_ARGB GetArgb(size_t index) const { return m_argbArray[index]; }
+
  private:
-  friend class CFGAS_GEGraphics;
-
-  enum class Type { kAxial = 1, kRadial };
-  static constexpr size_t kSteps = 256;
-
-  void InitArgbArray();
+  void InitArgbArray(FX_ARGB beginArgb, FX_ARGB endArgb);
 
   const Type m_type;
   const CFX_PointF m_beginPoint;
@@ -48,8 +56,6 @@ class CFGAS_GEShading final {
   const float m_endRadius;
   const bool m_isExtendedBegin;
   const bool m_isExtendedEnd;
-  const FX_ARGB m_beginArgb;
-  const FX_ARGB m_endArgb;
   FX_ARGB m_argbArray[kSteps];
 };
 

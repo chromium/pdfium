@@ -277,16 +277,16 @@ void CFGAS_GEGraphics::FillPathWithShading(
   RetainPtr<CFX_DIBitmap> bitmap = m_renderDevice->GetBitmap();
   int32_t width = bitmap->GetWidth();
   int32_t height = bitmap->GetHeight();
-  float start_x = m_info.fillColor.GetShading()->m_beginPoint.x;
-  float start_y = m_info.fillColor.GetShading()->m_beginPoint.y;
-  float end_x = m_info.fillColor.GetShading()->m_endPoint.x;
-  float end_y = m_info.fillColor.GetShading()->m_endPoint.y;
+  float start_x = m_info.fillColor.GetShading()->GetBeginPoint().x;
+  float start_y = m_info.fillColor.GetShading()->GetBeginPoint().y;
+  float end_x = m_info.fillColor.GetShading()->GetEndPoint().x;
+  float end_y = m_info.fillColor.GetShading()->GetEndPoint().y;
   auto bmp = pdfium::MakeRetain<CFX_DIBitmap>();
   bmp->Create(width, height, FXDIB_Format::kArgb);
   m_renderDevice->GetDIBits(bmp, 0, 0);
   int32_t pitch = bmp->GetPitch();
   bool result = false;
-  switch (m_info.fillColor.GetShading()->m_type) {
+  switch (m_info.fillColor.GetShading()->GetType()) {
     case CFGAS_GEShading::Type::kAxial: {
       float x_span = end_x - start_x;
       float y_span = end_y - start_y;
@@ -302,26 +302,26 @@ void CFGAS_GEGraphics::FillPathWithShading(
             scale = (((x - start_x) * x_span) + ((y - start_y) * y_span)) /
                     axis_len_square;
             if (std::isnan(scale) || scale < 0.0f) {
-              if (!m_info.fillColor.GetShading()->m_isExtendedBegin)
+              if (!m_info.fillColor.GetShading()->IsExtendedBegin())
                 continue;
               scale = 0.0f;
             } else if (scale > 1.0f) {
-              if (!m_info.fillColor.GetShading()->m_isExtendedEnd)
+              if (!m_info.fillColor.GetShading()->IsExtendedEnd())
                 continue;
               scale = 1.0f;
             }
           }
           int32_t index =
               static_cast<int32_t>(scale * (CFGAS_GEShading::kSteps - 1));
-          dib_buf[column] = m_info.fillColor.GetShading()->m_argbArray[index];
+          dib_buf[column] = m_info.fillColor.GetShading()->GetArgb(index);
         }
       }
       result = true;
       break;
     }
     case CFGAS_GEShading::Type::kRadial: {
-      float start_r = m_info.fillColor.GetShading()->m_beginRadius;
-      float end_r = m_info.fillColor.GetShading()->m_endRadius;
+      float start_r = m_info.fillColor.GetShading()->GetBeginRadius();
+      float end_r = m_info.fillColor.GetShading()->GetEndRadius();
       float a = ((start_x - end_x) * (start_x - end_x)) +
                 ((start_y - end_y) * (start_y - end_y)) -
                 ((start_r - end_r) * (start_r - end_r));
@@ -353,7 +353,7 @@ void CFGAS_GEGraphics::FillPathWithShading(
               s2 = (-b - root) / (2 * a);
               s1 = (-b + root) / (2 * a);
             }
-            if (s2 <= 1.0f || m_info.fillColor.GetShading()->m_isExtendedEnd) {
+            if (s2 <= 1.0f || m_info.fillColor.GetShading()->IsExtendedEnd()) {
               s = (s2);
             } else {
               s = (s1);
@@ -363,17 +363,17 @@ void CFGAS_GEGraphics::FillPathWithShading(
             }
           }
           if (std::isnan(s) || s < 0.0f) {
-            if (!m_info.fillColor.GetShading()->m_isExtendedBegin)
+            if (!m_info.fillColor.GetShading()->IsExtendedBegin())
               continue;
             s = 0.0f;
           }
           if (s > 1.0f) {
-            if (!m_info.fillColor.GetShading()->m_isExtendedEnd)
+            if (!m_info.fillColor.GetShading()->IsExtendedEnd())
               continue;
             s = 1.0f;
           }
           int index = static_cast<int32_t>(s * (CFGAS_GEShading::kSteps - 1));
-          dib_buf[column] = m_info.fillColor.GetShading()->m_argbArray[index];
+          dib_buf[column] = m_info.fillColor.GetShading()->GetArgb(index);
         }
       }
       result = true;
