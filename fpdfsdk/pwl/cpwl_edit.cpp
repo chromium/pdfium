@@ -33,7 +33,7 @@ CPWL_Edit::CPWL_Edit(
     std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData)
     : CPWL_Wnd(cp, std::move(pAttachedData)),
       m_pEditImpl(std::make_unique<CPWL_EditImpl>()) {
-  GetCreationParams()->eCursorType = FXCT_VBEAM;
+  GetCreationParams()->eCursorType = IPWL_SystemHandler::CursorStyle::kVBeam;
 }
 
 CPWL_Edit::~CPWL_Edit() {
@@ -482,8 +482,11 @@ bool CPWL_Edit::IsWndHorV() const {
 }
 
 void CPWL_Edit::SetCursor() {
-  if (IsValid())
-    GetSystemHandler()->SetCursor(IsWndHorV() ? FXCT_VBEAM : FXCT_HBEAM);
+  if (IsValid()) {
+    GetSystemHandler()->SetCursor(
+        IsWndHorV() ? IPWL_SystemHandler::CursorStyle::kVBeam
+                    : IPWL_SystemHandler::CursorStyle::kHBeam);
+  }
 }
 
 WideString CPWL_Edit::GetSelectedText() {

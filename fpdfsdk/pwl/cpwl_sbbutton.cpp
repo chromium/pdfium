@@ -17,7 +17,7 @@ CPWL_SBButton::CPWL_SBButton(
     std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData,
     Type eButtonType)
     : CPWL_Wnd(cp, std::move(pAttachedData)), m_eSBButtonType(eButtonType) {
-  GetCreationParams()->eCursorType = FXCT_ARROW;
+  GetCreationParams()->eCursorType = IPWL_SystemHandler::CursorStyle::kArrow;
 }
 
 CPWL_SBButton::~CPWL_SBButton() = default;

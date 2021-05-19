@@ -28,6 +28,25 @@
 #include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
 
+static_assert(FXCT_ARROW ==
+                  static_cast<int>(IPWL_SystemHandler::CursorStyle::kArrow),
+              "kArrow value mismatch");
+static_assert(FXCT_NESW ==
+                  static_cast<int>(IPWL_SystemHandler::CursorStyle::kNESW),
+              "kNEWS value mismatch");
+static_assert(FXCT_NWSE ==
+                  static_cast<int>(IPWL_SystemHandler::CursorStyle::kNWSE),
+              "kNWSE value mismatch");
+static_assert(FXCT_VBEAM ==
+                  static_cast<int>(IPWL_SystemHandler::CursorStyle::kVBeam),
+              "kVBeam value mismatch");
+static_assert(FXCT_HBEAM ==
+                  static_cast<int>(IPWL_SystemHandler::CursorStyle::kHBeam),
+              "HBeam value mismatch");
+static_assert(FXCT_HAND ==
+                  static_cast<int>(IPWL_SystemHandler::CursorStyle::kHand),
+              "kHand value mismatch");
+
 FPDF_WIDESTRING AsFPDFWideString(ByteString* bsUTF16LE) {
   // Force a private version of the string, since we're about to hand it off
   // to the embedder. Should the embedder modify it by accident, it won't
@@ -345,9 +364,9 @@ void CPDFSDK_FormFillEnvironment::Invalidate(IPDF_Page* page,
   }
 }
 
-void CPDFSDK_FormFillEnvironment::SetCursor(int nCursorType) {
+void CPDFSDK_FormFillEnvironment::SetCursor(CursorStyle nCursorType) {
   if (m_pInfo && m_pInfo->FFI_SetCursor)
-    m_pInfo->FFI_SetCursor(m_pInfo, nCursorType);
+    m_pInfo->FFI_SetCursor(m_pInfo, static_cast<int>(nCursorType));
 }
 
 int CPDFSDK_FormFillEnvironment::SetTimer(int uElapse,

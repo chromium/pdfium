@@ -491,7 +491,7 @@ void CPWL_Wnd::CreateVScrollBar(const CreateParams& cp) {
   CreateParams scp = cp;
   scp.dwFlags = PWS_BACKGROUND | PWS_AUTOTRANSPARENT | PWS_NOREFRESHCLIP;
   scp.sBackgroundColor = PWL_DEFAULT_WHITECOLOR;
-  scp.eCursorType = FXCT_ARROW;
+  scp.eCursorType = IPWL_SystemHandler::CursorStyle::kArrow;
   scp.nTransparency = PWL_SCROLLBAR_TRANSPARENCY;
 
   auto pBar = std::make_unique<CPWL_ScrollBar>(scp, CloneAttachedData());

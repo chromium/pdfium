@@ -170,7 +170,7 @@ void CPWL_ComboBox::CreateButton(const CreateParams& cp) {
   bcp.sBorderColor = PWL_DEFAULT_BLACKCOLOR;
   bcp.dwBorderWidth = 2;
   bcp.nBorderStyle = BorderStyle::kBeveled;
-  bcp.eCursorType = FXCT_ARROW;
+  bcp.eCursorType = IPWL_SystemHandler::CursorStyle::kArrow;
 
   auto pButton = std::make_unique<CPWL_CBButton>(bcp, CloneAttachedData());
   m_pButton = pButton.get();
@@ -186,7 +186,7 @@ void CPWL_ComboBox::CreateListBox(const CreateParams& cp) {
   lcp.dwFlags = PWS_BORDER | PWS_BACKGROUND | PLBS_HOVERSEL | PWS_VSCROLL;
   lcp.nBorderStyle = BorderStyle::kSolid;
   lcp.dwBorderWidth = 1;
-  lcp.eCursorType = FXCT_ARROW;
+  lcp.eCursorType = IPWL_SystemHandler::CursorStyle::kArrow;
   lcp.rcRectWnd = CFX_FloatRect();
 
   lcp.fFontSize =

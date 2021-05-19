@@ -107,7 +107,7 @@ CPWL_ScrollBar::CPWL_ScrollBar(
     const CreateParams& cp,
     std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData)
     : CPWL_Wnd(cp, std::move(pAttachedData)) {
-  GetCreationParams()->eCursorType = FXCT_ARROW;
+  GetCreationParams()->eCursorType = IPWL_SystemHandler::CursorStyle::kArrow;
 }
 
 CPWL_ScrollBar::~CPWL_ScrollBar() = default;

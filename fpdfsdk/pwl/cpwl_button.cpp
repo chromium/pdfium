@@ -12,7 +12,7 @@ CPWL_Button::CPWL_Button(
     const CreateParams& cp,
     std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData)
     : CPWL_Wnd(cp, std::move(pAttachedData)) {
-  GetCreationParams()->eCursorType = FXCT_HAND;
+  GetCreationParams()->eCursorType = IPWL_SystemHandler::CursorStyle::kHand;
 }
 
 CPWL_Button::~CPWL_Button() = default;
