@@ -247,7 +247,8 @@ void CFGAS_GEGraphics::FillPathWithPattern(
   bmp->Create(width, height, FXDIB_Format::kArgb);
   m_renderDevice->GetDIBits(bmp, 0, 0);
 
-  FX_HatchStyle hatchStyle = m_info.fillColor.GetPattern()->m_hatchStyle;
+  CFGAS_GEPattern::HatchStyle hatchStyle =
+      m_info.fillColor.GetPattern()->GetHatchStyle();
   const FX_HATCHDATA& data =
       GetHatchBitmapData(static_cast<size_t>(hatchStyle));
 
@@ -260,10 +261,12 @@ void CFGAS_GEGraphics::FillPathWithPattern(
 
   CFX_DefaultRenderDevice device;
   device.Attach(bmp, false, nullptr, false);
-  device.FillRect(rect, m_info.fillColor.GetPattern()->m_backArgb);
+  device.FillRect(rect, m_info.fillColor.GetPattern()->GetBackArgb());
   for (int32_t j = rect.bottom; j < rect.top; j += mask->GetHeight()) {
-    for (int32_t i = rect.left; i < rect.right; i += mask->GetWidth())
-      device.SetBitMask(mask, i, j, m_info.fillColor.GetPattern()->m_foreArgb);
+    for (int32_t i = rect.left; i < rect.right; i += mask->GetWidth()) {
+      device.SetBitMask(mask, i, j,
+                        m_info.fillColor.GetPattern()->GetForeArgb());
+    }
   }
   CFX_RenderDevice::StateRestorer restorer(m_renderDevice);
   m_renderDevice->SetClip_PathFill(path.GetPathData(), &matrix, fill_options);

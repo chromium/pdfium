@@ -6,9 +6,9 @@
 
 #include "xfa/fgas/graphics/cfgas_gepattern.h"
 
-CFGAS_GEPattern::CFGAS_GEPattern(FX_HatchStyle hatchStyle,
-                                 const FX_ARGB foreArgb,
-                                 const FX_ARGB backArgb)
+CFGAS_GEPattern::CFGAS_GEPattern(HatchStyle hatchStyle,
+                                 FX_ARGB foreArgb,
+                                 FX_ARGB backArgb)
     : m_hatchStyle(hatchStyle), m_foreArgb(foreArgb), m_backArgb(backArgb) {}
 
 CFGAS_GEPattern::~CFGAS_GEPattern() = default;

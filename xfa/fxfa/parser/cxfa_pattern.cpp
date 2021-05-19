@@ -57,22 +57,22 @@ void CXFA_Pattern::Draw(CFGAS_GEGraphics* pGS,
                         const CFX_Matrix& matrix) {
   CXFA_Color* pColor = GetColorIfExists();
   FX_ARGB crEnd = pColor ? pColor->GetValue() : CXFA_Color::kBlackColor;
-  FX_HatchStyle iHatch = FX_HatchStyle::Cross;
+  CFGAS_GEPattern::HatchStyle iHatch = CFGAS_GEPattern::HatchStyle::Cross;
   switch (GetType()) {
     case XFA_AttributeValue::CrossDiagonal:
-      iHatch = FX_HatchStyle::DiagonalCross;
+      iHatch = CFGAS_GEPattern::HatchStyle::DiagonalCross;
       break;
     case XFA_AttributeValue::DiagonalLeft:
-      iHatch = FX_HatchStyle::ForwardDiagonal;
+      iHatch = CFGAS_GEPattern::HatchStyle::ForwardDiagonal;
       break;
     case XFA_AttributeValue::DiagonalRight:
-      iHatch = FX_HatchStyle::BackwardDiagonal;
+      iHatch = CFGAS_GEPattern::HatchStyle::BackwardDiagonal;
       break;
     case XFA_AttributeValue::Horizontal:
-      iHatch = FX_HatchStyle::Horizontal;
+      iHatch = CFGAS_GEPattern::HatchStyle::Horizontal;
       break;
     case XFA_AttributeValue::Vertical:
-      iHatch = FX_HatchStyle::Vertical;
+      iHatch = CFGAS_GEPattern::HatchStyle::Vertical;
       break;
     default:
       break;
