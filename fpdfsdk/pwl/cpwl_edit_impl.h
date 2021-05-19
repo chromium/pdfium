@@ -127,35 +127,13 @@ class CPWL_EditImpl {
   CPVT_WordRange GetSelectWordRange() const;
   void EnableUndo(bool bUndo);
   bool IsTextFull() const;
-  bool IsTextOverflow() const;
   bool CanUndo() const;
   bool CanRedo() const;
   CPVT_WordRange GetVisibleWordRange() const;
 
-  bool Clear();
-
-  CPVT_WordPlace DoInsertText(const CPVT_WordPlace& place,
-                              const WideString& sText,
-                              int32_t charset);
-  int32_t GetCharSetFromUnicode(uint16_t word, int32_t nOldCharset);
-
-  int32_t GetTotalLines() const;
-
   ByteString GetPDFWordString(int32_t nFontIndex,
                               uint16_t Word,
                               uint16_t SubWord);
-
-  void SetSelection(const CPVT_WordPlace& begin, const CPVT_WordPlace& end);
-
-  bool Delete(bool bAddUndo);
-  bool Clear(bool bAddUndo);
-  bool InsertText(const WideString& sText, int32_t charset, bool bAddUndo);
-  bool InsertWord(uint16_t word, int32_t charset, bool bAddUndo);
-  bool InsertReturn(bool bAddUndo);
-  bool Backspace(bool bAddUndo);
-  void SetCaret(const CPVT_WordPlace& place);
-
-  CFX_PointF VTToEdit(const CFX_PointF& point) const;
 
  private:
   class RefreshState {
@@ -245,6 +223,29 @@ class CPWL_EditImpl {
   class UndoInsertText;
   class UndoInsertWord;
   class UndoReplaceSelection;
+
+  bool IsTextOverflow() const;
+
+  bool Clear();
+
+  CPVT_WordPlace DoInsertText(const CPVT_WordPlace& place,
+                              const WideString& sText,
+                              int32_t charset);
+  int32_t GetCharSetFromUnicode(uint16_t word, int32_t nOldCharset);
+
+  int32_t GetTotalLines() const;
+
+  void SetSelection(const CPVT_WordPlace& begin, const CPVT_WordPlace& end);
+
+  bool Delete(bool bAddUndo);
+  bool Clear(bool bAddUndo);
+  bool InsertText(const WideString& sText, int32_t charset, bool bAddUndo);
+  bool InsertWord(uint16_t word, int32_t charset, bool bAddUndo);
+  bool InsertReturn(bool bAddUndo);
+  bool Backspace(bool bAddUndo);
+  void SetCaret(const CPVT_WordPlace& place);
+
+  CFX_PointF VTToEdit(const CFX_PointF& point) const;
 
   void RearrangeAll();
   void RearrangePart(const CPVT_WordRange& range);
