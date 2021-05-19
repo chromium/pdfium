@@ -11,8 +11,8 @@
 #include <vector>
 
 #include "core/fxcodec/gif/cfx_gif.h"
-#include "core/fxcodec/gif/cfx_lzwdecompressor.h"
 #include "core/fxcodec/gif/gif_decoder.h"
+#include "core/fxcodec/gif/lzw_decompressor.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 
@@ -54,7 +54,7 @@ class CFX_GifContext : public ProgressiveDecoderIface::Context {
   int32_t decode_status_ = GIF_D_STATUS_SIG;
   std::unique_ptr<CFX_GifGraphicControlExtension> graphic_control_extension_;
   std::vector<std::unique_ptr<CFX_GifImage>> images_;
-  std::unique_ptr<CFX_LZWDecompressor> lzw_decompressor_;
+  std::unique_ptr<LZWDecompressor> lzw_decompressor_;
   int width_ = 0;
   int height_ = 0;
   uint8_t bc_index_ = 0;

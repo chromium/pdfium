@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_GIF_CFX_LZWDECOMPRESSOR_H_
-#define CORE_FXCODEC_GIF_CFX_LZWDECOMPRESSOR_H_
+#ifndef CORE_FXCODEC_GIF_LZW_DECOMPRESSOR_H_
+#define CORE_FXCODEC_GIF_LZW_DECOMPRESSOR_H_
 
 #include <memory>
 #include <vector>
@@ -13,7 +13,9 @@
 #include "core/fxcodec/gif/cfx_gif.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 
-class CFX_LZWDecompressor {
+namespace fxcodec {
+
+class LZWDecompressor {
  public:
   enum class Status {
     kError,
@@ -28,9 +30,9 @@ class CFX_LZWDecompressor {
   };
 
   // Returns nullptr on error
-  static std::unique_ptr<CFX_LZWDecompressor> Create(uint8_t color_exp,
-                                                     uint8_t code_exp);
-  ~CFX_LZWDecompressor();
+  static std::unique_ptr<LZWDecompressor> Create(uint8_t color_exp,
+                                                 uint8_t code_exp);
+  ~LZWDecompressor();
 
   Status Decode(const uint8_t* src_buf,
                 uint32_t src_size,
@@ -49,7 +51,7 @@ class CFX_LZWDecompressor {
 
  private:
   // Use Create() instead.
-  CFX_LZWDecompressor(uint8_t color_exp, uint8_t code_exp);
+  LZWDecompressor(uint8_t color_exp, uint8_t code_exp);
 
   void ClearTable();
   void AddCode(uint16_t prefix_code, uint8_t append_char);
@@ -73,4 +75,8 @@ class CFX_LZWDecompressor {
   CodeEntry code_table_[GIF_MAX_LZW_CODE];
 };
 
-#endif  // CORE_FXCODEC_GIF_CFX_LZWDECOMPRESSOR_H_
+}  // namespace fxcodec
+
+using LZWDecompressor = fxcodec::LZWDecompressor;
+
+#endif  // CORE_FXCODEC_GIF_LZW_DECOMPRESSOR_H_

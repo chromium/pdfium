@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/gif/cfx_lzwdecompressor.h"
+#include "core/fxcodec/gif/lzw_decompressor.h"
 
 #include <algorithm>
 #include <cstring>
@@ -15,30 +15,31 @@
 #include "third_party/base/numerics/safe_math.h"
 #include "third_party/base/ptr_util.h"
 
-std::unique_ptr<CFX_LZWDecompressor> CFX_LZWDecompressor::Create(
-    uint8_t color_exp,
-    uint8_t code_exp) {
+namespace fxcodec {
+
+std::unique_ptr<LZWDecompressor> LZWDecompressor::Create(uint8_t color_exp,
+                                                         uint8_t code_exp) {
   // |color_exp| generates 2^(n + 1) codes, where as the code_exp reserves 2^n.
   // This is a quirk of the GIF spec.
   if (code_exp > GIF_MAX_LZW_EXP || code_exp < color_exp + 1)
     return nullptr;
 
   // Private ctor.
-  return pdfium::WrapUnique(new CFX_LZWDecompressor(color_exp, code_exp));
+  return pdfium::WrapUnique(new LZWDecompressor(color_exp, code_exp));
 }
 
-CFX_LZWDecompressor::CFX_LZWDecompressor(uint8_t color_exp, uint8_t code_exp)
+LZWDecompressor::LZWDecompressor(uint8_t color_exp, uint8_t code_exp)
     : code_size_(code_exp),
       code_color_end_(static_cast<uint16_t>(1 << (color_exp + 1))),
       code_clear_(static_cast<uint16_t>(1 << code_exp)),
       code_end_(static_cast<uint16_t>((1 << code_exp) + 1)) {}
 
-CFX_LZWDecompressor::~CFX_LZWDecompressor() = default;
+LZWDecompressor::~LZWDecompressor() = default;
 
-CFX_LZWDecompressor::Status CFX_LZWDecompressor::Decode(const uint8_t* src_buf,
-                                                        uint32_t src_size,
-                                                        uint8_t* dest_buf,
-                                                        uint32_t* dest_size) {
+LZWDecompressor::Status LZWDecompressor::Decode(const uint8_t* src_buf,
+                                                uint32_t src_size,
+                                                uint8_t* dest_buf,
+                                                uint32_t* dest_size) {
   if (!src_buf || src_size == 0 || !dest_buf || !dest_size)
     return Status::kError;
 
@@ -131,7 +132,7 @@ CFX_LZWDecompressor::Status CFX_LZWDecompressor::Decode(const uint8_t* src_buf,
   return Status::kUnfinished;
 }
 
-void CFX_LZWDecompressor::ClearTable() {
+void LZWDecompressor::ClearTable() {
   code_size_cur_ = code_size_ + 1;
   code_next_ = code_end_ + 1;
   code_old_ = static_cast<uint16_t>(-1);
@@ -142,7 +143,7 @@ void CFX_LZWDecompressor::ClearTable() {
   decompressed_next_ = 0;
 }
 
-void CFX_LZWDecompressor::AddCode(uint16_t prefix_code, uint8_t append_char) {
+void LZWDecompressor::AddCode(uint16_t prefix_code, uint8_t append_char) {
   if (code_next_ == GIF_MAX_LZW_CODE)
     return;
 
@@ -154,7 +155,7 @@ void CFX_LZWDecompressor::AddCode(uint16_t prefix_code, uint8_t append_char) {
   }
 }
 
-bool CFX_LZWDecompressor::DecodeString(uint16_t code) {
+bool LZWDecompressor::DecodeString(uint16_t code) {
   decompressed_.resize(code_next_ - code_clear_ + 1);
   decompressed_next_ = 0;
 
@@ -175,8 +176,7 @@ bool CFX_LZWDecompressor::DecodeString(uint16_t code) {
   return true;
 }
 
-uint32_t CFX_LZWDecompressor::ExtractData(uint8_t* dest_buf,
-                                          uint32_t dest_size) {
+uint32_t LZWDecompressor::ExtractData(uint8_t* dest_buf, uint32_t dest_size) {
   if (dest_size == 0)
     return 0;
 
@@ -188,3 +188,5 @@ uint32_t CFX_LZWDecompressor::ExtractData(uint8_t* dest_buf,
   decompressed_next_ -= copy_size;
   return copy_size;
 }
+
+}  // namespace fxcodec

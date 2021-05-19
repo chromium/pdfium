@@ -107,12 +107,12 @@ source_set("fxcodec") {
         "gif/cfx_gif.h",
         "gif/cfx_gifcontext.cpp",
         "gif/cfx_gifcontext.h",
-        "gif/cfx_lzwdecompressor.cpp",
-        "gif/cfx_lzwdecompressor.h",
         "gif/gif_decoder.cpp",
         "gif/gif_decoder.h",
         "gif/gif_progressive_decoder.cpp",
         "gif/gif_progressive_decoder.h",
+        "gif/lzw_decompressor.cpp",
+        "gif/lzw_decompressor.h",
       ]
     }
     if (pdf_enable_xfa_png) {
@@ -155,7 +155,7 @@ pdfium_unittest_source_set("unittests") {
     if (pdf_enable_xfa_gif) {
       sources += [
         "gif/cfx_gifcontext_unittest.cpp",
-        "gif/cfx_lzwdecompressor_unittest.cpp",
+        "gif/lzw_decompressor_unittest.cpp",
       ]
     }
   }

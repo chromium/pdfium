@@ -2,21 +2,21 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "core/fxcodec/gif/cfx_lzwdecompressor.h"
+#include "core/fxcodec/gif/lzw_decompressor.h"
 
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/stl_util.h"
 
-TEST(CFX_LZWDecompressor, CreateBadParams) {
-  EXPECT_EQ(nullptr, CFX_LZWDecompressor::Create(0x10, 0x02));
-  EXPECT_EQ(nullptr, CFX_LZWDecompressor::Create(0x04, 0x0F));
-  EXPECT_EQ(nullptr, CFX_LZWDecompressor::Create(0x02, 0x02));
+TEST(LZWDecompressor, CreateBadParams) {
+  EXPECT_EQ(nullptr, LZWDecompressor::Create(0x10, 0x02));
+  EXPECT_EQ(nullptr, LZWDecompressor::Create(0x04, 0x0F));
+  EXPECT_EQ(nullptr, LZWDecompressor::Create(0x02, 0x02));
 }
 
-TEST(CFX_LZWDecompressor, ExtractData) {
+TEST(LZWDecompressor, ExtractData) {
   uint8_t palette_exp = 0x1;
   uint8_t code_exp = 0x2;
-  auto decompressor = CFX_LZWDecompressor::Create(palette_exp, code_exp);
+  auto decompressor = LZWDecompressor::Create(palette_exp, code_exp);
   ASSERT_NE(nullptr, decompressor);
 
   // Check that 0 length extract does nothing
@@ -79,10 +79,10 @@ TEST(CFX_LZWDecompressor, ExtractData) {
   }
 }
 
-TEST(CFX_LZWDecompressor, DecodeBadParams) {
+TEST(LZWDecompressor, DecodeBadParams) {
   uint8_t palette_exp = 0x0;
   uint8_t code_exp = 0x2;
-  auto decompressor = CFX_LZWDecompressor::Create(palette_exp, code_exp);
+  auto decompressor = LZWDecompressor::Create(palette_exp, code_exp);
   ASSERT_NE(nullptr, decompressor);
 
   uint8_t image_data[10];
@@ -92,26 +92,26 @@ TEST(CFX_LZWDecompressor, DecodeBadParams) {
   uint32_t output_size = pdfium::size(output_data);
 
   EXPECT_EQ(
-      CFX_LZWDecompressor::Status::kError,
+      LZWDecompressor::Status::kError,
       decompressor->Decode(nullptr, image_size, output_data, &output_size));
-  EXPECT_EQ(CFX_LZWDecompressor::Status::kError,
+  EXPECT_EQ(LZWDecompressor::Status::kError,
             decompressor->Decode(image_data, 0, output_data, &output_size));
   EXPECT_EQ(
-      CFX_LZWDecompressor::Status::kError,
+      LZWDecompressor::Status::kError,
       decompressor->Decode(image_data, image_size, nullptr, &output_size));
-  EXPECT_EQ(CFX_LZWDecompressor::Status::kError,
+  EXPECT_EQ(LZWDecompressor::Status::kError,
             decompressor->Decode(image_data, image_size, output_data, nullptr));
 
   output_size = 0;
   EXPECT_EQ(
-      CFX_LZWDecompressor::Status::kInsufficientDestSize,
+      LZWDecompressor::Status::kInsufficientDestSize,
       decompressor->Decode(image_data, image_size, output_data, &output_size));
 }
 
-TEST(CFX_LZWDecompressor, Decode1x1SingleColour) {
+TEST(LZWDecompressor, Decode1x1SingleColour) {
   uint8_t palette_exp = 0x0;
   uint8_t code_exp = 0x2;
-  auto decompressor = CFX_LZWDecompressor::Create(palette_exp, code_exp);
+  auto decompressor = LZWDecompressor::Create(palette_exp, code_exp);
   ASSERT_NE(nullptr, decompressor);
 
   uint8_t image_data[] = {0x44, 0x01};
@@ -123,17 +123,17 @@ TEST(CFX_LZWDecompressor, Decode1x1SingleColour) {
   uint32_t output_size = pdfium::size(output_data);
 
   EXPECT_EQ(
-      CFX_LZWDecompressor::Status::kSuccess,
+      LZWDecompressor::Status::kSuccess,
       decompressor->Decode(image_data, image_size, output_data, &output_size));
 
   EXPECT_EQ(pdfium::size(output_data), output_size);
   EXPECT_TRUE(0 == memcmp(expected_data, output_data, sizeof(expected_data)));
 }
 
-TEST(CFX_LZWDecompressor, Decode10x10SingleColour) {
+TEST(LZWDecompressor, Decode10x10SingleColour) {
   uint8_t palette_exp = 0x0;
   uint8_t code_exp = 0x2;
-  auto decompressor = CFX_LZWDecompressor::Create(palette_exp, code_exp);
+  auto decompressor = LZWDecompressor::Create(palette_exp, code_exp);
   ASSERT_NE(nullptr, decompressor);
 
   static constexpr uint8_t kImageData[] = {0x84, 0x8F, 0xA9, 0xCB,
@@ -155,17 +155,17 @@ TEST(CFX_LZWDecompressor, Decode10x10SingleColour) {
   uint32_t output_size = pdfium::size(output_data);
 
   EXPECT_EQ(
-      CFX_LZWDecompressor::Status::kSuccess,
+      LZWDecompressor::Status::kSuccess,
       decompressor->Decode(kImageData, image_size, output_data, &output_size));
 
   EXPECT_EQ(pdfium::size(output_data), output_size);
   EXPECT_TRUE(0 == memcmp(kExpectedData, output_data, sizeof(kExpectedData)));
 }
 
-TEST(CFX_LZWDecompressor, Decode10x10MultipleColour) {
+TEST(LZWDecompressor, Decode10x10MultipleColour) {
   uint8_t palette_exp = 0x1;
   uint8_t code_exp = 0x2;
-  auto decompressor = CFX_LZWDecompressor::Create(palette_exp, code_exp);
+  auto decompressor = LZWDecompressor::Create(palette_exp, code_exp);
   ASSERT_NE(nullptr, decompressor);
 
   static constexpr uint8_t kImageData[] = {
@@ -189,18 +189,18 @@ TEST(CFX_LZWDecompressor, Decode10x10MultipleColour) {
   uint32_t output_size = pdfium::size(output_data);
 
   EXPECT_EQ(
-      CFX_LZWDecompressor::Status::kSuccess,
+      LZWDecompressor::Status::kSuccess,
       decompressor->Decode(kImageData, image_size, output_data, &output_size));
 
   EXPECT_EQ(pdfium::size(output_data), output_size);
   EXPECT_TRUE(0 == memcmp(kExpectedData, output_data, sizeof(kExpectedData)));
 }
 
-TEST(CFX_LZWDecompressor, HandleColourCodeOutOfPalette) {
+TEST(LZWDecompressor, HandleColourCodeOutOfPalette) {
   uint8_t palette_exp = 0x2;  // Image uses 10 colours, so the palette exp
                               // should be 3, 2^(3+1) = 16 colours.
   uint8_t code_exp = 0x4;
-  auto decompressor = CFX_LZWDecompressor::Create(palette_exp, code_exp);
+  auto decompressor = LZWDecompressor::Create(palette_exp, code_exp);
   ASSERT_NE(nullptr, decompressor);
 
   static constexpr uint8_t kImageData[] = {
@@ -214,6 +214,6 @@ TEST(CFX_LZWDecompressor, HandleColourCodeOutOfPalette) {
   uint32_t output_size = pdfium::size(output_data);
 
   EXPECT_EQ(
-      CFX_LZWDecompressor::Status::kError,
+      LZWDecompressor::Status::kError,
       decompressor->Decode(kImageData, image_size, output_data, &output_size));
 }

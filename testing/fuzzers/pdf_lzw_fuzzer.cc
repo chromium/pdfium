@@ -4,7 +4,7 @@
 
 #include <vector>
 
-#include "core/fxcodec/gif/cfx_lzwdecompressor.h"
+#include "core/fxcodec/gif/lzw_decompressor.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
 // Between 2x and 5x is a standard range for LZW according to a quick
@@ -16,8 +16,8 @@ void LZWFuzz(const uint8_t* src_buf,
              size_t src_size,
              uint8_t color_exp,
              uint8_t code_exp) {
-  std::unique_ptr<CFX_LZWDecompressor> decompressor =
-      CFX_LZWDecompressor::Create(color_exp, code_exp);
+  std::unique_ptr<LZWDecompressor> decompressor =
+      LZWDecompressor::Create(color_exp, code_exp);
   if (!decompressor)
     return;
 
@@ -27,7 +27,7 @@ void LZWFuzz(const uint8_t* src_buf,
     // This cast should be safe since the caller is checking for overflow on
     // the initial data.
     uint32_t dest_size = static_cast<uint32_t>(dest_buf.size());
-    if (CFX_LZWDecompressor::Status::kInsufficientDestSize !=
+    if (LZWDecompressor::Status::kInsufficientDestSize !=
         decompressor->Decode(src_buf, src_size, dest_buf.data(), &dest_size)) {
       return;
     }
