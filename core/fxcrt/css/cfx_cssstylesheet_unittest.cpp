@@ -55,14 +55,16 @@ class CFX_CSSStyleSheetTest : public testing::Test {
     EXPECT_EQ(decl_->PropertyCountForTesting(), decl_count);
   }
 
-  void VerifyFloat(CFX_CSSProperty prop, float val, CFX_CSSNumberType type) {
+  void VerifyFloat(CFX_CSSProperty prop,
+                   float val,
+                   CFX_CSSNumberValue::Unit unit) {
     DCHECK(decl_);
 
     bool important;
     RetainPtr<CFX_CSSValue> v = decl_->GetProperty(prop, &important);
     EXPECT_EQ(v->GetType(), CFX_CSSPrimitiveType::Number);
-    EXPECT_EQ(v.As<CFX_CSSNumberValue>()->Kind(), type);
-    EXPECT_EQ(v.As<CFX_CSSNumberValue>()->Value(), val);
+    EXPECT_EQ(v.As<CFX_CSSNumberValue>()->unit(), unit);
+    EXPECT_EQ(v.As<CFX_CSSNumberValue>()->value(), val);
   }
 
   void VerifyEnum(CFX_CSSProperty prop, CFX_CSSPropertyValue val) {
@@ -151,13 +153,13 @@ TEST_F(CFX_CSSStyleSheetTest, ParseMultipleSelectors) {
   EXPECT_EQ(4u, decl_->PropertyCountForTesting());
 
   VerifyFloat(CFX_CSSProperty::BorderLeftWidth, 10.0f,
-              CFX_CSSNumberType::Pixels);
+              CFX_CSSNumberValue::Unit::kPixels);
   VerifyFloat(CFX_CSSProperty::BorderRightWidth, 10.0f,
-              CFX_CSSNumberType::Pixels);
+              CFX_CSSNumberValue::Unit::kPixels);
   VerifyFloat(CFX_CSSProperty::BorderTopWidth, 10.0f,
-              CFX_CSSNumberType::Pixels);
+              CFX_CSSNumberValue::Unit::kPixels);
   VerifyFloat(CFX_CSSProperty::BorderBottomWidth, 10.0f,
-              CFX_CSSNumberType::Pixels);
+              CFX_CSSNumberValue::Unit::kPixels);
 
   style = sheet_->GetRule(1);
   ASSERT_TRUE(style);
@@ -179,10 +181,14 @@ TEST_F(CFX_CSSStyleSheetTest, ParseMultipleSelectors) {
   decl_ = style->GetDeclaration();
   ASSERT_TRUE(decl_);
   EXPECT_EQ(4u, decl_->PropertyCountForTesting());
-  VerifyFloat(CFX_CSSProperty::PaddingLeft, 0.0f, CFX_CSSNumberType::Number);
-  VerifyFloat(CFX_CSSProperty::PaddingRight, 0.0f, CFX_CSSNumberType::Number);
-  VerifyFloat(CFX_CSSProperty::PaddingTop, 0.0f, CFX_CSSNumberType::Number);
-  VerifyFloat(CFX_CSSProperty::PaddingBottom, 0.0f, CFX_CSSNumberType::Number);
+  VerifyFloat(CFX_CSSProperty::PaddingLeft, 0.0f,
+              CFX_CSSNumberValue::Unit::kNumber);
+  VerifyFloat(CFX_CSSProperty::PaddingRight, 0.0f,
+              CFX_CSSNumberValue::Unit::kNumber);
+  VerifyFloat(CFX_CSSProperty::PaddingTop, 0.0f,
+              CFX_CSSNumberValue::Unit::kNumber);
+  VerifyFloat(CFX_CSSProperty::PaddingBottom, 0.0f,
+              CFX_CSSNumberValue::Unit::kNumber);
 }
 
 TEST_F(CFX_CSSStyleSheetTest, ParseChildSelectors) {
@@ -214,13 +220,13 @@ TEST_F(CFX_CSSStyleSheetTest, ParseChildSelectors) {
   EXPECT_EQ(4u, decl_->PropertyCountForTesting());
 
   VerifyFloat(CFX_CSSProperty::BorderLeftWidth, 10.0f,
-              CFX_CSSNumberType::Pixels);
+              CFX_CSSNumberValue::Unit::kPixels);
   VerifyFloat(CFX_CSSProperty::BorderRightWidth, 10.0f,
-              CFX_CSSNumberType::Pixels);
+              CFX_CSSNumberValue::Unit::kPixels);
   VerifyFloat(CFX_CSSProperty::BorderTopWidth, 10.0f,
-              CFX_CSSNumberType::Pixels);
+              CFX_CSSNumberValue::Unit::kPixels);
   VerifyFloat(CFX_CSSProperty::BorderBottomWidth, 10.0f,
-              CFX_CSSNumberType::Pixels);
+              CFX_CSSNumberValue::Unit::kPixels);
 }
 
 TEST_F(CFX_CSSStyleSheetTest, ParseUnhandledSelectors) {
@@ -247,27 +253,32 @@ TEST_F(CFX_CSSStyleSheetTest, ParseMultipleSelectorsCombined) {
 
 TEST_F(CFX_CSSStyleSheetTest, ParseBorder) {
   LoadAndVerifyDecl(L"a { border: 5px; }", {L"a"}, 4);
-  VerifyFloat(CFX_CSSProperty::BorderLeftWidth, 5.0, CFX_CSSNumberType::Pixels);
+  VerifyFloat(CFX_CSSProperty::BorderLeftWidth, 5.0,
+              CFX_CSSNumberValue::Unit::kPixels);
   VerifyFloat(CFX_CSSProperty::BorderRightWidth, 5.0,
-              CFX_CSSNumberType::Pixels);
-  VerifyFloat(CFX_CSSProperty::BorderTopWidth, 5.0, CFX_CSSNumberType::Pixels);
+              CFX_CSSNumberValue::Unit::kPixels);
+  VerifyFloat(CFX_CSSProperty::BorderTopWidth, 5.0,
+              CFX_CSSNumberValue::Unit::kPixels);
   VerifyFloat(CFX_CSSProperty::BorderBottomWidth, 5.0,
-              CFX_CSSNumberType::Pixels);
+              CFX_CSSNumberValue::Unit::kPixels);
 }
 
 TEST_F(CFX_CSSStyleSheetTest, ParseBorderFull) {
   LoadAndVerifyDecl(L"a { border: 5px solid red; }", {L"a"}, 4);
-  VerifyFloat(CFX_CSSProperty::BorderLeftWidth, 5.0, CFX_CSSNumberType::Pixels);
+  VerifyFloat(CFX_CSSProperty::BorderLeftWidth, 5.0,
+              CFX_CSSNumberValue::Unit::kPixels);
   VerifyFloat(CFX_CSSProperty::BorderRightWidth, 5.0,
-              CFX_CSSNumberType::Pixels);
-  VerifyFloat(CFX_CSSProperty::BorderTopWidth, 5.0, CFX_CSSNumberType::Pixels);
+              CFX_CSSNumberValue::Unit::kPixels);
+  VerifyFloat(CFX_CSSProperty::BorderTopWidth, 5.0,
+              CFX_CSSNumberValue::Unit::kPixels);
   VerifyFloat(CFX_CSSProperty::BorderBottomWidth, 5.0,
-              CFX_CSSNumberType::Pixels);
+              CFX_CSSNumberValue::Unit::kPixels);
 }
 
 TEST_F(CFX_CSSStyleSheetTest, ParseBorderLeft) {
   LoadAndVerifyDecl(L"a { border-left: 2.5pc; }", {L"a"}, 1);
-  VerifyFloat(CFX_CSSProperty::BorderLeftWidth, 2.5, CFX_CSSNumberType::Picas);
+  VerifyFloat(CFX_CSSProperty::BorderLeftWidth, 2.5,
+              CFX_CSSNumberValue::Unit::kPicas);
 }
 
 TEST_F(CFX_CSSStyleSheetTest, ParseBorderLeftThick) {
@@ -277,37 +288,39 @@ TEST_F(CFX_CSSStyleSheetTest, ParseBorderLeftThick) {
 
 TEST_F(CFX_CSSStyleSheetTest, ParseBorderRight) {
   LoadAndVerifyDecl(L"a { border-right: 2.5pc; }", {L"a"}, 1);
-  VerifyFloat(CFX_CSSProperty::BorderRightWidth, 2.5, CFX_CSSNumberType::Picas);
+  VerifyFloat(CFX_CSSProperty::BorderRightWidth, 2.5,
+              CFX_CSSNumberValue::Unit::kPicas);
 }
 
 TEST_F(CFX_CSSStyleSheetTest, ParseBorderTop) {
   LoadAndVerifyDecl(L"a { border-top: 2.5pc; }", {L"a"}, 1);
-  VerifyFloat(CFX_CSSProperty::BorderTopWidth, 2.5, CFX_CSSNumberType::Picas);
+  VerifyFloat(CFX_CSSProperty::BorderTopWidth, 2.5,
+              CFX_CSSNumberValue::Unit::kPicas);
 }
 
 TEST_F(CFX_CSSStyleSheetTest, ParseBorderBottom) {
   LoadAndVerifyDecl(L"a { border-bottom: 2.5pc; }", {L"a"}, 1);
   VerifyFloat(CFX_CSSProperty::BorderBottomWidth, 2.5,
-              CFX_CSSNumberType::Picas);
+              CFX_CSSNumberValue::Unit::kPicas);
 }
 
 TEST_F(CFX_CSSStyleSheetTest, ParseWithCommentsInSelector) {
   LoadAndVerifyDecl(L"/**{*/a/**}*/ { border-bottom: 2.5pc; }", {L"a"}, 1);
   VerifyFloat(CFX_CSSProperty::BorderBottomWidth, 2.5,
-              CFX_CSSNumberType::Picas);
+              CFX_CSSNumberValue::Unit::kPicas);
 }
 
 TEST_F(CFX_CSSStyleSheetTest, ParseWithCommentsInProperty) {
   LoadAndVerifyDecl(L"a { /*}*/border-bottom: 2.5pc; }", {L"a"}, 1);
   VerifyFloat(CFX_CSSProperty::BorderBottomWidth, 2.5,
-              CFX_CSSNumberType::Picas);
+              CFX_CSSNumberValue::Unit::kPicas);
 }
 
 TEST_F(CFX_CSSStyleSheetTest, ParseWithCommentsInValue) {
   LoadAndVerifyDecl(L"a { border-bottom: /*;*/2.5pc;/* color:red;*/ }", {L"a"},
                     1);
   VerifyFloat(CFX_CSSProperty::BorderBottomWidth, 2.5,
-              CFX_CSSNumberType::Picas);
+              CFX_CSSNumberValue::Unit::kPicas);
 }
 
 TEST_F(CFX_CSSStyleSheetTest, ParseWithUnterminatedCommentInSelector) {

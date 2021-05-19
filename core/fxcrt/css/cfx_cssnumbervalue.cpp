@@ -6,33 +6,33 @@
 
 #include "core/fxcrt/css/cfx_cssnumbervalue.h"
 
-CFX_CSSNumberValue::CFX_CSSNumberValue(CFX_CSSNumberType type, float value)
-    : CFX_CSSValue(CFX_CSSPrimitiveType::Number), type_(type), value_(value) {
-  if (type_ == CFX_CSSNumberType::Number && fabs(value_) < 0.001f)
+CFX_CSSNumberValue::CFX_CSSNumberValue(Unit unit, float value)
+    : CFX_CSSValue(CFX_CSSPrimitiveType::Number), unit_(unit), value_(value) {
+  if (unit_ == Unit::kNumber && fabs(value_) < 0.001f)
     value_ = 0.0f;
 }
 
 CFX_CSSNumberValue::~CFX_CSSNumberValue() = default;
 
 float CFX_CSSNumberValue::Apply(float percentBase) const {
-  switch (type_) {
-    case CFX_CSSNumberType::Pixels:
-    case CFX_CSSNumberType::Number:
+  switch (unit_) {
+    case Unit::kPixels:
+    case Unit::kNumber:
       return value_ * 72 / 96;
-    case CFX_CSSNumberType::EMS:
-    case CFX_CSSNumberType::EXS:
+    case Unit::kEMS:
+    case Unit::kEXS:
       return value_ * percentBase;
-    case CFX_CSSNumberType::Percent:
+    case Unit::kPercent:
       return value_ * percentBase / 100.0f;
-    case CFX_CSSNumberType::CentiMeters:
+    case Unit::kCentiMeters:
       return value_ * 28.3464f;
-    case CFX_CSSNumberType::MilliMeters:
+    case Unit::kMilliMeters:
       return value_ * 2.8346f;
-    case CFX_CSSNumberType::Inches:
+    case Unit::kInches:
       return value_ * 72.0f;
-    case CFX_CSSNumberType::Picas:
+    case Unit::kPicas:
       return value_ / 12.0f;
-    case CFX_CSSNumberType::Points:
+    case Unit::kPoints:
       return value_;
   }
   return value_;

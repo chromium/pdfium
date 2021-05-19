@@ -31,7 +31,7 @@ uint8_t Hex2Dec(uint8_t hexHigh, uint8_t hexLow) {
 bool ParseCSSNumber(const wchar_t* pszValue,
                     int32_t iValueLen,
                     float* pValue,
-                    CFX_CSSNumberType* pOutUnit) {
+                    CFX_CSSNumberValue::Unit* pOutUnit) {
   DCHECK(pszValue);
   DCHECK(iValueLen > 0);
 
@@ -42,9 +42,9 @@ bool ParseCSSNumber(const wchar_t* pszValue,
 
   iValueLen -= iUsedLen;
   pszValue += iUsedLen;
-  *pOutUnit = CFX_CSSNumberType::Number;
+  *pOutUnit = CFX_CSSNumberValue::Unit::kNumber;
   if (iValueLen >= 1 && *pszValue == '%') {
-    *pOutUnit = CFX_CSSNumberType::Percent;
+    *pOutUnit = CFX_CSSNumberValue::Unit::kPercent;
   } else if (iValueLen == 2) {
     const CFX_CSSData::LengthUnit* pUnit =
         CFX_CSSData::GetLengthUnitByName(WideStringView(pszValue, 2));
@@ -118,11 +118,11 @@ bool CFX_CSSDeclaration::ParseCSSColor(const wchar_t* pszValue,
         return false;
       if (eType != CFX_CSSPrimitiveType::Number)
         return false;
-      CFX_CSSNumberType eNumType;
+      CFX_CSSNumberValue::Unit eNumType;
       if (!ParseCSSNumber(pszValue, iValueLen, &fValue, &eNumType))
         return false;
 
-      rgb[i] = eNumType == CFX_CSSNumberType::Percent
+      rgb[i] = eNumType == CFX_CSSNumberValue::Unit::kPercent
                    ? FXSYS_roundf(fValue * 2.55f)
                    : FXSYS_roundf(fValue);
     }
@@ -289,7 +289,7 @@ void CFX_CSSDeclaration::AddProperty(const WideString& prop,
 RetainPtr<CFX_CSSValue> CFX_CSSDeclaration::ParseNumber(const wchar_t* pszValue,
                                                         int32_t iValueLen) {
   float fValue;
-  CFX_CSSNumberType eUnit;
+  CFX_CSSNumberValue::Unit eUnit;
   if (!ParseCSSNumber(pszValue, iValueLen, &fValue, &eUnit))
     return nullptr;
   return pdfium::MakeRetain<CFX_CSSNumberValue>(eUnit, fValue);
@@ -340,7 +340,7 @@ void CFX_CSSDeclaration::ParseValueListProperty(
       case CFX_CSSPrimitiveType::Number:
         if (dwType & CFX_CSSVALUETYPE_MaybeNumber) {
           float fValue;
-          CFX_CSSNumberType eNumType;
+          CFX_CSSNumberValue::Unit eNumType;
           if (ParseCSSNumber(pszValue, iValueLen, &fValue, &eNumType))
             list.push_back(
                 pdfium::MakeRetain<CFX_CSSNumberValue>(eNumType, fValue));
@@ -462,7 +462,7 @@ bool CFX_CSSDeclaration::ParseBorderProperty(
           continue;
 
         float fValue;
-        CFX_CSSNumberType eNumType;
+        CFX_CSSNumberValue::Unit eNumType;
         if (ParseCSSNumber(pszValue, iValueLen, &fValue, &eNumType))
           pWidth = pdfium::MakeRetain<CFX_CSSNumberValue>(eNumType, fValue);
         break;
@@ -495,10 +495,10 @@ bool CFX_CSSDeclaration::ParseBorderProperty(
         break;
     }
   }
-  if (!pWidth)
-    pWidth =
-        pdfium::MakeRetain<CFX_CSSNumberValue>(CFX_CSSNumberType::Number, 0.0f);
-
+  if (!pWidth) {
+    pWidth = pdfium::MakeRetain<CFX_CSSNumberValue>(
+        CFX_CSSNumberValue::Unit::kNumber, 0.0f);
+  }
   return true;
 }
 
@@ -574,7 +574,7 @@ void CFX_CSSDeclaration::ParseFontProperty(const wchar_t* pszValue,
       }
       case CFX_CSSPrimitiveType::Number: {
         float fValue;
-        CFX_CSSNumberType eNumType;
+        CFX_CSSNumberValue::Unit eNumType;
         if (!ParseCSSNumber(pszValue, iValueLen, &fValue, &eNumType))
           break;
         if (eType == CFX_CSSPrimitiveType::Number) {
@@ -588,9 +588,10 @@ void CFX_CSSDeclaration::ParseFontProperty(const wchar_t* pszValue,
             case 700:
             case 800:
             case 900:
-              if (!pWeight)
+              if (!pWeight) {
                 pWeight = pdfium::MakeRetain<CFX_CSSNumberValue>(
-                    CFX_CSSNumberType::Number, fValue);
+                    CFX_CSSNumberValue::Unit::kNumber, fValue);
+              }
               continue;
           }
         }

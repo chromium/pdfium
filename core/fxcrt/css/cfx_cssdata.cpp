@@ -258,10 +258,14 @@ const CFX_CSSData::PropertyValue propertyValueTable[] = {
 #undef PVAL
 
 const CFX_CSSData::LengthUnit lengthUnitTable[] = {
-    {L"cm", CFX_CSSNumberType::CentiMeters}, {L"em", CFX_CSSNumberType::EMS},
-    {L"ex", CFX_CSSNumberType::EXS},         {L"in", CFX_CSSNumberType::Inches},
-    {L"mm", CFX_CSSNumberType::MilliMeters}, {L"pc", CFX_CSSNumberType::Picas},
-    {L"pt", CFX_CSSNumberType::Points},      {L"px", CFX_CSSNumberType::Pixels},
+    {L"cm", CFX_CSSNumberValue::Unit::kCentiMeters},
+    {L"em", CFX_CSSNumberValue::Unit::kEMS},
+    {L"ex", CFX_CSSNumberValue::Unit::kEXS},
+    {L"in", CFX_CSSNumberValue::Unit::kInches},
+    {L"mm", CFX_CSSNumberValue::Unit::kMilliMeters},
+    {L"pc", CFX_CSSNumberValue::Unit::kPicas},
+    {L"pt", CFX_CSSNumberValue::Unit::kPoints},
+    {L"px", CFX_CSSNumberValue::Unit::kPixels},
 };
 
 // 16 colours from CSS 2.0 + alternate spelling of grey/gray.
