@@ -587,7 +587,7 @@ ByteString GetEditAppStream(CPWL_EditImpl* pEdit,
                             const CFX_PointF& ptOffset,
                             bool bContinuous,
                             uint16_t SubWord) {
-  CPWL_EditImpl_Iterator* pIterator = pEdit->GetIterator();
+  CPWL_EditImpl::Iterator* pIterator = pEdit->GetIterator();
   pIterator->SetAt(0);
 
   std::ostringstream sEditStream;

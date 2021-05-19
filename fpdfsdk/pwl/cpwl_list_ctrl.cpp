@@ -42,7 +42,7 @@ float CPWL_ListCtrl::Item::GetItemHeight() const {
 
 uint16_t CPWL_ListCtrl::Item::GetFirstChar() const {
   CPVT_Word word;
-  CPWL_EditImpl_Iterator* pIterator = m_pEdit->GetIterator();
+  CPWL_EditImpl::Iterator* pIterator = m_pEdit->GetIterator();
   pIterator->SetAt(1);
   pIterator->GetWord(word);
   return word.Word;

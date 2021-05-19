@@ -18,238 +18,29 @@
 #include "core/fxge/dib/fx_dib.h"
 
 class CFFL_FormFiller;
-class CPWL_EditImpl;
-class CPWL_EditImpl_Iterator;
-class CPWL_EditImpl_Provider;
 class CFX_RenderDevice;
 class CPWL_Edit;
 class IPWL_SystemHandler;
-class IFX_Edit_UndoItem;
-
-struct CPWL_EditImpl_LineRect {
-  CPWL_EditImpl_LineRect(const CPVT_WordRange& wrLine,
-                         const CFX_FloatRect& rcLine)
-      : m_wrLine(wrLine), m_rcLine(rcLine) {}
-
-  CPVT_WordRange m_wrLine;
-  CFX_FloatRect m_rcLine;
-};
-
-class CPWL_EditImpl_Refresh {
- public:
-  CPWL_EditImpl_Refresh();
-  ~CPWL_EditImpl_Refresh();
-
-  void BeginRefresh();
-  void Push(const CPVT_WordRange& linerange, const CFX_FloatRect& rect);
-  void NoAnalyse();
-  std::vector<CFX_FloatRect>* GetRefreshRects();
-  void EndRefresh();
-
- private:
-  void Add(const CFX_FloatRect& new_rect);
-
-  std::vector<CPWL_EditImpl_LineRect> m_NewLineRects;
-  std::vector<CPWL_EditImpl_LineRect> m_OldLineRects;
-  std::vector<CFX_FloatRect> m_RefreshRects;
-};
-
-class CPWL_EditImpl_Select {
- public:
-  CPWL_EditImpl_Select();
-  explicit CPWL_EditImpl_Select(const CPVT_WordRange& range);
-
-  void Reset();
-  void Set(const CPVT_WordPlace& begin, const CPVT_WordPlace& end);
-  void SetEndPos(const CPVT_WordPlace& end);
-
-  CPVT_WordRange ConvertToWordRange() const;
-  bool IsEmpty() const;
-
-  CPVT_WordPlace BeginPos;
-  CPVT_WordPlace EndPos;
-};
-
-class CPWL_EditImpl_Undo {
- public:
-  CPWL_EditImpl_Undo();
-  ~CPWL_EditImpl_Undo();
-
-  void AddItem(std::unique_ptr<IFX_Edit_UndoItem> pItem);
-  void Undo();
-  void Redo();
-  bool CanUndo() const;
-  bool CanRedo() const;
-
- private:
-  void RemoveHeads();
-  void RemoveTails();
-
-  std::deque<std::unique_ptr<IFX_Edit_UndoItem>> m_UndoItemStack;
-  size_t m_nCurUndoPos = 0;
-  bool m_bWorking = false;
-};
-
-class IFX_Edit_UndoItem {
- public:
-  virtual ~IFX_Edit_UndoItem() = default;
-
-  // Undo/Redo the current undo item and returns the number of additional items
-  // to be processed in |m_UndoItemStack| to fully undo/redo the action. (An
-  // example is CFXEU_ReplaceSelection::Undo(), if CFXEU_ReplaceSelection marks
-  // the end of a replace action, CFXEU_ReplaceSelection::Undo() returns 3
-  // because 3 more undo items need to be processed to revert the replace
-  // action: insert text, clear selection and the CFXEU_ReplaceSelection which
-  // marks the beginning of replace action.) Implementations should return 0 by
-  // default.
-  virtual int Undo() = 0;
-  virtual int Redo() = 0;
-};
-
-class CFXEU_InsertWord final : public IFX_Edit_UndoItem {
- public:
-  CFXEU_InsertWord(CPWL_EditImpl* pEdit,
-                   const CPVT_WordPlace& wpOldPlace,
-                   const CPVT_WordPlace& wpNewPlace,
-                   uint16_t word,
-                   int32_t charset);
-  ~CFXEU_InsertWord() override;
-
-  // IFX_Edit_UndoItem:
-  int Redo() override;
-  int Undo() override;
-
- private:
-  UnownedPtr<CPWL_EditImpl> m_pEdit;
-
-  CPVT_WordPlace m_wpOld;
-  CPVT_WordPlace m_wpNew;
-  uint16_t m_Word;
-  int32_t m_nCharset;
-};
-
-class CFXEU_InsertReturn final : public IFX_Edit_UndoItem {
- public:
-  CFXEU_InsertReturn(CPWL_EditImpl* pEdit,
-                     const CPVT_WordPlace& wpOldPlace,
-                     const CPVT_WordPlace& wpNewPlace);
-  ~CFXEU_InsertReturn() override;
-
-  // IFX_Edit_UndoItem:
-  int Redo() override;
-  int Undo() override;
-
- private:
-  UnownedPtr<CPWL_EditImpl> m_pEdit;
-
-  CPVT_WordPlace m_wpOld;
-  CPVT_WordPlace m_wpNew;
-};
-
-class CFXEU_ReplaceSelection final : public IFX_Edit_UndoItem {
- public:
-  CFXEU_ReplaceSelection(CPWL_EditImpl* pEdit, bool bIsEnd);
-  ~CFXEU_ReplaceSelection() override;
-
-  // IFX_Edit_UndoItem:
-  int Redo() override;
-  int Undo() override;
-
- private:
-  bool IsEnd() const { return m_bEnd; }
-
-  UnownedPtr<CPWL_EditImpl> m_pEdit;
-  const bool m_bEnd;  // indicate whether this is the end of replace action
-};
-
-class CFXEU_Backspace final : public IFX_Edit_UndoItem {
- public:
-  CFXEU_Backspace(CPWL_EditImpl* pEdit,
-                  const CPVT_WordPlace& wpOldPlace,
-                  const CPVT_WordPlace& wpNewPlace,
-                  uint16_t word,
-                  int32_t charset);
-  ~CFXEU_Backspace() override;
-
-  // IFX_Edit_UndoItem:
-  int Redo() override;
-  int Undo() override;
-
- private:
-  UnownedPtr<CPWL_EditImpl> m_pEdit;
-
-  CPVT_WordPlace m_wpOld;
-  CPVT_WordPlace m_wpNew;
-  uint16_t m_Word;
-  int32_t m_nCharset;
-};
-
-class CFXEU_Delete final : public IFX_Edit_UndoItem {
- public:
-  CFXEU_Delete(CPWL_EditImpl* pEdit,
-               const CPVT_WordPlace& wpOldPlace,
-               const CPVT_WordPlace& wpNewPlace,
-               uint16_t word,
-               int32_t charset,
-               bool bSecEnd);
-  ~CFXEU_Delete() override;
-
-  // IFX_Edit_UndoItem:
-  int Redo() override;
-  int Undo() override;
-
- private:
-  UnownedPtr<CPWL_EditImpl> m_pEdit;
-
-  CPVT_WordPlace m_wpOld;
-  CPVT_WordPlace m_wpNew;
-  uint16_t m_Word;
-  int32_t m_nCharset;
-  bool m_bSecEnd;
-};
-
-class CFXEU_Clear final : public IFX_Edit_UndoItem {
- public:
-  CFXEU_Clear(CPWL_EditImpl* pEdit,
-              const CPVT_WordRange& wrSel,
-              const WideString& swText);
-  ~CFXEU_Clear() override;
-
-  // IFX_Edit_UndoItem:
-  int Redo() override;
-  int Undo() override;
-
- private:
-  UnownedPtr<CPWL_EditImpl> m_pEdit;
-
-  CPVT_WordRange m_wrSel;
-  WideString m_swText;
-};
-
-class CFXEU_InsertText final : public IFX_Edit_UndoItem {
- public:
-  CFXEU_InsertText(CPWL_EditImpl* pEdit,
-                   const CPVT_WordPlace& wpOldPlace,
-                   const CPVT_WordPlace& wpNewPlace,
-                   const WideString& swText,
-                   int32_t charset);
-  ~CFXEU_InsertText() override;
-
-  // IFX_Edit_UndoItem:
-  int Redo() override;
-  int Undo() override;
-
- private:
-  UnownedPtr<CPWL_EditImpl> m_pEdit;
-
-  CPVT_WordPlace m_wpOld;
-  CPVT_WordPlace m_wpNew;
-  WideString m_swText;
-  int32_t m_nCharset;
-};
 
 class CPWL_EditImpl {
  public:
+  class Iterator {
+   public:
+    Iterator(CPWL_EditImpl* pEdit, CPVT_VariableText::Iterator* pVTIterator);
+    ~Iterator();
+
+    bool NextWord();
+    bool GetWord(CPVT_Word& word) const;
+    bool GetLine(CPVT_Line& line) const;
+    void SetAt(int32_t nWordIndex);
+    void SetAt(const CPVT_WordPlace& place);
+    const CPVT_WordPlace& GetAt() const;
+
+   private:
+    UnownedPtr<CPWL_EditImpl> m_pEdit;
+    UnownedPtr<CPVT_VariableText::Iterator> m_pVTIterator;
+  };
+
   static void DrawEdit(CFX_RenderDevice* pDevice,
                        const CFX_Matrix& mtUser2Device,
                        CPWL_EditImpl* pEdit,
@@ -267,7 +58,7 @@ class CPWL_EditImpl {
   void SetNotify(CPWL_Edit* pNotify);
 
   // Returns an iterator for the contents. Should not be released.
-  CPWL_EditImpl_Iterator* GetIterator();
+  Iterator* GetIterator();
   IPVT_FontMap* GetFontMap();
   void Initialize();
 
@@ -367,6 +158,94 @@ class CPWL_EditImpl {
   CFX_PointF VTToEdit(const CFX_PointF& point) const;
 
  private:
+  class RefreshState {
+   public:
+    RefreshState();
+    ~RefreshState();
+
+    void BeginRefresh();
+    void Push(const CPVT_WordRange& linerange, const CFX_FloatRect& rect);
+    void NoAnalyse();
+    std::vector<CFX_FloatRect>* GetRefreshRects();
+    void EndRefresh();
+
+   private:
+    struct LineRect {
+      LineRect(const CPVT_WordRange& wrLine, const CFX_FloatRect& rcLine)
+          : m_wrLine(wrLine), m_rcLine(rcLine) {}
+
+      CPVT_WordRange m_wrLine;
+      CFX_FloatRect m_rcLine;
+    };
+
+    void Add(const CFX_FloatRect& new_rect);
+
+    std::vector<LineRect> m_NewLineRects;
+    std::vector<LineRect> m_OldLineRects;
+    std::vector<CFX_FloatRect> m_RefreshRects;
+  };
+
+  class SelectState {
+   public:
+    SelectState();
+    explicit SelectState(const CPVT_WordRange& range);
+
+    void Reset();
+    void Set(const CPVT_WordPlace& begin, const CPVT_WordPlace& end);
+    void SetEndPos(const CPVT_WordPlace& end);
+
+    CPVT_WordRange ConvertToWordRange() const;
+    bool IsEmpty() const;
+
+    CPVT_WordPlace BeginPos;
+    CPVT_WordPlace EndPos;
+  };
+
+  class UndoItemIface {
+   public:
+    virtual ~UndoItemIface() = default;
+
+    // Undo/Redo the current undo item and returns the number of additional
+    // items to be processed in |m_UndoItemStack| to fully undo/redo the action.
+    // (An example is UndoReplaceSelection::Undo(), if UndoReplaceSelection
+    // marks the end of a replace action, UndoReplaceSelection::Undo() returns 3
+    // because 3 more undo items need to be processed to revert the replace
+    // action: insert text, clear selection and the UndoReplaceSelection which
+    // marks the beginning of replace action.) Implementations should return 0
+    // by default.
+    virtual int Undo() = 0;
+    virtual int Redo() = 0;
+  };
+
+  class UndoStack {
+   public:
+    UndoStack();
+    ~UndoStack();
+
+    void AddItem(std::unique_ptr<UndoItemIface> pItem);
+    void Undo();
+    void Redo();
+    bool CanUndo() const;
+    bool CanRedo() const;
+
+   private:
+    void RemoveHeads();
+    void RemoveTails();
+
+    std::deque<std::unique_ptr<UndoItemIface>> m_UndoItemStack;
+    size_t m_nCurUndoPos = 0;
+    bool m_bWorking = false;
+  };
+
+  class Provider;
+  class UndoBackspace;
+  class UndoClear;
+  class UndoDelete;
+  class UndoInsertReturn;
+  class UndoInsertText;
+  class UndoInsertWord;
+  class UndoReplaceSelection;
+
   void RearrangeAll();
   void RearrangePart(const CPVT_WordRange& range);
   void ScrollToCaret();
@@ -388,7 +267,7 @@ class CPWL_EditImpl {
   void SetCaretInfo();
   void SetCaretOrigin();
 
-  void AddEditUndoItem(std::unique_ptr<IFX_Edit_UndoItem> pEditUndoItem);
+  void AddEditUndoItem(std::unique_ptr<UndoItemIface> pEditUndoItem);
 
   bool m_bEnableScroll = false;
   bool m_bNotifyFlag = false;
@@ -396,49 +275,19 @@ class CPWL_EditImpl {
   bool m_bEnableRefresh = true;
   bool m_bEnableUndo = true;
   int32_t m_nAlignment = 0;
-  std::unique_ptr<CPWL_EditImpl_Provider> m_pVTProvider;
+  std::unique_ptr<Provider> m_pVTProvider;
   std::unique_ptr<CPVT_VariableText> m_pVT;  // Must outlive |m_pVTProvider|.
   UnownedPtr<CPWL_Edit> m_pNotify;
   CPVT_WordPlace m_wpCaret;
   CPVT_WordPlace m_wpOldCaret;
-  CPWL_EditImpl_Select m_SelState;
+  SelectState m_SelState;
   CFX_PointF m_ptScrollPos;
   CFX_PointF m_ptRefreshScrollPos;
-  std::unique_ptr<CPWL_EditImpl_Iterator> m_pIterator;
-  CPWL_EditImpl_Refresh m_Refresh;
+  std::unique_ptr<Iterator> m_pIterator;
+  RefreshState m_Refresh;
   CFX_PointF m_ptCaret;
-  CPWL_EditImpl_Undo m_Undo;
+  UndoStack m_Undo;
   CFX_FloatRect m_rcOldContent;
-};
-
-class CPWL_EditImpl_Iterator {
- public:
-  CPWL_EditImpl_Iterator(CPWL_EditImpl* pEdit,
-                         CPVT_VariableText::Iterator* pVTIterator);
-  ~CPWL_EditImpl_Iterator();
-
-  bool NextWord();
-  bool GetWord(CPVT_Word& word) const;
-  bool GetLine(CPVT_Line& line) const;
-  void SetAt(int32_t nWordIndex);
-  void SetAt(const CPVT_WordPlace& place);
-  const CPVT_WordPlace& GetAt() const;
-
- private:
-  UnownedPtr<CPWL_EditImpl> m_pEdit;
-  UnownedPtr<CPVT_VariableText::Iterator> m_pVTIterator;
-};
-
-class CPWL_EditImpl_Provider final : public CPVT_VariableText::Provider {
- public:
-  explicit CPWL_EditImpl_Provider(IPVT_FontMap* pFontMap);
-  ~CPWL_EditImpl_Provider() override;
-
-  // CPVT_VariableText::Provider:
-  int GetCharWidth(int32_t nFontIndex, uint16_t word) override;
-  int32_t GetWordFontIndex(uint16_t word,
-                           int32_t charset,
-                           int32_t nFontIndex) override;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_EDIT_IMPL_H_

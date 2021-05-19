@@ -759,7 +759,7 @@ void CPWL_Edit::SetEditCaret(bool bVisible) {
 }
 
 void CPWL_Edit::GetCaretInfo(CFX_PointF* ptHead, CFX_PointF* ptFoot) const {
-  CPWL_EditImpl_Iterator* pIterator = m_pEditImpl->GetIterator();
+  CPWL_EditImpl::Iterator* pIterator = m_pEditImpl->GetIterator();
   pIterator->SetAt(m_pEditImpl->GetCaret());
   CPVT_Word word;
   CPVT_Line line;

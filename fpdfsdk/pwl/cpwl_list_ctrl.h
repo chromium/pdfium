@@ -14,9 +14,8 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "fpdfsdk/pwl/cpwl_edit_impl.h"
 
-class CPWL_EditImpl;
-class CPWL_EditImpl_Iterator;
 class IPVT_FontMap;
 
 class CPWL_ListCtrl {
@@ -103,7 +102,7 @@ class CPWL_ListCtrl {
     uint16_t GetFirstChar() const;
 
    private:
-    CPWL_EditImpl_Iterator* GetIterator() const;
+    CPWL_EditImpl::Iterator* GetIterator() const;
 
     bool m_bSelected = false;
     CFX_FloatRect m_rcListItem;
