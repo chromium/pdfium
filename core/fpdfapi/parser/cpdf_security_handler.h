@@ -9,17 +9,12 @@
 
 #include <memory>
 
+#include "core/fpdfapi/parser/cpdf_crypto_handler.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 
-#define FXCIPHER_NONE 0
-#define FXCIPHER_RC4 1
-#define FXCIPHER_AES 2
-#define FXCIPHER_AES2 3
-
 class CPDF_Array;
-class CPDF_CryptoHandler;
 class CPDF_Dictionary;
 class CPDF_Parser;
 
@@ -62,7 +57,7 @@ class CPDF_SecurityHandler : public Retainable {
 
   bool LoadDict(const CPDF_Dictionary* pEncryptDict);
   bool LoadDict(const CPDF_Dictionary* pEncryptDict,
-                int* cipher,
+                CPDF_CryptoHandler::Cipher* cipher,
                 size_t* key_len);
 
   ByteString GetUserPassword(const ByteString& owner_password) const;
@@ -88,8 +83,8 @@ class CPDF_SecurityHandler : public Retainable {
   int m_Version = 0;
   int m_Revision = 0;
   uint32_t m_Permissions = 0;
-  int m_Cipher = FXCIPHER_NONE;
   size_t m_KeyLen = 0;
+  CPDF_CryptoHandler::Cipher m_Cipher = CPDF_CryptoHandler::Cipher::kNone;
   PasswordEncodingConversion m_PasswordEncodingConversion = kUnknown;
   ByteString m_FileId;
   RetainPtr<const CPDF_Dictionary> m_pEncryptDict;

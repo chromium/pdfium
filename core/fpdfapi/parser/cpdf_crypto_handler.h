@@ -19,14 +19,20 @@
 
 class CPDF_Dictionary;
 class CPDF_Object;
-class CPDF_SecurityHandler;
 
 class CPDF_CryptoHandler {
  public:
-  CPDF_CryptoHandler(int cipher, const uint8_t* key, size_t keylen);
-  ~CPDF_CryptoHandler();
+  enum class Cipher {
+    kNone = 0,
+    kRC4 = 1,
+    kAES = 2,
+    kAES2 = 3,
+  };
 
   static bool IsSignatureDictionary(const CPDF_Dictionary* dictionary);
+
+  CPDF_CryptoHandler(Cipher cipher, const uint8_t* key, size_t keylen);
+  ~CPDF_CryptoHandler();
 
   bool DecryptObjectTree(RetainPtr<CPDF_Object> object);
   size_t EncryptGetSize(pdfium::span<const uint8_t> source) const;
@@ -62,7 +68,7 @@ class CPDF_CryptoHandler {
   bool CryptFinish(void* context, CFX_BinaryBuf& dest_buf, bool bEncrypt);
 
   const size_t m_KeyLen;
-  const int m_Cipher;
+  const Cipher m_Cipher;
   std::unique_ptr<CRYPT_aes_context, FxFreeDeleter> m_pAESContext;
   uint8_t m_EncryptKey[32];
 };

@@ -50,23 +50,23 @@ void CPDF_CryptoHandler::CryptBlock(bool bEncrypt,
                                     pdfium::span<const uint8_t> source,
                                     uint8_t* dest_buf,
                                     uint32_t& dest_size) const {
-  if (m_Cipher == FXCIPHER_NONE) {
+  if (m_Cipher == Cipher::kNone) {
     memcpy(dest_buf, source.data(), source.size());
     return;
   }
   uint8_t realkey[16];
   size_t realkeylen = sizeof(realkey);
-  if (m_Cipher != FXCIPHER_AES || m_KeyLen != 32) {
+  if (m_Cipher != Cipher::kAES || m_KeyLen != 32) {
     uint8_t key1[32];
     PopulateKey(objnum, gennum, key1);
 
-    if (m_Cipher == FXCIPHER_AES)
+    if (m_Cipher == Cipher::kAES)
       memcpy(key1 + m_KeyLen + 5, "sAlT", 4);
-    size_t len = m_Cipher == FXCIPHER_AES ? m_KeyLen + 9 : m_KeyLen + 5;
+    size_t len = m_Cipher == Cipher::kAES ? m_KeyLen + 9 : m_KeyLen + 5;
     CRYPT_MD5Generate({key1, len}, realkey);
     realkeylen = std::min(m_KeyLen + 5, sizeof(realkey));
   }
-  if (m_Cipher == FXCIPHER_AES) {
+  if (m_Cipher == Cipher::kAES) {
     CRYPT_AESSetKey(m_pAESContext.get(),
                     m_KeyLen == 32 ? m_EncryptKey : realkey, m_KeyLen,
                     bEncrypt);
@@ -112,10 +112,10 @@ struct AESCryptContext {
 void* CPDF_CryptoHandler::CryptStart(uint32_t objnum,
                                      uint32_t gennum,
                                      bool bEncrypt) {
-  if (m_Cipher == FXCIPHER_NONE) {
+  if (m_Cipher == Cipher::kNone) {
     return this;
   }
-  if (m_Cipher == FXCIPHER_AES && m_KeyLen == 32) {
+  if (m_Cipher == Cipher::kAES && m_KeyLen == 32) {
     AESCryptContext* pContext = FX_Alloc(AESCryptContext, 1);
     pContext->m_bIV = true;
     pContext->m_BlockOffset = 0;
@@ -131,15 +131,15 @@ void* CPDF_CryptoHandler::CryptStart(uint32_t objnum,
   uint8_t key1[48];
   PopulateKey(objnum, gennum, key1);
 
-  if (m_Cipher == FXCIPHER_AES)
+  if (m_Cipher == Cipher::kAES)
     memcpy(key1 + m_KeyLen + 5, "sAlT", 4);
 
   uint8_t realkey[16];
-  size_t len = m_Cipher == FXCIPHER_AES ? m_KeyLen + 9 : m_KeyLen + 5;
+  size_t len = m_Cipher == Cipher::kAES ? m_KeyLen + 9 : m_KeyLen + 5;
   CRYPT_MD5Generate({key1, len}, realkey);
   size_t realkeylen = std::min(m_KeyLen + 5, sizeof(realkey));
 
-  if (m_Cipher == FXCIPHER_AES) {
+  if (m_Cipher == Cipher::kAES) {
     AESCryptContext* pContext = FX_Alloc(AESCryptContext, 1);
     pContext->m_bIV = true;
     pContext->m_BlockOffset = 0;
@@ -164,11 +164,11 @@ bool CPDF_CryptoHandler::CryptStream(void* context,
   if (!context)
     return false;
 
-  if (m_Cipher == FXCIPHER_NONE) {
+  if (m_Cipher == Cipher::kNone) {
     dest_buf.AppendBlock(source.data(), source.size());
     return true;
   }
-  if (m_Cipher == FXCIPHER_RC4) {
+  if (m_Cipher == Cipher::kRC4) {
     int old_size = dest_buf.GetSize();
     dest_buf.AppendBlock(source.data(), source.size());
     CRYPT_ArcFourCrypt(static_cast<CRYPT_rc4_context*>(context),
@@ -222,10 +222,10 @@ bool CPDF_CryptoHandler::CryptFinish(void* context,
   if (!context) {
     return false;
   }
-  if (m_Cipher == FXCIPHER_NONE) {
+  if (m_Cipher == Cipher::kNone) {
     return true;
   }
-  if (m_Cipher == FXCIPHER_RC4) {
+  if (m_Cipher == Cipher::kRC4) {
     FX_Free(context);
     return true;
   }
@@ -267,11 +267,11 @@ void* CPDF_CryptoHandler::DecryptStart(uint32_t objnum, uint32_t gennum) {
   return CryptStart(objnum, gennum, false);
 }
 uint32_t CPDF_CryptoHandler::DecryptGetSize(uint32_t src_size) {
-  return m_Cipher == FXCIPHER_AES ? src_size - 16 : src_size;
+  return m_Cipher == Cipher::kAES ? src_size - 16 : src_size;
 }
 
 bool CPDF_CryptoHandler::IsCipherAES() const {
-  return m_Cipher == FXCIPHER_AES;
+  return m_Cipher == Cipher::kAES;
 }
 
 bool CPDF_CryptoHandler::DecryptObjectTree(RetainPtr<CPDF_Object> object) {
@@ -367,7 +367,7 @@ bool CPDF_CryptoHandler::DecryptFinish(void* context, CFX_BinaryBuf& dest_buf) {
 
 size_t CPDF_CryptoHandler::EncryptGetSize(
     pdfium::span<const uint8_t> source) const {
-  return m_Cipher == FXCIPHER_AES ? source.size() + 32 : source.size();
+  return m_Cipher == Cipher::kAES ? source.size() + 32 : source.size();
 }
 
 bool CPDF_CryptoHandler::EncryptContent(uint32_t objnum,
@@ -379,19 +379,19 @@ bool CPDF_CryptoHandler::EncryptContent(uint32_t objnum,
   return true;
 }
 
-CPDF_CryptoHandler::CPDF_CryptoHandler(int cipher,
+CPDF_CryptoHandler::CPDF_CryptoHandler(Cipher cipher,
                                        const uint8_t* key,
                                        size_t keylen)
     : m_KeyLen(std::min<size_t>(keylen, 32)), m_Cipher(cipher) {
-  DCHECK(cipher != FXCIPHER_AES || keylen == 16 || keylen == 24 ||
+  DCHECK(cipher != Cipher::kAES || keylen == 16 || keylen == 24 ||
          keylen == 32);
-  DCHECK(cipher != FXCIPHER_AES2 || keylen == 32);
-  DCHECK(cipher != FXCIPHER_RC4 || (keylen >= 5 && keylen <= 16));
+  DCHECK(cipher != Cipher::kAES2 || keylen == 32);
+  DCHECK(cipher != Cipher::kRC4 || (keylen >= 5 && keylen <= 16));
 
-  if (m_Cipher != FXCIPHER_NONE)
+  if (m_Cipher != Cipher::kNone)
     memcpy(m_EncryptKey, key, m_KeyLen);
 
-  if (m_Cipher == FXCIPHER_AES)
+  if (m_Cipher == Cipher::kAES)
     m_pAESContext.reset(FX_Alloc(CRYPT_aes_context, 1));
 }
 
