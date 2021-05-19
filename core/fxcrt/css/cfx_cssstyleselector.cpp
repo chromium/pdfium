@@ -148,13 +148,13 @@ void CFX_CSSStyleSelector::AppendInlineStyle(CFX_CSSDeclaration* pDecl,
   const CFX_CSSData::Property* property = nullptr;
   WideString wsName;
   while (1) {
-    CFX_CSSSyntaxStatus eStatus = pSyntax->DoSyntaxParse();
-    if (eStatus == CFX_CSSSyntaxStatus::kPropertyName) {
+    CFX_CSSSyntaxParser::Status eStatus = pSyntax->DoSyntaxParse();
+    if (eStatus == CFX_CSSSyntaxParser::Status::kPropertyName) {
       WideStringView strValue = pSyntax->GetCurrentString();
       property = CFX_CSSData::GetPropertyByName(strValue);
       if (!property)
         wsName = WideString(strValue);
-    } else if (eStatus == CFX_CSSSyntaxStatus::kPropertyValue) {
+    } else if (eStatus == CFX_CSSSyntaxParser::Status::kPropertyValue) {
       if (property || iLen2 > 0) {
         WideStringView strValue = pSyntax->GetCurrentString();
         if (!strValue.IsEmpty()) {

@@ -29,41 +29,40 @@ bool CFX_CSSStyleSheet::LoadBuffer(WideStringView buffer) {
   m_RuleArray.clear();
   auto pSyntax = std::make_unique<CFX_CSSSyntaxParser>(buffer);
   while (1) {
-    CFX_CSSSyntaxStatus eStatus = pSyntax->DoSyntaxParse();
-    if (eStatus == CFX_CSSSyntaxStatus::kStyleRule)
+    CFX_CSSSyntaxParser::Status eStatus = pSyntax->DoSyntaxParse();
+    if (eStatus == CFX_CSSSyntaxParser::Status::kStyleRule)
       eStatus = LoadStyleRule(pSyntax.get());
-    if (eStatus == CFX_CSSSyntaxStatus::kEOS)
+    if (eStatus == CFX_CSSSyntaxParser::Status::kEOS)
       return true;
-    if (eStatus == CFX_CSSSyntaxStatus::kError)
+    if (eStatus == CFX_CSSSyntaxParser::Status::kError)
       return false;
   }
 }
 
-CFX_CSSSyntaxStatus CFX_CSSStyleSheet::LoadStyleRule(
+CFX_CSSSyntaxParser::Status CFX_CSSStyleSheet::LoadStyleRule(
     CFX_CSSSyntaxParser* pSyntax) {
   std::vector<std::unique_ptr<CFX_CSSSelector>> selectors;
-
   CFX_CSSStyleRule* pStyleRule = nullptr;
   int32_t iValueLen = 0;
   const CFX_CSSData::Property* property = nullptr;
   WideString wsName;
   while (1) {
     switch (pSyntax->DoSyntaxParse()) {
-      case CFX_CSSSyntaxStatus::kSelector: {
+      case CFX_CSSSyntaxParser::Status::kSelector: {
         WideStringView strValue = pSyntax->GetCurrentString();
         auto pSelector = CFX_CSSSelector::FromString(strValue);
         if (pSelector)
           selectors.push_back(std::move(pSelector));
         break;
       }
-      case CFX_CSSSyntaxStatus::kPropertyName: {
+      case CFX_CSSSyntaxParser::Status::kPropertyName: {
         WideStringView strValue = pSyntax->GetCurrentString();
         property = CFX_CSSData::GetPropertyByName(strValue);
         if (!property)
           wsName = WideString(strValue);
         break;
       }
-      case CFX_CSSSyntaxStatus::kPropertyValue: {
+      case CFX_CSSSyntaxParser::Status::kPropertyValue: {
         if (property || iValueLen > 0) {
           WideStringView strValue = pSyntax->GetCurrentString();
           auto* decl = pStyleRule->GetDeclaration();
@@ -77,7 +76,7 @@ CFX_CSSSyntaxStatus CFX_CSSStyleSheet::LoadStyleRule(
         }
         break;
       }
-      case CFX_CSSSyntaxStatus::kDeclOpen: {
+      case CFX_CSSSyntaxParser::Status::kDeclOpen: {
         if (!pStyleRule && !selectors.empty()) {
           auto rule = std::make_unique<CFX_CSSStyleRule>();
           pStyleRule = rule.get();
@@ -85,22 +84,22 @@ CFX_CSSSyntaxStatus CFX_CSSStyleSheet::LoadStyleRule(
           m_RuleArray.push_back(std::move(rule));
         } else {
           SkipRuleSet(pSyntax);
-          return CFX_CSSSyntaxStatus::kNone;
+          return CFX_CSSSyntaxParser::Status::kNone;
         }
         break;
       }
-      case CFX_CSSSyntaxStatus::kDeclClose: {
+      case CFX_CSSSyntaxParser::Status::kDeclClose: {
         if (pStyleRule && pStyleRule->GetDeclaration()->empty()) {
           m_RuleArray.pop_back();
           pStyleRule = nullptr;
         }
-        return CFX_CSSSyntaxStatus::kNone;
+        return CFX_CSSSyntaxParser::Status::kNone;
       }
-      case CFX_CSSSyntaxStatus::kEOS:
-        return CFX_CSSSyntaxStatus::kEOS;
-      case CFX_CSSSyntaxStatus::kError:
+      case CFX_CSSSyntaxParser::Status::kEOS:
+        return CFX_CSSSyntaxParser::Status::kEOS;
+      case CFX_CSSSyntaxParser::Status::kError:
       default:
-        return CFX_CSSSyntaxStatus::kError;
+        return CFX_CSSSyntaxParser::Status::kError;
     }
   }
 }
@@ -108,14 +107,14 @@ CFX_CSSSyntaxStatus CFX_CSSStyleSheet::LoadStyleRule(
 void CFX_CSSStyleSheet::SkipRuleSet(CFX_CSSSyntaxParser* pSyntax) {
   while (1) {
     switch (pSyntax->DoSyntaxParse()) {
-      case CFX_CSSSyntaxStatus::kSelector:
-      case CFX_CSSSyntaxStatus::kDeclOpen:
-      case CFX_CSSSyntaxStatus::kPropertyName:
-      case CFX_CSSSyntaxStatus::kPropertyValue:
+      case CFX_CSSSyntaxParser::Status::kSelector:
+      case CFX_CSSSyntaxParser::Status::kDeclOpen:
+      case CFX_CSSSyntaxParser::Status::kPropertyName:
+      case CFX_CSSSyntaxParser::Status::kPropertyValue:
         break;
-      case CFX_CSSSyntaxStatus::kDeclClose:
-      case CFX_CSSSyntaxStatus::kEOS:
-      case CFX_CSSSyntaxStatus::kError:
+      case CFX_CSSSyntaxParser::Status::kDeclClose:
+      case CFX_CSSSyntaxParser::Status::kEOS:
+      case CFX_CSSSyntaxParser::Status::kError:
       default:
         return;
     }

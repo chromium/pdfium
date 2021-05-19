@@ -13,32 +13,29 @@
 #include "core/fxcrt/css/cfx_cssoutputtextbuf.h"
 #include "core/fxcrt/fx_string.h"
 
-#define CFX_CSSSYNTAXCHECK_AllowCharset 1
-#define CFX_CSSSYNTAXCHECK_AllowImport 2
-
-enum class CFX_CSSSyntaxStatus : uint8_t {
-  kError,
-  kEOS,
-  kNone,
-  kStyleRule,
-  kSelector,
-  kDeclOpen,
-  kDeclClose,
-  kPropertyName,
-  kPropertyValue,
-};
-
 class CFX_CSSSyntaxParser {
  public:
+  enum class Status : uint8_t {
+    kError,
+    kEOS,
+    kNone,
+    kStyleRule,
+    kSelector,
+    kDeclOpen,
+    kDeclClose,
+    kPropertyName,
+    kPropertyValue,
+  };
+
   explicit CFX_CSSSyntaxParser(WideStringView str);
   ~CFX_CSSSyntaxParser();
 
   void SetParseOnlyDeclarations();
-  CFX_CSSSyntaxStatus DoSyntaxParse();
+  Status DoSyntaxParse();
   WideStringView GetCurrentString() const;
 
  private:
-  enum class SyntaxMode : uint8_t {
+  enum class Mode : uint8_t {
     kRuleSet,
     kComment,
     kSelector,
@@ -46,14 +43,14 @@ class CFX_CSSSyntaxParser {
     kPropertyValue,
   };
 
-  void SaveMode(SyntaxMode eMode);
+  void SaveMode(Mode eMode);
   bool RestoreMode();
 
   bool m_bHasError = false;
-  SyntaxMode m_eMode = SyntaxMode::kRuleSet;
+  Mode m_eMode = Mode::kRuleSet;
   CFX_CSSOutputTextBuf m_Output;
   CFX_CSSInputTextBuf m_Input;
-  std::stack<SyntaxMode> m_ModeStack;
+  std::stack<Mode> m_ModeStack;
 };
 
 #endif  // CORE_FXCRT_CSS_CFX_CSSSYNTAXPARSER_H_

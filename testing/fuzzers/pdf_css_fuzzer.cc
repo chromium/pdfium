@@ -15,10 +15,10 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
     return 0;
 
   CFX_CSSSyntaxParser parser(input.AsStringView());
-  CFX_CSSSyntaxStatus status;
+  CFX_CSSSyntaxParser::Status status;
   do {
     status = parser.DoSyntaxParse();
-  } while (status != CFX_CSSSyntaxStatus::kError &&
-           status != CFX_CSSSyntaxStatus::kEOS);
+  } while (status != CFX_CSSSyntaxParser::Status::kError &&
+           status != CFX_CSSSyntaxParser::Status::kEOS);
   return 0;
 }

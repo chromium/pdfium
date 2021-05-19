@@ -25,7 +25,7 @@ class CFX_CSSStyleSheet {
   CFX_CSSStyleRule* GetRule(size_t index) const;
 
  private:
-  CFX_CSSSyntaxStatus LoadStyleRule(CFX_CSSSyntaxParser* pSyntax);
+  CFX_CSSSyntaxParser::Status LoadStyleRule(CFX_CSSSyntaxParser* pSyntax);
   void SkipRuleSet(CFX_CSSSyntaxParser* pSyntax);
 
   std::vector<std::unique_ptr<CFX_CSSStyleRule>> m_RuleArray;
