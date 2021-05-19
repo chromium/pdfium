@@ -92,19 +92,19 @@ TEST(CFX_LZWDecompressor, DecodeBadParams) {
   uint32_t output_size = pdfium::size(output_data);
 
   EXPECT_EQ(
-      GifDecoder::Status::kError,
+      CFX_LZWDecompressor::Status::kError,
       decompressor->Decode(nullptr, image_size, output_data, &output_size));
-  EXPECT_EQ(GifDecoder::Status::kError,
+  EXPECT_EQ(CFX_LZWDecompressor::Status::kError,
             decompressor->Decode(image_data, 0, output_data, &output_size));
   EXPECT_EQ(
-      GifDecoder::Status::kError,
+      CFX_LZWDecompressor::Status::kError,
       decompressor->Decode(image_data, image_size, nullptr, &output_size));
-  EXPECT_EQ(GifDecoder::Status::kError,
+  EXPECT_EQ(CFX_LZWDecompressor::Status::kError,
             decompressor->Decode(image_data, image_size, output_data, nullptr));
 
   output_size = 0;
   EXPECT_EQ(
-      GifDecoder::Status::kInsufficientDestSize,
+      CFX_LZWDecompressor::Status::kInsufficientDestSize,
       decompressor->Decode(image_data, image_size, output_data, &output_size));
 }
 
@@ -123,7 +123,7 @@ TEST(CFX_LZWDecompressor, Decode1x1SingleColour) {
   uint32_t output_size = pdfium::size(output_data);
 
   EXPECT_EQ(
-      GifDecoder::Status::kSuccess,
+      CFX_LZWDecompressor::Status::kSuccess,
       decompressor->Decode(image_data, image_size, output_data, &output_size));
 
   EXPECT_EQ(pdfium::size(output_data), output_size);
@@ -155,7 +155,7 @@ TEST(CFX_LZWDecompressor, Decode10x10SingleColour) {
   uint32_t output_size = pdfium::size(output_data);
 
   EXPECT_EQ(
-      GifDecoder::Status::kSuccess,
+      CFX_LZWDecompressor::Status::kSuccess,
       decompressor->Decode(kImageData, image_size, output_data, &output_size));
 
   EXPECT_EQ(pdfium::size(output_data), output_size);
@@ -189,7 +189,7 @@ TEST(CFX_LZWDecompressor, Decode10x10MultipleColour) {
   uint32_t output_size = pdfium::size(output_data);
 
   EXPECT_EQ(
-      GifDecoder::Status::kSuccess,
+      CFX_LZWDecompressor::Status::kSuccess,
       decompressor->Decode(kImageData, image_size, output_data, &output_size));
 
   EXPECT_EQ(pdfium::size(output_data), output_size);
@@ -214,6 +214,6 @@ TEST(CFX_LZWDecompressor, HandleColourCodeOutOfPalette) {
   uint32_t output_size = pdfium::size(output_data);
 
   EXPECT_EQ(
-      GifDecoder::Status::kError,
+      CFX_LZWDecompressor::Status::kError,
       decompressor->Decode(kImageData, image_size, output_data, &output_size));
 }

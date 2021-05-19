@@ -240,27 +240,27 @@ GifDecoder::Status CFX_GifContext::LoadFrame(int32_t frame_num) {
       SaveDecodingStatus(GIF_D_STATUS_IMG_DATA);
       img_row_offset_ += img_row_avail_size_;
       img_row_avail_size_ = gif_img_row_bytes - img_row_offset_;
-      GifDecoder::Status ret =
+      CFX_LZWDecompressor::Status ret =
           lzw_decompressor_.get()
               ? lzw_decompressor_->Decode(
                     img_data.data(), img_data_size,
                     gif_image->row_buffer.data() + img_row_offset_,
                     &img_row_avail_size_)
-              : GifDecoder::Status::kError;
-      if (ret == GifDecoder::Status::kError) {
+              : CFX_LZWDecompressor::Status::kError;
+      if (ret == CFX_LZWDecompressor::Status::kError) {
         DecodingFailureAtTailCleanup(gif_image);
         return GifDecoder::Status::kError;
       }
 
-      while (ret != GifDecoder::Status::kError) {
-        if (ret == GifDecoder::Status::kSuccess) {
+      while (ret != CFX_LZWDecompressor::Status::kError) {
+        if (ret == CFX_LZWDecompressor::Status::kSuccess) {
           ReadScanline(gif_image->row_num, gif_image->row_buffer.data());
           gif_image->row_buffer.clear();
           SaveDecodingStatus(GIF_D_STATUS_TAIL);
           return GifDecoder::Status::kSuccess;
         }
 
-        if (ret == GifDecoder::Status::kUnfinished) {
+        if (ret == CFX_LZWDecompressor::Status::kUnfinished) {
           read_marker = input_buffer_->GetPosition();
           if (!ReadAllOrNone(&img_data_size, sizeof(img_data_size)))
             return GifDecoder::Status::kUnfinished;
@@ -284,11 +284,11 @@ GifDecoder::Status CFX_GifContext::LoadFrame(int32_t frame_num) {
                             img_data.data(), img_data_size,
                             gif_image->row_buffer.data() + img_row_offset_,
                             &img_row_avail_size_)
-                      : GifDecoder::Status::kError;
+                      : CFX_LZWDecompressor::Status::kError;
           }
         }
 
-        if (ret == GifDecoder::Status::kInsufficientDestSize) {
+        if (ret == CFX_LZWDecompressor::Status::kInsufficientDestSize) {
           if (gif_image->image_info.local_flags.interlace) {
             ReadScanline(gif_image->row_num, gif_image->row_buffer.data());
             gif_image->row_num += kGifInterlaceStep[img_pass_num_];
@@ -311,11 +311,11 @@ GifDecoder::Status CFX_GifContext::LoadFrame(int32_t frame_num) {
                           img_data.data(), img_data_size,
                           gif_image->row_buffer.data() + img_row_offset_,
                           &img_row_avail_size_)
-                    : GifDecoder::Status::kError;
+                    : CFX_LZWDecompressor::Status::kError;
         }
 
-        if (ret == GifDecoder::Status::kInsufficientDestSize ||
-            ret == GifDecoder::Status::kError) {
+        if (ret == CFX_LZWDecompressor::Status::kInsufficientDestSize ||
+            ret == CFX_LZWDecompressor::Status::kError) {
           DecodingFailureAtTailCleanup(gif_image);
           return GifDecoder::Status::kError;
         }

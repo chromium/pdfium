@@ -28,7 +28,6 @@ class GifDecoder {
     kError,
     kSuccess,
     kUnfinished,
-    kInsufficientDestSize,  // Only used internally by CGifLZWDecoder::Decode()
   };
 
   class Delegate {

@@ -35,15 +35,15 @@ CFX_LZWDecompressor::CFX_LZWDecompressor(uint8_t color_exp, uint8_t code_exp)
 
 CFX_LZWDecompressor::~CFX_LZWDecompressor() = default;
 
-GifDecoder::Status CFX_LZWDecompressor::Decode(const uint8_t* src_buf,
-                                               uint32_t src_size,
-                                               uint8_t* dest_buf,
-                                               uint32_t* dest_size) {
+CFX_LZWDecompressor::Status CFX_LZWDecompressor::Decode(const uint8_t* src_buf,
+                                                        uint32_t src_size,
+                                                        uint8_t* dest_buf,
+                                                        uint32_t* dest_size) {
   if (!src_buf || src_size == 0 || !dest_buf || !dest_size)
-    return GifDecoder::Status::kError;
+    return Status::kError;
 
   if (*dest_size == 0)
-    return GifDecoder::Status::kInsufficientDestSize;
+    return Status::kInsufficientDestSize;
 
   next_in_ = src_buf;
   avail_in_ = src_size;
@@ -54,7 +54,7 @@ GifDecoder::Status CFX_LZWDecompressor::Decode(const uint8_t* src_buf,
   if (decompressed_next_ != 0) {
     uint32_t extracted_size = ExtractData(dest_buf, *dest_size);
     if (decompressed_next_ != 0)
-      return GifDecoder::Status::kInsufficientDestSize;
+      return Status::kInsufficientDestSize;
 
     dest_buf += extracted_size;
     i += extracted_size;
@@ -62,17 +62,17 @@ GifDecoder::Status CFX_LZWDecompressor::Decode(const uint8_t* src_buf,
 
   while (i <= *dest_size && (avail_in_ > 0 || bits_left_ >= code_size_cur_)) {
     if (code_size_cur_ > GIF_MAX_LZW_EXP)
-      return GifDecoder::Status::kError;
+      return Status::kError;
 
     if (avail_in_ > 0) {
       if (bits_left_ > 31)
-        return GifDecoder::Status::kError;
+        return Status::kError;
 
       FX_SAFE_UINT32 safe_code = *next_in_++;
       safe_code <<= bits_left_;
       safe_code |= code_store_;
       if (!safe_code.IsValid())
-        return GifDecoder::Status::kError;
+        return Status::kError;
 
       code_store_ = safe_code.ValueOrDie();
       --avail_in_;
@@ -90,7 +90,7 @@ GifDecoder::Status CFX_LZWDecompressor::Decode(const uint8_t* src_buf,
       }
       if (code == code_end_) {
         *dest_size = i;
-        return GifDecoder::Status::kSuccess;
+        return Status::kSuccess;
       }
 
       if (code_old_ != static_cast<uint16_t>(-1)) {
@@ -98,12 +98,12 @@ GifDecoder::Status CFX_LZWDecompressor::Decode(const uint8_t* src_buf,
           if (code == code_next_) {
             AddCode(code_old_, code_first_);
             if (!DecodeString(code))
-              return GifDecoder::Status::kError;
+              return Status::kError;
           } else if (code > code_next_) {
-            return GifDecoder::Status::kError;
+            return Status::kError;
           } else {
             if (!DecodeString(code))
-              return GifDecoder::Status::kError;
+              return Status::kError;
 
             uint8_t append_char = decompressed_[decompressed_next_ - 1];
             AddCode(code_old_, append_char);
@@ -111,13 +111,13 @@ GifDecoder::Status CFX_LZWDecompressor::Decode(const uint8_t* src_buf,
         }
       } else {
         if (!DecodeString(code))
-          return GifDecoder::Status::kError;
+          return Status::kError;
       }
 
       code_old_ = code;
       uint32_t extracted_size = ExtractData(dest_buf, *dest_size - i);
       if (decompressed_next_ != 0)
-        return GifDecoder::Status::kInsufficientDestSize;
+        return Status::kInsufficientDestSize;
 
       dest_buf += extracted_size;
       i += extracted_size;
@@ -125,10 +125,10 @@ GifDecoder::Status CFX_LZWDecompressor::Decode(const uint8_t* src_buf,
   }
 
   if (avail_in_ != 0)
-    return GifDecoder::Status::kError;
+    return Status::kError;
 
   *dest_size = i;
-  return GifDecoder::Status::kUnfinished;
+  return Status::kUnfinished;
 }
 
 void CFX_LZWDecompressor::ClearTable() {

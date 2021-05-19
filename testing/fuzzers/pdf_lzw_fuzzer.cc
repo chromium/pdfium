@@ -27,7 +27,7 @@ void LZWFuzz(const uint8_t* src_buf,
     // This cast should be safe since the caller is checking for overflow on
     // the initial data.
     uint32_t dest_size = static_cast<uint32_t>(dest_buf.size());
-    if (GifDecoder::Status::kInsufficientDestSize !=
+    if (CFX_LZWDecompressor::Status::kInsufficientDestSize !=
         decompressor->Decode(src_buf, src_size, dest_buf.data(), &dest_size)) {
       return;
     }
