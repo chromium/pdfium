@@ -20,7 +20,7 @@ std::unique_ptr<ProgressiveDecoderIface::Context> GifDecoder::StartDecode(
 }
 
 // static
-CFX_GifDecodeStatus GifDecoder::ReadHeader(
+GifDecoder::Status GifDecoder::ReadHeader(
     ProgressiveDecoderIface::Context* pContext,
     int* width,
     int* height,
@@ -28,8 +28,8 @@ CFX_GifDecodeStatus GifDecoder::ReadHeader(
     CFX_GifPalette** pal_pp,
     int* bg_index) {
   auto* context = static_cast<CFX_GifContext*>(pContext);
-  CFX_GifDecodeStatus ret = context->ReadHeader();
-  if (ret != CFX_GifDecodeStatus::Success)
+  Status ret = context->ReadHeader();
+  if (ret != Status::kSuccess)
     return ret;
 
   *width = context->width_;
@@ -38,21 +38,21 @@ CFX_GifDecodeStatus GifDecoder::ReadHeader(
   *pal_pp = context->global_palette_.empty() ? nullptr
                                              : context->global_palette_.data();
   *bg_index = context->bc_index_;
-  return CFX_GifDecodeStatus::Success;
+  return Status::kSuccess;
 }
 
 // static
-std::pair<CFX_GifDecodeStatus, size_t> GifDecoder::LoadFrameInfo(
+std::pair<GifDecoder::Status, size_t> GifDecoder::LoadFrameInfo(
     ProgressiveDecoderIface::Context* pContext) {
   auto* context = static_cast<CFX_GifContext*>(pContext);
-  CFX_GifDecodeStatus ret = context->GetFrame();
-  if (ret != CFX_GifDecodeStatus::Success)
+  Status ret = context->GetFrame();
+  if (ret != Status::kSuccess)
     return {ret, 0};
-  return {CFX_GifDecodeStatus::Success, context->GetFrameNum()};
+  return {Status::kSuccess, context->GetFrameNum()};
 }
 
 // static
-CFX_GifDecodeStatus GifDecoder::LoadFrame(
+GifDecoder::Status GifDecoder::LoadFrame(
     ProgressiveDecoderIface::Context* pContext,
     size_t frame_num) {
   return static_cast<CFX_GifContext*>(pContext)->LoadFrame(frame_num);

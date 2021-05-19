@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/fxcodec/gif/cfx_gif.h"
+#include "core/fxcodec/gif/gif_decoder.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 
 class CFX_LZWDecompressor {
@@ -25,10 +26,10 @@ class CFX_LZWDecompressor {
                                                      uint8_t code_exp);
   ~CFX_LZWDecompressor();
 
-  CFX_GifDecodeStatus Decode(const uint8_t* src_buf,
-                             uint32_t src_size,
-                             uint8_t* dest_buf,
-                             uint32_t* dest_size);
+  GifDecoder::Status Decode(const uint8_t* src_buf,
+                            uint32_t src_size,
+                            uint8_t* dest_buf,
+                            uint32_t* dest_size);
 
   // Used by unittests, should not be called in production code.
   uint32_t ExtractDataForTest(uint8_t* dest_buf, uint32_t dest_size) {

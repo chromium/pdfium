@@ -39,9 +39,9 @@ class CFX_GifContext : public ProgressiveDecoderIface::Context {
                          int32_t trans_index,
                          int32_t disposal_method,
                          bool interlace);
-  CFX_GifDecodeStatus ReadHeader();
-  CFX_GifDecodeStatus GetFrame();
-  CFX_GifDecodeStatus LoadFrame(int32_t frame_num);
+  GifDecoder::Status ReadHeader();
+  GifDecoder::Status GetFrame();
+  GifDecoder::Status LoadFrame(int32_t frame_num);
   void SetInputBuffer(RetainPtr<CFX_CodecMemory> codec_memory);
   uint32_t GetAvailInput() const;
   size_t GetFrameNum() const { return images_.size(); }
@@ -64,15 +64,15 @@ class CFX_GifContext : public ProgressiveDecoderIface::Context {
 
  protected:
   bool ReadAllOrNone(uint8_t* dest, uint32_t size);
-  CFX_GifDecodeStatus ReadGifSignature();
-  CFX_GifDecodeStatus ReadLogicalScreenDescriptor();
+  GifDecoder::Status ReadGifSignature();
+  GifDecoder::Status ReadLogicalScreenDescriptor();
 
   RetainPtr<CFX_CodecMemory> input_buffer_;
 
  private:
   void SaveDecodingStatus(int32_t status);
-  CFX_GifDecodeStatus DecodeExtension();
-  CFX_GifDecodeStatus DecodeImageInfo();
+  GifDecoder::Status DecodeExtension();
+  GifDecoder::Status DecodeImageInfo();
   void DecodingFailureAtTailCleanup(CFX_GifImage* gif_image);
   bool ScanForTerminalMarker();
   uint8_t GetPaletteExp(CFX_GifImage* gif_image) const;

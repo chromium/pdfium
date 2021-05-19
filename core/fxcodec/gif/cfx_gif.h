@@ -12,8 +12,6 @@
 
 #include "core/fxcrt/fx_memory_wrappers.h"
 
-class CFX_GifContext;
-
 extern const char kGifSignature87[];
 extern const char kGifSignature89[];
 
@@ -110,13 +108,6 @@ struct CFX_GifPalette {
   uint8_t b;
 };
 #pragma pack()
-
-enum class CFX_GifDecodeStatus {
-  Error,
-  Success,
-  Unfinished,
-  InsufficientDestSize,  // Only used internally by CGifLZWDecoder::Decode()
-};
 
 struct CFX_GifImage {
   CFX_GifImage();

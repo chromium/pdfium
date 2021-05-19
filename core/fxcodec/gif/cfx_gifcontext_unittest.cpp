@@ -88,7 +88,7 @@ TEST(CFX_GifContext, ReadGifSignature) {
   {
     uint8_t data[1];
     context.SetTestInputBuffer({data, 0});
-    EXPECT_EQ(CFX_GifDecodeStatus::Unfinished, context.ReadGifSignature());
+    EXPECT_EQ(GifDecoder::Status::kUnfinished, context.ReadGifSignature());
     EXPECT_EQ(0u, context.InputBuffer()->GetPosition());
     context.SetTestInputBuffer({});
   }
@@ -96,14 +96,14 @@ TEST(CFX_GifContext, ReadGifSignature) {
   {
     uint8_t data[] = {'G', 'I', 'F'};
     context.SetTestInputBuffer(data);
-    EXPECT_EQ(CFX_GifDecodeStatus::Unfinished, context.ReadGifSignature());
+    EXPECT_EQ(GifDecoder::Status::kUnfinished, context.ReadGifSignature());
     EXPECT_EQ(0u, context.InputBuffer()->GetPosition());
     context.SetTestInputBuffer({});
   }
   {
     uint8_t data[] = {'N', 'O', 'T', 'G', 'I', 'F'};
     context.SetTestInputBuffer(data);
-    EXPECT_EQ(CFX_GifDecodeStatus::Error, context.ReadGifSignature());
+    EXPECT_EQ(GifDecoder::Status::kError, context.ReadGifSignature());
     EXPECT_EQ(6u, context.InputBuffer()->GetPosition());
     context.SetTestInputBuffer({});
   }
@@ -111,7 +111,7 @@ TEST(CFX_GifContext, ReadGifSignature) {
   {
     uint8_t data[] = {'G', 'I', 'F', '8', '0', 'a'};
     context.SetTestInputBuffer(data);
-    EXPECT_EQ(CFX_GifDecodeStatus::Error, context.ReadGifSignature());
+    EXPECT_EQ(GifDecoder::Status::kError, context.ReadGifSignature());
     EXPECT_EQ(6u, context.InputBuffer()->GetPosition());
     context.SetTestInputBuffer({});
   }
@@ -119,7 +119,7 @@ TEST(CFX_GifContext, ReadGifSignature) {
   {
     uint8_t data[] = {'G', 'I', 'F', '9', '2', 'a'};
     context.SetTestInputBuffer(data);
-    EXPECT_EQ(CFX_GifDecodeStatus::Error, context.ReadGifSignature());
+    EXPECT_EQ(GifDecoder::Status::kError, context.ReadGifSignature());
     EXPECT_EQ(6u, context.InputBuffer()->GetPosition());
     context.SetTestInputBuffer({});
   }
@@ -127,7 +127,7 @@ TEST(CFX_GifContext, ReadGifSignature) {
   {
     uint8_t data[] = {'G', 'I', 'F', '8', '7', 'a'};
     context.SetTestInputBuffer(data);
-    EXPECT_EQ(CFX_GifDecodeStatus::Success, context.ReadGifSignature());
+    EXPECT_EQ(GifDecoder::Status::kSuccess, context.ReadGifSignature());
     EXPECT_EQ(6u, context.InputBuffer()->GetPosition());
     context.SetTestInputBuffer({});
   }
@@ -135,7 +135,7 @@ TEST(CFX_GifContext, ReadGifSignature) {
   {
     uint8_t data[] = {'G', 'I', 'F', '8', '9', 'a'};
     context.SetTestInputBuffer(data);
-    EXPECT_EQ(CFX_GifDecodeStatus::Success, context.ReadGifSignature());
+    EXPECT_EQ(GifDecoder::Status::kSuccess, context.ReadGifSignature());
     EXPECT_EQ(6u, context.InputBuffer()->GetPosition());
     context.SetTestInputBuffer({});
   }
@@ -146,7 +146,7 @@ TEST(CFX_GifContext, ReadLocalScreenDescriptor) {
   {
     uint8_t data[1];
     context.SetTestInputBuffer({data, 0});
-    EXPECT_EQ(CFX_GifDecodeStatus::Unfinished,
+    EXPECT_EQ(GifDecoder::Status::kUnfinished,
               context.ReadLogicalScreenDescriptor());
     context.SetTestInputBuffer({});
   }
@@ -156,7 +156,7 @@ TEST(CFX_GifContext, ReadLocalScreenDescriptor) {
     memset(&lsd, 0, sizeof(CFX_GifLocalScreenDescriptor));
     context.SetTestInputBuffer(lsd);
 
-    EXPECT_EQ(CFX_GifDecodeStatus::Success,
+    EXPECT_EQ(GifDecoder::Status::kSuccess,
               context.ReadLogicalScreenDescriptor());
 
     EXPECT_EQ(sizeof(CFX_GifLocalScreenDescriptor),
@@ -172,7 +172,7 @@ TEST(CFX_GifContext, ReadLocalScreenDescriptor) {
                                                          0x00, 0x01, 0x02};
     context.SetTestInputBuffer(lsd);
 
-    EXPECT_EQ(CFX_GifDecodeStatus::Success,
+    EXPECT_EQ(GifDecoder::Status::kSuccess,
               context.ReadLogicalScreenDescriptor());
 
     EXPECT_EQ(sizeof(CFX_GifLocalScreenDescriptor),
@@ -188,7 +188,7 @@ TEST(CFX_GifContext, ReadLocalScreenDescriptor) {
                                                          0x80, 0x01, 0x02};
     context.SetTestInputBuffer(lsd);
 
-    EXPECT_EQ(CFX_GifDecodeStatus::Unfinished,
+    EXPECT_EQ(GifDecoder::Status::kUnfinished,
               context.ReadLogicalScreenDescriptor());
 
     EXPECT_EQ(0u, context.InputBuffer()->GetPosition());
@@ -204,7 +204,7 @@ TEST(CFX_GifContext, ReadLocalScreenDescriptor) {
     context.SetTestInputBuffer(
         {reinterpret_cast<uint8_t*>(&data), sizeof(data)});
 
-    EXPECT_EQ(CFX_GifDecodeStatus::Success,
+    EXPECT_EQ(GifDecoder::Status::kSuccess,
               context.ReadLogicalScreenDescriptor());
 
     EXPECT_EQ(sizeof(data), context.InputBuffer()->GetPosition());
@@ -232,7 +232,7 @@ TEST(CFX_GifContext, ReadHeader) {
     context.SetTestInputBuffer(
         {reinterpret_cast<uint8_t*>(&data), sizeof(data)});
 
-    EXPECT_EQ(CFX_GifDecodeStatus::Error, context.ReadHeader());
+    EXPECT_EQ(GifDecoder::Status::kError, context.ReadHeader());
     EXPECT_EQ(sizeof(data.signature), context.InputBuffer()->GetPosition());
     context.SetTestInputBuffer({});
   }
@@ -242,7 +242,7 @@ TEST(CFX_GifContext, ReadHeader) {
     context.SetTestInputBuffer(
         {reinterpret_cast<uint8_t*>(&signature), sizeof(signature)});
 
-    EXPECT_EQ(CFX_GifDecodeStatus::Unfinished, context.ReadHeader());
+    EXPECT_EQ(GifDecoder::Status::kUnfinished, context.ReadHeader());
     EXPECT_EQ(sizeof(signature), context.InputBuffer()->GetPosition());
     context.SetTestInputBuffer({});
   }
@@ -256,7 +256,7 @@ TEST(CFX_GifContext, ReadHeader) {
     context.SetTestInputBuffer(
         {reinterpret_cast<uint8_t*>(&data), sizeof(data)});
 
-    EXPECT_EQ(CFX_GifDecodeStatus::Success, context.ReadHeader());
+    EXPECT_EQ(GifDecoder::Status::kSuccess, context.ReadHeader());
     EXPECT_EQ(sizeof(data), context.InputBuffer()->GetPosition());
     EXPECT_EQ(0x000A, context.width_);
     EXPECT_EQ(0x0F00, context.height_);
@@ -273,7 +273,7 @@ TEST(CFX_GifContext, ReadHeader) {
     context.SetTestInputBuffer(
         {reinterpret_cast<uint8_t*>(&data), sizeof(data)});
 
-    EXPECT_EQ(CFX_GifDecodeStatus::Unfinished, context.ReadHeader());
+    EXPECT_EQ(GifDecoder::Status::kUnfinished, context.ReadHeader());
     EXPECT_EQ(sizeof(data.signature), context.InputBuffer()->GetPosition());
     context.SetTestInputBuffer({});
   }
@@ -289,7 +289,7 @@ TEST(CFX_GifContext, ReadHeader) {
     context.SetTestInputBuffer(
         {reinterpret_cast<uint8_t*>(&data), sizeof(data)});
 
-    EXPECT_EQ(CFX_GifDecodeStatus::Success, context.ReadHeader());
+    EXPECT_EQ(GifDecoder::Status::kSuccess, context.ReadHeader());
     EXPECT_EQ(sizeof(data), context.InputBuffer()->GetPosition());
     EXPECT_EQ(0x000A, context.width_);
     EXPECT_EQ(0x0F00, context.height_);

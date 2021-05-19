@@ -24,6 +24,13 @@ class CFX_DIBAttribute;
 
 class GifDecoder {
  public:
+  enum class Status {
+    kError,
+    kSuccess,
+    kUnfinished,
+    kInsufficientDestSize,  // Only used internally by CGifLZWDecoder::Decode()
+  };
+
   class Delegate {
    public:
     virtual void GifRecordCurrentPosition(uint32_t& cur_pos) = 0;
@@ -41,18 +48,16 @@ class GifDecoder {
 
   static std::unique_ptr<ProgressiveDecoderIface::Context> StartDecode(
       Delegate* pDelegate);
-  static CFX_GifDecodeStatus ReadHeader(
-      ProgressiveDecoderIface::Context* context,
-      int* width,
-      int* height,
-      int* pal_num,
-      CFX_GifPalette** pal_pp,
-      int* bg_index);
-  static std::pair<CFX_GifDecodeStatus, size_t> LoadFrameInfo(
+  static Status ReadHeader(ProgressiveDecoderIface::Context* context,
+                           int* width,
+                           int* height,
+                           int* pal_num,
+                           CFX_GifPalette** pal_pp,
+                           int* bg_index);
+  static std::pair<Status, size_t> LoadFrameInfo(
       ProgressiveDecoderIface::Context* context);
-  static CFX_GifDecodeStatus LoadFrame(
-      ProgressiveDecoderIface::Context* context,
-      size_t frame_num);
+  static Status LoadFrame(ProgressiveDecoderIface::Context* context,
+                          size_t frame_num);
   static FX_FILESIZE GetAvailInput(ProgressiveDecoderIface::Context* context);
   static bool Input(ProgressiveDecoderIface::Context* context,
                     RetainPtr<CFX_CodecMemory> codec_memory,
