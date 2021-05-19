@@ -12,7 +12,7 @@ CFGAS_GEShading::CFGAS_GEShading(const CFX_PointF& beginPoint,
                                  bool isExtendedEnd,
                                  const FX_ARGB beginArgb,
                                  const FX_ARGB endArgb)
-    : m_type(FX_SHADING_Axial),
+    : m_type(Type::kAxial),
       m_beginPoint(beginPoint),
       m_endPoint(endPoint),
       m_beginRadius(0),
@@ -32,7 +32,7 @@ CFGAS_GEShading::CFGAS_GEShading(const CFX_PointF& beginPoint,
                                  bool isExtendedEnd,
                                  const FX_ARGB beginArgb,
                                  const FX_ARGB endArgb)
-    : m_type(FX_SHADING_Radial),
+    : m_type(Type::kRadial),
       m_beginPoint(beginPoint),
       m_endPoint(endPoint),
       m_beginRadius(beginRadius),
@@ -59,13 +59,13 @@ void CFGAS_GEShading::InitArgbArray() {
   int32_t b2;
   std::tie(a2, r2, g2, b2) = ArgbDecode(m_endArgb);
 
-  float f = static_cast<float>(FX_SHADING_Steps - 1);
+  float f = static_cast<float>(kSteps - 1);
   float aScale = 1.0 * (a2 - a1) / f;
   float rScale = 1.0 * (r2 - r1) / f;
   float gScale = 1.0 * (g2 - g1) / f;
   float bScale = 1.0 * (b2 - b1) / f;
 
-  for (int32_t i = 0; i < FX_SHADING_Steps; i++) {
+  for (size_t i = 0; i < kSteps; i++) {
     int32_t a3 = static_cast<int32_t>(i * aScale);
     int32_t r3 = static_cast<int32_t>(i * rScale);
     int32_t g3 = static_cast<int32_t>(i * gScale);

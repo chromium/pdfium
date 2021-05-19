@@ -11,10 +11,6 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/dib/fx_dib.h"
 
-#define FX_SHADING_Steps 256
-
-enum CFGAS_GEShading_Type { FX_SHADING_Axial = 1, FX_SHADING_Radial };
-
 class CFGAS_GEShading final {
  public:
   // Axial shading.
@@ -40,9 +36,12 @@ class CFGAS_GEShading final {
  private:
   friend class CFGAS_GEGraphics;
 
+  enum class Type { kAxial = 1, kRadial };
+  static constexpr size_t kSteps = 256;
+
   void InitArgbArray();
 
-  const CFGAS_GEShading_Type m_type;
+  const Type m_type;
   const CFX_PointF m_beginPoint;
   const CFX_PointF m_endPoint;
   const float m_beginRadius;
@@ -51,7 +50,7 @@ class CFGAS_GEShading final {
   const bool m_isExtendedEnd;
   const FX_ARGB m_beginArgb;
   const FX_ARGB m_endArgb;
-  FX_ARGB m_argbArray[FX_SHADING_Steps];
+  FX_ARGB m_argbArray[kSteps];
 };
 
 #endif  // XFA_FGAS_GRAPHICS_CFGAS_GESHADING_H_

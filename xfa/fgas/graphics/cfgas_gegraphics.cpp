@@ -287,7 +287,7 @@ void CFGAS_GEGraphics::FillPathWithShading(
   int32_t pitch = bmp->GetPitch();
   bool result = false;
   switch (m_info.fillColor.GetShading()->m_type) {
-    case FX_SHADING_Axial: {
+    case CFGAS_GEShading::Type::kAxial: {
       float x_span = end_x - start_x;
       float y_span = end_y - start_y;
       float axis_len_square = (x_span * x_span) + (y_span * y_span);
@@ -311,14 +311,15 @@ void CFGAS_GEGraphics::FillPathWithShading(
               scale = 1.0f;
             }
           }
-          int32_t index = static_cast<int32_t>(scale * (FX_SHADING_Steps - 1));
+          int32_t index =
+              static_cast<int32_t>(scale * (CFGAS_GEShading::kSteps - 1));
           dib_buf[column] = m_info.fillColor.GetShading()->m_argbArray[index];
         }
       }
       result = true;
       break;
     }
-    case FX_SHADING_Radial: {
+    case CFGAS_GEShading::Type::kRadial: {
       float start_r = m_info.fillColor.GetShading()->m_beginRadius;
       float end_r = m_info.fillColor.GetShading()->m_endRadius;
       float a = ((start_x - end_x) * (start_x - end_x)) +
@@ -371,7 +372,7 @@ void CFGAS_GEGraphics::FillPathWithShading(
               continue;
             s = 1.0f;
           }
-          int index = static_cast<int32_t>(s * (FX_SHADING_Steps - 1));
+          int index = static_cast<int32_t>(s * (CFGAS_GEShading::kSteps - 1));
           dib_buf[column] = m_info.fillColor.GetShading()->m_argbArray[index];
         }
       }
