@@ -71,7 +71,8 @@ class CXFA_FFDoc : public cppgc::GarbageCollected<CXFA_FFDoc> {
                    const CFX_RectF& rtAnchor,
                    CFX_RectF* pPopupRect) const;
   bool PopupMenu(CXFA_FFWidget* hWidget, const CFX_PointF& ptPopup);
-  void PageViewEvent(CXFA_FFPageView* pPageView, uint32_t dwFlags);
+  void OnPageViewEvent(CXFA_FFPageView* pPageView,
+                       IXFA_DocEnvironment::PageViewEvent eEvent);
   void WidgetPostAdd(CXFA_FFWidget* hWidget);
   void WidgetPreRemove(CXFA_FFWidget* hWidget);
   int32_t CountPages() const;

@@ -68,10 +68,6 @@ enum class FormType {
 #define XFA_PRINTOPT_ReverseOrder 0x00000010
 #define XFA_PRINTOPT_PrintAnnot 0x00000020
 
-#define XFA_PAGEVIEWEVENT_PostAdded 1
-#define XFA_PAGEVIEWEVENT_PostRemoved 3
-#define XFA_PAGEVIEWEVENT_StopLayout 4
-
 enum class XFA_EventError {
   kError = -1,
   kNotExist = 0,
@@ -201,6 +197,12 @@ class IXFA_AppProvider {
 // Probably should be called CFXA_FFDoc::CallbackIface in cxfa_ffdoc.h
 class IXFA_DocEnvironment {
  public:
+  enum class PageViewEvent {
+    kPostAdded = 1,
+    kPostRemoved = 3,
+    kStopLayout = 4,
+  };
+
   virtual ~IXFA_DocEnvironment() = default;
 
   virtual void SetChangeMark(CXFA_FFDoc* hDoc) = 0;
@@ -218,8 +220,8 @@ class IXFA_DocEnvironment {
                            CFX_RectF* pPopupRect) = 0;
   virtual bool PopupMenu(CXFA_FFWidget* hWidget, const CFX_PointF& ptPopup) = 0;
 
-  // Specify dwFlags XFA_PAGEVIEWEVENT_Added, XFA_PAGEVIEWEVENT_Removing
-  virtual void PageViewEvent(CXFA_FFPageView* pPageView, uint32_t dwFlags) = 0;
+  virtual void OnPageViewEvent(CXFA_FFPageView* pPageView,
+                               PageViewEvent eEvent) = 0;
 
   virtual void WidgetPostAdd(CXFA_FFWidget* hWidget) = 0;
   virtual void WidgetPreRemove(CXFA_FFWidget* hWidget) = 0;

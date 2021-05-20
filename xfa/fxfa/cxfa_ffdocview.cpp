@@ -454,10 +454,11 @@ CXFA_FFWidget* CXFA_FFDocView::GetWidgetByName(const WideString& wsName,
   return nullptr;
 }
 
-void CXFA_FFDocView::OnPageEvent(CXFA_ViewLayoutItem* pSender,
-                                 uint32_t dwEvent) {
+void CXFA_FFDocView::OnPageViewEvent(
+    CXFA_ViewLayoutItem* pSender,
+    IXFA_DocEnvironment::PageViewEvent eEvent) {
   CXFA_FFPageView* pFFPageView = pSender ? pSender->GetPageView() : nullptr;
-  m_pDoc->PageViewEvent(pFFPageView, dwEvent);
+  m_pDoc->OnPageViewEvent(pFFPageView, eEvent);
 }
 
 void CXFA_FFDocView::InvalidateRect(CXFA_FFPageView* pPageView,
@@ -474,12 +475,14 @@ bool CXFA_FFDocView::RunLayout() {
     pProcessor->DoLayout();
     UnlockUpdate();
     m_bInLayoutStatus = false;
-    m_pDoc->PageViewEvent(nullptr, XFA_PAGEVIEWEVENT_StopLayout);
+    m_pDoc->OnPageViewEvent(nullptr,
+                            IXFA_DocEnvironment::PageViewEvent::kStopLayout);
     return true;
   }
 
   m_bInLayoutStatus = false;
-  m_pDoc->PageViewEvent(nullptr, XFA_PAGEVIEWEVENT_StopLayout);
+  m_pDoc->OnPageViewEvent(nullptr,
+                          IXFA_DocEnvironment::PageViewEvent::kStopLayout);
   UnlockUpdate();
   return false;
 }

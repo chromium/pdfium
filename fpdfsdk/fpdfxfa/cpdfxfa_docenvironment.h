@@ -33,7 +33,8 @@ class CPDFXFA_DocEnvironment final : public IXFA_DocEnvironment {
                    const CFX_RectF& rtAnchor,
                    CFX_RectF* pPopupRect) override;
   bool PopupMenu(CXFA_FFWidget* hWidget, const CFX_PointF& ptPopup) override;
-  void PageViewEvent(CXFA_FFPageView* pPageView, uint32_t dwFlags) override;
+  void OnPageViewEvent(CXFA_FFPageView* pPageView,
+                       PageViewEvent eEvent) override;
   void WidgetPostAdd(CXFA_FFWidget* hWidget) override;
   void WidgetPreRemove(CXFA_FFWidget* hWidget) override;
   int32_t CountPages(const CXFA_FFDoc* hDoc) const override;

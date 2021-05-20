@@ -51,11 +51,11 @@ void CXFA_FFNotify::Trace(cppgc::Visitor* visitor) const {
   visitor->Trace(m_pDoc);
 }
 
-void CXFA_FFNotify::OnPageEvent(CXFA_ViewLayoutItem* pSender,
-                                uint32_t dwEvent) {
+void CXFA_FFNotify::OnPageViewEvent(CXFA_ViewLayoutItem* pSender,
+                                    IXFA_DocEnvironment::PageViewEvent eEvent) {
   CXFA_FFDocView* pDocView = m_pDoc->GetDocView(pSender->GetLayout());
   if (pDocView)
-    pDocView->OnPageEvent(pSender, dwEvent);
+    pDocView->OnPageViewEvent(pSender, eEvent);
 }
 
 void CXFA_FFNotify::OnWidgetListItemAdded(CXFA_Node* pSender,

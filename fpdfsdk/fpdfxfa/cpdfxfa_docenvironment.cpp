@@ -44,6 +44,17 @@
 #define FXFA_PDF 0x10000000
 #define FXFA_XFA_ALL 0x01111111
 
+// Although there isn't direct casting between these types at present,
+// keep the internal and exernal types in sync.
+static_assert(
+    FXFA_PAGEVIEWEVENT_POSTADDED ==
+        static_cast<int>(IXFA_DocEnvironment::PageViewEvent::kPostAdded),
+    "kPostAdded mismatch");
+static_assert(
+    FXFA_PAGEVIEWEVENT_POSTREMOVED ==
+        static_cast<int>(IXFA_DocEnvironment::PageViewEvent::kPostRemoved),
+    "kPostRemoved mismatch");
+
 CPDFXFA_DocEnvironment::CPDFXFA_DocEnvironment(CPDFXFA_Context* pContext)
     : m_pContext(pContext) {
   DCHECK(m_pContext);
@@ -270,17 +281,17 @@ bool CPDFXFA_DocEnvironment::PopupMenu(CXFA_FFWidget* hWidget,
   return pFormFillEnv->PopupMenu(pPage.Get(), menuFlag, ptPopup);
 }
 
-void CPDFXFA_DocEnvironment::PageViewEvent(CXFA_FFPageView* pPageView,
-                                           uint32_t dwFlags) {
+void CPDFXFA_DocEnvironment::OnPageViewEvent(CXFA_FFPageView* pPageView,
+                                             PageViewEvent eEvent) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pContext->GetFormFillEnv();
   if (!pFormFillEnv)
     return;
 
   if (m_pContext->GetLoadStatus() == FXFA_LOADSTATUS_LOADING ||
       m_pContext->GetLoadStatus() == FXFA_LOADSTATUS_CLOSING ||
-      XFA_PAGEVIEWEVENT_StopLayout != dwFlags)
+      eEvent != IXFA_DocEnvironment::PageViewEvent::kStopLayout) {
     return;
-
+  }
   int nNewCount = m_pContext->GetPageCount();
   if (nNewCount == m_pContext->GetOriginalPageCount())
     return;

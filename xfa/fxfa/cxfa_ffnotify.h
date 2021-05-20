@@ -28,7 +28,8 @@ class CXFA_FFNotify : public cppgc::GarbageCollected<CXFA_FFNotify> {
 
   void Trace(cppgc::Visitor* visitor) const;
 
-  void OnPageEvent(CXFA_ViewLayoutItem* pSender, uint32_t dwEvent);
+  void OnPageViewEvent(CXFA_ViewLayoutItem* pSender,
+                       IXFA_DocEnvironment::PageViewEvent eEvent);
 
   void OnWidgetListItemAdded(CXFA_Node* pSender,
                              const WideString& wsLabel,

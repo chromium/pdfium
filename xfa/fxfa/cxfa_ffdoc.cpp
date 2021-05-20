@@ -137,8 +137,9 @@ bool CXFA_FFDoc::PopupMenu(CXFA_FFWidget* hWidget, const CFX_PointF& ptPopup) {
   return m_pDocEnvironment->PopupMenu(hWidget, ptPopup);
 }
 
-void CXFA_FFDoc::PageViewEvent(CXFA_FFPageView* pPageView, uint32_t dwFlags) {
-  m_pDocEnvironment->PageViewEvent(pPageView, dwFlags);
+void CXFA_FFDoc::OnPageViewEvent(CXFA_FFPageView* pPageView,
+                                 IXFA_DocEnvironment::PageViewEvent eEvent) {
+  m_pDocEnvironment->OnPageViewEvent(pPageView, eEvent);
 }
 
 void CXFA_FFDoc::WidgetPostAdd(CXFA_FFWidget* hWidget) {
