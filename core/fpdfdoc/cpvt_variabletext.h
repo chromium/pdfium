@@ -25,8 +25,6 @@ class CPVT_Word;
 class IPVT_FontMap;
 struct CPVT_WordInfo;
 
-#define VARIABLETEXT_HALF 0.5f
-
 class CPVT_VariableText {
  public:
   class Iterator {
