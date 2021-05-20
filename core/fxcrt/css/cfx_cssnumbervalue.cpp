@@ -7,7 +7,7 @@
 #include "core/fxcrt/css/cfx_cssnumbervalue.h"
 
 CFX_CSSNumberValue::CFX_CSSNumberValue(Unit unit, float value)
-    : CFX_CSSValue(CFX_CSSPrimitiveType::Number), unit_(unit), value_(value) {
+    : CFX_CSSValue(PrimitiveType::kNumber), unit_(unit), value_(value) {
   if (unit_ == Unit::kNumber && fabs(value_) < 0.001f)
     value_ = 0.0f;
 }

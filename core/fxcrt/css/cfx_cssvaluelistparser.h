@@ -7,14 +7,14 @@
 #ifndef CORE_FXCRT_CSS_CFX_CSSVALUELISTPARSER_H_
 #define CORE_FXCRT_CSS_CFX_CSSVALUELISTPARSER_H_
 
-#include "core/fxcrt/css/cfx_css.h"
+#include "core/fxcrt/css/cfx_cssvalue.h"
 #include "core/fxcrt/fx_system.h"
 
 class CFX_CSSValueListParser {
  public:
   CFX_CSSValueListParser(const wchar_t* psz, int32_t iLen, wchar_t separator);
 
-  bool NextValue(CFX_CSSPrimitiveType* eType,
+  bool NextValue(CFX_CSSValue::PrimitiveType* eType,
                  const wchar_t** pStart,
                  int32_t* iLength);
   void UseCommaSeparator() { m_Separator = ','; }

@@ -62,7 +62,7 @@ class CFX_CSSStyleSheetTest : public testing::Test {
 
     bool important;
     RetainPtr<CFX_CSSValue> v = decl_->GetProperty(prop, &important);
-    EXPECT_EQ(v->GetType(), CFX_CSSPrimitiveType::Number);
+    EXPECT_EQ(v->GetType(), CFX_CSSValue::PrimitiveType::kNumber);
     EXPECT_EQ(v.As<CFX_CSSNumberValue>()->unit(), unit);
     EXPECT_EQ(v.As<CFX_CSSNumberValue>()->value(), val);
   }
@@ -72,7 +72,7 @@ class CFX_CSSStyleSheetTest : public testing::Test {
 
     bool important;
     RetainPtr<CFX_CSSValue> v = decl_->GetProperty(prop, &important);
-    EXPECT_EQ(v->GetType(), CFX_CSSPrimitiveType::Enum);
+    EXPECT_EQ(v->GetType(), CFX_CSSValue::PrimitiveType::kEnum);
     EXPECT_EQ(v.As<CFX_CSSEnumValue>()->Value(), val);
   }
 
@@ -89,7 +89,7 @@ class CFX_CSSStyleSheetTest : public testing::Test {
 
     for (size_t i = 0; i < expected_values.size(); ++i) {
       const auto& val = values[i];
-      EXPECT_EQ(val->GetType(), CFX_CSSPrimitiveType::Enum);
+      EXPECT_EQ(val->GetType(), CFX_CSSValue::PrimitiveType::kEnum);
       EXPECT_EQ(val.As<CFX_CSSEnumValue>()->Value(), expected_values[i]);
     }
   }

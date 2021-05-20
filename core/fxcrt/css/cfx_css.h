@@ -20,16 +20,6 @@ enum CFX_CSSVALUETYPE {
   CFX_CSSVALUETYPE_MaybeColor = 1 << 8
 };
 
-enum class CFX_CSSPrimitiveType : uint8_t {
-  Unknown = 0,
-  Number,
-  String,
-  RGB,
-  Enum,
-  Function,
-  List,
-};
-
 // Any entries added/removed here, will need to be mirrored in
 // propertyValueTable, in core/fxcrt/css/cfx_cssdata.cpp.
 enum class CFX_CSSPropertyValue : uint8_t {

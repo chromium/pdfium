@@ -111,12 +111,12 @@ bool CFX_CSSDeclaration::ParseCSSColor(const wchar_t* pszValue,
 
     uint8_t rgb[3] = {0};
     float fValue;
-    CFX_CSSPrimitiveType eType;
+    CFX_CSSValue::PrimitiveType eType;
     CFX_CSSValueListParser list(pszValue + 4, iValueLen - 5, ',');
     for (int32_t i = 0; i < 3; ++i) {
       if (!list.NextValue(&eType, &pszValue, &iValueLen))
         return false;
-      if (eType != CFX_CSSPrimitiveType::Number)
+      if (eType != CFX_CSSValue::PrimitiveType::kNumber)
         return false;
       CFX_CSSNumberValue::Unit eNumType;
       if (!ParseCSSNumber(pszValue, iValueLen, &fValue, &eNumType))
@@ -333,11 +333,11 @@ void CFX_CSSDeclaration::ParseValueListProperty(
   CFX_CSSValueListParser parser(pszValue, iValueLen, separator);
 
   const uint32_t dwType = pProperty->dwType;
-  CFX_CSSPrimitiveType eType;
+  CFX_CSSValue::PrimitiveType eType;
   std::vector<RetainPtr<CFX_CSSValue>> list;
   while (parser.NextValue(&eType, &pszValue, &iValueLen)) {
     switch (eType) {
-      case CFX_CSSPrimitiveType::Number:
+      case CFX_CSSValue::PrimitiveType::kNumber:
         if (dwType & CFX_CSSVALUETYPE_MaybeNumber) {
           float fValue;
           CFX_CSSNumberValue::Unit eNumType;
@@ -346,7 +346,7 @@ void CFX_CSSDeclaration::ParseValueListProperty(
                 pdfium::MakeRetain<CFX_CSSNumberValue>(eNumType, fValue));
         }
         break;
-      case CFX_CSSPrimitiveType::String:
+      case CFX_CSSValue::PrimitiveType::kString:
         if (dwType & CFX_CSSVALUETYPE_MaybeColor) {
           FX_ARGB dwColor;
           if (ParseCSSColor(pszValue, iValueLen, &dwColor)) {
@@ -368,7 +368,7 @@ void CFX_CSSDeclaration::ParseValueListProperty(
               WideString(pszValue, iValueLen)));
         }
         break;
-      case CFX_CSSPrimitiveType::RGB:
+      case CFX_CSSValue::PrimitiveType::kRGB:
         if (dwType & CFX_CSSVALUETYPE_MaybeColor) {
           FX_ARGB dwColor;
           if (ParseCSSColor(pszValue, iValueLen, &dwColor)) {
@@ -453,11 +453,11 @@ bool CFX_CSSDeclaration::ParseBorderProperty(
     RetainPtr<CFX_CSSValue>& pWidth) const {
   pWidth.Reset(nullptr);
 
+  CFX_CSSValue::PrimitiveType eType;
   CFX_CSSValueListParser parser(pszValue, iValueLen, ' ');
-  CFX_CSSPrimitiveType eType;
   while (parser.NextValue(&eType, &pszValue, &iValueLen)) {
     switch (eType) {
-      case CFX_CSSPrimitiveType::Number: {
+      case CFX_CSSValue::PrimitiveType::kNumber: {
         if (pWidth)
           continue;
 
@@ -467,7 +467,7 @@ bool CFX_CSSDeclaration::ParseBorderProperty(
           pWidth = pdfium::MakeRetain<CFX_CSSNumberValue>(eNumType, fValue);
         break;
       }
-      case CFX_CSSPrimitiveType::String: {
+      case CFX_CSSValue::PrimitiveType::kString: {
         const CFX_CSSData::Color* pColorItem =
             CFX_CSSData::GetColorByName(WideStringView(pszValue, iValueLen));
         if (pColorItem)
@@ -512,10 +512,10 @@ void CFX_CSSDeclaration::ParseFontProperty(const wchar_t* pszValue,
   RetainPtr<CFX_CSSValue> pFontSize;
   RetainPtr<CFX_CSSValue> pLineHeight;
   std::vector<RetainPtr<CFX_CSSValue>> family_list;
-  CFX_CSSPrimitiveType eType;
+  CFX_CSSValue::PrimitiveType eType;
   while (parser.NextValue(&eType, &pszValue, &iValueLen)) {
     switch (eType) {
-      case CFX_CSSPrimitiveType::String: {
+      case CFX_CSSValue::PrimitiveType::kString: {
         const CFX_CSSData::PropertyValue* pValue =
             CFX_CSSData::GetPropertyValueByName(
                 WideStringView(pszValue, iValueLen));
@@ -572,12 +572,12 @@ void CFX_CSSDeclaration::ParseFontProperty(const wchar_t* pszValue,
         parser.UseCommaSeparator();
         break;
       }
-      case CFX_CSSPrimitiveType::Number: {
+      case CFX_CSSValue::PrimitiveType::kNumber: {
         float fValue;
         CFX_CSSNumberValue::Unit eNumType;
         if (!ParseCSSNumber(pszValue, iValueLen, &fValue, &eNumType))
           break;
-        if (eType == CFX_CSSPrimitiveType::Number) {
+        if (eType == CFX_CSSValue::PrimitiveType::kNumber) {
           switch (static_cast<int32_t>(fValue)) {
             case 100:
             case 200:

@@ -7,6 +7,6 @@
 #include "core/fxcrt/css/cfx_cssenumvalue.h"
 
 CFX_CSSEnumValue::CFX_CSSEnumValue(CFX_CSSPropertyValue value)
-    : CFX_CSSValue(CFX_CSSPrimitiveType::Enum), value_(value) {}
+    : CFX_CSSValue(PrimitiveType::kEnum), value_(value) {}
 
 CFX_CSSEnumValue::~CFX_CSSEnumValue() = default;

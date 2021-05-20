@@ -12,6 +12,7 @@
 
 #include "core/fxcrt/css/cfx_css.h"
 #include "core/fxcrt/css/cfx_cssrulecollection.h"
+#include "core/fxcrt/css/cfx_cssvalue.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 
@@ -21,7 +22,6 @@ class CFX_CSSDeclaration;
 class CFX_CSSPropertyHolder;
 class CFX_CSSSelector;
 class CFX_CSSStyleSheet;
-class CFX_CSSValue;
 class CFX_CSSValueList;
 
 class CFX_CSSStyleSelector {
@@ -64,7 +64,7 @@ class CFX_CSSStyleSelector {
                      std::vector<const CFX_CSSCustomProperty*>* custom);
 
   bool SetLengthWithPercent(CFX_CSSLength& width,
-                            CFX_CSSPrimitiveType eType,
+                            CFX_CSSValue::PrimitiveType eType,
                             const RetainPtr<CFX_CSSValue>& pValue,
                             float fFontSize);
   float ToFontSize(CFX_CSSPropertyValue eValue, float fCurFontSize);

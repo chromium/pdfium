@@ -6,4 +6,6 @@
 
 #include "core/fxcrt/css/cfx_cssvalue.h"
 
-CFX_CSSValue::CFX_CSSValue(CFX_CSSPrimitiveType type) : m_value(type) {}
+CFX_CSSValue::CFX_CSSValue(PrimitiveType type) : m_value(type) {}
+
+CFX_CSSValue::~CFX_CSSValue() = default;
