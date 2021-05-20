@@ -8,7 +8,8 @@ Alert: quaddot is MyField..nonesuch
 Alert: dotdot1 is 
 Alert: dotdot2 is MyField.MyPushButton
 Alert: dotdot3 is MyField
-Alert: found 7 sub-fields:
+Alert: found 8 sub-fields:
+Alert: MyField.MyBadPushButton
 Alert: MyField.MyCheckBox
 Alert: MyField.MyFile
 Alert: MyField.MyMultiSelect

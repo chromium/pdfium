@@ -46,6 +46,7 @@ endobj
     10 0 R
     11 0 R
     12 0 R
+    13 0 R
   ]
 >>
 endobj
@@ -68,6 +69,9 @@ endobj
   /Parent 5 0 R
   /T (MyPushButton)
   /Rect [220 221 240 241]
+  /MK <<
+    /TP 4
+  >>
 >>
 endobj
 {{object 8 0}} <<
@@ -130,6 +134,20 @@ endobj
   /T (MyFile)
   /Rect [200 201 220 221]
   /V ("/path/to/file.pdf")
+>>
+endobj
+% Questionable TP value.
+{{object 13 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Btn
+  /Ff 65536
+  /Parent 5 0 R
+  /T (MyBadPushButton)
+  /Rect [400 421 440 441]
+  /MK <<
+    /TP 7
+  >>
 >>
 endobj
 % OpenAction action

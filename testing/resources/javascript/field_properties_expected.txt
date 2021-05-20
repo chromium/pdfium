@@ -84,8 +84,8 @@ Alert: PASS: buttonAlignY = 0
 Alert: PASS: buttonAlignY = 0
 Alert: PASS: buttonFitBounds = false
 Alert: PASS: buttonFitBounds = false
-Alert: PASS: buttonPosition = 0
-Alert: PASS: buttonPosition = 0
+Alert: PASS: buttonPosition = 4
+Alert: PASS: buttonPosition = 4
 Alert: PASS: buttonScaleHow = false
 Alert: PASS: buttonScaleHow = false
 Alert: PASS: buttonScaleWhen = 0
@@ -94,6 +94,8 @@ Alert: PASS: highlight = invert
 Alert: PASS: highlight = invert
 Alert: PASS: type = button
 Alert: PASS: type threw Field.type: Operation not supported.
+Alert: PASS: buttonPosition = 7
+Alert: PASS: buttonPosition = 7
 Alert: PASS: exportValues = N
 Alert: PASS: exportValues threw Field.exportValues: Object no longer exists.
 Alert: PASS: radiosInUnison = false

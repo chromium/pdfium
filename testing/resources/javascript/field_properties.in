@@ -11,6 +11,7 @@ function testProperties() {
     var field = this.getField("MyField");
     var text = this.getField("MyField.MyText");
     var button = this.getField("MyField.MyPushButton");
+    var badbutton = this.getField("MyField.MyBadPushButton");
     var radio = this.getField("MyField.MyRadio");
     var list = this.getField("MyField.MyMultiSelect");
     var check = this.getField("MyField.MyCheckBox");
@@ -23,6 +24,7 @@ function testProperties() {
     testFieldPropertiesCase(field);
     testTextPropertiesCase(text);
     testPushButtonPropertiesCase(button);
+    testBadPushButtonPropertiesCase(badbutton);
     testRadioButtonPropertiesCase(radio);
     testCheckBoxPropertiesCase(check);
     testListBoxPropertiesCase(list);
@@ -94,11 +96,19 @@ function testPushButtonPropertiesCase(field) {
     testRIProperty(field, "buttonAlignX", 0, 50);
     testRIProperty(field, "buttonAlignY", 0, 50);
     testRIProperty(field, "buttonFitBounds", false);
-    testRIProperty(field, "buttonPosition", 0);
+    testRIProperty(field, "buttonPosition", 4);
     testRIProperty(field, "buttonScaleHow", 0);
     testRIProperty(field, "buttonScaleWhen", 0);
     testRIProperty(field, "highlight", "invert");
     testROProperty(field, "type", "button");
+  } catch (e) {
+    app.alert("Unexpected error: " + e);
+  }
+}
+
+function testBadPushButtonPropertiesCase(field) {
+  try {
+    testRIProperty(field, "buttonPosition", 7); // not checked.
   } catch (e) {
     app.alert("Unexpected error: " + e);
   }
