@@ -135,14 +135,14 @@ CJS_Result CJS_Util::printf(CJS_Runtime* pRuntime,
 
     WideString segment;
     switch (ParseDataType(&fmt)) {
-      case UTIL_INT:
+      case DataType::kInt:
         segment = WideString::Format(fmt.c_str(), pRuntime->ToInt32(params[i]));
         break;
-      case UTIL_DOUBLE:
+      case DataType::kDouble:
         segment =
             WideString::Format(fmt.c_str(), pRuntime->ToDouble(params[i]));
         break;
-      case UTIL_STRING:
+      case DataType::kString:
         segment = WideString::Format(fmt.c_str(),
                                      pRuntime->ToWideString(params[i]).c_str());
         break;
@@ -398,10 +398,10 @@ CJS_Result CJS_Util::byteToChar(
 }
 
 // static
-int CJS_Util::ParseDataType(WideString* sFormat) {
+CJS_Util::DataType CJS_Util::ParseDataType(WideString* sFormat) {
   enum State { BEFORE, FLAGS, WIDTH, PRECISION, SPECIFIER, AFTER };
 
-  int result = -1;
+  DataType result = DataType::kInvalid;
   State state = BEFORE;
   size_t precision_digits = 0;
   size_t i = 0;
@@ -422,7 +422,7 @@ int CJS_Util::ParseDataType(WideString* sFormat) {
         break;
       case WIDTH:
         if (c == L'*')
-          return -1;
+          return DataType::kInvalid;
         if (FXSYS_IsDecimalDigit(c)) {
           // Stay in same state.
         } else if (c == L'.') {
@@ -434,7 +434,7 @@ int CJS_Util::ParseDataType(WideString* sFormat) {
         break;
       case PRECISION:
         if (c == L'*')
-          return -1;
+          return DataType::kInvalid;
         if (FXSYS_IsDecimalDigit(c)) {
           // Stay in same state.
           ++precision_digits;
@@ -446,32 +446,32 @@ int CJS_Util::ParseDataType(WideString* sFormat) {
       case SPECIFIER:
         if (c == L'c' || c == L'C' || c == L'd' || c == L'i' || c == L'o' ||
             c == L'u' || c == L'x' || c == L'X') {
-          result = UTIL_INT;
+          result = DataType::kInt;
         } else if (c == L'e' || c == L'E' || c == L'f' || c == L'g' ||
                    c == L'G') {
-          result = UTIL_DOUBLE;
+          result = DataType::kDouble;
         } else if (c == L's' || c == L'S') {
           // Map s to S since we always deal internally with wchar_t strings.
           // TODO(tsepez): Probably 100% borked. %S is not a standard
           // conversion.
           sFormat->SetAt(i, L'S');
-          result = UTIL_STRING;
+          result = DataType::kString;
         } else {
-          return -1;
+          return DataType::kInvalid;
         }
         state = AFTER;
         break;
       case AFTER:
         if (c == L'%')
-          return -1;
+          return DataType::kInvalid;
         // Stay in same state until string exhausted.
         break;
     }
     ++i;
   }
   // See https://crbug.com/740166
-  if (result == UTIL_INT && precision_digits > 2)
-    return -1;
+  if (result == DataType::kInt && precision_digits > 2)
+    return DataType::kInvalid;
 
   return result;
 }

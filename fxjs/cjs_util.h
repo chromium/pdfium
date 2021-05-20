@@ -13,13 +13,15 @@
 #include "fxjs/cjs_object.h"
 #include "fxjs/js_define.h"
 
-// Return values for ParseDataType() below.
-#define UTIL_INT 0
-#define UTIL_DOUBLE 1
-#define UTIL_STRING 2
-
 class CJS_Util final : public CJS_Object {
  public:
+  enum class DataType {
+    kInvalid = -1,
+    kInt = 0,
+    kDouble = 1,
+    kString = 2,
+  };
+
   static uint32_t GetObjDefnID();
   static void DefineJSObjects(CFXJS_Engine* pEngine);
 
@@ -33,7 +35,7 @@ class CJS_Util final : public CJS_Object {
   // byte-by-byte.
   //
   // Exposed for testing.
-  static int ParseDataType(WideString* sFormat);
+  static DataType ParseDataType(WideString* sFormat);
 
   // Exposed for testing.
   static WideString StringPrintx(const WideString& cFormat,
