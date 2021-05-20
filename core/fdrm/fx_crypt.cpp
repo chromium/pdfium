@@ -142,11 +142,11 @@ void CRYPT_ArcFourSetup(CRYPT_rc4_context* context,
                         pdfium::span<const uint8_t> key) {
   context->x = 0;
   context->y = 0;
-  for (int i = 0; i < kRC4ContextPermutationLength; ++i)
+  for (int i = 0; i < CRYPT_rc4_context::kPermutationLength; ++i)
     context->m[i] = i;
 
   int j = 0;
-  for (int i = 0; i < kRC4ContextPermutationLength; ++i) {
+  for (int i = 0; i < CRYPT_rc4_context::kPermutationLength; ++i) {
     size_t size = key.size();
     j = (j + context->m[i] + (size ? key[i % size] : 0)) & 0xFF;
     std::swap(context->m[i], context->m[j]);

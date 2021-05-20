@@ -10,21 +10,24 @@
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/span.h"
 
-constexpr int32_t kRC4ContextPermutationLength = 256;
 struct CRYPT_rc4_context {
+  static constexpr int32_t kPermutationLength = 256;
+
   int32_t x;
   int32_t y;
-  int32_t m[kRC4ContextPermutationLength];
+  int32_t m[kPermutationLength];
 };
 
-#define MAX_NR 14
-#define MAX_NB 8
 struct CRYPT_aes_context {
+  static constexpr int kMaxNb = 8;
+  static constexpr int kMaxNr = 14;
+  static constexpr int kSchedSize = (kMaxNr + 1) * kMaxNb;
+
   int Nb;
   int Nr;
-  unsigned int keysched[(MAX_NR + 1) * MAX_NB];
-  unsigned int invkeysched[(MAX_NR + 1) * MAX_NB];
-  unsigned int iv[MAX_NB];
+  unsigned int keysched[kSchedSize];
+  unsigned int invkeysched[kSchedSize];
+  unsigned int iv[kMaxNb];
 };
 
 struct CRYPT_md5_context {
