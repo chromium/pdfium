@@ -4897,36 +4897,8 @@ WideString CXFA_Node::GetFormatDataValue(const WideString& wsValue) {
     if (!pValueChild)
       return wsValue;
 
-    CXFA_LocaleValue::ValueType iVTType;
-    switch (pValueChild->GetElementType()) {
-      case XFA_Element::Decimal:
-        iVTType = CXFA_LocaleValue::ValueType::kDecimal;
-        break;
-      case XFA_Element::Float:
-        iVTType = CXFA_LocaleValue::ValueType::kFloat;
-        break;
-      case XFA_Element::Date:
-        iVTType = CXFA_LocaleValue::ValueType::kDate;
-        break;
-      case XFA_Element::Time:
-        iVTType = CXFA_LocaleValue::ValueType::kTime;
-        break;
-      case XFA_Element::DateTime:
-        iVTType = CXFA_LocaleValue::ValueType::kDateTime;
-        break;
-      case XFA_Element::Boolean:
-        iVTType = CXFA_LocaleValue::ValueType::kBoolean;
-        break;
-      case XFA_Element::Integer:
-        iVTType = CXFA_LocaleValue::ValueType::kInteger;
-        break;
-      case XFA_Element::Text:
-        iVTType = CXFA_LocaleValue::ValueType::kText;
-        break;
-      default:
-        iVTType = CXFA_LocaleValue::ValueType::kNull;
-        break;
-    }
+    CXFA_LocaleValue::ValueType iVTType =
+        XFA_GetLocaleValueType(pValueChild->GetElementType());
     CXFA_LocaleMgr* pLocaleMgr = GetDocument()->GetLocaleMgr();
     CXFA_LocaleValue widgetValue(iVTType, wsValue, pLocaleMgr);
     switch (widgetValue.GetType()) {

@@ -22,7 +22,6 @@
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
-#include "xfa/fxfa/parser/cxfa_localevalue.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_ui.h"
@@ -386,38 +385,32 @@ CXFA_LocaleValue XFA_GetLocaleValue(CXFA_Node* pNode) {
   if (!pValueChild)
     return CXFA_LocaleValue();
 
-  CXFA_LocaleValue::ValueType iVTType;
-  switch (pValueChild->GetElementType()) {
-    case XFA_Element::Decimal:
-      iVTType = CXFA_LocaleValue::ValueType::kDecimal;
-      break;
-    case XFA_Element::Float:
-      iVTType = CXFA_LocaleValue::ValueType::kFloat;
-      break;
-    case XFA_Element::Date:
-      iVTType = CXFA_LocaleValue::ValueType::kDate;
-      break;
-    case XFA_Element::Time:
-      iVTType = CXFA_LocaleValue::ValueType::kTime;
-      break;
-    case XFA_Element::DateTime:
-      iVTType = CXFA_LocaleValue::ValueType::kDateTime;
-      break;
-    case XFA_Element::Boolean:
-      iVTType = CXFA_LocaleValue::ValueType::kBoolean;
-      break;
-    case XFA_Element::Integer:
-      iVTType = CXFA_LocaleValue::ValueType::kInteger;
-      break;
-    case XFA_Element::Text:
-      iVTType = CXFA_LocaleValue::ValueType::kText;
-      break;
-    default:
-      iVTType = CXFA_LocaleValue::ValueType::kNull;
-      break;
-  }
-  return CXFA_LocaleValue(iVTType, pNode->GetRawValue(),
+  return CXFA_LocaleValue(XFA_GetLocaleValueType(pValueChild->GetElementType()),
+                          pNode->GetRawValue(),
                           pNode->GetDocument()->GetLocaleMgr());
+}
+
+CXFA_LocaleValue::ValueType XFA_GetLocaleValueType(XFA_Element element) {
+  switch (element) {
+    case XFA_Element::Decimal:
+      return CXFA_LocaleValue::ValueType::kDecimal;
+    case XFA_Element::Float:
+      return CXFA_LocaleValue::ValueType::kFloat;
+    case XFA_Element::Date:
+      return CXFA_LocaleValue::ValueType::kDate;
+    case XFA_Element::Time:
+      return CXFA_LocaleValue::ValueType::kTime;
+    case XFA_Element::DateTime:
+      return CXFA_LocaleValue::ValueType::kDateTime;
+    case XFA_Element::Boolean:
+      return CXFA_LocaleValue::ValueType::kBoolean;
+    case XFA_Element::Integer:
+      return CXFA_LocaleValue::ValueType::kInteger;
+    case XFA_Element::Text:
+      return CXFA_LocaleValue::ValueType::kText;
+    default:
+      return CXFA_LocaleValue::ValueType::kNull;
+  }
 }
 
 bool XFA_FDEExtension_ResolveNamespaceQualifier(CFX_XMLElement* pNode,
