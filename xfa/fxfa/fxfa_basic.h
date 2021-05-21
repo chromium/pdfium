@@ -111,9 +111,6 @@ enum class XFA_AttributeType : uint8_t {
   Measure,
 };
 
-#define XFA_PROPERTYFLAG_OneOf 0x01
-#define XFA_PROPERTYFLAG_DefaultOneOf 0x02
-
 enum class XFA_Unit : uint8_t {
   Percent = 0,
   Em,

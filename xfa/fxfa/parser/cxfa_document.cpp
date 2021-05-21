@@ -675,7 +675,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
     case XFA_FFWidgetType::kChoiceList:
       if (pFormNode->IsChoiceListMultiSelect()) {
         std::vector<CXFA_Node*> items = pDataNode->GetNodeListWithFilter(
-            XFA_NODEFILTER_Children | XFA_NODEFILTER_Properties);
+            XFA_NodeFilter_Children | XFA_NodeFilter_Properties);
         if (!items.empty()) {
           bool single = items.size() == 1;
           wsNormalizeValue.clear();
@@ -710,7 +710,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
       break;
     case XFA_FFWidgetType::kNumericEdit: {
       WideString wsPicture =
-          pFormNode->GetPictureContent(XFA_VALUEPICTURE_DataBind);
+          pFormNode->GetPictureContent(XFA_ValuePicture::kDataBind);
       if (wsPicture.IsEmpty())
         wsNormalizeValue = pFormNode->NormalizeNumStr(wsNormalizeValue);
 

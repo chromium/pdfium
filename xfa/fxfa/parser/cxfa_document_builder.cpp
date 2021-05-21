@@ -653,7 +653,7 @@ CXFA_Node* CXFA_DocumentBuilder::NormalLoader(CXFA_Node* pXFANode,
 
         if (pXFANode->HasPropertyFlags(
                 eType,
-                XFA_PROPERTYFLAG_OneOf | XFA_PROPERTYFLAG_DefaultOneOf)) {
+                XFA_PropertyFlag_OneOf | XFA_PropertyFlag_DefaultOneOf)) {
           if (bOneOfPropertyFound)
             break;
           bOneOfPropertyFound = true;

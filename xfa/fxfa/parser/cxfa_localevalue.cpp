@@ -271,7 +271,7 @@ bool CXFA_LocaleValue::SetDateTime(const CFX_DateTime& dt) {
 bool CXFA_LocaleValue::FormatPatterns(WideString& wsResult,
                                       const WideString& wsFormat,
                                       GCedLocaleIface* pLocale,
-                                      XFA_VALUEPICTURE eValueType) const {
+                                      XFA_ValuePicture eValueType) const {
   wsResult.clear();
   for (const auto& pattern : CFGAS_StringFormatter::SplitOnBars(wsFormat)) {
     if (FormatSinglePattern(wsResult, pattern, pLocale, eValueType))
@@ -283,7 +283,7 @@ bool CXFA_LocaleValue::FormatPatterns(WideString& wsResult,
 bool CXFA_LocaleValue::FormatSinglePattern(WideString& wsResult,
                                            const WideString& wsFormat,
                                            GCedLocaleIface* pLocale,
-                                           XFA_VALUEPICTURE eValueType) const {
+                                           XFA_ValuePicture eValueType) const {
   if (!m_pLocaleMgr)
     return false;
 
@@ -329,7 +329,7 @@ bool CXFA_LocaleValue::FormatSinglePattern(WideString& wsResult,
       bRet = true;
   }
   if (!bRet && (eCategory != CFGAS_StringFormatter::Category::kNum ||
-                eValueType != XFA_VALUEPICTURE_Display)) {
+                eValueType != XFA_ValuePicture::kDisplay)) {
     wsResult = m_wsValue;
   }
 

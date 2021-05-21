@@ -54,7 +54,7 @@ class CXFA_LocaleValue {
   bool FormatPatterns(WideString& wsResult,
                       const WideString& wsFormat,
                       GCedLocaleIface* pLocale,
-                      XFA_VALUEPICTURE eValueType) const;
+                      XFA_ValuePicture eValueType) const;
 
   void GetNumericFormat(WideString& wsFormat, int32_t nIntLen, int32_t nDecLen);
   bool ValidateNumericTemp(const WideString& wsNumeric,
@@ -73,7 +73,7 @@ class CXFA_LocaleValue {
   bool FormatSinglePattern(WideString& wsResult,
                            const WideString& wsFormat,
                            GCedLocaleIface* pLocale,
-                           XFA_VALUEPICTURE eValueType) const;
+                           XFA_ValuePicture eValueType) const;
   bool ValidateCanonicalValue(const WideString& wsValue, uint32_t dwVType);
   bool ValidateCanonicalDate(const WideString& wsDate, CFX_DateTime* unDate);
   bool ValidateCanonicalTime(const WideString& wsTime);

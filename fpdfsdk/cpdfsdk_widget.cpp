@@ -265,25 +265,24 @@ void CPDFSDK_Widget::Synchronize(bool bSynchronizeElse) {
     case FormFieldType::kCheckBox:
     case FormFieldType::kRadioButton: {
       CPDF_FormControl* pFormCtrl = GetFormControl();
-      XFA_CHECKSTATE eCheckState =
-          pFormCtrl->IsChecked() ? XFA_CHECKSTATE_On : XFA_CHECKSTATE_Off;
+      XFA_CheckState eCheckState =
+          pFormCtrl->IsChecked() ? XFA_CheckState::kOn : XFA_CheckState::kOff;
       node->SetCheckState(eCheckState);
       break;
     }
     case FormFieldType::kTextField:
-      node->SetValue(XFA_VALUEPICTURE_Edit, pFormField->GetValue());
+      node->SetValue(XFA_ValuePicture::kEdit, pFormField->GetValue());
       break;
     case FormFieldType::kComboBox:
     case FormFieldType::kListBox: {
       node->ClearAllSelections();
-
       for (int i = 0; i < pFormField->CountSelectedItems(); ++i) {
         int nIndex = pFormField->GetSelectedIndex(i);
         if (nIndex > -1 && nIndex < node->CountChoiceListItems(false))
           node->SetItemState(nIndex, true, false, false, true);
       }
       if (GetFieldType() == FormFieldType::kComboBox)
-        node->SetValue(XFA_VALUEPICTURE_Edit, pFormField->GetValue());
+        node->SetValue(XFA_ValuePicture::kEdit, pFormField->GetValue());
       break;
     }
     default:
@@ -486,7 +485,7 @@ WideString CPDFSDK_Widget::GetValue() const {
   if (CXFA_FFWidget* hWidget = GetMixXFAWidget()) {
     CXFA_Node* node = hWidget->GetNode();
     if (node->IsWidgetReady())
-      return node->GetValue(XFA_VALUEPICTURE_Display);
+      return node->GetValue(XFA_ValuePicture::kDisplay);
   }
 #endif  // PDF_ENABLE_XFA
   CPDF_FormField* pFormField = GetFormField();
@@ -534,7 +533,7 @@ bool CPDFSDK_Widget::IsChecked() const {
   if (CXFA_FFWidget* hWidget = GetMixXFAWidget()) {
     CXFA_Node* node = hWidget->GetNode();
     if (node->IsWidgetReady())
-      return node->GetCheckState() == XFA_CHECKSTATE_On;
+      return node->GetCheckState() == XFA_CheckState::kOn;
   }
 #endif  // PDF_ENABLE_XFA
   CPDF_FormControl* pFormCtrl = GetFormControl();

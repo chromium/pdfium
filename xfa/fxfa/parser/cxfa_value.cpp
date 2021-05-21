@@ -18,19 +18,19 @@
 namespace {
 
 const CXFA_Node::PropertyData kValuePropertyData[] = {
-    {XFA_Element::Arc, 1, XFA_PROPERTYFLAG_OneOf},
-    {XFA_Element::Text, 1, XFA_PROPERTYFLAG_OneOf},
-    {XFA_Element::Time, 1, XFA_PROPERTYFLAG_OneOf},
-    {XFA_Element::DateTime, 1, XFA_PROPERTYFLAG_OneOf},
-    {XFA_Element::Image, 1, XFA_PROPERTYFLAG_OneOf},
-    {XFA_Element::Decimal, 1, XFA_PROPERTYFLAG_OneOf},
-    {XFA_Element::Boolean, 1, XFA_PROPERTYFLAG_OneOf},
-    {XFA_Element::Integer, 1, XFA_PROPERTYFLAG_OneOf},
-    {XFA_Element::ExData, 1, XFA_PROPERTYFLAG_OneOf},
-    {XFA_Element::Rectangle, 1, XFA_PROPERTYFLAG_OneOf},
-    {XFA_Element::Date, 1, XFA_PROPERTYFLAG_OneOf},
-    {XFA_Element::Float, 1, XFA_PROPERTYFLAG_OneOf},
-    {XFA_Element::Line, 1, XFA_PROPERTYFLAG_OneOf},
+    {XFA_Element::Arc, 1, XFA_PropertyFlag_OneOf},
+    {XFA_Element::Text, 1, XFA_PropertyFlag_OneOf},
+    {XFA_Element::Time, 1, XFA_PropertyFlag_OneOf},
+    {XFA_Element::DateTime, 1, XFA_PropertyFlag_OneOf},
+    {XFA_Element::Image, 1, XFA_PropertyFlag_OneOf},
+    {XFA_Element::Decimal, 1, XFA_PropertyFlag_OneOf},
+    {XFA_Element::Boolean, 1, XFA_PropertyFlag_OneOf},
+    {XFA_Element::Integer, 1, XFA_PropertyFlag_OneOf},
+    {XFA_Element::ExData, 1, XFA_PropertyFlag_OneOf},
+    {XFA_Element::Rectangle, 1, XFA_PropertyFlag_OneOf},
+    {XFA_Element::Date, 1, XFA_PropertyFlag_OneOf},
+    {XFA_Element::Float, 1, XFA_PropertyFlag_OneOf},
+    {XFA_Element::Line, 1, XFA_PropertyFlag_OneOf},
 };
 
 const CXFA_Node::AttributeData kValueAttributeData[] = {

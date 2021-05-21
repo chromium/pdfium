@@ -2573,7 +2573,7 @@ ByteString CFXJSE_FormCalcContext::IsoDate2Local(CFXJSE_HostObject* pThis,
   WideString wsFormat = FormatFromString(pLocale, bsFormat);
   WideString wsRet;
   CXFA_LocaleValue(XFA_VT_DATE, WideString::FromUTF8(bsDate), pMgr)
-      .FormatPatterns(wsRet, wsFormat, pLocale, XFA_VALUEPICTURE_Display);
+      .FormatPatterns(wsRet, wsFormat, pLocale, XFA_ValuePicture::kDisplay);
   return wsRet.ToUTF8();
 }
 
@@ -2596,7 +2596,7 @@ ByteString CFXJSE_FormCalcContext::IsoTime2Local(CFXJSE_HostObject* pThis,
   CXFA_LocaleValue widgetValue(XFA_VT_TIME, WideString::FromUTF8(bsTime), pMgr);
   WideString wsRet;
   widgetValue.FormatPatterns(wsRet, wsFormat, pLocale,
-                             XFA_VALUEPICTURE_Display);
+                             XFA_ValuePicture::kDisplay);
   return wsRet.ToUTF8();
 }
 
@@ -3833,7 +3833,7 @@ void CFXJSE_FormCalcContext::Format(
                                pMgr);
   WideString wsRet;
   if (!localeValue.FormatPatterns(wsRet, wsPattern, pLocale,
-                                  XFA_VALUEPICTURE_Display)) {
+                                  XFA_ValuePicture::kDisplay)) {
     info.GetReturnValue().SetEmptyString();
     return;
   }

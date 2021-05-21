@@ -7,6 +7,7 @@
 #ifndef XFA_FXFA_PARSER_CXFA_NODE_H_
 #define XFA_FXFA_PARSER_CXFA_NODE_H_
 
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -50,24 +51,27 @@ class CXFA_Value;
 class CXFA_WidgetLayoutData;
 class GCedLocaleIface;
 
-#define XFA_NODEFILTER_Children 0x01
-#define XFA_NODEFILTER_Properties 0x02
-#define XFA_NODEFILTER_OneOfProperty 0x04
+enum XFA_NodeFilter : uint8_t {
+  XFA_NodeFilter_Children = 1 << 0,
+  XFA_NodeFilter_Properties = 1 << 1,
+  XFA_NodeFilter_OneOfProperty = 1 << 2,
+};
+using XFA_NodeFilterMask = std::underlying_type<XFA_NodeFilter>::type;
 
-enum XFA_CHECKSTATE {
-  XFA_CHECKSTATE_On = 0,
-  XFA_CHECKSTATE_Off = 1,
-  XFA_CHECKSTATE_Neutral = 2,
+enum class XFA_CheckState : uint8_t {
+  kOn = 0,
+  kOff = 1,
+  kNeutral = 2,
 };
 
-enum XFA_VALUEPICTURE {
-  XFA_VALUEPICTURE_Raw = 0,
-  XFA_VALUEPICTURE_Display,
-  XFA_VALUEPICTURE_Edit,
-  XFA_VALUEPICTURE_DataBind,
+enum class XFA_ValuePicture : uint8_t {
+  kRaw = 0,
+  kDisplay,
+  kEdit,
+  kDataBind,
 };
 
-enum XFA_NodeFlag {
+enum XFA_NodeFlag : uint8_t {
   XFA_NodeFlag_None = 0,
   XFA_NodeFlag_Initialized = 1 << 0,
   XFA_NodeFlag_HasRemovedChildren = 1 << 1,
@@ -77,13 +81,20 @@ enum XFA_NodeFlag {
   XFA_NodeFlag_UnusedNode = 1 << 5,
   XFA_NodeFlag_LayoutGeneratedNode = 1 << 6
 };
+using XFA_NodeFlagMask = std::underlying_type<XFA_NodeFlag>::type;
+
+enum XFA_PropertyFlag : uint8_t {
+  XFA_PropertyFlag_OneOf = 1 << 0,
+  XFA_PropertyFlag_DefaultOneOf = 1 << 1,
+};
+using XFA_PropertyFlagMask = std::underlying_type<XFA_PropertyFlag>::type;
 
 class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
  public:
   struct PropertyData {
     XFA_Element property;
     uint8_t occurance_count;
-    uint8_t flags;
+    XFA_PropertyFlagMask flags;
   };
 
   struct AttributeData {
@@ -186,7 +197,7 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
   CXFA_Node* GetContainerParent() const;
 
   std::vector<CXFA_Node*> GetNodeListForType(XFA_Element eTypeFilter);
-  std::vector<CXFA_Node*> GetNodeListWithFilter(uint32_t dwTypeFilter);
+  std::vector<CXFA_Node*> GetNodeListWithFilter(XFA_NodeFilterMask dwFilter);
   CXFA_Node* CreateSamePacketNode(XFA_Element eType);
   CXFA_Node* CloneTemplateToForm(bool bRecursive);
   CXFA_Node* GetTemplateNodeIfExists() const;
@@ -329,8 +340,8 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
 
   float GetCheckButtonSize();
 
-  XFA_CHECKSTATE GetCheckState();
-  void SetCheckState(XFA_CHECKSTATE eCheckState);
+  XFA_CheckState GetCheckState();
+  void SetCheckState(XFA_CheckState eCheckState);
 
   CXFA_Node* GetSelectedMember();
   CXFA_Node* SetSelectedMember(WideStringView wsName);
@@ -376,10 +387,9 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
   bool IsVerticalScrollPolicyOff();
   Optional<int32_t> GetNumberOfCells();
 
-  bool SetValue(XFA_VALUEPICTURE eValueType, const WideString& wsValue);
-  WideString GetValue(XFA_VALUEPICTURE eValueType);
-
-  WideString GetPictureContent(XFA_VALUEPICTURE ePicture);
+  bool SetValue(XFA_ValuePicture eValueType, const WideString& wsValue);
+  WideString GetValue(XFA_ValuePicture eValueType);
+  WideString GetPictureContent(XFA_ValuePicture ePicture);
   WideString GetNormalizeDataValue(const WideString& wsValue);
   WideString GetFormatDataValue(const WideString& wsValue);
   WideString NormalizeNumStr(const WideString& wsValue);
@@ -504,7 +514,7 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
   UnownedPtr<CFX_XMLNode> xml_node_;
   const XFA_PacketType m_ePacket;
   uint8_t m_ExecuteRecursionDepth = 0;
-  uint16_t m_uNodeFlags = XFA_NodeFlag_None;
+  XFA_NodeFlagMask m_uNodeFlags = XFA_NodeFlag_None;
   uint32_t m_dwNameHash = 0;
   cppgc::Member<CXFA_Node> m_pAuxNode;
   std::vector<cppgc::Member<CXFA_Node>> binding_nodes_;

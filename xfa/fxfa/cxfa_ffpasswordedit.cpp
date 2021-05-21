@@ -40,7 +40,7 @@ bool CXFA_FFPasswordEdit::LoadWidget() {
 
   {
     CFWL_Widget::ScopedUpdateLock update_lock(pWidget);
-    pWidget->SetText(m_pNode->GetValue(XFA_VALUEPICTURE_Display));
+    pWidget->SetText(m_pNode->GetValue(XFA_ValuePicture::kDisplay));
     UpdateWidgetProperty();
   }
 

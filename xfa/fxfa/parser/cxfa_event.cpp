@@ -14,11 +14,11 @@
 namespace {
 
 const CXFA_Node::PropertyData kEventPropertyData[] = {
-    {XFA_Element::Execute, 1, XFA_PROPERTYFLAG_OneOf},
-    {XFA_Element::Script, 1, XFA_PROPERTYFLAG_OneOf},
-    {XFA_Element::SignData, 1, XFA_PROPERTYFLAG_OneOf},
+    {XFA_Element::Execute, 1, XFA_PropertyFlag_OneOf},
+    {XFA_Element::Script, 1, XFA_PropertyFlag_OneOf},
+    {XFA_Element::SignData, 1, XFA_PropertyFlag_OneOf},
     {XFA_Element::Extras, 1, 0},
-    {XFA_Element::Submit, 1, XFA_PROPERTYFLAG_OneOf},
+    {XFA_Element::Submit, 1, XFA_PropertyFlag_OneOf},
 };
 
 const CXFA_Node::AttributeData kEventAttributeData[] = {

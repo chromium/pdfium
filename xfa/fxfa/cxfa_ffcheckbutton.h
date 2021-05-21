@@ -37,7 +37,7 @@ class CXFA_FFCheckButton final : public CXFA_FFField {
                     const CFX_Matrix& matrix) override;
   FormFieldType GetFormFieldType() override;
 
-  void SetFWLCheckState(XFA_CHECKSTATE eCheckState);
+  void SetFWLCheckState(XFA_CheckState eCheckState);
 
  private:
   CXFA_FFCheckButton(CXFA_Node* pNode, CXFA_CheckButton* button);
@@ -46,7 +46,7 @@ class CXFA_FFCheckButton final : public CXFA_FFField {
   bool IsDataChanged() override;
   void CapLeftRightPlacement(const CXFA_Margin* captionMargin);
   void AddUIMargin(XFA_AttributeValue iCapPlacement);
-  XFA_CHECKSTATE FWLState2XFAState();
+  XFA_CheckState FWLState2XFAState();
 
   cppgc::Member<IFWL_WidgetDelegate> m_pOldDelegate;
   cppgc::Member<CXFA_CheckButton> const button_;

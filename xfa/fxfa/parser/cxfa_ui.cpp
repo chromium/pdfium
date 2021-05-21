@@ -12,18 +12,18 @@
 namespace {
 
 const CXFA_Node::PropertyData kUiPropertyData[] = {
-    {XFA_Element::CheckButton, 1, XFA_PROPERTYFLAG_OneOf},
-    {XFA_Element::ChoiceList, 1, XFA_PROPERTYFLAG_OneOf},
-    {XFA_Element::DefaultUi, 1, XFA_PROPERTYFLAG_OneOf},
-    {XFA_Element::Barcode, 1, XFA_PROPERTYFLAG_OneOf},
-    {XFA_Element::Button, 1, XFA_PROPERTYFLAG_OneOf},
-    {XFA_Element::DateTimeEdit, 1, XFA_PROPERTYFLAG_OneOf},
+    {XFA_Element::CheckButton, 1, XFA_PropertyFlag_OneOf},
+    {XFA_Element::ChoiceList, 1, XFA_PropertyFlag_OneOf},
+    {XFA_Element::DefaultUi, 1, XFA_PropertyFlag_OneOf},
+    {XFA_Element::Barcode, 1, XFA_PropertyFlag_OneOf},
+    {XFA_Element::Button, 1, XFA_PropertyFlag_OneOf},
+    {XFA_Element::DateTimeEdit, 1, XFA_PropertyFlag_OneOf},
     {XFA_Element::Picture, 1, 0},
-    {XFA_Element::ImageEdit, 1, XFA_PROPERTYFLAG_OneOf},
-    {XFA_Element::PasswordEdit, 1, XFA_PROPERTYFLAG_OneOf},
-    {XFA_Element::NumericEdit, 1, XFA_PROPERTYFLAG_OneOf},
-    {XFA_Element::Signature, 1, XFA_PROPERTYFLAG_OneOf},
-    {XFA_Element::TextEdit, 1, XFA_PROPERTYFLAG_OneOf},
+    {XFA_Element::ImageEdit, 1, XFA_PropertyFlag_OneOf},
+    {XFA_Element::PasswordEdit, 1, XFA_PropertyFlag_OneOf},
+    {XFA_Element::NumericEdit, 1, XFA_PropertyFlag_OneOf},
+    {XFA_Element::Signature, 1, XFA_PropertyFlag_OneOf},
+    {XFA_Element::TextEdit, 1, XFA_PropertyFlag_OneOf},
     {XFA_Element::Extras, 1, 0},
 };
 
@@ -53,7 +53,7 @@ bool CXFA_Ui::IsAOneOfChild(CXFA_Node* child) const {
   for (auto& prop : kUiPropertyData) {
     if (prop.property != child->GetElementType())
       continue;
-    if (!!(prop.flags & XFA_PROPERTYFLAG_OneOf))
+    if (!!(prop.flags & XFA_PropertyFlag_OneOf))
       return true;
   }
   return false;

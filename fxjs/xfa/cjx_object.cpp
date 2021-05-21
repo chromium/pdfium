@@ -1298,7 +1298,7 @@ void CJX_Object::ScriptSomDefaultValue(v8::Isolate* pIsolate,
         pContainerNode = pFormNode->GetContainerNode();
         if (pContainerNode) {
           wsPicture =
-              pContainerNode->GetPictureContent(XFA_VALUEPICTURE_DataBind);
+              pContainerNode->GetPictureContent(XFA_ValuePicture::kDataBind);
         }
         if (!wsPicture.IsEmpty())
           break;

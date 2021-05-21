@@ -158,7 +158,7 @@ bool CXFA_FFBarcode::LoadWidget() {
 
   {
     CFWL_Widget::ScopedUpdateLock update_lock(pFWLBarcode);
-    pFWLBarcode->SetText(m_pNode->GetValue(XFA_VALUEPICTURE_Display));
+    pFWLBarcode->SetText(m_pNode->GetValue(XFA_ValuePicture::kDisplay));
     UpdateWidgetProperty();
   }
 

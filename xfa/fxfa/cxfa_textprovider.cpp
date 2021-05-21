@@ -165,5 +165,5 @@ Optional<WideString> CXFA_TextProvider::GetEmbeddedObj(
   if (!pIDNode || !pIDNode->IsWidgetReady())
     return {};
 
-  return pIDNode->GetValue(XFA_VALUEPICTURE_Display);
+  return pIDNode->GetValue(XFA_ValuePicture::kDisplay);
 }
