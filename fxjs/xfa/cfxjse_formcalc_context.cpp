@@ -335,30 +335,24 @@ std::pair<bool, CXFA_LocaleValue::ValueType> PatternStringType(
     return {true, CXFA_LocaleValue::ValueType::kDateTime};
   if (L"date" == wsPattern.First(4)) {
     auto pos = wsPattern.Find(L"time");
-    CXFA_LocaleValue::ValueType type =
-        pos.has_value() && pos.value() != 0
-            ? CXFA_LocaleValue::ValueType::kDateTime
-            : CXFA_LocaleValue::ValueType::kDate;
-    return {true, type};
+    if (pos.has_value() && pos.value() != 0)
+      return {true, CXFA_LocaleValue::ValueType::kDateTime};
+    return {true, CXFA_LocaleValue::ValueType::kDate};
   }
   if (L"time" == wsPattern.First(4))
     return {true, CXFA_LocaleValue::ValueType::kTime};
   if (L"text" == wsPattern.First(4))
     return {true, CXFA_LocaleValue::ValueType::kText};
   if (L"num" == wsPattern.First(3)) {
-    CXFA_LocaleValue::ValueType type;
-    if (L"integer" == wsPattern.Substr(4, 7)) {
-      type = CXFA_LocaleValue::ValueType::kInteger;
-    } else if (L"decimal" == wsPattern.Substr(4, 7)) {
-      type = CXFA_LocaleValue::ValueType::kDecimal;
-    } else if (L"currency" == wsPattern.Substr(4, 8)) {
-      type = CXFA_LocaleValue::ValueType::kFloat;
-    } else if (L"percent" == wsPattern.Substr(4, 7)) {
-      type = CXFA_LocaleValue::ValueType::kFloat;
-    } else {
-      type = CXFA_LocaleValue::ValueType::kFloat;
-    }
-    return {true, type};
+    if (L"integer" == wsPattern.Substr(4, 7))
+      return {true, CXFA_LocaleValue::ValueType::kInteger};
+    if (L"decimal" == wsPattern.Substr(4, 7))
+      return {true, CXFA_LocaleValue::ValueType::kDecimal};
+    if (L"currency" == wsPattern.Substr(4, 8))
+      return {true, CXFA_LocaleValue::ValueType::kFloat};
+    if (L"percent" == wsPattern.Substr(4, 7))
+      return {true, CXFA_LocaleValue::ValueType::kFloat};
+    return {true, CXFA_LocaleValue::ValueType::kFloat};
   }
 
   CXFA_LocaleValue::ValueType type = CXFA_LocaleValue::ValueType::kNull;
