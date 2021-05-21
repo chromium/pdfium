@@ -32,7 +32,7 @@ class CFXJSE_ResolveNodeData {
   WideString m_wsCondition;
   XFA_HashCode m_uHashName = XFA_HASHCODE_None;
   int32_t m_nLevel = 0;
-  uint32_t m_dwStyles = XFA_RESOLVENODE_Children;
+  XFA_ResolveNodeMask m_dwStyles = XFA_RESOLVENODE_Children;
   CFXJSE_Engine::ResolveResult m_Result;
 };
 

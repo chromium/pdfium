@@ -181,7 +181,7 @@ bool CFXJSE_Engine::RunScript(CXFA_Script::Type eScriptType,
 bool CFXJSE_Engine::QueryNodeByFlag(CXFA_Node* refNode,
                                     WideStringView propname,
                                     v8::Local<v8::Value>* pValue,
-                                    uint32_t dwFlag,
+                                    XFA_ResolveNodeMask dwFlag,
                                     bool bSetting) {
   if (!refNode)
     return false;
@@ -624,14 +624,14 @@ void CFXJSE_Engine::RemoveBuiltInObjs(CFXJSE_Context* pContext) {
 Optional<CFXJSE_Engine::ResolveResult> CFXJSE_Engine::ResolveObjects(
     CXFA_Object* refObject,
     WideStringView wsExpression,
-    uint32_t dwStyles) {
+    XFA_ResolveNodeMask dwStyles) {
   return ResolveObjectsWithBindNode(refObject, wsExpression, dwStyles, nullptr);
 }
 
 Optional<CFXJSE_Engine::ResolveResult>
 CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
                                           WideStringView wsExpression,
-                                          uint32_t dwStyles,
+                                          XFA_ResolveNodeMask dwStyles,
                                           CXFA_Node* bindNode) {
   if (wsExpression.IsEmpty())
     return pdfium::nullopt;
