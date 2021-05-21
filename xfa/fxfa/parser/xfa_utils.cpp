@@ -386,34 +386,34 @@ CXFA_LocaleValue XFA_GetLocaleValue(CXFA_Node* pNode) {
   if (!pValueChild)
     return CXFA_LocaleValue();
 
-  int32_t iVTType = XFA_VT_NULL;
+  CXFA_LocaleValue::ValueType iVTType;
   switch (pValueChild->GetElementType()) {
     case XFA_Element::Decimal:
-      iVTType = XFA_VT_DECIMAL;
+      iVTType = CXFA_LocaleValue::ValueType::kDecimal;
       break;
     case XFA_Element::Float:
-      iVTType = XFA_VT_FLOAT;
+      iVTType = CXFA_LocaleValue::ValueType::kFloat;
       break;
     case XFA_Element::Date:
-      iVTType = XFA_VT_DATE;
+      iVTType = CXFA_LocaleValue::ValueType::kDate;
       break;
     case XFA_Element::Time:
-      iVTType = XFA_VT_TIME;
+      iVTType = CXFA_LocaleValue::ValueType::kTime;
       break;
     case XFA_Element::DateTime:
-      iVTType = XFA_VT_DATETIME;
+      iVTType = CXFA_LocaleValue::ValueType::kDateTime;
       break;
     case XFA_Element::Boolean:
-      iVTType = XFA_VT_BOOLEAN;
+      iVTType = CXFA_LocaleValue::ValueType::kBoolean;
       break;
     case XFA_Element::Integer:
-      iVTType = XFA_VT_INTEGER;
+      iVTType = CXFA_LocaleValue::ValueType::kInteger;
       break;
     case XFA_Element::Text:
-      iVTType = XFA_VT_TEXT;
+      iVTType = CXFA_LocaleValue::ValueType::kText;
       break;
     default:
-      iVTType = XFA_VT_NULL;
+      iVTType = CXFA_LocaleValue::ValueType::kNull;
       break;
   }
   return CXFA_LocaleValue(iVTType, pNode->GetRawValue(),

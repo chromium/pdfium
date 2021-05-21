@@ -188,7 +188,8 @@ void CXFA_FFDateTimeEdit::OnSelectChanged(CFWL_Widget* pWidget,
                                           int32_t iMonth,
                                           int32_t iDay) {
   WideString wsPicture = m_pNode->GetPictureContent(XFA_ValuePicture::kEdit);
-  CXFA_LocaleValue date(XFA_VT_DATE, GetDoc()->GetXFADoc()->GetLocaleMgr());
+  CXFA_LocaleValue date(CXFA_LocaleValue::ValueType::kDate,
+                        GetDoc()->GetXFADoc()->GetLocaleMgr());
   date.SetDate(CFX_DateTime(iYear, iMonth, iDay, 0, 0, 0, 0));
 
   WideString wsDate;

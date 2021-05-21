@@ -4726,22 +4726,21 @@ WideString CXFA_Node::GetPictureContent(XFA_ValuePicture ePicture) {
       if (!pLocale)
         return WideString();
 
-      uint32_t dwType = widgetValue.GetType();
-      switch (dwType) {
-        case XFA_VT_DATE:
+      switch (widgetValue.GetType()) {
+        case CXFA_LocaleValue::ValueType::kDate:
           return pLocale->GetDatePattern(
               LocaleIface::DateTimeSubcategory::kMedium);
-        case XFA_VT_TIME:
+        case CXFA_LocaleValue::ValueType::kTime:
           return pLocale->GetTimePattern(
               LocaleIface::DateTimeSubcategory::kMedium);
-        case XFA_VT_DATETIME:
+        case CXFA_LocaleValue::ValueType::kDateTime:
           return pLocale->GetDatePattern(
                      LocaleIface::DateTimeSubcategory::kMedium) +
                  L"T" +
                  pLocale->GetTimePattern(
                      LocaleIface::DateTimeSubcategory::kMedium);
-        case XFA_VT_DECIMAL:
-        case XFA_VT_FLOAT:
+        case CXFA_LocaleValue::ValueType::kDecimal:
+        case CXFA_LocaleValue::ValueType::kFloat:
         default:
           return WideString();
       }
@@ -4762,15 +4761,14 @@ WideString CXFA_Node::GetPictureContent(XFA_ValuePicture ePicture) {
       if (!pLocale)
         return WideString();
 
-      uint32_t dwType = widgetValue.GetType();
-      switch (dwType) {
-        case XFA_VT_DATE:
+      switch (widgetValue.GetType()) {
+        case CXFA_LocaleValue::ValueType::kDate:
           return pLocale->GetDatePattern(
               LocaleIface::DateTimeSubcategory::kShort);
-        case XFA_VT_TIME:
+        case CXFA_LocaleValue::ValueType::kTime:
           return pLocale->GetTimePattern(
               LocaleIface::DateTimeSubcategory::kShort);
-        case XFA_VT_DATETIME:
+        case CXFA_LocaleValue::ValueType::kDateTime:
           return pLocale->GetDatePattern(
                      LocaleIface::DateTimeSubcategory::kShort) +
                  L"T" +
@@ -4833,19 +4831,21 @@ WideString CXFA_Node::GetValue(XFA_ValuePicture eValueType) {
     CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(this);
     CXFA_LocaleMgr* pLocaleMgr = GetDocument()->GetLocaleMgr();
     switch (widgetValue.GetType()) {
-      case XFA_VT_DATE: {
+      case CXFA_LocaleValue::ValueType::kDate: {
         WideString wsDate, wsTime;
         if (SplitDateTime(wsValue, wsDate, wsTime)) {
-          CXFA_LocaleValue date(XFA_VT_DATE, wsDate, pLocaleMgr);
+          CXFA_LocaleValue date(CXFA_LocaleValue::ValueType::kDate, wsDate,
+                                pLocaleMgr);
           if (date.FormatPatterns(wsValue, wsPicture, pLocale, eValueType))
             return wsValue;
         }
         break;
       }
-      case XFA_VT_TIME: {
+      case CXFA_LocaleValue::ValueType::kTime: {
         WideString wsDate, wsTime;
         if (SplitDateTime(wsValue, wsDate, wsTime)) {
-          CXFA_LocaleValue time(XFA_VT_TIME, wsTime, pLocaleMgr);
+          CXFA_LocaleValue time(CXFA_LocaleValue::ValueType::kTime, wsTime,
+                                pLocaleMgr);
           if (time.FormatPatterns(wsValue, wsPicture, pLocale, eValueType))
             return wsValue;
         }
@@ -4897,43 +4897,44 @@ WideString CXFA_Node::GetFormatDataValue(const WideString& wsValue) {
     if (!pValueChild)
       return wsValue;
 
-    int32_t iVTType = XFA_VT_NULL;
+    CXFA_LocaleValue::ValueType iVTType;
     switch (pValueChild->GetElementType()) {
       case XFA_Element::Decimal:
-        iVTType = XFA_VT_DECIMAL;
+        iVTType = CXFA_LocaleValue::ValueType::kDecimal;
         break;
       case XFA_Element::Float:
-        iVTType = XFA_VT_FLOAT;
+        iVTType = CXFA_LocaleValue::ValueType::kFloat;
         break;
       case XFA_Element::Date:
-        iVTType = XFA_VT_DATE;
+        iVTType = CXFA_LocaleValue::ValueType::kDate;
         break;
       case XFA_Element::Time:
-        iVTType = XFA_VT_TIME;
+        iVTType = CXFA_LocaleValue::ValueType::kTime;
         break;
       case XFA_Element::DateTime:
-        iVTType = XFA_VT_DATETIME;
+        iVTType = CXFA_LocaleValue::ValueType::kDateTime;
         break;
       case XFA_Element::Boolean:
-        iVTType = XFA_VT_BOOLEAN;
+        iVTType = CXFA_LocaleValue::ValueType::kBoolean;
         break;
       case XFA_Element::Integer:
-        iVTType = XFA_VT_INTEGER;
+        iVTType = CXFA_LocaleValue::ValueType::kInteger;
         break;
       case XFA_Element::Text:
-        iVTType = XFA_VT_TEXT;
+        iVTType = CXFA_LocaleValue::ValueType::kText;
         break;
       default:
-        iVTType = XFA_VT_NULL;
+        iVTType = CXFA_LocaleValue::ValueType::kNull;
         break;
     }
     CXFA_LocaleMgr* pLocaleMgr = GetDocument()->GetLocaleMgr();
     CXFA_LocaleValue widgetValue(iVTType, wsValue, pLocaleMgr);
     switch (widgetValue.GetType()) {
-      case XFA_VT_DATE: {
+      case CXFA_LocaleValue::ValueType::kDate: {
         WideString wsDate, wsTime;
         if (SplitDateTime(wsValue, wsDate, wsTime)) {
-          CXFA_LocaleValue date(XFA_VT_DATE, wsDate, pLocaleMgr);
+          CXFA_LocaleValue date(CXFA_LocaleValue::ValueType::kDate, wsDate,
+                                pLocaleMgr);
           if (date.FormatPatterns(wsFormattedValue, wsPicture, pLocale,
                                   XFA_ValuePicture::kDataBind)) {
             return wsFormattedValue;
@@ -4941,10 +4942,11 @@ WideString CXFA_Node::GetFormatDataValue(const WideString& wsValue) {
         }
         break;
       }
-      case XFA_VT_TIME: {
+      case CXFA_LocaleValue::ValueType::kTime: {
         WideString wsDate, wsTime;
         if (SplitDateTime(wsValue, wsDate, wsTime)) {
-          CXFA_LocaleValue time(XFA_VT_TIME, wsTime, pLocaleMgr);
+          CXFA_LocaleValue time(CXFA_LocaleValue::ValueType::kTime, wsTime,
+                                pLocaleMgr);
           if (time.FormatPatterns(wsFormattedValue, wsPicture, pLocale,
                                   XFA_ValuePicture::kDataBind)) {
             return wsFormattedValue;

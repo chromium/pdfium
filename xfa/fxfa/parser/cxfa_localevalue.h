@@ -17,26 +17,28 @@ class CFX_DateTime;
 class CXFA_LocaleMgr;
 class GCedLocaleIface;
 
-#define XFA_VT_NULL 0
-#define XFA_VT_BOOLEAN 1
-#define XFA_VT_INTEGER 2
-#define XFA_VT_DECIMAL 4
-#define XFA_VT_FLOAT 8
-#define XFA_VT_TEXT 16
-#define XFA_VT_DATE 32
-#define XFA_VT_TIME 64
-#define XFA_VT_DATETIME 128
-
 class CXFA_LocaleValue {
   CPPGC_STACK_ALLOCATED();  // Raw/Unowned pointers allowed.
 
  public:
+  enum class ValueType : uint8_t {
+    kNull = 0,
+    kBoolean,
+    kInteger,
+    kDecimal,
+    kFloat,
+    kText,
+    kDate,
+    kTime,
+    kDateTime,
+  };
+
   CXFA_LocaleValue();
-  CXFA_LocaleValue(uint32_t dwType, CXFA_LocaleMgr* pLocaleMgr);
-  CXFA_LocaleValue(uint32_t dwType,
+  CXFA_LocaleValue(ValueType eType, CXFA_LocaleMgr* pLocaleMgr);
+  CXFA_LocaleValue(ValueType eType,
                    const WideString& wsValue,
                    CXFA_LocaleMgr* pLocaleMgr);
-  CXFA_LocaleValue(uint32_t dwType,
+  CXFA_LocaleValue(ValueType dwType,
                    const WideString& wsValue,
                    const WideString& wsFormat,
                    GCedLocaleIface* pLocale,
@@ -63,7 +65,7 @@ class CXFA_LocaleValue {
 
   bool IsValid() const { return m_bValid; }
   const WideString& GetValue() const { return m_wsValue; }
-  uint32_t GetType() const { return m_dwType; }
+  ValueType GetType() const { return m_eType; }
   double GetDoubleNum() const;
   bool SetDate(const CFX_DateTime& d);
   CFX_DateTime GetDate() const;
@@ -74,7 +76,7 @@ class CXFA_LocaleValue {
                            const WideString& wsFormat,
                            GCedLocaleIface* pLocale,
                            XFA_ValuePicture eValueType) const;
-  bool ValidateCanonicalValue(const WideString& wsValue, uint32_t dwVType);
+  bool ValidateCanonicalValue(const WideString& wsValue, ValueType eType);
   bool ValidateCanonicalDate(const WideString& wsDate, CFX_DateTime* unDate);
   bool ValidateCanonicalTime(const WideString& wsTime);
 
@@ -87,7 +89,7 @@ class CXFA_LocaleValue {
 
   UnownedPtr<CXFA_LocaleMgr> m_pLocaleMgr;  // Ok, stack-only.
   WideString m_wsValue;
-  uint32_t m_dwType = XFA_VT_NULL;
+  ValueType m_eType = ValueType::kNull;
   bool m_bValid = true;
 };
 
