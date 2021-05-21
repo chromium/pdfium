@@ -10,7 +10,6 @@
 luci.builder.defaults.build_numbers.set(True)
 luci.builder.defaults.execution_timeout.set(3 * time.hour)
 luci.builder.defaults.swarming_host.set("chromium-swarm.appspot.com")
-luci.builder.defaults.swarming_tags.set(["vpython:native-python-wrapper"])
 
 # Constants.
 
@@ -294,12 +293,6 @@ luci.recipe(
 luci.bucket(
     name = "ci",
     acls = [
-        acl.entry(
-            acl.BUILDBUCKET_TRIGGERER,
-            users = [
-                "luci-scheduler@appspot.gserviceaccount.com",
-            ],
-        ),
         acl.entry(
             acl.BUILDBUCKET_OWNER,
             groups = "project-pdfium-admins",
