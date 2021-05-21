@@ -408,9 +408,6 @@ std::pair<bool, uint32_t> PatternStringType(ByteStringView bsPattern) {
     }
     iIndex++;
   }
-
-  if (type == XFA_VT_NULL)
-    type = XFA_VT_TEXT | XFA_VT_FLOAT;
   return {false, type};
 }
 
