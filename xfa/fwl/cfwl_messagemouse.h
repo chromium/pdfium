@@ -7,10 +7,12 @@
 #ifndef XFA_FWL_CFWL_MESSAGEMOUSE_H_
 #define XFA_FWL_CFWL_MESSAGEMOUSE_H_
 
+#include <type_traits>
+
 #include "core/fxcrt/fx_coordinates.h"
 #include "xfa/fwl/cfwl_message.h"
 
-enum class FWL_MouseCommand {
+enum class FWL_MouseCommand : uint8_t {
   LeftButtonDown,
   LeftButtonUp,
   LeftButtonDblClk,
@@ -23,17 +25,28 @@ enum class FWL_MouseCommand {
   Hover
 };
 
+enum FWL_KeyFlag : uint8_t {
+  FWL_KEYFLAG_Ctrl = 1 << 0,
+  FWL_KEYFLAG_Alt = 1 << 1,
+  FWL_KEYFLAG_Shift = 1 << 2,
+  FWL_KEYFLAG_Command = 1 << 3,
+  FWL_KEYFLAG_LButton = 1 << 4,
+  FWL_KEYFLAG_RButton = 1 << 5,
+  FWL_KEYFLAG_MButton = 1 << 6
+};
+using FWL_KeyFlagMask = std::underlying_type<FWL_KeyFlag>::type;
+
 class CFWL_MessageMouse final : public CFWL_Message {
  public:
   CFWL_MessageMouse(CFWL_Widget* pDstTarget, FWL_MouseCommand cmd);
   CFWL_MessageMouse(CFWL_Widget* pDstTarget,
                     FWL_MouseCommand cmd,
-                    uint32_t flags,
+                    FWL_KeyFlagMask flags,
                     CFX_PointF pos);
   ~CFWL_MessageMouse() override;
 
   const FWL_MouseCommand m_dwCmd;
-  uint32_t m_dwFlags = 0;
+  FWL_KeyFlagMask m_dwFlags = 0;
   CFX_PointF m_pos;
 };
 

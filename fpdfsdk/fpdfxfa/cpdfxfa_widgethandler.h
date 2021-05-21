@@ -12,6 +12,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/ipdfsdk_annothandler.h"
+#include "xfa/fwl/cfwl_messagemouse.h"
 
 class CFX_Matrix;
 class CFX_RenderDevice;
@@ -109,7 +110,7 @@ class CPDFXFA_WidgetHandler final : public IPDFSDK_AnnotHandler {
 
  private:
   CXFA_FFWidgetHandler* GetXFAFFWidgetHandler(CPDFSDK_Annot* pAnnot);
-  uint32_t GetFWLFlags(uint32_t dwFlag);
+  FWL_KeyFlagMask GetFWLFlags(uint32_t dwFlag);
 
   UnownedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
 };

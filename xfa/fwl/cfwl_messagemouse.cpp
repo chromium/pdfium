@@ -13,7 +13,7 @@ CFWL_MessageMouse::CFWL_MessageMouse(CFWL_Widget* pDstTarget,
 
 CFWL_MessageMouse::CFWL_MessageMouse(CFWL_Widget* pDstTarget,
                                      FWL_MouseCommand cmd,
-                                     uint32_t flags,
+                                     FWL_KeyFlagMask flags,
                                      CFX_PointF pos)
     : CFWL_Message(CFWL_Message::Type::kMouse, nullptr, pDstTarget),
       m_dwCmd(cmd),
