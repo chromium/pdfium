@@ -218,7 +218,7 @@ def add_entries_for_builder(name, category = None, short_name = None, skip_ci_bu
 # Enable LUCI Realms support.
 # TODO(tandrii): launch 100% of builds with realms.
 lucicfg.enable_experiment("crbug.com/1085650")
-luci.builder.defaults.experiments.set({"luci.use_realms": 0})
+luci.builder.defaults.experiments.set({"luci.use_realms": 20})
 
 lucicfg.config(
     config_dir = "generated",
