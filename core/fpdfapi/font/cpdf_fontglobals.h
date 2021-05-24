@@ -35,16 +35,16 @@ class CPDF_FontGlobals {
            CFX_FontMapper::StandardFont index,
            const RetainPtr<CPDF_Font>& pFont);
 
-  void SetEmbeddedCharset(size_t idx, pdfium::span<const FXCMAP_CMap> map) {
+  void SetEmbeddedCharset(CIDSet idx, pdfium::span<const FXCMAP_CMap> map) {
     m_EmbeddedCharsets[idx] = map;
   }
-  pdfium::span<const FXCMAP_CMap> GetEmbeddedCharset(size_t idx) const {
+  pdfium::span<const FXCMAP_CMap> GetEmbeddedCharset(CIDSet idx) const {
     return m_EmbeddedCharsets[idx];
   }
-  void SetEmbeddedToUnicode(size_t idx, pdfium::span<const uint16_t> map) {
+  void SetEmbeddedToUnicode(CIDSet idx, pdfium::span<const uint16_t> map) {
     m_EmbeddedToUnicodes[idx] = map;
   }
-  pdfium::span<const uint16_t> GetEmbeddedToUnicode(size_t idx) {
+  pdfium::span<const uint16_t> GetEmbeddedToUnicode(CIDSet idx) {
     return m_EmbeddedToUnicodes[idx];
   }
 
