@@ -16,6 +16,12 @@ bool XYBothNotEqual(const CFX_PointF& p1, const CFX_PointF& p2) {
   return p1.x != p2.x && p1.y != p2.y;
 }
 
+CFX_FloatRect CreateRectFromPoints(const CFX_PointF& p1, const CFX_PointF& p2) {
+  CFX_FloatRect rect(p1.x, p1.y, p2.x, p2.y);
+  rect.Normalize();
+  return rect;
+}
+
 void UpdateLineEndPoints(CFX_FloatRect* rect,
                          const CFX_PointF& start_pos,
                          const CFX_PointF& end_pos,
@@ -332,10 +338,7 @@ Optional<CFX_FloatRect> CFX_PathData::GetRect(const CFX_Matrix* matrix) const {
     if (!IsRect())
       return pdfium::nullopt;
 
-    CFX_FloatRect rect(m_Points[0].m_Point.x, m_Points[0].m_Point.y,
-                       m_Points[2].m_Point.x, m_Points[2].m_Point.y);
-    rect.Normalize();
-    return rect;
+    return CreateRectFromPoints(m_Points[0].m_Point, m_Points[2].m_Point);
   }
 
   if (m_Points.size() != 5 && m_Points.size() != 4)
@@ -362,9 +365,7 @@ Optional<CFX_FloatRect> CFX_PathData::GetRect(const CFX_Matrix* matrix) const {
       return pdfium::nullopt;
   }
 
-  CFX_FloatRect rect(points[0].x, points[0].y, points[2].x, points[2].y);
-  rect.Normalize();
-  return rect;
+  return CreateRectFromPoints(points[0], points[2]);
 }
 
 CFX_RetainablePathData::CFX_RetainablePathData() = default;
