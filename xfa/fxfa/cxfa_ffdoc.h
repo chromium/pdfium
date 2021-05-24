@@ -87,7 +87,7 @@ class CXFA_FFDoc : public cppgc::GarbageCollected<CXFA_FFDoc> {
   bool IsValidationsEnabled() const;
   void SetValidationsEnabled(bool bEnabled);
   void SetFocusWidget(CXFA_FFWidget* hWidget);
-  void Print(int32_t nStartPage, int32_t nEndPage, uint32_t dwOptions);
+  void Print(int32_t nStartPage, int32_t nEndPage, XFA_PrintOptMask dwOptions);
   FX_ARGB GetHighlightColor() const;
   IJS_Runtime* GetIJSRuntime() const;
   CFX_XMLDocument* GetXMLDocument() const;

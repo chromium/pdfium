@@ -579,7 +579,7 @@ void CPDFXFA_DocEnvironment::SetFocusWidget(CXFA_FFDoc* hDoc,
 void CPDFXFA_DocEnvironment::Print(CXFA_FFDoc* hDoc,
                                    int32_t nStartPage,
                                    int32_t nEndPage,
-                                   uint32_t dwOptions) {
+                                   XFA_PrintOptMask dwOptions) {
   if (hDoc != m_pContext->GetXFADoc())
     return;
 

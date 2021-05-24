@@ -67,7 +67,7 @@ CFX_Matrix GetPageMatrix(const CFX_RectF& docPageRect,
 }
 
 bool PageWidgetFilter(CXFA_FFWidget* pWidget,
-                      uint32_t dwFilter,
+                      XFA_WidgetStatusMask dwFilter,
                       bool bTraversal,
                       bool bIgnoreRelevant) {
   CXFA_Node* pNode = pWidget->GetNode();
@@ -133,7 +133,7 @@ CXFA_FFWidget* LoadedWidgetFromLayoutItem(CXFA_LayoutItem* pLayoutItem) {
 }
 
 CXFA_FFWidget* FilteredLoadedWidgetFromLayoutItem(CXFA_LayoutItem* pLayoutItem,
-                                                  uint32_t dwFilter,
+                                                  XFA_WidgetStatusMask dwFilter,
                                                   bool bIgnoreRelevant) {
   CXFA_FFWidget* pWidget = CXFA_FFWidget::FromLayoutItem(pLayoutItem);
   if (!pWidget)
@@ -269,21 +269,22 @@ CFX_Matrix CXFA_FFPageView::GetDisplayMatrix(const FX_RECT& rtDisp,
 }
 
 IXFA_WidgetIterator* CXFA_FFPageView::CreateGCedFormWidgetIterator(
-    uint32_t dwWidgetFilter) {
+    XFA_WidgetStatusMask dwWidgetFilter) {
   return cppgc::MakeGarbageCollected<CXFA_FFPageWidgetIterator>(
       GetDocView()->GetDoc()->GetHeap()->GetAllocationHandle(), this,
       dwWidgetFilter);
 }
 
 IXFA_WidgetIterator* CXFA_FFPageView::CreateGCedTraverseWidgetIterator(
-    uint32_t dwWidgetFilter) {
+    XFA_WidgetStatusMask dwWidgetFilter) {
   return cppgc::MakeGarbageCollected<CXFA_FFTabOrderPageWidgetIterator>(
       GetDocView()->GetDoc()->GetHeap()->GetAllocationHandle(), this,
       dwWidgetFilter);
 }
 
-CXFA_FFPageWidgetIterator::CXFA_FFPageWidgetIterator(CXFA_FFPageView* pPageView,
-                                                     uint32_t dwFilter)
+CXFA_FFPageWidgetIterator::CXFA_FFPageWidgetIterator(
+    CXFA_FFPageView* pPageView,
+    XFA_WidgetStatusMask dwFilter)
     : m_sIterator(pPageView->GetLayoutItem()),
       m_dwFilter(dwFilter),
       m_bIgnoreRelevant(IsDocVersionBelow205(GetDocForPageView(pPageView))) {}
@@ -340,7 +341,7 @@ bool CXFA_FFPageWidgetIterator::SetCurrentWidget(CXFA_FFWidget* pWidget) {
 
 CXFA_FFTabOrderPageWidgetIterator::CXFA_FFTabOrderPageWidgetIterator(
     CXFA_FFPageView* pPageView,
-    uint32_t dwFilter)
+    XFA_WidgetStatusMask dwFilter)
     : m_pPageViewLayout(pPageView->GetLayoutItem()),
       m_dwFilter(dwFilter),
       m_bIgnoreRelevant(IsDocVersionBelow205(GetDocForPageView(pPageView))) {

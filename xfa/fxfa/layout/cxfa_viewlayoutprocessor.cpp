@@ -105,8 +105,10 @@ class TraverseStrategy_PageSet {
 using PageSetIterator =
     CXFA_NodeIteratorTemplate<CXFA_ViewLayoutItem, TraverseStrategy_PageSet>;
 
-uint32_t GetRelevant(CXFA_Node* pFormItem, uint32_t dwParentRelvant) {
-  uint32_t dwRelevant = XFA_WidgetStatus_Viewable | XFA_WidgetStatus_Printable;
+XFA_WidgetStatusMask GetRelevant(CXFA_Node* pFormItem,
+                                 XFA_WidgetStatusMask dwParentRelvant) {
+  XFA_WidgetStatusMask dwRelevant =
+      XFA_WidgetStatus_Viewable | XFA_WidgetStatus_Printable;
   WideString wsRelevant =
       pFormItem->JSObject()->GetCData(XFA_Attribute::Relevant);
   if (!wsRelevant.IsEmpty()) {
@@ -129,12 +131,12 @@ uint32_t GetRelevant(CXFA_Node* pFormItem, uint32_t dwParentRelvant) {
 void SyncContainer(CXFA_FFNotify* pNotify,
                    CXFA_LayoutProcessor* pDocLayout,
                    CXFA_LayoutItem* pViewItem,
-                   uint32_t dwRelevant,
+                   XFA_WidgetStatusMask dwRelevant,
                    bool bVisible,
                    int32_t nPageIndex) {
   bool bVisibleItem = false;
-  uint32_t dwStatus = 0;
-  uint32_t dwRelevantContainer = 0;
+  XFA_WidgetStatusMask dwStatus = 0;
+  XFA_WidgetStatusMask dwRelevantContainer = 0;
   if (bVisible) {
     XFA_AttributeValue eAttributeValue =
         pViewItem->GetFormNode()
@@ -1882,7 +1884,7 @@ void CXFA_ViewLayoutProcessor::SyncLayoutData() {
         continue;
 
       nPageIdx++;
-      uint32_t dwRelevant =
+      XFA_WidgetStatusMask dwRelevant =
           XFA_WidgetStatus_Viewable | XFA_WidgetStatus_Printable;
       CXFA_LayoutItemIterator iterator(pViewItem);
       CXFA_LayoutItem* pChildLayoutItem = iterator.GetCurrent();
@@ -1900,7 +1902,7 @@ void CXFA_ViewLayoutProcessor::SyncLayoutData() {
                 ->TryEnum(XFA_Attribute::Presence, true)
                 .value_or(XFA_AttributeValue::Visible);
         bool bVisible = presence == XFA_AttributeValue::Visible;
-        uint32_t dwRelevantChild =
+        XFA_WidgetStatusMask dwRelevantChild =
             GetRelevant(pContentItem->GetFormNode(), dwRelevant);
         SyncContainer(pNotify, m_pLayoutProcessor, pContentItem,
                       dwRelevantChild, bVisible, nPageIdx);

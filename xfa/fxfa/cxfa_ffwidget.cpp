@@ -285,7 +285,8 @@ CFX_RectF CXFA_FFWidget::GetRectWithoutRotate() {
   return rtWidget;
 }
 
-void CXFA_FFWidget::ModifyStatus(uint32_t dwAdded, uint32_t dwRemoved) {
+void CXFA_FFWidget::ModifyStatus(XFA_WidgetStatusMask dwAdded,
+                                 XFA_WidgetStatusMask dwRemoved) {
   GetLayoutItem()->ClearStatusBits(dwRemoved);
   GetLayoutItem()->SetStatusBits(dwAdded);
 }

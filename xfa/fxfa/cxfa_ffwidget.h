@@ -152,7 +152,8 @@ class CXFA_FFWidget : public cppgc::GarbageCollected<CXFA_FFWidget>,
   CXFA_FFWidget* GetNextFFWidget() const;
   const CFX_RectF& GetWidgetRect() const;
   const CFX_RectF& RecacheWidgetRect() const;
-  void ModifyStatus(uint32_t dwAdded, uint32_t dwRemoved);
+  void ModifyStatus(XFA_WidgetStatusMask dwAdded,
+                    XFA_WidgetStatusMask dwRemoved);
 
   CXFA_FFDoc* GetDoc();
   CXFA_FFApp* GetApp();

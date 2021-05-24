@@ -24,9 +24,9 @@
 
 namespace {
 
-constexpr uint32_t kIteratorFilter = XFA_WidgetStatus_Visible |
-                                     XFA_WidgetStatus_Viewable |
-                                     XFA_WidgetStatus_Focused;
+constexpr XFA_WidgetStatusMask kIteratorFilter = XFA_WidgetStatus_Visible |
+                                                 XFA_WidgetStatus_Viewable |
+                                                 XFA_WidgetStatus_Focused;
 
 }  // namespace
 

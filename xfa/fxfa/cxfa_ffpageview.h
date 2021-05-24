@@ -36,9 +36,10 @@ class CXFA_FFPageView final : public cppgc::GarbageCollected<CXFA_FFPageView> {
   CFX_Matrix GetDisplayMatrix(const FX_RECT& rtDisp, int32_t iRotate) const;
 
   // These always return a non-null iterator from the gc heap.
-  IXFA_WidgetIterator* CreateGCedFormWidgetIterator(uint32_t dwWidgetFilter);
+  IXFA_WidgetIterator* CreateGCedFormWidgetIterator(
+      XFA_WidgetStatusMask dwWidgetFilter);
   IXFA_WidgetIterator* CreateGCedTraverseWidgetIterator(
-      uint32_t dwWidgetFilter);
+      XFA_WidgetStatusMask dwWidgetFilter);
 
  private:
   CXFA_FFPageView(CXFA_FFDocView* pDocView, CXFA_Node* pPageArea);
@@ -66,10 +67,11 @@ class CXFA_FFPageWidgetIterator final
   bool SetCurrentWidget(CXFA_FFWidget* hWidget) override;
 
  private:
-  CXFA_FFPageWidgetIterator(CXFA_FFPageView* pPageView, uint32_t dwFilter);
+  CXFA_FFPageWidgetIterator(CXFA_FFPageView* pPageView,
+                            XFA_WidgetStatusMask dwFilter);
 
   CXFA_LayoutItemIterator m_sIterator;
-  const uint32_t m_dwFilter;
+  const XFA_WidgetStatusMask m_dwFilter;
   const bool m_bIgnoreRelevant;
 };
 
@@ -92,7 +94,7 @@ class CXFA_FFTabOrderPageWidgetIterator final
 
  private:
   CXFA_FFTabOrderPageWidgetIterator(CXFA_FFPageView* pPageView,
-                                    uint32_t dwFilter);
+                                    XFA_WidgetStatusMask dwFilter);
 
   CXFA_FFWidget* GetTraverseWidget(CXFA_FFWidget* pWidget);
   CXFA_FFWidget* FindWidgetByName(const WideString& wsWidgetName,
@@ -102,7 +104,7 @@ class CXFA_FFTabOrderPageWidgetIterator final
 
   cppgc::Member<CXFA_ViewLayoutItem> const m_pPageViewLayout;
   std::vector<cppgc::Member<CXFA_ContentLayoutItem>> m_TabOrderWidgetArray;
-  const uint32_t m_dwFilter;
+  const XFA_WidgetStatusMask m_dwFilter;
   int32_t m_iCurWidget = -1;
   const bool m_bIgnoreRelevant;
 };

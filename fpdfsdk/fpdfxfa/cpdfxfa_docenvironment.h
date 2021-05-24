@@ -54,7 +54,7 @@ class CPDFXFA_DocEnvironment final : public IXFA_DocEnvironment {
   void Print(CXFA_FFDoc* hDoc,
              int32_t nStartPage,
              int32_t nEndPage,
-             uint32_t dwOptions) override;
+             XFA_PrintOptMask dwOptions) override;
   FX_ARGB GetHighlightColor(const CXFA_FFDoc* hDoc) const override;
   IJS_Runtime* GetIJSRuntime(const CXFA_FFDoc* hDoc) const override;
   CFX_XMLDocument* GetXMLDoc() const override;

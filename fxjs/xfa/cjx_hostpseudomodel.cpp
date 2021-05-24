@@ -531,7 +531,7 @@ CJS_Result CJX_HostPseudoModel::print(
   if (!pNotify)
     return CJS_Result::Success();
 
-  uint32_t dwOptions = 0;
+  XFA_PrintOptMask dwOptions = 0;
   if (runtime->ToBoolean(params[0]))
     dwOptions |= XFA_PRINTOPT_ShowDialog;
   if (runtime->ToBoolean(params[3]))

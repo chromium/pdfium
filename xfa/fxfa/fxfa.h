@@ -7,6 +7,8 @@
 #ifndef XFA_FXFA_FXFA_H_
 #define XFA_FXFA_FXFA_H_
 
+#include <type_traits>
+
 #include "core/fxcrt/cfx_timer.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -61,12 +63,15 @@ enum class FormType {
   kXFAForeground = 3,
 };
 
-#define XFA_PRINTOPT_ShowDialog 0x00000001
-#define XFA_PRINTOPT_CanCancel 0x00000002
-#define XFA_PRINTOPT_ShrinkPage 0x00000004
-#define XFA_PRINTOPT_AsImage 0x00000008
-#define XFA_PRINTOPT_ReverseOrder 0x00000010
-#define XFA_PRINTOPT_PrintAnnot 0x00000020
+enum XFA_PrintOpt : uint8_t {
+  XFA_PRINTOPT_ShowDialog = 1 << 0,
+  XFA_PRINTOPT_CanCancel = 1 << 1,
+  XFA_PRINTOPT_ShrinkPage = 1 << 2,
+  XFA_PRINTOPT_AsImage = 1 << 3,
+  XFA_PRINTOPT_ReverseOrder = 1 << 4,
+  XFA_PRINTOPT_PrintAnnot = 1 << 5,
+};
+using XFA_PrintOptMask = std::underlying_type<XFA_PrintOpt>::type;
 
 enum class XFA_EventError {
   kError = -1,
@@ -75,9 +80,8 @@ enum class XFA_EventError {
   kDisabled = 2,
 };
 
-enum XFA_WidgetStatus {
+enum XFA_WidgetStatus : uint16_t {
   XFA_WidgetStatus_None = 0,
-
   XFA_WidgetStatus_Access = 1 << 0,
   XFA_WidgetStatus_ButtonDown = 1 << 1,
   XFA_WidgetStatus_Disabled = 1 << 2,
@@ -88,6 +92,7 @@ enum XFA_WidgetStatus {
   XFA_WidgetStatus_Viewable = 1 << 7,
   XFA_WidgetStatus_Visible = 1 << 8
 };
+using XFA_WidgetStatusMask = std::underlying_type<XFA_WidgetStatus>::type;
 
 // Probably should be CXFA_FFApp::CallbackIface in cxfa_ffapp.h
 class IXFA_AppProvider {
@@ -242,7 +247,7 @@ class IXFA_DocEnvironment {
   virtual void Print(CXFA_FFDoc* hDoc,
                      int32_t nStartPage,
                      int32_t nEndPage,
-                     uint32_t dwOptions) = 0;
+                     XFA_PrintOptMask dwOptions) = 0;
   virtual FX_ARGB GetHighlightColor(const CXFA_FFDoc* hDoc) const = 0;
   virtual IJS_Runtime* GetIJSRuntime(const CXFA_FFDoc* hDoc) const = 0;
   virtual CFX_XMLDocument* GetXMLDoc() const = 0;
