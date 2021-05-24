@@ -43,12 +43,12 @@ void CFX_ClipRgn::IntersectMaskRect(FX_RECT rect,
   RetainPtr<CFX_DIBitmap> pOldMask(pMask);
   m_Mask = pdfium::MakeRetain<CFX_DIBitmap>();
   m_Mask->Create(m_Box.Width(), m_Box.Height(), FXDIB_Format::k8bppMask);
+  const int offset = m_Box.left - mask_rect.left;
   for (int row = m_Box.top; row < m_Box.bottom; row++) {
     uint8_t* dest_scan =
         m_Mask->GetBuffer() + m_Mask->GetPitch() * (row - m_Box.top);
     const uint8_t* src_scan = pOldMask->GetScanline(row - mask_rect.top);
-    for (int col = m_Box.left; col < m_Box.right; col++)
-      dest_scan[col - m_Box.left] = src_scan[col - mask_rect.left];
+    memcpy(dest_scan, &src_scan[offset], m_Box.Width());
   }
 }
 
