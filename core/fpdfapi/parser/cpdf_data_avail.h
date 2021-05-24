@@ -93,8 +93,7 @@ class CPDF_DataAvail final : public Observable::ObserverIface {
   };
 
   CPDF_DataAvail(FileAvail* pFileAvail,
-                 const RetainPtr<IFX_SeekableReadStream>& pFileRead,
-                 bool bSupportHintTable);
+                 const RetainPtr<IFX_SeekableReadStream>& pFileRead);
   ~CPDF_DataAvail() override;
 
   // Observable::ObserverIface:
@@ -193,7 +192,6 @@ class CPDF_DataAvail final : public Observable::ObserverIface {
   std::set<uint32_t> m_pageMapCheckState;
   std::set<uint32_t> m_pagesLoadState;
   std::unique_ptr<CPDF_HintTables> m_pHintTables;
-  const bool m_bSupportHintTable;
   std::map<uint32_t, std::unique_ptr<CPDF_PageObjectAvail>> m_PagesObjAvail;
   std::map<const CPDF_Object*, std::unique_ptr<CPDF_PageObjectAvail>>
       m_PagesResourcesAvail;

@@ -36,8 +36,8 @@ RetainPtr<CPDF_ReadValidator> MakeValidatorFromFile(
 
 std::unique_ptr<CPDF_DataAvail> MakeDataAvailFromFile(
     const std::string& file_name) {
-  return std::make_unique<CPDF_DataAvail>(
-      nullptr, MakeValidatorFromFile(file_name), true);
+  return std::make_unique<CPDF_DataAvail>(nullptr,
+                                          MakeValidatorFromFile(file_name));
 }
 
 class TestLinearizedHeader final : public CPDF_LinearizedHeader {

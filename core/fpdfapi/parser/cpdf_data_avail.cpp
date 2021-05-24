@@ -79,12 +79,10 @@ CPDF_DataAvail::DownloadHints::~DownloadHints() = default;
 
 CPDF_DataAvail::CPDF_DataAvail(
     FileAvail* pFileAvail,
-    const RetainPtr<IFX_SeekableReadStream>& pFileRead,
-    bool bSupportHintTable)
+    const RetainPtr<IFX_SeekableReadStream>& pFileRead)
     : m_pFileRead(
           pdfium::MakeRetain<CPDF_ReadValidator>(pFileRead, pFileAvail)),
-      m_dwFileLen(m_pFileRead->GetSize()),
-      m_bSupportHintTable(bSupportHintTable) {}
+      m_dwFileLen(m_pFileRead->GetSize()) {}
 
 CPDF_DataAvail::~CPDF_DataAvail() {
   m_pHintTables.reset();
@@ -439,8 +437,7 @@ bool CPDF_DataAvail::CheckFirstPage() {
                                                              data_size))
     return false;
 
-  m_docStatus =
-      m_bSupportHintTable ? PDF_DATAAVAIL_HINTTABLE : PDF_DATAAVAIL_DONE;
+  m_docStatus = PDF_DATAAVAIL_HINTTABLE;
   return true;
 }
 

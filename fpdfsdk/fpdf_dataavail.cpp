@@ -116,9 +116,8 @@ class FPDF_AvailContext {
   FPDF_AvailContext(FX_FILEAVAIL* file_avail, FPDF_FILEACCESS* file)
       : file_avail_(std::make_unique<FPDF_FileAvailContext>(file_avail)),
         file_read_(pdfium::MakeRetain<FPDF_FileAccessContext>(file)),
-        data_avail_(std::make_unique<CPDF_DataAvail>(file_avail_.get(),
-                                                     file_read_,
-                                                     true)) {}
+        data_avail_(
+            std::make_unique<CPDF_DataAvail>(file_avail_.get(), file_read_)) {}
   ~FPDF_AvailContext() = default;
 
   CPDF_DataAvail* data_avail() { return data_avail_.get(); }
