@@ -938,39 +938,30 @@ bool CPDF_InteractiveForm::CheckRequiredFields(
 }
 
 std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
-    const WideString& pdf_path,
-    bool bSimpleFileSpec) const {
+    const WideString& pdf_path) const {
   std::vector<CPDF_FormField*> fields;
   CFieldTree::Node* pRoot = m_pFieldTree->GetRoot();
   const size_t nCount = pRoot->CountFields();
   for (size_t i = 0; i < nCount; ++i)
     fields.push_back(pRoot->GetFieldAtIndex(i));
-  return ExportToFDF(pdf_path, fields, true, bSimpleFileSpec);
+  return ExportToFDF(pdf_path, fields, true);
 }
 
 std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
     const WideString& pdf_path,
     const std::vector<CPDF_FormField*>& fields,
-    bool bIncludeOrExclude,
-    bool bSimpleFileSpec) const {
+    bool bIncludeOrExclude) const {
   std::unique_ptr<CFDF_Document> pDoc = CFDF_Document::CreateNewDoc();
   if (!pDoc)
     return nullptr;
 
   CPDF_Dictionary* pMainDict = pDoc->GetRoot()->GetDictFor("FDF");
   if (!pdf_path.IsEmpty()) {
-    if (bSimpleFileSpec) {
-      WideString wsFilePath = CPDF_FileSpec::EncodeFileName(pdf_path);
-      pMainDict->SetNewFor<CPDF_String>(pdfium::stream::kF,
-                                        wsFilePath.ToDefANSI(), false);
-      pMainDict->SetNewFor<CPDF_String>("UF", wsFilePath);
-    } else {
-      auto pNewDict = pDoc->New<CPDF_Dictionary>();
-      pNewDict->SetNewFor<CPDF_Name>("Type", "Filespec");
-      CPDF_FileSpec filespec(pNewDict.Get());
-      filespec.SetFileName(pdf_path);
-      pMainDict->SetFor("F", pNewDict);
-    }
+    auto pNewDict = pDoc->New<CPDF_Dictionary>();
+    pNewDict->SetNewFor<CPDF_Name>("Type", "Filespec");
+    CPDF_FileSpec filespec(pNewDict.Get());
+    filespec.SetFileName(pdf_path);
+    pMainDict->SetFor("F", pNewDict);
   }
 
   CPDF_Array* pFields = pMainDict->SetNewFor<CPDF_Array>("Fields");
