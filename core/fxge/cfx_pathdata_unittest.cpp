@@ -24,17 +24,18 @@ TEST(CFX_PathData, BasicTest) {
   EXPECT_EQ(0u, path.GetPoints().size());
   EXPECT_FALSE(path.IsRect());
 
-  // As is, 4 points do not make a rect without a closed path.
+  // 4 points without a closed path makes a rect.
   path.AppendPoint({0, 0}, FXPT_TYPE::MoveTo);
   path.AppendPoint({0, 1}, FXPT_TYPE::LineTo);
   path.AppendPoint({1, 1}, FXPT_TYPE::LineTo);
   path.AppendPoint({1, 0}, FXPT_TYPE::LineTo);
   EXPECT_EQ(4u, path.GetPoints().size());
-  EXPECT_FALSE(path.IsRect());
+  EXPECT_TRUE(path.IsRect());
   rect = path.GetRect(nullptr);
-  EXPECT_FALSE(rect.has_value());
+  ASSERT_TRUE(rect.has_value());
+  EXPECT_EQ(rect.value(), CFX_FloatRect(0, 0, 1, 1));
 
-  // As is, 4 points with a closed path makes a rect.
+  // 4 points with a closed path also makes a rect.
   path.ClosePath();
   EXPECT_EQ(4u, path.GetPoints().size());
   EXPECT_TRUE(path.IsRect());
@@ -132,12 +133,10 @@ TEST(CFX_PathData, ClosePath) {
   ASSERT_EQ(4u, path.GetPoints().size());
   EXPECT_EQ(FXPT_TYPE::LineTo, path.GetType(3));
   EXPECT_FALSE(path.IsClosingFigure(3));
-
-  // TODO(crbug.com/pdfium/1683): Resolve disagreement between these 2 calls,
-  // and the call with `kIdentityMatrix` below.
-  EXPECT_FALSE(path.IsRect());
+  EXPECT_TRUE(path.IsRect());
   Optional<CFX_FloatRect> rect = path.GetRect(nullptr);
-  EXPECT_FALSE(rect.has_value());
+  ASSERT_TRUE(rect.has_value());
+  EXPECT_EQ(rect.value(), CFX_FloatRect(0, 0, 1, 1));
 
   const CFX_Matrix kIdentityMatrix;
   ASSERT_TRUE(kIdentityMatrix.IsIdentity());

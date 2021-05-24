@@ -12,6 +12,25 @@
 
 namespace {
 
+bool IsRectPreTransform(const std::vector<FX_PATHPOINT>& points) {
+  if (points.size() != 5 && points.size() != 4)
+    return false;
+
+  if (points.size() == 5 && points[0].m_Point != points[4].m_Point)
+    return false;
+
+  if (points[0].m_Point == points[2].m_Point ||
+      points[1].m_Point == points[3].m_Point) {
+    return false;
+  }
+
+  for (size_t i = 1; i < points.size(); ++i) {
+    if (points[i].m_Type != FXPT_TYPE::LineTo)
+      return false;
+  }
+  return true;
+}
+
 bool XYBothNotEqual(const CFX_PointF& p1, const CFX_PointF& p2) {
   return p1.x != p2.x && p1.y != p2.y;
 }
@@ -313,24 +332,18 @@ void CFX_PathData::Transform(const CFX_Matrix& matrix) {
 }
 
 bool CFX_PathData::IsRect() const {
-  if (m_Points.size() != 5 && m_Points.size() != 4)
-    return false;
-
-  if ((m_Points.size() == 5 && m_Points[0].m_Point != m_Points[4].m_Point) ||
-      m_Points[0].m_Point == m_Points[2].m_Point ||
-      m_Points[1].m_Point == m_Points[3].m_Point) {
-    return false;
-  }
-  if (XYBothNotEqual(m_Points[0].m_Point, m_Points[3].m_Point))
+  if (!IsRectPreTransform(m_Points))
     return false;
 
   for (int i = 1; i < 4; i++) {
-    if (m_Points[i].m_Type != FXPT_TYPE::LineTo)
-      return false;
     if (XYBothNotEqual(m_Points[i].m_Point, m_Points[i - 1].m_Point))
       return false;
   }
-  return m_Points.size() == 5 || m_Points[3].m_CloseFigure;
+
+  if (XYBothNotEqual(m_Points[0].m_Point, m_Points[3].m_Point))
+    return false;
+
+  return true;
 }
 
 Optional<CFX_FloatRect> CFX_PathData::GetRect(const CFX_Matrix* matrix) const {
@@ -341,29 +354,21 @@ Optional<CFX_FloatRect> CFX_PathData::GetRect(const CFX_Matrix* matrix) const {
     return CreateRectFromPoints(m_Points[0].m_Point, m_Points[2].m_Point);
   }
 
-  if (m_Points.size() != 5 && m_Points.size() != 4)
+  if (!IsRectPreTransform(m_Points))
     return pdfium::nullopt;
-
-  if ((m_Points.size() == 5 && m_Points[0].m_Point != m_Points[4].m_Point) ||
-      m_Points[1].m_Point == m_Points[3].m_Point) {
-    return pdfium::nullopt;
-  }
-  if (m_Points.size() == 4 &&
-      XYBothNotEqual(m_Points[0].m_Point, m_Points[3].m_Point)) {
-    return pdfium::nullopt;
-  }
 
   CFX_PointF points[5];
-  for (size_t i = 0; i < m_Points.size(); i++) {
+  for (size_t i = 0; i < m_Points.size(); ++i) {
     points[i] = matrix->Transform(m_Points[i].m_Point);
 
     if (i == 0)
       continue;
-    if (m_Points[i].m_Type != FXPT_TYPE::LineTo)
-      return pdfium::nullopt;
     if (XYBothNotEqual(points[i], points[i - 1]))
       return pdfium::nullopt;
   }
+
+  if (XYBothNotEqual(points[0], points[3]))
+    return pdfium::nullopt;
 
   return CreateRectFromPoints(points[0], points[2]);
 }
