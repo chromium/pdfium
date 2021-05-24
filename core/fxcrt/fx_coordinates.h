@@ -302,6 +302,11 @@ class CFX_FloatRect {
   // Rounds LBRT values.
   FX_RECT ToRoundedFxRect() const;
 
+  bool operator==(const CFX_FloatRect& other) const {
+    return left == other.left && right == other.right && top == other.top &&
+           bottom == other.bottom;
+  }
+
   float left = 0.0f;
   float bottom = 0.0f;
   float right = 0.0f;
