@@ -310,17 +310,13 @@ def _CheckPNGFormat(input_api, output_api):
   return results
 
 def CheckChangeOnUpload(input_api, output_api):
-  cpp_source_filter = lambda x: input_api.FilterSourceFile(
-      x, files_to_check=(r'\.(?:c|cc|cpp|h)$',))
-
   results = []
   results.extend(_CheckUnwantedDependencies(input_api, output_api))
   results.extend(
       input_api.canned_checks.CheckPatchFormatted(input_api, output_api))
   results.extend(
-      input_api.canned_checks.CheckChangeLintsClean(input_api, output_api,
-                                                    cpp_source_filter,
-                                                    LINT_FILTERS))
+      input_api.canned_checks.CheckChangeLintsClean(
+          input_api, output_api, lint_filters=LINT_FILTERS))
   results.extend(_CheckIncludeOrder(input_api, output_api))
   results.extend(_CheckTestDuplicates(input_api, output_api))
   results.extend(_CheckPNGFormat(input_api, output_api))
