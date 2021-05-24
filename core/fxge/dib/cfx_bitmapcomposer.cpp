@@ -32,7 +32,7 @@ void CFX_BitmapComposer::Compose(const RetainPtr<CFX_DIBitmap>& pDest,
   m_BitmapAlpha = bitmap_alpha;
   m_MaskColor = mask_color;
   m_pClipMask = nullptr;
-  if (pClipRgn && pClipRgn->GetType() != CFX_ClipRgn::RectI)
+  if (pClipRgn && pClipRgn->GetType() != CFX_ClipRgn::kRectI)
     m_pClipMask = pClipRgn->GetMask();
   m_bVertical = bVertical;
   m_bFlipX = bFlipX;

@@ -775,8 +775,7 @@ bool CFX_DIBitmap::CompositeBitmap(int dest_left,
 
   RetainPtr<CFX_DIBitmap> pClipMask;
   FX_RECT clip_box;
-  if (pClipRgn && pClipRgn->GetType() != CFX_ClipRgn::RectI) {
-    DCHECK_EQ(pClipRgn->GetType(), CFX_ClipRgn::MaskF);
+  if (pClipRgn && pClipRgn->GetType() != CFX_ClipRgn::kRectI) {
     pClipMask = pClipRgn->GetMask();
     clip_box = pClipRgn->GetBox();
   }
@@ -858,8 +857,7 @@ bool CFX_DIBitmap::CompositeMask(int dest_left,
 
   RetainPtr<CFX_DIBitmap> pClipMask;
   FX_RECT clip_box;
-  if (pClipRgn && pClipRgn->GetType() != CFX_ClipRgn::RectI) {
-    DCHECK_EQ(pClipRgn->GetType(), CFX_ClipRgn::MaskF);
+  if (pClipRgn && pClipRgn->GetType() != CFX_ClipRgn::kRectI) {
     pClipMask = pClipRgn->GetMask();
     clip_box = pClipRgn->GetBox();
   }

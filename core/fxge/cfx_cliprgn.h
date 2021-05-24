@@ -14,7 +14,7 @@ class CFX_DIBitmap;
 
 class CFX_ClipRgn {
  public:
-  enum ClipType { RectI, MaskF };
+  enum ClipType : bool { kRectI, kMaskF };
 
   CFX_ClipRgn(int device_width, int device_height);
   CFX_ClipRgn(const CFX_ClipRgn& src);
@@ -32,7 +32,7 @@ class CFX_ClipRgn {
                          FX_RECT mask_rect,
                          const RetainPtr<CFX_DIBitmap>& Mask);
 
-  ClipType m_Type;
+  ClipType m_Type = kRectI;
   FX_RECT m_Box;
   RetainPtr<CFX_DIBitmap> m_Mask;
 };

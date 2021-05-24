@@ -294,7 +294,7 @@ agg::filling_rule_e GetAlternateOrWindingFillType(
 }
 
 RetainPtr<CFX_DIBitmap> GetClipMaskFromRegion(const CFX_ClipRgn* r) {
-  return (r && r->GetType() == CFX_ClipRgn::MaskF) ? r->GetMask() : nullptr;
+  return (r && r->GetType() == CFX_ClipRgn::kMaskF) ? r->GetMask() : nullptr;
 }
 
 FX_RECT GetClipBoxFromRegion(const RetainPtr<CFX_DIBitmap>& device,
@@ -1282,7 +1282,7 @@ bool CFX_AggDeviceDriver::FillRectWithBlend(const FX_RECT& rect,
   if (draw_rect.IsEmpty())
     return true;
 
-  if (!m_pClipRgn || m_pClipRgn->GetType() == CFX_ClipRgn::RectI) {
+  if (!m_pClipRgn || m_pClipRgn->GetType() == CFX_ClipRgn::kRectI) {
     if (m_bRgbByteOrder) {
       RgbByteOrderCompositeRect(m_pBitmap, draw_rect.left, draw_rect.top,
                                 draw_rect.Width(), draw_rect.Height(),
