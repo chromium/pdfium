@@ -24,8 +24,6 @@ class CFWL_ScrollBarTP final : public CFWL_WidgetTP {
   struct SBThemeData {
     FX_ARGB clrTrackBKStart;
     FX_ARGB clrTrackBKEnd;
-    FX_ARGB clrPawColorLight[4];
-    FX_ARGB clrPawColorDark[4];
     FX_ARGB clrBtnBK[4][2];
     FX_ARGB clrBtnBorder[4];
   };
@@ -36,7 +34,6 @@ class CFWL_ScrollBarTP final : public CFWL_WidgetTP {
                     const CFX_RectF& rect,
                     bool bVert,
                     FWLTHEME_STATE eState,
-                    bool bPawButton,
                     const CFX_Matrix& matrix);
   void DrawTrack(CFGAS_GEGraphics* pGraphics,
                  const CFX_RectF& rect,
