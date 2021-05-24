@@ -57,8 +57,7 @@ void CRYPT_ArcFourCrypt(CRYPT_rc4_context* context, pdfium::span<uint8_t> data);
 
 void CRYPT_AESSetKey(CRYPT_aes_context* context,
                      const uint8_t* key,
-                     uint32_t keylen,
-                     bool bEncrypt);
+                     uint32_t keylen);
 void CRYPT_AESSetIV(CRYPT_aes_context* context, const uint8_t* iv);
 void CRYPT_AESDecrypt(CRYPT_aes_context* context,
                       uint8_t* dest,

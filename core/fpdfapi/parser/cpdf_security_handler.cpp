@@ -149,7 +149,7 @@ void Revision6_Hash(const ByteString& password,
         content.insert(std::end(content), vector, vector + 48);
       }
     }
-    CRYPT_AESSetKey(&aes, key, 16, true);
+    CRYPT_AESSetKey(&aes, key, 16);
     CRYPT_AESSetIV(&aes, iv);
     CRYPT_AESEncrypt(&aes, E, content.data(), iBufLen);
     int iHash = 0;
@@ -366,11 +366,11 @@ bool CPDF_SecurityHandler::AES256_CheckPassword(const ByteString& password,
     return false;
 
   CRYPT_aes_context aes = {};
-  CRYPT_AESSetKey(&aes, digest, sizeof(digest), false);
+  CRYPT_AESSetKey(&aes, digest, sizeof(digest));
   uint8_t iv[16] = {};
   CRYPT_AESSetIV(&aes, iv);
   CRYPT_AESDecrypt(&aes, m_EncryptKey, ekey.raw_str(), 32);
-  CRYPT_AESSetKey(&aes, m_EncryptKey, sizeof(m_EncryptKey), false);
+  CRYPT_AESSetKey(&aes, m_EncryptKey, sizeof(m_EncryptKey));
   CRYPT_AESSetIV(&aes, iv);
   ByteString perms = m_pEncryptDict->GetStringFor("Perms");
   if (perms.IsEmpty())
@@ -681,7 +681,7 @@ void CPDF_SecurityHandler::AES256_SetPassword(CPDF_Dictionary* pEncryptDict,
     CRYPT_SHA256Finish(&sha2, digest1);
   }
   CRYPT_aes_context aes = {};
-  CRYPT_AESSetKey(&aes, digest1, 32, true);
+  CRYPT_AESSetKey(&aes, digest1, 32);
   uint8_t iv[16] = {};
   CRYPT_AESSetIV(&aes, iv);
   CRYPT_AESEncrypt(&aes, digest1, m_EncryptKey, sizeof(m_EncryptKey));
@@ -710,7 +710,7 @@ void CPDF_SecurityHandler::AES256_SetPerms(CPDF_Dictionary* pEncryptDict) {
   FX_Random_GenerateMT(buf_random, 1);
 
   CRYPT_aes_context aes = {};
-  CRYPT_AESSetKey(&aes, m_EncryptKey, sizeof(m_EncryptKey), true);
+  CRYPT_AESSetKey(&aes, m_EncryptKey, sizeof(m_EncryptKey));
 
   uint8_t iv[16] = {};
   CRYPT_AESSetIV(&aes, iv);

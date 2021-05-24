@@ -638,8 +638,7 @@ void aes_encrypt_cbc(unsigned char* dest,
 
 void CRYPT_AESSetKey(CRYPT_aes_context* context,
                      const uint8_t* key,
-                     uint32_t keylen,
-                     bool bEncrypt) {
+                     uint32_t keylen) {
   aes_setup(context, key, keylen);
 }
 
