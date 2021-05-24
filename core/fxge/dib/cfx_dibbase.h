@@ -34,13 +34,6 @@ class CFX_DIBBase : public Retainable {
   virtual uint8_t* GetBuffer() const;
   virtual const uint8_t* GetScanline(int line) const = 0;
   virtual bool SkipToScanline(int line, PauseIndicatorIface* pPause) const;
-  virtual void DownSampleScanline(int line,
-                                  uint8_t* dest_scan,
-                                  int dest_bpp,
-                                  int dest_width,
-                                  bool bFlipX,
-                                  int clip_left,
-                                  int clip_width) const = 0;
 
   uint8_t* GetWritableScanline(int line) {
     return const_cast<uint8_t*>(GetScanline(line));

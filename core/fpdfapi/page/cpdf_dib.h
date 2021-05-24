@@ -48,13 +48,6 @@ class CPDF_DIB final : public CFX_DIBBase {
   bool SkipToScanline(int line, PauseIndicatorIface* pPause) const override;
   uint8_t* GetBuffer() const override;
   const uint8_t* GetScanline(int line) const override;
-  void DownSampleScanline(int line,
-                          uint8_t* dest_scan,
-                          int dest_bpp,
-                          int dest_width,
-                          bool bFlipX,
-                          int clip_left,
-                          int clip_width) const override;
 
   RetainPtr<CPDF_ColorSpace> GetColorSpace() const { return m_pColorSpace; }
   uint32_t GetMatteColor() const { return m_MatteColor; }
@@ -102,33 +95,6 @@ class CPDF_DIB final : public CFX_DIBBase {
   bool TranslateScanline24bppDefaultDecode(uint8_t* dest_scan,
                                            const uint8_t* src_scan) const;
   void ValidateDictParam(const ByteString& filter);
-  void DownSampleScanline1Bit(int orig_Bpp,
-                              int dest_Bpp,
-                              uint32_t src_width,
-                              const uint8_t* pSrcLine,
-                              uint8_t* dest_scan,
-                              int dest_width,
-                              bool bFlipX,
-                              int clip_left,
-                              int clip_width) const;
-  void DownSampleScanline8Bit(int orig_Bpp,
-                              int dest_Bpp,
-                              uint32_t src_width,
-                              const uint8_t* pSrcLine,
-                              uint8_t* dest_scan,
-                              int dest_width,
-                              bool bFlipX,
-                              int clip_left,
-                              int clip_width) const;
-  void DownSampleScanline32Bit(int orig_Bpp,
-                               int dest_Bpp,
-                               uint32_t src_width,
-                               const uint8_t* pSrcLine,
-                               uint8_t* dest_scan,
-                               int dest_width,
-                               bool bFlipX,
-                               int clip_left,
-                               int clip_width) const;
   bool TransMask() const;
   void SetMaskProperties();
 

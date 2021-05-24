@@ -595,63 +595,6 @@ void CFX_DIBitmap::SetPixel(int x, int y, uint32_t color) {
 }
 #endif  // defined(_SKIA_SUPPORT_)
 
-void CFX_DIBitmap::DownSampleScanline(int line,
-                                      uint8_t* dest_scan,
-                                      int dest_bpp,
-                                      int dest_width,
-                                      bool bFlipX,
-                                      int clip_left,
-                                      int clip_width) const {
-  if (!m_pBuffer)
-    return;
-
-  int src_Bpp = GetBppFromFormat(m_Format) / 8;
-  uint8_t* scanline = m_pBuffer.Get() + line * m_Pitch;
-  if (src_Bpp == 0) {
-    for (int i = 0; i < clip_width; i++) {
-      uint32_t dest_x = clip_left + i;
-      uint32_t src_x = dest_x * m_Width / dest_width;
-      if (bFlipX) {
-        src_x = m_Width - src_x - 1;
-      }
-      src_x %= m_Width;
-      dest_scan[i] = (scanline[src_x / 8] & (1 << (7 - src_x % 8))) ? 255 : 0;
-    }
-  } else if (src_Bpp == 1) {
-    pdfium::span<const uint32_t> palette = GetPaletteSpan();
-    for (int i = 0; i < clip_width; i++) {
-      uint32_t dest_x = clip_left + i;
-      uint32_t src_x = dest_x * m_Width / dest_width;
-      if (bFlipX) {
-        src_x = m_Width - src_x - 1;
-      }
-      src_x %= m_Width;
-      int dest_pos = i;
-      if (HasPalette()) {
-        dest_pos *= 3;
-        FX_ARGB argb = palette[scanline[src_x]];
-        dest_scan[dest_pos] = FXARGB_B(argb);
-        dest_scan[dest_pos + 1] = FXARGB_G(argb);
-        dest_scan[dest_pos + 2] = FXARGB_R(argb);
-      } else {
-        dest_scan[dest_pos] = scanline[src_x];
-      }
-    }
-  } else {
-    for (int i = 0; i < clip_width; i++) {
-      uint32_t dest_x = clip_left + i;
-      uint32_t src_x =
-          bFlipX ? (m_Width - dest_x * m_Width / dest_width - 1) * src_Bpp
-                 : (dest_x * m_Width / dest_width) * src_Bpp;
-      src_x %= m_Width * src_Bpp;
-      int dest_pos = i * src_Bpp;
-      for (int b = 0; b < src_Bpp; b++) {
-        dest_scan[dest_pos + b] = scanline[src_x + b];
-      }
-    }
-  }
-}
-
 void CFX_DIBitmap::ConvertBGRColorScale(uint32_t forecolor,
                                         uint32_t backcolor) {
   int fr = FXSYS_GetRValue(forecolor);

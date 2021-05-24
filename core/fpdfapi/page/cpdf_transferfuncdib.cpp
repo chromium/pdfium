@@ -148,56 +148,7 @@ void CPDF_TransferFuncDIB::TranslateScanline(
   }
 }
 
-void CPDF_TransferFuncDIB::TranslateDownSamples(uint8_t* dest_buf,
-                                                const uint8_t* src_buf,
-                                                int pixels,
-                                                int Bpp) const {
-  if (Bpp == 8) {
-    for (int i = 0; i < pixels; i++)
-      *dest_buf++ = m_RampR[*(src_buf++)];
-  } else if (Bpp == 24) {
-    for (int i = 0; i < pixels; i++) {
-      *dest_buf++ = m_RampB[*(src_buf++)];
-      *dest_buf++ = m_RampG[*(src_buf++)];
-      *dest_buf++ = m_RampR[*(src_buf++)];
-    }
-  } else {
-#if defined(OS_APPLE)
-    if (!m_pSrc->IsAlphaFormat()) {
-      for (int i = 0; i < pixels; i++) {
-        *dest_buf++ = m_RampB[*(src_buf++)];
-        *dest_buf++ = m_RampG[*(src_buf++)];
-        *dest_buf++ = m_RampR[*(src_buf++)];
-        dest_buf++;
-        src_buf++;
-      }
-    } else {
-#endif
-      for (int i = 0; i < pixels; i++) {
-        *dest_buf++ = m_RampB[*(src_buf++)];
-        *dest_buf++ = m_RampG[*(src_buf++)];
-        *dest_buf++ = m_RampR[*(src_buf++)];
-        *dest_buf++ = *(src_buf++);
-      }
-#if defined(OS_APPLE)
-    }
-#endif
-  }
-}
-
 const uint8_t* CPDF_TransferFuncDIB::GetScanline(int line) const {
   TranslateScanline(m_pSrc->GetScanline(line), &m_Scanline);
   return m_Scanline.data();
-}
-
-void CPDF_TransferFuncDIB::DownSampleScanline(int line,
-                                              uint8_t* dest_scan,
-                                              int dest_bpp,
-                                              int dest_width,
-                                              bool bFlipX,
-                                              int clip_left,
-                                              int clip_width) const {
-  m_pSrc->DownSampleScanline(line, dest_scan, dest_bpp, dest_width, bFlipX,
-                             clip_left, clip_width);
-  TranslateDownSamples(dest_scan, dest_scan, clip_width, dest_bpp);
 }
