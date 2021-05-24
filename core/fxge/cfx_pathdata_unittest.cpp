@@ -208,10 +208,10 @@ TEST(CFX_PathData, SixPlusPointRect) {
   path.AppendPoint({2, 1}, FXPT_TYPE::LineTo);
   path.AppendPoint({0, 1}, FXPT_TYPE::LineTo);
   path.AppendPoint({0, 0}, FXPT_TYPE::LineTo);
-  // TODO(crbug.com/pdfium/1683): Treat this as a rect.
-  EXPECT_FALSE(path.IsRect());
+  EXPECT_TRUE(path.IsRect());
   Optional<CFX_FloatRect> rect = path.GetRect(nullptr);
-  EXPECT_FALSE(rect.has_value());
+  ASSERT_TRUE(rect.has_value());
+  EXPECT_EQ(rect.value(), CFX_FloatRect(0, 0, 2, 1));
 
   path.Clear();
   path.AppendPoint({0, 0}, FXPT_TYPE::MoveTo);
@@ -227,10 +227,10 @@ TEST(CFX_PathData, SixPlusPointRect) {
   path.AppendPoint({0, 0}, FXPT_TYPE::LineTo);
   path.AppendPoint({0, 0}, FXPT_TYPE::LineTo);
   path.AppendPoint({0, 0}, FXPT_TYPE::LineTo);
-  // TODO(crbug.com/pdfium/1683): Treat this as a rect.
-  EXPECT_FALSE(path.IsRect());
+  EXPECT_TRUE(path.IsRect());
   rect = path.GetRect(nullptr);
-  EXPECT_FALSE(rect.has_value());
+  ASSERT_TRUE(rect.has_value());
+  EXPECT_EQ(rect.value(), CFX_FloatRect(0, 0, 2, 1));
 }
 
 TEST(CFX_PathData, NotRect) {

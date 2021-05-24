@@ -6,8 +6,11 @@
 
 #include "core/fxge/cfx_pathdata.h"
 
+#include <algorithm>
+#include <iterator>
+
 #include "core/fxcrt/fx_system.h"
-#include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/numerics/safe_math.h"
 
 namespace {
@@ -35,10 +38,65 @@ bool XYBothNotEqual(const CFX_PointF& p1, const CFX_PointF& p2) {
   return p1.x != p2.x && p1.y != p2.y;
 }
 
+bool IsRectImpl(const std::vector<FX_PATHPOINT>& points) {
+  if (!IsRectPreTransform(points))
+    return false;
+
+  for (int i = 1; i < 4; i++) {
+    if (XYBothNotEqual(points[i].m_Point, points[i - 1].m_Point))
+      return false;
+  }
+
+  if (XYBothNotEqual(points[0].m_Point, points[3].m_Point))
+    return false;
+
+  return true;
+}
+
 CFX_FloatRect CreateRectFromPoints(const CFX_PointF& p1, const CFX_PointF& p2) {
   CFX_FloatRect rect(p1.x, p1.y, p2.x, p2.y);
   rect.Normalize();
   return rect;
+}
+
+bool PathPointsNeedNormalization(const std::vector<FX_PATHPOINT>& points) {
+  return points.size() > 5;
+}
+
+std::vector<FX_PATHPOINT> GetNormalizedPoints(
+    const std::vector<FX_PATHPOINT>& points) {
+  DCHECK(PathPointsNeedNormalization(points));
+
+  if (points[0].m_Point != points.back().m_Point)
+    return {};
+
+  std::vector<FX_PATHPOINT> normalized;
+  normalized.reserve(6);
+  normalized.push_back(points[0]);
+  for (auto it = points.begin() + 1; it != points.end(); ++it) {
+    // Exactly 5 points left. Stop normalizing and take what is left.
+    if (normalized.size() + std::distance(it, points.end()) == 5) {
+      std::copy(it, points.end(), std::back_inserter(normalized));
+      break;
+    }
+
+    // If the line does not move, skip this point.
+    const auto& point = *it;
+    if (point.m_Type == FXPT_TYPE::LineTo && !point.m_CloseFigure &&
+        !normalized.back().m_CloseFigure &&
+        point.m_Point == normalized.back().m_Point) {
+      continue;
+    }
+
+    normalized.push_back(point);
+
+    // Too many points. Not considered as a rectangle.
+    if (normalized.size() > 5)
+      return {};
+  }
+
+  DCHECK_EQ(5u, normalized.size());
+  return normalized;
 }
 
 void UpdateLineEndPoints(CFX_FloatRect* rect,
@@ -332,34 +390,32 @@ void CFX_PathData::Transform(const CFX_Matrix& matrix) {
 }
 
 bool CFX_PathData::IsRect() const {
-  if (!IsRectPreTransform(m_Points))
-    return false;
-
-  for (int i = 1; i < 4; i++) {
-    if (XYBothNotEqual(m_Points[i].m_Point, m_Points[i - 1].m_Point))
-      return false;
-  }
-
-  if (XYBothNotEqual(m_Points[0].m_Point, m_Points[3].m_Point))
-    return false;
-
-  return true;
+  if (PathPointsNeedNormalization(m_Points))
+    return IsRectImpl(GetNormalizedPoints(m_Points));
+  return IsRectImpl(m_Points);
 }
 
 Optional<CFX_FloatRect> CFX_PathData::GetRect(const CFX_Matrix* matrix) const {
+  bool do_normalize = PathPointsNeedNormalization(m_Points);
+  std::vector<FX_PATHPOINT> normalized;
+  if (do_normalize)
+    normalized = GetNormalizedPoints(m_Points);
+  const std::vector<FX_PATHPOINT>& path_points =
+      do_normalize ? normalized : m_Points;
+
   if (!matrix) {
-    if (!IsRect())
+    if (!IsRectImpl(path_points))
       return pdfium::nullopt;
 
-    return CreateRectFromPoints(m_Points[0].m_Point, m_Points[2].m_Point);
+    return CreateRectFromPoints(path_points[0].m_Point, path_points[2].m_Point);
   }
 
-  if (!IsRectPreTransform(m_Points))
+  if (!IsRectPreTransform(path_points))
     return pdfium::nullopt;
 
   CFX_PointF points[5];
-  for (size_t i = 0; i < m_Points.size(); ++i) {
-    points[i] = matrix->Transform(m_Points[i].m_Point);
+  for (size_t i = 0; i < path_points.size(); ++i) {
+    points[i] = matrix->Transform(path_points[i].m_Point);
 
     if (i == 0)
       continue;
