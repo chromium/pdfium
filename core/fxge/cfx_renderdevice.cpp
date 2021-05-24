@@ -645,8 +645,7 @@ bool CFX_RenderDevice::DrawPathWithBlend(
     return true;
   }
 
-  if ((points.size() == 5 || points.size() == 4) && stroke_alpha == 0 &&
-      !fill_options.rect_aa) {
+  if (stroke_alpha == 0 && !fill_options.rect_aa) {
     Optional<CFX_FloatRect> maybe_rect_f = pPathData->GetRect(pObject2Device);
     if (maybe_rect_f.has_value()) {
       const CFX_FloatRect& rect_f = maybe_rect_f.value();

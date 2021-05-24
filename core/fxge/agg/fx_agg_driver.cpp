@@ -1133,18 +1133,15 @@ bool CFX_AggDeviceDriver::SetClip_PathFill(
     m_pClipRgn = std::make_unique<CFX_ClipRgn>(
         GetDeviceCaps(FXDC_PIXEL_WIDTH), GetDeviceCaps(FXDC_PIXEL_HEIGHT));
   }
-  size_t size = pPathData->GetPoints().size();
-  if (size == 5 || size == 4) {
-    Optional<CFX_FloatRect> maybe_rectf = pPathData->GetRect(pObject2Device);
-    if (maybe_rectf.has_value()) {
-      CFX_FloatRect& rectf = maybe_rectf.value();
-      rectf.Intersect(CFX_FloatRect(
-          0, 0, static_cast<float>(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
-          static_cast<float>(GetDeviceCaps(FXDC_PIXEL_HEIGHT))));
-      FX_RECT rect = rectf.GetOuterRect();
-      m_pClipRgn->IntersectRect(rect);
-      return true;
-    }
+  Optional<CFX_FloatRect> maybe_rectf = pPathData->GetRect(pObject2Device);
+  if (maybe_rectf.has_value()) {
+    CFX_FloatRect& rectf = maybe_rectf.value();
+    rectf.Intersect(
+        CFX_FloatRect(0, 0, static_cast<float>(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
+                      static_cast<float>(GetDeviceCaps(FXDC_PIXEL_HEIGHT))));
+    FX_RECT rect = rectf.GetOuterRect();
+    m_pClipRgn->IntersectRect(rect);
+    return true;
   }
   agg::path_storage path_data;
   BuildAggPath(pPathData, pObject2Device, path_data);

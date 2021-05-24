@@ -583,10 +583,7 @@ bool CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
         ((m_DeviceType != DeviceType::kPrinter && !fill_options.full_cover) ||
          (pGraphState && !pGraphState->m_DashArray.empty()))) {
       if (!((!pMatrix || !pMatrix->WillScale()) && pGraphState &&
-            pGraphState->m_LineWidth == 1.0f &&
-            (pPathData->GetPoints().size() == 5 ||
-             pPathData->GetPoints().size() == 4) &&
-            pPathData->IsRect())) {
+            pGraphState->m_LineWidth == 1.0f && pPathData->IsRect())) {
         if (pPlatform->m_GdiplusExt.DrawPath(m_hDC, pPathData, pMatrix,
                                              pGraphState, fill_color,
                                              stroke_color, fill_options)) {
@@ -677,17 +674,15 @@ bool CGdiDeviceDriver::SetClip_PathFill(
     const CFX_PathData* pPathData,
     const CFX_Matrix* pMatrix,
     const CFX_FillRenderOptions& fill_options) {
-  if (pPathData->GetPoints().size() == 5) {
-    Optional<CFX_FloatRect> maybe_rectf = pPathData->GetRect(pMatrix);
-    if (maybe_rectf.has_value()) {
-      FX_RECT rect = maybe_rectf.value().GetOuterRect();
-      // Can easily apply base clip to protect against wildly large rectangular
-      // clips. crbug.com/1019026
-      if (m_BaseClipBox.has_value())
-        rect.Intersect(m_BaseClipBox.value());
-      return IntersectClipRect(m_hDC, rect.left, rect.top, rect.right,
-                               rect.bottom) != ERROR;
-    }
+  Optional<CFX_FloatRect> maybe_rectf = pPathData->GetRect(pMatrix);
+  if (maybe_rectf.has_value()) {
+    FX_RECT rect = maybe_rectf.value().GetOuterRect();
+    // Can easily apply base clip to protect against wildly large rectangular
+    // clips. crbug.com/1019026
+    if (m_BaseClipBox.has_value())
+      rect.Intersect(m_BaseClipBox.value());
+    return IntersectClipRect(m_hDC, rect.left, rect.top, rect.right,
+                             rect.bottom) != ERROR;
   }
   SetPathToDC(m_hDC, pPathData, pMatrix);
   SetPolyFillMode(m_hDC, FillTypeToGdiFillType(fill_options.fill_type));
