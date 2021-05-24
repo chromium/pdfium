@@ -12,6 +12,10 @@
 
 namespace {
 
+bool XYBothNotEqual(const CFX_PointF& p1, const CFX_PointF& p2) {
+  return p1.x != p2.x && p1.y != p2.y;
+}
+
 void UpdateLineEndPoints(CFX_FloatRect* rect,
                          const CFX_PointF& start_pos,
                          const CFX_PointF& end_pos,
@@ -311,20 +315,14 @@ bool CFX_PathData::IsRect() const {
       m_Points[1].m_Point == m_Points[3].m_Point) {
     return false;
   }
-  // Note, both x,y have to not equal.
-  if (m_Points[0].m_Point.x != m_Points[3].m_Point.x &&
-      m_Points[0].m_Point.y != m_Points[3].m_Point.y) {
+  if (XYBothNotEqual(m_Points[0].m_Point, m_Points[3].m_Point))
     return false;
-  }
 
   for (int i = 1; i < 4; i++) {
     if (m_Points[i].m_Type != FXPT_TYPE::LineTo)
       return false;
-    // Note, both x,y have to not equal.
-    if (m_Points[i].m_Point.x != m_Points[i - 1].m_Point.x &&
-        m_Points[i].m_Point.y != m_Points[i - 1].m_Point.y) {
+    if (XYBothNotEqual(m_Points[i].m_Point, m_Points[i - 1].m_Point))
       return false;
-    }
   }
   return m_Points.size() == 5 || m_Points[3].m_CloseFigure;
 }
@@ -347,9 +345,8 @@ Optional<CFX_FloatRect> CFX_PathData::GetRect(const CFX_Matrix* matrix) const {
       m_Points[1].m_Point == m_Points[3].m_Point) {
     return pdfium::nullopt;
   }
-  // Note, both x,y not equal.
-  if (m_Points.size() == 4 && m_Points[0].m_Point.x != m_Points[3].m_Point.x &&
-      m_Points[0].m_Point.y != m_Points[3].m_Point.y) {
+  if (m_Points.size() == 4 &&
+      XYBothNotEqual(m_Points[0].m_Point, m_Points[3].m_Point)) {
     return pdfium::nullopt;
   }
 
@@ -361,7 +358,7 @@ Optional<CFX_FloatRect> CFX_PathData::GetRect(const CFX_Matrix* matrix) const {
       continue;
     if (m_Points[i].m_Type != FXPT_TYPE::LineTo)
       return pdfium::nullopt;
-    if (points[i].x != points[i - 1].x && points[i].y != points[i - 1].y)
+    if (XYBothNotEqual(points[i], points[i - 1]))
       return pdfium::nullopt;
   }
 
