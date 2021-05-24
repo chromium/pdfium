@@ -132,7 +132,7 @@ class CPDF_FormField {
   int GetSelectedOptionIndex(int index) const;
   bool IsSelectedOption(const WideString& wsOptValue) const;
   bool IsSelectedIndex(int iOptIndex) const;
-  bool SelectOption(int iOptIndex, bool bSelected, NotificationOption notify);
+  void SelectOption(int iOptIndex);
 
   // Verifies if there is a valid selected indicies (/I) object and whether its
   // entries are consistent with the value (/V) object.

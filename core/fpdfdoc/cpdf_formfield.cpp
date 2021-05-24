@@ -512,7 +512,7 @@ void CPDF_FormField::SetItemSelectionSelected(int index,
     return;
   }
 
-  SelectOption(index, true, NotificationOption::kDoNotNotify);
+  SelectOption(index);
   if (!m_bIsMultiSelectListBox) {
     m_pDict->SetNewFor<CPDF_String>(pdfium::form_fields::kV, opt_value);
     return;
@@ -732,58 +732,22 @@ bool CPDF_FormField::IsSelectedIndex(int iOptIndex) const {
          pSelectedIndicesObject->GetInteger() == iOptIndex;
 }
 
-bool CPDF_FormField::SelectOption(int iOptIndex,
-                                  bool bSelected,
-                                  NotificationOption notify) {
+void CPDF_FormField::SelectOption(int iOptIndex) {
   CPDF_Array* pArray = m_pDict->GetArrayFor("I");
-  if (!pArray) {
-    if (!bSelected)
-      return true;
-
+  if (!pArray)
     pArray = m_pDict->SetNewFor<CPDF_Array>("I");
-  }
 
-  bool bReturn = false;
   for (size_t i = 0; i < pArray->size(); i++) {
     int iFind = pArray->GetIntegerAt(i);
-    if (iFind == iOptIndex) {
-      if (bSelected)
-        return true;
-
-      if (notify == NotificationOption::kNotify && m_pForm->GetFormNotify()) {
-        WideString csValue = GetOptionLabel(iOptIndex);
-        if (!NotifyListOrComboBoxBeforeChange(csValue))
-          return false;
-      }
-      pArray->RemoveAt(i);
-      bReturn = true;
-      break;
-    }
+    if (iFind == iOptIndex)
+      return;
 
     if (iFind > iOptIndex) {
-      if (!bSelected)
-        continue;
-
-      if (notify == NotificationOption::kNotify && m_pForm->GetFormNotify()) {
-        WideString csValue = GetOptionLabel(iOptIndex);
-        if (!NotifyListOrComboBoxBeforeChange(csValue))
-          return false;
-      }
       pArray->InsertNewAt<CPDF_Number>(i, iOptIndex);
-      bReturn = true;
-      break;
+      return;
     }
   }
-  if (!bReturn) {
-    if (bSelected)
-      pArray->AppendNew<CPDF_Number>(iOptIndex);
-    if (pArray->IsEmpty())
-      m_pDict->RemoveFor("I");
-  }
-  if (notify == NotificationOption::kNotify)
-    NotifyListOrComboBoxAfterChange();
-
-  return true;
+  pArray->AppendNew<CPDF_Number>(iOptIndex);
 }
 
 bool CPDF_FormField::UseSelectedIndicesObject() const {
