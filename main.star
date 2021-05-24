@@ -22,7 +22,7 @@ _CONSOLE_HEADER = {
 _LINUX_DIMENSIONS = {
     "cores": "8",
     "cpu": "x86-64",
-    "os": "Ubuntu-16.04",
+    "os": "Ubuntu-18.04",
 }
 _MACOS_DIMENSIONS = {
     "cpu": "x86-64",
@@ -335,7 +335,7 @@ luci.builder(
     dimensions = {
         "cores": "8",
         "cpu": "x86-64",
-        "os": "Ubuntu-16.04",
+        "os": "Ubuntu-18.04",
         "pool": "luci.flex.try",
     },
     properties = {
@@ -352,7 +352,7 @@ luci.builder(
     dimensions = {
         "cores": "8",
         "cpu": "x86-64",
-        "os": "Ubuntu-16.04",
+        "os": "Ubuntu-18.04",
         "pool": "luci.flex.try",
     },
     properties = {
