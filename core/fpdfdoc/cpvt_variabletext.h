@@ -122,8 +122,8 @@ class CPVT_VariableText {
   CPVT_WordPlace GetSectionBeginPlace(const CPVT_WordPlace& place) const;
   CPVT_WordPlace GetSectionEndPlace(const CPVT_WordPlace& place) const;
   void UpdateWordPlace(CPVT_WordPlace& place) const;
-  CPVT_WordPlace AdjustLineHeader(const CPVT_WordPlace& place,
-                                  bool bPrevOrNext) const;
+  CPVT_WordPlace PrevLineHeaderPlace(const CPVT_WordPlace& place) const;
+  CPVT_WordPlace NextLineHeaderPlace(const CPVT_WordPlace& place) const;
   int32_t WordPlaceToWordIndex(const CPVT_WordPlace& place) const;
   CPVT_WordPlace WordIndexToWordPlace(int32_t index) const;
 

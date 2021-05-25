@@ -252,11 +252,11 @@ CPVT_WordPlace CPVT_VariableText::DeleteWords(
 }
 
 CPVT_WordPlace CPVT_VariableText::DeleteWord(const CPVT_WordPlace& place) {
-  return ClearRightWord(AdjustLineHeader(place, true));
+  return ClearRightWord(PrevLineHeaderPlace(place));
 }
 
 CPVT_WordPlace CPVT_VariableText::BackSpaceWord(const CPVT_WordPlace& place) {
-  return ClearLeftWord(AdjustLineHeader(place, true));
+  return ClearLeftWord(PrevLineHeaderPlace(place));
 }
 
 void CPVT_VariableText::SetText(const WideString& swText) {
@@ -307,7 +307,7 @@ void CPVT_VariableText::UpdateWordPlace(CPVT_WordPlace& place) const {
   if (place.nSecIndex >= pdfium::CollectionSize<int32_t>(m_SectionArray))
     place = GetEndWordPlace();
 
-  place = AdjustLineHeader(place, true);
+  place = PrevLineHeaderPlace(place);
   if (pdfium::IndexInBounds(m_SectionArray, place.nSecIndex))
     m_SectionArray[place.nSecIndex]->UpdateWordPlace(place);
 }
@@ -640,7 +640,7 @@ int32_t CPVT_VariableText::GetAlignment() {
 }
 
 void CPVT_VariableText::ClearSectionRightWords(const CPVT_WordPlace& place) {
-  CPVT_WordPlace wordplace = AdjustLineHeader(place, true);
+  CPVT_WordPlace wordplace = PrevLineHeaderPlace(place);
   if (!pdfium::IndexInBounds(m_SectionArray, place.nSecIndex))
     return;
 
@@ -648,10 +648,17 @@ void CPVT_VariableText::ClearSectionRightWords(const CPVT_WordPlace& place) {
   pSection->EraseWordsFrom(wordplace.nWordIndex + 1);
 }
 
-CPVT_WordPlace CPVT_VariableText::AdjustLineHeader(const CPVT_WordPlace& place,
-                                                   bool bPrevOrNext) const {
+CPVT_WordPlace CPVT_VariableText::PrevLineHeaderPlace(
+    const CPVT_WordPlace& place) const {
   if (place.nWordIndex < 0 && place.nLineIndex > 0)
-    return bPrevOrNext ? GetPrevWordPlace(place) : GetNextWordPlace(place);
+    return GetPrevWordPlace(place);
+  return place;
+}
+
+CPVT_WordPlace CPVT_VariableText::NextLineHeaderPlace(
+    const CPVT_WordPlace& place) const {
+  if (place.nWordIndex < 0 && place.nLineIndex > 0)
+    return GetNextWordPlace(place);
   return place;
 }
 
@@ -679,7 +686,7 @@ void CPVT_VariableText::ClearEmptySections(const CPVT_WordRange& PlaceRange) {
 }
 
 void CPVT_VariableText::LinkLatterSection(const CPVT_WordPlace& place) {
-  CPVT_WordPlace oldplace = AdjustLineHeader(place, true);
+  CPVT_WordPlace oldplace = PrevLineHeaderPlace(place);
   if (!pdfium::IndexInBounds(m_SectionArray, place.nSecIndex + 1))
     return;
 
@@ -696,8 +703,8 @@ void CPVT_VariableText::LinkLatterSection(const CPVT_WordPlace& place) {
 
 void CPVT_VariableText::ClearWords(const CPVT_WordRange& PlaceRange) {
   CPVT_WordRange NewRange;
-  NewRange.BeginPos = AdjustLineHeader(PlaceRange.BeginPos, true);
-  NewRange.EndPos = AdjustLineHeader(PlaceRange.EndPos, true);
+  NewRange.BeginPos = PrevLineHeaderPlace(PlaceRange.BeginPos);
+  NewRange.EndPos = PrevLineHeaderPlace(PlaceRange.EndPos);
   for (int32_t s = NewRange.EndPos.nSecIndex; s >= NewRange.BeginPos.nSecIndex;
        s--) {
     if (pdfium::IndexInBounds(m_SectionArray, s))
@@ -730,7 +737,7 @@ CPVT_WordPlace CPVT_VariableText::ClearRightWord(const CPVT_WordPlace& place) {
     return place;
 
   CPVT_Section* pSection = m_SectionArray[place.nSecIndex].get();
-  CPVT_WordPlace rightplace = AdjustLineHeader(GetNextWordPlace(place), false);
+  CPVT_WordPlace rightplace = NextLineHeaderPlace(GetNextWordPlace(place));
   if (rightplace == place)
     return place;
 
