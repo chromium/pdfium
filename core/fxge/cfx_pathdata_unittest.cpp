@@ -317,6 +317,19 @@ TEST(CFX_PathData, NotRect) {
   rect = path.GetRect(nullptr);
   EXPECT_FALSE(rect.has_value());
   EXPECT_EQ(CFX_FloatRect(0, 0, 2, 1), path.GetBoundingBox());
+
+  path.Clear();
+  path.AppendPoint({0, 0}, FXPT_TYPE::MoveTo);
+  path.AppendPoint({2, 0}, FXPT_TYPE::LineTo);
+  path.AppendPoint({2, 1}, FXPT_TYPE::LineTo);
+  path.AppendPoint({2, 2}, FXPT_TYPE::LineTo);
+  EXPECT_FALSE(path.IsRect());
+  rect = path.GetRect(nullptr);
+  EXPECT_FALSE(rect.has_value());
+  const CFX_Matrix kScaleMatrix(1, 0, 0, 2, 60, 70);
+  rect = path.GetRect(&kScaleMatrix);
+  EXPECT_FALSE(rect.has_value());
+  EXPECT_EQ(CFX_FloatRect(0, 0, 2, 2), path.GetBoundingBox());
 }
 
 TEST(CFX_PathData, EmptyRect) {
@@ -332,4 +345,29 @@ TEST(CFX_PathData, EmptyRect) {
   ASSERT_TRUE(rect.has_value());
   EXPECT_EQ(CFX_FloatRect(0, 0, 0, 1), rect.value());
   EXPECT_EQ(CFX_FloatRect(0, 0, 0, 1), path.GetBoundingBox());
+}
+
+TEST(CFX_PathData, Append) {
+  CFX_PathData path;
+  path.AppendPoint({5, 6}, FXPT_TYPE::MoveTo);
+  ASSERT_EQ(1u, path.GetPoints().size());
+  EXPECT_EQ(CFX_PointF(5, 6), path.GetPoint(0));
+
+  CFX_PathData empty_path;
+  path.Append(empty_path, nullptr);
+  ASSERT_EQ(1u, path.GetPoints().size());
+  EXPECT_EQ(CFX_PointF(5, 6), path.GetPoint(0));
+
+  path.Append(path, nullptr);
+  ASSERT_EQ(2u, path.GetPoints().size());
+  EXPECT_EQ(CFX_PointF(5, 6), path.GetPoint(0));
+  EXPECT_EQ(CFX_PointF(5, 6), path.GetPoint(1));
+
+  const CFX_Matrix kScaleMatrix(1, 0, 0, 2, 60, 70);
+  path.Append(path, &kScaleMatrix);
+  ASSERT_EQ(4u, path.GetPoints().size());
+  EXPECT_EQ(CFX_PointF(5, 6), path.GetPoint(0));
+  EXPECT_EQ(CFX_PointF(5, 6), path.GetPoint(1));
+  EXPECT_EQ(CFX_PointF(65, 82), path.GetPoint(2));
+  EXPECT_EQ(CFX_PointF(65, 82), path.GetPoint(3));
 }
