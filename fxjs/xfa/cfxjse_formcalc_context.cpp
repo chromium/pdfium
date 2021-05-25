@@ -1552,12 +1552,13 @@ v8::Local<v8::Value> GetObjectForName(CFXJSE_HostObject* pHostObject,
     return v8::Local<v8::Value>();
 
   CFXJSE_Engine* pScriptContext = pDoc->GetScriptContext();
-  uint32_t dwFlags = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
-                     XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent;
+  constexpr XFA_ResolveNodeMask kFlags =
+      XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
+      XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent;
   Optional<CFXJSE_Engine::ResolveResult> maybeResult =
       pScriptContext->ResolveObjects(
           pScriptContext->GetThisObject(),
-          WideString::FromUTF8(bsAccessorName).AsStringView(), dwFlags);
+          WideString::FromUTF8(bsAccessorName).AsStringView(), kFlags);
   if (!maybeResult.has_value() ||
       maybeResult.value().type != CFXJSE_Engine::ResolveResult::Type::kNodes ||
       maybeResult.value().objects.empty()) {
@@ -1581,11 +1582,11 @@ Optional<CFXJSE_Engine::ResolveResult> ResolveObjects(
   WideString wsSomExpression = WideString::FromUTF8(bsSomExp);
   CFXJSE_Engine* pScriptContext = pDoc->GetScriptContext();
   CXFA_Object* pNode = nullptr;
-  uint32_t dFlags = 0UL;
+  XFA_ResolveNodeMask dwFlags = 0;
   if (bDotAccessor) {
     if (fxv8::IsNull(pRefValue)) {
       pNode = pScriptContext->GetThisObject();
-      dFlags = XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent;
+      dwFlags = XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent;
     } else {
       pNode = CFXJSE_Engine::ToObject(pIsolate, pRefValue);
       if (!pNode)
@@ -1603,20 +1604,20 @@ Optional<CFXJSE_Engine::ResolveResult> ResolveObjects(
           wsName = L"#" + WideString::FromASCII(pNode->GetClassName());
 
         wsSomExpression = wsName + wsSomExpression;
-        dFlags = XFA_RESOLVENODE_Siblings;
+        dwFlags = XFA_RESOLVENODE_Siblings;
       } else {
-        dFlags = (bsSomExp == "*")
-                     ? (XFA_RESOLVENODE_Children)
-                     : (XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Attributes |
-                        XFA_RESOLVENODE_Properties);
+        dwFlags = (bsSomExp == "*")
+                      ? (XFA_RESOLVENODE_Children)
+                      : (XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Attributes |
+                         XFA_RESOLVENODE_Properties);
       }
     }
   } else {
     pNode = CFXJSE_Engine::ToObject(pIsolate, pRefValue);
-    dFlags = XFA_RESOLVENODE_AnyChild;
+    dwFlags = XFA_RESOLVENODE_AnyChild;
   }
   return pScriptContext->ResolveObjects(pNode, wsSomExpression.AsStringView(),
-                                        dFlags);
+                                        dwFlags);
 }
 
 std::vector<v8::Local<v8::Value>> ParseResolveResult(

@@ -292,11 +292,12 @@ CJS_Result CJX_HostPseudoModel::openList(
     if (!pObject)
       return CJS_Result::Success();
 
-    uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Parent |
-                      XFA_RESOLVENODE_Siblings;
+    constexpr XFA_ResolveNodeMask kFlags = XFA_RESOLVENODE_Children |
+                                           XFA_RESOLVENODE_Parent |
+                                           XFA_RESOLVENODE_Siblings;
     Optional<CFXJSE_Engine::ResolveResult> maybeResult =
         pScriptContext->ResolveObjects(
-            pObject, runtime->ToWideString(params[0]).AsStringView(), dwFlag);
+            pObject, runtime->ToWideString(params[0]).AsStringView(), kFlags);
     if (!maybeResult.has_value() ||
         !maybeResult.value().objects.front()->IsNode()) {
       return CJS_Result::Success();
@@ -377,10 +378,11 @@ CJS_Result CJX_HostPseudoModel::resetData(
     if (!pObject)
       return CJS_Result::Success();
 
-    uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Parent |
-                      XFA_RESOLVENODE_Siblings;
+    constexpr XFA_ResolveNodeMask kFlags = XFA_RESOLVENODE_Children |
+                                           XFA_RESOLVENODE_Parent |
+                                           XFA_RESOLVENODE_Siblings;
     Optional<CFXJSE_Engine::ResolveResult> maybeResult =
-        pScriptContext->ResolveObjects(pObject, wsName.AsStringView(), dwFlag);
+        pScriptContext->ResolveObjects(pObject, wsName.AsStringView(), kFlags);
     if (!maybeResult.has_value() ||
         !maybeResult.value().objects.front()->IsNode())
       continue;
@@ -439,11 +441,12 @@ CJS_Result CJX_HostPseudoModel::setFocus(
       if (!pObject)
         return CJS_Result::Success();
 
-      uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Parent |
-                        XFA_RESOLVENODE_Siblings;
+      constexpr XFA_ResolveNodeMask kFlags = XFA_RESOLVENODE_Children |
+                                             XFA_RESOLVENODE_Parent |
+                                             XFA_RESOLVENODE_Siblings;
       Optional<CFXJSE_Engine::ResolveResult> maybeResult =
           pScriptContext->ResolveObjects(
-              pObject, runtime->ToWideString(params[0]).AsStringView(), dwFlag);
+              pObject, runtime->ToWideString(params[0]).AsStringView(), kFlags);
       if (!maybeResult.has_value() ||
           !maybeResult.value().objects.front()->IsNode()) {
         return CJS_Result::Success();

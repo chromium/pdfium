@@ -347,13 +347,14 @@ CXFA_Node* FindDataRefDataNode(CXFA_Document* pDocument,
                                CXFA_Node* pTemplateNode,
                                bool bForceBind,
                                bool bUpLevel) {
-  uint32_t dFlags = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_BindNew;
+  XFA_ResolveNodeMask dwFlags =
+      XFA_RESOLVENODE_Children | XFA_RESOLVENODE_BindNew;
   if (bUpLevel || !wsRef.EqualsASCII("name"))
-    dFlags |= (XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings);
+    dwFlags |= (XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings);
 
   Optional<CFXJSE_Engine::ResolveResult> maybeResult =
       pDocument->GetScriptContext()->ResolveObjectsWithBindNode(
-          pDataScope, wsRef.AsStringView(), dFlags, pTemplateNode);
+          pDataScope, wsRef.AsStringView(), dwFlags, pTemplateNode);
   if (!maybeResult.has_value())
     return nullptr;
 
@@ -1198,11 +1199,11 @@ void UpdateBindingRelations(CXFA_Document* pDocument,
               pTemplateNodeBind
                   ? pTemplateNodeBind->JSObject()->GetCData(XFA_Attribute::Ref)
                   : WideString();
-          uint32_t dFlags =
+          constexpr XFA_ResolveNodeMask kFlags =
               XFA_RESOLVENODE_Children | XFA_RESOLVENODE_CreateNode;
           Optional<CFXJSE_Engine::ResolveResult> maybeResult =
               pDocument->GetScriptContext()->ResolveObjectsWithBindNode(
-                  pDataScope, wsRef.AsStringView(), dFlags, pTemplateNode);
+                  pDataScope, wsRef.AsStringView(), kFlags, pTemplateNode);
           CXFA_Object* pObject =
               maybeResult.has_value() && !maybeResult.value().objects.empty()
                   ? maybeResult.value().objects.front().Get()

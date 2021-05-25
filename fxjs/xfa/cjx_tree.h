@@ -7,6 +7,7 @@
 #ifndef FXJS_XFA_CJX_TREE_H_
 #define FXJS_XFA_CJX_TREE_H_
 
+#include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "fxjs/xfa/jse_define.h"
 
@@ -46,7 +47,7 @@ class CJX_Tree : public CJX_Object {
   void ResolveNodeList(v8::Isolate* pIsolate,
                        v8::Local<v8::Value>* pValue,
                        WideString wsExpression,
-                       uint32_t dwFlag,
+                       XFA_ResolveNodeMask dwFlag,
                        CXFA_Node* refNode);
 };
 
