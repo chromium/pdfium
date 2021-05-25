@@ -27,6 +27,15 @@
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_widget.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_widgethandler.h"
+
+namespace {
+
+CPDFXFA_Page* XFAPageIfNotBackedByPDFPage(CPDFSDK_PageView* pPageView) {
+  auto* pPage = static_cast<CPDFXFA_Page*>(pPageView->GetXFAPage());
+  return pPage && !pPage->AsPDFPage() ? pPage : nullptr;
+}
+
+}  // namespace
 #endif  // PDF_ENABLE_XFA
 
 CPDFSDK_AnnotHandlerMgr::CPDFSDK_AnnotHandlerMgr(
@@ -248,8 +257,9 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnKeyDown(CPDFSDK_PageView* pPageView,
     if (CPWL_Wnd::IsCTRLKeyDown(nFlag) || CPWL_Wnd::IsALTKeyDown(nFlag))
       return false;
 
-    ObservedPtr<CPDFSDK_Annot> end_annot(GetFirstOrLastFocusableAnnot(
-        pPageView, CPWL_Wnd::IsSHIFTKeyDown(nFlag)));
+    ObservedPtr<CPDFSDK_Annot> end_annot(
+        CPWL_Wnd::IsSHIFTKeyDown(nFlag) ? GetLastFocusableAnnot(pPageView)
+                                        : GetFirstFocusableAnnot(pPageView));
     return end_annot && pPageView->GetFormFillEnv()->SetFocusAnnot(&end_annot);
   }
 
@@ -259,8 +269,9 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnKeyDown(CPDFSDK_PageView* pPageView,
   ObservedPtr<CPDFSDK_Annot> pObservedAnnot(pAnnot);
   CPDFSDK_Annot* pFocusAnnot = pPageView->GetFocusAnnot();
   if (pFocusAnnot && (nKeyCode == FWL_VKEY_Tab)) {
-    ObservedPtr<CPDFSDK_Annot> pNext(
-        GetNextAnnot(pFocusAnnot, !CPWL_Wnd::IsSHIFTKeyDown(nFlag)));
+    ObservedPtr<CPDFSDK_Annot> pNext(CPWL_Wnd::IsSHIFTKeyDown(nFlag)
+                                         ? GetPrevAnnot(pFocusAnnot)
+                                         : GetNextAnnot(pFocusAnnot));
     if (!pNext)
       return false;
     if (pNext.Get() != pFocusAnnot) {
@@ -336,37 +347,52 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnHitTest(CPDFSDK_PageView* pPageView,
   return false;
 }
 
-CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::GetNextAnnot(CPDFSDK_Annot* pSDKAnnot,
-                                                     bool bNext) {
+CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::GetNextAnnot(
+    CPDFSDK_Annot* pSDKAnnot) const {
+  CPDFSDK_PageView* pPageView = pSDKAnnot->GetPageView();
 #ifdef PDF_ENABLE_XFA
-  IPDF_Page* pPage = pSDKAnnot->GetPageView()->GetXFAPage();
-  if (pPage && !pPage->AsPDFPage()) {
-    // For xfa annots in XFA pages not backed by PDF pages.
-    return static_cast<CPDFXFA_Page*>(pPage)->GetNextXFAAnnot(pSDKAnnot, bNext);
-  }
+  CPDFXFA_Page* pXFAPage = XFAPageIfNotBackedByPDFPage(pPageView);
+  if (pXFAPage)
+    return pXFAPage->GetNextXFAAnnot(pSDKAnnot);
 #endif  // PDF_ENABLE_XFA
-  CPDFSDK_FormFillEnvironment* pFormFillEnv =
-      pSDKAnnot->GetPageView()->GetFormFillEnv();
-
-  // For PDF annots.
-  CPDFSDK_AnnotIterator ai(pSDKAnnot->GetPageView(),
-                           pFormFillEnv->GetFocusableAnnotSubtypes());
-  return bNext ? ai.GetNextAnnot(pSDKAnnot) : ai.GetPrevAnnot(pSDKAnnot);
+  CPDFSDK_AnnotIterator ai(
+      pPageView, pPageView->GetFormFillEnv()->GetFocusableAnnotSubtypes());
+  return ai.GetNextAnnot(pSDKAnnot);
 }
 
-CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::GetFirstOrLastFocusableAnnot(
-    CPDFSDK_PageView* page_view,
-    bool last) const {
+CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::GetPrevAnnot(
+    CPDFSDK_Annot* pSDKAnnot) const {
+  CPDFSDK_PageView* pPageView = pSDKAnnot->GetPageView();
 #ifdef PDF_ENABLE_XFA
-  IPDF_Page* page = page_view->GetXFAPage();
-  if (page && !page->AsPDFPage()) {
-    // For XFA annots in XFA pages not backed by PDF pages.
-    return page->AsXFAPage()->GetFirstOrLastXFAAnnot(page_view, last);
-  }
+  CPDFXFA_Page* pXFAPage = XFAPageIfNotBackedByPDFPage(pPageView);
+  if (pXFAPage)
+    return pXFAPage->GetPrevXFAAnnot(pSDKAnnot);
 #endif  // PDF_ENABLE_XFA
+  CPDFSDK_AnnotIterator ai(
+      pPageView, pPageView->GetFormFillEnv()->GetFocusableAnnotSubtypes());
+  return ai.GetPrevAnnot(pSDKAnnot);
+}
 
-  CPDFSDK_FormFillEnvironment* form_fill_env = page_view->GetFormFillEnv();
-  CPDFSDK_AnnotIterator ai(page_view,
-                           form_fill_env->GetFocusableAnnotSubtypes());
-  return last ? ai.GetLastAnnot() : ai.GetFirstAnnot();
+CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::GetFirstFocusableAnnot(
+    CPDFSDK_PageView* page_view) const {
+#ifdef PDF_ENABLE_XFA
+  CPDFXFA_Page* pXFAPage = XFAPageIfNotBackedByPDFPage(page_view);
+  if (pXFAPage)
+    return pXFAPage->GetFirstXFAAnnot(page_view);
+#endif  // PDF_ENABLE_XFA
+  CPDFSDK_AnnotIterator ai(
+      page_view, page_view->GetFormFillEnv()->GetFocusableAnnotSubtypes());
+  return ai.GetFirstAnnot();
+}
+
+CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::GetLastFocusableAnnot(
+    CPDFSDK_PageView* page_view) const {
+#ifdef PDF_ENABLE_XFA
+  CPDFXFA_Page* pXFAPage = XFAPageIfNotBackedByPDFPage(page_view);
+  if (pXFAPage)
+    return pXFAPage->GetLastXFAAnnot(page_view);
+#endif  // PDF_ENABLE_XFA
+  CPDFSDK_AnnotIterator ai(
+      page_view, page_view->GetFormFillEnv()->GetFocusableAnnotSubtypes());
+  return ai.GetLastAnnot();
 }

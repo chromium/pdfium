@@ -47,9 +47,10 @@ class CPDFXFA_Page final : public IPDF_Page {
   int GetPageIndex() const { return m_iPageIndex; }
   void SetXFAPageViewIndex(int index) { m_iPageIndex = index; }
   CXFA_FFPageView* GetXFAPageView() const;
-  CPDFSDK_Annot* GetNextXFAAnnot(CPDFSDK_Annot* pSDKAnnot, bool bNext);
-  CPDFSDK_Annot* GetFirstOrLastXFAAnnot(CPDFSDK_PageView* page_view,
-                                        bool last) const;
+  CPDFSDK_Annot* GetNextXFAAnnot(CPDFSDK_Annot* pSDKAnnot) const;
+  CPDFSDK_Annot* GetPrevXFAAnnot(CPDFSDK_Annot* pSDKAnnot) const;
+  CPDFSDK_Annot* GetFirstXFAAnnot(CPDFSDK_PageView* page_view) const;
+  CPDFSDK_Annot* GetLastXFAAnnot(CPDFSDK_PageView* page_view) const;
   int HasFormFieldAtPoint(const CFX_PointF& point) const;
   void DrawFocusAnnot(CFX_RenderDevice* pDevice,
                       CPDFSDK_Annot* pAnnot,

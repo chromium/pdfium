@@ -126,9 +126,10 @@ class CPDFSDK_AnnotHandlerMgr {
   IPDFSDK_AnnotHandler* GetAnnotHandler(CPDFSDK_Annot* pAnnot) const;
   IPDFSDK_AnnotHandler* GetAnnotHandlerOfType(
       CPDF_Annot::Subtype nAnnotSubtype) const;
-  CPDFSDK_Annot* GetNextAnnot(CPDFSDK_Annot* pSDKAnnot, bool bNext);
-  CPDFSDK_Annot* GetFirstOrLastFocusableAnnot(CPDFSDK_PageView* page_view,
-                                              bool last) const;
+  CPDFSDK_Annot* GetNextAnnot(CPDFSDK_Annot* pSDKAnnot) const;
+  CPDFSDK_Annot* GetPrevAnnot(CPDFSDK_Annot* pSDKAnnot) const;
+  CPDFSDK_Annot* GetFirstFocusableAnnot(CPDFSDK_PageView* page_view) const;
+  CPDFSDK_Annot* GetLastFocusableAnnot(CPDFSDK_PageView* page_view) const;
 
   // |m_pBAAnnotHandler| and |m_pWidgetHandler| are always present, but
   // |m_pXFAWidgetHandler| is only present in XFA mode.
