@@ -1149,7 +1149,8 @@ CXFA_Node* CXFA_Node::GetOrCreateProperty(int32_t index,
   return pNewNode;
 }
 
-Optional<XFA_Element> CXFA_Node::GetFirstPropertyWithFlag(uint8_t flag) const {
+Optional<XFA_Element> CXFA_Node::GetFirstPropertyWithFlag(
+    XFA_PropertyFlagMask flag) const {
   for (const auto& prop : m_Properties) {
     if (prop.flags & flag)
       return prop.property;

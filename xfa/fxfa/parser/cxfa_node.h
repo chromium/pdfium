@@ -435,7 +435,8 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
   bool HasFlag(XFA_NodeFlag dwFlag) const;
   const PropertyData* GetPropertyData(XFA_Element property) const;
   const AttributeData* GetAttributeData(XFA_Attribute attr) const;
-  Optional<XFA_Element> GetFirstPropertyWithFlag(uint8_t flag) const;
+  Optional<XFA_Element> GetFirstPropertyWithFlag(
+      XFA_PropertyFlagMask flag) const;
   void OnRemoved(bool bNotify) const;
   Optional<void*> GetDefaultValue(XFA_Attribute attr,
                                   XFA_AttributeType eType) const;
