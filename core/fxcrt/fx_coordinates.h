@@ -227,6 +227,7 @@ class CFX_FloatRect {
       : CFX_FloatRect(pArray[0], pArray[1], pArray[2], pArray[3]) {}
 
   explicit CFX_FloatRect(const FX_RECT& rect);
+  explicit CFX_FloatRect(const CFX_PointF& point);
 
   static CFX_FloatRect GetBBox(const CFX_PointF* pPoints, int nPoints);
 
@@ -255,12 +256,6 @@ class CFX_FloatRect {
 
   CFX_FloatRect GetCenterSquare() const;
 
-  void InitRect(const CFX_PointF& point) {
-    left = point.x;
-    right = point.x;
-    bottom = point.y;
-    top = point.y;
-  }
   void UpdateRect(const CFX_PointF& point);
 
   float Width() const { return right - left; }

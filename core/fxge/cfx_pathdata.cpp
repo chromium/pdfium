@@ -327,9 +327,8 @@ CFX_FloatRect CFX_PathData::GetBoundingBox() const {
   if (m_Points.empty())
     return CFX_FloatRect();
 
-  CFX_FloatRect rect;
-  rect.InitRect(m_Points[0].m_Point);
-  for (size_t i = 1; i < m_Points.size(); i++)
+  CFX_FloatRect rect(m_Points[0].m_Point);
+  for (size_t i = 1; i < m_Points.size(); ++i)
     rect.UpdateRect(m_Points[i].m_Point);
   return rect;
 }

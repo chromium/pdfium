@@ -91,6 +91,9 @@ void FX_RECT::Intersect(const FX_RECT& src) {
 CFX_FloatRect::CFX_FloatRect(const FX_RECT& rect)
     : left(rect.left), bottom(rect.top), right(rect.right), top(rect.bottom) {}
 
+CFX_FloatRect::CFX_FloatRect(const CFX_PointF& point)
+    : left(point.x), bottom(point.y), right(point.x), top(point.y) {}
+
 // static
 CFX_FloatRect CFX_FloatRect::GetBBox(const CFX_PointF* pPoints, int nPoints) {
   if (nPoints == 0)

@@ -75,19 +75,23 @@ CFX_FloatRect GetShadingBBox(CPDF_ShadingPattern* pShading,
     return CFX_FloatRect();
 
   CFX_FloatRect rect;
-  bool bStarted = false;
+  bool update_rect = false;
   bool bGouraud = type == kFreeFormGouraudTriangleMeshShading ||
                   type == kLatticeFormGouraudTriangleMeshShading;
 
-  int point_count = kSingleCoordinatePair;
+  int point_count;
   if (type == kTensorProductPatchMeshShading)
     point_count = kTensorCoordinatePairs;
   else if (type == kCoonsPatchMeshShading)
     point_count = kCoonsCoordinatePairs;
+  else
+    point_count = kSingleCoordinatePair;
 
-  int color_count = kSingleColorPerPatch;
+  int color_count;
   if (type == kCoonsPatchMeshShading || type == kTensorProductPatchMeshShading)
     color_count = kQuadColorsPerPatch;
+  else
+    color_count = kSingleColorPerPatch;
 
   while (!stream.BitStream()->IsEOF()) {
     uint32_t flag = 0;
@@ -102,15 +106,16 @@ CFX_FloatRect GetShadingBBox(CPDF_ShadingPattern* pShading,
       color_count -= 2;
     }
 
-    for (int i = 0; i < point_count; i++) {
+    for (int i = 0; i < point_count; ++i) {
       if (!stream.CanReadCoords())
         break;
+
       CFX_PointF origin = stream.ReadCoords();
-      if (bStarted) {
+      if (update_rect) {
         rect.UpdateRect(origin);
       } else {
-        rect.InitRect(origin);
-        bStarted = true;
+        rect = CFX_FloatRect(origin);
+        update_rect = true;
       }
     }
     FX_SAFE_UINT32 nBits = stream.Components();
