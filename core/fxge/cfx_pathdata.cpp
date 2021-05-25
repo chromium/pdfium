@@ -334,8 +334,9 @@ CFX_FloatRect CFX_PathData::GetBoundingBox() const {
   return rect;
 }
 
-CFX_FloatRect CFX_PathData::GetBoundingBox(float line_width,
-                                           float miter_limit) const {
+CFX_FloatRect CFX_PathData::GetBoundingBoxForStrokePath(
+    float line_width,
+    float miter_limit) const {
   CFX_FloatRect rect(100000.0f, 100000.0f, -100000.0f, -100000.0f);
   size_t iPoint = 0;
   float half_width = line_width;

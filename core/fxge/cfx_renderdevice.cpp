@@ -754,8 +754,8 @@ bool CFX_RenderDevice::DrawFillStrokePath(
     return false;
   CFX_FloatRect bbox;
   if (pGraphState) {
-    bbox = pPathData->GetBoundingBox(pGraphState->m_LineWidth,
-                                     pGraphState->m_MiterLimit);
+    bbox = pPathData->GetBoundingBoxForStrokePath(pGraphState->m_LineWidth,
+                                                  pGraphState->m_MiterLimit);
   } else {
     bbox = pPathData->GetBoundingBox();
   }

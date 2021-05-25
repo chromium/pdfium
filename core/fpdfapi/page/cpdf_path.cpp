@@ -28,9 +28,10 @@ CFX_FloatRect CPDF_Path::GetBoundingBox() const {
   return m_Ref.GetObject()->GetBoundingBox();
 }
 
-CFX_FloatRect CPDF_Path::GetBoundingBox(float line_width,
-                                        float miter_limit) const {
-  return m_Ref.GetObject()->GetBoundingBox(line_width, miter_limit);
+CFX_FloatRect CPDF_Path::GetBoundingBoxForStrokePath(float line_width,
+                                                     float miter_limit) const {
+  return m_Ref.GetObject()->GetBoundingBoxForStrokePath(line_width,
+                                                        miter_limit);
 }
 
 bool CPDF_Path::IsRect() const {

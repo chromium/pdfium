@@ -184,8 +184,8 @@ void CFX_PSRenderer::SetClip_PathStroke(const CFX_PathData* pPathData,
   WriteToStream(&buf);
 
   OutputPath(pPathData, nullptr);
-  CFX_FloatRect rect = pPathData->GetBoundingBox(pGraphState->m_LineWidth,
-                                                 pGraphState->m_MiterLimit);
+  CFX_FloatRect rect = pPathData->GetBoundingBoxForStrokePath(
+      pGraphState->m_LineWidth, pGraphState->m_MiterLimit);
   m_ClipBox.Intersect(pObject2Device->TransformRect(rect).GetOuterRect());
 
   m_pStream->WriteString("strokepath W n sm\n");

@@ -27,7 +27,8 @@ class CPDF_Path {
 
   CFX_PointF GetPoint(int index) const;
   CFX_FloatRect GetBoundingBox() const;
-  CFX_FloatRect GetBoundingBox(float line_width, float miter_limit) const;
+  CFX_FloatRect GetBoundingBoxForStrokePath(float line_width,
+                                            float miter_limit) const;
 
   bool IsRect() const;
   void Transform(const CFX_Matrix& matrix);
