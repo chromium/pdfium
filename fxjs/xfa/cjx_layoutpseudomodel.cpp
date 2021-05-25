@@ -112,7 +112,7 @@ CJS_Result CJX_LayoutPseudoModel::HWXY(
     return CJS_Result::Success(runtime->NewNumber(0.0));
 
   CXFA_Measurement measure;
-  CFX_RectF rtRect = pLayoutItem->GetRect(true);
+  CFX_RectF rtRect = pLayoutItem->GetRelativeRect();
   switch (layoutModel) {
     case XFA_LAYOUTMODEL_H:
       measure.Set(rtRect.height, XFA_Unit::Pt);

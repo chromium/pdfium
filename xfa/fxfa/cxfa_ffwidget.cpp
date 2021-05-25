@@ -257,7 +257,7 @@ const CFX_RectF& CXFA_FFWidget::GetWidgetRect() const {
 
 const CFX_RectF& CXFA_FFWidget::RecacheWidgetRect() const {
   GetLayoutItem()->SetStatusBits(XFA_WidgetStatus_RectCached);
-  m_WidgetRect = GetLayoutItem()->GetRect(false);
+  m_WidgetRect = GetLayoutItem()->GetAbsoluteRect();
   return m_WidgetRect;
 }
 

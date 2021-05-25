@@ -29,7 +29,8 @@ class CXFA_ContentLayoutItem final : public CXFA_LayoutItem {
   CXFA_ContentLayoutItem* GetNext() const { return m_pNext.Get(); }
   void InsertAfter(CXFA_ContentLayoutItem* pNext);
 
-  CFX_RectF GetRect(bool bRelative) const;
+  CFX_RectF GetRelativeRect() const;
+  CFX_RectF GetAbsoluteRect() const;
   size_t GetIndex() const;
 
   void SetStatusBits(XFA_WidgetStatusMask val) { m_dwStatus |= val; }

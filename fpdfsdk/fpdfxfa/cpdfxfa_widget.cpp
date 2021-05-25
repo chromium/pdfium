@@ -27,5 +27,5 @@ CPDF_Annot::Subtype CPDFXFA_Widget::GetAnnotSubtype() const {
 }
 
 CFX_FloatRect CPDFXFA_Widget::GetRect() const {
-  return GetXFAFFWidget()->GetLayoutItem()->GetRect(false).ToFloatRect();
+  return GetXFAFFWidget()->GetLayoutItem()->GetAbsoluteRect().ToFloatRect();
 }

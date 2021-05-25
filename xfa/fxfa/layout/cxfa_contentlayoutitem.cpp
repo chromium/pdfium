@@ -61,11 +61,13 @@ void CXFA_ContentLayoutItem::RemoveSelf() {
     m_pPrev->m_pNext = m_pNext;
 }
 
-CFX_RectF CXFA_ContentLayoutItem::GetRect(bool bRelative) const {
+CFX_RectF CXFA_ContentLayoutItem::GetRelativeRect() const {
+  return CFX_RectF(m_sPos, m_sSize);
+}
+
+CFX_RectF CXFA_ContentLayoutItem::GetAbsoluteRect() const {
   CFX_PointF sPos = m_sPos;
   CFX_SizeF sSize = m_sSize;
-  if (bRelative)
-    return CFX_RectF(sPos, sSize);
 
   for (CXFA_LayoutItem* pLayoutItem = GetParent(); pLayoutItem;
        pLayoutItem = pLayoutItem->GetParent()) {

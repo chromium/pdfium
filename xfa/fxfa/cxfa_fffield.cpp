@@ -210,10 +210,10 @@ void CXFA_FFField::CapPlacement() {
         m_CaptionRect = rtWidget;
       } else {
         pItem = pItem->GetFirst();
-        m_CaptionRect = pItem->GetRect(false);
+        m_CaptionRect = pItem->GetAbsoluteRect();
         pItem = pItem->GetNext();
         while (pItem) {
-          m_CaptionRect.height += pItem->GetRect(false).Height();
+          m_CaptionRect.height += pItem->GetAbsoluteRect().Height();
           pItem = pItem->GetNext();
         }
         XFA_RectWithoutMargin(&m_CaptionRect, margin);

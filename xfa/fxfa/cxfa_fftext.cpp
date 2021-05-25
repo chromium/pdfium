@@ -82,7 +82,7 @@ bool CXFA_FFText::PerformLayout() {
 
   pItem = pItem->GetFirst();
   while (pItem) {
-    CFX_RectF rtText = pItem->GetRect(false);
+    CFX_RectF rtText = pItem->GetAbsoluteRect();
     CXFA_Margin* margin = m_pNode->GetMarginIfExists();
     if (margin) {
       if (!pItem->GetPrev())
