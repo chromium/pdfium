@@ -753,34 +753,9 @@ WideString GetNameExpressionSinglePath(CXFA_Node* pNode) {
 void TraverseSiblings(CXFA_Node* parent,
                       uint32_t dwNameHash,
                       std::vector<CXFA_Node*>* pSiblings,
-                      bool bIsClassName,
-                      bool bIsFindProperty) {
+                      bool bIsClassName) {
   DCHECK(parent);
   DCHECK(pSiblings);
-
-  if (bIsFindProperty) {
-    for (CXFA_Node* child :
-         parent->GetNodeListWithFilter(XFA_NodeFilter_Properties)) {
-      if (bIsClassName) {
-        if (child->GetClassHashCode() == dwNameHash)
-          pSiblings->push_back(child);
-      } else {
-        if (child->GetNameHash() == dwNameHash) {
-          if (child->GetElementType() != XFA_Element::PageSet &&
-              child->GetElementType() != XFA_Element::Extras &&
-              child->GetElementType() != XFA_Element::Items) {
-            pSiblings->push_back(child);
-          }
-        }
-      }
-      if (child->IsUnnamed() &&
-          child->GetElementType() == XFA_Element::PageSet) {
-        TraverseSiblings(child, dwNameHash, pSiblings, bIsClassName, false);
-      }
-    }
-    if (!pSiblings->empty())
-      return;
-  }
   for (CXFA_Node* child :
        parent->GetNodeListWithFilter(XFA_NodeFilter_Children)) {
     if (child->GetElementType() == XFA_Element::Variables)
@@ -793,12 +768,39 @@ void TraverseSiblings(CXFA_Node* parent,
       if (child->GetNameHash() == dwNameHash)
         pSiblings->push_back(child);
     }
-
     if (child->IsTransparent() &&
         child->GetElementType() != XFA_Element::PageSet) {
-      TraverseSiblings(child, dwNameHash, pSiblings, bIsClassName, false);
+      TraverseSiblings(child, dwNameHash, pSiblings, bIsClassName);
     }
   }
+}
+
+void TraversePropertiesOrSiblings(CXFA_Node* parent,
+                                  uint32_t dwNameHash,
+                                  std::vector<CXFA_Node*>* pSiblings,
+                                  bool bIsClassName) {
+  DCHECK(parent);
+  DCHECK(pSiblings);
+  for (CXFA_Node* child :
+       parent->GetNodeListWithFilter(XFA_NodeFilter_Properties)) {
+    if (bIsClassName) {
+      if (child->GetClassHashCode() == dwNameHash)
+        pSiblings->push_back(child);
+    } else {
+      if (child->GetNameHash() == dwNameHash) {
+        if (child->GetElementType() != XFA_Element::PageSet &&
+            child->GetElementType() != XFA_Element::Extras &&
+            child->GetElementType() != XFA_Element::Items) {
+          pSiblings->push_back(child);
+        }
+      }
+    }
+    if (child->IsUnnamed() && child->GetElementType() == XFA_Element::PageSet) {
+      TraverseSiblings(child, dwNameHash, pSiblings, bIsClassName);
+    }
+  }
+  if (pSiblings->empty())
+    TraverseSiblings(parent, dwNameHash, pSiblings, bIsClassName);
 }
 
 }  // namespace
@@ -1706,7 +1708,7 @@ std::vector<CXFA_Node*> CXFA_Node::GetSiblings(bool bIsClassName) {
   }
 
   uint32_t dwNameHash = bIsClassName ? GetClassHashCode() : GetNameHash();
-  TraverseSiblings(parent, dwNameHash, &siblings, bIsClassName, true);
+  TraversePropertiesOrSiblings(parent, dwNameHash, &siblings, bIsClassName);
   return siblings;
 }
 
@@ -1722,7 +1724,7 @@ size_t CXFA_Node::GetIndex(bool bIsProperty, bool bIsClassIndex) {
   }
   uint32_t dwHashName = bIsClassIndex ? GetClassHashCode() : GetNameHash();
   std::vector<CXFA_Node*> siblings;
-  TraverseSiblings(parent, dwHashName, &siblings, bIsClassIndex, true);
+  TraversePropertiesOrSiblings(parent, dwHashName, &siblings, bIsClassIndex);
   for (size_t i = 0; i < siblings.size(); ++i) {
     if (siblings[i] == this)
       return i;
