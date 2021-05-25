@@ -62,7 +62,8 @@ class CJX_LayoutPseudoModel final : public CJX_Object {
   static const TypeTag static_type__ = TypeTag::LayoutPseudoModel;
   static const CJX_MethodSpec MethodSpecs[];
 
-  CJS_Result NumberedPageCount(CFX_V8* runtime, bool bNumbered);
+  CJS_Result AllPageCount(CFX_V8* runtime);
+  CJS_Result NumberedPageCount(CFX_V8* runtime);
   CJS_Result HWXY(CFX_V8* runtime,
                   const std::vector<v8::Local<v8::Value>>& params,
                   XFA_LAYOUTMODEL_HWXY layoutModel);
