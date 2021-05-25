@@ -14,15 +14,18 @@ TEST(CFX_PathData, BasicTest) {
   Optional<CFX_FloatRect> rect = path.GetRect(nullptr);
   ASSERT_TRUE(rect.has_value());
   EXPECT_EQ(CFX_FloatRect(1, 2, 3, 5), rect.value());
+  EXPECT_EQ(CFX_FloatRect(1, 2, 3, 5), path.GetBoundingBox());
 
   const CFX_Matrix kScaleMatrix(1, 0, 0, 2, 60, 70);
   rect = path.GetRect(&kScaleMatrix);
   ASSERT_TRUE(rect.has_value());
   EXPECT_EQ(CFX_FloatRect(61, 74, 63, 80), rect.value());
+  EXPECT_EQ(CFX_FloatRect(1, 2, 3, 5), path.GetBoundingBox());
 
   path.Clear();
   EXPECT_EQ(0u, path.GetPoints().size());
   EXPECT_FALSE(path.IsRect());
+  EXPECT_EQ(CFX_FloatRect(), path.GetBoundingBox());
 
   // 4 points without a closed path makes a rect.
   path.AppendPoint({0, 0}, FXPT_TYPE::MoveTo);
@@ -34,6 +37,7 @@ TEST(CFX_PathData, BasicTest) {
   rect = path.GetRect(nullptr);
   ASSERT_TRUE(rect.has_value());
   EXPECT_EQ(CFX_FloatRect(0, 0, 1, 1), rect.value());
+  EXPECT_EQ(CFX_FloatRect(0, 0, 1, 1), path.GetBoundingBox());
 
   // 4 points with a closed path also makes a rect.
   path.ClosePath();
@@ -42,12 +46,14 @@ TEST(CFX_PathData, BasicTest) {
   rect = path.GetRect(nullptr);
   ASSERT_TRUE(rect.has_value());
   EXPECT_EQ(CFX_FloatRect(0, 0, 1, 1), rect.value());
+  EXPECT_EQ(CFX_FloatRect(0, 0, 1, 1), path.GetBoundingBox());
 
   path.Transform(kScaleMatrix);
   EXPECT_TRUE(path.IsRect());
   rect = path.GetRect(nullptr);
   ASSERT_TRUE(rect.has_value());
   EXPECT_EQ(CFX_FloatRect(60, 70, 61, 72), rect.value());
+  EXPECT_EQ(CFX_FloatRect(60, 70, 61, 72), path.GetBoundingBox());
 
   path.Clear();
   path.AppendFloatRect({1, 2, 3, 5});
@@ -55,6 +61,7 @@ TEST(CFX_PathData, BasicTest) {
   rect = path.GetRect(nullptr);
   ASSERT_TRUE(rect.has_value());
   EXPECT_EQ(CFX_FloatRect(1, 2, 3, 5), rect.value());
+  EXPECT_EQ(CFX_FloatRect(1, 2, 3, 5), path.GetBoundingBox());
 }
 
 TEST(CFX_PathData, ShearTransform) {
@@ -65,22 +72,26 @@ TEST(CFX_PathData, ShearTransform) {
   EXPECT_TRUE(path.IsRect());
   Optional<CFX_FloatRect> rect = path.GetRect(&kShearMatrix);
   EXPECT_FALSE(rect.has_value());
+  EXPECT_EQ(CFX_FloatRect(1, 2, 3, 5), path.GetBoundingBox());
 
   path.Transform(kShearMatrix);
   EXPECT_FALSE(path.IsRect());
   rect = path.GetRect(nullptr);
   EXPECT_FALSE(rect.has_value());
+  EXPECT_EQ(CFX_FloatRect(1, 4, 3, 11), path.GetBoundingBox());
 
   const CFX_Matrix shear_inverse_matrix = kShearMatrix.GetInverse();
   rect = path.GetRect(&shear_inverse_matrix);
   ASSERT_TRUE(rect.has_value());
   EXPECT_EQ(CFX_FloatRect(1, 2, 3, 5), rect.value());
+  EXPECT_EQ(CFX_FloatRect(1, 4, 3, 11), path.GetBoundingBox());
 
   path.Transform(shear_inverse_matrix);
   EXPECT_TRUE(path.IsRect());
   rect = path.GetRect(nullptr);
   ASSERT_TRUE(rect.has_value());
   EXPECT_EQ(CFX_FloatRect(1, 2, 3, 5), rect.value());
+  EXPECT_EQ(CFX_FloatRect(1, 2, 3, 5), path.GetBoundingBox());
 }
 
 TEST(CFX_PathData, Hexagon) {
@@ -96,6 +107,7 @@ TEST(CFX_PathData, Hexagon) {
   EXPECT_FALSE(path.IsClosingFigure(5));
   EXPECT_FALSE(path.IsRect());
   EXPECT_FALSE(path.GetRect(nullptr).has_value());
+  EXPECT_EQ(CFX_FloatRect(0, 0, 3, 2), path.GetBoundingBox());
 
   path.ClosePath();
   ASSERT_EQ(6u, path.GetPoints().size());
@@ -123,6 +135,7 @@ TEST(CFX_PathData, Hexagon) {
   path.AppendPoint({1, 0}, FXPT_TYPE::LineTo);
   EXPECT_FALSE(path.IsRect());
   EXPECT_FALSE(path.GetRect(nullptr).has_value());
+  EXPECT_EQ(CFX_FloatRect(0, 0, 3, 2), path.GetBoundingBox());
 }
 
 TEST(CFX_PathData, ClosePath) {
@@ -212,6 +225,7 @@ TEST(CFX_PathData, SixPlusPointRect) {
   Optional<CFX_FloatRect> rect = path.GetRect(nullptr);
   ASSERT_TRUE(rect.has_value());
   EXPECT_EQ(CFX_FloatRect(0, 0, 2, 1), rect.value());
+  EXPECT_EQ(CFX_FloatRect(0, 0, 2, 1), path.GetBoundingBox());
 
   path.Clear();
   path.AppendPoint({0, 0}, FXPT_TYPE::MoveTo);
@@ -231,6 +245,7 @@ TEST(CFX_PathData, SixPlusPointRect) {
   rect = path.GetRect(nullptr);
   ASSERT_TRUE(rect.has_value());
   EXPECT_EQ(CFX_FloatRect(0, 0, 2, 1), rect.value());
+  EXPECT_EQ(CFX_FloatRect(0, 0, 2, 1), path.GetBoundingBox());
 }
 
 TEST(CFX_PathData, NotRect) {
@@ -243,11 +258,13 @@ TEST(CFX_PathData, NotRect) {
   EXPECT_FALSE(path.IsRect());
   Optional<CFX_FloatRect> rect = path.GetRect(nullptr);
   EXPECT_FALSE(rect.has_value());
+  EXPECT_EQ(CFX_FloatRect(0, 0, 2, 1), path.GetBoundingBox());
 
   path.ClosePath();
   EXPECT_FALSE(path.IsRect());
   rect = path.GetRect(nullptr);
   EXPECT_FALSE(rect.has_value());
+  EXPECT_EQ(CFX_FloatRect(0, 0, 2, 1), path.GetBoundingBox());
 
   path.Clear();
   path.AppendPoint({0, 0}, FXPT_TYPE::MoveTo);
@@ -257,6 +274,7 @@ TEST(CFX_PathData, NotRect) {
   EXPECT_FALSE(path.IsRect());
   rect = path.GetRect(nullptr);
   EXPECT_FALSE(rect.has_value());
+  EXPECT_EQ(CFX_FloatRect(0, 0, 3, 1), path.GetBoundingBox());
 
   path.Clear();
   path.AppendPoint({0, 0}, FXPT_TYPE::MoveTo);
@@ -266,6 +284,7 @@ TEST(CFX_PathData, NotRect) {
   EXPECT_FALSE(path.IsRect());
   rect = path.GetRect(nullptr);
   EXPECT_FALSE(rect.has_value());
+  EXPECT_EQ(CFX_FloatRect(0, 0, 2, 1), path.GetBoundingBox());
 
   path.Clear();
   path.AppendPoint({0, 0}, FXPT_TYPE::MoveTo);
@@ -275,6 +294,7 @@ TEST(CFX_PathData, NotRect) {
   EXPECT_FALSE(path.IsRect());
   rect = path.GetRect(nullptr);
   EXPECT_FALSE(rect.has_value());
+  EXPECT_EQ(CFX_FloatRect(0, 0, 3, 1), path.GetBoundingBox());
 
   path.Clear();
   path.AppendPoint({0, 0}, FXPT_TYPE::MoveTo);
@@ -285,6 +305,7 @@ TEST(CFX_PathData, NotRect) {
   EXPECT_FALSE(path.IsRect());
   rect = path.GetRect(nullptr);
   EXPECT_FALSE(rect.has_value());
+  EXPECT_EQ(CFX_FloatRect(0, 0, 2, 1), path.GetBoundingBox());
 
   path.Clear();
   path.AppendPoint({0, 0}, FXPT_TYPE::MoveTo);
@@ -295,6 +316,7 @@ TEST(CFX_PathData, NotRect) {
   EXPECT_FALSE(path.IsRect());
   rect = path.GetRect(nullptr);
   EXPECT_FALSE(rect.has_value());
+  EXPECT_EQ(CFX_FloatRect(0, 0, 2, 1), path.GetBoundingBox());
 }
 
 TEST(CFX_PathData, EmptyRect) {
@@ -309,4 +331,5 @@ TEST(CFX_PathData, EmptyRect) {
   Optional<CFX_FloatRect> rect = path.GetRect(nullptr);
   ASSERT_TRUE(rect.has_value());
   EXPECT_EQ(CFX_FloatRect(0, 0, 0, 1), rect.value());
+  EXPECT_EQ(CFX_FloatRect(0, 0, 0, 1), path.GetBoundingBox());
 }
