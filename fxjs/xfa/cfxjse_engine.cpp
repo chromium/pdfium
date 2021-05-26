@@ -306,10 +306,9 @@ v8::Local<v8::Value> CFXJSE_Engine::GlobalPropertyGetter(
   if (!pCJSRuntime)
     return pValue;
 
-  v8::Local<v8::Value> temp_value;
   IJS_Runtime::ScopedEventContext pContext(pCJSRuntime);
-  if (!pCJSRuntime->GetValueByNameFromGlobalObject(szPropName, &temp_value))
-    return pValue;
+  v8::Local<v8::Value> temp_value =
+      pCJSRuntime->GetValueByNameFromGlobalObject(szPropName);
 
   return !temp_value.IsEmpty() ? temp_value : pValue;
 }
@@ -399,9 +398,8 @@ v8::Local<v8::Value> CFXJSE_Engine::NormalPropertyGetter(
     return pReturnValue;
 
   IJS_Runtime::ScopedEventContext pContext(pCJSRuntime);
-  v8::Local<v8::Value> temp_local;
-  if (!pCJSRuntime->GetValueByNameFromGlobalObject(szPropName, &temp_local))
-    return pReturnValue;
+  v8::Local<v8::Value> temp_local =
+      pCJSRuntime->GetValueByNameFromGlobalObject(szPropName);
 
   return !temp_local.IsEmpty() ? temp_local : pReturnValue;
 }

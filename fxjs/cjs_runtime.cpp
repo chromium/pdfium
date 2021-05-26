@@ -179,19 +179,16 @@ CJS_Runtime* CJS_Runtime::AsCJSRuntime() {
   return this;
 }
 
-bool CJS_Runtime::GetValueByNameFromGlobalObject(ByteStringView utf8Name,
-                                                 v8::Local<v8::Value>* pValue) {
+v8::Local<v8::Value> CJS_Runtime::GetValueByNameFromGlobalObject(
+    ByteStringView utf8Name) {
   v8::Isolate::Scope isolate_scope(GetIsolate());
   v8::Local<v8::Context> context = GetV8Context();
   v8::Context::Scope context_scope(context);
   v8::Local<v8::String> str = fxv8::NewStringHelper(GetIsolate(), utf8Name);
-  v8::MaybeLocal<v8::Value> maybe_propvalue =
-      context->Global()->Get(context, str);
-  if (maybe_propvalue.IsEmpty())
-    return false;
-
-  *pValue = maybe_propvalue.ToLocalChecked();
-  return true;
+  v8::MaybeLocal<v8::Value> maybe_value = context->Global()->Get(context, str);
+  if (maybe_value.IsEmpty())
+    return v8::Local<v8::Value>();
+  return maybe_value.ToLocalChecked();
 }
 
 bool CJS_Runtime::SetValueByNameInGlobalObject(ByteStringView utf8Name,

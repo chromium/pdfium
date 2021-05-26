@@ -53,8 +53,7 @@ class CJS_Runtime final : public IJS_Runtime,
   // value will be returned, otherwise |value| is returned.
   v8::Local<v8::Value> MaybeCoerceToNumber(v8::Local<v8::Value> value);
 
-  bool GetValueByNameFromGlobalObject(ByteStringView utf8Name,
-                                      v8::Local<v8::Value>* pValue);
+  v8::Local<v8::Value> GetValueByNameFromGlobalObject(ByteStringView utf8Name);
   bool SetValueByNameInGlobalObject(ByteStringView utf8Name,
                                     v8::Local<v8::Value> pValue);
 
