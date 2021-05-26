@@ -160,10 +160,13 @@ class CFXJSE_Engine final : public CFX_V8 {
   bool IsStrictScopeInJavaScript();
   CXFA_Object* GetVariablesThis(CXFA_Object* pObject);
   CXFA_Object* GetVariablesScript(CXFA_Object* pObject);
+  CFXJSE_Context* VariablesContextForScriptNode(CXFA_Node* pScriptNode);
   bool QueryVariableValue(CXFA_Node* pScriptNode,
                           ByteStringView szPropName,
-                          v8::Local<v8::Value>* pValue,
-                          bool bGetter);
+                          v8::Local<v8::Value>* pValue);
+  bool UpdateVariableValue(CXFA_Node* pScriptNode,
+                           ByteStringView szPropName,
+                           v8::Local<v8::Value> pValue);
   bool RunVariablesScript(CXFA_Node* pScriptNode);
 
   UnownedPtr<CJS_Runtime> const m_pSubordinateRuntime;
