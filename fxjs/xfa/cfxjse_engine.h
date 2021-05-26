@@ -152,8 +152,11 @@ class CFXJSE_Engine final : public CFX_V8 {
   bool QueryNodeByFlag(CXFA_Node* refNode,
                        WideStringView propname,
                        v8::Local<v8::Value>* pValue,
-                       XFA_ResolveNodeMask dwFlag,
-                       bool bSetting);
+                       XFA_ResolveNodeMask dwFlag);
+  bool UpdateNodeByFlag(CXFA_Node* refNode,
+                        WideStringView propname,
+                        v8::Local<v8::Value> pValue,
+                        XFA_ResolveNodeMask dwFlag);
   bool IsStrictScopeInJavaScript();
   CXFA_Object* GetVariablesThis(CXFA_Object* pObject);
   CXFA_Object* GetVariablesScript(CXFA_Object* pObject);

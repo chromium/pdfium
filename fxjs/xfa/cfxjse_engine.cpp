@@ -181,8 +181,7 @@ bool CFXJSE_Engine::RunScript(CXFA_Script::Type eScriptType,
 bool CFXJSE_Engine::QueryNodeByFlag(CXFA_Node* refNode,
                                     WideStringView propname,
                                     v8::Local<v8::Value>* pValue,
-                                    XFA_ResolveNodeMask dwFlag,
-                                    bool bSetting) {
+                                    XFA_ResolveNodeMask dwFlag) {
   if (!refNode)
     return false;
 
@@ -200,7 +199,29 @@ bool CFXJSE_Engine::QueryNodeByFlag(CXFA_Node* refNode,
       maybeResult.value().script_attribute.callback) {
     CJX_Object* jsObject = maybeResult.value().objects.front()->JSObject();
     (*maybeResult.value().script_attribute.callback)(
-        GetIsolate(), jsObject, pValue, bSetting,
+        GetIsolate(), jsObject, pValue, false,
+        maybeResult.value().script_attribute.attribute);
+  }
+  return true;
+}
+
+bool CFXJSE_Engine::UpdateNodeByFlag(CXFA_Node* refNode,
+                                     WideStringView propname,
+                                     v8::Local<v8::Value> pValue,
+                                     XFA_ResolveNodeMask dwFlag) {
+  if (!refNode)
+    return false;
+
+  Optional<CFXJSE_Engine::ResolveResult> maybeResult =
+      ResolveObjects(refNode, propname, dwFlag);
+  if (!maybeResult.has_value())
+    return false;
+
+  if (maybeResult.value().type == ResolveResult::Type::kAttribute &&
+      maybeResult.value().script_attribute.callback) {
+    CJX_Object* jsObject = maybeResult.value().objects.front()->JSObject();
+    (*maybeResult.value().script_attribute.callback)(
+        GetIsolate(), jsObject, &pValue, true,
         maybeResult.value().script_attribute.attribute);
   }
   return true;
@@ -219,12 +240,11 @@ void CFXJSE_Engine::GlobalPropertySetter(v8::Isolate* pIsolate,
     pRefNode = ToNode(lpScriptContext->GetVariablesThis(lpOrginalNode));
 
   WideString wsPropName = WideString::FromUTF8(szPropName);
-  if (lpScriptContext->QueryNodeByFlag(
-          pRefNode, wsPropName.AsStringView(), &pValue,
+  if (lpScriptContext->UpdateNodeByFlag(
+          pRefNode, wsPropName.AsStringView(), pValue,
           XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings |
               XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
-              XFA_RESOLVENODE_Attributes,
-          true)) {
+              XFA_RESOLVENODE_Attributes)) {
     return;
   }
   if (lpOrginalNode->IsThisProxy() && fxv8::IsUndefined(pValue)) {
@@ -273,19 +293,18 @@ v8::Local<v8::Value> CFXJSE_Engine::GlobalPropertyGetter(
   }
 
   CXFA_Node* pRefNode = ToNode(lpScriptContext->GetThisObject());
-  if (pOriginalObject->IsThisProxy()) {
+  if (pOriginalObject->IsThisProxy())
     pRefNode = ToNode(lpScriptContext->GetVariablesThis(pOriginalObject));
-  }
+
   if (lpScriptContext->QueryNodeByFlag(
           pRefNode, wsPropName.AsStringView(), &pValue,
           XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
-              XFA_RESOLVENODE_Attributes,
-          false)) {
+              XFA_RESOLVENODE_Attributes)) {
     return pValue;
   }
   if (lpScriptContext->QueryNodeByFlag(
           pRefNode, wsPropName.AsStringView(), &pValue,
-          XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings, false)) {
+          XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings)) {
     return pValue;
   }
 
@@ -351,40 +370,36 @@ v8::Local<v8::Value> CFXJSE_Engine::NormalPropertyGetter(
 
   v8::Local<v8::Value> pReturnValue = fxv8::NewUndefinedHelper(pIsolate);
   CXFA_Object* pObject = lpScriptContext->GetVariablesThis(pOriginalObject);
-  bool bRet = lpScriptContext->QueryNodeByFlag(
-      ToNode(pObject), wsPropName.AsStringView(), &pReturnValue,
-      XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
-          XFA_RESOLVENODE_Attributes,
-      false);
-  if (bRet)
+  CXFA_Node* pRefNode = ToNode(pObject);
+  if (lpScriptContext->QueryNodeByFlag(
+          pRefNode, wsPropName.AsStringView(), &pReturnValue,
+          XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
+              XFA_RESOLVENODE_Attributes)) {
     return pReturnValue;
-
+  }
   if (pObject == lpScriptContext->GetThisObject() ||
       (lpScriptContext->GetType() == CXFA_Script::Type::Javascript &&
        !lpScriptContext->IsStrictScopeInJavaScript())) {
-    bRet = lpScriptContext->QueryNodeByFlag(
-        ToNode(pObject), wsPropName.AsStringView(), &pReturnValue,
-        XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings, false);
+    if (lpScriptContext->QueryNodeByFlag(
+            pRefNode, wsPropName.AsStringView(), &pReturnValue,
+            XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings)) {
+      return pReturnValue;
+    }
   }
-  if (bRet)
-    return pReturnValue;
-
   CXFA_Object* pScriptObject =
       lpScriptContext->GetVariablesScript(pOriginalObject);
   if (!pScriptObject)
     return pReturnValue;
 
-  bRet = lpScriptContext->QueryVariableValue(ToNode(pScriptObject), szPropName,
-                                             &pReturnValue, true);
-  if (bRet)
+  if (lpScriptContext->QueryVariableValue(ToNode(pScriptObject), szPropName,
+                                          &pReturnValue, true)) {
     return pReturnValue;
-
+  }
   Optional<XFA_SCRIPTATTRIBUTEINFO> info = XFA_GetScriptAttributeByName(
       pObject->GetElementType(), wsPropName.AsStringView());
   if (info.has_value()) {
-    CJX_Object* jsObject = pObject->JSObject();
-    (*info.value().callback)(pIsolate, jsObject, &pReturnValue, false,
-                             info.value().attribute);
+    (*info.value().callback)(pIsolate, pObject->JSObject(), &pReturnValue,
+                             false, info.value().attribute);
     return pReturnValue;
   }
 
