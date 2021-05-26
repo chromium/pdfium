@@ -234,8 +234,7 @@ std::vector<WideString> ReentrantGetObjectPropertyNamesHelper(
 
 bool ReentrantHasObjectOwnPropertyHelper(v8::Isolate* pIsolate,
                                          v8::Local<v8::Object> pObj,
-                                         ByteStringView bsUTF8PropertyName,
-                                         bool bUseTypeGetter) {
+                                         ByteStringView bsUTF8PropertyName) {
   if (pObj.IsEmpty())
     return false;
 
@@ -243,9 +242,7 @@ bool ReentrantHasObjectOwnPropertyHelper(v8::Isolate* pIsolate,
   v8::Local<v8::Context> pContext = pIsolate->GetCurrentContext();
   v8::Local<v8::String> hKey =
       fxv8::NewStringHelper(pIsolate, bsUTF8PropertyName);
-  return pObj->HasRealNamedProperty(pContext, hKey).FromJust() ||
-         (bUseTypeGetter &&
-          pObj->HasOwnProperty(pContext, hKey).FromMaybe(false));
+  return pObj->HasRealNamedProperty(pContext, hKey).FromJust();
 }
 
 bool ReentrantSetObjectOwnPropertyHelper(v8::Isolate* pIsolate,

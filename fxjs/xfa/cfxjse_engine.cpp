@@ -595,7 +595,7 @@ bool CFXJSE_Engine::QueryVariableValue(CXFA_Node* pScriptNode,
   }
 
   if (!fxv8::ReentrantHasObjectOwnPropertyHelper(GetIsolate(), pObject,
-                                                 szPropName, false)) {
+                                                 szPropName)) {
     return false;
   }
 
