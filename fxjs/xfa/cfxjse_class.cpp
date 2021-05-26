@@ -242,7 +242,7 @@ void NamedPropertyEnumeratorCallback(
 }
 
 void SetUpNamedPropHandler(v8::Isolate* pIsolate,
-                           v8::Local<v8::ObjectTemplate>* pObjectTemplate,
+                           v8::Local<v8::ObjectTemplate> pObjectTemplate,
                            const FXJSE_CLASS_DESCRIPTOR* lpClassDefinition) {
   v8::NamedPropertyHandlerConfiguration configuration(
       lpClassDefinition->dynPropGetter ? NamedPropertyGetterCallback : nullptr,
@@ -253,7 +253,7 @@ void SetUpNamedPropHandler(v8::Isolate* pIsolate,
       v8::External::New(pIsolate,
                         const_cast<FXJSE_CLASS_DESCRIPTOR*>(lpClassDefinition)),
       v8::PropertyHandlerFlags::kNonMasking);
-  (*pObjectTemplate)->SetHandler(configuration);
+  pObjectTemplate->SetHandler(configuration);
 }
 
 }  // namespace
@@ -289,7 +289,7 @@ CFXJSE_Class* CFXJSE_Class::Create(
   hFunctionTemplate->InstanceTemplate()->SetInternalFieldCount(2);
   v8::Local<v8::ObjectTemplate> hObjectTemplate =
       hFunctionTemplate->InstanceTemplate();
-  SetUpNamedPropHandler(pIsolate, &hObjectTemplate, lpClassDefinition);
+  SetUpNamedPropHandler(pIsolate, hObjectTemplate, lpClassDefinition);
 
   if (lpClassDefinition->methNum) {
     for (int32_t i = 0; i < lpClassDefinition->methNum; i++) {
