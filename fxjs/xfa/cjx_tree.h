@@ -44,11 +44,10 @@ class CJX_Tree : public CJX_Object {
   static const TypeTag static_type__ = TypeTag::Tree;
   static const CJX_MethodSpec MethodSpecs[];
 
-  void ResolveNodeList(v8::Isolate* pIsolate,
-                       v8::Local<v8::Value>* pValue,
-                       WideString wsExpression,
-                       XFA_ResolveNodeMask dwFlag,
-                       CXFA_Node* refNode);
+  v8::Local<v8::Value> ResolveNodeList(v8::Isolate* pIsolate,
+                                       WideString wsExpression,
+                                       XFA_ResolveNodeMask dwFlag,
+                                       CXFA_Node* refNode);
 };
 
 #endif  // FXJS_XFA_CJX_TREE_H_
