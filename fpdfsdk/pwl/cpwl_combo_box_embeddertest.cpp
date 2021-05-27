@@ -6,7 +6,7 @@
 #include "fpdfsdk/cpdfsdk_annotiterator.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
-#include "fpdfsdk/formfiller/cffl_formfiller.h"
+#include "fpdfsdk/formfiller/cffl_formfield.h"
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 #include "fpdfsdk/pwl/cpwl_combo_box.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
@@ -80,7 +80,7 @@ class CPWLComboBoxEditEmbedderTest : public EmbedderTest {
 
   FPDF_PAGE GetPage() const { return m_page; }
   CPWL_ComboBox* GetCPWLComboBox() const { return m_pComboBox; }
-  CFFL_FormFiller* GetCFFLFormFiller() const { return m_pFormFiller; }
+  CFFL_FormField* GetCFFLFormFiller() const { return m_pFormFiller; }
   CPDFSDK_Annot* GetCPDFSDKAnnotNormal() const { return m_pAnnotNormal; }
   CPDFSDK_Annot* GetCPDFSDKAnnotUserEditable() const {
     return m_pAnnotEditable;
@@ -92,7 +92,7 @@ class CPWLComboBoxEditEmbedderTest : public EmbedderTest {
  private:
   FPDF_PAGE m_page;
   CPWL_ComboBox* m_pComboBox;
-  CFFL_FormFiller* m_pFormFiller;
+  CFFL_FormField* m_pFormFiller;
   CPDFSDK_Annot* m_pAnnotNormal;
   CPDFSDK_Annot* m_pAnnotEditable;
   CPDFSDK_FormFillEnvironment* m_pFormFillEnv;

@@ -587,7 +587,7 @@ void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
                              const CFX_PointF& ptOffset,
                              const CPVT_WordRange* pRange,
                              IPWL_SystemHandler* pSystemHandler,
-                             CFFL_FormFiller* pFFLData) {
+                             CFFL_FormField* pFFLData) {
   const bool bContinuous =
       pEdit->GetCharArray() == 0 && pEdit->GetCharSpace() <= 0.0f;
   uint16_t SubWord = pEdit->GetPasswordChar();

@@ -81,7 +81,7 @@ class CPWL_ListBox : public CPWL_Wnd, public CPWL_ListCtrl::NotifyIface {
     m_pFillerNotify = pNotify;
   }
 
-  void AttachFFLData(CFFL_FormFiller* pData) { m_pFormFiller = pData; }
+  void AttachFFLData(CFFL_FormField* pData) { m_pFormFiller = pData; }
 
  protected:
   bool m_bMouseDown = false;
@@ -90,7 +90,7 @@ class CPWL_ListBox : public CPWL_Wnd, public CPWL_ListCtrl::NotifyIface {
   UnownedPtr<IPWL_FillerNotify> m_pFillerNotify;
 
  private:
-  UnownedPtr<CFFL_FormFiller> m_pFormFiller;
+  UnownedPtr<CFFL_FormField> m_pFormFiller;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_LIST_BOX_H_

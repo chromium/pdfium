@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_FORMFILLER_CFFL_FORMFILLER_H_
-#define FPDFSDK_FORMFILLER_CFFL_FORMFILLER_H_
+#ifndef FPDFSDK_FORMFILLER_CFFL_FORMFIELD_H_
+#define FPDFSDK_FORMFILLER_CFFL_FORMFIELD_H_
 
 #include <map>
 #include <memory>
@@ -22,12 +22,12 @@ class CPDFSDK_Annot;
 class CPDFSDK_FormFillEnvironment;
 class CPDFSDK_PageView;
 
-class CFFL_FormFiller : public CPWL_Wnd::ProviderIface,
-                        public CFX_Timer::CallbackIface {
+class CFFL_FormField : public CPWL_Wnd::ProviderIface,
+                       public CFX_Timer::CallbackIface {
  public:
-  CFFL_FormFiller(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                  CPDFSDK_Widget* pWidget);
-  ~CFFL_FormFiller() override;
+  CFFL_FormField(CPDFSDK_FormFillEnvironment* pFormFillEnv,
+                 CPDFSDK_Widget* pWidget);
+  ~CFFL_FormField() override;
 
   virtual void OnDraw(CPDFSDK_PageView* pPageView,
                       CPDFSDK_Annot* pAnnot,
@@ -153,4 +153,4 @@ class CFFL_FormFiller : public CPWL_Wnd::ProviderIface,
   std::map<CPDFSDK_PageView*, std::unique_ptr<CPWL_Wnd>> m_Maps;
 };
 
-#endif  // FPDFSDK_FORMFILLER_CFFL_FORMFILLER_H_
+#endif  // FPDFSDK_FORMFILLER_CFFL_FORMFIELD_H_

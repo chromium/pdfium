@@ -17,7 +17,7 @@
 #include "fpdfsdk/pwl/ipwl_fillernotify.h"
 #include "fpdfsdk/pwl/ipwl_systemhandler.h"
 
-class CFFL_FormFiller;
+class CFFL_FormField;
 class CPDFSDK_FormFillEnvironment;
 class CPDFSDK_PageView;
 class CPDFSDK_Widget;
@@ -81,7 +81,7 @@ class CFFL_InteractiveFormFiller final : public IPWL_FillerNotify {
   bool OnSetFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot, uint32_t nFlag);
   bool OnKillFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot, uint32_t nFlag);
 
-  CFFL_FormFiller* GetFormFillerForTesting(CPDFSDK_Annot* pAnnot) {
+  CFFL_FormField* GetFormFillerForTesting(CPDFSDK_Annot* pAnnot) {
     return GetFormFiller(pAnnot);
   }
 
@@ -122,7 +122,7 @@ class CFFL_InteractiveFormFiller final : public IPWL_FillerNotify {
 
  private:
   using WidgetToFormFillerMap =
-      std::map<CPDFSDK_Annot*, std::unique_ptr<CFFL_FormFiller>>;
+      std::map<CPDFSDK_Annot*, std::unique_ptr<CFFL_FormField>>;
 
   // IPWL_FillerNotify:
   void QueryWherePopup(const IPWL_SystemHandler::PerWindowData* pAttached,
@@ -161,8 +161,8 @@ class CFFL_InteractiveFormFiller final : public IPWL_FillerNotify {
 #endif  // PDF_ENABLE_XFA
 
   bool IsFillingAllowed(CPDFSDK_Widget* pWidget) const;
-  CFFL_FormFiller* GetFormFiller(CPDFSDK_Annot* pAnnot);
-  CFFL_FormFiller* GetOrCreateFormFiller(CPDFSDK_Annot* pAnnot);
+  CFFL_FormField* GetFormFiller(CPDFSDK_Annot* pAnnot);
+  CFFL_FormField* GetOrCreateFormFiller(CPDFSDK_Annot* pAnnot);
   void UnRegisterFormFiller(CPDFSDK_Annot* pAnnot);
 
   UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;

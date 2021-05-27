@@ -14,7 +14,7 @@
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "fpdfsdk/pwl/ipwl_systemhandler.h"
 
-class CFFL_FormFiller;
+class CFFL_FormField;
 class CPWL_Edit;
 class CPWL_CBButton;
 class CPWL_CBListBox;
@@ -62,7 +62,7 @@ class CPWL_ComboBox final : public CPWL_Wnd {
   void SelectAll();
   bool IsPopup() const;
   void SetSelectText();
-  void AttachFFLData(CFFL_FormFiller* pData) { m_pFormFiller = pData; }
+  void AttachFFLData(CFFL_FormField* pData) { m_pFormFiller = pData; }
 
  private:
   void CreateEdit(const CreateParams& cp);
@@ -80,7 +80,7 @@ class CPWL_ComboBox final : public CPWL_Wnd {
   bool m_bBottom = true;
   int32_t m_nSelectItem = -1;
   UnownedPtr<IPWL_FillerNotify> m_pFillerNotify;
-  UnownedPtr<CFFL_FormFiller> m_pFormFiller;
+  UnownedPtr<CFFL_FormField> m_pFormFiller;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_COMBO_BOX_H_

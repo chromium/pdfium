@@ -25,7 +25,7 @@ CPWL_Wnd* CFFL_TextObject::ResetPWLWindow(CPDFSDK_PageView* pPageView,
 
 CFFL_TextObject::CFFL_TextObject(CPDFSDK_FormFillEnvironment* pApp,
                                  CPDFSDK_Widget* pWidget)
-    : CFFL_FormFiller(pApp, pWidget) {}
+    : CFFL_FormField(pApp, pWidget) {}
 
 CFFL_TextObject::~CFFL_TextObject() {
   // Destroy view classes before this object's members are destroyed since

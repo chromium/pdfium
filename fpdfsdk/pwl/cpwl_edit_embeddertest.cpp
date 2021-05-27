@@ -8,7 +8,7 @@
 #include "fpdfsdk/cpdfsdk_annotiterator.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
-#include "fpdfsdk/formfiller/cffl_formfiller.h"
+#include "fpdfsdk/formfiller/cffl_formfield.h"
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 #include "public/fpdf_fwlevent.h"
 #include "testing/embedder_test.h"
@@ -85,14 +85,14 @@ class CPWLEditEmbedderTest : public EmbedderTest {
 
   FPDF_PAGE GetPage() { return m_page; }
   CPWL_Edit* GetCPWLEdit() { return m_pEdit; }
-  CFFL_FormFiller* GetCFFLFormFiller() { return m_pFormFiller; }
+  CFFL_FormField* GetCFFLFormFiller() { return m_pFormFiller; }
   CPDFSDK_Annot* GetCPDFSDKAnnot() { return m_pAnnot; }
   CPDFSDK_Annot* GetCPDFSDKAnnotCharLimit() { return m_pAnnotCharLimit; }
 
  private:
   FPDF_PAGE m_page;
   CPWL_Edit* m_pEdit;
-  CFFL_FormFiller* m_pFormFiller;
+  CFFL_FormField* m_pFormFiller;
   CPDFSDK_Annot* m_pAnnot;
   CPDFSDK_Annot* m_pAnnotCharLimit;
   CPDFSDK_FormFillEnvironment* m_pFormFillEnv;

@@ -9,15 +9,15 @@
 
 #include <memory>
 
-#include "fpdfsdk/formfiller/cffl_formfiller.h"
+#include "fpdfsdk/formfiller/cffl_formfield.h"
 
 class CPDF_BAFontMap;
 
-// Class to implement common functionality for CFFL_FormFiller sub-classes with
+// Class to implement common functionality for CFFL_FormField sub-classes with
 // text fields.
-class CFFL_TextObject : public CFFL_FormFiller {
+class CFFL_TextObject : public CFFL_FormField {
  public:
-  // CFFL_FormFiller:
+  // CFFL_FormField:
   CPWL_Wnd* ResetPWLWindow(CPDFSDK_PageView* pPageView,
                            bool bRestoreValue) override;
 

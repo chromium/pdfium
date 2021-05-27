@@ -11,7 +11,7 @@
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
-#include "fpdfsdk/formfiller/cffl_formfiller.h"
+#include "fpdfsdk/formfiller/cffl_formfield.h"
 #include "fpdfsdk/pwl/cpwl_special_button.h"
 #include "public/fpdf_fwlevent.h"
 #include "third_party/base/check.h"
@@ -37,7 +37,7 @@ bool CFFL_CheckBox::OnKeyDown(uint32_t nKeyCode, uint32_t nFlags) {
     case FWL_VKEY_Space:
       return true;
     default:
-      return CFFL_FormFiller::OnKeyDown(nKeyCode, nFlags);
+      return CFFL_FormField::OnKeyDown(nKeyCode, nFlags);
   }
 }
 bool CFFL_CheckBox::OnChar(CPDFSDK_Annot* pAnnot,
@@ -61,7 +61,7 @@ bool CFFL_CheckBox::OnChar(CPDFSDK_Annot* pAnnot,
         return true;
       }
 
-      CFFL_FormFiller::OnChar(pAnnot, nChar, nFlags);
+      CFFL_FormField::OnChar(pAnnot, nChar, nFlags);
 
       CPWL_CheckBox* pWnd = GetCheckBox(pPageView, true);
       if (pWnd && !pWnd->IsReadOnly()) {
@@ -72,7 +72,7 @@ bool CFFL_CheckBox::OnChar(CPDFSDK_Annot* pAnnot,
       return CommitData(pPageView, nFlags);
     }
     default:
-      return CFFL_FormFiller::OnChar(pAnnot, nChar, nFlags);
+      return CFFL_FormField::OnChar(pAnnot, nChar, nFlags);
   }
 }
 

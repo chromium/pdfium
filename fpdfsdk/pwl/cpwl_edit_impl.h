@@ -17,7 +17,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
 
-class CFFL_FormFiller;
+class CFFL_FormField;
 class CFX_RenderDevice;
 class CPWL_Edit;
 class IPWL_SystemHandler;
@@ -49,7 +49,7 @@ class CPWL_EditImpl {
                        const CFX_PointF& ptOffset,
                        const CPVT_WordRange* pRange,
                        IPWL_SystemHandler* pSystemHandler,
-                       CFFL_FormFiller* pFFLData);
+                       CFFL_FormField* pFFLData);
 
   CPWL_EditImpl();
   ~CPWL_EditImpl();

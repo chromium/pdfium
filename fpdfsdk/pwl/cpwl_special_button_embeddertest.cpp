@@ -6,7 +6,7 @@
 #include "fpdfsdk/cpdfsdk_annotiterator.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
-#include "fpdfsdk/formfiller/cffl_formfiller.h"
+#include "fpdfsdk/formfiller/cffl_formfield.h"
 #include "fpdfsdk/pwl/cpwl_special_button.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "testing/embedder_test.h"
@@ -96,7 +96,7 @@ class CPWLSpecialButtonEmbedderTest : public EmbedderTest {
 
  private:
   FPDF_PAGE page_;
-  CFFL_FormFiller* form_filler_;
+  CFFL_FormField* form_filler_;
   CPDFSDK_Annot* annot_checkbox_;
   CPDFSDK_Annot* annot_readonly_checkbox_;
   CPDFSDK_Annot* annot_radiobutton_;
