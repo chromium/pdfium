@@ -187,7 +187,7 @@ WideString GetPlainTextFromRichText(CFX_XMLNode* pXMLNode) {
     case CFX_XMLNode::Type::kElement: {
       CFX_XMLElement* pXMLElement = static_cast<CFX_XMLElement*>(pXMLNode);
       WideString wsTag = pXMLElement->GetLocalTagName();
-      uint32_t uTag = FX_HashCode_GetW(wsTag.AsStringView(), true);
+      uint32_t uTag = FX_HashCode_GetLoweredW(wsTag.AsStringView());
       if (uTag == 0x0001f714) {
         wsPlainText += L"\n";
       } else if (uTag == 0x00000070) {
@@ -358,7 +358,7 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_XDP(
       continue;
     }
     // TODO(tsepez): make GetFirstChildByName() take a name.
-    uint32_t hash = FX_HashCode_GetW(config_packet.name, false);
+    uint32_t hash = FX_HashCode_GetW(config_packet.name);
     if (pXFARootNode->GetFirstChildByName(hash))
       return nullptr;
 
@@ -416,7 +416,7 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_XDP(
         if (packet_info.has_value() &&
             (packet_info.value().flags & XFA_XDPPACKET_FLAGS_SUPPORTONE) &&
             pXFARootNode->GetFirstChildByName(
-                FX_HashCode_GetW(packet_info.value().name, false))) {
+                FX_HashCode_GetW(packet_info.value().name))) {
           return nullptr;
         }
         pXFARootNode->InsertChildAndNotify(pPacketNode, nullptr);

@@ -24,7 +24,7 @@ CXFA_Object::CXFA_Object(CXFA_Document* pDocument,
     : m_objectType(objectType),
       m_elementType(elementType),
       m_elementName(XFA_ElementToName(elementType)),
-      m_elementNameHash(FX_HashCode_GetAsIfW(m_elementName, false)),
+      m_elementNameHash(FX_HashCode_GetAsIfW(m_elementName)),
       m_pDocument(pDocument),
       m_pJSObject(jsObject) {}
 

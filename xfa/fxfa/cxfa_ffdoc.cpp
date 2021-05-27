@@ -268,7 +268,7 @@ bool CXFA_FFDoc::OpenDoc(CFX_XMLDocument* pXML) {
 RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(WideStringView wsName,
                                                      int32_t& iImageXDpi,
                                                      int32_t& iImageYDpi) {
-  uint32_t dwHash = FX_HashCode_GetW(wsName, false);
+  uint32_t dwHash = FX_HashCode_GetW(wsName);
   auto it = m_HashToDibDpiMap.find(dwHash);
   if (it != m_HashToDibDpiMap.end()) {
     iImageXDpi = it->second.iImageXDpi;

@@ -62,7 +62,7 @@ int32_t CJX_InstanceManager::SetInstances(int32_t iDesired) {
             ? wsInstManagerName
             : wsInstManagerName.Last(wsInstManagerName.GetLength() - 1));
     uint32_t dInstanceNameHash =
-        FX_HashCode_GetW(wsInstanceName.AsStringView(), false);
+        FX_HashCode_GetW(wsInstanceName.AsStringView());
     CXFA_Node* pPrevSibling = iDesired == 0
                                   ? GetXFANode()
                                   : GetXFANode()->GetItemIfExists(iDesired - 1);

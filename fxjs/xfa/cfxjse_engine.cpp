@@ -282,8 +282,8 @@ v8::Local<v8::Value> CFXJSE_Engine::GlobalPropertyGetter(
     if (szPropName == kFormCalcRuntime)
       return lpScriptContext->m_FM2JSContext->GlobalPropertyGetter();
 
-    XFA_HashCode uHashCode = static_cast<XFA_HashCode>(
-        FX_HashCode_GetW(wsPropName.AsStringView(), false));
+    XFA_HashCode uHashCode =
+        static_cast<XFA_HashCode>(FX_HashCode_GetW(wsPropName.AsStringView()));
     if (uHashCode != XFA_HASHCODE_Layout) {
       CXFA_Object* pObj =
           lpScriptContext->GetDocument()->GetXFAObject(uHashCode);

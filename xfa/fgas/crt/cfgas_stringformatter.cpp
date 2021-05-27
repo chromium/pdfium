@@ -904,7 +904,7 @@ CFGAS_StringFormatter::Category CFGAS_StringFormatter::GetCategory() const {
         wsCategory += m_spPattern[ccf];
         ccf++;
       }
-      uint32_t dwHash = FX_HashCode_GetW(wsCategory.AsStringView(), false);
+      uint32_t dwHash = FX_HashCode_GetW(wsCategory.AsStringView());
       if (dwHash == FX_LOCALECATEGORY_DateTimeHash)
         return Category::kDateTime;
       if (dwHash == FX_LOCALECATEGORY_TextHash)
@@ -1027,8 +1027,7 @@ LocaleIface* CFGAS_StringFormatter::GetNumericFormat(
                  m_spPattern[ccf] != '{') {
             wsSubCategory += m_spPattern[ccf++];
           }
-          uint32_t dwSubHash =
-              FX_HashCode_GetW(wsSubCategory.AsStringView(), false);
+          uint32_t dwSubHash = FX_HashCode_GetW(wsSubCategory.AsStringView());
           LocaleIface::NumSubcategory eSubCategory =
               LocaleIface::NumSubcategory::kDecimal;
           for (const auto& data : kLocaleNumSubcategoryData) {
@@ -1637,8 +1636,7 @@ CFGAS_StringFormatter::DateTimeType CFGAS_StringFormatter::GetDateTimeFormat(
                  m_spPattern[ccf] != '{')
             wsSubCategory += m_spPattern[ccf++];
 
-          uint32_t dwSubHash =
-              FX_HashCode_GetW(wsSubCategory.AsStringView(), false);
+          uint32_t dwSubHash = FX_HashCode_GetW(wsSubCategory.AsStringView());
           LocaleIface::DateTimeSubcategory eSubCategory =
               LocaleIface::DateTimeSubcategory::kMedium;
           for (const auto& data : kLocaleDateTimeSubcategoryData) {

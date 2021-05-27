@@ -285,7 +285,7 @@ const CFX_CSSData::Property* CFX_CSSData::GetPropertyByName(
   if (name.IsEmpty())
     return nullptr;
 
-  uint32_t hash = FX_HashCode_GetW(name, true);
+  uint32_t hash = FX_HashCode_GetLoweredW(name);
   auto* result =
       std::lower_bound(std::begin(propertyTable), std::end(propertyTable), hash,
                        [](const CFX_CSSData::Property& iter,
@@ -306,7 +306,7 @@ const CFX_CSSData::PropertyValue* CFX_CSSData::GetPropertyValueByName(
   if (wsName.IsEmpty())
     return nullptr;
 
-  uint32_t hash = FX_HashCode_GetW(wsName, true);
+  uint32_t hash = FX_HashCode_GetLoweredW(wsName);
   auto* result = std::lower_bound(
       std::begin(propertyValueTable), std::end(propertyValueTable), hash,
       [](const PropertyValue& iter, const uint32_t& hash) {

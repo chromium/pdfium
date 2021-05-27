@@ -22,7 +22,7 @@ CXFA_TreeList::CXFA_TreeList(CXFA_Document* doc)
 CXFA_TreeList::~CXFA_TreeList() = default;
 
 CXFA_Node* CXFA_TreeList::NamedItem(WideStringView wsName) {
-  uint32_t dwHashCode = FX_HashCode_GetW(wsName, false);
+  uint32_t dwHashCode = FX_HashCode_GetW(wsName);
   size_t count = GetLength();
   for (size_t i = 0; i < count; i++) {
     CXFA_Node* ret = Item(i);

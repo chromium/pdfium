@@ -777,26 +777,30 @@ std::ostream& operator<<(std::ostream& os, ByteStringView str) {
 
 }  // namespace fxcrt
 
-uint32_t FX_HashCode_GetA(ByteStringView str, bool bIgnoreCase) {
+uint32_t FX_HashCode_GetA(ByteStringView str) {
   uint32_t dwHashCode = 0;
-  if (bIgnoreCase) {
-    for (ByteStringView::UnsignedType c : str)
-      dwHashCode = 31 * dwHashCode + tolower(c);
-  } else {
-    for (ByteStringView::UnsignedType c : str)
-      dwHashCode = 31 * dwHashCode + c;
-  }
+  for (ByteStringView::UnsignedType c : str)
+    dwHashCode = 31 * dwHashCode + c;
   return dwHashCode;
 }
 
-uint32_t FX_HashCode_GetAsIfW(ByteStringView str, bool bIgnoreCase) {
+uint32_t FX_HashCode_GetLoweredA(ByteStringView str) {
   uint32_t dwHashCode = 0;
-  if (bIgnoreCase) {
-    for (ByteStringView::UnsignedType c : str)
-      dwHashCode = 1313 * dwHashCode + FXSYS_towlower(c);
-  } else {
-    for (ByteStringView::UnsignedType c : str)
-      dwHashCode = 1313 * dwHashCode + c;
-  }
+  for (ByteStringView::UnsignedType c : str)
+    dwHashCode = 31 * dwHashCode + tolower(c);
+  return dwHashCode;
+}
+
+uint32_t FX_HashCode_GetAsIfW(ByteStringView str) {
+  uint32_t dwHashCode = 0;
+  for (ByteStringView::UnsignedType c : str)
+    dwHashCode = 1313 * dwHashCode + c;
+  return dwHashCode;
+}
+
+uint32_t FX_HashCode_GetLoweredAsIfW(ByteStringView str) {
+  uint32_t dwHashCode = 0;
+  for (ByteStringView::UnsignedType c : str)
+    dwHashCode = 1313 * dwHashCode + FXSYS_towlower(c);
   return dwHashCode;
 }

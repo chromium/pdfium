@@ -171,7 +171,7 @@ XFA_PACKETINFO XFA_GetPacketByIndex(XFA_PacketType ePacket) {
 }
 
 Optional<XFA_PACKETINFO> XFA_GetPacketByName(WideStringView wsName) {
-  uint32_t hash = FX_HashCode_GetW(wsName, false);
+  uint32_t hash = FX_HashCode_GetW(wsName);
   auto* elem = std::lower_bound(
       std::begin(g_PacketTable), std::end(g_PacketTable), hash,
       [](const PacketRecord& a, uint32_t hash) { return a.hash < hash; });
@@ -185,7 +185,7 @@ ByteStringView XFA_ElementToName(XFA_Element elem) {
 }
 
 XFA_Element XFA_GetElementByName(WideStringView name) {
-  uint32_t hash = FX_HashCode_GetW(name, false);
+  uint32_t hash = FX_HashCode_GetW(name);
   auto* elem = std::lower_bound(
       std::begin(kElementRecords), std::end(kElementRecords), hash,
       [](const ElementRecord& a, uint32_t hash) { return a.hash < hash; });
@@ -202,7 +202,7 @@ ByteStringView XFA_AttributeToName(XFA_Attribute attr) {
 }
 
 Optional<XFA_ATTRIBUTEINFO> XFA_GetAttributeByName(WideStringView name) {
-  uint32_t hash = FX_HashCode_GetW(name, false);
+  uint32_t hash = FX_HashCode_GetW(name);
   auto* elem = std::lower_bound(
       std::begin(kAttributeRecords), std::end(kAttributeRecords), hash,
       [](const AttributeRecord& a, uint32_t hash) { return a.hash < hash; });
@@ -224,11 +224,12 @@ ByteStringView XFA_AttributeValueToName(XFA_AttributeValue item) {
 }
 
 Optional<XFA_AttributeValue> XFA_GetAttributeValueByName(WideStringView name) {
-  auto* it = std::lower_bound(std::begin(kAttributeValueRecords),
-                              std::end(kAttributeValueRecords),
-                              FX_HashCode_GetW(name, false),
-                              [](const AttributeValueRecord& arg,
-                                 uint32_t hash) { return arg.uHash < hash; });
+  auto* it =
+      std::lower_bound(std::begin(kAttributeValueRecords),
+                       std::end(kAttributeValueRecords), FX_HashCode_GetW(name),
+                       [](const AttributeValueRecord& arg, uint32_t hash) {
+                         return arg.uHash < hash;
+                       });
   if (it == std::end(kAttributeValueRecords))
     return pdfium::nullopt;
 

@@ -283,7 +283,7 @@ bool CXFA_TextParser::TagValidate(const WideString& wsName) const {
       0xdb8ac455,  // html
   };
   return std::binary_search(std::begin(s_XFATagName), std::end(s_XFATagName),
-                            FX_HashCode_GetW(wsName.AsStringView(), true));
+                            FX_HashCode_GetLoweredW(wsName.AsStringView()));
 }
 
 // static
@@ -599,7 +599,7 @@ bool CXFA_TextParser::GetTabstops(const CFX_CSSComputedStyle* pStyle,
         break;
       case TabStopStatus::Location:
         if (ch == ' ') {
-          uint32_t dwHashCode = FX_HashCode_GetW(wsAlign.AsStringView(), true);
+          uint32_t dwHashCode = FX_HashCode_GetLoweredW(wsAlign.AsStringView());
           CXFA_Measurement ms(
               WideStringView(spTabStops.subspan(iLast, iCur - iLast)));
           float fPos = ms.ToUnit(XFA_Unit::Pt);
@@ -615,7 +615,7 @@ bool CXFA_TextParser::GetTabstops(const CFX_CSSComputedStyle* pStyle,
   }
 
   if (!wsAlign.IsEmpty()) {
-    uint32_t dwHashCode = FX_HashCode_GetW(wsAlign.AsStringView(), true);
+    uint32_t dwHashCode = FX_HashCode_GetLoweredW(wsAlign.AsStringView());
     CXFA_Measurement ms(
         WideStringView(spTabStops.subspan(iLast, iCur - iLast)));
     float fPos = ms.ToUnit(XFA_Unit::Pt);

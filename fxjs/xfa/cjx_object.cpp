@@ -54,7 +54,7 @@ enum XFA_KEYTYPE {
 };
 
 uint32_t GetMapKey_Custom(WideStringView wsKey) {
-  uint32_t dwKey = FX_HashCode_GetW(wsKey, false);
+  uint32_t dwKey = FX_HashCode_GetW(wsKey);
   return ((dwKey << 1) | XFA_KEYTYPE_Custom);
 }
 

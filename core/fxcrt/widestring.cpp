@@ -1122,14 +1122,16 @@ std::ostream& operator<<(std::ostream& os, WideStringView str) {
 
 }  // namespace fxcrt
 
-uint32_t FX_HashCode_GetW(WideStringView str, bool bIgnoreCase) {
+uint32_t FX_HashCode_GetW(WideStringView str) {
   uint32_t dwHashCode = 0;
-  if (bIgnoreCase) {
-    for (wchar_t c : str)  // match FXSYS_towlower() arg type.
-      dwHashCode = 1313 * dwHashCode + FXSYS_towlower(c);
-  } else {
-    for (WideStringView::UnsignedType c : str)
-      dwHashCode = 1313 * dwHashCode + c;
-  }
+  for (WideStringView::UnsignedType c : str)
+    dwHashCode = 1313 * dwHashCode + c;
+  return dwHashCode;
+}
+
+uint32_t FX_HashCode_GetLoweredW(WideStringView str) {
+  uint32_t dwHashCode = 0;
+  for (wchar_t c : str)  // match FXSYS_towlower() arg type.
+    dwHashCode = 1313 * dwHashCode + FXSYS_towlower(c);
   return dwHashCode;
 }

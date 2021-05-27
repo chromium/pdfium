@@ -298,14 +298,15 @@ std::ostream& operator<<(std::ostream& os, WideStringView str);
 
 using WideString = fxcrt::WideString;
 
-uint32_t FX_HashCode_GetW(WideStringView str, bool bIgnoreCase);
+uint32_t FX_HashCode_GetW(WideStringView str);
+uint32_t FX_HashCode_GetLoweredW(WideStringView str);
 
 namespace std {
 
 template <>
 struct hash<WideString> {
   std::size_t operator()(const WideString& str) const {
-    return FX_HashCode_GetW(str.AsStringView(), false);
+    return FX_HashCode_GetW(str.AsStringView());
   }
 };
 

@@ -76,7 +76,7 @@ const ExecEventParaInfo* GetExecEventParaInfoByName(
   if (wsEventName.IsEmpty())
     return nullptr;
 
-  uint32_t uHash = FX_HashCode_GetW(wsEventName, false);
+  uint32_t uHash = FX_HashCode_GetW(wsEventName);
   auto* result = std::lower_bound(
       std::begin(kExecEventParaInfoTable), std::end(kExecEventParaInfoTable),
       uHash, [](const ExecEventParaInfo& iter, const uint16_t& hash) {

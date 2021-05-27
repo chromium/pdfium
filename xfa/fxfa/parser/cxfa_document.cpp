@@ -189,8 +189,7 @@ CXFA_Node* CloneOrMergeInstanceManager(CXFA_Document* pDocument,
   WideString wsSubformName =
       pTemplateNode->JSObject()->GetCData(XFA_Attribute::Name);
   WideString wsInstMgrNodeName = L"_" + wsSubformName;
-  uint32_t dwInstNameHash =
-      FX_HashCode_GetW(wsInstMgrNodeName.AsStringView(), false);
+  uint32_t dwInstNameHash = FX_HashCode_GetW(wsInstMgrNodeName.AsStringView());
   CXFA_Node* pExistingNode = XFA_DataMerge_FindFormDOMInstance(
       pDocument, XFA_Element::InstanceManager, dwInstNameHash, pFormParent);
   if (pExistingNode) {
@@ -302,7 +301,7 @@ CXFA_Node* FindGlobalDataNode(CXFA_Document* pDocument,
   if (wsName.IsEmpty())
     return nullptr;
 
-  uint32_t dwNameHash = FX_HashCode_GetW(wsName.AsStringView(), false);
+  uint32_t dwNameHash = FX_HashCode_GetW(wsName.AsStringView());
   CXFA_Node* pBounded = pDocument->GetGlobalBinding(dwNameHash);
   if (!pBounded) {
     pBounded =
@@ -319,7 +318,7 @@ CXFA_Node* FindOnceDataNode(const WideString& wsName,
   if (wsName.IsEmpty())
     return nullptr;
 
-  uint32_t dwNameHash = FX_HashCode_GetW(wsName.AsStringView(), false);
+  uint32_t dwNameHash = FX_HashCode_GetW(wsName.AsStringView());
   CXFA_Node* pLastDataScope = nullptr;
   for (CXFA_Node* pCurDataScope = pDataScope;
        pCurDataScope &&
@@ -1526,7 +1525,7 @@ void CXFA_Document::DoProtoMerge() {
        pNode = sIterator.MoveToNext()) {
     WideString wsIDVal = pNode->JSObject()->GetCData(XFA_Attribute::Id);
     if (!wsIDVal.IsEmpty())
-      mIDMap[FX_HashCode_GetW(wsIDVal.AsStringView(), false)] = pNode;
+      mIDMap[FX_HashCode_GetW(wsIDVal.AsStringView())] = pNode;
 
     WideString wsUseVal = pNode->JSObject()->GetCData(XFA_Attribute::Use);
     if (!wsUseVal.IsEmpty()) {
@@ -1590,7 +1589,7 @@ void CXFA_Document::DoProtoMerge() {
           pProtoNode = pFirstObject->AsNode();
       }
     } else if (!wsID.IsEmpty()) {
-      auto it = mIDMap.find(FX_HashCode_GetW(wsID, false));
+      auto it = mIDMap.find(FX_HashCode_GetW(wsID));
       if (it == mIDMap.end())
         continue;
       pProtoNode = it->second;

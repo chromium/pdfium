@@ -26,8 +26,7 @@ size_t GetCSSNameLen(WideStringView str) {
 
 CFX_CSSSelector::CFX_CSSSelector(WideStringView str,
                                  std::unique_ptr<CFX_CSSSelector> next)
-    : name_hash_(FX_HashCode_GetW(str, /*bIgnoreCase=*/true)),
-      next_(std::move(next)) {}
+    : name_hash_(FX_HashCode_GetLoweredW(str)), next_(std::move(next)) {}
 
 CFX_CSSSelector::~CFX_CSSSelector() = default;
 

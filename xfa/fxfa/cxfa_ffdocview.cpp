@@ -657,7 +657,7 @@ void CXFA_FFDocView::RunBindItems() {
         wsValueRef.IsEmpty() || wsValueRef.EqualsASCII("$");
     WideString wsValue;
     WideString wsLabel;
-    uint32_t uValueHash = FX_HashCode_GetW(wsValueRef.AsStringView(), false);
+    uint32_t uValueHash = FX_HashCode_GetW(wsValueRef.AsStringView());
     for (auto& refObject : maybeRS.value().objects) {
       CXFA_Node* refNode = refObject->AsNode();
       if (!refNode)

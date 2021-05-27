@@ -76,7 +76,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_PDFFontMgr::FindFont(const ByteString& strPsName,
 RetainPtr<CFGAS_GEFont> CFGAS_PDFFontMgr::GetFont(WideStringView wsFontFamily,
                                                   uint32_t dwFontStyles,
                                                   bool bStrictMatch) {
-  uint32_t dwHashCode = FX_HashCode_GetW(wsFontFamily, false);
+  uint32_t dwHashCode = FX_HashCode_GetW(wsFontFamily);
   ByteString strKey = ByteString::Format("%u%u", dwHashCode, dwFontStyles);
   auto it = m_FontMap.find(strKey);
   if (it != m_FontMap.end())

@@ -1640,7 +1640,7 @@ void CXFA_Node::RemoveChildAndNotify(CXFA_Node* pNode, bool bNotify) {
 }
 
 CXFA_Node* CXFA_Node::GetFirstChildByName(WideStringView wsName) const {
-  return GetFirstChildByName(FX_HashCode_GetW(wsName, false));
+  return GetFirstChildByName(FX_HashCode_GetW(wsName));
 }
 
 CXFA_Node* CXFA_Node::GetFirstChildByName(uint32_t dwNameHash) const {
@@ -1672,7 +1672,7 @@ CXFA_Node* CXFA_Node::GetNextSameNameSibling(uint32_t dwNameHash) const {
 
 CXFA_Node* CXFA_Node::GetNextSameNameSiblingInternal(
     WideStringView wsNodeName) const {
-  return GetNextSameNameSibling(FX_HashCode_GetW(wsNodeName, false));
+  return GetNextSameNameSibling(FX_HashCode_GetW(wsNodeName));
 }
 
 CXFA_Node* CXFA_Node::GetNextSameClassSiblingInternal(XFA_Element eType) const {
@@ -1685,7 +1685,7 @@ CXFA_Node* CXFA_Node::GetNextSameClassSiblingInternal(XFA_Element eType) const {
 }
 
 CXFA_Node* CXFA_Node::GetOneChildNamed(WideStringView wsName) {
-  return FindFirstSiblingNamed(this, FX_HashCode_GetW(wsName, false));
+  return FindFirstSiblingNamed(this, FX_HashCode_GetW(wsName));
 }
 
 CXFA_Node* CXFA_Node::GetOneChildOfClass(WideStringView wsClass) {
@@ -1817,7 +1817,7 @@ void CXFA_Node::OnRemoved(bool bNotify) const {
 
 void CXFA_Node::UpdateNameHash() {
   WideString wsName = JSObject()->GetCData(XFA_Attribute::Name);
-  m_dwNameHash = FX_HashCode_GetW(wsName.AsStringView(), false);
+  m_dwNameHash = FX_HashCode_GetW(wsName.AsStringView());
 }
 
 CFX_XMLNode* CXFA_Node::CreateXMLMappingNode() {
@@ -4075,7 +4075,7 @@ CXFA_Node* CXFA_Node::GetSelectedMember() {
 }
 
 CXFA_Node* CXFA_Node::SetSelectedMember(WideStringView wsName) {
-  uint32_t nameHash = FX_HashCode_GetW(wsName, false);
+  uint32_t nameHash = FX_HashCode_GetW(wsName);
   for (CXFA_Node* pNode = ToNode(GetFirstChild()); pNode;
        pNode = pNode->GetNextSibling()) {
     if (pNode->GetNameHash() == nameHash) {

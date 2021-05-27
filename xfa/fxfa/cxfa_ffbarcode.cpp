@@ -124,7 +124,7 @@ const BarCodeInfo* CXFA_FFBarcode::GetBarcodeTypeByName(
 
   auto* it = std::lower_bound(
       std::begin(g_BarCodeData), std::end(g_BarCodeData),
-      FX_HashCode_GetW(wsName.AsStringView(), true),
+      FX_HashCode_GetLoweredW(wsName.AsStringView()),
       [](const BarCodeInfo& arg, uint32_t hash) { return arg.uHash < hash; });
 
   if (it != std::end(g_BarCodeData) && wsName.EqualsASCII(it->pName))

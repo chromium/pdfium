@@ -985,12 +985,12 @@ void CXFA_TextLayout::DoTabstops(CFX_CSSComputedStyle* pStyle,
     float fLeft = 0;
     if (m_pTabstopContext->m_bHasTabstops) {
       uint32_t dwAlign = m_pTabstopContext->m_tabstops[iTabstopsIndex].dwAlign;
-      if (dwAlign == FX_HashCode_GetW(L"center", false)) {
+      if (dwAlign == FX_HashCode_GetW(L"center")) {
         fLeft = pPiece->rtPiece.width / 2.0f;
-      } else if (dwAlign == FX_HashCode_GetW(L"right", false) ||
-                 dwAlign == FX_HashCode_GetW(L"before", false)) {
+      } else if (dwAlign == FX_HashCode_GetW(L"right") ||
+                 dwAlign == FX_HashCode_GetW(L"before")) {
         fLeft = pPiece->rtPiece.width;
-      } else if (dwAlign == FX_HashCode_GetW(L"decimal", false)) {
+      } else if (dwAlign == FX_HashCode_GetW(L"decimal")) {
         int32_t iChars = pPiece->iChars;
         for (int32_t i = 0; i < iChars; i++) {
           if (pPiece->szText[i] == L'.')

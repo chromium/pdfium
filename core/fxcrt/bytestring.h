@@ -276,15 +276,17 @@ std::ostream& operator<<(std::ostream& os, ByteStringView str);
 
 using ByteString = fxcrt::ByteString;
 
-uint32_t FX_HashCode_GetA(ByteStringView str, bool bIgnoreCase);
-uint32_t FX_HashCode_GetAsIfW(ByteStringView str, bool bIgnoreCase);
+uint32_t FX_HashCode_GetA(ByteStringView str);
+uint32_t FX_HashCode_GetLoweredA(ByteStringView str);
+uint32_t FX_HashCode_GetAsIfW(ByteStringView str);
+uint32_t FX_HashCode_GetLoweredAsIfW(ByteStringView str);
 
 namespace std {
 
 template <>
 struct hash<ByteString> {
   std::size_t operator()(const ByteString& str) const {
-    return FX_HashCode_GetA(str.AsStringView(), false);
+    return FX_HashCode_GetA(str.AsStringView());
   }
 };
 

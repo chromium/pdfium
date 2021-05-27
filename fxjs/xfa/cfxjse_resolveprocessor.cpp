@@ -165,7 +165,7 @@ bool CFXJSE_ResolveProcessor::ResolveDollar(v8::Isolate* pIsolate,
     return false;
 
   XFA_HashCode dwNameHash = static_cast<XFA_HashCode>(
-      FX_HashCode_GetW(wsName.AsStringView().Last(iNameLen - 1), false));
+      FX_HashCode_GetW(wsName.AsStringView().Last(iNameLen - 1)));
   if (dwNameHash == XFA_HASHCODE_Xfa) {
     rnd.m_Result.objects.emplace_back(rnd.m_pSC->GetDocument()->GetRoot());
   } else {
@@ -192,7 +192,7 @@ bool CFXJSE_ResolveProcessor::ResolveExcalmatory(v8::Isolate* pIsolate,
   rndFind.m_CurObject = datasets;
   rndFind.m_wsName = rnd.m_wsName.Last(rnd.m_wsName.GetLength() - 1);
   rndFind.m_uHashName = static_cast<XFA_HashCode>(
-      FX_HashCode_GetW(rndFind.m_wsName.AsStringView(), false));
+      FX_HashCode_GetW(rndFind.m_wsName.AsStringView()));
   rndFind.m_nLevel = rnd.m_nLevel + 1;
   rndFind.m_dwStyles = XFA_RESOLVENODE_Children;
   rndFind.m_wsCondition = rnd.m_wsCondition;
@@ -219,7 +219,7 @@ bool CFXJSE_ResolveProcessor::ResolveNumberSign(v8::Isolate* pIsolate,
   rndFind.m_dwStyles &= ~XFA_RESOLVENODE_Attributes;
   rndFind.m_wsName = std::move(wsName);
   rndFind.m_uHashName = static_cast<XFA_HashCode>(
-      FX_HashCode_GetW(rndFind.m_wsName.AsStringView(), false));
+      FX_HashCode_GetW(rndFind.m_wsName.AsStringView()));
   rndFind.m_wsCondition = wsCondition;
   rndFind.m_CurObject = curNode;
   ResolveNormal(pIsolate, rndFind);
@@ -603,7 +603,7 @@ int32_t CFXJSE_ResolveProcessor::GetFilter(WideStringView wsExpression,
   wsName.Trim();
   wsCondition.Trim();
   rnd.m_uHashName =
-      static_cast<XFA_HashCode>(FX_HashCode_GetW(wsName.AsStringView(), false));
+      static_cast<XFA_HashCode>(FX_HashCode_GetW(wsName.AsStringView()));
   return nStart;
 }
 

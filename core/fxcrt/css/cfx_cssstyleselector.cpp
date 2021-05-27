@@ -74,7 +74,7 @@ bool CFX_CSSStyleSelector::MatchSelector(const WideString& tagname,
   // just say we don't support them to simplify the code for now.
   if (!pSel || pSel->next_selector() || pSel->is_descendant())
     return false;
-  return pSel->name_hash() == FX_HashCode_GetW(tagname.AsStringView(), true);
+  return pSel->name_hash() == FX_HashCode_GetLoweredW(tagname.AsStringView());
 }
 
 void CFX_CSSStyleSelector::ComputeStyle(

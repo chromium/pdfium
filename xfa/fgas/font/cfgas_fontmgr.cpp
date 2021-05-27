@@ -751,7 +751,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByCodePage(
     const wchar_t* pszFontFamily) {
   ByteString bsHash = ByteString::Format("%d, %d", wCodePage, dwFontStyles);
   bsHash += FX_UTF8Encode(WideStringView(pszFontFamily));
-  uint32_t dwHash = FX_HashCode_GetA(bsHash.AsStringView(), false);
+  uint32_t dwHash = FX_HashCode_GetA(bsHash.AsStringView());
   auto* pFontVector = &m_Hash2Fonts[dwHash];
   if (!pFontVector->empty()) {
     for (auto iter = pFontVector->begin(); iter != pFontVector->end(); ++iter) {
@@ -814,7 +814,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByUnicode(
     bsHash = ByteString::Format("%d, %d", wCodePage, dwFontStyles);
   }
   bsHash += FX_UTF8Encode(WideStringView(pszFontFamily));
-  uint32_t dwHash = FX_HashCode_GetA(bsHash.AsStringView(), false);
+  uint32_t dwHash = FX_HashCode_GetA(bsHash.AsStringView());
   std::vector<RetainPtr<CFGAS_GEFont>>& fonts = m_Hash2Fonts[dwHash];
   for (auto& pFont : fonts) {
     if (VerifyUnicode(pFont, wUnicode))
@@ -831,7 +831,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::LoadFont(const wchar_t* pszFontFamily,
 #if defined(OS_WIN)
   ByteString bsHash = ByteString::Format("%d, %d", wCodePage, dwFontStyles);
   bsHash += FX_UTF8Encode(WideStringView(pszFontFamily));
-  uint32_t dwHash = FX_HashCode_GetA(bsHash.AsStringView(), false);
+  uint32_t dwHash = FX_HashCode_GetA(bsHash.AsStringView());
   std::vector<RetainPtr<CFGAS_GEFont>>* pFontArray = &m_Hash2Fonts[dwHash];
   if (!pFontArray->empty())
     return (*pFontArray)[0];
