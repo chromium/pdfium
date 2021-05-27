@@ -220,19 +220,19 @@ bool SetWidgetDisplayStatus(CPDFSDK_Widget* pWidget, int value) {
 void SetBorderStyle(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                     const WideString& swFieldName,
                     int nControlIndex,
-                    const ByteString& string) {
+                    const ByteString& bsString) {
   DCHECK(pFormFillEnv);
 
   BorderStyle nBorderStyle = BorderStyle::kSolid;
-  if (string == "solid")
+  if (bsString == "solid")
     nBorderStyle = BorderStyle::kSolid;
-  else if (string == "beveled")
+  else if (bsString == "beveled")
     nBorderStyle = BorderStyle::kBeveled;
-  else if (string == "dashed")
+  else if (bsString == "dashed")
     nBorderStyle = BorderStyle::kDash;
-  else if (string == "inset")
+  else if (bsString == "inset")
     nBorderStyle = BorderStyle::kInset;
-  else if (string == "underline")
+  else if (bsString == "underline")
     nBorderStyle = BorderStyle::kUnderline;
   else
     return;
@@ -1121,15 +1121,6 @@ CJS_Result CJS_Field::set_do_not_spell_check(CJS_Runtime* pRuntime,
   if (!m_bCanSet)
     return CJS_Result::Failure(JSMessage::kReadOnlyError);
   return CJS_Result::Success();
-}
-
-void CJS_Field::SetDelay(bool bDelay) {
-  m_bDelay = bDelay;
-
-  if (m_bDelay)
-    return;
-  if (m_pJSDoc)
-    m_pJSDoc->DoFieldDelay(m_FieldName, m_nFormControlIndex);
 }
 
 CJS_Result CJS_Field::get_delay(CJS_Runtime* pRuntime) {
@@ -2573,6 +2564,15 @@ CJS_Result CJS_Field::signatureValidate(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   return CJS_Result::Failure(JSMessage::kNotSupportedError);
+}
+
+void CJS_Field::SetDelay(bool bDelay) {
+  m_bDelay = bDelay;
+  if (m_bDelay)
+    return;
+
+  if (m_pJSDoc)
+    m_pJSDoc->DoFieldDelay(m_FieldName, m_nFormControlIndex);
 }
 
 void CJS_Field::AddDelay_Int(FIELD_PROP prop, int32_t n) {
