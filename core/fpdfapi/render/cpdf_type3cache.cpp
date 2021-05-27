@@ -20,14 +20,14 @@
 
 namespace {
 
-struct CPDF_UniqueKeyGen {
+struct UniqueKeyGen {
   void Generate(int count, ...);
 
   int m_KeyLen;
   char m_Key[128];
 };
 
-void CPDF_UniqueKeyGen::Generate(int count, ...) {
+void UniqueKeyGen::Generate(int count, ...) {
   va_list argList;
   va_start(argList, count);
   for (int i = 0; i < count; i++) {
@@ -38,7 +38,7 @@ void CPDF_UniqueKeyGen::Generate(int count, ...) {
   m_KeyLen = count * sizeof(uint32_t);
 }
 
-bool IsScanLine1bpp(uint8_t* pBuf, int width) {
+bool IsScanLine1bpp(const uint8_t* pBuf, int width) {
   int size = width / 8;
   for (int i = 0; i < size; i++) {
     if (pBuf[i])
@@ -47,7 +47,7 @@ bool IsScanLine1bpp(uint8_t* pBuf, int width) {
   return (width % 8) && (pBuf[width / 8] & (0xff << (8 - width % 8)));
 }
 
-bool IsScanLine8bpp(uint8_t* pBuf, int width) {
+bool IsScanLine8bpp(const uint8_t* pBuf, int width) {
   for (int i = 0; i < width; i++) {
     if (pBuf[i] > 0x40)
       return true;
@@ -55,26 +55,36 @@ bool IsScanLine8bpp(uint8_t* pBuf, int width) {
   return false;
 }
 
-int DetectFirstLastScan(const RetainPtr<CFX_DIBitmap>& pBitmap, bool bFirst) {
-  int height = pBitmap->GetHeight();
-  int pitch = pBitmap->GetPitch();
-  int width = pBitmap->GetWidth();
-  int bpp = pBitmap->GetBPP();
+bool IsScanLineBpp(int bpp, const uint8_t* pBuf, int width) {
+  if (bpp == 1)
+    return IsScanLine1bpp(pBuf, width);
   if (bpp > 8)
     width *= bpp / 8;
-  uint8_t* pBuf = pBitmap->GetBuffer();
-  int line = bFirst ? 0 : height - 1;
-  int line_step = bFirst ? 1 : -1;
-  int line_end = bFirst ? height : -1;
-  while (line != line_end) {
-    if (bpp == 1) {
-      if (IsScanLine1bpp(pBuf + line * pitch, width))
-        return line;
-    } else {
-      if (IsScanLine8bpp(pBuf + line * pitch, width))
-        return line;
-    }
-    line += line_step;
+  return IsScanLine8bpp(pBuf, width);
+}
+
+int DetectFirstScan(const RetainPtr<CFX_DIBitmap>& pBitmap) {
+  const int height = pBitmap->GetHeight();
+  const int pitch = pBitmap->GetPitch();
+  const int width = pBitmap->GetWidth();
+  const int bpp = pBitmap->GetBPP();
+  const uint8_t* pBuf = pBitmap->GetBuffer();
+  for (int line = 0; line < height; ++line) {
+    if (IsScanLineBpp(bpp, pBuf + line * pitch, width))
+      return line;
+  }
+  return -1;
+}
+
+int DetectLastScan(const RetainPtr<CFX_DIBitmap>& pBitmap) {
+  const int height = pBitmap->GetHeight();
+  const int pitch = pBitmap->GetPitch();
+  const int bpp = pBitmap->GetBPP();
+  const int width = pBitmap->GetWidth();
+  const uint8_t* pBuf = pBitmap->GetBuffer();
+  for (int line = height - 1; line >= 0; --line) {
+    if (IsScanLineBpp(bpp, pBuf + line * pitch, width))
+      return line;
   }
   return -1;
 }
@@ -87,7 +97,7 @@ CPDF_Type3Cache::~CPDF_Type3Cache() = default;
 
 const CFX_GlyphBitmap* CPDF_Type3Cache::LoadGlyph(uint32_t charcode,
                                                   const CFX_Matrix& mtMatrix) {
-  CPDF_UniqueKeyGen keygen;
+  UniqueKeyGen keygen;
   keygen.Generate(
       4, FXSYS_roundf(mtMatrix.a * 10000), FXSYS_roundf(mtMatrix.b * 10000),
       FXSYS_roundf(mtMatrix.c * 10000), FXSYS_roundf(mtMatrix.d * 10000));
@@ -129,8 +139,8 @@ std::unique_ptr<CFX_GlyphBitmap> CPDF_Type3Cache::RenderGlyph(
   int top = 0;
   if (fabs(image_matrix.b) < fabs(image_matrix.a) / 100 &&
       fabs(image_matrix.c) < fabs(image_matrix.d) / 100) {
-    int top_line = DetectFirstLastScan(pBitmap, true);
-    int bottom_line = DetectFirstLastScan(pBitmap, false);
+    int top_line = DetectFirstScan(pBitmap);
+    int bottom_line = DetectLastScan(pBitmap);
     if (top_line == 0 && bottom_line == pBitmap->GetHeight() - 1) {
       float top_y = image_matrix.d + image_matrix.f;
       float bottom_y = image_matrix.f;
