@@ -229,7 +229,7 @@ class CPDFSDK_FormFillEnvironment final : public CFX_Timer::HandlerIface,
   ObservedPtr<CPDFSDK_Annot> m_pFocusAnnot;
   UnownedPtr<CPDF_Document> const m_pCPDFDoc;
   std::unique_ptr<CPDFSDK_AnnotHandlerMgr> m_pAnnotHandlerMgr;
-  std::unique_ptr<CFFL_InteractiveFormFiller> m_pFormFiller;
+  std::unique_ptr<CFFL_InteractiveFormFiller> m_pInteractiveFormFiller;
   bool m_bChangeMask = false;
   bool m_bBeingDestroyed = false;
 

@@ -463,11 +463,12 @@ bool CFFL_FormField::CommitData(CPDFSDK_PageView* pPageView, uint32_t nFlag) {
   if (!IsDataChanged(pPageView))
     return true;
 
-  CFFL_InteractiveFormFiller* pFormFiller =
+  CFFL_InteractiveFormFiller* pInteractiveFormFiller =
       m_pFormFillEnv->GetInteractiveFormFiller();
   ObservedPtr<CPDFSDK_Annot> pObserved(m_pWidget.Get());
 
-  if (!pFormFiller->OnKeyStrokeCommit(&pObserved, pPageView, nFlag)) {
+  if (!pInteractiveFormFiller->OnKeyStrokeCommit(&pObserved, pPageView,
+                                                 nFlag)) {
     if (!pObserved)
       return false;
     ResetPWLWindow(pPageView, false);
@@ -476,7 +477,7 @@ bool CFFL_FormField::CommitData(CPDFSDK_PageView* pPageView, uint32_t nFlag) {
   if (!pObserved)
     return false;
 
-  if (!pFormFiller->OnValidate(&pObserved, pPageView, nFlag)) {
+  if (!pInteractiveFormFiller->OnValidate(&pObserved, pPageView, nFlag)) {
     if (!pObserved)
       return false;
     ResetPWLWindow(pPageView, false);
@@ -489,11 +490,11 @@ bool CFFL_FormField::CommitData(CPDFSDK_PageView* pPageView, uint32_t nFlag) {
   if (!pObserved)
     return false;
 
-  pFormFiller->OnCalculate(&pObserved, pPageView, nFlag);
+  pInteractiveFormFiller->OnCalculate(&pObserved, pPageView, nFlag);
   if (!pObserved)
     return false;
 
-  pFormFiller->OnFormat(&pObserved, pPageView, nFlag);
+  pInteractiveFormFiller->OnFormat(&pObserved, pPageView, nFlag);
   if (!pObserved)
     return false;
 

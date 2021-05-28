@@ -78,10 +78,10 @@ CPDFSDK_FormFillEnvironment::~CPDFSDK_FormFillEnvironment() {
   // itself up. Make sure it is deleted before |m_pFormFiller|.
   m_pAnnotHandlerMgr.reset();
 
-  // Must destroy the |m_pFormFiller| before the environment (|this|)
+  // Must destroy the |m_pInteractiveFormFiller| before the environment (|this|)
   // because any created form widgets hold a pointer to the environment.
   // Those widgets may call things like KillTimer() as they are shutdown.
-  m_pFormFiller.reset();
+  m_pInteractiveFormFiller.reset();
 
   if (m_pInfo && m_pInfo->Release)
     m_pInfo->Release(m_pInfo);
@@ -351,9 +351,11 @@ CPDFSDK_ActionHandler* CPDFSDK_FormFillEnvironment::GetActionHandler() {
 
 CFFL_InteractiveFormFiller*
 CPDFSDK_FormFillEnvironment::GetInteractiveFormFiller() {
-  if (!m_pFormFiller)
-    m_pFormFiller = std::make_unique<CFFL_InteractiveFormFiller>(this);
-  return m_pFormFiller.get();
+  if (!m_pInteractiveFormFiller) {
+    m_pInteractiveFormFiller =
+        std::make_unique<CFFL_InteractiveFormFiller>(this);
+  }
+  return m_pInteractiveFormFiller.get();
 }
 
 void CPDFSDK_FormFillEnvironment::Invalidate(IPDF_Page* page,
