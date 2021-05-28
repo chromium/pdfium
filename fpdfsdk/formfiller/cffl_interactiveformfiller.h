@@ -81,8 +81,8 @@ class CFFL_InteractiveFormFiller final : public IPWL_FillerNotify {
   bool OnSetFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot, uint32_t nFlag);
   bool OnKillFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot, uint32_t nFlag);
 
-  CFFL_FormField* GetFormFillerForTesting(CPDFSDK_Annot* pAnnot) {
-    return GetFormFiller(pAnnot);
+  CFFL_FormField* GetFormFieldForTesting(CPDFSDK_Annot* pAnnot) {
+    return GetFormField(pAnnot);
   }
 
   WideString GetText(CPDFSDK_Annot* pAnnot);
@@ -161,9 +161,9 @@ class CFFL_InteractiveFormFiller final : public IPWL_FillerNotify {
 #endif  // PDF_ENABLE_XFA
 
   bool IsFillingAllowed(CPDFSDK_Widget* pWidget) const;
-  CFFL_FormField* GetFormFiller(CPDFSDK_Annot* pAnnot);
-  CFFL_FormField* GetOrCreateFormFiller(CPDFSDK_Annot* pAnnot);
-  void UnRegisterFormFiller(CPDFSDK_Annot* pAnnot);
+  CFFL_FormField* GetFormField(CPDFSDK_Annot* pAnnot);
+  CFFL_FormField* GetOrCreateFormField(CPDFSDK_Annot* pAnnot);
+  void UnregisterFormField(CPDFSDK_Annot* pAnnot);
 
   UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
   WidgetToFormFillerMap m_Map;

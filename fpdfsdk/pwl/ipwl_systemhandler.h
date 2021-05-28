@@ -36,7 +36,7 @@ class IPWL_SystemHandler {
 
   virtual void InvalidateRect(PerWindowData* pWidgetData,
                               const CFX_FloatRect& rect) = 0;
-  virtual void OutputSelectedRect(CFFL_FormField* pFormFiller,
+  virtual void OutputSelectedRect(CFFL_FormField* pFormField,
                                   const CFX_FloatRect& rect) = 0;
   virtual bool IsSelectionImplemented() const = 0;
   virtual void SetCursor(CursorStyle nCursorStyle) = 0;

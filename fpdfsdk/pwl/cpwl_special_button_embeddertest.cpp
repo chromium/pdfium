@@ -71,7 +71,7 @@ class CPWLSpecialButtonEmbedderTest : public EmbedderTest {
       EXPECT_TRUE(interactive_formfiller->OnSetFocus(&observed, 0));
     }
 
-    form_filler_ = interactive_formfiller->GetFormFillerForTesting(annot);
+    form_filler_ = interactive_formfiller->GetFormFieldForTesting(annot);
     ASSERT_TRUE(form_filler_);
 
     window_ =

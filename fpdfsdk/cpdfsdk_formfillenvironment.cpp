@@ -110,16 +110,16 @@ void CPDFSDK_FormFillEnvironment::InvalidateRect(PerWindowData* pWidgetData,
 }
 
 void CPDFSDK_FormFillEnvironment::OutputSelectedRect(
-    CFFL_FormField* pFormFiller,
+    CFFL_FormField* pFormField,
     const CFX_FloatRect& rect) {
-  if (!pFormFiller || !m_pInfo || !m_pInfo->FFI_OutputSelectedRect)
+  if (!pFormField || !m_pInfo || !m_pInfo->FFI_OutputSelectedRect)
     return;
 
-  auto* pPage = FPDFPageFromIPDFPage(pFormFiller->GetSDKAnnot()->GetPage());
+  auto* pPage = FPDFPageFromIPDFPage(pFormField->GetSDKAnnot()->GetPage());
   DCHECK(pPage);
 
-  CFX_PointF ptA = pFormFiller->PWLtoFFL(CFX_PointF(rect.left, rect.bottom));
-  CFX_PointF ptB = pFormFiller->PWLtoFFL(CFX_PointF(rect.right, rect.top));
+  CFX_PointF ptA = pFormField->PWLtoFFL(CFX_PointF(rect.left, rect.bottom));
+  CFX_PointF ptB = pFormField->PWLtoFFL(CFX_PointF(rect.right, rect.top));
   m_pInfo->FFI_OutputSelectedRect(m_pInfo, pPage, ptA.x, ptB.y, ptB.x, ptA.y);
 }
 
