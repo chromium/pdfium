@@ -33,7 +33,8 @@ class CFFL_CheckBox final : public CFFL_Button {
   void SaveData(CPDFSDK_PageView* pPageView) override;
 
  private:
-  CPWL_CheckBox* GetCheckBox(CPDFSDK_PageView* pPageView, bool bNew);
+  CPWL_CheckBox* GetCheckBox(CPDFSDK_PageView* pPageView) const;
+  CPWL_CheckBox* CreateOrUpdateCheckBox(CPDFSDK_PageView* pPageView);
 };
 
 #endif  // FPDFSDK_FORMFILLER_CFFL_CHECKBOX_H_

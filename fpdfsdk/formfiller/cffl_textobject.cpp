@@ -18,7 +18,9 @@ CPWL_Wnd* CFFL_TextObject::ResetPWLWindow(CPDFSDK_PageView* pPageView,
   if (bRestoreValue)
     RestoreState(pPageView);
 
-  ObservedPtr<CPWL_Wnd> pRet(GetPWLWindow(pPageView, !bRestoreValue));
+  ObservedPtr<CPWL_Wnd> pRet(bRestoreValue
+                                 ? GetPWLWindow(pPageView)
+                                 : CreateOrUpdatePWLWindow(pPageView));
   m_pWidget->UpdateField();  // May invoke JS, invalidating |pRet|.
   return pRet.Get();
 }

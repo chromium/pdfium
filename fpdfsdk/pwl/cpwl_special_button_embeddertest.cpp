@@ -74,8 +74,8 @@ class CPWLSpecialButtonEmbedderTest : public EmbedderTest {
     form_filler_ = interactive_formfiller->GetFormFieldForTesting(annot);
     ASSERT_TRUE(form_filler_);
 
-    window_ =
-        form_filler_->GetPWLWindow(formfill_env_->GetPageViewAtIndex(0), true);
+    window_ = form_filler_->CreateOrUpdatePWLWindow(
+        formfill_env_->GetPageViewAtIndex(0));
     ASSERT_TRUE(window_);
   }
 

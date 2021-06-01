@@ -50,7 +50,8 @@ class CFFL_TextField final : public CFFL_TextObject,
   void OnSetFocus(CPWL_Edit* pEdit) override;
 
  private:
-  CPWL_Edit* GetEdit(CPDFSDK_PageView* pPageView, bool bNew);
+  CPWL_Edit* GetEdit(CPDFSDK_PageView* pPageView) const;
+  CPWL_Edit* CreateOrUpdateEdit(CPDFSDK_PageView* pPageView);
 
   FFL_TextFieldState m_State;
 };

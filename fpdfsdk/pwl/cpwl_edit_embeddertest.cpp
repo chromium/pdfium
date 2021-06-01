@@ -70,8 +70,8 @@ class CPWLEditEmbedderTest : public EmbedderTest {
         pInteractiveFormFiller->GetFormFieldForTesting(pAnnotTextField);
     ASSERT_TRUE(m_pFormFiller);
 
-    CPWL_Wnd* pWindow = m_pFormFiller->GetPWLWindow(
-        m_pFormFillEnv->GetPageViewAtIndex(0), false);
+    CPWL_Wnd* pWindow =
+        m_pFormFiller->GetPWLWindow(m_pFormFillEnv->GetPageViewAtIndex(0));
     ASSERT_TRUE(pWindow);
     m_pEdit = static_cast<CPWL_Edit*>(pWindow);
   }

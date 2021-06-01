@@ -123,7 +123,8 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
   virtual bool IsFieldFull(CPDFSDK_PageView* pPageView);
 #endif  // PDF_ENABLE_XFA
 
-  CPWL_Wnd* GetPWLWindow(CPDFSDK_PageView* pPageView, bool bNew);
+  CPWL_Wnd* GetPWLWindow(CPDFSDK_PageView* pPageView) const;
+  CPWL_Wnd* CreateOrUpdatePWLWindow(CPDFSDK_PageView* pPageView);
   void DestroyPWLWindow(CPDFSDK_PageView* pPageView);
   void EscapeFiller(CPDFSDK_PageView* pPageView, bool bDestroyPWLWindow);
 
