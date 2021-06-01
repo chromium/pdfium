@@ -7,6 +7,8 @@
 #ifndef FPDFSDK_FORMFILLER_CFFL_PRIVATEDATA_H_
 #define FPDFSDK_FORMFILLER_CFFL_PRIVATEDATA_H_
 
+#include <memory>
+
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/pwl/ipwl_systemhandler.h"
@@ -31,7 +33,7 @@ class CFFL_PrivateData final : public IPWL_SystemHandler::PerWindowData {
   bool AppearanceAgeEquals(uint32_t age) const {
     return age == m_nAppearanceAge;
   }
-  bool ValueAgeEquals(uint32_t age) const { return age == m_nValueAge; }
+  uint32_t GetValueAge() const { return m_nValueAge; }
 
  private:
   CFFL_PrivateData(const CFFL_PrivateData& that);

@@ -9,22 +9,6 @@
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfdoc/cpdf_bafontmap.h"
 
-CPWL_Wnd* CFFL_TextObject::ResetPWLWindow(CPDFSDK_PageView* pPageView,
-                                          bool bRestoreValue) {
-  if (bRestoreValue)
-    SaveState(pPageView);
-
-  DestroyPWLWindow(pPageView);
-  if (bRestoreValue)
-    RestoreState(pPageView);
-
-  ObservedPtr<CPWL_Wnd> pRet(bRestoreValue
-                                 ? GetPWLWindow(pPageView)
-                                 : CreateOrUpdatePWLWindow(pPageView));
-  m_pWidget->UpdateField();  // May invoke JS, invalidating |pRet|.
-  return pRet.Get();
-}
-
 CFFL_TextObject::CFFL_TextObject(CPDFSDK_FormFillEnvironment* pApp,
                                  CPDFSDK_Widget* pWidget)
     : CFFL_FormField(pApp, pWidget) {}
@@ -33,6 +17,22 @@ CFFL_TextObject::~CFFL_TextObject() {
   // Destroy view classes before this object's members are destroyed since
   // the view classes have pointers to m_pFontMap that would be left dangling.
   DestroyWindows();
+}
+
+CPWL_Wnd* CFFL_TextObject::ResetPWLWindow(CPDFSDK_PageView* pPageView) {
+  DestroyPWLWindow(pPageView);
+  ObservedPtr<CPWL_Wnd> pRet(CreateOrUpdatePWLWindow(pPageView));
+  m_pWidget->UpdateField();  // May invoke JS, invalidating |pRet|.
+  return pRet.Get();
+}
+
+CPWL_Wnd* CFFL_TextObject::RestorePWLWindow(CPDFSDK_PageView* pPageView) {
+  SaveState(pPageView);
+  DestroyPWLWindow(pPageView);
+  RestoreState(pPageView);
+  ObservedPtr<CPWL_Wnd> pRet(GetPWLWindow(pPageView));
+  m_pWidget->UpdateField();  // May invoke JS, invalidating |pRet|.
+  return pRet.Get();
 }
 
 CPDF_BAFontMap* CFFL_TextObject::MaybeCreateFontMap() {

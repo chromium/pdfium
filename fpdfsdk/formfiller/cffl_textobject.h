@@ -18,8 +18,8 @@ class CPDF_BAFontMap;
 class CFFL_TextObject : public CFFL_FormField {
  public:
   // CFFL_FormField:
-  CPWL_Wnd* ResetPWLWindow(CPDFSDK_PageView* pPageView,
-                           bool bRestoreValue) override;
+  CPWL_Wnd* ResetPWLWindow(CPDFSDK_PageView* pPageView) override;
+  CPWL_Wnd* RestorePWLWindow(CPDFSDK_PageView* pPageView) override;
 
  protected:
   CFFL_TextObject(CPDFSDK_FormFillEnvironment* pApp, CPDFSDK_Widget* pWidget);

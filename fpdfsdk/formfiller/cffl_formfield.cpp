@@ -365,8 +365,8 @@ CPWL_Wnd* CFFL_FormField::CreateOrUpdatePWLWindow(CPDFSDK_PageView* pPageView) {
   if (pPrivateData->AppearanceAgeEquals(m_pWidget->GetAppearanceAge()))
     return pWnd;
 
-  return ResetPWLWindow(pPageView,
-                        pPrivateData->ValueAgeEquals(m_pWidget->GetValueAge()));
+  return ResetPWLWindowForValueAge(pPageView, m_pWidget,
+                                   pPrivateData->GetValueAge());
 }
 
 void CFFL_FormField::DestroyPWLWindow(CPDFSDK_PageView* pPageView) {
@@ -469,7 +469,7 @@ bool CFFL_FormField::CommitData(CPDFSDK_PageView* pPageView, uint32_t nFlag) {
                                                  nFlag)) {
     if (!pObserved)
       return false;
-    ResetPWLWindow(pPageView, false);
+    ResetPWLWindow(pPageView);
     return true;
   }
   if (!pObserved)
@@ -478,7 +478,7 @@ bool CFFL_FormField::CommitData(CPDFSDK_PageView* pPageView, uint32_t nFlag) {
   if (!pInteractiveFormFiller->OnValidate(&pObserved, pPageView, nFlag)) {
     if (!pObserved)
       return false;
-    ResetPWLWindow(pPageView, false);
+    ResetPWLWindow(pPageView);
     return true;
   }
   if (!pObserved)
@@ -529,8 +529,18 @@ void CFFL_FormField::SaveState(CPDFSDK_PageView* pPageView) {}
 
 void CFFL_FormField::RestoreState(CPDFSDK_PageView* pPageView) {}
 
-CPWL_Wnd* CFFL_FormField::ResetPWLWindow(CPDFSDK_PageView* pPageView,
-                                         bool bRestoreValue) {
+CPWL_Wnd* CFFL_FormField::ResetPWLWindowForValueAge(CPDFSDK_PageView* pPageView,
+                                                    CPDFSDK_Widget* pWidget,
+                                                    uint32_t nValueAge) {
+  return nValueAge == pWidget->GetValueAge() ? RestorePWLWindow(pPageView)
+                                             : ResetPWLWindow(pPageView);
+}
+
+CPWL_Wnd* CFFL_FormField::ResetPWLWindow(CPDFSDK_PageView* pPageView) {
+  return GetPWLWindow(pPageView);
+}
+
+CPWL_Wnd* CFFL_FormField::RestorePWLWindow(CPDFSDK_PageView* pPageView) {
   return GetPWLWindow(pPageView);
 }
 

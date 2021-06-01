@@ -103,10 +103,13 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
   virtual std::unique_ptr<CPWL_Wnd> NewPWLWindow(
       const CPWL_Wnd::CreateParams& cp,
       std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData) = 0;
-  virtual CPWL_Wnd* ResetPWLWindow(CPDFSDK_PageView* pPageView,
-                                   bool bRestoreValue);
   virtual void SaveState(CPDFSDK_PageView* pPageView);
   virtual void RestoreState(CPDFSDK_PageView* pPageView);
+  virtual bool IsDataChanged(CPDFSDK_PageView* pPageView);
+  virtual void SaveData(CPDFSDK_PageView* pPageView);
+#ifdef PDF_ENABLE_XFA
+  virtual bool IsFieldFull(CPDFSDK_PageView* pPageView);
+#endif  // PDF_ENABLE_XFA
 
   CFX_Matrix GetCurMatrix();
   CFX_FloatRect GetFocusBox(CPDFSDK_PageView* pPageView);
@@ -114,15 +117,10 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
   CFX_FloatRect PWLtoFFL(const CFX_FloatRect& rect);
   CFX_PointF FFLtoPWL(const CFX_PointF& point);
   CFX_PointF PWLtoFFL(const CFX_PointF& point);
-
   bool CommitData(CPDFSDK_PageView* pPageView, uint32_t nFlag);
-  virtual bool IsDataChanged(CPDFSDK_PageView* pPageView);
-  virtual void SaveData(CPDFSDK_PageView* pPageView);
-
-#ifdef PDF_ENABLE_XFA
-  virtual bool IsFieldFull(CPDFSDK_PageView* pPageView);
-#endif  // PDF_ENABLE_XFA
-
+  CPWL_Wnd* ResetPWLWindowForValueAge(CPDFSDK_PageView* pPageView,
+                                      CPDFSDK_Widget* pWidget,
+                                      uint32_t nValueAge);
   CPWL_Wnd* GetPWLWindow(CPDFSDK_PageView* pPageView) const;
   CPWL_Wnd* CreateOrUpdatePWLWindow(CPDFSDK_PageView* pPageView);
   void DestroyPWLWindow(CPDFSDK_PageView* pPageView);
@@ -137,6 +135,9 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
   CPDFSDK_Annot* GetSDKAnnot() const { return m_pWidget.Get(); }
 
  protected:
+  virtual CPWL_Wnd* ResetPWLWindow(CPDFSDK_PageView* pPageView);
+  virtual CPWL_Wnd* RestorePWLWindow(CPDFSDK_PageView* pPageView);
+
   // If the inheriting widget has its own fontmap and a PWL_Edit widget that
   // access that fontmap then you have to call DestroyWindows before destroying
   // the font map in order to not get a use-after-free.
