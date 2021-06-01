@@ -77,7 +77,7 @@ CPWL_Wnd::CreateParams CFFL_TextField::GetCreateParam() {
       cp.dwFlags |= PES_RIGHT;
       break;
   }
-  cp.pFontMap = MaybeCreateFontMap();
+  cp.pFontMap = GetOrCreateFontMap();
   cp.pFocusHandler = this;
   return cp;
 }

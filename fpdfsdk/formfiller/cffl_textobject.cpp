@@ -35,7 +35,7 @@ CPWL_Wnd* CFFL_TextObject::RestorePWLWindow(CPDFSDK_PageView* pPageView) {
   return pRet.Get();
 }
 
-CPDF_BAFontMap* CFFL_TextObject::MaybeCreateFontMap() {
+CPDF_BAFontMap* CFFL_TextObject::GetOrCreateFontMap() {
   if (!m_pFontMap) {
     m_pFontMap = std::make_unique<CPDF_BAFontMap>(
         m_pWidget->GetPDFPage()->GetDocument(),

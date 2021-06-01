@@ -25,7 +25,7 @@ class CFFL_TextObject : public CFFL_FormField {
   CFFL_TextObject(CPDFSDK_FormFillEnvironment* pApp, CPDFSDK_Widget* pWidget);
   ~CFFL_TextObject() override;
 
-  CPDF_BAFontMap* MaybeCreateFontMap();
+  CPDF_BAFontMap* GetOrCreateFontMap();
 
  private:
   std::unique_ptr<CPDF_BAFontMap> m_pFontMap;

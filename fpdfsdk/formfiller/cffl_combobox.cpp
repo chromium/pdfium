@@ -35,7 +35,7 @@ CPWL_Wnd::CreateParams CFFL_ComboBox::GetCreateParam() {
   if (m_pWidget->GetFieldFlags() & pdfium::form_flags::kChoiceEdit)
     cp.dwFlags |= PCBS_ALLOWCUSTOMTEXT;
 
-  cp.pFontMap = MaybeCreateFontMap();
+  cp.pFontMap = GetOrCreateFontMap();
   cp.pFocusHandler = this;
   return cp;
 }
