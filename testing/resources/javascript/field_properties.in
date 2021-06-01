@@ -70,7 +70,7 @@ function testTextPropertiesCase(field) {
     testROProperty(field, "page", 0);
     testRIProperty(field, "password", false, 42);
     testRWProperty(field, "print", true, false);
-    testRIProperty(field, "readonly", false, true);
+    testRWProperty(field, "readonly", false, true);
     testROProperty(field, "rect", [200,221,220,201]);
     // testROProperty(field, "required", "clams");
     testRIProperty(field, "richText", false, true);

@@ -98,6 +98,7 @@ class CPDF_FormField {
   WideString GetMappingName() const;
 
   uint32_t GetFieldFlags() const;
+  void SetFieldFlags(uint32_t dwFlags);
   ByteString GetDefaultStyle() const;
 
   bool IsRequired() const { return m_bRequired; }

@@ -51,7 +51,7 @@ Alert: PASS: password = false
 Alert: PASS: print = true
 Alert: PASS: print = false
 Alert: PASS: readonly = false
-Alert: PASS: readonly = false
+Alert: PASS: readonly = true
 Alert: PASS: rect = 200,221,220,201
 Alert: PASS: rect threw Field.rect: Incorrect parameter value.
 Alert: PASS: richText = false

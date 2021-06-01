@@ -281,6 +281,11 @@ uint32_t CPDF_FormField::GetFieldFlags() const {
   return pObj ? pObj->GetInteger() : 0;
 }
 
+void CPDF_FormField::SetFieldFlags(uint32_t dwFlags) {
+  m_pDict->SetNewFor<CPDF_Number>(pdfium::form_fields::kFf,
+                                  static_cast<int>(dwFlags));
+}
+
 ByteString CPDF_FormField::GetDefaultStyle() const {
   const CPDF_Object* pObj = GetFieldAttr(m_pDict.Get(), "DS");
   return pObj ? pObj->GetString() : ByteString();
