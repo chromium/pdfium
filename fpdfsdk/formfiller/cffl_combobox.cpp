@@ -166,7 +166,7 @@ void CFFL_ComboBox::SetActionData(CPDFSDK_PageView* pPageView,
   }
 }
 
-void CFFL_ComboBox::SaveState(CPDFSDK_PageView* pPageView) {
+void CFFL_ComboBox::SavePWLWindowState(CPDFSDK_PageView* pPageView) {
   CPWL_ComboBox* pComboBox = GetComboBox(pPageView);
   if (!pComboBox)
     return;
@@ -181,7 +181,8 @@ void CFFL_ComboBox::SaveState(CPDFSDK_PageView* pPageView) {
   m_State.sValue = pEdit->GetText();
 }
 
-void CFFL_ComboBox::RestoreState(CPDFSDK_PageView* pPageView) {
+void CFFL_ComboBox::RecreatePWLWindowFromSavedState(
+    CPDFSDK_PageView* pPageView) {
   CPWL_ComboBox* pComboBox = CreateOrUpdateComboBox(pPageView);
   if (!pComboBox)
     return;

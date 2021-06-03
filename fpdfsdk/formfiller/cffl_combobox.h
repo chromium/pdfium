@@ -42,8 +42,8 @@ class CFFL_ComboBox final : public CFFL_TextObject,
   void SetActionData(CPDFSDK_PageView* pPageView,
                      CPDF_AAction::AActionType type,
                      const CPDFSDK_FieldAction& fa) override;
-  void SaveState(CPDFSDK_PageView* pPageView) override;
-  void RestoreState(CPDFSDK_PageView* pPageView) override;
+  void SavePWLWindowState(CPDFSDK_PageView* pPageView) override;
+  void RecreatePWLWindowFromSavedState(CPDFSDK_PageView* pPageView) override;
   bool SetIndexSelected(int index, bool selected) override;
   bool IsIndexSelected(int index) override;
 #ifdef PDF_ENABLE_XFA

@@ -103,8 +103,8 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
   virtual std::unique_ptr<CPWL_Wnd> NewPWLWindow(
       const CPWL_Wnd::CreateParams& cp,
       std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData) = 0;
-  virtual void SaveState(CPDFSDK_PageView* pPageView);
-  virtual void RestoreState(CPDFSDK_PageView* pPageView);
+  virtual void SavePWLWindowState(CPDFSDK_PageView* pPageView);
+  virtual void RecreatePWLWindowFromSavedState(CPDFSDK_PageView* pPageView);
   virtual bool IsDataChanged(CPDFSDK_PageView* pPageView);
   virtual void SaveData(CPDFSDK_PageView* pPageView);
 #ifdef PDF_ENABLE_XFA

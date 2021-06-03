@@ -216,7 +216,7 @@ void CFFL_TextField::SetActionData(CPDFSDK_PageView* pPageView,
   }
 }
 
-void CFFL_TextField::SaveState(CPDFSDK_PageView* pPageView) {
+void CFFL_TextField::SavePWLWindowState(CPDFSDK_PageView* pPageView) {
   CPWL_Edit* pWnd = GetEdit(pPageView);
   if (!pWnd)
     return;
@@ -225,7 +225,8 @@ void CFFL_TextField::SaveState(CPDFSDK_PageView* pPageView) {
   m_State.sValue = pWnd->GetText();
 }
 
-void CFFL_TextField::RestoreState(CPDFSDK_PageView* pPageView) {
+void CFFL_TextField::RecreatePWLWindowFromSavedState(
+    CPDFSDK_PageView* pPageView) {
   CPWL_Edit* pWnd = CreateOrUpdateEdit(pPageView);
   if (!pWnd)
     return;

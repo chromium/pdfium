@@ -167,7 +167,7 @@ void CFFL_ListBox::GetActionData(CPDFSDK_PageView* pPageView,
   }
 }
 
-void CFFL_ListBox::SaveState(CPDFSDK_PageView* pPageView) {
+void CFFL_ListBox::SavePWLWindowState(CPDFSDK_PageView* pPageView) {
   CPWL_ListBox* pListBox = GetListBox(pPageView);
   if (!pListBox)
     return;
@@ -178,7 +178,8 @@ void CFFL_ListBox::SaveState(CPDFSDK_PageView* pPageView) {
   }
 }
 
-void CFFL_ListBox::RestoreState(CPDFSDK_PageView* pPageView) {
+void CFFL_ListBox::RecreatePWLWindowFromSavedState(
+    CPDFSDK_PageView* pPageView) {
   CPWL_ListBox* pListBox = GetListBox(pPageView);
   if (!pListBox)
     return;

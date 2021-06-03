@@ -665,7 +665,7 @@ bool CFFL_InteractiveFormFiller::OnKeyStrokeCommit(
 
   CFFL_FormField* pFormField = GetFormField(pWidget);
   pFormField->GetActionData(pPageView, CPDF_AAction::kKeyStroke, fa);
-  pFormField->SaveState(pPageView);
+  pFormField->SavePWLWindowState(pPageView);
   pWidget->OnAAction(CPDF_AAction::kKeyStroke, &fa, pPageView);
   if (!pAnnot->HasObservable())
     return true;
@@ -696,7 +696,7 @@ bool CFFL_InteractiveFormFiller::OnValidate(ObservedPtr<CPDFSDK_Annot>* pAnnot,
 
   CFFL_FormField* pFormField = GetFormField(pWidget);
   pFormField->GetActionData(pPageView, CPDF_AAction::kValidate, fa);
-  pFormField->SaveState(pPageView);
+  pFormField->SavePWLWindowState(pPageView);
   pWidget->OnAAction(CPDF_AAction::kValidate, &fa, pPageView);
   if (!pAnnot->HasObservable())
     return true;
@@ -921,7 +921,7 @@ std::pair<bool, bool> CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
   fa.nSelStart = nSelStart;
   fa.nSelEnd = nSelEnd;
   pFormField->GetActionData(pPageView, CPDF_AAction::kKeyStroke, fa);
-  pFormField->SaveState(pPageView);
+  pFormField->SavePWLWindowState(pPageView);
 
   bool action_status =
       pWidget->OnAAction(CPDF_AAction::kKeyStroke, &fa, pPageView);
@@ -948,7 +948,7 @@ std::pair<bool, bool> CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
   if (fa.bRC) {
     pFormField->SetActionData(pPageView, CPDF_AAction::kKeyStroke, fa);
   } else {
-    pFormField->RestoreState(pPageView);
+    pFormField->RecreatePWLWindowFromSavedState(pPageView);
   }
   if (pFormFillEnv->GetFocusAnnot() == pWidget)
     return {false, bExit};

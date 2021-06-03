@@ -40,8 +40,8 @@ class CFFL_TextField final : public CFFL_TextObject,
   void SetActionData(CPDFSDK_PageView* pPageView,
                      CPDF_AAction::AActionType type,
                      const CPDFSDK_FieldAction& fa) override;
-  void SaveState(CPDFSDK_PageView* pPageView) override;
-  void RestoreState(CPDFSDK_PageView* pPageView) override;
+  void SavePWLWindowState(CPDFSDK_PageView* pPageView) override;
+  void RecreatePWLWindowFromSavedState(CPDFSDK_PageView* pPageView) override;
 #ifdef PDF_ENABLE_XFA
   bool IsFieldFull(CPDFSDK_PageView* pPageView) override;
 #endif

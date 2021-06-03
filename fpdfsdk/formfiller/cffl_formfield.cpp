@@ -525,9 +525,10 @@ void CFFL_FormField::SetActionData(CPDFSDK_PageView* pPageView,
                                    CPDF_AAction::AActionType type,
                                    const CPDFSDK_FieldAction& fa) {}
 
-void CFFL_FormField::SaveState(CPDFSDK_PageView* pPageView) {}
+void CFFL_FormField::SavePWLWindowState(CPDFSDK_PageView* pPageView) {}
 
-void CFFL_FormField::RestoreState(CPDFSDK_PageView* pPageView) {}
+void CFFL_FormField::RecreatePWLWindowFromSavedState(
+    CPDFSDK_PageView* pPageView) {}
 
 CPWL_Wnd* CFFL_FormField::ResetPWLWindowForValueAge(CPDFSDK_PageView* pPageView,
                                                     CPDFSDK_Widget* pWidget,
