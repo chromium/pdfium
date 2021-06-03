@@ -180,7 +180,7 @@ void CFFL_ListBox::SavePWLWindowState(CPDFSDK_PageView* pPageView) {
 
 void CFFL_ListBox::RecreatePWLWindowFromSavedState(
     CPDFSDK_PageView* pPageView) {
-  CPWL_ListBox* pListBox = GetListBox(pPageView);
+  CPWL_ListBox* pListBox = CreateOrUpdateListBox(pPageView);
   if (!pListBox)
     return;
 
@@ -223,4 +223,8 @@ bool CFFL_ListBox::IsIndexSelected(int index) {
 
 CPWL_ListBox* CFFL_ListBox::GetListBox(CPDFSDK_PageView* pPageView) const {
   return static_cast<CPWL_ListBox*>(GetPWLWindow(pPageView));
+}
+
+CPWL_ListBox* CFFL_ListBox::CreateOrUpdateListBox(CPDFSDK_PageView* pPageView) {
+  return static_cast<CPWL_ListBox*>(CreateOrUpdatePWLWindow(pPageView));
 }
