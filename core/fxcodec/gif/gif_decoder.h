@@ -37,10 +37,7 @@ class GifDecoder {
                                            const FX_RECT& img_rc,
                                            int32_t pal_num,
                                            CFX_GifPalette* pal_ptr,
-                                           int32_t delay_time,
-                                           bool user_input,
                                            int32_t trans_index,
-                                           int32_t disposal_method,
                                            bool interlace) = 0;
     virtual void GifReadScanline(int32_t row_num, uint8_t* row_buf) = 0;
   };

@@ -420,10 +420,7 @@ bool ProgressiveDecoder::GifInputRecordPositionBuf(uint32_t rcd_pos,
                                                    const FX_RECT& img_rc,
                                                    int32_t pal_num,
                                                    CFX_GifPalette* pal_ptr,
-                                                   int32_t delay_time,
-                                                   bool user_input,
                                                    int32_t trans_index,
-                                                   int32_t disposal_method,
                                                    bool interlace) {
   m_offSet = rcd_pos;
   m_InvalidateGifBuffer = true;

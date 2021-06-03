@@ -34,10 +34,7 @@ class CFX_GifContext : public ProgressiveDecoderIface::Context {
                          int32_t height,
                          int32_t pal_num,
                          CFX_GifPalette* pal,
-                         int32_t delay_time,
-                         bool user_input,
                          int32_t trans_index,
-                         int32_t disposal_method,
                          bool interlace);
   GifDecoder::Status ReadHeader();
   GifDecoder::Status GetFrame();

@@ -40,14 +40,11 @@ bool CFX_GifContext::GetRecordPosition(uint32_t cur_pos,
                                        int32_t height,
                                        int32_t pal_num,
                                        CFX_GifPalette* pal,
-                                       int32_t delay_time,
-                                       bool user_input,
                                        int32_t trans_index,
-                                       int32_t disposal_method,
                                        bool interlace) {
   return delegate_->GifInputRecordPositionBuf(
       cur_pos, FX_RECT(left, top, left + width, top + height), pal_num, pal,
-      delay_time, user_input, trans_index, disposal_method, interlace);
+      trans_index, interlace);
 }
 
 GifDecoder::Status CFX_GifContext::ReadHeader() {
@@ -182,7 +179,7 @@ GifDecoder::Status CFX_GifContext::LoadFrame(int32_t frame_num) {
       bool bRes = GetRecordPosition(
           gif_image->data_pos, gif_image->image_info.left,
           gif_image->image_info.top, gif_image->image_info.width,
-          gif_image->image_info.height, loc_pal_num, pLocalPalette, 0, 0, -1, 0,
+          gif_image->image_info.height, loc_pal_num, pLocalPalette, -1,
           gif_image->image_info.local_flags.interlace);
       if (!bRes) {
         gif_image->row_buffer.clear();
@@ -193,12 +190,9 @@ GifDecoder::Status CFX_GifContext::LoadFrame(int32_t frame_num) {
           gif_image->data_pos, gif_image->image_info.left,
           gif_image->image_info.top, gif_image->image_info.width,
           gif_image->image_info.height, loc_pal_num, pLocalPalette,
-          static_cast<int32_t>(gif_image->image_GCE->delay_time),
-          gif_image->image_GCE->gce_flags.user_input,
           gif_image->image_GCE->gce_flags.transparency
               ? static_cast<int32_t>(gif_image->image_GCE->trans_index)
               : -1,
-          static_cast<int32_t>(gif_image->image_GCE->gce_flags.disposal_method),
           gif_image->image_info.local_flags.interlace);
       if (!bRes) {
         gif_image->row_buffer.clear();
