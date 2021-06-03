@@ -102,7 +102,7 @@ class ProgressiveDecoder :
 
 #ifdef PDF_ENABLE_XFA_GIF
   // GifDecoder::Delegate
-  void GifRecordCurrentPosition(uint32_t& cur_pos) override;
+  uint32_t GifCurrentPosition() const override;
   bool GifInputRecordPositionBuf(uint32_t rcd_pos,
                                  const FX_RECT& img_rc,
                                  int32_t pal_num,
