@@ -125,7 +125,7 @@ bool CXFA_FFComboBox::OnKillFocus(CXFA_FFWidget* pNewWidget) {
 }
 
 void CXFA_FFComboBox::OpenDropDownList() {
-  ToComboBox(GetNormalWidget())->OpenDropDownList(true);
+  ToComboBox(GetNormalWidget())->ShowDropDownList();
 }
 
 bool CXFA_FFComboBox::CommitData() {

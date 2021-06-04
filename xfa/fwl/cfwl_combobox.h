@@ -61,8 +61,6 @@ class CFWL_ComboBox final : public CFWL_Widget {
   void SetEditText(const WideString& wsText);
   WideString GetEditText() const;
 
-  void OpenDropDownList(bool bActivate);
-
   bool EditCanUndo() const { return m_pEdit->CanUndo(); }
   bool EditCanRedo() const { return m_pEdit->CanRedo(); }
   bool EditUndo() { return m_pEdit->Undo(); }
@@ -83,7 +81,8 @@ class CFWL_ComboBox final : public CFWL_Widget {
 
   CFX_RectF GetBBox() const;
   void EditModifyStylesEx(uint32_t dwStylesExAdded, uint32_t dwStylesExRemoved);
-  void ShowDropList(bool bActivate);
+  void ShowDropDownList();
+  void HideDropDownList();
 
   CFWL_ComboEdit* GetComboEdit() const { return m_pEdit; }
 
@@ -111,6 +110,7 @@ class CFWL_ComboBox final : public CFWL_Widget {
   void OnFocusGained();
   void OnFocusLost();
   void OnKey(CFWL_MessageKey* pMsg);
+  void RepaintInflatedListBoxRect();
 
   CFX_RectF m_ClientRect;
   CFX_RectF m_ContentRect;

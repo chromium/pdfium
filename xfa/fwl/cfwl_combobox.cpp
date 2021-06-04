@@ -182,10 +182,6 @@ WideString CFWL_ComboBox::GetEditText() const {
   return hItem ? hItem->GetText() : WideString();
 }
 
-void CFWL_ComboBox::OpenDropDownList(bool bActivate) {
-  ShowDropList(bActivate);
-}
-
 CFX_RectF CFWL_ComboBox::GetBBox() const {
   CFX_RectF rect = m_WidgetRect;
   if (!m_pListBox || !IsDropListVisible())
@@ -203,45 +199,50 @@ void CFWL_ComboBox::EditModifyStylesEx(uint32_t dwStylesExAdded,
     m_pEdit->ModifyStylesEx(dwStylesExAdded, dwStylesExRemoved);
 }
 
-void CFWL_ComboBox::ShowDropList(bool bActivate) {
-  if (IsDropListVisible() == bActivate)
+void CFWL_ComboBox::ShowDropDownList() {
+  if (IsDropListVisible())
     return;
 
-  if (bActivate) {
-    CFWL_Event preEvent(CFWL_Event::Type::PreDropDown, this);
-    DispatchEvent(&preEvent);
-    if (!preEvent.GetSrcTarget())
-      return;
+  CFWL_Event preEvent(CFWL_Event::Type::PreDropDown, this);
+  DispatchEvent(&preEvent);
+  if (!preEvent.GetSrcTarget())
+    return;
 
-    CFWL_ComboList* pComboList = m_pListBox;
-    int32_t iItems = pComboList->CountItems(nullptr);
-    if (iItems < 1)
-      return;
+  CFWL_ComboList* pComboList = m_pListBox;
+  int32_t iItems = pComboList->CountItems(nullptr);
+  if (iItems < 1)
+    return;
 
-    ResetListItemAlignment();
-    pComboList->ChangeSelected(m_iCurSel);
+  ResetListItemAlignment();
+  pComboList->ChangeSelected(m_iCurSel);
 
-    float fItemHeight = pComboList->CalcItemHeight();
-    float fBorder = GetCXBorderSize();
-    float fPopupMin = 0.0f;
-    if (iItems > 3)
-      fPopupMin = fItemHeight * 3 + fBorder * 2;
+  float fItemHeight = pComboList->CalcItemHeight();
+  float fBorder = GetCXBorderSize();
+  float fPopupMin = 0.0f;
+  if (iItems > 3)
+    fPopupMin = fItemHeight * 3 + fBorder * 2;
 
-    float fPopupMax = fItemHeight * iItems + fBorder * 2;
-    CFX_RectF rtList(m_ClientRect.left, 0, m_WidgetRect.width, 0);
-    GetPopupPos(fPopupMin, fPopupMax, m_WidgetRect, &rtList);
-    m_pListBox->SetWidgetRect(rtList);
-    m_pListBox->Update();
-  }
+  float fPopupMax = fItemHeight * iItems + fBorder * 2;
+  CFX_RectF rtList(m_ClientRect.left, 0, m_WidgetRect.width, 0);
+  GetPopupPos(fPopupMin, fPopupMax, m_WidgetRect, &rtList);
+  m_pListBox->SetWidgetRect(rtList);
+  m_pListBox->Update();
+  m_pListBox->RemoveStates(FWL_WGTSTATE_Invisible);
 
-  if (bActivate) {
-    m_pListBox->RemoveStates(FWL_WGTSTATE_Invisible);
-    CFWL_Event postEvent(CFWL_Event::Type::PostDropDown, this);
-    DispatchEvent(&postEvent);
-  } else {
-    m_pListBox->SetStates(FWL_WGTSTATE_Invisible);
-  }
+  CFWL_Event postEvent(CFWL_Event::Type::PostDropDown, this);
+  DispatchEvent(&postEvent);
+  RepaintInflatedListBoxRect();
+}
 
+void CFWL_ComboBox::HideDropDownList() {
+  if (!IsDropListVisible())
+    return;
+
+  m_pListBox->SetStates(FWL_WGTSTATE_Invisible);
+  RepaintInflatedListBoxRect();
+}
+
+void CFWL_ComboBox::RepaintInflatedListBoxRect() {
   CFX_RectF rect = m_pListBox->GetWidgetRect();
   rect.Inflate(2, 2);
   RepaintRect(rect);
@@ -457,18 +458,17 @@ void CFWL_ComboBox::OnLButtonUp(CFWL_MessageMouse* pMsg) {
 }
 
 void CFWL_ComboBox::OnLButtonDown(CFWL_MessageMouse* pMsg) {
-  bool bDropDown = IsDropListVisible();
-  CFX_RectF& rtBtn = bDropDown ? m_BtnRect : m_ClientRect;
-  if (!rtBtn.Contains(pMsg->m_pos))
-    return;
-
   if (IsDropListVisible()) {
-    ShowDropList(false);
+    if (m_BtnRect.Contains(pMsg->m_pos))
+      HideDropDownList();
     return;
   }
+  if (!m_ClientRect.Contains(pMsg->m_pos))
+    return;
+
   if (m_pEdit)
     MatchEditText();
-  ShowDropList(true);
+  ShowDropDownList();
 }
 
 void CFWL_ComboBox::OnFocusGained() {
@@ -481,7 +481,7 @@ void CFWL_ComboBox::OnFocusGained() {
 
 void CFWL_ComboBox::OnFocusLost() {
   m_Properties.m_dwStates &= ~FWL_WGTSTATE_Focused;
-  ShowDropList(false);
+  HideDropDownList();
   CFWL_MessageKillFocus msg(m_pEdit);
   m_pEdit->GetDelegate()->OnProcessMessage(&msg);
 }
