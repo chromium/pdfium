@@ -87,8 +87,8 @@ CPDF_ContentParser::CPDF_ContentParser(CPDF_Form* pForm,
   m_pParser->GetCurStates()->m_CTM = form_matrix;
   m_pParser->GetCurStates()->m_ParentMatrix = form_matrix;
   if (ClipPath.HasRef()) {
-    m_pParser->GetCurStates()->m_ClipPath.AppendPath(
-        ClipPath, CFX_FillRenderOptions::FillType::kWinding, true);
+    m_pParser->GetCurStates()->m_ClipPath.AppendPathWithAutoMerge(
+        ClipPath, CFX_FillRenderOptions::FillType::kWinding);
   }
   if (pForm->GetTransparency().IsGroup()) {
     CPDF_GeneralState* pState = &m_pParser->GetCurStates()->m_GeneralState;

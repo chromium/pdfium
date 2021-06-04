@@ -75,10 +75,16 @@ CFX_FloatRect CPDF_ClipPath::GetClipBox() const {
 }
 
 void CPDF_ClipPath::AppendPath(CPDF_Path path,
-                               CFX_FillRenderOptions::FillType type,
-                               bool bAutoMerge) {
+                               CFX_FillRenderOptions::FillType type) {
   PathData* pData = m_Ref.GetPrivateCopy();
-  if (!pData->m_PathAndTypeList.empty() && bAutoMerge) {
+  pData->m_PathAndTypeList.push_back(std::make_pair(path, type));
+}
+
+void CPDF_ClipPath::AppendPathWithAutoMerge(
+    CPDF_Path path,
+    CFX_FillRenderOptions::FillType type) {
+  PathData* pData = m_Ref.GetPrivateCopy();
+  if (!pData->m_PathAndTypeList.empty()) {
     const CPDF_Path& old_path = pData->m_PathAndTypeList.back().first;
     if (old_path.IsRect()) {
       CFX_PointF point0 = old_path.GetPoint(0);
@@ -89,7 +95,7 @@ void CPDF_ClipPath::AppendPath(CPDF_Path path,
         pData->m_PathAndTypeList.pop_back();
     }
   }
-  pData->m_PathAndTypeList.push_back(std::make_pair(path, type));
+  AppendPath(path, type);
 }
 
 void CPDF_ClipPath::AppendTexts(
@@ -109,7 +115,7 @@ void CPDF_ClipPath::CopyClipPath(const CPDF_ClipPath& that) {
     return;
 
   for (size_t i = 0; i < that.GetPathCount(); ++i)
-    AppendPath(that.GetPath(i), that.GetClipType(i), /*bAutoMerge=*/false);
+    AppendPath(that.GetPath(i), that.GetClipType(i));
 }
 
 void CPDF_ClipPath::Transform(const CFX_Matrix& matrix) {

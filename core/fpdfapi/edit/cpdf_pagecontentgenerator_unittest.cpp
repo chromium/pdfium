@@ -344,8 +344,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
     pPath->AppendPointAndClose(CFX_PointF(0, 4), FXPT_TYPE::LineTo);
     pTextObj->m_ClipPath.Emplace();
     pTextObj->m_ClipPath.AppendPath(*pPath,
-                                    CFX_FillRenderOptions::FillType::kEvenOdd,
-                                    /*bAutoMerge=*/false);
+                                    CFX_FillRenderOptions::FillType::kEvenOdd);
 
     TestProcessText(&generator, &buf, pTextObj.get());
   }

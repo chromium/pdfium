@@ -1456,8 +1456,8 @@ void CPDF_StreamContentParser::AddPathObject(
     if (path_clip_type != CFX_FillRenderOptions::FillType::kNoFill) {
       CPDF_Path path;
       path.AppendRect(0, 0, 0, 0);
-      m_pCurStates->m_ClipPath.AppendPath(
-          path, CFX_FillRenderOptions::FillType::kWinding, true);
+      m_pCurStates->m_ClipPath.AppendPathWithAutoMerge(
+          path, CFX_FillRenderOptions::FillType::kWinding);
     }
     return;
   }
@@ -1487,7 +1487,7 @@ void CPDF_StreamContentParser::AddPathObject(
   if (path_clip_type != CFX_FillRenderOptions::FillType::kNoFill) {
     if (!matrix.IsIdentity())
       path.Transform(matrix);
-    m_pCurStates->m_ClipPath.AppendPath(path, path_clip_type, true);
+    m_pCurStates->m_ClipPath.AppendPathWithAutoMerge(path, path_clip_type);
   }
 }
 

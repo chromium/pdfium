@@ -367,8 +367,7 @@ FPDF_EXPORT FPDF_CLIPPATH FPDF_CALLCONV FPDF_CreateClipPath(float left,
   Path.AppendRect(left, bottom, right, top);
 
   auto pNewClipPath = std::make_unique<CPDF_ClipPath>();
-  pNewClipPath->AppendPath(Path, CFX_FillRenderOptions::FillType::kEvenOdd,
-                           false);
+  pNewClipPath->AppendPath(Path, CFX_FillRenderOptions::FillType::kEvenOdd);
 
   // Caller takes ownership.
   return FPDFClipPathFromCPDFClipPath(pNewClipPath.release());
