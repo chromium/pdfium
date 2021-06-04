@@ -87,7 +87,8 @@ class CFWL_DateTimePicker final : public CFWL_Widget {
                    float fMaxHeight,
                    const CFX_RectF& rtAnchor,
                    CFX_RectF* pPopupRect);
-  void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
+  void OnFocusGained(CFWL_Message* pMsg);
+  void OnFocusLost(CFWL_Message* pMsg);
   void OnLButtonDown(CFWL_MessageMouse* pMsg);
   void OnLButtonUp(CFWL_MessageMouse* pMsg);
   void OnMouseMove(CFWL_MessageMouse* pMsg);

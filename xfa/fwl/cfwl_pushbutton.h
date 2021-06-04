@@ -36,7 +36,8 @@ class CFWL_PushButton final : public CFWL_Widget {
   void DrawBkground(CFGAS_GEGraphics* pGraphics, const CFX_Matrix& mtMatrix);
   uint32_t GetPartStates();
   void UpdateTextOutStyles();
-  void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
+  void OnFocusGained();
+  void OnFocusLost();
   void OnLButtonDown(CFWL_MessageMouse* pMsg);
   void OnLButtonUp(CFWL_MessageMouse* pMsg);
   void OnMouseMove(CFWL_MessageMouse* pMsg);

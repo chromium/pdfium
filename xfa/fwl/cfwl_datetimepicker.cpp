@@ -297,10 +297,10 @@ bool CFWL_DateTimePicker::NeedsToShowButton() const {
 void CFWL_DateTimePicker::OnProcessMessage(CFWL_Message* pMessage) {
   switch (pMessage->GetType()) {
     case CFWL_Message::Type::kSetFocus:
-      OnFocusChanged(pMessage, true);
+      OnFocusGained(pMessage);
       break;
     case CFWL_Message::Type::kKillFocus:
-      OnFocusChanged(pMessage, false);
+      OnFocusLost(pMessage);
       break;
     case CFWL_Message::Type::kMouse: {
       CFWL_MessageMouse* pMouse = static_cast<CFWL_MessageMouse*>(pMessage);
@@ -342,29 +342,28 @@ void CFWL_DateTimePicker::OnDrawWidget(CFGAS_GEGraphics* pGraphics,
   DrawWidget(pGraphics, matrix);
 }
 
-void CFWL_DateTimePicker::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
-  if (!pMsg)
-    return;
-
+void CFWL_DateTimePicker::OnFocusGained(CFWL_Message* pMsg) {
+  m_Properties.m_dwStates |= FWL_WGTSTATE_Focused;
+  if (m_pEdit && !(m_pEdit->GetStylesEx() & FWL_STYLEEXT_EDT_ReadOnly)) {
+    m_BtnRect =
+        CFX_RectF(m_WidgetRect.width, 0, m_fBtn, m_WidgetRect.height - 1);
+  }
   CFX_RectF rtInvalidate(m_BtnRect);
-  if (bSet) {
-    m_Properties.m_dwStates |= FWL_WGTSTATE_Focused;
-    if (m_pEdit && !(m_pEdit->GetStylesEx() & FWL_STYLEEXT_EDT_ReadOnly)) {
-      m_BtnRect =
-          CFX_RectF(m_WidgetRect.width, 0, m_fBtn, m_WidgetRect.height - 1);
-    }
-    rtInvalidate = m_BtnRect;
-    pMsg->SetDstTarget(m_pEdit);
+  pMsg->SetDstTarget(m_pEdit);
+  m_pEdit->GetDelegate()->OnProcessMessage(pMsg);
+  rtInvalidate.Inflate(2, 2);
+  RepaintRect(rtInvalidate);
+}
+
+void CFWL_DateTimePicker::OnFocusLost(CFWL_Message* pMsg) {
+  CFX_RectF rtInvalidate(m_BtnRect);
+  m_Properties.m_dwStates &= ~FWL_WGTSTATE_Focused;
+  m_BtnRect = CFX_RectF();
+  if (IsMonthCalendarVisible())
+    ShowMonthCalendar(false);
+  if (m_pEdit->GetStates() & FWL_WGTSTATE_Focused) {
+    pMsg->SetSrcTarget(m_pEdit);
     m_pEdit->GetDelegate()->OnProcessMessage(pMsg);
-  } else {
-    m_Properties.m_dwStates &= ~FWL_WGTSTATE_Focused;
-    m_BtnRect = CFX_RectF();
-    if (IsMonthCalendarVisible())
-      ShowMonthCalendar(false);
-    if (m_pEdit->GetStates() & FWL_WGTSTATE_Focused) {
-      pMsg->SetSrcTarget(m_pEdit);
-      m_pEdit->GetDelegate()->OnProcessMessage(pMsg);
-    }
   }
   rtInvalidate.Inflate(2, 2);
   RepaintRect(rtInvalidate);

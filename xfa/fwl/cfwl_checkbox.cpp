@@ -184,10 +184,10 @@ void CFWL_CheckBox::NextStates() {
 void CFWL_CheckBox::OnProcessMessage(CFWL_Message* pMessage) {
   switch (pMessage->GetType()) {
     case CFWL_Message::Type::kSetFocus:
-      OnFocusChanged(true);
+      OnFocusGained();
       break;
     case CFWL_Message::Type::kKillFocus:
-      OnFocusChanged(false);
+      OnFocusLost();
       break;
     case CFWL_Message::Type::kMouse: {
       CFWL_MessageMouse* pMsg = static_cast<CFWL_MessageMouse*>(pMessage);
@@ -228,12 +228,13 @@ void CFWL_CheckBox::OnDrawWidget(CFGAS_GEGraphics* pGraphics,
   DrawWidget(pGraphics, matrix);
 }
 
-void CFWL_CheckBox::OnFocusChanged(bool bSet) {
-  if (bSet)
-    m_Properties.m_dwStates |= FWL_WGTSTATE_Focused;
-  else
-    m_Properties.m_dwStates &= ~FWL_WGTSTATE_Focused;
+void CFWL_CheckBox::OnFocusGained() {
+  m_Properties.m_dwStates |= FWL_WGTSTATE_Focused;
+  RepaintRect(m_ClientRect);
+}
 
+void CFWL_CheckBox::OnFocusLost() {
+  m_Properties.m_dwStates &= ~FWL_WGTSTATE_Focused;
   RepaintRect(m_ClientRect);
 }
 

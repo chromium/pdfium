@@ -54,7 +54,8 @@ class CFWL_CheckBox final : public CFWL_Widget {
   uint32_t GetPartStates() const;
   void UpdateTextOutStyles();
   void NextStates();
-  void OnFocusChanged(bool bSet);
+  void OnFocusGained();
+  void OnFocusLost();
   void OnLButtonDown();
   void OnLButtonUp(CFWL_MessageMouse* pMsg);
   void OnMouseMove(CFWL_MessageMouse* pMsg);

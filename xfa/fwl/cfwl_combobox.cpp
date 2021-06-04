@@ -379,12 +379,12 @@ void CFWL_ComboBox::OnProcessMessage(CFWL_Message* pMessage) {
   switch (pMessage->GetType()) {
     case CFWL_Message::Type::kSetFocus: {
       backDefault = false;
-      OnFocusChanged(pMessage, true);
+      OnFocusGained();
       break;
     }
     case CFWL_Message::Type::kKillFocus: {
       backDefault = false;
-      OnFocusChanged(pMessage, false);
+      OnFocusLost();
       break;
     }
     case CFWL_Message::Type::kMouse: {
@@ -471,19 +471,19 @@ void CFWL_ComboBox::OnLButtonDown(CFWL_MessageMouse* pMsg) {
   ShowDropList(true);
 }
 
-void CFWL_ComboBox::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
-  if (bSet) {
-    m_Properties.m_dwStates |= FWL_WGTSTATE_Focused;
-    if ((m_pEdit->GetStates() & FWL_WGTSTATE_Focused) == 0) {
-      CFWL_MessageSetFocus msg(nullptr, m_pEdit);
-      m_pEdit->GetDelegate()->OnProcessMessage(&msg);
-    }
-  } else {
-    m_Properties.m_dwStates &= ~FWL_WGTSTATE_Focused;
-    ShowDropList(false);
-    CFWL_MessageKillFocus msg(m_pEdit);
+void CFWL_ComboBox::OnFocusGained() {
+  m_Properties.m_dwStates |= FWL_WGTSTATE_Focused;
+  if ((m_pEdit->GetStates() & FWL_WGTSTATE_Focused) == 0) {
+    CFWL_MessageSetFocus msg(nullptr, m_pEdit);
     m_pEdit->GetDelegate()->OnProcessMessage(&msg);
   }
+}
+
+void CFWL_ComboBox::OnFocusLost() {
+  m_Properties.m_dwStates &= ~FWL_WGTSTATE_Focused;
+  ShowDropList(false);
+  CFWL_MessageKillFocus msg(m_pEdit);
+  m_pEdit->GetDelegate()->OnProcessMessage(&msg);
 }
 
 void CFWL_ComboBox::OnKey(CFWL_MessageKey* pMsg) {

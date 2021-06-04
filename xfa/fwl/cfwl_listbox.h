@@ -115,7 +115,8 @@ class CFWL_ListBox : public CFWL_Widget {
   float GetMaxTextWidth();
   float GetScrollWidth();
 
-  void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
+  void OnFocusGained();
+  void OnFocusLost();
   void OnLButtonDown(CFWL_MessageMouse* pMsg);
   void OnLButtonUp(CFWL_MessageMouse* pMsg);
   void OnMouseWheel(CFWL_MessageMouseWheel* pMsg);

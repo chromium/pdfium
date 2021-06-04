@@ -609,10 +609,10 @@ void CFWL_ListBox::OnProcessMessage(CFWL_Message* pMessage) {
 
   switch (pMessage->GetType()) {
     case CFWL_Message::Type::kSetFocus:
-      OnFocusChanged(pMessage, true);
+      OnFocusGained();
       break;
     case CFWL_Message::Type::kKillFocus:
-      OnFocusChanged(pMessage, false);
+      OnFocusLost();
       break;
     case CFWL_Message::Type::kMouse: {
       CFWL_MessageMouse* pMsg = static_cast<CFWL_MessageMouse*>(pMessage);
@@ -665,26 +665,25 @@ void CFWL_ListBox::OnDrawWidget(CFGAS_GEGraphics* pGraphics,
   DrawWidget(pGraphics, matrix);
 }
 
-void CFWL_ListBox::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
+void CFWL_ListBox::OnFocusGained() {
   if (GetStylesEx() & FWL_STYLEEXT_LTB_ShowScrollBarFocus) {
-    if (m_pVertScrollBar) {
-      if (bSet)
-        m_pVertScrollBar->RemoveStates(FWL_WGTSTATE_Invisible);
-      else
-        m_pVertScrollBar->SetStates(FWL_WGTSTATE_Invisible);
-    }
-    if (m_pHorzScrollBar) {
-      if (bSet)
-        m_pHorzScrollBar->RemoveStates(FWL_WGTSTATE_Invisible);
-      else
-        m_pHorzScrollBar->SetStates(FWL_WGTSTATE_Invisible);
-    }
+    if (m_pVertScrollBar)
+      m_pVertScrollBar->RemoveStates(FWL_WGTSTATE_Invisible);
+    if (m_pHorzScrollBar)
+      m_pHorzScrollBar->RemoveStates(FWL_WGTSTATE_Invisible);
   }
-  if (bSet)
-    m_Properties.m_dwStates |= (FWL_WGTSTATE_Focused);
-  else
-    m_Properties.m_dwStates &= ~(FWL_WGTSTATE_Focused);
+  m_Properties.m_dwStates |= FWL_WGTSTATE_Focused;
+  RepaintRect(m_ClientRect);
+}
 
+void CFWL_ListBox::OnFocusLost() {
+  if (GetStylesEx() & FWL_STYLEEXT_LTB_ShowScrollBarFocus) {
+    if (m_pVertScrollBar)
+      m_pVertScrollBar->SetStates(FWL_WGTSTATE_Invisible);
+    if (m_pHorzScrollBar)
+      m_pHorzScrollBar->SetStates(FWL_WGTSTATE_Invisible);
+  }
+  m_Properties.m_dwStates &= ~FWL_WGTSTATE_Focused;
   RepaintRect(m_ClientRect);
 }
 

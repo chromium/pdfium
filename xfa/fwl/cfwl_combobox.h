@@ -108,7 +108,8 @@ class CFWL_ComboBox final : public CFWL_Widget {
   void OnLButtonUp(CFWL_MessageMouse* pMsg);
   bool IsDropListVisible() const { return m_pListBox->IsVisible(); }
   void OnLButtonDown(CFWL_MessageMouse* pMsg);
-  void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
+  void OnFocusGained();
+  void OnFocusLost();
   void OnKey(CFWL_MessageKey* pMsg);
 
   CFX_RectF m_ClientRect;

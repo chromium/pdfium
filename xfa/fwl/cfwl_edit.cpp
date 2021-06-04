@@ -902,10 +902,10 @@ void CFWL_Edit::SetCursorPosition(size_t position) {
 void CFWL_Edit::OnProcessMessage(CFWL_Message* pMessage) {
   switch (pMessage->GetType()) {
     case CFWL_Message::Type::kSetFocus:
-      OnFocusChanged(pMessage, true);
+      OnFocusGained();
       break;
     case CFWL_Message::Type::kKillFocus:
-      OnFocusChanged(pMessage, false);
+      OnFocusLost();
       break;
     case CFWL_Message::Type::kMouse: {
       CFWL_MessageMouse* pMsg = static_cast<CFWL_MessageMouse*>(pMessage);
@@ -969,25 +969,25 @@ void CFWL_Edit::DoRButtonDown(CFWL_MessageMouse* pMsg) {
       m_pEditEngine->GetIndexForPoint(DeviceToEngine(pMsg->m_pos)));
 }
 
-void CFWL_Edit::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
-  bool bRepaint = false;
-  if (bSet) {
-    m_Properties.m_dwStates |= FWL_WGTSTATE_Focused;
+void CFWL_Edit::OnFocusGained() {
+  m_Properties.m_dwStates |= FWL_WGTSTATE_Focused;
+  UpdateVAlignment();
+  UpdateOffset();
+  UpdateCaret();
+  LayoutScrollBar();
+}
 
-    UpdateVAlignment();
-    UpdateOffset();
-    UpdateCaret();
-  } else if (m_Properties.m_dwStates & FWL_WGTSTATE_Focused) {
+void CFWL_Edit::OnFocusLost() {
+  bool bRepaint = false;
+  if (m_Properties.m_dwStates & FWL_WGTSTATE_Focused) {
     m_Properties.m_dwStates &= ~FWL_WGTSTATE_Focused;
     HideCaret(nullptr);
-
     if (HasSelection()) {
       ClearSelection();
       bRepaint = true;
     }
     UpdateOffset();
   }
-
   LayoutScrollBar();
   if (!bRepaint)
     return;
