@@ -31,6 +31,7 @@ class CPDF_String final : public CPDF_Object {
                const CPDF_Encryptor* encryptor) const override;
 
   bool IsHex() const { return m_bHex; }
+  ByteString EncodeString() const;
 
  private:
   CPDF_String();

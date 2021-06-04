@@ -559,20 +559,9 @@ ByteString PDF_EncodeText(const WideString& str) {
   return result;
 }
 
-ByteString PDF_EncodeString(const ByteString& src, bool bHex) {
+ByteString PDF_EncodeString(const ByteString& src) {
   std::ostringstream result;
   int srclen = src.GetLength();
-  if (bHex) {
-    result << '<';
-    for (int i = 0; i < srclen; ++i) {
-      char buf[2];
-      FXSYS_IntToTwoHexChars(src[i], buf);
-      result << buf[0];
-      result << buf[1];
-    }
-    result << '>';
-    return ByteString(result);
-  }
   result << '(';
   for (int i = 0; i < srclen; ++i) {
     uint8_t ch = src[i];
@@ -589,6 +578,20 @@ ByteString PDF_EncodeString(const ByteString& src, bool bHex) {
     result << static_cast<char>(ch);
   }
   result << ')';
+  return ByteString(result);
+}
+
+ByteString PDF_HexEncodeString(const ByteString& src) {
+  std::ostringstream result;
+  int srclen = src.GetLength();
+  result << '<';
+  for (int i = 0; i < srclen; ++i) {
+    char buf[2];
+    FXSYS_IntToTwoHexChars(src[i], buf);
+    result << buf[0];
+    result << buf[1];
+  }
+  result << '>';
   return ByteString(result);
 }
 

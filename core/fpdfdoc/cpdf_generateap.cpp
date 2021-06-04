@@ -77,7 +77,7 @@ ByteString GetPDFWordString(IPVT_FontMap* pFontMap,
 
 ByteString GetWordRenderString(const ByteString& strWords) {
   if (strWords.GetLength() > 0)
-    return PDF_EncodeString(strWords, false) + " Tj\n";
+    return PDF_EncodeString(strWords) + " Tj\n";
   return ByteString();
 }
 

@@ -577,9 +577,8 @@ ByteString GetFontSetString(IPVT_FontMap* pFontMap,
 }
 
 ByteString GetWordRenderString(const ByteString& strWords) {
-  if (strWords.GetLength() > 0) {
-    return PDF_EncodeString(strWords, false) + " " + kShowTextOperator + "\n";
-  }
+  if (strWords.GetLength() > 0)
+    return PDF_EncodeString(strWords) + " " + kShowTextOperator + "\n";
   return ByteString();
 }
 
