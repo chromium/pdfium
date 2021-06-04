@@ -125,8 +125,8 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   void InitHorizontalScrollBar();
   void InitEngine();
   void InitCaret();
-  bool IsShowScrollBar(bool bVert);
-  bool IsContentHeightOverflow();
+  bool IsShowVertScrollBar() const;
+  bool IsContentHeightOverflow() const;
   void SetCursorPosition(size_t position);
   void UpdateCursorRect();
 

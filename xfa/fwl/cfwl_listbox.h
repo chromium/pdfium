@@ -86,7 +86,9 @@ class CFWL_ListBox : public CFWL_Widget {
   bool ScrollToVisible(Item* hItem);
   void InitVerticalScrollBar();
   void InitHorizontalScrollBar();
-  bool IsShowScrollBar(bool bVert);
+  bool IsShowVertScrollBar() const;
+  bool IsShowHorzScrollBar() const;
+  bool ScrollBarPropertiesPresent() const;
   CFWL_ScrollBar* GetVertScrollBar() const { return m_pVertScrollBar; }
   const CFX_RectF& GetRTClient() const { return m_ClientRect; }
 

@@ -68,12 +68,12 @@ void CFWL_ListBox::Update() {
 }
 
 FWL_WidgetHit CFWL_ListBox::HitTest(const CFX_PointF& point) {
-  if (IsShowScrollBar(false)) {
+  if (IsShowHorzScrollBar()) {
     CFX_RectF rect = m_pHorzScrollBar->GetWidgetRect();
     if (rect.Contains(point))
       return FWL_WidgetHit::HScrollBar;
   }
-  if (IsShowScrollBar(true)) {
+  if (IsShowVertScrollBar()) {
     CFX_RectF rect = m_pVertScrollBar->GetWidgetRect();
     if (rect.Contains(point))
       return FWL_WidgetHit::VScrollBar;
@@ -93,9 +93,9 @@ void CFWL_ListBox::DrawWidget(CFGAS_GEGraphics* pGraphics,
     DrawBorder(pGraphics, CFWL_Part::Border, matrix);
 
   CFX_RectF rtClip(m_ContentRect);
-  if (IsShowScrollBar(false))
+  if (IsShowHorzScrollBar())
     rtClip.height -= m_fScorllBarWidth;
-  if (IsShowScrollBar(true))
+  if (IsShowVertScrollBar())
     rtClip.width -= m_fScorllBarWidth;
 
   pGraphics->SetClipRect(matrix.TransformRect(rtClip));
@@ -336,7 +336,7 @@ void CFWL_ListBox::DrawBkground(CFGAS_GEGraphics* pGraphics,
   param.m_iPart = CFWL_Part::Background;
   param.m_matrix = mtMatrix;
   param.m_PartRect = m_ClientRect;
-  if (IsShowScrollBar(false) && IsShowScrollBar(true))
+  if (IsShowHorzScrollBar() && IsShowVertScrollBar())
     param.m_pRtData = &m_StaticRect;
   if (!IsEnabled())
     param.m_dwStates = CFWL_PartState_Disabled;
@@ -594,11 +594,17 @@ void CFWL_ListBox::InitHorizontalScrollBar() {
       Properties{0, FWL_STYLEEXT_SCB_Horz, FWL_WGTSTATE_Invisible}, this);
 }
 
-bool CFWL_ListBox::IsShowScrollBar(bool bVert) {
-  CFWL_ScrollBar* pScrollbar = bVert ? m_pVertScrollBar : m_pHorzScrollBar;
-  if (!pScrollbar || !pScrollbar->IsVisible())
-    return false;
+bool CFWL_ListBox::IsShowVertScrollBar() const {
+  return m_pVertScrollBar && m_pVertScrollBar->IsVisible() &&
+         ScrollBarPropertiesPresent();
+}
 
+bool CFWL_ListBox::IsShowHorzScrollBar() const {
+  return m_pHorzScrollBar && m_pHorzScrollBar->IsVisible() &&
+         ScrollBarPropertiesPresent();
+}
+
+bool CFWL_ListBox::ScrollBarPropertiesPresent() const {
   return !(m_Properties.m_dwStyleExes & FWL_STYLEEXT_LTB_ShowScrollBarFocus) ||
          (m_Properties.m_dwStates & FWL_WGTSTATE_Focused);
 }
@@ -727,7 +733,7 @@ void CFWL_ListBox::OnLButtonUp(CFWL_MessageMouse* pMsg) {
 }
 
 void CFWL_ListBox::OnMouseWheel(CFWL_MessageMouseWheel* pMsg) {
-  if (IsShowScrollBar(true))
+  if (IsShowVertScrollBar())
     m_pVertScrollBar->GetDelegate()->OnProcessMessage(pMsg);
 }
 
