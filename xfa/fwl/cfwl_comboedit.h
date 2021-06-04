@@ -20,7 +20,6 @@ class CFWL_ComboEdit final : public CFWL_Edit {
 
   void ClearSelected();
   void SetSelected();
-  void FlagFocus(bool bSet);
 
  private:
   CFWL_ComboEdit(CFWL_App* app,

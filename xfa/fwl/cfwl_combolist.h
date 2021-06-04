@@ -20,7 +20,6 @@ class CFWL_ComboList final : public CFWL_ListBox {
 
   int32_t MatchItem(WideStringView wsMatch);
   void ChangeSelected(int32_t iSel);
-  void SetNotifyOwner(bool notify) { m_bNotifyOwner = notify; }
 
  private:
   CFWL_ComboList(CFWL_App* app,

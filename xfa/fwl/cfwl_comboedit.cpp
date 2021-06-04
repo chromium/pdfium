@@ -23,18 +23,8 @@ void CFWL_ComboEdit::ClearSelected() {
 }
 
 void CFWL_ComboEdit::SetSelected() {
-  FlagFocus(true);
+  m_Properties.m_dwStates |= FWL_WGTSTATE_Focused;
   SelectAll();
-}
-
-void CFWL_ComboEdit::FlagFocus(bool bSet) {
-  if (bSet) {
-    m_Properties.m_dwStates |= FWL_WGTSTATE_Focused;
-    return;
-  }
-
-  m_Properties.m_dwStates &= ~FWL_WGTSTATE_Focused;
-  HideCaret(nullptr);
 }
 
 void CFWL_ComboEdit::OnProcessMessage(CFWL_Message* pMessage) {
