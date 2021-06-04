@@ -84,7 +84,7 @@ bool CPDF_StitchFunc::v_Init(const CPDF_Object* pObj,
       if (nFuncOutputs == 0)
         return false;
 
-      if (nOutputs) {
+      if (nOutputs.has_value()) {
         if (nFuncOutputs != *nOutputs)
           return false;
       } else {

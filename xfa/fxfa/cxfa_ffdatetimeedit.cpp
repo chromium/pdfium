@@ -93,7 +93,7 @@ void CXFA_FFDateTimeEdit::UpdateWidgetProperty() {
 
   uint32_t dwEditStyles = 0;
   Optional<int32_t> numCells = m_pNode->GetNumberOfCells();
-  if (numCells && *numCells > 0) {
+  if (numCells.has_value() && *numCells > 0) {
     dwEditStyles |= FWL_STYLEEXT_EDT_CombText;
     pPicker->SetEditLimit(*numCells);
   }

@@ -115,7 +115,7 @@ bool AttributeSaveInDataModel(CXFA_Node* pNode, XFA_Attribute eAttribute) {
 bool ContentNodeNeedtoExport(CXFA_Node* pContentNode) {
   Optional<WideString> wsContent =
       pContentNode->JSObject()->TryContent(false, false);
-  if (!wsContent)
+  if (!wsContent.has_value())
     return false;
 
   DCHECK(pContentNode->IsContentNode());
@@ -142,7 +142,7 @@ void SaveAttribute(CXFA_Node* pNode,
     return;
 
   Optional<WideString> value = pNode->JSObject()->TryAttribute(eName, false);
-  if (!value)
+  if (!value.has_value())
     return;
 
   wsOutput += L" ";
@@ -209,7 +209,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
                  contentType.value().EqualsASCII("text/xml")) {
         Optional<WideString> rawValue = pRawValueNode->JSObject()->TryAttribute(
             XFA_Attribute::Value, false);
-        if (!rawValue || rawValue->IsEmpty())
+        if (!rawValue.has_value() || rawValue->IsEmpty())
           break;
 
         std::vector<WideString> wsSelTextArray =
@@ -362,7 +362,7 @@ WideString RecognizeXFAVersionNumber(CXFA_Node* pTemplateRoot) {
     return WideString();
 
   Optional<WideString> templateNS = pTemplateRoot->JSObject()->TryNamespace();
-  if (!templateNS)
+  if (!templateNS.has_value())
     return WideString();
 
   XFA_VERSION eVersion =

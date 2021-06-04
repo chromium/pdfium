@@ -455,7 +455,7 @@ bool CBC_QRCoderEncoder::Encode(WideStringView content,
       qrCode->GetMatrixWidth(), qrCode->GetMatrixWidth());
   Optional<int32_t> maskPattern = ChooseMaskPattern(
       &finalBits, qrCode->GetECLevel(), qrCode->GetVersion(), matrix.get());
-  if (!maskPattern)
+  if (!maskPattern.has_value())
     return false;
 
   qrCode->SetMaskPattern(*maskPattern);

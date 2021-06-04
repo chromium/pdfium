@@ -143,7 +143,7 @@ CXFA_Font* CXFA_TextProvider::GetFontIfExists() {
 bool CXFA_TextProvider::IsCheckButtonAndAutoWidth() const {
   if (m_pNode->GetFFWidgetType() != XFA_FFWidgetType::kCheckButton)
     return false;
-  return !m_pNode->TryWidth();
+  return !m_pNode->TryWidth().has_value();
 }
 
 Optional<WideString> CXFA_TextProvider::GetEmbeddedObj(

@@ -697,7 +697,7 @@ FPDF_SetFormFieldHighlightColor(FPDF_FORMHANDLE hHandle,
 
   Optional<FormFieldType> cast_input =
       CPDF_FormField::IntToFormFieldType(fieldType);
-  if (!cast_input)
+  if (!cast_input.has_value())
     return;
 
   if (cast_input.value() == FormFieldType::kUnknown)

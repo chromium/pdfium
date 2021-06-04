@@ -195,56 +195,56 @@ void CXFA_FFBarcode::UpdateWidgetProperty() {
   pBarCodeWidget->SetType(info->eBCType);
 
   Optional<WideString> encoding_string = barcode_->GetCharEncoding();
-  if (encoding_string) {
+  if (encoding_string.has_value()) {
     Optional<BC_CHAR_ENCODING> encoding =
         CharEncodingFromString(*encoding_string);
-    if (encoding)
+    if (encoding.has_value())
       pBarCodeWidget->SetCharEncoding(*encoding);
   }
 
   Optional<bool> calcChecksum = barcode_->GetChecksum();
-  if (calcChecksum)
+  if (calcChecksum.has_value())
     pBarCodeWidget->SetCalChecksum(*calcChecksum);
 
   Optional<int32_t> dataLen = barcode_->GetDataLength();
-  if (dataLen)
+  if (dataLen.has_value())
     pBarCodeWidget->SetDataLength(*dataLen);
 
   Optional<char> startChar = barcode_->GetStartChar();
-  if (startChar)
+  if (startChar.has_value())
     pBarCodeWidget->SetStartChar(*startChar);
 
   Optional<char> endChar = barcode_->GetEndChar();
-  if (endChar)
+  if (endChar.has_value())
     pBarCodeWidget->SetEndChar(*endChar);
 
   Optional<int32_t> ecLevel = barcode_->GetECLevel();
-  if (ecLevel)
+  if (ecLevel.has_value())
     pBarCodeWidget->SetErrorCorrectionLevel(*ecLevel);
 
   Optional<int32_t> width = barcode_->GetModuleWidth();
-  if (width)
+  if (width.has_value())
     pBarCodeWidget->SetModuleWidth(*width);
 
   Optional<int32_t> height = barcode_->GetModuleHeight();
-  if (height)
+  if (height.has_value())
     pBarCodeWidget->SetModuleHeight(*height);
 
   Optional<bool> printCheck = barcode_->GetPrintChecksum();
-  if (printCheck)
+  if (printCheck.has_value())
     pBarCodeWidget->SetPrintChecksum(*printCheck);
 
   Optional<XFA_AttributeValue> text_attr = barcode_->GetTextLocation();
-  if (text_attr) {
+  if (text_attr.has_value()) {
     Optional<BC_TEXT_LOC> textLoc = TextLocFromAttribute(*text_attr);
-    if (textLoc)
+    if (textLoc.has_value())
       pBarCodeWidget->SetTextLocation(*textLoc);
   }
 
   // Truncated is currently not a supported flag.
 
   Optional<int8_t> ratio = barcode_->GetWideNarrowRatio();
-  if (ratio)
+  if (ratio.has_value())
     pBarCodeWidget->SetWideNarrowRatio(*ratio);
 
   if (info->eName == BarcodeType::code3Of9 ||

@@ -308,7 +308,7 @@ WideString WideString::FormatV(const wchar_t* format, va_list argList) {
         TryVSWPrintf(static_cast<size_t>(maxLen), format, argListCopy);
     va_end(argListCopy);
 
-    if (ret)
+    if (ret.has_value())
       return *ret;
     maxLen *= 2;
   }

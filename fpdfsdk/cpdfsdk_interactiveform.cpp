@@ -280,7 +280,7 @@ void CPDFSDK_InteractiveForm::OnCalculate(CPDF_FormField* pFormField) {
     pContext->OnField_Calculate(pFormField, pField, &sValue, &bRC);
 
     Optional<IJS_Runtime::JS_Error> err = pContext->RunScript(csJS);
-    if (!err && bRC && sValue != sOldValue)
+    if (!err.has_value() && bRC && sValue != sOldValue)
       pField->SetValue(sValue, NotificationOption::kNotify);
   }
 }
@@ -308,7 +308,7 @@ Optional<WideString> CPDFSDK_InteractiveForm::OnFormat(
         IJS_Runtime::ScopedEventContext pContext(pRuntime);
         pContext->OnField_Format(pFormField, &sValue);
         Optional<IJS_Runtime::JS_Error> err = pContext->RunScript(script);
-        if (!err)
+        if (!err.has_value())
           return sValue;
       }
     }

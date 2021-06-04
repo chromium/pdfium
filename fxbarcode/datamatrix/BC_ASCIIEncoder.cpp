@@ -69,7 +69,7 @@ bool CBC_ASCIIEncoder::Encode(CBC_EncoderContext* context) {
   if (n >= 2) {
     Optional<wchar_t> code = EncodeASCIIDigits(
         context->m_msg[context->m_pos], context->m_msg[context->m_pos + 1]);
-    if (!code)
+    if (!code.has_value())
       return false;
 
     context->writeCodeword(*code);

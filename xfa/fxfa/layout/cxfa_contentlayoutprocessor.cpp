@@ -95,14 +95,14 @@ CFX_SizeF CalculateContainerSpecifiedSize(CXFA_Node* pFormNode,
   if (eType == XFA_Element::Subform || eType == XFA_Element::ExclGroup) {
     Optional<CXFA_Measurement> wValue =
         pFormNode->JSObject()->TryMeasure(XFA_Attribute::W, false);
-    if (wValue && wValue->GetValue() > kXFALayoutPrecision) {
+    if (wValue.has_value() && wValue->GetValue() > kXFALayoutPrecision) {
       containerSize.width = wValue->ToUnit(XFA_Unit::Pt);
       *bContainerWidthAutoSize = false;
     }
 
     Optional<CXFA_Measurement> hValue =
         pFormNode->JSObject()->TryMeasure(XFA_Attribute::H, false);
-    if (hValue && hValue->GetValue() > kXFALayoutPrecision) {
+    if (hValue.has_value() && hValue->GetValue() > kXFALayoutPrecision) {
       containerSize.height = hValue->ToUnit(XFA_Unit::Pt);
       *bContainerHeightAutoSize = false;
     }
@@ -111,14 +111,14 @@ CFX_SizeF CalculateContainerSpecifiedSize(CXFA_Node* pFormNode,
   if (*bContainerWidthAutoSize && eType == XFA_Element::Subform) {
     Optional<CXFA_Measurement> maxW =
         pFormNode->JSObject()->TryMeasure(XFA_Attribute::MaxW, false);
-    if (maxW && maxW->GetValue() > kXFALayoutPrecision) {
+    if (maxW.has_value() && maxW->GetValue() > kXFALayoutPrecision) {
       containerSize.width = maxW->ToUnit(XFA_Unit::Pt);
       *bContainerWidthAutoSize = false;
     }
 
     Optional<CXFA_Measurement> maxH =
         pFormNode->JSObject()->TryMeasure(XFA_Attribute::MaxH, false);
-    if (maxH && maxH->GetValue() > kXFALayoutPrecision) {
+    if (maxH.has_value() && maxH->GetValue() > kXFALayoutPrecision) {
       containerSize.height = maxH->ToUnit(XFA_Unit::Pt);
       *bContainerHeightAutoSize = false;
     }
@@ -141,12 +141,12 @@ CFX_SizeF CalculateContainerComponentSizeFromContentSize(
     if (pMarginNode) {
       Optional<CXFA_Measurement> leftInset =
           pMarginNode->JSObject()->TryMeasure(XFA_Attribute::LeftInset, false);
-      if (leftInset)
+      if (leftInset.has_value())
         componentSize.width += leftInset->ToUnit(XFA_Unit::Pt);
 
       Optional<CXFA_Measurement> rightInset =
           pMarginNode->JSObject()->TryMeasure(XFA_Attribute::RightInset, false);
-      if (rightInset)
+      if (rightInset.has_value())
         componentSize.width += rightInset->ToUnit(XFA_Unit::Pt);
     }
   }
@@ -156,13 +156,13 @@ CFX_SizeF CalculateContainerComponentSizeFromContentSize(
     if (pMarginNode) {
       Optional<CXFA_Measurement> topInset =
           pMarginNode->JSObject()->TryMeasure(XFA_Attribute::TopInset, false);
-      if (topInset)
+      if (topInset.has_value())
         componentSize.height += topInset->ToUnit(XFA_Unit::Pt);
 
       Optional<CXFA_Measurement> bottomInset =
           pMarginNode->JSObject()->TryMeasure(XFA_Attribute::BottomInset,
                                               false);
-      if (bottomInset)
+      if (bottomInset.has_value())
         componentSize.height += bottomInset->ToUnit(XFA_Unit::Pt);
     }
   }
@@ -340,7 +340,7 @@ XFA_AttributeValue GetLayout(CXFA_Node* pFormNode, bool* bRootForceTb) {
   *bRootForceTb = false;
   Optional<XFA_AttributeValue> layoutMode =
       pFormNode->JSObject()->TryEnum(XFA_Attribute::Layout, false);
-  if (layoutMode)
+  if (layoutMode.has_value())
     return *layoutMode;
 
   CXFA_Node* pParentNode = pFormNode->GetParent();
@@ -369,7 +369,7 @@ bool ExistContainerKeep(CXFA_Node* pCurNode, bool bPreFind) {
 
     Optional<XFA_AttributeValue> previous =
         pKeep->JSObject()->TryEnum(eKeepType, false);
-    if (previous) {
+    if (previous.has_value()) {
       if (*previous == XFA_AttributeValue::ContentArea ||
           *previous == XFA_AttributeValue::PageArea) {
         return true;
@@ -387,7 +387,7 @@ bool ExistContainerKeep(CXFA_Node* pCurNode, bool bPreFind) {
 
   Optional<XFA_AttributeValue> next =
       pKeep->JSObject()->TryEnum(eKeepType, false);
-  if (!next)
+  if (!next.has_value())
     return false;
   if (*next == XFA_AttributeValue::ContentArea ||
       *next == XFA_AttributeValue::PageArea) {

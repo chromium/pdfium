@@ -41,12 +41,12 @@ CXFA_Color::~CXFA_Color() = default;
 
 FX_ARGB CXFA_Color::GetValue() {
   Optional<WideString> val = JSObject()->TryCData(XFA_Attribute::Value, false);
-  return val ? StringToFXARGB(val->AsStringView()) : 0xFF000000;
+  return val.has_value() ? StringToFXARGB(val->AsStringView()) : 0xFF000000;
 }
 
 FX_ARGB CXFA_Color::GetValueOrDefault(FX_ARGB defaultValue) {
   Optional<WideString> val = JSObject()->TryCData(XFA_Attribute::Value, false);
-  return val ? StringToFXARGB(val->AsStringView()) : defaultValue;
+  return val.has_value() ? StringToFXARGB(val->AsStringView()) : defaultValue;
 }
 
 void CXFA_Color::SetValue(FX_ARGB color) {

@@ -1207,7 +1207,7 @@ void CPDFSDK_AppStream::SetAsPushButton() {
   float fFontSize;
   ByteString csNameTag;
   Optional<ByteString> font = da.GetFont(&fFontSize);
-  if (font)
+  if (font.has_value())
     csNameTag = *font;
   else
     fFontSize = 12.0f;

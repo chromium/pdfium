@@ -938,7 +938,7 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
 
   float fFontSize = 0;
   Optional<ByteString> font = appearance.GetFont(&fFontSize);
-  if (!font)
+  if (!font.has_value())
     return;
 
   ByteString font_name = *font;

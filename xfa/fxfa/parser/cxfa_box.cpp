@@ -257,7 +257,7 @@ void CXFA_Box::GetPathArcOrRounded(CFX_RectF rtDraw,
   rtDraw.height = b + b;
   Optional<int32_t> startAngle = GetStartAngle();
   Optional<int32_t> sweepAngle = GetSweepAngle();
-  if (!startAngle && !sweepAngle) {
+  if (!startAngle.has_value() && !sweepAngle.has_value()) {
     fillPath->AddEllipse(rtDraw);
     return;
   }

@@ -1452,7 +1452,7 @@ XFA_AttributeValue CXFA_Node::GetIntact() {
       layout.value_or(XFA_AttributeValue::Position);
   if (pKeep) {
     Optional<XFA_AttributeValue> intact = GetIntactFromKeep(pKeep, eLayoutType);
-    if (intact)
+    if (intact.has_value())
       return *intact;
   }
 
@@ -1485,7 +1485,7 @@ XFA_AttributeValue CXFA_Node::GetIntact() {
       if (eParLayout == XFA_AttributeValue::Tb && version < XFA_VERSION_208) {
         Optional<CXFA_Measurement> measureH =
             JSObject()->TryMeasure(XFA_Attribute::H, false);
-        if (measureH)
+        if (measureH.has_value())
           return XFA_AttributeValue::ContentArea;
       }
       return XFA_AttributeValue::None;
@@ -2020,14 +2020,14 @@ CXFA_Node* CXFA_Node::CreateInstanceIfPossible(bool bDataMerge) {
 
 Optional<bool> CXFA_Node::GetDefaultBoolean(XFA_Attribute attr) const {
   Optional<void*> value = GetDefaultValue(attr, XFA_AttributeType::Boolean);
-  if (!value)
+  if (!value.has_value())
     return {};
   return {!!*value};
 }
 
 Optional<int32_t> CXFA_Node::GetDefaultInteger(XFA_Attribute attr) const {
   Optional<void*> value = GetDefaultValue(attr, XFA_AttributeType::Integer);
-  if (!value)
+  if (!value.has_value())
     return {};
   return {static_cast<int32_t>(reinterpret_cast<uintptr_t>(*value))};
 }
@@ -2035,7 +2035,7 @@ Optional<int32_t> CXFA_Node::GetDefaultInteger(XFA_Attribute attr) const {
 Optional<CXFA_Measurement> CXFA_Node::GetDefaultMeasurement(
     XFA_Attribute attr) const {
   Optional<void*> value = GetDefaultValue(attr, XFA_AttributeType::Measure);
-  if (!value)
+  if (!value.has_value())
     return {};
 
   WideString str = WideString(static_cast<const wchar_t*>(*value));
@@ -2044,7 +2044,7 @@ Optional<CXFA_Measurement> CXFA_Node::GetDefaultMeasurement(
 
 Optional<WideString> CXFA_Node::GetDefaultCData(XFA_Attribute attr) const {
   Optional<void*> value = GetDefaultValue(attr, XFA_AttributeType::CData);
-  if (!value)
+  if (!value.has_value())
     return {};
 
   return {WideString(static_cast<const wchar_t*>(*value))};
@@ -2053,7 +2053,7 @@ Optional<WideString> CXFA_Node::GetDefaultCData(XFA_Attribute attr) const {
 Optional<XFA_AttributeValue> CXFA_Node::GetDefaultEnum(
     XFA_Attribute attr) const {
   Optional<void*> value = GetDefaultValue(attr, XFA_AttributeType::Enum);
-  if (!value)
+  if (!value.has_value())
     return {};
   return {static_cast<XFA_AttributeValue>(reinterpret_cast<uintptr_t>(*value))};
 }
@@ -2231,7 +2231,7 @@ WideString CXFA_Node::GetRawValue() {
 int32_t CXFA_Node::GetRotate() const {
   Optional<int32_t> degrees =
       JSObject()->TryInteger(XFA_Attribute::Rotate, false);
-  return degrees ? XFA_MapRotation(*degrees) / 90 * 90 : 0;
+  return degrees.has_value() ? XFA_MapRotation(*degrees) / 90 * 90 : 0;
 }
 
 CXFA_Border* CXFA_Node::GetBorderIfExists() const {
@@ -2343,8 +2343,8 @@ Optional<XFA_AttributeValue> CXFA_Node::GetIntactFromKeep(
 
   Optional<XFA_AttributeValue> value =
       pKeep->JSObject()->TryEnum(XFA_Attribute::Previous, false);
-  if (value && (*value == XFA_AttributeValue::ContentArea ||
-                *value == XFA_AttributeValue::PageArea)) {
+  if (value.has_value() && (*value == XFA_AttributeValue::ContentArea ||
+                            *value == XFA_AttributeValue::PageArea)) {
     return XFA_AttributeValue::ContentArea;
   }
 
@@ -2355,7 +2355,7 @@ Optional<XFA_AttributeValue> CXFA_Node::GetIntactFromKeep(
 
   Optional<XFA_AttributeValue> ret =
       pNode->JSObject()->TryEnum(XFA_Attribute::Next, false);
-  if (!ret)
+  if (!ret.has_value())
     return intact;
 
   return (*ret == XFA_AttributeValue::ContentArea ||
@@ -3004,15 +3004,16 @@ CFX_RectF CXFA_Node::GetUIMargin() {
     float fThickness = 0;
     XFA_AttributeValue iType = XFA_AttributeValue::Unknown;
     std::tie(iType, bVisible, fThickness) = border->Get3DStyle();
-    if (!left || !top || !right || !bottom) {
+    if (!left.has_value() || !top.has_value() || !right.has_value() ||
+        !bottom.has_value()) {
       std::vector<CXFA_Stroke*> strokes = border->GetStrokes();
-      if (!top)
+      if (!top.has_value())
         top = GetEdgeThickness(strokes, bVisible, 0);
-      if (!right)
+      if (!right.has_value())
         right = GetEdgeThickness(strokes, bVisible, 1);
-      if (!bottom)
+      if (!bottom.has_value())
         bottom = GetEdgeThickness(strokes, bVisible, 2);
-      if (!left)
+      if (!left.has_value())
         left = GetEdgeThickness(strokes, bVisible, 3);
     }
   }
@@ -3242,28 +3243,28 @@ bool CXFA_Node::CalculateWidgetAutoSize(CFX_SizeF* pSize) {
     pSize->width += para->GetMarginLeft() + para->GetTextIndent();
 
   Optional<float> width = TryWidth();
-  if (width) {
+  if (width.has_value()) {
     pSize->width = *width;
   } else {
     Optional<float> min = TryMinWidth();
-    if (min)
+    if (min.has_value())
       pSize->width = std::max(pSize->width, *min);
 
     Optional<float> max = TryMaxWidth();
-    if (max && *max > 0)
+    if (max.has_value() && *max > 0)
       pSize->width = std::min(pSize->width, *max);
   }
 
   Optional<float> height = TryHeight();
-  if (height) {
+  if (height.has_value()) {
     pSize->height = *height;
   } else {
     Optional<float> min = TryMinHeight();
-    if (min)
+    if (min.has_value())
       pSize->height = std::max(pSize->height, *min);
 
     Optional<float> max = TryMaxHeight();
-    if (max && *max > 0)
+    if (max.has_value() && *max > 0)
       pSize->height = std::min(pSize->height, *max);
   }
   return true;
@@ -3372,7 +3373,7 @@ CFX_SizeF CXFA_Node::CalculateImageSize(float img_width,
 
   CFX_RectF rtFit;
   Optional<float> width = TryWidth();
-  if (width) {
+  if (width.has_value()) {
     rtFit.width = *width;
     GetWidthWithoutMargin(rtFit.width);
   } else {
@@ -3380,7 +3381,7 @@ CFX_SizeF CXFA_Node::CalculateImageSize(float img_width,
   }
 
   Optional<float> height = TryHeight();
-  if (height) {
+  if (height.has_value()) {
     rtFit.height = *height;
     GetHeightWithoutMargin(rtFit.height);
   } else {
@@ -3446,11 +3447,11 @@ float CXFA_Node::CalculateWidgetAutoWidth(float fWidthCalc) {
     fWidthCalc += margin->GetLeftInset() + margin->GetRightInset();
 
   Optional<float> min = TryMinWidth();
-  if (min)
+  if (min.has_value())
     fWidthCalc = std::max(fWidthCalc, *min);
 
   Optional<float> max = TryMaxWidth();
-  if (max && *max > 0)
+  if (max.has_value() && *max > 0)
     fWidthCalc = std::min(fWidthCalc, *max);
 
   return fWidthCalc;
@@ -3469,11 +3470,11 @@ float CXFA_Node::CalculateWidgetAutoHeight(float fHeightCalc) {
     fHeightCalc += margin->GetTopInset() + margin->GetBottomInset();
 
   Optional<float> min = TryMinHeight();
-  if (min)
+  if (min.has_value())
     fHeightCalc = std::max(fHeightCalc, *min);
 
   Optional<float> max = TryMaxHeight();
-  if (max && *max > 0)
+  if (max.has_value() && *max > 0)
     fHeightCalc = std::min(fHeightCalc, *max);
 
   return fHeightCalc;
@@ -3503,7 +3504,7 @@ void CXFA_Node::StartWidgetLayout(CXFA_FFDoc* doc,
   float fWidth = 0;
   if (*pCalcWidth > 0 && *pCalcHeight < 0) {
     Optional<float> height = TryHeight();
-    if (height) {
+    if (height.has_value()) {
       *pCalcHeight = *height;
     } else {
       CFX_SizeF size = CalculateAccWidthAndHeight(doc, *pCalcWidth);
@@ -3517,14 +3518,13 @@ void CXFA_Node::StartWidgetLayout(CXFA_FFDoc* doc,
   if (*pCalcWidth < 0 && *pCalcHeight < 0) {
     Optional<float> height;
     Optional<float> width = TryWidth();
-    if (width) {
+    if (width.has_value()) {
       fWidth = *width;
-
       height = TryHeight();
-      if (height)
+      if (height.has_value())
         *pCalcHeight = *height;
     }
-    if (!width || !height) {
+    if (!width.has_value() || !height.has_value()) {
       CFX_SizeF size = CalculateAccWidthAndHeight(doc, fWidth);
       *pCalcWidth = size.width;
       *pCalcHeight = size.height;
@@ -3856,7 +3856,7 @@ void CXFA_Node::StartTextLayout(CXFA_FFDoc* doc,
   }
   if (*pCalcWidth < 0 && *pCalcHeight < 0) {
     Optional<float> width = TryWidth();
-    if (width) {
+    if (width.has_value()) {
       pTextLayout->StartLayout(GetWidthWithoutMargin(*width));
       *pCalcWidth = *width;
     } else {
@@ -3989,7 +3989,7 @@ XFA_CheckState CXFA_Node::GetCheckState() {
   int32_t i = 0;
   while (pText) {
     Optional<WideString> wsContent = pText->JSObject()->TryContent(false, true);
-    if (wsContent && *wsContent == wsValue)
+    if (wsContent.has_value() && *wsContent == wsValue)
       return static_cast<XFA_CheckState>(i);
 
     i++;
@@ -4720,7 +4720,7 @@ WideString CXFA_Node::GetPictureContent(XFA_ValuePicture ePicture) {
                 0, XFA_Element::Picture, false)) {
           Optional<WideString> picture =
               pPicture->JSObject()->TryContent(false, true);
-          if (picture)
+          if (picture.has_value())
             return *picture;
         }
       }
@@ -4755,7 +4755,7 @@ WideString CXFA_Node::GetPictureContent(XFA_ValuePicture ePicture) {
                 pUI->GetChild<CXFA_Picture>(0, XFA_Element::Picture, false)) {
           Optional<WideString> picture =
               pPicture->JSObject()->TryContent(false, true);
-          if (picture)
+          if (picture.has_value())
             return *picture;
         }
       }

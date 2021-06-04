@@ -162,14 +162,14 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeHuffman(
 
         Optional<uint32_t> WOI = CheckTRDDimension(IBOI->width(), RDWI);
         Optional<uint32_t> HOI = CheckTRDDimension(IBOI->height(), RDHI);
-        if (!WOI || !HOI)
+        if (!WOI.has_value() || !HOI.has_value())
           return nullptr;
 
         Optional<int32_t> GRREFERENCEDX =
             CheckTRDReferenceDimension(RDWI, 2, RDXI);
         Optional<int32_t> GRREFERENCEDY =
             CheckTRDReferenceDimension(RDHI, 2, RDYI);
-        if (!GRREFERENCEDX || !GRREFERENCEDY)
+        if (!GRREFERENCEDX.has_value() || !GRREFERENCEDY.has_value())
           return nullptr;
 
         auto pGRRD = std::make_unique<CJBig2_GRRDProc>();
@@ -342,14 +342,14 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeArith(
 
         Optional<uint32_t> WOI = CheckTRDDimension(IBOI->width(), RDWI);
         Optional<uint32_t> HOI = CheckTRDDimension(IBOI->height(), RDHI);
-        if (!WOI || !HOI)
+        if (!WOI.has_value() || !HOI.has_value())
           return nullptr;
 
         Optional<int32_t> GRREFERENCEDX =
             CheckTRDReferenceDimension(RDWI, 1, RDXI);
         Optional<int32_t> GRREFERENCEDY =
             CheckTRDReferenceDimension(RDHI, 1, RDYI);
-        if (!GRREFERENCEDX || !GRREFERENCEDY)
+        if (!GRREFERENCEDX.has_value() || !GRREFERENCEDY.has_value())
           return nullptr;
 
         auto pGRRD = std::make_unique<CJBig2_GRRDProc>();

@@ -494,7 +494,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckHeaderAndLinearized() {
   if (GetValidator()->has_read_problems())
     return kDataNotAvailable;
 
-  if (!header_offset)
+  if (!header_offset.has_value())
     return kDataError;
 
   m_parser.m_pSyntax =
