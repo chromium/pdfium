@@ -122,7 +122,6 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   void LayoutScrollBar();
   CFX_PointF DeviceToEngine(const CFX_PointF& pt);
   void InitVerticalScrollBar();
-  void InitHorizontalScrollBar();
   void InitEngine();
   void InitCaret();
   bool IsShowVertScrollBar() const;
@@ -156,7 +155,6 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   size_t m_CursorPosition = 0;
   std::unique_ptr<CFDE_TextEditEngine> const m_pEditEngine;
   cppgc::Member<CFWL_ScrollBar> m_pVertScrollBar;
-  cppgc::Member<CFWL_ScrollBar> m_pHorzScrollBar;
   cppgc::Member<CFWL_Caret> m_pCaret;
   WideString m_wsCache;
   WideString m_wsFont;
