@@ -75,7 +75,7 @@ class CFGAS_GEFont final : public Retainable {
   RetainPtr<CPDF_Font> m_pPDFFont;  // Must come before |m_pFont|.
   MaybeOwned<CFX_Font> m_pFont;     // Must come before |m_pFontEncoding|.
   std::unique_ptr<CFX_UnicodeEncodingEx> m_pFontEncoding;
-  std::map<wchar_t, int32_t> m_CharWidthMap;
+  std::map<wchar_t, uint16_t> m_CharWidthMap;
   std::map<wchar_t, FX_RECT> m_BBoxMap;
   std::vector<RetainPtr<CFGAS_GEFont>> m_SubstFonts;
   std::map<wchar_t, RetainPtr<CFGAS_GEFont>> m_FontMapper;
