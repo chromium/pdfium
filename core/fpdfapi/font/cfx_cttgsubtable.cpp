@@ -57,38 +57,40 @@ bool CFX_CTTGSUBTable::LoadGSUBTable(FT_Bytes gsub) {
 }
 
 uint32_t CFX_CTTGSUBTable::GetVerticalGlyph(uint32_t glyphnum) const {
-  uint32_t vglyphnum = 0;
   for (uint32_t item : m_featureSet) {
-    if (GetVerticalGlyphSub(FeatureList[item], glyphnum, &vglyphnum))
-      break;
+    Optional<uint32_t> result =
+        GetVerticalGlyphSub(FeatureList[item], glyphnum);
+    if (result.has_value())
+      return result.value();
   }
-  return vglyphnum;
+  return 0;
 }
 
-bool CFX_CTTGSUBTable::GetVerticalGlyphSub(const TFeatureRecord& feature,
-                                           uint32_t glyphnum,
-                                           uint32_t* vglyphnum) const {
+Optional<uint32_t> CFX_CTTGSUBTable::GetVerticalGlyphSub(
+    const TFeatureRecord& feature,
+    uint32_t glyphnum) const {
   for (int index : feature.LookupListIndices) {
     if (!pdfium::IndexInBounds(LookupList, index))
       continue;
-    if (LookupList[index].LookupType == 1 &&
-        GetVerticalGlyphSub2(LookupList[index], glyphnum, vglyphnum)) {
-      return true;
-    }
+    if (LookupList[index].LookupType != 1)
+      continue;
+    Optional<uint32_t> result =
+        GetVerticalGlyphSub2(LookupList[index], glyphnum);
+    if (result.has_value())
+      return result.value();
   }
-  return false;
+  return pdfium::nullopt;
 }
 
-bool CFX_CTTGSUBTable::GetVerticalGlyphSub2(const TLookup& lookup,
-                                            uint32_t glyphnum,
-                                            uint32_t* vglyphnum) const {
+Optional<uint32_t> CFX_CTTGSUBTable::GetVerticalGlyphSub2(
+    const TLookup& lookup,
+    uint32_t glyphnum) const {
   for (const auto& subTable : lookup.SubTables) {
     switch (subTable->SubstFormat) {
       case 1: {
         auto* tbl1 = static_cast<TSubTable1*>(subTable.get());
         if (GetCoverageIndex(tbl1->Coverage.get(), glyphnum) >= 0) {
-          *vglyphnum = glyphnum + tbl1->DeltaGlyphID;
-          return true;
+          return glyphnum + tbl1->DeltaGlyphID;
         }
         break;
       }
@@ -96,14 +98,13 @@ bool CFX_CTTGSUBTable::GetVerticalGlyphSub2(const TLookup& lookup,
         auto* tbl2 = static_cast<TSubTable2*>(subTable.get());
         int index = GetCoverageIndex(tbl2->Coverage.get(), glyphnum);
         if (pdfium::IndexInBounds(tbl2->Substitutes, index)) {
-          *vglyphnum = tbl2->Substitutes[index];
-          return true;
+          return tbl2->Substitutes[index];
         }
         break;
       }
     }
   }
-  return false;
+  return pdfium::nullopt;
 }
 
 int CFX_CTTGSUBTable::GetCoverageIndex(TCoverageFormatBase* Coverage,

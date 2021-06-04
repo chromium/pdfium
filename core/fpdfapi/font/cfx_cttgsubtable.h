@@ -15,6 +15,7 @@
 
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxge/fx_freetype.h"
+#include "third_party/base/optional.h"
 
 class CFX_CTTGSUBTable {
  public:
@@ -61,21 +62,21 @@ class CFX_CTTGSUBTable {
   };
 
   struct TCoverageFormatBase {
-    TCoverageFormatBase(uint16_t format) : CoverageFormat(format) {}
+    explicit TCoverageFormatBase(uint16_t format) : CoverageFormat(format) {}
     virtual ~TCoverageFormatBase() = default;
 
     const uint16_t CoverageFormat;
   };
 
   struct TCoverageFormat1 final : public TCoverageFormatBase {
-    TCoverageFormat1(size_t initial_size);
+    explicit TCoverageFormat1(size_t initial_size);
     ~TCoverageFormat1() override;
 
     std::vector<uint16_t, FxAllocAllocator<uint16_t>> GlyphArray;
   };
 
   struct TCoverageFormat2 final : public TCoverageFormatBase {
-    TCoverageFormat2(size_t initial_size);
+    explicit TCoverageFormat2(size_t initial_size);
     ~TCoverageFormat2() override;
 
     std::vector<TRangeRecord> RangeRecords;
@@ -90,7 +91,7 @@ class CFX_CTTGSUBTable {
   };
 
   struct TSubTableBase {
-    TSubTableBase(uint16_t format);
+    explicit TSubTableBase(uint16_t format);
     virtual ~TSubTableBase();
 
     const uint16_t SubstFormat;
@@ -136,12 +137,10 @@ class CFX_CTTGSUBTable {
   std::unique_ptr<TSubTable1> ParseSingleSubstFormat1(FT_Bytes raw);
   std::unique_ptr<TSubTable2> ParseSingleSubstFormat2(FT_Bytes raw);
 
-  bool GetVerticalGlyphSub(const TFeatureRecord& feature,
-                           uint32_t glyphnum,
-                           uint32_t* vglyphnum) const;
-  bool GetVerticalGlyphSub2(const TLookup& lookup,
-                            uint32_t glyphnum,
-                            uint32_t* vglyphnum) const;
+  Optional<uint32_t> GetVerticalGlyphSub(const TFeatureRecord& feature,
+                                         uint32_t glyphnum) const;
+  Optional<uint32_t> GetVerticalGlyphSub2(const TLookup& lookup,
+                                          uint32_t glyphnum) const;
   int GetCoverageIndex(TCoverageFormatBase* Coverage, uint32_t g) const;
 
   uint8_t GetUInt8(FT_Bytes& p) const;
