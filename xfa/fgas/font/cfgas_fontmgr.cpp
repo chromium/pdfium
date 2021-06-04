@@ -365,31 +365,31 @@ std::vector<WideString> GetNames(const uint8_t* name_table) {
   if (!name_table)
     return results;
 
-  const uint8_t* lpTable = name_table;
+  const uint8_t* pTable = name_table;
   WideString wsFamily;
-  const uint8_t* sp = lpTable + 2;
-  const uint8_t* lpNameRecord = lpTable + 6;
+  const uint8_t* sp = pTable + 2;
+  const uint8_t* pNameRecord = pTable + 6;
   uint16_t nNameCount = GetUInt16(sp);
-  const uint8_t* lpStr = lpTable + GetUInt16(sp + 2);
+  const uint8_t* pStr = pTable + GetUInt16(sp + 2);
   for (uint16_t j = 0; j < nNameCount; j++) {
-    uint16_t nNameID = GetUInt16(lpNameRecord + j * 12 + 6);
+    uint16_t nNameID = GetUInt16(pNameRecord + j * 12 + 6);
     if (nNameID != 1)
       continue;
 
-    uint16_t nPlatformID = GetUInt16(lpNameRecord + j * 12 + 0);
-    uint16_t nNameLength = GetUInt16(lpNameRecord + j * 12 + 8);
-    uint16_t nNameOffset = GetUInt16(lpNameRecord + j * 12 + 10);
+    uint16_t nPlatformID = GetUInt16(pNameRecord + j * 12 + 0);
+    uint16_t nNameLength = GetUInt16(pNameRecord + j * 12 + 8);
+    uint16_t nNameOffset = GetUInt16(pNameRecord + j * 12 + 10);
     wsFamily.clear();
     if (nPlatformID != 1) {
       for (uint16_t k = 0; k < nNameLength / 2; k++) {
-        wchar_t wcTemp = GetUInt16(lpStr + nNameOffset + k * 2);
+        wchar_t wcTemp = GetUInt16(pStr + nNameOffset + k * 2);
         wsFamily += wcTemp;
       }
       results.push_back(wsFamily);
       continue;
     }
     for (uint16_t k = 0; k < nNameLength; k++) {
-      wchar_t wcTemp = GetUInt8(lpStr + nNameOffset + k);
+      wchar_t wcTemp = GetUInt8(pStr + nNameOffset + k);
       wsFamily += wcTemp;
     }
     results.push_back(wsFamily);

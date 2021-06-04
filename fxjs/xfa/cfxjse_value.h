@@ -54,7 +54,7 @@ class CFXJSE_Value {
   void SetFloat(v8::Isolate* pIsolate, float fFloat);
 
   void SetHostObject(v8::Isolate* pIsolate,
-                     CFXJSE_HostObject* lpObject,
+                     CFXJSE_HostObject* pObject,
                      CFXJSE_Class* pClass);
 
   void SetArray(v8::Isolate* pIsolate,
@@ -62,17 +62,17 @@ class CFXJSE_Value {
 
   bool GetObjectProperty(v8::Isolate* pIsolate,
                          ByteStringView szPropName,
-                         CFXJSE_Value* lpPropValue);
+                         CFXJSE_Value* pPropValue);
   bool SetObjectProperty(v8::Isolate* pIsolate,
                          ByteStringView szPropName,
-                         CFXJSE_Value* lpPropValue);
+                         CFXJSE_Value* pPropValue);
   bool GetObjectPropertyByIdx(v8::Isolate* pIsolate,
                               uint32_t uPropIdx,
-                              CFXJSE_Value* lpPropValue);
+                              CFXJSE_Value* pPropValue);
   void DeleteObjectProperty(v8::Isolate* pIsolate, ByteStringView szPropName);
   bool SetObjectOwnProperty(v8::Isolate* pIsolate,
                             ByteStringView szPropName,
-                            CFXJSE_Value* lpPropValue);
+                            CFXJSE_Value* pPropValue);
 
   // Return empty local on error.
   static v8::Local<v8::Function> NewBoundFunction(
@@ -84,14 +84,6 @@ class CFXJSE_Value {
   const v8::Global<v8::Value>& DirectGetValue() const { return m_hValue; }
   void ForceSetValue(v8::Isolate* pIsolate, v8::Local<v8::Value> hValue) {
     m_hValue.Reset(pIsolate, hValue);
-  }
-  void Assign(v8::Isolate* pIsolate, const CFXJSE_Value* lpValue) {
-    DCHECK(lpValue);
-    if (lpValue) {
-      m_hValue.Reset(pIsolate, lpValue->m_hValue);
-    } else {
-      m_hValue.Reset();
-    }
   }
 
  private:

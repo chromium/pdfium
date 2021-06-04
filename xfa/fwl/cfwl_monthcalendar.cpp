@@ -676,12 +676,12 @@ void CFWL_MonthCalendar::OnLButtonUp(CFWL_MessageMouse* pMsg) {
 
   int32_t iCurSel = GetDayAtPoint(pMsg->m_pos);
   if (iCurSel > 0) {
-    DATEINFO* lpDatesInfo = m_DateArray[iCurSel - 1].get();
-    CFX_RectF rtInvalidate(lpDatesInfo->rect);
+    DATEINFO* pDateInfo = m_DateArray[iCurSel - 1].get();
+    CFX_RectF rtInvalidate(pDateInfo->rect);
     if (iOldSel > 0 &&
         iOldSel <= pdfium::CollectionSize<int32_t>(m_DateArray)) {
-      lpDatesInfo = m_DateArray[iOldSel - 1].get();
-      rtInvalidate.Union(lpDatesInfo->rect);
+      pDateInfo = m_DateArray[iOldSel - 1].get();
+      rtInvalidate.Union(pDateInfo->rect);
     }
     AddSelDay(iCurSel);
     CFWL_DateTimePicker* pDateTime =

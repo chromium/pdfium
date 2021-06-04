@@ -39,10 +39,10 @@ class CFXJSE_Context {
   CFXJSE_Class* GetClassByName(ByteStringView szName) const;
   void EnableCompatibleMode();
 
-  // Note: `lpNewThisObject` may be empty.
+  // Note: `pNewThisObject` may be empty.
   bool ExecuteScript(const char* szScript,
-                     CFXJSE_Value* lpRetValue,
-                     v8::Local<v8::Object> lpNewThisObject);
+                     CFXJSE_Value* pRetValue,
+                     v8::Local<v8::Object> pNewThisObject);
 
  private:
   CFXJSE_Context(v8::Isolate* pIsolate, CXFA_ThisProxy* pProxy);
@@ -56,7 +56,7 @@ class CFXJSE_Context {
 };
 
 void FXJSE_UpdateObjectBinding(v8::Local<v8::Object> hObject,
-                               CFXJSE_HostObject* lpNewBinding);
+                               CFXJSE_HostObject* pNewBinding);
 
 void FXJSE_ClearObjectBinding(v8::Local<v8::Object> hJSObject);
 CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(v8::Local<v8::Value> hValue);

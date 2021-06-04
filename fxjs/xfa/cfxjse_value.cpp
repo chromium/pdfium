@@ -113,8 +113,8 @@ void CFXJSE_Value::SetFloat(v8::Isolate* pIsolate, float fFloat) {
 
 bool CFXJSE_Value::SetObjectProperty(v8::Isolate* pIsolate,
                                      ByteStringView szPropName,
-                                     CFXJSE_Value* lpPropValue) {
-  if (lpPropValue->IsEmpty())
+                                     CFXJSE_Value* pPropValue) {
+  if (pPropValue->IsEmpty())
     return false;
 
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(pIsolate);
@@ -124,18 +124,18 @@ bool CFXJSE_Value::SetObjectProperty(v8::Isolate* pIsolate,
 
   return fxv8::ReentrantPutObjectPropertyHelper(
       pIsolate, hObject.As<v8::Object>(), szPropName,
-      lpPropValue->GetValue(pIsolate));
+      pPropValue->GetValue(pIsolate));
 }
 
 bool CFXJSE_Value::GetObjectProperty(v8::Isolate* pIsolate,
                                      ByteStringView szPropName,
-                                     CFXJSE_Value* lpPropValue) {
+                                     CFXJSE_Value* pPropValue) {
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(pIsolate);
   v8::Local<v8::Value> hObject = GetValue(pIsolate);
   if (!hObject->IsObject())
     return false;
 
-  lpPropValue->ForceSetValue(
+  pPropValue->ForceSetValue(
       pIsolate, fxv8::ReentrantGetObjectPropertyHelper(
                     pIsolate, hObject.As<v8::Object>(), szPropName));
   return true;
@@ -143,15 +143,15 @@ bool CFXJSE_Value::GetObjectProperty(v8::Isolate* pIsolate,
 
 bool CFXJSE_Value::GetObjectPropertyByIdx(v8::Isolate* pIsolate,
                                           uint32_t uPropIdx,
-                                          CFXJSE_Value* lpPropValue) {
+                                          CFXJSE_Value* pPropValue) {
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(pIsolate);
   v8::Local<v8::Value> hObject = GetValue(pIsolate);
   if (!hObject->IsArray())
     return false;
 
-  lpPropValue->ForceSetValue(pIsolate,
-                             fxv8::ReentrantGetArrayElementHelper(
-                                 pIsolate, hObject.As<v8::Array>(), uPropIdx));
+  pPropValue->ForceSetValue(pIsolate,
+                            fxv8::ReentrantGetArrayElementHelper(
+                                pIsolate, hObject.As<v8::Array>(), uPropIdx));
   return true;
 }
 

@@ -123,12 +123,12 @@ void FXJSE_UpdateProxyBinding(v8::Local<v8::Object> hObject) {
 }  // namespace
 
 void FXJSE_UpdateObjectBinding(v8::Local<v8::Object> hObject,
-                               CFXJSE_HostObject* lpNewBinding) {
+                               CFXJSE_HostObject* pNewBinding) {
   DCHECK(!hObject.IsEmpty());
   DCHECK_EQ(hObject->InternalFieldCount(), 2);
   hObject->SetAlignedPointerInInternalField(
       0, const_cast<wchar_t*>(kFXJSEHostObjectTag));
-  hObject->SetAlignedPointerInInternalField(1, lpNewBinding);
+  hObject->SetAlignedPointerInInternalField(1, pNewBinding);
 }
 
 void FXJSE_ClearObjectBinding(v8::Local<v8::Object> hObject) {
@@ -236,7 +236,7 @@ void CFXJSE_Context::EnableCompatibleMode() {
 }
 
 bool CFXJSE_Context::ExecuteScript(const char* szScript,
-                                   CFXJSE_Value* lpRetValue,
+                                   CFXJSE_Value* pRetValue,
                                    v8::Local<v8::Object> hNewThis) {
   CFXJSE_ScopeUtil_IsolateHandleContext scope(this);
   v8::Local<v8::Context> hContext = GetIsolate()->GetCurrentContext();
@@ -250,14 +250,15 @@ bool CFXJSE_Context::ExecuteScript(const char* szScript,
       v8::Local<v8::Value> hValue;
       if (hScript->Run(hContext).ToLocal(&hValue)) {
         DCHECK(!trycatch.HasCaught());
-        if (lpRetValue)
-          lpRetValue->ForceSetValue(GetIsolate(), hValue);
+        if (pRetValue)
+          pRetValue->ForceSetValue(GetIsolate(), hValue);
         return true;
       }
     }
-    if (lpRetValue)
-      lpRetValue->ForceSetValue(GetIsolate(),
-                                CreateReturnValue(GetIsolate(), &trycatch));
+    if (pRetValue) {
+      pRetValue->ForceSetValue(GetIsolate(),
+                               CreateReturnValue(GetIsolate(), &trycatch));
+    }
     return false;
   }
 
@@ -274,8 +275,8 @@ bool CFXJSE_Context::ExecuteScript(const char* szScript,
     if (hWrapperFn->Call(hContext, hNewThis.As<v8::Object>(), 1, rgArgs)
             .ToLocal(&hValue)) {
       DCHECK(!trycatch.HasCaught());
-      if (lpRetValue)
-        lpRetValue->ForceSetValue(GetIsolate(), hValue);
+      if (pRetValue)
+        pRetValue->ForceSetValue(GetIsolate(), hValue);
       return true;
     }
   }
@@ -294,9 +295,9 @@ bool CFXJSE_Context::ExecuteScript(const char* szScript,
   }
 #endif  // NDEBUG
 
-  if (lpRetValue) {
-    lpRetValue->ForceSetValue(GetIsolate(),
-                              CreateReturnValue(GetIsolate(), &trycatch));
+  if (pRetValue) {
+    pRetValue->ForceSetValue(GetIsolate(),
+                             CreateReturnValue(GetIsolate(), &trycatch));
   }
   return false;
 }

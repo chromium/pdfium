@@ -17,10 +17,10 @@ struct FXJSE_CLASS_DESCRIPTOR;
 class CFXJSE_Class {
  public:
   static CFXJSE_Class* Create(CFXJSE_Context* pContext,
-                              const FXJSE_CLASS_DESCRIPTOR* lpClassDefintion,
+                              const FXJSE_CLASS_DESCRIPTOR* pClassDescriptor,
                               bool bIsJSGlobal);
 
-  explicit CFXJSE_Class(const CFXJSE_Context* lpContext);
+  explicit CFXJSE_Class(const CFXJSE_Context* pContext);
   ~CFXJSE_Class();
 
   bool IsName(ByteStringView name) const { return name == m_szClassName; }
@@ -29,7 +29,7 @@ class CFXJSE_Class {
 
  protected:
   ByteString m_szClassName;
-  UnownedPtr<const FXJSE_CLASS_DESCRIPTOR> m_lpClassDefinition;
+  UnownedPtr<const FXJSE_CLASS_DESCRIPTOR> m_pClassDescriptor;
   UnownedPtr<const CFXJSE_Context> const m_pContext;
   v8::Global<v8::FunctionTemplate> m_hTemplate;
 };
