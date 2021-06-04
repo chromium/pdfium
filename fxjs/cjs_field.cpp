@@ -2507,15 +2507,13 @@ CJS_Result CJS_Field::setFocus(
     IPDF_Page* pPage = IPDFPageFromFPDFPage(m_pFormFillEnv->GetCurrentPage());
     if (!pPage)
       return CJS_Result::Failure(JSMessage::kBadObjectError);
-    if (CPDFSDK_PageView* pCurPageView =
-            m_pFormFillEnv->GetPageView(pPage, true)) {
-      for (int32_t i = 0; i < nCount; i++) {
-        if (CPDFSDK_Widget* pTempWidget =
-                pForm->GetWidget(pFormField->GetControl(i))) {
-          if (pTempWidget->GetPDFPage() == pCurPageView->GetPDFPage()) {
-            pWidget = pTempWidget;
-            break;
-          }
+    CPDFSDK_PageView* pCurPageView = m_pFormFillEnv->GetOrCreatePageView(pPage);
+    for (int32_t i = 0; i < nCount; i++) {
+      if (CPDFSDK_Widget* pTempWidget =
+              pForm->GetWidget(pFormField->GetControl(i))) {
+        if (pTempWidget->GetPDFPage() == pCurPageView->GetPDFPage()) {
+          pWidget = pTempWidget;
+          break;
         }
       }
     }

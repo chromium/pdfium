@@ -131,7 +131,7 @@ bool CPDFSDK_FormFillEnvironment::IsSelectionImplemented() const {
 #ifdef PDF_ENABLE_V8
 CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetCurrentView() {
   IPDF_Page* pPage = IPDFPageFromFPDFPage(GetCurrentPage());
-  return pPage ? GetPageView(pPage, true) : nullptr;
+  return pPage ? GetOrCreatePageView(pPage) : nullptr;
 }
 
 FPDF_PAGE CPDFSDK_FormFillEnvironment::GetCurrentPage() const {
@@ -589,15 +589,11 @@ void CPDFSDK_FormFillEnvironment::ClearAllFocusedAnnots() {
   }
 }
 
-CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetPageView(
-    IPDF_Page* pUnderlyingPage,
-    bool renew) {
-  auto it = m_PageMap.find(pUnderlyingPage);
-  if (it != m_PageMap.end())
-    return it->second.get();
-
-  if (!renew)
-    return nullptr;
+CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetOrCreatePageView(
+    IPDF_Page* pUnderlyingPage) {
+  CPDFSDK_PageView* pExisting = GetPageView(pUnderlyingPage);
+  if (pExisting)
+    return pExisting;
 
   auto pNew = std::make_unique<CPDFSDK_PageView>(this, pUnderlyingPage);
   CPDFSDK_PageView* pPageView = pNew.get();
@@ -608,13 +604,15 @@ CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetPageView(
   return pPageView;
 }
 
+CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetPageView(
+    IPDF_Page* pUnderlyingPage) {
+  auto it = m_PageMap.find(pUnderlyingPage);
+  return it != m_PageMap.end() ? it->second.get() : nullptr;
+}
+
 CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetPageViewAtIndex(int nIndex) {
   IPDF_Page* pTempPage = GetPage(nIndex);
-  if (!pTempPage)
-    return nullptr;
-
-  auto it = m_PageMap.find(pTempPage);
-  return it != m_PageMap.end() ? it->second.get() : nullptr;
+  return pTempPage ? GetPageView(pTempPage) : nullptr;
 }
 
 void CPDFSDK_FormFillEnvironment::ProcJavascriptAction() {
@@ -679,7 +677,7 @@ void CPDFSDK_FormFillEnvironment::RemovePageView(IPDF_Page* pUnderlyingPage) {
   m_PageMap.erase(it);
 }
 
-IPDF_Page* CPDFSDK_FormFillEnvironment::GetPage(int nIndex) {
+IPDF_Page* CPDFSDK_FormFillEnvironment::GetPage(int nIndex) const {
   if (!m_pInfo || !m_pInfo->FFI_GetPage)
     return nullptr;
   return IPDFPageFromFPDFPage(m_pInfo->FFI_GetPage(

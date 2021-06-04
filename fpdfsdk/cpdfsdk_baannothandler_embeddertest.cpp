@@ -34,7 +34,7 @@ class CPDFSDK_BAAnnotHandlerTest : public EmbedderTest {
         CPDFSDKFormFillEnvironmentFromFPDFFormHandle(form_handle());
     ASSERT_TRUE(m_pFormFillEnv);
     m_pPageView =
-        m_pFormFillEnv->GetPageView(IPDFPageFromFPDFPage(m_page), true);
+        m_pFormFillEnv->GetOrCreatePageView(IPDFPageFromFPDFPage(m_page));
     ASSERT_TRUE(m_pPageView);
 
     CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =

@@ -169,7 +169,7 @@ CPDFSDK_PageView* FormHandleToPageView(FPDF_FORMHANDLE hHandle,
 
   CPDFSDK_FormFillEnvironment* pFormFillEnv =
       CPDFSDKFormFillEnvironmentFromFPDFFormHandle(hHandle);
-  return pFormFillEnv ? pFormFillEnv->GetPageView(pPage, true) : nullptr;
+  return pFormFillEnv ? pFormFillEnv->GetOrCreatePageView(pPage) : nullptr;
 }
 
 void FFLCommon(FPDF_FORMHANDLE hHandle,
@@ -646,16 +646,16 @@ FORM_SetFocusedAnnot(FPDF_FORMHANDLE handle, FPDF_ANNOTATION annot) {
     return false;
 
   CPDFSDK_PageView* page_view =
-      form_fill_env->GetPageView(annot_context->GetPage(), true);
+      form_fill_env->GetOrCreatePageView(annot_context->GetPage());
   if (!page_view->IsValid())
     return false;
 
   CPDF_Dictionary* annot_dict = annot_context->GetAnnotDict();
-
   ObservedPtr<CPDFSDK_Annot> cpdfsdk_annot(
       page_view->GetAnnotByDict(annot_dict));
   if (!cpdfsdk_annot)
     return false;
+
   return form_fill_env->SetFocusAnnot(&cpdfsdk_annot);
 }
 
@@ -735,7 +735,7 @@ FPDF_EXPORT void FPDF_CALLCONV FORM_OnBeforeClosePage(FPDF_PAGE page,
   if (!pPage)
     return;
 
-  CPDFSDK_PageView* pPageView = pFormFillEnv->GetPageView(pPage, false);
+  CPDFSDK_PageView* pPageView = pFormFillEnv->GetPageView(pPage);
   if (pPageView) {
     pPageView->SetValid(false);
     // RemovePageView() takes care of the delete for us.
@@ -793,7 +793,7 @@ FPDF_EXPORT void FPDF_CALLCONV FORM_DoPageAAction(FPDF_PAGE page,
   if (!pPDFPage)
     return;
 
-  if (!pFormFillEnv->GetPageView(pPage, false))
+  if (!pFormFillEnv->GetPageView(pPage))
     return;
 
   CPDFSDK_ActionHandler* pActionHandler = pFormFillEnv->GetActionHandler();

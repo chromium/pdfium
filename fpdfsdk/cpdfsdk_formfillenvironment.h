@@ -66,9 +66,9 @@ class CPDFSDK_FormFillEnvironment final : public CFX_Timer::HandlerIface,
   bool IsSelectionImplemented() const override;
   void SetCursor(CursorStyle nCursorType) override;
 
-  CPDFSDK_PageView* GetPageView(IPDF_Page* pUnderlyingPage, bool renew);
+  CPDFSDK_PageView* GetOrCreatePageView(IPDF_Page* pUnderlyingPage);
+  CPDFSDK_PageView* GetPageView(IPDF_Page* pUnderlyingPage);
   CPDFSDK_PageView* GetPageViewAtIndex(int nIndex);
-
   void RemovePageView(IPDF_Page* pUnderlyingPage);
   void UpdateAllViews(CPDFSDK_PageView* pSender, CPDFSDK_Annot* pAnnot);
 
@@ -218,7 +218,7 @@ class CPDFSDK_FormFillEnvironment final : public CFX_Timer::HandlerIface,
   CPDFSDK_InteractiveForm* GetInteractiveForm();  // Creates if not present.
 
  private:
-  IPDF_Page* GetPage(int nIndex);
+  IPDF_Page* GetPage(int nIndex) const;
   void SendOnFocusChange(ObservedPtr<CPDFSDK_Annot>* pAnnot);
 
   UnownedPtr<FPDF_FORMFILLINFO> const m_pInfo;

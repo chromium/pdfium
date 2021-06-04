@@ -258,8 +258,9 @@ bool CFFL_FormField::Redo() {
 void CFFL_FormField::SetFocusForAnnot(CPDFSDK_Annot* pAnnot, uint32_t nFlag) {
   CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
   IPDF_Page* pPage = pWidget->GetPage();
-  CPDFSDK_PageView* pPageView = m_pFormFillEnv->GetPageView(pPage, true);
-  if (CPWL_Wnd* pWnd = CreateOrUpdatePWLWindow(pPageView))
+  CPDFSDK_PageView* pPageView = m_pFormFillEnv->GetOrCreatePageView(pPage);
+  CPWL_Wnd* pWnd = CreateOrUpdatePWLWindow(pPageView);
+  if (pWnd)
     pWnd->SetFocus();
 
   m_bValid = true;
@@ -271,7 +272,7 @@ void CFFL_FormField::KillFocusForAnnot(uint32_t nFlag) {
     return;
 
   CPDFSDK_PageView* pPageView =
-      m_pFormFillEnv->GetPageView(m_pWidget->GetPage(), false);
+      m_pFormFillEnv->GetPageView(m_pWidget->GetPage());
   if (!pPageView || !CommitData(pPageView, nFlag))
     return;
   if (CPWL_Wnd* pWnd = GetPWLWindow(pPageView))
@@ -428,7 +429,7 @@ CFX_FloatRect CFFL_FormField::GetPDFAnnotRect() const {
 
 CPDFSDK_PageView* CFFL_FormField::GetCurPageView() {
   IPDF_Page* pPage = m_pWidget->GetPage();
-  return m_pFormFillEnv->GetPageView(pPage, true);
+  return m_pFormFillEnv->GetOrCreatePageView(pPage);
 }
 
 CFX_FloatRect CFFL_FormField::GetFocusBox(CPDFSDK_PageView* pPageView) {

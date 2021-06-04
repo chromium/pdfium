@@ -330,7 +330,7 @@ void CPDFXFA_DocEnvironment::WidgetPostAdd(CXFA_FFWidget* hWidget) {
     return;
 
   m_pContext->GetFormFillEnv()
-      ->GetPageView(pXFAPage.Get(), true)
+      ->GetOrCreatePageView(pXFAPage.Get())
       ->AddAnnot(hWidget);
 }
 
@@ -347,7 +347,7 @@ void CPDFXFA_DocEnvironment::WidgetPreRemove(CXFA_FFWidget* hWidget) {
     return;
 
   CPDFSDK_PageView* pSdkPageView =
-      m_pContext->GetFormFillEnv()->GetPageView(pXFAPage.Get(), true);
+      m_pContext->GetFormFillEnv()->GetOrCreatePageView(pXFAPage.Get());
   CPDFSDK_Annot* pAnnot = pSdkPageView->GetAnnotByXFAWidget(hWidget);
   if (pAnnot)
     pSdkPageView->DeleteAnnot(pAnnot);

@@ -490,7 +490,7 @@ CJS_Result CJS_Document::removeField(
     // If there is currently no pageview associated with the page being used
     // do not create one. We may be in the process of tearing down the document
     // and creating a new pageview at this point will cause bad things.
-    CPDFSDK_PageView* pPageView = m_pFormFillEnv->GetPageView(pPage, false);
+    CPDFSDK_PageView* pPageView = m_pFormFillEnv->GetPageView(pPage);
     if (!pPageView)
       continue;
 
