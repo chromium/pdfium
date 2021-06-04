@@ -117,12 +117,6 @@ void CPWL_ComboBox::SetEditSelection(int32_t nStartChar, int32_t nEndChar) {
     m_pEdit->SetSelection(nStartChar, nEndChar);
 }
 
-std::pair<int32_t, int32_t> CPWL_ComboBox::GetEditSelection() const {
-  if (!m_pEdit)
-    return std::make_pair(-1, -1);
-  return m_pEdit->GetSelection();
-}
-
 void CPWL_ComboBox::ClearSelection() {
   if (m_pEdit)
     m_pEdit->ClearSelection();
