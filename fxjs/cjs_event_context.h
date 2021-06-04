@@ -27,17 +27,16 @@ class CJS_EventContext final : public IJS_EventContext {
   // IJS_EventContext
   Optional<IJS_Runtime::JS_Error> RunScript(const WideString& script) override;
   void OnApp_Init() override;
-  void OnDoc_Open(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                  const WideString& strTargetName) override;
-  void OnDoc_WillPrint(CPDFSDK_FormFillEnvironment* pFormFillEnv) override;
-  void OnDoc_DidPrint(CPDFSDK_FormFillEnvironment* pFormFillEnv) override;
-  void OnDoc_WillSave(CPDFSDK_FormFillEnvironment* pFormFillEnv) override;
-  void OnDoc_DidSave(CPDFSDK_FormFillEnvironment* pFormFillEnv) override;
-  void OnDoc_WillClose(CPDFSDK_FormFillEnvironment* pFormFillEnv) override;
-  void OnPage_Open(CPDFSDK_FormFillEnvironment* pFormFillEnv) override;
-  void OnPage_Close(CPDFSDK_FormFillEnvironment* pFormFillEnv) override;
-  void OnPage_InView(CPDFSDK_FormFillEnvironment* pFormFillEnv) override;
-  void OnPage_OutView(CPDFSDK_FormFillEnvironment* pFormFillEnv) override;
+  void OnDoc_Open(const WideString& strTargetName) override;
+  void OnDoc_WillPrint() override;
+  void OnDoc_DidPrint() override;
+  void OnDoc_WillSave() override;
+  void OnDoc_DidSave() override;
+  void OnDoc_WillClose() override;
+  void OnPage_Open() override;
+  void OnPage_Close() override;
+  void OnPage_InView() override;
+  void OnPage_OutView() override;
   void OnField_MouseDown(bool bModifier,
                          bool bShift,
                          CPDF_FormField* pTarget) override;
@@ -114,10 +113,9 @@ class CJS_EventContext final : public IJS_EventContext {
                         bool bShift,
                         CPDFSDK_Annot* pScreen) override;
   void OnBookmark_MouseUp(CPDF_Bookmark* pBookMark) override;
-  void OnLink_MouseUp(CPDFSDK_FormFillEnvironment* pFormFillEnv) override;
-  void OnMenu_Exec(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                   const WideString& strTargetName) override;
-  void OnBatchExec(CPDFSDK_FormFillEnvironment* pFormFillEnv) override;
+  void OnLink_MouseUp() override;
+  void OnMenu_Exec(const WideString& strTargetName) override;
+  void OnBatch_Exec() override;
   void OnConsole_Exec() override;
   void OnExternal_Exec() override;
 
@@ -129,7 +127,7 @@ class CJS_EventContext final : public IJS_EventContext {
 
  private:
   UnownedPtr<CJS_Runtime> const m_pRuntime;
-  std::unique_ptr<CJS_EventRecorder> m_pEventRecorder;
+  std::unique_ptr<CJS_EventRecorder> const m_pEventRecorder;
   bool m_bBusy = false;
 };
 

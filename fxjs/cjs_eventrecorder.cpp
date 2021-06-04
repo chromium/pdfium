@@ -10,7 +10,8 @@
 #include "core/fpdfdoc/cpdf_formfield.h"
 #include "third_party/base/check.h"
 
-CJS_EventRecorder::CJS_EventRecorder() = default;
+CJS_EventRecorder::CJS_EventRecorder(CPDFSDK_FormFillEnvironment* pFormFillEnv)
+    : m_pFormFillEnv(pFormFillEnv) {}
 
 CJS_EventRecorder::~CJS_EventRecorder() = default;
 
@@ -18,74 +19,53 @@ void CJS_EventRecorder::OnApp_Init() {
   Initialize(JET_APP_INIT);
 }
 
-void CJS_EventRecorder::OnDoc_Open(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                                   const WideString& strTargetName) {
+void CJS_EventRecorder::OnDoc_Open(const WideString& strTargetName) {
   Initialize(JET_DOC_OPEN);
-  m_pTargetFormFillEnv.Reset(pFormFillEnv);
   m_strTargetName = strTargetName;
 }
 
-void CJS_EventRecorder::OnDoc_WillPrint(
-    CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+void CJS_EventRecorder::OnDoc_WillPrint() {
   Initialize(JET_DOC_WILLPRINT);
-  m_pTargetFormFillEnv.Reset(pFormFillEnv);
 }
 
-void CJS_EventRecorder::OnDoc_DidPrint(
-    CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+void CJS_EventRecorder::OnDoc_DidPrint() {
   Initialize(JET_DOC_DIDPRINT);
-  m_pTargetFormFillEnv.Reset(pFormFillEnv);
 }
 
-void CJS_EventRecorder::OnDoc_WillSave(
-    CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+void CJS_EventRecorder::OnDoc_WillSave() {
   Initialize(JET_DOC_WILLSAVE);
-  m_pTargetFormFillEnv.Reset(pFormFillEnv);
 }
 
-void CJS_EventRecorder::OnDoc_DidSave(
-    CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+void CJS_EventRecorder::OnDoc_DidSave() {
   Initialize(JET_DOC_DIDSAVE);
-  m_pTargetFormFillEnv.Reset(pFormFillEnv);
 }
 
-void CJS_EventRecorder::OnDoc_WillClose(
-    CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+void CJS_EventRecorder::OnDoc_WillClose() {
   Initialize(JET_DOC_WILLCLOSE);
-  m_pTargetFormFillEnv.Reset(pFormFillEnv);
 }
 
-void CJS_EventRecorder::OnPage_Open(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+void CJS_EventRecorder::OnPage_Open() {
   Initialize(JET_PAGE_OPEN);
-  m_pTargetFormFillEnv.Reset(pFormFillEnv);
 }
 
-void CJS_EventRecorder::OnPage_Close(
-    CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+void CJS_EventRecorder::OnPage_Close() {
   Initialize(JET_PAGE_CLOSE);
-  m_pTargetFormFillEnv.Reset(pFormFillEnv);
 }
 
-void CJS_EventRecorder::OnPage_InView(
-    CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+void CJS_EventRecorder::OnPage_InView() {
   Initialize(JET_PAGE_INVIEW);
-  m_pTargetFormFillEnv.Reset(pFormFillEnv);
 }
 
-void CJS_EventRecorder::OnPage_OutView(
-    CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+void CJS_EventRecorder::OnPage_OutView() {
   Initialize(JET_PAGE_OUTVIEW);
-  m_pTargetFormFillEnv.Reset(pFormFillEnv);
 }
 
 void CJS_EventRecorder::OnField_MouseEnter(bool bModifier,
                                            bool bShift,
                                            CPDF_FormField* pTarget) {
   Initialize(JET_FIELD_MOUSEENTER);
-
   m_bModifier = bModifier;
   m_bShift = bShift;
-
   m_strTargetName = pTarget->GetFullName();
 }
 
@@ -93,7 +73,6 @@ void CJS_EventRecorder::OnField_MouseExit(bool bModifier,
                                           bool bShift,
                                           CPDF_FormField* pTarget) {
   Initialize(JET_FIELD_MOUSEEXIT);
-
   m_bModifier = bModifier;
   m_bShift = bShift;
   m_strTargetName = pTarget->GetFullName();
@@ -328,10 +307,8 @@ void CJS_EventRecorder::OnScreen_OutView(bool bModifier,
   m_pTargetAnnot.Reset(pScreen);
 }
 
-void CJS_EventRecorder::OnLink_MouseUp(
-    CPDFSDK_FormFillEnvironment* pTargetFormFillEnv) {
+void CJS_EventRecorder::OnLink_MouseUp() {
   Initialize(JET_LINK_MOUSEUP);
-  m_pTargetFormFillEnv.Reset(pTargetFormFillEnv);
 }
 
 void CJS_EventRecorder::OnBookmark_MouseUp(const CPDF_Bookmark* pBookMark) {
@@ -340,10 +317,8 @@ void CJS_EventRecorder::OnBookmark_MouseUp(const CPDF_Bookmark* pBookMark) {
 }
 
 void CJS_EventRecorder::OnMenu_Exec(
-    CPDFSDK_FormFillEnvironment* pTargetFormFillEnv,
     const WideString& strTargetName) {
   Initialize(JET_MENU_EXEC);
-  m_pTargetFormFillEnv.Reset(pTargetFormFillEnv);
   m_strTargetName = strTargetName;
 }
 
@@ -351,10 +326,8 @@ void CJS_EventRecorder::OnExternal_Exec() {
   Initialize(JET_EXTERNAL_EXEC);
 }
 
-void CJS_EventRecorder::OnBatchExec(
-    CPDFSDK_FormFillEnvironment* pTargetFormFillEnv) {
+void CJS_EventRecorder::OnBatchExec() {
   Initialize(JET_BATCH_EXEC);
-  m_pTargetFormFillEnv.Reset(pTargetFormFillEnv);
 }
 
 void CJS_EventRecorder::OnConsole_Exec() {
@@ -382,7 +355,6 @@ void CJS_EventRecorder::Initialize(JS_EVENT_T type) {
   m_pbRc = nullptr;
   m_bRcDu = false;
   m_pTargetBookMark = nullptr;
-  m_pTargetFormFillEnv.Reset();
   m_pTargetAnnot.Reset();
   m_bValid = true;
 }

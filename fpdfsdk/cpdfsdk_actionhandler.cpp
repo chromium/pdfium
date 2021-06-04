@@ -382,51 +382,49 @@ void CPDFSDK_ActionHandler::RunDocumentOpenJavaScript(
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
     const WideString& sScriptName,
     const WideString& script) {
-  RunScript(pFormFillEnv, script,
-            [pFormFillEnv, sScriptName](IJS_EventContext* context) {
-              context->OnDoc_Open(pFormFillEnv, sScriptName);
-            });
+  RunScript(pFormFillEnv, script, [sScriptName](IJS_EventContext* context) {
+    context->OnDoc_Open(sScriptName);
+  });
 }
 
 void CPDFSDK_ActionHandler::RunDocumentPageJavaScript(
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
     CPDF_AAction::AActionType type,
     const WideString& script) {
-  RunScript(pFormFillEnv, script,
-            [type, pFormFillEnv](IJS_EventContext* context) {
-              switch (type) {
-                case CPDF_AAction::kOpenPage:
-                  context->OnPage_Open(pFormFillEnv);
-                  break;
-                case CPDF_AAction::kClosePage:
-                  context->OnPage_Close(pFormFillEnv);
-                  break;
-                case CPDF_AAction::kCloseDocument:
-                  context->OnDoc_WillClose(pFormFillEnv);
-                  break;
-                case CPDF_AAction::kSaveDocument:
-                  context->OnDoc_WillSave(pFormFillEnv);
-                  break;
-                case CPDF_AAction::kDocumentSaved:
-                  context->OnDoc_DidSave(pFormFillEnv);
-                  break;
-                case CPDF_AAction::kPrintDocument:
-                  context->OnDoc_WillPrint(pFormFillEnv);
-                  break;
-                case CPDF_AAction::kDocumentPrinted:
-                  context->OnDoc_DidPrint(pFormFillEnv);
-                  break;
-                case CPDF_AAction::kPageVisible:
-                  context->OnPage_InView(pFormFillEnv);
-                  break;
-                case CPDF_AAction::kPageInvisible:
-                  context->OnPage_OutView(pFormFillEnv);
-                  break;
-                default:
-                  NOTREACHED();
-                  break;
-              }
-            });
+  RunScript(pFormFillEnv, script, [type](IJS_EventContext* context) {
+    switch (type) {
+      case CPDF_AAction::kOpenPage:
+        context->OnPage_Open();
+        break;
+      case CPDF_AAction::kClosePage:
+        context->OnPage_Close();
+        break;
+      case CPDF_AAction::kCloseDocument:
+        context->OnDoc_WillClose();
+        break;
+      case CPDF_AAction::kSaveDocument:
+        context->OnDoc_WillSave();
+        break;
+      case CPDF_AAction::kDocumentSaved:
+        context->OnDoc_DidSave();
+        break;
+      case CPDF_AAction::kPrintDocument:
+        context->OnDoc_WillPrint();
+        break;
+      case CPDF_AAction::kDocumentPrinted:
+        context->OnDoc_DidPrint();
+        break;
+      case CPDF_AAction::kPageVisible:
+        context->OnPage_InView();
+        break;
+      case CPDF_AAction::kPageInvisible:
+        context->OnPage_OutView();
+        break;
+      default:
+        NOTREACHED();
+        break;
+    }
+  });
 }
 
 bool CPDFSDK_ActionHandler::DoAction_Hide(

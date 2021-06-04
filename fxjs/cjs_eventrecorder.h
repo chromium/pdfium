@@ -59,23 +59,22 @@ enum JS_EVENT_T {
 
 class CJS_EventRecorder {
  public:
-  CJS_EventRecorder();
+  explicit CJS_EventRecorder(CPDFSDK_FormFillEnvironment* pFormFillEnv);
   ~CJS_EventRecorder();
 
   void OnApp_Init();
 
-  void OnDoc_Open(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                  const WideString& strTargetName);
-  void OnDoc_WillPrint(CPDFSDK_FormFillEnvironment* pFormFillEnv);
-  void OnDoc_DidPrint(CPDFSDK_FormFillEnvironment* pFormFillEnv);
-  void OnDoc_WillSave(CPDFSDK_FormFillEnvironment* pFormFillEnv);
-  void OnDoc_DidSave(CPDFSDK_FormFillEnvironment* pFormFillEnv);
-  void OnDoc_WillClose(CPDFSDK_FormFillEnvironment* pFormFillEnv);
+  void OnDoc_Open(const WideString& strTargetName);
+  void OnDoc_WillPrint();
+  void OnDoc_DidPrint();
+  void OnDoc_WillSave();
+  void OnDoc_DidSave();
+  void OnDoc_WillClose();
 
-  void OnPage_Open(CPDFSDK_FormFillEnvironment* pFormFillEnv);
-  void OnPage_Close(CPDFSDK_FormFillEnvironment* pFormFillEnv);
-  void OnPage_InView(CPDFSDK_FormFillEnvironment* pFormFillEnv);
-  void OnPage_OutView(CPDFSDK_FormFillEnvironment* pFormFillEnv);
+  void OnPage_Open();
+  void OnPage_Close();
+  void OnPage_InView();
+  void OnPage_OutView();
 
   void OnField_Calculate(CPDF_FormField* pSource,
                          CPDF_FormField* pTarget,
@@ -127,11 +126,10 @@ class CJS_EventRecorder {
   void OnScreen_OutView(bool bModifier, bool bShift, CPDFSDK_Annot* pScreen);
 
   void OnBookmark_MouseUp(const CPDF_Bookmark* pBookMark);
-  void OnLink_MouseUp(CPDFSDK_FormFillEnvironment* pFormFillEnv);
+  void OnLink_MouseUp();
 
-  void OnMenu_Exec(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                   const WideString& strTargetName);
-  void OnBatchExec(CPDFSDK_FormFillEnvironment* pFormFillEnv);
+  void OnMenu_Exec(const WideString& strTargetName);
+  void OnBatchExec();
   void OnConsole_Exec();
   void OnExternal_Exec();
 
@@ -160,7 +158,7 @@ class CJS_EventRecorder {
   WideString& Value() { return *m_pValue; }
   bool WillCommit() const { return m_bWillCommit; }
   CPDFSDK_FormFillEnvironment* GetFormFillEnvironment() const {
-    return m_pTargetFormFillEnv.Get();
+    return m_pFormFillEnv.Get();
   }
 
   void SetValueForTest(WideString* pStr) { m_pValue = pStr; }
@@ -194,7 +192,7 @@ class CJS_EventRecorder {
   bool m_bRcDu = false;
   UnownedPtr<bool> m_pbRc;
   UnownedPtr<const CPDF_Bookmark> m_pTargetBookMark;
-  ObservedPtr<CPDFSDK_FormFillEnvironment> m_pTargetFormFillEnv;
+  ObservedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
   ObservedPtr<CPDFSDK_Annot> m_pTargetAnnot;
 };
 
