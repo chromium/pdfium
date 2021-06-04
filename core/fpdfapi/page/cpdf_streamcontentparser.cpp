@@ -1043,7 +1043,7 @@ void CPDF_StreamContentParser::Handle_SetColorPS_Fill() {
 
   // A valid |pLastParam| implies |m_ParamCount| > 0, so GetNamedColors() call
   // below is safe.
-  RetainPtr<CPDF_Pattern> pPattern = FindPattern(GetString(0), false);
+  RetainPtr<CPDF_Pattern> pPattern = FindPattern(GetString(0));
   if (pPattern)
     m_pCurStates->m_ColorState.SetFillPattern(pPattern, GetNamedColors());
 }
@@ -1060,17 +1060,13 @@ void CPDF_StreamContentParser::Handle_SetColorPS_Stroke() {
 
   // A valid |pLastParam| implies |m_ParamCount| > 0, so GetNamedColors() call
   // below is safe.
-  RetainPtr<CPDF_Pattern> pPattern = FindPattern(GetString(0), false);
+  RetainPtr<CPDF_Pattern> pPattern = FindPattern(GetString(0));
   if (pPattern)
     m_pCurStates->m_ColorState.SetStrokePattern(pPattern, GetNamedColors());
 }
 
 void CPDF_StreamContentParser::Handle_ShadeFill() {
-  RetainPtr<CPDF_Pattern> pPattern = FindPattern(GetString(0), true);
-  if (!pPattern)
-    return;
-
-  CPDF_ShadingPattern* pShading = pPattern->AsShadingPattern();
+  RetainPtr<CPDF_ShadingPattern> pShading = FindShading(GetString(0));
   if (!pShading)
     return;
 
@@ -1079,12 +1075,12 @@ void CPDF_StreamContentParser::Handle_ShadeFill() {
 
   CFX_Matrix matrix = m_pCurStates->m_CTM * m_mtContentToUser;
   auto pObj = std::make_unique<CPDF_ShadingObject>(GetCurrentStreamIndex(),
-                                                   pShading, matrix);
+                                                   pShading.Get(), matrix);
   SetGraphicStates(pObj.get(), false, false, false);
   CFX_FloatRect bbox =
       pObj->m_ClipPath.HasRef() ? pObj->m_ClipPath.GetClipBox() : m_BBox;
   if (pShading->IsMeshShading())
-    bbox.Intersect(GetShadingBBox(pShading, pObj->matrix()));
+    bbox.Intersect(GetShadingBBox(pShading.Get(), pObj->matrix()));
   pObj->SetRect(bbox);
   m_pObjectHolder->AppendPageObject(std::move(pObj));
 }
@@ -1186,16 +1182,25 @@ RetainPtr<CPDF_ColorSpace> CPDF_StreamContentParser::FindColorSpace(
 }
 
 RetainPtr<CPDF_Pattern> CPDF_StreamContentParser::FindPattern(
-    const ByteString& name,
-    bool bShading) {
-  CPDF_Object* pPattern =
-      FindResourceObj(bShading ? "Shading" : "Pattern", name);
+    const ByteString& name) {
+  CPDF_Object* pPattern = FindResourceObj("Pattern", name);
   if (!pPattern || (!pPattern->IsDictionary() && !pPattern->IsStream())) {
     m_bResourceMissing = true;
     return nullptr;
   }
   return CPDF_DocPageData::FromDocument(m_pDocument.Get())
-      ->GetPattern(pPattern, bShading, m_pCurStates->m_ParentMatrix);
+      ->GetPattern(pPattern, m_pCurStates->m_ParentMatrix);
+}
+
+RetainPtr<CPDF_ShadingPattern> CPDF_StreamContentParser::FindShading(
+    const ByteString& name) {
+  CPDF_Object* pPattern = FindResourceObj("Shading", name);
+  if (!pPattern || (!pPattern->IsDictionary() && !pPattern->IsStream())) {
+    m_bResourceMissing = true;
+    return nullptr;
+  }
+  return CPDF_DocPageData::FromDocument(m_pDocument.Get())
+      ->GetShading(pPattern, m_pCurStates->m_ParentMatrix);
 }
 
 void CPDF_StreamContentParser::AddTextObject(const ByteString* pStrs,

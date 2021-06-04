@@ -74,8 +74,9 @@ class CPDF_DocPageData : public CPDF_Document::PageDataIface,
       std::set<const CPDF_Object*>* pVisited);
 
   RetainPtr<CPDF_Pattern> GetPattern(CPDF_Object* pPatternObj,
-                                     bool bShading,
                                      const CFX_Matrix& matrix);
+  RetainPtr<CPDF_ShadingPattern> GetShading(CPDF_Object* pPatternObj,
+                                            const CFX_Matrix& matrix);
 
   RetainPtr<CPDF_Image> GetImage(uint32_t dwStreamObjNum);
   void MaybePurgeImage(uint32_t dwStreamObjNum);
