@@ -73,7 +73,8 @@ class CFWL_DateTimePicker final : public CFWL_Widget {
   void ModifyEditStylesEx(uint32_t dwStylesExAdded, uint32_t dwStylesExRemoved);
 
   bool IsMonthCalendarVisible() const;
-  void ShowMonthCalendar(bool bActivate);
+  void ShowMonthCalendar();
+  void HideMonthCalendar();
   void ProcessSelChanged(int32_t iYear, int32_t iMonth, int32_t iDay);
 
  private:
@@ -94,6 +95,7 @@ class CFWL_DateTimePicker final : public CFWL_Widget {
   void OnMouseMove(CFWL_MessageMouse* pMsg);
   void OnMouseLeave(CFWL_MessageMouse* pMsg);
   bool NeedsToShowButton() const;
+  void RepaintInflatedMonthCalRect();
 
   bool m_bLBtnDown = false;
   int32_t m_iBtnState = 1;

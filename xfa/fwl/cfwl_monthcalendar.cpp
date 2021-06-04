@@ -687,7 +687,7 @@ void CFWL_MonthCalendar::OnLButtonUp(CFWL_MessageMouse* pMsg) {
     CFWL_DateTimePicker* pDateTime =
         static_cast<CFWL_DateTimePicker*>(GetOuter());
     pDateTime->ProcessSelChanged(m_iCurYear, m_iCurMonth, iCurSel);
-    pDateTime->ShowMonthCalendar(false);
+    pDateTime->HideMonthCalendar();
   }
 }
 

@@ -198,30 +198,38 @@ WideString CFWL_DateTimePicker::FormatDateString(int32_t iYear,
   return WideString::Format(L"%d Year %d Month %d Day", iYear, iMonth, iDay);
 }
 
-void CFWL_DateTimePicker::ShowMonthCalendar(bool bActivate) {
-  if (IsMonthCalendarVisible() == bActivate)
+void CFWL_DateTimePicker::ShowMonthCalendar() {
+  if (IsMonthCalendarVisible())
     return;
 
-  if (bActivate) {
-    CFX_RectF rtMonthCal = m_pMonthCal->GetAutosizedWidgetRect();
-    float fPopupMin = rtMonthCal.height;
-    float fPopupMax = rtMonthCal.height;
-    CFX_RectF rtAnchor = m_WidgetRect;
-    rtAnchor.width = rtMonthCal.width;
-    rtMonthCal.left = m_ClientRect.left;
-    rtMonthCal.top = rtAnchor.Height();
-    GetPopupPos(fPopupMin, fPopupMax, rtAnchor, &rtMonthCal);
-    m_pMonthCal->SetWidgetRect(rtMonthCal);
-    if (m_iYear > 0 && m_iMonth > 0 && m_iDay > 0)
-      m_pMonthCal->SetSelect(m_iYear, m_iMonth, m_iDay);
-    m_pMonthCal->Update();
-    m_pMonthCal->RemoveStates(FWL_WGTSTATE_Invisible);
-    CFWL_MessageSetFocus msg(m_pEdit, m_pMonthCal);
-    m_pEdit->GetDelegate()->OnProcessMessage(&msg);
-  } else {
-    m_pMonthCal->SetStates(FWL_WGTSTATE_Invisible);
-  }
+  CFX_RectF rtMonthCal = m_pMonthCal->GetAutosizedWidgetRect();
+  float fPopupMin = rtMonthCal.height;
+  float fPopupMax = rtMonthCal.height;
+  CFX_RectF rtAnchor = m_WidgetRect;
+  rtAnchor.width = rtMonthCal.width;
+  rtMonthCal.left = m_ClientRect.left;
+  rtMonthCal.top = rtAnchor.Height();
+  GetPopupPos(fPopupMin, fPopupMax, rtAnchor, &rtMonthCal);
+  m_pMonthCal->SetWidgetRect(rtMonthCal);
+  if (m_iYear > 0 && m_iMonth > 0 && m_iDay > 0)
+    m_pMonthCal->SetSelect(m_iYear, m_iMonth, m_iDay);
+  m_pMonthCal->Update();
+  m_pMonthCal->RemoveStates(FWL_WGTSTATE_Invisible);
 
+  CFWL_MessageSetFocus msg(m_pEdit, m_pMonthCal);
+  m_pEdit->GetDelegate()->OnProcessMessage(&msg);
+  RepaintInflatedMonthCalRect();
+}
+
+void CFWL_DateTimePicker::HideMonthCalendar() {
+  if (!IsMonthCalendarVisible())
+    return;
+
+  m_pMonthCal->SetStates(FWL_WGTSTATE_Invisible);
+  RepaintInflatedMonthCalRect();
+}
+
+void CFWL_DateTimePicker::RepaintInflatedMonthCalRect() {
   CFX_RectF rtInvalidate(0, 0, m_WidgetRect.width, m_WidgetRect.height);
   CFX_RectF rtCal = m_pMonthCal->GetWidgetRect();
   rtInvalidate.Union(rtCal);
@@ -359,8 +367,7 @@ void CFWL_DateTimePicker::OnFocusLost(CFWL_Message* pMsg) {
   CFX_RectF rtInvalidate(m_BtnRect);
   m_Properties.m_dwStates &= ~FWL_WGTSTATE_Focused;
   m_BtnRect = CFX_RectF();
-  if (IsMonthCalendarVisible())
-    ShowMonthCalendar(false);
+  HideMonthCalendar();
   if (m_pEdit->GetStates() & FWL_WGTSTATE_Focused) {
     pMsg->SetSrcTarget(m_pEdit);
     m_pEdit->GetDelegate()->OnProcessMessage(pMsg);
@@ -376,11 +383,10 @@ void CFWL_DateTimePicker::OnLButtonDown(CFWL_MessageMouse* pMsg) {
     return;
 
   if (IsMonthCalendarVisible()) {
-    ShowMonthCalendar(false);
+    HideMonthCalendar();
     return;
   }
-  ShowMonthCalendar(true);
-
+  ShowMonthCalendar();
   m_bLBtnDown = true;
   RepaintRect(m_ClientRect);
 }
