@@ -105,12 +105,12 @@ void CXFA_FFTextEdit::UpdateWidgetProperty() {
   Optional<int32_t> numCells = m_pNode->GetNumberOfCells();
   if (!numCells.has_value()) {
     pWidget->SetLimit(iMaxChars);
-  } else if (*numCells == 0) {
+  } else if (numCells == 0) {
     dwExtendedStyle |= FWL_STYLEEXT_EDT_CombText;
     pWidget->SetLimit(iMaxChars > 0 ? iMaxChars : 1);
   } else {
     dwExtendedStyle |= FWL_STYLEEXT_EDT_CombText;
-    pWidget->SetLimit(*numCells);
+    pWidget->SetLimit(numCells.value());
   }
 
   dwExtendedStyle |= GetAlignment();

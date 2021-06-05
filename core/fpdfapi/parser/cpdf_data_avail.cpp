@@ -497,8 +497,8 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckHeaderAndLinearized() {
   if (!header_offset.has_value())
     return kDataError;
 
-  m_parser.m_pSyntax =
-      std::make_unique<CPDF_SyntaxParser>(GetValidator(), *header_offset);
+  m_parser.m_pSyntax = std::make_unique<CPDF_SyntaxParser>(
+      GetValidator(), header_offset.value());
   m_pLinearized = m_parser.ParseLinearizedHeader();
   if (GetValidator()->has_read_problems())
     return kDataNotAvailable;

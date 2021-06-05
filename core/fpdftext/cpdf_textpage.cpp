@@ -624,7 +624,7 @@ void CPDF_TextPage::AppendGeneratedCharacter(wchar_t unicode,
   m_TextBuf.AppendChar(unicode);
   if (!formMatrix.IsIdentity())
     pGenerateChar->m_Matrix = formMatrix;
-  m_CharList.push_back(*pGenerateChar);
+  m_CharList.push_back(pGenerateChar.value());
 }
 
 void CPDF_TextPage::ProcessObject() {
@@ -986,7 +986,7 @@ void CPDF_TextPage::ProcessTextObject(const TransformedTextObject& obj) {
           if (!form_matrix.IsIdentity())
             pGenerateChar->m_Matrix = form_matrix;
           m_TempTextBuf.AppendChar(L' ');
-          m_TempCharList.push_back(*pGenerateChar);
+          m_TempCharList.push_back(pGenerateChar.value());
         }
         break;
       }

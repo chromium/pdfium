@@ -64,9 +64,9 @@ XFA_AttributeValue CXFA_Validate::GetFormatTest() {
 void CXFA_Validate::SetNullTest(const WideString& wsValue) {
   Optional<XFA_AttributeValue> item =
       XFA_GetAttributeValueByName(wsValue.AsStringView());
-  JSObject()->SetEnum(XFA_Attribute::NullTest,
-                      item.has_value() ? *item : XFA_AttributeValue::Disabled,
-                      false);
+  JSObject()->SetEnum(
+      XFA_Attribute::NullTest,
+      item.has_value() ? item.value() : XFA_AttributeValue::Disabled, false);
 }
 
 XFA_AttributeValue CXFA_Validate::GetNullTest() {

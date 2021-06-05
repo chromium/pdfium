@@ -197,55 +197,55 @@ void CXFA_FFBarcode::UpdateWidgetProperty() {
   Optional<WideString> encoding_string = barcode_->GetCharEncoding();
   if (encoding_string.has_value()) {
     Optional<BC_CHAR_ENCODING> encoding =
-        CharEncodingFromString(*encoding_string);
+        CharEncodingFromString(encoding_string.value());
     if (encoding.has_value())
-      pBarCodeWidget->SetCharEncoding(*encoding);
+      pBarCodeWidget->SetCharEncoding(encoding.value());
   }
 
   Optional<bool> calcChecksum = barcode_->GetChecksum();
   if (calcChecksum.has_value())
-    pBarCodeWidget->SetCalChecksum(*calcChecksum);
+    pBarCodeWidget->SetCalChecksum(calcChecksum.value());
 
   Optional<int32_t> dataLen = barcode_->GetDataLength();
   if (dataLen.has_value())
-    pBarCodeWidget->SetDataLength(*dataLen);
+    pBarCodeWidget->SetDataLength(dataLen.value());
 
   Optional<char> startChar = barcode_->GetStartChar();
   if (startChar.has_value())
-    pBarCodeWidget->SetStartChar(*startChar);
+    pBarCodeWidget->SetStartChar(startChar.value());
 
   Optional<char> endChar = barcode_->GetEndChar();
   if (endChar.has_value())
-    pBarCodeWidget->SetEndChar(*endChar);
+    pBarCodeWidget->SetEndChar(endChar.value());
 
   Optional<int32_t> ecLevel = barcode_->GetECLevel();
   if (ecLevel.has_value())
-    pBarCodeWidget->SetErrorCorrectionLevel(*ecLevel);
+    pBarCodeWidget->SetErrorCorrectionLevel(ecLevel.value());
 
   Optional<int32_t> width = barcode_->GetModuleWidth();
   if (width.has_value())
-    pBarCodeWidget->SetModuleWidth(*width);
+    pBarCodeWidget->SetModuleWidth(width.value());
 
   Optional<int32_t> height = barcode_->GetModuleHeight();
   if (height.has_value())
-    pBarCodeWidget->SetModuleHeight(*height);
+    pBarCodeWidget->SetModuleHeight(height.value());
 
   Optional<bool> printCheck = barcode_->GetPrintChecksum();
   if (printCheck.has_value())
-    pBarCodeWidget->SetPrintChecksum(*printCheck);
+    pBarCodeWidget->SetPrintChecksum(printCheck.value());
 
   Optional<XFA_AttributeValue> text_attr = barcode_->GetTextLocation();
   if (text_attr.has_value()) {
-    Optional<BC_TEXT_LOC> textLoc = TextLocFromAttribute(*text_attr);
+    Optional<BC_TEXT_LOC> textLoc = TextLocFromAttribute(text_attr.value());
     if (textLoc.has_value())
-      pBarCodeWidget->SetTextLocation(*textLoc);
+      pBarCodeWidget->SetTextLocation(textLoc.value());
   }
 
   // Truncated is currently not a supported flag.
 
   Optional<int8_t> ratio = barcode_->GetWideNarrowRatio();
   if (ratio.has_value())
-    pBarCodeWidget->SetWideNarrowRatio(*ratio);
+    pBarCodeWidget->SetWideNarrowRatio(ratio.value());
 
   if (info->eName == BarcodeType::code3Of9 ||
       info->eName == BarcodeType::ean8 || info->eName == BarcodeType::ean13 ||

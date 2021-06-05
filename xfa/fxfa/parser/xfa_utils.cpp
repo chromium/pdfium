@@ -148,7 +148,7 @@ void SaveAttribute(CXFA_Node* pNode,
   wsOutput += L" ";
   wsOutput += wsName;
   wsOutput += L"=\"";
-  wsOutput += ExportEncodeAttribute(*value);
+  wsOutput += ExportEncodeAttribute(value.value());
   wsOutput += L"\"";
 }
 
@@ -366,7 +366,8 @@ WideString RecognizeXFAVersionNumber(CXFA_Node* pTemplateRoot) {
     return WideString();
 
   XFA_VERSION eVersion =
-      pTemplateRoot->GetDocument()->RecognizeXFAVersionNumber(*templateNS);
+      pTemplateRoot->GetDocument()->RecognizeXFAVersionNumber(
+          templateNS.value());
   if (eVersion == XFA_VERSION_UNKNOWN)
     eVersion = XFA_VERSION_DEFAULT;
 

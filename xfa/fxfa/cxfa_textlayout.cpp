@@ -813,7 +813,7 @@ bool CXFA_TextLayout::LoadRichText(
           Optional<WideString> obj =
               m_pTextParser->GetEmbeddedObj(m_pTextProvider, pXMLNode);
           if (obj.has_value())
-            wsText = *obj;
+            wsText = obj.value();
         }
       }
 

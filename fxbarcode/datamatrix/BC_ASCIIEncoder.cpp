@@ -72,7 +72,7 @@ bool CBC_ASCIIEncoder::Encode(CBC_EncoderContext* context) {
     if (!code.has_value())
       return false;
 
-    context->writeCodeword(*code);
+    context->writeCodeword(code.value());
     context->m_pos += 2;
     return true;
   }

@@ -85,15 +85,14 @@ bool CPDF_StitchFunc::v_Init(const CPDF_Object* pObj,
         return false;
 
       if (nOutputs.has_value()) {
-        if (nFuncOutputs != *nOutputs)
+        if (nOutputs != nFuncOutputs)
           return false;
       } else {
         nOutputs = nFuncOutputs;
       }
-
       m_pSubFunctions.push_back(std::move(pFunc));
     }
-    m_nOutputs = *nOutputs;
+    m_nOutputs = nOutputs.value();
   }
 
   m_bounds.reserve(nSubs + 1);

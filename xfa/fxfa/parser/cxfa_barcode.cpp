@@ -74,7 +74,7 @@ Optional<bool> CXFA_Barcode::GetChecksum() {
   if (!checksum.has_value())
     return pdfium::nullopt;
 
-  switch (*checksum) {
+  switch (checksum.value()) {
     case XFA_AttributeValue::None:
       return {false};
     case XFA_AttributeValue::Auto:
@@ -103,7 +103,7 @@ Optional<char> CXFA_Barcode::GetStartChar() {
   if (!wsStartEndChar.has_value() || wsStartEndChar->IsEmpty())
     return pdfium::nullopt;
 
-  return static_cast<char>((*wsStartEndChar)[0]);
+  return static_cast<char>(wsStartEndChar.value()[0]);
 }
 
 Optional<char> CXFA_Barcode::GetEndChar() {
@@ -112,7 +112,7 @@ Optional<char> CXFA_Barcode::GetEndChar() {
   if (!wsStartEndChar.has_value() || wsStartEndChar->IsEmpty())
     return pdfium::nullopt;
 
-  return static_cast<char>((*wsStartEndChar)[0]);
+  return static_cast<char>(wsStartEndChar.value()[0]);
 }
 
 Optional<int32_t> CXFA_Barcode::GetECLevel() {
@@ -164,12 +164,13 @@ Optional<int8_t> CXFA_Barcode::GetWideNarrowRatio() {
     return static_cast<int8_t>(FXSYS_wtoi(wsWideNarrowRatio->c_str()));
 
   int32_t fB = FXSYS_wtoi(
-      wsWideNarrowRatio->Last(wsWideNarrowRatio->GetLength() - (*ptPos + 1))
+      wsWideNarrowRatio
+          ->Last(wsWideNarrowRatio->GetLength() - (ptPos.value() + 1))
           .c_str());
   if (!fB)
     return 0;
 
-  int32_t fA = FXSYS_wtoi(wsWideNarrowRatio->First(*ptPos).c_str());
+  int32_t fA = FXSYS_wtoi(wsWideNarrowRatio->First(ptPos.value()).c_str());
   float result = static_cast<float>(fA) / static_cast<float>(fB);
   return static_cast<int8_t>(result);
 }

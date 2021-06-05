@@ -1012,7 +1012,7 @@ FPDF_VIEWERREF_GetName(FPDF_DOCUMENT document,
   if (!bsVal.has_value())
     return 0;
 
-  return NulTerminateMaybeCopyAndReturnLength(*bsVal, buffer, length);
+  return NulTerminateMaybeCopyAndReturnLength(bsVal.value(), buffer, length);
 }
 
 FPDF_EXPORT FPDF_DWORD FPDF_CALLCONV

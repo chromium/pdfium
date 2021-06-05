@@ -860,7 +860,7 @@ void CPDF_FormField::LoadDA() {
   if (!font_name.has_value())
     return;
 
-  CPDF_Dictionary* pFontDict = pFont->GetDictFor(*font_name);
+  CPDF_Dictionary* pFontDict = pFont->GetDictFor(font_name.value());
   if (!pFontDict)
     return;
 

@@ -210,7 +210,8 @@ void CJX_Object::SetAttributeByEnum(XFA_Attribute eAttr,
       Optional<XFA_AttributeValue> item =
           XFA_GetAttributeValueByName(wsValue.AsStringView());
       SetEnum(eAttr,
-              item.has_value() ? *item : *(GetXFANode()->GetDefaultEnum(eAttr)),
+              item.has_value() ? item.value()
+                               : GetXFANode()->GetDefaultEnum(eAttr).value(),
               bNotify);
       break;
     }
@@ -266,7 +267,7 @@ Optional<WideString> CJX_Object::TryAttribute(XFA_Attribute eAttr,
       Optional<XFA_AttributeValue> value = TryEnum(eAttr, bUseDefault);
       if (!value.has_value())
         return pdfium::nullopt;
-      return WideString::FromASCII(XFA_AttributeValueToName(*value));
+      return WideString::FromASCII(XFA_AttributeValueToName(value.value()));
     }
     case XFA_AttributeType::CData:
       return TryCData(eAttr, bUseDefault);
@@ -275,13 +276,13 @@ Optional<WideString> CJX_Object::TryAttribute(XFA_Attribute eAttr,
       Optional<bool> value = TryBoolean(eAttr, bUseDefault);
       if (!value.has_value())
         return pdfium::nullopt;
-      return WideString(*value ? L"1" : L"0");
+      return WideString(value.value() ? L"1" : L"0");
     }
     case XFA_AttributeType::Integer: {
       Optional<int32_t> iValue = TryInteger(eAttr, bUseDefault);
       if (!iValue.has_value())
         return pdfium::nullopt;
-      return WideString::Format(L"%d", *iValue);
+      return WideString::Format(L"%d", iValue.value());
     }
     case XFA_AttributeType::Measure: {
       Optional<CXFA_Measurement> value = TryMeasure(eAttr, bUseDefault);
@@ -614,7 +615,7 @@ void CJX_Object::SetContent(const WideString& wsContent,
         Optional<WideString> ret =
             TryAttribute(XFA_Attribute::ContentType, false);
         if (ret.has_value())
-          wsContentType = *ret;
+          wsContentType = ret.value();
         if (wsContentType.EqualsASCII("text/html")) {
           wsContentType.clear();
           SetAttributeByEnum(XFA_Attribute::ContentType, wsContentType, false);

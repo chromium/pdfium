@@ -341,7 +341,7 @@ XFA_AttributeValue GetLayout(CXFA_Node* pFormNode, bool* bRootForceTb) {
   Optional<XFA_AttributeValue> layoutMode =
       pFormNode->JSObject()->TryEnum(XFA_Attribute::Layout, false);
   if (layoutMode.has_value())
-    return *layoutMode;
+    return layoutMode.value();
 
   CXFA_Node* pParentNode = pFormNode->GetParent();
   if (pParentNode && pParentNode->GetElementType() == XFA_Element::Form) {
@@ -369,11 +369,9 @@ bool ExistContainerKeep(CXFA_Node* pCurNode, bool bPreFind) {
 
     Optional<XFA_AttributeValue> previous =
         pKeep->JSObject()->TryEnum(eKeepType, false);
-    if (previous.has_value()) {
-      if (*previous == XFA_AttributeValue::ContentArea ||
-          *previous == XFA_AttributeValue::PageArea) {
-        return true;
-      }
+    if (previous == XFA_AttributeValue::ContentArea ||
+        previous == XFA_AttributeValue::PageArea) {
+      return true;
     }
   }
 
@@ -387,10 +385,8 @@ bool ExistContainerKeep(CXFA_Node* pCurNode, bool bPreFind) {
 
   Optional<XFA_AttributeValue> next =
       pKeep->JSObject()->TryEnum(eKeepType, false);
-  if (!next.has_value())
-    return false;
-  if (*next == XFA_AttributeValue::ContentArea ||
-      *next == XFA_AttributeValue::PageArea) {
+  if (next == XFA_AttributeValue::ContentArea ||
+      next == XFA_AttributeValue::PageArea) {
     return true;
   }
   return false;

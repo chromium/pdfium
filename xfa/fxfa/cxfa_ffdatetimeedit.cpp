@@ -93,9 +93,9 @@ void CXFA_FFDateTimeEdit::UpdateWidgetProperty() {
 
   uint32_t dwEditStyles = 0;
   Optional<int32_t> numCells = m_pNode->GetNumberOfCells();
-  if (numCells.has_value() && *numCells > 0) {
+  if (numCells.has_value() && numCells.value() > 0) {
     dwEditStyles |= FWL_STYLEEXT_EDT_CombText;
-    pPicker->SetEditLimit(*numCells);
+    pPicker->SetEditLimit(numCells.value());
   }
   if (!m_pNode->IsOpenAccess() || !GetDoc()->GetXFADoc()->IsInteractive())
     dwEditStyles |= FWL_STYLEEXT_EDT_ReadOnly;
