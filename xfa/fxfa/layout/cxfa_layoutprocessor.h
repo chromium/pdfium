@@ -41,7 +41,8 @@ class CXFA_LayoutProcessor : public CXFA_Document::LayoutProcessorIface {
   void AddChangedContainer(CXFA_Node* pContainer) override;
 
   cppgc::Heap* GetHeap() { return m_pHeap.Get(); }
-  int32_t StartLayout(bool bForceRestart);
+  int32_t StartLayout();
+  int32_t RestartLayout();
   int32_t DoLayout();
   bool IncrementLayout();
   int32_t CountPages() const;
