@@ -171,7 +171,7 @@ Optional<pdfium::span<const uint8_t>> CFX_FontMgr::GetBuiltinFont(
     return pdfium::make_span(g_MMFonts[mm_index].m_pFontData,
                              g_MMFonts[mm_index].m_dwSize);
   }
-  return {};
+  return pdfium::nullopt;
 }
 
 bool CFX_FontMgr::FreeTypeVersionSupportsHinting() const {

@@ -288,7 +288,7 @@ void CPDFSDK_InteractiveForm::OnCalculate(CPDF_FormField* pFormField) {
 Optional<WideString> CPDFSDK_InteractiveForm::OnFormat(
     CPDF_FormField* pFormField) {
   if (!m_pFormFillEnv->IsJSPlatformPresent())
-    return {};
+    return pdfium::nullopt;
 
   WideString sValue = pFormField->GetValue();
   IJS_Runtime* pRuntime = m_pFormFillEnv->GetIJSRuntime();
@@ -313,7 +313,7 @@ Optional<WideString> CPDFSDK_InteractiveForm::OnFormat(
       }
     }
   }
-  return {};
+  return pdfium::nullopt;
 }
 
 void CPDFSDK_InteractiveForm::ResetFieldAppearance(

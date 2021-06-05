@@ -265,7 +265,7 @@ Optional<WideString> CJX_Object::TryAttribute(XFA_Attribute eAttr,
     case XFA_AttributeType::Enum: {
       Optional<XFA_AttributeValue> value = TryEnum(eAttr, bUseDefault);
       if (!value.has_value())
-        return {};
+        return pdfium::nullopt;
       return WideString::FromASCII(XFA_AttributeValueToName(*value));
     }
     case XFA_AttributeType::CData:
@@ -274,26 +274,25 @@ Optional<WideString> CJX_Object::TryAttribute(XFA_Attribute eAttr,
     case XFA_AttributeType::Boolean: {
       Optional<bool> value = TryBoolean(eAttr, bUseDefault);
       if (!value.has_value())
-        return {};
+        return pdfium::nullopt;
       return WideString(*value ? L"1" : L"0");
     }
     case XFA_AttributeType::Integer: {
       Optional<int32_t> iValue = TryInteger(eAttr, bUseDefault);
       if (!iValue.has_value())
-        return {};
+        return pdfium::nullopt;
       return WideString::Format(L"%d", *iValue);
     }
     case XFA_AttributeType::Measure: {
       Optional<CXFA_Measurement> value = TryMeasure(eAttr, bUseDefault);
       if (!value.has_value())
-        return {};
-
+        return pdfium::nullopt;
       return value->ToString();
     }
     default:
       break;
   }
-  return {};
+  return pdfium::nullopt;
 }
 
 void CJX_Object::RemoveAttribute(WideStringView wsAttr) {
@@ -690,16 +689,16 @@ Optional<WideString> CJX_Object::TryContent(bool bScriptModify,
         CXFA_Value* pValue =
             GetXFANode()->GetChild<CXFA_Value>(0, XFA_Element::Value, false);
         if (!pValue)
-          return {};
+          return pdfium::nullopt;
 
         CXFA_Node* pChildValue = pValue->GetFirstChild();
         if (pChildValue && XFA_FieldIsMultiListBox(GetXFANode())) {
           pChildValue->JSObject()->SetAttributeByEnum(
               XFA_Attribute::ContentType, L"text/xml", false);
         }
-        if (pChildValue)
-          return pChildValue->JSObject()->TryContent(bScriptModify, bProto);
-        return {};
+        if (!pChildValue)
+          return pdfium::nullopt;
+        return pChildValue->JSObject()->TryContent(bScriptModify, bProto);
       }
       break;
     case XFA_ObjectType::ContentNode: {
@@ -738,7 +737,7 @@ Optional<WideString> CJX_Object::TryContent(bool bScriptModify,
     }
     return TryCData(XFA_Attribute::Value, false);
   }
-  return {};
+  return pdfium::nullopt;
 }
 
 Optional<WideString> CJX_Object::TryNamespace() const {
@@ -747,7 +746,7 @@ Optional<WideString> CJX_Object::TryNamespace() const {
     CFX_XMLNode* pXMLNode = GetXFANode()->GetXMLMappingNode();
     CFX_XMLElement* element = ToXMLElement(pXMLNode);
     if (!element)
-      return {};
+      return pdfium::nullopt;
 
     return element->GetNamespaceURI();
   }
@@ -758,14 +757,14 @@ Optional<WideString> CJX_Object::TryNamespace() const {
   CFX_XMLNode* pXMLNode = GetXFANode()->GetXMLMappingNode();
   CFX_XMLElement* element = ToXMLElement(pXMLNode);
   if (!element)
-    return {};
+    return pdfium::nullopt;
 
   if (GetXFANode()->GetElementType() == XFA_Element::DataValue &&
       GetEnum(XFA_Attribute::Contains) == XFA_AttributeValue::MetaData) {
     WideString wsNamespace;
     if (!XFA_FDEExtension_ResolveNamespaceQualifier(
             element, GetCData(XFA_Attribute::QualifiedName), &wsNamespace)) {
-      return {};
+      return pdfium::nullopt;
     }
     return wsNamespace;
   }

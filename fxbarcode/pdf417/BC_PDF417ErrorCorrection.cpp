@@ -138,7 +138,7 @@ Optional<WideString> CBC_PDF417ErrorCorrection::GenerateErrorCorrection(
     int32_t errorCorrectionLevel) {
   int32_t k = GetErrorCorrectionCodewordCount(errorCorrectionLevel);
   if (k < 0)
-    return {};
+    return pdfium::nullopt;
 
   std::vector<wchar_t, FxAllocAllocator<wchar_t>> ech(k);
   size_t sld = dataCodewords.GetLength();

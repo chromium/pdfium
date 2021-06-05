@@ -53,9 +53,9 @@ const CPDF_Object* GetFieldAttrRecursive(const CPDF_Dictionary* pFieldDict,
 Optional<FormFieldType> CPDF_FormField::IntToFormFieldType(int value) {
   if (value >= static_cast<int>(FormFieldType::kUnknown) &&
       value < static_cast<int>(kFormFieldTypeCount)) {
-    return {static_cast<FormFieldType>(value)};
+    return static_cast<FormFieldType>(value);
   }
-  return {};
+  return pdfium::nullopt;
 }
 
 // static

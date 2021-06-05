@@ -20,13 +20,13 @@ Optional<CFX_Point> TextGlyphPos::GetOrigin(const CFX_Point& offset) const {
   left += m_pGlyph->left();
   left -= offset.x;
   if (!left.IsValid())
-    return {};
+    return pdfium::nullopt;
 
   FX_SAFE_INT32 top = m_Origin.y;
   top -= m_pGlyph->top();
   top -= offset.y;
   if (!top.IsValid())
-    return {};
+    return pdfium::nullopt;
 
   return CFX_Point(left.ValueOrDie(), top.ValueOrDie());
 }

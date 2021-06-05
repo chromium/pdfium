@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <limits>
 #include <utility>
+#include <vector>
 
 #include "core/fxcodec/jpx/jpx_decode_utils.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -60,15 +61,15 @@ Optional<OpjImageRgbData> alloc_rgb(size_t size) {
   OpjImageRgbData data;
   data.r.reset(static_cast<int*>(opj_image_data_alloc(size)));
   if (!data.r)
-    return {};
+    return pdfium::nullopt;
 
   data.g.reset(static_cast<int*>(opj_image_data_alloc(size)));
   if (!data.g)
-    return {};
+    return pdfium::nullopt;
 
   data.b.reset(static_cast<int*>(opj_image_data_alloc(size)));
   if (!data.b)
-    return {};
+    return pdfium::nullopt;
 
   return data;
 }

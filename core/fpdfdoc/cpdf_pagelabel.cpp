@@ -80,18 +80,18 @@ CPDF_PageLabel::~CPDF_PageLabel() = default;
 
 Optional<WideString> CPDF_PageLabel::GetLabel(int nPage) const {
   if (!m_pDocument)
-    return {};
+    return pdfium::nullopt;
 
   if (nPage < 0 || nPage >= m_pDocument->GetPageCount())
-    return {};
+    return pdfium::nullopt;
 
   const CPDF_Dictionary* pPDFRoot = m_pDocument->GetRoot();
   if (!pPDFRoot)
-    return {};
+    return pdfium::nullopt;
 
   const CPDF_Dictionary* pLabels = pPDFRoot->GetDictFor("PageLabels");
   if (!pLabels)
-    return {};
+    return pdfium::nullopt;
 
   CPDF_NumberTree numberTree(pLabels);
   const CPDF_Object* pValue = nullptr;
@@ -114,9 +114,9 @@ Optional<WideString> CPDF_PageLabel::GetLabel(int nPage) const {
       int nLabelNum = nPage - n + pLabel->GetIntegerFor("St", 1);
       WideString wsNumPortion = GetLabelNumPortion(nLabelNum, bsNumberingStyle);
       label += wsNumPortion;
-      return {label};
+      return label;
     }
   }
   label = WideString::Format(L"%d", nPage + 1);
-  return {label};
+  return label;
 }

@@ -177,7 +177,7 @@ Optional<XFA_PACKETINFO> XFA_GetPacketByName(WideStringView wsName) {
       [](const PacketRecord& a, uint32_t hash) { return a.hash < hash; });
   if (elem != std::end(g_PacketTable) && elem->name == wsName)
     return XFA_GetPacketByIndex(elem->packet_type);
-  return {};
+  return pdfium::nullopt;
 }
 
 ByteStringView XFA_ElementToName(XFA_Element elem) {
@@ -245,7 +245,7 @@ Optional<XFA_SCRIPTATTRIBUTEINFO> XFA_GetScriptAttributeByName(
     WideStringView attribute_name) {
   Optional<XFA_ATTRIBUTEINFO> attr = XFA_GetAttributeByName(attribute_name);
   if (!attr.has_value())
-    return {};
+    return pdfium::nullopt;
 
   while (element != XFA_Element::Unknown) {
     auto compound_key = std::make_pair(element, attr.value().attribute);
@@ -267,5 +267,5 @@ Optional<XFA_SCRIPTATTRIBUTEINFO> XFA_GetScriptAttributeByName(
     }
     element = kElementRecords[static_cast<size_t>(element)].parent;
   }
-  return {};
+  return pdfium::nullopt;
 }

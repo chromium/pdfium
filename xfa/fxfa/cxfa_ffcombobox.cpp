@@ -259,7 +259,7 @@ Optional<WideString> CXFA_FFComboBox::Copy() {
 
 Optional<WideString> CXFA_FFComboBox::Cut() {
   if (!m_pNode->IsChoiceListAllowTextEntry())
-    return {};
+    return pdfium::nullopt;
 
   return ToComboBox(GetNormalWidget())->EditCut();
 }

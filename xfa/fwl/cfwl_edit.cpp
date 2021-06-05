@@ -205,18 +205,18 @@ void CFWL_Edit::SetAliasChar(wchar_t wAlias) {
 
 Optional<WideString> CFWL_Edit::Copy() {
   if (!m_pEditEngine->HasSelection())
-    return {};
+    return pdfium::nullopt;
 
-  return {m_pEditEngine->GetSelectedText()};
+  return m_pEditEngine->GetSelectedText();
 }
 
 Optional<WideString> CFWL_Edit::Cut() {
   if (!m_pEditEngine->HasSelection())
-    return {};
+    return pdfium::nullopt;
 
   WideString cut_text = m_pEditEngine->DeleteSelectedText();
   UpdateCaret();
-  return {cut_text};
+  return cut_text;
 }
 
 bool CFWL_Edit::Paste(const WideString& wsPaste) {

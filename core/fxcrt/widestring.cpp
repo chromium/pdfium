@@ -254,7 +254,7 @@ Optional<WideString> TryVSWPrintf(size_t size,
                                   const wchar_t* pFormat,
                                   va_list argList) {
   if (!size)
-    return {};
+    return pdfium::nullopt;
 
   WideString str;
   {
@@ -272,10 +272,10 @@ Optional<WideString> TryVSWPrintf(size_t size,
 
     bool bSufficientBuffer = ret >= 0 || buffer[size - 1] == 0;
     if (!bSufficientBuffer)
-      return {};
+      return pdfium::nullopt;
   }
   str.ReleaseBuffer(str.GetStringLength());
-  return {str};
+  return str;
 }
 
 }  // namespace

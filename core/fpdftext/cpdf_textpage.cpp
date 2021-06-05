@@ -1427,7 +1427,7 @@ Optional<CPDF_TextPage::CharInfo> CPDF_TextPage::GenerateCharInfo(
     wchar_t unicode) {
   const CharInfo* pPrevCharInfo = GetPrevCharInfo();
   if (!pPrevCharInfo)
-    return {};
+    return pdfium::nullopt;
 
   CharInfo info;
   info.m_Index = m_TextBuf.GetLength();

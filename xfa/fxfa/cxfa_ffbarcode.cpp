@@ -94,7 +94,7 @@ Optional<BC_CHAR_ENCODING> CharEncodingFromString(const WideString& value) {
     return CHAR_ENCODING_UNICODE;
   if (value.CompareNoCase(L"UTF-8"))
     return CHAR_ENCODING_UTF8;
-  return {};
+  return pdfium::nullopt;
 }
 
 Optional<BC_TEXT_LOC> TextLocFromAttribute(XFA_AttributeValue value) {
@@ -110,7 +110,7 @@ Optional<BC_TEXT_LOC> TextLocFromAttribute(XFA_AttributeValue value) {
     case XFA_AttributeValue::BelowEmbedded:
       return BC_TEXT_LOC_BELOWEMBED;
     default:
-      return {};
+      return pdfium::nullopt;
   }
 }
 

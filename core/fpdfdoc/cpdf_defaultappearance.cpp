@@ -67,7 +67,7 @@ CPDF_DefaultAppearance::~CPDF_DefaultAppearance() = default;
 Optional<ByteString> CPDF_DefaultAppearance::GetFont(float* fFontSize) {
   *fFontSize = 0.0f;
   if (m_csDA.IsEmpty())
-    return {};
+    return pdfium::nullopt;
 
   ByteString csFontNameTag;
   CPDF_SimpleParser syntax(m_csDA.AsStringView().raw_span());
@@ -76,12 +76,12 @@ Optional<ByteString> CPDF_DefaultAppearance::GetFont(float* fFontSize) {
     csFontNameTag.Delete(0, 1);
     *fFontSize = StringToFloat(syntax.GetWord());
   }
-  return {PDF_NameDecode(csFontNameTag.AsStringView())};
+  return PDF_NameDecode(csFontNameTag.AsStringView());
 }
 
 Optional<CFX_Color> CPDF_DefaultAppearance::GetColor() const {
   if (m_csDA.IsEmpty())
-    return {};
+    return pdfium::nullopt;
 
   float fc[4];
   CPDF_SimpleParser syntax(m_csDA.AsStringView().raw_span());
@@ -102,7 +102,7 @@ Optional<CFX_Color> CPDF_DefaultAppearance::GetColor() const {
     fc[3] = StringToFloat(syntax.GetWord());
     return CFX_Color(CFX_Color::Type::kCMYK, fc[0], fc[1], fc[2], fc[3]);
   }
-  return {};
+  return pdfium::nullopt;
 }
 
 Optional<std::pair<CFX_Color::Type, FX_ARGB>>

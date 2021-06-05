@@ -382,7 +382,7 @@ Optional<size_t> CBC_PDF417HighLevelEncoder::DetermineConsecutiveBinaryCount(
       return idx - startpos;
     ch = msg[idx];
     if (bytes[idx] == 63 && ch != '?')
-      return {};
+      return pdfium::nullopt;
     idx++;
   }
   return idx - startpos;

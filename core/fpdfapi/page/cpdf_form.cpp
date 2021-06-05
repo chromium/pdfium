@@ -7,6 +7,7 @@
 #include "core/fpdfapi/page/cpdf_form.h"
 
 #include <algorithm>
+#include <memory>
 
 #include "core/fpdfapi/page/cpdf_contentparser.h"
 #include "core/fpdfapi/page/cpdf_imageobject.h"
@@ -108,11 +109,11 @@ const CPDF_Stream* CPDF_Form::GetStream() const {
 Optional<std::pair<RetainPtr<CFX_DIBitmap>, CFX_Matrix>>
 CPDF_Form::GetBitmapAndMatrixFromSoleImageOfForm() const {
   if (GetPageObjectCount() != 1)
-    return {};
+    return pdfium::nullopt;
 
   CPDF_ImageObject* pImageObject = (*begin())->AsImage();
   if (!pImageObject)
-    return {};
+    return pdfium::nullopt;
 
   return {{pImageObject->GetIndependentBitmap(), pImageObject->matrix()}};
 }

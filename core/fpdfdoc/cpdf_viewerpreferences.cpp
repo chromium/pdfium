@@ -44,11 +44,11 @@ Optional<ByteString> CPDF_ViewerPreferences::GenericName(
     const ByteString& bsKey) const {
   const CPDF_Dictionary* pDict = GetViewerPreferences();
   if (!pDict)
-    return {};
+    return pdfium::nullopt;
 
   const CPDF_Name* pName = ToName(pDict->GetObjectFor(bsKey));
   if (!pName)
-    return {};
+    return pdfium::nullopt;
 
   return pName->GetString();
 }
