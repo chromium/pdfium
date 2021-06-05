@@ -1492,34 +1492,29 @@ void CPDF_StreamContentParser::AddPathObject(
 }
 
 uint32_t CPDF_StreamContentParser::Parse(
-    const uint8_t* pData,
-    uint32_t dwSize,
+    pdfium::span<const uint8_t> pData,
     uint32_t start_offset,
     uint32_t max_cost,
     const std::vector<uint32_t>& stream_start_offsets) {
-  DCHECK(start_offset < dwSize);
+  DCHECK(start_offset < pData.size());
 
-  // Parsing will be done from |pDataStart|, for at most |size_left| bytes.
-  const uint8_t* pDataStart = pData + start_offset;
-  uint32_t size_left = dwSize - start_offset;
-
+  // Parsing will be done from within |pDataStart|.
+  pdfium::span<const uint8_t> pDataStart = pData.subspan(start_offset);
   m_StartParseOffset = start_offset;
-
   if (m_ParsedSet->size() > kMaxFormLevel ||
-      pdfium::Contains(*m_ParsedSet, pDataStart)) {
-    return size_left;
+      pdfium::Contains(*m_ParsedSet, pDataStart.data())) {
+    return pDataStart.size();
   }
 
   m_StreamStartOffsets = stream_start_offsets;
 
   ScopedSetInsertion<const uint8_t*> scopedInsert(m_ParsedSet.Get(),
-                                                  pDataStart);
+                                                  pDataStart.data());
 
   uint32_t init_obj_count = m_pObjectHolder->GetPageObjectCount();
   AutoNuller<std::unique_ptr<CPDF_StreamParser>> auto_clearer(&m_pSyntax);
   m_pSyntax = std::make_unique<CPDF_StreamParser>(
-      pdfium::make_span(pDataStart, size_left),
-      m_pDocument->GetByteStringPool());
+      pDataStart, m_pDocument->GetByteStringPool());
 
   while (1) {
     uint32_t cost = m_pObjectHolder->GetPageObjectCount() - init_obj_count;

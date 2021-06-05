@@ -200,7 +200,7 @@ CPDF_ContentParser::Stage CPDF_ContentParser::Parse() {
     m_StreamSegmentOffsets.push_back(0);
 
   static constexpr uint32_t kParseStepLimit = 100;
-  m_CurrentOffset += m_pParser->Parse(m_pData.Get(), m_Size, m_CurrentOffset,
+  m_CurrentOffset += m_pParser->Parse({m_pData.Get(), m_Size}, m_CurrentOffset,
                                       kParseStepLimit, m_StreamSegmentOffsets);
   return Stage::kParse;
 }
