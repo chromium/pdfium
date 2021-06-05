@@ -17,6 +17,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_face.h"
 #include "core/fxge/fx_freetype.h"
+#include "third_party/base/optional.h"
 #include "third_party/base/span.h"
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
@@ -86,7 +87,7 @@ class CFX_Font {
   int GetGlyphWidth(uint32_t glyph_index);
   int GetAscent() const;
   int GetDescent() const;
-  bool GetGlyphBBox(uint32_t glyph_index, FX_RECT* pBBox);
+  Optional<FX_RECT> GetGlyphBBox(uint32_t glyph_index);
   bool IsItalic() const;
   bool IsBold() const;
   bool IsFixedWidth() const;
@@ -99,7 +100,7 @@ class CFX_Font {
   ByteString GetFaceName() const;
   ByteString GetBaseFontName(bool restrict_to_psname) const;
   bool IsTTFont() const;
-  bool GetBBox(FX_RECT* pBBox);
+  Optional<FX_RECT> GetBBox();
   bool IsEmbedded() const { return m_bEmbedded; }
   uint8_t* GetSubData() const { return m_pGsubData.get(); }
   void SetSubData(uint8_t* data) { m_pGsubData.reset(data); }

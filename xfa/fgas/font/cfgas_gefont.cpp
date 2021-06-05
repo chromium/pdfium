@@ -182,33 +182,29 @@ bool CFGAS_GEFont::GetCharWidth(wchar_t wUnicode, int32_t* pWidth) {
   return *pWidth > 0;
 }
 
-bool CFGAS_GEFont::GetCharBBox(wchar_t wUnicode, FX_RECT* bbox) {
+Optional<FX_RECT> CFGAS_GEFont::GetCharBBox(wchar_t wUnicode) {
   auto it = m_BBoxMap.find(wUnicode);
-  if (it != m_BBoxMap.end()) {
-    *bbox = it->second;
-    return true;
-  }
+  if (it != m_BBoxMap.end())
+    return it->second;
 
   RetainPtr<CFGAS_GEFont> pFont;
   int32_t iGlyph;
   std::tie(iGlyph, pFont) = GetGlyphIndexAndFont(wUnicode, true);
   if (!pFont || iGlyph == 0xFFFF)
-    return false;
+    return pdfium::nullopt;
 
   if (pFont.Get() != this)
-    return pFont->GetCharBBox(wUnicode, bbox);
+    return pFont->GetCharBBox(wUnicode);
 
-  FX_RECT rtBBox;
-  if (!m_pFont->GetGlyphBBox(iGlyph, &rtBBox))
-    return false;
+  Optional<FX_RECT> rtBBox = m_pFont->GetGlyphBBox(iGlyph);
+  if (rtBBox.has_value())
+    m_BBoxMap[wUnicode] = rtBBox.value();
 
-  m_BBoxMap[wUnicode] = rtBBox;
-  *bbox = rtBBox;
-  return true;
+  return rtBBox;
 }
 
-bool CFGAS_GEFont::GetBBox(FX_RECT* bbox) {
-  return m_pFont->GetBBox(bbox);
+Optional<FX_RECT> CFGAS_GEFont::GetBBox() {
+  return m_pFont->GetBBox();
 }
 
 int32_t CFGAS_GEFont::GetGlyphIndex(wchar_t wUnicode) {

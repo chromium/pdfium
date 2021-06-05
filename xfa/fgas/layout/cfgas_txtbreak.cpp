@@ -863,16 +863,19 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
         }
 
         if (chartype == FX_CHARTYPE::kCombination) {
-          FX_RECT rtBBox;
-          if (pFont->GetCharBBox(wForm, &rtBBox)) {
+          Optional<FX_RECT> rtBBox = pFont->GetCharBBox(wForm);
+          if (rtBBox.has_value()) {
             pCharPos->m_Origin.y =
-                fYBase + fFontSize - fFontSize * rtBBox.Height() / iMaxHeight;
+                fYBase + fFontSize -
+                fFontSize * rtBBox.value().Height() / iMaxHeight;
           }
           if (wForm == wch && wLast != 0xFEFF) {
             if (FX_GetCharType(wLast) == FX_CHARTYPE::kCombination) {
-              FX_RECT rtBox;
-              if (pFont->GetCharBBox(wLast, &rtBox))
-                pCharPos->m_Origin.y -= fFontSize * rtBox.Height() / iMaxHeight;
+              Optional<FX_RECT> rtOtherBox = pFont->GetCharBBox(wLast);
+              if (rtOtherBox.has_value()) {
+                pCharPos->m_Origin.y -=
+                    fFontSize * rtOtherBox.value().Height() / iMaxHeight;
+              }
             }
           }
         }

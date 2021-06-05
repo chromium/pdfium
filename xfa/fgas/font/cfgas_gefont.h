@@ -43,8 +43,8 @@ class CFGAS_GEFont final : public Retainable {
   int32_t GetAscent() const;
   int32_t GetDescent() const;
 
-  bool GetCharBBox(wchar_t wUnicode, FX_RECT* bbox);
-  bool GetBBox(FX_RECT* bbox);
+  Optional<FX_RECT> GetCharBBox(wchar_t wUnicode);
+  Optional<FX_RECT> GetBBox();
 
   RetainPtr<CFGAS_GEFont> GetSubstFont(int32_t iGlyphIndex);
   CFX_Font* GetDevFont() const { return m_pFont.Get(); }
