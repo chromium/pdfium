@@ -18,11 +18,11 @@ CFWL_EditTP::~CFWL_EditTP() = default;
 
 void CFWL_EditTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   switch (pParams.m_iPart) {
-    case CFWL_Part::Border: {
+    case CFWL_ThemePart::Part::kBorder: {
       DrawBorder(pParams.GetGraphics(), pParams.m_PartRect, pParams.m_matrix);
       break;
     }
-    case CFWL_Part::Background: {
+    case CFWL_ThemePart::Part::kBackground: {
       if (pParams.m_pPath) {
         CFGAS_GEGraphics* pGraphics = pParams.GetGraphics();
         pGraphics->SaveGraphState();
@@ -54,7 +54,7 @@ void CFWL_EditTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
       }
       break;
     }
-    case CFWL_Part::CombTextLine: {
+    case CFWL_ThemePart::Part::kCombTextLine: {
       CFWL_Widget::AdapterIface* pWidget =
           pParams.GetWidget()->GetOutmost()->GetAdapterIface();
       FX_ARGB cr = 0xFF000000;

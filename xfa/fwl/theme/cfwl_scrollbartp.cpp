@@ -32,29 +32,29 @@ void CFWL_ScrollBarTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   CFGAS_GEGraphics* pGraphics = pParams.GetGraphics();
   bool bVert = !!pWidget->GetStylesEx();
   switch (pParams.m_iPart) {
-    case CFWL_Part::ForeArrow: {
+    case CFWL_ThemePart::Part::kForeArrow: {
       DrawMaxMinBtn(pGraphics, pParams.m_PartRect,
                     bVert ? FWLTHEME_DIRECTION_Up : FWLTHEME_DIRECTION_Left,
                     eState, pParams.m_matrix);
       break;
     }
-    case CFWL_Part::BackArrow: {
+    case CFWL_ThemePart::Part::kBackArrow: {
       DrawMaxMinBtn(pGraphics, pParams.m_PartRect,
                     bVert ? FWLTHEME_DIRECTION_Down : FWLTHEME_DIRECTION_Right,
                     eState, pParams.m_matrix);
       break;
     }
-    case CFWL_Part::Thumb: {
+    case CFWL_ThemePart::Part::kThumb: {
       DrawThumbBtn(pGraphics, pParams.m_PartRect, bVert, eState,
                    pParams.m_matrix);
       break;
     }
-    case CFWL_Part::LowerTrack: {
+    case CFWL_ThemePart::Part::kLowerTrack: {
       DrawTrack(pGraphics, pParams.m_PartRect, bVert, eState, true,
                 pParams.m_matrix);
       break;
     }
-    case CFWL_Part::UpperTrack: {
+    case CFWL_ThemePart::Part::kUpperTrack: {
       DrawTrack(pGraphics, pParams.m_PartRect, bVert, eState, false,
                 pParams.m_matrix);
       break;

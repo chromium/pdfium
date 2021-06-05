@@ -11,52 +11,6 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
 
-enum class CFWL_Part : uint8_t {
-  None = 0,
-
-  BackArrow,
-  Background,
-  Border,
-  Caption,
-  Check,
-  CheckBox,
-  CloseBox,
-  CombTextLine,
-  DateInBK,
-  DateInCircle,
-  DatesIn,
-  DatesOut,
-  DownButton,
-  DropDownButton,
-  ForeArrow,
-  HSeparator,
-  HeadText,
-  Header,
-  Icon,
-  Image,
-  LBtn,
-  ListItem,
-  LowerTrack,
-  MinimizeBox,
-  MaximizeBox,
-  NarrowCaption,
-  RBtn,
-  Thumb,
-  ThumbBackArrow,
-  ThumbForeArrow,
-  ThumbLowerTrack,
-  ThumbThumb,
-  ThumbUpperTrack,
-  Today,
-  TodayCircle,
-  UpButton,
-  UpperTrack,
-  VSeparator,
-  Week,
-  WeekNum,
-  WeekNumSep
-};
-
 enum CFWL_PartState {
   CFWL_PartState_Normal = 0,
 
@@ -79,7 +33,53 @@ class CFWL_Widget;
 
 class CFWL_ThemePart {
  public:
-  CFWL_ThemePart(CFWL_Widget* pWidget);
+  enum class Part : uint8_t {
+    kNone = 0,
+
+    kBackArrow,
+    kBackground,
+    kBorder,
+    kCaption,
+    kCheck,
+    kCheckBox,
+    kCloseBox,
+    kCombTextLine,
+    kDateInBK,
+    kDateInCircle,
+    kDatesIn,
+    kDatesOut,
+    kDownButton,
+    kDropDownButton,
+    kForeArrow,
+    kHSeparator,
+    kHeadText,
+    kHeader,
+    kIcon,
+    kImage,
+    kLBtn,
+    kListItem,
+    kLowerTrack,
+    kMinimizeBox,
+    kMaximizeBox,
+    kNarrowCaption,
+    kRBtn,
+    kThumb,
+    kThumbBackArrow,
+    kThumbForeArrow,
+    kThumbLowerTrack,
+    kThumbThumb,
+    kThumbUpperTrack,
+    kToday,
+    kTodayCircle,
+    kUpButton,
+    kUpperTrack,
+    kVSeparator,
+    kWeek,
+    kWeekNum,
+    kWeekNumSep
+  };
+
+  explicit CFWL_ThemePart(CFWL_Widget* pWidget);
   ~CFWL_ThemePart();
 
   CFWL_Widget* GetWidget() const { return m_pWidget.Get(); }
@@ -88,7 +88,7 @@ class CFWL_ThemePart {
   CFX_RectF m_PartRect;
   UnownedPtr<const CFX_RectF> m_pRtData;
   uint32_t m_dwStates = CFWL_PartState_Normal;
-  CFWL_Part m_iPart = CFWL_Part::None;
+  Part m_iPart = Part::kNone;
   bool m_bMaximize = false;
   bool m_bStaticBackground = false;
 

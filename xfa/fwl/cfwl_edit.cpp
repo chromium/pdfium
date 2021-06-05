@@ -141,7 +141,7 @@ void CFWL_Edit::DrawWidget(CFGAS_GEGraphics* pGraphics,
 
   DrawContent(pGraphics, matrix);
   if (HasBorder())
-    DrawBorder(pGraphics, CFWL_Part::Border, matrix);
+    DrawBorder(pGraphics, CFWL_ThemePart::Part::kBorder, matrix);
 }
 
 void CFWL_Edit::SetText(const WideString& wsText) {
@@ -339,7 +339,7 @@ void CFWL_Edit::DrawContent(CFGAS_GEGraphics* pGraphics,
 
     CFWL_ThemeBackground param(this, pGraphics);
     param.m_matrix = mtMatrix;
-    param.m_iPart = CFWL_Part::Background;
+    param.m_iPart = CFWL_ThemePart::Part::kBackground;
     param.m_pPath = &path;
     GetThemeProvider()->DrawBackground(param);
   }
@@ -362,7 +362,7 @@ void CFWL_Edit::DrawContent(CFGAS_GEGraphics* pGraphics,
 
     CFWL_ThemeBackground param(this, pGraphics);
     param.m_matrix = mtMatrix;
-    param.m_iPart = CFWL_Part::CombTextLine;
+    param.m_iPart = CFWL_ThemePart::Part::kCombTextLine;
     param.m_pPath = &path;
     GetThemeProvider()->DrawBackground(param);
   }

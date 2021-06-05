@@ -28,7 +28,7 @@ void CFWL_PictureBox::DrawWidget(CFGAS_GEGraphics* pGraphics,
     return;
 
   if (HasBorder())
-    DrawBorder(pGraphics, CFWL_Part::Border, matrix);
+    DrawBorder(pGraphics, CFWL_ThemePart::Part::kBorder, matrix);
 }
 
 void CFWL_PictureBox::OnDrawWidget(CFGAS_GEGraphics* pGraphics,

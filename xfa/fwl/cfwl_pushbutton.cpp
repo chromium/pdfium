@@ -48,7 +48,7 @@ void CFWL_PushButton::DrawWidget(CFGAS_GEGraphics* pGraphics,
     return;
 
   if (HasBorder())
-    DrawBorder(pGraphics, CFWL_Part::Border, matrix);
+    DrawBorder(pGraphics, CFWL_ThemePart::Part::kBorder, matrix);
 
   DrawBkground(pGraphics, matrix);
 }
@@ -56,7 +56,7 @@ void CFWL_PushButton::DrawWidget(CFGAS_GEGraphics* pGraphics,
 void CFWL_PushButton::DrawBkground(CFGAS_GEGraphics* pGraphics,
                                    const CFX_Matrix& matrix) {
   CFWL_ThemeBackground param(this, pGraphics);
-  param.m_iPart = CFWL_Part::Background;
+  param.m_iPart = CFWL_ThemePart::Part::kBackground;
   param.m_dwStates = GetPartStates();
   param.m_matrix = matrix;
   param.m_PartRect = m_ClientRect;

@@ -107,7 +107,7 @@ void CFWL_ComboBox::DrawWidget(CFGAS_GEGraphics* pGraphics,
   pGraphics->ConcatMatrix(matrix);
   if (!m_BtnRect.IsEmpty(0.1f)) {
     CFWL_ThemeBackground param(this, pGraphics);
-    param.m_iPart = CFWL_Part::DropDownButton;
+    param.m_iPart = CFWL_ThemePart::Part::kDropDownButton;
     param.m_dwStates = m_iBtnState;
     param.m_PartRect = m_BtnRect;
     GetThemeProvider()->DrawBackground(param);

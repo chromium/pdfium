@@ -51,7 +51,7 @@ void CFWL_ScrollBar::DrawWidget(CFGAS_GEGraphics* pGraphics,
     return;
 
   if (HasBorder())
-    DrawBorder(pGraphics, CFWL_Part::Border, matrix);
+    DrawBorder(pGraphics, CFWL_ThemePart::Part::kBorder, matrix);
 
   DrawTrack(pGraphics, true, matrix);
   DrawTrack(pGraphics, false, matrix);
@@ -77,7 +77,8 @@ void CFWL_ScrollBar::DrawTrack(CFGAS_GEGraphics* pGraphics,
                                bool bLower,
                                const CFX_Matrix& mtMatrix) {
   CFWL_ThemeBackground param(this, pGraphics);
-  param.m_iPart = bLower ? CFWL_Part::LowerTrack : CFWL_Part::UpperTrack;
+  param.m_iPart = bLower ? CFWL_ThemePart::Part::kLowerTrack
+                         : CFWL_ThemePart::Part::kUpperTrack;
   param.m_dwStates = (m_Properties.m_dwStates & FWL_WGTSTATE_Disabled)
                          ? CFWL_PartState_Disabled
                          : (bLower ? m_iMinTrackState : m_iMaxTrackState);
@@ -90,7 +91,8 @@ void CFWL_ScrollBar::DrawArrowBtn(CFGAS_GEGraphics* pGraphics,
                                   bool bMinBtn,
                                   const CFX_Matrix& mtMatrix) {
   CFWL_ThemeBackground param(this, pGraphics);
-  param.m_iPart = bMinBtn ? CFWL_Part::ForeArrow : CFWL_Part::BackArrow;
+  param.m_iPart = bMinBtn ? CFWL_ThemePart::Part::kForeArrow
+                          : CFWL_ThemePart::Part::kBackArrow;
   param.m_dwStates = (m_Properties.m_dwStates & FWL_WGTSTATE_Disabled)
                          ? CFWL_PartState_Disabled
                          : (bMinBtn ? m_iMinButtonState : m_iMaxButtonState);
@@ -103,7 +105,7 @@ void CFWL_ScrollBar::DrawArrowBtn(CFGAS_GEGraphics* pGraphics,
 void CFWL_ScrollBar::DrawThumb(CFGAS_GEGraphics* pGraphics,
                                const CFX_Matrix& mtMatrix) {
   CFWL_ThemeBackground param(this, pGraphics);
-  param.m_iPart = CFWL_Part::Thumb;
+  param.m_iPart = CFWL_ThemePart::Part::kThumb;
   param.m_dwStates = (m_Properties.m_dwStates & FWL_WGTSTATE_Disabled)
                          ? CFWL_PartState_Disabled
                          : m_iThumbButtonState;

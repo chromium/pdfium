@@ -279,7 +279,7 @@ void CFWL_Widget::RepaintRect(const CFX_RectF& pRect) {
 }
 
 void CFWL_Widget::DrawBackground(CFGAS_GEGraphics* pGraphics,
-                                 CFWL_Part iPartBk,
+                                 CFWL_ThemePart::Part iPartBk,
                                  const CFX_Matrix& mtMatrix) {
   CFWL_ThemeBackground param(this, pGraphics);
   param.m_iPart = iPartBk;
@@ -289,7 +289,7 @@ void CFWL_Widget::DrawBackground(CFGAS_GEGraphics* pGraphics,
 }
 
 void CFWL_Widget::DrawBorder(CFGAS_GEGraphics* pGraphics,
-                             CFWL_Part iPartBorder,
+                             CFWL_ThemePart::Part iPartBorder,
                              const CFX_Matrix& matrix) {
   CFWL_ThemeBackground param(this, pGraphics);
   param.m_iPart = iPartBorder;

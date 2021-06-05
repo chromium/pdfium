@@ -23,11 +23,11 @@ CFWL_PushButtonTP::~CFWL_PushButtonTP() = default;
 
 void CFWL_PushButtonTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   switch (pParams.m_iPart) {
-    case CFWL_Part::Border: {
+    case CFWL_ThemePart::Part::kBorder: {
       DrawBorder(pParams.GetGraphics(), pParams.m_PartRect, pParams.m_matrix);
       break;
     }
-    case CFWL_Part::Background: {
+    case CFWL_ThemePart::Part::kBackground: {
       const CFX_RectF& rect = pParams.m_PartRect;
       float fRight = rect.right();
       float fBottom = rect.bottom();

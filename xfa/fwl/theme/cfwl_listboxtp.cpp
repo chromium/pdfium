@@ -19,11 +19,11 @@ CFWL_ListBoxTP::~CFWL_ListBoxTP() = default;
 
 void CFWL_ListBoxTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   switch (pParams.m_iPart) {
-    case CFWL_Part::Border: {
+    case CFWL_ThemePart::Part::kBorder: {
       DrawBorder(pParams.GetGraphics(), pParams.m_PartRect, pParams.m_matrix);
       break;
     }
-    case CFWL_Part::Background: {
+    case CFWL_ThemePart::Part::kBackground: {
       FillSolidRect(pParams.GetGraphics(), ArgbEncode(255, 255, 255, 255),
                     pParams.m_PartRect, pParams.m_matrix);
       if (pParams.m_pRtData) {
@@ -32,12 +32,12 @@ void CFWL_ListBoxTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
       }
       break;
     }
-    case CFWL_Part::ListItem: {
+    case CFWL_ThemePart::Part::kListItem: {
       DrawListBoxItem(pParams.GetGraphics(), pParams.m_dwStates,
                       pParams.m_PartRect, pParams.m_pRtData, pParams.m_matrix);
       break;
     }
-    case CFWL_Part::Check: {
+    case CFWL_ThemePart::Part::kCheck: {
       uint32_t color = 0xFF000000;
       if (pParams.m_dwStates == CFWL_PartState_Checked) {
         color = 0xFFFF0000;

@@ -33,47 +33,47 @@ CFWL_MonthCalendarTP::~CFWL_MonthCalendarTP() = default;
 
 void CFWL_MonthCalendarTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   switch (pParams.m_iPart) {
-    case CFWL_Part::Border: {
+    case CFWL_ThemePart::Part::kBorder: {
       DrawBorder(pParams.GetGraphics(), pParams.m_PartRect, pParams.m_matrix);
       break;
     }
-    case CFWL_Part::Background: {
+    case CFWL_ThemePart::Part::kBackground: {
       DrawTotalBK(pParams, pParams.m_matrix);
       break;
     }
-    case CFWL_Part::Header: {
+    case CFWL_ThemePart::Part::kHeader: {
       DrawHeadBk(pParams, pParams.m_matrix);
       break;
     }
-    case CFWL_Part::LBtn: {
+    case CFWL_ThemePart::Part::kLBtn: {
       FWLTHEME_STATE eState = GetState(pParams.m_dwStates);
       DrawArrowBtn(pParams.GetGraphics(), pParams.m_PartRect,
                    FWLTHEME_DIRECTION_Left, eState, pParams.m_matrix);
       break;
     }
-    case CFWL_Part::RBtn: {
+    case CFWL_ThemePart::Part::kRBtn: {
       FWLTHEME_STATE eState = GetState(pParams.m_dwStates);
       DrawArrowBtn(pParams.GetGraphics(), pParams.m_PartRect,
                    FWLTHEME_DIRECTION_Right, eState, pParams.m_matrix);
       break;
     }
-    case CFWL_Part::HSeparator: {
+    case CFWL_ThemePart::Part::kHSeparator: {
       DrawHSeparator(pParams, pParams.m_matrix);
       break;
     }
-    case CFWL_Part::DatesIn: {
+    case CFWL_ThemePart::Part::kDatesIn: {
       DrawDatesInBK(pParams, pParams.m_matrix);
       break;
     }
-    case CFWL_Part::TodayCircle: {
+    case CFWL_ThemePart::Part::kTodayCircle: {
       DrawTodayCircle(pParams, pParams.m_matrix);
       break;
     }
-    case CFWL_Part::DateInCircle: {
+    case CFWL_ThemePart::Part::kDateInCircle: {
       DrawDatesInCircle(pParams, pParams.m_matrix);
       break;
     }
-    case CFWL_Part::WeekNumSep: {
+    case CFWL_ThemePart::Part::kWeekNumSep: {
       DrawWeekNumSep(pParams, pParams.m_matrix);
       break;
     }
@@ -84,12 +84,12 @@ void CFWL_MonthCalendarTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
 
 void CFWL_MonthCalendarTP::DrawText(const CFWL_ThemeText& pParams) {
   EnsureTTOInitialized();
-  if ((pParams.m_iPart == CFWL_Part::DatesIn) &&
+  if ((pParams.m_iPart == CFWL_ThemePart::Part::kDatesIn) &&
       !(pParams.m_dwStates & FWL_ITEMSTATE_MCD_Flag) &&
       (pParams.m_dwStates &
        (CFWL_PartState_Hovered | CFWL_PartState_Selected))) {
     m_pTextOut->SetTextColor(0xFFFFFFFF);
-  } else if (pParams.m_iPart == CFWL_Part::Caption) {
+  } else if (pParams.m_iPart == CFWL_ThemePart::Part::kCaption) {
     m_pTextOut->SetTextColor(kCaptionColor);
   } else {
     m_pTextOut->SetTextColor(0xFF000000);

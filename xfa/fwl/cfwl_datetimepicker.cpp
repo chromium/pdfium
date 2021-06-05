@@ -98,7 +98,7 @@ void CFWL_DateTimePicker::DrawWidget(CFGAS_GEGraphics* pGraphics,
     return;
 
   if (HasBorder())
-    DrawBorder(pGraphics, CFWL_Part::Border, matrix);
+    DrawBorder(pGraphics, CFWL_ThemePart::Part::kBorder, matrix);
 
   if (!m_BtnRect.IsEmpty())
     DrawDropDownButton(pGraphics, matrix);
@@ -182,7 +182,7 @@ void CFWL_DateTimePicker::ModifyEditStylesEx(uint32_t dwStylesExAdded,
 void CFWL_DateTimePicker::DrawDropDownButton(CFGAS_GEGraphics* pGraphics,
                                              const CFX_Matrix& mtMatrix) {
   CFWL_ThemeBackground param(this, pGraphics);
-  param.m_iPart = CFWL_Part::DropDownButton;
+  param.m_iPart = CFWL_ThemePart::Part::kDropDownButton;
   param.m_dwStates = m_iBtnState;
   param.m_PartRect = m_BtnRect;
   param.m_matrix = mtMatrix;

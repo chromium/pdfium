@@ -90,7 +90,7 @@ void CFWL_ListBox::DrawWidget(CFGAS_GEGraphics* pGraphics,
 
   pGraphics->SaveGraphState();
   if (HasBorder())
-    DrawBorder(pGraphics, CFWL_Part::Border, matrix);
+    DrawBorder(pGraphics, CFWL_ThemePart::Part::kBorder, matrix);
 
   CFX_RectF rtClip(m_ContentRect);
   if (IsShowHorzScrollBar())
@@ -333,7 +333,7 @@ void CFWL_ListBox::DrawBkground(CFGAS_GEGraphics* pGraphics,
     return;
 
   CFWL_ThemeBackground param(this, pGraphics);
-  param.m_iPart = CFWL_Part::Background;
+  param.m_iPart = CFWL_ThemePart::Part::kBackground;
   param.m_matrix = mtMatrix;
   param.m_PartRect = m_ClientRect;
   if (IsShowHorzScrollBar() && IsShowVertScrollBar())
@@ -394,7 +394,7 @@ void CFWL_ListBox::DrawItem(CFGAS_GEGraphics* pGraphics,
 
   CFX_RectF rtFocus(rtItem);  // Must outlive |bg_param|.
   CFWL_ThemeBackground bg_param(this, pGraphics);
-  bg_param.m_iPart = CFWL_Part::ListItem;
+  bg_param.m_iPart = CFWL_ThemePart::Part::kListItem;
   bg_param.m_dwStates = dwPartStates;
   bg_param.m_matrix = mtMatrix;
   bg_param.m_PartRect = rtItem;
@@ -420,7 +420,7 @@ void CFWL_ListBox::DrawItem(CFGAS_GEGraphics* pGraphics,
   rtText.Deflate(kItemTextMargin, kItemTextMargin);
 
   CFWL_ThemeText textParam(this, pGraphics);
-  textParam.m_iPart = CFWL_Part::ListItem;
+  textParam.m_iPart = CFWL_ThemePart::Part::kListItem;
   textParam.m_dwStates = dwPartStates;
   textParam.m_matrix = mtMatrix;
   textParam.m_PartRect = rtText;

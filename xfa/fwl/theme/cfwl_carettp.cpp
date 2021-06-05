@@ -18,7 +18,7 @@ CFWL_CaretTP::~CFWL_CaretTP() = default;
 
 void CFWL_CaretTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   switch (pParams.m_iPart) {
-    case CFWL_Part::Background: {
+    case CFWL_ThemePart::Part::kBackground: {
       if (!(pParams.m_dwStates & CFWL_PartState_HightLight))
         return;
 

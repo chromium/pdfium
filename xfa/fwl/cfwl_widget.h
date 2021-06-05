@@ -161,7 +161,7 @@ class CFWL_Widget : public cppgc::GarbageCollected<CFWL_Widget>,
   void UnregisterEventTarget();
   void DispatchEvent(CFWL_Event* pEvent);
   void DrawBorder(CFGAS_GEGraphics* pGraphics,
-                  CFWL_Part iPartBorder,
+                  CFWL_ThemePart::Part iPartBorder,
                   const CFX_Matrix& pMatrix);
 
   Properties m_Properties;
@@ -177,7 +177,7 @@ class CFWL_Widget : public cppgc::GarbageCollected<CFWL_Widget>,
   CFWL_Widget* GetParent() const { return m_pWidgetMgr->GetParentWidget(this); }
   CFX_SizeF GetOffsetFromParent(CFWL_Widget* pParent);
   void DrawBackground(CFGAS_GEGraphics* pGraphics,
-                      CFWL_Part iPartBk,
+                      CFWL_ThemePart::Part iPartBk,
                       const CFX_Matrix& mtMatrix);
   void NotifyDriver();
   bool IsParent(CFWL_Widget* pParent);
