@@ -23,12 +23,12 @@ TEST(CFXJSEMapModule, EmptyModule) {
 
 TEST(CFXJSEMapModule, InsertDelete) {
   const int value = 101;
-  WideString string(L"foo");
+  WideString str(L"foo");
   CXFA_Measurement measure(L"1 pt");
   CFXJSE_MapModule module;
 
   module.SetValue(100, value);
-  module.SetString(200, string);
+  module.SetString(200, str);
   module.SetMeasurement(300, measure);
   EXPECT_TRUE(module.HasKey(100));
   EXPECT_TRUE(module.HasKey(200));
@@ -39,7 +39,7 @@ TEST(CFXJSEMapModule, InsertDelete) {
   EXPECT_FALSE(module.GetMeasurement(100).has_value());
 
   EXPECT_FALSE(module.GetValue(200).has_value());
-  EXPECT_EQ(module.GetString(200).value(), string);
+  EXPECT_EQ(module.GetString(200).value(), str);
   EXPECT_FALSE(module.GetMeasurement(200).has_value());
 
   EXPECT_FALSE(module.GetValue(300).has_value());
@@ -60,7 +60,7 @@ TEST(CFXJSEMapModule, InsertDelete) {
 
 TEST(CFXJSEMapModule, KeyCollision) {
   const int value = 37;
-  WideString string(L"foo");
+  WideString str(L"foo");
   CXFA_Measurement measure(L"1 pt");
   CFXJSE_MapModule module;
 
@@ -70,10 +70,10 @@ TEST(CFXJSEMapModule, KeyCollision) {
   EXPECT_FALSE(module.GetString(100).has_value());
   EXPECT_FALSE(module.GetMeasurement(100).has_value());
 
-  module.SetString(100, string);
+  module.SetString(100, str);
   EXPECT_TRUE(module.HasKey(100));
   EXPECT_FALSE(module.GetValue(100).has_value());
-  EXPECT_EQ(module.GetString(100).value(), string);
+  EXPECT_EQ(module.GetString(100).value(), str);
   EXPECT_FALSE(module.GetMeasurement(100).has_value());
 
   module.SetMeasurement(100, measure);
