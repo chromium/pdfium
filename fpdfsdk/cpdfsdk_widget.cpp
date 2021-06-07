@@ -558,7 +558,7 @@ void CPDFSDK_Widget::SetCheck(bool bChecked) {
                            NotificationOption::kDoNotNotify);
 #ifdef PDF_ENABLE_XFA
   if (!IsWidgetAppearanceValid(CPDF_Annot::Normal))
-    ResetXFAAppearance(true);
+    ResetXFAAppearance(CPDFSDK_Widget::kValueChanged);
   Synchronize(true);
 #endif  // PDF_ENABLE_XFA
 }
@@ -602,26 +602,26 @@ bool CPDFSDK_Widget::IsAppModified() const {
 }
 
 #ifdef PDF_ENABLE_XFA
-void CPDFSDK_Widget::ResetXFAAppearance(bool bValueChanged) {
+void CPDFSDK_Widget::ResetXFAAppearance(ValueChanged bValueChanged) {
   switch (GetFieldType()) {
     case FormFieldType::kTextField:
     case FormFieldType::kComboBox: {
-      ResetAppearance(OnFormat(), true);
+      ResetAppearance(OnFormat(), kValueChanged);
       break;
     }
     default:
-      ResetAppearance(pdfium::nullopt, false);
+      ResetAppearance(pdfium::nullopt, kValueUnchanged);
       break;
   }
 }
 #endif  // PDF_ENABLE_XFA
 
 void CPDFSDK_Widget::ResetAppearance(Optional<WideString> sValue,
-                                     bool bValueChanged) {
+                                     ValueChanged bValueChanged) {
   SetAppModified();
 
   m_nAppearanceAge++;
-  if (bValueChanged)
+  if (bValueChanged == kValueChanged)
     m_nValueAge++;
 
   CPDFSDK_AppStream appStream(this, GetAPDict());

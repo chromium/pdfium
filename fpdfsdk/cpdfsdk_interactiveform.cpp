@@ -323,7 +323,7 @@ void CPDFSDK_InteractiveForm::ResetFieldAppearance(
     CPDF_FormControl* pFormCtrl = pFormField->GetControl(i);
     DCHECK(pFormCtrl);
     if (CPDFSDK_Widget* pWidget = GetWidget(pFormCtrl))
-      pWidget->ResetAppearance(sValue, true);
+      pWidget->ResetAppearance(sValue, CPDFSDK_Widget::kValueChanged);
   }
 }
 

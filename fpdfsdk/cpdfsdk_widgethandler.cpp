@@ -66,7 +66,7 @@ std::unique_ptr<CPDFSDK_Annot> CPDFSDK_WidgetHandler::NewAnnot(
   auto pWidget = std::make_unique<CPDFSDK_Widget>(pAnnot, pPageView, pForm);
   pForm->AddMap(pCtrl, pWidget.get());
   if (pPDFForm->NeedConstructAP())
-    pWidget->ResetAppearance(pdfium::nullopt, false);
+    pWidget->ResetAppearance(pdfium::nullopt, CPDFSDK_Widget::kValueUnchanged);
   return pWidget;
 }
 
@@ -205,7 +205,7 @@ void CPDFSDK_WidgetHandler::OnLoad(CPDFSDK_Annot* pAnnot) {
 
   CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
   if (!pWidget->IsAppearanceValid())
-    pWidget->ResetAppearance(pdfium::nullopt, false);
+    pWidget->ResetAppearance(pdfium::nullopt, CPDFSDK_Widget::kValueUnchanged);
 
   FormFieldType fieldType = pWidget->GetFieldType();
   if (fieldType == FormFieldType::kTextField ||
@@ -216,7 +216,7 @@ void CPDFSDK_WidgetHandler::OnLoad(CPDFSDK_Annot* pAnnot) {
       return;
 
     if (sValue.has_value() && fieldType == FormFieldType::kComboBox)
-      pWidget->ResetAppearance(sValue, false);
+      pWidget->ResetAppearance(sValue, CPDFSDK_Widget::kValueUnchanged);
   }
 
 #ifdef PDF_ENABLE_XFA
@@ -224,7 +224,7 @@ void CPDFSDK_WidgetHandler::OnLoad(CPDFSDK_Annot* pAnnot) {
   auto* pContext = pPageView->GetFormFillEnv()->GetDocExtension();
   if (pContext && pContext->ContainsExtensionForegroundForm()) {
     if (!pWidget->IsAppearanceValid() && !pWidget->GetValue().IsEmpty())
-      pWidget->ResetXFAAppearance(false);
+      pWidget->ResetXFAAppearance(CPDFSDK_Widget::kValueUnchanged);
   }
 #endif  // PDF_ENABLE_XFA
 }

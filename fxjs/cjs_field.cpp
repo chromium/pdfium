@@ -63,14 +63,18 @@ void UpdateFormField(CPDFSDK_FormFillEnvironment* pFormFillEnv,
           Optional<WideString> sValue =
               ToCPDFSDKWidget(pObserved.Get())->OnFormat();
           if (pObserved) {  // Not redundant, may be clobbered by OnFormat.
-            ToCPDFSDKWidget(pObserved.Get())->ResetAppearance(sValue, false);
+            auto* pWidget = ToCPDFSDKWidget(pObserved.Get());
+            pWidget->ResetAppearance(sValue, CPDFSDK_Widget::kValueUnchanged);
           }
         }
       }
     } else {
       for (auto& pObserved : widgets) {
-        if (pObserved)
-          ToCPDFSDKWidget(pObserved.Get())->ResetAppearance({}, false);
+        if (pObserved) {
+          auto* pWidget = ToCPDFSDKWidget(pObserved.Get());
+          pWidget->ResetAppearance(pdfium::nullopt,
+                                   CPDFSDK_Widget::kValueUnchanged);
+        }
       }
     }
   }
@@ -117,9 +121,10 @@ void UpdateFormControl(CPDFSDK_FormFillEnvironment* pFormFillEnv,
         Optional<WideString> sValue = pWidget->OnFormat();
         if (!observed_widget)
           return;
-        pWidget->ResetAppearance(sValue, false);
+        pWidget->ResetAppearance(sValue, CPDFSDK_Widget::kValueUnchanged);
       } else {
-        pWidget->ResetAppearance({}, false);
+        pWidget->ResetAppearance(pdfium::nullopt,
+                                 CPDFSDK_Widget::kValueUnchanged);
       }
       if (!observed_widget)
         return;
