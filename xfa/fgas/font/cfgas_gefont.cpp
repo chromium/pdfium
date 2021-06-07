@@ -154,32 +154,29 @@ uint32_t CFGAS_GEFont::GetFontStyles() const {
   return dwStyles;
 }
 
-bool CFGAS_GEFont::GetCharWidth(wchar_t wUnicode, int32_t* pWidth) {
+Optional<uint16_t> CFGAS_GEFont::GetCharWidth(wchar_t wUnicode) {
   auto it = m_CharWidthMap.find(wUnicode);
-  *pWidth = it != m_CharWidthMap.end() ? it->second : 0;
-  if (*pWidth == 65535)
-    return false;
-
-  if (*pWidth > 0)
-    return true;
+  if (it != m_CharWidthMap.end())
+    return it->second;
 
   RetainPtr<CFGAS_GEFont> pFont;
-  int32_t iGlyph;
-  std::tie(iGlyph, pFont) = GetGlyphIndexAndFont(wUnicode, true);
-  if (iGlyph != 0xFFFF && pFont) {
-    if (pFont == this) {
-      *pWidth = m_pFont->GetGlyphWidth(iGlyph);
-      if (*pWidth < 0)
-        *pWidth = -1;
-    } else if (pFont->GetCharWidth(wUnicode, pWidth)) {
-      return true;
-    }
-  } else {
-    *pWidth = -1;
+  int32_t glyph;
+  std::tie(glyph, pFont) = GetGlyphIndexAndFont(wUnicode, true);
+  if (!pFont || glyph == 0xffff) {
+    m_CharWidthMap[wUnicode] = pdfium::nullopt;
+    return pdfium::nullopt;
   }
+  if (pFont != this)
+    return pFont->GetCharWidth(wUnicode);
 
-  m_CharWidthMap[wUnicode] = *pWidth;
-  return *pWidth > 0;
+  int32_t width_from_cfx_font = m_pFont->GetGlyphWidth(glyph);
+  if (width_from_cfx_font < 0) {
+    m_CharWidthMap[wUnicode] = pdfium::nullopt;
+    return pdfium::nullopt;
+  }
+  uint16_t width = static_cast<uint16_t>(width_from_cfx_font);
+  m_CharWidthMap[wUnicode] = width;
+  return width;
 }
 
 Optional<FX_RECT> CFGAS_GEFont::GetCharBBox(wchar_t wUnicode) {

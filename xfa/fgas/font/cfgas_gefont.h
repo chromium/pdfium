@@ -38,11 +38,10 @@ class CFGAS_GEFont final : public Retainable {
                                                const ByteString& font_family);
 
   uint32_t GetFontStyles() const;
-  bool GetCharWidth(wchar_t wUnicode, int32_t* pWidth);
+  Optional<uint16_t> GetCharWidth(wchar_t wUnicode);
   int32_t GetGlyphIndex(wchar_t wUnicode);
   int32_t GetAscent() const;
   int32_t GetDescent() const;
-
   Optional<FX_RECT> GetCharBBox(wchar_t wUnicode);
   Optional<FX_RECT> GetBBox();
 
@@ -75,7 +74,7 @@ class CFGAS_GEFont final : public Retainable {
   RetainPtr<CPDF_Font> m_pPDFFont;  // Must come before |m_pFont|.
   MaybeOwned<CFX_Font> m_pFont;     // Must come before |m_pFontEncoding|.
   std::unique_ptr<CFX_UnicodeEncodingEx> m_pFontEncoding;
-  std::map<wchar_t, uint16_t> m_CharWidthMap;
+  std::map<wchar_t, Optional<uint16_t>> m_CharWidthMap;
   std::map<wchar_t, FX_RECT> m_BBoxMap;
   std::vector<RetainPtr<CFGAS_GEFont>> m_SubstFonts;
   std::map<wchar_t, RetainPtr<CFGAS_GEFont>> m_FontMapper;

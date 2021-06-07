@@ -79,12 +79,11 @@ void CFGAS_TxtBreak::AppendChar_Combination(CFGAS_Char* pCurChar) {
         pCurChar->m_dwCharStyles |= FX_TXTCHARSTYLE_ArabicShadda;
       }
     }
-    int32_t iCharWidthOut;
-    if (m_pFont && m_pFont->GetCharWidth(wForm, &iCharWidthOut))
-      iCharWidth = iCharWidthOut;
-    else
-      iCharWidth = 0;
-
+    Optional<uint16_t> iCharWidthRet;
+    if (m_pFont) {
+      iCharWidthRet = m_pFont->GetCharWidth(wForm);
+    }
+    iCharWidth = iCharWidthRet.value_or(0);
     iCharWidth *= m_iFontSize;
     iCharWidth *= m_iHorizontalScale;
     iCharWidth /= 100;
@@ -145,9 +144,7 @@ CFGAS_Char::BreakType CFGAS_TxtBreak::AppendChar_Arabic(CFGAS_Char* pCurChar) {
       bAlef = (wForm == 0xFEFF &&
                pLastChar->GetCharType() == FX_CHARTYPE::kArabicAlef);
       if (m_pFont) {
-        int32_t iCharWidthOut = 0;
-        m_pFont->GetCharWidth(wForm, &iCharWidthOut);
-        iCharWidth = iCharWidthOut;
+        iCharWidth = m_pFont->GetCharWidth(wForm).value_or(0);
       }
       if (wForm == 0xFEFF)
         iCharWidth = 0;
@@ -169,14 +166,9 @@ CFGAS_Char::BreakType CFGAS_TxtBreak::AppendChar_Arabic(CFGAS_Char* pCurChar) {
   if (m_bCombText) {
     iCharWidth = m_iCombWidth;
   } else {
-    if (m_pFont) {
-      int32_t iCharWidthOut = 0;
-      m_pFont->GetCharWidth(wForm, &iCharWidthOut);
-      iCharWidth = iCharWidthOut;
+    if (m_pFont && wForm != 0xFEFF) {
+      iCharWidth = m_pFont->GetCharWidth(wForm).value_or(0);
     }
-    if (wForm == 0xFEFF)
-      iCharWidth = 0;
-
     iCharWidth *= m_iFontSize;
     iCharWidth *= m_iHorizontalScale;
     iCharWidth /= 100;
@@ -195,30 +187,24 @@ CFGAS_Char::BreakType CFGAS_TxtBreak::AppendChar_Arabic(CFGAS_Char* pCurChar) {
 CFGAS_Char::BreakType CFGAS_TxtBreak::AppendChar_Others(CFGAS_Char* pCurChar) {
   FX_CHARTYPE chartype = pCurChar->GetCharType();
   int32_t& iLineWidth = m_pCurLine->m_iWidth;
-  FX_SAFE_INT32 iCharWidth = 0;
   m_eCharType = chartype;
   wchar_t wch = pCurChar->char_code();
   wchar_t wForm = wch;
 
+  FX_SAFE_INT32 iCharWidth = 0;
   if (m_bCombText) {
     iCharWidth = m_iCombWidth;
-  } else {
-    int32_t iCharWidthOut;
-    if (m_pFont && m_pFont->GetCharWidth(wForm, &iCharWidthOut))
-      iCharWidth = iCharWidthOut;
-    else
-      iCharWidth = 0;
-
+  } else if (m_pFont) {
+    iCharWidth = m_pFont->GetCharWidth(wForm).value_or(0);
     iCharWidth *= m_iFontSize;
     iCharWidth *= m_iHorizontalScale;
     iCharWidth /= 100;
   }
-
   iCharWidth += m_iCharSpace;
 
-  int32_t iCharWidthValid = iCharWidth.ValueOrDefault(0);
-  pCurChar->m_iCharWidth = iCharWidthValid;
-  iLineWidth += iCharWidthValid;
+  int32_t iValidCharWidth = iCharWidth.ValueOrDefault(0);
+  pCurChar->m_iCharWidth = iValidCharWidth;
+  iLineWidth += iValidCharWidth;
   if (!m_bSingleLine && chartype != FX_CHARTYPE::kSpace &&
       IsGreaterThanLineWidth(iLineWidth)) {
     return EndBreak(CFGAS_Char::BreakType::kLine);
@@ -823,13 +809,9 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
     formChars[0].iWidth = iCharWidth;
     if (bLam) {
       formChars[1].wForm = 0x0651;
-      iCharWidth = 0;
-      pFont->GetCharWidth(0x0651, &iCharWidth);
-      formChars[1].iWidth = iCharWidth;
+      formChars[1].iWidth = pFont->GetCharWidth(0x0651).value_or(0);
       formChars[2].wForm = 0x0670;
-      iCharWidth = 0;
-      pFont->GetCharWidth(0x0670, &iCharWidth);
-      formChars[2].iWidth = iCharWidth;
+      formChars[2].iWidth = pFont->GetCharWidth(0x0670).value_or(0);
     }
 
     for (int32_t j = 0; j < iForms; j++) {
@@ -856,12 +838,10 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
         pCharPos->m_Origin = CFX_PointF(fX, fY);
 
         if ((dwStyles & FX_LAYOUTSTYLE_CombText) != 0) {
-          int32_t iFormWidth = iCharWidth;
-          pFont->GetCharWidth(wForm, &iFormWidth);
+          int32_t iFormWidth = pFont->GetCharWidth(wForm).value_or(iCharWidth);
           float fOffset = fFontSize * (iCharWidth - iFormWidth) / 2000.0f;
           pCharPos->m_Origin.x += fOffset;
         }
-
         if (chartype == FX_CHARTYPE::kCombination) {
           Optional<FX_RECT> rtBBox = pFont->GetCharBBox(wForm);
           if (rtBBox.has_value()) {
