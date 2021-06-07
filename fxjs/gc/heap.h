@@ -9,7 +9,6 @@
 
 #include "v8/include/cppgc/allocation.h"
 #include "v8/include/cppgc/heap.h"
-#include "v8/include/libplatform/libplatform.h"
 
 namespace v8 {
 class Isolate;

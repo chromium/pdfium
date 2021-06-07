@@ -5,6 +5,7 @@
 #include "testing/fuzzers/xfa_process_state.h"
 
 #include "fxjs/gc/heap.h"
+#include "v8/include/libplatform/libplatform.h"
 
 XFAProcessState::XFAProcessState(v8::Platform* platform, v8::Isolate* isolate)
     : platform_(platform), isolate_(isolate), heap_(FXGC_CreateHeap()) {}

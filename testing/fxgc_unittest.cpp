@@ -7,6 +7,7 @@
 #include "fxjs/gc/heap.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/v8_test_environment.h"
+#include "v8/include/libplatform/libplatform.h"
 
 FXGCUnitTest::FXGCUnitTest() = default;
 
