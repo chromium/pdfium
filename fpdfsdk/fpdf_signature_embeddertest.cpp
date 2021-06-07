@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <vector>
+
 #include "public/fpdf_signature.h"
 #include "testing/embedder_test.h"
 #include "testing/fx_string_testhelpers.h"

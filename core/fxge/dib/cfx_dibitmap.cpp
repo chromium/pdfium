@@ -9,6 +9,7 @@
 #include <limits>
 #include <memory>
 #include <utility>
+#include <vector>
 
 #include "build/build_config.h"
 #include "core/fxcrt/fx_safe_types.h"

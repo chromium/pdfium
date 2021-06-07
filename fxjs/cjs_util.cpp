@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cwctype>
+#include <string>
 #include <vector>
 
 #include "build/build_config.h"
@@ -212,8 +213,7 @@ CJS_Result CJS_Util::printd(CJS_Runtime* pRuntime,
 
   // Convert PDF-style format specifiers to wcsftime specifiers. Remove any
   // pre-existing %-directives before inserting our own.
-  std::basic_string<wchar_t> cFormat =
-      pRuntime->ToWideString(params[0]).c_str();
+  std::wstring cFormat = pRuntime->ToWideString(params[0]).c_str();
   cFormat.erase(std::remove(cFormat.begin(), cFormat.end(), '%'),
                 cFormat.end());
 

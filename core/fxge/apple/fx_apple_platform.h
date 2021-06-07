@@ -7,6 +7,8 @@
 #ifndef CORE_FXGE_APPLE_FX_APPLE_PLATFORM_H_
 #define CORE_FXGE_APPLE_FX_APPLE_PLATFORM_H_
 
+#include <memory>
+
 #include "core/fxge/apple/fx_quartz_device.h"
 #include "core/fxge/cfx_gemodule.h"
 

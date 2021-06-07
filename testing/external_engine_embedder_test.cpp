@@ -4,6 +4,8 @@
 
 #include "testing/external_engine_embedder_test.h"
 
+#include <memory>
+
 #include "fxjs/cfxjs_engine.h"
 #include "testing/v8_test_environment.h"
 

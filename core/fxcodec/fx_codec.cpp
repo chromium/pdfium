@@ -7,6 +7,7 @@
 #include "core/fxcodec/fx_codec.h"
 
 #include <algorithm>
+#include <utility>
 
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxge/dib/fx_dib.h"

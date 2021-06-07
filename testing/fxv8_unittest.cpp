@@ -4,6 +4,8 @@
 
 #include "testing/fxv8_unittest.h"
 
+#include <memory>
+
 #include "fxjs/cfx_v8.h"
 #include "v8/include/v8.h"
 

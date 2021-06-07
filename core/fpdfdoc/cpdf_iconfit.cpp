@@ -6,6 +6,8 @@
 
 #include "core/fpdfdoc/cpdf_iconfit.h"
 
+#include <algorithm>
+
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fxcrt/fx_string.h"

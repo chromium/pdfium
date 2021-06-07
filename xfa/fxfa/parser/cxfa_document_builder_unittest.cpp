@@ -4,6 +4,8 @@
 
 #include "xfa/fxfa/parser/cxfa_document_builder.h"
 
+#include <memory>
+
 #include "core/fxcrt/cfx_readonlymemorystream.h"
 #include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmlparser.h"

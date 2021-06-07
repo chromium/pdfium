@@ -4,6 +4,8 @@
 
 #include "core/fxcrt/cfx_widetextbuf.h"
 
+#include <utility>
+
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace fxcrt {

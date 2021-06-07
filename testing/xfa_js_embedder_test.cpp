@@ -4,6 +4,7 @@
 
 #include "testing/xfa_js_embedder_test.h"
 
+#include <memory>
 #include <string>
 
 #include "fpdfsdk/cpdfsdk_helpers.h"
