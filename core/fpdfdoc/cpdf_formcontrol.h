@@ -7,8 +7,6 @@
 #ifndef CORE_FPDFDOC_CPDF_FORMCONTROL_H_
 #define CORE_FPDFDOC_CPDF_FORMCONTROL_H_
 
-#include <utility>
-
 #include "core/fpdfdoc/cpdf_aaction.h"
 #include "core/fpdfdoc/cpdf_action.h"
 #include "core/fpdfdoc/cpdf_annot.h"
@@ -56,9 +54,7 @@ class CPDF_FormControl {
   bool HasMKEntry(const ByteString& csEntry) const;
   int GetRotation() const;
 
-  std::pair<CFX_Color::Type, FX_ARGB> GetBorderColorARGB() {
-    return GetColorARGB("BC");
-  }
+  CFX_Color::TypeAndARGB GetBorderColorARGB() { return GetColorARGB("BC"); }
 
   float GetOriginalBorderColorComponent(int index) {
     return GetOriginalColorComponent(index, "BC");
@@ -66,9 +62,7 @@ class CPDF_FormControl {
 
   CFX_Color GetOriginalBorderColor() { return GetOriginalColor("BC"); }
 
-  std::pair<CFX_Color::Type, FX_ARGB> GetBackgroundColor() {
-    return GetColorARGB("BG");
-  }
+  CFX_Color::TypeAndARGB GetBackgroundColor() { return GetColorARGB("BG"); }
 
   float GetOriginalBackgroundColorComponent(int index) {
     return GetOriginalColorComponent(index, "BG");
@@ -96,7 +90,7 @@ class CPDF_FormControl {
 
  private:
   RetainPtr<CPDF_Font> GetDefaultControlFont() const;
-  std::pair<CFX_Color::Type, FX_ARGB> GetColorARGB(const ByteString& csEntry);
+  CFX_Color::TypeAndARGB GetColorARGB(const ByteString& csEntry);
   float GetOriginalColorComponent(int index, const ByteString& csEntry);
   CFX_Color GetOriginalColor(const ByteString& csEntry);
 

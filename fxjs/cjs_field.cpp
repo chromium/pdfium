@@ -1293,7 +1293,7 @@ CJS_Result CJS_Field::get_fill_color(CJS_Runtime* pRuntime) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   CFX_Color color;
-  CFX_Color::Type iColorType = pFormControl->GetBackgroundColor().first;
+  CFX_Color::Type iColorType = pFormControl->GetBackgroundColor().color_type;
   if (iColorType == CFX_Color::Type::kTransparent) {
     color = CFX_Color(CFX_Color::Type::kTransparent);
   } else if (iColorType == CFX_Color::Type::kGray) {
@@ -1830,7 +1830,7 @@ CJS_Result CJS_Field::get_stroke_color(CJS_Runtime* pRuntime) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   CFX_Color color;
-  CFX_Color::Type iColorType = pFormControl->GetBorderColorARGB().first;
+  CFX_Color::Type iColorType = pFormControl->GetBorderColorARGB().color_type;
   if (iColorType == CFX_Color::Type::kTransparent) {
     color = CFX_Color(CFX_Color::Type::kTransparent);
   } else if (iColorType == CFX_Color::Type::kGray) {
@@ -1936,17 +1936,18 @@ CJS_Result CJS_Field::get_text_color(CJS_Runtime* pRuntime) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   CPDF_DefaultAppearance FieldAppearance = pFormControl->GetDefaultAppearance();
-  Optional<std::pair<CFX_Color::Type, FX_ARGB>> maybe_type_argb_pair =
+  Optional<CFX_Color::TypeAndARGB> maybe_type_argb_pair =
       FieldAppearance.GetColorARGB();
 
   CFX_Color crRet;
   if (maybe_type_argb_pair.has_value() &&
-      maybe_type_argb_pair.value().first != CFX_Color::Type::kTransparent) {
+      maybe_type_argb_pair.value().color_type !=
+          CFX_Color::Type::kTransparent) {
     int32_t a;
     int32_t r;
     int32_t g;
     int32_t b;
-    std::tie(a, r, g, b) = ArgbDecode(maybe_type_argb_pair.value().second);
+    std::tie(a, r, g, b) = ArgbDecode(maybe_type_argb_pair.value().argb);
     crRet =
         CFX_Color(CFX_Color::Type::kRGB, r / 255.0f, g / 255.0f, b / 255.0f);
   }

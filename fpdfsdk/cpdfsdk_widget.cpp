@@ -427,36 +427,35 @@ WideString CPDFSDK_Widget::GetName() const {
 #endif  // PDF_ENABLE_XFA
 
 Optional<FX_COLORREF> CPDFSDK_Widget::GetFillColor() const {
-  std::pair<CFX_Color::Type, FX_ARGB> type_argb_pair =
+  CFX_Color::TypeAndARGB type_argb_pair =
       GetFormControl()->GetBackgroundColor();
 
-  if (type_argb_pair.first == CFX_Color::Type::kTransparent)
+  if (type_argb_pair.color_type == CFX_Color::Type::kTransparent)
     return pdfium::nullopt;
 
-  return ArgbToColorRef(type_argb_pair.second);
+  return ArgbToColorRef(type_argb_pair.argb);
 }
 
 Optional<FX_COLORREF> CPDFSDK_Widget::GetBorderColor() const {
-  std::pair<CFX_Color::Type, FX_ARGB> type_argb_pair =
+  CFX_Color::TypeAndARGB type_argb_pair =
       GetFormControl()->GetBorderColorARGB();
-  if (type_argb_pair.first == CFX_Color::Type::kTransparent)
+  if (type_argb_pair.color_type == CFX_Color::Type::kTransparent)
     return pdfium::nullopt;
 
-  return ArgbToColorRef(type_argb_pair.second);
+  return ArgbToColorRef(type_argb_pair.argb);
 }
 
 Optional<FX_COLORREF> CPDFSDK_Widget::GetTextColor() const {
   CPDF_DefaultAppearance da = GetFormControl()->GetDefaultAppearance();
-  Optional<std::pair<CFX_Color::Type, FX_ARGB>> maybe_type_argb_pair =
-      da.GetColorARGB();
+  Optional<CFX_Color::TypeAndARGB> maybe_type_argb_pair = da.GetColorARGB();
 
   if (!maybe_type_argb_pair.has_value())
     return pdfium::nullopt;
 
-  if (maybe_type_argb_pair.value().first == CFX_Color::Type::kTransparent)
+  if (maybe_type_argb_pair.value().color_type == CFX_Color::Type::kTransparent)
     return pdfium::nullopt;
 
-  return ArgbToColorRef(maybe_type_argb_pair.value().second);
+  return ArgbToColorRef(maybe_type_argb_pair.value().argb);
 }
 
 float CPDFSDK_Widget::GetFontSize() const {

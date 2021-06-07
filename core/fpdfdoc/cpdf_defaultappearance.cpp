@@ -105,8 +105,7 @@ Optional<CFX_Color> CPDF_DefaultAppearance::GetColor() const {
   return pdfium::nullopt;
 }
 
-Optional<std::pair<CFX_Color::Type, FX_ARGB>>
-CPDF_DefaultAppearance::GetColorARGB() const {
+Optional<CFX_Color::TypeAndARGB> CPDF_DefaultAppearance::GetColorARGB() const {
   Optional<CFX_Color> maybe_color = GetColor();
   if (!maybe_color.has_value())
     return pdfium::nullopt;
@@ -114,21 +113,21 @@ CPDF_DefaultAppearance::GetColorARGB() const {
   const CFX_Color& color = maybe_color.value();
   if (color.nColorType == CFX_Color::Type::kGray) {
     int g = static_cast<int>(color.fColor1 * 255 + 0.5f);
-    return std::pair<CFX_Color::Type, FX_ARGB>(CFX_Color::Type::kGray,
-                                               ArgbEncode(255, g, g, g));
+    return CFX_Color::TypeAndARGB(CFX_Color::Type::kGray,
+                                  ArgbEncode(255, g, g, g));
   }
   if (color.nColorType == CFX_Color::Type::kRGB) {
     int r = static_cast<int>(color.fColor1 * 255 + 0.5f);
     int g = static_cast<int>(color.fColor2 * 255 + 0.5f);
     int b = static_cast<int>(color.fColor3 * 255 + 0.5f);
-    return std::pair<CFX_Color::Type, FX_ARGB>(CFX_Color::Type::kRGB,
-                                               ArgbEncode(255, r, g, b));
+    return CFX_Color::TypeAndARGB(CFX_Color::Type::kRGB,
+                                  ArgbEncode(255, r, g, b));
   }
   if (color.nColorType == CFX_Color::Type::kCMYK) {
     float r = 1.0f - std::min(1.0f, color.fColor1 + color.fColor4);
     float g = 1.0f - std::min(1.0f, color.fColor2 + color.fColor4);
     float b = 1.0f - std::min(1.0f, color.fColor3 + color.fColor4);
-    return std::pair<CFX_Color::Type, FX_ARGB>(
+    return CFX_Color::TypeAndARGB(
         CFX_Color::Type::kCMYK,
         ArgbEncode(255, static_cast<int>(r * 255 + 0.5f),
                    static_cast<int>(g * 255 + 0.5f),

@@ -25,7 +25,7 @@ class CPDF_DefaultAppearance {
   Optional<ByteString> GetFont(float* fFontSize);
 
   Optional<CFX_Color> GetColor() const;
-  Optional<std::pair<CFX_Color::Type, FX_ARGB>> GetColorARGB() const;
+  Optional<CFX_Color::TypeAndARGB> GetColorARGB() const;
 
   bool FindTagParamFromStartForTesting(CPDF_SimpleParser* parser,
                                        ByteStringView token,

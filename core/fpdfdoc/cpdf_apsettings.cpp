@@ -26,7 +26,7 @@ int CPDF_ApSettings::GetRotation() const {
   return m_pDict ? m_pDict->GetIntegerFor("R") : 0;
 }
 
-std::pair<CFX_Color::Type, FX_ARGB> CPDF_ApSettings::GetColorARGB(
+CFX_Color::TypeAndARGB CPDF_ApSettings::GetColorARGB(
     const ByteString& csEntry) const {
   if (!m_pDict)
     return {CFX_Color::Type::kTransparent, 0};
