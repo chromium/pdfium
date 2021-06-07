@@ -69,7 +69,7 @@ bool CFFL_ComboBox::OnChar(CPDFSDK_Annot* pAnnot,
   return CFFL_TextObject::OnChar(pAnnot, nChar, nFlags);
 }
 
-bool CFFL_ComboBox::IsDataChanged(CPDFSDK_PageView* pPageView) {
+bool CFFL_ComboBox::IsDataChanged(const CPDFSDK_PageView* pPageView) {
   auto* pWnd = GetComboBox(pPageView);
   if (!pWnd)
     return false;
@@ -84,7 +84,7 @@ bool CFFL_ComboBox::IsDataChanged(CPDFSDK_PageView* pPageView) {
   return pWnd->GetText() != m_pWidget->GetValue();
 }
 
-void CFFL_ComboBox::SaveData(CPDFSDK_PageView* pPageView) {
+void CFFL_ComboBox::SaveData(const CPDFSDK_PageView* pPageView) {
   CPWL_ComboBox* pWnd = GetComboBox(pPageView);
   if (!pWnd)
     return;
@@ -114,7 +114,7 @@ void CFFL_ComboBox::SaveData(CPDFSDK_PageView* pPageView) {
   SetChangeMark();
 }
 
-void CFFL_ComboBox::GetActionData(CPDFSDK_PageView* pPageView,
+void CFFL_ComboBox::GetActionData(const CPDFSDK_PageView* pPageView,
                                   CPDF_AAction::AActionType type,
                                   CPDFSDK_FieldAction& fa) {
   switch (type) {
@@ -149,7 +149,7 @@ void CFFL_ComboBox::GetActionData(CPDFSDK_PageView* pPageView,
   }
 }
 
-void CFFL_ComboBox::SetActionData(CPDFSDK_PageView* pPageView,
+void CFFL_ComboBox::SetActionData(const CPDFSDK_PageView* pPageView,
                                   CPDF_AAction::AActionType type,
                                   const CPDFSDK_FieldAction& fa) {
   switch (type) {
@@ -166,7 +166,7 @@ void CFFL_ComboBox::SetActionData(CPDFSDK_PageView* pPageView,
   }
 }
 
-void CFFL_ComboBox::SavePWLWindowState(CPDFSDK_PageView* pPageView) {
+void CFFL_ComboBox::SavePWLWindowState(const CPDFSDK_PageView* pPageView) {
   CPWL_ComboBox* pComboBox = GetComboBox(pPageView);
   if (!pComboBox)
     return;
@@ -182,7 +182,7 @@ void CFFL_ComboBox::SavePWLWindowState(CPDFSDK_PageView* pPageView) {
 }
 
 void CFFL_ComboBox::RecreatePWLWindowFromSavedState(
-    CPDFSDK_PageView* pPageView) {
+    const CPDFSDK_PageView* pPageView) {
   CPWL_ComboBox* pComboBox = CreateOrUpdateComboBox(pPageView);
   if (!pComboBox)
     return;
@@ -227,7 +227,7 @@ bool CFFL_ComboBox::IsIndexSelected(int index) {
 }
 
 #ifdef PDF_ENABLE_XFA
-bool CFFL_ComboBox::IsFieldFull(CPDFSDK_PageView* pPageView) {
+bool CFFL_ComboBox::IsFieldFull(const CPDFSDK_PageView* pPageView) {
   CPWL_ComboBox* pComboBox = GetComboBox(pPageView);
   if (!pComboBox)
     return false;
@@ -265,11 +265,12 @@ WideString CFFL_ComboBox::GetSelectExportText() {
   return swRet;
 }
 
-CPWL_ComboBox* CFFL_ComboBox::GetComboBox(CPDFSDK_PageView* pPageView) const {
+CPWL_ComboBox* CFFL_ComboBox::GetComboBox(
+    const CPDFSDK_PageView* pPageView) const {
   return static_cast<CPWL_ComboBox*>(GetPWLWindow(pPageView));
 }
 
 CPWL_ComboBox* CFFL_ComboBox::CreateOrUpdateComboBox(
-    CPDFSDK_PageView* pPageView) {
+    const CPDFSDK_PageView* pPageView) {
   return static_cast<CPWL_ComboBox*>(CreateOrUpdatePWLWindow(pPageView));
 }

@@ -71,7 +71,7 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
   virtual bool SetIndexSelected(int index, bool selected);
   virtual bool IsIndexSelected(int index);
 
-  FX_RECT GetViewBBox(CPDFSDK_PageView* pPageView);
+  FX_RECT GetViewBBox(const CPDFSDK_PageView* pPageView);
 
   WideString GetText();
   WideString GetSelectedText();
@@ -93,37 +93,38 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
   CFX_Matrix GetWindowMatrix(
       const IPWL_SystemHandler::PerWindowData* pAttached) override;
 
-  virtual void GetActionData(CPDFSDK_PageView* pPageView,
+  virtual void GetActionData(const CPDFSDK_PageView* pPageView,
                              CPDF_AAction::AActionType type,
                              CPDFSDK_FieldAction& fa);
-  virtual void SetActionData(CPDFSDK_PageView* pPageView,
+  virtual void SetActionData(const CPDFSDK_PageView* pPageView,
                              CPDF_AAction::AActionType type,
                              const CPDFSDK_FieldAction& fa);
   virtual CPWL_Wnd::CreateParams GetCreateParam();
   virtual std::unique_ptr<CPWL_Wnd> NewPWLWindow(
       const CPWL_Wnd::CreateParams& cp,
       std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData) = 0;
-  virtual void SavePWLWindowState(CPDFSDK_PageView* pPageView);
-  virtual void RecreatePWLWindowFromSavedState(CPDFSDK_PageView* pPageView);
-  virtual bool IsDataChanged(CPDFSDK_PageView* pPageView);
-  virtual void SaveData(CPDFSDK_PageView* pPageView);
+  virtual void SavePWLWindowState(const CPDFSDK_PageView* pPageView);
+  virtual void RecreatePWLWindowFromSavedState(
+      const CPDFSDK_PageView* pPageView);
+  virtual bool IsDataChanged(const CPDFSDK_PageView* pPageView);
+  virtual void SaveData(const CPDFSDK_PageView* pPageView);
 #ifdef PDF_ENABLE_XFA
-  virtual bool IsFieldFull(CPDFSDK_PageView* pPageView);
+  virtual bool IsFieldFull(const CPDFSDK_PageView* pPageView);
 #endif  // PDF_ENABLE_XFA
 
   CFX_Matrix GetCurMatrix();
-  CFX_FloatRect GetFocusBox(CPDFSDK_PageView* pPageView);
+  CFX_FloatRect GetFocusBox(const CPDFSDK_PageView* pPageView);
   CFX_FloatRect FFLtoPWL(const CFX_FloatRect& rect);
   CFX_FloatRect PWLtoFFL(const CFX_FloatRect& rect);
   CFX_PointF FFLtoPWL(const CFX_PointF& point);
   CFX_PointF PWLtoFFL(const CFX_PointF& point);
-  bool CommitData(CPDFSDK_PageView* pPageView, uint32_t nFlag);
-  CPWL_Wnd* ResetPWLWindowForValueAge(CPDFSDK_PageView* pPageView,
+  bool CommitData(const CPDFSDK_PageView* pPageView, uint32_t nFlag);
+  CPWL_Wnd* ResetPWLWindowForValueAge(const CPDFSDK_PageView* pPageView,
                                       CPDFSDK_Widget* pWidget,
                                       uint32_t nValueAge);
-  CPWL_Wnd* GetPWLWindow(CPDFSDK_PageView* pPageView) const;
-  CPWL_Wnd* CreateOrUpdatePWLWindow(CPDFSDK_PageView* pPageView);
-  void DestroyPWLWindow(CPDFSDK_PageView* pPageView);
+  CPWL_Wnd* GetPWLWindow(const CPDFSDK_PageView* pPageView) const;
+  CPWL_Wnd* CreateOrUpdatePWLWindow(const CPDFSDK_PageView* pPageView);
+  void DestroyPWLWindow(const CPDFSDK_PageView* pPageView);
   void EscapeFiller(CPDFSDK_PageView* pPageView, bool bDestroyPWLWindow);
 
   bool IsValid() const;
@@ -135,8 +136,8 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
   CPDFSDK_Annot* GetSDKAnnot() const { return m_pWidget.Get(); }
 
  protected:
-  virtual CPWL_Wnd* ResetPWLWindow(CPDFSDK_PageView* pPageView);
-  virtual CPWL_Wnd* RestorePWLWindow(CPDFSDK_PageView* pPageView);
+  virtual CPWL_Wnd* ResetPWLWindow(const CPDFSDK_PageView* pPageView);
+  virtual CPWL_Wnd* RestorePWLWindow(const CPDFSDK_PageView* pPageView);
 
   // If the inheriting widget has its own fontmap and a PWL_Edit widget that
   // access that fontmap then you have to call DestroyWindows before destroying
@@ -152,7 +153,7 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
   UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
   UnownedPtr<CPDFSDK_Widget> m_pWidget;
   std::unique_ptr<CFX_Timer> m_pTimer;
-  std::map<CPDFSDK_PageView*, std::unique_ptr<CPWL_Wnd>> m_Maps;
+  std::map<const CPDFSDK_PageView*, std::unique_ptr<CPWL_Wnd>> m_Maps;
 };
 
 #endif  // FPDFSDK_FORMFILLER_CFFL_FORMFIELD_H_

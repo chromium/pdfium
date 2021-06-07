@@ -31,7 +31,7 @@ class CFFL_InteractiveFormFiller final : public IPWL_FillerNotify {
   bool Annot_HitTest(CPDFSDK_PageView* pPageView,
                      CPDFSDK_Annot* pAnnot,
                      const CFX_PointF& point);
-  FX_RECT GetViewBBox(CPDFSDK_PageView* pPageView, CPDFSDK_Annot* pAnnot);
+  FX_RECT GetViewBBox(const CPDFSDK_PageView* pPageView, CPDFSDK_Annot* pAnnot);
   void OnDraw(CPDFSDK_PageView* pPageView,
               CPDFSDK_Annot* pAnnot,
               CFX_RenderDevice* pDevice,
@@ -97,22 +97,23 @@ class CFFL_InteractiveFormFiller final : public IPWL_FillerNotify {
 
   static bool IsVisible(CPDFSDK_Widget* pWidget);
   static bool IsReadOnly(CPDFSDK_Widget* pWidget);
-  static bool IsValidAnnot(CPDFSDK_PageView* pPageView, CPDFSDK_Annot* pAnnot);
+  static bool IsValidAnnot(const CPDFSDK_PageView* pPageView,
+                           CPDFSDK_Annot* pAnnot);
 
   bool OnKeyStrokeCommit(ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                         CPDFSDK_PageView* pPageView,
+                         const CPDFSDK_PageView* pPageView,
                          uint32_t nFlag);
   bool OnValidate(ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                  CPDFSDK_PageView* pPageView,
+                  const CPDFSDK_PageView* pPageView,
                   uint32_t nFlag);
   void OnCalculate(ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                   CPDFSDK_PageView* pPageView,
+                   const CPDFSDK_PageView* pPageView,
                    uint32_t nFlag);
   void OnFormat(ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                CPDFSDK_PageView* pPageView,
+                const CPDFSDK_PageView* pPageView,
                 uint32_t nFlag);
   bool OnButtonUp(ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                  CPDFSDK_PageView* pPageView,
+                  const CPDFSDK_PageView* pPageView,
                   uint32_t nFlag);
 
   bool SetIndexSelected(ObservedPtr<CPDFSDK_Annot>* pAnnot,
@@ -147,16 +148,16 @@ class CFFL_InteractiveFormFiller final : public IPWL_FillerNotify {
 #ifdef PDF_ENABLE_XFA
   void SetFocusAnnotTab(CPDFSDK_Annot* pWidget, bool bSameField, bool bNext);
   bool OnClick(ObservedPtr<CPDFSDK_Annot>* pAnnot,
-               CPDFSDK_PageView* pPageView,
+               const CPDFSDK_PageView* pPageView,
                uint32_t nFlag);
   bool OnFull(ObservedPtr<CPDFSDK_Widget>* pAnnot,
-              CPDFSDK_PageView* pPageView,
+              const CPDFSDK_PageView* pPageView,
               uint32_t nFlag);
   bool OnPreOpen(ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                 CPDFSDK_PageView* pPageView,
+                 const CPDFSDK_PageView* pPageView,
                  uint32_t nFlag);
   bool OnPostOpen(ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                  CPDFSDK_PageView* pPageView,
+                  const CPDFSDK_PageView* pPageView,
                   uint32_t nFlag);
 #endif  // PDF_ENABLE_XFA
 

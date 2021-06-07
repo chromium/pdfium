@@ -37,7 +37,7 @@ void CFFL_FormField::DestroyWindows() {
   }
 }
 
-FX_RECT CFFL_FormField::GetViewBBox(CPDFSDK_PageView* pPageView) {
+FX_RECT CFFL_FormField::GetViewBBox(const CPDFSDK_PageView* pPageView) {
   CPWL_Wnd* pWnd = GetPWLWindow(pPageView);
   CFX_FloatRect rcAnnot =
       pWnd ? PWLtoFFL(pWnd->GetWindowRect()) : m_pWidget->GetRect();
@@ -344,13 +344,15 @@ CPWL_Wnd::CreateParams CFFL_FormField::GetCreateParam() {
   return cp;
 }
 
-CPWL_Wnd* CFFL_FormField::GetPWLWindow(CPDFSDK_PageView* pPageView) const {
+CPWL_Wnd* CFFL_FormField::GetPWLWindow(
+    const CPDFSDK_PageView* pPageView) const {
   DCHECK(pPageView);
   auto it = m_Maps.find(pPageView);
   return it != m_Maps.end() ? it->second.get() : nullptr;
 }
 
-CPWL_Wnd* CFFL_FormField::CreateOrUpdatePWLWindow(CPDFSDK_PageView* pPageView) {
+CPWL_Wnd* CFFL_FormField::CreateOrUpdatePWLWindow(
+    const CPDFSDK_PageView* pPageView) {
   DCHECK(pPageView);
   CPWL_Wnd* pWnd = GetPWLWindow(pPageView);
   if (!pWnd) {
@@ -370,7 +372,7 @@ CPWL_Wnd* CFFL_FormField::CreateOrUpdatePWLWindow(CPDFSDK_PageView* pPageView) {
                                    pPrivateData->GetValueAge());
 }
 
-void CFFL_FormField::DestroyPWLWindow(CPDFSDK_PageView* pPageView) {
+void CFFL_FormField::DestroyPWLWindow(const CPDFSDK_PageView* pPageView) {
   auto it = m_Maps.find(pPageView);
   if (it == m_Maps.end())
     return;
@@ -386,7 +388,7 @@ CFX_Matrix CFFL_FormField::GetWindowMatrix(
   if (!pPrivateData)
     return CFX_Matrix();
 
-  CPDFSDK_PageView* pPageView = pPrivateData->GetPageView();
+  const CPDFSDK_PageView* pPageView = pPrivateData->GetPageView();
   if (!pPageView)
     return CFX_Matrix();
 
@@ -432,7 +434,7 @@ CPDFSDK_PageView* CFFL_FormField::GetCurPageView() {
   return m_pFormFillEnv->GetOrCreatePageView(pPage);
 }
 
-CFX_FloatRect CFFL_FormField::GetFocusBox(CPDFSDK_PageView* pPageView) {
+CFX_FloatRect CFFL_FormField::GetFocusBox(const CPDFSDK_PageView* pPageView) {
   CPWL_Wnd* pWnd = GetPWLWindow(pPageView);
   if (!pWnd)
     return CFX_FloatRect();
@@ -458,7 +460,8 @@ CFX_PointF CFFL_FormField::PWLtoFFL(const CFX_PointF& point) {
   return GetCurMatrix().Transform(point);
 }
 
-bool CFFL_FormField::CommitData(CPDFSDK_PageView* pPageView, uint32_t nFlag) {
+bool CFFL_FormField::CommitData(const CPDFSDK_PageView* pPageView,
+                                uint32_t nFlag) {
   if (!IsDataChanged(pPageView))
     return true;
 
@@ -500,14 +503,14 @@ bool CFFL_FormField::CommitData(CPDFSDK_PageView* pPageView, uint32_t nFlag) {
   return true;
 }
 
-bool CFFL_FormField::IsDataChanged(CPDFSDK_PageView* pPageView) {
+bool CFFL_FormField::IsDataChanged(const CPDFSDK_PageView* pPageView) {
   return false;
 }
 
-void CFFL_FormField::SaveData(CPDFSDK_PageView* pPageView) {}
+void CFFL_FormField::SaveData(const CPDFSDK_PageView* pPageView) {}
 
 #ifdef PDF_ENABLE_XFA
-bool CFFL_FormField::IsFieldFull(CPDFSDK_PageView* pPageView) {
+bool CFFL_FormField::IsFieldFull(const CPDFSDK_PageView* pPageView) {
   return false;
 }
 #endif  // PDF_ENABLE_XFA
@@ -516,33 +519,34 @@ void CFFL_FormField::SetChangeMark() {
   m_pFormFillEnv->OnChange();
 }
 
-void CFFL_FormField::GetActionData(CPDFSDK_PageView* pPageView,
+void CFFL_FormField::GetActionData(const CPDFSDK_PageView* pPageView,
                                    CPDF_AAction::AActionType type,
                                    CPDFSDK_FieldAction& fa) {
   fa.sValue = m_pWidget->GetValue();
 }
 
-void CFFL_FormField::SetActionData(CPDFSDK_PageView* pPageView,
+void CFFL_FormField::SetActionData(const CPDFSDK_PageView* pPageView,
                                    CPDF_AAction::AActionType type,
                                    const CPDFSDK_FieldAction& fa) {}
 
-void CFFL_FormField::SavePWLWindowState(CPDFSDK_PageView* pPageView) {}
+void CFFL_FormField::SavePWLWindowState(const CPDFSDK_PageView* pPageView) {}
 
 void CFFL_FormField::RecreatePWLWindowFromSavedState(
-    CPDFSDK_PageView* pPageView) {}
+    const CPDFSDK_PageView* pPageView) {}
 
-CPWL_Wnd* CFFL_FormField::ResetPWLWindowForValueAge(CPDFSDK_PageView* pPageView,
-                                                    CPDFSDK_Widget* pWidget,
-                                                    uint32_t nValueAge) {
+CPWL_Wnd* CFFL_FormField::ResetPWLWindowForValueAge(
+    const CPDFSDK_PageView* pPageView,
+    CPDFSDK_Widget* pWidget,
+    uint32_t nValueAge) {
   return nValueAge == pWidget->GetValueAge() ? RestorePWLWindow(pPageView)
                                              : ResetPWLWindow(pPageView);
 }
 
-CPWL_Wnd* CFFL_FormField::ResetPWLWindow(CPDFSDK_PageView* pPageView) {
+CPWL_Wnd* CFFL_FormField::ResetPWLWindow(const CPDFSDK_PageView* pPageView) {
   return GetPWLWindow(pPageView);
 }
 
-CPWL_Wnd* CFFL_FormField::RestorePWLWindow(CPDFSDK_PageView* pPageView) {
+CPWL_Wnd* CFFL_FormField::RestorePWLWindow(const CPDFSDK_PageView* pPageView) {
   return GetPWLWindow(pPageView);
 }
 

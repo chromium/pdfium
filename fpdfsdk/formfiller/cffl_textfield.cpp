@@ -141,12 +141,12 @@ bool CFFL_TextField::OnChar(CPDFSDK_Annot* pAnnot,
   return CFFL_TextObject::OnChar(pAnnot, nChar, nFlags);
 }
 
-bool CFFL_TextField::IsDataChanged(CPDFSDK_PageView* pPageView) {
+bool CFFL_TextField::IsDataChanged(const CPDFSDK_PageView* pPageView) {
   CPWL_Edit* pEdit = GetEdit(pPageView);
   return pEdit && pEdit->GetText() != m_pWidget->GetValue();
 }
 
-void CFFL_TextField::SaveData(CPDFSDK_PageView* pPageView) {
+void CFFL_TextField::SaveData(const CPDFSDK_PageView* pPageView) {
   CPWL_Edit* pWnd = GetEdit(pPageView);
   if (!pWnd)
     return;
@@ -170,7 +170,7 @@ void CFFL_TextField::SaveData(CPDFSDK_PageView* pPageView) {
   SetChangeMark();
 }
 
-void CFFL_TextField::GetActionData(CPDFSDK_PageView* pPageView,
+void CFFL_TextField::GetActionData(const CPDFSDK_PageView* pPageView,
                                    CPDF_AAction::AActionType type,
                                    CPDFSDK_FieldAction& fa) {
   switch (type) {
@@ -200,7 +200,7 @@ void CFFL_TextField::GetActionData(CPDFSDK_PageView* pPageView,
   }
 }
 
-void CFFL_TextField::SetActionData(CPDFSDK_PageView* pPageView,
+void CFFL_TextField::SetActionData(const CPDFSDK_PageView* pPageView,
                                    CPDF_AAction::AActionType type,
                                    const CPDFSDK_FieldAction& fa) {
   switch (type) {
@@ -216,7 +216,7 @@ void CFFL_TextField::SetActionData(CPDFSDK_PageView* pPageView,
   }
 }
 
-void CFFL_TextField::SavePWLWindowState(CPDFSDK_PageView* pPageView) {
+void CFFL_TextField::SavePWLWindowState(const CPDFSDK_PageView* pPageView) {
   CPWL_Edit* pWnd = GetEdit(pPageView);
   if (!pWnd)
     return;
@@ -226,7 +226,7 @@ void CFFL_TextField::SavePWLWindowState(CPDFSDK_PageView* pPageView) {
 }
 
 void CFFL_TextField::RecreatePWLWindowFromSavedState(
-    CPDFSDK_PageView* pPageView) {
+    const CPDFSDK_PageView* pPageView) {
   CPWL_Edit* pWnd = CreateOrUpdateEdit(pPageView);
   if (!pWnd)
     return;
@@ -236,7 +236,7 @@ void CFFL_TextField::RecreatePWLWindowFromSavedState(
 }
 
 #ifdef PDF_ENABLE_XFA
-bool CFFL_TextField::IsFieldFull(CPDFSDK_PageView* pPageView) {
+bool CFFL_TextField::IsFieldFull(const CPDFSDK_PageView* pPageView) {
   CPWL_Edit* pWnd = GetEdit(pPageView);
   return pWnd && pWnd->IsTextFull();
 }
@@ -253,10 +253,11 @@ void CFFL_TextField::OnSetFocus(CPWL_Edit* pEdit) {
   m_pFormFillEnv->OnSetFieldInputFocus(pBuffer, nCharacters, true);
 }
 
-CPWL_Edit* CFFL_TextField::GetEdit(CPDFSDK_PageView* pPageView) const {
+CPWL_Edit* CFFL_TextField::GetEdit(const CPDFSDK_PageView* pPageView) const {
   return static_cast<CPWL_Edit*>(GetPWLWindow(pPageView));
 }
 
-CPWL_Edit* CFFL_TextField::CreateOrUpdateEdit(CPDFSDK_PageView* pPageView) {
+CPWL_Edit* CFFL_TextField::CreateOrUpdateEdit(
+    const CPDFSDK_PageView* pPageView) {
   return static_cast<CPWL_Edit*>(CreateOrUpdatePWLWindow(pPageView));
 }

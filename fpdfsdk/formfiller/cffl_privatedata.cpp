@@ -10,7 +10,7 @@
 #include "third_party/base/ptr_util.h"
 
 CFFL_PrivateData::CFFL_PrivateData(CPDFSDK_Widget* pWidget,
-                                   CPDFSDK_PageView* pPageView,
+                                   const CPDFSDK_PageView* pPageView,
                                    uint32_t nAppearanceAge,
                                    uint32_t nValueAge)
     : m_pWidget(pWidget),

@@ -19,14 +19,14 @@ CFFL_TextObject::~CFFL_TextObject() {
   DestroyWindows();
 }
 
-CPWL_Wnd* CFFL_TextObject::ResetPWLWindow(CPDFSDK_PageView* pPageView) {
+CPWL_Wnd* CFFL_TextObject::ResetPWLWindow(const CPDFSDK_PageView* pPageView) {
   DestroyPWLWindow(pPageView);
   ObservedPtr<CPWL_Wnd> pRet(CreateOrUpdatePWLWindow(pPageView));
   m_pWidget->UpdateField();  // May invoke JS, invalidating |pRet|.
   return pRet.Get();
 }
 
-CPWL_Wnd* CFFL_TextObject::RestorePWLWindow(CPDFSDK_PageView* pPageView) {
+CPWL_Wnd* CFFL_TextObject::RestorePWLWindow(const CPDFSDK_PageView* pPageView) {
   SavePWLWindowState(pPageView);
   DestroyPWLWindow(pPageView);
   RecreatePWLWindowFromSavedState(pPageView);

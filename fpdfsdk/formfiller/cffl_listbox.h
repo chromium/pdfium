@@ -27,19 +27,20 @@ class CFFL_ListBox final : public CFFL_TextObject {
       std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData)
       override;
   bool OnChar(CPDFSDK_Annot* pAnnot, uint32_t nChar, uint32_t nFlags) override;
-  bool IsDataChanged(CPDFSDK_PageView* pPageView) override;
-  void SaveData(CPDFSDK_PageView* pPageView) override;
-  void GetActionData(CPDFSDK_PageView* pPageView,
+  bool IsDataChanged(const CPDFSDK_PageView* pPageView) override;
+  void SaveData(const CPDFSDK_PageView* pPageView) override;
+  void GetActionData(const CPDFSDK_PageView* pPageView,
                      CPDF_AAction::AActionType type,
                      CPDFSDK_FieldAction& fa) override;
-  void SavePWLWindowState(CPDFSDK_PageView* pPageView) override;
-  void RecreatePWLWindowFromSavedState(CPDFSDK_PageView* pPageView) override;
+  void SavePWLWindowState(const CPDFSDK_PageView* pPageView) override;
+  void RecreatePWLWindowFromSavedState(
+      const CPDFSDK_PageView* pPageView) override;
   bool SetIndexSelected(int index, bool selected) override;
   bool IsIndexSelected(int index) override;
 
  private:
-  CPWL_ListBox* GetListBox(CPDFSDK_PageView* pPageView) const;
-  CPWL_ListBox* CreateOrUpdateListBox(CPDFSDK_PageView* pPageView);
+  CPWL_ListBox* GetListBox(const CPDFSDK_PageView* pPageView) const;
+  CPWL_ListBox* CreateOrUpdateListBox(const CPDFSDK_PageView* pPageView);
 
   std::set<int> m_OriginSelections;
   std::vector<int> m_State;

@@ -83,7 +83,7 @@ bool CFFL_ListBox::OnChar(CPDFSDK_Annot* pAnnot,
   return CFFL_TextObject::OnChar(pAnnot, nChar, nFlags);
 }
 
-bool CFFL_ListBox::IsDataChanged(CPDFSDK_PageView* pPageView) {
+bool CFFL_ListBox::IsDataChanged(const CPDFSDK_PageView* pPageView) {
   CPWL_ListBox* pListBox = GetListBox(pPageView);
   if (!pListBox)
     return false;
@@ -104,7 +104,7 @@ bool CFFL_ListBox::IsDataChanged(CPDFSDK_PageView* pPageView) {
   return pListBox->GetCurSel() != m_pWidget->GetSelectedIndex(0);
 }
 
-void CFFL_ListBox::SaveData(CPDFSDK_PageView* pPageView) {
+void CFFL_ListBox::SaveData(const CPDFSDK_PageView* pPageView) {
   CPWL_ListBox* pListBox = GetListBox(pPageView);
   if (!pListBox)
     return;
@@ -136,7 +136,7 @@ void CFFL_ListBox::SaveData(CPDFSDK_PageView* pPageView) {
   SetChangeMark();
 }
 
-void CFFL_ListBox::GetActionData(CPDFSDK_PageView* pPageView,
+void CFFL_ListBox::GetActionData(const CPDFSDK_PageView* pPageView,
                                  CPDF_AAction::AActionType type,
                                  CPDFSDK_FieldAction& fa) {
   switch (type) {
@@ -167,7 +167,7 @@ void CFFL_ListBox::GetActionData(CPDFSDK_PageView* pPageView,
   }
 }
 
-void CFFL_ListBox::SavePWLWindowState(CPDFSDK_PageView* pPageView) {
+void CFFL_ListBox::SavePWLWindowState(const CPDFSDK_PageView* pPageView) {
   CPWL_ListBox* pListBox = GetListBox(pPageView);
   if (!pListBox)
     return;
@@ -179,7 +179,7 @@ void CFFL_ListBox::SavePWLWindowState(CPDFSDK_PageView* pPageView) {
 }
 
 void CFFL_ListBox::RecreatePWLWindowFromSavedState(
-    CPDFSDK_PageView* pPageView) {
+    const CPDFSDK_PageView* pPageView) {
   CPWL_ListBox* pListBox = CreateOrUpdateListBox(pPageView);
   if (!pListBox)
     return;
@@ -221,10 +221,12 @@ bool CFFL_ListBox::IsIndexSelected(int index) {
   return pListBox && pListBox->IsItemSelected(index);
 }
 
-CPWL_ListBox* CFFL_ListBox::GetListBox(CPDFSDK_PageView* pPageView) const {
+CPWL_ListBox* CFFL_ListBox::GetListBox(
+    const CPDFSDK_PageView* pPageView) const {
   return static_cast<CPWL_ListBox*>(GetPWLWindow(pPageView));
 }
 
-CPWL_ListBox* CFFL_ListBox::CreateOrUpdateListBox(CPDFSDK_PageView* pPageView) {
+CPWL_ListBox* CFFL_ListBox::CreateOrUpdateListBox(
+    const CPDFSDK_PageView* pPageView) {
   return static_cast<CPWL_ListBox*>(CreateOrUpdatePWLWindow(pPageView));
 }

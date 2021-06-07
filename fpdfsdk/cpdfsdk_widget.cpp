@@ -206,7 +206,7 @@ bool CPDFSDK_Widget::HasXFAAAction(PDFSDK_XFAAActionType eXFAAAT) const {
 
 bool CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
                                   CPDFSDK_FieldAction* data,
-                                  CPDFSDK_PageView* pPageView) {
+                                  const CPDFSDK_PageView* pPageView) {
   auto* pContext = static_cast<CPDFXFA_Context*>(
       m_pPageView->GetFormFillEnv()->GetDocExtension());
   if (!pContext)
@@ -795,7 +795,7 @@ CFX_Color CPDFSDK_Widget::GetFillPWLColor() const {
 
 bool CPDFSDK_Widget::OnAAction(CPDF_AAction::AActionType type,
                                CPDFSDK_FieldAction* data,
-                               CPDFSDK_PageView* pPageView) {
+                               const CPDFSDK_PageView* pPageView) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv = pPageView->GetFormFillEnv();
 
 #ifdef PDF_ENABLE_XFA

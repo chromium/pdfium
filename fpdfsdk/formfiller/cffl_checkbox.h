@@ -29,12 +29,12 @@ class CFFL_CheckBox final : public CFFL_Button {
                    CPDFSDK_Annot* pAnnot,
                    uint32_t nFlags,
                    const CFX_PointF& point) override;
-  bool IsDataChanged(CPDFSDK_PageView* pPageView) override;
-  void SaveData(CPDFSDK_PageView* pPageView) override;
+  bool IsDataChanged(const CPDFSDK_PageView* pPageView) override;
+  void SaveData(const CPDFSDK_PageView* pPageView) override;
 
  private:
-  CPWL_CheckBox* GetCheckBox(CPDFSDK_PageView* pPageView) const;
-  CPWL_CheckBox* CreateOrUpdateCheckBox(CPDFSDK_PageView* pPageView);
+  CPWL_CheckBox* GetCheckBox(const CPDFSDK_PageView* pPageView) const;
+  CPWL_CheckBox* CreateOrUpdateCheckBox(const CPDFSDK_PageView* pPageView);
 };
 
 #endif  // FPDFSDK_FORMFILLER_CFFL_CHECKBOX_H_

@@ -40,8 +40,9 @@ bool CFFL_InteractiveFormFiller::Annot_HitTest(CPDFSDK_PageView* pPageView,
   return pAnnot->GetRect().Contains(point);
 }
 
-FX_RECT CFFL_InteractiveFormFiller::GetViewBBox(CPDFSDK_PageView* pPageView,
-                                                CPDFSDK_Annot* pAnnot) {
+FX_RECT CFFL_InteractiveFormFiller::GetViewBBox(
+    const CPDFSDK_PageView* pPageView,
+    CPDFSDK_Annot* pAnnot) {
   if (CFFL_FormField* pFormField = GetFormField(pAnnot))
     return pFormField->GetViewBBox(pPageView);
 
@@ -242,7 +243,7 @@ bool CFFL_InteractiveFormFiller::OnLButtonUp(CPDFSDK_PageView* pPageView,
 }
 
 bool CFFL_InteractiveFormFiller::OnButtonUp(ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                                            CPDFSDK_PageView* pPageView,
+                                            const CPDFSDK_PageView* pPageView,
                                             uint32_t nFlag) {
   if (m_bNotifying)
     return false;
@@ -643,7 +644,7 @@ void CFFL_InteractiveFormFiller::QueryWherePopup(
 
 bool CFFL_InteractiveFormFiller::OnKeyStrokeCommit(
     ObservedPtr<CPDFSDK_Annot>* pAnnot,
-    CPDFSDK_PageView* pPageView,
+    const CPDFSDK_PageView* pPageView,
     uint32_t nFlag) {
   if (m_bNotifying)
     return true;
@@ -675,7 +676,7 @@ bool CFFL_InteractiveFormFiller::OnKeyStrokeCommit(
 }
 
 bool CFFL_InteractiveFormFiller::OnValidate(ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                                            CPDFSDK_PageView* pPageView,
+                                            const CPDFSDK_PageView* pPageView,
                                             uint32_t nFlag) {
   if (m_bNotifying)
     return true;
@@ -706,7 +707,7 @@ bool CFFL_InteractiveFormFiller::OnValidate(ObservedPtr<CPDFSDK_Annot>* pAnnot,
 }
 
 void CFFL_InteractiveFormFiller::OnCalculate(ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                                             CPDFSDK_PageView* pPageView,
+                                             const CPDFSDK_PageView* pPageView,
                                              uint32_t nFlag) {
   if (m_bNotifying)
     return;
@@ -721,7 +722,7 @@ void CFFL_InteractiveFormFiller::OnCalculate(ObservedPtr<CPDFSDK_Annot>* pAnnot,
 }
 
 void CFFL_InteractiveFormFiller::OnFormat(ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                                          CPDFSDK_PageView* pPageView,
+                                          const CPDFSDK_PageView* pPageView,
                                           uint32_t nFlag) {
   if (m_bNotifying)
     return;
@@ -745,7 +746,7 @@ void CFFL_InteractiveFormFiller::OnFormat(ObservedPtr<CPDFSDK_Annot>* pAnnot,
 
 #ifdef PDF_ENABLE_XFA
 bool CFFL_InteractiveFormFiller::OnClick(ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                                         CPDFSDK_PageView* pPageView,
+                                         const CPDFSDK_PageView* pPageView,
                                          uint32_t nFlag) {
   if (m_bNotifying)
     return false;
@@ -776,7 +777,7 @@ bool CFFL_InteractiveFormFiller::OnClick(ObservedPtr<CPDFSDK_Annot>* pAnnot,
 }
 
 bool CFFL_InteractiveFormFiller::OnFull(ObservedPtr<CPDFSDK_Widget>* pAnnot,
-                                        CPDFSDK_PageView* pPageView,
+                                        const CPDFSDK_PageView* pPageView,
                                         uint32_t nFlag) {
   if (m_bNotifying)
     return false;
@@ -807,7 +808,7 @@ bool CFFL_InteractiveFormFiller::OnFull(ObservedPtr<CPDFSDK_Widget>* pAnnot,
 }
 
 bool CFFL_InteractiveFormFiller::OnPreOpen(ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                                           CPDFSDK_PageView* pPageView,
+                                           const CPDFSDK_PageView* pPageView,
                                            uint32_t nFlag) {
   if (m_bNotifying)
     return false;
@@ -838,7 +839,7 @@ bool CFFL_InteractiveFormFiller::OnPreOpen(ObservedPtr<CPDFSDK_Annot>* pAnnot,
 }
 
 bool CFFL_InteractiveFormFiller::OnPostOpen(ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                                            CPDFSDK_PageView* pPageView,
+                                            const CPDFSDK_PageView* pPageView,
                                             uint32_t nFlag) {
   if (m_bNotifying)
     return false;
@@ -870,7 +871,8 @@ bool CFFL_InteractiveFormFiller::OnPostOpen(ObservedPtr<CPDFSDK_Annot>* pAnnot,
 }
 #endif  // PDF_ENABLE_XFA
 
-bool CFFL_InteractiveFormFiller::IsValidAnnot(CPDFSDK_PageView* pPageView,
+// static
+bool CFFL_InteractiveFormFiller::IsValidAnnot(const CPDFSDK_PageView* pPageView,
                                               CPDFSDK_Annot* pAnnot) {
   return pPageView && pPageView->IsValidAnnot(pAnnot->GetPDFAnnot());
 }
@@ -885,7 +887,7 @@ std::pair<bool, bool> CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
     uint32_t nFlag) {
   // Copy out of private data since the window owning it may not survive.
   auto* pPrivateData = static_cast<const CFFL_PrivateData*>(pAttached);
-  CPDFSDK_PageView* pPageView = pPrivateData->GetPageView();
+  const CPDFSDK_PageView* pPageView = pPrivateData->GetPageView();
   ObservedPtr<CPDFSDK_Widget> pWidget(pPrivateData->GetWidget());
   DCHECK(pWidget);
 
