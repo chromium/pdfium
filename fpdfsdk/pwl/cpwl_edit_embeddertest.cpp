@@ -34,7 +34,7 @@ class CPWLEditEmbedderTest : public EmbedderTest {
     m_pFormFillEnv =
         CPDFSDKFormFillEnvironmentFromFPDFFormHandle(form_handle());
     CPDFSDK_AnnotIterator iter(m_pFormFillEnv->GetPageViewAtIndex(0),
-                               CPDF_Annot::Subtype::WIDGET);
+                               {CPDF_Annot::Subtype::WIDGET});
     // Normal text field.
     m_pAnnot = iter.GetFirstAnnot();
     ASSERT_TRUE(m_pAnnot);

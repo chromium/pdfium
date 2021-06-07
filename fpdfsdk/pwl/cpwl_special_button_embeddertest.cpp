@@ -31,7 +31,7 @@ class CPWLSpecialButtonEmbedderTest : public EmbedderTest {
 
     formfill_env_ = CPDFSDKFormFillEnvironmentFromFPDFFormHandle(form_handle());
     CPDFSDK_AnnotIterator it(formfill_env_->GetPageViewAtIndex(0),
-                             CPDF_Annot::Subtype::WIDGET);
+                             {CPDF_Annot::Subtype::WIDGET});
 
     // Read only check box.
     annot_readonly_checkbox_ = it.GetFirstAnnot();

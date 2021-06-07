@@ -30,12 +30,6 @@ bool CompareByTopDescending(const CPDFSDK_Annot* p1, const CPDFSDK_Annot* p2) {
 
 }  // namespace
 
-CPDFSDK_AnnotIterator::CPDFSDK_AnnotIterator(CPDFSDK_PageView* pPageView,
-                                             CPDF_Annot::Subtype nAnnotSubtype)
-    : CPDFSDK_AnnotIterator(
-          pPageView,
-          std::vector<CPDF_Annot::Subtype>(1, nAnnotSubtype)) {}
-
 CPDFSDK_AnnotIterator::CPDFSDK_AnnotIterator(
     CPDFSDK_PageView* pPageView,
     const std::vector<CPDF_Annot::Subtype>& subtypes_to_iterate)

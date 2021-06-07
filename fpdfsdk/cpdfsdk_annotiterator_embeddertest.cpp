@@ -45,7 +45,7 @@ TEST_F(CPDFSDK_AnnotIteratorTest, CPDFSDK_AnnotIterator) {
   {
     // Page 0 specifies "row order".
     CPDFSDK_AnnotIterator iter(pFormFillEnv->GetPageViewAtIndex(0),
-                               CPDF_Annot::Subtype::WIDGET);
+                               {CPDF_Annot::Subtype::WIDGET});
     CPDFSDK_Annot* pAnnot = iter.GetFirstAnnot();
     CheckRect(pAnnot->GetRect(), RightTop);
     pAnnot = iter.GetNextAnnot(pAnnot);
@@ -71,7 +71,7 @@ TEST_F(CPDFSDK_AnnotIteratorTest, CPDFSDK_AnnotIterator) {
   {
     // Page 1 specifies "column order"
     CPDFSDK_AnnotIterator iter(pFormFillEnv->GetPageViewAtIndex(1),
-                               CPDF_Annot::Subtype::WIDGET);
+                               {CPDF_Annot::Subtype::WIDGET});
     CPDFSDK_Annot* pAnnot = iter.GetFirstAnnot();
     CheckRect(pAnnot->GetRect(), RightTop);
     pAnnot = iter.GetNextAnnot(pAnnot);
@@ -97,7 +97,7 @@ TEST_F(CPDFSDK_AnnotIteratorTest, CPDFSDK_AnnotIterator) {
   {
     // Page 2 specifies "struct order"
     CPDFSDK_AnnotIterator iter(pFormFillEnv->GetPageViewAtIndex(2),
-                               CPDF_Annot::Subtype::WIDGET);
+                               {CPDF_Annot::Subtype::WIDGET});
     CPDFSDK_Annot* pAnnot = iter.GetFirstAnnot();
     CheckRect(pAnnot->GetRect(), LeftBottom);
     pAnnot = iter.GetNextAnnot(pAnnot);
