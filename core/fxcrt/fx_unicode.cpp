@@ -135,7 +135,10 @@ constexpr size_t kFXTextLayoutBidiMirrorSize =
 
 }  // namespace
 
-wchar_t FX_GetMirrorChar(wchar_t wch) {
+namespace pdfium {
+namespace unicode {
+
+wchar_t GetMirrorChar(wchar_t wch) {
   uint16_t prop = GetUnicodeProperties(wch);
   size_t idx = prop >> kMirrorBitPos;
   if (idx == kMirrorMax)
@@ -144,7 +147,7 @@ wchar_t FX_GetMirrorChar(wchar_t wch) {
   return kFXTextLayoutBidiMirror[idx];
 }
 
-FX_BIDICLASS FX_GetBidiClass(wchar_t wch) {
+FX_BIDICLASS GetBidiClass(wchar_t wch) {
   uint16_t prop = GetUnicodeProperties(wch);
   uint16_t result = (prop & kBidiClassBitMask) >> kBidiClassBitPos;
   DCHECK(result <= static_cast<uint16_t>(FX_BIDICLASS::kPDF));
@@ -152,17 +155,20 @@ FX_BIDICLASS FX_GetBidiClass(wchar_t wch) {
 }
 
 #ifdef PDF_ENABLE_XFA
-FX_CHARTYPE FX_GetCharType(wchar_t wch) {
+FX_CHARTYPE GetCharType(wchar_t wch) {
   uint16_t prop = GetExtendedUnicodeProperties(wch);
   uint16_t result = (prop & kCharTypeBitMask) >> kCharTypeBitPos;
   DCHECK(result <= static_cast<uint16_t>(FX_CHARTYPE::kArabic));
   return static_cast<FX_CHARTYPE>(result);
 }
 
-FX_BREAKPROPERTY FX_GetBreakProperty(wchar_t wch) {
+FX_BREAKPROPERTY GetBreakProperty(wchar_t wch) {
   uint16_t prop = GetExtendedUnicodeProperties(wch);
   uint16_t result = (prop & kBreakTypeBitMask) >> kBreakTypeBitPos;
   DCHECK(result <= static_cast<uint16_t>(FX_BREAKPROPERTY::kTB));
   return static_cast<FX_BREAKPROPERTY>(result);
 }
 #endif  // PDF_ENABLE_XFA
+
+}  // namespace unicode
+}  // namespace pdfium

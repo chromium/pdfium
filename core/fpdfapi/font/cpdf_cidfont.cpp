@@ -23,6 +23,7 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/fx_unicode.h"
 #include "core/fxge/fx_font.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
@@ -611,7 +612,7 @@ int CPDF_CIDFont::GetGlyphIndex(uint32_t unicode, bool* pVertGlyph) {
 
   FXFT_FaceRec* face = m_Font.GetFaceRec();
   int index = FT_Get_Char_Index(face, unicode);
-  if (unicode == 0x2502)
+  if (unicode == pdfium::unicode::kBoxDrawingsLightVerical)
     return index;
 
   if (!index || !IsVertWriting())

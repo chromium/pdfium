@@ -13,14 +13,19 @@
 namespace pdfium {
 namespace arabic {
 
+constexpr wchar_t kArabicLetterLam = 0x0644;
+constexpr wchar_t kArabicLetterHeh = 0x0647;
+constexpr wchar_t kArabicShadda = 0x0651;
+constexpr wchar_t kArabicLetterSuperscriptAlef = 0x0670;
+
 wchar_t GetFormChar(wchar_t wch, wchar_t prev, wchar_t next);
 wchar_t GetFormChar(const CFGAS_Char* cur,
                     const CFGAS_Char* prev,
                     const CFGAS_Char* next);
+wchar_t GetArabicFromShaddaTable(wchar_t shadda);
 
 }  // namespace arabic
 }  // namespace pdfium
 
-wchar_t FX_GetArabicFromShaddaTable(wchar_t shadda);
 
 #endif  // XFA_FGAS_LAYOUT_FGAS_ARABIC_H_

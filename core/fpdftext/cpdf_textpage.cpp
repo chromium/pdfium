@@ -75,7 +75,7 @@ float CalculateBaseSpace(const CPDF_TextObject* pTextObj,
   return baseSpace;
 }
 
-size_t Unicode_GetNormalization(wchar_t wch, wchar_t* pDst) {
+size_t GetUnicodeNormalization(wchar_t wch, wchar_t* pDst) {
   wch = wch & 0xFFFF;
   wchar_t wFind = g_UnicodeData_Normalization[wch];
   if (!wFind) {
@@ -678,7 +678,7 @@ void CPDF_TextPage::AddCharInfoByLRDirection(wchar_t wChar,
   info2.m_Index = m_TextBuf.GetLength();
   size_t nCount = 0;
   if (wChar >= 0xFB00 && wChar <= 0xFB06)
-    nCount = Unicode_GetNormalization(wChar, nullptr);
+    nCount = GetUnicodeNormalization(wChar, nullptr);
   if (nCount == 0) {
     m_TextBuf.AppendChar(wChar);
     m_CharList.push_back(info2);
@@ -686,7 +686,7 @@ void CPDF_TextPage::AddCharInfoByLRDirection(wchar_t wChar,
   }
 
   std::unique_ptr<wchar_t, FxFreeDeleter> pDst(FX_Alloc(wchar_t, nCount));
-  Unicode_GetNormalization(wChar, pDst.get());
+  GetUnicodeNormalization(wChar, pDst.get());
   for (size_t nIndex = 0; nIndex < nCount; ++nIndex) {
     info2.m_Unicode = pDst.get()[nIndex];
     info2.m_CharType = CPDF_TextPage::CharType::kPiece;
@@ -705,8 +705,8 @@ void CPDF_TextPage::AddCharInfoByRLDirection(wchar_t wChar,
   }
 
   info2.m_Index = m_TextBuf.GetLength();
-  wChar = FX_GetMirrorChar(wChar);
-  size_t nCount = Unicode_GetNormalization(wChar, nullptr);
+  wChar = pdfium::unicode::GetMirrorChar(wChar);
+  size_t nCount = GetUnicodeNormalization(wChar, nullptr);
   if (nCount == 0) {
     info2.m_Unicode = wChar;
     m_TextBuf.AppendChar(info2.m_Unicode);
@@ -715,7 +715,7 @@ void CPDF_TextPage::AddCharInfoByRLDirection(wchar_t wChar,
   }
 
   std::unique_ptr<wchar_t, FxFreeDeleter> pDst(FX_Alloc(wchar_t, nCount));
-  Unicode_GetNormalization(wChar, pDst.get());
+  GetUnicodeNormalization(wChar, pDst.get());
   for (size_t nIndex = 0; nIndex < nCount; ++nIndex) {
     info2.m_Unicode = pDst.get()[nIndex];
     info2.m_CharType = CPDF_TextPage::CharType::kPiece;

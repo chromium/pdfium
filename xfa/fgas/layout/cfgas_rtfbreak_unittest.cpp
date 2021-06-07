@@ -65,9 +65,8 @@ TEST_F(CFGAS_RTFBreakTest, ControlCharacters) {
   auto rtf_break = CreateBreak(FX_LAYOUTSTYLE_ExpandTab);
   EXPECT_EQ(CFGAS_Char::BreakType::kLine, rtf_break->AppendChar(L'\v'));
   EXPECT_EQ(CFGAS_Char::BreakType::kPage, rtf_break->AppendChar(L'\f'));
-  const wchar_t kUnicodeParagraphSeparator = 0x2029;
   EXPECT_EQ(CFGAS_Char::BreakType::kParagraph,
-            rtf_break->AppendChar(kUnicodeParagraphSeparator));
+            rtf_break->AppendChar(pdfium::unicode::kParagraphSeparator));
   EXPECT_EQ(CFGAS_Char::BreakType::kParagraph, rtf_break->AppendChar(L'\n'));
 
   ASSERT_EQ(1, rtf_break->CountBreakPieces());

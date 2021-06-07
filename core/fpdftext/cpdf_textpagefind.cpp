@@ -14,6 +14,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/fx_unicode.h"
 #include "third_party/base/check.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
@@ -143,7 +144,7 @@ std::vector<WideString> ExtractFindWhat(const WideString& findwhat) {
       WideString curStr = word->Substr(pos, 1);
       wchar_t curChar = word.value()[pos];
       if (IsIgnoreSpaceCharacter(curChar)) {
-        if (pos > 0 && curChar == 0x2019) {
+        if (pos > 0 && curChar == pdfium::unicode::kRightSingleQuotationMark) {
           pos++;
           continue;
         }

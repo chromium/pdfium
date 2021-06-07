@@ -144,7 +144,7 @@ const FX_ARBFORMTABLE* ParseChar(const CFGAS_Char* pTC,
                                  FX_CHARTYPE* eType) {
   if (!pTC) {
     *eType = FX_CHARTYPE::kUnknown;
-    *wChar = 0xFEFF;
+    *wChar = pdfium::unicode::kZeroWidthNoBreakSpace;
     return nullptr;
   }
 
@@ -191,13 +191,13 @@ wchar_t GetFormChar(const CFGAS_Char* cur,
   FX_CHARTYPE ePrev;
   wchar_t wPrev;
   ParseChar(prev, &wPrev, &ePrev);
-  if (wPrev == 0x0644 && eCur == FX_CHARTYPE::kArabicAlef)
-    return 0xFEFF;
+  if (wPrev == kArabicLetterLam && eCur == FX_CHARTYPE::kArabicAlef)
+    return pdfium::unicode::kZeroWidthNoBreakSpace;
 
   FX_CHARTYPE eNext;
   wchar_t wNext;
   ParseChar(next, &wNext, &eNext);
-  bool bAlef = (eNext == FX_CHARTYPE::kArabicAlef && wCur == 0x644);
+  bool bAlef = (eNext == FX_CHARTYPE::kArabicAlef && wCur == kArabicLetterLam);
   if (ePrev < FX_CHARTYPE::kArabicAlef) {
     if (bAlef)
       return GetArabicFromAlefTable(wNext);
@@ -214,10 +214,7 @@ wchar_t GetFormChar(const CFGAS_Char* cur,
   return (eNext < FX_CHARTYPE::kArabicAlef) ? ft->wFinal : ft->wMedial;
 }
 
-}  // namespace arabic
-}  // namespace pdfium
-
-wchar_t FX_GetArabicFromShaddaTable(wchar_t shadda) {
+wchar_t GetArabicFromShaddaTable(wchar_t shadda) {
   static const size_t s_iShaddaCount = pdfium::size(gs_FX_ShaddaTable);
   for (size_t iStart = 0; iStart < s_iShaddaCount; iStart++) {
     const FX_ARASHADDA& v = gs_FX_ShaddaTable[iStart];
@@ -226,3 +223,6 @@ wchar_t FX_GetArabicFromShaddaTable(wchar_t shadda) {
   }
   return shadda;
 }
+
+}  // namespace arabic
+}  // namespace pdfium
