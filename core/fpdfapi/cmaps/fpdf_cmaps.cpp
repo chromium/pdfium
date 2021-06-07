@@ -30,15 +30,6 @@ const FXCMAP_CMap* FindNextCMap(const FXCMAP_CMap* pMap) {
 
 }  // namespace
 
-const FXCMAP_CMap* FindEmbeddedCMap(pdfium::span<const FXCMAP_CMap> pCMaps,
-                                    ByteStringView bsName) {
-  for (size_t i = 0; i < pCMaps.size(); i++) {
-    if (bsName == pCMaps[i].m_Name)
-      return &pCMaps[i];
-  }
-  return nullptr;
-}
-
 uint16_t CIDFromCharCode(const FXCMAP_CMap* pMap, uint32_t charcode) {
   DCHECK(pMap);
   const uint16_t loword = static_cast<uint16_t>(charcode);

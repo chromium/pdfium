@@ -256,6 +256,15 @@ size_t GetFourByteCharSizeImpl(
   return 1;
 }
 
+const FXCMAP_CMap* FindEmbeddedCMap(pdfium::span<const FXCMAP_CMap> pCMaps,
+                                    ByteStringView bsName) {
+  for (size_t i = 0; i < pCMaps.size(); i++) {
+    if (bsName == pCMaps[i].m_Name)
+      return &pCMaps[i];
+  }
+  return nullptr;
+}
+
 }  // namespace
 
 CPDF_CMap::CPDF_CMap(ByteStringView bsPredefinedName)

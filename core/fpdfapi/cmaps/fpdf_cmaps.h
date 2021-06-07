@@ -10,7 +10,6 @@
 #include <stdint.h>
 
 #include "core/fxcrt/fx_string.h"
-#include "third_party/base/span.h"
 
 struct FXCMAP_DWordCIDMap {
   uint16_t m_HiWord;
@@ -31,8 +30,6 @@ struct FXCMAP_CMap {
   int8_t m_UseOffset;
 };
 
-const FXCMAP_CMap* FindEmbeddedCMap(pdfium::span<const FXCMAP_CMap> pCMaps,
-                                    ByteStringView name);
 uint16_t CIDFromCharCode(const FXCMAP_CMap* pMap, uint32_t charcode);
 uint32_t CharCodeFromCID(const FXCMAP_CMap* pMap, uint16_t cid);
 
