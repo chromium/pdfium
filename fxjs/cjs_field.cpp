@@ -1293,25 +1293,27 @@ CJS_Result CJS_Field::get_fill_color(CJS_Runtime* pRuntime) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   CFX_Color color;
-  CFX_Color::Type iColorType = pFormControl->GetBackgroundColor().color_type;
-  if (iColorType == CFX_Color::Type::kTransparent) {
-    color = CFX_Color(CFX_Color::Type::kTransparent);
-  } else if (iColorType == CFX_Color::Type::kGray) {
-    color = CFX_Color(CFX_Color::Type::kGray,
-                      pFormControl->GetOriginalBackgroundColorComponent(0));
-  } else if (iColorType == CFX_Color::Type::kRGB) {
-    color = CFX_Color(CFX_Color::Type::kRGB,
-                      pFormControl->GetOriginalBackgroundColorComponent(0),
-                      pFormControl->GetOriginalBackgroundColorComponent(1),
-                      pFormControl->GetOriginalBackgroundColorComponent(2));
-  } else if (iColorType == CFX_Color::Type::kCMYK) {
-    color = CFX_Color(CFX_Color::Type::kCMYK,
-                      pFormControl->GetOriginalBackgroundColorComponent(0),
-                      pFormControl->GetOriginalBackgroundColorComponent(1),
-                      pFormControl->GetOriginalBackgroundColorComponent(2),
-                      pFormControl->GetOriginalBackgroundColorComponent(3));
-  } else {
-    return CJS_Result::Failure(JSMessage::kValueError);
+  switch (pFormControl->GetBackgroundColor().color_type) {
+    case CFX_Color::Type::kTransparent:
+      color = CFX_Color(CFX_Color::Type::kTransparent);
+      break;
+    case CFX_Color::Type::kGray:
+      color = CFX_Color(CFX_Color::Type::kGray,
+                        pFormControl->GetOriginalBackgroundColorComponent(0));
+      break;
+    case CFX_Color::Type::kRGB:
+      color = CFX_Color(CFX_Color::Type::kRGB,
+                        pFormControl->GetOriginalBackgroundColorComponent(0),
+                        pFormControl->GetOriginalBackgroundColorComponent(1),
+                        pFormControl->GetOriginalBackgroundColorComponent(2));
+      break;
+    case CFX_Color::Type::kCMYK:
+      color = CFX_Color(CFX_Color::Type::kCMYK,
+                        pFormControl->GetOriginalBackgroundColorComponent(0),
+                        pFormControl->GetOriginalBackgroundColorComponent(1),
+                        pFormControl->GetOriginalBackgroundColorComponent(2),
+                        pFormControl->GetOriginalBackgroundColorComponent(3));
+      break;
   }
 
   v8::Local<v8::Value> array =
@@ -1830,25 +1832,27 @@ CJS_Result CJS_Field::get_stroke_color(CJS_Runtime* pRuntime) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   CFX_Color color;
-  CFX_Color::Type iColorType = pFormControl->GetBorderColorARGB().color_type;
-  if (iColorType == CFX_Color::Type::kTransparent) {
-    color = CFX_Color(CFX_Color::Type::kTransparent);
-  } else if (iColorType == CFX_Color::Type::kGray) {
-    color = CFX_Color(CFX_Color::Type::kGray,
-                      pFormControl->GetOriginalBorderColorComponent(0));
-  } else if (iColorType == CFX_Color::Type::kRGB) {
-    color = CFX_Color(CFX_Color::Type::kRGB,
-                      pFormControl->GetOriginalBorderColorComponent(0),
-                      pFormControl->GetOriginalBorderColorComponent(1),
-                      pFormControl->GetOriginalBorderColorComponent(2));
-  } else if (iColorType == CFX_Color::Type::kCMYK) {
-    color = CFX_Color(CFX_Color::Type::kCMYK,
-                      pFormControl->GetOriginalBorderColorComponent(0),
-                      pFormControl->GetOriginalBorderColorComponent(1),
-                      pFormControl->GetOriginalBorderColorComponent(2),
-                      pFormControl->GetOriginalBorderColorComponent(3));
-  } else {
-    return CJS_Result::Failure(JSMessage::kObjectTypeError);
+  switch (pFormControl->GetBorderColorARGB().color_type) {
+    case CFX_Color::Type::kTransparent:
+      color = CFX_Color(CFX_Color::Type::kTransparent);
+      break;
+    case CFX_Color::Type::kGray:
+      color = CFX_Color(CFX_Color::Type::kGray,
+                        pFormControl->GetOriginalBorderColorComponent(0));
+      break;
+    case CFX_Color::Type::kRGB:
+      color = CFX_Color(CFX_Color::Type::kRGB,
+                        pFormControl->GetOriginalBorderColorComponent(0),
+                        pFormControl->GetOriginalBorderColorComponent(1),
+                        pFormControl->GetOriginalBorderColorComponent(2));
+      break;
+    case CFX_Color::Type::kCMYK:
+      color = CFX_Color(CFX_Color::Type::kCMYK,
+                        pFormControl->GetOriginalBorderColorComponent(0),
+                        pFormControl->GetOriginalBorderColorComponent(1),
+                        pFormControl->GetOriginalBorderColorComponent(2),
+                        pFormControl->GetOriginalBorderColorComponent(3));
+      break;
   }
 
   v8::Local<v8::Value> array =
