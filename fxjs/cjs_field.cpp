@@ -28,6 +28,7 @@
 #include "fxjs/js_resources.h"
 #include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
+#include "third_party/base/optional.h"
 
 namespace {
 
@@ -140,34 +141,34 @@ void UpdateFormControl(CPDFSDK_FormFillEnvironment* pFormFillEnv,
     pFormFillEnv->SetChangeMark();
 }
 
-// note: iControlNo = -1, means not a widget.
-void ParseFieldName(const WideString& strFieldNameParsed,
-                    WideString& strFieldName,
-                    int& iControlNo) {
-  auto reverse_it = strFieldNameParsed.rbegin();
-  while (reverse_it != strFieldNameParsed.rend()) {
+struct FieldNameData {
+  FieldNameData(WideString field_name_in, int control_index_in)
+      : field_name(field_name_in), control_index(control_index_in) {}
+
+  WideString field_name;
+  int control_index;
+};
+
+Optional<FieldNameData> ParseFieldName(const WideString& field_name) {
+  auto reverse_it = field_name.rbegin();
+  while (reverse_it != field_name.rend()) {
     if (*reverse_it == L'.')
       break;
     ++reverse_it;
   }
-  if (reverse_it == strFieldNameParsed.rend()) {
-    strFieldName = strFieldNameParsed;
-    iControlNo = -1;
-    return;
+  if (reverse_it == field_name.rend()) {
+    return pdfium::nullopt;
   }
-  WideString suffixal =
-      strFieldNameParsed.Last(reverse_it - strFieldNameParsed.rbegin());
-  iControlNo = FXSYS_wtoi(suffixal.c_str());
-  if (iControlNo == 0) {
+  WideString suffixal = field_name.Last(reverse_it - field_name.rbegin());
+  int control_index = FXSYS_wtoi(suffixal.c_str());
+  if (control_index == 0) {
     suffixal.TrimRight(L' ');
     if (suffixal != L"0") {
-      strFieldName = strFieldNameParsed;
-      iControlNo = -1;
-      return;
+      return pdfium::nullopt;
     }
   }
-  strFieldName =
-      strFieldNameParsed.First(strFieldNameParsed.rend() - reverse_it - 1);
+  return FieldNameData(field_name.First(field_name.rend() - reverse_it - 1),
+                       control_index);
 }
 
 std::vector<CPDF_FormField*> GetFormFieldsForName(
@@ -628,14 +629,12 @@ bool CJS_Field::AttachField(CJS_Document* pDocument,
   swFieldNameTemp.Replace(L"..", L".");
 
   if (pForm->CountFields(swFieldNameTemp) <= 0) {
-    WideString strFieldName;
-    int iControlNo = -1;
-    ParseFieldName(swFieldNameTemp, strFieldName, iControlNo);
-    if (iControlNo == -1)
+    Optional<FieldNameData> parsed_data = ParseFieldName(swFieldNameTemp);
+    if (!parsed_data.has_value())
       return false;
 
-    m_FieldName = strFieldName;
-    m_nFormControlIndex = iControlNo;
+    m_FieldName = parsed_data.value().field_name;
+    m_nFormControlIndex = parsed_data.value().control_index;
     return true;
   }
 
