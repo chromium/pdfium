@@ -77,6 +77,10 @@ group("fuzzers") {
   foreach(fuzzer, fuzzer_list) {
     deps += [ ":${fuzzer}_src" ]
   }
+
+  if (is_component_build) {
+    deps += [ ":fuzzer_impls" ]
+  }
 }
 
 source_set("fuzzer_init") {
