@@ -18,8 +18,6 @@ class CPDFSDK_PageView;
 
 class CPDFSDK_AnnotIterator {
  public:
-  enum TabOrder : uint8_t { STRUCTURE = 0, ROW, COLUMN };
-
   CPDFSDK_AnnotIterator(CPDFSDK_PageView* pPageView,
                         CPDF_Annot::Subtype nAnnotSubtype);
 
@@ -35,6 +33,10 @@ class CPDFSDK_AnnotIterator {
   CPDFSDK_Annot* GetPrevAnnot(CPDFSDK_Annot* pAnnot);
 
  private:
+  enum TabOrder : uint8_t { kStructure = 0, kRow, kColumn };
+
+  static TabOrder GetTabOrder(CPDFSDK_PageView* pPageView);
+
   void GenerateResults();
   void CollectAnnots(std::vector<UnownedPtr<CPDFSDK_Annot>>* pArray);
   CFX_FloatRect AddToAnnotsList(std::vector<UnownedPtr<CPDFSDK_Annot>>* sa,
