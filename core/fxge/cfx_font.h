@@ -33,16 +33,34 @@ struct CFX_TextRenderOptions;
 
 class CFX_Font {
  public:
-  CFX_Font();
-  ~CFX_Font();
+  // This struct should be the same as FPDF_CharsetFontMap.
+  struct CharsetFontMap {
+    int charset;           // Character Set Enum value, see FX_CHARSET_XXX.
+    const char* fontname;  // Name of default font to use with that charset.
+  };
+
+  // Pointer to the default character set to TT Font name map. The map is an
+  // array of CharsetFontMap structs, with its end indicated by a {-1, nullptr}
+  // entry.
+  static const CharsetFontMap kDefaultTTFMap[];
 
   // Used when the font name is empty.
   static const char kUntitledFontName[];
 
   static const char kDefaultAnsiFontName[];
   static const char kUniversalDefaultFontName[];
+
+  // Returns negative values on failure.
+  static int GetWeightLevel(int charset, size_t index);
+
+  // |angle| is typically negative.
+  static int GetSkewFromAngle(int angle);
+
   static ByteString GetDefaultFontNameByCharset(uint8_t nCharset);
   static uint8_t GetCharSetFromUnicode(uint16_t word);
+
+  CFX_Font();
+  ~CFX_Font();
 
   void LoadSubst(const ByteString& face_name,
                  bool bTrueType,
@@ -79,11 +97,6 @@ class CFX_Font {
       int anti_alias,
       CFX_TextRenderOptions* text_options) const;
   const CFX_PathData* LoadGlyphPath(uint32_t glyph_index, int dest_width) const;
-
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  CFX_TypeFace* GetDeviceCache() const;
-#endif
-
   int GetGlyphWidth(uint32_t glyph_index);
   int GetAscent() const;
   int GetDescent() const;
@@ -91,9 +104,6 @@ class CFX_Font {
   bool IsItalic() const;
   bool IsBold() const;
   bool IsFixedWidth() const;
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  bool IsSubstFontBold() const;
-#endif
   bool IsVertical() const { return m_bVertical; }
   ByteString GetPsName() const;
   ByteString GetFamilyName() const;
@@ -108,27 +118,16 @@ class CFX_Font {
   void AdjustMMParams(int glyph_index, int dest_width, int weight) const;
   std::unique_ptr<CFX_PathData> LoadGlyphPathImpl(uint32_t glyph_index,
                                                   int dest_width) const;
+
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+  CFX_TypeFace* GetDeviceCache() const;
+  bool IsSubstFontBold() const;
+#endif
+
 #if defined(OS_APPLE)
   void* GetPlatformFont() const { return m_pPlatformFont; }
   void SetPlatformFont(void* font) { m_pPlatformFont = font; }
 #endif
-
-  // Returns negative values on failure.
-  static int GetWeightLevel(int charset, size_t index);
-
-  // |angle| is typically negative.
-  static int GetSkewFromAngle(int angle);
-
-  // This struct should be the same as FPDF_CharsetFontMap.
-  struct CharsetFontMap {
-    int charset;           // Character Set Enum value, see FX_CHARSET_XXX.
-    const char* fontname;  // Name of default font to use with that charset.
-  };
-
-  // Pointer to the default character set to TT Font name map. The map is an
-  // array of CharsetFontMap structs, with its end indicated by a {-1, nullptr}
-  // entry.
-  static const CharsetFontMap kDefaultTTFMap[];
 
  private:
   RetainPtr<CFX_GlyphCache> GetOrCreateGlyphCache() const;
@@ -143,6 +142,7 @@ class CFX_Font {
   RetainPtr<IFX_SeekableReadStream> m_pOwnedFile;
   std::unique_ptr<FXFT_StreamRec> m_pOwnedStreamRec;  // Must outlive |m_Face|.
 #endif
+
   mutable RetainPtr<CFX_Face> m_Face;
   mutable RetainPtr<CFX_GlyphCache> m_GlyphCache;
   std::unique_ptr<CFX_SubstFont> m_pSubstFont;
