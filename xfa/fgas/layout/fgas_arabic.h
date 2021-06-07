@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FGAS_LAYOUT_FX_ARABIC_H_
-#define XFA_FGAS_LAYOUT_FX_ARABIC_H_
+#ifndef XFA_FGAS_LAYOUT_FGAS_ARABIC_H_
+#define XFA_FGAS_LAYOUT_FGAS_ARABIC_H_
 
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fgas/layout/cfgas_char.h"
@@ -23,4 +23,4 @@ wchar_t GetFormChar(const CFGAS_Char* cur,
 
 wchar_t FX_GetArabicFromShaddaTable(wchar_t shadda);
 
-#endif  // XFA_FGAS_LAYOUT_FX_ARABIC_H_
+#endif  // XFA_FGAS_LAYOUT_FGAS_ARABIC_H_

@@ -20,8 +20,8 @@
 #include "xfa/fgas/layout/cfgas_char.h"
 #include "xfa/fgas/layout/cfgas_textpiece.h"
 #include "xfa/fgas/layout/cfgas_textuserdata.h"
-#include "xfa/fgas/layout/fx_arabic.h"
-#include "xfa/fgas/layout/fx_linebreak.h"
+#include "xfa/fgas/layout/fgas_arabic.h"
+#include "xfa/fgas/layout/fgas_linebreak.h"
 
 CFGAS_RTFBreak::CFGAS_RTFBreak(uint32_t dwLayoutStyles)
     : CFGAS_Break(dwLayoutStyles) {

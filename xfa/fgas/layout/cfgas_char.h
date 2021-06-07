@@ -14,7 +14,7 @@
 #include "core/fxcrt/fx_unicode.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "xfa/fgas/layout/cfgas_textuserdata.h"
-#include "xfa/fgas/layout/fx_linebreak.h"
+#include "xfa/fgas/layout/fgas_linebreak.h"
 
 class CFGAS_Char {
  public:

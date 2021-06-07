@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fgas/layout/fx_arabic.h"
+#include "xfa/fgas/layout/fgas_arabic.h"
 
 #include "core/fxcrt/fx_unicode.h"
 #include "third_party/base/stl_util.h"

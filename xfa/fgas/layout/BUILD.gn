@@ -27,10 +27,10 @@ source_set("layout") {
     "cfgas_textuserdata.h",
     "cfgas_txtbreak.cpp",
     "cfgas_txtbreak.h",
-    "fx_arabic.cpp",
-    "fx_arabic.h",
-    "fx_linebreak.cpp",
-    "fx_linebreak.h",
+    "fgas_arabic.cpp",
+    "fgas_arabic.h",
+    "fgas_linebreak.cpp",
+    "fgas_linebreak.h",
   ]
   deps = [
     "../../../core/fxcrt",

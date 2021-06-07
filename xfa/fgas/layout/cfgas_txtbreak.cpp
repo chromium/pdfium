@@ -17,8 +17,8 @@
 #include "third_party/base/stl_util.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/cfgas_char.h"
-#include "xfa/fgas/layout/fx_arabic.h"
-#include "xfa/fgas/layout/fx_linebreak.h"
+#include "xfa/fgas/layout/fgas_arabic.h"
+#include "xfa/fgas/layout/fgas_linebreak.h"
 
 namespace {
 
