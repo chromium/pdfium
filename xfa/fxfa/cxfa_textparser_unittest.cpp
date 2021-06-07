@@ -7,6 +7,7 @@
 #include "fxjs/gc/heap.h"
 #include "testing/fxgc_unittest.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "v8/include/cppgc/heap.h"
 
 class CXFA_TestTextParser final : public CXFA_TextParser {
  public:

@@ -11,6 +11,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "testing/fxgc_unittest.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "v8/include/cppgc/heap.h"
 #include "xfa/fxfa/fm2js/cxfa_fmlexer.h"
 #include "xfa/fxfa/fm2js/cxfa_fmtojavascriptdepth.h"
 

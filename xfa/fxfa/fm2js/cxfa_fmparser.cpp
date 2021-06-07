@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/fxcrt/autorestorer.h"
+#include "v8/include/cppgc/heap.h"
 
 namespace {
 
