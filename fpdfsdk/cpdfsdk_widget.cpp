@@ -11,6 +11,7 @@
 #include <utility>
 
 #include "constants/annotation_common.h"
+#include "constants/appearance.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -428,7 +429,7 @@ WideString CPDFSDK_Widget::GetName() const {
 
 Optional<FX_COLORREF> CPDFSDK_Widget::GetFillColor() const {
   CFX_Color::TypeAndARGB type_argb_pair =
-      GetFormControl()->GetBackgroundColor();
+      GetFormControl()->GetColorARGB(pdfium::appearance::kBG);
 
   if (type_argb_pair.color_type == CFX_Color::Type::kTransparent)
     return pdfium::nullopt;
@@ -438,7 +439,7 @@ Optional<FX_COLORREF> CPDFSDK_Widget::GetFillColor() const {
 
 Optional<FX_COLORREF> CPDFSDK_Widget::GetBorderColor() const {
   CFX_Color::TypeAndARGB type_argb_pair =
-      GetFormControl()->GetBorderColorARGB();
+      GetFormControl()->GetColorARGB(pdfium::appearance::kBC);
   if (type_argb_pair.color_type == CFX_Color::Type::kTransparent)
     return pdfium::nullopt;
 

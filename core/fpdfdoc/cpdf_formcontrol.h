@@ -55,24 +55,11 @@ class CPDF_FormControl {
   bool HasMKEntry(const ByteString& csEntry) const;
   int GetRotation() const;
 
-  CFX_Color::TypeAndARGB GetBorderColorARGB() {
-    return GetColorARGB(pdfium::appearance::kBC);
-  }
-
-  float GetOriginalBorderColorComponent(int index) {
-    return GetOriginalColorComponent(index, pdfium::appearance::kBC);
-  }
+  CFX_Color::TypeAndARGB GetColorARGB(const ByteString& csEntry);
+  float GetOriginalColorComponent(int index, const ByteString& csEntry);
 
   CFX_Color GetOriginalBorderColor() {
     return GetOriginalColor(pdfium::appearance::kBC);
-  }
-
-  CFX_Color::TypeAndARGB GetBackgroundColor() {
-    return GetColorARGB(pdfium::appearance::kBG);
-  }
-
-  float GetOriginalBackgroundColorComponent(int index) {
-    return GetOriginalColorComponent(index, pdfium::appearance::kBG);
   }
 
   CFX_Color GetOriginalBackgroundColor() {
@@ -105,8 +92,6 @@ class CPDF_FormControl {
 
  private:
   RetainPtr<CPDF_Font> GetDefaultControlFont() const;
-  CFX_Color::TypeAndARGB GetColorARGB(const ByteString& csEntry);
-  float GetOriginalColorComponent(int index, const ByteString& csEntry);
   CFX_Color GetOriginalColor(const ByteString& csEntry);
 
   WideString GetCaption(const ByteString& csEntry) const;
