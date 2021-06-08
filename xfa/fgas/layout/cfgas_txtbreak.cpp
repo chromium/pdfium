@@ -49,46 +49,36 @@ void CFGAS_TxtBreak::SetCombWidth(float fCombWidth) {
 }
 
 void CFGAS_TxtBreak::AppendChar_Combination(CFGAS_Char* pCurChar) {
-  wchar_t wch = pCurChar->char_code();
-  wchar_t wForm;
-  FX_SAFE_INT32 iCharWidth = 0;
+  FX_SAFE_INT32 iCharWidth = m_iCombWidth;
   pCurChar->m_iCharWidth = -1;
-  if (m_bCombText) {
-    iCharWidth = m_iCombWidth;
-  } else {
-    wForm = wch;
+  if (!m_bCombText) {
+    wchar_t wch = pCurChar->char_code();
     CFGAS_Char* pLastChar = GetLastChar(0, false, false);
     if (pLastChar &&
         (pLastChar->m_dwCharStyles & FX_TXTCHARSTYLE_ArabicShadda) == 0) {
-      bool bShadda = false;
+      wchar_t wLast = pLastChar->char_code();
+      Optional<uint16_t> maybe_shadda;
       if (wch == pdfium::arabic::kArabicShadda) {
-        wchar_t wLast = pLastChar->char_code();
-        if (wLast >= 0x064C && wLast <= 0x0650) {
-          wForm = pdfium::arabic::GetArabicFromShaddaTable(wLast);
-          bShadda = true;
-        }
-      } else if (wch >= 0x064C && wch <= 0x0650) {
-        if (pLastChar->char_code() == pdfium::arabic::kArabicShadda) {
-          wForm = pdfium::arabic::GetArabicFromShaddaTable(wch);
-          bShadda = true;
-        }
+        maybe_shadda = pdfium::arabic::GetArabicFromShaddaTable(wLast);
+      } else if (wLast == pdfium::arabic::kArabicShadda) {
+        maybe_shadda = pdfium::arabic::GetArabicFromShaddaTable(wch);
       }
-      if (bShadda) {
+      if (maybe_shadda.has_value()) {
+        wch = maybe_shadda.value();
+        pCurChar->m_dwCharStyles |= FX_TXTCHARSTYLE_ArabicShadda;
         pLastChar->m_dwCharStyles |= FX_TXTCHARSTYLE_ArabicShadda;
         pLastChar->m_iCharWidth = 0;
-        pCurChar->m_dwCharStyles |= FX_TXTCHARSTYLE_ArabicShadda;
       }
     }
     Optional<uint16_t> iCharWidthRet;
     if (m_pFont) {
-      iCharWidthRet = m_pFont->GetCharWidth(wForm);
+      iCharWidthRet = m_pFont->GetCharWidth(wch);
     }
     iCharWidth = iCharWidthRet.value_or(0);
     iCharWidth *= m_iFontSize;
     iCharWidth *= m_iHorizontalScale;
     iCharWidth /= 100;
   }
-
   iCharWidth *= -1;
   pCurChar->m_iCharWidth = iCharWidth.ValueOrDefault(0);
 }
@@ -754,20 +744,18 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
               int32_t iNextAbsolute = iNext + run.iStart;
               wNext = pEngine->GetChar(iNextAbsolute);
             }
-          } else {
-            if (i < iLength)
-              wNext = *pStr;
+          } else if (i < iLength) {
+            wNext = *pStr;
           }
+          Optional<uint16_t> maybe_shadda;
           if (wch == pdfium::arabic::kArabicShadda) {
-            if (wNext >= 0x064C && wNext <= 0x0650) {
-              wForm = pdfium::arabic::GetArabicFromShaddaTable(wNext);
-              bShadda = true;
-            }
-          } else {
-            if (wNext == pdfium::arabic::kArabicShadda) {
-              wForm = pdfium::arabic::GetArabicFromShaddaTable(wch);
-              bShadda = true;
-            }
+            maybe_shadda = pdfium::arabic::GetArabicFromShaddaTable(wNext);
+          } else if (wNext == pdfium::arabic::kArabicShadda) {
+            maybe_shadda = pdfium::arabic::GetArabicFromShaddaTable(wch);
+          }
+          if (maybe_shadda.has_value()) {
+            wForm = maybe_shadda.value();
+            bShadda = true;
           }
         }
       } else {

@@ -8,6 +8,7 @@
 
 #include "core/fxcrt/fx_unicode.h"
 #include "third_party/base/stl_util.h"
+#include "xfa/fgas/layout/cfgas_char.h"
 
 namespace {
 
@@ -23,12 +24,7 @@ struct FX_ARAALEF {
   uint16_t wIsolated;
 };
 
-struct FX_ARASHADDA {
-  uint16_t wShadda;
-  uint16_t wIsolated;
-};
-
-const FX_ARBFORMTABLE g_FX_ArabicFormTables[] = {
+constexpr FX_ARBFORMTABLE kFormTable[] = {
     {0xFE81, 0xFE82, 0xFE81, 0xFE82}, {0xFE83, 0xFE84, 0xFE83, 0xFE84},
     {0xFE85, 0xFE86, 0xFE85, 0xFE86}, {0xFE87, 0xFE88, 0xFE87, 0xFE88},
     {0xFE89, 0xFE8A, 0xFE8B, 0xFE8C}, {0xFE8D, 0xFE8E, 0xFE8D, 0xFE8E},
@@ -120,23 +116,27 @@ const FX_ARBFORMTABLE g_FX_ArabicFormTables[] = {
     {0xFBAE, 0xFBAF, 0xFBAE, 0xFBAF}, {0xFBB0, 0xFBB1, 0xFBB0, 0xFBB1},
     {0x06D4, 0x06D4, 0x06D4, 0x06D4}, {0x06D5, 0x06D5, 0x06D5, 0x06D5},
 };
+constexpr uint16_t kFirstFormTableEntry = 0x0622;
+constexpr uint16_t kLastFormTableEntry =
+    kFirstFormTableEntry + pdfium::size(kFormTable) - 1;
 
-const FX_ARAALEF gs_FX_AlefTable[] = {
+constexpr FX_ARAALEF kAlefTable[] = {
     {0x0622, 0xFEF5},
     {0x0623, 0xFEF7},
     {0x0625, 0xFEF9},
     {0x0627, 0xFEFB},
 };
 
-const FX_ARASHADDA gs_FX_ShaddaTable[] = {
-    {0x064C, 0xFC5E}, {0x064D, 0xFC5F}, {0x064E, 0xFC60},
-    {0x064F, 0xFC61}, {0x0650, 0xFC62},
-};
+constexpr uint16_t kShaddaTable[] = {0xFC5E, 0xFC5F, 0xFC60, 0xFC61, 0xFC62};
+constexpr uint16_t kFirstShaddaTableEntry = 0x064c;
+constexpr uint16_t kLastShaddaTableEntry =
+    kFirstShaddaTableEntry + pdfium::size(kShaddaTable) - 1;
 
 const FX_ARBFORMTABLE* GetArabicFormTable(wchar_t unicode) {
-  if (unicode < 0x622 || unicode > 0x6d5)
+  if (unicode < kFirstFormTableEntry || unicode > kLastFormTableEntry)
     return nullptr;
-  return g_FX_ArabicFormTables + (unicode - 0x622);
+
+  return &kFormTable[unicode - kFirstFormTableEntry];
 }
 
 const FX_ARBFORMTABLE* ParseChar(const CFGAS_Char* pTC,
@@ -158,9 +158,7 @@ const FX_ARBFORMTABLE* ParseChar(const CFGAS_Char* pTC,
 }
 
 wchar_t GetArabicFromAlefTable(wchar_t alef) {
-  static const size_t s_iAlefCount = pdfium::size(gs_FX_AlefTable);
-  for (size_t iStart = 0; iStart < s_iAlefCount; iStart++) {
-    const FX_ARAALEF& v = gs_FX_AlefTable[iStart];
+  for (const FX_ARAALEF& v : kAlefTable) {
     if (v.wAlef == alef)
       return v.wIsolated;
   }
@@ -214,14 +212,11 @@ wchar_t GetFormChar(const CFGAS_Char* cur,
   return (eNext < FX_CHARTYPE::kArabicAlef) ? ft->wFinal : ft->wMedial;
 }
 
-wchar_t GetArabicFromShaddaTable(wchar_t shadda) {
-  static const size_t s_iShaddaCount = pdfium::size(gs_FX_ShaddaTable);
-  for (size_t iStart = 0; iStart < s_iShaddaCount; iStart++) {
-    const FX_ARASHADDA& v = gs_FX_ShaddaTable[iStart];
-    if (v.wShadda == shadda)
-      return v.wIsolated;
-  }
-  return shadda;
+Optional<wchar_t> GetArabicFromShaddaTable(wchar_t shadda) {
+  if (shadda < kFirstShaddaTableEntry || shadda > kLastShaddaTableEntry)
+    return pdfium::nullopt;
+
+  return kShaddaTable[shadda - kFirstShaddaTableEntry];
 }
 
 }  // namespace arabic
