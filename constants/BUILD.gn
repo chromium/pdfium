@@ -22,4 +22,6 @@ source_set("constants") {
     "transparency.cpp",
     "transparency.h",
   ]
+
+  configs += [ "../:pdfium_strict_config" ]
 }
