@@ -12,7 +12,8 @@
 #include "v8/include/cppgc/member.h"
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
-#include "xfa/fxfa/fxfa.h"
+#include "xfa/fxfa/cxfa_ffapp.h"
+#include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 
 class CXFA_FFWidgetHandler;

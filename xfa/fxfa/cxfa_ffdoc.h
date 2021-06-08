@@ -10,9 +10,11 @@
 #include <map>
 #include <memory>
 
+#include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "core/fxge/dib/fx_dib.h"
 #include "fxjs/gc/heap.h"
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/member.h"
@@ -27,13 +29,73 @@ class CFX_DIBitmap;
 class CFX_XMLDocument;
 class CPDF_Document;
 class CXFA_FFApp;
+class CXFA_FFDoc;
 class CXFA_FFNotify;
 class CXFA_FFDocView;
+class CXFA_FFPageView;
 class CXFA_LayoutProcessor;
+class IJS_Runtime;
 
-namespace cppgc {
-class Heap;
-}  // namespace cppgc
+// Probably should be called CFXA_FFDoc::CallbackIface.
+class IXFA_DocEnvironment {
+ public:
+  enum class PageViewEvent {
+    kPostAdded = 1,
+    kPostRemoved = 3,
+    kStopLayout = 4,
+  };
+
+  virtual ~IXFA_DocEnvironment() = default;
+
+  virtual void SetChangeMark(CXFA_FFDoc* hDoc) = 0;
+  virtual void InvalidateRect(CXFA_FFPageView* pPageView,
+                              const CFX_RectF& rt) = 0;
+  // Show or hide caret.
+  virtual void DisplayCaret(CXFA_FFWidget* hWidget,
+                            bool bVisible,
+                            const CFX_RectF* pRtAnchor) = 0;
+
+  virtual bool GetPopupPos(CXFA_FFWidget* hWidget,
+                           float fMinPopup,
+                           float fMaxPopup,
+                           const CFX_RectF& rtAnchor,
+                           CFX_RectF* pPopupRect) = 0;
+  virtual bool PopupMenu(CXFA_FFWidget* hWidget, const CFX_PointF& ptPopup) = 0;
+
+  virtual void OnPageViewEvent(CXFA_FFPageView* pPageView,
+                               PageViewEvent eEvent) = 0;
+
+  virtual void WidgetPostAdd(CXFA_FFWidget* hWidget) = 0;
+  virtual void WidgetPreRemove(CXFA_FFWidget* hWidget) = 0;
+  virtual int32_t CountPages(const CXFA_FFDoc* hDoc) const = 0;
+  virtual int32_t GetCurrentPage(const CXFA_FFDoc* hDoc) const = 0;
+  virtual void SetCurrentPage(CXFA_FFDoc* hDoc, int32_t iCurPage) = 0;
+  virtual bool IsCalculationsEnabled(const CXFA_FFDoc* hDoc) const = 0;
+  virtual void SetCalculationsEnabled(CXFA_FFDoc* hDoc, bool bEnabled) = 0;
+  virtual WideString GetTitle(const CXFA_FFDoc* hDoc) const = 0;
+  virtual void SetTitle(CXFA_FFDoc* hDoc, const WideString& wsTitle) = 0;
+  virtual void ExportData(CXFA_FFDoc* hDoc,
+                          const WideString& wsFilePath,
+                          bool bXDP) = 0;
+  virtual void GotoURL(CXFA_FFDoc* hDoc, const WideString& bsURL) = 0;
+  virtual bool IsValidationsEnabled(const CXFA_FFDoc* hDoc) const = 0;
+  virtual void SetValidationsEnabled(CXFA_FFDoc* hDoc, bool bEnabled) = 0;
+  virtual void SetFocusWidget(CXFA_FFDoc* hDoc, CXFA_FFWidget* hWidget) = 0;
+  virtual void Print(CXFA_FFDoc* hDoc,
+                     int32_t nStartPage,
+                     int32_t nEndPage,
+                     XFA_PrintOptMask dwOptions) = 0;
+  virtual FX_ARGB GetHighlightColor(const CXFA_FFDoc* hDoc) const = 0;
+  virtual IJS_Runtime* GetIJSRuntime(const CXFA_FFDoc* hDoc) const = 0;
+  virtual CFX_XMLDocument* GetXMLDoc() const = 0;
+  virtual RetainPtr<IFX_SeekableReadStream> OpenLinkedFile(
+      CXFA_FFDoc* hDoc,
+      const WideString& wsLink) = 0;
+
+#ifdef PDF_XFA_ELEMENT_SUBMIT_ENABLED
+  virtual bool Submit(CXFA_FFDoc* hDoc, CXFA_Submit* submit) = 0;
+#endif  // PDF_XFA_ELEMENT_SUBMIT_ENABLED
+};
 
 struct FX_IMAGEDIB_AND_DPI {
   FX_IMAGEDIB_AND_DPI();

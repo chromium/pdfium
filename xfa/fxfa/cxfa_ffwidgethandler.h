@@ -7,6 +7,7 @@
 #ifndef XFA_FXFA_CXFA_FFWIDGETHANDLER_H_
 #define XFA_FXFA_CXFA_FFWIDGETHANDLER_H_
 
+#include "core/fxcrt/fx_coordinates.h"
 #include "fxjs/gc/heap.h"
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/member.h"

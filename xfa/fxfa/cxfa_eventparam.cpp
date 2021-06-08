@@ -6,9 +6,6 @@
 
 #include "xfa/fxfa/cxfa_eventparam.h"
 
-#include "xfa/fxfa/fxfa.h"
-#include "xfa/fxfa/parser/cxfa_node.h"
-
 CXFA_EventParam::CXFA_EventParam() = default;
 
 CXFA_EventParam::CXFA_EventParam(const CXFA_EventParam& other) = default;

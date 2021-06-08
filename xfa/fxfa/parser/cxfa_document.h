@@ -21,6 +21,7 @@
 #include "v8/include/cppgc/persistent.h"
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fxfa/fxfa.h"
+#include "xfa/fxfa/fxfa_basic.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/cxfa_nodeowner.h"
 

@@ -33,6 +33,8 @@ class CXFA_FFField;
 class CXFA_FFPageView;
 class CXFA_FFWidgetHandler;
 class CXFA_Margin;
+class IFX_SeekableReadStream;
+class IXFA_AppProvider;
 enum class FWL_WidgetHit;
 
 inline float XFA_UnitPx2Pt(float fPx, float fDpi) {

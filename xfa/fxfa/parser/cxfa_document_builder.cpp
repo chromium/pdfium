@@ -24,7 +24,6 @@
 #include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/optional.h"
-#include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_subform.h"

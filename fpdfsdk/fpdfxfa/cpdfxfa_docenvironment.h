@@ -10,7 +10,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "public/fpdfview.h"
-#include "xfa/fxfa/fxfa.h"
+#include "xfa/fxfa/cxfa_ffdoc.h"
 
 class CFX_XMLDocument;
 class CPDFXFA_Context;
