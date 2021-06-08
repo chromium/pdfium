@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFDOC_CPDF_FORMCONTROL_H_
 #define CORE_FPDFDOC_CPDF_FORMCONTROL_H_
 
+#include "constants/appearance.h"
 #include "core/fpdfdoc/cpdf_aaction.h"
 #include "core/fpdfdoc/cpdf_action.h"
 #include "core/fpdfdoc/cpdf_annot.h"
@@ -54,29 +55,43 @@ class CPDF_FormControl {
   bool HasMKEntry(const ByteString& csEntry) const;
   int GetRotation() const;
 
-  CFX_Color::TypeAndARGB GetBorderColorARGB() { return GetColorARGB("BC"); }
+  CFX_Color::TypeAndARGB GetBorderColorARGB() {
+    return GetColorARGB(pdfium::appearance::kBC);
+  }
 
   float GetOriginalBorderColorComponent(int index) {
-    return GetOriginalColorComponent(index, "BC");
+    return GetOriginalColorComponent(index, pdfium::appearance::kBC);
   }
 
-  CFX_Color GetOriginalBorderColor() { return GetOriginalColor("BC"); }
+  CFX_Color GetOriginalBorderColor() {
+    return GetOriginalColor(pdfium::appearance::kBC);
+  }
 
-  CFX_Color::TypeAndARGB GetBackgroundColor() { return GetColorARGB("BG"); }
+  CFX_Color::TypeAndARGB GetBackgroundColor() {
+    return GetColorARGB(pdfium::appearance::kBG);
+  }
 
   float GetOriginalBackgroundColorComponent(int index) {
-    return GetOriginalColorComponent(index, "BG");
+    return GetOriginalColorComponent(index, pdfium::appearance::kBG);
   }
 
-  CFX_Color GetOriginalBackgroundColor() { return GetOriginalColor("BG"); }
+  CFX_Color GetOriginalBackgroundColor() {
+    return GetOriginalColor(pdfium::appearance::kBG);
+  }
 
-  WideString GetNormalCaption() const { return GetCaption("CA"); }
-  WideString GetRolloverCaption() const { return GetCaption("RC"); }
-  WideString GetDownCaption() const { return GetCaption("AC"); }
+  WideString GetNormalCaption() const {
+    return GetCaption(pdfium::appearance::kCA);
+  }
+  WideString GetRolloverCaption() const {
+    return GetCaption(pdfium::appearance::kRC);
+  }
+  WideString GetDownCaption() const {
+    return GetCaption(pdfium::appearance::kAC);
+  }
 
-  CPDF_Stream* GetNormalIcon() { return GetIcon("I"); }
-  CPDF_Stream* GetRolloverIcon() { return GetIcon("RI"); }
-  CPDF_Stream* GetDownIcon() { return GetIcon("IX"); }
+  CPDF_Stream* GetNormalIcon() { return GetIcon(pdfium::appearance::kI); }
+  CPDF_Stream* GetRolloverIcon() { return GetIcon(pdfium::appearance::kRI); }
+  CPDF_Stream* GetDownIcon() { return GetIcon(pdfium::appearance::kIX); }
   CPDF_IconFit GetIconFit() const;
 
   int GetTextPosition() const;

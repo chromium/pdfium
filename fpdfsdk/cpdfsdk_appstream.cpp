@@ -10,6 +10,7 @@
 #include <sstream>
 #include <utility>
 
+#include "constants/appearance.h"
 #include "constants/form_flags.h"
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -1216,25 +1217,25 @@ void CPDFSDK_AppStream::SetAsPushButton() {
   WideString csNormalCaption;
   WideString csRolloverCaption;
   WideString csDownCaption;
-  if (pControl->HasMKEntry("CA"))
+  if (pControl->HasMKEntry(pdfium::appearance::kCA))
     csNormalCaption = pControl->GetNormalCaption();
 
-  if (pControl->HasMKEntry("RC"))
+  if (pControl->HasMKEntry(pdfium::appearance::kRC))
     csRolloverCaption = pControl->GetRolloverCaption();
 
-  if (pControl->HasMKEntry("AC"))
+  if (pControl->HasMKEntry(pdfium::appearance::kAC))
     csDownCaption = pControl->GetDownCaption();
 
   CPDF_Stream* pNormalIcon = nullptr;
   CPDF_Stream* pRolloverIcon = nullptr;
   CPDF_Stream* pDownIcon = nullptr;
-  if (pControl->HasMKEntry("I"))
+  if (pControl->HasMKEntry(pdfium::appearance::kI))
     pNormalIcon = pControl->GetNormalIcon();
 
-  if (pControl->HasMKEntry("RI"))
+  if (pControl->HasMKEntry(pdfium::appearance::kRI))
     pRolloverIcon = pControl->GetRolloverIcon();
 
-  if (pControl->HasMKEntry("IX"))
+  if (pControl->HasMKEntry(pdfium::appearance::kIX))
     pDownIcon = pControl->GetDownIcon();
 
   SetDefaultIconName(pNormalIcon, "ImgA");

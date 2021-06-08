@@ -10,6 +10,8 @@ source_set("constants") {
     "annotation_common.cpp",
     "annotation_common.h",
     "annotation_flags.h",
+    "appearance.cpp",
+    "appearance.h",
     "form_fields.cpp",
     "form_fields.h",
     "form_flags.h",

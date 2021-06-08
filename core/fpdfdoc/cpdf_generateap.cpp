@@ -12,6 +12,7 @@
 #include <utility>
 
 #include "constants/annotation_common.h"
+#include "constants/appearance.h"
 #include "constants/form_fields.h"
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
@@ -968,7 +969,8 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
 
   CFX_FloatRect rcAnnot = pAnnotDict->GetRectFor(pdfium::annotation::kRect);
   CPDF_Dictionary* pMKDict = pAnnotDict->GetDictFor("MK");
-  int32_t nRotate = pMKDict ? pMKDict->GetIntegerFor("R") : 0;
+  int32_t nRotate =
+      pMKDict ? pMKDict->GetIntegerFor(pdfium::appearance::kR) : 0;
 
   CFX_FloatRect rcBBox;
   CFX_Matrix matrix;
@@ -1037,10 +1039,11 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
   CFX_Color crBorder;
   CFX_Color crBG;
   if (pMKDict) {
-    if (CPDF_Array* pArray = pMKDict->GetArrayFor("BC"))
+    CPDF_Array* pArray = pMKDict->GetArrayFor(pdfium::appearance::kBC);
+    if (pArray)
       crBorder = fpdfdoc::CFXColorFromArray(*pArray);
-    if (CPDF_Array* pArray = pMKDict->GetArrayFor("BG"))
-      crBG = fpdfdoc::CFXColorFromArray(*pArray);
+    pArray = pMKDict->GetArrayFor(pdfium::appearance::kBG);
+    crBG = fpdfdoc::CFXColorFromArray(*pArray);
   }
   std::ostringstream sAppStream;
   ByteString sBG = GenerateColorAP(crBG, PaintOperation::kFill);
