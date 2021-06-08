@@ -213,6 +213,10 @@ component("pdfium") {
     complete_static_lib = true
     configs -= [ "//build/config/compiler:thin_archive" ]
   }
+
+  if (is_component_build) {
+    deps += [ "testing/fuzzers:fuzzer_impls" ]
+  }
 }
 
 # Targets below this are only visible within this file (and to the
