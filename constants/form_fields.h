@@ -8,24 +8,21 @@
 namespace pdfium {
 namespace form_fields {
 
-// PDF 1.7 spec, table 8.69.
-// Entries common to all field dictionaries.
-constexpr char kFT[] = "FT";
-constexpr char kParent[] = "Parent";
-constexpr char kKids[] = "Kids";
-constexpr char kT[] = "T";
-constexpr char kTU[] = "TU";
-constexpr char kTM[] = "TM";
-constexpr char kFf[] = "Ff";
-constexpr char kV[] = "V";
-constexpr char kDV[] = "DV";
-constexpr char kAA[] = "AA";
+extern const char kFT[];
+extern const char kParent[];
+extern const char kKids[];
+extern const char kT[];
+extern const char kTU[];
+extern const char kTM[];
+extern const char kFf[];
+extern const char kV[];
+extern const char kDV[];
+extern const char kAA[];
 
-// FT values from PDF 1.7 spec, table 8.69.
-constexpr char kBtn[] = "Btn";
-constexpr char kTx[] = "Tx";
-constexpr char kCh[] = "Ch";
-constexpr char kSig[] = "Sig";
+extern const char kBtn[];
+extern const char kTx[];
+extern const char kCh[];
+extern const char kSig[];
 
 }  // namespace form_fields
 }  // namespace pdfium

@@ -8,19 +8,16 @@
 namespace pdfium {
 namespace page_object {
 
-// PDF 1.7 spec, table 3.27.
-// Entries in a page object.
-
-constexpr char kType[] = "Type";
-constexpr char kParent[] = "Parent";
-constexpr char kResources[] = "Resources";
-constexpr char kMediaBox[] = "MediaBox";
-constexpr char kCropBox[] = "CropBox";
-constexpr char kBleedBox[] = "BleedBox";
-constexpr char kTrimBox[] = "TrimBox";
-constexpr char kArtBox[] = "ArtBox";
-constexpr char kContents[] = "Contents";
-constexpr char kRotate[] = "Rotate";
+extern const char kType[];
+extern const char kParent[];
+extern const char kResources[];
+extern const char kMediaBox[];
+extern const char kCropBox[];
+extern const char kBleedBox[];
+extern const char kTrimBox[];
+extern const char kArtBox[];
+extern const char kContents[];
+extern const char kRotate[];
 
 }  // namespace page_object
 }  // namespace pdfium

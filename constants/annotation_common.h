@@ -8,32 +8,26 @@
 namespace pdfium {
 namespace annotation {
 
-// PDF 1.7 spec, table 8.15.
-// Entries common to all annotation dictionaries.
+extern const char kType[];
+extern const char kSubtype[];
+extern const char kRect[];
+extern const char kContents[];
+extern const char kP[];
+extern const char kNM[];
+extern const char kM[];
+extern const char kF[];
+extern const char kAP[];
+extern const char kAS[];
+extern const char kBorder[];
+extern const char kC[];
+extern const char kStructParent[];
+extern const char kOC[];
 
-constexpr char kType[] = "Type";
-constexpr char kSubtype[] = "Subtype";
-constexpr char kRect[] = "Rect";
-constexpr char kContents[] = "Contents";
-constexpr char kP[] = "P";
-constexpr char kNM[] = "NM";
-constexpr char kM[] = "M";
-constexpr char kF[] = "F";
-constexpr char kAP[] = "AP";
-constexpr char kAS[] = "AS";
-constexpr char kBorder[] = "Border";
-constexpr char kC[] = "C";
-constexpr char kStructParent[] = "StructParent";
-constexpr char kOC[] = "OC";
+extern const char kVertices[];
 
-// Entries for polygon and polyline annotations.
-constexpr char kVertices[] = "Vertices";
+extern const char kInkList[];
 
-// Entries for ink annotations
-constexpr char kInkList[] = "InkList";
-
-// Entries for line annotations
-constexpr char kL[] = "L";
+extern const char kL[];
 
 }  // namespace annotation
 }  // namespace pdfium

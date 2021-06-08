@@ -8,46 +8,34 @@
 namespace pdfium {
 namespace transparency {
 
-// PDF 1.7 spec, table 7.2.
-// Standard separable blend modes.
+extern const char kNormal[];
+extern const char kMultiply[];
+extern const char kScreen[];
+extern const char kOverlay[];
+extern const char kDarken[];
+extern const char kLighten[];
+extern const char kColorDodge[];
+extern const char kColorBurn[];
+extern const char kHardLight[];
+extern const char kSoftLight[];
+extern const char kDifference[];
+extern const char kExclusion[];
 
-constexpr char kNormal[] = "Normal";
-constexpr char kMultiply[] = "Multiply";
-constexpr char kScreen[] = "Screen";
-constexpr char kOverlay[] = "Overlay";
-constexpr char kDarken[] = "Darken";
-constexpr char kLighten[] = "Lighten";
-constexpr char kColorDodge[] = "ColorDodge";
-constexpr char kColorBurn[] = "ColorBurn";
-constexpr char kHardLight[] = "HardLight";
-constexpr char kSoftLight[] = "SoftLight";
-constexpr char kDifference[] = "Difference";
-constexpr char kExclusion[] = "Exclusion";
+extern const char kHue[];
+extern const char kSaturation[];
+extern const char kColor[];
+extern const char kLuminosity[];
 
-// PDF 1.7 spec, table 7.3.
-// Standard nonseparable blend modes.
+extern const char kSoftMaskSubType[];
+extern const char kAlpha[];
+extern const char kG[];
+extern const char kBC[];
+extern const char kTR[];
 
-constexpr char kHue[] = "Hue";
-constexpr char kSaturation[] = "Saturation";
-constexpr char kColor[] = "Color";
-constexpr char kLuminosity[] = "Luminosity";
-
-// PDF 1.7 spec, table 7.10.
-// Entries in a soft-mask dictionary.
-
-constexpr char kSoftMaskSubType[] = "S";
-constexpr char kAlpha[] = "Alpha";
-constexpr char kG[] = "G";
-constexpr char kBC[] = "BC";
-constexpr char kTR[] = "TR";
-
-// PDF 1.7 spec, table 7.13.
-// Additional entries specific to a transparency group attributes dictionary.
-
-constexpr char kGroupSubType[] = "S";
-constexpr char kTransparency[] = "Transparency";
-constexpr char kCS[] = "CS";
-constexpr char kI[] = "I";
+extern const char kGroupSubType[];
+extern const char kTransparency[];
+extern const char kCS[];
+extern const char kI[];
 
 }  // namespace transparency
 }  // namespace pdfium
