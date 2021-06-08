@@ -71,11 +71,17 @@ if (is_clang) {
   fuzzer_list += [ "pdf_nametree_fuzzer" ]
 }
 
+# Note that this only compiles all the fuzzers, to prevent compile breakages.
+# It does not link and create fuzzer executables. That is done in Chromium.
 group("fuzzers") {
   testonly = true
   deps = []
   foreach(fuzzer, fuzzer_list) {
     deps += [ ":${fuzzer}_src" ]
+  }
+
+  if (is_component_build) {
+    deps += [ ":fuzzer_impls" ]
   }
 }
 
@@ -170,11 +176,12 @@ template("pdfium_fuzzer") {
   }
   if (is_component_build) {
     # In component builds, fuzzers are split into "_impl" and "_src" targets.
-    # The "_impl" target exports the fuzzer implementation and gets statically
-    # linked into the PDFium shared library.  The "_src" target is a thin
-    # wrapper that imports the fuzzer from PDFium; this gets linked into the
-    # real fuzzer executable.  In static builds, there's only a single "_src"
-    # target that contains the implementation and statically links in PDFium.
+    # The "_impl" target exports the fuzzer implementation. The "_src" target
+    # is a thin wrapper that imports the fuzzer from PDFium; this gets linked
+    # into the real fuzzer executable. The real fuzzer target has to depend on
+    # both the "_impl" and "_src" targets.
+    # In static builds, there's only a single "_src" target that contains the
+    # implementation and statically links in PDFium.
 
     impl_name = target_name + "_impl"
     template_target_name = target_name
@@ -225,6 +232,7 @@ if (pdf_enable_v8) {
     sources = [ "pdf_cjs_util_fuzzer.cc" ]
     deps = [
       "../../core/fxcrt",
+      "../../fpdfsdk",
       "../../fxjs",
     ]
   }
@@ -232,6 +240,7 @@ if (pdf_enable_v8) {
     sources = [ "pdf_fx_date_helpers_fuzzer.cc" ]
     deps = [
       "../../core/fxcrt",
+      "../../fpdfsdk",
       "../../fxjs",
     ]
   }
@@ -254,8 +263,10 @@ if (pdf_enable_v8) {
       deps = [
         ":fuzzer_utils",
         "../../core/fxcrt",
+        "../../fpdfsdk",
         "../../fxjs:gc",
         "../../xfa/fgas/crt",
+        "../../xfa/fxfa",
         "../../xfa/fxfa/parser",
       ]
       public_fuzzer = true
@@ -364,6 +375,7 @@ if (pdf_enable_v8) {
       deps = [
         ":fuzzer_utils",
         "../../core/fxcrt",
+        "../../fpdfsdk",
         "../../fxjs",
       ]
       public_fuzzer = true
