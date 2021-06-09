@@ -9,8 +9,6 @@
 
 #include <type_traits>
 
-class CXFA_FFWidget;
-
 // Note, values must match fpdf_formfill.h JSPLATFORM_ALERT_BUTTON_* flags.
 enum class AlertButton {
   kDefault = 0,
@@ -76,17 +74,5 @@ enum XFA_WidgetStatus : uint16_t {
   XFA_WidgetStatus_Visible = 1 << 8
 };
 using XFA_WidgetStatusMask = std::underlying_type<XFA_WidgetStatus>::type;
-
-class IXFA_WidgetIterator {
- public:
-  virtual ~IXFA_WidgetIterator() = default;
-
-  virtual CXFA_FFWidget* MoveToFirst() = 0;
-  virtual CXFA_FFWidget* MoveToLast() = 0;
-  virtual CXFA_FFWidget* MoveToNext() = 0;
-  virtual CXFA_FFWidget* MoveToPrevious() = 0;
-  virtual CXFA_FFWidget* GetCurrentWidget() = 0;
-  virtual bool SetCurrentWidget(CXFA_FFWidget* hWidget) = 0;
-};
 
 #endif  // XFA_FXFA_FXFA_H_

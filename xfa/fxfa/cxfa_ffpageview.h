@@ -14,7 +14,7 @@
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/member.h"
 #include "v8/include/cppgc/visitor.h"
-#include "xfa/fxfa/fxfa.h"
+#include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
 #include "xfa/fxfa/layout/cxfa_traversestrategy_layoutitem.h"
 #include "xfa/fxfa/layout/cxfa_viewlayoutitem.h"
@@ -37,9 +37,9 @@ class CXFA_FFPageView final : public cppgc::GarbageCollected<CXFA_FFPageView> {
   CFX_Matrix GetDisplayMatrix(const FX_RECT& rtDisp, int32_t iRotate) const;
 
   // These always return a non-null iterator from the gc heap.
-  IXFA_WidgetIterator* CreateGCedFormWidgetIterator(
+  CXFA_FFWidget::IteratorIface* CreateGCedFormWidgetIterator(
       XFA_WidgetStatusMask dwWidgetFilter);
-  IXFA_WidgetIterator* CreateGCedTraverseWidgetIterator(
+  CXFA_FFWidget::IteratorIface* CreateGCedTraverseWidgetIterator(
       XFA_WidgetStatusMask dwWidgetFilter);
 
  private:
@@ -52,14 +52,14 @@ class CXFA_FFPageView final : public cppgc::GarbageCollected<CXFA_FFPageView> {
 
 class CXFA_FFPageWidgetIterator final
     : public cppgc::GarbageCollected<CXFA_FFPageWidgetIterator>,
-      public IXFA_WidgetIterator {
+      public CXFA_FFWidget::IteratorIface {
  public:
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FFPageWidgetIterator() override;
 
   void Trace(cppgc::Visitor* visitor) const {}
 
-  // IXFA_WidgetIterator:
+  // CXFA_FFWidget::IteratorIface:
   CXFA_FFWidget* MoveToFirst() override;
   CXFA_FFWidget* MoveToLast() override;
   CXFA_FFWidget* MoveToNext() override;
@@ -78,14 +78,14 @@ class CXFA_FFPageWidgetIterator final
 
 class CXFA_FFTabOrderPageWidgetIterator final
     : public cppgc::GarbageCollected<CXFA_FFTabOrderPageWidgetIterator>,
-      public IXFA_WidgetIterator {
+      public CXFA_FFWidget::IteratorIface {
  public:
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FFTabOrderPageWidgetIterator() override;
 
   void Trace(cppgc::Visitor* visitor) const;
 
-  // IXFA_WidgetIterator:
+  // CXFA_FFWidget::IteratorIface:
   CXFA_FFWidget* MoveToFirst() override;
   CXFA_FFWidget* MoveToLast() override;
   CXFA_FFWidget* MoveToNext() override;

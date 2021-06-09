@@ -33,6 +33,7 @@ class CXFA_FFDoc;
 class CXFA_FFNotify;
 class CXFA_FFDocView;
 class CXFA_FFPageView;
+class CXFA_FFWidget;
 class CXFA_LayoutProcessor;
 class IJS_Runtime;
 

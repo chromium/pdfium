@@ -68,6 +68,18 @@ class CXFA_FFWidget : public cppgc::GarbageCollected<CXFA_FFWidget>,
   enum FocusOption { kDoNotDrawFocus = 0, kDrawFocus };
   enum HighlightOption { kNoHighlight = 0, kHighlight };
 
+  class IteratorIface {
+   public:
+    virtual ~IteratorIface() = default;
+
+    virtual CXFA_FFWidget* MoveToFirst() = 0;
+    virtual CXFA_FFWidget* MoveToLast() = 0;
+    virtual CXFA_FFWidget* MoveToNext() = 0;
+    virtual CXFA_FFWidget* MoveToPrevious() = 0;
+    virtual CXFA_FFWidget* GetCurrentWidget() = 0;
+    virtual bool SetCurrentWidget(CXFA_FFWidget* hWidget) = 0;
+  };
+
   static CXFA_FFWidget* FromLayoutItem(CXFA_LayoutItem* pLayoutItem);
 
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;

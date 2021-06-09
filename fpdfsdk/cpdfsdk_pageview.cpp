@@ -499,7 +499,7 @@ void CPDFSDK_PageView::LoadFXAnnots() {
   CPDF_Document::Extension* pContext = m_pFormFillEnv->GetDocExtension();
   if (pContext && pContext->ContainsExtensionFullForm()) {
     CXFA_FFPageView* pageView = protector->GetXFAPageView();
-    IXFA_WidgetIterator* pWidgetHandler =
+    CXFA_FFWidget::IteratorIface* pWidgetHandler =
         pageView->CreateGCedFormWidgetIterator(XFA_WidgetStatus_Visible |
                                                XFA_WidgetStatus_Viewable);
 
