@@ -638,7 +638,7 @@ CXFA_FFApp* CXFA_FFWidget::GetApp() {
   return GetDoc()->GetApp();
 }
 
-IXFA_AppProvider* CXFA_FFWidget::GetAppProvider() {
+CXFA_FFApp::CallbackIface* CXFA_FFWidget::GetAppProvider() {
   return GetApp()->GetAppProvider();
 }
 

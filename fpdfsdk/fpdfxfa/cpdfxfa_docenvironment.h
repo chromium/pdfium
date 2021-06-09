@@ -16,12 +16,12 @@ class CFX_XMLDocument;
 class CPDFXFA_Context;
 class IJS_Runtime;
 
-class CPDFXFA_DocEnvironment final : public IXFA_DocEnvironment {
+class CPDFXFA_DocEnvironment final : public CXFA_FFDoc::CallbackIface {
  public:
   explicit CPDFXFA_DocEnvironment(CPDFXFA_Context*);
   ~CPDFXFA_DocEnvironment() override;
 
-  // IXFA_DocEnvironment:
+  // CFXA_FFDoc::CallbackIface:
   void SetChangeMark(CXFA_FFDoc* hDoc) override;
   void InvalidateRect(CXFA_FFPageView* pPageView, const CFX_RectF& rt) override;
   void DisplayCaret(CXFA_FFWidget* hWidget,
@@ -34,7 +34,7 @@ class CPDFXFA_DocEnvironment final : public IXFA_DocEnvironment {
                    CFX_RectF* pPopupRect) override;
   bool PopupMenu(CXFA_FFWidget* hWidget, const CFX_PointF& ptPopup) override;
   void OnPageViewEvent(CXFA_FFPageView* pPageView,
-                       PageViewEvent eEvent) override;
+                       CXFA_FFDoc::PageViewEvent eEvent) override;
   void WidgetPostAdd(CXFA_FFWidget* hWidget) override;
   void WidgetPreRemove(CXFA_FFWidget* hWidget) override;
   int32_t CountPages(const CXFA_FFDoc* hDoc) const override;

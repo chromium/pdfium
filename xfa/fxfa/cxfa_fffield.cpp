@@ -635,7 +635,7 @@ int32_t CXFA_FFField::CalculateNode(CXFA_Node* pNode) {
       if (version <= XFA_VERSION_204)
         return 1;
 
-      IXFA_AppProvider* pAppProvider = GetAppProvider();
+      CXFA_FFApp::CallbackIface* pAppProvider = GetAppProvider();
       if (pAppProvider) {
         pAppProvider->MsgBox(
             WideString::FromASCII("You are not allowed to modify this field."),
@@ -655,7 +655,7 @@ int32_t CXFA_FFField::CalculateNode(CXFA_Node* pNode) {
       if (pNode->IsUserInteractive())
         return 1;
 
-      IXFA_AppProvider* pAppProvider = GetAppProvider();
+      CXFA_FFApp::CallbackIface* pAppProvider = GetAppProvider();
       if (!pAppProvider)
         return 0;
 

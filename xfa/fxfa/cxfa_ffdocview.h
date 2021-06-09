@@ -73,7 +73,7 @@ class CXFA_FFDocView : public cppgc::GarbageCollected<CXFA_FFDocView> {
                                  CXFA_FFWidget* pRefWidget);
   CXFA_LayoutProcessor* GetLayoutProcessor() const;
   void OnPageViewEvent(CXFA_ViewLayoutItem* pSender,
-                       IXFA_DocEnvironment::PageViewEvent eEvent);
+                       CXFA_FFDoc::PageViewEvent eEvent);
   void LockUpdate() { m_iLock++; }
   void UnlockUpdate() { m_iLock--; }
   void InvalidateRect(CXFA_FFPageView* pPageView,

@@ -4508,7 +4508,7 @@ void CFXJSE_FormCalcContext::Get(
   if (!pDoc)
     return;
 
-  IXFA_AppProvider* pAppProvider = pDoc->GetNotify()->GetAppProvider();
+  CXFA_FFApp::CallbackIface* pAppProvider = pDoc->GetNotify()->GetAppProvider();
   if (!pAppProvider)
     return;
 
@@ -4541,7 +4541,7 @@ void CFXJSE_FormCalcContext::Post(
   if (!pDoc)
     return;
 
-  IXFA_AppProvider* pAppProvider = pDoc->GetNotify()->GetAppProvider();
+  CXFA_FFApp::CallbackIface* pAppProvider = pDoc->GetNotify()->GetAppProvider();
   if (!pAppProvider)
     return;
 
@@ -4598,7 +4598,7 @@ void CFXJSE_FormCalcContext::Put(
   if (!pDoc)
     return;
 
-  IXFA_AppProvider* pAppProvider = pDoc->GetNotify()->GetAppProvider();
+  CXFA_FFApp::CallbackIface* pAppProvider = pDoc->GetNotify()->GetAppProvider();
   if (!pAppProvider)
     return;
 

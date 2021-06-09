@@ -54,7 +54,7 @@ FX_IMAGEDIB_AND_DPI::FX_IMAGEDIB_AND_DPI(const RetainPtr<CFX_DIBBase>& pDib,
 FX_IMAGEDIB_AND_DPI::~FX_IMAGEDIB_AND_DPI() = default;
 
 CXFA_FFDoc::CXFA_FFDoc(CXFA_FFApp* pApp,
-                       IXFA_DocEnvironment* pDocEnvironment,
+                       CallbackIface* pDocEnvironment,
                        CPDF_Document* pPDFDoc,
                        cppgc::Heap* pHeap)
     : m_pDocEnvironment(pDocEnvironment),
@@ -138,7 +138,7 @@ bool CXFA_FFDoc::PopupMenu(CXFA_FFWidget* hWidget, const CFX_PointF& ptPopup) {
 }
 
 void CXFA_FFDoc::OnPageViewEvent(CXFA_FFPageView* pPageView,
-                                 IXFA_DocEnvironment::PageViewEvent eEvent) {
+                                 PageViewEvent eEvent) {
   m_pDocEnvironment->OnPageViewEvent(pPageView, eEvent);
 }
 

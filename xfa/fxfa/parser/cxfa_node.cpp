@@ -2483,7 +2483,7 @@ void CXFA_Node::ProcessScriptTestValidate(CXFA_FFDocView* pDocView,
   if (bRetValue)
     return;
 
-  IXFA_AppProvider* pAppProvider =
+  CXFA_FFApp::CallbackIface* pAppProvider =
       pDocView->GetDoc()->GetApp()->GetAppProvider();
   if (!pAppProvider)
     return;
@@ -2537,7 +2537,7 @@ XFA_EventError CXFA_Node::ProcessFormatTestValidate(CXFA_FFDocView* pDocView,
   if (lcValue.ValidateValue(lcValue.GetValue(), wsPicture, pLocale, nullptr))
     return XFA_EventError::kSuccess;
 
-  IXFA_AppProvider* pAppProvider =
+  CXFA_FFApp::CallbackIface* pAppProvider =
       pDocView->GetDoc()->GetApp()->GetAppProvider();
   if (!pAppProvider)
     return XFA_EventError::kNotExist;
@@ -2602,7 +2602,7 @@ XFA_EventError CXFA_Node::ProcessNullTestValidate(CXFA_FFDocView* pDocView,
       eNullTest != XFA_AttributeValue::Disabled) {
     return XFA_EventError::kError;
   }
-  IXFA_AppProvider* pAppProvider =
+  CXFA_FFApp::CallbackIface* pAppProvider =
       pDocView->GetDoc()->GetApp()->GetAppProvider();
   if (!pAppProvider)
     return XFA_EventError::kNotExist;

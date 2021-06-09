@@ -14,7 +14,7 @@
 #include "xfa/fxfa/cxfa_fwladapterwidgetmgr.h"
 #include "xfa/fxfa/cxfa_fwltheme.h"
 
-CXFA_FFApp::CXFA_FFApp(IXFA_AppProvider* pProvider) : m_pProvider(pProvider) {
+CXFA_FFApp::CXFA_FFApp(CallbackIface* pProvider) : m_pProvider(pProvider) {
   // Ensure fully initialized before making objects based on |this|.
   m_pXFAFontMgr = cppgc::MakeGarbageCollected<CXFA_FontMgr>(
       GetHeap()->GetAllocationHandle());

@@ -20,6 +20,7 @@
 #include "xfa/fwl/cfwl_messagemouse.h"
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
+#include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
 
@@ -34,7 +35,6 @@ class CXFA_FFPageView;
 class CXFA_FFWidgetHandler;
 class CXFA_Margin;
 class IFX_SeekableReadStream;
-class IXFA_AppProvider;
 enum class FWL_WidgetHit;
 
 inline float XFA_UnitPx2Pt(float fPx, float fDpi) {
@@ -159,7 +159,7 @@ class CXFA_FFWidget : public cppgc::GarbageCollected<CXFA_FFWidget>,
 
   CXFA_FFDoc* GetDoc();
   CXFA_FFApp* GetApp();
-  IXFA_AppProvider* GetAppProvider();
+  CXFA_FFApp::CallbackIface* GetAppProvider();
   CFWL_App* GetFWLApp() const;
   void InvalidateRect();
   bool IsFocused() const {

@@ -209,7 +209,7 @@ void CXFA_FFTextEdit::ValidateNumberField(const WideString& wsText) {
   if (GetNode()->GetFFWidgetType() != XFA_FFWidgetType::kNumericEdit)
     return;
 
-  IXFA_AppProvider* pAppProvider = GetAppProvider();
+  CXFA_FFApp::CallbackIface* pAppProvider = GetAppProvider();
   if (!pAppProvider)
     return;
 

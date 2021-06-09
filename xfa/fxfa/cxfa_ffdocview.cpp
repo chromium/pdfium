@@ -156,7 +156,7 @@ void CXFA_FFDocView::StopLayout() {
 void CXFA_FFDocView::ShowNullTestMsg() {
   int32_t iCount = pdfium::CollectionSize<int32_t>(m_NullTestMsgArray);
   CXFA_FFApp* pApp = m_pDoc->GetApp();
-  IXFA_AppProvider* pAppProvider = pApp->GetAppProvider();
+  CXFA_FFApp::CallbackIface* pAppProvider = pApp->GetAppProvider();
   if (pAppProvider && iCount) {
     int32_t iRemain = iCount > 7 ? iCount - 7 : 0;
     iCount -= iRemain;
@@ -453,9 +453,8 @@ CXFA_FFWidget* CXFA_FFDocView::GetWidgetByName(const WideString& wsName,
   return nullptr;
 }
 
-void CXFA_FFDocView::OnPageViewEvent(
-    CXFA_ViewLayoutItem* pSender,
-    IXFA_DocEnvironment::PageViewEvent eEvent) {
+void CXFA_FFDocView::OnPageViewEvent(CXFA_ViewLayoutItem* pSender,
+                                     CXFA_FFDoc::PageViewEvent eEvent) {
   CXFA_FFPageView* pFFPageView = pSender ? pSender->GetPageView() : nullptr;
   m_pDoc->OnPageViewEvent(pFFPageView, eEvent);
 }
@@ -474,14 +473,12 @@ bool CXFA_FFDocView::RunLayout() {
     pProcessor->DoLayout();
     UnlockUpdate();
     m_bInLayoutStatus = false;
-    m_pDoc->OnPageViewEvent(nullptr,
-                            IXFA_DocEnvironment::PageViewEvent::kStopLayout);
+    m_pDoc->OnPageViewEvent(nullptr, CXFA_FFDoc::PageViewEvent::kStopLayout);
     return true;
   }
 
   m_bInLayoutStatus = false;
-  m_pDoc->OnPageViewEvent(nullptr,
-                          IXFA_DocEnvironment::PageViewEvent::kStopLayout);
+  m_pDoc->OnPageViewEvent(nullptr, CXFA_FFDoc::PageViewEvent::kStopLayout);
   UnlockUpdate();
   return false;
 }
