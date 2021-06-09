@@ -11,6 +11,7 @@
 
 #include "build/build_config.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_safe_types.h"
 
 #if defined(OS_WIN)
 static_assert(sizeof(FX_COLORREF) == sizeof(COLORREF),
@@ -30,6 +31,22 @@ FXDIB_Format MakeRGBFormat(int bpp) {
     default:
       return FXDIB_Format::kInvalid;
   }
+}
+
+// static
+size_t PixelWeight::TotalBytesForWeightCount(size_t weight_count) {
+  const size_t extra_weights = weight_count > 0 ? weight_count - 1 : 0;
+  FX_SAFE_SIZE_T total_bytes = extra_weights;
+  total_bytes *= sizeof(m_Weights[0]);
+  total_bytes += sizeof(PixelWeight);
+  return total_bytes.ValueOrDie();
+}
+
+// static
+size_t PixelWeight::WeightCountFromTotalBytes(size_t total_bytes) {
+  const size_t extra_bytes =
+      total_bytes > sizeof(PixelWeight) ? total_bytes - sizeof(PixelWeight) : 0;
+  return 1 + extra_bytes / sizeof(m_Weights[0]);
 }
 
 FXDIB_ResampleOptions::FXDIB_ResampleOptions() = default;

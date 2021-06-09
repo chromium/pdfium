@@ -30,9 +30,12 @@ enum class FXDIB_Format : uint16_t {
 };
 
 struct PixelWeight {
+  static size_t TotalBytesForWeightCount(size_t weight_count);
+  static size_t WeightCountFromTotalBytes(size_t total_bytes);
+
   int m_SrcStart;
   int m_SrcEnd;
-  int m_Weights[1];
+  int m_Weights[1];  // Not really 1, variable size.
 };
 
 using FX_ARGB = uint32_t;

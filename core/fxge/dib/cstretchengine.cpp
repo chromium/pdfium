@@ -29,8 +29,8 @@ CStretchEngine::CWeightTable::CWeightTable() = default;
 
 CStretchEngine::CWeightTable::~CWeightTable() = default;
 
-size_t CStretchEngine::CWeightTable::GetPixelWeightSize() const {
-  return m_ItemSize / sizeof(int) - 2;
+size_t CStretchEngine::CWeightTable::GetPixelWeightCount() const {
+  return PixelWeight::WeightCountFromTotalBytes(m_ItemSizeBytes);
 }
 
 bool CStretchEngine::CWeightTable::Calc(int dest_len,
@@ -40,23 +40,35 @@ bool CStretchEngine::CWeightTable::Calc(int dest_len,
                                         int src_min,
                                         int src_max,
                                         const FXDIB_ResampleOptions& options) {
+  static constexpr size_t kBytesPerWeight = sizeof(PixelWeight::m_Weights[0]);
+  static constexpr size_t kMaxTableBytesAllowed = (1 << 30) - kBytesPerWeight;
+
   // Help the compiler realize that these can't change during a loop iteration:
   const bool bilinear = options.bInterpolateBilinear;
 
+  m_DestMin = 0;
+  m_ItemSizeBytes = 0;
+  m_WeightTablesSizeBytes = 0;
   m_WeightTables.clear();
-  m_dwWeightTablesSize = 0;
-  const double scale = static_cast<float>(src_len) / dest_len;
-  const double base = dest_len < 0 ? src_len : 0;
-  m_ItemSize = sizeof(int) * 2 +
-               static_cast<int>(sizeof(int) *
-                                (ceil(fabs(static_cast<float>(scale))) + 1));
-
-  m_DestMin = dest_min;
-  if (dest_max - dest_min > static_cast<int>((1U << 30) - 4) / m_ItemSize)
+  if (dest_min > dest_max)
     return false;
 
-  m_dwWeightTablesSize = (dest_max - dest_min) * m_ItemSize + 4;
-  m_WeightTables.resize(m_dwWeightTablesSize);
+  m_DestMin = dest_min;
+
+  // TODO(tsepez): test results are sensitive to `scale` being a double
+  // rather than a float with an initial value no more precise than float.
+  const double scale = static_cast<float>(src_len) / dest_len;
+  const double base = dest_len < 0 ? src_len : 0;
+  const size_t weight_count = static_cast<size_t>(ceil(fabs(scale))) + 1;
+  m_ItemSizeBytes = PixelWeight::TotalBytesForWeightCount(weight_count);
+
+  const size_t dest_range = static_cast<size_t>(dest_max - dest_min);
+  const size_t kMaxTableItemsAllowed = kMaxTableBytesAllowed / m_ItemSizeBytes;
+  if (dest_range > kMaxTableItemsAllowed)
+    return false;
+
+  m_WeightTablesSizeBytes = dest_range * m_ItemSizeBytes;
+  m_WeightTables.resize(m_WeightTablesSizeBytes);
   if (options.bNoSmoothing || fabs(static_cast<float>(scale)) < 1.0f) {
     for (int dest_pixel = dest_min; dest_pixel < dest_max; ++dest_pixel) {
       PixelWeight& pixel_weights = *GetPixelWeight(dest_pixel);
@@ -116,7 +128,7 @@ bool CStretchEngine::CWeightTable::Calc(int dest_len,
         break;
       }
       size_t idx = j - start_i;
-      if (idx >= GetPixelWeightSize())
+      if (idx >= GetPixelWeightCount())
         return false;
 
       pixel_weights.m_Weights[idx] = FXSYS_roundf(weight * 65536);
@@ -129,7 +141,7 @@ const PixelWeight* CStretchEngine::CWeightTable::GetPixelWeight(
     int pixel) const {
   DCHECK(pixel >= m_DestMin);
   return reinterpret_cast<const PixelWeight*>(
-      &m_WeightTables[(pixel - m_DestMin) * m_ItemSize]);
+      &m_WeightTables[(pixel - m_DestMin) * m_ItemSizeBytes]);
 }
 
 int* CStretchEngine::CWeightTable::GetValueFromPixelWeight(PixelWeight* pWeight,
@@ -138,7 +150,7 @@ int* CStretchEngine::CWeightTable::GetValueFromPixelWeight(PixelWeight* pWeight,
     return nullptr;
 
   size_t idx = index - pWeight->m_SrcStart;
-  return idx < GetPixelWeightSize() ? &pWeight->m_Weights[idx] : nullptr;
+  return idx < GetPixelWeightCount() ? &pWeight->m_Weights[idx] : nullptr;
 }
 
 CStretchEngine::CStretchEngine(ScanlineComposerIface* pDestBitmap,
