@@ -20,6 +20,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/notreached.h"
 
 namespace {
@@ -33,7 +34,7 @@ bool ParseCSSNumber(const wchar_t* pszValue,
                     float* pValue,
                     CFX_CSSNumberValue::Unit* pOutUnit) {
   DCHECK(pszValue);
-  DCHECK(iValueLen > 0);
+  DCHECK_GT(iValueLen, 0);
 
   int32_t iUsedLen = 0;
   *pValue = FXSYS_wcstof(pszValue, iValueLen, &iUsedLen);
@@ -62,7 +63,7 @@ bool CFX_CSSDeclaration::ParseCSSString(const wchar_t* pszValue,
                                         int32_t* iOffset,
                                         int32_t* iLength) {
   DCHECK(pszValue);
-  DCHECK(iValueLen > 0);
+  DCHECK_GT(iValueLen, 0);
 
   *iOffset = 0;
   *iLength = iValueLen;
@@ -80,8 +81,7 @@ bool CFX_CSSDeclaration::ParseCSSString(const wchar_t* pszValue,
 bool CFX_CSSDeclaration::ParseCSSColor(const wchar_t* pszValue,
                                        int32_t iValueLen,
                                        FX_ARGB* dwColor) {
-  DCHECK(pszValue);
-  DCHECK(iValueLen > 0);
+  DCHECK_GT(iValueLen, 0);
   DCHECK(dwColor);
 
   if (*pszValue == '#') {

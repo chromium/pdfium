@@ -10,6 +10,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/allocator/partition_allocator/partition_alloc.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 
 namespace fxcrt {
 
@@ -17,7 +18,7 @@ namespace fxcrt {
 template <typename CharType>
 StringDataTemplate<CharType>* StringDataTemplate<CharType>::Create(
     size_t nLen) {
-  DCHECK(nLen > 0);
+  DCHECK_GT(nLen, 0);
 
   // Calculate space needed for the fixed portion of the struct plus the
   // NUL char that is not included in |m_nAllocLength|.
@@ -68,9 +69,8 @@ void StringDataTemplate<CharType>::CopyContents(
 template <typename CharType>
 void StringDataTemplate<CharType>::CopyContents(const CharType* pStr,
                                                 size_t nLen) {
-  DCHECK(nLen >= 0);
-  DCHECK(nLen <= m_nAllocLength);
-
+  DCHECK_GE(nLen, 0);
+  DCHECK_LE(nLen, m_nAllocLength);
   memcpy(m_String, pStr, nLen * sizeof(CharType));
   m_String[nLen] = 0;
 }
@@ -79,10 +79,9 @@ template <typename CharType>
 void StringDataTemplate<CharType>::CopyContentsAt(size_t offset,
                                                   const CharType* pStr,
                                                   size_t nLen) {
-  DCHECK(offset >= 0);
-  DCHECK(nLen >= 0);
-  DCHECK(offset + nLen <= m_nAllocLength);
-
+  DCHECK_GE(offset, 0);
+  DCHECK_GE(nLen, 0);
+  DCHECK_LE(offset + nLen, m_nAllocLength);
   memcpy(m_String + offset, pStr, nLen * sizeof(CharType));
   m_String[offset + nLen] = 0;
 }
@@ -91,8 +90,8 @@ template <typename CharType>
 StringDataTemplate<CharType>::StringDataTemplate(size_t dataLen,
                                                  size_t allocLen)
     : m_nDataLength(dataLen), m_nAllocLength(allocLen) {
-  DCHECK(dataLen >= 0);
-  DCHECK(dataLen <= allocLen);
+  DCHECK_GE(dataLen, 0);
+  DCHECK_LE(dataLen, allocLen);
   m_String[dataLen] = 0;
 }
 

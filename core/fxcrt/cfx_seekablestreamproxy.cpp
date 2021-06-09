@@ -17,6 +17,7 @@
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -72,7 +73,7 @@ static_assert(sizeof(wchar_t) > 2, "wchar_t is too small");
 
 void UTF16ToWChar(void* pBuffer, size_t iLength) {
   DCHECK(pBuffer);
-  DCHECK(iLength > 0);
+  DCHECK_GT(iLength, 0);
 
   uint16_t* pSrc = static_cast<uint16_t*>(pBuffer);
   wchar_t* pDst = static_cast<wchar_t*>(pBuffer);

@@ -20,6 +20,7 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/notreached.h"
 
 #ifdef PDF_ENABLE_XFA_BMP
@@ -68,7 +69,7 @@ ProgressiveDecoder::WeightTable::WeightTable() = default;
 ProgressiveDecoder::WeightTable::~WeightTable() = default;
 
 void ProgressiveDecoder::WeightTable::Calc(int dest_len, int src_len) {
-  CHECK(dest_len >= 0);
+  CHECK_GE(dest_len, 0);
   double scale = static_cast<double>(src_len) / dest_len;
   m_ItemSize = (int)(sizeof(int) * 2 + sizeof(int) * (ceil(fabs(scale)) + 1));
   m_DestMin = 0;
@@ -142,7 +143,7 @@ ProgressiveDecoder::HorzTable::HorzTable() = default;
 ProgressiveDecoder::HorzTable::~HorzTable() = default;
 
 void ProgressiveDecoder::HorzTable::Calc(int dest_len, int src_len) {
-  CHECK(dest_len >= 0);
+  CHECK_GE(dest_len, 0);
   double scale = (double)dest_len / (double)src_len;
   m_ItemSize = sizeof(int) * 4;
   int size = dest_len * m_ItemSize + 4;
@@ -196,7 +197,7 @@ ProgressiveDecoder::VertTable::VertTable() = default;
 ProgressiveDecoder::VertTable::~VertTable() = default;
 
 void ProgressiveDecoder::VertTable::Calc(int dest_len, int src_len) {
-  CHECK(dest_len >= 0);
+  CHECK_GE(dest_len, 0);
   double scale = (double)dest_len / (double)src_len;
   m_ItemSize = sizeof(int) * 4;
   int size = dest_len * m_ItemSize + 4;
