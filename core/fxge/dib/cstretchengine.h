@@ -32,11 +32,15 @@ class CStretchEngine {
   ~CStretchEngine();
 
   bool Continue(PauseIndicatorIface* pPause);
-
   bool StartStretchHorz();
   bool ContinueStretchHorz(PauseIndicatorIface* pPause);
   void StretchVert();
 
+  const FXDIB_ResampleOptions& GetResampleOptionsForTest() const {
+    return m_ResampleOptions;
+  }
+
+ private:
   class CWeightTable {
    public:
     CWeightTable();
