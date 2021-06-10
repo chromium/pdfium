@@ -89,7 +89,10 @@ source_set("fuzzer_init") {
   testonly = true
   sources = [ "pdf_fuzzer_init.cc" ]
   include_dirs = [ "../.." ]
-  deps = [ "../../:pdfium_public_headers" ]
+  deps = [
+    "../../:pdfium_public_headers",
+    "../../fpdfsdk",
+  ]
 }
 
 if (pdf_enable_xfa) {
@@ -115,6 +118,7 @@ source_set("fuzzer_init_public") {
   deps = [
     ":fuzzer_utils",
     "../../:pdfium_public_headers",
+    "../../fpdfsdk",
   ]
   if (pdf_enable_v8) {
     configs += [ "//v8:external_startup_data" ]
@@ -150,6 +154,7 @@ source_set("fuzzer_helper") {
   configs += [ ":fuzzer_config" ]
   deps = [
     "../../:pdfium_public_headers",
+    "../../fpdfsdk",
     "../../third_party:pdfium_base",
   ]
 }
@@ -189,7 +194,7 @@ template("pdfium_fuzzer") {
       testonly = true
       sources = [ "component_fuzzer_template.cc" ]
       deps = [
-        "../../:pdfium",
+        "../../:pdfium_public_headers",
         init_dep,
       ]
       configs += [ ":fuzzer_config" ]
