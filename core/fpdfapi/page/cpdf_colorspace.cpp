@@ -293,10 +293,9 @@ class CPDF_SeparationCS final : public CPDF_ColorSpace {
                   std::set<const CPDF_Object*>* pVisited) override;
 
  private:
-  enum { None, All, Colorant } m_Type;
-
   explicit CPDF_SeparationCS(CPDF_Document* pDoc);
 
+  bool m_IsNoneType;
   RetainPtr<CPDF_ColorSpace> m_pAltCS;
   std::unique_ptr<const CPDF_Function> m_pFunc;
 };
@@ -1238,13 +1237,10 @@ void CPDF_SeparationCS::GetDefaultValue(int iComponent,
 uint32_t CPDF_SeparationCS::v_Load(CPDF_Document* pDoc,
                                    const CPDF_Array* pArray,
                                    std::set<const CPDF_Object*>* pVisited) {
-  ByteString name = pArray->GetStringAt(1);
-  if (name == "None") {
-    m_Type = None;
+  m_IsNoneType = pArray->GetStringAt(1) == "None";
+  if (m_IsNoneType)
     return 1;
-  }
 
-  m_Type = Colorant;
   const CPDF_Object* pAltCS = pArray->GetDirectObjectAt(2);
   if (pAltCS == m_pArray)
     return 0;
@@ -1269,7 +1265,7 @@ bool CPDF_SeparationCS::GetRGB(pdfium::span<const float> pBuf,
                                float* R,
                                float* G,
                                float* B) const {
-  if (m_Type == None)
+  if (m_IsNoneType)
     return false;
 
   if (!m_pFunc) {
