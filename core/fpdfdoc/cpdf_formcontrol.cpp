@@ -23,15 +23,15 @@ namespace {
 constexpr char kHighlightModes[] = {'N', 'I', 'O', 'P', 'T'};
 
 // Order of |kHighlightModes| must match order of HighlightingMode enum.
-static_assert(kHighlightModes[CPDF_FormControl::None] == 'N',
+static_assert(kHighlightModes[CPDF_FormControl::kNone] == 'N',
               "HighlightingMode mismatch");
-static_assert(kHighlightModes[CPDF_FormControl::Invert] == 'I',
+static_assert(kHighlightModes[CPDF_FormControl::kInvert] == 'I',
               "HighlightingMode mismatch");
-static_assert(kHighlightModes[CPDF_FormControl::Outline] == 'O',
+static_assert(kHighlightModes[CPDF_FormControl::kOutline] == 'O',
               "HighlightingMode mismatch");
-static_assert(kHighlightModes[CPDF_FormControl::Push] == 'P',
+static_assert(kHighlightModes[CPDF_FormControl::kPush] == 'P',
               "HighlightingMode mismatch");
-static_assert(kHighlightModes[CPDF_FormControl::Toggle] == 'T',
+static_assert(kHighlightModes[CPDF_FormControl::kToggle] == 'T',
               "HighlightingMode mismatch");
 
 }  // namespace
@@ -132,7 +132,7 @@ CPDF_FormControl::HighlightingMode CPDF_FormControl::GetHighlightingMode()
     if (csH == kHighlightModes[i])
       return static_cast<HighlightingMode>(i);
   }
-  return Invert;
+  return kInvert;
 }
 
 CPDF_ApSettings CPDF_FormControl::GetMK() const {

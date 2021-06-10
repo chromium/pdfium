@@ -1380,15 +1380,15 @@ CJS_Result CJS_Field::get_highlight(CJS_Runtime* pRuntime) {
 
   int eHM = pFormControl->GetHighlightingMode();
   switch (eHM) {
-    case CPDF_FormControl::None:
+    case CPDF_FormControl::kNone:
       return CJS_Result::Success(pRuntime->NewString("none"));
-    case CPDF_FormControl::Push:
+    case CPDF_FormControl::kPush:
       return CJS_Result::Success(pRuntime->NewString("push"));
-    case CPDF_FormControl::Invert:
+    case CPDF_FormControl::kInvert:
       return CJS_Result::Success(pRuntime->NewString("invert"));
-    case CPDF_FormControl::Outline:
+    case CPDF_FormControl::kOutline:
       return CJS_Result::Success(pRuntime->NewString("outline"));
-    case CPDF_FormControl::Toggle:
+    case CPDF_FormControl::kToggle:
       return CJS_Result::Success(pRuntime->NewString("toggle"));
   }
   return CJS_Result::Success();

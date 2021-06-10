@@ -35,7 +35,7 @@ class CPDF_Stream;
 
 class CPDF_FormControl {
  public:
-  enum HighlightingMode { None = 0, Invert, Outline, Push, Toggle };
+  enum HighlightingMode { kNone = 0, kInvert, kOutline, kPush, kToggle };
 
   CPDF_FormControl(CPDF_FormField* pField, CPDF_Dictionary* pWidgetDict);
   ~CPDF_FormControl();

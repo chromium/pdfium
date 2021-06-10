@@ -1259,7 +1259,7 @@ void CPDFSDK_AppStream::SetAsPushButton() {
       AddImage("N", pNormalIcon);
 
     CPDF_FormControl::HighlightingMode eHLM = pControl->GetHighlightingMode();
-    if (eHLM != CPDF_FormControl::Push && eHLM != CPDF_FormControl::Toggle) {
+    if (eHLM != CPDF_FormControl::kPush && eHLM != CPDF_FormControl::kToggle) {
       Remove("D");
       Remove("R");
       return;
