@@ -19,6 +19,9 @@
 
 namespace {
 
+constexpr uint32_t kFixedPointBits = 16;
+constexpr uint32_t kFixedPointOne = 1 << kFixedPointBits;
+
 int GetPitchRoundUpTo4Bytes(int bits_per_pixel) {
   return (bits_per_pixel + 31) / 32 * 4;
 }
@@ -81,19 +84,20 @@ bool CStretchEngine::CWeightTable::Calc(int dest_len,
         pixel_weights.m_SrcStart = std::max(pixel_weights.m_SrcStart, src_min);
         pixel_weights.m_SrcEnd = std::min(pixel_weights.m_SrcEnd, src_max - 1);
         if (pixel_weights.m_SrcStart == pixel_weights.m_SrcEnd) {
-          pixel_weights.m_Weights[0] = 65536;
+          pixel_weights.m_Weights[0] = kFixedPointOne;
         } else {
           pixel_weights.m_Weights[1] =
               FXSYS_roundf(static_cast<float>(
                                src_pos - pixel_weights.m_SrcStart - 1.0f / 2) *
-                           65536);
-          pixel_weights.m_Weights[0] = 65536 - pixel_weights.m_Weights[1];
+                           kFixedPointOne);
+          pixel_weights.m_Weights[0] =
+              kFixedPointOne - pixel_weights.m_Weights[1];
         }
       } else {
         int pixel_pos = static_cast<int>(floor(static_cast<float>(src_pos)));
         pixel_weights.m_SrcStart = std::max(pixel_pos, src_min);
         pixel_weights.m_SrcEnd = std::min(pixel_pos, src_max - 1);
-        pixel_weights.m_Weights[0] = 65536;
+        pixel_weights.m_Weights[0] = kFixedPointOne;
       }
     }
     return true;
@@ -131,7 +135,7 @@ bool CStretchEngine::CWeightTable::Calc(int dest_len,
       if (idx >= GetPixelWeightCount())
         return false;
 
-      pixel_weights.m_Weights[idx] = FXSYS_roundf(weight * 65536);
+      pixel_weights.m_Weights[idx] = FXSYS_roundf(weight * kFixedPointOne);
     }
   }
   return true;
@@ -318,7 +322,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             if (src_scan[j / 8] & (1 << (7 - j % 8)))
               dest_a += pixel_weight * 255;
           }
-          *dest_scan++ = static_cast<uint8_t>(dest_a >> 16);
+          *dest_scan++ = static_cast<uint8_t>(dest_a >> kFixedPointBits);
         }
         break;
       }
@@ -334,7 +338,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             int pixel_weight = *pWeight;
             dest_a += pixel_weight * src_scan[j];
           }
-          *dest_scan++ = static_cast<uint8_t>(dest_a >> 16);
+          *dest_scan++ = static_cast<uint8_t>(dest_a >> kFixedPointBits);
         }
         break;
       }
@@ -353,8 +357,9 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             dest_r += pixel_weight * src_scan[j];
             dest_a += pixel_weight;
           }
-          *dest_scan++ = static_cast<uint8_t>(dest_r >> 16);
-          *dest_scan_mask++ = static_cast<uint8_t>((dest_a * 255) >> 16);
+          *dest_scan++ = static_cast<uint8_t>(dest_r >> kFixedPointBits);
+          *dest_scan_mask++ =
+              static_cast<uint8_t>((dest_a * 255) >> kFixedPointBits);
         }
         break;
       }
@@ -381,9 +386,9 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
               dest_r += pixel_weight * static_cast<uint8_t>(argb >> 8);
             }
           }
-          *dest_scan++ = static_cast<uint8_t>(dest_b >> 16);
-          *dest_scan++ = static_cast<uint8_t>(dest_g >> 16);
-          *dest_scan++ = static_cast<uint8_t>(dest_r >> 16);
+          *dest_scan++ = static_cast<uint8_t>(dest_b >> kFixedPointBits);
+          *dest_scan++ = static_cast<uint8_t>(dest_g >> kFixedPointBits);
+          *dest_scan++ = static_cast<uint8_t>(dest_r >> kFixedPointBits);
         }
         break;
       }
@@ -407,10 +412,11 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             dest_r += pixel_weight * static_cast<uint8_t>(argb >> 8);
             dest_a += pixel_weight;
           }
-          *dest_scan++ = static_cast<uint8_t>(dest_b >> 16);
-          *dest_scan++ = static_cast<uint8_t>(dest_g >> 16);
-          *dest_scan++ = static_cast<uint8_t>(dest_r >> 16);
-          *dest_scan_mask++ = static_cast<uint8_t>((dest_a * 255) >> 16);
+          *dest_scan++ = static_cast<uint8_t>(dest_b >> kFixedPointBits);
+          *dest_scan++ = static_cast<uint8_t>(dest_g >> kFixedPointBits);
+          *dest_scan++ = static_cast<uint8_t>(dest_r >> kFixedPointBits);
+          *dest_scan_mask++ =
+              static_cast<uint8_t>((dest_a * 255) >> kFixedPointBits);
         }
         break;
       }
@@ -431,9 +437,9 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             dest_g += pixel_weight * (*src_pixel++);
             dest_r += pixel_weight * (*src_pixel);
           }
-          *dest_scan++ = static_cast<uint8_t>(dest_b >> 16);
-          *dest_scan++ = static_cast<uint8_t>(dest_g >> 16);
-          *dest_scan++ = static_cast<uint8_t>(dest_r >> 16);
+          *dest_scan++ = static_cast<uint8_t>(dest_b >> kFixedPointBits);
+          *dest_scan++ = static_cast<uint8_t>(dest_g >> kFixedPointBits);
+          *dest_scan++ = static_cast<uint8_t>(dest_r >> kFixedPointBits);
           dest_scan += Bpp - 3;
         }
         break;
@@ -462,13 +468,15 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             dest_r += pixel_weight * (*src_pixel);
             dest_a += pixel_weight;
           }
-          *dest_scan++ = static_cast<uint8_t>(dest_b >> 16);
-          *dest_scan++ = static_cast<uint8_t>(dest_g >> 16);
-          *dest_scan++ = static_cast<uint8_t>(dest_r >> 16);
+          *dest_scan++ = static_cast<uint8_t>(dest_b >> kFixedPointBits);
+          *dest_scan++ = static_cast<uint8_t>(dest_g >> kFixedPointBits);
+          *dest_scan++ = static_cast<uint8_t>(dest_r >> kFixedPointBits);
           if (m_DestFormat == FXDIB_Format::kArgb)
-            *dest_scan = static_cast<uint8_t>((dest_a * 255) >> 16);
+            *dest_scan =
+                static_cast<uint8_t>((dest_a * 255) >> kFixedPointBits);
           if (dest_scan_mask)
-            *dest_scan_mask++ = static_cast<uint8_t>((dest_a * 255) >> 16);
+            *dest_scan_mask++ =
+                static_cast<uint8_t>((dest_a * 255) >> kFixedPointBits);
           dest_scan += Bpp - 3;
         }
         break;
@@ -512,7 +520,7 @@ void CStretchEngine::StretchVert() {
             dest_a +=
                 pixel_weight * src_scan[(j - m_SrcClip.top) * m_InterPitch];
           }
-          *dest_scan = static_cast<uint8_t>(dest_a >> 16);
+          *dest_scan = static_cast<uint8_t>(dest_a >> kFixedPointBits);
           dest_scan += DestBpp;
         }
         break;
@@ -536,9 +544,9 @@ void CStretchEngine::StretchVert() {
             dest_a += pixel_weight *
                       src_scan_mask[(j - m_SrcClip.top) * m_ExtraMaskPitch];
           }
-          *dest_scan = static_cast<uint8_t>(dest_k >> 16);
+          *dest_scan = static_cast<uint8_t>(dest_k >> kFixedPointBits);
           dest_scan += DestBpp;
-          *dest_scan_mask++ = static_cast<uint8_t>(dest_a >> 16);
+          *dest_scan_mask++ = static_cast<uint8_t>(dest_a >> kFixedPointBits);
         }
         break;
       }
@@ -562,9 +570,9 @@ void CStretchEngine::StretchVert() {
             dest_g += pixel_weight * (*src_pixel++);
             dest_r += pixel_weight * (*src_pixel);
           }
-          dest_scan[0] = static_cast<uint8_t>(dest_b >> 16);
-          dest_scan[1] = static_cast<uint8_t>(dest_g >> 16);
-          dest_scan[2] = static_cast<uint8_t>(dest_r >> 16);
+          dest_scan[0] = static_cast<uint8_t>(dest_b >> kFixedPointBits);
+          dest_scan[1] = static_cast<uint8_t>(dest_g >> kFixedPointBits);
+          dest_scan[2] = static_cast<uint8_t>(dest_r >> kFixedPointBits);
           dest_scan += DestBpp;
         }
         break;
@@ -609,9 +617,9 @@ void CStretchEngine::StretchVert() {
             dest_scan[2] = pdfium::clamp(r, 0, 255);
           }
           if (m_DestFormat == FXDIB_Format::kArgb)
-            dest_scan[3] = static_cast<uint8_t>((dest_a) >> 16);
+            dest_scan[3] = static_cast<uint8_t>((dest_a) >> kFixedPointBits);
           else
-            *dest_scan_mask = static_cast<uint8_t>((dest_a) >> 16);
+            *dest_scan_mask = static_cast<uint8_t>((dest_a) >> kFixedPointBits);
           dest_scan += DestBpp;
           if (dest_scan_mask)
             dest_scan_mask++;
