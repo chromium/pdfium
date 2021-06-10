@@ -24,7 +24,7 @@ class CPDF_InteractiveForm;
 class CPDF_Object;
 class CPDF_String;
 
-enum class NotificationOption { kDoNotNotify = 0, kNotify };
+enum class NotificationOption : bool { kDoNotNotify = false, kNotify = true };
 
 enum class FormFieldType : uint8_t {
   kUnknown = 0,
