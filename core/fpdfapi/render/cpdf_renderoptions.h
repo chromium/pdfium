@@ -22,6 +22,7 @@ class CPDF_RenderOptions {
   struct Options {
     Options();
     Options(const Options& rhs);
+    Options& operator=(const Options& rhs);
 
     bool bClearType = false;
     bool bNoNativeText = false;
