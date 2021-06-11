@@ -35,7 +35,7 @@ struct PixelWeight {
 
   int m_SrcStart;
   int m_SrcEnd;
-  int m_Weights[1];  // Not really 1, variable size.
+  uint32_t m_Weights[1];  // Not really 1, variable size.
 };
 
 using FX_ARGB = uint32_t;
