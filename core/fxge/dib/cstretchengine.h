@@ -60,7 +60,7 @@ class CStretchEngine {
           static_cast<const CWeightTable*>(this)->GetPixelWeight(pixel));
     }
 
-    int* GetValueFromPixelWeight(PixelWeight* pWeight, int index) const;
+    int GetValueFromPixelWeight(PixelWeight* pWeight, int index) const;
     size_t GetPixelWeightCount() const;
 
    private:
