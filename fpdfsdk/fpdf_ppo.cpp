@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <map>
 #include <memory>
+#include <numeric>
 #include <sstream>
 #include <utility>
 #include <vector>
@@ -33,6 +34,7 @@
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/cpp/fpdf_scopers.h"
 #include "third_party/base/check.h"
+#include "third_party/base/span.h"
 
 namespace {
 
@@ -201,17 +203,15 @@ bool CopyInheritable(CPDF_Dictionary* pDestPageDict,
   return true;
 }
 
-std::vector<uint32_t> GetPageNumbers(const CPDF_Document& doc,
+std::vector<uint32_t> GetPageIndices(const CPDF_Document& doc,
                                      const ByteString& bsPageRange) {
   uint32_t nCount = doc.GetPageCount();
   if (!bsPageRange.IsEmpty())
     return ParsePageRangeString(bsPageRange, nCount);
 
-  std::vector<uint32_t> page_numbers;
-  for (uint32_t i = 1; i <= nCount; ++i)
-    page_numbers.push_back(i);
-
-  return page_numbers;
+  std::vector<uint32_t> page_indices(nCount);
+  std::iota(page_indices.begin(), page_indices.end(), 0);
+  return page_indices;
 }
 
 class CPDF_PageOrganizer {
@@ -382,11 +382,10 @@ class CPDF_PageExporter final : public CPDF_PageOrganizer {
   CPDF_PageExporter(CPDF_Document* pDestDoc, CPDF_Document* pSrcDoc);
   ~CPDF_PageExporter();
 
-  // For the pages from the source document with |pageNums| as their page
-  // numbers, insert them into the destination document at page |nIndex|.
-  // |pageNums| is 1-based.
-  // |nIndex| is 0-based.
-  bool ExportPage(const std::vector<uint32_t>& pageNums, int nIndex);
+  // For the pages from the source document with |pageIndices| as their page
+  // indices, insert them into the destination document at page |nIndex|.
+  // |pageIndices| and |nIndex| are 0-based.
+  bool ExportPage(pdfium::span<const uint32_t> pageIndices, int nIndex);
 };
 
 CPDF_PageExporter::CPDF_PageExporter(CPDF_Document* pDestDoc,
@@ -395,15 +394,15 @@ CPDF_PageExporter::CPDF_PageExporter(CPDF_Document* pDestDoc,
 
 CPDF_PageExporter::~CPDF_PageExporter() = default;
 
-bool CPDF_PageExporter::ExportPage(const std::vector<uint32_t>& pageNums,
+bool CPDF_PageExporter::ExportPage(pdfium::span<const uint32_t> pageIndices,
                                    int nIndex) {
   if (!Init())
     return false;
 
   int curpage = nIndex;
-  for (size_t i = 0; i < pageNums.size(); ++i) {
+  for (uint32_t pageIndex : pageIndices) {
     CPDF_Dictionary* pDestPageDict = dest()->CreateNewPage(curpage);
-    auto* pSrcPageDict = src()->GetPageDictionary(pageNums[i] - 1);
+    auto* pSrcPageDict = src()->GetPageDictionary(pageIndex);
     if (!pSrcPageDict || !pDestPageDict)
       return false;
 
@@ -473,14 +472,15 @@ class CPDF_NPageToOneExporter final : public CPDF_PageOrganizer {
   CPDF_NPageToOneExporter(CPDF_Document* pDestDoc, CPDF_Document* pSrcDoc);
   ~CPDF_NPageToOneExporter();
 
-  // For the pages from the source document with |pageNums| as their page
-  // numbers, insert them into the destination document, starting at page 0.
-  // |pageNums| is 1-based.
+  // For the pages from the source document with |pageIndices| as their page
+  // indices, insert them into the destination document, starting at page index
+  // 0.
+  // |pageIndices| is 0-based.
   // |destPageSize| is the destination document page dimensions, measured in
   // PDF "user space" units.
   // |nPagesOnXAxis| and |nPagesOnXAxis| together defines how many source
   // pages fit on one destination page.
-  bool ExportNPagesToOne(const std::vector<uint32_t>& pageNums,
+  bool ExportNPagesToOne(pdfium::span<const uint32_t> pageIndices,
                          const CFX_SizeF& destPageSize,
                          size_t nPagesOnXAxis,
                          size_t nPagesOnYAxis);
@@ -525,7 +525,7 @@ CPDF_NPageToOneExporter::CPDF_NPageToOneExporter(CPDF_Document* pDestDoc,
 CPDF_NPageToOneExporter::~CPDF_NPageToOneExporter() = default;
 
 bool CPDF_NPageToOneExporter::ExportNPagesToOne(
-    const std::vector<uint32_t>& pageNums,
+    pdfium::span<const uint32_t> pageIndices,
     const CFX_SizeF& destPageSize,
     size_t nPagesOnXAxis,
     size_t nPagesOnYAxis) {
@@ -545,7 +545,7 @@ bool CPDF_NPageToOneExporter::ExportNPagesToOne(
   size_t curpage = 0;
   const CFX_FloatRect destPageRect(0, 0, destPageSize.width,
                                    destPageSize.height);
-  for (size_t iOuterPage = 0; iOuterPage < pageNums.size();
+  for (size_t iOuterPage = 0; iOuterPage < pageIndices.size();
        iOuterPage += nPagesPerSheet) {
     m_XObjectNameToNumberMap.clear();
 
@@ -557,9 +557,9 @@ bool CPDF_NPageToOneExporter::ExportNPagesToOne(
     pDestPageDict->SetRectFor(pdfium::page_object::kMediaBox, destPageRect);
     ByteString bsContent;
     size_t iInnerPageMax =
-        std::min(iOuterPage + nPagesPerSheet, pageNums.size());
+        std::min(iOuterPage + nPagesPerSheet, pageIndices.size());
     for (size_t i = iOuterPage; i < iInnerPageMax; ++i) {
-      auto* pSrcPageDict = src()->GetPageDictionary(pageNums[i] - 1);
+      auto* pSrcPageDict = src()->GetPageDictionary(pageIndices[i]);
       if (!pSrcPageDict)
         return false;
 
@@ -692,12 +692,12 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_ImportPages(FPDF_DOCUMENT dest_doc,
   if (!pSrcDoc)
     return false;
 
-  std::vector<uint32_t> page_numbers = GetPageNumbers(*pSrcDoc, pagerange);
-  if (page_numbers.empty())
+  std::vector<uint32_t> page_indices = GetPageIndices(*pSrcDoc, pagerange);
+  if (page_indices.empty())
     return false;
 
   CPDF_PageExporter exporter(pDestDoc, pSrcDoc);
-  return exporter.ExportPage(page_numbers, index);
+  return exporter.ExportPage(page_indices, index);
 }
 
 FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV
@@ -722,19 +722,19 @@ FPDF_ImportNPagesToOne(FPDF_DOCUMENT src_doc,
   CPDF_Document* pDestDoc = CPDFDocumentFromFPDFDocument(output_doc.get());
   DCHECK(pDestDoc);
 
-  std::vector<uint32_t> page_numbers = GetPageNumbers(*pSrcDoc, ByteString());
-  if (page_numbers.empty())
+  std::vector<uint32_t> page_indices = GetPageIndices(*pSrcDoc, ByteString());
+  if (page_indices.empty())
     return nullptr;
 
   if (num_pages_on_x_axis == 1 && num_pages_on_y_axis == 1) {
     CPDF_PageExporter exporter(pDestDoc, pSrcDoc);
-    if (!exporter.ExportPage(page_numbers, 0))
+    if (!exporter.ExportPage(page_indices, 0))
       return nullptr;
     return output_doc.release();
   }
 
   CPDF_NPageToOneExporter exporter(pDestDoc, pSrcDoc);
-  if (!exporter.ExportNPagesToOne(page_numbers,
+  if (!exporter.ExportNPagesToOne(page_indices,
                                   CFX_SizeF(output_width, output_height),
                                   num_pages_on_x_axis, num_pages_on_y_axis)) {
     return nullptr;

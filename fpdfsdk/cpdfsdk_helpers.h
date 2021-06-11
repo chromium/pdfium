@@ -281,6 +281,7 @@ void ProcessParseError(CPDF_Parser::Error err);
 void SetColorFromScheme(const FPDF_COLORSCHEME* pColorScheme,
                         CPDF_RenderOptions* pRenderOptions);
 
+// Returns a vector of page indices given a page range string.
 std::vector<uint32_t> ParsePageRangeString(const ByteString& bsPageRange,
                                            uint32_t nCount);
 
