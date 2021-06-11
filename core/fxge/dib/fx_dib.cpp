@@ -7,11 +7,16 @@
 #include "core/fxge/dib/fx_dib.h"
 
 #include <tuple>
+#include <type_traits>
 #include <utility>
 
 #include "build/build_config.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
+
+static_assert(
+    std::is_trivially_destructible<PixelWeight>::value,
+    "PixelWeight storage may be re-used without invoking its destructor");
 
 #if defined(OS_WIN)
 static_assert(sizeof(FX_COLORREF) == sizeof(COLORREF),
