@@ -1043,7 +1043,8 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
     if (pArray)
       crBorder = fpdfdoc::CFXColorFromArray(*pArray);
     pArray = pMKDict->GetArrayFor(pdfium::appearance::kBG);
-    crBG = fpdfdoc::CFXColorFromArray(*pArray);
+    if (pArray)
+      crBG = fpdfdoc::CFXColorFromArray(*pArray);
   }
   std::ostringstream sAppStream;
   ByteString sBG = GenerateColorAP(crBG, PaintOperation::kFill);
