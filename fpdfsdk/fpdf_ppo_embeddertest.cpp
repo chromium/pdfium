@@ -12,6 +12,7 @@
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -41,6 +42,25 @@ TEST_F(FPDFPPOEmbedderTest, ViewerPreferences) {
   EXPECT_TRUE(output_doc);
   EXPECT_TRUE(FPDF_CopyViewerPreferences(output_doc, document()));
   FPDF_CloseDocument(output_doc);
+}
+
+TEST_F(FPDFPPOEmbedderTest, ImportPagesByIndex) {
+  ASSERT_TRUE(OpenDocument("viewer_ref.pdf"));
+
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_TRUE(page);
+
+  ScopedFPDFDocument output_doc(FPDF_CreateNewDocument());
+  ASSERT_TRUE(output_doc);
+  EXPECT_TRUE(FPDF_CopyViewerPreferences(output_doc.get(), document()));
+
+  static constexpr int kPageIndices[] = {1};
+  EXPECT_TRUE(FPDF_ImportPagesByIndex(output_doc.get(), document(),
+                                      kPageIndices, pdfium::size(kPageIndices),
+                                      0));
+  EXPECT_EQ(1, FPDF_GetPageCount(output_doc.get()));
+
+  UnloadPage(page);
 }
 
 TEST_F(FPDFPPOEmbedderTest, ImportPages) {
@@ -160,6 +180,79 @@ TEST_F(FPDFPPOEmbedderTest, BadCircularViewerPref) {
   FPDF_CloseDocument(output_doc);
 }
 
+TEST_F(FPDFPPOEmbedderTest, BadIndices) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_TRUE(page);
+
+  ScopedFPDFDocument output_doc(FPDF_CreateNewDocument());
+  EXPECT_TRUE(output_doc);
+
+  static constexpr int kBadIndices1[] = {-1};
+  EXPECT_FALSE(FPDF_ImportPagesByIndex(output_doc.get(), document(),
+                                       kBadIndices1, pdfium::size(kBadIndices1),
+                                       0));
+
+  static constexpr int kBadIndices2[] = {1};
+  EXPECT_FALSE(FPDF_ImportPagesByIndex(output_doc.get(), document(),
+                                       kBadIndices2, pdfium::size(kBadIndices2),
+                                       0));
+
+  static constexpr int kBadIndices3[] = {-1, 0, 1};
+  EXPECT_FALSE(FPDF_ImportPagesByIndex(output_doc.get(), document(),
+                                       kBadIndices3, pdfium::size(kBadIndices3),
+                                       0));
+
+  static constexpr int kBadIndices4[] = {42};
+  EXPECT_FALSE(FPDF_ImportPagesByIndex(output_doc.get(), document(),
+                                       kBadIndices4, pdfium::size(kBadIndices4),
+                                       0));
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFPPOEmbedderTest, GoodIndices) {
+  ASSERT_TRUE(OpenDocument("viewer_ref.pdf"));
+
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_TRUE(page);
+
+  ScopedFPDFDocument output_doc(FPDF_CreateNewDocument());
+  EXPECT_TRUE(output_doc);
+
+  static constexpr int kGoodIndices1[] = {0, 0, 0, 0};
+  EXPECT_TRUE(FPDF_ImportPagesByIndex(output_doc.get(), document(),
+                                      kGoodIndices1,
+                                      pdfium::size(kGoodIndices1), 0));
+  EXPECT_EQ(4, FPDF_GetPageCount(output_doc.get()));
+
+  static constexpr int kGoodIndices2[] = {0};
+  EXPECT_TRUE(FPDF_ImportPagesByIndex(output_doc.get(), document(),
+                                      kGoodIndices2,
+                                      pdfium::size(kGoodIndices2), 0));
+  EXPECT_EQ(5, FPDF_GetPageCount(output_doc.get()));
+
+  static constexpr int kGoodIndices3[] = {4};
+  EXPECT_TRUE(FPDF_ImportPagesByIndex(output_doc.get(), document(),
+                                      kGoodIndices3,
+                                      pdfium::size(kGoodIndices3), 0));
+  EXPECT_EQ(6, FPDF_GetPageCount(output_doc.get()));
+
+  static constexpr int kGoodIndices4[] = {1, 2, 3};
+  EXPECT_TRUE(FPDF_ImportPagesByIndex(output_doc.get(), document(),
+                                      kGoodIndices4,
+                                      pdfium::size(kGoodIndices4), 0));
+  EXPECT_EQ(9, FPDF_GetPageCount(output_doc.get()));
+
+  // Passing in a nullptr should import all the pages.
+  EXPECT_TRUE(
+      FPDF_ImportPagesByIndex(output_doc.get(), document(), nullptr, 0, 0));
+  EXPECT_EQ(14, FPDF_GetPageCount(output_doc.get()));
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFPPOEmbedderTest, BadRanges) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
 
@@ -213,7 +306,10 @@ TEST_F(FPDFPPOEmbedderTest, BUG_664284) {
 
   FPDF_DOCUMENT output_doc = FPDF_CreateNewDocument();
   EXPECT_TRUE(output_doc);
-  EXPECT_TRUE(FPDF_ImportPages(output_doc, document(), "1", 0));
+
+  static constexpr int kIndices[] = {0};
+  EXPECT_TRUE(FPDF_ImportPagesByIndex(output_doc, document(), kIndices,
+                                      pdfium::size(kIndices), 0));
   FPDF_CloseDocument(output_doc);
 
   UnloadPage(page);
@@ -248,7 +344,10 @@ TEST_F(FPDFPPOEmbedderTest, BUG_750568) {
 
   FPDF_DOCUMENT output_doc = FPDF_CreateNewDocument();
   ASSERT_TRUE(output_doc);
-  EXPECT_TRUE(FPDF_ImportPages(output_doc, document(), "1,2,3,4", 0));
+
+  static constexpr int kIndices[] = {0, 1, 2, 3};
+  EXPECT_TRUE(FPDF_ImportPagesByIndex(output_doc, document(), kIndices,
+                                      pdfium::size(kIndices), 0));
   ASSERT_EQ(4, FPDF_GetPageCount(output_doc));
   for (size_t i = 0; i < 4; ++i) {
     FPDF_PAGE page = FPDF_LoadPage(output_doc, i);
@@ -280,7 +379,10 @@ TEST_F(FPDFPPOEmbedderTest, ImportWithZeroLengthStream) {
 
   FPDF_DOCUMENT new_doc = FPDF_CreateNewDocument();
   EXPECT_TRUE(new_doc);
-  EXPECT_TRUE(FPDF_ImportPages(new_doc, document(), "1", 0));
+
+  static constexpr int kIndices[] = {0};
+  EXPECT_TRUE(FPDF_ImportPagesByIndex(new_doc, document(), kIndices,
+                                      pdfium::size(kIndices), 0));
 
   EXPECT_EQ(1, FPDF_GetPageCount(new_doc));
   FPDF_PAGE new_page = FPDF_LoadPage(new_doc, 0);

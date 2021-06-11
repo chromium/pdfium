@@ -309,6 +309,7 @@ int CheckPDFiumCApi() {
     CHK(FPDF_CopyViewerPreferences);
     CHK(FPDF_ImportNPagesToOne);
     CHK(FPDF_ImportPages);
+    CHK(FPDF_ImportPagesByIndex);
 
     // fpdf_progressive.h
     CHK(FPDF_RenderPageBitmapWithColorScheme_Start);

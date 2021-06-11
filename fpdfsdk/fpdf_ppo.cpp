@@ -680,6 +680,37 @@ void CPDF_NPageToOneExporter::FinishPage(CPDF_Dictionary* pDestPageDict,
 
 }  // namespace
 
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDF_ImportPagesByIndex(FPDF_DOCUMENT dest_doc,
+                        FPDF_DOCUMENT src_doc,
+                        const int* page_indices,
+                        unsigned long length,
+                        int index) {
+  CPDF_Document* pDestDoc = CPDFDocumentFromFPDFDocument(dest_doc);
+  if (!dest_doc)
+    return false;
+
+  CPDF_Document* pSrcDoc = CPDFDocumentFromFPDFDocument(src_doc);
+  if (!pSrcDoc)
+    return false;
+
+  CPDF_PageExporter exporter(pDestDoc, pSrcDoc);
+
+  if (!page_indices) {
+    std::vector<uint32_t> page_indices_vec(pSrcDoc->GetPageCount());
+    std::iota(page_indices_vec.begin(), page_indices_vec.end(), 0);
+    return exporter.ExportPage(page_indices_vec, index);
+  }
+
+  if (length == 0)
+    return false;
+
+  return exporter.ExportPage(
+      pdfium::make_span(reinterpret_cast<const uint32_t*>(page_indices),
+                        length),
+      index);
+}
+
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_ImportPages(FPDF_DOCUMENT dest_doc,
                                                      FPDF_DOCUMENT src_doc,
                                                      FPDF_BYTESTRING pagerange,
