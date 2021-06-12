@@ -322,72 +322,78 @@ bool ProgressiveDecoder::PngAskScanlineBuf(int line, uint8_t** pSrcBuf) {
     NOTREACHED();
     return false;
   }
-  if (line >= m_clipBox.top && line < m_clipBox.bottom) {
-    double scale_y = static_cast<double>(m_sizeY) / m_clipBox.Height();
-    int32_t row =
-        static_cast<int32_t>((line - m_clipBox.top) * scale_y) + m_startY;
-    const uint8_t* src_scan = pDIBitmap->GetScanline(row);
-    uint8_t* dest_scan = m_pDecodeBuf.get();
-    *pSrcBuf = m_pDecodeBuf.get();
-    int32_t src_Bpp = pDIBitmap->GetBPP() >> 3;
-    int32_t dest_Bpp = (m_SrcFormat & 0xff) >> 3;
-    int32_t src_left = m_startX;
-    int32_t dest_left = m_clipBox.left;
-    src_scan += src_left * src_Bpp;
-    dest_scan += dest_left * dest_Bpp;
-    for (int32_t src_col = 0; src_col < m_sizeX; src_col++) {
-      PixelWeight* pPixelWeights = m_WeightHorzOO.GetPixelWeight(src_col);
-      if (pPixelWeights->m_SrcStart != pPixelWeights->m_SrcEnd) {
-        continue;
-      }
-      switch (pDIBitmap->GetFormat()) {
-        case FXDIB_Format::k1bppMask:
-        case FXDIB_Format::k1bppRgb:
-          NOTREACHED();
-          return false;
-        case FXDIB_Format::k8bppMask:
-        case FXDIB_Format::k8bppRgb: {
-          if (pDIBitmap->HasPalette())
-            return false;
+  if (line < m_clipBox.top || line >= m_clipBox.bottom)
+    return true;
 
-          uint32_t dest_g = 0;
-          dest_g += pPixelWeights->m_Weights[0] * src_scan[src_col];
-          dest_scan[pPixelWeights->m_SrcStart] = (uint8_t)(dest_g >> 16);
-        } break;
-        case FXDIB_Format::kRgb:
-        case FXDIB_Format::kRgb32: {
-          uint32_t dest_b = 0;
-          uint32_t dest_g = 0;
-          uint32_t dest_r = 0;
-          const uint8_t* p = src_scan + src_col * src_Bpp;
-          dest_b += pPixelWeights->m_Weights[0] * (*p++);
-          dest_g += pPixelWeights->m_Weights[0] * (*p++);
-          dest_r += pPixelWeights->m_Weights[0] * (*p);
-          uint8_t* pDes = &dest_scan[pPixelWeights->m_SrcStart * dest_Bpp];
-          *pDes++ = (uint8_t)((dest_b) >> 16);
-          *pDes++ = (uint8_t)((dest_g) >> 16);
-          *pDes = (uint8_t)((dest_r) >> 16);
-        } break;
-        case FXDIB_Format::kArgb: {
-          uint32_t dest_r = 0;
-          uint32_t dest_g = 0;
-          uint32_t dest_b = 0;
-          const uint8_t* p = src_scan + src_col * src_Bpp;
-          dest_b += pPixelWeights->m_Weights[0] * (*p++);
-          dest_g += pPixelWeights->m_Weights[0] * (*p++);
-          dest_r += pPixelWeights->m_Weights[0] * (*p++);
-          uint8_t* pDes = &dest_scan[pPixelWeights->m_SrcStart * dest_Bpp];
-          *pDes++ = (uint8_t)((dest_b) >> 16);
-          *pDes++ = (uint8_t)((dest_g) >> 16);
-          *pDes++ = (uint8_t)((dest_r) >> 16);
-          *pDes = *p;
-        } break;
-        default:
-          return false;
+  double scale_y = static_cast<double>(m_sizeY) / m_clipBox.Height();
+  int32_t row =
+      static_cast<int32_t>((line - m_clipBox.top) * scale_y) + m_startY;
+  *pSrcBuf = m_pDecodeBuf.get();
+  int32_t src_Bpp = pDIBitmap->GetBPP() >> 3;
+  int32_t dest_Bpp = (m_SrcFormat & 0xff) >> 3;
+  int32_t src_left = m_startX;
+  int32_t dest_left = m_clipBox.left;
+  const uint8_t* src_scan = pDIBitmap->GetScanline(row) + src_left * src_Bpp;
+  uint8_t* dest_scan = m_pDecodeBuf.get() + dest_left * dest_Bpp;
+  switch (pDIBitmap->GetFormat()) {
+    case FXDIB_Format::k1bppMask:
+    case FXDIB_Format::k1bppRgb:
+      for (int32_t src_col = 0; src_col < m_sizeX; src_col++) {
+        PixelWeight* pPixelWeights = m_WeightHorzOO.GetPixelWeight(src_col);
+        if (pPixelWeights->m_SrcStart != pPixelWeights->m_SrcEnd)
+          continue;
+        NOTREACHED();
+        return false;
       }
-    }
+      return true;
+    case FXDIB_Format::k8bppMask:
+    case FXDIB_Format::k8bppRgb:
+      if (pDIBitmap->HasPalette())
+        return false;
+      for (int32_t src_col = 0; src_col < m_sizeX; src_col++) {
+        PixelWeight* pPixelWeights = m_WeightHorzOO.GetPixelWeight(src_col);
+        if (pPixelWeights->m_SrcStart != pPixelWeights->m_SrcEnd)
+          continue;
+        uint32_t dest_g = pPixelWeights->m_Weights[0] * src_scan[src_col];
+        dest_scan[pPixelWeights->m_SrcStart] = (uint8_t)(dest_g >> 16);
+      }
+      return true;
+    case FXDIB_Format::kRgb:
+    case FXDIB_Format::kRgb32:
+      for (int32_t src_col = 0; src_col < m_sizeX; src_col++) {
+        PixelWeight* pPixelWeights = m_WeightHorzOO.GetPixelWeight(src_col);
+        if (pPixelWeights->m_SrcStart != pPixelWeights->m_SrcEnd)
+          continue;
+        const uint8_t* p = src_scan + src_col * src_Bpp;
+        uint32_t dest_b = pPixelWeights->m_Weights[0] * (*p++);
+        uint32_t dest_g = pPixelWeights->m_Weights[0] * (*p++);
+        uint32_t dest_r = pPixelWeights->m_Weights[0] * (*p);
+        uint8_t* pDes = &dest_scan[pPixelWeights->m_SrcStart * dest_Bpp];
+        *pDes++ = (uint8_t)((dest_b) >> 16);
+        *pDes++ = (uint8_t)((dest_g) >> 16);
+        *pDes = (uint8_t)((dest_r) >> 16);
+      }
+      return true;
+    case FXDIB_Format::kArgb:
+      for (int32_t src_col = 0; src_col < m_sizeX; src_col++) {
+        PixelWeight* pPixelWeights = m_WeightHorzOO.GetPixelWeight(src_col);
+        if (pPixelWeights->m_SrcStart != pPixelWeights->m_SrcEnd)
+          continue;
+        const uint8_t* p = src_scan + src_col * src_Bpp;
+        uint32_t dest_b = pPixelWeights->m_Weights[0] * (*p++);
+        uint32_t dest_g = pPixelWeights->m_Weights[0] * (*p++);
+        uint32_t dest_r = pPixelWeights->m_Weights[0] * (*p++);
+        uint8_t dest_a = *p;
+        uint8_t* pDes = &dest_scan[pPixelWeights->m_SrcStart * dest_Bpp];
+        *pDes++ = (uint8_t)((dest_b) >> 16);
+        *pDes++ = (uint8_t)((dest_g) >> 16);
+        *pDes++ = (uint8_t)((dest_r) >> 16);
+        *pDes = dest_a;
+      }
+      return true;
+    default:
+      return false;
   }
-  return true;
 }
 
 void ProgressiveDecoder::PngFillScanlineBufCompleted(int pass, int line) {
