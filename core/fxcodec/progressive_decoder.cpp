@@ -647,24 +647,25 @@ void ProgressiveDecoder::ResampleVertBT(
     const uint8_t* scan_src2 =
         pDeviceBitmap->GetScanline(pWeight->m_SrcEnd + dest_top) +
         dest_ScanOffet;
-    for (int dest_col = 0; dest_col < m_sizeX; dest_col++) {
-      switch (pDeviceBitmap->GetFormat()) {
-        case FXDIB_Format::kInvalid:
-        case FXDIB_Format::k1bppMask:
-        case FXDIB_Format::k1bppRgb:
+    switch (pDeviceBitmap->GetFormat()) {
+      case FXDIB_Format::kInvalid:
+      case FXDIB_Format::k1bppMask:
+      case FXDIB_Format::k1bppRgb:
+        return;
+      case FXDIB_Format::k8bppMask:
+      case FXDIB_Format::k8bppRgb:
+        if (pDeviceBitmap->HasPalette())
           return;
-        case FXDIB_Format::k8bppMask:
-        case FXDIB_Format::k8bppRgb: {
-          if (pDeviceBitmap->HasPalette())
-            return;
-
+        for (int dest_col = 0; dest_col < m_sizeX; dest_col++) {
           uint32_t dest_g = 0;
           dest_g += pWeight->m_Weights[0] * (*scan_src1++);
           dest_g += pWeight->m_Weights[1] * (*scan_src2++);
           *scan_des++ = (uint8_t)(dest_g >> 16);
-        } break;
-        case FXDIB_Format::kRgb:
-        case FXDIB_Format::kRgb32: {
+        }
+        break;
+      case FXDIB_Format::kRgb:
+      case FXDIB_Format::kRgb32:
+        for (int dest_col = 0; dest_col < m_sizeX; dest_col++) {
           uint32_t dest_b = 0;
           uint32_t dest_g = 0;
           uint32_t dest_r = 0;
@@ -680,8 +681,10 @@ void ProgressiveDecoder::ResampleVertBT(
           *scan_des++ = (uint8_t)((dest_g) >> 16);
           *scan_des++ = (uint8_t)((dest_r) >> 16);
           scan_des += dest_Bpp - 3;
-        } break;
-        case FXDIB_Format::kArgb: {
+        }
+        break;
+      case FXDIB_Format::kArgb:
+        for (int dest_col = 0; dest_col < m_sizeX; dest_col++) {
           uint32_t dest_a = 0;
           uint32_t dest_b = 0;
           uint32_t dest_g = 0;
@@ -698,10 +701,10 @@ void ProgressiveDecoder::ResampleVertBT(
           *scan_des++ = (uint8_t)((dest_g) >> 16);
           *scan_des++ = (uint8_t)((dest_r) >> 16);
           *scan_des++ = (uint8_t)((dest_a) >> 16);
-        } break;
-        default:
-          return;
-      }
+        }
+        break;
+      default:
+        return;
     }
   }
 }
