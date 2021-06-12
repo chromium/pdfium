@@ -121,15 +121,10 @@ void ProgressiveDecoder::WeightTable::Calc(int dest_len, int src_len) {
       double dest_start = ((float)j) / scale;
       double dest_end = ((float)(j + 1)) / scale;
       if (dest_start > dest_end) {
-        double temp = dest_start;
-        dest_start = dest_end;
-        dest_end = temp;
+        std::swap(dest_start, dest_end);
       }
-      double area_start =
-          dest_start > (float)(dest_pixel) ? dest_start : (float)(dest_pixel);
-      double area_end = dest_end > (float)(dest_pixel + 1)
-                            ? (float)(dest_pixel + 1)
-                            : dest_end;
+      double area_start = std::max(dest_start, static_cast<double>(dest_pixel));
+      double area_end = std::min(dest_end, static_cast<double>(dest_pixel + 1));
       double weight = area_start >= area_end ? 0.0 : area_end - area_start;
       if (weight == 0 && j == end_i) {
         pixel_weights.m_SrcEnd--;
