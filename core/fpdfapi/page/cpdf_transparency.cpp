@@ -7,5 +7,6 @@
 CPDF_Transparency::CPDF_Transparency() = default;
 
 CPDF_Transparency::CPDF_Transparency(const CPDF_Transparency& other) = default;
+
 CPDF_Transparency& CPDF_Transparency::operator=(
     const CPDF_Transparency& other) = default;

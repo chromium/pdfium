@@ -38,7 +38,8 @@ constexpr uint32_t RGBA_ALPHA = 0xff000000;
 class Image {
  public:
   Image() = default;
-  Image(const Image& image) : w_(image.w_), h_(image.h_), data_(image.data_) {}
+  Image(const Image& image) = default;
+  Image& operator=(const Image& other) = default;
 
   bool has_image() const { return w_ > 0 && h_ > 0; }
   int w() const { return w_; }

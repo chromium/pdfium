@@ -49,6 +49,9 @@ config("pdfium_common_config") {
     # Override -Wno-c++11-narrowing.
     cflags += [ "-Wc++11-narrowing" ]
 
+    # TODO(crbug.com/1213098): Remove once this is in //build.
+    cflags += [ "-Wdeprecated-copy" ]
+
     # Catch misuse of cppgc in XFA.
     if (pdf_enable_xfa && clang_use_chrome_plugins) {
       cflags += [
