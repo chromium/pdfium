@@ -116,15 +116,15 @@ void SetPathToDC(HDC hDC, const CFX_Path* pPath, const CFX_Matrix* pMatrix) {
       pos = pMatrix->Transform(pos);
 
     CFX_Point screen(FXSYS_roundf(pos.x), FXSYS_roundf(pos.y));
-    FXPT_TYPE point_type = points[i].m_Type;
-    if (point_type == FXPT_TYPE::MoveTo) {
+    CFX_Path::Point::Type point_type = points[i].m_Type;
+    if (point_type == CFX_Path::Point::Type::kMove) {
       MoveToEx(hDC, screen.x, screen.y, nullptr);
-    } else if (point_type == FXPT_TYPE::LineTo) {
+    } else if (point_type == CFX_Path::Point::Type::kLine) {
       if (points[i].m_Point == points[i - 1].m_Point)
         screen.x++;
 
       LineTo(hDC, screen.x, screen.y);
-    } else if (point_type == FXPT_TYPE::BezierTo) {
+    } else if (point_type == CFX_Path::Point::Type::kBezier) {
       POINT lppt[3];
       lppt[0].x = screen.x;
       lppt[0].y = screen.y;

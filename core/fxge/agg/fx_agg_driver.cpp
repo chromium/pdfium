@@ -974,18 +974,18 @@ void BuildAggPath(const CFX_Path* pPath,
       pos = pObject2Device->Transform(pos);
 
     pos = HardClip(pos);
-    FXPT_TYPE point_type = points[i].m_Type;
-    if (point_type == FXPT_TYPE::MoveTo) {
+    CFX_Path::Point::Type point_type = points[i].m_Type;
+    if (point_type == CFX_Path::Point::Type::kMove) {
       agg_path.move_to(pos.x, pos.y);
-    } else if (point_type == FXPT_TYPE::LineTo) {
-      if (i > 0 && points[i - 1].IsTypeAndOpen(FXPT_TYPE::MoveTo) &&
+    } else if (point_type == CFX_Path::Point::Type::kLine) {
+      if (i > 0 && points[i - 1].IsTypeAndOpen(CFX_Path::Point::Type::kMove) &&
           (i == points.size() - 1 ||
-           points[i + 1].IsTypeAndOpen(FXPT_TYPE::MoveTo)) &&
+           points[i + 1].IsTypeAndOpen(CFX_Path::Point::Type::kMove)) &&
           points[i].m_Point == points[i - 1].m_Point) {
         pos.x += 1;
       }
       agg_path.line_to(pos.x, pos.y);
-    } else if (point_type == FXPT_TYPE::BezierTo) {
+    } else if (point_type == CFX_Path::Point::Type::kBezier) {
       if (i > 0 && i + 2 < points.size()) {
         CFX_PointF pos0 = points[i - 1].m_Point;
         CFX_PointF pos2 = points[i + 1].m_Point;

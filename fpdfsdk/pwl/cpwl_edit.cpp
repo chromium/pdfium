@@ -193,8 +193,8 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
     for (int32_t i = 0; i < nCharArray - 1; ++i) {
       bottom.x = rcClient.left + width * (i + 1);
       top.x = bottom.x;
-      path.AppendPoint(bottom, FXPT_TYPE::MoveTo);
-      path.AppendPoint(top, FXPT_TYPE::LineTo);
+      path.AppendPoint(bottom, CFX_Path::Point::Type::kMove);
+      path.AppendPoint(top, CFX_Path::Point::Type::kLine);
     }
     if (!path.GetPoints().empty()) {
       pDevice->DrawPath(&path, &mtUser2Device, &gsd, 0,

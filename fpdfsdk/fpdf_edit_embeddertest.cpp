@@ -413,8 +413,8 @@ TEST_F(FPDFEditEmbedderTest, AddPaths) {
   EXPECT_EQ(0u, B);
   EXPECT_EQ(128u, A);
 
-  // Make sure the path has 5 points (1 FXPT_TYPE::MoveTo and 4
-  // FXPT_TYPE::LineTo).
+  // Make sure the path has 5 points (1 CFX_Path::Point::Type::kMove and 4
+  // CFX_Path::Point::Type::kLine).
   ASSERT_EQ(5, FPDFPath_CountSegments(green_rect));
   // Verify actual coordinates.
   FPDF_PATHSEGMENT segment = FPDFPath_GetPathSegment(green_rect, 0);
@@ -466,8 +466,8 @@ TEST_F(FPDFEditEmbedderTest, AddPaths) {
   EXPECT_TRUE(FPDFPath_LineTo(black_path, 300, 100));
   EXPECT_TRUE(FPDFPath_Close(black_path));
 
-  // Make sure the path has 3 points (1 FXPT_TYPE::MoveTo and 2
-  // FXPT_TYPE::LineTo).
+  // Make sure the path has 3 points (1 CFX_Path::Point::Type::kMove and 2
+  // CFX_Path::Point::Type::kLine).
   ASSERT_EQ(3, FPDFPath_CountSegments(black_path));
   // Verify actual coordinates.
   segment = FPDFPath_GetPathSegment(black_path, 0);

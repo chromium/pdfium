@@ -330,12 +330,12 @@ SkPath BuildPath(const CFX_Path* pPath) {
   pdfium::span<const CFX_Path::Point> points = pPath->GetPoints();
   for (size_t i = 0; i < points.size(); ++i) {
     const CFX_PointF& point = points[i].m_Point;
-    FXPT_TYPE point_type = points[i].m_Type;
-    if (point_type == FXPT_TYPE::MoveTo) {
+    CFX_Path::Point::Type point_type = points[i].m_Type;
+    if (point_type == CFX_Path::Point::Type::kMove) {
       sk_path.moveTo(point.x, point.y);
-    } else if (point_type == FXPT_TYPE::LineTo) {
+    } else if (point_type == CFX_Path::Point::Type::kLine) {
       sk_path.lineTo(point.x, point.y);
-    } else if (point_type == FXPT_TYPE::BezierTo) {
+    } else if (point_type == CFX_Path::Point::Type::kBezier) {
       const CFX_PointF& point2 = points[i + 1].m_Point;
       const CFX_PointF& point3 = points[i + 2].m_Point;
       sk_path.cubicTo(point.x, point.y, point2.x, point2.y, point3.x, point3.y);

@@ -28,7 +28,7 @@ bool IsRectPreTransform(const std::vector<CFX_Path::Point>& points) {
   }
 
   for (size_t i = 1; i < points.size(); ++i) {
-    if (points[i].m_Type != FXPT_TYPE::LineTo)
+    if (points[i].m_Type != CFX_Path::Point::Type::kLine)
       return false;
   }
   return true;
@@ -82,7 +82,7 @@ std::vector<CFX_Path::Point> GetNormalizedPoints(
 
     // If the line does not move, skip this point.
     const auto& point = *it;
-    if (point.m_Type == FXPT_TYPE::LineTo && !point.m_CloseFigure &&
+    if (point.m_Type == CFX_Path::Point::Type::kLine && !point.m_CloseFigure &&
         !normalized.back().m_CloseFigure &&
         point.m_Point == normalized.back().m_Point) {
       continue;
@@ -247,7 +247,7 @@ void UpdateLineJoinPoints(CFX_FloatRect* rect,
 
 CFX_Path::Point::Point() = default;
 
-CFX_Path::Point::Point(const CFX_PointF& point, FXPT_TYPE type, bool close)
+CFX_Path::Point::Point(const CFX_PointF& point, Type type, bool close)
     : m_Point(point), m_Type(type), m_CloseFigure(close) {}
 
 CFX_Path::Point::Point(const Point& other) = default;
@@ -286,20 +286,20 @@ void CFX_Path::Append(const CFX_Path& src, const CFX_Matrix* matrix) {
     m_Points[i].m_Point = matrix->Transform(m_Points[i].m_Point);
 }
 
-void CFX_Path::AppendPoint(const CFX_PointF& point, FXPT_TYPE type) {
+void CFX_Path::AppendPoint(const CFX_PointF& point, Point::Type type) {
   m_Points.push_back(Point(point, type, /*close=*/false));
 }
 
-void CFX_Path::AppendPointAndClose(const CFX_PointF& point, FXPT_TYPE type) {
+void CFX_Path::AppendPointAndClose(const CFX_PointF& point, Point::Type type) {
   m_Points.push_back(Point(point, type, /*close=*/true));
 }
 
 void CFX_Path::AppendLine(const CFX_PointF& pt1, const CFX_PointF& pt2) {
   if (m_Points.empty() || fabs(m_Points.back().m_Point.x - pt1.x) > 0.001 ||
       fabs(m_Points.back().m_Point.y - pt1.y) > 0.001) {
-    AppendPoint(pt1, FXPT_TYPE::MoveTo);
+    AppendPoint(pt1, CFX_Path::Point::Type::kMove);
   }
-  AppendPoint(pt2, FXPT_TYPE::LineTo);
+  AppendPoint(pt2, CFX_Path::Point::Type::kLine);
 }
 
 void CFX_Path::AppendFloatRect(const CFX_FloatRect& rect) {
@@ -339,7 +339,7 @@ CFX_FloatRect CFX_Path::GetBoundingBoxForStrokePath(float line_width,
   int iMiddlePoint = 0;
   bool bJoin;
   while (iPoint < m_Points.size()) {
-    if (m_Points[iPoint].IsTypeAndOpen(FXPT_TYPE::MoveTo)) {
+    if (m_Points[iPoint].IsTypeAndOpen(CFX_Path::Point::Type::kMove)) {
       if (iPoint + 1 == m_Points.size())
         break;
 
@@ -347,13 +347,13 @@ CFX_FloatRect CFX_Path::GetBoundingBoxForStrokePath(float line_width,
       iEndPoint = iPoint;
       bJoin = false;
     } else {
-      if (m_Points[iPoint].IsTypeAndOpen(FXPT_TYPE::BezierTo)) {
+      if (m_Points[iPoint].IsTypeAndOpen(CFX_Path::Point::Type::kBezier)) {
         rect.UpdateRect(m_Points[iPoint].m_Point);
         rect.UpdateRect(m_Points[iPoint + 1].m_Point);
         iPoint += 2;
       }
       if (iPoint == m_Points.size() - 1 ||
-          m_Points[iPoint + 1].IsTypeAndOpen(FXPT_TYPE::MoveTo)) {
+          m_Points[iPoint + 1].IsTypeAndOpen(CFX_Path::Point::Type::kMove)) {
         iStartPoint = iPoint - 1;
         iEndPoint = iPoint;
         bJoin = false;

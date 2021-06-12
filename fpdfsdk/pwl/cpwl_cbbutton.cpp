@@ -46,10 +46,10 @@ void CPWL_CBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
   CFX_PointF pt3(ptCenter.x, ptCenter.y - kComboBoxTriangleQuarterLength);
 
   CFX_Path path;
-  path.AppendPoint(pt1, FXPT_TYPE::MoveTo);
-  path.AppendPoint(pt2, FXPT_TYPE::LineTo);
-  path.AppendPoint(pt3, FXPT_TYPE::LineTo);
-  path.AppendPoint(pt1, FXPT_TYPE::LineTo);
+  path.AppendPoint(pt1, CFX_Path::Point::Type::kMove);
+  path.AppendPoint(pt2, CFX_Path::Point::Type::kLine);
+  path.AppendPoint(pt3, CFX_Path::Point::Type::kLine);
+  path.AppendPoint(pt1, CFX_Path::Point::Type::kLine);
 
   pDevice->DrawPath(&path, &mtUser2Device, nullptr,
                     PWL_DEFAULT_BLACKCOLOR.ToFXColor(GetTransparency()), 0,

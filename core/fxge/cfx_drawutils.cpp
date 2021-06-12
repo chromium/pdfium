@@ -19,16 +19,16 @@ void CFX_DrawUtils::DrawFocusRect(CFX_RenderDevice* render_device,
   DCHECK(render_device);
   CFX_Path path;
   path.AppendPoint(CFX_PointF(view_bounding_box.left, view_bounding_box.top),
-                   FXPT_TYPE::MoveTo);
+                   CFX_Path::Point::Type::kMove);
   path.AppendPoint(CFX_PointF(view_bounding_box.left, view_bounding_box.bottom),
-                   FXPT_TYPE::LineTo);
+                   CFX_Path::Point::Type::kLine);
   path.AppendPoint(
       CFX_PointF(view_bounding_box.right, view_bounding_box.bottom),
-      FXPT_TYPE::LineTo);
+      CFX_Path::Point::Type::kLine);
   path.AppendPoint(CFX_PointF(view_bounding_box.right, view_bounding_box.top),
-                   FXPT_TYPE::LineTo);
+                   CFX_Path::Point::Type::kLine);
   path.AppendPoint(CFX_PointF(view_bounding_box.left, view_bounding_box.top),
-                   FXPT_TYPE::LineTo);
+                   CFX_Path::Point::Type::kLine);
 
   CFX_GraphStateData graph_state_data;
   graph_state_data.m_DashArray = {1.0f};

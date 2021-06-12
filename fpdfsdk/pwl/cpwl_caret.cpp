@@ -42,8 +42,10 @@ void CPWL_Caret::DrawThisAppearance(CFX_RenderDevice* pDevice,
   }
 
   CFX_Path path;
-  path.AppendPoint(CFX_PointF(fCaretX, fCaretBottom), FXPT_TYPE::MoveTo);
-  path.AppendPoint(CFX_PointF(fCaretX, fCaretTop), FXPT_TYPE::LineTo);
+  path.AppendPoint(CFX_PointF(fCaretX, fCaretBottom),
+                   CFX_Path::Point::Type::kMove);
+  path.AppendPoint(CFX_PointF(fCaretX, fCaretTop),
+                   CFX_Path::Point::Type::kLine);
 
   CFX_GraphStateData gsd;
   gsd.m_LineWidth = m_fWidth;

@@ -64,12 +64,14 @@ void Outline_CheckEmptyContour(OUTLINE_PARAMS* param) {
     pdfium::span<const CFX_Path::Point> points = param->m_pPath->GetPoints();
     size = points.size();
 
-    if (size >= 2 && points[size - 2].IsTypeAndOpen(FXPT_TYPE::MoveTo) &&
+    if (size >= 2 &&
+        points[size - 2].IsTypeAndOpen(CFX_Path::Point::Type::kMove) &&
         points[size - 2].m_Point == points[size - 1].m_Point) {
       size -= 2;
     }
-    if (size >= 4 && points[size - 4].IsTypeAndOpen(FXPT_TYPE::MoveTo) &&
-        points[size - 3].IsTypeAndOpen(FXPT_TYPE::BezierTo) &&
+    if (size >= 4 &&
+        points[size - 4].IsTypeAndOpen(CFX_Path::Point::Type::kMove) &&
+        points[size - 3].IsTypeAndOpen(CFX_Path::Point::Type::kBezier) &&
         points[size - 3].m_Point == points[size - 4].m_Point &&
         points[size - 2].m_Point == points[size - 4].m_Point &&
         points[size - 1].m_Point == points[size - 4].m_Point) {
@@ -88,7 +90,7 @@ int Outline_MoveTo(const FT_Vector* to, void* user) {
   param->m_pPath->ClosePath();
   param->m_pPath->AppendPoint(
       CFX_PointF(to->x / param->m_CoordUnit, to->y / param->m_CoordUnit),
-      FXPT_TYPE::MoveTo);
+      CFX_Path::Point::Type::kMove);
 
   param->m_CurX = to->x;
   param->m_CurY = to->y;
@@ -100,7 +102,7 @@ int Outline_LineTo(const FT_Vector* to, void* user) {
 
   param->m_pPath->AppendPoint(
       CFX_PointF(to->x / param->m_CoordUnit, to->y / param->m_CoordUnit),
-      FXPT_TYPE::LineTo);
+      CFX_Path::Point::Type::kLine);
 
   param->m_CurX = to->x;
   param->m_CurY = to->y;
@@ -115,16 +117,16 @@ int Outline_ConicTo(const FT_Vector* control, const FT_Vector* to, void* user) {
                      param->m_CoordUnit,
                  (param->m_CurY + (control->y - param->m_CurY) * 2 / 3) /
                      param->m_CoordUnit),
-      FXPT_TYPE::BezierTo);
+      CFX_Path::Point::Type::kBezier);
 
   param->m_pPath->AppendPoint(
       CFX_PointF((control->x + (to->x - control->x) / 3) / param->m_CoordUnit,
                  (control->y + (to->y - control->y) / 3) / param->m_CoordUnit),
-      FXPT_TYPE::BezierTo);
+      CFX_Path::Point::Type::kBezier);
 
   param->m_pPath->AppendPoint(
       CFX_PointF(to->x / param->m_CoordUnit, to->y / param->m_CoordUnit),
-      FXPT_TYPE::BezierTo);
+      CFX_Path::Point::Type::kBezier);
 
   param->m_CurX = to->x;
   param->m_CurY = to->y;
@@ -139,15 +141,15 @@ int Outline_CubicTo(const FT_Vector* control1,
 
   param->m_pPath->AppendPoint(CFX_PointF(control1->x / param->m_CoordUnit,
                                          control1->y / param->m_CoordUnit),
-                              FXPT_TYPE::BezierTo);
+                              CFX_Path::Point::Type::kBezier);
 
   param->m_pPath->AppendPoint(CFX_PointF(control2->x / param->m_CoordUnit,
                                          control2->y / param->m_CoordUnit),
-                              FXPT_TYPE::BezierTo);
+                              CFX_Path::Point::Type::kBezier);
 
   param->m_pPath->AppendPoint(
       CFX_PointF(to->x / param->m_CoordUnit, to->y / param->m_CoordUnit),
-      FXPT_TYPE::BezierTo);
+      CFX_Path::Point::Type::kBezier);
 
   param->m_CurX = to->x;
   param->m_CurY = to->y;

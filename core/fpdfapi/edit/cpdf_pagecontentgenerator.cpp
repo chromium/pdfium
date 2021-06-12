@@ -347,16 +347,16 @@ void CPDF_PageContentGenerator::ProcessPathPoints(std::ostringstream* buf,
 
     *buf << points[i].m_Point;
 
-    FXPT_TYPE point_type = points[i].m_Type;
-    if (point_type == FXPT_TYPE::MoveTo) {
+    CFX_Path::Point::Type point_type = points[i].m_Type;
+    if (point_type == CFX_Path::Point::Type::kMove) {
       *buf << " m";
-    } else if (point_type == FXPT_TYPE::LineTo) {
+    } else if (point_type == CFX_Path::Point::Type::kLine) {
       *buf << " l";
-    } else if (point_type == FXPT_TYPE::BezierTo) {
+    } else if (point_type == CFX_Path::Point::Type::kBezier) {
       if (i + 2 >= points.size() ||
-          !points[i].IsTypeAndOpen(FXPT_TYPE::BezierTo) ||
-          !points[i + 1].IsTypeAndOpen(FXPT_TYPE::BezierTo) ||
-          points[i + 2].m_Type != FXPT_TYPE::BezierTo) {
+          !points[i].IsTypeAndOpen(CFX_Path::Point::Type::kBezier) ||
+          !points[i + 1].IsTypeAndOpen(CFX_Path::Point::Type::kBezier) ||
+          points[i + 2].m_Type != CFX_Path::Point::Type::kBezier) {
         // If format is not supported, close the path and paint
         *buf << " h";
         break;
