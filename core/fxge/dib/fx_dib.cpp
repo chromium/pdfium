@@ -47,13 +47,6 @@ size_t PixelWeight::TotalBytesForWeightCount(size_t weight_count) {
   return total_bytes.ValueOrDie();
 }
 
-// static
-size_t PixelWeight::WeightCountFromTotalBytes(size_t total_bytes) {
-  const size_t extra_bytes =
-      total_bytes > sizeof(PixelWeight) ? total_bytes - sizeof(PixelWeight) : 0;
-  return 1 + extra_bytes / sizeof(m_Weights[0]);
-}
-
 FXDIB_ResampleOptions::FXDIB_ResampleOptions() = default;
 
 bool FXDIB_ResampleOptions::HasAnyOptions() const {
