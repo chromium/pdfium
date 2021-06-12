@@ -675,7 +675,7 @@ bool CGdiplusExt::DrawPath(HDC hDC,
                            uint32_t fill_argb,
                            uint32_t stroke_argb,
                            const CFX_FillRenderOptions& fill_options) {
-  pdfium::span<const FX_PATHPOINT> points = pPath->GetPoints();
+  pdfium::span<const CFX_Path::Point> points = pPath->GetPoints();
   if (points.empty())
     return true;
 

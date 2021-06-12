@@ -1438,13 +1438,13 @@ void CPDF_StreamContentParser::AddPathPoint(float x,
   } else if (m_PathPoints.empty()) {
     return;
   }
-  m_PathPoints.push_back(FX_PATHPOINT(CFX_PointF(x, y), type, close));
+  m_PathPoints.push_back(CFX_Path::Point(CFX_PointF(x, y), type, close));
 }
 
 void CPDF_StreamContentParser::AddPathObject(
     CFX_FillRenderOptions::FillType fill_type,
     bool bStroke) {
-  std::vector<FX_PATHPOINT> path_points;
+  std::vector<CFX_Path::Point> path_points;
   path_points.swap(m_PathPoints);
   CFX_FillRenderOptions::FillType path_clip_type = m_PathClipType;
   m_PathClipType = CFX_FillRenderOptions::FillType::kNoFill;

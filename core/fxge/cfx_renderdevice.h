@@ -14,6 +14,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "core/fxge/cfx_path.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "core/fxge/render_defines.h"
 #include "core/fxge/renderdevicedriver_iface.h"
@@ -23,8 +24,6 @@ class CFX_DIBitmap;
 class CFX_Font;
 class CFX_GraphStateData;
 class CFX_ImageRenderer;
-class CFX_Path;
-class FX_PATHPOINT;
 class PauseIndicatorIface;
 class TextCharPos;
 struct CFX_Color;
@@ -244,7 +243,7 @@ class CFX_RenderDevice {
                         uint32_t color,
                         const CFX_FillRenderOptions& fill_options,
                         BlendMode blend_type);
-  void DrawZeroAreaPath(const std::vector<FX_PATHPOINT>& path,
+  void DrawZeroAreaPath(const std::vector<CFX_Path::Point>& path,
                         const CFX_Matrix* matrix,
                         bool adjust,
                         bool aliased_path,

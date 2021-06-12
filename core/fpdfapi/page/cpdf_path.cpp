@@ -12,7 +12,7 @@ CPDF_Path::CPDF_Path(const CPDF_Path& that) : m_Ref(that.m_Ref) {}
 
 CPDF_Path::~CPDF_Path() = default;
 
-const std::vector<FX_PATHPOINT>& CPDF_Path::GetPoints() const {
+const std::vector<CFX_Path::Point>& CPDF_Path::GetPoints() const {
   return m_Ref.GetObject()->GetPoints();
 }
 

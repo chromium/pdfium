@@ -13,6 +13,7 @@
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxge/cfx_path.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "public/fpdf_doc.h"
 #include "public/fpdf_ext.h"
@@ -38,7 +39,6 @@ class CPDF_TextPage;
 class CPDF_TextPageFind;
 class CPDFSDK_FormFillEnvironment;
 class CPDFSDK_InteractiveForm;
-class FX_PATHPOINT;
 struct CPDF_JavaScript;
 
 // Conversions to/from underlying types.
@@ -158,12 +158,12 @@ inline CPDF_Array* CPDFArrayFromFPDFPageRange(FPDF_PAGERANGE range) {
 }
 
 inline FPDF_PATHSEGMENT FPDFPathSegmentFromFXPathPoint(
-    const FX_PATHPOINT* segment) {
+    const CFX_Path::Point* segment) {
   return reinterpret_cast<FPDF_PATHSEGMENT>(segment);
 }
-inline const FX_PATHPOINT* FXPathPointFromFPDFPathSegment(
+inline const CFX_Path::Point* FXPathPointFromFPDFPathSegment(
     FPDF_PATHSEGMENT segment) {
-  return reinterpret_cast<const FX_PATHPOINT*>(segment);
+  return reinterpret_cast<const CFX_Path::Point*>(segment);
 }
 
 inline FPDF_STRUCTTREE FPDFStructTreeFromCPDFStructTree(

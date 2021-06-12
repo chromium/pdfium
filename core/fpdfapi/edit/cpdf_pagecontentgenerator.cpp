@@ -335,7 +335,7 @@ void CPDF_PageContentGenerator::ProcessImage(std::ostringstream* buf,
 // "h" closes the subpath (appends a line from current to starting point)
 void CPDF_PageContentGenerator::ProcessPathPoints(std::ostringstream* buf,
                                                   CPDF_Path* pPath) {
-  pdfium::span<const FX_PATHPOINT> points = pPath->GetPoints();
+  pdfium::span<const CFX_Path::Point> points = pPath->GetPoints();
   if (pPath->IsRect()) {
     CFX_PointF diff = points[2].m_Point - points[0].m_Point;
     *buf << points[0].m_Point << " " << diff << " re";

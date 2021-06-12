@@ -68,7 +68,7 @@ void OutputPath(std::ostringstream& buf, CPDF_Path path) {
   if (!pPath)
     return;
 
-  pdfium::span<const FX_PATHPOINT> points = pPath->GetPoints();
+  pdfium::span<const CFX_Path::Point> points = pPath->GetPoints();
   if (path.IsRect()) {
     CFX_PointF diff = points[2].m_Point - points[0].m_Point;
     buf << points[0].m_Point.x << " " << points[0].m_Point.y << " " << diff.x
@@ -351,7 +351,7 @@ FPDFClipPath_GetPathSegment(FPDF_CLIPPATH clip_path,
     return nullptr;
   }
 
-  pdfium::span<const FX_PATHPOINT> points =
+  pdfium::span<const CFX_Path::Point> points =
       pClipPath->GetPath(path_index).GetPoints();
   if (!pdfium::IndexInBounds(points, segment_index))
     return nullptr;

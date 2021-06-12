@@ -317,7 +317,7 @@ bool ShouldDrawDeviceText(const CFX_Font* pFont,
 
 // Returns true if the path is a 3-point path that draws A->B->A and forms a
 // zero area, or a 2-point path which draws A->B.
-bool CheckSimpleLinePath(pdfium::span<const FX_PATHPOINT> points,
+bool CheckSimpleLinePath(pdfium::span<const CFX_Path::Point> points,
                          const CFX_Matrix* matrix,
                          bool adjust,
                          CFX_Path* new_path,
@@ -359,7 +359,7 @@ bool CheckSimpleLinePath(pdfium::span<const FX_PATHPOINT> points,
 
 // Returns true if `points` is palindromic and forms zero area. Otherwise,
 // returns false.
-bool CheckPalindromicPath(pdfium::span<const FX_PATHPOINT> points,
+bool CheckPalindromicPath(pdfium::span<const CFX_Path::Point> points,
                           CFX_Path* new_path,
                           bool* thin) {
   if (points.size() <= 3 || !(points.size() % 2))
@@ -406,7 +406,7 @@ bool IsFoldingDiagonalLine(const CFX_PointF& a,
          (a.y - b.y) * (c.x - b.x) == (c.y - b.y) * (a.x - b.x);
 }
 
-bool GetZeroAreaPath(pdfium::span<const FX_PATHPOINT> points,
+bool GetZeroAreaPath(pdfium::span<const CFX_Path::Point> points,
                      const CFX_Matrix* matrix,
                      bool adjust,
                      CFX_Path* new_path,
@@ -440,17 +440,17 @@ bool GetZeroAreaPath(pdfium::span<const FX_PATHPOINT> points,
 
     DCHECK_EQ(point_type, FXPT_TYPE::LineTo);
     int next_index = (i + 1) % (points.size());
-    const FX_PATHPOINT& next = points[next_index];
+    const CFX_Path::Point& next = points[next_index];
     if (next.m_Type == FXPT_TYPE::BezierTo || next.m_Type == FXPT_TYPE::MoveTo)
       continue;
 
-    const FX_PATHPOINT& prev = points[i - 1];
-    const FX_PATHPOINT& cur = points[i];
+    const CFX_Path::Point& prev = points[i - 1];
+    const CFX_Path::Point& cur = points[i];
     if (IsFoldingVerticalLine(prev.m_Point, cur.m_Point, next.m_Point)) {
       bool use_prev = fabs(cur.m_Point.y - prev.m_Point.y) <
                       fabs(cur.m_Point.y - next.m_Point.y);
-      const FX_PATHPOINT& start = use_prev ? prev : cur;
-      const FX_PATHPOINT& end = use_prev ? points[next_index - 1] : next;
+      const CFX_Path::Point& start = use_prev ? prev : cur;
+      const CFX_Path::Point& end = use_prev ? points[next_index - 1] : next;
       new_path->AppendPoint(start.m_Point, FXPT_TYPE::MoveTo);
       new_path->AppendPoint(end.m_Point, FXPT_TYPE::LineTo);
       continue;
@@ -460,8 +460,8 @@ bool GetZeroAreaPath(pdfium::span<const FX_PATHPOINT> points,
         IsFoldingDiagonalLine(prev.m_Point, cur.m_Point, next.m_Point)) {
       bool use_prev = fabs(cur.m_Point.x - prev.m_Point.x) <
                       fabs(cur.m_Point.x - next.m_Point.x);
-      const FX_PATHPOINT& start = use_prev ? prev : cur;
-      const FX_PATHPOINT& end = use_prev ? points[next_index - 1] : next;
+      const CFX_Path::Point& start = use_prev ? prev : cur;
+      const CFX_Path::Point& end = use_prev ? points[next_index - 1] : next;
       new_path->AppendPoint(start.m_Point, FXPT_TYPE::MoveTo);
       new_path->AppendPoint(end.m_Point, FXPT_TYPE::LineTo);
       continue;
@@ -632,7 +632,7 @@ bool CFX_RenderDevice::DrawPathWithBlend(
       fill_options.fill_type != CFX_FillRenderOptions::FillType::kNoFill;
   uint8_t fill_alpha = fill ? FXARGB_A(fill_color) : 0;
   uint8_t stroke_alpha = pGraphState ? FXARGB_A(stroke_color) : 0;
-  pdfium::span<const FX_PATHPOINT> points = pPath->GetPoints();
+  pdfium::span<const CFX_Path::Point> points = pPath->GetPoints();
   if (stroke_alpha == 0 && points.size() == 2) {
     CFX_PointF pos1 = points[0].m_Point;
     CFX_PointF pos2 = points[1].m_Point;
@@ -692,7 +692,7 @@ bool CFX_RenderDevice::DrawPathWithBlend(
   if (fill && stroke_alpha == 0 && !fill_options.stroke &&
       !fill_options.text_mode) {
     bool adjust = !!m_pDeviceDriver->GetDriverType();
-    std::vector<FX_PATHPOINT> sub_path;
+    std::vector<CFX_Path::Point> sub_path;
     for (size_t i = 0; i < points.size(); i++) {
       FXPT_TYPE point_type = points[i].m_Type;
       if (point_type == FXPT_TYPE::MoveTo) {
@@ -840,13 +840,14 @@ bool CFX_RenderDevice::DrawCosmeticLine(
                                    fill_options, blend_type);
 }
 
-void CFX_RenderDevice::DrawZeroAreaPath(const std::vector<FX_PATHPOINT>& path,
-                                        const CFX_Matrix* matrix,
-                                        bool adjust,
-                                        bool aliased_path,
-                                        uint32_t fill_color,
-                                        uint8_t fill_alpha,
-                                        BlendMode blend_type) {
+void CFX_RenderDevice::DrawZeroAreaPath(
+    const std::vector<CFX_Path::Point>& path,
+    const CFX_Matrix* matrix,
+    bool adjust,
+    bool aliased_path,
+    uint32_t fill_color,
+    uint8_t fill_alpha,
+    BlendMode blend_type) {
   if (path.empty())
     return;
 

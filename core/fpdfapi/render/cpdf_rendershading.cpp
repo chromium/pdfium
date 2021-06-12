@@ -581,7 +581,7 @@ struct Coon_Bezier {
     y.BezierInterpol(C1.y, C2.y, D1.y, D2.y);
   }
 
-  void GetPoints(pdfium::span<FX_PATHPOINT> path_points) {
+  void GetPoints(pdfium::span<CFX_Path::Point> path_points) {
     constexpr size_t kPointsCount = 4;
     float points_x[kPointsCount];
     float points_y[kPointsCount];
@@ -591,7 +591,7 @@ struct Coon_Bezier {
       path_points[i].m_Point = {points_x[i], points_y[i]};
   }
 
-  void GetPointsReverse(pdfium::span<FX_PATHPOINT> path_points) {
+  void GetPointsReverse(pdfium::span<CFX_Path::Point> path_points) {
     constexpr size_t kPointsCount = 4;
     float points_x[kPointsCount];
     float points_y[kPointsCount];
@@ -701,7 +701,7 @@ struct CPDF_PatchDrawer {
     if (bSmall ||
         (d_bottom < COONCOLOR_THRESHOLD && d_left < COONCOLOR_THRESHOLD &&
          d_top < COONCOLOR_THRESHOLD && d_right < COONCOLOR_THRESHOLD)) {
-      pdfium::span<FX_PATHPOINT> points = path.GetPoints();
+      pdfium::span<CFX_Path::Point> points = path.GetPoints();
       C1.GetPoints(points.subspan(0, 4));
       D2.GetPoints(points.subspan(3, 4));
       C2.GetPointsReverse(points.subspan(6, 4));

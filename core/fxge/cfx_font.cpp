@@ -61,7 +61,7 @@ void FTStreamClose(FXFT_StreamRec* stream) {}
 void Outline_CheckEmptyContour(OUTLINE_PARAMS* param) {
   size_t size;
   {
-    pdfium::span<const FX_PATHPOINT> points = param->m_pPath->GetPoints();
+    pdfium::span<const CFX_Path::Point> points = param->m_pPath->GetPoints();
     size = points.size();
 
     if (size >= 2 && points[size - 2].IsTypeAndOpen(FXPT_TYPE::MoveTo) &&

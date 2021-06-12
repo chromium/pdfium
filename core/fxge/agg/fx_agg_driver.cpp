@@ -967,7 +967,7 @@ class RendererScanLineAaOffset {
 void BuildAggPath(const CFX_Path* pPath,
                   const CFX_Matrix* pObject2Device,
                   agg::path_storage& agg_path) {
-  pdfium::span<const FX_PATHPOINT> points = pPath->GetPoints();
+  pdfium::span<const CFX_Path::Point> points = pPath->GetPoints();
   for (size_t i = 0; i < points.size(); ++i) {
     CFX_PointF pos = points[i].m_Point;
     if (pObject2Device)

@@ -15,7 +15,7 @@
 
 namespace {
 
-bool IsRectPreTransform(const std::vector<FX_PATHPOINT>& points) {
+bool IsRectPreTransform(const std::vector<CFX_Path::Point>& points) {
   if (points.size() != 5 && points.size() != 4)
     return false;
 
@@ -38,7 +38,7 @@ bool XYBothNotEqual(const CFX_PointF& p1, const CFX_PointF& p2) {
   return p1.x != p2.x && p1.y != p2.y;
 }
 
-bool IsRectImpl(const std::vector<FX_PATHPOINT>& points) {
+bool IsRectImpl(const std::vector<CFX_Path::Point>& points) {
   if (!IsRectPreTransform(points))
     return false;
 
@@ -59,18 +59,18 @@ CFX_FloatRect CreateRectFromPoints(const CFX_PointF& p1, const CFX_PointF& p2) {
   return rect;
 }
 
-bool PathPointsNeedNormalization(const std::vector<FX_PATHPOINT>& points) {
+bool PathPointsNeedNormalization(const std::vector<CFX_Path::Point>& points) {
   return points.size() > 5;
 }
 
-std::vector<FX_PATHPOINT> GetNormalizedPoints(
-    const std::vector<FX_PATHPOINT>& points) {
+std::vector<CFX_Path::Point> GetNormalizedPoints(
+    const std::vector<CFX_Path::Point>& points) {
   DCHECK(PathPointsNeedNormalization(points));
 
   if (points[0].m_Point != points.back().m_Point)
     return {};
 
-  std::vector<FX_PATHPOINT> normalized;
+  std::vector<CFX_Path::Point> normalized;
   normalized.reserve(6);
   normalized.push_back(points[0]);
   for (auto it = points.begin() + 1; it != points.end(); ++it) {
@@ -245,14 +245,14 @@ void UpdateLineJoinPoints(CFX_FloatRect* rect,
 
 }  // namespace
 
-FX_PATHPOINT::FX_PATHPOINT() = default;
+CFX_Path::Point::Point() = default;
 
-FX_PATHPOINT::FX_PATHPOINT(const CFX_PointF& point, FXPT_TYPE type, bool close)
+CFX_Path::Point::Point(const CFX_PointF& point, FXPT_TYPE type, bool close)
     : m_Point(point), m_Type(type), m_CloseFigure(close) {}
 
-FX_PATHPOINT::FX_PATHPOINT(const FX_PATHPOINT& other) = default;
+CFX_Path::Point::Point(const Point& other) = default;
 
-FX_PATHPOINT::~FX_PATHPOINT() = default;
+CFX_Path::Point::~Point() = default;
 
 CFX_Path::CFX_Path() = default;
 
@@ -287,11 +287,11 @@ void CFX_Path::Append(const CFX_Path& src, const CFX_Matrix* matrix) {
 }
 
 void CFX_Path::AppendPoint(const CFX_PointF& point, FXPT_TYPE type) {
-  m_Points.push_back(FX_PATHPOINT(point, type, /*close=*/false));
+  m_Points.push_back(Point(point, type, /*close=*/false));
 }
 
 void CFX_Path::AppendPointAndClose(const CFX_PointF& point, FXPT_TYPE type) {
-  m_Points.push_back(FX_PATHPOINT(point, type, /*close=*/true));
+  m_Points.push_back(Point(point, type, /*close=*/true));
 }
 
 void CFX_Path::AppendLine(const CFX_PointF& pt1, const CFX_PointF& pt2) {
@@ -392,11 +392,10 @@ bool CFX_Path::IsRect() const {
 
 Optional<CFX_FloatRect> CFX_Path::GetRect(const CFX_Matrix* matrix) const {
   bool do_normalize = PathPointsNeedNormalization(m_Points);
-  std::vector<FX_PATHPOINT> normalized;
+  std::vector<Point> normalized;
   if (do_normalize)
     normalized = GetNormalizedPoints(m_Points);
-  const std::vector<FX_PATHPOINT>& path_points =
-      do_normalize ? normalized : m_Points;
+  const std::vector<Point>& path_points = do_normalize ? normalized : m_Points;
 
   if (!matrix) {
     if (!IsRectImpl(path_points))

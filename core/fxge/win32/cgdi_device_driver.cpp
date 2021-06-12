@@ -109,7 +109,7 @@ HBRUSH CreateBrush(uint32_t argb) {
 void SetPathToDC(HDC hDC, const CFX_Path* pPath, const CFX_Matrix* pMatrix) {
   BeginPath(hDC);
 
-  pdfium::span<const FX_PATHPOINT> points = pPath->GetPoints();
+  pdfium::span<const CFX_Path::Point> points = pPath->GetPoints();
   for (size_t i = 0; i < points.size(); ++i) {
     CFX_PointF pos = points[i].m_Point;
     if (pMatrix)

@@ -16,24 +16,24 @@
 
 enum class FXPT_TYPE : uint8_t { LineTo, BezierTo, MoveTo };
 
-class FX_PATHPOINT {
- public:
-  FX_PATHPOINT();
-  FX_PATHPOINT(const CFX_PointF& point, FXPT_TYPE type, bool close);
-  FX_PATHPOINT(const FX_PATHPOINT& other);
-  ~FX_PATHPOINT();
-
-  bool IsTypeAndOpen(FXPT_TYPE type) const {
-    return m_Type == type && !m_CloseFigure;
-  }
-
-  CFX_PointF m_Point;
-  FXPT_TYPE m_Type;
-  bool m_CloseFigure;
-};
-
 class CFX_Path {
  public:
+  class Point {
+   public:
+    Point();
+    Point(const CFX_PointF& point, FXPT_TYPE type, bool close);
+    Point(const Point& other);
+    ~Point();
+
+    bool IsTypeAndOpen(FXPT_TYPE type) const {
+      return m_Type == type && !m_CloseFigure;
+    }
+
+    CFX_PointF m_Point;
+    FXPT_TYPE m_Type;
+    bool m_CloseFigure;
+  };
+
   CFX_Path();
   CFX_Path(const CFX_Path& src);
   CFX_Path(CFX_Path&& src) noexcept;
@@ -47,8 +47,8 @@ class CFX_Path {
   }
 
   CFX_PointF GetPoint(int index) const { return m_Points[index].m_Point; }
-  const std::vector<FX_PATHPOINT>& GetPoints() const { return m_Points; }
-  std::vector<FX_PATHPOINT>& GetPoints() { return m_Points; }
+  const std::vector<Point>& GetPoints() const { return m_Points; }
+  std::vector<Point>& GetPoints() { return m_Points; }
 
   CFX_FloatRect GetBoundingBox() const;
   CFX_FloatRect GetBoundingBoxForStrokePath(float line_width,
@@ -67,7 +67,7 @@ class CFX_Path {
   void ClosePath();
 
  private:
-  std::vector<FX_PATHPOINT> m_Points;
+  std::vector<Point> m_Points;
 };
 
 class CFX_RetainablePath final : public Retainable, public CFX_Path {
