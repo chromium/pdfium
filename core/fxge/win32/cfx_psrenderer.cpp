@@ -17,7 +17,7 @@
 #include "core/fxge/cfx_fontcache.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_glyphcache.h"
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/dib/cfx_dibextractor.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
@@ -108,15 +108,15 @@ void CFX_PSRenderer::RestoreState(bool bKeepSaved) {
     m_ClipBoxStack.pop_back();
 }
 
-void CFX_PSRenderer::OutputPath(const CFX_PathData* pPathData,
+void CFX_PSRenderer::OutputPath(const CFX_Path* pPath,
                                 const CFX_Matrix* pObject2Device) {
   std::ostringstream buf;
-  size_t size = pPathData->GetPoints().size();
+  size_t size = pPath->GetPoints().size();
 
   for (size_t i = 0; i < size; i++) {
-    FXPT_TYPE type = pPathData->GetType(i);
-    bool closing = pPathData->IsClosingFigure(i);
-    CFX_PointF pos = pPathData->GetPoint(i);
+    FXPT_TYPE type = pPath->GetType(i);
+    bool closing = pPath->IsClosingFigure(i);
+    CFX_PointF pos = pPath->GetPoint(i);
     if (pObject2Device)
       pos = pObject2Device->Transform(pos);
 
@@ -131,8 +131,8 @@ void CFX_PSRenderer::OutputPath(const CFX_PathData* pPathData,
           buf << "h ";
         break;
       case FXPT_TYPE::BezierTo: {
-        CFX_PointF pos1 = pPathData->GetPoint(i + 1);
-        CFX_PointF pos2 = pPathData->GetPoint(i + 2);
+        CFX_PointF pos1 = pPath->GetPoint(i + 1);
+        CFX_PointF pos2 = pPath->GetPoint(i + 2);
         if (pObject2Device) {
           pos1 = pObject2Device->Transform(pos1);
           pos2 = pObject2Device->Transform(pos2);
@@ -151,12 +151,12 @@ void CFX_PSRenderer::OutputPath(const CFX_PathData* pPathData,
 }
 
 void CFX_PSRenderer::SetClip_PathFill(
-    const CFX_PathData* pPathData,
+    const CFX_Path* pPath,
     const CFX_Matrix* pObject2Device,
     const CFX_FillRenderOptions& fill_options) {
   StartRendering();
-  OutputPath(pPathData, pObject2Device);
-  CFX_FloatRect rect = pPathData->GetBoundingBox();
+  OutputPath(pPath, pObject2Device);
+  CFX_FloatRect rect = pPath->GetBoundingBox();
   if (pObject2Device)
     rect = pObject2Device->TransformRect(rect);
 
@@ -171,7 +171,7 @@ void CFX_PSRenderer::SetClip_PathFill(
   m_pStream->WriteString(" n\n");
 }
 
-void CFX_PSRenderer::SetClip_PathStroke(const CFX_PathData* pPathData,
+void CFX_PSRenderer::SetClip_PathStroke(const CFX_Path* pPath,
                                         const CFX_Matrix* pObject2Device,
                                         const CFX_GraphStateData* pGraphState) {
   StartRendering();
@@ -183,15 +183,15 @@ void CFX_PSRenderer::SetClip_PathStroke(const CFX_PathData* pPathData,
       << pObject2Device->e << " " << pObject2Device->f << "]cm ";
   WriteToStream(&buf);
 
-  OutputPath(pPathData, nullptr);
-  CFX_FloatRect rect = pPathData->GetBoundingBoxForStrokePath(
+  OutputPath(pPath, nullptr);
+  CFX_FloatRect rect = pPath->GetBoundingBoxForStrokePath(
       pGraphState->m_LineWidth, pGraphState->m_MiterLimit);
   m_ClipBox.Intersect(pObject2Device->TransformRect(rect).GetOuterRect());
 
   m_pStream->WriteString("strokepath W n sm\n");
 }
 
-bool CFX_PSRenderer::DrawPath(const CFX_PathData* pPathData,
+bool CFX_PSRenderer::DrawPath(const CFX_Path* pPath,
                               const CFX_Matrix* pObject2Device,
                               const CFX_GraphStateData* pGraphState,
                               uint32_t fill_color,
@@ -218,7 +218,7 @@ bool CFX_PSRenderer::DrawPath(const CFX_PathData* pPathData,
     }
   }
 
-  OutputPath(pPathData, stroke_alpha ? nullptr : pObject2Device);
+  OutputPath(pPath, stroke_alpha ? nullptr : pObject2Device);
   if (fill_options.fill_type != CFX_FillRenderOptions::FillType::kNoFill &&
       fill_alpha) {
     SetColor(fill_color);
@@ -516,12 +516,12 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_GlyphCache* pGlyphCache,
         CFX_Matrix(charpos.m_AdjustMatrix[0], charpos.m_AdjustMatrix[1],
                    charpos.m_AdjustMatrix[2], charpos.m_AdjustMatrix[3], 0, 0);
   }
-  const CFX_PathData* pPathData = pGlyphCache->LoadGlyphPath(
+  const CFX_Path* pPath = pGlyphCache->LoadGlyphPath(
       pFont, charpos.m_GlyphIndex, charpos.m_FontCharWidth);
-  if (!pPathData)
+  if (!pPath)
     return;
 
-  CFX_PathData TransformedPath(*pPathData);
+  CFX_Path TransformedPath(*pPath);
   if (charpos.m_bGlyphAdjust)
     TransformedPath.Transform(matrix);
 

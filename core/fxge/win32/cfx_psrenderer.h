@@ -21,7 +21,7 @@
 class CFX_DIBBase;
 class CFX_GlyphCache;
 class CFX_Font;
-class CFX_PathData;
+class CFX_Path;
 class CPSFont;
 class TextCharPos;
 struct CFX_FillRenderOptions;
@@ -63,14 +63,14 @@ class CFX_PSRenderer {
   void EndRendering();
   void SaveState();
   void RestoreState(bool bKeepSaved);
-  void SetClip_PathFill(const CFX_PathData* pPathData,
+  void SetClip_PathFill(const CFX_Path* pPath,
                         const CFX_Matrix* pObject2Device,
                         const CFX_FillRenderOptions& fill_options);
-  void SetClip_PathStroke(const CFX_PathData* pPathData,
+  void SetClip_PathStroke(const CFX_Path* pPath,
                           const CFX_Matrix* pObject2Device,
                           const CFX_GraphStateData* pGraphState);
   FX_RECT GetClipBox() { return m_ClipBox; }
-  bool DrawPath(const CFX_PathData* pPathData,
+  bool DrawPath(const CFX_Path* pPath,
                 const CFX_Matrix* pObject2Device,
                 const CFX_GraphStateData* pGraphState,
                 uint32_t fill_color,
@@ -99,8 +99,7 @@ class CFX_PSRenderer {
                 uint32_t color);
 
  private:
-  void OutputPath(const CFX_PathData* pPathData,
-                  const CFX_Matrix* pObject2Device);
+  void OutputPath(const CFX_Path* pPath, const CFX_Matrix* pObject2Device);
   void SetGraphState(const CFX_GraphStateData* pGraphState);
   void SetColor(uint32_t color);
   void FindPSFontGlyph(CFX_GlyphCache* pGlyphCache,

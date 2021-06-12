@@ -11,7 +11,7 @@
 #include <utility>
 
 #include "core/fxge/cfx_fillrenderoptions.h"
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "third_party/base/check.h"

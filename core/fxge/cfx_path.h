@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_CFX_PATHDATA_H_
-#define CORE_FXGE_CFX_PATHDATA_H_
+#ifndef CORE_FXGE_CFX_PATH_H_
+#define CORE_FXGE_CFX_PATH_H_
 
 #include <vector>
 
@@ -32,12 +32,12 @@ class FX_PATHPOINT {
   bool m_CloseFigure;
 };
 
-class CFX_PathData {
+class CFX_Path {
  public:
-  CFX_PathData();
-  CFX_PathData(const CFX_PathData& src);
-  CFX_PathData(CFX_PathData&& src) noexcept;
-  ~CFX_PathData();
+  CFX_Path();
+  CFX_Path(const CFX_Path& src);
+  CFX_Path(CFX_Path&& src) noexcept;
+  ~CFX_Path();
 
   void Clear();
 
@@ -58,7 +58,7 @@ class CFX_PathData {
   bool IsRect() const;
   Optional<CFX_FloatRect> GetRect(const CFX_Matrix* matrix) const;
 
-  void Append(const CFX_PathData& src, const CFX_Matrix* matrix);
+  void Append(const CFX_Path& src, const CFX_Matrix* matrix);
   void AppendFloatRect(const CFX_FloatRect& rect);
   void AppendRect(float left, float bottom, float right, float top);
   void AppendLine(const CFX_PointF& pt1, const CFX_PointF& pt2);
@@ -70,16 +70,16 @@ class CFX_PathData {
   std::vector<FX_PATHPOINT> m_Points;
 };
 
-class CFX_RetainablePathData final : public Retainable, public CFX_PathData {
+class CFX_RetainablePath final : public Retainable, public CFX_Path {
  public:
   CONSTRUCT_VIA_MAKE_RETAIN;
 
-  RetainPtr<CFX_RetainablePathData> Clone() const;
+  RetainPtr<CFX_RetainablePath> Clone() const;
 
  private:
-  CFX_RetainablePathData();
-  CFX_RetainablePathData(const CFX_RetainablePathData& src);
-  ~CFX_RetainablePathData() override;
+  CFX_RetainablePath();
+  CFX_RetainablePath(const CFX_RetainablePath& src);
+  ~CFX_RetainablePath() override;
 };
 
-#endif  // CORE_FXGE_CFX_PATHDATA_H_
+#endif  // CORE_FXGE_CFX_PATH_H_

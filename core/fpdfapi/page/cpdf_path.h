@@ -11,7 +11,7 @@
 
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/shared_copy_on_write.h"
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 
 class CPDF_Path {
  public:
@@ -33,17 +33,17 @@ class CPDF_Path {
   bool IsRect() const;
   void Transform(const CFX_Matrix& matrix);
 
-  void Append(const CFX_PathData& pData, const CFX_Matrix* pMatrix);
+  void Append(const CFX_Path& path, const CFX_Matrix* pMatrix);
   void AppendFloatRect(const CFX_FloatRect& rect);
   void AppendRect(float left, float bottom, float right, float top);
   void AppendPoint(const CFX_PointF& point, FXPT_TYPE type);
   void AppendPointAndClose(const CFX_PointF& point, FXPT_TYPE type);
 
   // TODO(tsepez): Remove when all access thru this class.
-  const CFX_PathData* GetObject() const { return m_Ref.GetObject(); }
+  const CFX_Path* GetObject() const { return m_Ref.GetObject(); }
 
  private:
-  SharedCopyOnWrite<CFX_RetainablePathData> m_Ref;
+  SharedCopyOnWrite<CFX_RetainablePath> m_Ref;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_PATH_H_

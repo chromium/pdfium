@@ -11,7 +11,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_graphstatedata.h"
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "fxbarcode/BC_Writer.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
@@ -89,7 +89,7 @@ void CBC_TwoDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
   DCHECK(m_output);
 
   CFX_GraphStateData stateData;
-  CFX_PathData path;
+  CFX_Path path;
   path.AppendRect(0, 0, m_Width, m_Height);
   device->DrawPath(&path, &matrix, &stateData, kBackgroundColor,
                    kBackgroundColor, CFX_FillRenderOptions::EvenOddOptions());
@@ -116,7 +116,7 @@ void CBC_TwoDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
         int start_y_output = y + 1;
         int end_y_output = y + 2;
 
-        CFX_PathData rect;
+        CFX_Path rect;
         rect.AppendRect(leftPos + start_x_output * m_multiX,
                         topPos + start_y_output * m_multiY,
                         leftPos + end_x_output * m_multiX,

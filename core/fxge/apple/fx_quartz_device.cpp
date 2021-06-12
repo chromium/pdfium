@@ -8,7 +8,7 @@
 
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxge/cfx_graphstatedata.h"
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_freetype.h"

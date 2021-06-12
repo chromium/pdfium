@@ -13,7 +13,7 @@
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_graphstatedata.h"
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_imagerenderer.h"
 #include "core/fxge/dib/cfx_imagestretcher.h"
@@ -964,10 +964,10 @@ class RendererScanLineAaOffset {
 
 // Note: BuildAggPath() has to take |agg_path| as an out-parameter. If it
 // returns the agg::path_storage instead, tests will fail with MSVC builds.
-void BuildAggPath(const CFX_PathData* pPathData,
+void BuildAggPath(const CFX_Path* pPath,
                   const CFX_Matrix* pObject2Device,
                   agg::path_storage& agg_path) {
-  pdfium::span<const FX_PATHPOINT> points = pPathData->GetPoints();
+  pdfium::span<const FX_PATHPOINT> points = pPath->GetPoints();
   for (size_t i = 0; i < points.size(); ++i) {
     CFX_PointF pos = points[i].m_Point;
     if (pObject2Device)
@@ -1123,7 +1123,7 @@ void CFX_AggDeviceDriver::SetClipMask(agg::rasterizer_scanline_aa& rasterizer) {
 }
 
 bool CFX_AggDeviceDriver::SetClip_PathFill(
-    const CFX_PathData* pPathData,
+    const CFX_Path* pPath,
     const CFX_Matrix* pObject2Device,
     const CFX_FillRenderOptions& fill_options) {
   DCHECK(fill_options.fill_type != CFX_FillRenderOptions::FillType::kNoFill);
@@ -1133,7 +1133,7 @@ bool CFX_AggDeviceDriver::SetClip_PathFill(
     m_pClipRgn = std::make_unique<CFX_ClipRgn>(
         GetDeviceCaps(FXDC_PIXEL_WIDTH), GetDeviceCaps(FXDC_PIXEL_HEIGHT));
   }
-  Optional<CFX_FloatRect> maybe_rectf = pPathData->GetRect(pObject2Device);
+  Optional<CFX_FloatRect> maybe_rectf = pPath->GetRect(pObject2Device);
   if (maybe_rectf.has_value()) {
     CFX_FloatRect& rectf = maybe_rectf.value();
     rectf.Intersect(
@@ -1144,7 +1144,7 @@ bool CFX_AggDeviceDriver::SetClip_PathFill(
     return true;
   }
   agg::path_storage path_data;
-  BuildAggPath(pPathData, pObject2Device, path_data);
+  BuildAggPath(pPath, pObject2Device, path_data);
   path_data.end_poly();
   agg::rasterizer_scanline_aa rasterizer;
   rasterizer.clip_box(0.0f, 0.0f,
@@ -1157,7 +1157,7 @@ bool CFX_AggDeviceDriver::SetClip_PathFill(
 }
 
 bool CFX_AggDeviceDriver::SetClip_PathStroke(
-    const CFX_PathData* pPathData,
+    const CFX_Path* pPath,
     const CFX_Matrix* pObject2Device,
     const CFX_GraphStateData* pGraphState) {
   if (!m_pClipRgn) {
@@ -1165,7 +1165,7 @@ bool CFX_AggDeviceDriver::SetClip_PathStroke(
         GetDeviceCaps(FXDC_PIXEL_WIDTH), GetDeviceCaps(FXDC_PIXEL_HEIGHT));
   }
   agg::path_storage path_data;
-  BuildAggPath(pPathData, nullptr, path_data);
+  BuildAggPath(pPath, nullptr, path_data);
   agg::rasterizer_scanline_aa rasterizer;
   rasterizer.clip_box(0.0f, 0.0f,
                       static_cast<float>(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
@@ -1194,7 +1194,7 @@ void CFX_AggDeviceDriver::RenderRasterizer(
                         m_FillOptions.aliased_path);
 }
 
-bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
+bool CFX_AggDeviceDriver::DrawPath(const CFX_Path* pPath,
                                    const CFX_Matrix* pObject2Device,
                                    const CFX_GraphStateData* pGraphState,
                                    uint32_t fill_color,
@@ -1211,7 +1211,7 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
   if (fill_options.fill_type != CFX_FillRenderOptions::FillType::kNoFill &&
       fill_color) {
     agg::path_storage path_data;
-    BuildAggPath(pPathData, pObject2Device, path_data);
+    BuildAggPath(pPath, pObject2Device, path_data);
     agg::rasterizer_scanline_aa rasterizer;
     rasterizer.clip_box(0.0f, 0.0f,
                         static_cast<float>(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
@@ -1227,7 +1227,7 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
 
   if (fill_options.zero_area) {
     agg::path_storage path_data;
-    BuildAggPath(pPathData, pObject2Device, path_data);
+    BuildAggPath(pPath, pObject2Device, path_data);
     agg::rasterizer_scanline_aa rasterizer;
     rasterizer.clip_box(0.0f, 0.0f,
                         static_cast<float>(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
@@ -1251,7 +1251,7 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
   }
 
   agg::path_storage path_data;
-  BuildAggPath(pPathData, &matrix1, path_data);
+  BuildAggPath(pPath, &matrix1, path_data);
   agg::rasterizer_scanline_aa rasterizer;
   rasterizer.clip_box(0.0f, 0.0f,
                       static_cast<float>(GetDeviceCaps(FXDC_PIXEL_WIDTH)),

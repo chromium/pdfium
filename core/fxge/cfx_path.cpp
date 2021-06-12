@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 
 #include <algorithm>
 #include <iterator>
@@ -254,25 +254,25 @@ FX_PATHPOINT::FX_PATHPOINT(const FX_PATHPOINT& other) = default;
 
 FX_PATHPOINT::~FX_PATHPOINT() = default;
 
-CFX_PathData::CFX_PathData() = default;
+CFX_Path::CFX_Path() = default;
 
-CFX_PathData::CFX_PathData(const CFX_PathData& src) = default;
+CFX_Path::CFX_Path(const CFX_Path& src) = default;
 
-CFX_PathData::CFX_PathData(CFX_PathData&& src) noexcept = default;
+CFX_Path::CFX_Path(CFX_Path&& src) noexcept = default;
 
-CFX_PathData::~CFX_PathData() = default;
+CFX_Path::~CFX_Path() = default;
 
-void CFX_PathData::Clear() {
+void CFX_Path::Clear() {
   m_Points.clear();
 }
 
-void CFX_PathData::ClosePath() {
+void CFX_Path::ClosePath() {
   if (m_Points.empty())
     return;
   m_Points.back().m_CloseFigure = true;
 }
 
-void CFX_PathData::Append(const CFX_PathData& src, const CFX_Matrix* matrix) {
+void CFX_Path::Append(const CFX_Path& src, const CFX_Matrix* matrix) {
   if (src.m_Points.empty())
     return;
 
@@ -286,16 +286,15 @@ void CFX_PathData::Append(const CFX_PathData& src, const CFX_Matrix* matrix) {
     m_Points[i].m_Point = matrix->Transform(m_Points[i].m_Point);
 }
 
-void CFX_PathData::AppendPoint(const CFX_PointF& point, FXPT_TYPE type) {
+void CFX_Path::AppendPoint(const CFX_PointF& point, FXPT_TYPE type) {
   m_Points.push_back(FX_PATHPOINT(point, type, /*close=*/false));
 }
 
-void CFX_PathData::AppendPointAndClose(const CFX_PointF& point,
-                                       FXPT_TYPE type) {
+void CFX_Path::AppendPointAndClose(const CFX_PointF& point, FXPT_TYPE type) {
   m_Points.push_back(FX_PATHPOINT(point, type, /*close=*/true));
 }
 
-void CFX_PathData::AppendLine(const CFX_PointF& pt1, const CFX_PointF& pt2) {
+void CFX_Path::AppendLine(const CFX_PointF& pt1, const CFX_PointF& pt2) {
   if (m_Points.empty() || fabs(m_Points.back().m_Point.x - pt1.x) > 0.001 ||
       fabs(m_Points.back().m_Point.y - pt1.y) > 0.001) {
     AppendPoint(pt1, FXPT_TYPE::MoveTo);
@@ -303,14 +302,11 @@ void CFX_PathData::AppendLine(const CFX_PointF& pt1, const CFX_PointF& pt2) {
   AppendPoint(pt2, FXPT_TYPE::LineTo);
 }
 
-void CFX_PathData::AppendFloatRect(const CFX_FloatRect& rect) {
+void CFX_Path::AppendFloatRect(const CFX_FloatRect& rect) {
   return AppendRect(rect.left, rect.bottom, rect.right, rect.top);
 }
 
-void CFX_PathData::AppendRect(float left,
-                              float bottom,
-                              float right,
-                              float top) {
+void CFX_Path::AppendRect(float left, float bottom, float right, float top) {
   CFX_PointF left_bottom(left, bottom);
   CFX_PointF left_top(left, top);
   CFX_PointF right_top(right, top);
@@ -323,7 +319,7 @@ void CFX_PathData::AppendRect(float left,
   ClosePath();
 }
 
-CFX_FloatRect CFX_PathData::GetBoundingBox() const {
+CFX_FloatRect CFX_Path::GetBoundingBox() const {
   if (m_Points.empty())
     return CFX_FloatRect();
 
@@ -333,9 +329,8 @@ CFX_FloatRect CFX_PathData::GetBoundingBox() const {
   return rect;
 }
 
-CFX_FloatRect CFX_PathData::GetBoundingBoxForStrokePath(
-    float line_width,
-    float miter_limit) const {
+CFX_FloatRect CFX_Path::GetBoundingBoxForStrokePath(float line_width,
+                                                    float miter_limit) const {
   CFX_FloatRect rect(100000.0f, 100000.0f, -100000.0f, -100000.0f);
   size_t iPoint = 0;
   float half_width = line_width;
@@ -384,18 +379,18 @@ CFX_FloatRect CFX_PathData::GetBoundingBoxForStrokePath(
   return rect;
 }
 
-void CFX_PathData::Transform(const CFX_Matrix& matrix) {
+void CFX_Path::Transform(const CFX_Matrix& matrix) {
   for (auto& point : m_Points)
     point.m_Point = matrix.Transform(point.m_Point);
 }
 
-bool CFX_PathData::IsRect() const {
+bool CFX_Path::IsRect() const {
   if (PathPointsNeedNormalization(m_Points))
     return IsRectImpl(GetNormalizedPoints(m_Points));
   return IsRectImpl(m_Points);
 }
 
-Optional<CFX_FloatRect> CFX_PathData::GetRect(const CFX_Matrix* matrix) const {
+Optional<CFX_FloatRect> CFX_Path::GetRect(const CFX_Matrix* matrix) const {
   bool do_normalize = PathPointsNeedNormalization(m_Points);
   std::vector<FX_PATHPOINT> normalized;
   if (do_normalize)
@@ -429,19 +424,18 @@ Optional<CFX_FloatRect> CFX_PathData::GetRect(const CFX_Matrix* matrix) const {
   return CreateRectFromPoints(points[0], points[2]);
 }
 
-CFX_RetainablePathData::CFX_RetainablePathData() = default;
+CFX_RetainablePath::CFX_RetainablePath() = default;
 
 // Note: can't default the copy constructor since Retainable<> has a deleted
 // copy constructor (as it should). Instead, we want the default Retainable<>
 // constructor to be invoked so as to create a copy with a ref-count of 1 as
 // of the time it is created, then populate the remainder of the members from
 // the |src| object.
-CFX_RetainablePathData::CFX_RetainablePathData(
-    const CFX_RetainablePathData& src)
-    : CFX_PathData(src) {}
+CFX_RetainablePath::CFX_RetainablePath(const CFX_RetainablePath& src)
+    : CFX_Path(src) {}
 
-CFX_RetainablePathData::~CFX_RetainablePathData() = default;
+CFX_RetainablePath::~CFX_RetainablePath() = default;
 
-RetainPtr<CFX_RetainablePathData> CFX_RetainablePathData::Clone() const {
-  return pdfium::MakeRetain<CFX_RetainablePathData>(*this);
+RetainPtr<CFX_RetainablePath> CFX_RetainablePath::Clone() const {
+  return pdfium::MakeRetain<CFX_RetainablePath>(*this);
 }

@@ -24,7 +24,7 @@
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fxcrt/autorestorer.h"
 #include "core/fxge/cfx_graphstatedata.h"
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 #include "fpdfsdk/cpdfsdk_actionhandler.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_annotiterator.h"

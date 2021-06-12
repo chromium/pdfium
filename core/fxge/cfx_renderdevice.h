@@ -23,7 +23,7 @@ class CFX_DIBitmap;
 class CFX_Font;
 class CFX_GraphStateData;
 class CFX_ImageRenderer;
-class CFX_PathData;
+class CFX_Path;
 class FX_PATHPOINT;
 class PauseIndicatorIface;
 class TextCharPos;
@@ -73,20 +73,20 @@ class CFX_RenderDevice {
                               int height) const;
   const FX_RECT& GetClipBox() const { return m_ClipBox; }
   void SetBaseClip(const FX_RECT& rect);
-  bool SetClip_PathFill(const CFX_PathData* pPathData,
+  bool SetClip_PathFill(const CFX_Path* pPath,
                         const CFX_Matrix* pObject2Device,
                         const CFX_FillRenderOptions& fill_options);
-  bool SetClip_PathStroke(const CFX_PathData* pPathData,
+  bool SetClip_PathStroke(const CFX_Path* pPath,
                           const CFX_Matrix* pObject2Device,
                           const CFX_GraphStateData* pGraphState);
   bool SetClip_Rect(const FX_RECT& pRect);
-  bool DrawPath(const CFX_PathData* pPathData,
+  bool DrawPath(const CFX_Path* pPath,
                 const CFX_Matrix* pObject2Device,
                 const CFX_GraphStateData* pGraphState,
                 uint32_t fill_color,
                 uint32_t stroke_color,
                 const CFX_FillRenderOptions& fill_options);
-  bool DrawPathWithBlend(const CFX_PathData* pPathData,
+  bool DrawPathWithBlend(const CFX_Path* pPath,
                          const CFX_Matrix* pObject2Device,
                          const CFX_GraphStateData* pGraphState,
                          uint32_t fill_color,
@@ -173,7 +173,7 @@ class CFX_RenderDevice {
                     const CFX_GraphStateData* pGraphState,
                     uint32_t fill_color,
                     uint32_t stroke_color,
-                    CFX_PathData* pClippingPath,
+                    CFX_Path* pClippingPath,
                     const CFX_FillRenderOptions& fill_options);
 
   void DrawFillRect(const CFX_Matrix* pUser2Device,
@@ -232,7 +232,7 @@ class CFX_RenderDevice {
  private:
   void InitDeviceInfo();
   void UpdateClipBox();
-  bool DrawFillStrokePath(const CFX_PathData* pPathData,
+  bool DrawFillStrokePath(const CFX_Path* pPath,
                           const CFX_Matrix* pObject2Device,
                           const CFX_GraphStateData* pGraphState,
                           uint32_t fill_color,

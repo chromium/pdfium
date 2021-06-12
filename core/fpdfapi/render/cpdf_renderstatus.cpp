@@ -58,7 +58,7 @@
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_glyphbitmap.h"
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/renderdevicedriver_iface.h"
@@ -516,19 +516,18 @@ void CPDF_RenderStatus::ProcessClipPath(const CPDF_ClipPath& ClipPath,
   m_LastClipPath = ClipPath;
   m_pDevice->RestoreState(true);
   for (size_t i = 0; i < ClipPath.GetPathCount(); ++i) {
-    const CFX_PathData* pPathData = ClipPath.GetPath(i).GetObject();
-    if (!pPathData)
+    const CFX_Path* pPath = ClipPath.GetPath(i).GetObject();
+    if (!pPath)
       continue;
 
-    if (pPathData->GetPoints().empty()) {
-      CFX_PathData EmptyPath;
+    if (pPath->GetPoints().empty()) {
+      CFX_Path EmptyPath;
       EmptyPath.AppendRect(-1, -1, 0, 0);
       m_pDevice->SetClip_PathFill(&EmptyPath, nullptr,
                                   CFX_FillRenderOptions::WindingOptions());
     } else {
       m_pDevice->SetClip_PathFill(
-          pPathData, &mtObj2Device,
-          CFX_FillRenderOptions(ClipPath.GetClipType(i)));
+          pPath, &mtObj2Device, CFX_FillRenderOptions(ClipPath.GetClipType(i)));
     }
   }
 
@@ -540,12 +539,12 @@ void CPDF_RenderStatus::ProcessClipPath(const CPDF_ClipPath& ClipPath,
     return;
   }
 
-  std::unique_ptr<CFX_PathData> pTextClippingPath;
+  std::unique_ptr<CFX_Path> pTextClippingPath;
   for (size_t i = 0; i < ClipPath.GetTextCount(); ++i) {
     CPDF_TextObject* pText = ClipPath.GetText(i);
     if (pText) {
       if (!pTextClippingPath)
-        pTextClippingPath = std::make_unique<CFX_PathData>();
+        pTextClippingPath = std::make_unique<CFX_Path>();
       ProcessText(pText, mtObj2Device, pTextClippingPath.get());
       continue;
     }
@@ -801,7 +800,7 @@ void CPDF_RenderStatus::DebugVerifyDeviceIsPreMultiplied() const {
 
 bool CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
                                     const CFX_Matrix& mtObj2Device,
-                                    CFX_PathData* clipping_path) {
+                                    CFX_Path* clipping_path) {
   if (textobj->GetCharCodes().empty())
     return true;
 
@@ -1105,7 +1104,7 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
     auto* font = charpos.m_FallbackFontPosition == -1
                      ? pFont->GetFont()
                      : pFont->GetFontFallback(charpos.m_FallbackFontPosition);
-    const CFX_PathData* pPath =
+    const CFX_Path* pPath =
         font->LoadGlyphPath(charpos.m_GlyphIndex, charpos.m_FontCharWidth);
     if (!pPath)
       continue;

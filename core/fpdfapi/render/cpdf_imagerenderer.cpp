@@ -30,7 +30,7 @@
 #include "core/fxcrt/maybe_owned.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_imagestretcher.h"
@@ -483,7 +483,7 @@ bool CPDF_ImageRenderer::StartDIBBase() {
 
 bool CPDF_ImageRenderer::StartBitmapAlpha() {
   if (m_pDIBBase->IsOpaqueImage()) {
-    CFX_PathData path;
+    CFX_Path path;
     path.AppendRect(0, 0, 1, 1);
     path.Transform(m_ImageMatrix);
     uint32_t fill_color =

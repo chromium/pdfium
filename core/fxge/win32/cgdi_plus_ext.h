@@ -17,7 +17,7 @@
 class CFX_DIBitmap;
 class CFX_GraphStateData;
 class CFX_Matrix;
-class CFX_PathData;
+class CFX_Path;
 struct CFX_FillRenderOptions;
 struct FXDIB_ResampleOptions;
 struct FX_RECT;
@@ -38,7 +38,7 @@ class CGdiplusExt {
                      const FX_RECT* pClipRect,
                      const FXDIB_ResampleOptions& options);
   bool DrawPath(HDC hDC,
-                const CFX_PathData* pPathData,
+                const CFX_Path* pPath,
                 const CFX_Matrix* pObject2Device,
                 const CFX_GraphStateData* pGraphState,
                 uint32_t fill_argb,

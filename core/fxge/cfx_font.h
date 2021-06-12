@@ -26,7 +26,7 @@
 
 class CFX_GlyphBitmap;
 class CFX_GlyphCache;
-class CFX_PathData;
+class CFX_Path;
 class CFX_SubstFont;
 class IFX_SeekableReadStream;
 struct CFX_TextRenderOptions;
@@ -96,7 +96,7 @@ class CFX_Font {
       int dest_width,
       int anti_alias,
       CFX_TextRenderOptions* text_options) const;
-  const CFX_PathData* LoadGlyphPath(uint32_t glyph_index, int dest_width) const;
+  const CFX_Path* LoadGlyphPath(uint32_t glyph_index, int dest_width) const;
   int GetGlyphWidth(uint32_t glyph_index);
   int GetAscent() const;
   int GetDescent() const;
@@ -116,8 +116,8 @@ class CFX_Font {
   void SetSubData(uint8_t* data) { m_pGsubData.reset(data); }
   pdfium::span<uint8_t> GetFontSpan() const { return m_FontData; }
   void AdjustMMParams(int glyph_index, int dest_width, int weight) const;
-  std::unique_ptr<CFX_PathData> LoadGlyphPathImpl(uint32_t glyph_index,
-                                                  int dest_width) const;
+  std::unique_ptr<CFX_Path> LoadGlyphPathImpl(uint32_t glyph_index,
+                                              int dest_width) const;
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   CFX_TypeFace* GetDeviceCache() const;

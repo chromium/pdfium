@@ -8,7 +8,7 @@
 #define XFA_FGAS_GRAPHICS_CFGAS_GEPATH_H_
 
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 #include "xfa/fgas/graphics/cfgas_gegraphics.h"
 
 class CFGAS_GEPath final {
@@ -16,10 +16,10 @@ class CFGAS_GEPath final {
   CFGAS_GEPath();
   ~CFGAS_GEPath();
 
-  const CFX_PathData* GetPathData() const { return &data_; }
+  const CFX_Path* GetPath() const { return &path_; }
 
   void Clear();
-  bool IsEmpty() const { return data_.GetPoints().empty(); }
+  bool IsEmpty() const { return path_.GetPoints().empty(); }
   void TransformBy(const CFX_Matrix& mt);
 
   void Close();
@@ -49,7 +49,7 @@ class CFGAS_GEPath final {
                      float start_angle,
                      float sweep_angle);
 
-  CFX_PathData data_;
+  CFX_Path path_;
 };
 
 #endif  // XFA_FGAS_GRAPHICS_CFGAS_GEPATH_H_

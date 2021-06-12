@@ -9,7 +9,7 @@
 #include <utility>
 
 #include "core/fxge/cfx_fillrenderoptions.h"
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 #include "core/fxge/cfx_renderdevice.h"
 
 CPWL_CBButton::CPWL_CBButton(
@@ -45,7 +45,7 @@ void CPWL_CBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
                  ptCenter.y + kComboBoxTriangleQuarterLength);
   CFX_PointF pt3(ptCenter.x, ptCenter.y - kComboBoxTriangleQuarterLength);
 
-  CFX_PathData path;
+  CFX_Path path;
   path.AppendPoint(pt1, FXPT_TYPE::MoveTo);
   path.AppendPoint(pt2, FXPT_TYPE::LineTo);
   path.AppendPoint(pt3, FXPT_TYPE::LineTo);

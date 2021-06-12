@@ -13,7 +13,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 #include "core/fxge/dib/cfx_imagerenderer.h"
 #include "core/fxge/win32/cpsoutput.h"
 #include "third_party/base/check.h"
@@ -53,7 +53,7 @@ CPSPrinterDriver::CPSPrinterDriver(HDC hDC,
       std::vector<uint8_t, FxAllocAllocator<uint8_t>> buffer(dwCount);
       RGNDATA* pData = reinterpret_cast<RGNDATA*>(buffer.data());
       if (::GetRegionData(hRgn, dwCount, pData)) {
-        CFX_PathData path;
+        CFX_Path path;
         for (uint32_t i = 0; i < pData->rdh.nCount; i++) {
           RECT* pRect =
               reinterpret_cast<RECT*>(pData->Buffer + pData->rdh.nRgnSize * i);
@@ -107,22 +107,22 @@ void CPSPrinterDriver::RestoreState(bool bKeepSaved) {
 }
 
 bool CPSPrinterDriver::SetClip_PathFill(
-    const CFX_PathData* pPathData,
+    const CFX_Path* pPath,
     const CFX_Matrix* pObject2Device,
     const CFX_FillRenderOptions& fill_options) {
-  m_PSRenderer.SetClip_PathFill(pPathData, pObject2Device, fill_options);
+  m_PSRenderer.SetClip_PathFill(pPath, pObject2Device, fill_options);
   return true;
 }
 
 bool CPSPrinterDriver::SetClip_PathStroke(
-    const CFX_PathData* pPathData,
+    const CFX_Path* pPath,
     const CFX_Matrix* pObject2Device,
     const CFX_GraphStateData* pGraphState) {
-  m_PSRenderer.SetClip_PathStroke(pPathData, pObject2Device, pGraphState);
+  m_PSRenderer.SetClip_PathStroke(pPath, pObject2Device, pGraphState);
   return true;
 }
 
-bool CPSPrinterDriver::DrawPath(const CFX_PathData* pPathData,
+bool CPSPrinterDriver::DrawPath(const CFX_Path* pPath,
                                 const CFX_Matrix* pObject2Device,
                                 const CFX_GraphStateData* pGraphState,
                                 FX_ARGB fill_color,
@@ -131,8 +131,8 @@ bool CPSPrinterDriver::DrawPath(const CFX_PathData* pPathData,
                                 BlendMode blend_type) {
   if (blend_type != BlendMode::kNormal)
     return false;
-  return m_PSRenderer.DrawPath(pPathData, pObject2Device, pGraphState,
-                               fill_color, stroke_color, fill_options);
+  return m_PSRenderer.DrawPath(pPath, pObject2Device, pGraphState, fill_color,
+                               stroke_color, fill_options);
 }
 
 bool CPSPrinterDriver::GetClipBox(FX_RECT* pRect) {

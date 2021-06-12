@@ -17,7 +17,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_graphstatedata.h"
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/fx_font.h"
 #include "fpdfsdk/pwl/cpwl_caret.h"
@@ -187,7 +187,7 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
     }
 
     const float width = (rcClient.right - rcClient.left) / nCharArray;
-    CFX_PathData path;
+    CFX_Path path;
     CFX_PointF bottom(0, rcClient.bottom);
     CFX_PointF top(0, rcClient.top);
     for (int32_t i = 0; i < nCharArray - 1; ++i) {

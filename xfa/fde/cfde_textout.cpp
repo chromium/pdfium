@@ -14,7 +14,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_font.h"
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/cfx_textrenderoptions.h"

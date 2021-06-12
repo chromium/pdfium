@@ -16,7 +16,7 @@
 #include "core/fxcrt/xml/cfx_xmltext.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_graphstatedata.h"
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/text_char_pos.h"
 #include "fxjs/xfa/cjx_object.h"
@@ -1174,7 +1174,7 @@ void CXFA_TextLayout::RenderPath(CFX_RenderDevice* pDevice,
   if (bNoUnderline && bNoLineThrough)
     return;
 
-  CFX_PathData path;
+  CFX_Path path;
   size_t szChars = GetDisplayPos(pPiece, pCharPos);
   if (szChars > 0) {
     CFX_PointF pt1;

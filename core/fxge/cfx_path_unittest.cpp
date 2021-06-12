@@ -2,12 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 
 #include "testing/gtest/include/gtest/gtest.h"
 
-TEST(CFX_PathData, BasicTest) {
-  CFX_PathData path;
+TEST(CFX_Path, BasicTest) {
+  CFX_Path path;
   path.AppendRect(/*left=*/1, /*bottom=*/2, /*right=*/3, /*top=*/5);
   EXPECT_EQ(5u, path.GetPoints().size());
   EXPECT_TRUE(path.IsRect());
@@ -64,8 +64,8 @@ TEST(CFX_PathData, BasicTest) {
   EXPECT_EQ(CFX_FloatRect(1, 2, 3, 5), path.GetBoundingBox());
 }
 
-TEST(CFX_PathData, ShearTransform) {
-  CFX_PathData path;
+TEST(CFX_Path, ShearTransform) {
+  CFX_Path path;
   path.AppendRect(/*left=*/1, /*bottom=*/2, /*right=*/3, /*top=*/5);
 
   const CFX_Matrix kShearMatrix(1, 2, 0, 1, 0, 0);
@@ -94,8 +94,8 @@ TEST(CFX_PathData, ShearTransform) {
   EXPECT_EQ(CFX_FloatRect(1, 2, 3, 5), path.GetBoundingBox());
 }
 
-TEST(CFX_PathData, Hexagon) {
-  CFX_PathData path;
+TEST(CFX_Path, Hexagon) {
+  CFX_Path path;
   path.AppendPoint({1, 0}, FXPT_TYPE::MoveTo);
   path.AppendPoint({2, 0}, FXPT_TYPE::LineTo);
   path.AppendPoint({3, 1}, FXPT_TYPE::LineTo);
@@ -138,8 +138,8 @@ TEST(CFX_PathData, Hexagon) {
   EXPECT_EQ(CFX_FloatRect(0, 0, 3, 2), path.GetBoundingBox());
 }
 
-TEST(CFX_PathData, ClosePath) {
-  CFX_PathData path;
+TEST(CFX_Path, ClosePath) {
+  CFX_Path path;
   path.AppendLine({0, 0}, {0, 1});
   path.AppendLine({0, 1}, {1, 1});
   path.AppendLine({1, 1}, {1, 0});
@@ -188,8 +188,8 @@ TEST(CFX_PathData, ClosePath) {
   EXPECT_EQ(CFX_FloatRect(0, 0, 1, 1), rect.value());
 }
 
-TEST(CFX_PathData, FivePointRect) {
-  CFX_PathData path;
+TEST(CFX_Path, FivePointRect) {
+  CFX_Path path;
   path.AppendPoint({0, 0}, FXPT_TYPE::MoveTo);
   path.AppendPoint({2, 0}, FXPT_TYPE::LineTo);
   path.AppendPoint({2, 1}, FXPT_TYPE::LineTo);
@@ -213,8 +213,8 @@ TEST(CFX_PathData, FivePointRect) {
   EXPECT_EQ(CFX_FloatRect(0, 0, 2, 1), rect.value());
 }
 
-TEST(CFX_PathData, SixPlusPointRect) {
-  CFX_PathData path;
+TEST(CFX_Path, SixPlusPointRect) {
+  CFX_Path path;
   path.AppendPoint({0, 0}, FXPT_TYPE::MoveTo);
   path.AppendPoint({0, 0}, FXPT_TYPE::LineTo);
   path.AppendPoint({2, 0}, FXPT_TYPE::LineTo);
@@ -248,8 +248,8 @@ TEST(CFX_PathData, SixPlusPointRect) {
   EXPECT_EQ(CFX_FloatRect(0, 0, 2, 1), path.GetBoundingBox());
 }
 
-TEST(CFX_PathData, NotRect) {
-  CFX_PathData path;
+TEST(CFX_Path, NotRect) {
+  CFX_Path path;
   path.AppendPoint({0, 0}, FXPT_TYPE::MoveTo);
   path.AppendPoint({2, 0}, FXPT_TYPE::LineTo);
   path.AppendPoint({2, 1}, FXPT_TYPE::LineTo);
@@ -332,9 +332,9 @@ TEST(CFX_PathData, NotRect) {
   EXPECT_EQ(CFX_FloatRect(0, 0, 2, 2), path.GetBoundingBox());
 }
 
-TEST(CFX_PathData, EmptyRect) {
+TEST(CFX_Path, EmptyRect) {
   // Document existing behavior where an empty rect is still considered a rect.
-  CFX_PathData path;
+  CFX_Path path;
   path.AppendPoint({0, 0}, FXPT_TYPE::MoveTo);
   path.AppendPoint({0, 0}, FXPT_TYPE::LineTo);
   path.AppendPoint({0, 1}, FXPT_TYPE::LineTo);
@@ -347,13 +347,13 @@ TEST(CFX_PathData, EmptyRect) {
   EXPECT_EQ(CFX_FloatRect(0, 0, 0, 1), path.GetBoundingBox());
 }
 
-TEST(CFX_PathData, Append) {
-  CFX_PathData path;
+TEST(CFX_Path, Append) {
+  CFX_Path path;
   path.AppendPoint({5, 6}, FXPT_TYPE::MoveTo);
   ASSERT_EQ(1u, path.GetPoints().size());
   EXPECT_EQ(CFX_PointF(5, 6), path.GetPoint(0));
 
-  CFX_PathData empty_path;
+  CFX_Path empty_path;
   path.Append(empty_path, nullptr);
   ASSERT_EQ(1u, path.GetPoints().size());
   EXPECT_EQ(CFX_PointF(5, 6), path.GetPoint(0));

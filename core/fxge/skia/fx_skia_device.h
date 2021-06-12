@@ -12,7 +12,7 @@
 
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 #include "core/fxge/renderdevicedriver_iface.h"
 
 class CFX_ClipRgn;
@@ -47,21 +47,21 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
 
   /** Set clipping path using filled region */
   bool SetClip_PathFill(
-      const CFX_PathData* pPathData,              // path info
+      const CFX_Path* pPath,                      // path info
       const CFX_Matrix* pObject2Device,           // optional transformation
       const CFX_FillRenderOptions& fill_options)  // fill options
       override;
 
   /** Set clipping path using stroked region */
   bool SetClip_PathStroke(
-      const CFX_PathData* pPathData,     // path info
+      const CFX_Path* pPath,             // path info
       const CFX_Matrix* pObject2Device,  // required transformation
       const CFX_GraphStateData*
           pGraphState)  // graphic state, for pen attributes
       override;
 
   /** Draw a path */
-  bool DrawPath(const CFX_PathData* pPathData,
+  bool DrawPath(const CFX_Path* pPath,
                 const CFX_Matrix* pObject2Device,
                 const CFX_GraphStateData* pGraphState,
                 uint32_t fill_color,

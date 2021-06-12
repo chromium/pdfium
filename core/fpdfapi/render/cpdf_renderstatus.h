@@ -21,7 +21,7 @@
 #include "core/fxge/dib/fx_dib.h"
 
 class CFX_DIBitmap;
-class CFX_PathData;
+class CFX_Path;
 class CFX_RenderDevice;
 class CPDF_Color;
 class CPDF_Font;
@@ -161,7 +161,7 @@ class CPDF_RenderStatus {
                         const CFX_Matrix& mtObj2Device);
   bool ProcessText(CPDF_TextObject* textobj,
                    const CFX_Matrix& mtObj2Device,
-                   CFX_PathData* clipping_path);
+                   CFX_Path* clipping_path);
   void DrawTextPathWithPattern(const CPDF_TextObject* textobj,
                                const CFX_Matrix& mtObj2Device,
                                CPDF_Font* pFont,

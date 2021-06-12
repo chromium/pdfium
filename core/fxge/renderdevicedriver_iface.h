@@ -20,7 +20,7 @@ class CFX_Font;
 class CFX_GraphStateData;
 class CFX_ImageRenderer;
 class CFX_Matrix;
-class CFX_PathData;
+class CFX_Path;
 class CPDF_ShadingPattern;
 class PauseIndicatorIface;
 class TextCharPos;
@@ -44,13 +44,13 @@ class RenderDeviceDriverIface {
   virtual void RestoreState(bool bKeepSaved) = 0;
 
   virtual void SetBaseClip(const FX_RECT& rect);
-  virtual bool SetClip_PathFill(const CFX_PathData* pPathData,
+  virtual bool SetClip_PathFill(const CFX_Path* pPath,
                                 const CFX_Matrix* pObject2Device,
                                 const CFX_FillRenderOptions& fill_options) = 0;
-  virtual bool SetClip_PathStroke(const CFX_PathData* pPathData,
+  virtual bool SetClip_PathStroke(const CFX_Path* pPath,
                                   const CFX_Matrix* pObject2Device,
                                   const CFX_GraphStateData* pGraphState);
-  virtual bool DrawPath(const CFX_PathData* pPathData,
+  virtual bool DrawPath(const CFX_Path* pPath,
                         const CFX_Matrix* pObject2Device,
                         const CFX_GraphStateData* pGraphState,
                         uint32_t fill_color,

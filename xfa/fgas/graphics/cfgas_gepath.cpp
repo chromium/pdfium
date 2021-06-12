@@ -6,34 +6,34 @@
 
 #include "xfa/fgas/graphics/cfgas_gepath.h"
 
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 
 CFGAS_GEPath::CFGAS_GEPath() = default;
 
 CFGAS_GEPath::~CFGAS_GEPath() = default;
 
 void CFGAS_GEPath::Clear() {
-  data_.Clear();
+  path_.Clear();
 }
 
 void CFGAS_GEPath::Close() {
-  data_.ClosePath();
+  path_.ClosePath();
 }
 
 void CFGAS_GEPath::MoveTo(const CFX_PointF& point) {
-  data_.AppendPoint(point, FXPT_TYPE::MoveTo);
+  path_.AppendPoint(point, FXPT_TYPE::MoveTo);
 }
 
 void CFGAS_GEPath::LineTo(const CFX_PointF& point) {
-  data_.AppendPoint(point, FXPT_TYPE::LineTo);
+  path_.AppendPoint(point, FXPT_TYPE::LineTo);
 }
 
 void CFGAS_GEPath::BezierTo(const CFX_PointF& c1,
                             const CFX_PointF& c2,
                             const CFX_PointF& to) {
-  data_.AppendPoint(c1, FXPT_TYPE::BezierTo);
-  data_.AppendPoint(c2, FXPT_TYPE::BezierTo);
-  data_.AppendPoint(to, FXPT_TYPE::BezierTo);
+  path_.AppendPoint(c1, FXPT_TYPE::BezierTo);
+  path_.AppendPoint(c2, FXPT_TYPE::BezierTo);
+  path_.AppendPoint(to, FXPT_TYPE::BezierTo);
 }
 
 void CFGAS_GEPath::ArcTo(const CFX_PointF& pos,
@@ -61,27 +61,27 @@ void CFGAS_GEPath::ArcToInternal(const CFX_PointF& pos,
   CFX_PointF bezier;
   bezier.x = pos.x + (size.width * ((points[0].x * cs) - (points[0].y * sn)));
   bezier.y = pos.y + (size.height * ((points[0].x * sn) + (points[0].y * cs)));
-  data_.AppendPoint(bezier, FXPT_TYPE::BezierTo);
+  path_.AppendPoint(bezier, FXPT_TYPE::BezierTo);
 
   bezier.x = pos.x + (size.width * ((points[1].x * cs) - (points[1].y * sn)));
   bezier.y = pos.y + (size.height * ((points[1].x * sn) + (points[1].y * cs)));
-  data_.AppendPoint(bezier, FXPT_TYPE::BezierTo);
+  path_.AppendPoint(bezier, FXPT_TYPE::BezierTo);
 
   bezier.x = pos.x + (size.width * cos(start_angle + sweep_angle));
   bezier.y = pos.y + (size.height * sin(start_angle + sweep_angle));
-  data_.AppendPoint(bezier, FXPT_TYPE::BezierTo);
+  path_.AppendPoint(bezier, FXPT_TYPE::BezierTo);
 }
 
 void CFGAS_GEPath::AddLine(const CFX_PointF& p1, const CFX_PointF& p2) {
-  data_.AppendPoint(p1, FXPT_TYPE::MoveTo);
-  data_.AppendPoint(p2, FXPT_TYPE::LineTo);
+  path_.AppendPoint(p1, FXPT_TYPE::MoveTo);
+  path_.AppendPoint(p2, FXPT_TYPE::LineTo);
 }
 
 void CFGAS_GEPath::AddRectangle(float left,
                                 float top,
                                 float width,
                                 float height) {
-  data_.AppendRect(left, top, left + width, top + height);
+  path_.AppendRect(left, top, left + width, top + height);
 }
 
 void CFGAS_GEPath::AddEllipse(const CFX_RectF& rect) {
@@ -107,7 +107,7 @@ void CFGAS_GEPath::AddArc(const CFX_PointF& original_pos,
 
   CFX_SizeF size = original_size / 2;
   CFX_PointF pos(original_pos.x + size.width, original_pos.y + size.height);
-  data_.AppendPoint(pos + CFX_PointF(size.width * cos(start_angle),
+  path_.AppendPoint(pos + CFX_PointF(size.width * cos(start_angle),
                                      size.height * sin(start_angle)),
                     FXPT_TYPE::MoveTo);
 
@@ -140,9 +140,9 @@ void CFGAS_GEPath::AddArc(const CFX_PointF& original_pos,
 }
 
 void CFGAS_GEPath::AddSubpath(const CFGAS_GEPath& path) {
-  data_.Append(path.data_, nullptr);
+  path_.Append(path.path_, nullptr);
 }
 
 void CFGAS_GEPath::TransformBy(const CFX_Matrix& mt) {
-  data_.Transform(mt);
+  path_.Transform(mt);
 }

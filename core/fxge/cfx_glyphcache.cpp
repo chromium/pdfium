@@ -17,7 +17,7 @@
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_glyphbitmap.h"
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_freetype.h"
@@ -219,9 +219,9 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_GlyphCache::RenderGlyph(
   return pGlyphBitmap;
 }
 
-const CFX_PathData* CFX_GlyphCache::LoadGlyphPath(const CFX_Font* pFont,
-                                                  uint32_t glyph_index,
-                                                  int dest_width) {
+const CFX_Path* CFX_GlyphCache::LoadGlyphPath(const CFX_Font* pFont,
+                                              uint32_t glyph_index,
+                                              int dest_width) {
   if (!GetFaceRec() || glyph_index == kInvalidGlyphIndex)
     return nullptr;
 

@@ -18,7 +18,7 @@
 #include "fxbarcode/utils.h"
 
 class CFX_Font;
-class CFX_PathData;
+class CFX_Path;
 class CFX_RenderDevice;
 class TextCharPos;
 
@@ -102,7 +102,7 @@ class CBC_OneDimWriter : public CBC_Writer {
   int32_t m_iDataLenth = 0;
   size_t m_iContentLen = 0;
 
-  std::vector<CFX_PathData> m_output;
+  std::vector<CFX_Path> m_output;
   int32_t m_barWidth;
   int32_t m_multiple;
   float m_outputHScale;

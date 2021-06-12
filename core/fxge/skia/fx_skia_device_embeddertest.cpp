@@ -6,7 +6,7 @@
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_graphstatedata.h"
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/cfx_textrenderoptions.h"
 #include "core/fxge/skia/fx_skia_device.h"
@@ -46,14 +46,14 @@ void CommonTest(CFX_SkiaDeviceDriver* driver, const State& state) {
 
   CFX_Font font;
   float fontSize = 1;
-  CFX_PathData clipPath;
-  CFX_PathData clipPath2;
+  CFX_Path clipPath;
+  CFX_Path clipPath2;
   clipPath.AppendRect(0, 0, 3, 1);
   clipPath2.AppendRect(0, 0, 2, 1);
   CFX_Matrix clipMatrix;
   CFX_Matrix clipMatrix2(1, 0, 0, 1, 0, 1);
   driver->SaveState();
-  CFX_PathData path1;
+  CFX_Path path1;
   path1.AppendRect(0, 0, 1, 2);
 
   CFX_Matrix matrix;
@@ -75,7 +75,7 @@ void CommonTest(CFX_SkiaDeviceDriver* driver, const State& state) {
   }
   if (state.m_save == State::Save::kYes)
     driver->RestoreState(true);
-  CFX_PathData path2;
+  CFX_Path path2;
   path2.AppendRect(0, 0, 2, 2);
   if (state.m_change == State::Change::kYes) {
     if (state.m_graphic == State::Graphic::kPath)
@@ -103,7 +103,7 @@ void CommonTest(CFX_SkiaDeviceDriver* driver, const State& state) {
 }
 
 void OutOfSequenceClipTest(CFX_SkiaDeviceDriver* driver, const State&) {
-  CFX_PathData clipPath;
+  CFX_Path clipPath;
   clipPath.AppendRect(1, 0, 3, 1);
   CFX_Matrix clipMatrix;
   driver->SaveState();

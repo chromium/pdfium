@@ -24,7 +24,7 @@
 #include "core/fpdfdoc/cpdf_generateap.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_graphstatedata.h"
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "third_party/base/check.h"
 
@@ -522,7 +522,7 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
 
   CFX_FloatRect rect = GetRect();
   rect.Deflate(width / 2, width / 2);
-  CFX_PathData path;
+  CFX_Path path;
   path.AppendFloatRect(rect);
 
   CFX_FillRenderOptions fill_options;

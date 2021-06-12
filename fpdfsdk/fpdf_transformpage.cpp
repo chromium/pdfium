@@ -22,7 +22,7 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
@@ -64,11 +64,11 @@ CPDF_Object* GetPageContent(CPDF_Dictionary* pPageDict) {
 }
 
 void OutputPath(std::ostringstream& buf, CPDF_Path path) {
-  const CFX_PathData* pPathData = path.GetObject();
-  if (!pPathData)
+  const CFX_Path* pPath = path.GetObject();
+  if (!pPath)
     return;
 
-  pdfium::span<const FX_PATHPOINT> points = pPathData->GetPoints();
+  pdfium::span<const FX_PATHPOINT> points = pPath->GetPoints();
   if (path.IsRect()) {
     CFX_PointF diff = points[2].m_Point - points[0].m_Point;
     buf << points[0].m_Point.x << " " << points[0].m_Point.y << " " << diff.x

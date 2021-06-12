@@ -13,7 +13,7 @@
 #include "core/fpdfapi/render/charposlist.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fxge/cfx_graphstatedata.h"
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/cfx_textrenderoptions.h"
 #include "core/fxge/fx_font.h"
@@ -58,7 +58,7 @@ bool CPDF_TextRenderer::DrawTextPath(
     const CFX_GraphStateData* pGraphState,
     FX_ARGB fill_argb,
     FX_ARGB stroke_argb,
-    CFX_PathData* pClippingPath,
+    CFX_Path* pClippingPath,
     const CFX_FillRenderOptions& fill_options) {
   std::vector<TextCharPos> pos =
       GetCharPosList(char_codes, char_pos, pFont, font_size);

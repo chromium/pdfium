@@ -22,7 +22,7 @@
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_graphstatedata.h"
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/win32/cwin32_platform.h"
 #include "third_party/base/span.h"
@@ -669,13 +669,13 @@ bool CGdiplusExt::StretchDIBits(HDC hDC,
 }
 
 bool CGdiplusExt::DrawPath(HDC hDC,
-                           const CFX_PathData* pPathData,
+                           const CFX_Path* pPath,
                            const CFX_Matrix* pObject2Device,
                            const CFX_GraphStateData* pGraphState,
                            uint32_t fill_argb,
                            uint32_t stroke_argb,
                            const CFX_FillRenderOptions& fill_options) {
-  pdfium::span<const FX_PATHPOINT> points = pPathData->GetPoints();
+  pdfium::span<const FX_PATHPOINT> points = pPath->GetPoints();
   if (points.empty())
     return true;
 

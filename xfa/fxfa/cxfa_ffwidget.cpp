@@ -15,7 +15,7 @@
 #include "core/fxcodec/progressive_decoder.h"
 #include "core/fxcrt/maybe_owned.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "third_party/base/check.h"
@@ -135,7 +135,7 @@ void XFA_DrawImage(CFGAS_GEGraphics* pGS,
 
   CFX_RenderDevice* pRenderDevice = pGS->GetRenderDevice();
   CFX_RenderDevice::StateRestorer restorer(pRenderDevice);
-  CFX_PathData path;
+  CFX_Path path;
   path.AppendRect(rtImage.left, rtImage.bottom(), rtImage.right(), rtImage.top);
   pRenderDevice->SetClip_PathFill(&path, &matrix,
                                   CFX_FillRenderOptions::WindingOptions());

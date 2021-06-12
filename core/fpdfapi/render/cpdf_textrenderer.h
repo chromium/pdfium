@@ -15,7 +15,7 @@
 
 class CFX_RenderDevice;
 class CFX_GraphStateData;
-class CFX_PathData;
+class CFX_Path;
 class CPDF_RenderOptions;
 class CPDF_Font;
 struct CFX_FillRenderOptions;
@@ -42,7 +42,7 @@ class CPDF_TextRenderer {
                            const CFX_GraphStateData* pGraphState,
                            FX_ARGB fill_argb,
                            FX_ARGB stroke_argb,
-                           CFX_PathData* pClippingPath,
+                           CFX_Path* pClippingPath,
                            const CFX_FillRenderOptions& fill_options);
 
   static bool DrawNormalText(CFX_RenderDevice* pDevice,

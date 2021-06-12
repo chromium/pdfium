@@ -26,7 +26,7 @@
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_graphstatedata.h"
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/cpdfsdk_actionhandler.h"
 #include "fpdfsdk/cpdfsdk_appstream.h"
@@ -676,9 +676,9 @@ void CPDFSDK_Widget::DrawAppearance(CFX_RenderDevice* pDevice,
     CFX_GraphStateData gsd;
     gsd.m_LineWidth = 0.0f;
 
-    CFX_PathData pathData;
-    pathData.AppendFloatRect(GetRect());
-    pDevice->DrawPath(&pathData, &mtUser2Device, &gsd, 0, 0xFFAAAAAA,
+    CFX_Path path;
+    path.AppendFloatRect(GetRect());
+    pDevice->DrawPath(&path, &mtUser2Device, &gsd, 0, 0xFFAAAAAA,
                       CFX_FillRenderOptions::EvenOddOptions());
   } else {
     CPDFSDK_BAAnnot::DrawAppearance(pDevice, mtUser2Device, mode, pOptions);

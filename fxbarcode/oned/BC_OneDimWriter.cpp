@@ -31,7 +31,7 @@
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_graphstatedata.h"
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/cfx_unicodeencodingex.h"
 #include "core/fxge/text_char_pos.h"
@@ -249,7 +249,7 @@ bool CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
     return false;
 
   CFX_GraphStateData stateData;
-  CFX_PathData path;
+  CFX_Path path;
   path.AppendRect(0, 0, static_cast<float>(m_Width),
                   static_cast<float>(m_Height));
   device->DrawPath(&path, &matrix, &stateData, kBackgroundColor,

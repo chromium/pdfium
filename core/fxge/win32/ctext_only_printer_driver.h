@@ -22,13 +22,13 @@ class CTextOnlyPrinterDriver final : public RenderDeviceDriverIface {
   int GetDeviceCaps(int caps_id) const override;
   void SaveState() override {}
   void RestoreState(bool bKeepSaved) override {}
-  bool SetClip_PathFill(const CFX_PathData* pPathData,
+  bool SetClip_PathFill(const CFX_Path* pPath,
                         const CFX_Matrix* pObject2Device,
                         const CFX_FillRenderOptions& fill_options) override;
-  bool SetClip_PathStroke(const CFX_PathData* pPathData,
+  bool SetClip_PathStroke(const CFX_Path* pPath,
                           const CFX_Matrix* pObject2Device,
                           const CFX_GraphStateData* pGraphState) override;
-  bool DrawPath(const CFX_PathData* pPathData,
+  bool DrawPath(const CFX_Path* pPath,
                 const CFX_Matrix* pObject2Device,
                 const CFX_GraphStateData* pGraphState,
                 uint32_t fill_color,

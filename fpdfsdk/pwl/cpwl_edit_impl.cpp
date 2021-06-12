@@ -20,7 +20,7 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_graphstatedata.h"
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/pwl/cpwl_edit.h"
 #include "fpdfsdk/pwl/cpwl_scroll_bar.h"
@@ -643,7 +643,7 @@ void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
           rc.Intersect(rcClip);
           pSystemHandler->OutputSelectedRect(pFFLData, rc);
         } else {
-          CFX_PathData pathSelBK;
+          CFX_Path pathSelBK;
           pathSelBK.AppendRect(word.ptWord.x, line.ptLine.y + line.fLineDescent,
                                word.ptWord.x + word.fWidth,
                                line.ptLine.y + line.fLineAscent);

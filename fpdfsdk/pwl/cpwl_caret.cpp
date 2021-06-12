@@ -11,7 +11,7 @@
 
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_graphstatedata.h"
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 #include "core/fxge/cfx_renderdevice.h"
 
 CPWL_Caret::CPWL_Caret(
@@ -28,7 +28,6 @@ void CPWL_Caret::DrawThisAppearance(CFX_RenderDevice* pDevice,
 
   CFX_FloatRect rcRect = GetCaretRect();
   CFX_FloatRect rcClip = GetClipRect();
-  CFX_PathData path;
 
   float fCaretX = rcRect.left + m_fWidth * 0.5f;
   float fCaretTop = rcRect.top;
@@ -42,6 +41,7 @@ void CPWL_Caret::DrawThisAppearance(CFX_RenderDevice* pDevice,
     fCaretBottom = rcRect.bottom;
   }
 
+  CFX_Path path;
   path.AppendPoint(CFX_PointF(fCaretX, fCaretBottom), FXPT_TYPE::MoveTo);
   path.AppendPoint(CFX_PointF(fCaretX, fCaretTop), FXPT_TYPE::LineTo);
 

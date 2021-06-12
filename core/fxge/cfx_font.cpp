@@ -20,7 +20,7 @@
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_glyphcache.h"
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/scoped_font_transform.h"
@@ -36,7 +36,7 @@ constexpr int kThousandthMinInt = std::numeric_limits<int>::min() / 1000;
 constexpr int kThousandthMaxInt = std::numeric_limits<int>::max() / 1000;
 
 struct OUTLINE_PARAMS {
-  UnownedPtr<CFX_PathData> m_pPath;
+  UnownedPtr<CFX_Path> m_pPath;
   int m_CurX;
   int m_CurY;
   float m_CoordUnit;
@@ -636,9 +636,8 @@ void CFX_Font::AdjustMMParams(int glyph_index,
   FT_Set_MM_Design_Coordinates(m_Face->GetRec(), 2, coords);
 }
 
-std::unique_ptr<CFX_PathData> CFX_Font::LoadGlyphPathImpl(
-    uint32_t glyph_index,
-    int dest_width) const {
+std::unique_ptr<CFX_Path> CFX_Font::LoadGlyphPathImpl(uint32_t glyph_index,
+                                                      int dest_width) const {
   if (!m_Face)
     return nullptr;
 
@@ -682,7 +681,7 @@ std::unique_ptr<CFX_PathData> CFX_Font::LoadGlyphPathImpl(
   funcs.shift = 0;
   funcs.delta = 0;
 
-  auto pPath = std::make_unique<CFX_PathData>();
+  auto pPath = std::make_unique<CFX_Path>();
   OUTLINE_PARAMS params;
   params.m_pPath = pPath.get();
   params.m_CurX = params.m_CurY = 0;
@@ -710,8 +709,8 @@ const CFX_GlyphBitmap* CFX_Font::LoadGlyphBitmap(
                                                   anti_alias, text_options);
 }
 
-const CFX_PathData* CFX_Font::LoadGlyphPath(uint32_t glyph_index,
-                                            int dest_width) const {
+const CFX_Path* CFX_Font::LoadGlyphPath(uint32_t glyph_index,
+                                        int dest_width) const {
   return GetOrCreateGlyphCache()->LoadGlyphPath(this, glyph_index, dest_width);
 }
 

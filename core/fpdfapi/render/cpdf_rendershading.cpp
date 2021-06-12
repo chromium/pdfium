@@ -27,7 +27,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
-#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_path.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "third_party/base/check.h"
@@ -761,7 +761,7 @@ struct CPDF_PatchDrawer {
   }
 
   int max_delta;
-  CFX_PathData path;
+  CFX_Path path;
   CFX_RenderDevice* pDevice;
   int bNoPathSmooth;
   int alpha;
