@@ -22,6 +22,14 @@ namespace {
 constexpr uint32_t kFixedPointBits = 16;
 constexpr uint32_t kFixedPointOne = 1 << kFixedPointBits;
 
+inline uint32_t FixedFromFloat(float f) {
+  return static_cast<uint32_t>(FXSYS_roundf(f * kFixedPointOne));
+}
+
+inline uint8_t PixelFromFixed(uint32_t fixed) {
+  return static_cast<uint8_t>(fixed >> kFixedPointBits);
+}
+
 int GetPitchRoundUpTo4Bytes(int bits_per_pixel) {
   return (bits_per_pixel + 31) / 32 * 4;
 }
@@ -86,10 +94,8 @@ bool CStretchEngine::CWeightTable::Calc(int dest_len,
         if (pixel_weights.m_SrcStart == pixel_weights.m_SrcEnd) {
           pixel_weights.m_Weights[0] = kFixedPointOne;
         } else {
-          pixel_weights.m_Weights[1] =
-              FXSYS_roundf(static_cast<float>(
-                               src_pos - pixel_weights.m_SrcStart - 1.0f / 2) *
-                           kFixedPointOne);
+          pixel_weights.m_Weights[1] = FixedFromFloat(
+              static_cast<float>(src_pos - pixel_weights.m_SrcStart - 0.5f));
           pixel_weights.m_Weights[0] =
               kFixedPointOne - pixel_weights.m_Weights[1];
         }
@@ -135,7 +141,7 @@ bool CStretchEngine::CWeightTable::Calc(int dest_len,
       if (idx >= GetPixelWeightCount())
         return false;
 
-      pixel_weights.m_Weights[idx] = FXSYS_roundf(weight * kFixedPointOne);
+      pixel_weights.m_Weights[idx] = FixedFromFloat(weight);
     }
   }
   return true;
@@ -320,7 +326,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             if (src_scan[j / 8] & (1 << (7 - j % 8)))
               dest_a += pixel_weight * 255;
           }
-          *dest_scan++ = static_cast<uint8_t>(dest_a >> kFixedPointBits);
+          *dest_scan++ = PixelFromFixed(dest_a);
         }
         break;
       }
@@ -333,7 +339,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
                 m_WeightTable.GetValueFromPixelWeight(pWeights, j);
             dest_a += pixel_weight * src_scan[j];
           }
-          *dest_scan++ = static_cast<uint8_t>(dest_a >> kFixedPointBits);
+          *dest_scan++ = PixelFromFixed(dest_a);
         }
         break;
       }
@@ -349,9 +355,8 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             dest_r += pixel_weight * src_scan[j];
             dest_a += pixel_weight;
           }
-          *dest_scan++ = static_cast<uint8_t>(dest_r >> kFixedPointBits);
-          *dest_scan_mask++ =
-              static_cast<uint8_t>((dest_a * 255) >> kFixedPointBits);
+          *dest_scan++ = PixelFromFixed(dest_r);
+          *dest_scan_mask++ = PixelFromFixed(255 * dest_a);
         }
         break;
       }
@@ -375,9 +380,9 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
               dest_r += pixel_weight * static_cast<uint8_t>(argb >> 8);
             }
           }
-          *dest_scan++ = static_cast<uint8_t>(dest_b >> kFixedPointBits);
-          *dest_scan++ = static_cast<uint8_t>(dest_g >> kFixedPointBits);
-          *dest_scan++ = static_cast<uint8_t>(dest_r >> kFixedPointBits);
+          *dest_scan++ = PixelFromFixed(dest_b);
+          *dest_scan++ = PixelFromFixed(dest_g);
+          *dest_scan++ = PixelFromFixed(dest_r);
         }
         break;
       }
@@ -398,11 +403,10 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             dest_r += pixel_weight * static_cast<uint8_t>(argb >> 8);
             dest_a += pixel_weight;
           }
-          *dest_scan++ = static_cast<uint8_t>(dest_b >> kFixedPointBits);
-          *dest_scan++ = static_cast<uint8_t>(dest_g >> kFixedPointBits);
-          *dest_scan++ = static_cast<uint8_t>(dest_r >> kFixedPointBits);
-          *dest_scan_mask++ =
-              static_cast<uint8_t>((dest_a * 255) >> kFixedPointBits);
+          *dest_scan++ = PixelFromFixed(dest_b);
+          *dest_scan++ = PixelFromFixed(dest_g);
+          *dest_scan++ = PixelFromFixed(dest_r);
+          *dest_scan_mask++ = PixelFromFixed(255 * dest_a);
         }
         break;
       }
@@ -420,9 +424,9 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             dest_g += pixel_weight * (*src_pixel++);
             dest_r += pixel_weight * (*src_pixel);
           }
-          *dest_scan++ = static_cast<uint8_t>(dest_b >> kFixedPointBits);
-          *dest_scan++ = static_cast<uint8_t>(dest_g >> kFixedPointBits);
-          *dest_scan++ = static_cast<uint8_t>(dest_r >> kFixedPointBits);
+          *dest_scan++ = PixelFromFixed(dest_b);
+          *dest_scan++ = PixelFromFixed(dest_g);
+          *dest_scan++ = PixelFromFixed(dest_r);
           dest_scan += Bpp - 3;
         }
         break;
@@ -448,15 +452,13 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             dest_r += pixel_weight * (*src_pixel);
             dest_a += pixel_weight;
           }
-          *dest_scan++ = static_cast<uint8_t>(dest_b >> kFixedPointBits);
-          *dest_scan++ = static_cast<uint8_t>(dest_g >> kFixedPointBits);
-          *dest_scan++ = static_cast<uint8_t>(dest_r >> kFixedPointBits);
+          *dest_scan++ = PixelFromFixed(dest_b);
+          *dest_scan++ = PixelFromFixed(dest_g);
+          *dest_scan++ = PixelFromFixed(dest_r);
           if (m_DestFormat == FXDIB_Format::kArgb)
-            *dest_scan =
-                static_cast<uint8_t>((dest_a * 255) >> kFixedPointBits);
+            *dest_scan = PixelFromFixed(255 * dest_a);
           if (dest_scan_mask)
-            *dest_scan_mask++ =
-                static_cast<uint8_t>((dest_a * 255) >> kFixedPointBits);
+            *dest_scan_mask++ = PixelFromFixed(255 * dest_a);
           dest_scan += Bpp - 3;
         }
         break;
@@ -496,7 +498,7 @@ void CStretchEngine::StretchVert() {
             dest_a +=
                 pixel_weight * src_scan[(j - m_SrcClip.top) * m_InterPitch];
           }
-          *dest_scan = static_cast<uint8_t>(dest_a >> kFixedPointBits);
+          *dest_scan = PixelFromFixed(dest_a);
           dest_scan += DestBpp;
         }
         break;
@@ -516,9 +518,9 @@ void CStretchEngine::StretchVert() {
             dest_a += pixel_weight *
                       src_scan_mask[(j - m_SrcClip.top) * m_ExtraMaskPitch];
           }
-          *dest_scan = static_cast<uint8_t>(dest_k >> kFixedPointBits);
+          *dest_scan = PixelFromFixed(dest_k);
           dest_scan += DestBpp;
-          *dest_scan_mask++ = static_cast<uint8_t>(dest_a >> kFixedPointBits);
+          *dest_scan_mask++ = PixelFromFixed(dest_a);
         }
         break;
       }
@@ -538,9 +540,9 @@ void CStretchEngine::StretchVert() {
             dest_g += pixel_weight * (*src_pixel++);
             dest_r += pixel_weight * (*src_pixel);
           }
-          dest_scan[0] = static_cast<uint8_t>(dest_b >> kFixedPointBits);
-          dest_scan[1] = static_cast<uint8_t>(dest_g >> kFixedPointBits);
-          dest_scan[2] = static_cast<uint8_t>(dest_r >> kFixedPointBits);
+          dest_scan[0] = PixelFromFixed(dest_b);
+          dest_scan[1] = PixelFromFixed(dest_g);
+          dest_scan[2] = PixelFromFixed(dest_r);
           dest_scan += DestBpp;
         }
         break;
@@ -581,9 +583,9 @@ void CStretchEngine::StretchVert() {
             dest_scan[2] = pdfium::clamp(r, 0, 255);
           }
           if (m_DestFormat == FXDIB_Format::kArgb)
-            dest_scan[3] = static_cast<uint8_t>((dest_a) >> kFixedPointBits);
+            dest_scan[3] = PixelFromFixed(dest_a);
           else
-            *dest_scan_mask = static_cast<uint8_t>((dest_a) >> kFixedPointBits);
+            *dest_scan_mask = PixelFromFixed(dest_a);
           dest_scan += DestBpp;
           if (dest_scan_mask)
             dest_scan_mask++;
