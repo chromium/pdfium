@@ -109,9 +109,9 @@ class CPDF_StreamContentParser {
 
   void OnChangeTextMatrix();
   void ParsePathObject();
-  void AddPathPoint(const CFX_PointF& point,
-                    CFX_Path::Point::Type type,
-                    bool close);
+  void AddPathPoint(const CFX_PointF& point, CFX_Path::Point::Type type);
+  void AddPathPointAndClose(const CFX_PointF& point,
+                            CFX_Path::Point::Type type);
   void AddPathRect(float x, float y, float w, float h);
   void AddPathObject(CFX_FillRenderOptions::FillType fill_type, bool bStroke);
   CPDF_ImageObject* AddImage(RetainPtr<CPDF_Stream> pStream);

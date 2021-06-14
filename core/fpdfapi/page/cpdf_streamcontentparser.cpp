@@ -560,7 +560,7 @@ void CPDF_StreamContentParser::Handle_FillStrokePath() {
 }
 
 void CPDF_StreamContentParser::Handle_CloseEOFillStrokePath() {
-  AddPathPoint(m_PathStart, CFX_Path::Point::Type::kLine, true);
+  AddPathPointAndClose(m_PathStart, CFX_Path::Point::Type::kLine);
   AddPathObject(CFX_FillRenderOptions::FillType::kEvenOdd, true);
 }
 
@@ -667,12 +667,9 @@ void CPDF_StreamContentParser::Handle_BeginText() {
 }
 
 void CPDF_StreamContentParser::Handle_CurveTo_123() {
-  AddPathPoint({GetNumber(5), GetNumber(4)}, CFX_Path::Point::Type::kBezier,
-               false);
-  AddPathPoint({GetNumber(3), GetNumber(2)}, CFX_Path::Point::Type::kBezier,
-               false);
-  AddPathPoint({GetNumber(1), GetNumber(0)}, CFX_Path::Point::Type::kBezier,
-               false);
+  AddPathPoint({GetNumber(5), GetNumber(4)}, CFX_Path::Point::Type::kBezier);
+  AddPathPoint({GetNumber(3), GetNumber(2)}, CFX_Path::Point::Type::kBezier);
+  AddPathPoint({GetNumber(1), GetNumber(0)}, CFX_Path::Point::Type::kBezier);
 }
 
 void CPDF_StreamContentParser::Handle_ConcatMatrix() {
@@ -903,7 +900,7 @@ void CPDF_StreamContentParser::Handle_ClosePath() {
     return;
 
   if (m_PathStart.x != m_PathCurrent.x || m_PathStart.y != m_PathCurrent.y) {
-    AddPathPoint(m_PathStart, CFX_Path::Point::Type::kLine, true);
+    AddPathPointAndClose(m_PathStart, CFX_Path::Point::Type::kLine);
   } else if (m_PathPoints.back().m_Type != CFX_Path::Point::Type::kMove) {
     m_PathPoints.back().m_CloseFigure = true;
   }
@@ -947,16 +944,14 @@ void CPDF_StreamContentParser::Handle_LineTo() {
   if (m_ParamCount != 2)
     return;
 
-  AddPathPoint({GetNumber(1), GetNumber(0)}, CFX_Path::Point::Type::kLine,
-               false);
+  AddPathPoint({GetNumber(1), GetNumber(0)}, CFX_Path::Point::Type::kLine);
 }
 
 void CPDF_StreamContentParser::Handle_MoveTo() {
   if (m_ParamCount != 2)
     return;
 
-  AddPathPoint({GetNumber(1), GetNumber(0)}, CFX_Path::Point::Type::kMove,
-               false);
+  AddPathPoint({GetNumber(1), GetNumber(0)}, CFX_Path::Point::Type::kMove);
   ParsePathObject();
 }
 
@@ -993,11 +988,11 @@ void CPDF_StreamContentParser::Handle_Rectangle() {
 }
 
 void CPDF_StreamContentParser::AddPathRect(float x, float y, float w, float h) {
-  AddPathPoint({x, y}, CFX_Path::Point::Type::kMove, false);
-  AddPathPoint({x + w, y}, CFX_Path::Point::Type::kLine, false);
-  AddPathPoint({x + w, y + h}, CFX_Path::Point::Type::kLine, false);
-  AddPathPoint({x, y + h}, CFX_Path::Point::Type::kLine, false);
-  AddPathPoint({x, y}, CFX_Path::Point::Type::kLine, true);
+  AddPathPoint({x, y}, CFX_Path::Point::Type::kMove);
+  AddPathPoint({x + w, y}, CFX_Path::Point::Type::kLine);
+  AddPathPoint({x + w, y + h}, CFX_Path::Point::Type::kLine);
+  AddPathPoint({x, y + h}, CFX_Path::Point::Type::kLine);
+  AddPathPointAndClose({x, y}, CFX_Path::Point::Type::kLine);
 }
 
 void CPDF_StreamContentParser::Handle_SetRGBColor_Fill() {
@@ -1384,11 +1379,9 @@ void CPDF_StreamContentParser::Handle_MoveToNextLine() {
 }
 
 void CPDF_StreamContentParser::Handle_CurveTo_23() {
-  AddPathPoint(m_PathCurrent, CFX_Path::Point::Type::kBezier, false);
-  AddPathPoint({GetNumber(3), GetNumber(2)}, CFX_Path::Point::Type::kBezier,
-               false);
-  AddPathPoint({GetNumber(1), GetNumber(0)}, CFX_Path::Point::Type::kBezier,
-               false);
+  AddPathPoint(m_PathCurrent, CFX_Path::Point::Type::kBezier);
+  AddPathPoint({GetNumber(3), GetNumber(2)}, CFX_Path::Point::Type::kBezier);
+  AddPathPoint({GetNumber(1), GetNumber(0)}, CFX_Path::Point::Type::kBezier);
 }
 
 void CPDF_StreamContentParser::Handle_SetLineWidth() {
@@ -1404,12 +1397,9 @@ void CPDF_StreamContentParser::Handle_EOClip() {
 }
 
 void CPDF_StreamContentParser::Handle_CurveTo_13() {
-  AddPathPoint({GetNumber(3), GetNumber(2)}, CFX_Path::Point::Type::kBezier,
-               false);
-  AddPathPoint({GetNumber(1), GetNumber(0)}, CFX_Path::Point::Type::kBezier,
-               false);
-  AddPathPoint({GetNumber(1), GetNumber(0)}, CFX_Path::Point::Type::kBezier,
-               false);
+  AddPathPoint({GetNumber(3), GetNumber(2)}, CFX_Path::Point::Type::kBezier);
+  AddPathPoint({GetNumber(1), GetNumber(0)}, CFX_Path::Point::Type::kBezier);
+  AddPathPoint({GetNumber(1), GetNumber(0)}, CFX_Path::Point::Type::kBezier);
 }
 
 void CPDF_StreamContentParser::Handle_NextLineShowText() {
@@ -1426,18 +1416,17 @@ void CPDF_StreamContentParser::Handle_NextLineShowText_Space() {
 void CPDF_StreamContentParser::Handle_Invalid() {}
 
 void CPDF_StreamContentParser::AddPathPoint(const CFX_PointF& point,
-                                            CFX_Path::Point::Type type,
-                                            bool close) {
+                                            CFX_Path::Point::Type type) {
   // If the path point is the same move as the previous one and neither of them
   // closes the path, then just skip it.
-  if (!close && type == CFX_Path::Point::Type::kMove && !m_PathPoints.empty() &&
+  if (type == CFX_Path::Point::Type::kMove && !m_PathPoints.empty() &&
       !m_PathPoints.back().m_CloseFigure &&
       m_PathPoints.back().m_Type == type && m_PathCurrent == point) {
     return;
   }
 
   m_PathCurrent = point;
-  if (type == CFX_Path::Point::Type::kMove && !close) {
+  if (type == CFX_Path::Point::Type::kMove) {
     m_PathStart = point;
     if (!m_PathPoints.empty() &&
         m_PathPoints.back().IsTypeAndOpen(CFX_Path::Point::Type::kMove)) {
@@ -1447,7 +1436,17 @@ void CPDF_StreamContentParser::AddPathPoint(const CFX_PointF& point,
   } else if (m_PathPoints.empty()) {
     return;
   }
-  m_PathPoints.push_back(CFX_Path::Point(point, type, close));
+  m_PathPoints.push_back(CFX_Path::Point(point, type, /*close=*/false));
+}
+
+void CPDF_StreamContentParser::AddPathPointAndClose(
+    const CFX_PointF& point,
+    CFX_Path::Point::Type type) {
+  m_PathCurrent = point;
+  if (m_PathPoints.empty())
+    return;
+
+  m_PathPoints.push_back(CFX_Path::Point(point, type, /*close=*/true));
 }
 
 void CPDF_StreamContentParser::AddPathObject(
@@ -1568,40 +1567,39 @@ void CPDF_StreamContentParser::ParsePathObject() {
         if (len == 1) {
           switch (strc[0]) {
             case kPathOperatorSubpath:
-              AddPathPoint({params[0], params[1]}, CFX_Path::Point::Type::kMove,
-                           false);
+              AddPathPoint({params[0], params[1]},
+                           CFX_Path::Point::Type::kMove);
               nParams = 0;
               break;
             case kPathOperatorLine:
-              AddPathPoint({params[0], params[1]}, CFX_Path::Point::Type::kLine,
-                           false);
+              AddPathPoint({params[0], params[1]},
+                           CFX_Path::Point::Type::kLine);
               nParams = 0;
               break;
             case kPathOperatorCubicBezier1:
               AddPathPoint({params[0], params[1]},
-                           CFX_Path::Point::Type::kBezier, false);
+                           CFX_Path::Point::Type::kBezier);
               AddPathPoint({params[2], params[3]},
-                           CFX_Path::Point::Type::kBezier, false);
+                           CFX_Path::Point::Type::kBezier);
               AddPathPoint({params[4], params[5]},
-                           CFX_Path::Point::Type::kBezier, false);
+                           CFX_Path::Point::Type::kBezier);
               nParams = 0;
               break;
             case kPathOperatorCubicBezier2:
-              AddPathPoint(m_PathCurrent, CFX_Path::Point::Type::kBezier,
-                           false);
+              AddPathPoint(m_PathCurrent, CFX_Path::Point::Type::kBezier);
               AddPathPoint({params[0], params[1]},
-                           CFX_Path::Point::Type::kBezier, false);
+                           CFX_Path::Point::Type::kBezier);
               AddPathPoint({params[2], params[3]},
-                           CFX_Path::Point::Type::kBezier, false);
+                           CFX_Path::Point::Type::kBezier);
               nParams = 0;
               break;
             case kPathOperatorCubicBezier3:
               AddPathPoint({params[0], params[1]},
-                           CFX_Path::Point::Type::kBezier, false);
+                           CFX_Path::Point::Type::kBezier);
               AddPathPoint({params[2], params[3]},
-                           CFX_Path::Point::Type::kBezier, false);
+                           CFX_Path::Point::Type::kBezier);
               AddPathPoint({params[2], params[3]},
-                           CFX_Path::Point::Type::kBezier, false);
+                           CFX_Path::Point::Type::kBezier);
               nParams = 0;
               break;
             case kPathOperatorClosePath:
