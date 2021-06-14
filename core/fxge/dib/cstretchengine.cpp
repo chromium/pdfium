@@ -251,18 +251,16 @@ bool CStretchEngine::StartStretchHorz() {
       m_SrcClip.Height() > (1 << 29) / m_InterPitch) {
     return false;
   }
-
   m_InterBuf.resize(m_SrcClip.Height() * m_InterPitch);
   if (m_pSource && m_bHasAlpha && m_pSource->HasAlphaMask()) {
     m_ExtraAlphaBuf.resize(m_SrcClip.Height(), m_ExtraMaskPitch);
     m_DestMaskScanline.resize(m_ExtraMaskPitch);
   }
-  bool ret = m_WeightTable.CalculateWeights(
-      m_DestWidth, m_DestClip.left, m_DestClip.right, m_SrcWidth,
-      m_SrcClip.left, m_SrcClip.right, m_ResampleOptions);
-  if (!ret)
+  if (!m_WeightTable.CalculateWeights(
+          m_DestWidth, m_DestClip.left, m_DestClip.right, m_SrcWidth,
+          m_SrcClip.left, m_SrcClip.right, m_ResampleOptions)) {
     return false;
-
+  }
   m_CurRow = m_SrcClip.top;
   m_State = State::kHorizontal;
   return true;
@@ -449,11 +447,11 @@ void CStretchEngine::StretchVert() {
     return;
 
   CWeightTable table;
-  bool ret = table.CalculateWeights(
-      m_DestHeight, m_DestClip.top, m_DestClip.bottom, m_SrcHeight,
-      m_SrcClip.top, m_SrcClip.bottom, m_ResampleOptions);
-  if (!ret)
+  if (!table.CalculateWeights(m_DestHeight, m_DestClip.top, m_DestClip.bottom,
+                              m_SrcHeight, m_SrcClip.top, m_SrcClip.bottom,
+                              m_ResampleOptions)) {
     return;
+  }
 
   const int DestBpp = m_DestBpp / 8;
   for (int row = m_DestClip.top; row < m_DestClip.bottom; ++row) {
