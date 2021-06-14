@@ -71,7 +71,7 @@ class CPDF_StreamContentParser {
   enum class RenderType : bool { kFill = false, kStroke = true };
 
   struct ContentParam {
-    enum Type { OBJECT = 0, NUMBER, NAME };
+    enum Type : uint8_t { kObject = 0, kNumber, kName };
 
     ContentParam();
     ~ContentParam();
