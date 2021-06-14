@@ -101,6 +101,10 @@ class CPDF_StreamContentParser {
   int GetInteger(uint32_t index) const {
     return static_cast<int>(GetNumber(index));
   }
+  // Makes a point from {GetNumber(index + 1), GetNumber(index)}.
+  CFX_PointF GetPoint(uint32_t index) const;
+  // Makes a matrix from {GetNumber(5), ..., GetNumber(0)}.
+  CFX_Matrix GetMatrix() const;
   void OnOperator(ByteStringView op);
   void AddTextObject(const ByteString* pStrs,
                      float fInitKerning,
