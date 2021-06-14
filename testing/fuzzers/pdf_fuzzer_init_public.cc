@@ -4,6 +4,8 @@
 
 #include "testing/fuzzers/pdf_fuzzer_init_public.h"
 
+#include <string.h>  // For memset()
+
 #include <string>
 
 #include "testing/fuzzers/pdfium_fuzzer_util.h"
