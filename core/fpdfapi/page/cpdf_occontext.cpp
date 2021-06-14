@@ -75,13 +75,13 @@ CPDF_Dictionary* GetConfig(CPDF_Document* pDoc,
 ByteString GetUsageTypeString(CPDF_OCContext::UsageType eType) {
   ByteString csState;
   switch (eType) {
-    case CPDF_OCContext::Design:
+    case CPDF_OCContext::kDesign:
       csState = "Design";
       break;
-    case CPDF_OCContext::Print:
+    case CPDF_OCContext::kPrint:
       csState = "Print";
       break;
-    case CPDF_OCContext::Export:
+    case CPDF_OCContext::kExport:
       csState = "Export";
       break;
     default:

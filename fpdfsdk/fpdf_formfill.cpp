@@ -215,7 +215,7 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
 
     options.SetDrawAnnots(flags & FPDF_ANNOT);
     options.SetOCContext(
-        pdfium::MakeRetain<CPDF_OCContext>(pPDFDoc, CPDF_OCContext::View));
+        pdfium::MakeRetain<CPDF_OCContext>(pPDFDoc, CPDF_OCContext::kView));
 
     if (pPageView)
       pPageView->PageView_OnDraw(pDevice.get(), matrix, &options, rect);

@@ -51,7 +51,7 @@ void RenderPageImpl(CPDF_PageRenderContext* pContext,
   }
 
   const CPDF_OCContext::UsageType usage =
-      (flags & FPDF_PRINTING) ? CPDF_OCContext::Print : CPDF_OCContext::View;
+      (flags & FPDF_PRINTING) ? CPDF_OCContext::kPrint : CPDF_OCContext::kView;
   pContext->m_pOptions->SetOCContext(
       pdfium::MakeRetain<CPDF_OCContext>(pPage->GetDocument(), usage));
 

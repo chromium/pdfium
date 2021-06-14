@@ -20,7 +20,7 @@ class CPDF_PageObject;
 
 class CPDF_OCContext final : public Retainable {
  public:
-  enum UsageType { View = 0, Design, Print, Export };
+  enum UsageType { kView = 0, kDesign, kPrint, kExport };
 
   CONSTRUCT_VIA_MAKE_RETAIN;
 
