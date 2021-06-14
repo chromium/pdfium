@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_contentmarks.h"
+#include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_number.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -108,7 +109,9 @@ class CPDF_StreamContentParser {
 
   void OnChangeTextMatrix();
   void ParsePathObject();
-  void AddPathPoint(float x, float y, CFX_Path::Point::Type type, bool close);
+  void AddPathPoint(const CFX_PointF& point,
+                    CFX_Path::Point::Type type,
+                    bool close);
   void AddPathRect(float x, float y, float w, float h);
   void AddPathObject(CFX_FillRenderOptions::FillType fill_type, bool bStroke);
   CPDF_ImageObject* AddImage(RetainPtr<CPDF_Stream> pStream);
@@ -222,10 +225,8 @@ class CPDF_StreamContentParser {
   std::vector<std::unique_ptr<CPDF_TextObject>> m_ClipTextList;
   UnownedPtr<const CPDF_TextObject> m_pLastTextObject;
   std::vector<CFX_Path::Point> m_PathPoints;
-  float m_PathStartX = 0.0f;
-  float m_PathStartY = 0.0f;
-  float m_PathCurrentX = 0.0f;
-  float m_PathCurrentY = 0.0f;
+  CFX_PointF m_PathStart;
+  CFX_PointF m_PathCurrent;
   CFX_FillRenderOptions::FillType m_PathClipType =
       CFX_FillRenderOptions::FillType::kNoFill;
   ByteString m_LastImageName;
