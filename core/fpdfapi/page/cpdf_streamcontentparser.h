@@ -68,6 +68,8 @@ class CPDF_StreamContentParser {
   static ByteStringView FindValueAbbreviationForTesting(ByteStringView abbr);
 
  private:
+  enum class RenderType : bool { kFill = false, kStroke = true };
+
   struct ContentParam {
     enum Type { OBJECT = 0, NUMBER, NAME };
 
@@ -113,7 +115,8 @@ class CPDF_StreamContentParser {
   void AddPathPointAndClose(const CFX_PointF& point,
                             CFX_Path::Point::Type type);
   void AddPathRect(float x, float y, float w, float h);
-  void AddPathObject(CFX_FillRenderOptions::FillType fill_type, bool bStroke);
+  void AddPathObject(CFX_FillRenderOptions::FillType fill_type,
+                     RenderType render_type);
   CPDF_ImageObject* AddImage(RetainPtr<CPDF_Stream> pStream);
   CPDF_ImageObject* AddImage(uint32_t streamObjNum);
   CPDF_ImageObject* AddImage(const RetainPtr<CPDF_Image>& pImage);
