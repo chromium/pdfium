@@ -399,51 +399,51 @@ CJS_Result CJS_Util::byteToChar(
 
 // static
 CJS_Util::DataType CJS_Util::ParseDataType(WideString* sFormat) {
-  enum State { BEFORE, FLAGS, WIDTH, PRECISION, SPECIFIER, AFTER };
+  enum State { kBefore, kFlags, kWidth, kPrecision, kSpecifier, kAfter };
 
   DataType result = DataType::kInvalid;
-  State state = BEFORE;
+  State state = kBefore;
   size_t precision_digits = 0;
   size_t i = 0;
   while (i < sFormat->GetLength()) {
     wchar_t c = (*sFormat)[i];
     switch (state) {
-      case BEFORE:
+      case kBefore:
         if (c == L'%')
-          state = FLAGS;
+          state = kFlags;
         break;
-      case FLAGS:
+      case kFlags:
         if (c == L'+' || c == L'-' || c == L'#' || c == L' ') {
           // Stay in same state.
         } else {
-          state = WIDTH;
+          state = kWidth;
           continue;  // Re-process same character.
         }
         break;
-      case WIDTH:
+      case kWidth:
         if (c == L'*')
           return DataType::kInvalid;
         if (FXSYS_IsDecimalDigit(c)) {
           // Stay in same state.
         } else if (c == L'.') {
-          state = PRECISION;
+          state = kPrecision;
         } else {
-          state = SPECIFIER;
+          state = kSpecifier;
           continue;  // Re-process same character.
         }
         break;
-      case PRECISION:
+      case kPrecision:
         if (c == L'*')
           return DataType::kInvalid;
         if (FXSYS_IsDecimalDigit(c)) {
           // Stay in same state.
           ++precision_digits;
         } else {
-          state = SPECIFIER;
+          state = kSpecifier;
           continue;  // Re-process same character.
         }
         break;
-      case SPECIFIER:
+      case kSpecifier:
         if (c == L'c' || c == L'C' || c == L'd' || c == L'i' || c == L'o' ||
             c == L'u' || c == L'x' || c == L'X') {
           result = DataType::kInt;
@@ -459,9 +459,9 @@ CJS_Util::DataType CJS_Util::ParseDataType(WideString* sFormat) {
         } else {
           return DataType::kInvalid;
         }
-        state = AFTER;
+        state = kAfter;
         break;
-      case AFTER:
+      case kAfter:
         if (c == L'%')
           return DataType::kInvalid;
         // Stay in same state until string exhausted.
