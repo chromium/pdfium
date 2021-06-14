@@ -302,7 +302,6 @@ void CPDF_PageContentGenerator::ProcessImage(std::ostringstream* buf,
       (pImageObj->matrix().c == 0 && pImageObj->matrix().d == 0)) {
     return;
   }
-  *buf << "q " << pImageObj->matrix() << " cm ";
 
   RetainPtr<CPDF_Image> pImage = pImageObj->GetImage();
   if (pImage->IsInline())
@@ -311,6 +310,8 @@ void CPDF_PageContentGenerator::ProcessImage(std::ostringstream* buf,
   CPDF_Stream* pStream = pImage->GetStream();
   if (!pStream)
     return;
+
+  *buf << "q " << pImageObj->matrix() << " cm ";
 
   bool bWasInline = pStream->IsInline();
   if (bWasInline)
