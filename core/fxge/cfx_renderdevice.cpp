@@ -41,7 +41,7 @@
 namespace {
 
 void AdjustGlyphSpace(std::vector<TextGlyphPos>* pGlyphAndPos) {
-  DCHECK(pGlyphAndPos->size() > 1);
+  DCHECK_GT(pGlyphAndPos->size(), 1u);
   std::vector<TextGlyphPos>& glyphs = *pGlyphAndPos;
   bool bVertical = glyphs.back().m_Origin.x == glyphs.front().m_Origin.x;
   if (!bVertical && (glyphs.back().m_Origin.y != glyphs.front().m_Origin.y))
@@ -78,7 +78,7 @@ void AdjustGlyphSpace(std::vector<TextGlyphPos>* pGlyphAndPos) {
   }
 }
 
-const uint8_t g_TextGammaAdjust[256] = {
+constexpr uint8_t kTextGammaAdjust[256] = {
     0,   2,   3,   4,   6,   7,   8,   10,  11,  12,  13,  15,  16,  17,  18,
     19,  21,  22,  23,  24,  25,  26,  27,  29,  30,  31,  32,  33,  34,  35,
     36,  38,  39,  40,  41,  42,  43,  44,  45,  46,  47,  48,  49,  51,  52,
@@ -100,9 +100,9 @@ const uint8_t g_TextGammaAdjust[256] = {
 };
 
 int TextGammaAdjust(int value) {
-  DCHECK(value >= 0);
-  DCHECK(value <= 255);
-  return g_TextGammaAdjust[value];
+  DCHECK_GE(value, 0);
+  DCHECK_LE(value, 255);
+  return kTextGammaAdjust[value];
 }
 
 int CalcAlpha(int src, int alpha) {
@@ -348,8 +348,7 @@ bool CheckSimpleLinePath(pdfium::span<const CFX_Path::Point> points,
       point = CFX_PointF(static_cast<int>(point.x) + 0.5f,
                          static_cast<int>(point.y) + 0.5f);
     }
-    new_path->AppendPoint(point, i == 0 ? CFX_Path::Point::Type::kMove
-                                        : CFX_Path::Point::Type::kLine);
+    new_path->AppendPoint(point, points[i].m_Type);
   }
   if (adjust && matrix)
     *set_identity = true;
@@ -367,23 +366,20 @@ bool CheckPalindromicPath(pdfium::span<const CFX_Path::Point> points,
     return false;
 
   const int mid = points.size() / 2;
-  bool zero_area = true;
   CFX_Path temp_path;
   for (int i = 0; i < mid; i++) {
-    if (!(points[mid - i - 1].m_Point == points[mid + i + 1].m_Point &&
-          points[mid - i - 1].m_Type != CFX_Path::Point::Type::kBezier &&
-          points[mid + i + 1].m_Type != CFX_Path::Point::Type::kBezier)) {
-      zero_area = false;
-      break;
-    }
+    const CFX_Path::Point& left = points[mid - i - 1];
+    const CFX_Path::Point& right = points[mid + i + 1];
+    bool zero_area = left.m_Point == right.m_Point &&
+                     left.m_Type != CFX_Path::Point::Type::kBezier &&
+                     right.m_Type != CFX_Path::Point::Type::kBezier;
+    if (!zero_area)
+      return false;
 
     temp_path.AppendPoint(points[mid - i].m_Point,
                           CFX_Path::Point::Type::kMove);
-    temp_path.AppendPoint(points[mid - i - 1].m_Point,
-                          CFX_Path::Point::Type::kLine);
+    temp_path.AppendPoint(left.m_Point, CFX_Path::Point::Type::kLine);
   }
-  if (!zero_area)
-    return false;
 
   new_path->Append(temp_path, nullptr);
   *thin = true;
@@ -437,15 +433,14 @@ bool GetZeroAreaPath(pdfium::span<const CFX_Path::Point> points,
 
     if (point_type == CFX_Path::Point::Type::kBezier) {
       i += 2;
-      DCHECK(i < points.size());
+      DCHECK_LT(i, points.size());
       continue;
     }
 
     DCHECK_EQ(point_type, CFX_Path::Point::Type::kLine);
-    int next_index = (i + 1) % (points.size());
+    size_t next_index = (i + 1) % (points.size());
     const CFX_Path::Point& next = points[next_index];
-    if (next.m_Type == CFX_Path::Point::Type::kBezier ||
-        next.m_Type == CFX_Path::Point::Type::kMove)
+    if (next.m_Type != CFX_Path::Point::Type::kLine)
       continue;
 
     const CFX_Path::Point& prev = points[i - 1];
@@ -454,7 +449,7 @@ bool GetZeroAreaPath(pdfium::span<const CFX_Path::Point> points,
       bool use_prev = fabs(cur.m_Point.y - prev.m_Point.y) <
                       fabs(cur.m_Point.y - next.m_Point.y);
       const CFX_Path::Point& start = use_prev ? prev : cur;
-      const CFX_Path::Point& end = use_prev ? points[next_index - 1] : next;
+      const CFX_Path::Point& end = use_prev ? cur : next;
       new_path->AppendPoint(start.m_Point, CFX_Path::Point::Type::kMove);
       new_path->AppendPoint(end.m_Point, CFX_Path::Point::Type::kLine);
       continue;
@@ -465,7 +460,7 @@ bool GetZeroAreaPath(pdfium::span<const CFX_Path::Point> points,
       bool use_prev = fabs(cur.m_Point.x - prev.m_Point.x) <
                       fabs(cur.m_Point.x - next.m_Point.x);
       const CFX_Path::Point& start = use_prev ? prev : cur;
-      const CFX_Path::Point& end = use_prev ? points[next_index - 1] : next;
+      const CFX_Path::Point& end = use_prev ? cur : next;
       new_path->AppendPoint(start.m_Point, CFX_Path::Point::Type::kMove);
       new_path->AppendPoint(end.m_Point, CFX_Path::Point::Type::kLine);
       continue;
@@ -700,7 +695,7 @@ bool CFX_RenderDevice::DrawPathWithBlend(
     for (size_t i = 0; i < points.size(); i++) {
       CFX_Path::Point::Type point_type = points[i].m_Type;
       if (point_type == CFX_Path::Point::Type::kMove) {
-        // Process the exisitng sub path.
+        // Process the existing sub path.
         DrawZeroAreaPath(sub_path, pObject2Device, adjust,
                          fill_options.aliased_path, fill_color, fill_alpha,
                          blend_type);
@@ -875,8 +870,7 @@ void CFX_RenderDevice::DrawZeroAreaPath(
 
   CFX_FillRenderOptions path_options;
   path_options.zero_area = true;
-  if (aliased_path)
-    path_options.aliased_path = true;
+  path_options.aliased_path = aliased_path;
 
   m_pDeviceDriver->DrawPath(&new_path, new_matrix, &graph_state, 0,
                             stroke_color, path_options, blend_type);
