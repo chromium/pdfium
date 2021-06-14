@@ -115,11 +115,6 @@ bool CStretchEngine::CWeightTable::Calc(int dest_len,
     int end_i = floor(std::max(src_start, src_end));
     start_i = std::max(start_i, src_min);
     end_i = std::min(end_i, src_max - 1);
-    if (start_i > end_i) {
-      start_i = std::min(start_i, src_max - 1);
-      pixel_weights.SetStartEnd(start_i, start_i, weight_count);
-      continue;
-    }
     pixel_weights.SetStartEnd(start_i, end_i, weight_count);
     for (int j = start_i; j <= end_i; ++j) {
       double dest_start = (j - base) / scale;
