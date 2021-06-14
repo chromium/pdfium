@@ -68,7 +68,8 @@ ProgressiveDecoder::WeightTable::WeightTable() = default;
 
 ProgressiveDecoder::WeightTable::~WeightTable() = default;
 
-void ProgressiveDecoder::WeightTable::Calc(int dest_len, int src_len) {
+void ProgressiveDecoder::WeightTable::CalculateWeights(int dest_len,
+                                                       int src_len) {
   CHECK_GE(dest_len, 0);
   double scale = static_cast<double>(src_len) / dest_len;
   const size_t weight_count = static_cast<size_t>(ceil(fabs(scale))) + 1;
@@ -140,7 +141,8 @@ ProgressiveDecoder::HorzTable::HorzTable() = default;
 
 ProgressiveDecoder::HorzTable::~HorzTable() = default;
 
-void ProgressiveDecoder::HorzTable::Calc(int dest_len, int src_len) {
+void ProgressiveDecoder::HorzTable::CalculateWeights(int dest_len,
+                                                     int src_len) {
   CHECK_GE(dest_len, 0);
   m_ItemSize = PixelWeight::TotalBytesForWeightCount(2);
   FX_SAFE_SIZE_T safe_size = m_ItemSize;
@@ -195,7 +197,8 @@ ProgressiveDecoder::VertTable::VertTable() = default;
 
 ProgressiveDecoder::VertTable::~VertTable() = default;
 
-void ProgressiveDecoder::VertTable::Calc(int dest_len, int src_len) {
+void ProgressiveDecoder::VertTable::CalculateWeights(int dest_len,
+                                                     int src_len) {
   CHECK_GE(dest_len, 0);
   m_ItemSize = PixelWeight::TotalBytesForWeightCount(2);
   FX_SAFE_SIZE_T safe_size = m_ItemSize;
@@ -789,8 +792,8 @@ FXCODEC_STATUS ProgressiveDecoder::BmpStartDecode(
   GetTransMethod(m_pDeviceBitmap->GetFormat(), m_SrcFormat);
   m_ScanlineSize = FxAlignToBoundary<4>(m_SrcWidth * m_SrcComponents);
   m_pDecodeBuf.reset(FX_Alloc(uint8_t, m_ScanlineSize));
-  m_WeightHorz.Calc(m_sizeX, m_clipBox.Width());
-  m_WeightVert.Calc(m_sizeY, m_clipBox.Height());
+  m_WeightHorz.CalculateWeights(m_sizeX, m_clipBox.Width());
+  m_WeightVert.CalculateWeights(m_sizeY, m_clipBox.Height());
   m_status = FXCODEC_STATUS_DECODE_TOBECONTINUE;
   return m_status;
 }
@@ -861,8 +864,8 @@ FXCODEC_STATUS ProgressiveDecoder::GifStartDecode(
   GetTransMethod(m_pDeviceBitmap->GetFormat(), m_SrcFormat);
   int scanline_size = FxAlignToBoundary<4>(m_SrcWidth);
   m_pDecodeBuf.reset(FX_Alloc(uint8_t, scanline_size));
-  m_WeightHorz.Calc(m_sizeX, m_clipBox.Width());
-  m_WeightVert.Calc(m_sizeY, m_clipBox.Height());
+  m_WeightHorz.CalculateWeights(m_sizeX, m_clipBox.Width());
+  m_WeightVert.CalculateWeights(m_sizeY, m_clipBox.Height());
   m_FrameCur = 0;
   m_status = FXCODEC_STATUS_DECODE_TOBECONTINUE;
   return m_status;
@@ -1053,8 +1056,8 @@ FXCODEC_STATUS ProgressiveDecoder::JpegStartDecode(
   int scanline_size = (m_SrcWidth + down_scale - 1) / down_scale;
   scanline_size = FxAlignToBoundary<4>(scanline_size * m_SrcComponents);
   m_pDecodeBuf.reset(FX_Alloc(uint8_t, scanline_size));
-  m_WeightHorz.Calc(m_sizeX, m_clipBox.Width());
-  m_WeightVert.Calc(m_sizeY, m_clipBox.Height());
+  m_WeightHorz.CalculateWeights(m_sizeX, m_clipBox.Width());
+  m_WeightVert.CalculateWeights(m_sizeY, m_clipBox.Height());
   switch (m_SrcComponents) {
     case 1:
       m_SrcFormat = FXCodec_8bppGray;
@@ -1252,8 +1255,8 @@ FXCODEC_STATUS ProgressiveDecoder::PngStartDecode(
   GetTransMethod(m_pDeviceBitmap->GetFormat(), m_SrcFormat);
   int scanline_size = FxAlignToBoundary<4>(m_SrcWidth * m_SrcComponents);
   m_pDecodeBuf.reset(FX_Alloc(uint8_t, scanline_size));
-  m_WeightHorzOO.Calc(m_sizeX, m_clipBox.Width());
-  m_WeightVert.Calc(m_sizeY, m_clipBox.Height());
+  m_WeightHorzOO.CalculateWeights(m_sizeX, m_clipBox.Width());
+  m_WeightVert.CalculateWeights(m_sizeY, m_clipBox.Height());
   m_status = FXCODEC_STATUS_DECODE_TOBECONTINUE;
   return m_status;
 }

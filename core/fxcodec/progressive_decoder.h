@@ -125,7 +125,7 @@ class ProgressiveDecoder :
     WeightTable();
     ~WeightTable();
 
-    void Calc(int dest_len, int src_len);
+    void CalculateWeights(int dest_len, int src_len);
     PixelWeight* GetPixelWeight(int pixel) {
       return reinterpret_cast<PixelWeight*>(m_pWeightTables.data() +
                                             (pixel - m_DestMin) * m_ItemSize);
@@ -141,7 +141,7 @@ class ProgressiveDecoder :
     HorzTable();
     ~HorzTable();
 
-    void Calc(int dest_len, int src_len);
+    void CalculateWeights(int dest_len, int src_len);
     PixelWeight* GetPixelWeight(int pixel) {
       return reinterpret_cast<PixelWeight*>(m_pWeightTables.data() +
                                             pixel * m_ItemSize);
@@ -156,7 +156,7 @@ class ProgressiveDecoder :
     VertTable();
     ~VertTable();
 
-    void Calc(int dest_len, int src_len);
+    void CalculateWeights(int dest_len, int src_len);
     PixelWeight* GetPixelWeight(int pixel) {
       return reinterpret_cast<PixelWeight*>(m_pWeightTables.data() +
                                             pixel * m_ItemSize);

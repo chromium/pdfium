@@ -46,13 +46,13 @@ class CStretchEngine {
     CWeightTable();
     ~CWeightTable();
 
-    bool Calc(int dest_len,
-              int dest_min,
-              int dest_max,
-              int src_len,
-              int src_min,
-              int src_max,
-              const FXDIB_ResampleOptions& options);
+    bool CalculateWeights(int dest_len,
+                          int dest_min,
+                          int dest_max,
+                          int src_len,
+                          int src_min,
+                          int src_max,
+                          const FXDIB_ResampleOptions& options);
 
     const PixelWeight* GetPixelWeight(int pixel) const;
     PixelWeight* GetPixelWeight(int pixel) {

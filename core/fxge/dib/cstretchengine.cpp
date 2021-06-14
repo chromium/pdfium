@@ -40,13 +40,14 @@ CStretchEngine::CWeightTable::CWeightTable() = default;
 
 CStretchEngine::CWeightTable::~CWeightTable() = default;
 
-bool CStretchEngine::CWeightTable::Calc(int dest_len,
-                                        int dest_min,
-                                        int dest_max,
-                                        int src_len,
-                                        int src_min,
-                                        int src_max,
-                                        const FXDIB_ResampleOptions& options) {
+bool CStretchEngine::CWeightTable::CalculateWeights(
+    int dest_len,
+    int dest_min,
+    int dest_max,
+    int src_len,
+    int src_min,
+    int src_max,
+    const FXDIB_ResampleOptions& options) {
   // 512MB should be large enough for this while preventing OOM.
   static constexpr size_t kMaxTableBytesAllowed = 512 * 1024 * 1024;
 
@@ -256,9 +257,9 @@ bool CStretchEngine::StartStretchHorz() {
     m_ExtraAlphaBuf.resize(m_SrcClip.Height(), m_ExtraMaskPitch);
     m_DestMaskScanline.resize(m_ExtraMaskPitch);
   }
-  bool ret = m_WeightTable.Calc(m_DestWidth, m_DestClip.left, m_DestClip.right,
-                                m_SrcWidth, m_SrcClip.left, m_SrcClip.right,
-                                m_ResampleOptions);
+  bool ret = m_WeightTable.CalculateWeights(
+      m_DestWidth, m_DestClip.left, m_DestClip.right, m_SrcWidth,
+      m_SrcClip.left, m_SrcClip.right, m_ResampleOptions);
   if (!ret)
     return false;
 
@@ -448,9 +449,9 @@ void CStretchEngine::StretchVert() {
     return;
 
   CWeightTable table;
-  bool ret =
-      table.Calc(m_DestHeight, m_DestClip.top, m_DestClip.bottom, m_SrcHeight,
-                 m_SrcClip.top, m_SrcClip.bottom, m_ResampleOptions);
+  bool ret = table.CalculateWeights(
+      m_DestHeight, m_DestClip.top, m_DestClip.bottom, m_SrcHeight,
+      m_SrcClip.top, m_SrcClip.bottom, m_ResampleOptions);
   if (!ret)
     return;
 
