@@ -339,6 +339,8 @@ class CFX_RectF {
   // NOLINTNEXTLINE(runtime/explicit)
   CFX_RectF(const CFX_RectF& other) = default;
 
+  CFX_RectF& operator=(const CFX_RectF& other) = default;
+
   CFX_RectF& operator+=(const PointType& p) {
     left += p.x;
     top += p.y;
