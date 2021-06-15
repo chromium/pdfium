@@ -293,6 +293,7 @@ def _CheckTestDuplicates(input_api, output_api):
       tests_added.append(path)
   return results
 
+
 def _CheckPNGFormat(input_api, output_api):
   """Checks that .png files have a format that will be considered valid by our
   test runners. If a file ends with .png, then it must be of the form
@@ -309,6 +310,54 @@ def _CheckPNGFormat(input_api, output_api):
         'PNG file %s does not have the correct format' % f.LocalPath()))
   return results
 
+
+def _CheckUselessForwardDeclarations(input_api, output_api):
+  """Checks that added or removed lines in non third party affected
+     header files do not lead to new useless class or struct forward
+     declaration.
+  """
+  results = []
+  class_pattern = input_api.re.compile(r'^class\s+(\w+);$',
+                                       input_api.re.MULTILINE)
+  struct_pattern = input_api.re.compile(r'^struct\s+(\w+);$',
+                                        input_api.re.MULTILINE)
+  for f in input_api.AffectedFiles(include_deletes=False):
+    if f.LocalPath().startswith('third_party'):
+      continue
+
+    if not f.LocalPath().endswith('.h'):
+      continue
+
+    contents = input_api.ReadFile(f)
+    fwd_decls = input_api.re.findall(class_pattern, contents)
+    fwd_decls.extend(input_api.re.findall(struct_pattern, contents))
+
+    useless_fwd_decls = []
+    for decl in fwd_decls:
+      count = sum(
+          1
+          for _ in input_api.re.finditer(r'\b%s\b' %
+                                         input_api.re.escape(decl), contents))
+      if count == 1:
+        useless_fwd_decls.append(decl)
+
+    if not useless_fwd_decls:
+      continue
+
+    for line in f.GenerateScmDiff().splitlines():
+      if (line.startswith('-') and not line.startswith('--') or
+          line.startswith('+') and not line.startswith('++')):
+        for decl in useless_fwd_decls:
+          if input_api.re.search(r'\b%s\b' % decl, line[1:]):
+            results.append(
+                output_api.PresubmitPromptWarning(
+                    '%s: %s forward declaration is no longer needed' %
+                    (f.LocalPath(), decl)))
+            useless_fwd_decls.remove(decl)
+
+  return results
+
+
 def CheckChangeOnUpload(input_api, output_api):
   results = []
   results.extend(_CheckUnwantedDependencies(input_api, output_api))
@@ -320,6 +369,7 @@ def CheckChangeOnUpload(input_api, output_api):
   results.extend(_CheckIncludeOrder(input_api, output_api))
   results.extend(_CheckTestDuplicates(input_api, output_api))
   results.extend(_CheckPNGFormat(input_api, output_api))
+  results.extend(_CheckUselessForwardDeclarations(input_api, output_api))
 
   author = input_api.change.author_email
   if author and author not in _KNOWN_ROBOTS:
