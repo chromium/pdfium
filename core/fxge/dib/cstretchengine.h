@@ -21,39 +21,67 @@ class CFX_DIBBase;
 class PauseIndicatorIface;
 class ScanlineComposerIface;
 
-struct PixelWeight {
-  static size_t TotalBytesForWeightCount(size_t weight_count);
-
-  void SetStartEnd(int src_start, int src_end, size_t weight_count) {
-    CHECK_LT(static_cast<size_t>(src_end - src_start), weight_count);
-    m_SrcStart = src_start;
-    m_SrcEnd = src_end;
-  }
-
-  uint32_t GetWeightForPosition(int position) const {
-    CHECK_GE(position, m_SrcStart);
-    CHECK_LE(position, m_SrcEnd);
-    return m_Weights[position - m_SrcStart];
-  }
-
-  void SetWeightForPosition(int position, uint32_t weight) {
-    CHECK_GE(position, m_SrcStart);
-    CHECK_LE(position, m_SrcEnd);
-    m_Weights[position - m_SrcStart] = weight;
-  }
-
-  void RemoveLastWeight() {
-    CHECK_GT(m_SrcEnd, m_SrcStart);
-    --m_SrcEnd;
-  }
-
-  int m_SrcStart;
-  int m_SrcEnd;           // Note: inclusive.
-  uint32_t m_Weights[1];  // Not really 1, variable size.
-};
-
 class CStretchEngine {
  public:
+  struct PixelWeight {
+    static size_t TotalBytesForWeightCount(size_t weight_count);
+
+    void SetStartEnd(int src_start, int src_end, size_t weight_count) {
+      CHECK_LT(static_cast<size_t>(src_end - src_start), weight_count);
+      m_SrcStart = src_start;
+      m_SrcEnd = src_end;
+    }
+
+    uint32_t GetWeightForPosition(int position) const {
+      CHECK_GE(position, m_SrcStart);
+      CHECK_LE(position, m_SrcEnd);
+      return m_Weights[position - m_SrcStart];
+    }
+
+    void SetWeightForPosition(int position, uint32_t weight) {
+      CHECK_GE(position, m_SrcStart);
+      CHECK_LE(position, m_SrcEnd);
+      m_Weights[position - m_SrcStart] = weight;
+    }
+
+    void RemoveLastWeight() {
+      CHECK_GT(m_SrcEnd, m_SrcStart);
+      --m_SrcEnd;
+    }
+
+    int m_SrcStart;
+    int m_SrcEnd;           // Note: inclusive.
+    uint32_t m_Weights[1];  // Not really 1, variable size.
+  };
+
+  class WeightTable {
+   public:
+    WeightTable();
+    ~WeightTable();
+
+    // Accepts a negative `dest_len` argument, producing a "mirror
+    // image" of the result if `dest_len` is negative.
+    bool CalculateWeights(int dest_len,
+                          int dest_min,
+                          int dest_max,
+                          int src_len,
+                          int src_min,
+                          int src_max,
+                          const FXDIB_ResampleOptions& options);
+
+    const PixelWeight* GetPixelWeight(int pixel) const;
+    PixelWeight* GetPixelWeight(int pixel) {
+      return const_cast<PixelWeight*>(
+          static_cast<const WeightTable*>(this)->GetPixelWeight(pixel));
+    }
+
+   private:
+    int m_DestMin = 0;
+    size_t m_ItemSizeBytes = 0;
+    size_t m_WeightTablesSizeBytes = 0;
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_WeightTables;
+  };
+
   CStretchEngine(ScanlineComposerIface* pDestBitmap,
                  FXDIB_Format dest_format,
                  int dest_width,
@@ -71,34 +99,6 @@ class CStretchEngine {
   const FXDIB_ResampleOptions& GetResampleOptionsForTest() const {
     return m_ResampleOptions;
   }
-
-  class CWeightTable {
-   public:
-    CWeightTable();
-    ~CWeightTable();
-
-    // Accepts a negative `dest_len` argument, producing a "mirror
-    // image" of the result if `dest_len` is negative.
-    bool CalculateWeights(int dest_len,
-                          int dest_min,
-                          int dest_max,
-                          int src_len,
-                          int src_min,
-                          int src_max,
-                          const FXDIB_ResampleOptions& options);
-
-    const PixelWeight* GetPixelWeight(int pixel) const;
-    PixelWeight* GetPixelWeight(int pixel) {
-      return const_cast<PixelWeight*>(
-          static_cast<const CWeightTable*>(this)->GetPixelWeight(pixel));
-    }
-
-   private:
-    int m_DestMin = 0;
-    size_t m_ItemSizeBytes = 0;
-    size_t m_WeightTablesSizeBytes = 0;
-    std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_WeightTables;
-  };
 
  private:
   enum class State : uint8_t { kInitial, kHorizontal, kVertical };
@@ -137,7 +137,7 @@ class CStretchEngine {
   TransformMethod m_TransMethod;
   State m_State = State::kInitial;
   int m_CurRow;
-  CWeightTable m_WeightTable;
+  WeightTable m_WeightTable;
 };
 
 #endif  // CORE_FXGE_DIB_CSTRETCHENGINE_H_

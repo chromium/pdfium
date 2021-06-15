@@ -121,7 +121,8 @@ class ProgressiveDecoder :
 #endif  // PDF_ENABLE_XFA_BMP
 
  private:
-  using WeightTable = CStretchEngine::CWeightTable;
+  using WeightTable = CStretchEngine::WeightTable;
+  using PixelWeight = CStretchEngine::PixelWeight;
 
   class HorzTable {
    public:
