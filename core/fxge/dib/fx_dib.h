@@ -39,10 +39,21 @@ struct PixelWeight {
     m_SrcEnd = src_end;
   }
 
-  uint32_t GetWeight(int pixel) const {
-    CHECK_GE(pixel, m_SrcStart);
-    CHECK_LE(pixel, m_SrcEnd);
-    return m_Weights[pixel - m_SrcStart];
+  uint32_t GetWeightForPosition(int position) const {
+    CHECK_GE(position, m_SrcStart);
+    CHECK_LE(position, m_SrcEnd);
+    return m_Weights[position - m_SrcStart];
+  }
+
+  void SetWeightForPosition(int position, uint32_t weight) {
+    CHECK_GE(position, m_SrcStart);
+    CHECK_LE(position, m_SrcEnd);
+    m_Weights[position - m_SrcStart] = weight;
+  }
+
+  void RemoveLastWeight() {
+    CHECK_GT(m_SrcEnd, m_SrcStart);
+    --m_SrcEnd;
   }
 
   int m_SrcStart;
