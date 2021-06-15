@@ -40,7 +40,6 @@ class CStretchEngine {
     return m_ResampleOptions;
   }
 
- private:
   class CWeightTable {
    public:
     CWeightTable();
@@ -69,6 +68,7 @@ class CStretchEngine {
     std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_WeightTables;
   };
 
+ private:
   enum class State : uint8_t { kInitial, kHorizontal, kVertical };
 
   enum class TransformMethod : uint8_t {

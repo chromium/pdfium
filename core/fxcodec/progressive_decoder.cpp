@@ -64,79 +64,6 @@ void RGB2BGR(uint8_t* buffer, int width = 1) {
 
 }  // namespace
 
-ProgressiveDecoder::WeightTable::WeightTable() = default;
-
-ProgressiveDecoder::WeightTable::~WeightTable() = default;
-
-void ProgressiveDecoder::WeightTable::CalculateWeights(int dest_len,
-                                                       int src_len) {
-  CHECK_GE(dest_len, 0);
-  double scale = static_cast<double>(src_len) / dest_len;
-  const size_t weight_count = static_cast<size_t>(ceil(fabs(scale))) + 1;
-  m_ItemSize = PixelWeight::TotalBytesForWeightCount(weight_count);
-  FX_SAFE_SIZE_T safe_size = m_ItemSize;
-  safe_size *= dest_len;
-  m_pWeightTables.resize(safe_size.ValueOrDie());
-  m_DestMin = 0;
-  if (fabs(scale) < 1.0) {
-    for (int dest_pixel = 0; dest_pixel < dest_len; dest_pixel++) {
-      PixelWeight& pixel_weights = *GetPixelWeight(dest_pixel);
-      double src_pos = dest_pixel * scale + scale / 2;
-      pixel_weights.m_SrcStart = (int)floor((float)src_pos - 1.0f / 2);
-      pixel_weights.m_SrcEnd = (int)floor((float)src_pos + 1.0f / 2);
-      pixel_weights.m_SrcStart = std::max(pixel_weights.m_SrcStart, 0);
-      pixel_weights.m_SrcEnd = std::min(pixel_weights.m_SrcEnd, src_len - 1);
-      if (pixel_weights.m_SrcStart == pixel_weights.m_SrcEnd) {
-        pixel_weights.m_Weights[0] = 65536;
-      } else {
-        pixel_weights.m_Weights[1] = FXSYS_roundf(
-            (float)(src_pos - pixel_weights.m_SrcStart - 1.0f / 2) * 65536);
-        pixel_weights.m_Weights[0] = 65536 - pixel_weights.m_Weights[1];
-      }
-    }
-    return;
-  }
-  for (int dest_pixel = 0; dest_pixel < dest_len; dest_pixel++) {
-    PixelWeight& pixel_weights = *GetPixelWeight(dest_pixel);
-    double src_start = dest_pixel * scale;
-    double src_end = src_start + scale;
-    int start_i;
-    int end_i;
-    if (src_start < src_end) {
-      start_i = (int)floor((float)src_start);
-      end_i = (int)ceil((float)src_end);
-    } else {
-      start_i = (int)floor((float)src_end);
-      end_i = (int)ceil((float)src_start);
-    }
-    start_i = std::max(start_i, 0);
-    end_i = std::min(end_i, src_len - 1);
-    if (start_i > end_i) {
-      pixel_weights.m_SrcStart = start_i;
-      pixel_weights.m_SrcEnd = start_i;
-      continue;
-    }
-    pixel_weights.m_SrcStart = start_i;
-    pixel_weights.m_SrcEnd = end_i;
-    for (int j = start_i; j <= end_i; j++) {
-      double dest_start = ((float)j) / scale;
-      double dest_end = ((float)(j + 1)) / scale;
-      if (dest_start > dest_end) {
-        std::swap(dest_start, dest_end);
-      }
-      double area_start = std::max(dest_start, static_cast<double>(dest_pixel));
-      double area_end = std::min(dest_end, static_cast<double>(dest_pixel + 1));
-      double weight = area_start >= area_end ? 0.0 : area_end - area_start;
-      if (weight == 0 && j == end_i) {
-        pixel_weights.m_SrcEnd--;
-        break;
-      }
-      pixel_weights.m_Weights[j - start_i] =
-          FXSYS_roundf((float)(weight * 65536));
-    }
-  }
-}
-
 ProgressiveDecoder::HorzTable::HorzTable() = default;
 
 ProgressiveDecoder::HorzTable::~HorzTable() = default;
@@ -792,7 +719,10 @@ FXCODEC_STATUS ProgressiveDecoder::BmpStartDecode(
   GetTransMethod(m_pDeviceBitmap->GetFormat(), m_SrcFormat);
   m_ScanlineSize = FxAlignToBoundary<4>(m_SrcWidth * m_SrcComponents);
   m_pDecodeBuf.reset(FX_Alloc(uint8_t, m_ScanlineSize));
-  m_WeightHorz.CalculateWeights(m_sizeX, m_clipBox.Width());
+  FXDIB_ResampleOptions options;
+  options.bInterpolateBilinear = true;
+  m_WeightHorz.CalculateWeights(m_sizeX, 0, m_sizeX, m_clipBox.Width(), 0,
+                                m_clipBox.Width(), options);
   m_WeightVert.CalculateWeights(m_sizeY, m_clipBox.Height());
   m_status = FXCODEC_STATUS_DECODE_TOBECONTINUE;
   return m_status;
@@ -864,7 +794,10 @@ FXCODEC_STATUS ProgressiveDecoder::GifStartDecode(
   GetTransMethod(m_pDeviceBitmap->GetFormat(), m_SrcFormat);
   int scanline_size = FxAlignToBoundary<4>(m_SrcWidth);
   m_pDecodeBuf.reset(FX_Alloc(uint8_t, scanline_size));
-  m_WeightHorz.CalculateWeights(m_sizeX, m_clipBox.Width());
+  FXDIB_ResampleOptions options;
+  options.bInterpolateBilinear = true;
+  m_WeightHorz.CalculateWeights(m_sizeX, 0, m_sizeX, m_clipBox.Width(), 0,
+                                m_clipBox.Width(), options);
   m_WeightVert.CalculateWeights(m_sizeY, m_clipBox.Height());
   m_FrameCur = 0;
   m_status = FXCODEC_STATUS_DECODE_TOBECONTINUE;
@@ -1056,7 +989,10 @@ FXCODEC_STATUS ProgressiveDecoder::JpegStartDecode(
   int scanline_size = (m_SrcWidth + down_scale - 1) / down_scale;
   scanline_size = FxAlignToBoundary<4>(scanline_size * m_SrcComponents);
   m_pDecodeBuf.reset(FX_Alloc(uint8_t, scanline_size));
-  m_WeightHorz.CalculateWeights(m_sizeX, m_clipBox.Width());
+  FXDIB_ResampleOptions options;
+  options.bInterpolateBilinear = true;
+  m_WeightHorz.CalculateWeights(m_sizeX, 0, m_sizeX, m_clipBox.Width(), 0,
+                                m_clipBox.Width(), options);
   m_WeightVert.CalculateWeights(m_sizeY, m_clipBox.Height());
   switch (m_SrcComponents) {
     case 1:
