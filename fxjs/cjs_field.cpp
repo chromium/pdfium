@@ -186,7 +186,6 @@ std::vector<CPDF_FormField*> GetFormFieldsForName(
 
 CFX_Color GetFormControlColor(CPDF_FormControl* pFormControl,
                               const ByteString& entry) {
-  CFX_Color color;
   switch (pFormControl->GetColorARGB(entry).color_type) {
     case CFX_Color::Type::kTransparent:
       return CFX_Color(CFX_Color::Type::kTransparent);
@@ -205,6 +204,8 @@ CFX_Color GetFormControlColor(CPDF_FormControl* pFormControl,
                        pFormControl->GetOriginalColorComponent(2, entry),
                        pFormControl->GetOriginalColorComponent(3, entry));
   }
+  NOTREACHED();
+  return CFX_Color();
 }
 
 bool SetWidgetDisplayStatus(CPDFSDK_Widget* pWidget, int value) {

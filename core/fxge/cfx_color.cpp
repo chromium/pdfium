@@ -8,8 +8,10 @@
 
 #include <algorithm>
 
-// Color types are orded by increasing number of components so we can
-// choose a best color type during some conversions.
+#include "third_party/base/notreached.h"
+
+// Color types are ordered by increasing number of components so we can choose
+// a best color type during some conversions.
 static_assert(CFX_Color::Type::kTransparent < CFX_Color::Type::kGray,
               "color type values must be ordered");
 static_assert(CFX_Color::Type::kGray < CFX_Color::Type::kRGB,
@@ -82,6 +84,11 @@ CFX_Color CFX_Color::ConvertColorType(Type nConvertColorType) const {
       break;
     case CFX_Color::Type::kGray:
       switch (nConvertColorType) {
+        case CFX_Color::Type::kTransparent:
+          break;
+        case CFX_Color::Type::kGray:
+          NOTREACHED();
+          break;
         case CFX_Color::Type::kRGB:
           ret = ConvertGRAY2RGB(fColor1);
           break;
@@ -92,8 +99,13 @@ CFX_Color CFX_Color::ConvertColorType(Type nConvertColorType) const {
       break;
     case CFX_Color::Type::kRGB:
       switch (nConvertColorType) {
+        case CFX_Color::Type::kTransparent:
+          break;
         case CFX_Color::Type::kGray:
           ret = ConvertRGB2GRAY(fColor1, fColor2, fColor3);
+          break;
+        case CFX_Color::Type::kRGB:
+          NOTREACHED();
           break;
         case CFX_Color::Type::kCMYK:
           ret = ConvertRGB2CMYK(fColor1, fColor2, fColor3);
@@ -102,11 +114,16 @@ CFX_Color CFX_Color::ConvertColorType(Type nConvertColorType) const {
       break;
     case CFX_Color::Type::kCMYK:
       switch (nConvertColorType) {
+        case CFX_Color::Type::kTransparent:
+          break;
         case CFX_Color::Type::kGray:
           ret = ConvertCMYK2GRAY(fColor1, fColor2, fColor3, fColor4);
           break;
         case CFX_Color::Type::kRGB:
           ret = ConvertCMYK2RGB(fColor1, fColor2, fColor3, fColor4);
+          break;
+        case CFX_Color::Type::kCMYK:
+          NOTREACHED();
           break;
       }
       break;
