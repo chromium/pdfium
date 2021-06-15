@@ -46,6 +46,8 @@ class CStretchEngine {
     CWeightTable();
     ~CWeightTable();
 
+    // Accepts a negative `dest_len` argument, producing a "mirror
+    // image" of the result if `dest_len` is negative.
     bool CalculateWeights(int dest_len,
                           int dest_min,
                           int dest_max,
