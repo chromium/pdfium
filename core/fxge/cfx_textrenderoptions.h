@@ -24,6 +24,8 @@ struct CFX_TextRenderOptions {
   constexpr explicit CFX_TextRenderOptions(AliasingType type)
       : aliasing_type(type) {}
   constexpr CFX_TextRenderOptions(const CFX_TextRenderOptions& other) = default;
+  CFX_TextRenderOptions& operator=(const CFX_TextRenderOptions& other) =
+      default;
 
   // Indicates whether anti-aliasing is enabled.
   bool IsSmooth() const {
