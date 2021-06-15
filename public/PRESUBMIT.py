@@ -8,6 +8,9 @@ See http://dev.chromium.org/developers/how-tos/depottools/presubmit-scripts
 for more details about the presubmit API built into depot_tools.
 """
 
+USE_PYTHON3 = True
+
+
 def _CheckPublicHeaders(input_api, output_api):
   """Checks that the public headers match the API tests."""
   src_path = input_api.os_path.dirname(input_api.PresubmitLocalPath())
