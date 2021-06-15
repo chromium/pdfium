@@ -14,11 +14,43 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/span.h"
 
 class CFX_DIBBase;
 class PauseIndicatorIface;
 class ScanlineComposerIface;
+
+struct PixelWeight {
+  static size_t TotalBytesForWeightCount(size_t weight_count);
+
+  void SetStartEnd(int src_start, int src_end, size_t weight_count) {
+    CHECK_LT(static_cast<size_t>(src_end - src_start), weight_count);
+    m_SrcStart = src_start;
+    m_SrcEnd = src_end;
+  }
+
+  uint32_t GetWeightForPosition(int position) const {
+    CHECK_GE(position, m_SrcStart);
+    CHECK_LE(position, m_SrcEnd);
+    return m_Weights[position - m_SrcStart];
+  }
+
+  void SetWeightForPosition(int position, uint32_t weight) {
+    CHECK_GE(position, m_SrcStart);
+    CHECK_LE(position, m_SrcEnd);
+    m_Weights[position - m_SrcStart] = weight;
+  }
+
+  void RemoveLastWeight() {
+    CHECK_GT(m_SrcEnd, m_SrcStart);
+    --m_SrcEnd;
+  }
+
+  int m_SrcStart;
+  int m_SrcEnd;           // Note: inclusive.
+  uint32_t m_Weights[1];  // Not really 1, variable size.
+};
 
 class CStretchEngine {
  public:

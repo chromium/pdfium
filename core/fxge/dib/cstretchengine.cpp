@@ -7,8 +7,10 @@
 #include "core/fxge/dib/cstretchengine.h"
 
 #include <algorithm>
+#include <type_traits>
 #include <utility>
 
+#include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/pauseindicator_iface.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
@@ -16,6 +18,10 @@
 #include "core/fxge/dib/scanlinecomposer_iface.h"
 #include "third_party/base/check.h"
 #include "third_party/base/stl_util.h"
+
+static_assert(
+    std::is_trivially_destructible<PixelWeight>::value,
+    "PixelWeight storage may be re-used without invoking its destructor");
 
 namespace {
 
@@ -35,6 +41,15 @@ int GetPitchRoundUpTo4Bytes(int bits_per_pixel) {
 }
 
 }  // namespace
+
+// static
+size_t PixelWeight::TotalBytesForWeightCount(size_t weight_count) {
+  const size_t extra_weights = weight_count > 0 ? weight_count - 1 : 0;
+  FX_SAFE_SIZE_T total_bytes = extra_weights;
+  total_bytes *= sizeof(m_Weights[0]);
+  total_bytes += sizeof(PixelWeight);
+  return total_bytes.ValueOrDie();
+}
 
 CStretchEngine::CWeightTable::CWeightTable() = default;
 

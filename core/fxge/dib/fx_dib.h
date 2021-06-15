@@ -13,7 +13,6 @@
 #include <utility>
 
 #include "core/fxcrt/fx_coordinates.h"
-#include "third_party/base/check_op.h"
 
 #if defined(PDF_ENABLE_XFA)
 #include "core/fxcrt/widestring.h"
@@ -28,37 +27,6 @@ enum class FXDIB_Format : uint16_t {
   k1bppMask = 0x101,
   k8bppMask = 0x108,
   kArgb = 0x220,
-};
-
-struct PixelWeight {
-  static size_t TotalBytesForWeightCount(size_t weight_count);
-
-  void SetStartEnd(int src_start, int src_end, size_t weight_count) {
-    CHECK_LT(static_cast<size_t>(src_end - src_start), weight_count);
-    m_SrcStart = src_start;
-    m_SrcEnd = src_end;
-  }
-
-  uint32_t GetWeightForPosition(int position) const {
-    CHECK_GE(position, m_SrcStart);
-    CHECK_LE(position, m_SrcEnd);
-    return m_Weights[position - m_SrcStart];
-  }
-
-  void SetWeightForPosition(int position, uint32_t weight) {
-    CHECK_GE(position, m_SrcStart);
-    CHECK_LE(position, m_SrcEnd);
-    m_Weights[position - m_SrcStart] = weight;
-  }
-
-  void RemoveLastWeight() {
-    CHECK_GT(m_SrcEnd, m_SrcStart);
-    --m_SrcEnd;
-  }
-
-  int m_SrcStart;
-  int m_SrcEnd;           // Note: inclusive.
-  uint32_t m_Weights[1];  // Not really 1, variable size.
 };
 
 using FX_ARGB = uint32_t;
