@@ -18,8 +18,8 @@ namespace {
 
 uint32_t PixelWeightSum(const CStretchEngine::PixelWeight* weights) {
   uint32_t sum = 0;
-  for (int j = weights->m_SrcStart; j <= weights->m_SrcEnd; ++j) {
-    sum += weights->GetWeightForPosition(j);
+  for (int i = weights->m_SrcStart; i <= weights->m_SrcEnd; ++i) {
+    sum += weights->GetWeightForPosition(i);
   }
   return sum;
 }
@@ -27,7 +27,7 @@ uint32_t PixelWeightSum(const CStretchEngine::PixelWeight* weights) {
 void ExecuteOneStretchTest(uint32_t dest_width,
                            uint32_t src_width,
                            const FXDIB_ResampleOptions& options) {
-  constexpr uint32_t kExpectedSum = 65536;  // kFixedPointOne not exposed yet.
+  constexpr uint32_t kExpectedSum = CStretchEngine::kFixedPointOne;
   CStretchEngine::WeightTable table;
   table.CalculateWeights(dest_width, 0, dest_width, src_width, 0, src_width,
                          options);

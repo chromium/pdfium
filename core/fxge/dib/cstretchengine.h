@@ -23,6 +23,17 @@ class ScanlineComposerIface;
 
 class CStretchEngine {
  public:
+  static constexpr uint32_t kFixedPointBits = 16;
+  static constexpr uint32_t kFixedPointOne = 1 << kFixedPointBits;
+
+  static inline uint32_t FixedFromFloat(float f) {
+    return static_cast<uint32_t>(FXSYS_roundf(f * kFixedPointOne));
+  }
+
+  static inline uint8_t PixelFromFixed(uint32_t fixed) {
+    return static_cast<uint8_t>(fixed >> kFixedPointBits);
+  }
+
   struct PixelWeight {
     static size_t TotalBytesForWeightCount(size_t weight_count);
 
