@@ -561,11 +561,11 @@ bool CPDF_DIB::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
   if (m_pDecoder)
     return true;
 
-  Optional<JpegModule::JpegImageInfo> info_opt = JpegModule::LoadInfo(src_span);
+  Optional<JpegModule::ImageInfo> info_opt = JpegModule::LoadInfo(src_span);
   if (!info_opt.has_value())
     return false;
 
-  const JpegModule::JpegImageInfo& info = info_opt.value();
+  const JpegModule::ImageInfo& info = info_opt.value();
   m_Width = info.width;
   m_Height = info.height;
 

@@ -82,11 +82,11 @@ CPDF_Dictionary* CPDF_Image::GetDict() const {
 
 RetainPtr<CPDF_Dictionary> CPDF_Image::InitJPEG(
     pdfium::span<uint8_t> src_span) {
-  Optional<JpegModule::JpegImageInfo> info_opt = JpegModule::LoadInfo(src_span);
+  Optional<JpegModule::ImageInfo> info_opt = JpegModule::LoadInfo(src_span);
   if (!info_opt.has_value())
     return nullptr;
 
-  const JpegModule::JpegImageInfo& info = info_opt.value();
+  const JpegModule::ImageInfo& info = info_opt.value();
   if (!IsValidJpegComponent(info.num_components) ||
       !IsValidJpegBitsPerComponent(info.bits_per_components)) {
     return nullptr;
