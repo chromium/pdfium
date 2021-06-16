@@ -13,10 +13,6 @@
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 class CFGAS_GEGraphics;
-class CXFA_Linear;
-class CXFA_Pattern;
-class CXFA_Radial;
-class CXFA_Stipple;
 
 class CXFA_Fill final : public CXFA_Node {
  public:

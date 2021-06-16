@@ -29,8 +29,6 @@ class CPDF_Dictionary;
 class CPDF_Font;
 class CPDF_FormField;
 class CPDF_InteractiveForm;
-class CPDF_OCContext;
-class CPDF_RenderOptions;
 class CPDF_Stream;
 
 class CPDF_FormControl {

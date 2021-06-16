@@ -13,7 +13,6 @@
 
 class CPDF_Array;
 class CPDF_Document;
-class CPDF_Object;
 class CPDF_Stream;
 class CPDF_PageObjectHolder;
 

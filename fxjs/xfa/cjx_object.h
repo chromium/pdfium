@@ -23,7 +23,6 @@
 #include "xfa/fxfa/fxfa_basic.h"
 
 class CFXJSE_MapModule;
-class CFXJSE_Value;
 class CFX_V8;
 class CFX_XMLElement;
 class CJX_Object;

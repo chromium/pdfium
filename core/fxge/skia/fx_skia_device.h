@@ -23,7 +23,6 @@ class SkPath;
 class SkPictureRecorder;
 class SkiaState;
 class TextCharPos;
-struct SkIRect;
 
 class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
  public:

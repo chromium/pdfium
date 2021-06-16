@@ -19,7 +19,6 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/optional.h"
 
-class CPDF_Font;
 class CPDF_FormObject;
 class CPDF_Page;
 class CPDF_TextObject;

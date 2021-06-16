@@ -16,7 +16,6 @@
 
 class CFX_SeekableStreamProxy;
 class CFX_XMLDocument;
-class CFX_XMLElement;
 class CFX_XMLNode;
 class IFX_SeekableReadStream;
 

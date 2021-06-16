@@ -16,7 +16,6 @@
 
 class CPDF_Array;
 class CPDF_Dictionary;
-class CPDF_Parser;
 
 class CPDF_SecurityHandler : public Retainable {
  public:

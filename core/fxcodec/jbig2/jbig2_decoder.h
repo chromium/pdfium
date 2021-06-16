@@ -13,7 +13,6 @@
 #include "third_party/base/span.h"
 
 class CJBig2_Context;
-class CJBig2_Image;
 class JBig2_DocumentContext;
 class PauseIndicatorIface;
 

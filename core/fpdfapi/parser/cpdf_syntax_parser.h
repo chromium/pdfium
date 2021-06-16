@@ -18,7 +18,6 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxcrt/weak_ptr.h"
 
-class CPDF_CryptoHandler;
 class CPDF_Dictionary;
 class CPDF_IndirectObjectHolder;
 class CPDF_Object;

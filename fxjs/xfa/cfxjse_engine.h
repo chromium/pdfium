@@ -26,6 +26,7 @@ class CFXJSE_Context;
 class CFXJSE_FormCalcContext;
 class CFXJSE_HostObject;
 class CFXJSE_ResolveProcessor;
+class CFXJSE_Value;
 class CJS_Runtime;
 
 enum XFA_ResolveNode : uint16_t {

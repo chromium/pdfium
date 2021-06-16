@@ -12,7 +12,6 @@
 #include "core/fxcrt/fx_system.h"
 
 class CPDF_Dictionary;
-class CPDF_Object;
 class CPDF_SyntaxParser;
 
 class CPDF_LinearizedHeader {

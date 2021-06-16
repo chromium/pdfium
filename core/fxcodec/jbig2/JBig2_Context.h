@@ -21,7 +21,6 @@
 
 class CJBig2_ArithDecoder;
 class CJBig2_GRDProc;
-class CPDF_StreamAcc;
 class PauseIndicatorIface;
 
 // Cache is keyed by the ObjNum of a stream and an index within the stream.

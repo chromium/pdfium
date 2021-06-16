@@ -15,7 +15,6 @@
 #include "core/fxge/dib/fx_dib.h"
 
 class CPDF_Dictionary;
-class CPDF_FormControl;
 class CPDF_Stream;
 
 // Corresponds to PDF spec section 12.5.6.19 (Widget annotation TP dictionary).

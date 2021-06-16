@@ -23,7 +23,6 @@ extern const char kClassTag[];
 }  // namespace pdfium
 
 class CFXJSE_FormCalcContext;
-class CFXJSE_Value;
 class CJS_Result;
 class CJX_Object;
 

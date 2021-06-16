@@ -28,7 +28,6 @@ enum CIDSet : uint8_t {
 };
 
 class CFX_CTTGSUBTable;
-class CPDF_Array;
 class CPDF_CID2UnicodeMap;
 class CPDF_CMap;
 class CPDF_StreamAcc;

@@ -10,7 +10,6 @@
 #include "fxjs/xfa/cjx_object.h"
 #include "fxjs/xfa/jse_define.h"
 
-class CFXJSE_Value;
 class CScript_EventPseudoModel;
 
 enum class XFA_Event {

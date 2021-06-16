@@ -25,7 +25,6 @@ class CPDF_Document;
 class CPDF_Dictionary;
 class CPDF_Font;
 class CPDF_FormControl;
-class CPDF_Object;
 class CPDF_Page;
 
 class CPDF_InteractiveForm {

@@ -38,7 +38,6 @@ class CPDF_ShadingObject;
 class CPDF_ShadingPattern;
 class CPDF_TilingPattern;
 class CPDF_TransferFunc;
-class CPDF_Type3Cache;
 class CPDF_Type3Char;
 class CPDF_Type3Font;
 class PauseIndicatorIface;

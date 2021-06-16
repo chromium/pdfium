@@ -26,7 +26,6 @@
 class CPDF_ContentParser;
 class CPDF_Document;
 class CPDF_PageObject;
-class CPDF_Stream;
 class PauseIndicatorIface;
 
 // These structs are used to keep track of resources that have already been

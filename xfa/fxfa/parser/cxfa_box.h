@@ -17,7 +17,6 @@
 class CFGAS_GEGraphics;
 class CXFA_Edge;
 class CXFA_Fill;
-class CXFA_Margin;
 class CXFA_Stroke;
 
 class CXFA_Box : public CXFA_Node {

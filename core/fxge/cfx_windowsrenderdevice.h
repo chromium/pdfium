@@ -21,7 +21,6 @@ enum WindowsPrintMode {
   kModeEmfImageMasks = 6,
 };
 
-class RenderDeviceDriverIface;
 struct EncoderIface;
 
 #if defined(PDFIUM_PRINT_TEXT_WITH_GDI)

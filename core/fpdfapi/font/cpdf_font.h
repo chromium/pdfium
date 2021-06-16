@@ -25,7 +25,6 @@ class CFX_DIBitmap;
 class CFX_SubstFont;
 class CPDF_CIDFont;
 class CPDF_Document;
-class CPDF_Object;
 class CPDF_TrueTypeFont;
 class CPDF_Type1Font;
 class CPDF_Type3Char;

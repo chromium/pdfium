@@ -13,7 +13,6 @@
 #include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_Object;
-class CPDF_Reference;
 class CPDF_IndirectObjectHolder;
 class CPDF_ReadValidator;
 

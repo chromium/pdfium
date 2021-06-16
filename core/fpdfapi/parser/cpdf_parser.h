@@ -21,7 +21,6 @@
 #include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_Array;
-class CPDF_CryptoHandler;
 class CPDF_Dictionary;
 class CPDF_LinearizedHeader;
 class CPDF_Object;

@@ -20,7 +20,6 @@
 
 class CPVT_VariableText;
 struct CPVT_LineInfo;
-struct CPVT_WordLine;
 struct CPVT_WordPlace;
 
 class CPVT_Section final {

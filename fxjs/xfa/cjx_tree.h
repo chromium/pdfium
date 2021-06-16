@@ -11,7 +11,6 @@
 #include "fxjs/xfa/cjx_object.h"
 #include "fxjs/xfa/jse_define.h"
 
-class CFXJSE_Value;
 class CXFA_Object;
 class CXFA_Node;
 

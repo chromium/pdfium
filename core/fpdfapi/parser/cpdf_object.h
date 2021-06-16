@@ -21,7 +21,6 @@ class CPDF_Dictionary;
 class CPDF_Encryptor;
 class CPDF_IndirectObjectHolder;
 class CPDF_Name;
-class CPDF_Null;
 class CPDF_Number;
 class CPDF_Reference;
 class CPDF_Stream;

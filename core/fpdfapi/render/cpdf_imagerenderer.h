@@ -17,12 +17,10 @@
 #include "core/fxge/dib/fx_dib.h"
 #include "third_party/base/optional.h"
 
-class CFX_DIBitmap;
 class CFX_DIBBase;
 class CFX_DefaultRenderDevice;
 class CFX_ImageTransformer;
 class CPDF_ImageObject;
-class CPDF_PageObject;
 class CPDF_Pattern;
 class CPDF_RenderOptions;
 class CPDF_RenderStatus;

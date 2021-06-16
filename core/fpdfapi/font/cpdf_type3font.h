@@ -18,7 +18,6 @@
 
 class CPDF_Dictionary;
 class CPDF_Document;
-class CPDF_Stream;
 class CPDF_Type3Char;
 
 class CPDF_Type3Font final : public CPDF_SimpleFont {
