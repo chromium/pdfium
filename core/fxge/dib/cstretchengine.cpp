@@ -67,6 +67,9 @@ bool CStretchEngine::WeightTable::CalculateWeights(
   m_ItemSizeBytes = 0;
   m_WeightTablesSizeBytes = 0;
   m_WeightTables.clear();
+  if (dest_len == 0)
+    return true;
+
   if (dest_min > dest_max)
     return false;
 

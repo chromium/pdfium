@@ -135,3 +135,9 @@ TEST(CStretchEngine, ZeroLengthSrcNoSmoothingBilinear) {
   CStretchEngine::WeightTable table;
   ASSERT_TRUE(table.CalculateWeights(100, 0, 100, 0, 0, 0, options));
 }
+
+TEST(CStretchEngine, ZeroLengthDest) {
+  FXDIB_ResampleOptions options;
+  CStretchEngine::WeightTable table;
+  ASSERT_TRUE(table.CalculateWeights(0, 0, 0, 100, 0, 100, options));
+}
