@@ -13,7 +13,6 @@
 #include "core/fxge/dib/cstretchengine.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "third_party/base/check.h"
-#include "third_party/base/stl_util.h"
 
 namespace {
 

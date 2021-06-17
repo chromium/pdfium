@@ -11,7 +11,6 @@
 #include "testing/fxgc_unittest.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/v8_test_environment.h"
-#include "third_party/base/stl_util.h"
 #include "v8/include/cppgc/allocation.h"
 #include "v8/include/cppgc/persistent.h"
 

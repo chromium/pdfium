@@ -9,7 +9,6 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/fx_font.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/stl_util.h"
 
 namespace {
 
