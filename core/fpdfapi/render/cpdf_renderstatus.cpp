@@ -442,12 +442,15 @@ RetainPtr<CPDF_TransferFunc> CPDF_RenderStatus::GetTransferFunc(
   return pDocCache ? pDocCache->GetTransferFunc(pObj) : nullptr;
 }
 
-FX_ARGB CPDF_RenderStatus::GetFillArgbInternal(CPDF_PageObject* pObj,
-                                               bool bType3) const {
-  const CPDF_ColorState* pColorState = &pObj->m_ColorState;
-  if (!bType3 && Type3CharMissingFillColor(m_pType3Char.Get(), pColorState))
+FX_ARGB CPDF_RenderStatus::GetFillArgb(CPDF_PageObject* pObj) const {
+  if (Type3CharMissingFillColor(m_pType3Char.Get(), &pObj->m_ColorState))
     return m_T3FillColor;
 
+  return GetFillArgbForType3(pObj);
+}
+
+FX_ARGB CPDF_RenderStatus::GetFillArgbForType3(CPDF_PageObject* pObj) const {
+  const CPDF_ColorState* pColorState = &pObj->m_ColorState;
   if (MissingFillColor(pColorState))
     pColorState = &m_InitialStates.m_ColorState;
 
