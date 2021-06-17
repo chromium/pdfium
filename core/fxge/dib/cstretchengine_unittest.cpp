@@ -16,6 +16,10 @@
 
 namespace {
 
+// Discovered experimentally
+constexpr uint32_t kTooBigSrcLen = 20;
+constexpr uint32_t kTooBigDestLen = 32 * 1024 * 1024 + 1;
+
 uint32_t PixelWeightSum(const CStretchEngine::PixelWeight* weights) {
   uint32_t sum = 0;
   for (int i = weights->m_SrcStart; i <= weights->m_SrcEnd; ++i) {
@@ -140,4 +144,12 @@ TEST(CStretchEngine, ZeroLengthDest) {
   FXDIB_ResampleOptions options;
   CStretchEngine::WeightTable table;
   ASSERT_TRUE(table.CalculateWeights(0, 0, 0, 100, 0, 100, options));
+}
+
+TEST(CStretchEngine, TooManyWeights) {
+  FXDIB_ResampleOptions options;
+  CStretchEngine::WeightTable table;
+  ASSERT_FALSE(table.CalculateWeights(kTooBigDestLen, 0, kTooBigDestLen,
+                                      kTooBigSrcLen, 0, kTooBigSrcLen,
+                                      options));
 }
