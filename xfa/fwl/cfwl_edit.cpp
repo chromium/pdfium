@@ -15,7 +15,7 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/text_char_pos.h"
 #include "third_party/base/check.h"
-#include "third_party/base/stl_util.h"
+#include "third_party/base/numerics/ranges.h"
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fgas/font/cfgas_gefont.h"

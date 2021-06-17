@@ -17,6 +17,7 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "third_party/base/check.h"
 #include "third_party/base/compiler_specific.h"
+#include "third_party/base/numerics/ranges.h"
 #include "third_party/base/stl_util.h"
 
 namespace {

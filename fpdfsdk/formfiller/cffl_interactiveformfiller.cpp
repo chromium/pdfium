@@ -26,7 +26,7 @@
 #include "public/fpdf_fwlevent.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/stl_util.h"
+#include "third_party/base/numerics/ranges.h"
 
 CFFL_InteractiveFormFiller::CFFL_InteractiveFormFiller(
     CPDFSDK_FormFillEnvironment* pFormFillEnv)

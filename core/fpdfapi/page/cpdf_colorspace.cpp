@@ -39,6 +39,7 @@
 #include "third_party/base/containers/contains.h"
 #include "third_party/base/cxx17_backports.h"
 #include "third_party/base/notreached.h"
+#include "third_party/base/numerics/ranges.h"
 #include "third_party/base/stl_util.h"
 
 namespace {

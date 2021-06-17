@@ -31,6 +31,7 @@
 #include "core/fxge/fx_freetype.h"
 #include "third_party/base/check.h"
 #include "third_party/base/cxx17_backports.h"
+#include "third_party/base/numerics/ranges.h"
 #include "third_party/base/stl_util.h"
 
 namespace {

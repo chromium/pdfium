@@ -20,8 +20,8 @@
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/notreached.h"
+#include "third_party/base/numerics/ranges.h"
 #include "third_party/base/span.h"
-#include "third_party/base/stl_util.h"
 
 // Ignore fallthrough warnings in agg23 headers.
 #if defined(__clang__)

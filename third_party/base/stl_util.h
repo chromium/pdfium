@@ -5,7 +5,6 @@
 #ifndef THIRD_PARTY_BASE_STL_UTIL_H_
 #define THIRD_PARTY_BASE_STL_UTIL_H_
 
-#include <algorithm>
 #include <memory>
 #include <vector>
 
@@ -35,12 +34,6 @@ ResultType CollectionSize(const Collection& collection) {
 template <typename IndexType, typename Collection>
 bool IndexInBounds(const Collection& collection, IndexType index) {
   return index >= 0 && index < CollectionSize<IndexType>(collection);
-}
-
-// std::clamp(), some day.
-template <class T>
-constexpr const T& clamp(const T& v, const T& lo, const T& hi) {
-  return std::min(std::max(v, lo), hi);
 }
 
 // Safely allocate a 1-dim vector big enough for |w| by |h| or die.

@@ -10,7 +10,7 @@
 #include <memory>
 #include <utility>
 
-#include "third_party/base/stl_util.h"
+#include "third_party/base/numerics/ranges.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_messagemouse.h"
 #include "xfa/fwl/cfwl_messagemousewheel.h"
