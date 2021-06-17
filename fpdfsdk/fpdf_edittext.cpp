@@ -29,7 +29,7 @@
 #include "public/fpdf_edit.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/stl_util.h"
+#include "third_party/base/containers/contains.h"
 
 // These checks are here because core/ and public/ cannot depend on each other.
 static_assert(static_cast<int>(TextRenderingMode::MODE_UNKNOWN) ==

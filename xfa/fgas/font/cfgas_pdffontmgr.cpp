@@ -15,7 +15,6 @@
 #include "core/fxge/fx_font.h"
 #include "third_party/base/check.h"
 #include "third_party/base/cxx17_backports.h"
-#include "third_party/base/stl_util.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 

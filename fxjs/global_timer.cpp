@@ -11,8 +11,8 @@
 #include "core/fxcrt/cfx_timer.h"
 #include "fxjs/cjs_app.h"
 #include "third_party/base/check.h"
+#include "third_party/base/containers/contains.h"
 #include "third_party/base/no_destructor.h"
-#include "third_party/base/stl_util.h"
 
 namespace {
 

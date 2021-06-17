@@ -15,7 +15,6 @@
 #include "core/fxcrt/fx_extension.h"
 #include "third_party/base/check.h"
 #include "third_party/base/span.h"
-#include "third_party/base/stl_util.h"
 #include "xfa/fgas/crt/cfgas_stringformatter.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"

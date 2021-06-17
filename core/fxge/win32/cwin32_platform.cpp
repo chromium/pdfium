@@ -13,7 +13,6 @@
 #include "core/fxge/cfx_gemodule.h"
 #include "third_party/base/cxx17_backports.h"
 #include "third_party/base/ptr_util.h"
-#include "third_party/base/stl_util.h"
 #include "third_party/base/win/win_util.h"
 
 namespace {

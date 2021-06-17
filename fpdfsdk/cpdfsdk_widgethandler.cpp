@@ -21,7 +21,7 @@
 #include "fpdfsdk/formfiller/cffl_formfield.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/stl_util.h"
+#include "third_party/base/containers/contains.h"
 
 CPDFSDK_WidgetHandler::CPDFSDK_WidgetHandler() = default;
 

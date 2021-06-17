@@ -65,8 +65,8 @@
 #include "core/fxge/text_char_pos.h"
 #include "core/fxge/text_glyph_pos.h"
 #include "third_party/base/check.h"
+#include "third_party/base/containers/contains.h"
 #include "third_party/base/notreached.h"
-#include "third_party/base/stl_util.h"
 
 #if defined(_SKIA_SUPPORT_)
 #include "core/fxge/skia/fx_skia_device.h"

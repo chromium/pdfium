@@ -13,7 +13,7 @@
 #include "core/fpdfapi/font/cfx_stockfontarray.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "third_party/base/check.h"
-#include "third_party/base/stl_util.h"
+#include "third_party/base/containers/contains.h"
 
 namespace {
 

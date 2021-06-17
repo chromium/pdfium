@@ -21,7 +21,7 @@
 #include "fpdfsdk/formfiller/cffl_formfield.h"
 #include "public/fpdf_fwlevent.h"
 #include "third_party/base/check.h"
-#include "third_party/base/stl_util.h"
+#include "third_party/base/containers/contains.h"
 
 namespace {
 

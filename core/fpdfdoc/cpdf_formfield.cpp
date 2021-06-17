@@ -28,6 +28,7 @@
 #include "core/fpdfdoc/cpdf_generateap.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "third_party/base/check.h"
+#include "third_party/base/containers/contains.h"
 #include "third_party/base/stl_util.h"
 
 namespace {

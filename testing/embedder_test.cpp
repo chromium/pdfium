@@ -22,8 +22,8 @@
 #include "testing/utils/hash.h"
 #include "testing/utils/path_service.h"
 #include "third_party/base/check.h"
+#include "third_party/base/containers/contains.h"
 #include "third_party/base/notreached.h"
-#include "third_party/base/stl_util.h"
 
 #ifdef PDF_ENABLE_V8
 #include "testing/v8_test_environment.h"

@@ -30,6 +30,7 @@
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/compiler_specific.h"
+#include "third_party/base/containers/contains.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"

@@ -39,8 +39,8 @@
 #include "core/fxge/cfx_unicodeencoding.h"
 #include "core/fxge/fx_font.h"
 #include "third_party/base/check.h"
+#include "third_party/base/containers/contains.h"
 #include "third_party/base/cxx17_backports.h"
-#include "third_party/base/stl_util.h"
 
 namespace {
 

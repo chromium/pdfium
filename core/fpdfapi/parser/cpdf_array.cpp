@@ -17,8 +17,8 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcrt/fx_stream.h"
 #include "third_party/base/check.h"
+#include "third_party/base/containers/contains.h"
 #include "third_party/base/notreached.h"
-#include "third_party/base/stl_util.h"
 
 CPDF_Array::CPDF_Array() = default;
 

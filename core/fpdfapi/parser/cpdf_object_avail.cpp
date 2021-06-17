@@ -12,7 +12,7 @@
 #include "core/fpdfapi/parser/cpdf_read_validator.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "third_party/base/check.h"
-#include "third_party/base/stl_util.h"
+#include "third_party/base/containers/contains.h"
 
 CPDF_ObjectAvail::CPDF_ObjectAvail(
     const RetainPtr<CPDF_ReadValidator>& validator,

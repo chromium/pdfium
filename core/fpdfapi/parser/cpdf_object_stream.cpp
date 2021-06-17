@@ -16,8 +16,8 @@
 #include "core/fxcrt/cfx_readonlymemorystream.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/check.h"
+#include "third_party/base/containers/contains.h"
 #include "third_party/base/ptr_util.h"
-#include "third_party/base/stl_util.h"
 
 // static
 bool CPDF_ObjectStream::IsObjectsStreamObject(const CPDF_Object* object) {

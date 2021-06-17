@@ -8,7 +8,7 @@
 
 #include "fxjs/gc/container_trace.h"
 #include "fxjs/xfa/cjx_object.h"
-#include "third_party/base/stl_util.h"
+#include "third_party/base/containers/contains.h"
 #include "v8/include/cppgc/heap.h"
 #include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
 #include "xfa/fxfa/layout/cxfa_contentlayoutprocessor.h"

@@ -35,9 +35,9 @@
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "third_party/base/check.h"
+#include "third_party/base/containers/contains.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/span.h"
-#include "third_party/base/stl_util.h"
 
 namespace {
 

@@ -6,7 +6,7 @@
 
 #include "fxjs/xfa/cfxjse_mapmodule.h"
 
-#include "third_party/base/stl_util.h"
+#include "third_party/base/containers/contains.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 
 CFXJSE_MapModule::CFXJSE_MapModule() = default;

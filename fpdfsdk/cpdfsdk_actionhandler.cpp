@@ -17,8 +17,8 @@
 #include "fxjs/ijs_event_context.h"
 #include "fxjs/ijs_runtime.h"
 #include "third_party/base/check.h"
+#include "third_party/base/containers/contains.h"
 #include "third_party/base/notreached.h"
-#include "third_party/base/stl_util.h"
 
 bool CPDFSDK_ActionHandler::DoAction_DocOpen(
     const CPDF_Action& action,

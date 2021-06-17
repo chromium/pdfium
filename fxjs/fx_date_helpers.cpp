@@ -15,7 +15,6 @@
 #include "core/fxcrt/fx_system.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "third_party/base/cxx17_backports.h"
-#include "third_party/base/stl_util.h"
 
 namespace fxjs {
 namespace {

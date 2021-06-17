@@ -596,6 +596,7 @@ source_set("pdfium_base") {
     "base/check_op.h",
     "base/compiler_specific.h",
     "base/containers/adapters.h",
+    "base/containers/contains.h",
     "base/cxx17_backports.h",
     "base/debug/alias.cc",
     "base/debug/alias.h",

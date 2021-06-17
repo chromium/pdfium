@@ -41,7 +41,6 @@
 #include "fxjs/xfa/cjx_wsdlconnection.h"
 #include "fxjs/xfa/cjx_xfa.h"
 #include "third_party/base/cxx17_backports.h"
-#include "third_party/base/stl_util.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
 namespace {

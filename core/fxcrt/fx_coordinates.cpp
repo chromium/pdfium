@@ -12,7 +12,6 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/cxx17_backports.h"
-#include "third_party/base/stl_util.h"
 
 #ifndef NDEBUG
 #include <ostream>

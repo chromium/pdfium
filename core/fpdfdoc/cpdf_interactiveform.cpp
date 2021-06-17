@@ -31,7 +31,7 @@
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fx_font.h"
 #include "third_party/base/check.h"
-#include "third_party/base/stl_util.h"
+#include "third_party/base/containers/contains.h"
 
 namespace {
 

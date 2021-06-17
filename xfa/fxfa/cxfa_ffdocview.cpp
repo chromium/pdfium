@@ -14,6 +14,7 @@
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/check_op.h"
+#include "third_party/base/containers/contains.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffbarcode.h"

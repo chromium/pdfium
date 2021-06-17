@@ -12,7 +12,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
-#include "third_party/base/stl_util.h"
+#include "third_party/base/containers/contains.h"
 
 namespace {
 

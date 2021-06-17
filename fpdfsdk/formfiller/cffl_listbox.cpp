@@ -14,7 +14,7 @@
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 #include "fpdfsdk/pwl/cpwl_list_box.h"
-#include "third_party/base/stl_util.h"
+#include "third_party/base/containers/contains.h"
 
 CFFL_ListBox::CFFL_ListBox(CPDFSDK_FormFillEnvironment* pApp,
                            CPDFSDK_Widget* pWidget)

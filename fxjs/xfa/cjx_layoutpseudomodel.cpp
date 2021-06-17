@@ -14,7 +14,7 @@
 #include "fxjs/js_resources.h"
 #include "fxjs/xfa/cfxjse_class.h"
 #include "fxjs/xfa/cfxjse_engine.h"
-#include "third_party/base/stl_util.h"
+#include "third_party/base/containers/contains.h"
 #include "v8/include/cppgc/allocation.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
