@@ -24,26 +24,41 @@ uint32_t PixelWeightSum(const CStretchEngine::PixelWeight* weights) {
   return sum;
 }
 
-void ExecuteOneStretchTest(uint32_t dest_width,
-                           uint32_t src_width,
+void ExecuteOneStretchTest(int32_t dest_width,
+                           int32_t src_width,
                            const FXDIB_ResampleOptions& options) {
   constexpr uint32_t kExpectedSum = CStretchEngine::kFixedPointOne;
   CStretchEngine::WeightTable table;
   ASSERT_TRUE(table.CalculateWeights(dest_width, 0, dest_width, src_width, 0,
                                      src_width, options));
-  for (uint32_t i = 0; i < dest_width; ++i) {
+  for (int32_t i = 0; i < dest_width; ++i) {
     EXPECT_EQ(kExpectedSum, PixelWeightSum(table.GetPixelWeight(i)))
         << "for { " << src_width << ", " << dest_width << " } at " << i;
   }
 }
 
+void ExecuteOneReversedStretchTest(int32_t dest_width,
+                                   int32_t src_width,
+                                   const FXDIB_ResampleOptions& options) {
+  constexpr uint32_t kExpectedSum = CStretchEngine::kFixedPointOne;
+  CStretchEngine::WeightTable table;
+  ASSERT_TRUE(table.CalculateWeights(-dest_width, 0, dest_width, src_width, 0,
+                                     src_width, options));
+  for (int32_t i = 0; i < dest_width; ++i) {
+    EXPECT_EQ(kExpectedSum, PixelWeightSum(table.GetPixelWeight(i)))
+        << "for { " << src_width << ", " << dest_width << " } at " << i
+        << " (reversed)";
+  }
+}
+
 void ExecuteStretchTests(const FXDIB_ResampleOptions& options) {
   // Can't test everything, few random values chosen.
-  constexpr uint32_t kDestWidths[] = {1, 2, 337, 512, 808, 2550};
-  constexpr uint32_t kSrcWidths[] = {1, 2, 187, 256, 809, 1110};
-  for (uint32_t src_width : kSrcWidths) {
-    for (uint32_t dest_width : kDestWidths) {
+  constexpr int32_t kDestWidths[] = {1, 2, 337, 512, 808, 2550};
+  constexpr int32_t kSrcWidths[] = {1, 2, 187, 256, 809, 1110};
+  for (int32_t src_width : kSrcWidths) {
+    for (int32_t dest_width : kDestWidths) {
       ExecuteOneStretchTest(dest_width, src_width, options);
+      ExecuteOneReversedStretchTest(dest_width, src_width, options);
     }
   }
 }
