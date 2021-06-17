@@ -35,6 +35,9 @@ int GetPitchRoundUpTo4Bytes(int bits_per_pixel) {
 // static
 size_t CStretchEngine::PixelWeight::TotalBytesForWeightCount(
     size_t weight_count) {
+  // Always room for one weight even for empty ranges due to declaration
+  // of m_Weights[1] in the header. Don't shrink below this since
+  // CalculateWeights() relies on this later.
   const size_t extra_weights = weight_count > 0 ? weight_count - 1 : 0;
   FX_SAFE_SIZE_T total_bytes = extra_weights;
   total_bytes *= sizeof(m_Weights[0]);
@@ -95,7 +98,8 @@ bool CStretchEngine::WeightTable::CalculateWeights(
         src_start = std::max(src_start, src_min);
         src_end = std::min(src_end, src_max - 1);
         pixel_weights.SetStartEnd(src_start, src_end, weight_count);
-        if (pixel_weights.m_SrcStart == pixel_weights.m_SrcEnd) {
+        if (pixel_weights.m_SrcStart >= pixel_weights.m_SrcEnd) {
+          // Always room for one weight per size calculation.
           pixel_weights.m_Weights[0] = kFixedPointOne;
         } else {
           pixel_weights.m_Weights[1] = FixedFromFloat(

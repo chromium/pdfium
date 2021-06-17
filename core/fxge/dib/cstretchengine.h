@@ -38,7 +38,7 @@ class CStretchEngine {
     static size_t TotalBytesForWeightCount(size_t weight_count);
 
     void SetStartEnd(int src_start, int src_end, size_t weight_count) {
-      CHECK_LT(static_cast<size_t>(src_end - src_start), weight_count);
+      CHECK_LT(src_end - src_start, static_cast<int>(weight_count));
       m_SrcStart = src_start;
       m_SrcEnd = src_end;
     }
@@ -61,7 +61,7 @@ class CStretchEngine {
     }
 
     int m_SrcStart;
-    int m_SrcEnd;           // Note: inclusive.
+    int m_SrcEnd;           // Note: inclusive, [0, -1] for empty range at 0.
     uint32_t m_Weights[1];  // Not really 1, variable size.
   };
 

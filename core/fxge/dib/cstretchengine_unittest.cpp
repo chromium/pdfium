@@ -29,8 +29,8 @@ void ExecuteOneStretchTest(uint32_t dest_width,
                            const FXDIB_ResampleOptions& options) {
   constexpr uint32_t kExpectedSum = CStretchEngine::kFixedPointOne;
   CStretchEngine::WeightTable table;
-  table.CalculateWeights(dest_width, 0, dest_width, src_width, 0, src_width,
-                         options);
+  ASSERT_TRUE(table.CalculateWeights(dest_width, 0, dest_width, src_width, 0,
+                                     src_width, options));
   for (uint32_t i = 0; i < dest_width; ++i) {
     EXPECT_EQ(kExpectedSum, PixelWeightSum(table.GetPixelWeight(i)))
         << "for { " << src_width << ", " << dest_width << " } at " << i;
@@ -91,4 +91,32 @@ TEST(CStretchEngine, WeightRoundingNoSmoothingBilinear) {
   options.bNoSmoothing = true;
   options.bInterpolateBilinear = true;
   ExecuteStretchTests(options);
+}
+
+TEST(CStretchEngine, ZeroLengthSrc) {
+  FXDIB_ResampleOptions options;
+  CStretchEngine::WeightTable table;
+  ASSERT_TRUE(table.CalculateWeights(100, 0, 100, 0, 0, 0, options));
+}
+
+TEST(CStretchEngine, ZeroLengthSrcNoSmoothing) {
+  FXDIB_ResampleOptions options;
+  options.bNoSmoothing = true;
+  CStretchEngine::WeightTable table;
+  ASSERT_TRUE(table.CalculateWeights(100, 0, 100, 0, 0, 0, options));
+}
+
+TEST(CStretchEngine, ZeroLengthSrcBilinear) {
+  FXDIB_ResampleOptions options;
+  options.bInterpolateBilinear = true;
+  CStretchEngine::WeightTable table;
+  ASSERT_TRUE(table.CalculateWeights(100, 0, 100, 0, 0, 0, options));
+}
+
+TEST(CStretchEngine, ZeroLengthSrcNoSmoothingBilinear) {
+  FXDIB_ResampleOptions options;
+  options.bNoSmoothing = true;
+  options.bInterpolateBilinear = true;
+  CStretchEngine::WeightTable table;
+  ASSERT_TRUE(table.CalculateWeights(100, 0, 100, 0, 0, 0, options));
 }
