@@ -6,7 +6,7 @@
 
 #include "core/fpdfapi/cmaps/CNS1/cmaps_cns1.h"
 
-#include "third_party/base/stl_util.h"
+#include "third_party/base/cxx17_backports.h"
 
 const FXCMAP_CMap g_FXCMAP_CNS1_cmaps[] = {
     {"B5pc-H", g_FXCMAP_B5pc_H_0, nullptr, 247, 0, FXCMAP_CMap::Range, 0},

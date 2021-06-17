@@ -11,6 +11,7 @@
 #include "build/build_config.h"
 #include "core/fxcrt/fx_string.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
 

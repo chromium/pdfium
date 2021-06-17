@@ -5,7 +5,7 @@
 #include "fxjs/cjs_publicmethods.h"
 
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/stl_util.h"
+#include "third_party/base/cxx17_backports.h"
 
 TEST(CJS_PublicMethods, IsNumber) {
   // TODO(weili): Check whether results from case 0, 1, 10, 15 are intended.

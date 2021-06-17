@@ -13,7 +13,7 @@
 #include "testing/fxgc_unittest.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/scoped_set_tz.h"
-#include "third_party/base/stl_util.h"
+#include "third_party/base/cxx17_backports.h"
 #include "v8/include/cppgc/persistent.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 

@@ -53,18 +53,6 @@ struct HasContains<Container,
 
 }  // namespace internal
 
-// C++14 implementation of C++17's std::size():
-// http://en.cppreference.com/w/cpp/iterator/size
-template <typename Container>
-constexpr auto size(const Container& c) -> decltype(c.size()) {
-  return c.size();
-}
-
-template <typename T, size_t N>
-constexpr size_t size(const T (&array)[N]) noexcept {
-  return N;
-}
-
 // General purpose implementation to check if |container| contains |value|.
 template <typename Container,
           typename Value,

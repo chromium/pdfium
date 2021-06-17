@@ -15,6 +15,7 @@
 #include "core/fxge/fx_font.h"
 #include "core/fxge/systemfontinfo_iface.h"
 #include "third_party/base/check.h"
+#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/stl_util.h"
 
 #if !defined(OS_LINUX) && !defined(OS_CHROMEOS) && !defined(OS_ASMJS)

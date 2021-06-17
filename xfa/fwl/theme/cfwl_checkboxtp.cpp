@@ -7,7 +7,7 @@
 #include "xfa/fwl/theme/cfwl_checkboxtp.h"
 
 #include "core/fxge/cfx_path.h"
-#include "third_party/base/stl_util.h"
+#include "third_party/base/cxx17_backports.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fgas/graphics/cfgas_gecolor.h"
 #include "xfa/fgas/graphics/cfgas_gepath.h"

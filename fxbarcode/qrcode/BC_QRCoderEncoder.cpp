@@ -40,8 +40,8 @@
 #include "fxbarcode/qrcode/BC_QRCoderVersion.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
+#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/optional.h"
-#include "third_party/base/stl_util.h"
 
 using ModeStringPair = std::pair<CBC_QRCoderMode*, ByteString>;
 

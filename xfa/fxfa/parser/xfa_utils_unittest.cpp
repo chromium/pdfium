@@ -5,7 +5,7 @@
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/stl_util.h"
+#include "third_party/base/cxx17_backports.h"
 
 TEST(XfaUtilsImpTest, XFA_MapRotation) {
   struct TestCase {

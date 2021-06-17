@@ -13,7 +13,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
-#include "third_party/base/stl_util.h"
+#include "third_party/base/cxx17_backports.h"
 
 namespace {
 

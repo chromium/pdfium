@@ -6,7 +6,7 @@
 
 #include "core/fpdfapi/cmaps/Japan1/cmaps_japan1.h"
 
-#include "third_party/base/stl_util.h"
+#include "third_party/base/cxx17_backports.h"
 
 const FXCMAP_CMap g_FXCMAP_Japan1_cmaps[] = {
     {"83pv-RKSJ-H", g_FXCMAP_83pv_RKSJ_H_1, nullptr, 222, 0, FXCMAP_CMap::Range,

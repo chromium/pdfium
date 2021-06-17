@@ -13,7 +13,7 @@
 #include "public/fpdfview.h"
 #include "testing/fuzzers/pdfium_fuzzer_util.h"
 #include "testing/fuzzers/xfa_process_state.h"
-#include "third_party/base/stl_util.h"
+#include "third_party/base/cxx17_backports.h"
 #include "v8/include/cppgc/heap.h"
 #include "v8/include/cppgc/persistent.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"

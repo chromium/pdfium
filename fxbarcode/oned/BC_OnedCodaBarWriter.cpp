@@ -27,6 +27,7 @@
 #include "fxbarcode/BC_Writer.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/oned/BC_OneDimWriter.h"
+#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/stl_util.h"
 
 namespace {

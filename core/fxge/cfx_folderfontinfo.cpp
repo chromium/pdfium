@@ -17,6 +17,7 @@
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/fx_font.h"
+#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/stl_util.h"
 
 namespace {

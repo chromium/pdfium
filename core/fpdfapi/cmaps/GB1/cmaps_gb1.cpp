@@ -6,7 +6,7 @@
 
 #include "core/fpdfapi/cmaps/GB1/cmaps_gb1.h"
 
-#include "third_party/base/stl_util.h"
+#include "third_party/base/cxx17_backports.h"
 
 const FXCMAP_CMap g_FXCMAP_GB1_cmaps[] = {
     {"GB-EUC-H", g_FXCMAP_GB_EUC_H_0, nullptr, 90, 0, FXCMAP_CMap::Range, 0},

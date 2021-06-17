@@ -11,7 +11,7 @@
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/stl_util.h"
+#include "third_party/base/cxx17_backports.h"
 
 TEST(cpdf_array, GetBooleanAt) {
   auto arr = pdfium::MakeRetain<CPDF_Array>();

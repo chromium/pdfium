@@ -6,7 +6,7 @@
 
 #include "core/fpdfapi/page/cpdf_psengine.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/stl_util.h"
+#include "third_party/base/cxx17_backports.h"
 
 namespace {
 

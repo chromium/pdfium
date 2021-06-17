@@ -6,7 +6,7 @@
 
 #include "core/fpdfapi/cmaps/Korea1/cmaps_korea1.h"
 
-#include "third_party/base/stl_util.h"
+#include "third_party/base/cxx17_backports.h"
 
 const FXCMAP_CMap g_FXCMAP_Korea1_cmaps[] = {
     {"KSC-EUC-H", g_FXCMAP_KSC_EUC_H_0, nullptr, 467, 0, FXCMAP_CMap::Range, 0},

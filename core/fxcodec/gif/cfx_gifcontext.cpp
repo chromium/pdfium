@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "core/fxcodec/cfx_codec_memory.h"
+#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/stl_util.h"
 
 namespace fxcodec {

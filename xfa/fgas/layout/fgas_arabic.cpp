@@ -7,7 +7,7 @@
 #include "xfa/fgas/layout/fgas_arabic.h"
 
 #include "core/fxcrt/fx_unicode.h"
-#include "third_party/base/stl_util.h"
+#include "third_party/base/cxx17_backports.h"
 #include "xfa/fgas/layout/cfgas_char.h"
 
 namespace {

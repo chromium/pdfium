@@ -5,7 +5,7 @@
 #include "core/fxcodec/gif/lzw_decompressor.h"
 
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/stl_util.h"
+#include "third_party/base/cxx17_backports.h"
 
 TEST(LZWDecompressor, CreateBadParams) {
   EXPECT_EQ(nullptr, LZWDecompressor::Create(0x10, 0x02));

@@ -18,6 +18,7 @@
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
 #include "third_party/base/containers/adapters.h"
+#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/stl_util.h"
 
 namespace {

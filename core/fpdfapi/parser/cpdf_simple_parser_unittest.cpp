@@ -7,8 +7,8 @@
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
+#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/span.h"
-#include "third_party/base/stl_util.h"
 
 TEST(SimpleParserTest, GetWord) {
   static const pdfium::StrFuncTestData test_data[] = {

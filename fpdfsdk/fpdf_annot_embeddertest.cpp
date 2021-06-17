@@ -30,6 +30,7 @@
 #include "testing/gmock/include/gmock/gmock-matchers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/hash.h"
+#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
 

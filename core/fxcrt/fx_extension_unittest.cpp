@@ -7,7 +7,7 @@
 #include <limits>
 
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/stl_util.h"
+#include "third_party/base/cxx17_backports.h"
 
 TEST(fxcrt, FXSYS_IsLowerASCII) {
   EXPECT_TRUE(FXSYS_IsLowerASCII('a'));

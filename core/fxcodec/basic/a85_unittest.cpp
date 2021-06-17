@@ -10,7 +10,7 @@
 #include "core/fxcodec/basic/basicmodule.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/stl_util.h"
+#include "third_party/base/cxx17_backports.h"
 
 TEST(fxcodec, A85TestBadInputs) {
   const uint8_t src_buf[] = {1, 2, 3, 4};

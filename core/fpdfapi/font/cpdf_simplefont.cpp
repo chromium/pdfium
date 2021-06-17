@@ -11,8 +11,8 @@
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
+#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/numerics/safe_math.h"
-#include "third_party/base/stl_util.h"
 
 namespace {
 

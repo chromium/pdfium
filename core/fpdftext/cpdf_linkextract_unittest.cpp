@@ -5,7 +5,7 @@
 #include "core/fpdftext/cpdf_linkextract.h"
 
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/stl_util.h"
+#include "third_party/base/cxx17_backports.h"
 
 // Class to help test functions in CPDF_LinkExtract class.
 class CPDF_TestLinkExtract final : public CPDF_LinkExtract {

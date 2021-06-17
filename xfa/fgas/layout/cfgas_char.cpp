@@ -10,6 +10,7 @@
 
 #include "core/fxcrt/fx_extension.h"
 #include "third_party/base/check.h"
+#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/stl_util.h"
 
 namespace {

@@ -6,7 +6,7 @@
 
 #include "fxjs/cjs_globalarrays.h"
 
-#include "third_party/base/stl_util.h"
+#include "third_party/base/cxx17_backports.h"
 
 #define GLOBAL_ARRAY(rt, name, ...)                                          \
   {                                                                          \

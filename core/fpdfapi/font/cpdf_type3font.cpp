@@ -17,7 +17,7 @@
 #include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/check.h"
-#include "third_party/base/stl_util.h"
+#include "third_party/base/cxx17_backports.h"
 
 namespace {
 

@@ -25,8 +25,9 @@
 #include "core/fxge/cfx_path.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/win32/cwin32_platform.h"
+#include "third_party/base/cxx17_backports.h"
+#include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/span.h"
-#include "third_party/base/stl_util.h"
 
 // Has to come before gdiplus.h
 namespace Gdiplus {

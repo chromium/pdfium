@@ -26,7 +26,7 @@
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/stl_util.h"
+#include "third_party/base/cxx17_backports.h"
 
 class CPDF_PageContentGeneratorTest : public testing::Test {
  protected:
