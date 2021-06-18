@@ -741,12 +741,12 @@ ByteString GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
 
   auto pEdit = std::make_unique<CPWL_EditImpl>();
   pEdit->SetFontMap(pFontMap);
-  pEdit->SetAlignmentH(1, true);
-  pEdit->SetAlignmentV(1, true);
-  pEdit->SetMultiLine(false, true);
-  pEdit->SetAutoReturn(false, true);
+  pEdit->SetAlignmentHAndPaint(1);
+  pEdit->SetAlignmentVAndPaint(1);
+  pEdit->SetMultiLineAndPaint(false);
+  pEdit->SetAutoReturnAndPaint(false);
   if (IsFloatZero(fFontSize))
-    pEdit->SetAutoFontSize(true, true);
+    pEdit->SetAutoFontSizeAndPaint(true);
   else
     pEdit->SetFontSizeAndPaint(fFontSize);
 
@@ -1541,11 +1541,11 @@ void CPDFSDK_AppStream::SetAsComboBox(Optional<WideString> sValue) {
   rcEdit.Normalize();
 
   pEdit->SetPlateRectAndPaint(rcEdit);
-  pEdit->SetAlignmentV(1, true);
+  pEdit->SetAlignmentVAndPaint(1);
 
   float fFontSize = widget_->GetFontSize();
   if (IsFloatZero(fFontSize))
-    pEdit->SetAutoFontSize(true, true);
+    pEdit->SetAutoFontSizeAndPaint(true);
   else
     pEdit->SetFontSizeAndPaint(fFontSize);
 
@@ -1689,21 +1689,21 @@ void CPDFSDK_AppStream::SetAsTextField(Optional<WideString> sValue) {
 
   CFX_FloatRect rcClient = widget_->GetClientRect();
   pEdit->SetPlateRectAndPaint(rcClient);
-  pEdit->SetAlignmentH(pControl->GetControlAlignment(), true);
+  pEdit->SetAlignmentHAndPaint(pControl->GetControlAlignment());
 
   uint32_t dwFieldFlags = pField->GetFieldFlags();
   bool bMultiLine = dwFieldFlags & pdfium::form_flags::kTextMultiline;
   if (bMultiLine) {
-    pEdit->SetMultiLine(true, true);
-    pEdit->SetAutoReturn(true, true);
+    pEdit->SetMultiLineAndPaint(true);
+    pEdit->SetAutoReturnAndPaint(true);
   } else {
-    pEdit->SetAlignmentV(1, true);
+    pEdit->SetAlignmentVAndPaint(1);
   }
 
   uint16_t subWord = 0;
   if (dwFieldFlags & pdfium::form_flags::kTextPassword) {
     subWord = '*';
-    pEdit->SetPasswordChar(subWord, true);
+    pEdit->SetPasswordCharAndPaint(subWord);
   }
 
   int nMaxLen = pField->GetMaxLen();
@@ -1730,7 +1730,7 @@ void CPDFSDK_AppStream::SetAsTextField(Optional<WideString> sValue) {
   }
 
   if (IsFloatZero(fFontSize))
-    pEdit->SetAutoFontSize(true, true);
+    pEdit->SetAutoFontSizeAndPaint(true);
   else
     pEdit->SetFontSizeAndPaint(fFontSize);
 

@@ -727,22 +727,31 @@ void CPWL_EditImpl::SetPlateRectAndPaint(const CFX_FloatRect& rect) {
   Paint();
 }
 
-void CPWL_EditImpl::SetAlignmentH(int32_t nFormat, bool bPaint) {
+void CPWL_EditImpl::SetAlignmentH(int32_t nFormat) {
   m_pVT->SetAlignment(nFormat);
-  if (bPaint)
-    Paint();
 }
 
-void CPWL_EditImpl::SetAlignmentV(int32_t nFormat, bool bPaint) {
+void CPWL_EditImpl::SetAlignmentHAndPaint(int32_t nFormat) {
+  SetAlignmentH(nFormat);
+  Paint();
+}
+
+void CPWL_EditImpl::SetAlignmentV(int32_t nFormat) {
   m_nAlignment = nFormat;
-  if (bPaint)
-    Paint();
 }
 
-void CPWL_EditImpl::SetPasswordChar(uint16_t wSubWord, bool bPaint) {
+void CPWL_EditImpl::SetAlignmentVAndPaint(int32_t nFormat) {
+  SetAlignmentV(nFormat);
+  Paint();
+}
+
+void CPWL_EditImpl::SetPasswordChar(uint16_t wSubWord) {
   m_pVT->SetPasswordChar(wSubWord);
-  if (bPaint)
-    Paint();
+}
+
+void CPWL_EditImpl::SetPasswordCharAndPaint(uint16_t wSubWord) {
+  SetPasswordChar(wSubWord);
+  Paint();
 }
 
 void CPWL_EditImpl::SetLimitCharAndPaint(int32_t nLimitChar) {
@@ -760,22 +769,31 @@ void CPWL_EditImpl::SetCharSpaceAndPaint(float fCharSpace) {
   Paint();
 }
 
-void CPWL_EditImpl::SetMultiLine(bool bMultiLine, bool bPaint) {
+void CPWL_EditImpl::SetMultiLine(bool bMultiLine) {
   m_pVT->SetMultiLine(bMultiLine);
-  if (bPaint)
-    Paint();
 }
 
-void CPWL_EditImpl::SetAutoReturn(bool bAuto, bool bPaint) {
+void CPWL_EditImpl::SetMultiLineAndPaint(bool bMultiLine) {
+  SetMultiLine(bMultiLine);
+  Paint();
+}
+
+void CPWL_EditImpl::SetAutoReturn(bool bAuto) {
   m_pVT->SetAutoReturn(bAuto);
-  if (bPaint)
-    Paint();
 }
 
-void CPWL_EditImpl::SetAutoFontSize(bool bAuto, bool bPaint) {
+void CPWL_EditImpl::SetAutoReturnAndPaint(bool bAuto) {
+  SetAutoReturn(bAuto);
+  Paint();
+}
+
+void CPWL_EditImpl::SetAutoFontSize(bool bAuto) {
   m_pVT->SetAutoFontSize(bAuto);
-  if (bPaint)
-    Paint();
+}
+
+void CPWL_EditImpl::SetAutoFontSizeAndPaint(bool bAuto) {
+  SetAutoFontSize(bAuto);
+  Paint();
 }
 
 void CPWL_EditImpl::SetFontSizeAndPaint(float fFontSize) {
@@ -787,10 +805,13 @@ void CPWL_EditImpl::SetAutoScroll(bool bAuto) {
   m_bEnableScroll = bAuto;
 }
 
-void CPWL_EditImpl::SetTextOverflow(bool bAllowed, bool bPaint) {
+void CPWL_EditImpl::SetTextOverflow(bool bAllowed) {
   m_bEnableOverflow = bAllowed;
-  if (bPaint)
-    Paint();
+}
+
+void CPWL_EditImpl::SetTextOverflowAndPaint(bool bAllowed) {
+  SetTextOverflow(bAllowed);
+  Paint();
 }
 
 void CPWL_EditImpl::SetSelection(int32_t nStartChar, int32_t nEndChar) {

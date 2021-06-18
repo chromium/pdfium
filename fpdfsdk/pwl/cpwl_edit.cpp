@@ -84,7 +84,7 @@ CFX_FloatRect CPWL_Edit::GetClientRect() const {
 }
 
 void CPWL_Edit::SetAlignFormatVerticalCenter() {
-  m_pEditImpl->SetAlignmentV(static_cast<int32_t>(PEAV_CENTER), true);
+  m_pEditImpl->SetAlignmentVAndPaint(static_cast<int32_t>(PEAV_CENTER));
 }
 
 bool CPWL_Edit::CanSelectAll() const {
@@ -122,32 +122,32 @@ void CPWL_Edit::OnCreated() {
 
 void CPWL_Edit::SetParamByFlag() {
   if (HasFlag(PES_RIGHT)) {
-    m_pEditImpl->SetAlignmentH(2, false);
+    m_pEditImpl->SetAlignmentH(2);
   } else if (HasFlag(PES_MIDDLE)) {
-    m_pEditImpl->SetAlignmentH(1, false);
+    m_pEditImpl->SetAlignmentH(1);
   } else {
-    m_pEditImpl->SetAlignmentH(0, false);
+    m_pEditImpl->SetAlignmentH(0);
   }
 
   if (HasFlag(PES_CENTER)) {
-    m_pEditImpl->SetAlignmentV(1, false);
+    m_pEditImpl->SetAlignmentV(1);
   } else {
-    m_pEditImpl->SetAlignmentV(0, false);
+    m_pEditImpl->SetAlignmentV(0);
   }
 
   if (HasFlag(PES_PASSWORD)) {
-    m_pEditImpl->SetPasswordChar('*', false);
+    m_pEditImpl->SetPasswordChar('*');
   }
 
-  m_pEditImpl->SetMultiLine(HasFlag(PES_MULTILINE), false);
-  m_pEditImpl->SetAutoReturn(HasFlag(PES_AUTORETURN), false);
-  m_pEditImpl->SetAutoFontSize(HasFlag(PWS_AUTOFONTSIZE), false);
+  m_pEditImpl->SetMultiLine(HasFlag(PES_MULTILINE));
+  m_pEditImpl->SetAutoReturn(HasFlag(PES_AUTORETURN));
+  m_pEditImpl->SetAutoFontSize(HasFlag(PWS_AUTOFONTSIZE));
   m_pEditImpl->SetAutoScroll(HasFlag(PES_AUTOSCROLL));
   m_pEditImpl->EnableUndo(HasFlag(PES_UNDO));
 
   if (HasFlag(PES_TEXTOVERFLOW)) {
     SetClipRect(CFX_FloatRect());
-    m_pEditImpl->SetTextOverflow(true, false);
+    m_pEditImpl->SetTextOverflow(true);
   } else {
     if (m_pCaret) {
       CFX_FloatRect rect = GetClientRect();
@@ -298,7 +298,7 @@ void CPWL_Edit::SetCharArray(int32_t nCharArray) {
     return;
 
   m_pEditImpl->SetCharArrayAndPaint(nCharArray);
-  m_pEditImpl->SetTextOverflow(true, true);
+  m_pEditImpl->SetTextOverflowAndPaint(true);
 
   if (!HasFlag(PWS_AUTOFONTSIZE))
     return;
@@ -312,7 +312,7 @@ void CPWL_Edit::SetCharArray(int32_t nCharArray) {
   if (fFontSize <= 0.0f)
     return;
 
-  m_pEditImpl->SetAutoFontSize(false, true);
+  m_pEditImpl->SetAutoFontSizeAndPaint(false);
   m_pEditImpl->SetFontSizeAndPaint(fFontSize);
 }
 

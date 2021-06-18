@@ -18,7 +18,7 @@
 CPWL_ListCtrl::NotifyIface::~NotifyIface() = default;
 
 CPWL_ListCtrl::Item::Item() : m_pEdit(std::make_unique<CPWL_EditImpl>()) {
-  m_pEdit->SetAlignmentV(1, true);
+  m_pEdit->SetAlignmentVAndPaint(1);
   m_pEdit->Initialize();
 }
 
