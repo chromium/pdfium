@@ -742,20 +742,14 @@ ByteString GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
   auto pEdit = std::make_unique<CPWL_EditImpl>();
   pEdit->SetFontMap(pFontMap);
   pEdit->SetAlignmentH(1);
-  pEdit->Paint();
   pEdit->SetAlignmentV(1);
-  pEdit->Paint();
   pEdit->SetMultiLine(false);
-  pEdit->Paint();
   pEdit->SetAutoReturn(false);
-  pEdit->Paint();
-  if (IsFloatZero(fFontSize)) {
+  if (IsFloatZero(fFontSize))
     pEdit->SetAutoFontSize(true);
-    pEdit->Paint();
-  } else {
+  else
     pEdit->SetFontSize(fFontSize);
-    pEdit->Paint();
-  }
+
   pEdit->Initialize();
   pEdit->SetText(sLabel);
   pEdit->Paint();
@@ -1549,33 +1543,26 @@ void CPDFSDK_AppStream::SetAsComboBox(Optional<WideString> sValue) {
   rcEdit.Normalize();
 
   pEdit->SetPlateRect(rcEdit);
-  pEdit->Paint();
   pEdit->SetAlignmentV(1);
-  pEdit->Paint();
 
   float fFontSize = widget_->GetFontSize();
-  if (IsFloatZero(fFontSize)) {
+  if (IsFloatZero(fFontSize))
     pEdit->SetAutoFontSize(true);
-    pEdit->Paint();
-  } else {
+  else
     pEdit->SetFontSize(fFontSize);
-    pEdit->Paint();
-  }
-  pEdit->Initialize();
 
+  pEdit->Initialize();
   if (sValue.has_value()) {
     pEdit->SetText(sValue.value());
-    pEdit->Paint();
   } else {
     int32_t nCurSel = pField->GetSelectedIndex(0);
     if (nCurSel < 0) {
       pEdit->SetText(pField->GetValue());
-      pEdit->Paint();
     } else {
       pEdit->SetText(pField->GetOptionLabel(nCurSel));
-      pEdit->Paint();
     }
   }
+  pEdit->Paint();
 
   CFX_FloatRect rcContent = pEdit->GetContentRect();
   ByteString sEdit = GetEditAppStream(pEdit.get(), CFX_PointF(), true, 0);
@@ -1618,11 +1605,9 @@ void CPDFSDK_AppStream::SetAsListBox() {
   pEdit->EnableRefresh(false);
   pEdit->SetFontMap(&font_map);
   pEdit->SetPlateRect(CFX_FloatRect(rcClient.left, 0.0f, rcClient.right, 0.0f));
-  pEdit->Paint();
 
   float fFontSize = widget_->GetFontSize();
   pEdit->SetFontSize(IsFloatZero(fFontSize) ? 12.0f : fFontSize);
-  pEdit->Paint();
   pEdit->Initialize();
 
   std::ostringstream sList;
@@ -1707,27 +1692,21 @@ void CPDFSDK_AppStream::SetAsTextField(Optional<WideString> sValue) {
 
   CFX_FloatRect rcClient = widget_->GetClientRect();
   pEdit->SetPlateRect(rcClient);
-  pEdit->Paint();
   pEdit->SetAlignmentH(pControl->GetControlAlignment());
-  pEdit->Paint();
 
   uint32_t dwFieldFlags = pField->GetFieldFlags();
   bool bMultiLine = dwFieldFlags & pdfium::form_flags::kTextMultiline;
   if (bMultiLine) {
     pEdit->SetMultiLine(true);
-    pEdit->Paint();
     pEdit->SetAutoReturn(true);
-    pEdit->Paint();
   } else {
     pEdit->SetAlignmentV(1);
-    pEdit->Paint();
   }
 
   uint16_t subWord = 0;
   if (dwFieldFlags & pdfium::form_flags::kTextPassword) {
     subWord = '*';
     pEdit->SetPasswordChar(subWord);
-    pEdit->Paint();
   }
 
   int nMaxLen = pField->GetMaxLen();
@@ -1742,7 +1721,6 @@ void CPDFSDK_AppStream::SetAsTextField(Optional<WideString> sValue) {
   if (nMaxLen > 0) {
     if (bCharArray) {
       pEdit->SetCharArray(nMaxLen);
-      pEdit->Paint();
       if (IsFloatZero(fFontSize)) {
         fFontSize = CPWL_Edit::GetCharArrayAutoFontSize(
             font_map.GetPDFFont(0).Get(), rcClient, nMaxLen);
@@ -1751,17 +1729,14 @@ void CPDFSDK_AppStream::SetAsTextField(Optional<WideString> sValue) {
       if (sValue.has_value())
         nMaxLen = sValue.value().GetLength();
       pEdit->SetLimitChar(nMaxLen);
-      pEdit->Paint();
     }
   }
 
-  if (IsFloatZero(fFontSize)) {
+  if (IsFloatZero(fFontSize))
     pEdit->SetAutoFontSize(true);
-    pEdit->Paint();
-  } else {
+  else
     pEdit->SetFontSize(fFontSize);
-    pEdit->Paint();
-  }
+
   pEdit->Initialize();
   pEdit->SetText(sValue.value_or(pField->GetValue()));
   pEdit->Paint();

@@ -302,7 +302,6 @@ void CPWL_Edit::SetCharArray(int32_t nCharArray) {
     return;
 
   m_pEditImpl->SetCharArray(nCharArray);
-  m_pEditImpl->Paint();
   m_pEditImpl->SetTextOverflow(true);
   m_pEditImpl->Paint();
 
@@ -319,7 +318,6 @@ void CPWL_Edit::SetCharArray(int32_t nCharArray) {
     return;
 
   m_pEditImpl->SetAutoFontSize(false);
-  m_pEditImpl->Paint();
   m_pEditImpl->SetFontSize(fFontSize);
   m_pEditImpl->Paint();
 }
