@@ -548,12 +548,10 @@ ByteString CFX_Font::GetFaceName() const {
   return m_pSubstFont->m_Family;
 }
 
-ByteString CFX_Font::GetBaseFontName(bool restrict_to_psname) const {
+ByteString CFX_Font::GetBaseFontName() const {
   ByteString psname = GetPsName();
-  if (restrict_to_psname || (!psname.IsEmpty() && psname != kUntitledFontName))
+  if (!psname.IsEmpty() && psname != kUntitledFontName)
     return psname;
-  if (!m_Face && !m_pSubstFont)
-    return ByteString();
   if (m_Face) {
     ByteString style = ByteString(FXFT_Get_Face_Style_Name(m_Face->GetRec()));
     ByteString facename = GetFamilyNameOrUntitled();
@@ -563,7 +561,9 @@ ByteString CFX_Font::GetBaseFontName(bool restrict_to_psname) const {
       facename += (IsTTFont() ? "," : " ") + style;
     return facename;
   }
-  return m_pSubstFont->m_Family;
+  if (m_pSubstFont)
+    return m_pSubstFont->m_Family;
+  return ByteString();
 }
 
 Optional<FX_RECT> CFX_Font::GetBBox() {

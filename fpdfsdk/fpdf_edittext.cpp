@@ -65,6 +65,15 @@ static_assert(static_cast<int>(TextRenderingMode::MODE_LAST) ==
 
 namespace {
 
+ByteString BaseFontNameForType(CFX_Font* pFont, int font_type) {
+  ByteString name = font_type == FPDF_FONT_TYPE1 ? pFont->GetPsName()
+                                                 : pFont->GetBaseFontName();
+  if (!name.IsEmpty())
+    return name;
+
+  return CFX_Font::kUntitledFontName;
+}
+
 CPDF_Dictionary* LoadFontDesc(CPDF_Document* pDoc,
                               const ByteString& font_name,
                               CFX_Font* pFont,
@@ -275,9 +284,7 @@ RetainPtr<CPDF_Font> LoadSimpleFont(CPDF_Document* pDoc,
   pFontDict->SetNewFor<CPDF_Name>("Type", "Font");
   pFontDict->SetNewFor<CPDF_Name>(
       "Subtype", font_type == FPDF_FONT_TYPE1 ? "Type1" : "TrueType");
-  ByteString name = pFont->GetBaseFontName(font_type == FPDF_FONT_TYPE1);
-  if (name.IsEmpty())
-    name = CFX_Font::kUntitledFontName;
+  ByteString name = BaseFontNameForType(pFont.get(), font_type);
   pFontDict->SetNewFor<CPDF_Name>("BaseFont", name);
 
   uint32_t dwGlyphIndex;
@@ -322,9 +329,7 @@ RetainPtr<CPDF_Font> LoadCompositeFont(CPDF_Document* pDoc,
   // TODO(npm): Get the correct encoding, if it's not identity.
   ByteString encoding = "Identity-H";
   pFontDict->SetNewFor<CPDF_Name>("Encoding", encoding);
-  ByteString name = pFont->GetBaseFontName(font_type == FPDF_FONT_TYPE1);
-  if (name.IsEmpty())
-    name = CFX_Font::kUntitledFontName;
+  ByteString name = BaseFontNameForType(pFont.get(), font_type);
   pFontDict->SetNewFor<CPDF_Name>(
       "BaseFont", font_type == FPDF_FONT_TYPE1 ? name + "-" + encoding : name);
 
