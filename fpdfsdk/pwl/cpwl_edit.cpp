@@ -142,7 +142,7 @@ void CPWL_Edit::SetParamByFlag() {
   m_pEditImpl->SetMultiLine(HasFlag(PES_MULTILINE), false);
   m_pEditImpl->SetAutoReturn(HasFlag(PES_AUTORETURN), false);
   m_pEditImpl->SetAutoFontSize(HasFlag(PWS_AUTOFONTSIZE), false);
-  m_pEditImpl->SetAutoScroll(HasFlag(PES_AUTOSCROLL), false);
+  m_pEditImpl->SetAutoScroll(HasFlag(PES_AUTOSCROLL));
   m_pEditImpl->EnableUndo(HasFlag(PES_UNDO));
 
   if (HasFlag(PES_TEXTOVERFLOW)) {

@@ -783,10 +783,8 @@ void CPWL_EditImpl::SetFontSize(float fFontSize) {
   Paint();
 }
 
-void CPWL_EditImpl::SetAutoScroll(bool bAuto, bool bPaint) {
+void CPWL_EditImpl::SetAutoScroll(bool bAuto) {
   m_bEnableScroll = bAuto;
-  if (bPaint)
-    Paint();
 }
 
 void CPWL_EditImpl::SetTextOverflow(bool bAllowed, bool bPaint) {

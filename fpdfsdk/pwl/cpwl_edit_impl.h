@@ -81,7 +81,7 @@ class CPWL_EditImpl {
   void SetMultiLine(bool bMultiLine, bool bPaint);
   void SetAutoReturn(bool bAuto, bool bPaint);
   void SetAutoFontSize(bool bAuto, bool bPaint);
-  void SetAutoScroll(bool bAuto, bool bPaint);
+  void SetAutoScroll(bool bAuto);
   void SetFontSize(float fFontSize);
   void SetTextOverflow(bool bAllowed, bool bPaint);
   void OnMouseDown(const CFX_PointF& point, bool bShift, bool bCtrl);
