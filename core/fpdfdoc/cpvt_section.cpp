@@ -519,13 +519,6 @@ CPVT_FloatRect CPVT_Section::SplitLines(bool bTypeset, float fFontSize) {
     if (bTypeset) {
       fLineAscent = m_pVT->GetLineAscent();
       fLineDescent = m_pVT->GetLineDescent();
-    } else {
-      fLineAscent =
-          m_pVT->GetFontAscent(m_pVT->GetDefaultFontIndex(), fFontSize);
-      fLineDescent =
-          m_pVT->GetFontDescent(m_pVT->GetDefaultFontIndex(), fFontSize);
-    }
-    if (bTypeset) {
       line.nBeginWordIndex = -1;
       line.nEndWordIndex = -1;
       line.nTotalWord = 0;
@@ -533,6 +526,11 @@ CPVT_FloatRect CPVT_Section::SplitLines(bool bTypeset, float fFontSize) {
       line.fLineAscent = fLineAscent;
       line.fLineDescent = fLineDescent;
       AddLine(line);
+    } else {
+      fLineAscent =
+          m_pVT->GetFontAscent(m_pVT->GetDefaultFontIndex(), fFontSize);
+      fLineDescent =
+          m_pVT->GetFontDescent(m_pVT->GetDefaultFontIndex(), fFontSize);
     }
     float fMaxY = m_pVT->GetLineLeading() + fLineAscent - fLineDescent;
     return CPVT_FloatRect(0, 0, 0, fMaxY);
