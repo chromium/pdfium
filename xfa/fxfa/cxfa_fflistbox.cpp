@@ -10,8 +10,8 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/stl_util.h"
 #include "third_party/base/check.h"
-#include "third_party/base/stl_util.h"
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fwl/cfwl_listbox.h"
 #include "xfa/fwl/cfwl_notedriver.h"
@@ -104,7 +104,7 @@ bool CXFA_FFListBox::CommitData() {
 
 bool CXFA_FFListBox::IsDataChanged() {
   std::vector<int32_t> iSelArray = m_pNode->GetSelectedItems();
-  int32_t iOldSels = pdfium::CollectionSize<int32_t>(iSelArray);
+  int32_t iOldSels = fxcrt::CollectionSize<int32_t>(iSelArray);
   auto* pListBox = ToListBox(GetNormalWidget());
   int32_t iSels = pListBox->CountSelItems();
   if (iOldSels != iSels)

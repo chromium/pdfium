@@ -9,8 +9,8 @@
 #include <algorithm>
 
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
+#include "core/fxcrt/stl_util.h"
 #include "third_party/base/notreached.h"
-#include "third_party/base/stl_util.h"
 
 CPDF_SeekableMultiStream::CPDF_SeekableMultiStream(
     const std::vector<const CPDF_Stream*>& streams) {
@@ -32,7 +32,7 @@ FX_FILESIZE CPDF_SeekableMultiStream::GetSize() {
 bool CPDF_SeekableMultiStream::ReadBlockAtOffset(void* buffer,
                                                  FX_FILESIZE offset,
                                                  size_t size) {
-  int32_t iCount = pdfium::CollectionSize<int32_t>(m_Data);
+  int32_t iCount = fxcrt::CollectionSize<int32_t>(m_Data);
   int32_t index = 0;
   while (index < iCount) {
     const auto& acc = m_Data[index];

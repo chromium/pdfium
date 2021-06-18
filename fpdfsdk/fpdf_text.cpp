@@ -18,10 +18,10 @@
 #include "core/fpdftext/cpdf_linkextract.h"
 #include "core/fpdftext/cpdf_textpage.h"
 #include "core/fpdftext/cpdf_textpagefind.h"
+#include "core/fxcrt/stl_util.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "third_party/base/check.h"
 #include "third_party/base/numerics/safe_conversions.h"
-#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -483,7 +483,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFLink_CountRects(FPDF_PAGELINK link_page,
     return 0;
 
   CPDF_LinkExtract* pageLink = CPDFLinkExtractFromFPDFPageLink(link_page);
-  return pdfium::CollectionSize<int>(pageLink->GetRects(link_index));
+  return fxcrt::CollectionSize<int>(pageLink->GetRects(link_index));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFLink_GetRect(FPDF_PAGELINK link_page,
@@ -498,7 +498,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFLink_GetRect(FPDF_PAGELINK link_page,
 
   CPDF_LinkExtract* pageLink = CPDFLinkExtractFromFPDFPageLink(link_page);
   std::vector<CFX_FloatRect> rectArray = pageLink->GetRects(link_index);
-  if (rect_index >= pdfium::CollectionSize<int>(rectArray))
+  if (rect_index >= fxcrt::CollectionSize<int>(rectArray))
     return false;
 
   *left = rectArray[rect_index].left;

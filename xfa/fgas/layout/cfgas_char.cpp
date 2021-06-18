@@ -9,9 +9,9 @@
 #include <algorithm>
 
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/stl_util.h"
 #include "third_party/base/check.h"
 #include "third_party/base/cxx17_backports.h"
-#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -269,7 +269,7 @@ FX_BIDINEUTRALACTION GetNeutralAction(FX_BIDINEUTRALSTATE eState,
 void ReverseString(std::vector<CFGAS_Char>* chars,
                    size_t iStart,
                    size_t iCount) {
-  DCHECK(pdfium::IndexInBounds(*chars, iStart));
+  DCHECK(fxcrt::IndexInBounds(*chars, iStart));
   DCHECK(iStart + iCount <= chars->size());
 
   std::reverse(chars->begin() + iStart, chars->begin() + iStart + iCount);

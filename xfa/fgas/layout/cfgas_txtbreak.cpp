@@ -11,10 +11,10 @@
 #include "build/build_config.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/text_char_pos.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/adapters.h"
-#include "third_party/base/stl_util.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/cfgas_char.h"
 #include "xfa/fgas/layout/fgas_arabic.h"
@@ -323,7 +323,7 @@ void CFGAS_TxtBreak::EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
   int32_t iCharWidth;
   int32_t i = 0;
   int32_t j = -1;
-  int32_t iCount = pdfium::CollectionSize<int32_t>(m_pCurLine->m_LineChars);
+  int32_t iCount = fxcrt::CollectionSize<int32_t>(m_pCurLine->m_LineChars);
   while (i < iCount) {
     pTC = &chars[i];
     if (iBidiLevel < 0) {
@@ -505,7 +505,7 @@ int32_t CFGAS_TxtBreak::GetBreakPos(std::vector<CFGAS_Char>* pChars,
                                     bool bOnlyBrk,
                                     int32_t* pEndPos) {
   std::vector<CFGAS_Char>& chars = *pChars;
-  int32_t iLength = pdfium::CollectionSize<int32_t>(chars) - 1;
+  int32_t iLength = fxcrt::CollectionSize<int32_t>(chars) - 1;
   if (iLength < 1)
     return iLength;
 
@@ -601,7 +601,7 @@ void CFGAS_TxtBreak::SplitTextLine(CFGAS_BreakLine* pCurLine,
     iCharPos = 0;
 
   iCharPos++;
-  if (iCharPos >= pdfium::CollectionSize<int32_t>(pCurLine->m_LineChars)) {
+  if (iCharPos >= fxcrt::CollectionSize<int32_t>(pCurLine->m_LineChars)) {
     pNextLine->Clear();
     CFGAS_Char* pTC = &curChars[iCharPos - 1];
     pTC->m_eLineBreakType = FX_LINEBREAKTYPE::kUNKNOWN;

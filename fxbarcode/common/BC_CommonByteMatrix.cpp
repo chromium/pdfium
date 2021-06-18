@@ -23,12 +23,12 @@
 
 #include <algorithm>
 #include <iterator>
-#include "third_party/base/stl_util.h"
+#include "core/fxcrt/stl_util.h"
 
 CBC_CommonByteMatrix::CBC_CommonByteMatrix(int32_t width, int32_t height)
     : m_width(width), m_height(height) {
   m_bytes =
-      pdfium::Vector2D<uint8_t, FxAllocAllocator<uint8_t>>(m_height, m_width);
+      fxcrt::Vector2D<uint8_t, FxAllocAllocator<uint8_t>>(m_height, m_width);
   clear(0xff);
 }
 

@@ -13,13 +13,13 @@
 #include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxcrt/xml/cfx_xmlchardata.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/check.h"
-#include "third_party/base/stl_util.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
@@ -225,7 +225,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
         buf << "<";
         buf << bodyTagName;
         buf << " xmlns=\"\"\n>";
-        for (int32_t i = 0; i < pdfium::CollectionSize<int32_t>(wsSelTextArray);
+        for (int32_t i = 0; i < fxcrt::CollectionSize<int32_t>(wsSelTextArray);
              i++) {
           buf << "<value\n>";
           buf << ExportEncodeContent(wsSelTextArray[i]);

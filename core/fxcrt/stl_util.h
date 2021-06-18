@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef THIRD_PARTY_BASE_STL_UTIL_H_
-#define THIRD_PARTY_BASE_STL_UTIL_H_
+#ifndef CORE_FXCRT_STL_UTIL_H_
+#define CORE_FXCRT_STL_UTIL_H_
 
 #include <memory>
 #include <vector>
@@ -11,7 +11,7 @@
 #include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/numerics/safe_math.h"
 
-namespace pdfium {
+namespace fxcrt {
 
 // Means of generating a key for searching STL collections of std::unique_ptr
 // that avoids the side effect of deleting the pointer.
@@ -44,6 +44,6 @@ std::vector<T, A> Vector2D(size_t w, size_t h) {
   return std::vector<T, A>(safe_size.ValueOrDie());
 }
 
-}  // namespace pdfium
+}  // namespace fxcrt
 
-#endif  // THIRD_PARTY_BASE_STL_UTIL_H_
+#endif  // CORE_FXCRT_STL_UTIL_H_

@@ -11,9 +11,9 @@
 
 #include "core/fpdfdoc/cpvt_word.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/stl_util.h"
 #include "fpdfsdk/pwl/cpwl_edit_impl.h"
 #include "fpdfsdk/pwl/cpwl_list_box.h"
-#include "third_party/base/stl_util.h"
 
 CPWL_ListCtrl::NotifyIface::~NotifyIface() = default;
 
@@ -569,7 +569,7 @@ CPWL_EditImpl* CPWL_ListCtrl::GetItemEdit(int32_t nIndex) const {
 }
 
 int32_t CPWL_ListCtrl::GetCount() const {
-  return pdfium::CollectionSize<int32_t>(m_ListItems);
+  return fxcrt::CollectionSize<int32_t>(m_ListItems);
 }
 
 float CPWL_ListCtrl::GetFirstHeight() const {
@@ -623,7 +623,7 @@ void CPWL_ListCtrl::SetItemSelect(int32_t nIndex, bool bSelected) {
 }
 
 bool CPWL_ListCtrl::IsValid(int32_t nItemIndex) const {
-  return pdfium::IndexInBounds(m_ListItems, nItemIndex);
+  return fxcrt::IndexInBounds(m_ListItems, nItemIndex);
 }
 
 WideString CPWL_ListCtrl::GetItemText(int32_t nIndex) const {

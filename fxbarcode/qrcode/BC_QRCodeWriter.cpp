@@ -22,6 +22,7 @@
 
 #include "fxbarcode/qrcode/BC_QRCodeWriter.h"
 
+#include "core/fxcrt/stl_util.h"
 #include "fxbarcode/common/BC_CommonByteMatrix.h"
 #include "fxbarcode/common/reedsolomon/BC_ReedSolomonGF256.h"
 #include "fxbarcode/qrcode/BC_QRCoder.h"
@@ -29,7 +30,6 @@
 #include "fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"
 #include "fxbarcode/qrcode/BC_QRCoderMode.h"
 #include "fxbarcode/qrcode/BC_QRCoderVersion.h"
-#include "third_party/base/stl_util.h"
 
 CBC_QRCodeWriter::CBC_QRCodeWriter() : CBC_TwoDimWriter(true) {}
 
@@ -72,8 +72,8 @@ std::vector<uint8_t, FxAllocAllocator<uint8_t>> CBC_QRCodeWriter::Encode(
 
   *pOutWidth = qr.GetMatrixWidth();
   *pOutHeight = qr.GetMatrixWidth();
-  results = pdfium::Vector2D<uint8_t, FxAllocAllocator<uint8_t>>(*pOutWidth,
-                                                                 *pOutHeight);
+  results = fxcrt::Vector2D<uint8_t, FxAllocAllocator<uint8_t>>(*pOutWidth,
+                                                                *pOutHeight);
   memcpy(results.data(), qr.GetMatrix()->GetArray().data(),
          *pOutWidth * *pOutHeight);
   return results;

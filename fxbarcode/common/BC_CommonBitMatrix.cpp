@@ -22,8 +22,8 @@
 
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 
+#include "core/fxcrt/stl_util.h"
 #include "third_party/base/check.h"
-#include "third_party/base/stl_util.h"
 
 CBC_CommonBitMatrix::CBC_CommonBitMatrix() = default;
 
@@ -31,7 +31,7 @@ void CBC_CommonBitMatrix::Init(int32_t width, int32_t height) {
   m_width = width;
   m_height = height;
   m_rowSize = (width + 31) >> 5;
-  m_bits = pdfium::Vector2D<int32_t>(m_rowSize, m_height);
+  m_bits = fxcrt::Vector2D<int32_t>(m_rowSize, m_height);
 }
 
 CBC_CommonBitMatrix::~CBC_CommonBitMatrix() = default;

@@ -25,11 +25,11 @@
 #include <algorithm>
 #include <utility>
 
+#include "core/fxcrt/stl_util.h"
 #include "fxbarcode/BC_TwoDimWriter.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/pdf417/BC_PDF417.h"
 #include "fxbarcode/pdf417/BC_PDF417BarcodeMatrix.h"
-#include "third_party/base/stl_util.h"
 
 CBC_PDF417Writer::CBC_PDF417Writer() : CBC_TwoDimWriter(false) {}
 
@@ -72,8 +72,8 @@ std::vector<uint8_t, FxAllocAllocator<uint8_t>> CBC_PDF417Writer::Encode(
   }
   *pOutWidth = matrixWidth;
   *pOutHeight = matrixHeight;
-  results = pdfium::Vector2D<uint8_t, FxAllocAllocator<uint8_t>>(*pOutWidth,
-                                                                 *pOutHeight);
+  results = fxcrt::Vector2D<uint8_t, FxAllocAllocator<uint8_t>>(*pOutWidth,
+                                                                *pOutHeight);
   memcpy(results.data(), matrixData.data(), *pOutWidth * *pOutHeight);
   return results;
 }

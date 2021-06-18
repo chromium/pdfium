@@ -27,9 +27,9 @@
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "core/fpdfdoc/cpdf_generateap.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
+#include "core/fxcrt/stl_util.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/contains.h"
-#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -220,7 +220,7 @@ bool CPDF_FormField::ResetField() {
 }
 
 int CPDF_FormField::CountControls() const {
-  return pdfium::CollectionSize<int>(GetControls());
+  return fxcrt::CollectionSize<int>(GetControls());
 }
 
 CPDF_FormControl* CPDF_FormField::GetControl(int index) const {

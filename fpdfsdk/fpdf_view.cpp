@@ -36,6 +36,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_gemodule.h"
@@ -49,7 +50,6 @@
 #include "public/fpdf_formfill.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/span.h"
-#include "third_party/base/stl_util.h"
 
 #ifdef PDF_ENABLE_V8
 #include "fxjs/cfx_v8.h"
@@ -1186,7 +1186,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetXFAPacketCount(FPDF_DOCUMENT document) {
   if (!doc)
     return -1;
 
-  return pdfium::CollectionSize<int>(
+  return fxcrt::CollectionSize<int>(
       GetXFAPackets(GetXFAEntryFromDocument(doc)));
 }
 

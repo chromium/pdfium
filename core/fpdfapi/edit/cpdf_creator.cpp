@@ -24,9 +24,9 @@
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_random.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/stl_util.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/contains.h"
-#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -394,7 +394,7 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage3() {
   }
   if (m_iStage == Stage::kWriteXrefsIncremental82) {
     ByteString str;
-    uint32_t iCount = pdfium::CollectionSize<uint32_t>(m_NewObjNumArray);
+    uint32_t iCount = fxcrt::CollectionSize<uint32_t>(m_NewObjNumArray);
     uint32_t i = m_CurObjNum;
     while (i < iCount) {
       size_t j = i;

@@ -10,8 +10,8 @@
 #include <memory>
 #include <utility>
 
+#include "core/fxcrt/stl_util.h"
 #include "third_party/base/numerics/ranges.h"
-#include "third_party/base/stl_util.h"
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fwl/cfwl_app.h"
@@ -838,7 +838,7 @@ bool CFWL_ListBox::OnScroll(CFWL_ScrollBar* pScrollBar,
 }
 
 int32_t CFWL_ListBox::CountItems(const CFWL_Widget* pWidget) const {
-  return pdfium::CollectionSize<int32_t>(m_ItemArray);
+  return fxcrt::CollectionSize<int32_t>(m_ItemArray);
 }
 
 CFWL_ListBox::Item* CFWL_ListBox::GetItem(const CFWL_Widget* pWidget,

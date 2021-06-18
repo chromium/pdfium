@@ -10,12 +10,12 @@
 #include <utility>
 
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/stl_util.h"
 #include "fxjs/gc/container_trace.h"
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/containers/contains.h"
-#include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffbarcode.h"
 #include "xfa/fxfa/cxfa_ffcheckbutton.h"
@@ -155,7 +155,7 @@ void CXFA_FFDocView::StopLayout() {
 }
 
 void CXFA_FFDocView::ShowNullTestMsg() {
-  int32_t iCount = pdfium::CollectionSize<int32_t>(m_NullTestMsgArray);
+  int32_t iCount = fxcrt::CollectionSize<int32_t>(m_NullTestMsgArray);
   CXFA_FFApp* pApp = m_pDoc->GetApp();
   CXFA_FFApp::CallbackIface* pAppProvider = pApp->GetAppProvider();
   if (pAppProvider && iCount) {

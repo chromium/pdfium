@@ -10,11 +10,11 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/stl_util.h"
 #include "fxjs/gc/container_trace.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/contains.h"
-#include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffcheckbutton.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffdocview.h"
@@ -358,8 +358,8 @@ void CXFA_FFTabOrderPageWidgetIterator::Trace(cppgc::Visitor* visitor) const {
 }
 
 CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::MoveToFirst() {
-  for (int32_t i = 0;
-       i < pdfium::CollectionSize<int32_t>(m_TabOrderWidgetArray); i++) {
+  for (int32_t i = 0; i < fxcrt::CollectionSize<int32_t>(m_TabOrderWidgetArray);
+       i++) {
     if (PageWidgetFilter(m_TabOrderWidgetArray[i]->GetFFWidget(), m_dwFilter,
                          true, m_bIgnoreRelevant)) {
       m_iCurWidget = i;
@@ -370,7 +370,7 @@ CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::MoveToFirst() {
 }
 
 CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::MoveToLast() {
-  for (int32_t i = pdfium::CollectionSize<int32_t>(m_TabOrderWidgetArray) - 1;
+  for (int32_t i = fxcrt::CollectionSize<int32_t>(m_TabOrderWidgetArray) - 1;
        i >= 0; i--) {
     if (PageWidgetFilter(m_TabOrderWidgetArray[i]->GetFFWidget(), m_dwFilter,
                          true, m_bIgnoreRelevant)) {
@@ -383,7 +383,7 @@ CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::MoveToLast() {
 
 CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::MoveToNext() {
   for (int32_t i = m_iCurWidget + 1;
-       i < pdfium::CollectionSize<int32_t>(m_TabOrderWidgetArray); i++) {
+       i < fxcrt::CollectionSize<int32_t>(m_TabOrderWidgetArray); i++) {
     if (PageWidgetFilter(m_TabOrderWidgetArray[i]->GetFFWidget(), m_dwFilter,
                          true, m_bIgnoreRelevant)) {
       m_iCurWidget = i;

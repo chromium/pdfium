@@ -16,10 +16,10 @@
 #include "core/fxcodec/scanlinedecoder.h"
 #include "core/fxcrt/cfx_binarybuf.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/stl_util.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/numerics/ranges.h"
-#include "third_party/base/stl_util.h"
 
 namespace fxcodec {
 
@@ -694,8 +694,7 @@ FaxEncoder::FaxEncoder(const uint8_t* src_buf, int width, int height, int pitch)
       m_Pitch(pitch),
       m_pSrcBuf(src_buf),
       m_RefLine(pitch, 0xff),
-      m_LineBuf(
-          pdfium::Vector2D<uint8_t, FxAllocAllocator<uint8_t>>(8, pitch)) {
+      m_LineBuf(fxcrt::Vector2D<uint8_t, FxAllocAllocator<uint8_t>>(8, pitch)) {
   m_DestBuf.SetAllocStep(10240);
 }
 

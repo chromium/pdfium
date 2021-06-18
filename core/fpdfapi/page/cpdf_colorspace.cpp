@@ -34,13 +34,13 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/maybe_owned.h"
 #include "core/fxcrt/scoped_set_insertion.h"
+#include "core/fxcrt/stl_util.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/containers/contains.h"
 #include "third_party/base/cxx17_backports.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/numerics/ranges.h"
-#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -1043,8 +1043,8 @@ void CPDF_ICCBasedCS::TranslateImageLine(uint8_t* pDestBuf,
 
   if (m_pCache.empty()) {
     m_pCache =
-        pdfium::Vector2D<uint8_t, FxAllocAllocator<uint8_t>>(nMaxColors, 3);
-    auto temp_src = pdfium::Vector2D<uint8_t, FxAllocAllocator<uint8_t>>(
+        fxcrt::Vector2D<uint8_t, FxAllocAllocator<uint8_t>>(nMaxColors, 3);
+    auto temp_src = fxcrt::Vector2D<uint8_t, FxAllocAllocator<uint8_t>>(
         nMaxColors, nComponents);
     size_t src_index = 0;
     for (int i = 0; i < nMaxColors; i++) {
@@ -1164,7 +1164,7 @@ uint32_t CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
     return 0;
 
   m_nBaseComponents = m_pBaseCS->CountComponents();
-  m_pCompMinMax = pdfium::Vector2D<float>(m_nBaseComponents, 2);
+  m_pCompMinMax = fxcrt::Vector2D<float>(m_nBaseComponents, 2);
   float defvalue;
   for (uint32_t i = 0; i < m_nBaseComponents; i++) {
     m_pBaseCS->GetDefaultValue(i, &defvalue, &m_pCompMinMax[i * 2],

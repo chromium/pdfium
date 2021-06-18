@@ -9,13 +9,13 @@
 #include <memory>
 #include <utility>
 
+#include "core/fxcrt/stl_util.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/cjs_object.h"
 #include "fxjs/fxv8.h"
 #include "fxjs/xfa/cfxjse_runtimedata.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/stl_util.h"
 #include "v8/include/v8-util.h"
 
 class CFXJS_PerObjectData;
@@ -337,7 +337,7 @@ FXJS_PerIsolateData::FXJS_PerIsolateData(v8::Isolate* pIsolate)
 FXJS_PerIsolateData::~FXJS_PerIsolateData() = default;
 
 uint32_t FXJS_PerIsolateData::CurrentMaxObjDefinitionID() const {
-  return pdfium::CollectionSize<uint32_t>(m_ObjectDefnArray);
+  return fxcrt::CollectionSize<uint32_t>(m_ObjectDefnArray);
 }
 
 CFXJS_ObjDefinition* FXJS_PerIsolateData::ObjDefinitionForID(

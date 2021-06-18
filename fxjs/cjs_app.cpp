@@ -8,13 +8,13 @@
 
 #include <utility>
 
+#include "core/fxcrt/stl_util.h"
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
 #include "fxjs/cjs_document.h"
 #include "fxjs/cjs_timerobj.h"
 #include "fxjs/global_timer.h"
 #include "fxjs/ijs_event_context.h"
 #include "fxjs/js_resources.h"
-#include "third_party/base/stl_util.h"
 
 #define JS_STR_VIEWERTYPE L"pdfium"
 #define JS_STR_VIEWERVARIATION L"Full"
@@ -393,7 +393,7 @@ void CJS_App::TimerProc(GlobalTimer* pTimer) {
 }
 
 void CJS_App::CancelProc(GlobalTimer* pTimer) {
-  m_Timers.erase(pdfium::FakeUniquePtr<GlobalTimer>(pTimer));
+  m_Timers.erase(fxcrt::FakeUniquePtr<GlobalTimer>(pTimer));
 }
 
 void CJS_App::RunJsScript(CJS_Runtime* pRuntime, const WideString& wsScript) {

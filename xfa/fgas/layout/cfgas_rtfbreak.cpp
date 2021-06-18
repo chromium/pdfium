@@ -11,11 +11,11 @@
 #include "build/build_config.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/text_char_pos.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/adapters.h"
 #include "third_party/base/numerics/safe_math.h"
-#include "third_party/base/stl_util.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/cfgas_char.h"
 #include "xfa/fgas/layout/cfgas_textpiece.h"
@@ -372,7 +372,7 @@ bool CFGAS_RTFBreak::EndBreak_SplitLine(CFGAS_BreakLine* pNextLine,
   tp.m_pChars = &m_pCurLine->m_LineChars;
   bool bNew = true;
   uint32_t dwIdentity = static_cast<uint32_t>(-1);
-  int32_t iLast = pdfium::CollectionSize<int32_t>(m_pCurLine->m_LineChars) - 1;
+  int32_t iLast = fxcrt::CollectionSize<int32_t>(m_pCurLine->m_LineChars) - 1;
   int32_t j = 0;
   for (int32_t i = 0; i <= iLast;) {
     const CFGAS_Char* pTC = pCurChars + i;
@@ -445,7 +445,7 @@ void CFGAS_RTFBreak::EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
   uint32_t dwIdentity = static_cast<uint32_t>(-1);
   int32_t i = 0;
   int32_t j = 0;
-  int32_t iCount = pdfium::CollectionSize<int32_t>(m_pCurLine->m_LineChars);
+  int32_t iCount = fxcrt::CollectionSize<int32_t>(m_pCurLine->m_LineChars);
   while (i < iCount) {
     pTC = &chars[i];
     if (iBidiLevel < 0) {
@@ -582,7 +582,7 @@ int32_t CFGAS_RTFBreak::GetBreakPos(std::vector<CFGAS_Char>& tca,
                                     bool bAllChars,
                                     bool bOnlyBrk,
                                     int32_t* pEndPos) {
-  int32_t iLength = pdfium::CollectionSize<int32_t>(tca) - 1;
+  int32_t iLength = fxcrt::CollectionSize<int32_t>(tca) - 1;
   if (iLength < 1)
     return iLength;
 
@@ -690,7 +690,7 @@ void CFGAS_RTFBreak::SplitTextLine(CFGAS_BreakLine* pCurLine,
     iCharPos = 0;
 
   ++iCharPos;
-  if (iCharPos >= pdfium::CollectionSize<int32_t>(pCurLine->m_LineChars)) {
+  if (iCharPos >= fxcrt::CollectionSize<int32_t>(pCurLine->m_LineChars)) {
     pNextLine->Clear();
     curChars[iCharPos - 1].m_eLineBreakType = FX_LINEBREAKTYPE::kUNKNOWN;
     return;

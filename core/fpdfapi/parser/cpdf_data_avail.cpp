@@ -27,12 +27,12 @@
 #include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/stl_util.h"
 #include "third_party/base/check.h"
 #include "third_party/base/compiler_specific.h"
 #include "third_party/base/containers/contains.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/numerics/safe_conversions.h"
-#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -639,7 +639,7 @@ bool CPDF_DataAvail::CheckPageNode(const CPDF_DataAvail::PageNode& pageNode,
   if (level >= kMaxPageRecursionDepth)
     return false;
 
-  int32_t iSize = pdfium::CollectionSize<int32_t>(pageNode.m_ChildNodes);
+  int32_t iSize = fxcrt::CollectionSize<int32_t>(pageNode.m_ChildNodes);
   if (iSize <= 0 || iPage >= iSize) {
     m_docStatus = PDF_DATAAVAIL_ERROR;
     return false;

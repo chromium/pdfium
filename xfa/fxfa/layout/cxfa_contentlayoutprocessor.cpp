@@ -10,13 +10,13 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/stl_util.h"
 #include "fxjs/gc/container_trace.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/check.h"
 #include "third_party/base/compiler_specific.h"
 #include "third_party/base/containers/adapters.h"
 #include "third_party/base/notreached.h"
-#include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
@@ -1078,12 +1078,12 @@ void CXFA_ContentLayoutProcessor::DoLayoutPositionedContainer(
     if (pContext && pContext->m_prgSpecifiedColumnWidths) {
       int32_t iColSpan =
           m_pCurChildNode->JSObject()->GetInteger(XFA_Attribute::ColSpan);
-      if (iColSpan <= pdfium::CollectionSize<int32_t>(
+      if (iColSpan <= fxcrt::CollectionSize<int32_t>(
                           *pContext->m_prgSpecifiedColumnWidths) -
                           iColIndex) {
         pContext->m_fCurColumnWidth = 0.0f;
         if (iColSpan == -1) {
-          iColSpan = pdfium::CollectionSize<int32_t>(
+          iColSpan = fxcrt::CollectionSize<int32_t>(
               *pContext->m_prgSpecifiedColumnWidths);
         }
         for (int32_t i = 0; iColIndex + i < iColSpan; ++i) {
@@ -1195,7 +1195,7 @@ void CXFA_ContentLayoutProcessor::DoLayoutTableContainer(
   }
 
   int32_t iSpecifiedColumnCount =
-      pdfium::CollectionSize<int32_t>(m_rgSpecifiedColumnWidths);
+      fxcrt::CollectionSize<int32_t>(m_rgSpecifiedColumnWidths);
   Context layoutContext;
   layoutContext.m_prgSpecifiedColumnWidths = &m_rgSpecifiedColumnWidths;
   Context* pLayoutContext =
@@ -1254,7 +1254,7 @@ void CXFA_ContentLayoutProcessor::DoLayoutTableContainer(
       }
     }
 
-    iRowCount = pdfium::CollectionSize<int32_t>(rgRowItems);
+    iRowCount = fxcrt::CollectionSize<int32_t>(rgRowItems);
     iColCount = 0;
     bool bMoreColumns = true;
     while (bMoreColumns) {
@@ -1286,9 +1286,8 @@ void CXFA_ContentLayoutProcessor::DoLayoutTableContainer(
           continue;
 
         if (iColCount >= iSpecifiedColumnCount) {
-          int32_t c =
-              iColCount + 1 -
-              pdfium::CollectionSize<int32_t>(m_rgSpecifiedColumnWidths);
+          int32_t c = iColCount + 1 -
+                      fxcrt::CollectionSize<int32_t>(m_rgSpecifiedColumnWidths);
           for (int32_t j = 0; j < c; j++)
             m_rgSpecifiedColumnWidths.push_back(0);
         }
@@ -1304,7 +1303,7 @@ void CXFA_ContentLayoutProcessor::DoLayoutTableContainer(
         continue;
 
       float fFinalColumnWidth = 0.0f;
-      if (pdfium::IndexInBounds(m_rgSpecifiedColumnWidths, iColCount))
+      if (fxcrt::IndexInBounds(m_rgSpecifiedColumnWidths, iColCount))
         fFinalColumnWidth = m_rgSpecifiedColumnWidths[iColCount];
 
       for (int32_t i = 0; i < iRowCount; ++i) {
@@ -1924,7 +1923,7 @@ bool CXFA_ContentLayoutProcessor::CalculateRowChildPosition(
   float fGroupWidths[3] = {0, 0, 0};
   int32_t nTotalLength = 0;
   for (int32_t i = 0; i < 3; i++) {
-    nGroupLengths[i] = pdfium::CollectionSize<int32_t>(rgCurLineLayoutItems[i]);
+    nGroupLengths[i] = fxcrt::CollectionSize<int32_t>(rgCurLineLayoutItems[i]);
     for (int32_t c = nGroupLengths[i], j = 0; j < c; j++) {
       nTotalLength++;
       if (rgCurLineLayoutItems[i][j]->GetFormNode()->PresenceRequiresSpace())

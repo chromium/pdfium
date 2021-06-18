@@ -8,11 +8,11 @@
 
 #include <utility>
 
+#include "core/fxcrt/stl_util.h"
 #include "fxjs/gc/container_trace.h"
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/check.h"
-#include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
@@ -685,7 +685,7 @@ void CXFA_ViewLayoutProcessor::AddPageAreaLayoutItem(
     CXFA_ViewRecord* pNewRecord,
     CXFA_Node* pNewPageArea) {
   CXFA_ViewLayoutItem* pNewPageAreaLayoutItem = nullptr;
-  if (pdfium::IndexInBounds(m_PageArray, m_nAvailPages)) {
+  if (fxcrt::IndexInBounds(m_PageArray, m_nAvailPages)) {
     CXFA_ViewLayoutItem* pViewItem = m_PageArray[m_nAvailPages];
     pViewItem->SetFormNode(pNewPageArea);
     m_nAvailPages++;
@@ -746,11 +746,11 @@ void CXFA_ViewLayoutProcessor::FinishPaginatedPageSets() {
 }
 
 int32_t CXFA_ViewLayoutProcessor::GetPageCount() const {
-  return pdfium::CollectionSize<int32_t>(m_PageArray);
+  return fxcrt::CollectionSize<int32_t>(m_PageArray);
 }
 
 CXFA_ViewLayoutItem* CXFA_ViewLayoutProcessor::GetPage(int32_t index) const {
-  if (!pdfium::IndexInBounds(m_PageArray, index))
+  if (!fxcrt::IndexInBounds(m_PageArray, index))
     return nullptr;
   return m_PageArray[index].Get();
 }
@@ -1912,7 +1912,7 @@ void CXFA_ViewLayoutProcessor::SyncLayoutData() {
     }
   }
 
-  int32_t nPage = pdfium::CollectionSize<int32_t>(m_PageArray);
+  int32_t nPage = fxcrt::CollectionSize<int32_t>(m_PageArray);
   for (int32_t i = nPage - 1; i >= m_nAvailPages; i--) {
     CXFA_ViewLayoutItem* pPage = m_PageArray[i];
     m_PageArray.erase(m_PageArray.begin() + i);

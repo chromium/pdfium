@@ -10,7 +10,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fxcrt/fx_safe_types.h"
-#include "third_party/base/stl_util.h"
+#include "core/fxcrt/stl_util.h"
 
 CPDF_ExpIntFunc::CPDF_ExpIntFunc()
     : CPDF_Function(Type::kType2ExponentialInterpolation) {}
@@ -36,8 +36,8 @@ bool CPDF_ExpIntFunc::v_Init(const CPDF_Object* pObj,
     m_nOutputs = 1;
 
   const CPDF_Array* pArray1 = pDict->GetArrayFor("C1");
-  m_BeginValues = pdfium::Vector2D<float>(m_nOutputs, 2);
-  m_EndValues = pdfium::Vector2D<float>(m_nOutputs, 2);
+  m_BeginValues = fxcrt::Vector2D<float>(m_nOutputs, 2);
+  m_EndValues = fxcrt::Vector2D<float>(m_nOutputs, 2);
   for (uint32_t i = 0; i < m_nOutputs; i++) {
     m_BeginValues[i] = pArray0 ? pArray0->GetNumberAt(i) : 0.0f;
     m_EndValues[i] = pArray1 ? pArray1->GetNumberAt(i) : 1.0f;

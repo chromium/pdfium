@@ -64,6 +64,7 @@ source_set("fxcrt") {
     "retained_tree_node.h",
     "scoped_set_insertion.h",
     "shared_copy_on_write.h",
+    "stl_util.h",
     "string_data_template.cpp",
     "string_data_template.h",
     "string_pool_template.h",

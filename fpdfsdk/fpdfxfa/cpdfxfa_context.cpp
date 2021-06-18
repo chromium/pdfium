@@ -15,6 +15,7 @@
 #include "core/fpdfapi/parser/cpdf_seekablemultistream.h"
 #include "core/fxcrt/autonuller.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmlparser.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
@@ -27,7 +28,6 @@
 #include "public/fpdf_formfill.h"
 #include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
-#include "third_party/base/stl_util.h"
 #include "v8/include/cppgc/allocation.h"
 #include "xfa/fgas/font/cfgas_gemodule.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
@@ -212,7 +212,7 @@ RetainPtr<CPDFXFA_Page> CPDFXFA_Context::GetOrCreateXFAPage(int page_index) {
   if (page_index < 0)
     return nullptr;
 
-  if (pdfium::IndexInBounds(m_XFAPageList, page_index)) {
+  if (fxcrt::IndexInBounds(m_XFAPageList, page_index)) {
     if (m_XFAPageList[page_index])
       return m_XFAPageList[page_index];
   } else {
@@ -224,14 +224,14 @@ RetainPtr<CPDFXFA_Page> CPDFXFA_Context::GetOrCreateXFAPage(int page_index) {
   if (!pPage->LoadPage())
     return nullptr;
 
-  if (pdfium::IndexInBounds(m_XFAPageList, page_index))
+  if (fxcrt::IndexInBounds(m_XFAPageList, page_index))
     m_XFAPageList[page_index] = pPage;
 
   return pPage;
 }
 
 RetainPtr<CPDFXFA_Page> CPDFXFA_Context::GetXFAPage(int page_index) {
-  if (!pdfium::IndexInBounds(m_XFAPageList, page_index))
+  if (!fxcrt::IndexInBounds(m_XFAPageList, page_index))
     return nullptr;
 
   return m_XFAPageList[page_index];
@@ -265,7 +265,7 @@ void CPDFXFA_Context::DeletePage(int page_index) {
   // if it's a valid page in the document.
   m_pPDFDoc->DeletePage(page_index);
 
-  if (pdfium::IndexInBounds(m_XFAPageList, page_index))
+  if (fxcrt::IndexInBounds(m_XFAPageList, page_index))
     m_XFAPageList[page_index].Reset();
 }
 

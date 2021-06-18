@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "fxjs/gc/container_trace.h"
@@ -19,7 +20,6 @@
 #include "third_party/base/check_op.h"
 #include "third_party/base/compiler_specific.h"
 #include "third_party/base/notreached.h"
-#include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cscript_datawindow.h"
@@ -1041,7 +1041,7 @@ CXFA_Node* CopyContainer_SubformSet(CXFA_Document* pDocument,
     if (iCurRepeatIndex == 0 && !bAccessedDataDOM) {
       int32_t iLimit = iMax;
       if (pInstMgrNode && pTemplateNode->GetNameHash() == 0) {
-        iLimit = pdfium::CollectionSize<int32_t>(subformArray);
+        iLimit = fxcrt::CollectionSize<int32_t>(subformArray);
         if (iLimit < iMin)
           iLimit = iInit;
       }

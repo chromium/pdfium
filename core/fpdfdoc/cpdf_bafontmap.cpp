@@ -24,11 +24,11 @@
 #include "core/fpdfdoc/cpdf_formfield.h"
 #include "core/fpdfdoc/ipvt_fontmap.h"
 #include "core/fxcrt/fx_codepage.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_substfont.h"
-#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -89,13 +89,13 @@ CPDF_BAFontMap::CPDF_BAFontMap(CPDF_Document* pDocument,
 CPDF_BAFontMap::~CPDF_BAFontMap() = default;
 
 RetainPtr<CPDF_Font> CPDF_BAFontMap::GetPDFFont(int32_t nFontIndex) {
-  if (pdfium::IndexInBounds(m_Data, nFontIndex))
+  if (fxcrt::IndexInBounds(m_Data, nFontIndex))
     return m_Data[nFontIndex]->pFont;
   return nullptr;
 }
 
 ByteString CPDF_BAFontMap::GetPDFFontAlias(int32_t nFontIndex) {
-  if (pdfium::IndexInBounds(m_Data, nFontIndex))
+  if (fxcrt::IndexInBounds(m_Data, nFontIndex))
     return m_Data[nFontIndex]->sFontName;
   return ByteString();
 }
@@ -133,7 +133,7 @@ int32_t CPDF_BAFontMap::GetWordFontIndex(uint16_t word,
 }
 
 int32_t CPDF_BAFontMap::CharCodeFromUnicode(int32_t nFontIndex, uint16_t word) {
-  if (!pdfium::IndexInBounds(m_Data, nFontIndex))
+  if (!fxcrt::IndexInBounds(m_Data, nFontIndex))
     return -1;
 
   Data* pData = m_Data[nFontIndex].get();
@@ -320,7 +320,7 @@ void CPDF_BAFontMap::AddFontToAnnotDict(const RetainPtr<CPDF_Font>& pFont,
 }
 
 bool CPDF_BAFontMap::KnowWord(int32_t nFontIndex, uint16_t word) {
-  return pdfium::IndexInBounds(m_Data, nFontIndex) &&
+  return fxcrt::IndexInBounds(m_Data, nFontIndex) &&
          CharCodeFromUnicode(nFontIndex, word) >= 0;
 }
 
@@ -351,7 +351,7 @@ int32_t CPDF_BAFontMap::AddFontData(const RetainPtr<CPDF_Font>& pFont,
   pNewData->sFontName = sFontAlias;
   pNewData->nCharset = nCharset;
   m_Data.push_back(std::move(pNewData));
-  return pdfium::CollectionSize<int32_t>(m_Data) - 1;
+  return fxcrt::CollectionSize<int32_t>(m_Data) - 1;
 }
 
 ByteString CPDF_BAFontMap::EncodeFontAlias(const ByteString& sFontName,

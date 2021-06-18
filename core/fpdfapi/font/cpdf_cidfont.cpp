@@ -24,13 +24,13 @@
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_unicode.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/fx_font.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/cxx17_backports.h"
 #include "third_party/base/numerics/ranges.h"
 #include "third_party/base/span.h"
-#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -227,7 +227,7 @@ void LoadMetricsArray(const CPDF_Array* pArray,
       if (width_status != 1)
         return;
       if (first_code > std::numeric_limits<int>::max() -
-                           pdfium::CollectionSize<int>(*pObjArray)) {
+                           fxcrt::CollectionSize<int>(*pObjArray)) {
         width_status = 0;
         continue;
       }

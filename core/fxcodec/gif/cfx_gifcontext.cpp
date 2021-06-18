@@ -10,8 +10,8 @@
 #include <utility>
 
 #include "core/fxcodec/cfx_codec_memory.h"
+#include "core/fxcrt/stl_util.h"
 #include "third_party/base/cxx17_backports.h"
-#include "third_party/base/stl_util.h"
 
 namespace fxcodec {
 
@@ -155,7 +155,7 @@ GifDecoder::Status CFX_GifContext::GetFrame() {
 }
 
 GifDecoder::Status CFX_GifContext::LoadFrame(int32_t frame_num) {
-  if (!pdfium::IndexInBounds(images_, frame_num))
+  if (!fxcrt::IndexInBounds(images_, frame_num))
     return GifDecoder::Status::kError;
 
   CFX_GifImage* gif_image = images_[static_cast<size_t>(frame_num)].get();

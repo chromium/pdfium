@@ -25,9 +25,9 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_unicode.h"
+#include "core/fxcrt/stl_util.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -329,7 +329,7 @@ void CPDF_TextPage::Init() {
 }
 
 int CPDF_TextPage::CountChars() const {
-  return pdfium::CollectionSize<int>(m_CharList);
+  return fxcrt::CollectionSize<int>(m_CharList);
 }
 
 int CPDF_TextPage::CharIndexFromTextIndex(int text_index) const {
@@ -543,11 +543,11 @@ int CPDF_TextPage::CountRects(int start, int nCount) {
     return -1;
 
   m_SelRects = GetRectArray(start, nCount);
-  return pdfium::CollectionSize<int>(m_SelRects);
+  return fxcrt::CollectionSize<int>(m_SelRects);
 }
 
 bool CPDF_TextPage::GetRect(int rectIndex, CFX_FloatRect* pRect) const {
-  if (!pdfium::IndexInBounds(m_SelRects, rectIndex))
+  if (!fxcrt::IndexInBounds(m_SelRects, rectIndex))
     return false;
 
   *pRect = m_SelRects[rectIndex];
@@ -941,7 +941,7 @@ void CPDF_TextPage::SwapTempTextBuf(int iCharListStartAppend,
                                     int iBufStartAppend) {
   DCHECK(!m_TempCharList.empty());
   int i = iCharListStartAppend;
-  int j = pdfium::CollectionSize<int>(m_TempCharList) - 1;
+  int j = fxcrt::CollectionSize<int>(m_TempCharList) - 1;
   for (; i < j; ++i, --j) {
     std::swap(m_TempCharList[i], m_TempCharList[j]);
     std::swap(m_TempCharList[i].m_Index, m_TempCharList[j].m_Index);
@@ -950,7 +950,7 @@ void CPDF_TextPage::SwapTempTextBuf(int iCharListStartAppend,
   pdfium::span<wchar_t> temp_span = m_TempTextBuf.GetWideSpan();
   DCHECK(!temp_span.empty());
   i = iBufStartAppend;
-  j = pdfium::CollectionSize<int>(temp_span) - 1;
+  j = fxcrt::CollectionSize<int>(temp_span) - 1;
   for (; i < j; ++i, --j)
     std::swap(temp_span[i], temp_span[j]);
 }
@@ -1038,8 +1038,7 @@ void CPDF_TextPage::ProcessTextObject(const TransformedTextObject& obj) {
   const bool bIsBidiAndMirrorInverse =
       bR2L && (matrix.a * matrix.d - matrix.b * matrix.c) < 0;
   int32_t iBufStartAppend = m_TempTextBuf.GetLength();
-  int32_t iCharListStartAppend =
-      pdfium::CollectionSize<int32_t>(m_TempCharList);
+  int32_t iCharListStartAppend = fxcrt::CollectionSize<int32_t>(m_TempCharList);
 
   float spacing = 0;
   const size_t nItems = pTextObj->CountItems();
@@ -1135,12 +1134,12 @@ void CPDF_TextPage::ProcessTextObject(const TransformedTextObject& obj) {
     }
     int nTotal = wstrItem.GetLength();
     bool bDel = false;
-    const int count = std::min(pdfium::CollectionSize<int>(m_TempCharList), 7);
+    const int count = std::min(fxcrt::CollectionSize<int>(m_TempCharList), 7);
     constexpr float kTextCharRatioGapDelta = 0.07f;
     float threshold = charinfo.m_Matrix.TransformXDistance(
         kTextCharRatioGapDelta * pTextObj->GetFontSize());
-    for (int n = pdfium::CollectionSize<int>(m_TempCharList);
-         n > pdfium::CollectionSize<int>(m_TempCharList) - count; --n) {
+    for (int n = fxcrt::CollectionSize<int>(m_TempCharList);
+         n > fxcrt::CollectionSize<int>(m_TempCharList) - count; --n) {
       const CharInfo& charinfo1 = m_TempCharList[n - 1];
       CFX_PointF diff = charinfo1.m_Origin - charinfo.m_Origin;
       if (charinfo1.m_CharCode == charinfo.m_CharCode &&

@@ -6,15 +6,15 @@
 
 #include "xfa/fgas/layout/cfgas_breakline.h"
 
+#include "core/fxcrt/stl_util.h"
 #include "third_party/base/check.h"
-#include "third_party/base/stl_util.h"
 
 CFGAS_BreakLine::CFGAS_BreakLine() = default;
 
 CFGAS_BreakLine::~CFGAS_BreakLine() = default;
 
 CFGAS_Char* CFGAS_BreakLine::GetChar(int32_t index) {
-  DCHECK(pdfium::IndexInBounds(m_LineChars, index));
+  DCHECK(fxcrt::IndexInBounds(m_LineChars, index));
   return &m_LineChars[index];
 }
 

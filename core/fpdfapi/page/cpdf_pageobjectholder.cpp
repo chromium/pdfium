@@ -16,9 +16,9 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/stl_util.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/stl_util.h"
 
 bool GraphicsData::operator<(const GraphicsData& other) const {
   if (!FXSYS_SafeEQ(fillAlpha, other.fillAlpha))
@@ -127,7 +127,7 @@ void CPDF_PageObjectHolder::LoadTransparencyInfo() {
 
 CPDF_PageObject* CPDF_PageObjectHolder::GetPageObjectByIndex(
     size_t index) const {
-  return pdfium::IndexInBounds(m_PageObjectList, index)
+  return fxcrt::IndexInBounds(m_PageObjectList, index)
              ? m_PageObjectList[index].get()
              : nullptr;
 }
@@ -138,7 +138,7 @@ void CPDF_PageObjectHolder::AppendPageObject(
 }
 
 bool CPDF_PageObjectHolder::RemovePageObject(CPDF_PageObject* pPageObj) {
-  pdfium::FakeUniquePtr<CPDF_PageObject> p(pPageObj);
+  fxcrt::FakeUniquePtr<CPDF_PageObject> p(pPageObj);
 
   auto it =
       std::find(std::begin(m_PageObjectList), std::end(m_PageObjectList), p);

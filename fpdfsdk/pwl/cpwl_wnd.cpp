@@ -11,13 +11,13 @@
 #include <vector>
 
 #include "build/build_config.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/pwl/cpwl_scroll_bar.h"
 #include "public/fpdf_fwlevent.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/containers/contains.h"
-#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -390,7 +390,7 @@ void CPWL_Wnd::AddChild(std::unique_ptr<CPWL_Wnd> pWnd) {
 void CPWL_Wnd::RemoveChild(CPWL_Wnd* pWnd) {
   DCHECK_EQ(pWnd->m_pParent, this);
   auto it = std::find(m_Children.begin(), m_Children.end(),
-                      pdfium::FakeUniquePtr<CPWL_Wnd>(pWnd));
+                      fxcrt::FakeUniquePtr<CPWL_Wnd>(pWnd));
   if (it == m_Children.end())
     return;
 

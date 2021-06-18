@@ -8,8 +8,8 @@
 
 #include <utility>
 
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_fontmapper.h"
-#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -70,7 +70,7 @@ Optional<uint32_t> CFX_CTTGSUBTable::GetVerticalGlyphSub(
     const TFeatureRecord& feature,
     uint32_t glyphnum) const {
   for (int index : feature.LookupListIndices) {
-    if (!pdfium::IndexInBounds(LookupList, index))
+    if (!fxcrt::IndexInBounds(LookupList, index))
       continue;
     if (LookupList[index].LookupType != 1)
       continue;
@@ -97,7 +97,7 @@ Optional<uint32_t> CFX_CTTGSUBTable::GetVerticalGlyphSub2(
       case 2: {
         auto* tbl2 = static_cast<TSubTable2*>(subTable.get());
         int index = GetCoverageIndex(tbl2->Coverage.get(), glyphnum);
-        if (pdfium::IndexInBounds(tbl2->Substitutes, index)) {
+        if (fxcrt::IndexInBounds(tbl2->Substitutes, index)) {
           return tbl2->Substitutes[index];
         }
         break;

@@ -15,9 +15,9 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/fx_unicode.h"
+#include "core/fxcrt/stl_util.h"
 #include "third_party/base/check.h"
 #include "third_party/base/ptr_util.h"
-#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -218,7 +218,7 @@ bool CPDF_TextPageFind::FindNext() {
   if (m_findNextStart.value() > strLen - 1)
     return false;
 
-  int nCount = pdfium::CollectionSize<int>(m_csFindWhatArray);
+  int nCount = fxcrt::CollectionSize<int>(m_csFindWhatArray);
   Optional<size_t> nResultPos = 0;
   size_t nStartPos = m_findNextStart.value();
   bool bSpaceStart = false;

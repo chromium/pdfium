@@ -10,9 +10,9 @@
 #include "core/fpdfapi/page/cpdf_path.h"
 #include "core/fpdfapi/page/cpdf_pathobject.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/stl_util.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "third_party/base/span.h"
-#include "third_party/base/stl_util.h"
 
 // These checks are here because core/ and public/ cannot depend on each other.
 static_assert(CFX_GraphStateData::LineCapButt == FPDF_LINECAP_BUTT,
@@ -75,7 +75,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPath_CountSegments(FPDF_PAGEOBJECT path) {
   auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
   if (!pPathObj)
     return -1;
-  return pdfium::CollectionSize<int>(pPathObj->path().GetPoints());
+  return fxcrt::CollectionSize<int>(pPathObj->path().GetPoints());
 }
 
 FPDF_EXPORT FPDF_PATHSEGMENT FPDF_CALLCONV
@@ -85,7 +85,7 @@ FPDFPath_GetPathSegment(FPDF_PAGEOBJECT path, int index) {
     return nullptr;
 
   pdfium::span<const CFX_Path::Point> points = pPathObj->path().GetPoints();
-  if (!pdfium::IndexInBounds(points, index))
+  if (!fxcrt::IndexInBounds(points, index))
     return nullptr;
 
   return FPDFPathSegmentFromFXPathPoint(&points[index]);

@@ -9,7 +9,7 @@
 #include <utility>
 
 #include "core/fdrm/fx_crypt.h"
-#include "third_party/base/stl_util.h"
+#include "core/fxcrt/stl_util.h"
 
 namespace {
 
@@ -241,7 +241,7 @@ bool CFX_GlobalData::DeleteGlobalVariable(ByteString sPropName) {
 }
 
 int32_t CFX_GlobalData::GetSize() const {
-  return pdfium::CollectionSize<int32_t>(m_arrayGlobalData);
+  return fxcrt::CollectionSize<int32_t>(m_arrayGlobalData);
 }
 
 CFX_GlobalData::Element* CFX_GlobalData::GetAt(int index) {

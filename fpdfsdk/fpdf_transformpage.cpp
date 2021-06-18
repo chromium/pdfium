@@ -21,11 +21,11 @@
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_path.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "third_party/base/span.h"
-#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -334,8 +334,7 @@ FPDFClipPath_CountPathSegments(FPDF_CLIPPATH clip_path, int path_index) {
     return -1;
   }
 
-  return pdfium::CollectionSize<int>(
-      pClipPath->GetPath(path_index).GetPoints());
+  return fxcrt::CollectionSize<int>(pClipPath->GetPath(path_index).GetPoints());
 }
 
 FPDF_EXPORT FPDF_PATHSEGMENT FPDF_CALLCONV
@@ -353,7 +352,7 @@ FPDFClipPath_GetPathSegment(FPDF_CLIPPATH clip_path,
 
   pdfium::span<const CFX_Path::Point> points =
       pClipPath->GetPath(path_index).GetPoints();
-  if (!pdfium::IndexInBounds(points, segment_index))
+  if (!fxcrt::IndexInBounds(points, segment_index))
     return nullptr;
 
   return FPDFPathSegmentFromFXPathPoint(&points[segment_index]);

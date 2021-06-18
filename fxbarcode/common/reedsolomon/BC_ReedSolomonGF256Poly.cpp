@@ -26,9 +26,9 @@
 #include <utility>
 
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/stl_util.h"
 #include "fxbarcode/common/reedsolomon/BC_ReedSolomonGF256.h"
 #include "third_party/base/check.h"
-#include "third_party/base/stl_util.h"
 
 CBC_ReedSolomonGF256Poly::CBC_ReedSolomonGF256Poly(
     CBC_ReedSolomonGF256* field,
@@ -62,7 +62,7 @@ const std::vector<int32_t>& CBC_ReedSolomonGF256Poly::GetCoefficients() const {
 }
 
 int32_t CBC_ReedSolomonGF256Poly::GetDegree() const {
-  return pdfium::CollectionSize<int32_t>(m_coefficients) - 1;
+  return fxcrt::CollectionSize<int32_t>(m_coefficients) - 1;
 }
 
 bool CBC_ReedSolomonGF256Poly::IsZero() const {

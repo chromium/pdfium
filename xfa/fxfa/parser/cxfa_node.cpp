@@ -17,6 +17,7 @@
 #include "core/fxcrt/cfx_readonlymemorystream.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
@@ -33,7 +34,6 @@
 #include "third_party/base/containers/contains.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/span.h"
-#include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fgas/crt/cfgas_decimal.h"
 #include "xfa/fgas/crt/locale_iface.h"
@@ -4273,7 +4273,7 @@ std::vector<WideString> CXFA_Node::GetChoiceListItems(bool bSaveValue) {
 int32_t CXFA_Node::CountSelectedItems() {
   std::vector<WideString> wsValueArray = GetSelectedItemsValue();
   if (IsListBox() || !IsChoiceListAllowTextEntry())
-    return pdfium::CollectionSize<int32_t>(wsValueArray);
+    return fxcrt::CollectionSize<int32_t>(wsValueArray);
 
   int32_t iSelected = 0;
   std::vector<WideString> wsSaveTextArray = GetChoiceListItems(true);
@@ -4286,7 +4286,7 @@ int32_t CXFA_Node::CountSelectedItems() {
 
 int32_t CXFA_Node::GetSelectedItem(int32_t nIndex) {
   std::vector<WideString> wsValueArray = GetSelectedItemsValue();
-  if (!pdfium::IndexInBounds(wsValueArray, nIndex))
+  if (!fxcrt::IndexInBounds(wsValueArray, nIndex))
     return -1;
 
   std::vector<WideString> wsSaveTextArray = GetChoiceListItems(true);
@@ -4319,7 +4319,7 @@ std::vector<WideString> CXFA_Node::GetSelectedItemsValue() {
 
 bool CXFA_Node::GetItemState(int32_t nIndex) {
   std::vector<WideString> wsSaveTextArray = GetChoiceListItems(true);
-  return pdfium::IndexInBounds(wsSaveTextArray, nIndex) &&
+  return fxcrt::IndexInBounds(wsSaveTextArray, nIndex) &&
          pdfium::Contains(GetSelectedItemsValue(), wsSaveTextArray[nIndex]);
 }
 
@@ -4329,7 +4329,7 @@ void CXFA_Node::SetItemState(int32_t nIndex,
                              bool bScriptModify,
                              bool bSyncData) {
   std::vector<WideString> wsSaveTextArray = GetChoiceListItems(true);
-  if (!pdfium::IndexInBounds(wsSaveTextArray, nIndex))
+  if (!fxcrt::IndexInBounds(wsSaveTextArray, nIndex))
     return;
 
   int32_t iSel = -1;
@@ -4377,7 +4377,7 @@ void CXFA_Node::SetSelectedItems(const std::vector<int32_t>& iSelArray,
                                  bool bScriptModify,
                                  bool bSyncData) {
   WideString wsValue;
-  int32_t iSize = pdfium::CollectionSize<int32_t>(iSelArray);
+  int32_t iSize = fxcrt::CollectionSize<int32_t>(iSelArray);
   if (iSize >= 1) {
     std::vector<WideString> wsSaveTextArray = GetChoiceListItems(true);
     WideString wsItemValue;

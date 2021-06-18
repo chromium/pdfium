@@ -15,6 +15,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/stl_util.h"
 #include "fpdfsdk/cpdfsdk_actionhandler.h"
 #include "fpdfsdk/cpdfsdk_annothandlermgr.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
@@ -26,7 +27,6 @@
 #include "fpdfsdk/formfiller/cffl_privatedata.h"
 #include "fxjs/ijs_runtime.h"
 #include "third_party/base/check.h"
-#include "third_party/base/stl_util.h"
 
 static_assert(FXCT_ARROW ==
                   static_cast<int>(IPWL_SystemHandler::CursorStyle::kArrow),
@@ -427,7 +427,7 @@ void CPDFSDK_FormFillEnvironment::DoGoToAction(int nPageIndex,
 
 #ifdef PDF_ENABLE_XFA
 int CPDFSDK_FormFillEnvironment::GetPageViewCount() const {
-  return pdfium::CollectionSize<int>(m_PageMap);
+  return fxcrt::CollectionSize<int>(m_PageMap);
 }
 
 void CPDFSDK_FormFillEnvironment::DisplayCaret(IPDF_Page* page,

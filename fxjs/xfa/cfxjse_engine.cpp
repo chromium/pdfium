@@ -11,6 +11,7 @@
 #include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/stl_util.h"
 #include "fxjs/cjs_runtime.h"
 #include "fxjs/fxv8.h"
 #include "fxjs/xfa/cfxjse_class.h"
@@ -22,7 +23,6 @@
 #include "fxjs/xfa/cfxjse_value.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/containers/contains.h"
-#include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
@@ -688,7 +688,7 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
   findObjects.emplace_back(refObject ? refObject : m_pDocument->GetRoot());
   int32_t nNodes = 0;
   while (true) {
-    nNodes = pdfium::CollectionSize<int32_t>(findObjects);
+    nNodes = fxcrt::CollectionSize<int32_t>(findObjects);
     int32_t i = 0;
     rndFind.m_dwStyles = dwStyles;
     m_ResolveProcessor->SetCurStart(nStart);
@@ -766,7 +766,7 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
     }
     findObjects.clear();
 
-    nNodes = pdfium::CollectionSize<int32_t>(retObjects);
+    nNodes = fxcrt::CollectionSize<int32_t>(retObjects);
     if (nNodes < 1) {
       if (dwStyles & XFA_RESOLVENODE_CreateNode) {
         bNextCreate = true;
