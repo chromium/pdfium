@@ -721,7 +721,7 @@ IPVT_FontMap* CPWL_EditImpl::GetFontMap() {
   return m_pVTProvider ? m_pVTProvider->GetFontMap() : nullptr;
 }
 
-void CPWL_EditImpl::SetPlateRect(const CFX_FloatRect& rect) {
+void CPWL_EditImpl::SetPlateRectAndPaint(const CFX_FloatRect& rect) {
   m_pVT->SetPlateRect(rect);
   m_ptScrollPos = CFX_PointF(rect.left, rect.top);
   Paint();
@@ -745,17 +745,17 @@ void CPWL_EditImpl::SetPasswordChar(uint16_t wSubWord, bool bPaint) {
     Paint();
 }
 
-void CPWL_EditImpl::SetLimitChar(int32_t nLimitChar) {
+void CPWL_EditImpl::SetLimitCharAndPaint(int32_t nLimitChar) {
   m_pVT->SetLimitChar(nLimitChar);
   Paint();
 }
 
-void CPWL_EditImpl::SetCharArray(int32_t nCharArray) {
+void CPWL_EditImpl::SetCharArrayAndPaint(int32_t nCharArray) {
   m_pVT->SetCharArray(nCharArray);
   Paint();
 }
 
-void CPWL_EditImpl::SetCharSpace(float fCharSpace) {
+void CPWL_EditImpl::SetCharSpaceAndPaint(float fCharSpace) {
   m_pVT->SetCharSpace(fCharSpace);
   Paint();
 }
@@ -778,7 +778,7 @@ void CPWL_EditImpl::SetAutoFontSize(bool bAuto, bool bPaint) {
     Paint();
 }
 
-void CPWL_EditImpl::SetFontSize(float fFontSize) {
+void CPWL_EditImpl::SetFontSizeAndPaint(float fFontSize) {
   m_pVT->SetFontSize(fFontSize);
   Paint();
 }
@@ -918,7 +918,7 @@ CPVT_WordRange CPWL_EditImpl::GetSelectWordRange() const {
   return m_SelState.ConvertToWordRange();
 }
 
-void CPWL_EditImpl::SetText(const WideString& sText) {
+void CPWL_EditImpl::SetTextAndPaint(const WideString& sText) {
   Clear();
   DoInsertText(CPVT_WordPlace(0, 0, -1), sText, FX_CHARSET_Default);
   Paint();

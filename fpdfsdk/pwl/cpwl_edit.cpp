@@ -41,7 +41,7 @@ CPWL_Edit::~CPWL_Edit() {
 }
 
 void CPWL_Edit::SetText(const WideString& csText) {
-  m_pEditImpl->SetText(csText);
+  m_pEditImpl->SetTextAndPaint(csText);
 }
 
 bool CPWL_Edit::RePosChildWnd() {
@@ -67,7 +67,7 @@ bool CPWL_Edit::RePosChildWnd() {
     m_pCaret->SetClipRect(rect);
   }
 
-  m_pEditImpl->SetPlateRect(GetClientRect());
+  m_pEditImpl->SetPlateRectAndPaint(GetClientRect());
   return true;
 }
 
@@ -258,7 +258,7 @@ void CPWL_Edit::OnKillFocus() {
 }
 
 void CPWL_Edit::SetCharSpace(float fCharSpace) {
-  m_pEditImpl->SetCharSpace(fCharSpace);
+  m_pEditImpl->SetCharSpaceAndPaint(fCharSpace);
 }
 
 CPVT_WordRange CPWL_Edit::GetSelectWordRange() const {
@@ -297,7 +297,7 @@ void CPWL_Edit::SetCharArray(int32_t nCharArray) {
   if (!HasFlag(PES_CHARARRAY) || nCharArray <= 0)
     return;
 
-  m_pEditImpl->SetCharArray(nCharArray);
+  m_pEditImpl->SetCharArrayAndPaint(nCharArray);
   m_pEditImpl->SetTextOverflow(true, true);
 
   if (!HasFlag(PWS_AUTOFONTSIZE))
@@ -313,11 +313,11 @@ void CPWL_Edit::SetCharArray(int32_t nCharArray) {
     return;
 
   m_pEditImpl->SetAutoFontSize(false, true);
-  m_pEditImpl->SetFontSize(fFontSize);
+  m_pEditImpl->SetFontSizeAndPaint(fFontSize);
 }
 
 void CPWL_Edit::SetLimitChar(int32_t nLimitChar) {
-  m_pEditImpl->SetLimitChar(nLimitChar);
+  m_pEditImpl->SetLimitCharAndPaint(nLimitChar);
 }
 
 CFX_FloatRect CPWL_Edit::GetFocusRect() const {
@@ -539,7 +539,7 @@ void CPWL_Edit::CreateEditCaret(const CreateParams& cp) {
 }
 
 void CPWL_Edit::SetFontSize(float fFontSize) {
-  m_pEditImpl->SetFontSize(fFontSize);
+  m_pEditImpl->SetFontSizeAndPaint(fFontSize);
 }
 
 float CPWL_Edit::GetFontSize() const {
