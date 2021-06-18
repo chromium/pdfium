@@ -2302,6 +2302,34 @@ TEST_F(FPDFEditEmbedderTest, AddStandardFontText) {
   FPDF_ClosePage(page);
 }
 
+TEST_F(FPDFEditEmbedderTest, AddStandardFontTextOfSizeZero) {
+  // Start with a blank page
+  ScopedFPDFPage page(FPDFPage_New(CreateNewDocument(), 0, 612, 792));
+
+  // Add some text of size 0 to the page.
+  FPDF_PAGEOBJECT text_object =
+      FPDFPageObj_NewTextObj(document(), "Arial", 0.0f);
+  EXPECT_TRUE(text_object);
+  ScopedFPDFWideString text = GetFPDFWideString(kBottomText);
+  EXPECT_TRUE(FPDFText_SetText(text_object, text.get()));
+  FPDFPageObj_Transform(text_object, 1, 0, 0, 1, 20, 20);
+
+  // TODO(crbug.com/pdfium/1695): A return value of 0 is suppose to mean
+  // failure. Did FPDFTextObj_GetFontSize() fail here?
+  EXPECT_EQ(0.0f, FPDFTextObj_GetFontSize(text_object));
+
+  FPDFPage_InsertObject(page.get(), text_object);
+  EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
+  {
+    ScopedFPDFBitmap page_bitmap = RenderPage(page.get());
+    CompareBitmap(page_bitmap.get(), 612, 792,
+                  pdfium::kBlankPage612By792Checksum);
+
+    EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+    VerifySavedDocument(612, 792, pdfium::kBlankPage612By792Checksum);
+  }
+}
+
 TEST_F(FPDFEditEmbedderTest, GetTextRenderMode) {
   ASSERT_TRUE(OpenDocument("text_render_mode.pdf"));
   FPDF_PAGE page = LoadPage(0);
