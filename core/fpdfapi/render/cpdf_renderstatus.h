@@ -165,11 +165,10 @@ class CPDF_RenderStatus {
                                bool stroke);
   bool ProcessForm(const CPDF_FormObject* pFormObj,
                    const CFX_Matrix& mtObj2Device);
+  FX_RECT GetClippedBBox(const FX_RECT& rect) const;
   RetainPtr<CFX_DIBitmap> GetBackdrop(const CPDF_PageObject* pObj,
                                       const FX_RECT& rect,
-                                      bool bBackAlphaRequired,
-                                      int* left,
-                                      int* top);
+                                      bool bBackAlphaRequired);
   RetainPtr<CFX_DIBitmap> LoadSMask(CPDF_Dictionary* pSMaskDict,
                                     FX_RECT* pClipRect,
                                     const CFX_Matrix& mtMatrix);
