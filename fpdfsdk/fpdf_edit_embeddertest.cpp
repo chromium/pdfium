@@ -2294,8 +2294,10 @@ TEST_F(FPDFEditEmbedderTest, AddStandardFontText) {
   EXPECT_FLOAT_EQ(200.0f, matrix.e);
   EXPECT_FLOAT_EQ(200.0f, matrix.f);
 
-  EXPECT_EQ(0, FPDFTextObj_GetFontSize(nullptr));
-  EXPECT_EQ(20, FPDFTextObj_GetFontSize(text_object3));
+  EXPECT_FALSE(FPDFTextObj_GetFontSize(nullptr, nullptr));
+  float size = 0;
+  EXPECT_TRUE(FPDFTextObj_GetFontSize(text_object3, &size));
+  EXPECT_EQ(20, size);
 
   // TODO(npm): Why are there issues with text rotated by 90 degrees?
   // TODO(npm): FPDF_SaveAsCopy not giving the desired result after this.
@@ -2314,9 +2316,9 @@ TEST_F(FPDFEditEmbedderTest, AddStandardFontTextOfSizeZero) {
   EXPECT_TRUE(FPDFText_SetText(text_object, text.get()));
   FPDFPageObj_Transform(text_object, 1, 0, 0, 1, 20, 20);
 
-  // TODO(crbug.com/pdfium/1695): A return value of 0 is suppose to mean
-  // failure. Did FPDFTextObj_GetFontSize() fail here?
-  EXPECT_EQ(0.0f, FPDFTextObj_GetFontSize(text_object));
+  float size = -1;  // Make sure 'size' gets changed.
+  EXPECT_TRUE(FPDFTextObj_GetFontSize(text_object, &size));
+  EXPECT_EQ(0.0f, size);
 
   FPDFPage_InsertObject(page.get(), text_object);
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));

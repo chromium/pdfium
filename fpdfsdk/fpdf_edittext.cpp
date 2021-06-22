@@ -532,9 +532,17 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFTextObj_GetMatrix(FPDF_PAGEOBJECT text,
   return true;
 }
 
-FPDF_EXPORT float FPDF_CALLCONV FPDFTextObj_GetFontSize(FPDF_PAGEOBJECT text) {
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFTextObj_GetFontSize(FPDF_PAGEOBJECT text, float* size) {
+  if (!size)
+    return false;
+
   CPDF_TextObject* pTextObj = CPDFTextObjectFromFPDFPageObject(text);
-  return pTextObj ? pTextObj->GetFontSize() : 0.0f;
+  if (!pTextObj)
+    return false;
+
+  *size = pTextObj->GetFontSize();
+  return true;
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV

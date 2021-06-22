@@ -1123,10 +1123,12 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFTextObj_GetMatrix(FPDF_PAGEOBJECT text,
 // Get the font size of a text object.
 //
 //   text - handle to a text.
+//   size - pointer to the font size of the text object, measured in points
+//   (about 1/72 inch)
 //
-// Returns the font size of the text object, measured in points (about 1/72
-// inch) on success; 0 on failure.
-FPDF_EXPORT float FPDF_CALLCONV FPDFTextObj_GetFontSize(FPDF_PAGEOBJECT text);
+// Returns TRUE on success.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFTextObj_GetFontSize(FPDF_PAGEOBJECT text, float* size);
 
 // Close a loaded PDF font.
 //
