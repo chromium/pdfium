@@ -2430,7 +2430,7 @@ TEST_F(FPDFEditEmbedderTest, SetTextRenderMode) {
   }
 }
 
-TEST_F(FPDFEditEmbedderTest, TestGetTextFontName) {
+TEST_F(FPDFEditEmbedderTest, GetTextFontName) {
   ASSERT_TRUE(OpenDocument("text_font.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -2458,14 +2458,14 @@ TEST_F(FPDFEditEmbedderTest, TestGetTextFontName) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFEditEmbedderTest, TestFormGetObjects) {
+TEST_F(FPDFEditEmbedderTest, FormGetObjects) {
   ASSERT_TRUE(OpenDocument("form_object.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
   ASSERT_EQ(1, FPDFPage_CountObjects(page));
 
   FPDF_PAGEOBJECT form = FPDFPage_GetObject(page, 0);
-  EXPECT_EQ(FPDF_PAGEOBJ_FORM, FPDFPageObj_GetType(form));
+  ASSERT_EQ(FPDF_PAGEOBJ_FORM, FPDFPageObj_GetType(form));
   ASSERT_EQ(-1, FPDFFormObj_CountObjects(nullptr));
   ASSERT_EQ(2, FPDFFormObj_CountObjects(form));
 
@@ -2490,8 +2490,7 @@ TEST_F(FPDFEditEmbedderTest, TestFormGetObjects) {
   ASSERT_EQ(nullptr, FPDFFormObj_GetObject(form, 2));
 
   // Reset the form object matrix to identity.
-  auto* pPageObj = CPDFPageObjectFromFPDFPageObject(form);
-  CPDF_FormObject* pFormObj = pPageObj->AsForm();
+  CPDF_FormObject* pFormObj = CPDFPageObjectFromFPDFPageObject(form)->AsForm();
   pFormObj->Transform(pFormObj->form_matrix().GetInverse());
 
   // FPDFFormObj_GetMatrix() positive testing.
@@ -2511,6 +2510,62 @@ TEST_F(FPDFEditEmbedderTest, TestFormGetObjects) {
   EXPECT_FALSE(FPDFFormObj_GetMatrix(nullptr, &matrix));
   EXPECT_FALSE(FPDFFormObj_GetMatrix(form, nullptr));
   EXPECT_FALSE(FPDFFormObj_GetMatrix(nullptr, nullptr));
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFEditEmbedderTest, ModifyFormObject) {
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#if defined(OS_WIN)
+  const char kOrigChecksum[] = "d511cae0c8ec3e7b2e7b672485a45859";
+#else
+  const char kOrigChecksum[] = "6332486c11a830d52163e453cac3f0f7";
+#endif  // defined(OS_WIN)
+  const char kNewChecksum[] = "9851fb1b59d91655ac8961ac89f383ae";
+#else
+#if defined(OS_WIN)
+  const char kOrigChecksum[] = "9993d8fd85dfc1f9522c4e5f1533ed78";
+  const char kNewChecksum[] = "ba6450c9060786c5aca3b7552ba7ec9e";
+#elif defined(OS_APPLE)
+  const char kOrigChecksum[] = "98c13e90ec592eea79b6458c0ca2822b";
+  const char kNewChecksum[] = "8cbad8c9281e1f3bac2306a5beb1fdcd";
+#else
+  const char kOrigChecksum[] = "26e65fb47da5674d1b7284932c3c94d6";
+  const char kNewChecksum[] = "fd408e99373b275316f7816ae8d35842";
+#endif  // defined(OS_WIN)
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+
+  ASSERT_TRUE(OpenDocument("form_object.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+  ASSERT_EQ(1, FPDFPage_CountObjects(page));
+
+  {
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    CompareBitmap(bitmap.get(), 62, 69, kOrigChecksum);
+  }
+
+  FPDF_PAGEOBJECT form = FPDFPage_GetObject(page, 0);
+  ASSERT_EQ(FPDF_PAGEOBJ_FORM, FPDFPageObj_GetType(form));
+
+  // Access the CPDF_FormObject underneath, as there is no public API to set the
+  // matrix for form objects. (yet)
+  static constexpr FS_MATRIX kMatrix = {0.5f, 0.0f, 0.0f, 0.5f, 0.0f, 0.0f};
+  CPDF_FormObject* pFormObj = CPDFPageObjectFromFPDFPageObject(form)->AsForm();
+  pFormObj->Transform(CFXMatrixFromFSMatrix(kMatrix));
+  pFormObj->SetDirty(true);
+
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+
+  {
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    CompareBitmap(bitmap.get(), 62, 69, kNewChecksum);
+  }
+
+  // TODO(thestig): This renders blank, but should not.
+  const char kBlankChecksum[] = "0617d6a83d3a8c0eeedcfd6e5b98f994";
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedDocument(62, 69, kBlankChecksum);
 
   UnloadPage(page);
 }
