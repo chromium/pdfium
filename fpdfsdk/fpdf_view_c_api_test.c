@@ -306,10 +306,13 @@ int CheckPDFiumCApi() {
     CHK(FPDFJavaScriptAction_GetScript);
 
     // fpdf_ppo.h
+    CHK(FPDF_CloseXObject);
     CHK(FPDF_CopyViewerPreferences);
     CHK(FPDF_ImportNPagesToOne);
     CHK(FPDF_ImportPages);
     CHK(FPDF_ImportPagesByIndex);
+    CHK(FPDF_NewFormObjectFromXObject);
+    CHK(FPDF_NewXObjectFromPage);
 
     // fpdf_progressive.h
     CHK(FPDF_RenderPageBitmapWithColorScheme_Start);

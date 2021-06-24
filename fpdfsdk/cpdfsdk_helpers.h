@@ -40,6 +40,7 @@ class CPDF_TextPageFind;
 class CPDFSDK_FormFillEnvironment;
 class CPDFSDK_InteractiveForm;
 struct CPDF_JavaScript;
+struct XObjectContext;
 
 // Conversions to/from underlying types.
 IPDF_Page* IPDFPageFromFPDFPage(FPDF_PAGE page);
@@ -216,6 +217,14 @@ inline FPDF_SIGNATURE FPDFSignatureFromCPDFDictionary(
 inline CPDF_Dictionary* CPDFDictionaryFromFPDFSignature(
     FPDF_SIGNATURE signature) {
   return reinterpret_cast<CPDF_Dictionary*>(signature);
+}
+
+inline FPDF_XOBJECT FPDFXObjectFromXObjectContext(XObjectContext* xobject) {
+  return reinterpret_cast<FPDF_XOBJECT>(xobject);
+}
+
+inline XObjectContext* XObjectContextFromFPDFXObject(FPDF_XOBJECT xobject) {
+  return reinterpret_cast<XObjectContext*>(xobject);
 }
 
 CPDFSDK_InteractiveForm* FormHandleToInteractiveForm(FPDF_FORMHANDLE hHandle);

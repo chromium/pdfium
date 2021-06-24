@@ -75,6 +75,30 @@ FPDF_ImportNPagesToOne(FPDF_DOCUMENT src_doc,
                        size_t num_pages_on_x_axis,
                        size_t num_pages_on_y_axis);
 
+// Experimental API.
+// Create a template to generate form xobjects from |src_doc|'s page at
+// |src_page_index|, for use in |dest_doc|.
+//
+// Returns a handle on success, or NULL on failure. Caller owns the newly
+// created object.
+FPDF_EXPORT FPDF_XOBJECT FPDF_CALLCONV
+FPDF_NewXObjectFromPage(FPDF_DOCUMENT dest_doc,
+                        FPDF_DOCUMENT src_doc,
+                        int src_page_index);
+
+// Experimental API.
+// Close an FPDF_XOBJECT handle created by FPDF_NewXObjectFromPage().
+// FPDF_PAGEOBJECTs created from the FPDF_XOBJECT handle are not affected.
+FPDF_EXPORT void FPDF_CALLCONV FPDF_CloseXObject(FPDF_XOBJECT xobject);
+
+// Experimental API.
+// Create a new form object from an FPDF_XOBJECT object.
+//
+// Returns a new form object on success, or NULL on failure. Caller owns the
+// newly created object.
+FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV
+FPDF_NewFormObjectFromXObject(FPDF_XOBJECT xobject);
+
 // Copy the viewer preferences from |src_doc| into |dest_doc|.
 //
 //   dest_doc - Document to write the viewer preferences into.

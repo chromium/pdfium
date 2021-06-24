@@ -15,6 +15,8 @@
 #include <vector>
 
 #include "constants/page_object.h"
+#include "core/fpdfapi/page/cpdf_form.h"
+#include "core/fpdfapi/page/cpdf_formobject.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
@@ -35,6 +37,11 @@
 #include "public/cpp/fpdf_scopers.h"
 #include "third_party/base/check.h"
 #include "third_party/base/span.h"
+
+struct XObjectContext {
+  CPDF_Document* dest_doc;
+  RetainPtr<CPDF_Stream> xobject;
+};
 
 namespace {
 
@@ -485,6 +492,9 @@ class CPDF_NPageToOneExporter final : public CPDF_PageOrganizer {
                          size_t nPagesOnXAxis,
                          size_t nPagesOnYAxis);
 
+  std::unique_ptr<XObjectContext> CreateXObjectContextFromPage(
+      int src_page_index);
+
  private:
   // Map page object number to XObject object name.
   using PageXObjectMap = std::map<uint32_t, ByteString>;
@@ -499,6 +509,7 @@ class CPDF_NPageToOneExporter final : public CPDF_PageOrganizer {
   // Creates an XObject from |pSrcPageDict|. Updates mapping as needed.
   // Returns the name of the newly created XObject.
   ByteString MakeXObjectFromPage(const CPDF_Dictionary* pSrcPageDict);
+  CPDF_Stream* MakeXObjectFromPageRaw(const CPDF_Dictionary* pSrcPageDict);
 
   // Adds |bsContent| as the Contents key in |pDestPageDict|.
   // Adds the objects in |m_XObjectNameToNumberMap| to the XObject dictionary in
@@ -599,7 +610,7 @@ ByteString CPDF_NPageToOneExporter::AddSubPage(
   return ByteString(contentStream);
 }
 
-ByteString CPDF_NPageToOneExporter::MakeXObjectFromPage(
+CPDF_Stream* CPDF_NPageToOneExporter::MakeXObjectFromPageRaw(
     const CPDF_Dictionary* pSrcPageDict) {
   DCHECK(pSrcPageDict);
 
@@ -644,12 +655,30 @@ ByteString CPDF_NPageToOneExporter::MakeXObjectFromPage(
     }
     pNewXObject->SetDataAndRemoveFilter(bsSrcContentStream.raw_span());
   }
+  return pNewXObject;
+}
+
+ByteString CPDF_NPageToOneExporter::MakeXObjectFromPage(
+    const CPDF_Dictionary* pSrcPageDict) {
+  CPDF_Stream* pNewXObject = MakeXObjectFromPageRaw(pSrcPageDict);
 
   // TODO(xlou): A better name schema to avoid possible object name collision.
   ByteString bsXObjectName = ByteString::Format("X%d", ++m_nObjectNumber);
   m_XObjectNameToNumberMap[bsXObjectName] = pNewXObject->GetObjNum();
   m_SrcPageXObjectMap[pSrcPageDict->GetObjNum()] = bsXObjectName;
   return bsXObjectName;
+}
+
+std::unique_ptr<XObjectContext>
+CPDF_NPageToOneExporter::CreateXObjectContextFromPage(int src_page_index) {
+  CPDF_Dictionary* src_page = src()->GetPageDictionary(src_page_index);
+  if (!src_page)
+    return nullptr;
+
+  auto xobject = std::make_unique<XObjectContext>();
+  xobject->dest_doc = dest();
+  xobject->xobject = MakeXObjectFromPageRaw(src_page);
+  return xobject;
 }
 
 void CPDF_NPageToOneExporter::FinishPage(CPDF_Dictionary* pDestPageDict,
@@ -771,6 +800,45 @@ FPDF_ImportNPagesToOne(FPDF_DOCUMENT src_doc,
     return nullptr;
   }
   return output_doc.release();
+}
+
+FPDF_EXPORT FPDF_XOBJECT FPDF_CALLCONV
+FPDF_NewXObjectFromPage(FPDF_DOCUMENT dest_doc,
+                        FPDF_DOCUMENT src_doc,
+                        int src_page_index) {
+  CPDF_Document* dest = CPDFDocumentFromFPDFDocument(dest_doc);
+  if (!dest)
+    return nullptr;
+
+  CPDF_Document* src = CPDFDocumentFromFPDFDocument(src_doc);
+  if (!src)
+    return nullptr;
+
+  CPDF_NPageToOneExporter exporter(dest, src);
+  std::unique_ptr<XObjectContext> xobject =
+      exporter.CreateXObjectContextFromPage(src_page_index);
+  return FPDFXObjectFromXObjectContext(xobject.release());
+}
+
+FPDF_EXPORT void FPDF_CALLCONV FPDF_CloseXObject(FPDF_XOBJECT xobject) {
+  std::unique_ptr<XObjectContext> xobject_deleter(
+      XObjectContextFromFPDFXObject(xobject));
+}
+
+FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV
+FPDF_NewFormObjectFromXObject(FPDF_XOBJECT xobject) {
+  XObjectContext* xobj = XObjectContextFromFPDFXObject(xobject);
+  if (!xobj)
+    return nullptr;
+
+  // If used directly with std::make_unique(), linking fails.
+  // Build toolchain bug?
+  constexpr int kNoContentStream = CPDF_PageObject::kNoContentStream;
+  auto form = std::make_unique<CPDF_Form>(xobj->dest_doc, nullptr,
+                                          xobj->xobject.Get(), nullptr);
+  auto form_object = std::make_unique<CPDF_FormObject>(
+      kNoContentStream, std::move(form), CFX_Matrix());
+  return FPDFPageObjectFromCPDFPageObject(form_object.release());
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV

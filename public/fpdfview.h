@@ -77,6 +77,7 @@ typedef struct fpdf_structelement_t__* FPDF_STRUCTELEMENT;
 typedef struct fpdf_structtree_t__* FPDF_STRUCTTREE;
 typedef struct fpdf_textpage_t__* FPDF_TEXTPAGE;
 typedef struct fpdf_widget_t__* FPDF_WIDGET;
+typedef struct fpdf_xobject_t__* FPDF_XOBJECT;
 
 // Basic data types
 typedef int FPDF_BOOL;
