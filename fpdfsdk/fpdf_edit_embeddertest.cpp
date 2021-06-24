@@ -2562,10 +2562,8 @@ TEST_F(FPDFEditEmbedderTest, ModifyFormObject) {
     CompareBitmap(bitmap.get(), 62, 69, kNewChecksum);
   }
 
-  // TODO(thestig): This renders blank, but should not.
-  const char kBlankChecksum[] = "0617d6a83d3a8c0eeedcfd6e5b98f994";
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-  VerifySavedDocument(62, 69, kBlankChecksum);
+  VerifySavedDocument(62, 69, kNewChecksum);
 
   UnloadPage(page);
 }

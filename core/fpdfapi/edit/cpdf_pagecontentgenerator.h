@@ -17,6 +17,7 @@
 
 class CPDF_ContentMarks;
 class CPDF_Document;
+class CPDF_FormObject;
 class CPDF_ImageObject;
 class CPDF_Object;
 class CPDF_PageObject;
@@ -39,6 +40,7 @@ class CPDF_PageContentGenerator {
   void ProcessPageObject(std::ostringstream* buf, CPDF_PageObject* pPageObj);
   void ProcessPathPoints(std::ostringstream* buf, CPDF_Path* pPath);
   void ProcessPath(std::ostringstream* buf, CPDF_PathObject* pPathObj);
+  void ProcessForm(std::ostringstream* buf, CPDF_FormObject* pFormObj);
   void ProcessImage(std::ostringstream* buf, CPDF_ImageObject* pImageObj);
   void ProcessGraphics(std::ostringstream* buf, CPDF_PageObject* pPageObj);
   void ProcessDefaultGraphics(std::ostringstream* buf);

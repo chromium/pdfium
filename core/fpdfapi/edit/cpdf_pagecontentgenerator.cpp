@@ -19,6 +19,8 @@
 #include "core/fpdfapi/font/cpdf_type1font.h"
 #include "core/fpdfapi/page/cpdf_contentmarks.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
+#include "core/fpdfapi/page/cpdf_form.h"
+#include "core/fpdfapi/page/cpdf_formobject.h"
 #include "core/fpdfapi/page/cpdf_image.h"
 #include "core/fpdfapi/page/cpdf_imageobject.h"
 #include "core/fpdfapi/page/cpdf_page.h"
@@ -289,6 +291,8 @@ void CPDF_PageContentGenerator::ProcessPageObject(std::ostringstream* buf,
                                                   CPDF_PageObject* pPageObj) {
   if (CPDF_ImageObject* pImageObject = pPageObj->AsImage())
     ProcessImage(buf, pImageObject);
+  else if (CPDF_FormObject* pFormObj = pPageObj->AsForm())
+    ProcessForm(buf, pFormObj);
   else if (CPDF_PathObject* pPathObj = pPageObj->AsPath())
     ProcessPath(buf, pPathObj);
   else if (CPDF_TextObject* pTextObj = pPageObj->AsText())
@@ -323,6 +327,23 @@ void CPDF_PageContentGenerator::ProcessImage(std::ostringstream* buf,
     pImageObj->SetImage(pPageData->GetImage(pStream->GetObjNum()));
   }
 
+  *buf << "/" << PDF_NameEncode(name) << " Do Q\n";
+}
+
+void CPDF_PageContentGenerator::ProcessForm(std::ostringstream* buf,
+                                            CPDF_FormObject* pFormObj) {
+  if ((pFormObj->form_matrix().a == 0 && pFormObj->form_matrix().b == 0) ||
+      (pFormObj->form_matrix().c == 0 && pFormObj->form_matrix().d == 0)) {
+    return;
+  }
+
+  const CPDF_Stream* pStream = pFormObj->form()->GetStream();
+  if (!pStream)
+    return;
+
+  *buf << "q\n" << pFormObj->form_matrix() << " cm ";
+
+  ByteString name = RealizeResource(pStream, "XObject");
   *buf << "/" << PDF_NameEncode(name) << " Do Q\n";
 }
 
