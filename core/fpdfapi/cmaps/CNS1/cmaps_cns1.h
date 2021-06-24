@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_CMAPS_CNS1_CMAPS_CNS1_H_
 #define CORE_FPDFAPI_CMAPS_CNS1_CMAPS_CNS1_H_
 
+#include <stddef.h>
+
 #include "core/fpdfapi/cmaps/fpdf_cmaps.h"
 
 extern const uint16_t g_FXCMAP_B5pc_H_0[];

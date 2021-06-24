@@ -9,8 +9,6 @@
 
 #include <stdint.h>
 
-#include "core/fxcrt/fx_string.h"
-
 struct FXCMAP_DWordCIDMap {
   uint16_t m_HiWord;
   uint16_t m_LoWordLow;
