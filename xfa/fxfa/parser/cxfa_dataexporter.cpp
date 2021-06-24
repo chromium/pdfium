@@ -31,7 +31,7 @@ bool CXFA_DataExporter::Export(const RetainPtr<IFX_SeekableStream>& pStream,
              pChild = pChild->GetNextSibling()) {
           Export(pStream, pChild);
         }
-        pStream->WriteString("</xdp:xdp\n>");
+        pStream->WriteString("</xdp:xdp>\n");
         break;
       }
       case XFA_PacketType::Datasets: {
