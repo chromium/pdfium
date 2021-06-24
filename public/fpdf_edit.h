@@ -896,6 +896,63 @@ FPDFPageObj_GetFillColor(FPDF_PAGEOBJECT page_object,
                          unsigned int* B,
                          unsigned int* A);
 
+// Experimental API.
+// Get the line dash |phase| of |page_object|.
+//
+// page_object - handle to a page object.
+// phase - pointer where the dashing phase will be stored.
+//
+// Returns TRUE on success.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPageObj_GetDashPhase(FPDF_PAGEOBJECT page_object, float* phase);
+
+// Experimental API.
+// Set the line dash phase of |page_object|.
+//
+// page_object - handle to a page object.
+// phase - line dash phase.
+//
+// Returns TRUE on success.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPageObj_SetDashPhase(FPDF_PAGEOBJECT page_object, float phase);
+
+// Experimental API.
+// Get the line dash array of |page_object|.
+//
+// page_object - handle to a page object.
+//
+// Returns the line dash array size or -1 on failure.
+FPDF_EXPORT int FPDF_CALLCONV
+FPDFPageObj_GetDashCount(FPDF_PAGEOBJECT page_object);
+
+// Experimental API.
+// Get the line dash array of |page_object|.
+//
+// page_object - handle to a page object.
+// dash_array - pointer where the dashing array will be stored.
+// dash_count - number of elements in |dash_array|.
+//
+// Returns TRUE on success.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPageObj_GetDashArray(FPDF_PAGEOBJECT page_object,
+                         float* dash_array,
+                         size_t dash_count);
+
+// Experimental API.
+// Set the line dash array of |page_object|.
+//
+// page_object - handle to a page object.
+// dash_array - the dash array.
+// dash_count - number of elements in |dash_array|.
+// phase - the line dash phase.
+//
+// Returns TRUE on success.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPageObj_SetDashArray(FPDF_PAGEOBJECT page_object,
+                         const float* dash_array,
+                         size_t dash_count,
+                         float phase);
+
 // Get number of segments inside |path|.
 //
 //   path - handle to a path.

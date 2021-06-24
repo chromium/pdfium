@@ -154,3 +154,136 @@ TEST_F(FPDFEditPageEmbedderTest, GetFillAndStrokeForImage) {
 
   UnloadPage(page);
 }
+
+TEST_F(FPDFEditPageEmbedderTest, DashingArrayAndPhase) {
+  {
+    EXPECT_FALSE(FPDFPageObj_GetDashPhase(nullptr, nullptr));
+
+    float phase = -1123.5f;
+    EXPECT_FALSE(FPDFPageObj_GetDashPhase(nullptr, &phase));
+    EXPECT_FLOAT_EQ(-1123.5f, phase);
+
+    EXPECT_EQ(-1, FPDFPageObj_GetDashCount(nullptr));
+
+    EXPECT_FALSE(FPDFPageObj_GetDashArray(nullptr, nullptr, 3));
+
+    float get_array[] = {-1.0f, -1.0f, -1.0f};
+    EXPECT_FALSE(FPDFPageObj_GetDashArray(nullptr, get_array, 3));
+    for (int i = 0; i < 3; i++)
+      EXPECT_FLOAT_EQ(-1.0f, get_array[i]);
+
+    EXPECT_FALSE(FPDFPageObj_SetDashPhase(nullptr, 5.0f));
+    EXPECT_FALSE(FPDFPageObj_SetDashArray(nullptr, nullptr, 3, 5.0f));
+
+    float set_array[] = {1.0f, 2.0f, 3.0f};
+    EXPECT_FALSE(FPDFPageObj_SetDashArray(nullptr, set_array, 3, 5.0f));
+  }
+
+  constexpr int kExpectedObjectCount = 3;
+  ASSERT_TRUE(OpenDocument("dashed_lines.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  ASSERT_EQ(kExpectedObjectCount, FPDFPage_CountObjects(page));
+
+  {
+    FPDF_PAGEOBJECT path = FPDFPage_GetObject(page, 0);
+    ASSERT_TRUE(path);
+    EXPECT_EQ(FPDF_PAGEOBJ_PATH, FPDFPageObj_GetType(path));
+
+    EXPECT_FALSE(FPDFPageObj_GetDashPhase(path, nullptr));
+    EXPECT_FALSE(FPDFPageObj_GetDashArray(path, nullptr, 3));
+    EXPECT_FALSE(FPDFPageObj_SetDashArray(path, nullptr, 3, 5.0f));
+
+    float phase = -1123.5f;
+    EXPECT_TRUE(FPDFPageObj_GetDashPhase(path, &phase));
+    EXPECT_FLOAT_EQ(0.0f, phase);
+    EXPECT_EQ(0, FPDFPageObj_GetDashCount(path));
+
+    float get_array[] = {-1.0f, -1.0f, -1.0f};
+    EXPECT_TRUE(FPDFPageObj_GetDashArray(path, get_array, 3));
+    for (int i = 0; i < 3; i++)
+      EXPECT_FLOAT_EQ(-1.0f, get_array[i]);
+  }
+
+  {
+    FPDF_PAGEOBJECT path = FPDFPage_GetObject(page, 1);
+    ASSERT_TRUE(path);
+    EXPECT_EQ(FPDF_PAGEOBJ_PATH, FPDFPageObj_GetType(path));
+
+    float phase = -1123.5f;
+    EXPECT_TRUE(FPDFPageObj_GetDashPhase(path, &phase));
+    EXPECT_LT(0.0f, phase);
+    ASSERT_EQ(6, FPDFPageObj_GetDashCount(path));
+
+    float dash_array[] = {-1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f};
+    ASSERT_TRUE(FPDFPageObj_GetDashArray(path, dash_array, 6));
+
+    for (int i = 0; i < 6; i++)
+      EXPECT_LT(0.0f, dash_array[i]);
+
+    // the array is decreasing in value.
+    for (int i = 0; i < 5; i++)
+      EXPECT_GT(dash_array[i], dash_array[i + 1]);
+
+    // modify phase
+    EXPECT_TRUE(FPDFPageObj_SetDashPhase(path, 1.0f));
+
+    phase = -1123.5f;
+    EXPECT_TRUE(FPDFPageObj_GetDashPhase(path, &phase));
+    EXPECT_FLOAT_EQ(1.0f, phase);
+
+    // clear array
+    EXPECT_TRUE(FPDFPageObj_SetDashArray(path, nullptr, 0, 0.0f));
+    EXPECT_EQ(0, FPDFPageObj_GetDashCount(path));
+
+    phase = -1123.5f;
+    EXPECT_TRUE(FPDFPageObj_GetDashPhase(path, &phase));
+    EXPECT_FLOAT_EQ(0.0f, phase);
+  }
+
+  {
+    FPDF_PAGEOBJECT path = FPDFPage_GetObject(page, 2);
+    ASSERT_TRUE(path);
+    EXPECT_EQ(FPDF_PAGEOBJ_PATH, FPDFPageObj_GetType(path));
+
+    float phase = -1123.5f;
+    EXPECT_TRUE(FPDFPageObj_GetDashPhase(path, &phase));
+    EXPECT_FLOAT_EQ(0.0f, phase);
+
+    EXPECT_EQ(0, FPDFPageObj_GetDashCount(path));
+
+    // `get_array` should be unmodified
+    float get_array[] = {-1.0f, -1.0f, -1.0f, -1.0f};
+    EXPECT_TRUE(FPDFPageObj_GetDashArray(path, get_array, 4));
+    for (int i = 0; i < 4; i++)
+      EXPECT_FLOAT_EQ(-1.0f, get_array[i]);
+
+    // modify dash_array and phase
+    const float set_array[] = {1.0f, 2.0f, 3.0f};
+    EXPECT_TRUE(FPDFPageObj_SetDashArray(path, set_array, 3, 5.0f));
+
+    phase = -1123.5f;
+    EXPECT_TRUE(FPDFPageObj_GetDashPhase(path, &phase));
+    EXPECT_FLOAT_EQ(5.0f, phase);
+    ASSERT_EQ(3, FPDFPageObj_GetDashCount(path));
+
+    ASSERT_TRUE(FPDFPageObj_GetDashArray(path, get_array, 4));
+
+    // `get_array` should be modified only up to dash_count
+    for (int i = 0; i < 3; i++)
+      EXPECT_FLOAT_EQ(static_cast<float>(i + 1), get_array[i]);
+
+    EXPECT_FLOAT_EQ(-1.0f, get_array[3]);
+
+    // clear array
+    EXPECT_TRUE(FPDFPageObj_SetDashArray(path, set_array, 0, 4.0f));
+    EXPECT_EQ(0, FPDFPageObj_GetDashCount(path));
+
+    phase = -1123.5f;
+    EXPECT_TRUE(FPDFPageObj_GetDashPhase(path, &phase));
+    EXPECT_FLOAT_EQ(4.0f, phase);
+  }
+
+  UnloadPage(page);
+}

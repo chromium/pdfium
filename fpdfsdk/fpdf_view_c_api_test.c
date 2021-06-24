@@ -189,6 +189,9 @@ int CheckPDFiumCApi() {
     CHK(FPDFPageObj_CreateTextObj);
     CHK(FPDFPageObj_Destroy);
     CHK(FPDFPageObj_GetBounds);
+    CHK(FPDFPageObj_GetDashArray);
+    CHK(FPDFPageObj_GetDashCount);
+    CHK(FPDFPageObj_GetDashPhase);
     CHK(FPDFPageObj_GetFillColor);
     CHK(FPDFPageObj_GetLineCap);
     CHK(FPDFPageObj_GetLineJoin);
@@ -201,6 +204,8 @@ int CheckPDFiumCApi() {
     CHK(FPDFPageObj_NewTextObj);
     CHK(FPDFPageObj_RemoveMark);
     CHK(FPDFPageObj_SetBlendMode);
+    CHK(FPDFPageObj_SetDashArray);
+    CHK(FPDFPageObj_SetDashPhase);
     CHK(FPDFPageObj_SetFillColor);
     CHK(FPDFPageObj_SetLineCap);
     CHK(FPDFPageObj_SetLineJoin);

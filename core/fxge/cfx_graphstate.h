@@ -21,6 +21,10 @@ class CFX_GraphState {
   void Emplace();
 
   void SetLineDash(std::vector<float> dashes, float phase, float scale);
+  void SetLineDashPhase(float phase);
+  std::vector<float> GetLineDashArray() const;
+  int GetLineDashSize() const;
+  float GetLineDashPhase() const;
 
   float GetLineWidth() const;
   void SetLineWidth(float width);
