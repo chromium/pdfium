@@ -75,9 +75,7 @@ bool CStretchEngine::WeightTable::CalculateWeights(
 
   m_DestMin = dest_min;
 
-  // TODO(tsepez): test results are sensitive to `scale` being a double
-  // rather than a float with an initial value no more precise than float.
-  const double scale = static_cast<float>(src_len) / dest_len;
+  const double scale = static_cast<double>(src_len) / dest_len;
   const double base = dest_len < 0 ? src_len : 0;
   const size_t weight_count = static_cast<size_t>(ceil(fabs(scale))) + 1;
   m_ItemSizeBytes = PixelWeight::TotalBytesForWeightCount(weight_count);
@@ -89,15 +87,13 @@ bool CStretchEngine::WeightTable::CalculateWeights(
 
   m_WeightTablesSizeBytes = dest_range * m_ItemSizeBytes;
   m_WeightTables.resize(m_WeightTablesSizeBytes);
-  if (options.bNoSmoothing || fabs(static_cast<float>(scale)) < 1.0f) {
+  if (options.bNoSmoothing || fabs(scale) < 1.0f) {
     for (int dest_pixel = dest_min; dest_pixel < dest_max; ++dest_pixel) {
       PixelWeight& pixel_weights = *GetPixelWeight(dest_pixel);
       double src_pos = dest_pixel * scale + scale / 2 + base;
       if (bilinear) {
-        int src_start =
-            static_cast<int>(floor(static_cast<float>(src_pos) - 1.0f / 2));
-        int src_end =
-            static_cast<int>(floor(static_cast<float>(src_pos) + 1.0f / 2));
+        int src_start = static_cast<int>(floor(src_pos - 0.5));
+        int src_end = static_cast<int>(floor(src_pos + 0.5));
         src_start = std::max(src_start, src_min);
         src_end = std::min(src_end, src_max - 1);
         pixel_weights.SetStartEnd(src_start, src_end, weight_count);
@@ -105,13 +101,13 @@ bool CStretchEngine::WeightTable::CalculateWeights(
           // Always room for one weight per size calculation.
           pixel_weights.m_Weights[0] = kFixedPointOne;
         } else {
-          pixel_weights.m_Weights[1] = FixedFromFloat(
-              static_cast<float>(src_pos - pixel_weights.m_SrcStart - 0.5f));
+          pixel_weights.m_Weights[1] =
+              FixedFromDouble(src_pos - pixel_weights.m_SrcStart - 0.5f);
           pixel_weights.m_Weights[0] =
               kFixedPointOne - pixel_weights.m_Weights[1];
         }
       } else {
-        int pixel_pos = static_cast<int>(floor(static_cast<float>(src_pos)));
+        int pixel_pos = static_cast<int>(floor(src_pos));
         int src_start = std::max(pixel_pos, src_min);
         int src_end = std::min(pixel_pos, src_max - 1);
         pixel_weights.SetStartEnd(src_start, src_end, weight_count);
@@ -130,7 +126,9 @@ bool CStretchEngine::WeightTable::CalculateWeights(
     start_i = std::max(start_i, src_min);
     end_i = std::min(end_i, src_max - 1);
     pixel_weights.SetStartEnd(start_i, end_i, weight_count);
-    for (int j = start_i; j <= end_i; ++j) {
+    uint32_t remaining = kFixedPointOne;
+    double rounding_error = 0.0;
+    for (int j = start_i; j < end_i; ++j) {
       double dest_start = (j - base) / scale;
       double dest_end = (j + 1 - base) / scale;
       if (dest_start > dest_end)
@@ -138,11 +136,18 @@ bool CStretchEngine::WeightTable::CalculateWeights(
       double area_start = std::max(dest_start, static_cast<double>(dest_pixel));
       double area_end = std::min(dest_end, static_cast<double>(dest_pixel + 1));
       double weight = std::max(0.0, area_end - area_start);
-      if (weight == 0 && j == end_i) {
-        pixel_weights.RemoveLastWeight();
-        break;
-      }
-      pixel_weights.SetWeightForPosition(j, FixedFromFloat(weight));
+      uint32_t fixed_weight = FixedFromDouble(weight + rounding_error);
+      pixel_weights.SetWeightForPosition(j, fixed_weight);
+      remaining -= fixed_weight;
+      rounding_error =
+          weight - static_cast<double>(fixed_weight) / kFixedPointOne;
+    }
+    // Note: underflow is defined behaviour for unsigned types and will
+    // result in an out-of-range value.
+    if (remaining && remaining <= kFixedPointOne) {
+      pixel_weights.SetWeightForPosition(end_i, remaining);
+    } else {
+      pixel_weights.RemoveLastWeightAndAdjust(remaining);
     }
   }
   return true;

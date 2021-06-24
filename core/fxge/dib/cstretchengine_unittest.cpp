@@ -86,8 +86,7 @@ TEST(CStretchEngine, OverflowInCtor) {
   EXPECT_FALSE(engine.GetResampleOptionsForTest().bLossy);
 }
 
-// See https://crbug.com/pdfium/1688
-TEST(CStretchEngine, DISABLED_WeightRounding) {
+TEST(CStretchEngine, WeightRounding) {
   FXDIB_ResampleOptions options;
   ExecuteStretchTests(options);
 }
@@ -98,8 +97,7 @@ TEST(CStretchEngine, WeightRoundingNoSmoothing) {
   ExecuteStretchTests(options);
 }
 
-// See https://crbug.com/pdfium/1688
-TEST(CStretchEngine, DISABLED_WeightRoundingBilinear) {
+TEST(CStretchEngine, WeightRoundingBilinear) {
   FXDIB_ResampleOptions options;
   options.bInterpolateBilinear = true;
   ExecuteStretchTests(options);

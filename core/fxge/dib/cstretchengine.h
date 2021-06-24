@@ -26,6 +26,10 @@ class CStretchEngine {
   static constexpr uint32_t kFixedPointBits = 16;
   static constexpr uint32_t kFixedPointOne = 1 << kFixedPointBits;
 
+  static inline uint32_t FixedFromDouble(double d) {
+    return static_cast<uint32_t>(FXSYS_round(d * kFixedPointOne));
+  }
+
   static inline uint32_t FixedFromFloat(float f) {
     return static_cast<uint32_t>(FXSYS_roundf(f * kFixedPointOne));
   }
@@ -55,9 +59,12 @@ class CStretchEngine {
       m_Weights[position - m_SrcStart] = weight;
     }
 
-    void RemoveLastWeight() {
+    // NOTE: relies on defined behaviour for unsigned overflow to
+    // decrement the previous position, as needed.
+    void RemoveLastWeightAndAdjust(uint32_t weight_change) {
       CHECK_GT(m_SrcEnd, m_SrcStart);
       --m_SrcEnd;
+      m_Weights[m_SrcEnd - m_SrcStart] += weight_change;
     }
 
     int m_SrcStart;

@@ -21,6 +21,6 @@ TEST_F(JBig2EmbedderTest, MAYBE_Bug_631912) {
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
   ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-  CompareBitmap(bitmap.get(), 691, 432, "24d75af646f8772c5ee7ced260452ae4");
+  CompareBitmap(bitmap.get(), 691, 432, "726c2b8c89df0ab40627322d1dddd521");
   UnloadPage(page);
 }
