@@ -202,7 +202,7 @@ TEST(CPDF_PSEngine, Truncate) {
   // Truncate does not behave according to the PostScript Language Reference for
   // values beyond the range of integers. This seems to match Acrobat's
   // behavior. See https://crbug.com/pdfium/1314.
-  float max_int = std::numeric_limits<int>::max();
+  float max_int = static_cast<float>(std::numeric_limits<int>::max());
   EXPECT_FLOAT_EQ(-max_int,
                   DoOperator1(&engine, max_int * -1.5f, PSOP_TRUNCATE));
 }
