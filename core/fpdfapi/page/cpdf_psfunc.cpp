@@ -20,7 +20,8 @@ bool CPDF_PSFunc::v_Init(const CPDF_Object* pObj,
   return m_PS.Parse(pAcc->GetSpan());
 }
 
-bool CPDF_PSFunc::v_Call(const float* inputs, float* results) const {
+bool CPDF_PSFunc::v_Call(pdfium::span<const float> inputs,
+                         pdfium::span<float> results) const {
   m_PS.Reset();
   for (uint32_t i = 0; i < m_nInputs; i++)
     m_PS.Push(inputs[i]);

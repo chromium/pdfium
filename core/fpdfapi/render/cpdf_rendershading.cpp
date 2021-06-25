@@ -69,13 +69,14 @@ std::array<FX_ARGB, kShadingSteps> GetShadingSteps(
   float diff = t_max - t_min;
   for (int i = 0; i < kShadingSteps; ++i) {
     float input = diff * i / kShadingSteps + t_min;
-    int offset = 0;
+    pdfium::span<float> result_span = pdfium::make_span(result_array);
     for (const auto& func : funcs) {
-      if (func) {
-        int nresults = 0;
-        if (func->Call(&input, 1, &result_array[offset], &nresults))
-          offset += nresults;
-      }
+      if (!func)
+        continue;
+      Optional<uint32_t> nresults =
+          func->Call(pdfium::make_span(&input, 1), result_span);
+      if (nresults.has_value())
+        result_span = result_span.subspan(nresults.value());
     }
     float R = 0.0f;
     float G = 0.0f;
@@ -295,16 +296,15 @@ void DrawFuncShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
       if (pos.x < xmin || pos.x > xmax || pos.y < ymin || pos.y > ymax)
         continue;
 
-      float input[] = {pos.x, pos.y};
-      int offset = 0;
+      float input[2] = {pos.x, pos.y};
+      pdfium::span<float> result_span = pdfium::make_span(result_array);
       for (const auto& func : funcs) {
-        if (func) {
-          int nresults;
-          if (func->Call(input, 2, &result_array[offset], &nresults))
-            offset += nresults;
-        }
+        if (!func)
+          continue;
+        Optional<uint32_t> nresults = func->Call(input, result_span);
+        if (nresults.has_value())
+          result_span = result_span.subspan(nresults.value());
       }
-
       float R = 0.0f;
       float G = 0.0f;
       float B = 0.0f;

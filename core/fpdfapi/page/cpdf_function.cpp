@@ -126,30 +126,27 @@ bool CPDF_Function::Init(const CPDF_Object* pObj,
   return true;
 }
 
-bool CPDF_Function::Call(const float* inputs,
-                         uint32_t ninputs,
-                         float* results,
-                         int* nresults) const {
-  if (m_nInputs != ninputs)
-    return false;
+Optional<uint32_t> CPDF_Function::Call(pdfium::span<const float> inputs,
+                                       pdfium::span<float> results) const {
+  if (m_nInputs != inputs.size())
+    return pdfium::nullopt;
 
-  *nresults = m_nOutputs;
   std::vector<float> clamped_inputs(m_nInputs);
   for (uint32_t i = 0; i < m_nInputs; i++) {
     clamped_inputs[i] =
         pdfium::clamp(inputs[i], m_Domains[i * 2], m_Domains[i * 2 + 1]);
   }
-  if (!v_Call(clamped_inputs.data(), results))
-    return false;
+  if (!v_Call(clamped_inputs, results))
+    return pdfium::nullopt;
 
   if (m_Ranges.empty())
-    return true;
+    return m_nOutputs;
 
   for (uint32_t i = 0; i < m_nOutputs; i++) {
     results[i] =
         pdfium::clamp(results[i], m_Ranges[i * 2], m_Ranges[i * 2 + 1]);
   }
-  return true;
+  return m_nOutputs;
 }
 
 // See PDF Reference 1.7, page 170.

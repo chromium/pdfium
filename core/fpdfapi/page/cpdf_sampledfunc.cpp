@@ -99,7 +99,8 @@ bool CPDF_SampledFunc::v_Init(const CPDF_Object* pObj,
   return true;
 }
 
-bool CPDF_SampledFunc::v_Call(const float* inputs, float* results) const {
+bool CPDF_SampledFunc::v_Call(pdfium::span<const float> inputs,
+                              pdfium::span<float> results) const {
   int pos = 0;
   CFX_FixedBufGrow<float, 16> encoded_input_buf(m_nInputs);
   float* encoded_input = encoded_input_buf;

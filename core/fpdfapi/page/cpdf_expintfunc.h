@@ -17,10 +17,11 @@ class CPDF_ExpIntFunc final : public CPDF_Function {
   CPDF_ExpIntFunc();
   ~CPDF_ExpIntFunc() override;
 
-  // CPDF_Function
+  // CPDF_Function:
   bool v_Init(const CPDF_Object* pObj,
               std::set<const CPDF_Object*>* pVisited) override;
-  bool v_Call(const float* inputs, float* results) const override;
+  bool v_Call(pdfium::span<const float> inputs,
+              pdfium::span<float> results) const override;
 
   uint32_t GetOrigOutputs() const { return m_nOrigOutputs; }
   float GetExponent() const { return m_Exponent; }

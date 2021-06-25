@@ -31,10 +31,11 @@ class CPDF_SampledFunc final : public CPDF_Function {
   CPDF_SampledFunc();
   ~CPDF_SampledFunc() override;
 
-  // CPDF_Function
+  // CPDF_Function:
   bool v_Init(const CPDF_Object* pObj,
               std::set<const CPDF_Object*>* pVisited) override;
-  bool v_Call(const float* inputs, float* results) const override;
+  bool v_Call(pdfium::span<const float> inputs,
+              pdfium::span<float> results) const override;
 
   const std::vector<SampleEncodeInfo>& GetEncodeInfo() const {
     return m_EncodeInfo;

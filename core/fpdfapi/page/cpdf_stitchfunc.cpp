@@ -105,7 +105,8 @@ bool CPDF_StitchFunc::v_Init(const CPDF_Object* pObj,
   return true;
 }
 
-bool CPDF_StitchFunc::v_Call(const float* inputs, float* results) const {
+bool CPDF_StitchFunc::v_Call(pdfium::span<const float> inputs,
+                             pdfium::span<float> results) const {
   float input = inputs[0];
   size_t i;
   for (i = 0; i < m_pSubFunctions.size() - 1; i++) {
@@ -114,7 +115,7 @@ bool CPDF_StitchFunc::v_Call(const float* inputs, float* results) const {
   }
   input = Interpolate(input, m_bounds[i], m_bounds[i + 1], m_encode[i * 2],
                       m_encode[i * 2 + 1]);
-  int nresults;
-  return m_pSubFunctions[i]->Call(&input, kRequiredNumInputs, results,
-                                  &nresults);
+  return m_pSubFunctions[i]
+      ->Call(pdfium::make_span(&input, 1), results)
+      .has_value();
 }

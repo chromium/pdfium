@@ -11,6 +11,9 @@
 #include <set>
 #include <vector>
 
+#include "third_party/base/optional.h"
+#include "third_party/base/span.h"
+
 class CPDF_ExpIntFunc;
 class CPDF_Object;
 class CPDF_SampledFunc;
@@ -31,10 +34,8 @@ class CPDF_Function {
 
   virtual ~CPDF_Function();
 
-  bool Call(const float* inputs,
-            uint32_t ninputs,
-            float* results,
-            int* nresults) const;
+  Optional<uint32_t> Call(pdfium::span<const float> inputs,
+                          pdfium::span<float> results) const;
   uint32_t CountInputs() const { return m_nInputs; }
   uint32_t CountOutputs() const { return m_nOutputs; }
   float GetDomain(int i) const { return m_Domains[i]; }
@@ -60,7 +61,8 @@ class CPDF_Function {
   bool Init(const CPDF_Object* pObj, std::set<const CPDF_Object*>* pVisited);
   virtual bool v_Init(const CPDF_Object* pObj,
                       std::set<const CPDF_Object*>* pVisited) = 0;
-  virtual bool v_Call(const float* inputs, float* results) const = 0;
+  virtual bool v_Call(pdfium::span<const float> inputs,
+                      pdfium::span<float> results) const = 0;
 
   const Type m_Type;
   uint32_t m_nInputs;
