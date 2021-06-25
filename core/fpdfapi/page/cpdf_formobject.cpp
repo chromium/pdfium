@@ -22,6 +22,7 @@ CPDF_FormObject::~CPDF_FormObject() = default;
 void CPDF_FormObject::Transform(const CFX_Matrix& matrix) {
   m_FormMatrix.Concat(matrix);
   CalcBoundingBox();
+  SetDirty(true);
 }
 
 bool CPDF_FormObject::IsForm() const {

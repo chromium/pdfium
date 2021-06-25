@@ -2548,13 +2548,7 @@ TEST_F(FPDFEditEmbedderTest, ModifyFormObject) {
   FPDF_PAGEOBJECT form = FPDFPage_GetObject(page, 0);
   ASSERT_EQ(FPDF_PAGEOBJ_FORM, FPDFPageObj_GetType(form));
 
-  // Access the CPDF_FormObject underneath, as there is no public API to set the
-  // matrix for form objects. (yet)
-  static constexpr FS_MATRIX kMatrix = {0.5f, 0.0f, 0.0f, 0.5f, 0.0f, 0.0f};
-  CPDF_FormObject* pFormObj = CPDFPageObjectFromFPDFPageObject(form)->AsForm();
-  pFormObj->Transform(CFXMatrixFromFSMatrix(kMatrix));
-  pFormObj->SetDirty(true);
-
+  FPDFPageObj_Transform(form, 0.5, 0, 0, 0.5, 0, 0);
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
 
   {

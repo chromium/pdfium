@@ -24,12 +24,11 @@ void CPDF_ShadingObject::Transform(const CFX_Matrix& matrix) {
     m_ClipPath.Transform(matrix);
 
   m_Matrix.Concat(matrix);
-  if (m_ClipPath.HasRef()) {
+  if (m_ClipPath.HasRef())
     CalcBoundingBox();
-    return;
-  }
-
-  SetRect(matrix.TransformRect(GetRect()));
+  else
+    SetRect(matrix.TransformRect(GetRect()));
+  SetDirty(true);
 }
 
 bool CPDF_ShadingObject::IsShading() const {
