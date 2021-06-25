@@ -826,8 +826,7 @@ CPDF_ImageObject* CPDF_StreamContentParser::AddImageObject(
                    false);
 
   CFX_Matrix ImageMatrix = m_pCurStates->m_CTM * m_mtContentToUser;
-  pImageObj->set_matrix(ImageMatrix);
-  pImageObj->CalcBoundingBox();
+  pImageObj->SetImageMatrix(ImageMatrix);
 
   CPDF_ImageObject* pRet = pImageObj.get();
   m_pObjectHolder->AppendPageObject(std::move(pImageObj));

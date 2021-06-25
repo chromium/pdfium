@@ -68,6 +68,11 @@ RetainPtr<CFX_DIBitmap> CPDF_ImageObject::GetIndependentBitmap() const {
   return pSource ? pSource->Clone(nullptr) : nullptr;
 }
 
+void CPDF_ImageObject::SetImageMatrix(const CFX_Matrix& matrix) {
+  m_Matrix = matrix;
+  CalcBoundingBox();
+}
+
 void CPDF_ImageObject::MaybePurgeCache() {
   if (!m_pImage)
     return;

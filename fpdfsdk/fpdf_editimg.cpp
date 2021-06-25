@@ -168,10 +168,9 @@ FPDFImageObj_SetMatrix(FPDF_PAGEOBJECT image_object,
   if (!pImgObj)
     return false;
 
-  pImgObj->set_matrix(CFX_Matrix(static_cast<float>(a), static_cast<float>(b),
-                                 static_cast<float>(c), static_cast<float>(d),
-                                 static_cast<float>(e), static_cast<float>(f)));
-  pImgObj->CalcBoundingBox();
+  pImgObj->SetImageMatrix(CFX_Matrix(
+      static_cast<float>(a), static_cast<float>(b), static_cast<float>(c),
+      static_cast<float>(d), static_cast<float>(e), static_cast<float>(f)));
   pImgObj->SetDirty(true);
   return true;
 }
