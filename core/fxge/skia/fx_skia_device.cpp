@@ -4,6 +4,8 @@
 
 #include "core/fxge/skia/fx_skia_device.h"
 
+#include <limits.h>
+
 #include <algorithm>
 #include <utility>
 #include <vector>

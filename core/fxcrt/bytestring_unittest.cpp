@@ -4,6 +4,8 @@
 
 #include "core/fxcrt/bytestring.h"
 
+#include <limits.h>
+
 #include <algorithm>
 #include <iterator>
 #include <vector>
