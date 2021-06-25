@@ -20,6 +20,7 @@
 #include "core/fxcrt/fx_memory.h"
 #include "testing/image_diff/image_diff_png.h"
 #include "testing/utils/path_service.h"
+#include "third_party/base/numerics/ranges.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
 #if defined(OS_WIN)
@@ -197,16 +198,21 @@ void PrintHelp(const std::string& binary_name) {
   fprintf(
       stderr,
       "Usage:\n"
-      "  %s OPTIONS <compare file> <reference file>\n"
-      "    Compares two files on disk, returning 0 when they are the same;\n"
+      "  %s OPTIONS <compare_file> <reference_file>\n"
+      "    Compares two files on disk, returning 0 when they are the same.\n"
       "    Passing \"--histogram\" additionally calculates a diff of the\n"
-      "    RGBA value histograms. (which is resistant to shifts in layout)\n"
-      "    Passing \"--reverse-byte-order\" additionally assumes the compare\n"
-      "    file has BGRA byte ordering.\n"
-      "  %s --diff <compare file> <reference file> <output file>\n"
-      "    Compares two files on disk, outputs an image that visualizes the\n"
-      "    difference to <output file>\n",
-      binary_name.c_str(), binary_name.c_str());
+      "    RGBA value histograms (which is resistant to shifts in layout).\n"
+      "    Passing \"--reverse-byte-order\" additionally assumes the\n"
+      "    compare file has BGRA byte ordering.\n\n"
+      "  %s --diff <compare_file> <reference_file> <output_file>\n"
+      "    Compares two files on disk, and if they differ, outputs an image\n"
+      "    to <output_file> that visualizes the differing pixels as red\n"
+      "    dots.\n\n"
+      "  %s --subtract <compare_file> <reference_file> <output_file>\n"
+      "    Compares two files on disk, and if they differ, outputs an image\n"
+      "    to <output_file> that visualizes the difference as a scaled\n"
+      "    subtraction of pixel values.\n",
+      binary_name.c_str(), binary_name.c_str(), binary_name.c_str());
 }
 
 int CompareImages(const std::string& binary_name,
@@ -279,10 +285,48 @@ bool CreateImageDiff(const Image& image1, const Image& image2, Image* out) {
   return same;
 }
 
+bool SubtractImages(const Image& image1, const Image& image2, Image* out) {
+  int w = std::min(image1.w(), image2.w());
+  int h = std::min(image1.h(), image2.h());
+  *out = Image(image1);
+  bool same = (image1.w() == image2.w()) && (image1.h() == image2.h());
+
+  for (int y = 0; y < h; ++y) {
+    for (int x = 0; x < w; ++x) {
+      uint32_t pixel1 = image1.pixel_at(x, y);
+      int32_t r1 = pixel1 & 0xff;
+      int32_t g1 = (pixel1 >> 8) & 0xff;
+      int32_t b1 = (pixel1 >> 16) & 0xff;
+
+      uint32_t pixel2 = image2.pixel_at(x, y);
+      int32_t r2 = pixel2 & 0xff;
+      int32_t g2 = (pixel2 >> 8) & 0xff;
+      int32_t b2 = (pixel2 >> 16) & 0xff;
+
+      int32_t delta_r = r1 - r2;
+      int32_t delta_g = g1 - g2;
+      int32_t delta_b = b1 - b2;
+      same &= (delta_r == 0 && delta_g == 0 && delta_b == 0);
+
+      delta_r = pdfium::clamp(128 + delta_r * 8, 0, 255);
+      delta_g = pdfium::clamp(128 + delta_g * 8, 0, 255);
+      delta_b = pdfium::clamp(128 + delta_b * 8, 0, 255);
+
+      uint32_t new_pixel = RGBA_ALPHA;
+      new_pixel |= delta_r;
+      new_pixel |= (delta_g << 8);
+      new_pixel |= (delta_b << 16);
+      out->set_pixel_at(x, y, new_pixel);
+    }
+  }
+  return same;
+}
+
 int DiffImages(const std::string& binary_name,
                const std::string& file1,
                const std::string& file2,
-               const std::string& out_file) {
+               const std::string& out_file,
+               bool do_subtraction) {
   Image actual_image;
   Image baseline_image;
 
@@ -298,7 +342,9 @@ int DiffImages(const std::string& binary_name,
   }
 
   Image diff_image;
-  bool same = CreateImageDiff(baseline_image, actual_image, &diff_image);
+  bool same = do_subtraction
+                  ? SubtractImages(baseline_image, actual_image, &diff_image)
+                  : CreateImageDiff(baseline_image, actual_image, &diff_image);
   if (same)
     return kStatusSame;
 
@@ -324,6 +370,7 @@ int main(int argc, const char* argv[]) {
 
   bool histograms = false;
   bool produce_diff_image = false;
+  bool produce_image_subtraction = false;
   bool reverse_byte_order = false;
   std::string filename1;
   std::string filename2;
@@ -342,6 +389,8 @@ int main(int argc, const char* argv[]) {
       histograms = true;
     } else if (strcmp(arg, "--diff") == 0) {
       produce_diff_image = true;
+    } else if (strcmp(arg, "--subtract") == 0) {
+      produce_image_subtraction = true;
     } else if (strcmp(arg, "--reverse-byte-order") == 0) {
       reverse_byte_order = true;
     }
@@ -353,9 +402,10 @@ int main(int argc, const char* argv[]) {
   if (i < argc)
     diff_filename = argv[i++];
 
-  if (produce_diff_image) {
+  if (produce_diff_image || produce_image_subtraction) {
     if (!diff_filename.empty()) {
-      return DiffImages(binary_name, filename1, filename2, diff_filename);
+      return DiffImages(binary_name, filename1, filename2, diff_filename,
+                        produce_image_subtraction);
     }
   } else if (!filename2.empty()) {
     return CompareImages(binary_name, filename1, filename2, histograms,
