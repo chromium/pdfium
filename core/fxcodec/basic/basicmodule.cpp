@@ -9,7 +9,9 @@
 #include <vector>
 
 #include "core/fxcodec/scanlinedecoder.h"
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/span_util.h"
 #include "third_party/base/check.h"
 
 namespace fxcodec {
@@ -107,7 +109,7 @@ bool RLScanlineDecoder::Create(pdfium::span<const uint8_t> src_buf,
 }
 
 bool RLScanlineDecoder::v_Rewind() {
-  memset(m_Scanline.data(), 0, m_Pitch);
+  fxcrt::spanclr(pdfium::make_span(m_Scanline));
   m_SrcOffset = 0;
   m_bEOD = false;
   m_Operator = 0;
@@ -120,9 +122,10 @@ uint8_t* RLScanlineDecoder::v_GetNextLine() {
   } else if (m_bEOD) {
     return nullptr;
   }
-  memset(m_Scanline.data(), 0, m_Pitch);
   uint32_t col_pos = 0;
   bool eol = false;
+  auto scan_span = pdfium::make_span(m_Scanline);
+  fxcrt::spanclr(scan_span);
   while (m_SrcOffset < m_SrcBuf.size() && !eol) {
     if (m_Operator < 128) {
       uint32_t copy_len = m_Operator + 1;
@@ -135,7 +138,7 @@ uint8_t* RLScanlineDecoder::v_GetNextLine() {
         m_bEOD = true;
       }
       auto copy_span = m_SrcBuf.subspan(m_SrcOffset, copy_len);
-      memcpy(m_Scanline.data() + col_pos, copy_span.data(), copy_span.size());
+      fxcrt::spancpy(scan_span.subspan(col_pos), copy_span);
       col_pos += copy_len;
       UpdateOperator((uint8_t)copy_len);
     } else if (m_Operator > 128) {
@@ -148,7 +151,7 @@ uint8_t* RLScanlineDecoder::v_GetNextLine() {
         duplicate_len = m_dwLineBytes - col_pos;
         eol = true;
       }
-      memset(m_Scanline.data() + col_pos, fill, duplicate_len);
+      fxcrt::spanset(scan_span.subspan(col_pos, duplicate_len), fill);
       col_pos += duplicate_len;
       UpdateOperator((uint8_t)duplicate_len);
     } else {

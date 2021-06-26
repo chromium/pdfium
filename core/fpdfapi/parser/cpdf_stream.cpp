@@ -18,6 +18,7 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/span_util.h"
 #include "third_party/base/containers/contains.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
@@ -131,7 +132,8 @@ void CPDF_Stream::SetData(pdfium::span<const uint8_t> pData) {
   std::unique_ptr<uint8_t, FxFreeDeleter> data_copy;
   if (!pData.empty()) {
     data_copy.reset(FX_AllocUninit(uint8_t, pData.size()));
-    memcpy(data_copy.get(), pData.data(), pData.size());
+    auto copy_span = pdfium::make_span(data_copy.get(), pData.size());
+    fxcrt::spancpy(copy_span, pData);
   }
   TakeData(std::move(data_copy), pData.size());
 }
