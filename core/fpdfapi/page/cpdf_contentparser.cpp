@@ -19,6 +19,7 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/pauseindicator_iface.h"
+#include "core/fxcrt/span_util.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
@@ -173,13 +174,13 @@ CPDF_ContentParser::Stage CPDF_ContentParser::PrepareContent() {
     return Stage::kComplete;
 
   uint32_t pos = 0;
+  auto data_span = pdfium::make_span(m_pData.Get(), m_Size);
   for (const auto& stream : m_StreamArray) {
-    memcpy(m_pData.Get() + pos, stream->GetData(), stream->GetSize());
+    fxcrt::spancpy(data_span.subspan(pos), stream->GetSpan());
     pos += stream->GetSize();
-    m_pData.Get()[pos++] = ' ';
+    data_span[pos++] = ' ';
   }
   m_StreamArray.clear();
-
   return Stage::kParse;
 }
 

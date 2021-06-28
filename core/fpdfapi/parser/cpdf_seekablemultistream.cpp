@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
+#include "core/fxcrt/span_util.h"
 #include "core/fxcrt/stl_util.h"
 #include "third_party/base/notreached.h"
 
@@ -43,16 +44,16 @@ bool CPDF_SeekableMultiStream::ReadBlockAtOffset(void* buffer,
     offset -= dwSize;
     index++;
   }
+  auto buffer_span = pdfium::make_span(static_cast<uint8_t*>(buffer), size);
   while (index < iCount) {
-    const auto& acc = m_Data[index];
-    uint32_t dwSize = acc->GetSize();
-    size_t dwRead = std::min(size, static_cast<size_t>(dwSize - offset));
-    memcpy(buffer, acc->GetSpan().subspan(offset, dwRead).data(), dwRead);
-    size -= dwRead;
-    if (size == 0)
+    auto acc_span = m_Data[index]->GetSpan();
+    size_t dwRead =
+        std::min<size_t>(buffer_span.size(), acc_span.size() - offset);
+    fxcrt::spancpy(buffer_span, acc_span.subspan(offset, dwRead));
+    buffer_span = buffer_span.subspan(dwRead);
+    if (buffer_span.empty())
       return true;
 
-    buffer = static_cast<uint8_t*>(buffer) + dwRead;
     offset = 0;
     index++;
   }

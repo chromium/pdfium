@@ -26,6 +26,7 @@
 #include "core/fxcodec/jpeg/jpegmodule.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/span_util.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "third_party/base/check.h"
@@ -290,7 +291,8 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
   size_t dest_span_offset = 0;
   if (bCopyWithoutAlpha) {
     for (int32_t i = 0; i < BitmapHeight; i++) {
-      memcpy(&dest_span[dest_span_offset], src_buf, dest_pitch);
+      fxcrt::spancpy(dest_span.subspan(dest_span_offset),
+                     pdfium::make_span(src_buf, dest_pitch));
       dest_span_offset += dest_pitch;
       src_buf += src_pitch;
     }

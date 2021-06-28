@@ -29,6 +29,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/span_util.h"
 #include "third_party/base/check.h"
 
 namespace {
@@ -168,8 +169,8 @@ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
   if (decoder.IsEmpty()) {
     dwOrigSize = std::min<uint32_t>(dwOrigSize, m_pBuf.size() - m_Pos);
     pData.reset(FX_AllocUninit(uint8_t, dwOrigSize));
-    auto copy_span = m_pBuf.subspan(m_Pos, dwOrigSize);
-    memcpy(pData.get(), copy_span.data(), copy_span.size());
+    auto dest_span = pdfium::make_span(pData.get(), dwOrigSize);
+    fxcrt::spancpy(dest_span, m_pBuf.subspan(m_Pos, dwOrigSize));
     dwStreamSize = dwOrigSize;
     m_Pos += dwOrigSize;
   } else {
@@ -198,8 +199,8 @@ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
     }
     m_Pos = dwSavePos;
     pData.reset(FX_AllocUninit(uint8_t, dwStreamSize));
-    auto copy_span = m_pBuf.subspan(m_Pos, dwStreamSize);
-    memcpy(pData.get(), copy_span.data(), copy_span.size());
+    auto dest_span = pdfium::make_span(pData.get(), dwStreamSize);
+    fxcrt::spancpy(dest_span, m_pBuf.subspan(m_Pos, dwStreamSize));
     m_Pos += dwStreamSize;
   }
   pDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(dwStreamSize));

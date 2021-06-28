@@ -24,6 +24,7 @@
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_random.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/span_util.h"
 #include "core/fxcrt/stl_util.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/contains.h"
@@ -82,7 +83,8 @@ bool CFX_FileBufferArchive::WriteBlock(const void* pBuf, size_t size) {
   size_t temp_size = size;
   while (temp_size) {
     size_t buf_size = std::min(kArchiveBufferSize - current_length_, temp_size);
-    memcpy(buffer_.data() + current_length_, buffer, buf_size);
+    fxcrt::spancpy(fxcrt::Subspan(buffer_, current_length_),
+                   pdfium::make_span(buffer, buf_size));
 
     current_length_ += buf_size;
     if (current_length_ == kArchiveBufferSize && !Flush())
