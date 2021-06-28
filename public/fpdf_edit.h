@@ -1241,7 +1241,7 @@ FPDFTextObj_SetTextRenderMode(FPDF_PAGEOBJECT text,
 // will not be modified.
 FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFTextObj_GetFontName(FPDF_PAGEOBJECT text,
-                        void* buffer,
+                        char* buffer,
                         unsigned long length);
 
 // Experimental API.

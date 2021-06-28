@@ -547,7 +547,7 @@ FPDFTextObj_GetFontSize(FPDF_PAGEOBJECT text, float* size) {
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFTextObj_GetFontName(FPDF_PAGEOBJECT text,
-                        void* buffer,
+                        char* buffer,
                         unsigned long length) {
   CPDF_TextObject* pTextObj = CPDFTextObjectFromFPDFPageObject(text);
   if (!pTextObj)
