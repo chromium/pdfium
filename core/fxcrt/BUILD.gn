@@ -160,6 +160,7 @@ pdfium_unittest_source_set("unittests") {
     "retained_tree_node_unittest.cpp",
     "scoped_set_insertion_unittest.cpp",
     "shared_copy_on_write_unittest.cpp",
+    "span_util_unittest.cpp",
     "string_pool_template_unittest.cpp",
     "tree_node_unittest.cpp",
     "unowned_ptr_unittest.cpp",
