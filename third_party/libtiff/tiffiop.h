@@ -57,7 +57,8 @@ extern void *lfind(const void *, const void *, size_t *, size_t,
 
 #if !defined(HAVE_SNPRINTF) && !defined(HAVE__SNPRINTF)
 #undef snprintf
-#define snprintf FXSYS_snprintf
+#define snprintf _TIFF_snprintf_f
+extern int snprintf(char* str, size_t size, const char* format, ...);
 #endif
 
 #include "tiffio.h"
