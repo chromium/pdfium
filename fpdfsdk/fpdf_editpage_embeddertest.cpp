@@ -268,6 +268,11 @@ TEST_F(FPDFEditPageEmbedderTest, DashingArrayAndPhase) {
     EXPECT_FLOAT_EQ(5.0f, phase);
     ASSERT_EQ(3, FPDFPageObj_GetDashCount(path));
 
+    // Pretend `get_array` has too few members.
+    EXPECT_FALSE(FPDFPageObj_GetDashArray(path, get_array, 2));
+    for (int i = 0; i < 4; i++)
+      EXPECT_FLOAT_EQ(-1.0f, get_array[i]);
+
     ASSERT_TRUE(FPDFPageObj_GetDashArray(path, get_array, 4));
 
     // `get_array` should be modified only up to dash_count
