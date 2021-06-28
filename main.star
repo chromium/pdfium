@@ -440,7 +440,7 @@ luci.cq_group(
     name = "pdfium",
     watch = cq.refset(
         "https://pdfium.googlesource.com/pdfium",
-        refs = [r"refs/heads/master", r"refs/heads/chromium/.+"],
+        refs = [r"refs/heads/master", r"refs/heads/main", r"refs/heads/chromium/.+"],
     ),
     tree_status_host = "pdfium-status.appspot.com",
     acls = [
