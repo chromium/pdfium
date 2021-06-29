@@ -534,22 +534,22 @@ bool CJPX_Decoder::Decode(uint8_t* dest_buf, uint32_t pitch, bool swap_rgb) {
   uint32_t height = m_Image->comps[0].h;
   for (uint32_t channel = 0; channel < m_Image->numcomps; ++channel) {
     uint8_t* pChannel = channel_bufs[channel];
-    if (adjust_comps[channel] < 0) {
+    const int adjust = adjust_comps[channel];
+    const opj_image_comp_t& comps = m_Image->comps[channel];
+    if (adjust < 0) {
       for (uint32_t row = 0; row < height; ++row) {
         uint8_t* pScanline = pChannel + row * pitch;
         for (uint32_t col = 0; col < width; ++col) {
           uint8_t* pPixel = pScanline + col * m_Image->numcomps;
-          if (!m_Image->comps[channel].data)
+          if (!comps.data)
             continue;
 
-          int src = m_Image->comps[channel].data[row * width + col];
-          src += m_Image->comps[channel].sgnd
-                     ? 1 << (m_Image->comps[channel].prec - 1)
-                     : 0;
-          if (adjust_comps[channel] > 0) {
+          int src = comps.data[row * width + col];
+          src += comps.sgnd ? 1 << (comps.prec - 1) : 0;
+          if (adjust > 0) {
             *pPixel = 0;
           } else {
-            *pPixel = static_cast<uint8_t>(src << -adjust_comps[channel]);
+            *pPixel = static_cast<uint8_t>(src << -adjust);
           }
         }
       }
@@ -558,20 +558,17 @@ bool CJPX_Decoder::Decode(uint8_t* dest_buf, uint32_t pitch, bool swap_rgb) {
         uint8_t* pScanline = pChannel + row * pitch;
         for (uint32_t col = 0; col < width; ++col) {
           uint8_t* pPixel = pScanline + col * m_Image->numcomps;
-          if (!m_Image->comps[channel].data)
+          if (!comps.data)
             continue;
 
-          int src = m_Image->comps[channel].data[row * width + col];
-          src += m_Image->comps[channel].sgnd
-                     ? 1 << (m_Image->comps[channel].prec - 1)
-                     : 0;
-          if (adjust_comps[channel] - 1 < 0) {
-            *pPixel = static_cast<uint8_t>((src >> adjust_comps[channel]));
+          int src = comps.data[row * width + col];
+          src += comps.sgnd ? 1 << (comps.prec - 1) : 0;
+          if (adjust - 1 < 0) {
+            *pPixel = static_cast<uint8_t>((src >> adjust));
           } else {
-            int tmpPixel = (src >> adjust_comps[channel]) +
-                           ((src >> (adjust_comps[channel] - 1)) % 2);
-            tmpPixel = pdfium::clamp(tmpPixel, 0, 255);
-            *pPixel = static_cast<uint8_t>(tmpPixel);
+            int pixel = (src >> adjust) + ((src >> (adjust - 1)) % 2);
+            pixel = pdfium::clamp(pixel, 0, 255);
+            *pPixel = static_cast<uint8_t>(pixel);
           }
         }
       }
