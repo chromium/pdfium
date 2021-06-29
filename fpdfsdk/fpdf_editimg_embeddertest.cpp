@@ -56,8 +56,9 @@ TEST_F(PDFEditImgTest, NewImageObjGenerateContent) {
 
   FPDF_PAGEOBJECT page_image = FPDFPageObj_NewImageObj(doc);
   ASSERT_TRUE(FPDFImageObj_SetBitmap(&page, 0, page_image, bitmap));
-  ASSERT_TRUE(
-      FPDFImageObj_SetMatrix(page_image, kBitmapSize, 0, 0, kBitmapSize, 0, 0));
+  static constexpr FS_MATRIX kScaleBitmapMatrix{kBitmapSize, 0, 0,
+                                                kBitmapSize, 0, 0};
+  ASSERT_TRUE(FPDFPageObj_SetMatrix(page_image, &kScaleBitmapMatrix));
   FPDFPage_InsertObject(page, page_image);
   EXPECT_EQ(1, FPDFPage_CountObjects(page));
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
@@ -123,58 +124,28 @@ TEST_F(PDFEditImgTest, GetSetImageMatrix) {
   FPDF_DOCUMENT doc = FPDF_CreateNewDocument();
   FPDF_PAGEOBJECT image = FPDFPageObj_NewImageObj(doc);
 
-  double a;
-  double b;
-  double c;
-  double d;
-  double e;
-  double f;
-  EXPECT_FALSE(FPDFImageObj_GetMatrix(nullptr, nullptr, nullptr, nullptr,
-                                      nullptr, nullptr, nullptr));
-  EXPECT_FALSE(FPDFImageObj_GetMatrix(nullptr, &a, nullptr, nullptr, nullptr,
-                                      nullptr, nullptr));
-  EXPECT_FALSE(FPDFImageObj_GetMatrix(nullptr, &a, &b, nullptr, nullptr,
-                                      nullptr, nullptr));
-  EXPECT_FALSE(
-      FPDFImageObj_GetMatrix(nullptr, &a, &b, &c, nullptr, nullptr, nullptr));
-  EXPECT_FALSE(
-      FPDFImageObj_GetMatrix(nullptr, &a, &b, &c, nullptr, nullptr, nullptr));
-  EXPECT_FALSE(
-      FPDFImageObj_GetMatrix(nullptr, &a, &b, &c, &d, nullptr, nullptr));
-  EXPECT_FALSE(FPDFImageObj_GetMatrix(nullptr, &a, &b, &c, &d, &e, nullptr));
-  EXPECT_FALSE(FPDFImageObj_GetMatrix(nullptr, &a, &b, &c, &d, &e, &f));
-  EXPECT_FALSE(FPDFImageObj_GetMatrix(nullptr, &a, nullptr, &c, &d, &e, &f));
+  FS_MATRIX matrix;
+  EXPECT_FALSE(FPDFPageObj_GetMatrix(nullptr, nullptr));
+  EXPECT_FALSE(FPDFPageObj_GetMatrix(nullptr, &matrix));
+  EXPECT_FALSE(FPDFPageObj_GetMatrix(image, nullptr));
 
-  EXPECT_FALSE(FPDFImageObj_GetMatrix(image, nullptr, nullptr, nullptr, nullptr,
-                                      nullptr, nullptr));
-  EXPECT_FALSE(FPDFImageObj_GetMatrix(image, &a, nullptr, nullptr, nullptr,
-                                      nullptr, nullptr));
-  EXPECT_FALSE(FPDFImageObj_GetMatrix(image, &a, &b, nullptr, nullptr, nullptr,
-                                      nullptr));
-  EXPECT_FALSE(
-      FPDFImageObj_GetMatrix(image, &a, &b, &c, nullptr, nullptr, nullptr));
-  EXPECT_FALSE(
-      FPDFImageObj_GetMatrix(image, &a, &b, &c, nullptr, nullptr, nullptr));
-  EXPECT_FALSE(FPDFImageObj_GetMatrix(image, &a, &b, &c, &d, nullptr, nullptr));
-  EXPECT_FALSE(FPDFImageObj_GetMatrix(image, &a, &b, &c, &d, &e, nullptr));
-  EXPECT_FALSE(FPDFImageObj_GetMatrix(image, &a, nullptr, &c, &d, &e, &f));
+  EXPECT_TRUE(FPDFPageObj_GetMatrix(image, &matrix));
+  EXPECT_FLOAT_EQ(1.0f, matrix.a);
+  EXPECT_FLOAT_EQ(0.0f, matrix.b);
+  EXPECT_FLOAT_EQ(0.0f, matrix.c);
+  EXPECT_FLOAT_EQ(1.0f, matrix.d);
+  EXPECT_FLOAT_EQ(0.0f, matrix.e);
+  EXPECT_FLOAT_EQ(0.0f, matrix.f);
 
-  EXPECT_TRUE(FPDFImageObj_GetMatrix(image, &a, &b, &c, &d, &e, &f));
-  EXPECT_DOUBLE_EQ(1.0, a);
-  EXPECT_DOUBLE_EQ(0.0, b);
-  EXPECT_DOUBLE_EQ(0.0, c);
-  EXPECT_DOUBLE_EQ(1.0, d);
-  EXPECT_DOUBLE_EQ(0.0, e);
-  EXPECT_DOUBLE_EQ(0.0, f);
-
-  EXPECT_TRUE(FPDFImageObj_SetMatrix(image, 1, 2, 3, 4, 5, 6));
-  EXPECT_TRUE(FPDFImageObj_GetMatrix(image, &a, &b, &c, &d, &e, &f));
-  EXPECT_DOUBLE_EQ(1.0, a);
-  EXPECT_DOUBLE_EQ(2.0, b);
-  EXPECT_DOUBLE_EQ(3.0, c);
-  EXPECT_DOUBLE_EQ(4.0, d);
-  EXPECT_DOUBLE_EQ(5.0, e);
-  EXPECT_DOUBLE_EQ(6.0, f);
+  static constexpr FS_MATRIX kMatrix{1, 2, 3, 4, 5, 6};
+  EXPECT_TRUE(FPDFPageObj_SetMatrix(image, &kMatrix));
+  EXPECT_TRUE(FPDFPageObj_GetMatrix(image, &matrix));
+  EXPECT_FLOAT_EQ(1.0f, matrix.a);
+  EXPECT_FLOAT_EQ(2.0f, matrix.b);
+  EXPECT_FLOAT_EQ(3.0f, matrix.c);
+  EXPECT_FLOAT_EQ(4.0f, matrix.d);
+  EXPECT_FLOAT_EQ(5.0f, matrix.e);
+  EXPECT_FLOAT_EQ(6.0f, matrix.f);
 
   FPDFPageObj_Destroy(image);
   FPDF_CloseDocument(doc);

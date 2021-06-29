@@ -335,7 +335,8 @@ TEST_F(FPDFEditEmbedderTest, RasterizePDF) {
     FPDF_PAGEOBJECT temp_img = FPDFPageObj_NewImageObj(temp_doc);
     EXPECT_TRUE(
         FPDFImageObj_SetBitmap(&temp_page, 1, temp_img, orig_bitmap.get()));
-    EXPECT_TRUE(FPDFImageObj_SetMatrix(temp_img, 612, 0, 0, 792, 0, 0));
+    static constexpr FS_MATRIX kLetterScaleMatrix{612, 0, 0, 792, 0, 0};
+    EXPECT_TRUE(FPDFPageObj_SetMatrix(temp_img, &kLetterScaleMatrix));
     FPDFPage_InsertObject(temp_page, temp_img);
     EXPECT_TRUE(FPDFPage_GenerateContent(temp_page));
     EXPECT_TRUE(FPDF_SaveAsCopy(temp_doc, this, 0));
@@ -371,13 +372,11 @@ TEST_F(FPDFEditEmbedderTest, AddPaths) {
   EXPECT_EQ(FPDF_FILLMODE_ALTERNATE, fillmode);
   EXPECT_FALSE(stroke);
 
-  static const FS_MATRIX kMatrix = {1, 2, 3, 4, 5, 6};
-  EXPECT_FALSE(FPDFPath_SetMatrix(nullptr, &kMatrix));
-  EXPECT_TRUE(FPDFPath_SetMatrix(red_rect, &kMatrix));
+  static constexpr FS_MATRIX kMatrix = {1, 2, 3, 4, 5, 6};
+  EXPECT_TRUE(FPDFPageObj_SetMatrix(red_rect, &kMatrix));
 
   FS_MATRIX matrix;
-  EXPECT_FALSE(FPDFPath_GetMatrix(nullptr, &matrix));
-  EXPECT_TRUE(FPDFPath_GetMatrix(red_rect, &matrix));
+  EXPECT_TRUE(FPDFPageObj_GetMatrix(red_rect, &matrix));
   EXPECT_FLOAT_EQ(1.0f, matrix.a);
   EXPECT_FLOAT_EQ(2.0f, matrix.b);
   EXPECT_FLOAT_EQ(3.0f, matrix.c);
@@ -387,7 +386,7 @@ TEST_F(FPDFEditEmbedderTest, AddPaths) {
 
   // Set back the identity matrix.
   matrix = {1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f};
-  EXPECT_TRUE(FPDFPath_SetMatrix(red_rect, &matrix));
+  EXPECT_TRUE(FPDFPageObj_SetMatrix(red_rect, &matrix));
 
   FPDFPage_InsertObject(page, red_rect);
   {
@@ -2285,8 +2284,7 @@ TEST_F(FPDFEditEmbedderTest, AddStandardFontText) {
   }
 
   FS_MATRIX matrix;
-  EXPECT_FALSE(FPDFTextObj_GetMatrix(nullptr, &matrix));
-  EXPECT_TRUE(FPDFTextObj_GetMatrix(text_object3, &matrix));
+  EXPECT_TRUE(FPDFPageObj_GetMatrix(text_object3, &matrix));
   EXPECT_FLOAT_EQ(1.0f, matrix.a);
   EXPECT_FLOAT_EQ(1.5f, matrix.b);
   EXPECT_FLOAT_EQ(2.0f, matrix.c);
@@ -2493,12 +2491,12 @@ TEST_F(FPDFEditEmbedderTest, FormGetObjects) {
   CPDF_FormObject* pFormObj = CPDFPageObjectFromFPDFPageObject(form)->AsForm();
   pFormObj->Transform(pFormObj->form_matrix().GetInverse());
 
-  // FPDFFormObj_GetMatrix() positive testing.
+  // FPDFPageObj_GetMatrix() positive testing for forms.
   static constexpr FS_MATRIX kMatrix = {1.0f, 1.5f, 2.0f, 2.5f, 100.0f, 200.0f};
   pFormObj->Transform(CFXMatrixFromFSMatrix(kMatrix));
 
   FS_MATRIX matrix;
-  EXPECT_TRUE(FPDFFormObj_GetMatrix(form, &matrix));
+  EXPECT_TRUE(FPDFPageObj_GetMatrix(form, &matrix));
   EXPECT_FLOAT_EQ(kMatrix.a, matrix.a);
   EXPECT_FLOAT_EQ(kMatrix.b, matrix.b);
   EXPECT_FLOAT_EQ(kMatrix.c, matrix.c);
@@ -2506,10 +2504,8 @@ TEST_F(FPDFEditEmbedderTest, FormGetObjects) {
   EXPECT_FLOAT_EQ(kMatrix.e, matrix.e);
   EXPECT_FLOAT_EQ(kMatrix.f, matrix.f);
 
-  // FPDFFormObj_GetMatrix() negative testing.
-  EXPECT_FALSE(FPDFFormObj_GetMatrix(nullptr, &matrix));
-  EXPECT_FALSE(FPDFFormObj_GetMatrix(form, nullptr));
-  EXPECT_FALSE(FPDFFormObj_GetMatrix(nullptr, nullptr));
+  // FPDFPageObj_GetMatrix() negative testing for forms.
+  EXPECT_FALSE(FPDFPageObj_GetMatrix(form, nullptr));
 
   UnloadPage(page);
 }
@@ -3567,35 +3563,30 @@ TEST_F(FPDFEditEmbedderTest, GetBitmapIgnoresSetMatrix) {
   }
 
   // Check the matrix for |obj|.
-  double a;
-  double b;
-  double c;
-  double d;
-  double e;
-  double f;
-  EXPECT_TRUE(FPDFImageObj_GetMatrix(obj, &a, &b, &c, &d, &e, &f));
-  EXPECT_DOUBLE_EQ(53.0, a);
-  EXPECT_DOUBLE_EQ(0.0, b);
-  EXPECT_DOUBLE_EQ(0.0, c);
-  EXPECT_DOUBLE_EQ(43.0, d);
-  EXPECT_DOUBLE_EQ(72.0, e);
-  EXPECT_DOUBLE_EQ(646.510009765625, f);
+  FS_MATRIX matrix;
+  EXPECT_TRUE(FPDFPageObj_GetMatrix(obj, &matrix));
+  EXPECT_FLOAT_EQ(53.0f, matrix.a);
+  EXPECT_FLOAT_EQ(0.0f, matrix.b);
+  EXPECT_FLOAT_EQ(0.0f, matrix.c);
+  EXPECT_FLOAT_EQ(43.0f, matrix.d);
+  EXPECT_FLOAT_EQ(72.0f, matrix.e);
+  EXPECT_FLOAT_EQ(646.510009765625f, matrix.f);
 
   // Modify the matrix for |obj|.
-  a = 120.0;
-  EXPECT_TRUE(FPDFImageObj_SetMatrix(obj, a, b, c, d, e, f));
+  matrix.a = 120.0;
+  EXPECT_TRUE(FPDFPageObj_SetMatrix(obj, &matrix));
 
   // Make sure the matrix modification took place.
-  EXPECT_TRUE(FPDFImageObj_GetMatrix(obj, &a, &b, &c, &d, &e, &f));
-  EXPECT_DOUBLE_EQ(120.0, a);
-  EXPECT_DOUBLE_EQ(0.0, b);
-  EXPECT_DOUBLE_EQ(0.0, c);
-  EXPECT_DOUBLE_EQ(43.0, d);
-  EXPECT_DOUBLE_EQ(72.0, e);
-  EXPECT_DOUBLE_EQ(646.510009765625, f);
+  EXPECT_TRUE(FPDFPageObj_GetMatrix(obj, &matrix));
+  EXPECT_FLOAT_EQ(120.0f, matrix.a);
+  EXPECT_FLOAT_EQ(0.0f, matrix.b);
+  EXPECT_FLOAT_EQ(0.0f, matrix.c);
+  EXPECT_FLOAT_EQ(43.0f, matrix.d);
+  EXPECT_FLOAT_EQ(72.0f, matrix.e);
+  EXPECT_FLOAT_EQ(646.510009765625f, matrix.f);
 
   {
-    // Render |obj| again. Note that the FPDFImageObj_SetMatrix() call has no
+    // Render |obj| again. Note that the FPDFPageObj_SetMatrix() call has no
     // effect.
     ScopedFPDFBitmap bitmap(FPDFImageObj_GetBitmap(obj));
     EXPECT_EQ(FPDFBitmap_BGR, FPDFBitmap_GetFormat(bitmap.get()));
@@ -3669,35 +3660,30 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_GetRenderedBitmapHandlesSetMatrix) {
   }
 
   // Check the matrix for |obj|.
-  double a;
-  double b;
-  double c;
-  double d;
-  double e;
-  double f;
-  EXPECT_TRUE(FPDFImageObj_GetMatrix(obj, &a, &b, &c, &d, &e, &f));
-  EXPECT_DOUBLE_EQ(53.0, a);
-  EXPECT_DOUBLE_EQ(0.0, b);
-  EXPECT_DOUBLE_EQ(0.0, c);
-  EXPECT_DOUBLE_EQ(43.0, d);
-  EXPECT_DOUBLE_EQ(72.0, e);
-  EXPECT_DOUBLE_EQ(646.510009765625, f);
+  FS_MATRIX matrix;
+  EXPECT_TRUE(FPDFPageObj_GetMatrix(obj, &matrix));
+  EXPECT_FLOAT_EQ(53.0f, matrix.a);
+  EXPECT_FLOAT_EQ(0.0f, matrix.b);
+  EXPECT_FLOAT_EQ(0.0f, matrix.c);
+  EXPECT_FLOAT_EQ(43.0f, matrix.d);
+  EXPECT_FLOAT_EQ(72.0f, matrix.e);
+  EXPECT_FLOAT_EQ(646.510009765625f, matrix.f);
 
   // Modify the matrix for |obj|.
-  a = 120.0;
-  EXPECT_TRUE(FPDFImageObj_SetMatrix(obj, a, b, c, d, e, f));
+  matrix.a = 120.0;
+  EXPECT_TRUE(FPDFPageObj_SetMatrix(obj, &matrix));
 
   // Make sure the matrix modification took place.
-  EXPECT_TRUE(FPDFImageObj_GetMatrix(obj, &a, &b, &c, &d, &e, &f));
-  EXPECT_DOUBLE_EQ(120.0, a);
-  EXPECT_DOUBLE_EQ(0.0, b);
-  EXPECT_DOUBLE_EQ(0.0, c);
-  EXPECT_DOUBLE_EQ(43.0, d);
-  EXPECT_DOUBLE_EQ(72.0, e);
-  EXPECT_DOUBLE_EQ(646.510009765625, f);
+  EXPECT_TRUE(FPDFPageObj_GetMatrix(obj, &matrix));
+  EXPECT_FLOAT_EQ(120.0f, matrix.a);
+  EXPECT_FLOAT_EQ(0.0f, matrix.b);
+  EXPECT_FLOAT_EQ(0.0f, matrix.c);
+  EXPECT_FLOAT_EQ(43.0f, matrix.d);
+  EXPECT_FLOAT_EQ(72.0f, matrix.e);
+  EXPECT_FLOAT_EQ(646.510009765625f, matrix.f);
 
   {
-    // Render |obj| again. Note that the FPDFImageObj_SetMatrix() call has an
+    // Render |obj| again. Note that the FPDFPageObj_SetMatrix() call has an
     // effect.
     ScopedFPDFBitmap bitmap(
         FPDFImageObj_GetRenderedBitmap(document(), page, obj));
@@ -3819,72 +3805,67 @@ TEST_F(FPDFEditEmbedderTest, GetImageMatrix) {
   ASSERT_EQ(39, FPDFPage_CountObjects(page));
 
   FPDF_PAGEOBJECT obj;
-  double a;
-  double b;
-  double c;
-  double d;
-  double e;
-  double f;
+  FS_MATRIX matrix;
 
   obj = FPDFPage_GetObject(page, 33);
   ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
-  EXPECT_TRUE(FPDFImageObj_GetMatrix(obj, &a, &b, &c, &d, &e, &f));
-  EXPECT_DOUBLE_EQ(53.0, a);
-  EXPECT_DOUBLE_EQ(0.0, b);
-  EXPECT_DOUBLE_EQ(0.0, c);
-  EXPECT_DOUBLE_EQ(43.0, d);
-  EXPECT_DOUBLE_EQ(72.0, e);
-  EXPECT_DOUBLE_EQ(646.510009765625, f);
+  EXPECT_TRUE(FPDFPageObj_GetMatrix(obj, &matrix));
+  EXPECT_FLOAT_EQ(53.0f, matrix.a);
+  EXPECT_FLOAT_EQ(0.0f, matrix.b);
+  EXPECT_FLOAT_EQ(0.0f, matrix.c);
+  EXPECT_FLOAT_EQ(43.0f, matrix.d);
+  EXPECT_FLOAT_EQ(72.0f, matrix.e);
+  EXPECT_FLOAT_EQ(646.510009765625f, matrix.f);
 
   obj = FPDFPage_GetObject(page, 34);
   ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
-  EXPECT_TRUE(FPDFImageObj_GetMatrix(obj, &a, &b, &c, &d, &e, &f));
-  EXPECT_DOUBLE_EQ(70.0, a);
-  EXPECT_DOUBLE_EQ(0.0, b);
-  EXPECT_DOUBLE_EQ(0.0, c);
-  EXPECT_DOUBLE_EQ(51.0, d);
-  EXPECT_DOUBLE_EQ(216.0, e);
-  EXPECT_DOUBLE_EQ(646.510009765625, f);
+  EXPECT_TRUE(FPDFPageObj_GetMatrix(obj, &matrix));
+  EXPECT_FLOAT_EQ(70.0f, matrix.a);
+  EXPECT_FLOAT_EQ(0.0f, matrix.b);
+  EXPECT_FLOAT_EQ(0.0f, matrix.c);
+  EXPECT_FLOAT_EQ(51.0f, matrix.d);
+  EXPECT_FLOAT_EQ(216.0f, matrix.e);
+  EXPECT_FLOAT_EQ(646.510009765625f, matrix.f);
 
   obj = FPDFPage_GetObject(page, 35);
   ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
-  EXPECT_TRUE(FPDFImageObj_GetMatrix(obj, &a, &b, &c, &d, &e, &f));
-  EXPECT_DOUBLE_EQ(69.0, a);
-  EXPECT_DOUBLE_EQ(0.0, b);
-  EXPECT_DOUBLE_EQ(0.0, c);
-  EXPECT_DOUBLE_EQ(51.0, d);
-  EXPECT_DOUBLE_EQ(360.0, e);
-  EXPECT_DOUBLE_EQ(646.510009765625, f);
+  EXPECT_TRUE(FPDFPageObj_GetMatrix(obj, &matrix));
+  EXPECT_FLOAT_EQ(69.0f, matrix.a);
+  EXPECT_FLOAT_EQ(0.0f, matrix.b);
+  EXPECT_FLOAT_EQ(0.0f, matrix.c);
+  EXPECT_FLOAT_EQ(51.0f, matrix.d);
+  EXPECT_FLOAT_EQ(360.0f, matrix.e);
+  EXPECT_FLOAT_EQ(646.510009765625f, matrix.f);
 
   obj = FPDFPage_GetObject(page, 36);
   ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
-  EXPECT_TRUE(FPDFImageObj_GetMatrix(obj, &a, &b, &c, &d, &e, &f));
-  EXPECT_DOUBLE_EQ(59.0, a);
-  EXPECT_DOUBLE_EQ(0.0, b);
-  EXPECT_DOUBLE_EQ(0.0, c);
-  EXPECT_DOUBLE_EQ(45.0, d);
-  EXPECT_DOUBLE_EQ(72.0, e);
-  EXPECT_DOUBLE_EQ(553.510009765625, f);
+  EXPECT_TRUE(FPDFPageObj_GetMatrix(obj, &matrix));
+  EXPECT_FLOAT_EQ(59.0f, matrix.a);
+  EXPECT_FLOAT_EQ(0.0f, matrix.b);
+  EXPECT_FLOAT_EQ(0.0f, matrix.c);
+  EXPECT_FLOAT_EQ(45.0f, matrix.d);
+  EXPECT_FLOAT_EQ(72.0f, matrix.e);
+  EXPECT_FLOAT_EQ(553.510009765625f, matrix.f);
 
   obj = FPDFPage_GetObject(page, 37);
   ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
-  EXPECT_TRUE(FPDFImageObj_GetMatrix(obj, &a, &b, &c, &d, &e, &f));
-  EXPECT_DOUBLE_EQ(55.94000244140625, a);
-  EXPECT_DOUBLE_EQ(0.0, b);
-  EXPECT_DOUBLE_EQ(0.0, c);
-  EXPECT_DOUBLE_EQ(46.950000762939453, d);
-  EXPECT_DOUBLE_EQ(216.0, e);
-  EXPECT_DOUBLE_EQ(552.510009765625, f);
+  EXPECT_TRUE(FPDFPageObj_GetMatrix(obj, &matrix));
+  EXPECT_FLOAT_EQ(55.94000244140625f, matrix.a);
+  EXPECT_FLOAT_EQ(0.0f, matrix.b);
+  EXPECT_FLOAT_EQ(0.0f, matrix.c);
+  EXPECT_FLOAT_EQ(46.950000762939453f, matrix.d);
+  EXPECT_FLOAT_EQ(216.0f, matrix.e);
+  EXPECT_FLOAT_EQ(552.510009765625f, matrix.f);
 
   obj = FPDFPage_GetObject(page, 38);
   ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
-  EXPECT_TRUE(FPDFImageObj_GetMatrix(obj, &a, &b, &c, &d, &e, &f));
-  EXPECT_DOUBLE_EQ(70.528999328613281, a);
-  EXPECT_DOUBLE_EQ(0.0, b);
-  EXPECT_DOUBLE_EQ(0.0, c);
-  EXPECT_DOUBLE_EQ(43.149997711181641, d);
-  EXPECT_DOUBLE_EQ(360.0, e);
-  EXPECT_DOUBLE_EQ(553.3599853515625, f);
+  EXPECT_TRUE(FPDFPageObj_GetMatrix(obj, &matrix));
+  EXPECT_FLOAT_EQ(70.528999328613281f, matrix.a);
+  EXPECT_FLOAT_EQ(0.0f, matrix.b);
+  EXPECT_FLOAT_EQ(0.0f, matrix.c);
+  EXPECT_FLOAT_EQ(43.149997711181641f, matrix.d);
+  EXPECT_FLOAT_EQ(360.0f, matrix.e);
+  EXPECT_FLOAT_EQ(553.3599853515625f, matrix.f);
 
   UnloadPage(page);
 }

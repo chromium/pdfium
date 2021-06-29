@@ -1396,8 +1396,9 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_AddAndModifyImage) {
     EXPECT_EQ(kBitmapSize, FPDFBitmap_GetHeight(image_bitmap));
     FPDF_PAGEOBJECT image_object = FPDFPageObj_NewImageObj(document());
     ASSERT_TRUE(FPDFImageObj_SetBitmap(&page, 0, image_object, image_bitmap));
-    ASSERT_TRUE(FPDFImageObj_SetMatrix(image_object, kBitmapSize, 0, 0,
-                                       kBitmapSize, 0, 0));
+    static constexpr FS_MATRIX kBitmapScaleMatrix{kBitmapSize, 0, 0,
+                                                  kBitmapSize, 0, 0};
+    ASSERT_TRUE(FPDFPageObj_SetMatrix(image_object, &kBitmapScaleMatrix));
     FPDFPageObj_Transform(image_object, 1, 0, 0, 1, 200, 600);
     EXPECT_TRUE(FPDFAnnot_AppendObject(annot.get(), image_object));
   }

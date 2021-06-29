@@ -184,33 +184,6 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetDrawMode(FPDF_PAGEOBJECT path,
   return true;
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetMatrix(FPDF_PAGEOBJECT path,
-                                                       FS_MATRIX* matrix) {
-  if (!path || !matrix)
-    return false;
-
-  CPDF_PathObject* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
-  if (!pPathObj)
-    return false;
-
-  *matrix = FSMatrixFromCFXMatrix(pPathObj->matrix());
-  return true;
-}
-
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDFPath_SetMatrix(FPDF_PAGEOBJECT path, const FS_MATRIX* matrix) {
-  if (!matrix)
-    return false;
-
-  CPDF_PathObject* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
-  if (!pPathObj)
-    return false;
-
-  pPathObj->set_matrix(CFXMatrixFromFSMatrix(*matrix));
-  pPathObj->SetDirty(true);
-  return true;
-}
-
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPathSegment_GetPoint(FPDF_PATHSEGMENT segment, float* x, float* y) {
   auto* pPathPoint = FXPathPointFromFPDFPathSegment(segment);

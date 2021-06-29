@@ -22,6 +22,7 @@
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fpdfapi/page/cpdf_pathobject.h"
 #include "core/fpdfapi/page/cpdf_shadingobject.h"
+#include "core/fpdfapi/page/cpdf_textobject.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -613,6 +614,61 @@ FPDFPageObj_Transform(FPDF_PAGEOBJECT page_object,
 
   CFX_Matrix matrix((float)a, (float)b, (float)c, (float)d, (float)e, (float)f);
   pPageObj->Transform(matrix);
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPageObj_GetMatrix(FPDF_PAGEOBJECT page_object, FS_MATRIX* matrix) {
+  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
+  if (!pPageObj || !matrix)
+    return false;
+
+  switch (pPageObj->GetType()) {
+    case CPDF_PageObject::TEXT:
+      *matrix = FSMatrixFromCFXMatrix(pPageObj->AsText()->GetTextMatrix());
+      return true;
+    case CPDF_PageObject::PATH:
+      *matrix = FSMatrixFromCFXMatrix(pPageObj->AsPath()->matrix());
+      return true;
+    case CPDF_PageObject::IMAGE:
+      *matrix = FSMatrixFromCFXMatrix(pPageObj->AsImage()->matrix());
+      return true;
+    case CPDF_PageObject::SHADING:
+      return false;
+    case CPDF_PageObject::FORM:
+      *matrix = FSMatrixFromCFXMatrix(pPageObj->AsForm()->form_matrix());
+      return true;
+    default:
+      NOTREACHED();
+      return false;
+  }
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPageObj_SetMatrix(FPDF_PAGEOBJECT page_object, const FS_MATRIX* matrix) {
+  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
+  if (!pPageObj || !matrix)
+    return false;
+
+  CFX_Matrix cmatrix = CFXMatrixFromFSMatrix(*matrix);
+  switch (pPageObj->GetType()) {
+    case CPDF_PageObject::TEXT:
+      return false;
+    case CPDF_PageObject::PATH:
+      pPageObj->AsPath()->set_matrix(cmatrix);
+      break;
+    case CPDF_PageObject::IMAGE:
+      pPageObj->AsImage()->SetImageMatrix(cmatrix);
+      break;
+    case CPDF_PageObject::SHADING:
+      return false;
+    case CPDF_PageObject::FORM:
+      return false;
+    default:
+      NOTREACHED();
+      return false;
+  }
+  pPageObj->SetDirty(true);
+  return true;
 }
 
 FPDF_EXPORT void FPDF_CALLCONV
