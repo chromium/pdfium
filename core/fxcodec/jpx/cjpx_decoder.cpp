@@ -536,14 +536,14 @@ bool CJPX_Decoder::Decode(uint8_t* dest_buf, uint32_t pitch, bool swap_rgb) {
     uint8_t* pChannel = channel_bufs[channel];
     const int adjust = adjust_comps[channel];
     const opj_image_comp_t& comps = m_Image->comps[channel];
+    if (!comps.data)
+      continue;
+
     if (adjust < 0) {
       for (uint32_t row = 0; row < height; ++row) {
         uint8_t* pScanline = pChannel + row * pitch;
         for (uint32_t col = 0; col < width; ++col) {
           uint8_t* pPixel = pScanline + col * m_Image->numcomps;
-          if (!comps.data)
-            continue;
-
           int src = comps.data[row * width + col];
           src += comps.sgnd ? 1 << (comps.prec - 1) : 0;
           if (adjust > 0) {
@@ -558,9 +558,6 @@ bool CJPX_Decoder::Decode(uint8_t* dest_buf, uint32_t pitch, bool swap_rgb) {
         uint8_t* pScanline = pChannel + row * pitch;
         for (uint32_t col = 0; col < width; ++col) {
           uint8_t* pPixel = pScanline + col * m_Image->numcomps;
-          if (!comps.data)
-            continue;
-
           int src = comps.data[row * width + col];
           src += comps.sgnd ? 1 << (comps.prec - 1) : 0;
           if (adjust - 1 < 0) {
