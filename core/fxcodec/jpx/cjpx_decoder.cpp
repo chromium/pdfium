@@ -546,11 +546,7 @@ bool CJPX_Decoder::Decode(uint8_t* dest_buf, uint32_t pitch, bool swap_rgb) {
           uint8_t* pPixel = pScanline + col * m_Image->numcomps;
           int src = comps.data[row * width + col];
           src += comps.sgnd ? 1 << (comps.prec - 1) : 0;
-          if (adjust > 0) {
-            *pPixel = 0;
-          } else {
-            *pPixel = static_cast<uint8_t>(src << -adjust);
-          }
+          *pPixel = static_cast<uint8_t>(src << -adjust);
         }
       }
     } else {
@@ -560,8 +556,8 @@ bool CJPX_Decoder::Decode(uint8_t* dest_buf, uint32_t pitch, bool swap_rgb) {
           uint8_t* pPixel = pScanline + col * m_Image->numcomps;
           int src = comps.data[row * width + col];
           src += comps.sgnd ? 1 << (comps.prec - 1) : 0;
-          if (adjust - 1 < 0) {
-            *pPixel = static_cast<uint8_t>((src >> adjust));
+          if (adjust == 0) {
+            *pPixel = static_cast<uint8_t>(src);
           } else {
             int pixel = (src >> adjust) + ((src >> (adjust - 1)) % 2);
             pixel = pdfium::clamp(pixel, 0, 255);
