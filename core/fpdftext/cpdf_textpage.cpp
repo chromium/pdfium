@@ -75,19 +75,16 @@ float CalculateBaseSpace(const CPDF_TextObject* pTextObj,
   return baseSpace;
 }
 
-size_t GetUnicodeNormalization(wchar_t wch, wchar_t* pDst) {
+std::vector<wchar_t, FxAllocAllocator<wchar_t>> GetUnicodeNormalization(
+    wchar_t wch) {
   wch = wch & 0xFFFF;
   wchar_t wFind = g_UnicodeData_Normalization[wch];
-  if (!wFind) {
-    if (pDst)
-      *pDst = wch;
-    return 1;
-  }
+  if (!wFind)
+    return std::vector<wchar_t, FxAllocAllocator<wchar_t>>(1, wch);
+
   if (wFind >= 0x8000) {
-    const uint16_t* pMap = g_UnicodeData_Normalization_Map1 + (wFind - 0x8000);
-    if (pDst)
-      *pDst = *pMap;
-    return 1;
+    return std::vector<wchar_t, FxAllocAllocator<wchar_t>>(
+        1, g_UnicodeData_Normalization_Map1[wFind - 0x8000]);
   }
 
   wch = wFind & 0x0FFF;
@@ -96,12 +93,7 @@ size_t GetUnicodeNormalization(wchar_t wch, wchar_t* pDst) {
   if (wFind == 4)
     wFind = static_cast<wchar_t>(*pMap++);
 
-  if (pDst) {
-    wchar_t n = wFind;
-    while (n--)
-      *pDst++ = *pMap++;
-  }
-  return static_cast<size_t>(wFind);
+  return std::vector<wchar_t, FxAllocAllocator<wchar_t>>(pMap, pMap + wFind);
 }
 
 float MaskPercentFilled(const std::vector<bool>& mask,
@@ -674,21 +666,17 @@ void CPDF_TextPage::AddCharInfoByLRDirection(wchar_t wChar,
     m_CharList.push_back(info2);
     return;
   }
-
   info2.m_Index = m_TextBuf.GetLength();
-  size_t nCount = 0;
+  std::vector<wchar_t, FxAllocAllocator<wchar_t>> normalized;
   if (wChar >= 0xFB00 && wChar <= 0xFB06)
-    nCount = GetUnicodeNormalization(wChar, nullptr);
-  if (nCount == 0) {
+    normalized = GetUnicodeNormalization(wChar);
+  if (normalized.empty()) {
     m_TextBuf.AppendChar(wChar);
     m_CharList.push_back(info2);
     return;
   }
-
-  std::unique_ptr<wchar_t, FxFreeDeleter> pDst(FX_Alloc(wchar_t, nCount));
-  GetUnicodeNormalization(wChar, pDst.get());
-  for (size_t nIndex = 0; nIndex < nCount; ++nIndex) {
-    info2.m_Unicode = pDst.get()[nIndex];
+  for (wchar_t normalized_char : normalized) {
+    info2.m_Unicode = normalized_char;
     info2.m_CharType = CPDF_TextPage::CharType::kPiece;
     m_TextBuf.AppendChar(info2.m_Unicode);
     m_CharList.push_back(info2);
@@ -703,21 +691,18 @@ void CPDF_TextPage::AddCharInfoByRLDirection(wchar_t wChar,
     m_CharList.push_back(info2);
     return;
   }
-
   info2.m_Index = m_TextBuf.GetLength();
   wChar = pdfium::unicode::GetMirrorChar(wChar);
-  size_t nCount = GetUnicodeNormalization(wChar, nullptr);
-  if (nCount == 0) {
+  std::vector<wchar_t, FxAllocAllocator<wchar_t>> normalized =
+      GetUnicodeNormalization(wChar);
+  if (normalized.empty()) {
     info2.m_Unicode = wChar;
     m_TextBuf.AppendChar(info2.m_Unicode);
     m_CharList.push_back(info2);
     return;
   }
-
-  std::unique_ptr<wchar_t, FxFreeDeleter> pDst(FX_Alloc(wchar_t, nCount));
-  GetUnicodeNormalization(wChar, pDst.get());
-  for (size_t nIndex = 0; nIndex < nCount; ++nIndex) {
-    info2.m_Unicode = pDst.get()[nIndex];
+  for (wchar_t normalized_char : normalized) {
+    info2.m_Unicode = normalized_char;
     info2.m_CharType = CPDF_TextPage::CharType::kPiece;
     m_TextBuf.AppendChar(info2.m_Unicode);
     m_CharList.push_back(info2);
