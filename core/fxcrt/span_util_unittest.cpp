@@ -39,7 +39,8 @@ TEST(Spancpy, FitsEntirely) {
 TEST(Spancpy, FitsWithin) {
   std::vector<char> src(2, 'A');
   std::vector<char> dst(4, 'B');
-  fxcrt::spancpy(fxcrt::Subspan(dst, 1), pdfium::make_span(src));
+  // Also show that a const src argument is acceptable.
+  fxcrt::spancpy(fxcrt::Subspan(dst, 1), pdfium::span<const char>(src));
   EXPECT_EQ(dst[0], 'B');
   EXPECT_EQ(dst[1], 'A');
   EXPECT_EQ(dst[2], 'A');
@@ -63,5 +64,16 @@ TEST(Spancpy, EmptyCopyToEmpty) {
   EXPECT_EQ(dst[0], 'B');
   EXPECT_EQ(dst[1], 'B');
   EXPECT_EQ(dst[2], 'B');
+  EXPECT_EQ(dst[3], 'B');
+}
+
+TEST(Spanmove, FitsWithin) {
+  std::vector<char> src(2, 'A');
+  std::vector<char> dst(4, 'B');
+  // Also show that a const src argument is acceptable.
+  fxcrt::spanmove(fxcrt::Subspan(dst, 1), pdfium::span<const char>(src));
+  EXPECT_EQ(dst[0], 'B');
+  EXPECT_EQ(dst[1], 'A');
+  EXPECT_EQ(dst[2], 'A');
   EXPECT_EQ(dst[3], 'B');
 }
