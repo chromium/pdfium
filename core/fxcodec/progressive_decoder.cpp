@@ -379,16 +379,10 @@ bool ProgressiveDecoder::GifInputRecordPositionBuf(uint32_t rcd_pos,
     pal_num = m_GifPltNumber;
     pPalette = m_pGifPalette;
   }
-  if (!m_pSrcPalette)
-    m_pSrcPalette.reset(FX_Alloc(FX_ARGB, pal_num));
-  else if (pal_num > m_SrcPaletteNumber)
-    m_pSrcPalette.reset(FX_Realloc(FX_ARGB, m_pSrcPalette.release(), pal_num));
-  if (!m_pSrcPalette)
-    return false;
-
+  m_SrcPalette.resize(pal_num);
   m_SrcPaletteNumber = pal_num;
   for (int i = 0; i < pal_num; i++) {
-    m_pSrcPalette.get()[i] =
+    m_SrcPalette[i] =
         ArgbEncode(0xff, pPalette[i].r, pPalette[i].g, pPalette[i].b);
   }
   m_GifTransIndex = trans_index;
@@ -399,7 +393,7 @@ bool ProgressiveDecoder::GifInputRecordPositionBuf(uint32_t rcd_pos,
   if (trans_index >= pal_num)
     trans_index = -1;
   if (trans_index != -1) {
-    m_pSrcPalette.get()[trans_index] &= 0x00ffffff;
+    m_SrcPalette[trans_index] &= 0x00ffffff;
     if (pDevice->IsAlphaFormat())
       pal_index = trans_index;
   }
@@ -411,7 +405,7 @@ bool ProgressiveDecoder::GifInputRecordPositionBuf(uint32_t rcd_pos,
   int sizeX = m_sizeX;
   int sizeY = m_sizeY;
   int Bpp = pDevice->GetBPP() / 8;
-  FX_ARGB argb = m_pSrcPalette.get()[pal_index];
+  FX_ARGB argb = m_SrcPalette[pal_index];
   for (int row = 0; row < sizeY; row++) {
     uint8_t* pScanline =
         pDevice->GetWritableScanline(row + startY) + startX * Bpp;
@@ -700,11 +694,11 @@ bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
   m_clipBox = FX_RECT(0, 0, m_SrcWidth, m_SrcHeight);
   m_pBmpContext = std::move(pBmpContext);
   if (m_SrcPaletteNumber) {
-    m_pSrcPalette.reset(FX_AllocUninit(FX_ARGB, m_SrcPaletteNumber));
-    memcpy(m_pSrcPalette.get(), palette->data(),
+    m_SrcPalette.resize(m_SrcPaletteNumber);
+    memcpy(m_SrcPalette.data(), palette->data(),
            m_SrcPaletteNumber * sizeof(FX_ARGB));
   } else {
-    m_pSrcPalette.reset();
+    m_SrcPalette.clear();
   }
   return true;
 }
@@ -1716,7 +1710,7 @@ void ProgressiveDecoder::ReSampleScanline(
              j++) {
           uint32_t pixel_weight =
               pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
-          uint32_t argb = m_pSrcPalette.get()[src_scan[j]];
+          uint32_t argb = m_SrcPalette[src_scan[j]];
           dest_r += pixel_weight * FXARGB_R(argb);
           dest_g += pixel_weight * FXARGB_G(argb);
           dest_b += pixel_weight * FXARGB_B(argb);
@@ -1789,7 +1783,7 @@ void ProgressiveDecoder::ReSampleScanline(
              j++) {
           uint32_t pixel_weight =
               pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
-          uint32_t argb = m_pSrcPalette.get()[src_scan[j]];
+          uint32_t argb = m_SrcPalette[src_scan[j]];
           dest_r += pixel_weight * FXARGB_R(argb);
           dest_g += pixel_weight * FXARGB_G(argb);
           dest_b += pixel_weight * FXARGB_B(argb);
@@ -1809,7 +1803,7 @@ void ProgressiveDecoder::ReSampleScanline(
                j++) {
             uint32_t pixel_weight =
                 pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
-            uint32_t argb = m_pSrcPalette.get()[src_scan[j]];
+            uint32_t argb = m_SrcPalette[src_scan[j]];
             dest_r += pixel_weight * FXARGB_R(argb);
             dest_g += pixel_weight * FXARGB_G(argb);
             dest_b += pixel_weight * FXARGB_B(argb);
@@ -1829,7 +1823,7 @@ void ProgressiveDecoder::ReSampleScanline(
              j++) {
           uint32_t pixel_weight =
               pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
-          unsigned long argb = m_pSrcPalette.get()[src_scan[j]];
+          unsigned long argb = m_SrcPalette[src_scan[j]];
           dest_a += pixel_weight * FXARGB_A(argb);
           dest_r += pixel_weight * FXARGB_R(argb);
           dest_g += pixel_weight * FXARGB_G(argb);
