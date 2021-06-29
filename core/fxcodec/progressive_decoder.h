@@ -221,7 +221,7 @@ class ProgressiveDecoder :
   RetainPtr<IFX_SeekableReadStream> m_pFile;
   RetainPtr<CFX_DIBitmap> m_pDeviceBitmap;
   RetainPtr<CFX_CodecMemory> m_pCodecMemory;
-  std::unique_ptr<uint8_t, FxFreeDeleter> m_pDecodeBuf;
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_DecodeBuf;
   std::vector<FX_ARGB, FxAllocAllocator<FX_ARGB>> m_SrcPalette;
   std::unique_ptr<ProgressiveDecoderIface::Context> m_pJpegContext;
 #ifdef PDF_ENABLE_XFA_BMP
