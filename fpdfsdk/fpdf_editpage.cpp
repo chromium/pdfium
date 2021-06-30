@@ -662,7 +662,8 @@ FPDFPageObj_SetMatrix(FPDF_PAGEOBJECT page_object, const FS_MATRIX* matrix) {
     case CPDF_PageObject::SHADING:
       return false;
     case CPDF_PageObject::FORM:
-      return false;
+      pPageObj->AsForm()->SetFormMatrix(cmatrix);
+      break;
     default:
       NOTREACHED();
       return false;

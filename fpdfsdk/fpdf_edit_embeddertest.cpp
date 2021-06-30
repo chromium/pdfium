@@ -2487,13 +2487,9 @@ TEST_F(FPDFEditEmbedderTest, FormGetObjects) {
   ASSERT_EQ(nullptr, FPDFFormObj_GetObject(form, -1));
   ASSERT_EQ(nullptr, FPDFFormObj_GetObject(form, 2));
 
-  // Reset the form object matrix to identity.
-  CPDF_FormObject* pFormObj = CPDFPageObjectFromFPDFPageObject(form)->AsForm();
-  pFormObj->Transform(pFormObj->form_matrix().GetInverse());
-
   // FPDFPageObj_GetMatrix() positive testing for forms.
   static constexpr FS_MATRIX kMatrix = {1.0f, 1.5f, 2.0f, 2.5f, 100.0f, 200.0f};
-  pFormObj->Transform(CFXMatrixFromFSMatrix(kMatrix));
+  EXPECT_TRUE(FPDFPageObj_SetMatrix(form, &kMatrix));
 
   FS_MATRIX matrix;
   EXPECT_TRUE(FPDFPageObj_GetMatrix(form, &matrix));

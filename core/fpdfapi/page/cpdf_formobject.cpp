@@ -44,3 +44,8 @@ CPDF_PageObject::Type CPDF_FormObject::GetType() const {
 void CPDF_FormObject::CalcBoundingBox() {
   SetRect(m_FormMatrix.TransformRect(m_pForm->CalcBoundingBox()));
 }
+
+void CPDF_FormObject::SetFormMatrix(const CFX_Matrix& matrix) {
+  m_FormMatrix = matrix;
+  CalcBoundingBox();
+}

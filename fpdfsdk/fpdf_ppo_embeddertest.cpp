@@ -249,13 +249,8 @@ TEST_F(FPDFPPOEmbedderTest, ImportPageToXObjectWithSameDoc) {
   ASSERT_TRUE(page_object);
   ASSERT_EQ(FPDF_PAGEOBJ_FORM, FPDFPageObj_GetType(page_object));
 
-  // Access the CPDF_FormObject underneath, as there is no public API to set
-  // the matrix for form objects. (yet)
   static constexpr FS_MATRIX kMatrix = {0.5f, 0.0f, 0.0f, 0.5f, 0.0f, 0.0f};
-  CPDF_FormObject* pFormObj =
-      CPDFPageObjectFromFPDFPageObject(page_object)->AsForm();
-  pFormObj->Transform(CFXMatrixFromFSMatrix(kMatrix));
-  pFormObj->SetDirty(true);
+  EXPECT_TRUE(FPDFPageObj_SetMatrix(page_object, &kMatrix));
 
   FPDFPage_InsertObject(page, page_object);
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
