@@ -143,7 +143,7 @@ def pdfium_internal_builder(name, bucket):
         dimensions.update({"pool": "luci.flex.ci"})
         properties.update({"builder_group": "client.pdfium"})
         service_account = "pdfium-ci-builder@chops-service-accounts.iam.gserviceaccount.com"
-        triggered_by = ["master-gitiles-trigger"]
+        triggered_by = ["pdfium-gitiles-trigger"]
     else:
         dimensions.update({"pool": "luci.flex.try"})
         properties.update({"builder_group": "tryserver.client.pdfium"})
@@ -408,7 +408,10 @@ luci.console_view(
     name = "main",
     header = _CONSOLE_HEADER,
     title = "PDFium Main Console",
-    refs = ["refs/heads/master"],
+    refs = [
+        "refs/heads/main",
+        "refs/heads/master",
+    ],
     repo = "https://pdfium.googlesource.com/pdfium",
     include_experimental_builds = True,
 )
@@ -475,10 +478,10 @@ luci.cq_group(
 
 # Scheduler
 luci.gitiles_poller(
-    name = "master-gitiles-trigger",
+    name = "pdfium-gitiles-trigger",
     bucket = "ci",
     repo = "https://pdfium.googlesource.com/pdfium",
     refs = [
-        "refs/heads/master",
+        "refs/heads/main",
     ],
 )

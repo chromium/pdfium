@@ -21,6 +21,6 @@ Or you can execute the .star file directly:
 
 ## References
 
-* [Starlark Language](https://docs.bazel.build/versions/master/skylark/language.html)
+* [Starlark Language](https://docs.bazel.build/versions/main/skylark/language.html)
 * [Lucicfg](https://chromium.googlesource.com/infra/luci/luci-go/+/HEAD/lucicfg/doc/README.md)
 * [Stalark-Go](https://github.com/google/starlark-go) (Implementation of Starlark used by lucicfg)
