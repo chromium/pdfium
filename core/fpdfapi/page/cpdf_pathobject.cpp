@@ -52,3 +52,8 @@ void CPDF_PathObject::CalcBoundingBox() {
     rect.Inflate(0.5f, 0.5f);
   SetRect(rect);
 }
+
+void CPDF_PathObject::SetPathMatrix(const CFX_Matrix& matrix) {
+  m_Matrix = matrix;
+  CalcBoundingBox();
+}

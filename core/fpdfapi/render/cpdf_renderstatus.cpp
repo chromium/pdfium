@@ -1128,8 +1128,7 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
     path.set_filltype(fill ? CFX_FillRenderOptions::FillType::kWinding
                            : CFX_FillRenderOptions::FillType::kNoFill);
     path.path().Append(*pPath, &matrix);
-    path.set_matrix(mtTextMatrix);
-    path.CalcBoundingBox();
+    path.SetPathMatrix(mtTextMatrix);
     ProcessPath(&path, mtObj2Device);
   }
 }

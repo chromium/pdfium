@@ -655,7 +655,7 @@ FPDFPageObj_SetMatrix(FPDF_PAGEOBJECT page_object, const FS_MATRIX* matrix) {
       pPageObj->AsText()->SetTextMatrix(cmatrix);
       break;
     case CPDF_PageObject::PATH:
-      pPageObj->AsPath()->set_matrix(cmatrix);
+      pPageObj->AsPath()->SetPathMatrix(cmatrix);
       break;
     case CPDF_PageObject::IMAGE:
       pPageObj->AsImage()->SetImageMatrix(cmatrix);

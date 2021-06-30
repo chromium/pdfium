@@ -60,7 +60,7 @@ class CPDF_PathObject final : public CPDF_PageObject {
   const CPDF_Path& path() const { return m_Path; }
 
   const CFX_Matrix& matrix() const { return m_Matrix; }
-  void set_matrix(const CFX_Matrix& matrix) { m_Matrix = matrix; }
+  void SetPathMatrix(const CFX_Matrix& matrix);
 
  private:
   bool m_bStroke = false;
