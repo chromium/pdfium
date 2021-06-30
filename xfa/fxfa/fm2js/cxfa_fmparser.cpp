@@ -797,7 +797,6 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParsePostExpression(
     if (!NextToken())
       return nullptr;
   }
-  return expr;
 }
 
 // Argument lists are zero or more comma seperated simple expressions found

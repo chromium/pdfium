@@ -151,7 +151,6 @@ GifDecoder::Status CFX_GifContext::GetFrame() {
       }
     }
   }
-  return GifDecoder::Status::kSuccess;
 }
 
 GifDecoder::Status CFX_GifContext::LoadFrame(int32_t frame_num) {

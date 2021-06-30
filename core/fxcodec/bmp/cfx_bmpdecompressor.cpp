@@ -528,7 +528,6 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE8() {
       }
     }
   }
-  return BmpDecoder::Status::kFail;
 }
 
 BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE4() {
@@ -636,7 +635,6 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE4() {
       }
     }
   }
-  return BmpDecoder::Status::kFail;
 }
 
 bool CFX_BmpDecompressor::ReadData(uint8_t* destination, uint32_t size) {

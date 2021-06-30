@@ -904,7 +904,6 @@ FX_FILESIZE CPDF_SyntaxParser::FindTag(ByteStringView tag) {
       match = ch == tag[0] ? 1 : 0;
     }
   }
-  return -1;
 }
 
 bool CPDF_SyntaxParser::IsPositionRead(FX_FILESIZE pos) const {

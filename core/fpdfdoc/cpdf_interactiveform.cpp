@@ -142,7 +142,6 @@ ByteString GenerateNewFontResourceName(const CPDF_Dictionary* pResDict,
 
     m++;
   }
-  return csTmp;
 }
 
 RetainPtr<CPDF_Font> AddStandardFont(CPDF_Document* pDocument) {

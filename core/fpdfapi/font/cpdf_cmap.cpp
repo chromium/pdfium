@@ -371,7 +371,6 @@ uint32_t CPDF_CMap::GetNextChar(ByteStringView pString, size_t* pOffset) const {
           return 0;
         codes[char_size++] = pBytes[offset++];
       }
-      break;
     }
   }
   return 0;

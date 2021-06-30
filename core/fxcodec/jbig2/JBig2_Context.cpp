@@ -353,7 +353,6 @@ JBig2_Result CJBig2_Context::ProcessingParseSegmentData(
     case 49:
       m_bInPage = false;
       return JBig2_Result::kEndReached;
-      break;
     case 50:
       m_pStream->offset(pSegment->m_dwData_length);
       break;

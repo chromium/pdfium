@@ -49,7 +49,6 @@ bool FindTagParamFromStart(CPDF_SimpleParser* parser,
       return true;
     }
   }
-  return false;
 }
 
 }  // namespace
