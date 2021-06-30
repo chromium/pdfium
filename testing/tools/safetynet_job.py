@@ -69,7 +69,7 @@ class JobRun(object):
 
     if not self.args.no_checkout:
       self.git.FetchOriginMaster()
-      self.git.Checkout('origin/master')
+      self.git.Checkout('origin/main')
 
     # Make sure results dir exists
     if not os.path.exists(self.context.results_dir):
@@ -200,7 +200,7 @@ def main():
   parser.add_argument(
       '--no-checkout',
       action='store_true',
-      help='whether to skip checking out origin/master. Use '
+      help='whether to skip checking out origin/main. Use '
       'for script debugging.')
   parser.add_argument(
       '--no-checkpoint',

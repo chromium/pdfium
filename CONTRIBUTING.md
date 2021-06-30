@@ -3,7 +3,7 @@ In general, we follow the
 [Chromium Contributing](https://chromium.googlesource.com/chromium/src/+/main/docs/contributing.md)
 guidelines in PDFium. The code review process, and the build tools are all very
 similar to Chromium. The PDFium
-[README](https://pdfium.googlesource.com/pdfium/+/refs/heads/master/README.md)
+[README](https://pdfium.googlesource.com/pdfium/+/refs/heads/main/README.md)
 outlines specific build and test information for PDFium.
 
 This document focuses on how the PDFium project operates and how we’d like it
@@ -56,7 +56,7 @@ adding public APIs.
 There are a lot of consumers of PDFium outside of Chromium. These include
 LibreOffice, Android and offline conversion tooling. As such, a lot of care is
 taken around the code in the
-[public](https://pdfium.googlesource.com/pdfium/+/refs/heads/master/public/)
+[public](https://pdfium.googlesource.com/pdfium/+/refs/heads/main/public/)
 folder. When planning on changing the public API, the change should be preceded
 by a bug being created and an email to the mailing list to gather feedback from
 other PDFium embedders.
@@ -161,7 +161,7 @@ online. Corporate contributors must fill out the
 and send it to us as described on that page.
 
 Your first CL should add yourself to the
-[AUTHORS](https://pdfium.googlesource.com/pdfium/+/refs/heads/master/AUTHORS)
+[AUTHORS](https://pdfium.googlesource.com/pdfium/+/refs/heads/main/AUTHORS)
 file (unless you’re covered by one of the blanket entries).
 
 ### External contributor checklist for reviewers
@@ -170,7 +170,7 @@ Before LGTMing a change, ensure that the contribution can be accepted:
    request on
    [https://pdfium-review.googlesource.com](https://pdfium-review.googlesource.com/)
  * Ensure the author is already listed in
-   [AUTHORS](https://pdfium.googlesource.com/pdfium/+/refs/heads/master/AUTHORS).
+   [AUTHORS](https://pdfium.googlesource.com/pdfium/+/refs/heads/main/AUTHORS).
    In some cases, the author's company might have a wildcard rule
    (e.g. \*@google.com).
  * If the author or their company is not listed, the CL should include a new

@@ -182,6 +182,6 @@ useful for loading documents over the network.
 
 
 [chrome-plugin]: https://chromium.googlesource.com/chromium/src/+/main/pdf/
-[pdfium-public]: https://pdfium.googlesource.com/pdfium/+/master/public/
+[pdfium-public]: https://pdfium.googlesource.com/pdfium/+/main/public/
 [pdfium-v8]: /docs/v8-getting-started.md
 [pdfium-edit-guide]: /docs/pdfium-edit-guide.md

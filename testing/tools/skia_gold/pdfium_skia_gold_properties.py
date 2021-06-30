@@ -16,7 +16,7 @@ class PDFiumSkiaGoldProperties(skia_gold_properties.SkiaGoldProperties):
   @staticmethod
   def _GetGitOriginMasterHeadSha1():
     try:
-      return subprocess.check_output(['git', 'rev-parse', 'origin/master'],
+      return subprocess.check_output(['git', 'rev-parse', 'origin/main'],
                                      shell=_IsWin(),
                                      cwd=path_util.GetPDFiumDir()).strip()
     except subprocess.CalledProcessError:

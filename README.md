@@ -167,7 +167,7 @@ easier by replacing the byte offsets with certain keywords.
 This saves space and also allows an easy way to reduce the test case to the
 essentials as you can simply remove everything that is not necessary.
 
-A simple example can be found [here](https://pdfium.googlesource.com/pdfium/+/refs/heads/master/testing/resources/rectangles.in).
+A simple example can be found [here](https://pdfium.googlesource.com/pdfium/+/refs/heads/main/testing/resources/rectangles.in).
 
 To transform this into a PDF, you can use the `fixup_pdf_template.py` tool:
 
