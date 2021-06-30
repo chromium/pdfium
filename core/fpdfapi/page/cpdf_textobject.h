@@ -30,7 +30,7 @@ class CPDF_TextObject final : public CPDF_PageObject {
   CPDF_TextObject();
   ~CPDF_TextObject() override;
 
-  // CPDF_PageObject
+  // CPDF_PageObject:
   Type GetType() const override;
   void Transform(const CFX_Matrix& matrix) override;
   bool IsText() const override;
@@ -65,6 +65,9 @@ class CPDF_TextObject final : public CPDF_PageObject {
 
   const std::vector<uint32_t>& GetCharCodes() const { return m_CharCodes; }
   const std::vector<float>& GetCharPositions() const { return m_CharPos; }
+
+  // Caller is expected to call SetDirty(true) when done changing the object.
+  void SetTextMatrix(const CFX_Matrix& matrix);
 
   void SetSegments(const ByteString* pStrs,
                    const std::vector<float>& kernings,

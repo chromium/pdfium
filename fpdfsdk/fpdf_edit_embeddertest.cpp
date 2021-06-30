@@ -9,7 +9,6 @@
 
 #include "build/build_config.h"
 #include "core/fpdfapi/font/cpdf_font.h"
-#include "core/fpdfapi/page/cpdf_formobject.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
@@ -2211,7 +2210,8 @@ TEST_F(FPDFEditEmbedderTest, AddStandardFontText) {
   EXPECT_TRUE(text_object1);
   ScopedFPDFWideString text1 = GetFPDFWideString(kBottomText);
   EXPECT_TRUE(FPDFText_SetText(text_object1, text1.get()));
-  FPDFPageObj_Transform(text_object1, 1, 0, 0, 1, 20, 20);
+  static constexpr FS_MATRIX kMatrix1{1, 0, 0, 1, 20, 20};
+  EXPECT_TRUE(FPDFPageObj_SetMatrix(text_object1, &kMatrix1));
   FPDFPage_InsertObject(page, text_object1);
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
   {

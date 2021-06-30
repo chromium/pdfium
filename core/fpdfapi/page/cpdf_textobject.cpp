@@ -155,15 +155,7 @@ CPDF_PageObject::Type CPDF_TextObject::GetType() const {
 }
 
 void CPDF_TextObject::Transform(const CFX_Matrix& matrix) {
-  CFX_Matrix text_matrix = GetTextMatrix() * matrix;
-
-  float* pTextMatrix = m_TextState.GetMutableMatrix();
-  pTextMatrix[0] = text_matrix.a;
-  pTextMatrix[1] = text_matrix.c;
-  pTextMatrix[2] = text_matrix.b;
-  pTextMatrix[3] = text_matrix.d;
-  m_Pos = CFX_PointF(text_matrix.e, text_matrix.f);
-  CalcPositionData(0);
+  SetTextMatrix(GetTextMatrix() * matrix);
   SetDirty(true);
 }
 
@@ -183,6 +175,16 @@ CFX_Matrix CPDF_TextObject::GetTextMatrix() const {
   const float* pTextMatrix = m_TextState.GetMatrix();
   return CFX_Matrix(pTextMatrix[0], pTextMatrix[2], pTextMatrix[1],
                     pTextMatrix[3], m_Pos.x, m_Pos.y);
+}
+
+void CPDF_TextObject::SetTextMatrix(const CFX_Matrix& matrix) {
+  float* pTextMatrix = m_TextState.GetMutableMatrix();
+  pTextMatrix[0] = matrix.a;
+  pTextMatrix[1] = matrix.c;
+  pTextMatrix[2] = matrix.b;
+  pTextMatrix[3] = matrix.d;
+  m_Pos = CFX_PointF(matrix.e, matrix.f);
+  CalcPositionData(0);
 }
 
 void CPDF_TextObject::SetSegments(const ByteString* pStrs,
