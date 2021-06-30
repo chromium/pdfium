@@ -7,6 +7,8 @@
 #ifndef CORE_FXCRT_WIDESTRING_H_
 #define CORE_FXCRT_WIDESTRING_H_
 
+#include <stdarg.h>
+
 #include <functional>
 #include <iosfwd>
 #include <iterator>

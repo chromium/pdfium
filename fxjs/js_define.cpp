@@ -6,6 +6,8 @@
 
 #include "fxjs/js_define.h"
 
+#include <stdarg.h>
+
 #include <algorithm>
 #include <cmath>
 #include <limits>

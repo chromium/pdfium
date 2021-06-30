@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/render/cpdf_type3cache.h"
 
+#include <stdarg.h>
+
 #include <memory>
 #include <utility>
 

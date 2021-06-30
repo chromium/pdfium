@@ -8,7 +8,6 @@
 #define CORE_FXCRT_FX_SYSTEM_H_
 
 #include <math.h>
-#include <stdarg.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>

@@ -6,6 +6,8 @@
 
 #include "core/fxge/cfx_glyphcache.h"
 
+#include <stdarg.h>
+
 #include <algorithm>
 #include <limits>
 #include <memory>
