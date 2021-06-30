@@ -8,6 +8,7 @@
 #define CORE_FXCRT_WIDESTRING_H_
 
 #include <stdarg.h>
+#include <stddef.h>
 
 #include <functional>
 #include <iosfwd>
@@ -307,7 +308,7 @@ namespace std {
 
 template <>
 struct hash<WideString> {
-  std::size_t operator()(const WideString& str) const {
+  size_t operator()(const WideString& str) const {
     return FX_HashCode_GetW(str.AsStringView());
   }
 };

@@ -94,7 +94,7 @@ void Add_Segment(FX_DOWNLOADHINTS* pThis, size_t offset, size_t size) {}
 std::pair<int, int> GetRenderingAndFormFlagFromData(const char* data,
                                                     size_t len) {
   std::string data_str = std::string(data, len);
-  std::size_t data_hash = std::hash<std::string>()(data_str);
+  size_t data_hash = std::hash<std::string>()(data_str);
 
   // The largest flag value is 0x4FFF, so just take 16 bits from |data_hash| at
   // a time.

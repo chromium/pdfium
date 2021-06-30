@@ -4,6 +4,8 @@
 
 #include "testing/utils/path_service.h"
 
+#include <stddef.h>
+
 #ifdef _WIN32
 #include <Windows.h>
 #elif defined(__APPLE__)
@@ -90,10 +92,10 @@ bool PathService::GetExecutableDir(std::string* path) {
 #endif  // _WIN32
 
   // Get the directory path.
-  std::size_t pos = path->size() - 1;
+  size_t pos = path->size() - 1;
   if (EndsWithSeparator(*path))
     pos--;
-  std::size_t found = path->find_last_of(PATH_SEPARATOR, pos);
+  size_t found = path->find_last_of(PATH_SEPARATOR, pos);
   if (found == std::string::npos)
     return false;
   path->resize(found);
