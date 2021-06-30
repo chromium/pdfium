@@ -7,7 +7,7 @@
 #ifndef CORE_FXCODEC_SCANLINEDECODER_H_
 #define CORE_FXCODEC_SCANLINEDECODER_H_
 
-#include "core/fxcrt/fx_system.h"
+#include <stdint.h>
 
 class PauseIndicatorIface;
 

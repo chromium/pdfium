@@ -7,6 +7,8 @@
 #ifndef CORE_FXCRT_WEAK_PTR_H_
 #define CORE_FXCRT_WEAK_PTR_H_
 
+#include <stdint.h>
+
 #include <cstddef>
 #include <memory>
 #include <utility>

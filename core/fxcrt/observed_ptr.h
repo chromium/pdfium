@@ -5,9 +5,10 @@
 #ifndef CORE_FXCRT_OBSERVED_PTR_H_
 #define CORE_FXCRT_OBSERVED_PTR_H_
 
+#include <stddef.h>
+
 #include <set>
 
-#include "core/fxcrt/fx_system.h"
 #include "third_party/base/check.h"
 
 namespace fxcrt {

@@ -7,9 +7,10 @@
 #ifndef CORE_FXCRT_FX_COORDINATES_H_
 #define CORE_FXCRT_FX_COORDINATES_H_
 
-#include <algorithm>
+#include <math.h>
+#include <stdint.h>
 
-#include "core/fxcrt/fx_system.h"
+#include <algorithm>
 
 #ifndef NDEBUG
 #include <iosfwd>

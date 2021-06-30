@@ -7,6 +7,7 @@
 #include <limits>
 #include <vector>
 
+#include "core/fxcrt/fx_system.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {

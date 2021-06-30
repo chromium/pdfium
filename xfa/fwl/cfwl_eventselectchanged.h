@@ -7,6 +7,8 @@
 #ifndef XFA_FWL_CFWL_EVENTSELECTCHANGED_H_
 #define XFA_FWL_CFWL_EVENTSELECTCHANGED_H_
 
+#include <stdint.h>
+
 #include "xfa/fwl/cfwl_event.h"
 
 class CFWL_EventSelectChanged final : public CFWL_Event {

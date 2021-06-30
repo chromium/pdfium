@@ -7,7 +7,7 @@
 #ifndef CORE_FPDFDOC_CPVT_WORDINFO_H_
 #define CORE_FPDFDOC_CPVT_WORDINFO_H_
 
-#include "core/fxcrt/fx_system.h"
+#include <stdint.h>
 
 struct CPVT_WordInfo {
   CPVT_WordInfo();

@@ -7,7 +7,6 @@
 #ifndef XFA_FWL_CFWL_EVENT_H_
 #define XFA_FWL_CFWL_EVENT_H_
 
-#include "core/fxcrt/fx_system.h"
 #include "v8/include/cppgc/macros.h"
 
 class CFWL_Widget;

@@ -7,6 +7,7 @@
 #include "core/fxcrt/widestring.h"
 
 #include <stddef.h>
+#include <string.h>
 
 #include <algorithm>
 #include <cctype>
@@ -15,6 +16,7 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/string_pool_template.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"

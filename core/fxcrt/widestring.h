@@ -9,17 +9,19 @@
 
 #include <stdarg.h>
 #include <stddef.h>
+#include <stdint.h>
+#include <wchar.h>
 
 #include <functional>
 #include <iosfwd>
 #include <iterator>
 #include <utility>
 
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/string_data_template.h"
 #include "core/fxcrt/string_view_template.h"
 #include "third_party/base/check.h"
+#include "third_party/base/compiler_specific.h"
 #include "third_party/base/optional.h"
 #include "third_party/base/span.h"
 

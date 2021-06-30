@@ -13,6 +13,10 @@
 #include "core/fxcrt/fx_extension.h"
 
 #if defined(OS_WIN)
+#include <windows.h>
+#endif
+
+#if defined(OS_WIN)
 static_assert(sizeof(FX_COLORREF) == sizeof(COLORREF),
               "FX_COLORREF vs. COLORREF mismatch");
 #endif

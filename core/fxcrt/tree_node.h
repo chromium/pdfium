@@ -5,7 +5,8 @@
 #ifndef CORE_FXCRT_TREE_NODE_H_
 #define CORE_FXCRT_TREE_NODE_H_
 
-#include "core/fxcrt/fx_system.h"
+#include <stdint.h>
+
 #include "third_party/base/check.h"
 
 namespace fxcrt {

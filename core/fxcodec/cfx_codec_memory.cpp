@@ -4,6 +4,8 @@
 
 #include "core/fxcodec/cfx_codec_memory.h"
 
+#include <string.h>
+
 #include <algorithm>
 
 CFX_CodecMemory::CFX_CodecMemory(size_t buffer_size)

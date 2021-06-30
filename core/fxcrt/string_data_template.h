@@ -7,7 +7,8 @@
 #ifndef CORE_FXCRT_STRING_DATA_TEMPLATE_H_
 #define CORE_FXCRT_STRING_DATA_TEMPLATE_H_
 
-#include "core/fxcrt/fx_system.h"
+#include <stddef.h>
+#include <stdint.h>
 
 namespace fxcrt {
 
