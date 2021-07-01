@@ -589,9 +589,10 @@ RetainPtr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyInternal(
         return nullptr;
       }
 
-      if (!key.IsEmpty()) {
-        ByteString keyNoSlash(key.raw_str() + 1, key.GetLength() - 1);
-        pDict->SetFor(keyNoSlash, std::move(pObj));
+      // `key` has to be "/X" at the minimum.
+      if (key.GetLength() > 1) {
+        ByteString key_no_slash(key.raw_str() + 1, key.GetLength() - 1);
+        pDict->SetFor(key_no_slash, std::move(pObj));
       }
     }
 
