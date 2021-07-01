@@ -11,6 +11,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/string_pool_template.h"
 #include "core/fxcrt/weak_ptr.h"
+#include "core/fxge/fx_freetype.h"
 
 #define PDFFONT_ENCODING_BUILTIN 0
 #define PDFFONT_ENCODING_WINANSI 1
@@ -22,8 +23,8 @@
 #define PDFFONT_ENCODING_PDFDOC 7
 #define PDFFONT_ENCODING_MS_SYMBOL 8
 
-uint32_t FT_CharCodeFromUnicode(int encoding, wchar_t unicode);
-wchar_t FT_UnicodeFromCharCode(int encoding, uint32_t charcode);
+uint32_t FT_CharCodeFromUnicode(FT_Encoding encoding, wchar_t unicode);
+wchar_t FT_UnicodeFromCharCode(FT_Encoding encoding, uint32_t charcode);
 
 const uint16_t* PDF_UnicodesForPredefinedCharSet(int encoding);
 const char* PDF_CharNameFromPredefinedCharSet(int encoding, uint8_t charcode);
