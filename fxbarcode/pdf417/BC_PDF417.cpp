@@ -22,6 +22,8 @@
 
 #include "fxbarcode/pdf417/BC_PDF417.h"
 
+#include <math.h>
+
 #include "fxbarcode/pdf417/BC_PDF417BarcodeMatrix.h"
 #include "fxbarcode/pdf417/BC_PDF417BarcodeRow.h"
 #include "fxbarcode/pdf417/BC_PDF417ErrorCorrection.h"

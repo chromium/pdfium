@@ -26,3 +26,4 @@ sweep_scanline.
 shadow variable.
 0008-namespace.patch: Wrap all AGG code in namespace pdfium.
 0009-infinite-loop.patch: avoid hang in agg_math_stroke.h
+0010-math.patch: includes <math.h>

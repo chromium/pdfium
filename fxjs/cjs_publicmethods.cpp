@@ -1367,7 +1367,7 @@ CJS_Result CJS_PublicMethods::AFSimple_Calculate(
   if (wcscmp(sFunction.c_str(), L"AVG") == 0 && nFieldsCount > 0)
     dValue /= nFieldsCount;
 
-  dValue = floor(dValue * FXSYS_pow(10, 6) + 0.49) / FXSYS_pow(10, 6);
+  dValue = floor(dValue * powf(10, 6) + 0.49) / powf(10, 6);
 
   CJS_EventContext* pContext = pRuntime->GetCurrentEventContext();
   if (pContext->GetEventRecorder()->HasValue()) {

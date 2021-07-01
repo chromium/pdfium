@@ -6,6 +6,7 @@
 
 #include "fxjs/xfa/cfxjse_formcalc_context.h"
 
+#include <math.h>
 #include <stdlib.h>
 
 #include <algorithm>
@@ -3062,8 +3063,8 @@ void CFXJSE_FormCalcContext::Rate(
     return;
   }
 
-  info.GetReturnValue().Set(
-      FXSYS_pow((float)(nFuture / nPresent), (float)(1 / nTotalNumber)) - 1);
+  info.GetReturnValue().Set(powf(nFuture / nPresent, 1.0f / nTotalNumber) -
+                            1.0f);
 }
 
 // static

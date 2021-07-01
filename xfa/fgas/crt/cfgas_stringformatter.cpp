@@ -6,6 +6,8 @@
 
 #include "xfa/fgas/crt/cfgas_stringformatter.h"
 
+#include <math.h>
+
 #include <algorithm>
 #include <limits>
 #include <utility>
@@ -1557,13 +1559,10 @@ bool CFGAS_StringFormatter::ParseNum(LocaleMgrIface* pLocaleMgr,
   }
   if (iExponent || bHavePercentSymbol) {
     CFGAS_Decimal decimal = CFGAS_Decimal(wsValue->AsStringView());
-    if (iExponent) {
-      decimal = decimal *
-                CFGAS_Decimal(FXSYS_pow(10, static_cast<float>(iExponent)), 3);
-    }
+    if (iExponent)
+      decimal = decimal * CFGAS_Decimal(powf(10, iExponent), 3);
     if (bHavePercentSymbol)
       decimal = decimal / CFGAS_Decimal(100);
-
     *wsValue = decimal.ToWideString();
   }
   if (bNeg)

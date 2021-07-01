@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 
+#include <math.h>
+
 #include <algorithm>
 #include <limits>
 #include <memory>
@@ -771,9 +773,9 @@ bool CPDF_CalRGB::GetRGB(pdfium::span<const float> pBuf,
   float B_ = pBuf[1];
   float C_ = pBuf[2];
   if (m_bHasGamma) {
-    A_ = FXSYS_pow(A_, m_Gamma[0]);
-    B_ = FXSYS_pow(B_, m_Gamma[1]);
-    C_ = FXSYS_pow(C_, m_Gamma[2]);
+    A_ = powf(A_, m_Gamma[0]);
+    B_ = powf(B_, m_Gamma[1]);
+    C_ = powf(C_, m_Gamma[2]);
   }
 
   float X;

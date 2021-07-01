@@ -7,7 +7,6 @@
 #ifndef CORE_FXCRT_FX_SYSTEM_H_
 #define CORE_FXCRT_FX_SYSTEM_H_
 
-#include <math.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -100,7 +99,6 @@ extern "C" {
 #define FXSYS_wcsicmp _wcsicmp
 #define FXSYS_wcslwr _wcslwr
 #define FXSYS_wcsupr _wcsupr
-#define FXSYS_pow(a, b) (float)powf(a, b)
 size_t FXSYS_wcsftime(wchar_t* strDest,
                       size_t maxsize,
                       const wchar_t* format,
@@ -130,7 +128,6 @@ int FXSYS_stricmp(const char* str1, const char* str2);
 int FXSYS_wcsicmp(const wchar_t* str1, const wchar_t* str2);
 wchar_t* FXSYS_wcslwr(wchar_t* str);
 wchar_t* FXSYS_wcsupr(wchar_t* str);
-#define FXSYS_pow(a, b) (float)pow(a, b)
 #define FXSYS_wcsftime wcsftime
 void FXSYS_SetLastError(uint32_t err);
 uint32_t FXSYS_GetLastError();
@@ -155,7 +152,7 @@ int64_t FXSYS_atoi64(const char* str);
 const char* FXSYS_i64toa(int64_t value, char* str, int radix);
 int FXSYS_roundf(float f);
 int FXSYS_round(double d);
-#define FXSYS_sqrt2(a, b) (float)sqrt((a) * (a) + (b) * (b))
+float FXSYS_sqrt2(float a, float b);
 #ifdef __cplusplus
 }  // extern C
 #endif  // __cplusplus

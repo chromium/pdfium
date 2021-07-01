@@ -1,0 +1,12 @@
+diff --git a/third_party/agg23/agg_basics.h b/third_party/agg23/agg_basics.h
+index eb6f35686..e7583e308 100644
+--- a/third_party/agg23/agg_basics.h
++++ b/third_party/agg23/agg_basics.h
+@@ -41,6 +41,7 @@
+ #endif
+ #define AGG_INLINE inline
+ 
++#include <math.h>
+ #include "core/fxcrt/fx_system.h"
+ 
+ namespace pdfium

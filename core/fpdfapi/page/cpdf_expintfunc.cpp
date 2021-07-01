@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/page/cpdf_expintfunc.h"
 
+#include <math.h>
+
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
@@ -58,8 +60,8 @@ bool CPDF_ExpIntFunc::v_Call(pdfium::span<const float> inputs,
   for (uint32_t i = 0; i < m_nInputs; i++) {
     for (uint32_t j = 0; j < m_nOrigOutputs; j++) {
       results[i * m_nOrigOutputs + j] =
-          m_BeginValues[j] + FXSYS_pow(inputs[i], m_Exponent) *
-                                 (m_EndValues[j] - m_BeginValues[j]);
+          m_BeginValues[j] +
+          powf(inputs[i], m_Exponent) * (m_EndValues[j] - m_BeginValues[j]);
     }
   }
   return true;

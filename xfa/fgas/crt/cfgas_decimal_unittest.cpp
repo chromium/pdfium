@@ -4,6 +4,8 @@
 
 #include "xfa/fgas/crt/cfgas_decimal.h"
 
+#include <math.h>
+
 #include <limits>
 
 #include "testing/gtest/include/gtest/gtest.h"

@@ -306,7 +306,7 @@ bool CPDF_PSEngine::DoOperator(PDF_PSOP op) {
     case PSOP_EXP:
       d2 = Pop();
       d1 = Pop();
-      Push(FXSYS_pow(d1, d2));
+      Push(powf(d1, d2));
       break;
     case PSOP_LN:
       d1 = Pop();

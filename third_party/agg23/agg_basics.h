@@ -41,6 +41,7 @@
 #endif
 #define AGG_INLINE inline
 
+#include <math.h>
 #include "core/fxcrt/fx_system.h"
 
 namespace pdfium
