@@ -13,6 +13,7 @@
 #include "build/build_config.h"
 #include "core/fxcrt/cfx_memorystream.h"
 #include "core/fxcrt/fx_codepage.h"
+#include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_fontmapper.h"

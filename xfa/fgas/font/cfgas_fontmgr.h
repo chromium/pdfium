@@ -14,7 +14,6 @@
 #include <vector>
 
 #include "build/build_config.h"
-#include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_face.h"
