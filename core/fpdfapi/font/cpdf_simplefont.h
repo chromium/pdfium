@@ -31,6 +31,8 @@ class CPDF_SimpleFont : public CPDF_Font {
   bool HasFontWidths() const override;
 
  protected:
+  static constexpr size_t kInternalTableSize = 256;
+
   CPDF_SimpleFont(CPDF_Document* pDocument, CPDF_Dictionary* pFontDict);
 
   virtual void LoadGlyphMap() = 0;
@@ -42,11 +44,11 @@ class CPDF_SimpleFont : public CPDF_Font {
 
   CPDF_FontEncoding m_Encoding{PDFFONT_ENCODING_BUILTIN};
   int m_BaseEncoding = PDFFONT_ENCODING_BUILTIN;
-  bool m_bUseFontWidth;
+  bool m_bUseFontWidth = false;
   std::vector<ByteString> m_CharNames;
-  uint16_t m_GlyphIndex[256];
-  uint16_t m_CharWidth[256];
-  FX_RECT m_CharBBox[256];
+  uint16_t m_GlyphIndex[kInternalTableSize];
+  uint16_t m_CharWidth[kInternalTableSize];
+  FX_RECT m_CharBBox[kInternalTableSize];
 };
 
 #endif  // CORE_FPDFAPI_FONT_CPDF_SIMPLEFONT_H_

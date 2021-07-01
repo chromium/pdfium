@@ -44,7 +44,7 @@ class CPDF_Type1Font final : public CPDF_SimpleFont {
   void SetExtGID(const char* name, uint32_t charcode);
   void CalcExtGID(uint32_t charcode);
 
-  uint16_t m_ExtGID[256];
+  uint16_t m_ExtGID[kInternalTableSize];
 #endif
 
   Optional<CFX_FontMapper::StandardFont> m_Base14Font;
