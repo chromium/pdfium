@@ -26,7 +26,6 @@
 
 #if defined(OS_WIN)
 #include <windows.h>
-#include <sal.h>
 #endif  // defined(OS_WIN)
 
 #ifdef __cplusplus
