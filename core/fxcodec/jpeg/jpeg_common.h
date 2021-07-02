@@ -12,6 +12,13 @@
 
 #include <stdio.h>
 
+#include "build/build_config.h"
+
+#if defined(OS_WIN)
+// windows.h must come before the third_party/libjpeg_turbo includes.
+#include <windows.h>
+#endif
+
 extern "C" {
 
 #undef FAR
