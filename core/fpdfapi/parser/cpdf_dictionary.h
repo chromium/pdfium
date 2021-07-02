@@ -85,7 +85,6 @@ class CPDF_Dictionary final : public CPDF_Object {
   typename std::enable_if<!CanInternStrings<T>::value, T*>::type SetNewFor(
       const ByteString& key,
       Args&&... args) {
-    CHECK(!IsLocked());
     return static_cast<T*>(
         SetFor(key, pdfium::MakeRetain<T>(std::forward<Args>(args)...)));
   }
@@ -93,7 +92,6 @@ class CPDF_Dictionary final : public CPDF_Object {
   typename std::enable_if<CanInternStrings<T>::value, T*>::type SetNewFor(
       const ByteString& key,
       Args&&... args) {
-    CHECK(!IsLocked());
     return static_cast<T*>(SetFor(
         key, pdfium::MakeRetain<T>(m_pPool, std::forward<Args>(args)...)));
   }
