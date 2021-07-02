@@ -458,11 +458,11 @@ TEST(CFX_Matrix, GetInverseCR714187) {
 #define EXPECT_NEAR_FIVE_PLACES(a, b) EXPECT_NEAR((a), (b), 1e-5)
 
 TEST(CFX_Matrix, ComposeTransformations) {
-  // sin(FX_PI/2) and cos(FX_PI/2) have a tiny error and are not exactly 1.0f
-  // and 0.0f. The rotation matrix is thus not perfect.
+  // sin(FXSYS_PI/2) and cos(FXSYS_PI/2) have a tiny error and are not
+  // exactly 1.0f and 0.0f. The rotation matrix is thus not perfect.
 
   CFX_Matrix rotate_90;
-  rotate_90.Rotate(FX_PI / 2);
+  rotate_90.Rotate(FXSYS_PI / 2);
   EXPECT_NEAR_FIVE_PLACES(0.0f, rotate_90.a);
   EXPECT_NEAR_FIVE_PLACES(1.0f, rotate_90.b);
   EXPECT_NEAR_FIVE_PLACES(-1.0f, rotate_90.c);
@@ -586,7 +586,7 @@ TEST(CFX_Matrix, ComposeTransformations) {
 
 TEST(CFX_Matrix, TransformRectForRectF) {
   CFX_Matrix rotate_90;
-  rotate_90.Rotate(FX_PI / 2);
+  rotate_90.Rotate(FXSYS_PI / 2);
 
   CFX_Matrix scale_5_13;
   scale_5_13.Scale(5, 13);
@@ -607,7 +607,7 @@ TEST(CFX_Matrix, TransformRectForRectF) {
 
 TEST(CFX_Matrix, TransformRectForFloatRect) {
   CFX_Matrix rotate_90;
-  rotate_90.Rotate(FX_PI / 2);
+  rotate_90.Rotate(FXSYS_PI / 2);
 
   CFX_Matrix scale_5_13;
   scale_5_13.Scale(5, 13);

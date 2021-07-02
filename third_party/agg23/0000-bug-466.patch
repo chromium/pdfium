@@ -8,11 +8,11 @@ index 6d7ba8a..2b06b1b 100644
      out_vertices.add(coord_type(x + dx1, y + dy1));
 -    if(!ccw) {
 -        if(a1 > a2) {
--            a2 += 2 * FX_PI;
+-            a2 += 2 * FXSYS_PI;
 +    if (da > 0) {
 +      if (!ccw) {
 +        if (a1 > a2) {
-+          a2 += 2 * FX_PI;
++          a2 += 2 * FXSYS_PI;
          }
          a2 -= da / 4;
          a1 += da;
@@ -25,10 +25,10 @@ index 6d7ba8a..2b06b1b 100644
          }
 -    } else {
 -        if(a1 < a2) {
--            a2 -= 2 * FX_PI;
+-            a2 -= 2 * FXSYS_PI;
 +      } else {
 +        if (a1 < a2) {
-+          a2 -= 2 * FX_PI;
++          a2 -= 2 * FXSYS_PI;
          }
          a2 += da / 4;
          a1 -= da;

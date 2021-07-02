@@ -267,8 +267,10 @@ void CPWL_ListBox::OnSetScrollInfoY(float fPlateMin,
   if (!pScroll)
     return;
 
-  if (IsFloatBigger(Info.fPlateWidth, Info.fContentMax - Info.fContentMin) ||
-      IsFloatEqual(Info.fPlateWidth, Info.fContentMax - Info.fContentMin)) {
+  if (FXSYS_IsFloatBigger(Info.fPlateWidth,
+                          Info.fContentMax - Info.fContentMin) ||
+      FXSYS_IsFloatEqual(Info.fPlateWidth,
+                         Info.fContentMax - Info.fContentMin)) {
     if (pScroll->IsVisible()) {
       pScroll->SetVisible(false);
       RePosChildWnd();

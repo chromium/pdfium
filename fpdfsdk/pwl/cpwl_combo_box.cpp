@@ -290,7 +290,7 @@ bool CPWL_ComboBox::SetPopup(bool bPopup) {
   if (bPopup == m_bPopup)
     return true;
   float fListHeight = m_pList->GetContentRect().Height();
-  if (!IsFloatBigger(fListHeight, 0.0f))
+  if (!FXSYS_IsFloatBigger(fListHeight, 0.0f))
     return true;
 
   if (!bPopup) {
@@ -317,7 +317,7 @@ bool CPWL_ComboBox::SetPopup(bool bPopup) {
   float fPopupRet;
   m_pFillerNotify->QueryWherePopup(GetAttachedData(), fPopupMin, fPopupMax,
                                    &bBottom, &fPopupRet);
-  if (!IsFloatBigger(fPopupRet, 0.0f))
+  if (!FXSYS_IsFloatBigger(fPopupRet, 0.0f))
     return true;
 
   m_rcOldWindow = CPWL_Wnd::GetWindowRect();

@@ -1116,7 +1116,7 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
       vt.SetProvider(&prd);
       vt.SetPlateRect(rcBody);
       vt.SetAlignment(nAlign);
-      if (IsFloatZero(fFontSize))
+      if (FXSYS_IsFloatZero(fFontSize))
         vt.SetAutoFontSize(true);
       else
         vt.SetFontSize(fFontSize);
@@ -1181,7 +1181,7 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
       rcEdit.right = rcButton.left;
       rcEdit.Normalize();
       vt.SetPlateRect(rcEdit);
-      if (IsFloatZero(fFontSize))
+      if (FXSYS_IsFloatZero(fFontSize))
         vt.SetAutoFontSize(true);
       else
         vt.SetFontSize(fFontSize);
@@ -1223,8 +1223,8 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
 
         CFX_PointF ptCenter = CFX_PointF((rcButton.left + rcButton.right) / 2,
                                          (rcButton.top + rcButton.bottom) / 2);
-        if (IsFloatBigger(rcButton.Width(), 6) &&
-            IsFloatBigger(rcButton.Height(), 6)) {
+        if (FXSYS_IsFloatBigger(rcButton.Width(), 6) &&
+            FXSYS_IsFloatBigger(rcButton.Height(), 6)) {
           sAppStream << "q\n"
                      << " 0 g\n";
           sAppStream << ptCenter.x - 3 << " " << ptCenter.y + 1.5f << " m\n";
@@ -1251,7 +1251,7 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
       if (pOpts) {
         float fy = rcBody.top;
         for (size_t i = nTop, sz = pOpts->size(); i < sz; i++) {
-          if (IsFloatSmaller(fy, rcBody.bottom))
+          if (FXSYS_IsFloatSmaller(fy, rcBody.bottom))
             break;
 
           if (CPDF_Object* pOpt = pOpts->GetDirectObjectAt(i)) {
@@ -1277,7 +1277,7 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
             vt.SetProvider(&prd);
             vt.SetPlateRect(
                 CFX_FloatRect(rcBody.left, 0.0f, rcBody.right, 0.0f));
-            vt.SetFontSize(IsFloatZero(fFontSize) ? 12.0f : fFontSize);
+            vt.SetFontSize(FXSYS_IsFloatZero(fFontSize) ? 12.0f : fFontSize);
 
             vt.Initialize();
             vt.SetText(swItem);

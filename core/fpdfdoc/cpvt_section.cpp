@@ -328,16 +328,16 @@ CPVT_WordPlace CPVT_Section::SearchWordPlace(const CFX_PointF& point) const {
     float fTop = pLine->m_LineInfo.fLineY - pLine->m_LineInfo.fLineAscent -
                  m_pVT->GetLineLeading();
     float fBottom = pLine->m_LineInfo.fLineY - pLine->m_LineInfo.fLineDescent;
-    if (IsFloatBigger(point.y, fTop))
+    if (FXSYS_IsFloatBigger(point.y, fTop))
       bUp = false;
-    if (IsFloatSmaller(point.y, fBottom))
+    if (FXSYS_IsFloatSmaller(point.y, fBottom))
       bDown = false;
-    if (IsFloatSmaller(point.y, fTop)) {
+    if (FXSYS_IsFloatSmaller(point.y, fTop)) {
       nRight = nMid - 1;
       nMid = (nLeft + nRight) / 2;
       continue;
     }
-    if (IsFloatBigger(point.y, fBottom)) {
+    if (FXSYS_IsFloatBigger(point.y, fBottom)) {
       nLeft = nMid + 1;
       nMid = (nLeft + nRight) / 2;
       continue;

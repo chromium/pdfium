@@ -226,7 +226,7 @@ float GetFontSize(const CPDF_TextObject* text_object) {
 
 CFX_FloatRect GetLooseBounds(const CPDF_TextPage::CharInfo& charinfo) {
   float font_size = GetFontSize(charinfo.m_pTextObj.Get());
-  if (charinfo.m_pTextObj && !IsFloatZero(font_size)) {
+  if (charinfo.m_pTextObj && !FXSYS_IsFloatZero(font_size)) {
     bool is_vert_writing = charinfo.m_pTextObj->GetFont()->IsVertWriting();
     if (is_vert_writing && charinfo.m_pTextObj->GetFont()->IsCIDFont()) {
       CPDF_CIDFont* pCIDFont = charinfo.m_pTextObj->GetFont()->AsCIDFont();

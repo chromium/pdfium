@@ -415,16 +415,16 @@ CPVT_WordPlace CPVT_VariableText::SearchWordPlace(
     if (!fxcrt::IndexInBounds(m_SectionArray, nMid))
       break;
     CPVT_Section* pSection = m_SectionArray[nMid].get();
-    if (IsFloatBigger(pt.y, pSection->GetRect().top))
+    if (FXSYS_IsFloatBigger(pt.y, pSection->GetRect().top))
       bUp = false;
-    if (IsFloatBigger(pSection->GetRect().bottom, pt.y))
+    if (FXSYS_IsFloatBigger(pSection->GetRect().bottom, pt.y))
       bDown = false;
-    if (IsFloatSmaller(pt.y, pSection->GetRect().top)) {
+    if (FXSYS_IsFloatSmaller(pt.y, pSection->GetRect().top)) {
       nRight = nMid - 1;
       nMid = (nLeft + nRight) / 2;
       continue;
     }
-    if (IsFloatBigger(pt.y, pSection->GetRect().bottom)) {
+    if (FXSYS_IsFloatBigger(pt.y, pSection->GetRect().bottom)) {
       nLeft = nMid + 1;
       nMid = (nLeft + nRight) / 2;
       continue;
@@ -799,8 +799,8 @@ bool CPVT_VariableText::IsBigger(float fFontSize) const {
     CFX_SizeF size = pSection->GetSectionSize(fFontSize);
     szTotal.width = std::max(size.width, szTotal.width);
     szTotal.height += size.height;
-    if (IsFloatBigger(szTotal.width, GetPlateWidth()) ||
-        IsFloatBigger(szTotal.height, GetPlateHeight())) {
+    if (FXSYS_IsFloatBigger(szTotal.width, GetPlateWidth()) ||
+        FXSYS_IsFloatBigger(szTotal.height, GetPlateHeight())) {
       return true;
     }
   }

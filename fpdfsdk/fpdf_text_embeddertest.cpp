@@ -1360,15 +1360,15 @@ TEST_F(FPDFTextEmbedderTest, GetCharAngle) {
                   FPDFText_GetCharAngle(text_page, kHelloGoodbyeTextSize + 1));
 
   // Test GetCharAngle for every quadrant
-  EXPECT_NEAR(FX_PI / 4.0, FPDFText_GetCharAngle(text_page, 0), 0.001);
-  EXPECT_NEAR(3 * FX_PI / 4.0,
+  EXPECT_NEAR(FXSYS_PI / 4.0, FPDFText_GetCharAngle(text_page, 0), 0.001);
+  EXPECT_NEAR(3 * FXSYS_PI / 4.0,
               FPDFText_GetCharAngle(text_page, kSubstringsSize[0]), 0.001);
   EXPECT_NEAR(
-      5 * FX_PI / 4.0,
+      5 * FXSYS_PI / 4.0,
       FPDFText_GetCharAngle(text_page, kSubstringsSize[0] + kSubstringsSize[1]),
       0.001);
   EXPECT_NEAR(
-      7 * FX_PI / 4.0,
+      7 * FXSYS_PI / 4.0,
       FPDFText_GetCharAngle(text_page, kSubstringsSize[0] + kSubstringsSize[1] +
                                            kSubstringsSize[2]),
       0.001);

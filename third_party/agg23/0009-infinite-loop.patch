@@ -4,7 +4,7 @@ index 8515d2b16..70d1f2cf9 100644
 +++ b/third_party/agg23/agg_math_stroke.h
 @@ -173,6 +173,9 @@ void stroke_calc_cap(VertexConsumer& out_vertices,
        float a1 = atan2(dy1, -dx1);
-       float a2 = a1 + FX_PI;
+       float a2 = a1 + FXSYS_PI;
        float da = acos(width / (width + ((1.0f / 8) / approximation_scale))) * 2;
 +      if (da < stroke_theta) {
 +        da = stroke_theta;

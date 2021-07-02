@@ -288,16 +288,16 @@ bool CPDF_PSEngine::DoOperator(PDF_PSOP op) {
       break;
     case PSOP_SIN:
       d1 = Pop();
-      Push(sin(d1 * FX_PI / 180.0f));
+      Push(sin(d1 * FXSYS_PI / 180.0f));
       break;
     case PSOP_COS:
       d1 = Pop();
-      Push(cos(d1 * FX_PI / 180.0f));
+      Push(cos(d1 * FXSYS_PI / 180.0f));
       break;
     case PSOP_ATAN:
       d2 = Pop();
       d1 = Pop();
-      d1 = atan2(d1, d2) * 180.0 / FX_PI;
+      d1 = atan2(d1, d2) * 180.0 / FXSYS_PI;
       if (d1 < 0) {
         d1 += 360;
       }

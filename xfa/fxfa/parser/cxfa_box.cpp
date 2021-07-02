@@ -263,8 +263,8 @@ void CXFA_Box::GetPathArcOrRounded(CFX_RectF rtDraw,
   }
 
   fillPath->AddArc(rtDraw.TopLeft(), rtDraw.Size(),
-                   -startAngle.value_or(0) * FX_PI / 180.0f,
-                   -sweepAngle.value_or(360) * FX_PI / 180.0f);
+                   -startAngle.value_or(0) * FXSYS_PI / 180.0f,
+                   -sweepAngle.value_or(360) * FXSYS_PI / 180.0f);
 }
 
 void CXFA_Box::StrokeArcOrRounded(CFGAS_GEGraphics* pGS,
@@ -323,27 +323,27 @@ void CXFA_Box::StrokeArcOrRounded(CFGAS_GEGraphics* pGS,
   rtWidget.height = b + b;
 
   CFGAS_GEPath arcPath;
-  arcPath.AddArc(rtWidget.TopLeft(), rtWidget.Size(), 3.0f * FX_PI / 4.0f,
-                 FX_PI);
+  arcPath.AddArc(rtWidget.TopLeft(), rtWidget.Size(), 3.0f * FXSYS_PI / 4.0f,
+                 FXSYS_PI);
 
   pGS->SetStrokeColor(CFGAS_GEColor(0xFF808080));
   pGS->StrokePath(arcPath, matrix);
   arcPath.Clear();
-  arcPath.AddArc(rtWidget.TopLeft(), rtWidget.Size(), -1.0f * FX_PI / 4.0f,
-                 FX_PI);
+  arcPath.AddArc(rtWidget.TopLeft(), rtWidget.Size(), -1.0f * FXSYS_PI / 4.0f,
+                 FXSYS_PI);
 
   pGS->SetStrokeColor(CFGAS_GEColor(0xFFFFFFFF));
   pGS->StrokePath(arcPath, matrix);
   rtWidget.Deflate(fHalf, fHalf);
   arcPath.Clear();
-  arcPath.AddArc(rtWidget.TopLeft(), rtWidget.Size(), 3.0f * FX_PI / 4.0f,
-                 FX_PI);
+  arcPath.AddArc(rtWidget.TopLeft(), rtWidget.Size(), 3.0f * FXSYS_PI / 4.0f,
+                 FXSYS_PI);
 
   pGS->SetStrokeColor(CFGAS_GEColor(0xFF404040));
   pGS->StrokePath(arcPath, matrix);
   arcPath.Clear();
-  arcPath.AddArc(rtWidget.TopLeft(), rtWidget.Size(), -1.0f * FX_PI / 4.0f,
-                 FX_PI);
+  arcPath.AddArc(rtWidget.TopLeft(), rtWidget.Size(), -1.0f * FXSYS_PI / 4.0f,
+                 FXSYS_PI);
 
   pGS->SetStrokeColor(CFGAS_GEColor(0xFFC0C0C0));
   pGS->StrokePath(arcPath, matrix);

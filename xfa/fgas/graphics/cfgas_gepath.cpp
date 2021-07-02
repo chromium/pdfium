@@ -85,7 +85,7 @@ void CFGAS_GEPath::AddRectangle(float left,
 }
 
 void CFGAS_GEPath::AddEllipse(const CFX_RectF& rect) {
-  AddArc(rect.TopLeft(), rect.Size(), 0, FX_PI * 2);
+  AddArc(rect.TopLeft(), rect.Size(), 0, FXSYS_PI * 2);
 }
 
 void CFGAS_GEPath::AddArc(const CFX_PointF& original_pos,
@@ -96,14 +96,14 @@ void CFGAS_GEPath::AddArc(const CFX_PointF& original_pos,
     return;
 
   const float bezier_arc_angle_epsilon = 0.01f;
-  while (start_angle > FX_PI * 2)
-    start_angle -= FX_PI * 2;
+  while (start_angle > FXSYS_PI * 2)
+    start_angle -= FXSYS_PI * 2;
   while (start_angle < 0)
-    start_angle += FX_PI * 2;
-  if (sweep_angle >= FX_PI * 2)
-    sweep_angle = FX_PI * 2;
-  if (sweep_angle <= -FX_PI * 2)
-    sweep_angle = -FX_PI * 2;
+    start_angle += FXSYS_PI * 2;
+  if (sweep_angle >= FXSYS_PI * 2)
+    sweep_angle = FXSYS_PI * 2;
+  if (sweep_angle <= -FXSYS_PI * 2)
+    sweep_angle = -FXSYS_PI * 2;
 
   CFX_SizeF size = original_size / 2;
   CFX_PointF pos(original_pos.x + size.width, original_pos.y + size.height);
@@ -118,16 +118,16 @@ void CFGAS_GEPath::AddArc(const CFX_PointF& original_pos,
   do {
     if (sweep_angle < 0) {
       prev_sweep = total_sweep;
-      local_sweep = -FX_PI / 2;
-      total_sweep -= FX_PI / 2;
+      local_sweep = -FXSYS_PI / 2;
+      total_sweep -= FXSYS_PI / 2;
       if (total_sweep <= sweep_angle + bezier_arc_angle_epsilon) {
         local_sweep = sweep_angle - prev_sweep;
         done = true;
       }
     } else {
       prev_sweep = total_sweep;
-      local_sweep = FX_PI / 2;
-      total_sweep += FX_PI / 2;
+      local_sweep = FXSYS_PI / 2;
+      total_sweep += FXSYS_PI / 2;
       if (total_sweep >= sweep_angle - bezier_arc_angle_epsilon) {
         local_sweep = sweep_angle - prev_sweep;
         done = true;

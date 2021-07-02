@@ -33,8 +33,10 @@ void CPWL_CBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
   constexpr float kComboBoxTriangleLength = 6.0f;
   constexpr float kComboBoxTriangleHalfLength = kComboBoxTriangleLength / 2;
   constexpr float kComboBoxTriangleQuarterLength = kComboBoxTriangleLength / 4;
-  if (!IsFloatBigger(window.right - window.left, kComboBoxTriangleLength) ||
-      !IsFloatBigger(window.top - window.bottom, kComboBoxTriangleHalfLength)) {
+  if (!FXSYS_IsFloatBigger(window.right - window.left,
+                           kComboBoxTriangleLength) ||
+      !FXSYS_IsFloatBigger(window.top - window.bottom,
+                           kComboBoxTriangleHalfLength)) {
     return;
   }
 

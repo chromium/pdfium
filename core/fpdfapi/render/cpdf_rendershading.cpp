@@ -196,7 +196,7 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
   const float dy = end_y - start_y;
   const float dr = end_r - start_r;
   const float a = dx * dx + dy * dy - dr * dr;
-  const bool a_is_float_zero = IsFloatZero(a);
+  const bool a_is_float_zero = FXSYS_IsFloatZero(a);
 
   int width = pBitmap->GetWidth();
   int height = pBitmap->GetHeight();
@@ -217,7 +217,7 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
       float b = -2 * (pos_dx * dx + pos_dy * dy + start_r * dr);
       float c = pos_dx * pos_dx + pos_dy * pos_dy - start_r * start_r;
       float s;
-      if (IsFloatZero(b)) {
+      if (FXSYS_IsFloatZero(b)) {
         s = sqrt(-c / a);
       } else if (a_is_float_zero) {
         s = -c / b;

@@ -56,7 +56,7 @@ void stroke_calc_arc(VertexConsumer& out_vertices,
     float a1 = atan2(dy1, dx1);
     float a2 = atan2(dy2, dx2);
     float da = a1 - a2;
-    bool ccw = da > 0 && da < FX_PI;
+    bool ccw = da > 0 && da < FXSYS_PI;
     if(width < 0) {
         width = -width;
     }
@@ -65,7 +65,7 @@ void stroke_calc_arc(VertexConsumer& out_vertices,
     if (da > 0) {
       if (!ccw) {
         if (a1 > a2) {
-          a2 += 2 * FX_PI;
+          a2 += 2 * FXSYS_PI;
         }
         a2 -= da / 4;
         a1 += da;
@@ -76,7 +76,7 @@ void stroke_calc_arc(VertexConsumer& out_vertices,
         }
       } else {
         if (a1 < a2) {
-          a2 -= 2 * FX_PI;
+          a2 -= 2 * FXSYS_PI;
         }
         a2 += da / 4;
         a1 -= da;
@@ -171,7 +171,7 @@ void stroke_calc_cap(VertexConsumer& out_vertices,
         out_vertices.add(coord_type(v0.x + dx1 - dx2, v0.y - dy1 - dy2));
     } else {
       float a1 = atan2(dy1, -dx1);
-      float a2 = a1 + FX_PI;
+      float a2 = a1 + FXSYS_PI;
       float da = acos(width / (width + ((1.0f / 8) / approximation_scale))) * 2;
       if (da < stroke_theta) {
         da = stroke_theta;

@@ -990,7 +990,7 @@ class SkiaState {
     font.setEmbolden(m_isSubstFontBold);
     font.setHinting(SkFontHinting::kNone);
     font.setScaleX(m_scaleX);
-    font.setSkewX(tanf(m_italicAngle * FX_PI / 180.0));
+    font.setSkewX(tanf(m_italicAngle * FXSYS_PI / 180.0));
     font.setSize(SkTAbs(m_fontSize));
     font.setSubpixel(true);
     font.setEdging(GetFontEdgingType(m_textOptions));
@@ -1721,7 +1721,7 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(
   font.setHinting(SkFontHinting::kNone);
   font.setSize(SkTAbs(font_size));
   font.setSubpixel(true);
-  font.setSkewX(tanf(pFont->GetSubstFontItalicAngle() * FX_PI / 180.0));
+  font.setSkewX(tanf(pFont->GetSubstFontItalicAngle() * FXSYS_PI / 180.0));
   font.setEdging(GetFontEdgingType(options));
 
   SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);

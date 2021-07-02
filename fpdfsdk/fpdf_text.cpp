@@ -197,7 +197,7 @@ FPDF_EXPORT float FPDF_CALLCONV FPDFText_GetCharAngle(FPDF_TEXTPAGE text_page,
   // Calculate the angle of the vector
   float angle = atan2f(charinfo.m_Matrix.c, charinfo.m_Matrix.a);
   if (angle < 0)
-    angle = 2 * FX_PI + angle;
+    angle = 2 * FXSYS_PI + angle;
 
   return angle;
 }
