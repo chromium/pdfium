@@ -730,14 +730,11 @@ WideString WideString::Substr(size_t first, size_t count) const {
 }
 
 WideString WideString::First(size_t count) const {
-  if (count == 0 || !IsValidLength(count))
-    return WideString();
   return Substr(0, count);
 }
 
 WideString WideString::Last(size_t count) const {
-  if (count == 0 || !IsValidLength(count))
-    return WideString();
+  // Unsigned underflow is well-defined and out-of-range is handled by Substr().
   return Substr(GetLength() - count, count);
 }
 
