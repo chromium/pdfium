@@ -54,6 +54,7 @@ source_set("fxcrt") {
     "fx_string.h",
     "fx_system.cpp",
     "fx_system.h",
+    "fx_types.h",
     "fx_unicode.cpp",
     "fx_unicode.h",
     "maybe_owned.h",

@@ -15,6 +15,7 @@
 #include <wchar.h>
 
 #include "build/build_config.h"
+#include "core/fxcrt/fx_types.h"
 
 #if defined(_MSC_VER) && _MSC_VER < 1900
 #error Sorry, VC++ 2015 or later is required to compile PDFium.
@@ -36,14 +37,6 @@ extern "C" {
 #define IsFloatBigger(fa, fb) ((fa) > (fb) && !IsFloatZero((fa) - (fb)))
 #define IsFloatSmaller(fa, fb) ((fa) < (fb) && !IsFloatZero((fa) - (fb)))
 #define IsFloatEqual(fa, fb) IsFloatZero((fa) - (fb))
-
-// PDFium file sizes match the platform. The value must be signed to support -1
-// error returns.
-#if defined(OS_WIN)
-#define FX_FILESIZE int64_t
-#else
-#define FX_FILESIZE off_t
-#endif  // defined(OS_WIN)
 
 // M_PI not universally present on all platforms.
 #define FX_PI 3.1415926535897932384626433832795f

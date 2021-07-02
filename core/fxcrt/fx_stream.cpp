@@ -13,6 +13,7 @@
 #include "build/build_config.h"
 #include "core/fxcrt/fileaccess_iface.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 #if defined(OS_WIN)
@@ -26,7 +27,6 @@ struct FX_FolderHandle {
 #else
 #include <dirent.h>
 #include <sys/stat.h>
-#include <sys/types.h>
 #include <unistd.h>
 
 struct FX_FolderHandle {
