@@ -2232,7 +2232,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_AddStrokedPaths) {
 // Tests adding text from standard font using FPDFPageObj_NewTextObj.
 TEST_F(FPDFEditEmbedderTest, AddStandardFontText) {
   // Start with a blank page
-  FPDF_PAGE page = FPDFPage_New(CreateNewDocument(), 0, 612, 792);
+  ScopedFPDFPage page(FPDFPage_New(CreateNewDocument(), 0, 612, 792));
 
   // Add some text to the page
   FPDF_PAGEOBJECT text_object1 =
@@ -2242,10 +2242,10 @@ TEST_F(FPDFEditEmbedderTest, AddStandardFontText) {
   EXPECT_TRUE(FPDFText_SetText(text_object1, text1.get()));
   static constexpr FS_MATRIX kMatrix1{1, 0, 0, 1, 20, 20};
   EXPECT_TRUE(FPDFPageObj_SetMatrix(text_object1, &kMatrix1));
-  FPDFPage_InsertObject(page, text_object1);
-  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  FPDFPage_InsertObject(page.get(), text_object1);
+  EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
   {
-    ScopedFPDFBitmap page_bitmap = RenderPage(page);
+    ScopedFPDFBitmap page_bitmap = RenderPage(page.get());
     CompareBitmap(page_bitmap.get(), 612, 792, kBottomTextChecksum);
 
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
@@ -2260,10 +2260,10 @@ TEST_F(FPDFEditEmbedderTest, AddStandardFontText) {
       GetFPDFWideString(L"Hi, I'm Bold. Times New Roman Bold.");
   EXPECT_TRUE(FPDFText_SetText(text_object2, text2.get()));
   FPDFPageObj_Transform(text_object2, 1, 0, 0, 1, 100, 600);
-  FPDFPage_InsertObject(page, text_object2);
-  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  FPDFPage_InsertObject(page.get(), text_object2);
+  EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
   {
-    ScopedFPDFBitmap page_bitmap = RenderPage(page);
+    ScopedFPDFBitmap page_bitmap = RenderPage(page.get());
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
     static constexpr char md5[] = "285cf09ca5600fc4ec061dc5ad5c6400";
 #else
@@ -2288,10 +2288,10 @@ TEST_F(FPDFEditEmbedderTest, AddStandardFontText) {
   ScopedFPDFWideString text3 = GetFPDFWideString(L"Can you read me? <:)>");
   EXPECT_TRUE(FPDFText_SetText(text_object3, text3.get()));
   FPDFPageObj_Transform(text_object3, 1, 1.5, 2, 0.5, 200, 200);
-  FPDFPage_InsertObject(page, text_object3);
-  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  FPDFPage_InsertObject(page.get(), text_object3);
+  EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
   {
-    ScopedFPDFBitmap page_bitmap = RenderPage(page);
+    ScopedFPDFBitmap page_bitmap = RenderPage(page.get());
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 #if defined(OS_WIN)
     static constexpr char md5[] = "03c4d98eae4fda51ca67743665ab61f4";
@@ -2323,13 +2323,14 @@ TEST_F(FPDFEditEmbedderTest, AddStandardFontText) {
   EXPECT_FLOAT_EQ(200.0f, matrix.f);
 
   EXPECT_FALSE(FPDFTextObj_GetFontSize(nullptr, nullptr));
-  float size = 0;
+  float size = 55;
+  EXPECT_FALSE(FPDFTextObj_GetFontSize(nullptr, &size));
+  EXPECT_EQ(55, size);
   EXPECT_TRUE(FPDFTextObj_GetFontSize(text_object3, &size));
   EXPECT_EQ(20, size);
 
   // TODO(npm): Why are there issues with text rotated by 90 degrees?
   // TODO(npm): FPDF_SaveAsCopy not giving the desired result after this.
-  FPDF_ClosePage(page);
 }
 
 TEST_F(FPDFEditEmbedderTest, AddStandardFontTextOfSizeZero) {
