@@ -22,7 +22,7 @@ class CFX_XMLElement final : public CFX_XMLNode {
   // CFX_XMLNode
   Type GetType() const override;
   CFX_XMLNode* Clone(CFX_XMLDocument* doc) override;
-  void Save(const RetainPtr<IFX_SeekableWriteStream>& pXMLStream) override;
+  void Save(const RetainPtr<IFX_RetainableWriteStream>& pXMLStream) override;
 
   const WideString& GetName() const { return name_; }
 

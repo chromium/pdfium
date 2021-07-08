@@ -20,6 +20,6 @@ CFX_XMLNode* CFX_XMLText::Clone(CFX_XMLDocument* doc) {
   return doc->CreateNode<CFX_XMLText>(text_);
 }
 
-void CFX_XMLText::Save(const RetainPtr<IFX_SeekableWriteStream>& pXMLStream) {
+void CFX_XMLText::Save(const RetainPtr<IFX_RetainableWriteStream>& pXMLStream) {
   pXMLStream->WriteString(GetText().EncodeEntities().ToUTF8().AsStringView());
 }

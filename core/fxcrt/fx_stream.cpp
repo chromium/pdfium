@@ -69,6 +69,20 @@ class CFX_CRTFileStream final : public IFX_SeekableStream {
 
 }  // namespace
 
+bool IFX_WriteStream::WriteString(ByteStringView str) {
+  return WriteBlock(str.unterminated_c_str(), str.GetLength());
+}
+
+bool IFX_WriteStream::WriteByte(uint8_t byte) {
+  return WriteBlock(&byte, 1);
+}
+
+bool IFX_WriteStream::WriteDWord(uint32_t i) {
+  char buf[32];
+  FXSYS_itoa(i, buf, 10);
+  return WriteBlock(buf, strlen(buf));
+}
+
 // static
 RetainPtr<IFX_SeekableStream> IFX_SeekableStream::CreateFromFilename(
     const char* filename,
@@ -113,10 +127,6 @@ size_t IFX_SeekableReadStream::ReadBlock(void* buffer, size_t size) {
 
 bool IFX_SeekableStream::WriteBlock(const void* buffer, size_t size) {
   return WriteBlockAtOffset(buffer, GetSize(), size);
-}
-
-bool IFX_SeekableStream::WriteString(ByteStringView str) {
-  return WriteBlock(str.unterminated_c_str(), str.GetLength());
 }
 
 FX_FolderHandle* FX_OpenFolder(const char* path) {

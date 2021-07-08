@@ -28,7 +28,7 @@ class CFX_XMLNode : public TreeNode<CFX_XMLNode> {
 
   virtual Type GetType() const = 0;
   virtual CFX_XMLNode* Clone(CFX_XMLDocument* doc) = 0;
-  virtual void Save(const RetainPtr<IFX_SeekableWriteStream>& pXMLStream) = 0;
+  virtual void Save(const RetainPtr<IFX_RetainableWriteStream>& pXMLStream) = 0;
 
   CFX_XMLNode* GetRoot();
   void InsertChildNode(CFX_XMLNode* pNode, int32_t index);

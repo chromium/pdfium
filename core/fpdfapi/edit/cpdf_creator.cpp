@@ -40,10 +40,6 @@ class CFX_FileBufferArchive final : public IFX_ArchiveStream {
   ~CFX_FileBufferArchive() override;
 
   bool WriteBlock(const void* pBuf, size_t size) override;
-  bool WriteByte(uint8_t byte) override;
-  bool WriteDWord(uint32_t i) override;
-  bool WriteString(ByteStringView str) override;
-
   FX_FILESIZE CurrentOffset() const override { return offset_; }
 
  private:
@@ -101,20 +97,6 @@ bool CFX_FileBufferArchive::WriteBlock(const void* pBuf, size_t size) {
 
   offset_ = safe_offset.ValueOrDie();
   return true;
-}
-
-bool CFX_FileBufferArchive::WriteByte(uint8_t byte) {
-  return WriteBlock(&byte, 1);
-}
-
-bool CFX_FileBufferArchive::WriteDWord(uint32_t i) {
-  char buf[32];
-  FXSYS_itoa(i, buf, 10);
-  return WriteBlock(buf, strlen(buf));
-}
-
-bool CFX_FileBufferArchive::WriteString(ByteStringView str) {
-  return WriteBlock(str.raw_str(), str.GetLength());
 }
 
 ByteString GenerateFileID(uint32_t dwSeed1, uint32_t dwSeed2) {

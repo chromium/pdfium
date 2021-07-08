@@ -34,7 +34,10 @@ struct FxFolderHandleCloser {
 class IFX_WriteStream {
  public:
   virtual bool WriteBlock(const void* pData, size_t size) = 0;
-  virtual bool WriteString(ByteStringView str) = 0;
+
+  bool WriteString(ByteStringView str);
+  bool WriteByte(uint8_t byte);
+  bool WriteDWord(uint32_t i);
 
  protected:
   virtual ~IFX_WriteStream() = default;
@@ -42,8 +45,6 @@ class IFX_WriteStream {
 
 class IFX_ArchiveStream : public IFX_WriteStream {
  public:
-  virtual bool WriteByte(uint8_t byte) = 0;
-  virtual bool WriteDWord(uint32_t i) = 0;
   virtual FX_FILESIZE CurrentOffset() const = 0;
 };
 
@@ -94,7 +95,6 @@ class IFX_SeekableStream : public IFX_SeekableReadStream,
 
   // IFX_SeekableWriteStream:
   bool WriteBlock(const void* buffer, size_t size) override;
-  bool WriteString(ByteStringView str) override;
 };
 
 #endif  // CORE_FXCRT_FX_STREAM_H_

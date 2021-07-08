@@ -10,18 +10,13 @@
 
 #include "core/fxcrt/fx_stream.h"
 
-class StringWriteStream final : public IFX_SeekableWriteStream {
+class StringWriteStream final : public IFX_RetainableWriteStream {
  public:
   StringWriteStream();
   ~StringWriteStream() override;
 
-  // IFX_SeekableWriteStream
-  FX_FILESIZE GetSize() override;
-  bool Flush() override;
-  bool WriteBlockAtOffset(const void* pData,
-                          FX_FILESIZE offset,
-                          size_t size) override;
-  bool WriteString(ByteStringView str) override;
+  // IFX_WriteStream:
+  bool WriteBlock(const void* pData, size_t size) override;
 
   std::string ToString() const { return stream_.str(); }
 

@@ -20,7 +20,7 @@ class CFX_XMLCharData final : public CFX_XMLText {
   // CFX_XMLNode
   Type GetType() const override;
   CFX_XMLNode* Clone(CFX_XMLDocument* doc) override;
-  void Save(const RetainPtr<IFX_SeekableWriteStream>& pXMLStream) override;
+  void Save(const RetainPtr<IFX_RetainableWriteStream>& pXMLStream) override;
 };
 
 inline CFX_XMLCharData* ToXMLCharData(CFX_XMLNode* pNode) {
