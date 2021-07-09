@@ -11,7 +11,7 @@
 
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
-#include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/fx_folder.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/android/cfpf_skiafont.h"
 #include "core/fxge/android/cfpf_skiapathfont.h"

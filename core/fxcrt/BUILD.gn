@@ -40,6 +40,7 @@ source_set("fxcrt") {
     "fx_coordinates.h",
     "fx_extension.cpp",
     "fx_extension.h",
+    "fx_folder.h",
     "fx_memory.cpp",
     "fx_memory.h",
     "fx_memory_wrappers.h",
@@ -119,12 +120,14 @@ source_set("fxcrt") {
     sources += [
       "cfx_fileaccess_posix.cpp",
       "cfx_fileaccess_posix.h",
+      "fx_folder_posix.cpp",
     ]
   }
   if (is_win) {
     sources += [
       "cfx_fileaccess_windows.cpp",
       "cfx_fileaccess_windows.h",
+      "fx_folder_windows.cpp",
     ]
   }
   if (pdf_enable_xfa) {

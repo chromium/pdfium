@@ -13,23 +13,9 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_types.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "third_party/base/compiler_specific.h"
 
-struct FX_FolderHandle;
-
-FX_FolderHandle* FX_OpenFolder(const char* path);
-bool FX_GetNextFile(FX_FolderHandle* handle,
-                    ByteString* filename,
-                    bool* bFolder);
-void FX_CloseFolder(FX_FolderHandle* handle);
-
-// Used with std::unique_ptr to automatically call FX_CloseFolder().
-struct FxFolderHandleCloser {
-  inline void operator()(FX_FolderHandle* h) const { FX_CloseFolder(h); }
-};
-
-#define FX_FILEMODE_ReadOnly 1
-#define FX_FILEMODE_Truncate 2
+constexpr uint32_t FX_FILEMODE_ReadOnly = 1 << 0;
+constexpr uint32_t FX_FILEMODE_Truncate = 1 << 1;
 
 class IFX_WriteStream {
  public:
@@ -87,9 +73,11 @@ class IFX_SeekableReadStream : virtual public Retainable,
 class IFX_SeekableStream : public IFX_SeekableReadStream,
                            public IFX_SeekableWriteStream {
  public:
+  // dwModes is a mask of FX_FILEMODE_* from above.
   static RetainPtr<IFX_SeekableStream> CreateFromFilename(const char* filename,
                                                           uint32_t dwModes);
 
+  // dwModes is a mask of FX_FILEMODE_* from above.
   static RetainPtr<IFX_SeekableStream> CreateFromFilename(
       const wchar_t* filename,
       uint32_t dwModes);
