@@ -38,6 +38,7 @@ class IFX_WriteStream {
   bool WriteString(ByteStringView str);
   bool WriteByte(uint8_t byte);
   bool WriteDWord(uint32_t i);
+  bool WriteFilesize(FX_FILESIZE size);
 
  protected:
   virtual ~IFX_WriteStream() = default;

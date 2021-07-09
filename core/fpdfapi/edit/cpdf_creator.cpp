@@ -479,13 +479,7 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage4() {
   if (m_IsIncremental) {
     FX_FILESIZE prev = m_pParser->GetLastXRefOffset();
     if (prev) {
-      if (!m_Archive->WriteString("/Prev "))
-        return Stage::kInvalid;
-
-      char offset_buf[20];
-      memset(offset_buf, 0, sizeof(offset_buf));
-      FXSYS_i64toa(prev, offset_buf, 10);
-      if (!m_Archive->WriteBlock(offset_buf, strlen(offset_buf)))
+      if (!m_Archive->WriteString("/Prev ") || !m_Archive->WriteFilesize(prev))
         return Stage::kInvalid;
     }
   }
@@ -544,13 +538,8 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage4() {
       return Stage::kInvalid;
   }
 
-  if (!m_Archive->WriteString("\r\nstartxref\r\n"))
-    return Stage::kInvalid;
-
-  char offset_buf[20];
-  memset(offset_buf, 0, sizeof(offset_buf));
-  FXSYS_i64toa(m_XrefStart, offset_buf, 10);
-  if (!m_Archive->WriteBlock(offset_buf, strlen(offset_buf)) ||
+  if (!m_Archive->WriteString("\r\nstartxref\r\n") ||
+      !m_Archive->WriteFilesize(m_XrefStart) ||
       !m_Archive->WriteString("\r\n%%EOF\r\n")) {
     return Stage::kInvalid;
   }
