@@ -41,6 +41,9 @@ class CPDF_Dictionary final : public CPDF_Object {
   bool WriteTo(IFX_ArchiveStream* archive,
                const CPDF_Encryptor* encryptor) const override;
 
+  // `key` must be non-empty and ASCII, per PDF 32000 standard, section 7.2.1.
+  static bool IsValidKey(const ByteString& key);
+
   bool IsLocked() const { return !!m_LockCount; }
 
   size_t size() const { return m_Map.size(); }

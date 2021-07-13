@@ -943,6 +943,9 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
     return;
 
   ByteString font_name = font.value();
+  if (!CPDF_Dictionary::IsValidKey(font_name))
+    return;
+
   CFX_Color crText = fpdfdoc::CFXColorFromString(DA);
   CPDF_Dictionary* pDRDict = pFormDict->GetDictFor("DR");
   if (!pDRDict)

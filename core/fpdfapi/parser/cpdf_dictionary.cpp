@@ -82,6 +82,11 @@ RetainPtr<CPDF_Object> CPDF_Dictionary::CloneNonCyclic(
   return pCopy;
 }
 
+// static
+bool CPDF_Dictionary::IsValidKey(const ByteString& key) {
+  return !key.IsEmpty() && key.AsStringView().IsASCII();
+}
+
 const CPDF_Object* CPDF_Dictionary::GetObjectFor(const ByteString& key) const {
   auto it = m_Map.find(key);
   return it != m_Map.end() ? it->second.Get() : nullptr;
@@ -210,8 +215,7 @@ std::vector<ByteString> CPDF_Dictionary::GetKeys() const {
 
 CPDF_Object* CPDF_Dictionary::SetFor(const ByteString& key,
                                      RetainPtr<CPDF_Object> pObj) {
-  CHECK(!key.IsEmpty());
-  CHECK(key.AsStringView().IsASCII());
+  CHECK(IsValidKey(key));
   CHECK(!IsLocked());
   if (!pObj) {
     m_Map.erase(key);

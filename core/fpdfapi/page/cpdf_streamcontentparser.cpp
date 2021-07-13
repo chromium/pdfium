@@ -618,7 +618,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
     auto word = m_pSyntax->GetWord();
     ByteString key(word.Last(word.GetLength() - 1));
     auto pObj = m_pSyntax->ReadNextObject(false, false, 0);
-    if (!key.IsEmpty()) {
+    if (CPDF_Dictionary::IsValidKey(key)) {
       if (pObj && !pObj->IsInline()) {
         pDict->SetNewFor<CPDF_Reference>(key, m_pDocument.Get(),
                                          pObj->GetObjNum());
