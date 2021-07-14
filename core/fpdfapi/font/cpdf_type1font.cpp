@@ -215,7 +215,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
           wchar_t unicode = 0;
           if (m_GlyphIndex[charcode]) {
             unicode =
-                FT_UnicodeFromCharCode(FT_ENCODING_ADOBE_STANDARD, charcode);
+                FT_UnicodeFromCharCode(PDFFONT_ENCODING_STANDARD, charcode);
           }
           char name_glyph[kInternalTableSize] = {};
           FT_Get_Glyph_Name(m_Font.GetFaceRec(), m_GlyphIndex[charcode],
@@ -276,7 +276,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
             FT_Get_Char_Index(m_Font.GetFaceRec(), charcode);
         if (m_GlyphIndex[charcode]) {
           wchar_t unicode =
-              FT_UnicodeFromCharCode(FT_ENCODING_ADOBE_STANDARD, charcode);
+              FT_UnicodeFromCharCode(PDFFONT_ENCODING_STANDARD, charcode);
           if (unicode == 0) {
             char name_glyph[kInternalTableSize] = {};
             FT_Get_Glyph_Name(m_Font.GetFaceRec(), m_GlyphIndex[charcode],

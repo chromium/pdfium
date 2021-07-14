@@ -1723,7 +1723,7 @@ RetainPtr<CPDF_Object> CPDF_FontEncoding::Realize(
   return pDict;
 }
 
-uint32_t FT_CharCodeFromUnicode(FT_Encoding encoding, wchar_t unicode) {
+uint32_t FT_CharCodeFromUnicode(int encoding, wchar_t unicode) {
   switch (encoding) {
     case FT_ENCODING_UNICODE:
       return unicode;
@@ -1739,28 +1739,9 @@ uint32_t FT_CharCodeFromUnicode(FT_Encoding encoding, wchar_t unicode) {
       return PDF_FindCode(PDFDocEncoding, unicode);
     case FT_ENCODING_MS_SYMBOL:
       return PDF_FindCode(MSSymbolEncoding, unicode);
-    default:
-      return 0;
   }
+  return 0;
 }
-
-wchar_t FT_UnicodeFromCharCode(FT_Encoding encoding, uint32_t charcode) {
-  switch (encoding) {
-    case FT_ENCODING_UNICODE:
-      return (uint16_t)charcode;
-    case FT_ENCODING_ADOBE_STANDARD:
-      return StandardEncoding[(uint8_t)charcode];
-    case FT_ENCODING_ADOBE_EXPERT:
-      return MacExpertEncoding[(uint8_t)charcode];
-    case FT_ENCODING_ADOBE_LATIN_1:
-      return AdobeWinAnsiEncoding[(uint8_t)charcode];
-    case FT_ENCODING_APPLE_ROMAN:
-      return MacRomanEncoding[(uint8_t)charcode];
-    default:
-      return 0;
-  }
-}
-
 const uint16_t* PDF_UnicodesForPredefinedCharSet(int encoding) {
   switch (encoding) {
     case PDFFONT_ENCODING_WINANSI:
@@ -1812,4 +1793,22 @@ const char* PDF_CharNameFromPredefinedCharSet(int encoding, uint8_t charcode) {
       return PDFDocEncodingNames[charcode];
   }
   return nullptr;
+}
+
+wchar_t FT_UnicodeFromCharCode(int encoding, uint32_t charcode) {
+  switch (encoding) {
+    case FT_ENCODING_UNICODE:
+      return (uint16_t)charcode;
+    case FT_ENCODING_ADOBE_STANDARD:
+      return StandardEncoding[(uint8_t)charcode];
+    case FT_ENCODING_ADOBE_EXPERT:
+      return MacExpertEncoding[(uint8_t)charcode];
+    case FT_ENCODING_ADOBE_LATIN_1:
+      return AdobeWinAnsiEncoding[(uint8_t)charcode];
+    case FT_ENCODING_APPLE_ROMAN:
+      return MacRomanEncoding[(uint8_t)charcode];
+    case PDFFONT_ENCODING_PDFDOC:
+      return PDFDocEncoding[(uint8_t)charcode];
+  }
+  return 0;
 }
