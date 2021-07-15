@@ -54,7 +54,7 @@ struct AltFontName {
   CFX_FontMapper::StandardFont m_Index;
 };
 
-const AltFontName g_AltFontNames[] = {
+constexpr AltFontName kAltFontNames[] = {
     {"Arial", CFX_FontMapper::kHelvetica},
     {"Arial,Bold", CFX_FontMapper::kHelveticaBold},
     {"Arial,BoldItalic", CFX_FontMapper::kHelveticaBoldOblique},
@@ -151,7 +151,7 @@ struct AltFontFamily {
   const char* m_pFontFamily;  // Raw, POD struct.
 };
 
-const AltFontFamily g_AltFontFamilies[] = {
+constexpr AltFontFamily kAltFontFamilies[] = {
     {"AGaramondPro", "Adobe Garamond Pro"},
     {"BankGothicBT-Medium", "BankGothic Md BT"},
     {"ForteMT", "Forte"},
@@ -189,7 +189,7 @@ void GetFontFamily(uint32_t nStyle, ByteString* fontName) {
       *fontName = "FreeStyleScript";
     return;
   }
-  for (const auto& alternate : g_AltFontFamilies) {
+  for (const auto& alternate : kAltFontFamilies) {
     if (fontName->Contains(alternate.m_pFontName)) {
       *fontName = alternate.m_pFontFamily;
       return;
@@ -821,9 +821,9 @@ RetainPtr<CFX_Face> CFX_FontMapper::GetCachedFace(void* hFont,
 // static
 Optional<CFX_FontMapper::StandardFont> CFX_FontMapper::GetStandardFontName(
     ByteString* name) {
-  const auto* end = std::end(g_AltFontNames);
+  const auto* end = std::end(kAltFontNames);
   const auto* found =
-      std::lower_bound(std::begin(g_AltFontNames), end, name->c_str(),
+      std::lower_bound(std::begin(kAltFontNames), end, name->c_str(),
                        [](const AltFontName& element, const char* name) {
                          return FXSYS_stricmp(element.m_pName, name) < 0;
                        });

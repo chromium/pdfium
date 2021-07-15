@@ -34,9 +34,9 @@ namespace {
 constexpr float kDefaultFontSize = 1.0f;
 constexpr float kSizeEpsilon = 0.01f;
 
-const uint16_t* const g_UnicodeData_Normalization_Maps[] = {
-    g_UnicodeData_Normalization_Map2, g_UnicodeData_Normalization_Map3,
-    g_UnicodeData_Normalization_Map4};
+const uint16_t* const kUnicodeDataNormalizationMaps[] = {
+    kUnicodeDataNormalizationMap2, kUnicodeDataNormalizationMap3,
+    kUnicodeDataNormalizationMap4};
 
 float NormalizeThreshold(float threshold, int t1, int t2, int t3) {
   DCHECK(t1 < t2);
@@ -78,18 +78,18 @@ float CalculateBaseSpace(const CPDF_TextObject* pTextObj,
 std::vector<wchar_t, FxAllocAllocator<wchar_t>> GetUnicodeNormalization(
     wchar_t wch) {
   wch = wch & 0xFFFF;
-  wchar_t wFind = g_UnicodeData_Normalization[wch];
+  wchar_t wFind = kUnicodeDataNormalization[wch];
   if (!wFind)
     return std::vector<wchar_t, FxAllocAllocator<wchar_t>>(1, wch);
 
   if (wFind >= 0x8000) {
     return std::vector<wchar_t, FxAllocAllocator<wchar_t>>(
-        1, g_UnicodeData_Normalization_Map1[wFind - 0x8000]);
+        1, kUnicodeDataNormalizationMap1[wFind - 0x8000]);
   }
 
   wch = wFind & 0x0FFF;
   wFind >>= 12;
-  const uint16_t* pMap = g_UnicodeData_Normalization_Maps[wFind - 2] + wch;
+  const uint16_t* pMap = kUnicodeDataNormalizationMaps[wFind - 2] + wch;
   if (wFind == 4)
     wFind = static_cast<wchar_t>(*pMap++);
 

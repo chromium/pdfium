@@ -18,16 +18,16 @@
 
 namespace {
 
-const uint8_t g_FXDaysPerMonth[12] = {31, 28, 31, 30, 31, 30,
-                                      31, 31, 30, 31, 30, 31};
-const uint8_t g_FXDaysPerLeapMonth[12] = {31, 29, 31, 30, 31, 30,
-                                          31, 31, 30, 31, 30, 31};
-const int32_t g_FXDaysBeforeMonth[12] = {0,   31,  59,  90,  120, 151,
-                                         181, 212, 243, 273, 304, 334};
-const int32_t g_FXDaysBeforeLeapMonth[12] = {0,   31,  60,  91,  121, 152,
-                                             182, 213, 244, 274, 305, 335};
-const int32_t g_FXDaysPerYear = 365;
-const int32_t g_FXDaysPerLeapYear = 366;
+constexpr uint8_t kDaysPerMonth[12] = {31, 28, 31, 30, 31, 30,
+                                       31, 31, 30, 31, 30, 31};
+constexpr uint8_t kDaysPerLeapMonth[12] = {31, 29, 31, 30, 31, 30,
+                                           31, 31, 30, 31, 30, 31};
+constexpr int32_t kDaysBeforeMonth[12] = {0,   31,  59,  90,  120, 151,
+                                          181, 212, 243, 273, 304, 334};
+constexpr int32_t kDaysBeforeLeapMonth[12] = {0,   31,  60,  91,  121, 152,
+                                              182, 213, 244, 274, 305, 335};
+constexpr int32_t kDaysPerYear = 365;
+constexpr int32_t kDaysPerLeapYear = 366;
 
 int32_t DaysBeforeMonthInYear(int32_t iYear, uint8_t iMonth) {
   DCHECK(iYear != 0);
@@ -35,13 +35,13 @@ int32_t DaysBeforeMonthInYear(int32_t iYear, uint8_t iMonth) {
   DCHECK(iMonth <= 12);
 
   const int32_t* p =
-      FX_IsLeapYear(iYear) ? g_FXDaysBeforeLeapMonth : g_FXDaysBeforeMonth;
+      FX_IsLeapYear(iYear) ? kDaysBeforeLeapMonth : kDaysBeforeMonth;
   return p[iMonth - 1];
 }
 
 int32_t DaysInYear(int32_t iYear) {
   DCHECK(iYear != 0);
-  return FX_IsLeapYear(iYear) ? g_FXDaysPerLeapYear : g_FXDaysPerYear;
+  return FX_IsLeapYear(iYear) ? kDaysPerLeapYear : kDaysPerYear;
 }
 
 int64_t DateToDays(int32_t iYear,
@@ -87,8 +87,7 @@ uint8_t FX_DaysInMonth(int32_t iYear, uint8_t iMonth) {
   DCHECK(iMonth >= 1);
   DCHECK(iMonth <= 12);
 
-  const uint8_t* p =
-      FX_IsLeapYear(iYear) ? g_FXDaysPerLeapMonth : g_FXDaysPerMonth;
+  const uint8_t* p = FX_IsLeapYear(iYear) ? kDaysPerLeapMonth : kDaysPerMonth;
   return p[iMonth - 1];
 }
 

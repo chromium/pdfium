@@ -34,9 +34,10 @@
 
 namespace {
 
-const uint16_t g_CharsetCPs[CIDSET_NUM_SETS] = {0, 936, 950, 932, 949, 1200};
+constexpr uint16_t kCharsetCodePages[CIDSET_NUM_SETS] = {0,   936, 950,
+                                                         932, 949, 1200};
 
-const struct CIDTransform {
+constexpr struct CIDTransform {
   uint16_t cid;
   uint8_t a;
   uint8_t b;
@@ -44,7 +45,7 @@ const struct CIDTransform {
   uint8_t d;
   uint8_t e;
   uint8_t f;
-} g_Japan1_VertCIDs[] = {
+} kJapan1VerticalCIDs[] = {
     {97, 129, 0, 0, 127, 55, 0},     {7887, 127, 0, 0, 127, 76, 89},
     {7888, 127, 0, 0, 127, 79, 94},  {7889, 0, 129, 127, 0, 17, 127},
     {7890, 0, 129, 127, 0, 17, 127}, {7891, 0, 129, 127, 0, 17, 127},
@@ -321,9 +322,9 @@ wchar_t CPDF_CIDFont::GetUnicodeFromCharCode(uint32_t charcode) const {
     charcode = (charcode % 256) * 256 + (charcode / 256);
     charsize = 2;
   }
-  int ret = FXSYS_MultiByteToWideChar(g_CharsetCPs[m_pCMap->GetCoding()], 0,
-                                      reinterpret_cast<const char*>(&charcode),
-                                      charsize, &unicode, 1);
+  int ret = FXSYS_MultiByteToWideChar(
+      kCharsetCodePages[m_pCMap->GetCoding()], 0,
+      reinterpret_cast<const char*>(&charcode), charsize, &unicode, 1);
   return ret == 1 ? unicode : 0;
 #else
   if (!m_pCMap->GetEmbedMap())
@@ -365,7 +366,7 @@ uint32_t CPDF_CIDFont::CharCodeFromUnicode(wchar_t unicode) const {
 #if defined(OS_WIN)
   uint8_t buffer[32];
   int ret = FXSYS_WideCharToMultiByte(
-      g_CharsetCPs[m_pCMap->GetCoding()], 0, &unicode, 1,
+      kCharsetCodePages[m_pCMap->GetCoding()], 0, &unicode, 1,
       reinterpret_cast<char*>(buffer), 4, nullptr, nullptr);
   if (ret == 1)
     return buffer[0];
@@ -816,7 +817,7 @@ void CPDF_CIDFont::LoadSubstFont() {
   safeStemV *= 5;
   m_Font.LoadSubst(m_BaseFontName, !m_bType1, m_Flags,
                    safeStemV.ValueOrDefault(FXFONT_FW_NORMAL), m_ItalicAngle,
-                   g_CharsetCPs[m_Charset], IsVertWriting());
+                   kCharsetCodePages[m_Charset], IsVertWriting());
 }
 
 // static
@@ -845,9 +846,9 @@ const uint8_t* CPDF_CIDFont::GetCIDTransform(uint16_t cid) const {
   if (m_Charset != CIDSET_JAPAN1 || m_pFontFile)
     return nullptr;
 
-  const auto* pEnd = g_Japan1_VertCIDs + pdfium::size(g_Japan1_VertCIDs);
+  const auto* pEnd = kJapan1VerticalCIDs + pdfium::size(kJapan1VerticalCIDs);
   const auto* pTransform = std::lower_bound(
-      g_Japan1_VertCIDs, pEnd, cid,
+      kJapan1VerticalCIDs, pEnd, cid,
       [](const CIDTransform& entry, uint16_t cid) { return entry.cid < cid; });
   return (pTransform < pEnd && cid == pTransform->cid) ? &pTransform->a
                                                        : nullptr;

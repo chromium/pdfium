@@ -20,14 +20,12 @@ namespace {
 // These arrays are indexed by the PDFDEST_VIEW_* constants.
 
 // Last element is a sentinel.
-const char* const g_sZoomModes[] = {"Unknown", "XYZ",  "Fit",  "FitH",
-                                    "FitV",    "FitR", "FitB", "FitBH",
-                                    "FitBV",   nullptr};
+const char* const kZoomModes[] = {"Unknown", "XYZ",  "Fit",   "FitH",  "FitV",
+                                  "FitR",    "FitB", "FitBH", "FitBV", nullptr};
 
-const uint8_t g_sZoomModeMaxParamCount[] = {0, 3, 0, 1, 1, 4, 0, 1, 1, 0};
+constexpr uint8_t kZoomModeMaxParamCount[] = {0, 3, 0, 1, 1, 4, 0, 1, 1, 0};
 
-static_assert(pdfium::size(g_sZoomModes) ==
-                  pdfium::size(g_sZoomModeMaxParamCount),
+static_assert(pdfium::size(kZoomModes) == pdfium::size(kZoomModeMaxParamCount),
               "Zoom mode count Mismatch");
 
 }  // namespace
@@ -75,8 +73,8 @@ int CPDF_Dest::GetZoomMode() const {
     return 0;
 
   ByteString mode = pArray->GetString();
-  for (int i = 1; g_sZoomModes[i]; ++i) {
-    if (mode == g_sZoomModes[i])
+  for (int i = 1; kZoomModes[i]; ++i) {
+    if (mode == kZoomModes[i])
       return i;
   }
 
@@ -133,7 +131,7 @@ unsigned long CPDF_Dest::GetNumParams() const {
   if (!m_pArray || m_pArray->size() < 2)
     return 0;
 
-  unsigned long maxParamsForFitType = g_sZoomModeMaxParamCount[GetZoomMode()];
+  unsigned long maxParamsForFitType = kZoomModeMaxParamCount[GetZoomMode()];
   unsigned long numParamsInArray = m_pArray->size() - 2;
   return std::min(maxParamsForFitType, numParamsInArray);
 }

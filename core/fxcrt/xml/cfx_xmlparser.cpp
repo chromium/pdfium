@@ -40,7 +40,7 @@ struct FX_XMLNAMECHAR {
   bool bStartChar;
 };
 
-const FX_XMLNAMECHAR g_XMLNameChars[] = {
+constexpr FX_XMLNAMECHAR kXMLNameChars[] = {
     {L'-', L'.', false},    {L'0', L'9', false},     {L':', L':', false},
     {L'A', L'Z', true},     {L'_', L'_', true},      {L'a', L'z', true},
     {0xB7, 0xB7, false},    {0xC0, 0xD6, true},      {0xD8, 0xF6, true},
@@ -55,9 +55,9 @@ const FX_XMLNAMECHAR g_XMLNameChars[] = {
 // static
 bool CFX_XMLParser::IsXMLNameChar(wchar_t ch, bool bFirstChar) {
   auto* it = std::lower_bound(
-      std::begin(g_XMLNameChars), std::end(g_XMLNameChars), ch,
+      std::begin(kXMLNameChars), std::end(kXMLNameChars), ch,
       [](const FX_XMLNAMECHAR& arg, wchar_t ch) { return arg.wEnd < ch; });
-  return it != std::end(g_XMLNameChars) && ch >= it->wStart &&
+  return it != std::end(kXMLNameChars) && ch >= it->wStart &&
          (!bFirstChar || it->bStartChar);
 }
 
