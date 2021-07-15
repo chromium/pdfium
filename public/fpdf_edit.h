@@ -820,7 +820,6 @@ FPDFPageObj_GetStrokeColor(FPDF_PAGEOBJECT page_object,
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPageObj_SetStrokeWidth(FPDF_PAGEOBJECT page_object, float width);
 
-// Experimental API.
 // Get the stroke width of a page object.
 //
 // path   - the handle to the page object.
@@ -1071,7 +1070,6 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_SetDrawMode(FPDF_PAGEOBJECT path,
                                                          int fillmode,
                                                          FPDF_BOOL stroke);
 
-// Experimental API.
 // Get the drawing mode of a path.
 //
 // path     - the handle to the path object.
@@ -1137,7 +1135,6 @@ FPDF_EXPORT FPDF_FONT FPDF_CALLCONV FPDFText_LoadFont(FPDF_DOCUMENT document,
 FPDF_EXPORT FPDF_FONT FPDF_CALLCONV
 FPDFText_LoadStandardFont(FPDF_DOCUMENT document, FPDF_BYTESTRING font);
 
-// Experimental API.
 // Get the font size of a text object.
 //
 //   text - handle to a text.
@@ -1165,7 +1162,6 @@ FPDFPageObj_CreateTextObj(FPDF_DOCUMENT document,
                           FPDF_FONT font,
                           float font_size);
 
-// Experimental API.
 // Get the text rendering mode of a text object.
 //
 // text     - the handle to the text object.
@@ -1205,7 +1201,6 @@ FPDFTextObj_GetFontName(FPDF_PAGEOBJECT text,
                         char* buffer,
                         unsigned long length);
 
-// Experimental API.
 // Get the text of a text object.
 //
 // text_object      - the handle to the text object.
@@ -1225,7 +1220,6 @@ FPDFTextObj_GetText(FPDF_PAGEOBJECT text_object,
                     FPDF_WCHAR* buffer,
                     unsigned long length);
 
-// Experimental API.
 // Get number of page objects inside |form_object|.
 //
 //   form_object - handle to a form object.
@@ -1234,7 +1228,6 @@ FPDFTextObj_GetText(FPDF_PAGEOBJECT text_object,
 FPDF_EXPORT int FPDF_CALLCONV
 FPDFFormObj_CountObjects(FPDF_PAGEOBJECT form_object);
 
-// Experimental API.
 // Get page object in |form_object| at |index|.
 //
 //   form_object - handle to a form object.
