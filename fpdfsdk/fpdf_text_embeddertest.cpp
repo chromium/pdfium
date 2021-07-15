@@ -1660,3 +1660,28 @@ TEST_F(FPDFTextEmbedderTest, SmallType3Glyph) {
 
   UnloadPage(page);
 }
+
+TEST_F(FPDFTextEmbedderTest, BigtableTextExtraction) {
+  constexpr char kExpectedText[] =
+      "{fay,jeff,sanjay,wilsonh,kerr,m3b,tushar,\x02k es,gruber}@google.com";
+  constexpr int kExpectedTextCount = pdfium::size(kExpectedText) - 1;
+
+  ASSERT_TRUE(OpenDocument("bigtable_mini.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFTextPage text_page(FPDFText_LoadPage(page));
+    ASSERT_TRUE(text_page);
+    int char_count = FPDFText_CountChars(text_page.get());
+    ASSERT_GE(char_count, 0);
+    ASSERT_EQ(kExpectedTextCount, char_count);
+
+    for (int i = 0; i < kExpectedTextCount; ++i) {
+      EXPECT_EQ(static_cast<uint32_t>(kExpectedText[i]),
+                FPDFText_GetUnicode(text_page.get(), i));
+    }
+  }
+
+  UnloadPage(page);
+}
