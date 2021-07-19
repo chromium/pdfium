@@ -135,12 +135,14 @@ def pdfium_internal_builder(name, bucket):
     """
     caches = None
     dimensions = {}
+    notifies = None
     properties = {}
     triggered_by = None
 
     # Set bucket-specific configs.
     if bucket == "ci":
         dimensions.update({"pool": "luci.flex.ci"})
+        notifies = ["pdfium main notifier"]
         properties.update({"builder_group": "client.pdfium"})
         service_account = "pdfium-ci-builder@chops-service-accounts.iam.gserviceaccount.com"
         triggered_by = ["pdfium-gitiles-trigger"]
@@ -170,6 +172,7 @@ def pdfium_internal_builder(name, bucket):
         caches = caches,
         dimensions = dimensions,
         executable = "pdfium",
+        notifies = notifies,
         properties = properties,
         service_account = service_account,
         triggered_by = triggered_by,
@@ -226,6 +229,8 @@ lucicfg.config(
         "cr-buildbucket.cfg",
         "luci-logdog.cfg",
         "luci-milo.cfg",
+        "luci-notify.cfg",
+        "luci-notify/email-templates/*.template",
         "luci-scheduler.cfg",
         "project.cfg",
         "realms.cfg",
@@ -276,6 +281,29 @@ luci.logdog(gs_bucket = "chromium-luci-logdog")
 
 luci.milo(
     logo = "https://storage.googleapis.com/chrome-infra/pdfium-logo.png",
+)
+
+luci.notify(
+    tree_closing_enabled = True,
+)
+
+luci.notifier(
+    name = "pdfium main notifier",
+    on_new_status = ["FAILURE"],
+    notify_emails = [
+        "awscreen@chromium.org",
+        "dhoss@chromium.org",
+        "kmoon@chromium.org",
+        "nigi@chromium.org",
+        "thestig@chromium.org",
+    ],
+    notify_blamelist = True,
+    template = "tree_closure_email_template",
+)
+
+luci.notifier_template(
+    name = "tree_closure_email_template",
+    body = io.read_file("template/tree_closure_email.template"),
 )
 
 # Recipes
