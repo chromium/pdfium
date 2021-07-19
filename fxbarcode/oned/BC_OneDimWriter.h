@@ -18,6 +18,7 @@
 #include "fxbarcode/utils.h"
 
 class CFX_Font;
+class CFX_Matrix;
 class CFX_Path;
 class CFX_RenderDevice;
 class TextCharPos;

@@ -7,11 +7,13 @@
 #ifndef XFA_FXFA_PARSER_CXFA_COLOR_H_
 #define XFA_FXFA_PARSER_CXFA_COLOR_H_
 
+#include "core/fxcrt/fx_string.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 class CXFA_Color final : public CXFA_Node {
  public:
   static constexpr FX_ARGB kBlackColor = 0xFF000000;
+  static FX_ARGB StringToFXARGB(WideStringView view);
 
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Color() override;

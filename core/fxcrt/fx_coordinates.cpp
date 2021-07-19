@@ -88,6 +88,29 @@ void FX_RECT::Intersect(const FX_RECT& src) {
   }
 }
 
+FX_RECT FX_RECT::SwappedClipBox(int width,
+                                int height,
+                                bool bFlipX,
+                                bool bFlipY) const {
+  FX_RECT rect;
+  if (bFlipY) {
+    rect.left = height - top;
+    rect.right = height - bottom;
+  } else {
+    rect.left = top;
+    rect.right = bottom;
+  }
+  if (bFlipX) {
+    rect.top = width - left;
+    rect.bottom = width - right;
+  } else {
+    rect.top = left;
+    rect.bottom = right;
+  }
+  rect.Normalize();
+  return rect;
+}
+
 // Y-axis runs the opposite way in FX_RECT.
 CFX_FloatRect::CFX_FloatRect(const FX_RECT& rect)
     : left(rect.left), bottom(rect.top), right(rect.right), top(rect.bottom) {}

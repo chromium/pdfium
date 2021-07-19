@@ -7,6 +7,7 @@
 #ifndef XFA_FXFA_CXFA_FFAPP_H_
 #define XFA_FXFA_CXFA_FFAPP_H_
 
+#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/gc/heap.h"
 #include "v8/include/cppgc/garbage-collected.h"

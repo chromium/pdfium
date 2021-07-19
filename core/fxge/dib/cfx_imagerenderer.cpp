@@ -44,8 +44,8 @@ CFX_ImageRenderer::CFX_ImageRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
       int dest_height = image_rect.Height();
       FX_RECT bitmap_clip = m_ClipBox;
       bitmap_clip.Offset(-image_rect.left, -image_rect.top);
-      bitmap_clip = FXDIB_SwapClipBox(bitmap_clip, dest_width, dest_height,
-                                      m_Matrix.c > 0, m_Matrix.b < 0);
+      bitmap_clip = bitmap_clip.SwappedClipBox(dest_width, dest_height,
+                                               m_Matrix.c > 0, m_Matrix.b < 0);
       m_Composer.Compose(pDevice, pClipRgn, bitmap_alpha, mask_color, m_ClipBox,
                          true, m_Matrix.c > 0, m_Matrix.b < 0, m_bRgbByteOrder,
                          BlendMode::kNormal);

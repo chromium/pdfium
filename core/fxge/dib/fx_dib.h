@@ -12,12 +12,6 @@
 #include <tuple>
 #include <utility>
 
-#include "core/fxcrt/fx_coordinates.h"
-
-#if defined(PDF_ENABLE_XFA)
-#include "core/fxcrt/widestring.h"
-#endif
-
 enum class FXDIB_Format : uint16_t {
   kInvalid = 0,
   k1bppRgb = 0x001,
@@ -127,10 +121,6 @@ constexpr FX_ARGB ArgbEncode(uint32_t a, uint32_t r, uint32_t g, uint32_t b) {
 
 FX_ARGB AlphaAndColorRefToArgb(int a, FX_COLORREF colorref);
 
-#if defined(PDF_ENABLE_XFA)
-FX_ARGB StringToFXARGB(WideStringView view);
-#endif
-
 #define FXARGB_A(argb) ((uint8_t)((argb) >> 24))
 #define FXARGB_R(argb) ((uint8_t)((argb) >> 16))
 #define FXARGB_G(argb) ((uint8_t)((argb) >> 8))
@@ -160,12 +150,6 @@ FX_ARGB StringToFXARGB(WideStringView view);
 #define FXARGB_TOBGRORDERDIB(argb)                       \
   ((uint8_t)(argb >> 16) | ((uint8_t)(argb >> 8)) << 8 | \
    ((uint8_t)(argb)) << 16 | ((uint8_t)(argb >> 24) << 24))
-
-FX_RECT FXDIB_SwapClipBox(const FX_RECT& clip,
-                          int width,
-                          int height,
-                          bool bFlipX,
-                          bool bFlipY);
 
 inline void ReverseCopy3Bytes(uint8_t* dest, const uint8_t* src) {
   dest[2] = src[0];

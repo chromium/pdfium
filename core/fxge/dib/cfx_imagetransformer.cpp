@@ -149,8 +149,8 @@ CFX_ImageTransformer::CFX_ImageTransformer(const RetainPtr<CFX_DIBBase>& pSrc,
     int dest_width = result_rect.Width();
     int dest_height = result_rect.Height();
     result_clip.Offset(-result_rect.left, -result_rect.top);
-    result_clip = FXDIB_SwapClipBox(result_clip, dest_width, dest_height,
-                                    m_matrix.c > 0, m_matrix.b < 0);
+    result_clip = result_clip.SwappedClipBox(dest_width, dest_height,
+                                             m_matrix.c > 0, m_matrix.b < 0);
     m_Stretcher = std::make_unique<CFX_ImageStretcher>(
         &m_Storer, m_pSrc, dest_height, dest_width, result_clip,
         m_ResampleOptions);

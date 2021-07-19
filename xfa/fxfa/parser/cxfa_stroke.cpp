@@ -113,7 +113,7 @@ FX_ARGB CXFA_Stroke::GetColor() {
   if (!pNode)
     return 0xFF000000;
 
-  return StringToFXARGB(
+  return CXFA_Color::StringToFXARGB(
       pNode->JSObject()->GetCData(XFA_Attribute::Value).AsStringView());
 }
 
