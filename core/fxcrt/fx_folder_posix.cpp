@@ -6,10 +6,6 @@
 
 #include "core/fxcrt/fx_folder.h"
 
-#include <dirent.h>
-#include <sys/stat.h>
-#include <unistd.h>
-
 #include <memory>
 
 #include "build/build_config.h"
@@ -18,6 +14,10 @@
 #if defined(OS_WIN)
 #error "built on wrong platform"
 #endif
+
+#include <dirent.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 struct FX_FolderHandle {
   ByteString m_Path;

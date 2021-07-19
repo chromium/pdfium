@@ -6,8 +6,6 @@
 
 #include "core/fxcrt/fx_folder.h"
 
-#include <direct.h>
-
 #include <memory>
 
 #include "build/build_config.h"
@@ -15,6 +13,8 @@
 #if !defined(OS_WIN)
 #error "built on wrong platform"
 #endif
+
+#include <direct.h>
 
 struct FX_FolderHandle {
   HANDLE m_Handle;
