@@ -66,10 +66,6 @@ namespace fxcrt {
 static_assert(sizeof(ByteString) <= sizeof(char*),
               "Strings must not require more space than pointers");
 
-#define FORCE_ANSI 0x10000
-#define FORCE_UNICODE 0x20000
-#define FORCE_INT64 0x40000
-
 // static
 ByteString ByteString::FormatInteger(int i) {
   char buf[32];
