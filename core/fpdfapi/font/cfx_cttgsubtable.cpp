@@ -147,25 +147,25 @@ uint8_t CFX_CTTGSUBTable::GetUInt8(FT_Bytes& p) const {
 }
 
 int16_t CFX_CTTGSUBTable::GetInt16(FT_Bytes& p) const {
-  uint16_t ret = p[0] << 8 | p[1];
+  uint16_t ret = FXSYS_UINT16_GET_MSBFIRST(p);
   p += 2;
   return *(int16_t*)&ret;
 }
 
 uint16_t CFX_CTTGSUBTable::GetUInt16(FT_Bytes& p) const {
-  uint16_t ret = p[0] << 8 | p[1];
+  uint16_t ret = FXSYS_UINT16_GET_MSBFIRST(p);
   p += 2;
   return ret;
 }
 
 int32_t CFX_CTTGSUBTable::GetInt32(FT_Bytes& p) const {
-  uint32_t ret = p[0] << 24 | p[1] << 16 | p[2] << 8 | p[3];
+  uint32_t ret = FXSYS_UINT32_GET_MSBFIRST(p);
   p += 4;
   return *(int32_t*)&ret;
 }
 
 uint32_t CFX_CTTGSUBTable::GetUInt32(FT_Bytes& p) const {
-  uint32_t ret = p[0] << 24 | p[1] << 16 | p[2] << 8 | p[3];
+  uint32_t ret = FXSYS_UINT32_GET_MSBFIRST(p);
   p += 4;
   return ret;
 }

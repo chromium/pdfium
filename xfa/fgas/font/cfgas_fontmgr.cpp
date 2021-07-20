@@ -15,6 +15,7 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/cfx_fontmgr.h"
@@ -337,7 +338,7 @@ inline uint8_t GetUInt8(const uint8_t* p) {
 }
 
 inline uint16_t GetUInt16(const uint8_t* p) {
-  return static_cast<uint16_t>(p[0] << 8 | p[1]);
+  return FXSYS_UINT16_GET_MSBFIRST(p);
 }
 
 extern "C" {
