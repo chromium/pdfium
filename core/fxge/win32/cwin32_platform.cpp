@@ -394,7 +394,7 @@ uint32_t CFX_Win32FontInfo::GetFontData(void* hFont,
                                         uint32_t table,
                                         pdfium::span<uint8_t> buffer) {
   HFONT hOldFont = (HFONT)::SelectObject(m_hDC, (HFONT)hFont);
-  table = FXSYS_DWORD_GET_MSBFIRST(reinterpret_cast<uint8_t*>(&table));
+  table = FXSYS_UINT32_GET_MSBFIRST(reinterpret_cast<uint8_t*>(&table));
   uint32_t size = ::GetFontData(m_hDC, table, 0, buffer.data(), buffer.size());
   ::SelectObject(m_hDC, hOldFont);
   if (size == GDI_ERROR) {

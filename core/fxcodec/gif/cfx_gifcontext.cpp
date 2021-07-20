@@ -387,9 +387,9 @@ GifDecoder::Status CFX_GifContext::ReadLogicalScreenDescriptor() {
   }
 
   width_ = static_cast<int>(
-      FXSYS_WORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&lsd.width)));
+      FXSYS_UINT16_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&lsd.width)));
   height_ = static_cast<int>(
-      FXSYS_WORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&lsd.height)));
+      FXSYS_UINT16_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&lsd.height)));
 
   return GifDecoder::Status::kSuccess;
 }
@@ -431,7 +431,7 @@ GifDecoder::Status CFX_GifContext::DecodeExtension() {
             std::make_unique<CFX_GifGraphicControlExtension>();
       graphic_control_extension_->block_size = gif_gce.block_size;
       graphic_control_extension_->gce_flags = gif_gce.gce_flags;
-      graphic_control_extension_->delay_time = FXSYS_WORD_GET_LSBFIRST(
+      graphic_control_extension_->delay_time = FXSYS_UINT16_GET_LSBFIRST(
           reinterpret_cast<uint8_t*>(&gif_gce.delay_time));
       graphic_control_extension_->trans_index = gif_gce.trans_index;
       break;
@@ -461,13 +461,13 @@ GifDecoder::Status CFX_GifContext::DecodeImageInfo() {
 
   auto gif_image = std::make_unique<CFX_GifImage>();
   gif_image->image_info.left =
-      FXSYS_WORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&img_info.left));
+      FXSYS_UINT16_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&img_info.left));
   gif_image->image_info.top =
-      FXSYS_WORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&img_info.top));
+      FXSYS_UINT16_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&img_info.top));
   gif_image->image_info.width =
-      FXSYS_WORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&img_info.width));
+      FXSYS_UINT16_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&img_info.width));
   gif_image->image_info.height =
-      FXSYS_WORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&img_info.height));
+      FXSYS_UINT16_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&img_info.height));
   gif_image->image_info.local_flags = img_info.local_flags;
   if (gif_image->image_info.left + gif_image->image_info.width > width_ ||
       gif_image->image_info.top + gif_image->image_info.height > height_)

@@ -4,24 +4,10 @@
 
 #include "core/fxcrt/byteorder.h"
 
+#include "core/fxcrt/fx_system.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {
-
-// Original code to use as a reference implementation.
-
-#define FXSYS_WORD_GET_LSBFIRST(p)                            \
-  (static_cast<uint16_t>((static_cast<uint16_t>(p[1]) << 8) | \
-                         (static_cast<uint16_t>(p[0]))))
-#define FXSYS_WORD_GET_MSBFIRST(p)                            \
-  (static_cast<uint16_t>((static_cast<uint16_t>(p[0]) << 8) | \
-                         (static_cast<uint16_t>(p[1]))))
-#define FXSYS_DWORD_GET_LSBFIRST(p)                                            \
-  ((static_cast<uint32_t>(p[3]) << 24) | (static_cast<uint32_t>(p[2]) << 16) | \
-   (static_cast<uint32_t>(p[1]) << 8) | (static_cast<uint32_t>(p[0])))
-#define FXSYS_DWORD_GET_MSBFIRST(p)                                            \
-  ((static_cast<uint32_t>(p[0]) << 24) | (static_cast<uint32_t>(p[1]) << 16) | \
-   (static_cast<uint32_t>(p[2]) << 8) | (static_cast<uint32_t>(p[3])))
 
 constexpr uint32_t kTestValues32[] = {
     0x0,      0x1,        0x2,        0x3,        0x4,       0xfe,
@@ -37,7 +23,7 @@ TEST(ByteOrder, ByteSwapToLE16) {
   for (uint32_t v = 0; v < 0x10000; ++v) {
     const uint16_t v16 = v;
     uint16_t expected =
-        FXSYS_WORD_GET_LSBFIRST(reinterpret_cast<const uint8_t*>(&v16));
+        FXSYS_UINT16_GET_LSBFIRST(reinterpret_cast<const uint8_t*>(&v16));
     EXPECT_EQ(expected, ByteSwapToLE16(v16)) << v;
   }
 }
@@ -45,7 +31,7 @@ TEST(ByteOrder, ByteSwapToLE16) {
 TEST(ByteOrder, ByteSwapToLE32) {
   for (uint32_t v : kTestValues32) {
     uint32_t expected =
-        FXSYS_DWORD_GET_LSBFIRST(reinterpret_cast<const uint8_t*>(&v));
+        FXSYS_UINT32_GET_LSBFIRST(reinterpret_cast<const uint8_t*>(&v));
     EXPECT_EQ(expected, ByteSwapToLE32(v)) << v;
   }
 }
@@ -55,7 +41,7 @@ TEST(ByteOrder, ByteSwapToBE16) {
   for (uint32_t v = 0; v < 0x10000; ++v) {
     const uint16_t v16 = v;
     uint16_t expected =
-        FXSYS_WORD_GET_MSBFIRST(reinterpret_cast<const uint8_t*>(&v16));
+        FXSYS_UINT16_GET_MSBFIRST(reinterpret_cast<const uint8_t*>(&v16));
     EXPECT_EQ(expected, ByteSwapToBE16(v16)) << v;
   }
 }
@@ -63,7 +49,7 @@ TEST(ByteOrder, ByteSwapToBE16) {
 TEST(ByteOrder, ByteSwapToBE32) {
   for (uint32_t v : kTestValues32) {
     uint32_t expected =
-        FXSYS_DWORD_GET_MSBFIRST(reinterpret_cast<const uint8_t*>(&v));
+        FXSYS_UINT32_GET_MSBFIRST(reinterpret_cast<const uint8_t*>(&v));
     EXPECT_EQ(expected, ByteSwapToBE32(v)) << v;
   }
 }
