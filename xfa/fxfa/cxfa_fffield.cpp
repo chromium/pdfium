@@ -36,6 +36,13 @@
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_script.h"
 
+namespace {
+
+constexpr float kMinUIHeight = 4.32f;
+constexpr float kDefaultUIHeight = 2.0f;
+
+}  // namespace
+
 CXFA_FFField::CXFA_FFField(CXFA_Node* pNode) : CXFA_FFWidget(pNode) {}
 
 CXFA_FFField::~CXFA_FFField() = default;
@@ -295,8 +302,8 @@ void CXFA_FFField::CapTopBottomPlacement(const CXFA_Margin* margin,
   if (fWidth > rtWidget.width)
     m_UIRect.width += fWidth - rtWidget.width;
 
-  if (fHeight == XFA_DEFAULTUI_HEIGHT && m_UIRect.height < XFA_MINUI_HEIGHT) {
-    m_UIRect.height = XFA_MINUI_HEIGHT;
+  if (fHeight == kDefaultUIHeight && m_UIRect.height < kMinUIHeight) {
+    m_UIRect.height = kMinUIHeight;
     m_CaptionRect.top += rtUIMargin.top + rtUIMargin.height;
   } else if (fHeight > rtWidget.height) {
     m_UIRect.height += fHeight - rtWidget.height;
@@ -325,8 +332,8 @@ void CXFA_FFField::CapLeftRightPlacement(const CXFA_Margin* margin,
       m_CaptionRect.left += fWidth - rtWidget.width;
   }
 
-  if (fHeight == XFA_DEFAULTUI_HEIGHT && m_UIRect.height < XFA_MINUI_HEIGHT) {
-    m_UIRect.height = XFA_MINUI_HEIGHT;
+  if (fHeight == kDefaultUIHeight && m_UIRect.height < kMinUIHeight) {
+    m_UIRect.height = kMinUIHeight;
     m_CaptionRect.top += rtUIMargin.top + rtUIMargin.height;
   } else if (fHeight > rtWidget.height) {
     m_UIRect.height += fHeight - rtWidget.height;
