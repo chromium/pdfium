@@ -25,6 +25,10 @@
 #include "third_party/base/check_op.h"
 
 #if defined(PDFIUM_PRINT_TEXT_WITH_GDI)
+#include "core/fxcrt/widestring.h"
+#endif
+
+#if defined(PDFIUM_PRINT_TEXT_WITH_GDI)
 namespace {
 
 class ScopedState {
