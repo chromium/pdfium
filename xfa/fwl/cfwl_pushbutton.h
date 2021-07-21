@@ -11,6 +11,7 @@
 
 #define FWL_STATE_PSB_Hovered (1 << FWL_STATE_WGT_MAX)
 #define FWL_STATE_PSB_Pressed (1 << (FWL_STATE_WGT_MAX + 1))
+#define FWL_STATE_PSB_Default (1 << (FWL_STATE_WGT_MAX + 2))
 
 class CFWL_MessageKey;
 class CFWL_MessageMouse;

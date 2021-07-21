@@ -11,6 +11,7 @@
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_message.h"
 #include "xfa/fwl/cfwl_notedriver.h"
+#include "xfa/fwl/cfwl_pushbutton.h"
 
 CFWL_WidgetMgr::CFWL_WidgetMgr(AdapterIface* pAdapter, CFWL_App* pApp)
     : m_pAdapter(pAdapter), m_pApp(pApp) {
@@ -134,15 +135,15 @@ CFWL_Widget* CFWL_WidgetMgr::GetWidgetAtPoint(CFWL_Widget* parent,
 }
 
 CFWL_Widget* CFWL_WidgetMgr::GetDefaultButton(CFWL_Widget* pParent) const {
-  if ((pParent->GetClassID() == FWL_Type::PushButton) &&
-      (pParent->GetStates() & (1 << (FWL_STATE_WGT_MAX + 2)))) {
+  if (pParent->GetClassID() == FWL_Type::PushButton &&
+      (pParent->GetStates() & FWL_STATE_PSB_Default)) {
     return pParent;
   }
 
   CFWL_Widget* child = GetFirstChildWidget(pParent);
   while (child) {
-    if ((child->GetClassID() == FWL_Type::PushButton) &&
-        (child->GetStates() & (1 << (FWL_STATE_WGT_MAX + 2)))) {
+    if (child->GetClassID() == FWL_Type::PushButton &&
+        (child->GetStates() & FWL_STATE_PSB_Default)) {
       return child;
     }
     if (CFWL_Widget* find = GetDefaultButton(child))
