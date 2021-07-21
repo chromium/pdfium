@@ -756,7 +756,7 @@ void CFWL_Edit::InitCaret() {
 
 void CFWL_Edit::UpdateCursorRect() {
   int32_t bidi_level;
-  if (m_pEditEngine->GetLength() > 0) {
+  if (m_pEditEngine->CanGenerateCharacterInfo()) {
     std::tie(bidi_level, m_CaretRect) =
         m_pEditEngine->GetCharacterInfo(m_CursorPosition);
   } else {

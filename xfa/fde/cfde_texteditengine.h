@@ -166,6 +166,10 @@ class CFDE_TextEditEngine : public CFGAS_TxtBreak::Engine {
   // <start_idx, count>
   std::pair<size_t, size_t> BoundsForWordAt(size_t idx) const;
 
+  // Note that if CanGenerateCharacterInfo() returns false, then
+  // GetCharacterInfo() cannot be called.
+  bool CanGenerateCharacterInfo() const { return text_length_ > 0 && font_; }
+
   // Returns <bidi level, character rect>
   std::pair<int32_t, CFX_RectF> GetCharacterInfo(int32_t start_idx);
   std::vector<CFX_RectF> GetCharacterRectsInRange(int32_t start_idx,

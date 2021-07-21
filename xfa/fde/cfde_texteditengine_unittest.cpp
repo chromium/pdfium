@@ -501,6 +501,26 @@ TEST_F(CFDE_TextEditEngineTest, GetIndexForPointLineBreaks) {
   EXPECT_EQ(11U, engine()->GetIndexForPoint({999999.0f, 9999999.0f}));
 }
 
+TEST_F(CFDE_TextEditEngineTest, CanGenerateCharacterInfo) {
+  RetainPtr<CFGAS_GEFont> font = engine()->GetFont();
+  ASSERT_TRUE(font);
+
+  // Has font but no text.
+  EXPECT_FALSE(engine()->CanGenerateCharacterInfo());
+
+  // Has font and text.
+  engine()->Insert(0, L"Hi!");
+  EXPECT_TRUE(engine()->CanGenerateCharacterInfo());
+
+  // Has text but no font.
+  engine()->SetFont(nullptr);
+  EXPECT_FALSE(engine()->CanGenerateCharacterInfo());
+
+  // Has no text and no font.
+  engine()->Clear();
+  EXPECT_FALSE(engine()->CanGenerateCharacterInfo());
+}
+
 TEST_F(CFDE_TextEditEngineTest, GetCharacterInfo) {
   std::pair<int32_t, CFX_RectF> char_info;
 

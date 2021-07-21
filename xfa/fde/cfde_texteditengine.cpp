@@ -1041,7 +1041,7 @@ void CFDE_TextEditEngine::RebuildPieces() {
   text_piece_info_.clear();
 
   // Must have a font set in order to break the text.
-  if (text_length_ == 0 || !font_)
+  if (!CanGenerateCharacterInfo())
     return;
 
   bool initialized_bounding_box = false;
