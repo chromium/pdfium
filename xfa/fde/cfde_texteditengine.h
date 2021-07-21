@@ -139,8 +139,6 @@ class CFDE_TextEditEngine : public CFGAS_TxtBreak::Engine {
   bool Undo();
   void ClearOperationRecords();
 
-  // This is not const it can trigger a |Layout|.
-  size_t GetIndexBefore(size_t pos);
   size_t GetIndexLeft(size_t pos) const;
   size_t GetIndexRight(size_t pos) const;
   size_t GetIndexUp(size_t pos) const;

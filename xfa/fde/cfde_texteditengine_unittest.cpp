@@ -4,6 +4,7 @@
 
 #include "xfa/fde/cfde_texteditengine.h"
 
+#include "core/fxcrt/fx_extension.h"
 #include "core/fxge/text_char_pos.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/xfa_test_environment.h"
@@ -702,21 +703,26 @@ TEST_F(CFDE_TextEditEngineTest, CursorMovement) {
   EXPECT_EQ(2U, engine()->GetIndexUp(2));
   EXPECT_EQ(2U, engine()->GetIndexDown(2));
   EXPECT_EQ(1U, engine()->GetIndexLeft(2));
-  EXPECT_EQ(1U, engine()->GetIndexBefore(2));
   EXPECT_EQ(3U, engine()->GetIndexRight(2));
   EXPECT_EQ(0U, engine()->GetIndexAtStartOfLine(2));
   EXPECT_EQ(5U, engine()->GetIndexAtEndOfLine(2));
 
   engine()->Clear();
   engine()->Insert(0, L"The book is \"مدخل إلى C++\"");
-  EXPECT_EQ(2U, engine()->GetIndexBefore(3));    // Before is to left.
-  EXPECT_EQ(16U, engine()->GetIndexBefore(15));  // Before is to right.
-  EXPECT_EQ(22U, engine()->GetIndexBefore(23));  // Before is to left.
+  EXPECT_FALSE(FX_IsOdd(engine()->GetCharacterInfo(3).first));
+  EXPECT_EQ(2U, engine()->GetIndexLeft(3));
+  EXPECT_EQ(4U, engine()->GetIndexRight(3));
+  EXPECT_TRUE(FX_IsOdd(engine()->GetCharacterInfo(15).first));
+  EXPECT_EQ(14U, engine()->GetIndexLeft(15));
+  EXPECT_EQ(16U, engine()->GetIndexRight(15));
+  EXPECT_FALSE(FX_IsOdd(engine()->GetCharacterInfo(23).first));
+  EXPECT_EQ(22U, engine()->GetIndexLeft(23));
+  EXPECT_EQ(24U, engine()->GetIndexRight(23));
 
   engine()->Clear();
   engine()->Insert(0, L"Hello\r\nWorld\r\nTest");
   // Move to end of Hello from start of World.
-  engine()->SetSelection(engine()->GetIndexBefore(7U), 7);
+  engine()->SetSelection(engine()->GetIndexLeft(7U), 7);
   EXPECT_STREQ(L"\r\nWorld", engine()->GetSelectedText().c_str());
 
   // Second letter in Hello from second letter in World.
@@ -756,7 +762,7 @@ TEST_F(CFDE_TextEditEngineTest, CursorMovement) {
   engine()->Clear();
   engine()->Insert(0, L"Hello\rWorld\rTest");
   // Move to end of Hello from start of World.
-  engine()->SetSelection(engine()->GetIndexBefore(6U), 6);
+  engine()->SetSelection(engine()->GetIndexLeft(6U), 6);
   EXPECT_STREQ(L"\rWorld", engine()->GetSelectedText().c_str());
 
   // Second letter in Hello from second letter in World.
@@ -787,7 +793,7 @@ TEST_F(CFDE_TextEditEngineTest, CursorMovement) {
   engine()->Clear();
   engine()->Insert(0, L"Hello\nWorld\nTest");
   // Move to end of Hello from start of World.
-  engine()->SetSelection(engine()->GetIndexBefore(6U), 6);
+  engine()->SetSelection(engine()->GetIndexLeft(6U), 6);
   EXPECT_STREQ(L"\nWorld", engine()->GetSelectedText().c_str());
 
   // Second letter in Hello from second letter in World.

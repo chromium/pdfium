@@ -393,14 +393,6 @@ void CFDE_TextEditEngine::ClearOperationRecords() {
   next_operation_index_to_insert_ = 0;
 }
 
-size_t CFDE_TextEditEngine::GetIndexBefore(size_t pos) {
-  int32_t bidi_level;
-  CFX_RectF rect;
-  // Possible |Layout| triggered by |GetCharacterInfo|.
-  std::tie(bidi_level, rect) = GetCharacterInfo(pos);
-  return FX_IsOdd(bidi_level) ? GetIndexRight(pos) : GetIndexLeft(pos);
-}
-
 size_t CFDE_TextEditEngine::GetIndexLeft(size_t pos) const {
   if (pos == 0)
     return 0;
