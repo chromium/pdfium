@@ -30,7 +30,7 @@ void CFWL_ScrollBarTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
     eState = FWLTHEME_STATE_Disable;
 
   CFGAS_GEGraphics* pGraphics = pParams.GetGraphics();
-  bool bVert = !!pWidget->GetStylesEx();
+  bool bVert = !!pWidget->GetStyleExts();
   switch (pParams.m_iPart) {
     case CFWL_ThemePart::Part::kForeArrow: {
       DrawMaxMinBtn(pGraphics, pParams.m_PartRect,

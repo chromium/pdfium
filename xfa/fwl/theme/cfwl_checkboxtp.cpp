@@ -223,7 +223,7 @@ void CFWL_CheckBoxTP::DrawCheckSign(CFWL_Widget* pWidget,
   CFX_RectF rtSign(pRtBox);
   uint32_t dwColor = iState & CFWL_PartState_Neutral ? 0xFFA9A9A9 : 0xFF000000;
 
-  uint32_t dwStyle = pWidget->GetStylesEx();
+  uint32_t dwStyle = pWidget->GetStyleExts();
   rtSign.Deflate(rtSign.width / 4, rtSign.height / 4);
   switch (dwStyle & FWL_STYLEEXT_CKB_SignShapeMask) {
     case FWL_STYLEEXT_CKB_SignShapeCheck:

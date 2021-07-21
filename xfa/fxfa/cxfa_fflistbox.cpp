@@ -51,7 +51,7 @@ bool CXFA_FFListBox::LoadWidget() {
   CFWL_ListBox* pListBox = cppgc::MakeGarbageCollected<CFWL_ListBox>(
       GetFWLApp()->GetHeap()->GetAllocationHandle(), GetFWLApp(),
       CFWL_Widget::Properties(), nullptr);
-  pListBox->ModifyStyles(FWL_WGTSTYLE_VScroll | FWL_WGTSTYLE_NoBackground,
+  pListBox->ModifyStyles(FWL_STYLE_WGT_VScroll | FWL_STYLE_WGT_NoBackground,
                          0xFFFFFFFF);
   SetNormalWidget(pListBox);
   pListBox->SetAdapterIface(this);
@@ -76,7 +76,7 @@ bool CXFA_FFListBox::LoadWidget() {
       dwExtendedStyle |= FWL_STYLEEXT_LTB_MultiSelection;
 
     dwExtendedStyle |= GetAlignment();
-    pListBox->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
+    pListBox->ModifyStyleExts(dwExtendedStyle, 0xFFFFFFFF);
     for (int32_t selected : m_pNode->GetSelectedItems())
       pListBox->SetSelItem(pListBox->GetItem(nullptr, selected), true);
   }

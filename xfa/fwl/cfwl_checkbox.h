@@ -19,12 +19,12 @@
 #define FWL_STYLEEXT_CKB_SignShapeSquare (4L << 10)
 #define FWL_STYLEEXT_CKB_SignShapeStar (5L << 10)
 #define FWL_STYLEEXT_CKB_SignShapeMask (7L << 10)
-#define FWL_STATE_CKB_Hovered (1 << FWL_WGTSTATE_MAX)
-#define FWL_STATE_CKB_Pressed (1 << (FWL_WGTSTATE_MAX + 1))
+#define FWL_STATE_CKB_Hovered (1 << FWL_STATE_WGT_MAX)
+#define FWL_STATE_CKB_Pressed (1 << (FWL_STATE_WGT_MAX + 1))
 #define FWL_STATE_CKB_Unchecked 0
-#define FWL_STATE_CKB_Checked (1 << (FWL_WGTSTATE_MAX + 2))
-#define FWL_STATE_CKB_Neutral (2 << (FWL_WGTSTATE_MAX + 2))
-#define FWL_STATE_CKB_CheckMask (3L << (FWL_WGTSTATE_MAX + 2))
+#define FWL_STATE_CKB_Checked (1 << (FWL_STATE_WGT_MAX + 2))
+#define FWL_STATE_CKB_Neutral (2 << (FWL_STATE_WGT_MAX + 2))
+#define FWL_STATE_CKB_CheckMask (3L << (FWL_STATE_WGT_MAX + 2))
 
 class CFWL_MessageKey;
 class CFWL_MessageMouse;

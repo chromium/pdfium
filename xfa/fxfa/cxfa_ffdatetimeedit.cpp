@@ -89,7 +89,7 @@ void CXFA_FFDateTimeEdit::UpdateWidgetProperty() {
   uint32_t dwExtendedStyle = FWL_STYLEEXT_DTP_ShortDateFormat;
   dwExtendedStyle |= UpdateUIProperty();
   dwExtendedStyle |= GetAlignment();
-  GetNormalWidget()->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
+  GetNormalWidget()->ModifyStyleExts(dwExtendedStyle, 0xFFFFFFFF);
 
   uint32_t dwEditStyles = 0;
   Optional<int32_t> numCells = m_pNode->GetNumberOfCells();
@@ -102,7 +102,7 @@ void CXFA_FFDateTimeEdit::UpdateWidgetProperty() {
   if (!m_pNode->IsHorizontalScrollPolicyOff())
     dwEditStyles |= FWL_STYLEEXT_EDT_AutoHScroll;
 
-  pPicker->ModifyEditStylesEx(dwEditStyles, 0xFFFFFFFF);
+  pPicker->ModifyEditStyleExts(dwEditStyles, 0xFFFFFFFF);
 }
 
 uint32_t CXFA_FFDateTimeEdit::GetAlignment() {
@@ -231,13 +231,13 @@ bool CXFA_FFDateTimeEdit::CanCopy() {
 }
 
 bool CXFA_FFDateTimeEdit::CanCut() {
-  if (GetPickerWidget()->GetStylesEx() & FWL_STYLEEXT_EDT_ReadOnly)
+  if (GetPickerWidget()->GetStyleExts() & FWL_STYLEEXT_EDT_ReadOnly)
     return false;
   return GetPickerWidget()->HasSelection();
 }
 
 bool CXFA_FFDateTimeEdit::CanPaste() {
-  return !(GetPickerWidget()->GetStylesEx() & FWL_STYLEEXT_EDT_ReadOnly);
+  return !(GetPickerWidget()->GetStyleExts() & FWL_STYLEEXT_EDT_ReadOnly);
 }
 
 bool CXFA_FFDateTimeEdit::CanSelectAll() {

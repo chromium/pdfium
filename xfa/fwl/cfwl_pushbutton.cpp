@@ -27,8 +27,8 @@ FWL_Type CFWL_PushButton::GetClassID() const {
 }
 
 void CFWL_PushButton::SetStates(uint32_t dwStates) {
-  if (dwStates & FWL_WGTSTATE_Disabled) {
-    m_Properties.m_dwStates = FWL_WGTSTATE_Disabled;
+  if (dwStates & FWL_STATE_WGT_Disabled) {
+    m_Properties.m_dwStates = FWL_STATE_WGT_Disabled;
     return;
   }
   CFWL_Widget::SetStates(dwStates);
@@ -60,16 +60,16 @@ void CFWL_PushButton::DrawBkground(CFGAS_GEGraphics* pGraphics,
   param.m_dwStates = GetPartStates();
   param.m_matrix = matrix;
   param.m_PartRect = m_ClientRect;
-  if (m_Properties.m_dwStates & FWL_WGTSTATE_Focused)
+  if (m_Properties.m_dwStates & FWL_STATE_WGT_Focused)
     param.m_pRtData = &m_CaptionRect;
   GetThemeProvider()->DrawBackground(param);
 }
 
 uint32_t CFWL_PushButton::GetPartStates() {
   uint32_t dwStates = CFWL_PartState_Normal;
-  if (m_Properties.m_dwStates & FWL_WGTSTATE_Focused)
+  if (m_Properties.m_dwStates & FWL_STATE_WGT_Focused)
     dwStates |= CFWL_PartState_Focused;
-  if (m_Properties.m_dwStates & FWL_WGTSTATE_Disabled)
+  if (m_Properties.m_dwStates & FWL_STATE_WGT_Disabled)
     dwStates = CFWL_PartState_Disabled;
   else if (m_Properties.m_dwStates & FWL_STATE_PSB_Pressed)
     dwStates |= CFWL_PartState_Pressed;
@@ -129,12 +129,12 @@ void CFWL_PushButton::OnDrawWidget(CFGAS_GEGraphics* pGraphics,
 }
 
 void CFWL_PushButton::OnFocusGained() {
-  m_Properties.m_dwStates |= FWL_WGTSTATE_Focused;
+  m_Properties.m_dwStates |= FWL_STATE_WGT_Focused;
   RepaintRect(m_ClientRect);
 }
 
 void CFWL_PushButton::OnFocusLost() {
-  m_Properties.m_dwStates &= ~FWL_WGTSTATE_Focused;
+  m_Properties.m_dwStates &= ~FWL_STATE_WGT_Focused;
   RepaintRect(m_ClientRect);
 }
 

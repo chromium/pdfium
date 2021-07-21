@@ -85,7 +85,7 @@ void CXFA_FFTextEdit::UpdateWidgetProperty() {
   if (m_pNode->IsMultiLine()) {
     dwExtendedStyle |= FWL_STYLEEXT_EDT_MultiLine | FWL_STYLEEXT_EDT_WantReturn;
     if (!m_pNode->IsVerticalScrollPolicyOff()) {
-      dwStyle |= FWL_WGTSTYLE_VScroll;
+      dwStyle |= FWL_STYLE_WGT_VScroll;
       dwExtendedStyle |= FWL_STYLEEXT_EDT_AutoVScroll;
     }
   } else if (!m_pNode->IsHorizontalScrollPolicyOff()) {
@@ -115,7 +115,7 @@ void CXFA_FFTextEdit::UpdateWidgetProperty() {
 
   dwExtendedStyle |= GetAlignment();
   GetNormalWidget()->ModifyStyles(dwStyle, 0xFFFFFFFF);
-  GetNormalWidget()->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
+  GetNormalWidget()->ModifyStyleExts(dwExtendedStyle, 0xFFFFFFFF);
 }
 
 bool CXFA_FFTextEdit::AcceptsFocusOnButtonDown(uint32_t dwFlags,
@@ -372,13 +372,13 @@ bool CXFA_FFTextEdit::CanCopy() {
 }
 
 bool CXFA_FFTextEdit::CanCut() {
-  if (ToEdit(GetNormalWidget())->GetStylesEx() & FWL_STYLEEXT_EDT_ReadOnly)
+  if (ToEdit(GetNormalWidget())->GetStyleExts() & FWL_STYLEEXT_EDT_ReadOnly)
     return false;
   return ToEdit(GetNormalWidget())->HasSelection();
 }
 
 bool CXFA_FFTextEdit::CanPaste() {
-  return !(ToEdit(GetNormalWidget())->GetStylesEx() &
+  return !(ToEdit(GetNormalWidget())->GetStyleExts() &
            FWL_STYLEEXT_EDT_ReadOnly);
 }
 

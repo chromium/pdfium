@@ -23,7 +23,7 @@ void CFWL_ComboEdit::ClearSelected() {
 }
 
 void CFWL_ComboEdit::SetSelected() {
-  m_Properties.m_dwStates |= FWL_WGTSTATE_Focused;
+  m_Properties.m_dwStates |= FWL_STATE_WGT_Focused;
   SelectAll();
 }
 
@@ -31,19 +31,19 @@ void CFWL_ComboEdit::OnProcessMessage(CFWL_Message* pMessage) {
   bool backDefault = true;
   switch (pMessage->GetType()) {
     case CFWL_Message::Type::kSetFocus: {
-      m_Properties.m_dwStates |= FWL_WGTSTATE_Focused;
+      m_Properties.m_dwStates |= FWL_STATE_WGT_Focused;
       backDefault = false;
       break;
     }
     case CFWL_Message::Type::kKillFocus: {
-      m_Properties.m_dwStates &= ~FWL_WGTSTATE_Focused;
+      m_Properties.m_dwStates &= ~FWL_STATE_WGT_Focused;
       backDefault = false;
       break;
     }
     case CFWL_Message::Type::kMouse: {
       CFWL_MessageMouse* pMsg = static_cast<CFWL_MessageMouse*>(pMessage);
       if ((pMsg->m_dwCmd == FWL_MouseCommand::LeftButtonDown) &&
-          ((m_Properties.m_dwStates & FWL_WGTSTATE_Focused) == 0)) {
+          ((m_Properties.m_dwStates & FWL_STATE_WGT_Focused) == 0)) {
         SetSelected();
       }
       break;

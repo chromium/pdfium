@@ -35,7 +35,7 @@ void CFWL_Barcode::DrawWidget(CFGAS_GEGraphics* pGraphics,
   if (!pGraphics)
     return;
 
-  if ((m_Properties.m_dwStates & FWL_WGTSTATE_Focused) == 0) {
+  if ((m_Properties.m_dwStates & FWL_STATE_WGT_Focused) == 0) {
     GenerateBarcodeImageCache();
     if (!m_pBarcodeEngine || m_eStatus != Status::kEncodeSuccess)
       return;

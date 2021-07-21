@@ -49,7 +49,7 @@ bool CXFA_FFCheckButton::LoadWidget() {
   m_pOldDelegate = pCheckBox->GetDelegate();
   pCheckBox->SetDelegate(this);
   if (m_pNode->IsRadioButton())
-    pCheckBox->ModifyStylesEx(FWL_STYLEEXT_CKB_RadioButton, 0xFFFFFFFF);
+    pCheckBox->ModifyStyleExts(FWL_STYLEEXT_CKB_RadioButton, 0xFFFFFFFF);
 
   {
     CFWL_Widget::ScopedUpdateLock update_lock(pCheckBox);
@@ -93,7 +93,7 @@ void CXFA_FFCheckButton::UpdateWidgetProperty() {
   if (button_->IsAllowNeutral())
     dwStyleEx |= FWL_STYLEEXT_CKB_3State;
 
-  pCheckBox->ModifyStylesEx(
+  pCheckBox->ModifyStyleExts(
       dwStyleEx, FWL_STYLEEXT_CKB_SignShapeMask | FWL_STYLEEXT_CKB_3State);
 }
 

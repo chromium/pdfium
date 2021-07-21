@@ -64,7 +64,7 @@ void CXFA_FFNumericEdit::UpdateWidgetProperty() {
   if (!m_pNode->IsOpenAccess() || !GetDoc()->GetXFADoc()->IsInteractive())
     dwExtendedStyle |= FWL_STYLEEXT_EDT_ReadOnly;
 
-  GetNormalWidget()->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
+  GetNormalWidget()->ModifyStyleExts(dwExtendedStyle, 0xFFFFFFFF);
 }
 
 void CXFA_FFNumericEdit::OnProcessEvent(CFWL_Event* pEvent) {

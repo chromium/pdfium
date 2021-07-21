@@ -11,7 +11,6 @@
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fwl/cfwl_themebackground.h"
-#include "xfa/fwl/fwl_widgetdef.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
 
 namespace {
@@ -48,13 +47,13 @@ void CFWL_Caret::DrawWidget(CFGAS_GEGraphics* pGraphics,
 void CFWL_Caret::ShowCaret() {
   m_pTimer = std::make_unique<CFX_Timer>(GetFWLApp()->GetTimerHandler(), this,
                                          kBlinkPeriodMs);
-  RemoveStates(FWL_WGTSTATE_Invisible);
+  RemoveStates(FWL_STATE_WGT_Invisible);
   SetStates(kStateHighlight);
 }
 
 void CFWL_Caret::HideCaret() {
   m_pTimer.reset();
-  SetStates(FWL_WGTSTATE_Invisible);
+  SetStates(FWL_STATE_WGT_Invisible);
 }
 
 void CFWL_Caret::DrawCaretBK(CFGAS_GEGraphics* pGraphics,

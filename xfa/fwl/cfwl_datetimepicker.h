@@ -70,7 +70,8 @@ class CFWL_DateTimePicker final : public CFWL_Widget {
 
   CFX_RectF GetBBox() const;
   void SetEditLimit(int32_t nLimit) { m_pEdit->SetLimit(nLimit); }
-  void ModifyEditStylesEx(uint32_t dwStylesExAdded, uint32_t dwStylesExRemoved);
+  void ModifyEditStyleExts(uint32_t dwStyleExtsAdded,
+                           uint32_t dwStyleExtsRemoved);
 
   bool IsMonthCalendarVisible() const;
   void ShowMonthCalendar();

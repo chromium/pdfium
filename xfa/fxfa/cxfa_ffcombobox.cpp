@@ -101,12 +101,12 @@ void CXFA_FFComboBox::UpdateWidgetProperty() {
     dwExtendedStyle |= FWL_STYLEEXT_CMB_ReadOnly;
   }
   dwExtendedStyle |= GetAlignment();
-  GetNormalWidget()->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
+  GetNormalWidget()->ModifyStyleExts(dwExtendedStyle, 0xFFFFFFFF);
 
   if (!m_pNode->IsHorizontalScrollPolicyOff())
     dwEditStyles |= FWL_STYLEEXT_EDT_AutoHScroll;
 
-  pComboBox->EditModifyStylesEx(dwEditStyles, 0xFFFFFFFF);
+  pComboBox->EditModifyStyleExts(dwEditStyles, 0xFFFFFFFF);
 }
 
 bool CXFA_FFComboBox::OnRButtonUp(uint32_t dwFlags, const CFX_PointF& point) {

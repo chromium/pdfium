@@ -59,9 +59,7 @@ class CFWL_ScrollBar final : public CFWL_Widget,
                  const Properties& properties,
                  CFWL_Widget* pOuter);
 
-  bool IsVertical() const {
-    return !!(m_Properties.m_dwStyleExes & FWL_STYLEEXT_SCB_Vert);
-  }
+  bool IsVertical() const { return !!(GetStyleExts() & FWL_STYLEEXT_SCB_Vert); }
   void DrawTrack(CFGAS_GEGraphics* pGraphics,
                  bool bLower,
                  const CFX_Matrix& mtMatrix);
