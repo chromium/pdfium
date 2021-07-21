@@ -11,8 +11,6 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/fx_system.h"
-#include "core/fxge/fx_freetype.h"
 #include "third_party/base/span.h"
 
 /* Font pitch and family flags */
@@ -39,10 +37,6 @@
 
 /* Other font flags */
 #define FXFONT_USEEXTERNATTR 0x80000
-
-#define GET_TT_SHORT(w) (uint16_t)(((w)[0] << 8) | (w)[1])
-#define GET_TT_LONG(w) \
-  (uint32_t)(((w)[0] << 24) | ((w)[1] << 16) | ((w)[2] << 8) | (w)[3])
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 class SkTypeface;
