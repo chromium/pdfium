@@ -6,6 +6,8 @@
 
 #include "core/fxcodec/jpx/cjpx_decoder.h"
 
+#include <string.h>
+
 #include <algorithm>
 #include <limits>
 #include <utility>

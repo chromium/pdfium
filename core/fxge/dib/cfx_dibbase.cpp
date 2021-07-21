@@ -6,6 +6,8 @@
 
 #include "core/fxge/dib/cfx_dibbase.h"
 
+#include <string.h>
+
 #include <algorithm>
 #include <memory>
 #include <utility>

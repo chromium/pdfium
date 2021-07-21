@@ -7,6 +7,7 @@
 #include "core/fxcodec/jpeg/jpegmodule.h"
 
 #include <setjmp.h>
+#include <string.h>
 
 #include <memory>
 #include <utility>

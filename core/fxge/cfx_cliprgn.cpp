@@ -6,6 +6,8 @@
 
 #include "core/fxge/cfx_cliprgn.h"
 
+#include <string.h>
+
 #include <utility>
 
 #include "core/fxge/dib/cfx_dibitmap.h"

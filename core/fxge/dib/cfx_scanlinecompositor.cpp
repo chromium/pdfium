@@ -6,6 +6,8 @@
 
 #include "core/fxge/dib/cfx_scanlinecompositor.h"
 
+#include <string.h>
+
 #include <algorithm>
 
 #include "core/fxge/dib/fx_dib.h"
