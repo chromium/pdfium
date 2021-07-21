@@ -112,7 +112,7 @@ bool CXFA_FFListBox::IsDataChanged() {
 
   for (int32_t i = 0; i < iSels; ++i) {
     CFWL_ListBox::Item* hlistItem = pListBox->GetItem(nullptr, iSelArray[i]);
-    if (!(hlistItem->GetStates() & FWL_ITEMSTATE_LTB_Selected))
+    if (!hlistItem->IsSelected())
       return true;
   }
   return false;

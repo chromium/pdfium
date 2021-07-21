@@ -21,8 +21,6 @@
 #define FWL_STYLEEXT_LTB_RightAlign (2L << 4)
 #define FWL_STYLEEXT_LTB_AlignMask (3L << 4)
 #define FWL_STYLEEXT_LTB_ShowScrollBarFocus (1L << 10)
-#define FWL_ITEMSTATE_LTB_Selected (1L << 0)
-#define FWL_ITEMSTATE_LTB_Focused (1L << 1)
 
 class CFWL_MessageMouse;
 class CFWL_MessageMouseWheel;
@@ -34,16 +32,19 @@ class CFWL_ListBox : public CFWL_Widget {
     explicit Item(const WideString& text);
     ~Item();
 
+    bool IsSelected() const { return m_bIsSelected; }
+    void SetSelected(bool enable) { m_bIsSelected = enable; }
+    bool IsFocused() const { return m_bIsFocused; }
+    void SetFocused(bool enable) { m_bIsFocused = enable; }
     CFX_RectF GetRect() const { return m_ItemRect; }
     void SetRect(const CFX_RectF& rect) { m_ItemRect = rect; }
-    uint32_t GetStates() const { return m_dwStates; }
-    void SetStates(uint32_t dwStates) { m_dwStates = dwStates; }
     WideString GetText() const { return m_wsText; }
 
    private:
-    uint32_t m_dwStates = 0;
+    bool m_bIsSelected = false;
+    bool m_bIsFocused = false;
     CFX_RectF m_ItemRect;
-    WideString m_wsText;
+    const WideString m_wsText;
   };
 
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
@@ -93,9 +94,7 @@ class CFWL_ListBox : public CFWL_Widget {
   const CFX_RectF& GetRTClient() const { return m_ClientRect; }
 
  private:
-  void SetSelectionDirect(Item* hItem, bool bSelect);
   bool IsMultiSelection() const;
-  bool IsItemSelected(Item* hItem);
   void ClearSelection();
   void SelectAll();
   Item* GetFocusedItem();

@@ -112,9 +112,7 @@ int32_t CFWL_ListBox::CountSelItems() {
   int32_t iCount = CountItems(this);
   for (int32_t i = 0; i < iCount; i++) {
     Item* pItem = GetItem(this, i);
-    if (!pItem)
-      continue;
-    if (pItem->GetStates() & FWL_ITEMSTATE_LTB_Selected)
+    if (pItem && pItem->IsSelected())
       iRet++;
   }
   return iRet;
@@ -134,7 +132,7 @@ int32_t CFWL_ListBox::GetSelIndex(int32_t nIndex) {
     Item* pItem = GetItem(this, i);
     if (!pItem)
       return -1;
-    if (pItem->GetStates() & FWL_ITEMSTATE_LTB_Selected) {
+    if (pItem->IsSelected()) {
       if (index == nIndex)
         return i;
       index++;
@@ -154,7 +152,7 @@ void CFWL_ListBox::SetSelItem(Item* pItem, bool bSelect) {
     return;
   }
   if (IsMultiSelection())
-    SetSelectionDirect(pItem, bSelect);
+    pItem->SetSelected(bSelect);
   else
     SetSelection(pItem, pItem, bSelect);
 }
@@ -191,36 +189,26 @@ CFWL_ListBox::Item* CFWL_ListBox::GetListItem(Item* pItem, uint32_t dwKeyCode) {
 void CFWL_ListBox::SetSelection(Item* hStart, Item* hEnd, bool bSelected) {
   int32_t iStart = GetItemIndex(this, hStart);
   int32_t iEnd = GetItemIndex(this, hEnd);
-  if (iStart > iEnd) {
-    int32_t iTemp = iStart;
-    iStart = iEnd;
-    iEnd = iTemp;
-  }
+  if (iStart > iEnd)
+    std::swap(iStart, iEnd);
   if (bSelected) {
     int32_t iCount = CountItems(this);
-    for (int32_t i = 0; i < iCount; i++)
-      SetSelectionDirect(GetItem(this, i), false);
+    for (int32_t i = 0; i < iCount; i++) {
+      Item* pItem = GetItem(this, i);
+      if (pItem)
+        pItem->SetSelected(false);
+    }
   }
-  for (; iStart <= iEnd; iStart++)
-    SetSelectionDirect(GetItem(this, iStart), bSelected);
-}
-
-void CFWL_ListBox::SetSelectionDirect(Item* pItem, bool bSelect) {
-  if (!pItem)
-    return;
-
-  uint32_t dwOldStyle = pItem->GetStates();
-  bSelect ? dwOldStyle |= FWL_ITEMSTATE_LTB_Selected
-          : dwOldStyle &= ~FWL_ITEMSTATE_LTB_Selected;
-  pItem->SetStates(dwOldStyle);
+  while (iStart <= iEnd) {
+    Item* pItem = GetItem(this, iStart);
+    if (pItem)
+      pItem->SetSelected(bSelected);
+    ++iStart;
+  }
 }
 
 bool CFWL_ListBox::IsMultiSelection() const {
   return m_Properties.m_dwStyleExts & FWL_STYLEEXT_LTB_MultiSelection;
-}
-
-bool CFWL_ListBox::IsItemSelected(Item* pItem) {
-  return pItem && (pItem->GetStates() & FWL_ITEMSTATE_LTB_Selected) != 0;
 }
 
 void CFWL_ListBox::ClearSelection() {
@@ -230,9 +218,9 @@ void CFWL_ListBox::ClearSelection() {
     Item* pItem = GetItem(this, i);
     if (!pItem)
       continue;
-    if (!(pItem->GetStates() & FWL_ITEMSTATE_LTB_Selected))
+    if (!pItem->IsSelected())
       continue;
-    SetSelectionDirect(pItem, false);
+    pItem->SetSelected(false);
     if (!bMulti)
       return;
   }
@@ -256,8 +244,8 @@ CFWL_ListBox::Item* CFWL_ListBox::GetFocusedItem() {
   for (int32_t i = 0; i < iCount; i++) {
     Item* pItem = GetItem(this, i);
     if (!pItem)
-      return nullptr;
-    if (pItem->GetStates() & FWL_ITEMSTATE_LTB_Focused)
+      break;
+    if (pItem->IsFocused())
       return pItem;
   }
   return nullptr;
@@ -268,16 +256,10 @@ void CFWL_ListBox::SetFocusItem(Item* pItem) {
   if (pItem == hFocus)
     return;
 
-  if (hFocus) {
-    uint32_t dwStyle = hFocus->GetStates();
-    dwStyle &= ~FWL_ITEMSTATE_LTB_Focused;
-    hFocus->SetStates(dwStyle);
-  }
-  if (pItem) {
-    uint32_t dwStyle = pItem->GetStates();
-    dwStyle |= FWL_ITEMSTATE_LTB_Focused;
-    pItem->SetStates(dwStyle);
-  }
+  if (hFocus)
+    hFocus->SetFocused(false);
+  if (pItem)
+    pItem->SetFocused(true);
 }
 
 CFWL_ListBox::Item* CFWL_ListBox::GetItemAtPoint(const CFX_PointF& point) {
@@ -381,15 +363,14 @@ void CFWL_ListBox::DrawItem(CFGAS_GEGraphics* pGraphics,
                             int32_t Index,
                             const CFX_RectF& rtItem,
                             const CFX_Matrix& mtMatrix) {
-  uint32_t dwItemStyles = pItem ? pItem->GetStates() : 0;
-  uint32_t dwPartStates = CFWL_PartState_Normal;
+  CFWL_PartStateMask dwPartStates = CFWL_PartState_Normal;
   if (m_Properties.m_dwStates & FWL_STATE_WGT_Disabled)
     dwPartStates = CFWL_PartState_Disabled;
-  else if (dwItemStyles & FWL_ITEMSTATE_LTB_Selected)
+  else if (pItem && pItem->IsSelected())
     dwPartStates = CFWL_PartState_Selected;
 
-  if (m_Properties.m_dwStates & FWL_STATE_WGT_Focused &&
-      dwItemStyles & FWL_ITEMSTATE_LTB_Focused) {
+  if ((m_Properties.m_dwStates & FWL_STATE_WGT_Focused) && pItem &&
+      pItem->IsFocused()) {
     dwPartStates |= CFWL_PartState_Focused;
   }
 
@@ -703,14 +684,13 @@ void CFWL_ListBox::OnLButtonDown(CFWL_MessageMouse* pMsg) {
 
   if (IsMultiSelection()) {
     if (pMsg->m_dwFlags & FWL_KEYFLAG_Ctrl) {
-      bool bSelected = IsItemSelected(pItem);
-      SetSelectionDirect(pItem, !bSelected);
+      pItem->SetSelected(!pItem->IsSelected());
       m_hAnchor = pItem;
     } else if (pMsg->m_dwFlags & FWL_KEYFLAG_Shift) {
       if (m_hAnchor)
         SetSelection(m_hAnchor, pItem, true);
       else
-        SetSelectionDirect(pItem, true);
+        pItem->SetSelected(true);
     } else {
       SetSelection(pItem, pItem, true);
       m_hAnchor = pItem;
@@ -768,7 +748,7 @@ void CFWL_ListBox::OnVK(Item* pItem, bool bShift, bool bCtrl) {
       if (m_hAnchor)
         SetSelection(m_hAnchor, pItem, true);
       else
-        SetSelectionDirect(pItem, true);
+        pItem->SetSelected(true);
     } else {
       SetSelection(pItem, pItem, true);
       m_hAnchor = pItem;
@@ -878,9 +858,8 @@ void CFWL_ListBox::DeleteString(Item* pItem) {
   if (iSel >= 0) {
     Item* item = GetItem(this, iSel);
     if (item)
-      item->SetStates(item->GetStates() | FWL_ITEMSTATE_LTB_Selected);
+      item->SetSelected(true);
   }
-
   m_ItemArray.erase(m_ItemArray.begin() + nIndex);
 }
 
