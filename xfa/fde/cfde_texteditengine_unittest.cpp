@@ -500,6 +500,44 @@ TEST_F(CFDE_TextEditEngineTest, GetIndexForPointLineBreaks) {
   EXPECT_EQ(11U, engine()->GetIndexForPoint({999999.0f, 9999999.0f}));
 }
 
+TEST_F(CFDE_TextEditEngineTest, GetCharacterInfo) {
+  std::pair<int32_t, CFX_RectF> char_info;
+
+  engine()->Insert(0, L"Hi!");
+  ASSERT_EQ(3U, engine()->GetLength());
+
+  char_info = engine()->GetCharacterInfo(0);
+  EXPECT_EQ(0, char_info.first);
+  EXPECT_FLOAT_EQ(0.0f, char_info.second.Left());
+  EXPECT_FLOAT_EQ(0.0f, char_info.second.Top());
+  EXPECT_FLOAT_EQ(9.996f, char_info.second.Width());
+  EXPECT_FLOAT_EQ(12.0f, char_info.second.Height());
+
+  char_info = engine()->GetCharacterInfo(1);
+  EXPECT_EQ(0, char_info.first);
+  EXPECT_FLOAT_EQ(9.996f, char_info.second.Left());
+  EXPECT_FLOAT_EQ(0.0f, char_info.second.Top());
+  EXPECT_FLOAT_EQ(3.996f, char_info.second.Width());
+  EXPECT_FLOAT_EQ(12.0f, char_info.second.Height());
+
+  char_info = engine()->GetCharacterInfo(2);
+  EXPECT_EQ(0, char_info.first);
+  EXPECT_FLOAT_EQ(13.992f, char_info.second.Left());
+  EXPECT_FLOAT_EQ(0.0f, char_info.second.Top());
+  EXPECT_FLOAT_EQ(3.996f, char_info.second.Width());
+  EXPECT_FLOAT_EQ(12.0f, char_info.second.Height());
+
+  // Allow retrieving the character info for the end of the text, as that
+  // information can be used to determine where to draw a cursor positioned at
+  // the end.
+  char_info = engine()->GetCharacterInfo(3);
+  EXPECT_EQ(0, char_info.first);
+  EXPECT_FLOAT_EQ(17.988f, char_info.second.Left());
+  EXPECT_FLOAT_EQ(0.0f, char_info.second.Top());
+  EXPECT_FLOAT_EQ(0.0f, char_info.second.Width());
+  EXPECT_FLOAT_EQ(12.0f, char_info.second.Height());
+}
+
 TEST_F(CFDE_TextEditEngineTest, BoundsForWordAt) {
   size_t start_idx;
   size_t count;
