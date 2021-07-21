@@ -13,6 +13,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/check.h"
 #include "xfa/fwl/cfwl_eventscroll.h"
+#include "xfa/fwl/cfwl_themepart.h"
 #include "xfa/fwl/cfwl_widget.h"
 
 #define FWL_STYLEEXT_SCB_Horz (0L << 0)
@@ -86,18 +87,22 @@ class CFWL_ScrollBar final : public CFWL_Widget,
   bool DoScroll(CFWL_EventScroll::Code dwCode, float fPos);
   void DoMouseDown(int32_t iItem,
                    const CFX_RectF& rtItem,
-                   int32_t& iState,
+                   CFWL_PartState* pState,
                    const CFX_PointF& point);
   void DoMouseUp(int32_t iItem,
                  const CFX_RectF& rtItem,
-                 int32_t& iState,
+                 CFWL_PartState* pState,
                  const CFX_PointF& point);
   void DoMouseMove(int32_t iItem,
                    const CFX_RectF& rtItem,
-                   int32_t& iState,
+                   CFWL_PartState* pState,
                    const CFX_PointF& point);
-  void DoMouseLeave(int32_t iItem, const CFX_RectF& rtItem, int32_t& iState);
-  void DoMouseHover(int32_t iItem, const CFX_RectF& rtItem, int32_t& iState);
+  void DoMouseLeave(int32_t iItem,
+                    const CFX_RectF& rtItem,
+                    CFWL_PartState* pState);
+  void DoMouseHover(int32_t iItem,
+                    const CFX_RectF& rtItem,
+                    CFWL_PartState* pState);
 
   float m_fRangeMin = 0.0f;
   float m_fRangeMax = -1.0f;
@@ -105,11 +110,11 @@ class CFWL_ScrollBar final : public CFWL_Widget,
   float m_fStepSize = 0.0f;
   float m_fPos = 0.0f;
   float m_fTrackPos = 0.0f;
-  int32_t m_iMinButtonState = CFWL_PartState_Normal;
-  int32_t m_iMaxButtonState = CFWL_PartState_Normal;
-  int32_t m_iThumbButtonState = CFWL_PartState_Normal;
-  int32_t m_iMinTrackState = CFWL_PartState_Normal;
-  int32_t m_iMaxTrackState = CFWL_PartState_Normal;
+  CFWL_PartState m_iMinButtonState = CFWL_PartState_Normal;
+  CFWL_PartState m_iMaxButtonState = CFWL_PartState_Normal;
+  CFWL_PartState m_iThumbButtonState = CFWL_PartState_Normal;
+  CFWL_PartState m_iMinTrackState = CFWL_PartState_Normal;
+  CFWL_PartState m_iMaxTrackState = CFWL_PartState_Normal;
   float m_fLastTrackPos = 0.0f;
   CFX_PointF m_cpTrackPoint;
   int32_t m_iMouseWheel = 0;

@@ -7,11 +7,15 @@
 #ifndef XFA_FWL_CFWL_THEMEPART_H_
 #define XFA_FWL_CFWL_THEMEPART_H_
 
+#include <type_traits>
+
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
 
-enum CFWL_PartState {
+class CFWL_Widget;
+
+enum CFWL_PartState : uint32_t {
   CFWL_PartState_Normal = 0,
 
   CFWL_PartState_Checked = 1 << 1,
@@ -28,8 +32,7 @@ enum CFWL_PartState {
   CFWL_PartState_RSelected = 1 << 13,
   CFWL_PartState_Selected = 1 << 14
 };
-
-class CFWL_Widget;
+using CFWL_PartStateMask = std::underlying_type<CFWL_PartState>::type;
 
 class CFWL_ThemePart {
  public:
@@ -87,7 +90,7 @@ class CFWL_ThemePart {
   CFX_Matrix m_matrix;
   CFX_RectF m_PartRect;
   UnownedPtr<const CFX_RectF> m_pRtData;
-  uint32_t m_dwStates = CFWL_PartState_Normal;
+  CFWL_PartStateMask m_dwStates = CFWL_PartState_Normal;
   Part m_iPart = Part::kNone;
   bool m_bMaximize = false;
   bool m_bStaticBackground = false;
