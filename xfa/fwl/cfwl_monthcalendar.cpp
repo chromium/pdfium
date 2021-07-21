@@ -220,14 +220,14 @@ void CFWL_MonthCalendar::DrawDatesInBK(CFGAS_GEGraphics* pGraphics,
   int32_t iCount = fxcrt::CollectionSize<int32_t>(m_DateArray);
   for (int32_t j = 0; j < iCount; j++) {
     DATEINFO* pDataInfo = m_DateArray[j].get();
-    if (pDataInfo->dwStates & FWL_ITEMSTATE_MCD_Selected) {
+    if (pDataInfo->bSelected) {
       params.m_dwStates |= CFWL_PartState_Selected;
-      if (pDataInfo->dwStates & FWL_ITEMSTATE_MCD_Flag) {
+      if (pDataInfo->bFlagged) {
         params.m_dwStates |= CFWL_PartState_Flagged;
       }
     } else if (j == m_iHovered - 1) {
       params.m_dwStates |= CFWL_PartState_Hovered;
-    } else if (pDataInfo->dwStates & FWL_ITEMSTATE_MCD_Flag) {
+    } else if (pDataInfo->bFlagged) {
       params.m_dwStates = CFWL_PartState_Flagged;
       pTheme->DrawBackground(params);
     }
@@ -285,7 +285,7 @@ void CFWL_MonthCalendar::DrawDatesIn(CFGAS_GEGraphics* pGraphics,
     DATEINFO* pDataInfo = m_DateArray[j].get();
     params.m_wsText = pDataInfo->wsDay;
     params.m_PartRect = pDataInfo->rect;
-    params.m_dwStates = pDataInfo->dwStates;
+    params.m_dwStates = pDataInfo->AsPartStateMask();
     if (j + 1 == m_iHovered)
       params.m_dwStates |= CFWL_PartState_Hovered;
 
@@ -469,20 +469,16 @@ void CFWL_MonthCalendar::ResetDateItem() {
   int32_t iDays = FX_DaysInMonth(m_iCurYear, m_iCurMonth);
   int32_t iDayOfWeek =
       CFX_DateTime(m_iCurYear, m_iCurMonth, 1, 0, 0, 0, 0).GetDayOfWeek();
-  for (int32_t i = 0; i < iDays; i++) {
+  for (int32_t i = 0; i < iDays; ++i, ++iDayOfWeek) {
     if (iDayOfWeek >= 7)
       iDayOfWeek = 0;
 
-    uint32_t dwStates = 0;
-    if (m_iYear == m_iCurYear && m_iMonth == m_iCurMonth && m_iDay == (i + 1))
-      dwStates |= FWL_ITEMSTATE_MCD_Flag;
-    if (pdfium::Contains(m_SelDayArray, i + 1))
-      dwStates |= FWL_ITEMSTATE_MCD_Selected;
-
-    CFX_RectF rtDate;
-    m_DateArray.push_back(std::make_unique<DATEINFO>(
-        i + 1, iDayOfWeek, dwStates, rtDate, WideString::Format(L"%d", i + 1)));
-    iDayOfWeek++;
+    const bool bFlagged =
+        m_iYear == m_iCurYear && m_iMonth == m_iCurMonth && m_iDay == i + 1;
+    const bool bSelected = pdfium::Contains(m_SelDayArray, i + 1);
+    m_DateArray.push_back(
+        std::make_unique<DATEINFO>(i + 1, iDayOfWeek, bFlagged, bSelected,
+                                   WideString::Format(L"%d", i + 1)));
   }
 }
 
@@ -536,7 +532,7 @@ void CFWL_MonthCalendar::RemoveSelDay() {
   int32_t iDatesCount = fxcrt::CollectionSize<int32_t>(m_DateArray);
   for (int32_t iSelDay : m_SelDayArray) {
     if (iSelDay <= iDatesCount)
-      m_DateArray[iSelDay - 1]->dwStates &= ~FWL_ITEMSTATE_MCD_Selected;
+      m_DateArray[iSelDay - 1]->bSelected = false;
   }
   m_SelDayArray.clear();
 }
@@ -548,7 +544,7 @@ void CFWL_MonthCalendar::AddSelDay(int32_t iDay) {
 
   RemoveSelDay();
   if (iDay <= fxcrt::CollectionSize<int32_t>(m_DateArray))
-    m_DateArray[iDay - 1]->dwStates |= FWL_ITEMSTATE_MCD_Selected;
+    m_DateArray[iDay - 1]->bSelected = true;
 
   m_SelDayArray.push_back(iDay);
 }
@@ -732,13 +728,22 @@ void CFWL_MonthCalendar::OnMouseLeave(CFWL_MessageMouse* pMsg) {
 
 CFWL_MonthCalendar::DATEINFO::DATEINFO(int32_t day,
                                        int32_t dayofweek,
-                                       uint32_t dwSt,
-                                       CFX_RectF rc,
+                                       bool bFlag,
+                                       bool bSelect,
                                        const WideString& wsday)
     : iDay(day),
       iDayOfWeek(dayofweek),
-      dwStates(dwSt),
-      rect(rc),
+      bFlagged(bFlag),
+      bSelected(bSelect),
       wsDay(wsday) {}
 
 CFWL_MonthCalendar::DATEINFO::~DATEINFO() = default;
+
+CFWL_PartStateMask CFWL_MonthCalendar::DATEINFO::AsPartStateMask() const {
+  CFWL_PartStateMask dwStates = 0;
+  if (bFlagged)
+    dwStates |= CFWL_PartState_Flagged;
+  if (bSelected)
+    dwStates |= CFWL_PartState_Selected;
+  return dwStates;
+}

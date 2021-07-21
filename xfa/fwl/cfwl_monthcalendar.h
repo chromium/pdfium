@@ -14,9 +14,6 @@
 #include "xfa/fwl/cfwl_event.h"
 #include "xfa/fwl/cfwl_widget.h"
 
-#define FWL_ITEMSTATE_MCD_Flag (1L << 0)
-#define FWL_ITEMSTATE_MCD_Selected (1L << 1)
-
 class CFWL_MessageMouse;
 
 class CFWL_MonthCalendar final : public CFWL_Widget {
@@ -71,19 +68,23 @@ class CFWL_MonthCalendar final : public CFWL_Widget {
     int32_t iMonth;
     int32_t iDay;
   };
+
   struct DATEINFO {
     DATEINFO(int32_t day,
              int32_t dayofweek,
-             uint32_t dwSt,
-             CFX_RectF rc,
+             bool bFlag,
+             bool bSelect,
              const WideString& wsday);
     ~DATEINFO();
 
-    int32_t iDay;
-    int32_t iDayOfWeek;
-    uint32_t dwStates;
+    CFWL_PartStateMask AsPartStateMask() const;
+
+    const int32_t iDay;
+    const int32_t iDayOfWeek;
+    bool bFlagged;
+    bool bSelected;
     CFX_RectF rect;
-    WideString wsDay;
+    const WideString wsDay;
   };
 
   CFWL_MonthCalendar(CFWL_App* app,

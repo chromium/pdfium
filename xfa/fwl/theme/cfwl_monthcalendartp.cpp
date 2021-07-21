@@ -84,8 +84,8 @@ void CFWL_MonthCalendarTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
 
 void CFWL_MonthCalendarTP::DrawText(const CFWL_ThemeText& pParams) {
   EnsureTTOInitialized();
-  if ((pParams.m_iPart == CFWL_ThemePart::Part::kDatesIn) &&
-      !(pParams.m_dwStates & FWL_ITEMSTATE_MCD_Flag) &&
+  if (pParams.m_iPart == CFWL_ThemePart::Part::kDatesIn &&
+      !(pParams.m_dwStates & CFWL_PartState_Flagged) &&
       (pParams.m_dwStates &
        (CFWL_PartState_Hovered | CFWL_PartState_Selected))) {
     m_pTextOut->SetTextColor(0xFFFFFFFF);
