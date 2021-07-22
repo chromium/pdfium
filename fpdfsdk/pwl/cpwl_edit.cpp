@@ -50,7 +50,7 @@ bool CPWL_Edit::RePosChildWnd() {
     CFX_FloatRect rcWindow = m_rcOldWindow;
     CFX_FloatRect rcVScroll =
         CFX_FloatRect(rcWindow.right, rcWindow.bottom,
-                      rcWindow.right + PWL_SCROLLBAR_WIDTH, rcWindow.top);
+                      rcWindow.right + CPWL_ScrollBar::kWidth, rcWindow.top);
 
     ObservedPtr<CPWL_Edit> thisObserved(this);
     pVSB->Move(rcVScroll, true, false);
@@ -76,12 +76,9 @@ bool CPWL_Edit::RePosChildWnd() {
 CFX_FloatRect CPWL_Edit::GetClientRect() const {
   float width = static_cast<float>(GetBorderWidth() + GetInnerBorderWidth());
   CFX_FloatRect rcClient = GetWindowRect().GetDeflated(width, width);
-  if (CPWL_ScrollBar* pVSB = GetVScrollBar()) {
-    if (pVSB->IsVisible()) {
-      rcClient.right -= PWL_SCROLLBAR_WIDTH;
-    }
-  }
-
+  CPWL_ScrollBar* pVSB = GetVScrollBar();
+  if (pVSB && pVSB->IsVisible())
+    rcClient.right -= CPWL_ScrollBar::kWidth;
   return rcClient;
 }
 

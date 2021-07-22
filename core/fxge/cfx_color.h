@@ -21,21 +21,21 @@ struct CFX_Color {
     FX_ARGB argb;
   };
 
-  explicit CFX_Color(FX_COLORREF ref)
+  explicit constexpr CFX_Color(FX_COLORREF ref)
       : CFX_Color(FXARGB_R(ref), FXARGB_G(ref), FXARGB_B(ref)) {}
 
-  CFX_Color(Type type = CFX_Color::Type::kTransparent,
-            float color1 = 0.0f,
-            float color2 = 0.0f,
-            float color3 = 0.0f,
-            float color4 = 0.0f)
+  constexpr CFX_Color(Type type = CFX_Color::Type::kTransparent,
+                      float color1 = 0.0f,
+                      float color2 = 0.0f,
+                      float color3 = 0.0f,
+                      float color4 = 0.0f)
       : nColorType(type),
         fColor1(color1),
         fColor2(color2),
         fColor3(color3),
         fColor4(color4) {}
 
-  CFX_Color(int32_t r, int32_t g, int32_t b)
+  constexpr CFX_Color(int32_t r, int32_t g, int32_t b)
       : nColorType(CFX_Color::Type::kRGB),
         fColor1(r / 255.0f),
         fColor2(g / 255.0f),

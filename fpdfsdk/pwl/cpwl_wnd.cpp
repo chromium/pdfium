@@ -25,6 +25,14 @@ constexpr float kDefaultFontSize = 9.0f;
 
 }  // namespace
 
+// static
+const CFX_Color CPWL_Wnd::kDefaultBlackColor =
+    CFX_Color(CFX_Color::Type::kGray, 0);
+
+// static
+const CFX_Color CPWL_Wnd::kDefaultWhiteColor =
+    CFX_Color(CFX_Color::Type::kGray, 1);
+
 CPWL_Wnd::CreateParams::CreateParams()
     : fFontSize(kDefaultFontSize), sDash(3, 0, 0) {}
 
@@ -491,9 +499,9 @@ void CPWL_Wnd::CreateVScrollBar(const CreateParams& cp) {
 
   CreateParams scp = cp;
   scp.dwFlags = PWS_BACKGROUND | PWS_AUTOTRANSPARENT | PWS_NOREFRESHCLIP;
-  scp.sBackgroundColor = PWL_DEFAULT_WHITECOLOR;
+  scp.sBackgroundColor = kDefaultWhiteColor;
   scp.eCursorType = IPWL_SystemHandler::CursorStyle::kArrow;
-  scp.nTransparency = PWL_SCROLLBAR_TRANSPARENCY;
+  scp.nTransparency = CPWL_ScrollBar::kTransparency;
 
   auto pBar = std::make_unique<CPWL_ScrollBar>(scp, CloneAttachedData());
   m_pVScrollBar = pBar.get();
@@ -593,7 +601,7 @@ bool CPWL_Wnd::RePosChildWnd() {
     rcContent.Normalize();
   }
   CFX_FloatRect rcVScroll =
-      CFX_FloatRect(rcContent.right - PWL_SCROLLBAR_WIDTH, rcContent.bottom,
+      CFX_FloatRect(rcContent.right - CPWL_ScrollBar::kWidth, rcContent.bottom,
                     rcContent.right - 1.0f, rcContent.top);
 
   ObservedPtr<CPWL_Wnd> thisObserved(this);

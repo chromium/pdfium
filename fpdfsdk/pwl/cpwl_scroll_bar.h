@@ -91,6 +91,9 @@ struct PWL_SCROLL_PRIVATEDATA {
 
 class CPWL_ScrollBar final : public CPWL_Wnd, public CFX_Timer::CallbackIface {
  public:
+  static constexpr float kWidth = 12.0f;
+  static constexpr uint8_t kTransparency = 150;
+
   CPWL_ScrollBar(
       const CreateParams& cp,
       std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData);

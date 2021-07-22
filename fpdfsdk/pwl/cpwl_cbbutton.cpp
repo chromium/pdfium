@@ -54,7 +54,7 @@ void CPWL_CBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
   path.AppendPoint(pt1, CFX_Path::Point::Type::kLine);
 
   pDevice->DrawPath(&path, &mtUser2Device, nullptr,
-                    PWL_DEFAULT_BLACKCOLOR.ToFXColor(GetTransparency()), 0,
+                    kDefaultBlackColor.ToFXColor(GetTransparency()), 0,
                     CFX_FillRenderOptions::EvenOddOptions());
 }
 

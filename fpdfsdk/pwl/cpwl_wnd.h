@@ -72,13 +72,11 @@ struct CPWL_Dash {
   int32_t nPhase;
 };
 
-#define PWL_SCROLLBAR_WIDTH 12.0f
-#define PWL_SCROLLBAR_TRANSPARENCY 150
-#define PWL_DEFAULT_BLACKCOLOR CFX_Color(CFX_Color::Type::kGray, 0)
-#define PWL_DEFAULT_WHITECOLOR CFX_Color(CFX_Color::Type::kGray, 1)
-
 class CPWL_Wnd : public Observable {
  public:
+  static const CFX_Color kDefaultBlackColor;
+  static const CFX_Color kDefaultWhiteColor;
+
   class ProviderIface : public Observable {
    public:
     virtual ~ProviderIface() = default;
