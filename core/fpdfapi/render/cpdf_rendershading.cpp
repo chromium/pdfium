@@ -495,46 +495,51 @@ void DrawLatticeGouraudShading(
   }
 }
 
-struct Coon_BezierCoeff {
-  void FromPoints(float p0, float p1, float p2, float p3) {
+struct CoonBezierCoeff {
+  void InitFromPoints(float p0, float p1, float p2, float p3) {
     a = -p0 + 3 * p1 - 3 * p2 + p3;
     b = 3 * p0 - 6 * p1 + 3 * p2;
     c = -3 * p0 + 3 * p1;
     d = p0;
   }
-  Coon_BezierCoeff first_half() {
-    Coon_BezierCoeff result;
-    result.a = a / 8;
-    result.b = b / 4;
-    result.c = c / 2;
-    result.d = d;
-    return result;
-  }
-  Coon_BezierCoeff second_half() {
-    Coon_BezierCoeff result;
-    result.a = a / 8;
-    result.b = 3 * a / 8 + b / 4;
-    result.c = 3 * a / 8 + b / 2 + c / 2;
-    result.d = a / 8 + b / 4 + c / 2 + d;
-    return result;
-  }
-  void GetPoints(float p[4]) {
-    p[0] = d;
-    p[1] = c / 3 + p[0];
-    p[2] = b / 3 - p[0] + 2 * p[1];
-    p[3] = a + p[0] - 3 * p[1] + 3 * p[2];
-  }
-  void BezierInterpol(Coon_BezierCoeff& C1,
-                      Coon_BezierCoeff& C2,
-                      Coon_BezierCoeff& D1,
-                      Coon_BezierCoeff& D2) {
+
+  void InitFromBezierInterpolation(const CoonBezierCoeff& C1,
+                                   const CoonBezierCoeff& C2,
+                                   const CoonBezierCoeff& D1,
+                                   const CoonBezierCoeff& D2) {
     a = (D1.a + D2.a) / 2;
     b = (D1.b + D2.b) / 2;
     c = (D1.c + D2.c) / 2 - (C1.a / 8 + C1.b / 4 + C1.c / 2) +
         (C2.a / 8 + C2.b / 4) + (-C1.d + D2.d) / 2 - (C2.a + C2.b) / 2;
     d = C1.a / 8 + C1.b / 4 + C1.c / 2 + C1.d;
   }
-  float Distance() {
+
+  CoonBezierCoeff first_half() const {
+    CoonBezierCoeff result;
+    result.a = a / 8;
+    result.b = b / 4;
+    result.c = c / 2;
+    result.d = d;
+    return result;
+  }
+
+  CoonBezierCoeff second_half() const {
+    CoonBezierCoeff result;
+    result.a = a / 8;
+    result.b = 3 * a / 8 + b / 4;
+    result.c = 3 * a / 8 + b / 2 + c / 2;
+    result.d = a / 8 + b / 4 + c / 2 + d;
+    return result;
+  }
+
+  void GetPoints(float p[4]) const {
+    p[0] = d;
+    p[1] = c / 3 + p[0];
+    p[2] = b / 3 - p[0] + 2 * p[1];
+    p[3] = a + p[0] - 3 * p[1] + 3 * p[2];
+  }
+
+  float Distance() const {
     float dis = a + b + c;
     return dis < 0 ? -dis : dis;
   }
@@ -545,43 +550,42 @@ struct Coon_BezierCoeff {
   float d;
 };
 
-struct Coon_Bezier {
-  Coon_BezierCoeff x, y;
-  void FromPoints(float x0,
-                  float y0,
-                  float x1,
-                  float y1,
-                  float x2,
-                  float y2,
-                  float x3,
-                  float y3) {
-    x.FromPoints(x0, x1, x2, x3);
-    y.FromPoints(y0, y1, y2, y3);
+struct CoonBezier {
+  void InitFromPoints(float x0,
+                      float y0,
+                      float x1,
+                      float y1,
+                      float x2,
+                      float y2,
+                      float x3,
+                      float y3) {
+    x.InitFromPoints(x0, x1, x2, x3);
+    y.InitFromPoints(y0, y1, y2, y3);
   }
 
-  Coon_Bezier first_half() {
-    Coon_Bezier result;
+  void InitFromBezierInterpolation(const CoonBezier& C1,
+                                   const CoonBezier& C2,
+                                   const CoonBezier& D1,
+                                   const CoonBezier& D2) {
+    x.InitFromBezierInterpolation(C1.x, C2.x, D1.x, D2.x);
+    y.InitFromBezierInterpolation(C1.y, C2.y, D1.y, D2.y);
+  }
+
+  CoonBezier first_half() const {
+    CoonBezier result;
     result.x = x.first_half();
     result.y = y.first_half();
     return result;
   }
 
-  Coon_Bezier second_half() {
-    Coon_Bezier result;
+  CoonBezier second_half() const {
+    CoonBezier result;
     result.x = x.second_half();
     result.y = y.second_half();
     return result;
   }
 
-  void BezierInterpol(Coon_Bezier& C1,
-                      Coon_Bezier& C2,
-                      Coon_Bezier& D1,
-                      Coon_Bezier& D2) {
-    x.BezierInterpol(C1.x, C2.x, D1.x, D2.x);
-    y.BezierInterpol(C1.y, C2.y, D1.y, D2.y);
-  }
-
-  void GetPoints(pdfium::span<CFX_Path::Point> path_points) {
+  void GetPoints(pdfium::span<CFX_Path::Point> path_points) const {
     constexpr size_t kPointsCount = 4;
     float points_x[kPointsCount];
     float points_y[kPointsCount];
@@ -591,7 +595,7 @@ struct Coon_Bezier {
       path_points[i].m_Point = {points_x[i], points_y[i]};
   }
 
-  void GetPointsReverse(pdfium::span<CFX_Path::Point> path_points) {
+  void GetPointsReverse(pdfium::span<CFX_Path::Point> path_points) const {
     constexpr size_t kPointsCount = 4;
     float points_x[kPointsCount];
     float points_y[kPointsCount];
@@ -604,7 +608,10 @@ struct Coon_Bezier {
     }
   }
 
-  float Distance() { return x.Distance() + y.Distance(); }
+  float Distance() const { return x.Distance() + y.Distance(); }
+
+  CoonBezierCoeff x;
+  CoonBezierCoeff y;
 };
 
 int Interpolate(int p1, int p2, int delta1, int delta2, bool* overflow) {
@@ -632,15 +639,11 @@ int BiInterpolImpl(int c0,
   return Interpolate(x1, x2, y, y_scale, overflow);
 }
 
-struct Coon_Color {
-  Coon_Color() { memset(comp, 0, sizeof(int) * 3); }
+struct CoonColor {
+  CoonColor() = default;
 
   // Returns true if successful, false if overflow detected.
-  bool BiInterpol(Coon_Color colors[4],
-                  int x,
-                  int y,
-                  int x_scale,
-                  int y_scale) {
+  bool BiInterpol(CoonColor colors[4], int x, int y, int x_scale, int y_scale) {
     bool overflow = false;
     for (int i = 0; i < 3; i++) {
       comp[i] = BiInterpolImpl(colors[0].comp[i], colors[1].comp[i],
@@ -650,27 +653,28 @@ struct Coon_Color {
     return !overflow;
   }
 
-  int Distance(Coon_Color& o) {
+  int Distance(const CoonColor& o) const {
     return std::max({abs(comp[0] - o.comp[0]), abs(comp[1] - o.comp[1]),
                      abs(comp[2] - o.comp[2])});
   }
 
-  int comp[3];
+  int comp[3] = {};
 };
 
-#define COONCOLOR_THRESHOLD 4
-struct CPDF_PatchDrawer {
+struct PatchDrawer {
+  static constexpr int kCoonColorThreshold = 4;
+
   void Draw(int x_scale,
             int y_scale,
             int left,
             int bottom,
-            Coon_Bezier C1,
-            Coon_Bezier C2,
-            Coon_Bezier D1,
-            Coon_Bezier D2) {
+            CoonBezier C1,
+            CoonBezier C2,
+            CoonBezier D1,
+            CoonBezier D2) {
     bool bSmall = C1.Distance() < 2 && C2.Distance() < 2 && D1.Distance() < 2 &&
                   D2.Distance() < 2;
-    Coon_Color div_colors[4];
+    CoonColor div_colors[4];
     int d_bottom = 0;
     int d_left = 0;
     int d_top = 0;
@@ -699,8 +703,8 @@ struct CPDF_PatchDrawer {
     }
 
     if (bSmall ||
-        (d_bottom < COONCOLOR_THRESHOLD && d_left < COONCOLOR_THRESHOLD &&
-         d_top < COONCOLOR_THRESHOLD && d_right < COONCOLOR_THRESHOLD)) {
+        (d_bottom < kCoonColorThreshold && d_left < kCoonColorThreshold &&
+         d_top < kCoonColorThreshold && d_right < kCoonColorThreshold)) {
       pdfium::span<CFX_Path::Point> points = path.GetPoints();
       C1.GetPoints(points.subspan(0, 4));
       D2.GetPoints(points.subspan(3, 4));
@@ -717,19 +721,19 @@ struct CPDF_PatchDrawer {
                      div_colors[0].comp[2]),
           0, fill_options);
     } else {
-      if (d_bottom < COONCOLOR_THRESHOLD && d_top < COONCOLOR_THRESHOLD) {
-        Coon_Bezier m1;
-        m1.BezierInterpol(D1, D2, C1, C2);
+      if (d_bottom < kCoonColorThreshold && d_top < kCoonColorThreshold) {
+        CoonBezier m1;
+        m1.InitFromBezierInterpolation(D1, D2, C1, C2);
         y_scale *= 2;
         bottom *= 2;
         Draw(x_scale, y_scale, left, bottom, C1, m1, D1.first_half(),
              D2.first_half());
         Draw(x_scale, y_scale, left, bottom + 1, m1, C2, D1.second_half(),
              D2.second_half());
-      } else if (d_left < COONCOLOR_THRESHOLD &&
-                 d_right < COONCOLOR_THRESHOLD) {
-        Coon_Bezier m2;
-        m2.BezierInterpol(C1, C2, D1, D2);
+      } else if (d_left < kCoonColorThreshold &&
+                 d_right < kCoonColorThreshold) {
+        CoonBezier m2;
+        m2.InitFromBezierInterpolation(C1, C2, D1, D2);
         x_scale *= 2;
         left *= 2;
         Draw(x_scale, y_scale, left, bottom, C1.first_half(), C2.first_half(),
@@ -737,13 +741,14 @@ struct CPDF_PatchDrawer {
         Draw(x_scale, y_scale, left + 1, bottom, C1.second_half(),
              C2.second_half(), m2, D2);
       } else {
-        Coon_Bezier m1, m2;
-        m1.BezierInterpol(D1, D2, C1, C2);
-        m2.BezierInterpol(C1, C2, D1, D2);
-        Coon_Bezier m1f = m1.first_half();
-        Coon_Bezier m1s = m1.second_half();
-        Coon_Bezier m2f = m2.first_half();
-        Coon_Bezier m2s = m2.second_half();
+        CoonBezier m1;
+        CoonBezier m2;
+        m1.InitFromBezierInterpolation(D1, D2, C1, C2);
+        m2.InitFromBezierInterpolation(C1, C2, D1, D2);
+        CoonBezier m1f = m1.first_half();
+        CoonBezier m1s = m1.second_half();
+        CoonBezier m2f = m2.first_half();
+        CoonBezier m2s = m2.second_half();
         x_scale *= 2;
         y_scale *= 2;
         left *= 2;
@@ -765,7 +770,7 @@ struct CPDF_PatchDrawer {
   CFX_RenderDevice* pDevice;
   int bNoPathSmooth;
   int alpha;
-  Coon_Color patch_colors[4];
+  CoonColor patch_colors[4];
 };
 
 void DrawCoonPatchMeshes(
@@ -787,7 +792,7 @@ void DrawCoonPatchMeshes(
   if (!stream.Load())
     return;
 
-  CPDF_PatchDrawer patch;
+  PatchDrawer patch;
   patch.alpha = alpha;
   patch.pDevice = &device;
   patch.bNoPathSmooth = bNoPathSmooth;
@@ -815,10 +820,10 @@ void DrawCoonPatchMeshes(
         tempCoords[i] = coords[(flag * 3 + i) % 12];
       }
       memcpy(coords, tempCoords, sizeof(tempCoords));
-      Coon_Color tempColors[2];
+      CoonColor tempColors[2];
       tempColors[0] = patch.patch_colors[flag];
       tempColors[1] = patch.patch_colors[(flag + 1) % 4];
-      memcpy(patch.patch_colors, tempColors, sizeof(Coon_Color) * 2);
+      memcpy(patch.patch_colors, tempColors, sizeof(CoonColor) * 2);
     }
     for (i = iStartPoint; i < point_count; i++) {
       if (!stream.CanReadCoords())
@@ -844,15 +849,18 @@ void DrawCoonPatchMeshes(
         bbox.top <= 0 || bbox.bottom >= (float)pBitmap->GetHeight()) {
       continue;
     }
-    Coon_Bezier C1, C2, D1, D2;
-    C1.FromPoints(coords[0].x, coords[0].y, coords[11].x, coords[11].y,
-                  coords[10].x, coords[10].y, coords[9].x, coords[9].y);
-    C2.FromPoints(coords[3].x, coords[3].y, coords[4].x, coords[4].y,
-                  coords[5].x, coords[5].y, coords[6].x, coords[6].y);
-    D1.FromPoints(coords[0].x, coords[0].y, coords[1].x, coords[1].y,
-                  coords[2].x, coords[2].y, coords[3].x, coords[3].y);
-    D2.FromPoints(coords[9].x, coords[9].y, coords[8].x, coords[8].y,
-                  coords[7].x, coords[7].y, coords[6].x, coords[6].y);
+    CoonBezier C1;
+    CoonBezier C2;
+    CoonBezier D1;
+    CoonBezier D2;
+    C1.InitFromPoints(coords[0].x, coords[0].y, coords[11].x, coords[11].y,
+                      coords[10].x, coords[10].y, coords[9].x, coords[9].y);
+    C2.InitFromPoints(coords[3].x, coords[3].y, coords[4].x, coords[4].y,
+                      coords[5].x, coords[5].y, coords[6].x, coords[6].y);
+    D1.InitFromPoints(coords[0].x, coords[0].y, coords[1].x, coords[1].y,
+                      coords[2].x, coords[2].y, coords[3].x, coords[3].y);
+    D2.InitFromPoints(coords[9].x, coords[9].y, coords[8].x, coords[8].y,
+                      coords[7].x, coords[7].y, coords[6].x, coords[6].y);
     patch.Draw(1, 1, 0, 0, C1, C2, D1, D2);
   }
 }
