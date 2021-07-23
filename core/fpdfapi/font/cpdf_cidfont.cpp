@@ -21,6 +21,7 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
+#include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_unicode.h"
@@ -34,10 +35,15 @@
 
 namespace {
 
-constexpr uint16_t kCharsetCodePages[CIDSET_NUM_SETS] = {0,   936, 950,
-                                                         932, 949, 1200};
+constexpr FX_CodePage kCharsetCodePages[CIDSET_NUM_SETS] = {
+    FX_CodePage::kDefANSI,
+    FX_CodePage::kChineseSimplified,
+    FX_CodePage::kChineseTraditional,
+    FX_CodePage::kShiftJIS,
+    FX_CodePage::kHangul,
+    FX_CodePage::kUTF16LE};
 
-constexpr struct CIDTransform {
+struct CIDTransform {
   uint16_t cid;
   uint8_t a;
   uint8_t b;
@@ -45,7 +51,9 @@ constexpr struct CIDTransform {
   uint8_t d;
   uint8_t e;
   uint8_t f;
-} kJapan1VerticalCIDs[] = {
+};
+
+constexpr CIDTransform kJapan1VerticalCIDs[] = {
     {97, 129, 0, 0, 127, 55, 0},     {7887, 127, 0, 0, 127, 76, 89},
     {7888, 127, 0, 0, 127, 79, 94},  {7889, 0, 129, 127, 0, 17, 127},
     {7890, 0, 129, 127, 0, 17, 127}, {7891, 0, 129, 127, 0, 17, 127},
@@ -322,9 +330,9 @@ wchar_t CPDF_CIDFont::GetUnicodeFromCharCode(uint32_t charcode) const {
     charcode = (charcode % 256) * 256 + (charcode / 256);
     charsize = 2;
   }
-  int ret = FXSYS_MultiByteToWideChar(
-      kCharsetCodePages[m_pCMap->GetCoding()], 0,
-      reinterpret_cast<const char*>(&charcode), charsize, &unicode, 1);
+  int ret = FX_MultiByteToWideChar(kCharsetCodePages[m_pCMap->GetCoding()], 0,
+                                   reinterpret_cast<const char*>(&charcode),
+                                   charsize, &unicode, 1);
   return ret == 1 ? unicode : 0;
 #else
   if (!m_pCMap->GetEmbedMap())
@@ -365,9 +373,9 @@ uint32_t CPDF_CIDFont::CharCodeFromUnicode(wchar_t unicode) const {
     return 0;
 #if defined(OS_WIN)
   uint8_t buffer[32];
-  int ret = FXSYS_WideCharToMultiByte(
-      kCharsetCodePages[m_pCMap->GetCoding()], 0, &unicode, 1,
-      reinterpret_cast<char*>(buffer), 4, nullptr, nullptr);
+  int ret = FX_WideCharToMultiByte(kCharsetCodePages[m_pCMap->GetCoding()], 0,
+                                   &unicode, 1, reinterpret_cast<char*>(buffer),
+                                   4, nullptr, nullptr);
   if (ret == 1)
     return buffer[0];
   if (ret == 2)

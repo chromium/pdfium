@@ -78,7 +78,8 @@ void CFWL_WidgetTP::EnsureTTOInitialized() {
   if (m_pTextOut)
     return;
 
-  m_pFGASFont = CFWL_FontManager::GetInstance()->FindFont(L"Helvetica", 0, 0);
+  m_pFGASFont = CFWL_FontManager::GetInstance()->FindFont(
+      L"Helvetica", 0, FX_CodePage::kDefANSI);
   m_pTextOut = std::make_unique<CFDE_TextOut>();
   m_pTextOut->SetFont(m_pFGASFont);
   m_pTextOut->SetFontSize(FWLTHEME_CAPACITY_FontSize);

@@ -78,7 +78,7 @@ bool CXFA_FWLTheme::LoadCalendarFont(CXFA_FFDoc* doc) {
   }
 
   m_pCalendarFont = CFGAS_GEModule::Get()->GetFontMgr()->GetFontByCodePage(
-      FX_CODEPAGE_MSWin_WesternEuropean, 0, nullptr);
+      FX_CodePage::kMSWin_WesternEuropean, 0, nullptr);
   return !!m_pCalendarFont;
 }
 

@@ -266,7 +266,7 @@ void AddFont(CPDF_Dictionary*& pFormDict,
 }
 
 uint8_t GetNativeCharSet() {
-  return FX_GetCharsetFromCodePage(FXSYS_GetACP());
+  return FX_GetCharsetFromCodePage(FX_GetACP());
 }
 
 void InitDict(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument) {

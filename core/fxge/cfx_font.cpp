@@ -347,13 +347,13 @@ void CFX_Font::LoadSubst(const ByteString& face_name,
                          uint32_t flags,
                          int weight,
                          int italic_angle,
-                         int CharsetCP,
+                         FX_CodePage code_page,
                          bool bVertical) {
   m_bEmbedded = false;
   m_bVertical = bVertical;
   m_pSubstFont = std::make_unique<CFX_SubstFont>();
   m_Face = CFX_GEModule::Get()->GetFontMgr()->FindSubstFont(
-      face_name, bTrueType, flags, weight, italic_angle, CharsetCP,
+      face_name, bTrueType, flags, weight, italic_angle, code_page,
       m_pSubstFont.get());
   if (m_Face) {
     m_FontData = {FXFT_Get_Face_Stream_Base(m_Face->GetRec()),

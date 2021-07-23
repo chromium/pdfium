@@ -146,10 +146,6 @@ size_t FXSYS_wcsftime(wchar_t* strDest,
 
 #else   // defined(OS_WIN)
 
-int FXSYS_GetACP() {
-  return 0;
-}
-
 char* FXSYS_strlwr(char* str) {
   if (!str) {
     return nullptr;
@@ -221,40 +217,6 @@ int FXSYS_wcsicmp(const wchar_t* str1, const wchar_t* str2) {
 
 char* FXSYS_itoa(int value, char* str, int radix) {
   return FXSYS_IntToStr<int32_t, uint32_t, char*>(value, str, radix);
-}
-
-int FXSYS_WideCharToMultiByte(uint32_t codepage,
-                              uint32_t dwFlags,
-                              const wchar_t* wstr,
-                              int wlen,
-                              char* buf,
-                              int buflen,
-                              const char* default_str,
-                              int* pUseDefault) {
-  int len = 0;
-  for (int i = 0; i < wlen; i++) {
-    if (wstr[i] < 0x100) {
-      if (buf && len < buflen)
-        buf[len] = static_cast<char>(wstr[i]);
-      len++;
-    }
-  }
-  return len;
-}
-
-int FXSYS_MultiByteToWideChar(uint32_t codepage,
-                              uint32_t dwFlags,
-                              const char* bstr,
-                              int blen,
-                              wchar_t* buf,
-                              int buflen) {
-  int wlen = 0;
-  for (int i = 0; i < blen; i++) {
-    if (buf && wlen < buflen)
-      buf[wlen] = reinterpret_cast<const uint8_t*>(bstr)[i];
-    wlen++;
-  }
-  return wlen;
 }
 
 void FXSYS_SetLastError(uint32_t err) {

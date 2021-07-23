@@ -103,10 +103,10 @@ RetainPtr<CFX_Face> CFX_FontMgr::FindSubstFont(const ByteString& face_name,
                                                uint32_t flags,
                                                int weight,
                                                int italic_angle,
-                                               int CharsetCP,
+                                               FX_CodePage code_page,
                                                CFX_SubstFont* pSubstFont) {
   return m_pBuiltinMapper->FindSubstFont(face_name, bTrueType, flags, weight,
-                                         italic_angle, CharsetCP, pSubstFont);
+                                         italic_angle, code_page, pSubstFont);
 }
 
 RetainPtr<CFX_FontMgr::FontDesc> CFX_FontMgr::GetCachedFontDesc(

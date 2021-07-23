@@ -12,6 +12,7 @@
 
 #include "build/build_config.h"
 #include "core/fxcrt/bytestring.h"
+#include "core/fxcrt/fx_codepage_forward.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -67,7 +68,7 @@ class CFX_Font {
                  uint32_t flags,
                  int weight,
                  int italic_angle,
-                 int CharsetCP,
+                 FX_CodePage code_page,
                  bool bVertical);
 
   bool LoadEmbedded(pdfium::span<const uint8_t> src_span,

@@ -10,6 +10,12 @@
 #include <iterator>
 #include <utility>
 
+#include "build/build_config.h"
+
+#if defined(OS_WIN)
+#include <windows.h>
+#endif
+
 namespace {
 
 const uint16_t g_FX_MSDOSThaiUnicodes[128] = {
@@ -158,41 +164,41 @@ const uint16_t g_FX_MSWinBalticUnicodes[128] = {
 
 struct FX_CHARSET_MAP {
   uint16_t charset;
-  uint16_t codepage;
+  FX_CodePage codepage;
 };
 
 const FX_CHARSET_MAP g_FXCharset2CodePageTable[] = {
-    {FX_CHARSET_ANSI, FX_CODEPAGE_MSWin_WesternEuropean},
-    {FX_CHARSET_Default, FX_CODEPAGE_DefANSI},
-    {FX_CHARSET_Symbol, FX_CODEPAGE_Symbol},
-    {FX_CHARSET_MAC_Roman, FX_CODEPAGE_MAC_Roman},
-    {FX_CHARSET_MAC_ShiftJIS, FX_CODEPAGE_MAC_ShiftJIS},
-    {FX_CHARSET_MAC_Korean, FX_CODEPAGE_MAC_Korean},
-    {FX_CHARSET_MAC_ChineseSimplified, FX_CODEPAGE_MAC_ChineseSimplified},
-    {FX_CHARSET_MAC_ChineseTraditional, FX_CODEPAGE_MAC_ChineseTraditional},
-    {FX_CHARSET_MAC_Hebrew, FX_CODEPAGE_MAC_Hebrew},
-    {FX_CHARSET_MAC_Arabic, FX_CODEPAGE_MAC_Arabic},
-    {FX_CHARSET_MAC_Greek, FX_CODEPAGE_MAC_Greek},
-    {FX_CHARSET_MAC_Turkish, FX_CODEPAGE_MAC_Turkish},
-    {FX_CHARSET_MAC_Thai, FX_CODEPAGE_MAC_Thai},
-    {FX_CHARSET_MAC_EasternEuropean, FX_CODEPAGE_MAC_EasternEuropean},
-    {FX_CHARSET_MAC_Cyrillic, FX_CODEPAGE_MAC_Cyrillic},
-    {FX_CHARSET_ShiftJIS, FX_CODEPAGE_ShiftJIS},
-    {FX_CHARSET_Hangul, FX_CODEPAGE_Hangul},
-    {FX_CHARSET_Johab, FX_CODEPAGE_Johab},
-    {FX_CHARSET_ChineseSimplified, FX_CODEPAGE_ChineseSimplified},
-    {FX_CHARSET_ChineseTraditional, FX_CODEPAGE_ChineseTraditional},
-    {FX_CHARSET_MSWin_Greek, FX_CODEPAGE_MSWin_Greek},
-    {FX_CHARSET_MSWin_Turkish, FX_CODEPAGE_MSWin_Turkish},
-    {FX_CHARSET_MSWin_Vietnamese, FX_CODEPAGE_MSWin_Vietnamese},
-    {FX_CHARSET_MSWin_Hebrew, FX_CODEPAGE_MSWin_Hebrew},
-    {FX_CHARSET_MSWin_Arabic, FX_CODEPAGE_MSWin_Arabic},
-    {FX_CHARSET_MSWin_Baltic, FX_CODEPAGE_MSWin_Baltic},
-    {FX_CHARSET_MSWin_Cyrillic, FX_CODEPAGE_MSWin_Cyrillic},
-    {FX_CHARSET_Thai, FX_CODEPAGE_MSDOS_Thai},
-    {FX_CHARSET_MSWin_EasternEuropean, FX_CODEPAGE_MSWin_EasternEuropean},
-    {FX_CHARSET_US, FX_CODEPAGE_MSDOS_US},
-    {FX_CHARSET_OEM, FX_CODEPAGE_MSDOS_WesternEuropean},
+    {FX_CHARSET_ANSI, FX_CodePage::kMSWin_WesternEuropean},
+    {FX_CHARSET_Default, FX_CodePage::kDefANSI},
+    {FX_CHARSET_Symbol, FX_CodePage::kSymbol},
+    {FX_CHARSET_MAC_Roman, FX_CodePage::kMAC_Roman},
+    {FX_CHARSET_MAC_ShiftJIS, FX_CodePage::kMAC_ShiftJIS},
+    {FX_CHARSET_MAC_Korean, FX_CodePage::kMAC_Korean},
+    {FX_CHARSET_MAC_ChineseSimplified, FX_CodePage::kMAC_ChineseSimplified},
+    {FX_CHARSET_MAC_ChineseTraditional, FX_CodePage::kMAC_ChineseTraditional},
+    {FX_CHARSET_MAC_Hebrew, FX_CodePage::kMAC_Hebrew},
+    {FX_CHARSET_MAC_Arabic, FX_CodePage::kMAC_Arabic},
+    {FX_CHARSET_MAC_Greek, FX_CodePage::kMAC_Greek},
+    {FX_CHARSET_MAC_Turkish, FX_CodePage::kMAC_Turkish},
+    {FX_CHARSET_MAC_Thai, FX_CodePage::kMAC_Thai},
+    {FX_CHARSET_MAC_EasternEuropean, FX_CodePage::kMAC_EasternEuropean},
+    {FX_CHARSET_MAC_Cyrillic, FX_CodePage::kMAC_Cyrillic},
+    {FX_CHARSET_ShiftJIS, FX_CodePage::kShiftJIS},
+    {FX_CHARSET_Hangul, FX_CodePage::kHangul},
+    {FX_CHARSET_Johab, FX_CodePage::kJohab},
+    {FX_CHARSET_ChineseSimplified, FX_CodePage::kChineseSimplified},
+    {FX_CHARSET_ChineseTraditional, FX_CodePage::kChineseTraditional},
+    {FX_CHARSET_MSWin_Greek, FX_CodePage::kMSWin_Greek},
+    {FX_CHARSET_MSWin_Turkish, FX_CodePage::kMSWin_Turkish},
+    {FX_CHARSET_MSWin_Vietnamese, FX_CodePage::kMSWin_Vietnamese},
+    {FX_CHARSET_MSWin_Hebrew, FX_CodePage::kMSWin_Hebrew},
+    {FX_CHARSET_MSWin_Arabic, FX_CodePage::kMSWin_Arabic},
+    {FX_CHARSET_MSWin_Baltic, FX_CodePage::kMSWin_Baltic},
+    {FX_CHARSET_MSWin_Cyrillic, FX_CodePage::kMSWin_Cyrillic},
+    {FX_CHARSET_Thai, FX_CodePage::kMSDOS_Thai},
+    {FX_CHARSET_MSWin_EasternEuropean, FX_CodePage::kMSWin_EasternEuropean},
+    {FX_CHARSET_US, FX_CodePage::kMSDOS_US},
+    {FX_CHARSET_OEM, FX_CodePage::kMSDOS_WesternEuropean},
 };
 
 }  // namespace
@@ -208,7 +214,15 @@ const FX_CharsetUnicodes g_FX_CharsetUnicodes[8] = {
     {FX_CHARSET_MSWin_Baltic, g_FX_MSWinBalticUnicodes},
 };
 
-uint16_t FX_GetCodePageFromCharset(uint8_t charset) {
+FX_CodePage FX_GetACP() {
+#if defined(OS_WIN)
+  return static_cast<FX_CodePage>(GetACP());
+#else
+  return FX_CodePage::kDefANSI;
+#endif
+}
+
+FX_CodePage FX_GetCodePageFromCharset(uint8_t charset) {
   auto* result =
       std::lower_bound(std::begin(g_FXCharset2CodePageTable),
                        std::end(g_FXCharset2CodePageTable), charset,
@@ -219,10 +233,10 @@ uint16_t FX_GetCodePageFromCharset(uint8_t charset) {
       result->charset == charset) {
     return result->codepage;
   }
-  return 0xFFFF;
+  return FX_CodePage::kFailure;
 }
 
-uint8_t FX_GetCharsetFromCodePage(uint16_t codepage) {
+uint8_t FX_GetCharsetFromCodePage(FX_CodePage codepage) {
   for (const auto& it : g_FXCharset2CodePageTable) {
     if (it.codepage == codepage)
       return it.charset;
@@ -234,4 +248,48 @@ bool FX_CharSetIsCJK(uint8_t uCharset) {
   return (uCharset == FX_CHARSET_ChineseSimplified) ||
          (uCharset == FX_CHARSET_ChineseTraditional) ||
          (uCharset == FX_CHARSET_Hangul) || (uCharset == FX_CHARSET_ShiftJIS);
+}
+
+int FX_WideCharToMultiByte(FX_CodePage codepage,
+                           uint32_t dwFlags,
+                           const wchar_t* wstr,
+                           int wlen,
+                           char* buf,
+                           int buflen,
+                           const char* default_str,
+                           int* pUseDefault) {
+#if defined(OS_WIN)
+  return WideCharToMultiByte(static_cast<UINT>(codepage), dwFlags, wstr, wlen,
+                             buf, buflen, default_str, pUseDefault);
+#else
+  int len = 0;
+  for (int i = 0; i < wlen; i++) {
+    if (wstr[i] < 0x100) {
+      if (buf && len < buflen)
+        buf[len] = static_cast<char>(wstr[i]);
+      len++;
+    }
+  }
+  return len;
+#endif
+}
+
+int FX_MultiByteToWideChar(FX_CodePage codepage,
+                           uint32_t dwFlags,
+                           const char* bstr,
+                           int blen,
+                           wchar_t* buf,
+                           int buflen) {
+#if defined(OS_WIN)
+  return MultiByteToWideChar(static_cast<UINT>(codepage), dwFlags, bstr, blen,
+                             buf, buflen);
+#else
+  int wlen = 0;
+  for (int i = 0; i < blen; i++) {
+    if (buf && wlen < buflen)
+      buf[wlen] = reinterpret_cast<const uint8_t*>(bstr)[i];
+    wlen++;
+  }
+  return wlen;
+#endif
 }

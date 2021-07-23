@@ -65,10 +65,10 @@ CFX_XMLParser::CFX_XMLParser(const RetainPtr<IFX_SeekableReadStream>& pStream) {
   DCHECK(pStream);
 
   auto proxy = pdfium::MakeRetain<CFX_SeekableStreamProxy>(pStream);
-  uint16_t wCodePage = proxy->GetCodePage();
-  if (wCodePage != FX_CODEPAGE_UTF16LE && wCodePage != FX_CODEPAGE_UTF16BE &&
-      wCodePage != FX_CODEPAGE_UTF8) {
-    proxy->SetCodePage(FX_CODEPAGE_UTF8);
+  FX_CodePage wCodePage = proxy->GetCodePage();
+  if (wCodePage != FX_CodePage::kUTF16LE &&
+      wCodePage != FX_CodePage::kUTF16BE && wCodePage != FX_CodePage::kUTF8) {
+    proxy->SetCodePage(FX_CodePage::kUTF8);
   }
   stream_ = proxy;
 

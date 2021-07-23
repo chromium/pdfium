@@ -36,6 +36,7 @@ source_set("fxcrt") {
     "fx_bidi.h",
     "fx_codepage.cpp",
     "fx_codepage.h",
+    "fx_codepage_forward.h",
     "fx_coordinates.cpp",
     "fx_coordinates.h",
     "fx_extension.cpp",

@@ -16,6 +16,7 @@
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
+#include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/fx_font.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
@@ -3006,7 +3007,7 @@ TEST_F(FPDFEditEmbedderTest, AddCIDFontText) {
   CFX_Font CIDfont;
   {
     // First, get the data from the font
-    CIDfont.LoadSubst("IPAGothic", 1, 0, 400, 0, 932, 0);
+    CIDfont.LoadSubst("IPAGothic", 1, 0, 400, 0, FX_CodePage::kShiftJIS, 0);
     EXPECT_EQ("IPAGothic", CIDfont.GetFaceName());
     pdfium::span<const uint8_t> span = CIDfont.GetFontSpan();
 

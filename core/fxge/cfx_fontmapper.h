@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "build/build_config.h"
+#include "core/fxcrt/fx_codepage_forward.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -64,7 +65,7 @@ class CFX_FontMapper {
                                     uint32_t flags,
                                     int weight,
                                     int italic_angle,
-                                    int CharsetCP,
+                                    FX_CodePage code_page,
                                     CFX_SubstFont* pSubstFont);
 
   bool IsBuiltinFace(const RetainPtr<CFX_Face>& face) const;

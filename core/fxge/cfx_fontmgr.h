@@ -10,6 +10,7 @@
 #include <map>
 #include <memory>
 
+#include "core/fxcrt/fx_codepage_forward.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/observed_ptr.h"
@@ -74,7 +75,7 @@ class CFX_FontMgr {
                                     uint32_t flags,
                                     int weight,
                                     int italic_angle,
-                                    int CharsetCP,
+                                    FX_CodePage code_page,
                                     CFX_SubstFont* pSubstFont);
 
   void SetSystemFontInfo(std::unique_ptr<SystemFontInfoIface> pFontInfo);

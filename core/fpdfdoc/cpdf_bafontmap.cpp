@@ -159,7 +159,7 @@ int32_t CPDF_BAFontMap::CharSetFromUnicode(uint16_t word, int32_t nOldCharset) {
 }
 
 int32_t CPDF_BAFontMap::GetNativeCharset() {
-  return FX_GetCharsetFromCodePage(FXSYS_GetACP());
+  return FX_GetCharsetFromCodePage(FX_GetACP());
 }
 
 RetainPtr<CPDF_Font> CPDF_BAFontMap::FindFontSameCharset(ByteString* sFontAlias,

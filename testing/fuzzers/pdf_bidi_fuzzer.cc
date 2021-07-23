@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <memory>
 
+#include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/widestring.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/fx_font.h"
@@ -17,7 +18,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
     return 0;
 
   auto font = std::make_unique<CFX_Font>();
-  font->LoadSubst("Arial", true, 0, FXFONT_FW_NORMAL, 0, 0, 0);
+  font->LoadSubst("Arial", true, 0, FXFONT_FW_NORMAL, 0, FX_CodePage::kDefANSI,
+                  0);
   assert(font);
 
   CFGAS_RTFBreak rtf_break(FX_LAYOUTSTYLE_ExpandTab);

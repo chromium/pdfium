@@ -12,6 +12,7 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
+#include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
 #include "third_party/base/cxx17_backports.h"
@@ -266,7 +267,7 @@ void CPDF_SimpleFont::LoadSubstFont() {
       m_Flags |= FXFONT_FIXED_PITCH;
   }
   m_Font.LoadSubst(m_BaseFontName, IsTrueTypeFont(), m_Flags, GetFontWeight(),
-                   m_ItalicAngle, 0, false);
+                   m_ItalicAngle, FX_CodePage::kDefANSI, false);
 }
 
 bool CPDF_SimpleFont::IsUnicodeCompatible() const {

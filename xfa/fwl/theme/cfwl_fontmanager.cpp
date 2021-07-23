@@ -35,7 +35,7 @@ CFWL_FontManager::~CFWL_FontManager() = default;
 
 RetainPtr<CFGAS_GEFont> CFWL_FontManager::FindFont(WideStringView wsFontFamily,
                                                    uint32_t dwFontStyles,
-                                                   uint16_t wCodePage) {
+                                                   FX_CodePage wCodePage) {
   for (const auto& pData : m_FontsArray) {
     if (pData->Equal(wsFontFamily, dwFontStyles, wCodePage))
       return pData->GetFont();
@@ -54,14 +54,14 @@ CFWL_FontManager::FontData::~FontData() = default;
 
 bool CFWL_FontManager::FontData::Equal(WideStringView wsFontFamily,
                                        uint32_t dwFontStyles,
-                                       uint16_t wCodePage) {
+                                       FX_CodePage wCodePage) {
   return m_wsFamily == wsFontFamily && m_dwStyles == dwFontStyles &&
          m_dwCodePage == wCodePage;
 }
 
 bool CFWL_FontManager::FontData::LoadFont(WideStringView wsFontFamily,
                                           uint32_t dwFontStyles,
-                                          uint16_t dwCodePage) {
+                                          FX_CodePage dwCodePage) {
   m_wsFamily = wsFontFamily;
   m_dwStyles = dwFontStyles;
   m_dwCodePage = dwCodePage;

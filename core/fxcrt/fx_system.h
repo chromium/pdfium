@@ -83,10 +83,7 @@ extern "C" {
 #endif  // __cplusplus
 
 #if defined(OS_WIN)
-#define FXSYS_GetACP GetACP
 #define FXSYS_itoa _itoa
-#define FXSYS_WideCharToMultiByte WideCharToMultiByte
-#define FXSYS_MultiByteToWideChar MultiByteToWideChar
 #define FXSYS_strlwr _strlwr
 #define FXSYS_strupr _strupr
 #define FXSYS_stricmp _stricmp
@@ -100,22 +97,7 @@ size_t FXSYS_wcsftime(wchar_t* strDest,
 #define FXSYS_SetLastError SetLastError
 #define FXSYS_GetLastError GetLastError
 #else  // defined(OS_WIN)
-int FXSYS_GetACP();
 char* FXSYS_itoa(int value, char* str, int radix);
-int FXSYS_WideCharToMultiByte(uint32_t codepage,
-                              uint32_t dwFlags,
-                              const wchar_t* wstr,
-                              int wlen,
-                              char* buf,
-                              int buflen,
-                              const char* default_str,
-                              int* pUseDefault);
-int FXSYS_MultiByteToWideChar(uint32_t codepage,
-                              uint32_t dwFlags,
-                              const char* bstr,
-                              int blen,
-                              wchar_t* buf,
-                              int buflen);
 char* FXSYS_strlwr(char* str);
 char* FXSYS_strupr(char* str);
 int FXSYS_stricmp(const char* str1, const char* str2);
