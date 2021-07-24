@@ -8,6 +8,7 @@
 
 #include <utility>
 
+#include "core/fxcrt/fx_system.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
 

@@ -9,7 +9,6 @@
 
 #include "core/fpdfapi/page/cpdf_graphicstates.h"
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_system.h"
 
 class CPDF_Array;
 class CPDF_Dictionary;

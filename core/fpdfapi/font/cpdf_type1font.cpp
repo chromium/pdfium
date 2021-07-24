@@ -11,6 +11,7 @@
 
 #include "build/build_config.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/cfx_gemodule.h"

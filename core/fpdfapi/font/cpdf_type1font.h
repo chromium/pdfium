@@ -7,9 +7,10 @@
 #ifndef CORE_FPDFAPI_FONT_CPDF_TYPE1FONT_H_
 #define CORE_FPDFAPI_FONT_CPDF_TYPE1FONT_H_
 
+#include <stdint.h>
+
 #include "build/build_config.h"
 #include "core/fpdfapi/font/cpdf_simplefont.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_fontmapper.h"
 

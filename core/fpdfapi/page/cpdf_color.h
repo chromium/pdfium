@@ -7,10 +7,11 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_COLOR_H_
 #define CORE_FPDFAPI_PAGE_CPDF_COLOR_H_
 
+#include <stdint.h>
+
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 
 class CPDF_ColorSpace;

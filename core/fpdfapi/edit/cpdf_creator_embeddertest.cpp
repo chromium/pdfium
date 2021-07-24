@@ -6,7 +6,6 @@
 #include <memory>
 #include <string>
 
-#include "core/fxcrt/fx_system.h"
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_annot.h"
 #include "public/fpdf_edit.h"

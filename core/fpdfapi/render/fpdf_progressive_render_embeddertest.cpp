@@ -2,10 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <stdint.h>
+
 #include <utility>
 
 #include "build/build_config.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "public/fpdf_progressive.h"
 #include "testing/embedder_test.h"

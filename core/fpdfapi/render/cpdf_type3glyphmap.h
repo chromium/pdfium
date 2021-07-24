@@ -7,12 +7,12 @@
 #ifndef CORE_FPDFAPI_RENDER_CPDF_TYPE3GLYPHMAP_H_
 #define CORE_FPDFAPI_RENDER_CPDF_TYPE3GLYPHMAP_H_
 
+#include <stdint.h>
+
 #include <map>
 #include <memory>
 #include <utility>
 #include <vector>
-
-#include "core/fxcrt/fx_system.h"
 
 class CFX_GlyphBitmap;
 

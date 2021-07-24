@@ -7,12 +7,13 @@
 #ifndef CORE_FPDFAPI_FONT_CPDF_SIMPLEFONT_H_
 #define CORE_FPDFAPI_FONT_CPDF_SIMPLEFONT_H_
 
+#include <stdint.h>
+
 #include <vector>
 
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/font/cpdf_fontencoding.h"
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/fx_system.h"
 
 class CPDF_SimpleFont : public CPDF_Font {
  public:

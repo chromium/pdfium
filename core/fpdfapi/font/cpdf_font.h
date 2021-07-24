@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_FONT_CPDF_FONT_H_
 #define CORE_FPDFAPI_FONT_CPDF_FONT_H_
 
+#include <stdint.h>
+
 #include <memory>
 #include <utility>
 #include <vector>
@@ -15,7 +17,6 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
