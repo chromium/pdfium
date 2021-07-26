@@ -11,6 +11,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/fx_codepage_forward.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_face.h"
@@ -26,7 +27,7 @@ class CFPF_SkiaFontMgr {
 
   void LoadSystemFonts();
   CFPF_SkiaFont* CreateFont(ByteStringView bsFamilyname,
-                            uint8_t uCharset,
+                            FX_Charset uCharset,
                             uint32_t dwStyle);
 
   bool InitFTLibrary();

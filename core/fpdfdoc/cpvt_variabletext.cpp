@@ -62,7 +62,7 @@ int32_t CPVT_VariableText::Provider::GetTypeDescent(int32_t nFontIndex) {
 }
 
 int32_t CPVT_VariableText::Provider::GetWordFontIndex(uint16_t word,
-                                                      int32_t charset,
+                                                      FX_Charset charset,
                                                       int32_t nFontIndex) {
   if (RetainPtr<CPDF_Font> pDefFont = m_pFontMap->GetPDFFont(0)) {
     if (pDefFont->CharCodeFromUnicode(word) != CPDF_Font::kInvalidCharCode)
@@ -191,7 +191,7 @@ void CPVT_VariableText::Initialize() {
 
 CPVT_WordPlace CPVT_VariableText::InsertWord(const CPVT_WordPlace& place,
                                              uint16_t word,
-                                             int32_t charset) {
+                                             FX_Charset charset) {
   int32_t nTotalWords = GetTotalWords();
   if (m_nLimitChar > 0 && nTotalWords >= m_nLimitChar)
     return place;
@@ -295,7 +295,7 @@ void CPVT_VariableText::SetText(const WideString& swText) {
         word = 0x20;
         FALLTHROUGH;
       default:
-        wp = InsertWord(wp, word, FX_CHARSET_Default);
+        wp = InsertWord(wp, word, FX_Charset::kDefault);
         break;
     }
     nCharCount++;
@@ -854,7 +854,7 @@ int CPVT_VariableText::GetCharWidth(int32_t nFontIndex,
 }
 
 int32_t CPVT_VariableText::GetWordFontIndex(uint16_t word,
-                                            int32_t charset,
+                                            FX_Charset charset,
                                             int32_t nFontIndex) {
   return m_pVTProvider
              ? m_pVTProvider->GetWordFontIndex(word, charset, nFontIndex)

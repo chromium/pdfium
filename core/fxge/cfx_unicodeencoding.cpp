@@ -26,7 +26,7 @@ uint32_t CFX_UnicodeEncoding::GlyphFromCharCode(uint32_t charcode) {
     return FT_Get_Char_Index(face, charcode);
 
   if (m_pFont->GetSubstFont() &&
-      m_pFont->GetSubstFont()->m_Charset == FX_CHARSET_Symbol) {
+      m_pFont->GetSubstFont()->m_Charset == FX_Charset::kSymbol) {
     uint32_t index = 0;
     if (FT_Select_Charmap(face, FT_ENCODING_MS_SYMBOL) == 0)
       index = FT_Get_Char_Index(face, charcode);

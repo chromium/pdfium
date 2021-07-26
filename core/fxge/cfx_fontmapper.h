@@ -57,7 +57,7 @@ class CFX_FontMapper {
   }
 
   void SetSystemFontInfo(std::unique_ptr<SystemFontInfoIface> pFontInfo);
-  void AddInstalledFont(const ByteString& name, int charset);
+  void AddInstalledFont(const ByteString& name, FX_Charset charset);
   void LoadInstalledFonts();
 
   RetainPtr<CFX_Face> FindSubstFont(const ByteString& face_name,

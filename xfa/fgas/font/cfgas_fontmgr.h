@@ -49,7 +49,7 @@ inline bool operator==(const FX_FONTSIGNATURE& left,
 struct FX_FONTDESCRIPTOR {
   wchar_t wsFontFace[32];
   uint32_t dwFontStyles;
-  uint8_t uCharSet;
+  FX_Charset uCharSet;
   FX_FONTSIGNATURE FontSignature;
 };
 

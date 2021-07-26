@@ -9,16 +9,18 @@
 
 #include <stdint.h>
 
+#include "core/fxcrt/fx_codepage_forward.h"
+
 struct CPVT_WordInfo {
   CPVT_WordInfo();
-  CPVT_WordInfo(uint16_t word, int32_t charset, int32_t fontIndex);
+  CPVT_WordInfo(uint16_t word, FX_Charset charset, int32_t fontIndex);
   CPVT_WordInfo(const CPVT_WordInfo& word);
   ~CPVT_WordInfo();
 
   CPVT_WordInfo& operator=(const CPVT_WordInfo& word);
 
   uint16_t Word;
-  int32_t nCharset;
+  FX_Charset nCharset;
   float fWordX;
   float fWordY;
   float fWordTail;

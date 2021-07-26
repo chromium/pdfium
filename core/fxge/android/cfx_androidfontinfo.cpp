@@ -31,7 +31,7 @@ bool CFX_AndroidFontInfo::EnumFontList(CFX_FontMapper* pMapper) {
 
 void* CFX_AndroidFontInfo::MapFont(int weight,
                                    bool bItalic,
-                                   int charset,
+                                   FX_Charset charset,
                                    int pitch_family,
                                    const char* face) {
   if (!m_pFontMgr)
@@ -71,7 +71,7 @@ bool CFX_AndroidFontInfo::GetFaceName(void* hFont, ByteString* name) {
   return true;
 }
 
-bool CFX_AndroidFontInfo::GetFontCharset(void* hFont, int* charset) {
+bool CFX_AndroidFontInfo::GetFontCharset(void* hFont, FX_Charset* charset) {
   if (!hFont)
     return false;
 

@@ -10,13 +10,15 @@
 
 CPVT_WordInfo::CPVT_WordInfo()
     : Word(0),
-      nCharset(FX_CHARSET_ANSI),
+      nCharset(FX_Charset::kANSI),
       fWordX(0.0f),
       fWordY(0.0f),
       fWordTail(0.0f),
       nFontIndex(-1) {}
 
-CPVT_WordInfo::CPVT_WordInfo(uint16_t word, int32_t charset, int32_t fontIndex)
+CPVT_WordInfo::CPVT_WordInfo(uint16_t word,
+                             FX_Charset charset,
+                             int32_t fontIndex)
     : Word(word),
       nCharset(charset),
       fWordX(0.0f),
@@ -26,7 +28,7 @@ CPVT_WordInfo::CPVT_WordInfo(uint16_t word, int32_t charset, int32_t fontIndex)
 
 CPVT_WordInfo::CPVT_WordInfo(const CPVT_WordInfo& word)
     : Word(0),
-      nCharset(FX_CHARSET_ANSI),
+      nCharset(FX_Charset::kANSI),
       fWordX(0.0f),
       fWordY(0.0f),
       fWordTail(0.0f),

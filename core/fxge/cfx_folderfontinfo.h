@@ -11,6 +11,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/fx_codepage_forward.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/systemfontinfo_iface.h"
@@ -29,11 +30,11 @@ class CFX_FolderFontInfo : public SystemFontInfoIface {
 
   void AddPath(const ByteString& path);
 
-  // IFX_SytemFontInfo:
+  // SystemFontInfoIface:
   bool EnumFontList(CFX_FontMapper* pMapper) override;
   void* MapFont(int weight,
                 bool bItalic,
-                int charset,
+                FX_Charset charset,
                 int pitch_family,
                 const char* family) override;
   void* GetFont(const char* face) override;
@@ -42,7 +43,7 @@ class CFX_FolderFontInfo : public SystemFontInfoIface {
                        pdfium::span<uint8_t> buffer) override;
   void DeleteFont(void* hFont) override;
   bool GetFaceName(void* hFont, ByteString* name) override;
-  bool GetFontCharset(void* hFont, int* charset) override;
+  bool GetFontCharset(void* hFont, FX_Charset* charset) override;
 
  protected:
   friend class CFX_FolderFontInfoTest;
@@ -73,7 +74,7 @@ class CFX_FolderFontInfo : public SystemFontInfoIface {
   void* GetSubstFont(const ByteString& face);
   void* FindFont(int weight,
                  bool bItalic,
-                 int charset,
+                 FX_Charset charset,
                  int pitch_family,
                  const char* family,
                  bool bMatchName);

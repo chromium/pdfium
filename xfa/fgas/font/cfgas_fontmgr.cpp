@@ -84,10 +84,10 @@ const FX_FONTDESCRIPTOR* MatchDefaultFont(
     if (pParams->pwsFamily) {
       if (FXSYS_wcsicmp(pParams->pwsFamily, font.wsFontFace))
         continue;
-      if (font.uCharSet == FX_CHARSET_Symbol)
+      if (font.uCharSet == FX_Charset::kSymbol)
         return &font;
     }
-    if (font.uCharSet == FX_CHARSET_Symbol)
+    if (font.uCharSet == FX_Charset::kSymbol)
       continue;
     if (pParams->wCodePage != FX_CodePage::kFailure) {
       if (FX_GetCodePageFromCharset(font.uCharSet) != pParams->wCodePage)
@@ -143,7 +143,7 @@ int32_t CALLBACK GdiFontEnumProc(ENUMLOGFONTEX* lpelfe,
     return 1;
   FX_FONTDESCRIPTOR font;
   memset(&font, 0, sizeof(FX_FONTDESCRIPTOR));
-  font.uCharSet = lf.lfCharSet;
+  font.uCharSet = FX_GetCharsetFromInt(lf.lfCharSet);
   font.dwFontStyles = GetGdiFontStyles(lf);
   FXSYS_wcsncpy(font.wsFontFace, (const wchar_t*)lf.lfFaceName, 31);
   font.wsFontFace[31] = 0;

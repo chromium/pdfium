@@ -64,50 +64,53 @@ enum class FX_CodePage : uint16_t {
   kFailure = 65535,
 };
 
-#define FX_CHARSET_ANSI 0
-#define FX_CHARSET_Default 1
-#define FX_CHARSET_Symbol 2
-#define FX_CHARSET_MAC_Roman 77
-#define FX_CHARSET_MAC_ShiftJIS 78
-#define FX_CHARSET_MAC_Korean 79
-#define FX_CHARSET_MAC_ChineseSimplified 80
-#define FX_CHARSET_MAC_ChineseTraditional 81
-#define FX_CHARSET_MAC_Hebrew 83
-#define FX_CHARSET_MAC_Arabic 84
-#define FX_CHARSET_MAC_Greek 85
-#define FX_CHARSET_MAC_Turkish 86
-#define FX_CHARSET_MAC_Thai 87
-#define FX_CHARSET_MAC_EasternEuropean 88
-#define FX_CHARSET_MAC_Cyrillic 89
-#define FX_CHARSET_ShiftJIS 128
-#define FX_CHARSET_Hangul 129
-#define FX_CHARSET_Johab 130
-#define FX_CHARSET_ChineseSimplified 134
-#define FX_CHARSET_ChineseTraditional 136
-#define FX_CHARSET_MSWin_Greek 161
-#define FX_CHARSET_MSWin_Turkish 162
-#define FX_CHARSET_MSWin_Vietnamese 163
-#define FX_CHARSET_MSWin_Hebrew 177
-#define FX_CHARSET_MSWin_Arabic 178
-#define FX_CHARSET_MSWin_Baltic 186
-#define FX_CHARSET_MSWin_Cyrillic 204
-#define FX_CHARSET_Thai 222
-#define FX_CHARSET_MSWin_EasternEuropean 238
-#define FX_CHARSET_US 254
-#define FX_CHARSET_OEM 255
+enum class FX_Charset : uint8_t {
+  kANSI = 0,
+  kDefault = 1,
+  kSymbol = 2,
+  kMAC_Roman = 77,
+  kMAC_ShiftJIS = 78,
+  kMAC_Korean = 79,
+  kMAC_ChineseSimplified = 80,
+  kMAC_ChineseTraditional = 81,
+  kMAC_Hebrew = 83,
+  kMAC_Arabic = 84,
+  kMAC_Greek = 85,
+  kMAC_Turkish = 86,
+  kMAC_Thai = 87,
+  kMAC_EasternEuropean = 88,
+  kMAC_Cyrillic = 89,
+  kShiftJIS = 128,
+  kHangul = 129,
+  kJohab = 130,
+  kChineseSimplified = 134,
+  kChineseTraditional = 136,
+  kMSWin_Greek = 161,
+  kMSWin_Turkish = 162,
+  kMSWin_Vietnamese = 163,
+  kMSWin_Hebrew = 177,
+  kMSWin_Arabic = 178,
+  kMSWin_Baltic = 186,
+  kMSWin_Cyrillic = 204,
+  kThai = 222,
+  kMSWin_EasternEuropean = 238,
+  kUS = 254,
+  kOEM = 255,
+};
 
 // Hi-bytes to unicode codepoint mapping for various code pages.
 struct FX_CharsetUnicodes {
-  uint8_t m_Charset;
+  FX_Charset m_Charset;
   const uint16_t* m_pUnicodes;  // Raw, POD struct.
 };
 
 extern const FX_CharsetUnicodes g_FX_CharsetUnicodes[8];
 
 FX_CodePage FX_GetACP();
-FX_CodePage FX_GetCodePageFromCharset(uint8_t charset);
-uint8_t FX_GetCharsetFromCodePage(FX_CodePage codepage);
-bool FX_CharSetIsCJK(uint8_t uCharset);
+FX_CodePage FX_GetCodePageFromCharset(FX_Charset charset);
+FX_Charset FX_GetCharsetFromCodePage(FX_CodePage codepage);
+FX_Charset FX_GetCharsetFromInt(int value);
+bool FX_CharSetIsCJK(FX_Charset uCharset);
 int FX_WideCharToMultiByte(FX_CodePage codepage,
                            uint32_t dwFlags,
                            const wchar_t* wstr,

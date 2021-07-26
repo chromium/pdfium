@@ -8,6 +8,7 @@
 
 #include <algorithm>
 
+#include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/android/cfpf_skiafontmgr.h"
@@ -20,7 +21,7 @@
 CFPF_SkiaFont::CFPF_SkiaFont(CFPF_SkiaFontMgr* pFontMgr,
                              const CFPF_SkiaPathFont* pFont,
                              uint32_t dwStyle,
-                             uint8_t uCharset)
+                             FX_Charset uCharset)
     : m_pFontMgr(pFontMgr),
       m_pFont(pFont),
       m_Face(m_pFontMgr->GetFontFace(m_pFont->path(), m_pFont->face_index())),

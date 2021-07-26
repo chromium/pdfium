@@ -83,10 +83,10 @@ class CFX_LinuxFontInfo final : public CFX_FolderFontInfo {
   CFX_LinuxFontInfo() = default;
   ~CFX_LinuxFontInfo() override = default;
 
-  // CFX_LinuxFontInfo:
+  // CFX_FolderFontInfo:
   void* MapFont(int weight,
                 bool bItalic,
-                int charset,
+                FX_Charset charset,
                 int pitch_family,
                 const char* family) override;
 
@@ -95,7 +95,7 @@ class CFX_LinuxFontInfo final : public CFX_FolderFontInfo {
 
 void* CFX_LinuxFontInfo::MapFont(int weight,
                                  bool bItalic,
-                                 int charset,
+                                 FX_Charset charset,
                                  int pitch_family,
                                  const char* family) {
   void* font = GetSubstFont(family);
@@ -104,7 +104,7 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
 
   bool bCJK = true;
   switch (charset) {
-    case FX_CHARSET_ShiftJIS: {
+    case FX_Charset::kShiftJIS: {
       uint8_t index = GetJapanesePreference(family, weight, pitch_family);
       DCHECK(index < pdfium::size(g_LinuxJpFontList));
       for (const char* name : g_LinuxJpFontList[index]) {
@@ -114,7 +114,7 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
       }
       break;
     }
-    case FX_CHARSET_ChineseSimplified: {
+    case FX_Charset::kChineseSimplified: {
       for (const char* name : g_LinuxGbFontList) {
         auto it = m_FontList.find(name);
         if (it != m_FontList.end())
@@ -122,7 +122,7 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
       }
       break;
     }
-    case FX_CHARSET_ChineseTraditional: {
+    case FX_Charset::kChineseTraditional: {
       for (const char* name : g_LinuxB5FontList) {
         auto it = m_FontList.find(name);
         if (it != m_FontList.end())
@@ -130,7 +130,7 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
       }
       break;
     }
-    case FX_CHARSET_Hangul: {
+    case FX_Charset::kHangul: {
       for (const char* name : g_LinuxHGFontList) {
         auto it = m_FontList.find(name);
         if (it != m_FontList.end())

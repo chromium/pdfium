@@ -103,7 +103,7 @@ class CPWL_EditImpl::Provider final : public CPVT_VariableText::Provider {
   // CPVT_VariableText::Provider:
   int GetCharWidth(int32_t nFontIndex, uint16_t word) override;
   int32_t GetWordFontIndex(uint16_t word,
-                           int32_t charset,
+                           FX_Charset charset,
                            int32_t nFontIndex) override;
 };
 
@@ -127,7 +127,7 @@ int CPWL_EditImpl::Provider::GetCharWidth(int32_t nFontIndex, uint16_t word) {
 }
 
 int32_t CPWL_EditImpl::Provider::GetWordFontIndex(uint16_t word,
-                                                  int32_t charset,
+                                                  FX_Charset charset,
                                                   int32_t nFontIndex) {
   return GetFontMap()->GetWordFontIndex(word, charset, nFontIndex);
 }
@@ -242,7 +242,7 @@ class CPWL_EditImpl::UndoInsertWord final
                  const CPVT_WordPlace& wpOldPlace,
                  const CPVT_WordPlace& wpNewPlace,
                  uint16_t word,
-                 int32_t charset);
+                 FX_Charset charset);
   ~UndoInsertWord() override;
 
   // UndoItemIface:
@@ -255,14 +255,14 @@ class CPWL_EditImpl::UndoInsertWord final
   CPVT_WordPlace m_wpOld;
   CPVT_WordPlace m_wpNew;
   uint16_t m_Word;
-  int32_t m_nCharset;
+  FX_Charset m_nCharset;
 };
 
 CPWL_EditImpl::UndoInsertWord::UndoInsertWord(CPWL_EditImpl* pEdit,
                                               const CPVT_WordPlace& wpOldPlace,
                                               const CPVT_WordPlace& wpNewPlace,
                                               uint16_t word,
-                                              int32_t charset)
+                                              FX_Charset charset)
     : m_pEdit(pEdit),
       m_wpOld(wpOldPlace),
       m_wpNew(wpNewPlace),
@@ -378,7 +378,7 @@ class CPWL_EditImpl::UndoBackspace final : public CPWL_EditImpl::UndoItemIface {
                 const CPVT_WordPlace& wpOldPlace,
                 const CPVT_WordPlace& wpNewPlace,
                 uint16_t word,
-                int32_t charset);
+                FX_Charset charset);
   ~UndoBackspace() override;
 
   // UndoItemIface:
@@ -391,14 +391,14 @@ class CPWL_EditImpl::UndoBackspace final : public CPWL_EditImpl::UndoItemIface {
   CPVT_WordPlace m_wpOld;
   CPVT_WordPlace m_wpNew;
   uint16_t m_Word;
-  int32_t m_nCharset;
+  FX_Charset m_nCharset;
 };
 
 CPWL_EditImpl::UndoBackspace::UndoBackspace(CPWL_EditImpl* pEdit,
                                             const CPVT_WordPlace& wpOldPlace,
                                             const CPVT_WordPlace& wpNewPlace,
                                             uint16_t word,
-                                            int32_t charset)
+                                            FX_Charset charset)
     : m_pEdit(pEdit),
       m_wpOld(wpOldPlace),
       m_wpNew(wpNewPlace),
@@ -432,7 +432,7 @@ class CPWL_EditImpl::UndoDelete final : public CPWL_EditImpl::UndoItemIface {
              const CPVT_WordPlace& wpOldPlace,
              const CPVT_WordPlace& wpNewPlace,
              uint16_t word,
-             int32_t charset,
+             FX_Charset charset,
              bool bSecEnd);
   ~UndoDelete() override;
 
@@ -446,7 +446,7 @@ class CPWL_EditImpl::UndoDelete final : public CPWL_EditImpl::UndoItemIface {
   CPVT_WordPlace m_wpOld;
   CPVT_WordPlace m_wpNew;
   uint16_t m_Word;
-  int32_t m_nCharset;
+  FX_Charset m_nCharset;
   bool m_bSecEnd;
 };
 
@@ -454,7 +454,7 @@ CPWL_EditImpl::UndoDelete::UndoDelete(CPWL_EditImpl* pEdit,
                                       const CPVT_WordPlace& wpOldPlace,
                                       const CPVT_WordPlace& wpNewPlace,
                                       uint16_t word,
-                                      int32_t charset,
+                                      FX_Charset charset,
                                       bool bSecEnd)
     : m_pEdit(pEdit),
       m_wpOld(wpOldPlace),
@@ -521,7 +521,7 @@ int CPWL_EditImpl::UndoClear::Redo() {
 int CPWL_EditImpl::UndoClear::Undo() {
   m_pEdit->SelectNone();
   m_pEdit->SetCaret(m_wrSel.BeginPos);
-  m_pEdit->InsertText(m_swText, FX_CHARSET_Default, false);
+  m_pEdit->InsertText(m_swText, FX_Charset::kDefault, false);
   m_pEdit->SetSelection(m_wrSel.BeginPos, m_wrSel.EndPos);
   return 0;
 }
@@ -533,7 +533,7 @@ class CPWL_EditImpl::UndoInsertText final
                  const CPVT_WordPlace& wpOldPlace,
                  const CPVT_WordPlace& wpNewPlace,
                  const WideString& swText,
-                 int32_t charset);
+                 FX_Charset charset);
   ~UndoInsertText() override;
 
   // UndoItemIface:
@@ -546,14 +546,14 @@ class CPWL_EditImpl::UndoInsertText final
   CPVT_WordPlace m_wpOld;
   CPVT_WordPlace m_wpNew;
   WideString m_swText;
-  int32_t m_nCharset;
+  FX_Charset m_nCharset;
 };
 
 CPWL_EditImpl::UndoInsertText::UndoInsertText(CPWL_EditImpl* pEdit,
                                               const CPVT_WordPlace& wpOldPlace,
                                               const CPVT_WordPlace& wpNewPlace,
                                               const WideString& swText,
-                                              int32_t charset)
+                                              FX_Charset charset)
     : m_pEdit(pEdit),
       m_wpOld(wpOldPlace),
       m_wpNew(wpNewPlace),
@@ -901,10 +901,10 @@ CPVT_WordRange CPWL_EditImpl::GetSelectWordRange() const {
 
 void CPWL_EditImpl::SetText(const WideString& sText) {
   Clear();
-  DoInsertText(CPVT_WordPlace(0, 0, -1), sText, FX_CHARSET_Default);
+  DoInsertText(CPVT_WordPlace(0, 0, -1), sText, FX_Charset::kDefault);
 }
 
-bool CPWL_EditImpl::InsertWord(uint16_t word, int32_t charset) {
+bool CPWL_EditImpl::InsertWord(uint16_t word, FX_Charset charset) {
   return InsertWord(word, charset, true);
 }
 
@@ -924,7 +924,7 @@ bool CPWL_EditImpl::ClearSelection() {
   return Clear(true);
 }
 
-bool CPWL_EditImpl::InsertText(const WideString& sText, int32_t charset) {
+bool CPWL_EditImpl::InsertText(const WideString& sText, FX_Charset charset) {
   return InsertText(sText, charset, true);
 }
 
@@ -1616,7 +1616,9 @@ void CPWL_EditImpl::OnVK_END(bool bShift, bool bCtrl) {
   }
 }
 
-bool CPWL_EditImpl::InsertWord(uint16_t word, int32_t charset, bool bAddUndo) {
+bool CPWL_EditImpl::InsertWord(uint16_t word,
+                               FX_Charset charset,
+                               bool bAddUndo) {
   if (IsTextOverflow() || !m_pVT->IsValid())
     return false;
 
@@ -1748,7 +1750,7 @@ bool CPWL_EditImpl::Clear(bool bAddUndo) {
 }
 
 bool CPWL_EditImpl::InsertText(const WideString& sText,
-                               int32_t charset,
+                               FX_Charset charset,
                                bool bAddUndo) {
   if (IsTextOverflow())
     return false;
@@ -1781,7 +1783,7 @@ void CPWL_EditImpl::PaintInsertText(const CPVT_WordPlace& wpOld,
 void CPWL_EditImpl::ReplaceSelection(const WideString& text) {
   AddEditUndoItem(std::make_unique<UndoReplaceSelection>(this, false));
   ClearSelection();
-  InsertText(text, FX_CHARSET_Default);
+  InsertText(text, FX_Charset::kDefault);
   AddEditUndoItem(std::make_unique<UndoReplaceSelection>(this, true));
 }
 
@@ -1883,7 +1885,7 @@ void CPWL_EditImpl::EnableUndo(bool bUndo) {
 
 CPVT_WordPlace CPWL_EditImpl::DoInsertText(const CPVT_WordPlace& place,
                                            const WideString& sText,
-                                           int32_t charset) {
+                                           FX_Charset charset) {
   CPVT_WordPlace wp = place;
 
   if (m_pVT->IsValid()) {
@@ -1912,8 +1914,8 @@ CPVT_WordPlace CPWL_EditImpl::DoInsertText(const CPVT_WordPlace& place,
   return wp;
 }
 
-int32_t CPWL_EditImpl::GetCharSetFromUnicode(uint16_t word,
-                                             int32_t nOldCharset) {
+FX_Charset CPWL_EditImpl::GetCharSetFromUnicode(uint16_t word,
+                                                FX_Charset nOldCharset) {
   if (IPVT_FontMap* pFontMap = GetFontMap())
     return pFontMap->CharSetFromUnicode(word, nOldCharset);
   return nOldCharset;

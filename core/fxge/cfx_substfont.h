@@ -19,7 +19,7 @@ class CFX_SubstFont {
   void UseChromeSerif();
 
   ByteString m_Family;
-  int m_Charset = FX_CHARSET_ANSI;
+  FX_Charset m_Charset = FX_Charset::kANSI;
   int m_Weight = 0;
   int m_ItalicAngle = 0;
   int m_WeightCJK = 0;

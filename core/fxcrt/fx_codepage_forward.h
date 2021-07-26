@@ -11,6 +11,7 @@
 
 // Incomplete definitions of large enumerated type for headers that don't
 // need the specifics.
+enum class FX_Charset : uint8_t;
 enum class FX_CodePage : uint16_t;
 
 #endif  // CORE_FXCRT_FX_CODEPAGE_FORWARD_H_

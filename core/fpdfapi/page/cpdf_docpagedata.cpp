@@ -468,7 +468,7 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::AddStandardFont(
 }
 
 RetainPtr<CPDF_Font> CPDF_DocPageData::AddFont(std::unique_ptr<CFX_Font> pFont,
-                                               int charset) {
+                                               FX_Charset charset) {
   if (!pFont)
     return nullptr;
 
@@ -477,7 +477,7 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::AddFont(std::unique_ptr<CFX_Font> pFont,
   basefont.Replace(" ", "");
   int flags =
       CalculateFlags(pFont->IsBold(), pFont->IsItalic(), pFont->IsFixedWidth(),
-                     false, false, charset == FX_CHARSET_Symbol);
+                     false, false, charset == FX_Charset::kSymbol);
 
   CPDF_Dictionary* pBaseDict = GetDocument()->NewIndirect<CPDF_Dictionary>();
   pBaseDict->SetNewFor<CPDF_Name>("Type", "Font");
@@ -490,8 +490,8 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::AddFont(std::unique_ptr<CFX_Font> pFont,
       int char_width = pFont->GetGlyphWidth(glyph_index);
       pWidths->AppendNew<CPDF_Number>(char_width);
     }
-    if (charset == FX_CHARSET_ANSI || charset == FX_CHARSET_Default ||
-        charset == FX_CHARSET_Symbol) {
+    if (charset == FX_Charset::kANSI || charset == FX_Charset::kDefault ||
+        charset == FX_Charset::kSymbol) {
       pBaseDict->SetNewFor<CPDF_Name>("Encoding", "WinAnsiEncoding");
       for (int charcode = 128; charcode <= 255; charcode++) {
         int glyph_index = pEncoding->GlyphFromCharCode(charcode);
@@ -567,13 +567,15 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::AddWindowsFont(LOGFONTA* pLogFont) {
   LPBYTE tm_buf = FX_Alloc(BYTE, tm_size);
   OUTLINETEXTMETRIC* ptm = reinterpret_cast<OUTLINETEXTMETRIC*>(tm_buf);
   GetOutlineTextMetrics(hDC, tm_size, ptm);
-  int flags = CalculateFlags(false, pLogFont->lfItalic != 0,
-                             (pLogFont->lfPitchAndFamily & 3) == FIXED_PITCH,
-                             (pLogFont->lfPitchAndFamily & 0xf8) == FF_ROMAN,
-                             (pLogFont->lfPitchAndFamily & 0xf8) == FF_SCRIPT,
-                             pLogFont->lfCharSet == FX_CHARSET_Symbol);
+  int flags = CalculateFlags(
+      false, pLogFont->lfItalic != 0,
+      (pLogFont->lfPitchAndFamily & 3) == FIXED_PITCH,
+      (pLogFont->lfPitchAndFamily & 0xf8) == FF_ROMAN,
+      (pLogFont->lfPitchAndFamily & 0xf8) == FF_SCRIPT,
+      pLogFont->lfCharSet == static_cast<int>(FX_Charset::kSymbol));
 
-  const bool bCJK = FX_CharSetIsCJK(pLogFont->lfCharSet);
+  const FX_Charset eCharset = FX_GetCharsetFromInt(pLogFont->lfCharSet);
+  const bool bCJK = FX_CharSetIsCJK(eCharset);
   ByteString basefont;
   if (bCJK)
     basefont = GetPSNameFromTT(hDC);
@@ -593,12 +595,11 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::AddWindowsFont(LOGFONTA* pLogFont) {
   pBaseDict->SetNewFor<CPDF_Name>("Type", "Font");
   CPDF_Dictionary* pFontDict = pBaseDict;
   if (!bCJK) {
-    if (pLogFont->lfCharSet == FX_CHARSET_ANSI ||
-        pLogFont->lfCharSet == FX_CHARSET_Default ||
-        pLogFont->lfCharSet == FX_CHARSET_Symbol) {
+    if (eCharset == FX_Charset::kANSI || eCharset == FX_Charset::kDefault ||
+        eCharset == FX_Charset::kSymbol) {
       pBaseDict->SetNewFor<CPDF_Name>("Encoding", "WinAnsiEncoding");
     } else {
-      CalculateEncodingDict(pLogFont->lfCharSet, pBaseDict);
+      CalculateEncodingDict(eCharset, pBaseDict);
     }
     int char_widths[224];
     GetCharWidth(hDC, 32, 255, char_widths);
@@ -609,7 +610,7 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::AddWindowsFont(LOGFONTA* pLogFont) {
                    pLogFont->lfItalic != 0, basefont, std::move(pWidths));
   } else {
     pFontDict =
-        ProcessbCJK(pBaseDict, pLogFont->lfCharSet, basefont,
+        ProcessbCJK(pBaseDict, eCharset, basefont,
                     [&hDC](wchar_t start, wchar_t end, CPDF_Array* widthArr) {
                       InsertWidthArray(hDC, start, end, widthArr);
                     });
@@ -632,7 +633,7 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::AddWindowsFont(LOGFONTA* pLogFont) {
 }
 #endif  //  defined(OS_WIN)
 
-size_t CPDF_DocPageData::CalculateEncodingDict(int charset,
+size_t CPDF_DocPageData::CalculateEncodingDict(FX_Charset charset,
                                                CPDF_Dictionary* pBaseDict) {
   size_t i;
   for (i = 0; i < pdfium::size(g_FX_CharsetUnicodes); ++i) {
@@ -661,7 +662,7 @@ size_t CPDF_DocPageData::CalculateEncodingDict(int charset,
 
 CPDF_Dictionary* CPDF_DocPageData::ProcessbCJK(
     CPDF_Dictionary* pBaseDict,
-    int charset,
+    FX_Charset charset,
     ByteString basefont,
     std::function<void(wchar_t, wchar_t, CPDF_Array*)> Insert) {
   CPDF_Dictionary* pFontDict = GetDocument()->NewIndirect<CPDF_Dictionary>();
@@ -670,14 +671,14 @@ CPDF_Dictionary* CPDF_DocPageData::ProcessbCJK(
   int supplement = 0;
   CPDF_Array* pWidthArray = pFontDict->SetNewFor<CPDF_Array>("W");
   switch (charset) {
-    case FX_CHARSET_ChineseTraditional:
+    case FX_Charset::kChineseTraditional:
       cmap = "ETenms-B5-H";
       ordering = "CNS1";
       supplement = 4;
       pWidthArray->AppendNew<CPDF_Number>(1);
       Insert(0x20, 0x7e, pWidthArray);
       break;
-    case FX_CHARSET_ChineseSimplified:
+    case FX_Charset::kChineseSimplified:
       cmap = "GBK-EUC-H";
       ordering = "GB1";
       supplement = 2;
@@ -686,14 +687,14 @@ CPDF_Dictionary* CPDF_DocPageData::ProcessbCJK(
       pWidthArray->AppendNew<CPDF_Number>(814);
       Insert(0x21, 0x7e, pWidthArray);
       break;
-    case FX_CHARSET_Hangul:
+    case FX_Charset::kHangul:
       cmap = "KSCms-UHC-H";
       ordering = "Korea1";
       supplement = 2;
       pWidthArray->AppendNew<CPDF_Number>(1);
       Insert(0x20, 0x7e, pWidthArray);
       break;
-    case FX_CHARSET_ShiftJIS:
+    case FX_Charset::kShiftJIS:
       cmap = "90ms-RKSJ-H";
       ordering = "Japan1";
       supplement = 5;
@@ -705,6 +706,8 @@ CPDF_Dictionary* CPDF_DocPageData::ProcessbCJK(
       Insert(0xa1, 0xdf, pWidthArray);
       pWidthArray->AppendNew<CPDF_Number>(631);
       Insert(0x7e, 0x7e, pWidthArray);
+      break;
+    default:
       break;
   }
   pBaseDict->SetNewFor<CPDF_Name>("Subtype", "Type0");

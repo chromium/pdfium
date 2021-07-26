@@ -43,7 +43,7 @@ class CFX_MacFontInfo final : public CFX_FolderFontInfo {
   // CFX_FolderFontInfo
   void* MapFont(int weight,
                 bool bItalic,
-                int charset,
+                FX_Charset charset,
                 int pitch_family,
                 const char* family) override;
 
@@ -64,7 +64,7 @@ void GetJapanesePreference(ByteString* face, int weight, int pitch_family) {
 
 void* CFX_MacFontInfo::MapFont(int weight,
                                bool bItalic,
-                               int charset,
+                               FX_Charset charset,
                                int pitch_family,
                                const char* cstr_face) {
   ByteString face = cstr_face;
@@ -97,23 +97,23 @@ void* CFX_MacFontInfo::MapFont(int weight,
   if (it != m_FontList.end())
     return it->second.get();
 
-  if (charset == FX_CHARSET_ANSI && FontFamilyIsFixedPitch(pitch_family))
+  if (charset == FX_Charset::kANSI && FontFamilyIsFixedPitch(pitch_family))
     return GetFont("Courier New");
 
-  if (charset == FX_CHARSET_ANSI || charset == FX_CHARSET_Symbol)
+  if (charset == FX_Charset::kANSI || charset == FX_Charset::kSymbol)
     return nullptr;
 
   switch (charset) {
-    case FX_CHARSET_ShiftJIS:
+    case FX_Charset::kShiftJIS:
       GetJapanesePreference(&face, weight, pitch_family);
       break;
-    case FX_CHARSET_ChineseSimplified:
+    case FX_Charset::kChineseSimplified:
       face = "STSong";
       break;
-    case FX_CHARSET_Hangul:
+    case FX_Charset::kHangul:
       face = "AppleMyungjo";
       break;
-    case FX_CHARSET_ChineseTraditional:
+    case FX_Charset::kChineseTraditional:
       face = "LiSong Pro Light";
   }
   it = m_FontList.find(face);

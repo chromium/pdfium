@@ -71,7 +71,7 @@ class CFX_Win32FallbackFontInfo final : public CFX_FolderFontInfo {
   // CFX_FolderFontInfo:
   void* MapFont(int weight,
                 bool bItalic,
-                int charset,
+                FX_Charset charset,
                 int pitch_family,
                 const char* family) override;
 };
@@ -85,7 +85,7 @@ class CFX_Win32FontInfo final : public SystemFontInfoIface {
   bool EnumFontList(CFX_FontMapper* pMapper) override;
   void* MapFont(int weight,
                 bool bItalic,
-                int charset,
+                FX_Charset charset,
                 int pitch_family,
                 const char* face) override;
   void* GetFont(const char* face) override { return nullptr; }
@@ -93,7 +93,7 @@ class CFX_Win32FontInfo final : public SystemFontInfoIface {
                        uint32_t table,
                        pdfium::span<uint8_t> buffer) override;
   bool GetFaceName(void* hFont, ByteString* name) override;
-  bool GetFontCharset(void* hFont, int* charset) override;
+  bool GetFontCharset(void* hFont, FX_Charset* charset) override;
   void DeleteFont(void* hFont) override;
 
   bool IsOpenTypeFromDiv(const LOGFONTA* plf);
@@ -176,7 +176,7 @@ void CFX_Win32FontInfo::AddInstalledFont(const LOGFONTA* plf,
     return;
 
   if (name == m_LastFamily) {
-    m_pMapper->AddInstalledFont(name, plf->lfCharSet);
+    m_pMapper->AddInstalledFont(name, FX_GetCharsetFromInt(plf->lfCharSet));
     return;
   }
   if (!(font_type & TRUETYPE_FONTTYPE)) {
@@ -184,7 +184,7 @@ void CFX_Win32FontInfo::AddInstalledFont(const LOGFONTA* plf,
       return;
   }
 
-  m_pMapper->AddInstalledFont(name, plf->lfCharSet);
+  m_pMapper->AddInstalledFont(name, FX_GetCharsetFromInt(plf->lfCharSet));
   m_LastFamily = name;
 }
 
@@ -192,7 +192,7 @@ bool CFX_Win32FontInfo::EnumFontList(CFX_FontMapper* pMapper) {
   m_pMapper = pMapper;
   LOGFONTA lf;
   memset(&lf, 0, sizeof(LOGFONTA));
-  lf.lfCharSet = FX_CHARSET_Default;
+  lf.lfCharSet = static_cast<int>(FX_Charset::kDefault);
   lf.lfFaceName[0] = 0;
   lf.lfPitchAndFamily = 0;
   EnumFontFamiliesExA(m_hDC, &lf, (FONTENUMPROCA)FontEnumProc, (uintptr_t)this,
@@ -219,7 +219,7 @@ ByteString CFX_Win32FontInfo::FindFont(const ByteString& name) {
 
 void* CFX_Win32FallbackFontInfo::MapFont(int weight,
                                          bool bItalic,
-                                         int charset,
+                                         FX_Charset charset,
                                          int pitch_family,
                                          const char* cstr_face) {
   void* font = GetSubstFont(cstr_face);
@@ -228,10 +228,10 @@ void* CFX_Win32FallbackFontInfo::MapFont(int weight,
 
   bool bCJK = true;
   switch (charset) {
-    case FX_CHARSET_ShiftJIS:
-    case FX_CHARSET_ChineseSimplified:
-    case FX_CHARSET_ChineseTraditional:
-    case FX_CHARSET_Hangul:
+    case FX_Charset::kShiftJIS:
+    case FX_Charset::kChineseSimplified:
+    case FX_Charset::kChineseTraditional:
+    case FX_Charset::kHangul:
       break;
     default:
       bCJK = false;
@@ -309,7 +309,7 @@ void CFX_Win32FontInfo::GetJapanesePreference(ByteString& face,
 
 void* CFX_Win32FontInfo::MapFont(int weight,
                                  bool bItalic,
-                                 int charset,
+                                 FX_Charset charset,
                                  int pitch_family,
                                  const char* cstr_face) {
   ByteString face = cstr_face;
@@ -322,23 +322,23 @@ void* CFX_Win32FontInfo::MapFont(int weight,
       break;
     }
   }
-  if (charset == FX_CHARSET_ANSI || charset == FX_CHARSET_Symbol)
-    charset = FX_CHARSET_Default;
+  if (charset == FX_Charset::kANSI || charset == FX_Charset::kSymbol)
+    charset = FX_Charset::kDefault;
 
   int subst_pitch_family = pitch_family;
   switch (charset) {
-    case FX_CHARSET_ShiftJIS:
+    case FX_Charset::kShiftJIS:
       subst_pitch_family = FF_ROMAN;
       break;
-    case FX_CHARSET_ChineseTraditional:
-    case FX_CHARSET_Hangul:
-    case FX_CHARSET_ChineseSimplified:
+    case FX_Charset::kChineseTraditional:
+    case FX_Charset::kHangul:
+    case FX_Charset::kChineseSimplified:
       subst_pitch_family = 0;
       break;
   }
-  HFONT hFont =
-      ::CreateFontA(-10, 0, 0, 0, weight, bItalic, 0, 0, charset,
-                    OUT_TT_ONLY_PRECIS, 0, 0, subst_pitch_family, face.c_str());
+  HFONT hFont = ::CreateFontA(-10, 0, 0, 0, weight, bItalic, 0, 0,
+                              static_cast<int>(charset), OUT_TT_ONLY_PRECIS, 0,
+                              0, subst_pitch_family, face.c_str());
   char facebuf[100];
   HFONT hOldFont = (HFONT)::SelectObject(m_hDC, hFont);
   ::GetTextFaceA(m_hDC, 100, facebuf);
@@ -359,20 +359,20 @@ void* CFX_Win32FontInfo::MapFont(int weight,
       return hFont;
   }
   ::DeleteObject(hFont);
-  if (charset == FX_CHARSET_Default)
+  if (charset == FX_Charset::kDefault)
     return nullptr;
 
   switch (charset) {
-    case FX_CHARSET_ShiftJIS:
+    case FX_Charset::kShiftJIS:
       GetJapanesePreference(face, weight, pitch_family);
       break;
-    case FX_CHARSET_ChineseSimplified:
+    case FX_Charset::kChineseSimplified:
       GetGBPreference(face, weight, pitch_family);
       break;
-    case FX_CHARSET_Hangul:
+    case FX_Charset::kHangul:
       face = "Gulim";
       break;
-    case FX_CHARSET_ChineseTraditional:
+    case FX_Charset::kChineseTraditional:
       if (face.Contains("MSung")) {
         face = "MingLiU";
       } else {
@@ -380,9 +380,9 @@ void* CFX_Win32FontInfo::MapFont(int weight,
       }
       break;
   }
-  hFont =
-      ::CreateFontA(-10, 0, 0, 0, weight, bItalic, 0, 0, charset,
-                    OUT_TT_ONLY_PRECIS, 0, 0, subst_pitch_family, face.c_str());
+  hFont = ::CreateFontA(-10, 0, 0, 0, weight, bItalic, 0, 0,
+                        static_cast<int>(charset), OUT_TT_ONLY_PRECIS, 0, 0,
+                        subst_pitch_family, face.c_str());
   return hFont;
 }
 
@@ -415,12 +415,12 @@ bool CFX_Win32FontInfo::GetFaceName(void* hFont, ByteString* name) {
   return true;
 }
 
-bool CFX_Win32FontInfo::GetFontCharset(void* hFont, int* charset) {
+bool CFX_Win32FontInfo::GetFontCharset(void* hFont, FX_Charset* charset) {
   TEXTMETRIC tm;
   HFONT hOldFont = (HFONT)::SelectObject(m_hDC, (HFONT)hFont);
   ::GetTextMetrics(m_hDC, &tm);
   ::SelectObject(m_hDC, hOldFont);
-  *charset = tm.tmCharSet;
+  *charset = FX_GetCharsetFromInt(tm.tmCharSet);
   return true;
 }
 

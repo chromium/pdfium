@@ -26,7 +26,7 @@ class CFX_AndroidFontInfo final : public SystemFontInfoIface {
   bool EnumFontList(CFX_FontMapper* pMapper) override;
   void* MapFont(int weight,
                 bool bItalic,
-                int charset,
+                FX_Charset charset,
                 int pitch_family,
                 const char* face) override;
   void* GetFont(const char* face) override;
@@ -34,7 +34,7 @@ class CFX_AndroidFontInfo final : public SystemFontInfoIface {
                        uint32_t table,
                        pdfium::span<uint8_t> buffer) override;
   bool GetFaceName(void* hFont, ByteString* name) override;
-  bool GetFontCharset(void* hFont, int* charset) override;
+  bool GetFontCharset(void* hFont, FX_Charset* charset) override;
   void DeleteFont(void* hFont) override;
 
  private:

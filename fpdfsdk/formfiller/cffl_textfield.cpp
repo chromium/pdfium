@@ -243,7 +243,7 @@ bool CFFL_TextField::IsFieldFull(const CPDFSDK_PageView* pPageView) {
 #endif  // PDF_ENABLE_XFA
 
 void CFFL_TextField::OnSetFocus(CPWL_Edit* pEdit) {
-  pEdit->SetCharSet(FX_CHARSET_ChineseSimplified);
+  pEdit->SetCharSet(FX_Charset::kChineseSimplified);
   pEdit->SetReadyToInput();
 
   WideString wsText = pEdit->GetText();

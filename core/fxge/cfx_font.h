@@ -36,7 +36,7 @@ class CFX_Font {
  public:
   // This struct should be the same as FPDF_CharsetFontMap.
   struct CharsetFontMap {
-    int charset;           // Character Set Enum value, see FX_CHARSET_XXX.
+    int charset;           // Character Set Enum value, see FX_Charset::kXXX.
     const char* fontname;  // Name of default font to use with that charset.
   };
 
@@ -52,13 +52,13 @@ class CFX_Font {
   static const char kUniversalDefaultFontName[];
 
   // Returns negative values on failure.
-  static int GetWeightLevel(int charset, size_t index);
+  static int GetWeightLevel(FX_Charset charset, size_t index);
 
   // |angle| is typically negative.
   static int GetSkewFromAngle(int angle);
 
-  static ByteString GetDefaultFontNameByCharset(uint8_t nCharset);
-  static uint8_t GetCharSetFromUnicode(uint16_t word);
+  static ByteString GetDefaultFontNameByCharset(FX_Charset nCharset);
+  static FX_Charset GetCharSetFromUnicode(uint16_t word);
 
   CFX_Font();
   ~CFX_Font();

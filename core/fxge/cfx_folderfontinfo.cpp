@@ -100,19 +100,19 @@ ByteString LoadTableFromTT(FILE* pFile,
   return ByteString();
 }
 
-uint32_t GetCharset(int charset) {
+uint32_t GetCharset(FX_Charset charset) {
   switch (charset) {
-    case FX_CHARSET_ShiftJIS:
+    case FX_Charset::kShiftJIS:
       return CHARSET_FLAG_SHIFTJIS;
-    case FX_CHARSET_ChineseSimplified:
+    case FX_Charset::kChineseSimplified:
       return CHARSET_FLAG_GB;
-    case FX_CHARSET_ChineseTraditional:
+    case FX_Charset::kChineseTraditional:
       return CHARSET_FLAG_BIG5;
-    case FX_CHARSET_Hangul:
+    case FX_Charset::kHangul:
       return CHARSET_FLAG_KOREAN;
-    case FX_CHARSET_Symbol:
+    case FX_Charset::kSymbol:
       return CHARSET_FLAG_SYMBOL;
-    case FX_CHARSET_ANSI:
+    case FX_Charset::kANSI:
       return CHARSET_FLAG_ANSI;
     default:
       break;
@@ -268,27 +268,27 @@ void CFX_FolderFontInfo::ReportFace(const ByteString& path,
     const uint8_t* p = os2.raw_str() + 78;
     uint32_t codepages = FXSYS_UINT32_GET_MSBFIRST(p);
     if (codepages & (1U << 17)) {
-      m_pMapper->AddInstalledFont(facename, FX_CHARSET_ShiftJIS);
+      m_pMapper->AddInstalledFont(facename, FX_Charset::kShiftJIS);
       pInfo->m_Charsets |= CHARSET_FLAG_SHIFTJIS;
     }
     if (codepages & (1U << 18)) {
-      m_pMapper->AddInstalledFont(facename, FX_CHARSET_ChineseSimplified);
+      m_pMapper->AddInstalledFont(facename, FX_Charset::kChineseSimplified);
       pInfo->m_Charsets |= CHARSET_FLAG_GB;
     }
     if (codepages & (1U << 20)) {
-      m_pMapper->AddInstalledFont(facename, FX_CHARSET_ChineseTraditional);
+      m_pMapper->AddInstalledFont(facename, FX_Charset::kChineseTraditional);
       pInfo->m_Charsets |= CHARSET_FLAG_BIG5;
     }
     if ((codepages & (1U << 19)) || (codepages & (1U << 21))) {
-      m_pMapper->AddInstalledFont(facename, FX_CHARSET_Hangul);
+      m_pMapper->AddInstalledFont(facename, FX_Charset::kHangul);
       pInfo->m_Charsets |= CHARSET_FLAG_KOREAN;
     }
     if (codepages & (1U << 31)) {
-      m_pMapper->AddInstalledFont(facename, FX_CHARSET_Symbol);
+      m_pMapper->AddInstalledFont(facename, FX_Charset::kSymbol);
       pInfo->m_Charsets |= CHARSET_FLAG_SYMBOL;
     }
   }
-  m_pMapper->AddInstalledFont(facename, FX_CHARSET_ANSI);
+  m_pMapper->AddInstalledFont(facename, FX_Charset::kANSI);
   pInfo->m_Charsets |= CHARSET_FLAG_ANSI;
   pInfo->m_Styles = 0;
   if (style.Contains("Bold"))
@@ -312,12 +312,12 @@ void* CFX_FolderFontInfo::GetSubstFont(const ByteString& face) {
 
 void* CFX_FolderFontInfo::FindFont(int weight,
                                    bool bItalic,
-                                   int charset,
+                                   FX_Charset charset,
                                    int pitch_family,
                                    const char* family,
                                    bool bMatchName) {
   FontFaceInfo* pFind = nullptr;
-  if (charset == FX_CHARSET_ANSI && FontFamilyIsFixedPitch(pitch_family))
+  if (charset == FX_Charset::kANSI && FontFamilyIsFixedPitch(pitch_family))
     return GetFont("Courier New");
 
   ByteStringView bsFamily(family);
@@ -326,7 +326,7 @@ void* CFX_FolderFontInfo::FindFont(int weight,
   for (const auto& it : m_FontList) {
     const ByteString& bsName = it.first;
     FontFaceInfo* pFont = it.second.get();
-    if (!(pFont->m_Charsets & charset_flag) && charset != FX_CHARSET_Default)
+    if (!(pFont->m_Charsets & charset_flag) && charset != FX_Charset::kDefault)
       continue;
 
     if (bMatchName && !FindFamilyNameMatch(bsFamily, bsName))
@@ -345,7 +345,7 @@ void* CFX_FolderFontInfo::FindFont(int weight,
 
 void* CFX_FolderFontInfo::MapFont(int weight,
                                   bool bItalic,
-                                  int charset,
+                                  FX_Charset charset,
                                   int pitch_family,
                                   const char* family) {
   return nullptr;
@@ -404,7 +404,7 @@ bool CFX_FolderFontInfo::GetFaceName(void* hFont, ByteString* name) {
   return true;
 }
 
-bool CFX_FolderFontInfo::GetFontCharset(void* hFont, int* charset) {
+bool CFX_FolderFontInfo::GetFontCharset(void* hFont, FX_Charset* charset) {
   return false;
 }
 

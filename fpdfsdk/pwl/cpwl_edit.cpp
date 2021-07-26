@@ -253,7 +253,7 @@ void CPWL_Edit::OnKillFocus() {
   if (!SetCaret(false, CFX_PointF(), CFX_PointF()))
     return;
 
-  SetCharSet(FX_CHARSET_ANSI);
+  SetCharSet(FX_Charset::kANSI);
   m_bFocus = false;
 }
 
@@ -450,9 +450,9 @@ bool CPWL_Edit::OnChar(uint16_t nChar, uint32_t nFlag) {
     return false;
 
   if (IPVT_FontMap* pFontMap = GetFontMap()) {
-    int32_t nOldCharSet = GetCharSet();
-    int32_t nNewCharSet =
-        pFontMap->CharSetFromUnicode(nChar, FX_CHARSET_Default);
+    FX_Charset nOldCharSet = GetCharSet();
+    FX_Charset nNewCharSet =
+        pFontMap->CharSetFromUnicode(nChar, FX_Charset::kDefault);
     if (nOldCharSet != nNewCharSet) {
       SetCharSet(nNewCharSet);
     }
@@ -827,7 +827,7 @@ void CPWL_Edit::CopyText() {}
 
 void CPWL_Edit::PasteText() {}
 
-void CPWL_Edit::InsertWord(uint16_t word, int32_t nCharset) {
+void CPWL_Edit::InsertWord(uint16_t word, FX_Charset nCharset) {
   if (!IsReadOnly())
     m_pEditImpl->InsertWord(word, nCharset);
 }

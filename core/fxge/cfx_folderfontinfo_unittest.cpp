@@ -43,7 +43,7 @@ class CFX_FolderFontInfoTest : public ::testing::Test {
 
   void* FindFont(int weight,
                  bool bItalic,
-                 int charset,
+                 FX_Charset charset,
                  int pitch_family,
                  const char* family,
                  bool bMatchName) {
@@ -69,57 +69,57 @@ class CFX_FolderFontInfoTest : public ::testing::Test {
 
 TEST_F(CFX_FolderFontInfoTest, TestFindFont) {
   // Find "Symbol" font
-  void* font = FindFont(/*weight=*/0, /*bItalic=*/false, FX_CHARSET_Symbol,
+  void* font = FindFont(/*weight=*/0, /*bItalic=*/false, FX_Charset::kSymbol,
                         FXFONT_FF_ROMAN, kSymbol, /*bMatchName=*/true);
   ASSERT_TRUE(font);
   EXPECT_EQ(GetFaceName(font), kSymbol);
 
   // Find "Calibri" font that is not present in the installed fonts
-  EXPECT_FALSE(FindFont(/*weight=*/0, /*bItalic=*/false, FX_CHARSET_Symbol,
+  EXPECT_FALSE(FindFont(/*weight=*/0, /*bItalic=*/false, FX_Charset::kSymbol,
                         FXFONT_FF_ROMAN, kCalibri, /*bMatchName=*/true));
 
   // Find the closest matching font to "Bookshelf" font that is present in the
   // installed fonts
-  font = FindFont(/*weight=*/0, /*bItalic=*/false, FX_CHARSET_Symbol,
+  font = FindFont(/*weight=*/0, /*bItalic=*/false, FX_Charset::kSymbol,
                   FXFONT_FF_ROMAN, kBookshelf, /*bMatchName=*/true);
   ASSERT_TRUE(font);
   EXPECT_EQ(GetFaceName(font), kBookshelfSymbol7);
 
   // Find "Book" font is expected to fail, because none of the installed fonts
   // is in the same font family.
-  EXPECT_FALSE(FindFont(/*weight=*/0, /*bItalic=*/false, FX_CHARSET_Symbol,
+  EXPECT_FALSE(FindFont(/*weight=*/0, /*bItalic=*/false, FX_Charset::kSymbol,
                         FXFONT_FF_ROMAN, kBook, /*bMatchName=*/true));
 
   // Find the closest matching font for "Tofu" in the installed fonts, which
   // has "," following the string "Tofu".
-  font = FindFont(/*weight=*/0, /*bItalic=*/false, FX_CHARSET_Symbol,
+  font = FindFont(/*weight=*/0, /*bItalic=*/false, FX_Charset::kSymbol,
                   FXFONT_FF_ROMAN, kTofu, /*bMatchName=*/true);
   ASSERT_TRUE(font);
   EXPECT_EQ(GetFaceName(font), kTofuBold);
 
   // Find the closest matching font for "Lato" in the installed fonts, which
   // has a space character following the string "Lato".
-  font = FindFont(/*weight=*/0, /*bItalic=*/false, FX_CHARSET_ANSI,
+  font = FindFont(/*weight=*/0, /*bItalic=*/false, FX_Charset::kANSI,
                   FXFONT_FF_ROMAN, kLato, /*bMatchName=*/true);
   ASSERT_TRUE(font);
   EXPECT_EQ(GetFaceName(font), kLatoUltraBold);
 
   // Find the closest matching font for "Oxygen" in the installed fonts,
   // which has "-" following the string "Oxygen".
-  font = FindFont(/*weight=*/0, /*bItalic=*/false, FX_CHARSET_ANSI,
+  font = FindFont(/*weight=*/0, /*bItalic=*/false, FX_Charset::kANSI,
                   FXFONT_FF_ROMAN, kOxygen, /*bMatchName=*/true);
   ASSERT_TRUE(font);
   EXPECT_EQ(GetFaceName(font), kOxygenSansSansBold);
 
   // Find the closest matching font for "Oxygen-Sans" in the installed fonts,
   // to test matching a family name with "-".
-  font = FindFont(/*weight=*/0, /*bItalic=*/false, FX_CHARSET_ANSI,
+  font = FindFont(/*weight=*/0, /*bItalic=*/false, FX_Charset::kANSI,
                   FXFONT_FF_ROMAN, kOxygenSans, /*bMatchName=*/true);
   ASSERT_TRUE(font);
   EXPECT_EQ(GetFaceName(font), kOxygenSansSansBold);
 
   // Find "Symbol" font when name matching is false
-  font = FindFont(/*weight=*/0, /*bItalic=*/false, FX_CHARSET_Symbol,
+  font = FindFont(/*weight=*/0, /*bItalic=*/false, FX_Charset::kSymbol,
                   FXFONT_FF_ROMAN, kSymbol, /*bMatchName=*/false);
   ASSERT_TRUE(font);
   EXPECT_EQ(GetFaceName(font), kBookshelfSymbol7);

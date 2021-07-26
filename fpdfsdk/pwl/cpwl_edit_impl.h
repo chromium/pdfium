@@ -14,6 +14,7 @@
 
 #include "core/fpdfdoc/cpvt_variabletext.h"
 #include "core/fpdfdoc/cpvt_wordrange.h"
+#include "core/fxcrt/fx_codepage_forward.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
 
@@ -94,12 +95,12 @@ class CPWL_EditImpl {
   void OnVK_HOME(bool bShift, bool bCtrl);
   void OnVK_END(bool bShift, bool bCtrl);
   void SetText(const WideString& sText);
-  bool InsertWord(uint16_t word, int32_t charset);
+  bool InsertWord(uint16_t word, FX_Charset charset);
   bool InsertReturn();
   bool Backspace();
   bool Delete();
   bool ClearSelection();
-  bool InsertText(const WideString& sText, int32_t charset);
+  bool InsertText(const WideString& sText, FX_Charset charset);
   void ReplaceSelection(const WideString& text);
   bool Redo();
   bool Undo();
@@ -226,22 +227,17 @@ class CPWL_EditImpl {
   class UndoReplaceSelection;
 
   bool IsTextOverflow() const;
-
   bool Clear();
-
   CPVT_WordPlace DoInsertText(const CPVT_WordPlace& place,
                               const WideString& sText,
-                              int32_t charset);
-  int32_t GetCharSetFromUnicode(uint16_t word, int32_t nOldCharset);
-
+                              FX_Charset charset);
+  FX_Charset GetCharSetFromUnicode(uint16_t word, FX_Charset nOldCharset);
   int32_t GetTotalLines() const;
-
   void SetSelection(const CPVT_WordPlace& begin, const CPVT_WordPlace& end);
-
   bool Delete(bool bAddUndo);
   bool Clear(bool bAddUndo);
-  bool InsertText(const WideString& sText, int32_t charset, bool bAddUndo);
-  bool InsertWord(uint16_t word, int32_t charset, bool bAddUndo);
+  bool InsertText(const WideString& sText, FX_Charset charset, bool bAddUndo);
+  bool InsertWord(uint16_t word, FX_Charset charset, bool bAddUndo);
   bool InsertReturn(bool bAddUndo);
   bool Backspace(bool bAddUndo);
   void SetCaret(const CPVT_WordPlace& place);

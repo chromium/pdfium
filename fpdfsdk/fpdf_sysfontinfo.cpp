@@ -19,24 +19,31 @@
 #include "core/fxge/fx_font.h"
 #include "core/fxge/systemfontinfo_iface.h"
 
-static_assert(FXFONT_ANSI_CHARSET == FX_CHARSET_ANSI, "Charset must match");
-static_assert(FXFONT_DEFAULT_CHARSET == FX_CHARSET_Default,
+static_assert(FXFONT_ANSI_CHARSET == static_cast<int>(FX_Charset::kANSI),
               "Charset must match");
-static_assert(FXFONT_SYMBOL_CHARSET == FX_CHARSET_Symbol, "Charset must match");
-static_assert(FXFONT_SHIFTJIS_CHARSET == FX_CHARSET_ShiftJIS,
+static_assert(FXFONT_DEFAULT_CHARSET == static_cast<int>(FX_Charset::kDefault),
               "Charset must match");
-static_assert(FXFONT_HANGEUL_CHARSET == FX_CHARSET_Hangul,
+static_assert(FXFONT_SYMBOL_CHARSET == static_cast<int>(FX_Charset::kSymbol),
               "Charset must match");
-static_assert(FXFONT_GB2312_CHARSET == FX_CHARSET_ChineseSimplified,
+static_assert(FXFONT_SHIFTJIS_CHARSET ==
+                  static_cast<int>(FX_Charset::kShiftJIS),
               "Charset must match");
-static_assert(FXFONT_CHINESEBIG5_CHARSET == FX_CHARSET_ChineseTraditional,
+static_assert(FXFONT_HANGEUL_CHARSET == static_cast<int>(FX_Charset::kHangul),
               "Charset must match");
-static_assert(FXFONT_ARABIC_CHARSET == FX_CHARSET_MSWin_Arabic,
+static_assert(FXFONT_GB2312_CHARSET ==
+                  static_cast<int>(FX_Charset::kChineseSimplified),
               "Charset must match");
-static_assert(FXFONT_CYRILLIC_CHARSET == FX_CHARSET_MSWin_Cyrillic,
+static_assert(FXFONT_CHINESEBIG5_CHARSET ==
+                  static_cast<int>(FX_Charset::kChineseTraditional),
+              "Charset must match");
+static_assert(FXFONT_ARABIC_CHARSET ==
+                  static_cast<int>(FX_Charset::kMSWin_Arabic),
+              "Charset must match");
+static_assert(FXFONT_CYRILLIC_CHARSET ==
+                  static_cast<int>(FX_Charset::kMSWin_Cyrillic),
               "Charset must match");
 static_assert(FXFONT_EASTERNEUROPEAN_CHARSET ==
-                  FX_CHARSET_MSWin_EasternEuropean,
+                  static_cast<int>(FX_Charset::kMSWin_EasternEuropean),
               "Charset must match");
 static_assert(offsetof(CFX_Font::CharsetFontMap, charset) ==
                   offsetof(FPDF_CharsetFontMap, charset),
@@ -65,15 +72,15 @@ class CFX_ExternalFontInfo final : public SystemFontInfoIface {
 
   void* MapFont(int weight,
                 bool bItalic,
-                int charset,
+                FX_Charset charset,
                 int pitch_family,
                 const char* family) override {
     if (!m_pInfo->MapFont)
       return nullptr;
 
     int iExact;
-    return m_pInfo->MapFont(m_pInfo, weight, bItalic, charset, pitch_family,
-                            family, &iExact);
+    return m_pInfo->MapFont(m_pInfo, weight, bItalic, static_cast<int>(charset),
+                            pitch_family, family, &iExact);
   }
 
   void* GetFont(const char* family) override {
@@ -104,11 +111,11 @@ class CFX_ExternalFontInfo final : public SystemFontInfoIface {
     return true;
   }
 
-  bool GetFontCharset(void* hFont, int* charset) override {
+  bool GetFontCharset(void* hFont, FX_Charset* charset) override {
     if (!m_pInfo->GetFontCharset)
       return false;
 
-    *charset = m_pInfo->GetFontCharset(m_pInfo, hFont);
+    *charset = FX_GetCharsetFromInt(m_pInfo->GetFontCharset(m_pInfo, hFont));
     return true;
   }
 
@@ -125,7 +132,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_AddInstalledFont(void* mapper,
                                                      const char* face,
                                                      int charset) {
   CFX_FontMapper* pMapper = static_cast<CFX_FontMapper*>(mapper);
-  pMapper->AddInstalledFont(face, charset);
+  pMapper->AddInstalledFont(face, FX_GetCharsetFromInt(charset));
 }
 
 FPDF_EXPORT void FPDF_CALLCONV
@@ -163,8 +170,8 @@ static void* DefaultMapFont(struct _FPDF_SYSFONTINFO* pThis,
                             const char* family,
                             int* bExact) {
   auto* pDefault = static_cast<FPDF_SYSFONTINFO_DEFAULT*>(pThis);
-  return pDefault->m_pFontInfo->MapFont(weight, !!bItalic, charset,
-                                        pitch_family, family);
+  return pDefault->m_pFontInfo->MapFont(
+      weight, !!bItalic, FX_GetCharsetFromInt(charset), pitch_family, family);
 }
 
 void* DefaultGetFont(struct _FPDF_SYSFONTINFO* pThis, const char* family) {
@@ -198,11 +205,11 @@ static unsigned long DefaultGetFaceName(struct _FPDF_SYSFONTINFO* pThis,
 }
 
 static int DefaultGetFontCharset(struct _FPDF_SYSFONTINFO* pThis, void* hFont) {
-  int charset;
+  FX_Charset charset;
   auto* pDefault = static_cast<FPDF_SYSFONTINFO_DEFAULT*>(pThis);
   if (!pDefault->m_pFontInfo->GetFontCharset(hFont, &charset))
     return 0;
-  return charset;
+  return static_cast<int>(charset);
 }
 
 static void DefaultDeleteFont(struct _FPDF_SYSFONTINFO* pThis, void* hFont) {
