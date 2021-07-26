@@ -7,10 +7,11 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_PATHOBJECT_H_
 #define CORE_FPDFAPI_PAGE_CPDF_PATHOBJECT_H_
 
+#include <stdint.h>
+
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fpdfapi/page/cpdf_path.h"
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 
 class CPDF_PathObject final : public CPDF_PageObject {

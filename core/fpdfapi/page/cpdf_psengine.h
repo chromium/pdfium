@@ -7,11 +7,13 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_PSENGINE_H_
 #define CORE_FPDFAPI_PAGE_CPDF_PSENGINE_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include <memory>
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/fx_system.h"
 #include "third_party/base/span.h"
 
 class CPDF_PSEngine;

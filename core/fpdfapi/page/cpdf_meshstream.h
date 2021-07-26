@@ -7,13 +7,14 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_MESHSTREAM_H_
 #define CORE_FPDFAPI_PAGE_CPDF_MESHSTREAM_H_
 
+#include <stdint.h>
+
 #include <memory>
 #include <tuple>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_shadingpattern.h"
 #include "core/fxcrt/cfx_bitstream.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 
 class CPDF_StreamAcc;

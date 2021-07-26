@@ -7,11 +7,12 @@
 #ifndef CORE_FPDFAPI_RENDER_CPDF_TYPE3CACHE_H_
 #define CORE_FPDFAPI_RENDER_CPDF_TYPE3CACHE_H_
 
+#include <stdint.h>
+
 #include <map>
 #include <memory>
 
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 

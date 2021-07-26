@@ -7,12 +7,13 @@
 #ifndef CORE_FPDFAPI_PARSER_CPDF_OBJECT_H_
 #define CORE_FPDFAPI_PARSER_CPDF_OBJECT_H_
 
+#include <stdint.h>
+
 #include <memory>
 #include <set>
 #include <type_traits>
 
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 
 class CPDF_Array;

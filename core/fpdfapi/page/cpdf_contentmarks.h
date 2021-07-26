@@ -7,11 +7,12 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_CONTENTMARKS_H_
 #define CORE_FPDFAPI_PAGE_CPDF_CONTENTMARKS_H_
 
+#include <stddef.h>
+
 #include <memory>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_contentmarkitem.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 
 class CPDF_Dictionary;

@@ -7,6 +7,9 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_PAGEOBJECTHOLDER_H_
 #define CORE_FPDFAPI_PAGE_CPDF_PAGEOBJECTHOLDER_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include <deque>
 #include <map>
 #include <memory>
@@ -17,7 +20,6 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/fx_dib.h"

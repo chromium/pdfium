@@ -8,7 +8,6 @@
 #define CORE_FPDFAPI_PAGE_CPDF_PATTERN_H_
 
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"

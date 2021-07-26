@@ -7,10 +7,11 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_PAGEOBJECT_H_
 #define CORE_FPDFAPI_PAGE_CPDF_PAGEOBJECT_H_
 
+#include <stdint.h>
+
 #include "core/fpdfapi/page/cpdf_contentmarks.h"
 #include "core/fpdfapi/page/cpdf_graphicstates.h"
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_system.h"
 
 class CPDF_FormObject;
 class CPDF_ImageObject;

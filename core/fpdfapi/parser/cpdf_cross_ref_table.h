@@ -5,10 +5,12 @@
 #ifndef CORE_FPDFAPI_PARSER_CPDF_CROSS_REF_TABLE_H_
 #define CORE_FPDFAPI_PARSER_CPDF_CROSS_REF_TABLE_H_
 
+#include <stdint.h>
+
 #include <map>
 #include <memory>
 
-#include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/fx_types.h"
 #include "core/fxcrt/retain_ptr.h"
 
 class CPDF_Dictionary;

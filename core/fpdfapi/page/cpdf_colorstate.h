@@ -10,12 +10,10 @@
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_color.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/shared_copy_on_write.h"
 #include "core/fxge/dib/fx_dib.h"
 
-class CPDF_Color;
 class CPDF_ColorSpace;
 class CPDF_Pattern;
 
