@@ -7,7 +7,7 @@
 #ifndef CORE_FXCODEC_JBIG2_JBIG2_PAGE_H_
 #define CORE_FXCODEC_JBIG2_JBIG2_PAGE_H_
 
-#include "core/fxcrt/fx_system.h"
+#include <stdint.h>
 
 struct JBig2PageInfo {
   uint32_t m_dwWidth;

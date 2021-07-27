@@ -7,10 +7,12 @@
 #ifndef CORE_FXCODEC_JBIG2_JBIG2_HUFFMANTABLE_H_
 #define CORE_FXCODEC_JBIG2_JBIG2_HUFFMANTABLE_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include <vector>
 
 #include "core/fxcodec/jbig2/JBig2_Define.h"
-#include "core/fxcrt/fx_system.h"
 
 class CJBig2_BitStream;
 

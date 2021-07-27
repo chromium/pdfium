@@ -7,11 +7,13 @@
 #ifndef CORE_FXCRT_CFX_BINARYBUF_H_
 #define CORE_FXCRT_CFX_BINARYBUF_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include <memory>
 
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/fx_system.h"
 #include "third_party/base/span.h"
 
 class CFX_BinaryBuf {

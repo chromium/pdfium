@@ -7,11 +7,12 @@
 #ifndef CORE_FXCODEC_JBIG2_JBIG2_GRDPROC_H_
 #define CORE_FXCODEC_JBIG2_JBIG2_GRDPROC_H_
 
+#include <stdint.h>
+
 #include <memory>
 
 #include "core/fxcodec/fx_codec_def.h"
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 class CJBig2_ArithDecoder;

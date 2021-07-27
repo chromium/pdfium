@@ -7,9 +7,9 @@
 #ifndef CORE_FXCODEC_JBIG2_JBIG2_PDDPROC_H_
 #define CORE_FXCODEC_JBIG2_JBIG2_PDDPROC_H_
 
-#include <memory>
+#include <stdint.h>
 
-#include "core/fxcrt/fx_system.h"
+#include <memory>
 
 class CJBig2_ArithDecoder;
 class CJBig2_BitStream;

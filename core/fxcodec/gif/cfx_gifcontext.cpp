@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "core/fxcodec/cfx_codec_memory.h"
+#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/stl_util.h"
 #include "third_party/base/cxx17_backports.h"
 

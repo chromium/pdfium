@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/cxfa_fwladapterwidgetmgr.h"
 
+#include "core/fxcrt/fx_coordinates.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_fffield.h"
 

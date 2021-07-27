@@ -7,6 +7,9 @@
 #ifndef CORE_FXCODEC_PROGRESSIVE_DECODER_H_
 #define CORE_FXCODEC_PROGRESSIVE_DECODER_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include <memory>
 #include <utility>
 #include <vector>
@@ -15,7 +18,6 @@
 #include "core/fxcodec/jpeg/jpegmodule.h"
 #include "core/fxcodec/progressive_decoder_iface.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/cstretchengine.h"
 #include "core/fxge/dib/fx_dib.h"

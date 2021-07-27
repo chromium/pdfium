@@ -7,6 +7,8 @@
 #ifndef XFA_FXFA_CXFA_TEXTPARSER_H_
 #define XFA_FXFA_CXFA_TEXTPARSER_H_
 
+#include <stdint.h>
+
 #include <map>
 #include <memory>
 #include <vector>
@@ -14,7 +16,6 @@
 #include "core/fxcrt/css/cfx_css.h"
 #include "core/fxcrt/css/cfx_cssdeclaration.h"
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "fxjs/gc/heap.h"

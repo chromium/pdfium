@@ -7,10 +7,11 @@
 #ifndef CORE_FXCODEC_JBIG2_JBIG2_ARITHINTDECODER_H_
 #define CORE_FXCODEC_JBIG2_JBIG2_ARITHINTDECODER_H_
 
+#include <stdint.h>
+
 #include <vector>
 
 #include "core/fxcodec/jbig2/JBig2_ArithDecoder.h"
-#include "core/fxcrt/fx_system.h"
 
 class CJBig2_ArithIntDecoder {
  public:

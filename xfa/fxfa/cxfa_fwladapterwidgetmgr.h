@@ -7,13 +7,12 @@
 #ifndef XFA_FXFA_CXFA_FWLADAPTERWIDGETMGR_H_
 #define XFA_FXFA_CXFA_FWLADAPTERWIDGETMGR_H_
 
-#include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_system.h"
 #include "fxjs/gc/heap.h"
 #include "v8/include/cppgc/garbage-collected.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
 
 class CFWL_Widget;
+class CFX_RectF;
 
 class CXFA_FWLAdapterWidgetMgr
     : public cppgc::GarbageCollected<CXFA_FWLAdapterWidgetMgr>,
