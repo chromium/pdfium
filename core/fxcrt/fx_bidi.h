@@ -7,10 +7,11 @@
 #ifndef CORE_FXCRT_FX_BIDI_H_
 #define CORE_FXCRT_FX_BIDI_H_
 
+#include <stdint.h>
+
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/fx_system.h"
 
 // Processes characters and group them into segments based on text direction.
 class CFX_BidiChar {

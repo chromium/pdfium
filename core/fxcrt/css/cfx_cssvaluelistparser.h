@@ -7,8 +7,9 @@
 #ifndef CORE_FXCRT_CSS_CFX_CSSVALUELISTPARSER_H_
 #define CORE_FXCRT_CSS_CFX_CSSVALUELISTPARSER_H_
 
+#include <stdint.h>
+
 #include "core/fxcrt/css/cfx_cssvalue.h"
-#include "core/fxcrt/fx_system.h"
 
 class CFX_CSSValueListParser {
  public:

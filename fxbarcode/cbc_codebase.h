@@ -7,10 +7,11 @@
 #ifndef FXBARCODE_CBC_CODEBASE_H_
 #define FXBARCODE_CBC_CODEBASE_H_
 
+#include <stdint.h>
+
 #include <memory>
 
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "fxbarcode/BC_Library.h"
 

@@ -7,9 +7,10 @@
 #ifndef CORE_FXGE_CFX_UNICODEENCODINGEX_H_
 #define CORE_FXGE_CFX_UNICODEENCODINGEX_H_
 
+#include <stdint.h>
+
 #include <memory>
 
-#include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_unicodeencoding.h"
 
 class CFX_UnicodeEncodingEx final : public CFX_UnicodeEncoding {

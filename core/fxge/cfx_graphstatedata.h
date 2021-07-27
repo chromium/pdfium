@@ -7,9 +7,10 @@
 #ifndef CORE_FXGE_CFX_GRAPHSTATEDATA_H_
 #define CORE_FXGE_CFX_GRAPHSTATEDATA_H_
 
+#include <stdint.h>
+
 #include <vector>
 
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 
 class CFX_GraphStateData {

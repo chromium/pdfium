@@ -7,12 +7,12 @@
 #ifndef FXBARCODE_CBC_CODE39_H_
 #define FXBARCODE_CBC_CODE39_H_
 
-#include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/fx_system.h"
 #include "fxbarcode/cbc_onecode.h"
 
 class CBC_OnedCode39Writer;
+class CFX_Matrix;
+class CFX_RenderDevice;
 
 class CBC_Code39 final : public CBC_OneCode {
  public:

@@ -7,8 +7,9 @@
 #ifndef CORE_FXGE_ANDROID_CFPF_SKIAPATHFONT_H_
 #define CORE_FXGE_ANDROID_CFPF_SKIAPATHFONT_H_
 
+#include <stdint.h>
+
 #include "core/fxcrt/bytestring.h"
-#include "core/fxcrt/fx_system.h"
 
 class CFPF_SkiaPathFont {
  public:

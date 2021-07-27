@@ -7,10 +7,11 @@
 #ifndef CORE_FXGE_RENDERDEVICEDRIVER_IFACE_H_
 #define CORE_FXGE_RENDERDEVICEDRIVER_IFACE_H_
 
+#include <stdint.h>
+
 #include <memory>
 
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
 

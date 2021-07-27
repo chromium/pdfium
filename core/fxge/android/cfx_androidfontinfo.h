@@ -7,7 +7,8 @@
 #ifndef CORE_FXGE_ANDROID_CFX_ANDROIDFONTINFO_H_
 #define CORE_FXGE_ANDROID_CFX_ANDROIDFONTINFO_H_
 
-#include "core/fxcrt/fx_system.h"
+#include <stdint.h>
+
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/systemfontinfo_iface.h"

@@ -24,6 +24,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "fxbarcode/datamatrix/BC_DataMatrixWriter.h"
 

@@ -7,9 +7,12 @@
 #ifndef CORE_FXCRT_CFX_SEEKABLESTREAMPROXY_H_
 #define CORE_FXCRT_CFX_SEEKABLESTREAMPROXY_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_stream.h"
-#include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/fx_types.h"
 #include "core/fxcrt/retain_ptr.h"
 
 class CFX_SeekableStreamProxy final : public Retainable {

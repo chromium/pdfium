@@ -7,9 +7,10 @@
 #ifndef CORE_FXGE_ANDROID_CFPF_SKIAFONT_H_
 #define CORE_FXGE_ANDROID_CFPF_SKIAFONT_H_
 
+#include <stdint.h>
+
 #include "core/fxcrt/fx_codepage_forward.h"
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_face.h"

@@ -7,10 +7,11 @@
 #ifndef FXBARCODE_ONED_BC_ONEDCODE128WRITER_H_
 #define FXBARCODE_ONED_BC_ONEDCODE128WRITER_H_
 
+#include <stdint.h>
+
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/fx_system.h"
 #include "fxbarcode/oned/BC_OneDimWriter.h"
 
 class CBC_OnedCode128Writer final : public CBC_OneDimWriter {

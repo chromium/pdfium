@@ -8,10 +8,9 @@
 #define CORE_FXGE_APPLE_FX_QUARTZ_DEVICE_H_
 
 #include <Carbon/Carbon.h>
+#include <stdint.h>
 
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/dib/fx_dib.h"
 
 class CFX_DIBitmap;

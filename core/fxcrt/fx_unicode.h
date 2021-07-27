@@ -7,7 +7,7 @@
 #ifndef CORE_FXCRT_FX_UNICODE_H_
 #define CORE_FXCRT_FX_UNICODE_H_
 
-#include "core/fxcrt/fx_system.h"
+#include <stdint.h>
 
 // NOTE: Order matters, less-than/greater-than comparisons are used.
 enum class FX_BIDICLASS : uint8_t {

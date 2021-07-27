@@ -7,9 +7,12 @@
 #ifndef CORE_FXCRT_CFX_FILEACCESS_WINDOWS_H_
 #define CORE_FXCRT_CFX_FILEACCESS_WINDOWS_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include "build/build_config.h"
 #include "core/fxcrt/fileaccess_iface.h"
-#include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/fx_types.h"
 
 #if !defined(OS_WIN)
 #error "Included on the wrong platform"

@@ -7,9 +7,9 @@
 #ifndef FXBARCODE_COMMON_BC_COMMONBITMATRIX_H_
 #define FXBARCODE_COMMON_BC_COMMONBITMATRIX_H_
 
-#include <vector>
+#include <stdint.h>
 
-#include "core/fxcrt/fx_system.h"
+#include <vector>
 
 class CBC_CommonBitMatrix {
  public:

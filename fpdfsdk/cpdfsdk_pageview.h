@@ -7,11 +7,12 @@
 #ifndef FPDFSDK_CPDFSDK_PAGEVIEW_H_
 #define FPDFSDK_CPDFSDK_PAGEVIEW_H_
 
+#include <stdint.h>
+
 #include <memory>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_page.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_annot.h"

@@ -7,10 +7,12 @@
 #ifndef FXBARCODE_ONED_BC_ONEDIMWRITER_H_
 #define FXBARCODE_ONED_BC_ONEDIMWRITER_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_textrenderoptions.h"
 #include "fxbarcode/BC_Library.h"

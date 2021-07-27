@@ -9,10 +9,8 @@
 
 #include <memory>
 
-#include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_system.h"
-
 class CFFL_FormField;
+class CFX_FloatRect;
 
 class IPWL_SystemHandler {
  public:

@@ -8,7 +8,6 @@
 #define CORE_FXCRT_CSS_CFX_CSSNUMBERVALUE_H_
 
 #include "core/fxcrt/css/cfx_cssvalue.h"
-#include "core/fxcrt/fx_system.h"
 
 class CFX_CSSNumberValue final : public CFX_CSSValue {
  public:

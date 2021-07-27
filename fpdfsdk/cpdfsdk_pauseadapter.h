@@ -7,7 +7,6 @@
 #ifndef FPDFSDK_CPDFSDK_PAUSEADAPTER_H_
 #define FPDFSDK_CPDFSDK_PAUSEADAPTER_H_
 
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/pauseindicator_iface.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "public/fpdf_progressive.h"

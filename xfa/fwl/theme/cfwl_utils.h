@@ -7,7 +7,7 @@
 #ifndef XFA_FWL_THEME_CFWL_UTILS_H_
 #define XFA_FWL_THEME_CFWL_UTILS_H_
 
-#include "core/fxcrt/fx_system.h"
+#include "core/fxge/dib/fx_dib.h"
 
 enum FWLTHEME_EDGE {
   FWLTHEME_EDGE_Flat = 0,

@@ -7,7 +7,8 @@
 #ifndef FXBARCODE_CBC_EAN8_H_
 #define FXBARCODE_CBC_EAN8_H_
 
-#include "core/fxcrt/fx_system.h"
+#include <stddef.h>
+
 #include "fxbarcode/cbc_eancode.h"
 
 class CBC_EAN8 final : public CBC_EANCode {

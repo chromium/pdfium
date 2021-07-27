@@ -7,13 +7,14 @@
 #ifndef CORE_FXCRT_CSS_CFX_CSSSTYLESELECTOR_H_
 #define CORE_FXCRT_CSS_CFX_CSSSTYLESELECTOR_H_
 
+#include <stdint.h>
+
 #include <memory>
 #include <vector>
 
 #include "core/fxcrt/css/cfx_css.h"
 #include "core/fxcrt/css/cfx_cssrulecollection.h"
 #include "core/fxcrt/css/cfx_cssvalue.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 
 class CFX_CSSComputedStyle;

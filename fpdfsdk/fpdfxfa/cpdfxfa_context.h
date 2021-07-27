@@ -7,12 +7,13 @@
 #ifndef FPDFSDK_FPDFXFA_CPDFXFA_CONTEXT_H_
 #define FPDFSDK_FPDFXFA_CPDFXFA_CONTEXT_H_
 
+#include <stdint.h>
+
 #include <memory>
 #include <vector>
 
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/cfx_timer.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"

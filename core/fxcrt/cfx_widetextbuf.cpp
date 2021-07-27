@@ -7,6 +7,7 @@
 #include "core/fxcrt/cfx_widetextbuf.h"
 
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/fx_system.h"
 
 size_t CFX_WideTextBuf::GetLength() const {
   return m_DataSize / sizeof(wchar_t);

@@ -7,7 +7,8 @@
 #ifndef FXBARCODE_DATAMATRIX_BC_SYMBOLINFO_H_
 #define FXBARCODE_DATAMATRIX_BC_SYMBOLINFO_H_
 
-#include "core/fxcrt/fx_system.h"
+#include <stddef.h>
+#include <stdint.h>
 
 class CBC_SymbolInfo {
  public:
