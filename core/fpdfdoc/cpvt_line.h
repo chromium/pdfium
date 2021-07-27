@@ -9,7 +9,6 @@
 
 #include "core/fpdfdoc/cpvt_wordplace.h"
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_system.h"
 
 class CPVT_Line {
  public:

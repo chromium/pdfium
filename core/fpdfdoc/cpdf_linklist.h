@@ -7,12 +7,13 @@
 #ifndef CORE_FPDFDOC_CPDF_LINKLIST_H_
 #define CORE_FPDFDOC_CPDF_LINKLIST_H_
 
+#include <stdint.h>
+
 #include <map>
 #include <vector>
 
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfdoc/cpdf_link.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 
 class CPDF_Page;

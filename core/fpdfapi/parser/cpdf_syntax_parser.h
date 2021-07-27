@@ -7,12 +7,14 @@
 #ifndef CORE_FPDFAPI_PARSER_CPDF_SYNTAX_PARSER_H_
 #define CORE_FPDFAPI_PARSER_CPDF_SYNTAX_PARSER_H_
 
+#include <stdint.h>
+
 #include <memory>
 #include <vector>
 
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
-#include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/fx_types.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/string_pool_template.h"
 #include "core/fxcrt/unowned_ptr.h"

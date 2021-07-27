@@ -8,7 +8,6 @@
 #define XFA_FXFA_PARSER_CXFA_MEASUREMENT_H_
 
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/fx_system.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
 class CXFA_Measurement {

@@ -7,9 +7,10 @@
 #ifndef CORE_FPDFDOC_CPVT_WORD_H_
 #define CORE_FPDFDOC_CPVT_WORD_H_
 
+#include <stdint.h>
+
 #include "core/fpdfdoc/cpvt_wordplace.h"
 #include "core/fxcrt/fx_codepage.h"
-#include "core/fxcrt/fx_system.h"
 
 class CPVT_Word {
  public:

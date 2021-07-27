@@ -7,9 +7,10 @@
 #ifndef XFA_FXFA_LAYOUT_CXFA_LAYOUTPROCESSOR_H_
 #define XFA_FXFA_LAYOUT_CXFA_LAYOUTPROCESSOR_H_
 
+#include <stdint.h>
+
 #include <vector>
 
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/gc/heap.h"
 #include "v8/include/cppgc/garbage-collected.h"

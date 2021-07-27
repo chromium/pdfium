@@ -8,7 +8,6 @@
 #define CORE_FPDFDOC_CPDF_ICONFIT_H_
 
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 
 class CPDF_Dictionary;

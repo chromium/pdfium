@@ -7,9 +7,10 @@
 #ifndef CORE_FPDFAPI_RENDER_CHARPOSLIST_H_
 #define CORE_FPDFAPI_RENDER_CHARPOSLIST_H_
 
+#include <stdint.h>
+
 #include <vector>
 
-#include "core/fxcrt/fx_system.h"
 #include "third_party/base/span.h"
 
 class CPDF_Font;

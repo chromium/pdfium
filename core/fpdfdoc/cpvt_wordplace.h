@@ -7,7 +7,7 @@
 #ifndef CORE_FPDFDOC_CPVT_WORDPLACE_H_
 #define CORE_FPDFDOC_CPVT_WORDPLACE_H_
 
-#include "core/fxcrt/fx_system.h"
+#include <stdint.h>
 
 struct CPVT_WordPlace {
   CPVT_WordPlace() = default;

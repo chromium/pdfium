@@ -7,11 +7,12 @@
 #ifndef CORE_FPDFAPI_PARSER_CPDF_STREAM_ACC_H_
 #define CORE_FPDFAPI_PARSER_CPDF_STREAM_ACC_H_
 
+#include <stdint.h>
+
 #include <memory>
 
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/maybe_owned.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "third_party/base/span.h"

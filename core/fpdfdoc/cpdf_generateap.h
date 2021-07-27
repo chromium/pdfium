@@ -8,7 +8,6 @@
 #define CORE_FPDFDOC_CPDF_GENERATEAP_H_
 
 #include "core/fpdfdoc/cpdf_annot.h"
-#include "core/fxcrt/fx_system.h"
 
 class CPDF_Dictionary;
 class CPDF_Document;

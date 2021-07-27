@@ -7,8 +7,9 @@
 #ifndef CORE_FPDFDOC_CPDF_VIEWERPREFERENCES_H_
 #define CORE_FPDFDOC_CPDF_VIEWERPREFERENCES_H_
 
+#include <stdint.h>
+
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/optional.h"
 

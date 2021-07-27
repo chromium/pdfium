@@ -7,12 +7,14 @@
 #ifndef CORE_FPDFDOC_CPDF_ANNOTLIST_H_
 #define CORE_FPDFDOC_CPDF_ANNOTLIST_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include <memory>
 #include <vector>
 
 #include "core/fpdfapi/render/cpdf_pagerendercontext.h"
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 class CFX_RenderDevice;

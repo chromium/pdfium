@@ -11,7 +11,6 @@
 #include <utility>
 
 #include "core/fpdfdoc/cpvt_wordplace.h"
-#include "core/fxcrt/fx_system.h"
 
 struct CPVT_WordRange {
   CPVT_WordRange() = default;

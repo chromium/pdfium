@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFDOC_CPVT_VARIABLETEXT_H_
 #define CORE_FPDFDOC_CPVT_VARIABLETEXT_H_
 
+#include <stdint.h>
+
 #include <memory>
 #include <vector>
 
@@ -18,7 +20,6 @@
 #include "core/fxcrt/fx_codepage_forward.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 class CPVT_Section;

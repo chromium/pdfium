@@ -7,10 +7,11 @@
 #ifndef CORE_FXCODEC_BASIC_BASICMODULE_H_
 #define CORE_FXCODEC_BASIC_BASICMODULE_H_
 
+#include <stdint.h>
+
 #include <memory>
 
 #include "core/fxcrt/fx_memory_wrappers.h"
-#include "core/fxcrt/fx_system.h"
 #include "third_party/base/span.h"
 
 namespace fxcodec {
