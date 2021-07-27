@@ -9,7 +9,7 @@
 
 #include <map>
 
-#include "core/fxcrt/fx_safe_types.h"
+#include "third_party/base/optional.h"
 
 namespace fxcodec {
 
@@ -28,8 +28,12 @@ class CFX_DIBAttribute {
 
 void ReverseRGB(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels);
 
-FX_SAFE_UINT32 CalculatePitch8(uint32_t bpc, uint32_t components, int width);
-FX_SAFE_UINT32 CalculatePitch32(int bpp, int width);
+uint32_t CalculatePitch8OrDie(uint32_t bpc, uint32_t components, int width);
+uint32_t CalculatePitch32OrDie(int bpp, int width);
+Optional<uint32_t> CalculatePitch8(uint32_t bpc,
+                                   uint32_t components,
+                                   int width);
+Optional<uint32_t> CalculatePitch32(int bpp, int width);
 
 }  // namespace fxcodec
 

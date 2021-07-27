@@ -227,27 +227,27 @@ BmpDecoder::Status CFX_BmpDecompressor::ReadBmpHeaderDimensions() {
     default:
       return BmpDecoder::Status::kFail;
   }
-  FX_SAFE_UINT32 stride = CalculatePitch32(bit_counts_, width_);
-  if (!stride.IsValid())
+  Optional<uint32_t> stride = CalculatePitch32(bit_counts_, width_);
+  if (!stride.has_value())
     return BmpDecoder::Status::kFail;
 
-  src_row_bytes_ = stride.ValueOrDie();
+  src_row_bytes_ = stride.value();
   switch (bit_counts_) {
     case 1:
     case 4:
     case 8:
       stride = CalculatePitch32(8, width_);
-      if (!stride.IsValid())
+      if (!stride.has_value())
         return BmpDecoder::Status::kFail;
-      out_row_bytes_ = stride.ValueOrDie();
+      out_row_bytes_ = stride.value();
       components_ = 1;
       break;
     case 16:
     case 24:
       stride = CalculatePitch32(24, width_);
-      if (!stride.IsValid())
+      if (!stride.has_value())
         return BmpDecoder::Status::kFail;
-      out_row_bytes_ = stride.ValueOrDie();
+      out_row_bytes_ = stride.value();
       components_ = 3;
       break;
     case 32:

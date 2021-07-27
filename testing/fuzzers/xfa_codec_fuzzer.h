@@ -10,6 +10,7 @@
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/progressive_decoder.h"
 #include "core/fxcrt/cfx_readonlymemorystream.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "third_party/base/span.h"

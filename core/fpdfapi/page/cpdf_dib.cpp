@@ -181,8 +181,13 @@ bool CPDF_DIB::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream) {
   if (m_bDoBpcCheck && (m_bpc == 0 || m_nComponents == 0))
     return false;
 
-  FX_SAFE_UINT32 src_size =
-      fxcodec::CalculatePitch8(m_bpc, m_nComponents, m_Width) * m_Height;
+  const Optional<uint32_t> maybe_size =
+      fxcodec::CalculatePitch8(m_bpc, m_nComponents, m_Width);
+  if (!maybe_size.has_value())
+    return false;
+
+  FX_SAFE_UINT32 src_size = maybe_size.value();
+  src_size *= m_Height;
   if (!src_size.IsValid())
     return false;
 
@@ -199,22 +204,22 @@ bool CPDF_DIB::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream) {
   else
     m_Format = MakeRGBFormat(CalculateBitsPerPixel(m_bpc, m_nComponents));
 
-  FX_SAFE_UINT32 pitch =
+  Optional<uint32_t> pitch =
       fxcodec::CalculatePitch32(GetBppFromFormat(m_Format), m_Width);
-  if (!pitch.IsValid())
+  if (!pitch.has_value())
     return false;
 
-  m_pLineBuf.reset(FX_Alloc(uint8_t, pitch.ValueOrDie()));
+  m_pLineBuf.reset(FX_Alloc(uint8_t, pitch.value()));
   LoadPalette();
   if (m_bColorKey) {
     m_Format = FXDIB_Format::kArgb;
     pitch = fxcodec::CalculatePitch32(GetBppFromFormat(m_Format), m_Width);
-    if (!pitch.IsValid())
+    if (!pitch.has_value())
       return false;
 
-    m_pMaskedLine.reset(FX_Alloc(uint8_t, pitch.ValueOrDie()));
+    m_pMaskedLine.reset(FX_Alloc(uint8_t, pitch.value()));
   }
-  m_Pitch = pitch.ValueOrDie();
+  m_Pitch = pitch.value();
   return true;
 }
 
@@ -228,12 +233,12 @@ bool CPDF_DIB::ContinueToLoadMask() {
     m_Format = MakeRGBFormat(CalculateBitsPerPixel(m_bpc, m_nComponents));
   }
 
-  FX_SAFE_UINT32 pitch =
+  Optional<uint32_t> pitch =
       fxcodec::CalculatePitch32(GetBppFromFormat(m_Format), m_Width);
-  if (!pitch.IsValid())
+  if (!pitch.has_value())
     return false;
 
-  m_pLineBuf.reset(FX_Alloc(uint8_t, pitch.ValueOrDie()));
+  m_pLineBuf.reset(FX_Alloc(uint8_t, pitch.value()));
   if (m_pColorSpace && m_bStdCS) {
     m_pColorSpace->EnableStdConversion(true);
   }
@@ -241,11 +246,11 @@ bool CPDF_DIB::ContinueToLoadMask() {
   if (m_bColorKey) {
     m_Format = FXDIB_Format::kArgb;
     pitch = fxcodec::CalculatePitch32(GetBppFromFormat(m_Format), m_Width);
-    if (!pitch.IsValid())
+    if (!pitch.has_value())
       return false;
-    m_pMaskedLine.reset(FX_Alloc(uint8_t, pitch.ValueOrDie()));
+    m_pMaskedLine.reset(FX_Alloc(uint8_t, pitch.value()));
   }
-  m_Pitch = pitch.ValueOrDie();
+  m_Pitch = pitch.value();
   return true;
 }
 
@@ -280,8 +285,13 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadDIBBase(
   if (m_bDoBpcCheck && (m_bpc == 0 || m_nComponents == 0))
     return LoadState::kFail;
 
-  FX_SAFE_UINT32 src_size =
-      fxcodec::CalculatePitch8(m_bpc, m_nComponents, m_Width) * m_Height;
+  const Optional<uint32_t> maybe_size =
+      fxcodec::CalculatePitch8(m_bpc, m_nComponents, m_Width);
+  if (!maybe_size.has_value())
+    return LoadState::kFail;
+
+  FX_SAFE_UINT32 src_size = maybe_size.value();
+  src_size *= m_Height;
   if (!src_size.IsValid())
     return LoadState::kFail;
 
@@ -540,15 +550,15 @@ CPDF_DIB::LoadState CPDF_DIB::CreateDecoder() {
   if (!m_pDecoder)
     return LoadState::kFail;
 
-  FX_SAFE_UINT32 requested_pitch =
+  const Optional<uint32_t> requested_pitch =
       fxcodec::CalculatePitch8(m_bpc, m_nComponents, m_Width);
-  if (!requested_pitch.IsValid())
+  if (!requested_pitch.has_value())
     return LoadState::kFail;
-  FX_SAFE_UINT32 provided_pitch = fxcodec::CalculatePitch8(
+  const Optional<uint32_t> provided_pitch = fxcodec::CalculatePitch8(
       m_pDecoder->GetBPC(), m_pDecoder->CountComps(), m_pDecoder->GetWidth());
-  if (!provided_pitch.IsValid())
+  if (!provided_pitch.has_value())
     return LoadState::kFail;
-  if (provided_pitch.ValueOrDie() < requested_pitch.ValueOrDie())
+  if (provided_pitch.value() < requested_pitch.value())
     return LoadState::kFail;
   return LoadState::kSuccess;
 }
@@ -1066,12 +1076,12 @@ const uint8_t* CPDF_DIB::GetScanline(int line) const {
   if (m_bpc == 0)
     return nullptr;
 
-  FX_SAFE_UINT32 src_pitch =
+  const Optional<uint32_t> src_pitch =
       fxcodec::CalculatePitch8(m_bpc, m_nComponents, m_Width);
-  if (!src_pitch.IsValid())
+  if (!src_pitch.has_value())
     return nullptr;
-  uint32_t src_pitch_value = src_pitch.ValueOrDie();
 
+  uint32_t src_pitch_value = src_pitch.value();
   const uint8_t* pSrcLine = nullptr;
   if (m_pCachedBitmap && src_pitch_value <= m_pCachedBitmap->GetPitch()) {
     if (line >= m_pCachedBitmap->GetHeight()) {

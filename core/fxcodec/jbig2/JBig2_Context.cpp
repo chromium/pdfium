@@ -91,7 +91,7 @@ JBig2_Result CJBig2_Context::DecodeSequential(PauseIndicatorIface* pPause) {
         m_pSegment.reset();
         return nRet;
       }
-      m_dwOffset = m_pStream->getOffset();
+      m_nOffset = m_pStream->getOffset();
     }
     nRet = ParseSegmentData(m_pSegment.get(), pPause);
     if (m_ProcessingStatus == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
@@ -108,11 +108,12 @@ JBig2_Result CJBig2_Context::DecodeSequential(PauseIndicatorIface* pPause) {
       return nRet;
     }
     if (m_pSegment->m_dwData_length != 0xffffffff) {
-      m_dwOffset += m_pSegment->m_dwData_length;
-      if (!m_dwOffset.IsValid())
+      FX_SAFE_UINT32 new_offset = m_nOffset;
+      new_offset += m_pSegment->m_dwData_length;
+      if (!new_offset.IsValid())
         return JBig2_Result::kFailure;
-
-      m_pStream->setOffset(m_dwOffset.ValueOrDie());
+      m_nOffset = new_offset.ValueOrDie();
+      m_pStream->setOffset(m_nOffset);
     } else {
       m_pStream->offset(4);
     }
