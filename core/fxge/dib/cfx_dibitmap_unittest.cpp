@@ -4,6 +4,7 @@
 
 #include "core/fxge/dib/cfx_dibitmap.h"
 
+#include "core/fxcrt/fx_coordinates.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(CFX_DIBitmap, Create) {

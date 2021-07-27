@@ -7,7 +7,6 @@
 #ifndef CORE_FXGE_DIB_CFX_BITMAPSTORER_H_
 #define CORE_FXGE_DIB_CFX_BITMAPSTORER_H_
 
-#include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/scanlinecomposer_iface.h"
 

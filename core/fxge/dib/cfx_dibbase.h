@@ -9,7 +9,6 @@
 
 #include <vector>
 
-#include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
@@ -17,7 +16,9 @@
 
 class CFX_ClipRgn;
 class CFX_DIBitmap;
+class CFX_Matrix;
 class PauseIndicatorIface;
+struct FX_RECT;
 
 // Base class for all Device-Independent Bitmaps.
 class CFX_DIBBase : public Retainable {

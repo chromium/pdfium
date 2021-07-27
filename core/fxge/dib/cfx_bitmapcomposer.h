@@ -9,7 +9,6 @@
 
 #include <vector>
 
-#include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -19,6 +18,7 @@
 
 class CFX_ClipRgn;
 class CFX_DIBitmap;
+struct FX_RECT;
 
 class CFX_BitmapComposer final : public ScanlineComposerIface {
  public:

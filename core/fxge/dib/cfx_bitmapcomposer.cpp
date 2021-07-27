@@ -8,6 +8,7 @@
 
 #include <string.h>
 
+#include "core/fxcrt/fx_coordinates.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 
