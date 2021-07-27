@@ -1093,7 +1093,7 @@ FPDFPageObj_NewTextObj(FPDF_DOCUMENT document,
                        FPDF_BYTESTRING font,
                        float font_size);
 
-// Set the text for a textobject. If it had text, it will be replaced.
+// Set the text for a text object. If it had text, it will be replaced.
 //
 // text_object  - handle to the text object.
 // text         - the UTF-16LE encoded string containing the text to be added.
@@ -1101,6 +1101,20 @@ FPDFPageObj_NewTextObj(FPDF_DOCUMENT document,
 // Returns TRUE on success
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFText_SetText(FPDF_PAGEOBJECT text_object, FPDF_WIDESTRING text);
+
+// Experimental API.
+// Set the text using charcodes for a text object. If it had text, it will be
+// replaced.
+//
+// text_object  - handle to the text object.
+// charcodes    - pointer to an array of charcodes to be added.
+// count        - number of elements in |charcodes|.
+//
+// Returns TRUE on success
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFText_SetCharcodes(FPDF_PAGEOBJECT text_object,
+                      const uint32_t* charcodes,
+                      size_t count);
 
 // Returns a font object loaded from a stream of data. The font is loaded
 // into the document.

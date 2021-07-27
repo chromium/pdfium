@@ -482,6 +482,27 @@ FPDFText_SetText(FPDF_PAGEOBJECT text_object, FPDF_WIDESTRING text) {
   return true;
 }
 
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFText_SetCharcodes(FPDF_PAGEOBJECT text_object,
+                      const uint32_t* charcodes,
+                      size_t count) {
+  CPDF_TextObject* pTextObj = CPDFTextObjectFromFPDFPageObject(text_object);
+  if (!pTextObj)
+    return false;
+
+  if (!charcodes && count)
+    return false;
+
+  ByteString byte_text;
+  if (charcodes) {
+    for (size_t i = 0; i < count; ++i) {
+      pTextObj->GetFont()->AppendChar(&byte_text, charcodes[i]);
+    }
+  }
+  pTextObj->SetText(byte_text);
+  return true;
+}
+
 FPDF_EXPORT FPDF_FONT FPDF_CALLCONV FPDFText_LoadFont(FPDF_DOCUMENT document,
                                                       const uint8_t* data,
                                                       uint32_t size,
