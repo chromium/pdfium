@@ -7,10 +7,10 @@
 #ifndef CORE_FXGE_WIN32_CPSOUTPUT_H_
 #define CORE_FXGE_WIN32_CPSOUTPUT_H_
 
+#include <stddef.h>
 #include <windows.h>
 
 #include "core/fxcrt/fx_stream.h"
-#include "core/fxcrt/fx_system.h"
 
 class CPSOutput final : public IFX_RetainableWriteStream {
  public:

@@ -7,11 +7,12 @@
 #ifndef FXJS_XFA_CFXJSE_VALUE_H_
 #define FXJS_XFA_CFXJSE_VALUE_H_
 
+#include <stdint.h>
+
 #include <memory>
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/check.h"
 #include "v8/include/v8.h"

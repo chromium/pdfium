@@ -7,7 +7,6 @@
 #ifndef XFA_FGAS_LAYOUT_FGAS_ARABIC_H_
 #define XFA_FGAS_LAYOUT_FGAS_ARABIC_H_
 
-#include "core/fxcrt/fx_system.h"
 #include "third_party/base/optional.h"
 
 class CFGAS_Char;

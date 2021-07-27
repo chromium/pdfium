@@ -8,6 +8,7 @@
 
 #include "build/build_config.h"
 #include "xfa/fgas/graphics/cfgas_gecolor.h"
+#include "xfa/fgas/graphics/cfgas_gegraphics.h"
 #include "xfa/fgas/graphics/cfgas_gepath.h"
 #include "xfa/fwl/cfwl_listbox.h"
 #include "xfa/fwl/cfwl_themebackground.h"

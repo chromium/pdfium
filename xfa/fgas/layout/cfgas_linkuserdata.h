@@ -8,7 +8,6 @@
 #define XFA_FGAS_LAYOUT_CFGAS_LINKUSERDATA_H_
 
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 
 class CFGAS_LinkUserData final : public Retainable {

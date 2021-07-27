@@ -7,6 +7,7 @@
 #include "xfa/fxfa/parser/cxfa_stipple.h"
 
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fgas/graphics/cfgas_gegraphics.h"
 #include "xfa/fxfa/parser/cxfa_color.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 

@@ -8,6 +8,7 @@
 
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fgas/graphics/cfgas_gecolor.h"
+#include "xfa/fgas/graphics/cfgas_gegraphics.h"
 #include "xfa/fgas/graphics/cfgas_gepath.h"
 #include "xfa/fwl/cfwl_monthcalendar.h"
 #include "xfa/fwl/cfwl_themebackground.h"

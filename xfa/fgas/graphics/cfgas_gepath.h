@@ -7,9 +7,8 @@
 #ifndef XFA_FGAS_GRAPHICS_CFGAS_GEPATH_H_
 #define XFA_FGAS_GRAPHICS_CFGAS_GEPATH_H_
 
-#include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/fx_coordinates.h"
 #include "core/fxge/cfx_path.h"
-#include "xfa/fgas/graphics/cfgas_gegraphics.h"
 
 class CFGAS_GEPath final {
  public:

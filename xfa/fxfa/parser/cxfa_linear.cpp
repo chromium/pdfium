@@ -7,6 +7,7 @@
 #include "xfa/fxfa/parser/cxfa_linear.h"
 
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fgas/graphics/cfgas_gegraphics.h"
 #include "xfa/fgas/graphics/cfgas_geshading.h"
 #include "xfa/fxfa/parser/cxfa_color.h"
 #include "xfa/fxfa/parser/cxfa_document.h"

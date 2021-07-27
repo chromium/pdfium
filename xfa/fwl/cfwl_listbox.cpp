@@ -14,6 +14,7 @@
 #include "third_party/base/numerics/ranges.h"
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fde/cfde_textout.h"
+#include "xfa/fgas/graphics/cfgas_gegraphics.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_messagekey.h"
 #include "xfa/fwl/cfwl_messagemouse.h"

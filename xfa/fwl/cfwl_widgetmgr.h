@@ -10,19 +10,17 @@
 #include <map>
 #include <memory>
 
-#include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/fx_coordinates.h"
 #include "fxjs/gc/gced_tree_node.h"
 #include "fxjs/gc/heap.h"
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/member.h"
 #include "v8/include/cppgc/visitor.h"
-#include "xfa/fgas/graphics/cfgas_gegraphics.h"
 
 class CFGAS_GEGraphics;
 class CFWL_App;
 class CFWL_Message;
 class CFWL_Widget;
-class CFX_Matrix;
 
 class CFWL_WidgetMgr final : public cppgc::GarbageCollected<CFWL_WidgetMgr> {
  public:

@@ -7,10 +7,11 @@
 #ifndef XFA_FWL_CFWL_THEMEPART_H_
 #define XFA_FWL_CFWL_THEMEPART_H_
 
+#include <stdint.h>
+
 #include <type_traits>
 
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 class CFWL_Widget;

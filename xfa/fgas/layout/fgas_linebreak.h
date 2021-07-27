@@ -7,7 +7,8 @@
 #ifndef XFA_FGAS_LAYOUT_FGAS_LINEBREAK_H_
 #define XFA_FGAS_LAYOUT_FGAS_LINEBREAK_H_
 
-#include "core/fxcrt/fx_system.h"
+#include <stdint.h>
+
 #include "core/fxcrt/fx_unicode.h"
 
 enum class FX_LINEBREAKTYPE : uint8_t {

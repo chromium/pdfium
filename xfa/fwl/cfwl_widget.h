@@ -7,10 +7,12 @@
 #ifndef XFA_FWL_CFWL_WIDGET_H_
 #define XFA_FWL_CFWL_WIDGET_H_
 
+#include <stdint.h>
+
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxcrt/widestring.h"
+#include "core/fxge/dib/fx_dib.h"
 #include "fxjs/gc/heap.h"
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/macros.h"

@@ -7,11 +7,12 @@
 #ifndef FXJS_XFA_CFXJSE_FORMCALC_CONTEXT_H_
 #define FXJS_XFA_CFXJSE_FORMCALC_CONTEXT_H_
 
+#include <stdint.h>
+
 #include <functional>
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/xfa/fxjse.h"
 #include "third_party/base/optional.h"

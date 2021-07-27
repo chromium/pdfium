@@ -10,7 +10,6 @@
 #include <memory>
 
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/fx_system.h"
 #include "fxbarcode/oned/BC_OnedEANWriter.h"
 
 class CBC_OnedEAN13Writer;

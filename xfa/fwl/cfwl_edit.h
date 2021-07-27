@@ -41,6 +41,7 @@
 class CFWL_MessageKey;
 class CFWL_MessageMouse;
 class CFWL_Caret;
+class CFX_RenderDevice;
 
 class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
  public:

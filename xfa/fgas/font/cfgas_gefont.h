@@ -7,6 +7,8 @@
 #ifndef XFA_FGAS_FONT_CFGAS_GEFONT_H_
 #define XFA_FGAS_FONT_CFGAS_GEFONT_H_
 
+#include <stdint.h>
+
 #include <map>
 #include <memory>
 #include <utility>
@@ -16,7 +18,6 @@
 #include "core/fxcrt/fx_codepage_forward.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/maybe_owned.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "third_party/base/optional.h"

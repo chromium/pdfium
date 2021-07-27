@@ -7,11 +7,12 @@
 #ifndef FXBARCODE_PDF417_BC_PDF417WRITER_H_
 #define FXBARCODE_PDF417_BC_PDF417WRITER_H_
 
+#include <stddef.h>
+
 #include <vector>
 
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/fx_system.h"
 #include "fxbarcode/BC_TwoDimWriter.h"
 
 class CBC_PDF417Writer final : public CBC_TwoDimWriter {

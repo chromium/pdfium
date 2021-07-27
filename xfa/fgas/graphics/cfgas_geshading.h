@@ -7,8 +7,9 @@
 #ifndef XFA_FGAS_GRAPHICS_CFGAS_GESHADING_H_
 #define XFA_FGAS_GRAPHICS_CFGAS_GESHADING_H_
 
+#include <stddef.h>
+
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxge/dib/fx_dib.h"
 
 class CFGAS_GEShading final {

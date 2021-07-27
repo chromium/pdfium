@@ -12,6 +12,7 @@
 #include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
+#include "xfa/fgas/graphics/cfgas_gegraphics.h"
 #include "xfa/fxfa/parser/cxfa_corner.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_stroke.h"

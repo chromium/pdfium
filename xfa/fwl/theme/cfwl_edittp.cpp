@@ -7,6 +7,7 @@
 #include "xfa/fwl/theme/cfwl_edittp.h"
 
 #include "xfa/fgas/graphics/cfgas_gecolor.h"
+#include "xfa/fgas/graphics/cfgas_gegraphics.h"
 #include "xfa/fgas/graphics/cfgas_gepath.h"
 #include "xfa/fwl/cfwl_edit.h"
 #include "xfa/fwl/cfwl_themebackground.h"

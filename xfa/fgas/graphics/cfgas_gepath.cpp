@@ -6,6 +6,7 @@
 
 #include "xfa/fgas/graphics/cfgas_gepath.h"
 
+#include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_path.h"
 
 CFGAS_GEPath::CFGAS_GEPath() = default;

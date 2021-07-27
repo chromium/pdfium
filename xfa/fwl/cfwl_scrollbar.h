@@ -7,10 +7,11 @@
 #ifndef XFA_FWL_CFWL_SCROLLBAR_H_
 #define XFA_FWL_CFWL_SCROLLBAR_H_
 
+#include <stdint.h>
+
 #include <memory>
 
 #include "core/fxcrt/cfx_timer.h"
-#include "core/fxcrt/fx_system.h"
 #include "third_party/base/check.h"
 #include "xfa/fwl/cfwl_eventscroll.h"
 #include "xfa/fwl/cfwl_themepart.h"
