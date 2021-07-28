@@ -12,33 +12,32 @@
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
 
-#define FXFM_ENC_TAG(a, b, c, d)                                          \
+#define ENC_TAG(a, b, c, d)                                               \
   (((uint32_t)(a) << 24) | ((uint32_t)(b) << 16) | ((uint32_t)(c) << 8) | \
    (uint32_t)(d))
-#define FXFM_ENCODING_MS_SYMBOL FXFM_ENC_TAG('s', 'y', 'm', 'b')
-#define FXFM_ENCODING_UNICODE FXFM_ENC_TAG('u', 'n', 'i', 'c')
-#define FXFM_ENCODING_MS_SJIS FXFM_ENC_TAG('s', 'j', 'i', 's')
-#define FXFM_ENCODING_MS_GB2312 FXFM_ENC_TAG('g', 'b', ' ', ' ')
-#define FXFM_ENCODING_MS_BIG5 FXFM_ENC_TAG('b', 'i', 'g', '5')
-#define FXFM_ENCODING_MS_WANSUNG FXFM_ENC_TAG('w', 'a', 'n', 's')
-#define FXFM_ENCODING_MS_JOHAB FXFM_ENC_TAG('j', 'o', 'h', 'a')
-#define FXFM_ENCODING_ADOBE_STANDARD FXFM_ENC_TAG('A', 'D', 'O', 'B')
-#define FXFM_ENCODING_ADOBE_EXPERT FXFM_ENC_TAG('A', 'D', 'B', 'E')
-#define FXFM_ENCODING_ADOBE_CUSTOM FXFM_ENC_TAG('A', 'D', 'B', 'C')
-#define FXFM_ENCODING_ADOBE_LATIN_1 FXFM_ENC_TAG('l', 'a', 't', '1')
-#define FXFM_ENCODING_OLD_LATIN_2 FXFM_ENC_TAG('l', 'a', 't', '2')
-#define FXFM_ENCODING_APPLE_ROMAN FXFM_ENC_TAG('a', 'r', 'm', 'n')
 
 namespace {
 
-const uint32_t g_EncodingID[] = {
-    FXFM_ENCODING_MS_SYMBOL,     FXFM_ENCODING_UNICODE,
-    FXFM_ENCODING_MS_SJIS,       FXFM_ENCODING_MS_GB2312,
-    FXFM_ENCODING_MS_BIG5,       FXFM_ENCODING_MS_WANSUNG,
-    FXFM_ENCODING_MS_JOHAB,      FXFM_ENCODING_ADOBE_STANDARD,
-    FXFM_ENCODING_ADOBE_EXPERT,  FXFM_ENCODING_ADOBE_CUSTOM,
-    FXFM_ENCODING_ADOBE_LATIN_1, FXFM_ENCODING_OLD_LATIN_2,
-    FXFM_ENCODING_APPLE_ROMAN,
+constexpr uint32_t kEncodingExSymbol = ENC_TAG('s', 'y', 'm', 'b');
+constexpr uint32_t kEncodingExUnicode = ENC_TAG('u', 'n', 'i', 'c');
+constexpr uint32_t kEncodingExSjis = ENC_TAG('s', 'j', 'i', 's');
+constexpr uint32_t kEncodingExGB2312 = ENC_TAG('g', 'b', ' ', ' ');
+constexpr uint32_t kEncodingExBig5 = ENC_TAG('b', 'i', 'g', '5');
+constexpr uint32_t kEncodingExWansung = ENC_TAG('w', 'a', 'n', 's');
+constexpr uint32_t kEncodingExJohab = ENC_TAG('j', 'o', 'h', 'a');
+constexpr uint32_t kEncodingExAdobeStandard = ENC_TAG('A', 'D', 'O', 'B');
+constexpr uint32_t kEncodingExAdobeExpert = ENC_TAG('A', 'D', 'B', 'E');
+constexpr uint32_t kEncodingExAdobeCustom = ENC_TAG('A', 'D', 'B', 'C');
+constexpr uint32_t kEncodingExLatin1 = ENC_TAG('l', 'a', 't', '1');
+constexpr uint32_t kEncodingExOldLatin2 = ENC_TAG('l', 'a', 't', '2');
+constexpr uint32_t kEncodingExAppleRoman = ENC_TAG('a', 'r', 'm', 'n');
+
+constexpr uint32_t kEncodingID[] = {
+    kEncodingExSymbol,      kEncodingExUnicode,       kEncodingExSjis,
+    kEncodingExGB2312,      kEncodingExBig5,          kEncodingExWansung,
+    kEncodingExJohab,       kEncodingExAdobeStandard, kEncodingExAdobeExpert,
+    kEncodingExAdobeCustom, kEncodingExLatin1,        kEncodingExOldLatin2,
+    kEncodingExAppleRoman,
 };
 
 std::unique_ptr<CFX_UnicodeEncodingEx> FXFM_CreateFontEncoding(
@@ -83,8 +82,8 @@ uint32_t CFX_UnicodeEncodingEx::GlyphFromCharCode(uint32_t charcode) {
 }
 
 uint32_t CFX_UnicodeEncodingEx::CharCodeFromUnicode(wchar_t Unicode) const {
-  if (m_nEncodingID == FXFM_ENCODING_UNICODE ||
-      m_nEncodingID == FXFM_ENCODING_MS_SYMBOL) {
+  if (m_nEncodingID == kEncodingExUnicode ||
+      m_nEncodingID == kEncodingExSymbol) {
     return Unicode;
   }
   FXFT_FaceRec* face = m_pFont->GetFaceRec();
@@ -92,8 +91,7 @@ uint32_t CFX_UnicodeEncodingEx::CharCodeFromUnicode(wchar_t Unicode) const {
   for (int i = 0; i < nmaps; i++) {
     int nEncodingID =
         FXFT_Get_Charmap_Encoding(FXFT_Get_Face_Charmaps(face)[i]);
-    if (nEncodingID == FXFM_ENCODING_UNICODE ||
-        nEncodingID == FXFM_ENCODING_MS_SYMBOL) {
+    if (nEncodingID == kEncodingExUnicode || nEncodingID == kEncodingExSymbol) {
       return Unicode;
     }
   }
@@ -105,7 +103,7 @@ std::unique_ptr<CFX_UnicodeEncodingEx> FX_CreateFontEncodingEx(
   if (!pFont || !pFont->GetFaceRec())
     return nullptr;
 
-  for (uint32_t id : g_EncodingID) {
+  for (uint32_t id : kEncodingID) {
     auto pFontEncoding = FXFM_CreateFontEncoding(pFont, id);
     if (pFontEncoding)
       return pFontEncoding;
