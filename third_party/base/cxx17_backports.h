@@ -5,6 +5,8 @@
 #ifndef THIRD_PARTY_BASE_CXX17_BACKPORTS_H_
 #define THIRD_PARTY_BASE_CXX17_BACKPORTS_H_
 
+#include <stddef.h>
+
 namespace pdfium {
 
 // C++14 implementation of C++17's std::size():
