@@ -63,8 +63,6 @@ class CPDF_TextObject final : public CPDF_PageObject {
   void SetText(const ByteString& str);
   void SetPosition(const CFX_PointF& pos) { m_Pos = pos; }
 
-  void RecalcPositionData();
-
   const std::vector<uint32_t>& GetCharCodes() const { return m_CharCodes; }
   const std::vector<float>& GetCharPositions() const { return m_CharPos; }
 

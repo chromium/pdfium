@@ -216,7 +216,7 @@ void CPDF_TextObject::SetSegments(const ByteString* pStrs,
 
 void CPDF_TextObject::SetText(const ByteString& str) {
   SetSegments(&str, std::vector<float>(), 1);
-  RecalcPositionData();
+  CalcPositionData(/*horz_scale=*/1.0f);
   SetDirty(true);
 }
 
@@ -333,8 +333,4 @@ CFX_PointF CPDF_TextObject::CalcPositionData(float horz_scale) {
   m_Rect.bottom -= half_width;
 
   return ret;
-}
-
-void CPDF_TextObject::RecalcPositionData() {
-  CalcPositionData(1);
 }
