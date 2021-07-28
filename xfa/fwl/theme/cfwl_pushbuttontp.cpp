@@ -14,7 +14,11 @@
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
 
-#define PUSHBUTTON_SIZE_Corner 2
+namespace {
+
+constexpr float kPushbuttonSizeCorner = 2.0f;
+
+}  // namespace
 
 CFWL_PushButtonTP::CFWL_PushButtonTP() : m_pThemeData(new PBThemeData) {
   SetThemeData();
@@ -35,19 +39,17 @@ void CFWL_PushButtonTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
 
       CFGAS_GEPath strokePath;
       strokePath.MoveTo(
-          CFX_PointF(rect.left + PUSHBUTTON_SIZE_Corner, rect.top));
-      strokePath.LineTo(CFX_PointF(fRight - PUSHBUTTON_SIZE_Corner, rect.top));
-      strokePath.LineTo(CFX_PointF(fRight, rect.top + PUSHBUTTON_SIZE_Corner));
-      strokePath.LineTo(CFX_PointF(fRight, fBottom - PUSHBUTTON_SIZE_Corner));
-      strokePath.LineTo(CFX_PointF(fRight - PUSHBUTTON_SIZE_Corner, fBottom));
+          CFX_PointF(rect.left + kPushbuttonSizeCorner, rect.top));
+      strokePath.LineTo(CFX_PointF(fRight - kPushbuttonSizeCorner, rect.top));
+      strokePath.LineTo(CFX_PointF(fRight, rect.top + kPushbuttonSizeCorner));
+      strokePath.LineTo(CFX_PointF(fRight, fBottom - kPushbuttonSizeCorner));
+      strokePath.LineTo(CFX_PointF(fRight - kPushbuttonSizeCorner, fBottom));
+      strokePath.LineTo(CFX_PointF(rect.left + kPushbuttonSizeCorner, fBottom));
+      strokePath.LineTo(CFX_PointF(rect.left, fBottom - kPushbuttonSizeCorner));
       strokePath.LineTo(
-          CFX_PointF(rect.left + PUSHBUTTON_SIZE_Corner, fBottom));
+          CFX_PointF(rect.left, rect.top + kPushbuttonSizeCorner));
       strokePath.LineTo(
-          CFX_PointF(rect.left, fBottom - PUSHBUTTON_SIZE_Corner));
-      strokePath.LineTo(
-          CFX_PointF(rect.left, rect.top + PUSHBUTTON_SIZE_Corner));
-      strokePath.LineTo(
-          CFX_PointF(rect.left + PUSHBUTTON_SIZE_Corner, rect.top));
+          CFX_PointF(rect.left + kPushbuttonSizeCorner, rect.top));
 
       CFGAS_GEPath fillPath;
       fillPath.AddSubpath(strokePath);
@@ -56,8 +58,8 @@ void CFWL_PushButtonTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
       pGraphics->SaveGraphState();
 
       CFX_RectF rtInner(rect);
-      rtInner.Deflate(PUSHBUTTON_SIZE_Corner + 1, PUSHBUTTON_SIZE_Corner + 1,
-                      PUSHBUTTON_SIZE_Corner, PUSHBUTTON_SIZE_Corner);
+      rtInner.Deflate(kPushbuttonSizeCorner + 1, kPushbuttonSizeCorner + 1,
+                      kPushbuttonSizeCorner, kPushbuttonSizeCorner);
       fillPath.AddRectangle(rtInner.left, rtInner.top, rtInner.width,
                             rtInner.height);
 
