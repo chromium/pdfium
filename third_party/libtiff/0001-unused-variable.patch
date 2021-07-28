@@ -1,0 +1,12 @@
+diff --git a/third_party/libtiff/tif_lzw.c b/third_party/libtiff/tif_lzw.c
+index 21064f29a..542ada455 100644
+--- a/third_party/libtiff/tif_lzw.c
++++ b/third_party/libtiff/tif_lzw.c
+@@ -1107,6 +1107,7 @@ LZWPostEncode(TIFF* tif)
+ 	}
+ 	PutNextCode(op, CODE_EOI);
+         /* Explicit 0xff masking to make icc -check=conversions happy */
++  (void)outcount;  /* Avoid compiler warning on unused-but-set variable. */
+ 	if (nextbits > 0) 
+ 		*op++ = (unsigned char)((nextdata << (8-nextbits))&0xff);
+ 	tif->tif_rawcc = (tmsize_t)(op - tif->tif_rawdata);

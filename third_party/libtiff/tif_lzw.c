@@ -1107,6 +1107,7 @@ LZWPostEncode(TIFF* tif)
 	}
 	PutNextCode(op, CODE_EOI);
         /* Explicit 0xff masking to make icc -check=conversions happy */
+  (void)outcount;  /* Avoid compiler warning on unused-but-set variable. */
 	if (nextbits > 0) 
 		*op++ = (unsigned char)((nextdata << (8-nextbits))&0xff);
 	tif->tif_rawcc = (tmsize_t)(op - tif->tif_rawdata);

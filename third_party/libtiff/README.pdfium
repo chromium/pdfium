@@ -10,6 +10,7 @@ TIFF library.
 Local Modifications:
 
 0000-build-config.patch: Local build configuration changes.
+0001-unused-variable.patch: Fix -Wunused-but-set-variable.
 0017-safe_skews_in_gtTileContig.patch: return error if to/from skews overflow from int32.
 0028-nstrips-OOM.patch: return error for excess number of tiles/strips.
 0031-safe_size_ingtStripContig.patch: return error if the size to read overflow from int32.
