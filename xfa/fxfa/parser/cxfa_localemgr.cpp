@@ -25,22 +25,6 @@
 #include "xfa/fxfa/parser/cxfa_xmllocale.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
-#define FX_LANG_zh_HK 0x0c04
-#define FX_LANG_zh_CN 0x0804
-#define FX_LANG_zh_TW 0x0404
-#define FX_LANG_nl_NL 0x0413
-#define FX_LANG_en_GB 0x0809
-#define FX_LANG_en_US 0x0409
-#define FX_LANG_fr_FR 0x040c
-#define FX_LANG_de_DE 0x0407
-#define FX_LANG_it_IT 0x0410
-#define FX_LANG_ja_JP 0x0411
-#define FX_LANG_ko_KR 0x0412
-#define FX_LANG_pt_BR 0x0416
-#define FX_LANG_ru_RU 0x0419
-#define FX_LANG_es_LA 0x080a
-#define FX_LANG_es_ES 0x0c0a
-
 namespace {
 
 // These arrays are the hex encoded XML strings which define the locale.
@@ -1081,9 +1065,9 @@ CXFA_XMLLocale* GetLocaleFromBuffer(cppgc::Heap* heap,
   return CXFA_XMLLocale::Create(heap, pdfium::make_span(output.get(), dwSize));
 }
 
-uint16_t GetLanguage(WideString wsLanguage) {
+CXFA_LocaleMgr::LangID GetLanguageID(WideString wsLanguage) {
   if (wsLanguage.GetLength() < 2)
-    return FX_LANG_en_US;
+    return CXFA_LocaleMgr::LangID::k_en_US;
 
   wsLanguage.MakeLower();
   uint32_t dwIDFirst = wsLanguage[0] << 8 | wsLanguage[1];
@@ -1092,36 +1076,38 @@ uint16_t GetLanguage(WideString wsLanguage) {
   switch (dwIDFirst) {
     case FXBSTR_ID(0, 0, 'z', 'h'):
       if (dwIDSecond == FXBSTR_ID(0, 0, 'c', 'n'))
-        return FX_LANG_zh_CN;
+        return CXFA_LocaleMgr::LangID::k_zh_CN;
       if (dwIDSecond == FXBSTR_ID(0, 0, 't', 'w'))
-        return FX_LANG_zh_TW;
+        return CXFA_LocaleMgr::LangID::k_zh_TW;
       if (dwIDSecond == FXBSTR_ID(0, 0, 'h', 'k'))
-        return FX_LANG_zh_HK;
+        return CXFA_LocaleMgr::LangID::k_zh_HK;
       break;
     case FXBSTR_ID(0, 0, 'j', 'a'):
-      return FX_LANG_ja_JP;
+      return CXFA_LocaleMgr::LangID::k_ja_JP;
     case FXBSTR_ID(0, 0, 'k', 'o'):
-      return FX_LANG_ko_KR;
+      return CXFA_LocaleMgr::LangID::k_ko_KR;
     case FXBSTR_ID(0, 0, 'e', 'n'):
-      return dwIDSecond == FXBSTR_ID(0, 0, 'g', 'b') ? FX_LANG_en_GB
-                                                     : FX_LANG_en_US;
+      return dwIDSecond == FXBSTR_ID(0, 0, 'g', 'b')
+                 ? CXFA_LocaleMgr::LangID::k_en_GB
+                 : CXFA_LocaleMgr::LangID::k_en_US;
     case FXBSTR_ID(0, 0, 'd', 'e'):
-      return FX_LANG_de_DE;
+      return CXFA_LocaleMgr::LangID::k_de_DE;
     case FXBSTR_ID(0, 0, 'f', 'r'):
-      return FX_LANG_fr_FR;
+      return CXFA_LocaleMgr::LangID::k_fr_FR;
     case FXBSTR_ID(0, 0, 'e', 's'):
-      return dwIDSecond == FXBSTR_ID(0, 0, 'e', 's') ? FX_LANG_es_ES
-                                                     : FX_LANG_es_LA;
+      return dwIDSecond == FXBSTR_ID(0, 0, 'e', 's')
+                 ? CXFA_LocaleMgr::LangID::k_es_ES
+                 : CXFA_LocaleMgr::LangID::k_es_LA;
     case FXBSTR_ID(0, 0, 'i', 't'):
-      return FX_LANG_it_IT;
+      return CXFA_LocaleMgr::LangID::k_it_IT;
     case FXBSTR_ID(0, 0, 'p', 't'):
-      return FX_LANG_pt_BR;
+      return CXFA_LocaleMgr::LangID::k_pt_BR;
     case FXBSTR_ID(0, 0, 'n', 'l'):
-      return FX_LANG_nl_NL;
+      return CXFA_LocaleMgr::LangID::k_nl_NL;
     case FXBSTR_ID(0, 0, 'r', 'u'):
-      return FX_LANG_ru_RU;
+      return CXFA_LocaleMgr::LangID::k_ru_RU;
   }
-  return FX_LANG_en_US;
+  return CXFA_LocaleMgr::LangID::k_en_US;
 }
 
 }  // namespace
@@ -1131,7 +1117,7 @@ CXFA_LocaleMgr::CXFA_LocaleMgr(cppgc::Heap* pHeap,
                                WideString wsDeflcid)
     : m_pHeap(pHeap),
       m_pDefLocale(GetLocaleByName(wsDeflcid)),
-      m_dwDeflcid(GetLanguage(wsDeflcid)) {
+      m_eDeflcid(GetLanguageID(wsDeflcid)) {
   if (!pLocaleSet)
     return;
 
@@ -1160,7 +1146,7 @@ GCedLocaleIface* CXFA_LocaleMgr::GetDefLocale() {
   if (!m_XMLLocaleArray.empty())
     return m_XMLLocaleArray[0];
 
-  CXFA_XMLLocale* pLocale = GetLocale(m_dwDeflcid);
+  CXFA_XMLLocale* pLocale = GetLocale(m_eDeflcid);
   if (pLocale)
     m_XMLLocaleArray.push_back(pLocale);
 
@@ -1168,37 +1154,37 @@ GCedLocaleIface* CXFA_LocaleMgr::GetDefLocale() {
   return m_pDefLocale;
 }
 
-CXFA_XMLLocale* CXFA_LocaleMgr::GetLocale(uint16_t lcid) {
+CXFA_XMLLocale* CXFA_LocaleMgr::GetLocale(LangID lcid) {
   switch (lcid) {
-    case FX_LANG_zh_CN:
+    case LangID::k_zh_CN:
       return GetLocaleFromBuffer(m_pHeap, g_zhCN_Locale);
-    case FX_LANG_zh_TW:
+    case LangID::k_zh_TW:
       return GetLocaleFromBuffer(m_pHeap, g_zhTW_Locale);
-    case FX_LANG_zh_HK:
+    case LangID::k_zh_HK:
       return GetLocaleFromBuffer(m_pHeap, g_zhHK_Locale);
-    case FX_LANG_ja_JP:
+    case LangID::k_ja_JP:
       return GetLocaleFromBuffer(m_pHeap, g_jaJP_Locale);
-    case FX_LANG_ko_KR:
+    case LangID::k_ko_KR:
       return GetLocaleFromBuffer(m_pHeap, g_koKR_Locale);
-    case FX_LANG_en_GB:
+    case LangID::k_en_GB:
       return GetLocaleFromBuffer(m_pHeap, g_enGB_Locale);
-    case FX_LANG_es_LA:
+    case LangID::k_es_LA:
       return GetLocaleFromBuffer(m_pHeap, g_esLA_Locale);
-    case FX_LANG_es_ES:
+    case LangID::k_es_ES:
       return GetLocaleFromBuffer(m_pHeap, g_esES_Locale);
-    case FX_LANG_de_DE:
+    case LangID::k_de_DE:
       return GetLocaleFromBuffer(m_pHeap, g_deDE_Loacale);
-    case FX_LANG_fr_FR:
+    case LangID::k_fr_FR:
       return GetLocaleFromBuffer(m_pHeap, g_frFR_Locale);
-    case FX_LANG_it_IT:
+    case LangID::k_it_IT:
       return GetLocaleFromBuffer(m_pHeap, g_itIT_Locale);
-    case FX_LANG_pt_BR:
+    case LangID::k_pt_BR:
       return GetLocaleFromBuffer(m_pHeap, g_ptBR_Locale);
-    case FX_LANG_nl_NL:
+    case LangID::k_nl_NL:
       return GetLocaleFromBuffer(m_pHeap, g_nlNL_Locale);
-    case FX_LANG_ru_RU:
+    case LangID::k_ru_RU:
       return GetLocaleFromBuffer(m_pHeap, g_ruRU_Locale);
-    case FX_LANG_en_US:
+    case LangID::k_en_US:
     default:
       return GetLocaleFromBuffer(m_pHeap, g_enUS_Locale);
   }
@@ -1220,7 +1206,7 @@ GCedLocaleIface* CXFA_LocaleMgr::GetLocaleByName(
       return pLocale;
   }
 
-  CXFA_XMLLocale* pLocale = GetLocale(GetLanguage(wsLocaleName));
+  CXFA_XMLLocale* pLocale = GetLocale(GetLanguageID(wsLocaleName));
   if (!pLocale)
     return nullptr;
 
