@@ -16,13 +16,17 @@
 #include "fxjs/ijs_event_context.h"
 #include "fxjs/js_resources.h"
 
-#define JS_STR_VIEWERTYPE L"pdfium"
-#define JS_STR_VIEWERVARIATION L"Full"
-#define JS_STR_PLATFORM L"WIN"
-#define JS_STR_LANGUAGE L"ENU"
-#define JS_NUM_VIEWERVERSION 8
-#define JS_NUM_VIEWERVERSION_XFA 11
-#define JS_NUM_FORMSVERSION 7
+namespace {
+
+constexpr wchar_t kStrViewerType[] = L"pdfium";
+constexpr wchar_t kStrViewerVariation[] = L"Full";
+constexpr wchar_t kStrPlatform[] = L"WIN";
+constexpr wchar_t kStrLanguage[] = L"ENU";
+constexpr int kNumViewerVersion = 8;
+constexpr int kNumViewerVersionXfa = 11;
+constexpr int kNumFormsVersion = 7;
+
+}  // namespace
 
 const JSPropertySpec CJS_App::PropertySpecs[] = {
     {"activeDocs", get_active_docs_static, set_active_docs_static},
@@ -116,7 +120,7 @@ CJS_Result CJS_App::set_calculate(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_App::get_forms_version(CJS_Runtime* pRuntime) {
-  return CJS_Result::Success(pRuntime->NewNumber(JS_NUM_FORMSVERSION));
+  return CJS_Result::Success(pRuntime->NewNumber(kNumFormsVersion));
 }
 
 CJS_Result CJS_App::set_forms_version(CJS_Runtime* pRuntime,
@@ -125,7 +129,7 @@ CJS_Result CJS_App::set_forms_version(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_App::get_viewer_type(CJS_Runtime* pRuntime) {
-  return CJS_Result::Success(pRuntime->NewString(JS_STR_VIEWERTYPE));
+  return CJS_Result::Success(pRuntime->NewString(kStrViewerType));
 }
 
 CJS_Result CJS_App::set_viewer_type(CJS_Runtime* pRuntime,
@@ -134,7 +138,7 @@ CJS_Result CJS_App::set_viewer_type(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_App::get_viewer_variation(CJS_Runtime* pRuntime) {
-  return CJS_Result::Success(pRuntime->NewString(JS_STR_VIEWERVARIATION));
+  return CJS_Result::Success(pRuntime->NewString(kStrViewerVariation));
 }
 
 CJS_Result CJS_App::set_viewer_variation(CJS_Runtime* pRuntime,
@@ -146,8 +150,8 @@ CJS_Result CJS_App::get_viewer_version(CJS_Runtime* pRuntime) {
   CPDF_Document::Extension* pContext =
       pRuntime->GetFormFillEnv()->GetDocExtension();
   int version = pContext && pContext->ContainsExtensionForm()
-                    ? JS_NUM_VIEWERVERSION_XFA
-                    : JS_NUM_VIEWERVERSION;
+                    ? kNumViewerVersionXfa
+                    : kNumViewerVersion;
   return CJS_Result::Success(pRuntime->NewNumber(version));
 }
 
@@ -163,7 +167,7 @@ CJS_Result CJS_App::get_platform(CJS_Runtime* pRuntime) {
     if (!platform.IsEmpty())
       return CJS_Result::Success(pRuntime->NewString(platform.AsStringView()));
   }
-  return CJS_Result::Success(pRuntime->NewString(JS_STR_PLATFORM));
+  return CJS_Result::Success(pRuntime->NewString(kStrPlatform));
 }
 
 CJS_Result CJS_App::set_platform(CJS_Runtime* pRuntime,
@@ -178,7 +182,7 @@ CJS_Result CJS_App::get_language(CJS_Runtime* pRuntime) {
     if (!language.IsEmpty())
       return CJS_Result::Success(pRuntime->NewString(language.AsStringView()));
   }
-  return CJS_Result::Success(pRuntime->NewString(JS_STR_LANGUAGE));
+  return CJS_Result::Success(pRuntime->NewString(kStrLanguage));
 }
 
 CJS_Result CJS_App::set_language(CJS_Runtime* pRuntime,
