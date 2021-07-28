@@ -6,6 +6,8 @@
 
 #include "core/fdrm/fx_crypt.h"
 
+#include <string.h>
+
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 

@@ -6,6 +6,8 @@
 
 #include "core/fxcodec/png/png_decoder.h"
 
+#include <string.h>
+
 #include <algorithm>
 
 #include "core/fxcodec/cfx_codec_memory.h"

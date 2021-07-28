@@ -6,6 +6,8 @@
 
 #include "core/fdrm/fx_crypt.h"
 
+#include <string.h>
+
 #define SHA_GET_UINT32(n, b, i)                                         \
   {                                                                     \
     (n) = ((uint32_t)(b)[(i)] << 24) | ((uint32_t)(b)[(i) + 1] << 16) | \

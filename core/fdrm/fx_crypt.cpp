@@ -6,6 +6,8 @@
 
 #include "core/fdrm/fx_crypt.h"
 
+#include <string.h>
+
 #include <utility>
 
 #define GET_UINT32(n, b, i)                            \

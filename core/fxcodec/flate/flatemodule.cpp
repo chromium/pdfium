@@ -6,6 +6,8 @@
 
 #include "core/fxcodec/flate/flatemodule.h"
 
+#include <string.h>
+
 #include <algorithm>
 #include <limits>
 #include <memory>
