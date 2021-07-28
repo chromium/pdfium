@@ -9,12 +9,6 @@
 
 #include "core/fxge/dib/fx_dib.h"
 
-enum FWLTHEME_EDGE {
-  FWLTHEME_EDGE_Flat = 0,
-  FWLTHEME_EDGE_Raised,
-  FWLTHEME_EDGE_Sunken
-};
-
 enum FWLTHEME_STATE {
   FWLTHEME_STATE_Normal = 1,
   FWLTHEME_STATE_Hover,
