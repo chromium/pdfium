@@ -57,27 +57,24 @@ void CFWL_ComboBoxTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
 void CFWL_ComboBoxTP::DrawDropDownButton(const CFWL_ThemeBackground& pParams,
                                          uint32_t dwStates,
                                          const CFX_Matrix& matrix) {
-  FWLTHEME_STATE eState = FWLTHEME_STATE_Normal;
+  FWLTHEME_STATE eState;
   switch (dwStates) {
-    case CFWL_PartState_Normal: {
-      eState = FWLTHEME_STATE_Normal;
+    case CFWL_PartState_Normal:
+      eState = FWLTHEME_STATE::kNormal;
       break;
-    }
-    case CFWL_PartState_Hovered: {
-      eState = FWLTHEME_STATE_Hover;
+    case CFWL_PartState_Hovered:
+      eState = FWLTHEME_STATE::kHover;
       break;
-    }
-    case CFWL_PartState_Pressed: {
-      eState = FWLTHEME_STATE_Pressed;
+    case CFWL_PartState_Pressed:
+      eState = FWLTHEME_STATE::kPressed;
       break;
-    }
-    case CFWL_PartState_Disabled: {
-      eState = FWLTHEME_STATE_Disable;
+    case CFWL_PartState_Disabled:
+      eState = FWLTHEME_STATE::kDisable;
       break;
-    }
     default:
+      eState = FWLTHEME_STATE::kNormal;
       break;
   }
   DrawArrowBtn(pParams.GetGraphics(), pParams.m_PartRect,
-               FWLTHEME_DIRECTION_Down, eState, pParams.m_matrix);
+               FWLTHEME_DIRECTION::kDown, eState, pParams.m_matrix);
 }

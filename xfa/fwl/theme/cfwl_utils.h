@@ -7,21 +7,14 @@
 #ifndef XFA_FWL_THEME_CFWL_UTILS_H_
 #define XFA_FWL_THEME_CFWL_UTILS_H_
 
+#include <stdint.h>
+
 #include "core/fxge/dib/fx_dib.h"
 
-enum FWLTHEME_STATE {
-  FWLTHEME_STATE_Normal = 1,
-  FWLTHEME_STATE_Hover,
-  FWLTHEME_STATE_Pressed,
-  FWLTHEME_STATE_Disable
-};
+// Values matter, used for indexing.
+enum class FWLTHEME_STATE : uint8_t { kNormal = 1, kHover, kPressed, kDisable };
 
-enum FWLTHEME_DIRECTION {
-  FWLTHEME_DIRECTION_Up = 0,
-  FWLTHEME_DIRECTION_Down,
-  FWLTHEME_DIRECTION_Left,
-  FWLTHEME_DIRECTION_Right
-};
+enum class FWLTHEME_DIRECTION : uint8_t { kUp = 0, kDown, kLeft, kRight };
 
 #define FWLTHEME_COLOR_EDGERB1 (ArgbEncode(255, 241, 239, 226))
 #define FWLTHEME_COLOR_Background (ArgbEncode(255, 236, 233, 216))

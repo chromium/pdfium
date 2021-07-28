@@ -22,27 +22,28 @@ CFWL_ScrollBarTP::~CFWL_ScrollBarTP() = default;
 
 void CFWL_ScrollBarTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   CFWL_Widget* pWidget = pParams.GetWidget();
-  FWLTHEME_STATE eState = FWLTHEME_STATE_Normal;
+  FWLTHEME_STATE eState = FWLTHEME_STATE::kNormal;
   if (pParams.m_dwStates & CFWL_PartState_Hovered)
-    eState = FWLTHEME_STATE_Hover;
+    eState = FWLTHEME_STATE::kHover;
   else if (pParams.m_dwStates & CFWL_PartState_Pressed)
-    eState = FWLTHEME_STATE_Pressed;
+    eState = FWLTHEME_STATE::kPressed;
   else if (pParams.m_dwStates & CFWL_PartState_Disabled)
-    eState = FWLTHEME_STATE_Disable;
+    eState = FWLTHEME_STATE::kDisable;
 
   CFGAS_GEGraphics* pGraphics = pParams.GetGraphics();
   bool bVert = !!pWidget->GetStyleExts();
   switch (pParams.m_iPart) {
     case CFWL_ThemePart::Part::kForeArrow: {
       DrawMaxMinBtn(pGraphics, pParams.m_PartRect,
-                    bVert ? FWLTHEME_DIRECTION_Up : FWLTHEME_DIRECTION_Left,
+                    bVert ? FWLTHEME_DIRECTION::kUp : FWLTHEME_DIRECTION::kLeft,
                     eState, pParams.m_matrix);
       break;
     }
     case CFWL_ThemePart::Part::kBackArrow: {
-      DrawMaxMinBtn(pGraphics, pParams.m_PartRect,
-                    bVert ? FWLTHEME_DIRECTION_Down : FWLTHEME_DIRECTION_Right,
-                    eState, pParams.m_matrix);
+      DrawMaxMinBtn(
+          pGraphics, pParams.m_PartRect,
+          bVert ? FWLTHEME_DIRECTION::kDown : FWLTHEME_DIRECTION::kRight,
+          eState, pParams.m_matrix);
       break;
     }
     case CFWL_ThemePart::Part::kThumb: {
@@ -70,7 +71,7 @@ void CFWL_ScrollBarTP::DrawThumbBtn(CFGAS_GEGraphics* pGraphics,
                                     bool bVert,
                                     FWLTHEME_STATE eState,
                                     const CFX_Matrix& matrix) {
-  if (eState < FWLTHEME_STATE_Normal || eState > FWLTHEME_STATE_Disable)
+  if (eState < FWLTHEME_STATE::kNormal || eState > FWLTHEME_STATE::kDisable)
     return;
 
   CFX_RectF rect = input_rect;
@@ -82,14 +83,16 @@ void CFWL_ScrollBarTP::DrawThumbBtn(CFGAS_GEGraphics* pGraphics,
   if (rect.IsEmpty(0.1f))
     return;
 
-  FillSolidRect(pGraphics, m_pThemeData->clrBtnBK[eState - 1][1], rect, matrix);
+  FillSolidRect(pGraphics,
+                m_pThemeData->clrBtnBK[static_cast<size_t>(eState) - 1][1],
+                rect, matrix);
 
   pGraphics->SaveGraphState();
 
   CFGAS_GEPath path;
   path.AddRectangle(rect.left, rect.top, rect.width, rect.height);
-  pGraphics->SetStrokeColor(
-      CFGAS_GEColor(m_pThemeData->clrBtnBorder[eState - 1]));
+  pGraphics->SetStrokeColor(CFGAS_GEColor(
+      m_pThemeData->clrBtnBorder[static_cast<size_t>(eState) - 1]));
   pGraphics->StrokePath(path, matrix);
   pGraphics->RestoreGraphState();
 }
@@ -100,7 +103,7 @@ void CFWL_ScrollBarTP::DrawTrack(CFGAS_GEGraphics* pGraphics,
                                  FWLTHEME_STATE eState,
                                  bool bLowerTrack,
                                  const CFX_Matrix& matrix) {
-  if (eState < FWLTHEME_STATE_Normal || eState > FWLTHEME_STATE_Disable)
+  if (eState < FWLTHEME_STATE::kNormal || eState > FWLTHEME_STATE::kDisable)
     return;
 
   pGraphics->SaveGraphState();
@@ -127,9 +130,10 @@ void CFWL_ScrollBarTP::DrawMaxMinBtn(CFGAS_GEGraphics* pGraphics,
                                      FWLTHEME_DIRECTION eDict,
                                      FWLTHEME_STATE eState,
                                      const CFX_Matrix& matrix) {
-  DrawTrack(pGraphics, rect,
-            eDict == FWLTHEME_DIRECTION_Up || eDict == FWLTHEME_DIRECTION_Down,
-            eState, true, matrix);
+  DrawTrack(
+      pGraphics, rect,
+      eDict == FWLTHEME_DIRECTION::kUp || eDict == FWLTHEME_DIRECTION::kDown,
+      eState, true, matrix);
   CFX_RectF rtArrowBtn = rect;
   rtArrowBtn.Deflate(1, 1, 1, 1);
   DrawArrowBtn(pGraphics, rtArrowBtn, eDict, eState, matrix);

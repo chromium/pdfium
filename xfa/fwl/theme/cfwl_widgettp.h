@@ -36,10 +36,10 @@ class CFWL_WidgetTP : public cppgc::GarbageCollected<CFWL_WidgetTP> {
 
  protected:
   struct CColorData {
-    FX_ARGB clrBorder[4];
-    FX_ARGB clrStart[4];
-    FX_ARGB clrEnd[4];
-    FX_ARGB clrSign[4];
+    FX_ARGB clrBorder[4];  // Indexed by enum FWLTHEME_STATE - 1.
+    FX_ARGB clrStart[4];   // Indexed by enum FWLTHEME_STATE - 1.
+    FX_ARGB clrEnd[4];     // Indexed by enum FWLTHEME_STATE - 1.
+    FX_ARGB clrSign[4];    // Indexed by enum FWLTHEME_STATE - 1.
   };
 
   CFWL_WidgetTP();
