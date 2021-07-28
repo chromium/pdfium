@@ -19,11 +19,11 @@
 #include "xfa/fwl/cfwl_themepart.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
 
-#define FWL_SCROLLBAR_Elapse 500
 
 namespace {
 
-const float kMinThumbSize = 5.0f;
+constexpr int kScrollbarElapsedMsecs = 500;
+constexpr float kMinThumbSize = 5.0f;
 
 }  // namespace
 
@@ -339,7 +339,7 @@ void CFWL_ScrollBar::OnLButtonDown(const CFX_PointF& point) {
 
   if (!SendEvent()) {
     m_pTimer = std::make_unique<CFX_Timer>(GetFWLApp()->GetTimerHandler(), this,
-                                           FWL_SCROLLBAR_Elapse);
+                                           kScrollbarElapsedMsecs);
   }
 }
 
