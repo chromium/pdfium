@@ -743,20 +743,3 @@ TEST_F(CFGAS_StringFormatterTest, GetCategory) {
   EXPECT_EQ(CFGAS_StringFormatter::Category::kDate,
             CFGAS_StringFormatter(L"date.long{}").GetCategory());
 }
-
-TEST_F(CFGAS_StringFormatterTest, HashConstants) {
-  EXPECT_EQ(static_cast<uint32_t>(FX_LOCALECATEGORY_DateHash),
-            FX_HashCode_GetW(L"date"));
-  EXPECT_EQ(static_cast<uint32_t>(FX_LOCALECATEGORY_TimeHash),
-            FX_HashCode_GetW(L"time"));
-  EXPECT_EQ(static_cast<uint32_t>(FX_LOCALECATEGORY_DateTimeHash),
-            FX_HashCode_GetW(L"datetime"));
-  EXPECT_EQ(static_cast<uint32_t>(FX_LOCALECATEGORY_NumHash),
-            FX_HashCode_GetW(L"num"));
-  EXPECT_EQ(static_cast<uint32_t>(FX_LOCALECATEGORY_TextHash),
-            FX_HashCode_GetW(L"text"));
-  EXPECT_EQ(static_cast<uint32_t>(FX_LOCALECATEGORY_ZeroHash),
-            FX_HashCode_GetW(L"zero"));
-  EXPECT_EQ(static_cast<uint32_t>(FX_LOCALECATEGORY_NullHash),
-            FX_HashCode_GetW(L"null"));
-}
