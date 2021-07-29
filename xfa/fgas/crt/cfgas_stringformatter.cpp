@@ -26,14 +26,6 @@
 // that exploits the well-defined behaviour for unsigned underflow (and hence
 // the standard x < size() can be used in all cases to validate indices).
 
-#define FX_LOCALECATEGORY_DateHash 0xbde9abde
-#define FX_LOCALECATEGORY_TimeHash 0x2d71b00f
-#define FX_LOCALECATEGORY_DateTimeHash 0x158c72ed
-#define FX_LOCALECATEGORY_NumHash 0x0b4ff870
-#define FX_LOCALECATEGORY_TextHash 0x2d08af85
-#define FX_LOCALECATEGORY_ZeroHash 0x568cb500
-#define FX_LOCALECATEGORY_NullHash 0x052931bb
-
 #define FX_NUMSTYLE_Percent 0x01
 #define FX_NUMSTYLE_Exponent 0x02
 #define FX_NUMSTYLE_DotVorv 0x04
