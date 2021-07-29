@@ -29,9 +29,13 @@
 #include "xfa/fwl/cfwl_widgetmgr.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
 
-#define FWL_WGT_CalcHeight 2048
-#define FWL_WGT_CalcWidth 2048
-#define FWL_WGT_CalcMultiLineDefWidth 120.0f
+namespace {
+
+constexpr float kCalcHeight = 2048.0f;
+constexpr float kCalcWidth = 2048.0f;
+constexpr float kCalcMultiLineDefWidth = 120.0f;
+
+}  // namespace
 
 CFWL_Widget::CFWL_Widget(CFWL_App* app,
                          const Properties& properties,
@@ -232,8 +236,8 @@ CFX_SizeF CFWL_Widget::CalcTextSize(const WideString& wsText, bool bMultiLine) {
     calPart.m_dwTTOStyles.single_line_ = true;
 
   calPart.m_iTTOAlign = FDE_TextAlignment::kTopLeft;
-  float fWidth = bMultiLine ? FWL_WGT_CalcMultiLineDefWidth : FWL_WGT_CalcWidth;
-  CFX_RectF rect(0, 0, fWidth, FWL_WGT_CalcHeight);
+  float fWidth = bMultiLine ? kCalcMultiLineDefWidth : kCalcWidth;
+  CFX_RectF rect(0, 0, fWidth, kCalcHeight);
   GetThemeProvider()->CalcTextRect(calPart, &rect);
   return CFX_SizeF(rect.width, rect.height);
 }
