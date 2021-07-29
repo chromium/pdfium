@@ -9,10 +9,14 @@
 #define DEFINE_PS_TABLES
 #include "third_party/freetype/include/pstables.h"
 
-static int xyq_search_node(char* glyph_name,
-                           int name_offset,
-                           int table_offset,
-                           wchar_t unicode) {
+namespace {
+
+constexpr uint32_t kVariantBit = 0x80000000;
+
+int xyq_search_node(char* glyph_name,
+                    int name_offset,
+                    int table_offset,
+                    wchar_t unicode) {
   // copy letters
   while (1) {
     glyph_name[name_offset] = ft_adobe_glyph_list[table_offset] & 0x7f;
@@ -51,7 +55,7 @@ static int xyq_search_node(char* glyph_name,
   return 0;
 }
 
-#define VARIANT_BIT 0x80000000UL
+}  // namespace
 
 int FXFT_unicode_from_adobe_name(const char* glyph_name) {
   /* If the name begins with `uni', then the glyph name may be a */
@@ -69,9 +73,7 @@ int FXFT_unicode_from_adobe_name(const char* glyph_name) {
 
     for (count = 4; count > 0; count--, p++) {
       char c = *p;
-      unsigned int d;
-
-      d = (unsigned char)c - '0';
+      unsigned int d = (unsigned char)c - '0';
       if (d >= 10) {
         d = (unsigned char)c - 'A';
         if (d >= 6)
@@ -94,7 +96,7 @@ int FXFT_unicode_from_adobe_name(const char* glyph_name) {
       if (*p == '\0')
         return value;
       if (*p == '.')
-        return (FT_UInt32)(value | VARIANT_BIT);
+        return (FT_UInt32)(value | kVariantBit);
     }
   }
 
@@ -107,9 +109,7 @@ int FXFT_unicode_from_adobe_name(const char* glyph_name) {
 
     for (count = 6; count > 0; count--, p++) {
       char c = *p;
-      unsigned int d;
-
-      d = (unsigned char)c - '0';
+      unsigned int d = (unsigned char)c - '0';
       if (d >= 10) {
         d = (unsigned char)c - 'A';
         if (d >= 6)
@@ -128,7 +128,7 @@ int FXFT_unicode_from_adobe_name(const char* glyph_name) {
       if (*p == '\0')
         return value;
       if (*p == '.')
-        return (FT_UInt32)(value | VARIANT_BIT);
+        return (FT_UInt32)(value | kVariantBit);
     }
   }
 
@@ -148,9 +148,8 @@ int FXFT_unicode_from_adobe_name(const char* glyph_name) {
     /* now look up the glyph in the Adobe Glyph List */
     if (!dot)
       return (FT_UInt32)ft_get_adobe_glyph_index(glyph_name, p);
-    else
-      return (FT_UInt32)(ft_get_adobe_glyph_index(glyph_name, dot) |
-                         VARIANT_BIT);
+
+    return (FT_UInt32)(ft_get_adobe_glyph_index(glyph_name, dot) | kVariantBit);
   }
 }
 
