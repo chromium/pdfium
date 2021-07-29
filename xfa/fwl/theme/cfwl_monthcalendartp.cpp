@@ -47,15 +47,15 @@ void CFWL_MonthCalendarTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
       break;
     }
     case CFWL_ThemePart::Part::kLBtn: {
-      FWLTHEME_STATE eState = GetState(pParams.m_dwStates);
       DrawArrowBtn(pParams.GetGraphics(), pParams.m_PartRect,
-                   FWLTHEME_DIRECTION::kLeft, eState, pParams.m_matrix);
+                   FWLTHEME_DIRECTION::kLeft, pParams.GetThemeState(),
+                   pParams.m_matrix);
       break;
     }
     case CFWL_ThemePart::Part::kRBtn: {
-      FWLTHEME_STATE eState = GetState(pParams.m_dwStates);
       DrawArrowBtn(pParams.GetGraphics(), pParams.m_PartRect,
-                   FWLTHEME_DIRECTION::kRight, eState, pParams.m_matrix);
+                   FWLTHEME_DIRECTION::kRight, pParams.GetThemeState(),
+                   pParams.m_matrix);
       break;
     }
     case CFWL_ThemePart::Part::kHSeparator: {
@@ -264,12 +264,4 @@ void CFWL_MonthCalendarTP::DrawTodayCircle(const CFWL_ThemeBackground& pParams,
   pParams.GetGraphics()->SetStrokeColor(CFGAS_GEColor(kDatesCircleColor));
   pParams.GetGraphics()->StrokePath(path, matrix);
   pParams.GetGraphics()->RestoreGraphState();
-}
-
-FWLTHEME_STATE CFWL_MonthCalendarTP::GetState(uint32_t dwFWLStates) {
-  if (dwFWLStates & CFWL_PartState_Hovered)
-    return FWLTHEME_STATE::kHover;
-  if (dwFWLStates & CFWL_PartState_Pressed)
-    return FWLTHEME_STATE::kPressed;
-  return FWLTHEME_STATE::kNormal;
 }

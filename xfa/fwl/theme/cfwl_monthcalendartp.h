@@ -40,7 +40,6 @@ class CFWL_MonthCalendarTP final : public CFWL_WidgetTP {
                       const CFX_Matrix& matrix);
   void DrawWeekNumSep(const CFWL_ThemeBackground& pParams,
                       const CFX_Matrix& matrix);
-  FWLTHEME_STATE GetState(uint32_t dwFWLStates);
 };
 
 #endif  // XFA_FWL_THEME_CFWL_MONTHCALENDARTP_H_

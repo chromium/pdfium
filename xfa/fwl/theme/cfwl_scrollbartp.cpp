@@ -22,43 +22,35 @@ CFWL_ScrollBarTP::~CFWL_ScrollBarTP() = default;
 
 void CFWL_ScrollBarTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   CFWL_Widget* pWidget = pParams.GetWidget();
-  FWLTHEME_STATE eState = FWLTHEME_STATE::kNormal;
-  if (pParams.m_dwStates & CFWL_PartState_Hovered)
-    eState = FWLTHEME_STATE::kHover;
-  else if (pParams.m_dwStates & CFWL_PartState_Pressed)
-    eState = FWLTHEME_STATE::kPressed;
-  else if (pParams.m_dwStates & CFWL_PartState_Disabled)
-    eState = FWLTHEME_STATE::kDisable;
-
   CFGAS_GEGraphics* pGraphics = pParams.GetGraphics();
   bool bVert = !!pWidget->GetStyleExts();
   switch (pParams.m_iPart) {
     case CFWL_ThemePart::Part::kForeArrow: {
       DrawMaxMinBtn(pGraphics, pParams.m_PartRect,
                     bVert ? FWLTHEME_DIRECTION::kUp : FWLTHEME_DIRECTION::kLeft,
-                    eState, pParams.m_matrix);
+                    pParams.GetThemeState(), pParams.m_matrix);
       break;
     }
     case CFWL_ThemePart::Part::kBackArrow: {
       DrawMaxMinBtn(
           pGraphics, pParams.m_PartRect,
           bVert ? FWLTHEME_DIRECTION::kDown : FWLTHEME_DIRECTION::kRight,
-          eState, pParams.m_matrix);
+          pParams.GetThemeState(), pParams.m_matrix);
       break;
     }
     case CFWL_ThemePart::Part::kThumb: {
-      DrawThumbBtn(pGraphics, pParams.m_PartRect, bVert, eState,
-                   pParams.m_matrix);
+      DrawThumbBtn(pGraphics, pParams.m_PartRect, bVert,
+                   pParams.GetThemeState(), pParams.m_matrix);
       break;
     }
     case CFWL_ThemePart::Part::kLowerTrack: {
-      DrawTrack(pGraphics, pParams.m_PartRect, bVert, eState, true,
-                pParams.m_matrix);
+      DrawTrack(pGraphics, pParams.m_PartRect, bVert, pParams.GetThemeState(),
+                true, pParams.m_matrix);
       break;
     }
     case CFWL_ThemePart::Part::kUpperTrack: {
-      DrawTrack(pGraphics, pParams.m_PartRect, bVert, eState, false,
-                pParams.m_matrix);
+      DrawTrack(pGraphics, pParams.m_PartRect, bVert, pParams.GetThemeState(),
+                false, pParams.m_matrix);
       break;
     }
     default:

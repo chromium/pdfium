@@ -13,6 +13,7 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "xfa/fwl/theme/cfwl_utils.h"
 
 class CFWL_Widget;
 
@@ -87,6 +88,7 @@ class CFWL_ThemePart {
   ~CFWL_ThemePart();
 
   CFWL_Widget* GetWidget() const { return m_pWidget.Get(); }
+  FWLTHEME_STATE GetThemeState() const;
 
   CFX_Matrix m_matrix;
   CFX_RectF m_PartRect;
