@@ -108,7 +108,6 @@ config("pdfium_core_config") {
     ":pdfium_common_config",
     ":pdfium_public_config",
     "//build/config/compiler:noshadowing",
-    "//build/config/compiler:no_size_t_to_int_warning",
   ]
   defines = []
   if (is_win) {
