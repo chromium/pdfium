@@ -99,7 +99,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libunwind
   # and whatever else without interference from each other.
-  'libunwind_revision': '950faeeabc1ee25569e62ec4ce749f013169482d',
+  'libunwind_revision': 'cdb04dc77cd222c79c00a55bd11d4dc0e91b6cf1',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling markupsafe
   # and whatever else without interference from each other.
