@@ -8,27 +8,27 @@
 
 #include "third_party/base/cxx17_backports.h"
 
-const FXCMAP_CMap g_FXCMAP_Korea1_cmaps[] = {
-    {"KSC-EUC-H", g_FXCMAP_KSC_EUC_H_0, nullptr, 467, 0, FXCMAP_CMap::Range, 0},
-    {"KSC-EUC-V", g_FXCMAP_KSC_EUC_V_0, nullptr, 16, 0, FXCMAP_CMap::Range, -1},
-    {"KSCms-UHC-H", g_FXCMAP_KSCms_UHC_H_1, nullptr, 675, 0, FXCMAP_CMap::Range,
+const FXCMAP_CMap kFXCMAP_Korea1_cmaps[] = {
+    {"KSC-EUC-H", kFXCMAP_KSC_EUC_H_0, nullptr, 467, 0, FXCMAP_CMap::Range, 0},
+    {"KSC-EUC-V", kFXCMAP_KSC_EUC_V_0, nullptr, 16, 0, FXCMAP_CMap::Range, -1},
+    {"KSCms-UHC-H", kFXCMAP_KSCms_UHC_H_1, nullptr, 675, 0, FXCMAP_CMap::Range,
      -2},
-    {"KSCms-UHC-V", g_FXCMAP_KSCms_UHC_V_1, nullptr, 16, 0, FXCMAP_CMap::Range,
+    {"KSCms-UHC-V", kFXCMAP_KSCms_UHC_V_1, nullptr, 16, 0, FXCMAP_CMap::Range,
      -1},
-    {"KSCms-UHC-HW-H", g_FXCMAP_KSCms_UHC_HW_H_1, nullptr, 675, 0,
+    {"KSCms-UHC-HW-H", kFXCMAP_KSCms_UHC_HW_H_1, nullptr, 675, 0,
      FXCMAP_CMap::Range, 0},
-    {"KSCms-UHC-HW-V", g_FXCMAP_KSCms_UHC_HW_V_1, nullptr, 16, 0,
+    {"KSCms-UHC-HW-V", kFXCMAP_KSCms_UHC_HW_V_1, nullptr, 16, 0,
      FXCMAP_CMap::Range, -1},
-    {"KSCpc-EUC-H", g_FXCMAP_KSCpc_EUC_H_0, nullptr, 509, 0, FXCMAP_CMap::Range,
+    {"KSCpc-EUC-H", kFXCMAP_KSCpc_EUC_H_0, nullptr, 509, 0, FXCMAP_CMap::Range,
      -6},
-    {"UniKS-UCS2-H", g_FXCMAP_UniKS_UCS2_H_1, nullptr, 8394, 0,
+    {"UniKS-UCS2-H", kFXCMAP_UniKS_UCS2_H_1, nullptr, 8394, 0,
      FXCMAP_CMap::Range, 0},
-    {"UniKS-UCS2-V", g_FXCMAP_UniKS_UCS2_V_1, nullptr, 18, 0,
-     FXCMAP_CMap::Range, -1},
-    {"UniKS-UTF16-H", g_FXCMAP_UniKS_UTF16_H_0, nullptr, 158, 0,
+    {"UniKS-UCS2-V", kFXCMAP_UniKS_UCS2_V_1, nullptr, 18, 0, FXCMAP_CMap::Range,
+     -1},
+    {"UniKS-UTF16-H", kFXCMAP_UniKS_UTF16_H_0, nullptr, 158, 0,
      FXCMAP_CMap::Single, -2},
-    {"UniKS-UTF16-V", g_FXCMAP_UniKS_UCS2_V_1, nullptr, 18, 0,
+    {"UniKS-UTF16-V", kFXCMAP_UniKS_UCS2_V_1, nullptr, 18, 0,
      FXCMAP_CMap::Range, -1},
 };
 
-const size_t g_FXCMAP_Korea1_cmaps_size = pdfium::size(g_FXCMAP_Korea1_cmaps);
+const size_t kFXCMAP_Korea1_cmaps_size = pdfium::size(kFXCMAP_Korea1_cmaps);
