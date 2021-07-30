@@ -117,7 +117,7 @@ class CPDF_Document : public Observable,
 
   CPDF_Parser::Error LoadDoc(
       const RetainPtr<IFX_SeekableReadStream>& pFileAccess,
-      const char* password);
+      const ByteString& password);
   CPDF_Parser::Error LoadLinearizedDoc(
       const RetainPtr<CPDF_ReadValidator>& validator,
       const ByteString& password);
