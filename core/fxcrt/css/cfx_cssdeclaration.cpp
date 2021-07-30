@@ -179,7 +179,7 @@ void CFX_CSSDeclaration::AddProperty(const CFX_CSSData::Property* property,
 
     bImportant = true;
   }
-  const uint32_t dwType = property->dwType;
+  const CFX_CSSValueTypeMask dwType = property->dwTypes;
   switch (dwType & 0x0F) {
     case CFX_CSSVALUETYPE_Primitive: {
       static constexpr CFX_CSSVALUETYPE kValueGuessOrder[] = {
@@ -188,8 +188,8 @@ void CFX_CSSDeclaration::AddProperty(const CFX_CSSData::Property* property,
           CFX_CSSVALUETYPE_MaybeColor,
           CFX_CSSVALUETYPE_MaybeString,
       };
-      for (uint32_t guess : kValueGuessOrder) {
-        const uint32_t dwMatch = dwType & guess;
+      for (CFX_CSSVALUETYPE guess : kValueGuessOrder) {
+        const CFX_CSSValueTypeMask dwMatch = dwType & guess;
         if (dwMatch == 0)
           continue;
 
@@ -332,7 +332,7 @@ void CFX_CSSDeclaration::ParseValueListProperty(
       (pProperty->eName == CFX_CSSProperty::FontFamily) ? ',' : ' ';
   CFX_CSSValueListParser parser(pszValue, iValueLen, separator);
 
-  const uint32_t dwType = pProperty->dwType;
+  const CFX_CSSValueTypeMask dwType = pProperty->dwTypes;
   CFX_CSSValue::PrimitiveType eType;
   std::vector<RetainPtr<CFX_CSSValue>> list;
   while (parser.NextValue(&eType, &pszValue, &iValueLen)) {

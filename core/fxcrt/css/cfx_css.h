@@ -9,6 +9,8 @@
 
 #include <stdint.h>
 
+#include <type_traits>
+
 enum CFX_CSSVALUETYPE {
   CFX_CSSVALUETYPE_Primitive = 1 << 0,
   CFX_CSSVALUETYPE_List = 1 << 1,
@@ -19,6 +21,7 @@ enum CFX_CSSVALUETYPE {
   CFX_CSSVALUETYPE_MaybeString = 1 << 7,
   CFX_CSSVALUETYPE_MaybeColor = 1 << 8
 };
+using CFX_CSSValueTypeMask = std::underlying_type<CFX_CSSVALUETYPE>::type;
 
 // Any entries added/removed here, will need to be mirrored in
 // propertyValueTable, in core/fxcrt/css/cfx_cssdata.cpp.
