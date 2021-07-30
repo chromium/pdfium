@@ -278,16 +278,16 @@ CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement() {
     return Name;
 
   if (m_WordSize == 4) {
-    if (WordBufferMatches(kTrue)) {
+    if (GetWord() == kTrue) {
       m_pLastObj = pdfium::MakeRetain<CPDF_Boolean>(true);
       return Others;
     }
-    if (WordBufferMatches(kNull)) {
+    if (GetWord() == kNull) {
       m_pLastObj = pdfium::MakeRetain<CPDF_Null>();
       return Others;
     }
   } else if (m_WordSize == 5) {
-    if (WordBufferMatches(kFalse)) {
+    if (GetWord() == kFalse) {
       m_pLastObj = pdfium::MakeRetain<CPDF_Boolean>(false);
       return Others;
     }
@@ -367,11 +367,11 @@ RetainPtr<CPDF_Object> CPDF_StreamParser::ReadNextObject(
     return pArray;
   }
 
-  if (WordBufferMatches(kFalse))
+  if (GetWord() == kFalse)
     return pdfium::MakeRetain<CPDF_Boolean>(false);
-  if (WordBufferMatches(kTrue))
+  if (GetWord() == kTrue)
     return pdfium::MakeRetain<CPDF_Boolean>(true);
-  if (WordBufferMatches(kNull))
+  if (GetWord() == kNull)
     return pdfium::MakeRetain<CPDF_Null>();
   return nullptr;
 }
@@ -596,9 +596,4 @@ ByteString CPDF_StreamParser::ReadHexString() {
 
 bool CPDF_StreamParser::PositionIsInBounds() const {
   return m_Pos < m_pBuf.size();
-}
-
-bool CPDF_StreamParser::WordBufferMatches(const char* pWord) const {
-  const size_t iLength = strlen(pWord);
-  return m_WordSize == iLength && memcmp(m_WordBuffer, pWord, iLength) == 0;
 }

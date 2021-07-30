@@ -48,7 +48,6 @@ class CPDF_StreamParser {
   ByteString ReadString();
   ByteString ReadHexString();
   bool PositionIsInBounds() const;
-  bool WordBufferMatches(const char* pWord) const;
 
   uint32_t m_Pos = 0;       // Current byte position within |m_pBuf|.
   uint32_t m_WordSize = 0;  // Current byte position within |m_WordBuffer|.
