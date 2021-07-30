@@ -614,7 +614,6 @@ source_set("pdfium_base") {
     "base/numerics/checked_math_impl.h",
     "base/numerics/clamped_math.h",
     "base/numerics/clamped_math_impl.h",
-    "base/numerics/ranges.h",
     "base/numerics/safe_conversions.h",
     "base/numerics/safe_conversions_arm_impl.h",
     "base/numerics/safe_conversions_impl.h",

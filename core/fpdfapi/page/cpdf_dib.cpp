@@ -35,7 +35,7 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/numerics/ranges.h"
+#include "third_party/base/cxx17_backports.h"
 
 namespace {
 

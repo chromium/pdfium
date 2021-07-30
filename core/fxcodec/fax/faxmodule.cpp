@@ -19,7 +19,7 @@
 #include "core/fxcrt/stl_util.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/numerics/ranges.h"
+#include "third_party/base/cxx17_backports.h"
 
 namespace fxcodec {
 

@@ -36,8 +36,8 @@
 #include "core/fxcrt/fx_extension.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/fpdf_formfill.h"
+#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/notreached.h"
-#include "third_party/base/numerics/ranges.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"

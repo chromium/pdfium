@@ -11,7 +11,7 @@
 #include <utility>
 
 #include "core/fxcrt/stl_util.h"
-#include "third_party/base/numerics/ranges.h"
+#include "third_party/base/cxx17_backports.h"
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fgas/graphics/cfgas_gegraphics.h"

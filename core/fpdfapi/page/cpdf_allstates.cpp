@@ -18,7 +18,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "third_party/base/compiler_specific.h"
-#include "third_party/base/numerics/ranges.h"
+#include "third_party/base/cxx17_backports.h"
 
 CPDF_AllStates::CPDF_AllStates() = default;
 

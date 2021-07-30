@@ -11,8 +11,8 @@
 #include <vector>
 
 #include "core/fxcrt/fx_memory_wrappers.h"
+#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/notreached.h"
-#include "third_party/base/numerics/ranges.h"
 
 namespace fxcodec {
 

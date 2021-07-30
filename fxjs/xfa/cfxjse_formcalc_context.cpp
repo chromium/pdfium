@@ -26,7 +26,6 @@
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/check.h"
 #include "third_party/base/cxx17_backports.h"
-#include "third_party/base/numerics/ranges.h"
 #include "third_party/base/optional.h"
 #include "xfa/fgas/crt/cfgas_decimal.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"

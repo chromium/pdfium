@@ -12,7 +12,7 @@
 #include "core/fpdfdoc/cpvt_wordinfo.h"
 #include "core/fxcrt/stl_util.h"
 #include "third_party/base/check.h"
-#include "third_party/base/numerics/ranges.h"
+#include "third_party/base/cxx17_backports.h"
 
 namespace {
 

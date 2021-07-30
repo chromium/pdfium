@@ -16,8 +16,8 @@
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxge/dib/cfx_cmyk_to_srgb.h"
 #include "third_party/base/check.h"
+#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/notreached.h"
-#include "third_party/base/numerics/ranges.h"
 
 namespace {
 

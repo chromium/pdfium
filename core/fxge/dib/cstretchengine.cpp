@@ -20,7 +20,7 @@
 #include "core/fxge/dib/fx_dib.h"
 #include "core/fxge/dib/scanlinecomposer_iface.h"
 #include "third_party/base/check.h"
-#include "third_party/base/numerics/ranges.h"
+#include "third_party/base/cxx17_backports.h"
 
 static_assert(
     std::is_trivially_destructible<CStretchEngine::PixelWeight>::value,
