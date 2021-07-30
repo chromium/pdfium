@@ -104,7 +104,7 @@ struct FX_CharsetUnicodes {
   const uint16_t* m_pUnicodes;  // Raw, POD struct.
 };
 
-extern const FX_CharsetUnicodes g_FX_CharsetUnicodes[8];
+extern const FX_CharsetUnicodes kFX_CharsetUnicodes[8];
 
 FX_CodePage FX_GetACP();
 FX_CodePage FX_GetCodePageFromCharset(FX_Charset charset);

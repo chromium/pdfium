@@ -18,7 +18,7 @@
 
 namespace {
 
-const uint16_t g_FX_MSDOSThaiUnicodes[128] = {
+const uint16_t kFX_MSDOSThaiUnicodes[128] = {
     0x20AC, 0x0000, 0x0000, 0x0000, 0x0000, 0x2026, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x2018,
     0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014, 0x0000, 0x0000, 0x0000,
@@ -36,7 +36,7 @@ const uint16_t g_FX_MSDOSThaiUnicodes[128] = {
     0x0000, 0x0000,
 };
 
-const uint16_t g_FX_MSWinEasternEuropeanUnicodes[128] = {
+const uint16_t kFX_MSWinEasternEuropeanUnicodes[128] = {
     0x20AC, 0x0000, 0x201A, 0x0000, 0x201E, 0x2026, 0x2020, 0x2021, 0x0000,
     0x2030, 0x0160, 0x2039, 0x015A, 0x0164, 0x017D, 0x0179, 0x0000, 0x2018,
     0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014, 0x0000, 0x2122, 0x0161,
@@ -54,7 +54,7 @@ const uint16_t g_FX_MSWinEasternEuropeanUnicodes[128] = {
     0x0163, 0x02D9,
 };
 
-const uint16_t g_FX_MSWinCyrillicUnicodes[128] = {
+const uint16_t kFX_MSWinCyrillicUnicodes[128] = {
     0x0402, 0x0403, 0x201A, 0x0453, 0x201E, 0x2026, 0x2020, 0x2021, 0x20AC,
     0x2030, 0x0409, 0x2039, 0x040A, 0x040C, 0x040B, 0x040F, 0x0452, 0x2018,
     0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014, 0x0000, 0x2122, 0x0459,
@@ -72,7 +72,7 @@ const uint16_t g_FX_MSWinCyrillicUnicodes[128] = {
     0x044E, 0x044F,
 };
 
-const uint16_t g_FX_MSWinGreekUnicodes[128] = {
+const uint16_t kFX_MSWinGreekUnicodes[128] = {
     0x20AC, 0x0000, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021, 0x0000,
     0x2030, 0x0000, 0x2039, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x2018,
     0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014, 0x0000, 0x2122, 0x0000,
@@ -90,7 +90,7 @@ const uint16_t g_FX_MSWinGreekUnicodes[128] = {
     0x03CE, 0x0000,
 };
 
-const uint16_t g_FX_MSWinTurkishUnicodes[128] = {
+const uint16_t kFX_MSWinTurkishUnicodes[128] = {
     0x20AC, 0x0000, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021, 0x02C6,
     0x2030, 0x0160, 0x2039, 0x0152, 0x0000, 0x0000, 0x0000, 0x0000, 0x2018,
     0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014, 0x02DC, 0x2122, 0x0161,
@@ -108,7 +108,7 @@ const uint16_t g_FX_MSWinTurkishUnicodes[128] = {
     0x015F, 0x00FF,
 };
 
-const uint16_t g_FX_MSWinHebrewUnicodes[128] = {
+const uint16_t kFX_MSWinHebrewUnicodes[128] = {
     0x20AC, 0x0000, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021, 0x02C6,
     0x2030, 0x0000, 0x2039, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x2018,
     0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014, 0x02DC, 0x2122, 0x0000,
@@ -126,7 +126,7 @@ const uint16_t g_FX_MSWinHebrewUnicodes[128] = {
     0x200F, 0x0000,
 };
 
-const uint16_t g_FX_MSWinArabicUnicodes[128] = {
+const uint16_t kFX_MSWinArabicUnicodes[128] = {
     0x20AC, 0x067E, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021, 0x02C6,
     0x2030, 0x0679, 0x2039, 0x0152, 0x0686, 0x0698, 0x0688, 0x06AF, 0x2018,
     0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014, 0x06A9, 0x2122, 0x0691,
@@ -144,7 +144,7 @@ const uint16_t g_FX_MSWinArabicUnicodes[128] = {
     0x200F, 0x06D2,
 };
 
-const uint16_t g_FX_MSWinBalticUnicodes[128] = {
+const uint16_t kFX_MSWinBalticUnicodes[128] = {
     0x20AC, 0x0000, 0x201A, 0x0000, 0x201E, 0x2026, 0x2020, 0x2021, 0x0000,
     0x2030, 0x0000, 0x2039, 0x0000, 0x00A8, 0x02C7, 0x00B8, 0x0000, 0x2018,
     0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014, 0x0000, 0x2122, 0x0000,
@@ -167,7 +167,7 @@ struct FX_CHARSET_MAP {
   FX_CodePage codepage;
 };
 
-const FX_CHARSET_MAP g_FXCharset2CodePageTable[] = {
+const FX_CHARSET_MAP kFXCharset2CodePageTable[] = {
     {FX_Charset::kANSI, FX_CodePage::kMSWin_WesternEuropean},
     {FX_Charset::kDefault, FX_CodePage::kDefANSI},
     {FX_Charset::kSymbol, FX_CodePage::kSymbol},
@@ -203,15 +203,15 @@ const FX_CHARSET_MAP g_FXCharset2CodePageTable[] = {
 
 }  // namespace
 
-const FX_CharsetUnicodes g_FX_CharsetUnicodes[8] = {
-    {FX_Charset::kThai, g_FX_MSDOSThaiUnicodes},
-    {FX_Charset::kMSWin_EasternEuropean, g_FX_MSWinEasternEuropeanUnicodes},
-    {FX_Charset::kMSWin_Cyrillic, g_FX_MSWinCyrillicUnicodes},
-    {FX_Charset::kMSWin_Greek, g_FX_MSWinGreekUnicodes},
-    {FX_Charset::kMSWin_Turkish, g_FX_MSWinTurkishUnicodes},
-    {FX_Charset::kMSWin_Hebrew, g_FX_MSWinHebrewUnicodes},
-    {FX_Charset::kMSWin_Arabic, g_FX_MSWinArabicUnicodes},
-    {FX_Charset::kMSWin_Baltic, g_FX_MSWinBalticUnicodes},
+const FX_CharsetUnicodes kFX_CharsetUnicodes[8] = {
+    {FX_Charset::kThai, kFX_MSDOSThaiUnicodes},
+    {FX_Charset::kMSWin_EasternEuropean, kFX_MSWinEasternEuropeanUnicodes},
+    {FX_Charset::kMSWin_Cyrillic, kFX_MSWinCyrillicUnicodes},
+    {FX_Charset::kMSWin_Greek, kFX_MSWinGreekUnicodes},
+    {FX_Charset::kMSWin_Turkish, kFX_MSWinTurkishUnicodes},
+    {FX_Charset::kMSWin_Hebrew, kFX_MSWinHebrewUnicodes},
+    {FX_Charset::kMSWin_Arabic, kFX_MSWinArabicUnicodes},
+    {FX_Charset::kMSWin_Baltic, kFX_MSWinBalticUnicodes},
 };
 
 FX_CodePage FX_GetACP() {
@@ -224,12 +224,11 @@ FX_CodePage FX_GetACP() {
 
 FX_CodePage FX_GetCodePageFromCharset(FX_Charset charset) {
   auto* result = std::lower_bound(
-      std::begin(g_FXCharset2CodePageTable),
-      std::end(g_FXCharset2CodePageTable), charset,
-      [](const FX_CHARSET_MAP& iter, const FX_Charset& charset) {
+      std::begin(kFXCharset2CodePageTable), std::end(kFXCharset2CodePageTable),
+      charset, [](const FX_CHARSET_MAP& iter, const FX_Charset& charset) {
         return iter.charset < charset;
       });
-  if (result != std::end(g_FXCharset2CodePageTable) &&
+  if (result != std::end(kFXCharset2CodePageTable) &&
       result->charset == charset) {
     return result->codepage;
   }
@@ -237,7 +236,7 @@ FX_CodePage FX_GetCodePageFromCharset(FX_Charset charset) {
 }
 
 FX_Charset FX_GetCharsetFromCodePage(FX_CodePage codepage) {
-  for (const auto& it : g_FXCharset2CodePageTable) {
+  for (const auto& it : kFXCharset2CodePageTable) {
     if (it.codepage == codepage)
       return it.charset;
   }
