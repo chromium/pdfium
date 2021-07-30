@@ -26,7 +26,7 @@ class ScanlineDecoder;
 }
 
 // Indexed by 8-bit char code, contains unicode code points.
-extern const uint16_t PDFDocEncoding[256];
+extern const uint16_t kPDFDocEncoding[256];
 
 bool ValidateDecoderPipeline(const CPDF_Array* pDecoders);
 
