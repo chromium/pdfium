@@ -373,9 +373,9 @@ uint32_t CPDF_CIDFont::CharCodeFromUnicode(wchar_t unicode) const {
     return 0;
 #if defined(OS_WIN)
   uint8_t buffer[32];
-  int ret = FX_WideCharToMultiByte(kCharsetCodePages[m_pCMap->GetCoding()], 0,
-                                   &unicode, 1, reinterpret_cast<char*>(buffer),
-                                   4, nullptr, nullptr);
+  int ret =
+      FX_WideCharToMultiByte(kCharsetCodePages[m_pCMap->GetCoding()], &unicode,
+                             1, reinterpret_cast<char*>(buffer), 4);
   if (ret == 1)
     return buffer[0];
   if (ret == 2)

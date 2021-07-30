@@ -112,13 +112,10 @@ FX_Charset FX_GetCharsetFromCodePage(FX_CodePage codepage);
 FX_Charset FX_GetCharsetFromInt(int value);
 bool FX_CharSetIsCJK(FX_Charset uCharset);
 int FX_WideCharToMultiByte(FX_CodePage codepage,
-                           uint32_t dwFlags,
                            const wchar_t* wstr,
                            int wlen,
                            char* buf,
-                           int buflen,
-                           const char* default_str,
-                           int* pUseDefault);
+                           int buflen);
 int FX_MultiByteToWideChar(FX_CodePage codepage,
                            uint32_t dwFlags,
                            const char* bstr,

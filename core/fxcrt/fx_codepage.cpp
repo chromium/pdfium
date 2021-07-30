@@ -291,16 +291,13 @@ bool FX_CharSetIsCJK(FX_Charset uCharset) {
 }
 
 int FX_WideCharToMultiByte(FX_CodePage codepage,
-                           uint32_t dwFlags,
                            const wchar_t* wstr,
                            int wlen,
                            char* buf,
-                           int buflen,
-                           const char* default_str,
-                           int* pUseDefault) {
+                           int buflen) {
 #if defined(OS_WIN)
-  return WideCharToMultiByte(static_cast<UINT>(codepage), dwFlags, wstr, wlen,
-                             buf, buflen, default_str, pUseDefault);
+  return WideCharToMultiByte(static_cast<UINT>(codepage), 0, wstr, wlen, buf,
+                             buflen, nullptr, nullptr);
 #else
   int len = 0;
   for (int i = 0; i < wlen; i++) {

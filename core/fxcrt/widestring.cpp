@@ -658,8 +658,8 @@ ByteString WideString::ToLatin1() const {
 
 ByteString WideString::ToDefANSI() const {
   int src_len = GetLength();
-  int dest_len = FX_WideCharToMultiByte(FX_CodePage::kDefANSI, 0, c_str(),
-                                        src_len, nullptr, 0, nullptr, nullptr);
+  int dest_len = FX_WideCharToMultiByte(FX_CodePage::kDefANSI, c_str(), src_len,
+                                        nullptr, 0);
   if (!dest_len)
     return ByteString();
 
@@ -667,8 +667,8 @@ ByteString WideString::ToDefANSI() const {
   {
     // Span's lifetime must end before ReleaseBuffer() below.
     pdfium::span<char> dest_buf = bstr.GetBuffer(dest_len);
-    FX_WideCharToMultiByte(FX_CodePage::kDefANSI, 0, c_str(), src_len,
-                           dest_buf.data(), dest_len, nullptr, nullptr);
+    FX_WideCharToMultiByte(FX_CodePage::kDefANSI, c_str(), src_len,
+                           dest_buf.data(), dest_len);
   }
   bstr.ReleaseBuffer(dest_len);
   return bstr;
