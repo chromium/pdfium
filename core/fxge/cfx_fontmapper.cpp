@@ -330,7 +330,7 @@ void CFX_FontMapper::AddInstalledFont(const ByteString& name,
   if (bLocalized) {
     void* hFont = m_pFontInfo->GetFont(name.c_str());
     if (!hFont) {
-      hFont = m_pFontInfo->MapFont(0, 0, FX_Charset::kDefault, 0, name.c_str());
+      hFont = m_pFontInfo->MapFont(0, 0, FX_Charset::kDefault, 0, name);
       if (!hFont)
         return;
     }
@@ -602,8 +602,8 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
   } else if (FontStyleIsItalic(flags)) {
     bItalic = true;
   }
-  void* hFont = m_pFontInfo->MapFont(weight, bItalic, Charset, PitchFamily,
-                                     family.c_str());
+  void* hFont =
+      m_pFontInfo->MapFont(weight, bItalic, Charset, PitchFamily, family);
   if (!hFont) {
     if (bCJK) {
       bItalic = italic_angle != 0;
@@ -734,8 +734,8 @@ std::unique_ptr<uint8_t, FxFreeDeleter> CFX_FontMapper::RawBytesForIndex(
   if (!m_pFontInfo)
     return nullptr;
 
-  void* hFont = m_pFontInfo->MapFont(0, 0, FX_Charset::kDefault, 0,
-                                     GetFaceName(index).c_str());
+  void* hFont =
+      m_pFontInfo->MapFont(0, 0, FX_Charset::kDefault, 0, GetFaceName(index));
   if (!hFont)
     return nullptr;
 

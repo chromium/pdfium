@@ -74,19 +74,19 @@ class CFX_ExternalFontInfo final : public SystemFontInfoIface {
                 bool bItalic,
                 FX_Charset charset,
                 int pitch_family,
-                const char* family) override {
+                const ByteString& face) override {
     if (!m_pInfo->MapFont)
       return nullptr;
 
     int iExact;
     return m_pInfo->MapFont(m_pInfo, weight, bItalic, static_cast<int>(charset),
-                            pitch_family, family, &iExact);
+                            pitch_family, face.c_str(), &iExact);
   }
 
-  void* GetFont(const char* family) override {
+  void* GetFont(const ByteString& family) override {
     if (!m_pInfo->GetFont)
       return nullptr;
-    return m_pInfo->GetFont(m_pInfo, family);
+    return m_pInfo->GetFont(m_pInfo, family.c_str());
   }
 
   uint32_t GetFontData(void* hFont,

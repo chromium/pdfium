@@ -314,13 +314,13 @@ void* CFX_FolderFontInfo::FindFont(int weight,
                                    bool bItalic,
                                    FX_Charset charset,
                                    int pitch_family,
-                                   const char* family,
+                                   const ByteString& family,
                                    bool bMatchName) {
   FontFaceInfo* pFind = nullptr;
   if (charset == FX_Charset::kANSI && FontFamilyIsFixedPitch(pitch_family))
     return GetFont("Courier New");
 
-  ByteStringView bsFamily(family);
+  ByteStringView bsFamily = family.AsStringView();
   uint32_t charset_flag = GetCharset(charset);
   int32_t iBestSimilar = 0;
   for (const auto& it : m_FontList) {
@@ -347,11 +347,11 @@ void* CFX_FolderFontInfo::MapFont(int weight,
                                   bool bItalic,
                                   FX_Charset charset,
                                   int pitch_family,
-                                  const char* family) {
+                                  const ByteString& face) {
   return nullptr;
 }
 
-void* CFX_FolderFontInfo::GetFont(const char* face) {
+void* CFX_FolderFontInfo::GetFont(const ByteString& face) {
   auto it = m_FontList.find(face);
   return it != m_FontList.end() ? it->second.get() : nullptr;
 }

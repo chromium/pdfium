@@ -73,7 +73,7 @@ class CFX_Win32FallbackFontInfo final : public CFX_FolderFontInfo {
                 bool bItalic,
                 FX_Charset charset,
                 int pitch_family,
-                const char* family) override;
+                const ByteString& face) override;
 };
 
 class CFX_Win32FontInfo final : public SystemFontInfoIface {
@@ -87,8 +87,8 @@ class CFX_Win32FontInfo final : public SystemFontInfoIface {
                 bool bItalic,
                 FX_Charset charset,
                 int pitch_family,
-                const char* face) override;
-  void* GetFont(const char* face) override { return nullptr; }
+                const ByteString& face) override;
+  void* GetFont(const ByteString& face) override { return nullptr; }
   uint32_t GetFontData(void* hFont,
                        uint32_t table,
                        pdfium::span<uint8_t> buffer) override;
@@ -221,8 +221,8 @@ void* CFX_Win32FallbackFontInfo::MapFont(int weight,
                                          bool bItalic,
                                          FX_Charset charset,
                                          int pitch_family,
-                                         const char* cstr_face) {
-  void* font = GetSubstFont(cstr_face);
+                                         const ByteString& face) {
+  void* font = GetSubstFont(face);
   if (font)
     return font;
 
@@ -237,7 +237,7 @@ void* CFX_Win32FallbackFontInfo::MapFont(int weight,
       bCJK = false;
       break;
   }
-  return FindFont(weight, bItalic, charset, pitch_family, cstr_face, !bCJK);
+  return FindFont(weight, bItalic, charset, pitch_family, face, !bCJK);
 }
 
 void CFX_Win32FontInfo::GetGBPreference(ByteString& face,
@@ -311,12 +311,11 @@ void* CFX_Win32FontInfo::MapFont(int weight,
                                  bool bItalic,
                                  FX_Charset charset,
                                  int pitch_family,
-                                 const char* cstr_face) {
-  ByteString face = cstr_face;
-  int iBaseFont;
-  for (iBaseFont = 0; iBaseFont < 12; iBaseFont++) {
-    if (face == ByteStringView(g_Base14Substs[iBaseFont].m_pName)) {
-      face = g_Base14Substs[iBaseFont].m_pWinName;
+                                 const ByteString& face) {
+  ByteString new_face = face;
+  for (int iBaseFont = 0; iBaseFont < 12; iBaseFont++) {
+    if (new_face == ByteStringView(g_Base14Substs[iBaseFont].m_pName)) {
+      new_face = g_Base14Substs[iBaseFont].m_pWinName;
       weight = g_Base14Substs[iBaseFont].m_bBold ? FW_BOLD : FW_NORMAL;
       bItalic = g_Base14Substs[iBaseFont].m_bItalic;
       break;
@@ -338,17 +337,17 @@ void* CFX_Win32FontInfo::MapFont(int weight,
   }
   HFONT hFont = ::CreateFontA(-10, 0, 0, 0, weight, bItalic, 0, 0,
                               static_cast<int>(charset), OUT_TT_ONLY_PRECIS, 0,
-                              0, subst_pitch_family, face.c_str());
+                              0, subst_pitch_family, new_face.c_str());
   char facebuf[100];
   HFONT hOldFont = (HFONT)::SelectObject(m_hDC, hFont);
   ::GetTextFaceA(m_hDC, 100, facebuf);
   ::SelectObject(m_hDC, hOldFont);
-  if (face.EqualNoCase(facebuf))
+  if (new_face.EqualNoCase(facebuf))
     return hFont;
 
   WideString wsFace = WideString::FromDefANSI(facebuf);
   for (size_t i = 0; i < pdfium::size(g_VariantNames); ++i) {
-    if (face != g_VariantNames[i].m_pFaceName)
+    if (new_face != g_VariantNames[i].m_pFaceName)
       continue;
 
     const unsigned short* pName = reinterpret_cast<const unsigned short*>(
@@ -364,25 +363,25 @@ void* CFX_Win32FontInfo::MapFont(int weight,
 
   switch (charset) {
     case FX_Charset::kShiftJIS:
-      GetJapanesePreference(face, weight, pitch_family);
+      GetJapanesePreference(new_face, weight, pitch_family);
       break;
     case FX_Charset::kChineseSimplified:
-      GetGBPreference(face, weight, pitch_family);
+      GetGBPreference(new_face, weight, pitch_family);
       break;
     case FX_Charset::kHangul:
-      face = "Gulim";
+      new_face = "Gulim";
       break;
     case FX_Charset::kChineseTraditional:
-      if (face.Contains("MSung")) {
-        face = "MingLiU";
+      if (new_face.Contains("MSung")) {
+        new_face = "MingLiU";
       } else {
-        face = "PMingLiU";
+        new_face = "PMingLiU";
       }
       break;
   }
   hFont = ::CreateFontA(-10, 0, 0, 0, weight, bItalic, 0, 0,
                         static_cast<int>(charset), OUT_TT_ONLY_PRECIS, 0, 0,
-                        subst_pitch_family, face.c_str());
+                        subst_pitch_family, new_face.c_str());
   return hFont;
 }
 

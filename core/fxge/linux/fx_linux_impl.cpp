@@ -31,33 +31,32 @@ enum JpFontFamily : uint8_t {
   kCount
 };
 
-const char* const g_LinuxJpFontList[][JpFontFamily::kCount] = {
+const char* const kLinuxJpFontList[][JpFontFamily::kCount] = {
     {"TakaoPGothic", "VL PGothic", "IPAPGothic", "VL Gothic"},
     {"TakaoGothic", "VL Gothic", "IPAGothic", "Kochi Gothic"},
     {"TakaoPMincho", "IPAPMincho", "VL Gothic", "Kochi Mincho"},
     {"TakaoMincho", "IPAMincho", "VL Gothic", "Kochi Mincho"},
 };
 
-const char* const g_LinuxGbFontList[] = {
+const char* const kLinuxGbFontList[] = {
     "AR PL UMing CN Light",
     "WenQuanYi Micro Hei",
     "AR PL UKai CN",
 };
 
-const char* const g_LinuxB5FontList[] = {
+const char* const kLinuxB5FontList[] = {
     "AR PL UMing TW Light",
     "WenQuanYi Micro Hei",
     "AR PL UKai TW",
 };
 
-const char* const g_LinuxHGFontList[] = {
+const char* const kLinuxHGFontList[] = {
     "UnDotum",
 };
 
-uint8_t GetJapanesePreference(const char* facearr,
-                              int weight,
-                              int pitch_family) {
-  ByteString face = facearr;
+JpFontFamily GetJapanesePreference(const ByteString& face,
+                                   int weight,
+                                   int pitch_family) {
   if (face.Contains("Gothic") ||
       face.Contains("\x83\x53\x83\x56\x83\x62\x83\x4e")) {
     if (face.Contains("PGothic") ||
@@ -88,7 +87,7 @@ class CFX_LinuxFontInfo final : public CFX_FolderFontInfo {
                 bool bItalic,
                 FX_Charset charset,
                 int pitch_family,
-                const char* family) override;
+                const ByteString& face) override;
 
   bool ParseFontCfg(const char** pUserPaths);
 };
@@ -97,17 +96,17 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
                                  bool bItalic,
                                  FX_Charset charset,
                                  int pitch_family,
-                                 const char* family) {
-  void* font = GetSubstFont(family);
+                                 const ByteString& face) {
+  void* font = GetSubstFont(face);
   if (font)
     return font;
 
   bool bCJK = true;
   switch (charset) {
     case FX_Charset::kShiftJIS: {
-      uint8_t index = GetJapanesePreference(family, weight, pitch_family);
-      DCHECK(index < pdfium::size(g_LinuxJpFontList));
-      for (const char* name : g_LinuxJpFontList[index]) {
+      JpFontFamily index = GetJapanesePreference(face, weight, pitch_family);
+      DCHECK(index < pdfium::size(kLinuxJpFontList));
+      for (const char* name : kLinuxJpFontList[index]) {
         auto it = m_FontList.find(name);
         if (it != m_FontList.end())
           return it->second.get();
@@ -115,7 +114,7 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
       break;
     }
     case FX_Charset::kChineseSimplified: {
-      for (const char* name : g_LinuxGbFontList) {
+      for (const char* name : kLinuxGbFontList) {
         auto it = m_FontList.find(name);
         if (it != m_FontList.end())
           return it->second.get();
@@ -123,7 +122,7 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
       break;
     }
     case FX_Charset::kChineseTraditional: {
-      for (const char* name : g_LinuxB5FontList) {
+      for (const char* name : kLinuxB5FontList) {
         auto it = m_FontList.find(name);
         if (it != m_FontList.end())
           return it->second.get();
@@ -131,7 +130,7 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
       break;
     }
     case FX_Charset::kHangul: {
-      for (const char* name : g_LinuxHGFontList) {
+      for (const char* name : kLinuxHGFontList) {
         auto it = m_FontList.find(name);
         if (it != m_FontList.end())
           return it->second.get();
@@ -142,7 +141,7 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
       bCJK = false;
       break;
   }
-  return FindFont(weight, bItalic, charset, pitch_family, family, !bCJK);
+  return FindFont(weight, bItalic, charset, pitch_family, face, !bCJK);
 }
 
 bool CFX_LinuxFontInfo::ParseFontCfg(const char** pUserPaths) {

@@ -36,8 +36,8 @@ class CFX_FolderFontInfo : public SystemFontInfoIface {
                 bool bItalic,
                 FX_Charset charset,
                 int pitch_family,
-                const char* family) override;
-  void* GetFont(const char* face) override;
+                const ByteString& face) override;
+  void* GetFont(const ByteString& face) override;
   uint32_t GetFontData(void* hFont,
                        uint32_t table,
                        pdfium::span<uint8_t> buffer) override;
@@ -76,7 +76,7 @@ class CFX_FolderFontInfo : public SystemFontInfoIface {
                  bool bItalic,
                  FX_Charset charset,
                  int pitch_family,
-                 const char* family,
+                 const ByteString& family,
                  bool bMatchName);
 
   std::map<ByteString, std::unique_ptr<FontFaceInfo>> m_FontList;

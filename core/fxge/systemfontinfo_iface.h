@@ -7,6 +7,7 @@
 #ifndef CORE_FXGE_SYSTEMFONTINFO_IFACE_H_
 #define CORE_FXGE_SYSTEMFONTINFO_IFACE_H_
 
+#include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_codepage_forward.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "third_party/base/span.h"
@@ -23,8 +24,8 @@ class SystemFontInfoIface {
                         bool bItalic,
                         FX_Charset charset,
                         int pitch_family,
-                        const char* face) = 0;
-  virtual void* GetFont(const char* face) = 0;
+                        const ByteString& face) = 0;
+  virtual void* GetFont(const ByteString& face) = 0;
   virtual uint32_t GetFontData(void* hFont,
                                uint32_t table,
                                pdfium::span<uint8_t> buffer) = 0;

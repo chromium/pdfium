@@ -33,7 +33,7 @@ void* CFX_AndroidFontInfo::MapFont(int weight,
                                    bool bItalic,
                                    FX_Charset charset,
                                    int pitch_family,
-                                   const char* face) {
+                                   const ByteString& face) {
   if (!m_pFontMgr)
     return nullptr;
 
@@ -48,10 +48,10 @@ void* CFX_AndroidFontInfo::MapFont(int weight,
     dwStyle |= FXFONT_SCRIPT;
   if (FontFamilyIsRoman(pitch_family))
     dwStyle |= FXFONT_SERIF;
-  return m_pFontMgr->CreateFont(face, charset, dwStyle);
+  return m_pFontMgr->CreateFont(face.AsStringView(), charset, dwStyle);
 }
 
-void* CFX_AndroidFontInfo::GetFont(const char* face) {
+void* CFX_AndroidFontInfo::GetFont(const ByteString& face) {
   return nullptr;
 }
 
