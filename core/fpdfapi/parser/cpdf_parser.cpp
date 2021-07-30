@@ -148,7 +148,7 @@ bool CPDF_Parser::ParseFileVersion() {
 
 CPDF_Parser::Error CPDF_Parser::StartParse(
     const RetainPtr<IFX_SeekableReadStream>& pFileAccess,
-    const char* password) {
+    const ByteString& password) {
   if (!InitSyntaxParser(
           pdfium::MakeRetain<CPDF_ReadValidator>(pFileAccess, nullptr)))
     return FORMAT_ERROR;
@@ -965,7 +965,7 @@ std::unique_ptr<CPDF_LinearizedHeader> CPDF_Parser::ParseLinearizedHeader() {
 
 CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(
     const RetainPtr<CPDF_ReadValidator>& validator,
-    const char* password) {
+    const ByteString& password) {
   DCHECK(!m_bHasParsed);
   DCHECK(!m_bXRefTableRebuilt);
   SetPassword(password);

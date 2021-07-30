@@ -62,11 +62,11 @@ class CPDF_Parser {
   ~CPDF_Parser();
 
   Error StartParse(const RetainPtr<IFX_SeekableReadStream>& pFile,
-                   const char* password);
+                   const ByteString& password);
   Error StartLinearizedParse(const RetainPtr<CPDF_ReadValidator>& validator,
-                             const char* password);
+                             const ByteString& password);
 
-  void SetPassword(const char* password) { m_Password = password; }
+  void SetPassword(const ByteString& password) { m_Password = password; }
   ByteString GetPassword() const { return m_Password; }
 
   // Take the GetPassword() value and encode it, if necessary, based on the

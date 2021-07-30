@@ -1008,7 +1008,7 @@ std::pair<CPDF_Parser::Error, std::unique_ptr<CPDF_Document>>
 CPDF_DataAvail::ParseDocument(
     std::unique_ptr<CPDF_Document::RenderDataIface> pRenderData,
     std::unique_ptr<CPDF_Document::PageDataIface> pPageData,
-    const char* password) {
+    const ByteString& password) {
   if (m_pDocument) {
     // We already returned parsed document.
     return std::make_pair(CPDF_Parser::HANDLER_ERROR, nullptr);

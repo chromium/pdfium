@@ -120,7 +120,7 @@ class CPDF_Document : public Observable,
       const char* password);
   CPDF_Parser::Error LoadLinearizedDoc(
       const RetainPtr<CPDF_ReadValidator>& validator,
-      const char* password);
+      const ByteString& password);
   bool has_valid_cross_reference_table() const {
     return m_bHasValidCrossReferenceTable;
   }

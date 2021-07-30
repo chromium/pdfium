@@ -110,7 +110,7 @@ class CPDF_DataAvail final : public Observable::ObserverIface {
   std::pair<CPDF_Parser::Error, std::unique_ptr<CPDF_Document>> ParseDocument(
       std::unique_ptr<CPDF_Document::RenderDataIface> pRenderData,
       std::unique_ptr<CPDF_Document::PageDataIface> pPageData,
-      const char* password);
+      const ByteString& password);
 
   const CPDF_HintTables* GetHintTables() const { return m_pHintTables.get(); }
 
