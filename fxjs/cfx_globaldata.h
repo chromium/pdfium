@@ -64,15 +64,7 @@ class CFX_GlobalData {
   bool LoadGlobalPersistentVariables();
   bool LoadGlobalPersistentVariablesFromBuffer(pdfium::span<uint8_t> buffer);
   bool SaveGlobalPersisitentVariables();
-
   iterator FindGlobalVariable(const ByteString& sPropname);
-
-  void LoadFileBuffer(const wchar_t* sFilePath,
-                      uint8_t*& pBuffer,
-                      int32_t& nLength);
-  void WriteFileBuffer(const wchar_t* sFilePath,
-                       const char* pBuffer,
-                       int32_t nLength);
 
   size_t m_RefCount = 0;
   UnownedPtr<Delegate> const m_pDelegate;
