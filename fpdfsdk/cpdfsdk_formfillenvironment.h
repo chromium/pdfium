@@ -92,11 +92,11 @@ class CPDFSDK_FormFillEnvironment final : public CFX_Timer::HandlerIface,
   void Invalidate(IPDF_Page* page, const FX_RECT& rect);
 
   void OnChange();
-  void ExecuteNamedAction(const char* namedAction);
+  void ExecuteNamedAction(const ByteString& namedAction);
   void OnSetFieldInputFocus(FPDF_WIDESTRING focusText,
                             FPDF_DWORD nTextLen,
                             bool bFocus);
-  void DoURIAction(const char* bsURI, uint32_t modifiers);
+  void DoURIAction(const ByteString& bsURI, uint32_t modifiers);
   void DoGoToAction(int nPageIndex,
                     int zoomMode,
                     float* fPosArray,

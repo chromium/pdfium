@@ -308,18 +308,15 @@ void CPDFSDK_ActionHandler::DoAction_URI(
     const CPDF_Action& action,
     int modifiers) {
   DCHECK(action.GetDict());
-
-  ByteString sURI = action.GetURI(pFormFillEnv->GetPDFDocument());
-  pFormFillEnv->DoURIAction(sURI.c_str(), modifiers);
+  pFormFillEnv->DoURIAction(action.GetURI(pFormFillEnv->GetPDFDocument()),
+                            modifiers);
 }
 
 void CPDFSDK_ActionHandler::DoAction_Named(
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
     const CPDF_Action& action) {
   DCHECK(action.GetDict());
-
-  ByteString csName = action.GetNamedAction();
-  pFormFillEnv->ExecuteNamedAction(csName.c_str());
+  pFormFillEnv->ExecuteNamedAction(action.GetNamedAction());
 }
 
 void CPDFSDK_ActionHandler::RunFieldJavaScript(

@@ -388,9 +388,10 @@ void CPDFSDK_FormFillEnvironment::OnChange() {
     m_pInfo->FFI_OnChange(m_pInfo);
 }
 
-void CPDFSDK_FormFillEnvironment::ExecuteNamedAction(const char* namedAction) {
+void CPDFSDK_FormFillEnvironment::ExecuteNamedAction(
+    const ByteString& namedAction) {
   if (m_pInfo && m_pInfo->FFI_ExecuteNamedAction)
-    m_pInfo->FFI_ExecuteNamedAction(m_pInfo, namedAction);
+    m_pInfo->FFI_ExecuteNamedAction(m_pInfo, namedAction.c_str());
 }
 
 void CPDFSDK_FormFillEnvironment::OnSetFieldInputFocus(
@@ -401,18 +402,19 @@ void CPDFSDK_FormFillEnvironment::OnSetFieldInputFocus(
     m_pInfo->FFI_SetTextFieldFocus(m_pInfo, focusText, nTextLen, bFocus);
 }
 
-void CPDFSDK_FormFillEnvironment::DoURIAction(const char* bsURI,
+void CPDFSDK_FormFillEnvironment::DoURIAction(const ByteString& bsURI,
                                               uint32_t modifiers) {
   if (!m_pInfo)
     return;
 
   if (m_pInfo->version >= 2 && m_pInfo->FFI_DoURIActionWithKeyboardModifier) {
-    m_pInfo->FFI_DoURIActionWithKeyboardModifier(m_pInfo, bsURI, modifiers);
+    m_pInfo->FFI_DoURIActionWithKeyboardModifier(m_pInfo, bsURI.c_str(),
+                                                 modifiers);
     return;
   }
 
   if (m_pInfo->FFI_DoURIAction)
-    m_pInfo->FFI_DoURIAction(m_pInfo, bsURI);
+    m_pInfo->FFI_DoURIAction(m_pInfo, bsURI.c_str());
 }
 
 void CPDFSDK_FormFillEnvironment::DoGoToAction(int nPageIndex,
