@@ -32,7 +32,7 @@ struct FPF_SKIAFONTMAP {
   uint32_t dwSubSt;
 };
 
-const FPF_SKIAFONTMAP g_SkiaFontmap[] = {
+const FPF_SKIAFONTMAP kSkiaFontmap[] = {
     {0x58c5083, 0xc8d2e345},  {0x5dfade2, 0xe1633081},
     {0x684317d, 0xe1633081},  {0x14ee2d13, 0xc8d2e345},
     {0x3918fe2d, 0xbbeeec72}, {0x3b98b31c, 0xe1633081},
@@ -46,7 +46,7 @@ const FPF_SKIAFONTMAP g_SkiaFontmap[] = {
     {0xfb4ce0de, 0xe1633081},
 };
 
-const FPF_SKIAFONTMAP g_SkiaSansFontMap[] = {
+const FPF_SKIAFONTMAP kSkiaSansFontMap[] = {
     {0x58c5083, 0xd5b8d10f},  {0x14ee2d13, 0xd5b8d10f},
     {0x779ce19d, 0xd5b8d10f}, {0xcb7a04c8, 0xd5b8d10f},
     {0xfb4ce0de, 0xd5b8d10f},
@@ -178,7 +178,7 @@ bool FPF_SkiaMaybeArabic(ByteStringView bsFacename) {
   return bsName.Contains("arabic");
 }
 
-const uint32_t g_FPFSkiaFontCharsets[] = {
+const uint32_t kFPFSkiaFontCharsets[] = {
     FPF_SKIACHARSET_Ansi,
     FPF_SKIACHARSET_EeasternEuropean,
     FPF_SKIACHARSET_Cyrillic,
@@ -218,7 +218,7 @@ uint32_t FPF_SkiaGetFaceCharset(TT_OS2* pOS2) {
   if (pOS2) {
     for (int32_t i = 0; i < 32; i++) {
       if (pOS2->ulCodePageRange1 & (1 << i))
-        dwCharset |= g_FPFSkiaFontCharsets[i];
+        dwCharset |= kFPFSkiaFontCharsets[i];
     }
   }
   dwCharset |= FPF_SKIACHARSET_Default;
@@ -263,10 +263,10 @@ CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(ByteStringView bsFamilyname,
     return family_iter->second.get();
 
   uint32_t dwFaceName = FPF_SKIANormalizeFontName(bsFamilyname);
-  uint32_t dwSubst = FPF_SkiaGetSubstFont(dwFaceName, g_SkiaFontmap,
-                                          pdfium::size(g_SkiaFontmap));
-  uint32_t dwSubstSans = FPF_SkiaGetSubstFont(dwFaceName, g_SkiaSansFontMap,
-                                              pdfium::size(g_SkiaSansFontMap));
+  uint32_t dwSubst = FPF_SkiaGetSubstFont(dwFaceName, kSkiaFontmap,
+                                          pdfium::size(kSkiaFontmap));
+  uint32_t dwSubstSans = FPF_SkiaGetSubstFont(dwFaceName, kSkiaSansFontMap,
+                                              pdfium::size(kSkiaSansFontMap));
   bool bMaybeSymbol = FPF_SkiaMaybeSymbol(bsFamilyname);
   if (uCharset != FX_Charset::kMSWin_Arabic &&
       FPF_SkiaMaybeArabic(bsFamilyname)) {

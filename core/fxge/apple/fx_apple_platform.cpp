@@ -17,10 +17,12 @@
 
 namespace {
 
-const struct {
+struct Substs {
   const char* m_pName;
   const char* m_pSubstName;
-} g_Base14Substs[] = {
+};
+
+constexpr Substs kBase14Substs[] = {
     {"Courier", "Courier New"},
     {"Courier-Bold", "Courier New Bold"},
     {"Courier-BoldOblique", "Courier New Bold Italic"},
@@ -68,7 +70,7 @@ void* CFX_MacFontInfo::MapFont(int weight,
                                FX_Charset charset,
                                int pitch_family,
                                const ByteString& face) {
-  for (const auto& sub : g_Base14Substs) {
+  for (const auto& sub : kBase14Substs) {
     if (face == ByteStringView(sub.m_pName))
       return GetFont(sub.m_pSubstName);
   }

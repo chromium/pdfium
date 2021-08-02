@@ -210,11 +210,13 @@ ByteString ParseStyle(const char* pStyle, int iLen, int iIndex) {
   return ByteString(buf);
 }
 
-const struct FX_FontStyle {
+struct FX_FontStyle {
   const char* name;
   size_t len;
   uint32_t style;
-} g_FontStyles[] = {
+};
+
+const FX_FontStyle kFontStyles[] = {
     {"Bold", 4, FXFONT_FORCE_BOLD},
     {"Italic", 6, FXFONT_ITALIC},
     {"BoldItalic", 10, FXFONT_FORCE_BOLD | FXFONT_ITALIC},
@@ -228,8 +230,8 @@ std::tuple<bool, uint32_t, size_t> GetStyleType(const ByteString& bsStyle,
   if (bsStyle.IsEmpty())
     return std::make_tuple(false, FXFONT_NORMAL, 0);
 
-  for (int i = pdfium::size(g_FontStyles) - 1; i >= 0; --i) {
-    const FX_FontStyle* pStyle = g_FontStyles + i;
+  for (int i = pdfium::size(kFontStyles) - 1; i >= 0; --i) {
+    const FX_FontStyle* pStyle = kFontStyles + i;
     if (!pStyle || pStyle->len > bsStyle.GetLength())
       continue;
 

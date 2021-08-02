@@ -17,19 +17,23 @@
 
 namespace {
 
-const struct {
+struct Variant {
   const char* m_pFaceName;
   const char* m_pVariantName;  // Note: UTF-16LE terminator required.
-} g_VariantNames[] = {
+};
+
+constexpr Variant kVariantNames[] = {
     {"DFKai-SB", "\x19\x6A\x77\x69\xD4\x9A\x00\x00"},
 };
 
-const struct {
+struct Substs {
   const char* m_pName;
   const char* m_pWinName;
   bool m_bBold;
   bool m_bItalic;
-} g_Base14Substs[] = {
+};
+
+constexpr Substs kBase14Substs[] = {
     {"Courier", "Courier New", false, false},
     {"Courier-Bold", "Courier New", true, false},
     {"Courier-BoldOblique", "Courier New", true, true},
@@ -48,15 +52,16 @@ struct FontNameMap {
   const char* m_pSubFontName;
   const char* m_pSrcFontName;
 };
-const FontNameMap g_JpFontNameMap[] = {
+
+constexpr FontNameMap kJpFontNameMap[] = {
     {"MS Mincho", "Heiseimin-W3"},
     {"MS Gothic", "Jun101-Light"},
 };
 
 bool GetSubFontName(ByteString* name) {
-  for (size_t i = 0; i < pdfium::size(g_JpFontNameMap); ++i) {
-    if (!FXSYS_stricmp(name->c_str(), g_JpFontNameMap[i].m_pSrcFontName)) {
-      *name = g_JpFontNameMap[i].m_pSubFontName;
+  for (size_t i = 0; i < pdfium::size(kJpFontNameMap); ++i) {
+    if (!FXSYS_stricmp(name->c_str(), kJpFontNameMap[i].m_pSrcFontName)) {
+      *name = kJpFontNameMap[i].m_pSubFontName;
       return true;
     }
   }
@@ -314,10 +319,10 @@ void* CFX_Win32FontInfo::MapFont(int weight,
                                  const ByteString& face) {
   ByteString new_face = face;
   for (int iBaseFont = 0; iBaseFont < 12; iBaseFont++) {
-    if (new_face == ByteStringView(g_Base14Substs[iBaseFont].m_pName)) {
-      new_face = g_Base14Substs[iBaseFont].m_pWinName;
-      weight = g_Base14Substs[iBaseFont].m_bBold ? FW_BOLD : FW_NORMAL;
-      bItalic = g_Base14Substs[iBaseFont].m_bItalic;
+    if (new_face == ByteStringView(kBase14Substs[iBaseFont].m_pName)) {
+      new_face = kBase14Substs[iBaseFont].m_pWinName;
+      weight = kBase14Substs[iBaseFont].m_bBold ? FW_BOLD : FW_NORMAL;
+      bItalic = kBase14Substs[iBaseFont].m_bItalic;
       break;
     }
   }
@@ -346,12 +351,12 @@ void* CFX_Win32FontInfo::MapFont(int weight,
     return hFont;
 
   WideString wsFace = WideString::FromDefANSI(facebuf);
-  for (size_t i = 0; i < pdfium::size(g_VariantNames); ++i) {
-    if (new_face != g_VariantNames[i].m_pFaceName)
+  for (size_t i = 0; i < pdfium::size(kVariantNames); ++i) {
+    if (new_face != kVariantNames[i].m_pFaceName)
       continue;
 
     const unsigned short* pName = reinterpret_cast<const unsigned short*>(
-        g_VariantNames[i].m_pVariantName);
+        kVariantNames[i].m_pVariantName);
     size_t len = WideString::WStringLength(pName);
     WideString wsName = WideString::FromUTF16LE(pName, len);
     if (wsFace == wsName)
