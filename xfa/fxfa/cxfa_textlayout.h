@@ -62,7 +62,9 @@ class CXFA_TextLayout final : public cppgc::GarbageCollected<CXFA_TextLayout> {
   bool HasBlock() const { return m_bHasBlock; }
   void ClearBlocks() { m_Blocks.clear(); }
   void ResetHasBlock() { m_bHasBlock = false; }
-  const wchar_t* GetLinkURLAtPoint(const CFX_PointF& point);
+
+  // Returns empty string when no link is present.
+  WideString GetLinkURLAtPoint(const CFX_PointF& point);
 
  private:
   class TextPiece : public CFGAS_TextPiece {

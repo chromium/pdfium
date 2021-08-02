@@ -107,14 +107,14 @@ void CXFA_TextLayout::Unload() {
   m_pBreak.reset();
 }
 
-const wchar_t* CXFA_TextLayout::GetLinkURLAtPoint(const CFX_PointF& point) {
+WideString CXFA_TextLayout::GetLinkURLAtPoint(const CFX_PointF& point) {
   for (const auto& pPieceLine : m_pieceLines) {
     for (const auto& pPiece : pPieceLine->m_textPieces) {
       if (pPiece->pLinkData && pPiece->rtPiece.Contains(point))
         return pPiece->pLinkData->GetLinkURL();
     }
   }
-  return nullptr;
+  return WideString();
 }
 
 void CXFA_TextLayout::GetTextDataNode() {

@@ -14,7 +14,7 @@ class CFGAS_LinkUserData final : public Retainable {
  public:
   CONSTRUCT_VIA_MAKE_RETAIN;
 
-  const wchar_t* GetLinkURL() const { return m_wsURLContent.c_str(); }
+  WideString GetLinkURL() const { return m_wsURLContent; }
 
  private:
   explicit CFGAS_LinkUserData(const WideString& wsText);

@@ -31,7 +31,8 @@ class CXFA_FFText final : public CXFA_FFWidget {
  private:
   explicit CXFA_FFText(CXFA_Node* pNode);
 
-  const wchar_t* GetLinkURLAtPoint(const CFX_PointF& point);
+  // Returns empty string when no link is present.
+  WideString GetLinkURLAtPoint(const CFX_PointF& point);
 };
 
 #endif  // XFA_FXFA_CXFA_FFTEXT_H_
