@@ -17,23 +17,23 @@
 
 namespace {
 
-const wchar_t g_FX_Percent[] = L"z,zzz,zzz,zzz,zzz,zzz%";
-const wchar_t g_FX_Currency[] = L"$z,zzz,zzz,zzz,zzz,zz9.99";
-const wchar_t g_FX_Decimal[] = L"z,zzz,zzz,zzz,zzz,zz9.zzz";
-const wchar_t g_FX_Integer[] = L"z,zzz,zzz,zzz,zzz,zzz";
+const wchar_t kFxPercent[] = L"z,zzz,zzz,zzz,zzz,zzz%";
+const wchar_t kFxCurrency[] = L"$z,zzz,zzz,zzz,zzz,zz9.99";
+const wchar_t kFxDecimal[] = L"z,zzz,zzz,zzz,zzz,zz9.zzz";
+const wchar_t kFxInteger[] = L"z,zzz,zzz,zzz,zzz,zzz";
 
 }  // namespace
 
 WideString XFA_PatternToString(LocaleIface::NumSubcategory category) {
   switch (category) {
     case LocaleIface::NumSubcategory::kPercent:
-      return g_FX_Percent;
+      return kFxPercent;
     case LocaleIface::NumSubcategory::kCurrency:
-      return g_FX_Currency;
+      return kFxCurrency;
     case LocaleIface::NumSubcategory::kDecimal:
-      return g_FX_Decimal;
+      return kFxDecimal;
     case LocaleIface::NumSubcategory::kInteger:
-      return g_FX_Integer;
+      return kFxInteger;
   }
   return WideString();
 }

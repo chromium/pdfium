@@ -371,7 +371,7 @@ namespace {
 
 constexpr uint8_t kMaxExecuteRecursion = 2;
 
-constexpr uint8_t g_inv_base64[128] = {
+constexpr uint8_t kInvBase64[128] = {
     255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
     255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
     255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 62,  255,
@@ -384,7 +384,7 @@ constexpr uint8_t g_inv_base64[128] = {
 };
 
 inline uint8_t GetInvBase64(uint8_t x) {
-  return (x & 128) == 0 ? g_inv_base64[x] : 255;
+  return (x & 128) == 0 ? kInvBase64[x] : 255;
 }
 
 std::vector<uint8_t, FxAllocAllocator<uint8_t>> XFA_RemoveBase64Whitespace(
@@ -416,21 +416,21 @@ std::vector<uint8_t, FxAllocAllocator<uint8_t>> XFA_Base64Decode(
         break;
       }
       if (buffer[i + 2] == '=') {
-        dwLimb = ((uint32_t)g_inv_base64[buffer[i]] << 6) |
-                 ((uint32_t)g_inv_base64[buffer[i + 1]]);
+        dwLimb = ((uint32_t)kInvBase64[buffer[i]] << 6) |
+                 ((uint32_t)kInvBase64[buffer[i + 1]]);
         result.push_back((uint8_t)(dwLimb >> 4) & 0xFF);
       } else {
-        dwLimb = ((uint32_t)g_inv_base64[buffer[i]] << 12) |
-                 ((uint32_t)g_inv_base64[buffer[i + 1]] << 6) |
-                 ((uint32_t)g_inv_base64[buffer[i + 2]]);
+        dwLimb = ((uint32_t)kInvBase64[buffer[i]] << 12) |
+                 ((uint32_t)kInvBase64[buffer[i + 1]] << 6) |
+                 ((uint32_t)kInvBase64[buffer[i + 2]]);
         result.push_back((uint8_t)(dwLimb >> 10) & 0xFF);
         result.push_back((uint8_t)(dwLimb >> 2) & 0xFF);
       }
     } else {
-      dwLimb = ((uint32_t)g_inv_base64[buffer[i]] << 18) |
-               ((uint32_t)g_inv_base64[buffer[i + 1]] << 12) |
-               ((uint32_t)g_inv_base64[buffer[i + 2]] << 6) |
-               ((uint32_t)g_inv_base64[buffer[i + 3]]);
+      dwLimb = ((uint32_t)kInvBase64[buffer[i]] << 18) |
+               ((uint32_t)kInvBase64[buffer[i + 1]] << 12) |
+               ((uint32_t)kInvBase64[buffer[i + 2]] << 6) |
+               ((uint32_t)kInvBase64[buffer[i + 3]]);
       result.push_back((uint8_t)(dwLimb >> 16) & 0xff);
       result.push_back((uint8_t)(dwLimb >> 8) & 0xff);
       result.push_back((uint8_t)(dwLimb)&0xff);
