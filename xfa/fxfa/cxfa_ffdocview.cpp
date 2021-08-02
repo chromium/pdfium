@@ -43,7 +43,7 @@
 #include "xfa/fxfa/parser/cxfa_validate.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
-const XFA_AttributeValue gs_EventActivity[] = {
+const XFA_AttributeValue kXFAEventActivity[] = {
     XFA_AttributeValue::Click,      XFA_AttributeValue::Change,
     XFA_AttributeValue::DocClose,   XFA_AttributeValue::DocReady,
     XFA_AttributeValue::Enter,      XFA_AttributeValue::Exit,
@@ -375,7 +375,7 @@ static XFA_EventError XFA_ProcessEvent(CXFA_FFDocView* pDocView,
       return pNode->ExecuteScript(pDocView, calc->GetScriptIfExists(), pParam);
     }
     default:
-      return pNode->ProcessEvent(pDocView, gs_EventActivity[pParam->m_eType],
+      return pNode->ProcessEvent(pDocView, kXFAEventActivity[pParam->m_eType],
                                  pParam);
   }
 }

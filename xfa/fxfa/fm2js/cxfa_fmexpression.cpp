@@ -51,7 +51,7 @@ struct XFA_FMSOMMethod {
   uint32_t m_dParameters;
 };
 
-const XFA_FMSOMMethod gs_FMSomMethods[] = {
+const XFA_FMSOMMethod kFMSomMethods[] = {
     {L"absPage", 0x01},
     {L"absPageInBatch", 0x01},
     {L"absPageSpan", 0x01},
@@ -445,11 +445,11 @@ bool CXFA_FMCallExpression::IsBuiltInFunc(CFX_WideTextBuf* funcName) const {
 uint32_t CXFA_FMCallExpression::IsMethodWithObjParam(
     const WideString& methodName) const {
   const XFA_FMSOMMethod* result = std::lower_bound(
-      std::begin(gs_FMSomMethods), std::end(gs_FMSomMethods), methodName,
+      std::begin(kFMSomMethods), std::end(kFMSomMethods), methodName,
       [](const XFA_FMSOMMethod iter, const WideString& val) {
         return val.Compare(iter.m_wsSomMethodName) > 0;
       });
-  if (result != std::end(gs_FMSomMethods) &&
+  if (result != std::end(kFMSomMethods) &&
       methodName == result->m_wsSomMethodName) {
     return result->m_dParameters;
   }

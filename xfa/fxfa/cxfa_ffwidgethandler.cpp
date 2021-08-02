@@ -217,7 +217,7 @@ bool CXFA_FFWidgetHandler::HasEvent(CXFA_Node* pNode,
     default:
       break;
   }
-  return !pNode->GetEventByActivity(gs_EventActivity[eEventType], false)
+  return !pNode->GetEventByActivity(kXFAEventActivity[eEventType], false)
               .empty();
 }
 
@@ -248,5 +248,5 @@ XFA_EventError CXFA_FFWidgetHandler::ProcessEvent(CXFA_Node* pNode,
       break;
   }
   return pNode->ProcessEvent(m_pDocView.Get(),
-                             gs_EventActivity[pParam->m_eType], pParam);
+                             kXFAEventActivity[pParam->m_eType], pParam);
 }

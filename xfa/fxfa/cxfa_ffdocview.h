@@ -26,7 +26,8 @@ class CXFA_FFWidgetHandler;
 class CXFA_Node;
 class CXFA_ViewLayoutItem;
 
-extern const XFA_AttributeValue gs_EventActivity[];
+extern const XFA_AttributeValue kXFAEventActivity[];
+
 enum XFA_DOCVIEW_LAYOUTSTATUS {
   XFA_DOCVIEW_LAYOUTSTATUS_None,
   XFA_DOCVIEW_LAYOUTSTATUS_Start,

@@ -20,7 +20,7 @@ namespace {
 #define FX_LBPB FX_LINEBREAKTYPE::kPROHIBITED_BRK
 #define FX_LBHS FX_LINEBREAKTYPE::kHANGUL_SPACE_BRK
 
-const FX_LINEBREAKTYPE gs_FX_LineBreak_PairTable[38][38] = {
+const FX_LINEBREAKTYPE kFX_LineBreak_PairTable[38][38] = {
     {FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB,
      FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB,
      FX_LBPB, FX_LBPB, FX_LBPB, FX_LBCP, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB,
@@ -227,7 +227,7 @@ FX_LINEBREAKTYPE GetLineBreakTypeFromPair(FX_BREAKPROPERTY curr_char,
                                           FX_BREAKPROPERTY next_char) {
   size_t row = static_cast<size_t>(curr_char);
   size_t col = static_cast<size_t>(next_char);
-  DCHECK(row < pdfium::size(gs_FX_LineBreak_PairTable));
-  DCHECK(col < pdfium::size(gs_FX_LineBreak_PairTable[0]));
-  return gs_FX_LineBreak_PairTable[row][col];
+  DCHECK(row < pdfium::size(kFX_LineBreak_PairTable));
+  DCHECK(col < pdfium::size(kFX_LineBreak_PairTable[0]));
+  return kFX_LineBreak_PairTable[row][col];
 }
