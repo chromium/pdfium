@@ -17,6 +17,10 @@ struct CBC_QRCoderECBlockData {
   uint8_t dataCodeWords2;
 };
 
-extern const CBC_QRCoderECBlockData g_ECBData[40][4];
+namespace fxbarcode {
+
+extern const CBC_QRCoderECBlockData kECBData[40][4];
+
+}  // namespace fxbarcode
 
 #endif  // FXBARCODE_QRCODE_BC_QRCODERECBLOCKSDATA_H_

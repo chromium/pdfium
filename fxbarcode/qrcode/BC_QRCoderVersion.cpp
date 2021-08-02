@@ -65,7 +65,7 @@ const CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
   if (g_VERSION->empty()) {
     for (int i = 0; i < kMaxVersion; ++i) {
       g_VERSION->push_back(
-          std::make_unique<CBC_QRCoderVersion>(i + 1, g_ECBData[i]));
+          std::make_unique<CBC_QRCoderVersion>(i + 1, fxbarcode::kECBData[i]));
     }
   }
   if (versionNumber < 1 || versionNumber > kMaxVersion)
