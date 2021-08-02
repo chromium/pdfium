@@ -14,7 +14,7 @@
 
 namespace {
 
-const FGAS_FONTUSB g_FXGdiFontUSBTable[] = {
+const FGAS_FONTUSB kFXGdiFontUSBTable[] = {
     {0x0000, 0x007F, 0, FX_CodePage::kMSWin_WesternEuropean},
     {0x0080, 0x00FF, 1, FX_CodePage::kMSWin_WesternEuropean},
     {0x0100, 0x017F, 2, FX_CodePage::kMSWin_EasternEuropean},
@@ -191,7 +191,7 @@ const FGAS_FONTUSB g_FXGdiFontUSBTable[] = {
 };
 
 #if defined(OS_WIN)
-const FGAS_FontInfo g_XFAFontsMap[] = {
+const FGAS_FontInfo kXFAFontsMap[] = {
     {0x01d5d33e, "SimSun", "Arial", 0, FX_CodePage::kChineseSimplified},
     {0x01e4f102, "YouYuan", "Arial", 1, FX_CodePage::kChineseSimplified},
     {0x030549dc, "LiSu", "Arial", 1, FX_CodePage::kChineseSimplified},
@@ -541,7 +541,7 @@ const FGAS_FontInfo g_XFAFontsMap[] = {
      FX_CodePage::kChineseSimplified},
 };
 #elif defined(OS_APPLE)
-const FGAS_FontInfo g_XFAFontsMap[] = {
+const FGAS_FontInfo kXFAFontsMap[] = {
     {0x01d5d33e, "SimSun", "STHeiti,Heiti TC,STFangsong", 0,
      FX_CodePage::kChineseSimplified},
     {0x01e4f102, "YouYuan", "STHeiti,Heiti TC,STFangsong", 1,
@@ -1104,7 +1104,7 @@ const FGAS_FontInfo g_XFAFontsMap[] = {
      FX_CodePage::kChineseSimplified},
 };
 #elif defined(OS_ANDROID)
-const FGAS_FontInfo g_XFAFontsMap[] = {
+const FGAS_FontInfo kXFAFontsMap[] = {
     {0x01d5d33e, "SimSun", "Droid Sans Fallback", 0,
      FX_CodePage::kChineseSimplified},
     {0x01e4f102, "YouYuan", "Droid Sans Fallback", 1,
@@ -1748,7 +1748,7 @@ const FGAS_FontInfo g_XFAFontsMap[] = {
      FX_CodePage::kChineseSimplified},
 };
 #elif defined(OS_POSIX)
-const FGAS_FontInfo g_XFAFontsMap[] = {
+const FGAS_FontInfo kXFAFontsMap[] = {
     {0x01d5d33e, "SimSun",
      "WenQuanYi Zen Hei Mono,AR PL UMing CN,AR PL UMing HK,AR PL UMing TW,AR "
      "PL UMing TW MBE",
@@ -2436,11 +2436,11 @@ const FGAS_FONTUSB* FGAS_GetUnicodeBitField(wchar_t unicode) {
   // ascending order, the correct entry is the first one with an end greater,
   // aka after, the value.
   auto* result = std::upper_bound(
-      std::begin(g_FXGdiFontUSBTable), std::end(g_FXGdiFontUSBTable), unicode,
+      std::begin(kFXGdiFontUSBTable), std::end(kFXGdiFontUSBTable), unicode,
       [](const wchar_t unicode, const FGAS_FONTUSB& iter) {
         return iter.wEndUnicode > unicode;
       });
-  if (result != std::end(g_FXGdiFontUSBTable) &&
+  if (result != std::end(kFXGdiFontUSBTable) &&
       result->wStartUnicode <= unicode && result->wEndUnicode >= unicode)
     return result;
   return nullptr;
@@ -2448,9 +2448,9 @@ const FGAS_FONTUSB* FGAS_GetUnicodeBitField(wchar_t unicode) {
 
 WideString FGAS_FontNameToEnglishName(WideStringView wsLocalName) {
   uint32_t dwLocalNameHash = FX_HashCode_GetLoweredW(wsLocalName);
-  const FGAS_FontInfo* pEnd = g_XFAFontsMap + pdfium::size(g_XFAFontsMap);
+  const FGAS_FontInfo* pEnd = kXFAFontsMap + pdfium::size(kXFAFontsMap);
   const FGAS_FontInfo* pFontInfo =
-      std::lower_bound(g_XFAFontsMap, pEnd, dwLocalNameHash,
+      std::lower_bound(kXFAFontsMap, pEnd, dwLocalNameHash,
                        [](const FGAS_FontInfo& entry, uint32_t hash) {
                          return entry.dwFontNameHash < hash;
                        });
@@ -2464,9 +2464,9 @@ const FGAS_FontInfo* FGAS_FontInfoByFontName(WideStringView wsFontName) {
   wsFontNameTemp.Remove(L' ');
   uint32_t dwCurFontNameHash =
       FX_HashCode_GetLoweredW(wsFontNameTemp.AsStringView());
-  const FGAS_FontInfo* pEnd = g_XFAFontsMap + pdfium::size(g_XFAFontsMap);
+  const FGAS_FontInfo* pEnd = kXFAFontsMap + pdfium::size(kXFAFontsMap);
   const FGAS_FontInfo* pFontInfo =
-      std::lower_bound(g_XFAFontsMap, pEnd, dwCurFontNameHash,
+      std::lower_bound(kXFAFontsMap, pEnd, dwCurFontNameHash,
                        [](const FGAS_FontInfo& entry, uint32_t hash) {
                          return entry.dwFontNameHash < hash;
                        });

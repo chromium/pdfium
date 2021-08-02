@@ -21,7 +21,7 @@
 namespace {
 
 // The 5 names per entry are: PsName, Normal, Bold, Italic, BoldItalic.
-const char* const g_XFAPDFFontName[][5] = {
+const char* const kXFAPDFFontName[][5] = {
     {"Adobe PI Std", "AdobePIStd", "AdobePIStd", "AdobePIStd", "AdobePIStd"},
     {"Myriad Pro Light", "MyriadPro-Light", "MyriadPro-Semibold",
      "MyriadPro-LightIt", "MyriadPro-SemiboldIt"},
@@ -97,14 +97,14 @@ RetainPtr<CFGAS_GEFont> CFGAS_PDFFontMgr::GetFont(WideStringView wsFontFamily,
 ByteString CFGAS_PDFFontMgr::PsNameToFontName(const ByteString& strPsName,
                                               bool bBold,
                                               bool bItalic) {
-  for (size_t i = 0; i < pdfium::size(g_XFAPDFFontName); ++i) {
-    if (strPsName == g_XFAPDFFontName[i][0]) {
+  for (size_t i = 0; i < pdfium::size(kXFAPDFFontName); ++i) {
+    if (strPsName == kXFAPDFFontName[i][0]) {
       size_t index = 1;
       if (bBold)
         ++index;
       if (bItalic)
         index += 2;
-      return g_XFAPDFFontName[i][index];
+      return kXFAPDFFontName[i][index];
     }
   }
   return strPsName;
