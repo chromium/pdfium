@@ -133,8 +133,12 @@ Optional<uint32_t> CPDF_Function::Call(pdfium::span<const float> inputs,
 
   std::vector<float> clamped_inputs(m_nInputs);
   for (uint32_t i = 0; i < m_nInputs; i++) {
-    clamped_inputs[i] =
-        pdfium::clamp(inputs[i], m_Domains[i * 2], m_Domains[i * 2 + 1]);
+    float domain1 = m_Domains[i * 2];
+    float domain2 = m_Domains[i * 2 + 1];
+    if (domain1 > domain2)
+      return pdfium::nullopt;
+
+    clamped_inputs[i] = pdfium::clamp(inputs[i], domain1, domain2);
   }
   if (!v_Call(clamped_inputs, results))
     return pdfium::nullopt;
@@ -143,8 +147,12 @@ Optional<uint32_t> CPDF_Function::Call(pdfium::span<const float> inputs,
     return m_nOutputs;
 
   for (uint32_t i = 0; i < m_nOutputs; i++) {
-    results[i] =
-        pdfium::clamp(results[i], m_Ranges[i * 2], m_Ranges[i * 2 + 1]);
+    float range1 = m_Ranges[i * 2];
+    float range2 = m_Ranges[i * 2 + 1];
+    if (range1 > range2)
+      return pdfium::nullopt;
+
+    results[i] = pdfium::clamp(results[i], range1, range2);
   }
   return m_nOutputs;
 }
