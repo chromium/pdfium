@@ -385,9 +385,10 @@ bool CXFA_FFWidget::OnMouseExit() {
   return false;
 }
 
-bool CXFA_FFWidget::AcceptsFocusOnButtonDown(uint32_t dwFlags,
-                                             const CFX_PointF& point,
-                                             FWL_MouseCommand command) {
+bool CXFA_FFWidget::AcceptsFocusOnButtonDown(
+    uint32_t dwFlags,
+    const CFX_PointF& point,
+    CFWL_MessageMouse::MouseCommand command) {
   return false;
 }
 

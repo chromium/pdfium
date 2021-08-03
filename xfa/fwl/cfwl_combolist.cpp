@@ -84,21 +84,18 @@ void CFWL_ComboList::OnProcessMessage(CFWL_Message* pMessage) {
       }
     }
     switch (pMsg->m_dwCmd) {
-      case FWL_MouseCommand::Move: {
+      case CFWL_MessageMouse::MouseCommand::kMove:
         backDefault = false;
         OnDropListMouseMove(pMsg);
         break;
-      }
-      case FWL_MouseCommand::LeftButtonDown: {
+      case CFWL_MessageMouse::MouseCommand::kLeftButtonDown:
         backDefault = false;
         OnDropListLButtonDown(pMsg);
         break;
-      }
-      case FWL_MouseCommand::LeftButtonUp: {
+      case CFWL_MessageMouse::MouseCommand::kLeftButtonUp:
         backDefault = false;
         OnDropListLButtonUp(pMsg);
         break;
-      }
       default:
         break;
     }

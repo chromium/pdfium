@@ -22,9 +22,10 @@ class CXFA_FFImageEdit final : public CXFA_FFField {
                     const CFX_Matrix& matrix,
                     HighlightOption highlight) override;
   bool LoadWidget() override;
-  bool AcceptsFocusOnButtonDown(uint32_t dwFlags,
-                                const CFX_PointF& point,
-                                FWL_MouseCommand command) override;
+  bool AcceptsFocusOnButtonDown(
+      uint32_t dwFlags,
+      const CFX_PointF& point,
+      CFWL_MessageMouse::MouseCommand command) override;
   bool OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;

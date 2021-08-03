@@ -118,11 +118,14 @@ void CXFA_FFTextEdit::UpdateWidgetProperty() {
   GetNormalWidget()->ModifyStyleExts(dwExtendedStyle, 0xFFFFFFFF);
 }
 
-bool CXFA_FFTextEdit::AcceptsFocusOnButtonDown(uint32_t dwFlags,
-                                               const CFX_PointF& point,
-                                               FWL_MouseCommand command) {
-  if (command == FWL_MouseCommand::RightButtonDown && !m_pNode->IsOpenAccess())
+bool CXFA_FFTextEdit::AcceptsFocusOnButtonDown(
+    uint32_t dwFlags,
+    const CFX_PointF& point,
+    CFWL_MessageMouse::MouseCommand command) {
+  if (command == CFWL_MessageMouse::MouseCommand::kRightButtonDown &&
+      !m_pNode->IsOpenAccess()) {
     return false;
+  }
   if (!PtInActiveRect(point))
     return false;
 
@@ -136,7 +139,8 @@ bool CXFA_FFTextEdit::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
     InvalidateRect();
   }
   SetButtonDown(true);
-  CFWL_MessageMouse msg(GetNormalWidget(), FWL_MouseCommand::LeftButtonDown,
+  CFWL_MessageMouse msg(GetNormalWidget(),
+                        CFWL_MessageMouse::MouseCommand::kLeftButtonDown,
                         dwFlags, FWLToClient(point));
   SendMessageToFWLWidget(&msg);
   return true;
@@ -149,8 +153,9 @@ bool CXFA_FFTextEdit::OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
     InvalidateRect();
   }
   SetButtonDown(true);
-  CFWL_MessageMouse msg(nullptr, FWL_MouseCommand::RightButtonDown, dwFlags,
-                        FWLToClient(point));
+  CFWL_MessageMouse msg(nullptr,
+                        CFWL_MessageMouse::MouseCommand::kRightButtonDown,
+                        dwFlags, FWLToClient(point));
   SendMessageToFWLWidget(&msg);
   return true;
 }

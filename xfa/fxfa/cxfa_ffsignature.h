@@ -19,9 +19,10 @@ class CXFA_FFSignature final : public CXFA_FFField {
                     const CFX_Matrix& matrix,
                     HighlightOption highlight) override;
   bool LoadWidget() override;
-  bool AcceptsFocusOnButtonDown(uint32_t dwFlags,
-                                const CFX_PointF& point,
-                                FWL_MouseCommand command) override;
+  bool AcceptsFocusOnButtonDown(
+      uint32_t dwFlags,
+      const CFX_PointF& point,
+      CFWL_MessageMouse::MouseCommand command) override;
   bool OnMouseEnter() override;
   bool OnMouseExit() override;
   bool OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) override;

@@ -291,16 +291,16 @@ void CFWL_ScrollBar::OnProcessMessage(CFWL_Message* pMessage) {
   if (type == CFWL_Message::Type::kMouse) {
     CFWL_MessageMouse* pMsg = static_cast<CFWL_MessageMouse*>(pMessage);
     switch (pMsg->m_dwCmd) {
-      case FWL_MouseCommand::LeftButtonDown:
+      case CFWL_MessageMouse::MouseCommand::kLeftButtonDown:
         OnLButtonDown(pMsg->m_pos);
         break;
-      case FWL_MouseCommand::LeftButtonUp:
+      case CFWL_MessageMouse::MouseCommand::kLeftButtonUp:
         OnLButtonUp(pMsg->m_pos);
         break;
-      case FWL_MouseCommand::Move:
+      case CFWL_MessageMouse::MouseCommand::kMove:
         OnMouseMove(pMsg->m_pos);
         break;
-      case FWL_MouseCommand::Leave:
+      case CFWL_MessageMouse::MouseCommand::kLeave:
         OnMouseLeave();
         break;
       default:

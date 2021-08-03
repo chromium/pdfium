@@ -370,7 +370,9 @@ bool CXFA_FFField::OnMouseEnter() {
   if (!GetNormalWidget())
     return false;
 
-  CFWL_MessageMouse msg(GetNormalWidget(), FWL_MouseCommand::Enter);
+  CFWL_MessageMouse msg(GetNormalWidget(),
+                        CFWL_MessageMouse::MouseCommand::kEnter, 0,
+                        CFX_PointF());
   SendMessageToFWLWidget(&msg);
   return true;
 }
@@ -379,7 +381,9 @@ bool CXFA_FFField::OnMouseExit() {
   if (!GetNormalWidget())
     return false;
 
-  CFWL_MessageMouse msg(GetNormalWidget(), FWL_MouseCommand::Leave);
+  CFWL_MessageMouse msg(GetNormalWidget(),
+                        CFWL_MessageMouse::MouseCommand::kLeave, 0,
+                        CFX_PointF());
   SendMessageToFWLWidget(&msg);
   return true;
 }
@@ -390,9 +394,10 @@ CFX_PointF CXFA_FFField::FWLToClient(const CFX_PointF& point) {
              : point;
 }
 
-bool CXFA_FFField::AcceptsFocusOnButtonDown(uint32_t dwFlags,
-                                            const CFX_PointF& point,
-                                            FWL_MouseCommand command) {
+bool CXFA_FFField::AcceptsFocusOnButtonDown(
+    uint32_t dwFlags,
+    const CFX_PointF& point,
+    CFWL_MessageMouse::MouseCommand command) {
   if (!GetNormalWidget())
     return false;
   if (!m_pNode->IsOpenAccess() || !GetDoc()->GetXFADoc()->IsInteractive())
@@ -405,7 +410,8 @@ bool CXFA_FFField::AcceptsFocusOnButtonDown(uint32_t dwFlags,
 
 bool CXFA_FFField::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   SetButtonDown(true);
-  CFWL_MessageMouse msg(GetNormalWidget(), FWL_MouseCommand::LeftButtonDown,
+  CFWL_MessageMouse msg(GetNormalWidget(),
+                        CFWL_MessageMouse::MouseCommand::kLeftButtonDown,
                         dwFlags, FWLToClient(point));
   SendMessageToFWLWidget(&msg);
   return true;
@@ -419,8 +425,9 @@ bool CXFA_FFField::OnLButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
 
   SetButtonDown(false);
 
-  CFWL_MessageMouse msg(GetNormalWidget(), FWL_MouseCommand::LeftButtonUp,
-                        dwFlags, FWLToClient(point));
+  CFWL_MessageMouse msg(GetNormalWidget(),
+                        CFWL_MessageMouse::MouseCommand::kLeftButtonUp, dwFlags,
+                        FWLToClient(point));
   SendMessageToFWLWidget(&msg);
   return true;
 }
@@ -429,7 +436,8 @@ bool CXFA_FFField::OnLButtonDblClk(uint32_t dwFlags, const CFX_PointF& point) {
   if (!GetNormalWidget())
     return false;
 
-  CFWL_MessageMouse msg(GetNormalWidget(), FWL_MouseCommand::LeftButtonDblClk,
+  CFWL_MessageMouse msg(GetNormalWidget(),
+                        CFWL_MessageMouse::MouseCommand::kLeftButtonDblClk,
                         dwFlags, FWLToClient(point));
   SendMessageToFWLWidget(&msg);
   return true;
@@ -439,7 +447,8 @@ bool CXFA_FFField::OnMouseMove(uint32_t dwFlags, const CFX_PointF& point) {
   if (!GetNormalWidget())
     return false;
 
-  CFWL_MessageMouse msg(GetNormalWidget(), FWL_MouseCommand::Move, dwFlags,
+  CFWL_MessageMouse msg(GetNormalWidget(),
+                        CFWL_MessageMouse::MouseCommand::kMove, dwFlags,
                         FWLToClient(point));
   SendMessageToFWLWidget(&msg);
   return true;
@@ -459,7 +468,8 @@ bool CXFA_FFField::OnMouseWheel(uint32_t dwFlags,
 bool CXFA_FFField::OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   SetButtonDown(true);
 
-  CFWL_MessageMouse msg(GetNormalWidget(), FWL_MouseCommand::RightButtonDown,
+  CFWL_MessageMouse msg(GetNormalWidget(),
+                        CFWL_MessageMouse::MouseCommand::kRightButtonDown,
                         dwFlags, FWLToClient(point));
   SendMessageToFWLWidget(&msg);
   return true;
@@ -472,7 +482,8 @@ bool CXFA_FFField::OnRButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
     return false;
 
   SetButtonDown(false);
-  CFWL_MessageMouse msg(GetNormalWidget(), FWL_MouseCommand::RightButtonUp,
+  CFWL_MessageMouse msg(GetNormalWidget(),
+                        CFWL_MessageMouse::MouseCommand::kRightButtonUp,
                         dwFlags, FWLToClient(point));
   SendMessageToFWLWidget(&msg);
   return true;
@@ -482,7 +493,8 @@ bool CXFA_FFField::OnRButtonDblClk(uint32_t dwFlags, const CFX_PointF& point) {
   if (!GetNormalWidget())
     return false;
 
-  CFWL_MessageMouse msg(GetNormalWidget(), FWL_MouseCommand::RightButtonDblClk,
+  CFWL_MessageMouse msg(GetNormalWidget(),
+                        CFWL_MessageMouse::MouseCommand::kRightButtonDblClk,
                         dwFlags, FWLToClient(point));
   SendMessageToFWLWidget(&msg);
   return true;
@@ -712,26 +724,26 @@ void CXFA_FFField::OnProcessEvent(CFWL_Event* pEvent) {
   switch (pEvent->GetType()) {
     case CFWL_Event::Type::Mouse: {
       CFWL_EventMouse* event = static_cast<CFWL_EventMouse*>(pEvent);
-      FWL_MouseCommand cmd = event->GetCommand();
-      if (cmd == FWL_MouseCommand::Enter) {
+      CFWL_MessageMouse::MouseCommand cmd = event->GetCommand();
+      if (cmd == CFWL_MessageMouse::MouseCommand::kEnter) {
         CXFA_EventParam eParam;
         eParam.m_eType = XFA_EVENT_MouseEnter;
         eParam.m_pTarget = m_pNode.Get();
         m_pNode->ProcessEvent(GetDocView(), XFA_AttributeValue::MouseEnter,
                               &eParam);
-      } else if (cmd == FWL_MouseCommand::Leave) {
+      } else if (cmd == CFWL_MessageMouse::MouseCommand::kLeave) {
         CXFA_EventParam eParam;
         eParam.m_eType = XFA_EVENT_MouseExit;
         eParam.m_pTarget = m_pNode.Get();
         m_pNode->ProcessEvent(GetDocView(), XFA_AttributeValue::MouseExit,
                               &eParam);
-      } else if (cmd == FWL_MouseCommand::LeftButtonDown) {
+      } else if (cmd == CFWL_MessageMouse::MouseCommand::kLeftButtonDown) {
         CXFA_EventParam eParam;
         eParam.m_eType = XFA_EVENT_MouseDown;
         eParam.m_pTarget = m_pNode.Get();
         m_pNode->ProcessEvent(GetDocView(), XFA_AttributeValue::MouseDown,
                               &eParam);
-      } else if (cmd == FWL_MouseCommand::LeftButtonUp) {
+      } else if (cmd == CFWL_MessageMouse::MouseCommand::kLeftButtonUp) {
         CXFA_EventParam eParam;
         eParam.m_eType = XFA_EVENT_MouseUp;
         eParam.m_pTarget = m_pNode.Get();

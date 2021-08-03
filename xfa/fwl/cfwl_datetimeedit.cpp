@@ -24,8 +24,8 @@ void CFWL_DateTimeEdit::OnProcessMessage(CFWL_Message* pMessage) {
   }
 
   CFWL_MessageMouse* pMouse = static_cast<CFWL_MessageMouse*>(pMessage);
-  if (pMouse->m_dwCmd == FWL_MouseCommand::LeftButtonDown ||
-      pMouse->m_dwCmd == FWL_MouseCommand::RightButtonDown) {
+  if (pMouse->m_dwCmd == CFWL_MessageMouse::MouseCommand::kLeftButtonDown ||
+      pMouse->m_dwCmd == CFWL_MessageMouse::MouseCommand::kRightButtonDown) {
     if ((m_Properties.m_dwStates & FWL_STATE_WGT_Focused) == 0)
       m_Properties.m_dwStates |= FWL_STATE_WGT_Focused;
 

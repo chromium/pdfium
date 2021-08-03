@@ -46,9 +46,10 @@ bool CXFA_FFSignature::OnMouseExit() {
   return false;
 }
 
-bool CXFA_FFSignature::AcceptsFocusOnButtonDown(uint32_t dwFlags,
-                                                const CFX_PointF& point,
-                                                FWL_MouseCommand command) {
+bool CXFA_FFSignature::AcceptsFocusOnButtonDown(
+    uint32_t dwFlags,
+    const CFX_PointF& point,
+    CFWL_MessageMouse::MouseCommand command) {
   return false;
 }
 

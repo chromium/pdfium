@@ -254,14 +254,16 @@ void CXFA_FFBarcode::UpdateWidgetProperty() {
   }
 }
 
-bool CXFA_FFBarcode::AcceptsFocusOnButtonDown(uint32_t dwFlags,
-                                              const CFX_PointF& point,
-                                              FWL_MouseCommand command) {
+bool CXFA_FFBarcode::AcceptsFocusOnButtonDown(
+    uint32_t dwFlags,
+    const CFX_PointF& point,
+    CFWL_MessageMouse::MouseCommand command) {
   auto* pBarCodeWidget = static_cast<CFWL_Barcode*>(GetNormalWidget());
   if (!pBarCodeWidget || pBarCodeWidget->IsProtectedType())
     return false;
-  if (command == FWL_MouseCommand::LeftButtonDown && !m_pNode->IsOpenAccess())
+  if (command == CFWL_MessageMouse::MouseCommand::kLeftButtonDown &&
+      !m_pNode->IsOpenAccess()) {
     return false;
-
+  }
   return CXFA_FFTextEdit::AcceptsFocusOnButtonDown(dwFlags, point, command);
 }

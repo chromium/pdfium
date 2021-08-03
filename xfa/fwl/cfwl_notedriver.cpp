@@ -182,9 +182,9 @@ bool CFWL_NoteDriver::DoKey(CFWL_Message* pMessage, CFWL_Widget* pMessageForm) {
 bool CFWL_NoteDriver::DoMouse(CFWL_Message* pMessage,
                               CFWL_Widget* pMessageForm) {
   CFWL_MessageMouse* pMsg = static_cast<CFWL_MessageMouse*>(pMessage);
-  if (pMsg->m_dwCmd == FWL_MouseCommand::Leave ||
-      pMsg->m_dwCmd == FWL_MouseCommand::Hover ||
-      pMsg->m_dwCmd == FWL_MouseCommand::Enter) {
+  if (pMsg->m_dwCmd == CFWL_MessageMouse::MouseCommand::kLeave ||
+      pMsg->m_dwCmd == CFWL_MessageMouse::MouseCommand::kHover ||
+      pMsg->m_dwCmd == CFWL_MessageMouse::MouseCommand::kEnter) {
     return !!pMsg->GetDstTarget();
   }
   if (pMsg->GetDstTarget() != pMessageForm)
@@ -234,7 +234,7 @@ void CFWL_NoteDriver::MouseSecondary(CFWL_Message* pMessage) {
   CFWL_MessageMouse* pMsg = static_cast<CFWL_MessageMouse*>(pMessage);
   if (m_pHover) {
     CFWL_MessageMouse msLeave(
-        m_pHover.Get(), FWL_MouseCommand::Leave, 0,
+        m_pHover.Get(), CFWL_MessageMouse::MouseCommand::kLeave, 0,
         pTarget->TransformTo(m_pHover.Get(), pMsg->m_pos));
     DispatchMessage(&msLeave, nullptr);
   }
@@ -244,7 +244,8 @@ void CFWL_NoteDriver::MouseSecondary(CFWL_Message* pMessage) {
   }
   m_pHover = pTarget;
 
-  CFWL_MessageMouse msHover(pTarget, FWL_MouseCommand::Hover, 0, pMsg->m_pos);
+  CFWL_MessageMouse msHover(pTarget, CFWL_MessageMouse::MouseCommand::kHover, 0,
+                            pMsg->m_pos);
   DispatchMessage(&msHover, nullptr);
 }
 

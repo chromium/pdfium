@@ -50,7 +50,8 @@ bool CXFA_FFWidgetHandler::OnLButtonDown(CXFA_FFWidget* hWidget,
                                          const CFX_PointF& point) {
   m_pDocView->LockUpdate();
   bool bRet = hWidget->AcceptsFocusOnButtonDown(
-      dwFlags, hWidget->Rotate2Normal(point), FWL_MouseCommand::LeftButtonDown);
+      dwFlags, hWidget->Rotate2Normal(point),
+      CFWL_MessageMouse::MouseCommand::kLeftButtonDown);
   if (bRet) {
     // May re-enter JS.
     if (m_pDocView->SetFocus(hWidget))
@@ -96,8 +97,9 @@ bool CXFA_FFWidgetHandler::OnMouseWheel(CXFA_FFWidget* hWidget,
 bool CXFA_FFWidgetHandler::OnRButtonDown(CXFA_FFWidget* hWidget,
                                          uint32_t dwFlags,
                                          const CFX_PointF& point) {
-  if (!hWidget->AcceptsFocusOnButtonDown(dwFlags, hWidget->Rotate2Normal(point),
-                                         FWL_MouseCommand::RightButtonDown)) {
+  if (!hWidget->AcceptsFocusOnButtonDown(
+          dwFlags, hWidget->Rotate2Normal(point),
+          CFWL_MessageMouse::MouseCommand::kRightButtonDown)) {
     return false;
   }
   // May re-enter JS.

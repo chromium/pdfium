@@ -105,9 +105,10 @@ class CXFA_FFWidget : public cppgc::GarbageCollected<CXFA_FFWidget>,
   virtual bool UpdateFWLData();
   virtual void UpdateWidgetProperty();
   // |command| must be LeftButtonDown or RightButtonDown.
-  virtual bool AcceptsFocusOnButtonDown(uint32_t dwFlags,
-                                        const CFX_PointF& point,
-                                        FWL_MouseCommand command);
+  virtual bool AcceptsFocusOnButtonDown(
+      uint32_t dwFlags,
+      const CFX_PointF& point,
+      CFWL_MessageMouse::MouseCommand command);
 
   // Caution: Returning false from an On* method may mean |this| is destroyed.
   virtual bool OnMouseEnter() WARN_UNUSED_RESULT;

@@ -92,16 +92,16 @@ void CFWL_PushButton::OnProcessMessage(CFWL_Message* pMessage) {
     case CFWL_Message::Type::kMouse: {
       CFWL_MessageMouse* pMsg = static_cast<CFWL_MessageMouse*>(pMessage);
       switch (pMsg->m_dwCmd) {
-        case FWL_MouseCommand::LeftButtonDown:
+        case CFWL_MessageMouse::MouseCommand::kLeftButtonDown:
           OnLButtonDown(pMsg);
           break;
-        case FWL_MouseCommand::LeftButtonUp:
+        case CFWL_MessageMouse::MouseCommand::kLeftButtonUp:
           OnLButtonUp(pMsg);
           break;
-        case FWL_MouseCommand::Move:
+        case CFWL_MessageMouse::MouseCommand::kMove:
           OnMouseMove(pMsg);
           break;
-        case FWL_MouseCommand::Leave:
+        case CFWL_MessageMouse::MouseCommand::kLeave:
           OnMouseLeave(pMsg);
           break;
         default:
@@ -206,7 +206,8 @@ void CFWL_PushButton::OnKeyDown(CFWL_MessageKey* pMsg) {
   if (pMsg->m_dwKeyCode != XFA_FWL_VKEY_Return)
     return;
 
-  CFWL_EventMouse wmMouse(this, nullptr, FWL_MouseCommand::LeftButtonUp);
+  CFWL_EventMouse wmMouse(this, nullptr,
+                          CFWL_MessageMouse::MouseCommand::kLeftButtonUp);
   DispatchEvent(&wmMouse);
   if (!wmMouse.GetSrcTarget())
     return;

@@ -97,10 +97,11 @@ bool CXFA_FFText::PerformLayout() {
   return true;
 }
 
-bool CXFA_FFText::AcceptsFocusOnButtonDown(uint32_t dwFlags,
-                                           const CFX_PointF& point,
-                                           FWL_MouseCommand command) {
-  return command == FWL_MouseCommand::LeftButtonDown &&
+bool CXFA_FFText::AcceptsFocusOnButtonDown(
+    uint32_t dwFlags,
+    const CFX_PointF& point,
+    CFWL_MessageMouse::MouseCommand command) {
+  return command == CFWL_MessageMouse::MouseCommand::kLeftButtonDown &&
          GetRectWithoutRotate().Contains(point) &&
          !GetLinkURLAtPoint(point).IsEmpty();
 }

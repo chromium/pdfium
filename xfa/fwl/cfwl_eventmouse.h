@@ -14,13 +14,13 @@ class CFWL_EventMouse final : public CFWL_Event {
  public:
   CFWL_EventMouse(CFWL_Widget* pSrcTarget,
                   CFWL_Widget* pDstTarget,
-                  FWL_MouseCommand cmd);
+                  CFWL_MessageMouse::MouseCommand cmd);
   ~CFWL_EventMouse() override;
 
-  FWL_MouseCommand GetCommand() const { return m_dwCmd; }
+  CFWL_MessageMouse::MouseCommand GetCommand() const { return m_dwCmd; }
 
  private:
-  const FWL_MouseCommand m_dwCmd;
+  const CFWL_MessageMouse::MouseCommand m_dwCmd;
 };
 
 #endif  // XFA_FWL_CFWL_EVENTMOUSE_H_

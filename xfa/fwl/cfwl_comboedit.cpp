@@ -42,7 +42,7 @@ void CFWL_ComboEdit::OnProcessMessage(CFWL_Message* pMessage) {
     }
     case CFWL_Message::Type::kMouse: {
       CFWL_MessageMouse* pMsg = static_cast<CFWL_MessageMouse*>(pMessage);
-      if ((pMsg->m_dwCmd == FWL_MouseCommand::LeftButtonDown) &&
+      if ((pMsg->m_dwCmd == CFWL_MessageMouse::MouseCommand::kLeftButtonDown) &&
           ((m_Properties.m_dwStates & FWL_STATE_WGT_Focused) == 0)) {
         SetSelected();
       }

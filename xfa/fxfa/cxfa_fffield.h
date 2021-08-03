@@ -34,9 +34,10 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   bool IsLoaded() override;
   bool LoadWidget() override;
   bool PerformLayout() override;
-  bool AcceptsFocusOnButtonDown(uint32_t dwFlags,
-                                const CFX_PointF& point,
-                                FWL_MouseCommand command) override;
+  bool AcceptsFocusOnButtonDown(
+      uint32_t dwFlags,
+      const CFX_PointF& point,
+      CFWL_MessageMouse::MouseCommand command) override;
   bool OnMouseEnter() override;
   bool OnMouseExit() override;
   bool OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) override;

@@ -104,9 +104,10 @@ class CXFA_FFBarcode final : public CXFA_FFTextEdit {
                     const CFX_Matrix& matrix,
                     HighlightOption highlight) override;
   void UpdateWidgetProperty() override;
-  bool AcceptsFocusOnButtonDown(uint32_t dwFlags,
-                                const CFX_PointF& point,
-                                FWL_MouseCommand command) override;
+  bool AcceptsFocusOnButtonDown(
+      uint32_t dwFlags,
+      const CFX_PointF& point,
+      CFWL_MessageMouse::MouseCommand command) override;
 
  private:
   CXFA_FFBarcode(CXFA_Node* pNode, CXFA_Barcode* barcode);
