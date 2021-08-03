@@ -103,22 +103,22 @@ bool CPWL_ListBox::OnKeyDown(uint16_t nChar, uint32_t nFlag) {
 
   switch (nChar) {
     case FWL_VKEY_Up:
-      m_pListCtrl->OnVK_UP(IsSHIFTpressed(nFlag), IsCTRLpressed(nFlag));
+      m_pListCtrl->OnVK_UP(IsSHIFTKeyDown(nFlag), IsCTRLKeyDown(nFlag));
       break;
     case FWL_VKEY_Down:
-      m_pListCtrl->OnVK_DOWN(IsSHIFTpressed(nFlag), IsCTRLpressed(nFlag));
+      m_pListCtrl->OnVK_DOWN(IsSHIFTKeyDown(nFlag), IsCTRLKeyDown(nFlag));
       break;
     case FWL_VKEY_Home:
-      m_pListCtrl->OnVK_HOME(IsSHIFTpressed(nFlag), IsCTRLpressed(nFlag));
+      m_pListCtrl->OnVK_HOME(IsSHIFTKeyDown(nFlag), IsCTRLKeyDown(nFlag));
       break;
     case FWL_VKEY_Left:
-      m_pListCtrl->OnVK_LEFT(IsSHIFTpressed(nFlag), IsCTRLpressed(nFlag));
+      m_pListCtrl->OnVK_LEFT(IsSHIFTKeyDown(nFlag), IsCTRLKeyDown(nFlag));
       break;
     case FWL_VKEY_End:
-      m_pListCtrl->OnVK_END(IsSHIFTpressed(nFlag), IsCTRLpressed(nFlag));
+      m_pListCtrl->OnVK_END(IsSHIFTKeyDown(nFlag), IsCTRLKeyDown(nFlag));
       break;
     case FWL_VKEY_Right:
-      m_pListCtrl->OnVK_RIGHT(IsSHIFTpressed(nFlag), IsCTRLpressed(nFlag));
+      m_pListCtrl->OnVK_RIGHT(IsSHIFTKeyDown(nFlag), IsCTRLKeyDown(nFlag));
       break;
     case FWL_VKEY_Delete:
       break;
@@ -130,7 +130,7 @@ bool CPWL_ListBox::OnKeyDown(uint16_t nChar, uint32_t nFlag) {
 bool CPWL_ListBox::OnChar(uint16_t nChar, uint32_t nFlag) {
   CPWL_Wnd::OnChar(nChar, nFlag);
 
-  if (!m_pListCtrl->OnChar(nChar, IsSHIFTpressed(nFlag), IsCTRLpressed(nFlag)))
+  if (!m_pListCtrl->OnChar(nChar, IsSHIFTKeyDown(nFlag), IsCTRLKeyDown(nFlag)))
     return false;
 
   OnNotifySelectionChanged(true, nFlag);
@@ -145,8 +145,8 @@ bool CPWL_ListBox::OnLButtonDown(uint32_t nFlag, const CFX_PointF& point) {
     SetFocus();
     SetCapture();
 
-    m_pListCtrl->OnMouseDown(point, IsSHIFTpressed(nFlag),
-                             IsCTRLpressed(nFlag));
+    m_pListCtrl->OnMouseDown(point, IsSHIFTKeyDown(nFlag),
+                             IsCTRLKeyDown(nFlag));
   }
 
   return true;
@@ -173,8 +173,8 @@ bool CPWL_ListBox::OnMouseMove(uint32_t nFlag, const CFX_PointF& point) {
   if (m_bHoverSel && !IsCaptureMouse() && ClientHitTest(point))
     m_pListCtrl->Select(m_pListCtrl->GetItemIndex(point));
   if (m_bMouseDown)
-    m_pListCtrl->OnMouseMove(point, IsSHIFTpressed(nFlag),
-                             IsCTRLpressed(nFlag));
+    m_pListCtrl->OnMouseMove(point, IsSHIFTKeyDown(nFlag),
+                             IsCTRLKeyDown(nFlag));
 
   return true;
 }
@@ -365,9 +365,9 @@ bool CPWL_ListBox::OnMouseWheel(uint32_t nFlag,
                                 const CFX_PointF& point,
                                 const CFX_Vector& delta) {
   if (delta.y < 0)
-    m_pListCtrl->OnVK_DOWN(IsSHIFTpressed(nFlag), IsCTRLpressed(nFlag));
+    m_pListCtrl->OnVK_DOWN(IsSHIFTKeyDown(nFlag), IsCTRLKeyDown(nFlag));
   else
-    m_pListCtrl->OnVK_UP(IsSHIFTpressed(nFlag), IsCTRLpressed(nFlag));
+    m_pListCtrl->OnVK_UP(IsSHIFTKeyDown(nFlag), IsCTRLKeyDown(nFlag));
 
   OnNotifySelectionChanged(false, nFlag);
   return true;

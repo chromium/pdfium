@@ -379,7 +379,7 @@ bool CPWL_Edit::OnKeyDown(uint16_t nChar, uint32_t nFlag) {
 // static
 bool CPWL_Edit::IsProceedtoOnChar(uint16_t nKeyCode, uint32_t nFlag) {
   bool bCtrl = IsPlatformShortcutKey(nFlag);
-  bool bAlt = IsALTpressed(nFlag);
+  bool bAlt = IsALTKeyDown(nFlag);
   if (bCtrl && !bAlt) {
     // hot keys for edit control.
     switch (nKeyCode) {
@@ -412,7 +412,7 @@ bool CPWL_Edit::OnChar(uint16_t nChar, uint32_t nFlag) {
   bool bRC = true;
   bool bExit = false;
 
-  if (!IsCTRLpressed(nFlag)) {
+  if (!IsCTRLKeyDown(nFlag)) {
     if (m_pFillerNotify) {
       WideString swChange;
 
@@ -590,29 +590,29 @@ bool CPWL_Edit::OnKeyDownInternal(uint16_t nChar, uint32_t nFlag) {
       Delete();
       return true;
     case FWL_VKEY_Insert:
-      if (IsSHIFTpressed(nFlag))
+      if (IsSHIFTKeyDown(nFlag))
         PasteText();
       return true;
     case FWL_VKEY_Up:
-      m_pEditImpl->OnVK_UP(IsSHIFTpressed(nFlag), false);
+      m_pEditImpl->OnVK_UP(IsSHIFTKeyDown(nFlag), false);
       return true;
     case FWL_VKEY_Down:
-      m_pEditImpl->OnVK_DOWN(IsSHIFTpressed(nFlag), false);
+      m_pEditImpl->OnVK_DOWN(IsSHIFTKeyDown(nFlag), false);
       return true;
     case FWL_VKEY_Left:
-      m_pEditImpl->OnVK_LEFT(IsSHIFTpressed(nFlag), false);
+      m_pEditImpl->OnVK_LEFT(IsSHIFTKeyDown(nFlag), false);
       return true;
     case FWL_VKEY_Right:
-      m_pEditImpl->OnVK_RIGHT(IsSHIFTpressed(nFlag), false);
+      m_pEditImpl->OnVK_RIGHT(IsSHIFTKeyDown(nFlag), false);
       return true;
     case FWL_VKEY_Home:
-      m_pEditImpl->OnVK_HOME(IsSHIFTpressed(nFlag), IsCTRLpressed(nFlag));
+      m_pEditImpl->OnVK_HOME(IsSHIFTKeyDown(nFlag), IsCTRLKeyDown(nFlag));
       return true;
     case FWL_VKEY_End:
-      m_pEditImpl->OnVK_END(IsSHIFTpressed(nFlag), IsCTRLpressed(nFlag));
+      m_pEditImpl->OnVK_END(IsSHIFTKeyDown(nFlag), IsCTRLKeyDown(nFlag));
       return true;
     case FWL_VKEY_Unknown:
-      if (!IsSHIFTpressed(nFlag))
+      if (!IsSHIFTKeyDown(nFlag))
         ClearSelection();
       else
         CutText();
@@ -640,8 +640,8 @@ bool CPWL_Edit::OnCharInternal(uint16_t nChar, uint32_t nFlag) {
   }
 
   bool bCtrl = IsPlatformShortcutKey(nFlag);
-  bool bAlt = IsALTpressed(nFlag);
-  bool bShift = IsSHIFTpressed(nFlag);
+  bool bAlt = IsALTKeyDown(nFlag);
+  bool bShift = IsSHIFTKeyDown(nFlag);
 
   uint16_t word = nChar;
 
@@ -704,8 +704,8 @@ bool CPWL_Edit::OnLButtonDown(uint32_t nFlag, const CFX_PointF& point) {
 
     m_bMouseDown = true;
     SetCapture();
-    m_pEditImpl->OnMouseDown(point, IsSHIFTpressed(nFlag),
-                             IsCTRLpressed(nFlag));
+    m_pEditImpl->OnMouseDown(point, IsSHIFTKeyDown(nFlag),
+                             IsCTRLKeyDown(nFlag));
   }
   return true;
 }

@@ -56,30 +56,30 @@ bool CPWL_CBListBox::OnMovementKeyDown(uint16_t nChar, uint32_t nFlag) {
 
   switch (nChar) {
     case FWL_VKEY_Up:
-      m_pListCtrl->OnVK_UP(IsSHIFTpressed(nFlag), IsCTRLpressed(nFlag));
+      m_pListCtrl->OnVK_UP(IsSHIFTKeyDown(nFlag), IsCTRLKeyDown(nFlag));
       break;
     case FWL_VKEY_Down:
-      m_pListCtrl->OnVK_DOWN(IsSHIFTpressed(nFlag), IsCTRLpressed(nFlag));
+      m_pListCtrl->OnVK_DOWN(IsSHIFTKeyDown(nFlag), IsCTRLKeyDown(nFlag));
       break;
     case FWL_VKEY_Home:
-      m_pListCtrl->OnVK_HOME(IsSHIFTpressed(nFlag), IsCTRLpressed(nFlag));
+      m_pListCtrl->OnVK_HOME(IsSHIFTKeyDown(nFlag), IsCTRLKeyDown(nFlag));
       break;
     case FWL_VKEY_Left:
-      m_pListCtrl->OnVK_LEFT(IsSHIFTpressed(nFlag), IsCTRLpressed(nFlag));
+      m_pListCtrl->OnVK_LEFT(IsSHIFTKeyDown(nFlag), IsCTRLKeyDown(nFlag));
       break;
     case FWL_VKEY_End:
-      m_pListCtrl->OnVK_END(IsSHIFTpressed(nFlag), IsCTRLpressed(nFlag));
+      m_pListCtrl->OnVK_END(IsSHIFTKeyDown(nFlag), IsCTRLKeyDown(nFlag));
       break;
     case FWL_VKEY_Right:
-      m_pListCtrl->OnVK_RIGHT(IsSHIFTpressed(nFlag), IsCTRLpressed(nFlag));
+      m_pListCtrl->OnVK_RIGHT(IsSHIFTKeyDown(nFlag), IsCTRLKeyDown(nFlag));
       break;
   }
   return OnNotifySelectionChanged(true, nFlag);
 }
 
 bool CPWL_CBListBox::IsChar(uint16_t nChar, uint32_t nFlag) const {
-  return m_pListCtrl->OnChar(nChar, IsSHIFTpressed(nFlag),
-                             IsCTRLpressed(nFlag));
+  return m_pListCtrl->OnChar(nChar, IsSHIFTKeyDown(nFlag),
+                             IsCTRLKeyDown(nFlag));
 }
 
 bool CPWL_CBListBox::OnCharNotify(uint16_t nChar, uint32_t nFlag) {

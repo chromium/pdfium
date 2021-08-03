@@ -274,16 +274,6 @@ class CPWL_Wnd : public Observable {
   bool IsWndCaptureMouse(const CPWL_Wnd* pWnd) const;
   bool IsWndCaptureKeyboard(const CPWL_Wnd* pWnd) const;
 
-  static bool IsCTRLpressed(uint32_t nFlag) {
-    return CPWL_Wnd::IsCTRLKeyDown(nFlag);
-  }
-  static bool IsSHIFTpressed(uint32_t nFlag) {
-    return CPWL_Wnd::IsSHIFTKeyDown(nFlag);
-  }
-  static bool IsALTpressed(uint32_t nFlag) {
-    return CPWL_Wnd::IsALTKeyDown(nFlag);
-  }
-
  private:
   void DrawChildAppearance(CFX_RenderDevice* pDevice,
                            const CFX_Matrix& mtUser2Device);
