@@ -466,7 +466,7 @@ bool CPDFSDK_PageView::IsIndexSelected(int index) {
   return false;
 }
 
-bool CPDFSDK_PageView::OnChar(int nChar, uint32_t nFlag) {
+bool CPDFSDK_PageView::OnChar(FWL_VKEYCODE nChar, uint32_t nFlag) {
   if (CPDFSDK_Annot* pAnnot = GetFocusAnnot()) {
     CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
         m_pFormFillEnv->GetAnnotHandlerMgr();
@@ -476,14 +476,14 @@ bool CPDFSDK_PageView::OnChar(int nChar, uint32_t nFlag) {
   return false;
 }
 
-bool CPDFSDK_PageView::OnKeyDown(int nKeyCode, int nFlag) {
+bool CPDFSDK_PageView::OnKeyDown(FWL_VKEYCODE nKeyCode, int nFlag) {
   CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
       m_pFormFillEnv->GetAnnotHandlerMgr();
   return pAnnotHandlerMgr->Annot_OnKeyDown(this, GetFocusAnnot(), nKeyCode,
                                            nFlag);
 }
 
-bool CPDFSDK_PageView::OnKeyUp(int nKeyCode, int nFlag) {
+bool CPDFSDK_PageView::OnKeyUp(FWL_VKEYCODE nKeyCode, int nFlag) {
   return false;
 }
 

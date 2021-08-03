@@ -180,21 +180,21 @@ bool CPDFSDK_WidgetHandler::OnRButtonDblClk(CPDFSDK_PageView* pPageView,
 }
 
 bool CPDFSDK_WidgetHandler::OnChar(CPDFSDK_Annot* pAnnot,
-                                   uint32_t nChar,
+                                   FWL_VKEYCODE nChar,
                                    uint32_t nFlags) {
   return !pAnnot->IsSignatureWidget() &&
          m_pInteractiveFormFiller->OnChar(pAnnot, nChar, nFlags);
 }
 
 bool CPDFSDK_WidgetHandler::OnKeyDown(CPDFSDK_Annot* pAnnot,
-                                      int nKeyCode,
+                                      FWL_VKEYCODE nKeyCode,
                                       int nFlag) {
   return !pAnnot->IsSignatureWidget() &&
          m_pInteractiveFormFiller->OnKeyDown(pAnnot, nKeyCode, nFlag);
 }
 
 bool CPDFSDK_WidgetHandler::OnKeyUp(CPDFSDK_Annot* pAnnot,
-                                    int nKeyCode,
+                                    FWL_VKEYCODE nKeyCode,
                                     int nFlag) {
   return false;
 }

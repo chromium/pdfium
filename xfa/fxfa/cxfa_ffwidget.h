@@ -20,6 +20,7 @@
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_messagemouse.h"
 #include "xfa/fwl/cfwl_widget.h"
+#include "xfa/fwl/fwl_widgetdef.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/fxfa.h"
@@ -132,10 +133,12 @@ class CXFA_FFWidget : public cppgc::GarbageCollected<CXFA_FFWidget>,
                                const CFX_PointF& point) WARN_UNUSED_RESULT;
   virtual bool OnSetFocus(CXFA_FFWidget* pOldWidget) WARN_UNUSED_RESULT;
   virtual bool OnKillFocus(CXFA_FFWidget* pNewWidget) WARN_UNUSED_RESULT;
-  virtual bool OnKeyDown(uint32_t dwKeyCode,
+  virtual bool OnKeyDown(XFA_FWL_VKEYCODE dwKeyCode,
                          uint32_t dwFlags) WARN_UNUSED_RESULT;
-  virtual bool OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) WARN_UNUSED_RESULT;
-  virtual bool OnChar(uint32_t dwChar, uint32_t dwFlags) WARN_UNUSED_RESULT;
+  virtual bool OnKeyUp(XFA_FWL_VKEYCODE dwKeyCode,
+                       uint32_t dwFlags) WARN_UNUSED_RESULT;
+  virtual bool OnChar(XFA_FWL_VKEYCODE dwChar,
+                      uint32_t dwFlags) WARN_UNUSED_RESULT;
 
   virtual FWL_WidgetHit HitTest(const CFX_PointF& point);
   virtual bool CanUndo();

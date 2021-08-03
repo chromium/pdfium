@@ -12,7 +12,6 @@
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_widget.h"
-#include "public/fpdf_fwlevent.h"
 #include "third_party/base/check.h"
 #include "xfa/fgas/graphics/cfgas_gegraphics.h"
 #include "xfa/fwl/cfwl_app.h"
@@ -529,38 +528,41 @@ bool CPDFXFA_WidgetHandler::OnRButtonDblClk(CPDFSDK_PageView* pPageView,
 }
 
 bool CPDFXFA_WidgetHandler::OnChar(CPDFSDK_Annot* pAnnot,
-                                   uint32_t nChar,
+                                   FWL_VKEYCODE nChar,
                                    uint32_t nFlags) {
   CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
   if (!pXFAWidget)
     return false;
 
   CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler(pXFAWidget);
-  return pWidgetHandler->OnChar(pXFAWidget->GetXFAFFWidget(), nChar,
+  return pWidgetHandler->OnChar(pXFAWidget->GetXFAFFWidget(),
+                                static_cast<XFA_FWL_VKEYCODE>(nChar),
                                 GetFWLFlags(nFlags));
 }
 
 bool CPDFXFA_WidgetHandler::OnKeyDown(CPDFSDK_Annot* pAnnot,
-                                      int nKeyCode,
+                                      FWL_VKEYCODE nKeyCode,
                                       int nFlag) {
   CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
   if (!pXFAWidget)
     return false;
 
   CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler(pXFAWidget);
-  return pWidgetHandler->OnKeyDown(pXFAWidget->GetXFAFFWidget(), nKeyCode,
+  return pWidgetHandler->OnKeyDown(pXFAWidget->GetXFAFFWidget(),
+                                   static_cast<XFA_FWL_VKEYCODE>(nKeyCode),
                                    GetFWLFlags(nFlag));
 }
 
 bool CPDFXFA_WidgetHandler::OnKeyUp(CPDFSDK_Annot* pAnnot,
-                                    int nKeyCode,
+                                    FWL_VKEYCODE nKeyCode,
                                     int nFlag) {
   CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
   if (!pXFAWidget)
     return false;
 
   CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler(pXFAWidget);
-  return pWidgetHandler->OnKeyUp(pXFAWidget->GetXFAFFWidget(), nKeyCode,
+  return pWidgetHandler->OnKeyUp(pXFAWidget->GetXFAFFWidget(),
+                                 static_cast<XFA_FWL_VKEYCODE>(nKeyCode),
                                  GetFWLFlags(nFlag));
 }
 

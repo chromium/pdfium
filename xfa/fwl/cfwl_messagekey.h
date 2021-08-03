@@ -8,6 +8,7 @@
 #define XFA_FWL_CFWL_MESSAGEKEY_H_
 
 #include "xfa/fwl/cfwl_message.h"
+#include "xfa/fwl/fwl_widgetdef.h"
 
 class CFWL_MessageKey final : public CFWL_Message {
  public:
@@ -16,12 +17,12 @@ class CFWL_MessageKey final : public CFWL_Message {
   CFWL_MessageKey(CFWL_Widget* pDstTarget,
                   KeyCommand subtype,
                   FWL_KeyFlagMask flags,
-                  uint32_t keycode);
+                  XFA_FWL_VKEYCODE keycode);
   ~CFWL_MessageKey() override;
 
   const KeyCommand m_dwCmd;
   const FWL_KeyFlagMask m_dwFlags;
-  const uint32_t m_dwKeyCode;
+  const XFA_FWL_VKEYCODE m_dwKeyCode;
 };
 
 #endif  // XFA_FWL_CFWL_MESSAGEKEY_H_

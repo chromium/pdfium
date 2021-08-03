@@ -525,7 +525,7 @@ bool CXFA_FFField::OnKillFocus(CXFA_FFWidget* pNewWidget) {
   return pNewWidget && CXFA_FFWidget::OnKillFocus(pNewWidget);
 }
 
-bool CXFA_FFField::OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags) {
+bool CXFA_FFField::OnKeyDown(XFA_FWL_VKEYCODE dwKeyCode, uint32_t dwFlags) {
   if (!GetNormalWidget() || !GetDoc()->GetXFADoc()->IsInteractive())
     return false;
 
@@ -535,7 +535,7 @@ bool CXFA_FFField::OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags) {
   return true;
 }
 
-bool CXFA_FFField::OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) {
+bool CXFA_FFField::OnKeyUp(XFA_FWL_VKEYCODE dwKeyCode, uint32_t dwFlags) {
   if (!GetNormalWidget() || !GetDoc()->GetXFADoc()->IsInteractive())
     return false;
 
@@ -545,7 +545,7 @@ bool CXFA_FFField::OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) {
   return true;
 }
 
-bool CXFA_FFField::OnChar(uint32_t dwChar, uint32_t dwFlags) {
+bool CXFA_FFField::OnChar(XFA_FWL_VKEYCODE dwChar, uint32_t dwFlags) {
   if (!GetDoc()->GetXFADoc()->IsInteractive())
     return false;
   if (dwChar == XFA_FWL_VKEY_Tab)

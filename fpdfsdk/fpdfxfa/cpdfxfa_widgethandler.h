@@ -12,6 +12,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/ipdfsdk_annothandler.h"
+#include "public/fpdf_fwlevent.h"
 #include "xfa/fwl/cfwl_messagemouse.h"
 
 class CFX_Matrix;
@@ -93,9 +94,15 @@ class CPDFXFA_WidgetHandler final : public IPDFSDK_AnnotHandler {
                        ObservedPtr<CPDFSDK_Annot>* pAnnot,
                        uint32_t nFlags,
                        const CFX_PointF& point) override;
-  bool OnChar(CPDFSDK_Annot* pAnnot, uint32_t nChar, uint32_t nFlags) override;
-  bool OnKeyDown(CPDFSDK_Annot* pAnnot, int nKeyCode, int nFlag) override;
-  bool OnKeyUp(CPDFSDK_Annot* pAnnot, int nKeyCode, int nFlag) override;
+  bool OnChar(CPDFSDK_Annot* pAnnot,
+              FWL_VKEYCODE nChar,
+              uint32_t nFlags) override;
+  bool OnKeyDown(CPDFSDK_Annot* pAnnot,
+                 FWL_VKEYCODE nKeyCode,
+                 int nFlag) override;
+  bool OnKeyUp(CPDFSDK_Annot* pAnnot,
+               FWL_VKEYCODE nKeyCode,
+               int nFlag) override;
   bool OnSetFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot, uint32_t nFlag) override;
   bool OnKillFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot, uint32_t nFlag) override;
   bool SetIndexSelected(ObservedPtr<CPDFSDK_Annot>* pAnnot,

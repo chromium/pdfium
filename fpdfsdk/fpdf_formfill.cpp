@@ -486,7 +486,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnKeyDown(FPDF_FORMHANDLE hHandle,
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
   if (!pPageView)
     return false;
-  return pPageView->OnKeyDown(nKeyCode, modifier);
+  return pPageView->OnKeyDown(static_cast<FWL_VKEYCODE>(nKeyCode), modifier);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnKeyUp(FPDF_FORMHANDLE hHandle,
@@ -496,7 +496,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnKeyUp(FPDF_FORMHANDLE hHandle,
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
   if (!pPageView)
     return false;
-  return pPageView->OnKeyUp(nKeyCode, modifier);
+  return pPageView->OnKeyUp(static_cast<FWL_VKEYCODE>(nKeyCode), modifier);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnChar(FPDF_FORMHANDLE hHandle,
@@ -506,7 +506,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnChar(FPDF_FORMHANDLE hHandle,
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
   if (!pPageView)
     return false;
-  return pPageView->OnChar(nChar, modifier);
+  return pPageView->OnChar(static_cast<FWL_VKEYCODE>(nChar), modifier);
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV

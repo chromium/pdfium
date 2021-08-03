@@ -169,13 +169,13 @@ bool CPDFSDK_BAAnnotHandler::OnRButtonDblClk(CPDFSDK_PageView* pPageView,
 }
 
 bool CPDFSDK_BAAnnotHandler::OnChar(CPDFSDK_Annot* pAnnot,
-                                    uint32_t nChar,
+                                    FWL_VKEYCODE nChar,
                                     uint32_t nFlags) {
   return false;
 }
 
 bool CPDFSDK_BAAnnotHandler::OnKeyDown(CPDFSDK_Annot* pAnnot,
-                                       int nKeyCode,
+                                       FWL_VKEYCODE nKeyCode,
                                        int nFlag) {
   DCHECK(pAnnot);
 
@@ -200,7 +200,7 @@ bool CPDFSDK_BAAnnotHandler::OnKeyDown(CPDFSDK_Annot* pAnnot,
 }
 
 bool CPDFSDK_BAAnnotHandler::OnKeyUp(CPDFSDK_Annot* pAnnot,
-                                     int nKeyCode,
+                                     FWL_VKEYCODE nKeyCode,
                                      int nFlag) {
   return false;
 }

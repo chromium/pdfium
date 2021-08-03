@@ -11,6 +11,7 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
+#include "public/fpdf_fwlevent.h"
 
 class CFX_Matrix;
 class CFX_RenderDevice;
@@ -89,10 +90,14 @@ class IPDFSDK_AnnotHandler {
                                uint32_t nFlags,
                                const CFX_PointF& point) = 0;
   virtual bool OnChar(CPDFSDK_Annot* pAnnot,
-                      uint32_t nChar,
+                      FWL_VKEYCODE nChar,
                       uint32_t nFlags) = 0;
-  virtual bool OnKeyDown(CPDFSDK_Annot* pAnnot, int nKeyCode, int nFlag) = 0;
-  virtual bool OnKeyUp(CPDFSDK_Annot* pAnnot, int nKeyCode, int nFlag) = 0;
+  virtual bool OnKeyDown(CPDFSDK_Annot* pAnnot,
+                         FWL_VKEYCODE nKeyCode,
+                         int nFlag) = 0;
+  virtual bool OnKeyUp(CPDFSDK_Annot* pAnnot,
+                       FWL_VKEYCODE nKeyCode,
+                       int nFlag) = 0;
   virtual bool OnSetFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                           uint32_t nFlag) = 0;
   virtual bool OnKillFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot,

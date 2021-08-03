@@ -91,9 +91,15 @@ class CPDFSDK_BAAnnotHandler final : public IPDFSDK_AnnotHandler {
                        ObservedPtr<CPDFSDK_Annot>* pAnnot,
                        uint32_t nFlags,
                        const CFX_PointF& point) override;
-  bool OnChar(CPDFSDK_Annot* pAnnot, uint32_t nChar, uint32_t nFlags) override;
-  bool OnKeyDown(CPDFSDK_Annot* pAnnot, int nKeyCode, int nFlag) override;
-  bool OnKeyUp(CPDFSDK_Annot* pAnnot, int nKeyCode, int nFlag) override;
+  bool OnChar(CPDFSDK_Annot* pAnnot,
+              FWL_VKEYCODE nChar,
+              uint32_t nFlags) override;
+  bool OnKeyDown(CPDFSDK_Annot* pAnnot,
+                 FWL_VKEYCODE nKeyCode,
+                 int nFlag) override;
+  bool OnKeyUp(CPDFSDK_Annot* pAnnot,
+               FWL_VKEYCODE nKeyCode,
+               int nFlag) override;
   bool OnSetFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot, uint32_t nFlag) override;
   bool OnKillFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot, uint32_t nFlag) override;
   bool SetIndexSelected(ObservedPtr<CPDFSDK_Annot>* pAnnot,

@@ -239,14 +239,14 @@ void CPDFSDK_AnnotHandlerMgr::Annot_OnMouseExit(
 }
 
 bool CPDFSDK_AnnotHandlerMgr::Annot_OnChar(CPDFSDK_Annot* pAnnot,
-                                           uint32_t nChar,
+                                           FWL_VKEYCODE nChar,
                                            uint32_t nFlags) {
   return GetAnnotHandler(pAnnot)->OnChar(pAnnot, nChar, nFlags);
 }
 
 bool CPDFSDK_AnnotHandlerMgr::Annot_OnKeyDown(CPDFSDK_PageView* pPageView,
                                               CPDFSDK_Annot* pAnnot,
-                                              int nKeyCode,
+                                              FWL_VKEYCODE nKeyCode,
                                               int nFlag) {
   if (!pAnnot) {
     // If pressed key is not tab then no action is needed.

@@ -91,15 +91,15 @@ bool CXFA_FFSignature::OnRButtonDblClk(uint32_t dwFlags,
   return false;
 }
 
-bool CXFA_FFSignature::OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags) {
+bool CXFA_FFSignature::OnKeyDown(XFA_FWL_VKEYCODE dwKeyCode, uint32_t dwFlags) {
   return false;
 }
 
-bool CXFA_FFSignature::OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) {
+bool CXFA_FFSignature::OnKeyUp(XFA_FWL_VKEYCODE dwKeyCode, uint32_t dwFlags) {
   return false;
 }
 
-bool CXFA_FFSignature::OnChar(uint32_t dwChar, uint32_t dwFlags) {
+bool CXFA_FFSignature::OnChar(XFA_FWL_VKEYCODE dwKeyCode, uint32_t dwFlags) {
   return false;
 }
 
