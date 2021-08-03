@@ -517,7 +517,7 @@ bool CXFA_FFField::OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags) {
   if (!GetNormalWidget() || !GetDoc()->GetXFADoc()->IsInteractive())
     return false;
 
-  CFWL_MessageKey msg(GetNormalWidget(), CFWL_MessageKey::Type::kKeyDown,
+  CFWL_MessageKey msg(GetNormalWidget(), CFWL_MessageKey::KeyCommand::kKeyDown,
                       dwFlags, dwKeyCode);
   SendMessageToFWLWidget(&msg);
   return true;
@@ -527,8 +527,8 @@ bool CXFA_FFField::OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) {
   if (!GetNormalWidget() || !GetDoc()->GetXFADoc()->IsInteractive())
     return false;
 
-  CFWL_MessageKey msg(GetNormalWidget(), CFWL_MessageKey::Type::kKeyUp, dwFlags,
-                      dwKeyCode);
+  CFWL_MessageKey msg(GetNormalWidget(), CFWL_MessageKey::KeyCommand::kKeyUp,
+                      dwFlags, dwKeyCode);
   SendMessageToFWLWidget(&msg);
   return true;
 }
@@ -543,8 +543,8 @@ bool CXFA_FFField::OnChar(uint32_t dwChar, uint32_t dwFlags) {
   if (!m_pNode->IsOpenAccess())
     return false;
 
-  CFWL_MessageKey msg(GetNormalWidget(), CFWL_MessageKey::Type::kChar, dwFlags,
-                      dwChar);
+  CFWL_MessageKey msg(GetNormalWidget(), CFWL_MessageKey::KeyCommand::kChar,
+                      dwFlags, dwChar);
   SendMessageToFWLWidget(&msg);
   return true;
 }

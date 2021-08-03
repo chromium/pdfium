@@ -7,10 +7,23 @@
 #ifndef XFA_FWL_CFWL_MESSAGE_H_
 #define XFA_FWL_CFWL_MESSAGE_H_
 
+#include <type_traits>
+
 #include "core/fxcrt/unowned_ptr.h"
 #include "v8/include/cppgc/macros.h"
 
 class CFWL_Widget;
+
+enum FWL_KeyFlag : uint8_t {
+  FWL_KEYFLAG_Ctrl = 1 << 0,
+  FWL_KEYFLAG_Alt = 1 << 1,
+  FWL_KEYFLAG_Shift = 1 << 2,
+  FWL_KEYFLAG_Command = 1 << 3,
+  FWL_KEYFLAG_LButton = 1 << 4,
+  FWL_KEYFLAG_RButton = 1 << 5,
+  FWL_KEYFLAG_MButton = 1 << 6
+};
+using FWL_KeyFlagMask = std::underlying_type<FWL_KeyFlag>::type;
 
 class CFWL_Message {
   CPPGC_STACK_ALLOCATED();  // Allow Raw/Unowned pointers.

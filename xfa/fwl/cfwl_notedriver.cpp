@@ -156,7 +156,7 @@ bool CFWL_NoteDriver::DoKillFocus(CFWL_Message* pMessage,
 bool CFWL_NoteDriver::DoKey(CFWL_Message* pMessage, CFWL_Widget* pMessageForm) {
   CFWL_MessageKey* pMsg = static_cast<CFWL_MessageKey*>(pMessage);
 #if !defined(OS_APPLE)
-  if (pMsg->m_dwCmd == CFWL_MessageKey::Type::kKeyDown &&
+  if (pMsg->m_dwCmd == CFWL_MessageKey::KeyCommand::kKeyDown &&
       pMsg->m_dwKeyCode == XFA_FWL_VKEY_Tab) {
     return true;
   }
@@ -167,7 +167,7 @@ bool CFWL_NoteDriver::DoKey(CFWL_Message* pMessage, CFWL_Widget* pMessageForm) {
     return true;
   }
 
-  if (pMsg->m_dwCmd == CFWL_MessageKey::Type::kKeyDown &&
+  if (pMsg->m_dwCmd == CFWL_MessageKey::KeyCommand::kKeyDown &&
       pMsg->m_dwKeyCode == XFA_FWL_VKEY_Return) {
     CFWL_WidgetMgr* pWidgetMgr = pMessageForm->GetFWLApp()->GetWidgetMgr();
     CFWL_Widget* pDefButton = pWidgetMgr->GetDefaultButton(pMessageForm);

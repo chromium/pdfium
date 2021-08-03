@@ -622,7 +622,7 @@ void CFWL_ListBox::OnProcessMessage(CFWL_Message* pMessage) {
       break;
     case CFWL_Message::Type::kKey: {
       CFWL_MessageKey* pMsg = static_cast<CFWL_MessageKey*>(pMessage);
-      if (pMsg->m_dwCmd == CFWL_MessageKey::Type::kKeyDown)
+      if (pMsg->m_dwCmd == CFWL_MessageKey::KeyCommand::kKeyDown)
         OnKeyDown(pMsg);
       break;
     }

@@ -7,8 +7,8 @@
 #include "xfa/fwl/cfwl_messagekey.h"
 
 CFWL_MessageKey::CFWL_MessageKey(CFWL_Widget* pDstTarget,
-                                 Type cmd,
-                                 uint32_t flags,
+                                 KeyCommand cmd,
+                                 FWL_KeyFlagMask flags,
                                  uint32_t keycode)
     : CFWL_Message(CFWL_Message::Type::kKey, nullptr, pDstTarget),
       m_dwCmd(cmd),

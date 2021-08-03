@@ -111,7 +111,7 @@ void CFWL_PushButton::OnProcessMessage(CFWL_Message* pMessage) {
     }
     case CFWL_Message::Type::kKey: {
       CFWL_MessageKey* pKey = static_cast<CFWL_MessageKey*>(pMessage);
-      if (pKey->m_dwCmd == CFWL_MessageKey::Type::kKeyDown)
+      if (pKey->m_dwCmd == CFWL_MessageKey::KeyCommand::kKeyDown)
         OnKeyDown(pKey);
       break;
     }
