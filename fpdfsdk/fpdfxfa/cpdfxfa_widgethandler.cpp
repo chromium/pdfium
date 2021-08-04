@@ -528,15 +528,14 @@ bool CPDFXFA_WidgetHandler::OnRButtonDblClk(CPDFSDK_PageView* pPageView,
 }
 
 bool CPDFXFA_WidgetHandler::OnChar(CPDFSDK_Annot* pAnnot,
-                                   FWL_VKEYCODE nChar,
+                                   uint32_t nChar,
                                    uint32_t nFlags) {
   CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
   if (!pXFAWidget)
     return false;
 
   CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler(pXFAWidget);
-  return pWidgetHandler->OnChar(pXFAWidget->GetXFAFFWidget(),
-                                static_cast<XFA_FWL_VKEYCODE>(nChar),
+  return pWidgetHandler->OnChar(pXFAWidget->GetXFAFFWidget(), nChar,
                                 GetFWLFlags(nFlags));
 }
 

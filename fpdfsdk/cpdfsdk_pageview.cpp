@@ -466,7 +466,7 @@ bool CPDFSDK_PageView::IsIndexSelected(int index) {
   return false;
 }
 
-bool CPDFSDK_PageView::OnChar(FWL_VKEYCODE nChar, uint32_t nFlag) {
+bool CPDFSDK_PageView::OnChar(uint32_t nChar, uint32_t nFlag) {
   if (CPDFSDK_Annot* pAnnot = GetFocusAnnot()) {
     CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
         m_pFormFillEnv->GetAnnotHandlerMgr();

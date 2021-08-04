@@ -90,7 +90,7 @@ class IPDFSDK_AnnotHandler {
                                uint32_t nFlags,
                                const CFX_PointF& point) = 0;
   virtual bool OnChar(CPDFSDK_Annot* pAnnot,
-                      FWL_VKEYCODE nChar,
+                      uint32_t nChar,
                       uint32_t nFlags) = 0;
   virtual bool OnKeyDown(CPDFSDK_Annot* pAnnot,
                          FWL_VKEYCODE nKeyCode,

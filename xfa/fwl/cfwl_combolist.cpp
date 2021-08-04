@@ -176,7 +176,7 @@ bool CFWL_ComboList::OnDropListKey(CFWL_MessageKey* pKey) {
   CFWL_ComboBox* pOuter = static_cast<CFWL_ComboBox*>(GetOuter());
   bool bPropagate = false;
   if (pKey->m_dwCmd == CFWL_MessageKey::KeyCommand::kKeyDown) {
-    uint32_t dwKeyCode = pKey->m_dwKeyCode;
+    uint32_t dwKeyCode = pKey->m_dwKeyCodeOrChar;
     switch (dwKeyCode) {
       case XFA_FWL_VKEY_Return:
       case XFA_FWL_VKEY_Escape: {
@@ -206,7 +206,7 @@ bool CFWL_ComboList::OnDropListKey(CFWL_MessageKey* pKey) {
 }
 
 void CFWL_ComboList::OnDropListKeyDown(CFWL_MessageKey* pKey) {
-  uint32_t dwKeyCode = pKey->m_dwKeyCode;
+  uint32_t dwKeyCode = pKey->m_dwKeyCodeOrChar;
   switch (dwKeyCode) {
     case XFA_FWL_VKEY_Up:
     case XFA_FWL_VKEY_Down:

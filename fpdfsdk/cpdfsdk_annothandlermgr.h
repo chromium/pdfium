@@ -98,7 +98,7 @@ class CPDFSDK_AnnotHandlerMgr {
                          ObservedPtr<CPDFSDK_Annot>* pAnnot,
                          uint32_t nFlags,
                          const CFX_PointF& point);
-  bool Annot_OnChar(CPDFSDK_Annot* pAnnot, FWL_VKEYCODE nChar, uint32_t nFlags);
+  bool Annot_OnChar(CPDFSDK_Annot* pAnnot, uint32_t nChar, uint32_t nFlags);
   bool Annot_OnKeyDown(CPDFSDK_PageView* pPageView,
                        CPDFSDK_Annot* pAnnot,
                        FWL_VKEYCODE nKeyCode,

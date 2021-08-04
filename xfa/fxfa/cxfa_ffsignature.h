@@ -37,7 +37,7 @@ class CXFA_FFSignature final : public CXFA_FFField {
   bool OnRButtonDblClk(uint32_t dwFlags, const CFX_PointF& point) override;
   bool OnKeyDown(XFA_FWL_VKEYCODE dwKeyCode, uint32_t dwFlags) override;
   bool OnKeyUp(XFA_FWL_VKEYCODE dwKeyCode, uint32_t dwFlags) override;
-  bool OnChar(XFA_FWL_VKEYCODE dwChar, uint32_t dwFlags) override;
+  bool OnChar(uint32_t dwChar, uint32_t dwFlags) override;
   FWL_WidgetHit HitTest(const CFX_PointF& point) override;
   FormFieldType GetFormFieldType() override;
 

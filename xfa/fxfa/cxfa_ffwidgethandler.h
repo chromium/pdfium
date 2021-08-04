@@ -73,9 +73,7 @@ class CXFA_FFWidgetHandler final
   bool OnKeyUp(CXFA_FFWidget* hWidget,
                XFA_FWL_VKEYCODE dwKeyCode,
                uint32_t dwFlags);
-  bool OnChar(CXFA_FFWidget* hWidget,
-              XFA_FWL_VKEYCODE dwChar,
-              uint32_t dwFlags);
+  bool OnChar(CXFA_FFWidget* hWidget, uint32_t dwChar, uint32_t dwFlags);
   FWL_WidgetHit HitTest(CXFA_FFWidget* pWidget, const CFX_PointF& point);
   void RenderWidget(CXFA_FFWidget* hWidget,
                     CFGAS_GEGraphics* pGS,

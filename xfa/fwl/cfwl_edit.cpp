@@ -966,7 +966,7 @@ void CFWL_Edit::OnKeyDown(CFWL_MessageKey* pMsg) {
     sel_start = start_idx;
   }
 
-  switch (pMsg->m_dwKeyCode) {
+  switch (pMsg->m_dwKeyCodeOrChar) {
     case XFA_FWL_VKEY_Left:
       SetCursorPosition(m_pEditEngine->GetIndexLeft(m_CursorPosition));
       break;
@@ -1019,7 +1019,7 @@ void CFWL_Edit::OnChar(CFWL_MessageKey* pMsg) {
     return;
   }
 
-  wchar_t c = static_cast<wchar_t>(pMsg->m_dwKeyCode);
+  wchar_t c = static_cast<wchar_t>(pMsg->m_dwKeyCodeOrChar);
   switch (c) {
     case L'\b':
       if (m_CursorPosition > 0) {

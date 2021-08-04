@@ -169,7 +169,7 @@ bool CPDFSDK_BAAnnotHandler::OnRButtonDblClk(CPDFSDK_PageView* pPageView,
 }
 
 bool CPDFSDK_BAAnnotHandler::OnChar(CPDFSDK_Annot* pAnnot,
-                                    FWL_VKEYCODE nChar,
+                                    uint32_t nChar,
                                     uint32_t nFlags) {
   return false;
 }

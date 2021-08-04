@@ -203,7 +203,7 @@ void CFWL_PushButton::OnMouseLeave(CFWL_MessageMouse* pMsg) {
 }
 
 void CFWL_PushButton::OnKeyDown(CFWL_MessageKey* pMsg) {
-  if (pMsg->m_dwKeyCode != XFA_FWL_VKEY_Return)
+  if (pMsg->m_dwKeyCodeOrChar != XFA_FWL_VKEY_Return)
     return;
 
   CFWL_EventMouse wmMouse(this, nullptr,

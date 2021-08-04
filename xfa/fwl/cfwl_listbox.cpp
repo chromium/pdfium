@@ -720,7 +720,7 @@ void CFWL_ListBox::OnMouseWheel(CFWL_MessageMouseWheel* pMsg) {
 }
 
 void CFWL_ListBox::OnKeyDown(CFWL_MessageKey* pMsg) {
-  uint32_t dwKeyCode = pMsg->m_dwKeyCode;
+  uint32_t dwKeyCode = pMsg->m_dwKeyCodeOrChar;
   switch (dwKeyCode) {
     case XFA_FWL_VKEY_Tab:
     case XFA_FWL_VKEY_Up:

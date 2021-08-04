@@ -506,7 +506,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnChar(FPDF_FORMHANDLE hHandle,
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
   if (!pPageView)
     return false;
-  return pPageView->OnChar(static_cast<FWL_VKEYCODE>(nChar), modifier);
+  return pPageView->OnChar(nChar, modifier);
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV

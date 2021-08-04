@@ -72,7 +72,7 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   bool OnLButtonDblClk(uint32_t nFlag, const CFX_PointF& point);
   bool OnRButtonDown(uint32_t nFlag, const CFX_PointF& point);
   bool OnRButtonUp(uint32_t nFlag, const CFX_PointF& point);
-  bool OnChar(FWL_VKEYCODE nChar, uint32_t nFlag);
+  bool OnChar(uint32_t nChar, uint32_t nFlag);
   bool OnKeyDown(FWL_VKEYCODE nKeyCode, int nFlag);
   bool OnKeyUp(FWL_VKEYCODE nKeyCode, int nFlag);
   bool OnMouseMove(int nFlag, const CFX_PointF& point);

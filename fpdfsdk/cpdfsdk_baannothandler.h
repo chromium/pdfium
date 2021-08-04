@@ -91,9 +91,7 @@ class CPDFSDK_BAAnnotHandler final : public IPDFSDK_AnnotHandler {
                        ObservedPtr<CPDFSDK_Annot>* pAnnot,
                        uint32_t nFlags,
                        const CFX_PointF& point) override;
-  bool OnChar(CPDFSDK_Annot* pAnnot,
-              FWL_VKEYCODE nChar,
-              uint32_t nFlags) override;
+  bool OnChar(CPDFSDK_Annot* pAnnot, uint32_t nChar, uint32_t nFlags) override;
   bool OnKeyDown(CPDFSDK_Annot* pAnnot,
                  FWL_VKEYCODE nKeyCode,
                  int nFlag) override;

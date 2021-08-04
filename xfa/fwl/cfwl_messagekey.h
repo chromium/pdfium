@@ -17,12 +17,12 @@ class CFWL_MessageKey final : public CFWL_Message {
   CFWL_MessageKey(CFWL_Widget* pDstTarget,
                   KeyCommand subtype,
                   FWL_KeyFlagMask flags,
-                  XFA_FWL_VKEYCODE keycode);
+                  uint32_t dwKeyCodeOrChar);
   ~CFWL_MessageKey() override;
 
   const KeyCommand m_dwCmd;
   const FWL_KeyFlagMask m_dwFlags;
-  const XFA_FWL_VKEYCODE m_dwKeyCode;
+  const uint32_t m_dwKeyCodeOrChar;
 };
 
 #endif  // XFA_FWL_CFWL_MESSAGEKEY_H_

@@ -136,7 +136,7 @@ bool CXFA_FFWidgetHandler::OnKeyUp(CXFA_FFWidget* hWidget,
 }
 
 bool CXFA_FFWidgetHandler::OnChar(CXFA_FFWidget* hWidget,
-                                  XFA_FWL_VKEYCODE dwChar,
+                                  uint32_t dwChar,
                                   uint32_t dwFlags) {
   return hWidget->OnChar(dwChar, dwFlags);
 }

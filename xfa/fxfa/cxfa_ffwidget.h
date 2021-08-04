@@ -137,8 +137,7 @@ class CXFA_FFWidget : public cppgc::GarbageCollected<CXFA_FFWidget>,
                          uint32_t dwFlags) WARN_UNUSED_RESULT;
   virtual bool OnKeyUp(XFA_FWL_VKEYCODE dwKeyCode,
                        uint32_t dwFlags) WARN_UNUSED_RESULT;
-  virtual bool OnChar(XFA_FWL_VKEYCODE dwChar,
-                      uint32_t dwFlags) WARN_UNUSED_RESULT;
+  virtual bool OnChar(uint32_t dwChar, uint32_t dwFlags) WARN_UNUSED_RESULT;
 
   virtual FWL_WidgetHit HitTest(const CFX_PointF& point);
   virtual bool CanUndo();

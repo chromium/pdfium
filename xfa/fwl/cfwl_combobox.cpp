@@ -410,10 +410,10 @@ void CFWL_ComboBox::OnProcessMessage(CFWL_Message* pMessage) {
         break;
       if (IsDropListVisible() &&
           pKey->m_dwCmd == CFWL_MessageKey::KeyCommand::kKeyDown) {
-        bool bListKey = pKey->m_dwKeyCode == XFA_FWL_VKEY_Up ||
-                        pKey->m_dwKeyCode == XFA_FWL_VKEY_Down ||
-                        pKey->m_dwKeyCode == XFA_FWL_VKEY_Return ||
-                        pKey->m_dwKeyCode == XFA_FWL_VKEY_Escape;
+        bool bListKey = pKey->m_dwKeyCodeOrChar == XFA_FWL_VKEY_Up ||
+                        pKey->m_dwKeyCodeOrChar == XFA_FWL_VKEY_Down ||
+                        pKey->m_dwKeyCodeOrChar == XFA_FWL_VKEY_Return ||
+                        pKey->m_dwKeyCodeOrChar == XFA_FWL_VKEY_Escape;
         if (bListKey) {
           m_pListBox->GetDelegate()->OnProcessMessage(pMessage);
           break;
@@ -487,7 +487,7 @@ void CFWL_ComboBox::OnFocusLost() {
 }
 
 void CFWL_ComboBox::OnKey(CFWL_MessageKey* pMsg) {
-  uint32_t dwKeyCode = pMsg->m_dwKeyCode;
+  uint32_t dwKeyCode = pMsg->m_dwKeyCodeOrChar;
   const bool bUp = dwKeyCode == XFA_FWL_VKEY_Up;
   const bool bDown = dwKeyCode == XFA_FWL_VKEY_Down;
   if (bUp || bDown) {

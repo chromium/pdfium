@@ -308,10 +308,10 @@ void CFWL_CheckBox::OnMouseLeave() {
 }
 
 void CFWL_CheckBox::OnKeyDown(CFWL_MessageKey* pMsg) {
-  if (pMsg->m_dwKeyCode == XFA_FWL_VKEY_Tab)
+  if (pMsg->m_dwKeyCodeOrChar == XFA_FWL_VKEY_Tab)
     return;
-  if (pMsg->m_dwKeyCode == XFA_FWL_VKEY_Return ||
-      pMsg->m_dwKeyCode == XFA_FWL_VKEY_Space) {
+  if (pMsg->m_dwKeyCodeOrChar == XFA_FWL_VKEY_Return ||
+      pMsg->m_dwKeyCodeOrChar == XFA_FWL_VKEY_Space) {
     NextStates();
   }
 }

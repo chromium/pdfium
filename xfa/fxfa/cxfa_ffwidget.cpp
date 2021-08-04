@@ -463,7 +463,7 @@ bool CXFA_FFWidget::OnKeyUp(XFA_FWL_VKEYCODE dwKeyCode, uint32_t dwFlags) {
   return false;
 }
 
-bool CXFA_FFWidget::OnChar(XFA_FWL_VKEYCODE dwChar, uint32_t dwFlags) {
+bool CXFA_FFWidget::OnChar(uint32_t dwChar, uint32_t dwFlags) {
   return false;
 }
 

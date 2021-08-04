@@ -239,7 +239,7 @@ void CPDFSDK_AnnotHandlerMgr::Annot_OnMouseExit(
 }
 
 bool CPDFSDK_AnnotHandlerMgr::Annot_OnChar(CPDFSDK_Annot* pAnnot,
-                                           FWL_VKEYCODE nChar,
+                                           uint32_t nChar,
                                            uint32_t nFlags) {
   return GetAnnotHandler(pAnnot)->OnChar(pAnnot, nChar, nFlags);
 }

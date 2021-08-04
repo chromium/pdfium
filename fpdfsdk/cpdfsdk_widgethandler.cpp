@@ -180,7 +180,7 @@ bool CPDFSDK_WidgetHandler::OnRButtonDblClk(CPDFSDK_PageView* pPageView,
 }
 
 bool CPDFSDK_WidgetHandler::OnChar(CPDFSDK_Annot* pAnnot,
-                                   FWL_VKEYCODE nChar,
+                                   uint32_t nChar,
                                    uint32_t nFlags) {
   return !pAnnot->IsSignatureWidget() &&
          m_pInteractiveFormFiller->OnChar(pAnnot, nChar, nFlags);

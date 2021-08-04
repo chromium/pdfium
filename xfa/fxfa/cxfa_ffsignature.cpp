@@ -99,7 +99,7 @@ bool CXFA_FFSignature::OnKeyUp(XFA_FWL_VKEYCODE dwKeyCode, uint32_t dwFlags) {
   return false;
 }
 
-bool CXFA_FFSignature::OnChar(XFA_FWL_VKEYCODE dwKeyCode, uint32_t dwFlags) {
+bool CXFA_FFSignature::OnChar(uint32_t nChar, uint32_t dwFlags) {
   return false;
 }
 
