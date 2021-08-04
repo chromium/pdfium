@@ -6,7 +6,8 @@
 
 #include "core/fxcrt/css/cfx_cssdeclaration.h"
 
-#include <cmath>
+#include <math.h>
+
 #include <utility>
 
 #include "core/fxcrt/css/cfx_csscolorvalue.h"
@@ -38,7 +39,7 @@ bool ParseCSSNumber(const wchar_t* pszValue,
 
   int32_t iUsedLen = 0;
   *pValue = FXSYS_wcstof(pszValue, iValueLen, &iUsedLen);
-  if (iUsedLen <= 0 || !std::isfinite(*pValue))
+  if (iUsedLen <= 0 || !isfinite(*pValue))
     return false;
 
   iValueLen -= iUsedLen;

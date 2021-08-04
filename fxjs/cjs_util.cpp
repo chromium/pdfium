@@ -6,10 +6,10 @@
 
 #include "fxjs/cjs_util.h"
 
+#include <math.h>
 #include <time.h>
 
 #include <algorithm>
-#include <cmath>
 #include <cwctype>
 #include <string>
 #include <vector>
@@ -171,7 +171,7 @@ CJS_Result CJS_Util::printd(CJS_Runtime* pRuntime,
     return CJS_Result::Failure(JSMessage::kSecondParamNotDateError);
 
   v8::Local<v8::Date> v8_date = params[1].As<v8::Date>();
-  if (v8_date.IsEmpty() || std::isnan(pRuntime->ToDouble(v8_date)))
+  if (v8_date.IsEmpty() || isnan(pRuntime->ToDouble(v8_date)))
     return CJS_Result::Failure(JSMessage::kSecondParamInvalidDateError);
 
   double date = FX_LocalTime(pRuntime->ToDouble(v8_date));
@@ -377,7 +377,7 @@ CJS_Result CJS_Util::scand(CJS_Runtime* pRuntime,
   double dDate = FX_GetDateTime();
   if (sDate.GetLength() > 0)
     dDate = CJS_PublicMethods::ParseDateUsingFormat(sDate, sFormat, nullptr);
-  if (std::isnan(dDate))
+  if (isnan(dDate))
     return CJS_Result::Success(pRuntime->NewUndefined());
 
   return CJS_Result::Success(pRuntime->NewDate(dDate));

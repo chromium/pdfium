@@ -6,8 +6,9 @@
 
 #include "fxjs/cjs_publicmethods.h"
 
+#include <math.h>
+
 #include <algorithm>
-#include <cmath>
 #include <cwctype>
 #include <iomanip>
 #include <iterator>
@@ -429,14 +430,14 @@ double CJS_PublicMethods::ParseDate(const WideString& value,
 double CJS_PublicMethods::ParseDateUsingFormat(const WideString& value,
                                                const WideString& format,
                                                bool* bWrongFormat) {
-  double dRet = std::nan("");
+  double dRet = nan("");
   fxjs::ConversionStatus status = FX_ParseDateUsingFormat(value, format, &dRet);
   if (status == fxjs::ConversionStatus::kSuccess)
     return dRet;
 
   if (status == fxjs::ConversionStatus::kBadDate) {
     dRet = JS_DateParse(value);
-    if (!std::isnan(dRet))
+    if (!isnan(dRet))
       return dRet;
   }
 
@@ -901,7 +902,7 @@ CJS_Result CJS_PublicMethods::AFDate_FormatEx(
     dDate = ParseDateUsingFormat(strValue, sFormat, nullptr);
   }
 
-  if (std::isnan(dDate)) {
+  if (isnan(dDate)) {
     WideString swMsg = WideString::Format(
         JSGetStringFromID(JSMessage::kParseDateError).c_str(), sFormat.c_str());
     AlertIfPossible(pContext, L"AFDate_FormatEx", swMsg);
@@ -942,7 +943,7 @@ double CJS_PublicMethods::ParseDateAsGMT(const WideString& strValue) {
   int nYear = StringToFloat(wsArray[7].AsStringView());
   double dRet = FX_MakeDate(FX_MakeDay(nYear, nMonth - 1, nDay),
                             FX_MakeTime(nHour, nMin, nSec, 0));
-  if (std::isnan(dRet))
+  if (isnan(dRet))
     dRet = JS_DateParse(strValue);
 
   return dRet;
@@ -972,7 +973,7 @@ CJS_Result CJS_PublicMethods::AFDate_KeystrokeEx(
   bool bWrongFormat = false;
   WideString sFormat = pRuntime->ToWideString(params[0]);
   double dRet = ParseDateUsingFormat(strValue, sFormat, &bWrongFormat);
-  if (bWrongFormat || std::isnan(dRet)) {
+  if (bWrongFormat || isnan(dRet)) {
     WideString swMsg = WideString::Format(
         JSGetStringFromID(JSMessage::kParseDateError).c_str(), sFormat.c_str());
     AlertIfPossible(pContext, L"AFDate_KeystrokeEx", swMsg);
@@ -1233,7 +1234,7 @@ CJS_Result CJS_PublicMethods::AFParseDateEx(
   WideString sValue = pRuntime->ToWideString(params[0]);
   WideString sFormat = pRuntime->ToWideString(params[1]);
   double dDate = ParseDateUsingFormat(sValue, sFormat, nullptr);
-  if (std::isnan(dDate)) {
+  if (isnan(dDate)) {
     WideString swMsg = WideString::Format(
         JSGetStringFromID(JSMessage::kParseDateError).c_str(), sFormat.c_str());
     AlertIfPossible(pRuntime->GetCurrentEventContext(), L"AFParseDateEx",
@@ -1252,7 +1253,7 @@ CJS_Result CJS_PublicMethods::AFSimple(
   WideString sFunction = pRuntime->ToWideString(params[0]);
   double arg1 = pRuntime->ToDouble(params[1]);
   double arg2 = pRuntime->ToDouble(params[2]);
-  if (std::isnan(arg1) || std::isnan(arg2))
+  if (isnan(arg1) || isnan(arg2))
     return CJS_Result::Failure(JSMessage::kValueError);
 
   Optional<double> result = ApplyNamedOperation(sFunction.c_str(), arg1, arg2);

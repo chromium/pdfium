@@ -7,10 +7,10 @@
 #ifndef CORE_FXCRT_FX_EXTENSION_H_
 #define CORE_FXCRT_FX_EXTENSION_H_
 
+#include <math.h>
 #include <time.h>
 
 #include <cctype>
-#include <cmath>
 #include <cwctype>
 #include <memory>
 
@@ -121,16 +121,16 @@ size_t FXSYS_ToUTF16BE(uint32_t unicode, char* buf);
 // All NaNs are treated as equal to each other and greater than infinity.
 template <typename T>
 bool FXSYS_SafeEQ(const T& lhs, const T& rhs) {
-  return (std::isnan(lhs) && std::isnan(rhs)) ||
-         (!std::isnan(lhs) && !std::isnan(rhs) && lhs == rhs);
+  return (isnan(lhs) && isnan(rhs)) ||
+         (!isnan(lhs) && !isnan(rhs) && lhs == rhs);
 }
 
 template <typename T>
 bool FXSYS_SafeLT(const T& lhs, const T& rhs) {
-  if (std::isnan(lhs) && std::isnan(rhs))
+  if (isnan(lhs) && isnan(rhs))
     return false;
-  if (std::isnan(lhs) || std::isnan(rhs))
-    return std::isnan(lhs) < std::isnan(rhs);
+  if (isnan(lhs) || isnan(rhs))
+    return isnan(lhs) < isnan(rhs);
   return lhs < rhs;
 }
 

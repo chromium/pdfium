@@ -6,6 +6,8 @@
 
 #include "fxjs/cjs_runtime.h"
 
+#include <math.h>
+
 #include <algorithm>
 
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
@@ -224,7 +226,7 @@ v8::Local<v8::Value> CJS_Runtime::MaybeCoerceToNumber(
     return value;
 
   v8::Local<v8::Number> num = maybeNum.ToLocalChecked();
-  if (std::isnan(num->Value()) && !bAllowNaN)
+  if (isnan(num->Value()) && !bAllowNaN)
     return value;
 
   return num;

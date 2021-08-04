@@ -6,7 +6,8 @@
 
 #include "xfa/fgas/graphics/cfgas_gegraphics.h"
 
-#include <cmath>
+#include <math.h>
+
 #include <memory>
 
 #include "core/fxcrt/fx_system.h"
@@ -305,7 +306,7 @@ void CFGAS_GEGraphics::FillPathWithShading(
             float x = static_cast<float>(column);
             scale = (((x - start_x) * x_span) + ((y - start_y) * y_span)) /
                     axis_len_square;
-            if (std::isnan(scale) || scale < 0.0f) {
+            if (isnan(scale) || scale < 0.0f) {
               if (!m_info.fillColor.GetShading()->IsExtendedBegin())
                 continue;
               scale = 0.0f;
@@ -366,7 +367,7 @@ void CFGAS_GEGraphics::FillPathWithShading(
               continue;
             }
           }
-          if (std::isnan(s) || s < 0.0f) {
+          if (isnan(s) || s < 0.0f) {
             if (!m_info.fillColor.GetShading()->IsExtendedBegin())
               continue;
             s = 0.0f;

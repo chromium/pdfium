@@ -6,9 +6,8 @@
 
 #include "fxjs/fx_date_helpers.h"
 
+#include <math.h>
 #include <time.h>
-
-#include <cmath>
 
 #include "build/build_config.h"
 #include "core/fxcrt/fx_extension.h"
@@ -248,7 +247,7 @@ double FX_MakeDay(int nYear, int nMonth, int nDate) {
   double mn = Mod(m, 12);
   double t = TimeFromYearMonth(static_cast<int>(ym), static_cast<int>(mn));
   if (YearFromTime(t) != ym || MonthFromTime(t) != mn || DateFromTime(t) != 1)
-    return std::nan("");
+    return nan("");
 
   return Day(t) + dt - 1;
 }
@@ -262,8 +261,8 @@ double FX_MakeTime(int nHour, int nMin, int nSec, int nMs) {
 }
 
 double FX_MakeDate(double day, double time) {
-  if (!std::isfinite(day) || !std::isfinite(time))
-    return std::nan("");
+  if (!isfinite(day) || !isfinite(time))
+    return nan("");
 
   return day * 86400000 + time;
 }
@@ -542,7 +541,7 @@ ConversionStatus FX_ParseDateUsingFormat(const WideString& value,
 
   dt = FX_MakeDate(FX_MakeDay(nYear, nMonth - 1, nDay),
                    FX_MakeTime(nHour, nMin, nSec, 0));
-  if (std::isnan(dt))
+  if (isnan(dt))
     return ConversionStatus::kBadDate;
 
   *result = dt;

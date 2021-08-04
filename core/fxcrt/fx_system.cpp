@@ -6,7 +6,8 @@
 
 #include "core/fxcrt/fx_system.h"
 
-#include <cmath>
+#include <math.h>
+
 #include <limits>
 
 #include "build/build_config.h"
@@ -89,7 +90,7 @@ STR_T FXSYS_IntToStr(T value, STR_T str, int radix) {
 }  // namespace
 
 int FXSYS_roundf(float f) {
-  if (std::isnan(f))
+  if (isnan(f))
     return 0;
   if (f < static_cast<float>(std::numeric_limits<int>::min()))
     return std::numeric_limits<int>::min();
@@ -99,7 +100,7 @@ int FXSYS_roundf(float f) {
 }
 
 int FXSYS_round(double d) {
-  if (std::isnan(d))
+  if (isnan(d))
     return 0;
   if (d < static_cast<double>(std::numeric_limits<int>::min()))
     return std::numeric_limits<int>::min();

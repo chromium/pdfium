@@ -6,8 +6,9 @@
 
 #include "core/fpdfapi/page/cpdf_psengine.h"
 
+#include <math.h>
+
 #include <algorithm>
-#include <cmath>
 #include <limits>
 #include <utility>
 
@@ -73,7 +74,7 @@ constexpr PDF_PSOpName kPsOpNames[] = {
 // Round half up is a nearest integer round with half-way numbers always rounded
 // up. Example: -5.5 rounds to -5.
 float RoundHalfUp(float f) {
-  if (std::isnan(f))
+  if (isnan(f))
     return 0;
   if (f > std::numeric_limits<float>::max() - 0.5f)
     return std::numeric_limits<float>::max();

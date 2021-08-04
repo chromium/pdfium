@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 
-#include <cmath>
+#include <math.h>
 
 #include "core/fxcrt/fx_extension.h"
 #include "third_party/base/notreached.h"
@@ -45,7 +45,7 @@ void CXFA_Measurement::SetString(WideStringView wsMeasure) {
   int32_t iUsedLen = 0;
   float fValue = FXSYS_wcstof(wsMeasure.unterminated_c_str(),
                               wsMeasure.GetLength(), &iUsedLen);
-  if (!std::isfinite(fValue))
+  if (!isfinite(fValue))
     fValue = 0.0f;
 
   wsMeasure = wsMeasure.Last(wsMeasure.GetLength() - iUsedLen);

@@ -6,10 +6,10 @@
 
 #include "fxjs/js_define.h"
 
+#include <math.h>
 #include <stdarg.h>
 
 #include <algorithm>
-#include <cmath>
 #include <limits>
 #include <vector>
 
@@ -54,7 +54,7 @@ double JS_DateParse(const WideString& str) {
     return 0;
 
   double date = value.As<v8::Number>()->Value();
-  return std::isfinite(date) ? FX_LocalTime(date) : date;
+  return isfinite(date) ? FX_LocalTime(date) : date;
 }
 
 std::vector<v8::Local<v8::Value>> ExpandKeywordParams(

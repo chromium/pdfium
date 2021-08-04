@@ -4,6 +4,8 @@
 
 #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
 
+#include <math.h>
+
 #include <algorithm>
 #include <limits>
 #include <vector>
@@ -36,7 +38,7 @@ TEST(CPDFPageObjectHolder, GraphicsDataAsKey) {
   EXPECT_EQ(data[0], fMin);
   EXPECT_EQ(data[1], fMax);
   EXPECT_EQ(data[2], fInf);
-  EXPECT_EQ(std::isnan(data[3]), std::isnan(fNan));
+  EXPECT_EQ(isnan(data[3]), isnan(fNan));
 
   std::map<GraphicsData, int> graphics_map;
 

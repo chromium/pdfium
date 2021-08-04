@@ -4,6 +4,8 @@
 
 #include "core/fxcrt/fx_extension.h"
 
+#include <math.h>
+
 #include <limits>
 
 #include "testing/gtest/include/gtest/gtest.h"
@@ -175,14 +177,14 @@ TEST(fxcrt, FXSYS_wcstof) {
 
   // Overflow to infinity.
   used_len = 0;
-  EXPECT_TRUE(std::isinf(FXSYS_wcstof(
+  EXPECT_TRUE(isinf(FXSYS_wcstof(
       L"88888888888888888888888888888888888888888888888888888888888888888888888"
       L"88888888888888888888888888888888888888888888888888888888888",
       130, &used_len)));
   EXPECT_EQ(130, used_len);
 
   used_len = 0;
-  EXPECT_TRUE(std::isinf(FXSYS_wcstof(
+  EXPECT_TRUE(isinf(FXSYS_wcstof(
       L"-8888888888888888888888888888888888888888888888888888888888888888888888"
       L"888888888888888888888888888888888888888888888888888888888888",
       131, &used_len)));
