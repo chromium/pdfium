@@ -158,20 +158,6 @@ class CFX_VTemplate final : public CFX_PTemplate<BaseType> {
     x /= fLen;
     y /= fLen;
   }
-  void Translate(BaseType dx, BaseType dy) {
-    x += dx;
-    y += dy;
-  }
-  void Scale(BaseType sx, BaseType sy) {
-    x *= sx;
-    y *= sy;
-  }
-  void Rotate(float fRadian) {
-    float cosValue = cos(fRadian);
-    float sinValue = sin(fRadian);
-    x = x * cosValue - y * sinValue;
-    y = x * sinValue + y * cosValue;
-  }
 };
 using CFX_Vector = CFX_VTemplate<int32_t>;
 using CFX_VectorF = CFX_VTemplate<float>;
