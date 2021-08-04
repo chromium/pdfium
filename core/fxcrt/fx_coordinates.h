@@ -7,7 +7,6 @@
 #ifndef CORE_FXCRT_FX_COORDINATES_H_
 #define CORE_FXCRT_FX_COORDINATES_H_
 
-#include <math.h>
 #include <stdint.h>
 
 #include <algorithm>
@@ -149,15 +148,8 @@ class CFX_VTemplate final : public CFX_PTemplate<BaseType> {
                 const CFX_PTemplate<BaseType>& point2)
       : CFX_PTemplate<BaseType>(point2.x - point1.x, point2.y - point1.y) {}
 
-  float Length() const { return sqrt(x * x + y * y); }
-  void Normalize() {
-    float fLen = Length();
-    if (fLen < 0.0001f)
-      return;
-
-    x /= fLen;
-    y /= fLen;
-  }
+  float Length() const;
+  void Normalize();
 };
 using CFX_Vector = CFX_VTemplate<int32_t>;
 using CFX_VectorF = CFX_VTemplate<float>;

@@ -6,6 +6,8 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 
+#include <math.h>
+
 #include <utility>
 
 #include "build/build_config.h"
@@ -59,6 +61,21 @@ static_assert(sizeof(FX_RECT::bottom) == sizeof(RECT::bottom),
 #endif
 
 }  // namespace
+
+template <>
+float CFX_VTemplate<float>::Length() const {
+  return FXSYS_sqrt2(x, y);
+}
+
+template <>
+void CFX_VTemplate<float>::Normalize() {
+  float fLen = Length();
+  if (fLen < 0.0001f)
+    return;
+
+  x /= fLen;
+  y /= fLen;
+}
 
 bool FX_RECT::Valid() const {
   FX_SAFE_INT32 w = right;
