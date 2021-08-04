@@ -6,6 +6,8 @@
 
 #include "xfa/fgas/crt/cfgas_decimal.h"
 
+#include <math.h>
+
 #include <algorithm>
 #include <limits>
 #include <utility>

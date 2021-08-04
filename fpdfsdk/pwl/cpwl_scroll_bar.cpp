@@ -6,6 +6,8 @@
 
 #include "fpdfsdk/pwl/cpwl_scroll_bar.h"
 
+#include <math.h>
+
 #include <algorithm>
 #include <sstream>
 #include <utility>

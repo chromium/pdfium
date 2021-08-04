@@ -6,6 +6,8 @@
 
 #include "core/fxge/cfx_renderdevice.h"
 
+#include <math.h>
+
 #include <algorithm>
 #include <memory>
 #include <utility>

@@ -6,6 +6,8 @@
 
 #include "fpdfsdk/cpdfsdk_appstream.h"
 
+#include <math.h>
+
 #include <memory>
 #include <sstream>
 #include <utility>

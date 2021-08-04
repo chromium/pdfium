@@ -6,6 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
+#include <math.h>
+
 #include <algorithm>
 #include <map>
 #include <memory>

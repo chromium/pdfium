@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/page/cpdf_tilingpattern.h"
 
+#include <math.h>
+
 #include "core/fpdfapi/page/cpdf_allstates.h"
 #include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"

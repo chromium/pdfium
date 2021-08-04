@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/render/cpdf_imagerenderer.h"
 
+#include <math.h>
+
 #include <algorithm>
 #include <memory>
 

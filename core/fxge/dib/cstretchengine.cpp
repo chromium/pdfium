@@ -7,6 +7,7 @@
 #include "core/fxge/dib/cstretchengine.h"
 
 #include <limits.h>
+#include <math.h>
 
 #include <algorithm>
 #include <type_traits>

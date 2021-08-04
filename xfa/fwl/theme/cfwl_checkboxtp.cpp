@@ -6,6 +6,8 @@
 
 #include "xfa/fwl/theme/cfwl_checkboxtp.h"
 
+#include <math.h>
+
 #include "core/fxge/cfx_path.h"
 #include "third_party/base/cxx17_backports.h"
 #include "xfa/fde/cfde_textout.h"

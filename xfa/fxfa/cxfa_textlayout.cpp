@@ -6,6 +6,8 @@
 
 #include "xfa/fxfa/cxfa_textlayout.h"
 
+#include <math.h>
+
 #include <algorithm>
 #include <utility>
 

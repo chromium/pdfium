@@ -22,6 +22,8 @@
 
 #include "fxbarcode/oned/BC_OnedEAN13Writer.h"
 
+#include <math.h>
+
 #include <algorithm>
 #include <cwctype>
 #include <memory>

@@ -6,7 +6,8 @@
 
 #include "core/fxge/dib/cfx_imagetransformer.h"
 
-#include <cmath>
+#include <math.h>
+
 #include <memory>
 #include <utility>
 

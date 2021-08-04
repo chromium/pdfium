@@ -6,6 +6,7 @@
 
 #include "core/fxge/win32/cgdi_printer_driver.h"
 
+#include <math.h>
 #include <windows.h>
 
 #include <algorithm>

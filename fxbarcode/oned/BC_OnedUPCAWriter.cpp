@@ -22,6 +22,8 @@
 
 #include "fxbarcode/oned/BC_OnedUPCAWriter.h"
 
+#include <math.h>
+
 #include <algorithm>
 #include <vector>
 

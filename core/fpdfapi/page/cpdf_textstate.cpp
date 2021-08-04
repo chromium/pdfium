@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/page/cpdf_textstate.h"
 
+#include <math.h>
+
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
 

@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/render/cpdf_type3glyphmap.h"
 
+#include <math.h>
+
 #include <algorithm>
 #include <utility>
 

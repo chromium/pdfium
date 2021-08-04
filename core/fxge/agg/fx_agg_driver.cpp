@@ -6,6 +6,8 @@
 
 #include "core/fxge/agg/fx_agg_driver.h"
 
+#include <math.h>
+
 #include <algorithm>
 #include <utility>
 

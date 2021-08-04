@@ -6,6 +6,8 @@
 
 #include "xfa/fxfa/cxfa_imagerenderer.h"
 
+#include <math.h>
+
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"

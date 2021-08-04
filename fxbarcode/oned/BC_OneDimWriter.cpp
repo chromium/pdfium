@@ -22,6 +22,8 @@
 
 #include "fxbarcode/oned/BC_OneDimWriter.h"
 
+#include <math.h>
+
 #include <algorithm>
 #include <memory>
 #include <vector>

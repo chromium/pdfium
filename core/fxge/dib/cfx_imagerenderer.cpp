@@ -6,6 +6,8 @@
 
 #include "core/fxge/dib/cfx_imagerenderer.h"
 
+#include <math.h>
+
 #include <memory>
 
 #include "core/fxge/cfx_cliprgn.h"

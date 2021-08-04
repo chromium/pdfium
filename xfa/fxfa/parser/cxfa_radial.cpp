@@ -6,6 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_radial.h"
 
+#include <math.h>
+
 #include <utility>
 
 #include "fxjs/xfa/cjx_node.h"

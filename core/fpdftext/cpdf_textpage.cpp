@@ -6,6 +6,8 @@
 
 #include "core/fpdftext/cpdf_textpage.h"
 
+#include <math.h>
+
 #include <algorithm>
 #include <memory>
 #include <utility>
