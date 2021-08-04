@@ -829,17 +829,22 @@ void CPDF_LabCS::GetDefaultValue(int iComponent,
                                  float* value,
                                  float* min,
                                  float* max) const {
-  DCHECK(iComponent < 3);
-  if (iComponent == 0) {
-    *min = 0.0f;
-    *max = 100 * 1.0f;
-    *value = 0.0f;
-    return;
+  DCHECK_LT(iComponent, 3);
+
+  if (iComponent > 0) {
+    float range_min = m_Ranges[iComponent * 2 - 2];
+    float range_max = m_Ranges[iComponent * 2 - 1];
+    if (range_min <= range_max) {
+      *min = range_min;
+      *max = range_max;
+      *value = pdfium::clamp(0.0f, *min, *max);
+      return;
+    }
   }
 
-  *min = m_Ranges[iComponent * 2 - 2];
-  *max = m_Ranges[iComponent * 2 - 1];
-  *value = pdfium::clamp(0.0f, *min, *max);
+  *min = 0.0f;
+  *max = 100.0f;
+  *value = 0.0f;
 }
 
 uint32_t CPDF_LabCS::v_Load(CPDF_Document* pDoc,
