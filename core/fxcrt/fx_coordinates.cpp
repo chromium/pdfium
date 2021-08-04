@@ -413,7 +413,7 @@ float CFX_Matrix::GetXUnit() const {
     return (a > 0 ? a : -a);
   if (a == 0)
     return (b > 0 ? b : -b);
-  return sqrt(a * a + b * b);
+  return FXSYS_sqrt2(a, b);
 }
 
 float CFX_Matrix::GetYUnit() const {
@@ -421,7 +421,7 @@ float CFX_Matrix::GetYUnit() const {
     return (d > 0 ? d : -d);
   if (d == 0)
     return (c > 0 ? c : -c);
-  return sqrt(c * c + d * d);
+  return FXSYS_sqrt2(c, d);
 }
 
 CFX_FloatRect CFX_Matrix::GetUnitRect() const {
@@ -431,7 +431,7 @@ CFX_FloatRect CFX_Matrix::GetUnitRect() const {
 float CFX_Matrix::TransformXDistance(float dx) const {
   float fx = a * dx;
   float fy = b * dx;
-  return sqrt(fx * fx + fy * fy);
+  return FXSYS_sqrt2(fx, fy);
 }
 
 float CFX_Matrix::TransformDistance(float distance) const {
