@@ -11,6 +11,7 @@
 #include <utility>
 
 #include "build/build_config.h"
+#include "third_party/base/numerics/safe_math.h"
 
 #if defined(OS_WIN)
 #include <windows.h>
@@ -289,19 +290,20 @@ bool FX_CharSetIsCJK(FX_Charset uCharset) {
          (uCharset == FX_Charset::kShiftJIS);
 }
 
-int FX_WideCharToMultiByte(FX_CodePage codepage,
-                           const wchar_t* wstr,
-                           int wlen,
-                           char* buf,
-                           int buflen) {
+size_t FX_WideCharToMultiByte(FX_CodePage codepage,
+                              WideStringView wstr,
+                              pdfium::span<char> buf) {
 #if defined(OS_WIN)
-  return WideCharToMultiByte(static_cast<UINT>(codepage), 0, wstr, wlen, buf,
-                             buflen, nullptr, nullptr);
+  int input_len = pdfium::base::checked_cast<int>(wstr.GetLength());
+  int output_len = pdfium::base::checked_cast<int>(buf.size());
+  return WideCharToMultiByte(static_cast<UINT>(codepage), 0,
+                             wstr.unterminated_c_str(), input_len, buf.data(),
+                             output_len, nullptr, nullptr);
 #else
-  int len = 0;
-  for (int i = 0; i < wlen; i++) {
+  size_t len = 0;
+  for (size_t i = 0; i < wstr.GetLength(); i++) {
     if (wstr[i] < 0x100) {
-      if (buf && len < buflen)
+      if (len < buf.size())
         buf[len] = static_cast<char>(wstr[i]);
       len++;
     }
@@ -310,20 +312,20 @@ int FX_WideCharToMultiByte(FX_CodePage codepage,
 #endif
 }
 
-int FX_MultiByteToWideChar(FX_CodePage codepage,
-                           uint32_t dwFlags,
-                           const char* bstr,
-                           int blen,
-                           wchar_t* buf,
-                           int buflen) {
+size_t FX_MultiByteToWideChar(FX_CodePage codepage,
+                              ByteStringView bstr,
+                              pdfium::span<wchar_t> buf) {
 #if defined(OS_WIN)
-  return MultiByteToWideChar(static_cast<UINT>(codepage), dwFlags, bstr, blen,
-                             buf, buflen);
+  const int input_len = pdfium::base::checked_cast<int>(bstr.GetLength());
+  const int output_len = pdfium::base::checked_cast<int>(buf.size());
+  return MultiByteToWideChar(static_cast<UINT>(codepage), 0,
+                             bstr.unterminated_c_str(), input_len, buf.data(),
+                             output_len);
 #else
-  int wlen = 0;
-  for (int i = 0; i < blen; i++) {
-    if (buf && wlen < buflen)
-      buf[wlen] = reinterpret_cast<const uint8_t*>(bstr)[i];
+  size_t wlen = 0;
+  for (size_t i = 0; i < bstr.GetLength(); i++) {
+    if (wlen < buf.size())
+      buf[wlen] = reinterpret_cast<uint8_t>(bstr[i]);
     wlen++;
   }
   return wlen;

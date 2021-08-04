@@ -657,9 +657,8 @@ ByteString WideString::ToLatin1() const {
 }
 
 ByteString WideString::ToDefANSI() const {
-  int src_len = GetLength();
-  int dest_len = FX_WideCharToMultiByte(FX_CodePage::kDefANSI, c_str(), src_len,
-                                        nullptr, 0);
+  size_t dest_len =
+      FX_WideCharToMultiByte(FX_CodePage::kDefANSI, AsStringView(), {});
   if (!dest_len)
     return ByteString();
 
@@ -667,8 +666,7 @@ ByteString WideString::ToDefANSI() const {
   {
     // Span's lifetime must end before ReleaseBuffer() below.
     pdfium::span<char> dest_buf = bstr.GetBuffer(dest_len);
-    FX_WideCharToMultiByte(FX_CodePage::kDefANSI, c_str(), src_len,
-                           dest_buf.data(), dest_len);
+    FX_WideCharToMultiByte(FX_CodePage::kDefANSI, AsStringView(), dest_buf);
   }
   bstr.ReleaseBuffer(dest_len);
   return bstr;
@@ -920,9 +918,7 @@ WideString WideString::FromLatin1(ByteStringView bstr) {
 
 // static
 WideString WideString::FromDefANSI(ByteStringView bstr) {
-  int src_len = bstr.GetLength();
-  int dest_len = FX_MultiByteToWideChar(
-      FX_CodePage::kDefANSI, 0, bstr.unterminated_c_str(), src_len, nullptr, 0);
+  size_t dest_len = FX_MultiByteToWideChar(FX_CodePage::kDefANSI, bstr, {});
   if (!dest_len)
     return WideString();
 
@@ -930,8 +926,7 @@ WideString WideString::FromDefANSI(ByteStringView bstr) {
   {
     // Span's lifetime must end before ReleaseBuffer() below.
     pdfium::span<wchar_t> dest_buf = wstr.GetBuffer(dest_len);
-    FX_MultiByteToWideChar(FX_CodePage::kDefANSI, 0, bstr.unterminated_c_str(),
-                           src_len, dest_buf.data(), dest_len);
+    FX_MultiByteToWideChar(FX_CodePage::kDefANSI, bstr, dest_buf);
   }
   wstr.ReleaseBuffer(dest_len);
   return wstr;
