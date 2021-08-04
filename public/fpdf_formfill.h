@@ -1455,7 +1455,8 @@ FORM_OnLButtonDoubleClick(FPDF_FORMHANDLE hHandle,
  *       hHandle     -   Handle to the form fill module, aseturned by
  *                       FPDFDOC_InitFormFillEnvironment().
  *       page        -   Handle to the page, as returned by FPDF_LoadPage().
- *       nKeyCode    -   Indicates whether various virtual keys are down.
+ *       nKeyCode    -   The virtual-key code of the given key (see
+ *                       fpdf_fwlevent.h for virtual key codes).
  *       modifier    -   Contains the scan code, key-transition code,
  *                       previous key state, and context code.
  * Return Value:
@@ -1473,7 +1474,8 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnKeyDown(FPDF_FORMHANDLE hHandle,
  *       hHandle     -   Handle to the form fill module, as returned by
  *                       FPDFDOC_InitFormFillEnvironment().
  *       page        -   Handle to the page, as returned by FPDF_LoadPage().
- *       nKeyCode    -   The virtual-key code of the given key.
+ *       nKeyCode    -   The virtual-key code of the given key (see
+ *                       fpdf_fwlevent.h for virtual key codes).
  *       modifier    -   Contains the scan code, key-transition code,
  *                       previous key state, and context code.
  * Return Value:
@@ -1492,7 +1494,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnKeyUp(FPDF_FORMHANDLE hHandle,
  *        hHandle    -   Handle to the form fill module, as returned by
  *                       FPDFDOC_InitFormFillEnvironment().
  *        page       -   Handle to the page, as returned by FPDF_LoadPage().
- *        nChar      -   The character code value of the key.
+ *        nChar      -   The character code value itself.
  *        modifier   -   Contains the scan code, key-transition code,
  *                       previous key state, and context code.
  * Return Value:
