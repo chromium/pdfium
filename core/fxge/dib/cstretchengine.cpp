@@ -128,6 +128,11 @@ bool CStretchEngine::WeightTable::CalculateWeights(
     int end_i = floor(std::max(src_start, src_end));
     start_i = std::max(start_i, src_min);
     end_i = std::min(end_i, src_max - 1);
+    if (start_i > end_i) {
+      start_i = std::min(start_i, src_max - 1);
+      pixel_weights.SetStartEnd(start_i, start_i, weight_count);
+      continue;
+    }
     pixel_weights.SetStartEnd(start_i, end_i, weight_count);
     uint32_t remaining = kFixedPointOne;
     double rounding_error = 0.0;
