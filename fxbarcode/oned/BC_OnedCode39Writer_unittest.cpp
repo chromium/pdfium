@@ -4,7 +4,7 @@
 
 #include "fxbarcode/oned/BC_OnedCode39Writer.h"
 
-#include <cstring>
+#include <string.h>
 
 #include "core/fxcrt/fx_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"

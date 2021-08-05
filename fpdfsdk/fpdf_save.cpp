@@ -31,12 +31,6 @@
 #include "public/fpdf_formfill.h"
 #endif
 
-#if defined(OS_ANDROID)
-#include <time.h>
-#else
-#include <ctime>
-#endif
-
 namespace {
 
 #ifdef PDF_ENABLE_XFA

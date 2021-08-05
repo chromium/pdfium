@@ -6,8 +6,9 @@
 
 #include "core/fxcodec/gif/lzw_decompressor.h"
 
+#include <string.h>
+
 #include <algorithm>
-#include <cstring>
 #include <memory>
 #include <utility>
 

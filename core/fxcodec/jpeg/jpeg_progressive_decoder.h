@@ -7,7 +7,8 @@
 #ifndef CORE_FXCODEC_JPEG_JPEG_PROGRESSIVE_DECODER_H_
 #define CORE_FXCODEC_JPEG_JPEG_PROGRESSIVE_DECODER_H_
 
-#include <csetjmp>
+#include <setjmp.h>
+
 #include <memory>
 
 #include "core/fxcodec/progressive_decoder_iface.h"

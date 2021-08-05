@@ -6,7 +6,6 @@
 
 #include "core/fxge/dib/cfx_imagestretcher.h"
 
-#include <climits>
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
