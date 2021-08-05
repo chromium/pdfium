@@ -17,6 +17,7 @@
 #include "core/fxge/cfx_color.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/pwl/ipwl_systemhandler.h"
+#include "public/fpdf_fwlevent.h"
 
 class CPWL_Edit;
 class CPWL_MsgControl;
@@ -139,7 +140,7 @@ class CPWL_Wnd : public Observable {
   // Returns |true| iff this instance is still allocated.
   virtual bool InvalidateRect(const CFX_FloatRect* pRect);
 
-  virtual bool OnKeyDown(uint16_t nChar, uint32_t nFlag);
+  virtual bool OnKeyDown(FWL_VKEYCODE nKeyCode, uint32_t nFlag);
   virtual bool OnChar(uint16_t nChar, uint32_t nFlag);
   virtual bool OnLButtonDblClk(uint32_t nFlag, const CFX_PointF& point);
   virtual bool OnLButtonDown(uint32_t nFlag, const CFX_PointF& point);

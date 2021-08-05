@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "build/build_config.h"
+#include "constants/ascii.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
@@ -1037,10 +1038,10 @@ TEST_F(FPDFFormFillEmbedderTest, CheckReadOnlyInCheckbox) {
     // The read-only checkbox is initially in checked state.
     EXPECT_TRUE(FPDFAnnot_IsChecked(form_handle(), annot));
 
-    EXPECT_TRUE(FORM_OnChar(form_handle(), page, '\r', 0));
+    EXPECT_TRUE(FORM_OnChar(form_handle(), page, pdfium::ascii::kReturn, 0));
     EXPECT_TRUE(FPDFAnnot_IsChecked(form_handle(), annot));
 
-    EXPECT_TRUE(FORM_OnChar(form_handle(), page, ' ', 0));
+    EXPECT_TRUE(FORM_OnChar(form_handle(), page, pdfium::ascii::kSpace, 0));
     EXPECT_TRUE(FPDFAnnot_IsChecked(form_handle(), annot));
 
     FPDFPage_CloseAnnot(annot);
@@ -1071,10 +1072,10 @@ TEST_F(FPDFFormFillEmbedderTest, CheckReadOnlyInRadiobutton) {
     // The read-only radio button is initially in checked state.
     EXPECT_FALSE(FPDFAnnot_IsChecked(form_handle(), annot));
 
-    EXPECT_TRUE(FORM_OnChar(form_handle(), page, '\r', 0));
+    EXPECT_TRUE(FORM_OnChar(form_handle(), page, pdfium::ascii::kReturn, 0));
     EXPECT_FALSE(FPDFAnnot_IsChecked(form_handle(), annot));
 
-    EXPECT_TRUE(FORM_OnChar(form_handle(), page, ' ', 0));
+    EXPECT_TRUE(FORM_OnChar(form_handle(), page, pdfium::ascii::kSpace, 0));
     EXPECT_FALSE(FPDFAnnot_IsChecked(form_handle(), annot));
 
     FPDFPage_CloseAnnot(annot);
@@ -2346,8 +2347,8 @@ TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
   CheckIsIndexSelected(0, false);
   CheckIsIndexSelected(1, true);
 
-  // Verify that the Enter key is handled.
-  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), '\r', 0));
+  // Verify that the Return character is handled.
+  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), pdfium::ascii::kReturn, 0));
 
   // Change the selection in the combo-box using the arrow down key.
   EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Down, 0));
@@ -2355,27 +2356,28 @@ TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
   CheckIsIndexSelected(2, true);
 
   // Tab to the next control.
-  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), '\t', 0));
+  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), pdfium::ascii::kTab, 0));
 
   // Shift-tab to the previous control.
-  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), '\t', FWL_EVENTFLAG_ShiftKey));
+  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), pdfium::ascii::kTab,
+                          FWL_EVENTFLAG_ShiftKey));
 
   // Verify that the selection is unchanged.
   CheckIsIndexSelected(2, true);
 
-  // Verify that the Space key is handled.
-  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), ' ', 0));
+  // Verify that the Space character is handled.
+  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), pdfium::ascii::kSpace, 0));
 
   // Change the selection in the combo-box using the arrow down key.
   EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Down, 0));
   CheckIsIndexSelected(3, true);
 
   // Tab to the next control.
-  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), '\t', 0));
+  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), pdfium::ascii::kTab, 0));
 
   // Shift-tab to the previous control.
-  EXPECT_TRUE(
-      FORM_OnChar(form_handle(), page(), FWL_VKEY_Tab, FWL_EVENTFLAG_ShiftKey));
+  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), pdfium::ascii::kTab,
+                          FWL_EVENTFLAG_ShiftKey));
 
   // Verify that the selection is unchanged.
   CheckIsIndexSelected(3, true);
@@ -2388,8 +2390,8 @@ TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
   CheckIsIndexSelected(0, false);
   CheckIsIndexSelected(1, false);
 
-  // Verify that the Enter key is handled.
-  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), '\r', 0));
+  // Verify that the Return character is handled.
+  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), pdfium::ascii::kReturn, 0));
 
   // Change the selection in the combo-box using the arrow down key.
   EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Down, 0));
@@ -2397,16 +2399,17 @@ TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
   CheckIsIndexSelected(1, false);
 
   // Tab to the next control.
-  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), '\t', 0));
+  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), pdfium::ascii::kTab, 0));
 
   // Shift-tab to the previous control.
-  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), '\t', FWL_EVENTFLAG_ShiftKey));
+  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), pdfium::ascii::kTab,
+                          FWL_EVENTFLAG_ShiftKey));
 
   // Verify that the selection is unchanged.
   CheckIsIndexSelected(0, true);
 
-  // Verify that the Space key is handled.
-  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), ' ', 0));
+  // Verify that the Space character is handled.
+  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), pdfium::ascii::kSpace, 0));
 
   CheckFocusedFieldText(L" ");
   CheckIsIndexSelected(0, false);
@@ -3136,7 +3139,8 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, SelectAllWithKeyboardShortcut) {
 #else
   constexpr int kCorrectModifier = FWL_EVENTFLAG_ControlKey;
 #endif
-  FORM_OnChar(form_handle(), page(), '\x01', kCorrectModifier);  // CTRL-A.
+  FORM_OnChar(form_handle(), page(), pdfium::ascii::kControlA,
+              kCorrectModifier);
   CheckSelection(L"AB");
 
   // Reset the selection again.
@@ -3149,7 +3153,7 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, SelectAllWithKeyboardShortcut) {
 #else
   constexpr int kWrongModifier = FWL_EVENTFLAG_MetaKey;
 #endif
-  FORM_OnChar(form_handle(), page(), '\x01', kWrongModifier);  // CTRL-A.
+  FORM_OnChar(form_handle(), page(), pdfium::ascii::kControlA, kWrongModifier);
   CheckSelection(L"");
 }
 
@@ -3238,7 +3242,7 @@ TEST_F(FPDFFormFillActionUriTest, ButtonActionInvokeTest) {
 
   // TODO(crbug.com/1028991): Following should be changed to ASSERT_TRUE after
   // handling key press implementation on buttons.
-  ASSERT_FALSE(FORM_OnChar(form_handle(), page(), '\r', 0));
+  ASSERT_FALSE(FORM_OnChar(form_handle(), page(), pdfium::ascii::kReturn, 0));
 }
 
 TEST_F(FPDFFormFillActionUriTest, LinkActionInvokeTest) {

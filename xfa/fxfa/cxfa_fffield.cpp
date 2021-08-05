@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <utility>
 
+#include "constants/ascii.h"
 #include "third_party/base/check.h"
 #include "xfa/fgas/graphics/cfgas_gecolor.h"
 #include "xfa/fgas/graphics/cfgas_gegraphics.h"
@@ -548,7 +549,7 @@ bool CXFA_FFField::OnKeyUp(XFA_FWL_VKEYCODE dwKeyCode, uint32_t dwFlags) {
 bool CXFA_FFField::OnChar(uint32_t dwChar, uint32_t dwFlags) {
   if (!GetDoc()->GetXFADoc()->IsInteractive())
     return false;
-  if (dwChar == XFA_FWL_VKEY_Tab)
+  if (dwChar == pdfium::ascii::kTab)
     return true;
   if (!GetNormalWidget())
     return false;

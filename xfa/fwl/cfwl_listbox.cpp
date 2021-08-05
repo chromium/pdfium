@@ -158,7 +158,8 @@ void CFWL_ListBox::SetSelItem(Item* pItem, bool bSelect) {
     SetSelection(pItem, pItem, bSelect);
 }
 
-CFWL_ListBox::Item* CFWL_ListBox::GetListItem(Item* pItem, uint32_t dwKeyCode) {
+CFWL_ListBox::Item* CFWL_ListBox::GetListItem(Item* pItem,
+                                              XFA_FWL_VKEYCODE dwKeyCode) {
   Item* hRet = nullptr;
   switch (dwKeyCode) {
     case XFA_FWL_VKEY_Up:
@@ -720,7 +721,7 @@ void CFWL_ListBox::OnMouseWheel(CFWL_MessageMouseWheel* pMsg) {
 }
 
 void CFWL_ListBox::OnKeyDown(CFWL_MessageKey* pMsg) {
-  uint32_t dwKeyCode = pMsg->m_dwKeyCodeOrChar;
+  auto dwKeyCode = static_cast<XFA_FWL_VKEYCODE>(pMsg->m_dwKeyCodeOrChar);
   switch (dwKeyCode) {
     case XFA_FWL_VKEY_Tab:
     case XFA_FWL_VKEY_Up:

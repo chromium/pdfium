@@ -86,10 +86,10 @@ void CPWL_ListBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
   }
 }
 
-bool CPWL_ListBox::OnKeyDown(uint16_t nChar, uint32_t nFlag) {
-  CPWL_Wnd::OnKeyDown(nChar, nFlag);
+bool CPWL_ListBox::OnKeyDown(FWL_VKEYCODE nKeyCode, uint32_t nFlag) {
+  CPWL_Wnd::OnKeyDown(nKeyCode, nFlag);
 
-  switch (nChar) {
+  switch (nKeyCode) {
     default:
       return false;
     case FWL_VKEY_Up:
@@ -101,7 +101,7 @@ bool CPWL_ListBox::OnKeyDown(uint16_t nChar, uint32_t nFlag) {
       break;
   }
 
-  switch (nChar) {
+  switch (nKeyCode) {
     case FWL_VKEY_Up:
       m_pListCtrl->OnVK_UP(IsSHIFTKeyDown(nFlag), IsCTRLKeyDown(nFlag));
       break;
@@ -120,7 +120,7 @@ bool CPWL_ListBox::OnKeyDown(uint16_t nChar, uint32_t nFlag) {
     case FWL_VKEY_Right:
       m_pListCtrl->OnVK_RIGHT(IsSHIFTKeyDown(nFlag), IsCTRLKeyDown(nFlag));
       break;
-    case FWL_VKEY_Delete:
+    default:
       break;
   }
   OnNotifySelectionChanged(true, nFlag);

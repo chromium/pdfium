@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <utility>
 
+#include "constants/ascii.h"
 #include "fpdfsdk/pwl/cpwl_cbbutton.h"
 #include "fpdfsdk/pwl/cpwl_cblistbox.h"
 #include "fpdfsdk/pwl/cpwl_edit.h"
@@ -336,7 +337,7 @@ bool CPWL_ComboBox::SetPopup(bool bPopup) {
   return !!thisObserved;
 }
 
-bool CPWL_ComboBox::OnKeyDown(uint16_t nChar, uint32_t nFlag) {
+bool CPWL_ComboBox::OnKeyDown(FWL_VKEYCODE nKeyCode, uint32_t nFlag) {
   if (!m_pList)
     return false;
   if (!m_pEdit)
@@ -344,7 +345,7 @@ bool CPWL_ComboBox::OnKeyDown(uint16_t nChar, uint32_t nFlag) {
 
   m_nSelectItem = -1;
 
-  switch (nChar) {
+  switch (nKeyCode) {
     case FWL_VKEY_Up:
       if (m_pList->GetCurSel() > 0) {
         if (m_pFillerNotify) {
@@ -353,8 +354,8 @@ bool CPWL_ComboBox::OnKeyDown(uint16_t nChar, uint32_t nFlag) {
           if (m_pFillerNotify->OnPopupPostOpen(GetAttachedData(), nFlag))
             return false;
         }
-        if (m_pList->IsMovementKey(nChar)) {
-          if (m_pList->OnMovementKeyDown(nChar, nFlag))
+        if (m_pList->IsMovementKey(nKeyCode)) {
+          if (m_pList->OnMovementKeyDown(nKeyCode, nFlag))
             return false;
           SetSelectText();
         }
@@ -368,17 +369,19 @@ bool CPWL_ComboBox::OnKeyDown(uint16_t nChar, uint32_t nFlag) {
           if (m_pFillerNotify->OnPopupPostOpen(GetAttachedData(), nFlag))
             return false;
         }
-        if (m_pList->IsMovementKey(nChar)) {
-          if (m_pList->OnMovementKeyDown(nChar, nFlag))
+        if (m_pList->IsMovementKey(nKeyCode)) {
+          if (m_pList->OnMovementKeyDown(nKeyCode, nFlag))
             return false;
           SetSelectText();
         }
       }
       return true;
+    default:
+      break;
   }
 
   if (HasFlag(PCBS_ALLOWCUSTOMTEXT))
-    return m_pEdit->OnKeyDown(nChar, nFlag);
+    return m_pEdit->OnKeyDown(nKeyCode, nFlag);
 
   return false;
 }
@@ -393,11 +396,11 @@ bool CPWL_ComboBox::OnChar(uint16_t nChar, uint32_t nFlag) {
   // In a combo box if the ENTER/SPACE key is pressed, show the combo box
   // options.
   switch (nChar) {
-    case FWL_VKEY_Return:
+    case pdfium::ascii::kReturn:
       SetPopup(!IsPopup());
       SetSelectText();
       return true;
-    case FWL_VKEY_Space:
+    case pdfium::ascii::kSpace:
       // Show the combo box options with space only if the combo box is not
       // editable
       if (!HasFlag(PCBS_ALLOWCUSTOMTEXT)) {

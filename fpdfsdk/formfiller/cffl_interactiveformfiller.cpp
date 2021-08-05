@@ -7,6 +7,7 @@
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 
 #include "constants/access_permissions.h"
+#include "constants/ascii.h"
 #include "constants/form_flags.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fxcrt/autorestorer.h"
@@ -351,7 +352,7 @@ bool CFFL_InteractiveFormFiller::OnRButtonUp(CPDFSDK_PageView* pPageView,
 }
 
 bool CFFL_InteractiveFormFiller::OnKeyDown(CPDFSDK_Annot* pAnnot,
-                                           uint32_t nKeyCode,
+                                           FWL_VKEYCODE nKeyCode,
                                            uint32_t nFlags) {
   DCHECK_EQ(pAnnot->GetPDFAnnot()->GetSubtype(), CPDF_Annot::Subtype::WIDGET);
 
@@ -363,7 +364,7 @@ bool CFFL_InteractiveFormFiller::OnChar(CPDFSDK_Annot* pAnnot,
                                         uint32_t nChar,
                                         uint32_t nFlags) {
   DCHECK_EQ(pAnnot->GetPDFAnnot()->GetSubtype(), CPDF_Annot::Subtype::WIDGET);
-  if (nChar == FWL_VKEY_Tab)
+  if (nChar == pdfium::ascii::kTab)
     return true;
 
   CFFL_FormField* pFormField = GetFormField(pAnnot);

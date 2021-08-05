@@ -35,8 +35,8 @@ void SendCharCodeEvent(FPDF_FORMHANDLE form,
     return;
   }
 
-  int keycode = atoi(tokens[1].c_str());
-  FORM_OnChar(form, page, keycode, 0);
+  int charcode = atoi(tokens[1].c_str());
+  FORM_OnChar(form, page, charcode, 0);
 }
 
 void SendKeyCodeEvent(FPDF_FORMHANDLE form,

@@ -16,6 +16,7 @@
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/pwl/ipwl_fillernotify.h"
 #include "fpdfsdk/pwl/ipwl_systemhandler.h"
+#include "public/fpdf_fwlevent.h"
 
 class CFFL_FormField;
 class CPDFSDK_FormFillEnvironment;
@@ -75,7 +76,7 @@ class CFFL_InteractiveFormFiller final : public IPWL_FillerNotify {
                    uint32_t nFlags,
                    const CFX_PointF& point);
 
-  bool OnKeyDown(CPDFSDK_Annot* pAnnot, uint32_t nKeyCode, uint32_t nFlags);
+  bool OnKeyDown(CPDFSDK_Annot* pAnnot, FWL_VKEYCODE nKeyCode, uint32_t nFlags);
   bool OnChar(CPDFSDK_Annot* pAnnot, uint32_t nChar, uint32_t nFlags);
 
   bool OnSetFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot, uint32_t nFlag);

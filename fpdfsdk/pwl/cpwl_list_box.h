@@ -27,7 +27,7 @@ class CPWL_ListBox : public CPWL_Wnd, public CPWL_ListCtrl::NotifyIface {
   void OnDestroy() override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           const CFX_Matrix& mtUser2Device) override;
-  bool OnKeyDown(uint16_t nChar, uint32_t nFlag) override;
+  bool OnKeyDown(FWL_VKEYCODE nKeyCode, uint32_t nFlag) override;
   bool OnChar(uint16_t nChar, uint32_t nFlag) override;
   bool OnLButtonDown(uint32_t nFlag, const CFX_PointF& point) override;
   bool OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) override;

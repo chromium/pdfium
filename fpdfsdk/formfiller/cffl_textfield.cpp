@@ -8,6 +8,7 @@
 
 #include <utility>
 
+#include "constants/ascii.h"
 #include "constants/form_flags.h"
 #include "core/fpdfdoc/cpdf_bafontmap.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
@@ -108,7 +109,7 @@ bool CFFL_TextField::OnChar(CPDFSDK_Annot* pAnnot,
                             uint32_t nChar,
                             uint32_t nFlags) {
   switch (nChar) {
-    case FWL_VKEY_Return: {
+    case pdfium::ascii::kReturn: {
       if (m_pWidget->GetFieldFlags() & pdfium::form_flags::kTextMultiline)
         break;
 
@@ -130,7 +131,7 @@ bool CFFL_TextField::OnChar(CPDFSDK_Annot* pAnnot,
       DestroyPWLWindow(pPageView);
       return true;
     }
-    case FWL_VKEY_Escape: {
+    case pdfium::ascii::kEscape: {
       CPDFSDK_PageView* pPageView = GetCurPageView();
       DCHECK(pPageView);
       EscapeFiller(pPageView, true);

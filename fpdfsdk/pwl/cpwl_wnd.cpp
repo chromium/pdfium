@@ -287,22 +287,29 @@ bool CPWL_Wnd::InvalidateRect(const CFX_FloatRect* pRect) {
   return !!thisObserved;
 }
 
-#define PWL_IMPLEMENT_KEY_METHOD(key_method_name)                  \
-  bool CPWL_Wnd::key_method_name(uint16_t nChar, uint32_t nFlag) { \
-    if (!IsValid() || !IsVisible())                                \
-      return false;                                                \
-    if (!IsWndCaptureKeyboard(this))                               \
-      return false;                                                \
-    for (const auto& pChild : m_Children) {                        \
-      if (IsWndCaptureKeyboard(pChild.get()))                      \
-        return pChild->key_method_name(nChar, nFlag);              \
-    }                                                              \
-    return false;                                                  \
+bool CPWL_Wnd::OnKeyDown(FWL_VKEYCODE nKeyCode, uint32_t nFlag) {
+  if (!IsValid() || !IsVisible())
+    return false;
+  if (!IsWndCaptureKeyboard(this))
+    return false;
+  for (const auto& pChild : m_Children) {
+    if (IsWndCaptureKeyboard(pChild.get()))
+      return pChild->OnKeyDown(nKeyCode, nFlag);
   }
+  return false;
+}
 
-PWL_IMPLEMENT_KEY_METHOD(OnKeyDown)
-PWL_IMPLEMENT_KEY_METHOD(OnChar)
-#undef PWL_IMPLEMENT_KEY_METHOD
+bool CPWL_Wnd::OnChar(uint16_t nChar, uint32_t nFlag) {
+  if (!IsValid() || !IsVisible())
+    return false;
+  if (!IsWndCaptureKeyboard(this))
+    return false;
+  for (const auto& pChild : m_Children) {
+    if (IsWndCaptureKeyboard(pChild.get()))
+      return pChild->OnChar(nChar, nFlag);
+  }
+  return false;
+}
 
 #define PWL_IMPLEMENT_MOUSE_METHOD(mouse_method_name)                         \
   bool CPWL_Wnd::mouse_method_name(uint32_t nFlag, const CFX_PointF& point) { \

@@ -12,6 +12,7 @@ source_set("constants") {
     "annotation_flags.h",
     "appearance.cpp",
     "appearance.h",
+    "ascii.h",
     "form_fields.cpp",
     "form_fields.h",
     "form_flags.h",

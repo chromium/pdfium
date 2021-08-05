@@ -8,6 +8,7 @@
 
 #include <utility>
 
+#include "constants/ascii.h"
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
@@ -31,7 +32,7 @@ std::unique_ptr<CPWL_Wnd> CFFL_CheckBox::NewPWLWindow(
   return std::move(pWnd);
 }
 
-bool CFFL_CheckBox::OnKeyDown(uint32_t nKeyCode, uint32_t nFlags) {
+bool CFFL_CheckBox::OnKeyDown(FWL_VKEYCODE nKeyCode, uint32_t nFlags) {
   switch (nKeyCode) {
     case FWL_VKEY_Return:
     case FWL_VKEY_Space:
@@ -44,8 +45,8 @@ bool CFFL_CheckBox::OnChar(CPDFSDK_Annot* pAnnot,
                            uint32_t nChar,
                            uint32_t nFlags) {
   switch (nChar) {
-    case FWL_VKEY_Return:
-    case FWL_VKEY_Space: {
+    case pdfium::ascii::kReturn:
+    case pdfium::ascii::kSpace: {
       CPDFSDK_PageView* pPageView = pAnnot->GetPageView();
       DCHECK(pPageView);
 

@@ -30,7 +30,7 @@ class CPWL_ComboBox final : public CPWL_Wnd {
 
   // CPWL_Wnd:
   void OnDestroy() override;
-  bool OnKeyDown(uint16_t nChar, uint32_t nFlag) override;
+  bool OnKeyDown(FWL_VKEYCODE nChar, uint32_t nFlag) override;
   bool OnChar(uint16_t nChar, uint32_t nFlag) override;
   void NotifyLButtonDown(CPWL_Wnd* child, const CFX_PointF& pos) override;
   void NotifyLButtonUp(CPWL_Wnd* child, const CFX_PointF& pos) override;

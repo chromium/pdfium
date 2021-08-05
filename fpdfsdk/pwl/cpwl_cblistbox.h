@@ -11,6 +11,7 @@
 
 #include "fpdfsdk/pwl/cpwl_list_box.h"
 #include "fpdfsdk/pwl/ipwl_systemhandler.h"
+#include "public/fpdf_fwlevent.h"
 
 class CPWL_CBListBox final : public CPWL_ListBox {
  public:
@@ -22,8 +23,8 @@ class CPWL_CBListBox final : public CPWL_ListBox {
   // CPWL_ListBox
   bool OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) override;
 
-  bool IsMovementKey(uint16_t nChar) const;
-  bool OnMovementKeyDown(uint16_t nChar, uint32_t nFlag);
+  bool IsMovementKey(FWL_VKEYCODE nKeyCode) const;
+  bool OnMovementKeyDown(FWL_VKEYCODE nKyeCode, uint32_t nFlag);
   bool IsChar(uint16_t nChar, uint32_t nFlag) const;
   bool OnCharNotify(uint16_t nChar, uint32_t nFlag);
 };

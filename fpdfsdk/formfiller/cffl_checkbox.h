@@ -23,7 +23,7 @@ class CFFL_CheckBox final : public CFFL_Button {
       const CPWL_Wnd::CreateParams& cp,
       std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData)
       override;
-  bool OnKeyDown(uint32_t nKeyCode, uint32_t nFlags) override;
+  bool OnKeyDown(FWL_VKEYCODE nKeyCode, uint32_t nFlags) override;
   bool OnChar(CPDFSDK_Annot* pAnnot, uint32_t nChar, uint32_t nFlags) override;
   bool OnLButtonUp(CPDFSDK_PageView* pPageView,
                    CPDFSDK_Annot* pAnnot,

@@ -85,6 +85,7 @@ source_set("fxfa") {
     "fxfa_basic.h",
   ]
   deps = [
+    "../../constants",
     "../../core/fpdfapi/parser",
     "../../core/fpdfdoc",
     "../../core/fxcodec",

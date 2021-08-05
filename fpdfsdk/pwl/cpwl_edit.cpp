@@ -11,6 +11,7 @@
 #include <sstream>
 #include <utility>
 
+#include "constants/ascii.h"
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfdoc/cpvt_word.h"
 #include "core/fpdfdoc/ipvt_fontmap.h"
@@ -333,11 +334,11 @@ bool CPWL_Edit::IsVScrollBarVisible() const {
   return pScroll && pScroll->IsVisible();
 }
 
-bool CPWL_Edit::OnKeyDown(uint16_t nChar, uint32_t nFlag) {
+bool CPWL_Edit::OnKeyDown(FWL_VKEYCODE nKeyCode, uint32_t nFlag) {
   if (m_bMouseDown)
     return true;
 
-  if (nChar == FWL_VKEY_Delete) {
+  if (nKeyCode == FWL_VKEY_Delete) {
     if (m_pFillerNotify) {
       WideString strChange;
       WideString strChangeEx;
@@ -367,27 +368,27 @@ bool CPWL_Edit::OnKeyDown(uint16_t nChar, uint32_t nFlag) {
     }
   }
 
-  bool bRet = OnKeyDownInternal(nChar, nFlag);
+  bool bRet = OnKeyDownInternal(nKeyCode, nFlag);
 
   // In case of implementation swallow the OnKeyDown event.
-  if (IsProceedtoOnChar(nChar, nFlag))
+  if (IsProceedtoOnChar(nKeyCode, nFlag))
     return true;
 
   return bRet;
 }
 
 // static
-bool CPWL_Edit::IsProceedtoOnChar(uint16_t nKeyCode, uint32_t nFlag) {
+bool CPWL_Edit::IsProceedtoOnChar(FWL_VKEYCODE nKeyCode, uint32_t nFlag) {
   bool bCtrl = IsPlatformShortcutKey(nFlag);
   bool bAlt = IsALTKeyDown(nFlag);
   if (bCtrl && !bAlt) {
     // hot keys for edit control.
     switch (nKeyCode) {
-      case 'C':
-      case 'V':
-      case 'X':
-      case 'A':
-      case 'Z':
+      case FWL_VKEY_A:
+      case FWL_VKEY_C:
+      case FWL_VKEY_V:
+      case FWL_VKEY_X:
+      case FWL_VKEY_Z:
         return true;
       default:
         break;
@@ -421,11 +422,11 @@ bool CPWL_Edit::OnChar(uint16_t nChar, uint32_t nFlag) {
       std::tie(nSelStart, nSelEnd) = GetSelection();
 
       switch (nChar) {
-        case FWL_VKEY_Back:
+        case pdfium::ascii::kBackspace:
           if (nSelStart == nSelEnd)
             nSelStart = nSelEnd - 1;
           break;
-        case FWL_VKEY_Return:
+        case pdfium::ascii::kReturn:
           break;
         default:
           swChange += nChar;
@@ -551,14 +552,14 @@ float CPWL_Edit::GetFontSize() const {
   return m_pEditImpl->GetFontSize();
 }
 
-bool CPWL_Edit::OnKeyDownInternal(uint16_t nChar, uint32_t nFlag) {
+bool CPWL_Edit::OnKeyDownInternal(FWL_VKEYCODE nKeyCode, uint32_t nFlag) {
   if (m_bMouseDown)
     return true;
 
-  bool bRet = CPWL_Wnd::OnKeyDown(nChar, nFlag);
+  bool bRet = CPWL_Wnd::OnKeyDown(nKeyCode, nFlag);
 
   // FILTER
-  switch (nChar) {
+  switch (nKeyCode) {
     default:
       return false;
     case FWL_VKEY_Delete:
@@ -569,23 +570,18 @@ bool CPWL_Edit::OnKeyDownInternal(uint16_t nChar, uint32_t nFlag) {
     case FWL_VKEY_Home:
     case FWL_VKEY_End:
     case FWL_VKEY_Insert:
-    case 'C':
-    case 'V':
-    case 'X':
-    case 'A':
-    case 'Z':
-    case 'c':
-    case 'v':
-    case 'x':
-    case 'a':
-    case 'z':
+    case FWL_VKEY_A:
+    case FWL_VKEY_C:
+    case FWL_VKEY_V:
+    case FWL_VKEY_X:
+    case FWL_VKEY_Z:
       break;
   }
 
-  if (nChar == FWL_VKEY_Delete && m_pEditImpl->IsSelected())
-    nChar = FWL_VKEY_Unknown;
+  if (nKeyCode == FWL_VKEY_Delete && m_pEditImpl->IsSelected())
+    nKeyCode = FWL_VKEY_Unknown;
 
-  switch (nChar) {
+  switch (nKeyCode) {
     case FWL_VKEY_Delete:
       Delete();
       return true;
@@ -632,8 +628,8 @@ bool CPWL_Edit::OnCharInternal(uint16_t nChar, uint32_t nFlag) {
 
   // FILTER
   switch (nChar) {
-    case 0x0A:
-    case 0x1B:
+    case pdfium::ascii::kNewline:
+    case pdfium::ascii::kEscape:
       return false;
     default:
       break;
@@ -647,19 +643,19 @@ bool CPWL_Edit::OnCharInternal(uint16_t nChar, uint32_t nFlag) {
 
   if (bCtrl && !bAlt) {
     switch (nChar) {
-      case 'C' - 'A' + 1:
+      case pdfium::ascii::kControlC:
         CopyText();
         return true;
-      case 'V' - 'A' + 1:
+      case pdfium::ascii::kControlV:
         PasteText();
         return true;
-      case 'X' - 'A' + 1:
+      case pdfium::ascii::kControlX:
         CutText();
         return true;
-      case 'A' - 'A' + 1:
+      case pdfium::ascii::kControlA:
         SelectAllText();
         return true;
-      case 'Z' - 'A' + 1:
+      case pdfium::ascii::kControlZ:
         if (bShift)
           Redo();
         else
@@ -674,19 +670,19 @@ bool CPWL_Edit::OnCharInternal(uint16_t nChar, uint32_t nFlag) {
   if (IsReadOnly())
     return true;
 
-  if (m_pEditImpl->IsSelected() && word == FWL_VKEY_Back)
-    word = FWL_VKEY_Unknown;
+  if (m_pEditImpl->IsSelected() && word == pdfium::ascii::kBackspace)
+    word = pdfium::ascii::kNul;
 
   ClearSelection();
 
   switch (word) {
-    case FWL_VKEY_Back:
+    case pdfium::ascii::kBackspace:
       Backspace();
       break;
-    case FWL_VKEY_Return:
+    case pdfium::ascii::kReturn:
       InsertReturn();
       break;
-    case FWL_VKEY_Unknown:
+    case pdfium::ascii::kNul:
       break;
     default:
       InsertWord(word, GetCharSet());

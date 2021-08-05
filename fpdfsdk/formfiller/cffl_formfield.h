@@ -66,7 +66,7 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
                            uint32_t nFlags,
                            const CFX_PointF& point);
 
-  virtual bool OnKeyDown(uint32_t nKeyCode, uint32_t nFlags);
+  virtual bool OnKeyDown(FWL_VKEYCODE nKeyCode, uint32_t nFlags);
   virtual bool OnChar(CPDFSDK_Annot* pAnnot, uint32_t nChar, uint32_t nFlags);
   virtual bool SetIndexSelected(int index, bool selected);
   virtual bool IsIndexSelected(int index);

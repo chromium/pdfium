@@ -14,6 +14,7 @@
 #include "xfa/fwl/cfwl_event.h"
 #include "xfa/fwl/cfwl_listbox.h"
 #include "xfa/fwl/cfwl_widget.h"
+#include "xfa/fwl/fwl_widgetdef.h"
 
 #define FWL_STYLEEXT_LTB_MultiSelection (1L << 0)
 #define FWL_STYLEEXT_LTB_LeftAlign (0L << 4)
@@ -81,7 +82,7 @@ class CFWL_ListBox : public CFWL_Widget {
                const Properties& properties,
                CFWL_Widget* pOuter);
 
-  Item* GetListItem(Item* hItem, uint32_t dwKeyCode);
+  Item* GetListItem(Item* hItem, XFA_FWL_VKEYCODE dwKeyCode);
   void SetSelection(Item* hStart, Item* hEnd, bool bSelected);
   Item* GetItemAtPoint(const CFX_PointF& point);
   bool ScrollToVisible(Item* hItem);

@@ -162,7 +162,7 @@ bool CFFL_FormField::OnRButtonUp(CPDFSDK_PageView* pPageView,
   return pWnd && pWnd->OnRButtonUp(nFlags, FFLtoPWL(point));
 }
 
-bool CFFL_FormField::OnKeyDown(uint32_t nKeyCode, uint32_t nFlags) {
+bool CFFL_FormField::OnKeyDown(FWL_VKEYCODE nKeyCode, uint32_t nFlags) {
   if (!IsValid())
     return false;
 

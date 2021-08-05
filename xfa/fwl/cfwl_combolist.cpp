@@ -206,7 +206,7 @@ bool CFWL_ComboList::OnDropListKey(CFWL_MessageKey* pKey) {
 }
 
 void CFWL_ComboList::OnDropListKeyDown(CFWL_MessageKey* pKey) {
-  uint32_t dwKeyCode = pKey->m_dwKeyCodeOrChar;
+  auto dwKeyCode = static_cast<XFA_FWL_VKEYCODE>(pKey->m_dwKeyCodeOrChar);
   switch (dwKeyCode) {
     case XFA_FWL_VKEY_Up:
     case XFA_FWL_VKEY_Down:

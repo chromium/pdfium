@@ -40,7 +40,7 @@ class CPWL_Edit final : public CPWL_Wnd {
   bool OnMouseWheel(uint32_t nFlag,
                     const CFX_PointF& point,
                     const CFX_Vector& delta) override;
-  bool OnKeyDown(uint16_t nChar, uint32_t nFlag) override;
+  bool OnKeyDown(FWL_VKEYCODE nChar, uint32_t nFlag) override;
   bool OnChar(uint16_t nChar, uint32_t nFlag) override;
   CFX_FloatRect GetFocusRect() const override;
   void OnSetFocus() override;
@@ -107,9 +107,9 @@ class CPWL_Edit final : public CPWL_Wnd {
   // In case of implementation swallow the OnKeyDown event. If the event is
   // swallowed, implementation may do other unexpected things, which is not the
   // control means to do.
-  static bool IsProceedtoOnChar(uint16_t nKeyCode, uint32_t nFlag);
+  static bool IsProceedtoOnChar(FWL_VKEYCODE nKeyCode, uint32_t nFlag);
 
-  bool OnKeyDownInternal(uint16_t nChar, uint32_t nFlag);
+  bool OnKeyDownInternal(FWL_VKEYCODE nKeyCode, uint32_t nFlag);
   bool OnCharInternal(uint16_t nChar, uint32_t nFlag);
 
   void CopyText();
