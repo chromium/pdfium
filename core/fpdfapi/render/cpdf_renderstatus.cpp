@@ -7,7 +7,6 @@
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
 
 #include <algorithm>
-#include <cmath>
 #include <memory>
 #include <numeric>
 #include <set>

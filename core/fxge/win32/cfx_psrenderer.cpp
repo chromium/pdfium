@@ -6,8 +6,9 @@
 
 #include "core/fxge/win32/cfx_psrenderer.h"
 
+#include <math.h>
+
 #include <algorithm>
-#include <cmath>
 #include <memory>
 #include <sstream>
 #include <utility>
@@ -571,7 +572,7 @@ bool CFX_PSRenderer::DrawText(int nChars,
   float scale =
       std::min(mtObject2Device.GetXUnit(), mtObject2Device.GetYUnit());
   static constexpr float kEpsilon = 0.01f;
-  if (std::fabs(font_size * scale) < kEpsilon)
+  if (fabsf(font_size * scale) < kEpsilon)
     return true;
 
   StartRendering();

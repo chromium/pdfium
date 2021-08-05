@@ -7,7 +7,6 @@
 #include "xfa/fxfa/cxfa_ffwidget.h"
 
 #include <algorithm>
-#include <cmath>
 #include <memory>
 #include <utility>
 

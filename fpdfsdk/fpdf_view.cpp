@@ -6,7 +6,6 @@
 
 #include "public/fpdfview.h"
 
-#include <cmath>
 #include <memory>
 #include <utility>
 #include <vector>

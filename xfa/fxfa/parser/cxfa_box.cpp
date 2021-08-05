@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_box.h"
 
+#include <math.h>
+
 #include <algorithm>
-#include <cmath>
 #include <utility>
 
 #include "fxjs/xfa/cjx_object.h"
@@ -222,7 +223,7 @@ void CXFA_Box::DrawFill(const std::vector<CXFA_Stroke*>& strokes,
   XFA_Element type = GetElementType();
   if (type == XFA_Element::Arc || forceRound) {
     CXFA_Edge* edge = GetEdgeIfExists(0);
-    float fThickness = std::fmax(0.0, edge ? edge->GetThickness() : 0);
+    float fThickness = fmax(0.0, edge ? edge->GetThickness() : 0);
     float fHalf = fThickness / 2;
     XFA_AttributeValue iHand = GetHand();
     if (iHand == XFA_AttributeValue::Left)

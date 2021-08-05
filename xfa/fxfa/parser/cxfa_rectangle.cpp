@@ -6,7 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_rectangle.h"
 
-#include <cmath>
+#include <math.h>
+
 #include <utility>
 
 #include "fxjs/xfa/cjx_node.h"
@@ -227,7 +228,7 @@ void CXFA_Rectangle::Draw(const std::vector<CXFA_Stroke*>& strokes,
     return;
 
   for (int32_t i = 1; i < 8; i += 2) {
-    float fThickness = std::fmax(0.0, strokes[i]->GetThickness());
+    float fThickness = fmax(0.0, strokes[i]->GetThickness());
     float fHalf = fThickness / 2;
     XFA_AttributeValue iHand = GetHand();
     switch (i) {
