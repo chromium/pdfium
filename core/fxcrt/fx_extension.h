@@ -7,12 +7,10 @@
 #ifndef CORE_FXCRT_FX_EXTENSION_H_
 #define CORE_FXCRT_FX_EXTENSION_H_
 
+#include <ctype.h>
 #include <math.h>
 #include <time.h>
-
-#include <cctype>
-#include <cwctype>
-#include <memory>
+#include <wctype.h>
 
 #if defined(USE_SYSTEM_ICUUC)
 #include <unicode/uchar.h>
@@ -75,11 +73,11 @@ inline bool FXSYS_IsOctalDigit(char c) {
 }
 
 inline bool FXSYS_IsHexDigit(char c) {
-  return !((c & 0x80) || !std::isxdigit(c));
+  return !((c & 0x80) || !isxdigit(c));
 }
 
 inline bool FXSYS_IsWideHexDigit(wchar_t c) {
-  return !((c & 0xFFFFFF80) || !std::isxdigit(c));
+  return !((c & 0xFFFFFF80) || !isxdigit(c));
 }
 
 inline int FXSYS_HexCharToInt(char c) {
@@ -92,16 +90,16 @@ inline int FXSYS_HexCharToInt(char c) {
 inline int FXSYS_WideHexCharToInt(wchar_t c) {
   if (!FXSYS_IsWideHexDigit(c))
     return 0;
-  char upchar = std::toupper(static_cast<char>(c));
+  char upchar = toupper(static_cast<char>(c));
   return upchar > '9' ? upchar - 'A' + 10 : upchar - '0';
 }
 
 inline bool FXSYS_IsDecimalDigit(char c) {
-  return !((c & 0x80) || !std::isdigit(c));
+  return !((c & 0x80) || !isdigit(c));
 }
 
 inline bool FXSYS_IsDecimalDigit(wchar_t c) {
-  return !((c & 0xFFFFFF80) || !std::iswdigit(c));
+  return !((c & 0xFFFFFF80) || !iswdigit(c));
 }
 
 inline int FXSYS_DecimalCharToInt(char c) {

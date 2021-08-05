@@ -6,8 +6,8 @@
 
 #include "core/fpdftext/cpdf_textpagefind.h"
 
-#include <cwchar>
-#include <cwctype>
+#include <wchar.h>
+
 #include <vector>
 
 #include "core/fpdftext/cpdf_textpage.h"
@@ -96,7 +96,7 @@ Optional<WideString> ExtractSubString(const wchar_t* lpszFullString,
   DCHECK(lpszFullString);
 
   while (iSubString--) {
-    lpszFullString = std::wcschr(lpszFullString, L' ');
+    lpszFullString = wcschr(lpszFullString, L' ');
     if (!lpszFullString)
       return pdfium::nullopt;
 
@@ -105,7 +105,7 @@ Optional<WideString> ExtractSubString(const wchar_t* lpszFullString,
       lpszFullString++;
   }
 
-  const wchar_t* lpchEnd = std::wcschr(lpszFullString, L' ');
+  const wchar_t* lpchEnd = wcschr(lpszFullString, L' ');
   int nLen = lpchEnd ? static_cast<int>(lpchEnd - lpszFullString)
                      : static_cast<int>(wcslen(lpszFullString));
   if (nLen < 0)

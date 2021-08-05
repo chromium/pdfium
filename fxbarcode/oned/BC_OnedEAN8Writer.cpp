@@ -25,7 +25,6 @@
 #include <math.h>
 
 #include <algorithm>
-#include <cwctype>
 #include <memory>
 #include <vector>
 

@@ -7,7 +7,6 @@
 #include <limits.h>
 
 #include <algorithm>
-#include <cwchar>
 #include <memory>
 #include <string>
 #include <vector>

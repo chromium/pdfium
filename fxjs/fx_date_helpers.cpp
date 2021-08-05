@@ -8,6 +8,7 @@
 
 #include <math.h>
 #include <time.h>
+#include <wctype.h>
 
 #include "build/build_config.h"
 #include "core/fxcrt/fx_extension.h"
@@ -159,7 +160,7 @@ int DateFromTime(double t) {
 size_t FindSubWordLength(const WideString& str, size_t nStart) {
   pdfium::span<const wchar_t> data = str.span();
   size_t i = nStart;
-  while (i < data.size() && std::iswalnum(data[i]))
+  while (i < data.size() && iswalnum(data[i]))
     ++i;
   return i - nStart;
 }

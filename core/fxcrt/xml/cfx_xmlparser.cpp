@@ -7,7 +7,6 @@
 #include "core/fxcrt/xml/cfx_xmlparser.h"
 
 #include <algorithm>
-#include <cwctype>
 #include <iterator>
 #include <stack>
 #include <utility>

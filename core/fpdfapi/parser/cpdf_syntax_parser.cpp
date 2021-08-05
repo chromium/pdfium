@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 
+#include <ctype.h>
+
 #include <algorithm>
 #include <sstream>
 #include <utility>
@@ -336,7 +338,7 @@ ByteString CPDF_SyntaxParser::ReadHexString() {
     if (ch == '>')
       break;
 
-    if (std::isxdigit(ch)) {
+    if (isxdigit(ch)) {
       int val = FXSYS_HexCharToInt(ch);
       if (bFirst) {
         code = val * 16;

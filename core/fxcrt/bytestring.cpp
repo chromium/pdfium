@@ -6,10 +6,10 @@
 
 #include "core/fxcrt/bytestring.h"
 
+#include <ctype.h>
 #include <stddef.h>
 
 #include <algorithm>
-#include <cctype>
 #include <sstream>
 #include <string>
 #include <utility>

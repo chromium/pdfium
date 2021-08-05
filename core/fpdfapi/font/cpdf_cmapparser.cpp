@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/font/cpdf_cmapparser.h"
 
+#include <ctype.h>
+
 #include "core/fpdfapi/cmaps/fpdf_cmaps.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -145,7 +147,7 @@ uint32_t CPDF_CMapParser::GetCode(ByteStringView word) {
 
   FX_SAFE_UINT32 num = 0;
   if (word[0] == '<') {
-    for (size_t i = 1; i < word.GetLength() && std::isxdigit(word[i]); ++i) {
+    for (size_t i = 1; i < word.GetLength() && isxdigit(word[i]); ++i) {
       num = num * 16 + FXSYS_HexCharToInt(word[i]);
       if (!num.IsValid())
         return 0;
@@ -153,7 +155,7 @@ uint32_t CPDF_CMapParser::GetCode(ByteStringView word) {
     return num.ValueOrDie();
   }
 
-  for (size_t i = 0; i < word.GetLength() && std::isdigit(word[i]); ++i) {
+  for (size_t i = 0; i < word.GetLength() && isdigit(word[i]); ++i) {
     num = num * 10 + FXSYS_DecimalCharToInt(static_cast<wchar_t>(word[i]));
     if (!num.IsValid())
       return 0;

@@ -6,11 +6,11 @@
 
 #include "fxjs/xfa/cfxjse_formcalc_context.h"
 
+#include <ctype.h>
 #include <math.h>
 #include <stdlib.h>
 
 #include <algorithm>
-#include <cctype>
 #include <sstream>
 #include <utility>
 
@@ -469,7 +469,7 @@ bool IsWhitespace(char c) {
 }
 
 bool IsPartOfNumber(char ch) {
-  return std::isdigit(ch) || ch == '-' || ch == '.';
+  return isdigit(ch) || ch == '-' || ch == '.';
 }
 
 bool IsPartOfNumberW(wchar_t ch) {
@@ -517,7 +517,7 @@ bool IsIsoDateFormat(pdfium::span<const char> pData,
   char szYear[5];
   szYear[4] = '\0';
   for (int32_t i = 0; i < 4; ++i) {
-    if (!std::isdigit(pData[i]))
+    if (!isdigit(pData[i]))
       return false;
 
     szYear[i] = pData[i];
@@ -530,7 +530,7 @@ bool IsIsoDateFormat(pdfium::span<const char> pData,
   iStyle = pData[4] == '-' ? 1 : 0;
 
   size_t iPosOff = iStyle == 0 ? 4 : 5;
-  if (!std::isdigit(pData[iPosOff]) || !std::isdigit(pData[iPosOff + 1]))
+  if (!isdigit(pData[iPosOff]) || !isdigit(pData[iPosOff + 1]))
     return false;
 
   char szBuffer[3] = {};
@@ -549,7 +549,7 @@ bool IsIsoDateFormat(pdfium::span<const char> pData,
     if (pData.size() == 7)
       return true;
   }
-  if (!std::isdigit(pData[iPosOff]) || !std::isdigit(pData[iPosOff + 1]))
+  if (!isdigit(pData[iPosOff]) || !isdigit(pData[iPosOff + 1]))
     return false;
 
   szBuffer[0] = pData[iPosOff];
@@ -595,7 +595,7 @@ bool IsIsoTimeFormat(pdfium::span<const char> pData,
   size_t iZone = 0;
   size_t i = 0;
   while (i < pData.size()) {
-    if (!std::isdigit(pData[i]) && pData[i] != ':') {
+    if (!isdigit(pData[i]) && pData[i] != ':') {
       iZone = i;
       break;
     }
@@ -608,11 +608,11 @@ bool IsIsoTimeFormat(pdfium::span<const char> pData,
   size_t iPos = 0;
   size_t iIndex = 0;
   while (iIndex < iZone) {
-    if (!std::isdigit(pData[iIndex]))
+    if (!isdigit(pData[iIndex]))
       return false;
 
     szBuffer[0] = pData[iIndex];
-    if (!std::isdigit(pData[iIndex + 1]))
+    if (!isdigit(pData[iIndex + 1]))
       return false;
 
     szBuffer[1] = pData[iIndex + 1];
@@ -654,7 +654,7 @@ bool IsIsoTimeFormat(pdfium::span<const char> pData,
     char szMilliSeconds[kSubSecondLength + 1];
     for (int j = 0; j < kSubSecondLength; ++j) {
       char c = pData[iIndex + j];
-      if (!std::isdigit(c))
+      if (!isdigit(c))
         return false;
       szMilliSeconds[j] = c;
     }
@@ -682,11 +682,11 @@ bool IsIsoTimeFormat(pdfium::span<const char> pData,
   }
   iPos = 0;
   while (iIndex < pData.size()) {
-    if (!std::isdigit(pData[iIndex]))
+    if (!isdigit(pData[iIndex]))
       return false;
 
     szBuffer[0] = pData[iIndex];
-    if (!std::isdigit(pData[iIndex + 1]))
+    if (!isdigit(pData[iIndex + 1]))
       return false;
 
     szBuffer[1] = pData[iIndex + 1];
@@ -3524,7 +3524,7 @@ void CFXJSE_FormCalcContext::UnitValue(
       ++uVal;
 
     while (uVal < bsUnitTemp.GetLength()) {
-      if (!std::isdigit(pChar[uVal]) && pChar[uVal] != '.')
+      if (!isdigit(pChar[uVal]) && pChar[uVal] != '.')
         break;
       ++uVal;
     }

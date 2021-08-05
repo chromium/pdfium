@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 
+#include <ctype.h>
 #include <limits.h>
 
 #include <algorithm>
@@ -220,7 +221,7 @@ uint32_t HexDecode(pdfium::span<const uint8_t> src_span,
       ++i;
       break;
     }
-    if (!std::isxdigit(ch))
+    if (!isxdigit(ch))
       continue;
 
     int digit = FXSYS_HexCharToInt(ch);

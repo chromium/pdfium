@@ -9,7 +9,6 @@
 #include <math.h>
 
 #include <algorithm>
-#include <cwctype>
 #include <iomanip>
 #include <iterator>
 #include <limits>

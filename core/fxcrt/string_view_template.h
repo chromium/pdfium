@@ -7,8 +7,9 @@
 #ifndef CORE_FXCRT_STRING_VIEW_TEMPLATE_H_
 #define CORE_FXCRT_STRING_VIEW_TEMPLATE_H_
 
+#include <ctype.h>
+
 #include <algorithm>
-#include <cctype>
 #include <iterator>
 #include <type_traits>
 #include <vector>

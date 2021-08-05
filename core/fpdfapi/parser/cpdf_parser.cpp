@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/parser/cpdf_parser.h"
 
+#include <ctype.h>
+
 #include <algorithm>
 #include <utility>
 #include <vector>
@@ -135,13 +137,13 @@ bool CPDF_Parser::ParseFileVersion() {
   if (!m_pSyntax->GetCharAt(5, ch))
     return false;
 
-  if (std::isdigit(ch))
+  if (isdigit(ch))
     m_FileVersion = FXSYS_DecimalCharToInt(static_cast<wchar_t>(ch)) * 10;
 
   if (!m_pSyntax->GetCharAt(7, ch))
     return false;
 
-  if (std::isdigit(ch))
+  if (isdigit(ch))
     m_FileVersion += FXSYS_DecimalCharToInt(static_cast<wchar_t>(ch));
   return true;
 }
@@ -481,7 +483,7 @@ bool CPDF_Parser::ParseAndAppendCrossRefSubsectionData(
 
         if (offset.ValueOrDie() == 0) {
           for (int32_t c = 0; c < 10; c++) {
-            if (!std::isdigit(pEntry[c]))
+            if (!isdigit(pEntry[c]))
               return false;
           }
         }

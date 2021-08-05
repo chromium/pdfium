@@ -7,7 +7,6 @@
 #include "core/fxcrt/fx_extension.h"
 
 #include <algorithm>
-#include <cwctype>
 #include <limits>
 
 #include "core/fxcrt/fx_system.h"
