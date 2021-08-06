@@ -135,6 +135,6 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage_Close(FPDF_PAGE page) {
       pDevice->GetBitmap()->UnPreMultiply();
     }
 #endif
-    pPage->SetRenderContext(nullptr);
+    pPage->ClearRenderContext();
   }
 }

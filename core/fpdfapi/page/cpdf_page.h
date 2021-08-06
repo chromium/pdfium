@@ -82,9 +82,12 @@ class CPDF_Page final : public IPDF_Page, public CPDF_PageObjectHolder {
   RenderContextIface* GetRenderContext() const {
     return m_pRenderContext.get();
   }
-  void SetRenderContext(std::unique_ptr<RenderContextIface> pContext) {
-    m_pRenderContext = std::move(pContext);
-  }
+
+  // `pContext` cannot be null. `SetRenderContext()` cannot be called if the
+  // page already has a render context. Use `ClearRenderContext()` to reset the
+  // render context.
+  void SetRenderContext(std::unique_ptr<RenderContextIface> pContext);
+  void ClearRenderContext();
 
   CPDF_Document* GetPDFDocument() const { return m_pPDFDocument.Get(); }
   View* GetView() const { return m_pView.Get(); }
