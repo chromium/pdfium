@@ -12,6 +12,7 @@
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
+#include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "public/fpdf_fwlevent.h"
 
 class CFX_Matrix;
@@ -65,46 +66,50 @@ class CPDFSDK_AnnotHandlerMgr {
 
   void Annot_OnMouseEnter(CPDFSDK_PageView* pPageView,
                           ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                          uint32_t nFlags);
+                          FWL_EventFlagMask nFlags);
   void Annot_OnMouseExit(CPDFSDK_PageView* pPageView,
                          ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                         uint32_t nFlags);
+                         FWL_EventFlagMask nFlags);
   bool Annot_OnLButtonDown(CPDFSDK_PageView* pPageView,
                            ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                           uint32_t nFlags,
+                           FWL_EventFlagMask nFlags,
                            const CFX_PointF& point);
   bool Annot_OnLButtonUp(CPDFSDK_PageView* pPageView,
                          ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                         uint32_t nFlags,
+                         FWL_EventFlagMask nFlags,
                          const CFX_PointF& point);
   bool Annot_OnLButtonDblClk(CPDFSDK_PageView* pPageView,
                              ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                             uint32_t nFlags,
+                             FWL_EventFlagMask nFlags,
                              const CFX_PointF& point);
   bool Annot_OnMouseMove(CPDFSDK_PageView* pPageView,
                          ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                         uint32_t nFlags,
+                         FWL_EventFlagMask nFlags,
                          const CFX_PointF& point);
   bool Annot_OnMouseWheel(CPDFSDK_PageView* pPageView,
                           ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                          uint32_t nFlags,
+                          FWL_EventFlagMask nFlags,
                           const CFX_PointF& point,
                           const CFX_Vector& delta);
   bool Annot_OnRButtonDown(CPDFSDK_PageView* pPageView,
                            ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                           uint32_t nFlags,
+                           FWL_EventFlagMask nFlags,
                            const CFX_PointF& point);
   bool Annot_OnRButtonUp(CPDFSDK_PageView* pPageView,
                          ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                         uint32_t nFlags,
+                         FWL_EventFlagMask nFlags,
                          const CFX_PointF& point);
-  bool Annot_OnChar(CPDFSDK_Annot* pAnnot, uint32_t nChar, uint32_t nFlags);
+  bool Annot_OnChar(CPDFSDK_Annot* pAnnot,
+                    uint32_t nChar,
+                    FWL_EventFlagMask nFlags);
   bool Annot_OnKeyDown(CPDFSDK_PageView* pPageView,
                        CPDFSDK_Annot* pAnnot,
                        FWL_VKEYCODE nKeyCode,
-                       int nFlag);
-  bool Annot_OnSetFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot, uint32_t nFlag);
-  bool Annot_OnKillFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot, uint32_t nFlag);
+                       FWL_EventFlagMask nFlag);
+  bool Annot_OnSetFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+                        FWL_EventFlagMask nFlag);
+  bool Annot_OnKillFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+                         FWL_EventFlagMask nFlag);
   bool Annot_SetIndexSelected(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                               int index,
                               bool selected);

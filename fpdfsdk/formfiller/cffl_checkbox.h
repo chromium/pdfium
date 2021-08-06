@@ -23,11 +23,13 @@ class CFFL_CheckBox final : public CFFL_Button {
       const CPWL_Wnd::CreateParams& cp,
       std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData)
       override;
-  bool OnKeyDown(FWL_VKEYCODE nKeyCode, uint32_t nFlags) override;
-  bool OnChar(CPDFSDK_Annot* pAnnot, uint32_t nChar, uint32_t nFlags) override;
+  bool OnKeyDown(FWL_VKEYCODE nKeyCode, FWL_EventFlagMask nFlags) override;
+  bool OnChar(CPDFSDK_Annot* pAnnot,
+              uint32_t nChar,
+              FWL_EventFlagMask nFlags) override;
   bool OnLButtonUp(CPDFSDK_PageView* pPageView,
                    CPDFSDK_Annot* pAnnot,
-                   uint32_t nFlags,
+                   FWL_EventFlagMask nFlags,
                    const CFX_PointF& point) override;
   bool IsDataChanged(const CPDFSDK_PageView* pPageView) override;
   void SaveData(const CPDFSDK_PageView* pPageView) override;

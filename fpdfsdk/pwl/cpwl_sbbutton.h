@@ -25,9 +25,9 @@ class CPWL_SBButton final : public CPWL_Wnd {
   // CPWL_Wnd
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           const CFX_Matrix& mtUser2Device) override;
-  bool OnLButtonDown(uint32_t nFlag, const CFX_PointF& point) override;
-  bool OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) override;
-  bool OnMouseMove(uint32_t nFlag, const CFX_PointF& point) override;
+  bool OnLButtonDown(FWL_EventFlagMask nFlag, const CFX_PointF& point) override;
+  bool OnLButtonUp(FWL_EventFlagMask nFlag, const CFX_PointF& point) override;
+  bool OnMouseMove(FWL_EventFlagMask nFlag, const CFX_PointF& point) override;
 
  private:
   const Type m_eSBButtonType;

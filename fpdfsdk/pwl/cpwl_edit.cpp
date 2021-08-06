@@ -334,7 +334,7 @@ bool CPWL_Edit::IsVScrollBarVisible() const {
   return pScroll && pScroll->IsVisible();
 }
 
-bool CPWL_Edit::OnKeyDown(FWL_VKEYCODE nKeyCode, uint32_t nFlag) {
+bool CPWL_Edit::OnKeyDown(FWL_VKEYCODE nKeyCode, FWL_EventFlagMask nFlag) {
   if (m_bMouseDown)
     return true;
 
@@ -378,7 +378,8 @@ bool CPWL_Edit::OnKeyDown(FWL_VKEYCODE nKeyCode, uint32_t nFlag) {
 }
 
 // static
-bool CPWL_Edit::IsProceedtoOnChar(FWL_VKEYCODE nKeyCode, uint32_t nFlag) {
+bool CPWL_Edit::IsProceedtoOnChar(FWL_VKEYCODE nKeyCode,
+                                  FWL_EventFlagMask nFlag) {
   bool bCtrl = IsPlatformShortcutKey(nFlag);
   bool bAlt = IsALTKeyDown(nFlag);
   if (bCtrl && !bAlt) {
@@ -406,7 +407,7 @@ bool CPWL_Edit::IsProceedtoOnChar(FWL_VKEYCODE nKeyCode, uint32_t nFlag) {
   }
 }
 
-bool CPWL_Edit::OnChar(uint16_t nChar, uint32_t nFlag) {
+bool CPWL_Edit::OnChar(uint16_t nChar, FWL_EventFlagMask nFlag) {
   if (m_bMouseDown)
     return true;
 
@@ -462,7 +463,7 @@ bool CPWL_Edit::OnChar(uint16_t nChar, uint32_t nFlag) {
   return OnCharInternal(nChar, nFlag);
 }
 
-bool CPWL_Edit::OnMouseWheel(uint32_t nFlag,
+bool CPWL_Edit::OnMouseWheel(FWL_EventFlagMask nFlag,
                              const CFX_PointF& point,
                              const CFX_Vector& delta) {
   if (!HasFlag(PES_MULTILINE))
@@ -552,7 +553,8 @@ float CPWL_Edit::GetFontSize() const {
   return m_pEditImpl->GetFontSize();
 }
 
-bool CPWL_Edit::OnKeyDownInternal(FWL_VKEYCODE nKeyCode, uint32_t nFlag) {
+bool CPWL_Edit::OnKeyDownInternal(FWL_VKEYCODE nKeyCode,
+                                  FWL_EventFlagMask nFlag) {
   if (m_bMouseDown)
     return true;
 
@@ -620,7 +622,7 @@ bool CPWL_Edit::OnKeyDownInternal(FWL_VKEYCODE nKeyCode, uint32_t nFlag) {
   return bRet;
 }
 
-bool CPWL_Edit::OnCharInternal(uint16_t nChar, uint32_t nFlag) {
+bool CPWL_Edit::OnCharInternal(uint16_t nChar, FWL_EventFlagMask nFlag) {
   if (m_bMouseDown)
     return true;
 
@@ -692,7 +694,8 @@ bool CPWL_Edit::OnCharInternal(uint16_t nChar, uint32_t nFlag) {
   return true;
 }
 
-bool CPWL_Edit::OnLButtonDown(uint32_t nFlag, const CFX_PointF& point) {
+bool CPWL_Edit::OnLButtonDown(FWL_EventFlagMask nFlag,
+                              const CFX_PointF& point) {
   CPWL_Wnd::OnLButtonDown(nFlag, point);
   if (HasFlag(PES_TEXTOVERFLOW) || ClientHitTest(point)) {
     if (m_bMouseDown && !InvalidateRect(nullptr))
@@ -706,7 +709,7 @@ bool CPWL_Edit::OnLButtonDown(uint32_t nFlag, const CFX_PointF& point) {
   return true;
 }
 
-bool CPWL_Edit::OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) {
+bool CPWL_Edit::OnLButtonUp(FWL_EventFlagMask nFlag, const CFX_PointF& point) {
   CPWL_Wnd::OnLButtonUp(nFlag, point);
   if (m_bMouseDown) {
     // can receive keybord message
@@ -719,7 +722,8 @@ bool CPWL_Edit::OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) {
   return true;
 }
 
-bool CPWL_Edit::OnLButtonDblClk(uint32_t nFlag, const CFX_PointF& point) {
+bool CPWL_Edit::OnLButtonDblClk(FWL_EventFlagMask nFlag,
+                                const CFX_PointF& point) {
   CPWL_Wnd::OnLButtonDblClk(nFlag, point);
   if (HasFlag(PES_TEXTOVERFLOW) || ClientHitTest(point))
     m_pEditImpl->SelectAll();
@@ -727,7 +731,7 @@ bool CPWL_Edit::OnLButtonDblClk(uint32_t nFlag, const CFX_PointF& point) {
   return true;
 }
 
-bool CPWL_Edit::OnRButtonUp(uint32_t nFlag, const CFX_PointF& point) {
+bool CPWL_Edit::OnRButtonUp(FWL_EventFlagMask nFlag, const CFX_PointF& point) {
   if (m_bMouseDown)
     return false;
 
@@ -739,7 +743,7 @@ bool CPWL_Edit::OnRButtonUp(uint32_t nFlag, const CFX_PointF& point) {
   return false;
 }
 
-bool CPWL_Edit::OnMouseMove(uint32_t nFlag, const CFX_PointF& point) {
+bool CPWL_Edit::OnMouseMove(FWL_EventFlagMask nFlag, const CFX_PointF& point) {
   CPWL_Wnd::OnMouseMove(nFlag, point);
 
   if (m_bMouseDown)

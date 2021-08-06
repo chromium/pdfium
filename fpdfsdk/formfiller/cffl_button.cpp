@@ -29,7 +29,7 @@ void CFFL_Button::OnMouseExit(CPDFSDK_PageView* pPageView) {
 
 bool CFFL_Button::OnLButtonDown(CPDFSDK_PageView* pPageView,
                                 CPDFSDK_Annot* pAnnot,
-                                uint32_t nFlags,
+                                FWL_EventFlagMask nFlags,
                                 const CFX_PointF& point) {
   if (!pAnnot->GetRect().Contains(point))
     return false;
@@ -42,7 +42,7 @@ bool CFFL_Button::OnLButtonDown(CPDFSDK_PageView* pPageView,
 
 bool CFFL_Button::OnLButtonUp(CPDFSDK_PageView* pPageView,
                               CPDFSDK_Annot* pAnnot,
-                              uint32_t nFlags,
+                              FWL_EventFlagMask nFlags,
                               const CFX_PointF& point) {
   if (!pAnnot->GetRect().Contains(point))
     return false;
@@ -53,7 +53,7 @@ bool CFFL_Button::OnLButtonUp(CPDFSDK_PageView* pPageView,
 }
 
 bool CFFL_Button::OnMouseMove(CPDFSDK_PageView* pPageView,
-                              uint32_t nFlags,
+                              FWL_EventFlagMask nFlags,
                               const CFX_PointF& point) {
   return true;
 }

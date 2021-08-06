@@ -30,7 +30,8 @@ CPWL_CheckBox::CPWL_CheckBox(
 
 CPWL_CheckBox::~CPWL_CheckBox() = default;
 
-bool CPWL_CheckBox::OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) {
+bool CPWL_CheckBox::OnLButtonUp(FWL_EventFlagMask nFlag,
+                                const CFX_PointF& point) {
   if (IsReadOnly())
     return false;
 
@@ -38,7 +39,7 @@ bool CPWL_CheckBox::OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) {
   return true;
 }
 
-bool CPWL_CheckBox::OnChar(uint16_t nChar, uint32_t nFlag) {
+bool CPWL_CheckBox::OnChar(uint16_t nChar, FWL_EventFlagMask nFlag) {
   if (IsReadOnly())
     return false;
 
@@ -53,7 +54,8 @@ CPWL_RadioButton::CPWL_RadioButton(
 
 CPWL_RadioButton::~CPWL_RadioButton() = default;
 
-bool CPWL_RadioButton::OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) {
+bool CPWL_RadioButton::OnLButtonUp(FWL_EventFlagMask nFlag,
+                                   const CFX_PointF& point) {
   if (IsReadOnly())
     return false;
 
@@ -61,7 +63,7 @@ bool CPWL_RadioButton::OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) {
   return true;
 }
 
-bool CPWL_RadioButton::OnChar(uint16_t nChar, uint32_t nFlag) {
+bool CPWL_RadioButton::OnChar(uint16_t nChar, FWL_EventFlagMask nFlag) {
   if (IsReadOnly())
     return false;
 

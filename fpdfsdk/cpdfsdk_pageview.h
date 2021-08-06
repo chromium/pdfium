@@ -66,17 +66,17 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   bool Undo();
   bool Redo();
 
-  bool OnFocus(uint32_t nFlag, const CFX_PointF& point);
-  bool OnLButtonDown(uint32_t nFlag, const CFX_PointF& point);
-  bool OnLButtonUp(uint32_t nFlag, const CFX_PointF& point);
-  bool OnLButtonDblClk(uint32_t nFlag, const CFX_PointF& point);
-  bool OnRButtonDown(uint32_t nFlag, const CFX_PointF& point);
-  bool OnRButtonUp(uint32_t nFlag, const CFX_PointF& point);
-  bool OnChar(uint32_t nChar, uint32_t nFlag);
-  bool OnKeyDown(FWL_VKEYCODE nKeyCode, int nFlag);
-  bool OnKeyUp(FWL_VKEYCODE nKeyCode, int nFlag);
-  bool OnMouseMove(int nFlag, const CFX_PointF& point);
-  bool OnMouseWheel(int nFlag,
+  bool OnFocus(FWL_EventFlagMask nFlag, const CFX_PointF& point);
+  bool OnLButtonDown(FWL_EventFlagMask nFlag, const CFX_PointF& point);
+  bool OnLButtonUp(FWL_EventFlagMask nFlag, const CFX_PointF& point);
+  bool OnLButtonDblClk(FWL_EventFlagMask nFlag, const CFX_PointF& point);
+  bool OnRButtonDown(FWL_EventFlagMask nFlag, const CFX_PointF& point);
+  bool OnRButtonUp(FWL_EventFlagMask nFlag, const CFX_PointF& point);
+  bool OnChar(uint32_t nChar, FWL_EventFlagMask nFlag);
+  bool OnKeyDown(FWL_VKEYCODE nKeyCode, FWL_EventFlagMask nFlag);
+  bool OnKeyUp(FWL_VKEYCODE nKeyCode, FWL_EventFlagMask nFlag);
+  bool OnMouseMove(FWL_EventFlagMask nFlag, const CFX_PointF& point);
+  bool OnMouseWheel(FWL_EventFlagMask nFlag,
                     const CFX_PointF& point,
                     const CFX_Vector& delta);
 
@@ -104,10 +104,10 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
 
   void EnterWidget(CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr,
                    ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                   uint32_t nFlag);
+                   FWL_EventFlagMask nFlag);
   void ExitWidget(CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr,
                   bool callExitCallback,
-                  uint32_t nFlag);
+                  FWL_EventFlagMask nFlag);
 
   CFX_Matrix m_curMatrix;
   UnownedPtr<IPDF_Page> const m_page;

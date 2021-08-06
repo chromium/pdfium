@@ -275,7 +275,8 @@ bool CPDFSDK_PageView::Redo() {
   return false;
 }
 
-bool CPDFSDK_PageView::OnFocus(uint32_t nFlag, const CFX_PointF& point) {
+bool CPDFSDK_PageView::OnFocus(FWL_EventFlagMask nFlag,
+                               const CFX_PointF& point) {
   ObservedPtr<CPDFSDK_Annot> pAnnot(GetFXWidgetAtPoint(point));
   if (!pAnnot) {
     m_pFormFillEnv->KillFocusAnnot(nFlag);
@@ -286,7 +287,8 @@ bool CPDFSDK_PageView::OnFocus(uint32_t nFlag, const CFX_PointF& point) {
   return true;
 }
 
-bool CPDFSDK_PageView::OnLButtonDown(uint32_t nFlag, const CFX_PointF& point) {
+bool CPDFSDK_PageView::OnLButtonDown(FWL_EventFlagMask nFlag,
+                                     const CFX_PointF& point) {
   ObservedPtr<CPDFSDK_Annot> pAnnot(GetFXWidgetAtPoint(point));
   if (!pAnnot) {
     m_pFormFillEnv->KillFocusAnnot(nFlag);
@@ -305,7 +307,8 @@ bool CPDFSDK_PageView::OnLButtonDown(uint32_t nFlag, const CFX_PointF& point) {
   return true;
 }
 
-bool CPDFSDK_PageView::OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) {
+bool CPDFSDK_PageView::OnLButtonUp(FWL_EventFlagMask nFlag,
+                                   const CFX_PointF& point) {
   CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
       m_pFormFillEnv->GetAnnotHandlerMgr();
   ObservedPtr<CPDFSDK_Annot> pFXAnnot(GetFXWidgetAtPoint(point));
@@ -319,7 +322,7 @@ bool CPDFSDK_PageView::OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) {
          pAnnotHandlerMgr->Annot_OnLButtonUp(this, &pFXAnnot, nFlag, point);
 }
 
-bool CPDFSDK_PageView::OnLButtonDblClk(uint32_t nFlag,
+bool CPDFSDK_PageView::OnLButtonDblClk(FWL_EventFlagMask nFlag,
                                        const CFX_PointF& point) {
   ObservedPtr<CPDFSDK_Annot> pAnnot(GetFXWidgetAtPoint(point));
   if (!pAnnot) {
@@ -339,7 +342,8 @@ bool CPDFSDK_PageView::OnLButtonDblClk(uint32_t nFlag,
   return true;
 }
 
-bool CPDFSDK_PageView::OnRButtonDown(uint32_t nFlag, const CFX_PointF& point) {
+bool CPDFSDK_PageView::OnRButtonDown(FWL_EventFlagMask nFlag,
+                                     const CFX_PointF& point) {
   ObservedPtr<CPDFSDK_Annot> pAnnot(GetFXWidgetAtPoint(point));
   if (!pAnnot)
     return false;
@@ -356,7 +360,8 @@ bool CPDFSDK_PageView::OnRButtonDown(uint32_t nFlag, const CFX_PointF& point) {
   return true;
 }
 
-bool CPDFSDK_PageView::OnRButtonUp(uint32_t nFlag, const CFX_PointF& point) {
+bool CPDFSDK_PageView::OnRButtonUp(FWL_EventFlagMask nFlag,
+                                   const CFX_PointF& point) {
   ObservedPtr<CPDFSDK_Annot> pAnnot(GetFXWidgetAtPoint(point));
   if (!pAnnot)
     return false;
@@ -373,7 +378,8 @@ bool CPDFSDK_PageView::OnRButtonUp(uint32_t nFlag, const CFX_PointF& point) {
   return true;
 }
 
-bool CPDFSDK_PageView::OnMouseMove(int nFlag, const CFX_PointF& point) {
+bool CPDFSDK_PageView::OnMouseMove(FWL_EventFlagMask nFlag,
+                                   const CFX_PointF& point) {
   CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
       m_pFormFillEnv->GetAnnotHandlerMgr();
 
@@ -405,7 +411,7 @@ bool CPDFSDK_PageView::OnMouseMove(int nFlag, const CFX_PointF& point) {
 
 void CPDFSDK_PageView::EnterWidget(CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr,
                                    ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                                   uint32_t nFlag) {
+                                   FWL_EventFlagMask nFlag) {
   m_bOnWidget = true;
   m_pCaptureWidget.Reset(pAnnot->Get());
   pAnnotHandlerMgr->Annot_OnMouseEnter(this, pAnnot, nFlag);
@@ -413,7 +419,7 @@ void CPDFSDK_PageView::EnterWidget(CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr,
 
 void CPDFSDK_PageView::ExitWidget(CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr,
                                   bool callExitCallback,
-                                  uint32_t nFlag) {
+                                  FWL_EventFlagMask nFlag) {
   m_bOnWidget = false;
   if (!m_pCaptureWidget)
     return;
@@ -430,7 +436,7 @@ void CPDFSDK_PageView::ExitWidget(CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr,
   m_pCaptureWidget.Reset();
 }
 
-bool CPDFSDK_PageView::OnMouseWheel(int nFlag,
+bool CPDFSDK_PageView::OnMouseWheel(FWL_EventFlagMask nFlag,
                                     const CFX_PointF& point,
                                     const CFX_Vector& delta) {
   ObservedPtr<CPDFSDK_Annot> pAnnot(GetFXWidgetAtPoint(point));
@@ -466,7 +472,7 @@ bool CPDFSDK_PageView::IsIndexSelected(int index) {
   return false;
 }
 
-bool CPDFSDK_PageView::OnChar(uint32_t nChar, uint32_t nFlag) {
+bool CPDFSDK_PageView::OnChar(uint32_t nChar, FWL_EventFlagMask nFlag) {
   if (CPDFSDK_Annot* pAnnot = GetFocusAnnot()) {
     CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
         m_pFormFillEnv->GetAnnotHandlerMgr();
@@ -476,14 +482,15 @@ bool CPDFSDK_PageView::OnChar(uint32_t nChar, uint32_t nFlag) {
   return false;
 }
 
-bool CPDFSDK_PageView::OnKeyDown(FWL_VKEYCODE nKeyCode, int nFlag) {
+bool CPDFSDK_PageView::OnKeyDown(FWL_VKEYCODE nKeyCode,
+                                 FWL_EventFlagMask nFlag) {
   CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
       m_pFormFillEnv->GetAnnotHandlerMgr();
   return pAnnotHandlerMgr->Annot_OnKeyDown(this, GetFocusAnnot(), nKeyCode,
                                            nFlag);
 }
 
-bool CPDFSDK_PageView::OnKeyUp(FWL_VKEYCODE nKeyCode, int nFlag) {
+bool CPDFSDK_PageView::OnKeyUp(FWL_VKEYCODE nKeyCode, FWL_EventFlagMask nFlag) {
   return false;
 }
 

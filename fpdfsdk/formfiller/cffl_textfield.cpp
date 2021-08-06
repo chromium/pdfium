@@ -107,7 +107,7 @@ std::unique_ptr<CPWL_Wnd> CFFL_TextField::NewPWLWindow(
 
 bool CFFL_TextField::OnChar(CPDFSDK_Annot* pAnnot,
                             uint32_t nChar,
-                            uint32_t nFlags) {
+                            FWL_EventFlagMask nFlags) {
   switch (nChar) {
     case pdfium::ascii::kReturn: {
       if (m_pWidget->GetFieldFlags() & pdfium::form_flags::kTextMultiline)

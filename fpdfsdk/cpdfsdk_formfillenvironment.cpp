@@ -741,7 +741,7 @@ bool CPDFSDK_FormFillEnvironment::SetFocusAnnot(
   return true;
 }
 
-bool CPDFSDK_FormFillEnvironment::KillFocusAnnot(uint32_t nFlag) {
+bool CPDFSDK_FormFillEnvironment::KillFocusAnnot(FWL_EventFlagMask nFlag) {
   if (!m_pFocusAnnot)
     return false;
 

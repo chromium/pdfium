@@ -113,7 +113,8 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
   }
 }
 
-bool CPWL_SBButton::OnLButtonDown(uint32_t nFlag, const CFX_PointF& point) {
+bool CPWL_SBButton::OnLButtonDown(FWL_EventFlagMask nFlag,
+                                  const CFX_PointF& point) {
   CPWL_Wnd::OnLButtonDown(nFlag, point);
 
   if (CPWL_Wnd* pParent = GetParentWindow())
@@ -125,7 +126,8 @@ bool CPWL_SBButton::OnLButtonDown(uint32_t nFlag, const CFX_PointF& point) {
   return true;
 }
 
-bool CPWL_SBButton::OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) {
+bool CPWL_SBButton::OnLButtonUp(FWL_EventFlagMask nFlag,
+                                const CFX_PointF& point) {
   CPWL_Wnd::OnLButtonUp(nFlag, point);
 
   if (CPWL_Wnd* pParent = GetParentWindow())
@@ -137,7 +139,8 @@ bool CPWL_SBButton::OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) {
   return true;
 }
 
-bool CPWL_SBButton::OnMouseMove(uint32_t nFlag, const CFX_PointF& point) {
+bool CPWL_SBButton::OnMouseMove(FWL_EventFlagMask nFlag,
+                                const CFX_PointF& point) {
   CPWL_Wnd::OnMouseMove(nFlag, point);
 
   if (CPWL_Wnd* pParent = GetParentWindow())

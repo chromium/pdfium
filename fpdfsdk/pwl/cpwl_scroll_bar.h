@@ -104,8 +104,8 @@ class CPWL_ScrollBar final : public CPWL_Wnd, public CFX_Timer::CallbackIface {
   bool RePosChildWnd() override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           const CFX_Matrix& mtUser2Device) override;
-  bool OnLButtonDown(uint32_t nFlag, const CFX_PointF& point) override;
-  bool OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) override;
+  bool OnLButtonDown(FWL_EventFlagMask nFlag, const CFX_PointF& point) override;
+  bool OnLButtonUp(FWL_EventFlagMask nFlag, const CFX_PointF& point) override;
   void SetScrollInfo(const PWL_SCROLL_INFO& info) override;
   void SetScrollPosition(float pos) override;
   void NotifyLButtonDown(CPWL_Wnd* child, const CFX_PointF& pos) override;

@@ -110,27 +110,27 @@ class CPWL_MsgControl final : public Observable {
 };
 
 // static
-bool CPWL_Wnd::IsSHIFTKeyDown(uint32_t nFlag) {
+bool CPWL_Wnd::IsSHIFTKeyDown(FWL_EventFlagMask nFlag) {
   return !!(nFlag & FWL_EVENTFLAG_ShiftKey);
 }
 
 // static
-bool CPWL_Wnd::IsCTRLKeyDown(uint32_t nFlag) {
+bool CPWL_Wnd::IsCTRLKeyDown(FWL_EventFlagMask nFlag) {
   return !!(nFlag & FWL_EVENTFLAG_ControlKey);
 }
 
 // static
-bool CPWL_Wnd::IsALTKeyDown(uint32_t nFlag) {
+bool CPWL_Wnd::IsALTKeyDown(FWL_EventFlagMask nFlag) {
   return !!(nFlag & FWL_EVENTFLAG_AltKey);
 }
 
 // static
-bool CPWL_Wnd::IsMETAKeyDown(uint32_t nFlag) {
+bool CPWL_Wnd::IsMETAKeyDown(FWL_EventFlagMask nFlag) {
   return !!(nFlag & FWL_EVENTFLAG_MetaKey);
 }
 
 // static
-bool CPWL_Wnd::IsPlatformShortcutKey(uint32_t nFlag) {
+bool CPWL_Wnd::IsPlatformShortcutKey(FWL_EventFlagMask nFlag) {
 #if defined(OS_APPLE)
   return IsMETAKeyDown(nFlag);
 #else
@@ -287,7 +287,7 @@ bool CPWL_Wnd::InvalidateRect(const CFX_FloatRect* pRect) {
   return !!thisObserved;
 }
 
-bool CPWL_Wnd::OnKeyDown(FWL_VKEYCODE nKeyCode, uint32_t nFlag) {
+bool CPWL_Wnd::OnKeyDown(FWL_VKEYCODE nKeyCode, FWL_EventFlagMask nFlag) {
   if (!IsValid() || !IsVisible())
     return false;
   if (!IsWndCaptureKeyboard(this))
@@ -299,7 +299,7 @@ bool CPWL_Wnd::OnKeyDown(FWL_VKEYCODE nKeyCode, uint32_t nFlag) {
   return false;
 }
 
-bool CPWL_Wnd::OnChar(uint16_t nChar, uint32_t nFlag) {
+bool CPWL_Wnd::OnChar(uint16_t nChar, FWL_EventFlagMask nFlag) {
   if (!IsValid() || !IsVisible())
     return false;
   if (!IsWndCaptureKeyboard(this))
@@ -311,27 +311,28 @@ bool CPWL_Wnd::OnChar(uint16_t nChar, uint32_t nFlag) {
   return false;
 }
 
-#define PWL_IMPLEMENT_MOUSE_METHOD(mouse_method_name)                         \
-  bool CPWL_Wnd::mouse_method_name(uint32_t nFlag, const CFX_PointF& point) { \
-    if (!IsValid() || !IsVisible())                                           \
-      return false;                                                           \
-    if (IsWndCaptureMouse(this)) {                                            \
-      for (const auto& pChild : m_Children) {                                 \
-        if (IsWndCaptureMouse(pChild.get())) {                                \
-          return pChild->mouse_method_name(nFlag, point);                     \
-        }                                                                     \
-      }                                                                       \
-      SetCursor();                                                            \
-      return false;                                                           \
-    }                                                                         \
-    for (const auto& pChild : m_Children) {                                   \
-      if (pChild->WndHitTest(point)) {                                        \
-        return pChild->mouse_method_name(nFlag, point);                       \
-      }                                                                       \
-    }                                                                         \
-    if (WndHitTest(point))                                                    \
-      SetCursor();                                                            \
-    return false;                                                             \
+#define PWL_IMPLEMENT_MOUSE_METHOD(mouse_method_name)         \
+  bool CPWL_Wnd::mouse_method_name(FWL_EventFlagMask nFlag,   \
+                                   const CFX_PointF& point) { \
+    if (!IsValid() || !IsVisible())                           \
+      return false;                                           \
+    if (IsWndCaptureMouse(this)) {                            \
+      for (const auto& pChild : m_Children) {                 \
+        if (IsWndCaptureMouse(pChild.get())) {                \
+          return pChild->mouse_method_name(nFlag, point);     \
+        }                                                     \
+      }                                                       \
+      SetCursor();                                            \
+      return false;                                           \
+    }                                                         \
+    for (const auto& pChild : m_Children) {                   \
+      if (pChild->WndHitTest(point)) {                        \
+        return pChild->mouse_method_name(nFlag, point);       \
+      }                                                       \
+    }                                                         \
+    if (WndHitTest(point))                                    \
+      SetCursor();                                            \
+    return false;                                             \
   }
 
 PWL_IMPLEMENT_MOUSE_METHOD(OnLButtonDblClk)
@@ -341,11 +342,11 @@ PWL_IMPLEMENT_MOUSE_METHOD(OnMouseMove)
 #undef PWL_IMPLEMENT_MOUSE_METHOD
 
 // Unlike their FWL counterparts, PWL windows don't handle right clicks.
-bool CPWL_Wnd::OnRButtonDown(uint32_t nFlag, const CFX_PointF& point) {
+bool CPWL_Wnd::OnRButtonDown(FWL_EventFlagMask nFlag, const CFX_PointF& point) {
   return false;
 }
 
-bool CPWL_Wnd::OnRButtonUp(uint32_t nFlag, const CFX_PointF& point) {
+bool CPWL_Wnd::OnRButtonUp(FWL_EventFlagMask nFlag, const CFX_PointF& point) {
   return false;
 }
 
@@ -379,7 +380,7 @@ bool CPWL_Wnd::Redo() {
   return false;
 }
 
-bool CPWL_Wnd::OnMouseWheel(uint32_t nFlag,
+bool CPWL_Wnd::OnMouseWheel(FWL_EventFlagMask nFlag,
                             const CFX_PointF& point,
                             const CFX_Vector& delta) {
   if (!IsValid() || !IsVisible())

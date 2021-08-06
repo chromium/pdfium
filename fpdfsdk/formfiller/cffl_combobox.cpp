@@ -65,7 +65,7 @@ std::unique_ptr<CPWL_Wnd> CFFL_ComboBox::NewPWLWindow(
 
 bool CFFL_ComboBox::OnChar(CPDFSDK_Annot* pAnnot,
                            uint32_t nChar,
-                           uint32_t nFlags) {
+                           FWL_EventFlagMask nFlags) {
   return CFFL_TextObject::OnChar(pAnnot, nChar, nFlags);
 }
 

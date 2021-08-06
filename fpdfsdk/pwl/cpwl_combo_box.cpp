@@ -337,7 +337,7 @@ bool CPWL_ComboBox::SetPopup(bool bPopup) {
   return !!thisObserved;
 }
 
-bool CPWL_ComboBox::OnKeyDown(FWL_VKEYCODE nKeyCode, uint32_t nFlag) {
+bool CPWL_ComboBox::OnKeyDown(FWL_VKEYCODE nKeyCode, FWL_EventFlagMask nFlag) {
   if (!m_pList)
     return false;
   if (!m_pEdit)
@@ -386,7 +386,7 @@ bool CPWL_ComboBox::OnKeyDown(FWL_VKEYCODE nKeyCode, uint32_t nFlag) {
   return false;
 }
 
-bool CPWL_ComboBox::OnChar(uint16_t nChar, uint32_t nFlag) {
+bool CPWL_ComboBox::OnChar(uint16_t nChar, FWL_EventFlagMask nFlag) {
   if (!m_pList)
     return false;
 

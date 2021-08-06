@@ -19,6 +19,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
+#include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "fpdfsdk/pwl/ipwl_systemhandler.h"
 #include "public/fpdf_formfill.h"
 
@@ -74,7 +75,7 @@ class CPDFSDK_FormFillEnvironment final : public CFX_Timer::HandlerIface,
 
   CPDFSDK_Annot* GetFocusAnnot() const { return m_pFocusAnnot.Get(); }
   bool SetFocusAnnot(ObservedPtr<CPDFSDK_Annot>* pAnnot);
-  bool KillFocusAnnot(uint32_t nFlag);
+  bool KillFocusAnnot(FWL_EventFlagMask nFlag);
   void ClearAllFocusedAnnots();
 
   int GetPageCount() const;
