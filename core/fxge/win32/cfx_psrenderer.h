@@ -61,7 +61,7 @@ class CFX_PSRenderer {
             int pslevel,
             int width,
             int height);
-  bool StartRendering();
+  void StartRendering();
   void EndRendering();
   void SaveState();
   void RestoreState(bool bKeepSaved);

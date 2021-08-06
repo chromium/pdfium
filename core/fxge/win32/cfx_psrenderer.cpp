@@ -56,11 +56,11 @@ void CFX_PSRenderer::Init(const RetainPtr<IFX_RetainableWriteStream>& pStream,
   m_ClipBox.bottom = height;
 }
 
-bool CFX_PSRenderer::StartRendering() {
+void CFX_PSRenderer::StartRendering() {
   if (m_bInited)
-    return true;
+    return;
 
-  static const char init_str[] =
+  static const char kInitStr[] =
       "\nsave\n/im/initmatrix load def\n"
       "/n/newpath load def/m/moveto load def/l/lineto load def/c/curveto load "
       "def/h/closepath load def\n"
@@ -74,9 +74,8 @@ bool CFX_PSRenderer::StartRendering() {
       "load def\n"
       "/cm/concat load def/Cm/currentmatrix load def/mx/matrix load "
       "def/sm/setmatrix load def\n";
-  m_pStream->WriteString(init_str);
+  m_pStream->WriteString(kInitStr);
   m_bInited = true;
-  return true;
 }
 
 void CFX_PSRenderer::EndRendering() {
