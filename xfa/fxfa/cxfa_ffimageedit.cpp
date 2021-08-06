@@ -95,7 +95,7 @@ void CXFA_FFImageEdit::RenderWidget(CFGAS_GEGraphics* pGS,
 }
 
 bool CXFA_FFImageEdit::AcceptsFocusOnButtonDown(
-    uint32_t dwFlags,
+    FWL_KeyFlagMask dwFlags,
     const CFX_PointF& point,
     CFWL_MessageMouse::MouseCommand command) {
   if (command != CFWL_MessageMouse::MouseCommand::kLeftButtonDown)
@@ -109,7 +109,7 @@ bool CXFA_FFImageEdit::AcceptsFocusOnButtonDown(
   return true;
 }
 
-bool CXFA_FFImageEdit::OnLButtonDown(uint32_t dwFlags,
+bool CXFA_FFImageEdit::OnLButtonDown(FWL_KeyFlagMask dwFlags,
                                      const CFX_PointF& point) {
   SetButtonDown(true);
   CFWL_MessageMouse msg(GetNormalWidget(),

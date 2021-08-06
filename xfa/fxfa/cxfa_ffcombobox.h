@@ -26,7 +26,7 @@ class CXFA_FFComboBox final : public CXFA_FFDropDown {
   CFX_RectF GetBBox(FocusOption focus) override;
   bool LoadWidget() override;
   void UpdateWidgetProperty() override;
-  bool OnRButtonUp(uint32_t dwFlags, const CFX_PointF& point) override;
+  bool OnRButtonUp(FWL_KeyFlagMask dwFlags, const CFX_PointF& point) override;
   bool OnKillFocus(CXFA_FFWidget* pNewWidget) override WARN_UNUSED_RESULT;
   bool CanUndo() override;
   bool CanRedo() override;

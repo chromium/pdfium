@@ -12,6 +12,7 @@
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/member.h"
 #include "v8/include/cppgc/visitor.h"
+#include "xfa/fwl/cfwl_message.h"
 #include "xfa/fwl/fwl_widgetdef.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
@@ -32,29 +33,29 @@ class CXFA_FFWidgetHandler final
   bool OnMouseEnter(CXFA_FFWidget* hWidget);
   bool OnMouseExit(CXFA_FFWidget* hWidget);
   bool OnLButtonDown(CXFA_FFWidget* hWidget,
-                     uint32_t dwFlags,
+                     FWL_KeyFlagMask dwFlags,
                      const CFX_PointF& point);
   bool OnLButtonUp(CXFA_FFWidget* hWidget,
-                   uint32_t dwFlags,
+                   FWL_KeyFlagMask dwFlags,
                    const CFX_PointF& point);
   bool OnLButtonDblClk(CXFA_FFWidget* hWidget,
-                       uint32_t dwFlags,
+                       FWL_KeyFlagMask dwFlags,
                        const CFX_PointF& point);
   bool OnMouseMove(CXFA_FFWidget* hWidget,
-                   uint32_t dwFlags,
+                   FWL_KeyFlagMask dwFlags,
                    const CFX_PointF& point);
   bool OnMouseWheel(CXFA_FFWidget* hWidget,
-                    uint32_t dwFlags,
+                    FWL_KeyFlagMask dwFlags,
                     const CFX_PointF& point,
                     const CFX_Vector& delta);
   bool OnRButtonDown(CXFA_FFWidget* hWidget,
-                     uint32_t dwFlags,
+                     FWL_KeyFlagMask dwFlags,
                      const CFX_PointF& point);
   bool OnRButtonUp(CXFA_FFWidget* hWidget,
-                   uint32_t dwFlags,
+                   FWL_KeyFlagMask dwFlags,
                    const CFX_PointF& point);
   bool OnRButtonDblClk(CXFA_FFWidget* hWidget,
-                       uint32_t dwFlags,
+                       FWL_KeyFlagMask dwFlags,
                        const CFX_PointF& point);
 
   WideString GetText(CXFA_FFWidget* widget);
@@ -69,11 +70,11 @@ class CXFA_FFWidgetHandler final
 
   bool OnKeyDown(CXFA_FFWidget* hWidget,
                  XFA_FWL_VKEYCODE dwKeyCode,
-                 uint32_t dwFlags);
+                 FWL_KeyFlagMask dwFlags);
   bool OnKeyUp(CXFA_FFWidget* hWidget,
                XFA_FWL_VKEYCODE dwKeyCode,
-               uint32_t dwFlags);
-  bool OnChar(CXFA_FFWidget* hWidget, uint32_t dwChar, uint32_t dwFlags);
+               FWL_KeyFlagMask dwFlags);
+  bool OnChar(CXFA_FFWidget* hWidget, uint32_t dwChar, FWL_KeyFlagMask dwFlags);
   FWL_WidgetHit HitTest(CXFA_FFWidget* pWidget, const CFX_PointF& point);
   void RenderWidget(CXFA_FFWidget* hWidget,
                     CFGAS_GEGraphics* pGS,

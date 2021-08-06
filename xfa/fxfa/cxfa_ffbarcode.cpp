@@ -255,7 +255,7 @@ void CXFA_FFBarcode::UpdateWidgetProperty() {
 }
 
 bool CXFA_FFBarcode::AcceptsFocusOnButtonDown(
-    uint32_t dwFlags,
+    FWL_KeyFlagMask dwFlags,
     const CFX_PointF& point,
     CFWL_MessageMouse::MouseCommand command) {
   auto* pBarCodeWidget = static_cast<CFWL_Barcode*>(GetNormalWidget());

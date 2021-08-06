@@ -385,43 +385,50 @@ bool CXFA_FFWidget::OnMouseExit() {
 }
 
 bool CXFA_FFWidget::AcceptsFocusOnButtonDown(
-    uint32_t dwFlags,
+    FWL_KeyFlagMask dwFlags,
     const CFX_PointF& point,
     CFWL_MessageMouse::MouseCommand command) {
   return false;
 }
 
-bool CXFA_FFWidget::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
+bool CXFA_FFWidget::OnLButtonDown(FWL_KeyFlagMask dwFlags,
+                                  const CFX_PointF& point) {
   return false;
 }
 
-bool CXFA_FFWidget::OnLButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
+bool CXFA_FFWidget::OnLButtonUp(FWL_KeyFlagMask dwFlags,
+                                const CFX_PointF& point) {
   return false;
 }
 
-bool CXFA_FFWidget::OnLButtonDblClk(uint32_t dwFlags, const CFX_PointF& point) {
+bool CXFA_FFWidget::OnLButtonDblClk(FWL_KeyFlagMask dwFlags,
+                                    const CFX_PointF& point) {
   return false;
 }
 
-bool CXFA_FFWidget::OnMouseMove(uint32_t dwFlags, const CFX_PointF& point) {
+bool CXFA_FFWidget::OnMouseMove(FWL_KeyFlagMask dwFlags,
+                                const CFX_PointF& point) {
   return false;
 }
 
-bool CXFA_FFWidget::OnMouseWheel(uint32_t dwFlags,
+bool CXFA_FFWidget::OnMouseWheel(FWL_KeyFlagMask dwFlags,
                                  const CFX_PointF& point,
                                  const CFX_Vector& delta) {
   return false;
 }
 
-bool CXFA_FFWidget::OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
+bool CXFA_FFWidget::OnRButtonDown(FWL_KeyFlagMask dwFlags,
+                                  const CFX_PointF& point) {
   return false;
 }
 
-bool CXFA_FFWidget::OnRButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
+bool CXFA_FFWidget::OnRButtonUp(FWL_KeyFlagMask dwFlags,
+                                const CFX_PointF& point) {
   return false;
 }
 
-bool CXFA_FFWidget::OnRButtonDblClk(uint32_t dwFlags, const CFX_PointF& point) {
+bool CXFA_FFWidget::OnRButtonDblClk(FWL_KeyFlagMask dwFlags,
+                                    const CFX_PointF& point) {
   return false;
 }
 
@@ -454,15 +461,17 @@ bool CXFA_FFWidget::OnKillFocus(CXFA_FFWidget* pNewWidget) {
   return true;
 }
 
-bool CXFA_FFWidget::OnKeyDown(XFA_FWL_VKEYCODE dwKeyCode, uint32_t dwFlags) {
+bool CXFA_FFWidget::OnKeyDown(XFA_FWL_VKEYCODE dwKeyCode,
+                              FWL_KeyFlagMask dwFlags) {
   return false;
 }
 
-bool CXFA_FFWidget::OnKeyUp(XFA_FWL_VKEYCODE dwKeyCode, uint32_t dwFlags) {
+bool CXFA_FFWidget::OnKeyUp(XFA_FWL_VKEYCODE dwKeyCode,
+                            FWL_KeyFlagMask dwFlags) {
   return false;
 }
 
-bool CXFA_FFWidget::OnChar(uint32_t dwChar, uint32_t dwFlags) {
+bool CXFA_FFWidget::OnChar(uint32_t dwChar, FWL_KeyFlagMask dwFlags) {
   return false;
 }
 

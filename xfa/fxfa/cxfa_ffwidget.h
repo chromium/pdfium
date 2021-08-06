@@ -107,37 +107,38 @@ class CXFA_FFWidget : public cppgc::GarbageCollected<CXFA_FFWidget>,
   virtual void UpdateWidgetProperty();
   // |command| must be LeftButtonDown or RightButtonDown.
   virtual bool AcceptsFocusOnButtonDown(
-      uint32_t dwFlags,
+      FWL_KeyFlagMask dwFlags,
       const CFX_PointF& point,
       CFWL_MessageMouse::MouseCommand command);
 
   // Caution: Returning false from an On* method may mean |this| is destroyed.
   virtual bool OnMouseEnter() WARN_UNUSED_RESULT;
   virtual bool OnMouseExit() WARN_UNUSED_RESULT;
-  virtual bool OnLButtonDown(uint32_t dwFlags,
+  virtual bool OnLButtonDown(FWL_KeyFlagMask dwFlags,
                              const CFX_PointF& point) WARN_UNUSED_RESULT;
-  virtual bool OnLButtonUp(uint32_t dwFlags,
+  virtual bool OnLButtonUp(FWL_KeyFlagMask dwFlags,
                            const CFX_PointF& point) WARN_UNUSED_RESULT;
-  virtual bool OnLButtonDblClk(uint32_t dwFlags,
+  virtual bool OnLButtonDblClk(FWL_KeyFlagMask dwFlags,
                                const CFX_PointF& point) WARN_UNUSED_RESULT;
-  virtual bool OnMouseMove(uint32_t dwFlags,
+  virtual bool OnMouseMove(FWL_KeyFlagMask dwFlags,
                            const CFX_PointF& point) WARN_UNUSED_RESULT;
-  virtual bool OnMouseWheel(uint32_t dwFlags,
+  virtual bool OnMouseWheel(FWL_KeyFlagMask dwFlags,
                             const CFX_PointF& point,
                             const CFX_Vector& delta) WARN_UNUSED_RESULT;
-  virtual bool OnRButtonDown(uint32_t dwFlags,
+  virtual bool OnRButtonDown(FWL_KeyFlagMask dwFlags,
                              const CFX_PointF& point) WARN_UNUSED_RESULT;
-  virtual bool OnRButtonUp(uint32_t dwFlags,
+  virtual bool OnRButtonUp(FWL_KeyFlagMask dwFlags,
                            const CFX_PointF& point) WARN_UNUSED_RESULT;
-  virtual bool OnRButtonDblClk(uint32_t dwFlags,
+  virtual bool OnRButtonDblClk(FWL_KeyFlagMask dwFlags,
                                const CFX_PointF& point) WARN_UNUSED_RESULT;
   virtual bool OnSetFocus(CXFA_FFWidget* pOldWidget) WARN_UNUSED_RESULT;
   virtual bool OnKillFocus(CXFA_FFWidget* pNewWidget) WARN_UNUSED_RESULT;
   virtual bool OnKeyDown(XFA_FWL_VKEYCODE dwKeyCode,
-                         uint32_t dwFlags) WARN_UNUSED_RESULT;
+                         FWL_KeyFlagMask dwFlags) WARN_UNUSED_RESULT;
   virtual bool OnKeyUp(XFA_FWL_VKEYCODE dwKeyCode,
-                       uint32_t dwFlags) WARN_UNUSED_RESULT;
-  virtual bool OnChar(uint32_t dwChar, uint32_t dwFlags) WARN_UNUSED_RESULT;
+                       FWL_KeyFlagMask dwFlags) WARN_UNUSED_RESULT;
+  virtual bool OnChar(uint32_t dwChar,
+                      FWL_KeyFlagMask dwFlags) WARN_UNUSED_RESULT;
 
   virtual FWL_WidgetHit HitTest(const CFX_PointF& point);
   virtual bool CanUndo();

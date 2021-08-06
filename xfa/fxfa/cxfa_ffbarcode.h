@@ -105,7 +105,7 @@ class CXFA_FFBarcode final : public CXFA_FFTextEdit {
                     HighlightOption highlight) override;
   void UpdateWidgetProperty() override;
   bool AcceptsFocusOnButtonDown(
-      uint32_t dwFlags,
+      FWL_KeyFlagMask dwFlags,
       const CFX_PointF& point,
       CFWL_MessageMouse::MouseCommand command) override;
 
