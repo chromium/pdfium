@@ -560,19 +560,12 @@ if (pdf_enable_xfa_tiff) {
   }
 }
 
-config("pdfium_base_config") {
-  defines = [ "BASE_NUMERICS_DISABLE_OSTREAM_OPERATORS" ]
-}
-
 source_set("pdfium_base") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",
     ":pdfium_third_party_config",
   ]
-
-  public_configs = [ ":pdfium_base_config" ]
-
   sources = [
     "base/allocator/partition_allocator/address_space_randomization.cc",
     "base/allocator/partition_allocator/address_space_randomization.h",

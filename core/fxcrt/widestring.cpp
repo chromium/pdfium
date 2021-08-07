@@ -10,7 +10,6 @@
 #include <string.h>
 
 #include <algorithm>
-#include <ostream>
 
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
