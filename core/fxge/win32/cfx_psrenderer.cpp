@@ -74,7 +74,7 @@ void CFX_PSRenderer::StartRendering() {
       "load def\n"
       "/cm/concat load def/Cm/currentmatrix load def/mx/matrix load "
       "def/sm/setmatrix load def\n";
-  m_pStream->WriteString(kInitStr);
+  WriteString(kInitStr);
   m_bInited = true;
 }
 
@@ -82,21 +82,21 @@ void CFX_PSRenderer::EndRendering() {
   if (!m_bInited)
     return;
 
-  m_pStream->WriteString("\nrestore\n");
+  WriteString("\nrestore\n");
   m_bInited = false;
 }
 
 void CFX_PSRenderer::SaveState() {
   StartRendering();
-  m_pStream->WriteString("q\n");
+  WriteString("q\n");
   m_ClipBoxStack.push_back(m_ClipBox);
 }
 
 void CFX_PSRenderer::RestoreState(bool bKeepSaved) {
   StartRendering();
-  m_pStream->WriteString("Q\n");
+  WriteString("Q\n");
   if (bKeepSaved)
-    m_pStream->WriteString("q\n");
+    WriteString("q\n");
 
   m_bColorSet = false;
   m_bGraphStateSet = false;
@@ -165,10 +165,10 @@ void CFX_PSRenderer::SetClip_PathFill(
   m_ClipBox.top = static_cast<int>(rect.top + rect.bottom);
   m_ClipBox.bottom = static_cast<int>(rect.bottom);
 
-  m_pStream->WriteString("W");
+  WriteString("W");
   if (fill_options.fill_type != CFX_FillRenderOptions::FillType::kWinding)
-    m_pStream->WriteString("*");
-  m_pStream->WriteString(" n\n");
+    WriteString("*");
+  WriteString(" n\n");
 }
 
 void CFX_PSRenderer::SetClip_PathStroke(const CFX_Path* pPath,
@@ -188,7 +188,7 @@ void CFX_PSRenderer::SetClip_PathStroke(const CFX_Path* pPath,
       pGraphState->m_LineWidth, pGraphState->m_MiterLimit);
   m_ClipBox.Intersect(pObject2Device->TransformRect(rect).GetOuterRect());
 
-  m_pStream->WriteString("strokepath W n sm\n");
+  WriteString("strokepath W n sm\n");
 }
 
 bool CFX_PSRenderer::DrawPath(const CFX_Path* pPath,
@@ -224,26 +224,26 @@ bool CFX_PSRenderer::DrawPath(const CFX_Path* pPath,
     SetColor(fill_color);
     if (fill_options.fill_type == CFX_FillRenderOptions::FillType::kWinding) {
       if (stroke_alpha)
-        m_pStream->WriteString("q f Q ");
+        WriteString("q f Q ");
       else
-        m_pStream->WriteString("f");
+        WriteString("f");
     } else if (fill_options.fill_type ==
                CFX_FillRenderOptions::FillType::kEvenOdd) {
       if (stroke_alpha)
-        m_pStream->WriteString("q F Q ");
+        WriteString("q F Q ");
       else
-        m_pStream->WriteString("F");
+        WriteString("F");
     }
   }
 
   if (stroke_alpha) {
     SetColor(stroke_color);
-    m_pStream->WriteString("s");
+    WriteString("s");
     if (pObject2Device)
-      m_pStream->WriteString(" sm");
+      WriteString(" sm");
   }
 
-  m_pStream->WriteString("\n");
+  WriteString("\n");
   return true;
 }
 
@@ -315,7 +315,7 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
   if (pSource->IsMaskFormat() && (alpha < 255 || pSource->GetBPP() != 1))
     return false;
 
-  m_pStream->WriteString("q\n");
+  WriteString("q\n");
 
   std::ostringstream buf;
   buf << "[" << matrix.a << " " << matrix.b << " " << matrix.c << " "
@@ -378,7 +378,7 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
         break;
     }
     if (!pConverted) {
-      m_pStream->WriteString("\nQ\n");
+      WriteString("\nQ\n");
       return false;
     }
 
@@ -432,7 +432,7 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
     WritePSBinary({output_buf, output_size});
     FX_Free(output_buf);
   }
-  m_pStream->WriteString("\nQ\n");
+  WriteString("\nQ\n");
   return true;
 }
 
@@ -672,4 +672,8 @@ void CFX_PSRenderer::WritePSBinary(pdfium::span<const uint8_t> data) {
 void CFX_PSRenderer::WriteStream(std::ostringstream& stream) {
   if (stream.tellp() > 0)
     m_pStream->WriteBlock(stream.str().c_str(), stream.tellp());
+}
+
+void CFX_PSRenderer::WriteString(ByteStringView str) {
+  m_pStream->WriteString(str);
 }

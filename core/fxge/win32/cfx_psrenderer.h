@@ -122,6 +122,7 @@ class CFX_PSRenderer {
                       const char** filter) const;
   void WritePSBinary(pdfium::span<const uint8_t> data);
   void WriteStream(std::ostringstream& stream);
+  void WriteString(ByteStringView str);
 
   bool m_bInited = false;
   bool m_bGraphStateSet = false;
