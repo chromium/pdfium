@@ -19,6 +19,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_graphstatedata.h"
+#include "third_party/base/span.h"
 
 class CFX_DIBBase;
 class CFX_GlyphCache;
@@ -119,7 +120,7 @@ class CFX_PSRenderer {
                       uint8_t** output_buf,
                       uint32_t* output_size,
                       const char** filter) const;
-  void WritePSBinary(const uint8_t* data, int len);
+  void WritePSBinary(pdfium::span<const uint8_t> data);
   void WriteToStream(std::ostringstream* stringStream);
 
   bool m_bInited = false;

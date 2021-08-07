@@ -359,7 +359,7 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
       buf << "false 1 colorimage\n";
 
     WriteToStream(&buf);
-    WritePSBinary(output_buf.get(), output_size);
+    WritePSBinary({output_buf.get(), output_size});
   } else {
     CFX_DIBExtractor source_extractor(pSource);
     RetainPtr<CFX_DIBBase> pConverted = source_extractor.GetBitmap();
@@ -429,7 +429,7 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
     buf << " colorimage\n";
     WriteToStream(&buf);
 
-    WritePSBinary(output_buf, output_size);
+    WritePSBinary({output_buf, output_size});
     FX_Free(output_buf);
   }
   m_pStream->WriteString("\nQ\n");
@@ -660,14 +660,13 @@ void CFX_PSRenderer::PSCompressData(uint8_t* src_buf,
   }
 }
 
-void CFX_PSRenderer::WritePSBinary(const uint8_t* data, int len) {
+void CFX_PSRenderer::WritePSBinary(pdfium::span<const uint8_t> data) {
   std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf;
   uint32_t dest_size;
-  if (m_pEncoderIface->pA85EncodeFunc({data, static_cast<size_t>(len)},
-                                      &dest_buf, &dest_size)) {
+  if (m_pEncoderIface->pA85EncodeFunc(data, &dest_buf, &dest_size)) {
     m_pStream->WriteBlock(dest_buf.get(), dest_size);
   } else {
-    m_pStream->WriteBlock(data, len);
+    m_pStream->WriteBlock(data.data(), data.size());
   }
 }
 
