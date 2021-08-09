@@ -123,7 +123,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling trace_event
   # and whatever else without interference from each other.
-  'trace_event_revision': 'd5bb24e5d9802c8c917fcaa4375d5239a586c168',
+  'trace_event_revision': '3da1e2fcf66acd5c7194497b4285ac163f32e239',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling v8
   # and whatever else without interference from each other.
