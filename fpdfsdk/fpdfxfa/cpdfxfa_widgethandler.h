@@ -119,7 +119,7 @@ class CPDFXFA_WidgetHandler final : public IPDFSDK_AnnotHandler {
 
  private:
   CXFA_FFWidgetHandler* GetXFAFFWidgetHandler(CPDFSDK_Annot* pAnnot);
-  FWL_KeyFlagMask GetKeyFlags(FWL_EventFlagMask dwFlag);
+  Mask<XFA_FWL_KeyFlag> GetKeyFlags(FWL_EventFlagMask dwFlag);
 
   UnownedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
 };

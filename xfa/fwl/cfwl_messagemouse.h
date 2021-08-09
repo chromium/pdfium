@@ -8,7 +8,9 @@
 #define XFA_FWL_CFWL_MESSAGEMOUSE_H_
 
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/mask.h"
 #include "xfa/fwl/cfwl_message.h"
+#include "xfa/fwl/fwl_widgetdef.h"
 
 class CFWL_MessageMouse final : public CFWL_Message {
  public:
@@ -27,12 +29,12 @@ class CFWL_MessageMouse final : public CFWL_Message {
 
   CFWL_MessageMouse(CFWL_Widget* pDstTarget,
                     MouseCommand cmd,
-                    FWL_KeyFlagMask flags,
+                    Mask<XFA_FWL_KeyFlag> flags,
                     CFX_PointF pos);
   ~CFWL_MessageMouse() override;
 
   const MouseCommand m_dwCmd;
-  FWL_KeyFlagMask m_dwFlags;
+  Mask<XFA_FWL_KeyFlag> m_dwFlags;
   CFX_PointF m_pos;
 };
 

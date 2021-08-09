@@ -109,7 +109,7 @@ void CXFA_FFComboBox::UpdateWidgetProperty() {
   pComboBox->EditModifyStyleExts(dwEditStyles, 0xFFFFFFFF);
 }
 
-bool CXFA_FFComboBox::OnRButtonUp(FWL_KeyFlagMask dwFlags,
+bool CXFA_FFComboBox::OnRButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
                                   const CFX_PointF& point) {
   if (!CXFA_FFField::OnRButtonUp(dwFlags, point))
     return false;

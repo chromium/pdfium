@@ -650,8 +650,9 @@ CXFA_FFWidgetHandler* CPDFXFA_WidgetHandler::GetXFAFFWidgetHandler(
   return pDocView->GetWidgetHandler();
 }
 
-FWL_KeyFlagMask CPDFXFA_WidgetHandler::GetKeyFlags(FWL_EventFlagMask dwFlag) {
-  FWL_KeyFlagMask dwFWLFlag;
+Mask<XFA_FWL_KeyFlag> CPDFXFA_WidgetHandler::GetKeyFlags(
+    FWL_EventFlagMask dwFlag) {
+  Mask<XFA_FWL_KeyFlag> dwFWLFlag;
 
   if (dwFlag & FWL_EVENTFLAG_ControlKey)
     dwFWLFlag |= FWL_KEYFLAG_Ctrl;

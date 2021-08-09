@@ -98,7 +98,7 @@ bool CXFA_FFText::PerformLayout() {
 }
 
 bool CXFA_FFText::AcceptsFocusOnButtonDown(
-    FWL_KeyFlagMask dwFlags,
+    Mask<XFA_FWL_KeyFlag> dwFlags,
     const CFX_PointF& point,
     CFWL_MessageMouse::MouseCommand command) {
   return command == CFWL_MessageMouse::MouseCommand::kLeftButtonDown &&
@@ -106,19 +106,19 @@ bool CXFA_FFText::AcceptsFocusOnButtonDown(
          !GetLinkURLAtPoint(point).IsEmpty();
 }
 
-bool CXFA_FFText::OnLButtonDown(FWL_KeyFlagMask dwFlags,
+bool CXFA_FFText::OnLButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
                                 const CFX_PointF& point) {
   SetButtonDown(true);
   return true;
 }
 
-bool CXFA_FFText::OnMouseMove(FWL_KeyFlagMask dwFlags,
+bool CXFA_FFText::OnMouseMove(Mask<XFA_FWL_KeyFlag> dwFlags,
                               const CFX_PointF& point) {
   return GetRectWithoutRotate().Contains(point) &&
          !GetLinkURLAtPoint(point).IsEmpty();
 }
 
-bool CXFA_FFText::OnLButtonUp(FWL_KeyFlagMask dwFlags,
+bool CXFA_FFText::OnLButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
                               const CFX_PointF& point) {
   if (!IsButtonDown())
     return false;

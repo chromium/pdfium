@@ -7,8 +7,8 @@
 #ifndef XFA_FWL_FWL_WIDGETDEF_H_
 #define XFA_FWL_FWL_WIDGETDEF_H_
 
-// Same as enum FWL_VKEYCODE in public/fpdf_fwlevent.h, but duplicated to keep
-// xfa/fwl standalone.
+// Same as enum FWL_VKEYCODE in public/fpdf_fwlevent.h, but duplicated here
+// to keep xfa/fwl standalone.
 enum XFA_FWL_VKEYCODE {
   XFA_FWL_VKEY_Back = 0x08,
   XFA_FWL_VKEY_Tab = 0x09,
@@ -179,6 +179,18 @@ enum XFA_FWL_VKEYCODE {
   XFA_FWL_VKEY_PA1 = 0xFD,
   XFA_FWL_VKEY_OEM_Clear = 0xFE,
   XFA_FWL_VKEY_Unknown = 0,
+};
+
+// Derived from FWL_EVENTFLAG in public/fwl_event.h, but not the same
+// values bit-for-bit, duplicated here to keep XFA standalone.
+enum XFA_FWL_KeyFlag : uint8_t {
+  FWL_KEYFLAG_Ctrl = 1 << 0,
+  FWL_KEYFLAG_Alt = 1 << 1,
+  FWL_KEYFLAG_Shift = 1 << 2,
+  FWL_KEYFLAG_Command = 1 << 3,
+  FWL_KEYFLAG_LButton = 1 << 4,
+  FWL_KEYFLAG_RButton = 1 << 5,
+  FWL_KEYFLAG_MButton = 1 << 6
 };
 
 #endif  // XFA_FWL_FWL_WIDGETDEF_H_

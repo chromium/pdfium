@@ -35,28 +35,35 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   bool LoadWidget() override;
   bool PerformLayout() override;
   bool AcceptsFocusOnButtonDown(
-      FWL_KeyFlagMask dwFlags,
+      Mask<XFA_FWL_KeyFlag> dwFlags,
       const CFX_PointF& point,
       CFWL_MessageMouse::MouseCommand command) override;
   bool OnMouseEnter() override;
   bool OnMouseExit() override;
-  bool OnLButtonDown(FWL_KeyFlagMask dwFlags, const CFX_PointF& point) override;
-  bool OnLButtonUp(FWL_KeyFlagMask dwFlags, const CFX_PointF& point) override;
-  bool OnLButtonDblClk(FWL_KeyFlagMask dwFlags,
+  bool OnLButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
+                     const CFX_PointF& point) override;
+  bool OnLButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
+                   const CFX_PointF& point) override;
+  bool OnLButtonDblClk(Mask<XFA_FWL_KeyFlag> dwFlags,
                        const CFX_PointF& point) override;
-  bool OnMouseMove(FWL_KeyFlagMask dwFlags, const CFX_PointF& point) override;
-  bool OnMouseWheel(FWL_KeyFlagMask dwFlags,
+  bool OnMouseMove(Mask<XFA_FWL_KeyFlag> dwFlags,
+                   const CFX_PointF& point) override;
+  bool OnMouseWheel(Mask<XFA_FWL_KeyFlag> dwFlags,
                     const CFX_PointF& point,
                     const CFX_Vector& delta) override;
-  bool OnRButtonDown(FWL_KeyFlagMask dwFlags, const CFX_PointF& point) override;
-  bool OnRButtonUp(FWL_KeyFlagMask dwFlags, const CFX_PointF& point) override;
-  bool OnRButtonDblClk(FWL_KeyFlagMask dwFlags,
+  bool OnRButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
+                     const CFX_PointF& point) override;
+  bool OnRButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
+                   const CFX_PointF& point) override;
+  bool OnRButtonDblClk(Mask<XFA_FWL_KeyFlag> dwFlags,
                        const CFX_PointF& point) override;
   bool OnSetFocus(CXFA_FFWidget* pOldWidget) override WARN_UNUSED_RESULT;
   bool OnKillFocus(CXFA_FFWidget* pNewWidget) override WARN_UNUSED_RESULT;
-  bool OnKeyDown(XFA_FWL_VKEYCODE dwKeyCode, FWL_KeyFlagMask dwFlags) override;
-  bool OnKeyUp(XFA_FWL_VKEYCODE dwKeyCode, FWL_KeyFlagMask dwFlags) override;
-  bool OnChar(uint32_t dwChar, FWL_KeyFlagMask dwFlags) override;
+  bool OnKeyDown(XFA_FWL_VKEYCODE dwKeyCode,
+                 Mask<XFA_FWL_KeyFlag> dwFlags) override;
+  bool OnKeyUp(XFA_FWL_VKEYCODE dwKeyCode,
+               Mask<XFA_FWL_KeyFlag> dwFlags) override;
+  bool OnChar(uint32_t dwChar, Mask<XFA_FWL_KeyFlag> dwFlags) override;
   FWL_WidgetHit HitTest(const CFX_PointF& point) override;
 
   // IFWL_WidgetDelegate:

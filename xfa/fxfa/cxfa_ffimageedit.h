@@ -23,10 +23,11 @@ class CXFA_FFImageEdit final : public CXFA_FFField {
                     HighlightOption highlight) override;
   bool LoadWidget() override;
   bool AcceptsFocusOnButtonDown(
-      FWL_KeyFlagMask dwFlags,
+      Mask<XFA_FWL_KeyFlag> dwFlags,
       const CFX_PointF& point,
       CFWL_MessageMouse::MouseCommand command) override;
-  bool OnLButtonDown(FWL_KeyFlagMask dwFlags, const CFX_PointF& point) override;
+  bool OnLButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
+                     const CFX_PointF& point) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
   void OnDrawWidget(CFGAS_GEGraphics* pGraphics,

@@ -30,7 +30,8 @@ class CXFA_FFCheckButton final : public CXFA_FFField {
   bool PerformLayout() override;
   bool UpdateFWLData() override;
   void UpdateWidgetProperty() override;
-  bool OnLButtonUp(FWL_KeyFlagMask dwFlags, const CFX_PointF& point) override;
+  bool OnLButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
+                   const CFX_PointF& point) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
   void OnDrawWidget(CFGAS_GEGraphics* pGraphics,

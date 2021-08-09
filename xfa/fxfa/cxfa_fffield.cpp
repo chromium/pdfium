@@ -373,7 +373,7 @@ bool CXFA_FFField::OnMouseEnter() {
 
   CFWL_MessageMouse msg(GetNormalWidget(),
                         CFWL_MessageMouse::MouseCommand::kEnter,
-                        FWL_KeyFlagMask(), CFX_PointF());
+                        Mask<XFA_FWL_KeyFlag>(), CFX_PointF());
   SendMessageToFWLWidget(&msg);
   return true;
 }
@@ -384,7 +384,7 @@ bool CXFA_FFField::OnMouseExit() {
 
   CFWL_MessageMouse msg(GetNormalWidget(),
                         CFWL_MessageMouse::MouseCommand::kLeave,
-                        FWL_KeyFlagMask(), CFX_PointF());
+                        Mask<XFA_FWL_KeyFlag>(), CFX_PointF());
   SendMessageToFWLWidget(&msg);
   return true;
 }
@@ -396,7 +396,7 @@ CFX_PointF CXFA_FFField::FWLToClient(const CFX_PointF& point) {
 }
 
 bool CXFA_FFField::AcceptsFocusOnButtonDown(
-    FWL_KeyFlagMask dwFlags,
+    Mask<XFA_FWL_KeyFlag> dwFlags,
     const CFX_PointF& point,
     CFWL_MessageMouse::MouseCommand command) {
   if (!GetNormalWidget())
@@ -409,7 +409,7 @@ bool CXFA_FFField::AcceptsFocusOnButtonDown(
   return true;
 }
 
-bool CXFA_FFField::OnLButtonDown(FWL_KeyFlagMask dwFlags,
+bool CXFA_FFField::OnLButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
                                  const CFX_PointF& point) {
   SetButtonDown(true);
   CFWL_MessageMouse msg(GetNormalWidget(),
@@ -419,7 +419,7 @@ bool CXFA_FFField::OnLButtonDown(FWL_KeyFlagMask dwFlags,
   return true;
 }
 
-bool CXFA_FFField::OnLButtonUp(FWL_KeyFlagMask dwFlags,
+bool CXFA_FFField::OnLButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
                                const CFX_PointF& point) {
   if (!GetNormalWidget())
     return false;
@@ -435,7 +435,7 @@ bool CXFA_FFField::OnLButtonUp(FWL_KeyFlagMask dwFlags,
   return true;
 }
 
-bool CXFA_FFField::OnLButtonDblClk(FWL_KeyFlagMask dwFlags,
+bool CXFA_FFField::OnLButtonDblClk(Mask<XFA_FWL_KeyFlag> dwFlags,
                                    const CFX_PointF& point) {
   if (!GetNormalWidget())
     return false;
@@ -447,7 +447,7 @@ bool CXFA_FFField::OnLButtonDblClk(FWL_KeyFlagMask dwFlags,
   return true;
 }
 
-bool CXFA_FFField::OnMouseMove(FWL_KeyFlagMask dwFlags,
+bool CXFA_FFField::OnMouseMove(Mask<XFA_FWL_KeyFlag> dwFlags,
                                const CFX_PointF& point) {
   if (!GetNormalWidget())
     return false;
@@ -459,7 +459,7 @@ bool CXFA_FFField::OnMouseMove(FWL_KeyFlagMask dwFlags,
   return true;
 }
 
-bool CXFA_FFField::OnMouseWheel(FWL_KeyFlagMask dwFlags,
+bool CXFA_FFField::OnMouseWheel(Mask<XFA_FWL_KeyFlag> dwFlags,
                                 const CFX_PointF& point,
                                 const CFX_Vector& delta) {
   if (!GetNormalWidget())
@@ -470,7 +470,7 @@ bool CXFA_FFField::OnMouseWheel(FWL_KeyFlagMask dwFlags,
   return true;
 }
 
-bool CXFA_FFField::OnRButtonDown(FWL_KeyFlagMask dwFlags,
+bool CXFA_FFField::OnRButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
                                  const CFX_PointF& point) {
   SetButtonDown(true);
 
@@ -481,7 +481,7 @@ bool CXFA_FFField::OnRButtonDown(FWL_KeyFlagMask dwFlags,
   return true;
 }
 
-bool CXFA_FFField::OnRButtonUp(FWL_KeyFlagMask dwFlags,
+bool CXFA_FFField::OnRButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
                                const CFX_PointF& point) {
   if (!GetNormalWidget())
     return false;
@@ -496,7 +496,7 @@ bool CXFA_FFField::OnRButtonUp(FWL_KeyFlagMask dwFlags,
   return true;
 }
 
-bool CXFA_FFField::OnRButtonDblClk(FWL_KeyFlagMask dwFlags,
+bool CXFA_FFField::OnRButtonDblClk(Mask<XFA_FWL_KeyFlag> dwFlags,
                                    const CFX_PointF& point) {
   if (!GetNormalWidget())
     return false;
@@ -534,7 +534,7 @@ bool CXFA_FFField::OnKillFocus(CXFA_FFWidget* pNewWidget) {
 }
 
 bool CXFA_FFField::OnKeyDown(XFA_FWL_VKEYCODE dwKeyCode,
-                             FWL_KeyFlagMask dwFlags) {
+                             Mask<XFA_FWL_KeyFlag> dwFlags) {
   if (!GetNormalWidget() || !GetDoc()->GetXFADoc()->IsInteractive())
     return false;
 
@@ -545,7 +545,7 @@ bool CXFA_FFField::OnKeyDown(XFA_FWL_VKEYCODE dwKeyCode,
 }
 
 bool CXFA_FFField::OnKeyUp(XFA_FWL_VKEYCODE dwKeyCode,
-                           FWL_KeyFlagMask dwFlags) {
+                           Mask<XFA_FWL_KeyFlag> dwFlags) {
   if (!GetNormalWidget() || !GetDoc()->GetXFADoc()->IsInteractive())
     return false;
 
@@ -555,7 +555,7 @@ bool CXFA_FFField::OnKeyUp(XFA_FWL_VKEYCODE dwKeyCode,
   return true;
 }
 
-bool CXFA_FFField::OnChar(uint32_t dwChar, FWL_KeyFlagMask dwFlags) {
+bool CXFA_FFField::OnChar(uint32_t dwChar, Mask<XFA_FWL_KeyFlag> dwFlags) {
   if (!GetDoc()->GetXFADoc()->IsInteractive())
     return false;
   if (dwChar == pdfium::ascii::kTab)

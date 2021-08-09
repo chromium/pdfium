@@ -235,7 +235,8 @@ void CFWL_NoteDriver::MouseSecondary(CFWL_Message* pMessage) {
   if (m_pHover) {
     CFWL_MessageMouse msLeave(
         m_pHover.Get(), CFWL_MessageMouse::MouseCommand::kLeave,
-        FWL_KeyFlagMask(), pTarget->TransformTo(m_pHover.Get(), pMsg->m_pos));
+        Mask<XFA_FWL_KeyFlag>(),
+        pTarget->TransformTo(m_pHover.Get(), pMsg->m_pos));
     DispatchMessage(&msLeave, nullptr);
   }
   if (pTarget->GetClassID() == FWL_Type::Form) {
@@ -245,7 +246,7 @@ void CFWL_NoteDriver::MouseSecondary(CFWL_Message* pMessage) {
   m_pHover = pTarget;
 
   CFWL_MessageMouse msHover(pTarget, CFWL_MessageMouse::MouseCommand::kHover,
-                            FWL_KeyFlagMask(), pMsg->m_pos);
+                            Mask<XFA_FWL_KeyFlag>(), pMsg->m_pos);
   DispatchMessage(&msHover, nullptr);
 }
 

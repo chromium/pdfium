@@ -16,12 +16,15 @@ class CXFA_FFText final : public CXFA_FFWidget {
 
   // CXFA_FFWidget
   bool AcceptsFocusOnButtonDown(
-      FWL_KeyFlagMask dwFlags,
+      Mask<XFA_FWL_KeyFlag> dwFlags,
       const CFX_PointF& point,
       CFWL_MessageMouse::MouseCommand command) override;
-  bool OnLButtonDown(FWL_KeyFlagMask dwFlags, const CFX_PointF& point) override;
-  bool OnLButtonUp(FWL_KeyFlagMask dwFlags, const CFX_PointF& point) override;
-  bool OnMouseMove(FWL_KeyFlagMask dwFlags, const CFX_PointF& point) override;
+  bool OnLButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
+                     const CFX_PointF& point) override;
+  bool OnLButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
+                   const CFX_PointF& point) override;
+  bool OnMouseMove(Mask<XFA_FWL_KeyFlag> dwFlags,
+                   const CFX_PointF& point) override;
   FWL_WidgetHit HitTest(const CFX_PointF& point) override;
   void RenderWidget(CFGAS_GEGraphics* pGS,
                     const CFX_Matrix& matrix,

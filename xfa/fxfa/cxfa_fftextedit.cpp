@@ -119,7 +119,7 @@ void CXFA_FFTextEdit::UpdateWidgetProperty() {
 }
 
 bool CXFA_FFTextEdit::AcceptsFocusOnButtonDown(
-    FWL_KeyFlagMask dwFlags,
+    Mask<XFA_FWL_KeyFlag> dwFlags,
     const CFX_PointF& point,
     CFWL_MessageMouse::MouseCommand command) {
   if (command == CFWL_MessageMouse::MouseCommand::kRightButtonDown &&
@@ -132,7 +132,7 @@ bool CXFA_FFTextEdit::AcceptsFocusOnButtonDown(
   return true;
 }
 
-bool CXFA_FFTextEdit::OnLButtonDown(FWL_KeyFlagMask dwFlags,
+bool CXFA_FFTextEdit::OnLButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
                                     const CFX_PointF& point) {
   if (!IsFocused()) {
     GetLayoutItem()->SetStatusBits(XFA_WidgetStatus_Focused);
@@ -147,7 +147,7 @@ bool CXFA_FFTextEdit::OnLButtonDown(FWL_KeyFlagMask dwFlags,
   return true;
 }
 
-bool CXFA_FFTextEdit::OnRButtonDown(FWL_KeyFlagMask dwFlags,
+bool CXFA_FFTextEdit::OnRButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
                                     const CFX_PointF& point) {
   if (!IsFocused()) {
     GetLayoutItem()->SetStatusBits(XFA_WidgetStatus_Focused);
@@ -162,7 +162,7 @@ bool CXFA_FFTextEdit::OnRButtonDown(FWL_KeyFlagMask dwFlags,
   return true;
 }
 
-bool CXFA_FFTextEdit::OnRButtonUp(FWL_KeyFlagMask dwFlags,
+bool CXFA_FFTextEdit::OnRButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
                                   const CFX_PointF& point) {
   if (!CXFA_FFField::OnRButtonUp(dwFlags, point))
     return false;

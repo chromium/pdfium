@@ -252,7 +252,7 @@ void CXFA_FFCheckButton::RenderWidget(CFGAS_GEGraphics* pGS,
   GetApp()->GetFWLWidgetMgr()->OnDrawWidget(GetNormalWidget(), pGS, mt);
 }
 
-bool CXFA_FFCheckButton::OnLButtonUp(FWL_KeyFlagMask dwFlags,
+bool CXFA_FFCheckButton::OnLButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
                                      const CFX_PointF& point) {
   if (!GetNormalWidget() || !IsButtonDown())
     return false;
