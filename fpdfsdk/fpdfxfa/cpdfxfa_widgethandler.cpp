@@ -651,7 +651,7 @@ CXFA_FFWidgetHandler* CPDFXFA_WidgetHandler::GetXFAFFWidgetHandler(
 }
 
 FWL_KeyFlagMask CPDFXFA_WidgetHandler::GetKeyFlags(FWL_EventFlagMask dwFlag) {
-  FWL_KeyFlagMask dwFWLFlag = 0;
+  FWL_KeyFlagMask dwFWLFlag;
 
   if (dwFlag & FWL_EVENTFLAG_ControlKey)
     dwFWLFlag |= FWL_KEYFLAG_Ctrl;

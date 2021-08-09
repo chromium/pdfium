@@ -9,6 +9,7 @@
 
 #include <type_traits>
 
+#include "core/fxcrt/mask.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "v8/include/cppgc/macros.h"
 
@@ -23,7 +24,7 @@ enum FWL_KeyFlag : uint8_t {
   FWL_KEYFLAG_RButton = 1 << 5,
   FWL_KEYFLAG_MButton = 1 << 6
 };
-using FWL_KeyFlagMask = std::underlying_type<FWL_KeyFlag>::type;
+using FWL_KeyFlagMask = Mask<FWL_KeyFlag>;
 
 class CFWL_Message {
   CPPGC_STACK_ALLOCATED();  // Allow Raw/Unowned pointers.

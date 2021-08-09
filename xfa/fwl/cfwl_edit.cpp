@@ -40,9 +40,9 @@ namespace {
 constexpr int kEditMargin = 3;
 
 #if defined(OS_APPLE)
-constexpr FWL_KeyFlagMask kEditingModifier = FWL_KEYFLAG_Command;
+constexpr FWL_KeyFlag kEditingModifier = FWL_KEYFLAG_Command;
 #else
-constexpr FWL_KeyFlagMask kEditingModifier = FWL_KEYFLAG_Ctrl;
+constexpr FWL_KeyFlag kEditingModifier = FWL_KEYFLAG_Ctrl;
 #endif
 
 }  // namespace

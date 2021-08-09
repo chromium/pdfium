@@ -32,7 +32,7 @@ class CFWL_MessageMouse final : public CFWL_Message {
   ~CFWL_MessageMouse() override;
 
   const MouseCommand m_dwCmd;
-  FWL_KeyFlagMask m_dwFlags = 0;
+  FWL_KeyFlagMask m_dwFlags;
   CFX_PointF m_pos;
 };
 

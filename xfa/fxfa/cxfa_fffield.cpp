@@ -372,8 +372,8 @@ bool CXFA_FFField::OnMouseEnter() {
     return false;
 
   CFWL_MessageMouse msg(GetNormalWidget(),
-                        CFWL_MessageMouse::MouseCommand::kEnter, 0,
-                        CFX_PointF());
+                        CFWL_MessageMouse::MouseCommand::kEnter,
+                        FWL_KeyFlagMask(), CFX_PointF());
   SendMessageToFWLWidget(&msg);
   return true;
 }
@@ -383,8 +383,8 @@ bool CXFA_FFField::OnMouseExit() {
     return false;
 
   CFWL_MessageMouse msg(GetNormalWidget(),
-                        CFWL_MessageMouse::MouseCommand::kLeave, 0,
-                        CFX_PointF());
+                        CFWL_MessageMouse::MouseCommand::kLeave,
+                        FWL_KeyFlagMask(), CFX_PointF());
   SendMessageToFWLWidget(&msg);
   return true;
 }
