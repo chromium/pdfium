@@ -1835,10 +1835,11 @@ void CPDFSDK_AppStream::AddImage(const ByteString& sAPType,
   CPDF_Dictionary* pStreamDict = pStream->GetDict();
   ByteString sImageAlias = "IMG";
 
-  if (CPDF_Dictionary* pImageDict = pImage->GetDict()) {
-    sImageAlias = pImageDict->GetStringFor("Name");
-    if (sImageAlias.IsEmpty())
-      sImageAlias = "IMG";
+  CPDF_Dictionary* pImageDict = pImage->GetDict();
+  if (pImageDict) {
+    ByteString image_name = pImageDict->GetStringFor("Name");
+    if (CPDF_Dictionary::IsValidKey(image_name))
+      sImageAlias = std::move(image_name);
   }
 
   CPDF_Dictionary* pStreamResList = pStreamDict->GetDictFor("Resources");
