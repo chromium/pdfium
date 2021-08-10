@@ -91,58 +91,47 @@ void CFWL_Barcode::OnProcessEvent(CFWL_Event* pEvent) {
 }
 
 void CFWL_Barcode::SetCharEncoding(BC_CHAR_ENCODING encoding) {
-  m_dwAttributeMask |= FWL_BCDATTRIBUTE_CHARENCODING;
   m_eCharEncoding = encoding;
 }
 
 void CFWL_Barcode::SetModuleHeight(int32_t height) {
-  m_dwAttributeMask |= FWL_BCDATTRIBUTE_MODULEHEIGHT;
   m_nModuleHeight = height;
 }
 
 void CFWL_Barcode::SetModuleWidth(int32_t width) {
-  m_dwAttributeMask |= FWL_BCDATTRIBUTE_MODULEWIDTH;
   m_nModuleWidth = width;
 }
 
 void CFWL_Barcode::SetDataLength(int32_t dataLength) {
-  m_dwAttributeMask |= FWL_BCDATTRIBUTE_DATALENGTH;
   m_nDataLength = dataLength;
   SetLimit(dataLength);
 }
 
 void CFWL_Barcode::SetCalChecksum(bool calChecksum) {
-  m_dwAttributeMask |= FWL_BCDATTRIBUTE_CALCHECKSUM;
   m_bCalChecksum = calChecksum;
 }
 
 void CFWL_Barcode::SetPrintChecksum(bool printChecksum) {
-  m_dwAttributeMask |= FWL_BCDATTRIBUTE_PRINTCHECKSUM;
   m_bPrintChecksum = printChecksum;
 }
 
 void CFWL_Barcode::SetTextLocation(BC_TEXT_LOC location) {
-  m_dwAttributeMask |= FWL_BCDATTRIBUTE_TEXTLOCATION;
   m_eTextLocation = location;
 }
 
 void CFWL_Barcode::SetWideNarrowRatio(int8_t ratio) {
-  m_dwAttributeMask |= FWL_BCDATTRIBUTE_WIDENARROWRATIO;
   m_nWideNarrowRatio = ratio;
 }
 
 void CFWL_Barcode::SetStartChar(char startChar) {
-  m_dwAttributeMask |= FWL_BCDATTRIBUTE_STARTCHAR;
   m_cStartChar = startChar;
 }
 
 void CFWL_Barcode::SetEndChar(char endChar) {
-  m_dwAttributeMask |= FWL_BCDATTRIBUTE_ENDCHAR;
   m_cEndChar = endChar;
 }
 
 void CFWL_Barcode::SetErrorCorrectionLevel(int32_t ecLevel) {
-  m_dwAttributeMask |= FWL_BCDATTRIBUTE_ECLEVEL;
   m_nECLevel = ecLevel;
 }
 
@@ -165,28 +154,28 @@ void CFWL_Barcode::GenerateBarcodeImageCache() {
   m_pBarcodeEngine->SetFontColor(pTheme->GetTextColor(part));
   m_pBarcodeEngine->SetHeight(int32_t(GetRTClient().height));
   m_pBarcodeEngine->SetWidth(int32_t(GetRTClient().width));
-  if (m_dwAttributeMask & FWL_BCDATTRIBUTE_CHARENCODING)
-    m_pBarcodeEngine->SetCharEncoding(m_eCharEncoding);
-  if (m_dwAttributeMask & FWL_BCDATTRIBUTE_MODULEHEIGHT)
-    m_pBarcodeEngine->SetModuleHeight(m_nModuleHeight);
-  if (m_dwAttributeMask & FWL_BCDATTRIBUTE_MODULEWIDTH)
-    m_pBarcodeEngine->SetModuleWidth(m_nModuleWidth);
-  if (m_dwAttributeMask & FWL_BCDATTRIBUTE_DATALENGTH)
-    m_pBarcodeEngine->SetDataLength(m_nDataLength);
-  if (m_dwAttributeMask & FWL_BCDATTRIBUTE_CALCHECKSUM)
-    m_pBarcodeEngine->SetCalChecksum(m_bCalChecksum);
-  if (m_dwAttributeMask & FWL_BCDATTRIBUTE_PRINTCHECKSUM)
-    m_pBarcodeEngine->SetPrintChecksum(m_bPrintChecksum);
-  if (m_dwAttributeMask & FWL_BCDATTRIBUTE_TEXTLOCATION)
-    m_pBarcodeEngine->SetTextLocation(m_eTextLocation);
-  if (m_dwAttributeMask & FWL_BCDATTRIBUTE_WIDENARROWRATIO)
-    m_pBarcodeEngine->SetWideNarrowRatio(m_nWideNarrowRatio);
-  if (m_dwAttributeMask & FWL_BCDATTRIBUTE_STARTCHAR)
-    m_pBarcodeEngine->SetStartChar(m_cStartChar);
-  if (m_dwAttributeMask & FWL_BCDATTRIBUTE_ENDCHAR)
-    m_pBarcodeEngine->SetEndChar(m_cEndChar);
-  if (m_dwAttributeMask & FWL_BCDATTRIBUTE_ECLEVEL)
-    m_pBarcodeEngine->SetErrorCorrectionLevel(m_nECLevel);
+  if (m_eCharEncoding.has_value())
+    m_pBarcodeEngine->SetCharEncoding(m_eCharEncoding.value());
+  if (m_nModuleHeight.has_value())
+    m_pBarcodeEngine->SetModuleHeight(m_nModuleHeight.value());
+  if (m_nModuleWidth.has_value())
+    m_pBarcodeEngine->SetModuleWidth(m_nModuleWidth.value());
+  if (m_nDataLength.has_value())
+    m_pBarcodeEngine->SetDataLength(m_nDataLength.value());
+  if (m_bCalChecksum.value())
+    m_pBarcodeEngine->SetCalChecksum(m_bCalChecksum.value());
+  if (m_bPrintChecksum.has_value())
+    m_pBarcodeEngine->SetPrintChecksum(m_bPrintChecksum.value());
+  if (m_eTextLocation.has_value())
+    m_pBarcodeEngine->SetTextLocation(m_eTextLocation.value());
+  if (m_nWideNarrowRatio.has_value())
+    m_pBarcodeEngine->SetWideNarrowRatio(m_nWideNarrowRatio.value());
+  if (m_cStartChar.has_value())
+    m_pBarcodeEngine->SetStartChar(m_cStartChar.value());
+  if (m_cEndChar.has_value())
+    m_pBarcodeEngine->SetEndChar(m_cEndChar.value());
+  if (m_nECLevel.has_value())
+    m_pBarcodeEngine->SetErrorCorrectionLevel(m_nECLevel.value());
 
   m_eStatus = m_pBarcodeEngine->Encode(GetText().AsStringView())
                   ? Status::kEncodeSuccess
