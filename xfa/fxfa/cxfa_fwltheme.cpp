@@ -101,9 +101,10 @@ void CXFA_FWLTheme::DrawText(const CFWL_ThemeText& pParams) {
     m_pTextOut->SetFontSize(FWLTHEME_CAPACITY_FontSize);
     m_pTextOut->SetTextColor(FWLTHEME_CAPACITY_TextColor);
     if ((pParams.m_iPart == CFWL_ThemePart::Part::kDatesIn) &&
-        !(pParams.m_dwStates & CFWL_PartState_Flagged) &&
+        !(pParams.m_dwStates & CFWL_PartState::kFlagged) &&
         (pParams.m_dwStates &
-         (CFWL_PartState_Hovered | CFWL_PartState_Selected))) {
+         Mask<CFWL_PartState>{CFWL_PartState::kHovered,
+                              CFWL_PartState::kSelected})) {
       m_pTextOut->SetTextColor(0xFF888888);
     }
     if (pParams.m_iPart == CFWL_ThemePart::Part::kCaption)

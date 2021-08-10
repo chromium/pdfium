@@ -40,9 +40,9 @@ void CFWL_EditTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
                           pParams.m_PartRect.width, pParams.m_PartRect.height);
         CFGAS_GEColor cr(FWLTHEME_COLOR_Background);
         if (!pParams.m_bStaticBackground) {
-          if (pParams.m_dwStates & CFWL_PartState_Disabled)
+          if (pParams.m_dwStates & CFWL_PartState::kDisabled)
             cr = CFGAS_GEColor(FWLTHEME_COLOR_EDGERB1);
-          else if (pParams.m_dwStates & CFWL_PartState_ReadOnly)
+          else if (pParams.m_dwStates & CFWL_PartState::kReadOnly)
             cr = CFGAS_GEColor(ArgbEncode(255, 236, 233, 216));
           else
             cr = CFGAS_GEColor(0xFFFFFFFF);

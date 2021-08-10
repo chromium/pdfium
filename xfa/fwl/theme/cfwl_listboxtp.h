@@ -8,6 +8,7 @@
 #define XFA_FWL_THEME_CFWL_LISTBOXTP_H_
 
 #include "fxjs/gc/heap.h"
+#include "xfa/fwl/cfwl_themepart.h"
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
 class CFWL_ListBoxTP final : public CFWL_WidgetTP {
@@ -22,7 +23,7 @@ class CFWL_ListBoxTP final : public CFWL_WidgetTP {
   CFWL_ListBoxTP();
 
   void DrawListBoxItem(CFGAS_GEGraphics* pGraphics,
-                       uint32_t dwStates,
+                       Mask<CFWL_PartState> dwStates,
                        const CFX_RectF& rtItem,
                        const CFX_RectF* pData,
                        const CFX_Matrix& matrix);

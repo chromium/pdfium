@@ -324,7 +324,7 @@ void CFWL_ListBox::DrawBkground(CFGAS_GEGraphics* pGraphics,
   if (IsShowHorzScrollBar() && IsShowVertScrollBar())
     param.m_pRtData = &m_StaticRect;
   if (!IsEnabled())
-    param.m_dwStates = CFWL_PartState_Disabled;
+    param.m_dwStates = CFWL_PartState::kDisabled;
   GetThemeProvider()->DrawBackground(param);
 }
 
@@ -365,15 +365,15 @@ void CFWL_ListBox::DrawItem(CFGAS_GEGraphics* pGraphics,
                             int32_t Index,
                             const CFX_RectF& rtItem,
                             const CFX_Matrix& mtMatrix) {
-  CFWL_PartStateMask dwPartStates = CFWL_PartState_Normal;
+  Mask<CFWL_PartState> dwPartStates = CFWL_PartState::kNormal;
   if (m_Properties.m_dwStates & FWL_STATE_WGT_Disabled)
-    dwPartStates = CFWL_PartState_Disabled;
+    dwPartStates = CFWL_PartState::kDisabled;
   else if (pItem && pItem->IsSelected())
-    dwPartStates = CFWL_PartState_Selected;
+    dwPartStates = CFWL_PartState::kSelected;
 
   if ((m_Properties.m_dwStates & FWL_STATE_WGT_Focused) && pItem &&
       pItem->IsFocused()) {
-    dwPartStates |= CFWL_PartState_Focused;
+    dwPartStates |= CFWL_PartState::kFocused;
   }
 
   CFX_RectF rtFocus(rtItem);  // Must outlive |bg_param|.
@@ -385,7 +385,7 @@ void CFWL_ListBox::DrawItem(CFGAS_GEGraphics* pGraphics,
   bg_param.m_bMaximize = true;
   bg_param.m_pRtData = &rtFocus;
   if (m_pVertScrollBar && !m_pHorzScrollBar &&
-      (dwPartStates & CFWL_PartState_Focused)) {
+      (dwPartStates & CFWL_PartState::kFocused)) {
     bg_param.m_PartRect.left += 1;
     bg_param.m_PartRect.width -= (m_fScorllBarWidth + 1);
     rtFocus.Deflate(0.5, 0.5, 1 + m_fScorllBarWidth, 1);

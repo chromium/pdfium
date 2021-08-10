@@ -65,16 +65,16 @@ void CFWL_PushButton::DrawBkground(CFGAS_GEGraphics* pGraphics,
   GetThemeProvider()->DrawBackground(param);
 }
 
-uint32_t CFWL_PushButton::GetPartStates() {
-  uint32_t dwStates = CFWL_PartState_Normal;
+Mask<CFWL_PartState> CFWL_PushButton::GetPartStates() {
+  Mask<CFWL_PartState> dwStates = CFWL_PartState::kNormal;
   if (m_Properties.m_dwStates & FWL_STATE_WGT_Focused)
-    dwStates |= CFWL_PartState_Focused;
+    dwStates |= CFWL_PartState::kFocused;
   if (m_Properties.m_dwStates & FWL_STATE_WGT_Disabled)
-    dwStates = CFWL_PartState_Disabled;
+    dwStates = CFWL_PartState::kDisabled;
   else if (m_Properties.m_dwStates & FWL_STATE_PSB_Pressed)
-    dwStates |= CFWL_PartState_Pressed;
+    dwStates |= CFWL_PartState::kPressed;
   else if (m_Properties.m_dwStates & FWL_STATE_PSB_Hovered)
-    dwStates |= CFWL_PartState_Hovered;
+    dwStates |= CFWL_PartState::kHovered;
   return dwStates;
 }
 

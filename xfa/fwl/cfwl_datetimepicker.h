@@ -99,7 +99,7 @@ class CFWL_DateTimePicker final : public CFWL_Widget {
   void RepaintInflatedMonthCalRect();
 
   bool m_bLBtnDown = false;
-  int32_t m_iBtnState = 1;
+  Mask<CFWL_PartState> m_iBtnState = CFWL_PartState::kChecked;
   int32_t m_iYear = -1;
   int32_t m_iMonth = -1;
   int32_t m_iDay = -1;

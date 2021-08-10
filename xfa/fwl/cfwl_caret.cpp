@@ -64,7 +64,7 @@ void CFWL_Caret::DrawCaretBK(CFGAS_GEGraphics* pGraphics,
   CFWL_ThemeBackground param(this, pGraphics);
   param.m_PartRect = CFX_RectF(0, 0, GetWidgetRect().Size());
   param.m_iPart = CFWL_ThemePart::Part::kBackground;
-  param.m_dwStates = CFWL_PartState_HightLight;
+  param.m_dwStates = CFWL_PartState::kHightLight;
   param.m_matrix = mtMatrix;
   GetThemeProvider()->DrawBackground(param);
 }

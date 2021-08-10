@@ -51,7 +51,7 @@ class CFWL_CheckBox final : public CFWL_Widget {
 
   void SetCheckState(int32_t iCheck);
   void Layout();
-  uint32_t GetPartStates() const;
+  Mask<CFWL_PartState> GetPartStates() const;
   void UpdateTextOutStyles();
   void NextStates();
   void OnFocusGained();

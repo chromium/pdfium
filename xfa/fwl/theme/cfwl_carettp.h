@@ -8,6 +8,7 @@
 #define XFA_FWL_THEME_CFWL_CARETTP_H_
 
 #include "fxjs/gc/heap.h"
+#include "xfa/fwl/cfwl_themepart.h"
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
 class CFWL_CaretTP final : public CFWL_WidgetTP {
@@ -22,7 +23,7 @@ class CFWL_CaretTP final : public CFWL_WidgetTP {
   CFWL_CaretTP();
 
   void DrawCaretBK(CFGAS_GEGraphics* pGraphics,
-                   uint32_t dwStates,
+                   Mask<CFWL_PartState> dwStates,
                    const CFX_RectF& rect,
                    const CFX_Matrix& matrix);
 };

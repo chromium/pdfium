@@ -450,9 +450,9 @@ void CFWL_ComboBox::OnDrawWidget(CFGAS_GEGraphics* pGraphics,
 
 void CFWL_ComboBox::OnLButtonUp(CFWL_MessageMouse* pMsg) {
   if (m_BtnRect.Contains(pMsg->m_pos))
-    m_iBtnState = CFWL_PartState_Hovered;
+    m_iBtnState = CFWL_PartState::kHovered;
   else
-    m_iBtnState = CFWL_PartState_Normal;
+    m_iBtnState = CFWL_PartState::kNormal;
 
   RepaintRect(m_BtnRect);
 }

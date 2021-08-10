@@ -397,22 +397,22 @@ void CFWL_DateTimePicker::OnLButtonUp(CFWL_MessageMouse* pMsg) {
 
   m_bLBtnDown = false;
   if (m_BtnRect.Contains(pMsg->m_pos))
-    m_iBtnState = CFWL_PartState_Hovered;
+    m_iBtnState = CFWL_PartState::kHovered;
   else
-    m_iBtnState = CFWL_PartState_Normal;
+    m_iBtnState = CFWL_PartState::kNormal;
   RepaintRect(m_BtnRect);
 }
 
 void CFWL_DateTimePicker::OnMouseMove(CFWL_MessageMouse* pMsg) {
   if (!m_BtnRect.Contains(pMsg->m_pos))
-    m_iBtnState = CFWL_PartState_Normal;
+    m_iBtnState = CFWL_PartState::kNormal;
   RepaintRect(m_BtnRect);
 }
 
 void CFWL_DateTimePicker::OnMouseLeave(CFWL_MessageMouse* pMsg) {
   if (!pMsg)
     return;
-  m_iBtnState = CFWL_PartState_Normal;
+  m_iBtnState = CFWL_PartState::kNormal;
   RepaintRect(m_BtnRect);
 }
 

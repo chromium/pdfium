@@ -38,7 +38,7 @@ CFWL_CheckBoxTP::~CFWL_CheckBoxTP() = default;
 
 void CFWL_CheckBoxTP::DrawText(const CFWL_ThemeText& pParams) {
   EnsureTTOInitialized();
-  m_pTextOut->SetTextColor(pParams.m_dwStates & CFWL_PartState_Disabled
+  m_pTextOut->SetTextColor(pParams.m_dwStates & CFWL_PartState::kDisabled
                                ? FWLTHEME_CAPACITY_TextDisColor
                                : FWLTHEME_CAPACITY_TextColor);
   CFWL_WidgetTP::DrawText(pParams);
@@ -211,8 +211,8 @@ void CFWL_CheckBoxTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   if (pParams.m_iPart != CFWL_ThemePart::Part::kCheckBox)
     return;
 
-  if ((pParams.m_dwStates & CFWL_PartState_Checked) ||
-      (pParams.m_dwStates & CFWL_PartState_Neutral)) {
+  if ((pParams.m_dwStates & CFWL_PartState::kChecked) ||
+      (pParams.m_dwStates & CFWL_PartState::kNeutral)) {
     DrawCheckSign(pParams.GetWidget(), pParams.GetGraphics(),
                   pParams.m_PartRect, pParams.m_dwStates, pParams.m_matrix);
   }
@@ -221,11 +221,11 @@ void CFWL_CheckBoxTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
 void CFWL_CheckBoxTP::DrawCheckSign(CFWL_Widget* pWidget,
                                     CFGAS_GEGraphics* pGraphics,
                                     const CFX_RectF& pRtBox,
-                                    int32_t iState,
+                                    Mask<CFWL_PartState> iState,
                                     const CFX_Matrix& matrix) {
   CFX_RectF rtSign(pRtBox);
-  uint32_t dwColor = iState & CFWL_PartState_Neutral ? 0xFFA9A9A9 : 0xFF000000;
-
+  uint32_t dwColor =
+      iState & CFWL_PartState::kNeutral ? 0xFFA9A9A9 : 0xFF000000;
   uint32_t dwStyle = pWidget->GetStyleExts();
   rtSign.Deflate(rtSign.width / 4, rtSign.height / 4);
   switch (dwStyle & FWL_STYLEEXT_CKB_SignShapeMask) {

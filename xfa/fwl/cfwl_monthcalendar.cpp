@@ -221,19 +221,19 @@ void CFWL_MonthCalendar::DrawDatesInBK(CFGAS_GEGraphics* pGraphics,
   for (int32_t j = 0; j < iCount; j++) {
     DATEINFO* pDataInfo = m_DateArray[j].get();
     if (pDataInfo->bSelected) {
-      params.m_dwStates |= CFWL_PartState_Selected;
+      params.m_dwStates |= CFWL_PartState::kSelected;
       if (pDataInfo->bFlagged) {
-        params.m_dwStates |= CFWL_PartState_Flagged;
+        params.m_dwStates |= CFWL_PartState::kFlagged;
       }
     } else if (j == m_iHovered - 1) {
-      params.m_dwStates |= CFWL_PartState_Hovered;
+      params.m_dwStates |= CFWL_PartState::kHovered;
     } else if (pDataInfo->bFlagged) {
-      params.m_dwStates = CFWL_PartState_Flagged;
+      params.m_dwStates = CFWL_PartState::kFlagged;
       pTheme->DrawBackground(params);
     }
     params.m_PartRect = pDataInfo->rect;
     pTheme->DrawBackground(params);
-    params.m_dwStates = 0;
+    params.m_dwStates = CFWL_PartState::kNormal;
   }
 }
 
@@ -287,7 +287,7 @@ void CFWL_MonthCalendar::DrawDatesIn(CFGAS_GEGraphics* pGraphics,
     params.m_PartRect = pDataInfo->rect;
     params.m_dwStates = pDataInfo->AsPartStateMask();
     if (j + 1 == m_iHovered)
-      params.m_dwStates |= CFWL_PartState_Hovered;
+      params.m_dwStates |= CFWL_PartState::kHovered;
 
     params.m_dwTTOStyles.single_line_ = true;
     pTheme->DrawText(params);
@@ -640,11 +640,11 @@ void CFWL_MonthCalendar::OnDrawWidget(CFGAS_GEGraphics* pGraphics,
 
 void CFWL_MonthCalendar::OnLButtonDown(CFWL_MessageMouse* pMsg) {
   if (m_LBtnRect.Contains(pMsg->m_pos)) {
-    m_iLBtnPartStates = CFWL_PartState_Pressed;
+    m_iLBtnPartStates = CFWL_PartState::kPressed;
     PrevMonth();
     RepaintRect(m_ClientRect);
   } else if (m_RBtnRect.Contains(pMsg->m_pos)) {
-    m_iRBtnPartStates |= CFWL_PartState_Pressed;
+    m_iRBtnPartStates |= CFWL_PartState::kPressed;
     NextMonth();
     RepaintRect(m_ClientRect);
   } else if (m_TodayRect.Contains(pMsg->m_pos)) {
@@ -655,12 +655,12 @@ void CFWL_MonthCalendar::OnLButtonDown(CFWL_MessageMouse* pMsg) {
 
 void CFWL_MonthCalendar::OnLButtonUp(CFWL_MessageMouse* pMsg) {
   if (m_LBtnRect.Contains(pMsg->m_pos)) {
-    m_iLBtnPartStates = 0;
+    m_iLBtnPartStates = CFWL_PartState::kNormal;
     RepaintRect(m_LBtnRect);
     return;
   }
   if (m_RBtnRect.Contains(pMsg->m_pos)) {
-    m_iRBtnPartStates = 0;
+    m_iRBtnPartStates = CFWL_PartState::kNormal;
     RepaintRect(m_RBtnRect);
     return;
   }
@@ -739,11 +739,11 @@ CFWL_MonthCalendar::DATEINFO::DATEINFO(int32_t day,
 
 CFWL_MonthCalendar::DATEINFO::~DATEINFO() = default;
 
-CFWL_PartStateMask CFWL_MonthCalendar::DATEINFO::AsPartStateMask() const {
-  CFWL_PartStateMask dwStates = 0;
+Mask<CFWL_PartState> CFWL_MonthCalendar::DATEINFO::AsPartStateMask() const {
+  Mask<CFWL_PartState> dwStates = CFWL_PartState::kNormal;
   if (bFlagged)
-    dwStates |= CFWL_PartState_Flagged;
+    dwStates |= CFWL_PartState::kFlagged;
   if (bSelected)
-    dwStates |= CFWL_PartState_Selected;
+    dwStates |= CFWL_PartState::kSelected;
   return dwStates;
 }

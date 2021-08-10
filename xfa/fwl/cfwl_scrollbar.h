@@ -111,11 +111,11 @@ class CFWL_ScrollBar final : public CFWL_Widget,
   float m_fStepSize = 0.0f;
   float m_fPos = 0.0f;
   float m_fTrackPos = 0.0f;
-  CFWL_PartState m_iMinButtonState = CFWL_PartState_Normal;
-  CFWL_PartState m_iMaxButtonState = CFWL_PartState_Normal;
-  CFWL_PartState m_iThumbButtonState = CFWL_PartState_Normal;
-  CFWL_PartState m_iMinTrackState = CFWL_PartState_Normal;
-  CFWL_PartState m_iMaxTrackState = CFWL_PartState_Normal;
+  CFWL_PartState m_iMinButtonState = CFWL_PartState::kNormal;
+  CFWL_PartState m_iMaxButtonState = CFWL_PartState::kNormal;
+  CFWL_PartState m_iThumbButtonState = CFWL_PartState::kNormal;
+  CFWL_PartState m_iMinTrackState = CFWL_PartState::kNormal;
+  CFWL_PartState m_iMaxTrackState = CFWL_PartState::kNormal;
   float m_fLastTrackPos = 0.0f;
   CFX_PointF m_cpTrackPoint;
   int32_t m_iMouseWheel = 0;

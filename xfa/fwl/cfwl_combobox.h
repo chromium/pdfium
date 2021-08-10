@@ -119,7 +119,7 @@ class CFWL_ComboBox final : public CFWL_Widget {
   cppgc::Member<CFWL_ComboEdit> const m_pEdit;
   cppgc::Member<CFWL_ComboList> const m_pListBox;
   int32_t m_iCurSel = -1;
-  int32_t m_iBtnState = CFWL_PartState_Normal;
+  Mask<CFWL_PartState> m_iBtnState = CFWL_PartState::kNormal;
 };
 
 #endif  // XFA_FWL_CFWL_COMBOBOX_H_

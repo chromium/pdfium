@@ -77,7 +77,7 @@ void CFWL_PushButtonTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
       pGraphics->SetFillColor(CFGAS_GEColor(m_pThemeData->clrFill[iColor]));
       pGraphics->FillPath(fillPath, CFX_FillRenderOptions::FillType::kWinding,
                           pParams.m_matrix);
-      if (pParams.m_dwStates & CFWL_PartState_Focused) {
+      if (pParams.m_dwStates & CFWL_PartState::kFocused) {
         rtInner.Inflate(1, 1, 0, 0);
         DrawFocus(pGraphics, rtInner, pParams.m_matrix);
       }
@@ -112,16 +112,16 @@ void CFWL_PushButtonTP::SetThemeData() {
   m_pThemeData->clrFill[4] = ArgbEncode(255, 245, 244, 234);
 }
 
-int32_t CFWL_PushButtonTP::GetColorID(uint32_t dwStates) const {
+int32_t CFWL_PushButtonTP::GetColorID(Mask<CFWL_PartState> dwStates) const {
   int32_t color = 0;
-  if (dwStates & CFWL_PartState_Disabled)
+  if (dwStates & CFWL_PartState::kDisabled)
     color += 4;
-  if (dwStates & CFWL_PartState_Default) {
+  if (dwStates & CFWL_PartState::kDefault) {
     color += 3;
   } else {
-    if (dwStates & CFWL_PartState_Hovered)
+    if (dwStates & CFWL_PartState::kHovered)
       color += 2;
-    if (dwStates & CFWL_PartState_Pressed)
+    if (dwStates & CFWL_PartState::kPressed)
       color += 1;
   }
   return color;

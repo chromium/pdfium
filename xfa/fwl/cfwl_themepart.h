@@ -12,29 +12,28 @@
 #include <type_traits>
 
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/mask.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fwl/theme/cfwl_utils.h"
 
 class CFWL_Widget;
 
-enum CFWL_PartState : uint32_t {
-  CFWL_PartState_Normal = 0,
-
-  CFWL_PartState_Checked = 1 << 1,
-  CFWL_PartState_Default = 1 << 2,
-  CFWL_PartState_Disabled = 1 << 3,
-  CFWL_PartState_Flagged = 1 << 4,
-  CFWL_PartState_Focused = 1 << 5,
-  CFWL_PartState_HightLight = 1 << 6,
-  CFWL_PartState_Hovered = 1 << 7,
-  CFWL_PartState_Neutral = 1 << 9,
-  CFWL_PartState_Pressed = 1 << 10,
-  CFWL_PartState_ReadOnly = 1 << 11,
-  CFWL_PartState_LSelected = 1 << 12,
-  CFWL_PartState_RSelected = 1 << 13,
-  CFWL_PartState_Selected = 1 << 14
+enum class CFWL_PartState : uint16_t {
+  kNormal = 0,
+  kChecked = 1 << 1,
+  kDefault = 1 << 2,
+  kDisabled = 1 << 3,
+  kFlagged = 1 << 4,
+  kFocused = 1 << 5,
+  kHightLight = 1 << 6,
+  kHovered = 1 << 7,
+  kNeutral = 1 << 9,
+  kPressed = 1 << 10,
+  kReadOnly = 1 << 11,
+  kLSelected = 1 << 12,
+  kRSelected = 1 << 13,
+  kSelected = 1 << 14
 };
-using CFWL_PartStateMask = std::underlying_type<CFWL_PartState>::type;
 
 class CFWL_ThemePart {
  public:
@@ -93,7 +92,7 @@ class CFWL_ThemePart {
   CFX_Matrix m_matrix;
   CFX_RectF m_PartRect;
   UnownedPtr<const CFX_RectF> m_pRtData;
-  CFWL_PartStateMask m_dwStates = CFWL_PartState_Normal;
+  Mask<CFWL_PartState> m_dwStates = CFWL_PartState::kNormal;
   Part m_iPart = Part::kNone;
   bool m_bMaximize = false;
   bool m_bStaticBackground = false;

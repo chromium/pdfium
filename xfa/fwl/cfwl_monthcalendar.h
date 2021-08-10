@@ -77,7 +77,7 @@ class CFWL_MonthCalendar final : public CFWL_Widget {
              const WideString& wsday);
     ~DATEINFO();
 
-    CFWL_PartStateMask AsPartStateMask() const;
+    Mask<CFWL_PartState> AsPartStateMask() const;
 
     const int32_t iDay;
     const int32_t iDayOfWeek;
@@ -146,8 +146,8 @@ class CFWL_MonthCalendar final : public CFWL_Widget {
   int32_t m_iMonth = 1;
   int32_t m_iDay = 1;
   int32_t m_iHovered = -1;
-  int32_t m_iLBtnPartStates = CFWL_PartState_Normal;
-  int32_t m_iRBtnPartStates = CFWL_PartState_Normal;
+  Mask<CFWL_PartState> m_iLBtnPartStates = CFWL_PartState::kNormal;
+  Mask<CFWL_PartState> m_iRBtnPartStates = CFWL_PartState::kNormal;
   DATE m_dtMin;
   DATE m_dtMax;
   CFX_SizeF m_HeadSize;

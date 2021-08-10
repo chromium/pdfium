@@ -58,7 +58,7 @@ void CFWL_CheckBox::DrawWidget(CFGAS_GEGraphics* pGraphics,
   if (HasBorder())
     DrawBorder(pGraphics, CFWL_ThemePart::Part::kBorder, matrix);
 
-  int32_t dwStates = GetPartStates();
+  Mask<CFWL_PartState> dwStates = GetPartStates();
   CFWL_ThemeBackground param(this, pGraphics);
   param.m_iPart = CFWL_ThemePart::Part::kBackground;
   param.m_dwStates = dwStates;
@@ -121,25 +121,25 @@ void CFWL_CheckBox::Layout() {
   m_FocusRect.Inflate(1, 1);
 }
 
-uint32_t CFWL_CheckBox::GetPartStates() const {
-  int32_t dwStates = CFWL_PartState_Normal;
+Mask<CFWL_PartState> CFWL_CheckBox::GetPartStates() const {
+  Mask<CFWL_PartState> dwStates = CFWL_PartState::kNormal;
   if ((m_Properties.m_dwStates & FWL_STATE_CKB_CheckMask) ==
       FWL_STATE_CKB_Neutral) {
-    dwStates = CFWL_PartState_Neutral;
+    dwStates = CFWL_PartState::kNeutral;
   } else if ((m_Properties.m_dwStates & FWL_STATE_CKB_CheckMask) ==
              FWL_STATE_CKB_Checked) {
-    dwStates = CFWL_PartState_Checked;
+    dwStates = CFWL_PartState::kChecked;
   }
   if (m_Properties.m_dwStates & FWL_STATE_WGT_Disabled)
-    dwStates |= CFWL_PartState_Disabled;
+    dwStates |= CFWL_PartState::kDisabled;
   else if (m_Properties.m_dwStates & FWL_STATE_CKB_Hovered)
-    dwStates |= CFWL_PartState_Hovered;
+    dwStates |= CFWL_PartState::kHovered;
   else if (m_Properties.m_dwStates & FWL_STATE_CKB_Pressed)
-    dwStates |= CFWL_PartState_Pressed;
+    dwStates |= CFWL_PartState::kPressed;
   else
-    dwStates |= CFWL_PartState_Normal;
+    dwStates |= CFWL_PartState::kNormal;
   if (m_Properties.m_dwStates & FWL_STATE_WGT_Focused)
-    dwStates |= CFWL_PartState_Focused;
+    dwStates |= CFWL_PartState::kFocused;
   return dwStates;
 }
 

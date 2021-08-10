@@ -28,16 +28,13 @@ void CFWL_ComboBoxTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
       const CFX_RectF& rect = pParams.m_PartRect;
       path.AddRectangle(rect.left, rect.top, rect.width, rect.height);
       FX_ARGB argb_color;
-      switch (pParams.m_dwStates) {
-        case CFWL_PartState_Selected:
-          argb_color = FWLTHEME_COLOR_BKSelected;
-          break;
-        case CFWL_PartState_Disabled:
-          argb_color = FWLTHEME_COLOR_EDGERB1;
-          break;
-        default:
-          argb_color = 0xFFFFFFFF;
-      }
+      if (pParams.m_dwStates & CFWL_PartState::kSelected)
+        argb_color = FWLTHEME_COLOR_BKSelected;
+      else if (pParams.m_dwStates & CFWL_PartState::kDisabled)
+        argb_color = FWLTHEME_COLOR_EDGERB1;
+      else
+        argb_color = 0xFFFFFFFF;
+
       pParams.GetGraphics()->SaveGraphState();
       pParams.GetGraphics()->SetFillColor(CFGAS_GEColor(argb_color));
       pParams.GetGraphics()->FillPath(
