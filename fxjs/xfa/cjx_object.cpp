@@ -1004,13 +1004,13 @@ void CJX_Object::ScriptAttributeString(v8::Isolate* pIsolate,
 
   CXFA_Node* pProtoNode = nullptr;
   if (!wsSOM.IsEmpty()) {
-    constexpr XFA_ResolveNodeMask kFlags =
-        XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Attributes |
-        XFA_RESOLVENODE_Properties | XFA_RESOLVENODE_Parent |
-        XFA_RESOLVENODE_Siblings;
     Optional<CFXJSE_Engine::ResolveResult> maybeResult =
         GetDocument()->GetScriptContext()->ResolveObjects(
-            pProtoRoot, wsSOM.AsStringView(), kFlags);
+            pProtoRoot, wsSOM.AsStringView(),
+            Mask<XFA_ResolveFlag>{
+                XFA_ResolveFlag::kChildren, XFA_ResolveFlag::kAttributes,
+                XFA_ResolveFlag::kProperties, XFA_ResolveFlag::kParent,
+                XFA_ResolveFlag::kSiblings});
     if (maybeResult.has_value() &&
         maybeResult.value().objects.front()->IsNode()) {
       pProtoNode = maybeResult.value().objects.front()->AsNode();

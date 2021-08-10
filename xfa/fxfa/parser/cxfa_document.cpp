@@ -346,11 +346,12 @@ CXFA_Node* FindDataRefDataNode(CXFA_Document* pDocument,
                                CXFA_Node* pTemplateNode,
                                bool bForceBind,
                                bool bUpLevel) {
-  XFA_ResolveNodeMask dwFlags =
-      XFA_RESOLVENODE_Children | XFA_RESOLVENODE_BindNew;
-  if (bUpLevel || !wsRef.EqualsASCII("name"))
-    dwFlags |= (XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings);
-
+  Mask<XFA_ResolveFlag> dwFlags = {XFA_ResolveFlag::kChildren,
+                                   XFA_ResolveFlag::kBindNew};
+  if (bUpLevel || !wsRef.EqualsASCII("name")) {
+    dwFlags |= XFA_ResolveFlag::kParent;
+    dwFlags |= XFA_ResolveFlag::kSiblings;
+  }
   Optional<CFXJSE_Engine::ResolveResult> maybeResult =
       pDocument->GetScriptContext()->ResolveObjectsWithBindNode(
           pDataScope, wsRef.AsStringView(), dwFlags, pTemplateNode);
@@ -1198,8 +1199,8 @@ void UpdateBindingRelations(CXFA_Document* pDocument,
               pTemplateNodeBind
                   ? pTemplateNodeBind->JSObject()->GetCData(XFA_Attribute::Ref)
                   : WideString();
-          constexpr XFA_ResolveNodeMask kFlags =
-              XFA_RESOLVENODE_Children | XFA_RESOLVENODE_CreateNode;
+          const Mask<XFA_ResolveFlag> kFlags = {XFA_ResolveFlag::kChildren,
+                                                XFA_ResolveFlag::kCreateNode};
           Optional<CFXJSE_Engine::ResolveResult> maybeResult =
               pDocument->GetScriptContext()->ResolveObjectsWithBindNode(
                   pDataScope, wsRef.AsStringView(), kFlags, pTemplateNode);
@@ -1577,12 +1578,13 @@ void CXFA_Document::DoProtoMerge() {
 
     CXFA_Node* pProtoNode = nullptr;
     if (!wsSOM.IsEmpty()) {
-      constexpr uint32_t dwFlag =
-          XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Attributes |
-          XFA_RESOLVENODE_Properties | XFA_RESOLVENODE_Parent |
-          XFA_RESOLVENODE_Siblings;
       Optional<CFXJSE_Engine::ResolveResult> maybeResult =
-          m_pScriptContext->ResolveObjects(pUseHrefNode, wsSOM, dwFlag);
+          m_pScriptContext->ResolveObjects(
+              pUseHrefNode, wsSOM,
+              Mask<XFA_ResolveFlag>{
+                  XFA_ResolveFlag::kChildren, XFA_ResolveFlag::kAttributes,
+                  XFA_ResolveFlag::kProperties, XFA_ResolveFlag::kParent,
+                  XFA_ResolveFlag::kSiblings});
       if (maybeResult.has_value()) {
         auto* pFirstObject = maybeResult.value().objects.front().Get();
         if (pFirstObject && pFirstObject->IsNode())

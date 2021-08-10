@@ -437,12 +437,12 @@ CXFA_FFWidget* CXFA_FFDocView::GetWidgetByName(const WideString& wsName,
     pRefNode = node->IsWidgetReady() ? node : nullptr;
   }
   WideString wsExpression = (!pRefNode ? L"$form." : L"") + wsName;
-  constexpr XFA_ResolveNodeMask kFlags =
-      XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
-      XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent;
   Optional<CFXJSE_Engine::ResolveResult> maybeResult =
-      pScriptContext->ResolveObjects(pRefNode, wsExpression.AsStringView(),
-                                     kFlags);
+      pScriptContext->ResolveObjects(
+          pRefNode, wsExpression.AsStringView(),
+          Mask<XFA_ResolveFlag>{
+              XFA_ResolveFlag::kChildren, XFA_ResolveFlag::kProperties,
+              XFA_ResolveFlag::kSiblings, XFA_ResolveFlag::kParent});
   if (!maybeResult.has_value())
     return nullptr;
 
@@ -634,12 +634,13 @@ void CXFA_FFDocView::RunBindItems() {
     CFXJSE_Engine* pScriptContext =
         pWidgetNode->GetDocument()->GetScriptContext();
     WideString wsRef = item->GetRef();
-    constexpr XFA_ResolveNodeMask kFlags =
-        XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
-        XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_ALL;
     Optional<CFXJSE_Engine::ResolveResult> maybeRS =
-        pScriptContext->ResolveObjects(pWidgetNode, wsRef.AsStringView(),
-                                       kFlags);
+        pScriptContext->ResolveObjects(
+            pWidgetNode, wsRef.AsStringView(),
+            Mask<XFA_ResolveFlag>{
+                XFA_ResolveFlag::kChildren, XFA_ResolveFlag::kProperties,
+                XFA_ResolveFlag::kSiblings, XFA_ResolveFlag::kParent,
+                XFA_ResolveFlag::kALL});
     pWidgetNode->DeleteItem(-1, false, false);
     if (!maybeRS.has_value() ||
         maybeRS.value().type != CFXJSE_Engine::ResolveResult::Type::kNodes ||

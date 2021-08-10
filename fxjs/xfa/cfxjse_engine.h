@@ -12,6 +12,7 @@
 #include <type_traits>
 #include <vector>
 
+#include "core/fxcrt/mask.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/cfx_v8.h"
 #include "v8/include/cppgc/persistent.h"
@@ -29,20 +30,19 @@ class CFXJSE_ResolveProcessor;
 class CFXJSE_Value;
 class CJS_Runtime;
 
-enum XFA_ResolveNode : uint16_t {
-  XFA_RESOLVENODE_Children = 1 << 0,
-  XFA_RESOLVENODE_TagName = 1 << 1,
-  XFA_RESOLVENODE_Attributes = 1 << 2,
-  XFA_RESOLVENODE_Properties = 1 << 3,
-  XFA_RESOLVENODE_Siblings = 1 << 5,
-  XFA_RESOLVENODE_Parent = 1 << 6,
-  XFA_RESOLVENODE_AnyChild = 1 << 7,
-  XFA_RESOLVENODE_ALL = 1 << 8,
-  XFA_RESOLVENODE_CreateNode = 1 << 10,
-  XFA_RESOLVENODE_Bind = 1 << 11,
-  XFA_RESOLVENODE_BindNew = 1 << 12,
+enum class XFA_ResolveFlag : uint16_t {
+  kChildren = 1 << 0,
+  kTagName = 1 << 1,
+  kAttributes = 1 << 2,
+  kProperties = 1 << 3,
+  kSiblings = 1 << 5,
+  kParent = 1 << 6,
+  kAnyChild = 1 << 7,
+  kALL = 1 << 8,
+  kCreateNode = 1 << 10,
+  kBind = 1 << 11,
+  kBindNew = 1 << 12,
 };
-using XFA_ResolveNodeMask = std::underlying_type<XFA_ResolveNode>::type;
 
 class CFXJSE_Engine final : public CFX_V8 {
  public:
@@ -117,12 +117,12 @@ class CFXJSE_Engine final : public CFX_V8 {
 
   Optional<ResolveResult> ResolveObjects(CXFA_Object* refObject,
                                          WideStringView wsExpression,
-                                         XFA_ResolveNodeMask dwStyles);
+                                         Mask<XFA_ResolveFlag> dwStyles);
 
   Optional<ResolveResult> ResolveObjectsWithBindNode(
       CXFA_Object* refObject,
       WideStringView wsExpression,
-      XFA_ResolveNodeMask dwStyles,
+      Mask<XFA_ResolveFlag> dwStyles,
       CXFA_Node* bindNode);
 
   v8::Local<v8::Object> GetOrCreateJSBindingFromMap(CXFA_Object* pObject);
@@ -153,11 +153,11 @@ class CFXJSE_Engine final : public CFX_V8 {
   bool QueryNodeByFlag(CXFA_Node* refNode,
                        WideStringView propname,
                        v8::Local<v8::Value>* pValue,
-                       XFA_ResolveNodeMask dwFlag);
+                       Mask<XFA_ResolveFlag> dwFlag);
   bool UpdateNodeByFlag(CXFA_Node* refNode,
                         WideStringView propname,
                         v8::Local<v8::Value> pValue,
-                        XFA_ResolveNodeMask dwFlag);
+                        Mask<XFA_ResolveFlag> dwFlag);
   bool IsStrictScopeInJavaScript();
   CXFA_Object* GetVariablesThis(CXFA_Object* pObject);
   CXFA_Object* GetVariablesScript(CXFA_Object* pObject);

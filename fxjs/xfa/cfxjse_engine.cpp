@@ -182,7 +182,7 @@ bool CFXJSE_Engine::RunScript(CXFA_Script::Type eScriptType,
 bool CFXJSE_Engine::QueryNodeByFlag(CXFA_Node* refNode,
                                     WideStringView propname,
                                     v8::Local<v8::Value>* pValue,
-                                    XFA_ResolveNodeMask dwFlag) {
+                                    Mask<XFA_ResolveFlag> dwFlag) {
   if (!refNode)
     return false;
 
@@ -209,7 +209,7 @@ bool CFXJSE_Engine::QueryNodeByFlag(CXFA_Node* refNode,
 bool CFXJSE_Engine::UpdateNodeByFlag(CXFA_Node* refNode,
                                      WideStringView propname,
                                      v8::Local<v8::Value> pValue,
-                                     XFA_ResolveNodeMask dwFlag) {
+                                     Mask<XFA_ResolveFlag> dwFlag) {
   if (!refNode)
     return false;
 
@@ -243,9 +243,10 @@ void CFXJSE_Engine::GlobalPropertySetter(v8::Isolate* pIsolate,
   WideString wsPropName = WideString::FromUTF8(szPropName);
   if (pScriptContext->UpdateNodeByFlag(
           pRefNode, wsPropName.AsStringView(), pValue,
-          XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings |
-              XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
-              XFA_RESOLVENODE_Attributes)) {
+          Mask<XFA_ResolveFlag>{
+              XFA_ResolveFlag::kParent, XFA_ResolveFlag::kSiblings,
+              XFA_ResolveFlag::kChildren, XFA_ResolveFlag::kProperties,
+              XFA_ResolveFlag::kAttributes})) {
     return;
   }
   if (pOriginalNode->IsThisProxy() && fxv8::IsUndefined(pValue)) {
@@ -299,13 +300,15 @@ v8::Local<v8::Value> CFXJSE_Engine::GlobalPropertyGetter(
 
   if (pScriptContext->QueryNodeByFlag(
           pRefNode, wsPropName.AsStringView(), &pValue,
-          XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
-              XFA_RESOLVENODE_Attributes)) {
+          Mask<XFA_ResolveFlag>{XFA_ResolveFlag::kChildren,
+                                XFA_ResolveFlag::kProperties,
+                                XFA_ResolveFlag::kAttributes})) {
     return pValue;
   }
   if (pScriptContext->QueryNodeByFlag(
           pRefNode, wsPropName.AsStringView(), &pValue,
-          XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings)) {
+          Mask<XFA_ResolveFlag>{XFA_ResolveFlag::kParent,
+                                XFA_ResolveFlag::kSiblings})) {
     return pValue;
   }
 
@@ -373,8 +376,9 @@ v8::Local<v8::Value> CFXJSE_Engine::NormalPropertyGetter(
   CXFA_Node* pRefNode = ToNode(pObject);
   if (pScriptContext->QueryNodeByFlag(
           pRefNode, wsPropName.AsStringView(), &pReturnValue,
-          XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
-              XFA_RESOLVENODE_Attributes)) {
+          Mask<XFA_ResolveFlag>{XFA_ResolveFlag::kChildren,
+                                XFA_ResolveFlag::kProperties,
+                                XFA_ResolveFlag::kAttributes})) {
     return pReturnValue;
   }
   if (pObject == pScriptContext->GetThisObject() ||
@@ -382,7 +386,8 @@ v8::Local<v8::Value> CFXJSE_Engine::NormalPropertyGetter(
        !pScriptContext->IsStrictScopeInJavaScript())) {
     if (pScriptContext->QueryNodeByFlag(
             pRefNode, wsPropName.AsStringView(), &pReturnValue,
-            XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings)) {
+            Mask<XFA_ResolveFlag>{XFA_ResolveFlag::kParent,
+                                  XFA_ResolveFlag::kSiblings})) {
       return pReturnValue;
     }
   }
@@ -650,31 +655,30 @@ void CFXJSE_Engine::RemoveBuiltInObjs(CFXJSE_Context* pContext) {
 Optional<CFXJSE_Engine::ResolveResult> CFXJSE_Engine::ResolveObjects(
     CXFA_Object* refObject,
     WideStringView wsExpression,
-    XFA_ResolveNodeMask dwStyles) {
+    Mask<XFA_ResolveFlag> dwStyles) {
   return ResolveObjectsWithBindNode(refObject, wsExpression, dwStyles, nullptr);
 }
 
 Optional<CFXJSE_Engine::ResolveResult>
 CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
                                           WideStringView wsExpression,
-                                          XFA_ResolveNodeMask dwStyles,
+                                          Mask<XFA_ResolveFlag> dwStyles,
                                           CXFA_Node* bindNode) {
   if (wsExpression.IsEmpty())
     return pdfium::nullopt;
 
-  ResolveResult result;
-  if (m_eScriptType != CXFA_Script::Type::Formcalc ||
-      (dwStyles & (XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings))) {
+  const bool bParentOrSiblings =
+      !!(dwStyles & Mask<XFA_ResolveFlag>{XFA_ResolveFlag::kParent,
+                                          XFA_ResolveFlag::kSiblings});
+  if (m_eScriptType != CXFA_Script::Type::Formcalc || bParentOrSiblings)
     m_upObjectArray.clear();
-  }
-  if (refObject && refObject->IsNode() &&
-      (dwStyles & (XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings))) {
+  if (refObject && refObject->IsNode() && bParentOrSiblings)
     m_upObjectArray.push_back(refObject->AsNode());
-  }
 
+  ResolveResult result;
   bool bNextCreate = false;
   CFXJSE_NodeHelper* pNodeHelper = m_ResolveProcessor->GetNodeHelper();
-  if (dwStyles & XFA_RESOLVENODE_CreateNode)
+  if (dwStyles & XFA_ResolveFlag::kCreateNode)
     pNodeHelper->SetCreateNodeType(bindNode);
 
   pNodeHelper->m_pCreateParent = nullptr;
@@ -694,7 +698,7 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
     m_ResolveProcessor->SetCurStart(nStart);
     nStart = m_ResolveProcessor->GetFilter(wsExpression, nStart, rndFind);
     if (nStart < 1) {
-      if ((dwStyles & XFA_RESOLVENODE_CreateNode) && !bNextCreate) {
+      if ((dwStyles & XFA_ResolveFlag::kCreateNode) && !bNextCreate) {
         CXFA_Node* pDataNode = nullptr;
         nStart = pNodeHelper->m_iCurAllStart;
         if (nStart != -1) {
@@ -710,7 +714,7 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
           findObjects.emplace_back(pDataNode);
           break;
         }
-        dwStyles |= XFA_RESOLVENODE_Bind;
+        dwStyles |= XFA_ResolveFlag::kBind;
         findObjects.clear();
         findObjects.emplace_back(pNodeHelper->m_pAllStartParent.Get());
         continue;
@@ -729,8 +733,8 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
     std::vector<cppgc::Member<CXFA_Object>> retObjects;
     while (i < nNodes) {
       bool bDataBind = false;
-      if (((dwStyles & XFA_RESOLVENODE_Bind) ||
-           (dwStyles & XFA_RESOLVENODE_CreateNode)) &&
+      if (((dwStyles & XFA_ResolveFlag::kBind) ||
+           (dwStyles & XFA_ResolveFlag::kCreateNode)) &&
           nNodes > 1) {
         CFXJSE_ResolveNodeData rndBind(nullptr);
         m_ResolveProcessor->GetFilter(wsExpression, nStart, rndBind);
@@ -768,7 +772,7 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
 
     nNodes = fxcrt::CollectionSize<int32_t>(retObjects);
     if (nNodes < 1) {
-      if (dwStyles & XFA_RESOLVENODE_CreateNode) {
+      if (dwStyles & XFA_ResolveFlag::kCreateNode) {
         bNextCreate = true;
         if (!pNodeHelper->m_pCreateParent) {
           pNodeHelper->m_pCreateParent = ToNode(rndFind.m_CurObject.Get());
@@ -786,9 +790,10 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
 
     findObjects = std::move(retObjects);
     rndFind.m_Result.objects.clear();
-    if (nLevel == 0)
-      dwStyles &= ~(XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings);
-
+    if (nLevel == 0) {
+      dwStyles.Clear(XFA_ResolveFlag::kParent);
+      dwStyles.Clear(XFA_ResolveFlag::kSiblings);
+    }
     nLevel++;
   }
 
@@ -803,8 +808,9 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
       return result;
     }
   }
-  if (dwStyles & (XFA_RESOLVENODE_CreateNode | XFA_RESOLVENODE_Bind |
-                  XFA_RESOLVENODE_BindNew)) {
+  if ((dwStyles & XFA_ResolveFlag::kCreateNode) ||
+      (dwStyles & XFA_ResolveFlag::kBind) ||
+      (dwStyles & XFA_ResolveFlag::kBindNew)) {
     if (pNodeHelper->m_pCreateParent)
       result.objects.emplace_back(pNodeHelper->m_pCreateParent.Get());
     else
@@ -816,7 +822,7 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
         result.type = ResolveResult::Type::kCreateNodeMidAll;
     }
 
-    if (!bNextCreate && (dwStyles & XFA_RESOLVENODE_CreateNode))
+    if (!bNextCreate && (dwStyles & XFA_ResolveFlag::kCreateNode))
       result.type = ResolveResult::Type::kExistNodes;
 
     if (result.objects.empty())

@@ -292,9 +292,9 @@ CJS_Result CJX_HostPseudoModel::openList(
     if (!pObject)
       return CJS_Result::Success();
 
-    constexpr XFA_ResolveNodeMask kFlags = XFA_RESOLVENODE_Children |
-                                           XFA_RESOLVENODE_Parent |
-                                           XFA_RESOLVENODE_Siblings;
+    constexpr Mask<XFA_ResolveFlag> kFlags = {XFA_ResolveFlag::kChildren,
+                                              XFA_ResolveFlag::kParent,
+                                              XFA_ResolveFlag::kSiblings};
     Optional<CFXJSE_Engine::ResolveResult> maybeResult =
         pScriptContext->ResolveObjects(
             pObject, runtime->ToWideString(params[0]).AsStringView(), kFlags);
@@ -378,9 +378,9 @@ CJS_Result CJX_HostPseudoModel::resetData(
     if (!pObject)
       return CJS_Result::Success();
 
-    constexpr XFA_ResolveNodeMask kFlags = XFA_RESOLVENODE_Children |
-                                           XFA_RESOLVENODE_Parent |
-                                           XFA_RESOLVENODE_Siblings;
+    constexpr Mask<XFA_ResolveFlag> kFlags = {XFA_ResolveFlag::kChildren,
+                                              XFA_ResolveFlag::kParent,
+                                              XFA_ResolveFlag::kSiblings};
     Optional<CFXJSE_Engine::ResolveResult> maybeResult =
         pScriptContext->ResolveObjects(pObject, wsName.AsStringView(), kFlags);
     if (!maybeResult.has_value() ||
@@ -441,9 +441,9 @@ CJS_Result CJX_HostPseudoModel::setFocus(
       if (!pObject)
         return CJS_Result::Success();
 
-      constexpr XFA_ResolveNodeMask kFlags = XFA_RESOLVENODE_Children |
-                                             XFA_RESOLVENODE_Parent |
-                                             XFA_RESOLVENODE_Siblings;
+      constexpr Mask<XFA_ResolveFlag> kFlags = {XFA_ResolveFlag::kChildren,
+                                                XFA_ResolveFlag::kParent,
+                                                XFA_ResolveFlag::kSiblings};
       Optional<CFXJSE_Engine::ResolveResult> maybeResult =
           pScriptContext->ResolveObjects(
               pObject, runtime->ToWideString(params[0]).AsStringView(), kFlags);
@@ -534,19 +534,19 @@ CJS_Result CJX_HostPseudoModel::print(
   if (!pNotify)
     return CJS_Result::Success();
 
-  XFA_PrintOptMask dwOptions = 0;
+  Mask<XFA_PrintOpt> dwOptions;
   if (runtime->ToBoolean(params[0]))
-    dwOptions |= XFA_PRINTOPT_ShowDialog;
+    dwOptions |= XFA_PrintOpt::kShowDialog;
   if (runtime->ToBoolean(params[3]))
-    dwOptions |= XFA_PRINTOPT_CanCancel;
+    dwOptions |= XFA_PrintOpt::kCanCancel;
   if (runtime->ToBoolean(params[4]))
-    dwOptions |= XFA_PRINTOPT_ShrinkPage;
+    dwOptions |= XFA_PrintOpt::kShrinkPage;
   if (runtime->ToBoolean(params[5]))
-    dwOptions |= XFA_PRINTOPT_AsImage;
+    dwOptions |= XFA_PrintOpt::kAsImage;
   if (runtime->ToBoolean(params[6]))
-    dwOptions |= XFA_PRINTOPT_ReverseOrder;
+    dwOptions |= XFA_PrintOpt::kReverseOrder;
   if (runtime->ToBoolean(params[7]))
-    dwOptions |= XFA_PRINTOPT_PrintAnnot;
+    dwOptions |= XFA_PrintOpt::kPrintAnnot;
 
   int32_t nStartPage = runtime->ToInt32(params[1]);
   int32_t nEndPage = runtime->ToInt32(params[2]);

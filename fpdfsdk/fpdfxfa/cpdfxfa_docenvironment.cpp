@@ -577,7 +577,7 @@ void CPDFXFA_DocEnvironment::SetFocusWidget(CXFA_FFDoc* hDoc,
 void CPDFXFA_DocEnvironment::Print(CXFA_FFDoc* hDoc,
                                    int32_t nStartPage,
                                    int32_t nEndPage,
-                                   XFA_PrintOptMask dwOptions) {
+                                   Mask<XFA_PrintOpt> dwOptions) {
   if (hDoc != m_pContext->GetXFADoc())
     return;
 
@@ -590,10 +590,12 @@ void CPDFXFA_DocEnvironment::Print(CXFA_FFDoc* hDoc,
 
   pFormFillEnv->GetFormFillInfo()->m_pJsPlatform->Doc_print(
       pFormFillEnv->GetFormFillInfo()->m_pJsPlatform,
-      dwOptions & XFA_PRINTOPT_ShowDialog, nStartPage, nEndPage,
-      dwOptions & XFA_PRINTOPT_CanCancel, dwOptions & XFA_PRINTOPT_ShrinkPage,
-      dwOptions & XFA_PRINTOPT_AsImage, dwOptions & XFA_PRINTOPT_ReverseOrder,
-      dwOptions & XFA_PRINTOPT_PrintAnnot);
+      !!(dwOptions & XFA_PrintOpt::kShowDialog), nStartPage, nEndPage,
+      !!(dwOptions & XFA_PrintOpt::kCanCancel),
+      !!(dwOptions & XFA_PrintOpt::kShrinkPage),
+      !!(dwOptions & XFA_PrintOpt::kAsImage),
+      !!(dwOptions & XFA_PrintOpt::kReverseOrder),
+      !!(dwOptions & XFA_PrintOpt::kPrintAnnot));
 }
 
 FX_ARGB CPDFXFA_DocEnvironment::GetHighlightColor(

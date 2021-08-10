@@ -12,6 +12,7 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/mask.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
@@ -102,7 +103,7 @@ class CXFA_FFDoc : public cppgc::GarbageCollected<CXFA_FFDoc> {
     virtual void Print(CXFA_FFDoc* hDoc,
                        int32_t nStartPage,
                        int32_t nEndPage,
-                       XFA_PrintOptMask dwOptions) = 0;
+                       Mask<XFA_PrintOpt> dwOptions) = 0;
     virtual FX_ARGB GetHighlightColor(const CXFA_FFDoc* hDoc) const = 0;
     virtual IJS_Runtime* GetIJSRuntime(const CXFA_FFDoc* hDoc) const = 0;
     virtual CFX_XMLDocument* GetXMLDoc() const = 0;
@@ -149,7 +150,9 @@ class CXFA_FFDoc : public cppgc::GarbageCollected<CXFA_FFDoc> {
   bool IsValidationsEnabled() const;
   void SetValidationsEnabled(bool bEnabled);
   void SetFocusWidget(CXFA_FFWidget* hWidget);
-  void Print(int32_t nStartPage, int32_t nEndPage, XFA_PrintOptMask dwOptions);
+  void Print(int32_t nStartPage,
+             int32_t nEndPage,
+             Mask<XFA_PrintOpt> dwOptions);
   FX_ARGB GetHighlightColor() const;
   IJS_Runtime* GetIJSRuntime() const;
   CFX_XMLDocument* GetXMLDocument() const;

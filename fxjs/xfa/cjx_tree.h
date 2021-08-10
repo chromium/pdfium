@@ -45,7 +45,7 @@ class CJX_Tree : public CJX_Object {
 
   v8::Local<v8::Value> ResolveNodeList(v8::Isolate* pIsolate,
                                        WideString wsExpression,
-                                       XFA_ResolveNodeMask dwFlag,
+                                       Mask<XFA_ResolveFlag> dwFlag,
                                        CXFA_Node* refNode);
 };
 

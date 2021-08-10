@@ -209,13 +209,13 @@ CXFA_Node* ResolveBreakTarget(CXFA_Node* pPageSetRoot,
       if (wsExpr.First(4).EqualsASCII("som(") && wsExpr.Back() == L')')
         wsProcessedTarget = wsExpr.Substr(4, wsExpr.GetLength() - 5);
 
-      constexpr XFA_ResolveNodeMask kFlags =
-          XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
-          XFA_RESOLVENODE_Attributes | XFA_RESOLVENODE_Siblings |
-          XFA_RESOLVENODE_Parent;
       Optional<CFXJSE_Engine::ResolveResult> maybeResult =
           pDocument->GetScriptContext()->ResolveObjects(
-              pPageSetRoot, wsProcessedTarget.AsStringView(), kFlags);
+              pPageSetRoot, wsProcessedTarget.AsStringView(),
+              Mask<XFA_ResolveFlag>{
+                  XFA_ResolveFlag::kChildren, XFA_ResolveFlag::kProperties,
+                  XFA_ResolveFlag::kAttributes, XFA_ResolveFlag::kSiblings,
+                  XFA_ResolveFlag::kParent});
       if (maybeResult.has_value() &&
           maybeResult.value().objects.front()->IsNode()) {
         return maybeResult.value().objects.front()->AsNode();

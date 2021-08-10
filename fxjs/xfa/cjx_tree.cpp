@@ -47,13 +47,13 @@ CJS_Result CJX_Tree::resolveNode(
   if (pRefNode->GetElementType() == XFA_Element::Xfa)
     pRefNode = pScriptContext->GetThisObject();
 
-  constexpr XFA_ResolveNodeMask kFlags =
-      XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Attributes |
-      XFA_RESOLVENODE_Properties | XFA_RESOLVENODE_Parent |
-      XFA_RESOLVENODE_Siblings;
   Optional<CFXJSE_Engine::ResolveResult> maybeResult =
-      pScriptContext->ResolveObjects(ToNode(pRefNode),
-                                     wsExpression.AsStringView(), kFlags);
+      pScriptContext->ResolveObjects(
+          ToNode(pRefNode), wsExpression.AsStringView(),
+          Mask<XFA_ResolveFlag>{
+              XFA_ResolveFlag::kChildren, XFA_ResolveFlag::kAttributes,
+              XFA_ResolveFlag::kProperties, XFA_ResolveFlag::kParent,
+              XFA_ResolveFlag::kSiblings});
   if (!maybeResult.has_value())
     return CJS_Result::Success(runtime->NewNull());
 
@@ -88,10 +88,10 @@ CJS_Result CJX_Tree::resolveNodes(
     refNode = GetDocument()->GetScriptContext()->GetThisObject();
 
   CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
-  constexpr XFA_ResolveNodeMask kFlags =
-      XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Attributes |
-      XFA_RESOLVENODE_Properties | XFA_RESOLVENODE_Parent |
-      XFA_RESOLVENODE_Siblings;
+  const Mask<XFA_ResolveFlag> kFlags = {
+      XFA_ResolveFlag::kChildren, XFA_ResolveFlag::kAttributes,
+      XFA_ResolveFlag::kProperties, XFA_ResolveFlag::kParent,
+      XFA_ResolveFlag::kSiblings};
   return CJS_Result::Success(ResolveNodeList(pScriptContext->GetIsolate(),
                                              runtime->ToWideString(params[0]),
                                              kFlags, ToNode(refNode)));
@@ -105,8 +105,8 @@ void CJX_Tree::all(v8::Isolate* pIsolate,
     ThrowInvalidPropertyException();
     return;
   }
-  constexpr XFA_ResolveNodeMask kFlags =
-      XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_ALL;
+  const Mask<XFA_ResolveFlag> kFlags = {XFA_ResolveFlag::kSiblings,
+                                        XFA_ResolveFlag::kALL};
   WideString wsExpression = GetAttributeByEnum(XFA_Attribute::Name) + L"[*]";
   *pValue = ResolveNodeList(pIsolate, wsExpression, kFlags, nullptr);
 }
@@ -119,8 +119,8 @@ void CJX_Tree::classAll(v8::Isolate* pIsolate,
     ThrowInvalidPropertyException();
     return;
   }
-  constexpr XFA_ResolveNodeMask kFlags =
-      XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_ALL;
+  const Mask<XFA_ResolveFlag> kFlags = {XFA_ResolveFlag::kSiblings,
+                                        XFA_ResolveFlag::kALL};
   WideString wsExpression =
       L"#" + WideString::FromASCII(GetXFAObject()->GetClassName()) + L"[*]";
   *pValue = ResolveNodeList(pIsolate, wsExpression, kFlags, nullptr);
@@ -208,7 +208,7 @@ void CJX_Tree::somExpression(v8::Isolate* pIsolate,
 
 v8::Local<v8::Value> CJX_Tree::ResolveNodeList(v8::Isolate* pIsolate,
                                                WideString wsExpression,
-                                               XFA_ResolveNodeMask dwFlag,
+                                               Mask<XFA_ResolveFlag> dwFlag,
                                                CXFA_Node* refNode) {
   if (!refNode)
     refNode = GetXFANode();

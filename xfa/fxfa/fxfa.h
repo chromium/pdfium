@@ -44,15 +44,14 @@ enum class FormType {
   kXFAForeground = 3,
 };
 
-enum XFA_PrintOpt : uint8_t {
-  XFA_PRINTOPT_ShowDialog = 1 << 0,
-  XFA_PRINTOPT_CanCancel = 1 << 1,
-  XFA_PRINTOPT_ShrinkPage = 1 << 2,
-  XFA_PRINTOPT_AsImage = 1 << 3,
-  XFA_PRINTOPT_ReverseOrder = 1 << 4,
-  XFA_PRINTOPT_PrintAnnot = 1 << 5,
+enum class XFA_PrintOpt : uint8_t {
+  kShowDialog = 1 << 0,
+  kCanCancel = 1 << 1,
+  kShrinkPage = 1 << 2,
+  kAsImage = 1 << 3,
+  kReverseOrder = 1 << 4,
+  kPrintAnnot = 1 << 5,
 };
-using XFA_PrintOptMask = std::underlying_type<XFA_PrintOpt>::type;
 
 enum class XFA_EventError {
   kError = -1,

@@ -200,7 +200,7 @@ void CXFA_FFDoc::SetFocusWidget(CXFA_FFWidget* hWidget) {
 
 void CXFA_FFDoc::Print(int32_t nStartPage,
                        int32_t nEndPage,
-                       XFA_PrintOptMask dwOptions) {
+                       Mask<XFA_PrintOpt> dwOptions) {
   m_pDocEnvironment->Print(this, nStartPage, nEndPage, dwOptions);
 }
 
