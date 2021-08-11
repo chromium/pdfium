@@ -560,9 +560,9 @@ CFX_CSSVerticalAlign CFX_CSSStyleSelector::ToVerticalAlign(
   }
 }
 
-uint32_t CFX_CSSStyleSelector::ToTextDecoration(
+Mask<CFX_CSSTEXTDECORATION> CFX_CSSStyleSelector::ToTextDecoration(
     const RetainPtr<CFX_CSSValueList>& pValue) {
-  uint32_t dwDecoration = 0;
+  Mask<CFX_CSSTEXTDECORATION> dwDecoration;
   for (const RetainPtr<CFX_CSSValue>& val :
        pdfium::base::Reversed(pValue->values())) {
     if (val->GetType() != CFX_CSSValue::PrimitiveType::kEnum)
@@ -570,19 +570,19 @@ uint32_t CFX_CSSStyleSelector::ToTextDecoration(
 
     switch (val.As<CFX_CSSEnumValue>()->Value()) {
       case CFX_CSSPropertyValue::Underline:
-        dwDecoration |= CFX_CSSTEXTDECORATION_Underline;
+        dwDecoration |= CFX_CSSTEXTDECORATION::kUnderline;
         break;
       case CFX_CSSPropertyValue::LineThrough:
-        dwDecoration |= CFX_CSSTEXTDECORATION_LineThrough;
+        dwDecoration |= CFX_CSSTEXTDECORATION::kLineThrough;
         break;
       case CFX_CSSPropertyValue::Overline:
-        dwDecoration |= CFX_CSSTEXTDECORATION_Overline;
+        dwDecoration |= CFX_CSSTEXTDECORATION::kOverline;
         break;
       case CFX_CSSPropertyValue::Blink:
-        dwDecoration |= CFX_CSSTEXTDECORATION_Blink;
+        dwDecoration |= CFX_CSSTEXTDECORATION::kBlink;
         break;
       case CFX_CSSPropertyValue::Double:
-        dwDecoration |= CFX_CSSTEXTDECORATION_Double;
+        dwDecoration |= CFX_CSSTEXTDECORATION::kDouble;
         break;
       default:
         break;

@@ -126,7 +126,7 @@ float CFX_CSSComputedStyle::GetNumberVerticalAlign() const {
   return m_NonInheritedData.m_fVerticalAlign;
 }
 
-uint32_t CFX_CSSComputedStyle::GetTextDecoration() const {
+Mask<CFX_CSSTEXTDECORATION> CFX_CSSComputedStyle::GetTextDecoration() const {
   return m_NonInheritedData.m_dwTextDecoration;
 }
 
@@ -151,7 +151,8 @@ void CFX_CSSComputedStyle::SetNumberVerticalAlign(float fAlign) {
   m_NonInheritedData.m_fVerticalAlign = fAlign;
 }
 
-void CFX_CSSComputedStyle::SetTextDecoration(uint32_t dwTextDecoration) {
+void CFX_CSSComputedStyle::SetTextDecoration(
+    Mask<CFX_CSSTEXTDECORATION> dwTextDecoration) {
   m_NonInheritedData.m_dwTextDecoration = dwTextDecoration;
 }
 

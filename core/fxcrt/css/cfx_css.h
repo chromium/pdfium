@@ -164,13 +164,13 @@ enum class CFX_CSSFontVariant : uint8_t {
   SmallCaps,
 };
 
-enum CFX_CSSTEXTDECORATION {
-  CFX_CSSTEXTDECORATION_None = 0,
-  CFX_CSSTEXTDECORATION_Underline = 1 << 0,
-  CFX_CSSTEXTDECORATION_Overline = 1 << 1,
-  CFX_CSSTEXTDECORATION_LineThrough = 1 << 2,
-  CFX_CSSTEXTDECORATION_Blink = 1 << 3,
-  CFX_CSSTEXTDECORATION_Double = 1 << 4,
+enum class CFX_CSSTEXTDECORATION : uint8_t {
+  kNone = 0,
+  kUnderline = 1 << 0,
+  kOverline = 1 << 1,
+  kLineThrough = 1 << 2,
+  kBlink = 1 << 3,
+  kDouble = 1 << 4,
 };
 
 class CFX_CSSLength {
