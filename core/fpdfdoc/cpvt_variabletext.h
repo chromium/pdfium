@@ -145,7 +145,6 @@ class CPVT_VariableText {
   float GetFontDescent(int32_t nFontIndex, float fFontSize) const;
   int32_t GetDefaultFontIndex();
   float GetLineLeading();
-  int32_t GetAlignment();
   float GetWordWidth(const CPVT_WordInfo& WordInfo) const;
   float GetWordWidth(int32_t nFontIndex,
                      uint16_t Word,

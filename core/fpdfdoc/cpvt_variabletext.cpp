@@ -636,10 +636,6 @@ float CPVT_VariableText::GetLineIndent() {
   return 0.0f;
 }
 
-int32_t CPVT_VariableText::GetAlignment() {
-  return m_nAlignment;
-}
-
 void CPVT_VariableText::ClearSectionRightWords(const CPVT_WordPlace& place) {
   CPVT_WordPlace wordplace = PrevLineHeaderPlace(place);
   if (!fxcrt::IndexInBounds(m_SectionArray, place.nSecIndex))
