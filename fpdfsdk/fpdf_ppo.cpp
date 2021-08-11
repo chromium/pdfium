@@ -180,21 +180,6 @@ const CPDF_Object* PageDictGetInheritableTag(const CPDF_Dictionary* pDict,
   return nullptr;
 }
 
-CFX_FloatRect GetMediaBox(const CPDF_Dictionary* pPageDict) {
-  const CPDF_Object* pMediaBox =
-      PageDictGetInheritableTag(pPageDict, pdfium::page_object::kMediaBox);
-  const CPDF_Array* pArray = ToArray(pMediaBox->GetDirect());
-  if (!pArray)
-    return CFX_FloatRect();
-  return pArray->GetRect();
-}
-
-CFX_FloatRect GetCropBox(const CPDF_Dictionary* pPageDict) {
-  if (pPageDict->KeyExist(pdfium::page_object::kCropBox))
-    return pPageDict->GetRectFor(pdfium::page_object::kCropBox);
-  return GetMediaBox(pPageDict);
-}
-
 bool CopyInheritable(CPDF_Dictionary* pDestPageDict,
                      const CPDF_Dictionary* pSrcPageDict,
                      const ByteString& key) {
@@ -499,17 +484,17 @@ class CPDF_NPageToOneExporter final : public CPDF_PageOrganizer {
   // Map page object number to XObject object name.
   using PageXObjectMap = std::map<uint32_t, ByteString>;
 
-  // Creates an XObject from |pSrcPageDict|, or find an existing XObject that
-  // represents |pSrcPageDict|. The transformation matrix is specified in
+  // Creates an XObject from |pSrcPage|, or find an existing XObject that
+  // represents |pSrcPage|. The transformation matrix is specified in
   // |settings|.
   // Returns the XObject reference surrounded by the transformation matrix.
-  ByteString AddSubPage(const CPDF_Dictionary* pSrcPageDict,
+  ByteString AddSubPage(const RetainPtr<CPDF_Page>& pSrcPage,
                         const NupPageSettings& settings);
 
-  // Creates an XObject from |pSrcPageDict|. Updates mapping as needed.
+  // Creates an XObject from |pSrcPage|. Updates mapping as needed.
   // Returns the name of the newly created XObject.
-  ByteString MakeXObjectFromPage(const CPDF_Dictionary* pSrcPageDict);
-  CPDF_Stream* MakeXObjectFromPageRaw(const CPDF_Dictionary* pSrcPageDict);
+  ByteString MakeXObjectFromPage(const RetainPtr<CPDF_Page>& pSrcPage);
+  CPDF_Stream* MakeXObjectFromPageRaw(const RetainPtr<CPDF_Page>& pSrcPage);
 
   // Adds |bsContent| as the Contents key in |pDestPageDict|.
   // Adds the objects in |m_XObjectNameToNumberMap| to the XObject dictionary in
@@ -579,7 +564,7 @@ bool CPDF_NPageToOneExporter::ExportNPagesToOne(
           std::make_unique<CPDF_PageRenderCache>(pSrcPage.Get()));
       NupPageSettings settings =
           nupState.CalculateNewPagePosition(pSrcPage->GetPageSize());
-      bsContent += AddSubPage(pSrcPageDict, settings);
+      bsContent += AddSubPage(pSrcPage, settings);
     }
 
     FinishPage(pDestPageDict, bsContent);
@@ -590,13 +575,13 @@ bool CPDF_NPageToOneExporter::ExportNPagesToOne(
 }
 
 ByteString CPDF_NPageToOneExporter::AddSubPage(
-    const CPDF_Dictionary* pSrcPageDict,
+    const RetainPtr<CPDF_Page>& pSrcPage,
     const NupPageSettings& settings) {
-  uint32_t dwSrcPageObjnum = pSrcPageDict->GetObjNum();
+  uint32_t dwSrcPageObjnum = pSrcPage->GetDict()->GetObjNum();
   const auto it = m_SrcPageXObjectMap.find(dwSrcPageObjnum);
   ByteString bsXObjectName = it != m_SrcPageXObjectMap.end()
                                  ? it->second
-                                 : MakeXObjectFromPage(pSrcPageDict);
+                                 : MakeXObjectFromPage(pSrcPage);
 
   CFX_Matrix matrix;
   matrix.Scale(settings.scale, settings.scale);
@@ -611,9 +596,8 @@ ByteString CPDF_NPageToOneExporter::AddSubPage(
 }
 
 CPDF_Stream* CPDF_NPageToOneExporter::MakeXObjectFromPageRaw(
-    const CPDF_Dictionary* pSrcPageDict) {
-  DCHECK(pSrcPageDict);
-
+    const RetainPtr<CPDF_Page>& pSrcPage) {
+  const CPDF_Dictionary* pSrcPageDict = pSrcPage->GetDict();
   const CPDF_Object* pSrcContentObj =
       pSrcPageDict->GetDirectObjectFor(pdfium::page_object::kContents);
 
@@ -633,7 +617,7 @@ CPDF_Stream* CPDF_NPageToOneExporter::MakeXObjectFromPageRaw(
   pNewXObjectDict->SetNewFor<CPDF_Name>("Type", "XObject");
   pNewXObjectDict->SetNewFor<CPDF_Name>("Subtype", "Form");
   pNewXObjectDict->SetNewFor<CPDF_Number>("FormType", 1);
-  pNewXObjectDict->SetRectFor("BBox", GetCropBox(pSrcPageDict));
+  pNewXObjectDict->SetRectFor("BBox", pSrcPage->GetBBox());
   // TODO(xlou): add matrix field to pNewXObjectDict.
 
   if (pSrcContentObj) {
@@ -659,22 +643,23 @@ CPDF_Stream* CPDF_NPageToOneExporter::MakeXObjectFromPageRaw(
 }
 
 ByteString CPDF_NPageToOneExporter::MakeXObjectFromPage(
-    const CPDF_Dictionary* pSrcPageDict) {
-  CPDF_Stream* pNewXObject = MakeXObjectFromPageRaw(pSrcPageDict);
+    const RetainPtr<CPDF_Page>& pSrcPage) {
+  CPDF_Stream* pNewXObject = MakeXObjectFromPageRaw(pSrcPage);
 
   // TODO(xlou): A better name schema to avoid possible object name collision.
   ByteString bsXObjectName = ByteString::Format("X%d", ++m_nObjectNumber);
   m_XObjectNameToNumberMap[bsXObjectName] = pNewXObject->GetObjNum();
-  m_SrcPageXObjectMap[pSrcPageDict->GetObjNum()] = bsXObjectName;
+  m_SrcPageXObjectMap[pSrcPage->GetDict()->GetObjNum()] = bsXObjectName;
   return bsXObjectName;
 }
 
 std::unique_ptr<XObjectContext>
 CPDF_NPageToOneExporter::CreateXObjectContextFromPage(int src_page_index) {
-  CPDF_Dictionary* src_page = src()->GetPageDictionary(src_page_index);
-  if (!src_page)
+  CPDF_Dictionary* src_page_dict = src()->GetPageDictionary(src_page_index);
+  if (!src_page_dict)
     return nullptr;
 
+  auto src_page = pdfium::MakeRetain<CPDF_Page>(src(), src_page_dict);
   auto xobject = std::make_unique<XObjectContext>();
   xobject->dest_doc = dest();
   xobject->xobject = MakeXObjectFromPageRaw(src_page);
