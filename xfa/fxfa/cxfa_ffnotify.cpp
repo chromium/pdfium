@@ -344,7 +344,7 @@ void CXFA_FFNotify::OnNodeReady(CXFA_Node* pNode) {
       pDocView->AddBindItem(static_cast<CXFA_BindItems*>(pNode));
       break;
     case XFA_Element::Validate:
-      pNode->SetFlag(XFA_NodeFlag_NeedsInitApp);
+      pNode->SetFlag(XFA_NodeFlag::kNeedsInitApp);
       break;
     default:
       break;

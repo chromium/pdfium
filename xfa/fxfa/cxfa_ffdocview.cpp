@@ -250,7 +250,7 @@ bool CXFA_FFDocView::ResetSingleNodeData(CXFA_Node* pNode) {
     return true;
 
   AddValidateNode(pNode);
-  validate->SetFlag(XFA_NodeFlag_NeedsInitApp);
+  validate->SetFlag(XFA_NodeFlag::kNeedsInitApp);
   return true;
 }
 

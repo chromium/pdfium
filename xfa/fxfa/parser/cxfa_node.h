@@ -74,17 +74,16 @@ enum class XFA_ValuePicture : uint8_t {
   kDataBind,
 };
 
-enum XFA_NodeFlag : uint8_t {
-  XFA_NodeFlag_None = 0,
-  XFA_NodeFlag_Initialized = 1 << 0,
-  XFA_NodeFlag_HasRemovedChildren = 1 << 1,
-  XFA_NodeFlag_NeedsInitApp = 1 << 2,
-  XFA_NodeFlag_BindFormItems = 1 << 3,
-  XFA_NodeFlag_UserInteractive = 1 << 4,
-  XFA_NodeFlag_UnusedNode = 1 << 5,
-  XFA_NodeFlag_LayoutGeneratedNode = 1 << 6
+enum class XFA_NodeFlag : uint8_t {
+  kNone = 0,
+  kInitialized = 1 << 0,
+  kHasRemovedChildren = 1 << 1,
+  kNeedsInitApp = 1 << 2,
+  kBindFormItems = 1 << 3,
+  kUserInteractive = 1 << 4,
+  kUnusedNode = 1 << 5,
+  kLayoutGeneratedNode = 1 << 6
 };
-using XFA_NodeFlagMask = std::underlying_type<XFA_NodeFlag>::type;
 
 enum XFA_PropertyFlag : uint8_t {
   XFA_PropertyFlag_OneOf = 1 << 0,
@@ -134,9 +133,9 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
 
   XFA_PacketType GetPacketType() const { return m_ePacket; }
 
-  void SetFlag(uint32_t dwFlag);
-  void SetFlagAndNotify(uint32_t dwFlag);
-  void ClearFlag(uint32_t dwFlag);
+  void SetInitializedFlagAndNotify();
+  void SetFlag(XFA_NodeFlag dwFlag);
+  void ClearFlag(XFA_NodeFlag dwFlag);
 
   CXFA_Node* CreateInstanceIfPossible(bool bDataMerge);
   int32_t GetCount();
@@ -147,13 +146,13 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
                   int32_t iCount,
                   bool bMoveDataBindingNodes);
 
-  bool IsInitialized() const { return HasFlag(XFA_NodeFlag_Initialized); }
+  bool IsInitialized() const { return HasFlag(XFA_NodeFlag::kInitialized); }
   bool IsUserInteractive() const {
-    return HasFlag(XFA_NodeFlag_UserInteractive);
+    return HasFlag(XFA_NodeFlag::kUserInteractive);
   }
-  bool IsUnusedNode() const { return HasFlag(XFA_NodeFlag_UnusedNode); }
+  bool IsUnusedNode() const { return HasFlag(XFA_NodeFlag::kUnusedNode); }
   bool IsLayoutGeneratedNode() const {
-    return HasFlag(XFA_NodeFlag_LayoutGeneratedNode);
+    return HasFlag(XFA_NodeFlag::kLayoutGeneratedNode);
   }
 
   bool PresenceRequiresSpace() const;
@@ -161,7 +160,7 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
   void SetNodeAndDescendantsUnused();
 
   bool HasRemovedChildren() const {
-    return HasFlag(XFA_NodeFlag_HasRemovedChildren);
+    return HasFlag(XFA_NodeFlag::kHasRemovedChildren);
   }
 
   bool IsAttributeInXML();
@@ -486,8 +485,8 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
       return nullptr;
     return binding_nodes_[0];
   }
-  bool BindsFormItems() const { return HasFlag(XFA_NodeFlag_BindFormItems); }
-  bool NeedsInitApp() const { return HasFlag(XFA_NodeFlag_NeedsInitApp); }
+  bool BindsFormItems() const { return HasFlag(XFA_NodeFlag::kBindFormItems); }
+  bool NeedsInitApp() const { return HasFlag(XFA_NodeFlag::kNeedsInitApp); }
   void SyncValue(const WideString& wsValue, bool bNotify);
   CXFA_Value* GetDefaultValueIfExists();
   CXFA_Bind* GetBindIfExists() const;
@@ -518,7 +517,7 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
   UnownedPtr<CFX_XMLNode> xml_node_;
   const XFA_PacketType m_ePacket;
   uint8_t m_ExecuteRecursionDepth = 0;
-  XFA_NodeFlagMask m_uNodeFlags = XFA_NodeFlag_None;
+  Mask<XFA_NodeFlag> m_uNodeFlags = XFA_NodeFlag::kNone;
   uint32_t m_dwNameHash = 0;
   cppgc::Member<CXFA_Node> m_pAuxNode;
   std::vector<cppgc::Member<CXFA_Node>> binding_nodes_;

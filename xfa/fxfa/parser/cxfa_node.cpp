@@ -1039,7 +1039,7 @@ CXFA_Node* CXFA_Node::Clone(bool bRecursive) {
       pClone->InsertChildAndNotify(pChild->Clone(bRecursive), nullptr);
     }
   }
-  pClone->SetFlagAndNotify(XFA_NodeFlag_Initialized);
+  pClone->SetInitializedFlagAndNotify();
   pClone->SetBindingNode(nullptr);
   return pClone;
 }
@@ -1149,7 +1149,7 @@ CXFA_Node* CXFA_Node::GetOrCreateProperty(int32_t index,
       return nullptr;
 
     InsertChildAndNotify(pNewNode, nullptr);
-    pNewNode->SetFlagAndNotify(XFA_NodeFlag_Initialized);
+    pNewNode->SetInitializedFlagAndNotify();
   }
   return pNewNode;
 }
@@ -1247,7 +1247,7 @@ std::vector<CXFA_Node*> CXFA_Node::GetNodeListWithFilter(
       m_pDocument->CreateNode(GetPacketType(), property.value());
   if (pNewNode) {
     InsertChildAndNotify(pNewNode, nullptr);
-    pNewNode->SetFlagAndNotify(XFA_NodeFlag_Initialized);
+    pNewNode->SetInitializedFlagAndNotify();
     nodes.push_back(pNewNode);
   }
   return nodes;
@@ -1258,7 +1258,7 @@ CXFA_Node* CXFA_Node::CreateSamePacketNode(XFA_Element eType) {
   if (!pNode)
     return nullptr;
 
-  pNode->SetFlagAndNotify(XFA_NodeFlag_Initialized);
+  pNode->SetInitializedFlagAndNotify();
   return pNode;
 }
 
@@ -1279,7 +1279,7 @@ CXFA_Node* CXFA_Node::CloneTemplateToForm(bool bRecursive) {
                                    nullptr);
     }
   }
-  pClone->SetFlagAndNotify(XFA_NodeFlag_Initialized);
+  pClone->SetInitializedFlagAndNotify();
   return pClone;
 }
 
@@ -1320,7 +1320,7 @@ void CXFA_Node::AddBindItem(CXFA_Node* pFormNode) {
   binding_nodes_.clear();
   binding_nodes_.push_back(pOldFormItem);
   binding_nodes_.push_back(pFormNode);
-  m_uNodeFlags |= XFA_NodeFlag_BindFormItems;
+  m_uNodeFlags |= XFA_NodeFlag::kBindFormItems;
 }
 
 bool CXFA_Node::RemoveBindItem(CXFA_Node* pFormNode) {
@@ -1331,7 +1331,7 @@ bool CXFA_Node::RemoveBindItem(CXFA_Node* pFormNode) {
       binding_nodes_.erase(it);
 
     if (binding_nodes_.size() == 1) {
-      m_uNodeFlags &= ~XFA_NodeFlag_BindFormItems;
+      m_uNodeFlags.Clear(XFA_NodeFlag::kBindFormItems);
       return true;
     }
     return !binding_nodes_.empty();
@@ -1590,7 +1590,7 @@ void CXFA_Node::InsertChildAndNotify(int32_t index, CXFA_Node* pNode) {
 void CXFA_Node::InsertChildAndNotify(CXFA_Node* pNode, CXFA_Node* pBeforeNode) {
   CHECK(!pNode->GetParent());
   CHECK(!pBeforeNode || pBeforeNode->GetParent() == this);
-  pNode->ClearFlag(XFA_NodeFlag_HasRemovedChildren);
+  pNode->ClearFlag(XFA_NodeFlag::kHasRemovedChildren);
   InsertBefore(pNode, pBeforeNode);
 
   CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
@@ -1610,7 +1610,7 @@ void CXFA_Node::RemoveChildAndNotify(CXFA_Node* pNode, bool bNotify) {
   if (pNode->GetParent() != this)
     return;
 
-  pNode->SetFlag(XFA_NodeFlag_HasRemovedChildren);
+  pNode->SetFlag(XFA_NodeFlag::kHasRemovedChildren);
   GCedTreeNodeMixin<CXFA_Node>::RemoveChild(pNode);
   OnRemoved(bNotify);
 
@@ -1782,29 +1782,26 @@ CXFA_Occur* CXFA_Node::GetOccurIfExists() {
 bool CXFA_Node::HasFlag(XFA_NodeFlag dwFlag) const {
   if (m_uNodeFlags & dwFlag)
     return true;
-  if (dwFlag == XFA_NodeFlag_HasRemovedChildren)
+  if (dwFlag == XFA_NodeFlag::kHasRemovedChildren)
     return GetParent() && GetParent()->HasFlag(dwFlag);
   return false;
 }
 
-void CXFA_Node::SetFlagAndNotify(uint32_t dwFlag) {
-  DCHECK_EQ(dwFlag, XFA_NodeFlag_Initialized);
-
+void CXFA_Node::SetInitializedFlagAndNotify() {
   if (!IsInitialized()) {
     CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
-    if (pNotify) {
+    if (pNotify)
       pNotify->OnNodeReady(this);
-    }
   }
+  m_uNodeFlags |= XFA_NodeFlag::kInitialized;
+}
+
+void CXFA_Node::SetFlag(XFA_NodeFlag dwFlag) {
   m_uNodeFlags |= dwFlag;
 }
 
-void CXFA_Node::SetFlag(uint32_t dwFlag) {
-  m_uNodeFlags |= dwFlag;
-}
-
-void CXFA_Node::ClearFlag(uint32_t dwFlag) {
-  m_uNodeFlags &= ~dwFlag;
+void CXFA_Node::ClearFlag(XFA_NodeFlag dwFlag) {
+  m_uNodeFlags.Clear(dwFlag);
 }
 
 bool CXFA_Node::IsAttributeInXML() {
@@ -2512,7 +2509,7 @@ void CXFA_Node::ProcessScriptTestValidate(CXFA_FFDocView* pDocView,
                              static_cast<uint32_t>(AlertIcon::kWarning),
                              static_cast<uint32_t>(AlertButton::kYesNo)) ==
         static_cast<uint32_t>(AlertReturn::kYes)) {
-      SetFlag(XFA_NodeFlag_UserInteractive);
+      SetFlag(XFA_NodeFlag::kUserInteractive);
     }
     return;
   }
@@ -2573,7 +2570,7 @@ XFA_EventError CXFA_Node::ProcessFormatTestValidate(CXFA_FFDocView* pDocView,
                            static_cast<uint32_t>(AlertIcon::kWarning),
                            static_cast<uint32_t>(AlertButton::kYesNo)) ==
       static_cast<uint32_t>(AlertReturn::kYes)) {
-    SetFlag(XFA_NodeFlag_UserInteractive);
+    SetFlag(XFA_NodeFlag::kUserInteractive);
   }
 
   return XFA_EventError::kError;
@@ -2640,7 +2637,7 @@ XFA_EventError CXFA_Node::ProcessNullTestValidate(CXFA_FFDocView* pDocView,
                                static_cast<uint32_t>(AlertIcon::kWarning),
                                static_cast<uint32_t>(AlertButton::kYesNo)) ==
           static_cast<uint32_t>(AlertReturn::kYes)) {
-        SetFlag(XFA_NodeFlag_UserInteractive);
+        SetFlag(XFA_NodeFlag::kUserInteractive);
       }
       return XFA_EventError::kError;
     }
@@ -2678,7 +2675,7 @@ XFA_EventError CXFA_Node::ProcessValidate(CXFA_FFDocView* pDocView,
   bool bVersionFlag = version < XFA_VERSION_208;
 
   if (bInitDoc) {
-    validate->ClearFlag(XFA_NodeFlag_NeedsInitApp);
+    validate->ClearFlag(XFA_NodeFlag::kNeedsInitApp);
   } else {
     iFormat = ProcessFormatTestValidate(pDocView, validate, bVersionFlag);
     if (!bVersionFlag)
@@ -5043,7 +5040,7 @@ void CXFA_Node::SetNodeAndDescendantsUnused() {
   CXFA_NodeIterator sIterator(this);
   for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
        pNode = sIterator.MoveToNext()) {
-    pNode->SetFlag(XFA_NodeFlag_UnusedNode);
+    pNode->SetFlag(XFA_NodeFlag::kUnusedNode);
   }
 }
 

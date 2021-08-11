@@ -700,7 +700,7 @@ int32_t CXFA_FFField::CalculateNode(CXFA_Node* pNode) {
                                static_cast<uint32_t>(AlertIcon::kWarning),
                                static_cast<uint32_t>(AlertButton::kYesNo)) ==
           static_cast<uint32_t>(AlertReturn::kYes)) {
-        pNode->SetFlag(XFA_NodeFlag_UserInteractive);
+        pNode->SetFlag(XFA_NodeFlag::kUserInteractive);
         return 1;
       }
       return 0;
@@ -708,7 +708,7 @@ int32_t CXFA_FFField::CalculateNode(CXFA_Node* pNode) {
     case XFA_AttributeValue::Ignore:
       return 0;
     case XFA_AttributeValue::Disabled:
-      pNode->SetFlag(XFA_NodeFlag_UserInteractive);
+      pNode->SetFlag(XFA_NodeFlag::kUserInteractive);
       return 1;
     default:
       return 1;

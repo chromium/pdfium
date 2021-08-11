@@ -1491,7 +1491,7 @@ void CXFA_ContentLayoutProcessor::ProcessUnUseBinds(CXFA_Node* pFormNode) {
         pNode->SetBindingNode(nullptr);
       }
     }
-    pNode->SetFlag(XFA_NodeFlag_UnusedNode);
+    pNode->SetFlag(XFA_NodeFlag::kUnusedNode);
   }
 }
 
