@@ -186,7 +186,7 @@ bool CXFA_FFWidgetHandler::Redo(CXFA_FFWidget* widget) {
 
 FWL_WidgetHit CXFA_FFWidgetHandler::HitTest(CXFA_FFWidget* pWidget,
                                             const CFX_PointF& point) {
-  if (!pWidget->GetLayoutItem()->TestStatusBits(XFA_WidgetStatus_Visible))
+  if (!pWidget->GetLayoutItem()->TestStatusBits(XFA_WidgetStatus::kVisible))
     return FWL_WidgetHit::Unknown;
   return pWidget->HitTest(pWidget->Rotate2Normal(point));
 }

@@ -22,8 +22,9 @@ class CPWL_CBButton final : public CPWL_Wnd {
   // CPWL_Wnd:
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           const CFX_Matrix& mtUser2Device) override;
-  bool OnLButtonDown(FWL_EventFlagMask nFlag, const CFX_PointF& point) override;
-  bool OnLButtonUp(FWL_EventFlagMask nFlag, const CFX_PointF& point) override;
+  bool OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag,
+                     const CFX_PointF& point) override;
+  bool OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point) override;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_CBBUTTON_H_

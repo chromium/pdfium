@@ -86,7 +86,7 @@ void CPWL_ListBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
   }
 }
 
-bool CPWL_ListBox::OnKeyDown(FWL_VKEYCODE nKeyCode, FWL_EventFlagMask nFlag) {
+bool CPWL_ListBox::OnKeyDown(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlag) {
   CPWL_Wnd::OnKeyDown(nKeyCode, nFlag);
 
   switch (nKeyCode) {
@@ -127,7 +127,7 @@ bool CPWL_ListBox::OnKeyDown(FWL_VKEYCODE nKeyCode, FWL_EventFlagMask nFlag) {
   return true;
 }
 
-bool CPWL_ListBox::OnChar(uint16_t nChar, FWL_EventFlagMask nFlag) {
+bool CPWL_ListBox::OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
   CPWL_Wnd::OnChar(nChar, nFlag);
 
   if (!m_pListCtrl->OnChar(nChar, IsSHIFTKeyDown(nFlag), IsCTRLKeyDown(nFlag)))
@@ -137,7 +137,7 @@ bool CPWL_ListBox::OnChar(uint16_t nChar, FWL_EventFlagMask nFlag) {
   return true;
 }
 
-bool CPWL_ListBox::OnLButtonDown(FWL_EventFlagMask nFlag,
+bool CPWL_ListBox::OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag,
                                  const CFX_PointF& point) {
   CPWL_Wnd::OnLButtonDown(nFlag, point);
 
@@ -153,7 +153,7 @@ bool CPWL_ListBox::OnLButtonDown(FWL_EventFlagMask nFlag,
   return true;
 }
 
-bool CPWL_ListBox::OnLButtonUp(FWL_EventFlagMask nFlag,
+bool CPWL_ListBox::OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag,
                                const CFX_PointF& point) {
   CPWL_Wnd::OnLButtonUp(nFlag, point);
 
@@ -169,7 +169,7 @@ void CPWL_ListBox::SetHoverSel(bool bHoverSel) {
   m_bHoverSel = bHoverSel;
 }
 
-bool CPWL_ListBox::OnMouseMove(FWL_EventFlagMask nFlag,
+bool CPWL_ListBox::OnMouseMove(Mask<FWL_EVENTFLAG> nFlag,
                                const CFX_PointF& point) {
   CPWL_Wnd::OnMouseMove(nFlag, point);
 
@@ -205,7 +205,7 @@ bool CPWL_ListBox::RePosChildWnd() {
 }
 
 bool CPWL_ListBox::OnNotifySelectionChanged(bool bKeyDown,
-                                            FWL_EventFlagMask nFlag) {
+                                            Mask<FWL_EVENTFLAG> nFlag) {
   if (!m_pFillerNotify)
     return false;
 
@@ -365,7 +365,7 @@ CFX_FloatRect CPWL_ListBox::GetListRect() const {
   return GetWindowRect().GetDeflated(width, width);
 }
 
-bool CPWL_ListBox::OnMouseWheel(FWL_EventFlagMask nFlag,
+bool CPWL_ListBox::OnMouseWheel(Mask<FWL_EVENTFLAG> nFlag,
                                 const CFX_PointF& point,
                                 const CFX_Vector& delta) {
   if (delta.y < 0)

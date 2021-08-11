@@ -105,25 +105,25 @@ class TraverseStrategy_PageSet {
 using PageSetIterator =
     CXFA_NodeIteratorTemplate<CXFA_ViewLayoutItem, TraverseStrategy_PageSet>;
 
-XFA_WidgetStatusMask GetRelevant(CXFA_Node* pFormItem,
-                                 XFA_WidgetStatusMask dwParentRelvant) {
-  XFA_WidgetStatusMask dwRelevant =
-      XFA_WidgetStatus_Viewable | XFA_WidgetStatus_Printable;
+Mask<XFA_WidgetStatus> GetRelevant(CXFA_Node* pFormItem,
+                                   Mask<XFA_WidgetStatus> dwParentRelvant) {
+  Mask<XFA_WidgetStatus> dwRelevant = {XFA_WidgetStatus::kViewable,
+                                       XFA_WidgetStatus::kPrintable};
   WideString wsRelevant =
       pFormItem->JSObject()->GetCData(XFA_Attribute::Relevant);
   if (!wsRelevant.IsEmpty()) {
     if (wsRelevant.EqualsASCII("+print") || wsRelevant.EqualsASCII("print"))
-      dwRelevant &= ~XFA_WidgetStatus_Viewable;
+      dwRelevant.Clear(XFA_WidgetStatus::kViewable);
     else if (wsRelevant.EqualsASCII("-print"))
-      dwRelevant &= ~XFA_WidgetStatus_Printable;
+      dwRelevant.Clear(XFA_WidgetStatus::kPrintable);
   }
-  if (!(dwParentRelvant & XFA_WidgetStatus_Viewable) &&
-      (dwRelevant != XFA_WidgetStatus_Viewable)) {
-    dwRelevant &= ~XFA_WidgetStatus_Viewable;
+  if (!(dwParentRelvant & XFA_WidgetStatus::kViewable) &&
+      (dwRelevant != XFA_WidgetStatus::kViewable)) {
+    dwRelevant.Clear(XFA_WidgetStatus::kViewable);
   }
-  if (!(dwParentRelvant & XFA_WidgetStatus_Printable) &&
-      (dwRelevant != XFA_WidgetStatus_Printable)) {
-    dwRelevant &= ~XFA_WidgetStatus_Printable;
+  if (!(dwParentRelvant & XFA_WidgetStatus::kPrintable) &&
+      (dwRelevant != XFA_WidgetStatus::kPrintable)) {
+    dwRelevant.Clear(XFA_WidgetStatus::kPrintable);
   }
   return dwRelevant;
 }
@@ -131,12 +131,12 @@ XFA_WidgetStatusMask GetRelevant(CXFA_Node* pFormItem,
 void SyncContainer(CXFA_FFNotify* pNotify,
                    CXFA_LayoutProcessor* pDocLayout,
                    CXFA_LayoutItem* pViewItem,
-                   XFA_WidgetStatusMask dwRelevant,
+                   Mask<XFA_WidgetStatus> dwRelevant,
                    bool bVisible,
                    int32_t nPageIndex) {
   bool bVisibleItem = false;
-  XFA_WidgetStatusMask dwStatus = 0;
-  XFA_WidgetStatusMask dwRelevantContainer = 0;
+  Mask<XFA_WidgetStatus> dwStatus;
+  Mask<XFA_WidgetStatus> dwRelevantContainer;
   if (bVisible) {
     XFA_AttributeValue eAttributeValue =
         pViewItem->GetFormNode()
@@ -147,8 +147,9 @@ void SyncContainer(CXFA_FFNotify* pNotify,
       bVisibleItem = true;
 
     dwRelevantContainer = GetRelevant(pViewItem->GetFormNode(), dwRelevant);
-    dwStatus =
-        (bVisibleItem ? XFA_WidgetStatus_Visible : 0) | dwRelevantContainer;
+    dwStatus = dwRelevantContainer;
+    if (bVisibleItem)
+      dwStatus |= XFA_WidgetStatus::kVisible;
   }
   pNotify->OnLayoutItemAdded(pDocLayout, pViewItem, nPageIndex, dwStatus);
   for (CXFA_LayoutItem* pChild = pViewItem->GetFirstChild(); pChild;
@@ -1885,8 +1886,8 @@ void CXFA_ViewLayoutProcessor::SyncLayoutData() {
         continue;
 
       nPageIdx++;
-      XFA_WidgetStatusMask dwRelevant =
-          XFA_WidgetStatus_Viewable | XFA_WidgetStatus_Printable;
+      Mask<XFA_WidgetStatus> dwRelevant = {XFA_WidgetStatus::kViewable,
+                                           XFA_WidgetStatus::kPrintable};
       CXFA_LayoutItemIterator iterator(pViewItem);
       CXFA_LayoutItem* pChildLayoutItem = iterator.GetCurrent();
       while (pChildLayoutItem) {
@@ -1903,7 +1904,7 @@ void CXFA_ViewLayoutProcessor::SyncLayoutData() {
                 ->TryEnum(XFA_Attribute::Presence, true)
                 .value_or(XFA_AttributeValue::Visible);
         bool bVisible = presence == XFA_AttributeValue::Visible;
-        XFA_WidgetStatusMask dwRelevantChild =
+        Mask<XFA_WidgetStatus> dwRelevantChild =
             GetRelevant(pContentItem->GetFormNode(), dwRelevant);
         SyncContainer(pNotify, m_pLayoutProcessor, pContentItem,
                       dwRelevantChild, bVisible, nPageIdx);

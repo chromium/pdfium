@@ -184,7 +184,7 @@ void CPWL_ScrollBar::DrawThisAppearance(CFX_RenderDevice* pDevice,
   }
 }
 
-bool CPWL_ScrollBar::OnLButtonDown(FWL_EventFlagMask nFlag,
+bool CPWL_ScrollBar::OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag,
                                    const CFX_PointF& point) {
   CPWL_Wnd::OnLButtonDown(nFlag, point);
 
@@ -227,7 +227,7 @@ bool CPWL_ScrollBar::OnLButtonDown(FWL_EventFlagMask nFlag,
   return true;
 }
 
-bool CPWL_ScrollBar::OnLButtonUp(FWL_EventFlagMask nFlag,
+bool CPWL_ScrollBar::OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag,
                                  const CFX_PointF& point) {
   CPWL_Wnd::OnLButtonUp(nFlag, point);
 

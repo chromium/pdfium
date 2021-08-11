@@ -154,7 +154,7 @@ void CPDFSDK_AnnotHandlerMgr::Annot_OnDraw(CPDFSDK_PageView* pPageView,
 bool CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonDown(
     CPDFSDK_PageView* pPageView,
     ObservedPtr<CPDFSDK_Annot>* pAnnot,
-    FWL_EventFlagMask nFlags,
+    Mask<FWL_EVENTFLAG> nFlags,
     const CFX_PointF& point) {
   DCHECK(pAnnot->HasObservable());
   return GetAnnotHandler(pAnnot->Get())
@@ -164,7 +164,7 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonDown(
 bool CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonUp(
     CPDFSDK_PageView* pPageView,
     ObservedPtr<CPDFSDK_Annot>* pAnnot,
-    FWL_EventFlagMask nFlags,
+    Mask<FWL_EVENTFLAG> nFlags,
     const CFX_PointF& point) {
   DCHECK(pAnnot->HasObservable());
   return GetAnnotHandler(pAnnot->Get())
@@ -174,7 +174,7 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonUp(
 bool CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonDblClk(
     CPDFSDK_PageView* pPageView,
     ObservedPtr<CPDFSDK_Annot>* pAnnot,
-    FWL_EventFlagMask nFlags,
+    Mask<FWL_EVENTFLAG> nFlags,
     const CFX_PointF& point) {
   DCHECK(pAnnot->HasObservable());
   return GetAnnotHandler(pAnnot->Get())
@@ -184,7 +184,7 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonDblClk(
 bool CPDFSDK_AnnotHandlerMgr::Annot_OnMouseMove(
     CPDFSDK_PageView* pPageView,
     ObservedPtr<CPDFSDK_Annot>* pAnnot,
-    FWL_EventFlagMask nFlags,
+    Mask<FWL_EVENTFLAG> nFlags,
     const CFX_PointF& point) {
   DCHECK(pAnnot->HasObservable());
   return GetAnnotHandler(pAnnot->Get())
@@ -194,7 +194,7 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnMouseMove(
 bool CPDFSDK_AnnotHandlerMgr::Annot_OnMouseWheel(
     CPDFSDK_PageView* pPageView,
     ObservedPtr<CPDFSDK_Annot>* pAnnot,
-    FWL_EventFlagMask nFlags,
+    Mask<FWL_EVENTFLAG> nFlags,
     const CFX_PointF& point,
     const CFX_Vector& delta) {
   DCHECK(pAnnot->HasObservable());
@@ -205,7 +205,7 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnMouseWheel(
 bool CPDFSDK_AnnotHandlerMgr::Annot_OnRButtonDown(
     CPDFSDK_PageView* pPageView,
     ObservedPtr<CPDFSDK_Annot>* pAnnot,
-    FWL_EventFlagMask nFlags,
+    Mask<FWL_EVENTFLAG> nFlags,
     const CFX_PointF& point) {
   DCHECK(pAnnot->HasObservable());
   return GetAnnotHandler(pAnnot->Get())
@@ -215,7 +215,7 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnRButtonDown(
 bool CPDFSDK_AnnotHandlerMgr::Annot_OnRButtonUp(
     CPDFSDK_PageView* pPageView,
     ObservedPtr<CPDFSDK_Annot>* pAnnot,
-    FWL_EventFlagMask nFlags,
+    Mask<FWL_EVENTFLAG> nFlags,
     const CFX_PointF& point) {
   DCHECK(pAnnot->HasObservable());
   return GetAnnotHandler(pAnnot->Get())
@@ -225,7 +225,7 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnRButtonUp(
 void CPDFSDK_AnnotHandlerMgr::Annot_OnMouseEnter(
     CPDFSDK_PageView* pPageView,
     ObservedPtr<CPDFSDK_Annot>* pAnnot,
-    FWL_EventFlagMask nFlag) {
+    Mask<FWL_EVENTFLAG> nFlag) {
   DCHECK(pAnnot->HasObservable());
   GetAnnotHandler(pAnnot->Get())->OnMouseEnter(pPageView, pAnnot, nFlag);
 }
@@ -233,21 +233,21 @@ void CPDFSDK_AnnotHandlerMgr::Annot_OnMouseEnter(
 void CPDFSDK_AnnotHandlerMgr::Annot_OnMouseExit(
     CPDFSDK_PageView* pPageView,
     ObservedPtr<CPDFSDK_Annot>* pAnnot,
-    FWL_EventFlagMask nFlag) {
+    Mask<FWL_EVENTFLAG> nFlag) {
   DCHECK(pAnnot->HasObservable());
   GetAnnotHandler(pAnnot->Get())->OnMouseExit(pPageView, pAnnot, nFlag);
 }
 
 bool CPDFSDK_AnnotHandlerMgr::Annot_OnChar(CPDFSDK_Annot* pAnnot,
                                            uint32_t nChar,
-                                           FWL_EventFlagMask nFlags) {
+                                           Mask<FWL_EVENTFLAG> nFlags) {
   return GetAnnotHandler(pAnnot)->OnChar(pAnnot, nChar, nFlags);
 }
 
 bool CPDFSDK_AnnotHandlerMgr::Annot_OnKeyDown(CPDFSDK_PageView* pPageView,
                                               CPDFSDK_Annot* pAnnot,
                                               FWL_VKEYCODE nKeyCode,
-                                              FWL_EventFlagMask nFlag) {
+                                              Mask<FWL_EVENTFLAG> nFlag) {
   if (!pAnnot) {
     // If pressed key is not tab then no action is needed.
     if (nKeyCode != FWL_VKEY_Tab)
@@ -289,14 +289,14 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnKeyDown(CPDFSDK_PageView* pPageView,
 
 bool CPDFSDK_AnnotHandlerMgr::Annot_OnSetFocus(
     ObservedPtr<CPDFSDK_Annot>* pAnnot,
-    FWL_EventFlagMask nFlag) {
+    Mask<FWL_EVENTFLAG> nFlag) {
   DCHECK(pAnnot->HasObservable());
   return GetAnnotHandler(pAnnot->Get())->OnSetFocus(pAnnot, nFlag);
 }
 
 bool CPDFSDK_AnnotHandlerMgr::Annot_OnKillFocus(
     ObservedPtr<CPDFSDK_Annot>* pAnnot,
-    FWL_EventFlagMask nFlag) {
+    Mask<FWL_EVENTFLAG> nFlag) {
   DCHECK(pAnnot->HasObservable());
   return GetAnnotHandler(pAnnot->Get())->OnKillFocus(pAnnot, nFlag);
 }

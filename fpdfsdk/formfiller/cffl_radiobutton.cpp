@@ -33,7 +33,7 @@ std::unique_ptr<CPWL_Wnd> CFFL_RadioButton::NewPWLWindow(
 }
 
 bool CFFL_RadioButton::OnKeyDown(FWL_VKEYCODE nKeyCode,
-                                 FWL_EventFlagMask nFlags) {
+                                 Mask<FWL_EVENTFLAG> nFlags) {
   switch (nKeyCode) {
     case FWL_VKEY_Return:
     case FWL_VKEY_Space:
@@ -45,7 +45,7 @@ bool CFFL_RadioButton::OnKeyDown(FWL_VKEYCODE nKeyCode,
 
 bool CFFL_RadioButton::OnChar(CPDFSDK_Annot* pAnnot,
                               uint32_t nChar,
-                              FWL_EventFlagMask nFlags) {
+                              Mask<FWL_EVENTFLAG> nFlags) {
   switch (nChar) {
     case pdfium::ascii::kReturn:
     case pdfium::ascii::kSpace: {
@@ -72,7 +72,7 @@ bool CFFL_RadioButton::OnChar(CPDFSDK_Annot* pAnnot,
 
 bool CFFL_RadioButton::OnLButtonUp(CPDFSDK_PageView* pPageView,
                                    CPDFSDK_Annot* pAnnot,
-                                   FWL_EventFlagMask nFlags,
+                                   Mask<FWL_EVENTFLAG> nFlags,
                                    const CFX_PointF& point) {
   CFFL_Button::OnLButtonUp(pPageView, pAnnot, nFlags, point);
 

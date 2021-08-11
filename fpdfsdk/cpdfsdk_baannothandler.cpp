@@ -97,7 +97,7 @@ void CPDFSDK_BAAnnotHandler::OnDraw(CPDFSDK_PageView* pPageView,
 
 void CPDFSDK_BAAnnotHandler::OnMouseEnter(CPDFSDK_PageView* pPageView,
                                           ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                                          FWL_EventFlagMask nFlag) {
+                                          Mask<FWL_EVENTFLAG> nFlag) {
   CPDFSDK_BAAnnot* pBAAnnot = (*pAnnot)->AsBAAnnot();
   pBAAnnot->SetOpenState(true);
   UpdateAnnotRects(pPageView, pBAAnnot);
@@ -105,7 +105,7 @@ void CPDFSDK_BAAnnotHandler::OnMouseEnter(CPDFSDK_PageView* pPageView,
 
 void CPDFSDK_BAAnnotHandler::OnMouseExit(CPDFSDK_PageView* pPageView,
                                          ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                                         FWL_EventFlagMask nFlag) {
+                                         Mask<FWL_EVENTFLAG> nFlag) {
   CPDFSDK_BAAnnot* pBAAnnot = (*pAnnot)->AsBAAnnot();
   pBAAnnot->SetOpenState(false);
   UpdateAnnotRects(pPageView, pBAAnnot);
@@ -113,35 +113,35 @@ void CPDFSDK_BAAnnotHandler::OnMouseExit(CPDFSDK_PageView* pPageView,
 
 bool CPDFSDK_BAAnnotHandler::OnLButtonDown(CPDFSDK_PageView* pPageView,
                                            ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                                           FWL_EventFlagMask nFlags,
+                                           Mask<FWL_EVENTFLAG> nFlags,
                                            const CFX_PointF& point) {
   return false;
 }
 
 bool CPDFSDK_BAAnnotHandler::OnLButtonUp(CPDFSDK_PageView* pPageView,
                                          ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                                         FWL_EventFlagMask nFlags,
+                                         Mask<FWL_EVENTFLAG> nFlags,
                                          const CFX_PointF& point) {
   return false;
 }
 
 bool CPDFSDK_BAAnnotHandler::OnLButtonDblClk(CPDFSDK_PageView* pPageView,
                                              ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                                             FWL_EventFlagMask nFlags,
+                                             Mask<FWL_EVENTFLAG> nFlags,
                                              const CFX_PointF& point) {
   return false;
 }
 
 bool CPDFSDK_BAAnnotHandler::OnMouseMove(CPDFSDK_PageView* pPageView,
                                          ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                                         FWL_EventFlagMask nFlags,
+                                         Mask<FWL_EVENTFLAG> nFlags,
                                          const CFX_PointF& point) {
   return false;
 }
 
 bool CPDFSDK_BAAnnotHandler::OnMouseWheel(CPDFSDK_PageView* pPageView,
                                           ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                                          FWL_EventFlagMask nFlags,
+                                          Mask<FWL_EVENTFLAG> nFlags,
                                           const CFX_PointF& point,
                                           const CFX_Vector& delta) {
   return false;
@@ -149,34 +149,34 @@ bool CPDFSDK_BAAnnotHandler::OnMouseWheel(CPDFSDK_PageView* pPageView,
 
 bool CPDFSDK_BAAnnotHandler::OnRButtonDown(CPDFSDK_PageView* pPageView,
                                            ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                                           FWL_EventFlagMask nFlags,
+                                           Mask<FWL_EVENTFLAG> nFlags,
                                            const CFX_PointF& point) {
   return false;
 }
 
 bool CPDFSDK_BAAnnotHandler::OnRButtonUp(CPDFSDK_PageView* pPageView,
                                          ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                                         FWL_EventFlagMask nFlags,
+                                         Mask<FWL_EVENTFLAG> nFlags,
                                          const CFX_PointF& point) {
   return false;
 }
 
 bool CPDFSDK_BAAnnotHandler::OnRButtonDblClk(CPDFSDK_PageView* pPageView,
                                              ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                                             FWL_EventFlagMask nFlags,
+                                             Mask<FWL_EVENTFLAG> nFlags,
                                              const CFX_PointF& point) {
   return false;
 }
 
 bool CPDFSDK_BAAnnotHandler::OnChar(CPDFSDK_Annot* pAnnot,
                                     uint32_t nChar,
-                                    FWL_EventFlagMask nFlags) {
+                                    Mask<FWL_EVENTFLAG> nFlags) {
   return false;
 }
 
 bool CPDFSDK_BAAnnotHandler::OnKeyDown(CPDFSDK_Annot* pAnnot,
                                        FWL_VKEYCODE nKeyCode,
-                                       FWL_EventFlagMask nFlag) {
+                                       Mask<FWL_EVENTFLAG> nFlag) {
   DCHECK(pAnnot);
 
   // OnKeyDown() is implemented only for link annotations for now. As
@@ -201,7 +201,7 @@ bool CPDFSDK_BAAnnotHandler::OnKeyDown(CPDFSDK_Annot* pAnnot,
 
 bool CPDFSDK_BAAnnotHandler::OnKeyUp(CPDFSDK_Annot* pAnnot,
                                      FWL_VKEYCODE nKeyCode,
-                                     FWL_EventFlagMask nFlag) {
+                                     Mask<FWL_EVENTFLAG> nFlag) {
   return false;
 }
 
@@ -228,7 +228,7 @@ void CPDFSDK_BAAnnotHandler::InvalidateRect(CPDFSDK_Annot* annot) {
 }
 
 bool CPDFSDK_BAAnnotHandler::OnSetFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                                        FWL_EventFlagMask nFlag) {
+                                        Mask<FWL_EVENTFLAG> nFlag) {
   if (!IsFocusableAnnot(pAnnot->Get()->GetAnnotSubtype()))
     return false;
 
@@ -238,7 +238,7 @@ bool CPDFSDK_BAAnnotHandler::OnSetFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot,
 }
 
 bool CPDFSDK_BAAnnotHandler::OnKillFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                                         FWL_EventFlagMask nFlag) {
+                                         Mask<FWL_EVENTFLAG> nFlag) {
   if (!IsFocusableAnnot(pAnnot->Get()->GetAnnotSubtype()))
     return false;
 

@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/mask.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "public/fpdf_fwlevent.h"
@@ -53,56 +54,56 @@ class IPDFSDK_AnnotHandler {
   virtual void OnLoad(CPDFSDK_Annot* pAnnot) = 0;
   virtual void OnMouseEnter(CPDFSDK_PageView* pPageView,
                             ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                            FWL_EventFlagMask nFlag) = 0;
+                            Mask<FWL_EVENTFLAG> nFlag) = 0;
   virtual void OnMouseExit(CPDFSDK_PageView* pPageView,
                            ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                           FWL_EventFlagMask nFlag) = 0;
+                           Mask<FWL_EVENTFLAG> nFlag) = 0;
   virtual bool OnLButtonDown(CPDFSDK_PageView* pPageView,
                              ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                             FWL_EventFlagMask nFlags,
+                             Mask<FWL_EVENTFLAG> nFlags,
                              const CFX_PointF& point) = 0;
   virtual bool OnLButtonUp(CPDFSDK_PageView* pPageView,
                            ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                           FWL_EventFlagMask nFlags,
+                           Mask<FWL_EVENTFLAG> nFlags,
                            const CFX_PointF& point) = 0;
   virtual bool OnLButtonDblClk(CPDFSDK_PageView* pPageView,
                                ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                               FWL_EventFlagMask nFlags,
+                               Mask<FWL_EVENTFLAG> nFlags,
                                const CFX_PointF& point) = 0;
   virtual bool OnMouseMove(CPDFSDK_PageView* pPageView,
                            ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                           FWL_EventFlagMask nFlags,
+                           Mask<FWL_EVENTFLAG> nFlags,
                            const CFX_PointF& point) = 0;
   virtual bool OnMouseWheel(CPDFSDK_PageView* pPageView,
                             ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                            FWL_EventFlagMask nFlags,
+                            Mask<FWL_EVENTFLAG> nFlags,
                             const CFX_PointF& point,
                             const CFX_Vector& delta) = 0;
   virtual bool OnRButtonDown(CPDFSDK_PageView* pPageView,
                              ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                             FWL_EventFlagMask nFlags,
+                             Mask<FWL_EVENTFLAG> nFlags,
                              const CFX_PointF& point) = 0;
   virtual bool OnRButtonUp(CPDFSDK_PageView* pPageView,
                            ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                           FWL_EventFlagMask nFlags,
+                           Mask<FWL_EVENTFLAG> nFlags,
                            const CFX_PointF& point) = 0;
   virtual bool OnRButtonDblClk(CPDFSDK_PageView* pPageView,
                                ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                               FWL_EventFlagMask nFlags,
+                               Mask<FWL_EVENTFLAG> nFlags,
                                const CFX_PointF& point) = 0;
   virtual bool OnChar(CPDFSDK_Annot* pAnnot,
                       uint32_t nChar,
-                      FWL_EventFlagMask nFlags) = 0;
+                      Mask<FWL_EVENTFLAG> nFlags) = 0;
   virtual bool OnKeyDown(CPDFSDK_Annot* pAnnot,
                          FWL_VKEYCODE nKeyCode,
-                         FWL_EventFlagMask nFlag) = 0;
+                         Mask<FWL_EVENTFLAG> nFlag) = 0;
   virtual bool OnKeyUp(CPDFSDK_Annot* pAnnot,
                        FWL_VKEYCODE nKeyCode,
-                       FWL_EventFlagMask nFlag) = 0;
+                       Mask<FWL_EVENTFLAG> nFlag) = 0;
   virtual bool OnSetFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                          FWL_EventFlagMask nFlag) = 0;
+                          Mask<FWL_EVENTFLAG> nFlag) = 0;
   virtual bool OnKillFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                           FWL_EventFlagMask nFlag) = 0;
+                           Mask<FWL_EVENTFLAG> nFlag) = 0;
   virtual bool SetIndexSelected(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                 int index,
                                 bool selected) = 0;

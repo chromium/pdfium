@@ -24,9 +24,11 @@
 
 namespace {
 
-constexpr XFA_WidgetStatusMask kIteratorFilter = XFA_WidgetStatus_Visible |
-                                                 XFA_WidgetStatus_Viewable |
-                                                 XFA_WidgetStatus_Focused;
+constexpr Mask<XFA_WidgetStatus> kIteratorFilter = {
+    XFA_WidgetStatus::kVisible,
+    XFA_WidgetStatus::kViewable,
+    XFA_WidgetStatus::kFocused,
+};
 
 CXFA_FFWidget::IteratorIface* GCedWidgetIteratorForPage(
     CXFA_FFPageView* pFFPageView,
@@ -273,7 +275,7 @@ int CPDFXFA_Page::HasFormFieldAtPoint(const CFX_PointF& point) const {
     return -1;
 
   CXFA_FFWidget::IteratorIface* pWidgetIterator =
-      pPageView->CreateGCedFormWidgetIterator(XFA_WidgetStatus_Viewable);
+      pPageView->CreateGCedFormWidgetIterator(XFA_WidgetStatus::kViewable);
 
   CXFA_FFWidget* pXFAAnnot;
   while ((pXFAAnnot = pWidgetIterator->MoveToNext()) != nullptr) {
@@ -299,8 +301,8 @@ void CPDFXFA_Page::DrawFocusAnnot(CFX_RenderDevice* pDevice,
 
   CXFA_FFPageView* xfaView = GetXFAPageView();
   CXFA_FFWidget::IteratorIface* pWidgetIterator =
-      xfaView->CreateGCedFormWidgetIterator(XFA_WidgetStatus_Visible |
-                                            XFA_WidgetStatus_Viewable);
+      xfaView->CreateGCedFormWidgetIterator(Mask<XFA_WidgetStatus>{
+          XFA_WidgetStatus::kVisible, XFA_WidgetStatus::kViewable});
 
   while (1) {
     CXFA_FFWidget* pWidget = pWidgetIterator->MoveToNext();

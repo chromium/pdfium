@@ -8,6 +8,7 @@
 #define XFA_FXFA_LAYOUT_CXFA_CONTENTLAYOUTITEM_H_
 
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/mask.h"
 #include "v8/include/cppgc/persistent.h"
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/layout/cxfa_layoutitem.h"
@@ -33,12 +34,12 @@ class CXFA_ContentLayoutItem final : public CXFA_LayoutItem {
   CFX_RectF GetAbsoluteRect() const;
   size_t GetIndex() const;
 
-  void SetStatusBits(XFA_WidgetStatusMask val) { m_dwStatus |= val; }
-  void ClearStatusBits(XFA_WidgetStatusMask val) { m_dwStatus &= ~val; }
+  void SetStatusBits(Mask<XFA_WidgetStatus> val) { m_dwStatus |= val; }
+  void ClearStatusBits(Mask<XFA_WidgetStatus> val) { m_dwStatus &= ~val; }
 
   // TRUE if all (not any) bits set in |val| are set in |m_dwStatus|.
-  bool TestStatusBits(XFA_WidgetStatusMask val) const {
-    return (m_dwStatus & val) == val;
+  bool TestStatusBits(Mask<XFA_WidgetStatus> val) const {
+    return m_dwStatus.TestAll(val);
   }
 
   CFX_PointF m_sPos;
@@ -48,7 +49,7 @@ class CXFA_ContentLayoutItem final : public CXFA_LayoutItem {
   CXFA_ContentLayoutItem(CXFA_Node* pNode, CXFA_FFWidget* pFFWidget);
   void RemoveSelf();
 
-  mutable XFA_WidgetStatusMask m_dwStatus = 0;
+  mutable Mask<XFA_WidgetStatus> m_dwStatus;
   cppgc::Member<CXFA_ContentLayoutItem> m_pPrev;
   cppgc::Member<CXFA_ContentLayoutItem> m_pNext;
   cppgc::Member<CXFA_FFWidget> const m_pFFWidget;

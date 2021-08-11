@@ -403,13 +403,13 @@ void CPDFSDK_FormFillEnvironment::OnSetFieldInputFocus(
 }
 
 void CPDFSDK_FormFillEnvironment::DoURIAction(const ByteString& bsURI,
-                                              uint32_t modifiers) {
+                                              Mask<FWL_EVENTFLAG> modifiers) {
   if (!m_pInfo)
     return;
 
   if (m_pInfo->version >= 2 && m_pInfo->FFI_DoURIActionWithKeyboardModifier) {
     m_pInfo->FFI_DoURIActionWithKeyboardModifier(m_pInfo, bsURI.c_str(),
-                                                 modifiers);
+                                                 modifiers.UncheckedValue());
     return;
   }
 
@@ -587,7 +587,7 @@ void CPDFSDK_FormFillEnvironment::PageEvent(int iPageCount,
 void CPDFSDK_FormFillEnvironment::ClearAllFocusedAnnots() {
   for (auto& it : m_PageMap) {
     if (it.second->IsValidSDKAnnot(GetFocusAnnot()))
-      KillFocusAnnot(0);
+      KillFocusAnnot({});
   }
 }
 
@@ -672,7 +672,7 @@ void CPDFSDK_FormFillEnvironment::RemovePageView(IPDF_Page* pUnderlyingPage) {
   // be created. We then have two page views pointing to the same page and
   // bad things happen.
   if (pPageView->IsValidSDKAnnot(GetFocusAnnot()))
-    KillFocusAnnot(0);
+    KillFocusAnnot({});
 
   // Remove the page from the map to make sure we don't accidentally attempt
   // to use the |pPageView| while we're cleaning it up.
@@ -707,7 +707,7 @@ bool CPDFSDK_FormFillEnvironment::SetFocusAnnot(
     return false;
   if (m_pFocusAnnot == *pAnnot)
     return true;
-  if (m_pFocusAnnot && !KillFocusAnnot(0))
+  if (m_pFocusAnnot && !KillFocusAnnot({}))
     return false;
   if (!pAnnot->HasObservable())
     return false;
@@ -728,7 +728,7 @@ bool CPDFSDK_FormFillEnvironment::SetFocusAnnot(
   if (!pAnnot->HasObservable())
     return false;
 #endif  // PDF_ENABLE_XFA
-  if (!pAnnotHandler->Annot_OnSetFocus(pAnnot, 0))
+  if (!pAnnotHandler->Annot_OnSetFocus(pAnnot, {}))
     return false;
   if (m_pFocusAnnot)
     return false;
@@ -741,7 +741,7 @@ bool CPDFSDK_FormFillEnvironment::SetFocusAnnot(
   return true;
 }
 
-bool CPDFSDK_FormFillEnvironment::KillFocusAnnot(FWL_EventFlagMask nFlag) {
+bool CPDFSDK_FormFillEnvironment::KillFocusAnnot(Mask<FWL_EVENTFLAG> nFlag) {
   if (!m_pFocusAnnot)
     return false;
 

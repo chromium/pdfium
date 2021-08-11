@@ -79,7 +79,7 @@ std::unique_ptr<CPWL_Wnd> CFFL_ListBox::NewPWLWindow(
 
 bool CFFL_ListBox::OnChar(CPDFSDK_Annot* pAnnot,
                           uint32_t nChar,
-                          FWL_EventFlagMask nFlags) {
+                          Mask<FWL_EVENTFLAG> nFlags) {
   return CFFL_TextObject::OnChar(pAnnot, nChar, nFlags);
 }
 

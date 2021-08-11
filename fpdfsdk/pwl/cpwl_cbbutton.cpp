@@ -58,7 +58,7 @@ void CPWL_CBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
                     CFX_FillRenderOptions::EvenOddOptions());
 }
 
-bool CPWL_CBButton::OnLButtonDown(FWL_EventFlagMask nFlag,
+bool CPWL_CBButton::OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag,
                                   const CFX_PointF& point) {
   CPWL_Wnd::OnLButtonDown(nFlag, point);
 
@@ -70,7 +70,7 @@ bool CPWL_CBButton::OnLButtonDown(FWL_EventFlagMask nFlag,
   return true;
 }
 
-bool CPWL_CBButton::OnLButtonUp(FWL_EventFlagMask nFlag,
+bool CPWL_CBButton::OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag,
                                 const CFX_PointF& point) {
   CPWL_Wnd::OnLButtonUp(nFlag, point);
 

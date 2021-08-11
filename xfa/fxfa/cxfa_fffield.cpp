@@ -517,7 +517,7 @@ bool CXFA_FFField::OnSetFocus(CXFA_FFWidget* pOldWidget) {
 
   CFWL_MessageSetFocus msg(nullptr, GetNormalWidget());
   SendMessageToFWLWidget(&msg);
-  GetLayoutItem()->SetStatusBits(XFA_WidgetStatus_Focused);
+  GetLayoutItem()->SetStatusBits(XFA_WidgetStatus::kFocused);
   InvalidateRect();
 
   return true;
@@ -527,7 +527,7 @@ bool CXFA_FFField::OnKillFocus(CXFA_FFWidget* pNewWidget) {
   if (GetNormalWidget()) {
     CFWL_MessageKillFocus msg(nullptr, GetNormalWidget());
     SendMessageToFWLWidget(&msg);
-    GetLayoutItem()->ClearStatusBits(XFA_WidgetStatus_Focused);
+    GetLayoutItem()->ClearStatusBits(XFA_WidgetStatus::kFocused);
     InvalidateRect();
   }
   return pNewWidget && CXFA_FFWidget::OnKillFocus(pNewWidget);

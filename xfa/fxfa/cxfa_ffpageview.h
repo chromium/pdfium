@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/mask.h"
 #include "fxjs/gc/heap.h"
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/member.h"
@@ -38,9 +39,9 @@ class CXFA_FFPageView final : public cppgc::GarbageCollected<CXFA_FFPageView> {
 
   // These always return a non-null iterator from the gc heap.
   CXFA_FFWidget::IteratorIface* CreateGCedFormWidgetIterator(
-      XFA_WidgetStatusMask dwWidgetFilter);
+      Mask<XFA_WidgetStatus> dwWidgetFilter);
   CXFA_FFWidget::IteratorIface* CreateGCedTraverseWidgetIterator(
-      XFA_WidgetStatusMask dwWidgetFilter);
+      Mask<XFA_WidgetStatus> dwWidgetFilter);
 
  private:
   CXFA_FFPageView(CXFA_FFDocView* pDocView, CXFA_Node* pPageArea);
@@ -69,10 +70,10 @@ class CXFA_FFPageWidgetIterator final
 
  private:
   CXFA_FFPageWidgetIterator(CXFA_FFPageView* pPageView,
-                            XFA_WidgetStatusMask dwFilter);
+                            Mask<XFA_WidgetStatus> dwFilter);
 
   CXFA_LayoutItemIterator m_sIterator;
-  const XFA_WidgetStatusMask m_dwFilter;
+  const Mask<XFA_WidgetStatus> m_dwFilter;
   const bool m_bIgnoreRelevant;
 };
 
@@ -95,7 +96,7 @@ class CXFA_FFTabOrderPageWidgetIterator final
 
  private:
   CXFA_FFTabOrderPageWidgetIterator(CXFA_FFPageView* pPageView,
-                                    XFA_WidgetStatusMask dwFilter);
+                                    Mask<XFA_WidgetStatus> dwFilter);
 
   CXFA_FFWidget* GetTraverseWidget(CXFA_FFWidget* pWidget);
   CXFA_FFWidget* FindWidgetByName(const WideString& wsWidgetName,
@@ -105,7 +106,7 @@ class CXFA_FFTabOrderPageWidgetIterator final
 
   cppgc::Member<CXFA_ViewLayoutItem> const m_pPageViewLayout;
   std::vector<cppgc::Member<CXFA_ContentLayoutItem>> m_TabOrderWidgetArray;
-  const XFA_WidgetStatusMask m_dwFilter;
+  const Mask<XFA_WidgetStatus> m_dwFilter;
   int32_t m_iCurWidget = -1;
   const bool m_bIgnoreRelevant;
 };

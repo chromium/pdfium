@@ -15,6 +15,7 @@
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/cfx_timer.h"
+#include "core/fxcrt/mask.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -75,7 +76,7 @@ class CPDFSDK_FormFillEnvironment final : public CFX_Timer::HandlerIface,
 
   CPDFSDK_Annot* GetFocusAnnot() const { return m_pFocusAnnot.Get(); }
   bool SetFocusAnnot(ObservedPtr<CPDFSDK_Annot>* pAnnot);
-  bool KillFocusAnnot(FWL_EventFlagMask nFlag);
+  bool KillFocusAnnot(Mask<FWL_EVENTFLAG> nFlag);
   void ClearAllFocusedAnnots();
 
   int GetPageCount() const;
@@ -97,7 +98,7 @@ class CPDFSDK_FormFillEnvironment final : public CFX_Timer::HandlerIface,
   void OnSetFieldInputFocus(FPDF_WIDESTRING focusText,
                             FPDF_DWORD nTextLen,
                             bool bFocus);
-  void DoURIAction(const ByteString& bsURI, uint32_t modifiers);
+  void DoURIAction(const ByteString& bsURI, Mask<FWL_EVENTFLAG> modifiers);
   void DoGoToAction(int nPageIndex,
                     int zoomMode,
                     float* fPosArray,

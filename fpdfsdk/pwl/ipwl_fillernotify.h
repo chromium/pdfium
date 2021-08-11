@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/mask.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "fpdfsdk/pwl/ipwl_systemhandler.h"
 
@@ -32,15 +33,15 @@ class IPWL_FillerNotify {
       int nSelStart,
       int nSelEnd,
       bool bKeyDown,
-      FWL_EventFlagMask nFlag) = 0;
+      Mask<FWL_EVENTFLAG> nFlag) = 0;
 
   virtual bool OnPopupPreOpen(
       const IPWL_SystemHandler::PerWindowData* pAttached,
-      FWL_EventFlagMask nFlag) = 0;
+      Mask<FWL_EVENTFLAG> nFlag) = 0;
 
   virtual bool OnPopupPostOpen(
       const IPWL_SystemHandler::PerWindowData* pAttached,
-      FWL_EventFlagMask nFlag) = 0;
+      Mask<FWL_EVENTFLAG> nFlag) = 0;
 };
 
 #endif  // FPDFSDK_PWL_IPWL_FILLERNOTIFY_H_

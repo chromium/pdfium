@@ -20,7 +20,7 @@ CPWL_CBListBox::CPWL_CBListBox(
 
 CPWL_CBListBox::~CPWL_CBListBox() = default;
 
-bool CPWL_CBListBox::OnLButtonUp(FWL_EventFlagMask nFlag,
+bool CPWL_CBListBox::OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag,
                                  const CFX_PointF& point) {
   CPWL_Wnd::OnLButtonUp(nFlag, point);
 
@@ -53,7 +53,7 @@ bool CPWL_CBListBox::IsMovementKey(FWL_VKEYCODE nKeyCode) const {
 }
 
 bool CPWL_CBListBox::OnMovementKeyDown(FWL_VKEYCODE nKeyCode,
-                                       FWL_EventFlagMask nFlag) {
+                                       Mask<FWL_EVENTFLAG> nFlag) {
   switch (nKeyCode) {
     case FWL_VKEY_Up:
       m_pListCtrl->OnVK_UP(IsSHIFTKeyDown(nFlag), IsCTRLKeyDown(nFlag));
@@ -80,12 +80,12 @@ bool CPWL_CBListBox::OnMovementKeyDown(FWL_VKEYCODE nKeyCode,
   return OnNotifySelectionChanged(true, nFlag);
 }
 
-bool CPWL_CBListBox::IsChar(uint16_t nChar, FWL_EventFlagMask nFlag) const {
+bool CPWL_CBListBox::IsChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) const {
   return m_pListCtrl->OnChar(nChar, IsSHIFTKeyDown(nFlag),
                              IsCTRLKeyDown(nFlag));
 }
 
-bool CPWL_CBListBox::OnCharNotify(uint16_t nChar, FWL_EventFlagMask nFlag) {
+bool CPWL_CBListBox::OnCharNotify(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
   if (auto* pComboBox = static_cast<CPWL_ComboBox*>(GetParentWindow()))
     pComboBox->SetSelectText();
 

@@ -17,7 +17,7 @@ CPWL_Button::CPWL_Button(
 
 CPWL_Button::~CPWL_Button() = default;
 
-bool CPWL_Button::OnLButtonDown(FWL_EventFlagMask nFlag,
+bool CPWL_Button::OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag,
                                 const CFX_PointF& point) {
   CPWL_Wnd::OnLButtonDown(nFlag, point);
   m_bMouseDown = true;
@@ -25,7 +25,7 @@ bool CPWL_Button::OnLButtonDown(FWL_EventFlagMask nFlag,
   return true;
 }
 
-bool CPWL_Button::OnLButtonUp(FWL_EventFlagMask nFlag,
+bool CPWL_Button::OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag,
                               const CFX_PointF& point) {
   CPWL_Wnd::OnLButtonUp(nFlag, point);
   ReleaseCapture();

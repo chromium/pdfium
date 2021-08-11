@@ -253,7 +253,7 @@ CJS_Result CJS_App::alert(CJS_Runtime* pRuntime,
     swTitle = JSGetStringFromID(JSMessage::kAlert);
 
   pRuntime->BeginBlock();
-  pFormFillEnv->KillFocusAnnot(0);
+  pFormFillEnv->KillFocusAnnot({});
   v8::Local<v8::Value> ret = pRuntime->NewNumber(
       pFormFillEnv->JS_appAlert(swMsg, swTitle, iType, iIcon));
   pRuntime->EndBlock();

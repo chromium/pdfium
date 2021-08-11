@@ -57,56 +57,56 @@ class CPDFXFA_WidgetHandler final : public IPDFSDK_AnnotHandler {
   void OnLoad(CPDFSDK_Annot* pAnnot) override;
   void OnMouseEnter(CPDFSDK_PageView* pPageView,
                     ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                    FWL_EventFlagMask nFlag) override;
+                    Mask<FWL_EVENTFLAG> nFlag) override;
   void OnMouseExit(CPDFSDK_PageView* pPageView,
                    ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                   FWL_EventFlagMask nFlag) override;
+                   Mask<FWL_EVENTFLAG> nFlag) override;
   bool OnLButtonDown(CPDFSDK_PageView* pPageView,
                      ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                     FWL_EventFlagMask nFlags,
+                     Mask<FWL_EVENTFLAG> nFlags,
                      const CFX_PointF& point) override;
   bool OnLButtonUp(CPDFSDK_PageView* pPageView,
                    ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                   FWL_EventFlagMask nFlags,
+                   Mask<FWL_EVENTFLAG> nFlags,
                    const CFX_PointF& point) override;
   bool OnLButtonDblClk(CPDFSDK_PageView* pPageView,
                        ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                       FWL_EventFlagMask nFlags,
+                       Mask<FWL_EVENTFLAG> nFlags,
                        const CFX_PointF& point) override;
   bool OnMouseMove(CPDFSDK_PageView* pPageView,
                    ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                   FWL_EventFlagMask nFlags,
+                   Mask<FWL_EVENTFLAG> nFlags,
                    const CFX_PointF& point) override;
   bool OnMouseWheel(CPDFSDK_PageView* pPageView,
                     ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                    FWL_EventFlagMask nFlags,
+                    Mask<FWL_EVENTFLAG> nFlags,
                     const CFX_PointF& point,
                     const CFX_Vector& delta) override;
   bool OnRButtonDown(CPDFSDK_PageView* pPageView,
                      ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                     FWL_EventFlagMask nFlags,
+                     Mask<FWL_EVENTFLAG> nFlags,
                      const CFX_PointF& point) override;
   bool OnRButtonUp(CPDFSDK_PageView* pPageView,
                    ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                   FWL_EventFlagMask nFlags,
+                   Mask<FWL_EVENTFLAG> nFlags,
                    const CFX_PointF& point) override;
   bool OnRButtonDblClk(CPDFSDK_PageView* pPageView,
                        ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                       FWL_EventFlagMask nFlags,
+                       Mask<FWL_EVENTFLAG> nFlags,
                        const CFX_PointF& point) override;
   bool OnChar(CPDFSDK_Annot* pAnnot,
               uint32_t nChar,
-              FWL_EventFlagMask nFlags) override;
+              Mask<FWL_EVENTFLAG> nFlags) override;
   bool OnKeyDown(CPDFSDK_Annot* pAnnot,
                  FWL_VKEYCODE nKeyCode,
-                 FWL_EventFlagMask nFlag) override;
+                 Mask<FWL_EVENTFLAG> nFlag) override;
   bool OnKeyUp(CPDFSDK_Annot* pAnnot,
                FWL_VKEYCODE nKeyCode,
-               FWL_EventFlagMask nFlag) override;
+               Mask<FWL_EVENTFLAG> nFlag) override;
   bool OnSetFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                  FWL_EventFlagMask nFlag) override;
+                  Mask<FWL_EVENTFLAG> nFlag) override;
   bool OnKillFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                   FWL_EventFlagMask nFlag) override;
+                   Mask<FWL_EVENTFLAG> nFlag) override;
   bool SetIndexSelected(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                         int index,
                         bool selected) override;
@@ -119,7 +119,7 @@ class CPDFXFA_WidgetHandler final : public IPDFSDK_AnnotHandler {
 
  private:
   CXFA_FFWidgetHandler* GetXFAFFWidgetHandler(CPDFSDK_Annot* pAnnot);
-  Mask<XFA_FWL_KeyFlag> GetKeyFlags(FWL_EventFlagMask dwFlag);
+  Mask<XFA_FWL_KeyFlag> GetKeyFlags(Mask<FWL_EVENTFLAG> dwFlag);
 
   UnownedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
 };

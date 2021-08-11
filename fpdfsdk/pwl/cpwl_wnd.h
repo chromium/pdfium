@@ -8,10 +8,10 @@
 #define FPDFSDK_PWL_CPWL_WND_H_
 
 #include <memory>
-#include <type_traits>
 #include <vector>
 
 #include "core/fxcrt/cfx_timer.h"
+#include "core/fxcrt/mask.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxcrt/widestring.h"
@@ -25,8 +25,6 @@ class CPWL_MsgControl;
 class CPWL_ScrollBar;
 class IPVT_FontMap;
 struct PWL_SCROLL_INFO;
-
-using FWL_EventFlagMask = std::underlying_type<FWL_EVENTFLAG>::type;
 
 // window styles
 #define PWS_BORDER 0x40000000L
@@ -128,13 +126,13 @@ class CPWL_Wnd : public Observable {
         IPWL_SystemHandler::CursorStyle::kArrow;
   };
 
-  static bool IsSHIFTKeyDown(FWL_EventFlagMask nFlag);
-  static bool IsCTRLKeyDown(FWL_EventFlagMask nFlag);
-  static bool IsALTKeyDown(FWL_EventFlagMask nFlag);
-  static bool IsMETAKeyDown(FWL_EventFlagMask nFlag);
+  static bool IsSHIFTKeyDown(Mask<FWL_EVENTFLAG> nFlag);
+  static bool IsCTRLKeyDown(Mask<FWL_EVENTFLAG> nFlag);
+  static bool IsALTKeyDown(Mask<FWL_EVENTFLAG> nFlag);
+  static bool IsMETAKeyDown(Mask<FWL_EVENTFLAG> nFlag);
 
   // Selects between IsCTRLKeyDown() and IsMETAKeyDown() depending on platform.
-  static bool IsPlatformShortcutKey(FWL_EventFlagMask nFlag);
+  static bool IsPlatformShortcutKey(Mask<FWL_EVENTFLAG> nFlag);
 
   CPWL_Wnd(const CreateParams& cp,
            std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData);
@@ -143,16 +141,18 @@ class CPWL_Wnd : public Observable {
   // Returns |true| iff this instance is still allocated.
   virtual bool InvalidateRect(const CFX_FloatRect* pRect);
 
-  virtual bool OnKeyDown(FWL_VKEYCODE nKeyCode, FWL_EventFlagMask nFlag);
-  virtual bool OnChar(uint16_t nChar, FWL_EventFlagMask nFlag);
-  virtual bool OnLButtonDblClk(FWL_EventFlagMask nFlag,
+  virtual bool OnKeyDown(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlag);
+  virtual bool OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag);
+  virtual bool OnLButtonDblClk(Mask<FWL_EVENTFLAG> nFlag,
                                const CFX_PointF& point);
-  virtual bool OnLButtonDown(FWL_EventFlagMask nFlag, const CFX_PointF& point);
-  virtual bool OnLButtonUp(FWL_EventFlagMask nFlag, const CFX_PointF& point);
-  virtual bool OnRButtonDown(FWL_EventFlagMask nFlag, const CFX_PointF& point);
-  virtual bool OnRButtonUp(FWL_EventFlagMask nFlag, const CFX_PointF& point);
-  virtual bool OnMouseMove(FWL_EventFlagMask nFlag, const CFX_PointF& point);
-  virtual bool OnMouseWheel(FWL_EventFlagMask nFlag,
+  virtual bool OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag,
+                             const CFX_PointF& point);
+  virtual bool OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point);
+  virtual bool OnRButtonDown(Mask<FWL_EVENTFLAG> nFlag,
+                             const CFX_PointF& point);
+  virtual bool OnRButtonUp(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point);
+  virtual bool OnMouseMove(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point);
+  virtual bool OnMouseWheel(Mask<FWL_EVENTFLAG> nFlag,
                             const CFX_PointF& point,
                             const CFX_Vector& delta);
   virtual void SetScrollInfo(const PWL_SCROLL_INFO& info);

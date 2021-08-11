@@ -57,7 +57,7 @@ class CPWLComboBoxEditEmbedderTest : public EmbedderTest {
         m_pFormFillEnv->GetInteractiveFormFiller();
     {
       ObservedPtr<CPDFSDK_Annot> pObserved(pAnnotCombobox);
-      EXPECT_TRUE(pInteractiveFormFiller->OnSetFocus(&pObserved, 0));
+      EXPECT_TRUE(pInteractiveFormFiller->OnSetFocus(&pObserved, {}));
     }
 
     m_pFormFiller =
@@ -74,7 +74,7 @@ class CPWLComboBoxEditEmbedderTest : public EmbedderTest {
     // Type text starting with 'A' to as many chars as specified by |num_chars|.
     for (int i = 0; i < num_chars; ++i) {
       EXPECT_TRUE(GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnotUserEditable(),
-                                              i + 'A', 0));
+                                              i + 'A', {}));
     }
   }
 
@@ -117,7 +117,7 @@ TEST_F(CPWLComboBoxEditEmbedderTest, GetSelectedTextEmptyAndBasicNormal) {
   EXPECT_STREQ(L"Cherry", GetCPWLComboBox()->GetSelectedText().c_str());
 
   // Verify that combobox text cannot be edited.
-  EXPECT_FALSE(GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnotNormal(), 'a', 0));
+  EXPECT_FALSE(GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnotNormal(), 'a', {}));
 }
 
 TEST_F(CPWLComboBoxEditEmbedderTest, GetSelectedTextFragmentsNormal) {
@@ -164,11 +164,11 @@ TEST_F(CPWLComboBoxEditEmbedderTest, GetSelectedTextEmptyAndBasicEditable) {
 
   // Type into editable combobox text field and select new text.
   EXPECT_TRUE(
-      GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnotUserEditable(), 'a', 0));
+      GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnotUserEditable(), 'a', {}));
   EXPECT_TRUE(
-      GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnotUserEditable(), 'b', 0));
+      GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnotUserEditable(), 'b', {}));
   EXPECT_TRUE(
-      GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnotUserEditable(), 'c', 0));
+      GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnotUserEditable(), 'c', {}));
 
   EXPECT_TRUE(GetCPWLComboBox()->GetSelectedText().IsEmpty());
   GetCPWLComboBox()->SetEditSelection(0, 5);
@@ -274,7 +274,7 @@ TEST_F(CPWLComboBoxEditEmbedderTest,
   TypeTextIntoTextField(10);
 
   // Move cursor to beginning of user-editable combobox text field.
-  EXPECT_TRUE(GetCFFLFormFiller()->OnKeyDown(FWL_VKEY_Home, 0));
+  EXPECT_TRUE(GetCFFLFormFiller()->OnKeyDown(FWL_VKEY_Home, {}));
 
   GetCPWLComboBox()->ReplaceSelection(L"Hello");
   EXPECT_STREQ(L"HelloABCDEFGHIJ", GetCPWLComboBox()->GetText().c_str());
@@ -287,7 +287,7 @@ TEST_F(CPWLComboBoxEditEmbedderTest,
 
   // Move cursor to middle of user-editable combobox text field.
   for (int i = 0; i < 5; ++i) {
-    EXPECT_TRUE(GetCFFLFormFiller()->OnKeyDown(FWL_VKEY_Left, 0));
+    EXPECT_TRUE(GetCFFLFormFiller()->OnKeyDown(FWL_VKEY_Left, {}));
   }
 
   GetCPWLComboBox()->ReplaceSelection(L"Hello");

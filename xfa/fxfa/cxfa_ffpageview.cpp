@@ -68,24 +68,25 @@ CFX_Matrix GetPageMatrix(const CFX_RectF& docPageRect,
 }
 
 bool PageWidgetFilter(CXFA_FFWidget* pWidget,
-                      XFA_WidgetStatusMask dwFilter,
+                      Mask<XFA_WidgetStatus> dwFilter,
                       bool bTraversal,
                       bool bIgnoreRelevant) {
   CXFA_Node* pNode = pWidget->GetNode();
 
-  if ((dwFilter & XFA_WidgetStatus_Focused) &&
+  if ((dwFilter & XFA_WidgetStatus::kFocused) &&
       (!pNode || pNode->GetElementType() != XFA_Element::Field)) {
     return false;
   }
 
   CXFA_ContentLayoutItem* pItem = pWidget->GetLayoutItem();
-  if (bTraversal && pItem->TestStatusBits(XFA_WidgetStatus_Disabled))
+  if (bTraversal && pItem->TestStatusBits(XFA_WidgetStatus::kDisabled))
     return false;
   if (bIgnoreRelevant)
-    return pItem->TestStatusBits(XFA_WidgetStatus_Visible);
+    return pItem->TestStatusBits(XFA_WidgetStatus::kVisible);
 
-  dwFilter &= (XFA_WidgetStatus_Visible | XFA_WidgetStatus_Viewable |
-               XFA_WidgetStatus_Printable);
+  dwFilter &= Mask<XFA_WidgetStatus>{XFA_WidgetStatus::kVisible,
+                                     XFA_WidgetStatus::kViewable,
+                                     XFA_WidgetStatus::kPrintable};
   return pItem->TestStatusBits(dwFilter);
 }
 
@@ -117,7 +118,7 @@ bool IsDocVersionBelow205(const CXFA_Document* doc) {
 
 bool EnsureWidgetLoadedIfVisible(CXFA_FFWidget* pWidget) {
   if (!pWidget->IsLoaded() &&
-      pWidget->GetLayoutItem()->TestStatusBits(XFA_WidgetStatus_Visible)) {
+      pWidget->GetLayoutItem()->TestStatusBits(XFA_WidgetStatus::kVisible)) {
     if (!pWidget->LoadWidget())
       return false;
   }
@@ -133,9 +134,10 @@ CXFA_FFWidget* LoadedWidgetFromLayoutItem(CXFA_LayoutItem* pLayoutItem) {
   return pWidget;
 }
 
-CXFA_FFWidget* FilteredLoadedWidgetFromLayoutItem(CXFA_LayoutItem* pLayoutItem,
-                                                  XFA_WidgetStatusMask dwFilter,
-                                                  bool bIgnoreRelevant) {
+CXFA_FFWidget* FilteredLoadedWidgetFromLayoutItem(
+    CXFA_LayoutItem* pLayoutItem,
+    Mask<XFA_WidgetStatus> dwFilter,
+    bool bIgnoreRelevant) {
   CXFA_FFWidget* pWidget = CXFA_FFWidget::FromLayoutItem(pLayoutItem);
   if (!pWidget)
     return nullptr;
@@ -265,14 +267,14 @@ CFX_Matrix CXFA_FFPageView::GetDisplayMatrix(const FX_RECT& rtDisp,
 }
 
 CXFA_FFWidget::IteratorIface* CXFA_FFPageView::CreateGCedFormWidgetIterator(
-    XFA_WidgetStatusMask dwWidgetFilter) {
+    Mask<XFA_WidgetStatus> dwWidgetFilter) {
   return cppgc::MakeGarbageCollected<CXFA_FFPageWidgetIterator>(
       GetDocView()->GetDoc()->GetHeap()->GetAllocationHandle(), this,
       dwWidgetFilter);
 }
 
 CXFA_FFWidget::IteratorIface* CXFA_FFPageView::CreateGCedTraverseWidgetIterator(
-    XFA_WidgetStatusMask dwWidgetFilter) {
+    Mask<XFA_WidgetStatus> dwWidgetFilter) {
   return cppgc::MakeGarbageCollected<CXFA_FFTabOrderPageWidgetIterator>(
       GetDocView()->GetDoc()->GetHeap()->GetAllocationHandle(), this,
       dwWidgetFilter);
@@ -280,7 +282,7 @@ CXFA_FFWidget::IteratorIface* CXFA_FFPageView::CreateGCedTraverseWidgetIterator(
 
 CXFA_FFPageWidgetIterator::CXFA_FFPageWidgetIterator(
     CXFA_FFPageView* pPageView,
-    XFA_WidgetStatusMask dwFilter)
+    Mask<XFA_WidgetStatus> dwFilter)
     : m_sIterator(pPageView->GetLayoutItem()),
       m_dwFilter(dwFilter),
       m_bIgnoreRelevant(IsDocVersionBelow205(GetDocForPageView(pPageView))) {}
@@ -337,7 +339,7 @@ bool CXFA_FFPageWidgetIterator::SetCurrentWidget(CXFA_FFWidget* pWidget) {
 
 CXFA_FFTabOrderPageWidgetIterator::CXFA_FFTabOrderPageWidgetIterator(
     CXFA_FFPageView* pPageView,
-    XFA_WidgetStatusMask dwFilter)
+    Mask<XFA_WidgetStatus> dwFilter)
     : m_pPageViewLayout(pPageView->GetLayoutItem()),
       m_dwFilter(dwFilter),
       m_bIgnoreRelevant(IsDocVersionBelow205(GetDocForPageView(pPageView))) {

@@ -11,6 +11,7 @@
 #include <memory>
 #include <utility>
 
+#include "core/fxcrt/mask.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
@@ -42,47 +43,51 @@ class CFFL_InteractiveFormFiller final : public IPWL_FillerNotify {
 
   void OnMouseEnter(CPDFSDK_PageView* pPageView,
                     ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                    FWL_EventFlagMask nFlag);
+                    Mask<FWL_EVENTFLAG> nFlag);
   void OnMouseExit(CPDFSDK_PageView* pPageView,
                    ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                   FWL_EventFlagMask nFlag);
+                   Mask<FWL_EVENTFLAG> nFlag);
   bool OnLButtonDown(CPDFSDK_PageView* pPageView,
                      ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                     FWL_EventFlagMask nFlags,
+                     Mask<FWL_EVENTFLAG> nFlags,
                      const CFX_PointF& point);
   bool OnLButtonUp(CPDFSDK_PageView* pPageView,
                    ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                   FWL_EventFlagMask nFlags,
+                   Mask<FWL_EVENTFLAG> nFlags,
                    const CFX_PointF& point);
   bool OnLButtonDblClk(CPDFSDK_PageView* pPageView,
                        ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                       FWL_EventFlagMask nFlags,
+                       Mask<FWL_EVENTFLAG> nFlags,
                        const CFX_PointF& point);
   bool OnMouseMove(CPDFSDK_PageView* pPageView,
                    ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                   FWL_EventFlagMask nFlags,
+                   Mask<FWL_EVENTFLAG> nFlags,
                    const CFX_PointF& point);
   bool OnMouseWheel(CPDFSDK_PageView* pPageView,
                     ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                    FWL_EventFlagMask nFlags,
+                    Mask<FWL_EVENTFLAG> nFlags,
                     const CFX_PointF& point,
                     const CFX_Vector& delta);
   bool OnRButtonDown(CPDFSDK_PageView* pPageView,
                      ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                     FWL_EventFlagMask nFlags,
+                     Mask<FWL_EVENTFLAG> nFlags,
                      const CFX_PointF& point);
   bool OnRButtonUp(CPDFSDK_PageView* pPageView,
                    ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                   FWL_EventFlagMask nFlags,
+                   Mask<FWL_EVENTFLAG> nFlags,
                    const CFX_PointF& point);
 
   bool OnKeyDown(CPDFSDK_Annot* pAnnot,
                  FWL_VKEYCODE nKeyCode,
-                 FWL_EventFlagMask nFlags);
-  bool OnChar(CPDFSDK_Annot* pAnnot, uint32_t nChar, FWL_EventFlagMask nFlags);
+                 Mask<FWL_EVENTFLAG> nFlags);
+  bool OnChar(CPDFSDK_Annot* pAnnot,
+              uint32_t nChar,
+              Mask<FWL_EVENTFLAG> nFlags);
 
-  bool OnSetFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot, FWL_EventFlagMask nFlag);
-  bool OnKillFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot, FWL_EventFlagMask nFlag);
+  bool OnSetFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+                  Mask<FWL_EVENTFLAG> nFlag);
+  bool OnKillFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+                   Mask<FWL_EVENTFLAG> nFlag);
 
   CFFL_FormField* GetFormFieldForTesting(CPDFSDK_Annot* pAnnot) {
     return GetFormField(pAnnot);
@@ -105,19 +110,19 @@ class CFFL_InteractiveFormFiller final : public IPWL_FillerNotify {
 
   bool OnKeyStrokeCommit(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                          const CPDFSDK_PageView* pPageView,
-                         FWL_EventFlagMask nFlag);
+                         Mask<FWL_EVENTFLAG> nFlag);
   bool OnValidate(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                   const CPDFSDK_PageView* pPageView,
-                  FWL_EventFlagMask nFlag);
+                  Mask<FWL_EVENTFLAG> nFlag);
   void OnCalculate(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                    const CPDFSDK_PageView* pPageView,
-                   FWL_EventFlagMask nFlag);
+                   Mask<FWL_EVENTFLAG> nFlag);
   void OnFormat(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                 const CPDFSDK_PageView* pPageView,
-                FWL_EventFlagMask nFlag);
+                Mask<FWL_EVENTFLAG> nFlag);
   bool OnButtonUp(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                   const CPDFSDK_PageView* pPageView,
-                  FWL_EventFlagMask nFlag);
+                  Mask<FWL_EVENTFLAG> nFlag);
 
   bool SetIndexSelected(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                         int index,
@@ -142,26 +147,26 @@ class CFFL_InteractiveFormFiller final : public IPWL_FillerNotify {
       int nSelStart,
       int nSelEnd,
       bool bKeyDown,
-      FWL_EventFlagMask nFlag) override;
+      Mask<FWL_EVENTFLAG> nFlag) override;
   bool OnPopupPreOpen(const IPWL_SystemHandler::PerWindowData* pAttached,
-                      FWL_EventFlagMask nFlag) override;
+                      Mask<FWL_EVENTFLAG> nFlag) override;
   bool OnPopupPostOpen(const IPWL_SystemHandler::PerWindowData* pAttached,
-                       FWL_EventFlagMask nFlag) override;
+                       Mask<FWL_EVENTFLAG> nFlag) override;
 
 #ifdef PDF_ENABLE_XFA
   void SetFocusAnnotTab(CPDFSDK_Annot* pWidget, bool bSameField, bool bNext);
   bool OnClick(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                const CPDFSDK_PageView* pPageView,
-               FWL_EventFlagMask nFlag);
+               Mask<FWL_EVENTFLAG> nFlag);
   bool OnFull(ObservedPtr<CPDFSDK_Widget>* pAnnot,
               const CPDFSDK_PageView* pPageView,
-              FWL_EventFlagMask nFlag);
+              Mask<FWL_EVENTFLAG> nFlag);
   bool OnPreOpen(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                  const CPDFSDK_PageView* pPageView,
-                 FWL_EventFlagMask nFlag);
+                 Mask<FWL_EVENTFLAG> nFlag);
   bool OnPostOpen(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                   const CPDFSDK_PageView* pPageView,
-                  FWL_EventFlagMask nFlag);
+                  Mask<FWL_EVENTFLAG> nFlag);
 #endif  // PDF_ENABLE_XFA
 
   bool IsFillingAllowed(CPDFSDK_Widget* pWidget) const;

@@ -110,27 +110,27 @@ class CPWL_MsgControl final : public Observable {
 };
 
 // static
-bool CPWL_Wnd::IsSHIFTKeyDown(FWL_EventFlagMask nFlag) {
+bool CPWL_Wnd::IsSHIFTKeyDown(Mask<FWL_EVENTFLAG> nFlag) {
   return !!(nFlag & FWL_EVENTFLAG_ShiftKey);
 }
 
 // static
-bool CPWL_Wnd::IsCTRLKeyDown(FWL_EventFlagMask nFlag) {
+bool CPWL_Wnd::IsCTRLKeyDown(Mask<FWL_EVENTFLAG> nFlag) {
   return !!(nFlag & FWL_EVENTFLAG_ControlKey);
 }
 
 // static
-bool CPWL_Wnd::IsALTKeyDown(FWL_EventFlagMask nFlag) {
+bool CPWL_Wnd::IsALTKeyDown(Mask<FWL_EVENTFLAG> nFlag) {
   return !!(nFlag & FWL_EVENTFLAG_AltKey);
 }
 
 // static
-bool CPWL_Wnd::IsMETAKeyDown(FWL_EventFlagMask nFlag) {
+bool CPWL_Wnd::IsMETAKeyDown(Mask<FWL_EVENTFLAG> nFlag) {
   return !!(nFlag & FWL_EVENTFLAG_MetaKey);
 }
 
 // static
-bool CPWL_Wnd::IsPlatformShortcutKey(FWL_EventFlagMask nFlag) {
+bool CPWL_Wnd::IsPlatformShortcutKey(Mask<FWL_EVENTFLAG> nFlag) {
 #if defined(OS_APPLE)
   return IsMETAKeyDown(nFlag);
 #else
@@ -287,7 +287,7 @@ bool CPWL_Wnd::InvalidateRect(const CFX_FloatRect* pRect) {
   return !!thisObserved;
 }
 
-bool CPWL_Wnd::OnKeyDown(FWL_VKEYCODE nKeyCode, FWL_EventFlagMask nFlag) {
+bool CPWL_Wnd::OnKeyDown(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlag) {
   if (!IsValid() || !IsVisible())
     return false;
   if (!IsWndCaptureKeyboard(this))
@@ -299,7 +299,7 @@ bool CPWL_Wnd::OnKeyDown(FWL_VKEYCODE nKeyCode, FWL_EventFlagMask nFlag) {
   return false;
 }
 
-bool CPWL_Wnd::OnChar(uint16_t nChar, FWL_EventFlagMask nFlag) {
+bool CPWL_Wnd::OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
   if (!IsValid() || !IsVisible())
     return false;
   if (!IsWndCaptureKeyboard(this))
@@ -312,7 +312,7 @@ bool CPWL_Wnd::OnChar(uint16_t nChar, FWL_EventFlagMask nFlag) {
 }
 
 #define PWL_IMPLEMENT_MOUSE_METHOD(mouse_method_name)         \
-  bool CPWL_Wnd::mouse_method_name(FWL_EventFlagMask nFlag,   \
+  bool CPWL_Wnd::mouse_method_name(Mask<FWL_EVENTFLAG> nFlag, \
                                    const CFX_PointF& point) { \
     if (!IsValid() || !IsVisible())                           \
       return false;                                           \
@@ -342,11 +342,12 @@ PWL_IMPLEMENT_MOUSE_METHOD(OnMouseMove)
 #undef PWL_IMPLEMENT_MOUSE_METHOD
 
 // Unlike their FWL counterparts, PWL windows don't handle right clicks.
-bool CPWL_Wnd::OnRButtonDown(FWL_EventFlagMask nFlag, const CFX_PointF& point) {
+bool CPWL_Wnd::OnRButtonDown(Mask<FWL_EVENTFLAG> nFlag,
+                             const CFX_PointF& point) {
   return false;
 }
 
-bool CPWL_Wnd::OnRButtonUp(FWL_EventFlagMask nFlag, const CFX_PointF& point) {
+bool CPWL_Wnd::OnRButtonUp(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point) {
   return false;
 }
 
@@ -380,7 +381,7 @@ bool CPWL_Wnd::Redo() {
   return false;
 }
 
-bool CPWL_Wnd::OnMouseWheel(FWL_EventFlagMask nFlag,
+bool CPWL_Wnd::OnMouseWheel(Mask<FWL_EVENTFLAG> nFlag,
                             const CFX_PointF& point,
                             const CFX_Vector& delta) {
   if (!IsValid() || !IsVisible())

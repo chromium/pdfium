@@ -374,8 +374,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnMouseMove(FPDF_FORMHANDLE hHandle,
                                                      double page_y) {
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
   return pPageView &&
-         pPageView->OnMouseMove(static_cast<FWL_EventFlagMask>(modifier),
-                                CFX_PointF(page_x, page_y));
+         pPageView->OnMouseMove(
+             Mask<FWL_EVENTFLAG>::FromUnderlyingUnchecked(modifier),
+             CFX_PointF(page_x, page_y));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -390,9 +391,9 @@ FORM_OnMouseWheel(FPDF_FORMHANDLE hHandle,
 
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
   return pPageView &&
-         pPageView->OnMouseWheel(static_cast<FWL_EventFlagMask>(modifier),
-                                 CFXPointFFromFSPointF(*page_coord),
-                                 CFX_Vector(delta_x, delta_y));
+         pPageView->OnMouseWheel(
+             Mask<FWL_EVENTFLAG>::FromUnderlyingUnchecked(modifier),
+             CFXPointFFromFSPointF(*page_coord), CFX_Vector(delta_x, delta_y));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnFocus(FPDF_FORMHANDLE hHandle,
@@ -402,8 +403,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnFocus(FPDF_FORMHANDLE hHandle,
                                                  double page_y) {
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
   return pPageView &&
-         pPageView->OnFocus(static_cast<FWL_EventFlagMask>(modifier),
-                            CFX_PointF(page_x, page_y));
+         pPageView->OnFocus(
+             Mask<FWL_EVENTFLAG>::FromUnderlyingUnchecked(modifier),
+             CFX_PointF(page_x, page_y));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnLButtonDown(FPDF_FORMHANDLE hHandle,
@@ -417,8 +419,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnLButtonDown(FPDF_FORMHANDLE hHandle,
 #endif  // PDF_ENABLE_CLICK_LOGGING
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
   return pPageView &&
-         pPageView->OnLButtonDown(static_cast<FWL_EventFlagMask>(modifier),
-                                  CFX_PointF(page_x, page_y));
+         pPageView->OnLButtonDown(
+             Mask<FWL_EVENTFLAG>::FromUnderlyingUnchecked(modifier),
+             CFX_PointF(page_x, page_y));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnLButtonUp(FPDF_FORMHANDLE hHandle,
@@ -432,8 +435,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnLButtonUp(FPDF_FORMHANDLE hHandle,
 #endif  // PDF_ENABLE_CLICK_LOGGING
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
   return pPageView &&
-         pPageView->OnLButtonUp(static_cast<FWL_EventFlagMask>(modifier),
-                                CFX_PointF(page_x, page_y));
+         pPageView->OnLButtonUp(
+             Mask<FWL_EVENTFLAG>::FromUnderlyingUnchecked(modifier),
+             CFX_PointF(page_x, page_y));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -448,8 +452,9 @@ FORM_OnLButtonDoubleClick(FPDF_FORMHANDLE hHandle,
 #endif  // PDF_ENABLE_CLICK_LOGGING
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
   return pPageView &&
-         pPageView->OnLButtonDblClk(static_cast<FWL_EventFlagMask>(modifier),
-                                    CFX_PointF(page_x, page_y));
+         pPageView->OnLButtonDblClk(
+             Mask<FWL_EVENTFLAG>::FromUnderlyingUnchecked(modifier),
+             CFX_PointF(page_x, page_y));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnRButtonDown(FPDF_FORMHANDLE hHandle,
@@ -463,8 +468,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnRButtonDown(FPDF_FORMHANDLE hHandle,
 #endif  // PDF_ENABLE_CLICK_LOGGING
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
   return pPageView &&
-         pPageView->OnRButtonDown(static_cast<FWL_EventFlagMask>(modifier),
-                                  CFX_PointF(page_x, page_y));
+         pPageView->OnRButtonDown(
+             Mask<FWL_EVENTFLAG>::FromUnderlyingUnchecked(modifier),
+             CFX_PointF(page_x, page_y));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnRButtonUp(FPDF_FORMHANDLE hHandle,
@@ -478,8 +484,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnRButtonUp(FPDF_FORMHANDLE hHandle,
 #endif  // PDF_ENABLE_CLICK_LOGGING
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
   return pPageView &&
-         pPageView->OnRButtonUp(static_cast<FWL_EventFlagMask>(modifier),
-                                CFX_PointF(page_x, page_y));
+         pPageView->OnRButtonUp(
+             Mask<FWL_EVENTFLAG>::FromUnderlyingUnchecked(modifier),
+             CFX_PointF(page_x, page_y));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnKeyDown(FPDF_FORMHANDLE hHandle,
@@ -488,8 +495,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnKeyDown(FPDF_FORMHANDLE hHandle,
                                                    int modifier) {
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
   return pPageView &&
-         pPageView->OnKeyDown(static_cast<FWL_VKEYCODE>(nKeyCode),
-                              static_cast<FWL_EventFlagMask>(modifier));
+         pPageView->OnKeyDown(
+             static_cast<FWL_VKEYCODE>(nKeyCode),
+             Mask<FWL_EVENTFLAG>::FromUnderlyingUnchecked(modifier));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnKeyUp(FPDF_FORMHANDLE hHandle,
@@ -498,8 +506,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnKeyUp(FPDF_FORMHANDLE hHandle,
                                                  int modifier) {
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
   return pPageView &&
-         pPageView->OnKeyUp(static_cast<FWL_VKEYCODE>(nKeyCode),
-                            static_cast<FWL_EventFlagMask>(modifier));
+         pPageView->OnKeyUp(
+             static_cast<FWL_VKEYCODE>(nKeyCode),
+             Mask<FWL_EVENTFLAG>::FromUnderlyingUnchecked(modifier));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnChar(FPDF_FORMHANDLE hHandle,
@@ -508,7 +517,8 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnChar(FPDF_FORMHANDLE hHandle,
                                                 int modifier) {
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
   return pPageView &&
-         pPageView->OnChar(nChar, static_cast<FWL_EventFlagMask>(modifier));
+         pPageView->OnChar(
+             nChar, Mask<FWL_EVENTFLAG>::FromUnderlyingUnchecked(modifier));
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
@@ -591,7 +601,7 @@ FORM_ForceToKillFocus(FPDF_FORMHANDLE hHandle) {
       CPDFSDKFormFillEnvironmentFromFPDFFormHandle(hHandle);
   if (!pFormFillEnv)
     return false;
-  return pFormFillEnv->KillFocusAnnot(0);
+  return pFormFillEnv->KillFocusAnnot({});
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV

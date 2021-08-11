@@ -37,22 +37,23 @@ class CPWL_Edit final : public CPWL_Wnd {
   CFX_FloatRect GetClientRect() const override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           const CFX_Matrix& mtUser2Device) override;
-  bool OnMouseWheel(FWL_EventFlagMask nFlag,
+  bool OnMouseWheel(Mask<FWL_EVENTFLAG> nFlag,
                     const CFX_PointF& point,
                     const CFX_Vector& delta) override;
-  bool OnKeyDown(FWL_VKEYCODE nChar, FWL_EventFlagMask nFlag) override;
-  bool OnChar(uint16_t nChar, FWL_EventFlagMask nFlag) override;
+  bool OnKeyDown(FWL_VKEYCODE nChar, Mask<FWL_EVENTFLAG> nFlag) override;
+  bool OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) override;
   CFX_FloatRect GetFocusRect() const override;
   void OnSetFocus() override;
   void OnKillFocus() override;
   void OnCreated() override;
   void OnDestroy() override;
-  bool OnLButtonDown(FWL_EventFlagMask nFlag, const CFX_PointF& point) override;
-  bool OnLButtonUp(FWL_EventFlagMask nFlag, const CFX_PointF& point) override;
-  bool OnLButtonDblClk(FWL_EventFlagMask nFlag,
+  bool OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag,
+                     const CFX_PointF& point) override;
+  bool OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point) override;
+  bool OnLButtonDblClk(Mask<FWL_EVENTFLAG> nFlag,
                        const CFX_PointF& point) override;
-  bool OnRButtonUp(FWL_EventFlagMask nFlag, const CFX_PointF& point) override;
-  bool OnMouseMove(FWL_EventFlagMask nFlag, const CFX_PointF& point) override;
+  bool OnRButtonUp(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point) override;
+  bool OnMouseMove(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point) override;
   void SetScrollInfo(const PWL_SCROLL_INFO& info) override;
   void SetScrollPosition(float pos) override;
   void ScrollWindowVertically(float pos) override;
@@ -108,10 +109,11 @@ class CPWL_Edit final : public CPWL_Wnd {
   // In case of implementation swallow the OnKeyDown event. If the event is
   // swallowed, implementation may do other unexpected things, which is not the
   // control means to do.
-  static bool IsProceedtoOnChar(FWL_VKEYCODE nKeyCode, FWL_EventFlagMask nFlag);
+  static bool IsProceedtoOnChar(FWL_VKEYCODE nKeyCode,
+                                Mask<FWL_EVENTFLAG> nFlag);
 
-  bool OnKeyDownInternal(FWL_VKEYCODE nKeyCode, FWL_EventFlagMask nFlag);
-  bool OnCharInternal(uint16_t nChar, FWL_EventFlagMask nFlag);
+  bool OnKeyDownInternal(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlag);
+  bool OnCharInternal(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag);
 
   void CopyText();
   void PasteText();

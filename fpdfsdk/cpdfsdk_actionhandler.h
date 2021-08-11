@@ -13,7 +13,9 @@
 #include "core/fpdfdoc/cpdf_aaction.h"
 #include "core/fpdfdoc/cpdf_action.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/mask.h"
 #include "fpdfsdk/cpdfsdk_fieldaction.h"
+#include "public/fpdf_fwlevent.h"
 
 class CPDFSDK_FormFillEnvironment;
 class CPDF_Dictionary;
@@ -46,7 +48,7 @@ class CPDFSDK_ActionHandler {
   bool DoAction_Link(const CPDF_Action& action,
                      CPDF_AAction::AActionType type,
                      CPDFSDK_FormFillEnvironment* form_fill_env,
-                     int modifiers);
+                     Mask<FWL_EVENTFLAG> modifiers);
   bool DoAction_Destination(const CPDF_Dest& dest,
                             CPDFSDK_FormFillEnvironment* form_fill_env);
 
@@ -73,8 +75,7 @@ class CPDFSDK_ActionHandler {
 
   void DoAction_NoJs(const CPDF_Action& action,
                      CPDF_AAction::AActionType type,
-                     CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                     int modifiers);
+                     CPDFSDK_FormFillEnvironment* pFormFillEnv);
   void RunDocumentPageJavaScript(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                                  CPDF_AAction::AActionType type,
                                  const WideString& script);
@@ -96,7 +97,7 @@ class CPDFSDK_ActionHandler {
                        const CPDF_Action& action);
   void DoAction_URI(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                     const CPDF_Action& action,
-                    int modifiers);
+                    Mask<FWL_EVENTFLAG> modifiers);
   void DoAction_Named(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                       const CPDF_Action& action);
 

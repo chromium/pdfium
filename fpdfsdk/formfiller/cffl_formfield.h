@@ -11,6 +11,7 @@
 #include <memory>
 
 #include "core/fxcrt/cfx_timer.h"
+#include "core/fxcrt/mask.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_fieldaction.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
@@ -43,33 +44,33 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
 
   virtual bool OnLButtonDown(CPDFSDK_PageView* pPageView,
                              CPDFSDK_Annot* pAnnot,
-                             FWL_EventFlagMask nFlags,
+                             Mask<FWL_EVENTFLAG> nFlags,
                              const CFX_PointF& point);
   virtual bool OnLButtonUp(CPDFSDK_PageView* pPageView,
                            CPDFSDK_Annot* pAnnot,
-                           FWL_EventFlagMask nFlags,
+                           Mask<FWL_EVENTFLAG> nFlags,
                            const CFX_PointF& point);
   virtual bool OnLButtonDblClk(CPDFSDK_PageView* pPageView,
-                               FWL_EventFlagMask nFlags,
+                               Mask<FWL_EVENTFLAG> nFlags,
                                const CFX_PointF& point);
   virtual bool OnMouseMove(CPDFSDK_PageView* pPageView,
-                           FWL_EventFlagMask nFlags,
+                           Mask<FWL_EVENTFLAG> nFlags,
                            const CFX_PointF& point);
   virtual bool OnMouseWheel(CPDFSDK_PageView* pPageView,
-                            FWL_EventFlagMask nFlags,
+                            Mask<FWL_EVENTFLAG> nFlags,
                             const CFX_PointF& point,
                             const CFX_Vector& delta);
   virtual bool OnRButtonDown(CPDFSDK_PageView* pPageView,
-                             FWL_EventFlagMask nFlags,
+                             Mask<FWL_EVENTFLAG> nFlags,
                              const CFX_PointF& point);
   virtual bool OnRButtonUp(CPDFSDK_PageView* pPageView,
-                           FWL_EventFlagMask nFlags,
+                           Mask<FWL_EVENTFLAG> nFlags,
                            const CFX_PointF& point);
 
-  virtual bool OnKeyDown(FWL_VKEYCODE nKeyCode, FWL_EventFlagMask nFlags);
+  virtual bool OnKeyDown(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlags);
   virtual bool OnChar(CPDFSDK_Annot* pAnnot,
                       uint32_t nChar,
-                      FWL_EventFlagMask nFlags);
+                      Mask<FWL_EVENTFLAG> nFlags);
   virtual bool SetIndexSelected(int index, bool selected);
   virtual bool IsIndexSelected(int index);
 
@@ -85,8 +86,8 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
   bool Undo();
   bool Redo();
 
-  void SetFocusForAnnot(CPDFSDK_Annot* pAnnot, FWL_EventFlagMask nFlag);
-  void KillFocusForAnnot(FWL_EventFlagMask nFlag);
+  void SetFocusForAnnot(CPDFSDK_Annot* pAnnot, Mask<FWL_EVENTFLAG> nFlag);
+  void KillFocusForAnnot(Mask<FWL_EVENTFLAG> nFlag);
 
   // CFX_Timer::CallbackIface:
   void OnTimerFired() override;
@@ -120,7 +121,7 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
   CFX_FloatRect PWLtoFFL(const CFX_FloatRect& rect);
   CFX_PointF FFLtoPWL(const CFX_PointF& point);
   CFX_PointF PWLtoFFL(const CFX_PointF& point);
-  bool CommitData(const CPDFSDK_PageView* pPageView, FWL_EventFlagMask nFlag);
+  bool CommitData(const CPDFSDK_PageView* pPageView, Mask<FWL_EVENTFLAG> nFlag);
   CPWL_Wnd* ResetPWLWindowForValueAge(const CPDFSDK_PageView* pPageView,
                                       CPDFSDK_Widget* pWidget,
                                       uint32_t nValueAge);

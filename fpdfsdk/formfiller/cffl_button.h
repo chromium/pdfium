@@ -28,14 +28,14 @@ class CFFL_Button : public CFFL_FormField {
   void OnMouseExit(CPDFSDK_PageView* pPageView) override;
   bool OnLButtonDown(CPDFSDK_PageView* pPageView,
                      CPDFSDK_Annot* pAnnot,
-                     FWL_EventFlagMask nFlags,
+                     Mask<FWL_EVENTFLAG> nFlags,
                      const CFX_PointF& point) override;
   bool OnLButtonUp(CPDFSDK_PageView* pPageView,
                    CPDFSDK_Annot* pAnnot,
-                   FWL_EventFlagMask nFlags,
+                   Mask<FWL_EVENTFLAG> nFlags,
                    const CFX_PointF& point) override;
   bool OnMouseMove(CPDFSDK_PageView* pPageView,
-                   FWL_EventFlagMask nFlags,
+                   Mask<FWL_EVENTFLAG> nFlags,
                    const CFX_PointF& point) override;
   void OnDraw(CPDFSDK_PageView* pPageView,
               CPDFSDK_Annot* pAnnot,

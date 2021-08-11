@@ -19,8 +19,9 @@ class CPWL_Button : public CPWL_Wnd {
   ~CPWL_Button() override;
 
   // CPWL_Wnd
-  bool OnLButtonDown(FWL_EventFlagMask nFlag, const CFX_PointF& point) override;
-  bool OnLButtonUp(FWL_EventFlagMask nFlag, const CFX_PointF& point) override;
+  bool OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag,
+                     const CFX_PointF& point) override;
+  bool OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point) override;
 
  protected:
   bool m_bMouseDown = false;

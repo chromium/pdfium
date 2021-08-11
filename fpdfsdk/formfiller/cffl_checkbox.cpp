@@ -32,7 +32,8 @@ std::unique_ptr<CPWL_Wnd> CFFL_CheckBox::NewPWLWindow(
   return std::move(pWnd);
 }
 
-bool CFFL_CheckBox::OnKeyDown(FWL_VKEYCODE nKeyCode, FWL_EventFlagMask nFlags) {
+bool CFFL_CheckBox::OnKeyDown(FWL_VKEYCODE nKeyCode,
+                              Mask<FWL_EVENTFLAG> nFlags) {
   switch (nKeyCode) {
     case FWL_VKEY_Return:
     case FWL_VKEY_Space:
@@ -43,7 +44,7 @@ bool CFFL_CheckBox::OnKeyDown(FWL_VKEYCODE nKeyCode, FWL_EventFlagMask nFlags) {
 }
 bool CFFL_CheckBox::OnChar(CPDFSDK_Annot* pAnnot,
                            uint32_t nChar,
-                           FWL_EventFlagMask nFlags) {
+                           Mask<FWL_EVENTFLAG> nFlags) {
   switch (nChar) {
     case pdfium::ascii::kReturn:
     case pdfium::ascii::kSpace: {
@@ -79,7 +80,7 @@ bool CFFL_CheckBox::OnChar(CPDFSDK_Annot* pAnnot,
 
 bool CFFL_CheckBox::OnLButtonUp(CPDFSDK_PageView* pPageView,
                                 CPDFSDK_Annot* pAnnot,
-                                FWL_EventFlagMask nFlags,
+                                Mask<FWL_EVENTFLAG> nFlags,
                                 const CFX_PointF& point) {
   CFFL_Button::OnLButtonUp(pPageView, pAnnot, nFlags, point);
 

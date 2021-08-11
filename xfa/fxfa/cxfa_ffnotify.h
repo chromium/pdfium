@@ -7,6 +7,7 @@
 #ifndef XFA_FXFA_CXFA_FFNOTIFY_H_
 #define XFA_FXFA_CXFA_FFNOTIFY_H_
 
+#include "core/fxcrt/mask.h"
 #include "fxjs/gc/heap.h"
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/member.h"
@@ -55,7 +56,7 @@ class CXFA_FFNotify : public cppgc::GarbageCollected<CXFA_FFNotify> {
   void OnLayoutItemAdded(CXFA_LayoutProcessor* pLayout,
                          CXFA_LayoutItem* pSender,
                          int32_t iPageIdx,
-                         XFA_WidgetStatusMask dwStatus);
+                         Mask<XFA_WidgetStatus> dwStatus);
   void OnLayoutItemRemoving(CXFA_LayoutProcessor* pLayout,
                             CXFA_LayoutItem* pSender);
   void StartFieldDrawLayout(CXFA_Node* pItem,

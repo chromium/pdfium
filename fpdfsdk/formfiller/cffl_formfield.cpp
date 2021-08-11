@@ -88,7 +88,7 @@ void CFFL_FormField::OnMouseExit(CPDFSDK_PageView* pPageView) {
 
 bool CFFL_FormField::OnLButtonDown(CPDFSDK_PageView* pPageView,
                                    CPDFSDK_Annot* pAnnot,
-                                   FWL_EventFlagMask nFlags,
+                                   Mask<FWL_EVENTFLAG> nFlags,
                                    const CFX_PointF& point) {
   CPWL_Wnd* pWnd = CreateOrUpdatePWLWindow(pPageView);
   if (!pWnd)
@@ -104,7 +104,7 @@ bool CFFL_FormField::OnLButtonDown(CPDFSDK_PageView* pPageView,
 
 bool CFFL_FormField::OnLButtonUp(CPDFSDK_PageView* pPageView,
                                  CPDFSDK_Annot* pAnnot,
-                                 FWL_EventFlagMask nFlags,
+                                 Mask<FWL_EVENTFLAG> nFlags,
                                  const CFX_PointF& point) {
   CPWL_Wnd* pWnd = GetPWLWindow(pPageView);
   if (!pWnd)
@@ -116,7 +116,7 @@ bool CFFL_FormField::OnLButtonUp(CPDFSDK_PageView* pPageView,
 }
 
 bool CFFL_FormField::OnLButtonDblClk(CPDFSDK_PageView* pPageView,
-                                     FWL_EventFlagMask nFlags,
+                                     Mask<FWL_EVENTFLAG> nFlags,
                                      const CFX_PointF& point) {
   CPWL_Wnd* pWnd = GetPWLWindow(pPageView);
   if (!pWnd)
@@ -127,7 +127,7 @@ bool CFFL_FormField::OnLButtonDblClk(CPDFSDK_PageView* pPageView,
 }
 
 bool CFFL_FormField::OnMouseMove(CPDFSDK_PageView* pPageView,
-                                 FWL_EventFlagMask nFlags,
+                                 Mask<FWL_EVENTFLAG> nFlags,
                                  const CFX_PointF& point) {
   CPWL_Wnd* pWnd = GetPWLWindow(pPageView);
   if (!pWnd)
@@ -138,7 +138,7 @@ bool CFFL_FormField::OnMouseMove(CPDFSDK_PageView* pPageView,
 }
 
 bool CFFL_FormField::OnMouseWheel(CPDFSDK_PageView* pPageView,
-                                  FWL_EventFlagMask nFlags,
+                                  Mask<FWL_EVENTFLAG> nFlags,
                                   const CFX_PointF& point,
                                   const CFX_Vector& delta) {
   if (!IsValid())
@@ -149,21 +149,21 @@ bool CFFL_FormField::OnMouseWheel(CPDFSDK_PageView* pPageView,
 }
 
 bool CFFL_FormField::OnRButtonDown(CPDFSDK_PageView* pPageView,
-                                   FWL_EventFlagMask nFlags,
+                                   Mask<FWL_EVENTFLAG> nFlags,
                                    const CFX_PointF& point) {
   CPWL_Wnd* pWnd = CreateOrUpdatePWLWindow(pPageView);
   return pWnd && pWnd->OnRButtonDown(nFlags, FFLtoPWL(point));
 }
 
 bool CFFL_FormField::OnRButtonUp(CPDFSDK_PageView* pPageView,
-                                 FWL_EventFlagMask nFlags,
+                                 Mask<FWL_EVENTFLAG> nFlags,
                                  const CFX_PointF& point) {
   CPWL_Wnd* pWnd = GetPWLWindow(pPageView);
   return pWnd && pWnd->OnRButtonUp(nFlags, FFLtoPWL(point));
 }
 
 bool CFFL_FormField::OnKeyDown(FWL_VKEYCODE nKeyCode,
-                               FWL_EventFlagMask nFlags) {
+                               Mask<FWL_EVENTFLAG> nFlags) {
   if (!IsValid())
     return false;
 
@@ -173,7 +173,7 @@ bool CFFL_FormField::OnKeyDown(FWL_VKEYCODE nKeyCode,
 
 bool CFFL_FormField::OnChar(CPDFSDK_Annot* pAnnot,
                             uint32_t nChar,
-                            FWL_EventFlagMask nFlags) {
+                            Mask<FWL_EVENTFLAG> nFlags) {
   if (!IsValid())
     return false;
 
@@ -257,7 +257,7 @@ bool CFFL_FormField::Redo() {
 }
 
 void CFFL_FormField::SetFocusForAnnot(CPDFSDK_Annot* pAnnot,
-                                      FWL_EventFlagMask nFlag) {
+                                      Mask<FWL_EVENTFLAG> nFlag) {
   CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
   IPDF_Page* pPage = pWidget->GetPage();
   CPDFSDK_PageView* pPageView = m_pFormFillEnv->GetOrCreatePageView(pPage);
@@ -269,7 +269,7 @@ void CFFL_FormField::SetFocusForAnnot(CPDFSDK_Annot* pAnnot,
   InvalidateRect(GetViewBBox(pPageView));
 }
 
-void CFFL_FormField::KillFocusForAnnot(FWL_EventFlagMask nFlag) {
+void CFFL_FormField::KillFocusForAnnot(Mask<FWL_EVENTFLAG> nFlag) {
   if (!IsValid())
     return;
 
@@ -463,7 +463,7 @@ CFX_PointF CFFL_FormField::PWLtoFFL(const CFX_PointF& point) {
 }
 
 bool CFFL_FormField::CommitData(const CPDFSDK_PageView* pPageView,
-                                FWL_EventFlagMask nFlag) {
+                                Mask<FWL_EVENTFLAG> nFlag) {
   if (!IsDataChanged(pPageView))
     return true;
 

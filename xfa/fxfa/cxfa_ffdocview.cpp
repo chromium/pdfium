@@ -299,8 +299,8 @@ bool CXFA_FFDocView::SetFocus(CXFA_FFWidget* pNewFocus) {
 
   if (m_pFocusWidget) {
     CXFA_ContentLayoutItem* pItem = m_pFocusWidget->GetLayoutItem();
-    if (pItem->TestStatusBits(XFA_WidgetStatus_Visible) &&
-        !pItem->TestStatusBits(XFA_WidgetStatus_Focused)) {
+    if (pItem->TestStatusBits(XFA_WidgetStatus::kVisible) &&
+        !pItem->TestStatusBits(XFA_WidgetStatus::kFocused)) {
       if (!m_pFocusWidget->IsLoaded())
         m_pFocusWidget->LoadWidget();
       if (!m_pFocusWidget->OnSetFocus(m_pFocusWidget))
@@ -313,7 +313,8 @@ bool CXFA_FFDocView::SetFocus(CXFA_FFWidget* pNewFocus) {
   }
 
   if (pNewFocus) {
-    if (pNewFocus->GetLayoutItem()->TestStatusBits(XFA_WidgetStatus_Visible)) {
+    if (pNewFocus->GetLayoutItem()->TestStatusBits(
+            XFA_WidgetStatus::kVisible)) {
       if (!pNewFocus->IsLoaded())
         pNewFocus->LoadWidget();
       if (!pNewFocus->OnSetFocus(m_pFocusWidget))

@@ -27,12 +27,13 @@ class CPWL_ListBox : public CPWL_Wnd, public CPWL_ListCtrl::NotifyIface {
   void OnDestroy() override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           const CFX_Matrix& mtUser2Device) override;
-  bool OnKeyDown(FWL_VKEYCODE nKeyCode, FWL_EventFlagMask nFlag) override;
-  bool OnChar(uint16_t nChar, FWL_EventFlagMask nFlag) override;
-  bool OnLButtonDown(FWL_EventFlagMask nFlag, const CFX_PointF& point) override;
-  bool OnLButtonUp(FWL_EventFlagMask nFlag, const CFX_PointF& point) override;
-  bool OnMouseMove(FWL_EventFlagMask nFlag, const CFX_PointF& point) override;
-  bool OnMouseWheel(FWL_EventFlagMask nFlag,
+  bool OnKeyDown(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlag) override;
+  bool OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) override;
+  bool OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag,
+                     const CFX_PointF& point) override;
+  bool OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point) override;
+  bool OnMouseMove(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point) override;
+  bool OnMouseWheel(Mask<FWL_EVENTFLAG> nFlag,
                     const CFX_PointF& point,
                     const CFX_Vector& delta) override;
   WideString GetText() override;
@@ -54,7 +55,7 @@ class CPWL_ListBox : public CPWL_Wnd, public CPWL_ListCtrl::NotifyIface {
   void OnSetScrollPosY(float fy) override;
   void OnInvalidateRect(const CFX_FloatRect& pRect) override;
 
-  bool OnNotifySelectionChanged(bool bKeyDown, FWL_EventFlagMask nFlag);
+  bool OnNotifySelectionChanged(bool bKeyDown, Mask<FWL_EVENTFLAG> nFlag);
 
   void AddString(const WideString& str);
   void SetTopVisibleIndex(int32_t nItemIndex);

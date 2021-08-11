@@ -33,7 +33,7 @@ class CFFL_TextField final : public CFFL_TextObject,
       override;
   bool OnChar(CPDFSDK_Annot* pAnnot,
               uint32_t nChar,
-              FWL_EventFlagMask nFlags) override;
+              Mask<FWL_EVENTFLAG> nFlags) override;
   bool IsDataChanged(const CPDFSDK_PageView* pPageView) override;
   void SaveData(const CPDFSDK_PageView* pPageView) override;
   void GetActionData(const CPDFSDK_PageView* pPageView,

@@ -21,12 +21,12 @@ class CPWL_CBListBox final : public CPWL_ListBox {
   ~CPWL_CBListBox() override;
 
   // CPWL_ListBox
-  bool OnLButtonUp(FWL_EventFlagMask nFlag, const CFX_PointF& point) override;
+  bool OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point) override;
 
   bool IsMovementKey(FWL_VKEYCODE nKeyCode) const;
-  bool OnMovementKeyDown(FWL_VKEYCODE nKyeCode, FWL_EventFlagMask nFlag);
-  bool IsChar(uint16_t nChar, FWL_EventFlagMask nFlag) const;
-  bool OnCharNotify(uint16_t nChar, FWL_EventFlagMask nFlag);
+  bool OnMovementKeyDown(FWL_VKEYCODE nKyeCode, Mask<FWL_EVENTFLAG> nFlag);
+  bool IsChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) const;
+  bool OnCharNotify(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag);
 };
 
 #endif  // FPDFSDK_PWL_CPWL_CBLISTBOX_H_

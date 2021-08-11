@@ -249,13 +249,13 @@ CXFA_FFWidget* CXFA_FFWidget::GetNextFFWidget() const {
 }
 
 const CFX_RectF& CXFA_FFWidget::GetWidgetRect() const {
-  if (!GetLayoutItem()->TestStatusBits(XFA_WidgetStatus_RectCached))
+  if (!GetLayoutItem()->TestStatusBits(XFA_WidgetStatus::kRectCached))
     RecacheWidgetRect();
   return m_WidgetRect;
 }
 
 const CFX_RectF& CXFA_FFWidget::RecacheWidgetRect() const {
-  GetLayoutItem()->SetStatusBits(XFA_WidgetStatus_RectCached);
+  GetLayoutItem()->SetStatusBits(XFA_WidgetStatus::kRectCached);
   m_WidgetRect = GetLayoutItem()->GetAbsoluteRect();
   return m_WidgetRect;
 }
@@ -284,8 +284,8 @@ CFX_RectF CXFA_FFWidget::GetRectWithoutRotate() {
   return rtWidget;
 }
 
-void CXFA_FFWidget::ModifyStatus(XFA_WidgetStatusMask dwAdded,
-                                 XFA_WidgetStatusMask dwRemoved) {
+void CXFA_FFWidget::ModifyStatus(Mask<XFA_WidgetStatus> dwAdded,
+                                 Mask<XFA_WidgetStatus> dwRemoved) {
   GetLayoutItem()->ClearStatusBits(dwRemoved);
   GetLayoutItem()->SetStatusBits(dwAdded);
 }
@@ -438,7 +438,7 @@ bool CXFA_FFWidget::OnSetFocus(CXFA_FFWidget* pOldWidget) {
     if (!pParent->OnSetFocus(pOldWidget))
       return false;
   }
-  GetLayoutItem()->SetStatusBits(XFA_WidgetStatus_Focused);
+  GetLayoutItem()->SetStatusBits(XFA_WidgetStatus::kFocused);
 
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Enter;
@@ -448,7 +448,7 @@ bool CXFA_FFWidget::OnSetFocus(CXFA_FFWidget* pOldWidget) {
 }
 
 bool CXFA_FFWidget::OnKillFocus(CXFA_FFWidget* pNewWidget) {
-  GetLayoutItem()->ClearStatusBits(XFA_WidgetStatus_Focused);
+  GetLayoutItem()->ClearStatusBits(XFA_WidgetStatus::kFocused);
   EventKillFocus();
   if (!pNewWidget)
     return true;
@@ -652,13 +652,13 @@ CXFA_FFApp::CallbackIface* CXFA_FFWidget::GetAppProvider() {
 }
 
 bool CXFA_FFWidget::HasVisibleStatus() const {
-  return GetLayoutItem()->TestStatusBits(XFA_WidgetStatus_Visible);
+  return GetLayoutItem()->TestStatusBits(XFA_WidgetStatus::kVisible);
 }
 
 void CXFA_FFWidget::EventKillFocus() {
   CXFA_ContentLayoutItem* pItem = GetLayoutItem();
-  if (pItem->TestStatusBits(XFA_WidgetStatus_Access)) {
-    pItem->ClearStatusBits(XFA_WidgetStatus_Access);
+  if (pItem->TestStatusBits(XFA_WidgetStatus::kAccess)) {
+    pItem->ClearStatusBits(XFA_WidgetStatus::kAccess);
     return;
   }
   CXFA_EventParam eParam;
@@ -668,13 +668,13 @@ void CXFA_FFWidget::EventKillFocus() {
 }
 
 bool CXFA_FFWidget::IsButtonDown() {
-  return GetLayoutItem()->TestStatusBits(XFA_WidgetStatus_ButtonDown);
+  return GetLayoutItem()->TestStatusBits(XFA_WidgetStatus::kButtonDown);
 }
 
 void CXFA_FFWidget::SetButtonDown(bool bSet) {
   CXFA_ContentLayoutItem* pItem = GetLayoutItem();
   if (bSet)
-    pItem->SetStatusBits(XFA_WidgetStatus_ButtonDown);
+    pItem->SetStatusBits(XFA_WidgetStatus::kButtonDown);
   else
-    pItem->ClearStatusBits(XFA_WidgetStatus_ButtonDown);
+    pItem->ClearStatusBits(XFA_WidgetStatus::kButtonDown);
 }

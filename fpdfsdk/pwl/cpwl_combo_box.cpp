@@ -302,7 +302,7 @@ bool CPWL_ComboBox::SetPopup(bool bPopup) {
     return true;
 
   ObservedPtr<CPWL_ComboBox> thisObserved(this);
-  if (m_pFillerNotify->OnPopupPreOpen(GetAttachedData(), 0))
+  if (m_pFillerNotify->OnPopupPreOpen(GetAttachedData(), {}))
     return !!thisObserved;
   if (!thisObserved)
     return false;
@@ -333,11 +333,12 @@ bool CPWL_ComboBox::SetPopup(bool bPopup) {
   if (!Move(rcWindow, true, true))
     return false;
 
-  m_pFillerNotify->OnPopupPostOpen(GetAttachedData(), 0);
+  m_pFillerNotify->OnPopupPostOpen(GetAttachedData(), {});
   return !!thisObserved;
 }
 
-bool CPWL_ComboBox::OnKeyDown(FWL_VKEYCODE nKeyCode, FWL_EventFlagMask nFlag) {
+bool CPWL_ComboBox::OnKeyDown(FWL_VKEYCODE nKeyCode,
+                              Mask<FWL_EVENTFLAG> nFlag) {
   if (!m_pList)
     return false;
   if (!m_pEdit)
@@ -386,7 +387,7 @@ bool CPWL_ComboBox::OnKeyDown(FWL_VKEYCODE nKeyCode, FWL_EventFlagMask nFlag) {
   return false;
 }
 
-bool CPWL_ComboBox::OnChar(uint16_t nChar, FWL_EventFlagMask nFlag) {
+bool CPWL_ComboBox::OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
   if (!m_pList)
     return false;
 

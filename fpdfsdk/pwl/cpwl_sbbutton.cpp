@@ -113,7 +113,7 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
   }
 }
 
-bool CPWL_SBButton::OnLButtonDown(FWL_EventFlagMask nFlag,
+bool CPWL_SBButton::OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag,
                                   const CFX_PointF& point) {
   CPWL_Wnd::OnLButtonDown(nFlag, point);
 
@@ -126,7 +126,7 @@ bool CPWL_SBButton::OnLButtonDown(FWL_EventFlagMask nFlag,
   return true;
 }
 
-bool CPWL_SBButton::OnLButtonUp(FWL_EventFlagMask nFlag,
+bool CPWL_SBButton::OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag,
                                 const CFX_PointF& point) {
   CPWL_Wnd::OnLButtonUp(nFlag, point);
 
@@ -139,7 +139,7 @@ bool CPWL_SBButton::OnLButtonUp(FWL_EventFlagMask nFlag,
   return true;
 }
 
-bool CPWL_SBButton::OnMouseMove(FWL_EventFlagMask nFlag,
+bool CPWL_SBButton::OnMouseMove(Mask<FWL_EVENTFLAG> nFlag,
                                 const CFX_PointF& point) {
   CPWL_Wnd::OnMouseMove(nFlag, point);
 

@@ -68,7 +68,7 @@ class CPWLSpecialButtonEmbedderTest : public EmbedderTest {
         formfill_env_->GetInteractiveFormFiller();
     {
       ObservedPtr<CPDFSDK_Annot> observed(annot);
-      EXPECT_TRUE(interactive_formfiller->OnSetFocus(&observed, 0));
+      EXPECT_TRUE(interactive_formfiller->OnSetFocus(&observed, {}));
     }
 
     form_filler_ = interactive_formfiller->GetFormFieldForTesting(annot);
@@ -110,7 +110,7 @@ TEST_F(CPWLSpecialButtonEmbedderTest, EnterOnReadOnlyCheckBox) {
   CPWL_CheckBox* check_box = static_cast<CPWL_CheckBox*>(GetWindow());
   EXPECT_TRUE(check_box->IsChecked());
   EXPECT_TRUE(GetCPDFSDKFormFillEnv()->GetInteractiveFormFiller()->OnChar(
-      GetCPDFSDKAnnotReadOnlyCheckBox(), '\r', 0));
+      GetCPDFSDKAnnotReadOnlyCheckBox(), '\r', {}));
   EXPECT_TRUE(check_box->IsChecked());
 }
 
@@ -118,11 +118,11 @@ TEST_F(CPWLSpecialButtonEmbedderTest, EnterOnCheckBox) {
   FormFillerAndWindowSetup(GetCPDFSDKAnnotCheckBox());
   CPWL_CheckBox* check_box = static_cast<CPWL_CheckBox*>(GetWindow());
   EXPECT_TRUE(GetCPDFSDKFormFillEnv()->GetInteractiveFormFiller()->OnChar(
-      GetCPDFSDKAnnotCheckBox(), '\r', 0));
+      GetCPDFSDKAnnotCheckBox(), '\r', {}));
   EXPECT_TRUE(check_box->IsChecked());
 
   EXPECT_TRUE(GetCPDFSDKFormFillEnv()->GetInteractiveFormFiller()->OnChar(
-      GetCPDFSDKAnnotCheckBox(), '\r', 0));
+      GetCPDFSDKAnnotCheckBox(), '\r', {}));
   EXPECT_FALSE(check_box->IsChecked());
 }
 
@@ -131,7 +131,7 @@ TEST_F(CPWLSpecialButtonEmbedderTest, EnterOnReadOnlyRadioButton) {
   CPWL_RadioButton* radio_button = static_cast<CPWL_RadioButton*>(GetWindow());
   EXPECT_FALSE(radio_button->IsChecked());
   EXPECT_TRUE(GetCPDFSDKFormFillEnv()->GetInteractiveFormFiller()->OnChar(
-      GetCPDFSDKAnnotReadOnlyRadioButton(), '\r', 0));
+      GetCPDFSDKAnnotReadOnlyRadioButton(), '\r', {}));
   EXPECT_FALSE(radio_button->IsChecked());
 }
 
@@ -139,6 +139,6 @@ TEST_F(CPWLSpecialButtonEmbedderTest, EnterOnRadioButton) {
   FormFillerAndWindowSetup(GetCPDFSDKAnnotRadioButton());
   CPWL_RadioButton* radio_button = static_cast<CPWL_RadioButton*>(GetWindow());
   EXPECT_TRUE(GetCPDFSDKFormFillEnv()->GetInteractiveFormFiller()->OnChar(
-      GetCPDFSDKAnnotRadioButton(), '\r', 0));
+      GetCPDFSDKAnnotRadioButton(), '\r', {}));
   EXPECT_TRUE(radio_button->IsChecked());
 }
