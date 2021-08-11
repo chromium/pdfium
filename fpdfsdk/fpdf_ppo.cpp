@@ -618,7 +618,7 @@ CPDF_Stream* CPDF_NPageToOneExporter::MakeXObjectFromPageRaw(
   pNewXObjectDict->SetNewFor<CPDF_Name>("Subtype", "Form");
   pNewXObjectDict->SetNewFor<CPDF_Number>("FormType", 1);
   pNewXObjectDict->SetRectFor("BBox", pSrcPage->GetBBox());
-  // TODO(xlou): add matrix field to pNewXObjectDict.
+  pNewXObjectDict->SetMatrixFor("Matrix", pSrcPage->GetPageMatrix());
 
   if (pSrcContentObj) {
     ByteString bsSrcContentStream;

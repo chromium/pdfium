@@ -128,10 +128,10 @@ TEST_F(FPDFPPOEmbedderTest, NupRenderImage) {
   const int kPageCount = 2;
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   static constexpr const char* kExpectedMD5s[kPageCount] = {
-      "bf8fa88dc85a9897931273168e8e1a30", "4fa6a7507e9f3ef4f28719a7d656c3a5"};
+      "7a4cddd5a17a60ce50acb53e318d94f8", "4fa6a7507e9f3ef4f28719a7d656c3a5"};
 #else
   static constexpr const char* kExpectedMD5s[kPageCount] = {
-      "4d225b961da0f1bced7c83273e64c9b6", "fb18142190d770cfbc329d2b071aee4d"};
+      "72d0d7a19a2f40e010ca6a1133b33e1e", "fb18142190d770cfbc329d2b071aee4d"};
 #endif
   ScopedFPDFDocument output_doc_3up(
       FPDF_ImportNPagesToOne(document(), 792, 612, 3, 1));
@@ -307,8 +307,7 @@ TEST_F(FPDFPPOEmbedderTest, BUG_1229106) {
   static constexpr int kPageCount = 4;
   static constexpr int kTwoUpPageCount = 2;
   static const char kRectsChecksum[] = "140d629b3c96a07ced2e3e408ea85a1d";
-  static const char kBadTwoUpChecksum[] = "1d12f824e6e1710a91bbb13a903e300a";
-  static const char kGoodTwoUpChecksum[] = "fa4501562301b2e75da354bd067495ec";
+  static const char kTwoUpChecksum[] = "fa4501562301b2e75da354bd067495ec";
 
   ASSERT_TRUE(OpenDocument("bug_1229106.pdf"));
 
@@ -328,9 +327,7 @@ TEST_F(FPDFPPOEmbedderTest, BUG_1229106) {
   for (int i = 0; i < kTwoUpPageCount; ++i) {
     ScopedFPDFPage page(FPDF_LoadPage(output_doc_2up.get(), i));
     ScopedFPDFBitmap bitmap = RenderPage(page.get());
-    // TODO(crbug.com/1229106): Both pages should render the same.
-    CompareBitmap(bitmap.get(), 612, 792,
-                  i == 0 ? kBadTwoUpChecksum : kGoodTwoUpChecksum);
+    CompareBitmap(bitmap.get(), 612, 792, kTwoUpChecksum);
   }
 }
 

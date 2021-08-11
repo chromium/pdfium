@@ -73,6 +73,7 @@ class CPDF_Page final : public IPDF_Page, public CPDF_PageObjectHolder {
 
   void ParseContent();
   const CFX_SizeF& GetPageSize() const { return m_PageSize; }
+  const CFX_Matrix& GetPageMatrix() const { return m_PageMatrix; }
   int GetPageRotation() const;
   RenderCacheIface* GetRenderCache() const { return m_pRenderCache.get(); }
   void SetRenderCache(std::unique_ptr<RenderCacheIface> pCache) {
