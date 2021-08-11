@@ -487,11 +487,7 @@ TEST_F(FPDFPPOEmbedderTest, BUG_750568) {
     ASSERT_TRUE(page);
 
     ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-    ASSERT_EQ(200, FPDFBitmap_GetWidth(bitmap.get()));
-    ASSERT_EQ(200, FPDFBitmap_GetHeight(bitmap.get()));
-    ASSERT_EQ(800, FPDFBitmap_GetStride(bitmap.get()));
-
-    EXPECT_EQ(kHashes[i], HashBitmap(bitmap.get()));
+    CompareBitmap(bitmap.get(), 200, 200, kHashes[i]);
     UnloadPage(page);
   }
 
@@ -507,11 +503,7 @@ TEST_F(FPDFPPOEmbedderTest, BUG_750568) {
     ASSERT_TRUE(page);
 
     ScopedFPDFBitmap bitmap = RenderPage(page);
-    ASSERT_EQ(200, FPDFBitmap_GetWidth(bitmap.get()));
-    ASSERT_EQ(200, FPDFBitmap_GetHeight(bitmap.get()));
-    ASSERT_EQ(800, FPDFBitmap_GetStride(bitmap.get()));
-
-    EXPECT_EQ(kHashes[i], HashBitmap(bitmap.get()));
+    CompareBitmap(bitmap.get(), 200, 200, kHashes[i]);
     FPDF_ClosePage(page);
   }
   FPDF_CloseDocument(output_doc);
@@ -523,29 +515,19 @@ TEST_F(FPDFPPOEmbedderTest, ImportWithZeroLengthStream) {
   ASSERT_TRUE(page);
 
   ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-  ASSERT_EQ(200, FPDFBitmap_GetWidth(bitmap.get()));
-  ASSERT_EQ(200, FPDFBitmap_GetHeight(bitmap.get()));
-  ASSERT_EQ(800, FPDFBitmap_GetStride(bitmap.get()));
-
-  std::string digest = HashBitmap(bitmap.get());
+  CompareBitmap(bitmap.get(), 200, 200, pdfium::kHelloWorldChecksum);
   UnloadPage(page);
 
-  FPDF_DOCUMENT new_doc = FPDF_CreateNewDocument();
-  EXPECT_TRUE(new_doc);
+  ScopedFPDFDocument new_doc(FPDF_CreateNewDocument());
+  ASSERT_TRUE(new_doc);
 
   static constexpr int kIndices[] = {0};
-  EXPECT_TRUE(FPDF_ImportPagesByIndex(new_doc, document(), kIndices,
+  EXPECT_TRUE(FPDF_ImportPagesByIndex(new_doc.get(), document(), kIndices,
                                       pdfium::size(kIndices), 0));
 
-  EXPECT_EQ(1, FPDF_GetPageCount(new_doc));
-  FPDF_PAGE new_page = FPDF_LoadPage(new_doc, 0);
-  ASSERT_NE(nullptr, new_page);
-  ScopedFPDFBitmap new_bitmap = RenderPage(new_page);
-  ASSERT_EQ(200, FPDFBitmap_GetWidth(new_bitmap.get()));
-  ASSERT_EQ(200, FPDFBitmap_GetHeight(new_bitmap.get()));
-  ASSERT_EQ(800, FPDFBitmap_GetStride(new_bitmap.get()));
-
-  EXPECT_EQ(digest, HashBitmap(new_bitmap.get()));
-  FPDF_ClosePage(new_page);
-  FPDF_CloseDocument(new_doc);
+  EXPECT_EQ(1, FPDF_GetPageCount(new_doc.get()));
+  ScopedFPDFPage new_page(FPDF_LoadPage(new_doc.get(), 0));
+  ASSERT_TRUE(new_page);
+  ScopedFPDFBitmap new_bitmap = RenderPage(new_page.get());
+  CompareBitmap(new_bitmap.get(), 200, 200, pdfium::kHelloWorldChecksum);
 }
