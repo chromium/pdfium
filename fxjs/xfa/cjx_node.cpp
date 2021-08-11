@@ -460,7 +460,7 @@ void CJX_Node::oneOfChild(v8::Isolate* pIsolate,
   }
 
   std::vector<CXFA_Node*> properties =
-      GetXFANode()->GetNodeListWithFilter(XFA_NodeFilter_OneOfProperty);
+      GetXFANode()->GetNodeListWithFilter(XFA_NodeFilter::kOneOfProperty);
   if (!properties.empty()) {
     *pValue = GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
         properties.front());

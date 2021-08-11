@@ -16,6 +16,7 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/mask.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
@@ -54,12 +55,11 @@ class CXFA_Value;
 class CXFA_WidgetLayoutData;
 class GCedLocaleIface;
 
-enum XFA_NodeFilter : uint8_t {
-  XFA_NodeFilter_Children = 1 << 0,
-  XFA_NodeFilter_Properties = 1 << 1,
-  XFA_NodeFilter_OneOfProperty = 1 << 2,
+enum class XFA_NodeFilter : uint8_t {
+  kChildren = 1 << 0,
+  kProperties = 1 << 1,
+  kOneOfProperty = 1 << 2,
 };
-using XFA_NodeFilterMask = std::underlying_type<XFA_NodeFilter>::type;
 
 enum class XFA_CheckState : uint8_t {
   kOn = 0,
@@ -200,7 +200,7 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
   CXFA_Node* GetContainerParent() const;
 
   std::vector<CXFA_Node*> GetNodeListForType(XFA_Element eTypeFilter);
-  std::vector<CXFA_Node*> GetNodeListWithFilter(XFA_NodeFilterMask dwFilter);
+  std::vector<CXFA_Node*> GetNodeListWithFilter(Mask<XFA_NodeFilter> dwFilter);
   CXFA_Node* CreateSamePacketNode(XFA_Element eType);
   CXFA_Node* CloneTemplateToForm(bool bRecursive);
   CXFA_Node* GetTemplateNodeIfExists() const;

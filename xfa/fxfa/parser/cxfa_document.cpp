@@ -676,7 +676,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
     case XFA_FFWidgetType::kChoiceList:
       if (pFormNode->IsChoiceListMultiSelect()) {
         std::vector<CXFA_Node*> items = pDataNode->GetNodeListWithFilter(
-            XFA_NodeFilter_Children | XFA_NodeFilter_Properties);
+            {XFA_NodeFilter::kChildren, XFA_NodeFilter::kProperties});
         if (!items.empty()) {
           bool single = items.size() == 1;
           wsNormalizeValue.clear();
