@@ -40,9 +40,9 @@ namespace {
 constexpr int kEditMargin = 3;
 
 #if defined(OS_APPLE)
-constexpr XFA_FWL_KeyFlag kEditingModifier = FWL_KEYFLAG_Command;
+constexpr XFA_FWL_KeyFlag kEditingModifier = XFA_FWL_KeyFlag::kCommand;
 #else
-constexpr XFA_FWL_KeyFlag kEditingModifier = FWL_KEYFLAG_Ctrl;
+constexpr XFA_FWL_KeyFlag kEditingModifier = XFA_FWL_KeyFlag::kCtrl;
 #endif
 
 }  // namespace
@@ -896,7 +896,7 @@ void CFWL_Edit::OnLButtonDown(CFWL_MessageMouse* pMsg) {
       m_pEditEngine->GetIndexForPoint(DeviceToEngine(pMsg->m_pos));
 
   if (index_at_click != m_CursorPosition &&
-      !!(pMsg->m_dwFlags & FWL_KEYFLAG_Shift)) {
+      !!(pMsg->m_dwFlags & XFA_FWL_KeyFlag::kShift)) {
     size_t start = std::min(m_CursorPosition, index_at_click);
     size_t end = std::max(m_CursorPosition, index_at_click);
 
@@ -928,7 +928,7 @@ void CFWL_Edit::OnButtonDoubleClick(CFWL_MessageMouse* pMsg) {
 }
 
 void CFWL_Edit::OnMouseMove(CFWL_MessageMouse* pMsg) {
-  bool shift = !!(pMsg->m_dwFlags & FWL_KEYFLAG_Shift);
+  bool shift = !!(pMsg->m_dwFlags & XFA_FWL_KeyFlag::kShift);
   if (!m_bLButtonDown || !shift)
     return;
 
@@ -955,8 +955,8 @@ void CFWL_Edit::OnMouseMove(CFWL_MessageMouse* pMsg) {
 }
 
 void CFWL_Edit::OnKeyDown(CFWL_MessageKey* pMsg) {
-  bool bShift = !!(pMsg->m_dwFlags & FWL_KEYFLAG_Shift);
-  bool bCtrl = !!(pMsg->m_dwFlags & FWL_KEYFLAG_Ctrl);
+  bool bShift = !!(pMsg->m_dwFlags & XFA_FWL_KeyFlag::kShift);
+  bool bCtrl = !!(pMsg->m_dwFlags & XFA_FWL_KeyFlag::kCtrl);
 
   size_t sel_start = m_CursorPosition;
   if (m_pEditEngine->HasSelection()) {

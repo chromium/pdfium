@@ -685,10 +685,10 @@ void CFWL_ListBox::OnLButtonDown(CFWL_MessageMouse* pMsg) {
     return;
 
   if (IsMultiSelection()) {
-    if (pMsg->m_dwFlags & FWL_KEYFLAG_Ctrl) {
+    if (pMsg->m_dwFlags & XFA_FWL_KeyFlag::kCtrl) {
       pItem->SetSelected(!pItem->IsSelected());
       m_hAnchor = pItem;
-    } else if (pMsg->m_dwFlags & FWL_KEYFLAG_Shift) {
+    } else if (pMsg->m_dwFlags & XFA_FWL_KeyFlag::kShift) {
       if (m_hAnchor)
         SetSelection(m_hAnchor, pItem, true);
       else
@@ -729,8 +729,8 @@ void CFWL_ListBox::OnKeyDown(CFWL_MessageKey* pMsg) {
     case XFA_FWL_VKEY_Home:
     case XFA_FWL_VKEY_End: {
       Item* pItem = GetListItem(GetFocusedItem(), dwKeyCode);
-      bool bShift = !!(pMsg->m_dwFlags & FWL_KEYFLAG_Shift);
-      bool bCtrl = !!(pMsg->m_dwFlags & FWL_KEYFLAG_Ctrl);
+      bool bShift = !!(pMsg->m_dwFlags & XFA_FWL_KeyFlag::kShift);
+      bool bCtrl = !!(pMsg->m_dwFlags & XFA_FWL_KeyFlag::kCtrl);
       OnVK(pItem, bShift, bCtrl);
       break;
     }

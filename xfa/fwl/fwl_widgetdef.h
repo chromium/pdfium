@@ -183,14 +183,14 @@ enum XFA_FWL_VKEYCODE {
 
 // Derived from FWL_EVENTFLAG in public/fwl_event.h, but not the same
 // values bit-for-bit, duplicated here to keep XFA standalone.
-enum XFA_FWL_KeyFlag : uint8_t {
-  FWL_KEYFLAG_Ctrl = 1 << 0,
-  FWL_KEYFLAG_Alt = 1 << 1,
-  FWL_KEYFLAG_Shift = 1 << 2,
-  FWL_KEYFLAG_Command = 1 << 3,
-  FWL_KEYFLAG_LButton = 1 << 4,
-  FWL_KEYFLAG_RButton = 1 << 5,
-  FWL_KEYFLAG_MButton = 1 << 6
+enum class XFA_FWL_KeyFlag : uint8_t {
+  kCtrl = 1 << 0,
+  kAlt = 1 << 1,
+  kShift = 1 << 2,
+  kCommand = 1 << 3,
+  kLButton = 1 << 4,
+  kRButton = 1 << 5,
+  kMButton = 1 << 6
 };
 
 #endif  // XFA_FWL_FWL_WIDGETDEF_H_

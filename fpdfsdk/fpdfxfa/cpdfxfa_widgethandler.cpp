@@ -655,17 +655,17 @@ Mask<XFA_FWL_KeyFlag> CPDFXFA_WidgetHandler::GetKeyFlags(
   Mask<XFA_FWL_KeyFlag> dwFWLFlag;
 
   if (dwFlag & FWL_EVENTFLAG_ControlKey)
-    dwFWLFlag |= FWL_KEYFLAG_Ctrl;
+    dwFWLFlag |= XFA_FWL_KeyFlag::kCtrl;
   if (dwFlag & FWL_EVENTFLAG_LeftButtonDown)
-    dwFWLFlag |= FWL_KEYFLAG_LButton;
+    dwFWLFlag |= XFA_FWL_KeyFlag::kLButton;
   if (dwFlag & FWL_EVENTFLAG_MiddleButtonDown)
-    dwFWLFlag |= FWL_KEYFLAG_MButton;
+    dwFWLFlag |= XFA_FWL_KeyFlag::kMButton;
   if (dwFlag & FWL_EVENTFLAG_RightButtonDown)
-    dwFWLFlag |= FWL_KEYFLAG_RButton;
+    dwFWLFlag |= XFA_FWL_KeyFlag::kRButton;
   if (dwFlag & FWL_EVENTFLAG_ShiftKey)
-    dwFWLFlag |= FWL_KEYFLAG_Shift;
+    dwFWLFlag |= XFA_FWL_KeyFlag::kShift;
   if (dwFlag & FWL_EVENTFLAG_AltKey)
-    dwFWLFlag |= FWL_KEYFLAG_Alt;
+    dwFWLFlag |= XFA_FWL_KeyFlag::kAlt;
 
   return dwFWLFlag;
 }
