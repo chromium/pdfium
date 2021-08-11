@@ -303,6 +303,37 @@ TEST_F(FPDFPPOEmbedderTest, BUG_925981) {
   EXPECT_EQ(1, FPDF_GetPageCount(output_doc_2up.get()));
 }
 
+TEST_F(FPDFPPOEmbedderTest, BUG_1229106) {
+  static constexpr int kPageCount = 4;
+  static constexpr int kTwoUpPageCount = 2;
+  static const char kRectsChecksum[] = "140d629b3c96a07ced2e3e408ea85a1d";
+  static const char kBadTwoUpChecksum[] = "1d12f824e6e1710a91bbb13a903e300a";
+  static const char kGoodTwoUpChecksum[] = "fa4501562301b2e75da354bd067495ec";
+
+  ASSERT_TRUE(OpenDocument("bug_1229106.pdf"));
+
+  // Show all pages render the same.
+  ASSERT_EQ(kPageCount, FPDF_GetPageCount(document()));
+  for (int i = 0; i < kPageCount; ++i) {
+    FPDF_PAGE page = LoadPage(0);
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    CompareBitmap(bitmap.get(), 792, 612, kRectsChecksum);
+    UnloadPage(page);
+  }
+
+  // Create a 2-up PDF.
+  ScopedFPDFDocument output_doc_2up(
+      FPDF_ImportNPagesToOne(document(), 612, 792, 1, 2));
+  ASSERT_EQ(kTwoUpPageCount, FPDF_GetPageCount(output_doc_2up.get()));
+  for (int i = 0; i < kTwoUpPageCount; ++i) {
+    ScopedFPDFPage page(FPDF_LoadPage(output_doc_2up.get(), i));
+    ScopedFPDFBitmap bitmap = RenderPage(page.get());
+    // TODO(crbug.com/1229106): Both pages should render the same.
+    CompareBitmap(bitmap.get(), 612, 792,
+                  i == 0 ? kBadTwoUpChecksum : kGoodTwoUpChecksum);
+  }
+}
+
 TEST_F(FPDFPPOEmbedderTest, BadRepeatViewerPref) {
   ASSERT_TRUE(OpenDocument("repeat_viewer_ref.pdf"));
 

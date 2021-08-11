@@ -1,0 +1,68 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 4
+  /Kids [3 0 R 3 0 R 5 0 R 5 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [0 0 612 792]
+  /Rotate 90
+  /Contents 4 0 R
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+0 1 -1 0 792 0 cm
+0 0 0 rg
+100 400 150 50 re f
+1 0 0 rg
+0 180 100 50 re f
+0 1 0 rg
+0 742 100 50 re f
+0 0 1 rg
+692 742 100 50 re f
+1 0 1 rg
+692 180 100 50 re f
+Q
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [0 0 792 612]
+  /Contents 6 0 R
+>>
+endobj
+{{object 6 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+0 0 0 rg
+100 220 150 50 re f
+1 0 0 rg
+0 0 100 50 re f
+0 1 0 rg
+0 562 100 50 re f
+0 0 1 rg
+692 562 100 50 re f
+1 0 1 rg
+692 0 100 50 re f
+Q
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
