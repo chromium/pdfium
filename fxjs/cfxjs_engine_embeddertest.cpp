@@ -99,8 +99,9 @@ TEST_F(CFXJSEngineEmbedderTest, JSRuntimeError) {
   Optional<IJS_Runtime::JS_Error> err =
       engine()->Execute(L"let a = 3;\nundefined.colour");
   EXPECT_TRUE(err);
-  EXPECT_EQ(L"TypeError: Cannot read property 'colour' of undefined",
-            err->exception);
+  EXPECT_EQ(
+      L"TypeError: Cannot read properties of undefined (reading 'colour')",
+      err->exception);
   EXPECT_EQ(2, err->line);
   EXPECT_EQ(10, err->column);
 }
