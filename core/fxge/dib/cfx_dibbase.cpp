@@ -832,26 +832,6 @@ void CFX_DIBBase::SetPalette(pdfium::span<const uint32_t> src_palette) {
     m_palette[i] = src_palette[i];
 }
 
-void CFX_DIBBase::GetPalette(uint32_t* pal, int alpha) const {
-  DCHECK(GetBPP() <= 8);
-
-  if (GetBPP() == 1) {
-    pal[0] = ((HasPalette() ? GetPaletteSpan()[0] : 0xff000000) & 0xffffff) |
-             (alpha << 24);
-    pal[1] = ((HasPalette() ? GetPaletteSpan()[1] : 0xffffffff) & 0xffffff) |
-             (alpha << 24);
-    return;
-  }
-  if (HasPalette()) {
-    pdfium::span<const uint32_t> palette = GetPaletteSpan();
-    for (int i = 0; i < 256; ++i)
-      pal[i] = (palette[i] & 0x00ffffff) | (alpha << 24);
-  } else {
-    for (int i = 0; i < 256; ++i)
-      pal[i] = ArgbEncode(alpha, i, i, i);
-  }
-}
-
 uint32_t CFX_DIBBase::GetAlphaMaskPitch() const {
   return m_pAlphaMask ? m_pAlphaMask->GetPitch() : 0;
 }

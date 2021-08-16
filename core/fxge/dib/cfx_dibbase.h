@@ -113,7 +113,6 @@ class CFX_DIBBase : public Retainable {
   void BuildPalette();
   bool BuildAlphaMask();
   int FindPalette(uint32_t color) const;
-  void GetPalette(uint32_t* pal, int alpha) const;
 
   FXDIB_Format m_Format = FXDIB_Format::kInvalid;
   int m_Width = 0;
