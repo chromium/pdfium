@@ -11,9 +11,9 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "fxjs/cjs_eventrecorder.h"
 #include "fxjs/ijs_event_context.h"
 
-class CJS_EventRecorder;
 class CJS_Field;
 class CJS_Runtime;
 class CPDFSDK_FormFillEnvironment;
@@ -119,10 +119,38 @@ class CJS_EventContext final : public IJS_EventContext {
   void OnExternal_Exec() override;
 
   CJS_Runtime* GetJSRuntime() const { return m_pRuntime.Get(); }
-  CJS_EventRecorder* GetEventRecorder() const { return m_pEventRecorder.get(); }
   CPDFSDK_FormFillEnvironment* GetFormFillEnv();
   CJS_Field* SourceField();
   CJS_Field* TargetField();
+
+  WideString& Change() { return m_pEventRecorder->Change(); }
+  WideString ChangeEx() const { return m_pEventRecorder->ChangeEx(); }
+  bool IsUserGesture() const { return m_pEventRecorder->IsUserGesture(); }
+  int CommitKey() const { return m_pEventRecorder->CommitKey(); }
+  ByteStringView Name() const { return m_pEventRecorder->Name(); }
+  ByteStringView Type() const { return m_pEventRecorder->Type(); }
+  bool FieldFull() const { return m_pEventRecorder->FieldFull(); }
+  bool KeyDown() const { return m_pEventRecorder->KeyDown(); }
+  bool Modifier() const { return m_pEventRecorder->Modifier(); }
+  bool& Rc() { return m_pEventRecorder->Rc(); }
+  int SelEnd() const { return m_pEventRecorder->SelEnd(); }
+  int SelStart() const { return m_pEventRecorder->SelStart(); }
+  void SetSelEnd(int value) { m_pEventRecorder->SetSelEnd(value); }
+  void SetSelStart(int value) { m_pEventRecorder->SetSelStart(value); }
+  bool Shift() const { return m_pEventRecorder->Shift(); }
+  bool HasValue() const { return m_pEventRecorder->HasValue(); }
+  WideString& Value() { return m_pEventRecorder->Value(); }
+  WideString TargetName() const { return m_pEventRecorder->TargetName(); }
+  bool WillCommit() const { return m_pEventRecorder->WillCommit(); }
+
+  void SetValueForTest(WideString* pStr) {
+    m_pEventRecorder->SetValueForTest(pStr);
+  }
+  void SetRCForTest(bool* pRC) { m_pEventRecorder->SetRCForTest(pRC); }
+  void SetStrChangeForTest(WideString* pStrChange) {
+    m_pEventRecorder->SetStrChangeForTest(pStrChange);
+  }
+  void ResetWillCommitForTest() { m_pEventRecorder->ResetWillCommitForTest(); }
 
  private:
   UnownedPtr<CJS_Runtime> const m_pRuntime;

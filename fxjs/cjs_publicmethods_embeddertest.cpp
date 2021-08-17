@@ -192,8 +192,7 @@ TEST_F(CJS_PublicMethodsEmbedderTest, AFSimple_CalculateSum) {
   runtime.NewEventContext();
 
   WideString result;
-  runtime.GetCurrentEventContext()->GetEventRecorder()->SetValueForTest(
-      &result);
+  runtime.GetCurrentEventContext()->SetValueForTest(&result);
 
   auto ary = runtime.NewArray();
   runtime.PutArrayElement(ary, 0, runtime.NewString("Calc1_A"));
@@ -206,8 +205,7 @@ TEST_F(CJS_PublicMethodsEmbedderTest, AFSimple_CalculateSum) {
   CJS_Result ret = CJS_PublicMethods::AFSimple_Calculate(&runtime, params);
   UnloadPage(page);
 
-  runtime.GetCurrentEventContext()->GetEventRecorder()->SetValueForTest(
-      nullptr);
+  runtime.GetCurrentEventContext()->SetValueForTest(nullptr);
 
   ASSERT_TRUE(!ret.HasError());
   ASSERT_TRUE(!ret.HasReturn());
@@ -227,7 +225,7 @@ TEST_F(CJS_PublicMethodsEmbedderTest, AFNumber_Keystroke) {
       CPDFSDKFormFillEnvironmentFromFPDFFormHandle(form_handle()));
   runtime.NewEventContext();
 
-  auto* handler = runtime.GetCurrentEventContext()->GetEventRecorder();
+  auto* handler = runtime.GetCurrentEventContext();
 
   bool valid = true;
   WideString result = L"-10";
