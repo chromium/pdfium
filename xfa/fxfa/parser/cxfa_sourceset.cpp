@@ -23,7 +23,7 @@ const CXFA_Node::AttributeData kSourceSetAttributeData[] = {
 CXFA_SourceSet::CXFA_SourceSet(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
-                XFA_XDPPACKET_SourceSet,
+                XFA_XDPPACKET::kSourceSet,
                 XFA_ObjectType::ModelNode,
                 XFA_Element::SourceSet,
                 {},

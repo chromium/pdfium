@@ -21,7 +21,7 @@ const CXFA_Node::AttributeData kTimePatternAttributeData[] = {
 CXFA_TimePattern::CXFA_TimePattern(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
-                XFA_XDPPACKET_LocaleSet,
+                XFA_XDPPACKET::kLocaleSet,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::TimePattern,
                 {},

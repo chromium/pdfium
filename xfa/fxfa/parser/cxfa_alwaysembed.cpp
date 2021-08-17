@@ -21,7 +21,7 @@ const CXFA_Node::AttributeData kAlwaysEmbedAttributeData[] = {
 CXFA_AlwaysEmbed::CXFA_AlwaysEmbed(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
-                XFA_XDPPACKET_Config,
+                XFA_XDPPACKET::kConfig,
                 XFA_ObjectType::NodeV,
                 XFA_Element::AlwaysEmbed,
                 {},

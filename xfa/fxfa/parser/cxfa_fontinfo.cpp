@@ -27,7 +27,7 @@ const CXFA_Node::AttributeData kFontInfoAttributeData[] = {
 CXFA_FontInfo::CXFA_FontInfo(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
-                XFA_XDPPACKET_Config,
+                XFA_XDPPACKET::kConfig,
                 XFA_ObjectType::Node,
                 XFA_Element::FontInfo,
                 kFontInfoPropertyData,

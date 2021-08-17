@@ -53,17 +53,17 @@ const CXFA_Node::AttributeData kFontAttributeData[] = {
 }  // namespace
 
 CXFA_Font::CXFA_Font(CXFA_Document* doc, XFA_PacketType packet)
-    : CXFA_Node(
-          doc,
-          packet,
-          (XFA_XDPPACKET_Template | XFA_XDPPACKET_Config | XFA_XDPPACKET_Form),
-          XFA_ObjectType::Node,
-          XFA_Element::Font,
-          kFontPropertyData,
-          kFontAttributeData,
-          cppgc::MakeGarbageCollected<CJX_Node>(
-              doc->GetHeap()->GetAllocationHandle(),
-              this)) {}
+    : CXFA_Node(doc,
+                packet,
+                {XFA_XDPPACKET::kTemplate, XFA_XDPPACKET::kConfig,
+                 XFA_XDPPACKET::kForm},
+                XFA_ObjectType::Node,
+                XFA_Element::Font,
+                kFontPropertyData,
+                kFontAttributeData,
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Font::~CXFA_Font() = default;
 

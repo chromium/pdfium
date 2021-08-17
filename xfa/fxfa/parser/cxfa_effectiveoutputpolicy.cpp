@@ -24,7 +24,7 @@ CXFA_EffectiveOutputPolicy::CXFA_EffectiveOutputPolicy(CXFA_Document* doc,
                                                        XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
-                XFA_XDPPACKET_ConnectionSet,
+                XFA_XDPPACKET::kConnectionSet,
                 XFA_ObjectType::Node,
                 XFA_Element::EffectiveOutputPolicy,
                 {},

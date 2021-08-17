@@ -25,7 +25,7 @@ const CXFA_Node::AttributeData kDataValueAttributeData[] = {
 CXFA_DataValue::CXFA_DataValue(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
-                XFA_XDPPACKET_Datasets,
+                XFA_XDPPACKET::kDatasets,
                 XFA_ObjectType::Node,
                 XFA_Element::DataValue,
                 {},

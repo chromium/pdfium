@@ -58,7 +58,7 @@ const CXFA_Node::AttributeData kFieldAttributeData[] = {
 CXFA_Field::CXFA_Field(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
-                (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
+                {XFA_XDPPACKET::kTemplate, XFA_XDPPACKET::kForm},
                 XFA_ObjectType::ContainerNode,
                 XFA_Element::Field,
                 kFieldPropertyData,

@@ -13,7 +13,7 @@ CXFA_DateTimeSymbols::CXFA_DateTimeSymbols(CXFA_Document* doc,
                                            XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
-                XFA_XDPPACKET_LocaleSet,
+                XFA_XDPPACKET::kLocaleSet,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::DateTimeSymbols,
                 {},

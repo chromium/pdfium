@@ -23,7 +23,7 @@ class TestNode final : public CXFA_Node {
   explicit TestNode(CXFA_Document* doc)
       : CXFA_Node(doc,
                   XFA_PacketType::Form,
-                  (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
+                  {XFA_XDPPACKET::kTemplate, XFA_XDPPACKET::kForm},
                   XFA_ObjectType::Node,
                   XFA_Element::Node,
                   {},

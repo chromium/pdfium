@@ -23,7 +23,7 @@ const CXFA_Node::AttributeData kSoapActionAttributeData[] = {
 CXFA_SoapAction::CXFA_SoapAction(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
-                XFA_XDPPACKET_ConnectionSet,
+                XFA_XDPPACKET::kConnectionSet,
                 XFA_ObjectType::TextNode,
                 XFA_Element::SoapAction,
                 {},

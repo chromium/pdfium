@@ -62,7 +62,7 @@ CXFA_Rectangle* ToRectangle(CXFA_Box* box) {
 
 CXFA_Box::CXFA_Box(CXFA_Document* pDoc,
                    XFA_PacketType ePacket,
-                   uint32_t validPackets,
+                   Mask<XFA_XDPPACKET> validPackets,
                    XFA_ObjectType oType,
                    XFA_Element eType,
                    pdfium::span<const PropertyData> properties,

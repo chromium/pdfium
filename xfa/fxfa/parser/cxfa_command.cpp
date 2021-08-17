@@ -31,7 +31,7 @@ const CXFA_Node::AttributeData kCommandAttributeData[] = {
 CXFA_Command::CXFA_Command(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
-                XFA_XDPPACKET_SourceSet,
+                XFA_XDPPACKET::kSourceSet,
                 XFA_ObjectType::Node,
                 XFA_Element::Command,
                 kCommandPropertyData,

@@ -48,11 +48,11 @@ enum class XFA_PacketType : uint8_t {
 #undef PCKT____
 };
 
-enum XFA_XDPPACKET {
-  XFA_XDPPACKET_UNKNOWN = 0,
+enum class XFA_XDPPACKET {
+  kUNKNOWN = 0,
 #undef PCKT____
 #define PCKT____(a, b, c, d, e, f) \
-  XFA_XDPPACKET_##c = 1 << static_cast<uint8_t>(XFA_PacketType::c),
+  k##c = 1 << static_cast<uint8_t>(XFA_PacketType::c),
 #include "xfa/fxfa/parser/packets.inc"
 #undef PCKT____
 };

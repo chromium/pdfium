@@ -39,7 +39,7 @@ const CXFA_Node::AttributeData kRectangleAttributeData[] = {
 CXFA_Rectangle::CXFA_Rectangle(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Box(doc,
                packet,
-               (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
+               {XFA_XDPPACKET::kTemplate, XFA_XDPPACKET::kForm},
                XFA_ObjectType::Node,
                XFA_Element::Rectangle,
                kRectanglePropertyData,
@@ -50,7 +50,7 @@ CXFA_Rectangle::CXFA_Rectangle(CXFA_Document* doc, XFA_PacketType packet)
 
 CXFA_Rectangle::CXFA_Rectangle(CXFA_Document* pDoc,
                                XFA_PacketType ePacket,
-                               uint32_t validPackets,
+                               Mask<XFA_XDPPACKET> validPackets,
                                XFA_ObjectType oType,
                                XFA_Element eType,
                                pdfium::span<const PropertyData> properties,

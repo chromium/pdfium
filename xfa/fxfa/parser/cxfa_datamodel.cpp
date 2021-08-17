@@ -12,7 +12,7 @@
 CXFA_DataModel::CXFA_DataModel(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
-                XFA_XDPPACKET_Datasets,
+                XFA_XDPPACKET::kDatasets,
                 XFA_ObjectType::ModelNode,
                 XFA_Element::DataModel,
                 {},

@@ -24,7 +24,7 @@ const CXFA_Node::AttributeData kEquateRangeAttributeData[] = {
 CXFA_EquateRange::CXFA_EquateRange(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
-                XFA_XDPPACKET_Config,
+                XFA_XDPPACKET::kConfig,
                 XFA_ObjectType::NodeV,
                 XFA_Element::EquateRange,
                 {},

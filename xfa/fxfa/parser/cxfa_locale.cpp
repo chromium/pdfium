@@ -33,7 +33,7 @@ const CXFA_Node::AttributeData kLocaleAttributeData[] = {
 CXFA_Locale::CXFA_Locale(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
-                (XFA_XDPPACKET_Config | XFA_XDPPACKET_LocaleSet),
+                {XFA_XDPPACKET::kConfig, XFA_XDPPACKET::kLocaleSet},
                 XFA_ObjectType::Node,
                 XFA_Element::Locale,
                 kLocalePropertyData,

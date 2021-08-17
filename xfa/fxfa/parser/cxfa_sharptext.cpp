@@ -20,9 +20,9 @@ const CXFA_Node::AttributeData kSharptextAttributeData[] = {
 CXFA_Sharptext::CXFA_Sharptext(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
-                (XFA_XDPPACKET_Template | XFA_XDPPACKET_Config |
-                 XFA_XDPPACKET_LocaleSet | XFA_XDPPACKET_ConnectionSet |
-                 XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Form),
+                {XFA_XDPPACKET::kTemplate, XFA_XDPPACKET::kConfig,
+                 XFA_XDPPACKET::kLocaleSet, XFA_XDPPACKET::kConnectionSet,
+                 XFA_XDPPACKET::kSourceSet, XFA_XDPPACKET::kForm},
                 XFA_ObjectType::NodeV,
                 XFA_Element::Sharptext,
                 {},

@@ -29,7 +29,7 @@ class CXFA_Rectangle : public CXFA_Box {
   CXFA_Rectangle(CXFA_Document* doc, XFA_PacketType packet);
   CXFA_Rectangle(CXFA_Document* pDoc,
                  XFA_PacketType ePacket,
-                 uint32_t validPackets,
+                 Mask<XFA_XDPPACKET> validPackets,
                  XFA_ObjectType oType,
                  XFA_Element eType,
                  pdfium::span<const PropertyData> properties,

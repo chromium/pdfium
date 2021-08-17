@@ -35,7 +35,7 @@ const CXFA_Node::AttributeData kBorderAttributeData[] = {
 CXFA_Border::CXFA_Border(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Rectangle(doc,
                      packet,
-                     (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
+                     {XFA_XDPPACKET::kTemplate, XFA_XDPPACKET::kForm},
                      XFA_ObjectType::Node,
                      XFA_Element::Border,
                      kBorderPropertyData,

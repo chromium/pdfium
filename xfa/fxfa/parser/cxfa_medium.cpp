@@ -32,7 +32,7 @@ const CXFA_Node::AttributeData kMediumAttributeData[] = {
 CXFA_Medium::CXFA_Medium(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
-                (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
+                {XFA_XDPPACKET::kTemplate, XFA_XDPPACKET::kForm},
                 XFA_ObjectType::Node,
                 XFA_Element::Medium,
                 {},

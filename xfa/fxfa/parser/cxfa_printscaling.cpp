@@ -21,7 +21,7 @@ const CXFA_Node::AttributeData kPrintScalingAttributeData[] = {
 CXFA_PrintScaling::CXFA_PrintScaling(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
-                XFA_XDPPACKET_Config,
+                XFA_XDPPACKET::kConfig,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::PrintScaling,
                 {},

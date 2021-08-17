@@ -21,7 +21,7 @@ const CXFA_Node::AttributeData kWhitespaceAttributeData[] = {
 CXFA_Whitespace::CXFA_Whitespace(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
-                XFA_XDPPACKET_Config,
+                XFA_XDPPACKET::kConfig,
                 XFA_ObjectType::NodeV,
                 XFA_Element::Whitespace,
                 {},

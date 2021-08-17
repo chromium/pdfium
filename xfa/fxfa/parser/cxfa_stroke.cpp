@@ -66,7 +66,7 @@ void XFA_StrokeTypeSetLineDash(CFGAS_GEGraphics* pGraphics,
 
 CXFA_Stroke::CXFA_Stroke(CXFA_Document* pDoc,
                          XFA_PacketType ePacket,
-                         uint32_t validPackets,
+                         Mask<XFA_XDPPACKET> validPackets,
                          XFA_ObjectType oType,
                          XFA_Element eType,
                          pdfium::span<const PropertyData> properties,

@@ -408,7 +408,7 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
  protected:
   CXFA_Node(CXFA_Document* pDoc,
             XFA_PacketType ePacket,
-            uint32_t validPackets,
+            Mask<XFA_XDPPACKET> validPackets,
             XFA_ObjectType oType,
             XFA_Element eType,
             pdfium::span<const PropertyData> properties,
@@ -512,7 +512,7 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
   bool is_widget_ready_ = false;
   const pdfium::span<const PropertyData> m_Properties;
   const pdfium::span<const AttributeData> m_Attributes;
-  const uint32_t m_ValidPackets;
+  const Mask<XFA_XDPPACKET> m_ValidPackets;
   UnownedPtr<CFX_XMLNode> xml_node_;
   const XFA_PacketType m_ePacket;
   uint8_t m_ExecuteRecursionDepth = 0;

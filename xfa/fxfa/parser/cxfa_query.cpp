@@ -30,7 +30,7 @@ const CXFA_Node::AttributeData kQueryAttributeData[] = {
 CXFA_Query::CXFA_Query(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
-                XFA_XDPPACKET_SourceSet,
+                XFA_XDPPACKET::kSourceSet,
                 XFA_ObjectType::Node,
                 XFA_Element::Query,
                 kQueryPropertyData,

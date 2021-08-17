@@ -23,7 +23,7 @@ const CXFA_Node::AttributeData kRootElementAttributeData[] = {
 CXFA_RootElement::CXFA_RootElement(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
-                XFA_XDPPACKET_ConnectionSet,
+                XFA_XDPPACKET::kConnectionSet,
                 XFA_ObjectType::TextNode,
                 XFA_Element::RootElement,
                 {},

@@ -38,7 +38,7 @@ const CXFA_Node::AttributeData kPresentAttributeData[] = {
 CXFA_Present::CXFA_Present(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
-                XFA_XDPPACKET_Config,
+                XFA_XDPPACKET::kConfig,
                 XFA_ObjectType::Node,
                 XFA_Element::Present,
                 kPresentPropertyData,

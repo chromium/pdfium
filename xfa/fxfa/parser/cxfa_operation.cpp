@@ -25,7 +25,7 @@ const CXFA_Node::AttributeData kOperationAttributeData[] = {
 CXFA_Operation::CXFA_Operation(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
-                XFA_XDPPACKET_ConnectionSet,
+                XFA_XDPPACKET::kConnectionSet,
                 XFA_ObjectType::TextNode,
                 XFA_Element::Operation,
                 {},

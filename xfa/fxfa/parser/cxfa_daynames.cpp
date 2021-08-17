@@ -24,7 +24,7 @@ const CXFA_Node::AttributeData kDayNamesAttributeData[] = {
 CXFA_DayNames::CXFA_DayNames(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
-                XFA_XDPPACKET_LocaleSet,
+                XFA_XDPPACKET::kLocaleSet,
                 XFA_ObjectType::Node,
                 XFA_Element::DayNames,
                 kDayNamesPropertyData,

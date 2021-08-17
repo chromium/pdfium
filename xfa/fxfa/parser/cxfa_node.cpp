@@ -978,7 +978,7 @@ class CXFA_ImageEditData final : public CXFA_FieldLayoutData {
 
 CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
                      XFA_PacketType ePacket,
-                     uint32_t validPackets,
+                     Mask<XFA_XDPPACKET> validPackets,
                      XFA_ObjectType oType,
                      XFA_Element eType,
                      pdfium::span<const PropertyData> properties,
@@ -1077,7 +1077,8 @@ CXFA_Node* CXFA_Node::GetContainerParent() const {
 }
 
 bool CXFA_Node::IsValidInPacket(XFA_PacketType packet) const {
-  return !!(m_ValidPackets & (1 << static_cast<uint8_t>(packet)));
+  uint32_t bitflag = 1 << static_cast<uint8_t>(packet);
+  return !!(m_ValidPackets & static_cast<XFA_XDPPACKET>(bitflag));
 }
 
 const CXFA_Node::PropertyData* CXFA_Node::GetPropertyData(

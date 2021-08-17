@@ -23,7 +23,7 @@ const CXFA_Node::AttributeData kDeleteAttributeData[] = {
 CXFA_Delete::CXFA_Delete(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
-                XFA_XDPPACKET_SourceSet,
+                XFA_XDPPACKET::kSourceSet,
                 XFA_ObjectType::TextNode,
                 XFA_Element::Delete,
                 {},

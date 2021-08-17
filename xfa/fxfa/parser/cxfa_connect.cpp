@@ -36,8 +36,8 @@ const CXFA_Node::AttributeData kConnectAttributeData[] = {
 CXFA_Connect::CXFA_Connect(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
-                (XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
-                 XFA_XDPPACKET_Form),
+                {XFA_XDPPACKET::kSourceSet, XFA_XDPPACKET::kTemplate,
+                 XFA_XDPPACKET::kForm},
                 XFA_ObjectType::Node,
                 XFA_Element::Connect,
                 kConnectPropertyData,

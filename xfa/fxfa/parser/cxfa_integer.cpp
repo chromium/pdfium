@@ -23,8 +23,8 @@ const CXFA_Node::AttributeData kIntegerAttributeData[] = {
 CXFA_Integer::CXFA_Integer(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
-                (XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
-                 XFA_XDPPACKET_Form),
+                {XFA_XDPPACKET::kSourceSet, XFA_XDPPACKET::kTemplate,
+                 XFA_XDPPACKET::kForm},
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Integer,
                 {},

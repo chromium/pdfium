@@ -21,7 +21,7 @@ const CXFA_Node::AttributeData kXfaAttributeData[] = {
 CXFA_Xfa::CXFA_Xfa(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
-                XFA_XDPPACKET_Xdp,
+                XFA_XDPPACKET::kXdp,
                 XFA_ObjectType::ModelNode,
                 XFA_Element::Xfa,
                 {},

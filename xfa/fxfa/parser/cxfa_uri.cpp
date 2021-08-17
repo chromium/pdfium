@@ -25,7 +25,7 @@ const CXFA_Node::AttributeData kUriAttributeData[] = {
 CXFA_Uri::CXFA_Uri(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
-                (XFA_XDPPACKET_Config | XFA_XDPPACKET_ConnectionSet),
+                {XFA_XDPPACKET::kConfig, XFA_XDPPACKET::kConnectionSet},
                 XFA_ObjectType::TextNode,
                 XFA_Element::Uri,
                 {},

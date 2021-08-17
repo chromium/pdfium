@@ -43,17 +43,17 @@ constexpr wchar_t kScriptTest[] = L"scriptTest";
 }  // namespace
 
 CXFA_Validate::CXFA_Validate(CXFA_Document* doc, XFA_PacketType packet)
-    : CXFA_Node(
-          doc,
-          packet,
-          (XFA_XDPPACKET_Config | XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
-          XFA_ObjectType::ContentNode,
-          XFA_Element::Validate,
-          kValidatePropertyData,
-          kValidateAttributeData,
-          cppgc::MakeGarbageCollected<CJX_Node>(
-              doc->GetHeap()->GetAllocationHandle(),
-              this)) {}
+    : CXFA_Node(doc,
+                packet,
+                {XFA_XDPPACKET::kConfig, XFA_XDPPACKET::kTemplate,
+                 XFA_XDPPACKET::kForm},
+                XFA_ObjectType::ContentNode,
+                XFA_Element::Validate,
+                kValidatePropertyData,
+                kValidateAttributeData,
+                cppgc::MakeGarbageCollected<CJX_Node>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Validate::~CXFA_Validate() = default;
 

@@ -34,7 +34,7 @@ const CXFA_Node::AttributeData kEdgeAttributeData[] = {
 CXFA_Edge::CXFA_Edge(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Stroke(doc,
                   packet,
-                  (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
+                  {XFA_XDPPACKET::kTemplate, XFA_XDPPACKET::kForm},
                   XFA_ObjectType::Node,
                   XFA_Element::Edge,
                   kEdgePropertyData,

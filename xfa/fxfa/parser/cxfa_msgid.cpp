@@ -21,7 +21,7 @@ const CXFA_Node::AttributeData kMsgIdAttributeData[] = {
 CXFA_MsgId::CXFA_MsgId(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
-                XFA_XDPPACKET_Config,
+                XFA_XDPPACKET::kConfig,
                 XFA_ObjectType::NodeV,
                 XFA_Element::MsgId,
                 {},

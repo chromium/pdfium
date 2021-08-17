@@ -34,7 +34,7 @@ const CXFA_Node::AttributeData kRecordSetAttributeData[] = {
 CXFA_RecordSet::CXFA_RecordSet(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
-                XFA_XDPPACKET_SourceSet,
+                XFA_XDPPACKET::kSourceSet,
                 XFA_ObjectType::Node,
                 XFA_Element::RecordSet,
                 {},

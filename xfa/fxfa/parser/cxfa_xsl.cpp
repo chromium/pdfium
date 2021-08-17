@@ -26,7 +26,7 @@ const CXFA_Node::AttributeData kXslAttributeData[] = {
 CXFA_Xsl::CXFA_Xsl(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
-                XFA_XDPPACKET_Config,
+                XFA_XDPPACKET::kConfig,
                 XFA_ObjectType::Node,
                 XFA_Element::Xsl,
                 kXslPropertyData,

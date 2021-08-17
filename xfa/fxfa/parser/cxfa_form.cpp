@@ -20,7 +20,7 @@ const CXFA_Node::AttributeData kFormAttributeData[] = {
 CXFA_Form::CXFA_Form(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
-                XFA_XDPPACKET_Form,
+                XFA_XDPPACKET::kForm,
                 XFA_ObjectType::ModelNode,
                 XFA_Element::Form,
                 {},

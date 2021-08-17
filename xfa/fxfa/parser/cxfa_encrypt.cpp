@@ -26,16 +26,16 @@ const CXFA_Node::AttributeData kEncryptAttributeData[] = {
 }  // namespace
 
 CXFA_Encrypt::CXFA_Encrypt(CXFA_Document* doc, XFA_PacketType packet)
-    : CXFA_Node(
-          doc,
-          packet,
-          (XFA_XDPPACKET_Template | XFA_XDPPACKET_Config | XFA_XDPPACKET_Form),
-          XFA_ObjectType::ContentNode,
-          XFA_Element::Encrypt,
-          kEncryptPropertyData,
-          kEncryptAttributeData,
-          cppgc::MakeGarbageCollected<CJX_Encrypt>(
-              doc->GetHeap()->GetAllocationHandle(),
-              this)) {}
+    : CXFA_Node(doc,
+                packet,
+                {XFA_XDPPACKET::kTemplate, XFA_XDPPACKET::kConfig,
+                 XFA_XDPPACKET::kForm},
+                XFA_ObjectType::ContentNode,
+                XFA_Element::Encrypt,
+                kEncryptPropertyData,
+                kEncryptAttributeData,
+                cppgc::MakeGarbageCollected<CJX_Encrypt>(
+                    doc->GetHeap()->GetAllocationHandle(),
+                    this)) {}
 
 CXFA_Encrypt::~CXFA_Encrypt() = default;
