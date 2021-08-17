@@ -122,16 +122,17 @@ void DynPropGetterAdapter(v8::Isolate* pIsolate,
                           CFXJSE_Value* pValue) {
   DCHECK(pClassDescriptor);
 
-  int32_t nPropType = pClassDescriptor->dynPropTypeGetter
-                          ? pClassDescriptor->dynPropTypeGetter(
-                                pIsolate, pObject, szPropName, false)
-                          : FXJSE_ClassPropType_Property;
-  if (nPropType == FXJSE_ClassPropType_Property) {
+  FXJSE_ClassPropType nPropType =
+      pClassDescriptor->dynPropTypeGetter
+          ? pClassDescriptor->dynPropTypeGetter(pIsolate, pObject, szPropName,
+                                                false)
+          : FXJSE_ClassPropType::kProperty;
+  if (nPropType == FXJSE_ClassPropType::kProperty) {
     if (pClassDescriptor->dynPropGetter) {
       pValue->ForceSetValue(pIsolate, pClassDescriptor->dynPropGetter(
                                           pIsolate, pObject, szPropName));
     }
-  } else if (nPropType == FXJSE_ClassPropType_Method) {
+  } else if (nPropType == FXJSE_ClassPropType::kMethod) {
     if (pClassDescriptor->dynMethodCall && pValue) {
       v8::HandleScope hscope(pIsolate);
       v8::Local<v8::ObjectTemplate> hCallBackInfoTemplate =
@@ -160,11 +161,12 @@ void DynPropSetterAdapter(v8::Isolate* pIsolate,
                           ByteStringView szPropName,
                           CFXJSE_Value* pValue) {
   DCHECK(pClassDescriptor);
-  int32_t nPropType = pClassDescriptor->dynPropTypeGetter
-                          ? pClassDescriptor->dynPropTypeGetter(
-                                pIsolate, pObject, szPropName, false)
-                          : FXJSE_ClassPropType_Property;
-  if (nPropType != FXJSE_ClassPropType_Method) {
+  FXJSE_ClassPropType nPropType =
+      pClassDescriptor->dynPropTypeGetter
+          ? pClassDescriptor->dynPropTypeGetter(pIsolate, pObject, szPropName,
+                                                false)
+          : FXJSE_ClassPropType::kProperty;
+  if (nPropType != FXJSE_ClassPropType::kMethod) {
     if (pClassDescriptor->dynPropSetter) {
       pClassDescriptor->dynPropSetter(pIsolate, pObject, szPropName,
                                       pValue->GetValue(pIsolate));
@@ -176,12 +178,11 @@ bool DynPropQueryAdapter(v8::Isolate* pIsolate,
                          const FXJSE_CLASS_DESCRIPTOR* pClassDescriptor,
                          v8::Local<v8::Object> pObject,
                          ByteStringView szPropName) {
-  DCHECK(pClassDescriptor);
-  int32_t nPropType = pClassDescriptor->dynPropTypeGetter
-                          ? pClassDescriptor->dynPropTypeGetter(
-                                pIsolate, pObject, szPropName, true)
-                          : FXJSE_ClassPropType_Property;
-  return nPropType != FXJSE_ClassPropType_None;
+  FXJSE_ClassPropType nPropType = pClassDescriptor->dynPropTypeGetter
+                                      ? pClassDescriptor->dynPropTypeGetter(
+                                            pIsolate, pObject, szPropName, true)
+                                      : FXJSE_ClassPropType::kProperty;
+  return nPropType != FXJSE_ClassPropType::kNone;
 }
 
 void NamedPropertyQueryCallback(

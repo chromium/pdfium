@@ -96,14 +96,14 @@ class CFXJSE_Engine final : public CFX_V8 {
   static CJS_Result NormalMethodCall(
       const v8::FunctionCallbackInfo<v8::Value>& info,
       const WideString& functionName);
-  static int32_t NormalPropTypeGetter(v8::Isolate* pIsolate,
-                                      v8::Local<v8::Object> pObject,
-                                      ByteStringView szPropName,
-                                      bool bQueryIn);
-  static int32_t GlobalPropTypeGetter(v8::Isolate* pIsolate,
-                                      v8::Local<v8::Object> pObject,
-                                      ByteStringView szPropName,
-                                      bool bQueryIn);
+  static FXJSE_ClassPropType NormalPropTypeGetter(v8::Isolate* pIsolate,
+                                                  v8::Local<v8::Object> pObject,
+                                                  ByteStringView szPropName,
+                                                  bool bQueryIn);
+  static FXJSE_ClassPropType GlobalPropTypeGetter(v8::Isolate* pIsolate,
+                                                  v8::Local<v8::Object> pObject,
+                                                  ByteStringView szPropName,
+                                                  bool bQueryIn);
 
   CFXJSE_Engine(CXFA_Document* pDocument, CJS_Runtime* fxjs_runtime);
   ~CFXJSE_Engine() override;

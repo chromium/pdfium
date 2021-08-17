@@ -27,6 +27,12 @@ class CFXJSE_FormCalcContext;
 class CJS_Result;
 class CJX_Object;
 
+enum class FXJSE_ClassPropType {
+  kNone,
+  kProperty,
+  kMethod,
+};
+
 // C++ object which is retrieved from v8 object's slot.
 class CFXJSE_HostObject {
  public:
@@ -57,16 +63,11 @@ typedef void (*FXJSE_PropSetter)(v8::Isolate* pIsolate,
                                  v8::Local<v8::Object> pObject,
                                  ByteStringView szPropName,
                                  v8::Local<v8::Value> pValue);
-typedef int32_t (*FXJSE_PropTypeGetter)(v8::Isolate* pIsolate,
-                                        v8::Local<v8::Object> pObject,
-                                        ByteStringView szPropName,
-                                        bool bQueryIn);
-
-enum FXJSE_ClassPropTypes {
-  FXJSE_ClassPropType_None,
-  FXJSE_ClassPropType_Property,
-  FXJSE_ClassPropType_Method
-};
+typedef FXJSE_ClassPropType (*FXJSE_PropTypeGetter)(
+    v8::Isolate* pIsolate,
+    v8::Local<v8::Object> pObject,
+    ByteStringView szPropName,
+    bool bQueryIn);
 
 struct FXJSE_FUNCTION_DESCRIPTOR {
   const char* tag;  // `pdfium::fxjse::kFuncTag` always.
