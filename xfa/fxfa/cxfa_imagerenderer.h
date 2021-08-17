@@ -30,13 +30,15 @@ class CXFA_ImageRenderer {
   bool Continue();
 
  private:
+  enum class State : uint8_t { kInitial = 0, kTransforming, kStarted };
+
   void CompositeDIBitmap(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
                          int left,
                          int top);
 
-  UnownedPtr<CFX_RenderDevice> m_pDevice;
-  int m_Status = 0;
+  State m_State = State::kInitial;
   CFX_Matrix m_ImageMatrix;
+  UnownedPtr<CFX_RenderDevice> m_pDevice;
   RetainPtr<CFX_DIBBase> m_pDIBBase;
   RetainPtr<CFX_DIBitmap> m_pCloneConvert;
   std::unique_ptr<CFX_ImageTransformer> m_pTransformer;
