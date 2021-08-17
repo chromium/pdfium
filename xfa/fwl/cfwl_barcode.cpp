@@ -162,7 +162,7 @@ void CFWL_Barcode::GenerateBarcodeImageCache() {
     m_pBarcodeEngine->SetModuleWidth(m_nModuleWidth.value());
   if (m_nDataLength.has_value())
     m_pBarcodeEngine->SetDataLength(m_nDataLength.value());
-  if (m_bCalChecksum.value())
+  if (m_bCalChecksum.has_value())
     m_pBarcodeEngine->SetCalChecksum(m_bCalChecksum.value());
   if (m_bPrintChecksum.has_value())
     m_pBarcodeEngine->SetPrintChecksum(m_bPrintChecksum.value());
