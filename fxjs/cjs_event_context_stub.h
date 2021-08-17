@@ -17,7 +17,6 @@ class CJS_EventContextStub final : public IJS_EventContext {
   // IJS_EventContext:
   Optional<IJS_Runtime::JS_Error> RunScript(const WideString& script) override;
 
-  void OnApp_Init() override {}
   void OnDoc_Open(const WideString& strTargetName) override {}
   void OnDoc_WillPrint() override {}
   void OnDoc_DidPrint() override {}
@@ -73,41 +72,6 @@ class CJS_EventContextStub final : public IJS_EventContext {
                         CPDF_FormField* pTarget,
                         WideString* Value,
                         bool* bRc) override {}
-  void OnScreen_Focus(bool bModifier,
-                      bool bShift,
-                      CPDFSDK_Annot* pScreen) override {}
-  void OnScreen_Blur(bool bModifier,
-                     bool bShift,
-                     CPDFSDK_Annot* pScreen) override {}
-  void OnScreen_Open(bool bModifier,
-                     bool bShift,
-                     CPDFSDK_Annot* pScreen) override {}
-  void OnScreen_Close(bool bModifier,
-                      bool bShift,
-                      CPDFSDK_Annot* pScreen) override {}
-  void OnScreen_MouseDown(bool bModifier,
-                          bool bShift,
-                          CPDFSDK_Annot* pScreen) override {}
-  void OnScreen_MouseUp(bool bModifier,
-                        bool bShift,
-                        CPDFSDK_Annot* pScreen) override {}
-  void OnScreen_MouseEnter(bool bModifier,
-                           bool bShift,
-                           CPDFSDK_Annot* pScreen) override {}
-  void OnScreen_MouseExit(bool bModifier,
-                          bool bShift,
-                          CPDFSDK_Annot* pScreen) override {}
-  void OnScreen_InView(bool bModifier,
-                       bool bShift,
-                       CPDFSDK_Annot* pScreen) override {}
-  void OnScreen_OutView(bool bModifier,
-                        bool bShift,
-                        CPDFSDK_Annot* pScreen) override {}
-  void OnBookmark_MouseUp(CPDF_Bookmark* pBookMark) override {}
-  void OnLink_MouseUp() override {}
-  void OnMenu_Exec(const WideString&) override {}
-  void OnBatch_Exec() override {}
-  void OnConsole_Exec() override {}
   void OnExternal_Exec() override {}
 };
 

@@ -101,10 +101,6 @@ CJS_Field* CJS_EventContext::TargetField() {
   return pJSField;
 }
 
-void CJS_EventContext::OnApp_Init() {
-  Initialize(JET_APP_INIT);
-}
-
 void CJS_EventContext::OnDoc_Open(const WideString& strTargetName) {
   Initialize(JET_DOC_OPEN);
   m_strTargetName = strTargetName;
@@ -295,128 +291,8 @@ void CJS_EventContext::OnField_Format(CPDF_FormField* pTarget,
   m_bWillCommit = true;
 }
 
-void CJS_EventContext::OnScreen_Focus(bool bModifier,
-                                      bool bShift,
-                                      CPDFSDK_Annot* pScreen) {
-  Initialize(JET_SCREEN_FOCUS);
-
-  m_bModifier = bModifier;
-  m_bShift = bShift;
-  m_pTargetAnnot.Reset(pScreen);
-}
-
-void CJS_EventContext::OnScreen_Blur(bool bModifier,
-                                     bool bShift,
-                                     CPDFSDK_Annot* pScreen) {
-  Initialize(JET_SCREEN_BLUR);
-
-  m_bModifier = bModifier;
-  m_bShift = bShift;
-  m_pTargetAnnot.Reset(pScreen);
-}
-
-void CJS_EventContext::OnScreen_Open(bool bModifier,
-                                     bool bShift,
-                                     CPDFSDK_Annot* pScreen) {
-  Initialize(JET_SCREEN_OPEN);
-
-  m_bModifier = bModifier;
-  m_bShift = bShift;
-  m_pTargetAnnot.Reset(pScreen);
-}
-
-void CJS_EventContext::OnScreen_Close(bool bModifier,
-                                      bool bShift,
-                                      CPDFSDK_Annot* pScreen) {
-  Initialize(JET_SCREEN_CLOSE);
-
-  m_bModifier = bModifier;
-  m_bShift = bShift;
-  m_pTargetAnnot.Reset(pScreen);
-}
-
-void CJS_EventContext::OnScreen_MouseDown(bool bModifier,
-                                          bool bShift,
-                                          CPDFSDK_Annot* pScreen) {
-  Initialize(JET_SCREEN_MOUSEDOWN);
-
-  m_bModifier = bModifier;
-  m_bShift = bShift;
-  m_pTargetAnnot.Reset(pScreen);
-}
-
-void CJS_EventContext::OnScreen_MouseUp(bool bModifier,
-                                        bool bShift,
-                                        CPDFSDK_Annot* pScreen) {
-  Initialize(JET_SCREEN_MOUSEUP);
-
-  m_bModifier = bModifier;
-  m_bShift = bShift;
-  m_pTargetAnnot.Reset(pScreen);
-}
-
-void CJS_EventContext::OnScreen_MouseEnter(bool bModifier,
-                                           bool bShift,
-                                           CPDFSDK_Annot* pScreen) {
-  Initialize(JET_SCREEN_MOUSEENTER);
-
-  m_bModifier = bModifier;
-  m_bShift = bShift;
-  m_pTargetAnnot.Reset(pScreen);
-}
-
-void CJS_EventContext::OnScreen_MouseExit(bool bModifier,
-                                          bool bShift,
-                                          CPDFSDK_Annot* pScreen) {
-  Initialize(JET_SCREEN_MOUSEEXIT);
-
-  m_bModifier = bModifier;
-  m_bShift = bShift;
-  m_pTargetAnnot.Reset(pScreen);
-}
-
-void CJS_EventContext::OnScreen_InView(bool bModifier,
-                                       bool bShift,
-                                       CPDFSDK_Annot* pScreen) {
-  Initialize(JET_SCREEN_INVIEW);
-  m_bModifier = bModifier;
-  m_bShift = bShift;
-  m_pTargetAnnot.Reset(pScreen);
-}
-
-void CJS_EventContext::OnScreen_OutView(bool bModifier,
-                                        bool bShift,
-                                        CPDFSDK_Annot* pScreen) {
-  Initialize(JET_SCREEN_OUTVIEW);
-  m_bModifier = bModifier;
-  m_bShift = bShift;
-  m_pTargetAnnot.Reset(pScreen);
-}
-
-void CJS_EventContext::OnLink_MouseUp() {
-  Initialize(JET_LINK_MOUSEUP);
-}
-
-void CJS_EventContext::OnBookmark_MouseUp(CPDF_Bookmark* pBookMark) {
-  Initialize(JET_BOOKMARK_MOUSEUP);
-  m_pTargetBookMark = pBookMark;
-}
-
-void CJS_EventContext::OnMenu_Exec(const WideString& strTargetName) {
-  Initialize(JET_MENU_EXEC);
-  m_strTargetName = strTargetName;
-}
-
 void CJS_EventContext::OnExternal_Exec() {
   Initialize(JET_EXTERNAL_EXEC);
-}
-
-void CJS_EventContext::OnBatch_Exec() {
-  Initialize(JET_BATCH_EXEC);
-}
-
-void CJS_EventContext::OnConsole_Exec() {
-  Initialize(JET_CONSOLE_EXEC);
 }
 
 void CJS_EventContext::Initialize(JS_EVENT_T type) {
@@ -439,7 +315,6 @@ void CJS_EventContext::Initialize(JS_EVENT_T type) {
   m_bFieldFull = false;
   m_pbRc = nullptr;
   m_bRcDu = false;
-  m_pTargetBookMark = nullptr;
   m_pTargetAnnot.Reset();
   m_bValid = true;
 }
@@ -452,10 +327,6 @@ bool CJS_EventContext::IsUserGesture() const {
   switch (m_eEventType) {
     case JET_FIELD_MOUSEDOWN:
     case JET_FIELD_MOUSEUP:
-    case JET_SCREEN_MOUSEDOWN:
-    case JET_SCREEN_MOUSEUP:
-    case JET_BOOKMARK_MOUSEUP:
-    case JET_LINK_MOUSEUP:
     case JET_FIELD_KEYSTROKE:
       return true;
     default:
@@ -469,14 +340,6 @@ WideString& CJS_EventContext::Change() {
 
 ByteStringView CJS_EventContext::Name() const {
   switch (m_eEventType) {
-    case JET_APP_INIT:
-      return "Init";
-    case JET_BATCH_EXEC:
-      return "Exec";
-    case JET_BOOKMARK_MOUSEUP:
-      return "Mouse Up";
-    case JET_CONSOLE_EXEC:
-      return "Exec";
     case JET_DOC_DIDPRINT:
       return "DidPrint";
     case JET_DOC_DIDSAVE:
@@ -492,22 +355,16 @@ ByteStringView CJS_EventContext::Name() const {
     case JET_EXTERNAL_EXEC:
       return "Exec";
     case JET_FIELD_FOCUS:
-    case JET_SCREEN_FOCUS:
       return "Focus";
     case JET_FIELD_BLUR:
-    case JET_SCREEN_BLUR:
       return "Blur";
     case JET_FIELD_MOUSEDOWN:
-    case JET_SCREEN_MOUSEDOWN:
       return "Mouse Down";
     case JET_FIELD_MOUSEUP:
-    case JET_SCREEN_MOUSEUP:
       return "Mouse Up";
     case JET_FIELD_MOUSEENTER:
-    case JET_SCREEN_MOUSEENTER:
       return "Mouse Enter";
     case JET_FIELD_MOUSEEXIT:
-    case JET_SCREEN_MOUSEEXIT:
       return "Mouse Exit";
     case JET_FIELD_CALCULATE:
       return "Calculate";
@@ -517,21 +374,13 @@ ByteStringView CJS_EventContext::Name() const {
       return "Keystroke";
     case JET_FIELD_VALIDATE:
       return "Validate";
-    case JET_LINK_MOUSEUP:
-      return "Mouse Up";
-    case JET_MENU_EXEC:
-      return "Exec";
     case JET_PAGE_OPEN:
-    case JET_SCREEN_OPEN:
       return "Open";
     case JET_PAGE_CLOSE:
-    case JET_SCREEN_CLOSE:
       return "Close";
-    case JET_SCREEN_INVIEW:
     case JET_PAGE_INVIEW:
       return "InView";
     case JET_PAGE_OUTVIEW:
-    case JET_SCREEN_OUTVIEW:
       return "OutView";
     default:
       return "";
@@ -540,14 +389,6 @@ ByteStringView CJS_EventContext::Name() const {
 
 ByteStringView CJS_EventContext::Type() const {
   switch (m_eEventType) {
-    case JET_APP_INIT:
-      return "App";
-    case JET_BATCH_EXEC:
-      return "Batch";
-    case JET_BOOKMARK_MOUSEUP:
-      return "BookMark";
-    case JET_CONSOLE_EXEC:
-      return "Console";
     case JET_DOC_DIDPRINT:
     case JET_DOC_DIDSAVE:
     case JET_DOC_OPEN:
@@ -568,21 +409,6 @@ ByteStringView CJS_EventContext::Type() const {
     case JET_FIELD_KEYSTROKE:
     case JET_FIELD_VALIDATE:
       return "Field";
-    case JET_SCREEN_FOCUS:
-    case JET_SCREEN_BLUR:
-    case JET_SCREEN_OPEN:
-    case JET_SCREEN_CLOSE:
-    case JET_SCREEN_MOUSEDOWN:
-    case JET_SCREEN_MOUSEUP:
-    case JET_SCREEN_MOUSEENTER:
-    case JET_SCREEN_MOUSEEXIT:
-    case JET_SCREEN_INVIEW:
-    case JET_SCREEN_OUTVIEW:
-      return "Screen";
-    case JET_LINK_MOUSEUP:
-      return "Link";
-    case JET_MENU_EXEC:
-      return "Menu";
     case JET_PAGE_OPEN:
     case JET_PAGE_CLOSE:
     case JET_PAGE_INVIEW:
