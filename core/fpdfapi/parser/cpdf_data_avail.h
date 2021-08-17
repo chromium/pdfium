@@ -27,29 +27,6 @@ class CPDF_PageObjectAvail;
 class CPDF_ReadValidator;
 class CPDF_SyntaxParser;
 
-enum PDF_DATAAVAIL_STATUS {
-  PDF_DATAAVAIL_HEADER = 0,
-  PDF_DATAAVAIL_FIRSTPAGE,
-  PDF_DATAAVAIL_HINTTABLE,
-  PDF_DATAAVAIL_LOADALLCROSSREF,
-  PDF_DATAAVAIL_ROOT,
-  PDF_DATAAVAIL_INFO,
-  PDF_DATAAVAIL_PAGETREE,
-  PDF_DATAAVAIL_PAGE,
-  PDF_DATAAVAIL_PAGE_LATERLOAD,
-  PDF_DATAAVAIL_RESOURCES,
-  PDF_DATAAVAIL_DONE,
-  PDF_DATAAVAIL_ERROR,
-  PDF_DATAAVAIL_LOADALLFILE,
-};
-
-enum PDF_PAGENODE_TYPE {
-  PDF_PAGENODE_UNKNOWN = 0,
-  PDF_PAGENODE_PAGE,
-  PDF_PAGENODE_PAGES,
-  PDF_PAGENODE_ARRAY,
-};
-
 class CPDF_DataAvail final : public Observable::ObserverIface {
  public:
   // Must match PDF_DATA_* definitions in public/fpdf_dataavail.h, but cannot
@@ -115,13 +92,31 @@ class CPDF_DataAvail final : public Observable::ObserverIface {
   const CPDF_HintTables* GetHintTables() const { return m_pHintTables.get(); }
 
  private:
+  enum class InternalStatus : uint8_t {
+    kHeader = 0,
+    kFirstPage,
+    kHintTable,
+    kLoadAllCrossRef,
+    kRoot,
+    kInfo,
+    kPageTree,
+    kPage,
+    kPageLaterLoad,
+    kResources,
+    kDone,
+    kError,
+    kLoadAllFile,
+  };
+
   class PageNode {
    public:
+    enum class Type { kUnknown = 0, kPage, kPages, kArray };
+
     PageNode();
     ~PageNode();
 
-    PDF_PAGENODE_TYPE m_type;
-    uint32_t m_dwPageNo;
+    Type m_type = Type::kUnknown;
+    uint32_t m_dwPageNo = 0;
     std::vector<std::unique_ptr<PageNode>> m_ChildNodes;
   };
 
@@ -172,8 +167,8 @@ class CPDF_DataAvail final : public Observable::ObserverIface {
   RetainPtr<CPDF_Dictionary> m_pRoot;
   std::unique_ptr<CPDF_LinearizedHeader> m_pLinearized;
   bool m_bDocAvail = false;
+  InternalStatus m_internalStatus = InternalStatus::kHeader;
   std::unique_ptr<CPDF_CrossRefAvail> m_pCrossRefAvail;
-  PDF_DATAAVAIL_STATUS m_docStatus = PDF_DATAAVAIL_HEADER;
   const FX_FILESIZE m_dwFileLen;
   UnownedPtr<CPDF_Document> m_pDocument;
   std::vector<uint32_t> m_PageObjList;
