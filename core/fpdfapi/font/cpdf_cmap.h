@@ -17,15 +17,15 @@
 
 struct FXCMAP_CMap;
 
-enum CIDCoding : uint8_t {
-  CIDCODING_UNKNOWN = 0,
-  CIDCODING_GB,
-  CIDCODING_BIG5,
-  CIDCODING_JIS,
-  CIDCODING_KOREA,
-  CIDCODING_UCS2,
-  CIDCODING_CID,
-  CIDCODING_UTF16,
+enum class CIDCoding : uint8_t {
+  kUNKNOWN = 0,
+  kGB,
+  kBIG5,
+  kJIS,
+  kKOREA,
+  kUCS2,
+  kCID,
+  kUTF16,
 };
 
 class CPDF_CMap final : public Retainable {
@@ -66,7 +66,7 @@ class CPDF_CMap final : public Retainable {
   void SetAdditionalMappings(std::vector<CIDRange> mappings);
   void SetMixedFourByteLeadingRanges(std::vector<CodeRange> ranges);
 
-  int GetCoding() const { return m_Coding; }
+  CIDCoding GetCoding() const { return m_Coding; }
   const FXCMAP_CMap* GetEmbedMap() const { return m_pEmbedMap.Get(); }
   CIDSet GetCharset() const { return m_Charset; }
   void SetCharset(CIDSet set) { m_Charset = set; }
@@ -87,7 +87,7 @@ class CPDF_CMap final : public Retainable {
   bool m_bVertical = false;
   CIDSet m_Charset = CIDSET_UNKNOWN;
   CodingScheme m_CodingScheme = TwoBytes;
-  int m_Coding = CIDCODING_UNKNOWN;
+  CIDCoding m_Coding = CIDCoding::kUNKNOWN;
   std::vector<bool> m_MixedTwoByteLeadingBytes;
   std::vector<CodeRange> m_MixedFourByteLeadingRanges;
   std::vector<uint16_t, FxAllocAllocator<uint16_t>> m_DirectCharcodeToCIDTable;

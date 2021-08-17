@@ -189,19 +189,19 @@ uint32_t EmbeddedCharcodeFromUnicode(const FXCMAP_CMap* pEmbedMap,
 
 #endif  // !defined(OS_WIN)
 
-void FT_UseCIDCharmap(FXFT_FaceRec* face, int coding) {
+void FT_UseCIDCharmap(FXFT_FaceRec* face, CIDCoding coding) {
   int encoding;
   switch (coding) {
-    case CIDCODING_GB:
+    case CIDCoding::kGB:
       encoding = FT_ENCODING_GB2312;
       break;
-    case CIDCODING_BIG5:
+    case CIDCoding::kBIG5:
       encoding = FT_ENCODING_BIG5;
       break;
-    case CIDCODING_JIS:
+    case CIDCoding::kJIS:
       encoding = FT_ENCODING_SJIS;
       break;
-    case CIDCODING_KOREA:
+    case CIDCoding::kKOREA:
       encoding = FT_ENCODING_JOHAB;
       break;
     default:
@@ -311,13 +311,15 @@ WideString CPDF_CIDFont::UnicodeFromCharCode(uint32_t charcode) const {
 
 wchar_t CPDF_CIDFont::GetUnicodeFromCharCode(uint32_t charcode) const {
   switch (m_pCMap->GetCoding()) {
-    case CIDCODING_UCS2:
-    case CIDCODING_UTF16:
+    case CIDCoding::kUCS2:
+    case CIDCoding::kUTF16:
       return static_cast<wchar_t>(charcode);
-    case CIDCODING_CID:
+    case CIDCoding::kCID:
       if (!m_pCID2UnicodeMap || !m_pCID2UnicodeMap->IsLoaded())
         return 0;
       return m_pCID2UnicodeMap->UnicodeFromCID(static_cast<uint16_t>(charcode));
+    default:
+      break;
   }
   if (m_pCID2UnicodeMap && m_pCID2UnicodeMap->IsLoaded() && m_pCMap->IsLoaded())
     return m_pCID2UnicodeMap->UnicodeFromCID(CIDFromCharCode(charcode));
@@ -330,7 +332,7 @@ wchar_t CPDF_CIDFont::GetUnicodeFromCharCode(uint32_t charcode) const {
     charsize = 2;
   }
   size_t ret = FX_MultiByteToWideChar(
-      kCharsetCodePages[m_pCMap->GetCoding()],
+      kCharsetCodePages[static_cast<size_t>(m_pCMap->GetCoding())],
       ByteStringView(reinterpret_cast<const char*>(&charcode), charsize),
       pdfium::make_span(&unicode, 1));
   return ret == 1 ? unicode : 0;
@@ -346,13 +348,14 @@ uint32_t CPDF_CIDFont::CharCodeFromUnicode(wchar_t unicode) const {
   uint32_t charcode = CPDF_Font::CharCodeFromUnicode(unicode);
   if (charcode)
     return charcode;
+
   switch (m_pCMap->GetCoding()) {
-    case CIDCODING_UNKNOWN:
+    case CIDCoding::kUNKNOWN:
       return 0;
-    case CIDCODING_UCS2:
-    case CIDCODING_UTF16:
+    case CIDCoding::kUCS2:
+    case CIDCoding::kUTF16:
       return unicode;
-    case CIDCODING_CID: {
+    case CIDCoding::kCID: {
       if (!m_pCID2UnicodeMap || !m_pCID2UnicodeMap->IsLoaded())
         return 0;
       uint32_t cid = 0;
@@ -365,16 +368,19 @@ uint32_t CPDF_CIDFont::CharCodeFromUnicode(wchar_t unicode) const {
       }
       break;
     }
+    default:
+      break;
   }
 
   if (unicode < 0x80)
     return static_cast<uint32_t>(unicode);
-  if (m_pCMap->GetCoding() == CIDCODING_CID)
+  if (m_pCMap->GetCoding() == CIDCoding::kCID)
     return 0;
 #if defined(OS_WIN)
   uint8_t buffer[32];
   size_t ret = FX_WideCharToMultiByte(
-      kCharsetCodePages[m_pCMap->GetCoding()], WideStringView(&unicode, 1),
+      kCharsetCodePages[static_cast<size_t>(m_pCMap->GetCoding())],
+      WideStringView(&unicode, 1),
       pdfium::make_span(reinterpret_cast<char*>(buffer), 4));
   if (ret == 1)
     return buffer[0];
@@ -775,7 +781,7 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
       return cid;
     if (m_pFontFile && m_pCMap->IsDirectCharcodeToCIDTableIsEmpty())
       return cid;
-    if (m_pCMap->GetCoding() == CIDCODING_UNKNOWN ||
+    if (m_pCMap->GetCoding() == CIDCoding::kUNKNOWN ||
         !FXFT_Get_Face_Charmap(m_Font.GetFaceRec())) {
       return cid;
     }
@@ -817,7 +823,7 @@ int CPDF_CIDFont::AppendChar(char* str, uint32_t charcode) const {
 bool CPDF_CIDFont::IsUnicodeCompatible() const {
   if (m_pCID2UnicodeMap && m_pCID2UnicodeMap->IsLoaded() && m_pCMap->IsLoaded())
     return true;
-  return m_pCMap->GetCoding() != CIDCODING_UNKNOWN;
+  return m_pCMap->GetCoding() != CIDCoding::kUNKNOWN;
 }
 
 void CPDF_CIDFont::LoadSubstFont() {
