@@ -324,7 +324,7 @@ void CJX_Field::formatMessage(v8::Isolate* pIsolate,
                               v8::Local<v8::Value>* pValue,
                               bool bSetting,
                               XFA_Attribute eAttribute) {
-  ScriptSomMessage(pIsolate, pValue, bSetting, XFA_SOM_FormatMessage);
+  ScriptSomMessage(pIsolate, pValue, bSetting, SOMMessageType::kFormatMessage);
 }
 
 void CJX_Field::formattedValue(v8::Isolate* pIsolate,

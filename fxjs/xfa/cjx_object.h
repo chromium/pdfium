@@ -42,12 +42,6 @@ struct CJX_MethodSpec {
   CJX_MethodCall pMethodCall;
 };
 
-enum XFA_SOM_MESSAGETYPE {
-  XFA_SOM_ValidationMessage,
-  XFA_SOM_FormatMessage,
-  XFA_SOM_MandatoryMessage
-};
-
 class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
                    public CFXJSE_HostObject {
  public:
@@ -180,11 +174,6 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
   JSE_PROP(ScriptSomInstanceIndex);
   JSE_PROP(ScriptSubmitFormatMode);
 
-  void ScriptSomMessage(v8::Isolate* pIsolate,
-                        v8::Local<v8::Value>* pValue,
-                        bool bSetting,
-                        XFA_SOM_MESSAGETYPE iMessageType);
-
   Optional<WideString> TryNamespace() const;
 
   int32_t GetInteger(XFA_Attribute eAttr) const;
@@ -226,8 +215,18 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
   void ThrowTooManyOccurancesException(const WideString& obj) const;
 
  protected:
+  enum class SOMMessageType {
+    kValidationMessage,
+    kFormatMessage,
+    kMandatoryMessage
+  };
+
   explicit CJX_Object(CXFA_Object* obj);
 
+  void ScriptSomMessage(v8::Isolate* pIsolate,
+                        v8::Local<v8::Value>* pValue,
+                        bool bSetting,
+                        SOMMessageType iMessageType);
   void SetAttributeValueImpl(const WideString& wsValue,
                              const WideString& wsXMLValue,
                              bool bNotify,

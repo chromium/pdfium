@@ -1181,7 +1181,7 @@ void CJX_Object::ScriptSomBorderWidth(v8::Isolate* pIsolate,
 void CJX_Object::ScriptSomMessage(v8::Isolate* pIsolate,
                                   v8::Local<v8::Value>* pValue,
                                   bool bSetting,
-                                  XFA_SOM_MESSAGETYPE iMessageType) {
+                                  SOMMessageType iMessageType) {
   bool bNew = false;
   CXFA_Validate* validate = ToNode(object_.Get())->GetValidateIfExists();
   if (!validate) {
@@ -1192,19 +1192,17 @@ void CJX_Object::ScriptSomMessage(v8::Isolate* pIsolate,
   if (bSetting) {
     if (validate) {
       switch (iMessageType) {
-        case XFA_SOM_ValidationMessage:
+        case SOMMessageType::kValidationMessage:
           validate->SetScriptMessageText(
               fxv8::ReentrantToWideStringHelper(pIsolate, *pValue));
           break;
-        case XFA_SOM_FormatMessage:
+        case SOMMessageType::kFormatMessage:
           validate->SetFormatMessageText(
               fxv8::ReentrantToWideStringHelper(pIsolate, *pValue));
           break;
-        case XFA_SOM_MandatoryMessage:
+        case SOMMessageType::kMandatoryMessage:
           validate->SetNullMessageText(
               fxv8::ReentrantToWideStringHelper(pIsolate, *pValue));
-          break;
-        default:
           break;
       }
     }
@@ -1227,16 +1225,14 @@ void CJX_Object::ScriptSomMessage(v8::Isolate* pIsolate,
 
   WideString wsMessage;
   switch (iMessageType) {
-    case XFA_SOM_ValidationMessage:
+    case SOMMessageType::kValidationMessage:
       wsMessage = validate->GetScriptMessageText();
       break;
-    case XFA_SOM_FormatMessage:
+    case SOMMessageType::kFormatMessage:
       wsMessage = validate->GetFormatMessageText();
       break;
-    case XFA_SOM_MandatoryMessage:
+    case SOMMessageType::kMandatoryMessage:
       wsMessage = validate->GetNullMessageText();
-      break;
-    default:
       break;
   }
   *pValue = fxv8::NewStringHelper(pIsolate, wsMessage.ToUTF8().AsStringView());
@@ -1246,14 +1242,16 @@ void CJX_Object::ScriptSomValidationMessage(v8::Isolate* pIsolate,
                                             v8::Local<v8::Value>* pValue,
                                             bool bSetting,
                                             XFA_Attribute eAttribute) {
-  ScriptSomMessage(pIsolate, pValue, bSetting, XFA_SOM_ValidationMessage);
+  ScriptSomMessage(pIsolate, pValue, bSetting,
+                   SOMMessageType::kValidationMessage);
 }
 
 void CJX_Object::ScriptSomMandatoryMessage(v8::Isolate* pIsolate,
                                            v8::Local<v8::Value>* pValue,
                                            bool bSetting,
                                            XFA_Attribute eAttribute) {
-  ScriptSomMessage(pIsolate, pValue, bSetting, XFA_SOM_MandatoryMessage);
+  ScriptSomMessage(pIsolate, pValue, bSetting,
+                   SOMMessageType::kMandatoryMessage);
 }
 
 void CJX_Object::ScriptSomDefaultValue(v8::Isolate* pIsolate,
