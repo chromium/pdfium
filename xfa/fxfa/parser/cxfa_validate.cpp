@@ -17,10 +17,10 @@
 namespace {
 
 const CXFA_Node::PropertyData kValidatePropertyData[] = {
-    {XFA_Element::Message, 1, 0},
-    {XFA_Element::Picture, 1, 0},
-    {XFA_Element::Script, 1, 0},
-    {XFA_Element::Extras, 1, 0},
+    {XFA_Element::Message, 1, {}},
+    {XFA_Element::Picture, 1, {}},
+    {XFA_Element::Script, 1, {}},
+    {XFA_Element::Extras, 1, {}},
 };
 const CXFA_Node::AttributeData kValidateAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},

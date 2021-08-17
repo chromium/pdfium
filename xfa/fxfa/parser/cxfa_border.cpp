@@ -12,9 +12,9 @@
 namespace {
 
 const CXFA_Node::PropertyData kBorderPropertyData[] = {
-    {XFA_Element::Margin, 1, 0}, {XFA_Element::Edge, 4, 0},
-    {XFA_Element::Corner, 4, 0}, {XFA_Element::Fill, 1, 0},
-    {XFA_Element::Extras, 1, 0},
+    {XFA_Element::Margin, 1, {}}, {XFA_Element::Edge, 4, {}},
+    {XFA_Element::Corner, 4, {}}, {XFA_Element::Fill, 1, {}},
+    {XFA_Element::Extras, 1, {}},
 };
 
 const CXFA_Node::AttributeData kBorderAttributeData[] = {

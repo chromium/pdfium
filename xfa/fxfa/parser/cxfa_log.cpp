@@ -12,10 +12,10 @@
 namespace {
 
 const CXFA_Node::PropertyData kLogPropertyData[] = {
-    {XFA_Element::To, 1, 0},
-    {XFA_Element::Uri, 1, 0},
-    {XFA_Element::Mode, 1, 0},
-    {XFA_Element::Threshold, 1, 0},
+    {XFA_Element::To, 1, {}},
+    {XFA_Element::Uri, 1, {}},
+    {XFA_Element::Mode, 1, {}},
+    {XFA_Element::Threshold, 1, {}},
 };
 
 const CXFA_Node::AttributeData kLogAttributeData[] = {

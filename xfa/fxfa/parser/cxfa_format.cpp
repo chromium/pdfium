@@ -12,8 +12,8 @@
 namespace {
 
 const CXFA_Node::PropertyData kFormatPropertyData[] = {
-    {XFA_Element::Picture, 1, 0},
-    {XFA_Element::Extras, 1, 0},
+    {XFA_Element::Picture, 1, {}},
+    {XFA_Element::Extras, 1, {}},
 };
 
 const CXFA_Node::AttributeData kFormatAttributeData[] = {

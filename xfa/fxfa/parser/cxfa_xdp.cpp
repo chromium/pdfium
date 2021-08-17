@@ -12,7 +12,7 @@
 namespace {
 
 const CXFA_Node::PropertyData kXdpPropertyData[] = {
-    {XFA_Element::Packets, 1, 0},
+    {XFA_Element::Packets, 1, {}},
 };
 
 const CXFA_Node::AttributeData kXdpAttributeData[] = {

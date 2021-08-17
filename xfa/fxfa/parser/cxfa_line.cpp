@@ -14,7 +14,7 @@
 namespace {
 
 const CXFA_Node::PropertyData kLinePropertyData[] = {
-    {XFA_Element::Edge, 1, 0},
+    {XFA_Element::Edge, 1, {}},
 };
 
 const CXFA_Node::AttributeData kLineAttributeData[] = {

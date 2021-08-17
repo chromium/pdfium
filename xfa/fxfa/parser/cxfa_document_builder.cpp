@@ -650,9 +650,8 @@ CXFA_Node* CXFA_DocumentBuilder::NormalLoader(CXFA_Node* pXFANode,
         if (eType == XFA_Element::Unknown)
           continue;
 
-        if (pXFANode->HasPropertyFlags(
-                eType,
-                XFA_PropertyFlag_OneOf | XFA_PropertyFlag_DefaultOneOf)) {
+        if (pXFANode->HasPropertyFlag(eType, XFA_PropertyFlag::kOneOf) ||
+            pXFANode->HasPropertyFlag(eType, XFA_PropertyFlag::kDefaultOneOf)) {
           if (bOneOfPropertyFound)
             break;
           bOneOfPropertyFound = true;

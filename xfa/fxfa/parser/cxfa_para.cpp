@@ -13,7 +13,7 @@
 namespace {
 
 const CXFA_Node::PropertyData kParaPropertyData[] = {
-    {XFA_Element::Hyphenation, 1, 0},
+    {XFA_Element::Hyphenation, 1, {}},
 };
 
 const CXFA_Node::AttributeData kParaAttributeData[] = {

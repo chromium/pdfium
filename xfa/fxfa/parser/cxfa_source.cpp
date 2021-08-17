@@ -12,7 +12,7 @@
 namespace {
 
 const CXFA_Node::PropertyData kSourcePropertyData[] = {
-    {XFA_Element::Connect, 1, 0},
+    {XFA_Element::Connect, 1, {}},
 };
 
 const CXFA_Node::AttributeData kSourceAttributeData[] = {

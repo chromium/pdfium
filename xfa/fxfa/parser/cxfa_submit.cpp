@@ -12,7 +12,7 @@
 namespace {
 
 const CXFA_Node::PropertyData kSubmitPropertyData[] = {
-    {XFA_Element::Encrypt, 1, 0},
+    {XFA_Element::Encrypt, 1, {}},
 };
 
 const CXFA_Node::AttributeData kSubmitAttributeData[] = {

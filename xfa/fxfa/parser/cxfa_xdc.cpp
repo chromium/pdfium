@@ -12,8 +12,8 @@
 namespace {
 
 const CXFA_Node::PropertyData kXdcPropertyData[] = {
-    {XFA_Element::Uri, 1, 0},
-    {XFA_Element::Xsl, 1, 0},
+    {XFA_Element::Uri, 1, {}},
+    {XFA_Element::Xsl, 1, {}},
 };
 
 const CXFA_Node::AttributeData kXdcAttributeData[] = {

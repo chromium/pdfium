@@ -12,9 +12,9 @@
 namespace {
 
 const CXFA_Node::PropertyData kConfigPropertyData[] = {
-    {XFA_Element::Present, 1, 0},
-    {XFA_Element::Acrobat, 1, 0},
-    {XFA_Element::Trace, 1, 0},
+    {XFA_Element::Present, 1, {}},
+    {XFA_Element::Acrobat, 1, {}},
+    {XFA_Element::Trace, 1, {}},
 };
 
 const CXFA_Node::AttributeData kConfigAttributeData[] = {

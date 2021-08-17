@@ -12,8 +12,8 @@
 namespace {
 
 const CXFA_Node::PropertyData kMessagePropertyData[] = {
-    {XFA_Element::MsgId, 1, 0},
-    {XFA_Element::Severity, 1, 0},
+    {XFA_Element::MsgId, 1, {}},
+    {XFA_Element::Severity, 1, {}},
 };
 
 const CXFA_Node::AttributeData kMessageAttributeData[] = {

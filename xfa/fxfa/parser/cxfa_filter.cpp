@@ -12,11 +12,11 @@
 namespace {
 
 const CXFA_Node::PropertyData kFilterPropertyData[] = {
-    {XFA_Element::Mdp, 1, 0},           {XFA_Element::Certificates, 1, 0},
-    {XFA_Element::TimeStamp, 1, 0},     {XFA_Element::Handler, 1, 0},
-    {XFA_Element::DigestMethods, 1, 0}, {XFA_Element::Encodings, 1, 0},
-    {XFA_Element::Reasons, 1, 0},       {XFA_Element::AppearanceFilter, 1, 0},
-    {XFA_Element::LockDocument, 1, 0},
+    {XFA_Element::Mdp, 1, {}},           {XFA_Element::Certificates, 1, {}},
+    {XFA_Element::TimeStamp, 1, {}},     {XFA_Element::Handler, 1, {}},
+    {XFA_Element::DigestMethods, 1, {}}, {XFA_Element::Encodings, 1, {}},
+    {XFA_Element::Reasons, 1, {}},       {XFA_Element::AppearanceFilter, 1, {}},
+    {XFA_Element::LockDocument, 1, {}},
 };
 
 const CXFA_Node::AttributeData kFilterAttributeData[] = {

@@ -12,9 +12,9 @@
 namespace {
 
 const CXFA_Node::PropertyData kChoiceListPropertyData[] = {
-    {XFA_Element::Margin, 1, 0},
-    {XFA_Element::Border, 1, 0},
-    {XFA_Element::Extras, 1, 0},
+    {XFA_Element::Margin, 1, {}},
+    {XFA_Element::Border, 1, {}},
+    {XFA_Element::Extras, 1, {}},
 };
 
 const CXFA_Node::AttributeData kChoiceListAttributeData[] = {

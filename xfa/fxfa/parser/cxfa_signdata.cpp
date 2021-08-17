@@ -12,8 +12,8 @@
 namespace {
 
 const CXFA_Node::PropertyData kSignDataPropertyData[] = {
-    {XFA_Element::Filter, 1, 0},
-    {XFA_Element::Manifest, 1, 0},
+    {XFA_Element::Filter, 1, {}},
+    {XFA_Element::Manifest, 1, {}},
 };
 
 const CXFA_Node::AttributeData kSignDataAttributeData[] = {

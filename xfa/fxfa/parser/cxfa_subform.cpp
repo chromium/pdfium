@@ -12,15 +12,15 @@
 namespace {
 
 const CXFA_Node::PropertyData kSubformPropertyData[] = {
-    {XFA_Element::Break, 1, 0},   {XFA_Element::Margin, 1, 0},
-    {XFA_Element::Para, 1, 0},    {XFA_Element::Border, 1, 0},
-    {XFA_Element::Assist, 1, 0},  {XFA_Element::Traversal, 1, 0},
-    {XFA_Element::Keep, 1, 0},    {XFA_Element::Validate, 1, 0},
-    {XFA_Element::PageSet, 1, 0}, {XFA_Element::Overflow, 1, 0},
-    {XFA_Element::Bind, 1, 0},    {XFA_Element::Desc, 1, 0},
-    {XFA_Element::Bookend, 1, 0}, {XFA_Element::Calculate, 1, 0},
-    {XFA_Element::Extras, 1, 0},  {XFA_Element::Variables, 1, 0},
-    {XFA_Element::Occur, 1, 0},
+    {XFA_Element::Break, 1, {}},   {XFA_Element::Margin, 1, {}},
+    {XFA_Element::Para, 1, {}},    {XFA_Element::Border, 1, {}},
+    {XFA_Element::Assist, 1, {}},  {XFA_Element::Traversal, 1, {}},
+    {XFA_Element::Keep, 1, {}},    {XFA_Element::Validate, 1, {}},
+    {XFA_Element::PageSet, 1, {}}, {XFA_Element::Overflow, 1, {}},
+    {XFA_Element::Bind, 1, {}},    {XFA_Element::Desc, 1, {}},
+    {XFA_Element::Bookend, 1, {}}, {XFA_Element::Calculate, 1, {}},
+    {XFA_Element::Extras, 1, {}},  {XFA_Element::Variables, 1, {}},
+    {XFA_Element::Occur, 1, {}},
 };
 
 const CXFA_Node::AttributeData kSubformAttributeData[] = {

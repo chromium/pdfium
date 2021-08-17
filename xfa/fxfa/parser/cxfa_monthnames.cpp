@@ -12,7 +12,7 @@
 namespace {
 
 const CXFA_Node::PropertyData kMonthNamesPropertyData[] = {
-    {XFA_Element::Month, 12, 0},
+    {XFA_Element::Month, 12, {}},
 };
 
 const CXFA_Node::AttributeData kMonthNamesAttributeData[] = {

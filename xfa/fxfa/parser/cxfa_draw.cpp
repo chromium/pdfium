@@ -12,12 +12,12 @@
 namespace {
 
 const CXFA_Node::PropertyData kDrawPropertyData[] = {
-    {XFA_Element::Ui, 1, 0},     {XFA_Element::Margin, 1, 0},
-    {XFA_Element::Para, 1, 0},   {XFA_Element::Border, 1, 0},
-    {XFA_Element::Assist, 1, 0}, {XFA_Element::Traversal, 1, 0},
-    {XFA_Element::Keep, 1, 0},   {XFA_Element::Caption, 1, 0},
-    {XFA_Element::Desc, 1, 0},   {XFA_Element::Font, 1, 0},
-    {XFA_Element::Value, 1, 0},  {XFA_Element::Extras, 1, 0},
+    {XFA_Element::Ui, 1, {}},     {XFA_Element::Margin, 1, {}},
+    {XFA_Element::Para, 1, {}},   {XFA_Element::Border, 1, {}},
+    {XFA_Element::Assist, 1, {}}, {XFA_Element::Traversal, 1, {}},
+    {XFA_Element::Keep, 1, {}},   {XFA_Element::Caption, 1, {}},
+    {XFA_Element::Desc, 1, {}},   {XFA_Element::Font, 1, {}},
+    {XFA_Element::Value, 1, {}},  {XFA_Element::Extras, 1, {}},
 };
 
 const CXFA_Node::AttributeData kDrawAttributeData[] = {

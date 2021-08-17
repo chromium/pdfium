@@ -21,9 +21,9 @@
 namespace {
 
 const CXFA_Node::PropertyData kRectanglePropertyData[] = {
-    {XFA_Element::Edge, 4, 0},
-    {XFA_Element::Corner, 4, 0},
-    {XFA_Element::Fill, 1, 0},
+    {XFA_Element::Edge, 4, {}},
+    {XFA_Element::Corner, 4, {}},
+    {XFA_Element::Fill, 1, {}},
 };
 
 const CXFA_Node::AttributeData kRectangleAttributeData[] = {

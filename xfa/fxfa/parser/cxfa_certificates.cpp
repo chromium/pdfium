@@ -12,9 +12,9 @@
 namespace {
 
 const CXFA_Node::PropertyData kCertificatesPropertyData[] = {
-    {XFA_Element::KeyUsage, 1, 0}, {XFA_Element::SubjectDNs, 1, 0},
-    {XFA_Element::Issuers, 1, 0},  {XFA_Element::Signing, 1, 0},
-    {XFA_Element::Oids, 1, 0},
+    {XFA_Element::KeyUsage, 1, {}}, {XFA_Element::SubjectDNs, 1, {}},
+    {XFA_Element::Issuers, 1, {}},  {XFA_Element::Signing, 1, {}},
+    {XFA_Element::Oids, 1, {}},
 };
 
 const CXFA_Node::AttributeData kCertificatesAttributeData[] = {

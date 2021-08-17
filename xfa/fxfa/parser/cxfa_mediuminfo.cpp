@@ -12,7 +12,7 @@
 namespace {
 
 const CXFA_Node::PropertyData kMediumInfoPropertyData[] = {
-    {XFA_Element::Map, 1, 0},
+    {XFA_Element::Map, 1, {}},
 };
 
 const CXFA_Node::AttributeData kMediumInfoAttributeData[] = {

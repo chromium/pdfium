@@ -12,7 +12,7 @@
 namespace {
 
 const CXFA_Node::PropertyData kCurrencySymbolsPropertyData[] = {
-    {XFA_Element::CurrencySymbol, 3, 0},
+    {XFA_Element::CurrencySymbol, 3, {}},
 };
 
 }  // namespace

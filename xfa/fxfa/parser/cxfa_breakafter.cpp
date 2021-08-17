@@ -12,7 +12,7 @@
 namespace {
 
 const CXFA_Node::PropertyData kBreakAfterPropertyData[] = {
-    {XFA_Element::Script, 1, 0},
+    {XFA_Element::Script, 1, {}},
 };
 
 const CXFA_Node::AttributeData kBreakAfterAttributeData[] = {

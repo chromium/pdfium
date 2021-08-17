@@ -12,7 +12,7 @@
 namespace {
 
 const CXFA_Node::PropertyData kOpenActionPropertyData[] = {
-    {XFA_Element::Destination, 1, 0},
+    {XFA_Element::Destination, 1, {}},
 };
 
 const CXFA_Node::AttributeData kOpenActionAttributeData[] = {

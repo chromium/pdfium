@@ -12,10 +12,14 @@
 namespace {
 
 const CXFA_Node::PropertyData kLocalePropertyData[] = {
-    {XFA_Element::DatePatterns, 1, 0},    {XFA_Element::CalendarSymbols, 1, 0},
-    {XFA_Element::CurrencySymbols, 1, 0}, {XFA_Element::Typefaces, 1, 0},
-    {XFA_Element::DateTimeSymbols, 1, 0}, {XFA_Element::NumberPatterns, 1, 0},
-    {XFA_Element::NumberSymbols, 1, 0},   {XFA_Element::TimePatterns, 1, 0},
+    {XFA_Element::DatePatterns, 1, {}},
+    {XFA_Element::CalendarSymbols, 1, {}},
+    {XFA_Element::CurrencySymbols, 1, {}},
+    {XFA_Element::Typefaces, 1, {}},
+    {XFA_Element::DateTimeSymbols, 1, {}},
+    {XFA_Element::NumberPatterns, 1, {}},
+    {XFA_Element::NumberSymbols, 1, {}},
+    {XFA_Element::TimePatterns, 1, {}},
 };
 
 const CXFA_Node::AttributeData kLocaleAttributeData[] = {

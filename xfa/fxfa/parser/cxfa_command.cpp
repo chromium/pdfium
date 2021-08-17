@@ -12,10 +12,10 @@
 namespace {
 
 const CXFA_Node::PropertyData kCommandPropertyData[] = {
-    {XFA_Element::Query, 1, 0},
-    {XFA_Element::Insert, 1, 0},
-    {XFA_Element::Update, 1, 0},
-    {XFA_Element::Delete, 1, 0},
+    {XFA_Element::Query, 1, {}},
+    {XFA_Element::Insert, 1, {}},
+    {XFA_Element::Update, 1, {}},
+    {XFA_Element::Delete, 1, {}},
 };
 
 const CXFA_Node::AttributeData kCommandAttributeData[] = {

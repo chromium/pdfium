@@ -12,7 +12,7 @@
 namespace {
 
 const CXFA_Node::PropertyData kEncryptPropertyData[] = {
-    {XFA_Element::Certificate, 1, 0},
+    {XFA_Element::Certificate, 1, {}},
 };
 
 const CXFA_Node::AttributeData kEncryptAttributeData[] = {

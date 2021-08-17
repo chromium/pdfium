@@ -1094,9 +1094,10 @@ bool CXFA_Node::HasProperty(XFA_Element property) const {
   return !!GetPropertyData(property);
 }
 
-bool CXFA_Node::HasPropertyFlags(XFA_Element property, uint8_t flags) const {
+bool CXFA_Node::HasPropertyFlag(XFA_Element property,
+                                XFA_PropertyFlag flag) const {
   const PropertyData* data = GetPropertyData(property);
-  return data && !!(data->flags & flags);
+  return data && !!(data->flags & flag);
 }
 
 uint8_t CXFA_Node::PropertyOccuranceCount(XFA_Element property) const {
@@ -1133,10 +1134,10 @@ CXFA_Node* CXFA_Node::GetOrCreateProperty(int32_t index,
   if (node)
     return node;
 
-  if (HasPropertyFlags(eProperty, XFA_PropertyFlag_OneOf)) {
+  if (HasPropertyFlag(eProperty, XFA_PropertyFlag::kOneOf)) {
     for (CXFA_Node* pNode = GetFirstChild(); pNode;
          pNode = pNode->GetNextSibling()) {
-      if (HasPropertyFlags(pNode->GetElementType(), XFA_PropertyFlag_OneOf)) {
+      if (HasPropertyFlag(pNode->GetElementType(), XFA_PropertyFlag::kOneOf)) {
         return nullptr;
       }
     }
@@ -1155,7 +1156,7 @@ CXFA_Node* CXFA_Node::GetOrCreateProperty(int32_t index,
 }
 
 Optional<XFA_Element> CXFA_Node::GetFirstPropertyWithFlag(
-    XFA_PropertyFlagMask flag) const {
+    XFA_PropertyFlag flag) const {
   for (const auto& prop : m_Properties) {
     if (prop.flags & flag)
       return prop.property;
@@ -1222,8 +1223,8 @@ std::vector<CXFA_Node*> CXFA_Node::GetNodeListWithFilter(
       if (bFilterProperties) {
         nodes.push_back(pChild);
       } else if (bFilterOneOfProperties &&
-                 HasPropertyFlags(pChild->GetElementType(),
-                                  XFA_PropertyFlag_OneOf)) {
+                 HasPropertyFlag(pChild->GetElementType(),
+                                 XFA_PropertyFlag::kOneOf)) {
         nodes.push_back(pChild);
       } else if (bFilterChildren &&
                  (pChild->GetElementType() == XFA_Element::Variables ||
@@ -1239,7 +1240,7 @@ std::vector<CXFA_Node*> CXFA_Node::GetNodeListWithFilter(
     return nodes;
 
   Optional<XFA_Element> property =
-      GetFirstPropertyWithFlag(XFA_PropertyFlag_DefaultOneOf);
+      GetFirstPropertyWithFlag(XFA_PropertyFlag::kDefaultOneOf);
   if (!property.has_value())
     return nodes;
 

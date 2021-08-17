@@ -12,10 +12,10 @@
 namespace {
 
 const CXFA_Node::PropertyData kTransformPropertyData[] = {
-    {XFA_Element::Whitespace, 1, 0},  {XFA_Element::Rename, 1, 0},
-    {XFA_Element::IfEmpty, 1, 0},     {XFA_Element::Presence, 1, 0},
-    {XFA_Element::Picture, 1, 0},     {XFA_Element::NameAttr, 1, 0},
-    {XFA_Element::GroupParent, 1, 0},
+    {XFA_Element::Whitespace, 1, {}},  {XFA_Element::Rename, 1, {}},
+    {XFA_Element::IfEmpty, 1, {}},     {XFA_Element::Presence, 1, {}},
+    {XFA_Element::Picture, 1, {}},     {XFA_Element::NameAttr, 1, {}},
+    {XFA_Element::GroupParent, 1, {}},
 };
 
 const CXFA_Node::AttributeData kTransformAttributeData[] = {

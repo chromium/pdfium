@@ -12,9 +12,9 @@
 namespace {
 
 const CXFA_Node::PropertyData kScriptPropertyData[] = {
-    {XFA_Element::Exclude, 1, 0},
-    {XFA_Element::CurrentPage, 1, 0},
-    {XFA_Element::RunScripts, 1, 0},
+    {XFA_Element::Exclude, 1, {}},
+    {XFA_Element::CurrentPage, 1, {}},
+    {XFA_Element::RunScripts, 1, {}},
 };
 
 const CXFA_Node::AttributeData kScriptAttributeData[] = {

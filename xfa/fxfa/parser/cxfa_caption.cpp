@@ -16,9 +16,9 @@
 namespace {
 
 const CXFA_Node::PropertyData kCaptionPropertyData[] = {
-    {XFA_Element::Margin, 1, 0}, {XFA_Element::Para, 1, 0},
-    {XFA_Element::Font, 1, 0},   {XFA_Element::Value, 1, 0},
-    {XFA_Element::Extras, 1, 0},
+    {XFA_Element::Margin, 1, {}}, {XFA_Element::Para, 1, {}},
+    {XFA_Element::Font, 1, {}},   {XFA_Element::Value, 1, {}},
+    {XFA_Element::Extras, 1, {}},
 };
 
 const CXFA_Node::AttributeData kCaptionAttributeData[] = {

@@ -12,7 +12,7 @@
 namespace {
 
 const CXFA_Node::PropertyData kNumberPatternsPropertyData[] = {
-    {XFA_Element::NumberPattern, 4, 0},
+    {XFA_Element::NumberPattern, 4, {}},
 };
 
 }  // namespace

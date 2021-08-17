@@ -19,14 +19,15 @@
 namespace {
 
 const CXFA_Node::PropertyData kFillPropertyData[] = {
-    {XFA_Element::Pattern, 1, XFA_PropertyFlag_OneOf},
-    {XFA_Element::Solid, 1,
-     XFA_PropertyFlag_OneOf | XFA_PropertyFlag_DefaultOneOf},
-    {XFA_Element::Stipple, 1, XFA_PropertyFlag_OneOf},
-    {XFA_Element::Color, 1, 0},
-    {XFA_Element::Linear, 1, XFA_PropertyFlag_OneOf},
-    {XFA_Element::Extras, 1, 0},
-    {XFA_Element::Radial, 1, XFA_PropertyFlag_OneOf},
+    {XFA_Element::Pattern, 1, {XFA_PropertyFlag::kOneOf}},
+    {XFA_Element::Solid,
+     1,
+     {XFA_PropertyFlag::kOneOf, XFA_PropertyFlag::kDefaultOneOf}},
+    {XFA_Element::Stipple, 1, {XFA_PropertyFlag::kOneOf}},
+    {XFA_Element::Color, 1, {}},
+    {XFA_Element::Linear, 1, {XFA_PropertyFlag::kOneOf}},
+    {XFA_Element::Extras, 1, {}},
+    {XFA_Element::Radial, 1, {XFA_PropertyFlag::kOneOf}},
 };
 
 const CXFA_Node::AttributeData kFillAttributeData[] = {

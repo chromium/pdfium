@@ -12,12 +12,12 @@
 namespace {
 
 const CXFA_Node::PropertyData kWsdlConnectionPropertyData[] = {
-    {XFA_Element::Operation, 1, 0},
-    {XFA_Element::WsdlAddress, 1, 0},
-    {XFA_Element::SoapAddress, 1, 0},
-    {XFA_Element::SoapAction, 1, 0},
-    {XFA_Element::EffectiveOutputPolicy, 1, 0},
-    {XFA_Element::EffectiveInputPolicy, 1, 0},
+    {XFA_Element::Operation, 1, {}},
+    {XFA_Element::WsdlAddress, 1, {}},
+    {XFA_Element::SoapAddress, 1, {}},
+    {XFA_Element::SoapAction, 1, {}},
+    {XFA_Element::EffectiveOutputPolicy, 1, {}},
+    {XFA_Element::EffectiveInputPolicy, 1, {}},
 };
 
 const CXFA_Node::AttributeData kWsdlConnectionAttributeData[] = {

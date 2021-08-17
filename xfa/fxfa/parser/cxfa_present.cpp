@@ -12,20 +12,20 @@
 namespace {
 
 const CXFA_Node::PropertyData kPresentPropertyData[] = {
-    {XFA_Element::Xdp, 1, 0},
-    {XFA_Element::Cache, 1, 0},
-    {XFA_Element::Pagination, 1, 0},
-    {XFA_Element::Overprint, 1, 0},
-    {XFA_Element::BehaviorOverride, 1, 0},
-    {XFA_Element::Copies, 1, 0},
-    {XFA_Element::Output, 1, 0},
-    {XFA_Element::Validate, 1, 0},
-    {XFA_Element::Layout, 1, 0},
-    {XFA_Element::Script, 1, 0},
-    {XFA_Element::Common, 1, 0},
-    {XFA_Element::PaginationOverride, 1, 0},
-    {XFA_Element::Destination, 1, 0},
-    {XFA_Element::IncrementalMerge, 1, 0},
+    {XFA_Element::Xdp, 1, {}},
+    {XFA_Element::Cache, 1, {}},
+    {XFA_Element::Pagination, 1, {}},
+    {XFA_Element::Overprint, 1, {}},
+    {XFA_Element::BehaviorOverride, 1, {}},
+    {XFA_Element::Copies, 1, {}},
+    {XFA_Element::Output, 1, {}},
+    {XFA_Element::Validate, 1, {}},
+    {XFA_Element::Layout, 1, {}},
+    {XFA_Element::Script, 1, {}},
+    {XFA_Element::Common, 1, {}},
+    {XFA_Element::PaginationOverride, 1, {}},
+    {XFA_Element::Destination, 1, {}},
+    {XFA_Element::IncrementalMerge, 1, {}},
 };
 
 const CXFA_Node::AttributeData kPresentAttributeData[] = {

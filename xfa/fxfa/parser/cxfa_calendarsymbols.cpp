@@ -12,10 +12,10 @@
 namespace {
 
 const CXFA_Node::PropertyData kCalendarSymbolsPropertyData[] = {
-    {XFA_Element::EraNames, 1, 0},
-    {XFA_Element::DayNames, 2, 0},
-    {XFA_Element::MeridiemNames, 1, 0},
-    {XFA_Element::MonthNames, 2, 0},
+    {XFA_Element::EraNames, 1, {}},
+    {XFA_Element::DayNames, 2, {}},
+    {XFA_Element::MeridiemNames, 1, {}},
+    {XFA_Element::MonthNames, 2, {}},
 };
 
 const CXFA_Node::AttributeData kCalendarSymbolsAttributeData[] = {

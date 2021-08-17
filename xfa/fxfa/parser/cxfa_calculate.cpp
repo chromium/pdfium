@@ -15,9 +15,9 @@
 namespace {
 
 const CXFA_Node::PropertyData kCalculatePropertyData[] = {
-    {XFA_Element::Message, 1, 0},
-    {XFA_Element::Script, 1, 0},
-    {XFA_Element::Extras, 1, 0},
+    {XFA_Element::Message, 1, {}},
+    {XFA_Element::Script, 1, {}},
+    {XFA_Element::Extras, 1, {}},
 };
 
 const CXFA_Node::AttributeData kCalculateAttributeData[] = {

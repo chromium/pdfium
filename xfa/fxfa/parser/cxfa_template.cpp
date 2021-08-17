@@ -12,9 +12,9 @@
 namespace {
 
 const CXFA_Node::PropertyData kTemplatePropertyData[] = {
-    {XFA_Element::Uri, 1, 0},       {XFA_Element::Xsl, 1, 0},
-    {XFA_Element::StartPage, 1, 0}, {XFA_Element::Relevant, 1, 0},
-    {XFA_Element::Base, 1, 0},      {XFA_Element::Extras, 1, 0},
+    {XFA_Element::Uri, 1, {}},       {XFA_Element::Xsl, 1, {}},
+    {XFA_Element::StartPage, 1, {}}, {XFA_Element::Relevant, 1, {}},
+    {XFA_Element::Base, 1, {}},      {XFA_Element::Extras, 1, {}},
 };
 
 const CXFA_Node::AttributeData kTemplateAttributeData[] = {

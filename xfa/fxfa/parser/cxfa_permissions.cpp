@@ -12,15 +12,15 @@
 namespace {
 
 const CXFA_Node::PropertyData kPermissionsPropertyData[] = {
-    {XFA_Element::ModifyAnnots, 1, 0},
-    {XFA_Element::ContentCopy, 1, 0},
-    {XFA_Element::FormFieldFilling, 1, 0},
-    {XFA_Element::Change, 1, 0},
-    {XFA_Element::AccessibleContent, 1, 0},
-    {XFA_Element::Print, 1, 0},
-    {XFA_Element::PlaintextMetadata, 1, 0},
-    {XFA_Element::PrintHighQuality, 1, 0},
-    {XFA_Element::DocumentAssembly, 1, 0},
+    {XFA_Element::ModifyAnnots, 1, {}},
+    {XFA_Element::ContentCopy, 1, {}},
+    {XFA_Element::FormFieldFilling, 1, {}},
+    {XFA_Element::Change, 1, {}},
+    {XFA_Element::AccessibleContent, 1, {}},
+    {XFA_Element::Print, 1, {}},
+    {XFA_Element::PlaintextMetadata, 1, {}},
+    {XFA_Element::PrintHighQuality, 1, {}},
+    {XFA_Element::DocumentAssembly, 1, {}},
 };
 
 const CXFA_Node::AttributeData kPermissionsAttributeData[] = {

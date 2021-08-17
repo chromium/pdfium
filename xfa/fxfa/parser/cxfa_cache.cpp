@@ -12,7 +12,7 @@
 namespace {
 
 const CXFA_Node::PropertyData kCachePropertyData[] = {
-    {XFA_Element::TemplateCache, 1, 0},
+    {XFA_Element::TemplateCache, 1, {}},
 };
 
 const CXFA_Node::AttributeData kCacheAttributeData[] = {

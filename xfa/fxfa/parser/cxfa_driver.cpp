@@ -12,8 +12,8 @@
 namespace {
 
 const CXFA_Node::PropertyData kDriverPropertyData[] = {
-    {XFA_Element::FontInfo, 1, 0},
-    {XFA_Element::Xdc, 1, 0},
+    {XFA_Element::FontInfo, 1, {}},
+    {XFA_Element::Xdc, 1, {}},
 };
 
 const CXFA_Node::AttributeData kDriverAttributeData[] = {

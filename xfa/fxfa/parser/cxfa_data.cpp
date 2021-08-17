@@ -12,11 +12,11 @@
 namespace {
 
 const CXFA_Node::PropertyData kDataPropertyData[] = {
-    {XFA_Element::Uri, 1, 0},        {XFA_Element::Xsl, 1, 0},
-    {XFA_Element::StartNode, 1, 0},  {XFA_Element::OutputXSL, 1, 0},
-    {XFA_Element::AdjustData, 1, 0}, {XFA_Element::Attributes, 1, 0},
-    {XFA_Element::Window, 1, 0},     {XFA_Element::Record, 1, 0},
-    {XFA_Element::Range, 1, 0},      {XFA_Element::IncrementalLoad, 1, 0},
+    {XFA_Element::Uri, 1, {}},        {XFA_Element::Xsl, 1, {}},
+    {XFA_Element::StartNode, 1, {}},  {XFA_Element::OutputXSL, 1, {}},
+    {XFA_Element::AdjustData, 1, {}}, {XFA_Element::Attributes, 1, {}},
+    {XFA_Element::Window, 1, {}},     {XFA_Element::Record, 1, {}},
+    {XFA_Element::Range, 1, {}},      {XFA_Element::IncrementalLoad, 1, {}},
 };
 
 const CXFA_Node::AttributeData kDataAttributeData[] = {

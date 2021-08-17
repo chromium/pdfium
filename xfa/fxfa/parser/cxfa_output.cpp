@@ -12,9 +12,9 @@
 namespace {
 
 const CXFA_Node::PropertyData kOutputPropertyData[] = {
-    {XFA_Element::To, 1, 0},
-    {XFA_Element::Uri, 1, 0},
-    {XFA_Element::Type, 1, 0},
+    {XFA_Element::To, 1, {}},
+    {XFA_Element::Uri, 1, {}},
+    {XFA_Element::Type, 1, {}},
 };
 
 const CXFA_Node::AttributeData kOutputAttributeData[] = {

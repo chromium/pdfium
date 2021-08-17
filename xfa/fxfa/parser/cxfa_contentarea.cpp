@@ -12,8 +12,8 @@
 namespace {
 
 const CXFA_Node::PropertyData kContentAreaPropertyData[] = {
-    {XFA_Element::Desc, 1, 0},
-    {XFA_Element::Extras, 1, 0},
+    {XFA_Element::Desc, 1, {}},
+    {XFA_Element::Extras, 1, {}},
 };
 
 const CXFA_Node::AttributeData kContentAreaAttributeData[] = {

@@ -12,8 +12,8 @@
 namespace {
 
 const CXFA_Node::PropertyData kQueryPropertyData[] = {
-    {XFA_Element::RecordSet, 1, 0},
-    {XFA_Element::Select, 1, 0},
+    {XFA_Element::RecordSet, 1, {}},
+    {XFA_Element::Select, 1, {}},
 };
 
 const CXFA_Node::AttributeData kQueryAttributeData[] = {

@@ -12,9 +12,9 @@
 namespace {
 
 const CXFA_Node::PropertyData kEncryptionPropertyData[] = {
-    {XFA_Element::EncryptionLevel, 1, 0},
-    {XFA_Element::Encrypt, 1, 0},
-    {XFA_Element::Permissions, 1, 0},
+    {XFA_Element::EncryptionLevel, 1, {}},
+    {XFA_Element::Encrypt, 1, {}},
+    {XFA_Element::Permissions, 1, {}},
 };
 
 const CXFA_Node::AttributeData kEncryptionAttributeData[] = {

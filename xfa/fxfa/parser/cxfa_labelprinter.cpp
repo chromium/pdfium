@@ -12,10 +12,10 @@
 namespace {
 
 const CXFA_Node::PropertyData kLabelPrinterPropertyData[] = {
-    {XFA_Element::FontInfo, 1, 0},
-    {XFA_Element::Xdc, 1, 0},
-    {XFA_Element::BatchOutput, 1, 0},
-    {XFA_Element::FlipLabel, 1, 0},
+    {XFA_Element::FontInfo, 1, {}},
+    {XFA_Element::Xdc, 1, {}},
+    {XFA_Element::BatchOutput, 1, {}},
+    {XFA_Element::FlipLabel, 1, {}},
 };
 
 const CXFA_Node::AttributeData kLabelPrinterAttributeData[] = {

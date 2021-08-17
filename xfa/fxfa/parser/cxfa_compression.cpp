@@ -12,10 +12,10 @@
 namespace {
 
 const CXFA_Node::PropertyData kCompressionPropertyData[] = {
-    {XFA_Element::Level, 1, 0},
-    {XFA_Element::Type, 1, 0},
-    {XFA_Element::CompressObjectStream, 1, 0},
-    {XFA_Element::CompressLogicalStructure, 1, 0},
+    {XFA_Element::Level, 1, {}},
+    {XFA_Element::Type, 1, {}},
+    {XFA_Element::CompressObjectStream, 1, {}},
+    {XFA_Element::CompressLogicalStructure, 1, {}},
 };
 
 const CXFA_Node::AttributeData kCompressionAttributeData[] = {

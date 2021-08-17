@@ -12,7 +12,7 @@
 namespace {
 
 const CXFA_Node::PropertyData kExObjectPropertyData[] = {
-    {XFA_Element::Extras, 1, 0},
+    {XFA_Element::Extras, 1, {}},
 };
 
 const CXFA_Node::AttributeData kExObjectAttributeData[] = {

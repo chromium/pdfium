@@ -12,7 +12,7 @@
 namespace {
 
 const CXFA_Node::PropertyData kAcrobat7PropertyData[] = {
-    {XFA_Element::DynamicRender, 1, 0},
+    {XFA_Element::DynamicRender, 1, {}},
 };
 
 const CXFA_Node::AttributeData kAcrobat7AttributeData[] = {

@@ -12,7 +12,7 @@
 namespace {
 
 const CXFA_Node::PropertyData kOutputXSLPropertyData[] = {
-    {XFA_Element::Uri, 1, 0},
+    {XFA_Element::Uri, 1, {}},
 };
 
 const CXFA_Node::AttributeData kOutputXSLAttributeData[] = {

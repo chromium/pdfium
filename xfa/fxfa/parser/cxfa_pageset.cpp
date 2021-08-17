@@ -12,8 +12,8 @@
 namespace {
 
 const CXFA_Node::PropertyData kPageSetPropertyData[] = {
-    {XFA_Element::Extras, 1, 0},
-    {XFA_Element::Occur, 1, 0},
+    {XFA_Element::Extras, 1, {}},
+    {XFA_Element::Occur, 1, {}},
 };
 
 const CXFA_Node::AttributeData kPageSetAttributeData[] = {

@@ -12,11 +12,11 @@
 namespace {
 
 const CXFA_Node::PropertyData kAcrobatPropertyData[] = {
-    {XFA_Element::AutoSave, 1, 0},
-    {XFA_Element::Validate, 1, 0},
-    {XFA_Element::ValidateApprovalSignatures, 1, 0},
-    {XFA_Element::Acrobat7, 1, 0},
-    {XFA_Element::Common, 1, 0},
+    {XFA_Element::AutoSave, 1, {}},
+    {XFA_Element::Validate, 1, {}},
+    {XFA_Element::ValidateApprovalSignatures, 1, {}},
+    {XFA_Element::Acrobat7, 1, {}},
+    {XFA_Element::Common, 1, {}},
 };
 
 const CXFA_Node::AttributeData kAcrobatAttributeData[] = {

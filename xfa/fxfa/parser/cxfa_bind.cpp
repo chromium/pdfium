@@ -14,7 +14,7 @@
 namespace {
 
 const CXFA_Node::PropertyData kBindPropertyData[] = {
-    {XFA_Element::Picture, 1, 0},
+    {XFA_Element::Picture, 1, {}},
 };
 
 const CXFA_Node::AttributeData kBindAttributeData[] = {

@@ -12,7 +12,7 @@
 namespace {
 
 const CXFA_Node::PropertyData kDayNamesPropertyData[] = {
-    {XFA_Element::Day, 7, 0},
+    {XFA_Element::Day, 7, {}},
 };
 
 const CXFA_Node::AttributeData kDayNamesAttributeData[] = {

@@ -12,7 +12,7 @@
 namespace {
 
 const CXFA_Node::PropertyData kNumberSymbolsPropertyData[] = {
-    {XFA_Element::NumberSymbol, 5, 0},
+    {XFA_Element::NumberSymbol, 5, {}},
 };
 
 }  // namespace

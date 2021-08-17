@@ -12,10 +12,10 @@
 namespace {
 
 const CXFA_Node::PropertyData kConnectPropertyData[] = {
-    {XFA_Element::Picture, 1, 0},
-    {XFA_Element::ConnectString, 1, 0},
-    {XFA_Element::User, 1, 0},
-    {XFA_Element::Password, 1, 0},
+    {XFA_Element::Picture, 1, {}},
+    {XFA_Element::ConnectString, 1, {}},
+    {XFA_Element::User, 1, {}},
+    {XFA_Element::Password, 1, {}},
 };
 
 const CXFA_Node::AttributeData kConnectAttributeData[] = {

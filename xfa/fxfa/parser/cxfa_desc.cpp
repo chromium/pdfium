@@ -12,11 +12,11 @@
 namespace {
 
 const CXFA_Node::PropertyData kDescPropertyData[] = {
-    {XFA_Element::Text, 1, 0},     {XFA_Element::Time, 1, 0},
-    {XFA_Element::DateTime, 1, 0}, {XFA_Element::Image, 1, 0},
-    {XFA_Element::Decimal, 1, 0},  {XFA_Element::Boolean, 1, 0},
-    {XFA_Element::Integer, 1, 0},  {XFA_Element::ExData, 1, 0},
-    {XFA_Element::Date, 1, 0},     {XFA_Element::Float, 1, 0},
+    {XFA_Element::Text, 1, {}},     {XFA_Element::Time, 1, {}},
+    {XFA_Element::DateTime, 1, {}}, {XFA_Element::Image, 1, {}},
+    {XFA_Element::Decimal, 1, {}},  {XFA_Element::Boolean, 1, {}},
+    {XFA_Element::Integer, 1, {}},  {XFA_Element::ExData, 1, {}},
+    {XFA_Element::Date, 1, {}},     {XFA_Element::Float, 1, {}},
 };
 
 const CXFA_Node::AttributeData kDescAttributeData[] = {

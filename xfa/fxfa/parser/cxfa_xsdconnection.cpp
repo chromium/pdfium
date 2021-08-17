@@ -12,8 +12,8 @@
 namespace {
 
 const CXFA_Node::PropertyData kXsdConnectionPropertyData[] = {
-    {XFA_Element::Uri, 1, 0},
-    {XFA_Element::RootElement, 1, 0},
+    {XFA_Element::Uri, 1, {}},
+    {XFA_Element::RootElement, 1, {}},
 };
 
 const CXFA_Node::AttributeData kXsdConnectionAttributeData[] = {

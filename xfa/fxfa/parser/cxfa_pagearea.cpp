@@ -12,10 +12,10 @@
 namespace {
 
 const CXFA_Node::PropertyData kPageAreaPropertyData[] = {
-    {XFA_Element::Medium, 1, 0},
-    {XFA_Element::Desc, 1, 0},
-    {XFA_Element::Extras, 1, 0},
-    {XFA_Element::Occur, 1, 0},
+    {XFA_Element::Medium, 1, {}},
+    {XFA_Element::Desc, 1, {}},
+    {XFA_Element::Extras, 1, {}},
+    {XFA_Element::Occur, 1, {}},
 };
 
 const CXFA_Node::AttributeData kPageAreaAttributeData[] = {

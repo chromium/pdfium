@@ -12,8 +12,8 @@
 namespace {
 
 const CXFA_Node::PropertyData kAssistPropertyData[] = {
-    {XFA_Element::ToolTip, 1, 0},
-    {XFA_Element::Speak, 1, 0},
+    {XFA_Element::ToolTip, 1, {}},
+    {XFA_Element::Speak, 1, {}},
 };
 
 const CXFA_Node::AttributeData kAssistAttributeData[] = {
