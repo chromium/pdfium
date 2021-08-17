@@ -78,10 +78,10 @@ void CJX_LayoutPseudoModel::ready(v8::Isolate* pIsolate,
   *pValue = fxv8::NewBooleanHelper(pIsolate, iStatus >= 2);
 }
 
-CJS_Result CJX_LayoutPseudoModel::HWXY(
+CJS_Result CJX_LayoutPseudoModel::DoHWXYInternal(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params,
-    XFA_LAYOUTMODEL_HWXY layoutModel) {
+    HWXY layoutModel) {
   if (params.empty() || params.size() > 3)
     return CJS_Result::Failure(JSMessage::kParamError);
 
@@ -114,16 +114,16 @@ CJS_Result CJX_LayoutPseudoModel::HWXY(
   CXFA_Measurement measure;
   CFX_RectF rtRect = pLayoutItem->GetRelativeRect();
   switch (layoutModel) {
-    case XFA_LAYOUTMODEL_H:
+    case HWXY::kH:
       measure.Set(rtRect.height, XFA_Unit::Pt);
       break;
-    case XFA_LAYOUTMODEL_W:
+    case HWXY::kW:
       measure.Set(rtRect.width, XFA_Unit::Pt);
       break;
-    case XFA_LAYOUTMODEL_X:
+    case HWXY::kX:
       measure.Set(rtRect.left, XFA_Unit::Pt);
       break;
-    case XFA_LAYOUTMODEL_Y:
+    case HWXY::kY:
       measure.Set(rtRect.top, XFA_Unit::Pt);
       break;
   }
@@ -140,25 +140,25 @@ CJS_Result CJX_LayoutPseudoModel::HWXY(
 CJS_Result CJX_LayoutPseudoModel::h(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  return HWXY(runtime, params, XFA_LAYOUTMODEL_H);
+  return DoHWXYInternal(runtime, params, HWXY::kH);
 }
 
 CJS_Result CJX_LayoutPseudoModel::w(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  return HWXY(runtime, params, XFA_LAYOUTMODEL_W);
+  return DoHWXYInternal(runtime, params, HWXY::kW);
 }
 
 CJS_Result CJX_LayoutPseudoModel::x(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  return HWXY(runtime, params, XFA_LAYOUTMODEL_X);
+  return DoHWXYInternal(runtime, params, HWXY::kX);
 }
 
 CJS_Result CJX_LayoutPseudoModel::y(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  return HWXY(runtime, params, XFA_LAYOUTMODEL_Y);
+  return DoHWXYInternal(runtime, params, HWXY::kY);
 }
 
 CJS_Result CJX_LayoutPseudoModel::AllPageCount(CFX_V8* runtime) {

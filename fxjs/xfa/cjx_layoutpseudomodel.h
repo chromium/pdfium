@@ -12,13 +12,6 @@
 #include "fxjs/xfa/cjx_object.h"
 #include "fxjs/xfa/jse_define.h"
 
-enum XFA_LAYOUTMODEL_HWXY {
-  XFA_LAYOUTMODEL_H,
-  XFA_LAYOUTMODEL_W,
-  XFA_LAYOUTMODEL_X,
-  XFA_LAYOUTMODEL_Y
-};
-
 class CScript_LayoutPseudoModel;
 class CXFA_LayoutProcessor;
 class CXFA_Node;
@@ -54,6 +47,8 @@ class CJX_LayoutPseudoModel final : public CJX_Object {
   JSE_PROP(ready);
 
  private:
+  enum class HWXY { kH, kW, kX, kY };
+
   explicit CJX_LayoutPseudoModel(CScript_LayoutPseudoModel* model);
 
   using Type__ = CJX_LayoutPseudoModel;
@@ -64,9 +59,9 @@ class CJX_LayoutPseudoModel final : public CJX_Object {
 
   CJS_Result AllPageCount(CFX_V8* runtime);
   CJS_Result NumberedPageCount(CFX_V8* runtime);
-  CJS_Result HWXY(CFX_V8* runtime,
-                  const std::vector<v8::Local<v8::Value>>& params,
-                  XFA_LAYOUTMODEL_HWXY layoutModel);
+  CJS_Result DoHWXYInternal(CFX_V8* runtime,
+                            const std::vector<v8::Local<v8::Value>>& params,
+                            HWXY layoutModel);
   std::vector<CXFA_Node*> GetObjArray(CXFA_LayoutProcessor* pDocLayout,
                                       int32_t iPageNo,
                                       const WideString& wsType,
