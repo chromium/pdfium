@@ -21,7 +21,6 @@
 #include "fxjs/cjs_document.h"
 #include "fxjs/cjs_event.h"
 #include "fxjs/cjs_event_context.h"
-#include "fxjs/cjs_eventrecorder.h"
 #include "fxjs/cjs_field.h"
 #include "fxjs/cjs_font.h"
 #include "fxjs/cjs_global.h"

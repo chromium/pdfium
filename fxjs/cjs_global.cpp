@@ -11,10 +11,10 @@
 #include <vector>
 
 #include "core/fxcrt/fx_extension.h"
+#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fxjs/cfx_globaldata.h"
 #include "fxjs/cfx_keyvalue.h"
 #include "fxjs/cjs_event_context.h"
-#include "fxjs/cjs_eventrecorder.h"
 #include "fxjs/cjs_object.h"
 #include "fxjs/fxv8.h"
 #include "fxjs/js_define.h"

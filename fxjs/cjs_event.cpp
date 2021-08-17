@@ -7,7 +7,6 @@
 #include "fxjs/cjs_event.h"
 
 #include "fxjs/cjs_event_context.h"
-#include "fxjs/cjs_eventrecorder.h"
 #include "fxjs/cjs_field.h"
 #include "fxjs/cjs_object.h"
 #include "fxjs/js_define.h"

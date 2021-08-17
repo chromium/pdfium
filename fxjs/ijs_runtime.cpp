@@ -4,6 +4,7 @@
 
 #include "fxjs/ijs_runtime.h"
 
+#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fxjs/cjs_runtimestub.h"
 
 #ifdef PDF_ENABLE_V8

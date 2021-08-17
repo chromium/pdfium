@@ -13,6 +13,7 @@
 #include "fxjs/cjs_object.h"
 #include "fxjs/js_define.h"
 
+class CFX_FloatRect;
 class CPDF_FormControl;
 struct CJS_DelayData;
 

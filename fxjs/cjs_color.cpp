@@ -11,7 +11,6 @@
 
 #include "core/fxge/cfx_color.h"
 #include "fxjs/cjs_event_context.h"
-#include "fxjs/cjs_eventrecorder.h"
 #include "fxjs/cjs_object.h"
 #include "fxjs/cjs_runtime.h"
 #include "fxjs/fxv8.h"

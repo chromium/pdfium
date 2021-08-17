@@ -15,10 +15,9 @@
 #include "core/fxcrt/cfx_timer.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "fxjs/cfxjs_engine.h"
-#include "fxjs/cjs_eventrecorder.h"
+#include "fxjs/cjs_event_context.h"
 #include "fxjs/ijs_runtime.h"
 
-class CJS_EventContext;
 class CPDFSDK_FormFillEnvironment;
 
 class CJS_Runtime final : public IJS_Runtime,
