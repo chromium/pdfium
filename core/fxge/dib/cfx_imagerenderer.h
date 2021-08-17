@@ -35,6 +35,8 @@ class CFX_ImageRenderer {
   bool Continue(PauseIndicatorIface* pPause);
 
  private:
+  enum class State : uint8_t { kInitial = 0, kStretching, kTransforming };
+
   RetainPtr<CFX_DIBitmap> const m_pDevice;
   UnownedPtr<const CFX_ClipRgn> const m_pClipRgn;
   const CFX_Matrix m_Matrix;
@@ -43,8 +45,8 @@ class CFX_ImageRenderer {
   CFX_BitmapComposer m_Composer;
   FX_RECT m_ClipBox;
   const int m_BitmapAlpha;
-  int m_Status = 0;
   uint32_t m_MaskColor;
+  State m_State = State::kInitial;
   const bool m_bRgbByteOrder;
 };
 
