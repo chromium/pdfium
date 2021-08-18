@@ -376,7 +376,7 @@ TEST(ProgressiveDecoder, BUG_895009) {
     CFX_DIBAttribute attr;
     FXCODEC_STATUS status =
         decoder->LoadImageInfo(source, FXCODEC_IMAGE_GIF, &attr, true);
-    ASSERT_EQ(FXCODEC_STATUS_FRAME_READY, status);
+    ASSERT_EQ(FXCODEC_STATUS::kFrameReady, status);
 
     ASSERT_EQ(98, decoder->GetWidth());
     ASSERT_EQ(6945, decoder->GetHeight());
@@ -387,14 +387,14 @@ TEST(ProgressiveDecoder, BUG_895009) {
 
     size_t frames;
     std::tie(status, frames) = decoder->GetFrames();
-    ASSERT_EQ(FXCODEC_STATUS_DECODE_READY, status);
+    ASSERT_EQ(FXCODEC_STATUS::kDecodeReady, status);
     ASSERT_EQ(1u, frames);
 
     status = decoder->StartDecode(bitmap, 0, 0, bitmap->GetWidth(),
                                   bitmap->GetHeight());
-    while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE)
+    while (status == FXCODEC_STATUS::kDecodeToBeContinued)
       status = decoder->ContinueDecode();
-    EXPECT_EQ(FXCODEC_STATUS_DECODE_FINISH, status);
+    EXPECT_EQ(FXCODEC_STATUS::kDecodeFinished, status);
   }
 }
 #endif  // PDF_ENABLE_XFA_GIF

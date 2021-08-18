@@ -95,7 +95,7 @@ class CJBig2_GRDProc {
 
   uint32_t m_loopIndex = 0;
   uint8_t* m_pLine = nullptr;
-  FXCODEC_STATUS m_ProssiveStatus;
+  FXCODEC_STATUS m_ProgressiveStatus;
   uint16_t m_DecodeType = 0;
   int m_LTP = 0;
   FX_RECT m_ReplaceRect;

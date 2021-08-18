@@ -43,7 +43,7 @@ std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::DecodeArith(
 
   FXCODEC_STATUS status = pGRD->StartDecodeArith(&state);
   state.pPause = pPause;
-  while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE)
+  while (status == FXCODEC_STATUS::kDecodeToBeContinued)
     status = pGRD->ContinueDecode(&state);
   if (!BHDC)
     return nullptr;

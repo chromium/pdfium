@@ -94,8 +94,7 @@ JBig2_Result CJBig2_Context::DecodeSequential(PauseIndicatorIface* pPause) {
       m_nOffset = m_pStream->getOffset();
     }
     nRet = ParseSegmentData(m_pSegment.get(), pPause);
-    if (m_ProcessingStatus == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
-      m_ProcessingStatus = FXCODEC_STATUS_DECODE_TOBECONTINUE;
+    if (m_ProcessingStatus == FXCODEC_STATUS::kDecodeToBeContinued) {
       m_PauseStep = 2;
       return JBig2_Result::kSuccess;
     }
@@ -120,7 +119,7 @@ JBig2_Result CJBig2_Context::DecodeSequential(PauseIndicatorIface* pPause) {
     m_SegmentList.push_back(std::move(m_pSegment));
     if (m_pStream->getByteLeft() > 0 && m_pPage && pPause &&
         pPause->NeedToPauseNow()) {
-      m_ProcessingStatus = FXCODEC_STATUS_DECODE_TOBECONTINUE;
+      m_ProcessingStatus = FXCODEC_STATUS::kDecodeToBeContinued;
       m_PauseStep = 2;
       return JBig2_Result::kSuccess;
     }
@@ -136,7 +135,7 @@ bool CJBig2_Context::GetFirstPage(uint8_t* pBuf,
   if (m_pGlobalContext) {
     JBig2_Result nRet = m_pGlobalContext->DecodeSequential(pPause);
     if (nRet != JBig2_Result::kSuccess) {
-      m_ProcessingStatus = FXCODEC_STATUS_ERROR;
+      m_ProcessingStatus = FXCODEC_STATUS::kError;
       return nRet == JBig2_Result::kSuccess;
     }
   }
@@ -145,33 +144,33 @@ bool CJBig2_Context::GetFirstPage(uint8_t* pBuf,
   m_bBufSpecified = true;
   if (pPause && pPause->NeedToPauseNow()) {
     m_PauseStep = 1;
-    m_ProcessingStatus = FXCODEC_STATUS_DECODE_TOBECONTINUE;
+    m_ProcessingStatus = FXCODEC_STATUS::kDecodeToBeContinued;
     return true;
   }
   return Continue(pPause);
 }
 
 bool CJBig2_Context::Continue(PauseIndicatorIface* pPause) {
-  m_ProcessingStatus = FXCODEC_STATUS_DECODE_READY;
+  m_ProcessingStatus = FXCODEC_STATUS::kDecodeReady;
   JBig2_Result nRet = JBig2_Result::kSuccess;
   if (m_PauseStep == 5) {
-    m_ProcessingStatus = FXCODEC_STATUS_DECODE_FINISH;
+    m_ProcessingStatus = FXCODEC_STATUS::kDecodeFinished;
     return true;
   }
 
   if (m_PauseStep <= 2)
     nRet = DecodeSequential(pPause);
-  if (m_ProcessingStatus == FXCODEC_STATUS_DECODE_TOBECONTINUE)
+  if (m_ProcessingStatus == FXCODEC_STATUS::kDecodeToBeContinued)
     return nRet == JBig2_Result::kSuccess;
 
   m_PauseStep = 5;
   if (!m_bBufSpecified && nRet == JBig2_Result::kSuccess) {
-    m_ProcessingStatus = FXCODEC_STATUS_DECODE_FINISH;
+    m_ProcessingStatus = FXCODEC_STATUS::kDecodeFinished;
     return true;
   }
   m_ProcessingStatus = nRet == JBig2_Result::kSuccess
-                           ? FXCODEC_STATUS_DECODE_FINISH
-                           : FXCODEC_STATUS_ERROR;
+                           ? FXCODEC_STATUS::kDecodeFinished
+                           : FXCODEC_STATUS::kError;
   return nRet == JBig2_Result::kSuccess;
 }
 
@@ -280,7 +279,7 @@ JBig2_Result CJBig2_Context::ParseSegmentHeader(CJBig2_Segment* pSegment) {
 JBig2_Result CJBig2_Context::ParseSegmentData(CJBig2_Segment* pSegment,
                                               PauseIndicatorIface* pPause) {
   JBig2_Result ret = ProcessingParseSegmentData(pSegment, pPause);
-  while (m_ProcessingStatus == FXCODEC_STATUS_DECODE_TOBECONTINUE &&
+  while (m_ProcessingStatus == FXCODEC_STATUS::kDecodeToBeContinued &&
          m_pStream->getByteLeft() > 0) {
     ret = ProcessingParseSegmentData(pSegment, pPause);
   }
@@ -343,7 +342,7 @@ JBig2_Result CJBig2_Context::ProcessingParseSegmentData(
       }
 
       if (!m_pPage->data()) {
-        m_ProcessingStatus = FXCODEC_STATUS_ERROR;
+        m_ProcessingStatus = FXCODEC_STATUS::kError;
         return JBig2_Result::kFailure;
       }
 
@@ -975,7 +974,7 @@ JBig2_Result CJBig2_Context::ParseGenericRegion(CJBig2_Segment* pSegment,
       state.pPause = pPause;
       m_ProcessingStatus = bStart ? m_pGRD->StartDecodeArith(&state)
                                   : m_pGRD->ContinueDecode(&state);
-      if (m_ProcessingStatus == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
+      if (m_ProcessingStatus == FXCODEC_STATUS::kDecodeToBeContinued) {
         if (pSegment->m_cFlags.s.type != 36) {
           if (!m_bBufSpecified) {
             const auto& pPageInfo = m_PageInfoList.back();
@@ -996,7 +995,7 @@ JBig2_Result CJBig2_Context::ParseGenericRegion(CJBig2_Segment* pSegment,
     m_pArithDecoder.reset();
     m_gbContext.clear();
     if (!pSegment->m_Image) {
-      m_ProcessingStatus = FXCODEC_STATUS_ERROR;
+      m_ProcessingStatus = FXCODEC_STATUS::kError;
       m_pGRD.reset();
       return JBig2_Result::kFailure;
     }

@@ -17,18 +17,18 @@ namespace {
 
 FXCODEC_STATUS Decode(Jbig2Context* pJbig2Context, bool decode_success) {
   FXCODEC_STATUS status = pJbig2Context->m_pContext->GetProcessingStatus();
-  if (status != FXCODEC_STATUS_DECODE_FINISH)
+  if (status != FXCODEC_STATUS::kDecodeFinished)
     return status;
 
   pJbig2Context->m_pContext.reset();
   if (!decode_success)
-    return FXCODEC_STATUS_ERROR;
+    return FXCODEC_STATUS::kError;
 
   int dword_size = pJbig2Context->m_height * pJbig2Context->m_dest_pitch / 4;
   uint32_t* dword_buf = reinterpret_cast<uint32_t*>(pJbig2Context->m_dest_buf);
   for (int i = 0; i < dword_size; i++)
     dword_buf[i] = ~dword_buf[i];
-  return FXCODEC_STATUS_DECODE_FINISH;
+  return FXCODEC_STATUS::kDecodeFinished;
 }
 
 }  // namespace

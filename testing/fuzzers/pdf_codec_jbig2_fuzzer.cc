@@ -40,7 +40,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
       &jbig2_context, &document_context, width, height, {data, size}, 1, {}, 0,
       bitmap->GetBuffer(), bitmap->GetPitch(), nullptr);
 
-  while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE)
+  while (status == FXCODEC_STATUS::kDecodeToBeContinued)
     status = Jbig2Decoder::ContinueDecode(&jbig2_context, nullptr);
   return 0;
 }

@@ -218,7 +218,7 @@ class ProgressiveDecoder :
                       double scale_y,
                       int dest_row);
 
-  FXCODEC_STATUS m_status = FXCODEC_STATUS_DECODE_FINISH;
+  FXCODEC_STATUS m_status = FXCODEC_STATUS::kDecodeFinished;
   FXCODEC_IMAGE_TYPE m_imageType = FXCODEC_IMAGE_UNKNOWN;
   RetainPtr<IFX_SeekableReadStream> m_pFile;
   RetainPtr<CFX_DIBitmap> m_pDeviceBitmap;
