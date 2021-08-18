@@ -65,15 +65,6 @@ FXDIB_Format XFA_GetDIBFormat(FXCODEC_IMAGE_TYPE type,
   return dibFormat;
 }
 
-bool IsFXCodecErrorStatus(FXCODEC_STATUS status) {
-  return (status == FXCODEC_STATUS_ERROR ||
-          status == FXCODEC_STATUS_ERR_MEMORY ||
-          status == FXCODEC_STATUS_ERR_READ ||
-          status == FXCODEC_STATUS_ERR_FLUSH ||
-          status == FXCODEC_STATUS_ERR_FORMAT ||
-          status == FXCODEC_STATUS_ERR_PARAMS);
-}
-
 }  // namespace
 
 void XFA_DrawImage(CFGAS_GEGraphics* pGS,
@@ -199,12 +190,12 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageFromBuffer(
 
   status = pProgressiveDecoder->StartDecode(pBitmap, 0, 0, pBitmap->GetWidth(),
                                             pBitmap->GetHeight());
-  if (IsFXCodecErrorStatus(status))
+  if (status == FXCODEC_STATUS_ERROR)
     return nullptr;
 
   while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
     status = pProgressiveDecoder->ContinueDecode();
-    if (IsFXCodecErrorStatus(status))
+    if (status == FXCODEC_STATUS_ERROR)
       return nullptr;
   }
 
