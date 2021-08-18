@@ -60,7 +60,10 @@ class UnownedPtr {
   // NOLINTNEXTLINE(runtime/explicit)
   constexpr UnownedPtr(std::nullptr_t ptr) noexcept {}
 
-  ~UnownedPtr() { ProbeForLowSeverityLifetimeIssue(); }
+  ~UnownedPtr() {
+    ProbeForLowSeverityLifetimeIssue();
+    m_pObj = nullptr;
+  }
 
   void Reset(T* obj = nullptr) {
     ProbeForLowSeverityLifetimeIssue();
