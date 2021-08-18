@@ -45,19 +45,17 @@
 
 namespace {
 
-struct PacketRecord {
-  XFA_PacketType packet_type;
+struct PacketTableRecord {
   uint32_t hash;
-  uint32_t flags;
-  const wchar_t* name;
-  const wchar_t* uri;
+  XFA_PACKETINFO info;
 };
 
-const PacketRecord kPacketTable[] = {
+const PacketTableRecord kPacketTable[] = {
 #undef PCKT____
-#define PCKT____(a, b, c, d, e, f)                                          \
-  {XFA_PacketType::c, a, XFA_XDPPACKET_FLAGS_##e | XFA_XDPPACKET_FLAGS_##f, \
-   L##b, d},
+#define PCKT____(a, b, c, d, e, f)                                        \
+  {a,                                                                     \
+   {XFA_PacketType::c, XFA_XDPPACKET_FLAGS_##e | XFA_XDPPACKET_FLAGS_##f, \
+    L##b, d}},
 #include "xfa/fxfa/parser/packets.inc"
 #undef PCKT____
 };
@@ -166,17 +164,16 @@ static_assert(pdfium::size(kElementAttributeRecords) ==
 }  // namespace
 
 XFA_PACKETINFO XFA_GetPacketByIndex(XFA_PacketType ePacket) {
-  const PacketRecord* pRecord = &kPacketTable[static_cast<uint8_t>(ePacket)];
-  return {pRecord->name, pRecord->packet_type, pRecord->uri, pRecord->flags};
+  return kPacketTable[static_cast<uint8_t>(ePacket)].info;
 }
 
 Optional<XFA_PACKETINFO> XFA_GetPacketByName(WideStringView wsName) {
   uint32_t hash = FX_HashCode_GetW(wsName);
   auto* elem = std::lower_bound(
       std::begin(kPacketTable), std::end(kPacketTable), hash,
-      [](const PacketRecord& a, uint32_t hash) { return a.hash < hash; });
-  if (elem != std::end(kPacketTable) && elem->name == wsName)
-    return XFA_GetPacketByIndex(elem->packet_type);
+      [](const PacketTableRecord& a, uint32_t hash) { return a.hash < hash; });
+  if (elem != std::end(kPacketTable) && elem->info.name == wsName)
+    return elem->info;
   return pdfium::nullopt;
 }
 

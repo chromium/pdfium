@@ -21,10 +21,10 @@ typedef void (*XFA_ATTRIBUTE_CALLBACK)(v8::Isolate* pIsolate,
                                        XFA_Attribute eAttribute);
 
 struct XFA_PACKETINFO {
-  const wchar_t* name;
   XFA_PacketType packet_type;
-  const wchar_t* uri;
   uint32_t flags;
+  const wchar_t* name;
+  const wchar_t* uri;
 };
 
 struct XFA_ATTRIBUTEINFO {
