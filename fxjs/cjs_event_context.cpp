@@ -315,7 +315,6 @@ void CJS_EventContext::Initialize(JS_EVENT_T type) {
   m_bFieldFull = false;
   m_pbRc = nullptr;
   m_bRcDu = false;
-  m_pTargetAnnot.Reset();
   m_bValid = true;
 }
 

@@ -12,14 +12,11 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fxjs/ijs_event_context.h"
 
 class CJS_Field;
 class CJS_Runtime;
-class CPDFSDK_Annot;
-class CPDFSDK_FormFillEnvironment;
 
 enum JS_EVENT_T {
   JET_UNKNOWN,
@@ -174,7 +171,6 @@ class CJS_EventContext final : public IJS_EventContext {
   bool m_bFieldFull = false;
   bool m_bRcDu = false;
   UnownedPtr<bool> m_pbRc;
-  ObservedPtr<CPDFSDK_Annot> m_pTargetAnnot;
 };
 
 #endif  // FXJS_CJS_EVENT_CONTEXT_H_
