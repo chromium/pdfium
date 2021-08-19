@@ -52,10 +52,8 @@ struct PacketTableRecord {
 
 const PacketTableRecord kPacketTable[] = {
 #undef PCKT____
-#define PCKT____(a, b, c, d, e, f)                                        \
-  {a,                                                                     \
-   {XFA_PacketType::c, XFA_XDPPACKET_FLAGS_##e | XFA_XDPPACKET_FLAGS_##f, \
-    L##b, d}},
+#define PCKT____(a, b, c, d, e, f) \
+  {a, {XFA_PacketType::c, XFA_PacketMatch::e, XFA_PacketSupport::f, L##b, d}},
 #include "xfa/fxfa/parser/packets.inc"
 #undef PCKT____
 };

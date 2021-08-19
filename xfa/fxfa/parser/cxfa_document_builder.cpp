@@ -45,7 +45,7 @@ CFX_XMLNode* GetDocumentNode(CFX_XMLNode* pRootNode) {
 bool MatchNodeName(CFX_XMLNode* pNode,
                    WideStringView wsLocalTagName,
                    WideStringView wsNamespaceURIPrefix,
-                   uint32_t eMatchFlags = XFA_XDPPACKET_FLAGS_NOMATCH) {
+                   XFA_PacketMatch eMatch) {
   CFX_XMLElement* pElement = ToXMLElement(pNode);
   if (!pElement)
     return false;
@@ -54,14 +54,14 @@ bool MatchNodeName(CFX_XMLNode* pNode,
   if (wsNodeStr != wsLocalTagName)
     return false;
 
-  wsNodeStr = pElement->GetNamespaceURI();
-  if (eMatchFlags & XFA_XDPPACKET_FLAGS_NOMATCH)
+  if (eMatch == XFA_PacketMatch::kNoMatch)
     return true;
-  if (eMatchFlags & XFA_XDPPACKET_FLAGS_PREFIXMATCH) {
+
+  wsNodeStr = pElement->GetNamespaceURI();
+  if (eMatch == XFA_PacketMatch::kPrefixMatch) {
     return wsNodeStr.First(wsNamespaceURIPrefix.GetLength()) ==
            wsNamespaceURIPrefix;
   }
-
   return wsNodeStr == wsNamespaceURIPrefix;
 }
 
@@ -129,18 +129,18 @@ CFX_XMLNode* GetDataSetsFromXDP(CFX_XMLNode* pXMLDocumentNode) {
   XFA_PACKETINFO datasets_packet =
       XFA_GetPacketByIndex(XFA_PacketType::Datasets);
   if (MatchNodeName(pXMLDocumentNode, datasets_packet.name, datasets_packet.uri,
-                    datasets_packet.flags)) {
+                    datasets_packet.match)) {
     return pXMLDocumentNode;
   }
   XFA_PACKETINFO xdp_packet = XFA_GetPacketByIndex(XFA_PacketType::Xdp);
   if (!MatchNodeName(pXMLDocumentNode, xdp_packet.name, xdp_packet.uri,
-                     xdp_packet.flags)) {
+                     xdp_packet.match)) {
     return nullptr;
   }
   for (CFX_XMLNode* pDatasetsNode = pXMLDocumentNode->GetFirstChild();
        pDatasetsNode; pDatasetsNode = pDatasetsNode->GetNextSibling()) {
     if (MatchNodeName(pDatasetsNode, datasets_packet.name, datasets_packet.uri,
-                      datasets_packet.flags)) {
+                      datasets_packet.match)) {
       return pDatasetsNode;
     }
   }
@@ -329,7 +329,7 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket(CFX_XMLNode* pXMLDocumentNode,
 CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_XDP(
     CFX_XMLNode* pXMLDocumentNode) {
   XFA_PACKETINFO packet = XFA_GetPacketByIndex(XFA_PacketType::Xdp);
-  if (!MatchNodeName(pXMLDocumentNode, packet.name, packet.uri, packet.flags))
+  if (!MatchNodeName(pXMLDocumentNode, packet.name, packet.uri, packet.match))
     return nullptr;
 
   CXFA_Node* pXFARootNode =
@@ -353,7 +353,7 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_XDP(
   for (CFX_XMLNode* pChildItem = pXMLDocumentNode->GetFirstChild(); pChildItem;
        pChildItem = pChildItem->GetNextSibling()) {
     if (!MatchNodeName(pChildItem, config_packet.name, config_packet.uri,
-                       config_packet.flags)) {
+                       config_packet.match)) {
       continue;
     }
     // TODO(tsepez): make GetFirstChildByName() take a name.
@@ -381,7 +381,7 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_XDP(
         XFA_GetPacketByName(wsPacketName.AsStringView());
     if (packet_info.has_value() && packet_info.value().uri &&
         !MatchNodeName(pElement, packet_info.value().name,
-                       packet_info.value().uri, packet_info.value().flags)) {
+                       packet_info.value().uri, packet_info.value().match)) {
       packet_info = {};
     }
     XFA_PacketType ePacket = XFA_PacketType::User;
@@ -413,7 +413,7 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_XDP(
       CXFA_Node* pPacketNode = ParseAsXDPPacket(pElement, ePacket);
       if (pPacketNode) {
         if (packet_info.has_value() &&
-            (packet_info.value().flags & XFA_XDPPACKET_FLAGS_SUPPORTONE) &&
+            (packet_info.value().support == XFA_PacketSupport::kSupportOne) &&
             pXFARootNode->GetFirstChildByName(
                 FX_HashCode_GetW(packet_info.value().name))) {
           return nullptr;
@@ -447,7 +447,7 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_XDP(
 CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_Config(
     CFX_XMLNode* pXMLDocumentNode) {
   XFA_PACKETINFO packet = XFA_GetPacketByIndex(XFA_PacketType::Config);
-  if (!MatchNodeName(pXMLDocumentNode, packet.name, packet.uri, packet.flags))
+  if (!MatchNodeName(pXMLDocumentNode, packet.name, packet.uri, packet.match))
     return nullptr;
 
   CXFA_Node* pNode =
@@ -466,7 +466,7 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_Config(
 CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_Template(
     CFX_XMLNode* pXMLDocumentNode) {
   XFA_PACKETINFO packet = XFA_GetPacketByIndex(XFA_PacketType::Template);
-  if (!MatchNodeName(pXMLDocumentNode, packet.name, packet.uri, packet.flags))
+  if (!MatchNodeName(pXMLDocumentNode, packet.name, packet.uri, packet.match))
     return nullptr;
 
   CXFA_Node* pNode = node_factory_->CreateNode(XFA_PacketType::Template,
@@ -493,7 +493,7 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_Template(
 CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_Form(
     CFX_XMLNode* pXMLDocumentNode) {
   XFA_PACKETINFO packet = XFA_GetPacketByIndex(XFA_PacketType::Form);
-  if (!MatchNodeName(pXMLDocumentNode, packet.name, packet.uri, packet.flags))
+  if (!MatchNodeName(pXMLDocumentNode, packet.name, packet.uri, packet.match))
     return nullptr;
 
   CXFA_Node* pNode =
@@ -541,7 +541,7 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_Data(
   }
 
   CFX_XMLNode* pDataXMLNode = nullptr;
-  if (MatchNodeName(pXMLDocumentNode, L"data", packet.uri, packet.flags)) {
+  if (MatchNodeName(pXMLDocumentNode, L"data", packet.uri, packet.match)) {
     ToXMLElement(pXMLDocumentNode)->RemoveAttribute(L"xmlns:xfa");
     pDataXMLNode = pXMLDocumentNode;
   } else {
@@ -578,7 +578,7 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_LocaleConnectionSourceSet(
     XFA_PacketType packet_type,
     XFA_Element element) {
   XFA_PACKETINFO packet = XFA_GetPacketByIndex(packet_type);
-  if (!MatchNodeName(pXMLDocumentNode, packet.name, packet.uri, packet.flags))
+  if (!MatchNodeName(pXMLDocumentNode, packet.name, packet.uri, packet.match))
     return nullptr;
 
   CXFA_Node* pNode = node_factory_->CreateNode(packet_type, element);
@@ -596,7 +596,7 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_LocaleConnectionSourceSet(
 CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_Xdc(
     CFX_XMLNode* pXMLDocumentNode) {
   XFA_PACKETINFO packet = XFA_GetPacketByIndex(XFA_PacketType::Xdc);
-  if (!MatchNodeName(pXMLDocumentNode, packet.name, packet.uri, packet.flags))
+  if (!MatchNodeName(pXMLDocumentNode, packet.name, packet.uri, packet.match))
     return nullptr;
 
   CXFA_Node* pNode =
