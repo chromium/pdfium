@@ -24,10 +24,10 @@ TEST(XFABasicDataTest, GetPacketByName) {
 
 TEST(XFABasicDataTest, PacketToName) {
   XFA_PACKETINFO result = XFA_GetPacketByIndex(XFA_PacketType::Datasets);
-  EXPECT_STREQ(L"datasets", result.name);
+  EXPECT_STREQ("datasets", result.name);
 
   result = XFA_GetPacketByIndex(XFA_PacketType::ConnectionSet);
-  EXPECT_STREQ(L"connectionSet", result.name);
+  EXPECT_STREQ("connectionSet", result.name);
 }
 
 TEST(XFABasicDataTest, GetElementByName) {

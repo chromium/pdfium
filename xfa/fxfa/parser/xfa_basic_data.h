@@ -35,8 +35,8 @@ struct XFA_PACKETINFO {
   XFA_PacketType packet_type;
   XFA_PacketMatch match;
   XFA_PacketSupport support;
-  const wchar_t* name;
-  const wchar_t* uri;
+  const char* name;
+  const char* uri;
 };
 
 struct XFA_ATTRIBUTEINFO {
