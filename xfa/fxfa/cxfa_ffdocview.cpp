@@ -60,6 +60,16 @@ const XFA_AttributeValue kXFAEventActivity[] = {
     XFA_AttributeValue::Unknown,
 };
 
+CXFA_FFDocView::UpdateScope::UpdateScope(CXFA_FFDocView* pDocView)
+    : m_pDocView(pDocView) {
+  m_pDocView->LockUpdate();
+}
+
+CXFA_FFDocView::UpdateScope::~UpdateScope() {
+  m_pDocView->UnlockUpdate();
+  m_pDocView->UpdateDocView();
+}
+
 CXFA_FFDocView::CXFA_FFDocView(CXFA_FFDoc* pDoc) : m_pDoc(pDoc) {}
 
 CXFA_FFDocView::~CXFA_FFDocView() = default;

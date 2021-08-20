@@ -281,11 +281,8 @@ void CXFA_FFNotify::OpenDropDownList(CXFA_Node* pNode) {
   if (!pComboBox)
     return;
 
-  CXFA_FFDocView* pDocView = m_pDoc->GetDocView();
-  pDocView->LockUpdate();
+  CXFA_FFDocView::UpdateScope scope(m_pDoc->GetDocView());
   pComboBox->OpenDropDownList();
-  pDocView->UnlockUpdate();
-  pDocView->UpdateDocView();
 }
 
 void CXFA_FFNotify::ResetData(CXFA_Node* pNode) {

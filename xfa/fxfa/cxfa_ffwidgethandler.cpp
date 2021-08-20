@@ -30,49 +30,37 @@ void CXFA_FFWidgetHandler::Trace(cppgc::Visitor* visitor) const {
 }
 
 bool CXFA_FFWidgetHandler::OnMouseEnter(CXFA_FFWidget* hWidget) {
-  m_pDocView->LockUpdate();
-  bool bRet = hWidget->OnMouseEnter();
-  m_pDocView->UnlockUpdate();
-  m_pDocView->UpdateDocView();
-  return bRet;
+  CXFA_FFDocView::UpdateScope scope(m_pDocView);
+  return hWidget->OnMouseEnter();
 }
 
 bool CXFA_FFWidgetHandler::OnMouseExit(CXFA_FFWidget* hWidget) {
-  m_pDocView->LockUpdate();
-  bool bRet = hWidget->OnMouseExit();
-  m_pDocView->UnlockUpdate();
-  m_pDocView->UpdateDocView();
-  return bRet;
+  CXFA_FFDocView::UpdateScope scope(m_pDocView);
+  return hWidget->OnMouseExit();
 }
 
 bool CXFA_FFWidgetHandler::OnLButtonDown(CXFA_FFWidget* hWidget,
                                          Mask<XFA_FWL_KeyFlag> dwFlags,
                                          const CFX_PointF& point) {
-  m_pDocView->LockUpdate();
-  bool bRet = hWidget->AcceptsFocusOnButtonDown(
-      dwFlags, hWidget->Rotate2Normal(point),
-      CFWL_MessageMouse::MouseCommand::kLeftButtonDown);
-  if (bRet) {
-    // May re-enter JS.
-    if (m_pDocView->SetFocus(hWidget))
-      m_pDocView->GetDoc()->SetFocusWidget(hWidget);
-
-    bRet = hWidget->OnLButtonDown(dwFlags, hWidget->Rotate2Normal(point));
+  CXFA_FFDocView::UpdateScope scope(m_pDocView);
+  if (!hWidget->AcceptsFocusOnButtonDown(
+          dwFlags, hWidget->Rotate2Normal(point),
+          CFWL_MessageMouse::MouseCommand::kLeftButtonDown)) {
+    return false;
   }
-  m_pDocView->UnlockUpdate();
-  m_pDocView->UpdateDocView();
-  return bRet;
+  // May re-enter JS.
+  if (m_pDocView->SetFocus(hWidget))
+    m_pDocView->GetDoc()->SetFocusWidget(hWidget);
+
+  return hWidget->OnLButtonDown(dwFlags, hWidget->Rotate2Normal(point));
 }
 
 bool CXFA_FFWidgetHandler::OnLButtonUp(CXFA_FFWidget* hWidget,
                                        Mask<XFA_FWL_KeyFlag> dwFlags,
                                        const CFX_PointF& point) {
-  m_pDocView->LockUpdate();
+  CXFA_FFDocView::UpdateScope scope(m_pDocView);
   m_pDocView->SetLayoutEvent();
-  bool bRet = hWidget->OnLButtonUp(dwFlags, hWidget->Rotate2Normal(point));
-  m_pDocView->UnlockUpdate();
-  m_pDocView->UpdateDocView();
-  return bRet;
+  return hWidget->OnLButtonUp(dwFlags, hWidget->Rotate2Normal(point));
 }
 
 bool CXFA_FFWidgetHandler::OnLButtonDblClk(CXFA_FFWidget* hWidget,

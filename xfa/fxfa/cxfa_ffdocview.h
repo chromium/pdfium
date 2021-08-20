@@ -32,6 +32,15 @@ class CXFA_FFDocView : public cppgc::GarbageCollected<CXFA_FFDocView> {
  public:
   enum class LayoutStatus : uint8_t { kNone, kStart, kDoing, kEnd };
 
+  class UpdateScope {
+   public:
+    explicit UpdateScope(CXFA_FFDocView* pDocView);
+    ~UpdateScope();
+
+   private:
+    UnownedPtr<CXFA_FFDocView> const m_pDocView;
+  };
+
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FFDocView();
 
