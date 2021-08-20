@@ -1059,7 +1059,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
 
   pBitmap->Clear(0);
   for (const TextGlyphPos& glyph : glyphs) {
-    if (!glyph.m_pGlyph)
+    if (!glyph.m_pGlyph || !glyph.m_pGlyph->GetBitmap()->IsMaskFormat())
       continue;
 
     Optional<CFX_Point> point = glyph.GetOrigin({rect.left, rect.top});
