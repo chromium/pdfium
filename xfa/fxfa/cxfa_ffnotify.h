@@ -15,6 +15,7 @@
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
+#include "xfa/fxfa/cxfa_ffdocview.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 
 class CXFA_FFWidgetHandler;
@@ -73,7 +74,7 @@ class CXFA_FFNotify : public cppgc::GarbageCollected<CXFA_FFNotify> {
   CXFA_FFWidgetHandler* GetWidgetHandler();
   void OpenDropDownList(CXFA_Node* pNode);
   void ResetData(CXFA_Node* pNode);
-  int32_t GetLayoutStatus();
+  CXFA_FFDocView::LayoutStatus GetLayoutStatus();
   void RunNodeInitialize(CXFA_Node* pNode);
   void RunSubformIndexChange(CXFA_Node* pSubformNode);
   CXFA_Node* GetFocusWidgetNode();

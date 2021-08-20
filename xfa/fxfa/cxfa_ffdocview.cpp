@@ -83,7 +83,7 @@ void CXFA_FFDocView::InitLayout(CXFA_Node* pNode) {
 }
 
 int32_t CXFA_FFDocView::StartLayout() {
-  m_iStatus = XFA_DOCVIEW_LAYOUTSTATUS_Start;
+  m_iStatus = LayoutStatus::kStart;
   m_pDoc->GetXFADoc()->DoProtoMerge();
   m_pDoc->GetXFADoc()->DoDataMerge();
 
@@ -101,7 +101,7 @@ int32_t CXFA_FFDocView::StartLayout() {
   InitValidate(pRootItem);
 
   ExecEventActivityByDeepFirst(pRootItem, XFA_EVENT_Ready, true, true);
-  m_iStatus = XFA_DOCVIEW_LAYOUTSTATUS_Start;
+  m_iStatus = LayoutStatus::kStart;
   return iStatus;
 }
 
@@ -110,7 +110,7 @@ int32_t CXFA_FFDocView::DoLayout() {
   if (iStatus != 100)
     return iStatus;
 
-  m_iStatus = XFA_DOCVIEW_LAYOUTSTATUS_Doing;
+  m_iStatus = LayoutStatus::kDoing;
   return iStatus;
 }
 
@@ -151,7 +151,7 @@ void CXFA_FFDocView::StopLayout() {
   if (m_pFocusNode && !m_pFocusWidget)
     SetFocusNode(m_pFocusNode);
 
-  m_iStatus = XFA_DOCVIEW_LAYOUTSTATUS_End;
+  m_iStatus = LayoutStatus::kEnd;
 }
 
 void CXFA_FFDocView::ShowNullTestMsg() {
@@ -338,7 +338,7 @@ void CXFA_FFDocView::SetFocusNode(CXFA_Node* node) {
     return;
 
   m_pFocusNode = node;
-  if (m_iStatus != XFA_DOCVIEW_LAYOUTSTATUS_End)
+  if (m_iStatus != LayoutStatus::kEnd)
     return;
 
   m_pDoc->SetFocusWidget(m_pFocusWidget);
@@ -689,7 +689,7 @@ void CXFA_FFDocView::RunBindItems() {
 }
 
 void CXFA_FFDocView::SetChangeMark() {
-  if (m_iStatus < XFA_DOCVIEW_LAYOUTSTATUS_End)
+  if (m_iStatus != LayoutStatus::kEnd)
     return;
 
   m_pDoc->SetChangeMark();

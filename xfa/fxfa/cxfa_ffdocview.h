@@ -28,25 +28,10 @@ class CXFA_ViewLayoutItem;
 
 extern const XFA_AttributeValue kXFAEventActivity[];
 
-enum XFA_DOCVIEW_LAYOUTSTATUS {
-  XFA_DOCVIEW_LAYOUTSTATUS_None,
-  XFA_DOCVIEW_LAYOUTSTATUS_Start,
-  XFA_DOCVIEW_LAYOUTSTATUS_FormInitialize,
-  XFA_DOCVIEW_LAYOUTSTATUS_FormInitCalculate,
-  XFA_DOCVIEW_LAYOUTSTATUS_FormInitValidate,
-  XFA_DOCVIEW_LAYOUTSTATUS_FormFormReady,
-  XFA_DOCVIEW_LAYOUTSTATUS_Doing,
-  XFA_DOCVIEW_LAYOUTSTATUS_PagesetInitialize,
-  XFA_DOCVIEW_LAYOUTSTATUS_PagesetInitCalculate,
-  XFA_DOCVIEW_LAYOUTSTATUS_PagesetInitValidate,
-  XFA_DOCVIEW_LAYOUTSTATUS_PagesetFormReady,
-  XFA_DOCVIEW_LAYOUTSTATUS_LayoutReady,
-  XFA_DOCVIEW_LAYOUTSTATUS_DocReady,
-  XFA_DOCVIEW_LAYOUTSTATUS_End
-};
-
 class CXFA_FFDocView : public cppgc::GarbageCollected<CXFA_FFDocView> {
  public:
+  enum class LayoutStatus : uint8_t { kNone, kStart, kDoing, kEnd };
+
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FFDocView();
 
@@ -56,7 +41,7 @@ class CXFA_FFDocView : public cppgc::GarbageCollected<CXFA_FFDocView> {
   int32_t StartLayout();
   int32_t DoLayout();
   void StopLayout();
-  int32_t GetLayoutStatus() const { return m_iStatus; }
+  LayoutStatus GetLayoutStatus() const { return m_iStatus; }
 
   void UpdateDocView();
   void UpdateUIDisplay(CXFA_Node* pNode, CXFA_FFWidget* pExcept);
@@ -131,7 +116,7 @@ class CXFA_FFDocView : public cppgc::GarbageCollected<CXFA_FFDocView> {
   std::list<cppgc::Member<CXFA_BindItems>> m_BindItems;
   std::list<cppgc::Member<CXFA_Node>> m_NewAddedNodes;
   std::list<cppgc::Member<CXFA_Node>> m_IndexChangedSubforms;
-  XFA_DOCVIEW_LAYOUTSTATUS m_iStatus = XFA_DOCVIEW_LAYOUTSTATUS_None;
+  LayoutStatus m_iStatus = LayoutStatus::kNone;
   int32_t m_iLock = 0;
 };
 

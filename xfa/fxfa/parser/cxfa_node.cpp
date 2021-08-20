@@ -2659,8 +2659,10 @@ XFA_EventError CXFA_Node::ProcessValidate(CXFA_FFDocView* pDocView,
   if (!validate)
     return XFA_EventError::kNotExist;
 
-  bool bInitDoc = validate->NeedsInitApp();
-  bool bStatus = pDocView->GetLayoutStatus() < XFA_DOCVIEW_LAYOUTSTATUS_End;
+  const bool bInitDoc = validate->NeedsInitApp();
+  const bool bStatus =
+      pDocView->GetLayoutStatus() != CXFA_FFDocView::LayoutStatus::kEnd;
+
   XFA_EventError iFormat = XFA_EventError::kNotExist;
   XFA_EventError iRet = XFA_EventError::kNotExist;
   CXFA_Script* script = validate->GetScriptIfExists();

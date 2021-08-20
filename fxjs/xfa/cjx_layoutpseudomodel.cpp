@@ -74,8 +74,10 @@ void CJX_LayoutPseudoModel::ready(v8::Isolate* pIsolate,
     return;
   }
 
-  int32_t iStatus = pNotify->GetLayoutStatus();
-  *pValue = fxv8::NewBooleanHelper(pIsolate, iStatus >= 2);
+  CXFA_FFDocView::LayoutStatus iStatus = pNotify->GetLayoutStatus();
+  const bool bReady = iStatus != CXFA_FFDocView::LayoutStatus::kNone &&
+                      iStatus != CXFA_FFDocView::LayoutStatus::kStart;
+  *pValue = fxv8::NewBooleanHelper(pIsolate, bReady);
 }
 
 CJS_Result CJX_LayoutPseudoModel::DoHWXYInternal(
