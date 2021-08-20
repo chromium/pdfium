@@ -41,6 +41,9 @@ class CXFA_FFDocView : public cppgc::GarbageCollected<CXFA_FFDocView> {
   int32_t StartLayout();
   int32_t DoLayout();
   void StopLayout();
+
+  void SetLayoutEvent() { m_bLayoutEvent = true; }
+  bool InLayoutStatus() const { return m_bInLayoutStatus; }
   LayoutStatus GetLayoutStatus() const { return m_iStatus; }
 
   void UpdateDocView();
@@ -85,10 +88,7 @@ class CXFA_FFDocView : public cppgc::GarbageCollected<CXFA_FFDocView> {
                                               bool bRecursive);
 
   void AddBindItem(CXFA_BindItems* item) { m_BindItems.push_back(item); }
-
-  bool m_bLayoutEvent = false;
-  bool m_bInLayoutStatus = false;
-  std::vector<WideString> m_NullTestMsgArray;
+  void AddNullTestMsg(const WideString& msg);
 
  private:
   explicit CXFA_FFDocView(CXFA_FFDoc* pDoc);
@@ -116,6 +116,9 @@ class CXFA_FFDocView : public cppgc::GarbageCollected<CXFA_FFDocView> {
   std::list<cppgc::Member<CXFA_BindItems>> m_BindItems;
   std::list<cppgc::Member<CXFA_Node>> m_NewAddedNodes;
   std::list<cppgc::Member<CXFA_Node>> m_IndexChangedSubforms;
+  std::vector<WideString> m_NullTestMsgArray;
+  bool m_bLayoutEvent = false;
+  bool m_bInLayoutStatus = false;
   LayoutStatus m_iStatus = LayoutStatus::kNone;
   int32_t m_iLock = 0;
 };

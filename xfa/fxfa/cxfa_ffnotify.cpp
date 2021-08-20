@@ -449,9 +449,9 @@ void CXFA_FFNotify::OnChildAdded(CXFA_Node* pSender) {
   if (!pDocView)
     return;
 
-  bool bLayoutReady =
-      !(pDocView->m_bInLayoutStatus) &&
-      (pDocView->GetLayoutStatus() == CXFA_FFDocView::LayoutStatus::kEnd);
+  const bool bLayoutReady =
+      !pDocView->InLayoutStatus() &&
+      pDocView->GetLayoutStatus() == CXFA_FFDocView::LayoutStatus::kEnd;
   if (bLayoutReady)
     m_pDoc->SetChangeMark();
 }
@@ -461,9 +461,9 @@ void CXFA_FFNotify::OnChildRemoved() {
   if (!pDocView)
     return;
 
-  bool bLayoutReady =
-      !(pDocView->m_bInLayoutStatus) &&
-      (pDocView->GetLayoutStatus() == CXFA_FFDocView::LayoutStatus::kEnd);
+  const bool bLayoutReady =
+      !pDocView->InLayoutStatus() &&
+      pDocView->GetLayoutStatus() == CXFA_FFDocView::LayoutStatus::kEnd;
   if (bLayoutReady)
     m_pDoc->SetChangeMark();
 }

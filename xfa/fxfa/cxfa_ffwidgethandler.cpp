@@ -68,7 +68,7 @@ bool CXFA_FFWidgetHandler::OnLButtonUp(CXFA_FFWidget* hWidget,
                                        Mask<XFA_FWL_KeyFlag> dwFlags,
                                        const CFX_PointF& point) {
   m_pDocView->LockUpdate();
-  m_pDocView->m_bLayoutEvent = true;
+  m_pDocView->SetLayoutEvent();
   bool bRet = hWidget->OnLButtonUp(dwFlags, hWidget->Rotate2Normal(point));
   m_pDocView->UnlockUpdate();
   m_pDocView->UpdateDocView();

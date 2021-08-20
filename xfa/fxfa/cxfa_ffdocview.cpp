@@ -154,6 +154,10 @@ void CXFA_FFDocView::StopLayout() {
   m_iStatus = LayoutStatus::kEnd;
 }
 
+void CXFA_FFDocView::AddNullTestMsg(const WideString& msg) {
+  m_NullTestMsgArray.push_back(msg);
+}
+
 void CXFA_FFDocView::ShowNullTestMsg() {
   int32_t iCount = fxcrt::CollectionSize<int32_t>(m_NullTestMsgArray);
   CXFA_FFApp* pApp = m_pDoc->GetApp();
