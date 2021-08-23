@@ -7,14 +7,10 @@
 #ifndef XFA_FXFA_PARSER_CXFA_STROKE_H_
 #define XFA_FXFA_PARSER_CXFA_STROKE_H_
 
+#include "core/fxcrt/mask.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "xfa/fxfa/fxfa_basic.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
-
-enum StrokeSameStyle {
-  XFA_STROKE_SAMESTYLE_NoPresence = 1,
-  XFA_STROKE_SAMESTYLE_Corner = 2
-};
 
 class CFGAS_GEGraphics;
 class CFGAS_GEPath;
@@ -26,6 +22,10 @@ void XFA_StrokeTypeSetLineDash(CFGAS_GEGraphics* pGraphics,
 
 class CXFA_Stroke : public CXFA_Node {
  public:
+  enum class SameStyleOption {
+    kNoPresence = 1 << 0,
+    kCorner = 1 << 1,
+  };
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Stroke() override;
 
@@ -45,7 +45,7 @@ class CXFA_Stroke : public CXFA_Node {
   FX_ARGB GetColor();
   void SetColor(FX_ARGB argb);
 
-  bool SameStyles(CXFA_Stroke* stroke, uint32_t dwFlags);
+  bool SameStyles(CXFA_Stroke* stroke, Mask<SameStyleOption> dwFlags);
 
   void Stroke(CFGAS_GEGraphics* pGS,
               const CFGAS_GEPath& pPath,

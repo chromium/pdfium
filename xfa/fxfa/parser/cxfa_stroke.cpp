@@ -149,12 +149,13 @@ float CXFA_Stroke::GetRadius() const {
       .ToUnit(XFA_Unit::Pt);
 }
 
-bool CXFA_Stroke::SameStyles(CXFA_Stroke* stroke, uint32_t dwFlags) {
+bool CXFA_Stroke::SameStyles(CXFA_Stroke* stroke,
+                             Mask<SameStyleOption> dwFlags) {
   if (this == stroke)
     return true;
   if (fabs(GetThickness() - stroke->GetThickness()) >= 0.01f)
     return false;
-  if ((dwFlags & XFA_STROKE_SAMESTYLE_NoPresence) == 0 &&
+  if (!(dwFlags & SameStyleOption::kNoPresence) &&
       IsVisible() != stroke->IsVisible()) {
     return false;
   }
@@ -162,7 +163,7 @@ bool CXFA_Stroke::SameStyles(CXFA_Stroke* stroke, uint32_t dwFlags) {
     return false;
   if (GetColor() != stroke->GetColor())
     return false;
-  if ((dwFlags & XFA_STROKE_SAMESTYLE_Corner) != 0 &&
+  if ((dwFlags & CXFA_Stroke::SameStyleOption::kCorner) &&
       fabs(GetRadius() - stroke->GetRadius()) >= 0.01f) {
     return false;
   }
