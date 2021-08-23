@@ -285,8 +285,8 @@ void CPDFXFA_DocEnvironment::OnPageViewEvent(CXFA_FFPageView* pPageView,
   if (!pFormFillEnv)
     return;
 
-  if (m_pContext->GetLoadStatus() == FXFA_LOADSTATUS_LOADING ||
-      m_pContext->GetLoadStatus() == FXFA_LOADSTATUS_CLOSING ||
+  if (m_pContext->GetLoadStatus() == CPDFXFA_Context::LoadStatus::kLoading ||
+      m_pContext->GetLoadStatus() == CPDFXFA_Context::LoadStatus::kClosing ||
       eEvent != CXFA_FFDoc::PageViewEvent::kStopLayout) {
     return;
   }
