@@ -10,6 +10,7 @@
 #include <stdint.h>
 
 #include "core/fxcrt/fx_string.h"
+#include "fxbarcode/BC_Library.h"
 #include "fxbarcode/oned/BC_OnedEANWriter.h"
 
 class CFX_RenderDevice;
@@ -21,7 +22,7 @@ class CBC_OnedEAN13Writer final : public CBC_OneDimEANWriter {
 
   // CBC_OneDimEANWriter:
   uint8_t* EncodeWithHint(const ByteString& contents,
-                          BCFORMAT format,
+                          BC_TYPE format,
                           int32_t& outWidth,
                           int32_t& outHeight,
                           int32_t hints) override;

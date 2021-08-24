@@ -47,7 +47,7 @@ class CBC_OneDimWriter : public CBC_Writer {
   virtual void SetFontColor(FX_ARGB color);
 
   uint8_t* Encode(const ByteString& contents,
-                  BCFORMAT format,
+                  BC_TYPE format,
                   int32_t& outWidth,
                   int32_t& outHeight);
   bool RenderDeviceResult(CFX_RenderDevice* device,
@@ -57,7 +57,7 @@ class CBC_OneDimWriter : public CBC_Writer {
 
  protected:
   virtual uint8_t* EncodeWithHint(const ByteString& contents,
-                                  BCFORMAT format,
+                                  BC_TYPE format,
                                   int32_t& outWidth,
                                   int32_t& outHeight,
                                   int32_t hints);

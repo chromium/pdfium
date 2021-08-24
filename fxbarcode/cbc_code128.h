@@ -8,6 +8,7 @@
 #define FXBARCODE_CBC_CODE128_H_
 
 #include "core/fxcrt/fx_string.h"
+#include "fxbarcode/BC_Library.h"
 #include "fxbarcode/cbc_onecode.h"
 
 class CBC_OnedCode128Writer;

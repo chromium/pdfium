@@ -37,7 +37,7 @@ bool CBC_Code39::Encode(WideStringView contents) {
   if (!pWriter->CheckContentValidity(contents))
     return false;
 
-  BCFORMAT format = BCFORMAT_CODE_39;
+  BC_TYPE format = BC_CODE39;
   int32_t outWidth = 0;
   int32_t outHeight = 0;
   WideString filtercontents = pWriter->FilterContents(contents);

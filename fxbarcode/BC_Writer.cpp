@@ -10,7 +10,7 @@ CBC_Writer::CBC_Writer() = default;
 
 CBC_Writer::~CBC_Writer() = default;
 
-bool CBC_Writer::SetCharEncoding(int32_t encoding) {
+bool CBC_Writer::SetCharEncoding(BC_CHAR_ENCODING encoding) {
   m_CharEncoding = encoding;
   return true;
 }

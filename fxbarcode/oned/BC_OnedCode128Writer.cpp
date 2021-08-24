@@ -122,11 +122,11 @@ bool CBC_OnedCode128Writer::SetTextLocation(BC_TEXT_LOC location) {
 }
 
 uint8_t* CBC_OnedCode128Writer::EncodeWithHint(const ByteString& contents,
-                                               BCFORMAT format,
+                                               BC_TYPE format,
                                                int32_t& outWidth,
                                                int32_t& outHeight,
                                                int32_t hints) {
-  if (format != BCFORMAT_CODE_128)
+  if (format != BC_CODE128)
     return nullptr;
   return CBC_OneDimWriter::EncodeWithHint(contents, format, outWidth, outHeight,
                                           hints);

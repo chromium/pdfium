@@ -85,16 +85,16 @@ int32_t CBC_OnedUPCAWriter::CalcChecksum(const ByteString& contents) {
 }
 
 uint8_t* CBC_OnedUPCAWriter::EncodeWithHint(const ByteString& contents,
-                                            BCFORMAT format,
+                                            BC_TYPE format,
                                             int32_t& outWidth,
                                             int32_t& outHeight,
                                             int32_t hints) {
-  if (format != BCFORMAT_UPC_A)
+  if (format != BC_UPCA)
     return nullptr;
 
   ByteString toEAN13String = '0' + contents;
   m_iDataLenth = 13;
-  return m_subWriter->EncodeWithHint(toEAN13String, BCFORMAT_EAN_13, outWidth,
+  return m_subWriter->EncodeWithHint(toEAN13String, BC_EAN13, outWidth,
                                      outHeight, hints);
 }
 

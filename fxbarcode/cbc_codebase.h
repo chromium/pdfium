@@ -34,7 +34,7 @@ class CBC_CodeBase {
   bool SetStartChar(char start);
   bool SetEndChar(char end);
   bool SetErrorCorrectionLevel(int32_t level);
-  bool SetCharEncoding(int32_t encoding);
+  bool SetCharEncoding(BC_CHAR_ENCODING encoding);
   bool SetModuleHeight(int32_t moduleHeight);
   bool SetModuleWidth(int32_t moduleWidth);
   bool SetHeight(int32_t height);

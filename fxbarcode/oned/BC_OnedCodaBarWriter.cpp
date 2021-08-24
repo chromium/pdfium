@@ -125,11 +125,11 @@ WideString CBC_OnedCodaBarWriter::FilterContents(WideStringView contents) {
 }
 
 uint8_t* CBC_OnedCodaBarWriter::EncodeWithHint(const ByteString& contents,
-                                               BCFORMAT format,
+                                               BC_TYPE format,
                                                int32_t& outWidth,
                                                int32_t& outHeight,
                                                int32_t hints) {
-  if (format != BCFORMAT_CODABAR)
+  if (format != BC_CODABAR)
     return nullptr;
   return CBC_OneDimWriter::EncodeWithHint(contents, format, outWidth, outHeight,
                                           hints);

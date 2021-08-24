@@ -91,9 +91,9 @@ const BarCodeInfo kBarCodeData[] = {
 
 Optional<BC_CHAR_ENCODING> CharEncodingFromString(const WideString& value) {
   if (value.CompareNoCase(L"UTF-16"))
-    return CHAR_ENCODING_UNICODE;
+    return BC_CHAR_ENCODING_UNICODE;
   if (value.CompareNoCase(L"UTF-8"))
-    return CHAR_ENCODING_UTF8;
+    return BC_CHAR_ENCODING_UTF8;
   return pdfium::nullopt;
 }
 

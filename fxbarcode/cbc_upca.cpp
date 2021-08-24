@@ -33,10 +33,6 @@ BC_TYPE CBC_UPCA::GetType() {
   return BC_UPCA;
 }
 
-BCFORMAT CBC_UPCA::GetFormat() const {
-  return BCFORMAT_UPC_A;
-}
-
 size_t CBC_UPCA::GetMaxLength() const {
   return 11;
 }

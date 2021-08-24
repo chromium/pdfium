@@ -19,7 +19,6 @@ class CBC_EANCode : public CBC_OneCode {
   explicit CBC_EANCode(std::unique_ptr<CBC_OneDimEANWriter> pWriter);
   ~CBC_EANCode() override;
 
-  virtual BCFORMAT GetFormat() const = 0;
   virtual size_t GetMaxLength() const = 0;
 
   // CBC_EANCode:

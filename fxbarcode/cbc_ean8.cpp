@@ -33,10 +33,6 @@ BC_TYPE CBC_EAN8::GetType() {
   return BC_EAN8;
 }
 
-BCFORMAT CBC_EAN8::GetFormat() const {
-  return BCFORMAT_EAN_8;
-}
-
 size_t CBC_EAN8::GetMaxLength() const {
   return 7;
 }

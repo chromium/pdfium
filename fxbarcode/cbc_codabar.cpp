@@ -37,7 +37,7 @@ bool CBC_Codabar::Encode(WideStringView contents) {
   if (!pWriter->CheckContentValidity(contents))
     return false;
 
-  BCFORMAT format = BCFORMAT_CODABAR;
+  BC_TYPE format = BC_CODABAR;
   int32_t outWidth = 0;
   int32_t outHeight = 0;
   m_renderContents = pWriter->FilterContents(contents);

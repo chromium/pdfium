@@ -50,7 +50,7 @@ bool CBC_CodeBase::SetErrorCorrectionLevel(int32_t level) {
   return m_pBCWriter->SetErrorCorrectionLevel(level);
 }
 
-bool CBC_CodeBase::SetCharEncoding(int32_t encoding) {
+bool CBC_CodeBase::SetCharEncoding(BC_CHAR_ENCODING encoding) {
   return m_pBCWriter->SetCharEncoding(encoding);
 }
 

@@ -37,7 +37,7 @@ bool CBC_Code128::Encode(WideStringView contents) {
   if (!pWriter->CheckContentValidity(contents))
     return false;
 
-  BCFORMAT format = BCFORMAT_CODE_128;
+  BC_TYPE format = BC_CODE128;
   int32_t outWidth = 0;
   int32_t outHeight = 0;
   WideString content(contents);

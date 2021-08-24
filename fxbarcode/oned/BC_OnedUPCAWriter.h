@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "core/fxcrt/fx_string.h"
+#include "fxbarcode/BC_Library.h"
 #include "fxbarcode/oned/BC_OnedEANWriter.h"
 
 class CBC_OnedEAN13Writer;
@@ -23,7 +24,7 @@ class CBC_OnedUPCAWriter final : public CBC_OneDimEANWriter {
 
   // CBC_OneDimEANWriter:
   uint8_t* EncodeWithHint(const ByteString& contents,
-                          BCFORMAT format,
+                          BC_TYPE format,
                           int32_t& outWidth,
                           int32_t& outHeight,
                           int32_t hints) override;

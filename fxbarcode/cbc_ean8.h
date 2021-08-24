@@ -9,6 +9,7 @@
 
 #include <stddef.h>
 
+#include "fxbarcode/BC_Library.h"
 #include "fxbarcode/cbc_eancode.h"
 
 class CBC_EAN8 final : public CBC_EANCode {
@@ -18,7 +19,6 @@ class CBC_EAN8 final : public CBC_EANCode {
 
   // CBC_EANCode:
   BC_TYPE GetType() override;
-  BCFORMAT GetFormat() const override;
   size_t GetMaxLength() const override;
 };
 

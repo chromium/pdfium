@@ -17,7 +17,7 @@ class CBC_OnedCode39Writer final : public CBC_OneDimWriter {
 
   // CBC_OneDimWriter
   uint8_t* EncodeWithHint(const ByteString& contents,
-                          BCFORMAT format,
+                          BC_TYPE format,
                           int32_t& outWidth,
                           int32_t& outHeight,
                           int32_t hints) override;
