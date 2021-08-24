@@ -11,7 +11,6 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "fxbarcode/cbc_onecode.h"
-#include "fxbarcode/utils.h"
 
 class CBC_OneDimEANWriter;
 

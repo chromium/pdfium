@@ -131,7 +131,6 @@ source_set("fxbarcode") {
     "qrcode/BC_QRCoderMode.h",
     "qrcode/BC_QRCoderVersion.cpp",
     "qrcode/BC_QRCoderVersion.h",
-    "utils.h",
   ]
   deps = [
     "../core/fxcrt",
