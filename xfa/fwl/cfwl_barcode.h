@@ -60,7 +60,7 @@ class CFWL_Barcode final : public CFWL_Edit {
   void GenerateBarcodeImageCache();
   void CreateBarcodeEngine();
 
-  BC_TYPE m_type = BC_UNKNOWN;
+  BC_TYPE m_type = BC_TYPE::kUnknown;
   Status m_eStatus = Status::kNormal;
   Optional<BC_TEXT_LOC> m_eTextLocation;
   Optional<BC_CHAR_ENCODING> m_eCharEncoding;

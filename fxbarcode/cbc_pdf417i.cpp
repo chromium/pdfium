@@ -59,7 +59,7 @@ bool CBC_PDF417I::RenderDevice(CFX_RenderDevice* device,
 }
 
 BC_TYPE CBC_PDF417I::GetType() {
-  return BC_PDF417;
+  return BC_TYPE::kPDF417;
 }
 
 CBC_PDF417Writer* CBC_PDF417I::GetPDF417Writer() {

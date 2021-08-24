@@ -23,7 +23,7 @@ TEST(OnedCodaBarWriterTest, Encode) {
   int32_t width;
   int32_t height;
 
-  uint8_t* encoded = writer.Encode("", BC_CODABAR, width, height);
+  uint8_t* encoded = writer.Encode("", BC_TYPE::kCodabar, width, height);
   EXPECT_EQ(1, height);
   EXPECT_EQ(kModulesForDelimiters, width);
   const char* expected =
@@ -34,7 +34,7 @@ TEST(OnedCodaBarWriterTest, Encode) {
   }
   FX_Free(encoded);
 
-  encoded = writer.Encode("123", BC_CODABAR, width, height);
+  encoded = writer.Encode("123", BC_TYPE::kCodabar, width, height);
   EXPECT_EQ(1, height);
   EXPECT_EQ(kModulesForDelimiters + 3 * kModulesPerNumber, width);
   expected =
@@ -48,7 +48,7 @@ TEST(OnedCodaBarWriterTest, Encode) {
   }
   FX_Free(encoded);
 
-  encoded = writer.Encode("-$./:+", BC_CODABAR, width, height);
+  encoded = writer.Encode("-$./:+", BC_TYPE::kCodabar, width, height);
   EXPECT_EQ(1, height);
   EXPECT_EQ(kModulesForDelimiters + 2 * kModulesPerNumber +
                 4 * kModulesPerPunctuation,
@@ -67,7 +67,8 @@ TEST(OnedCodaBarWriterTest, Encode) {
   }
   FX_Free(encoded);
 
-  encoded = writer.Encode("456.987987987/001", BC_CODABAR, width, height);
+  encoded =
+      writer.Encode("456.987987987/001", BC_TYPE::kCodabar, width, height);
   EXPECT_EQ(1, height);
   EXPECT_EQ(kModulesForDelimiters + 15 * kModulesPerNumber +
                 2 * kModulesPerPunctuation,
@@ -132,7 +133,7 @@ TEST(OnedCodaBarWriterTest, SetDelimiters) {
   writer.SetStartChar('N');
   writer.SetEndChar('*');
 
-  uint8_t* encoded = writer.Encode("987", BC_CODABAR, width, height);
+  uint8_t* encoded = writer.Encode("987", BC_TYPE::kCodabar, width, height);
   EXPECT_EQ(1, height);
   EXPECT_EQ(kModulesForDelimiters + 3 * kModulesPerNumber, width);
   const char* expected =

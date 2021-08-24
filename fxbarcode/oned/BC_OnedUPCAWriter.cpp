@@ -89,12 +89,12 @@ uint8_t* CBC_OnedUPCAWriter::EncodeWithHint(const ByteString& contents,
                                             int32_t& outWidth,
                                             int32_t& outHeight,
                                             int32_t hints) {
-  if (format != BC_UPCA)
+  if (format != BC_TYPE::kUPCA)
     return nullptr;
 
   ByteString toEAN13String = '0' + contents;
   m_iDataLenth = 13;
-  return m_subWriter->EncodeWithHint(toEAN13String, BC_EAN13, outWidth,
+  return m_subWriter->EncodeWithHint(toEAN13String, BC_TYPE::kEAN13, outWidth,
                                      outHeight, hints);
 }
 

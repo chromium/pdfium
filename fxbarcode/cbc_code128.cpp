@@ -37,11 +37,11 @@ bool CBC_Code128::Encode(WideStringView contents) {
   if (!pWriter->CheckContentValidity(contents))
     return false;
 
-  BC_TYPE format = BC_CODE128;
+  BC_TYPE format = BC_TYPE::kCode128;
   int32_t outWidth = 0;
   int32_t outHeight = 0;
   WideString content(contents);
-  if (contents.GetLength() % 2 && pWriter->GetType() == BC_CODE128_C)
+  if (contents.GetLength() % 2 && pWriter->GetType() == BC_TYPE::kCode128C)
     content += '0';
 
   m_renderContents = pWriter->FilterContents(content.AsStringView());
@@ -59,7 +59,7 @@ bool CBC_Code128::RenderDevice(CFX_RenderDevice* device,
 }
 
 BC_TYPE CBC_Code128::GetType() {
-  return BC_CODE128;
+  return BC_TYPE::kCode128;
 }
 
 CBC_OnedCode128Writer* CBC_Code128::GetOnedCode128Writer() {

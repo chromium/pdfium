@@ -47,7 +47,7 @@ bool CBC_QRCode::RenderDevice(CFX_RenderDevice* device,
 }
 
 BC_TYPE CBC_QRCode::GetType() {
-  return BC_QR_CODE;
+  return BC_TYPE::kQRCode;
 }
 
 CBC_QRCodeWriter* CBC_QRCode::GetQRCodeWriter() {

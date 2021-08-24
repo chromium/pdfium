@@ -30,7 +30,7 @@ CBC_UPCA::CBC_UPCA() : CBC_EANCode(std::make_unique<CBC_OnedUPCAWriter>()) {}
 CBC_UPCA::~CBC_UPCA() = default;
 
 BC_TYPE CBC_UPCA::GetType() {
-  return BC_UPCA;
+  return BC_TYPE::kUPCA;
 }
 
 size_t CBC_UPCA::GetMaxLength() const {

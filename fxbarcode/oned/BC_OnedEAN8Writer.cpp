@@ -93,8 +93,9 @@ uint8_t* CBC_OnedEAN8Writer::EncodeWithHint(const ByteString& contents,
                                             int32_t& outWidth,
                                             int32_t& outHeight,
                                             int32_t hints) {
-  if (format != BC_EAN8)
+  if (format != BC_TYPE::kEAN8)
     return nullptr;
+
   return CBC_OneDimWriter::EncodeWithHint(contents, format, outWidth, outHeight,
                                           hints);
 }

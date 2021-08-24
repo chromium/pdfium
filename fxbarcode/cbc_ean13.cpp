@@ -30,7 +30,7 @@ CBC_EAN13::CBC_EAN13() : CBC_EANCode(std::make_unique<CBC_OnedEAN13Writer>()) {}
 CBC_EAN13::~CBC_EAN13() = default;
 
 BC_TYPE CBC_EAN13::GetType() {
-  return BC_EAN13;
+  return BC_TYPE::kEAN13;
 }
 
 size_t CBC_EAN13::GetMaxLength() const {

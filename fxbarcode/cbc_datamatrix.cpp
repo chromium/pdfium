@@ -49,7 +49,7 @@ bool CBC_DataMatrix::RenderDevice(CFX_RenderDevice* device,
 }
 
 BC_TYPE CBC_DataMatrix::GetType() {
-  return BC_DATAMATRIX;
+  return BC_TYPE::kDataMatrix;
 }
 
 CBC_DataMatrixWriter* CBC_DataMatrix::GetDataMatrixWriter() {

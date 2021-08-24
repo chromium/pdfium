@@ -37,7 +37,7 @@ bool CBC_Code39::Encode(WideStringView contents) {
   if (!pWriter->CheckContentValidity(contents))
     return false;
 
-  BC_TYPE format = BC_CODE39;
+  BC_TYPE format = BC_TYPE::kCode39;
   int32_t outWidth = 0;
   int32_t outHeight = 0;
   WideString filtercontents = pWriter->FilterContents(contents);
@@ -59,7 +59,7 @@ bool CBC_Code39::RenderDevice(CFX_RenderDevice* device,
 }
 
 BC_TYPE CBC_Code39::GetType() {
-  return BC_CODE39;
+  return BC_TYPE::kCode39;
 }
 
 CBC_OnedCode39Writer* CBC_Code39::GetOnedCode39Writer() {

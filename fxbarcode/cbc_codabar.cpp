@@ -37,7 +37,7 @@ bool CBC_Codabar::Encode(WideStringView contents) {
   if (!pWriter->CheckContentValidity(contents))
     return false;
 
-  BC_TYPE format = BC_CODABAR;
+  BC_TYPE format = BC_TYPE::kCodabar;
   int32_t outWidth = 0;
   int32_t outHeight = 0;
   m_renderContents = pWriter->FilterContents(contents);
@@ -57,7 +57,7 @@ bool CBC_Codabar::RenderDevice(CFX_RenderDevice* device,
 }
 
 BC_TYPE CBC_Codabar::GetType() {
-  return BC_CODABAR;
+  return BC_TYPE::kCodabar;
 }
 
 CBC_OnedCodaBarWriter* CBC_Codabar::GetOnedCodaBarWriter() {
