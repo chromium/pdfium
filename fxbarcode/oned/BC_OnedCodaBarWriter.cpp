@@ -75,12 +75,8 @@ void CBC_OnedCodaBarWriter::SetDataLength(int32_t length) {
   m_iDataLenth = length + 2;
 }
 
-bool CBC_OnedCodaBarWriter::SetTextLocation(BC_TEXT_LOC location) {
-  if (location < BC_TEXT_LOC_NONE || location > BC_TEXT_LOC_BELOWEMBED) {
-    return false;
-  }
+void CBC_OnedCodaBarWriter::SetTextLocation(BC_TEXT_LOC location) {
   m_locTextLoc = location;
-  return true;
 }
 
 bool CBC_OnedCodaBarWriter::SetWideNarrowRatio(int8_t ratio) {

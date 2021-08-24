@@ -99,7 +99,7 @@ class CBC_OneDimWriter : public CBC_Writer {
   float m_fFontSize = 10.0f;
   int32_t m_iFontStyle = 0;
   uint32_t m_fontColor = 0xff000000;
-  BC_TEXT_LOC m_locTextLoc = BC_TEXT_LOC_BELOWEMBED;
+  BC_TEXT_LOC m_locTextLoc = BC_TEXT_LOC::kBelowEmbed;
 
   int32_t m_iDataLenth = 0;
   size_t m_iContentLen = 0;

@@ -9,17 +9,17 @@
 
 #include <stdint.h>
 
-enum BC_TEXT_LOC : uint8_t {
-  BC_TEXT_LOC_NONE = 0,
-  BC_TEXT_LOC_ABOVE,
-  BC_TEXT_LOC_BELOW,
-  BC_TEXT_LOC_ABOVEEMBED,
-  BC_TEXT_LOC_BELOWEMBED
+enum class BC_TEXT_LOC : uint8_t {
+  kNone = 0,
+  kAbove,
+  kBelow,
+  kAboveEmbed,
+  kBelowEmbed,
 };
 
-enum BC_CHAR_ENCODING : uint8_t {
-  BC_CHAR_ENCODING_UTF8 = 0,
-  BC_CHAR_ENCODING_UNICODE
+enum class BC_CHAR_ENCODING : uint8_t {
+  kUTF8 = 0,
+  kUnicode,
 };
 
 enum BC_TYPE : int8_t {

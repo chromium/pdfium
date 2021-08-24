@@ -46,8 +46,7 @@ class CFX_Barcode {
   bool SetFontSize(float size);
   bool SetFontColor(FX_ARGB color);
 
-  bool SetTextLocation(BC_TEXT_LOC location);
-
+  void SetTextLocation(BC_TEXT_LOC location);
   bool SetWideNarrowRatio(int8_t ratio);
   bool SetStartChar(char start);
   bool SetEndChar(char end);

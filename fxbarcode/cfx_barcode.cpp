@@ -201,8 +201,9 @@ bool CFX_Barcode::SetFontColor(FX_ARGB color) {
   }
 }
 
-bool CFX_Barcode::SetTextLocation(BC_TEXT_LOC location) {
-  return m_pBCEngine && m_pBCEngine->SetTextLocation(location);
+void CFX_Barcode::SetTextLocation(BC_TEXT_LOC location) {
+  if (m_pBCEngine)
+    m_pBCEngine->SetTextLocation(location);
 }
 
 bool CFX_Barcode::SetWideNarrowRatio(int8_t ratio) {

@@ -91,24 +91,24 @@ const BarCodeInfo kBarCodeData[] = {
 
 Optional<BC_CHAR_ENCODING> CharEncodingFromString(const WideString& value) {
   if (value.CompareNoCase(L"UTF-16"))
-    return BC_CHAR_ENCODING_UNICODE;
+    return BC_CHAR_ENCODING::kUnicode;
   if (value.CompareNoCase(L"UTF-8"))
-    return BC_CHAR_ENCODING_UTF8;
+    return BC_CHAR_ENCODING::kUTF8;
   return pdfium::nullopt;
 }
 
 Optional<BC_TEXT_LOC> TextLocFromAttribute(XFA_AttributeValue value) {
   switch (value) {
     case XFA_AttributeValue::None:
-      return BC_TEXT_LOC_NONE;
+      return BC_TEXT_LOC::kNone;
     case XFA_AttributeValue::Above:
-      return BC_TEXT_LOC_ABOVE;
+      return BC_TEXT_LOC::kAbove;
     case XFA_AttributeValue::Below:
-      return BC_TEXT_LOC_BELOW;
+      return BC_TEXT_LOC::kBelow;
     case XFA_AttributeValue::AboveEmbedded:
-      return BC_TEXT_LOC_ABOVEEMBED;
+      return BC_TEXT_LOC::kAboveEmbed;
     case XFA_AttributeValue::BelowEmbedded:
-      return BC_TEXT_LOC_BELOWEMBED;
+      return BC_TEXT_LOC::kBelowEmbed;
     default:
       return pdfium::nullopt;
   }

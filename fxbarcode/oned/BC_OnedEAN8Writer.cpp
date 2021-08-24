@@ -57,12 +57,9 @@ void CBC_OnedEAN8Writer::SetDataLength(int32_t length) {
   m_iDataLenth = 8;
 }
 
-bool CBC_OnedEAN8Writer::SetTextLocation(BC_TEXT_LOC location) {
-  if (location == BC_TEXT_LOC_BELOWEMBED) {
+void CBC_OnedEAN8Writer::SetTextLocation(BC_TEXT_LOC location) {
+  if (location == BC_TEXT_LOC::kBelowEmbed)
     m_locTextLoc = location;
-    return true;
-  }
-  return false;
 }
 
 bool CBC_OnedEAN8Writer::CheckContentValidity(WideStringView contents) {

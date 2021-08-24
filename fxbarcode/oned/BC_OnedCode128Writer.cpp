@@ -113,12 +113,8 @@ WideString CBC_OnedCode128Writer::FilterContents(WideStringView contents) {
   return filtered;
 }
 
-bool CBC_OnedCode128Writer::SetTextLocation(BC_TEXT_LOC location) {
-  if (location < BC_TEXT_LOC_NONE || location > BC_TEXT_LOC_BELOWEMBED) {
-    return false;
-  }
+void CBC_OnedCode128Writer::SetTextLocation(BC_TEXT_LOC location) {
   m_locTextLoc = location;
-  return true;
 }
 
 uint8_t* CBC_OnedCode128Writer::EncodeWithHint(const ByteString& contents,
