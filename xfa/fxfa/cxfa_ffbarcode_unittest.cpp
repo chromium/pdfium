@@ -12,13 +12,13 @@ TEST(XFA_FFBarcode, GetBarcodeTypeByName) {
 
   auto* data = CXFA_FFBarcode::GetBarcodeTypeByName(L"ean13");
   ASSERT_NE(nullptr, data);
-  EXPECT_EQ(BarcodeType::ean13, data->eName);
+  EXPECT_EQ(BC_TYPE::kEAN13, data->eBCType);
 
   data = CXFA_FFBarcode::GetBarcodeTypeByName(L"pdf417");
   ASSERT_NE(nullptr, data);
-  EXPECT_EQ(BarcodeType::pdf417, data->eName);
+  EXPECT_EQ(BC_TYPE::kPDF417, data->eBCType);
 
   data = CXFA_FFBarcode::GetBarcodeTypeByName(L"code3Of9");
   ASSERT_NE(nullptr, data);
-  EXPECT_EQ(BarcodeType::code3Of9, data->eName);
+  EXPECT_EQ(BC_TYPE::kCode39, data->eBCType);
 }

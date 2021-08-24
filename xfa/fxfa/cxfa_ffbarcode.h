@@ -13,77 +13,11 @@
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_fftextedit.h"
 
-enum class BarcodeType {
-  aztec,
-  codabar,
-  code11,
-  code128,
-  code128A,
-  code128B,
-  code128C,
-  code128SSCC,
-  code2Of5Industrial,
-  code2Of5Interleaved,
-  code2Of5Matrix,
-  code2Of5Standard,
-  code3Of9,
-  code3Of9extended,
-  code49,
-  code93,
-  dataMatrix,
-  ean13,
-  ean13add2,
-  ean13add5,
-  ean13pwcd,
-  ean8,
-  ean8add2,
-  ean8add5,
-  fim,
-  logmars,
-  maxicode,
-  msi,
-  pdf417,
-  pdf417macro,
-  plessey,
-  postAUSCust2,
-  postAUSCust3,
-  postAUSReplyPaid,
-  postAUSStandard,
-  postUKRM4SCC,
-  postUS5Zip,
-  postUSDPBC,
-  postUSIMB,
-  postUSStandard,
-  QRCode,
-  rfid,
-  rss14,
-  rss14Expanded,
-  rss14Limited,
-  rss14Stacked,
-  rss14StackedOmni,
-  rss14Truncated,
-  telepen,
-  ucc128,
-  ucc128random,
-  ucc128sscc,
-  upcA,
-  upcAadd2,
-  upcAadd5,
-  upcApwcd,
-  upcE,
-  upcEadd2,
-  upcEadd5,
-  upcean2,
-  upcean5,
-  upsMaxicode
-};
-
 struct BarCodeInfo {
   // |pName| hashed as if wide string.
   uint32_t uHash;
   // Inline string data reduces size for small strings.
   const char pName[20];
-  BarcodeType eName;
   BC_TYPE eBCType;
 };
 
