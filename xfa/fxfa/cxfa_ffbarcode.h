@@ -13,19 +13,11 @@
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_fftextedit.h"
 
-struct BarCodeInfo {
-  // |pName| hashed as if wide string.
-  uint32_t uHash;
-  // Inline string data reduces size for small strings.
-  const char pName[20];
-  BC_TYPE eBCType;
-};
-
 class CXFA_Barcode;
 
 class CXFA_FFBarcode final : public CXFA_FFTextEdit {
  public:
-  static const BarCodeInfo* GetBarcodeTypeByName(const WideString& wsName);
+  static BC_TYPE GetBarcodeTypeByName(const WideString& wsName);
 
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FFBarcode() override;

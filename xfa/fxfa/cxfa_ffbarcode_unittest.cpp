@@ -6,19 +6,13 @@
 
 #include "testing/gtest/include/gtest/gtest.h"
 
-TEST(XFA_FFBarcode, GetBarcodeTypeByName) {
-  EXPECT_EQ(nullptr, CXFA_FFBarcode::GetBarcodeTypeByName(L""));
-  EXPECT_EQ(nullptr, CXFA_FFBarcode::GetBarcodeTypeByName(L"not_found"));
+TEST(CXFA_FFBarcode, GetBarcodeTypeByName) {
+  EXPECT_EQ(BC_TYPE::kUnknown, CXFA_FFBarcode::GetBarcodeTypeByName(L""));
+  EXPECT_EQ(BC_TYPE::kUnknown,
+            CXFA_FFBarcode::GetBarcodeTypeByName(L"not_found"));
 
-  auto* data = CXFA_FFBarcode::GetBarcodeTypeByName(L"ean13");
-  ASSERT_NE(nullptr, data);
-  EXPECT_EQ(BC_TYPE::kEAN13, data->eBCType);
-
-  data = CXFA_FFBarcode::GetBarcodeTypeByName(L"pdf417");
-  ASSERT_NE(nullptr, data);
-  EXPECT_EQ(BC_TYPE::kPDF417, data->eBCType);
-
-  data = CXFA_FFBarcode::GetBarcodeTypeByName(L"code3Of9");
-  ASSERT_NE(nullptr, data);
-  EXPECT_EQ(BC_TYPE::kCode39, data->eBCType);
+  EXPECT_EQ(BC_TYPE::kEAN13, CXFA_FFBarcode::GetBarcodeTypeByName(L"ean13"));
+  EXPECT_EQ(BC_TYPE::kPDF417, CXFA_FFBarcode::GetBarcodeTypeByName(L"pdf417"));
+  EXPECT_EQ(BC_TYPE::kCode39,
+            CXFA_FFBarcode::GetBarcodeTypeByName(L"code3Of9"));
 }

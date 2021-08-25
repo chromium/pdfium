@@ -22,6 +22,12 @@
 
 namespace {
 
+struct BarCodeInfo {
+  uint32_t uHash;        // `pName` hashed as if wide string.
+  const char pName[20];  // Inline string data reduces size for small strings.
+  BC_TYPE eBCType;
+};
+
 const BarCodeInfo kBarCodeData[] = {
     {0x7fb4a18, "ean13", BC_TYPE::kEAN13},
     {0x8d13a3d, "code11", BC_TYPE::kUnknown},
@@ -115,10 +121,9 @@ Optional<BC_TEXT_LOC> TextLocFromAttribute(XFA_AttributeValue value) {
 }  // namespace.
 
 // static
-const BarCodeInfo* CXFA_FFBarcode::GetBarcodeTypeByName(
-    const WideString& wsName) {
+BC_TYPE CXFA_FFBarcode::GetBarcodeTypeByName(const WideString& wsName) {
   if (wsName.IsEmpty())
-    return nullptr;
+    return BC_TYPE::kUnknown;
 
   auto* it = std::lower_bound(
       std::begin(kBarCodeData), std::end(kBarCodeData),
@@ -126,9 +131,9 @@ const BarCodeInfo* CXFA_FFBarcode::GetBarcodeTypeByName(
       [](const BarCodeInfo& arg, uint32_t hash) { return arg.uHash < hash; });
 
   if (it != std::end(kBarCodeData) && wsName.EqualsASCII(it->pName))
-    return it;
+    return it->eBCType;
 
-  return nullptr;
+  return BC_TYPE::kUnknown;
 }
 
 CXFA_FFBarcode::CXFA_FFBarcode(CXFA_Node* pNode, CXFA_Barcode* barcode)
@@ -185,12 +190,12 @@ void CXFA_FFBarcode::RenderWidget(CFGAS_GEGraphics* pGS,
 void CXFA_FFBarcode::UpdateWidgetProperty() {
   CXFA_FFTextEdit::UpdateWidgetProperty();
 
-  const BarCodeInfo* info = GetBarcodeTypeByName(barcode_->GetBarcodeType());
-  if (!info)
+  BC_TYPE bc_type = GetBarcodeTypeByName(barcode_->GetBarcodeType());
+  if (bc_type == BC_TYPE::kUnknown)
     return;
 
   auto* pBarCodeWidget = static_cast<CFWL_Barcode*>(GetNormalWidget());
-  pBarCodeWidget->SetType(info->eBCType);
+  pBarCodeWidget->SetType(bc_type);
 
   Optional<WideString> encoding_string = barcode_->GetCharEncoding();
   if (encoding_string.has_value()) {
@@ -245,8 +250,8 @@ void CXFA_FFBarcode::UpdateWidgetProperty() {
   if (ratio.has_value())
     pBarCodeWidget->SetWideNarrowRatio(ratio.value());
 
-  if (info->eBCType == BC_TYPE::kCode39 || info->eBCType == BC_TYPE::kEAN8 ||
-      info->eBCType == BC_TYPE::kEAN13 || info->eBCType == BC_TYPE::kUPCA) {
+  if (bc_type == BC_TYPE::kCode39 || bc_type == BC_TYPE::kEAN8 ||
+      bc_type == BC_TYPE::kEAN13 || bc_type == BC_TYPE::kUPCA) {
     pBarCodeWidget->SetPrintChecksum(true);
   }
 }
