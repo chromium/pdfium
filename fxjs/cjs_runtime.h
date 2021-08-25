@@ -24,7 +24,7 @@ class CJS_Runtime final : public IJS_Runtime,
                           public CFXJS_Engine,
                           public Observable {
  public:
-  using FieldEvent = std::pair<WideString, JS_EVENT_T>;
+  using FieldEvent = std::pair<WideString, CJS_EventContext::Kind>;
 
   explicit CJS_Runtime(CPDFSDK_FormFillEnvironment* pFormFillEnv);
   ~CJS_Runtime() override;

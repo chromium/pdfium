@@ -36,7 +36,7 @@ Optional<IJS_Runtime::JS_Error> CJS_EventContext::RunScript(
   m_bBusy = true;
 
   DCHECK(IsValid());
-  CJS_Runtime::FieldEvent event(TargetName(), EventType());
+  CJS_Runtime::FieldEvent event(TargetName(), EventKind());
   if (!m_pRuntime->AddEventToSet(event)) {
     return IJS_Runtime::JS_Error(
         1, 1, JSGetStringFromID(JSMessage::kDuplicateEventError));
@@ -96,50 +96,50 @@ CJS_Field* CJS_EventContext::TargetField() {
 }
 
 void CJS_EventContext::OnDoc_Open(const WideString& strTargetName) {
-  Initialize(JET_DOC_OPEN);
+  Initialize(Kind::kDocOpen);
   m_strTargetName = strTargetName;
 }
 
 void CJS_EventContext::OnDoc_WillPrint() {
-  Initialize(JET_DOC_WILLPRINT);
+  Initialize(Kind::kDocWillPrint);
 }
 
 void CJS_EventContext::OnDoc_DidPrint() {
-  Initialize(JET_DOC_DIDPRINT);
+  Initialize(Kind::kDocDidPrint);
 }
 
 void CJS_EventContext::OnDoc_WillSave() {
-  Initialize(JET_DOC_WILLSAVE);
+  Initialize(Kind::kDocWillSave);
 }
 
 void CJS_EventContext::OnDoc_DidSave() {
-  Initialize(JET_DOC_DIDSAVE);
+  Initialize(Kind::kDocDidSave);
 }
 
 void CJS_EventContext::OnDoc_WillClose() {
-  Initialize(JET_DOC_WILLCLOSE);
+  Initialize(Kind::kDocWillClose);
 }
 
 void CJS_EventContext::OnPage_Open() {
-  Initialize(JET_PAGE_OPEN);
+  Initialize(Kind::kPageOpen);
 }
 
 void CJS_EventContext::OnPage_Close() {
-  Initialize(JET_PAGE_CLOSE);
+  Initialize(Kind::kPageClose);
 }
 
 void CJS_EventContext::OnPage_InView() {
-  Initialize(JET_PAGE_INVIEW);
+  Initialize(Kind::kPageInView);
 }
 
 void CJS_EventContext::OnPage_OutView() {
-  Initialize(JET_PAGE_OUTVIEW);
+  Initialize(Kind::kPageOutView);
 }
 
 void CJS_EventContext::OnField_MouseEnter(bool bModifier,
                                           bool bShift,
                                           CPDF_FormField* pTarget) {
-  Initialize(JET_FIELD_MOUSEENTER);
+  Initialize(Kind::kFieldMouseEnter);
   m_bModifier = bModifier;
   m_bShift = bShift;
   m_strTargetName = pTarget->GetFullName();
@@ -148,7 +148,7 @@ void CJS_EventContext::OnField_MouseEnter(bool bModifier,
 void CJS_EventContext::OnField_MouseExit(bool bModifier,
                                          bool bShift,
                                          CPDF_FormField* pTarget) {
-  Initialize(JET_FIELD_MOUSEEXIT);
+  Initialize(Kind::kFieldMouseExit);
   m_bModifier = bModifier;
   m_bShift = bShift;
   m_strTargetName = pTarget->GetFullName();
@@ -157,9 +157,7 @@ void CJS_EventContext::OnField_MouseExit(bool bModifier,
 void CJS_EventContext::OnField_MouseDown(bool bModifier,
                                          bool bShift,
                                          CPDF_FormField* pTarget) {
-  Initialize(JET_FIELD_MOUSEDOWN);
-  m_eEventType = JET_FIELD_MOUSEDOWN;
-
+  Initialize(Kind::kFieldMouseDown);
   m_bModifier = bModifier;
   m_bShift = bShift;
   m_strTargetName = pTarget->GetFullName();
@@ -168,8 +166,7 @@ void CJS_EventContext::OnField_MouseDown(bool bModifier,
 void CJS_EventContext::OnField_MouseUp(bool bModifier,
                                        bool bShift,
                                        CPDF_FormField* pTarget) {
-  Initialize(JET_FIELD_MOUSEUP);
-
+  Initialize(Kind::kFieldMouseUp);
   m_bModifier = bModifier;
   m_bShift = bShift;
   m_strTargetName = pTarget->GetFullName();
@@ -180,8 +177,7 @@ void CJS_EventContext::OnField_Focus(bool bModifier,
                                      CPDF_FormField* pTarget,
                                      WideString* pValue) {
   DCHECK(pValue);
-  Initialize(JET_FIELD_FOCUS);
-
+  Initialize(Kind::kFieldFocus);
   m_bModifier = bModifier;
   m_bShift = bShift;
   m_strTargetName = pTarget->GetFullName();
@@ -193,8 +189,7 @@ void CJS_EventContext::OnField_Blur(bool bModifier,
                                     CPDF_FormField* pTarget,
                                     WideString* pValue) {
   DCHECK(pValue);
-  Initialize(JET_FIELD_BLUR);
-
+  Initialize(Kind::kFieldBlur);
   m_bModifier = bModifier;
   m_bShift = bShift;
   m_strTargetName = pTarget->GetFullName();
@@ -218,8 +213,7 @@ void CJS_EventContext::OnField_Keystroke(WideString* strChange,
   DCHECK(pSelStart);
   DCHECK(pSelEnd);
 
-  Initialize(JET_FIELD_KEYSTROKE);
-
+  Initialize(Kind::kFieldKeystroke);
   m_nCommitKey = 0;
   m_pWideStrChange = strChange;
   m_WideStrChangeEx = strChangeEx;
@@ -245,9 +239,7 @@ void CJS_EventContext::OnField_Validate(WideString* strChange,
                                         bool* pbRc) {
   DCHECK(pValue);
   DCHECK(pbRc);
-
-  Initialize(JET_FIELD_VALIDATE);
-
+  Initialize(Kind::kFieldValidate);
   m_pWideStrChange = strChange;
   m_WideStrChangeEx = strChangeEx;
   m_bKeyDown = bKeyDown;
@@ -264,9 +256,7 @@ void CJS_EventContext::OnField_Calculate(CPDF_FormField* pSource,
                                          bool* pRc) {
   DCHECK(pValue);
   DCHECK(pRc);
-
-  Initialize(JET_FIELD_CALCULATE);
-
+  Initialize(Kind::kFieldCalculate);
   if (pSource)
     m_strSourceName = pSource->GetFullName();
   m_strTargetName = pTarget->GetFullName();
@@ -277,8 +267,7 @@ void CJS_EventContext::OnField_Calculate(CPDF_FormField* pSource,
 void CJS_EventContext::OnField_Format(CPDF_FormField* pTarget,
                                       WideString* pValue) {
   DCHECK(pValue);
-  Initialize(JET_FIELD_FORMAT);
-
+  Initialize(Kind::kFieldFormat);
   m_nCommitKey = 0;
   m_strTargetName = pTarget->GetFullName();
   m_pValue = pValue;
@@ -286,11 +275,11 @@ void CJS_EventContext::OnField_Format(CPDF_FormField* pTarget,
 }
 
 void CJS_EventContext::OnExternal_Exec() {
-  Initialize(JET_EXTERNAL_EXEC);
+  Initialize(Kind::kExternalExec);
 }
 
-void CJS_EventContext::Initialize(JS_EVENT_T type) {
-  m_eEventType = type;
+void CJS_EventContext::Initialize(Kind kind) {
+  m_eKind = kind;
   m_strTargetName.clear();
   m_strSourceName.clear();
   m_pWideStrChange = nullptr;
@@ -317,10 +306,10 @@ void CJS_EventContext::Destroy() {
 }
 
 bool CJS_EventContext::IsUserGesture() const {
-  switch (m_eEventType) {
-    case JET_FIELD_MOUSEDOWN:
-    case JET_FIELD_MOUSEUP:
-    case JET_FIELD_KEYSTROKE:
+  switch (m_eKind) {
+    case Kind::kFieldMouseDown:
+    case Kind::kFieldMouseUp:
+    case Kind::kFieldKeystroke:
       return true;
     default:
       return false;
@@ -332,48 +321,48 @@ WideString& CJS_EventContext::Change() {
 }
 
 ByteStringView CJS_EventContext::Name() const {
-  switch (m_eEventType) {
-    case JET_DOC_DIDPRINT:
+  switch (m_eKind) {
+    case Kind::kDocDidPrint:
       return "DidPrint";
-    case JET_DOC_DIDSAVE:
+    case Kind::kDocDidSave:
       return "DidSave";
-    case JET_DOC_OPEN:
+    case Kind::kDocOpen:
       return "Open";
-    case JET_DOC_WILLCLOSE:
+    case Kind::kDocWillClose:
       return "WillClose";
-    case JET_DOC_WILLPRINT:
+    case Kind::kDocWillPrint:
       return "WillPrint";
-    case JET_DOC_WILLSAVE:
+    case Kind::kDocWillSave:
       return "WillSave";
-    case JET_EXTERNAL_EXEC:
+    case Kind::kExternalExec:
       return "Exec";
-    case JET_FIELD_FOCUS:
+    case Kind::kFieldFocus:
       return "Focus";
-    case JET_FIELD_BLUR:
+    case Kind::kFieldBlur:
       return "Blur";
-    case JET_FIELD_MOUSEDOWN:
+    case Kind::kFieldMouseDown:
       return "Mouse Down";
-    case JET_FIELD_MOUSEUP:
+    case Kind::kFieldMouseUp:
       return "Mouse Up";
-    case JET_FIELD_MOUSEENTER:
+    case Kind::kFieldMouseEnter:
       return "Mouse Enter";
-    case JET_FIELD_MOUSEEXIT:
+    case Kind::kFieldMouseExit:
       return "Mouse Exit";
-    case JET_FIELD_CALCULATE:
+    case Kind::kFieldCalculate:
       return "Calculate";
-    case JET_FIELD_FORMAT:
+    case Kind::kFieldFormat:
       return "Format";
-    case JET_FIELD_KEYSTROKE:
+    case Kind::kFieldKeystroke:
       return "Keystroke";
-    case JET_FIELD_VALIDATE:
+    case Kind::kFieldValidate:
       return "Validate";
-    case JET_PAGE_OPEN:
+    case Kind::kPageOpen:
       return "Open";
-    case JET_PAGE_CLOSE:
+    case Kind::kPageClose:
       return "Close";
-    case JET_PAGE_INVIEW:
+    case Kind::kPageInView:
       return "InView";
-    case JET_PAGE_OUTVIEW:
+    case Kind::kPageOutView:
       return "OutView";
     default:
       return "";
@@ -381,31 +370,31 @@ ByteStringView CJS_EventContext::Name() const {
 }
 
 ByteStringView CJS_EventContext::Type() const {
-  switch (m_eEventType) {
-    case JET_DOC_DIDPRINT:
-    case JET_DOC_DIDSAVE:
-    case JET_DOC_OPEN:
-    case JET_DOC_WILLCLOSE:
-    case JET_DOC_WILLPRINT:
-    case JET_DOC_WILLSAVE:
+  switch (m_eKind) {
+    case Kind::kDocDidPrint:
+    case Kind::kDocDidSave:
+    case Kind::kDocOpen:
+    case Kind::kDocWillClose:
+    case Kind::kDocWillPrint:
+    case Kind::kDocWillSave:
       return "Doc";
-    case JET_EXTERNAL_EXEC:
+    case Kind::kExternalExec:
       return "External";
-    case JET_FIELD_BLUR:
-    case JET_FIELD_FOCUS:
-    case JET_FIELD_MOUSEDOWN:
-    case JET_FIELD_MOUSEENTER:
-    case JET_FIELD_MOUSEEXIT:
-    case JET_FIELD_MOUSEUP:
-    case JET_FIELD_CALCULATE:
-    case JET_FIELD_FORMAT:
-    case JET_FIELD_KEYSTROKE:
-    case JET_FIELD_VALIDATE:
+    case Kind::kFieldBlur:
+    case Kind::kFieldFocus:
+    case Kind::kFieldMouseDown:
+    case Kind::kFieldMouseUp:
+    case Kind::kFieldMouseEnter:
+    case Kind::kFieldMouseExit:
+    case Kind::kFieldCalculate:
+    case Kind::kFieldFormat:
+    case Kind::kFieldKeystroke:
+    case Kind::kFieldValidate:
       return "Field";
-    case JET_PAGE_OPEN:
-    case JET_PAGE_CLOSE:
-    case JET_PAGE_INVIEW:
-    case JET_PAGE_OUTVIEW:
+    case Kind::kPageOpen:
+    case Kind::kPageClose:
+    case Kind::kPageInView:
+    case Kind::kPageOutView:
       return "Page";
     default:
       return "";

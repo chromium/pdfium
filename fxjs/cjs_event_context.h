@@ -18,33 +18,33 @@
 class CJS_Field;
 class CJS_Runtime;
 
-enum JS_EVENT_T {
-  JET_UNKNOWN,
-  JET_DOC_OPEN,
-  JET_DOC_WILLPRINT,
-  JET_DOC_DIDPRINT,
-  JET_DOC_WILLSAVE,
-  JET_DOC_DIDSAVE,
-  JET_DOC_WILLCLOSE,
-  JET_PAGE_OPEN,
-  JET_PAGE_CLOSE,
-  JET_PAGE_INVIEW,
-  JET_PAGE_OUTVIEW,
-  JET_FIELD_MOUSEDOWN,
-  JET_FIELD_MOUSEUP,
-  JET_FIELD_MOUSEENTER,
-  JET_FIELD_MOUSEEXIT,
-  JET_FIELD_FOCUS,
-  JET_FIELD_BLUR,
-  JET_FIELD_KEYSTROKE,
-  JET_FIELD_VALIDATE,
-  JET_FIELD_CALCULATE,
-  JET_FIELD_FORMAT,
-  JET_EXTERNAL_EXEC,
-};
-
 class CJS_EventContext final : public IJS_EventContext {
  public:
+  enum class Kind : uint8_t {
+    kUnknown,
+    kDocOpen,
+    kDocWillPrint,
+    kDocDidPrint,
+    kDocWillSave,
+    kDocDidSave,
+    kDocWillClose,
+    kPageOpen,
+    kPageClose,
+    kPageInView,
+    kPageOutView,
+    kFieldMouseDown,
+    kFieldMouseUp,
+    kFieldMouseEnter,
+    kFieldMouseExit,
+    kFieldFocus,
+    kFieldBlur,
+    kFieldKeystroke,
+    kFieldValidate,
+    kFieldCalculate,
+    kFieldFormat,
+    kExternalExec,
+  };
+
   explicit CJS_EventContext(CJS_Runtime* pRuntime);
   ~CJS_EventContext() override;
 
@@ -114,7 +114,7 @@ class CJS_EventContext final : public IJS_EventContext {
   CJS_Field* SourceField();
   CJS_Field* TargetField();
 
-  JS_EVENT_T EventType() const { return m_eEventType; }
+  Kind EventKind() const { return m_eKind; }
   bool IsValid() const { return m_bValid; }
   bool IsUserGesture() const;
   WideString& Change();
@@ -145,13 +145,13 @@ class CJS_EventContext final : public IJS_EventContext {
   void ResetWillCommitForTest() { m_bWillCommit = false; }
 
  private:
-  void Initialize(JS_EVENT_T type);
+  void Initialize(Kind kind);
   void Destroy();
 
   UnownedPtr<CJS_Runtime> const m_pRuntime;
   ObservedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
+  Kind m_eKind = Kind::kUnknown;
   bool m_bBusy = false;
-  JS_EVENT_T m_eEventType = JET_UNKNOWN;
   bool m_bValid = false;
   UnownedPtr<WideString> m_pValue;
   WideString m_strSourceName;
