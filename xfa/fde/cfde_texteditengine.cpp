@@ -666,13 +666,13 @@ void CFDE_TextEditEngine::EnableMultiLine(bool val) {
   if (is_multiline_ == val)
     return;
 
-  is_multiline_ = true;
-
+  is_multiline_ = val;
   uint32_t style = text_break_.GetLayoutStyles();
   if (is_multiline_)
     style &= ~FX_LAYOUTSTYLE_SingleLine;
   else
     style |= FX_LAYOUTSTYLE_SingleLine;
+
   text_break_.SetLayoutStyles(style);
   is_dirty_ = true;
 }
