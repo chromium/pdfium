@@ -19,13 +19,12 @@ namespace {
 CFX_GraphStateData::LineCap LineCapToFXGE(XFA_AttributeValue iLineCap) {
   switch (iLineCap) {
     case XFA_AttributeValue::Round:
-      return CFX_GraphStateData::LineCapRound;
+      return CFX_GraphStateData::LineCap::kRound;
     case XFA_AttributeValue::Butt:
-      return CFX_GraphStateData::LineCapButt;
+      return CFX_GraphStateData::LineCap::kButt;
     default:
-      break;
+      return CFX_GraphStateData::LineCap::kSquare;
   }
-  return CFX_GraphStateData::LineCapSquare;
 }
 
 }  // namespace

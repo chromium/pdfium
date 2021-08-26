@@ -228,10 +228,10 @@ void RasterizeStroke(agg::rasterizer_scanline_aa* rasterizer,
                      bool bTextMode) {
   agg::line_cap_e cap;
   switch (pGraphState->m_LineCap) {
-    case CFX_GraphStateData::LineCapRound:
+    case CFX_GraphStateData::LineCap::kRound:
       cap = agg::round_cap;
       break;
-    case CFX_GraphStateData::LineCapSquare:
+    case CFX_GraphStateData::LineCap::kSquare:
       cap = agg::square_cap;
       break;
     default:
@@ -240,10 +240,10 @@ void RasterizeStroke(agg::rasterizer_scanline_aa* rasterizer,
   }
   agg::line_join_e join;
   switch (pGraphState->m_LineJoin) {
-    case CFX_GraphStateData::LineJoinRound:
+    case CFX_GraphStateData::LineJoin::kRound:
       join = agg::round_join;
       break;
-    case CFX_GraphStateData::LineJoinBevel:
+    case CFX_GraphStateData::LineJoin::kBevel:
       join = agg::bevel_join;
       break;
     default:

@@ -186,7 +186,7 @@ void CXFA_Stroke::Stroke(CFGAS_GEGraphics* pGS,
 
   pGS->SetLineWidth(fThickness);
   pGS->EnableActOnDash();
-  pGS->SetLineCap(CFX_GraphStateData::LineCapButt);
+  pGS->SetLineCap(CFX_GraphStateData::LineCap::kButt);
   XFA_StrokeTypeSetLineDash(pGS, GetStrokeType(), XFA_AttributeValue::Butt);
   pGS->SetStrokeColor(CFGAS_GEColor(GetColor()));
   pGS->StrokePath(pPath, matrix);

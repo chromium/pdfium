@@ -1572,10 +1572,10 @@ void CFX_SkiaDeviceDriver::PaintStroke(SkPaint* spaint,
                                        const SkMatrix& matrix) {
   SkPaint::Cap cap;
   switch (pGraphState->m_LineCap) {
-    case CFX_GraphStateData::LineCapRound:
+    case CFX_GraphStateData::LineCap::kRound:
       cap = SkPaint::kRound_Cap;
       break;
-    case CFX_GraphStateData::LineCapSquare:
+    case CFX_GraphStateData::LineCap::kSquare:
       cap = SkPaint::kSquare_Cap;
       break;
     default:
@@ -1584,10 +1584,10 @@ void CFX_SkiaDeviceDriver::PaintStroke(SkPaint* spaint,
   }
   SkPaint::Join join;
   switch (pGraphState->m_LineJoin) {
-    case CFX_GraphStateData::LineJoinRound:
+    case CFX_GraphStateData::LineJoin::kRound:
       join = SkPaint::kRound_Join;
       break;
-    case CFX_GraphStateData::LineJoinBevel:
+    case CFX_GraphStateData::LineJoin::kBevel:
       join = SkPaint::kBevel_Join;
       break;
     default:

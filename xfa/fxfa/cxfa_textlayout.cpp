@@ -1280,8 +1280,8 @@ void CXFA_TextLayout::RenderPath(CFX_RenderDevice* pDevice,
   }
 
   CFX_GraphStateData graphState;
-  graphState.m_LineCap = CFX_GraphStateData::LineCapButt;
-  graphState.m_LineJoin = CFX_GraphStateData::LineJoinMiter;
+  graphState.m_LineCap = CFX_GraphStateData::LineCap::kButt;
+  graphState.m_LineJoin = CFX_GraphStateData::LineJoin::kMiter;
   graphState.m_LineWidth = 1;
   graphState.m_MiterLimit = 10;
   graphState.m_DashPhase = 0;

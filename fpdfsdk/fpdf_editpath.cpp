@@ -15,20 +15,25 @@
 #include "third_party/base/span.h"
 
 // These checks are here because core/ and public/ cannot depend on each other.
-static_assert(CFX_GraphStateData::LineCapButt == FPDF_LINECAP_BUTT,
-              "CFX_GraphStateData::LineCapButt value mismatch");
-static_assert(CFX_GraphStateData::LineCapRound == FPDF_LINECAP_ROUND,
-              "CFX_GraphStateData::LineCapRound value mismatch");
-static_assert(CFX_GraphStateData::LineCapSquare ==
+static_assert(static_cast<int>(CFX_GraphStateData::LineCap::kButt) ==
+                  FPDF_LINECAP_BUTT,
+              "CFX_GraphStateData::LineCap::kButt value mismatch");
+static_assert(static_cast<int>(CFX_GraphStateData::LineCap::kRound) ==
+                  FPDF_LINECAP_ROUND,
+              "CFX_GraphStateData::LineCap::kRound value mismatch");
+static_assert(static_cast<int>(CFX_GraphStateData::LineCap::kSquare) ==
                   FPDF_LINECAP_PROJECTING_SQUARE,
-              "CFX_GraphStateData::LineCapSquare value mismatch");
+              "CFX_GraphStateData::LineCap::kSquare value mismatch");
 
-static_assert(CFX_GraphStateData::LineJoinMiter == FPDF_LINEJOIN_MITER,
-              "CFX_GraphStateData::LineJoinMiter value mismatch");
-static_assert(CFX_GraphStateData::LineJoinRound == FPDF_LINEJOIN_ROUND,
-              "CFX_GraphStateData::LineJoinRound value mismatch");
-static_assert(CFX_GraphStateData::LineJoinBevel == FPDF_LINEJOIN_BEVEL,
-              "CFX_GraphStateData::LineJoinBevel value mismatch");
+static_assert(static_cast<int>(CFX_GraphStateData::LineJoin::kMiter) ==
+                  FPDF_LINEJOIN_MITER,
+              "CFX_GraphStateData::LineJoin::kMiter value mismatch");
+static_assert(static_cast<int>(CFX_GraphStateData::LineJoin::kRound) ==
+                  FPDF_LINEJOIN_ROUND,
+              "CFX_GraphStateData::LineJoin::kRound value mismatch");
+static_assert(static_cast<int>(CFX_GraphStateData::LineJoin::kBevel) ==
+                  FPDF_LINEJOIN_BEVEL,
+              "CFX_GraphStateData::LineJoin::kBevel value mismatch");
 
 static_assert(static_cast<int>(CFX_Path::Point::Type::kLine) ==
                   FPDF_SEGMENT_LINETO,

@@ -849,7 +849,7 @@ FPDFPageObj_GetStrokeWidth(FPDF_PAGEOBJECT page_object, float* width) {
 FPDF_EXPORT int FPDF_CALLCONV
 FPDFPageObj_GetLineJoin(FPDF_PAGEOBJECT page_object) {
   auto* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
-  return pPageObj ? pPageObj->m_GraphState.GetLineJoin() : -1;
+  return pPageObj ? static_cast<int>(pPageObj->m_GraphState.GetLineJoin()) : -1;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -858,11 +858,7 @@ FPDFPageObj_SetLineJoin(FPDF_PAGEOBJECT page_object, int line_join) {
   if (!pPageObj)
     return false;
 
-  constexpr int kLineJoinMiter =
-      static_cast<int>(CFX_GraphStateData::LineJoin::LineJoinMiter);
-  constexpr int kLineJoinBevel =
-      static_cast<int>(CFX_GraphStateData::LineJoin::LineJoinBevel);
-  if (line_join < kLineJoinMiter || line_join > kLineJoinBevel)
+  if (line_join < FPDF_LINEJOIN_MITER || line_join > FPDF_LINEJOIN_BEVEL)
     return false;
 
   pPageObj->m_GraphState.SetLineJoin(
@@ -874,7 +870,7 @@ FPDFPageObj_SetLineJoin(FPDF_PAGEOBJECT page_object, int line_join) {
 FPDF_EXPORT int FPDF_CALLCONV
 FPDFPageObj_GetLineCap(FPDF_PAGEOBJECT page_object) {
   auto* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
-  return pPageObj ? pPageObj->m_GraphState.GetLineCap() : -1;
+  return pPageObj ? static_cast<int>(pPageObj->m_GraphState.GetLineCap()) : -1;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -883,13 +879,10 @@ FPDFPageObj_SetLineCap(FPDF_PAGEOBJECT page_object, int line_cap) {
   if (!pPageObj)
     return false;
 
-  constexpr int kLineCapButt =
-      static_cast<int>(CFX_GraphStateData::LineCap::LineCapButt);
-  constexpr int kLineCapSquare =
-      static_cast<int>(CFX_GraphStateData::LineCap::LineCapSquare);
-  if (line_cap < kLineCapButt || line_cap > kLineCapSquare)
+  if (line_cap < FPDF_LINECAP_BUTT ||
+      line_cap > FPDF_LINECAP_PROJECTING_SQUARE) {
     return false;
-
+  }
   pPageObj->m_GraphState.SetLineCap(
       static_cast<CFX_GraphStateData::LineCap>(line_cap));
   pPageObj->SetDirty(true);

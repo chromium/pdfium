@@ -440,10 +440,10 @@ void CPDF_PageContentGenerator::ProcessGraphics(std::ostringstream* buf,
   if (lineWidth != 1.0f)
     WriteFloat(*buf, lineWidth) << " w ";
   CFX_GraphStateData::LineCap lineCap = pPageObj->m_GraphState.GetLineCap();
-  if (lineCap != CFX_GraphStateData::LineCapButt)
+  if (lineCap != CFX_GraphStateData::LineCap::kButt)
     *buf << static_cast<int>(lineCap) << " J ";
   CFX_GraphStateData::LineJoin lineJoin = pPageObj->m_GraphState.GetLineJoin();
-  if (lineJoin != CFX_GraphStateData::LineJoinMiter)
+  if (lineJoin != CFX_GraphStateData::LineJoin::kMiter)
     *buf << static_cast<int>(lineJoin) << " j ";
 
   const CPDF_ClipPath& clip_path = pPageObj->m_ClipPath;
@@ -504,8 +504,8 @@ void CPDF_PageContentGenerator::ProcessGraphics(std::ostringstream* buf,
 void CPDF_PageContentGenerator::ProcessDefaultGraphics(
     std::ostringstream* buf) {
   *buf << "0 0 0 RG 0 0 0 rg 1 w "
-       << static_cast<int>(CFX_GraphStateData::LineCapButt) << " J "
-       << static_cast<int>(CFX_GraphStateData::LineJoinMiter) << " j\n";
+       << static_cast<int>(CFX_GraphStateData::LineCap::kButt) << " J "
+       << static_cast<int>(CFX_GraphStateData::LineJoin::kMiter) << " j\n";
   ByteString name = GetOrCreateDefaultGraphics();
   *buf << "/" << PDF_NameEncode(name) << " gs ";
 }

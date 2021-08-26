@@ -79,7 +79,7 @@ void CommonTest(CFX_SkiaDeviceDriver* driver, const State& state) {
   path2.AppendRect(0, 0, 2, 2);
   if (state.m_change == State::Change::kYes) {
     if (state.m_graphic == State::Graphic::kPath)
-      graphState.m_LineCap = CFX_GraphStateData::LineCapRound;
+      graphState.m_LineCap = CFX_GraphStateData::LineCap::kRound;
     else if (state.m_graphic == State::Graphic::kText)
       fontSize = 2;
   }

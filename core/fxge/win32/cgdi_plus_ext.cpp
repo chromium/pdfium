@@ -361,15 +361,15 @@ Gdiplus::GpPen* GdipCreatePenImpl(const CFX_GraphStateData* pGraphState,
   Gdiplus::DashCap dashCap = Gdiplus::DashCapFlat;
   bool bDashExtend = false;
   switch (pGraphState->m_LineCap) {
-    case CFX_GraphStateData::LineCapButt:
+    case CFX_GraphStateData::LineCap::kButt:
       lineCap = Gdiplus::LineCapFlat;
       break;
-    case CFX_GraphStateData::LineCapRound:
+    case CFX_GraphStateData::LineCap::kRound:
       lineCap = Gdiplus::LineCapRound;
       dashCap = Gdiplus::DashCapRound;
       bDashExtend = true;
       break;
-    case CFX_GraphStateData::LineCapSquare:
+    case CFX_GraphStateData::LineCap::kSquare:
       lineCap = Gdiplus::LineCapSquare;
       bDashExtend = true;
       break;
@@ -377,13 +377,13 @@ Gdiplus::GpPen* GdipCreatePenImpl(const CFX_GraphStateData* pGraphState,
   CallFunc(GdipSetPenLineCap197819)(pPen, lineCap, lineCap, dashCap);
   Gdiplus::LineJoin lineJoin = Gdiplus::LineJoinMiterClipped;
   switch (pGraphState->m_LineJoin) {
-    case CFX_GraphStateData::LineJoinMiter:
+    case CFX_GraphStateData::LineJoin::kMiter:
       lineJoin = Gdiplus::LineJoinMiterClipped;
       break;
-    case CFX_GraphStateData::LineJoinRound:
+    case CFX_GraphStateData::LineJoin::kRound:
       lineJoin = Gdiplus::LineJoinRound;
       break;
-    case CFX_GraphStateData::LineJoinBevel:
+    case CFX_GraphStateData::LineJoin::kBevel:
       lineJoin = Gdiplus::LineJoinBevel;
       break;
   }

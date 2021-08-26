@@ -61,24 +61,24 @@ HPEN CreateExtPen(const CFX_GraphStateData* pGraphState,
     PenStyle |= PS_SOLID;
 
   switch (pGraphState->m_LineCap) {
-    case CFX_GraphStateData::LineCapButt:
+    case CFX_GraphStateData::LineCap::kButt:
       PenStyle |= PS_ENDCAP_FLAT;
       break;
-    case CFX_GraphStateData::LineCapRound:
+    case CFX_GraphStateData::LineCap::kRound:
       PenStyle |= PS_ENDCAP_ROUND;
       break;
-    case CFX_GraphStateData::LineCapSquare:
+    case CFX_GraphStateData::LineCap::kSquare:
       PenStyle |= PS_ENDCAP_SQUARE;
       break;
   }
   switch (pGraphState->m_LineJoin) {
-    case CFX_GraphStateData::LineJoinMiter:
+    case CFX_GraphStateData::LineJoin::kMiter:
       PenStyle |= PS_JOIN_MITER;
       break;
-    case CFX_GraphStateData::LineJoinRound:
+    case CFX_GraphStateData::LineJoin::kRound:
       PenStyle |= PS_JOIN_ROUND;
       break;
-    case CFX_GraphStateData::LineJoinBevel:
+    case CFX_GraphStateData::LineJoin::kBevel:
       PenStyle |= PS_JOIN_BEVEL;
       break;
   }
