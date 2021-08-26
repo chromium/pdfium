@@ -10,12 +10,6 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "xfa/fxfa/cxfa_fftextedit.h"
 
-enum XFA_DATETIMETYPE {
-  XFA_DATETIMETYPE_Date = 0,
-  XFA_DATETIMETYPE_Time,
-  XFA_DATETIMETYPE_DateAndTime
-};
-
 class CFWL_DateTimePicker;
 class CFWL_Event;
 class CFWL_Widget;
