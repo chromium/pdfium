@@ -15,13 +15,6 @@
 
 class CFGAS_GEFont;
 
-struct FX_TPO {
-  bool operator<(const FX_TPO& that) const { return pos < that.pos; }
-
-  int32_t index;
-  int32_t pos;
-};
-
 enum FX_LAYOUTSTYLE {
   FX_LAYOUTSTYLE_None = 0,
   FX_LAYOUTSTYLE_Pagination = 0x01,
@@ -62,6 +55,13 @@ class CFGAS_Break {
   }
 
  protected:
+  struct TPO {
+    bool operator<(const TPO& that) const { return pos < that.pos; }
+
+    int32_t index;
+    int32_t pos;
+  };
+
   static const int kMinimumTabWidth;
   static const float kConversionFactor;
 

@@ -84,12 +84,11 @@ class CFGAS_TxtBreak final : public CFGAS_Break {
   CFGAS_Char::BreakType AppendChar_Others(CFGAS_Char* pCurChar);
 
   void ResetContextCharStyles();
-  void EndBreak_SplitLine(CFGAS_BreakLine* pNextLine, bool bAllChars);
-  void EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
+  void EndBreakSplitLine(CFGAS_BreakLine* pNextLine, bool bAllChars);
+  std::deque<TPO> EndBreakBidiLine(CFGAS_Char::BreakType dwStatus);
+  void EndBreakAlignment(const std::deque<TPO>& tpos,
+                         bool bAllChars,
                          CFGAS_Char::BreakType dwStatus);
-  void EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
-                          bool bAllChars,
-                          CFGAS_Char::BreakType dwStatus);
   int32_t GetBreakPos(std::vector<CFGAS_Char>* pChars,
                       bool bAllChars,
                       bool bOnlyBrk,

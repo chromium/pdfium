@@ -61,14 +61,13 @@ class CFGAS_RTFBreak final : public CFGAS_Break {
   void SplitTextLine(CFGAS_BreakLine* pCurLine,
                      CFGAS_BreakLine* pNextLine,
                      bool bAllChars);
-  bool EndBreak_SplitLine(CFGAS_BreakLine* pNextLine,
-                          bool bAllChars,
-                          CFGAS_Char::BreakType dwStatus);
-  void EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
+  bool EndBreakSplitLine(CFGAS_BreakLine* pNextLine,
+                         bool bAllChars,
                          CFGAS_Char::BreakType dwStatus);
-  void EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
-                          bool bAllChars,
-                          CFGAS_Char::BreakType dwStatus);
+  std::deque<TPO> EndBreakBidiLine(CFGAS_Char::BreakType dwStatus);
+  void EndBreakAlignment(const std::deque<TPO>& tpos,
+                         bool bAllChars,
+                         CFGAS_Char::BreakType dwStatus);
 
   bool m_bPagination = false;
   LineAlignment m_iAlignment = LineAlignment::Left;
