@@ -66,32 +66,34 @@ void CFFL_Button::OnDraw(CPDFSDK_PageView* pPageView,
   CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
   CPDF_FormControl* pCtrl = pWidget->GetFormControl();
   if (pCtrl->GetHighlightingMode() != CPDF_FormControl::kPush) {
-    pWidget->DrawAppearance(pDevice, mtUser2Device, CPDF_Annot::Normal,
-                            nullptr);
+    pWidget->DrawAppearance(pDevice, mtUser2Device,
+                            CPDF_Annot::AppearanceMode::kNormal, nullptr);
     return;
   }
   if (m_bMouseDown) {
-    if (pWidget->IsWidgetAppearanceValid(CPDF_Annot::Down)) {
-      pWidget->DrawAppearance(pDevice, mtUser2Device, CPDF_Annot::Down,
-                              nullptr);
+    if (pWidget->IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode::kDown)) {
+      pWidget->DrawAppearance(pDevice, mtUser2Device,
+                              CPDF_Annot::AppearanceMode::kDown, nullptr);
     } else {
-      pWidget->DrawAppearance(pDevice, mtUser2Device, CPDF_Annot::Normal,
-                              nullptr);
+      pWidget->DrawAppearance(pDevice, mtUser2Device,
+                              CPDF_Annot::AppearanceMode::kNormal, nullptr);
     }
     return;
   }
   if (m_bMouseIn) {
-    if (pWidget->IsWidgetAppearanceValid(CPDF_Annot::Rollover)) {
-      pWidget->DrawAppearance(pDevice, mtUser2Device, CPDF_Annot::Rollover,
-                              nullptr);
+    if (pWidget->IsWidgetAppearanceValid(
+            CPDF_Annot::AppearanceMode::kRollover)) {
+      pWidget->DrawAppearance(pDevice, mtUser2Device,
+                              CPDF_Annot::AppearanceMode::kRollover, nullptr);
     } else {
-      pWidget->DrawAppearance(pDevice, mtUser2Device, CPDF_Annot::Normal,
-                              nullptr);
+      pWidget->DrawAppearance(pDevice, mtUser2Device,
+                              CPDF_Annot::AppearanceMode::kNormal, nullptr);
     }
     return;
   }
 
-  pWidget->DrawAppearance(pDevice, mtUser2Device, CPDF_Annot::Normal, nullptr);
+  pWidget->DrawAppearance(pDevice, mtUser2Device,
+                          CPDF_Annot::AppearanceMode::kNormal, nullptr);
 }
 
 void CFFL_Button::OnDrawDeactive(CPDFSDK_PageView* pPageView,

@@ -87,8 +87,8 @@ void CPDFSDK_WidgetHandler::OnDraw(CPDFSDK_PageView* pPageView,
                                    const CFX_Matrix& mtUser2Device,
                                    bool bDrawAnnots) {
   if (pAnnot->IsSignatureWidget()) {
-    pAnnot->AsBAAnnot()->DrawAppearance(pDevice, mtUser2Device,
-                                        CPDF_Annot::Normal, nullptr);
+    pAnnot->AsBAAnnot()->DrawAppearance(
+        pDevice, mtUser2Device, CPDF_Annot::AppearanceMode::kNormal, nullptr);
   } else {
     m_pInteractiveFormFiller->OnDraw(pPageView, pAnnot, pDevice, mtUser2Device);
   }

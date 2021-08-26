@@ -347,9 +347,9 @@ bool CPDFSDK_Widget::IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode mode) {
 
   // Choose the right sub-ap
   const char* ap_entry = "N";
-  if (mode == CPDF_Annot::Down)
+  if (mode == CPDF_Annot::AppearanceMode::kDown)
     ap_entry = "D";
-  else if (mode == CPDF_Annot::Rollover)
+  else if (mode == CPDF_Annot::AppearanceMode::kRollover)
     ap_entry = "R";
   if (!pAP->KeyExist(ap_entry))
     ap_entry = "N";
@@ -557,7 +557,7 @@ void CPDFSDK_Widget::SetCheck(bool bChecked) {
   pFormField->CheckControl(pFormField->GetControlIndex(pFormCtrl), bChecked,
                            NotificationOption::kDoNotNotify);
 #ifdef PDF_ENABLE_XFA
-  if (!IsWidgetAppearanceValid(CPDF_Annot::Normal))
+  if (!IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode::kNormal))
     ResetXFAAppearance(CPDFSDK_Widget::kValueChanged);
   Synchronize(true);
 #endif  // PDF_ENABLE_XFA
@@ -671,8 +671,8 @@ void CPDFSDK_Widget::DrawAppearance(CFX_RenderDevice* pDevice,
 
   if ((fieldType == FormFieldType::kCheckBox ||
        fieldType == FormFieldType::kRadioButton) &&
-      mode == CPDF_Annot::Normal &&
-      !IsWidgetAppearanceValid(CPDF_Annot::Normal)) {
+      mode == CPDF_Annot::AppearanceMode::kNormal &&
+      !IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode::kNormal)) {
     CFX_GraphStateData gsd;
     gsd.m_LineWidth = 0.0f;
 

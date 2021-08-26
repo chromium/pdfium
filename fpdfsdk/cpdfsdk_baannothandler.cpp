@@ -77,8 +77,8 @@ void CPDFSDK_BAAnnotHandler::OnDraw(CPDFSDK_PageView* pPageView,
 
   const CPDF_Annot::Subtype annot_type = pAnnot->GetAnnotSubtype();
   if (bDrawAnnots && annot_type == CPDF_Annot::Subtype::POPUP) {
-    pAnnot->AsBAAnnot()->DrawAppearance(pDevice, mtUser2Device,
-                                        CPDF_Annot::Normal, nullptr);
+    pAnnot->AsBAAnnot()->DrawAppearance(
+        pDevice, mtUser2Device, CPDF_Annot::AppearanceMode::kNormal, nullptr);
     return;
   }
 

@@ -64,9 +64,9 @@ CPDF_Stream* GetAnnotAPInternal(CPDF_Dictionary* pAnnotDict,
     return nullptr;
 
   const char* ap_entry = "N";
-  if (eMode == CPDF_Annot::Down)
+  if (eMode == CPDF_Annot::AppearanceMode::kDown)
     ap_entry = "D";
-  else if (eMode == CPDF_Annot::Rollover)
+  else if (eMode == CPDF_Annot::AppearanceMode::kRollover)
     ap_entry = "R";
   if (bFallbackToNormal && !pAP->KeyExist(ap_entry))
     ap_entry = "N";
@@ -95,28 +95,19 @@ CPDF_Stream* GetAnnotAPInternal(CPDF_Dictionary* pAnnotDict,
 
 }  // namespace
 
-CPDF_Annot::CPDF_Annot(RetainPtr<CPDF_Dictionary> pDict,
-                       CPDF_Document* pDocument)
-    : m_pAnnotDict(std::move(pDict)), m_pDocument(pDocument) {
-  Init();
-}
-
 CPDF_Annot::CPDF_Annot(CPDF_Dictionary* pDict, CPDF_Document* pDocument)
-    : m_pAnnotDict(pDict), m_pDocument(pDocument) {
-  Init();
+    : m_pAnnotDict(pDict),
+      m_pDocument(pDocument),
+      m_nSubtype(StringToAnnotSubtype(
+          m_pAnnotDict->GetStringFor(pdfium::annotation::kSubtype))),
+      m_bIsTextMarkupAnnotation(IsTextMarkupAnnotation(m_nSubtype)),
+      m_bHasGeneratedAP(
+          m_pAnnotDict->GetBooleanFor(kPDFiumKey_HasGeneratedAP, false)) {
+  GenerateAPIfNeeded();
 }
 
 CPDF_Annot::~CPDF_Annot() {
   ClearCachedAP();
-}
-
-void CPDF_Annot::Init() {
-  m_nSubtype = StringToAnnotSubtype(
-      m_pAnnotDict->GetStringFor(pdfium::annotation::kSubtype));
-  m_bIsTextMarkupAnnotation = IsTextMarkupAnnotation(m_nSubtype);
-  m_bHasGeneratedAP =
-      m_pAnnotDict->GetBooleanFor(kPDFiumKey_HasGeneratedAP, false);
-  GenerateAPIfNeeded();
 }
 
 void CPDF_Annot::GenerateAPIfNeeded() {
