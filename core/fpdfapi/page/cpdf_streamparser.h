@@ -19,14 +19,14 @@ class CPDF_Stream;
 
 class CPDF_StreamParser {
  public:
-  enum SyntaxType { EndOfData, Number, Keyword, Name, Others };
+  enum ElementType { kEndOfData, kNumber, kKeyword, kName, kOther };
 
   explicit CPDF_StreamParser(pdfium::span<const uint8_t> span);
   CPDF_StreamParser(pdfium::span<const uint8_t> span,
                     const WeakPtr<ByteStringPool>& pPool);
   ~CPDF_StreamParser();
 
-  SyntaxType ParseNextElement();
+  ElementType ParseNextElement();
   ByteStringView GetWord() const {
     return ByteStringView(m_WordBuffer, m_WordSize);
   }

@@ -194,11 +194,11 @@ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
     m_Pos += dwStreamSize;
     while (1) {
       uint32_t dwPrevPos = m_Pos;
-      CPDF_StreamParser::SyntaxType type = ParseNextElement();
-      if (type == CPDF_StreamParser::EndOfData)
+      ElementType type = ParseNextElement();
+      if (type == ElementType::kEndOfData)
         break;
 
-      if (type != CPDF_StreamParser::Keyword) {
+      if (type != ElementType::kKeyword) {
         dwStreamSize += m_Pos - dwPrevPos;
         continue;
       }
@@ -219,17 +219,17 @@ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
                                          std::move(pDict));
 }
 
-CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement() {
+CPDF_StreamParser::ElementType CPDF_StreamParser::ParseNextElement() {
   m_pLastObj.Reset();
   m_WordSize = 0;
   if (!PositionIsInBounds())
-    return EndOfData;
+    return ElementType::kEndOfData;
 
   uint8_t ch = m_pBuf[m_Pos++];
   while (1) {
     while (PDFCharIsWhitespace(ch)) {
       if (!PositionIsInBounds())
-        return EndOfData;
+        return ElementType::kEndOfData;
 
       ch = m_pBuf[m_Pos++];
     }
@@ -239,7 +239,7 @@ CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement() {
 
     while (1) {
       if (!PositionIsInBounds())
-        return EndOfData;
+        return ElementType::kEndOfData;
 
       ch = m_pBuf[m_Pos++];
       if (PDFCharIsLineEnding(ch))
@@ -250,7 +250,7 @@ CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement() {
   if (PDFCharIsDelimiter(ch) && ch != '/') {
     m_Pos--;
     m_pLastObj = ReadNextObject(false, false, 0);
-    return Others;
+    return ElementType::kOther;
   }
 
   bool bIsNumber = true;
@@ -274,27 +274,27 @@ CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement() {
 
   m_WordBuffer[m_WordSize] = 0;
   if (bIsNumber)
-    return Number;
+    return ElementType::kNumber;
 
   if (m_WordBuffer[0] == '/')
-    return Name;
+    return ElementType::kName;
 
   if (m_WordSize == 4) {
     if (GetWord() == kTrue) {
       m_pLastObj = pdfium::MakeRetain<CPDF_Boolean>(true);
-      return Others;
+      return ElementType::kOther;
     }
     if (GetWord() == kNull) {
       m_pLastObj = pdfium::MakeRetain<CPDF_Null>();
-      return Others;
+      return ElementType::kOther;
     }
   } else if (m_WordSize == 5) {
     if (GetWord() == kFalse) {
       m_pLastObj = pdfium::MakeRetain<CPDF_Boolean>(false);
-      return Others;
+      return ElementType::kOther;
     }
   }
-  return Keyword;
+  return ElementType::kKeyword;
 }
 
 RetainPtr<CPDF_Object> CPDF_StreamParser::ReadNextObject(

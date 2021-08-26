@@ -605,14 +605,14 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
   FX_FILESIZE savePos = m_pSyntax->GetPos();
   auto pDict = m_pDocument->New<CPDF_Dictionary>();
   while (1) {
-    CPDF_StreamParser::SyntaxType type = m_pSyntax->ParseNextElement();
-    if (type == CPDF_StreamParser::Keyword) {
+    CPDF_StreamParser::ElementType type = m_pSyntax->ParseNextElement();
+    if (type == CPDF_StreamParser::ElementType::kKeyword) {
       if (m_pSyntax->GetWord() != "ID") {
         m_pSyntax->SetPos(savePos);
         return;
       }
     }
-    if (type != CPDF_StreamParser::Name) {
+    if (type != CPDF_StreamParser::ElementType::kName) {
       break;
     }
     auto word = m_pSyntax->GetWord();
@@ -644,16 +644,15 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
   RetainPtr<CPDF_Stream> pStream =
       m_pSyntax->ReadInlineStream(m_pDocument.Get(), std::move(pDict), pCSObj);
   while (1) {
-    CPDF_StreamParser::SyntaxType type = m_pSyntax->ParseNextElement();
-    if (type == CPDF_StreamParser::EndOfData) {
+    CPDF_StreamParser::ElementType type = m_pSyntax->ParseNextElement();
+    if (type == CPDF_StreamParser::ElementType::kEndOfData)
       break;
-    }
-    if (type != CPDF_StreamParser::Keyword) {
+
+    if (type != CPDF_StreamParser::ElementType::kKeyword)
       continue;
-    }
-    if (m_pSyntax->GetWord() == "EI") {
+
+    if (m_pSyntax->GetWord() == "EI")
       break;
-    }
   }
   CPDF_ImageObject* pObj = AddImage(std::move(pStream));
   // Record the bounding box of this image, so rendering code can draw it
@@ -1535,16 +1534,16 @@ uint32_t CPDF_StreamContentParser::Parse(
       break;
     }
     switch (m_pSyntax->ParseNextElement()) {
-      case CPDF_StreamParser::EndOfData:
+      case CPDF_StreamParser::ElementType::kEndOfData:
         return m_pSyntax->GetPos();
-      case CPDF_StreamParser::Keyword:
+      case CPDF_StreamParser::ElementType::kKeyword:
         OnOperator(m_pSyntax->GetWord());
         ClearAllParams();
         break;
-      case CPDF_StreamParser::Number:
+      case CPDF_StreamParser::ElementType::kNumber:
         AddNumberParam(m_pSyntax->GetWord());
         break;
-      case CPDF_StreamParser::Name: {
+      case CPDF_StreamParser::ElementType::kName: {
         auto word = m_pSyntax->GetWord();
         AddNameParam(word.Last(word.GetLength() - 1));
         break;
@@ -1561,12 +1560,12 @@ void CPDF_StreamContentParser::ParsePathObject() {
   int nParams = 0;
   int last_pos = m_pSyntax->GetPos();
   while (1) {
-    CPDF_StreamParser::SyntaxType type = m_pSyntax->ParseNextElement();
+    CPDF_StreamParser::ElementType type = m_pSyntax->ParseNextElement();
     bool bProcessed = true;
     switch (type) {
-      case CPDF_StreamParser::EndOfData:
+      case CPDF_StreamParser::ElementType::kEndOfData:
         return;
-      case CPDF_StreamParser::Keyword: {
+      case CPDF_StreamParser::ElementType::kKeyword: {
         ByteStringView strc = m_pSyntax->GetWord();
         int len = strc.GetLength();
         if (len == 1) {
@@ -1631,7 +1630,7 @@ void CPDF_StreamContentParser::ParsePathObject() {
         }
         break;
       }
-      case CPDF_StreamParser::Number: {
+      case CPDF_StreamParser::ElementType::kNumber: {
         if (nParams == 6)
           break;
 
