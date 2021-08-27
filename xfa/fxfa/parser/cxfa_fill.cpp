@@ -70,8 +70,8 @@ void CXFA_Fill::SetColor(FX_ARGB color) {
   pColor->SetValue(color);
 }
 
-FX_ARGB CXFA_Fill::GetColor(bool bText) {
-  CXFA_Color* pColor = GetChild<CXFA_Color>(0, XFA_Element::Color, false);
+FX_ARGB CXFA_Fill::GetColor(bool bText) const {
+  const auto* pColor = GetChild<CXFA_Color>(0, XFA_Element::Color, false);
   if (!pColor)
     return bText ? 0xFF000000 : 0xFFFFFFFF;
   return pColor->GetValueOrDefault(bText ? 0xFF000000 : 0xFFFFFFFF);

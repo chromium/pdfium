@@ -21,7 +21,7 @@ class CXFA_Fill final : public CXFA_Node {
 
   bool IsVisible();
 
-  FX_ARGB GetColor(bool bText);
+  FX_ARGB GetColor(bool bText) const;
   void SetColor(FX_ARGB color);
 
   void Draw(CFGAS_GEGraphics* pGS,

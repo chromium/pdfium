@@ -18,8 +18,8 @@ class CXFA_Color final : public CXFA_Node {
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Color() override;
 
-  FX_ARGB GetValue();
-  FX_ARGB GetValueOrDefault(FX_ARGB defaultValue);
+  FX_ARGB GetValue() const;
+  FX_ARGB GetValueOrDefault(FX_ARGB defaultValue) const;
   void SetValue(FX_ARGB color);
 
  private:
