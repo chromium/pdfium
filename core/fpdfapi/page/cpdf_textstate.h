@@ -10,6 +10,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/shared_copy_on_write.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "third_party/base/span.h"
 
 class CPDF_Document;
 class CPDF_Font;
@@ -41,8 +42,8 @@ class CPDF_TextState {
   float GetFontSize() const;
   void SetFontSize(float size);
 
-  const float* GetMatrix() const;
-  float* GetMutableMatrix();
+  pdfium::span<const float> GetMatrix() const;
+  pdfium::span<float> GetMutableMatrix();
 
   float GetCharSpace() const;
   void SetCharSpace(float sp);
@@ -55,8 +56,8 @@ class CPDF_TextState {
   TextRenderingMode GetTextMode() const;
   void SetTextMode(TextRenderingMode mode);
 
-  const float* GetCTM() const;
-  float* GetMutableCTM();
+  pdfium::span<const float> GetCTM() const;
+  pdfium::span<float> GetMutableCTM();
 
  private:
   class TextData final : public Retainable {
