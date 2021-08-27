@@ -16,6 +16,7 @@
 #include "core/fxge/dib/fx_dib.h"
 #include "third_party/base/span.h"
 #include "xfa/fde/cfde_data.h"
+#include "xfa/fgas/layout/cfgas_break.h"
 #include "xfa/fgas/layout/cfgas_char.h"
 
 class CFGAS_GEFont;
@@ -110,7 +111,7 @@ class CFDE_TextOut {
   FDE_TextStyle m_Styles;
   std::vector<int32_t> m_CharWidths;
   FX_ARGB m_TxtColor = 0xFF000000;
-  uint32_t m_dwTxtBkStyles = 0;
+  Mask<CFGAS_Break::LayoutStyle> m_dwTxtBkStyles;
   WideString m_wsText;
   CFX_Matrix m_Matrix;
   std::deque<Line> m_ttoLines;

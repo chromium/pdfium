@@ -667,11 +667,11 @@ void CFDE_TextEditEngine::EnableMultiLine(bool val) {
     return;
 
   is_multiline_ = val;
-  uint32_t style = text_break_.GetLayoutStyles();
+  Mask<CFGAS_Break::LayoutStyle> style = text_break_.GetLayoutStyles();
   if (is_multiline_)
-    style &= ~FX_LAYOUTSTYLE_SingleLine;
+    style.Clear(CFGAS_Break::LayoutStyle::kSingleLine);
   else
-    style |= FX_LAYOUTSTYLE_SingleLine;
+    style |= CFGAS_Break::LayoutStyle::kSingleLine;
 
   text_break_.SetLayoutStyles(style);
   is_dirty_ = true;
@@ -693,12 +693,12 @@ void CFDE_TextEditEngine::SetCombText(bool enable) {
 
   is_comb_text_ = enable;
 
-  uint32_t style = text_break_.GetLayoutStyles();
+  Mask<CFGAS_Break::LayoutStyle> style = text_break_.GetLayoutStyles();
   if (enable) {
-    style |= FX_LAYOUTSTYLE_CombText;
+    style |= CFGAS_Break::LayoutStyle::kCombText;
     SetCombTextWidth();
   } else {
-    style &= ~FX_LAYOUTSTYLE_CombText;
+    style.Clear(CFGAS_Break::LayoutStyle::kCombText);
   }
   text_break_.SetLayoutStyles(style);
   is_dirty_ = true;

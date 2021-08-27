@@ -56,7 +56,7 @@ class CFGAS_TxtBreak final : public CFGAS_Break {
     int32_t iLength = 0;
     RetainPtr<CFGAS_GEFont> pFont;
     float fFontSize = 12.0f;
-    uint32_t dwStyles = 0;
+    Mask<LayoutStyle> dwStyles = LayoutStyle::kNone;
     int32_t iHorizontalScale = 100;
     int32_t iVerticalScale = 100;
     uint32_t dwCharStyles = 0;

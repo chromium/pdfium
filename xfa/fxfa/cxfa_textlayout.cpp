@@ -148,9 +148,9 @@ CFX_XMLNode* CXFA_TextLayout::GetXMLContainerNode() {
 }
 
 std::unique_ptr<CFGAS_RTFBreak> CXFA_TextLayout::CreateBreak(bool bDefault) {
-  uint32_t dwStyle = FX_LAYOUTSTYLE_ExpandTab;
+  Mask<CFGAS_Break::LayoutStyle> dwStyle = CFGAS_Break::LayoutStyle::kExpandTab;
   if (!bDefault)
-    dwStyle |= FX_LAYOUTSTYLE_Pagination;
+    dwStyle |= CFGAS_Break::LayoutStyle::kPagination;
 
   auto pBreak = std::make_unique<CFGAS_RTFBreak>(dwStyle);
   pBreak->SetLineBreakTolerance(1);

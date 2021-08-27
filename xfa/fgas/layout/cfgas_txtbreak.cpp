@@ -23,6 +23,12 @@
 
 namespace {
 
+struct FX_FORMCHAR {
+  uint16_t wch;
+  uint16_t wForm;
+  int32_t iWidth;
+};
+
 bool IsCtrlCode(wchar_t wch) {
   FX_CHARTYPE dwRet = pdfium::unicode::GetCharType(wch);
   return dwRet == FX_CHARTYPE::kTab || dwRet == FX_CHARTYPE::kControl;
@@ -30,7 +36,7 @@ bool IsCtrlCode(wchar_t wch) {
 
 }  // namespace
 
-CFGAS_TxtBreak::CFGAS_TxtBreak() : CFGAS_Break(FX_LAYOUTSTYLE_None) {}
+CFGAS_TxtBreak::CFGAS_TxtBreak() : CFGAS_Break(LayoutStyle::kNone) {}
 
 CFGAS_TxtBreak::~CFGAS_TxtBreak() = default;
 
@@ -621,12 +627,6 @@ void CFGAS_TxtBreak::SplitTextLine(CFGAS_BreakLine* pCurLine,
   pNextLine->m_iWidth = iWidth;
 }
 
-struct FX_FORMCHAR {
-  uint16_t wch;
-  uint16_t wForm;
-  int32_t iWidth;
-};
-
 size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
                                      TextCharPos* pCharPos) const {
   if (run.iLength < 1)
@@ -637,7 +637,7 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
   int32_t* pWidths = run.pWidths;
   int32_t iLength = run.iLength - 1;
   RetainPtr<CFGAS_GEFont> pFont = run.pFont;
-  uint32_t dwStyles = run.dwStyles;
+  Mask<LayoutStyle> dwStyles = run.dwStyles;
   CFX_RectF rtText(*run.pRect);
   bool bRTLPiece = (run.dwCharStyles & FX_TXTCHARSTYLE_OddBidiLevel) != 0;
   float fFontSize = run.fFontSize;
@@ -827,7 +827,7 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
       if (!bEmptyChar || (bEmptyChar && !bSkipSpace)) {
         pCharPos->m_Origin = CFX_PointF(fX, fY);
 
-        if ((dwStyles & FX_LAYOUTSTYLE_CombText) != 0) {
+        if (!!(dwStyles & LayoutStyle::kCombText)) {
           int32_t iFormWidth = pFont->GetCharWidth(wForm).value_or(iCharWidth);
           float fOffset = fFontSize * (iCharWidth - iFormWidth) / 2000.0f;
           pCharPos->m_Origin.x += fOffset;
@@ -893,7 +893,7 @@ std::vector<CFX_RectF> CFGAS_TxtBreak::GetCharRects(const Run& run) const {
   CFX_RectF rect(*run.pRect);
   float fFontSize = run.fFontSize;
   bool bRTLPiece = !!(run.dwCharStyles & FX_TXTCHARSTYLE_OddBidiLevel);
-  bool bSingleLine = !!(run.dwStyles & FX_LAYOUTSTYLE_SingleLine);
+  bool bSingleLine = !!(run.dwStyles & LayoutStyle::kSingleLine);
   float fStart = bRTLPiece ? rect.right() : rect.left;
 
   std::vector<CFX_RectF> rtArray(iLength);

@@ -29,7 +29,7 @@ class CFGAS_RTFBreak final : public CFGAS_Break {
     Distributed
   };
 
-  explicit CFGAS_RTFBreak(uint32_t dwLayoutStyles);
+  explicit CFGAS_RTFBreak(Mask<LayoutStyle> dwLayoutStyles);
   ~CFGAS_RTFBreak() override;
 
   void SetLineStartPos(float fLinePos);

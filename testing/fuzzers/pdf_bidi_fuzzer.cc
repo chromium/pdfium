@@ -22,7 +22,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
                   0);
   assert(font);
 
-  CFGAS_RTFBreak rtf_break(FX_LAYOUTSTYLE_ExpandTab);
+  CFGAS_RTFBreak rtf_break(CFGAS_Break::LayoutStyle::kExpandTab);
   rtf_break.SetLineBreakTolerance(1);
   rtf_break.SetFont(CFGAS_GEFont::LoadFont(std::move(font)));
   rtf_break.SetFontSize(12);

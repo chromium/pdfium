@@ -149,10 +149,9 @@ void CFDE_TextOut::SetFontSize(float fFontSize) {
 
 void CFDE_TextOut::SetStyles(const FDE_TextStyle& dwStyles) {
   m_Styles = dwStyles;
-
-  m_dwTxtBkStyles = 0;
-  if (m_Styles.single_line_)
-    m_dwTxtBkStyles |= FX_LAYOUTSTYLE_SingleLine;
+  m_dwTxtBkStyles = m_Styles.single_line_
+                        ? CFGAS_Break::LayoutStyle::kSingleLine
+                        : CFGAS_Break::LayoutStyle::kNone;
 
   m_pTxtBreak->SetLayoutStyles(m_dwTxtBkStyles);
 }

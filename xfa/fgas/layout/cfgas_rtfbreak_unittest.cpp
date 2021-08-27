@@ -24,7 +24,8 @@ class CFGAS_RTFBreakTest : public testing::Test {
     ASSERT_TRUE(font_);
   }
 
-  std::unique_ptr<CFGAS_RTFBreak> CreateBreak(uint32_t layout_styles) {
+  std::unique_ptr<CFGAS_RTFBreak> CreateBreak(
+      Mask<CFGAS_Break::LayoutStyle> layout_styles) {
     auto rtf_break = std::make_unique<CFGAS_RTFBreak>(layout_styles);
     rtf_break->SetFont(font_);
     return rtf_break;
@@ -38,8 +39,7 @@ class CFGAS_RTFBreakTest : public testing::Test {
 // and must be consumed before you get any more characters ....
 
 TEST_F(CFGAS_RTFBreakTest, AddChars) {
-  auto rtf_break = CreateBreak(FX_LAYOUTSTYLE_ExpandTab);
-
+  auto rtf_break = CreateBreak(CFGAS_Break::LayoutStyle::kExpandTab);
   WideString str(L"Input String.");
   for (wchar_t ch : str)
     EXPECT_EQ(CFGAS_Char::BreakType::kNone, rtf_break->AppendChar(ch));
@@ -63,7 +63,7 @@ TEST_F(CFGAS_RTFBreakTest, AddChars) {
 }
 
 TEST_F(CFGAS_RTFBreakTest, ControlCharacters) {
-  auto rtf_break = CreateBreak(FX_LAYOUTSTYLE_ExpandTab);
+  auto rtf_break = CreateBreak(CFGAS_Break::LayoutStyle::kExpandTab);
   EXPECT_EQ(CFGAS_Char::BreakType::kLine, rtf_break->AppendChar(L'\v'));
   EXPECT_EQ(CFGAS_Char::BreakType::kPage, rtf_break->AppendChar(L'\f'));
   EXPECT_EQ(CFGAS_Char::BreakType::kParagraph,
@@ -75,7 +75,7 @@ TEST_F(CFGAS_RTFBreakTest, ControlCharacters) {
 }
 
 TEST_F(CFGAS_RTFBreakTest, BidiLine) {
-  auto rtf_break = CreateBreak(FX_LAYOUTSTYLE_ExpandTab);
+  auto rtf_break = CreateBreak(CFGAS_Break::LayoutStyle::kExpandTab);
   rtf_break->SetLineBreakTolerance(1);
   rtf_break->SetFontSize(12);
 

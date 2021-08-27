@@ -23,10 +23,10 @@
 #include "xfa/fgas/layout/fgas_arabic.h"
 #include "xfa/fgas/layout/fgas_linebreak.h"
 
-CFGAS_RTFBreak::CFGAS_RTFBreak(uint32_t dwLayoutStyles)
+CFGAS_RTFBreak::CFGAS_RTFBreak(Mask<LayoutStyle> dwLayoutStyles)
     : CFGAS_Break(dwLayoutStyles) {
   SetBreakStatus();
-  m_bPagination = !!(m_dwLayoutStyles & FX_LAYOUTSTYLE_Pagination);
+  m_bPagination = !!(m_dwLayoutStyles & LayoutStyle::kPagination);
 }
 
 CFGAS_RTFBreak::~CFGAS_RTFBreak() = default;
@@ -150,7 +150,7 @@ void CFGAS_RTFBreak::AppendChar_Combination(CFGAS_Char* pCurChar) {
 }
 
 void CFGAS_RTFBreak::AppendChar_Tab(CFGAS_Char* pCurChar) {
-  if (!(m_dwLayoutStyles & FX_LAYOUTSTYLE_ExpandTab))
+  if (!(m_dwLayoutStyles & LayoutStyle::kExpandTab))
     return;
 
   int32_t& iLineWidth = m_pCurLine->m_iWidth;

@@ -9,28 +9,29 @@
 
 #include <stdint.h>
 
+#include "core/fxcrt/mask.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fgas/layout/cfgas_breakline.h"
 
 class CFGAS_GEFont;
 
-enum FX_LAYOUTSTYLE {
-  FX_LAYOUTSTYLE_None = 0,
-  FX_LAYOUTSTYLE_Pagination = 0x01,
-  FX_LAYOUTSTYLE_ExpandTab = 0x10,
-  FX_LAYOUTSTYLE_SingleLine = 0x200,
-  FX_LAYOUTSTYLE_CombText = 0x400
-};
-
 class CFGAS_Break {
  public:
+  enum class LayoutStyle : uint8_t {
+    kNone = 0,
+    kPagination = 1 << 0,
+    kExpandTab = 1 << 1,
+    kSingleLine = 1 << 2,
+    kCombText = 1 << 3,
+  };
+
   virtual ~CFGAS_Break();
 
   void Reset();
 
-  void SetLayoutStyles(uint32_t dwLayoutStyles);
-  uint32_t GetLayoutStyles() const { return m_dwLayoutStyles; }
+  void SetLayoutStyles(Mask<LayoutStyle> dwLayoutStyles);
+  Mask<LayoutStyle> GetLayoutStyles() const { return m_dwLayoutStyles; }
 
   void SetFont(const RetainPtr<CFGAS_GEFont>& pFont);
   void SetFontSize(float fFontSize);
@@ -65,7 +66,7 @@ class CFGAS_Break {
   static const int kMinimumTabWidth;
   static const float kConversionFactor;
 
-  explicit CFGAS_Break(uint32_t dwLayoutStyles);
+  explicit CFGAS_Break(Mask<LayoutStyle> dwLayoutStyles);
 
   void SetBreakStatus();
   bool HasLine() const { return m_iReadyLineIndex >= 0; }
@@ -75,8 +76,8 @@ class CFGAS_Break {
   FX_CHARTYPE m_eCharType = FX_CHARTYPE::kUnknown;
   bool m_bSingleLine = false;
   bool m_bCombText = false;
+  Mask<LayoutStyle> m_dwLayoutStyles = LayoutStyle::kNone;
   uint32_t m_dwIdentity = 0;
-  uint32_t m_dwLayoutStyles = 0;
   int32_t m_iLineStart = 0;
   int32_t m_iLineWidth = 2000000;
   wchar_t m_wParagraphBreakChar = L'\n';
