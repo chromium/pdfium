@@ -67,6 +67,9 @@ declare_args() {
 
   # Don't build against bundled libpng.
   use_system_libpng = false
+
+  # Enable SSE2 for MSVC builds. Ignored if it's not a MSVC build.
+  msvc_use_sse2 = true
 }
 
 if (pdf_use_skia && pdf_use_skia_paths) {
