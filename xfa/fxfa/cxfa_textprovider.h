@@ -19,16 +19,15 @@ class CXFA_Font;
 class CXFA_Node;
 class CXFA_Para;
 
-enum XFA_TEXTPROVIDERTYPE {
-  XFA_TEXTPROVIDERTYPE_Text,
-  XFA_TEXTPROVIDERTYPE_Datasets,
-  XFA_TEXTPROVIDERTYPE_Caption,
-  XFA_TEXTPROVIDERTYPE_Rollover,
-  XFA_TEXTPROVIDERTYPE_Down,
-};
-
 class CXFA_TextProvider : public cppgc::GarbageCollected<CXFA_TextProvider> {
  public:
+  enum class Type : uint8_t {
+    kText,
+    kCaption,
+    kRollover,
+    kDown,
+  };
+
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_TextProvider();
 
@@ -41,10 +40,10 @@ class CXFA_TextProvider : public cppgc::GarbageCollected<CXFA_TextProvider> {
   Optional<WideString> GetEmbeddedObj(const WideString& wsAttr) const;
 
  private:
-  CXFA_TextProvider(CXFA_Node* pNode, XFA_TEXTPROVIDERTYPE eType);
+  CXFA_TextProvider(CXFA_Node* pNode, Type eType);
 
   cppgc::Member<CXFA_Node> m_pNode;
-  XFA_TEXTPROVIDERTYPE m_eType;
+  const Type m_eType;
 };
 
 #endif  // XFA_FXFA_CXFA_TEXTPROVIDER_H_

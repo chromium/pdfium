@@ -146,7 +146,7 @@ void CXFA_FFPushButton::LoadHighlightCaption() {
     if (!m_pRollProvider) {
       m_pRollProvider = cppgc::MakeGarbageCollected<CXFA_TextProvider>(
           GetDoc()->GetHeap()->GetAllocationHandle(), m_pNode.Get(),
-          XFA_TEXTPROVIDERTYPE_Rollover);
+          CXFA_TextProvider::Type::kRollover);
     }
     m_pRolloverTextLayout = cppgc::MakeGarbageCollected<CXFA_TextLayout>(
         GetDoc()->GetHeap()->GetAllocationHandle(), GetDoc(), m_pRollProvider);
@@ -155,7 +155,7 @@ void CXFA_FFPushButton::LoadHighlightCaption() {
     if (!m_pDownProvider) {
       m_pDownProvider = cppgc::MakeGarbageCollected<CXFA_TextProvider>(
           GetDoc()->GetHeap()->GetAllocationHandle(), m_pNode.Get(),
-          XFA_TEXTPROVIDERTYPE_Down);
+          CXFA_TextProvider::Type::kDown);
     }
     m_pDownTextLayout = cppgc::MakeGarbageCollected<CXFA_TextLayout>(
         GetDoc()->GetHeap()->GetAllocationHandle(), GetDoc(), m_pDownProvider);

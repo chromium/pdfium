@@ -848,7 +848,7 @@ class CXFA_TextLayoutData final : public CXFA_WidgetLayoutData {
 
     m_pTextProvider = cppgc::MakeGarbageCollected<CXFA_TextProvider>(
         doc->GetHeap()->GetAllocationHandle(), pNode,
-        XFA_TEXTPROVIDERTYPE_Text);
+        CXFA_TextProvider::Type::kText);
     m_pTextLayout = cppgc::MakeGarbageCollected<CXFA_TextLayout>(
         doc->GetHeap()->GetAllocationHandle(), doc, m_pTextProvider);
   }
@@ -917,7 +917,7 @@ class CXFA_FieldLayoutData : public CXFA_WidgetLayoutData {
 
     m_pCapTextProvider = cppgc::MakeGarbageCollected<CXFA_TextProvider>(
         doc->GetHeap()->GetAllocationHandle(), pNode,
-        XFA_TEXTPROVIDERTYPE_Caption);
+        CXFA_TextProvider::Type::kCaption);
     m_pCapTextLayout = cppgc::MakeGarbageCollected<CXFA_TextLayout>(
         doc->GetHeap()->GetAllocationHandle(), doc, m_pCapTextProvider);
     return true;
