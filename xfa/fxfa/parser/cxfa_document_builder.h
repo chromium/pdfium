@@ -44,13 +44,11 @@ class CXFA_DocumentBuilder {
       XFA_Element element);
   CXFA_Node* ParseAsXDPPacket_Xdc(CFX_XMLNode* pXMLDocumentNode);
   CXFA_Node* ParseAsXDPPacket_User(CFX_XMLNode* pXMLDocumentNode);
+  CXFA_Node* DataLoader(CXFA_Node* pXFANode, CFX_XMLNode* pXMLDoc);
   CXFA_Node* NormalLoader(CXFA_Node* pXFANode,
                           CFX_XMLNode* pXMLDoc,
                           XFA_PacketType ePacketID,
                           bool bUseAttribute);
-  CXFA_Node* DataLoader(CXFA_Node* pXFANode,
-                        CFX_XMLNode* pXMLDoc,
-                        bool bDoTransform);
   void ParseContentNode(CXFA_Node* pXFANode,
                         CFX_XMLNode* pXMLNode,
                         XFA_PacketType ePacketID);

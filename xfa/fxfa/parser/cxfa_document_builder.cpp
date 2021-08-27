@@ -282,7 +282,7 @@ void CXFA_DocumentBuilder::ConstructXFANode(CXFA_Node* pXFANode,
       }
       root_node_ = pXFANode;
     } else {
-      root_node_ = DataLoader(pXFANode, pXMLNode, true);
+      root_node_ = DataLoader(pXFANode, pXMLNode);
     }
   } else if (pXFANode->IsContentNode()) {
     ParseContentNode(pXFANode, pXMLNode, ePacketID);
@@ -537,7 +537,7 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_Data(
 
     pNode->JSObject()->SetCData(XFA_Attribute::Name,
                                 WideString::FromASCII(packet.name));
-    if (!DataLoader(pNode, pDatasetsXMLNode, false))
+    if (!DataLoader(pNode, pDatasetsXMLNode))
       return nullptr;
 
     pNode->SetXMLMappingNode(pDatasetsXMLNode);
@@ -570,7 +570,7 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_Data(
 
   WideString wsLocalName = ToXMLElement(pDataXMLNode)->GetLocalTagName();
   pNode->JSObject()->SetCData(XFA_Attribute::Name, wsLocalName);
-  if (!DataLoader(pNode, pDataXMLNode, true))
+  if (!DataLoader(pNode, pDataXMLNode))
     return nullptr;
 
   pNode->SetXMLMappingNode(pDataXMLNode);
@@ -629,8 +629,7 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_User(
 }
 
 CXFA_Node* CXFA_DocumentBuilder::DataLoader(CXFA_Node* pXFANode,
-                                            CFX_XMLNode* pXMLDoc,
-                                            bool bDoTransform) {
+                                            CFX_XMLNode* pXMLDoc) {
   ParseDataGroup(pXFANode, pXMLDoc, XFA_PacketType::Datasets);
   return pXFANode;
 }
