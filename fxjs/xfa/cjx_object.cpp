@@ -1110,7 +1110,7 @@ void CJX_Object::ScriptSomFillColor(v8::Isolate* pIsolate,
     return;
   }
 
-  FX_ARGB color = borderfill->GetColor(false);
+  FX_ARGB color = borderfill->GetFillColor();
   int32_t a;
   int32_t r;
   int32_t g;
