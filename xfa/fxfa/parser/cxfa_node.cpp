@@ -2590,18 +2590,12 @@ XFA_EventError CXFA_Node::ProcessNullTestValidate(CXFA_FFDocView* pDocView,
   XFA_AttributeValue eNullTest = validate->GetNullTest();
   WideString wsNullMsg = validate->GetNullMessageText();
   if (iFlags & 0x01) {
-    XFA_EventError iRet = XFA_EventError::kSuccess;
-    if (eNullTest != XFA_AttributeValue::Disabled)
-      iRet = XFA_EventError::kError;
+    if (eNullTest == XFA_AttributeValue::Disabled)
+      return XFA_EventError::kSuccess;
 
-    if (wsNullMsg.IsEmpty())
-      return iRet;
-
-    if (eNullTest != XFA_AttributeValue::Disabled) {
+    if (!wsNullMsg.IsEmpty())
       pDocView->AddNullTestMsg(wsNullMsg);
-      return XFA_EventError::kError;
-    }
-    return XFA_EventError::kSuccess;
+    return XFA_EventError::kError;
   }
   if (wsNullMsg.IsEmpty() && bVersionFlag &&
       eNullTest != XFA_AttributeValue::Disabled) {
