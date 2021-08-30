@@ -202,7 +202,7 @@ class CFDE_TextEditEngine : public CFGAS_TxtBreak::Engine {
   void AddOperationRecord(std::unique_ptr<Operation> op);
 
   bool IsAlignedRight() const {
-    return !!(character_alignment_ & CFX_TxtLineAlignment_Left);
+    return !!(character_alignment_ & CFX_TxtLineAlignment_Right);
   }
 
   bool IsAlignedCenter() const {
