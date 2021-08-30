@@ -426,8 +426,6 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
  private:
   void ProcessScriptTestValidate(CXFA_FFDocView* pDocView,
                                  CXFA_Validate* validate,
-                                 XFA_EventError iRet,
-                                 bool pRetValue,
                                  bool bVersionFlag);
   XFA_EventError ProcessFormatTestValidate(CXFA_FFDocView* pDocView,
                                            CXFA_Validate* validate,

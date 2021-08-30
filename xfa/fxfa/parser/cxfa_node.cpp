@@ -2480,14 +2480,7 @@ XFA_EventError CXFA_Node::ProcessCalculate(CXFA_FFDocView* pDocView) {
 
 void CXFA_Node::ProcessScriptTestValidate(CXFA_FFDocView* pDocView,
                                           CXFA_Validate* validate,
-                                          XFA_EventError iRet,
-                                          bool bRetValue,
                                           bool bVersionFlag) {
-  if (iRet != XFA_EventError::kSuccess)
-    return;
-  if (bRetValue)
-    return;
-
   CXFA_FFApp::CallbackIface* pAppProvider =
       pDocView->GetDoc()->GetApp()->GetAppProvider();
   if (!pAppProvider)
@@ -2682,9 +2675,10 @@ XFA_EventError CXFA_Node::ProcessValidate(CXFA_FFDocView* pDocView,
         &iRet,
         ProcessNullTestValidate(pDocView, validate, iFlags, bVersionFlag));
   }
-  if (iFormat != XFA_EventError::kSuccess && hasBoolResult)
-    ProcessScriptTestValidate(pDocView, validate, iRet, bRet, bVersionFlag);
-
+  if (iRet == XFA_EventError::kSuccess && iFormat != XFA_EventError::kSuccess &&
+      hasBoolResult && !bRet) {
+    ProcessScriptTestValidate(pDocView, validate, bVersionFlag);
+  }
   XFA_EventErrorAccumulate(&iRet, iFormat);
   return iRet;
 }
