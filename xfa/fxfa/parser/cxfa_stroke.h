@@ -42,7 +42,7 @@ class CXFA_Stroke : public CXFA_Node {
   CXFA_Measurement GetMSThickness() const;
   void SetMSThickness(CXFA_Measurement msThinkness);
 
-  FX_ARGB GetColor();
+  FX_ARGB GetColor() const;
   void SetColor(FX_ARGB argb);
 
   bool SameStyles(CXFA_Stroke* stroke, Mask<SameStyleOption> dwFlags);

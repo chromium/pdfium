@@ -28,7 +28,7 @@ class CXFA_Font final : public CXFA_Node {
   bool IsBold();
   bool IsItalic();
 
-  FX_ARGB GetColor();
+  FX_ARGB GetColor() const;
   void SetColor(FX_ARGB color);
 
  private:

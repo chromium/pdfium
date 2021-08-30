@@ -110,8 +110,8 @@ void CXFA_Stroke::SetMSThickness(CXFA_Measurement msThinkness) {
   JSObject()->SetMeasure(XFA_Attribute::Thickness, msThinkness, false);
 }
 
-FX_ARGB CXFA_Stroke::GetColor() {
-  CXFA_Color* pNode = GetChild<CXFA_Color>(0, XFA_Element::Color, false);
+FX_ARGB CXFA_Stroke::GetColor() const {
+  const auto* pNode = GetChild<CXFA_Color>(0, XFA_Element::Color, false);
   if (!pNode)
     return 0xFF000000;
 

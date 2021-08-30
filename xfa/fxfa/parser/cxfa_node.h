@@ -276,7 +276,7 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
   CXFA_Validate* GetOrCreateValidateIfPossible();
 
   CXFA_Value* GetFormValueIfExists() const;
-  WideString GetRawValue();
+  WideString GetRawValue() const;
 
   int32_t GetRotate() const;
   Optional<float> TryWidth();
@@ -342,8 +342,8 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
   bool IsRadioButton();
   bool IsMultiLine();
 
-  bool HasButtonRollover();
-  bool HasButtonDown();
+  bool HasButtonRollover() const;
+  bool HasButtonDown() const;
 
   float GetCheckButtonSize();
 
@@ -401,9 +401,9 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
   WideString GetFormatDataValue(const WideString& wsValue);
   WideString NormalizeNumStr(const WideString& wsValue);
 
-  std::pair<XFA_Element, int32_t> GetMaxChars();
-  int32_t GetFracDigits();
-  int32_t GetLeadDigits();
+  std::pair<XFA_Element, int32_t> GetMaxChars() const;
+  int32_t GetFracDigits() const;
+  int32_t GetLeadDigits() const;
 
   WideString NumericLimit(const WideString& wsValue);
 

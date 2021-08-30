@@ -30,7 +30,7 @@ class CXFA_Validate final : public CXFA_Node {
   WideString GetScriptMessageText();
   void SetScriptMessageText(const WideString& wsMessage);
 
-  WideString GetPicture();
+  WideString GetPicture() const;
   CXFA_Script* GetScriptIfExists();
 
  private:

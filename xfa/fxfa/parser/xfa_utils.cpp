@@ -363,8 +363,8 @@ WideString RecognizeXFAVersionNumber(CXFA_Node* pTemplateRoot) {
 
 }  // namespace
 
-CXFA_LocaleValue XFA_GetLocaleValue(CXFA_Node* pNode) {
-  CXFA_Value* pNodeValue =
+CXFA_LocaleValue XFA_GetLocaleValue(const CXFA_Node* pNode) {
+  const auto* pNodeValue =
       pNode->GetChild<CXFA_Value>(0, XFA_Element::Value, false);
   if (!pNodeValue)
     return CXFA_LocaleValue();
@@ -478,11 +478,12 @@ void XFA_DataExporter_RegenerateFormFile(
   }
 }
 
-bool XFA_FieldIsMultiListBox(CXFA_Node* pFieldNode) {
+bool XFA_FieldIsMultiListBox(const CXFA_Node* pFieldNode) {
   if (!pFieldNode)
     return false;
 
-  CXFA_Ui* pUIChild = pFieldNode->GetChild<CXFA_Ui>(0, XFA_Element::Ui, false);
+  const auto* pUIChild =
+      pFieldNode->GetChild<CXFA_Ui>(0, XFA_Element::Ui, false);
   if (!pUIChild)
     return false;
 

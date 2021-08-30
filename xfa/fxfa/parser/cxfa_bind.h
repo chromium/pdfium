@@ -14,7 +14,7 @@ class CXFA_Bind final : public CXFA_Node {
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Bind() override;
 
-  WideString GetPicture();
+  WideString GetPicture() const;
 
  private:
   CXFA_Bind(CXFA_Document* doc, XFA_PacketType packet);

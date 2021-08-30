@@ -37,6 +37,6 @@ CXFA_Text::CXFA_Text(CXFA_Document* doc, XFA_PacketType packet)
 
 CXFA_Text::~CXFA_Text() = default;
 
-WideString CXFA_Text::GetContent() {
+WideString CXFA_Text::GetContent() const {
   return JSObject()->GetContent(false);
 }

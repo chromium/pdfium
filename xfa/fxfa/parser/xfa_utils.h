@@ -21,12 +21,12 @@ bool XFA_FDEExtension_ResolveNamespaceQualifier(CFX_XMLElement* pNode,
                                                 const WideString& wsQualifier,
                                                 WideString* wsNamespaceURI);
 
-CXFA_LocaleValue XFA_GetLocaleValue(CXFA_Node* pNode);
+CXFA_LocaleValue XFA_GetLocaleValue(const CXFA_Node* pNode);
 CXFA_LocaleValue::ValueType XFA_GetLocaleValueType(XFA_Element element);
 int32_t XFA_MapRotation(int32_t nRotation);
 
 bool XFA_RecognizeRichText(CFX_XMLElement* pRichTextXMLNode);
-bool XFA_FieldIsMultiListBox(CXFA_Node* pFieldNode);
+bool XFA_FieldIsMultiListBox(const CXFA_Node* pFieldNode);
 
 void XFA_DataExporter_DealWithDataGroupNode(CXFA_Node* pDataNode);
 void XFA_DataExporter_RegenerateFormFile(

@@ -15,7 +15,7 @@ class CXFA_Text final : public CXFA_Node {
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Text() override;
 
-  WideString GetContent();
+  WideString GetContent() const;
 
  private:
   CXFA_Text(CXFA_Document* doc, XFA_PacketType packet);

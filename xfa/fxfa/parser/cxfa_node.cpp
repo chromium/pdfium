@@ -2228,7 +2228,7 @@ void CXFA_Node::SyncValue(const WideString& wsValue, bool bNotify) {
   JSObject()->SetContent(wsValue, wsFormatValue, bNotify, false, true);
 }
 
-WideString CXFA_Node::GetRawValue() {
+WideString CXFA_Node::GetRawValue() const {
   return JSObject()->GetContent(false);
 }
 
@@ -3930,8 +3930,8 @@ RetainPtr<CFGAS_GEFont> CXFA_Node::GetFGASFont(CXFA_FFDoc* doc) {
                                                  dwFontStyle);
 }
 
-bool CXFA_Node::HasButtonRollover() {
-  CXFA_Items* pItems = GetChild<CXFA_Items>(0, XFA_Element::Items, false);
+bool CXFA_Node::HasButtonRollover() const {
+  const auto* pItems = GetChild<CXFA_Items>(0, XFA_Element::Items, false);
   if (!pItems)
     return false;
 
@@ -3946,8 +3946,8 @@ bool CXFA_Node::HasButtonRollover() {
   return false;
 }
 
-bool CXFA_Node::HasButtonDown() {
-  CXFA_Items* pItems = GetChild<CXFA_Items>(0, XFA_Element::Items, false);
+bool CXFA_Node::HasButtonDown() const {
+  const auto* pItems = GetChild<CXFA_Items>(0, XFA_Element::Items, false);
   if (!pItems)
     return false;
 
@@ -4612,8 +4612,9 @@ bool CXFA_Node::IsMultiLine() {
   return pUIChild && pUIChild->JSObject()->GetBoolean(XFA_Attribute::MultiLine);
 }
 
-std::pair<XFA_Element, int32_t> CXFA_Node::GetMaxChars() {
-  if (CXFA_Value* pNode = GetChild<CXFA_Value>(0, XFA_Element::Value, false)) {
+std::pair<XFA_Element, int32_t> CXFA_Node::GetMaxChars() const {
+  const auto* pNode = GetChild<CXFA_Value>(0, XFA_Element::Value, false);
+  if (pNode) {
     if (CXFA_Node* pChild = pNode->GetFirstChild()) {
       switch (pChild->GetElementType()) {
         case XFA_Element::Text:
@@ -4632,12 +4633,12 @@ std::pair<XFA_Element, int32_t> CXFA_Node::GetMaxChars() {
   return {XFA_Element::Unknown, 0};
 }
 
-int32_t CXFA_Node::GetFracDigits() {
-  CXFA_Value* pNode = GetChild<CXFA_Value>(0, XFA_Element::Value, false);
+int32_t CXFA_Node::GetFracDigits() const {
+  const auto* pNode = GetChild<CXFA_Value>(0, XFA_Element::Value, false);
   if (!pNode)
     return -1;
 
-  CXFA_Decimal* pChild =
+  const auto* pChild =
       pNode->GetChild<CXFA_Decimal>(0, XFA_Element::Decimal, false);
   if (!pChild)
     return -1;
@@ -4647,12 +4648,12 @@ int32_t CXFA_Node::GetFracDigits() {
       .value_or(-1);
 }
 
-int32_t CXFA_Node::GetLeadDigits() {
-  CXFA_Value* pNode = GetChild<CXFA_Value>(0, XFA_Element::Value, false);
+int32_t CXFA_Node::GetLeadDigits() const {
+  const auto* pNode = GetChild<CXFA_Value>(0, XFA_Element::Value, false);
   if (!pNode)
     return -1;
 
-  CXFA_Decimal* pChild =
+  const auto* pChild =
       pNode->GetChild<CXFA_Decimal>(0, XFA_Element::Decimal, false);
   if (!pChild)
     return -1;
@@ -4715,10 +4716,11 @@ WideString CXFA_Node::GetPictureContent(XFA_ValuePicture ePicture) {
   CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(this);
   switch (ePicture) {
     case XFA_ValuePicture::kDisplay: {
-      if (CXFA_Format* pFormat =
-              GetChild<CXFA_Format>(0, XFA_Element::Format, false)) {
-        if (CXFA_Picture* pPicture = pFormat->GetChild<CXFA_Picture>(
-                0, XFA_Element::Picture, false)) {
+      auto* pFormat = GetChild<CXFA_Format>(0, XFA_Element::Format, false);
+      if (pFormat) {
+        auto* pPicture =
+            pFormat->GetChild<CXFA_Picture>(0, XFA_Element::Picture, false);
+        if (pPicture) {
           Optional<WideString> picture =
               pPicture->JSObject()->TryContent(false, true);
           if (picture.has_value())

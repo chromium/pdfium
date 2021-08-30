@@ -54,11 +54,11 @@ CXFA_Script* CXFA_Calculate::GetScriptIfExists() {
   return GetChild<CXFA_Script>(0, XFA_Element::Script, false);
 }
 
-WideString CXFA_Calculate::GetMessageText() {
-  CXFA_Message* pNode = GetChild<CXFA_Message>(0, XFA_Element::Message, false);
+WideString CXFA_Calculate::GetMessageText() const {
+  const auto* pNode = GetChild<CXFA_Message>(0, XFA_Element::Message, false);
   if (!pNode)
     return WideString();
 
-  CXFA_Text* text = pNode->GetChild<CXFA_Text>(0, XFA_Element::Text, false);
+  const auto* text = pNode->GetChild<CXFA_Text>(0, XFA_Element::Text, false);
   return text ? text->GetContent() : WideString();
 }

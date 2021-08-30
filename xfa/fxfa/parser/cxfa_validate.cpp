@@ -145,8 +145,8 @@ void CXFA_Validate::SetMessageText(const WideString& wsMessageType,
   pTextNode->JSObject()->SetContent(wsMessage, wsMessage, false, false, true);
 }
 
-WideString CXFA_Validate::GetPicture() {
-  CXFA_Picture* pNode = GetChild<CXFA_Picture>(0, XFA_Element::Picture, false);
+WideString CXFA_Validate::GetPicture() const {
+  const auto* pNode = GetChild<CXFA_Picture>(0, XFA_Element::Picture, false);
   return pNode ? pNode->JSObject()->GetContent(false) : WideString();
 }
 
