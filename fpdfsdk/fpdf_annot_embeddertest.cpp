@@ -1127,9 +1127,9 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
 #endif  // defined(OS_LINUX) || defined(OS_CHROMEOS)
 #else
 #if defined(OS_WIN)
-  static const char kMd5ModifiedPath[] = "a7a8d675a6ddbcbdfecee65a33ba19e1";
-  static const char kMd5TwoPaths[] = "7c0bdd4552329704c47a7cce47edbbd6";
-  static const char kMd5NewAnnot[] = "3c48d492b4f62941fed0fb62f729f31e";
+  static const char kMd5ModifiedPath[] = "15683598de2364925c42a50513dad71f";
+  static const char kMd5TwoPaths[] = "9e53f315535e6f570560f46934442fbe";
+  static const char kMd5NewAnnot[] = "5f2a2998b320b1ae035528f2b10a1b38";
 #elif defined(OS_APPLE)
   static const char kMd5ModifiedPath[] = "8cfae6d547fc5d6702f5f1ac631beb5e";
   static const char kMd5TwoPaths[] = "9677e4892bb02950d3e4dbe74470578f";
@@ -1353,8 +1353,8 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_AddAndModifyImage) {
   static const char kMd5NewImage[] = "dd18709d90c245a12ce0b8c4d092bea9";
   static const char kMd5ModifiedImage[] = "8d6f478ff8c7e67d49b253f1af587a99";
 #elif defined(OS_WIN)
-  static const char kMd5NewImage[] = "3d77d06a971bcb9fb54db082f1082c8b";
-  static const char kMd5ModifiedImage[] = "dc4f4afc26c345418330d31c065020e1";
+  static const char kMd5NewImage[] = "a822fffc257c445467aa91876e1f8611";
+  static const char kMd5ModifiedImage[] = "a5afb12f4f516e1f5f675c67f99e043a";
 #else
   static const char kMd5NewImage[] = "528e6243dc29d54f36b61e0d3287d935";
   static const char kMd5ModifiedImage[] = "6d9e59f3e57a1ff82fb258356b7eb731";
@@ -1443,8 +1443,8 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
 #endif  // defined(OS_LINUX) || defined(OS_CHROMEOS)
 #else
 #if defined(OS_WIN)
-  static const char kMd5NewText[] = "204cc01749a70b8afc246a4ca33c7eb6";
-  static const char kMd5ModifiedText[] = "641261a45e8dfd68c89b80bfd237660d";
+  static const char kMd5NewText[] = "31e106afba1b9af2c8613c9d6bd77153";
+  static const char kMd5ModifiedText[] = "c5ef84b480cd762b0b9dad715beb92b6";
 #elif defined(OS_APPLE)
   static const char kMd5NewText[] = "e657266260b88c964938efe6c9b292da";
   static const char kMd5ModifiedText[] = "7accdf2bac64463101783221f53d3188";
@@ -1590,7 +1590,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
 #if defined(OS_APPLE)
   static const char kMd5[] = "5e7e185b386ad21ca83b0287268c50fb";
 #elif defined(OS_WIN)
-  static const char kMd5[] = "20b612ebd46babcb44c48c903e2c5a48";
+  static const char kMd5[] = "64631cd3422201a36ea8f7ec63b34ae7";
 #else
   static const char kMd5[] = "1d7bea2042c6fea0558ff2aef05811b5";
 #endif
@@ -3618,8 +3618,8 @@ TEST_F(FPDFAnnotEmbedderTest, AnnotationBorderRendering) {
   constexpr char kOriginalChecksum[] = "bc9ba381d6d46ff93ed0b5288b763b60";
   constexpr char kModifiedChecksum[] = "0f3e10336f67cb6a8731a06d26d01e50";
 #elif defined(OS_WIN)
-  constexpr char kOriginalChecksum[] = "f9fcab6ac610ee2347c4eba6be86a90c";
-  constexpr char kModifiedChecksum[] = "e0e9ad5b67ef84288d446861265898b3";
+  constexpr char kOriginalChecksum[] = "768b9edd280a535b4223e57bf17940e3";
+  constexpr char kModifiedChecksum[] = "ab367296994b5dc1a178820626601ffc";
 #elif defined(OS_APPLE)
   constexpr char kOriginalChecksum[] = "1839f5df5fb4fae10cf3793568e73ede";
   constexpr char kModifiedChecksum[] = "abd4f5d1c3b8d8cfc572b389e589da5a";

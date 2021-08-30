@@ -43,16 +43,13 @@ TEST_F(FPDFFlattenEmbedderTest, BUG_861842) {
   static constexpr char kCheckboxChecksum[] =
       "95fdaa000e81c80892b8d370f77be970";
 #else
-#if defined(OS_WIN)
-  static constexpr char kCheckboxChecksum[] =
-      "95fba3cb7bce7e0d3c94279f60984e17";
-#elif defined(OS_APPLE)
+#if defined(OS_APPLE)
   static constexpr char kCheckboxChecksum[] =
       "6aafcb2d98da222964bcdbf5aa1f4f1f";
 #else
   static constexpr char kCheckboxChecksum[] =
       "594265790b81df2d93120d33b72a6ada";
-#endif
+#endif  // defined(OS_APPLE)
 #endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
   ASSERT_TRUE(OpenDocument("bug_861842.pdf"));

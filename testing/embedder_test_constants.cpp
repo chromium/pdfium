@@ -19,7 +19,7 @@ const char kAnnotationStampWithApChecksum[] =
 #else
 #if defined(OS_WIN)
 const char kAnnotationStampWithApChecksum[] =
-    "6aa001a77ec05d0f1b0d1d22e28744d4";
+    "6712a912af61cb45809e343f59b62432";
 #elif defined(OS_APPLE)
 const char kAnnotationStampWithApChecksum[] =
     "80d7b6cc7b13a78d77a6151bc846e80b";
@@ -38,11 +38,7 @@ const char kBug890322Checksum[] = "6c674642154408e877d88c6c082d67e9";
 #endif
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#if defined(OS_WIN)
-const char kHelloWorldChecksum[] = "7fca5790ce81c715d74d955ea9939fd8";
-#else
 const char kHelloWorldChecksum[] = "66ecb880a880dd263ff495b28aeda0d1";
-#endif  // defined(OS_WIN)
 #else
 #if defined(OS_WIN)
 const char kHelloWorldChecksum[] = "795b7ce1626931aa06af0fa23b7d80bb";
