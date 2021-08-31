@@ -203,9 +203,6 @@ class CFX_FloatRect {
   constexpr CFX_FloatRect(float l, float b, float r, float t)
       : left(l), bottom(b), right(r), top(t) {}
 
-  explicit CFX_FloatRect(const float* pArray)
-      : CFX_FloatRect(pArray[0], pArray[1], pArray[2], pArray[3]) {}
-
   explicit CFX_FloatRect(const FX_RECT& rect);
   explicit CFX_FloatRect(const CFX_PointF& point);
 

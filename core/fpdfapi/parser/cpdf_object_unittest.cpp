@@ -456,7 +456,7 @@ TEST(PDFArrayTest, GetRect) {
                       {0.05f, 0.1f, 1.34f, 99.9f}};
   for (size_t i = 0; i < pdfium::size(elems); ++i) {
     auto arr = pdfium::MakeRetain<CPDF_Array>();
-    CFX_FloatRect rect(elems[i]);
+    CFX_FloatRect rect(elems[i][0], elems[i][1], elems[i][2], elems[i][3]);
     for (size_t j = 0; j < 4; ++j)
       arr->AppendNew<CPDF_Number>(elems[i][j]);
     CFX_FloatRect arr_rect = arr->GetRect();
