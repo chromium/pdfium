@@ -6,15 +6,13 @@
 
 #include "core/fxcodec/png/png_decoder.h"
 
+#include <setjmp.h>
 #include <string.h>
-
-#include <algorithm>
 
 #include "core/fxcodec/cfx_codec_memory.h"
 #include "core/fxcodec/fx_codec.h"
+#include "core/fxcodec/fx_codec_def.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "core/fxge/dib/fx_dib.h"
-#include "third_party/base/compiler_specific.h"
 
 #ifdef USE_SYSTEM_LIBPNG
 #include <png.h>
