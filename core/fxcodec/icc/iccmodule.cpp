@@ -110,25 +110,26 @@ std::unique_ptr<CLcmsCmm> IccModule::CreateTransformSRGB(
 
 // static
 void IccModule::Translate(CLcmsCmm* pTransform,
-                          uint32_t nSrcComponents,
-                          const float* pSrcValues,
-                          float* pDestValues) {
+                          pdfium::span<const float> pSrcValues,
+                          pdfium::span<float> pDestValues) {
   if (!pTransform)
     return;
 
   uint8_t output[4];
   // TODO(npm): Currently the CmsDoTransform method is part of LCMS and it will
   // apply some member of m_hTransform to the input. We need to go over all the
-  // places which set transform to verify that only |nSrcComponents| are used.
+  // places which set transform to verify that only `pSrcValues.size()`
+  // components are used.
   if (pTransform->IsLab()) {
-    std::vector<double> inputs(std::max(nSrcComponents, 16u));
-    for (uint32_t i = 0; i < nSrcComponents; ++i)
+    std::vector<double, FxAllocAllocator<double>> inputs(
+        std::max<size_t>(pSrcValues.size(), 16));
+    for (uint32_t i = 0; i < pSrcValues.size(); ++i)
       inputs[i] = pSrcValues[i];
     cmsDoTransform(pTransform->transform(), inputs.data(), output, 1);
   } else {
     std::vector<uint8_t, FxAllocAllocator<uint8_t>> inputs(
-        std::max(nSrcComponents, 16u));
-    for (uint32_t i = 0; i < nSrcComponents; ++i) {
+        std::max<size_t>(pSrcValues.size(), 16));
+    for (size_t i = 0; i < pSrcValues.size(); ++i) {
       inputs[i] =
           pdfium::clamp(static_cast<int>(pSrcValues[i] * 255.0f), 0, 255);
     }

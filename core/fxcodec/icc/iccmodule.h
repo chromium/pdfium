@@ -47,9 +47,8 @@ class IccModule {
   static std::unique_ptr<CLcmsCmm> CreateTransformSRGB(
       pdfium::span<const uint8_t> span);
   static void Translate(CLcmsCmm* pTransform,
-                        uint32_t nSrcComponents,
-                        const float* pSrcValues,
-                        float* pDestValues);
+                        pdfium::span<const float> pSrcValues,
+                        pdfium::span<float> pDestValues);
   static void TranslateScanline(CLcmsCmm* pTransform,
                                 uint8_t* pDest,
                                 const uint8_t* pSrc,

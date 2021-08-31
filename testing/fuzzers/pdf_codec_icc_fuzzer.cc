@@ -11,13 +11,14 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   std::unique_ptr<CLcmsCmm> transform =
       IccModule::CreateTransformSRGB(pdfium::make_span(data, size));
 
-  if (transform) {
-    float src[4];
-    float dst[4];
-    for (int i = 0; i < 4; i++)
-      src[i] = 0.5f;
-    IccModule::Translate(transform.get(), transform->components(), src, dst);
-  }
+  if (!transform)
+    return 0;
+
+  const float src[4] = {0.5f, 0.5f, 0.5f, 0.5f};
+  float dst[4];
+  IccModule::Translate(transform.get(),
+                       pdfium::make_span(src).first(transform->components()),
+                       pdfium::make_span(dst));
 
   return 0;
 }

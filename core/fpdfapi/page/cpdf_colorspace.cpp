@@ -986,8 +986,8 @@ bool CPDF_ICCBasedCS::GetRGB(pdfium::span<const float> pBuf,
   }
   if (m_pProfile->transform()) {
     float rgb[3];
-    IccModule::Translate(m_pProfile->transform(), CountComponents(),
-                         pBuf.data(), rgb);
+    IccModule::Translate(m_pProfile->transform(), pBuf.first(CountComponents()),
+                         rgb);
     *R = rgb[0];
     *G = rgb[1];
     *B = rgb[2];
