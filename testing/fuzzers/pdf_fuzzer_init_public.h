@@ -28,7 +28,9 @@ class PDFFuzzerInitPublic {
   FPDF_LIBRARY_CONFIG config_;
   UNSUPPORT_INFO unsupport_info_;
 #ifdef PDF_ENABLE_V8
+#ifdef V8_USE_EXTERNAL_STARTUP_DATA
   v8::StartupData snapshot_blob_;
+#endif  // V8_USE_EXTERNAL_STARTUP_DATA
   std::unique_ptr<v8::Platform> platform_;
   std::unique_ptr<v8::ArrayBuffer::Allocator> allocator_;
   std::unique_ptr<v8::Isolate, CFX_V8IsolateDeleter> isolate_;

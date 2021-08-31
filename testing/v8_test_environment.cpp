@@ -61,7 +61,7 @@ void V8TestEnvironment::SetUp() {
         exe_path_, std::string(), std::string(), startup_data_.get());
   }
 #else
-  platform_ = InitializeV8ForPDFium(exe_path_);
+  platform_ = InitializeV8ForPDFium(std::string(), exe_path_);
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
 
   v8::Isolate::CreateParams params;
