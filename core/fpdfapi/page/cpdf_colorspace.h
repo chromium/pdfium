@@ -96,6 +96,7 @@ class CPDF_ColorSpace : public Retainable, public Observable {
            GetFamily() == Family::kPattern;
   }
 
+  // Use CPDF_Pattern::GetPatternRGB() instead of GetRGB() for patterns.
   virtual bool GetRGB(pdfium::span<const float> pBuf,
                       float* R,
                       float* G,
@@ -117,12 +118,6 @@ class CPDF_ColorSpace : public Retainable, public Observable {
   // Returns |this| as a CPDF_PatternCS* if |this| is a pattern.
   virtual CPDF_PatternCS* AsPatternCS();
   virtual const CPDF_PatternCS* AsPatternCS() const;
-
-  // Use instead of GetRGB() for patterns.
-  virtual bool GetPatternRGB(const PatternValue& value,
-                             float* R,
-                             float* G,
-                             float* B) const;
 
  protected:
   CPDF_ColorSpace(CPDF_Document* pDoc, Family family);

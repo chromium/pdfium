@@ -28,15 +28,16 @@ class CPDF_PatternCS final : public CPDF_ColorSpace {
               float* R,
               float* G,
               float* B) const override;
-  bool GetPatternRGB(const PatternValue& value,
-                     float* R,
-                     float* G,
-                     float* B) const override;
   CPDF_PatternCS* AsPatternCS() override;
   const CPDF_PatternCS* AsPatternCS() const override;
   uint32_t v_Load(CPDF_Document* pDoc,
                   const CPDF_Array* pArray,
                   std::set<const CPDF_Object*>* pVisited) override;
+
+  bool GetPatternRGB(const PatternValue& value,
+                     float* R,
+                     float* G,
+                     float* B) const;
 
  private:
   explicit CPDF_PatternCS(CPDF_Document* pDoc);
