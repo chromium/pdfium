@@ -139,8 +139,8 @@ class CPDF_CalGray final : public CPDF_ColorSpace {
   explicit CPDF_CalGray(CPDF_Document* pDoc);
 
   float m_Gamma = kDefaultGamma;
-  float m_WhitePoint[kBlackWhitePointCount];
-  float m_BlackPoint[kBlackWhitePointCount];
+  float m_WhitePoint[kBlackWhitePointCount] = {1.0f, 1.0f, 1.0f};
+  float m_BlackPoint[kBlackWhitePointCount] = {0.0f, 0.0f, 0.0f};
 };
 
 class CPDF_CalRGB final : public CPDF_ColorSpace {
@@ -169,8 +169,8 @@ class CPDF_CalRGB final : public CPDF_ColorSpace {
 
   explicit CPDF_CalRGB(CPDF_Document* pDoc);
 
-  float m_WhitePoint[kBlackWhitePointCount];
-  float m_BlackPoint[kBlackWhitePointCount];
+  float m_WhitePoint[kBlackWhitePointCount] = {1.0f, 1.0f, 1.0f};
+  float m_BlackPoint[kBlackWhitePointCount] = {0.0f, 0.0f, 0.0f};
   float m_Gamma[kGammaCount];
   float m_Matrix[kMatrixCount];
   bool m_bHasGamma = false;
@@ -206,8 +206,8 @@ class CPDF_LabCS final : public CPDF_ColorSpace {
 
   explicit CPDF_LabCS(CPDF_Document* pDoc);
 
-  float m_WhitePoint[kBlackWhitePointCount];
-  float m_BlackPoint[kBlackWhitePointCount];
+  float m_WhitePoint[kBlackWhitePointCount] = {1.0f, 1.0f, 1.0f};
+  float m_BlackPoint[kBlackWhitePointCount] = {0.0f, 0.0f, 0.0f};
   float m_Ranges[kRangesCount];
 };
 
@@ -539,42 +539,44 @@ RetainPtr<CPDF_ColorSpace> CPDF_ColorSpace::Load(
   if (pArray->size() == 1)
     return ColorspaceFromName(familyname);
 
-  RetainPtr<CPDF_ColorSpace> pCS;
-  switch (familyname.GetID()) {
-    case FXBSTR_ID('C', 'a', 'l', 'G'):
-      pCS = pdfium::MakeRetain<CPDF_CalGray>(pDoc);
-      break;
-    case FXBSTR_ID('C', 'a', 'l', 'R'):
-      pCS = pdfium::MakeRetain<CPDF_CalRGB>(pDoc);
-      break;
-    case FXBSTR_ID('L', 'a', 'b', 0):
-      pCS = pdfium::MakeRetain<CPDF_LabCS>(pDoc);
-      break;
-    case FXBSTR_ID('I', 'C', 'C', 'B'):
-      pCS = pdfium::MakeRetain<CPDF_ICCBasedCS>(pDoc);
-      break;
-    case FXBSTR_ID('I', 'n', 'd', 'e'):
-    case FXBSTR_ID('I', 0, 0, 0):
-      pCS = pdfium::MakeRetain<CPDF_IndexedCS>(pDoc);
-      break;
-    case FXBSTR_ID('S', 'e', 'p', 'a'):
-      pCS = pdfium::MakeRetain<CPDF_SeparationCS>(pDoc);
-      break;
-    case FXBSTR_ID('D', 'e', 'v', 'i'):
-      pCS = pdfium::MakeRetain<CPDF_DeviceNCS>(pDoc);
-      break;
-    case FXBSTR_ID('P', 'a', 't', 't'):
-      pCS = pdfium::MakeRetain<CPDF_PatternCS>(pDoc);
-      break;
-    default:
-      return nullptr;
-  }
+  RetainPtr<CPDF_ColorSpace> pCS =
+      CPDF_ColorSpace::AllocateColorSpaceForID(pDoc, familyname.GetID());
+  if (!pCS)
+    return nullptr;
+
   pCS->m_pArray.Reset(pArray);
   pCS->m_nComponents = pCS->v_Load(pDoc, pArray, pVisited);
   if (pCS->m_nComponents == 0)
     return nullptr;
 
   return pCS;
+}
+
+// static
+RetainPtr<CPDF_ColorSpace> CPDF_ColorSpace::AllocateColorSpaceForID(
+    CPDF_Document* pDocument,
+    uint32_t family_id) {
+  switch (family_id) {
+    case FXBSTR_ID('C', 'a', 'l', 'G'):
+      return pdfium::MakeRetain<CPDF_CalGray>(pDocument);
+    case FXBSTR_ID('C', 'a', 'l', 'R'):
+      return pdfium::MakeRetain<CPDF_CalRGB>(pDocument);
+    case FXBSTR_ID('L', 'a', 'b', 0):
+      return pdfium::MakeRetain<CPDF_LabCS>(pDocument);
+    case FXBSTR_ID('I', 'C', 'C', 'B'):
+      return pdfium::MakeRetain<CPDF_ICCBasedCS>(pDocument);
+    case FXBSTR_ID('I', 'n', 'd', 'e'):
+    case FXBSTR_ID('I', 0, 0, 0):
+      return pdfium::MakeRetain<CPDF_IndexedCS>(pDocument);
+    case FXBSTR_ID('S', 'e', 'p', 'a'):
+      return pdfium::MakeRetain<CPDF_SeparationCS>(pDocument);
+    case FXBSTR_ID('D', 'e', 'v', 'i'):
+      return pdfium::MakeRetain<CPDF_DeviceNCS>(pDocument);
+    case FXBSTR_ID('P', 'a', 't', 't'):
+      return pdfium::MakeRetain<CPDF_PatternCS>(pDocument);
+    default:
+      return nullptr;
+  }
 }
 
 // static
@@ -800,24 +802,26 @@ void CPDF_CalRGB::TranslateImageLine(uint8_t* pDestBuf,
                                      int image_width,
                                      int image_height,
                                      bool bTransMask) const {
-  if (bTransMask) {
-    float Cal[3];
-    float R;
-    float G;
-    float B;
-    for (int i = 0; i < pixels; i++) {
-      Cal[0] = static_cast<float>(pSrcBuf[2]) / 255;
-      Cal[1] = static_cast<float>(pSrcBuf[1]) / 255;
-      Cal[2] = static_cast<float>(pSrcBuf[0]) / 255;
-      GetRGB(Cal, &R, &G, &B);
-      pDestBuf[0] = FXSYS_roundf(B * 255);
-      pDestBuf[1] = FXSYS_roundf(G * 255);
-      pDestBuf[2] = FXSYS_roundf(R * 255);
-      pSrcBuf += 3;
-      pDestBuf += 3;
-    }
+  if (!bTransMask) {
+    fxcodec::ReverseRGB(pDestBuf, pSrcBuf, pixels);
+    return;
   }
-  fxcodec::ReverseRGB(pDestBuf, pSrcBuf, pixels);
+
+  float Cal[3];
+  float R;
+  float G;
+  float B;
+  for (int i = 0; i < pixels; i++) {
+    Cal[0] = static_cast<float>(pSrcBuf[2]) / 255;
+    Cal[1] = static_cast<float>(pSrcBuf[1]) / 255;
+    Cal[2] = static_cast<float>(pSrcBuf[0]) / 255;
+    GetRGB(Cal, &R, &G, &B);
+    pDestBuf[0] = FXSYS_roundf(B * 255);
+    pDestBuf[1] = FXSYS_roundf(G * 255);
+    pDestBuf[2] = FXSYS_roundf(R * 255);
+    pSrcBuf += 3;
+    pDestBuf += 3;
+  }
 }
 
 CPDF_LabCS::CPDF_LabCS(CPDF_Document* pDoc)

@@ -117,6 +117,7 @@ source_set("page") {
 
 pdfium_unittest_source_set("unittests") {
   sources = [
+    "cpdf_colorspace_unittest.cpp",
     "cpdf_devicecs_unittest.cpp",
     "cpdf_function_unittest.cpp",
     "cpdf_pageobjectholder_unittest.cpp",

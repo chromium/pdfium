@@ -77,6 +77,10 @@ class CPDF_ColorSpace : public Retainable, public Observable {
       const CPDF_Object* pObj,
       std::set<const CPDF_Object*>* pVisited);
 
+  static RetainPtr<CPDF_ColorSpace> AllocateColorSpaceForID(
+      CPDF_Document* pDocument,
+      uint32_t family_id);
+
   static uint32_t ComponentsForFamily(Family family);
   static bool IsValidIccComponents(int components);
 
