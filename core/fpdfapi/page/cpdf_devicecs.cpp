@@ -60,7 +60,7 @@ bool CPDF_DeviceCS::GetRGB(pdfium::span<const float> pBuf,
       *B = NormalizeChannel(pBuf[2]);
       return true;
     case Family::kDeviceCMYK:
-      if (m_dwStdConversion) {
+      if (IsStdConversionEnabled()) {
         float k = pBuf[3];
         *R = 1.0f - std::min(1.0f, pBuf[0] + k);
         *G = 1.0f - std::min(1.0f, pBuf[1] + k);
@@ -106,7 +106,7 @@ void CPDF_DeviceCS::TranslateImageLine(uint8_t* pDestBuf,
         }
       } else {
         for (int i = 0; i < pixels; i++) {
-          if (m_dwStdConversion) {
+          if (IsStdConversionEnabled()) {
             uint8_t k = pSrcBuf[3];
             pDestBuf[2] = 255 - std::min(255, pSrcBuf[0] + k);
             pDestBuf[1] = 255 - std::min(255, pSrcBuf[1] + k);

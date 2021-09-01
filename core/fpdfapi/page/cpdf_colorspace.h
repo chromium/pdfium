@@ -132,10 +132,11 @@ class CPDF_ColorSpace : public Retainable, public Observable {
   // components count.
   void SetComponentsForStockCS(uint32_t nComponents);
 
+  bool IsStdConversionEnabled() const { return m_dwStdConversion != 0; }
+
   UnownedPtr<const CPDF_Document> const m_pDocument;
   RetainPtr<const CPDF_Array> m_pArray;
   const Family m_Family;
-  uint32_t m_dwStdConversion = 0;
 
  private:
   friend class CPDF_CalGray_TranslateImageLine_Test;
@@ -145,6 +146,7 @@ class CPDF_ColorSpace : public Retainable, public Observable {
       CPDF_Document* pDocument,
       ByteStringView bsFamilyName);
 
+  uint32_t m_dwStdConversion = 0;
   uint32_t m_nComponents = 0;
 };
 
