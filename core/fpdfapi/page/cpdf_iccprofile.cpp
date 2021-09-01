@@ -7,7 +7,7 @@
 #include "core/fpdfapi/page/cpdf_iccprofile.h"
 
 #include "core/fpdfapi/parser/cpdf_stream.h"
-#include "core/fxcodec/icc/iccmodule.h"
+#include "core/fxcodec/icc/icc_transform.h"
 
 namespace {
 
@@ -26,7 +26,7 @@ CPDF_IccProfile::CPDF_IccProfile(const CPDF_Stream* pStream,
     return;
   }
 
-  m_Transform = IccModule::CreateTransformSRGB(span);
+  m_Transform = fxcodec::IccTransform::CreateTransformSRGB(span);
   if (m_Transform)
     m_nSrcComponents = m_Transform->components();
 }

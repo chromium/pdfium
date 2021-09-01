@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/icc/iccmodule.h"
+#include "core/fxcodec/icc/icc_transform.h"
 
 #include <algorithm>
 #include <memory>
@@ -13,6 +13,7 @@
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "third_party/base/cxx17_backports.h"
 #include "third_party/base/notreached.h"
+#include "third_party/base/ptr_util.h"
 
 namespace fxcodec {
 
@@ -37,21 +38,21 @@ bool Check3Components(cmsColorSpaceSignature cs) {
 
 }  // namespace
 
-CLcmsCmm::CLcmsCmm(cmsHTRANSFORM hTransform,
-                   int srcComponents,
-                   bool bIsLab,
-                   bool bNormal)
+IccTransform::IccTransform(cmsHTRANSFORM hTransform,
+                           int srcComponents,
+                           bool bIsLab,
+                           bool bNormal)
     : m_hTransform(hTransform),
       m_nSrcComponents(srcComponents),
       m_bLab(bIsLab),
       m_bNormal(bNormal) {}
 
-CLcmsCmm::~CLcmsCmm() {
+IccTransform::~IccTransform() {
   cmsDeleteTransform(m_hTransform);
 }
 
 // static
-std::unique_ptr<CLcmsCmm> IccModule::CreateTransformSRGB(
+std::unique_ptr<IccTransform> IccTransform::CreateTransformSRGB(
     pdfium::span<const uint8_t> span) {
   ScopedCmsProfile srcProfile(cmsOpenProfileFromMem(span.data(), span.size()));
   if (!srcProfile)
@@ -62,8 +63,8 @@ std::unique_ptr<CLcmsCmm> IccModule::CreateTransformSRGB(
     return nullptr;
 
   cmsColorSpaceSignature srcCS = cmsGetColorSpace(srcProfile.get());
-
   uint32_t nSrcComponents = cmsChannelsOf(srcCS);
+
   // According to PDF spec, number of components must be 1, 3, or 4.
   if (nSrcComponents != 1 && nSrcComponents != 3 && nSrcComponents != 4)
     return nullptr;
@@ -105,27 +106,24 @@ std::unique_ptr<CLcmsCmm> IccModule::CreateTransformSRGB(
   if (!hTransform)
     return nullptr;
 
-  return std::make_unique<CLcmsCmm>(hTransform, nSrcComponents, bLab, bNormal);
+  // Private ctor.
+  return pdfium::WrapUnique(
+      new IccTransform(hTransform, nSrcComponents, bLab, bNormal));
 }
 
-// static
-void IccModule::Translate(CLcmsCmm* pTransform,
-                          pdfium::span<const float> pSrcValues,
-                          pdfium::span<float> pDestValues) {
-  if (!pTransform)
-    return;
-
+void IccTransform::Translate(pdfium::span<const float> pSrcValues,
+                             pdfium::span<float> pDestValues) {
   uint8_t output[4];
   // TODO(npm): Currently the CmsDoTransform method is part of LCMS and it will
   // apply some member of m_hTransform to the input. We need to go over all the
   // places which set transform to verify that only `pSrcValues.size()`
   // components are used.
-  if (pTransform->IsLab()) {
+  if (m_bLab) {
     std::vector<double, FxAllocAllocator<double>> inputs(
         std::max<size_t>(pSrcValues.size(), 16));
     for (uint32_t i = 0; i < pSrcValues.size(); ++i)
       inputs[i] = pSrcValues[i];
-    cmsDoTransform(pTransform->transform(), inputs.data(), output, 1);
+    cmsDoTransform(m_hTransform, inputs.data(), output, 1);
   } else {
     std::vector<uint8_t, FxAllocAllocator<uint8_t>> inputs(
         std::max<size_t>(pSrcValues.size(), 16));
@@ -133,20 +131,17 @@ void IccModule::Translate(CLcmsCmm* pTransform,
       inputs[i] =
           pdfium::clamp(static_cast<int>(pSrcValues[i] * 255.0f), 0, 255);
     }
-    cmsDoTransform(pTransform->transform(), inputs.data(), output, 1);
+    cmsDoTransform(m_hTransform, inputs.data(), output, 1);
   }
   pDestValues[0] = output[2] / 255.0f;
   pDestValues[1] = output[1] / 255.0f;
   pDestValues[2] = output[0] / 255.0f;
 }
 
-// static
-void IccModule::TranslateScanline(CLcmsCmm* pTransform,
-                                  unsigned char* pDest,
-                                  const unsigned char* pSrc,
-                                  int32_t pixels) {
-  if (pTransform)
-    cmsDoTransform(pTransform->transform(), pSrc, pDest, pixels);
+void IccTransform::TranslateScanline(unsigned char* pDest,
+                                     const unsigned char* pSrc,
+                                     int32_t pixels) {
+  cmsDoTransform(m_hTransform, pSrc, pDest, pixels);
 }
 
 }  // namespace fxcodec

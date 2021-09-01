@@ -32,7 +32,7 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcodec/fx_codec.h"
-#include "core/fxcodec/icc/iccmodule.h"
+#include "core/fxcodec/icc/icc_transform.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/maybe_owned.h"
 #include "core/fxcrt/scoped_set_insertion.h"
@@ -986,14 +986,12 @@ bool CPDF_ICCBasedCS::GetRGB(pdfium::span<const float> pBuf,
   }
   if (m_pProfile->transform()) {
     float rgb[3];
-    IccModule::Translate(m_pProfile->transform(), pBuf.first(CountComponents()),
-                         rgb);
+    m_pProfile->transform()->Translate(pBuf.first(CountComponents()), rgb);
     *R = rgb[0];
     *G = rgb[1];
     *B = rgb[2];
     return true;
   }
-
   if (m_pAlterCS)
     return m_pAlterCS->GetRGB(pBuf, R, G, B);
 
@@ -1041,12 +1039,10 @@ void CPDF_ICCBasedCS::TranslateImageLine(uint8_t* pDestBuf,
     if (nPixelCount.IsValid())
       bTranslate = nPixelCount.ValueOrDie() < nMaxColors * 3 / 2;
   }
-  if (bTranslate) {
-    IccModule::TranslateScanline(m_pProfile->transform(), pDestBuf, pSrcBuf,
-                                 pixels);
+  if (bTranslate && m_pProfile->transform()) {
+    m_pProfile->transform()->TranslateScanline(pDestBuf, pSrcBuf, pixels);
     return;
   }
-
   if (m_pCache.empty()) {
     m_pCache =
         fxcrt::Vector2D<uint8_t, FxAllocAllocator<uint8_t>>(nMaxColors, 3);
@@ -1062,8 +1058,10 @@ void CPDF_ICCBasedCS::TranslateImageLine(uint8_t* pDestBuf,
         order /= 52;
       }
     }
-    IccModule::TranslateScanline(m_pProfile->transform(), m_pCache.data(),
-                                 temp_src.data(), nMaxColors);
+    if (m_pProfile->transform()) {
+      m_pProfile->transform()->TranslateScanline(m_pCache.data(),
+                                                 temp_src.data(), nMaxColors);
+    }
   }
   for (int i = 0; i < pixels; i++) {
     int index = 0;
