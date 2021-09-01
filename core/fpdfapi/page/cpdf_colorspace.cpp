@@ -468,7 +468,7 @@ void PatternValue::SetComps(pdfium::span<const float> comps) {
 }
 
 // static
-RetainPtr<CPDF_ColorSpace> CPDF_ColorSpace::ColorspaceFromName(
+RetainPtr<CPDF_ColorSpace> CPDF_ColorSpace::GetStockCSForName(
     const ByteString& name) {
   if (name == "DeviceRGB" || name == "RGB")
     return GetStockCS(Family::kDeviceRGB);
@@ -487,13 +487,6 @@ RetainPtr<CPDF_ColorSpace> CPDF_ColorSpace::GetStockCS(Family family) {
 }
 
 // static
-RetainPtr<CPDF_ColorSpace> CPDF_ColorSpace::Load(CPDF_Document* pDoc,
-                                                 CPDF_Object* pObj) {
-  std::set<const CPDF_Object*> visited;
-  return Load(pDoc, pObj, &visited);
-}
-
-// static
 RetainPtr<CPDF_ColorSpace> CPDF_ColorSpace::Load(
     CPDF_Document* pDoc,
     const CPDF_Object* pObj,
@@ -507,7 +500,7 @@ RetainPtr<CPDF_ColorSpace> CPDF_ColorSpace::Load(
   ScopedSetInsertion<const CPDF_Object*> insertion(pVisited, pObj);
 
   if (pObj->IsName())
-    return ColorspaceFromName(pObj->GetString());
+    return GetStockCSForName(pObj->GetString());
 
   if (const CPDF_Stream* pStream = pObj->AsStream()) {
     const CPDF_Dictionary* pDict = pStream->GetDict();
@@ -519,7 +512,7 @@ RetainPtr<CPDF_ColorSpace> CPDF_ColorSpace::Load(
       CPDF_Name* pValue = ToName(it.second.Get());
       if (pValue) {
         RetainPtr<CPDF_ColorSpace> pRet =
-            ColorspaceFromName(pValue->GetString());
+            GetStockCSForName(pValue->GetString());
         if (pRet)
           return pRet;
       }
@@ -537,10 +530,10 @@ RetainPtr<CPDF_ColorSpace> CPDF_ColorSpace::Load(
 
   ByteString familyname = pFamilyObj->GetString();
   if (pArray->size() == 1)
-    return ColorspaceFromName(familyname);
+    return GetStockCSForName(familyname);
 
   RetainPtr<CPDF_ColorSpace> pCS =
-      CPDF_ColorSpace::AllocateColorSpaceForID(pDoc, familyname.GetID());
+      CPDF_ColorSpace::AllocateColorSpace(pDoc, familyname.AsStringView());
   if (!pCS)
     return nullptr;
 
@@ -553,10 +546,10 @@ RetainPtr<CPDF_ColorSpace> CPDF_ColorSpace::Load(
 }
 
 // static
-RetainPtr<CPDF_ColorSpace> CPDF_ColorSpace::AllocateColorSpaceForID(
+RetainPtr<CPDF_ColorSpace> CPDF_ColorSpace::AllocateColorSpace(
     CPDF_Document* pDocument,
-    uint32_t family_id) {
-  switch (family_id) {
+    ByteStringView bsFamilyName) {
+  switch (bsFamilyName.GetID()) {
     case FXBSTR_ID('C', 'a', 'l', 'G'):
       return pdfium::MakeRetain<CPDF_CalGray>(pDocument);
     case FXBSTR_ID('C', 'a', 'l', 'R'):

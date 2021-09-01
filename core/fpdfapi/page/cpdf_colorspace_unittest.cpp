@@ -14,8 +14,8 @@ TEST(CPDF_CalGray, TranslateImageLine) {
   const uint8_t kSrc[12] = {255, 0, 0, 0, 255, 0, 0, 0, 255, 128, 128, 128};
   const uint8_t kExpect[12] = {255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-  RetainPtr<CPDF_ColorSpace> pCal = CPDF_ColorSpace::AllocateColorSpaceForID(
-      nullptr, FXBSTR_ID('C', 'a', 'l', 'G'));
+  RetainPtr<CPDF_ColorSpace> pCal =
+      CPDF_ColorSpace::AllocateColorSpace(nullptr, "CalG");
   ASSERT_TRUE(pCal);
 
   uint8_t dst[12];
@@ -37,8 +37,8 @@ TEST(CPDF_CalRGB, TranslateImageLine) {
   const uint8_t kExpectNomask[12] = {0,   0, 255, 0,   255, 0,
                                      255, 0, 0,   128, 128, 128};
 
-  RetainPtr<CPDF_ColorSpace> pCal = CPDF_ColorSpace::AllocateColorSpaceForID(
-      nullptr, FXBSTR_ID('C', 'a', 'l', 'R'));
+  RetainPtr<CPDF_ColorSpace> pCal =
+      CPDF_ColorSpace::AllocateColorSpace(nullptr, "CalR");
   ASSERT_TRUE(pCal);
 
   uint8_t dst[12];

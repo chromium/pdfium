@@ -268,7 +268,7 @@ RetainPtr<CPDF_ColorSpace> CPDF_DocPageData::GetColorSpaceInternal(
 
   if (pCSObj->IsName()) {
     ByteString name = pCSObj->GetString();
-    RetainPtr<CPDF_ColorSpace> pCS = CPDF_ColorSpace::ColorspaceFromName(name);
+    RetainPtr<CPDF_ColorSpace> pCS = CPDF_ColorSpace::GetStockCSForName(name);
     if (!pCS && pResources) {
       const CPDF_Dictionary* pList = pResources->GetDictFor("ColorSpace");
       if (pList) {
