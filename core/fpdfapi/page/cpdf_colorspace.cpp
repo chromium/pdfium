@@ -1249,9 +1249,9 @@ bool CPDF_SeparationCS::GetRGB(pdfium::span<const float> pBuf,
   if (m_pBaseCS)
     return m_pBaseCS->GetRGB(results, R, G, B);
 
-  R = 0;
-  G = 0;
-  B = 0;
+  *R = 0.0f;
+  *G = 0.0f;
+  *B = 0.0f;
   return false;
 }
 
