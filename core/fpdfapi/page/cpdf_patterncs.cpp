@@ -11,8 +11,7 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "third_party/base/notreached.h"
 
-CPDF_PatternCS::CPDF_PatternCS(CPDF_Document* pDoc)
-    : CPDF_ColorSpace(pDoc, Family::kPattern) {}
+CPDF_PatternCS::CPDF_PatternCS() : CPDF_ColorSpace(Family::kPattern) {}
 
 CPDF_PatternCS::~CPDF_PatternCS() = default;
 

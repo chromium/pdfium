@@ -44,7 +44,7 @@ CPDF_PageModule::CPDF_PageModule()
           CPDF_ColorSpace::Family::kDeviceRGB)),
       m_StockCMYKCS(pdfium::MakeRetain<CPDF_DeviceCS>(
           CPDF_ColorSpace::Family::kDeviceCMYK)),
-      m_StockPatternCS(pdfium::MakeRetain<CPDF_PatternCS>(nullptr)) {
+      m_StockPatternCS(pdfium::MakeRetain<CPDF_PatternCS>()) {
   m_StockPatternCS->InitializeStockPattern();
   CPDF_FontGlobals::Create();
   CPDF_FontGlobals::GetInstance()->LoadEmbeddedMaps();

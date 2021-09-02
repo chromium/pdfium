@@ -40,7 +40,7 @@ class CPDF_PatternCS final : public CPDF_ColorSpace {
                      float* B) const;
 
  private:
-  explicit CPDF_PatternCS(CPDF_Document* pDoc);
+  CPDF_PatternCS();
 
   RetainPtr<CPDF_ColorSpace> m_pBaseCS;
 };
