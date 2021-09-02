@@ -11,6 +11,8 @@ source_set("page") {
     "cpdf_allstates.h",
     "cpdf_annotcontext.cpp",
     "cpdf_annotcontext.h",
+    "cpdf_basedcs.cpp",
+    "cpdf_basedcs.h",
     "cpdf_clippath.cpp",
     "cpdf_clippath.h",
     "cpdf_color.cpp",

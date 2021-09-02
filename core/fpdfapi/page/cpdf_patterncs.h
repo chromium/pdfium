@@ -9,12 +9,12 @@
 
 #include <set>
 
-#include "core/fpdfapi/page/cpdf_colorspace.h"
+#include "core/fpdfapi/page/cpdf_basedcs.h"
 #include "core/fxcrt/retain_ptr.h"
 
 class CPDF_Document;
 
-class CPDF_PatternCS final : public CPDF_ColorSpace {
+class CPDF_PatternCS final : public CPDF_BasedCS {
  public:
   CONSTRUCT_VIA_MAKE_RETAIN;
   ~CPDF_PatternCS() override;
@@ -41,8 +41,6 @@ class CPDF_PatternCS final : public CPDF_ColorSpace {
 
  private:
   CPDF_PatternCS();
-
-  RetainPtr<CPDF_ColorSpace> m_pBaseCS;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_PATTERNCS_H_
