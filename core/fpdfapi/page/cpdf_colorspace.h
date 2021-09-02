@@ -115,7 +115,6 @@ class CPDF_ColorSpace : public Retainable, public Observable {
   virtual bool IsNormal() const;
 
   // Returns |this| as a CPDF_PatternCS* if |this| is a pattern.
-  virtual CPDF_PatternCS* AsPatternCS();
   virtual const CPDF_PatternCS* AsPatternCS() const;
 
  protected:

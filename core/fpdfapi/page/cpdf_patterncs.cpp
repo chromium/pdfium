@@ -48,10 +48,6 @@ bool CPDF_PatternCS::GetRGB(pdfium::span<const float> pBuf,
   return false;
 }
 
-CPDF_PatternCS* CPDF_PatternCS::AsPatternCS() {
-  return this;
-}
-
 const CPDF_PatternCS* CPDF_PatternCS::AsPatternCS() const {
   return this;
 }

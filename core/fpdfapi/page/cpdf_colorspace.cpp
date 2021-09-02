@@ -643,13 +643,7 @@ bool CPDF_ColorSpace::IsNormal() const {
          GetFamily() == Family::kCalGray || GetFamily() == Family::kCalRGB;
 }
 
-CPDF_PatternCS* CPDF_ColorSpace::AsPatternCS() {
-  NOTREACHED();
-  return nullptr;
-}
-
 const CPDF_PatternCS* CPDF_ColorSpace::AsPatternCS() const {
-  NOTREACHED();
   return nullptr;
 }
 

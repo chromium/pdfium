@@ -28,7 +28,6 @@ class CPDF_PatternCS final : public CPDF_BasedCS {
               float* R,
               float* G,
               float* B) const override;
-  CPDF_PatternCS* AsPatternCS() override;
   const CPDF_PatternCS* AsPatternCS() const override;
   uint32_t v_Load(CPDF_Document* pDoc,
                   const CPDF_Array* pArray,
