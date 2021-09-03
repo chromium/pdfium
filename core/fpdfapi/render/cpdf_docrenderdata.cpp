@@ -117,7 +117,7 @@ RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::CreateTransferFunc(
       channel[v] = o;
   }
 
-  return pdfium::MakeRetain<CPDF_TransferFunc>(
-      GetDocument(), bIdentity, std::move(samples_r), std::move(samples_g),
-      std::move(samples_b));
+  return pdfium::MakeRetain<CPDF_TransferFunc>(bIdentity, std::move(samples_r),
+                                               std::move(samples_g),
+                                               std::move(samples_b));
 }
