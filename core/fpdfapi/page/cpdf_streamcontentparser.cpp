@@ -1234,7 +1234,6 @@ void CPDF_StreamContentParser::AddTextObject(const ByteString* pStrs,
                            : m_pCurStates->m_TextState.GetTextMode();
   {
     auto pText = std::make_unique<CPDF_TextObject>(GetCurrentStreamIndex());
-    m_pLastTextObject = pText.get();
     SetGraphicStates(pText.get(), true, true, true);
     if (TextRenderingModeIsStrokeMode(text_mode)) {
       pdfium::span<float> pCTM = pText->m_TextState.GetMutableCTM();
