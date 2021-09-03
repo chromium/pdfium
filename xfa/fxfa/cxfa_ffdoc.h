@@ -184,7 +184,6 @@ class CXFA_FFDoc : public cppgc::GarbageCollected<CXFA_FFDoc> {
   UnownedPtr<CallbackIface> const m_pDocEnvironment;
   UnownedPtr<CPDF_Document> const m_pPDFDoc;
   UnownedPtr<cppgc::Heap> const m_pHeap;
-  UnownedPtr<CFX_XMLDocument> m_pXMLDoc;
   cppgc::Member<CXFA_FFApp> const m_pApp;
   cppgc::Member<CXFA_FFNotify> m_pNotify;
   cppgc::Member<CXFA_Document> m_pDocument;
