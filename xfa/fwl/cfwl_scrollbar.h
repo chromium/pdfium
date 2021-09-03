@@ -39,8 +39,6 @@ class CFWL_ScrollBar final : public CFWL_Widget,
   void OnTimerFired() override;
 
   void GetRange(float* fMin, float* fMax) const {
-    DCHECK(fMin);
-    DCHECK(fMax);
     *fMin = m_fRangeMin;
     *fMax = m_fRangeMax;
   }

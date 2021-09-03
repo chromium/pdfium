@@ -1056,44 +1056,45 @@ void CFWL_Edit::OnChar(CFWL_MessageKey* pMsg) {
 bool CFWL_Edit::OnScroll(CFWL_ScrollBar* pScrollBar,
                          CFWL_EventScroll::Code dwCode,
                          float fPos) {
-  CFX_SizeF fs;
-  pScrollBar->GetRange(&fs.width, &fs.height);
+  float fMin;
+  float fMax;
+  pScrollBar->GetRange(&fMin, &fMax);
   float iCurPos = pScrollBar->GetPos();
   float fStep = pScrollBar->GetStepSize();
   switch (dwCode) {
     case CFWL_EventScroll::Code::Min: {
-      fPos = fs.width;
+      fPos = fMin;
       break;
     }
     case CFWL_EventScroll::Code::Max: {
-      fPos = fs.height;
+      fPos = fMax;
       break;
     }
     case CFWL_EventScroll::Code::StepBackward: {
       fPos -= fStep;
-      if (fPos < fs.width + fStep / 2) {
-        fPos = fs.width;
+      if (fPos < fMin + fStep / 2) {
+        fPos = fMin;
       }
       break;
     }
     case CFWL_EventScroll::Code::StepForward: {
       fPos += fStep;
-      if (fPos > fs.height - fStep / 2) {
-        fPos = fs.height;
+      if (fPos > fMax - fStep / 2) {
+        fPos = fMax;
       }
       break;
     }
     case CFWL_EventScroll::Code::PageBackward: {
       fPos -= pScrollBar->GetPageSize();
-      if (fPos < fs.width) {
-        fPos = fs.width;
+      if (fPos < fMin) {
+        fPos = fMin;
       }
       break;
     }
     case CFWL_EventScroll::Code::PageForward: {
       fPos += pScrollBar->GetPageSize();
-      if (fPos > fs.height) {
-        fPos = fs.height;
+      if (fPos > fMax) {
+        fPos = fMax;
       }
       break;
     }
