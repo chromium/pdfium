@@ -205,9 +205,7 @@ CPDFXFA_WidgetHandler::CPDFXFA_WidgetHandler() = default;
 CPDFXFA_WidgetHandler::~CPDFXFA_WidgetHandler() = default;
 
 void CPDFXFA_WidgetHandler::SetFormFillEnvironment(
-    CPDFSDK_FormFillEnvironment* pFormFillEnv) {
-  m_pFormFillEnv = pFormFillEnv;
-}
+    CPDFSDK_FormFillEnvironment* pFormFillEnv) {}
 
 bool CPDFXFA_WidgetHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
   CPDFXFA_Widget* pWidget = ToXFAWidget(pAnnot);
@@ -223,8 +221,7 @@ std::unique_ptr<CPDFSDK_Annot> CPDFXFA_WidgetHandler::NewAnnot(
 std::unique_ptr<CPDFSDK_Annot> CPDFXFA_WidgetHandler::NewAnnotForXFA(
     CXFA_FFWidget* pAnnot,
     CPDFSDK_PageView* pPageView) {
-  CPDFSDK_InteractiveForm* pForm = m_pFormFillEnv->GetInteractiveForm();
-  return std::make_unique<CPDFXFA_Widget>(pAnnot, pPageView, pForm);
+  return std::make_unique<CPDFXFA_Widget>(pAnnot, pPageView);
 }
 
 void CPDFXFA_WidgetHandler::OnDraw(CPDFSDK_PageView* pPageView,
