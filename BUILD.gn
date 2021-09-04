@@ -43,7 +43,7 @@ config("pdfium_common_config") {
   if (is_win) {
     # Assume UTF-8 by default to avoid code page dependencies.
     cflags += [ "/utf-8" ]
-    if (msvc_use_sse2 && !is_clang) {
+    if (msvc_use_sse2 && !is_clang && current_cpu == "x86") {
       cflags += [ "/arch:SSE2" ]
     }
   }
