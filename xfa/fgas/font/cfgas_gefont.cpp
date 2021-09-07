@@ -95,11 +95,10 @@ bool CFGAS_GEFont::LoadFontInternal(const wchar_t* pszFontFamily,
 #endif  // defined(OS_WIN)
 
 bool CFGAS_GEFont::LoadFontInternal(const RetainPtr<CPDF_Font>& pPDFFont) {
-  CFX_Font* pExternalFont = pPDFFont->GetFont();
-  if (m_pFont || !pExternalFont)
+  if (m_pFont)
     return false;
 
-  m_pFont = pExternalFont;
+  m_pFont = pPDFFont->GetFont();
   if (!InitFont())
     return false;
 
