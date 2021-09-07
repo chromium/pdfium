@@ -94,8 +94,7 @@ std::vector<TextCharPos> GetCharPosList(pdfium::span<const uint32_t> char_codes,
         !current_font->GetSubstFont()->m_bFlagMM) {
       int pdf_glyph_width = font->GetCharWidthF(char_code);
       int font_glyph_width =
-          current_font ? current_font->GetGlyphWidth(text_char_pos.m_GlyphIndex)
-                       : 0;
+          current_font->GetGlyphWidth(text_char_pos.m_GlyphIndex);
       if (font_glyph_width && pdf_glyph_width > font_glyph_width + 1) {
         // Move the initial x position by half of the excess (transformed to
         // text space coordinates).
