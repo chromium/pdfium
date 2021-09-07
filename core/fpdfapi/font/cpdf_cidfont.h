@@ -63,6 +63,11 @@ class CPDF_CIDFont final : public CPDF_Font {
   int GetCharSize(uint32_t charcode) const;
 
  private:
+  enum class CIDFontType : bool {
+    kType1,    // CIDFontType0
+    kTrueType  // CIDFontType2
+  };
+
   CPDF_CIDFont(CPDF_Document* pDocument, CPDF_Dictionary* pFontDict);
 
   void LoadGB2312();
@@ -75,7 +80,7 @@ class CPDF_CIDFont final : public CPDF_Font {
   UnownedPtr<const CPDF_CID2UnicodeMap> m_pCID2UnicodeMap;
   RetainPtr<CPDF_StreamAcc> m_pStreamAcc;
   std::unique_ptr<CFX_CTTGSUBTable> m_pTTGSUBTable;
-  bool m_bType1 = false;
+  CIDFontType m_FontType = CIDFontType::kTrueType;
   bool m_bCIDIsGID = false;
   bool m_bAnsiWidthsFixed = false;
   bool m_bAdobeCourierStd = false;

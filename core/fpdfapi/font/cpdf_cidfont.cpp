@@ -422,7 +422,8 @@ bool CPDF_CIDFont::Load() {
     return false;
 
   ByteString subtype = pCIDFontDict->GetStringFor("Subtype");
-  m_bType1 = (subtype == "CIDFontType0");
+  m_FontType =
+      subtype == "CIDFontType0" ? CIDFontType::kType1 : CIDFontType::kTrueType;
 
   if (!pEncoding->IsName() && !pEncoding->IsStream())
     return false;
@@ -456,7 +457,7 @@ bool CPDF_CIDFont::Load() {
     m_pCID2UnicodeMap = manager->GetCID2UnicodeMap(m_Charset);
   }
   if (m_Font.GetFaceRec()) {
-    if (m_bType1)
+    if (m_FontType == CIDFontType::kType1)
       FXFT_Select_Charmap(m_Font.GetFaceRec(), FT_ENCODING_UNICODE);
     else
       FT_UseCIDCharmap(m_Font.GetFaceRec(), m_pCMap->GetCoding());
@@ -777,7 +778,7 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
 
   uint16_t cid = CIDFromCharCode(charcode);
   if (!m_pStreamAcc) {
-    if (m_bType1)
+    if (m_FontType == CIDFontType::kType1)
       return cid;
     if (m_pFontFile && m_pCMap->IsDirectCharcodeToCIDTableIsEmpty())
       return cid;
@@ -829,9 +830,10 @@ bool CPDF_CIDFont::IsUnicodeCompatible() const {
 void CPDF_CIDFont::LoadSubstFont() {
   FX_SAFE_INT32 safeStemV(m_StemV);
   safeStemV *= 5;
-  m_Font.LoadSubst(m_BaseFontName, !m_bType1, m_Flags,
-                   safeStemV.ValueOrDefault(FXFONT_FW_NORMAL), m_ItalicAngle,
-                   kCharsetCodePages[m_Charset], IsVertWriting());
+  m_Font.LoadSubst(m_BaseFontName, m_FontType == CIDFontType::kTrueType,
+                   m_Flags, safeStemV.ValueOrDefault(FXFONT_FW_NORMAL),
+                   m_ItalicAngle, kCharsetCodePages[m_Charset],
+                   IsVertWriting());
 }
 
 // static
