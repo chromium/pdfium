@@ -19,6 +19,8 @@ enum WindowsPrintMode {
   kModePostScript2PassThrough = 4,
   kModePostScript3PassThrough = 5,
   kModeEmfImageMasks = 6,
+  kModePostScript3Type42 = 7,
+  kModePostScript3Type42PassThrough = 8,
 };
 
 struct EncoderIface;

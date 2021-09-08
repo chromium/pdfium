@@ -57,10 +57,10 @@ CFX_PSRenderer::CFX_PSRenderer(const EncoderIface* pEncoderIface)
 CFX_PSRenderer::~CFX_PSRenderer() = default;
 
 void CFX_PSRenderer::Init(const RetainPtr<IFX_RetainableWriteStream>& pStream,
-                          int pslevel,
+                          RenderingLevel level,
                           int width,
                           int height) {
-  m_PSLevel = pslevel;
+  m_Level = level;
   m_pStream = pStream;
   m_ClipBox.left = 0;
   m_ClipBox.top = 0;
@@ -398,7 +398,7 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
     uint8_t* output_buf = nullptr;
     size_t output_size = 0;
     const char* filter = nullptr;
-    if ((m_PSLevel == 2 || options.bLossy) &&
+    if ((m_Level.value() == RenderingLevel::kLevel2 || options.bLossy) &&
         m_pEncoderIface->pJpegEncodeFunc(pConverted, &output_buf,
                                          &output_size)) {
       filter = "/DCTDecode filter ";
@@ -585,7 +585,7 @@ bool CFX_PSRenderer::DrawTextAsType42Font(int char_count,
                                           CFX_Font* font,
                                           float font_size,
                                           std::ostringstream& buf) {
-  if (!CanEmbed(font))
+  if (m_Level != RenderingLevel::kLevel3Type42 || !CanEmbed(font))
     return false;
 
   if (font->GetFontType() != CFX_Font::FontType::kCIDTrueType)
@@ -664,7 +664,8 @@ void CFX_PSRenderer::PSCompressData(uint8_t* src_buf,
 
   uint8_t* dest_buf = nullptr;
   uint32_t dest_size = src_size;
-  if (m_PSLevel >= 3) {
+  if (m_Level.value() == RenderingLevel::kLevel3 ||
+      m_Level.value() == RenderingLevel::kLevel3Type42) {
     std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf_unique;
     if (m_pEncoderIface->pFlateEncodeFunc(src_buf, src_size, &dest_buf_unique,
                                           &dest_size)) {

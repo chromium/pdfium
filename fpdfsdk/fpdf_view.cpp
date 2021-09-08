@@ -83,6 +83,13 @@ static_assert(WindowsPrintMode::kModePostScript3PassThrough ==
 static_assert(WindowsPrintMode::kModeEmfImageMasks ==
                   FPDF_PRINTMODE_EMF_IMAGE_MASKS,
               "WindowsPrintMode::kModeEmfImageMasks value mismatch");
+static_assert(WindowsPrintMode::kModePostScript3Type42 ==
+                  FPDF_PRINTMODE_POSTSCRIPT3_TYPE42,
+              "WindowsPrintMode::kModePostScript3Type42 value mismatch");
+static_assert(
+    WindowsPrintMode::kModePostScript3Type42PassThrough ==
+        FPDF_PRINTMODE_POSTSCRIPT3_TYPE42_PASSTHROUGH,
+    "WindowsPrintMode::kModePostScript3Type42PassThrough value mismatch");
 #endif  // defined(OS_WIN)
 
 namespace {
@@ -219,8 +226,10 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_SetPrintTextWithGDI(FPDF_BOOL use_gdi) {
 #endif  // PDFIUM_PRINT_TEXT_WITH_GDI
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_SetPrintMode(int mode) {
-  if (mode < FPDF_PRINTMODE_EMF || mode > FPDF_PRINTMODE_EMF_IMAGE_MASKS)
+  if (mode < FPDF_PRINTMODE_EMF ||
+      mode > FPDF_PRINTMODE_POSTSCRIPT3_TYPE42_PASSTHROUGH) {
     return FALSE;
+  }
 
   g_pdfium_print_mode = static_cast<WindowsPrintMode>(mode);
   return TRUE;

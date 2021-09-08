@@ -337,6 +337,12 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_SetPrintTextWithGDI(FPDF_BOOL use_gdi);
 //                 PostScript via ExtEscape() in PASSTHROUGH mode.
 //                 FPDF_PRINTMODE_EMF_IMAGE_MASKS to output EMF, with more
 //                 efficient processing of documents containing image masks.
+//                 FPDF_PRINTMODE_POSTSCRIPT3_TYPE42 to output level 3
+//                 PostScript with embedded Type 42 fonts, when applicable, into
+//                 EMF as a series of GDI comments.
+//                 FPDF_PRINTMODE_POSTSCRIPT3_TYPE42_PASSTHROUGH to output level
+//                 3 PostScript with embedded Type 42 fonts, when applicable,
+//                 via ExtEscape() in PASSTHROUGH mode.
 // Return value:
 //          True if successful, false if unsuccessful (typically invalid input).
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_SetPrintMode(int mode);

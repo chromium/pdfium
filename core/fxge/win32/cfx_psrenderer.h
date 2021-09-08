@@ -20,6 +20,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_graphstatedata.h"
+#include "third_party/base/optional.h"
 #include "third_party/base/span.h"
 
 class CFX_DIBBase;
@@ -55,11 +56,17 @@ struct EncoderIface {
 
 class CFX_PSRenderer {
  public:
+  enum class RenderingLevel {
+    kLevel2,
+    kLevel3,
+    kLevel3Type42,
+  };
+
   explicit CFX_PSRenderer(const EncoderIface* pEncoderIface);
   ~CFX_PSRenderer();
 
   void Init(const RetainPtr<IFX_RetainableWriteStream>& stream,
-            int pslevel,
+            RenderingLevel level,
             int width,
             int height);
   void StartRendering();
@@ -139,7 +146,7 @@ class CFX_PSRenderer {
   bool m_bInited = false;
   bool m_bGraphStateSet = false;
   bool m_bColorSet = false;
-  int m_PSLevel = 0;
+  Optional<RenderingLevel> m_Level;
   uint32_t m_LastColor = 0;
   FX_RECT m_ClipBox;
   CFX_GraphStateData m_CurGraphState;

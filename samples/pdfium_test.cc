@@ -88,6 +88,7 @@ enum class OutputFormat {
   kEmf,
   kPs2,
   kPs3,
+  kPs3Type42,
 #endif
 #ifdef PDF_ENABLE_SKIA
   kSkp,
@@ -565,6 +566,12 @@ bool ParseCommandLine(const std::vector<std::string>& args,
         return false;
       }
       options->output_format = OutputFormat::kPs3;
+    } else if (cur_arg == "--ps3-type42") {
+      if (options->output_format != OutputFormat::kNone) {
+        fprintf(stderr, "Duplicate or conflicting --ps3-type42 argument\n");
+        return false;
+      }
+      options->output_format = OutputFormat::kPs3Type42;
     } else if (cur_arg == "--bmp") {
       if (options->output_format != OutputFormat::kNone) {
         fprintf(stderr, "Duplicate or conflicting --bmp argument\n");
@@ -1003,6 +1010,8 @@ void ProcessPdf(const std::string& name,
     FPDF_SetPrintMode(FPDF_PRINTMODE_POSTSCRIPT2);
   else if (options.output_format == OutputFormat::kPs3)
     FPDF_SetPrintMode(FPDF_PRINTMODE_POSTSCRIPT3);
+  else if (options.output_format == OutputFormat::kPs3Type42)
+    FPDF_SetPrintMode(FPDF_PRINTMODE_POSTSCRIPT3_TYPE42);
 #endif
 
   int page_count = FPDF_GetPageCount(doc.get());
@@ -1135,6 +1144,8 @@ constexpr char kUsageString[] =
     "  --ps2   - write page raw PostScript (Lvl 2) "
     "<pdf-name>.<page-number>.ps\n"
     "  --ps3   - write page raw PostScript (Lvl 3) "
+    "<pdf-name>.<page-number>.ps\n"
+    "  --ps3-type42 - write page raw PostScript (Lvl 3 with Type 42 fonts) "
     "<pdf-name>.<page-number>.ps\n"
 #endif
     "  --txt   - write page text in UTF32-LE <pdf-name>.<page-number>.txt\n"
