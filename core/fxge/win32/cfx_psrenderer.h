@@ -11,6 +11,7 @@
 #include <stdint.h>
 
 #include <memory>
+#include <sstream>
 #include <vector>
 
 #include "core/fxcrt/fx_coordinates.h"
@@ -22,8 +23,8 @@
 #include "third_party/base/span.h"
 
 class CFX_DIBBase;
-class CFX_GlyphCache;
 class CFX_Font;
+class CFX_GlyphCache;
 class CFX_Path;
 class TextCharPos;
 struct CFX_FillRenderOptions;
@@ -111,6 +112,16 @@ class CFX_PSRenderer {
                        const TextCharPos& charpos,
                        int* ps_fontnum,
                        int* ps_glyphindex);
+  void DrawTextAsType3Font(int char_count,
+                           const TextCharPos* char_pos,
+                           CFX_Font* font,
+                           float font_size,
+                           std::ostringstream& buf);
+  bool DrawTextAsType42Font(int char_count,
+                            const TextCharPos* char_pos,
+                            CFX_Font* font,
+                            float font_size,
+                            std::ostringstream& buf);
   bool FaxCompressData(std::unique_ptr<uint8_t, FxFreeDeleter> src_buf,
                        int width,
                        int height,
