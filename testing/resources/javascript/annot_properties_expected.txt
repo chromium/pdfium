@@ -14,3 +14,5 @@ Alert: Test lookup after name change gives error
 Alert: SUCCESS: Document.getAnnot: Object no longer exists.
 Alert: Test lookup under changed name
 Alert: nonesuch after name change: object
+Alert: Test setting empty name under changed name
+Alert: name after empty name change: 

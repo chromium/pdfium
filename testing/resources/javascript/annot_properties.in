@@ -74,6 +74,15 @@ try {
 } catch (e) {
   app.alert("ERROR: " + e);
 }
+app.alert("Test setting empty name under changed name");
+try {
+  var annot = this.getAnnot(0, "nonesuch");
+  annot.name = "";
+  app.alert("name after empty name change: " + annot.name);
+} catch (e) {
+  app.alert("ERROR: " + e);
+}
+
 endstream
 endobj
 {{object 22 0}} <<
