@@ -26,6 +26,7 @@
 class CFX_DIBBase;
 class CFX_Font;
 class CFX_GlyphCache;
+class CFX_PSFontTracker;
 class CFX_Path;
 class TextCharPos;
 struct CFX_FillRenderOptions;
@@ -62,7 +63,8 @@ class CFX_PSRenderer {
     kLevel3Type42,
   };
 
-  explicit CFX_PSRenderer(const EncoderIface* pEncoderIface);
+  CFX_PSRenderer(CFX_PSFontTracker* font_tracker,
+                 const EncoderIface* encoder_iface);
   ~CFX_PSRenderer();
 
   void Init(const RetainPtr<IFX_RetainableWriteStream>& stream,
@@ -150,6 +152,7 @@ class CFX_PSRenderer {
   uint32_t m_LastColor = 0;
   FX_RECT m_ClipBox;
   CFX_GraphStateData m_CurGraphState;
+  UnownedPtr<CFX_PSFontTracker> const m_pFontTracker;
   UnownedPtr<const EncoderIface> const m_pEncoderIface;
   RetainPtr<IFX_RetainableWriteStream> m_pStream;
   std::vector<std::unique_ptr<Glyph>> m_PSFontList;

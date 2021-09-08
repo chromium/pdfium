@@ -27,7 +27,9 @@
 #include "core/fxge/dib/fx_dib.h"
 #include "core/fxge/fx_freetype.h"
 #include "core/fxge/text_char_pos.h"
+#include "core/fxge/win32/cfx_psfonttracker.h"
 #include "core/fxge/win32/cpsoutput.h"
+#include "third_party/base/check.h"
 
 namespace {
 
@@ -51,8 +53,11 @@ struct CFX_PSRenderer::Glyph {
   Optional<std::array<float, 4>> adjust_matrix;
 };
 
-CFX_PSRenderer::CFX_PSRenderer(const EncoderIface* pEncoderIface)
-    : m_pEncoderIface(pEncoderIface) {}
+CFX_PSRenderer::CFX_PSRenderer(CFX_PSFontTracker* font_tracker,
+                               const EncoderIface* encoder_iface)
+    : m_pFontTracker(font_tracker), m_pEncoderIface(encoder_iface) {
+  DCHECK(m_pFontTracker);
+}
 
 CFX_PSRenderer::~CFX_PSRenderer() = default;
 
@@ -590,6 +595,17 @@ bool CFX_PSRenderer::DrawTextAsType42Font(int char_count,
 
   if (font->GetFontType() != CFX_Font::FontType::kCIDTrueType)
     return false;
+
+  bool is_existing_font = m_pFontTracker->SeenFontObject(font);
+  if (!is_existing_font) {
+    // TODO(thestig): Generate font here.
+    bool generated_font = false;
+    if (!generated_font)
+      return false;
+
+    m_pFontTracker->AddFontObject(font);
+    // TODO(thestig): Write out font here.
+  }
 
   // TODO(thestig): Write out text here.
   return false;

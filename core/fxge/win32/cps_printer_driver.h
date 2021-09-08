@@ -15,11 +15,14 @@
 #include "core/fxge/renderdevicedriver_iface.h"
 #include "core/fxge/win32/cfx_psrenderer.h"
 
+class CFX_PSFontTracker;
+
 class CPSPrinterDriver final : public RenderDeviceDriverIface {
  public:
   CPSPrinterDriver(HDC hDC,
                    WindowsPrintMode mode,
-                   const EncoderIface* pEncoderIface);
+                   CFX_PSFontTracker* ps_font_tracker,
+                   const EncoderIface* encoder_iface);
   ~CPSPrinterDriver() override;
 
  private:

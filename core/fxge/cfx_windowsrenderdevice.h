@@ -23,6 +23,7 @@ enum class WindowsPrintMode {
   kPostScript3Type42PassThrough = 8,
 };
 
+class CFX_PSFontTracker;
 struct EncoderIface;
 
 #if defined(PDFIUM_PRINT_TEXT_WITH_GDI)
@@ -38,7 +39,9 @@ extern WindowsPrintMode g_pdfium_print_mode;
 
 class CFX_WindowsRenderDevice : public CFX_RenderDevice {
  public:
-  CFX_WindowsRenderDevice(HDC hDC, const EncoderIface* pEncoderIface);
+  CFX_WindowsRenderDevice(HDC hDC,
+                          CFX_PSFontTracker* ps_font_tracker,
+                          const EncoderIface* encoder_iface);
   ~CFX_WindowsRenderDevice() override;
 
 #if defined(_SKIA_SUPPORT_)

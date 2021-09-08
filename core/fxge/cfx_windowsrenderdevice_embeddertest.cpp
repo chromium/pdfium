@@ -10,6 +10,7 @@
 
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_path.h"
+#include "core/fxge/win32/cfx_psfonttracker.h"
 #include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
@@ -27,7 +28,8 @@ class CFX_WindowsRenderDeviceTest : public EmbedderTest {
     // Get a device context with Windows GDI.
     m_hDC = CreateCompatibleDC(nullptr);
     ASSERT_TRUE(m_hDC);
-    m_driver = std::make_unique<CFX_WindowsRenderDevice>(m_hDC, nullptr);
+    m_driver = std::make_unique<CFX_WindowsRenderDevice>(
+        m_hDC, &m_PSFontTracker, /*encoder_iface=*/nullptr);
     m_driver->SaveState();
   }
 
@@ -40,6 +42,7 @@ class CFX_WindowsRenderDeviceTest : public EmbedderTest {
 
  protected:
   HDC m_hDC;
+  CFX_PSFontTracker m_PSFontTracker;
   std::unique_ptr<CFX_WindowsRenderDevice> m_driver;
 };
 

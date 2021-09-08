@@ -9,15 +9,24 @@
 
 #include <map>
 
+#include "build/build_config.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
+
+#if defined(OS_WIN)
+#include <memory>
+#endif
 
 class CPDF_Font;
 class CPDF_Object;
 class CPDF_TransferFunc;
 class CPDF_Type3Cache;
 class CPDF_Type3Font;
+
+#if defined(OS_WIN)
+class CFX_PSFontTracker;
+#endif
 
 class CPDF_DocRenderData : public CPDF_Document::RenderDataIface {
  public:
@@ -32,6 +41,10 @@ class CPDF_DocRenderData : public CPDF_Document::RenderDataIface {
   RetainPtr<CPDF_Type3Cache> GetCachedType3(CPDF_Type3Font* pFont);
   RetainPtr<CPDF_TransferFunc> GetTransferFunc(const CPDF_Object* pObj);
 
+#if defined(OS_WIN)
+  CFX_PSFontTracker* GetPSFontTracker();
+#endif
+
  protected:
   // protected for use by test subclasses.
   RetainPtr<CPDF_TransferFunc> CreateTransferFunc(
@@ -41,6 +54,10 @@ class CPDF_DocRenderData : public CPDF_Document::RenderDataIface {
   std::map<CPDF_Font*, ObservedPtr<CPDF_Type3Cache>> m_Type3FaceMap;
   std::map<const CPDF_Object*, ObservedPtr<CPDF_TransferFunc>>
       m_TransferFuncMap;
+
+#if defined(OS_WIN)
+  std::unique_ptr<CFX_PSFontTracker> m_PSFontTracker;
+#endif
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_DOCRENDERDATA_H_

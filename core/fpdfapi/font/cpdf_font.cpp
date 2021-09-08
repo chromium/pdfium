@@ -45,11 +45,6 @@ const uint8_t kChineseFontNames[][kChineseFontNameSize] = {
     {0xB7, 0xC2, 0xCB, 0xCE},
     {0xD0, 0xC2, 0xCB, 0xCE}};
 
-uint64_t MakeObjectTag(uint32_t id, uint32_t gen) {
-  uint64_t tag = id;
-  return (tag << 32) | gen;
-}
-
 }  // namespace
 
 CPDF_Font::CPDF_Font(CPDF_Document* pDocument, CPDF_Dictionary* pFontDict)
@@ -218,8 +213,8 @@ void CPDF_Font::LoadFontDescriptor(const CPDF_Dictionary* pFontDesc) {
   if (!m_pFontFile)
     return;
 
-  uint64_t tag = MakeObjectTag(pFontFile->GetObjNum(), pFontFile->GetGenNum());
-  if (!m_Font.LoadEmbedded(m_pFontFile->GetSpan(), IsVertWriting(), tag)) {
+  if (!m_Font.LoadEmbedded(m_pFontFile->GetSpan(), IsVertWriting(),
+                           pFontFile->KeyForCache())) {
     pData->MaybePurgeFontFileStreamAcc(m_pFontFile->GetStream()->AsStream());
     m_pFontFile = nullptr;
   }

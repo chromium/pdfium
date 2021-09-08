@@ -528,8 +528,10 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
                           (pPage->HasImageMask() && !bEnableImageMasks) ||
                           pPage->GetMaskBoundingBoxes().size() > 100;
   const bool bHasMask = pPage->HasImageMask() && !bNewBitmap;
+  auto* render_data = CPDF_DocRenderData::FromDocument(pPage->GetDocument());
   if (!bNewBitmap && !bHasMask) {
-    pContext->m_pDevice = std::make_unique<CPDF_WindowsRenderDevice>(dc);
+    pContext->m_pDevice = std::make_unique<CPDF_WindowsRenderDevice>(
+        dc, render_data->GetPSFontTracker());
     CPDFSDK_RenderPageWithContext(pContext, pPage, start_x, start_y, size_x,
                                   size_y, rotate, flags,
                                   /*color_scheme=*/nullptr,
@@ -556,20 +558,20 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
                                 /*pause=*/nullptr);
 
   if (!bHasMask) {
-    CPDF_WindowsRenderDevice WinDC(dc);
+    CPDF_WindowsRenderDevice win_dc(dc, render_data->GetPSFontTracker());
     bool bitsStretched = false;
-    if (WinDC.GetDeviceType() == DeviceType::kPrinter) {
+    if (win_dc.GetDeviceType() == DeviceType::kPrinter) {
       auto pDst = pdfium::MakeRetain<CFX_DIBitmap>();
       if (pDst->Create(size_x, size_y, FXDIB_Format::kRgb32)) {
         memset(pDst->GetBuffer(), -1, pBitmap->GetPitch() * size_y);
         pDst->CompositeBitmap(0, 0, size_x, size_y, pBitmap, 0, 0,
                               BlendMode::kNormal, nullptr, false);
-        WinDC.StretchDIBits(pDst, 0, 0, size_x, size_y);
+        win_dc.StretchDIBits(pDst, 0, 0, size_x, size_y);
         bitsStretched = true;
       }
     }
     if (!bitsStretched)
-      WinDC.SetDIBits(pBitmap, 0, 0);
+      win_dc.SetDIBits(pBitmap, 0, 0);
     return;
   }
 
@@ -590,7 +592,8 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
   pOwnedContext = std::make_unique<CPDF_PageRenderContext>();
   pContext = pOwnedContext.get();
   pPage->SetRenderContext(std::move(pOwnedContext));
-  pContext->m_pDevice = std::make_unique<CPDF_WindowsRenderDevice>(dc);
+  pContext->m_pDevice = std::make_unique<CPDF_WindowsRenderDevice>(
+      dc, render_data->GetPSFontTracker());
   pContext->m_pOptions = std::make_unique<CPDF_RenderOptions>();
   pContext->m_pOptions->GetOptions().bBreakForMasks = true;
 

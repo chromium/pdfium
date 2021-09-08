@@ -19,7 +19,8 @@ namespace {
 
 std::unique_ptr<RenderDeviceDriverIface> CreateDriver(
     HDC hDC,
-    const EncoderIface* pEncoderIface) {
+    CFX_PSFontTracker* ps_font_tracker,
+    const EncoderIface* encoder_iface) {
   int device_type = ::GetDeviceCaps(hDC, TECHNOLOGY);
   int obj_type = ::GetObjectType(hDC);
   bool use_printer = device_type == DT_RASPRINTER ||
@@ -38,7 +39,7 @@ std::unique_ptr<RenderDeviceDriverIface> CreateDriver(
     return std::make_unique<CTextOnlyPrinterDriver>(hDC);
 
   return std::make_unique<CPSPrinterDriver>(hDC, g_pdfium_print_mode,
-                                            pEncoderIface);
+                                            ps_font_tracker, encoder_iface);
 }
 
 }  // namespace
@@ -47,8 +48,9 @@ WindowsPrintMode g_pdfium_print_mode = WindowsPrintMode::kEmf;
 
 CFX_WindowsRenderDevice::CFX_WindowsRenderDevice(
     HDC hDC,
-    const EncoderIface* pEncoderIface) {
-  SetDeviceDriver(CreateDriver(hDC, pEncoderIface));
+    CFX_PSFontTracker* ps_font_tracker,
+    const EncoderIface* encoder_iface) {
+  SetDeviceDriver(CreateDriver(hDC, ps_font_tracker, encoder_iface));
 }
 
 CFX_WindowsRenderDevice::~CFX_WindowsRenderDevice() = default;

@@ -9,9 +9,11 @@
 
 #include "core/fxge/cfx_windowsrenderdevice.h"
 
+class CFX_PSFontTracker;
+
 class CPDF_WindowsRenderDevice final : public CFX_WindowsRenderDevice {
  public:
-  explicit CPDF_WindowsRenderDevice(HDC hDC);
+  CPDF_WindowsRenderDevice(HDC hDC, CFX_PSFontTracker* ps_font_tracker);
   ~CPDF_WindowsRenderDevice() override;
 };
 

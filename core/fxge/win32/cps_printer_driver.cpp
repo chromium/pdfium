@@ -44,8 +44,9 @@ CFX_PSRenderer::RenderingLevel RenderingLevelFromWindowsPrintMode(
 
 CPSPrinterDriver::CPSPrinterDriver(HDC hDC,
                                    WindowsPrintMode mode,
-                                   const EncoderIface* pEncoderIface)
-    : m_hDC(hDC), m_PSRenderer(pEncoderIface) {
+                                   CFX_PSFontTracker* ps_font_tracker,
+                                   const EncoderIface* encoder_iface)
+    : m_hDC(hDC), m_PSRenderer(ps_font_tracker, encoder_iface) {
   CFX_PSRenderer::RenderingLevel level =
       RenderingLevelFromWindowsPrintMode(mode);
   CPSOutput::OutputMode output_mode =
