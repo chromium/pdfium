@@ -428,6 +428,22 @@ TEST_F(PDFObjectsTest, MakeReferenceGeneric) {
             ToReference(ref_obj.Get())->GetRefObjNum());
 }
 
+TEST_F(PDFObjectsTest, KeyForCache) {
+  std::set<uint64_t> key_set;
+
+  // Check all direct objects inserted without collision.
+  for (const auto& direct : m_DirectObjs) {
+    EXPECT_TRUE(key_set.insert(direct->KeyForCache()).second);
+  }
+  // Check indirect objects inserted without collision.
+  for (const auto& pair : *m_ObjHolder) {
+    EXPECT_TRUE(key_set.insert(pair.second->KeyForCache()).second);
+  }
+
+  // Check all expected objects counted.
+  EXPECT_EQ(18u, key_set.size());
+}
+
 TEST(PDFArrayTest, GetMatrix) {
   float elems[][6] = {{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
                       {1, 2, 3, 4, 5, 6},
