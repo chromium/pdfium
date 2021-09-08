@@ -25,7 +25,6 @@ class CFX_DIBBase;
 class CFX_GlyphCache;
 class CFX_Font;
 class CFX_Path;
-class CPSFont;
 class TextCharPos;
 struct CFX_FillRenderOptions;
 struct FXDIB_ResampleOptions;
@@ -102,6 +101,8 @@ class CFX_PSRenderer {
                 uint32_t color);
 
  private:
+  struct Glyph;
+
   void OutputPath(const CFX_Path* pPath, const CFX_Matrix* pObject2Device);
   void SetGraphState(const CFX_GraphStateData* pGraphState);
   void SetColor(uint32_t color);
@@ -133,7 +134,7 @@ class CFX_PSRenderer {
   CFX_GraphStateData m_CurGraphState;
   UnownedPtr<const EncoderIface> const m_pEncoderIface;
   RetainPtr<IFX_RetainableWriteStream> m_pStream;
-  std::vector<std::unique_ptr<CPSFont>> m_PSFontList;
+  std::vector<std::unique_ptr<Glyph>> m_PSFontList;
   std::vector<FX_RECT> m_ClipBoxStack;
 };
 

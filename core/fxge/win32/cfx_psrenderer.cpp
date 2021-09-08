@@ -9,6 +9,7 @@
 #include <math.h>
 
 #include <algorithm>
+#include <array>
 #include <memory>
 #include <sstream>
 #include <utility>
@@ -26,17 +27,16 @@
 #include "core/fxge/text_char_pos.h"
 #include "core/fxge/win32/cpsoutput.h"
 
-struct PSGlyph {
-  UnownedPtr<CFX_Font> m_pFont;
-  uint32_t m_GlyphIndex;
-  bool m_bGlyphAdjust;
-  float m_AdjustMatrix[4];
-};
+struct CFX_PSRenderer::Glyph {
+  Glyph(CFX_Font* font, uint32_t glyph_index)
+      : font(font), glyph_index(glyph_index) {}
+  Glyph(const Glyph& other) = delete;
+  Glyph& operator=(const Glyph&) = delete;
+  ~Glyph() = default;
 
-class CPSFont {
- public:
-  int m_nGlyphs;
-  PSGlyph m_Glyphs[256];
+  UnownedPtr<CFX_Font> const font;
+  const uint32_t glyph_index;
+  Optional<std::array<float, 4>> adjust_matrix;
 };
 
 CFX_PSRenderer::CFX_PSRenderer(const EncoderIface* pEncoderIface)
@@ -453,32 +453,33 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_GlyphCache* pGlyphCache,
                                      const TextCharPos& charpos,
                                      int* ps_fontnum,
                                      int* ps_glyphindex) {
-  int i = 0;
-  for (const auto& pPSFont : m_PSFontList) {
-    for (int j = 0; j < pPSFont->m_nGlyphs; j++) {
-      if (pPSFont->m_Glyphs[j].m_pFont == pFont &&
-          pPSFont->m_Glyphs[j].m_GlyphIndex == charpos.m_GlyphIndex &&
-          ((!pPSFont->m_Glyphs[j].m_bGlyphAdjust && !charpos.m_bGlyphAdjust) ||
-           (pPSFont->m_Glyphs[j].m_bGlyphAdjust && charpos.m_bGlyphAdjust &&
-            (fabs(pPSFont->m_Glyphs[j].m_AdjustMatrix[0] -
-                  charpos.m_AdjustMatrix[0]) < 0.01 &&
-             fabs(pPSFont->m_Glyphs[j].m_AdjustMatrix[1] -
-                  charpos.m_AdjustMatrix[1]) < 0.01 &&
-             fabs(pPSFont->m_Glyphs[j].m_AdjustMatrix[2] -
-                  charpos.m_AdjustMatrix[2]) < 0.01 &&
-             fabs(pPSFont->m_Glyphs[j].m_AdjustMatrix[3] -
-                  charpos.m_AdjustMatrix[3]) < 0.01)))) {
-        *ps_fontnum = i;
-        *ps_glyphindex = j;
+  for (size_t i = 0; i < m_PSFontList.size(); ++i) {
+    const Glyph& glyph = *m_PSFontList[i];
+    if (glyph.font == pFont && glyph.glyph_index == charpos.m_GlyphIndex &&
+        glyph.adjust_matrix.has_value() == charpos.m_bGlyphAdjust) {
+      bool found;
+      if (glyph.adjust_matrix.has_value()) {
+        constexpr float kEpsilon = 0.01f;
+        const auto& adjust_matrix = glyph.adjust_matrix.value();
+        found = fabs(adjust_matrix[0] - charpos.m_AdjustMatrix[0]) < kEpsilon &&
+                fabs(adjust_matrix[1] - charpos.m_AdjustMatrix[1]) < kEpsilon &&
+                fabs(adjust_matrix[2] - charpos.m_AdjustMatrix[2]) < kEpsilon &&
+                fabs(adjust_matrix[3] - charpos.m_AdjustMatrix[3]) < kEpsilon;
+      } else {
+        found = true;
+      }
+      if (found) {
+        *ps_fontnum = i / 256;
+        *ps_glyphindex = i % 256;
         return;
       }
     }
-    ++i;
   }
 
-  if (m_PSFontList.empty() || m_PSFontList.back()->m_nGlyphs == 256) {
-    m_PSFontList.push_back(std::make_unique<CPSFont>());
-    m_PSFontList.back()->m_nGlyphs = 0;
+  m_PSFontList.push_back(std::make_unique<Glyph>(pFont, charpos.m_GlyphIndex));
+  *ps_fontnum = (m_PSFontList.size() - 1) / 256;
+  *ps_glyphindex = (m_PSFontList.size() - 1) % 256;
+  if (*ps_glyphindex == 0) {
     std::ostringstream buf;
     buf << "8 dict begin/FontType 3 def/FontMatrix[1 0 0 1 0 0]def\n"
            "/FontBBox[0 0 0 0]def/Encoding 256 array def 0 1 255{Encoding "
@@ -489,25 +490,15 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_GlyphCache* pGlyphCache,
            "/BuildChar{1 index/Encoding get exch get 1 index/BuildGlyph get "
            "exec}bind def\n"
            "currentdict end\n";
-    buf << "/X" << static_cast<uint32_t>(m_PSFontList.size() - 1)
-        << " exch definefont pop\n";
+    buf << "/X" << *ps_fontnum << " exch definefont pop\n";
     WriteStream(buf);
   }
 
-  *ps_fontnum = m_PSFontList.size() - 1;
-  CPSFont* pPSFont = m_PSFontList[*ps_fontnum].get();
-  int glyphindex = pPSFont->m_nGlyphs;
-  *ps_glyphindex = glyphindex;
-  pPSFont->m_Glyphs[glyphindex].m_GlyphIndex = charpos.m_GlyphIndex;
-  pPSFont->m_Glyphs[glyphindex].m_pFont = pFont;
-  pPSFont->m_Glyphs[glyphindex].m_bGlyphAdjust = charpos.m_bGlyphAdjust;
   if (charpos.m_bGlyphAdjust) {
-    pPSFont->m_Glyphs[glyphindex].m_AdjustMatrix[0] = charpos.m_AdjustMatrix[0];
-    pPSFont->m_Glyphs[glyphindex].m_AdjustMatrix[1] = charpos.m_AdjustMatrix[1];
-    pPSFont->m_Glyphs[glyphindex].m_AdjustMatrix[2] = charpos.m_AdjustMatrix[2];
-    pPSFont->m_Glyphs[glyphindex].m_AdjustMatrix[3] = charpos.m_AdjustMatrix[3];
+    m_PSFontList.back()->adjust_matrix = std::array<float, 4>{
+        charpos.m_AdjustMatrix[0], charpos.m_AdjustMatrix[1],
+        charpos.m_AdjustMatrix[2], charpos.m_AdjustMatrix[3]};
   }
-  pPSFont->m_nGlyphs++;
 
   CFX_Matrix matrix;
   if (charpos.m_bGlyphAdjust) {
@@ -525,7 +516,7 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_GlyphCache* pGlyphCache,
     TransformedPath.Transform(matrix);
 
   std::ostringstream buf;
-  buf << "/X" << *ps_fontnum << " Ff/CharProcs get begin/" << glyphindex
+  buf << "/X" << *ps_fontnum << " Ff/CharProcs get begin/" << *ps_glyphindex
       << "{n ";
   for (size_t p = 0; p < TransformedPath.GetPoints().size(); p++) {
     CFX_PointF point = TransformedPath.GetPoint(p);
@@ -549,8 +540,8 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_GlyphCache* pGlyphCache,
     }
   }
   buf << "f}bind def end\n";
-  buf << "/X" << *ps_fontnum << " Ff/Encoding get " << glyphindex << "/"
-      << glyphindex << " put\n";
+  buf << "/X" << *ps_fontnum << " Ff/Encoding get " << *ps_glyphindex << "/"
+      << *ps_glyphindex << " put\n";
   WriteStream(buf);
 }
 
