@@ -109,10 +109,6 @@ CPDF_CIDFont* CPDF_Font::AsCIDFont() {
   return nullptr;
 }
 
-bool CPDF_Font::IsUnicodeCompatible() const {
-  return false;
-}
-
 size_t CPDF_Font::CountChar(ByteStringView pString) const {
   return pString.GetLength();
 }

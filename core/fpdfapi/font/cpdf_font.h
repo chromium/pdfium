@@ -83,7 +83,7 @@ class CPDF_Font : public Retainable, public Observable {
 
   virtual void WillBeDestroyed();
   virtual bool IsVertWriting() const;
-  virtual bool IsUnicodeCompatible() const;
+  virtual bool IsUnicodeCompatible() const = 0;
   virtual uint32_t GetNextChar(ByteStringView pString, size_t* pOffset) const;
   virtual size_t CountChar(ByteStringView pString) const;
   virtual int AppendChar(char* buf, uint32_t charcode) const;
