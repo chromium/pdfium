@@ -29,12 +29,12 @@ std::unique_ptr<RenderDeviceDriverIface> CreateDriver(
   if (!use_printer)
     return std::make_unique<CGdiDisplayDriver>(hDC);
 
-  if (g_pdfium_print_mode == WindowsPrintMode::kModeEmf ||
-      g_pdfium_print_mode == WindowsPrintMode::kModeEmfImageMasks) {
+  if (g_pdfium_print_mode == WindowsPrintMode::kEmf ||
+      g_pdfium_print_mode == WindowsPrintMode::kEmfImageMasks) {
     return std::make_unique<CGdiPrinterDriver>(hDC);
   }
 
-  if (g_pdfium_print_mode == WindowsPrintMode::kModeTextOnly)
+  if (g_pdfium_print_mode == WindowsPrintMode::kTextOnly)
     return std::make_unique<CTextOnlyPrinterDriver>(hDC);
 
   return std::make_unique<CPSPrinterDriver>(hDC, g_pdfium_print_mode,
@@ -43,7 +43,7 @@ std::unique_ptr<RenderDeviceDriverIface> CreateDriver(
 
 }  // namespace
 
-WindowsPrintMode g_pdfium_print_mode = WindowsPrintMode::kModeEmf;
+WindowsPrintMode g_pdfium_print_mode = WindowsPrintMode::kEmf;
 
 CFX_WindowsRenderDevice::CFX_WindowsRenderDevice(
     HDC hDC,

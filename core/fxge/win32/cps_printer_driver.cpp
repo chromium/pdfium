@@ -24,14 +24,14 @@ namespace {
 CFX_PSRenderer::RenderingLevel RenderingLevelFromWindowsPrintMode(
     WindowsPrintMode mode) {
   switch (mode) {
-    case WindowsPrintMode::kModePostScript2:
-    case WindowsPrintMode::kModePostScript2PassThrough:
+    case WindowsPrintMode::kPostScript2:
+    case WindowsPrintMode::kPostScript2PassThrough:
       return CFX_PSRenderer::RenderingLevel::kLevel2;
-    case WindowsPrintMode::kModePostScript3:
-    case WindowsPrintMode::kModePostScript3PassThrough:
+    case WindowsPrintMode::kPostScript3:
+    case WindowsPrintMode::kPostScript3PassThrough:
       return CFX_PSRenderer::RenderingLevel::kLevel3;
-    case WindowsPrintMode::kModePostScript3Type42:
-    case WindowsPrintMode::kModePostScript3Type42PassThrough:
+    case WindowsPrintMode::kPostScript3Type42:
+    case WindowsPrintMode::kPostScript3Type42PassThrough:
       return CFX_PSRenderer::RenderingLevel::kLevel3Type42;
     default:
       // |mode| should be PostScript.
@@ -49,9 +49,9 @@ CPSPrinterDriver::CPSPrinterDriver(HDC hDC,
   CFX_PSRenderer::RenderingLevel level =
       RenderingLevelFromWindowsPrintMode(mode);
   CPSOutput::OutputMode output_mode =
-      (mode == WindowsPrintMode::kModePostScript2 ||
-       mode == WindowsPrintMode::kModePostScript3 ||
-       mode == WindowsPrintMode::kModePostScript3Type42)
+      (mode == WindowsPrintMode::kPostScript2 ||
+       mode == WindowsPrintMode::kPostScript3 ||
+       mode == WindowsPrintMode::kPostScript3Type42)
           ? CPSOutput::OutputMode::kGdiComment
           : CPSOutput::OutputMode::kExtEscape;
 

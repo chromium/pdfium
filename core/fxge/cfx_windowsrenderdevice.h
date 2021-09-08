@@ -11,16 +11,16 @@
 
 #include "core/fxge/cfx_renderdevice.h"
 
-enum WindowsPrintMode {
-  kModeEmf = 0,
-  kModeTextOnly = 1,
-  kModePostScript2 = 2,
-  kModePostScript3 = 3,
-  kModePostScript2PassThrough = 4,
-  kModePostScript3PassThrough = 5,
-  kModeEmfImageMasks = 6,
-  kModePostScript3Type42 = 7,
-  kModePostScript3Type42PassThrough = 8,
+enum class WindowsPrintMode {
+  kEmf = 0,
+  kTextOnly = 1,
+  kPostScript2 = 2,
+  kPostScript3 = 3,
+  kPostScript2PassThrough = 4,
+  kPostScript3PassThrough = 5,
+  kEmfImageMasks = 6,
+  kPostScript3Type42 = 7,
+  kPostScript3Type42PassThrough = 8,
 };
 
 struct EncoderIface;

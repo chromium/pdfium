@@ -128,7 +128,7 @@ bool CTextOnlyPrinterDriver::DrawDeviceText(
     float font_size,
     uint32_t color,
     const CFX_TextRenderOptions& /*options*/) {
-  if (g_pdfium_print_mode != 1)
+  if (g_pdfium_print_mode != WindowsPrintMode::kTextOnly)
     return false;
   if (nChars < 1 || !pFont || !pFont->IsEmbedded() || !pFont->IsTTFont())
     return false;
