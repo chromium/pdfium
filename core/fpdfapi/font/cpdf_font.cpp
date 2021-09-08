@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/font/cpdf_font.h"
 
+#include <algorithm>
 #include <limits>
 #include <memory>
 #include <utility>
@@ -240,18 +241,10 @@ void CPDF_Font::CheckFontMetrics() {
           m_FontBBox = rect;
           bFirst = false;
         } else {
-          if (m_FontBBox.top < rect.top) {
-            m_FontBBox.top = rect.top;
-          }
-          if (m_FontBBox.right < rect.right) {
-            m_FontBBox.right = rect.right;
-          }
-          if (m_FontBBox.left > rect.left) {
-            m_FontBBox.left = rect.left;
-          }
-          if (m_FontBBox.bottom > rect.bottom) {
-            m_FontBBox.bottom = rect.bottom;
-          }
+          m_FontBBox.left = std::min(m_FontBBox.left, rect.left);
+          m_FontBBox.top = std::max(m_FontBBox.top, rect.top);
+          m_FontBBox.right = std::max(m_FontBBox.right, rect.right);
+          m_FontBBox.bottom = std::min(m_FontBBox.bottom, rect.bottom);
         }
       }
     }
