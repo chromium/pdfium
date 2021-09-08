@@ -40,6 +40,11 @@ class CFX_Font {
     const char* fontname;  // Name of default font to use with that charset.
   };
 
+  enum class FontType {
+    kUnknown,
+    kCIDTrueType,
+  };
+
   // Pointer to the default character set to TT Font name map. The map is an
   // array of CharsetFontMap structs, with its end indicated by a {-1, nullptr}
   // entry.
@@ -72,7 +77,8 @@ class CFX_Font {
                  bool bVertical);
 
   bool LoadEmbedded(pdfium::span<const uint8_t> src_span,
-                    bool bForceAsVertical);
+                    bool force_vertical,
+                    uint64_t object_tag);
   RetainPtr<CFX_Face> GetFace() const { return m_Face; }
   FXFT_FaceRec* GetFaceRec() const {
     return m_Face ? m_Face->GetRec() : nullptr;
@@ -115,6 +121,9 @@ class CFX_Font {
   bool IsEmbedded() const { return m_bEmbedded; }
   uint8_t* GetSubData() const { return m_pGsubData.get(); }
   void SetSubData(uint8_t* data) { m_pGsubData.reset(data); }
+  FontType GetFontType() const { return m_FontType; }
+  void SetFontType(FontType type) { m_FontType = type; }
+  uint64_t GetObjectTag() const { return m_ObjectTag; }
   pdfium::span<uint8_t> GetFontSpan() const { return m_FontData; }
   void AdjustMMParams(int glyph_index, int dest_width, int weight) const;
   std::unique_ptr<CFX_Path> LoadGlyphPathImpl(uint32_t glyph_index,
@@ -150,6 +159,8 @@ class CFX_Font {
   std::unique_ptr<uint8_t, FxFreeDeleter> m_pGsubData;
   std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_FontDataAllocation;
   pdfium::span<uint8_t> m_FontData;
+  FontType m_FontType = FontType::kUnknown;
+  uint64_t m_ObjectTag = 0;
   bool m_bEmbedded = false;
   bool m_bVertical = false;
 #if defined(OS_APPLE)

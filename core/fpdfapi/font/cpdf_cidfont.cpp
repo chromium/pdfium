@@ -492,6 +492,11 @@ bool CPDF_CIDFont::Load() {
       m_DefaultW1 = pDefaultArray->GetIntegerAt(1);
     }
   }
+
+  // TODO(thestig): Better identify font types and identify more font types.
+  if (m_FontType == CIDFontType::kTrueType && IsEmbedded())
+    m_Font.SetFontType(CFX_Font::FontType::kCIDTrueType);
+
   return true;
 }
 
