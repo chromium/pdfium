@@ -141,6 +141,7 @@ class CFX_PSRenderer {
                       uint8_t** output_buf,
                       uint32_t* output_size,
                       const char** filter) const;
+  void WritePreambleString(ByteStringView str);
   void WritePSBinary(pdfium::span<const uint8_t> data);
   void WriteStream(std::ostringstream& stream);
   void WriteString(ByteStringView str);
@@ -156,6 +157,7 @@ class CFX_PSRenderer {
   UnownedPtr<const EncoderIface> const m_pEncoderIface;
   RetainPtr<IFX_RetainableWriteStream> m_pStream;
   std::vector<std::unique_ptr<Glyph>> m_PSFontList;
+  std::ostringstream m_PreambleOutput;
   std::ostringstream m_Output;
   std::vector<FX_RECT> m_ClipBoxStack;
 };

@@ -105,6 +105,13 @@ void CFX_PSRenderer::EndRendering() {
   WriteString("\nrestore\n");
   m_bInited = false;
 
+  // Flush `m_PreambleOutput` if it is not empty.
+  std::streampos preamble_pos = m_PreambleOutput.tellp();
+  if (preamble_pos > 0) {
+    m_pStream->WriteBlock(m_PreambleOutput.str().c_str(), preamble_pos);
+    m_PreambleOutput.str(std::string());
+  }
+
   // Flush `m_Output`. It's never empty because of the WriteString() call above.
   m_pStream->WriteBlock(m_Output.str().c_str(), m_Output.tellp());
   m_Output.str(std::string());
@@ -710,6 +717,10 @@ void CFX_PSRenderer::PSCompressData(uint8_t* src_buf,
     *filter = nullptr;
     FX_Free(dest_buf);
   }
+}
+
+void CFX_PSRenderer::WritePreambleString(ByteStringView str) {
+  m_PreambleOutput << str;
 }
 
 void CFX_PSRenderer::WritePSBinary(pdfium::span<const uint8_t> data) {
