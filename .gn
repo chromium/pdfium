@@ -8,6 +8,9 @@ default_args = {
   v8_extra_library_files = []
   v8_experimental_extra_library_files = []
 
+  # PDFs only need to run JavaScript.
+  v8_enable_webassembly = false
+
   # Turns on compiler optimizations in V8 in Debug build.
   v8_optimized_debug = true
 }
