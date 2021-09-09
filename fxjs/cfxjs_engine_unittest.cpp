@@ -9,6 +9,8 @@
 #include "fxjs/cjs_object.h"
 #include "testing/fxv8_unittest.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "v8/include/v8-context.h"
+#include "v8/include/v8-isolate.h"
 
 class FXJSEngineUnitTest : public FXV8UnitTest {
  public:

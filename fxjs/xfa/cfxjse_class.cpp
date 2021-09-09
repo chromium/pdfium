@@ -18,6 +18,14 @@
 #include "fxjs/xfa/cfxjse_value.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
+#include "v8/include/v8-container.h"
+#include "v8/include/v8-external.h"
+#include "v8/include/v8-function-callback.h"
+#include "v8/include/v8-function.h"
+#include "v8/include/v8-isolate.h"
+#include "v8/include/v8-object.h"
+#include "v8/include/v8-primitive.h"
+#include "v8/include/v8-template.h"
 
 using pdfium::fxjse::kClassTag;
 using pdfium::fxjse::kFuncTag;

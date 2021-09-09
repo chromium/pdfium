@@ -36,6 +36,7 @@
 #include "third_party/base/check.h"
 #include "third_party/base/cxx17_backports.h"
 #include "third_party/base/optional.h"
+#include "v8/include/v8-container.h"
 
 // static
 const JSMethodSpec CJS_PublicMethods::GlobalFunctionSpecs[] = {

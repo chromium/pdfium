@@ -19,6 +19,9 @@
 #include "fxjs/fx_date_helpers.h"
 #include "fxjs/fxv8.h"
 #include "third_party/base/check.h"
+#include "v8/include/v8-context.h"
+#include "v8/include/v8-function.h"
+#include "v8/include/v8-isolate.h"
 
 void JSDestructor(v8::Local<v8::Object> obj) {
   CFXJS_Engine::SetObjectPrivate(obj, nullptr);

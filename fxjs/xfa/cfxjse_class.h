@@ -9,7 +9,8 @@
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/xfa/fxjse.h"
-#include "v8/include/v8.h"
+#include "v8/include/v8-forward.h"
+#include "v8/include/v8-persistent-handle.h"
 
 class CFXJSE_Context;
 struct FXJSE_CLASS_DESCRIPTOR;

@@ -12,6 +12,12 @@
 #include "fxjs/fxv8.h"
 #include "fxjs/xfa/cfxjse_isolatetracker.h"
 #include "third_party/base/check_op.h"
+#include "v8/include/v8-context.h"
+#include "v8/include/v8-external.h"
+#include "v8/include/v8-isolate.h"
+#include "v8/include/v8-object.h"
+#include "v8/include/v8-primitive.h"
+#include "v8/include/v8-template.h"
 
 CFXJSE_RuntimeData::CFXJSE_RuntimeData() = default;
 

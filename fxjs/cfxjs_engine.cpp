@@ -16,6 +16,12 @@
 #include "fxjs/xfa/cfxjse_runtimedata.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
+#include "v8/include/v8-context.h"
+#include "v8/include/v8-exception.h"
+#include "v8/include/v8-isolate.h"
+#include "v8/include/v8-message.h"
+#include "v8/include/v8-primitive.h"
+#include "v8/include/v8-script.h"
 #include "v8/include/v8-util.h"
 
 class CFXJS_PerObjectData;

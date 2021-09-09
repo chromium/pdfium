@@ -16,6 +16,7 @@
 #include "fxjs/global_timer.h"
 #include "fxjs/ijs_event_context.h"
 #include "fxjs/js_resources.h"
+#include "v8/include/v8-container.h"
 
 namespace {
 

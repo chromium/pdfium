@@ -25,6 +25,7 @@
 #include "fxjs/js_resources.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/cxx17_backports.h"
+#include "v8/include/v8-date.h"
 
 #if defined(OS_ANDROID)
 #include <ctype.h>

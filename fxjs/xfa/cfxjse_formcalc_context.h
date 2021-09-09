@@ -16,6 +16,8 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/xfa/fxjse.h"
 #include "third_party/base/optional.h"
+#include "v8/include/v8-forward.h"
+#include "v8/include/v8-persistent-handle.h"
 
 class CFXJSE_Context;
 class CFX_WideTextBuf;

@@ -19,6 +19,7 @@
 #include "fxjs/js_define.h"
 #include "fxjs/js_resources.h"
 #include "third_party/base/check.h"
+#include "v8/include/v8-isolate.h"
 
 namespace {
 

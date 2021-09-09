@@ -22,7 +22,10 @@
 #include "core/fxcrt/fx_string.h"
 #include "fxjs/cfx_v8.h"
 #include "fxjs/ijs_runtime.h"
-#include "v8/include/v8.h"
+#include "v8/include/v8-forward.h"
+#include "v8/include/v8-function-callback.h"
+#include "v8/include/v8-persistent-handle.h"
+#include "v8/include/v8-template.h"
 
 class CFXJS_ObjDefinition;
 class CJS_Object;

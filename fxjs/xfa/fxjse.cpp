@@ -8,6 +8,9 @@
 
 #include "fxjs/fxv8.h"
 #include "fxjs/xfa/cfxjse_context.h"
+#include "v8/include/v8-isolate.h"
+#include "v8/include/v8-object.h"
+#include "v8/include/v8-template.h"
 
 namespace pdfium {
 namespace fxjse {

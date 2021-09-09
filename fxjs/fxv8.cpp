@@ -6,6 +6,13 @@
 
 #include "fxjs/fxv8.h"
 
+#include "v8/include/v8-container.h"
+#include "v8/include/v8-date.h"
+#include "v8/include/v8-exception.h"
+#include "v8/include/v8-isolate.h"
+#include "v8/include/v8-primitive.h"
+#include "v8/include/v8-value.h"
+
 namespace fxv8 {
 
 bool IsUndefined(v8::Local<v8::Value> value) {

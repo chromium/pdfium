@@ -17,12 +17,8 @@ default_args = {
 
 no_check_targets = [
   "//third_party/icu/*",
-  "//v8/src/inspector:*",
-  "//v8/test/cctest:*",
-  "//v8/test/unittests:*",
-  "//v8/test/wasm-api-tests:*",
-  "//v8/third_party/inspector_protocol:*",
-  "//v8/tools/debug_helper:*",
-  "//v8/tools/v8windbg:*",
-  "//v8:*",
+  "//v8:cppgc_base",
+  "//v8:v8_internal_headers",
+  "//v8/src/inspector:inspector",
+  "//v8/test/cctest:cctest_sources",
 ]

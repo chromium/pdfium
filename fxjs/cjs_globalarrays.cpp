@@ -7,6 +7,8 @@
 #include "fxjs/cjs_globalarrays.h"
 
 #include "third_party/base/cxx17_backports.h"
+#include "v8/include/v8-container.h"
+#include "v8/include/v8-isolate.h"
 
 #define GLOBAL_ARRAY(rt, name, ...)                                          \
   {                                                                          \

@@ -9,6 +9,7 @@
 #include "core/fxcrt/fx_memory.h"
 #include "fxjs/fxv8.h"
 #include "third_party/base/allocator/partition_allocator/partition_alloc.h"
+#include "v8/include/v8-isolate.h"
 
 CFX_V8::CFX_V8(v8::Isolate* isolate) : m_pIsolate(isolate) {}
 
@@ -145,4 +146,8 @@ void* CFX_V8ArrayBufferAllocator::AllocateUninitialized(size_t length) {
 
 void CFX_V8ArrayBufferAllocator::Free(void* data, size_t length) {
   GetArrayBufferPartitionAllocator().root()->Free(data);
+}
+
+void CFX_V8IsolateDeleter::operator()(v8::Isolate* ptr) {
+  ptr->Dispose();
 }

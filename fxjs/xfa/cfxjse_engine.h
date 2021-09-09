@@ -16,7 +16,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/cfx_v8.h"
 #include "v8/include/cppgc/persistent.h"
-#include "v8/include/v8.h"
+#include "v8/include/v8-forward.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_script.h"

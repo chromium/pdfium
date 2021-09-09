@@ -10,7 +10,7 @@
 #include <stdint.h>
 
 #include "core/fxcrt/fx_string.h"
-#include "v8/include/v8.h"
+#include "v8/include/v8-forward.h"
 
 namespace pdfium {
 namespace fxjse {

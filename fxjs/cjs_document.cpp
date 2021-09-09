@@ -31,6 +31,7 @@
 #include "fxjs/cjs_icon.h"
 #include "fxjs/js_resources.h"
 #include "third_party/base/check.h"
+#include "v8/include/v8-container.h"
 
 const JSPropertySpec CJS_Document::PropertySpecs[] = {
     {"ADBE", get_ADBE_static, set_ADBE_static},

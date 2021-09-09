@@ -10,6 +10,10 @@
 
 #include "testing/fxv8_unittest.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "v8/include/v8-container.h"
+#include "v8/include/v8-context.h"
+#include "v8/include/v8-date.h"
+#include "v8/include/v8-isolate.h"
 
 namespace {
 bool getter_sentinel = false;

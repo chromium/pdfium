@@ -30,6 +30,7 @@
 #include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/optional.h"
+#include "v8/include/v8-container.h"
 
 namespace {
 

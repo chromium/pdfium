@@ -9,7 +9,7 @@
 
 #include "fxjs/js_resources.h"
 #include "third_party/base/optional.h"
-#include "v8/include/v8.h"
+#include "v8/include/v8-forward.h"
 
 class CJS_Result {
  public:

@@ -8,7 +8,8 @@
 #define FXJS_XFA_CFXJSE_ISOLATETRACKER_H_
 
 #include "core/fxcrt/fx_memory.h"
-#include "v8/include/v8.h"
+#include "v8/include/v8-context.h"
+#include "v8/include/v8-isolate.h"
 
 class CFXJSE_Context;
 
