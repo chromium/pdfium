@@ -156,6 +156,7 @@ class CFX_PSRenderer {
   UnownedPtr<const EncoderIface> const m_pEncoderIface;
   RetainPtr<IFX_RetainableWriteStream> m_pStream;
   std::vector<std::unique_ptr<Glyph>> m_PSFontList;
+  std::ostringstream m_Output;
   std::vector<FX_RECT> m_ClipBoxStack;
 };
 

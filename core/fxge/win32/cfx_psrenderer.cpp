@@ -12,6 +12,7 @@
 #include <array>
 #include <memory>
 #include <sstream>
+#include <string>
 #include <utility>
 
 #include "core/fxcrt/maybe_owned.h"
@@ -65,6 +66,8 @@ void CFX_PSRenderer::Init(const RetainPtr<IFX_RetainableWriteStream>& pStream,
                           RenderingLevel level,
                           int width,
                           int height) {
+  DCHECK(pStream);
+
   m_Level = level;
   m_pStream = pStream;
   m_ClipBox.left = 0;
@@ -101,6 +104,10 @@ void CFX_PSRenderer::EndRendering() {
 
   WriteString("\nrestore\n");
   m_bInited = false;
+
+  // Flush `m_Output`. It's never empty because of the WriteString() call above.
+  m_pStream->WriteBlock(m_Output.str().c_str(), m_Output.tellp());
+  m_Output.str(std::string());
 }
 
 void CFX_PSRenderer::SaveState() {
@@ -709,17 +716,17 @@ void CFX_PSRenderer::WritePSBinary(pdfium::span<const uint8_t> data) {
   std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf;
   uint32_t dest_size;
   if (m_pEncoderIface->pA85EncodeFunc(data, &dest_buf, &dest_size)) {
-    m_pStream->WriteBlock(dest_buf.get(), dest_size);
+    m_Output.write(reinterpret_cast<const char*>(dest_buf.get()), dest_size);
   } else {
-    m_pStream->WriteBlock(data.data(), data.size());
+    m_Output.write(reinterpret_cast<const char*>(data.data()), data.size());
   }
 }
 
 void CFX_PSRenderer::WriteStream(std::ostringstream& stream) {
   if (stream.tellp() > 0)
-    m_pStream->WriteBlock(stream.str().c_str(), stream.tellp());
+    m_Output.write(stream.str().c_str(), stream.tellp());
 }
 
 void CFX_PSRenderer::WriteString(ByteStringView str) {
-  m_pStream->WriteString(str);
+  m_Output << str;
 }
