@@ -63,7 +63,7 @@ class CPDFSDK_FormFillEnvironment final : public CFX_Timer::HandlerIface,
   // IPWL_SystemHandler:
   void InvalidateRect(PerWindowData* pWidgetData,
                       const CFX_FloatRect& rect) override;
-  void OutputSelectedRect(CFFL_FormField* pFormField,
+  void OutputSelectedRect(PerWindowData* pWidgetData,
                           const CFX_FloatRect& rect) override;
   bool IsSelectionImplemented() const override;
   void SetCursor(CursorStyle nCursorType) override;

@@ -587,7 +587,7 @@ void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
                              const CFX_PointF& ptOffset,
                              const CPVT_WordRange* pRange,
                              IPWL_SystemHandler* pSystemHandler,
-                             CFFL_FormField* pFFLData) {
+                             IPWL_SystemHandler::PerWindowData* pSystemData) {
   const bool bContinuous =
       pEdit->GetCharArray() == 0 && pEdit->GetCharSpace() <= 0.0f;
   uint16_t SubWord = pEdit->GetPasswordChar();
@@ -641,7 +641,7 @@ void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
                            word.ptWord.x + word.fWidth,
                            line.ptLine.y + line.fLineAscent);
           rc.Intersect(rcClip);
-          pSystemHandler->OutputSelectedRect(pFFLData, rc);
+          pSystemHandler->OutputSelectedRect(pSystemData, rc);
         } else {
           CFX_Path pathSelBK;
           pathSelBK.AppendRect(word.ptWord.x, line.ptLine.y + line.fLineDescent,

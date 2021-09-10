@@ -67,15 +67,15 @@ void CPWL_ListBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
         CPWL_EditImpl::DrawEdit(pDevice, mtUser2Device,
                                 m_pListCtrl->GetItemEdit(i),
                                 GetTextColor().ToFXColor(255), rcList, ptOffset,
-                                nullptr, pSysHandler, m_pFormFiller.Get());
-        pSysHandler->OutputSelectedRect(m_pFormFiller.Get(), rcItem);
+                                nullptr, pSysHandler, GetAttachedData());
+        pSysHandler->OutputSelectedRect(GetAttachedData(), rcItem);
       } else {
         pDevice->DrawFillRect(&mtUser2Device, rcItem,
                               ArgbEncode(255, 0, 51, 113));
         CPWL_EditImpl::DrawEdit(
             pDevice, mtUser2Device, m_pListCtrl->GetItemEdit(i),
             ArgbEncode(255, 255, 255, 255), rcList, ptOffset, nullptr,
-            pSysHandler, m_pFormFiller.Get());
+            pSysHandler, GetAttachedData());
       }
     } else {
       CPWL_EditImpl::DrawEdit(pDevice, mtUser2Device,

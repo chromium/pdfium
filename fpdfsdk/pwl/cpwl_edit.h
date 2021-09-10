@@ -100,7 +100,6 @@ class CPWL_Edit final : public CPWL_Wnd {
     m_pFillerNotify = pNotify;
   }
 
-  void AttachFFLData(CFFL_FormField* pData) { m_pFormFiller = pData; }
   bool SetCaret(bool bVisible,
                 const CFX_PointF& ptHead,
                 const CFX_PointF& ptFoot);
@@ -138,7 +137,6 @@ class CPWL_Edit final : public CPWL_Wnd {
   std::unique_ptr<CPWL_EditImpl> const m_pEditImpl;
   UnownedPtr<CPWL_Caret> m_pCaret;
   UnownedPtr<IPWL_FillerNotify> m_pFillerNotify;
-  UnownedPtr<CFFL_FormField> m_pFormFiller;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_EDIT_H_

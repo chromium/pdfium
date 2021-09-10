@@ -215,7 +215,7 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
   CPWL_EditImpl::DrawEdit(pDevice, mtUser2Device, m_pEditImpl.get(),
                           GetTextColor().ToFXColor(GetTransparency()), rcClip,
                           CFX_PointF(), pRange, GetSystemHandler(),
-                          m_pFormFiller.Get());
+                          GetAttachedData());
 }
 
 

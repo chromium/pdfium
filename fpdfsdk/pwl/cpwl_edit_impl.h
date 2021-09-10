@@ -17,11 +17,10 @@
 #include "core/fxcrt/fx_codepage_forward.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
+#include "fpdfsdk/pwl/ipwl_systemhandler.h"
 
-class CFFL_FormField;
 class CFX_RenderDevice;
 class CPWL_Edit;
-class IPWL_SystemHandler;
 
 class CPWL_EditImpl {
  public:
@@ -50,7 +49,7 @@ class CPWL_EditImpl {
                        const CFX_PointF& ptOffset,
                        const CPVT_WordRange* pRange,
                        IPWL_SystemHandler* pSystemHandler,
-                       CFFL_FormField* pFFLData);
+                       IPWL_SystemHandler::PerWindowData* pSystemData);
 
   CPWL_EditImpl();
   ~CPWL_EditImpl();

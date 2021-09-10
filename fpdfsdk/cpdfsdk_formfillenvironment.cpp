@@ -110,9 +110,17 @@ void CPDFSDK_FormFillEnvironment::InvalidateRect(PerWindowData* pWidgetData,
 }
 
 void CPDFSDK_FormFillEnvironment::OutputSelectedRect(
-    CFFL_FormField* pFormField,
+    PerWindowData* pWidgetData,
     const CFX_FloatRect& rect) {
-  if (!pFormField || !m_pInfo || !m_pInfo->FFI_OutputSelectedRect)
+  if (!m_pInfo || !m_pInfo->FFI_OutputSelectedRect)
+    return;
+
+  auto* pPrivateData = static_cast<CFFL_PrivateData*>(pWidgetData);
+  if (!pPrivateData)
+    return;
+
+  CFFL_FormField* pFormField = pPrivateData->GetFormField();
+  if (!pFormField)
     return;
 
   auto* pPage = FPDFPageFromIPDFPage(pFormField->GetSDKAnnot()->GetPage());

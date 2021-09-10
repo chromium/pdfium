@@ -13,6 +13,7 @@
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
+#include "fpdfsdk/formfiller/cffl_privatedata.h"
 #include "fpdfsdk/pwl/cpwl_list_box.h"
 #include "third_party/base/containers/contains.h"
 
@@ -42,8 +43,8 @@ CPWL_Wnd::CreateParams CFFL_ListBox::GetCreateParam() {
 std::unique_ptr<CPWL_Wnd> CFFL_ListBox::NewPWLWindow(
     const CPWL_Wnd::CreateParams& cp,
     std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData) {
+  static_cast<CFFL_PrivateData*>(pAttachedData.get())->SetFormField(this);
   auto pWnd = std::make_unique<CPWL_ListBox>(cp, std::move(pAttachedData));
-  pWnd->AttachFFLData(this);
   pWnd->Realize();
   pWnd->SetFillerNotify(m_pFormFillEnv->GetInteractiveFormFiller());
 

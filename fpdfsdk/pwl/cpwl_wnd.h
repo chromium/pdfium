@@ -220,7 +220,7 @@ class CPWL_Wnd : public Observable {
   const CFX_FloatRect& GetClipRect() const;
 
   CPWL_Wnd* GetParentWindow() const { return m_pParent.Get(); }
-  const IPWL_SystemHandler::PerWindowData* GetAttachedData() const {
+  IPWL_SystemHandler::PerWindowData* GetAttachedData() const {
     return m_pAttachedData.get();
   }
   std::unique_ptr<IPWL_SystemHandler::PerWindowData> CloneAttachedData() const;
