@@ -14,7 +14,7 @@
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
-#include "fpdfsdk/formfiller/cffl_privatedata.h"
+#include "fpdfsdk/formfiller/cffl_perwindowdata.h"
 #include "third_party/base/check.h"
 
 CFFL_FormField::CFFL_FormField(CPDFSDK_FormFillEnvironment* pFormFillEnv,
@@ -361,13 +361,13 @@ CPWL_Wnd* CFFL_FormField::CreateOrUpdatePWLWindow(
   if (!pWnd) {
     CPWL_Wnd::CreateParams cp = GetCreateParam();
     // TODO(tsepez): maybe pass widget's value age as 4th arg.
-    auto pPrivateData = std::make_unique<CFFL_PrivateData>(
+    auto pPrivateData = std::make_unique<CFFL_PerWindowData>(
         m_pWidget.Get(), pPageView, m_pWidget->GetAppearanceAge(), 0);
     m_Maps[pPageView] = NewPWLWindow(cp, std::move(pPrivateData));
     return m_Maps[pPageView].get();
   }
   const auto* pPrivateData =
-      static_cast<const CFFL_PrivateData*>(pWnd->GetAttachedData());
+      static_cast<const CFFL_PerWindowData*>(pWnd->GetAttachedData());
   if (pPrivateData->AppearanceAgeEquals(m_pWidget->GetAppearanceAge()))
     return pWnd;
 
@@ -387,7 +387,7 @@ void CFFL_FormField::DestroyPWLWindow(const CPDFSDK_PageView* pPageView) {
 
 CFX_Matrix CFFL_FormField::GetWindowMatrix(
     const IPWL_SystemHandler::PerWindowData* pAttached) {
-  const auto* pPrivateData = static_cast<const CFFL_PrivateData*>(pAttached);
+  const auto* pPrivateData = static_cast<const CFFL_PerWindowData*>(pAttached);
   if (!pPrivateData)
     return CFX_Matrix();
 

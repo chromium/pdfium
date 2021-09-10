@@ -13,7 +13,7 @@
 #include "core/fpdfdoc/cpdf_bafontmap.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
-#include "fpdfsdk/formfiller/cffl_privatedata.h"
+#include "fpdfsdk/formfiller/cffl_perwindowdata.h"
 #include "fpdfsdk/pwl/cpwl_edit.h"
 #include "public/fpdf_fwlevent.h"
 #include "third_party/base/check.h"
@@ -87,7 +87,7 @@ CPWL_Wnd::CreateParams CFFL_TextField::GetCreateParam() {
 std::unique_ptr<CPWL_Wnd> CFFL_TextField::NewPWLWindow(
     const CPWL_Wnd::CreateParams& cp,
     std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData) {
-  static_cast<CFFL_PrivateData*>(pAttachedData.get())->SetFormField(this);
+  static_cast<CFFL_PerWindowData*>(pAttachedData.get())->SetFormField(this);
   auto pWnd = std::make_unique<CPWL_Edit>(cp, std::move(pAttachedData));
   pWnd->Realize();
   pWnd->SetFillerNotify(m_pFormFillEnv->GetInteractiveFormFiller());

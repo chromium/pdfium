@@ -20,7 +20,7 @@
 #include "fpdfsdk/formfiller/cffl_combobox.h"
 #include "fpdfsdk/formfiller/cffl_formfield.h"
 #include "fpdfsdk/formfiller/cffl_listbox.h"
-#include "fpdfsdk/formfiller/cffl_privatedata.h"
+#include "fpdfsdk/formfiller/cffl_perwindowdata.h"
 #include "fpdfsdk/formfiller/cffl_pushbutton.h"
 #include "fpdfsdk/formfiller/cffl_radiobutton.h"
 #include "fpdfsdk/formfiller/cffl_textfield.h"
@@ -588,7 +588,7 @@ void CFFL_InteractiveFormFiller::QueryWherePopup(
     float fPopupMax,
     bool* bBottom,
     float* fPopupRet) {
-  auto* pData = static_cast<const CFFL_PrivateData*>(pAttached);
+  auto* pData = static_cast<const CFFL_PerWindowData*>(pAttached);
   CPDFSDK_Widget* pWidget = pData->GetWidget();
   CPDF_Page* pPage = pWidget->GetPDFPage();
 
@@ -887,7 +887,7 @@ std::pair<bool, bool> CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
     bool bKeyDown,
     Mask<FWL_EVENTFLAG> nFlag) {
   // Copy out of private data since the window owning it may not survive.
-  auto* pPrivateData = static_cast<const CFFL_PrivateData*>(pAttached);
+  auto* pPrivateData = static_cast<const CFFL_PerWindowData*>(pAttached);
   const CPDFSDK_PageView* pPageView = pPrivateData->GetPageView();
   ObservedPtr<CPDFSDK_Widget> pWidget(pPrivateData->GetWidget());
   DCHECK(pWidget);
@@ -943,7 +943,7 @@ std::pair<bool, bool> CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
       return {true, true};
 
     pPrivateData =
-        static_cast<const CFFL_PrivateData*>(pWnd->GetAttachedData());
+        static_cast<const CFFL_PerWindowData*>(pWnd->GetAttachedData());
     pWidget.Reset(pPrivateData->GetWidget());
     pPageView = pPrivateData->GetPageView();
     bExit = true;
@@ -964,7 +964,7 @@ bool CFFL_InteractiveFormFiller::OnPopupPreOpen(
     const IPWL_SystemHandler::PerWindowData* pAttached,
     Mask<FWL_EVENTFLAG> nFlag) {
 #ifdef PDF_ENABLE_XFA
-  auto* pData = static_cast<const CFFL_PrivateData*>(pAttached);
+  auto* pData = static_cast<const CFFL_PerWindowData*>(pAttached);
   DCHECK(pData->GetWidget());
 
   ObservedPtr<CPDFSDK_Annot> pObserved(pData->GetWidget());
@@ -978,7 +978,7 @@ bool CFFL_InteractiveFormFiller::OnPopupPostOpen(
     const IPWL_SystemHandler::PerWindowData* pAttached,
     Mask<FWL_EVENTFLAG> nFlag) {
 #ifdef PDF_ENABLE_XFA
-  auto* pData = static_cast<const CFFL_PrivateData*>(pAttached);
+  auto* pData = static_cast<const CFFL_PerWindowData*>(pAttached);
   DCHECK(pData->GetWidget());
 
   ObservedPtr<CPDFSDK_Annot> pObserved(pData->GetWidget());

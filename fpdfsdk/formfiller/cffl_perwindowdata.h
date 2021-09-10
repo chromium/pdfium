@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_FORMFILLER_CFFL_PRIVATEDATA_H_
-#define FPDFSDK_FORMFILLER_CFFL_PRIVATEDATA_H_
+#ifndef FPDFSDK_FORMFILLER_CFFL_PERWINDOWDATA_H_
+#define FPDFSDK_FORMFILLER_CFFL_PERWINDOWDATA_H_
 
 #include <memory>
 
@@ -17,14 +17,14 @@ class CFFL_FormField;
 class CPDFSDK_PageView;
 class CPDFSDK_Widget;
 
-class CFFL_PrivateData final : public IPWL_SystemHandler::PerWindowData {
+class CFFL_PerWindowData final : public IPWL_SystemHandler::PerWindowData {
  public:
-  CFFL_PrivateData(CPDFSDK_Widget* pWidget,
-                   const CPDFSDK_PageView* pPageView,
-                   uint32_t nAppearanceAge,
-                   uint32_t nValueAge);
-  CFFL_PrivateData& operator=(const CFFL_PrivateData& that) = delete;
-  ~CFFL_PrivateData() override;
+  CFFL_PerWindowData(CPDFSDK_Widget* pWidget,
+                     const CPDFSDK_PageView* pPageView,
+                     uint32_t nAppearanceAge,
+                     uint32_t nValueAge);
+  CFFL_PerWindowData& operator=(const CFFL_PerWindowData& that) = delete;
+  ~CFFL_PerWindowData() override;
 
   // IPWL_SystemHandler::PerWindowData:
   std::unique_ptr<IPWL_SystemHandler::PerWindowData> Clone() const override;
@@ -40,7 +40,7 @@ class CFFL_PrivateData final : public IPWL_SystemHandler::PerWindowData {
   CFFL_FormField* GetFormField() { return m_pFormField.Get(); }
 
  private:
-  CFFL_PrivateData(const CFFL_PrivateData& that);
+  CFFL_PerWindowData(const CFFL_PerWindowData& that);
 
   ObservedPtr<CPDFSDK_Widget> m_pWidget;
   UnownedPtr<const CPDFSDK_PageView> const m_pPageView;
@@ -49,4 +49,4 @@ class CFFL_PrivateData final : public IPWL_SystemHandler::PerWindowData {
   const uint32_t m_nValueAge;
 };
 
-#endif  // FPDFSDK_FORMFILLER_CFFL_PRIVATEDATA_H_
+#endif  // FPDFSDK_FORMFILLER_CFFL_PERWINDOWDATA_H_
