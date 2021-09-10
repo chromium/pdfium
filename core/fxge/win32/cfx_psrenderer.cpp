@@ -7,6 +7,7 @@
 #include "core/fxge/win32/cfx_psrenderer.h"
 
 #include <math.h>
+#include <string.h>
 
 #include <algorithm>
 #include <array>
@@ -15,7 +16,10 @@
 #include <string>
 #include <utility>
 
-#include "core/fxcrt/maybe_owned.h"
+#include "core/fxcrt/bytestring.h"
+#include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/fx_stream.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_fontcache.h"
@@ -29,7 +33,6 @@
 #include "core/fxge/fx_freetype.h"
 #include "core/fxge/text_char_pos.h"
 #include "core/fxge/win32/cfx_psfonttracker.h"
-#include "core/fxge/win32/cpsoutput.h"
 #include "third_party/base/check.h"
 
 namespace {
