@@ -107,7 +107,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling nasm_source
   # and whatever else without interference from each other.
-  'nasm_source_revision': 'e9be5fd6d723a435ca2da162f9e0ffcb688747c1',
+  'nasm_source_revision': '4e6fe9d1549e4ffb6c804494573e404849dfe7de',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling pdfium_tests
   # and whatever else without interference from each other.
