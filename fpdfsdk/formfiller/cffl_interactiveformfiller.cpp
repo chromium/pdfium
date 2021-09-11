@@ -715,8 +715,9 @@ void CFFL_InteractiveFormFiller::OnCalculate(ObservedPtr<CPDFSDK_Annot>* pAnnot,
 
   CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot->Get());
   if (pWidget) {
-    CPDFSDK_InteractiveForm* pForm =
-        pPageView->GetFormFillEnv()->GetInteractiveForm();
+    CPDFSDK_FormFillEnvironment* pOtherEnv = pPageView->GetFormFillEnv();
+    CHECK_EQ(pOtherEnv, m_pFormFillEnv);
+    CPDFSDK_InteractiveForm* pForm = pOtherEnv->GetInteractiveForm();
     pForm->OnCalculate(pWidget->GetFormField());
   }
   m_bNotifying = false;
@@ -730,8 +731,10 @@ void CFFL_InteractiveFormFiller::OnFormat(ObservedPtr<CPDFSDK_Annot>* pAnnot,
 
   CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot->Get());
   DCHECK(pWidget);
-  CPDFSDK_InteractiveForm* pForm =
-      pPageView->GetFormFillEnv()->GetInteractiveForm();
+
+  CPDFSDK_FormFillEnvironment* pOtherEnv = pPageView->GetFormFillEnv();
+  CHECK_EQ(pOtherEnv, m_pFormFillEnv);
+  CPDFSDK_InteractiveForm* pForm = pOtherEnv->GetInteractiveForm();
 
   Optional<WideString> sValue = pForm->OnFormat(pWidget->GetFormField());
   if (!pAnnot->HasObservable())
@@ -912,6 +915,7 @@ std::pair<bool, bool> CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
   uint32_t nAge = pWidget->GetAppearanceAge();
   uint32_t nValueAge = pWidget->GetValueAge();
   CPDFSDK_FormFillEnvironment* pFormFillEnv = pPageView->GetFormFillEnv();
+  CHECK_EQ(pFormFillEnv, m_pFormFillEnv);
 
   CPDFSDK_FieldAction fa;
   fa.bModifier = CPWL_Wnd::IsCTRLKeyDown(nFlag);
