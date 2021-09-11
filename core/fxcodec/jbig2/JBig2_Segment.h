@@ -50,8 +50,8 @@ class CJBig2_Segment {
   uint32_t m_dwPage_association = 0;
   uint32_t m_dwData_length = 0;
   uint32_t m_dwHeader_Length = 0;
-  uint32_t m_dwObjNum = 0;
   uint32_t m_dwDataOffset = 0;
+  uint64_t m_Key = 0;
   JBig2_SegmentState m_State = JBIG2_SEGMENT_HEADER_UNPARSED;
   JBig2_ResultType m_nResultType = JBIG2_VOID_POINTER;
   std::unique_ptr<CJBig2_SymbolDict> m_SymbolDict;

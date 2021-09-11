@@ -25,8 +25,8 @@ class Jbig2Context {
 
   uint32_t m_width = 0;
   uint32_t m_height = 0;
-  uint32_t m_nGlobalObjNum = 0;
-  uint32_t m_nSrcObjNum = 0;
+  uint64_t m_nGlobalKey = 0;
+  uint64_t m_nSrcKey = 0;
   pdfium::span<const uint8_t> m_pGlobalSpan;
   pdfium::span<const uint8_t> m_pSrcSpan;
   uint8_t* m_dest_buf = nullptr;
@@ -42,9 +42,9 @@ class Jbig2Decoder {
       uint32_t width,
       uint32_t height,
       pdfium::span<const uint8_t> src_span,
-      uint32_t src_objnum,
+      uint64_t src_key,
       pdfium::span<const uint8_t> global_span,
-      uint32_t global_objnum,
+      uint64_t global_key,
       uint8_t* dest_buf,
       uint32_t dest_pitch,
       PauseIndicatorIface* pPause);

@@ -44,23 +44,23 @@ FXCODEC_STATUS Jbig2Decoder::StartDecode(
     uint32_t width,
     uint32_t height,
     pdfium::span<const uint8_t> src_span,
-    uint32_t src_objnum,
+    uint64_t src_key,
     pdfium::span<const uint8_t> global_span,
-    uint32_t global_objnum,
+    uint64_t global_key,
     uint8_t* dest_buf,
     uint32_t dest_pitch,
     PauseIndicatorIface* pPause) {
   pJbig2Context->m_width = width;
   pJbig2Context->m_height = height;
   pJbig2Context->m_pSrcSpan = src_span;
-  pJbig2Context->m_nSrcObjNum = src_objnum;
+  pJbig2Context->m_nSrcKey = src_key;
   pJbig2Context->m_pGlobalSpan = global_span;
-  pJbig2Context->m_nGlobalObjNum = global_objnum;
+  pJbig2Context->m_nGlobalKey = global_key;
   pJbig2Context->m_dest_buf = dest_buf;
   pJbig2Context->m_dest_pitch = dest_pitch;
   memset(dest_buf, 0, height * dest_pitch);
   pJbig2Context->m_pContext =
-      CJBig2_Context::Create(global_span, global_objnum, src_span, src_objnum,
+      CJBig2_Context::Create(global_span, global_key, src_span, src_key,
                              pJBig2DocumentContext->GetSymbolDictCache());
   bool succeeded = pJbig2Context->m_pContext->GetFirstPage(
       dest_buf, width, height, dest_pitch, pPause);

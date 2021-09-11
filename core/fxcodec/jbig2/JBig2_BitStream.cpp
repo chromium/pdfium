@@ -19,8 +19,8 @@ pdfium::span<const uint8_t> ValidatedSpan(pdfium::span<const uint8_t> sp) {
 }  // namespace
 
 CJBig2_BitStream::CJBig2_BitStream(pdfium::span<const uint8_t> pSrcStream,
-                                   uint32_t dwObjNum)
-    : m_Span(ValidatedSpan(pSrcStream)), m_dwObjNum(dwObjNum) {}
+                                   uint64_t key)
+    : m_Span(ValidatedSpan(pSrcStream)), m_Key(key) {}
 
 CJBig2_BitStream::~CJBig2_BitStream() = default;
 
@@ -186,8 +186,4 @@ bool CJBig2_BitStream::IsInBounds() const {
 
 uint32_t CJBig2_BitStream::LengthInBits() const {
   return m_Span.size() << 3;
-}
-
-uint32_t CJBig2_BitStream::getObjNum() const {
-  return m_dwObjNum;
 }

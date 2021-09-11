@@ -54,24 +54,24 @@ static_assert(kSymbolDictCacheMaxSize > 0,
 // static
 std::unique_ptr<CJBig2_Context> CJBig2_Context::Create(
     pdfium::span<const uint8_t> pGlobalSpan,
-    uint32_t dwGlobalObjNum,
+    uint64_t global_key,
     pdfium::span<const uint8_t> pSrcSpan,
-    uint32_t dwSrcObjNum,
+    uint64_t src_key,
     std::list<CJBig2_CachePair>* pSymbolDictCache) {
   auto result = pdfium::WrapUnique(
-      new CJBig2_Context(pSrcSpan, dwSrcObjNum, pSymbolDictCache, false));
+      new CJBig2_Context(pSrcSpan, src_key, pSymbolDictCache, false));
   if (!pGlobalSpan.empty()) {
-    result->m_pGlobalContext = pdfium::WrapUnique(new CJBig2_Context(
-        pGlobalSpan, dwGlobalObjNum, pSymbolDictCache, true));
+    result->m_pGlobalContext = pdfium::WrapUnique(
+        new CJBig2_Context(pGlobalSpan, global_key, pSymbolDictCache, true));
   }
   return result;
 }
 
 CJBig2_Context::CJBig2_Context(pdfium::span<const uint8_t> pSrcSpan,
-                               uint32_t dwObjNum,
+                               uint64_t src_key,
                                std::list<CJBig2_CachePair>* pSymbolDictCache,
                                bool bIsGlobal)
-    : m_pStream(std::make_unique<CJBig2_BitStream>(pSrcSpan, dwObjNum)),
+    : m_pStream(std::make_unique<CJBig2_BitStream>(pSrcSpan, src_key)),
       m_HuffmanTables(CJBig2_HuffmanTable::kNumHuffmanTables),
       m_bIsGlobal(bIsGlobal),
       m_pSymbolDictCache(pSymbolDictCache) {}
@@ -270,7 +270,7 @@ JBig2_Result CJBig2_Context::ParseSegmentHeader(CJBig2_Segment* pSegment) {
   if (m_pStream->readInteger(&pSegment->m_dwData_length) != 0)
     return JBig2_Result::kFailure;
 
-  pSegment->m_dwObjNum = m_pStream->getObjNum();
+  pSegment->m_Key = m_pStream->getKey();
   pSegment->m_dwDataOffset = m_pStream->getOffset();
   pSegment->m_State = JBIG2_SEGMENT_DATA_UNPARSED;
   return JBig2_Result::kSuccess;
@@ -514,8 +514,7 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
       grContext.resize(grContextSize);
   }
 
-  CJBig2_CacheKey key =
-      CJBig2_CacheKey(pSegment->m_dwObjNum, pSegment->m_dwDataOffset);
+  CJBig2_CompoundKey key(pSegment->m_Key, pSegment->m_dwDataOffset);
   bool cache_hit = false;
   pSegment->m_nResultType = JBIG2_SYMBOL_DICT_POINTER;
   if (m_bIsGlobal && key.first != 0) {

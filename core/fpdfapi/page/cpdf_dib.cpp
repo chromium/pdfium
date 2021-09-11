@@ -345,23 +345,23 @@ CPDF_DIB::LoadState CPDF_DIB::ContinueLoadDIBBase(PauseIndicatorIface* pPause) {
         m_pGlobalAcc->LoadAllDataFiltered();
       }
     }
-    uint32_t nSrcObjNum = 0;
+    uint64_t nSrcKey = 0;
     pdfium::span<const uint8_t> pSrcSpan;
     if (m_pStreamAcc) {
       pSrcSpan = m_pStreamAcc->GetSpan();
       if (m_pStreamAcc->GetStream())
-        nSrcObjNum = m_pStreamAcc->GetStream()->GetObjNum();
+        nSrcKey = m_pStreamAcc->GetStream()->KeyForCache();
     }
-    uint32_t nGlobalObjNum = 0;
+    uint64_t nGlobalKey = 0;
     pdfium::span<const uint8_t> pGlobalSpan;
     if (m_pGlobalAcc) {
       pGlobalSpan = m_pGlobalAcc->GetSpan();
       if (m_pGlobalAcc->GetStream())
-        nGlobalObjNum = m_pGlobalAcc->GetStream()->GetObjNum();
+        nGlobalKey = m_pGlobalAcc->GetStream()->KeyForCache();
     }
     iDecodeStatus = Jbig2Decoder::StartDecode(
         m_pJbig2Context.get(), m_pDocument->GetOrCreateCodecContext(), m_Width,
-        m_Height, pSrcSpan, nSrcObjNum, pGlobalSpan, nGlobalObjNum,
+        m_Height, pSrcSpan, nSrcKey, pGlobalSpan, nGlobalKey,
         m_pCachedBitmap->GetBuffer(), m_pCachedBitmap->GetPitch(), pPause);
   } else {
     iDecodeStatus = Jbig2Decoder::ContinueDecode(m_pJbig2Context.get(), pPause);
