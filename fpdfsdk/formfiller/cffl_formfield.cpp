@@ -495,11 +495,11 @@ bool CFFL_FormField::CommitData(const CPDFSDK_PageView* pPageView,
   if (!pObserved)
     return false;
 
-  pInteractiveFormFiller->OnCalculate(&pObserved, pPageView, nFlag);
+  pInteractiveFormFiller->OnCalculate(&pObserved);
   if (!pObserved)
     return false;
 
-  pInteractiveFormFiller->OnFormat(&pObserved, pPageView, nFlag);
+  pInteractiveFormFiller->OnFormat(&pObserved);
   if (!pObserved)
     return false;
 

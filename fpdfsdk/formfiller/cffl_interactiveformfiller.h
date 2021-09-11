@@ -30,15 +30,13 @@ class CFFL_InteractiveFormFiller final : public IPWL_FillerNotify {
       CPDFSDK_FormFillEnvironment* pFormFillEnv);
   ~CFFL_InteractiveFormFiller() override;
 
-  bool Annot_HitTest(CPDFSDK_PageView* pPageView,
-                     CPDFSDK_Annot* pAnnot,
-                     const CFX_PointF& point);
+  bool Annot_HitTest(const CPDFSDK_Annot* pAnnot, const CFX_PointF& point);
   FX_RECT GetViewBBox(const CPDFSDK_PageView* pPageView, CPDFSDK_Annot* pAnnot);
+
   void OnDraw(CPDFSDK_PageView* pPageView,
               CPDFSDK_Annot* pAnnot,
               CFX_RenderDevice* pDevice,
               const CFX_Matrix& mtUser2Device);
-
   void OnDelete(CPDFSDK_Annot* pAnnot);
 
   void OnMouseEnter(CPDFSDK_PageView* pPageView,
@@ -114,12 +112,8 @@ class CFFL_InteractiveFormFiller final : public IPWL_FillerNotify {
   bool OnValidate(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                   const CPDFSDK_PageView* pPageView,
                   Mask<FWL_EVENTFLAG> nFlag);
-  void OnCalculate(ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                   const CPDFSDK_PageView* pPageView,
-                   Mask<FWL_EVENTFLAG> nFlag);
-  void OnFormat(ObservedPtr<CPDFSDK_Annot>* pAnnot,
-                const CPDFSDK_PageView* pPageView,
-                Mask<FWL_EVENTFLAG> nFlag);
+  void OnCalculate(ObservedPtr<CPDFSDK_Annot>* pAnnot);
+  void OnFormat(ObservedPtr<CPDFSDK_Annot>* pAnnot);
   bool OnButtonUp(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                   const CPDFSDK_PageView* pPageView,
                   Mask<FWL_EVENTFLAG> nFlag);
