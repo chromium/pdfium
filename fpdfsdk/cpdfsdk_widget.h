@@ -26,7 +26,7 @@ class CPDF_RenderOptions;
 class CPDFSDK_FormFillEnvironment;
 class CPDFSDK_InteractiveForm;
 class CPDFSDK_PageView;
-struct CPDFSDK_FieldAction;
+struct CFFL_FieldAction;
 
 #ifdef PDF_ENABLE_XFA
 class CXFA_FFWidget;
@@ -87,7 +87,7 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
   CXFA_FFWidget* GetMixXFAWidget() const;
   bool HasXFAAAction(PDFSDK_XFAAActionType eXFAAAT) const;
   bool OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
-                    CPDFSDK_FieldAction* data,
+                    CFFL_FieldAction* data,
                     const CPDFSDK_PageView* pPageView);
   void Synchronize(bool bSynchronizeElse);
   // TODO(thestig): Figure out if the parameter should be used or removed.
@@ -100,7 +100,7 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
   Optional<WideString> OnFormat();
 
   bool OnAAction(CPDF_AAction::AActionType type,
-                 CPDFSDK_FieldAction* data,
+                 CFFL_FieldAction* data,
                  const CPDFSDK_PageView* pPageView);
 
   CPDFSDK_InteractiveForm* GetInteractiveForm() const {
@@ -137,7 +137,7 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
   CXFA_FFWidget* GetGroupMixXFAWidget() const;
   WideString GetName() const;
   bool HandleXFAAAction(CPDF_AAction::AActionType type,
-                        CPDFSDK_FieldAction* data,
+                        CFFL_FieldAction* data,
                         CPDFSDK_FormFillEnvironment* pFormFillEnv);
 #endif  // PDF_ENABLE_XFA
 

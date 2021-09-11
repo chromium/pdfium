@@ -174,7 +174,7 @@ void CFFL_TextField::SaveData(const CPDFSDK_PageView* pPageView) {
 
 void CFFL_TextField::GetActionData(const CPDFSDK_PageView* pPageView,
                                    CPDF_AAction::AActionType type,
-                                   CPDFSDK_FieldAction& fa) {
+                                   CFFL_FieldAction& fa) {
   switch (type) {
     case CPDF_AAction::kKeyStroke:
       if (CPWL_Edit* pWnd = GetEdit(pPageView)) {
@@ -204,7 +204,7 @@ void CFFL_TextField::GetActionData(const CPDFSDK_PageView* pPageView,
 
 void CFFL_TextField::SetActionData(const CPDFSDK_PageView* pPageView,
                                    CPDF_AAction::AActionType type,
-                                   const CPDFSDK_FieldAction& fa) {
+                                   const CFFL_FieldAction& fa) {
   switch (type) {
     case CPDF_AAction::kKeyStroke:
       if (CPWL_Edit* pEdit = GetEdit(pPageView)) {

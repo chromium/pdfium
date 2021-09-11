@@ -33,7 +33,7 @@ class CFFL_ListBox final : public CFFL_TextObject {
   void SaveData(const CPDFSDK_PageView* pPageView) override;
   void GetActionData(const CPDFSDK_PageView* pPageView,
                      CPDF_AAction::AActionType type,
-                     CPDFSDK_FieldAction& fa) override;
+                     CFFL_FieldAction& fa) override;
   void SavePWLWindowState(const CPDFSDK_PageView* pPageView) override;
   void RecreatePWLWindowFromSavedState(
       const CPDFSDK_PageView* pPageView) override;

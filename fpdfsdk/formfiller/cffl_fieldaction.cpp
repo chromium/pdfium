@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/cpdfsdk_fieldaction.h"
+#include "fpdfsdk/formfiller/cffl_fieldaction.h"
 
-CPDFSDK_FieldAction::CPDFSDK_FieldAction() = default;
+CFFL_FieldAction::CFFL_FieldAction() = default;
 
-CPDFSDK_FieldAction::~CPDFSDK_FieldAction() = default;
+CFFL_FieldAction::~CFFL_FieldAction() = default;

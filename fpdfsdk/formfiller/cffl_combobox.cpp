@@ -117,7 +117,7 @@ void CFFL_ComboBox::SaveData(const CPDFSDK_PageView* pPageView) {
 
 void CFFL_ComboBox::GetActionData(const CPDFSDK_PageView* pPageView,
                                   CPDF_AAction::AActionType type,
-                                  CPDFSDK_FieldAction& fa) {
+                                  CFFL_FieldAction& fa) {
   switch (type) {
     case CPDF_AAction::kKeyStroke:
       if (CPWL_ComboBox* pComboBox = GetComboBox(pPageView)) {
@@ -152,7 +152,7 @@ void CFFL_ComboBox::GetActionData(const CPDFSDK_PageView* pPageView,
 
 void CFFL_ComboBox::SetActionData(const CPDFSDK_PageView* pPageView,
                                   CPDF_AAction::AActionType type,
-                                  const CPDFSDK_FieldAction& fa) {
+                                  const CFFL_FieldAction& fa) {
   switch (type) {
     case CPDF_AAction::kKeyStroke:
       if (CPWL_ComboBox* pComboBox = GetComboBox(pPageView)) {

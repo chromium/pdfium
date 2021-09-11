@@ -139,7 +139,7 @@ void CFFL_ListBox::SaveData(const CPDFSDK_PageView* pPageView) {
 
 void CFFL_ListBox::GetActionData(const CPDFSDK_PageView* pPageView,
                                  CPDF_AAction::AActionType type,
-                                 CPDFSDK_FieldAction& fa) {
+                                 CFFL_FieldAction& fa) {
   switch (type) {
     case CPDF_AAction::kValidate:
       if (m_pWidget->GetFieldFlags() & pdfium::form_flags::kChoiceMultiSelect) {

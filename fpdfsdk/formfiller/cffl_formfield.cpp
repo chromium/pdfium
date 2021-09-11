@@ -524,13 +524,13 @@ void CFFL_FormField::SetChangeMark() {
 
 void CFFL_FormField::GetActionData(const CPDFSDK_PageView* pPageView,
                                    CPDF_AAction::AActionType type,
-                                   CPDFSDK_FieldAction& fa) {
+                                   CFFL_FieldAction& fa) {
   fa.sValue = m_pWidget->GetValue();
 }
 
 void CFFL_FormField::SetActionData(const CPDFSDK_PageView* pPageView,
                                    CPDF_AAction::AActionType type,
-                                   const CPDFSDK_FieldAction& fa) {}
+                                   const CFFL_FieldAction& fa) {}
 
 void CFFL_FormField::SavePWLWindowState(const CPDFSDK_PageView* pPageView) {}
 

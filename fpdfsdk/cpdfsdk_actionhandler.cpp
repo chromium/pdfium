@@ -47,7 +47,7 @@ bool CPDFSDK_ActionHandler::DoAction_FieldJavaScript(
     CPDF_AAction::AActionType type,
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
     CPDF_FormField* pFormField,
-    CPDFSDK_FieldAction* data) {
+    CFFL_FieldAction* data) {
   DCHECK(pFormFillEnv);
   if (pFormFillEnv->IsJSPlatformPresent() &&
       JsAction.GetType() == CPDF_Action::Type::kJavaScript) {
@@ -125,7 +125,7 @@ bool CPDFSDK_ActionHandler::DoAction_Field(
     CPDF_AAction::AActionType type,
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
     CPDF_FormField* pFormField,
-    CPDFSDK_FieldAction* data) {
+    CFFL_FieldAction* data) {
   std::set<const CPDF_Dictionary*> visited;
   return ExecuteFieldAction(action, type, pFormFillEnv, pFormField, data,
                             &visited);
@@ -210,7 +210,7 @@ bool CPDFSDK_ActionHandler::ExecuteFieldAction(
     CPDF_AAction::AActionType type,
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
     CPDF_FormField* pFormField,
-    CPDFSDK_FieldAction* data,
+    CFFL_FieldAction* data,
     std::set<const CPDF_Dictionary*>* visited) {
   const CPDF_Dictionary* pDict = action.GetDict();
   if (pdfium::Contains(*visited, pDict))
@@ -322,7 +322,7 @@ void CPDFSDK_ActionHandler::RunFieldJavaScript(
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
     CPDF_FormField* pFormField,
     CPDF_AAction::AActionType type,
-    CPDFSDK_FieldAction* data,
+    CFFL_FieldAction* data,
     const WideString& script) {
   DCHECK(type != CPDF_AAction::kCalculate);
   DCHECK(type != CPDF_AAction::kFormat);

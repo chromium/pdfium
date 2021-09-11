@@ -13,8 +13,8 @@
 #include "core/fxcrt/cfx_timer.h"
 #include "core/fxcrt/mask.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "fpdfsdk/cpdfsdk_fieldaction.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
+#include "fpdfsdk/formfiller/cffl_fieldaction.h"
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "fpdfsdk/pwl/ipwl_systemhandler.h"
@@ -98,10 +98,10 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
 
   virtual void GetActionData(const CPDFSDK_PageView* pPageView,
                              CPDF_AAction::AActionType type,
-                             CPDFSDK_FieldAction& fa);
+                             CFFL_FieldAction& fa);
   virtual void SetActionData(const CPDFSDK_PageView* pPageView,
                              CPDF_AAction::AActionType type,
-                             const CPDFSDK_FieldAction& fa);
+                             const CFFL_FieldAction& fa);
   virtual CPWL_Wnd::CreateParams GetCreateParam();
   virtual std::unique_ptr<CPWL_Wnd> NewPWLWindow(
       const CPWL_Wnd::CreateParams& cp,

@@ -4,15 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_CPDFSDK_FIELDACTION_H_
-#define FPDFSDK_CPDFSDK_FIELDACTION_H_
+#ifndef FPDFSDK_FORMFILLER_CFFL_FIELDACTION_H_
+#define FPDFSDK_FORMFILLER_CFFL_FIELDACTION_H_
 
 #include "core/fxcrt/fx_string.h"
 
-struct CPDFSDK_FieldAction {
-  CPDFSDK_FieldAction();
-  CPDFSDK_FieldAction(const CPDFSDK_FieldAction& other) = delete;
-  ~CPDFSDK_FieldAction();
+struct CFFL_FieldAction {
+  CFFL_FieldAction();
+  CFFL_FieldAction(const CFFL_FieldAction& other) = delete;
+  ~CFFL_FieldAction();
 
   bool bModifier = false;
   bool bShift = false;
@@ -27,4 +27,4 @@ struct CPDFSDK_FieldAction {
   WideString sValue;
 };
 
-#endif  // FPDFSDK_CPDFSDK_FIELDACTION_H_
+#endif  // FPDFSDK_FORMFILLER_CFFL_FIELDACTION_H_
