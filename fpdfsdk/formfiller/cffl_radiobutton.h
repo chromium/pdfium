@@ -35,8 +35,8 @@ class CFFL_RadioButton final : public CFFL_Button {
   void SaveData(const CPDFSDK_PageView* pPageView) override;
 
  private:
-  CPWL_RadioButton* GetRadioButton(const CPDFSDK_PageView* pPageView) const;
-  CPWL_RadioButton* CreateOrUpdateRadioButton(
+  CPWL_RadioButton* GetPWLRadioButton(const CPDFSDK_PageView* pPageView) const;
+  CPWL_RadioButton* CreateOrUpdatePWLRadioButton(
       const CPDFSDK_PageView* pPageView);
 };
 

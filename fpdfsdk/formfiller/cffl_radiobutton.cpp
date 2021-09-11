@@ -60,7 +60,7 @@ bool CFFL_RadioButton::OnChar(CPDFSDK_Annot* pAnnot,
       }
 
       CFFL_FormField::OnChar(pAnnot, nChar, nFlags);
-      CPWL_RadioButton* pWnd = CreateOrUpdateRadioButton(pPageView);
+      CPWL_RadioButton* pWnd = CreateOrUpdatePWLRadioButton(pPageView);
       if (pWnd && !pWnd->IsReadOnly())
         pWnd->SetCheck(true);
       return CommitData(pPageView, nFlags);
@@ -79,7 +79,7 @@ bool CFFL_RadioButton::OnLButtonUp(CPDFSDK_PageView* pPageView,
   if (!IsValid())
     return true;
 
-  CPWL_RadioButton* pWnd = CreateOrUpdateRadioButton(pPageView);
+  CPWL_RadioButton* pWnd = CreateOrUpdatePWLRadioButton(pPageView);
   if (pWnd)
     pWnd->SetCheck(true);
 
@@ -87,12 +87,12 @@ bool CFFL_RadioButton::OnLButtonUp(CPDFSDK_PageView* pPageView,
 }
 
 bool CFFL_RadioButton::IsDataChanged(const CPDFSDK_PageView* pPageView) {
-  CPWL_RadioButton* pWnd = GetRadioButton(pPageView);
+  CPWL_RadioButton* pWnd = GetPWLRadioButton(pPageView);
   return pWnd && pWnd->IsChecked() != m_pWidget->IsChecked();
 }
 
 void CFFL_RadioButton::SaveData(const CPDFSDK_PageView* pPageView) {
-  CPWL_RadioButton* pWnd = GetRadioButton(pPageView);
+  CPWL_RadioButton* pWnd = GetPWLRadioButton(pPageView);
   if (!pWnd)
     return;
 
@@ -119,12 +119,12 @@ void CFFL_RadioButton::SaveData(const CPDFSDK_PageView* pPageView) {
   SetChangeMark();
 }
 
-CPWL_RadioButton* CFFL_RadioButton::GetRadioButton(
+CPWL_RadioButton* CFFL_RadioButton::GetPWLRadioButton(
     const CPDFSDK_PageView* pPageView) const {
   return static_cast<CPWL_RadioButton*>(GetPWLWindow(pPageView));
 }
 
-CPWL_RadioButton* CFFL_RadioButton::CreateOrUpdateRadioButton(
+CPWL_RadioButton* CFFL_RadioButton::CreateOrUpdatePWLRadioButton(
     const CPDFSDK_PageView* pPageView) {
   return static_cast<CPWL_RadioButton*>(CreateOrUpdatePWLWindow(pPageView));
 }
