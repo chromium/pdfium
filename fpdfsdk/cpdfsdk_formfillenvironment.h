@@ -213,8 +213,11 @@ class CPDFSDK_FormFillEnvironment final : public CFX_Timer::HandlerIface,
     return m_FocusableAnnotTypes;
   }
 
-  // Creates if not present.
-  CFFL_InteractiveFormFiller* GetInteractiveFormFiller();
+  // Never returns null.
+  CFFL_InteractiveFormFiller* GetInteractiveFormFiller() {
+    return m_pInteractiveFormFiller.get();
+  }
+
   IJS_Runtime* GetIJSRuntime();                   // Creates if not present.
   CPDFSDK_ActionHandler* GetActionHandler();      // Creates if not present.
   CPDFSDK_InteractiveForm* GetInteractiveForm();  // Creates if not present.

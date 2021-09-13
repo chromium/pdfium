@@ -61,7 +61,9 @@ CPDFSDK_FormFillEnvironment::CPDFSDK_FormFillEnvironment(
     std::unique_ptr<CPDFSDK_AnnotHandlerMgr> pHandlerMgr)
     : m_pInfo(pFFinfo),
       m_pCPDFDoc(pDoc),
-      m_pAnnotHandlerMgr(std::move(pHandlerMgr)) {
+      m_pAnnotHandlerMgr(std::move(pHandlerMgr)),
+      m_pInteractiveFormFiller(
+          std::make_unique<CFFL_InteractiveFormFiller>(this)) {
   DCHECK(m_pCPDFDoc);
   m_pAnnotHandlerMgr->SetFormFillEnv(this);
 }
@@ -355,15 +357,6 @@ CPDFSDK_ActionHandler* CPDFSDK_FormFillEnvironment::GetActionHandler() {
   if (!m_pActionHandler)
     m_pActionHandler = std::make_unique<CPDFSDK_ActionHandler>();
   return m_pActionHandler.get();
-}
-
-CFFL_InteractiveFormFiller*
-CPDFSDK_FormFillEnvironment::GetInteractiveFormFiller() {
-  if (!m_pInteractiveFormFiller) {
-    m_pInteractiveFormFiller =
-        std::make_unique<CFFL_InteractiveFormFiller>(this);
-  }
-  return m_pInteractiveFormFiller.get();
 }
 
 void CPDFSDK_FormFillEnvironment::Invalidate(IPDF_Page* page,
