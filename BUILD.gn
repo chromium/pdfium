@@ -6,6 +6,10 @@ import("//build/config/clang/clang.gni")
 import("//testing/test.gni")
 import("pdfium.gni")
 
+if (pdf_enable_v8) {
+  import("//v8/gni/v8.gni")
+}
+
 group("freetype_common") {
   public_deps = []
   if (pdf_bundle_freetype) {
@@ -97,6 +101,10 @@ config("pdfium_public_config") {
       if (pdf_enable_xfa_tiff) {
         defines += [ "PDF_ENABLE_XFA_TIFF" ]
       }
+    }
+
+    if (v8_enable_webassembly) {
+      defines += [ "PDF_ENABLE_V8_WASM" ]
     }
   }
 
