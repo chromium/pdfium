@@ -11,7 +11,6 @@
 #include "constants/ascii.h"
 #include "constants/form_flags.h"
 #include "core/fpdfdoc/cpdf_bafontmap.h"
-#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cffl_perwindowdata.h"
 #include "fpdfsdk/pwl/cpwl_edit.h"
@@ -29,9 +28,9 @@ enum Alignment {
 
 }  // namespace
 
-CFFL_TextField::CFFL_TextField(CPDFSDK_FormFillEnvironment* pApp,
+CFFL_TextField::CFFL_TextField(CFFL_InteractiveFormFiller* pFormFiller,
                                CPDFSDK_Widget* pWidget)
-    : CFFL_TextObject(pApp, pWidget) {}
+    : CFFL_TextObject(pFormFiller, pWidget) {}
 
 CFFL_TextField::~CFFL_TextField() {
   for (const auto& it : m_Maps)
@@ -90,7 +89,7 @@ std::unique_ptr<CPWL_Wnd> CFFL_TextField::NewPWLWindow(
   static_cast<CFFL_PerWindowData*>(pAttachedData.get())->SetFormField(this);
   auto pWnd = std::make_unique<CPWL_Edit>(cp, std::move(pAttachedData));
   pWnd->Realize();
-  pWnd->SetFillerNotify(m_pFormFillEnv->GetInteractiveFormFiller());
+  pWnd->SetFillerNotify(m_pFormFiller.Get());
 
   int32_t nMaxLen = m_pWidget->GetMaxLen();
   WideString swValue = m_pWidget->GetValue();
@@ -117,9 +116,8 @@ bool CFFL_TextField::OnChar(CPDFSDK_Annot* pAnnot,
       CPDFSDK_PageView* pPageView = GetCurPageView();
       DCHECK(pPageView);
       m_bValid = !m_bValid;
-      m_pFormFillEnv->Invalidate(pAnnot->GetPage(),
-                                 pAnnot->GetRect().GetOuterRect());
-
+      m_pFormFiller->GetCallbackIface()->Invalidate(
+          pAnnot->GetPage(), pAnnot->GetRect().GetOuterRect());
       if (m_bValid) {
         if (CPWL_Wnd* pWnd = CreateOrUpdatePWLWindow(pPageView))
           pWnd->SetFocus();
@@ -247,12 +245,7 @@ bool CFFL_TextField::IsFieldFull(const CPDFSDK_PageView* pPageView) {
 void CFFL_TextField::OnSetFocus(CPWL_Edit* pEdit) {
   pEdit->SetCharSet(FX_Charset::kChineseSimplified);
   pEdit->SetReadyToInput();
-
-  WideString wsText = pEdit->GetText();
-  int nCharacters = wsText.GetLength();
-  ByteString bsUTFText = wsText.ToUTF16LE();
-  auto* pBuffer = reinterpret_cast<const unsigned short*>(bsUTFText.c_str());
-  m_pFormFillEnv->OnSetFieldInputFocus(pBuffer, nCharacters, true);
+  m_pFormFiller->GetCallbackIface()->OnSetFieldInputFocus(pEdit->GetText());
 }
 
 CPWL_Edit* CFFL_TextField::GetPWLEdit(const CPDFSDK_PageView* pPageView) const {

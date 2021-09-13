@@ -20,16 +20,34 @@
 #include "public/fpdf_fwlevent.h"
 
 class CFFL_FormField;
-class CPDFSDK_FormFillEnvironment;
 class CPDFSDK_PageView;
 class CPDFSDK_Widget;
 
 class CFFL_InteractiveFormFiller final : public IPWL_FillerNotify {
  public:
-  explicit CFFL_InteractiveFormFiller(
-      CPDFSDK_FormFillEnvironment* pFormFillEnv);
+  class CallbackIface {
+   public:
+    virtual ~CallbackIface() = default;
+
+    virtual void OnSetFieldInputFocus(const WideString& text) = 0;
+    virtual void Invalidate(IPDF_Page* pPage, const FX_RECT& rect) = 0;
+    virtual CPDFSDK_PageView* GetOrCreatePageView(IPDF_Page* pPage) = 0;
+    virtual CPDFSDK_PageView* GetPageView(IPDF_Page* pPage) = 0;
+    virtual CFX_Timer::HandlerIface* GetTimerHandler() = 0;
+    virtual IPWL_SystemHandler* GetSysHandler() = 0;
+    virtual CPDFSDK_Annot* GetFocusAnnot() const = 0;
+    virtual bool SetFocusAnnot(ObservedPtr<CPDFSDK_Annot>* pAnnot) = 0;
+
+    // See PDF Reference 1.7, table 3.20 for the permission bits. Returns true
+    // if any bit in |flags| is set.
+    virtual bool HasPermissions(uint32_t flags) const = 0;
+    virtual void OnChange() = 0;
+  };
+
+  explicit CFFL_InteractiveFormFiller(CallbackIface* pCallbackIface);
   ~CFFL_InteractiveFormFiller() override;
 
+  CallbackIface* GetCallbackIface() { return m_pCallbackIface.Get(); }
   bool Annot_HitTest(const CPDFSDK_Annot* pAnnot, const CFX_PointF& point);
   FX_RECT GetViewBBox(const CPDFSDK_PageView* pPageView, CPDFSDK_Annot* pAnnot);
 
@@ -168,7 +186,7 @@ class CFFL_InteractiveFormFiller final : public IPWL_FillerNotify {
   CFFL_FormField* GetOrCreateFormField(CPDFSDK_Annot* pAnnot);
   void UnregisterFormField(CPDFSDK_Annot* pAnnot);
 
-  UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
+  UnownedPtr<CallbackIface> const m_pCallbackIface;
   WidgetToFormFillerMap m_Map;
   bool m_bNotifying = false;
 };

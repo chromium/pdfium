@@ -22,7 +22,8 @@ class CFFL_TextObject : public CFFL_FormField {
   CPWL_Wnd* RestorePWLWindow(const CPDFSDK_PageView* pPageView) override;
 
  protected:
-  CFFL_TextObject(CPDFSDK_FormFillEnvironment* pApp, CPDFSDK_Widget* pWidget);
+  CFFL_TextObject(CFFL_InteractiveFormFiller* pFormFiller,
+                  CPDFSDK_Widget* pWidget);
   ~CFFL_TextObject() override;
 
   CPDF_BAFontMap* GetOrCreateFontMap();

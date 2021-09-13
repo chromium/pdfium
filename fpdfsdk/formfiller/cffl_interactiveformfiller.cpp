@@ -12,7 +12,6 @@
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fxcrt/autorestorer.h"
 #include "core/fxge/cfx_drawutils.h"
-#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
@@ -30,8 +29,8 @@
 #include "third_party/base/cxx17_backports.h"
 
 CFFL_InteractiveFormFiller::CFFL_InteractiveFormFiller(
-    CPDFSDK_FormFillEnvironment* pFormFillEnv)
-    : m_pFormFillEnv(pFormFillEnv) {}
+    CallbackIface* pCallbackIface)
+    : m_pCallbackIface(pCallbackIface) {}
 
 CFFL_InteractiveFormFiller::~CFFL_InteractiveFormFiller() = default;
 
@@ -69,7 +68,7 @@ void CFFL_InteractiveFormFiller::OnDraw(CPDFSDK_PageView* pPageView,
   CFFL_FormField* pFormField = GetFormField(pAnnot);
   if (pFormField && pFormField->IsValid()) {
     pFormField->OnDraw(pPageView, pAnnot, pDevice, mtUser2Device);
-    if (m_pFormFillEnv->GetFocusAnnot() != pAnnot)
+    if (m_pCallbackIface->GetFocusAnnot() != pAnnot)
       return;
 
     CFX_FloatRect rcFocus = pFormField->GetFocusBox(pPageView);
@@ -226,12 +225,12 @@ bool CFFL_InteractiveFormFiller::OnLButtonUp(CPDFSDK_PageView* pPageView,
       break;
   }
   if (bSetFocus)
-    m_pFormFillEnv->SetFocusAnnot(pAnnot);
+    m_pCallbackIface->SetFocusAnnot(pAnnot);
 
   CFFL_FormField* pFormField = GetFormField(pAnnot->Get());
   bool bRet = pFormField &&
               pFormField->OnLButtonUp(pPageView, pAnnot->Get(), nFlags, point);
-  if (m_pFormFillEnv->GetFocusAnnot() != pAnnot->Get())
+  if (m_pCallbackIface->GetFocusAnnot() != pAnnot->Get())
     return bRet;
   if (OnButtonUp(pAnnot, pPageView, nFlags) || !pAnnot)
     return true;
@@ -466,7 +465,7 @@ bool CFFL_InteractiveFormFiller::IsFillingAllowed(
   if (pWidget->GetFieldType() == FormFieldType::kPushButton)
     return false;
 
-  return m_pFormFillEnv->HasPermissions(
+  return m_pCallbackIface->HasPermissions(
       pdfium::access_permissions::kFillForm |
       pdfium::access_permissions::kModifyAnnotation |
       pdfium::access_permissions::kModifyContent);
@@ -488,28 +487,22 @@ CFFL_FormField* CFFL_InteractiveFormFiller::GetOrCreateFormField(
   std::unique_ptr<CFFL_FormField> pFormField;
   switch (pWidget->GetFieldType()) {
     case FormFieldType::kPushButton:
-      pFormField =
-          std::make_unique<CFFL_PushButton>(m_pFormFillEnv.Get(), pWidget);
+      pFormField = std::make_unique<CFFL_PushButton>(this, pWidget);
       break;
     case FormFieldType::kCheckBox:
-      pFormField =
-          std::make_unique<CFFL_CheckBox>(m_pFormFillEnv.Get(), pWidget);
+      pFormField = std::make_unique<CFFL_CheckBox>(this, pWidget);
       break;
     case FormFieldType::kRadioButton:
-      pFormField =
-          std::make_unique<CFFL_RadioButton>(m_pFormFillEnv.Get(), pWidget);
+      pFormField = std::make_unique<CFFL_RadioButton>(this, pWidget);
       break;
     case FormFieldType::kTextField:
-      pFormField =
-          std::make_unique<CFFL_TextField>(m_pFormFillEnv.Get(), pWidget);
+      pFormField = std::make_unique<CFFL_TextField>(this, pWidget);
       break;
     case FormFieldType::kListBox:
-      pFormField =
-          std::make_unique<CFFL_ListBox>(m_pFormFillEnv.Get(), pWidget);
+      pFormField = std::make_unique<CFFL_ListBox>(this, pWidget);
       break;
     case FormFieldType::kComboBox:
-      pFormField =
-          std::make_unique<CFFL_ComboBox>(m_pFormFillEnv.Get(), pWidget);
+      pFormField = std::make_unique<CFFL_ComboBox>(this, pWidget);
       break;
     case FormFieldType::kUnknown:
     default:
@@ -713,7 +706,7 @@ void CFFL_InteractiveFormFiller::OnCalculate(
 
   CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot->Get());
   if (pWidget) {
-    CPDFSDK_InteractiveForm* pForm = m_pFormFillEnv->GetInteractiveForm();
+    CPDFSDK_InteractiveForm* pForm = pWidget->GetInteractiveForm();
     pForm->OnCalculate(pWidget->GetFormField());
   }
   m_bNotifying = false;
@@ -726,7 +719,7 @@ void CFFL_InteractiveFormFiller::OnFormat(ObservedPtr<CPDFSDK_Annot>* pAnnot) {
   CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot->Get());
   DCHECK(pWidget);
 
-  CPDFSDK_InteractiveForm* pForm = m_pFormFillEnv->GetInteractiveForm();
+  CPDFSDK_InteractiveForm* pForm = pWidget->GetInteractiveForm();
   Optional<WideString> sValue = pForm->OnFormat(pWidget->GetFormField());
   if (!pAnnot->HasObservable())
     return;
@@ -945,7 +938,7 @@ std::pair<bool, bool> CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
   } else {
     pFormField->RecreatePWLWindowFromSavedState(pPageView);
   }
-  if (m_pFormFillEnv->GetFocusAnnot() == pWidget)
+  if (m_pCallbackIface->GetFocusAnnot() == pWidget)
     return {false, bExit};
 
   pFormField->CommitData(pPageView, nFlag);

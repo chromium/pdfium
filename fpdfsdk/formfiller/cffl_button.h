@@ -13,14 +13,12 @@
 class CFX_RenderDevice;
 class CFX_Matrix;
 class CPDFSDK_Annot;
-class CPDFSDK_FormFillEnvironment;
 class CPDFSDK_PageView;
 class CPDFSDK_Widget;
 
 class CFFL_Button : public CFFL_FormField {
  public:
-  CFFL_Button(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-              CPDFSDK_Widget* pWidget);
+  CFFL_Button(CFFL_InteractiveFormFiller* pFormFiller, CPDFSDK_Widget* pWidget);
   ~CFFL_Button() override;
 
   // CFFL_FormField

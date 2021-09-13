@@ -10,16 +10,15 @@
 
 #include "constants/form_flags.h"
 #include "core/fpdfdoc/cpdf_bafontmap.h"
-#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 #include "fpdfsdk/formfiller/cffl_perwindowdata.h"
 #include "fpdfsdk/pwl/cpwl_combo_box.h"
 #include "fpdfsdk/pwl/cpwl_edit.h"
 
-CFFL_ComboBox::CFFL_ComboBox(CPDFSDK_FormFillEnvironment* pApp,
+CFFL_ComboBox::CFFL_ComboBox(CFFL_InteractiveFormFiller* pFormFiller,
                              CPDFSDK_Widget* pWidget)
-    : CFFL_TextObject(pApp, pWidget) {}
+    : CFFL_TextObject(pFormFiller, pWidget) {}
 
 CFFL_ComboBox::~CFFL_ComboBox() {
   for (const auto& it : m_Maps)
@@ -47,7 +46,7 @@ std::unique_ptr<CPWL_Wnd> CFFL_ComboBox::NewPWLWindow(
   static_cast<CFFL_PerWindowData*>(pAttachedData.get())->SetFormField(this);
   auto pWnd = std::make_unique<CPWL_ComboBox>(cp, std::move(pAttachedData));
   pWnd->Realize();
-  pWnd->SetFillerNotify(m_pFormFillEnv->GetInteractiveFormFiller());
+  pWnd->SetFillerNotify(m_pFormFiller.Get());
 
   int32_t nCurSel = m_pWidget->GetSelectedIndex(0);
   WideString swText;
@@ -241,12 +240,7 @@ bool CFFL_ComboBox::IsFieldFull(const CPDFSDK_PageView* pPageView) {
 void CFFL_ComboBox::OnSetFocus(CPWL_Edit* pEdit) {
   pEdit->SetCharSet(FX_Charset::kChineseSimplified);
   pEdit->SetReadyToInput();
-
-  WideString wsText = pEdit->GetText();
-  int nCharacters = wsText.GetLength();
-  ByteString bsUTFText = wsText.ToUTF16LE();
-  auto* pBuffer = reinterpret_cast<const unsigned short*>(bsUTFText.c_str());
-  m_pFormFillEnv->OnSetFieldInputFocus(pBuffer, nCharacters, true);
+  m_pFormFiller->GetCallbackIface()->OnSetFieldInputFocus(pEdit->GetText());
 }
 
 WideString CFFL_ComboBox::GetSelectExportText() {

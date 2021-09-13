@@ -9,9 +9,9 @@
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "third_party/base/check.h"
 
-CFFL_Button::CFFL_Button(CPDFSDK_FormFillEnvironment* pFormFillEnv,
+CFFL_Button::CFFL_Button(CFFL_InteractiveFormFiller* pFormFiller,
                          CPDFSDK_Widget* pWidget)
-    : CFFL_FormField(pFormFillEnv, pWidget) {}
+    : CFFL_FormField(pFormFiller, pWidget) {}
 
 CFFL_Button::~CFFL_Button() = default;
 

@@ -24,7 +24,8 @@ struct FFL_ComboBoxState {
 class CFFL_ComboBox final : public CFFL_TextObject,
                             public CPWL_Wnd::FocusHandlerIface {
  public:
-  CFFL_ComboBox(CPDFSDK_FormFillEnvironment* pApp, CPDFSDK_Widget* pWidget);
+  CFFL_ComboBox(CFFL_InteractiveFormFiller* pFormFiller,
+                CPDFSDK_Widget* pWidget);
   ~CFFL_ComboBox() override;
 
   // CFFL_TextObject:

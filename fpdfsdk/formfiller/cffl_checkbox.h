@@ -15,7 +15,8 @@ class CPWL_CheckBox;
 
 class CFFL_CheckBox final : public CFFL_Button {
  public:
-  CFFL_CheckBox(CPDFSDK_FormFillEnvironment* pApp, CPDFSDK_Widget* pWidget);
+  CFFL_CheckBox(CFFL_InteractiveFormFiller* pFormFiller,
+                CPDFSDK_Widget* pWidget);
   ~CFFL_CheckBox() override;
 
   // CFFL_Button:

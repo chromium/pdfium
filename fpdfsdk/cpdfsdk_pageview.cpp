@@ -175,6 +175,10 @@ CPDF_Page* CPDFSDK_PageView::GetPDFPage() const {
   return ToPDFPage(m_page);
 }
 
+CPDFSDK_InteractiveForm* CPDFSDK_PageView::GetInteractiveForm() const {
+  return m_pFormFillEnv->GetInteractiveForm();
+}
+
 CPDFSDK_Annot* CPDFSDK_PageView::GetAnnotByDict(CPDF_Dictionary* pDict) {
   for (CPDFSDK_Annot* pAnnot : m_SDKAnnotArray) {
     CPDF_Annot* pPDFAnnot = pAnnot->GetPDFAnnot();

@@ -10,16 +10,15 @@
 
 #include "constants/ascii.h"
 #include "core/fpdfdoc/cpdf_formcontrol.h"
-#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cffl_formfield.h"
 #include "fpdfsdk/pwl/cpwl_special_button.h"
 #include "public/fpdf_fwlevent.h"
 #include "third_party/base/check.h"
 
-CFFL_CheckBox::CFFL_CheckBox(CPDFSDK_FormFillEnvironment* pApp,
+CFFL_CheckBox::CFFL_CheckBox(CFFL_InteractiveFormFiller* pFormFiller,
                              CPDFSDK_Widget* pWidget)
-    : CFFL_Button(pApp, pWidget) {}
+    : CFFL_Button(pFormFiller, pWidget) {}
 
 CFFL_CheckBox::~CFFL_CheckBox() = default;
 
@@ -52,8 +51,7 @@ bool CFFL_CheckBox::OnChar(CPDFSDK_Annot* pAnnot,
       DCHECK(pPageView);
 
       ObservedPtr<CPDFSDK_Annot> pObserved(m_pWidget.Get());
-      if (m_pFormFillEnv->GetInteractiveFormFiller()->OnButtonUp(
-              &pObserved, pPageView, nFlags)) {
+      if (m_pFormFiller->OnButtonUp(&pObserved, pPageView, nFlags)) {
         if (!pObserved)
           m_pWidget = nullptr;
         return true;

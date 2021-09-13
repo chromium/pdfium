@@ -395,12 +395,19 @@ void CPDFSDK_FormFillEnvironment::ExecuteNamedAction(
     m_pInfo->FFI_ExecuteNamedAction(m_pInfo, namedAction.c_str());
 }
 
-void CPDFSDK_FormFillEnvironment::OnSetFieldInputFocus(
-    FPDF_WIDESTRING focusText,
-    FPDF_DWORD nTextLen,
+void CPDFSDK_FormFillEnvironment::OnSetFieldInputFocus(const WideString& text) {
+  OnSetFieldInputFocusInternal(text, true);
+}
+
+void CPDFSDK_FormFillEnvironment::OnSetFieldInputFocusInternal(
+    const WideString& text,
     bool bFocus) {
-  if (m_pInfo && m_pInfo->FFI_SetTextFieldFocus)
-    m_pInfo->FFI_SetTextFieldFocus(m_pInfo, focusText, nTextLen, bFocus);
+  if (m_pInfo && m_pInfo->FFI_SetTextFieldFocus) {
+    int nCharacters = text.GetLength();
+    ByteString bsUTFText = text.ToUTF16LE();
+    auto* pBuffer = reinterpret_cast<const unsigned short*>(bsUTFText.c_str());
+    m_pInfo->FFI_SetTextFieldFocus(m_pInfo, pBuffer, nCharacters, bFocus);
+  }
 }
 
 void CPDFSDK_FormFillEnvironment::DoURIAction(const ByteString& bsURI,
@@ -613,6 +620,14 @@ CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetPageView(
   return it != m_PageMap.end() ? it->second.get() : nullptr;
 }
 
+CFX_Timer::HandlerIface* CPDFSDK_FormFillEnvironment::GetTimerHandler() {
+  return this;
+}
+
+IPWL_SystemHandler* CPDFSDK_FormFillEnvironment::GetSysHandler() {
+  return this;
+}
+
 CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetPageViewAtIndex(int nIndex) {
   IPDF_Page* pTempPage = GetPage(nIndex);
   return pTempPage ? GetPageView(pTempPage) : nullptr;
@@ -702,6 +717,10 @@ void CPDFSDK_FormFillEnvironment::UpdateAllViews(CPDFSDK_PageView* pSender,
   }
 }
 
+CPDFSDK_Annot* CPDFSDK_FormFillEnvironment::GetFocusAnnot() const {
+  return m_pFocusAnnot.Get();
+}
+
 bool CPDFSDK_FormFillEnvironment::SetFocusAnnot(
     ObservedPtr<CPDFSDK_Annot>* pAnnot) {
   if (m_bBeingDestroyed)
@@ -770,7 +789,7 @@ bool CPDFSDK_FormFillEnvironment::KillFocusAnnot(Mask<FWL_EVENTFLAG> nFlag) {
     FormFieldType fieldType = pWidget->GetFieldType();
     if (fieldType == FormFieldType::kTextField ||
         fieldType == FormFieldType::kComboBox) {
-      OnSetFieldInputFocus(nullptr, 0, false);
+      OnSetFieldInputFocusInternal(WideString(), false);
     }
   }
   return !m_pFocusAnnot;
