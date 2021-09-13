@@ -30,6 +30,8 @@ class CFFL_InteractiveFormFiller final : public IPWL_FillerNotify {
     virtual ~CallbackIface() = default;
 
     virtual void OnSetFieldInputFocus(const WideString& text) = 0;
+    virtual void OnCalculate(ObservedPtr<CPDFSDK_Annot>* pAnnot) = 0;
+    virtual void OnFormat(ObservedPtr<CPDFSDK_Annot>* pAnnot) = 0;
     virtual void Invalidate(IPDF_Page* pPage, const FX_RECT& rect) = 0;
     virtual CPDFSDK_PageView* GetOrCreatePageView(IPDF_Page* pPage) = 0;
     virtual CPDFSDK_PageView* GetPageView(IPDF_Page* pPage) = 0;

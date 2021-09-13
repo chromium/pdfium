@@ -410,6 +410,28 @@ void CPDFSDK_FormFillEnvironment::OnSetFieldInputFocusInternal(
   }
 }
 
+void CPDFSDK_FormFillEnvironment::OnCalculate(
+    ObservedPtr<CPDFSDK_Annot>* pAnnot) {
+  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot->Get());
+  if (pWidget)
+    m_pInteractiveForm->OnCalculate(pWidget->GetFormField());
+}
+
+void CPDFSDK_FormFillEnvironment::OnFormat(ObservedPtr<CPDFSDK_Annot>* pAnnot) {
+  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot->Get());
+  DCHECK(pWidget);
+
+  Optional<WideString> sValue =
+      m_pInteractiveForm->OnFormat(pWidget->GetFormField());
+  if (!pAnnot->HasObservable())
+    return;
+
+  if (sValue.has_value()) {
+    m_pInteractiveForm->ResetFieldAppearance(pWidget->GetFormField(), sValue);
+    m_pInteractiveForm->UpdateField(pWidget->GetFormField());
+  }
+}
+
 void CPDFSDK_FormFillEnvironment::DoURIAction(const ByteString& bsURI,
                                               Mask<FWL_EVENTFLAG> modifiers) {
   if (!m_pInfo)

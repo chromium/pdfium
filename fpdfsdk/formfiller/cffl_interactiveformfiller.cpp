@@ -12,7 +12,6 @@
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fxcrt/autorestorer.h"
 #include "core/fxge/cfx_drawutils.h"
-#include "fpdfsdk/cpdfsdk_interactiveform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cffl_checkbox.h"
@@ -704,11 +703,7 @@ void CFFL_InteractiveFormFiller::OnCalculate(
   if (m_bNotifying)
     return;
 
-  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot->Get());
-  if (pWidget) {
-    CPDFSDK_InteractiveForm* pForm = pWidget->GetInteractiveForm();
-    pForm->OnCalculate(pWidget->GetFormField());
-  }
+  m_pCallbackIface->OnCalculate(pAnnot);
   m_bNotifying = false;
 }
 
@@ -716,18 +711,7 @@ void CFFL_InteractiveFormFiller::OnFormat(ObservedPtr<CPDFSDK_Annot>* pAnnot) {
   if (m_bNotifying)
     return;
 
-  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot->Get());
-  DCHECK(pWidget);
-
-  CPDFSDK_InteractiveForm* pForm = pWidget->GetInteractiveForm();
-  Optional<WideString> sValue = pForm->OnFormat(pWidget->GetFormField());
-  if (!pAnnot->HasObservable())
-    return;
-
-  if (sValue.has_value()) {
-    pForm->ResetFieldAppearance(pWidget->GetFormField(), sValue);
-    pForm->UpdateField(pWidget->GetFormField());
-  }
+  m_pCallbackIface->OnFormat(pAnnot);
   m_bNotifying = false;
 }
 

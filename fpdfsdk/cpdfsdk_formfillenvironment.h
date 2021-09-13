@@ -72,6 +72,8 @@ class CPDFSDK_FormFillEnvironment final
 
   // CFFL_InteractiveFormFiller::CallbackIface:
   void OnSetFieldInputFocus(const WideString& text) override;
+  void OnCalculate(ObservedPtr<CPDFSDK_Annot>* pAnnot) override;
+  void OnFormat(ObservedPtr<CPDFSDK_Annot>* pAnnot) override;
   void Invalidate(IPDF_Page* page, const FX_RECT& rect) override;
   CPDFSDK_PageView* GetOrCreatePageView(IPDF_Page* pUnderlyingPage) override;
   CPDFSDK_PageView* GetPageView(IPDF_Page* pUnderlyingPage) override;
