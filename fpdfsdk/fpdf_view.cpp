@@ -1063,13 +1063,10 @@ FPDF_GetNamedDestByName(FPDF_DOCUMENT document, FPDF_BYTESTRING name) {
 
 #ifdef PDF_ENABLE_V8
 FPDF_EXPORT const char* FPDF_CALLCONV FPDF_GetRecommendedV8Flags() {
-  // Use interpreted JS only to avoid RWX pages in our address space.
-  // Reduce exposure since no PDF should contain web assembly.
-#if defined(PDF_ENABLE_V8_WASM)
-  return "--jitless --no-expose-wasm";
-#else
+  // Use interpreted JS only to avoid RWX pages in our address space. Also,
+  // --jitless implies --no-expose-wasm, which reduce exposure since no PDF
+  // should contain web assembly.
   return "--jitless";
-#endif
 }
 
 FPDF_EXPORT void* FPDF_CALLCONV FPDF_GetArrayBufferAllocatorSharedInstance() {
