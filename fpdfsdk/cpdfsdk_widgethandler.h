@@ -11,7 +11,6 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 #include "fpdfsdk/ipdfsdk_annothandler.h"
 
 class CFX_Matrix;
@@ -113,7 +112,6 @@ class CPDFSDK_WidgetHandler final : public IPDFSDK_AnnotHandler {
   bool IsFocusableAnnot(const CPDF_Annot::Subtype& annot_type) const;
 
   UnownedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
-  UnownedPtr<CFFL_InteractiveFormFiller> m_pInteractiveFormFiller;
 };
 
 #endif  // FPDFSDK_CPDFSDK_WIDGETHANDLER_H_
