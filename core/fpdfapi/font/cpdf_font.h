@@ -111,6 +111,7 @@ class CPDF_Font : public Retainable, public Observable {
   uint32_t FallbackFontFromCharcode(uint32_t charcode);
   int FallbackGlyphFromCharcode(int fallbackFont, uint32_t charcode);
   int GetFontFlags() const { return m_Flags; }
+  int GetItalicAngle() const { return m_ItalicAngle; }
   int GetFontWeight() const;
 
   virtual int GetCharWidthF(uint32_t charcode) = 0;

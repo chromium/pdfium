@@ -156,8 +156,18 @@ int CheckPDFiumCApi() {
 
     // fpdf_edit.h
     CHK(FPDFFont_Close);
+    CHK(FPDFFont_GetAscent);
+    CHK(FPDFFont_GetDescent);
+    CHK(FPDFFont_GetFlags);
+    CHK(FPDFFont_GetFontName);
+    CHK(FPDFFont_GetGlyphPath);
+    CHK(FPDFFont_GetGlyphWidth);
+    CHK(FPDFFont_GetItalicAngle);
+    CHK(FPDFFont_GetWeight);
     CHK(FPDFFormObj_CountObjects);
     CHK(FPDFFormObj_GetObject);
+    CHK(FPDFGlyphPath_CountGlyphSegments);
+    CHK(FPDFGlyphPath_GetGlyphPathSegment);
     CHK(FPDFImageObj_GetBitmap);
     CHK(FPDFImageObj_GetImageDataDecoded);
     CHK(FPDFImageObj_GetImageDataRaw);
@@ -234,6 +244,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFPath_LineTo);
     CHK(FPDFPath_MoveTo);
     CHK(FPDFPath_SetDrawMode);
+    CHK(FPDFTextObj_GetFont);
     CHK(FPDFTextObj_GetFontName);
     CHK(FPDFTextObj_GetFontSize);
     CHK(FPDFTextObj_GetText);

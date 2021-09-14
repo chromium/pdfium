@@ -1236,6 +1236,139 @@ FPDFTextObj_GetText(FPDF_PAGEOBJECT text_object,
                     FPDF_WCHAR* buffer,
                     unsigned long length);
 
+// Experimental API.
+// Get the font of a text object.
+//
+// text - the handle to the text object.
+//
+// Returns a handle to the font object held by |text| which retains ownership.
+FPDF_EXPORT FPDF_FONT FPDF_CALLCONV FPDFTextObj_GetFont(FPDF_PAGEOBJECT text);
+
+// Experimental API.
+// Get the font name of a font.
+//
+// font   - the handle to the font object.
+// buffer - the address of a buffer that receives the font name.
+// length - the size, in bytes, of |buffer|.
+//
+// Returns the number of bytes in the font name (including the trailing NUL
+// character) on success, 0 on error.
+//
+// Regardless of the platform, the |buffer| is always in UTF-8 encoding.
+// If |length| is less than the returned length, or |buffer| is NULL, |buffer|
+// will not be modified.
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFFont_GetFontName(FPDF_FONT font, char* buffer, unsigned long length);
+
+// Experimental API.
+// Get the descriptor flags of a font.
+//
+// font - the handle to the font object.
+//
+// Returns the bit flags specifying various characteristics of the font as
+// defined in ISO 32000-1 Table 123, -1 on failure.
+FPDF_EXPORT int FPDF_CALLCONV FPDFFont_GetFlags(FPDF_FONT font);
+
+// Experimental API.
+// Get the font weight of a font.
+//
+// font - the handle to the font object.
+//
+// Returns the font weight, -1 on failure.
+// Typical values are 400 (normal) and 700 (bold).
+FPDF_EXPORT int FPDF_CALLCONV FPDFFont_GetWeight(FPDF_FONT font);
+
+// Experimental API.
+// Get the italic angle of a font.
+//
+// font  - the handle to the font object.
+// angle - pointer where the italic angle will be stored
+//
+// The italic angle of a |font| is defined as degrees counterclockwise
+// from vertical. For a font that slopes to the right, this will be negative.
+//
+// Returns TRUE on success; |angle| unmodified on failure.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFFont_GetItalicAngle(FPDF_FONT font,
+                                                            int* angle);
+
+// Experimental API.
+// Get ascent distance of a font.
+//
+// font       - the handle to the font object.
+// font_size  - the size of the |font|.
+// ascent     - pointer where the font ascent will be stored
+//
+// Ascent is the maximum distance in points above the baseline reached by the
+// glyphs of the |font|. One point is 1/72 inch (around 0.3528 mm).
+//
+// Returns TRUE on success; |ascent| unmodified on failure.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFFont_GetAscent(FPDF_FONT font,
+                                                       float font_size,
+                                                       float* ascent);
+
+// Experimental API.
+// Get descent distance of a font.
+//
+// font       - the handle to the font object.
+// font_size  - the size of the |font|.
+// descent    - pointer where the font descent will be stored
+//
+// Descent is the maximum distance in points below the baseline reached by the
+// glyphs of the |font|. One point is 1/72 inch (around 0.3528 mm).
+//
+// Returns TRUE on success; |descent| unmodified on failure.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFFont_GetDescent(FPDF_FONT font,
+                                                        float font_size,
+                                                        float* descent);
+
+// Experimental API.
+// Get the width of a glyph in a font.
+//
+// font       - the handle to the font object.
+// glyph      - the glyph.
+// font_size  - the size of the font.
+// width      - pointer where the glyph width will be stored
+//
+// Glyph width is the distance from the end of the prior glyph to the next
+// glyph. This will be the vertical distance for vertical writing.
+//
+// Returns TRUE on success; |width| unmodified on failure.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFFont_GetGlyphWidth(FPDF_FONT font,
+                                                           uint32_t glyph,
+                                                           float font_size,
+                                                           float* width);
+
+// Experimental API.
+// Get the glyphpath describing how to draw a font glyph.
+//
+// font       - the handle to the font object.
+// glyph      - the glyph being drawn.
+// font_size  - the size of the font.
+//
+// Returns the handle to the segment, or NULL on faiure.
+FPDF_EXPORT FPDF_GLYPHPATH FPDF_CALLCONV FPDFFont_GetGlyphPath(FPDF_FONT font,
+                                                               uint32_t glyph,
+                                                               float font_size);
+
+// Experimental API.
+// Get number of segments inside glyphpath.
+//
+// glyphpath - handle to a glyph path.
+//
+// Returns the number of objects in |glyphpath| or -1 on failure.
+FPDF_EXPORT int FPDF_CALLCONV
+FPDFGlyphPath_CountGlyphSegments(FPDF_GLYPHPATH glyphpath);
+
+// Experimental API.
+// Get segment in glyphpath at index.
+//
+// glyphpath  - handle to a glyph path.
+// index      - the index of a segment.
+//
+// Returns the handle to the segment, or NULL on faiure.
+FPDF_EXPORT FPDF_PATHSEGMENT FPDF_CALLCONV
+FPDFGlyphPath_GetGlyphPathSegment(FPDF_GLYPHPATH glyphpath, int index);
+
 // Get number of page objects inside |form_object|.
 //
 //   form_object - handle to a form object.
