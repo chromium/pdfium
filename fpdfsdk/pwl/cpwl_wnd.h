@@ -262,7 +262,6 @@ class CPWL_Wnd : public Observable {
   virtual void OnCreated();
   virtual void OnDestroy();
 
-  bool IsNotifying() const { return m_bNotifying; }
   bool IsValid() const { return m_bCreated; }
   CreateParams* GetCreationParams() { return &m_CreationParams; }
   CFX_Timer::HandlerIface* GetTimerHandler() const {
@@ -303,7 +302,6 @@ class CPWL_Wnd : public Observable {
   CFX_FloatRect m_rcClip;
   bool m_bCreated = false;
   bool m_bVisible = false;
-  bool m_bNotifying = false;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_WND_H_
