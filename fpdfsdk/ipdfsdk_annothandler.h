@@ -11,6 +11,8 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/mask.h"
+#include "core/fxcrt/observed_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "public/fpdf_fwlevent.h"
@@ -23,10 +25,16 @@ class CPDFSDK_PageView;
 
 class IPDFSDK_AnnotHandler {
  public:
-  virtual ~IPDFSDK_AnnotHandler() = default;
+  IPDFSDK_AnnotHandler();
+  virtual ~IPDFSDK_AnnotHandler();
 
-  virtual void SetFormFillEnvironment(
-      CPDFSDK_FormFillEnvironment* pFormFillEnv) = 0;
+  void SetFormFillEnvironment(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+    m_pFormFillEnv = pFormFillEnv;
+  }
+  CPDFSDK_FormFillEnvironment* GetFormFillEnvironment() const {
+    return m_pFormFillEnv.Get();
+  }
+
   virtual bool CanAnswer(CPDFSDK_Annot* pAnnot) = 0;
   virtual std::unique_ptr<CPDFSDK_Annot> NewAnnot(
       CPDF_Annot* pAnnot,
@@ -109,6 +117,9 @@ class IPDFSDK_AnnotHandler {
                                 bool selected) = 0;
   virtual bool IsIndexSelected(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                int index) = 0;
+
+ private:
+  UnownedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
 };
 
 #endif  // FPDFSDK_IPDFSDK_ANNOTHANDLER_H_

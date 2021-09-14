@@ -44,11 +44,6 @@ CPDFSDK_BAAnnotHandler::CPDFSDK_BAAnnotHandler() = default;
 
 CPDFSDK_BAAnnotHandler::~CPDFSDK_BAAnnotHandler() = default;
 
-void CPDFSDK_BAAnnotHandler::SetFormFillEnvironment(
-    CPDFSDK_FormFillEnvironment* pFormFillEnv) {
-  form_fill_environment_ = pFormFillEnv;
-}
-
 bool CPDFSDK_BAAnnotHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
   return false;
 }
@@ -83,7 +78,7 @@ void CPDFSDK_BAAnnotHandler::OnDraw(CPDFSDK_PageView* pPageView,
   }
 
   if (is_annotation_focused_ && IsFocusableAnnot(annot_type) &&
-      pAnnot == form_fill_environment_->GetFocusAnnot()) {
+      pAnnot == GetFormFillEnvironment()->GetFocusAnnot()) {
     CFX_FloatRect view_bounding_box =
         GetViewBBox(pPageView, pAnnot->AsBAAnnot());
     if (view_bounding_box.IsEmpty())
@@ -191,12 +186,12 @@ bool CPDFSDK_BAAnnotHandler::OnKeyDown(CPDFSDK_Annot* pAnnot,
   CPDF_Action action = ba_annot->GetAAction(CPDF_AAction::kKeyStroke);
 
   if (action.GetDict()) {
-    return form_fill_environment_->GetActionHandler()->DoAction_Link(
-        action, CPDF_AAction::kKeyStroke, form_fill_environment_.Get(), nFlag);
+    return GetFormFillEnvironment()->GetActionHandler()->DoAction_Link(
+        action, CPDF_AAction::kKeyStroke, GetFormFillEnvironment(), nFlag);
   }
 
-  return form_fill_environment_->GetActionHandler()->DoAction_Destination(
-      ba_annot->GetDestination(), form_fill_environment_.Get());
+  return GetFormFillEnvironment()->GetActionHandler()->DoAction_Destination(
+      ba_annot->GetDestination(), GetFormFillEnvironment());
 }
 
 bool CPDFSDK_BAAnnotHandler::OnKeyUp(CPDFSDK_Annot* pAnnot,
@@ -211,7 +206,7 @@ bool CPDFSDK_BAAnnotHandler::IsFocusableAnnot(
     const CPDF_Annot::Subtype& annot_type) const {
   DCHECK(annot_type != CPDF_Annot::Subtype::WIDGET);
 
-  return pdfium::Contains(form_fill_environment_->GetFocusableAnnotSubtypes(),
+  return pdfium::Contains(GetFormFillEnvironment()->GetFocusableAnnotSubtypes(),
                           annot_type);
 }
 
@@ -223,7 +218,7 @@ void CPDFSDK_BAAnnotHandler::InvalidateRect(CPDFSDK_Annot* annot) {
     view_bounding_box.Inflate(1, 1);
     view_bounding_box.Normalize();
     FX_RECT rect = view_bounding_box.GetOuterRect();
-    form_fill_environment_->Invalidate(ba_annot->GetPage(), rect);
+    GetFormFillEnvironment()->Invalidate(ba_annot->GetPage(), rect);
   }
 }
 

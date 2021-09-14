@@ -67,6 +67,7 @@ source_set("fpdfsdk") {
     "fpdf_thumbnail.cpp",
     "fpdf_transformpage.cpp",
     "fpdf_view.cpp",
+    "ipdfsdk_annothandler.cpp",
     "ipdfsdk_annothandler.h",
   ]
 

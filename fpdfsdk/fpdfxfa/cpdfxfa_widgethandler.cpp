@@ -204,9 +204,6 @@ CPDFXFA_WidgetHandler::CPDFXFA_WidgetHandler() = default;
 
 CPDFXFA_WidgetHandler::~CPDFXFA_WidgetHandler() = default;
 
-void CPDFXFA_WidgetHandler::SetFormFillEnvironment(
-    CPDFSDK_FormFillEnvironment* pFormFillEnv) {}
-
 bool CPDFXFA_WidgetHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
   CPDFXFA_Widget* pWidget = ToXFAWidget(pAnnot);
   return pWidget && pWidget->GetXFAFFWidget();
@@ -233,7 +230,7 @@ void CPDFXFA_WidgetHandler::OnDraw(CPDFSDK_PageView* pPageView,
   DCHECK(pXFAWidget);
 
   bool bIsHighlight = false;
-  if (pPageView->GetFormFillEnv()->GetFocusAnnot() != pAnnot)
+  if (GetFormFillEnvironment()->GetFocusAnnot() != pAnnot)
     bIsHighlight = true;
 
   CFGAS_GEGraphics gs(pDevice);
@@ -348,12 +345,8 @@ bool CPDFXFA_WidgetHandler::HitTest(CPDFSDK_PageView* pPageView,
   if (!pXFAWidget)
     return false;
 
-  CPDFSDK_FormFillEnvironment* pFormFillEnv = pPageView->GetFormFillEnv();
-  if (!pFormFillEnv)
-    return false;
-
-  auto* pContext =
-      static_cast<CPDFXFA_Context*>(pFormFillEnv->GetDocExtension());
+  auto* pContext = static_cast<CPDFXFA_Context*>(
+      GetFormFillEnvironment()->GetDocExtension());
   if (!pContext)
     return false;
 
@@ -631,12 +624,8 @@ CXFA_FFWidgetHandler* CPDFXFA_WidgetHandler::GetXFAFFWidgetHandler(
   if (!pAnnot)
     return nullptr;
 
-  CPDFSDK_FormFillEnvironment* pFormFillEnv =
-      pAnnot->GetPageView()->GetFormFillEnv();
-  if (!pFormFillEnv)
-    return nullptr;
-
-  auto* pDoc = static_cast<CPDFXFA_Context*>(pFormFillEnv->GetDocExtension());
+  auto* pDoc = static_cast<CPDFXFA_Context*>(
+      GetFormFillEnvironment()->GetDocExtension());
   if (!pDoc)
     return nullptr;
 

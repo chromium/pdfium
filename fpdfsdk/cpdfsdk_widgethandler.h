@@ -10,14 +10,12 @@
 #include <memory>
 
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/ipdfsdk_annothandler.h"
 
 class CFX_Matrix;
 class CFX_RenderDevice;
 class CPDF_Annot;
 class CPDFSDK_Annot;
-class CPDFSDK_FormFillEnvironment;
 class CPDFSDK_PageView;
 
 class CPDFSDK_WidgetHandler final : public IPDFSDK_AnnotHandler {
@@ -25,8 +23,6 @@ class CPDFSDK_WidgetHandler final : public IPDFSDK_AnnotHandler {
   CPDFSDK_WidgetHandler();
   ~CPDFSDK_WidgetHandler() override;
 
-  void SetFormFillEnvironment(
-      CPDFSDK_FormFillEnvironment* pFormFillEnv) override;
   bool CanAnswer(CPDFSDK_Annot* pAnnot) override;
   std::unique_ptr<CPDFSDK_Annot> NewAnnot(CPDF_Annot* pAnnot,
                                           CPDFSDK_PageView* pPageView) override;
@@ -110,8 +106,6 @@ class CPDFSDK_WidgetHandler final : public IPDFSDK_AnnotHandler {
 
  private:
   bool IsFocusableAnnot(const CPDF_Annot::Subtype& annot_type) const;
-
-  UnownedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
 };
 
 #endif  // FPDFSDK_CPDFSDK_WIDGETHANDLER_H_
