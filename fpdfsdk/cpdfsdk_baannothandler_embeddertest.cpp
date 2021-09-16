@@ -40,7 +40,8 @@ class CPDFSDK_BAAnnotHandlerTest : public EmbedderTest {
     CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
         m_pFormFillEnv->GetAnnotHandlerMgr();
     ASSERT_TRUE(pAnnotHandlerMgr);
-    m_pBAAnnotHandler = pAnnotHandlerMgr->m_pBAAnnotHandler.get();
+    m_pBAAnnotHandler = static_cast<CPDFSDK_BAAnnotHandler*>(
+        pAnnotHandlerMgr->m_pBAAnnotHandler.get());
     ASSERT_TRUE(m_pBAAnnotHandler);
   }
 

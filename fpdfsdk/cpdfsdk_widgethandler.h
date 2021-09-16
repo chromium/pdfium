@@ -23,6 +23,7 @@ class CPDFSDK_WidgetHandler final : public IPDFSDK_AnnotHandler {
   CPDFSDK_WidgetHandler();
   ~CPDFSDK_WidgetHandler() override;
 
+  // IPDFSDK_AnnotHandler:
   bool CanAnswer(CPDFSDK_Annot* pAnnot) override;
   std::unique_ptr<CPDFSDK_Annot> NewAnnot(CPDF_Annot* pAnnot,
                                           CPDFSDK_PageView* pPageView) override;
@@ -46,7 +47,6 @@ class CPDFSDK_WidgetHandler final : public IPDFSDK_AnnotHandler {
               const CFX_Matrix& mtUser2Device,
               bool bDrawAnnots) override;
   void OnLoad(CPDFSDK_Annot* pAnnot) override;
-
   void OnMouseEnter(CPDFSDK_PageView* pPageView,
                     ObservedPtr<CPDFSDK_Annot>* pAnnot,
                     Mask<FWL_EVENTFLAG> nFlag) override;

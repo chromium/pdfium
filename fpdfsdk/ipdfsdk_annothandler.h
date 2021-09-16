@@ -23,6 +23,10 @@ class CPDF_Annot;
 class CPDFSDK_FormFillEnvironment;
 class CPDFSDK_PageView;
 
+#ifdef PDF_ENABLE_XFA
+class CXFA_FFWidget;
+#endif
+
 class IPDFSDK_AnnotHandler {
  public:
   IPDFSDK_AnnotHandler();
@@ -117,6 +121,14 @@ class IPDFSDK_AnnotHandler {
                                 bool selected) = 0;
   virtual bool IsIndexSelected(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                int index) = 0;
+
+#ifdef PDF_ENABLE_XFA
+  virtual std::unique_ptr<CPDFSDK_Annot> NewAnnotForXFA(
+      CXFA_FFWidget* pFFWidget,
+      CPDFSDK_PageView* pPageView);
+  virtual bool OnXFAChangedFocus(ObservedPtr<CPDFSDK_Annot>* pOldAnnot,
+                                 ObservedPtr<CPDFSDK_Annot>* pNewAnnot);
+#endif  // PDF_ENABLE_XFA
 
  private:
   UnownedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
