@@ -437,7 +437,7 @@ const unsigned int D3[256] = {
   (block[0] ^= *keysched++, block[1] ^= *keysched++, block[2] ^= *keysched++, \
    block[3] ^= *keysched++)
 #define MOVEWORD(i) (block[i] = newstate[i])
-#define MAKEWORD(i)                                         \
+#define FMAKEWORD(i)                                        \
   (newstate[i] = (E0[(block[i] >> 24) & 0xFF] ^             \
                   E1[(block[(i + C1) % Nb] >> 16) & 0xFF] ^ \
                   E2[(block[(i + C2) % Nb] >> 8) & 0xFF] ^  \
@@ -458,10 +458,10 @@ void aes_encrypt_nb_4(CRYPT_aes_context* ctx, unsigned int* block) {
   unsigned int newstate[4];
   for (i = 0; i < ctx->Nr - 1; i++) {
     ADD_ROUND_KEY_4();
-    MAKEWORD(0);
-    MAKEWORD(1);
-    MAKEWORD(2);
-    MAKEWORD(3);
+    FMAKEWORD(0);
+    FMAKEWORD(1);
+    FMAKEWORD(2);
+    FMAKEWORD(3);
     MOVEWORD(0);
     MOVEWORD(1);
     MOVEWORD(2);
@@ -478,10 +478,10 @@ void aes_encrypt_nb_4(CRYPT_aes_context* ctx, unsigned int* block) {
   MOVEWORD(3);
   ADD_ROUND_KEY_4();
 }
-#undef MAKEWORD
+#undef FMAKEWORD
 #undef LASTWORD
 
-#define MAKEWORD(i)                                         \
+#define FMAKEWORD(i)                                        \
   (newstate[i] = (D0[(block[i] >> 24) & 0xFF] ^             \
                   D1[(block[(i + C1) % Nb] >> 16) & 0xFF] ^ \
                   D2[(block[(i + C2) % Nb] >> 8) & 0xFF] ^  \
@@ -502,10 +502,10 @@ void aes_decrypt_nb_4(CRYPT_aes_context* ctx, unsigned int* block) {
   unsigned int newstate[4];
   for (i = 0; i < ctx->Nr - 1; i++) {
     ADD_ROUND_KEY_4();
-    MAKEWORD(0);
-    MAKEWORD(1);
-    MAKEWORD(2);
-    MAKEWORD(3);
+    FMAKEWORD(0);
+    FMAKEWORD(1);
+    FMAKEWORD(2);
+    FMAKEWORD(3);
     MOVEWORD(0);
     MOVEWORD(1);
     MOVEWORD(2);
@@ -522,7 +522,7 @@ void aes_decrypt_nb_4(CRYPT_aes_context* ctx, unsigned int* block) {
   MOVEWORD(3);
   ADD_ROUND_KEY_4();
 }
-#undef MAKEWORD
+#undef FMAKEWORD
 #undef LASTWORD
 
 void aes_setup(CRYPT_aes_context* ctx, const unsigned char* key, int keylen) {
