@@ -578,21 +578,18 @@ int CPWL_EditImpl::UndoInsertText::Undo() {
   return 0;
 }
 
-// static
 void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
                              const CFX_Matrix& mtUser2Device,
-                             CPWL_EditImpl* pEdit,
                              FX_COLORREF crTextFill,
                              const CFX_FloatRect& rcClip,
                              const CFX_PointF& ptOffset,
                              const CPVT_WordRange* pRange,
                              IPWL_SystemHandler* pSystemHandler,
                              IPWL_SystemHandler::PerWindowData* pSystemData) {
-  const bool bContinuous =
-      pEdit->GetCharArray() == 0 && pEdit->GetCharSpace() <= 0.0f;
-  uint16_t SubWord = pEdit->GetPasswordChar();
-  float fFontSize = pEdit->GetFontSize();
-  CPVT_WordRange wrSelect = pEdit->GetSelectWordRange();
+  const bool bContinuous = GetCharArray() == 0 && GetCharSpace() <= 0.0f;
+  uint16_t SubWord = GetPasswordChar();
+  float fFontSize = GetFontSize();
+  CPVT_WordRange wrSelect = GetSelectWordRange();
   FX_COLORREF crCurFill = crTextFill;
   FX_COLORREF crOldFill = crCurFill;
   bool bSelect = false;
@@ -606,8 +603,8 @@ void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
   if (!rcClip.IsEmpty())
     pDevice->SetClip_Rect(mtUser2Device.TransformRect(rcClip).ToFxRect());
 
-  Iterator* pIterator = pEdit->GetIterator();
-  IPVT_FontMap* pFontMap = pEdit->GetFontMap();
+  Iterator* pIterator = GetIterator();
+  IPVT_FontMap* pFontMap = GetFontMap();
   if (!pFontMap)
     return;
 
@@ -669,16 +666,14 @@ void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
           crOldFill = crCurFill;
         }
 
-        sTextBuf << pEdit->GetPDFWordString(word.nFontIndex, word.Word,
-                                            SubWord);
+        sTextBuf << GetPDFWordString(word.nFontIndex, word.Word, SubWord);
       } else {
         DrawTextString(
             pDevice,
             CFX_PointF(word.ptWord.x + ptOffset.x, word.ptWord.y + ptOffset.y),
             pFontMap->GetPDFFont(word.nFontIndex).Get(), fFontSize,
             mtUser2Device,
-            pEdit->GetPDFWordString(word.nFontIndex, word.Word, SubWord),
-            crCurFill);
+            GetPDFWordString(word.nFontIndex, word.Word, SubWord), crCurFill);
       }
       oldplace = place;
     }

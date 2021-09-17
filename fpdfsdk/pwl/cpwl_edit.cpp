@@ -211,11 +211,9 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
     rcClip = GetClientRect();
     pRange = &wrRange;
   }
-
-  CPWL_EditImpl::DrawEdit(pDevice, mtUser2Device, m_pEditImpl.get(),
-                          GetTextColor().ToFXColor(GetTransparency()), rcClip,
-                          CFX_PointF(), pRange, GetSystemHandler(),
-                          GetAttachedData());
+  m_pEditImpl->DrawEdit(
+      pDevice, mtUser2Device, GetTextColor().ToFXColor(GetTransparency()),
+      rcClip, CFX_PointF(), pRange, GetSystemHandler(), GetAttachedData());
 }
 
 

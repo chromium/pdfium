@@ -41,18 +41,17 @@ class CPWL_EditImpl {
     UnownedPtr<CPVT_VariableText::Iterator> m_pVTIterator;
   };
 
-  static void DrawEdit(CFX_RenderDevice* pDevice,
-                       const CFX_Matrix& mtUser2Device,
-                       CPWL_EditImpl* pEdit,
-                       FX_COLORREF crTextFill,
-                       const CFX_FloatRect& rcClip,
-                       const CFX_PointF& ptOffset,
-                       const CPVT_WordRange* pRange,
-                       IPWL_SystemHandler* pSystemHandler,
-                       IPWL_SystemHandler::PerWindowData* pSystemData);
-
   CPWL_EditImpl();
   ~CPWL_EditImpl();
+
+  void DrawEdit(CFX_RenderDevice* pDevice,
+                const CFX_Matrix& mtUser2Device,
+                FX_COLORREF crTextFill,
+                const CFX_FloatRect& rcClip,
+                const CFX_PointF& ptOffset,
+                const CPVT_WordRange* pRange,
+                IPWL_SystemHandler* pSystemHandler,
+                IPWL_SystemHandler::PerWindowData* pSystemData);
 
   void SetFontMap(IPVT_FontMap* pFontMap);
   void SetNotify(CPWL_Edit* pNotify);
