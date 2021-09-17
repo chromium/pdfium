@@ -43,9 +43,9 @@ class IPDFSDK_AnnotHandler {
   virtual std::unique_ptr<CPDFSDK_Annot> NewAnnot(
       CPDF_Annot* pAnnot,
       CPDFSDK_PageView* pPageView) = 0;
+
   virtual void ReleaseAnnot(std::unique_ptr<CPDFSDK_Annot> pAnnot) = 0;
-  virtual CFX_FloatRect GetViewBBox(CPDFSDK_PageView* pPageView,
-                                    CPDFSDK_Annot* pAnnot) = 0;
+  virtual CFX_FloatRect GetViewBBox(CPDFSDK_Annot* pAnnot) = 0;
   virtual WideString GetText(CPDFSDK_Annot* pAnnot) = 0;
   virtual WideString GetSelectedText(CPDFSDK_Annot* pAnnot) = 0;
   virtual void ReplaceSelection(CPDFSDK_Annot* pAnnot,
@@ -55,52 +55,39 @@ class IPDFSDK_AnnotHandler {
   virtual bool CanRedo(CPDFSDK_Annot* pAnnot) = 0;
   virtual bool Undo(CPDFSDK_Annot* pAnnot) = 0;
   virtual bool Redo(CPDFSDK_Annot* pAnnot) = 0;
-  virtual bool HitTest(CPDFSDK_PageView* pPageView,
-                       CPDFSDK_Annot* pAnnot,
-                       const CFX_PointF& point) = 0;
-  virtual void OnDraw(CPDFSDK_PageView* pPageView,
-                      CPDFSDK_Annot* pAnnot,
+  virtual bool HitTest(CPDFSDK_Annot* pAnnot, const CFX_PointF& point) = 0;
+  virtual void OnDraw(CPDFSDK_Annot* pAnnot,
                       CFX_RenderDevice* pDevice,
                       const CFX_Matrix& mtUser2Device,
                       bool bDrawAnnots) = 0;
   virtual void OnLoad(CPDFSDK_Annot* pAnnot) = 0;
-  virtual void OnMouseEnter(CPDFSDK_PageView* pPageView,
-                            ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  virtual void OnMouseEnter(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                             Mask<FWL_EVENTFLAG> nFlag) = 0;
-  virtual void OnMouseExit(CPDFSDK_PageView* pPageView,
-                           ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  virtual void OnMouseExit(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                            Mask<FWL_EVENTFLAG> nFlag) = 0;
-  virtual bool OnLButtonDown(CPDFSDK_PageView* pPageView,
-                             ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  virtual bool OnLButtonDown(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                              Mask<FWL_EVENTFLAG> nFlags,
                              const CFX_PointF& point) = 0;
-  virtual bool OnLButtonUp(CPDFSDK_PageView* pPageView,
-                           ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  virtual bool OnLButtonUp(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                            Mask<FWL_EVENTFLAG> nFlags,
                            const CFX_PointF& point) = 0;
-  virtual bool OnLButtonDblClk(CPDFSDK_PageView* pPageView,
-                               ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  virtual bool OnLButtonDblClk(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                Mask<FWL_EVENTFLAG> nFlags,
                                const CFX_PointF& point) = 0;
-  virtual bool OnMouseMove(CPDFSDK_PageView* pPageView,
-                           ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  virtual bool OnMouseMove(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                            Mask<FWL_EVENTFLAG> nFlags,
                            const CFX_PointF& point) = 0;
-  virtual bool OnMouseWheel(CPDFSDK_PageView* pPageView,
-                            ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  virtual bool OnMouseWheel(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                             Mask<FWL_EVENTFLAG> nFlags,
                             const CFX_PointF& point,
                             const CFX_Vector& delta) = 0;
-  virtual bool OnRButtonDown(CPDFSDK_PageView* pPageView,
-                             ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  virtual bool OnRButtonDown(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                              Mask<FWL_EVENTFLAG> nFlags,
                              const CFX_PointF& point) = 0;
-  virtual bool OnRButtonUp(CPDFSDK_PageView* pPageView,
-                           ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  virtual bool OnRButtonUp(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                            Mask<FWL_EVENTFLAG> nFlags,
                            const CFX_PointF& point) = 0;
-  virtual bool OnRButtonDblClk(CPDFSDK_PageView* pPageView,
-                               ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  virtual bool OnRButtonDblClk(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                Mask<FWL_EVENTFLAG> nFlags,
                                const CFX_PointF& point) = 0;
   virtual bool OnChar(CPDFSDK_Annot* pAnnot,
