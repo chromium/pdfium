@@ -26,15 +26,22 @@ size_t CXFA_AttachNodeList::GetLength() {
       m_pAttachNode->GetElementType() == XFA_Element::Subform);
 }
 
-void CXFA_AttachNodeList::Append(CXFA_Node* pNode) {
+bool CXFA_AttachNodeList::Append(CXFA_Node* pNode) {
+  if (pNode->IsAncestorOf(m_pAttachNode))
+    return false;
+
   CXFA_Node* pParent = pNode->GetParent();
   if (pParent)
     pParent->RemoveChildAndNotify(pNode, true);
 
   m_pAttachNode->InsertChildAndNotify(pNode, nullptr);
+  return true;
 }
 
 bool CXFA_AttachNodeList::Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) {
+  if (pNewNode->IsAncestorOf(m_pAttachNode))
+    return false;
+
   if (pBeforeNode && pBeforeNode->GetParent() != m_pAttachNode)
     return false;
 

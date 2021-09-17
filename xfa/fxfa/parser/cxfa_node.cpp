@@ -1585,6 +1585,15 @@ CXFA_Node* CXFA_Node::GetChildInternal(size_t index,
   return nullptr;
 }
 
+bool CXFA_Node::IsAncestorOf(const CXFA_Node* that) const {
+  while (that) {
+    if (this == that)
+      return true;
+    that = that->GetParent();
+  }
+  return false;
+}
+
 void CXFA_Node::InsertChildAndNotify(int32_t index, CXFA_Node* pNode) {
   InsertChildAndNotify(pNode, GetNthChild(index));
 }

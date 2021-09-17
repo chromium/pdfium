@@ -35,6 +35,7 @@ enum class JSMessage {
   kUserGestureRequiredError,
   kTooManyOccurances,
   kUnknownMethod,
+  kWouldBeCyclic,
 };
 
 WideString JSGetStringFromID(JSMessage msg);

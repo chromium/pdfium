@@ -1,0 +1,1 @@
+Alert: PASS: Caught: XFAObject.append: Operation would create a cycle.

@@ -192,6 +192,8 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
     return static_cast<const T*>(GetChildInternal(index, eType, bOnlyChild));
   }
 
+  bool IsAncestorOf(const CXFA_Node* that) const;
+
   void InsertChildAndNotify(int32_t index, CXFA_Node* pNode);
   void InsertChildAndNotify(CXFA_Node* pNode, CXFA_Node* pBeforeNode);
   void RemoveChildAndNotify(CXFA_Node* pNode, bool bNotify);

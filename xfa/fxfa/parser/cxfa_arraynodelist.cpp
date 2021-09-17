@@ -34,8 +34,9 @@ size_t CXFA_ArrayNodeList::GetLength() {
   return m_array.size();
 }
 
-void CXFA_ArrayNodeList::Append(CXFA_Node* pNode) {
+bool CXFA_ArrayNodeList::Append(CXFA_Node* pNode) {
   m_array.push_back(pNode);
+  return true;
 }
 
 bool CXFA_ArrayNodeList::Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) {

@@ -46,7 +46,9 @@ CJS_Result CJX_List::append(CFX_V8* runtime,
   if (!pNode)
     return CJS_Result::Failure(JSMessage::kValueError);
 
-  GetXFAList()->Append(pNode);
+  if (!GetXFAList()->Append(pNode))
+    return CJS_Result::Failure(JSMessage::kWouldBeCyclic);
+
   return CJS_Result::Success();
 }
 

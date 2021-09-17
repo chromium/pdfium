@@ -89,6 +89,9 @@ WideString JSGetStringFromID(JSMessage msg) {
     case JSMessage::kUnknownMethod:
       msg_string = "Unknown method.";
       break;
+    case JSMessage::kWouldBeCyclic:
+      msg_string = "Operation would create a cycle.";
+      break;
     default:
       NOTREACHED();
       break;
