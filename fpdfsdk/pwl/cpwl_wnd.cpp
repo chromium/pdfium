@@ -63,9 +63,6 @@ class CPWL_MsgControl final : public Observable {
 
   void SetFocus(CPWL_Wnd* pWnd) {
     m_KeyboardPaths.clear();
-    if (!pWnd)
-      return;
-
     m_pMainKeyboardWnd = pWnd;
     CPWL_Wnd* pParent = pWnd;
     while (pParent) {
