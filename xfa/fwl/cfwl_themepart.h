@@ -9,8 +9,6 @@
 
 #include <stdint.h>
 
-#include <type_traits>
-
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/mask.h"
 #include "core/fxcrt/unowned_ptr.h"

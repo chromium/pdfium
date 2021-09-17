@@ -7,8 +7,6 @@
 #ifndef CORE_FPDFDOC_CPDF_DEFAULTAPPEARANCE_H_
 #define CORE_FPDFDOC_CPDF_DEFAULTAPPEARANCE_H_
 
-#include <utility>
-
 #include "core/fxcrt/fx_string.h"
 #include "core/fxge/cfx_color.h"
 #include "third_party/base/optional.h"

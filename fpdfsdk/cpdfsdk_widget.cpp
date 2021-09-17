@@ -6,10 +6,6 @@
 
 #include "fpdfsdk/cpdfsdk_widget.h"
 
-#include <memory>
-#include <sstream>
-#include <utility>
-
 #include "constants/annotation_common.h"
 #include "constants/appearance.h"
 #include "core/fpdfapi/parser/cpdf_array.h"

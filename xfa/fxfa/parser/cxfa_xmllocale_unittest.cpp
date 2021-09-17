@@ -4,8 +4,6 @@
 
 #include "xfa/fxfa/parser/cxfa_xmllocale.h"
 
-#include <memory>
-
 #include "testing/fxgc_unittest.h"
 #include "testing/gtest/include/gtest/gtest.h"
 

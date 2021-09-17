@@ -7,8 +7,6 @@
 #ifndef FXJS_CJS_EVENT_CONTEXT_H_
 #define FXJS_CJS_EVENT_CONTEXT_H_
 
-#include <memory>
-
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"

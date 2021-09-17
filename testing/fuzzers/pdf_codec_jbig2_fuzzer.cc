@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include <cstdint>
+#include <stdint.h>
 
 #include "core/fxcodec/jbig2/JBig2_Context.h"
 #include "core/fxcodec/jbig2/JBig2_DocumentContext.h"
