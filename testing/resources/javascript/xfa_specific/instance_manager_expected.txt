@@ -35,5 +35,5 @@ Alert: PASS: mgr.removeInstance(0) = undefined
 Alert: PASS: mgr.removeInstance(0) = undefined
 Alert: PASS: mgr.removeInstance(0) = undefined
 Alert: PASS: mgr.count = 1
-Alert: PASS: mgr.removeInstance(0) threw XFAObject.removeInstance: Too many occurances.
+Alert: PASS: mgr.removeInstance(0) threw XFAObject.removeInstance: Too many occurrences.
 Alert: PASS: mgr.count = 1

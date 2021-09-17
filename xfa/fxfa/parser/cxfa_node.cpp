@@ -1101,15 +1101,15 @@ bool CXFA_Node::HasPropertyFlag(XFA_Element property,
   return data && !!(data->flags & flag);
 }
 
-uint8_t CXFA_Node::PropertyOccuranceCount(XFA_Element property) const {
+uint8_t CXFA_Node::PropertyOccurrenceCount(XFA_Element property) const {
   const PropertyData* data = GetPropertyData(property);
-  return data ? data->occurance_count : 0;
+  return data ? data->occurrence_count : 0;
 }
 
 std::pair<CXFA_Node*, int32_t> CXFA_Node::GetProperty(
     int32_t index,
     XFA_Element eProperty) const {
-  if (index < 0 || index >= PropertyOccuranceCount(eProperty))
+  if (index < 0 || index >= PropertyOccurrenceCount(eProperty))
     return {nullptr, 0};
 
   int32_t iCount = 0;
@@ -1126,7 +1126,7 @@ std::pair<CXFA_Node*, int32_t> CXFA_Node::GetProperty(
 
 CXFA_Node* CXFA_Node::GetOrCreateProperty(int32_t index,
                                           XFA_Element eProperty) {
-  if (index < 0 || index >= PropertyOccuranceCount(eProperty))
+  if (index < 0 || index >= PropertyOccurrenceCount(eProperty))
     return nullptr;
 
   int32_t iCount = 0;

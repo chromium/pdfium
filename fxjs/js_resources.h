@@ -33,7 +33,7 @@ enum class JSMessage {
   kUnknownProperty,
   kInvalidSetError,
   kUserGestureRequiredError,
-  kTooManyOccurances,
+  kTooManyOccurrences,
   kUnknownMethod,
   kWouldBeCyclic,
 };

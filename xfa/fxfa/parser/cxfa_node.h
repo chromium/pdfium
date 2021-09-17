@@ -95,7 +95,7 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
     PropertyData() = delete;
 
     XFA_Element property;
-    uint8_t occurance_count;
+    uint8_t occurrence_count;
     Mask<XFA_PropertyFlag> flags;
   };
 
@@ -117,7 +117,7 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
 
   bool HasProperty(XFA_Element property) const;
   bool HasPropertyFlag(XFA_Element property, XFA_PropertyFlag flag) const;
-  uint8_t PropertyOccuranceCount(XFA_Element property) const;
+  uint8_t PropertyOccurrenceCount(XFA_Element property) const;
 
   std::pair<CXFA_Node*, int32_t> GetProperty(int32_t index,
                                              XFA_Element eProperty) const;

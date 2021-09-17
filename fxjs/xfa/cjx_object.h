@@ -212,7 +212,7 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
   void ThrowArgumentMismatchException() const;
   void ThrowIndexOutOfBoundsException() const;
   void ThrowParamCountMismatchException(const WideString& method) const;
-  void ThrowTooManyOccurancesException(const WideString& obj) const;
+  void ThrowTooManyOccurrencesException(const WideString& obj) const;
 
  protected:
   enum class SOMMessageType {

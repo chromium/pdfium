@@ -166,7 +166,7 @@ CJS_Result CJX_Object::RunMethod(
                     params);
 }
 
-void CJX_Object::ThrowTooManyOccurancesException(const WideString& obj) const {
+void CJX_Object::ThrowTooManyOccurrencesException(const WideString& obj) const {
   ThrowException(WideString::FromASCII("The element [") + obj +
                  WideString::FromASCII(
                      "] has violated its allowable number of occurrences."));
