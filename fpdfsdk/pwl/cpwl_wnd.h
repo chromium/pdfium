@@ -197,10 +197,8 @@ class CPWL_Wnd : public Observable {
                       const CFX_Matrix& mtUser2Device);
 
   CFX_Color GetBackgroundColor() const;
-  void SetBackgroundColor(const CFX_Color& color);
   CFX_Color GetBorderColor() const;
   CFX_Color GetTextColor() const;
-  void SetTextColor(const CFX_Color& color);
   CFX_Color GetBorderLeftTopColor(BorderStyle nBorderStyle) const;
   CFX_Color GetBorderRightBottomColor(BorderStyle nBorderStyle) const;
   BorderStyle GetBorderStyle() const;
@@ -229,7 +227,6 @@ class CPWL_Wnd : public Observable {
   bool ClientHitTest(const CFX_PointF& point) const;
   bool IsCaptureMouse() const;
 
-  const CPWL_Wnd* GetFocused() const;
   bool IsFocused() const;
   bool IsReadOnly() const;
   CPWL_ScrollBar* GetVScrollBar() const;
