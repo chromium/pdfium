@@ -72,7 +72,6 @@ class CPWL_ListBox : public CPWL_Wnd, public CPWL_ListCtrl::NotifyIface {
   int32_t GetCurSel() const;
   bool IsItemSelected(int32_t nItemIndex) const;
   int32_t GetTopVisibleIndex() const;
-  int32_t FindNext(int32_t nIndex, wchar_t nChar) const;
   CFX_FloatRect GetContentRect() const;
   float GetFirstHeight() const;
   CFX_FloatRect GetListRect() const;

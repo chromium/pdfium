@@ -337,10 +337,6 @@ int32_t CPWL_ListBox::GetCount() const {
   return m_pListCtrl->GetCount();
 }
 
-int32_t CPWL_ListBox::FindNext(int32_t nIndex, wchar_t nChar) const {
-  return m_pListCtrl->FindNext(nIndex, nChar);
-}
-
 CFX_FloatRect CPWL_ListBox::GetContentRect() const {
   return m_pListCtrl->GetContentRect();
 }
