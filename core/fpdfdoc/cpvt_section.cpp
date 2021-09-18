@@ -572,9 +572,9 @@ CPVT_FloatRect CPVT_Section::SplitLines(bool bTypeset, float fFontSize) {
             std::max(fLineAscent, m_pVT->GetWordAscent(*pWord, fFontSize));
         fLineDescent =
             std::min(fLineDescent, m_pVT->GetWordDescent(*pWord, fFontSize));
-        fWordWidth = m_pVT->GetWordWidth(
-            pWord->nFontIndex, pWord->Word, m_pVT->GetSubWord(),
-            m_pVT->GetCharSpace(), fFontSize, pWord->fWordTail);
+        fWordWidth = m_pVT->GetWordWidth(pWord->nFontIndex, pWord->Word,
+                                         m_pVT->GetSubWord(), fFontSize,
+                                         pWord->fWordTail);
       }
       if (!bOpened) {
         if (IsOpenStylePunctuation(pWord->Word)) {

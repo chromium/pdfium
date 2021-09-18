@@ -64,7 +64,6 @@ const char kMarkedSequenceBeginOperator[] = "BMC";
 const char kMarkedSequenceEndOperator[] = "EMC";
 const char kMoveTextPositionOperator[] = "Td";
 const char kMoveToOperator[] = "m";
-const char kSetCharacterSpacingOperator[] = "Tc";
 const char kSetCMYKOperator[] = "k";
 const char kSetCMKYStrokedOperator[] = "K";
 const char kSetDashOperator[] = "d";
@@ -676,13 +675,8 @@ ByteString GetEditAppStream(CPWL_EditImpl* pEdit,
 
   std::ostringstream sAppStream;
   if (sEditStream.tellp() > 0) {
-    float fCharSpace = pEdit->GetCharSpace();
-    if (!FXSYS_IsFloatZero(fCharSpace))
-      sAppStream << fCharSpace << " " << kSetCharacterSpacingOperator << "\n";
-
     sAppStream << sEditStream.str();
   }
-
   return ByteString(sAppStream);
 }
 

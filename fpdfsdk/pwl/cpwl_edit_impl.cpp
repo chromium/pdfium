@@ -586,7 +586,7 @@ void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
                              const CPVT_WordRange* pRange,
                              IPWL_SystemHandler* pSystemHandler,
                              IPWL_SystemHandler::PerWindowData* pSystemData) {
-  const bool bContinuous = GetCharArray() == 0 && GetCharSpace() <= 0.0f;
+  const bool bContinuous = GetCharArray() == 0;
   uint16_t SubWord = GetPasswordChar();
   float fFontSize = GetFontSize();
   CPVT_WordRange wrSelect = GetSelectWordRange();
@@ -739,10 +739,6 @@ void CPWL_EditImpl::SetLimitChar(int32_t nLimitChar) {
 
 void CPWL_EditImpl::SetCharArray(int32_t nCharArray) {
   m_pVT->SetCharArray(nCharArray);
-}
-
-void CPWL_EditImpl::SetCharSpace(float fCharSpace) {
-  m_pVT->SetCharSpace(fCharSpace);
 }
 
 void CPWL_EditImpl::SetMultiLine(bool bMultiLine) {
@@ -937,10 +933,6 @@ int32_t CPWL_EditImpl::GetCharArray() const {
 
 CFX_FloatRect CPWL_EditImpl::GetContentRect() const {
   return VTToEdit(m_pVT->GetContentRect());
-}
-
-float CPWL_EditImpl::GetCharSpace() const {
-  return m_pVT->GetCharSpace();
 }
 
 CPVT_WordRange CPWL_EditImpl::GetWholeWordRange() const {

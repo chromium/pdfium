@@ -256,11 +256,6 @@ void CPWL_Edit::OnKillFocus() {
   m_bFocus = false;
 }
 
-void CPWL_Edit::SetCharSpace(float fCharSpace) {
-  m_pEditImpl->SetCharSpace(fCharSpace);
-  m_pEditImpl->Paint();
-}
-
 CPVT_WordRange CPWL_Edit::GetSelectWordRange() const {
   if (!m_pEditImpl->IsSelected())
     return CPVT_WordRange();

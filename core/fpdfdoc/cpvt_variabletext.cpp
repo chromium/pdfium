@@ -578,16 +578,15 @@ float CPVT_VariableText::GetWordFontSize() const {
 float CPVT_VariableText::GetWordWidth(int32_t nFontIndex,
                                       uint16_t Word,
                                       uint16_t SubWord,
-                                      float fCharSpace,
                                       float fFontSize,
                                       float fWordTail) const {
   return GetCharWidth(nFontIndex, Word, SubWord) * fFontSize * kFontScale +
-         fCharSpace + fWordTail;
+         fWordTail;
 }
 
 float CPVT_VariableText::GetWordWidth(const CPVT_WordInfo& WordInfo) const {
   return GetWordWidth(WordInfo.nFontIndex, WordInfo.Word, GetSubWord(),
-                      GetCharSpace(), GetWordFontSize(), WordInfo.fWordTail);
+                      GetWordFontSize(), WordInfo.fWordTail);
 }
 
 float CPVT_VariableText::GetLineAscent() {

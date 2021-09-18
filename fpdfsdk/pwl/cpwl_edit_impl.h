@@ -77,7 +77,6 @@ class CPWL_EditImpl {
   // Set the maximum number of words in the text.
   void SetLimitChar(int32_t nLimitChar);
   void SetCharArray(int32_t nCharArray);
-  void SetCharSpace(float fCharSpace);
   void SetMultiLine(bool bMultiLine);
   void SetAutoReturn(bool bAuto);
   void SetAutoFontSize(bool bAuto);
@@ -114,7 +113,6 @@ class CPWL_EditImpl {
   int32_t GetCharArray() const;
   CFX_FloatRect GetContentRect() const;
   WideString GetRangeText(const CPVT_WordRange& range) const;
-  float GetCharSpace() const;
   void SetSelection(int32_t nStartChar, int32_t nEndChar);
   std::pair<int32_t, int32_t> GetSelection() const;
   void SelectAll();

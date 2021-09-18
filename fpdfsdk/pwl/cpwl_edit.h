@@ -84,7 +84,6 @@ class CPWL_Edit final : public CPWL_Wnd {
   void SetAlignFormatVerticalCenter();
   void SetCharArray(int32_t nCharArray);
   void SetLimitChar(int32_t nLimitChar);
-  void SetCharSpace(float fCharSpace);
   bool CanSelectAll() const;
   bool CanCopy() const;
   bool CanCut() const;
