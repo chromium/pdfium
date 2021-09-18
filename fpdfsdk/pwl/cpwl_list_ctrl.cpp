@@ -102,7 +102,8 @@ void CPWL_ListCtrl::SelectState::Done() {
 CPWL_ListCtrl::CPWL_ListCtrl() = default;
 
 CPWL_ListCtrl::~CPWL_ListCtrl() {
-  Clear();
+  m_ListItems.clear();
+  InvalidateItem(-1);
 }
 
 CFX_PointF CPWL_ListCtrl::InToOut(const CFX_PointF& point) const {
@@ -517,15 +518,6 @@ int32_t CPWL_ListCtrl::GetTopItem() const {
     nItemIndex += 1;
 
   return nItemIndex;
-}
-
-void CPWL_ListCtrl::Clear() {
-  m_ListItems.clear();
-  InvalidateItem(-1);
-}
-
-void CPWL_ListCtrl::Cancel() {
-  m_SelectState.DeselectAll();
 }
 
 int32_t CPWL_ListCtrl::GetItemIndex(const CFX_PointF& point) const {

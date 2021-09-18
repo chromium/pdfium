@@ -312,14 +312,6 @@ void CPWL_ListBox::ScrollToListItem(int32_t nItemIndex) {
   m_pListCtrl->ScrollToListItem(nItemIndex);
 }
 
-void CPWL_ListBox::ResetContent() {
-  m_pListCtrl->Clear();
-}
-
-void CPWL_ListBox::Reset() {
-  m_pListCtrl->Cancel();
-}
-
 bool CPWL_ListBox::IsMultipleSel() const {
   return m_pListCtrl->IsMultipleSel();
 }
