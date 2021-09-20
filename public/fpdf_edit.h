@@ -1199,24 +1199,6 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFTextObj_SetTextRenderMode(FPDF_PAGEOBJECT text,
                               FPDF_TEXT_RENDERMODE render_mode);
 
-// Experimental API.
-// Get the font name of a text object.
-//
-// text             - the handle to the text object.
-// buffer           - the address of a buffer that receives the font name.
-// length           - the size, in bytes, of |buffer|.
-//
-// Returns the number of bytes in the font name (including the trailing NUL
-// character) on success, 0 on error.
-//
-// Regardless of the platform, the |buffer| is always in UTF-8 encoding.
-// If |length| is less than the returned length, or |buffer| is NULL, |buffer|
-// will not be modified.
-FPDF_EXPORT unsigned long FPDF_CALLCONV
-FPDFTextObj_GetFontName(FPDF_PAGEOBJECT text,
-                        char* buffer,
-                        unsigned long length);
-
 // Get the text of a text object.
 //
 // text_object      - the handle to the text object.

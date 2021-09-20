@@ -564,24 +564,6 @@ FPDFTextObj_GetFontSize(FPDF_PAGEOBJECT text, float* size) {
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
-FPDFTextObj_GetFontName(FPDF_PAGEOBJECT text,
-                        char* buffer,
-                        unsigned long length) {
-  CPDF_TextObject* pTextObj = CPDFTextObjectFromFPDFPageObject(text);
-  if (!pTextObj)
-    return 0;
-
-  RetainPtr<CPDF_Font> pPdfFont = pTextObj->GetFont();
-  CFX_Font* pFont = pPdfFont->GetFont();
-  ByteString name = pFont->GetFamilyName();
-  unsigned long dwStringLen = name.GetLength() + 1;
-  if (buffer && length >= dwStringLen)
-    memcpy(buffer, name.c_str(), dwStringLen);
-
-  return dwStringLen;
-}
-
-FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFTextObj_GetText(FPDF_PAGEOBJECT text_object,
                     FPDF_TEXTPAGE text_page,
                     FPDF_WCHAR* buffer,
