@@ -198,10 +198,6 @@ Optional<FX_RECT> CFGAS_GEFont::GetCharBBox(wchar_t wUnicode) {
   return rtBBox;
 }
 
-Optional<FX_RECT> CFGAS_GEFont::GetBBox() {
-  return m_pFont->GetBBox();
-}
-
 int32_t CFGAS_GEFont::GetGlyphIndex(wchar_t wUnicode) {
   int32_t glyph;
   RetainPtr<CFGAS_GEFont> font;
