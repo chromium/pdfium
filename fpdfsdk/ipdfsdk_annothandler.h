@@ -113,8 +113,7 @@ class IPDFSDK_AnnotHandler {
   virtual std::unique_ptr<CPDFSDK_Annot> NewAnnotForXFA(
       CXFA_FFWidget* pFFWidget,
       CPDFSDK_PageView* pPageView);
-  virtual bool OnXFAChangedFocus(ObservedPtr<CPDFSDK_Annot>* pOldAnnot,
-                                 ObservedPtr<CPDFSDK_Annot>* pNewAnnot);
+  virtual bool OnXFAChangedFocus(ObservedPtr<CPDFSDK_Annot>* pNewAnnot);
 #endif  // PDF_ENABLE_XFA
 
  private:

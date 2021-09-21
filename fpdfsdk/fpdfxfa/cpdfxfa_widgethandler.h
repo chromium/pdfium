@@ -97,8 +97,7 @@ class CPDFXFA_WidgetHandler final : public IPDFSDK_AnnotHandler {
   std::unique_ptr<CPDFSDK_Annot> NewAnnotForXFA(
       CXFA_FFWidget* pFFWidget,
       CPDFSDK_PageView* pPageView) override;
-  bool OnXFAChangedFocus(ObservedPtr<CPDFSDK_Annot>* pOldAnnot,
-                         ObservedPtr<CPDFSDK_Annot>* pNewAnnot) override;
+  bool OnXFAChangedFocus(ObservedPtr<CPDFSDK_Annot>* pNewAnnot) override;
 
  private:
   CXFA_FFWidgetHandler* GetXFAFFWidgetHandler(CPDFSDK_Annot* pAnnot);

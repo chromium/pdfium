@@ -293,7 +293,6 @@ std::unique_ptr<CPDFSDK_Annot> CPDFSDK_BAAnnotHandler::NewAnnotForXFA(
 }
 
 bool CPDFSDK_BAAnnotHandler::OnXFAChangedFocus(
-    ObservedPtr<CPDFSDK_Annot>* pOldAnnot,
     ObservedPtr<CPDFSDK_Annot>* pNewAnnot) {
   NOTREACHED();
   return false;

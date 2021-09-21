@@ -534,15 +534,8 @@ bool CPDFXFA_WidgetHandler::OnKillFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot,
 }
 
 bool CPDFXFA_WidgetHandler::OnXFAChangedFocus(
-    ObservedPtr<CPDFSDK_Annot>* pOldAnnot,
     ObservedPtr<CPDFSDK_Annot>* pNewAnnot) {
-  CXFA_FFWidgetHandler* pWidgetHandler = nullptr;
-  if (pOldAnnot->HasObservable())
-    pWidgetHandler = GetXFAFFWidgetHandler(pOldAnnot->Get());
-  else if (pNewAnnot->HasObservable())
-    pWidgetHandler = GetXFAFFWidgetHandler(pNewAnnot->Get());
-
-  if (!pWidgetHandler)
+  if (!pNewAnnot->HasObservable() || !GetXFAFFWidgetHandler(pNewAnnot->Get()))
     return true;
 
   CPDFXFA_Widget* pNewXFAWidget = ToXFAWidget(pNewAnnot->Get());
