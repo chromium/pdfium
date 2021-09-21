@@ -20,7 +20,6 @@ class IPDF_Page;
 
 class CPDFSDK_Annot : public Observable {
  public:
-  explicit CPDFSDK_Annot(CPDFSDK_PageView* pPageView);
   virtual ~CPDFSDK_Annot();
 
   virtual CPDFSDK_BAAnnot* AsBAAnnot();
@@ -28,10 +27,9 @@ class CPDFSDK_Annot : public Observable {
 
   virtual int GetLayoutOrder() const;
   virtual CPDF_Annot* GetPDFAnnot() const;
-  virtual CPDF_Annot::Subtype GetAnnotSubtype() const;
   virtual bool IsSignatureWidget() const;
-  virtual CFX_FloatRect GetRect() const;
-  virtual void SetRect(const CFX_FloatRect& rect);
+  virtual CPDF_Annot::Subtype GetAnnotSubtype() const = 0;
+  virtual CFX_FloatRect GetRect() const = 0;
 
   // Three cases: PDF page only, XFA page only, or XFA page backed by PDF page.
   IPDF_Page* GetPage();     // Returns XFA Page if possible, else PDF page.
@@ -42,6 +40,8 @@ class CPDFSDK_Annot : public Observable {
   CPDFSDK_PageView* GetPageView() const { return m_pPageView.Get(); }
 
  protected:
+  explicit CPDFSDK_Annot(CPDFSDK_PageView* pPageView);
+
   UnownedPtr<CPDFSDK_PageView> const m_pPageView;
 };
 

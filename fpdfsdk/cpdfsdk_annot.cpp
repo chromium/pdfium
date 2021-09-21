@@ -40,18 +40,8 @@ CPDF_Annot* CPDFSDK_Annot::GetPDFAnnot() const {
   return nullptr;
 }
 
-CPDF_Annot::Subtype CPDFSDK_Annot::GetAnnotSubtype() const {
-  return CPDF_Annot::Subtype::UNKNOWN;
-}
-
 bool CPDFSDK_Annot::IsSignatureWidget() const {
   return false;
-}
-
-void CPDFSDK_Annot::SetRect(const CFX_FloatRect& rect) {}
-
-CFX_FloatRect CPDFSDK_Annot::GetRect() const {
-  return CFX_FloatRect();
 }
 
 IPDF_Page* CPDFSDK_Annot::GetPage() {

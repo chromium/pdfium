@@ -379,6 +379,12 @@ FormFieldType CPDFSDK_Widget::GetFieldType() const {
   return pField ? pField->GetFieldType() : FormFieldType::kUnknown;
 }
 
+void CPDFSDK_Widget::SetRect(const CFX_FloatRect& rect) {
+  DCHECK(rect.right - rect.left >= 1.0f);
+  DCHECK(rect.top - rect.bottom >= 1.0f);
+  GetAnnotDict()->SetRectFor(pdfium::annotation::kRect, rect);
+}
+
 bool CPDFSDK_Widget::IsAppearanceValid() {
 #ifdef PDF_ENABLE_XFA
   CPDF_Document::Extension* pContext =
