@@ -11,7 +11,6 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "v8/include/v8-array-buffer.h"
 #include "v8/include/v8-forward.h"
 
 class CFX_V8 {
@@ -63,13 +62,6 @@ class CFX_V8 {
 
  private:
   UnownedPtr<v8::Isolate> m_pIsolate;
-};
-
-class CFX_V8ArrayBufferAllocator final : public v8::ArrayBuffer::Allocator {
-  static const size_t kMaxAllowedBytes = 0x10000000;
-  void* Allocate(size_t length) override;
-  void* AllocateUninitialized(size_t length) override;
-  void Free(void* data, size_t length) override;
 };
 
 // Use with std::unique_ptr<v8::Isolate> to dispose of isolates correctly.

@@ -51,7 +51,7 @@
 #include "third_party/base/span.h"
 
 #ifdef PDF_ENABLE_V8
-#include "fxjs/cfx_v8.h"
+#include "fxjs/cfx_v8_array_buffer_allocator.h"
 #include "third_party/base/no_destructor.h"
 #endif
 

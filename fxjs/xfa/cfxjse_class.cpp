@@ -9,7 +9,6 @@
 #include <memory>
 #include <utility>
 
-#include "fxjs/cfx_v8.h"
 #include "fxjs/cjs_result.h"
 #include "fxjs/fxv8.h"
 #include "fxjs/js_resources.h"

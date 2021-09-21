@@ -11,6 +11,7 @@
 
 #include "core/fxcrt/stl_util.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "fxjs/cfx_v8_array_buffer_allocator.h"
 #include "fxjs/cjs_object.h"
 #include "fxjs/fxv8.h"
 #include "fxjs/xfa/cfxjse_runtimedata.h"

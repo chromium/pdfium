@@ -7,7 +7,6 @@
 
 #include <memory>
 
-#include "fxjs/cfx_v8.h"
 #include "testing/js_embedder_test.h"
 #include "v8/include/v8.h"
 

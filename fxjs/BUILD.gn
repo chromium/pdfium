@@ -27,6 +27,8 @@ source_set("fxjs") {
       "cfx_keyvalue.h",
       "cfx_v8.cpp",
       "cfx_v8.h",
+      "cfx_v8_array_buffer_allocator.cpp",
+      "cfx_v8_array_buffer_allocator.h",
       "cfxjs_engine.cpp",
       "cfxjs_engine.h",
       "cjs_annot.cpp",

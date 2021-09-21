@@ -8,6 +8,7 @@
 
 #include "fxjs/fxv8.h"
 #include "fxjs/xfa/cfxjse_engine.h"
+#include "v8/include/v8-object.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_xfa.h"
 

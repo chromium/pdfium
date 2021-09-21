@@ -8,7 +8,6 @@
 
 #include <math.h>
 
-#include "fxjs/cfx_v8.h"
 #include "fxjs/fxv8.h"
 #include "fxjs/xfa/cfxjse_class.h"
 #include "fxjs/xfa/cfxjse_context.h"
@@ -17,6 +16,7 @@
 #include "v8/include/v8-container.h"
 #include "v8/include/v8-exception.h"
 #include "v8/include/v8-function.h"
+#include "v8/include/v8-primitive.h"
 #include "v8/include/v8-script.h"
 
 namespace {

@@ -16,6 +16,7 @@
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "third_party/base/containers/contains.h"
 #include "v8/include/cppgc/allocation.h"
+#include "v8/include/v8-object.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
 #include "xfa/fxfa/layout/cxfa_layoutitem.h"

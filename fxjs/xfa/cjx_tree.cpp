@@ -15,6 +15,8 @@
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "v8/include/cppgc/allocation.h"
+#include "v8/include/v8-object.h"
+#include "v8/include/v8-primitive.h"
 #include "xfa/fxfa/parser/cxfa_arraynodelist.h"
 #include "xfa/fxfa/parser/cxfa_attachnodelist.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
