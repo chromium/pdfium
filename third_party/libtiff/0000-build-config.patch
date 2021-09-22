@@ -32,29 +32,6 @@ diff a/third_party/libtiff/tif_jpeg.c b/third_party/libtiff/tif_jpeg.c
  
  /* 
   * Do we want to do special processing suitable for when JSAMPLE is a
-diff a/third_party/libtiff/tif_ojpeg.c b/third_party/libtiff/tif_ojpeg.c
---- a/third_party/libtiff/tif_ojpeg.c
-+++ b/third_party/libtiff/tif_ojpeg.c
-@@ -214,8 +214,17 @@
- # define HAVE_BOOLEAN            /* prevent jmorecfg.h from redefining it */
- #endif
- 
--#include "jpeglib.h"
--#include "jerror.h"
-+#if defined(USE_SYSTEM_LIBJPEG)
-+#include <jerror.h>
-+#include <jpeglib.h>
-+#elif defined(USE_LIBJPEG_TURBO)
-+#include "third_party/libjpeg_turbo/jerror.h"
-+#include "third_party/libjpeg_turbo/jpeglib.h"
-+#else
-+#include "third_party/libjpeg/jerror.h"
-+#include "third_party/libjpeg/jpeglib.h"
-+#endif
-+
- 
- typedef struct jpeg_error_mgr jpeg_error_mgr;
- typedef struct jpeg_common_struct jpeg_common_struct;
 diff a/third_party/libtiff/tiffconf.h b/third_party/libtiff/tiffconf.h
 --- /dev/null
 +++ b/third_party/libtiff/tiffconf.h

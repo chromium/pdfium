@@ -509,8 +509,7 @@ if (pdf_enable_xfa_tiff) {
       ":pdfium_third_party_config",
     ]
     if (is_win) {
-      # Need to undefine the macro since it is redefined in
-      # tif_ojpeg.c and tif_jpeg.c.
+      # Need to undefine the macro since it is redefined in tif_jpeg.c.
       configs -= [ "//build/config/win:lean_and_mean" ]
     }
     deps = [
@@ -539,7 +538,6 @@ if (pdf_enable_xfa_tiff) {
       "libtiff/tif_luv.c",
       "libtiff/tif_lzw.c",
       "libtiff/tif_next.c",
-      "libtiff/tif_ojpeg.c",
       "libtiff/tif_open.c",
       "libtiff/tif_packbits.c",
       "libtiff/tif_pixarlog.c",
