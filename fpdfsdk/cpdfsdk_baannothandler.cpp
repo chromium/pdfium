@@ -90,64 +90,64 @@ void CPDFSDK_BAAnnotHandler::OnDraw(CPDFSDK_Annot* pAnnot,
   }
 }
 
-void CPDFSDK_BAAnnotHandler::OnMouseEnter(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+void CPDFSDK_BAAnnotHandler::OnMouseEnter(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                           Mask<FWL_EVENTFLAG> nFlag) {
-  CPDFSDK_BAAnnot* pBAAnnot = (*pAnnot)->AsBAAnnot();
+  CPDFSDK_BAAnnot* pBAAnnot = pAnnot->AsBAAnnot();
   pBAAnnot->SetOpenState(true);
   UpdateAnnotRects(pBAAnnot);
 }
 
-void CPDFSDK_BAAnnotHandler::OnMouseExit(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+void CPDFSDK_BAAnnotHandler::OnMouseExit(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                          Mask<FWL_EVENTFLAG> nFlag) {
-  CPDFSDK_BAAnnot* pBAAnnot = (*pAnnot)->AsBAAnnot();
+  CPDFSDK_BAAnnot* pBAAnnot = pAnnot->AsBAAnnot();
   pBAAnnot->SetOpenState(false);
   UpdateAnnotRects(pBAAnnot);
 }
 
-bool CPDFSDK_BAAnnotHandler::OnLButtonDown(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+bool CPDFSDK_BAAnnotHandler::OnLButtonDown(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                            Mask<FWL_EVENTFLAG> nFlags,
                                            const CFX_PointF& point) {
   return false;
 }
 
-bool CPDFSDK_BAAnnotHandler::OnLButtonUp(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+bool CPDFSDK_BAAnnotHandler::OnLButtonUp(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                          Mask<FWL_EVENTFLAG> nFlags,
                                          const CFX_PointF& point) {
   return false;
 }
 
-bool CPDFSDK_BAAnnotHandler::OnLButtonDblClk(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+bool CPDFSDK_BAAnnotHandler::OnLButtonDblClk(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                              Mask<FWL_EVENTFLAG> nFlags,
                                              const CFX_PointF& point) {
   return false;
 }
 
-bool CPDFSDK_BAAnnotHandler::OnMouseMove(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+bool CPDFSDK_BAAnnotHandler::OnMouseMove(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                          Mask<FWL_EVENTFLAG> nFlags,
                                          const CFX_PointF& point) {
   return false;
 }
 
-bool CPDFSDK_BAAnnotHandler::OnMouseWheel(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+bool CPDFSDK_BAAnnotHandler::OnMouseWheel(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                           Mask<FWL_EVENTFLAG> nFlags,
                                           const CFX_PointF& point,
                                           const CFX_Vector& delta) {
   return false;
 }
 
-bool CPDFSDK_BAAnnotHandler::OnRButtonDown(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+bool CPDFSDK_BAAnnotHandler::OnRButtonDown(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                            Mask<FWL_EVENTFLAG> nFlags,
                                            const CFX_PointF& point) {
   return false;
 }
 
-bool CPDFSDK_BAAnnotHandler::OnRButtonUp(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+bool CPDFSDK_BAAnnotHandler::OnRButtonUp(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                          Mask<FWL_EVENTFLAG> nFlags,
                                          const CFX_PointF& point) {
   return false;
 }
 
-bool CPDFSDK_BAAnnotHandler::OnRButtonDblClk(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+bool CPDFSDK_BAAnnotHandler::OnRButtonDblClk(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                              Mask<FWL_EVENTFLAG> nFlags,
                                              const CFX_PointF& point) {
   return false;
@@ -211,34 +211,34 @@ void CPDFSDK_BAAnnotHandler::InvalidateRect(CPDFSDK_Annot* annot) {
   }
 }
 
-bool CPDFSDK_BAAnnotHandler::OnSetFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+bool CPDFSDK_BAAnnotHandler::OnSetFocus(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                         Mask<FWL_EVENTFLAG> nFlag) {
-  if (!IsFocusableAnnot(pAnnot->Get()->GetAnnotSubtype()))
+  if (!IsFocusableAnnot(pAnnot->GetAnnotSubtype()))
     return false;
 
   is_annotation_focused_ = true;
-  InvalidateRect(pAnnot->Get());
+  InvalidateRect(pAnnot.Get());
   return true;
 }
 
-bool CPDFSDK_BAAnnotHandler::OnKillFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+bool CPDFSDK_BAAnnotHandler::OnKillFocus(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                          Mask<FWL_EVENTFLAG> nFlag) {
-  if (!IsFocusableAnnot(pAnnot->Get()->GetAnnotSubtype()))
+  if (!IsFocusableAnnot(pAnnot->GetAnnotSubtype()))
     return false;
 
   is_annotation_focused_ = false;
-  InvalidateRect(pAnnot->Get());
+  InvalidateRect(pAnnot.Get());
   return true;
 }
 
 bool CPDFSDK_BAAnnotHandler::SetIndexSelected(
-    ObservedPtr<CPDFSDK_Annot>* pAnnot,
+    ObservedPtr<CPDFSDK_Annot>& pAnnot,
     int index,
     bool selected) {
   return false;
 }
 
-bool CPDFSDK_BAAnnotHandler::IsIndexSelected(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+bool CPDFSDK_BAAnnotHandler::IsIndexSelected(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                              int index) {
   return false;
 }
@@ -293,7 +293,7 @@ std::unique_ptr<CPDFSDK_Annot> CPDFSDK_BAAnnotHandler::NewAnnotForXFA(
 }
 
 bool CPDFSDK_BAAnnotHandler::OnXFAChangedFocus(
-    ObservedPtr<CPDFSDK_Annot>* pNewAnnot) {
+    ObservedPtr<CPDFSDK_Annot>& pNewAnnot) {
   NOTREACHED();
   return false;
 }

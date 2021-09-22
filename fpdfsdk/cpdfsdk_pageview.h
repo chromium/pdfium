@@ -119,7 +119,7 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   int GetPageIndexForStaticPDF() const;
 
   void EnterWidget(CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr,
-                   ObservedPtr<CPDFSDK_Annot>* pAnnot,
+                   ObservedPtr<CPDFSDK_Annot>& pAnnot,
                    Mask<FWL_EVENTFLAG> nFlag);
   void ExitWidget(CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr,
                   bool callExitCallback,

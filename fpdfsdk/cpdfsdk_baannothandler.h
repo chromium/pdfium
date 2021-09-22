@@ -45,33 +45,33 @@ class CPDFSDK_BAAnnotHandler final : public IPDFSDK_AnnotHandler {
               bool bDrawAnnots) override;
   void OnLoad(CPDFSDK_Annot* pAnnot) override;
 
-  void OnMouseEnter(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  void OnMouseEnter(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                     Mask<FWL_EVENTFLAG> nFlag) override;
-  void OnMouseExit(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  void OnMouseExit(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                    Mask<FWL_EVENTFLAG> nFlag) override;
-  bool OnLButtonDown(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  bool OnLButtonDown(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                      Mask<FWL_EVENTFLAG> nFlags,
                      const CFX_PointF& point) override;
-  bool OnLButtonUp(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  bool OnLButtonUp(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                    Mask<FWL_EVENTFLAG> nFlags,
                    const CFX_PointF& point) override;
-  bool OnLButtonDblClk(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  bool OnLButtonDblClk(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                        Mask<FWL_EVENTFLAG> nFlags,
                        const CFX_PointF& point) override;
-  bool OnMouseMove(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  bool OnMouseMove(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                    Mask<FWL_EVENTFLAG> nFlags,
                    const CFX_PointF& point) override;
-  bool OnMouseWheel(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  bool OnMouseWheel(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                     Mask<FWL_EVENTFLAG> nFlags,
                     const CFX_PointF& point,
                     const CFX_Vector& delta) override;
-  bool OnRButtonDown(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  bool OnRButtonDown(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                      Mask<FWL_EVENTFLAG> nFlags,
                      const CFX_PointF& point) override;
-  bool OnRButtonUp(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  bool OnRButtonUp(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                    Mask<FWL_EVENTFLAG> nFlags,
                    const CFX_PointF& point) override;
-  bool OnRButtonDblClk(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  bool OnRButtonDblClk(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                        Mask<FWL_EVENTFLAG> nFlags,
                        const CFX_PointF& point) override;
   bool OnChar(CPDFSDK_Annot* pAnnot,
@@ -83,20 +83,20 @@ class CPDFSDK_BAAnnotHandler final : public IPDFSDK_AnnotHandler {
   bool OnKeyUp(CPDFSDK_Annot* pAnnot,
                FWL_VKEYCODE nKeyCode,
                Mask<FWL_EVENTFLAG> nFlag) override;
-  bool OnSetFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  bool OnSetFocus(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                   Mask<FWL_EVENTFLAG> nFlag) override;
-  bool OnKillFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  bool OnKillFocus(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                    Mask<FWL_EVENTFLAG> nFlag) override;
-  bool SetIndexSelected(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  bool SetIndexSelected(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                         int index,
                         bool selected) override;
-  bool IsIndexSelected(ObservedPtr<CPDFSDK_Annot>* pAnnot, int index) override;
+  bool IsIndexSelected(ObservedPtr<CPDFSDK_Annot>& pAnnot, int index) override;
 
 #ifdef PDF_ENABLE_XFA
   std::unique_ptr<CPDFSDK_Annot> NewAnnotForXFA(
       CXFA_FFWidget* pAnnot,
       CPDFSDK_PageView* pPageView) override;
-  bool OnXFAChangedFocus(ObservedPtr<CPDFSDK_Annot>* pNewAnnot) override;
+  bool OnXFAChangedFocus(ObservedPtr<CPDFSDK_Annot>& pNewAnnot) override;
 #endif  // PDF_ENABLE_XFA
 
  private:

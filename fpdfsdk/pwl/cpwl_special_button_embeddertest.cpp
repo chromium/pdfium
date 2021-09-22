@@ -68,7 +68,7 @@ class CPWLSpecialButtonEmbedderTest : public EmbedderTest {
         formfill_env_->GetInteractiveFormFiller();
     {
       ObservedPtr<CPDFSDK_Annot> observed(annot);
-      EXPECT_TRUE(interactive_formfiller->OnSetFocus(&observed, {}));
+      EXPECT_TRUE(interactive_formfiller->OnSetFocus(observed, {}));
     }
 
     form_filler_ = interactive_formfiller->GetFormFieldForTesting(annot);

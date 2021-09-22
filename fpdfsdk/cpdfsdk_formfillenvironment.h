@@ -72,15 +72,15 @@ class CPDFSDK_FormFillEnvironment final
 
   // CFFL_InteractiveFormFiller::CallbackIface:
   void OnSetFieldInputFocus(const WideString& text) override;
-  void OnCalculate(ObservedPtr<CPDFSDK_Annot>* pAnnot) override;
-  void OnFormat(ObservedPtr<CPDFSDK_Annot>* pAnnot) override;
+  void OnCalculate(ObservedPtr<CPDFSDK_Annot>& pAnnot) override;
+  void OnFormat(ObservedPtr<CPDFSDK_Annot>& pAnnot) override;
   void Invalidate(IPDF_Page* page, const FX_RECT& rect) override;
   CPDFSDK_PageView* GetOrCreatePageView(IPDF_Page* pUnderlyingPage) override;
   CPDFSDK_PageView* GetPageView(IPDF_Page* pUnderlyingPage) override;
   CFX_Timer::HandlerIface* GetTimerHandler() override;
   IPWL_SystemHandler* GetSysHandler() override;
   CPDFSDK_Annot* GetFocusAnnot() const override;
-  bool SetFocusAnnot(ObservedPtr<CPDFSDK_Annot>* pAnnot) override;
+  bool SetFocusAnnot(ObservedPtr<CPDFSDK_Annot>& pAnnot) override;
   bool HasPermissions(uint32_t flags) const override;
   void OnChange() override;
 
@@ -227,7 +227,7 @@ class CPDFSDK_FormFillEnvironment final
  private:
   IPDF_Page* GetPage(int nIndex) const;
   void OnSetFieldInputFocusInternal(const WideString& text, bool bFocus);
-  void SendOnFocusChange(ObservedPtr<CPDFSDK_Annot>* pAnnot);
+  void SendOnFocusChange(ObservedPtr<CPDFSDK_Annot>& pAnnot);
 
   UnownedPtr<FPDF_FORMFILLINFO> const m_pInfo;
   std::unique_ptr<CPDFSDK_ActionHandler> m_pActionHandler;

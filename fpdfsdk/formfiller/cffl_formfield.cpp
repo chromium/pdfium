@@ -465,8 +465,7 @@ bool CFFL_FormField::CommitData(const CPDFSDK_PageView* pPageView,
     return true;
 
   ObservedPtr<CPDFSDK_Annot> pObserved(m_pWidget.Get());
-
-  if (!m_pFormFiller->OnKeyStrokeCommit(&pObserved, pPageView, nFlag)) {
+  if (!m_pFormFiller->OnKeyStrokeCommit(pObserved, pPageView, nFlag)) {
     if (!pObserved)
       return false;
     ResetPWLWindow(pPageView);
@@ -475,7 +474,7 @@ bool CFFL_FormField::CommitData(const CPDFSDK_PageView* pPageView,
   if (!pObserved)
     return false;
 
-  if (!m_pFormFiller->OnValidate(&pObserved, pPageView, nFlag)) {
+  if (!m_pFormFiller->OnValidate(pObserved, pPageView, nFlag)) {
     if (!pObserved)
       return false;
     ResetPWLWindow(pPageView);
@@ -488,11 +487,11 @@ bool CFFL_FormField::CommitData(const CPDFSDK_PageView* pPageView,
   if (!pObserved)
     return false;
 
-  m_pFormFiller->OnCalculate(&pObserved);
+  m_pFormFiller->OnCalculate(pObserved);
   if (!pObserved)
     return false;
 
-  m_pFormFiller->OnFormat(&pObserved);
+  m_pFormFiller->OnFormat(pObserved);
   if (!pObserved)
     return false;
 

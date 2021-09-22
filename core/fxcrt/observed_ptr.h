@@ -39,6 +39,8 @@ class Observable {
 };
 
 // Simple case of a self-nulling pointer.
+// Generally, pass ObservedPtr<> by non-const reference since this saves
+// considerable work compared to pass by value.
 template <typename T>
 class ObservedPtr final : public Observable::ObserverIface {
  public:

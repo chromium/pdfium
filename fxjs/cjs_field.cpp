@@ -2509,7 +2509,7 @@ CJS_Result CJS_Field::setFocus(
 
   if (pWidget) {
     ObservedPtr<CPDFSDK_Annot> pObserved(pWidget);
-    m_pFormFillEnv->SetFocusAnnot(&pObserved);
+    m_pFormFillEnv->SetFocusAnnot(pObserved);
   }
 
   return CJS_Result::Success();

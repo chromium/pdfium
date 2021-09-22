@@ -331,7 +331,7 @@ bool CPDFSDK_PageView::OnFocus(Mask<FWL_EVENTFLAG> nFlag,
     return false;
   }
 
-  m_pFormFillEnv->SetFocusAnnot(&pAnnot);
+  m_pFormFillEnv->SetFocusAnnot(pAnnot);
   return true;
 }
 
@@ -345,13 +345,13 @@ bool CPDFSDK_PageView::OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag,
 
   CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
       m_pFormFillEnv->GetAnnotHandlerMgr();
-  if (!pAnnotHandlerMgr->Annot_OnLButtonDown(&pAnnot, nFlag, point))
+  if (!pAnnotHandlerMgr->Annot_OnLButtonDown(pAnnot, nFlag, point))
     return false;
 
   if (!pAnnot)
     return false;
 
-  m_pFormFillEnv->SetFocusAnnot(&pAnnot);
+  m_pFormFillEnv->SetFocusAnnot(pAnnot);
   return true;
 }
 
@@ -363,11 +363,11 @@ bool CPDFSDK_PageView::OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag,
   ObservedPtr<CPDFSDK_Annot> pFocusAnnot(GetFocusAnnot());
   if (pFocusAnnot && pFocusAnnot != pFXAnnot) {
     // Last focus Annot gets a chance to handle the event.
-    if (pAnnotHandlerMgr->Annot_OnLButtonUp(&pFocusAnnot, nFlag, point))
+    if (pAnnotHandlerMgr->Annot_OnLButtonUp(pFocusAnnot, nFlag, point))
       return true;
   }
   return pFXAnnot &&
-         pAnnotHandlerMgr->Annot_OnLButtonUp(&pFXAnnot, nFlag, point);
+         pAnnotHandlerMgr->Annot_OnLButtonUp(pFXAnnot, nFlag, point);
 }
 
 bool CPDFSDK_PageView::OnLButtonDblClk(Mask<FWL_EVENTFLAG> nFlag,
@@ -380,13 +380,13 @@ bool CPDFSDK_PageView::OnLButtonDblClk(Mask<FWL_EVENTFLAG> nFlag,
 
   CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
       m_pFormFillEnv->GetAnnotHandlerMgr();
-  if (!pAnnotHandlerMgr->Annot_OnLButtonDblClk(&pAnnot, nFlag, point))
+  if (!pAnnotHandlerMgr->Annot_OnLButtonDblClk(pAnnot, nFlag, point))
     return false;
 
   if (!pAnnot)
     return false;
 
-  m_pFormFillEnv->SetFocusAnnot(&pAnnot);
+  m_pFormFillEnv->SetFocusAnnot(pAnnot);
   return true;
 }
 
@@ -398,12 +398,12 @@ bool CPDFSDK_PageView::OnRButtonDown(Mask<FWL_EVENTFLAG> nFlag,
 
   CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
       m_pFormFillEnv->GetAnnotHandlerMgr();
-  bool ok = pAnnotHandlerMgr->Annot_OnRButtonDown(&pAnnot, nFlag, point);
+  bool ok = pAnnotHandlerMgr->Annot_OnRButtonDown(pAnnot, nFlag, point);
   if (!pAnnot)
     return false;
 
   if (ok)
-    m_pFormFillEnv->SetFocusAnnot(&pAnnot);
+    m_pFormFillEnv->SetFocusAnnot(pAnnot);
 
   return true;
 }
@@ -416,12 +416,12 @@ bool CPDFSDK_PageView::OnRButtonUp(Mask<FWL_EVENTFLAG> nFlag,
 
   CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
       m_pFormFillEnv->GetAnnotHandlerMgr();
-  bool ok = pAnnotHandlerMgr->Annot_OnRButtonUp(&pAnnot, nFlag, point);
+  bool ok = pAnnotHandlerMgr->Annot_OnRButtonUp(pAnnot, nFlag, point);
   if (!pAnnot)
     return false;
 
   if (ok)
-    m_pFormFillEnv->SetFocusAnnot(&pAnnot);
+    m_pFormFillEnv->SetFocusAnnot(pAnnot);
 
   return true;
 }
@@ -442,7 +442,7 @@ bool CPDFSDK_PageView::OnMouseMove(Mask<FWL_EVENTFLAG> nFlag,
     return false;
 
   if (!m_bOnWidget) {
-    EnterWidget(pAnnotHandlerMgr, &pFXAnnot, nFlag);
+    EnterWidget(pAnnotHandlerMgr, pFXAnnot, nFlag);
 
     // EnterWidget() may have invalidated objects.
     if (!pThis)
@@ -453,15 +453,15 @@ bool CPDFSDK_PageView::OnMouseMove(Mask<FWL_EVENTFLAG> nFlag,
       return true;
     }
   }
-  pAnnotHandlerMgr->Annot_OnMouseMove(&pFXAnnot, nFlag, point);
+  pAnnotHandlerMgr->Annot_OnMouseMove(pFXAnnot, nFlag, point);
   return true;
 }
 
 void CPDFSDK_PageView::EnterWidget(CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr,
-                                   ObservedPtr<CPDFSDK_Annot>* pAnnot,
+                                   ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                    Mask<FWL_EVENTFLAG> nFlag) {
   m_bOnWidget = true;
-  m_pCaptureWidget.Reset(pAnnot->Get());
+  m_pCaptureWidget.Reset(pAnnot.Get());
   pAnnotHandlerMgr->Annot_OnMouseEnter(pAnnot, nFlag);
 }
 
@@ -474,7 +474,7 @@ void CPDFSDK_PageView::ExitWidget(CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr,
 
   if (callExitCallback) {
     ObservedPtr<CPDFSDK_PageView> pThis(this);
-    pAnnotHandlerMgr->Annot_OnMouseExit(&m_pCaptureWidget, nFlag);
+    pAnnotHandlerMgr->Annot_OnMouseExit(m_pCaptureWidget, nFlag);
 
     // Annot_OnMouseExit() may have invalidated |this|.
     if (!pThis)
@@ -493,7 +493,7 @@ bool CPDFSDK_PageView::OnMouseWheel(Mask<FWL_EVENTFLAG> nFlag,
 
   CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
       m_pFormFillEnv->GetAnnotHandlerMgr();
-  return pAnnotHandlerMgr->Annot_OnMouseWheel(&pAnnot, nFlag, point, delta);
+  return pAnnotHandlerMgr->Annot_OnMouseWheel(pAnnot, nFlag, point, delta);
 }
 
 bool CPDFSDK_PageView::SetIndexSelected(int index, bool selected) {
@@ -501,7 +501,7 @@ bool CPDFSDK_PageView::SetIndexSelected(int index, bool selected) {
     ObservedPtr<CPDFSDK_Annot> pAnnotObserved(pAnnot);
     CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
         m_pFormFillEnv->GetAnnotHandlerMgr();
-    return pAnnotHandlerMgr->Annot_SetIndexSelected(&pAnnotObserved, index,
+    return pAnnotHandlerMgr->Annot_SetIndexSelected(pAnnotObserved, index,
                                                     selected);
   }
 
@@ -513,7 +513,7 @@ bool CPDFSDK_PageView::IsIndexSelected(int index) {
     ObservedPtr<CPDFSDK_Annot> pAnnotObserved(pAnnot);
     CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
         m_pFormFillEnv->GetAnnotHandlerMgr();
-    return pAnnotHandlerMgr->Annot_IsIndexSelected(&pAnnotObserved, index);
+    return pAnnotHandlerMgr->Annot_IsIndexSelected(pAnnotObserved, index);
   }
 
   return false;
@@ -547,7 +547,7 @@ bool CPDFSDK_PageView::OnKeyDown(FWL_VKEYCODE nKeyCode,
     ObservedPtr<CPDFSDK_Annot> end_annot(CPWL_Wnd::IsSHIFTKeyDown(nFlag)
                                              ? GetLastFocusableAnnot()
                                              : GetFirstFocusableAnnot());
-    return end_annot && m_pFormFillEnv->SetFocusAnnot(&end_annot);
+    return end_annot && m_pFormFillEnv->SetFocusAnnot(end_annot);
   }
 
   if (CPWL_Wnd::IsCTRLKeyDown(nFlag) || CPWL_Wnd::IsALTKeyDown(nFlag))
@@ -562,7 +562,7 @@ bool CPDFSDK_PageView::OnKeyDown(FWL_VKEYCODE nKeyCode,
     if (!pNext)
       return false;
     if (pNext.Get() != pFocusAnnot) {
-      GetFormFillEnv()->SetFocusAnnot(&pNext);
+      GetFormFillEnv()->SetFocusAnnot(pNext);
       return true;
     }
   }

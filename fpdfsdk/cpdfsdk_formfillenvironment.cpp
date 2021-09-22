@@ -411,19 +411,19 @@ void CPDFSDK_FormFillEnvironment::OnSetFieldInputFocusInternal(
 }
 
 void CPDFSDK_FormFillEnvironment::OnCalculate(
-    ObservedPtr<CPDFSDK_Annot>* pAnnot) {
-  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot->Get());
+    ObservedPtr<CPDFSDK_Annot>& pAnnot) {
+  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot.Get());
   if (pWidget)
     m_pInteractiveForm->OnCalculate(pWidget->GetFormField());
 }
 
-void CPDFSDK_FormFillEnvironment::OnFormat(ObservedPtr<CPDFSDK_Annot>* pAnnot) {
-  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot->Get());
+void CPDFSDK_FormFillEnvironment::OnFormat(ObservedPtr<CPDFSDK_Annot>& pAnnot) {
+  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot.Get());
   DCHECK(pWidget);
 
   Optional<WideString> sValue =
       m_pInteractiveForm->OnFormat(pWidget->GetFormField());
-  if (!pAnnot->HasObservable())
+  if (!pAnnot)
     return;
 
   if (sValue.has_value()) {
@@ -744,17 +744,16 @@ CPDFSDK_Annot* CPDFSDK_FormFillEnvironment::GetFocusAnnot() const {
 }
 
 bool CPDFSDK_FormFillEnvironment::SetFocusAnnot(
-    ObservedPtr<CPDFSDK_Annot>* pAnnot) {
+    ObservedPtr<CPDFSDK_Annot>& pAnnot) {
   if (m_bBeingDestroyed)
     return false;
-  if (m_pFocusAnnot == *pAnnot)
+  if (m_pFocusAnnot == pAnnot)
     return true;
   if (m_pFocusAnnot && !KillFocusAnnot({}))
     return false;
-  if (!pAnnot->HasObservable())
+  if (!pAnnot)
     return false;
-
-  if (!(*pAnnot)->GetPageView()->IsValid())
+  if (!pAnnot->GetPageView()->IsValid())
     return false;
 
   CPDFSDK_AnnotHandlerMgr* pAnnotHandler = GetAnnotHandlerMgr();
@@ -766,7 +765,7 @@ bool CPDFSDK_FormFillEnvironment::SetFocusAnnot(
     return false;
 
   // |pAnnot| may be destroyed in |Annot_OnChangeFocus|.
-  if (!pAnnot->HasObservable())
+  if (!pAnnot)
     return false;
 #endif  // PDF_ENABLE_XFA
 
@@ -775,7 +774,7 @@ bool CPDFSDK_FormFillEnvironment::SetFocusAnnot(
   if (m_pFocusAnnot)
     return false;
 
-  m_pFocusAnnot.Reset(pAnnot->Get());
+  m_pFocusAnnot.Reset(pAnnot.Get());
 
   // If we are not able to inform the client about the focus change, it
   // shouldn't be considered as failure.
@@ -791,7 +790,7 @@ bool CPDFSDK_FormFillEnvironment::KillFocusAnnot(Mask<FWL_EVENTFLAG> nFlag) {
   ObservedPtr<CPDFSDK_Annot> pFocusAnnot(m_pFocusAnnot.Get());
   m_pFocusAnnot.Reset();
 
-  if (!pAnnotHandler->Annot_OnKillFocus(&pFocusAnnot, nFlag)) {
+  if (!pAnnotHandler->Annot_OnKillFocus(pFocusAnnot, nFlag)) {
     m_pFocusAnnot.Reset(pFocusAnnot.Get());
     return false;
   }
@@ -821,24 +820,23 @@ bool CPDFSDK_FormFillEnvironment::HasPermissions(uint32_t flags) const {
 }
 
 void CPDFSDK_FormFillEnvironment::SendOnFocusChange(
-    ObservedPtr<CPDFSDK_Annot>* pAnnot) {
+    ObservedPtr<CPDFSDK_Annot>& pAnnot) {
   if (!m_pInfo || m_pInfo->version < 2 || !m_pInfo->FFI_OnFocusChange)
     return;
 
   // TODO(crbug.com/pdfium/1482): Handle XFA case.
-  if ((*pAnnot)->AsXFAWidget())
+  if (pAnnot->AsXFAWidget())
     return;
 
-  CPDFSDK_PageView* pPageView = (*pAnnot)->GetPageView();
+  CPDFSDK_PageView* pPageView = pAnnot->GetPageView();
   if (!pPageView->IsValid())
     return;
 
-  IPDF_Page* page = (*pAnnot)->GetPage();
+  IPDF_Page* page = pAnnot->GetPage();
   if (!page)
     return;
 
-  CPDF_Dictionary* annot_dict = (*pAnnot)->GetPDFAnnot()->GetAnnotDict();
-
+  CPDF_Dictionary* annot_dict = pAnnot->GetPDFAnnot()->GetAnnotDict();
   auto focused_annot = std::make_unique<CPDF_AnnotContext>(annot_dict, page);
   FPDF_ANNOTATION fpdf_annot =
       FPDFAnnotationFromCPDFAnnotContext(focused_annot.get());

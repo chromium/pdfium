@@ -52,7 +52,7 @@ bool CFFL_CheckBox::OnChar(CPDFSDK_Widget* pWidget,
       DCHECK(pPageView);
 
       ObservedPtr<CPDFSDK_Annot> pObserved(m_pWidget.Get());
-      if (m_pFormFiller->OnButtonUp(&pObserved, pPageView, nFlags)) {
+      if (m_pFormFiller->OnButtonUp(pObserved, pPageView, nFlags)) {
         if (!pObserved)
           m_pWidget = nullptr;
         return true;

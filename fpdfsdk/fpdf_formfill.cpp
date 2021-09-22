@@ -668,7 +668,7 @@ FORM_SetFocusedAnnot(FPDF_FORMHANDLE handle, FPDF_ANNOTATION annot) {
   if (!cpdfsdk_annot)
     return false;
 
-  return form_fill_env->SetFocusAnnot(&cpdfsdk_annot);
+  return form_fill_env->SetFocusAnnot(cpdfsdk_annot);
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,

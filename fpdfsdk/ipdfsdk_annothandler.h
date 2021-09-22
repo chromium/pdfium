@@ -61,33 +61,33 @@ class IPDFSDK_AnnotHandler {
                       const CFX_Matrix& mtUser2Device,
                       bool bDrawAnnots) = 0;
   virtual void OnLoad(CPDFSDK_Annot* pAnnot) = 0;
-  virtual void OnMouseEnter(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  virtual void OnMouseEnter(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                             Mask<FWL_EVENTFLAG> nFlag) = 0;
-  virtual void OnMouseExit(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  virtual void OnMouseExit(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                            Mask<FWL_EVENTFLAG> nFlag) = 0;
-  virtual bool OnLButtonDown(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  virtual bool OnLButtonDown(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                              Mask<FWL_EVENTFLAG> nFlags,
                              const CFX_PointF& point) = 0;
-  virtual bool OnLButtonUp(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  virtual bool OnLButtonUp(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                            Mask<FWL_EVENTFLAG> nFlags,
                            const CFX_PointF& point) = 0;
-  virtual bool OnLButtonDblClk(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  virtual bool OnLButtonDblClk(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                Mask<FWL_EVENTFLAG> nFlags,
                                const CFX_PointF& point) = 0;
-  virtual bool OnMouseMove(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  virtual bool OnMouseMove(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                            Mask<FWL_EVENTFLAG> nFlags,
                            const CFX_PointF& point) = 0;
-  virtual bool OnMouseWheel(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  virtual bool OnMouseWheel(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                             Mask<FWL_EVENTFLAG> nFlags,
                             const CFX_PointF& point,
                             const CFX_Vector& delta) = 0;
-  virtual bool OnRButtonDown(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  virtual bool OnRButtonDown(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                              Mask<FWL_EVENTFLAG> nFlags,
                              const CFX_PointF& point) = 0;
-  virtual bool OnRButtonUp(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  virtual bool OnRButtonUp(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                            Mask<FWL_EVENTFLAG> nFlags,
                            const CFX_PointF& point) = 0;
-  virtual bool OnRButtonDblClk(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  virtual bool OnRButtonDblClk(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                Mask<FWL_EVENTFLAG> nFlags,
                                const CFX_PointF& point) = 0;
   virtual bool OnChar(CPDFSDK_Annot* pAnnot,
@@ -99,21 +99,21 @@ class IPDFSDK_AnnotHandler {
   virtual bool OnKeyUp(CPDFSDK_Annot* pAnnot,
                        FWL_VKEYCODE nKeyCode,
                        Mask<FWL_EVENTFLAG> nFlag) = 0;
-  virtual bool OnSetFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  virtual bool OnSetFocus(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                           Mask<FWL_EVENTFLAG> nFlag) = 0;
-  virtual bool OnKillFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  virtual bool OnKillFocus(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                            Mask<FWL_EVENTFLAG> nFlag) = 0;
-  virtual bool SetIndexSelected(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  virtual bool SetIndexSelected(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                 int index,
                                 bool selected) = 0;
-  virtual bool IsIndexSelected(ObservedPtr<CPDFSDK_Annot>* pAnnot,
+  virtual bool IsIndexSelected(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                int index) = 0;
 
 #ifdef PDF_ENABLE_XFA
   virtual std::unique_ptr<CPDFSDK_Annot> NewAnnotForXFA(
       CXFA_FFWidget* pFFWidget,
       CPDFSDK_PageView* pPageView);
-  virtual bool OnXFAChangedFocus(ObservedPtr<CPDFSDK_Annot>* pNewAnnot);
+  virtual bool OnXFAChangedFocus(ObservedPtr<CPDFSDK_Annot>& pNewAnnot);
 #endif  // PDF_ENABLE_XFA
 
  private:
