@@ -100,7 +100,7 @@ class CPDFXFA_WidgetHandler final : public IPDFSDK_AnnotHandler {
   bool OnXFAChangedFocus(ObservedPtr<CPDFSDK_Annot>& pNewAnnot) override;
 
  private:
-  CXFA_FFWidgetHandler* GetXFAFFWidgetHandler(CPDFSDK_Annot* pAnnot);
+  CXFA_FFWidgetHandler* GetXFAFFWidgetHandler();
   Mask<XFA_FWL_KeyFlag> GetKeyFlags(Mask<FWL_EVENTFLAG> dwFlag);
 };
 
