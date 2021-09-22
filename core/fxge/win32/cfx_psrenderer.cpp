@@ -17,6 +17,7 @@
 #include <utility>
 
 #include "core/fxcrt/bytestring.h"
+#include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_stream.h"
@@ -33,7 +34,7 @@
 #include "core/fxge/fx_freetype.h"
 #include "core/fxge/text_char_pos.h"
 #include "core/fxge/win32/cfx_psfonttracker.h"
-#include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 
 namespace {
 
@@ -41,6 +42,146 @@ bool CanEmbed(CFX_Font* font) {
   FT_UShort fstype = FT_Get_FSType_Flags(font->GetFaceRec());
   return (fstype & (FT_FSTYPE_RESTRICTED_LICENSE_EMBEDDING |
                     FT_FSTYPE_BITMAP_EMBEDDING_ONLY)) == 0;
+}
+
+Optional<ByteString> GenerateType42SfntData(
+    const ByteString& psname,
+    pdfium::span<const uint8_t> font_data) {
+  if (font_data.empty())
+    return pdfium::nullopt;
+
+  // Per Type 42 font spec.
+  constexpr size_t kMaxSfntStringSize = 65535;
+  if (font_data.size() > kMaxSfntStringSize) {
+    // TODO(thestig): Fonts that are too big need to be written out in sections.
+    return pdfium::nullopt;
+  }
+
+  // Each byte is written as 2 ASCIIHex characters, so really 64 chars per line.
+  constexpr size_t kMaxBytesPerLine = 32;
+  std::ostringstream output;
+  output << "/" << psname << "_sfnts [\n<\n";
+  size_t bytes_per_line = 0;
+  char buf[2];
+  for (uint8_t datum : font_data) {
+    FXSYS_IntToTwoHexChars(datum, buf);
+    output << buf[0];
+    output << buf[1];
+    bytes_per_line++;
+    if (bytes_per_line == kMaxBytesPerLine) {
+      output << "\n";
+      bytes_per_line = 0;
+    }
+  }
+
+  // Pad with ASCIIHex NUL character per Type 42 font spec if needed.
+  if (!FX_IsOdd(font_data.size()))
+    output << "00";
+
+  output << "\n>\n] def\n";
+  return ByteString(output);
+}
+
+// The value to use with GenerateType42FontDictionary() below, and the max
+// number of entries supported for non-CID fonts.
+// Also used to avoid buggy fonts by writing out at least this many entries,
+// per note in Poppler's Type 42 generation code.
+constexpr size_t kGlyphsPerDescendantFont = 256;
+
+ByteString GenerateType42FontDictionary(const ByteString& psname,
+                                        const FX_RECT& bbox,
+                                        size_t num_glyphs,
+                                        size_t glyphs_per_descendant_font) {
+  DCHECK_LE(glyphs_per_descendant_font, kGlyphsPerDescendantFont);
+  CHECK_GT(glyphs_per_descendant_font, 0u);
+
+  const size_t descendant_font_count =
+      (num_glyphs + glyphs_per_descendant_font - 1) /
+      glyphs_per_descendant_font;
+
+  std::ostringstream output;
+  for (size_t i = 0; i < descendant_font_count; ++i) {
+    output << "8 dict begin\n";
+    output << "/FontType 42 def\n";
+    output << "/FontMatrix [1 0 0 1 0 0] def\n";
+    output << "/FontName /" << psname << "_" << i << " def\n";
+
+    output << "/Encoding " << glyphs_per_descendant_font << " array\n";
+    for (size_t j = 0, pos = i * glyphs_per_descendant_font;
+         j < glyphs_per_descendant_font; ++j, ++pos) {
+      if (pos >= num_glyphs)
+        break;
+
+      output << ByteString::Format("dup %d /c%02x put\n", j, j);
+    }
+    output << "readonly def\n";
+
+    // Note: `bbox` is LTRB, while /FontBBox is LBRT. Writing it out as LTRB
+    // gets the correct values.
+    output << "/FontBBox [" << bbox.left << " " << bbox.top << " " << bbox.right
+           << " " << bbox.bottom << "] def\n";
+
+    output << "/PaintType 0 def\n";
+
+    output << "/CharStrings " << glyphs_per_descendant_font + 1
+           << " dict dup begin\n";
+    output << "/.notdef 0 def\n";
+    for (size_t j = 0, pos = i * glyphs_per_descendant_font;
+         j < glyphs_per_descendant_font; ++j, ++pos) {
+      if (pos >= num_glyphs)
+        break;
+
+      output << ByteString::Format("/c%02x %d def\n", j, pos);
+    }
+    output << "end readonly def\n";
+
+    output << "/sfnts " << psname << "_sfnts def\n";
+    output << "FontName currentdict end definefont pop\n";
+  }
+
+  output << "6 dict begin\n";
+  output << "/FontName /" << psname << " def\n";
+  output << "/FontType 0 def\n";
+  output << "/FontMatrix [1 0 0 1 0 0] def\n";
+  output << "/FMapType 2 def\n";
+
+  output << "/Encoding [\n";
+  for (size_t i = 0; i < descendant_font_count; ++i)
+    output << i << "\n";
+  output << "] def\n";
+
+  output << "/FDepVector [\n";
+  for (size_t i = 0; i < descendant_font_count; ++i)
+    output << "/" << psname << "_" << i << " findfont\n";
+  output << "] def\n";
+
+  output << "FontName currentdict end definefont pop\n";
+  output << "%%EndResource\n";
+
+  return ByteString(output);
+}
+
+ByteString GenerateType42FontData(const CFX_Font* font) {
+  const FXFT_FaceRec* font_face_rec = font->GetFaceRec();
+  if (!font_face_rec)
+    return ByteString();
+
+  const ByteString psname = font->GetPsName();
+  DCHECK(!psname.IsEmpty());
+
+  Optional<ByteString> sfnt_data =
+      GenerateType42SfntData(psname, font->GetFontSpan());
+  if (!sfnt_data.has_value())
+    return ByteString();
+
+  ByteString output = "%%BeginResource: font ";
+  output += psname;
+  output += "\n";
+  output += sfnt_data.value();
+  output += GenerateType42FontDictionary(psname, font->GetRawBBox().value(),
+                                         font_face_rec->num_glyphs,
+                                         kGlyphsPerDescendantFont);
+  return output;
 }
 
 }  // namespace
@@ -615,17 +756,23 @@ bool CFX_PSRenderer::DrawTextAsType42Font(int char_count,
 
   bool is_existing_font = m_pFontTracker->SeenFontObject(font);
   if (!is_existing_font) {
-    // TODO(thestig): Generate font here.
-    bool generated_font = false;
-    if (!generated_font)
+    ByteString font_data = GenerateType42FontData(font);
+    if (font_data.IsEmpty())
       return false;
 
     m_pFontTracker->AddFontObject(font);
-    // TODO(thestig): Write out font here.
+    WritePreambleString(font_data.AsStringView());
   }
 
-  // TODO(thestig): Write out text here.
-  return false;
+  buf << "/" << font->GetPsName() << " " << font_size << " selectfont\n";
+  for (int i = 0; i < char_count; ++i) {
+    buf << char_pos[i].m_Origin.x << " " << char_pos[i].m_Origin.y << " m";
+    uint8_t hi = char_pos[i].m_GlyphIndex / 256;
+    uint8_t lo = char_pos[i].m_GlyphIndex % 256;
+    ByteString hex = ByteString::Format("<%02X%02X>", hi, lo);
+    buf << hex.AsStringView() << "Tj\n";
+  }
+  return true;
 }
 
 bool CFX_PSRenderer::DrawText(int nChars,
@@ -743,4 +890,21 @@ void CFX_PSRenderer::WriteStream(std::ostringstream& stream) {
 
 void CFX_PSRenderer::WriteString(ByteStringView str) {
   m_Output << str;
+}
+
+// static
+Optional<ByteString> CFX_PSRenderer::GenerateType42SfntDataForTesting(
+    const ByteString& psname,
+    pdfium::span<const uint8_t> font_data) {
+  return GenerateType42SfntData(psname, font_data);
+}
+
+// static
+ByteString CFX_PSRenderer::GenerateType42FontDictionaryForTesting(
+    const ByteString& psname,
+    const FX_RECT& bbox,
+    size_t num_glyphs,
+    size_t glyphs_per_descendant_font) {
+  return GenerateType42FontDictionary(psname, bbox, num_glyphs,
+                                      glyphs_per_descendant_font);
 }

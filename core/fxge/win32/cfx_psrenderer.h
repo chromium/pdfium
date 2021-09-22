@@ -111,6 +111,16 @@ class CFX_PSRenderer {
                 float font_size,
                 uint32_t color);
 
+  static Optional<ByteString> GenerateType42SfntDataForTesting(
+      const ByteString& psname,
+      pdfium::span<const uint8_t> font_data);
+
+  static ByteString GenerateType42FontDictionaryForTesting(
+      const ByteString& psname,
+      const FX_RECT& bbox,
+      size_t num_glyphs,
+      size_t glyphs_per_descendant_font);
+
  private:
   struct Glyph;
 

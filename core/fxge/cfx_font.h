@@ -117,7 +117,13 @@ class CFX_Font {
   ByteString GetFaceName() const;
   ByteString GetBaseFontName() const;
   bool IsTTFont() const;
-  Optional<FX_RECT> GetBBox();
+
+  // Raw bounding box.
+  Optional<FX_RECT> GetRawBBox() const;
+
+  // Bounding box adjusted for font units.
+  Optional<FX_RECT> GetBBox() const;
+
   bool IsEmbedded() const { return m_bEmbedded; }
   uint8_t* GetSubData() const { return m_pGsubData.get(); }
   void SetSubData(uint8_t* data) { m_pGsubData.reset(data); }

@@ -225,6 +225,10 @@ pdfium_unittest_source_set("unittests") {
     "../fpdfapi/parser",
   ]
   pdfium_root_dir = "../../"
+
+  if (is_win) {
+    sources += [ "win32/cfx_psrenderer_unittest.cpp" ]
+  }
 }
 
 pdfium_embeddertest_source_set("embeddertests") {

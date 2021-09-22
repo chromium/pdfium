@@ -570,20 +570,28 @@ ByteString CFX_Font::GetBaseFontName() const {
   return ByteString();
 }
 
-Optional<FX_RECT> CFX_Font::GetBBox() {
+Optional<FX_RECT> CFX_Font::GetRawBBox() const {
   if (!m_Face)
     return pdfium::nullopt;
 
-  FX_RECT result(FXFT_Get_Face_xMin(m_Face->GetRec()),
+  return FX_RECT(FXFT_Get_Face_xMin(m_Face->GetRec()),
                  FXFT_Get_Face_yMin(m_Face->GetRec()),
                  FXFT_Get_Face_xMax(m_Face->GetRec()),
                  FXFT_Get_Face_yMax(m_Face->GetRec()));
+}
+
+Optional<FX_RECT> CFX_Font::GetBBox() const {
+  Optional<FX_RECT> result = GetRawBBox();
+  if (!result.has_value())
+    return result;
+
   int em = FXFT_Get_Face_UnitsPerEM(m_Face->GetRec());
   if (em != 0) {
-    result.left = (result.left * 1000) / em;
-    result.top = (result.top * 1000) / em;
-    result.right = (result.right * 1000) / em;
-    result.bottom = (result.bottom * 1000) / em;
+    FX_RECT& bbox = result.value();
+    bbox.left = (bbox.left * 1000) / em;
+    bbox.top = (bbox.top * 1000) / em;
+    bbox.right = (bbox.right * 1000) / em;
+    bbox.bottom = (bbox.bottom * 1000) / em;
   }
   return result;
 }
