@@ -41,13 +41,14 @@ bool CFFL_CheckBox::OnKeyDown(FWL_VKEYCODE nKeyCode,
       return CFFL_FormField::OnKeyDown(nKeyCode, nFlags);
   }
 }
-bool CFFL_CheckBox::OnChar(CPDFSDK_Annot* pAnnot,
+
+bool CFFL_CheckBox::OnChar(CPDFSDK_Widget* pWidget,
                            uint32_t nChar,
                            Mask<FWL_EVENTFLAG> nFlags) {
   switch (nChar) {
     case pdfium::ascii::kReturn:
     case pdfium::ascii::kSpace: {
-      CPDFSDK_PageView* pPageView = pAnnot->GetPageView();
+      CPDFSDK_PageView* pPageView = pWidget->GetPageView();
       DCHECK(pPageView);
 
       ObservedPtr<CPDFSDK_Annot> pObserved(m_pWidget.Get());
@@ -61,35 +62,31 @@ bool CFFL_CheckBox::OnChar(CPDFSDK_Annot* pAnnot,
         return true;
       }
 
-      CFFL_FormField::OnChar(pAnnot, nChar, nFlags);
+      CFFL_FormField::OnChar(pWidget, nChar, nFlags);
 
       CPWL_CheckBox* pWnd = CreateOrUpdatePWLCheckBox(pPageView);
-      if (pWnd && !pWnd->IsReadOnly()) {
-        CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
+      if (pWnd && !pWnd->IsReadOnly())
         pWnd->SetCheck(!pWidget->IsChecked());
-      }
 
       return CommitData(pPageView, nFlags);
     }
     default:
-      return CFFL_FormField::OnChar(pAnnot, nChar, nFlags);
+      return CFFL_FormField::OnChar(pWidget, nChar, nFlags);
   }
 }
 
 bool CFFL_CheckBox::OnLButtonUp(CPDFSDK_PageView* pPageView,
-                                CPDFSDK_Annot* pAnnot,
+                                CPDFSDK_Widget* pWidget,
                                 Mask<FWL_EVENTFLAG> nFlags,
                                 const CFX_PointF& point) {
-  CFFL_Button::OnLButtonUp(pPageView, pAnnot, nFlags, point);
+  CFFL_Button::OnLButtonUp(pPageView, pWidget, nFlags, point);
 
   if (!IsValid())
     return true;
 
   CPWL_CheckBox* pWnd = CreateOrUpdatePWLCheckBox(pPageView);
-  if (pWnd) {
-    CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
+  if (pWnd)
     pWnd->SetCheck(!pWidget->IsChecked());
-  }
 
   return CommitData(pPageView, nFlags);
 }

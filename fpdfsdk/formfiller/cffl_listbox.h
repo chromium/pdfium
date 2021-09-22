@@ -27,7 +27,7 @@ class CFFL_ListBox final : public CFFL_TextObject {
       const CPWL_Wnd::CreateParams& cp,
       std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData)
       override;
-  bool OnChar(CPDFSDK_Annot* pAnnot,
+  bool OnChar(CPDFSDK_Widget* pWidget,
               uint32_t nChar,
               Mask<FWL_EVENTFLAG> nFlags) override;
   bool IsDataChanged(const CPDFSDK_PageView* pPageView) override;

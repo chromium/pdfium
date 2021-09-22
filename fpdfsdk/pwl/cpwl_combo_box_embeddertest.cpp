@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_annotiterator.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
+#include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cffl_formfield.h"
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 #include "fpdfsdk/pwl/cpwl_combo_box.h"
@@ -37,14 +37,12 @@ class CPWLComboBoxEditEmbedderTest : public EmbedderTest {
                                {CPDF_Annot::Subtype::WIDGET});
 
     // User editable combobox.
-    m_pAnnotEditable = iter.GetFirstAnnot();
+    m_pAnnotEditable = ToCPDFSDKWidget(iter.GetFirstAnnot());
     ASSERT_TRUE(m_pAnnotEditable);
-    ASSERT_EQ(CPDF_Annot::Subtype::WIDGET, m_pAnnotEditable->GetAnnotSubtype());
 
     // Normal combobox with pre-selected value.
-    m_pAnnotNormal = iter.GetNextAnnot(m_pAnnotEditable);
+    m_pAnnotNormal = ToCPDFSDKWidget(iter.GetNextAnnot(m_pAnnotEditable));
     ASSERT_TRUE(m_pAnnotNormal);
-    ASSERT_EQ(CPDF_Annot::Subtype::WIDGET, m_pAnnotNormal->GetAnnotSubtype());
 
     // Read-only combobox.
     CPDFSDK_Annot* pAnnotReadOnly = iter.GetNextAnnot(m_pAnnotNormal);
@@ -81,8 +79,8 @@ class CPWLComboBoxEditEmbedderTest : public EmbedderTest {
   FPDF_PAGE GetPage() const { return m_page; }
   CPWL_ComboBox* GetCPWLComboBox() const { return m_pComboBox; }
   CFFL_FormField* GetCFFLFormFiller() const { return m_pFormFiller; }
-  CPDFSDK_Annot* GetCPDFSDKAnnotNormal() const { return m_pAnnotNormal; }
-  CPDFSDK_Annot* GetCPDFSDKAnnotUserEditable() const {
+  CPDFSDK_Widget* GetCPDFSDKAnnotNormal() const { return m_pAnnotNormal; }
+  CPDFSDK_Widget* GetCPDFSDKAnnotUserEditable() const {
     return m_pAnnotEditable;
   }
   CPDFSDK_FormFillEnvironment* GetCPDFSDKFormFillEnv() const {
@@ -93,8 +91,8 @@ class CPWLComboBoxEditEmbedderTest : public EmbedderTest {
   FPDF_PAGE m_page;
   CPWL_ComboBox* m_pComboBox;
   CFFL_FormField* m_pFormFiller;
-  CPDFSDK_Annot* m_pAnnotNormal;
-  CPDFSDK_Annot* m_pAnnotEditable;
+  CPDFSDK_Widget* m_pAnnotNormal;
+  CPDFSDK_Widget* m_pAnnotEditable;
   CPDFSDK_FormFillEnvironment* m_pFormFillEnv;
 };
 

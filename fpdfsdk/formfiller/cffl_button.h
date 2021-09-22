@@ -12,7 +12,6 @@
 
 class CFX_RenderDevice;
 class CFX_Matrix;
-class CPDFSDK_Annot;
 class CPDFSDK_PageView;
 class CPDFSDK_Widget;
 
@@ -25,22 +24,22 @@ class CFFL_Button : public CFFL_FormField {
   void OnMouseEnter(CPDFSDK_PageView* pPageView) override;
   void OnMouseExit(CPDFSDK_PageView* pPageView) override;
   bool OnLButtonDown(CPDFSDK_PageView* pPageView,
-                     CPDFSDK_Annot* pAnnot,
+                     CPDFSDK_Widget* pWidget,
                      Mask<FWL_EVENTFLAG> nFlags,
                      const CFX_PointF& point) override;
   bool OnLButtonUp(CPDFSDK_PageView* pPageView,
-                   CPDFSDK_Annot* pAnnot,
+                   CPDFSDK_Widget* pWidget,
                    Mask<FWL_EVENTFLAG> nFlags,
                    const CFX_PointF& point) override;
   bool OnMouseMove(CPDFSDK_PageView* pPageView,
                    Mask<FWL_EVENTFLAG> nFlags,
                    const CFX_PointF& point) override;
   void OnDraw(CPDFSDK_PageView* pPageView,
-              CPDFSDK_Annot* pAnnot,
+              CPDFSDK_Widget* pWidget,
               CFX_RenderDevice* pDevice,
               const CFX_Matrix& mtUser2Device) override;
   void OnDrawDeactive(CPDFSDK_PageView* pPageView,
-                      CPDFSDK_Annot* pAnnot,
+                      CPDFSDK_Widget* pWidget,
                       CFX_RenderDevice* pDevice,
                       const CFX_Matrix& mtUser2Device) override;
 

@@ -42,13 +42,13 @@ bool CFFL_RadioButton::OnKeyDown(FWL_VKEYCODE nKeyCode,
   }
 }
 
-bool CFFL_RadioButton::OnChar(CPDFSDK_Annot* pAnnot,
+bool CFFL_RadioButton::OnChar(CPDFSDK_Widget* pWidget,
                               uint32_t nChar,
                               Mask<FWL_EVENTFLAG> nFlags) {
   switch (nChar) {
     case pdfium::ascii::kReturn:
     case pdfium::ascii::kSpace: {
-      CPDFSDK_PageView* pPageView = pAnnot->GetPageView();
+      CPDFSDK_PageView* pPageView = pWidget->GetPageView();
       DCHECK(pPageView);
 
       ObservedPtr<CPDFSDK_Annot> pObserved(m_pWidget.Get());
@@ -57,22 +57,22 @@ bool CFFL_RadioButton::OnChar(CPDFSDK_Annot* pAnnot,
         return true;
       }
 
-      CFFL_FormField::OnChar(pAnnot, nChar, nFlags);
+      CFFL_FormField::OnChar(pWidget, nChar, nFlags);
       CPWL_RadioButton* pWnd = CreateOrUpdatePWLRadioButton(pPageView);
       if (pWnd && !pWnd->IsReadOnly())
         pWnd->SetCheck(true);
       return CommitData(pPageView, nFlags);
     }
     default:
-      return CFFL_FormField::OnChar(pAnnot, nChar, nFlags);
+      return CFFL_FormField::OnChar(pWidget, nChar, nFlags);
   }
 }
 
 bool CFFL_RadioButton::OnLButtonUp(CPDFSDK_PageView* pPageView,
-                                   CPDFSDK_Annot* pAnnot,
+                                   CPDFSDK_Widget* pWidget,
                                    Mask<FWL_EVENTFLAG> nFlags,
                                    const CFX_PointF& point) {
-  CFFL_Button::OnLButtonUp(pPageView, pAnnot, nFlags, point);
+  CFFL_Button::OnLButtonUp(pPageView, pWidget, nFlags, point);
 
   if (!IsValid())
     return true;

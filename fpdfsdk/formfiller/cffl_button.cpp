@@ -7,6 +7,7 @@
 #include "fpdfsdk/formfiller/cffl_button.h"
 
 #include "core/fpdfdoc/cpdf_formcontrol.h"
+#include "fpdfsdk/cpdfsdk_widget.h"
 #include "third_party/base/check.h"
 
 CFFL_Button::CFFL_Button(CFFL_InteractiveFormFiller* pFormFiller,
@@ -28,10 +29,10 @@ void CFFL_Button::OnMouseExit(CPDFSDK_PageView* pPageView) {
 }
 
 bool CFFL_Button::OnLButtonDown(CPDFSDK_PageView* pPageView,
-                                CPDFSDK_Annot* pAnnot,
+                                CPDFSDK_Widget* pWidget,
                                 Mask<FWL_EVENTFLAG> nFlags,
                                 const CFX_PointF& point) {
-  if (!pAnnot->GetRect().Contains(point))
+  if (!pWidget->GetRect().Contains(point))
     return false;
 
   m_bMouseDown = true;
@@ -41,10 +42,10 @@ bool CFFL_Button::OnLButtonDown(CPDFSDK_PageView* pPageView,
 }
 
 bool CFFL_Button::OnLButtonUp(CPDFSDK_PageView* pPageView,
-                              CPDFSDK_Annot* pAnnot,
+                              CPDFSDK_Widget* pWidget,
                               Mask<FWL_EVENTFLAG> nFlags,
                               const CFX_PointF& point) {
-  if (!pAnnot->GetRect().Contains(point))
+  if (!pWidget->GetRect().Contains(point))
     return false;
 
   m_bMouseDown = false;
@@ -59,11 +60,10 @@ bool CFFL_Button::OnMouseMove(CPDFSDK_PageView* pPageView,
 }
 
 void CFFL_Button::OnDraw(CPDFSDK_PageView* pPageView,
-                         CPDFSDK_Annot* pAnnot,
+                         CPDFSDK_Widget* pWidget,
                          CFX_RenderDevice* pDevice,
                          const CFX_Matrix& mtUser2Device) {
   DCHECK(pPageView);
-  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
   CPDF_FormControl* pCtrl = pWidget->GetFormControl();
   if (pCtrl->GetHighlightingMode() != CPDF_FormControl::kPush) {
     pWidget->DrawAppearance(pDevice, mtUser2Device,
@@ -97,8 +97,8 @@ void CFFL_Button::OnDraw(CPDFSDK_PageView* pPageView,
 }
 
 void CFFL_Button::OnDrawDeactive(CPDFSDK_PageView* pPageView,
-                                 CPDFSDK_Annot* pAnnot,
+                                 CPDFSDK_Widget* pWidget,
                                  CFX_RenderDevice* pDevice,
                                  const CFX_Matrix& mtUser2Device) {
-  OnDraw(pPageView, pAnnot, pDevice, mtUser2Device);
+  OnDraw(pPageView, pWidget, pDevice, mtUser2Device);
 }

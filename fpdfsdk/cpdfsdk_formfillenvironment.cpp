@@ -125,7 +125,7 @@ void CPDFSDK_FormFillEnvironment::OutputSelectedRect(
   if (!pFormField)
     return;
 
-  auto* pPage = FPDFPageFromIPDFPage(pFormField->GetSDKAnnot()->GetPage());
+  auto* pPage = FPDFPageFromIPDFPage(pFormField->GetSDKWidget()->GetPage());
   DCHECK(pPage);
 
   CFX_PointF ptA = pFormField->PWLtoFFL(CFX_PointF(rect.left, rect.bottom));

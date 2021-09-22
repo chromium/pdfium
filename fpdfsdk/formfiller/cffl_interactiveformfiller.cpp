@@ -66,7 +66,7 @@ void CFFL_InteractiveFormFiller::OnDraw(CPDFSDK_PageView* pPageView,
 
   CFFL_FormField* pFormField = GetFormField(pAnnot);
   if (pFormField && pFormField->IsValid()) {
-    pFormField->OnDraw(pPageView, pAnnot, pDevice, mtUser2Device);
+    pFormField->OnDraw(pPageView, pWidget, pDevice, mtUser2Device);
     if (m_pCallbackIface->GetFocusAnnot() != pAnnot)
       return;
 
@@ -80,7 +80,7 @@ void CFFL_InteractiveFormFiller::OnDraw(CPDFSDK_PageView* pPageView,
   }
 
   if (pFormField) {
-    pFormField->OnDrawDeactive(pPageView, pAnnot, pDevice, mtUser2Device);
+    pFormField->OnDrawDeactive(pPageView, pWidget, pDevice, mtUser2Device);
   } else {
     pWidget->DrawAppearance(pDevice, mtUser2Device,
                             CPDF_Annot::AppearanceMode::kNormal, nullptr);
@@ -201,7 +201,8 @@ bool CFFL_InteractiveFormFiller::OnLButtonDown(
   }
   CFFL_FormField* pFormField = GetFormField(pAnnot->Get());
   return pFormField &&
-         pFormField->OnLButtonDown(pPageView, pAnnot->Get(), nFlags, point);
+         pFormField->OnLButtonDown(pPageView, ToCPDFSDKWidget(pAnnot->Get()),
+                                   nFlags, point);
 }
 
 bool CFFL_InteractiveFormFiller::OnLButtonUp(CPDFSDK_PageView* pPageView,
@@ -231,7 +232,8 @@ bool CFFL_InteractiveFormFiller::OnLButtonUp(CPDFSDK_PageView* pPageView,
 
   CFFL_FormField* pFormField = GetFormField(pAnnot->Get());
   bool bRet = pFormField &&
-              pFormField->OnLButtonUp(pPageView, pAnnot->Get(), nFlags, point);
+              pFormField->OnLButtonUp(pPageView, ToCPDFSDKWidget(pAnnot->Get()),
+                                      nFlags, point);
   if (m_pCallbackIface->GetFocusAnnot() != pAnnot->Get())
     return bRet;
   if (OnButtonUp(pAnnot, pPageView, nFlags) || !pAnnot)
@@ -369,7 +371,8 @@ bool CFFL_InteractiveFormFiller::OnChar(CPDFSDK_Annot* pAnnot,
     return true;
 
   CFFL_FormField* pFormField = GetFormField(pAnnot);
-  return pFormField && pFormField->OnChar(pAnnot, nChar, nFlags);
+  return pFormField &&
+         pFormField->OnChar(ToCPDFSDKWidget(pAnnot), nChar, nFlags);
 }
 
 bool CFFL_InteractiveFormFiller::OnSetFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot,
@@ -413,7 +416,7 @@ bool CFFL_InteractiveFormFiller::OnSetFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot,
   }
 
   if (CFFL_FormField* pFormField = GetOrCreateFormField(pAnnot->Get()))
-    pFormField->SetFocusForAnnot(pAnnot->Get(), nFlag);
+    pFormField->SetFocusForAnnot(ToCPDFSDKWidget(pAnnot->Get()), nFlag);
 
   return true;
 }

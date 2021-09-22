@@ -4,10 +4,10 @@
 
 #include "fpdfsdk/pwl/cpwl_edit.h"
 
-#include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_annotiterator.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
+#include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cffl_formfield.h"
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 #include "public/fpdf_fwlevent.h"
@@ -36,18 +36,15 @@ class CPWLEditEmbedderTest : public EmbedderTest {
     CPDFSDK_AnnotIterator iter(m_pFormFillEnv->GetPageViewAtIndex(0),
                                {CPDF_Annot::Subtype::WIDGET});
     // Normal text field.
-    m_pAnnot = iter.GetFirstAnnot();
+    m_pAnnot = ToCPDFSDKWidget(iter.GetFirstAnnot());
     ASSERT_TRUE(m_pAnnot);
-    ASSERT_EQ(CPDF_Annot::Subtype::WIDGET, m_pAnnot->GetAnnotSubtype());
 
     // Read-only text field.
     CPDFSDK_Annot* pAnnotReadOnly = iter.GetNextAnnot(m_pAnnot);
 
     // Pre-filled text field with char limit of 10.
-    m_pAnnotCharLimit = iter.GetNextAnnot(pAnnotReadOnly);
+    m_pAnnotCharLimit = ToCPDFSDKWidget(iter.GetNextAnnot(pAnnotReadOnly));
     ASSERT_TRUE(m_pAnnotCharLimit);
-    ASSERT_EQ(CPDF_Annot::Subtype::WIDGET,
-              m_pAnnotCharLimit->GetAnnotSubtype());
 
     // Password text field.
     CPDFSDK_Annot* password_annot = iter.GetNextAnnot(m_pAnnotCharLimit);
@@ -86,15 +83,15 @@ class CPWLEditEmbedderTest : public EmbedderTest {
   FPDF_PAGE GetPage() { return m_page; }
   CPWL_Edit* GetCPWLEdit() { return m_pEdit; }
   CFFL_FormField* GetCFFLFormFiller() { return m_pFormFiller; }
-  CPDFSDK_Annot* GetCPDFSDKAnnot() { return m_pAnnot; }
-  CPDFSDK_Annot* GetCPDFSDKAnnotCharLimit() { return m_pAnnotCharLimit; }
+  CPDFSDK_Widget* GetCPDFSDKAnnot() { return m_pAnnot; }
+  CPDFSDK_Widget* GetCPDFSDKAnnotCharLimit() { return m_pAnnotCharLimit; }
 
  private:
   FPDF_PAGE m_page;
   CPWL_Edit* m_pEdit;
   CFFL_FormField* m_pFormFiller;
-  CPDFSDK_Annot* m_pAnnot;
-  CPDFSDK_Annot* m_pAnnotCharLimit;
+  CPDFSDK_Widget* m_pAnnot;
+  CPDFSDK_Widget* m_pAnnotCharLimit;
   CPDFSDK_FormFillEnvironment* m_pFormFillEnv;
 };
 

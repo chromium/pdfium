@@ -10,17 +10,17 @@
 #include <map>
 #include <memory>
 
+#include "core/fpdfdoc/cpdf_aaction.h"
 #include "core/fxcrt/cfx_timer.h"
 #include "core/fxcrt/mask.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cffl_fieldaction.h"
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "fpdfsdk/pwl/ipwl_systemhandler.h"
 
-class CPDFSDK_Annot;
 class CPDFSDK_PageView;
+class CPDFSDK_Widget;
 
 class CFFL_FormField : public CPWL_Wnd::ProviderIface,
                        public CFX_Timer::CallbackIface {
@@ -30,11 +30,11 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
   ~CFFL_FormField() override;
 
   virtual void OnDraw(CPDFSDK_PageView* pPageView,
-                      CPDFSDK_Annot* pAnnot,
+                      CPDFSDK_Widget* pAnnot,
                       CFX_RenderDevice* pDevice,
                       const CFX_Matrix& mtUser2Device);
   virtual void OnDrawDeactive(CPDFSDK_PageView* pPageView,
-                              CPDFSDK_Annot* pAnnot,
+                              CPDFSDK_Widget* pAnnot,
                               CFX_RenderDevice* pDevice,
                               const CFX_Matrix& mtUser2Device);
 
@@ -42,11 +42,11 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
   virtual void OnMouseExit(CPDFSDK_PageView* pPageView);
 
   virtual bool OnLButtonDown(CPDFSDK_PageView* pPageView,
-                             CPDFSDK_Annot* pAnnot,
+                             CPDFSDK_Widget* pAnnot,
                              Mask<FWL_EVENTFLAG> nFlags,
                              const CFX_PointF& point);
   virtual bool OnLButtonUp(CPDFSDK_PageView* pPageView,
-                           CPDFSDK_Annot* pAnnot,
+                           CPDFSDK_Widget* pAnnot,
                            Mask<FWL_EVENTFLAG> nFlags,
                            const CFX_PointF& point);
   virtual bool OnLButtonDblClk(CPDFSDK_PageView* pPageView,
@@ -67,7 +67,7 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
                            const CFX_PointF& point);
 
   virtual bool OnKeyDown(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlags);
-  virtual bool OnChar(CPDFSDK_Annot* pAnnot,
+  virtual bool OnChar(CPDFSDK_Widget* pAnnot,
                       uint32_t nChar,
                       Mask<FWL_EVENTFLAG> nFlags);
   virtual bool SetIndexSelected(int index, bool selected);
@@ -85,7 +85,7 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
   bool Undo();
   bool Redo();
 
-  void SetFocusForAnnot(CPDFSDK_Annot* pAnnot, Mask<FWL_EVENTFLAG> nFlag);
+  void SetFocusForAnnot(CPDFSDK_Widget* pAnnot, Mask<FWL_EVENTFLAG> nFlag);
   void KillFocusForAnnot(Mask<FWL_EVENTFLAG> nFlag);
 
   // CFX_Timer::CallbackIface:
@@ -135,7 +135,7 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
   CPDFSDK_PageView* GetCurPageView();
   void SetChangeMark();
 
-  CPDFSDK_Annot* GetSDKAnnot() const { return m_pWidget.Get(); }
+  CPDFSDK_Widget* GetSDKWidget() const { return m_pWidget.Get(); }
 
  protected:
   virtual CPWL_Wnd* ResetPWLWindow(const CPDFSDK_PageView* pPageView);

@@ -8,6 +8,7 @@
 
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfdoc/cpdf_bafontmap.h"
+#include "fpdfsdk/cpdfsdk_widget.h"
 
 CFFL_TextObject::CFFL_TextObject(CFFL_InteractiveFormFiller* pFormFiller,
                                  CPDFSDK_Widget* pWidget)

@@ -105,7 +105,7 @@ std::unique_ptr<CPWL_Wnd> CFFL_TextField::NewPWLWindow(
   return std::move(pWnd);
 }
 
-bool CFFL_TextField::OnChar(CPDFSDK_Annot* pAnnot,
+bool CFFL_TextField::OnChar(CPDFSDK_Widget* pWidget,
                             uint32_t nChar,
                             Mask<FWL_EVENTFLAG> nFlags) {
   switch (nChar) {
@@ -117,7 +117,7 @@ bool CFFL_TextField::OnChar(CPDFSDK_Annot* pAnnot,
       DCHECK(pPageView);
       m_bValid = !m_bValid;
       m_pFormFiller->GetCallbackIface()->Invalidate(
-          pAnnot->GetPage(), pAnnot->GetRect().GetOuterRect());
+          pWidget->GetPage(), pWidget->GetRect().GetOuterRect());
       if (m_bValid) {
         if (CPWL_Wnd* pWnd = CreateOrUpdatePWLWindow(pPageView))
           pWnd->SetFocus();
@@ -138,7 +138,7 @@ bool CFFL_TextField::OnChar(CPDFSDK_Annot* pAnnot,
     }
   }
 
-  return CFFL_TextObject::OnChar(pAnnot, nChar, nFlags);
+  return CFFL_TextObject::OnChar(pWidget, nChar, nFlags);
 }
 
 bool CFFL_TextField::IsDataChanged(const CPDFSDK_PageView* pPageView) {
