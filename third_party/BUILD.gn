@@ -551,7 +551,6 @@ if (pdf_enable_xfa_tiff) {
       "libtiff/tif_version.c",
       "libtiff/tif_warning.c",
       "libtiff/tif_write.c",
-      "libtiff/tif_zip.c",
       "libtiff/tiffiop.h",
       "libtiff/tiffvers.h",
     ]
