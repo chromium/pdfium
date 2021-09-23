@@ -32,10 +32,10 @@ class CXFA_Measurement;
 class CXFA_Node;
 class CXFA_Object;
 
-typedef CJS_Result (*CJX_MethodCall)(
-    CJX_Object* obj,
-    CFX_V8* runtime,
-    const std::vector<v8::Local<v8::Value>>& params);
+using CJX_MethodCall =
+    CJS_Result (*)(CJX_Object* obj,
+                   CFX_V8* runtime,
+                   const std::vector<v8::Local<v8::Value>>& params);
 
 struct CJX_MethodSpec {
   const char* pName;

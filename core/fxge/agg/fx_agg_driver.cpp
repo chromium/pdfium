@@ -322,15 +322,15 @@ class CFX_Renderer {
   void render(const Scanline& sl);
 
  private:
-  typedef void (CFX_Renderer::*CompositeSpanFunc)(uint8_t*,
-                                                  int,
-                                                  int,
-                                                  int,
-                                                  uint8_t*,
-                                                  int,
-                                                  int,
-                                                  uint8_t*,
-                                                  uint8_t*);
+  using CompositeSpanFunc = void (CFX_Renderer::*)(uint8_t*,
+                                                   int,
+                                                   int,
+                                                   int,
+                                                   uint8_t*,
+                                                   int,
+                                                   int,
+                                                   uint8_t*,
+                                                   uint8_t*);
 
   void CompositeSpan(uint8_t* dest_scan,
                      uint8_t* backdrop_scan,

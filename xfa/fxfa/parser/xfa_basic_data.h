@@ -14,11 +14,11 @@
 #include "third_party/base/optional.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
-typedef void (*XFA_ATTRIBUTE_CALLBACK)(v8::Isolate* pIsolate,
-                                       CJX_Object* pNode,
-                                       v8::Local<v8::Value>* pValue,
-                                       bool bSetting,
-                                       XFA_Attribute eAttribute);
+using XFA_ATTRIBUTE_CALLBACK = void (*)(v8::Isolate* pIsolate,
+                                        CJX_Object* pNode,
+                                        v8::Local<v8::Value>* pValue,
+                                        bool bSetting,
+                                        XFA_Attribute eAttribute);
 
 enum class XFA_PacketMatch : uint8_t {
   kCompleteMatch = 1,

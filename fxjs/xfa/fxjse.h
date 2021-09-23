@@ -50,24 +50,24 @@ class CFXJSE_HostObject {
   CFXJSE_HostObject();
 };
 
-typedef CJS_Result (*FXJSE_MethodCallback)(
-    const v8::FunctionCallbackInfo<v8::Value>& info,
-    const WideString& functionName);
-typedef void (*FXJSE_FuncCallback)(
-    CFXJSE_HostObject* pThis,
-    const v8::FunctionCallbackInfo<v8::Value>& info);
-typedef v8::Local<v8::Value> (*FXJSE_PropGetter)(v8::Isolate* pIsolate,
-                                                 v8::Local<v8::Object> pObject,
-                                                 ByteStringView szPropName);
-typedef void (*FXJSE_PropSetter)(v8::Isolate* pIsolate,
-                                 v8::Local<v8::Object> pObject,
-                                 ByteStringView szPropName,
-                                 v8::Local<v8::Value> pValue);
-typedef FXJSE_ClassPropType (*FXJSE_PropTypeGetter)(
-    v8::Isolate* pIsolate,
-    v8::Local<v8::Object> pObject,
-    ByteStringView szPropName,
-    bool bQueryIn);
+using FXJSE_MethodCallback =
+    CJS_Result (*)(const v8::FunctionCallbackInfo<v8::Value>& info,
+                   const WideString& functionName);
+using FXJSE_FuncCallback =
+    void (*)(CFXJSE_HostObject* pThis,
+             const v8::FunctionCallbackInfo<v8::Value>& info);
+using FXJSE_PropGetter = v8::Local<v8::Value> (*)(v8::Isolate* pIsolate,
+                                                  v8::Local<v8::Object> pObject,
+                                                  ByteStringView szPropName);
+using FXJSE_PropSetter = void (*)(v8::Isolate* pIsolate,
+                                  v8::Local<v8::Object> pObject,
+                                  ByteStringView szPropName,
+                                  v8::Local<v8::Value> pValue);
+using FXJSE_PropTypeGetter =
+    FXJSE_ClassPropType (*)(v8::Isolate* pIsolate,
+                            v8::Local<v8::Object> pObject,
+                            ByteStringView szPropName,
+                            bool bQueryIn);
 
 struct FXJSE_FUNCTION_DESCRIPTOR {
   const char* tag;  // `pdfium::fxjse::kFuncTag` always.
