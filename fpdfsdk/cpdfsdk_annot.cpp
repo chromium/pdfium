@@ -40,10 +40,6 @@ CPDF_Annot* CPDFSDK_Annot::GetPDFAnnot() const {
   return nullptr;
 }
 
-bool CPDFSDK_Annot::IsSignatureWidget() const {
-  return false;
-}
-
 IPDF_Page* CPDFSDK_Annot::GetPage() {
 #ifdef PDF_ENABLE_XFA
   IPDF_Page* pXFAPage = GetXFAPage();

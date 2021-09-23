@@ -50,13 +50,13 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
   ~CPDFSDK_Widget() override;
 
   // CPDFSDK_BAAnnot:
-  bool IsSignatureWidget() const override;
   CPDF_Action GetAAction(CPDF_AAction::AActionType eAAT) override;
   bool IsAppearanceValid() override;
 
   // CPDFSDK_Annot:
   int GetLayoutOrder() const override;
 
+  bool IsSignatureWidget() const;
   void SetRect(const CFX_FloatRect& rect);
   FormFieldType GetFieldType() const;
   int GetFieldFlags() const;

@@ -12,6 +12,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
+#include "fpdfsdk/cpdfsdk_widget.h"
 #include "third_party/base/containers/contains.h"
 
 namespace {
@@ -69,9 +70,10 @@ CPDFSDK_Annot* CPDFSDK_AnnotIterator::GetPrevAnnot(CPDFSDK_Annot* pAnnot) {
 void CPDFSDK_AnnotIterator::CollectAnnots(
     std::vector<UnownedPtr<CPDFSDK_Annot>>* pArray) {
   for (auto* pAnnot : m_pPageView->GetAnnotList()) {
-    if (pdfium::Contains(m_subtypes, pAnnot->GetAnnotSubtype()) &&
-        !pAnnot->IsSignatureWidget()) {
-      pArray->emplace_back(pAnnot);
+    if (pdfium::Contains(m_subtypes, pAnnot->GetAnnotSubtype())) {
+      CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
+      if (!pWidget || !pWidget->IsSignatureWidget())
+        pArray->emplace_back(pAnnot);
     }
   }
 }

@@ -27,7 +27,6 @@ class CPDFSDK_Annot : public Observable {
 
   virtual int GetLayoutOrder() const;
   virtual CPDF_Annot* GetPDFAnnot() const;
-  virtual bool IsSignatureWidget() const;
   virtual CPDF_Annot::Subtype GetAnnotSubtype() const = 0;
   virtual CFX_FloatRect GetRect() const = 0;
 
