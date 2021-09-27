@@ -71,9 +71,9 @@ std::unique_ptr<CPDFSDK_Annot> CPDFSDK_WidgetHandler::NewAnnot(
 void CPDFSDK_WidgetHandler::ReleaseAnnot(
     std::unique_ptr<CPDFSDK_Annot> pAnnot) {
   DCHECK(pAnnot);
-  GetFormFillEnvironment()->GetInteractiveFormFiller()->OnDelete(pAnnot.get());
-
   std::unique_ptr<CPDFSDK_Widget> pWidget(ToCPDFSDKWidget(pAnnot.release()));
+  GetFormFillEnvironment()->GetInteractiveFormFiller()->OnDelete(pWidget.get());
+
   CPDFSDK_InteractiveForm* pForm = pWidget->GetInteractiveForm();
   CPDF_FormControl* pControl = pWidget->GetFormControl();
   pForm->RemoveMap(pControl);
@@ -95,84 +95,84 @@ void CPDFSDK_WidgetHandler::OnDraw(CPDFSDK_Annot* pAnnot,
 
 void CPDFSDK_WidgetHandler::OnMouseEnter(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                          Mask<FWL_EVENTFLAG> nFlag) {
-  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot.Get());
+  ObservedPtr<CPDFSDK_Widget> pWidget(ToCPDFSDKWidget(pAnnot.Get()));
   if (!pWidget->IsSignatureWidget()) {
     GetFormFillEnvironment()->GetInteractiveFormFiller()->OnMouseEnter(
-        pAnnot->GetPageView(), pAnnot, nFlag);
+        pWidget->GetPageView(), pWidget, nFlag);
   }
 }
 
 void CPDFSDK_WidgetHandler::OnMouseExit(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                         Mask<FWL_EVENTFLAG> nFlag) {
-  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot.Get());
+  ObservedPtr<CPDFSDK_Widget> pWidget(ToCPDFSDKWidget(pAnnot.Get()));
   if (!pWidget->IsSignatureWidget()) {
     GetFormFillEnvironment()->GetInteractiveFormFiller()->OnMouseExit(
-        pAnnot->GetPageView(), pAnnot, nFlag);
+        pWidget->GetPageView(), pWidget, nFlag);
   }
 }
 
 bool CPDFSDK_WidgetHandler::OnLButtonDown(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                           Mask<FWL_EVENTFLAG> nFlags,
                                           const CFX_PointF& point) {
-  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot.Get());
+  ObservedPtr<CPDFSDK_Widget> pWidget(ToCPDFSDKWidget(pAnnot.Get()));
   return !pWidget->IsSignatureWidget() &&
          GetFormFillEnvironment()->GetInteractiveFormFiller()->OnLButtonDown(
-             pAnnot->GetPageView(), pAnnot, nFlags, point);
+             pWidget->GetPageView(), pWidget, nFlags, point);
 }
 
 bool CPDFSDK_WidgetHandler::OnLButtonUp(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                         Mask<FWL_EVENTFLAG> nFlags,
                                         const CFX_PointF& point) {
-  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot.Get());
+  ObservedPtr<CPDFSDK_Widget> pWidget(ToCPDFSDKWidget(pAnnot.Get()));
   return !pWidget->IsSignatureWidget() &&
          GetFormFillEnvironment()->GetInteractiveFormFiller()->OnLButtonUp(
-             pAnnot->GetPageView(), pAnnot, nFlags, point);
+             pWidget->GetPageView(), pWidget, nFlags, point);
 }
 
 bool CPDFSDK_WidgetHandler::OnLButtonDblClk(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                             Mask<FWL_EVENTFLAG> nFlags,
                                             const CFX_PointF& point) {
-  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot.Get());
+  ObservedPtr<CPDFSDK_Widget> pWidget(ToCPDFSDKWidget(pAnnot.Get()));
   return !pWidget->IsSignatureWidget() &&
          GetFormFillEnvironment()->GetInteractiveFormFiller()->OnLButtonDblClk(
-             pAnnot->GetPageView(), pAnnot, nFlags, point);
+             pWidget->GetPageView(), pWidget, nFlags, point);
 }
 
 bool CPDFSDK_WidgetHandler::OnMouseMove(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                         Mask<FWL_EVENTFLAG> nFlags,
                                         const CFX_PointF& point) {
-  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot.Get());
+  ObservedPtr<CPDFSDK_Widget> pWidget(ToCPDFSDKWidget(pAnnot.Get()));
   return !pWidget->IsSignatureWidget() &&
          GetFormFillEnvironment()->GetInteractiveFormFiller()->OnMouseMove(
-             pAnnot->GetPageView(), pAnnot, nFlags, point);
+             pWidget->GetPageView(), pWidget, nFlags, point);
 }
 
 bool CPDFSDK_WidgetHandler::OnMouseWheel(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                          Mask<FWL_EVENTFLAG> nFlags,
                                          const CFX_PointF& point,
                                          const CFX_Vector& delta) {
-  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot.Get());
+  ObservedPtr<CPDFSDK_Widget> pWidget(ToCPDFSDKWidget(pAnnot.Get()));
   return !pWidget->IsSignatureWidget() &&
          GetFormFillEnvironment()->GetInteractiveFormFiller()->OnMouseWheel(
-             pAnnot->GetPageView(), pAnnot, nFlags, point, delta);
+             pWidget->GetPageView(), pWidget, nFlags, point, delta);
 }
 
 bool CPDFSDK_WidgetHandler::OnRButtonDown(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                           Mask<FWL_EVENTFLAG> nFlags,
                                           const CFX_PointF& point) {
-  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot.Get());
+  ObservedPtr<CPDFSDK_Widget> pWidget(ToCPDFSDKWidget(pAnnot.Get()));
   return !pWidget->IsSignatureWidget() &&
          GetFormFillEnvironment()->GetInteractiveFormFiller()->OnRButtonDown(
-             pAnnot->GetPageView(), pAnnot, nFlags, point);
+             pWidget->GetPageView(), pWidget, nFlags, point);
 }
 
 bool CPDFSDK_WidgetHandler::OnRButtonUp(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                         Mask<FWL_EVENTFLAG> nFlags,
                                         const CFX_PointF& point) {
-  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot.Get());
+  ObservedPtr<CPDFSDK_Widget> pWidget(ToCPDFSDKWidget(pAnnot.Get()));
   return !pWidget->IsSignatureWidget() &&
          GetFormFillEnvironment()->GetInteractiveFormFiller()->OnRButtonUp(
-             pAnnot->GetPageView(), pAnnot, nFlags, point);
+             pWidget->GetPageView(), pWidget, nFlags, point);
 }
 
 bool CPDFSDK_WidgetHandler::OnRButtonDblClk(ObservedPtr<CPDFSDK_Annot>& pAnnot,
@@ -187,7 +187,7 @@ bool CPDFSDK_WidgetHandler::OnChar(CPDFSDK_Annot* pAnnot,
   CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
   return !pWidget->IsSignatureWidget() &&
          GetFormFillEnvironment()->GetInteractiveFormFiller()->OnChar(
-             pAnnot, nChar, nFlags);
+             pWidget, nChar, nFlags);
 }
 
 bool CPDFSDK_WidgetHandler::OnKeyDown(CPDFSDK_Annot* pAnnot,
@@ -196,7 +196,7 @@ bool CPDFSDK_WidgetHandler::OnKeyDown(CPDFSDK_Annot* pAnnot,
   CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
   return !pWidget->IsSignatureWidget() &&
          GetFormFillEnvironment()->GetInteractiveFormFiller()->OnKeyDown(
-             pAnnot, nKeyCode, nFlag);
+             pWidget, nKeyCode, nFlag);
 }
 
 bool CPDFSDK_WidgetHandler::OnKeyUp(CPDFSDK_Annot* pAnnot,
@@ -239,10 +239,10 @@ bool CPDFSDK_WidgetHandler::OnSetFocus(ObservedPtr<CPDFSDK_Annot>& pAnnot,
   if (!IsFocusableAnnot(pAnnot->GetPDFAnnot()->GetSubtype()))
     return false;
 
-  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot.Get());
+  ObservedPtr<CPDFSDK_Widget> pWidget(ToCPDFSDKWidget(pAnnot.Get()));
   return pWidget->IsSignatureWidget() ||
          GetFormFillEnvironment()->GetInteractiveFormFiller()->OnSetFocus(
-             pAnnot, nFlag);
+             pWidget, nFlag);
 }
 
 bool CPDFSDK_WidgetHandler::OnKillFocus(ObservedPtr<CPDFSDK_Annot>& pAnnot,
@@ -250,27 +250,27 @@ bool CPDFSDK_WidgetHandler::OnKillFocus(ObservedPtr<CPDFSDK_Annot>& pAnnot,
   if (!IsFocusableAnnot(pAnnot->GetPDFAnnot()->GetSubtype()))
     return false;
 
-  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot.Get());
+  ObservedPtr<CPDFSDK_Widget> pWidget(ToCPDFSDKWidget(pAnnot.Get()));
   return pWidget->IsSignatureWidget() ||
          GetFormFillEnvironment()->GetInteractiveFormFiller()->OnKillFocus(
-             pAnnot, nFlag);
+             pWidget, nFlag);
 }
 
 bool CPDFSDK_WidgetHandler::SetIndexSelected(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                              int index,
                                              bool selected) {
-  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot.Get());
+  ObservedPtr<CPDFSDK_Widget> pWidget(ToCPDFSDKWidget(pAnnot.Get()));
   return !pWidget->IsSignatureWidget() &&
          GetFormFillEnvironment()->GetInteractiveFormFiller()->SetIndexSelected(
-             pAnnot, index, selected);
+             pWidget, index, selected);
 }
 
 bool CPDFSDK_WidgetHandler::IsIndexSelected(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                             int index) {
-  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot.Get());
+  ObservedPtr<CPDFSDK_Widget> pWidget(ToCPDFSDKWidget(pAnnot.Get()));
   return !pWidget->IsSignatureWidget() &&
          GetFormFillEnvironment()->GetInteractiveFormFiller()->IsIndexSelected(
-             pAnnot, index);
+             pWidget, index);
 }
 
 CFX_FloatRect CPDFSDK_WidgetHandler::GetViewBBox(CPDFSDK_Annot* pAnnot) {
@@ -280,7 +280,7 @@ CFX_FloatRect CPDFSDK_WidgetHandler::GetViewBBox(CPDFSDK_Annot* pAnnot) {
 
   return CFX_FloatRect(
       GetFormFillEnvironment()->GetInteractiveFormFiller()->GetViewBBox(
-          pAnnot->GetPageView(), pAnnot));
+          pWidget->GetPageView(), pWidget));
 }
 
 WideString CPDFSDK_WidgetHandler::GetText(CPDFSDK_Annot* pAnnot) {
@@ -288,7 +288,7 @@ WideString CPDFSDK_WidgetHandler::GetText(CPDFSDK_Annot* pAnnot) {
   if (pWidget->IsSignatureWidget())
     return WideString();
 
-  return GetFormFillEnvironment()->GetInteractiveFormFiller()->GetText(pAnnot);
+  return GetFormFillEnvironment()->GetInteractiveFormFiller()->GetText(pWidget);
 }
 
 WideString CPDFSDK_WidgetHandler::GetSelectedText(CPDFSDK_Annot* pAnnot) {
@@ -297,7 +297,7 @@ WideString CPDFSDK_WidgetHandler::GetSelectedText(CPDFSDK_Annot* pAnnot) {
     return WideString();
 
   return GetFormFillEnvironment()->GetInteractiveFormFiller()->GetSelectedText(
-      pAnnot);
+      pWidget);
 }
 
 void CPDFSDK_WidgetHandler::ReplaceSelection(CPDFSDK_Annot* pAnnot,
@@ -306,39 +306,39 @@ void CPDFSDK_WidgetHandler::ReplaceSelection(CPDFSDK_Annot* pAnnot,
   if (pWidget->IsSignatureWidget())
     return;
 
-  GetFormFillEnvironment()->GetInteractiveFormFiller()->ReplaceSelection(pAnnot,
-                                                                         text);
+  GetFormFillEnvironment()->GetInteractiveFormFiller()->ReplaceSelection(
+      pWidget, text);
 }
 
 bool CPDFSDK_WidgetHandler::SelectAllText(CPDFSDK_Annot* pAnnot) {
   CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
   return !pWidget->IsSignatureWidget() &&
          GetFormFillEnvironment()->GetInteractiveFormFiller()->SelectAllText(
-             pAnnot);
+             pWidget);
 }
 
 bool CPDFSDK_WidgetHandler::CanUndo(CPDFSDK_Annot* pAnnot) {
   CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
   return !pWidget->IsSignatureWidget() &&
-         GetFormFillEnvironment()->GetInteractiveFormFiller()->CanUndo(pAnnot);
+         GetFormFillEnvironment()->GetInteractiveFormFiller()->CanUndo(pWidget);
 }
 
 bool CPDFSDK_WidgetHandler::CanRedo(CPDFSDK_Annot* pAnnot) {
   CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
   return !pWidget->IsSignatureWidget() &&
-         GetFormFillEnvironment()->GetInteractiveFormFiller()->CanRedo(pAnnot);
+         GetFormFillEnvironment()->GetInteractiveFormFiller()->CanRedo(pWidget);
 }
 
 bool CPDFSDK_WidgetHandler::Undo(CPDFSDK_Annot* pAnnot) {
   CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
   return !pWidget->IsSignatureWidget() &&
-         GetFormFillEnvironment()->GetInteractiveFormFiller()->Undo(pAnnot);
+         GetFormFillEnvironment()->GetInteractiveFormFiller()->Undo(pWidget);
 }
 
 bool CPDFSDK_WidgetHandler::Redo(CPDFSDK_Annot* pAnnot) {
   CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
   return !pWidget->IsSignatureWidget() &&
-         GetFormFillEnvironment()->GetInteractiveFormFiller()->Redo(pAnnot);
+         GetFormFillEnvironment()->GetInteractiveFormFiller()->Redo(pWidget);
 }
 
 bool CPDFSDK_WidgetHandler::HitTest(CPDFSDK_Annot* pAnnot,

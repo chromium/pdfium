@@ -55,11 +55,11 @@ class CPWLEditEmbedderTest : public EmbedderTest {
     ASSERT_EQ(password_annot, pLastAnnot);
   }
 
-  void FormFillerAndWindowSetup(CPDFSDK_Annot* pAnnotTextField) {
+  void FormFillerAndWindowSetup(CPDFSDK_Widget* pAnnotTextField) {
     CFFL_InteractiveFormFiller* pInteractiveFormFiller =
         m_pFormFillEnv->GetInteractiveFormFiller();
     {
-      ObservedPtr<CPDFSDK_Annot> pObserved(pAnnotTextField);
+      ObservedPtr<CPDFSDK_Widget> pObserved(pAnnotTextField);
       EXPECT_TRUE(pInteractiveFormFiller->OnSetFocus(pObserved, {}));
     }
 

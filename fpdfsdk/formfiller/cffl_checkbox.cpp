@@ -51,7 +51,7 @@ bool CFFL_CheckBox::OnChar(CPDFSDK_Widget* pWidget,
       CPDFSDK_PageView* pPageView = pWidget->GetPageView();
       DCHECK(pPageView);
 
-      ObservedPtr<CPDFSDK_Annot> pObserved(m_pWidget.Get());
+      ObservedPtr<CPDFSDK_Widget> pObserved(m_pWidget.Get());
       if (m_pFormFiller->OnButtonUp(pObserved, pPageView, nFlags)) {
         if (!pObserved)
           m_pWidget = nullptr;

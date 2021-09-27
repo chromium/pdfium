@@ -464,7 +464,7 @@ bool CFFL_FormField::CommitData(const CPDFSDK_PageView* pPageView,
   if (!IsDataChanged(pPageView))
     return true;
 
-  ObservedPtr<CPDFSDK_Annot> pObserved(m_pWidget.Get());
+  ObservedPtr<CPDFSDK_Widget> pObserved(m_pWidget.Get());
   if (!m_pFormFiller->OnKeyStrokeCommit(pObserved, pPageView, nFlag)) {
     if (!pObserved)
       return false;
