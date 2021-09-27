@@ -9,6 +9,7 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
+#include "v8/include/cppgc/prefinalizer.h"
 #include "xfa/fxfa/cxfa_fffield.h"
 
 class CFWL_Event;
@@ -19,11 +20,14 @@ class CXFA_FFWidget;
 class IFWL_WidgetDelegate;
 
 class CXFA_FFTextEdit : public CXFA_FFField {
+  CPPGC_USING_PRE_FINALIZER(CXFA_FFTextEdit, PreFinalize);
+
  public:
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FFTextEdit() override;
 
-  void PreFinalize() override;
+  void PreFinalize();
+
   void Trace(cppgc::Visitor* visitor) const override;
 
   // CXFA_FFField

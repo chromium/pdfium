@@ -222,8 +222,6 @@ CXFA_FFWidget::CXFA_FFWidget(CXFA_Node* node) : m_pNode(node) {}
 
 CXFA_FFWidget::~CXFA_FFWidget() = default;
 
-void CXFA_FFWidget::PreFinalize() {}
-
 void CXFA_FFWidget::Trace(cppgc::Visitor* visitor) const {
   visitor->Trace(m_pLayoutItem);
   visitor->Trace(m_pDocView);

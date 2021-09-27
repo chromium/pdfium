@@ -37,7 +37,6 @@ void CXFA_FFListBox::PreFinalize() {
         GetNormalWidget()->GetFWLApp()->GetNoteDriver();
     pNoteDriver->UnregisterEventTarget(GetNormalWidget());
   }
-  CXFA_FFDropDown::PreFinalize();
 }
 
 void CXFA_FFListBox::Trace(cppgc::Visitor* visitor) const {

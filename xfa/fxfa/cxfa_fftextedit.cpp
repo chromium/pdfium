@@ -42,7 +42,6 @@ void CXFA_FFTextEdit::PreFinalize() {
         GetNormalWidget()->GetFWLApp()->GetNoteDriver();
     pNoteDriver->UnregisterEventTarget(GetNormalWidget());
   }
-  CXFA_FFField::PreFinalize();
 }
 
 void CXFA_FFTextEdit::Trace(cppgc::Visitor* visitor) const {

@@ -21,7 +21,6 @@ CXFA_FFImage::~CXFA_FFImage() = default;
 
 void CXFA_FFImage::PreFinalize() {
   GetNode()->SetImageImage(nullptr);
-  CXFA_FFWidget::PreFinalize();
 }
 
 bool CXFA_FFImage::IsLoaded() {

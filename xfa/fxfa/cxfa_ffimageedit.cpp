@@ -29,7 +29,6 @@ CXFA_FFImageEdit::~CXFA_FFImageEdit() = default;
 
 void CXFA_FFImageEdit::PreFinalize() {
   m_pNode->SetImageEditImage(nullptr);
-  CXFA_FFField::PreFinalize();
 }
 
 void CXFA_FFImageEdit::Trace(cppgc::Visitor* visitor) const {

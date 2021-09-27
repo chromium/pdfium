@@ -8,15 +8,19 @@
 #define XFA_FXFA_CXFA_FFIMAGEEDIT_H_
 
 #include "v8/include/cppgc/member.h"
+#include "v8/include/cppgc/prefinalizer.h"
 #include "xfa/fxfa/cxfa_fffield.h"
 
 class CXFA_FFImageEdit final : public CXFA_FFField {
+  CPPGC_USING_PRE_FINALIZER(CXFA_FFImageEdit, PreFinalize);
+
  public:
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FFImageEdit() override;
 
+  void PreFinalize();
+
   // CXFA_FFField:
-  void PreFinalize() override;
   void Trace(cppgc::Visitor* visitor) const override;
   void RenderWidget(CFGAS_GEGraphics* pGS,
                     const CFX_Matrix& matrix,
