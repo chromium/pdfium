@@ -38,7 +38,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
 
   if (decoder) {
     int line = 0;
-    while (decoder->GetScanline(line))
+    while (!decoder->GetScanline(line).empty())
       line++;
   }
 

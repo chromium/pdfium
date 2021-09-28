@@ -1089,7 +1089,7 @@ const uint8_t* CPDF_DIB::GetScanline(int line) const {
     }
     pSrcLine = m_pCachedBitmap->GetScanline(line);
   } else if (m_pDecoder) {
-    pSrcLine = m_pDecoder->GetScanline(line);
+    pSrcLine = m_pDecoder->GetScanline(line).data();
   } else if (m_pStreamAcc->GetSize() >= (line + 1) * src_pitch_value) {
     pSrcLine = m_pStreamAcc->GetData() + line * src_pitch_value;
   }

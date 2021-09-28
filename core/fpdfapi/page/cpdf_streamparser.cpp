@@ -64,7 +64,7 @@ uint32_t DecodeAllScanlines(std::unique_ptr<ScanlineDecoder> pDecoder) {
     return FX_INVALID_OFFSET;
 
   for (int row = 0; row < height; ++row) {
-    if (!pDecoder->GetScanline(row))
+    if (pDecoder->GetScanline(row).empty())
       break;
   }
   return pDecoder->GetSrcOffset();
