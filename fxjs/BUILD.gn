@@ -17,6 +17,7 @@ source_set("fxjs") {
   ]
   configs += [ "../:pdfium_strict_config" ]
   deps = [ "../core/fxcrt" ]
+  public_deps = []
   visibility = [ "../*" ]
 
   if (pdf_enable_v8) {
@@ -110,7 +111,10 @@ source_set("fxjs") {
       "//v8:v8_libplatform",
     ]
     configs += [ "//v8:external_startup_data" ]
-    public_deps = [ "//v8" ]
+    public_deps += [
+      "../core/fxcrt",
+      "//v8",
+    ]
 
     if (pdf_enable_xfa) {
       sources += [

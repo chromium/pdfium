@@ -127,6 +127,7 @@ source_set("fuzzer_init_public") {
     configs += [ "//v8:external_startup_data" ]
     deps += [
       "../:test_support",
+      "../../fxjs",
       "//v8",
       "//v8:v8_libplatform",
     ]
