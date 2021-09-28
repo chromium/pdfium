@@ -9,6 +9,8 @@
 
 #include <stdint.h>
 
+#include "third_party/base/span.h"
+
 class PauseIndicatorIface;
 
 namespace fxcodec {
@@ -37,7 +39,7 @@ class ScanlineDecoder {
 
  protected:
   virtual bool Rewind() = 0;
-  virtual uint8_t* GetNextLine() = 0;
+  virtual pdfium::span<uint8_t> GetNextLine() = 0;
 
   int m_OrigWidth;
   int m_OrigHeight;
@@ -47,7 +49,7 @@ class ScanlineDecoder {
   int m_bpc;
   uint32_t m_Pitch;
   int m_NextLine = -1;
-  uint8_t* m_pLastScanline = nullptr;
+  pdfium::span<uint8_t> m_pLastScanline;
 };
 
 }  // namespace fxcodec

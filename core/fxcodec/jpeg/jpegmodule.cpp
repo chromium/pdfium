@@ -125,7 +125,7 @@ class JpegDecoder final : public ScanlineDecoder {
 
   // ScanlineDecoder:
   bool Rewind() override;
-  uint8_t* GetNextLine() override;
+  pdfium::span<uint8_t> GetNextLine() override;
   uint32_t GetSrcOffset() override;
 
   bool InitDecode(bool bAcceptKnownBadHeader);
@@ -175,6 +175,9 @@ JpegDecoder::JpegDecoder() {
 JpegDecoder::~JpegDecoder() {
   if (m_bInited)
     jpeg_destroy_decompress(&m_Cinfo);
+
+  // Span in superclass can't outlive our buffer.
+  m_pLastScanline = pdfium::span<uint8_t>();
 }
 
 bool JpegDecoder::InitDecode(bool bAcceptKnownBadHeader) {
@@ -294,13 +297,16 @@ bool JpegDecoder::Rewind() {
   return true;
 }
 
-uint8_t* JpegDecoder::GetNextLine() {
+pdfium::span<uint8_t> JpegDecoder::GetNextLine() {
   if (setjmp(m_JmpBuf) == -1)
-    return nullptr;
+    return pdfium::span<uint8_t>();
 
   uint8_t* row_array[] = {m_pScanlineBuf.get()};
   int nlines = jpeg_read_scanlines(&m_Cinfo, row_array, 1);
-  return nlines > 0 ? m_pScanlineBuf.get() : nullptr;
+  if (nlines <= 0)
+    return pdfium::span<uint8_t>();
+
+  return {m_pScanlineBuf.get(), m_Pitch};
 }
 
 uint32_t JpegDecoder::GetSrcOffset() {
