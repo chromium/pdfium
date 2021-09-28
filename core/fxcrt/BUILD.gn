@@ -5,6 +5,11 @@
 import("../../pdfium.gni")
 import("../../testing/test.gni")
 
+source_set("unowned_ptr") {
+  sources = [ "unowned_ptr.h" ]
+  configs += [ "../../:pdfium_strict_config" ]
+}
+
 source_set("fxcrt") {
   sources = [
     "autonuller.h",
@@ -75,7 +80,6 @@ source_set("fxcrt") {
     "string_pool_template.h",
     "string_view_template.h",
     "tree_node.h",
-    "unowned_ptr.h",
     "weak_ptr.h",
     "widestring.cpp",
     "widestring.h",
@@ -107,16 +111,15 @@ source_set("fxcrt") {
     "../../third_party:fx_lcms2",
     "../../third_party:fx_libopenjpeg",
     "../../third_party:fx_tiff",
-    "../../third_party:pdfium_base",
     "../../xfa/*",
   ]
   deps = [ "../../third_party:pdfium_base" ]
   public_deps = [
+    ":unowned_ptr",
     "../../:freetype_common",
     "../../third_party:pdfium_base",
     "//third_party/icu:icuuc",
   ]
-  allow_circular_includes_from = [ "../../third_party:pdfium_base" ]
 
   if (is_posix || is_fuchsia) {
     sources += [

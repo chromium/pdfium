@@ -624,6 +624,8 @@ source_set("pdfium_base") {
     "base/template_util.h",
   ]
 
+  public_deps = [ "../core/fxcrt:unowned_ptr" ]
+
   if (is_win) {
     sources += [
       "base/allocator/partition_allocator/page_allocator_internals_win.h",
