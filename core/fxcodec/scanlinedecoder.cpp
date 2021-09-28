@@ -34,15 +34,15 @@ const uint8_t* ScanlineDecoder::GetScanline(int line) {
     return m_pLastScanline;
 
   if (m_NextLine < 0 || m_NextLine > line) {
-    if (!v_Rewind())
+    if (!Rewind())
       return nullptr;
     m_NextLine = 0;
   }
   while (m_NextLine < line) {
-    ReadNextLine();
+    GetNextLine();
     m_NextLine++;
   }
-  m_pLastScanline = ReadNextLine();
+  m_pLastScanline = GetNextLine();
   m_NextLine++;
   return m_pLastScanline;
 }
@@ -52,22 +52,18 @@ bool ScanlineDecoder::SkipToScanline(int line, PauseIndicatorIface* pPause) {
     return false;
 
   if (m_NextLine < 0 || m_NextLine > line) {
-    v_Rewind();
+    Rewind();
     m_NextLine = 0;
   }
   m_pLastScanline = nullptr;
   while (m_NextLine < line) {
-    m_pLastScanline = ReadNextLine();
+    m_pLastScanline = GetNextLine();
     m_NextLine++;
     if (pPause && pPause->NeedToPauseNow()) {
       return true;
     }
   }
   return false;
-}
-
-uint8_t* ScanlineDecoder::ReadNextLine() {
-  return v_GetNextLine();
 }
 
 }  // namespace fxcodec

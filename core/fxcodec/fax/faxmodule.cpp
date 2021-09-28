@@ -467,8 +467,8 @@ class FaxDecoder final : public ScanlineDecoder {
   ~FaxDecoder() override;
 
   // ScanlineDecoder:
-  bool v_Rewind() override;
-  uint8_t* v_GetNextLine() override;
+  bool Rewind() override;
+  uint8_t* GetNextLine() override;
   uint32_t GetSrcOffset() override;
 
  private:
@@ -508,13 +508,13 @@ FaxDecoder::FaxDecoder(pdfium::span<const uint8_t> src_span,
 
 FaxDecoder::~FaxDecoder() = default;
 
-bool FaxDecoder::v_Rewind() {
+bool FaxDecoder::Rewind() {
   memset(m_RefBuf.data(), 0xff, m_RefBuf.size());
   m_bitpos = 0;
   return true;
 }
 
-uint8_t* FaxDecoder::v_GetNextLine() {
+uint8_t* FaxDecoder::GetNextLine() {
   int bitsize = m_SrcSpan.size() * 8;
   FaxSkipEOL(m_SrcSpan.data(), bitsize, &m_bitpos);
   if (m_bitpos >= bitsize)

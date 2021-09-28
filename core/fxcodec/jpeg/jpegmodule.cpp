@@ -124,8 +124,8 @@ class JpegDecoder final : public ScanlineDecoder {
               bool ColorTransform);
 
   // ScanlineDecoder:
-  bool v_Rewind() override;
-  uint8_t* v_GetNextLine() override;
+  bool Rewind() override;
+  uint8_t* GetNextLine() override;
   uint32_t GetSrcOffset() override;
 
   bool InitDecode(bool bAcceptKnownBadHeader);
@@ -269,7 +269,7 @@ bool JpegDecoder::Create(pdfium::span<const uint8_t> src_span,
   return true;
 }
 
-bool JpegDecoder::v_Rewind() {
+bool JpegDecoder::Rewind() {
   if (m_bStarted) {
     jpeg_destroy_decompress(&m_Cinfo);
     if (!InitDecode(/*bAcceptKnownBadHeader=*/false)) {
@@ -294,7 +294,7 @@ bool JpegDecoder::v_Rewind() {
   return true;
 }
 
-uint8_t* JpegDecoder::v_GetNextLine() {
+uint8_t* JpegDecoder::GetNextLine() {
   if (setjmp(m_JmpBuf) == -1)
     return nullptr;
 

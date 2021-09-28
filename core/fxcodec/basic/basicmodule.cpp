@@ -31,8 +31,8 @@ class RLScanlineDecoder final : public ScanlineDecoder {
               int bpc);
 
   // ScanlineDecoder:
-  bool v_Rewind() override;
-  uint8_t* v_GetNextLine() override;
+  bool Rewind() override;
+  uint8_t* GetNextLine() override;
   uint32_t GetSrcOffset() override { return m_SrcOffset; }
 
  private:
@@ -109,7 +109,7 @@ bool RLScanlineDecoder::Create(pdfium::span<const uint8_t> src_buf,
   return CheckDestSize();
 }
 
-bool RLScanlineDecoder::v_Rewind() {
+bool RLScanlineDecoder::Rewind() {
   fxcrt::spanclr(pdfium::make_span(m_Scanline));
   m_SrcOffset = 0;
   m_bEOD = false;
@@ -117,7 +117,7 @@ bool RLScanlineDecoder::v_Rewind() {
   return true;
 }
 
-uint8_t* RLScanlineDecoder::v_GetNextLine() {
+uint8_t* RLScanlineDecoder::GetNextLine() {
   if (m_SrcOffset == 0) {
     GetNextOperator();
   } else if (m_bEOD) {

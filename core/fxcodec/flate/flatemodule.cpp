@@ -604,8 +604,8 @@ class FlateScanlineDecoder : public ScanlineDecoder {
   ~FlateScanlineDecoder() override;
 
   // ScanlineDecoder:
-  bool v_Rewind() override;
-  uint8_t* v_GetNextLine() override;
+  bool Rewind() override;
+  uint8_t* GetNextLine() override;
   uint32_t GetSrcOffset() override;
 
  protected:
@@ -631,7 +631,7 @@ FlateScanlineDecoder::FlateScanlineDecoder(pdfium::span<const uint8_t> src_span,
 
 FlateScanlineDecoder::~FlateScanlineDecoder() = default;
 
-bool FlateScanlineDecoder::v_Rewind() {
+bool FlateScanlineDecoder::Rewind() {
   m_pFlate.reset(FlateInit());
   if (!m_pFlate)
     return false;
@@ -640,7 +640,7 @@ bool FlateScanlineDecoder::v_Rewind() {
   return true;
 }
 
-uint8_t* FlateScanlineDecoder::v_GetNextLine() {
+uint8_t* FlateScanlineDecoder::GetNextLine() {
   FlateOutput(m_pFlate.get(), m_pScanline.get(), m_Pitch);
   return m_pScanline.get();
 }
@@ -663,8 +663,8 @@ class FlatePredictorScanlineDecoder final : public FlateScanlineDecoder {
   ~FlatePredictorScanlineDecoder() override;
 
   // ScanlineDecoder:
-  bool v_Rewind() override;
-  uint8_t* v_GetNextLine() override;
+  bool Rewind() override;
+  uint8_t* GetNextLine() override;
 
  private:
   void GetNextLineWithPredictedPitch();
@@ -711,15 +711,15 @@ FlatePredictorScanlineDecoder::FlatePredictorScanlineDecoder(
 
 FlatePredictorScanlineDecoder::~FlatePredictorScanlineDecoder() = default;
 
-bool FlatePredictorScanlineDecoder::v_Rewind() {
-  if (!FlateScanlineDecoder::v_Rewind())
+bool FlatePredictorScanlineDecoder::Rewind() {
+  if (!FlateScanlineDecoder::Rewind())
     return false;
 
   m_LeftOver = 0;
   return true;
 }
 
-uint8_t* FlatePredictorScanlineDecoder::v_GetNextLine() {
+uint8_t* FlatePredictorScanlineDecoder::GetNextLine() {
   if (m_Pitch == m_PredictPitch)
     GetNextLineWithPredictedPitch();
   else

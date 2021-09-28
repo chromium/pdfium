@@ -36,10 +36,8 @@ class ScanlineDecoder {
   virtual uint32_t GetSrcOffset() = 0;
 
  protected:
-  virtual bool v_Rewind() = 0;
-  virtual uint8_t* v_GetNextLine() = 0;
-
-  uint8_t* ReadNextLine();
+  virtual bool Rewind() = 0;
+  virtual uint8_t* GetNextLine() = 0;
 
   int m_OrigWidth;
   int m_OrigHeight;
