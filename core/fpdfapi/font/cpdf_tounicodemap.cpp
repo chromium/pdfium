@@ -72,7 +72,7 @@ uint32_t CPDF_ToUnicodeMap::ReverseLookup(wchar_t unicode) const {
 }
 
 // static
-pdfium::Optional<uint32_t> CPDF_ToUnicodeMap::StringToCode(ByteStringView str) {
+Optional<uint32_t> CPDF_ToUnicodeMap::StringToCode(ByteStringView str) {
   size_t len = str.GetLength();
   if (len <= 2 || str[0] != '<' || str[len - 1] != '>')
     return pdfium::nullopt;
@@ -86,7 +86,7 @@ pdfium::Optional<uint32_t> CPDF_ToUnicodeMap::StringToCode(ByteStringView str) {
     if (!code.IsValid())
       return pdfium::nullopt;
   }
-  return pdfium::Optional<uint32_t>(code.ValueOrDie());
+  return Optional<uint32_t>(code.ValueOrDie());
 }
 
 // static
@@ -148,7 +148,7 @@ void CPDF_ToUnicodeMap::HandleBeginBFChar(CPDF_SimpleParser* pParser) {
     if (word.IsEmpty() || word == "endbfchar")
       return;
 
-    pdfium::Optional<uint32_t> code = StringToCode(word);
+    Optional<uint32_t> code = StringToCode(word);
     if (!code.has_value())
       return;
 
@@ -162,12 +162,12 @@ void CPDF_ToUnicodeMap::HandleBeginBFRange(CPDF_SimpleParser* pParser) {
     if (lowcode_str.IsEmpty() || lowcode_str == "endbfrange")
       return;
 
-    pdfium::Optional<uint32_t> lowcode_opt = StringToCode(lowcode_str);
+    Optional<uint32_t> lowcode_opt = StringToCode(lowcode_str);
     if (!lowcode_opt.has_value())
       return;
 
     ByteStringView highcode_str = pParser->GetWord();
-    pdfium::Optional<uint32_t> highcode_opt = StringToCode(highcode_str);
+    Optional<uint32_t> highcode_opt = StringToCode(highcode_str);
     if (!highcode_opt.has_value())
       return;
 
@@ -184,7 +184,7 @@ void CPDF_ToUnicodeMap::HandleBeginBFRange(CPDF_SimpleParser* pParser) {
 
     WideString destcode = StringToWideString(start);
     if (destcode.GetLength() == 1) {
-      pdfium::Optional<uint32_t> value_or_error = StringToCode(start);
+      Optional<uint32_t> value_or_error = StringToCode(start);
       if (!value_or_error.has_value())
         return;
 
