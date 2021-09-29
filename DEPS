@@ -23,6 +23,10 @@ vars = {
   'pdfium_git': 'https://pdfium.googlesource.com',
 
   # Three lines of non-changing comments so that
+  # the commit queue can handle CLs rolling abseil
+  # and whatever else without interference from each other.
+  'abseil_revision': 'a46a6332f7b310ce5280d1b9bd7d8b557d445c2d',
+  # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling android_ndk
   # and whatever else without interference from each other.
   'android_ndk_revision': '401019bf85744311b26c88ced255cd53401af8b7',
@@ -198,6 +202,10 @@ deps = {
   'testing/corpus':
     Var('pdfium_git') + '/pdfium_tests@' + Var('pdfium_tests_revision'),
 
+  'third_party/abseil-cpp':
+    Var('chromium_git') + '/chromium/src/third_party/abseil-cpp.git@' +
+        Var('abseil_revision'),
+
   'third_party/android_ndk': {
     'url': Var('chromium_git') + '/android_ndk.git@' +
         Var('android_ndk_revision'),
@@ -321,6 +329,14 @@ include_rules = [
   '+constants',
   '+testing',
   '+third_party/base',
+
+  # Abseil features must be allowlisted explicitly for now. See Chromium's
+  # //styleguide/c++/c++11.html. Allowed features' headers will be listed
+  # explicitly here.
+  '-absl',
+  '-third_party/abseil-cpp',
+  '+third_party/abseil-cpp/absl/types/optional.h',
+  '+third_party/abseil-cpp/absl/types/variant.h',
 ]
 
 specific_include_rules = {

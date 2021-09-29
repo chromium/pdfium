@@ -624,7 +624,10 @@ source_set("pdfium_base") {
     "base/template_util.h",
   ]
 
-  public_deps = [ "../core/fxcrt:unowned_ptr" ]
+  public_deps = [
+    "../core/fxcrt:unowned_ptr",
+    "//third_party/abseil-cpp:absl",
+  ]
 
   if (is_win) {
     sources += [
