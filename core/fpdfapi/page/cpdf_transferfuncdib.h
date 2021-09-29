@@ -20,18 +20,15 @@ class CPDF_TransferFuncDIB final : public CFX_DIBBase {
  public:
   CONSTRUCT_VIA_MAKE_RETAIN;
 
-  void TranslateScanline(
-      const uint8_t* src_buf,
-      std::vector<uint8_t, FxAllocAllocator<uint8_t>>* dest_buf) const;
+  // CFX_DIBBase:
+  pdfium::span<const uint8_t> GetScanline(int line) const override;
 
  private:
   CPDF_TransferFuncDIB(const RetainPtr<CFX_DIBBase>& pSrc,
                        const RetainPtr<CPDF_TransferFunc>& pTransferFunc);
   ~CPDF_TransferFuncDIB() override;
 
-  // CFX_DIBBase:
-  pdfium::span<const uint8_t> GetScanline(int line) const override;
-
+  void TranslateScanline(pdfium::span<const uint8_t> src_span) const;
   FXDIB_Format GetDestFormat() const;
 
   RetainPtr<CFX_DIBBase> const m_pSrc;
