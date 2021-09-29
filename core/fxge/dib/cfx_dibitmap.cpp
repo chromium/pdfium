@@ -251,7 +251,7 @@ void CFX_DIBitmap::TransferWithMultipleBPP(
     uint8_t* dest_scan =
         m_pBuffer.Get() + (dest_top + row) * m_Pitch + dest_left * Bpp;
     const uint8_t* src_scan =
-        pSrcBitmap->GetScanline(src_top + row).data() + src_left * Bpp;
+        pSrcBitmap->GetScanline(src_top + row).subspan(src_left * Bpp).data();
     memcpy(dest_scan, src_scan, width * Bpp);
   }
 }
@@ -352,7 +352,8 @@ bool CFX_DIBitmap::SetChannelFromBitmap(
   int destBytes = pDst->GetBPP() / 8;
   for (int row = 0; row < m_Height; row++) {
     uint8_t* dest_pos = pDst->GetWritableScanline(row) + destOffset;
-    const uint8_t* src_pos = pSrcClone->GetScanline(row).data() + srcOffset;
+    const uint8_t* src_pos =
+        pSrcClone->GetScanline(row).subspan(srcOffset).data();
     for (int col = 0; col < m_Width; col++) {
       *dest_pos = *src_pos;
       dest_pos += destBytes;
@@ -765,11 +766,12 @@ bool CFX_DIBitmap::CompositeBitmap(int dest_left,
   for (int row = 0; row < height; row++) {
     uint8_t* dest_scan =
         m_pBuffer.Get() + (dest_top + row) * m_Pitch + dest_left * dest_Bpp;
-    const uint8_t* src_scan =
-        pSrcBitmap->GetScanline(src_top + row).data() + src_left * src_Bpp;
+    const uint8_t* src_scan = pSrcBitmap->GetScanline(src_top + row)
+                                  .subspan(src_left * src_Bpp)
+                                  .data();
     const uint8_t* src_scan_extra_alpha =
         pSrcAlphaMask
-            ? pSrcAlphaMask->GetScanline(src_top + row).data() + src_left
+            ? pSrcAlphaMask->GetScanline(src_top + row).subspan(src_left).data()
             : nullptr;
     uint8_t* dst_scan_extra_alpha =
         m_pAlphaMask

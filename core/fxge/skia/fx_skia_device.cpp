@@ -98,7 +98,7 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
     for (int row = 0; row < height; row++) {
       uint8_t* dest_scan = buffer + (dest_top + row) * pitch + dest_left * Bpp;
       const uint8_t* src_scan =
-          pSrcBitmap->GetScanline(src_top + row).data() + src_left * Bpp;
+          pSrcBitmap->GetScanline(src_top + row).subspan(src_left * Bpp).data();
       if (Bpp == 4) {
         for (int col = 0; col < width; col++) {
           FXARGB_SETDIB(dest_scan, ArgbEncode(src_scan[3], src_scan[0],
@@ -124,7 +124,7 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
       for (int row = 0; row < height; row++) {
         uint8_t* dest_scan = dest_buf + row * pitch;
         const uint8_t* src_scan =
-            pSrcBitmap->GetScanline(src_top + row).data() + src_left * 4;
+            pSrcBitmap->GetScanline(src_top + row).subspan(src_left * 4).data();
         for (int col = 0; col < width; col++) {
           *dest_scan++ = src_scan[2];
           *dest_scan++ = src_scan[1];
@@ -144,7 +144,7 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
       for (int row = 0; row < height; row++) {
         uint8_t* dest_scan = (uint8_t*)(dest_buf + row * pitch);
         const uint8_t* src_scan =
-            pSrcBitmap->GetScanline(src_top + row).data() + src_left * 3;
+            pSrcBitmap->GetScanline(src_top + row).subspan(src_left * 3).data();
         for (int col = 0; col < width; col++) {
           FXARGB_SETDIB(dest_scan, ArgbEncode(0xff, src_scan[0], src_scan[1],
                                               src_scan[2]));
@@ -157,7 +157,7 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
       for (int row = 0; row < height; row++) {
         uint8_t* dest_scan = dest_buf + row * pitch;
         const uint8_t* src_scan =
-            pSrcBitmap->GetScanline(src_top + row).data() + src_left * 4;
+            pSrcBitmap->GetScanline(src_top + row).subspan(src_left * 4).data();
         for (int col = 0; col < width; col++) {
           FXARGB_SETDIB(dest_scan, ArgbEncode(0xff, src_scan[0], src_scan[1],
                                               src_scan[2]));
