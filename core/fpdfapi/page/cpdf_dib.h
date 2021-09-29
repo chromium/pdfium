@@ -121,8 +121,8 @@ class CPDF_DIB final : public CFX_DIBBase {
   bool m_bHasMask = false;
   bool m_bStdCS = false;
   std::vector<DIB_COMP_DATA> m_CompData;
-  std::unique_ptr<uint8_t, FxFreeDeleter> m_pLineBuf;
-  std::unique_ptr<uint8_t, FxFreeDeleter> m_pMaskedLine;
+  mutable std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_LineBuf;
+  mutable std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_MaskBuf;
   RetainPtr<CFX_DIBitmap> m_pCachedBitmap;
   // Note: Must not create a cycle between CPDF_DIB instances.
   RetainPtr<CPDF_DIB> m_pMask;

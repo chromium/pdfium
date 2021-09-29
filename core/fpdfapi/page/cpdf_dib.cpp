@@ -32,6 +32,7 @@
 #include "core/fxcodec/scanlinedecoder.h"
 #include "core/fxcrt/cfx_fixedbufgrow.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/span_util.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
@@ -209,7 +210,7 @@ bool CPDF_DIB::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream) {
   if (!pitch.has_value())
     return false;
 
-  m_pLineBuf.reset(FX_Alloc(uint8_t, pitch.value()));
+  m_LineBuf = std::vector<uint8_t, FxAllocAllocator<uint8_t>>(pitch.value());
   LoadPalette();
   if (m_bColorKey) {
     m_Format = FXDIB_Format::kArgb;
@@ -217,7 +218,7 @@ bool CPDF_DIB::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream) {
     if (!pitch.has_value())
       return false;
 
-    m_pMaskedLine.reset(FX_Alloc(uint8_t, pitch.value()));
+    m_MaskBuf = std::vector<uint8_t, FxAllocAllocator<uint8_t>>(pitch.value());
   }
   m_Pitch = pitch.value();
   return true;
@@ -238,7 +239,7 @@ bool CPDF_DIB::ContinueToLoadMask() {
   if (!pitch.has_value())
     return false;
 
-  m_pLineBuf.reset(FX_Alloc(uint8_t, pitch.value()));
+  m_LineBuf = std::vector<uint8_t, FxAllocAllocator<uint8_t>>(pitch.value());
   if (m_pColorSpace && m_bStdCS) {
     m_pColorSpace->EnableStdConversion(true);
   }
@@ -248,7 +249,7 @@ bool CPDF_DIB::ContinueToLoadMask() {
     pitch = fxcodec::CalculatePitch32(GetBppFromFormat(m_Format), m_Width);
     if (!pitch.has_value())
       return false;
-    m_pMaskedLine.reset(FX_Alloc(uint8_t, pitch.value()));
+    m_MaskBuf = std::vector<uint8_t, FxAllocAllocator<uint8_t>>(pitch.value());
   }
   m_Pitch = pitch.value();
   return true;
@@ -1094,35 +1095,37 @@ const uint8_t* CPDF_DIB::GetScanline(int line) const {
     pSrcLine = m_pStreamAcc->GetData() + line * src_pitch_value;
   }
   if (!pSrcLine) {
-    uint8_t* pLineBuf = m_pMaskedLine ? m_pMaskedLine.get() : m_pLineBuf.get();
-    memset(pLineBuf, 0xFF, m_Pitch);
-    return pLineBuf;
+    pdfium::span<uint8_t> pLineBuf = !m_MaskBuf.empty() ? m_MaskBuf : m_LineBuf;
+    fxcrt::spanset(pLineBuf, 0xFF);
+    return pLineBuf.data();
   }
 
   if (m_bpc * m_nComponents == 1) {
     if (m_bImageMask && m_bDefaultDecode) {
       for (uint32_t i = 0; i < src_pitch_value; i++)
-        m_pLineBuf.get()[i] = ~pSrcLine[i];
-      return m_pLineBuf.get();
+        m_LineBuf[i] = ~pSrcLine[i];
+      return m_LineBuf.data();
     }
 
     if (!m_bColorKey) {
-      memcpy(m_pLineBuf.get(), pSrcLine, src_pitch_value);
-      return m_pLineBuf.get();
+      fxcrt::spancpy(pdfium::make_span(m_LineBuf),
+                     pdfium::make_span(pSrcLine, src_pitch_value));
+      return m_LineBuf.data();
     }
 
     uint32_t reset_argb = Get1BitResetValue();
     uint32_t set_argb = Get1BitSetValue();
-    uint32_t* dest_scan = reinterpret_cast<uint32_t*>(m_pMaskedLine.get());
+    uint32_t* dest_scan = reinterpret_cast<uint32_t*>(m_MaskBuf.data());
     for (int col = 0; col < m_Width; col++) {
       *dest_scan = GetBitValue(pSrcLine, col) ? set_argb : reset_argb;
       dest_scan++;
     }
-    return m_pMaskedLine.get();
+    return m_MaskBuf.data();
   }
   if (m_bpc * m_nComponents <= 8) {
     if (m_bpc == 8) {
-      memcpy(m_pLineBuf.get(), pSrcLine, src_pitch_value);
+      fxcrt::spancpy(pdfium::make_span(m_LineBuf),
+                     pdfium::make_span(pSrcLine, src_pitch_value));
     } else {
       uint64_t src_bit_pos = 0;
       for (int col = 0; col < m_Width; col++) {
@@ -1132,14 +1135,14 @@ const uint8_t* CPDF_DIB::GetScanline(int line) const {
           color_index |= data << (color * m_bpc);
           src_bit_pos += m_bpc;
         }
-        m_pLineBuf.get()[col] = color_index;
+        m_LineBuf[col] = color_index;
       }
     }
     if (!m_bColorKey)
-      return m_pLineBuf.get();
+      return m_LineBuf.data();
 
-    uint8_t* pDestPixel = m_pMaskedLine.get();
-    const uint8_t* pSrcPixel = m_pLineBuf.get();
+    uint8_t* pDestPixel = m_MaskBuf.data();
+    const uint8_t* pSrcPixel = m_LineBuf.data();
     pdfium::span<const uint32_t> palette = GetPaletteSpan();
     for (int col = 0; col < m_Width; col++) {
       uint8_t index = *pSrcPixel++;
@@ -1155,36 +1158,36 @@ const uint8_t* CPDF_DIB::GetScanline(int line) const {
       *pDestPixel = IsColorIndexOutOfBounds(index, m_CompData[0]) ? 0xFF : 0;
       pDestPixel++;
     }
-    return m_pMaskedLine.get();
+    return m_MaskBuf.data();
   }
   if (m_bColorKey) {
     if (m_nComponents == 3 && m_bpc == 8) {
-      uint8_t* alpha_channel = m_pMaskedLine.get() + 3;
+      uint8_t* alpha_channel = m_MaskBuf.data() + 3;
       for (int col = 0; col < m_Width; col++) {
         const uint8_t* pPixel = pSrcLine + col * 3;
         alpha_channel[col * 4] =
             AreColorIndicesOutOfBounds(pPixel, m_CompData.data(), 3) ? 0xFF : 0;
       }
     } else {
-      memset(m_pMaskedLine.get(), 0xFF, m_Pitch);
+      fxcrt::spanset(pdfium::make_span(m_MaskBuf), 0xFF);
     }
   }
   if (m_pColorSpace) {
-    TranslateScanline24bpp(m_pLineBuf.get(), pSrcLine);
-    pSrcLine = m_pLineBuf.get();
+    TranslateScanline24bpp(m_LineBuf.data(), pSrcLine);
+    pSrcLine = m_LineBuf.data();
   }
   if (!m_bColorKey)
     return pSrcLine;
 
   const uint8_t* pSrcPixel = pSrcLine;
-  uint8_t* pDestPixel = m_pMaskedLine.get();
+  uint8_t* pDestPixel = m_MaskBuf.data();
   for (int col = 0; col < m_Width; col++) {
     *pDestPixel++ = *pSrcPixel++;
     *pDestPixel++ = *pSrcPixel++;
     *pDestPixel++ = *pSrcPixel++;
     pDestPixel++;
   }
-  return m_pMaskedLine.get();
+  return m_MaskBuf.data();
 }
 
 bool CPDF_DIB::SkipToScanline(int line, PauseIndicatorIface* pPause) const {
