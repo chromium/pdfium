@@ -305,7 +305,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
       rows_to_go = kStrechPauseRows;
     }
 
-    const uint8_t* src_scan = m_pSource->GetScanline(m_CurRow);
+    const uint8_t* src_scan = m_pSource->GetScanline(m_CurRow).data();
     uint8_t* dest_scan =
         m_InterBuf.data() + (m_CurRow - m_SrcClip.top) * m_InterPitch;
     const uint8_t* src_scan_mask = nullptr;

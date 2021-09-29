@@ -30,7 +30,7 @@ class CPDF_TransferFuncDIB final : public CFX_DIBBase {
   ~CPDF_TransferFuncDIB() override;
 
   // CFX_DIBBase:
-  const uint8_t* GetScanline(int line) const override;
+  pdfium::span<const uint8_t> GetScanline(int line) const override;
 
   FXDIB_Format GetDestFormat() const;
 

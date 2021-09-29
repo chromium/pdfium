@@ -148,7 +148,7 @@ void CPDF_TransferFuncDIB::TranslateScanline(
   }
 }
 
-const uint8_t* CPDF_TransferFuncDIB::GetScanline(int line) const {
-  TranslateScanline(m_pSrc->GetScanline(line), &m_Scanline);
-  return m_Scanline.data();
+pdfium::span<const uint8_t> CPDF_TransferFuncDIB::GetScanline(int line) const {
+  TranslateScanline(m_pSrc->GetScanline(line).data(), &m_Scanline);
+  return m_Scanline;
 }

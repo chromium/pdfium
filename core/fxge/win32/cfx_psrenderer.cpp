@@ -506,7 +506,7 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
     std::unique_ptr<uint8_t, FxFreeDeleter> src_buf(
         FX_Alloc(uint8_t, src_size));
     for (int row = 0; row < height; row++) {
-      const uint8_t* src_scan = pSource->GetScanline(row);
+      const uint8_t* src_scan = pSource->GetScanline(row).data();
       memcpy(src_buf.get() + row * pitch, src_scan, pitch);
     }
 
@@ -571,7 +571,7 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
       output_size = height * src_pitch;
       output_buf = FX_Alloc(uint8_t, output_size);
       for (int row = 0; row < height; row++) {
-        const uint8_t* src_scan = pConverted->GetScanline(row);
+        const uint8_t* src_scan = pConverted->GetScanline(row).data();
         uint8_t* dest_scan = output_buf + row * src_pitch;
         if (bpp == 3) {
           for (int col = 0; col < width; col++) {

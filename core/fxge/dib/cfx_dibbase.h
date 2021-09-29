@@ -33,11 +33,11 @@ class CFX_DIBBase : public Retainable {
   ~CFX_DIBBase() override;
 
   virtual uint8_t* GetBuffer() const;
-  virtual const uint8_t* GetScanline(int line) const = 0;
+  virtual pdfium::span<const uint8_t> GetScanline(int line) const = 0;
   virtual bool SkipToScanline(int line, PauseIndicatorIface* pPause) const;
 
   uint8_t* GetWritableScanline(int line) {
-    return const_cast<uint8_t*>(GetScanline(line));
+    return const_cast<uint8_t*>(GetScanline(line).data());
   }
   int GetWidth() const { return m_Width; }
   int GetHeight() const { return m_Height; }

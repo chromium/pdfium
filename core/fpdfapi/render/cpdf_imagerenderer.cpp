@@ -242,7 +242,8 @@ void CPDF_ImageRenderer::CalculateDrawImage(
   int matte_b = FXARGB_B(m_Loader.MatteColor());
   for (int row = 0; row < rect.Height(); row++) {
     uint8_t* dest_scan = pBitmapDevice1->GetBitmap()->GetWritableScanline(row);
-    const uint8_t* mask_scan = pBitmapDevice2->GetBitmap()->GetScanline(row);
+    const uint8_t* mask_scan =
+        pBitmapDevice2->GetBitmap()->GetScanline(row).data();
     for (int col = 0; col < rect.Width(); col++) {
       int alpha = *mask_scan++;
       if (!alpha) {
