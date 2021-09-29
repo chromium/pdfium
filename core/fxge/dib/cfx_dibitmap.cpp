@@ -351,7 +351,8 @@ bool CFX_DIBitmap::SetChannelFromBitmap(
   int srcBytes = pSrcClone->GetBPP() / 8;
   int destBytes = pDst->GetBPP() / 8;
   for (int row = 0; row < m_Height; row++) {
-    uint8_t* dest_pos = pDst->GetWritableScanline(row).data() + destOffset;
+    uint8_t* dest_pos =
+        pDst->GetWritableScanline(row).subspan(destOffset).data();
     const uint8_t* src_pos =
         pSrcClone->GetScanline(row).subspan(srcOffset).data();
     for (int col = 0; col < m_Width; col++) {
@@ -774,10 +775,10 @@ bool CFX_DIBitmap::CompositeBitmap(int dest_left,
             ? pSrcAlphaMask->GetScanline(src_top + row).subspan(src_left).data()
             : nullptr;
     uint8_t* dst_scan_extra_alpha =
-        m_pAlphaMask
-            ? m_pAlphaMask->GetWritableScanline(dest_top + row).data() +
-                  dest_left
-            : nullptr;
+        m_pAlphaMask ? m_pAlphaMask->GetWritableScanline(dest_top + row)
+                           .subspan(dest_left)
+                           .data()
+                     : nullptr;
     const uint8_t* clip_scan = nullptr;
     if (pClipMask) {
       clip_scan = pClipMask->m_pBuffer.Get() +
@@ -847,10 +848,10 @@ bool CFX_DIBitmap::CompositeMask(int dest_left,
         m_pBuffer.Get() + (dest_top + row) * m_Pitch + dest_left * Bpp;
     const uint8_t* src_scan = pMask->GetScanline(src_top + row).data();
     uint8_t* dst_scan_extra_alpha =
-        m_pAlphaMask
-            ? m_pAlphaMask->GetWritableScanline(dest_top + row).data() +
-                  dest_left
-            : nullptr;
+        m_pAlphaMask ? m_pAlphaMask->GetWritableScanline(dest_top + row)
+                           .subspan(dest_left)
+                           .data()
+                     : nullptr;
     const uint8_t* clip_scan = nullptr;
     if (pClipMask) {
       clip_scan = pClipMask->m_pBuffer.Get() +
@@ -919,9 +920,10 @@ bool CFX_DIBitmap::CompositeRect(int left,
       index = (static_cast<uint8_t>(color) == 0xff) ? 1 : 0;
     }
     for (int row = rect.top; row < rect.bottom; row++) {
-      uint8_t* dest_scan_top = GetWritableScanline(row).data() + rect.left / 8;
+      uint8_t* dest_scan_top =
+          GetWritableScanline(row).subspan(rect.left / 8).data();
       uint8_t* dest_scan_top_r =
-          GetWritableScanline(row).data() + rect.right / 8;
+          GetWritableScanline(row).subspan(rect.right / 8).data();
       uint8_t left_flag = *dest_scan_top & (255 << (8 - left_shift));
       uint8_t right_flag = *dest_scan_top_r & (255 >> right_shift);
       if (new_width) {
@@ -958,7 +960,7 @@ bool CFX_DIBitmap::CompositeRect(int left,
       uint8_t* dest_scan = m_pBuffer.Get() + row * m_Pitch + rect.left * Bpp;
       uint8_t* dest_scan_alpha =
           m_pAlphaMask
-              ? m_pAlphaMask->GetWritableScanline(row).data() + rect.left
+              ? m_pAlphaMask->GetWritableScanline(row).subspan(rect.left).data()
               : nullptr;
       if (dest_scan_alpha)
         memset(dest_scan_alpha, 0xff, width);
@@ -1002,7 +1004,7 @@ bool CFX_DIBitmap::CompositeRect(int left,
         }
       } else {
         uint8_t* dest_scan_alpha =
-            m_pAlphaMask->GetWritableScanline(row).data() + rect.left;
+            m_pAlphaMask->GetWritableScanline(row).subspan(rect.left).data();
         for (int col = 0; col < width; col++) {
           uint8_t back_alpha = *dest_scan_alpha;
           if (back_alpha == 0) {

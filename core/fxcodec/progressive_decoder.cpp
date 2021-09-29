@@ -411,7 +411,7 @@ bool ProgressiveDecoder::GifInputRecordPositionBuf(uint32_t rcd_pos,
   FX_ARGB argb = m_SrcPalette[pal_index];
   for (int row = 0; row < sizeY; row++) {
     uint8_t* pScanline =
-        pDevice->GetWritableScanline(row + startY).data() + startX * Bpp;
+        pDevice->GetWritableScanline(row + startY).subspan(startX * Bpp).data();
     switch (m_TransMethod) {
       case 3: {
         uint8_t gray =
@@ -486,14 +486,15 @@ void ProgressiveDecoder::GifReadScanline(int32_t row_num, uint8_t* row_buf) {
 
   int dest_bottom = dest_top + m_sizeY;
   int dest_Bpp = pDIBitmap->GetBPP() >> 3;
-  uint32_t dest_ScanOffet = m_startX * dest_Bpp;
+  uint32_t dest_ScanOffset = m_startX * dest_Bpp;
   if (dest_row + (int)scale_y >= dest_bottom - 1) {
     const uint8_t* scan_src =
-        pDIBitmap->GetScanline(dest_row).subspan(dest_ScanOffet).data();
+        pDIBitmap->GetScanline(dest_row).subspan(dest_ScanOffset).data();
     int cur_row = dest_row;
     while (++cur_row < dest_bottom) {
-      uint8_t* scan_des =
-          pDIBitmap->GetWritableScanline(cur_row).data() + dest_ScanOffet;
+      uint8_t* scan_des = pDIBitmap->GetWritableScanline(cur_row)
+                              .subspan(dest_ScanOffset)
+                              .data();
       uint32_t size = m_sizeX * dest_Bpp;
       memmove(scan_des, scan_src, size);
     }
@@ -549,7 +550,7 @@ void ProgressiveDecoder::ResampleVertBT(
     double scale_y,
     int dest_row) {
   int dest_Bpp = pDeviceBitmap->GetBPP() >> 3;
-  uint32_t dest_ScanOffet = m_startX * dest_Bpp;
+  uint32_t dest_ScanOffset = m_startX * dest_Bpp;
   int dest_top = m_startY;
   int dest_bottom = m_startY + m_sizeY;
   FX_SAFE_INT32 check_dest_row_1 = dest_row;
@@ -557,26 +558,28 @@ void ProgressiveDecoder::ResampleVertBT(
   int dest_row_1 = check_dest_row_1.ValueOrDie();
   if (dest_row_1 >= dest_bottom - 1) {
     const uint8_t* scan_src =
-        pDeviceBitmap->GetScanline(dest_row).subspan(dest_ScanOffet).data();
+        pDeviceBitmap->GetScanline(dest_row).subspan(dest_ScanOffset).data();
     while (++dest_row < dest_bottom) {
-      uint8_t* scan_des =
-          pDeviceBitmap->GetWritableScanline(dest_row).data() + dest_ScanOffet;
+      uint8_t* scan_des = pDeviceBitmap->GetWritableScanline(dest_row)
+                              .subspan(dest_ScanOffset)
+                              .data();
       uint32_t size = m_sizeX * dest_Bpp;
       memmove(scan_des, scan_src, size);
     }
     return;
   }
   for (; dest_row_1 > dest_row; dest_row_1--) {
-    uint8_t* scan_des =
-        pDeviceBitmap->GetWritableScanline(dest_row_1).data() + dest_ScanOffet;
+    uint8_t* scan_des = pDeviceBitmap->GetWritableScanline(dest_row_1)
+                            .subspan(dest_ScanOffset)
+                            .data();
     PixelWeight* pWeight = m_WeightVert.GetPixelWeight(dest_row_1 - dest_top);
     const uint8_t* scan_src1 =
         pDeviceBitmap->GetScanline(pWeight->m_SrcStart + dest_top)
-            .subspan(dest_ScanOffet)
+            .subspan(dest_ScanOffset)
             .data();
     const uint8_t* scan_src2 =
         pDeviceBitmap->GetScanline(pWeight->m_SrcEnd + dest_top)
-            .subspan(dest_ScanOffet)
+            .subspan(dest_ScanOffset)
             .data();
     switch (pDeviceBitmap->GetFormat()) {
       case FXDIB_Format::kInvalid:
@@ -837,7 +840,7 @@ void ProgressiveDecoder::GifDoubleLineResampleVert(
     double scale_y,
     int dest_row) {
   int dest_Bpp = pDeviceBitmap->GetBPP() >> 3;
-  uint32_t dest_ScanOffet = m_startX * dest_Bpp;
+  uint32_t dest_ScanOffset = m_startX * dest_Bpp;
   int dest_top = m_startY;
   pdfium::base::CheckedNumeric<double> scale_y2 = scale_y;
   scale_y2 *= 2;
@@ -846,16 +849,17 @@ void ProgressiveDecoder::GifDoubleLineResampleVert(
   int dest_row_1 = check_dest_row_1.ValueOrDie();
   dest_row_1 = std::max(dest_row_1, dest_top);
   for (; dest_row_1 < dest_row; dest_row_1++) {
-    uint8_t* scan_des =
-        pDeviceBitmap->GetWritableScanline(dest_row_1).data() + dest_ScanOffet;
+    uint8_t* scan_des = pDeviceBitmap->GetWritableScanline(dest_row_1)
+                            .subspan(dest_ScanOffset)
+                            .data();
     PixelWeight* pWeight = m_WeightVert.GetPixelWeight(dest_row_1 - dest_top);
     const uint8_t* scan_src1 =
         pDeviceBitmap->GetScanline(pWeight->m_SrcStart + dest_top)
-            .subspan(dest_ScanOffet)
+            .subspan(dest_ScanOffset)
             .data();
     const uint8_t* scan_src2 =
         pDeviceBitmap->GetScanline(pWeight->m_SrcEnd + dest_top)
-            .subspan(dest_ScanOffet)
+            .subspan(dest_ScanOffset)
             .data();
     switch (pDeviceBitmap->GetFormat()) {
       case FXDIB_Format::kInvalid:
@@ -1063,8 +1067,9 @@ void ProgressiveDecoder::PngOneOneMapResampleHorz(
   int32_t src_left = m_clipBox.left;
   int32_t dest_left = m_startX;
   src_scan += src_left * src_Bpp;
-  uint8_t* dest_scan = pDeviceBitmap->GetWritableScanline(dest_line).data() +
-                       dest_left * dest_Bpp;
+  uint8_t* dest_scan = pDeviceBitmap->GetWritableScanline(dest_line)
+                           .subspan(dest_left * dest_Bpp)
+                           .data();
   switch (pDeviceBitmap->GetFormat()) {
     case FXDIB_Format::k1bppMask:
     case FXDIB_Format::k1bppRgb:
@@ -1915,7 +1920,7 @@ void ProgressiveDecoder::ResampleVert(
     double scale_y,
     int dest_row) {
   int dest_Bpp = pDeviceBitmap->GetBPP() >> 3;
-  uint32_t dest_ScanOffet = m_startX * dest_Bpp;
+  uint32_t dest_ScanOffset = m_startX * dest_Bpp;
   int dest_top = m_startY;
   FX_SAFE_INT32 check_dest_row_1 = dest_row;
   check_dest_row_1 -= pdfium::base::checked_cast<int>(scale_y);
@@ -1924,11 +1929,11 @@ void ProgressiveDecoder::ResampleVert(
     int dest_bottom = dest_top + m_sizeY;
     if (dest_row + (int)scale_y >= dest_bottom - 1) {
       const uint8_t* scan_src =
-          pDeviceBitmap->GetScanline(dest_row).subspan(dest_ScanOffet).data();
+          pDeviceBitmap->GetScanline(dest_row).subspan(dest_ScanOffset).data();
       while (++dest_row < dest_bottom) {
-        uint8_t* scan_des =
-            pDeviceBitmap->GetWritableScanline(dest_row).data() +
-            dest_ScanOffet;
+        uint8_t* scan_des = pDeviceBitmap->GetWritableScanline(dest_row)
+                                .subspan(dest_ScanOffset)
+                                .data();
         uint32_t size = m_sizeX * dest_Bpp;
         memmove(scan_des, scan_src, size);
       }
@@ -1936,16 +1941,17 @@ void ProgressiveDecoder::ResampleVert(
     return;
   }
   for (; dest_row_1 < dest_row; dest_row_1++) {
-    uint8_t* scan_des =
-        pDeviceBitmap->GetWritableScanline(dest_row_1).data() + dest_ScanOffet;
+    uint8_t* scan_des = pDeviceBitmap->GetWritableScanline(dest_row_1)
+                            .subspan(dest_ScanOffset)
+                            .data();
     PixelWeight* pWeight = m_WeightVert.GetPixelWeight(dest_row_1 - dest_top);
     const uint8_t* scan_src1 =
         pDeviceBitmap->GetScanline(pWeight->m_SrcStart + dest_top)
-            .subspan(dest_ScanOffet)
+            .subspan(dest_ScanOffset)
             .data();
     const uint8_t* scan_src2 =
         pDeviceBitmap->GetScanline(pWeight->m_SrcEnd + dest_top)
-            .subspan(dest_ScanOffet)
+            .subspan(dest_ScanOffset)
             .data();
     switch (pDeviceBitmap->GetFormat()) {
       case FXDIB_Format::kInvalid:
@@ -2003,10 +2009,11 @@ void ProgressiveDecoder::ResampleVert(
   int dest_bottom = dest_top + m_sizeY;
   if (dest_row + (int)scale_y >= dest_bottom - 1) {
     const uint8_t* scan_src =
-        pDeviceBitmap->GetScanline(dest_row).subspan(dest_ScanOffet).data();
+        pDeviceBitmap->GetScanline(dest_row).subspan(dest_ScanOffset).data();
     while (++dest_row < dest_bottom) {
-      uint8_t* scan_des =
-          pDeviceBitmap->GetWritableScanline(dest_row).data() + dest_ScanOffet;
+      uint8_t* scan_des = pDeviceBitmap->GetWritableScanline(dest_row)
+                              .subspan(dest_ScanOffset)
+                              .data();
       uint32_t size = m_sizeX * dest_Bpp;
       memmove(scan_des, scan_src, size);
     }
