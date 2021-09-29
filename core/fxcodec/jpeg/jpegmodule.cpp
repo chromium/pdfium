@@ -11,6 +11,7 @@
 
 #include <memory>
 #include <utility>
+#include <vector>
 
 #include "build/build_config.h"
 #include "core/fxcodec/cfx_codec_memory.h"
@@ -135,7 +136,7 @@ class JpegDecoder final : public ScanlineDecoder {
   jpeg_error_mgr m_Jerr;
   jpeg_source_mgr m_Src;
   pdfium::span<const uint8_t> m_SrcSpan;
-  std::unique_ptr<uint8_t, FxFreeDeleter> m_pScanlineBuf;
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_ScanlineBuf;
   bool m_bInited = false;
   bool m_bStarted = false;
   bool m_bJpegTransform = false;
@@ -265,7 +266,7 @@ bool JpegDecoder::Create(pdfium::span<const uint8_t> src_span,
     return false;
 
   CalcPitch();
-  m_pScanlineBuf.reset(FX_Alloc(uint8_t, m_Pitch));
+  m_ScanlineBuf = std::vector<uint8_t, FxAllocAllocator<uint8_t>>(m_Pitch);
   m_nComps = m_Cinfo.num_components;
   m_bpc = 8;
   m_bStarted = false;
@@ -301,12 +302,12 @@ pdfium::span<uint8_t> JpegDecoder::GetNextLine() {
   if (setjmp(m_JmpBuf) == -1)
     return pdfium::span<uint8_t>();
 
-  uint8_t* row_array[] = {m_pScanlineBuf.get()};
+  uint8_t* row_array[] = {m_ScanlineBuf.data()};
   int nlines = jpeg_read_scanlines(&m_Cinfo, row_array, 1);
   if (nlines <= 0)
     return pdfium::span<uint8_t>();
 
-  return {m_pScanlineBuf.get(), m_Pitch};
+  return m_ScanlineBuf;
 }
 
 uint32_t JpegDecoder::GetSrcOffset() {
