@@ -105,7 +105,7 @@ void DoBilinearLoop(const CFX_ImageTransformer::CalcData& calc_data,
                     const F& func) {
   CFX_BilinearMatrix matrix_fix(calc_data.matrix);
   for (int row = 0; row < result_rect.Height(); row++) {
-    uint8_t* dest = calc_data.bitmap->GetWritableScanline(row);
+    uint8_t* dest = calc_data.bitmap->GetWritableScanline(row).data();
     for (int col = 0; col < result_rect.Width(); col++) {
       CFX_ImageTransformer::BilinearData d;
       d.res_x = 0;

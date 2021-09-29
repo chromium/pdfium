@@ -727,7 +727,7 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap() {
       m_JpxInlineData.data.reserve(image_info.width * image_info.height);
       for (uint32_t row = 0; row < image_info.height; ++row) {
         const uint8_t* src = result_bitmap->GetScanline(row).data();
-        uint8_t* dest = rgb_bitmap->GetWritableScanline(row);
+        uint8_t* dest = rgb_bitmap->GetWritableScanline(row).data();
         for (uint32_t col = 0; col < image_info.width; ++col) {
           uint8_t a = src[3];
           m_JpxInlineData.data.push_back(a);
@@ -746,7 +746,7 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap() {
       // TODO(thestig): Is there existing code that does this already?
       for (uint32_t row = 0; row < image_info.height; ++row) {
         const uint8_t* src = result_bitmap->GetScanline(row).data();
-        uint8_t* dest = rgb_bitmap->GetWritableScanline(row);
+        uint8_t* dest = rgb_bitmap->GetWritableScanline(row).data();
         for (uint32_t col = 0; col < image_info.width; ++col) {
           memcpy(dest, src, 3);
           src += 4;
@@ -760,7 +760,7 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap() {
              m_bpc < 8) {
     int scale = 8 - m_bpc;
     for (uint32_t row = 0; row < image_info.height; ++row) {
-      uint8_t* scanline = result_bitmap->GetWritableScanline(row);
+      uint8_t* scanline = result_bitmap->GetWritableScanline(row).data();
       for (uint32_t col = 0; col < image_info.width; ++col) {
         *scanline = (*scanline) >> scale;
         ++scanline;

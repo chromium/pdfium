@@ -27,7 +27,7 @@ void CFX_BitmapStorer::Replace(RetainPtr<CFX_DIBitmap>&& pBitmap) {
 void CFX_BitmapStorer::ComposeScanline(int line,
                                        const uint8_t* scanline,
                                        const uint8_t* scan_extra_alpha) {
-  uint8_t* dest_buf = m_pBitmap->GetWritableScanline(line);
+  uint8_t* dest_buf = m_pBitmap->GetWritableScanline(line).data();
   if (dest_buf)
     memcpy(dest_buf, scanline, m_pBitmap->GetPitch());
 

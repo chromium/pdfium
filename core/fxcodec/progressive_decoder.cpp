@@ -411,7 +411,7 @@ bool ProgressiveDecoder::GifInputRecordPositionBuf(uint32_t rcd_pos,
   FX_ARGB argb = m_SrcPalette[pal_index];
   for (int row = 0; row < sizeY; row++) {
     uint8_t* pScanline =
-        pDevice->GetWritableScanline(row + startY) + startX * Bpp;
+        pDevice->GetWritableScanline(row + startY).data() + startX * Bpp;
     switch (m_TransMethod) {
       case 3: {
         uint8_t gray =
@@ -493,7 +493,7 @@ void ProgressiveDecoder::GifReadScanline(int32_t row_num, uint8_t* row_buf) {
     int cur_row = dest_row;
     while (++cur_row < dest_bottom) {
       uint8_t* scan_des =
-          pDIBitmap->GetWritableScanline(cur_row) + dest_ScanOffet;
+          pDIBitmap->GetWritableScanline(cur_row).data() + dest_ScanOffet;
       uint32_t size = m_sizeX * dest_Bpp;
       memmove(scan_des, scan_src, size);
     }
@@ -560,7 +560,7 @@ void ProgressiveDecoder::ResampleVertBT(
         pDeviceBitmap->GetScanline(dest_row).subspan(dest_ScanOffet).data();
     while (++dest_row < dest_bottom) {
       uint8_t* scan_des =
-          pDeviceBitmap->GetWritableScanline(dest_row) + dest_ScanOffet;
+          pDeviceBitmap->GetWritableScanline(dest_row).data() + dest_ScanOffet;
       uint32_t size = m_sizeX * dest_Bpp;
       memmove(scan_des, scan_src, size);
     }
@@ -568,7 +568,7 @@ void ProgressiveDecoder::ResampleVertBT(
   }
   for (; dest_row_1 > dest_row; dest_row_1--) {
     uint8_t* scan_des =
-        pDeviceBitmap->GetWritableScanline(dest_row_1) + dest_ScanOffet;
+        pDeviceBitmap->GetWritableScanline(dest_row_1).data() + dest_ScanOffet;
     PixelWeight* pWeight = m_WeightVert.GetPixelWeight(dest_row_1 - dest_top);
     const uint8_t* scan_src1 =
         pDeviceBitmap->GetScanline(pWeight->m_SrcStart + dest_top)
@@ -847,7 +847,7 @@ void ProgressiveDecoder::GifDoubleLineResampleVert(
   dest_row_1 = std::max(dest_row_1, dest_top);
   for (; dest_row_1 < dest_row; dest_row_1++) {
     uint8_t* scan_des =
-        pDeviceBitmap->GetWritableScanline(dest_row_1) + dest_ScanOffet;
+        pDeviceBitmap->GetWritableScanline(dest_row_1).data() + dest_ScanOffet;
     PixelWeight* pWeight = m_WeightVert.GetPixelWeight(dest_row_1 - dest_top);
     const uint8_t* scan_src1 =
         pDeviceBitmap->GetScanline(pWeight->m_SrcStart + dest_top)
@@ -1063,8 +1063,8 @@ void ProgressiveDecoder::PngOneOneMapResampleHorz(
   int32_t src_left = m_clipBox.left;
   int32_t dest_left = m_startX;
   src_scan += src_left * src_Bpp;
-  uint8_t* dest_scan =
-      pDeviceBitmap->GetWritableScanline(dest_line) + dest_left * dest_Bpp;
+  uint8_t* dest_scan = pDeviceBitmap->GetWritableScanline(dest_line).data() +
+                       dest_left * dest_Bpp;
   switch (pDeviceBitmap->GetFormat()) {
     case FXDIB_Format::k1bppMask:
     case FXDIB_Format::k1bppRgb:
@@ -1335,7 +1335,7 @@ FXCODEC_STATUS ProgressiveDecoder::TiffContinueDecode() {
     case FXDIB_Format::k8bppMask: {
       for (int32_t row = 0; row < pClipBitmap->GetHeight(); row++) {
         const uint8_t* src_line = pClipBitmap->GetScanline(row).data();
-        uint8_t* dest_line = pFormatBitmap->GetWritableScanline(row);
+        uint8_t* dest_line = pFormatBitmap->GetWritableScanline(row).data();
         for (int32_t col = 0; col < pClipBitmap->GetWidth(); col++) {
           uint8_t _a = 255 - src_line[3];
           uint8_t b = (src_line[0] * src_line[3] + 0xFF * _a) / 255;
@@ -1352,7 +1352,7 @@ FXCODEC_STATUS ProgressiveDecoder::TiffContinueDecode() {
           (m_pDeviceBitmap->GetFormat() == FXDIB_Format::kRgb) ? 3 : 4;
       for (int32_t row = 0; row < pClipBitmap->GetHeight(); row++) {
         const uint8_t* src_line = pClipBitmap->GetScanline(row).data();
-        uint8_t* dest_line = pFormatBitmap->GetWritableScanline(row);
+        uint8_t* dest_line = pFormatBitmap->GetWritableScanline(row).data();
         for (int32_t col = 0; col < pClipBitmap->GetWidth(); col++) {
           uint8_t _a = 255 - src_line[3];
           uint8_t b = (src_line[0] * src_line[3] + 0xFF * _a) / 255;
@@ -1927,7 +1927,8 @@ void ProgressiveDecoder::ResampleVert(
           pDeviceBitmap->GetScanline(dest_row).subspan(dest_ScanOffet).data();
       while (++dest_row < dest_bottom) {
         uint8_t* scan_des =
-            pDeviceBitmap->GetWritableScanline(dest_row) + dest_ScanOffet;
+            pDeviceBitmap->GetWritableScanline(dest_row).data() +
+            dest_ScanOffet;
         uint32_t size = m_sizeX * dest_Bpp;
         memmove(scan_des, scan_src, size);
       }
@@ -1936,7 +1937,7 @@ void ProgressiveDecoder::ResampleVert(
   }
   for (; dest_row_1 < dest_row; dest_row_1++) {
     uint8_t* scan_des =
-        pDeviceBitmap->GetWritableScanline(dest_row_1) + dest_ScanOffet;
+        pDeviceBitmap->GetWritableScanline(dest_row_1).data() + dest_ScanOffet;
     PixelWeight* pWeight = m_WeightVert.GetPixelWeight(dest_row_1 - dest_top);
     const uint8_t* scan_src1 =
         pDeviceBitmap->GetScanline(pWeight->m_SrcStart + dest_top)
@@ -2005,7 +2006,7 @@ void ProgressiveDecoder::ResampleVert(
         pDeviceBitmap->GetScanline(dest_row).subspan(dest_ScanOffet).data();
     while (++dest_row < dest_bottom) {
       uint8_t* scan_des =
-          pDeviceBitmap->GetWritableScanline(dest_row) + dest_ScanOffet;
+          pDeviceBitmap->GetWritableScanline(dest_row).data() + dest_ScanOffet;
       uint32_t size = m_sizeX * dest_Bpp;
       memmove(scan_des, scan_src, size);
     }

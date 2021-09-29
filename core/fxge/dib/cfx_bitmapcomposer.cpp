@@ -113,7 +113,7 @@ void CFX_BitmapComposer::ComposeScanline(int line,
                     m_pClipMask->GetPitch() +
                 (m_DestLeft - m_pClipRgn->GetBox().left);
   }
-  uint8_t* dest_scan = m_pBitmap->GetWritableScanline(line + m_DestTop);
+  uint8_t* dest_scan = m_pBitmap->GetWritableScanline(line + m_DestTop).data();
   if (dest_scan) {
     FX_SAFE_UINT32 offset = m_DestLeft;
     offset *= m_pBitmap->GetBPP();

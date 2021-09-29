@@ -634,7 +634,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::Clone(const FX_RECT* pClip) const {
           reinterpret_cast<const uint32_t*>(GetScanline(row).data()) +
           rect.left / 32;
       uint32_t* dest_scan = reinterpret_cast<uint32_t*>(
-          pNewBitmap->GetWritableScanline(row - rect.top));
+          pNewBitmap->GetWritableScanline(row - rect.top).data());
       for (int i = 0; i < dword_count; ++i) {
         dest_scan[i] =
             (src_scan[i] << left_shift) | (src_scan[i + 1] >> right_shift);
@@ -659,7 +659,8 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::Clone(const FX_RECT* pClip) const {
     for (int row = rect.top; row < rect.bottom; ++row) {
       const uint8_t* src_scan =
           GetScanline(row).subspan(offset.ValueOrDie()).data();
-      uint8_t* dest_scan = pNewBitmap->GetWritableScanline(row - rect.top);
+      uint8_t* dest_scan =
+          pNewBitmap->GetWritableScanline(row - rect.top).data();
       memcpy(dest_scan, src_scan, copy_len.ValueOrDie());
     }
   }
@@ -858,7 +859,8 @@ const uint8_t* CFX_DIBBase::GetAlphaMaskScanline(int line) const {
 }
 
 uint8_t* CFX_DIBBase::GetWritableAlphaMaskScanline(int line) {
-  return m_pAlphaMask ? m_pAlphaMask->GetWritableScanline(line) : nullptr;
+  return m_pAlphaMask ? m_pAlphaMask->GetWritableScanline(line).data()
+                      : nullptr;
 }
 
 uint8_t* CFX_DIBBase::GetAlphaMaskBuffer() {
@@ -879,7 +881,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::CloneAlphaMask() const {
   for (int row = rect.top; row < rect.bottom; ++row) {
     const uint8_t* src_scan =
         GetScanline(row).subspan(rect.left * 4 + 3).data();
-    uint8_t* dest_scan = pMask->GetWritableScanline(row - rect.top);
+    uint8_t* dest_scan = pMask->GetWritableScanline(row - rect.top).data();
     for (int col = rect.left; col < rect.right; ++col) {
       *dest_scan++ = *src_scan;
       src_scan += 4;
@@ -909,7 +911,7 @@ bool CFX_DIBBase::SetAlphaMask(const RetainPtr<CFX_DIBBase>& pAlphaMask,
       return false;
   }
   for (int row = 0; row < m_Height; ++row) {
-    memcpy(m_pAlphaMask->GetWritableScanline(row),
+    memcpy(m_pAlphaMask->GetWritableScanline(row).data(),
            pAlphaMask->GetScanline(row + rect.top).subspan(rect.left).data(),
            m_pAlphaMask->m_Pitch);
   }
