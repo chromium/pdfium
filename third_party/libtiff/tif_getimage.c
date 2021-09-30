@@ -647,38 +647,28 @@ gtTileContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 
     flip = setorientation(img);
     if (flip & FLIP_VERTICALLY) {
-	    y = h - 1;
-	    safeskew = 0;
-	    safeskew -= tw;
-	    safeskew -= w;
+        if ((tw + w) > INT_MAX) {
+            TIFFErrorExt(tif->tif_clientdata, TIFFFileName(tif), "%s", "unsupported tile size (too wide)");
+            return (0);
+        }
+        y = h - 1;
+        toskew = -(int32)(tw + w);
     }
     else {
-	    y = 0;
-	    safeskew = 0;
-	    safeskew -= tw;
-	    safeskew +=w;
+        if (tw > (INT_MAX + w)) {
+            TIFFErrorExt(tif->tif_clientdata, TIFFFileName(tif), "%s", "unsupported tile size (too wide)");
+            return (0);
+        }
+        y = 0;
+        toskew = -(int32)(tw - w);
     }
      
-    if(safeskew > INT_MAX || safeskew < INT_MIN){
-       _TIFFfree(buf);
-       TIFFErrorExt(tif->tif_clientdata, TIFFFileName(tif), "%s", "Invalid skew");
-       return (0);
-    }
-    toskew = safeskew;
-
     /*
      *	Leftmost tile is clipped on left side if col_offset > 0.
      */
     leftmost_fromskew = img->col_offset % tw;
     leftmost_tw = tw - leftmost_fromskew;
-    safeskew = toskew;
-    safeskew += leftmost_fromskew;
-    if(safeskew > INT_MAX || safeskew < INT_MIN){
-       _TIFFfree(buf);
-       TIFFErrorExt(tif->tif_clientdata, TIFFFileName(tif), "%s", "Invalid skew");
-       return (0);
-    }
-    leftmost_toskew = safeskew;
+    leftmost_toskew = toskew + leftmost_fromskew;
     for (row = 0; ret != 0 && row < h; row += nrow)
     {
         rowstoread = th - (row + img->row_offset) % th;
@@ -800,10 +790,18 @@ gtTileSeparate(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 
 	flip = setorientation(img);
 	if (flip & FLIP_VERTICALLY) {
+		if ((tw + w) > INT_MAX) {
+            TIFFErrorExt(tif->tif_clientdata, TIFFFileName(tif), "%s", "unsupported tile size (too wide)");
+            return (0);
+        }
 		y = h - 1;
 		toskew = -(int32)(tw + w);
 	}
 	else {
+		if (tw > (INT_MAX + w)) {
+            TIFFErrorExt(tif->tif_clientdata, TIFFFileName(tif), "%s", "unsupported tile size (too wide)");
+            return (0);
+        }
 		y = 0;
 		toskew = -(int32)(tw - w);
 	}
@@ -974,6 +972,10 @@ gtStripContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 
 	flip = setorientation(img);
 	if (flip & FLIP_VERTICALLY) {
+		if ( w > INT_MAX ) {
+        	TIFFErrorExt(tif->tif_clientdata, TIFFFileName(tif), "Width overflow");
+			return (0);
+		}
 		y = h - 1;
 		toskew = -(int32)(w + w);
 	} else {
@@ -1070,6 +1072,10 @@ gtStripSeparate(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 
 	flip = setorientation(img);
 	if (flip & FLIP_VERTICALLY) {
+		if ( w > INT_MAX ) {
+        	TIFFErrorExt(tif->tif_clientdata, TIFFFileName(tif), "Width overflow");
+			return (0);
+		}
 		y = h - 1;
 		toskew = -(int32)(w + w);
 	}

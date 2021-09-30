@@ -2,14 +2,6 @@ diff --git a/third_party/libtiff/tif_getimage.c b/third_party/libtiff/tif_getima
 index fc554ccab..fff3f7fde 100644
 --- a/third_party/libtiff/tif_getimage.c
 +++ b/third_party/libtiff/tif_getimage.c
-@@ -31,6 +31,7 @@
-  */
- #include "tiffiop.h"
- #include <stdio.h>
-+#include <limits.h>
- 
- static int gtTileContig(TIFFRGBAImage*, uint32*, uint32, uint32);
- static int gtTileSeparate(TIFFRGBAImage*, uint32*, uint32, uint32);
 @@ -628,6 +629,7 @@ gtTileContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
      uint32 tw, th;
      unsigned char* buf = NULL;
@@ -18,47 +10,6 @@ index fc554ccab..fff3f7fde 100644
      uint32 nrow;
      int ret = 1, flip;
      uint32 this_tw, tocol;
-@@ -648,19 +650,37 @@ gtTileContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
-     flip = setorientation(img);
-     if (flip & FLIP_VERTICALLY) {
- 	    y = h - 1;
--	    toskew = -(int32)(tw + w);
-+	    safeskew = 0;
-+	    safeskew -= tw;
-+	    safeskew -= w;
-     }
-     else {
- 	    y = 0;
--	    toskew = -(int32)(tw - w);
-+	    safeskew = 0;
-+	    safeskew -= tw;
-+	    safeskew +=w;
-     }
-      
-+    if(safeskew > INT_MAX || safeskew < INT_MIN){
-+       _TIFFfree(buf);
-+       TIFFErrorExt(tif->tif_clientdata, TIFFFileName(tif), "%s", "Invalid skew");
-+       return (0);
-+    }
-+    toskew = safeskew;
-+
-     /*
-      *	Leftmost tile is clipped on left side if col_offset > 0.
-      */
-     leftmost_fromskew = img->col_offset % tw;
-     leftmost_tw = tw - leftmost_fromskew;
--    leftmost_toskew = toskew + leftmost_fromskew;
-+    safeskew = toskew;
-+    safeskew += leftmost_fromskew;
-+    if(safeskew > INT_MAX || safeskew < INT_MIN){
-+       _TIFFfree(buf);
-+       TIFFErrorExt(tif->tif_clientdata, TIFFFileName(tif), "%s", "Invalid skew");
-+       return (0);
-+    }
-+    leftmost_toskew = safeskew;
-     for (row = 0; ret != 0 && row < h; row += nrow)
-     {
-         rowstoread = th - (row + img->row_offset) % th;
 @@ -686,9 +706,24 @@ gtTileContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
  		/*
  		 * Rightmost tile is clipped on right side.
