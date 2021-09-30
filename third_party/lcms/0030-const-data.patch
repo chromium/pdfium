@@ -21,9 +21,9 @@ index 54dd78912..f15a5f1a8 100644
  // The built-in list
 -static _cmsParametricCurvesCollection DefaultCurves = {
 +static const _cmsParametricCurvesCollection DefaultCurves = {
-     9,                                  // # of curve types
-     { 1, 2, 3, 4, 5, 6, 7, 8, 108 },    // Parametric curve ID
-     { 1, 3, 4, 5, 7, 4, 5, 5, 1 },      // Parameters by type
+     10,                                      // # of curve types
+     { 1, 2, 3, 4, 5, 6, 7, 8, 108, 109 },    // Parametric curve ID
+     { 1, 3, 4, 5, 7, 4, 5, 5,   1,   1 },    // Parameters by type
 @@ -162,7 +162,7 @@ cmsBool _cmsRegisterParametricCurvesPlugin(cmsContext ContextID, cmsPluginBase*
  
  // Search in type list, return position or -1 if not found
