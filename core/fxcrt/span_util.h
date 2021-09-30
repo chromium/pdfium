@@ -7,8 +7,6 @@
 
 #include <string.h>
 
-#include <vector>
-
 #include "third_party/base/check_op.h"
 #include "third_party/base/span.h"
 
@@ -42,14 +40,6 @@ void spanset(pdfium::span<T> dst, uint8_t val) {
 template <typename T>
 void spanclr(pdfium::span<T> dst) {
   memset(dst.data(), 0, dst.size_bytes());
-}
-
-// Extracting subspans from arrays.
-template <typename T, typename A>
-pdfium::span<T> Subspan(std::vector<T, A>& vec,
-                        size_t start,
-                        size_t count = -1) {
-  return pdfium::make_span(vec).subspan(start, count);
 }
 
 }  // namespace fxcrt
