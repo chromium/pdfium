@@ -9,6 +9,7 @@
 
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/scanlinecomposer_iface.h"
+#include "third_party/base/span.h"
 
 class CFX_DIBitmap;
 
@@ -19,8 +20,8 @@ class CFX_BitmapStorer final : public ScanlineComposerIface {
 
   // ScanlineComposerIface:
   void ComposeScanline(int line,
-                       const uint8_t* scanline,
-                       const uint8_t* scan_extra_alpha) override;
+                       pdfium::span<const uint8_t> scanline,
+                       pdfium::span<const uint8_t> scan_extra_alpha) override;
   bool SetInfo(int width,
                int height,
                FXDIB_Format src_format,

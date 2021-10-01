@@ -28,32 +28,32 @@ class CFX_ScanlineCompositor {
             bool bRgbByteOrder);
 
   void CompositeRgbBitmapLine(uint8_t* dest_scan,
-                              const uint8_t* src_scan,
+                              pdfium::span<const uint8_t> src_scan,
                               int width,
                               const uint8_t* clip_scan,
-                              const uint8_t* src_extra_alpha,
-                              uint8_t* dst_extra_alpha);
+                              pdfium::span<const uint8_t> src_extra_alpha,
+                              pdfium::span<uint8_t> dst_extra_alpha);
 
   void CompositePalBitmapLine(uint8_t* dest_scan,
-                              const uint8_t* src_scan,
+                              pdfium::span<const uint8_t> src_scan,
                               int src_left,
                               int width,
                               const uint8_t* clip_scan,
-                              const uint8_t* src_extra_alpha,
-                              uint8_t* dst_extra_alpha);
+                              pdfium::span<const uint8_t> src_extra_alpha,
+                              pdfium::span<uint8_t> dst_extra_alpha);
 
   void CompositeByteMaskLine(uint8_t* dest_scan,
-                             const uint8_t* src_scan,
+                             pdfium::span<const uint8_t> src_scan,
                              int width,
                              const uint8_t* clip_scan,
-                             uint8_t* dst_extra_alpha);
+                             pdfium::span<uint8_t> dst_extra_alpha);
 
   void CompositeBitMaskLine(uint8_t* dest_scan,
-                            const uint8_t* src_scan,
+                            pdfium::span<const uint8_t> src_scan,
                             int src_left,
                             int width,
                             const uint8_t* clip_scan,
-                            uint8_t* dst_extra_alpha);
+                            pdfium::span<uint8_t> dst_extra_alpha);
 
  private:
   class Palette {

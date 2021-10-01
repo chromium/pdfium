@@ -767,18 +767,16 @@ bool CFX_DIBitmap::CompositeBitmap(int dest_left,
   for (int row = 0; row < height; row++) {
     uint8_t* dest_scan =
         m_pBuffer.Get() + (dest_top + row) * m_Pitch + dest_left * dest_Bpp;
-    const uint8_t* src_scan = pSrcBitmap->GetScanline(src_top + row)
-                                  .subspan(src_left * src_Bpp)
-                                  .data();
-    const uint8_t* src_scan_extra_alpha =
+    pdfium::span<const uint8_t> src_scan =
+        pSrcBitmap->GetScanline(src_top + row).subspan(src_left * src_Bpp);
+    pdfium::span<const uint8_t> src_scan_extra_alpha =
         pSrcAlphaMask
-            ? pSrcAlphaMask->GetScanline(src_top + row).subspan(src_left).data()
-            : nullptr;
-    uint8_t* dst_scan_extra_alpha =
+            ? pSrcAlphaMask->GetScanline(src_top + row).subspan(src_left)
+            : pdfium::span<const uint8_t>();
+    pdfium::span<uint8_t> dst_scan_extra_alpha =
         m_pAlphaMask ? m_pAlphaMask->GetWritableScanline(dest_top + row)
                            .subspan(dest_left)
-                           .data()
-                     : nullptr;
+                     : pdfium::span<uint8_t>();
     const uint8_t* clip_scan = nullptr;
     if (pClipMask) {
       clip_scan = pClipMask->m_pBuffer.Get() +
@@ -846,12 +844,11 @@ bool CFX_DIBitmap::CompositeMask(int dest_left,
   for (int row = 0; row < height; row++) {
     uint8_t* dest_scan =
         m_pBuffer.Get() + (dest_top + row) * m_Pitch + dest_left * Bpp;
-    const uint8_t* src_scan = pMask->GetScanline(src_top + row).data();
-    uint8_t* dst_scan_extra_alpha =
+    pdfium::span<const uint8_t> src_scan = pMask->GetScanline(src_top + row);
+    pdfium::span<uint8_t> dst_scan_extra_alpha =
         m_pAlphaMask ? m_pAlphaMask->GetWritableScanline(dest_top + row)
                            .subspan(dest_left)
-                           .data()
-                     : nullptr;
+                     : pdfium::span<uint8_t>();
     const uint8_t* clip_scan = nullptr;
     if (pClipMask) {
       clip_scan = pClipMask->m_pBuffer.Get() +
@@ -862,8 +859,8 @@ bool CFX_DIBitmap::CompositeMask(int dest_left,
       compositor.CompositeBitMaskLine(dest_scan, src_scan, src_left, width,
                                       clip_scan, dst_scan_extra_alpha);
     } else {
-      compositor.CompositeByteMaskLine(dest_scan, src_scan + src_left, width,
-                                       clip_scan, dst_scan_extra_alpha);
+      compositor.CompositeByteMaskLine(dest_scan, src_scan.subspan(src_left),
+                                       width, clip_scan, dst_scan_extra_alpha);
     }
   }
   return true;

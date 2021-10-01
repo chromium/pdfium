@@ -588,7 +588,7 @@ void CStretchEngine::StretchVert() {
         break;
       }
     }
-    m_pDestBitmap->ComposeScanline(row - m_DestClip.top, m_DestScanline.data(),
-                                   m_DestMaskScanline.data());
+    m_pDestBitmap->ComposeScanline(row - m_DestClip.top, m_DestScanline,
+                                   m_DestMaskScanline);
   }
 }

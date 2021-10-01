@@ -14,9 +14,10 @@ class ScanlineComposerIface {
  public:
   virtual ~ScanlineComposerIface() = default;
 
-  virtual void ComposeScanline(int line,
-                               const uint8_t* scanline,
-                               const uint8_t* scan_extra_alpha) = 0;
+  virtual void ComposeScanline(
+      int line,
+      pdfium::span<const uint8_t> scanline,
+      pdfium::span<const uint8_t> scan_extra_alpha) = 0;
 
   virtual bool SetInfo(int width,
                        int height,

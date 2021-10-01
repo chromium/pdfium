@@ -10,6 +10,7 @@
 
 #include <utility>
 
+#include "core/fxcrt/span_util.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 
 CFX_BitmapStorer::CFX_BitmapStorer() = default;
@@ -24,17 +25,18 @@ void CFX_BitmapStorer::Replace(RetainPtr<CFX_DIBitmap>&& pBitmap) {
   m_pBitmap = std::move(pBitmap);
 }
 
-void CFX_BitmapStorer::ComposeScanline(int line,
-                                       const uint8_t* scanline,
-                                       const uint8_t* scan_extra_alpha) {
-  uint8_t* dest_buf = m_pBitmap->GetWritableScanline(line).data();
-  if (dest_buf)
-    memcpy(dest_buf, scanline, m_pBitmap->GetPitch());
+void CFX_BitmapStorer::ComposeScanline(
+    int line,
+    pdfium::span<const uint8_t> scanline,
+    pdfium::span<const uint8_t> scan_extra_alpha) {
+  pdfium::span<uint8_t> dest_buf = m_pBitmap->GetWritableScanline(line);
+  if (!dest_buf.empty())
+    fxcrt::spancpy(dest_buf, scanline);
 
-  uint8_t* dest_alpha_buf =
-      m_pBitmap->GetWritableAlphaMaskScanline(line).data();
-  if (dest_alpha_buf)
-    memcpy(dest_alpha_buf, scan_extra_alpha, m_pBitmap->GetAlphaMaskPitch());
+  pdfium::span<uint8_t> dest_alpha_buf =
+      m_pBitmap->GetWritableAlphaMaskScanline(line);
+  if (!dest_alpha_buf.empty())
+    fxcrt::spancpy(dest_alpha_buf, scan_extra_alpha);
 }
 
 bool CFX_BitmapStorer::SetInfo(int width,
