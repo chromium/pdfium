@@ -31,7 +31,8 @@ void CFX_BitmapStorer::ComposeScanline(int line,
   if (dest_buf)
     memcpy(dest_buf, scanline, m_pBitmap->GetPitch());
 
-  uint8_t* dest_alpha_buf = m_pBitmap->GetWritableAlphaMaskScanline(line);
+  uint8_t* dest_alpha_buf =
+      m_pBitmap->GetWritableAlphaMaskScanline(line).data();
   if (dest_alpha_buf)
     memcpy(dest_alpha_buf, scan_extra_alpha, m_pBitmap->GetAlphaMaskPitch());
 }

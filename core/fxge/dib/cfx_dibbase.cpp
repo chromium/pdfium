@@ -854,13 +854,14 @@ uint32_t CFX_DIBBase::GetAlphaMaskPitch() const {
   return m_pAlphaMask ? m_pAlphaMask->GetPitch() : 0;
 }
 
-const uint8_t* CFX_DIBBase::GetAlphaMaskScanline(int line) const {
-  return m_pAlphaMask ? m_pAlphaMask->GetScanline(line).data() : nullptr;
+pdfium::span<const uint8_t> CFX_DIBBase::GetAlphaMaskScanline(int line) const {
+  return m_pAlphaMask ? m_pAlphaMask->GetScanline(line)
+                      : pdfium::span<const uint8_t>();
 }
 
-uint8_t* CFX_DIBBase::GetWritableAlphaMaskScanline(int line) {
-  return m_pAlphaMask ? m_pAlphaMask->GetWritableScanline(line).data()
-                      : nullptr;
+pdfium::span<uint8_t> CFX_DIBBase::GetWritableAlphaMaskScanline(int line) {
+  return m_pAlphaMask ? m_pAlphaMask->GetWritableScanline(line)
+                      : pdfium::span<uint8_t>();
 }
 
 uint8_t* CFX_DIBBase::GetAlphaMaskBuffer() {

@@ -73,8 +73,8 @@ class CFX_DIBBase : public Retainable {
 
   bool HasAlphaMask() const { return !!m_pAlphaMask; }
   uint32_t GetAlphaMaskPitch() const;
-  const uint8_t* GetAlphaMaskScanline(int line) const;
-  uint8_t* GetWritableAlphaMaskScanline(int line);
+  pdfium::span<const uint8_t> GetAlphaMaskScanline(int line) const;
+  pdfium::span<uint8_t> GetWritableAlphaMaskScanline(int line);
   uint8_t* GetAlphaMaskBuffer();
   RetainPtr<CFX_DIBitmap> GetAlphaMask();
   RetainPtr<CFX_DIBitmap> CloneAlphaMask() const;

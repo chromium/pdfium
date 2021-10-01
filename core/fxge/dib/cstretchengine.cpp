@@ -311,7 +311,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
     const uint8_t* src_scan_mask = nullptr;
     uint8_t* dest_scan_mask = nullptr;
     if (!m_ExtraAlphaBuf.empty()) {
-      src_scan_mask = m_pSource->GetAlphaMaskScanline(m_CurRow);
+      src_scan_mask = m_pSource->GetAlphaMaskScanline(m_CurRow).data();
       dest_scan_mask = m_ExtraAlphaBuf.data() +
                        (m_CurRow - m_SrcClip.top) * m_ExtraMaskPitch;
     }

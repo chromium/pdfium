@@ -125,7 +125,7 @@ void CFX_BitmapComposer::ComposeScanline(int line,
     dest_scan += static_cast<uint32_t>(offset.ValueOrDie());
   }
   uint8_t* dest_alpha_scan =
-      m_pBitmap->GetWritableAlphaMaskScanline(line + m_DestTop);
+      m_pBitmap->GetWritableAlphaMaskScanline(line + m_DestTop).data();
   if (dest_alpha_scan)
     dest_alpha_scan += m_DestLeft;
 
