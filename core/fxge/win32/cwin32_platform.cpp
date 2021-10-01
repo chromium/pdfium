@@ -435,10 +435,6 @@ CWin32Platform::CWin32Platform() = default;
 CWin32Platform::~CWin32Platform() = default;
 
 void CWin32Platform::Init() {
-  OSVERSIONINFO ver;
-  ver.dwOSVersionInfoSize = sizeof(ver);
-  GetVersionEx(&ver);
-  m_bHalfTone = ver.dwMajorVersion >= 5;
   if (pdfium::base::win::IsUser32AndGdi32Available())
     m_GdiplusExt.Load();
 }
