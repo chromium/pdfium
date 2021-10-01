@@ -1175,6 +1175,7 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
   if (m_pColorSpace) {
     TranslateScanline24bpp(m_LineBuf.data(), pSrcLine);
     pSrcLine = m_LineBuf.data();
+    src_pitch_value = 3 * m_Width;
   }
   if (!m_bColorKey)
     return {pSrcLine, src_pitch_value};
