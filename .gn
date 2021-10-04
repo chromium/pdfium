@@ -4,6 +4,10 @@
 
 buildconfig = "//build/config/BUILDCONFIG.gn"
 
+# The python interpreter to use by default. On Windows, this will look
+# for python3.exe and python3.bat.
+script_executable = "python3"
+
 default_args = {
   v8_extra_library_files = []
   v8_experimental_extra_library_files = []
