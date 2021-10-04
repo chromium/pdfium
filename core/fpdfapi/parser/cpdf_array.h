@@ -7,7 +7,6 @@
 #ifndef CORE_FPDFAPI_PARSER_CPDF_ARRAY_H_
 #define CORE_FPDFAPI_PARSER_CPDF_ARRAY_H_
 
-#include <memory>
 #include <set>
 #include <type_traits>
 #include <utility>

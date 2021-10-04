@@ -10,7 +10,6 @@
 #include <iterator>
 #include <list>
 #include <map>
-#include <memory>
 #include <vector>
 
 #include "core/fxcrt/unowned_ptr.h"

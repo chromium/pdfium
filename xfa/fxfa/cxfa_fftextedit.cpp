@@ -6,7 +6,6 @@
 
 #include "xfa/fxfa/cxfa_fftextedit.h"
 
-#include <memory>
 #include <utility>
 
 #include "third_party/base/check.h"

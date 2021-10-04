@@ -11,7 +11,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <memory>
 #include <sstream>
 #include <string>
 #include <tuple>

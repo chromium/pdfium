@@ -8,7 +8,6 @@
 #define XFA_FWL_CFWL_WIDGETMGR_H_
 
 #include <map>
-#include <memory>
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "fxjs/gc/gced_tree_node.h"

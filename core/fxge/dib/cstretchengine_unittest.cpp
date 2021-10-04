@@ -4,7 +4,6 @@
 
 #include "core/fxge/dib/cstretchengine.h"
 
-#include <memory>
 #include <utility>
 
 #include "core/fpdfapi/page/cpdf_dib.h"

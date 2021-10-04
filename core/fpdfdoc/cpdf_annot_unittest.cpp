@@ -4,7 +4,6 @@
 
 #include "core/fpdfdoc/cpdf_annot.h"
 
-#include <memory>
 #include <vector>
 
 #include "core/fpdfapi/parser/cpdf_array.h"

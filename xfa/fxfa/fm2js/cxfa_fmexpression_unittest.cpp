@@ -4,7 +4,6 @@
 
 #include "xfa/fxfa/fm2js/cxfa_fmexpression.h"
 
-#include <memory>
 #include <utility>
 
 #include "core/fxcrt/cfx_widetextbuf.h"

@@ -6,7 +6,6 @@
 
 #include "core/fpdfapi/font/cpdf_cmap.h"
 
-#include <memory>
 #include <utility>
 #include <vector>
 

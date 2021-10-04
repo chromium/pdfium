@@ -8,7 +8,6 @@
 #define FXJS_XFA_CFXJSE_RESOLVEPROCESSOR_H_
 
 #include <memory>
-#include <vector>
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr.h"

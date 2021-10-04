@@ -7,7 +7,6 @@
 #ifndef XFA_FXFA_PARSER_CXFA_LOCALEMGR_H_
 #define XFA_FXFA_PARSER_CXFA_LOCALEMGR_H_
 
-#include <memory>
 #include <vector>
 
 #include "core/fxcrt/unowned_ptr.h"

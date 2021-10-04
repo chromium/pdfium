@@ -9,7 +9,6 @@
 
 #include <stdint.h>
 
-#include <memory>
 #include <set>
 #include <type_traits>
 

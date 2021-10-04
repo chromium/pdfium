@@ -8,7 +8,6 @@
 #define CORE_FXGE_CFX_FONTCACHE_H_
 
 #include <map>
-#include <memory>
 
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"

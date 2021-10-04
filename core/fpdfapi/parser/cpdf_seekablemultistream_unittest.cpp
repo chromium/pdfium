@@ -4,7 +4,6 @@
 
 #include "core/fpdfapi/parser/cpdf_seekablemultistream.h"
 
-#include <memory>
 #include <vector>
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"

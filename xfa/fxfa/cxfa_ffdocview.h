@@ -8,7 +8,6 @@
 #define XFA_FXFA_CXFA_FFDOCVIEW_H_
 
 #include <list>
-#include <memory>
 #include <vector>
 
 #include "fxjs/gc/heap.h"

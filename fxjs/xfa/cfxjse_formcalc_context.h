@@ -10,8 +10,6 @@
 #include <stdint.h>
 
 #include <functional>
-#include <memory>
-#include <vector>
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/xfa/fxjse.h"

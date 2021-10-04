@@ -4,7 +4,6 @@
 
 #include <string.h>
 
-#include <memory>
 #include <string>
 
 #include "public/cpp/fpdf_scopers.h"

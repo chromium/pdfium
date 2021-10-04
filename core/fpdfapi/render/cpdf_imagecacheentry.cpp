@@ -6,7 +6,6 @@
 
 #include "core/fpdfapi/render/cpdf_imagecacheentry.h"
 
-#include <memory>
 #include <utility>
 
 #include "core/fpdfapi/page/cpdf_dib.h"

@@ -8,7 +8,6 @@
 #define CORE_FPDFAPI_PARSER_CPDF_DICTIONARY_H_
 
 #include <map>
-#include <memory>
 #include <set>
 #include <utility>
 #include <vector>

@@ -7,7 +7,6 @@
 #ifndef XFA_FXFA_FM2JS_CXFA_FMPARSER_H_
 #define XFA_FXFA_FM2JS_CXFA_FMPARSER_H_
 
-#include <memory>
 #include <vector>
 
 #include "core/fxcrt/unowned_ptr.h"

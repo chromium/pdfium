@@ -7,7 +7,6 @@
 #include "xfa/fxfa/cxfa_ffpageview.h"
 
 #include <algorithm>
-#include <memory>
 #include <vector>
 
 #include "core/fxcrt/stl_util.h"

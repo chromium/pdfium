@@ -6,7 +6,6 @@
 #define CORE_FXCRT_UNOWNED_PTR_H_
 
 #include <functional>
-#include <memory>
 #include <type_traits>
 #include <utility>
 

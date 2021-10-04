@@ -5,7 +5,6 @@
 #ifndef TESTING_XFA_JS_EMBEDDER_TEST_H_
 #define TESTING_XFA_JS_EMBEDDER_TEST_H_
 
-#include <memory>
 #include <string>
 
 #include "core/fxcrt/string_view_template.h"

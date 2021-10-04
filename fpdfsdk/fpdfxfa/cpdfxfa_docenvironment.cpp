@@ -6,7 +6,6 @@
 
 #include "fpdfsdk/fpdfxfa/cpdfxfa_docenvironment.h"
 
-#include <memory>
 #include <utility>
 
 #include "core/fpdfapi/parser/cpdf_array.h"

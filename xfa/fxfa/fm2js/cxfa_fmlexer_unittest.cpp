@@ -4,7 +4,6 @@
 
 #include "xfa/fxfa/fm2js/cxfa_fmlexer.h"
 
-#include <memory>
 #include <vector>
 
 #include "testing/gtest/include/gtest/gtest.h"

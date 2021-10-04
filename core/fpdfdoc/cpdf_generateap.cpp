@@ -7,7 +7,6 @@
 #include "core/fpdfdoc/cpdf_generateap.h"
 
 #include <algorithm>
-#include <memory>
 #include <sstream>
 #include <utility>
 

@@ -6,7 +6,6 @@
 
 #include "public/fpdf_save.h"
 
-#include <memory>
 #include <utility>
 #include <vector>
 

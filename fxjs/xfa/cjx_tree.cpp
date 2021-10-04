@@ -6,7 +6,6 @@
 
 #include "fxjs/xfa/cjx_tree.h"
 
-#include <memory>
 #include <vector>
 
 #include "fxjs/fxv8.h"
