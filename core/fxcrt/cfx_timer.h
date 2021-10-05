@@ -7,6 +7,8 @@
 #ifndef CORE_FXCRT_CFX_TIMER_H_
 #define CORE_FXCRT_CFX_TIMER_H_
 
+#include <stdint.h>
+
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 

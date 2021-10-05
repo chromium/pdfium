@@ -7,6 +7,8 @@
 #ifndef XFA_FWL_FWL_WIDGETDEF_H_
 #define XFA_FWL_FWL_WIDGETDEF_H_
 
+#include <stdint.h>
+
 // Same as enum FWL_VKEYCODE in public/fpdf_fwlevent.h, but duplicated here
 // to keep xfa/fwl standalone.
 enum XFA_FWL_VKEYCODE {

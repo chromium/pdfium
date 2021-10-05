@@ -11,8 +11,10 @@
 #include <stdlib.h>
 
 #include <algorithm>
+#include <memory>
 #include <sstream>
 #include <utility>
+#include <vector>
 
 #include "core/fxcrt/cfx_datetime.h"
 #include "core/fxcrt/cfx_widetextbuf.h"
