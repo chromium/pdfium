@@ -193,7 +193,7 @@ class StringViewTemplate {
     const auto* found = reinterpret_cast<const UnsignedType*>(FXSYS_chr(
         reinterpret_cast<const CharType*>(m_Span.data()), ch, m_Span.size()));
 
-    return found ? Optional<size_t>(found - m_Span.data()) : Optional<size_t>();
+    return found ? Optional<size_t>(found - m_Span.data()) : absl::nullopt;
   }
 
   bool Contains(CharType ch) const { return Find(ch).has_value(); }
