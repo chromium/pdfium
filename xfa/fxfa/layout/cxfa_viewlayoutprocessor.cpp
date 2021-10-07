@@ -232,7 +232,7 @@ void SetLayoutGeneratedNodeFlag(CXFA_Node* pNode) {
   pNode->ClearFlag(XFA_NodeFlag::kUnusedNode);
 }
 
-// Note: Returning nullptr is not the same as returning pdfium::nullopt.
+// Note: Returning nullptr is not the same as returning absl::nullopt.
 Optional<CXFA_ViewLayoutItem*> CheckContentAreaNotUsed(
     CXFA_ViewLayoutItem* pPageAreaLayoutItem,
     CXFA_Node* pContentArea) {
@@ -242,7 +242,7 @@ Optional<CXFA_ViewLayoutItem*> CheckContentAreaNotUsed(
     if (pLayoutItem && pLayoutItem->GetFormNode() == pContentArea) {
       if (!pLayoutItem->GetFirstChild())
         return pLayoutItem;
-      return pdfium::nullopt;
+      return absl::nullopt;
     }
   }
   return nullptr;
@@ -894,7 +894,7 @@ CXFA_ViewLayoutProcessor::ProcessBreakBeforeOrAfter(const CXFA_Node* pBreakNode,
                                                     bool bBefore) {
   CXFA_Node* pFormNode = pBreakNode->GetContainerParent();
   if (!pFormNode->PresenceRequiresSpace())
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   BreakData break_data = ExecuteBreakBeforeOrAfter(pBreakNode, bBefore);
   CXFA_Document* pDocument = pBreakNode->GetDocument();
@@ -902,20 +902,20 @@ CXFA_ViewLayoutProcessor::ProcessBreakBeforeOrAfter(const CXFA_Node* pBreakNode,
   pFormNode = pFormNode->GetContainerParent();
   if (break_data.pLeader) {
     if (!break_data.pLeader->IsContainerNode())
-      return pdfium::nullopt;
+      return absl::nullopt;
 
     pDataScope = XFA_DataMerge_FindDataScope(pFormNode);
     break_data.pLeader = pDocument->DataMerge_CopyContainer(
         break_data.pLeader, pFormNode, pDataScope, true, true, true);
     if (!break_data.pLeader)
-      return pdfium::nullopt;
+      return absl::nullopt;
 
     pDocument->DataMerge_UpdateBindingRelations(break_data.pLeader);
     SetLayoutGeneratedNodeFlag(break_data.pLeader);
   }
   if (break_data.pTrailer) {
     if (!break_data.pTrailer->IsContainerNode())
-      return pdfium::nullopt;
+      return absl::nullopt;
 
     if (!pDataScope)
       pDataScope = XFA_DataMerge_FindDataScope(pFormNode);
@@ -923,7 +923,7 @@ CXFA_ViewLayoutProcessor::ProcessBreakBeforeOrAfter(const CXFA_Node* pBreakNode,
     break_data.pTrailer = pDocument->DataMerge_CopyContainer(
         break_data.pTrailer, pFormNode, pDataScope, true, true, true);
     if (!break_data.pTrailer)
-      return pdfium::nullopt;
+      return absl::nullopt;
 
     pDocument->DataMerge_UpdateBindingRelations(break_data.pTrailer);
     SetLayoutGeneratedNodeFlag(break_data.pTrailer);
@@ -1047,7 +1047,7 @@ Optional<CXFA_ViewLayoutProcessor::OverflowData>
 CXFA_ViewLayoutProcessor::ProcessOverflow(CXFA_Node* pFormNode,
                                           bool bCreatePage) {
   if (!pFormNode)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   CXFA_Node* pLeaderTemplate = nullptr;
   CXFA_Node* pTrailerTemplate = nullptr;
@@ -1070,7 +1070,7 @@ CXFA_ViewLayoutProcessor::ProcessOverflow(CXFA_Node* pFormNode,
         overflow_data.pLeader = pDocument->DataMerge_CopyContainer(
             pLeaderTemplate, pFormNode, pDataScope, true, true, true);
         if (!overflow_data.pLeader)
-          return pdfium::nullopt;
+          return absl::nullopt;
 
         pDocument->DataMerge_UpdateBindingRelations(overflow_data.pLeader);
         SetLayoutGeneratedNodeFlag(overflow_data.pLeader);
@@ -1082,7 +1082,7 @@ CXFA_ViewLayoutProcessor::ProcessOverflow(CXFA_Node* pFormNode,
         overflow_data.pTrailer = pDocument->DataMerge_CopyContainer(
             pTrailerTemplate, pFormNode, pDataScope, true, true, true);
         if (!overflow_data.pTrailer)
-          return pdfium::nullopt;
+          return absl::nullopt;
 
         pDocument->DataMerge_UpdateBindingRelations(overflow_data.pTrailer);
         SetLayoutGeneratedNodeFlag(overflow_data.pTrailer);
@@ -1092,7 +1092,7 @@ CXFA_ViewLayoutProcessor::ProcessOverflow(CXFA_Node* pFormNode,
     if (bIsOverflowNode)
       break;
   }
-  return pdfium::nullopt;
+  return absl::nullopt;
 }
 
 CXFA_Node* CXFA_ViewLayoutProcessor::ResolveBookendLeaderOrTrailer(

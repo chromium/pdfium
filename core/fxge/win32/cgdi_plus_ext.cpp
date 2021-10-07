@@ -392,7 +392,7 @@ Optional<std::pair<size_t, size_t>> IsSmallTriangle(
     if (distance_square < 2.25f)
       return std::make_pair(i, pair1);
   }
-  return pdfium::nullopt;
+  return absl::nullopt;
 }
 
 class GpStream final : public IStream {

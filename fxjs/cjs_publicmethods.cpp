@@ -222,7 +222,7 @@ Optional<double> ApplyNamedOperation(const wchar_t* sFunction,
     return std::min(dValue1, dValue2);
   if (FXSYS_wcsicmp(sFunction, L"MAX") == 0)
     return std::max(dValue1, dValue2);
-  return pdfium::nullopt;
+  return absl::nullopt;
 }
 
 }  // namespace

@@ -1162,7 +1162,7 @@ Optional<XFA_Element> CXFA_Node::GetFirstPropertyWithFlag(
     if (prop.flags & flag)
       return prop.property;
   }
-  return pdfium::nullopt;
+  return absl::nullopt;
 }
 
 const CXFA_Node::AttributeData* CXFA_Node::GetAttributeData(
@@ -1416,12 +1416,12 @@ GCedLocaleIface* CXFA_Node::GetLocale() {
 Optional<WideString> CXFA_Node::GetLocaleName() {
   CXFA_Node* pForm = ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form));
   if (!pForm)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   CXFA_Subform* pTopSubform =
       pForm->GetFirstChildByClass<CXFA_Subform>(XFA_Element::Subform);
   if (!pTopSubform)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   Optional<WideString> localeName;
   CXFA_Node* pLocaleNode = this;
@@ -1448,7 +1448,7 @@ Optional<WideString> CXFA_Node::GetLocaleName() {
 
   LocaleIface* pLocale = GetDocument()->GetLocaleMgr()->GetDefLocale();
   if (!pLocale)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   return pLocale->GetName();
 }
@@ -2035,14 +2035,14 @@ CXFA_Node* CXFA_Node::CreateInstanceIfPossible(bool bDataMerge) {
 Optional<bool> CXFA_Node::GetDefaultBoolean(XFA_Attribute attr) const {
   Optional<void*> value = GetDefaultValue(attr, XFA_AttributeType::Boolean);
   if (!value.has_value())
-    return pdfium::nullopt;
+    return absl::nullopt;
   return !!value.value();
 }
 
 Optional<int32_t> CXFA_Node::GetDefaultInteger(XFA_Attribute attr) const {
   Optional<void*> value = GetDefaultValue(attr, XFA_AttributeType::Integer);
   if (!value.has_value())
-    return pdfium::nullopt;
+    return absl::nullopt;
   return static_cast<int32_t>(reinterpret_cast<uintptr_t>(value.value()));
 }
 
@@ -2050,7 +2050,7 @@ Optional<CXFA_Measurement> CXFA_Node::GetDefaultMeasurement(
     XFA_Attribute attr) const {
   Optional<void*> value = GetDefaultValue(attr, XFA_AttributeType::Measure);
   if (!value.has_value())
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   WideString str = WideString(static_cast<const wchar_t*>(value.value()));
   return CXFA_Measurement(str.AsStringView());
@@ -2059,7 +2059,7 @@ Optional<CXFA_Measurement> CXFA_Node::GetDefaultMeasurement(
 Optional<WideString> CXFA_Node::GetDefaultCData(XFA_Attribute attr) const {
   Optional<void*> value = GetDefaultValue(attr, XFA_AttributeType::CData);
   if (!value.has_value())
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   return WideString(static_cast<const wchar_t*>(value.value()));
 }
@@ -2068,7 +2068,7 @@ Optional<XFA_AttributeValue> CXFA_Node::GetDefaultEnum(
     XFA_Attribute attr) const {
   Optional<void*> value = GetDefaultValue(attr, XFA_AttributeType::Enum);
   if (!value.has_value())
-    return pdfium::nullopt;
+    return absl::nullopt;
   return static_cast<XFA_AttributeValue>(
       reinterpret_cast<uintptr_t>(value.value()));
 }
@@ -2077,7 +2077,7 @@ Optional<void*> CXFA_Node::GetDefaultValue(XFA_Attribute attr,
                                            XFA_AttributeType eType) const {
   const AttributeData* data = GetAttributeData(attr);
   if (!data || data->type != eType)
-    return pdfium::nullopt;
+    return absl::nullopt;
   return data->default_value;
 }
 
@@ -2340,7 +2340,7 @@ Optional<XFA_AttributeValue> CXFA_Node::GetIntactFromKeep(
   Optional<XFA_AttributeValue> intact =
       pKeep->JSObject()->TryEnum(XFA_Attribute::Intact, false);
   if (!intact.has_value())
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   if (intact.value() != XFA_AttributeValue::None ||
       eLayoutType != XFA_AttributeValue::Row ||
@@ -3582,7 +3582,7 @@ Optional<float> CXFA_Node::FindSplitPos(CXFA_FFDocView* pDocView,
                                         size_t szBlockIndex,
                                         float fCalcHeight) {
   if (GetFFWidgetType() == XFA_FFWidgetType::kSubform)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   switch (GetFFWidgetType()) {
     case XFA_FFWidgetType::kText:
@@ -3621,7 +3621,7 @@ Optional<float> CXFA_Node::FindSplitPos(CXFA_FFDocView* pDocView,
       if (szBlockIndex == 0)
         fCalcHeight += fTopInset;
       if (fabs(fHeight - fCalcHeight) < kXFAWidgetPrecision)
-        return pdfium::nullopt;
+        return absl::nullopt;
     }
     return fCalcHeight;
   }
@@ -3662,14 +3662,14 @@ Optional<float> CXFA_Node::FindSplitPos(CXFA_FFDocView* pDocView,
   std::vector<float>* pFieldArray = &pFieldData->m_FieldSplitArray;
   size_t szFieldSplitCount = pFieldArray->size();
   if (szFieldSplitCount < szBlockIndex * 3)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   for (size_t i = 0; i < szBlockIndex * 3; i += 3) {
     iLinesCount -= static_cast<int32_t>((*pFieldArray)[i + 1]);
     fHeight -= (*pFieldArray)[i + 2];
   }
   if (iLinesCount == 0)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   float fLineHeight = GetLineHeight();
   float fFontSize = GetFontSize();
@@ -3746,7 +3746,7 @@ Optional<float> CXFA_Node::FindSplitPos(CXFA_FFDocView* pDocView,
       pFieldArray->push_back(0);
       pFieldArray->push_back(fCalcHeight);
     }
-    return pdfium::nullopt;
+    return absl::nullopt;
   }
 
   if (fCalcHeight - fStartOffset < fLineHeight) {
@@ -3774,7 +3774,7 @@ Optional<float> CXFA_Node::FindSplitPos(CXFA_FFDocView* pDocView,
         pFieldArray->push_back(iLinesCount);
         pFieldArray->push_back(fCalcHeight);
       }
-      return pdfium::nullopt;
+      return absl::nullopt;
     }
     if (fHeight - fStartOffset - fTextHeight < fFontSize) {
       iLineNum -= 1;
@@ -3796,7 +3796,7 @@ Optional<float> CXFA_Node::FindSplitPos(CXFA_FFDocView* pDocView,
     pFieldArray->push_back(fSplitHeight);
   }
   if (fabs(fSplitHeight - fCalcHeight) < kXFAWidgetPrecision)
-    return pdfium::nullopt;
+    return absl::nullopt;
   return fSplitHeight;
 }
 
@@ -4223,7 +4223,7 @@ Optional<WideString> CXFA_Node::GetChoiceListItem(int32_t nIndex,
       break;
   }
   if (iCount == 0)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   CXFA_Node* pItems = pItemsArray[0];
   if (iCount > 1) {
@@ -4235,12 +4235,12 @@ Optional<WideString> CXFA_Node::GetChoiceListItem(int32_t nIndex,
       pItems = pItemsArray[1];
   }
   if (!pItems)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   CXFA_Node* pItem =
       pItems->GetChild<CXFA_Node>(nIndex, XFA_Element::Unknown, false);
   if (!pItem)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   return pItem->JSObject()->GetContent(false);
 }
@@ -4601,11 +4601,11 @@ bool CXFA_Node::IsVerticalScrollPolicyOff() {
 Optional<int32_t> CXFA_Node::GetNumberOfCells() {
   CXFA_Node* pUIChild = GetUIChildNode();
   if (!pUIChild)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   CXFA_Comb* pNode = pUIChild->GetChild<CXFA_Comb>(0, XFA_Element::Comb, false);
   if (!pNode)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   return pNode->JSObject()->GetInteger(XFA_Attribute::NumberOfCells);
 }

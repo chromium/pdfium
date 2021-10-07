@@ -180,7 +180,7 @@ Optional<CFX_PointF> CPDFXFA_Page::DeviceToPage(
     const CFX_PointF& device_point) const {
   CXFA_FFPageView* pPageView = GetXFAPageView();
   if (!m_pPDFPage && !pPageView)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   CFX_Matrix page2device = GetDisplayMatrix(rect, rotate);
   return page2device.GetInverse().Transform(device_point);
@@ -192,7 +192,7 @@ Optional<CFX_PointF> CPDFXFA_Page::PageToDevice(
     const CFX_PointF& page_point) const {
   CXFA_FFPageView* pPageView = GetXFAPageView();
   if (!m_pPDFPage && !pPageView)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   CFX_Matrix page2device = GetDisplayMatrix(rect, rotate);
   return page2device.Transform(page_point);

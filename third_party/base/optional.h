@@ -7,14 +7,6 @@
 
 #include "third_party/abseil-cpp/absl/types/optional.h"
 
-namespace pdfium {
-
-using absl::make_optional;
-using absl::nullopt;
-using absl::nullopt_t;
-
-}  // namespace pdfium
-
 template <class T>
 using Optional = absl::optional<T>;
 

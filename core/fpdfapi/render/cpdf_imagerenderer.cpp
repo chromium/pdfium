@@ -611,7 +611,7 @@ Optional<FX_RECT> CPDF_ImageRenderer::GetUnitRect() const {
   CFX_FloatRect image_rect_f = m_ImageMatrix.GetUnitRect();
   FX_RECT image_rect = image_rect_f.GetOuterRect();
   if (!image_rect.Valid())
-    return pdfium::nullopt;
+    return absl::nullopt;
   return image_rect;
 }
 

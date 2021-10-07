@@ -1458,7 +1458,7 @@ Optional<double> ExtractDouble(v8::Isolate* pIsolate,
   v8::Local<v8::Array> arr = src.As<v8::Array>();
   uint32_t iLength = fxv8::GetArrayLengthHelper(arr);
   if (iLength < 3)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   v8::Local<v8::Value> propertyValue =
       fxv8::ReentrantGetArrayElementHelper(pIsolate, arr, 1);
@@ -1583,7 +1583,7 @@ Optional<CFXJSE_Engine::ResolveResult> ResolveObjects(
     bool bHasNoResolveName) {
   CXFA_Document* pDoc = ToFormCalcContext(pHostObject)->GetDocument();
   if (!pDoc)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   v8::Isolate* pIsolate = ToFormCalcContext(pHostObject)->GetIsolate();
   WideString wsSomExpression = WideString::FromUTF8(bsSomExp);
@@ -1597,7 +1597,7 @@ Optional<CFXJSE_Engine::ResolveResult> ResolveObjects(
     } else {
       pNode = CFXJSE_Engine::ToObject(pIsolate, pRefValue);
       if (!pNode)
-        return pdfium::nullopt;
+        return absl::nullopt;
 
       if (bHasNoResolveName) {
         WideString wsName;
@@ -5301,15 +5301,15 @@ Optional<CFX_WideTextBuf> CFXJSE_FormCalcContext::Translate(
   CXFA_FMParser parser(pHeap, &lexer);
   CXFA_FMAST* ast = parser.Parse();
   if (!ast || parser.HasError())
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   CXFA_FMToJavaScriptDepth::Reset();
   Optional<CFX_WideTextBuf> wsJavaScript = ast->ToJavaScript();
   if (!wsJavaScript.has_value())
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   if (CXFA_IsTooBig(wsJavaScript.value()))
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   return wsJavaScript;
 }

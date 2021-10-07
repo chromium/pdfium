@@ -72,7 +72,7 @@ Optional<bool> CXFA_Barcode::GetChecksum() {
   Optional<XFA_AttributeValue> checksum =
       JSObject()->TryEnum(XFA_Attribute::Checksum, true);
   if (!checksum.has_value())
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   switch (checksum.value()) {
     case XFA_AttributeValue::None:
@@ -85,14 +85,14 @@ Optional<bool> CXFA_Barcode::GetChecksum() {
     default:
       break;
   }
-  return pdfium::nullopt;
+  return absl::nullopt;
 }
 
 Optional<int32_t> CXFA_Barcode::GetDataLength() {
   Optional<WideString> wsDataLength =
       JSObject()->TryCData(XFA_Attribute::DataLength, true);
   if (!wsDataLength.has_value())
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   return FXSYS_wtoi(wsDataLength->c_str());
 }
@@ -101,7 +101,7 @@ Optional<char> CXFA_Barcode::GetStartChar() {
   Optional<WideString> wsStartEndChar =
       JSObject()->TryCData(XFA_Attribute::StartChar, true);
   if (!wsStartEndChar.has_value() || wsStartEndChar->IsEmpty())
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   return static_cast<char>(wsStartEndChar.value()[0]);
 }
@@ -110,7 +110,7 @@ Optional<char> CXFA_Barcode::GetEndChar() {
   Optional<WideString> wsStartEndChar =
       JSObject()->TryCData(XFA_Attribute::EndChar, true);
   if (!wsStartEndChar.has_value() || wsStartEndChar->IsEmpty())
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   return static_cast<char>(wsStartEndChar.value()[0]);
 }
@@ -119,7 +119,7 @@ Optional<int32_t> CXFA_Barcode::GetECLevel() {
   Optional<WideString> wsECLevel =
       JSObject()->TryCData(XFA_Attribute::ErrorCorrectionLevel, true);
   if (!wsECLevel.has_value())
-    return pdfium::nullopt;
+    return absl::nullopt;
   return FXSYS_wtoi(wsECLevel->c_str());
 }
 
@@ -127,7 +127,7 @@ Optional<int32_t> CXFA_Barcode::GetModuleWidth() {
   Optional<CXFA_Measurement> moduleWidthHeight =
       JSObject()->TryMeasure(XFA_Attribute::ModuleWidth, true);
   if (!moduleWidthHeight.has_value())
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   return static_cast<int32_t>(moduleWidthHeight->ToUnit(XFA_Unit::Pt));
 }
@@ -136,7 +136,7 @@ Optional<int32_t> CXFA_Barcode::GetModuleHeight() {
   Optional<CXFA_Measurement> moduleWidthHeight =
       JSObject()->TryMeasure(XFA_Attribute::ModuleHeight, true);
   if (!moduleWidthHeight.has_value())
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   return static_cast<int32_t>(moduleWidthHeight->ToUnit(XFA_Unit::Pt));
 }
@@ -157,7 +157,7 @@ Optional<int8_t> CXFA_Barcode::GetWideNarrowRatio() {
   Optional<WideString> wsWideNarrowRatio =
       JSObject()->TryCData(XFA_Attribute::WideNarrowRatio, true);
   if (!wsWideNarrowRatio.has_value())
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   Optional<size_t> ptPos = wsWideNarrowRatio->Find(':');
   if (!ptPos.has_value())

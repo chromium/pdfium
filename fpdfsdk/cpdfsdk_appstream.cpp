@@ -1116,7 +1116,7 @@ void SetDefaultIconName(CPDF_Stream* pIcon, const char* name) {
 
 Optional<CheckStyle> CheckStyleFromCaption(const WideString& caption) {
   if (caption.IsEmpty())
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   // Character values are ZapfDingbats encodings of named glyphs.
   switch (caption[0]) {
@@ -1133,7 +1133,7 @@ Optional<CheckStyle> CheckStyleFromCaption(const WideString& caption) {
     case L'u':
       return CheckStyle::kDiamond;
     default:
-      return pdfium::nullopt;
+      return absl::nullopt;
   }
 }
 

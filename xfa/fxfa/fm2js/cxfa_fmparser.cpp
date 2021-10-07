@@ -803,7 +803,7 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParsePostExpression(
 Optional<std::vector<cppgc::Member<CXFA_FMSimpleExpression>>>
 CXFA_FMParser::ParseArgumentList() {
   if (m_token.m_type != TOKlparen || !NextToken())
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   std::vector<cppgc::Member<CXFA_FMSimpleExpression>> expressions;
   bool first_arg = true;
@@ -812,16 +812,16 @@ CXFA_FMParser::ParseArgumentList() {
       first_arg = false;
     } else {
       if (m_token.m_type != TOKcomma || !NextToken())
-        return pdfium::nullopt;
+        return absl::nullopt;
     }
 
     CXFA_FMSimpleExpression* exp = ParseSimpleExpression();
     if (!exp)
-      return pdfium::nullopt;
+      return absl::nullopt;
 
     expressions.push_back(exp);
     if (expressions.size() > kMaxPostExpressions)
-      return pdfium::nullopt;
+      return absl::nullopt;
   }
 
   return expressions;

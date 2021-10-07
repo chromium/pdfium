@@ -203,7 +203,7 @@ Optional<const char*> GetCustomFontPath(const Options& options) {
 
   // No custom font path. Use default.
   if (options.font_directory.empty())
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   // Set custom font path to |options.font_directory|.
   return options.font_directory.c_str();

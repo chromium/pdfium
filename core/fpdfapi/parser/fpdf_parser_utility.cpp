@@ -80,12 +80,12 @@ Optional<FX_FILESIZE> GetHeaderOffset(
   uint8_t buf[kBufSize];
   for (FX_FILESIZE offset = 0; offset <= 1024; ++offset) {
     if (!pFile->ReadBlockAtOffset(buf, offset, kBufSize))
-      return pdfium::nullopt;
+      return absl::nullopt;
 
     if (memcmp(buf, "%PDF", 4) == 0)
       return offset;
   }
-  return pdfium::nullopt;
+  return absl::nullopt;
 }
 
 int32_t GetDirectInteger(const CPDF_Dictionary* pDict, const ByteString& key) {

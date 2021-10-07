@@ -81,7 +81,7 @@ Optional<uint32_t> CFX_CTTGSUBTable::GetVerticalGlyphSub(
     if (result.has_value())
       return result.value();
   }
-  return pdfium::nullopt;
+  return absl::nullopt;
 }
 
 Optional<uint32_t> CFX_CTTGSUBTable::GetVerticalGlyphSub2(
@@ -106,7 +106,7 @@ Optional<uint32_t> CFX_CTTGSUBTable::GetVerticalGlyphSub2(
       }
     }
   }
-  return pdfium::nullopt;
+  return absl::nullopt;
 }
 
 int CFX_CTTGSUBTable::GetCoverageIndex(TCoverageFormatBase* Coverage,

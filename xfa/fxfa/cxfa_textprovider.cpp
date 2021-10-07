@@ -133,7 +133,7 @@ bool CXFA_TextProvider::IsCheckButtonAndAutoWidth() const {
 Optional<WideString> CXFA_TextProvider::GetEmbeddedObj(
     const WideString& wsAttr) const {
   if (m_eType != Type::kText)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   CXFA_Node* pParent = m_pNode->GetParent();
   CXFA_Document* pDocument = m_pNode->GetDocument();
@@ -147,7 +147,7 @@ Optional<WideString> CXFA_TextProvider::GetEmbeddedObj(
         wsAttr.AsStringView());
   }
   if (!pIDNode || !pIDNode->IsWidgetReady())
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   return pIDNode->GetValue(XFA_ValuePicture::kDisplay);
 }

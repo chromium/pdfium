@@ -88,7 +88,7 @@ Optional<ByteString> CPDF_PageObjectHolder::GraphicsMapSearch(
     const GraphicsData& gd) {
   auto it = m_GraphicsMap.find(gd);
   if (it == m_GraphicsMap.end())
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   return it->second;
 }
@@ -101,7 +101,7 @@ void CPDF_PageObjectHolder::GraphicsMapInsert(const GraphicsData& gd,
 Optional<ByteString> CPDF_PageObjectHolder::FontsMapSearch(const FontData& fd) {
   auto it = m_FontsMap.find(fd);
   if (it == m_FontsMap.end())
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   return it->second;
 }

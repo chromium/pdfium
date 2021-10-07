@@ -22,7 +22,7 @@ Optional<uint32_t> CheckTRDDimension(uint32_t dimension, int32_t delta) {
   FX_SAFE_UINT32 result = dimension;
   result += delta;
   if (!result.IsValid())
-    return pdfium::nullopt;
+    return absl::nullopt;
   return result.ValueOrDie();
 }
 
@@ -32,7 +32,7 @@ Optional<int32_t> CheckTRDReferenceDimension(int32_t dimension,
   FX_SAFE_INT32 result = offset;
   result += dimension >> shift;
   if (!result.IsValid())
-    return pdfium::nullopt;
+    return absl::nullopt;
   return result.ValueOrDie();
 }
 

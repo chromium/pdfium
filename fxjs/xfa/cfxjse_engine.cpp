@@ -670,7 +670,7 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
                                           Mask<XFA_ResolveFlag> dwStyles,
                                           CXFA_Node* bindNode) {
   if (wsExpression.IsEmpty())
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   const bool bParentOrSiblings =
       !!(dwStyles & Mask<XFA_ResolveFlag>{XFA_ResolveFlag::kParent,
@@ -831,12 +831,12 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
       result.type = ResolveResult::Type::kExistNodes;
 
     if (result.objects.empty())
-      return pdfium::nullopt;
+      return absl::nullopt;
 
     return result;
   }
   if (nNodes == 0)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   return result;
 }

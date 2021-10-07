@@ -172,7 +172,7 @@ Optional<XFA_PACKETINFO> XFA_GetPacketByName(WideStringView wsName) {
       [](const PacketTableRecord& a, uint32_t hash) { return a.hash < hash; });
   if (elem != std::end(kPacketTable) && wsName.EqualsASCII(elem->info.name))
     return elem->info;
-  return pdfium::nullopt;
+  return absl::nullopt;
 }
 
 ByteStringView XFA_ElementToName(XFA_Element elem) {
@@ -202,11 +202,11 @@ Optional<XFA_ATTRIBUTEINFO> XFA_GetAttributeByName(WideStringView name) {
       std::begin(kAttributeRecords), std::end(kAttributeRecords), hash,
       [](const AttributeRecord& a, uint32_t hash) { return a.hash < hash; });
   if (elem == std::end(kAttributeRecords))
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   size_t index = std::distance(std::begin(kAttributeRecords), elem);
   if (!name.EqualsASCII(kAttributeNames[index]))
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   XFA_ATTRIBUTEINFO result;
   result.attribute = elem->attribute;
@@ -226,11 +226,11 @@ Optional<XFA_AttributeValue> XFA_GetAttributeValueByName(WideStringView name) {
                          return arg.uHash < hash;
                        });
   if (it == std::end(kAttributeValueRecords))
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   size_t index = std::distance(std::begin(kAttributeValueRecords), it);
   if (!name.EqualsASCII(kAttributeValueNames[index]))
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   return it->eName;
 }
@@ -240,7 +240,7 @@ Optional<XFA_SCRIPTATTRIBUTEINFO> XFA_GetScriptAttributeByName(
     WideStringView attribute_name) {
   Optional<XFA_ATTRIBUTEINFO> attr = XFA_GetAttributeByName(attribute_name);
   if (!attr.has_value())
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   while (element != XFA_Element::Unknown) {
     auto compound_key = std::make_pair(element, attr.value().attribute);
@@ -262,5 +262,5 @@ Optional<XFA_SCRIPTATTRIBUTEINFO> XFA_GetScriptAttributeByName(
     }
     element = kElementRecords[static_cast<size_t>(element)].parent;
   }
-  return pdfium::nullopt;
+  return absl::nullopt;
 }

@@ -31,5 +31,5 @@ CJS_Runtime* CJS_RuntimeStub::AsCJSRuntime() {
 
 Optional<IJS_Runtime::JS_Error> CJS_RuntimeStub::ExecuteScript(
     const WideString& script) {
-  return pdfium::nullopt;
+  return absl::nullopt;
 }

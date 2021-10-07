@@ -55,7 +55,7 @@ Optional<FormFieldType> CPDF_FormField::IntToFormFieldType(int value) {
       value < static_cast<int>(kFormFieldTypeCount)) {
     return static_cast<FormFieldType>(value);
   }
-  return pdfium::nullopt;
+  return absl::nullopt;
 }
 
 // static

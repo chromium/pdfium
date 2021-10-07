@@ -434,7 +434,7 @@ Optional<FX_COLORREF> CPDFSDK_Widget::GetFillColor() const {
       GetFormControl()->GetColorARGB(pdfium::appearance::kBG);
 
   if (type_argb_pair.color_type == CFX_Color::Type::kTransparent)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   return ArgbToColorRef(type_argb_pair.argb);
 }
@@ -443,7 +443,7 @@ Optional<FX_COLORREF> CPDFSDK_Widget::GetBorderColor() const {
   CFX_Color::TypeAndARGB type_argb_pair =
       GetFormControl()->GetColorARGB(pdfium::appearance::kBC);
   if (type_argb_pair.color_type == CFX_Color::Type::kTransparent)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   return ArgbToColorRef(type_argb_pair.argb);
 }
@@ -453,10 +453,10 @@ Optional<FX_COLORREF> CPDFSDK_Widget::GetTextColor() const {
   Optional<CFX_Color::TypeAndARGB> maybe_type_argb_pair = da.GetColorARGB();
 
   if (!maybe_type_argb_pair.has_value())
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   if (maybe_type_argb_pair.value().color_type == CFX_Color::Type::kTransparent)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   return ArgbToColorRef(maybe_type_argb_pair.value().argb);
 }
@@ -612,7 +612,7 @@ void CPDFSDK_Widget::ResetXFAAppearance(ValueChanged bValueChanged) {
       break;
     }
     default:
-      ResetAppearance(pdfium::nullopt, kValueUnchanged);
+      ResetAppearance(absl::nullopt, kValueUnchanged);
       break;
   }
 }
@@ -662,7 +662,7 @@ Optional<WideString> CPDFSDK_Widget::OnFormat() {
 void CPDFSDK_Widget::ResetFieldAppearance() {
   CPDF_FormField* pFormField = GetFormField();
   DCHECK(pFormField);
-  m_pInteractiveForm->ResetFieldAppearance(pFormField, pdfium::nullopt);
+  m_pInteractiveForm->ResetFieldAppearance(pFormField, absl::nullopt);
 }
 
 void CPDFSDK_Widget::DrawAppearance(CFX_RenderDevice* pDevice,

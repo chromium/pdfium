@@ -796,13 +796,13 @@ Optional<CFX_WideTextBuf> CXFA_FMAST::ToJavaScript() const {
             ? CXFA_FMAssignExpression::ReturnType::kImplied
             : CXFA_FMAssignExpression::ReturnType::kInferred;
     if (!expr->ToJavaScript(&js, ret_type))
-      return pdfium::nullopt;
+      return absl::nullopt;
   }
   js << "return pfm_rt.get_val(pfm_ret);\n";
   js << "}).call(this);";
 
   if (CXFA_IsTooBig(js))
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   return js;
 }

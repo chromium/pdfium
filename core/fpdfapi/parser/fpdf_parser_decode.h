@@ -76,7 +76,7 @@ uint32_t FlateOrLZWDecode(bool bLZW,
                           std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
                           uint32_t* dest_size);
 
-// Returns pdfium::nullopt if the filter in |pDict| is the wrong type or an
+// Returns absl::nullopt if the filter in |pDict| is the wrong type or an
 // invalid decoder pipeline.
 // Returns an empty vector if there is no filter, or if the filter is an empty
 // array.

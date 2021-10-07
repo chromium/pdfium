@@ -206,14 +206,14 @@ void CFWL_Edit::SetAliasChar(wchar_t wAlias) {
 
 Optional<WideString> CFWL_Edit::Copy() {
   if (!m_pEditEngine->HasSelection())
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   return m_pEditEngine->GetSelectedText();
 }
 
 Optional<WideString> CFWL_Edit::Cut() {
   if (!m_pEditEngine->HasSelection())
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   WideString cut_text = m_pEditEngine->DeleteSelectedText();
   UpdateCaret();

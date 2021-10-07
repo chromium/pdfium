@@ -509,11 +509,11 @@ bool CXFA_FFWidget::Redo() {
 }
 
 Optional<WideString> CXFA_FFWidget::Copy() {
-  return pdfium::nullopt;
+  return absl::nullopt;
 }
 
 Optional<WideString> CXFA_FFWidget::Cut() {
-  return pdfium::nullopt;
+  return absl::nullopt;
 }
 
 bool CXFA_FFWidget::Paste(const WideString& wsPaste) {

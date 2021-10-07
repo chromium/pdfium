@@ -75,16 +75,16 @@ uint32_t CPDF_ToUnicodeMap::ReverseLookup(wchar_t unicode) const {
 Optional<uint32_t> CPDF_ToUnicodeMap::StringToCode(ByteStringView str) {
   size_t len = str.GetLength();
   if (len <= 2 || str[0] != '<' || str[len - 1] != '>')
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   FX_SAFE_UINT32 code = 0;
   for (char c : str.Substr(1, len - 2)) {
     if (!FXSYS_IsHexDigit(c))
-      return pdfium::nullopt;
+      return absl::nullopt;
 
     code = code * 16 + FXSYS_HexCharToInt(c);
     if (!code.IsValid())
-      return pdfium::nullopt;
+      return absl::nullopt;
   }
   return Optional<uint32_t>(code.ValueOrDie());
 }

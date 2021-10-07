@@ -122,7 +122,7 @@ Optional<WideString> FindAttributeWithNS(CFX_XMLElement* pElement,
     }
     return it.second;
   }
-  return pdfium::nullopt;
+  return absl::nullopt;
 }
 
 CFX_XMLNode* GetDataSetsFromXDP(CFX_XMLNode* pXMLDocumentNode) {

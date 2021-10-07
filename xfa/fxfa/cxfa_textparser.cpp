@@ -504,15 +504,15 @@ Optional<WideString> CXFA_TextParser::GetEmbeddedObj(
     const CXFA_TextProvider* pTextProvider,
     const CFX_XMLNode* pXMLNode) {
   if (!pXMLNode)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   const CFX_XMLElement* pElement = ToXMLElement(pXMLNode);
   if (!pElement)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   WideString wsAttr = pElement->GetAttribute(L"xfa:embed");
   if (wsAttr.IsEmpty())
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   if (wsAttr[0] == L'#')
     wsAttr.Delete(0);
@@ -520,12 +520,12 @@ Optional<WideString> CXFA_TextParser::GetEmbeddedObj(
   WideString ws =
       GetLowerCaseElementAttributeOrDefault(pElement, L"xfa:embedType", L"som");
   if (!ws.EqualsASCII("uri"))
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   ws = GetLowerCaseElementAttributeOrDefault(pElement, L"xfa:embedMode",
                                              L"formatted");
   if (!(ws.EqualsASCII("raw") || ws.EqualsASCII("formatted")))
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   return pTextProvider->GetEmbeddedObj(wsAttr);
 }

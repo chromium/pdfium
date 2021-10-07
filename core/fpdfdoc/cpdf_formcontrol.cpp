@@ -190,7 +190,7 @@ CPDF_DefaultAppearance CPDF_FormControl::GetDefaultAppearance() const {
 Optional<WideString> CPDF_FormControl::GetDefaultControlFontName() const {
   RetainPtr<CPDF_Font> pFont = GetDefaultControlFont();
   if (!pFont)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   return WideString::FromDefANSI(pFont->GetBaseFontName().AsStringView());
 }

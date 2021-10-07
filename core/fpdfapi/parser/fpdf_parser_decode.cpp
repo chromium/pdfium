@@ -372,7 +372,7 @@ Optional<DecoderArray> GetDecoderArray(const CPDF_Dictionary* pDict) {
     return DecoderArray();
 
   if (!pFilter->IsArray() && !pFilter->IsName())
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   const CPDF_Object* pParams =
       pDict->GetDirectObjectFor(pdfium::stream::kDecodeParms);
@@ -380,7 +380,7 @@ Optional<DecoderArray> GetDecoderArray(const CPDF_Dictionary* pDict) {
   DecoderArray decoder_array;
   if (const CPDF_Array* pDecoders = pFilter->AsArray()) {
     if (!ValidateDecoderPipeline(pDecoders))
-      return pdfium::nullopt;
+      return absl::nullopt;
 
     const CPDF_Array* pParamsArray = ToArray(pParams);
     for (size_t i = 0; i < pDecoders->size(); ++i) {

@@ -268,7 +268,7 @@ Optional<WideString> CJX_Object::TryAttribute(XFA_Attribute eAttr,
     case XFA_AttributeType::Enum: {
       Optional<XFA_AttributeValue> value = TryEnum(eAttr, bUseDefault);
       if (!value.has_value())
-        return pdfium::nullopt;
+        return absl::nullopt;
       return WideString::FromASCII(XFA_AttributeValueToName(value.value()));
     }
     case XFA_AttributeType::CData:
@@ -277,25 +277,25 @@ Optional<WideString> CJX_Object::TryAttribute(XFA_Attribute eAttr,
     case XFA_AttributeType::Boolean: {
       Optional<bool> value = TryBoolean(eAttr, bUseDefault);
       if (!value.has_value())
-        return pdfium::nullopt;
+        return absl::nullopt;
       return WideString(value.value() ? L"1" : L"0");
     }
     case XFA_AttributeType::Integer: {
       Optional<int32_t> iValue = TryInteger(eAttr, bUseDefault);
       if (!iValue.has_value())
-        return pdfium::nullopt;
+        return absl::nullopt;
       return WideString::Format(L"%d", iValue.value());
     }
     case XFA_AttributeType::Measure: {
       Optional<CXFA_Measurement> value = TryMeasure(eAttr, bUseDefault);
       if (!value.has_value())
-        return pdfium::nullopt;
+        return absl::nullopt;
       return value->ToString();
     }
     default:
       break;
   }
-  return pdfium::nullopt;
+  return absl::nullopt;
 }
 
 void CJX_Object::RemoveAttribute(WideStringView wsAttr) {
@@ -309,7 +309,7 @@ Optional<bool> CJX_Object::TryBoolean(XFA_Attribute eAttr,
   if (value.has_value())
     return !!value.value();
   if (!bUseDefault)
-    return pdfium::nullopt;
+    return absl::nullopt;
   return GetXFANode()->GetDefaultBoolean(eAttr);
 }
 
@@ -344,7 +344,7 @@ Optional<int32_t> CJX_Object::TryInteger(XFA_Attribute eAttr,
   if (value.has_value())
     return value.value();
   if (!bUseDefault)
-    return pdfium::nullopt;
+    return absl::nullopt;
   return GetXFANode()->GetDefaultInteger(eAttr);
 }
 
@@ -355,7 +355,7 @@ Optional<XFA_AttributeValue> CJX_Object::TryEnum(XFA_Attribute eAttr,
   if (value.has_value())
     return static_cast<XFA_AttributeValue>(value.value());
   if (!bUseDefault)
-    return pdfium::nullopt;
+    return absl::nullopt;
   return GetXFANode()->GetDefaultEnum(eAttr);
 }
 
@@ -394,14 +394,14 @@ Optional<CXFA_Measurement> CJX_Object::TryMeasure(XFA_Attribute eAttr,
   if (result.has_value())
     return result.value();
   if (!bUseDefault)
-    return pdfium::nullopt;
+    return absl::nullopt;
   return GetXFANode()->GetDefaultMeasurement(eAttr);
 }
 
 Optional<float> CJX_Object::TryMeasureAsFloat(XFA_Attribute attr) const {
   Optional<CXFA_Measurement> measure = TryMeasure(attr, false);
   if (!measure.has_value())
-    return pdfium::nullopt;
+    return absl::nullopt;
   return measure->ToUnit(XFA_Unit::Pt);
 }
 
@@ -495,7 +495,7 @@ Optional<WideString> CJX_Object::TryCData(XFA_Attribute eAttr,
     return value;
 
   if (!bUseDefault)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   return GetXFANode()->GetDefaultCData(eAttr);
 }
@@ -692,7 +692,7 @@ Optional<WideString> CJX_Object::TryContent(bool bScriptModify,
         CXFA_Value* pValue =
             GetXFANode()->GetChild<CXFA_Value>(0, XFA_Element::Value, false);
         if (!pValue)
-          return pdfium::nullopt;
+          return absl::nullopt;
 
         CXFA_Node* pChildValue = pValue->GetFirstChild();
         if (pChildValue && XFA_FieldIsMultiListBox(GetXFANode())) {
@@ -700,7 +700,7 @@ Optional<WideString> CJX_Object::TryContent(bool bScriptModify,
               XFA_Attribute::ContentType, L"text/xml", false);
         }
         if (!pChildValue)
-          return pdfium::nullopt;
+          return absl::nullopt;
         return pChildValue->JSObject()->TryContent(bScriptModify, bProto);
       }
       break;
@@ -740,7 +740,7 @@ Optional<WideString> CJX_Object::TryContent(bool bScriptModify,
     }
     return TryCData(XFA_Attribute::Value, false);
   }
-  return pdfium::nullopt;
+  return absl::nullopt;
 }
 
 Optional<WideString> CJX_Object::TryNamespace() const {
@@ -749,7 +749,7 @@ Optional<WideString> CJX_Object::TryNamespace() const {
     CFX_XMLNode* pXMLNode = GetXFANode()->GetXMLMappingNode();
     CFX_XMLElement* element = ToXMLElement(pXMLNode);
     if (!element)
-      return pdfium::nullopt;
+      return absl::nullopt;
 
     return element->GetNamespaceURI();
   }
@@ -760,14 +760,14 @@ Optional<WideString> CJX_Object::TryNamespace() const {
   CFX_XMLNode* pXMLNode = GetXFANode()->GetXMLMappingNode();
   CFX_XMLElement* element = ToXMLElement(pXMLNode);
   if (!element)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   if (GetXFANode()->GetElementType() == XFA_Element::DataValue &&
       GetEnum(XFA_Attribute::Contains) == XFA_AttributeValue::MetaData) {
     WideString wsNamespace;
     if (!XFA_FDEExtension_ResolveNamespaceQualifier(
             element, GetCData(XFA_Attribute::QualifiedName), &wsNamespace)) {
-      return pdfium::nullopt;
+      return absl::nullopt;
     }
     return wsNamespace;
   }
@@ -811,14 +811,14 @@ void CJX_Object::SetMapModuleMeasurement(uint32_t key,
 Optional<int32_t> CJX_Object::GetMapModuleValue(uint32_t key) const {
   CFXJSE_MapModule* pModule = GetMapModule();
   if (!pModule)
-    return pdfium::nullopt;
+    return absl::nullopt;
   return pModule->GetValue(key);
 }
 
 Optional<WideString> CJX_Object::GetMapModuleString(uint32_t key) const {
   CFXJSE_MapModule* pModule = GetMapModule();
   if (!pModule)
-    return pdfium::nullopt;
+    return absl::nullopt;
   return pModule->GetString(key);
 }
 
@@ -826,7 +826,7 @@ Optional<CXFA_Measurement> CJX_Object::GetMapModuleMeasurement(
     uint32_t key) const {
   CFXJSE_MapModule* pModule = GetMapModule();
   if (!pModule)
-    return pdfium::nullopt;
+    return absl::nullopt;
   return pModule->GetMeasurement(key);
 }
 
@@ -845,7 +845,7 @@ Optional<int32_t> CJX_Object::GetMapModuleValueFollowingChain(
     if (pNode->GetPacketType() == XFA_PacketType::Datasets)
       break;
   }
-  return pdfium::nullopt;
+  return absl::nullopt;
 }
 
 Optional<WideString> CJX_Object::GetMapModuleStringFollowingChain(
@@ -863,7 +863,7 @@ Optional<WideString> CJX_Object::GetMapModuleStringFollowingChain(
     if (pNode->GetPacketType() == XFA_PacketType::Datasets)
       break;
   }
-  return pdfium::nullopt;
+  return absl::nullopt;
 }
 
 Optional<CXFA_Measurement> CJX_Object::GetMapModuleMeasurementFollowingChain(
@@ -882,7 +882,7 @@ Optional<CXFA_Measurement> CJX_Object::GetMapModuleMeasurementFollowingChain(
     if (pNode->GetPacketType() == XFA_PacketType::Datasets)
       break;
   }
-  return pdfium::nullopt;
+  return absl::nullopt;
 }
 
 bool CJX_Object::HasMapModuleKey(uint32_t key) const {

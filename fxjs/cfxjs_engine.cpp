@@ -587,7 +587,7 @@ Optional<IJS_Runtime::JS_Error> CFXJS_Engine::Execute(
     std::tie(line, column) = GetLineAndColumnFromError(msg, context);
     return IJS_Runtime::JS_Error(line, column, WideString::FromUTF8(*error));
   }
-  return pdfium::nullopt;
+  return absl::nullopt;
 }
 
 v8::Local<v8::Object> CFXJS_Engine::NewFXJSBoundObject(uint32_t nObjDefnID,

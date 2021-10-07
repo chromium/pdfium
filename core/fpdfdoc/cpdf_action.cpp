@@ -143,7 +143,7 @@ std::vector<const CPDF_Object*> CPDF_Action::GetAllFields() const {
 Optional<WideString> CPDF_Action::MaybeGetJavaScript() const {
   const CPDF_Object* pObject = GetJavaScriptObject();
   if (!pObject)
-    return pdfium::nullopt;
+    return absl::nullopt;
   return pObject->GetUnicodeText();
 }
 

@@ -48,13 +48,13 @@ Optional<ByteString> GenerateType42SfntData(
     const ByteString& psname,
     pdfium::span<const uint8_t> font_data) {
   if (font_data.empty())
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   // Per Type 42 font spec.
   constexpr size_t kMaxSfntStringSize = 65535;
   if (font_data.size() > kMaxSfntStringSize) {
     // TODO(thestig): Fonts that are too big need to be written out in sections.
-    return pdfium::nullopt;
+    return absl::nullopt;
   }
 
   // Each byte is written as 2 ASCIIHex characters, so really 64 chars per line.

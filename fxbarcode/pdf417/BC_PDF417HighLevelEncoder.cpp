@@ -85,7 +85,7 @@ Optional<WideString> CBC_PDF417HighLevelEncoder::EncodeHighLevel(
   for (size_t i = 0; i < len; i++) {
     wchar_t ch = bytes[i] & 0xff;
     if (ch == '?' && bytes[i] != '?')
-      return pdfium::nullopt;
+      return absl::nullopt;
 
     result += ch;
   }
@@ -117,7 +117,7 @@ Optional<WideString> CBC_PDF417HighLevelEncoder::EncodeHighLevel(
         Optional<size_t> b =
             DetermineConsecutiveBinaryCount(result, bytes.raw_span(), p);
         if (!b.has_value())
-          return pdfium::nullopt;
+          return absl::nullopt;
 
         size_t b_value = b.value();
         if (b_value == 0)
@@ -382,7 +382,7 @@ Optional<size_t> CBC_PDF417HighLevelEncoder::DetermineConsecutiveBinaryCount(
       return idx - startpos;
     ch = msg[idx];
     if (bytes[idx] == 63 && ch != '?')
-      return pdfium::nullopt;
+      return absl::nullopt;
     idx++;
   }
   return idx - startpos;

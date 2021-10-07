@@ -98,7 +98,7 @@ Optional<WideString> ExtractSubString(const wchar_t* lpszFullString,
   while (iSubString--) {
     lpszFullString = wcschr(lpszFullString, L' ');
     if (!lpszFullString)
-      return pdfium::nullopt;
+      return absl::nullopt;
 
     lpszFullString++;
     while (*lpszFullString == L' ')
@@ -109,7 +109,7 @@ Optional<WideString> ExtractSubString(const wchar_t* lpszFullString,
   int nLen = lpchEnd ? static_cast<int>(lpchEnd - lpszFullString)
                      : static_cast<int>(wcslen(lpszFullString));
   if (nLen < 0)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   return WideString(lpszFullString, static_cast<size_t>(nLen));
 }

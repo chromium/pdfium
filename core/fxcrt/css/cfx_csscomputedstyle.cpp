@@ -28,7 +28,7 @@ bool CFX_CSSComputedStyle::GetCustomStyle(const WideString& wsName,
 Optional<WideString> CFX_CSSComputedStyle::GetLastFontFamily() const {
   if (!m_InheritedData.m_pFontFamily ||
       m_InheritedData.m_pFontFamily->values().empty()) {
-    return pdfium::nullopt;
+    return absl::nullopt;
   }
 
   return m_InheritedData.m_pFontFamily->values()

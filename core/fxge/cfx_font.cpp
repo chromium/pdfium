@@ -424,23 +424,23 @@ int CFX_Font::GetDescent() const {
 
 Optional<FX_RECT> CFX_Font::GetGlyphBBox(uint32_t glyph_index) {
   if (!m_Face)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   FX_RECT result;
   if (FXFT_Is_Face_Tricky(m_Face->GetRec())) {
     int error = FT_Set_Char_Size(m_Face->GetRec(), 0, 1000 * 64, 72, 72);
     if (error)
-      return pdfium::nullopt;
+      return absl::nullopt;
 
     error = FT_Load_Glyph(m_Face->GetRec(), glyph_index,
                           FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH);
     if (error)
-      return pdfium::nullopt;
+      return absl::nullopt;
 
     FT_Glyph glyph;
     error = FT_Get_Glyph(m_Face->GetRec()->glyph, &glyph);
     if (error)
-      return pdfium::nullopt;
+      return absl::nullopt;
 
     FT_BBox cbox;
     FT_Glyph_Get_CBox(glyph, FT_GLYPH_BBOX_PIXELS, &cbox);
@@ -465,12 +465,12 @@ Optional<FX_RECT> CFX_Font::GetGlyphBBox(uint32_t glyph_index) {
         static_cast<int32_t>(FXFT_Get_Face_Descender(m_Face->GetRec())));
     FT_Done_Glyph(glyph);
     if (FT_Set_Pixel_Sizes(m_Face->GetRec(), 0, 64) != 0)
-      return pdfium::nullopt;
+      return absl::nullopt;
     return result;
   }
   constexpr int kFlag = FT_LOAD_NO_SCALE | FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH;
   if (FT_Load_Glyph(m_Face->GetRec(), glyph_index, kFlag) != 0)
-    return pdfium::nullopt;
+    return absl::nullopt;
   int em = FXFT_Get_Face_UnitsPerEM(m_Face->GetRec());
   if (em == 0) {
     result.left = FXFT_Get_Glyph_HoriBearingX(m_Face->GetRec());
@@ -572,7 +572,7 @@ ByteString CFX_Font::GetBaseFontName() const {
 
 Optional<FX_RECT> CFX_Font::GetRawBBox() const {
   if (!m_Face)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   return FX_RECT(FXFT_Get_Face_xMin(m_Face->GetRec()),
                  FXFT_Get_Face_yMin(m_Face->GetRec()),

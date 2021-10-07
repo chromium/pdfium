@@ -429,7 +429,7 @@ Optional<CXFA_ContentLayoutProcessor::Stage> FindBreakNode(
         break;
     }
   }
-  return pdfium::nullopt;
+  return absl::nullopt;
 }
 
 void DeleteLayoutGeneratedNode(CXFA_Node* pGenerateNode) {
@@ -944,21 +944,21 @@ CXFA_ContentLayoutProcessor::ProcessKeepNodesForCheckNext(
       m_pKeepHeadNode = *pNextContainer;
       m_bIsProcessKeep = true;
     }
-    return pdfium::nullopt;
+    return absl::nullopt;
   }
 
   if (!m_bIsProcessKeep || !m_pKeepHeadNode) {
     if (m_bKeepBreakFinish)
       *pLastKeepNode = true;
     m_bKeepBreakFinish = false;
-    return pdfium::nullopt;
+    return absl::nullopt;
   }
 
   m_pKeepTailNode = *pNextContainer;
   if (m_bKeepBreakFinish) {
     *pNextContainer = m_pKeepHeadNode;
     ProcessKeepNodesEnd();
-    return pdfium::nullopt;
+    return absl::nullopt;
   }
 
   Optional<Stage> ret =
@@ -966,7 +966,7 @@ CXFA_ContentLayoutProcessor::ProcessKeepNodesForCheckNext(
   if (!ret.has_value()) {
     *pNextContainer = m_pKeepHeadNode;
     ProcessKeepNodesEnd();
-    return pdfium::nullopt;
+    return absl::nullopt;
   }
 
   return ret;
@@ -2672,7 +2672,7 @@ Optional<CXFA_ContentLayoutProcessor::Stage>
 CXFA_ContentLayoutProcessor::HandleKeep(CXFA_Node* pBreakAfterNode,
                                         CXFA_Node** pCurActionNode) {
   if (m_bKeepBreakFinish)
-    return pdfium::nullopt;
+    return absl::nullopt;
   return FindBreakNode(pBreakAfterNode, false, pCurActionNode);
 }
 
@@ -2692,14 +2692,14 @@ CXFA_ContentLayoutProcessor::HandleBookendLeader(CXFA_Node* pParentContainer,
         break;
     }
   }
-  return pdfium::nullopt;
+  return absl::nullopt;
 }
 
 Optional<CXFA_ContentLayoutProcessor::Stage>
 CXFA_ContentLayoutProcessor::HandleBreakBefore(CXFA_Node* pChildContainer,
                                                CXFA_Node** pCurActionNode) {
   if (!*pCurActionNode)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   CXFA_Node* pBreakBeforeNode = (*pCurActionNode)->GetNextSibling();
   if (!m_bKeepBreakFinish) {
@@ -2741,7 +2741,7 @@ CXFA_ContentLayoutProcessor::HandleCheckNextChildContainer(
       DeleteLayoutGeneratedNode(pSaveNode);
   }
   if (!pNextChildContainer)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   bool bLastKeep = false;
   Optional<Stage> ret = ProcessKeepNodesForCheckNext(
@@ -2775,7 +2775,7 @@ CXFA_ContentLayoutProcessor::HandleBookendTrailer(CXFA_Node* pParentContainer,
         break;
     }
   }
-  return pdfium::nullopt;
+  return absl::nullopt;
 }
 
 void CXFA_ContentLayoutProcessor::ProcessKeepNodesEnd() {

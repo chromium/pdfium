@@ -399,13 +399,13 @@ Optional<CFX_FloatRect> CFX_Path::GetRect(const CFX_Matrix* matrix) const {
 
   if (!matrix) {
     if (!IsRectImpl(path_points))
-      return pdfium::nullopt;
+      return absl::nullopt;
 
     return CreateRectFromPoints(path_points[0].m_Point, path_points[2].m_Point);
   }
 
   if (!IsRectPreTransform(path_points))
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   CFX_PointF points[5];
   for (size_t i = 0; i < path_points.size(); ++i) {
@@ -414,11 +414,11 @@ Optional<CFX_FloatRect> CFX_Path::GetRect(const CFX_Matrix* matrix) const {
     if (i == 0)
       continue;
     if (XYBothNotEqual(points[i], points[i - 1]))
-      return pdfium::nullopt;
+      return absl::nullopt;
   }
 
   if (XYBothNotEqual(points[0], points[3]))
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   return CreateRectFromPoints(points[0], points[2]);
 }

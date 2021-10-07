@@ -63,15 +63,15 @@ Optional<OpjImageRgbData> alloc_rgb(size_t size) {
   OpjImageRgbData data;
   data.r.reset(static_cast<int*>(opj_image_data_alloc(size)));
   if (!data.r)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   data.g.reset(static_cast<int*>(opj_image_data_alloc(size)));
   if (!data.g)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   data.b.reset(static_cast<int*>(opj_image_data_alloc(size)));
   if (!data.b)
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   return data;
 }

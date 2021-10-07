@@ -64,7 +64,7 @@ std::unique_ptr<CPDFSDK_Annot> CPDFSDK_WidgetHandler::NewAnnot(
   auto pWidget = std::make_unique<CPDFSDK_Widget>(pAnnot, pPageView, pForm);
   pForm->AddMap(pCtrl, pWidget.get());
   if (pPDFForm->NeedConstructAP())
-    pWidget->ResetAppearance(pdfium::nullopt, CPDFSDK_Widget::kValueUnchanged);
+    pWidget->ResetAppearance(absl::nullopt, CPDFSDK_Widget::kValueUnchanged);
   return pWidget;
 }
 
@@ -211,7 +211,7 @@ void CPDFSDK_WidgetHandler::OnLoad(CPDFSDK_Annot* pAnnot) {
     return;
 
   if (!pWidget->IsAppearanceValid())
-    pWidget->ResetAppearance(pdfium::nullopt, CPDFSDK_Widget::kValueUnchanged);
+    pWidget->ResetAppearance(absl::nullopt, CPDFSDK_Widget::kValueUnchanged);
 
   FormFieldType fieldType = pWidget->GetFieldType();
   if (fieldType == FormFieldType::kTextField ||

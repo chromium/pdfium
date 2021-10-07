@@ -716,7 +716,7 @@ Optional<ByteString> CFX_FontMapper::InstalledFontNameStartingWith(
     if (thisname.First(name.GetLength()) == name)
       return thisname;
   }
-  return pdfium::nullopt;
+  return absl::nullopt;
 }
 
 Optional<ByteString> CFX_FontMapper::LocalizedFontNameStartingWith(
@@ -725,7 +725,7 @@ Optional<ByteString> CFX_FontMapper::LocalizedFontNameStartingWith(
     if (thispair.first.First(name.GetLength()) == name)
       return thispair.second;
   }
-  return pdfium::nullopt;
+  return absl::nullopt;
 }
 #endif  // defined(OS_WIN)
 
@@ -832,7 +832,7 @@ Optional<CFX_FontMapper::StandardFont> CFX_FontMapper::GetStandardFontName(
                          return FXSYS_stricmp(element.m_pName, name) < 0;
                        });
   if (found == end || FXSYS_stricmp(found->m_pName, name->c_str()))
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   *name = kBase14FontNames[static_cast<size_t>(found->m_Index)];
   return found->m_Index;

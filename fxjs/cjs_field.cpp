@@ -75,7 +75,7 @@ void UpdateFormField(CPDFSDK_FormFillEnvironment* pFormFillEnv,
       for (auto& pObserved : widgets) {
         if (pObserved) {
           auto* pWidget = ToCPDFSDKWidget(pObserved.Get());
-          pWidget->ResetAppearance(pdfium::nullopt,
+          pWidget->ResetAppearance(absl::nullopt,
                                    CPDFSDK_Widget::kValueUnchanged);
         }
       }
@@ -126,7 +126,7 @@ void UpdateFormControl(CPDFSDK_FormFillEnvironment* pFormFillEnv,
           return;
         pWidget->ResetAppearance(sValue, CPDFSDK_Widget::kValueUnchanged);
       } else {
-        pWidget->ResetAppearance(pdfium::nullopt,
+        pWidget->ResetAppearance(absl::nullopt,
                                  CPDFSDK_Widget::kValueUnchanged);
       }
       if (!observed_widget)
@@ -159,14 +159,14 @@ Optional<FieldNameData> ParseFieldName(const WideString& field_name) {
     ++reverse_it;
   }
   if (reverse_it == field_name.rend()) {
-    return pdfium::nullopt;
+    return absl::nullopt;
   }
   WideString suffixal = field_name.Last(reverse_it - field_name.rbegin());
   int control_index = FXSYS_wtoi(suffixal.c_str());
   if (control_index == 0) {
     suffixal.TrimRight(L' ');
     if (suffixal != L"0") {
-      return pdfium::nullopt;
+      return absl::nullopt;
     }
   }
   return FieldNameData(field_name.First(field_name.rend() - reverse_it - 1),

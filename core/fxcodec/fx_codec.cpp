@@ -75,14 +75,14 @@ Optional<uint32_t> CalculatePitch8(uint32_t bpc,
                                    int width) {
   FX_SAFE_UINT32 pitch = CalculatePitch8Safely(bpc, components, width);
   if (!pitch.IsValid())
-    return pdfium::nullopt;
+    return absl::nullopt;
   return pitch.ValueOrDie();
 }
 
 Optional<uint32_t> CalculatePitch32(int bpp, int width) {
   FX_SAFE_UINT32 pitch = CalculatePitch32Safely(bpp, width);
   if (!pitch.IsValid())
-    return pdfium::nullopt;
+    return absl::nullopt;
   return pitch.ValueOrDie();
 }
 

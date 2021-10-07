@@ -66,7 +66,7 @@ CPDF_DefaultAppearance::~CPDF_DefaultAppearance() = default;
 Optional<ByteString> CPDF_DefaultAppearance::GetFont(float* fFontSize) {
   *fFontSize = 0.0f;
   if (m_csDA.IsEmpty())
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   ByteString csFontNameTag;
   CPDF_SimpleParser syntax(m_csDA.AsStringView().raw_span());
@@ -80,7 +80,7 @@ Optional<ByteString> CPDF_DefaultAppearance::GetFont(float* fFontSize) {
 
 Optional<CFX_Color> CPDF_DefaultAppearance::GetColor() const {
   if (m_csDA.IsEmpty())
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   float fc[4];
   CPDF_SimpleParser syntax(m_csDA.AsStringView().raw_span());
@@ -101,13 +101,13 @@ Optional<CFX_Color> CPDF_DefaultAppearance::GetColor() const {
     fc[3] = StringToFloat(syntax.GetWord());
     return CFX_Color(CFX_Color::Type::kCMYK, fc[0], fc[1], fc[2], fc[3]);
   }
-  return pdfium::nullopt;
+  return absl::nullopt;
 }
 
 Optional<CFX_Color::TypeAndARGB> CPDF_DefaultAppearance::GetColorARGB() const {
   Optional<CFX_Color> maybe_color = GetColor();
   if (!maybe_color.has_value())
-    return pdfium::nullopt;
+    return absl::nullopt;
 
   const CFX_Color& color = maybe_color.value();
   if (color.nColorType == CFX_Color::Type::kGray) {
@@ -133,7 +133,7 @@ Optional<CFX_Color::TypeAndARGB> CPDF_DefaultAppearance::GetColorARGB() const {
                    static_cast<int>(b * 255 + 0.5f)));
   }
   NOTREACHED();
-  return pdfium::nullopt;
+  return absl::nullopt;
 }
 
 bool CPDF_DefaultAppearance::FindTagParamFromStartForTesting(
