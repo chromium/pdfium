@@ -38,7 +38,7 @@ bool CFX_DIBitmap::Create(int width,
   m_Height = 0;
   m_Pitch = 0;
 
-  Optional<PitchAndSize> pitch_size =
+  absl::optional<PitchAndSize> pitch_size =
       CalculatePitchAndSize(width, height, format, pitch);
   if (!pitch_size.has_value())
     return false;
@@ -683,7 +683,7 @@ bool CFX_DIBitmap::ConvertColorScale(uint32_t forecolor, uint32_t backcolor) {
 }
 
 // static
-Optional<CFX_DIBitmap::PitchAndSize> CFX_DIBitmap::CalculatePitchAndSize(
+absl::optional<CFX_DIBitmap::PitchAndSize> CFX_DIBitmap::CalculatePitchAndSize(
     int width,
     int height,
     FXDIB_Format format,

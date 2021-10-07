@@ -48,7 +48,7 @@ CJS_Result CJX_Tree::resolveNode(
   if (pRefNode->GetElementType() == XFA_Element::Xfa)
     pRefNode = pScriptContext->GetThisObject();
 
-  Optional<CFXJSE_Engine::ResolveResult> maybeResult =
+  absl::optional<CFXJSE_Engine::ResolveResult> maybeResult =
       pScriptContext->ResolveObjects(
           ToNode(pRefNode), wsExpression.AsStringView(),
           Mask<XFA_ResolveFlag>{
@@ -220,7 +220,7 @@ v8::Local<v8::Value> CJX_Tree::ResolveNodeList(v8::Isolate* pIsolate,
   pDoc->GetNodeOwner()->PersistList(pNodeList);
 
   CFXJSE_Engine* pScriptContext = pDoc->GetScriptContext();
-  Optional<CFXJSE_Engine::ResolveResult> maybeResult =
+  absl::optional<CFXJSE_Engine::ResolveResult> maybeResult =
       pScriptContext->ResolveObjects(refNode, wsExpression.AsStringView(),
                                      dwFlag);
 

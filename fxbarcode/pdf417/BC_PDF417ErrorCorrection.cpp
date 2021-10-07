@@ -133,7 +133,7 @@ int32_t CBC_PDF417ErrorCorrection::GetErrorCorrectionCodewordCount(
 }
 
 // static
-Optional<WideString> CBC_PDF417ErrorCorrection::GenerateErrorCorrection(
+absl::optional<WideString> CBC_PDF417ErrorCorrection::GenerateErrorCorrection(
     const WideString& dataCodewords,
     int32_t errorCorrectionLevel) {
   int32_t k = GetErrorCorrectionCodewordCount(errorCorrectionLevel);

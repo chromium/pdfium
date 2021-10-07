@@ -142,7 +142,8 @@ void CJX_Form::checksumS(v8::Isolate* pIsolate,
     return;
   }
 
-  Optional<WideString> checksum = TryAttribute(XFA_Attribute::Checksum, false);
+  absl::optional<WideString> checksum =
+      TryAttribute(XFA_Attribute::Checksum, false);
   *pValue = fxv8::NewStringHelper(
       pIsolate,
       checksum.has_value() ? checksum.value().ToUTF8().AsStringView() : "");

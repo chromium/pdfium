@@ -111,7 +111,7 @@ CJS_Result CJX_Field::getSaveItem(
   if (!node->IsWidgetReady())
     return CJS_Result::Success(runtime->NewNull());
 
-  Optional<WideString> value = node->GetChoiceListItem(iIndex, true);
+  absl::optional<WideString> value = node->GetChoiceListItem(iIndex, true);
   if (!value.has_value())
     return CJS_Result::Success(runtime->NewNull());
 
@@ -177,7 +177,7 @@ CJS_Result CJX_Field::getDisplayItem(
   if (!node->IsWidgetReady())
     return CJS_Result::Success(runtime->NewNull());
 
-  Optional<WideString> value = node->GetChoiceListItem(iIndex, false);
+  absl::optional<WideString> value = node->GetChoiceListItem(iIndex, false);
   if (!value.has_value())
     return CJS_Result::Success(runtime->NewNull());
 

@@ -209,9 +209,9 @@ void NormalizeDecimalMarkW(WideString* str) {
   str->Replace(L",", L".");
 }
 
-Optional<double> ApplyNamedOperation(const wchar_t* sFunction,
-                                     double dValue1,
-                                     double dValue2) {
+absl::optional<double> ApplyNamedOperation(const wchar_t* sFunction,
+                                           double dValue1,
+                                           double dValue2) {
   if (FXSYS_wcsicmp(sFunction, L"AVG") == 0 ||
       FXSYS_wcsicmp(sFunction, L"SUM") == 0) {
     return dValue1 + dValue2;
@@ -840,7 +840,7 @@ CJS_Result CJS_PublicMethods::AFPercent_Format(
   strValue.ReleaseBuffer(szNewSize);
 
   // for processing separator style
-  Optional<size_t> mark_pos = strValue.Find('.');
+  absl::optional<size_t> mark_pos = strValue.Find('.');
   if (mark_pos.has_value()) {
     char mark = DecimalMarkForStyle(iSepStyle);
     if (mark != '.')
@@ -1245,7 +1245,8 @@ CJS_Result CJS_PublicMethods::AFSimple(
   if (isnan(arg1) || isnan(arg2))
     return CJS_Result::Failure(JSMessage::kValueError);
 
-  Optional<double> result = ApplyNamedOperation(sFunction.c_str(), arg1, arg2);
+  absl::optional<double> result =
+      ApplyNamedOperation(sFunction.c_str(), arg1, arg2);
   if (!result.has_value())
     return CJS_Result::Failure(JSMessage::kValueError);
 
@@ -1344,7 +1345,7 @@ CJS_Result CJS_PublicMethods::AFSimple_Calculate(
            wcscmp(sFunction.c_str(), L"MAX") == 0)) {
         dValue = dTemp;
       }
-      Optional<double> dResult =
+      absl::optional<double> dResult =
           ApplyNamedOperation(sFunction.c_str(), dValue, dTemp);
       if (!dResult.has_value())
         return CJS_Result::Failure(JSMessage::kValueError);

@@ -72,7 +72,7 @@ class CGdiDeviceDriver : public RenderDeviceDriverIface {
   int m_nBitsPerPixel;
   const DeviceType m_DeviceType;
   int m_RenderCaps;
-  Optional<FX_RECT> m_BaseClipBox;
+  absl::optional<FX_RECT> m_BaseClipBox;
 };
 
 #endif  // CORE_FXGE_WIN32_CGDI_DEVICE_DRIVER_H_

@@ -120,7 +120,7 @@ class CFXJS_Engine : public CFX_V8 {
   void ReleaseEngine();
 
   // Called after FXJS_InitializeEngine call made.
-  Optional<IJS_Runtime::JS_Error> Execute(const WideString& script);
+  absl::optional<IJS_Runtime::JS_Error> Execute(const WideString& script);
 
   v8::Local<v8::Object> GetThisObj();
   v8::Local<v8::Object> NewFXJSBoundObject(uint32_t nObjDefnID,

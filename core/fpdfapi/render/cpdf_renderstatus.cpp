@@ -947,7 +947,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
           if (!glyph.m_pGlyph)
             continue;
 
-          Optional<CFX_Point> point = glyph.GetOrigin({0, 0});
+          absl::optional<CFX_Point> point = glyph.GetOrigin({0, 0});
           if (!point.has_value())
             continue;
 
@@ -1063,7 +1063,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
     if (!glyph.m_pGlyph || !glyph.m_pGlyph->GetBitmap()->IsMaskFormat())
       continue;
 
-    Optional<CFX_Point> point = glyph.GetOrigin({rect.left, rect.top});
+    absl::optional<CFX_Point> point = glyph.GetOrigin({rect.left, rect.top});
     if (!point.has_value())
       continue;
 

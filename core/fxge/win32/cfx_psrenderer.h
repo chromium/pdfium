@@ -111,7 +111,7 @@ class CFX_PSRenderer {
                 float font_size,
                 uint32_t color);
 
-  static Optional<ByteString> GenerateType42SfntDataForTesting(
+  static absl::optional<ByteString> GenerateType42SfntDataForTesting(
       const ByteString& psname,
       pdfium::span<const uint8_t> font_data);
 
@@ -160,7 +160,7 @@ class CFX_PSRenderer {
   bool m_bInited = false;
   bool m_bGraphStateSet = false;
   bool m_bColorSet = false;
-  Optional<RenderingLevel> m_Level;
+  absl::optional<RenderingLevel> m_Level;
   uint32_t m_LastColor = 0;
   FX_RECT m_ClipBox;
   CFX_GraphStateData m_CurGraphState;

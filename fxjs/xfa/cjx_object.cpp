@@ -209,7 +209,7 @@ void CJX_Object::SetAttributeByEnum(XFA_Attribute eAttr,
                                     bool bNotify) {
   switch (GetXFANode()->GetAttributeType(eAttr)) {
     case XFA_AttributeType::Enum: {
-      Optional<XFA_AttributeValue> item =
+      absl::optional<XFA_AttributeValue> item =
           XFA_GetAttributeValueByName(wsValue.AsStringView());
       SetEnum(eAttr,
               item.has_value() ? item.value()
@@ -239,7 +239,7 @@ void CJX_Object::SetAttributeByEnum(XFA_Attribute eAttr,
 
 void CJX_Object::SetAttributeByString(WideStringView wsAttr,
                                       const WideString& wsValue) {
-  Optional<XFA_ATTRIBUTEINFO> attr = XFA_GetAttributeByName(wsAttr);
+  absl::optional<XFA_ATTRIBUTEINFO> attr = XFA_GetAttributeByName(wsAttr);
   if (attr.has_value()) {
     SetAttributeByEnum(attr.value().attribute, wsValue, true);
     return;
@@ -249,8 +249,8 @@ void CJX_Object::SetAttributeByString(WideStringView wsAttr,
 }
 
 WideString CJX_Object::GetAttributeByString(WideStringView attr) const {
-  Optional<WideString> result;
-  Optional<XFA_ATTRIBUTEINFO> enum_attr = XFA_GetAttributeByName(attr);
+  absl::optional<WideString> result;
+  absl::optional<XFA_ATTRIBUTEINFO> enum_attr = XFA_GetAttributeByName(attr);
   if (enum_attr.has_value())
     result = TryAttribute(enum_attr.value().attribute, true);
   else
@@ -262,11 +262,11 @@ WideString CJX_Object::GetAttributeByEnum(XFA_Attribute attr) const {
   return TryAttribute(attr, true).value_or(WideString());
 }
 
-Optional<WideString> CJX_Object::TryAttribute(XFA_Attribute eAttr,
-                                              bool bUseDefault) const {
+absl::optional<WideString> CJX_Object::TryAttribute(XFA_Attribute eAttr,
+                                                    bool bUseDefault) const {
   switch (GetXFANode()->GetAttributeType(eAttr)) {
     case XFA_AttributeType::Enum: {
-      Optional<XFA_AttributeValue> value = TryEnum(eAttr, bUseDefault);
+      absl::optional<XFA_AttributeValue> value = TryEnum(eAttr, bUseDefault);
       if (!value.has_value())
         return absl::nullopt;
       return WideString::FromASCII(XFA_AttributeValueToName(value.value()));
@@ -275,19 +275,19 @@ Optional<WideString> CJX_Object::TryAttribute(XFA_Attribute eAttr,
       return TryCData(eAttr, bUseDefault);
 
     case XFA_AttributeType::Boolean: {
-      Optional<bool> value = TryBoolean(eAttr, bUseDefault);
+      absl::optional<bool> value = TryBoolean(eAttr, bUseDefault);
       if (!value.has_value())
         return absl::nullopt;
       return WideString(value.value() ? L"1" : L"0");
     }
     case XFA_AttributeType::Integer: {
-      Optional<int32_t> iValue = TryInteger(eAttr, bUseDefault);
+      absl::optional<int32_t> iValue = TryInteger(eAttr, bUseDefault);
       if (!iValue.has_value())
         return absl::nullopt;
       return WideString::Format(L"%d", iValue.value());
     }
     case XFA_AttributeType::Measure: {
-      Optional<CXFA_Measurement> value = TryMeasure(eAttr, bUseDefault);
+      absl::optional<CXFA_Measurement> value = TryMeasure(eAttr, bUseDefault);
       if (!value.has_value())
         return absl::nullopt;
       return value->ToString();
@@ -302,10 +302,10 @@ void CJX_Object::RemoveAttribute(WideStringView wsAttr) {
   RemoveMapModuleKey(GetMapKey_Custom(wsAttr));
 }
 
-Optional<bool> CJX_Object::TryBoolean(XFA_Attribute eAttr,
-                                      bool bUseDefault) const {
+absl::optional<bool> CJX_Object::TryBoolean(XFA_Attribute eAttr,
+                                            bool bUseDefault) const {
   uint32_t key = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
-  Optional<int32_t> value = GetMapModuleValueFollowingChain(key);
+  absl::optional<int32_t> value = GetMapModuleValueFollowingChain(key);
   if (value.has_value())
     return !!value.value();
   if (!bUseDefault)
@@ -337,10 +337,10 @@ int32_t CJX_Object::GetInteger(XFA_Attribute eAttr) const {
   return TryInteger(eAttr, true).value_or(0);
 }
 
-Optional<int32_t> CJX_Object::TryInteger(XFA_Attribute eAttr,
-                                         bool bUseDefault) const {
+absl::optional<int32_t> CJX_Object::TryInteger(XFA_Attribute eAttr,
+                                               bool bUseDefault) const {
   uint32_t key = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
-  Optional<int32_t> value = GetMapModuleValueFollowingChain(key);
+  absl::optional<int32_t> value = GetMapModuleValueFollowingChain(key);
   if (value.has_value())
     return value.value();
   if (!bUseDefault)
@@ -348,10 +348,10 @@ Optional<int32_t> CJX_Object::TryInteger(XFA_Attribute eAttr,
   return GetXFANode()->GetDefaultInteger(eAttr);
 }
 
-Optional<XFA_AttributeValue> CJX_Object::TryEnum(XFA_Attribute eAttr,
-                                                 bool bUseDefault) const {
+absl::optional<XFA_AttributeValue> CJX_Object::TryEnum(XFA_Attribute eAttr,
+                                                       bool bUseDefault) const {
   uint32_t key = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
-  Optional<int32_t> value = GetMapModuleValueFollowingChain(key);
+  absl::optional<int32_t> value = GetMapModuleValueFollowingChain(key);
   if (value.has_value())
     return static_cast<XFA_AttributeValue>(value.value());
   if (!bUseDefault)
@@ -386,10 +386,11 @@ void CJX_Object::SetMeasure(XFA_Attribute eAttr,
     OnChanged(eAttr, false);
 }
 
-Optional<CXFA_Measurement> CJX_Object::TryMeasure(XFA_Attribute eAttr,
-                                                  bool bUseDefault) const {
+absl::optional<CXFA_Measurement> CJX_Object::TryMeasure(
+    XFA_Attribute eAttr,
+    bool bUseDefault) const {
   uint32_t key = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
-  Optional<CXFA_Measurement> result =
+  absl::optional<CXFA_Measurement> result =
       GetMapModuleMeasurementFollowingChain(key);
   if (result.has_value())
     return result.value();
@@ -398,8 +399,8 @@ Optional<CXFA_Measurement> CJX_Object::TryMeasure(XFA_Attribute eAttr,
   return GetXFANode()->GetDefaultMeasurement(eAttr);
 }
 
-Optional<float> CJX_Object::TryMeasureAsFloat(XFA_Attribute attr) const {
-  Optional<CXFA_Measurement> measure = TryMeasure(attr, false);
+absl::optional<float> CJX_Object::TryMeasureAsFloat(XFA_Attribute attr) const {
+  absl::optional<CXFA_Measurement> measure = TryMeasure(attr, false);
   if (!measure.has_value())
     return absl::nullopt;
   return measure->ToUnit(XFA_Unit::Pt);
@@ -427,7 +428,7 @@ void CJX_Object::SetCDataImpl(XFA_Attribute eAttr,
                               bool bScriptModify) {
   CXFA_Node* xfaObj = GetXFANode();
   uint32_t key = GetMapKey_Element(xfaObj->GetElementType(), eAttr);
-  Optional<WideString> old_value = GetMapModuleString(key);
+  absl::optional<WideString> old_value = GetMapModuleString(key);
   if (!old_value.has_value() || old_value.value() != wsValue) {
     if (bNotify)
       OnChanging(eAttr);
@@ -475,7 +476,7 @@ void CJX_Object::SetAttributeValueImpl(const WideString& wsValue,
   auto* xfaObj = GetXFANode();
   uint32_t key =
       GetMapKey_Element(xfaObj->GetElementType(), XFA_Attribute::Value);
-  Optional<WideString> old_value = GetMapModuleString(key);
+  absl::optional<WideString> old_value = GetMapModuleString(key);
   if (!old_value.has_value() || old_value.value() != wsValue) {
     if (bNotify)
       OnChanging(XFA_Attribute::Value);
@@ -487,10 +488,10 @@ void CJX_Object::SetAttributeValueImpl(const WideString& wsValue,
   }
 }
 
-Optional<WideString> CJX_Object::TryCData(XFA_Attribute eAttr,
-                                          bool bUseDefault) const {
+absl::optional<WideString> CJX_Object::TryCData(XFA_Attribute eAttr,
+                                                bool bUseDefault) const {
   uint32_t key = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
-  Optional<WideString> value = GetMapModuleStringFollowingChain(key);
+  absl::optional<WideString> value = GetMapModuleStringFollowingChain(key);
   if (value.has_value())
     return value;
 
@@ -504,7 +505,7 @@ CFX_XMLElement* CJX_Object::SetValue(XFA_Attribute eAttr,
                                      int32_t value,
                                      bool bNotify) {
   uint32_t key = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
-  Optional<int32_t> old_value = GetMapModuleValue(key);
+  absl::optional<int32_t> old_value = GetMapModuleValue(key);
   if (!old_value.has_value() || old_value.value() != value) {
     if (bNotify)
       OnChanging(eAttr);
@@ -614,7 +615,7 @@ void CJX_Object::SetContent(const WideString& wsContent,
     case XFA_ObjectType::ContentNode: {
       WideString wsContentType;
       if (GetXFANode()->GetElementType() == XFA_Element::ExData) {
-        Optional<WideString> ret =
+        absl::optional<WideString> ret =
             TryAttribute(XFA_Attribute::ContentType, false);
         if (ret.has_value())
           wsContentType = ret.value();
@@ -681,8 +682,8 @@ WideString CJX_Object::GetContent(bool bScriptModify) const {
   return TryContent(bScriptModify, true).value_or(WideString());
 }
 
-Optional<WideString> CJX_Object::TryContent(bool bScriptModify,
-                                            bool bProto) const {
+absl::optional<WideString> CJX_Object::TryContent(bool bScriptModify,
+                                                  bool bProto) const {
   CXFA_Node* pNode = nullptr;
   switch (GetXFANode()->GetObjectType()) {
     case XFA_ObjectType::ContainerNode:
@@ -709,7 +710,7 @@ Optional<WideString> CJX_Object::TryContent(bool bScriptModify,
       if (!pContentRawDataNode) {
         XFA_Element element = XFA_Element::Sharptext;
         if (GetXFANode()->GetElementType() == XFA_Element::ExData) {
-          Optional<WideString> contentType =
+          absl::optional<WideString> contentType =
               TryAttribute(XFA_Attribute::ContentType, false);
           if (contentType.has_value()) {
             if (contentType.value().EqualsASCII("text/html"))
@@ -743,7 +744,7 @@ Optional<WideString> CJX_Object::TryContent(bool bScriptModify,
   return absl::nullopt;
 }
 
-Optional<WideString> CJX_Object::TryNamespace() const {
+absl::optional<WideString> CJX_Object::TryNamespace() const {
   if (GetXFANode()->IsModelNode() ||
       GetXFANode()->GetElementType() == XFA_Element::Packet) {
     CFX_XMLNode* pXMLNode = GetXFANode()->GetXMLMappingNode();
@@ -808,21 +809,21 @@ void CJX_Object::SetMapModuleMeasurement(uint32_t key,
   CreateMapModule()->SetMeasurement(key, value);
 }
 
-Optional<int32_t> CJX_Object::GetMapModuleValue(uint32_t key) const {
+absl::optional<int32_t> CJX_Object::GetMapModuleValue(uint32_t key) const {
   CFXJSE_MapModule* pModule = GetMapModule();
   if (!pModule)
     return absl::nullopt;
   return pModule->GetValue(key);
 }
 
-Optional<WideString> CJX_Object::GetMapModuleString(uint32_t key) const {
+absl::optional<WideString> CJX_Object::GetMapModuleString(uint32_t key) const {
   CFXJSE_MapModule* pModule = GetMapModule();
   if (!pModule)
     return absl::nullopt;
   return pModule->GetString(key);
 }
 
-Optional<CXFA_Measurement> CJX_Object::GetMapModuleMeasurement(
+absl::optional<CXFA_Measurement> CJX_Object::GetMapModuleMeasurement(
     uint32_t key) const {
   CFXJSE_MapModule* pModule = GetMapModule();
   if (!pModule)
@@ -830,7 +831,7 @@ Optional<CXFA_Measurement> CJX_Object::GetMapModuleMeasurement(
   return pModule->GetMeasurement(key);
 }
 
-Optional<int32_t> CJX_Object::GetMapModuleValueFollowingChain(
+absl::optional<int32_t> CJX_Object::GetMapModuleValueFollowingChain(
     uint32_t key) const {
   std::set<const CXFA_Node*> visited;
   for (const CXFA_Node* pNode = GetXFANode(); pNode;
@@ -838,7 +839,7 @@ Optional<int32_t> CJX_Object::GetMapModuleValueFollowingChain(
     if (!visited.insert(pNode).second)
       break;
 
-    Optional<int32_t> result = pNode->JSObject()->GetMapModuleValue(key);
+    absl::optional<int32_t> result = pNode->JSObject()->GetMapModuleValue(key);
     if (result.has_value())
       return result;
 
@@ -848,7 +849,7 @@ Optional<int32_t> CJX_Object::GetMapModuleValueFollowingChain(
   return absl::nullopt;
 }
 
-Optional<WideString> CJX_Object::GetMapModuleStringFollowingChain(
+absl::optional<WideString> CJX_Object::GetMapModuleStringFollowingChain(
     uint32_t key) const {
   std::set<const CXFA_Node*> visited;
   for (const CXFA_Node* pNode = GetXFANode(); pNode;
@@ -856,7 +857,8 @@ Optional<WideString> CJX_Object::GetMapModuleStringFollowingChain(
     if (!visited.insert(pNode).second)
       break;
 
-    Optional<WideString> result = pNode->JSObject()->GetMapModuleString(key);
+    absl::optional<WideString> result =
+        pNode->JSObject()->GetMapModuleString(key);
     if (result.has_value())
       return result;
 
@@ -866,15 +868,15 @@ Optional<WideString> CJX_Object::GetMapModuleStringFollowingChain(
   return absl::nullopt;
 }
 
-Optional<CXFA_Measurement> CJX_Object::GetMapModuleMeasurementFollowingChain(
-    uint32_t key) const {
+absl::optional<CXFA_Measurement>
+CJX_Object::GetMapModuleMeasurementFollowingChain(uint32_t key) const {
   std::set<const CXFA_Node*> visited;
   for (const CXFA_Node* pNode = GetXFANode(); pNode;
        pNode = pNode->GetTemplateNodeIfExists()) {
     if (!visited.insert(pNode).second)
       break;
 
-    Optional<CXFA_Measurement> result =
+    absl::optional<CXFA_Measurement> result =
         pNode->JSObject()->GetMapModuleMeasurement(key);
     if (result.has_value())
       return result;
@@ -1006,7 +1008,7 @@ void CJX_Object::ScriptAttributeString(v8::Isolate* pIsolate,
 
   CXFA_Node* pProtoNode = nullptr;
   if (!wsSOM.IsEmpty()) {
-    Optional<CFXJSE_Engine::ResolveResult> maybeResult =
+    absl::optional<CFXJSE_Engine::ResolveResult> maybeResult =
         GetDocument()->GetScriptContext()->ResolveObjects(
             pProtoRoot, wsSOM.AsStringView(),
             Mask<XFA_ResolveFlag>{

@@ -34,7 +34,7 @@ class CJS_Runtime final : public IJS_Runtime,
   IJS_EventContext* NewEventContext() override;
   void ReleaseEventContext(IJS_EventContext* pContext) override;
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const override;
-  Optional<IJS_Runtime::JS_Error> ExecuteScript(
+  absl::optional<IJS_Runtime::JS_Error> ExecuteScript(
       const WideString& script) override;
 
   CJS_EventContext* GetCurrentEventContext() const;

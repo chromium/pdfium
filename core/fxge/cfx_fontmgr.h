@@ -45,7 +45,8 @@ class CFX_FontMgr {
     ObservedPtr<CFX_Face> m_TTCFaces[16];
   };
 
-  static Optional<pdfium::span<const uint8_t>> GetBuiltinFont(size_t index);
+  static absl::optional<pdfium::span<const uint8_t>> GetBuiltinFont(
+      size_t index);
 
   CFX_FontMgr();
   ~CFX_FontMgr();

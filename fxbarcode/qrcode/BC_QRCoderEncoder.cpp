@@ -252,7 +252,7 @@ int32_t CalculateMaskPenalty(CBC_CommonByteMatrix* matrix) {
          CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule4(matrix);
 }
 
-Optional<int32_t> ChooseMaskPattern(
+absl::optional<int32_t> ChooseMaskPattern(
     CBC_QRCoderBitVector* bits,
     const CBC_QRCoderErrorCorrectionLevel* ecLevel,
     int32_t version,
@@ -453,7 +453,7 @@ bool CBC_QRCoderEncoder::Encode(WideStringView content,
 
   auto matrix = std::make_unique<CBC_CommonByteMatrix>(
       qrCode->GetMatrixWidth(), qrCode->GetMatrixWidth());
-  Optional<int32_t> maskPattern = ChooseMaskPattern(
+  absl::optional<int32_t> maskPattern = ChooseMaskPattern(
       &finalBits, qrCode->GetECLevel(), qrCode->GetVersion(), matrix.get());
   if (!maskPattern.has_value())
     return false;

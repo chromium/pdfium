@@ -11,7 +11,7 @@ TEST(CFX_Path, BasicTest) {
   path.AppendRect(/*left=*/1, /*bottom=*/2, /*right=*/3, /*top=*/5);
   EXPECT_EQ(5u, path.GetPoints().size());
   EXPECT_TRUE(path.IsRect());
-  Optional<CFX_FloatRect> rect = path.GetRect(nullptr);
+  absl::optional<CFX_FloatRect> rect = path.GetRect(nullptr);
   ASSERT_TRUE(rect.has_value());
   EXPECT_EQ(CFX_FloatRect(1, 2, 3, 5), rect.value());
   EXPECT_EQ(CFX_FloatRect(1, 2, 3, 5), path.GetBoundingBox());
@@ -70,7 +70,7 @@ TEST(CFX_Path, ShearTransform) {
 
   const CFX_Matrix kShearMatrix(1, 2, 0, 1, 0, 0);
   EXPECT_TRUE(path.IsRect());
-  Optional<CFX_FloatRect> rect = path.GetRect(&kShearMatrix);
+  absl::optional<CFX_FloatRect> rect = path.GetRect(&kShearMatrix);
   EXPECT_FALSE(rect.has_value());
   EXPECT_EQ(CFX_FloatRect(1, 2, 3, 5), path.GetBoundingBox());
 
@@ -147,7 +147,7 @@ TEST(CFX_Path, ClosePath) {
   EXPECT_EQ(CFX_Path::Point::Type::kLine, path.GetType(3));
   EXPECT_FALSE(path.IsClosingFigure(3));
   EXPECT_TRUE(path.IsRect());
-  Optional<CFX_FloatRect> rect = path.GetRect(nullptr);
+  absl::optional<CFX_FloatRect> rect = path.GetRect(nullptr);
   ASSERT_TRUE(rect.has_value());
   EXPECT_EQ(CFX_FloatRect(0, 0, 1, 1), rect.value());
 
@@ -199,7 +199,7 @@ TEST(CFX_Path, FivePointRect) {
   EXPECT_EQ(CFX_Path::Point::Type::kLine, path.GetType(4));
   EXPECT_FALSE(path.IsClosingFigure(4));
   EXPECT_TRUE(path.IsRect());
-  Optional<CFX_FloatRect> rect = path.GetRect(nullptr);
+  absl::optional<CFX_FloatRect> rect = path.GetRect(nullptr);
   ASSERT_TRUE(rect.has_value());
   EXPECT_EQ(CFX_FloatRect(0, 0, 2, 1), rect.value());
 
@@ -222,7 +222,7 @@ TEST(CFX_Path, SixPlusPointRect) {
   path.AppendPoint({0, 1}, CFX_Path::Point::Type::kLine);
   path.AppendPoint({0, 0}, CFX_Path::Point::Type::kLine);
   EXPECT_TRUE(path.IsRect());
-  Optional<CFX_FloatRect> rect = path.GetRect(nullptr);
+  absl::optional<CFX_FloatRect> rect = path.GetRect(nullptr);
   ASSERT_TRUE(rect.has_value());
   EXPECT_EQ(CFX_FloatRect(0, 0, 2, 1), rect.value());
   EXPECT_EQ(CFX_FloatRect(0, 0, 2, 1), path.GetBoundingBox());
@@ -256,7 +256,7 @@ TEST(CFX_Path, NotRect) {
   path.AppendPoint({0, 1}, CFX_Path::Point::Type::kLine);
   path.AppendPoint({0, 0.1f}, CFX_Path::Point::Type::kLine);
   EXPECT_FALSE(path.IsRect());
-  Optional<CFX_FloatRect> rect = path.GetRect(nullptr);
+  absl::optional<CFX_FloatRect> rect = path.GetRect(nullptr);
   EXPECT_FALSE(rect.has_value());
   EXPECT_EQ(CFX_FloatRect(0, 0, 2, 1), path.GetBoundingBox());
 
@@ -341,7 +341,7 @@ TEST(CFX_Path, EmptyRect) {
   path.AppendPoint({0, 1}, CFX_Path::Point::Type::kLine);
   path.AppendPoint({0, 0}, CFX_Path::Point::Type::kLine);
   EXPECT_TRUE(path.IsRect());
-  Optional<CFX_FloatRect> rect = path.GetRect(nullptr);
+  absl::optional<CFX_FloatRect> rect = path.GetRect(nullptr);
   ASSERT_TRUE(rect.has_value());
   EXPECT_EQ(CFX_FloatRect(0, 0, 0, 1), rect.value());
   EXPECT_EQ(CFX_FloatRect(0, 0, 0, 1), path.GetBoundingBox());

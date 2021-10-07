@@ -300,7 +300,7 @@ TEST_F(FPDFDataAvailEmbedderTest, LoadInfoAfterReceivingFirstPage) {
   // Map "Info" to an object within the first section without breaking
   // linearization.
   ByteString data(loader.file_contents(), loader.file_length());
-  Optional<size_t> index = data.Find("/Info 27 0 R");
+  absl::optional<size_t> index = data.Find("/Info 27 0 R");
   ASSERT_TRUE(index);
   memcpy(loader.file_contents() + *index, "/Info 29 0 R", 12);
 
@@ -327,7 +327,7 @@ TEST_F(FPDFDataAvailEmbedderTest, TryLoadInvalidInfo) {
   TestAsyncLoader loader("linearized.pdf");
   // Map "Info" to an invalid object without breaking linearization.
   ByteString data(loader.file_contents(), loader.file_length());
-  Optional<size_t> index = data.Find("/Info 27 0 R");
+  absl::optional<size_t> index = data.Find("/Info 27 0 R");
   ASSERT_TRUE(index);
   memcpy(loader.file_contents() + *index, "/Info 99 0 R", 12);
 
@@ -353,7 +353,7 @@ TEST_F(FPDFDataAvailEmbedderTest, TryLoadNonExistsInfo) {
   TestAsyncLoader loader("linearized.pdf");
   // Break the "Info" parameter without breaking linearization.
   ByteString data(loader.file_contents(), loader.file_length());
-  Optional<size_t> index = data.Find("/Info 27 0 R");
+  absl::optional<size_t> index = data.Find("/Info 27 0 R");
   ASSERT_TRUE(index);
   memcpy(loader.file_contents() + *index, "/I_fo 27 0 R", 12);
 

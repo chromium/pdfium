@@ -47,7 +47,7 @@ class CFX_FontMapper {
   explicit CFX_FontMapper(CFX_FontMgr* mgr);
   ~CFX_FontMapper();
 
-  static Optional<StandardFont> GetStandardFontName(ByteString* name);
+  static absl::optional<StandardFont> GetStandardFontName(ByteString* name);
   static bool IsStandardFontName(const ByteString& name);
   static bool IsSymbolicFont(StandardFont font);
   static bool IsFixedFont(StandardFont font);
@@ -75,9 +75,9 @@ class CFX_FontMapper {
   bool HasLocalizedFont(ByteStringView name) const;
 
 #if defined(OS_WIN)
-  Optional<ByteString> InstalledFontNameStartingWith(
+  absl::optional<ByteString> InstalledFontNameStartingWith(
       const ByteString& name) const;
-  Optional<ByteString> LocalizedFontNameStartingWith(
+  absl::optional<ByteString> LocalizedFontNameStartingWith(
       const ByteString& name) const;
 #endif  // defined(OS_WIN)
 

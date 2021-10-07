@@ -116,11 +116,11 @@ class CFXJSE_Engine final : public CFX_V8 {
                  CFXJSE_Value* pRetValue,
                  CXFA_Object* pThisObject);
 
-  Optional<ResolveResult> ResolveObjects(CXFA_Object* refObject,
-                                         WideStringView wsExpression,
-                                         Mask<XFA_ResolveFlag> dwStyles);
+  absl::optional<ResolveResult> ResolveObjects(CXFA_Object* refObject,
+                                               WideStringView wsExpression,
+                                               Mask<XFA_ResolveFlag> dwStyles);
 
-  Optional<ResolveResult> ResolveObjectsWithBindNode(
+  absl::optional<ResolveResult> ResolveObjectsWithBindNode(
       CXFA_Object* refObject,
       WideStringView wsExpression,
       Mask<XFA_ResolveFlag> dwStyles,

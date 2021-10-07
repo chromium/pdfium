@@ -44,7 +44,7 @@ bool CanEmbed(CFX_Font* font) {
                     FT_FSTYPE_BITMAP_EMBEDDING_ONLY)) == 0;
 }
 
-Optional<ByteString> GenerateType42SfntData(
+absl::optional<ByteString> GenerateType42SfntData(
     const ByteString& psname,
     pdfium::span<const uint8_t> font_data) {
   if (font_data.empty())
@@ -169,7 +169,7 @@ ByteString GenerateType42FontData(const CFX_Font* font) {
   const ByteString psname = font->GetPsName();
   DCHECK(!psname.IsEmpty());
 
-  Optional<ByteString> sfnt_data =
+  absl::optional<ByteString> sfnt_data =
       GenerateType42SfntData(psname, font->GetFontSpan());
   if (!sfnt_data.has_value())
     return ByteString();
@@ -195,7 +195,7 @@ struct CFX_PSRenderer::Glyph {
 
   UnownedPtr<CFX_Font> const font;
   const uint32_t glyph_index;
-  Optional<std::array<float, 4>> adjust_matrix;
+  absl::optional<std::array<float, 4>> adjust_matrix;
 };
 
 CFX_PSRenderer::CFX_PSRenderer(CFX_PSFontTracker* font_tracker,
@@ -893,7 +893,7 @@ void CFX_PSRenderer::WriteString(ByteStringView str) {
 }
 
 // static
-Optional<ByteString> CFX_PSRenderer::GenerateType42SfntDataForTesting(
+absl::optional<ByteString> CFX_PSRenderer::GenerateType42SfntDataForTesting(
     const ByteString& psname,
     pdfium::span<const uint8_t> font_data) {
   return GenerateType42SfntData(psname, font_data);

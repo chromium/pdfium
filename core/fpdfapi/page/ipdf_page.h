@@ -35,12 +35,12 @@ class IPDF_Page : public Retainable {
   virtual CFX_Matrix GetDisplayMatrix(const FX_RECT& rect,
                                       int iRotate) const = 0;
 
-  virtual Optional<CFX_PointF> DeviceToPage(
+  virtual absl::optional<CFX_PointF> DeviceToPage(
       const FX_RECT& rect,
       int rotate,
       const CFX_PointF& device_point) const = 0;
 
-  virtual Optional<CFX_PointF> PageToDevice(
+  virtual absl::optional<CFX_PointF> PageToDevice(
       const FX_RECT& rect,
       int rotate,
       const CFX_PointF& page_point) const = 0;

@@ -112,7 +112,8 @@ CJS_Result CJS_Util::printf(CJS_Runtime* pRuntime,
   {
     size_t offset = 0;
     while (true) {
-      Optional<size_t> offset_end = unsafe_fmt_string.Find(L"%", offset + 1);
+      absl::optional<size_t> offset_end =
+          unsafe_fmt_string.Find(L"%", offset + 1);
       if (!offset_end.has_value()) {
         unsafe_conversion_specifiers.push_back(
             unsafe_fmt_string.Last(unsafe_fmt_string.GetLength() - offset));

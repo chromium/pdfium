@@ -100,10 +100,10 @@ class CFX_DIBitmap : public CFX_DIBBase {
   // If |pitch| is non-zero, then that be used as the actual pitch.
   // The actual pitch will be used to calculate the size.
   // Returns the calculated pitch and size on success, or nullopt on failure.
-  static Optional<PitchAndSize> CalculatePitchAndSize(int width,
-                                                      int height,
-                                                      FXDIB_Format format,
-                                                      uint32_t pitch);
+  static absl::optional<PitchAndSize> CalculatePitchAndSize(int width,
+                                                            int height,
+                                                            FXDIB_Format format,
+                                                            uint32_t pitch);
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   void PreMultiply();

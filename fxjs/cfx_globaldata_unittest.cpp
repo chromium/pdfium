@@ -21,7 +21,7 @@ class TestDelegate : public CFX_GlobalData::Delegate {
         buffer.begin(), buffer.end());
     return true;
   }
-  Optional<pdfium::span<uint8_t>> LoadBuffer() override {
+  absl::optional<pdfium::span<uint8_t>> LoadBuffer() override {
     return pdfium::span<uint8_t>(last_buffer_);
   }
   void BufferDone() override {

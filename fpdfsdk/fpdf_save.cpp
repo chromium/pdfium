@@ -151,7 +151,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
 bool DoDocSave(FPDF_DOCUMENT document,
                FPDF_FILEWRITE* pFileWrite,
                FPDF_DWORD flags,
-               Optional<int> version) {
+               absl::optional<int> version) {
   CPDF_Document* pPDFDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pPDFDoc)
     return 0;

@@ -42,7 +42,7 @@ class CPDF_Font : public Retainable, public Observable {
     virtual void ParseContentForType3Char(CPDF_Type3Char* pChar) = 0;
     virtual bool HasPageObjects() const = 0;
     virtual CFX_FloatRect CalcBoundingBox() const = 0;
-    virtual Optional<std::pair<RetainPtr<CFX_DIBitmap>, CFX_Matrix>>
+    virtual absl::optional<std::pair<RetainPtr<CFX_DIBitmap>, CFX_Matrix>>
     GetBitmapAndMatrixFromSoleImageOfForm() const = 0;
   };
 

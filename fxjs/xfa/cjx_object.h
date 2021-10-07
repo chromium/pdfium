@@ -125,8 +125,8 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
   bool HasAttribute(XFA_Attribute eAttr) const;
   WideString GetAttributeByString(WideStringView attr) const;
   WideString GetAttributeByEnum(XFA_Attribute attr) const;
-  Optional<WideString> TryAttribute(XFA_Attribute eAttr,
-                                    bool bUseDefault) const;
+  absl::optional<WideString> TryAttribute(XFA_Attribute eAttr,
+                                          bool bUseDefault) const;
   void SetAttributeByEnum(XFA_Attribute eAttr,
                           const WideString& wsValue,
                           bool bNotify);
@@ -134,7 +134,7 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
   void RemoveAttribute(WideStringView wsAttr);
 
   WideString GetContent(bool bScriptModify) const;
-  Optional<WideString> TryContent(bool bScriptModify, bool bProto) const;
+  absl::optional<WideString> TryContent(bool bScriptModify, bool bProto) const;
   void SetContent(const WideString& wsContent,
                   const WideString& wsXMLValue,
                   bool bNotify,
@@ -174,30 +174,32 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
   JSE_PROP(ScriptSomInstanceIndex);
   JSE_PROP(ScriptSubmitFormatMode);
 
-  Optional<WideString> TryNamespace() const;
+  absl::optional<WideString> TryNamespace() const;
 
   int32_t GetInteger(XFA_Attribute eAttr) const;
-  Optional<int32_t> TryInteger(XFA_Attribute eAttr, bool bUseDefault) const;
+  absl::optional<int32_t> TryInteger(XFA_Attribute eAttr,
+                                     bool bUseDefault) const;
   void SetInteger(XFA_Attribute eAttr, int32_t iValue, bool bNotify);
 
   WideString GetCData(XFA_Attribute eAttr) const;
-  Optional<WideString> TryCData(XFA_Attribute eAttr, bool bUseDefault) const;
+  absl::optional<WideString> TryCData(XFA_Attribute eAttr,
+                                      bool bUseDefault) const;
   void SetCData(XFA_Attribute eAttr, const WideString& wsValue);
 
   XFA_AttributeValue GetEnum(XFA_Attribute eAttr) const;
-  Optional<XFA_AttributeValue> TryEnum(XFA_Attribute eAttr,
-                                       bool bUseDefault) const;
+  absl::optional<XFA_AttributeValue> TryEnum(XFA_Attribute eAttr,
+                                             bool bUseDefault) const;
   void SetEnum(XFA_Attribute eAttr, XFA_AttributeValue eValue, bool bNotify);
 
   bool GetBoolean(XFA_Attribute eAttr) const;
-  Optional<bool> TryBoolean(XFA_Attribute eAttr, bool bUseDefault) const;
+  absl::optional<bool> TryBoolean(XFA_Attribute eAttr, bool bUseDefault) const;
   void SetBoolean(XFA_Attribute eAttr, bool bValue, bool bNotify);
 
   CXFA_Measurement GetMeasure(XFA_Attribute eAttr) const;
   float GetMeasureInUnit(XFA_Attribute eAttr, XFA_Unit unit) const;
-  Optional<CXFA_Measurement> TryMeasure(XFA_Attribute eAttr,
-                                        bool bUseDefault) const;
-  Optional<float> TryMeasureAsFloat(XFA_Attribute attr) const;
+  absl::optional<CXFA_Measurement> TryMeasure(XFA_Attribute eAttr,
+                                              bool bUseDefault) const;
+  absl::optional<float> TryMeasureAsFloat(XFA_Attribute attr) const;
   void SetMeasure(XFA_Attribute eAttr,
                   const CXFA_Measurement& mValue,
                   bool bNotify);
@@ -260,12 +262,13 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
   void SetMapModuleValue(uint32_t key, int32_t value);
   void SetMapModuleString(uint32_t key, const WideString& wsValue);
   void SetMapModuleMeasurement(uint32_t key, const CXFA_Measurement& value);
-  Optional<int32_t> GetMapModuleValue(uint32_t key) const;
-  Optional<WideString> GetMapModuleString(uint32_t key) const;
-  Optional<CXFA_Measurement> GetMapModuleMeasurement(uint32_t key) const;
-  Optional<int32_t> GetMapModuleValueFollowingChain(uint32_t key) const;
-  Optional<WideString> GetMapModuleStringFollowingChain(uint32_t key) const;
-  Optional<CXFA_Measurement> GetMapModuleMeasurementFollowingChain(
+  absl::optional<int32_t> GetMapModuleValue(uint32_t key) const;
+  absl::optional<WideString> GetMapModuleString(uint32_t key) const;
+  absl::optional<CXFA_Measurement> GetMapModuleMeasurement(uint32_t key) const;
+  absl::optional<int32_t> GetMapModuleValueFollowingChain(uint32_t key) const;
+  absl::optional<WideString> GetMapModuleStringFollowingChain(
+      uint32_t key) const;
+  absl::optional<CXFA_Measurement> GetMapModuleMeasurementFollowingChain(
       uint32_t key) const;
   bool HasMapModuleKey(uint32_t key) const;
   void RemoveMapModuleKey(uint32_t key);

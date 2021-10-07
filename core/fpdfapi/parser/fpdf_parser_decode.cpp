@@ -366,7 +366,7 @@ uint32_t FlateOrLZWDecode(bool bLZW,
                                        estimated_size, dest_buf, dest_size);
 }
 
-Optional<DecoderArray> GetDecoderArray(const CPDF_Dictionary* pDict) {
+absl::optional<DecoderArray> GetDecoderArray(const CPDF_Dictionary* pDict) {
   const CPDF_Object* pFilter = pDict->GetDirectObjectFor("Filter");
   if (!pFilter)
     return DecoderArray();

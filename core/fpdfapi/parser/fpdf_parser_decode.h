@@ -82,7 +82,7 @@ uint32_t FlateOrLZWDecode(bool bLZW,
 // array.
 // Otherwise, returns a vector of decoders.
 using DecoderArray = std::vector<std::pair<ByteString, const CPDF_Object*>>;
-Optional<DecoderArray> GetDecoderArray(const CPDF_Dictionary* pDict);
+absl::optional<DecoderArray> GetDecoderArray(const CPDF_Dictionary* pDict);
 
 bool PDF_DataDecode(pdfium::span<const uint8_t> src_span,
                     uint32_t estimated_size,

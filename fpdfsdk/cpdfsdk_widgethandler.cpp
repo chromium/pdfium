@@ -217,7 +217,7 @@ void CPDFSDK_WidgetHandler::OnLoad(CPDFSDK_Annot* pAnnot) {
   if (fieldType == FormFieldType::kTextField ||
       fieldType == FormFieldType::kComboBox) {
     ObservedPtr<CPDFSDK_Annot> pObserved(pWidget);
-    Optional<WideString> sValue = pWidget->OnFormat();
+    absl::optional<WideString> sValue = pWidget->OnFormat();
     if (!pObserved)
       return;
 

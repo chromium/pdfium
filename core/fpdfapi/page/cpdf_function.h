@@ -34,8 +34,8 @@ class CPDF_Function {
 
   virtual ~CPDF_Function();
 
-  Optional<uint32_t> Call(pdfium::span<const float> inputs,
-                          pdfium::span<float> results) const;
+  absl::optional<uint32_t> Call(pdfium::span<const float> inputs,
+                                pdfium::span<float> results) const;
   uint32_t CountInputs() const { return m_nInputs; }
   uint32_t CountOutputs() const { return m_nOutputs; }
   float GetDomain(int i) const { return m_Domains[i]; }

@@ -24,9 +24,9 @@ class CPDFSDK_AppStream {
   void SetAsPushButton();
   void SetAsCheckBox();
   void SetAsRadioButton();
-  void SetAsComboBox(Optional<WideString> sValue);
+  void SetAsComboBox(absl::optional<WideString> sValue);
   void SetAsListBox();
-  void SetAsTextField(Optional<WideString> sValue);
+  void SetAsTextField(absl::optional<WideString> sValue);
 
  private:
   void AddImage(const ByteString& sAPType, CPDF_Stream* pImage);

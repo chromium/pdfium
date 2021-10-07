@@ -63,7 +63,7 @@ void UpdateFormField(CPDFSDK_FormFillEnvironment* pFormFillEnv,
     if (IsComboBoxOrTextField(pFormField)) {
       for (auto& pObserved : widgets) {
         if (pObserved) {
-          Optional<WideString> sValue =
+          absl::optional<WideString> sValue =
               ToCPDFSDKWidget(pObserved.Get())->OnFormat();
           if (pObserved) {  // Not redundant, may be clobbered by OnFormat.
             auto* pWidget = ToCPDFSDKWidget(pObserved.Get());
@@ -121,7 +121,7 @@ void UpdateFormControl(CPDFSDK_FormFillEnvironment* pFormFillEnv,
       FormFieldType fieldType = pWidget->GetFieldType();
       if (fieldType == FormFieldType::kComboBox ||
           fieldType == FormFieldType::kTextField) {
-        Optional<WideString> sValue = pWidget->OnFormat();
+        absl::optional<WideString> sValue = pWidget->OnFormat();
         if (!observed_widget)
           return;
         pWidget->ResetAppearance(sValue, CPDFSDK_Widget::kValueUnchanged);
@@ -151,7 +151,7 @@ struct FieldNameData {
   int control_index;
 };
 
-Optional<FieldNameData> ParseFieldName(const WideString& field_name) {
+absl::optional<FieldNameData> ParseFieldName(const WideString& field_name) {
   auto reverse_it = field_name.rbegin();
   while (reverse_it != field_name.rend()) {
     if (*reverse_it == L'.')
@@ -655,7 +655,7 @@ bool CJS_Field::AttachField(CJS_Document* pDocument,
   swFieldNameTemp.Replace(L"..", L".");
 
   if (pForm->CountFields(swFieldNameTemp) <= 0) {
-    Optional<FieldNameData> parsed_data = ParseFieldName(swFieldNameTemp);
+    absl::optional<FieldNameData> parsed_data = ParseFieldName(swFieldNameTemp);
     if (!parsed_data.has_value())
       return false;
 
@@ -1918,7 +1918,7 @@ CJS_Result CJS_Field::get_text_color(CJS_Runtime* pRuntime) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   CPDF_DefaultAppearance FieldAppearance = pFormControl->GetDefaultAppearance();
-  Optional<CFX_Color::TypeAndARGB> maybe_type_argb_pair =
+  absl::optional<CFX_Color::TypeAndARGB> maybe_type_argb_pair =
       FieldAppearance.GetColorARGB();
 
   CFX_Color crRet;
@@ -1969,7 +1969,8 @@ CJS_Result CJS_Field::get_text_font(CJS_Runtime* pRuntime) {
     return CJS_Result::Failure(JSMessage::kObjectTypeError);
   }
 
-  Optional<WideString> wsFontName = pFormControl->GetDefaultControlFontName();
+  absl::optional<WideString> wsFontName =
+      pFormControl->GetDefaultControlFontName();
   if (!wsFontName.has_value())
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 

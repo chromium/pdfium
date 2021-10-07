@@ -18,7 +18,7 @@ class CBC_PDF417ErrorCorrection {
   ~CBC_PDF417ErrorCorrection() = delete;
 
   static int32_t GetErrorCorrectionCodewordCount(int32_t errorCorrectionLevel);
-  static Optional<WideString> GenerateErrorCorrection(
+  static absl::optional<WideString> GenerateErrorCorrection(
       const WideString& dataCodewords,
       int32_t errorCorrectionLevel);
 };

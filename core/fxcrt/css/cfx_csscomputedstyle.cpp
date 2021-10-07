@@ -25,7 +25,7 @@ bool CFX_CSSComputedStyle::GetCustomStyle(const WideString& wsName,
   return false;
 }
 
-Optional<WideString> CFX_CSSComputedStyle::GetLastFontFamily() const {
+absl::optional<WideString> CFX_CSSComputedStyle::GetLastFontFamily() const {
   if (!m_InheritedData.m_pFontFamily ||
       m_InheritedData.m_pFontFamily->values().empty()) {
     return absl::nullopt;

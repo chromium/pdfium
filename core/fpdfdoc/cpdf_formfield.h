@@ -73,7 +73,7 @@ class CPDF_FormField {
   CPDF_FormField(CPDF_InteractiveForm* pForm, CPDF_Dictionary* pDict);
   ~CPDF_FormField();
 
-  static Optional<FormFieldType> IntToFormFieldType(int value);
+  static absl::optional<FormFieldType> IntToFormFieldType(int value);
 
   static const CPDF_Object* GetFieldAttr(const CPDF_Dictionary* pFieldDict,
                                          const ByteString& name);

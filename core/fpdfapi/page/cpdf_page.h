@@ -59,11 +59,11 @@ class CPDF_Page final : public IPDF_Page, public CPDF_PageObjectHolder {
   float GetPageWidth() const override;
   float GetPageHeight() const override;
   CFX_Matrix GetDisplayMatrix(const FX_RECT& rect, int iRotate) const override;
-  Optional<CFX_PointF> DeviceToPage(
+  absl::optional<CFX_PointF> DeviceToPage(
       const FX_RECT& rect,
       int rotate,
       const CFX_PointF& device_point) const override;
-  Optional<CFX_PointF> PageToDevice(
+  absl::optional<CFX_PointF> PageToDevice(
       const FX_RECT& rect,
       int rotate,
       const CFX_PointF& page_point) const override;

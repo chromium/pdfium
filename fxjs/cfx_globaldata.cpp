@@ -257,7 +257,7 @@ bool CFX_GlobalData::LoadGlobalPersistentVariables() {
   bool ret;
   {
     // Span can't outlive call to BufferDone().
-    Optional<pdfium::span<uint8_t>> buffer = m_pDelegate->LoadBuffer();
+    absl::optional<pdfium::span<uint8_t>> buffer = m_pDelegate->LoadBuffer();
     if (!buffer.has_value() || buffer.value().empty())
       return false;
 

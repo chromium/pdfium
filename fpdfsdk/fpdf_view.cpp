@@ -765,7 +765,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_DeviceToPage(FPDF_PAGE page,
 
   IPDF_Page* pPage = IPDFPageFromFPDFPage(page);
   const FX_RECT rect(start_x, start_y, start_x + size_x, start_y + size_y);
-  Optional<CFX_PointF> pos =
+  absl::optional<CFX_PointF> pos =
       pPage->DeviceToPage(rect, rotate, CFX_PointF(device_x, device_y));
   if (!pos.has_value())
     return false;
@@ -791,7 +791,8 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_PageToDevice(FPDF_PAGE page,
   IPDF_Page* pPage = IPDFPageFromFPDFPage(page);
   const FX_RECT rect(start_x, start_y, start_x + size_x, start_y + size_y);
   CFX_PointF page_point(static_cast<float>(page_x), static_cast<float>(page_y));
-  Optional<CFX_PointF> pos = pPage->PageToDevice(rect, rotate, page_point);
+  absl::optional<CFX_PointF> pos =
+      pPage->PageToDevice(rect, rotate, page_point);
   if (!pos.has_value())
     return false;
 
@@ -1023,7 +1024,7 @@ FPDF_VIEWERREF_GetName(FPDF_DOCUMENT document,
     return 0;
 
   CPDF_ViewerPreferences viewRef(pDoc);
-  Optional<ByteString> bsVal = viewRef.GenericName(key);
+  absl::optional<ByteString> bsVal = viewRef.GenericName(key);
   if (!bsVal.has_value())
     return 0;
 

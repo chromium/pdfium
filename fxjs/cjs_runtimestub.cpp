@@ -29,7 +29,7 @@ CJS_Runtime* CJS_RuntimeStub::AsCJSRuntime() {
   return nullptr;
 }
 
-Optional<IJS_Runtime::JS_Error> CJS_RuntimeStub::ExecuteScript(
+absl::optional<IJS_Runtime::JS_Error> CJS_RuntimeStub::ExecuteScript(
     const WideString& script) {
   return absl::nullopt;
 }

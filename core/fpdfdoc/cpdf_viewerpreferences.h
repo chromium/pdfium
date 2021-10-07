@@ -29,7 +29,7 @@ class CPDF_ViewerPreferences {
   ByteString Duplex() const;
 
   // Gets the entry for |bsKey|.
-  Optional<ByteString> GenericName(const ByteString& bsKey) const;
+  absl::optional<ByteString> GenericName(const ByteString& bsKey) const;
 
  private:
   CPDF_Dictionary* GetViewerPreferences() const;

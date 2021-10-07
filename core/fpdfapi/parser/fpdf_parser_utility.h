@@ -42,7 +42,7 @@ inline bool PDFCharIsLineEnding(uint8_t c) {
 // On success, return a positive offset value to the PDF header. If the header
 // cannot be found, or if there is an error reading from |pFile|, then return
 // nullopt.
-Optional<FX_FILESIZE> GetHeaderOffset(
+absl::optional<FX_FILESIZE> GetHeaderOffset(
     const RetainPtr<IFX_SeekableReadStream>& pFile);
 
 int32_t GetDirectInteger(const CPDF_Dictionary* pDict, const ByteString& key);

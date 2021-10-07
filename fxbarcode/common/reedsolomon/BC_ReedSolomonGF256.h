@@ -25,7 +25,7 @@ class CBC_ReedSolomonGF256 {
                                                           int32_t coefficient);
   static int32_t AddOrSubtract(int32_t a, int32_t b);
   int32_t Exp(int32_t a);
-  Optional<int32_t> Inverse(int32_t a);
+  absl::optional<int32_t> Inverse(int32_t a);
   int32_t Multiply(int32_t a, int32_t b);
   void Init();
 

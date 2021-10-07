@@ -51,7 +51,7 @@ struct FxFileCloser {
 
 bool FindFamilyNameMatch(ByteStringView family_name,
                          const ByteString& installed_font_name) {
-  Optional<size_t> result = installed_font_name.Find(family_name, 0);
+  absl::optional<size_t> result = installed_font_name.Find(family_name, 0);
   if (!result.has_value())
     return false;
 

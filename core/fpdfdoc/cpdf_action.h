@@ -60,7 +60,7 @@ class CPDF_Action {
   std::vector<const CPDF_Object*> GetAllFields() const;
 
   // Differentiates between empty JS entry and no JS entry.
-  Optional<WideString> MaybeGetJavaScript() const;
+  absl::optional<WideString> MaybeGetJavaScript() const;
 
   // Returns empty string for empty JS entry and no JS entry.
   WideString GetJavaScript() const;

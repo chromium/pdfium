@@ -160,7 +160,7 @@ RetainPtr<CFX_Face> CFX_FontMgr::NewFixedFace(const RetainPtr<FontDesc>& pDesc,
 }
 
 // static
-Optional<pdfium::span<const uint8_t>> CFX_FontMgr::GetBuiltinFont(
+absl::optional<pdfium::span<const uint8_t>> CFX_FontMgr::GetBuiltinFont(
     size_t index) {
   if (index < pdfium::size(kFoxitFonts)) {
     return pdfium::make_span(kFoxitFonts[index].m_pFontData,

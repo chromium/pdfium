@@ -74,7 +74,7 @@ std::array<FX_ARGB, kShadingSteps> GetShadingSteps(
     for (const auto& func : funcs) {
       if (!func)
         continue;
-      Optional<uint32_t> nresults =
+      absl::optional<uint32_t> nresults =
           func->Call(pdfium::make_span(&input, 1), result_span);
       if (nresults.has_value())
         result_span = result_span.subspan(nresults.value());
@@ -301,7 +301,7 @@ void DrawFuncShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
       for (const auto& func : funcs) {
         if (!func)
           continue;
-        Optional<uint32_t> nresults = func->Call(input, result_span);
+        absl::optional<uint32_t> nresults = func->Call(input, result_span);
         if (nresults.has_value())
           result_span = result_span.subspan(nresults.value());
       }

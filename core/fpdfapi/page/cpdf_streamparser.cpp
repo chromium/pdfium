@@ -54,7 +54,8 @@ uint32_t DecodeAllScanlines(std::unique_ptr<ScanlineDecoder> pDecoder) {
   if (width <= 0 || height <= 0)
     return FX_INVALID_OFFSET;
 
-  Optional<uint32_t> maybe_size = fxcodec::CalculatePitch8(bpc, ncomps, width);
+  absl::optional<uint32_t> maybe_size =
+      fxcodec::CalculatePitch8(bpc, ncomps, width);
   if (!maybe_size.has_value())
     return FX_INVALID_OFFSET;
 
@@ -164,7 +165,7 @@ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
     nComponents = pCS ? pCS->CountComponents() : 3;
     bpc = pDict->GetIntegerFor("BitsPerComponent");
   }
-  Optional<uint32_t> maybe_size =
+  absl::optional<uint32_t> maybe_size =
       fxcodec::CalculatePitch8(bpc, nComponents, width);
   if (!maybe_size.has_value())
     return nullptr;

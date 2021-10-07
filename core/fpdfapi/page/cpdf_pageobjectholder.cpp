@@ -84,7 +84,7 @@ std::set<int32_t> CPDF_PageObjectHolder::TakeDirtyStreams() {
   return dirty_streams;
 }
 
-Optional<ByteString> CPDF_PageObjectHolder::GraphicsMapSearch(
+absl::optional<ByteString> CPDF_PageObjectHolder::GraphicsMapSearch(
     const GraphicsData& gd) {
   auto it = m_GraphicsMap.find(gd);
   if (it == m_GraphicsMap.end())
@@ -98,7 +98,8 @@ void CPDF_PageObjectHolder::GraphicsMapInsert(const GraphicsData& gd,
   m_GraphicsMap[gd] = str;
 }
 
-Optional<ByteString> CPDF_PageObjectHolder::FontsMapSearch(const FontData& fd) {
+absl::optional<ByteString> CPDF_PageObjectHolder::FontsMapSearch(
+    const FontData& fd) {
   auto it = m_FontsMap.find(fd);
   if (it == m_FontsMap.end())
     return absl::nullopt;

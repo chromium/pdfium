@@ -530,7 +530,7 @@ size_t ByteString::Insert(size_t index, char ch) {
   return new_length;
 }
 
-Optional<size_t> ByteString::Find(char ch, size_t start) const {
+absl::optional<size_t> ByteString::Find(char ch, size_t start) const {
   if (!m_pData)
     return absl::nullopt;
 
@@ -539,11 +539,13 @@ Optional<size_t> ByteString::Find(char ch, size_t start) const {
 
   const char* pStr = static_cast<const char*>(
       memchr(m_pData->m_String + start, ch, m_pData->m_nDataLength - start));
-  return pStr ? Optional<size_t>(static_cast<size_t>(pStr - m_pData->m_String))
+  return pStr ? absl::optional<size_t>(
+                    static_cast<size_t>(pStr - m_pData->m_String))
               : absl::nullopt;
 }
 
-Optional<size_t> ByteString::Find(ByteStringView subStr, size_t start) const {
+absl::optional<size_t> ByteString::Find(ByteStringView subStr,
+                                        size_t start) const {
   if (!m_pData)
     return absl::nullopt;
 
@@ -553,11 +555,12 @@ Optional<size_t> ByteString::Find(ByteStringView subStr, size_t start) const {
   const char* pStr =
       FX_strstr(m_pData->m_String + start, m_pData->m_nDataLength - start,
                 subStr.unterminated_c_str(), subStr.GetLength());
-  return pStr ? Optional<size_t>(static_cast<size_t>(pStr - m_pData->m_String))
+  return pStr ? absl::optional<size_t>(
+                    static_cast<size_t>(pStr - m_pData->m_String))
               : absl::nullopt;
 }
 
-Optional<size_t> ByteString::ReverseFind(char ch) const {
+absl::optional<size_t> ByteString::ReverseFind(char ch) const {
   if (!m_pData)
     return absl::nullopt;
 

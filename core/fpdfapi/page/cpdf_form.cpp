@@ -106,7 +106,7 @@ const CPDF_Stream* CPDF_Form::GetStream() const {
   return m_pFormStream.Get();
 }
 
-Optional<std::pair<RetainPtr<CFX_DIBitmap>, CFX_Matrix>>
+absl::optional<std::pair<RetainPtr<CFX_DIBitmap>, CFX_Matrix>>
 CPDF_Form::GetBitmapAndMatrixFromSoleImageOfForm() const {
   if (GetPageObjectCount() != 1)
     return absl::nullopt;

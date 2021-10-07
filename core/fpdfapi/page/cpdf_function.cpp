@@ -126,8 +126,9 @@ bool CPDF_Function::Init(const CPDF_Object* pObj,
   return true;
 }
 
-Optional<uint32_t> CPDF_Function::Call(pdfium::span<const float> inputs,
-                                       pdfium::span<float> results) const {
+absl::optional<uint32_t> CPDF_Function::Call(
+    pdfium::span<const float> inputs,
+    pdfium::span<float> results) const {
   if (m_nInputs != inputs.size())
     return absl::nullopt;
 

@@ -78,7 +78,7 @@ CPDF_PageLabel::CPDF_PageLabel(CPDF_Document* pDocument)
 
 CPDF_PageLabel::~CPDF_PageLabel() = default;
 
-Optional<WideString> CPDF_PageLabel::GetLabel(int nPage) const {
+absl::optional<WideString> CPDF_PageLabel::GetLabel(int nPage) const {
   if (!m_pDocument)
     return absl::nullopt;
 

@@ -15,7 +15,8 @@ TextGlyphPos::TextGlyphPos(const TextGlyphPos&) = default;
 
 TextGlyphPos::~TextGlyphPos() = default;
 
-Optional<CFX_Point> TextGlyphPos::GetOrigin(const CFX_Point& offset) const {
+absl::optional<CFX_Point> TextGlyphPos::GetOrigin(
+    const CFX_Point& offset) const {
   FX_SAFE_INT32 left = m_Origin.x;
   left += m_pGlyph->left();
   left -= offset.x;

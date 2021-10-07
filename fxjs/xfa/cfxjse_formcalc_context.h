@@ -270,8 +270,8 @@ class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
                                           int32_t iIndexFlags,
                                           int32_t iIndexValue,
                                           bool bIsStar);
-  static Optional<CFX_WideTextBuf> Translate(cppgc::Heap* pHeap,
-                                             WideStringView wsFormcalc);
+  static absl::optional<CFX_WideTextBuf> Translate(cppgc::Heap* pHeap,
+                                                   WideStringView wsFormcalc);
 
   v8::Local<v8::Value> GlobalPropertyGetter();
   v8::Isolate* GetIsolate() const { return m_pIsolate.Get(); }

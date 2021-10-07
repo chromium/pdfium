@@ -82,7 +82,7 @@ class CPDF_FormControl {
   int GetTextPosition() const;
   CPDF_DefaultAppearance GetDefaultAppearance() const;
 
-  Optional<WideString> GetDefaultControlFontName() const;
+  absl::optional<WideString> GetDefaultControlFontName() const;
   int GetControlAlignment() const;
 
   ByteString GetOnStateName() const;

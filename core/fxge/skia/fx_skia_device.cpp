@@ -1058,7 +1058,7 @@ class SkiaState {
     Dump(__func__);
     SkPath skClipPath;
     if (pPath->GetPoints().size() == 5 || pPath->GetPoints().size() == 4) {
-      Optional<CFX_FloatRect> maybe_rectf = pPath->GetRect(pMatrix);
+      absl::optional<CFX_FloatRect> maybe_rectf = pPath->GetRect(pMatrix);
       if (maybe_rectf.has_value()) {
         CFX_FloatRect& rectf = maybe_rectf.value();
         rectf.Intersect(CFX_FloatRect(
@@ -1994,7 +1994,7 @@ bool CFX_SkiaDeviceDriver::SetClip_PathFill(
   }
 #endif
   if (pPath->GetPoints().size() == 5 || pPath->GetPoints().size() == 4) {
-    Optional<CFX_FloatRect> maybe_rectf = pPath->GetRect(deviceMatrix);
+    absl::optional<CFX_FloatRect> maybe_rectf = pPath->GetRect(deviceMatrix);
     if (maybe_rectf.has_value()) {
       CFX_FloatRect& rectf = maybe_rectf.value();
       rectf.Intersect(CFX_FloatRect(0, 0,

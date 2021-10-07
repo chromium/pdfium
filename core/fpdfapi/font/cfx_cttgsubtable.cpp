@@ -60,7 +60,7 @@ bool CFX_CTTGSUBTable::LoadGSUBTable(FT_Bytes gsub) {
 
 uint32_t CFX_CTTGSUBTable::GetVerticalGlyph(uint32_t glyphnum) const {
   for (uint32_t item : m_featureSet) {
-    Optional<uint32_t> result =
+    absl::optional<uint32_t> result =
         GetVerticalGlyphSub(FeatureList[item], glyphnum);
     if (result.has_value())
       return result.value();
@@ -68,7 +68,7 @@ uint32_t CFX_CTTGSUBTable::GetVerticalGlyph(uint32_t glyphnum) const {
   return 0;
 }
 
-Optional<uint32_t> CFX_CTTGSUBTable::GetVerticalGlyphSub(
+absl::optional<uint32_t> CFX_CTTGSUBTable::GetVerticalGlyphSub(
     const TFeatureRecord& feature,
     uint32_t glyphnum) const {
   for (int index : feature.LookupListIndices) {
@@ -76,7 +76,7 @@ Optional<uint32_t> CFX_CTTGSUBTable::GetVerticalGlyphSub(
       continue;
     if (LookupList[index].LookupType != 1)
       continue;
-    Optional<uint32_t> result =
+    absl::optional<uint32_t> result =
         GetVerticalGlyphSub2(LookupList[index], glyphnum);
     if (result.has_value())
       return result.value();
@@ -84,7 +84,7 @@ Optional<uint32_t> CFX_CTTGSUBTable::GetVerticalGlyphSub(
   return absl::nullopt;
 }
 
-Optional<uint32_t> CFX_CTTGSUBTable::GetVerticalGlyphSub2(
+absl::optional<uint32_t> CFX_CTTGSUBTable::GetVerticalGlyphSub2(
     const TLookup& lookup,
     uint32_t glyphnum) const {
   for (const auto& subTable : lookup.SubTables) {

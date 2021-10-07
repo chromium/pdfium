@@ -192,7 +192,7 @@ bool JpegDecoder::InitDecode(bool bAcceptKnownBadHeader) {
   m_bInited = true;
 
   if (setjmp(m_JmpBuf) == -1) {
-    Optional<size_t> known_bad_header_offset;
+    absl::optional<size_t> known_bad_header_offset;
     if (bAcceptKnownBadHeader) {
       for (size_t offset : kKnownBadHeaderWithInvalidHeightByteOffsetStarts) {
         if (HasKnownBadHeaderWithInvalidHeight(offset)) {
@@ -398,7 +398,7 @@ std::unique_ptr<ScanlineDecoder> JpegModule::CreateDecoder(
 }
 
 // static
-Optional<JpegModule::ImageInfo> JpegModule::LoadInfo(
+absl::optional<JpegModule::ImageInfo> JpegModule::LoadInfo(
     pdfium::span<const uint8_t> src_span) {
   ImageInfo info;
   if (!JpegLoadInfo(src_span, &info))

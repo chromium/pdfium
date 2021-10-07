@@ -63,7 +63,7 @@ CPDF_DefaultAppearance::CPDF_DefaultAppearance(
 
 CPDF_DefaultAppearance::~CPDF_DefaultAppearance() = default;
 
-Optional<ByteString> CPDF_DefaultAppearance::GetFont(float* fFontSize) {
+absl::optional<ByteString> CPDF_DefaultAppearance::GetFont(float* fFontSize) {
   *fFontSize = 0.0f;
   if (m_csDA.IsEmpty())
     return absl::nullopt;
@@ -78,7 +78,7 @@ Optional<ByteString> CPDF_DefaultAppearance::GetFont(float* fFontSize) {
   return PDF_NameDecode(csFontNameTag.AsStringView());
 }
 
-Optional<CFX_Color> CPDF_DefaultAppearance::GetColor() const {
+absl::optional<CFX_Color> CPDF_DefaultAppearance::GetColor() const {
   if (m_csDA.IsEmpty())
     return absl::nullopt;
 
@@ -104,8 +104,9 @@ Optional<CFX_Color> CPDF_DefaultAppearance::GetColor() const {
   return absl::nullopt;
 }
 
-Optional<CFX_Color::TypeAndARGB> CPDF_DefaultAppearance::GetColorARGB() const {
-  Optional<CFX_Color> maybe_color = GetColor();
+absl::optional<CFX_Color::TypeAndARGB> CPDF_DefaultAppearance::GetColorARGB()
+    const {
+  absl::optional<CFX_Color> maybe_color = GetColor();
   if (!maybe_color.has_value())
     return absl::nullopt;
 

@@ -646,7 +646,7 @@ bool CFX_RenderDevice::DrawPathWithBlend(
   }
 
   if (stroke_alpha == 0 && !fill_options.rect_aa) {
-    Optional<CFX_FloatRect> maybe_rect_f = pPath->GetRect(pObject2Device);
+    absl::optional<CFX_FloatRect> maybe_rect_f = pPath->GetRect(pObject2Device);
     if (maybe_rect_f.has_value()) {
       const CFX_FloatRect& rect_f = maybe_rect_f.value();
       FX_RECT rect_i = rect_f.GetOuterRect();
@@ -1143,7 +1143,8 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
       if (!glyph.m_pGlyph)
         continue;
 
-      Optional<CFX_Point> point = glyph.GetOrigin({pixel_left, pixel_top});
+      absl::optional<CFX_Point> point =
+          glyph.GetOrigin({pixel_left, pixel_top});
       if (!point.has_value())
         continue;
 
@@ -1183,7 +1184,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
     if (!glyph.m_pGlyph)
       continue;
 
-    Optional<CFX_Point> point = glyph.GetOrigin({pixel_left, pixel_top});
+    absl::optional<CFX_Point> point = glyph.GetOrigin({pixel_left, pixel_top});
     if (!point.has_value())
       continue;
 

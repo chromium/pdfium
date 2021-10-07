@@ -429,7 +429,7 @@ WideString CPDFSDK_Widget::GetName() const {
 }
 #endif  // PDF_ENABLE_XFA
 
-Optional<FX_COLORREF> CPDFSDK_Widget::GetFillColor() const {
+absl::optional<FX_COLORREF> CPDFSDK_Widget::GetFillColor() const {
   CFX_Color::TypeAndARGB type_argb_pair =
       GetFormControl()->GetColorARGB(pdfium::appearance::kBG);
 
@@ -439,7 +439,7 @@ Optional<FX_COLORREF> CPDFSDK_Widget::GetFillColor() const {
   return ArgbToColorRef(type_argb_pair.argb);
 }
 
-Optional<FX_COLORREF> CPDFSDK_Widget::GetBorderColor() const {
+absl::optional<FX_COLORREF> CPDFSDK_Widget::GetBorderColor() const {
   CFX_Color::TypeAndARGB type_argb_pair =
       GetFormControl()->GetColorARGB(pdfium::appearance::kBC);
   if (type_argb_pair.color_type == CFX_Color::Type::kTransparent)
@@ -448,9 +448,10 @@ Optional<FX_COLORREF> CPDFSDK_Widget::GetBorderColor() const {
   return ArgbToColorRef(type_argb_pair.argb);
 }
 
-Optional<FX_COLORREF> CPDFSDK_Widget::GetTextColor() const {
+absl::optional<FX_COLORREF> CPDFSDK_Widget::GetTextColor() const {
   CPDF_DefaultAppearance da = GetFormControl()->GetDefaultAppearance();
-  Optional<CFX_Color::TypeAndARGB> maybe_type_argb_pair = da.GetColorARGB();
+  absl::optional<CFX_Color::TypeAndARGB> maybe_type_argb_pair =
+      da.GetColorARGB();
 
   if (!maybe_type_argb_pair.has_value())
     return absl::nullopt;
@@ -618,7 +619,7 @@ void CPDFSDK_Widget::ResetXFAAppearance(ValueChanged bValueChanged) {
 }
 #endif  // PDF_ENABLE_XFA
 
-void CPDFSDK_Widget::ResetAppearance(Optional<WideString> sValue,
+void CPDFSDK_Widget::ResetAppearance(absl::optional<WideString> sValue,
                                      ValueChanged bValueChanged) {
   SetAppModified();
 
@@ -653,7 +654,7 @@ void CPDFSDK_Widget::ResetAppearance(Optional<WideString> sValue,
   m_pAnnot->ClearCachedAP();
 }
 
-Optional<WideString> CPDFSDK_Widget::OnFormat() {
+absl::optional<WideString> CPDFSDK_Widget::OnFormat() {
   CPDF_FormField* pFormField = GetFormField();
   DCHECK(pFormField);
   return m_pInteractiveForm->OnFormat(pFormField);
@@ -781,7 +782,8 @@ CFX_Matrix CPDFSDK_Widget::GetMatrix() const {
 
 CFX_Color CPDFSDK_Widget::GetTextPWLColor() const {
   CPDF_FormControl* pFormCtrl = GetFormControl();
-  Optional<CFX_Color> crText = pFormCtrl->GetDefaultAppearance().GetColor();
+  absl::optional<CFX_Color> crText =
+      pFormCtrl->GetDefaultAppearance().GetColor();
   return crText.value_or(CFX_Color(CFX_Color::Type::kGray, 0));
 }
 

@@ -171,9 +171,9 @@ class ByteString {
   ByteString First(size_t count) const;
   ByteString Last(size_t count) const;
 
-  Optional<size_t> Find(ByteStringView subStr, size_t start = 0) const;
-  Optional<size_t> Find(char ch, size_t start = 0) const;
-  Optional<size_t> ReverseFind(char ch) const;
+  absl::optional<size_t> Find(ByteStringView subStr, size_t start = 0) const;
+  absl::optional<size_t> Find(char ch, size_t start = 0) const;
+  absl::optional<size_t> ReverseFind(char ch) const;
 
   bool Contains(ByteStringView lpszSub, size_t start = 0) const {
     return Find(lpszSub, start).has_value();

@@ -59,7 +59,7 @@ opj_stream_t* fx_opj_stream_create_memory_stream(DecodeData* data) {
   return stream;
 }
 
-Optional<OpjImageRgbData> alloc_rgb(size_t size) {
+absl::optional<OpjImageRgbData> alloc_rgb(size_t size) {
   OpjImageRgbData data;
   data.r.reset(static_cast<int*>(opj_image_data_alloc(size)));
   if (!data.r)
@@ -114,7 +114,7 @@ void sycc444_to_rgb(opj_image_t* img) {
   if (!y || !cb || !cr)
     return;
 
-  Optional<OpjImageRgbData> data = alloc_rgb(max_size.ValueOrDie());
+  absl::optional<OpjImageRgbData> data = alloc_rgb(max_size.ValueOrDie());
   if (!data.has_value())
     return;
 
@@ -179,7 +179,7 @@ void sycc420_to_rgb(opj_image_t* img) {
   if (!y || !cb || !cr)
     return;
 
-  Optional<OpjImageRgbData> data = alloc_rgb(safe_size.ValueOrDie());
+  absl::optional<OpjImageRgbData> data = alloc_rgb(safe_size.ValueOrDie());
   if (!data.has_value())
     return;
 
@@ -316,7 +316,7 @@ void sycc422_to_rgb(opj_image_t* img) {
   if (!y || !cb || !cr)
     return;
 
-  Optional<OpjImageRgbData> data = alloc_rgb(max_size.ValueOrDie());
+  absl::optional<OpjImageRgbData> data = alloc_rgb(max_size.ValueOrDie());
   if (!data.has_value())
     return;
 

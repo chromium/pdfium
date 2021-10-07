@@ -32,21 +32,21 @@ void CFXJSE_MapModule::SetMeasurement(uint32_t key,
   m_MeasurementMap[key] = measurement;
 }
 
-Optional<int32_t> CFXJSE_MapModule::GetValue(uint32_t key) const {
+absl::optional<int32_t> CFXJSE_MapModule::GetValue(uint32_t key) const {
   auto it = m_ValueMap.find(key);
   if (it == m_ValueMap.end())
     return absl::nullopt;
   return it->second;
 }
 
-Optional<WideString> CFXJSE_MapModule::GetString(uint32_t key) const {
+absl::optional<WideString> CFXJSE_MapModule::GetString(uint32_t key) const {
   auto it = m_StringMap.find(key);
   if (it == m_StringMap.end())
     return absl::nullopt;
   return it->second;
 }
 
-Optional<CXFA_Measurement> CFXJSE_MapModule::GetMeasurement(
+absl::optional<CXFA_Measurement> CFXJSE_MapModule::GetMeasurement(
     uint32_t key) const {
   auto it = m_MeasurementMap.find(key);
   if (it == m_MeasurementMap.end())

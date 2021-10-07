@@ -20,10 +20,10 @@ class CPDF_DefaultAppearance {
   CPDF_DefaultAppearance(const CPDF_DefaultAppearance& cDA);
   ~CPDF_DefaultAppearance();
 
-  Optional<ByteString> GetFont(float* fFontSize);
+  absl::optional<ByteString> GetFont(float* fFontSize);
 
-  Optional<CFX_Color> GetColor() const;
-  Optional<CFX_Color::TypeAndARGB> GetColorARGB() const;
+  absl::optional<CFX_Color> GetColor() const;
+  absl::optional<CFX_Color::TypeAndARGB> GetColorARGB() const;
 
   bool FindTagParamFromStartForTesting(CPDF_SimpleParser* parser,
                                        ByteStringView token,

@@ -295,7 +295,7 @@ CJS_Result CJX_HostPseudoModel::openList(
     constexpr Mask<XFA_ResolveFlag> kFlags = {XFA_ResolveFlag::kChildren,
                                               XFA_ResolveFlag::kParent,
                                               XFA_ResolveFlag::kSiblings};
-    Optional<CFXJSE_Engine::ResolveResult> maybeResult =
+    absl::optional<CFXJSE_Engine::ResolveResult> maybeResult =
         pScriptContext->ResolveObjects(
             pObject, runtime->ToWideString(params[0]).AsStringView(), kFlags);
     if (!maybeResult.has_value() ||
@@ -381,7 +381,7 @@ CJS_Result CJX_HostPseudoModel::resetData(
     constexpr Mask<XFA_ResolveFlag> kFlags = {XFA_ResolveFlag::kChildren,
                                               XFA_ResolveFlag::kParent,
                                               XFA_ResolveFlag::kSiblings};
-    Optional<CFXJSE_Engine::ResolveResult> maybeResult =
+    absl::optional<CFXJSE_Engine::ResolveResult> maybeResult =
         pScriptContext->ResolveObjects(pObject, wsName.AsStringView(), kFlags);
     if (!maybeResult.has_value() ||
         !maybeResult.value().objects.front()->IsNode())
@@ -444,7 +444,7 @@ CJS_Result CJX_HostPseudoModel::setFocus(
       constexpr Mask<XFA_ResolveFlag> kFlags = {XFA_ResolveFlag::kChildren,
                                                 XFA_ResolveFlag::kParent,
                                                 XFA_ResolveFlag::kSiblings};
-      Optional<CFXJSE_Engine::ResolveResult> maybeResult =
+      absl::optional<CFXJSE_Engine::ResolveResult> maybeResult =
           pScriptContext->ResolveObjects(
               pObject, runtime->ToWideString(params[0]).AsStringView(), kFlags);
       if (!maybeResult.has_value() ||

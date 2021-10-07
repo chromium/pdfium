@@ -61,7 +61,7 @@ class CFX_CSSComputedStyle final : public Retainable {
 
   CONSTRUCT_VIA_MAKE_RETAIN;
 
-  Optional<WideString> GetLastFontFamily() const;
+  absl::optional<WideString> GetLastFontFamily() const;
   uint16_t GetFontWeight() const;
   CFX_CSSFontVariant GetFontVariant() const;
   CFX_CSSFontStyle GetFontStyle() const;

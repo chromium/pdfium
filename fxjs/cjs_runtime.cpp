@@ -166,7 +166,7 @@ CPDFSDK_FormFillEnvironment* CJS_Runtime::GetFormFillEnv() const {
   return m_pFormFillEnv.Get();
 }
 
-Optional<IJS_Runtime::JS_Error> CJS_Runtime::ExecuteScript(
+absl::optional<IJS_Runtime::JS_Error> CJS_Runtime::ExecuteScript(
     const WideString& script) {
   return Execute(script);
 }

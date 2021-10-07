@@ -20,7 +20,7 @@ class TextGlyphPos {
   TextGlyphPos(const TextGlyphPos&);
   ~TextGlyphPos();
 
-  Optional<CFX_Point> GetOrigin(const CFX_Point& offset) const;
+  absl::optional<CFX_Point> GetOrigin(const CFX_Point& offset) const;
 
   UnownedPtr<const CFX_GlyphBitmap> m_pGlyph;
   CFX_Point m_Origin;

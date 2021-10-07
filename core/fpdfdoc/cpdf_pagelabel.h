@@ -18,7 +18,7 @@ class CPDF_PageLabel {
   explicit CPDF_PageLabel(CPDF_Document* pDocument);
   ~CPDF_PageLabel();
 
-  Optional<WideString> GetLabel(int nPage) const;
+  absl::optional<WideString> GetLabel(int nPage) const;
 
  private:
   UnownedPtr<CPDF_Document> const m_pDocument;

@@ -23,7 +23,7 @@ class CFX_GlobalData {
     virtual ~Delegate() = default;
 
     virtual bool StoreBuffer(pdfium::span<const uint8_t> pBuffer) = 0;
-    virtual Optional<pdfium::span<uint8_t>> LoadBuffer() = 0;
+    virtual absl::optional<pdfium::span<uint8_t>> LoadBuffer() = 0;
     virtual void BufferDone() = 0;
   };
 

@@ -182,7 +182,7 @@ bool CPDF_DIB::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream) {
   if (m_bDoBpcCheck && (m_bpc == 0 || m_nComponents == 0))
     return false;
 
-  const Optional<uint32_t> maybe_size =
+  const absl::optional<uint32_t> maybe_size =
       fxcodec::CalculatePitch8(m_bpc, m_nComponents, m_Width);
   if (!maybe_size.has_value())
     return false;
@@ -205,7 +205,7 @@ bool CPDF_DIB::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream) {
   else
     m_Format = MakeRGBFormat(CalculateBitsPerPixel(m_bpc, m_nComponents));
 
-  Optional<uint32_t> pitch =
+  absl::optional<uint32_t> pitch =
       fxcodec::CalculatePitch32(GetBppFromFormat(m_Format), m_Width);
   if (!pitch.has_value())
     return false;
@@ -234,7 +234,7 @@ bool CPDF_DIB::ContinueToLoadMask() {
     m_Format = MakeRGBFormat(CalculateBitsPerPixel(m_bpc, m_nComponents));
   }
 
-  Optional<uint32_t> pitch =
+  absl::optional<uint32_t> pitch =
       fxcodec::CalculatePitch32(GetBppFromFormat(m_Format), m_Width);
   if (!pitch.has_value())
     return false;
@@ -286,7 +286,7 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadDIBBase(
   if (m_bDoBpcCheck && (m_bpc == 0 || m_nComponents == 0))
     return LoadState::kFail;
 
-  const Optional<uint32_t> maybe_size =
+  const absl::optional<uint32_t> maybe_size =
       fxcodec::CalculatePitch8(m_bpc, m_nComponents, m_Width);
   if (!maybe_size.has_value())
     return LoadState::kFail;
@@ -394,7 +394,7 @@ CPDF_DIB::LoadState CPDF_DIB::ContinueLoadDIBBase(PauseIndicatorIface* pPause) {
 
 bool CPDF_DIB::LoadColorInfo(const CPDF_Dictionary* pFormResources,
                              const CPDF_Dictionary* pPageResources) {
-  Optional<DecoderArray> decoder_array = GetDecoderArray(m_pDict.Get());
+  absl::optional<DecoderArray> decoder_array = GetDecoderArray(m_pDict.Get());
   if (!decoder_array.has_value())
     return false;
 
@@ -551,11 +551,11 @@ CPDF_DIB::LoadState CPDF_DIB::CreateDecoder() {
   if (!m_pDecoder)
     return LoadState::kFail;
 
-  const Optional<uint32_t> requested_pitch =
+  const absl::optional<uint32_t> requested_pitch =
       fxcodec::CalculatePitch8(m_bpc, m_nComponents, m_Width);
   if (!requested_pitch.has_value())
     return LoadState::kFail;
-  const Optional<uint32_t> provided_pitch = fxcodec::CalculatePitch8(
+  const absl::optional<uint32_t> provided_pitch = fxcodec::CalculatePitch8(
       m_pDecoder->GetBPC(), m_pDecoder->CountComps(), m_pDecoder->GetWidth());
   if (!provided_pitch.has_value())
     return LoadState::kFail;
@@ -572,7 +572,8 @@ bool CPDF_DIB::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
   if (m_pDecoder)
     return true;
 
-  Optional<JpegModule::ImageInfo> info_opt = JpegModule::LoadInfo(src_span);
+  absl::optional<JpegModule::ImageInfo> info_opt =
+      JpegModule::LoadInfo(src_span);
   if (!info_opt.has_value())
     return false;
 
@@ -1077,7 +1078,7 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
   if (m_bpc == 0)
     return pdfium::span<const uint8_t>();
 
-  const Optional<uint32_t> src_pitch =
+  const absl::optional<uint32_t> src_pitch =
       fxcodec::CalculatePitch8(m_bpc, m_nComponents, m_Width);
   if (!src_pitch.has_value())
     return pdfium::span<const uint8_t>();

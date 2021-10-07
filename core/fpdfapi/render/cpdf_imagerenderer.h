@@ -73,7 +73,7 @@ class CPDF_ImageRenderer {
                           const FX_RECT& rect) const;
   const CPDF_RenderOptions& GetRenderOptions() const;
   void HandleFilters();
-  Optional<FX_RECT> GetUnitRect() const;
+  absl::optional<FX_RECT> GetUnitRect() const;
   bool GetDimensionsFromUnitRect(const FX_RECT& rect,
                                  int* left,
                                  int* top,

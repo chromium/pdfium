@@ -48,7 +48,7 @@ class CPDF_Type1Font final : public CPDF_SimpleFont {
   uint16_t m_ExtGID[kInternalTableSize];
 #endif
 
-  Optional<CFX_FontMapper::StandardFont> m_Base14Font;
+  absl::optional<CFX_FontMapper::StandardFont> m_Base14Font;
 };
 
 #endif  // CORE_FPDFAPI_FONT_CPDF_TYPE1FONT_H_

@@ -107,7 +107,7 @@ class CFX_Font {
   int GetGlyphWidth(uint32_t glyph_index);
   int GetAscent() const;
   int GetDescent() const;
-  Optional<FX_RECT> GetGlyphBBox(uint32_t glyph_index);
+  absl::optional<FX_RECT> GetGlyphBBox(uint32_t glyph_index);
   bool IsItalic() const;
   bool IsBold() const;
   bool IsFixedWidth() const;
@@ -119,10 +119,10 @@ class CFX_Font {
   bool IsTTFont() const;
 
   // Raw bounding box.
-  Optional<FX_RECT> GetRawBBox() const;
+  absl::optional<FX_RECT> GetRawBBox() const;
 
   // Bounding box adjusted for font units.
-  Optional<FX_RECT> GetBBox() const;
+  absl::optional<FX_RECT> GetBBox() const;
 
   bool IsEmbedded() const { return m_bEmbedded; }
   uint8_t* GetSubData() const { return m_pGsubData.get(); }

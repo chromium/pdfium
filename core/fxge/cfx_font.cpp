@@ -422,7 +422,7 @@ int CFX_Font::GetDescent() const {
   return EM_ADJUST(FXFT_Get_Face_UnitsPerEM(m_Face->GetRec()), descender);
 }
 
-Optional<FX_RECT> CFX_Font::GetGlyphBBox(uint32_t glyph_index) {
+absl::optional<FX_RECT> CFX_Font::GetGlyphBBox(uint32_t glyph_index) {
   if (!m_Face)
     return absl::nullopt;
 
@@ -570,7 +570,7 @@ ByteString CFX_Font::GetBaseFontName() const {
   return ByteString();
 }
 
-Optional<FX_RECT> CFX_Font::GetRawBBox() const {
+absl::optional<FX_RECT> CFX_Font::GetRawBBox() const {
   if (!m_Face)
     return absl::nullopt;
 
@@ -580,8 +580,8 @@ Optional<FX_RECT> CFX_Font::GetRawBBox() const {
                  FXFT_Get_Face_yMax(m_Face->GetRec()));
 }
 
-Optional<FX_RECT> CFX_Font::GetBBox() const {
-  Optional<FX_RECT> result = GetRawBBox();
+absl::optional<FX_RECT> CFX_Font::GetBBox() const {
+  absl::optional<FX_RECT> result = GetRawBBox();
   if (!result.has_value())
     return result;
 

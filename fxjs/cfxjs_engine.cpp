@@ -562,7 +562,7 @@ void CFXJS_Engine::ReleaseEngine() {
   GetIsolate()->SetData(g_embedderDataSlot, nullptr);
 }
 
-Optional<IJS_Runtime::JS_Error> CFXJS_Engine::Execute(
+absl::optional<IJS_Runtime::JS_Error> CFXJS_Engine::Execute(
     const WideString& script) {
   v8::Isolate::Scope isolate_scope(GetIsolate());
   v8::TryCatch try_catch(GetIsolate());

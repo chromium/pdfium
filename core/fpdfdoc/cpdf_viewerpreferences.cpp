@@ -40,7 +40,7 @@ ByteString CPDF_ViewerPreferences::Duplex() const {
   return pDict ? pDict->GetStringFor("Duplex") : ByteString("None");
 }
 
-Optional<ByteString> CPDF_ViewerPreferences::GenericName(
+absl::optional<ByteString> CPDF_ViewerPreferences::GenericName(
     const ByteString& bsKey) const {
   const CPDF_Dictionary* pDict = GetViewerPreferences();
   if (!pDict)

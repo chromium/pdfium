@@ -35,7 +35,8 @@ TEST_F(CFXJSEngineEmbedderTest, Getters) {
   v8::HandleScope handle_scope(isolate());
   v8::Context::Scope context_scope(GetV8Context());
 
-  Optional<IJS_Runtime::JS_Error> err = engine()->Execute(WideString(kScript1));
+  absl::optional<IJS_Runtime::JS_Error> err =
+      engine()->Execute(WideString(kScript1));
   EXPECT_FALSE(err);
   CheckAssignmentInEngineContext(engine(), kExpected1);
 }
@@ -52,7 +53,7 @@ TEST_F(CFXJSEngineEmbedderTest, MultipleEngines) {
 
   v8::Context::Scope context_scope(GetV8Context());
   {
-    Optional<IJS_Runtime::JS_Error> err =
+    absl::optional<IJS_Runtime::JS_Error> err =
         engine()->Execute(WideString(kScript0));
     EXPECT_FALSE(err);
     CheckAssignmentInEngineContext(engine(), kExpected0);
@@ -60,7 +61,8 @@ TEST_F(CFXJSEngineEmbedderTest, MultipleEngines) {
   {
     // engine1 executing in engine1's context doesn't affect main.
     v8::Context::Scope context_scope1(engine1.GetV8Context());
-    Optional<IJS_Runtime::JS_Error> err = engine1.Execute(WideString(kScript1));
+    absl::optional<IJS_Runtime::JS_Error> err =
+        engine1.Execute(WideString(kScript1));
     EXPECT_FALSE(err);
     CheckAssignmentInEngineContext(engine(), kExpected0);
     CheckAssignmentInEngineContext(&engine1, kExpected1);
@@ -68,7 +70,8 @@ TEST_F(CFXJSEngineEmbedderTest, MultipleEngines) {
   {
     // engine1 executing in engine2's context doesn't affect engine1.
     v8::Context::Scope context_scope2(engine2.GetV8Context());
-    Optional<IJS_Runtime::JS_Error> err = engine1.Execute(WideString(kScript2));
+    absl::optional<IJS_Runtime::JS_Error> err =
+        engine1.Execute(WideString(kScript2));
     EXPECT_FALSE(err);
     CheckAssignmentInEngineContext(engine(), kExpected0);
     CheckAssignmentInEngineContext(&engine1, kExpected1);
@@ -83,7 +86,7 @@ TEST_F(CFXJSEngineEmbedderTest, JSCompileError) {
   v8::HandleScope handle_scope(isolate());
   v8::Context::Scope context_scope(GetV8Context());
 
-  Optional<IJS_Runtime::JS_Error> err =
+  absl::optional<IJS_Runtime::JS_Error> err =
       engine()->Execute(L"functoon(x) { return x+1; }");
   EXPECT_TRUE(err);
   EXPECT_STREQ(L"SyntaxError: Unexpected token '{'", err->exception.c_str());
@@ -96,7 +99,7 @@ TEST_F(CFXJSEngineEmbedderTest, JSRuntimeError) {
   v8::HandleScope handle_scope(isolate());
   v8::Context::Scope context_scope(GetV8Context());
 
-  Optional<IJS_Runtime::JS_Error> err =
+  absl::optional<IJS_Runtime::JS_Error> err =
       engine()->Execute(L"let a = 3;\nundefined.colour");
   EXPECT_TRUE(err);
   EXPECT_EQ(

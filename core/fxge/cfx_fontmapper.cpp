@@ -378,7 +378,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::UseInternalSubst(CFX_SubstFont* pSubstFont,
   if (iBaseFont < kNumStandardFonts) {
     if (m_FoxitFaces[iBaseFont])
       return m_FoxitFaces[iBaseFont];
-    Optional<pdfium::span<const uint8_t>> font_data =
+    absl::optional<pdfium::span<const uint8_t>> font_data =
         m_pFontMgr->GetBuiltinFont(iBaseFont);
     if (font_data.has_value()) {
       m_FoxitFaces[iBaseFont] =
@@ -442,7 +442,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
   bool bHasComma = false;
   bool bHasHyphen = false;
   {
-    Optional<size_t> pos = SubstName.Find(",");
+    absl::optional<size_t> pos = SubstName.Find(",");
     if (pos.has_value()) {
       family = SubstName.First(pos.value());
       GetStandardFontName(&family);
@@ -471,7 +471,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
   } else {
     iBaseFont = kNumStandardFonts;
     if (!bHasComma) {
-      Optional<size_t> pos = family.ReverseFind('-');
+      absl::optional<size_t> pos = family.ReverseFind('-');
       if (pos.has_value()) {
         style = family.Last(family.GetLength() - (pos.value() + 1));
         family = family.First(pos.value());
@@ -568,7 +568,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
         bItalic = italic_angle != 0;
         weight = old_weight;
       }
-      Optional<size_t> pos = SubstName.Find("Narrow");
+      absl::optional<size_t> pos = SubstName.Find("Narrow");
       if (pos.has_value() && pos.value() != 0)
         family = kNarrowFamily;
       pos = SubstName.Find("Condensed");
@@ -710,7 +710,7 @@ bool CFX_FontMapper::HasLocalizedFont(ByteStringView name) const {
 }
 
 #if defined(OS_WIN)
-Optional<ByteString> CFX_FontMapper::InstalledFontNameStartingWith(
+absl::optional<ByteString> CFX_FontMapper::InstalledFontNameStartingWith(
     const ByteString& name) const {
   for (const auto& thisname : m_InstalledTTFonts) {
     if (thisname.First(name.GetLength()) == name)
@@ -719,7 +719,7 @@ Optional<ByteString> CFX_FontMapper::InstalledFontNameStartingWith(
   return absl::nullopt;
 }
 
-Optional<ByteString> CFX_FontMapper::LocalizedFontNameStartingWith(
+absl::optional<ByteString> CFX_FontMapper::LocalizedFontNameStartingWith(
     const ByteString& name) const {
   for (const auto& thispair : m_LocalizedTTFonts) {
     if (thispair.first.First(name.GetLength()) == name)
@@ -823,8 +823,8 @@ RetainPtr<CFX_Face> CFX_FontMapper::GetCachedFace(void* hFont,
 }
 
 // static
-Optional<CFX_FontMapper::StandardFont> CFX_FontMapper::GetStandardFontName(
-    ByteString* name) {
+absl::optional<CFX_FontMapper::StandardFont>
+CFX_FontMapper::GetStandardFontName(ByteString* name) {
   const auto* end = std::end(kAltFontNames);
   const auto* found =
       std::lower_bound(std::begin(kAltFontNames), end, name->c_str(),

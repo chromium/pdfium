@@ -72,7 +72,7 @@ uint32_t CPDF_ToUnicodeMap::ReverseLookup(wchar_t unicode) const {
 }
 
 // static
-Optional<uint32_t> CPDF_ToUnicodeMap::StringToCode(ByteStringView str) {
+absl::optional<uint32_t> CPDF_ToUnicodeMap::StringToCode(ByteStringView str) {
   size_t len = str.GetLength();
   if (len <= 2 || str[0] != '<' || str[len - 1] != '>')
     return absl::nullopt;
@@ -86,7 +86,7 @@ Optional<uint32_t> CPDF_ToUnicodeMap::StringToCode(ByteStringView str) {
     if (!code.IsValid())
       return absl::nullopt;
   }
-  return Optional<uint32_t>(code.ValueOrDie());
+  return absl::optional<uint32_t>(code.ValueOrDie());
 }
 
 // static
@@ -148,7 +148,7 @@ void CPDF_ToUnicodeMap::HandleBeginBFChar(CPDF_SimpleParser* pParser) {
     if (word.IsEmpty() || word == "endbfchar")
       return;
 
-    Optional<uint32_t> code = StringToCode(word);
+    absl::optional<uint32_t> code = StringToCode(word);
     if (!code.has_value())
       return;
 
@@ -162,12 +162,12 @@ void CPDF_ToUnicodeMap::HandleBeginBFRange(CPDF_SimpleParser* pParser) {
     if (lowcode_str.IsEmpty() || lowcode_str == "endbfrange")
       return;
 
-    Optional<uint32_t> lowcode_opt = StringToCode(lowcode_str);
+    absl::optional<uint32_t> lowcode_opt = StringToCode(lowcode_str);
     if (!lowcode_opt.has_value())
       return;
 
     ByteStringView highcode_str = pParser->GetWord();
-    Optional<uint32_t> highcode_opt = StringToCode(highcode_str);
+    absl::optional<uint32_t> highcode_opt = StringToCode(highcode_str);
     if (!highcode_opt.has_value())
       return;
 
@@ -184,7 +184,7 @@ void CPDF_ToUnicodeMap::HandleBeginBFRange(CPDF_SimpleParser* pParser) {
 
     WideString destcode = StringToWideString(start);
     if (destcode.GetLength() == 1) {
-      Optional<uint32_t> value_or_error = StringToCode(start);
+      absl::optional<uint32_t> value_or_error = StringToCode(start);
       if (!value_or_error.has_value())
         return;
 

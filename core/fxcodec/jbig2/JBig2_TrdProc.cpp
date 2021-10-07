@@ -18,7 +18,7 @@
 
 namespace {
 
-Optional<uint32_t> CheckTRDDimension(uint32_t dimension, int32_t delta) {
+absl::optional<uint32_t> CheckTRDDimension(uint32_t dimension, int32_t delta) {
   FX_SAFE_UINT32 result = dimension;
   result += delta;
   if (!result.IsValid())
@@ -26,9 +26,9 @@ Optional<uint32_t> CheckTRDDimension(uint32_t dimension, int32_t delta) {
   return result.ValueOrDie();
 }
 
-Optional<int32_t> CheckTRDReferenceDimension(int32_t dimension,
-                                             uint32_t shift,
-                                             int32_t offset) {
+absl::optional<int32_t> CheckTRDReferenceDimension(int32_t dimension,
+                                                   uint32_t shift,
+                                                   int32_t offset) {
   FX_SAFE_INT32 result = offset;
   result += dimension >> shift;
   if (!result.IsValid())
@@ -160,14 +160,14 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeHuffman(
         if (!IBOI)
           return nullptr;
 
-        Optional<uint32_t> WOI = CheckTRDDimension(IBOI->width(), RDWI);
-        Optional<uint32_t> HOI = CheckTRDDimension(IBOI->height(), RDHI);
+        absl::optional<uint32_t> WOI = CheckTRDDimension(IBOI->width(), RDWI);
+        absl::optional<uint32_t> HOI = CheckTRDDimension(IBOI->height(), RDHI);
         if (!WOI.has_value() || !HOI.has_value())
           return nullptr;
 
-        Optional<int32_t> GRREFERENCEDX =
+        absl::optional<int32_t> GRREFERENCEDX =
             CheckTRDReferenceDimension(RDWI, 2, RDXI);
-        Optional<int32_t> GRREFERENCEDY =
+        absl::optional<int32_t> GRREFERENCEDY =
             CheckTRDReferenceDimension(RDHI, 2, RDYI);
         if (!GRREFERENCEDX.has_value() || !GRREFERENCEDY.has_value())
           return nullptr;
@@ -340,14 +340,14 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeArith(
         if (!IBOI)
           return nullptr;
 
-        Optional<uint32_t> WOI = CheckTRDDimension(IBOI->width(), RDWI);
-        Optional<uint32_t> HOI = CheckTRDDimension(IBOI->height(), RDHI);
+        absl::optional<uint32_t> WOI = CheckTRDDimension(IBOI->width(), RDWI);
+        absl::optional<uint32_t> HOI = CheckTRDDimension(IBOI->height(), RDHI);
         if (!WOI.has_value() || !HOI.has_value())
           return nullptr;
 
-        Optional<int32_t> GRREFERENCEDX =
+        absl::optional<int32_t> GRREFERENCEDX =
             CheckTRDReferenceDimension(RDWI, 1, RDXI);
-        Optional<int32_t> GRREFERENCEDY =
+        absl::optional<int32_t> GRREFERENCEDY =
             CheckTRDReferenceDimension(RDHI, 1, RDYI);
         if (!GRREFERENCEDX.has_value() || !GRREFERENCEDY.has_value())
           return nullptr;

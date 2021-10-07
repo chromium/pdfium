@@ -62,9 +62,9 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
   int GetFieldFlags() const;
   int GetRotate() const;
 
-  Optional<FX_COLORREF> GetFillColor() const;
-  Optional<FX_COLORREF> GetBorderColor() const;
-  Optional<FX_COLORREF> GetTextColor() const;
+  absl::optional<FX_COLORREF> GetFillColor() const;
+  absl::optional<FX_COLORREF> GetBorderColor() const;
+  absl::optional<FX_COLORREF> GetTextColor() const;
   float GetFontSize() const;
 
   int GetSelectedIndex(int nIndex) const;
@@ -95,10 +95,11 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
   void ResetXFAAppearance(ValueChanged bValueChanged);
 #endif  // PDF_ENABLE_XFA
 
-  void ResetAppearance(Optional<WideString> sValue, ValueChanged bValueChanged);
+  void ResetAppearance(absl::optional<WideString> sValue,
+                       ValueChanged bValueChanged);
   void ResetFieldAppearance();
   void UpdateField();
-  Optional<WideString> OnFormat();
+  absl::optional<WideString> OnFormat();
 
   bool OnAAction(CPDF_AAction::AActionType type,
                  CFFL_FieldAction* data,

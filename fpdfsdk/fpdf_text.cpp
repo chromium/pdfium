@@ -385,7 +385,7 @@ FPDFText_FindStart(FPDF_TEXTPAGE text_page,
   options.bConsecutive = !!(flags & FPDF_CONSECUTIVE);
   auto find = CPDF_TextPageFind::Create(
       textpage, WideStringFromFPDFWideString(findwhat), options,
-      start_index >= 0 ? Optional<size_t>(start_index) : absl::nullopt);
+      start_index >= 0 ? absl::optional<size_t>(start_index) : absl::nullopt);
 
   // Caller takes ownership.
   return FPDFSchHandleFromCPDFTextPageFind(find.release());

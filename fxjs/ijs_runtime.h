@@ -57,7 +57,7 @@ class IJS_Runtime {
   virtual IJS_EventContext* NewEventContext() = 0;
   virtual void ReleaseEventContext(IJS_EventContext* pContext) = 0;
   virtual CPDFSDK_FormFillEnvironment* GetFormFillEnv() const = 0;
-  virtual Optional<JS_Error> ExecuteScript(const WideString& script) = 0;
+  virtual absl::optional<JS_Error> ExecuteScript(const WideString& script) = 0;
 
  protected:
   IJS_Runtime() = default;

@@ -42,7 +42,8 @@ class JpegModule {
       int nComps,
       bool ColorTransform);
 
-  static Optional<ImageInfo> LoadInfo(pdfium::span<const uint8_t> src_span);
+  static absl::optional<ImageInfo> LoadInfo(
+      pdfium::span<const uint8_t> src_span);
 
 #if defined(OS_WIN)
   static bool JpegEncode(const RetainPtr<CFX_DIBBase>& pSource,

@@ -372,7 +372,7 @@ Gdiplus::GpPen* GdipCreatePenImpl(const CFX_GraphStateData* pGraphState,
   return pPen;
 }
 
-Optional<std::pair<size_t, size_t>> IsSmallTriangle(
+absl::optional<std::pair<size_t, size_t>> IsSmallTriangle(
     pdfium::span<const Gdiplus::PointF> points,
     const CFX_Matrix* pMatrix) {
   static constexpr size_t kPairs[3][2] = {{1, 2}, {0, 2}, {0, 1}};

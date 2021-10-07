@@ -73,7 +73,7 @@ int32_t CBC_ReedSolomonGF256::Exp(int32_t a) {
   return m_expTable[a];
 }
 
-Optional<int32_t> CBC_ReedSolomonGF256::Inverse(int32_t a) {
+absl::optional<int32_t> CBC_ReedSolomonGF256::Inverse(int32_t a) {
   if (a == 0)
     return absl::nullopt;
   return m_expTable[255 - m_logTable[a]];

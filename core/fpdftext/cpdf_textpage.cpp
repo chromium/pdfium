@@ -610,7 +610,7 @@ CPDF_TextPage::TextOrientation CPDF_TextPage::FindTextlineFlowOrientation()
 
 void CPDF_TextPage::AppendGeneratedCharacter(wchar_t unicode,
                                              const CFX_Matrix& formMatrix) {
-  Optional<CharInfo> pGenerateChar = GenerateCharInfo(unicode);
+  absl::optional<CharInfo> pGenerateChar = GenerateCharInfo(unicode);
   if (!pGenerateChar.has_value())
     return;
 
@@ -967,7 +967,7 @@ void CPDF_TextPage::ProcessTextObject(const TransformedTextObject& obj) {
       case GenerateCharacter::kNone:
         break;
       case GenerateCharacter::kSpace: {
-        Optional<CharInfo> pGenerateChar = GenerateCharInfo(L' ');
+        absl::optional<CharInfo> pGenerateChar = GenerateCharInfo(L' ');
         if (pGenerateChar.has_value()) {
           if (!form_matrix.IsIdentity())
             pGenerateChar->m_Matrix = form_matrix;
@@ -1408,7 +1408,7 @@ bool CPDF_TextPage::IsSameAsPreTextObject(
   return false;
 }
 
-Optional<CPDF_TextPage::CharInfo> CPDF_TextPage::GenerateCharInfo(
+absl::optional<CPDF_TextPage::CharInfo> CPDF_TextPage::GenerateCharInfo(
     wchar_t unicode) {
   const CharInfo* pPrevCharInfo = GetPrevCharInfo();
   if (!pPrevCharInfo)

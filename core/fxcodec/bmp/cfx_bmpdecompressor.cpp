@@ -227,7 +227,7 @@ BmpDecoder::Status CFX_BmpDecompressor::ReadBmpHeaderDimensions() {
     default:
       return BmpDecoder::Status::kFail;
   }
-  Optional<uint32_t> stride = CalculatePitch32(bit_counts_, width_);
+  absl::optional<uint32_t> stride = CalculatePitch32(bit_counts_, width_);
   if (!stride.has_value())
     return BmpDecoder::Status::kFail;
 

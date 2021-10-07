@@ -279,7 +279,7 @@ int CPDF_Font::GetStringWidth(ByteStringView pString) {
 RetainPtr<CPDF_Font> CPDF_Font::GetStockFont(CPDF_Document* pDoc,
                                              ByteStringView name) {
   ByteString fontname(name);
-  Optional<CFX_FontMapper::StandardFont> font_id =
+  absl::optional<CFX_FontMapper::StandardFont> font_id =
       CFX_FontMapper::GetStandardFontName(&fontname);
   if (!font_id.has_value())
     return nullptr;

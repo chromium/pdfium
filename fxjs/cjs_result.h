@@ -50,7 +50,7 @@ class CJS_Result {
   explicit CJS_Result(const WideString&);     // Error with custom message.
   explicit CJS_Result(JSMessage id);          // Error with stock message.
 
-  Optional<WideString> error_;
+  absl::optional<WideString> error_;
   v8::Local<v8::Value> return_;
 };
 

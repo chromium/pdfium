@@ -390,7 +390,8 @@ bool CFX_Path::IsRect() const {
   return IsRectImpl(m_Points);
 }
 
-Optional<CFX_FloatRect> CFX_Path::GetRect(const CFX_Matrix* matrix) const {
+absl::optional<CFX_FloatRect> CFX_Path::GetRect(
+    const CFX_Matrix* matrix) const {
   bool do_normalize = PathPointsNeedNormalization(m_Points);
   std::vector<Point> normalized;
   if (do_normalize)

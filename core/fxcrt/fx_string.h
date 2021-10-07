@@ -36,7 +36,7 @@ std::vector<StrType> Split(const StrType& that, typename StrType::CharType ch) {
   std::vector<StrType> result;
   StringViewTemplate<typename StrType::CharType> remaining(that.span());
   while (1) {
-    Optional<size_t> index = remaining.Find(ch);
+    absl::optional<size_t> index = remaining.Find(ch);
     if (!index.has_value())
       break;
     result.emplace_back(remaining.First(index.value()));

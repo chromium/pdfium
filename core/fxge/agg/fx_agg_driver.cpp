@@ -1135,7 +1135,7 @@ bool CFX_AggDeviceDriver::SetClip_PathFill(
     m_pClipRgn = std::make_unique<CFX_ClipRgn>(
         GetDeviceCaps(FXDC_PIXEL_WIDTH), GetDeviceCaps(FXDC_PIXEL_HEIGHT));
   }
-  Optional<CFX_FloatRect> maybe_rectf = pPath->GetRect(pObject2Device);
+  absl::optional<CFX_FloatRect> maybe_rectf = pPath->GetRect(pObject2Device);
   if (maybe_rectf.has_value()) {
     CFX_FloatRect& rectf = maybe_rectf.value();
     rectf.Intersect(

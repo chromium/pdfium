@@ -479,7 +479,8 @@ void CPDF_PageContentGenerator::ProcessGraphics(std::ostringstream* buf,
   }
 
   ByteString name;
-  Optional<ByteString> maybe_name = m_pObjHolder->GraphicsMapSearch(graphD);
+  absl::optional<ByteString> maybe_name =
+      m_pObjHolder->GraphicsMapSearch(graphD);
   if (maybe_name.has_value()) {
     name = std::move(maybe_name.value());
   } else {
@@ -516,7 +517,7 @@ ByteString CPDF_PageContentGenerator::GetOrCreateDefaultGraphics() const {
   defaultGraphics.strokeAlpha = 1.0f;
   defaultGraphics.blendType = BlendMode::kNormal;
 
-  Optional<ByteString> maybe_name =
+  absl::optional<ByteString> maybe_name =
       m_pObjHolder->GraphicsMapSearch(defaultGraphics);
   if (maybe_name.has_value())
     return maybe_name.value();
@@ -560,7 +561,7 @@ void CPDF_PageContentGenerator::ProcessText(std::ostringstream* buf,
   data.baseFont = pFont->GetBaseFontName();
 
   ByteString dictName;
-  Optional<ByteString> maybe_name = m_pObjHolder->FontsMapSearch(data);
+  absl::optional<ByteString> maybe_name = m_pObjHolder->FontsMapSearch(data);
   if (maybe_name.has_value()) {
     dictName = std::move(maybe_name.value());
   } else {

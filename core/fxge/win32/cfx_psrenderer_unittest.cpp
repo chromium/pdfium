@@ -9,7 +9,7 @@
 #include "third_party/base/span.h"
 
 TEST(PSRendererTest, GenerateType42SfntData) {
-  Optional<ByteString> result;
+  absl::optional<ByteString> result;
 
   result = CFX_PSRenderer::GenerateType42SfntDataForTesting("empty", {});
   EXPECT_FALSE(result.has_value());

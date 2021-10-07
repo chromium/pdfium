@@ -76,7 +76,7 @@ bool IsText(wchar_t ch) {
 }  // namespace
 
 // static
-Optional<WideString> CBC_PDF417HighLevelEncoder::EncodeHighLevel(
+absl::optional<WideString> CBC_PDF417HighLevelEncoder::EncodeHighLevel(
     WideStringView msg) {
   const ByteString bytes = FX_UTF8Encode(msg);
   size_t len = bytes.GetLength();
@@ -114,7 +114,7 @@ Optional<WideString> CBC_PDF417HighLevelEncoder::EncodeHighLevel(
         textSubMode = EncodeText(result, p, t, textSubMode, &sb);
         p += t;
       } else {
-        Optional<size_t> b =
+        absl::optional<size_t> b =
             DetermineConsecutiveBinaryCount(result, bytes.raw_span(), p);
         if (!b.has_value())
           return absl::nullopt;
@@ -351,7 +351,8 @@ size_t CBC_PDF417HighLevelEncoder::DetermineConsecutiveTextCount(
   return idx - startpos;
 }
 
-Optional<size_t> CBC_PDF417HighLevelEncoder::DetermineConsecutiveBinaryCount(
+absl::optional<size_t>
+CBC_PDF417HighLevelEncoder::DetermineConsecutiveBinaryCount(
     WideString msg,
     pdfium::span<const uint8_t> bytes,
     size_t startpos) {
