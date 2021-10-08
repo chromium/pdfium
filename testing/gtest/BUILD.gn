@@ -66,11 +66,7 @@ static_library("gtest") {
   }
 
   if (is_ios && gtest_include_ios_coverage) {
-    sources += [
-      "../coverage_util_ios.h",
-      "../coverage_util_ios.mm",
-    ]
-    deps = [ ":ios_enable_coverage" ]
+    public_deps += [ ":ios_coverage_utils" ]
   }
 }
 
@@ -83,6 +79,16 @@ source_set("gtest_main") {
 }
 
 if (is_ios) {
+  # These headers are needed in some non test targets for iOS code coverage. So
+  # can not be testonly.
+  source_set("ios_coverage_utils") {
+    sources = [
+      "../coverage_util_ios.h",
+      "../coverage_util_ios.mm",
+    ]
+    deps = [ ":ios_enable_coverage" ]
+  }
+
   buildflag_header("ios_enable_coverage") {
     header = "ios_enable_coverage.h"
     flags = [ "IOS_ENABLE_COVERAGE=$use_clang_coverage" ]

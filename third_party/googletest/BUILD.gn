@@ -2,8 +2,12 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import("//build_overrides/build.gni")
+
 config("gtest_config") {
-  visibility = [ ":*" ]  # gmock also shares this config.
+  visibility = [
+    ":*",  # gmock also shares this config.
+  ]
 
   defines = [
     # Chromium always links googletest statically, so no API qualifier is
@@ -31,6 +35,11 @@ config("gtest_config") {
   if (is_win) {
     cflags = [ "/wd4800" ]  # Unused variable warning.
   }
+
+  if (gtest_enable_absl_printers) {
+    configs = [ "//third_party/abseil-cpp:absl_include_config" ]
+    defines += [ "GTEST_HAS_ABSL=1" ]
+  }
 }
 
 config("gmock_config") {
@@ -39,6 +48,12 @@ config("gmock_config") {
     "custom",
     "src/googlemock/include",
   ]
+
+  if (is_clang) {
+    # TODO(tikuta): remove this when the issue is fixed.
+    # https://github.com/google/googletest/issues/533
+    cflags = [ "-Wno-inconsistent-missing-override" ]
+  }
 }
 
 # Do NOT depend on this directly. Use //testing/gtest instead.
@@ -108,6 +123,20 @@ source_set("gtest") {
     "custom/gtest/internal/custom/stack_trace_getter.cc",
     "custom/gtest/internal/custom/stack_trace_getter.h",
   ]
+
+  deps = []
+  public_deps = []
+
+  if (is_fuchsia) {
+    deps += [
+      "//third_party/fuchsia-sdk/sdk/pkg/fdio",
+      "//third_party/fuchsia-sdk/sdk/pkg/zx",
+    ]
+  }
+
+  if (gtest_enable_absl_printers) {
+    deps += [ "//third_party/abseil-cpp:absl" ]
+  }
 }
 
 # Do NOT depend on this directly. Use //testing/gtest:gtest_main instead.
@@ -127,7 +156,6 @@ source_set("gmock") {
     "src/googlemock/include/gmock/gmock-cardinalities.h",
     "src/googlemock/include/gmock/gmock-function-mocker.h",
     "src/googlemock/include/gmock/gmock-matchers.h",
-    "src/googlemock/include/gmock/gmock-more-actions.h",
     "src/googlemock/include/gmock/gmock-more-matchers.h",
     "src/googlemock/include/gmock/gmock-nice-strict.h",
     "src/googlemock/include/gmock/gmock-spec-builders.h",

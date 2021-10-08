@@ -36,6 +36,10 @@ declare_args() {
   # obtained with gclient sync after setting the environment variable
   # FORCE_MAC_TOOLCHAIN].
   use_system_xcode = ""
+
+  # Allows googletest to pretty-print various absl types.
+  # Assumes //third_party/abseil-cpp is an available dependency for googletest.
+  gtest_enable_absl_printers = true
 }
 
 if (use_system_xcode == "") {
