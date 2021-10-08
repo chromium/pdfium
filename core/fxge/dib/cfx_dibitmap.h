@@ -14,7 +14,7 @@
 #include "core/fxge/dib/fx_dib.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 
-class CFX_DIBitmap : public CFX_DIBBase {
+class CFX_DIBitmap final : public CFX_DIBBase {
  public:
   struct PitchAndSize {
     uint32_t pitch;
@@ -112,22 +112,16 @@ class CFX_DIBitmap : public CFX_DIBBase {
   void UnPreMultiply();
 #endif
 
- protected:
-  CFX_DIBitmap();
-  CFX_DIBitmap(const CFX_DIBitmap& src);
-  ~CFX_DIBitmap() override;
+ private:
+  enum class Channel : uint8_t { kRed, kAlpha };
 
 #if defined(_SKIA_SUPPORT_PATHS_)
   enum class Format { kCleared, kPreMultiplied, kUnPreMultiplied };
 #endif
 
-  MaybeOwned<uint8_t, FxFreeDeleter> m_pBuffer;
-#if defined(_SKIA_SUPPORT_PATHS_)
-  Format m_nFormat = Format::kCleared;
-#endif
-
- private:
-  enum class Channel : uint8_t { kRed, kAlpha };
+  CFX_DIBitmap();
+  CFX_DIBitmap(const CFX_DIBitmap& src);
+  ~CFX_DIBitmap() override;
 
   bool SetChannelFromBitmap(Channel destChannel,
                             const RetainPtr<CFX_DIBBase>& pSrcBitmap);
@@ -154,6 +148,11 @@ class CFX_DIBitmap : public CFX_DIBBase {
                                   const RetainPtr<CFX_DIBBase>& pSrcBitmap,
                                   int src_left,
                                   int src_top);
+
+  MaybeOwned<uint8_t, FxFreeDeleter> m_pBuffer;
+#if defined(_SKIA_SUPPORT_PATHS_)
+  Format m_nFormat = Format::kCleared;
+#endif
 };
 
 #endif  // CORE_FXGE_DIB_CFX_DIBITMAP_H_
