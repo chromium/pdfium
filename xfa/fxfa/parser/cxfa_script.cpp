@@ -48,7 +48,7 @@ CXFA_Script::CXFA_Script(CXFA_Document* doc, XFA_PacketType packet)
 CXFA_Script::~CXFA_Script() = default;
 
 CXFA_Script::Type CXFA_Script::GetContentType() {
-  Optional<WideString> cData =
+  absl::optional<WideString> cData =
       JSObject()->TryCData(XFA_Attribute::ContentType, false);
   if (!cData.has_value())
     return Type::Formcalc;

@@ -93,14 +93,14 @@ CFX_SizeF CalculateContainerSpecifiedSize(CXFA_Node* pFormNode,
 
   CFX_SizeF containerSize;
   if (eType == XFA_Element::Subform || eType == XFA_Element::ExclGroup) {
-    Optional<CXFA_Measurement> wValue =
+    absl::optional<CXFA_Measurement> wValue =
         pFormNode->JSObject()->TryMeasure(XFA_Attribute::W, false);
     if (wValue.has_value() && wValue->GetValue() > kXFALayoutPrecision) {
       containerSize.width = wValue->ToUnit(XFA_Unit::Pt);
       *bContainerWidthAutoSize = false;
     }
 
-    Optional<CXFA_Measurement> hValue =
+    absl::optional<CXFA_Measurement> hValue =
         pFormNode->JSObject()->TryMeasure(XFA_Attribute::H, false);
     if (hValue.has_value() && hValue->GetValue() > kXFALayoutPrecision) {
       containerSize.height = hValue->ToUnit(XFA_Unit::Pt);
@@ -109,14 +109,14 @@ CFX_SizeF CalculateContainerSpecifiedSize(CXFA_Node* pFormNode,
   }
 
   if (*bContainerWidthAutoSize && eType == XFA_Element::Subform) {
-    Optional<CXFA_Measurement> maxW =
+    absl::optional<CXFA_Measurement> maxW =
         pFormNode->JSObject()->TryMeasure(XFA_Attribute::MaxW, false);
     if (maxW.has_value() && maxW->GetValue() > kXFALayoutPrecision) {
       containerSize.width = maxW->ToUnit(XFA_Unit::Pt);
       *bContainerWidthAutoSize = false;
     }
 
-    Optional<CXFA_Measurement> maxH =
+    absl::optional<CXFA_Measurement> maxH =
         pFormNode->JSObject()->TryMeasure(XFA_Attribute::MaxH, false);
     if (maxH.has_value() && maxH->GetValue() > kXFALayoutPrecision) {
       containerSize.height = maxH->ToUnit(XFA_Unit::Pt);
@@ -139,12 +139,12 @@ CFX_SizeF CalculateContainerComponentSizeFromContentSize(
   if (bContainerWidthAutoSize) {
     componentSize.width = fContentCalculatedWidth;
     if (pMarginNode) {
-      Optional<CXFA_Measurement> leftInset =
+      absl::optional<CXFA_Measurement> leftInset =
           pMarginNode->JSObject()->TryMeasure(XFA_Attribute::LeftInset, false);
       if (leftInset.has_value())
         componentSize.width += leftInset->ToUnit(XFA_Unit::Pt);
 
-      Optional<CXFA_Measurement> rightInset =
+      absl::optional<CXFA_Measurement> rightInset =
           pMarginNode->JSObject()->TryMeasure(XFA_Attribute::RightInset, false);
       if (rightInset.has_value())
         componentSize.width += rightInset->ToUnit(XFA_Unit::Pt);
@@ -154,12 +154,12 @@ CFX_SizeF CalculateContainerComponentSizeFromContentSize(
   if (bContainerHeightAutoSize) {
     componentSize.height = fContentCalculatedHeight;
     if (pMarginNode) {
-      Optional<CXFA_Measurement> topInset =
+      absl::optional<CXFA_Measurement> topInset =
           pMarginNode->JSObject()->TryMeasure(XFA_Attribute::TopInset, false);
       if (topInset.has_value())
         componentSize.height += topInset->ToUnit(XFA_Unit::Pt);
 
-      Optional<CXFA_Measurement> bottomInset =
+      absl::optional<CXFA_Measurement> bottomInset =
           pMarginNode->JSObject()->TryMeasure(XFA_Attribute::BottomInset,
                                               false);
       if (bottomInset.has_value())
@@ -338,7 +338,7 @@ void RelocateTableRowCells(CXFA_ContentLayoutItem* pLayoutRow,
 
 XFA_AttributeValue GetLayout(CXFA_Node* pFormNode, bool* bRootForceTb) {
   *bRootForceTb = false;
-  Optional<XFA_AttributeValue> layoutMode =
+  absl::optional<XFA_AttributeValue> layoutMode =
       pFormNode->JSObject()->TryEnum(XFA_Attribute::Layout, false);
   if (layoutMode.has_value())
     return layoutMode.value();
@@ -367,7 +367,7 @@ bool ExistContainerKeep(CXFA_Node* pCurNode, bool bPreFind) {
     if (!bPreFind)
       eKeepType = XFA_Attribute::Next;
 
-    Optional<XFA_AttributeValue> previous =
+    absl::optional<XFA_AttributeValue> previous =
         pKeep->JSObject()->TryEnum(eKeepType, false);
     if (previous == XFA_AttributeValue::ContentArea ||
         previous == XFA_AttributeValue::PageArea) {
@@ -383,7 +383,7 @@ bool ExistContainerKeep(CXFA_Node* pCurNode, bool bPreFind) {
   if (!bPreFind)
     eKeepType = XFA_Attribute::Previous;
 
-  Optional<XFA_AttributeValue> next =
+  absl::optional<XFA_AttributeValue> next =
       pKeep->JSObject()->TryEnum(eKeepType, false);
   if (next == XFA_AttributeValue::ContentArea ||
       next == XFA_AttributeValue::PageArea) {
@@ -392,7 +392,7 @@ bool ExistContainerKeep(CXFA_Node* pCurNode, bool bPreFind) {
   return false;
 }
 
-Optional<CXFA_ContentLayoutProcessor::Stage> FindBreakNode(
+absl::optional<CXFA_ContentLayoutProcessor::Stage> FindBreakNode(
     CXFA_Node* pContainerNode,
     bool bBreakBefore,
     CXFA_Node** pCurActionNode) {
@@ -493,7 +493,7 @@ bool FindLayoutItemSplitPos(CXFA_ContentLayoutItem* pLayoutItem,
       while (bChanged) {
         bChanged = false;
         {
-          Optional<float> fRelSplitPos = pFormNode->FindSplitPos(
+          absl::optional<float> fRelSplitPos = pFormNode->FindSplitPos(
               pNotify->GetFFDoc()->GetDocView(), pLayoutItem->GetIndex(),
               *fProposedSplitPos - fCurVerticalOffset);
           if (fRelSplitPos.has_value()) {
@@ -872,7 +872,7 @@ CXFA_ContentLayoutProcessor::GotoNextContainerNode(Stage nCurStage,
       break;
   }
 
-  Optional<Stage> ret;
+  absl::optional<Stage> ret;
   switch (nCurStage) {
     case Stage::kKeep:
       ret = HandleKeep(pChildContainer->GetFirstChild(), &pCurActionNode);
@@ -930,7 +930,7 @@ CXFA_ContentLayoutProcessor::GotoNextContainerNode(Stage nCurStage,
   return {Stage::kDone, nullptr};
 }
 
-Optional<CXFA_ContentLayoutProcessor::Stage>
+absl::optional<CXFA_ContentLayoutProcessor::Stage>
 CXFA_ContentLayoutProcessor::ProcessKeepNodesForCheckNext(
     CXFA_Node** pCurActionNode,
     CXFA_Node** pNextContainer,
@@ -961,7 +961,7 @@ CXFA_ContentLayoutProcessor::ProcessKeepNodesForCheckNext(
     return absl::nullopt;
   }
 
-  Optional<Stage> ret =
+  absl::optional<Stage> ret =
       FindBreakNode((*pNextContainer)->GetFirstChild(), true, pCurActionNode);
   if (!ret.has_value()) {
     *pNextContainer = m_pKeepHeadNode;
@@ -972,7 +972,7 @@ CXFA_ContentLayoutProcessor::ProcessKeepNodesForCheckNext(
   return ret;
 }
 
-Optional<CXFA_ContentLayoutProcessor::Stage>
+absl::optional<CXFA_ContentLayoutProcessor::Stage>
 CXFA_ContentLayoutProcessor::ProcessKeepNodesForBreakBefore(
     CXFA_Node** pCurActionNode,
     CXFA_Node* pContainerNode) {
@@ -1643,7 +1643,7 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
           if (!bUseBreakControl || !m_pViewLayoutProcessor)
             break;
 
-          Optional<CXFA_ViewLayoutProcessor::BreakData> break_data =
+          absl::optional<CXFA_ViewLayoutProcessor::BreakData> break_data =
               m_pViewLayoutProcessor->ProcessBreakBefore(m_pCurChildNode);
           if (!break_data.has_value() || !break_data.value().bCreatePage ||
               GetFormNode()->GetElementType() == XFA_Element::Form) {
@@ -1684,7 +1684,7 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
           if (!bUseBreakControl || !m_pViewLayoutProcessor)
             break;
 
-          Optional<CXFA_ViewLayoutProcessor::BreakData> break_data =
+          absl::optional<CXFA_ViewLayoutProcessor::BreakData> break_data =
               m_pViewLayoutProcessor->ProcessBreakAfter(m_pCurChildNode);
           if (!break_data.has_value() ||
               GetFormNode()->GetElementType() == XFA_Element::Form) {
@@ -2430,7 +2430,7 @@ CXFA_ContentLayoutProcessor::InsertFlowedItem(
       pFormNode = pLayoutContext->m_pOverflowNode.Get();
       bUseInherited = true;
     }
-    Optional<CXFA_ViewLayoutProcessor::OverflowData> overflow_data =
+    absl::optional<CXFA_ViewLayoutProcessor::OverflowData> overflow_data =
         m_pViewLayoutProcessor->ProcessOverflow(pFormNode, false);
     if (overflow_data.has_value()) {
       pOverflowLeaderNode = overflow_data.value().pLeader;
@@ -2632,7 +2632,7 @@ CXFA_ContentLayoutProcessor::InsertFlowedItem(
   if (pProcessor->GetFormNode()->GetIntact() == XFA_AttributeValue::None &&
       eLayout == XFA_AttributeValue::Tb) {
     if (m_pViewLayoutProcessor) {
-      Optional<CXFA_ViewLayoutProcessor::OverflowData> overflow_data =
+      absl::optional<CXFA_ViewLayoutProcessor::OverflowData> overflow_data =
           m_pViewLayoutProcessor->ProcessOverflow(pFormNode, true);
       if (overflow_data.has_value()) {
         pOverflowLeaderNode = overflow_data.value().pLeader;
@@ -2653,7 +2653,7 @@ CXFA_ContentLayoutProcessor::InsertFlowedItem(
   if (!pFormNode && pLayoutContext)
     pFormNode = pLayoutContext->m_pOverflowProcessor->GetFormNode();
   if (m_pViewLayoutProcessor) {
-    Optional<CXFA_ViewLayoutProcessor::OverflowData> overflow_data =
+    absl::optional<CXFA_ViewLayoutProcessor::OverflowData> overflow_data =
         m_pViewLayoutProcessor->ProcessOverflow(pFormNode, true);
     if (overflow_data.has_value()) {
       pOverflowLeaderNode = overflow_data.value().pLeader;
@@ -2668,7 +2668,7 @@ CXFA_ContentLayoutProcessor::InsertFlowedItem(
   return Result::kPageFullBreak;
 }
 
-Optional<CXFA_ContentLayoutProcessor::Stage>
+absl::optional<CXFA_ContentLayoutProcessor::Stage>
 CXFA_ContentLayoutProcessor::HandleKeep(CXFA_Node* pBreakAfterNode,
                                         CXFA_Node** pCurActionNode) {
   if (m_bKeepBreakFinish)
@@ -2676,7 +2676,7 @@ CXFA_ContentLayoutProcessor::HandleKeep(CXFA_Node* pBreakAfterNode,
   return FindBreakNode(pBreakAfterNode, false, pCurActionNode);
 }
 
-Optional<CXFA_ContentLayoutProcessor::Stage>
+absl::optional<CXFA_ContentLayoutProcessor::Stage>
 CXFA_ContentLayoutProcessor::HandleBookendLeader(CXFA_Node* pParentContainer,
                                                  CXFA_Node** pCurActionNode) {
   for (CXFA_Node* pBookendNode = *pCurActionNode
@@ -2695,7 +2695,7 @@ CXFA_ContentLayoutProcessor::HandleBookendLeader(CXFA_Node* pParentContainer,
   return absl::nullopt;
 }
 
-Optional<CXFA_ContentLayoutProcessor::Stage>
+absl::optional<CXFA_ContentLayoutProcessor::Stage>
 CXFA_ContentLayoutProcessor::HandleBreakBefore(CXFA_Node* pChildContainer,
                                                CXFA_Node** pCurActionNode) {
   if (!*pCurActionNode)
@@ -2703,7 +2703,8 @@ CXFA_ContentLayoutProcessor::HandleBreakBefore(CXFA_Node* pChildContainer,
 
   CXFA_Node* pBreakBeforeNode = (*pCurActionNode)->GetNextSibling();
   if (!m_bKeepBreakFinish) {
-    Optional<Stage> ret = FindBreakNode(pBreakBeforeNode, true, pCurActionNode);
+    absl::optional<Stage> ret =
+        FindBreakNode(pBreakBeforeNode, true, pCurActionNode);
     if (ret.has_value())
       return ret.value();
   }
@@ -2714,7 +2715,7 @@ CXFA_ContentLayoutProcessor::HandleBreakBefore(CXFA_Node* pChildContainer,
   return Stage::kContainer;
 }
 
-Optional<CXFA_ContentLayoutProcessor::Stage>
+absl::optional<CXFA_ContentLayoutProcessor::Stage>
 CXFA_ContentLayoutProcessor::HandleBreakAfter(CXFA_Node* pChildContainer,
                                               CXFA_Node** pCurActionNode) {
   if (*pCurActionNode) {
@@ -2726,7 +2727,7 @@ CXFA_ContentLayoutProcessor::HandleBreakAfter(CXFA_Node* pChildContainer,
   return HandleKeep(pBreakAfterNode, pCurActionNode);
 }
 
-Optional<CXFA_ContentLayoutProcessor::Stage>
+absl::optional<CXFA_ContentLayoutProcessor::Stage>
 CXFA_ContentLayoutProcessor::HandleCheckNextChildContainer(
     CXFA_Node* pParentContainer,
     CXFA_Node* pChildContainer,
@@ -2744,7 +2745,7 @@ CXFA_ContentLayoutProcessor::HandleCheckNextChildContainer(
     return absl::nullopt;
 
   bool bLastKeep = false;
-  Optional<Stage> ret = ProcessKeepNodesForCheckNext(
+  absl::optional<Stage> ret = ProcessKeepNodesForCheckNext(
       pCurActionNode, &pNextChildContainer, &bLastKeep);
   if (ret.has_value())
     return ret.value();
@@ -2759,7 +2760,7 @@ CXFA_ContentLayoutProcessor::HandleCheckNextChildContainer(
   return m_bIsProcessKeep ? Stage::kKeep : Stage::kContainer;
 }
 
-Optional<CXFA_ContentLayoutProcessor::Stage>
+absl::optional<CXFA_ContentLayoutProcessor::Stage>
 CXFA_ContentLayoutProcessor::HandleBookendTrailer(CXFA_Node* pParentContainer,
                                                   CXFA_Node** pCurActionNode) {
   for (CXFA_Node* pBookendNode = *pCurActionNode

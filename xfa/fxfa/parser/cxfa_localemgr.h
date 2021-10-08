@@ -52,7 +52,7 @@ class CXFA_LocaleMgr : public cppgc::GarbageCollected<CXFA_LocaleMgr>,
   GCedLocaleIface* GetLocaleByName(const WideString& wsLocaleName) override;
 
   void SetDefLocale(GCedLocaleIface* pLocale);
-  Optional<WideString> GetConfigLocaleName(CXFA_Node* pConfig) const;
+  absl::optional<WideString> GetConfigLocaleName(CXFA_Node* pConfig) const;
 
  private:
   CXFA_LocaleMgr(cppgc::Heap* pHeap,
@@ -74,7 +74,7 @@ class CXFA_LocaleMgr : public cppgc::GarbageCollected<CXFA_LocaleMgr>,
   // 3. we might have tried and gotten something.
   // So |m_bConfigLocaleCached| indicates whether we've already tried,
   // and |m_wsConfigLocale| is the possibly nothing we got if we tried.
-  mutable Optional<WideString> m_wsConfigLocale;
+  mutable absl::optional<WideString> m_wsConfigLocale;
   mutable bool m_bConfigLocaleCached = false;
 
   LangID m_eDeflcid;

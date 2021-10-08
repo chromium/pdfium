@@ -55,7 +55,7 @@ void CXFA_FFNumericEdit::UpdateWidgetProperty() {
   if (!m_pNode->IsHorizontalScrollPolicyOff())
     dwExtendedStyle |= FWL_STYLEEXT_EDT_AutoHScroll;
 
-  Optional<int32_t> numCells = m_pNode->GetNumberOfCells();
+  absl::optional<int32_t> numCells = m_pNode->GetNumberOfCells();
   if (numCells.has_value() && numCells.value() > 0) {
     dwExtendedStyle |= FWL_STYLEEXT_EDT_CombText;
     pWidget->SetLimit(numCells.value());

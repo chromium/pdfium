@@ -351,7 +351,7 @@ RetainPtr<CFGAS_GEFont> CXFA_TextParser::GetFont(
   }
 
   if (pStyle) {
-    Optional<WideString> last_family = pStyle->GetLastFontFamily();
+    absl::optional<WideString> last_family = pStyle->GetLastFontFamily();
     if (last_family.has_value())
       wsFamily = last_family.value();
 
@@ -500,7 +500,7 @@ float CXFA_TextParser::GetLineHeight(CXFA_TextProvider* pTextProvider,
   return fLineHeight;
 }
 
-Optional<WideString> CXFA_TextParser::GetEmbeddedObj(
+absl::optional<WideString> CXFA_TextParser::GetEmbeddedObj(
     const CXFA_TextProvider* pTextProvider,
     const CFX_XMLNode* pXMLNode) {
   if (!pXMLNode)

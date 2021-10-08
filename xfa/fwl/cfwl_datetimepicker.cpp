@@ -436,11 +436,11 @@ void CFWL_DateTimePicker::ClearSelection() {
   m_pEdit->ClearSelection();
 }
 
-Optional<WideString> CFWL_DateTimePicker::Copy() {
+absl::optional<WideString> CFWL_DateTimePicker::Copy() {
   return m_pEdit->Copy();
 }
 
-Optional<WideString> CFWL_DateTimePicker::Cut() {
+absl::optional<WideString> CFWL_DateTimePicker::Cut() {
   return m_pEdit->Cut();
 }
 

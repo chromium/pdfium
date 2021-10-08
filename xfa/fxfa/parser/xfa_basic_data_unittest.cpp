@@ -7,7 +7,7 @@
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(XFABasicDataTest, GetPacketByName) {
-  Optional<XFA_PACKETINFO> result = XFA_GetPacketByName(L"");
+  absl::optional<XFA_PACKETINFO> result = XFA_GetPacketByName(L"");
   EXPECT_FALSE(result.has_value());
 
   result = XFA_GetPacketByName(L"nonesuch");
@@ -49,7 +49,7 @@ TEST(XFABasicDataTest, ElementToName) {
 }
 
 TEST(XFABasicDataTest, GetAttributeByName) {
-  Optional<XFA_ATTRIBUTEINFO> result = XFA_GetAttributeByName(L"");
+  absl::optional<XFA_ATTRIBUTEINFO> result = XFA_GetAttributeByName(L"");
   EXPECT_FALSE(result.has_value());
 
   result = XFA_GetAttributeByName(L"nonesuch");
@@ -74,7 +74,7 @@ TEST(XFABasicDataTest, AttributeToName) {
 }
 
 TEST(XFABasicDataTest, GetAttributeValueByName) {
-  Optional<XFA_AttributeValue> result = XFA_GetAttributeValueByName(L"");
+  absl::optional<XFA_AttributeValue> result = XFA_GetAttributeValueByName(L"");
   EXPECT_FALSE(result.has_value());
 
   result = XFA_GetAttributeValueByName(L"nonesuch");

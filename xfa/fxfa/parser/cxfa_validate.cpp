@@ -62,7 +62,7 @@ XFA_AttributeValue CXFA_Validate::GetFormatTest() {
 }
 
 void CXFA_Validate::SetNullTest(const WideString& wsValue) {
-  Optional<XFA_AttributeValue> item =
+  absl::optional<XFA_AttributeValue> item =
       XFA_GetAttributeValueByName(wsValue.AsStringView());
   JSObject()->SetEnum(
       XFA_Attribute::NullTest,

@@ -37,7 +37,7 @@ class CXFA_TextProvider : public cppgc::GarbageCollected<CXFA_TextProvider> {
   CXFA_Para* GetParaIfExists();
   CXFA_Font* GetFontIfExists();
   bool IsCheckButtonAndAutoWidth() const;
-  Optional<WideString> GetEmbeddedObj(const WideString& wsAttr) const;
+  absl::optional<WideString> GetEmbeddedObj(const WideString& wsAttr) const;
 
  private:
   CXFA_TextProvider(CXFA_Node* pNode, Type eType);

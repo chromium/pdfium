@@ -62,17 +62,17 @@ class CFWL_Barcode final : public CFWL_Edit {
 
   BC_TYPE m_type = BC_TYPE::kUnknown;
   Status m_eStatus = Status::kNormal;
-  Optional<BC_TEXT_LOC> m_eTextLocation;
-  Optional<BC_CHAR_ENCODING> m_eCharEncoding;
-  Optional<bool> m_bCalChecksum;
-  Optional<bool> m_bPrintChecksum;
-  Optional<char> m_cStartChar;
-  Optional<char> m_cEndChar;
-  Optional<int8_t> m_nWideNarrowRatio;
-  Optional<int32_t> m_nModuleHeight;
-  Optional<int32_t> m_nModuleWidth;
-  Optional<int32_t> m_nDataLength;
-  Optional<int32_t> m_nECLevel;
+  absl::optional<BC_TEXT_LOC> m_eTextLocation;
+  absl::optional<BC_CHAR_ENCODING> m_eCharEncoding;
+  absl::optional<bool> m_bCalChecksum;
+  absl::optional<bool> m_bPrintChecksum;
+  absl::optional<char> m_cStartChar;
+  absl::optional<char> m_cEndChar;
+  absl::optional<int8_t> m_nWideNarrowRatio;
+  absl::optional<int32_t> m_nModuleHeight;
+  absl::optional<int32_t> m_nModuleWidth;
+  absl::optional<int32_t> m_nDataLength;
+  absl::optional<int32_t> m_nECLevel;
   std::unique_ptr<CFX_Barcode> m_pBarcodeEngine;
 };
 

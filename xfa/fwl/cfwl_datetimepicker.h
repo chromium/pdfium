@@ -60,8 +60,8 @@ class CFWL_DateTimePicker final : public CFWL_Widget {
   std::pair<size_t, size_t> GetSelection() const {
     return m_pEdit->GetSelection();
   }
-  Optional<WideString> Copy();
-  Optional<WideString> Cut();
+  absl::optional<WideString> Copy();
+  absl::optional<WideString> Cut();
   bool Paste(const WideString& wsPaste);
   bool Undo();
   bool Redo();

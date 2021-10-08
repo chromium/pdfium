@@ -106,7 +106,7 @@ void FormValueNode_SetChildContent(CXFA_Node* pValueNode,
       if (!pContentRawDataNode) {
         XFA_Element element = XFA_Element::Sharptext;
         if (pChildNode->GetElementType() == XFA_Element::ExData) {
-          Optional<WideString> contentType =
+          absl::optional<WideString> contentType =
               pChildNode->JSObject()->TryAttribute(XFA_Attribute::ContentType,
                                                    false);
           if (contentType.has_value()) {
@@ -352,7 +352,7 @@ CXFA_Node* FindDataRefDataNode(CXFA_Document* pDocument,
     dwFlags |= XFA_ResolveFlag::kParent;
     dwFlags |= XFA_ResolveFlag::kSiblings;
   }
-  Optional<CFXJSE_Engine::ResolveResult> maybeResult =
+  absl::optional<CFXJSE_Engine::ResolveResult> maybeResult =
       pDocument->GetScriptContext()->ResolveObjectsWithBindNode(
           pDataScope, wsRef.AsStringView(), dwFlags, pTemplateNode);
   if (!maybeResult.has_value())
@@ -752,7 +752,7 @@ CXFA_Node* MaybeCreateDataNode(CXFA_Document* pDocument,
       if (pDDGroupNode->GetElementType() != XFA_Element::DataGroup)
         continue;
 
-      Optional<WideString> ns = pDDGroupNode->JSObject()->TryNamespace();
+      absl::optional<WideString> ns = pDDGroupNode->JSObject()->TryNamespace();
       if (!ns.has_value() ||
           !ns.value().EqualsASCII("http://ns.adobe.com/data-description/")) {
         continue;
@@ -1201,7 +1201,7 @@ void UpdateBindingRelations(CXFA_Document* pDocument,
                   : WideString();
           const Mask<XFA_ResolveFlag> kFlags = {XFA_ResolveFlag::kChildren,
                                                 XFA_ResolveFlag::kCreateNode};
-          Optional<CFXJSE_Engine::ResolveResult> maybeResult =
+          absl::optional<CFXJSE_Engine::ResolveResult> maybeResult =
               pDocument->GetScriptContext()->ResolveObjectsWithBindNode(
                   pDataScope, wsRef.AsStringView(), kFlags, pTemplateNode);
           CXFA_Object* pObject =
@@ -1259,7 +1259,8 @@ void UpdateDataRelation(CXFA_Node* pDataNode, CXFA_Node* pDataDescriptionNode) {
         if (pDDGroupNode->GetElementType() != XFA_Element::DataGroup)
           continue;
 
-        Optional<WideString> ns = pDDGroupNode->JSObject()->TryNamespace();
+        absl::optional<WideString> ns =
+            pDDGroupNode->JSObject()->TryNamespace();
         if (!ns.has_value() ||
             !ns.value().EqualsASCII("http://ns.adobe.com/data-description/")) {
           continue;
@@ -1340,12 +1341,12 @@ CXFA_Object* CXFA_Document::GetXFAObject(XFA_HashCode dwNodeNameHash) {
         if (pDatasetsChild->GetNameHash() != XFA_HASHCODE_Data)
           continue;
 
-        Optional<WideString> namespaceURI =
+        absl::optional<WideString> namespaceURI =
             pDatasetsChild->JSObject()->TryNamespace();
         if (!namespaceURI.has_value())
           continue;
 
-        Optional<WideString> datasetsURI =
+        absl::optional<WideString> datasetsURI =
             pDatasetsNode->JSObject()->TryNamespace();
         if (!datasetsURI.has_value())
           continue;
@@ -1578,7 +1579,7 @@ void CXFA_Document::DoProtoMerge() {
 
     CXFA_Node* pProtoNode = nullptr;
     if (!wsSOM.IsEmpty()) {
-      Optional<CFXJSE_Engine::ResolveResult> maybeResult =
+      absl::optional<CFXJSE_Engine::ResolveResult> maybeResult =
           m_pScriptContext->ResolveObjects(
               pUseHrefNode, wsSOM,
               Mask<XFA_ResolveFlag>{
@@ -1681,7 +1682,7 @@ void CXFA_Document::DoDataMerge() {
       continue;
 
     if (!pDDRoot && pChildNode->GetNameHash() == XFA_HASHCODE_DataDescription) {
-      Optional<WideString> namespaceURI =
+      absl::optional<WideString> namespaceURI =
           pChildNode->JSObject()->TryNamespace();
       if (!namespaceURI.has_value())
         continue;
@@ -1690,7 +1691,7 @@ void CXFA_Document::DoDataMerge() {
         pDDRoot = pChildNode;
       }
     } else if (!pDataRoot && pChildNode->GetNameHash() == XFA_HASHCODE_Data) {
-      Optional<WideString> namespaceURI =
+      absl::optional<WideString> namespaceURI =
           pChildNode->JSObject()->TryNamespace();
       if (!namespaceURI.has_value())
         continue;

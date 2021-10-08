@@ -37,8 +37,8 @@ class CXFA_FFComboBox final : public CXFA_FFDropDown {
   bool CanSelectAll() override;
   bool Undo() override;
   bool Redo() override;
-  Optional<WideString> Copy() override;
-  Optional<WideString> Cut() override;
+  absl::optional<WideString> Copy() override;
+  absl::optional<WideString> Cut() override;
   bool Paste(const WideString& wsPaste) override;
   void SelectAll() override;
   void Delete() override;

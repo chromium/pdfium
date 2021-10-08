@@ -176,7 +176,7 @@ int PageRenderFlagsFromOptions(const Options& options) {
   return flags;
 }
 
-Optional<std::string> ExpandDirectoryPath(const std::string& path) {
+absl::optional<std::string> ExpandDirectoryPath(const std::string& path) {
 #if defined(WORDEXP_AVAILABLE)
   wordexp_t expansion;
   if (wordexp(path.c_str(), &expansion, 0) != 0 || expansion.we_wordc < 1) {
@@ -185,7 +185,7 @@ Optional<std::string> ExpandDirectoryPath(const std::string& path) {
   }
   // Need to contruct the return value before hand, since wordfree will
   // deallocate |expansion|.
-  Optional<std::string> ret_val = {expansion.we_wordv[0]};
+  absl::optional<std::string> ret_val = {expansion.we_wordv[0]};
   wordfree(&expansion);
   return ret_val;
 #else
@@ -193,7 +193,7 @@ Optional<std::string> ExpandDirectoryPath(const std::string& path) {
 #endif  // WORDEXP_AVAILABLE
 }
 
-Optional<const char*> GetCustomFontPath(const Options& options) {
+absl::optional<const char*> GetCustomFontPath(const Options& options) {
 #if defined(__APPLE__) || (defined(__linux__) && !defined(__ANDROID__))
   // Set custom font path to an empty path. This avoids the fallback to default
   // font paths.
@@ -533,7 +533,7 @@ bool ParseCommandLine(const std::vector<std::string>& args,
         return false;
       }
       std::string path = value;
-      Optional<std::string> expanded_path = ExpandDirectoryPath(path);
+      absl::optional<std::string> expanded_path = ExpandDirectoryPath(path);
       if (!expanded_path.has_value()) {
         fprintf(stderr, "Failed to expand --font-dir, %s\n", path.c_str());
         return false;
@@ -588,7 +588,7 @@ bool ParseCommandLine(const std::vector<std::string>& args,
         return false;
       }
       std::string path = value;
-      Optional<std::string> expanded_path = ExpandDirectoryPath(path);
+      absl::optional<std::string> expanded_path = ExpandDirectoryPath(path);
       if (!expanded_path.has_value()) {
         fprintf(stderr, "Failed to expand --bin-dir, %s\n", path.c_str());
         return false;
@@ -1224,7 +1224,7 @@ int main(int argc, const char* argv[]) {
 #endif  // PDF_ENABLE_V8
 
   const char* path_array[2] = {nullptr, nullptr};
-  Optional<const char*> custom_font_path = GetCustomFontPath(options);
+  absl::optional<const char*> custom_font_path = GetCustomFontPath(options);
   if (custom_font_path.has_value()) {
     path_array[0] = custom_font_path.value();
     config.m_pUserFontPaths = path_array;

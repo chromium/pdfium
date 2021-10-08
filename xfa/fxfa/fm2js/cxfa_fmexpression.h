@@ -595,7 +595,7 @@ class CXFA_FMAST : public cppgc::GarbageCollected<CXFA_FMAST> {
   ~CXFA_FMAST();
 
   void Trace(cppgc::Visitor* visitor) const;
-  Optional<CFX_WideTextBuf> ToJavaScript() const;
+  absl::optional<CFX_WideTextBuf> ToJavaScript() const;
 
  private:
   explicit CXFA_FMAST(

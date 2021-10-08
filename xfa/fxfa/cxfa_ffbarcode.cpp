@@ -93,7 +93,8 @@ const BarCodeInfo kBarCodeData[] = {
     {0xfb48155c, "code3Of9", BC_TYPE::kCode39},
 };
 
-Optional<BC_CHAR_ENCODING> CharEncodingFromString(const WideString& value) {
+absl::optional<BC_CHAR_ENCODING> CharEncodingFromString(
+    const WideString& value) {
   if (value.CompareNoCase(L"UTF-16"))
     return BC_CHAR_ENCODING::kUnicode;
   if (value.CompareNoCase(L"UTF-8"))
@@ -101,7 +102,7 @@ Optional<BC_CHAR_ENCODING> CharEncodingFromString(const WideString& value) {
   return absl::nullopt;
 }
 
-Optional<BC_TEXT_LOC> TextLocFromAttribute(XFA_AttributeValue value) {
+absl::optional<BC_TEXT_LOC> TextLocFromAttribute(XFA_AttributeValue value) {
   switch (value) {
     case XFA_AttributeValue::None:
       return BC_TEXT_LOC::kNone;
@@ -197,56 +198,57 @@ void CXFA_FFBarcode::UpdateWidgetProperty() {
   auto* pBarCodeWidget = static_cast<CFWL_Barcode*>(GetNormalWidget());
   pBarCodeWidget->SetType(bc_type);
 
-  Optional<WideString> encoding_string = barcode_->GetCharEncoding();
+  absl::optional<WideString> encoding_string = barcode_->GetCharEncoding();
   if (encoding_string.has_value()) {
-    Optional<BC_CHAR_ENCODING> encoding =
+    absl::optional<BC_CHAR_ENCODING> encoding =
         CharEncodingFromString(encoding_string.value());
     if (encoding.has_value())
       pBarCodeWidget->SetCharEncoding(encoding.value());
   }
 
-  Optional<bool> calcChecksum = barcode_->GetChecksum();
+  absl::optional<bool> calcChecksum = barcode_->GetChecksum();
   if (calcChecksum.has_value())
     pBarCodeWidget->SetCalChecksum(calcChecksum.value());
 
-  Optional<int32_t> dataLen = barcode_->GetDataLength();
+  absl::optional<int32_t> dataLen = barcode_->GetDataLength();
   if (dataLen.has_value())
     pBarCodeWidget->SetDataLength(dataLen.value());
 
-  Optional<char> startChar = barcode_->GetStartChar();
+  absl::optional<char> startChar = barcode_->GetStartChar();
   if (startChar.has_value())
     pBarCodeWidget->SetStartChar(startChar.value());
 
-  Optional<char> endChar = barcode_->GetEndChar();
+  absl::optional<char> endChar = barcode_->GetEndChar();
   if (endChar.has_value())
     pBarCodeWidget->SetEndChar(endChar.value());
 
-  Optional<int32_t> ecLevel = barcode_->GetECLevel();
+  absl::optional<int32_t> ecLevel = barcode_->GetECLevel();
   if (ecLevel.has_value())
     pBarCodeWidget->SetErrorCorrectionLevel(ecLevel.value());
 
-  Optional<int32_t> width = barcode_->GetModuleWidth();
+  absl::optional<int32_t> width = barcode_->GetModuleWidth();
   if (width.has_value())
     pBarCodeWidget->SetModuleWidth(width.value());
 
-  Optional<int32_t> height = barcode_->GetModuleHeight();
+  absl::optional<int32_t> height = barcode_->GetModuleHeight();
   if (height.has_value())
     pBarCodeWidget->SetModuleHeight(height.value());
 
-  Optional<bool> printCheck = barcode_->GetPrintChecksum();
+  absl::optional<bool> printCheck = barcode_->GetPrintChecksum();
   if (printCheck.has_value())
     pBarCodeWidget->SetPrintChecksum(printCheck.value());
 
-  Optional<XFA_AttributeValue> text_attr = barcode_->GetTextLocation();
+  absl::optional<XFA_AttributeValue> text_attr = barcode_->GetTextLocation();
   if (text_attr.has_value()) {
-    Optional<BC_TEXT_LOC> textLoc = TextLocFromAttribute(text_attr.value());
+    absl::optional<BC_TEXT_LOC> textLoc =
+        TextLocFromAttribute(text_attr.value());
     if (textLoc.has_value())
       pBarCodeWidget->SetTextLocation(textLoc.value());
   }
 
   // Truncated is currently not a supported flag.
 
-  Optional<int8_t> ratio = barcode_->GetWideNarrowRatio();
+  absl::optional<int8_t> ratio = barcode_->GetWideNarrowRatio();
   if (ratio.has_value())
     pBarCodeWidget->SetWideNarrowRatio(ratio.value());
 

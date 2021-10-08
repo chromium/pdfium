@@ -18,18 +18,18 @@ class CXFA_Barcode final : public CXFA_Node {
   XFA_FFWidgetType GetDefaultFFWidgetType() const override;
 
   WideString GetBarcodeType();
-  Optional<WideString> GetCharEncoding();
-  Optional<bool> GetChecksum();
-  Optional<int32_t> GetDataLength();
-  Optional<char> GetStartChar();
-  Optional<char> GetEndChar();
-  Optional<int32_t> GetECLevel();
-  Optional<int32_t> GetModuleWidth();
-  Optional<int32_t> GetModuleHeight();
-  Optional<bool> GetPrintChecksum();
-  Optional<XFA_AttributeValue> GetTextLocation();
-  Optional<bool> GetTruncate();
-  Optional<int8_t> GetWideNarrowRatio();
+  absl::optional<WideString> GetCharEncoding();
+  absl::optional<bool> GetChecksum();
+  absl::optional<int32_t> GetDataLength();
+  absl::optional<char> GetStartChar();
+  absl::optional<char> GetEndChar();
+  absl::optional<int32_t> GetECLevel();
+  absl::optional<int32_t> GetModuleWidth();
+  absl::optional<int32_t> GetModuleHeight();
+  absl::optional<bool> GetPrintChecksum();
+  absl::optional<XFA_AttributeValue> GetTextLocation();
+  absl::optional<bool> GetTruncate();
+  absl::optional<int8_t> GetWideNarrowRatio();
 
  private:
   CXFA_Barcode(CXFA_Document* doc, XFA_PacketType packet);

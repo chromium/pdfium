@@ -165,7 +165,7 @@ XFA_PACKETINFO XFA_GetPacketByIndex(XFA_PacketType ePacket) {
   return kPacketTable[static_cast<uint8_t>(ePacket)].info;
 }
 
-Optional<XFA_PACKETINFO> XFA_GetPacketByName(WideStringView wsName) {
+absl::optional<XFA_PACKETINFO> XFA_GetPacketByName(WideStringView wsName) {
   uint32_t hash = FX_HashCode_GetW(wsName);
   auto* elem = std::lower_bound(
       std::begin(kPacketTable), std::end(kPacketTable), hash,
@@ -196,7 +196,7 @@ ByteStringView XFA_AttributeToName(XFA_Attribute attr) {
   return kAttributeNames[static_cast<size_t>(attr)];
 }
 
-Optional<XFA_ATTRIBUTEINFO> XFA_GetAttributeByName(WideStringView name) {
+absl::optional<XFA_ATTRIBUTEINFO> XFA_GetAttributeByName(WideStringView name) {
   uint32_t hash = FX_HashCode_GetW(name);
   auto* elem = std::lower_bound(
       std::begin(kAttributeRecords), std::end(kAttributeRecords), hash,
@@ -218,7 +218,8 @@ ByteStringView XFA_AttributeValueToName(XFA_AttributeValue item) {
   return kAttributeValueNames[static_cast<int32_t>(item)];
 }
 
-Optional<XFA_AttributeValue> XFA_GetAttributeValueByName(WideStringView name) {
+absl::optional<XFA_AttributeValue> XFA_GetAttributeValueByName(
+    WideStringView name) {
   auto* it =
       std::lower_bound(std::begin(kAttributeValueRecords),
                        std::end(kAttributeValueRecords), FX_HashCode_GetW(name),
@@ -235,10 +236,11 @@ Optional<XFA_AttributeValue> XFA_GetAttributeValueByName(WideStringView name) {
   return it->eName;
 }
 
-Optional<XFA_SCRIPTATTRIBUTEINFO> XFA_GetScriptAttributeByName(
+absl::optional<XFA_SCRIPTATTRIBUTEINFO> XFA_GetScriptAttributeByName(
     XFA_Element element,
     WideStringView attribute_name) {
-  Optional<XFA_ATTRIBUTEINFO> attr = XFA_GetAttributeByName(attribute_name);
+  absl::optional<XFA_ATTRIBUTEINFO> attr =
+      XFA_GetAttributeByName(attribute_name);
   if (!attr.has_value())
     return absl::nullopt;
 

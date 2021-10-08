@@ -100,7 +100,7 @@ void CXFA_FFTextEdit::UpdateWidgetProperty() {
   if (eType == XFA_Element::ExData)
     iMaxChars = 0;
 
-  Optional<int32_t> numCells = m_pNode->GetNumberOfCells();
+  absl::optional<int32_t> numCells = m_pNode->GetNumberOfCells();
   if (!numCells.has_value()) {
     pWidget->SetLimit(iMaxChars);
   } else if (numCells == 0) {
@@ -401,11 +401,11 @@ bool CXFA_FFTextEdit::Redo() {
   return ToEdit(GetNormalWidget())->Redo();
 }
 
-Optional<WideString> CXFA_FFTextEdit::Copy() {
+absl::optional<WideString> CXFA_FFTextEdit::Copy() {
   return ToEdit(GetNormalWidget())->Copy();
 }
 
-Optional<WideString> CXFA_FFTextEdit::Cut() {
+absl::optional<WideString> CXFA_FFTextEdit::Cut() {
   return ToEdit(GetNormalWidget())->Cut();
 }
 

@@ -147,7 +147,7 @@ class CFGAS_FontMgr {
   std::deque<FX_FONTDESCRIPTOR> m_FontFaces;
 #else
   std::vector<std::unique_ptr<CFGAS_FontDescriptor>> m_InstalledFonts;
-  std::map<uint32_t, Optional<std::vector<CFGAS_FontDescriptorInfo>>>
+  std::map<uint32_t, absl::optional<std::vector<CFGAS_FontDescriptorInfo>>>
       m_Hash2CandidateList;
 #endif  // defined(OS_WIN)
 };

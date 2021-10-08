@@ -20,7 +20,7 @@ class ScopedSetTZ {
   ~ScopedSetTZ();
 
  private:
-  Optional<std::string> old_tz_;
+  absl::optional<std::string> old_tz_;
 };
 
 #endif  // TESTING_SCOPED_SET_TZ_H_

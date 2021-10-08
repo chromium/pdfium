@@ -72,8 +72,8 @@ class CFWL_ComboBox final : public CFWL_Widget {
     return EditCanCopy();
   }
   bool EditCanSelectAll() const { return m_pEdit->GetTextLength() > 0; }
-  Optional<WideString> EditCopy() const { return m_pEdit->Copy(); }
-  Optional<WideString> EditCut() { return m_pEdit->Cut(); }
+  absl::optional<WideString> EditCopy() const { return m_pEdit->Copy(); }
+  absl::optional<WideString> EditCut() { return m_pEdit->Cut(); }
   bool EditPaste(const WideString& wsPaste) { return m_pEdit->Paste(wsPaste); }
   void EditSelectAll() { m_pEdit->SelectAll(); }
   void EditDelete() { m_pEdit->ClearText(); }

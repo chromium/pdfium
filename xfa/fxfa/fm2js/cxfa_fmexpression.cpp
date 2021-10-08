@@ -771,7 +771,7 @@ void CXFA_FMAST::Trace(cppgc::Visitor* visitor) const {
   ContainerTrace(visitor, expressions_);
 }
 
-Optional<CFX_WideTextBuf> CXFA_FMAST::ToJavaScript() const {
+absl::optional<CFX_WideTextBuf> CXFA_FMAST::ToJavaScript() const {
   CFX_WideTextBuf js;
   if (expressions_.empty()) {
     js << "// comments only";

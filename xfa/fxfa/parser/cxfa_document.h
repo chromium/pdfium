@@ -165,7 +165,7 @@ class CXFA_Document final : public cppgc::GarbageCollected<CXFA_Document> {
   std::map<uint32_t, cppgc::Member<CXFA_Node>> m_rgGlobalBinding;
   std::vector<cppgc::Member<CXFA_Node>> m_pPendingPageSet;
   XFA_VERSION m_eCurVersionMode = XFA_VERSION_DEFAULT;
-  Optional<bool> m_Interactive;
+  absl::optional<bool> m_Interactive;
   bool m_bStrictScoping = false;
   bool m_bScripting = false;
 };

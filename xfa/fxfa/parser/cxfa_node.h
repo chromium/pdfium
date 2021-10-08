@@ -222,7 +222,7 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
   bool HasBindItem() const;
   CXFA_Node* GetContainerNode();
   GCedLocaleIface* GetLocale();
-  Optional<WideString> GetLocaleName();
+  absl::optional<WideString> GetLocaleName();
   XFA_AttributeValue GetIntact();
   WideString GetNameExpression();
 
@@ -252,11 +252,12 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
 
   CXFA_Node* GetInstanceMgrOfSubform();
 
-  Optional<bool> GetDefaultBoolean(XFA_Attribute attr) const;
-  Optional<int32_t> GetDefaultInteger(XFA_Attribute attr) const;
-  Optional<CXFA_Measurement> GetDefaultMeasurement(XFA_Attribute attr) const;
-  Optional<WideString> GetDefaultCData(XFA_Attribute attr) const;
-  Optional<XFA_AttributeValue> GetDefaultEnum(XFA_Attribute attr) const;
+  absl::optional<bool> GetDefaultBoolean(XFA_Attribute attr) const;
+  absl::optional<int32_t> GetDefaultInteger(XFA_Attribute attr) const;
+  absl::optional<CXFA_Measurement> GetDefaultMeasurement(
+      XFA_Attribute attr) const;
+  absl::optional<WideString> GetDefaultCData(XFA_Attribute attr) const;
+  absl::optional<XFA_AttributeValue> GetDefaultEnum(XFA_Attribute attr) const;
 
   bool IsOpenAccess() const;
 
@@ -281,7 +282,7 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
   WideString GetRawValue() const;
 
   int32_t GetRotate() const;
-  Optional<float> TryWidth();
+  absl::optional<float> TryWidth();
 
   CXFA_Node* GetExclGroupIfExists();
 
@@ -320,9 +321,9 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
   void StartWidgetLayout(CXFA_FFDoc* doc,
                          float* pCalcWidth,
                          float* pCalcHeight);
-  Optional<float> FindSplitPos(CXFA_FFDocView* pDocView,
-                               size_t szBlockIndex,
-                               float fCalcHeight);
+  absl::optional<float> FindSplitPos(CXFA_FFDocView* pDocView,
+                                     size_t szBlockIndex,
+                                     float fCalcHeight);
 
   bool LoadCaption(CXFA_FFDoc* doc);
   CXFA_TextLayout* GetCaptionTextLayout();
@@ -364,7 +365,7 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
 
   bool IsChoiceListAllowTextEntry();
   int32_t CountChoiceListItems(bool bSaveValue);
-  Optional<WideString> GetChoiceListItem(int32_t nIndex, bool bSaveValue);
+  absl::optional<WideString> GetChoiceListItem(int32_t nIndex, bool bSaveValue);
   bool IsChoiceListMultiSelect();
   bool IsChoiceListCommitOnSelect();
   std::vector<WideString> GetChoiceListItems(bool bSaveValue);
@@ -394,7 +395,7 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
 
   bool IsHorizontalScrollPolicyOff();
   bool IsVerticalScrollPolicyOff();
-  Optional<int32_t> GetNumberOfCells();
+  absl::optional<int32_t> GetNumberOfCells();
 
   bool SetValue(XFA_ValuePicture eValueType, const WideString& wsValue);
   WideString GetValue(XFA_ValuePicture eValueType);
@@ -442,10 +443,11 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
   bool HasFlag(XFA_NodeFlag dwFlag) const;
   const PropertyData* GetPropertyData(XFA_Element property) const;
   const AttributeData* GetAttributeData(XFA_Attribute attr) const;
-  Optional<XFA_Element> GetFirstPropertyWithFlag(XFA_PropertyFlag flag) const;
+  absl::optional<XFA_Element> GetFirstPropertyWithFlag(
+      XFA_PropertyFlag flag) const;
   void OnRemoved(bool bNotify) const;
-  Optional<void*> GetDefaultValue(XFA_Attribute attr,
-                                  XFA_AttributeType eType) const;
+  absl::optional<void*> GetDefaultValue(XFA_Attribute attr,
+                                        XFA_AttributeType eType) const;
   CXFA_Node* GetChildInternal(size_t index,
                               XFA_Element eType,
                               bool bOnlyChild) const;
@@ -494,16 +496,16 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
   void SyncValue(const WideString& wsValue, bool bNotify);
   CXFA_Value* GetDefaultValueIfExists();
   CXFA_Bind* GetBindIfExists() const;
-  Optional<XFA_AttributeValue> GetIntactFromKeep(
+  absl::optional<XFA_AttributeValue> GetIntactFromKeep(
       const CXFA_Keep* pKeep,
       XFA_AttributeValue eLayoutType) const;
   CXFA_Node* GetTransparentParent();
 
-  Optional<float> TryHeight();
-  Optional<float> TryMinWidth();
-  Optional<float> TryMinHeight();
-  Optional<float> TryMaxWidth();
-  Optional<float> TryMaxHeight();
+  absl::optional<float> TryHeight();
+  absl::optional<float> TryMinWidth();
+  absl::optional<float> TryMinHeight();
+  absl::optional<float> TryMaxWidth();
+  absl::optional<float> TryMaxHeight();
   XFA_EventError ProcessEventInternal(CXFA_FFDocView* pDocView,
                                       XFA_AttributeValue iActivity,
                                       CXFA_Event* event,

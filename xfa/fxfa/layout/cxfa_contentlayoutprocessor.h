@@ -72,7 +72,7 @@ class CXFA_ContentLayoutProcessor
     Context();
     ~Context();
 
-    Optional<float> m_fCurColumnWidth;
+    absl::optional<float> m_fCurColumnWidth;
     UnownedPtr<std::vector<float>> m_prgSpecifiedColumnWidths;
     UnownedPtr<CXFA_ContentLayoutProcessor> m_pOverflowProcessor;  // OK, stack
     UnownedPtr<CXFA_Node> m_pOverflowNode;                         // Ok, stack
@@ -155,12 +155,13 @@ class CXFA_ContentLayoutProcessor
       CXFA_Node* pParentContainer,
       CXFA_Node* pCurActionNode);
 
-  Optional<Stage> ProcessKeepNodesForCheckNext(CXFA_Node** pCurActionNode,
-                                               CXFA_Node** pNextContainer,
-                                               bool* pLastKeepNode);
+  absl::optional<Stage> ProcessKeepNodesForCheckNext(CXFA_Node** pCurActionNode,
+                                                     CXFA_Node** pNextContainer,
+                                                     bool* pLastKeepNode);
 
-  Optional<Stage> ProcessKeepNodesForBreakBefore(CXFA_Node** pCurActionNode,
-                                                 CXFA_Node* pContainerNode);
+  absl::optional<Stage> ProcessKeepNodesForBreakBefore(
+      CXFA_Node** pCurActionNode,
+      CXFA_Node* pContainerNode);
 
   CXFA_Node* GetSubformSetParent(CXFA_Node* pSubformSet);
 
@@ -192,19 +193,20 @@ class CXFA_ContentLayoutProcessor
       Context* pLayoutContext,
       bool bNewRow);
 
-  Optional<Stage> HandleKeep(CXFA_Node* pBreakAfterNode,
-                             CXFA_Node** pCurActionNode);
-  Optional<Stage> HandleBookendLeader(CXFA_Node* pParentContainer,
-                                      CXFA_Node** pCurActionNode);
-  Optional<Stage> HandleBreakBefore(CXFA_Node* pChildContainer,
-                                    CXFA_Node** pCurActionNode);
-  Optional<Stage> HandleBreakAfter(CXFA_Node* pChildContainer,
+  absl::optional<Stage> HandleKeep(CXFA_Node* pBreakAfterNode,
                                    CXFA_Node** pCurActionNode);
-  Optional<Stage> HandleCheckNextChildContainer(CXFA_Node* pParentContainer,
-                                                CXFA_Node* pChildContainer,
-                                                CXFA_Node** pCurActionNode);
-  Optional<Stage> HandleBookendTrailer(CXFA_Node* pParentContainer,
-                                       CXFA_Node** pCurActionNode);
+  absl::optional<Stage> HandleBookendLeader(CXFA_Node* pParentContainer,
+                                            CXFA_Node** pCurActionNode);
+  absl::optional<Stage> HandleBreakBefore(CXFA_Node* pChildContainer,
+                                          CXFA_Node** pCurActionNode);
+  absl::optional<Stage> HandleBreakAfter(CXFA_Node* pChildContainer,
+                                         CXFA_Node** pCurActionNode);
+  absl::optional<Stage> HandleCheckNextChildContainer(
+      CXFA_Node* pParentContainer,
+      CXFA_Node* pChildContainer,
+      CXFA_Node** pCurActionNode);
+  absl::optional<Stage> HandleBookendTrailer(CXFA_Node* pParentContainer,
+                                             CXFA_Node** pCurActionNode);
   void ProcessKeepNodesEnd();
   void AdjustContainerSpecifiedSize(Context* pContext,
                                     CFX_SizeF* pSize,

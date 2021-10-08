@@ -508,11 +508,11 @@ bool CXFA_FFWidget::Redo() {
   return false;
 }
 
-Optional<WideString> CXFA_FFWidget::Copy() {
+absl::optional<WideString> CXFA_FFWidget::Copy() {
   return absl::nullopt;
 }
 
-Optional<WideString> CXFA_FFWidget::Cut() {
+absl::optional<WideString> CXFA_FFWidget::Cut() {
   return absl::nullopt;
 }
 

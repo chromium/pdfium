@@ -112,7 +112,7 @@ bool AttributeSaveInDataModel(CXFA_Node* pNode, XFA_Attribute eAttribute) {
 }
 
 bool ContentNodeNeedtoExport(CXFA_Node* pContentNode) {
-  Optional<WideString> wsContent =
+  absl::optional<WideString> wsContent =
       pContentNode->JSObject()->TryContent(false, false);
   if (!wsContent.has_value())
     return false;
@@ -140,7 +140,8 @@ void SaveAttribute(CXFA_Node* pNode,
   if (!bProto && !pNode->JSObject()->HasAttribute(eName))
     return;
 
-  Optional<WideString> value = pNode->JSObject()->TryAttribute(eName, false);
+  absl::optional<WideString> value =
+      pNode->JSObject()->TryAttribute(eName, false);
   if (!value.has_value())
     return;
 
@@ -186,7 +187,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
       if (!pRawValueNode)
         break;
 
-      Optional<WideString> contentType =
+      absl::optional<WideString> contentType =
           pNode->JSObject()->TryAttribute(XFA_Attribute::ContentType, false);
       if (pRawValueNode->GetElementType() == XFA_Element::SharpxHTML &&
           contentType.has_value() &&
@@ -206,8 +207,9 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
       } else if (pRawValueNode->GetElementType() == XFA_Element::Sharpxml &&
                  contentType.has_value() &&
                  contentType.value().EqualsASCII("text/xml")) {
-        Optional<WideString> rawValue = pRawValueNode->JSObject()->TryAttribute(
-            XFA_Attribute::Value, false);
+        absl::optional<WideString> rawValue =
+            pRawValueNode->JSObject()->TryAttribute(XFA_Attribute::Value,
+                                                    false);
         if (!rawValue.has_value() || rawValue->IsEmpty())
           break;
 
@@ -348,7 +350,8 @@ WideString RecognizeXFAVersionNumber(CXFA_Node* pTemplateRoot) {
   if (!pTemplateRoot)
     return WideString();
 
-  Optional<WideString> templateNS = pTemplateRoot->JSObject()->TryNamespace();
+  absl::optional<WideString> templateNS =
+      pTemplateRoot->JSObject()->TryNamespace();
   if (!templateNS.has_value())
     return WideString();
 

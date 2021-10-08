@@ -152,7 +152,7 @@ uint32_t CFGAS_GEFont::GetFontStyles() const {
   return dwStyles;
 }
 
-Optional<uint16_t> CFGAS_GEFont::GetCharWidth(wchar_t wUnicode) {
+absl::optional<uint16_t> CFGAS_GEFont::GetCharWidth(wchar_t wUnicode) {
   auto it = m_CharWidthMap.find(wUnicode);
   if (it != m_CharWidthMap.end())
     return it->second;
@@ -177,7 +177,7 @@ Optional<uint16_t> CFGAS_GEFont::GetCharWidth(wchar_t wUnicode) {
   return width;
 }
 
-Optional<FX_RECT> CFGAS_GEFont::GetCharBBox(wchar_t wUnicode) {
+absl::optional<FX_RECT> CFGAS_GEFont::GetCharBBox(wchar_t wUnicode) {
   auto it = m_BBoxMap.find(wUnicode);
   if (it != m_BBoxMap.end())
     return it->second;
@@ -191,7 +191,7 @@ Optional<FX_RECT> CFGAS_GEFont::GetCharBBox(wchar_t wUnicode) {
   if (pFont.Get() != this)
     return pFont->GetCharBBox(wUnicode);
 
-  Optional<FX_RECT> rtBBox = m_pFont->GetGlyphBBox(iGlyph);
+  absl::optional<FX_RECT> rtBBox = m_pFont->GetGlyphBBox(iGlyph);
   if (rtBBox.has_value())
     m_BBoxMap[wUnicode] = rtBBox.value();
 

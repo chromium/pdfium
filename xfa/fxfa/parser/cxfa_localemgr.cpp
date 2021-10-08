@@ -1232,7 +1232,7 @@ void CXFA_LocaleMgr::SetDefLocale(GCedLocaleIface* pLocale) {
   m_pDefLocale = pLocale;
 }
 
-Optional<WideString> CXFA_LocaleMgr::GetConfigLocaleName(
+absl::optional<WideString> CXFA_LocaleMgr::GetConfigLocaleName(
     CXFA_Node* pConfig) const {
   if (m_bConfigLocaleCached)
     return m_wsConfigLocale;
@@ -1261,7 +1261,7 @@ Optional<WideString> CXFA_LocaleMgr::GetConfigLocaleName(
   if (!pLocale)
     return m_wsConfigLocale;
 
-  Optional<WideString> wsMaybeLocale =
+  absl::optional<WideString> wsMaybeLocale =
       pLocale->JSObject()->TryCData(XFA_Attribute::Value, false);
   if (!wsMaybeLocale.has_value() || wsMaybeLocale.value().IsEmpty())
     return m_wsConfigLocale;

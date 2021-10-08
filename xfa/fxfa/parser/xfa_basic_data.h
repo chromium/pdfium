@@ -51,18 +51,19 @@ struct XFA_SCRIPTATTRIBUTEINFO {
 };
 
 XFA_PACKETINFO XFA_GetPacketByIndex(XFA_PacketType ePacket);
-Optional<XFA_PACKETINFO> XFA_GetPacketByName(WideStringView wsName);
+absl::optional<XFA_PACKETINFO> XFA_GetPacketByName(WideStringView wsName);
 
 ByteStringView XFA_ElementToName(XFA_Element elem);
 XFA_Element XFA_GetElementByName(WideStringView name);
 
 ByteStringView XFA_AttributeToName(XFA_Attribute attr);
-Optional<XFA_ATTRIBUTEINFO> XFA_GetAttributeByName(WideStringView name);
+absl::optional<XFA_ATTRIBUTEINFO> XFA_GetAttributeByName(WideStringView name);
 
 ByteStringView XFA_AttributeValueToName(XFA_AttributeValue item);
-Optional<XFA_AttributeValue> XFA_GetAttributeValueByName(WideStringView name);
+absl::optional<XFA_AttributeValue> XFA_GetAttributeValueByName(
+    WideStringView name);
 
-Optional<XFA_SCRIPTATTRIBUTEINFO> XFA_GetScriptAttributeByName(
+absl::optional<XFA_SCRIPTATTRIBUTEINFO> XFA_GetScriptAttributeByName(
     XFA_Element eElement,
     WideStringView wsAttributeName);
 

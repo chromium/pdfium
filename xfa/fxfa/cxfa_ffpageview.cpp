@@ -426,7 +426,7 @@ CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::GetTraverseWidget(
     CXFA_Traverse* pTraverse =
         pTraversal->GetChild<CXFA_Traverse>(0, XFA_Element::Traverse, false);
     if (pTraverse) {
-      Optional<WideString> traverseWidgetName =
+      absl::optional<WideString> traverseWidgetName =
           pTraverse->JSObject()->TryAttribute(XFA_Attribute::Ref, true);
       if (traverseWidgetName.has_value())
         return FindWidgetByName(traverseWidgetName.value(), pWidget);

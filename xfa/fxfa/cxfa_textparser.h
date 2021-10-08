@@ -110,8 +110,9 @@ class CXFA_TextParser : public cppgc::GarbageCollected<CXFA_TextParser> {
                       bool bFirst,
                       float fVerScale) const;
 
-  Optional<WideString> GetEmbeddedObj(const CXFA_TextProvider* pTextProvider,
-                                      const CFX_XMLNode* pXMLNode);
+  absl::optional<WideString> GetEmbeddedObj(
+      const CXFA_TextProvider* pTextProvider,
+      const CFX_XMLNode* pXMLNode);
   Context* GetParseContextFromMap(const CFX_XMLNode* pXMLNode);
 
  protected:

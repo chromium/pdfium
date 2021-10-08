@@ -19,10 +19,10 @@ class CXFA_Margin final : public CXFA_Node {
   float GetRightInset() const;
   float GetBottomInset() const;
 
-  Optional<float> TryLeftInset() const;
-  Optional<float> TryTopInset() const;
-  Optional<float> TryRightInset() const;
-  Optional<float> TryBottomInset() const;
+  absl::optional<float> TryLeftInset() const;
+  absl::optional<float> TryTopInset() const;
+  absl::optional<float> TryRightInset() const;
+  absl::optional<float> TryBottomInset() const;
 
  private:
   CXFA_Margin(CXFA_Document* doc, XFA_PacketType packet);

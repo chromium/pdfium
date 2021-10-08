@@ -254,11 +254,11 @@ bool CXFA_FFComboBox::Redo() {
          ToComboBox(GetNormalWidget())->EditRedo();
 }
 
-Optional<WideString> CXFA_FFComboBox::Copy() {
+absl::optional<WideString> CXFA_FFComboBox::Copy() {
   return ToComboBox(GetNormalWidget())->EditCopy();
 }
 
-Optional<WideString> CXFA_FFComboBox::Cut() {
+absl::optional<WideString> CXFA_FFComboBox::Cut() {
   if (!m_pNode->IsChoiceListAllowTextEntry())
     return absl::nullopt;
 

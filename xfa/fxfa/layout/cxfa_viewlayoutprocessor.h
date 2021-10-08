@@ -62,10 +62,10 @@ class CXFA_ViewLayoutProcessor
   CXFA_ViewLayoutItem* GetRootLayoutItem() const {
     return m_pPageSetRootLayoutItem.Get();
   }
-  Optional<BreakData> ProcessBreakBefore(const CXFA_Node* pBreakNode);
-  Optional<BreakData> ProcessBreakAfter(const CXFA_Node* pBreakNode);
-  Optional<OverflowData> ProcessOverflow(CXFA_Node* pFormNode,
-                                         bool bCreatePage);
+  absl::optional<BreakData> ProcessBreakBefore(const CXFA_Node* pBreakNode);
+  absl::optional<BreakData> ProcessBreakAfter(const CXFA_Node* pBreakNode);
+  absl::optional<OverflowData> ProcessOverflow(CXFA_Node* pFormNode,
+                                               bool bCreatePage);
   CXFA_Node* QueryOverflow(CXFA_Node* pFormNode);
   CXFA_Node* ProcessBookendLeader(const CXFA_Node* pBookendNode);
   CXFA_Node* ProcessBookendTrailer(const CXFA_Node* pBookendNode);
@@ -130,8 +130,9 @@ class CXFA_ViewLayoutProcessor
                                            bool bLeader);
   CXFA_Node* ResolveBookendLeaderOrTrailer(const CXFA_Node* pBookendNode,
                                            bool bLeader);
-  Optional<BreakData> ProcessBreakBeforeOrAfter(const CXFA_Node* pBreakNode,
-                                                bool bBefore);
+  absl::optional<BreakData> ProcessBreakBeforeOrAfter(
+      const CXFA_Node* pBreakNode,
+      bool bBefore);
   BreakData ExecuteBreakBeforeOrAfter(const CXFA_Node* pCurNode, bool bBefore);
 
   int32_t CreateMinPageRecord(CXFA_Node* pPageArea,

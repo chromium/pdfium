@@ -60,7 +60,7 @@ class CXFA_FMParser {
   CXFA_FMSimpleExpression* ParsePostExpression(CXFA_FMSimpleExpression* e);
   CXFA_FMSimpleExpression* ParseIndexExpression();
   CXFA_FMSimpleExpression* ParseLiteral();
-  Optional<std::vector<cppgc::Member<CXFA_FMSimpleExpression>>>
+  absl::optional<std::vector<cppgc::Member<CXFA_FMSimpleExpression>>>
   ParseArgumentList();
 
   UnownedPtr<cppgc::Heap> const m_heap;

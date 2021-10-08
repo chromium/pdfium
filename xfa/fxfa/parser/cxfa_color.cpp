@@ -95,12 +95,14 @@ CXFA_Color::CXFA_Color(CXFA_Document* doc, XFA_PacketType packet)
 CXFA_Color::~CXFA_Color() = default;
 
 FX_ARGB CXFA_Color::GetValue() const {
-  Optional<WideString> val = JSObject()->TryCData(XFA_Attribute::Value, false);
+  absl::optional<WideString> val =
+      JSObject()->TryCData(XFA_Attribute::Value, false);
   return val.has_value() ? StringToFXARGB(val->AsStringView()) : 0xFF000000;
 }
 
 FX_ARGB CXFA_Color::GetValueOrDefault(FX_ARGB defaultValue) const {
-  Optional<WideString> val = JSObject()->TryCData(XFA_Attribute::Value, false);
+  absl::optional<WideString> val =
+      JSObject()->TryCData(XFA_Attribute::Value, false);
   return val.has_value() ? StringToFXARGB(val->AsStringView()) : defaultValue;
 }
 

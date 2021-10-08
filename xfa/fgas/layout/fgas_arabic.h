@@ -23,7 +23,7 @@ wchar_t GetFormChar(wchar_t wch, wchar_t prev, wchar_t next);
 wchar_t GetFormChar(const CFGAS_Char* cur,
                     const CFGAS_Char* prev,
                     const CFGAS_Char* next);
-Optional<wchar_t> GetArabicFromShaddaTable(wchar_t shadda);
+absl::optional<wchar_t> GetArabicFromShaddaTable(wchar_t shadda);
 
 }  // namespace arabic
 }  // namespace pdfium

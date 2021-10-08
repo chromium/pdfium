@@ -204,14 +204,14 @@ void CFWL_Edit::SetAliasChar(wchar_t wAlias) {
   m_pEditEngine->SetAliasChar(wAlias);
 }
 
-Optional<WideString> CFWL_Edit::Copy() {
+absl::optional<WideString> CFWL_Edit::Copy() {
   if (!m_pEditEngine->HasSelection())
     return absl::nullopt;
 
   return m_pEditEngine->GetSelectedText();
 }
 
-Optional<WideString> CFWL_Edit::Cut() {
+absl::optional<WideString> CFWL_Edit::Cut() {
   if (!m_pEditEngine->HasSelection())
     return absl::nullopt;
 
