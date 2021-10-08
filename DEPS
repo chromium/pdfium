@@ -37,7 +37,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling buildtools
   # and whatever else without interference from each other.
-  'buildtools_revision': '7ea3a871db68ae2cbbeaf5433a3192a799ef3c11',
+  'buildtools_revision': 'a9bc3e283182a586998338a665c7eae17406ec54',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling catapult
   # and whatever else without interference from each other.
@@ -99,7 +99,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libc++abi
   # and whatever else without interference from each other.
-  'libcxxabi_revision': '17de75220a90f23a16f9f87fbc5c00dce475b726',
+  'libcxxabi_revision': '9eb0245224c2d7f6b20f76d4d24eab1d60a2b281',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libunwind
   # and whatever else without interference from each other.
