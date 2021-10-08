@@ -18,8 +18,10 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/dib/cfx_scanlinecompositor.h"
+#include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/notreached.h"
+#include "third_party/base/numerics/safe_conversions.h"
 
 CFX_DIBitmap::CFX_DIBitmap() = default;
 
@@ -102,6 +104,16 @@ pdfium::span<const uint8_t> CFX_DIBitmap::GetScanline(int line) const {
     return pdfium::span<const uint8_t>();
 
   return {m_pBuffer.Get() + line * m_Pitch, m_Pitch};
+}
+
+uint32_t CFX_DIBitmap::GetEstimatedImageMemoryBurden() const {
+  uint32_t result = CFX_DIBBase::GetEstimatedImageMemoryBurden();
+  if (GetBuffer()) {
+    int height = GetHeight();
+    DCHECK(pdfium::base::IsValueInRangeForNumericType<uint32_t>(height));
+    result += static_cast<uint32_t>(height) * GetPitch();
+  }
+  return result;
 }
 
 void CFX_DIBitmap::TakeOver(RetainPtr<CFX_DIBitmap>&& pSrcBitmap) {

@@ -612,6 +612,10 @@ bool CFX_DIBBase::SkipToScanline(int line, PauseIndicatorIface* pPause) const {
   return false;
 }
 
+uint32_t CFX_DIBBase::GetEstimatedImageMemoryBurden() const {
+  return GetRequiredPaletteSize() * sizeof(uint32_t);
+}
+
 RetainPtr<CFX_DIBitmap> CFX_DIBBase::Clone(const FX_RECT* pClip) const {
   FX_RECT rect(0, 0, m_Width, m_Height);
   if (pClip) {

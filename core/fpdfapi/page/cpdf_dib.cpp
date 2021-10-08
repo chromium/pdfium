@@ -1196,6 +1196,10 @@ bool CPDF_DIB::SkipToScanline(int line, PauseIndicatorIface* pPause) const {
   return m_pDecoder && m_pDecoder->SkipToScanline(line, pPause);
 }
 
+uint32_t CPDF_DIB::GetEstimatedImageMemoryBurden() const {
+  return m_pCachedBitmap ? m_pCachedBitmap->GetEstimatedImageMemoryBurden() : 0;
+}
+
 bool CPDF_DIB::TransMask() const {
   return m_bLoadMask && m_GroupFamily == CPDF_ColorSpace::Family::kDeviceCMYK &&
          m_Family == CPDF_ColorSpace::Family::kDeviceCMYK;

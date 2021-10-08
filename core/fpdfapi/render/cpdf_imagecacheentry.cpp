@@ -18,22 +18,6 @@
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
-#include "third_party/base/check.h"
-#include "third_party/base/numerics/safe_conversions.h"
-
-namespace {
-
-uint32_t GetEstimatedImageSize(const RetainPtr<CFX_DIBBase>& pDIB) {
-  if (!pDIB || !pDIB->GetBuffer())
-    return 0;
-
-  int height = pDIB->GetHeight();
-  DCHECK(pdfium::base::IsValueInRangeForNumericType<uint32_t>(height));
-  return static_cast<uint32_t>(height) * pDIB->GetPitch() +
-         pDIB->GetRequiredPaletteSize() * 4;
-}
-
-}  // namespace
 
 CPDF_ImageCacheEntry::CPDF_ImageCacheEntry(CPDF_Document* pDoc,
                                            const RetainPtr<CPDF_Image>& pImage)
@@ -116,6 +100,9 @@ void CPDF_ImageCacheEntry::ContinueGetCachedBitmap(
 }
 
 void CPDF_ImageCacheEntry::CalcSize() {
-  m_dwCacheSize = GetEstimatedImageSize(m_pCachedBitmap) +
-                  GetEstimatedImageSize(m_pCachedMask);
+  m_dwCacheSize = 0;
+  if (m_pCachedBitmap)
+    m_dwCacheSize += m_pCachedBitmap->GetEstimatedImageMemoryBurden();
+  if (m_pCachedMask)
+    m_dwCacheSize += m_pCachedMask->GetEstimatedImageMemoryBurden();
 }
