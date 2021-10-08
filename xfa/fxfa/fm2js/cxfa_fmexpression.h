@@ -11,7 +11,7 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "fxjs/gc/heap.h"
-#include "third_party/base/optional.h"
+#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/member.h"
 #include "xfa/fxfa/fm2js/cxfa_fmlexer.h"

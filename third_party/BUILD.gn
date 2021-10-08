@@ -618,7 +618,6 @@ source_set("pdfium_base") {
     "base/numerics/safe_math_arm_impl.h",
     "base/numerics/safe_math_clang_gcc_impl.h",
     "base/numerics/safe_math_shared_impl.h",
-    "base/optional.h",
     "base/span.h",
     "base/sys_byteorder.h",
     "base/template_util.h",

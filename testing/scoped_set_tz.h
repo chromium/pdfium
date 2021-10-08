@@ -8,7 +8,7 @@
 #include <string>
 
 #include "core/fxcrt/fx_memory.h"
-#include "third_party/base/optional.h"
+#include "third_party/abseil-cpp/absl/types/optional.h"
 
 class ScopedSetTZ {
  public:

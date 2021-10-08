@@ -7,7 +7,7 @@
 #ifndef XFA_FGAS_LAYOUT_FGAS_ARABIC_H_
 #define XFA_FGAS_LAYOUT_FGAS_ARABIC_H_
 
-#include "third_party/base/optional.h"
+#include "third_party/abseil-cpp/absl/types/optional.h"
 
 class CFGAS_Char;
 

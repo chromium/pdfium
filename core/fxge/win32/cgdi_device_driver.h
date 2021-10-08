@@ -11,7 +11,7 @@
 
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/renderdevicedriver_iface.h"
-#include "third_party/base/optional.h"
+#include "third_party/abseil-cpp/absl/types/optional.h"
 
 class CGdiDeviceDriver : public RenderDeviceDriverIface {
  protected:

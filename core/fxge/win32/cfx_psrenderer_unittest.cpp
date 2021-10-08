@@ -5,7 +5,7 @@
 #include "core/fxge/win32/cfx_psrenderer.h"
 #include "core/fxcrt/bytestring.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/optional.h"
+#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/span.h"
 
 TEST(PSRendererTest, GenerateType42SfntData) {

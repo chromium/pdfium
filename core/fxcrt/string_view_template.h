@@ -15,7 +15,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_system.h"
-#include "third_party/base/optional.h"
+#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/span.h"
 
 namespace fxcrt {

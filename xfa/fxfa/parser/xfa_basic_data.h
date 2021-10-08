@@ -11,7 +11,7 @@
 
 #include "core/fxcrt/widestring.h"
 #include "fxjs/xfa/cjx_object.h"
-#include "third_party/base/optional.h"
+#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
 using XFA_ATTRIBUTE_CALLBACK = void (*)(v8::Isolate* pIsolate,

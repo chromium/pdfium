@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "third_party/base/optional.h"
+#include "third_party/abseil-cpp/absl/types/optional.h"
 
 class CBC_ReedSolomonGF256Poly;
 

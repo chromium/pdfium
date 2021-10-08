@@ -6,8 +6,8 @@
 #include "public/fpdf_structtree.h"
 #include "testing/embedder_test.h"
 #include "testing/fx_string_testhelpers.h"
+#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/cxx17_backports.h"
-#include "third_party/base/optional.h"
 
 class FPDFStructTreeEmbedderTest : public EmbedderTest {};
 

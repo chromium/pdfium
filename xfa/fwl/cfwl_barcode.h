@@ -12,7 +12,7 @@
 #include <memory>
 
 #include "fxbarcode/BC_Library.h"
-#include "third_party/base/optional.h"
+#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "xfa/fwl/cfwl_edit.h"
 
 class CFX_Barcode;

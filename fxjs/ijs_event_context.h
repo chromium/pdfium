@@ -9,7 +9,7 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "fxjs/ijs_runtime.h"
-#include "third_party/base/optional.h"
+#include "third_party/abseil-cpp/absl/types/optional.h"
 
 class CPDF_FormField;
 
