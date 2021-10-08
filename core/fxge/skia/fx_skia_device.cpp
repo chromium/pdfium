@@ -286,13 +286,13 @@ static void DebugValidate(const RetainPtr<CFX_DIBitmap>& bitmap,
   if (bitmap) {
     DCHECK(bitmap->GetBPP() == 8 || bitmap->GetBPP() == 32);
     if (bitmap->GetBPP() == 32) {
-      bitmap->DebugVerifyBitmapIsPreMultiplied(nullptr);
+      bitmap->DebugVerifyBitmapIsPreMultiplied();
     }
   }
   if (device) {
     DCHECK(device->GetBPP() == 8 || device->GetBPP() == 32);
     if (device->GetBPP() == 32) {
-      device->DebugVerifyBitmapIsPreMultiplied(nullptr);
+      device->DebugVerifyBitmapIsPreMultiplied();
     }
   }
 }
@@ -716,7 +716,7 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
     case 32:
       colorType = Get32BitSkColorType(bRgbByteOrder);
       alphaType = kPremul_SkAlphaType;
-      pSource->DebugVerifyBitmapIsPreMultiplied(buffer);
+      pSource->DebugVerifyBufferIsPreMultiplied(buffer);
       break;
     default:
       NOTREACHED();  // TODO(bug_11) ensure that all cases are covered
@@ -2625,7 +2625,7 @@ void CFX_DIBitmap::PreMultiply() {
       SkImageInfo::Make(width, height, kN32_SkColorType, kPremul_SkAlphaType);
   SkPixmap premultiplied(premultipliedInfo, buffer, rowBytes);
   unpremultiplied.readPixels(premultiplied);
-  this->DebugVerifyBitmapIsPreMultiplied(nullptr);
+  this->DebugVerifyBitmapIsPreMultiplied();
 }
 
 #if defined(_SKIA_SUPPORT_PATHS_)
@@ -2639,7 +2639,7 @@ void CFX_DIBitmap::UnPreMultiply() {
   m_nFormat = Format::kUnPreMultiplied;
   if (priorFormat != Format::kPreMultiplied)
     return;
-  this->DebugVerifyBitmapIsPreMultiplied(nullptr);
+  this->DebugVerifyBitmapIsPreMultiplied();
   int height = this->GetHeight();
   int width = this->GetWidth();
   int rowBytes = this->GetPitch();
@@ -2730,7 +2730,7 @@ void CFX_SkiaDeviceDriver::Dump() const {
 #if defined(_SKIA_SUPPORT_)
 void CFX_SkiaDeviceDriver::DebugVerifyBitmapIsPreMultiplied() const {
   if (m_pBackdropBitmap)
-    m_pBackdropBitmap->DebugVerifyBitmapIsPreMultiplied(nullptr);
+    m_pBackdropBitmap->DebugVerifyBitmapIsPreMultiplied();
 }
 #endif
 
@@ -2818,10 +2818,10 @@ bool CFX_DefaultRenderDevice::SetBitsWithMask(
 }
 #endif  // defined(_SKIA_SUPPORT_)
 
-void CFX_DIBBase::DebugVerifyBitmapIsPreMultiplied(void* opt) const {
+void CFX_DIBBase::DebugVerifyBufferIsPreMultiplied(void* arg) const {
 #ifdef SK_DEBUG
   DCHECK_EQ(GetBPP(), 32);
-  const uint32_t* buffer = (const uint32_t*)(opt ? opt : GetBuffer());
+  const uint32_t* buffer = (const uint32_t*)arg;
   int width = GetWidth();
   int height = GetHeight();
   // verify that input is really premultiplied
@@ -2838,5 +2838,11 @@ void CFX_DIBBase::DebugVerifyBitmapIsPreMultiplied(void* opt) const {
       DCHECK(b <= a);
     }
   }
+#endif  // SK_DEBUG
+}
+
+void CFX_DIBitmap::DebugVerifyBitmapIsPreMultiplied() const {
+#ifdef SK_DEBUG
+  DebugVerifyBufferIsPreMultiplied(GetBuffer());
 #endif  // SK_DEBUG
 }
