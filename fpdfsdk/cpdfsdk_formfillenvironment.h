@@ -93,7 +93,6 @@ class CPDFSDK_FormFillEnvironment final
 
   int GetPageCount() const;
 
-
   bool GetChangeMark() const { return m_bChangeMask; }
   void SetChangeMark() { m_bChangeMask = true; }
   void ClearChangeMark() { m_bChangeMask = false; }

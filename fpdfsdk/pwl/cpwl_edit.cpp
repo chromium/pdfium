@@ -216,7 +216,6 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
       rcClip, CFX_PointF(), pRange, GetSystemHandler(), GetAttachedData());
 }
 
-
 void CPWL_Edit::OnSetFocus() {
   ObservedPtr<CPWL_Edit> observed_ptr(this);
   SetEditCaret(true);

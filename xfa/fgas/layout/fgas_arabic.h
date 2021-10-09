@@ -28,5 +28,4 @@ absl::optional<wchar_t> GetArabicFromShaddaTable(wchar_t shadda);
 }  // namespace arabic
 }  // namespace pdfium
 
-
 #endif  // XFA_FGAS_LAYOUT_FGAS_ARABIC_H_

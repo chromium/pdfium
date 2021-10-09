@@ -19,7 +19,6 @@
 #include "xfa/fwl/cfwl_themepart.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
 
-
 namespace {
 
 constexpr int kScrollbarElapsedMsecs = 500;
