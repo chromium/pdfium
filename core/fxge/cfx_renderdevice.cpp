@@ -201,7 +201,7 @@ void NormalizeSrc(bool has_alpha,
     NormalizeArgb(src_value, r, g, b, a, dest, src_alpha);
 }
 
-void NextPixel(uint8_t** src_scan, uint8_t** dst_scan, int bpp) {
+void NextPixel(const uint8_t** src_scan, uint8_t** dst_scan, int bpp) {
   *src_scan += 3;
   *dst_scan += bpp;
 }
@@ -225,18 +225,16 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
                           int g,
                           int b) {
   const bool has_alpha = bitmap->GetFormat() == FXDIB_Format::kArgb;
-  uint8_t* src_buf = pGlyph->GetBuffer();
-  int src_pitch = pGlyph->GetPitch();
-  uint8_t* dest_buf = bitmap->GetBuffer();
-  int dest_pitch = bitmap->GetPitch();
   const int Bpp = has_alpha ? 4 : bitmap->GetBPP() / 8;
   for (int row = 0; row < nrows; ++row) {
     int dest_row = row + top;
     if (dest_row < 0 || dest_row >= bitmap->GetHeight())
       continue;
 
-    uint8_t* src_scan = src_buf + row * src_pitch + (start_col - left) * 3;
-    uint8_t* dest_scan = dest_buf + dest_row * dest_pitch + start_col * Bpp;
+    const uint8_t* src_scan =
+        pGlyph->GetScanline(row).subspan((start_col - left) * 3).data();
+    uint8_t* dest_scan =
+        bitmap->GetWritableScanline(dest_row).subspan(start_col * Bpp).data();
     if (x_subpixel == 0) {
       for (int col = start_col; col < end_col; ++col) {
         if (normalize) {

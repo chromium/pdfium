@@ -476,7 +476,7 @@ void ProgressiveDecoder::GifReadScanline(int32_t row_num, uint8_t* row_buf) {
   if (dest_row >= dest_top + dest_height)
     return;
 
-  ReSampleScanline(pDIBitmap, dest_row, m_DecodeBuf.data(), m_SrcFormat);
+  ResampleScanline(pDIBitmap, dest_row, m_DecodeBuf.data(), m_SrcFormat);
   if (scale_y > 1.0 && m_SrcPassNumber == 1) {
     ResampleVert(pDIBitmap, scale_y, dest_row);
     return;
@@ -534,7 +534,7 @@ void ProgressiveDecoder::BmpReadScanline(uint32_t row_num,
   if (dest_row >= dest_top + dest_height)
     return;
 
-  ReSampleScanline(pDIBitmap, dest_row, m_DecodeBuf.data(), m_SrcFormat);
+  ResampleScanline(pDIBitmap, dest_row, m_DecodeBuf.data(), m_SrcFormat);
   if (scale_y <= 1.0)
     return;
 
@@ -1682,15 +1682,14 @@ void ProgressiveDecoder::GetTransMethod(FXDIB_Format dest_format,
   }
 }
 
-void ProgressiveDecoder::ReSampleScanline(
+void ProgressiveDecoder::ResampleScanline(
     const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
     int dest_line,
     uint8_t* src_scan,
     FXCodec_Format src_format) {
   int src_left = m_clipBox.left;
   int dest_left = m_startX;
-  uint8_t* dest_scan =
-      pDeviceBitmap->GetBuffer() + dest_line * pDeviceBitmap->GetPitch();
+  uint8_t* dest_scan = pDeviceBitmap->GetWritableScanline(dest_line).data();
   int src_bytes_per_pixel = (src_format & 0xff) / 8;
   int dest_bytes_per_pixel = pDeviceBitmap->GetBPP() / 8;
   src_scan += src_left * src_bytes_per_pixel;
@@ -2035,7 +2034,7 @@ void ProgressiveDecoder::Resample(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
     if (dest_row >= dest_top + dest_height)
       return;
 
-    ReSampleScanline(pDeviceBitmap, dest_row, m_DecodeBuf.data(), src_format);
+    ResampleScanline(pDeviceBitmap, dest_row, m_DecodeBuf.data(), src_format);
     if (scale_y > 1.0)
       ResampleVert(pDeviceBitmap, scale_y, dest_row);
   }

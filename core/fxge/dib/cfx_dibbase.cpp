@@ -692,8 +692,9 @@ bool CFX_DIBBase::BuildAlphaMask() {
     m_pAlphaMask = nullptr;
     return false;
   }
-  memset(m_pAlphaMask->GetBuffer(), 0xff,
-         m_pAlphaMask->GetHeight() * m_pAlphaMask->GetPitch());
+  for (int i = 0; i < m_pAlphaMask->GetHeight(); ++i) {
+    fxcrt::spanset(m_pAlphaMask->GetWritableScanline(i), 0xff);
+  }
   return true;
 }
 
@@ -928,12 +929,11 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::FlipImage(bool bXFlip, bool bYFlip) const {
     return nullptr;
 
   pFlipped->SetPalette(GetPaletteSpan());
-  uint8_t* pDestBuffer = pFlipped->GetBuffer();
   int Bpp = GetBppFromFormat(m_Format) / 8;
   for (int row = 0; row < m_Height; ++row) {
     const uint8_t* src_scan = GetScanline(row).data();
     uint8_t* dest_scan =
-        pDestBuffer + m_Pitch * (bYFlip ? (m_Height - row - 1) : row);
+        pFlipped->GetWritableScanline(bYFlip ? m_Height - row - 1 : row).data();
     if (!bXFlip) {
       memcpy(dest_scan, src_scan, m_Pitch);
       continue;
@@ -974,12 +974,13 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::FlipImage(bool bXFlip, bool bYFlip) const {
     }
   }
   if (m_pAlphaMask) {
-    pDestBuffer = pFlipped->m_pAlphaMask->GetBuffer();
     uint32_t dest_pitch = pFlipped->m_pAlphaMask->GetPitch();
     for (int row = 0; row < m_Height; ++row) {
       const uint8_t* src_scan = m_pAlphaMask->GetScanline(row).data();
       uint8_t* dest_scan =
-          pDestBuffer + dest_pitch * (bYFlip ? (m_Height - row - 1) : row);
+          pFlipped->m_pAlphaMask
+              ->GetWritableScanline(bYFlip ? m_Height - row - 1 : row)
+              .data();
       if (!bXFlip) {
         memcpy(dest_scan, src_scan, dest_pitch);
         continue;

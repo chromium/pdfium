@@ -366,12 +366,11 @@ bool CTiffContext::Decode1bppRGB(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
     TIFFError(TIFFFileName(m_tif_ctx.get()), "No space for scanline buffer");
     return false;
   }
-  uint8_t* bitMapbuffer = (uint8_t*)pDIBitmap->GetBuffer();
-  uint32_t pitch = pDIBitmap->GetPitch();
   for (int32_t row = 0; row < height; row++) {
+    uint8_t* bitMapbuffer = pDIBitmap->GetWritableScanline(row).data();
     TIFFReadScanline(m_tif_ctx.get(), buf, row, 0);
     for (int32_t j = 0; j < size; j++) {
-      bitMapbuffer[row * pitch + j] = buf[j];
+      bitMapbuffer[j] = buf[j];
     }
   }
   _TIFFfree(buf);
@@ -394,18 +393,17 @@ bool CTiffContext::Decode8bppRGB(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
     TIFFError(TIFFFileName(m_tif_ctx.get()), "No space for scanline buffer");
     return false;
   }
-  uint8_t* bitMapbuffer = (uint8_t*)pDIBitmap->GetBuffer();
-  uint32_t pitch = pDIBitmap->GetPitch();
   for (int32_t row = 0; row < height; row++) {
+    uint8_t* bitMapbuffer = pDIBitmap->GetWritableScanline(row).data();
     TIFFReadScanline(m_tif_ctx.get(), buf, row, 0);
     for (int32_t j = 0; j < size; j++) {
       switch (bps) {
         case 4:
-          bitMapbuffer[row * pitch + 2 * j + 0] = (buf[j] & 0xF0) >> 4;
-          bitMapbuffer[row * pitch + 2 * j + 1] = (buf[j] & 0x0F) >> 0;
+          bitMapbuffer[2 * j + 0] = (buf[j] & 0xF0) >> 4;
+          bitMapbuffer[2 * j + 1] = (buf[j] & 0x0F) >> 0;
           break;
         case 8:
-          bitMapbuffer[row * pitch + j] = buf[j];
+          bitMapbuffer[j] = buf[j];
           break;
       }
     }
@@ -428,14 +426,13 @@ bool CTiffContext::Decode24bppRGB(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
     TIFFError(TIFFFileName(m_tif_ctx.get()), "No space for scanline buffer");
     return false;
   }
-  uint8_t* bitMapbuffer = (uint8_t*)pDIBitmap->GetBuffer();
-  uint32_t pitch = pDIBitmap->GetPitch();
   for (int32_t row = 0; row < height; row++) {
+    uint8_t* bitMapbuffer = pDIBitmap->GetWritableScanline(row).data();
     TIFFReadScanline(m_tif_ctx.get(), buf, row, 0);
     for (int32_t j = 0; j < size - 2; j += 3) {
-      bitMapbuffer[row * pitch + j + 0] = buf[j + 2];
-      bitMapbuffer[row * pitch + j + 1] = buf[j + 1];
-      bitMapbuffer[row * pitch + j + 2] = buf[j + 0];
+      bitMapbuffer[j + 0] = buf[j + 2];
+      bitMapbuffer[j + 1] = buf[j + 1];
+      bitMapbuffer[j + 2] = buf[j + 0];
     }
   }
   _TIFFfree(buf);

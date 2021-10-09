@@ -129,11 +129,10 @@ void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
   std::array<FX_ARGB, kShadingSteps> shading_steps =
       GetShadingSteps(t_min, t_max, funcs, pCS, alpha, total_results);
 
-  int pitch = pBitmap->GetPitch();
   CFX_Matrix matrix = mtObject2Bitmap.GetInverse();
   for (int row = 0; row < height; row++) {
     uint32_t* dib_buf =
-        reinterpret_cast<uint32_t*>(pBitmap->GetBuffer() + row * pitch);
+        reinterpret_cast<uint32_t*>(pBitmap->GetWritableScanline(row).data());
     for (int column = 0; column < width; column++) {
       CFX_PointF pos = matrix.Transform(
           CFX_PointF(static_cast<float>(column), static_cast<float>(row)));
@@ -201,14 +200,12 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
 
   int width = pBitmap->GetWidth();
   int height = pBitmap->GetHeight();
-  int pitch = pBitmap->GetPitch();
-
   bool bDecreasing = dr < 0 && static_cast<int>(FXSYS_sqrt2(dx, dy)) < -dr;
 
   CFX_Matrix matrix = mtObject2Bitmap.GetInverse();
   for (int row = 0; row < height; row++) {
     uint32_t* dib_buf =
-        reinterpret_cast<uint32_t*>(pBitmap->GetBuffer() + row * pitch);
+        reinterpret_cast<uint32_t*>(pBitmap->GetWritableScanline(row).data());
     for (int column = 0; column < width; column++) {
       CFX_PointF pos = matrix.Transform(
           CFX_PointF(static_cast<float>(column), static_cast<float>(row)));
@@ -283,13 +280,13 @@ void DrawFuncShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
       mtObject2Bitmap.GetInverse() * mtDomain2Target.GetInverse();
   int width = pBitmap->GetWidth();
   int height = pBitmap->GetHeight();
-  int pitch = pBitmap->GetPitch();
 
   DCHECK(total_results >= CountOutputsFromFunctions(funcs));
   DCHECK(total_results >= pCS->CountComponents());
   std::vector<float> result_array(total_results);
   for (int row = 0; row < height; ++row) {
-    uint32_t* dib_buf = (uint32_t*)(pBitmap->GetBuffer() + row * pitch);
+    uint32_t* dib_buf =
+        reinterpret_cast<uint32_t*>(pBitmap->GetWritableScanline(row).data());
     for (int column = 0; column < width; column++) {
       CFX_PointF pos = matrix.Transform(
           CFX_PointF(static_cast<float>(column), static_cast<float>(row)));
@@ -395,7 +392,7 @@ void DrawGouraud(const RetainPtr<CFX_DIBitmap>& pBitmap,
     int end_x = std::min(max_x, pBitmap->GetWidth());
 
     uint8_t* dib_buf =
-        pBitmap->GetBuffer() + y * pBitmap->GetPitch() + start_x * 4;
+        pBitmap->GetWritableScanline(y).subspan(start_x * 4).data();
     float r_unit = (r[end_index] - r[start_index]) / (max_x - min_x);
     float g_unit = (g[end_index] - g[start_index]) / (max_x - min_x);
     float b_unit = (b[end_index] - b[start_index]) / (max_x - min_x);

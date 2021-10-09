@@ -109,10 +109,11 @@ void CFX_BitmapComposer::ComposeScanline(
   }
   const uint8_t* clip_scan = nullptr;
   if (m_pClipMask) {
-    clip_scan = m_pClipMask->GetBuffer() +
-                (m_DestTop + line - m_pClipRgn->GetBox().top) *
-                    m_pClipMask->GetPitch() +
-                (m_DestLeft - m_pClipRgn->GetBox().left);
+    clip_scan =
+        m_pClipMask
+            ->GetWritableScanline(m_DestTop + line - m_pClipRgn->GetBox().top)
+            .subspan(m_DestLeft - m_pClipRgn->GetBox().left)
+            .data();
   }
   uint8_t* dest_scan = m_pBitmap->GetWritableScanline(line + m_DestTop).data();
   if (dest_scan) {
@@ -180,9 +181,9 @@ void CFX_BitmapComposer::ComposeScanlineV(
     clip_scan = m_pClipScanV.data();
     int clip_pitch = m_pClipMask->GetPitch();
     const uint8_t* src_clip =
-        m_pClipMask->GetBuffer() +
-        (m_DestTop - m_pClipRgn->GetBox().top) * clip_pitch +
-        (dest_x - m_pClipRgn->GetBox().left);
+        m_pClipMask->GetScanline(m_DestTop - m_pClipRgn->GetBox().top)
+            .subspan(dest_x - m_pClipRgn->GetBox().left)
+            .data();
     if (m_bFlipY) {
       src_clip += clip_pitch * (m_DestHeight - 1);
       clip_pitch = -clip_pitch;

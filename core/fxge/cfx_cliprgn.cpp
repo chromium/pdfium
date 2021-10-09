@@ -10,6 +10,7 @@
 
 #include <utility>
 
+#include "core/fxcrt/span_util.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/notreached.h"
@@ -47,11 +48,11 @@ void CFX_ClipRgn::IntersectMaskRect(FX_RECT rect,
   m_Mask->Create(m_Box.Width(), m_Box.Height(), FXDIB_Format::k8bppMask);
   const int offset = m_Box.left - mask_rect.left;
   for (int row = m_Box.top; row < m_Box.bottom; row++) {
-    uint8_t* dest_scan =
-        m_Mask->GetBuffer() + m_Mask->GetPitch() * (row - m_Box.top);
+    pdfium::span<uint8_t> dest_scan =
+        m_Mask->GetWritableScanline(row - m_Box.top);
     pdfium::span<const uint8_t> src_scan =
         pOldMask->GetScanline(row - mask_rect.top);
-    memcpy(dest_scan, &src_scan[offset], m_Box.Width());
+    fxcrt::spancpy(dest_scan, src_scan.subspan(offset, m_Box.Width()));
   }
 }
 
@@ -79,8 +80,7 @@ void CFX_ClipRgn::IntersectMaskF(int left,
   for (int row = new_box.top; row < new_box.bottom; row++) {
     pdfium::span<const uint8_t> old_scan = m_Mask->GetScanline(row - m_Box.top);
     pdfium::span<const uint8_t> mask_scan = pMask->GetScanline(row - top);
-    uint8_t* new_scan =
-        new_dib->GetBuffer() + (row - new_box.top) * new_dib->GetPitch();
+    uint8_t* new_scan = new_dib->GetWritableScanline(row - new_box.top).data();
     for (int col = new_box.left; col < new_box.right; col++) {
       new_scan[col - new_box.left] =
           old_scan[col - m_Box.left] * mask_scan[col - left] / 255;

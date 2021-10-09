@@ -68,12 +68,11 @@ bool IsScanLineBpp(int bpp, const uint8_t* pBuf, int width) {
 
 int DetectFirstScan(const RetainPtr<CFX_DIBitmap>& pBitmap) {
   const int height = pBitmap->GetHeight();
-  const int pitch = pBitmap->GetPitch();
   const int width = pBitmap->GetWidth();
   const int bpp = pBitmap->GetBPP();
-  const uint8_t* pBuf = pBitmap->GetBuffer();
   for (int line = 0; line < height; ++line) {
-    if (IsScanLineBpp(bpp, pBuf + line * pitch, width))
+    const uint8_t* pBuf = pBitmap->GetScanline(line).data();
+    if (IsScanLineBpp(bpp, pBuf, width))
       return line;
   }
   return -1;
@@ -81,12 +80,11 @@ int DetectFirstScan(const RetainPtr<CFX_DIBitmap>& pBitmap) {
 
 int DetectLastScan(const RetainPtr<CFX_DIBitmap>& pBitmap) {
   const int height = pBitmap->GetHeight();
-  const int pitch = pBitmap->GetPitch();
   const int bpp = pBitmap->GetBPP();
   const int width = pBitmap->GetWidth();
-  const uint8_t* pBuf = pBitmap->GetBuffer();
   for (int line = height - 1; line >= 0; --line) {
-    if (IsScanLineBpp(bpp, pBuf + line * pitch, width))
+    const uint8_t* pBuf = pBitmap->GetScanline(line).data();
+    if (IsScanLineBpp(bpp, pBuf, width))
       return line;
   }
   return -1;

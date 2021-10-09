@@ -289,7 +289,6 @@ void CFGAS_GEGraphics::FillPathWithShading(
   auto bmp = pdfium::MakeRetain<CFX_DIBitmap>();
   bmp->Create(width, height, FXDIB_Format::kArgb);
   m_renderDevice->GetDIBits(bmp, 0, 0);
-  int32_t pitch = bmp->GetPitch();
   bool result = false;
   switch (m_info.fillColor.GetShading()->GetType()) {
     case CFGAS_GEShading::Type::kAxial: {
@@ -298,7 +297,7 @@ void CFGAS_GEGraphics::FillPathWithShading(
       float axis_len_square = (x_span * x_span) + (y_span * y_span);
       for (int32_t row = 0; row < height; row++) {
         uint32_t* dib_buf =
-            reinterpret_cast<uint32_t*>(bmp->GetBuffer() + row * pitch);
+            reinterpret_cast<uint32_t*>(bmp->GetWritableScanline(row).data());
         for (int32_t column = 0; column < width; column++) {
           float scale = 0.0f;
           if (axis_len_square) {
@@ -331,7 +330,8 @@ void CFGAS_GEGraphics::FillPathWithShading(
                 ((start_y - end_y) * (start_y - end_y)) -
                 ((start_r - end_r) * (start_r - end_r));
       for (int32_t row = 0; row < height; row++) {
-        uint32_t* dib_buf = (uint32_t*)(bmp->GetBuffer() + row * pitch);
+        uint32_t* dib_buf =
+            reinterpret_cast<uint32_t*>(bmp->GetWritableScanline(row).data());
         for (int32_t column = 0; column < width; column++) {
           float x = (float)(column);
           float y = (float)(row);

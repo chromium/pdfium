@@ -203,7 +203,7 @@ class ProgressiveDecoder :
   int GetDownScale();
   void GetTransMethod(FXDIB_Format dest_format, FXCodec_Format src_format);
 
-  void ReSampleScanline(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
+  void ResampleScanline(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
                         int32_t dest_line,
                         uint8_t* src_scan,
                         FXCodec_Format src_format);
