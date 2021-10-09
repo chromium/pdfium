@@ -69,21 +69,20 @@ bool CFX_BitmapComposer::SetInfo(int width,
   return true;
 }
 
-void CFX_BitmapComposer::DoCompose(uint8_t* dest_scan,
+void CFX_BitmapComposer::DoCompose(pdfium::span<uint8_t> dest_scan,
                                    pdfium::span<const uint8_t> src_scan,
                                    int dest_width,
-                                   const uint8_t* clip_scan,
+                                   pdfium::span<const uint8_t> clip_scan,
                                    pdfium::span<const uint8_t> src_extra_alpha,
                                    pdfium::span<uint8_t> dst_extra_alpha) {
-  uint8_t* pAddClipScan = m_pAddClipScan.data();
   if (m_BitmapAlpha < 255) {
-    if (clip_scan) {
+    if (!clip_scan.empty()) {
       for (int i = 0; i < dest_width; ++i)
-        pAddClipScan[i] = clip_scan[i] * m_BitmapAlpha / 255;
+        m_pAddClipScan[i] = clip_scan[i] * m_BitmapAlpha / 255;
     } else {
-      memset(pAddClipScan, m_BitmapAlpha, dest_width);
+      memset(m_pAddClipScan.data(), m_BitmapAlpha, dest_width);
     }
-    clip_scan = pAddClipScan;
+    clip_scan = m_pAddClipScan;
   }
   if (m_SrcFormat == FXDIB_Format::k8bppMask) {
     m_Compositor.CompositeByteMaskLine(dest_scan, src_scan, dest_width,
@@ -107,24 +106,23 @@ void CFX_BitmapComposer::ComposeScanline(
     ComposeScanlineV(line, scanline, scan_extra_alpha);
     return;
   }
-  const uint8_t* clip_scan = nullptr;
+  pdfium::span<const uint8_t> clip_scan;
   if (m_pClipMask) {
     clip_scan =
         m_pClipMask
             ->GetWritableScanline(m_DestTop + line - m_pClipRgn->GetBox().top)
-            .subspan(m_DestLeft - m_pClipRgn->GetBox().left)
-            .data();
+            .subspan(m_DestLeft - m_pClipRgn->GetBox().left);
   }
-  uint8_t* dest_scan = m_pBitmap->GetWritableScanline(line + m_DestTop).data();
-  if (dest_scan) {
+  pdfium::span<uint8_t> dest_scan =
+      m_pBitmap->GetWritableScanline(line + m_DestTop);
+  if (!dest_scan.empty()) {
     FX_SAFE_UINT32 offset = m_DestLeft;
     offset *= m_pBitmap->GetBPP();
     offset /= 8;
     if (!offset.IsValid())
       return;
 
-    // Help some compilers perform pointer arithmetic against safe numerics.
-    dest_scan += static_cast<uint32_t>(offset.ValueOrDie());
+    dest_scan = dest_scan.subspan(offset.ValueOrDie());
   }
   pdfium::span<uint8_t> dest_alpha_scan =
       m_pBitmap->GetWritableAlphaMaskScanline(line + m_DestTop);
@@ -176,9 +174,9 @@ void CFX_BitmapComposer::ComposeScanlineV(
       dest_alpha_scan += y_alpha_step;
     }
   }
-  uint8_t* clip_scan = nullptr;
+  pdfium::span<uint8_t> clip_scan;
   if (m_pClipMask) {
-    clip_scan = m_pClipScanV.data();
+    clip_scan = m_pClipScanV;
     int clip_pitch = m_pClipMask->GetPitch();
     const uint8_t* src_clip =
         m_pClipMask->GetScanline(m_DestTop - m_pClipRgn->GetBox().top)
@@ -193,8 +191,8 @@ void CFX_BitmapComposer::ComposeScanlineV(
       src_clip += clip_pitch;
     }
   }
-  DoCompose(m_pScanlineV.data(), scanline, m_DestHeight, clip_scan,
-            scan_extra_alpha, m_pScanlineAlphaV);
+  DoCompose(m_pScanlineV, scanline, m_DestHeight, clip_scan, scan_extra_alpha,
+            m_pScanlineAlphaV);
   src_scan = m_pScanlineV.data();
   dest_scan = dest_buf;
   for (int i = 0; i < m_DestHeight; ++i) {

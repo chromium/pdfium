@@ -47,10 +47,10 @@ class CFX_BitmapComposer final : public ScanlineComposerIface {
                        pdfium::span<const uint8_t> scan_extra_alpha) override;
 
  private:
-  void DoCompose(uint8_t* dest_scan,
+  void DoCompose(pdfium::span<uint8_t> dest_scan,
                  pdfium::span<const uint8_t> src_scan,
                  int dest_width,
-                 const uint8_t* clip_scan,
+                 pdfium::span<const uint8_t> clip_scan,
                  pdfium::span<const uint8_t> src_extra_alpha,
                  pdfium::span<uint8_t> dst_extra_alpha);
   void ComposeScanlineV(int line,

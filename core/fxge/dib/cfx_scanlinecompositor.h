@@ -27,32 +27,32 @@ class CFX_ScanlineCompositor {
             bool bClip,
             bool bRgbByteOrder);
 
-  void CompositeRgbBitmapLine(uint8_t* dest_scan,
+  void CompositeRgbBitmapLine(pdfium::span<uint8_t> dest_scan,
                               pdfium::span<const uint8_t> src_scan,
                               int width,
-                              const uint8_t* clip_scan,
+                              pdfium::span<const uint8_t> clip_scan,
                               pdfium::span<const uint8_t> src_extra_alpha,
                               pdfium::span<uint8_t> dst_extra_alpha);
 
-  void CompositePalBitmapLine(uint8_t* dest_scan,
+  void CompositePalBitmapLine(pdfium::span<uint8_t> dest_scan,
                               pdfium::span<const uint8_t> src_scan,
                               int src_left,
                               int width,
-                              const uint8_t* clip_scan,
+                              pdfium::span<const uint8_t> clip_scan,
                               pdfium::span<const uint8_t> src_extra_alpha,
                               pdfium::span<uint8_t> dst_extra_alpha);
 
-  void CompositeByteMaskLine(uint8_t* dest_scan,
+  void CompositeByteMaskLine(pdfium::span<uint8_t> dest_scan,
                              pdfium::span<const uint8_t> src_scan,
                              int width,
-                             const uint8_t* clip_scan,
+                             pdfium::span<const uint8_t> clip_scan,
                              pdfium::span<uint8_t> dst_extra_alpha);
 
-  void CompositeBitMaskLine(uint8_t* dest_scan,
+  void CompositeBitMaskLine(pdfium::span<uint8_t> dest_scan,
                             pdfium::span<const uint8_t> src_scan,
                             int src_left,
                             int width,
-                            const uint8_t* clip_scan,
+                            pdfium::span<const uint8_t> clip_scan,
                             pdfium::span<uint8_t> dst_extra_alpha);
 
  private:

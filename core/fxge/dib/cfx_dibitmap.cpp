@@ -777,8 +777,8 @@ bool CFX_DIBitmap::CompositeBitmap(int dest_left,
 
   RetainPtr<CFX_DIBitmap> pSrcAlphaMask = pSrcBitmap->GetAlphaMask();
   for (int row = 0; row < height; row++) {
-    uint8_t* dest_scan =
-        m_pBuffer.Get() + (dest_top + row) * m_Pitch + dest_left * dest_Bpp;
+    pdfium::span<uint8_t> dest_scan =
+        GetWritableScanline(dest_top + row).subspan(dest_left * dest_Bpp);
     pdfium::span<const uint8_t> src_scan =
         pSrcBitmap->GetScanline(src_top + row).subspan(src_left * src_Bpp);
     pdfium::span<const uint8_t> src_scan_extra_alpha =
@@ -789,11 +789,10 @@ bool CFX_DIBitmap::CompositeBitmap(int dest_left,
         m_pAlphaMask ? m_pAlphaMask->GetWritableScanline(dest_top + row)
                            .subspan(dest_left)
                      : pdfium::span<uint8_t>();
-    const uint8_t* clip_scan = nullptr;
+    pdfium::span<const uint8_t> clip_scan;
     if (pClipMask) {
-      clip_scan = pClipMask->m_pBuffer.Get() +
-                  (dest_top + row - clip_box.top) * pClipMask->m_Pitch +
-                  (dest_left - clip_box.left);
+      clip_scan = pClipMask->GetWritableScanline(dest_top + row - clip_box.top)
+                      .subspan(dest_left - clip_box.left);
     }
     if (bRgb) {
       compositor.CompositeRgbBitmapLine(dest_scan, src_scan, width, clip_scan,
@@ -854,18 +853,17 @@ bool CFX_DIBitmap::CompositeMask(int dest_left,
     return false;
   }
   for (int row = 0; row < height; row++) {
-    uint8_t* dest_scan =
-        m_pBuffer.Get() + (dest_top + row) * m_Pitch + dest_left * Bpp;
+    pdfium::span<uint8_t> dest_scan =
+        GetWritableScanline(dest_top + row).subspan(dest_left * Bpp);
     pdfium::span<const uint8_t> src_scan = pMask->GetScanline(src_top + row);
     pdfium::span<uint8_t> dst_scan_extra_alpha =
         m_pAlphaMask ? m_pAlphaMask->GetWritableScanline(dest_top + row)
                            .subspan(dest_left)
                      : pdfium::span<uint8_t>();
-    const uint8_t* clip_scan = nullptr;
+    pdfium::span<const uint8_t> clip_scan;
     if (pClipMask) {
-      clip_scan = pClipMask->m_pBuffer.Get() +
-                  (dest_top + row - clip_box.top) * pClipMask->m_Pitch +
-                  (dest_left - clip_box.left);
+      clip_scan = pClipMask->GetScanline(dest_top + row - clip_box.top)
+                      .subspan(dest_left - clip_box.left);
     }
     if (src_bpp == 1) {
       compositor.CompositeBitMaskLine(dest_scan, src_scan, src_left, width,
