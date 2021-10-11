@@ -645,26 +645,27 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::Clone(const FX_RECT* pClip) const {
       }
     }
   } else {
-    FX_SAFE_UINT32 safe_copy_len = pNewBitmap->GetWidth();
-    safe_copy_len *= pNewBitmap->GetBPP();
-    safe_copy_len += 7;
-    safe_copy_len /= 8;
-    if (!safe_copy_len.IsValid())
+    FX_SAFE_UINT32 copy_len = pNewBitmap->GetWidth();
+    copy_len *= pNewBitmap->GetBPP();
+    copy_len += 7;
+    copy_len /= 8;
+    if (!copy_len.IsValid())
       return nullptr;
 
-    uint32_t copy_len = std::min<uint32_t>(m_Pitch, safe_copy_len.ValueOrDie());
+    copy_len = std::min<uint32_t>(m_Pitch, copy_len.ValueOrDie());
 
-    FX_SAFE_UINT32 safe_offset = rect.left;
-    safe_offset *= GetBppFromFormat(m_Format);
-    safe_offset /= 8;
-    if (!safe_offset.IsValid())
+    FX_SAFE_UINT32 offset = rect.left;
+    offset *= GetBppFromFormat(m_Format);
+    offset /= 8;
+    if (!offset.IsValid())
       return nullptr;
-
-    uint32_t offset = safe_offset.ValueOrDie();
 
     for (int row = rect.top; row < rect.bottom; ++row) {
-      fxcrt::spancpy(pNewBitmap->GetWritableScanline(row - rect.top),
-                     GetScanline(row).subspan(offset, copy_len));
+      const uint8_t* src_scan =
+          GetScanline(row).subspan(offset.ValueOrDie()).data();
+      uint8_t* dest_scan =
+          pNewBitmap->GetWritableScanline(row - rect.top).data();
+      memcpy(dest_scan, src_scan, copy_len.ValueOrDie());
     }
   }
   return pNewBitmap;
