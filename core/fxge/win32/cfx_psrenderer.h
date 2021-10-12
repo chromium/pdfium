@@ -72,8 +72,6 @@ class CFX_PSRenderer {
             RenderingLevel level,
             int width,
             int height);
-  void StartRendering();
-  void EndRendering();
   void SaveState();
   void RestoreState(bool bKeepSaved);
   void SetClip_PathFill(const CFX_Path* pPath,
@@ -124,6 +122,8 @@ class CFX_PSRenderer {
  private:
   struct Glyph;
 
+  void StartRendering();
+  void EndRendering();
   void OutputPath(const CFX_Path* pPath, const CFX_Matrix* pObject2Device);
   void SetGraphState(const CFX_GraphStateData* pGraphState);
   void SetColor(uint32_t color);

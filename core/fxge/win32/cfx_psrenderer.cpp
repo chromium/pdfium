@@ -204,7 +204,9 @@ CFX_PSRenderer::CFX_PSRenderer(CFX_PSFontTracker* font_tracker,
   DCHECK(m_pFontTracker);
 }
 
-CFX_PSRenderer::~CFX_PSRenderer() = default;
+CFX_PSRenderer::~CFX_PSRenderer() {
+  EndRendering();
+}
 
 void CFX_PSRenderer::Init(const RetainPtr<IFX_RetainableWriteStream>& pStream,
                           RenderingLevel level,

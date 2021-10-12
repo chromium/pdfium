@@ -88,9 +88,7 @@ CPSPrinterDriver::CPSPrinterDriver(HDC hDC,
   ::DeleteObject(hRgn);
 }
 
-CPSPrinterDriver::~CPSPrinterDriver() {
-  m_PSRenderer.EndRendering();
-}
+CPSPrinterDriver::~CPSPrinterDriver() = default;
 
 DeviceType CPSPrinterDriver::GetDeviceType() const {
   return DeviceType::kPrinter;
