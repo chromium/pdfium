@@ -892,10 +892,3 @@ CFX_FloatRect CPVT_VariableText::InToOut(const CPVT_FloatRect& rect) const {
   return CFX_FloatRect(ptLeftTop.x, ptRightBottom.y, ptRightBottom.x,
                        ptLeftTop.y);
 }
-
-CPVT_FloatRect CPVT_VariableText::OutToIn(const CFX_FloatRect& rect) const {
-  CFX_PointF ptLeftTop = OutToIn(CFX_PointF(rect.left, rect.top));
-  CFX_PointF ptRightBottom = OutToIn(CFX_PointF(rect.right, rect.bottom));
-  return CPVT_FloatRect(ptLeftTop.x, ptLeftTop.y, ptRightBottom.x,
-                        ptRightBottom.y);
-}

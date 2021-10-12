@@ -137,7 +137,6 @@ class CPVT_VariableText {
   CFX_PointF InToOut(const CFX_PointF& point) const;
   CFX_PointF OutToIn(const CFX_PointF& point) const;
   CFX_FloatRect InToOut(const CPVT_FloatRect& rect) const;
-  CPVT_FloatRect OutToIn(const CFX_FloatRect& rect) const;
 
   float GetFontAscent(int32_t nFontIndex, float fFontSize) const;
   float GetFontDescent(int32_t nFontIndex, float fFontSize) const;
