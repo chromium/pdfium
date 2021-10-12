@@ -391,8 +391,7 @@ void DrawGouraud(const RetainPtr<CFX_DIBitmap>& pBitmap,
     int start_x = std::max(min_x, 0);
     int end_x = std::min(max_x, pBitmap->GetWidth());
 
-    uint8_t* dib_buf =
-        pBitmap->GetWritableScanline(y).subspan(start_x * 4).data();
+    uint8_t* dib_buf = pBitmap->GetWritableScanline(y).data() + start_x * 4;
     float r_unit = (r[end_index] - r[start_index]) / (max_x - min_x);
     float g_unit = (g[end_index] - g[start_index]) / (max_x - min_x);
     float b_unit = (b[end_index] - b[start_index]) / (max_x - min_x);
