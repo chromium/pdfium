@@ -1,0 +1,51 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Kids [3 0 R]
+  /Count 1
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+  /Resources <<
+    /XObject <</Im25 5 0 R>>
+    /ProcSet [/PDF /Text /ImageC /ImageI]
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+/Im25 Do
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  /Width 447
+  /BitsPerComponent 8
+  /Name /X
+  /Height 150
+  /Decode [0.0 255.0]
+  /Filter [/ASCII85Decode /FlateDecode /JPXDecode]
+  {{streamlen}}
+>>
+stream
+GhQG_Yti1j&;L4+&hHI;8ZC3n%U"m$jU!\c,9XuY,s^4`#\,T>=L,1U+n6>\!><`+M:^s'mTe/j=LRYs
+s8.3L+D^;KgeV9U!5mR3B@E<uP']`:c-mCld>-<04O@hs(t9_.OHhdR,`!m>B3Y]5fsTr<!RNbrCD*'p
+pBsV>I8B!]N0Qp5:2ZMS"Y$P]`Nj1F-AG$1/&,f>CDqEZc>b%B?K"ua*C"PE8JAWBAF'tm-j$q6qGfBk
+e[sGH+nbX3p>#O@GMK5P5JOj(TmQF;al^NZ[gDFm:K9qc8>D89+cSi-LGT>%=t\92mfZn.~>
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
