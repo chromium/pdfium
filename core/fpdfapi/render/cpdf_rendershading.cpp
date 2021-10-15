@@ -33,6 +33,7 @@
 #include "core/fxge/dib/fx_dib.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
+#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/span.h"
 
 namespace {
@@ -388,24 +389,26 @@ void DrawGouraud(const RetainPtr<CFX_DIBitmap>& pBitmap,
       end_index = 0;
     }
 
-    int start_x = std::max(min_x, 0);
-    int end_x = std::min(max_x, pBitmap->GetWidth());
-
-    uint8_t* dib_buf = pBitmap->GetWritableScanline(y).data() + start_x * 4;
+    int start_x = pdfium::clamp(min_x, 0, pBitmap->GetWidth());
+    int end_x = pdfium::clamp(max_x, 0, pBitmap->GetWidth());
     float r_unit = (r[end_index] - r[start_index]) / (max_x - min_x);
     float g_unit = (g[end_index] - g[start_index]) / (max_x - min_x);
     float b_unit = (b[end_index] - b[start_index]) / (max_x - min_x);
     float r_result = r[start_index] + (start_x - min_x) * r_unit;
     float g_result = g[start_index] + (start_x - min_x) * g_unit;
     float b_result = b[start_index] + (start_x - min_x) * b_unit;
+    pdfium::span<uint8_t> dib_span =
+        pBitmap->GetWritableScanline(y).subspan(start_x * 4);
+
     for (int x = start_x; x < end_x; x++) {
+      uint8_t* dib_buf = dib_span.data();
       r_result += r_unit;
       g_result += g_unit;
       b_result += b_unit;
       FXARGB_SETDIB(dib_buf, ArgbEncode(alpha, static_cast<int>(r_result * 255),
                                         static_cast<int>(g_result * 255),
                                         static_cast<int>(b_result * 255)));
-      dib_buf += 4;
+      dib_span = dib_span.subspan(4);
     }
   }
 }
