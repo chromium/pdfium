@@ -736,10 +736,8 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
   }
 
   CPDF_Stream* pXObject = ToStream(FindResourceObj("XObject", name));
-  if (!pXObject) {
-    m_bResourceMissing = true;
+  if (!pXObject)
     return;
-  }
 
   ByteString type;
   if (pXObject->GetDict())
@@ -894,10 +892,9 @@ void CPDF_StreamContentParser::Handle_SetGray_Stroke() {
 void CPDF_StreamContentParser::Handle_SetExtendGraphState() {
   ByteString name = GetString(0);
   CPDF_Dictionary* pGS = ToDictionary(FindResourceObj("ExtGState", name));
-  if (!pGS) {
-    m_bResourceMissing = true;
+  if (!pGS)
     return;
-  }
+
   m_pCurStates->ProcessExtGS(pGS, this);
 }
 
@@ -1146,7 +1143,6 @@ RetainPtr<CPDF_Font> CPDF_StreamContentParser::FindFont(
     const ByteString& name) {
   CPDF_Dictionary* pFontDict = ToDictionary(FindResourceObj("Font", name));
   if (!pFontDict) {
-    m_bResourceMissing = true;
     return CPDF_Font::GetStockFont(m_pDocument.Get(),
                                    CFX_Font::kDefaultAnsiFontName);
   }
@@ -1182,10 +1178,8 @@ RetainPtr<CPDF_ColorSpace> CPDF_StreamContentParser::FindColorSpace(
         ->GetColorSpace(pDefObj, nullptr);
   }
   const CPDF_Object* pCSObj = FindResourceObj("ColorSpace", name);
-  if (!pCSObj) {
-    m_bResourceMissing = true;
+  if (!pCSObj)
     return nullptr;
-  }
   return CPDF_DocPageData::FromDocument(m_pDocument.Get())
       ->GetColorSpace(pCSObj, nullptr);
 }
@@ -1193,10 +1187,8 @@ RetainPtr<CPDF_ColorSpace> CPDF_StreamContentParser::FindColorSpace(
 RetainPtr<CPDF_Pattern> CPDF_StreamContentParser::FindPattern(
     const ByteString& name) {
   CPDF_Object* pPattern = FindResourceObj("Pattern", name);
-  if (!pPattern || (!pPattern->IsDictionary() && !pPattern->IsStream())) {
-    m_bResourceMissing = true;
+  if (!pPattern || (!pPattern->IsDictionary() && !pPattern->IsStream()))
     return nullptr;
-  }
   return CPDF_DocPageData::FromDocument(m_pDocument.Get())
       ->GetPattern(pPattern, m_pCurStates->m_ParentMatrix);
 }
@@ -1204,10 +1196,8 @@ RetainPtr<CPDF_Pattern> CPDF_StreamContentParser::FindPattern(
 RetainPtr<CPDF_ShadingPattern> CPDF_StreamContentParser::FindShading(
     const ByteString& name) {
   CPDF_Object* pPattern = FindResourceObj("Shading", name);
-  if (!pPattern || (!pPattern->IsDictionary() && !pPattern->IsStream())) {
-    m_bResourceMissing = true;
+  if (!pPattern || (!pPattern->IsDictionary() && !pPattern->IsStream()))
     return nullptr;
-  }
   return CPDF_DocPageData::FromDocument(m_pDocument.Get())
       ->GetShading(pPattern, m_pCurStates->m_ParentMatrix);
 }

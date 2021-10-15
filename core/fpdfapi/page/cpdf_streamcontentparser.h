@@ -238,7 +238,6 @@ class CPDF_StreamContentParser {
   ByteString m_LastImageName;
   RetainPtr<CPDF_Image> m_pLastImage;
   bool m_bColored = false;
-  bool m_bResourceMissing = false;
   std::vector<std::unique_ptr<CPDF_AllStates>> m_StateStack;
   float m_Type3Data[6] = {0.0f};
   ContentParam m_ParamBuf[kParamBufSize];
