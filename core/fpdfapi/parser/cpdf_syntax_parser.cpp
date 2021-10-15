@@ -789,12 +789,14 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
     }
   }
 
-  auto pStream = pdfium::MakeRetain<CPDF_Stream>();
+  RetainPtr<CPDF_Stream> pStream;
   if (data) {
+    pStream = pdfium::MakeRetain<CPDF_Stream>();
     pStream->InitStreamFromFile(data, std::move(pDict));
   } else {
     DCHECK(!len);
-    pStream->InitStream({}, std::move(pDict));  // Empty stream
+    pStream = pdfium::MakeRetain<CPDF_Stream>(pdfium::span<const uint8_t>(),
+                                              std::move(pDict));
   }
   const FX_FILESIZE end_stream_offset = GetPos();
   memset(m_WordBuffer, 0, kEndObjStr.GetLength() + 1);

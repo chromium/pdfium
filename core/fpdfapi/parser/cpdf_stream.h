@@ -63,6 +63,8 @@ class CPDF_Stream final : public CPDF_Object {
 
  private:
   CPDF_Stream();
+  CPDF_Stream(pdfium::span<const uint8_t> pData,
+              RetainPtr<CPDF_Dictionary> pDict);
   CPDF_Stream(std::unique_ptr<uint8_t, FxFreeDeleter> pData,
               uint32_t size,
               RetainPtr<CPDF_Dictionary> pDict);

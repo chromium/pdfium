@@ -161,7 +161,7 @@ void CPDF_Image::SetJpegImageInline(
   if (!pDict)
     return;
 
-  m_pStream->InitStream(data, std::move(pDict));
+  m_pStream = pdfium::MakeRetain<CPDF_Stream>(data, std::move(pDict));
 }
 
 void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
@@ -317,10 +317,8 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
       dest_span_offset += dest_pitch;
     }
   }
-  if (!m_pStream)
-    m_pStream = pdfium::MakeRetain<CPDF_Stream>();
 
-  m_pStream->InitStream(dest_span, std::move(pDict));
+  m_pStream = pdfium::MakeRetain<CPDF_Stream>(dest_span, std::move(pDict));
   m_bIsMask = pBitmap->IsMaskFormat();
   m_Width = BitmapWidth;
   m_Height = BitmapHeight;
