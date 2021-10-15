@@ -104,6 +104,7 @@ pdfium_unittest_source_set("unittests") {
     "cpdf_hint_tables_unittest.cpp",
     "cpdf_indirect_object_holder_unittest.cpp",
     "cpdf_object_avail_unittest.cpp",
+    "cpdf_object_stream_unittest.cpp",
     "cpdf_object_unittest.cpp",
     "cpdf_object_walker_unittest.cpp",
     "cpdf_page_object_avail_unittest.cpp",
