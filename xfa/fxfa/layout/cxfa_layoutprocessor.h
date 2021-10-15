@@ -28,7 +28,7 @@ namespace cppgc {
 class Heap;
 }  // namespace cppgc
 
-class CXFA_LayoutProcessor : public CXFA_Document::LayoutProcessorIface {
+class CXFA_LayoutProcessor final : public CXFA_Document::LayoutProcessorIface {
  public:
   static CXFA_LayoutProcessor* FromDocument(const CXFA_Document* pXFADoc);
 

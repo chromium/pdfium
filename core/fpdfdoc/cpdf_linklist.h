@@ -19,7 +19,7 @@
 class CPDF_Page;
 class CPDF_Dictionary;
 
-class CPDF_LinkList : public CPDF_Document::LinkListIface {
+class CPDF_LinkList final : public CPDF_Document::LinkListIface {
  public:
   CPDF_LinkList();
   ~CPDF_LinkList() override;

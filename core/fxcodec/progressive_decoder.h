@@ -43,7 +43,7 @@ class CFX_DIBAttribute;
 
 class Dummy {};  // Placeholder to work around C++ syntax issues
 
-class ProgressiveDecoder :
+class ProgressiveDecoder final :
 #ifdef PDF_ENABLE_XFA_BMP
     public BmpDecoder::Delegate,
 #endif  // PDF_ENABLE_XFA_BMP

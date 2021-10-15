@@ -22,8 +22,8 @@ class CXFA_Node;
 class CXFA_NodeLocale;
 class CXFA_XMLLocale;
 
-class CXFA_LocaleMgr : public cppgc::GarbageCollected<CXFA_LocaleMgr>,
-                       public LocaleMgrIface {
+class CXFA_LocaleMgr final : public cppgc::GarbageCollected<CXFA_LocaleMgr>,
+                             public LocaleMgrIface {
  public:
   enum class LangID : uint16_t {
     k_zh_HK = 0x0c04,

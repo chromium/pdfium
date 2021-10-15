@@ -14,7 +14,7 @@
 class CFWL_Widget;
 class CFX_RectF;
 
-class CXFA_FWLAdapterWidgetMgr
+class CXFA_FWLAdapterWidgetMgr final
     : public cppgc::GarbageCollected<CXFA_FWLAdapterWidgetMgr>,
       public CFWL_WidgetMgr::AdapterIface {
  public:

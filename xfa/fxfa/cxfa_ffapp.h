@@ -21,8 +21,8 @@ class CXFA_FWLTheme;
 class CXFA_FontMgr;
 class IFX_SeekableReadStream;
 
-class CXFA_FFApp : public cppgc::GarbageCollected<CXFA_FFApp>,
-                   public CFWL_App::AdapterIface {
+class CXFA_FFApp final : public cppgc::GarbageCollected<CXFA_FFApp>,
+                         public CFWL_App::AdapterIface {
  public:
   class CallbackIface {
    public:

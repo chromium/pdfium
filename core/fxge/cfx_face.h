@@ -10,7 +10,7 @@
 #include "core/fxge/fx_freetype.h"
 #include "third_party/base/span.h"
 
-class CFX_Face : public Retainable, public Observable {
+class CFX_Face final : public Retainable, public Observable {
  public:
   static RetainPtr<CFX_Face> New(FT_Library library,
                                  const RetainPtr<Retainable>& pDesc,

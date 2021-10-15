@@ -19,7 +19,7 @@
 class CPDF_Array;
 class CPDF_Dictionary;
 
-class CPDF_SecurityHandler : public Retainable {
+class CPDF_SecurityHandler final : public Retainable {
  public:
   CONSTRUCT_VIA_MAKE_RETAIN;
 

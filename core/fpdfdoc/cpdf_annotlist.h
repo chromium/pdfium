@@ -24,7 +24,7 @@ class CPDF_Page;
 class CPDF_RenderContext;
 class CPDF_RenderOptions;
 
-class CPDF_AnnotList : public CPDF_PageRenderContext::AnnotListIface {
+class CPDF_AnnotList final : public CPDF_PageRenderContext::AnnotListIface {
  public:
   explicit CPDF_AnnotList(CPDF_Page* pPage);
   ~CPDF_AnnotList() override;

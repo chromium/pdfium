@@ -27,7 +27,7 @@ class CFX_Matrix;
 class CFX_Path;
 struct CFX_TextRenderOptions;
 
-class CFX_GlyphCache : public Retainable, public Observable {
+class CFX_GlyphCache final : public Retainable, public Observable {
  public:
   CONSTRUCT_VIA_MAKE_RETAIN;
   ~CFX_GlyphCache() override;

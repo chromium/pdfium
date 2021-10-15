@@ -30,8 +30,8 @@ class CPDF_Pattern;
 class CPDF_Stream;
 class CPDF_StreamAcc;
 
-class CPDF_DocPageData : public CPDF_Document::PageDataIface,
-                         public CPDF_Font::FormFactoryIface {
+class CPDF_DocPageData final : public CPDF_Document::PageDataIface,
+                               public CPDF_Font::FormFactoryIface {
  public:
   static CPDF_DocPageData* FromDocument(const CPDF_Document* pDoc);
 

@@ -24,7 +24,7 @@ class CPDF_RenderStatus;
 class CPDF_Stream;
 class PauseIndicatorIface;
 
-class CPDF_PageRenderCache : public CPDF_Page::RenderCacheIface {
+class CPDF_PageRenderCache final : public CPDF_Page::RenderCacheIface {
  public:
   explicit CPDF_PageRenderCache(CPDF_Page* pPage);
   ~CPDF_PageRenderCache() override;

@@ -38,7 +38,7 @@ inline FDE_TEXTEDITPIECE::FDE_TEXTEDITPIECE(const FDE_TEXTEDITPIECE& that) =
     default;
 inline FDE_TEXTEDITPIECE::~FDE_TEXTEDITPIECE() = default;
 
-class CFDE_TextEditEngine : public CFGAS_TxtBreak::Engine {
+class CFDE_TextEditEngine final : public CFGAS_TxtBreak::Engine {
  public:
   class Iterator {
    public:

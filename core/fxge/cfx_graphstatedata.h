@@ -35,8 +35,8 @@ class CFX_GraphStateData {
   std::vector<float> m_DashArray;
 };
 
-class CFX_RetainableGraphStateData : public Retainable,
-                                     public CFX_GraphStateData {
+class CFX_RetainableGraphStateData final : public Retainable,
+                                           public CFX_GraphStateData {
  public:
   CONSTRUCT_VIA_MAKE_RETAIN;
 
