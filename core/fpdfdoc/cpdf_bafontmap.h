@@ -51,7 +51,6 @@ class CPDF_BAFontMap final : public IPVT_FontMap {
     ByteString sFontName;
   };
 
-  void Initialize();
   RetainPtr<CPDF_Font> FindFontSameCharset(ByteString* sFontAlias,
                                            FX_Charset nCharset);
   RetainPtr<CPDF_Font> FindResFontSameCharset(const CPDF_Dictionary* pResDict,
