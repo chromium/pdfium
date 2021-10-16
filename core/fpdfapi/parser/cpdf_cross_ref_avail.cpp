@@ -85,7 +85,7 @@ bool CPDF_CrossRefAvail::CheckCrossRef() {
   }
   parser_->SetPos(cross_refs_for_check_.front());
 
-  const ByteString first_word = parser_->PeekNextWord(nullptr);
+  const ByteString first_word = parser_->PeekNextWord();
   if (CheckReadProblems())
     return false;
 

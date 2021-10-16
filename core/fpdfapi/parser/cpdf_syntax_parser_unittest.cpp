@@ -156,6 +156,6 @@ TEST(cpdf_syntax_parser, GetInvalidReference) {
 TEST(cpdf_syntax_parser, PeekNextWord) {
   static const uint8_t data[] = "    WORD ";
   CPDF_SyntaxParser parser(pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(data));
-  EXPECT_EQ("WORD", parser.PeekNextWord(nullptr));
+  EXPECT_EQ("WORD", parser.PeekNextWord());
   EXPECT_EQ("WORD", parser.GetNextWord(nullptr));
 }

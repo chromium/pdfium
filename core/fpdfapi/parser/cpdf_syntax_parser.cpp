@@ -475,9 +475,9 @@ ByteString CPDF_SyntaxParser::GetNextWord(bool* bIsNumber) {
   return ret;
 }
 
-ByteString CPDF_SyntaxParser::PeekNextWord(bool* bIsNumber) {
+ByteString CPDF_SyntaxParser::PeekNextWord() {
   AutoRestorer<FX_FILESIZE> save_pos(&m_Pos);
-  return GetNextWord(bIsNumber);
+  return GetNextWord(nullptr);
 }
 
 ByteString CPDF_SyntaxParser::GetKeyword() {

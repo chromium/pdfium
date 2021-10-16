@@ -62,7 +62,7 @@ class CPDF_SyntaxParser {
   bool ReadBlock(uint8_t* pBuf, uint32_t size);
   bool GetCharAt(FX_FILESIZE pos, uint8_t& ch);
   ByteString GetNextWord(bool* bIsNumber);
-  ByteString PeekNextWord(bool* bIsNumber);
+  ByteString PeekNextWord();
 
   const RetainPtr<CPDF_ReadValidator>& GetValidator() const {
     return m_pFileAccess;
