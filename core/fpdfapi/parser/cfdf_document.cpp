@@ -38,19 +38,18 @@ void CFDF_Document::ParseStream(RetainPtr<IFX_SeekableReadStream> pFile) {
   m_pFile = std::move(pFile);
   CPDF_SyntaxParser parser(m_pFile);
   while (1) {
-    bool bNumber;
-    ByteString word = parser.GetNextWord(&bNumber);
-    if (bNumber) {
-      uint32_t objnum = FXSYS_atoui(word.c_str());
+    CPDF_SyntaxParser::WordResult word_result = parser.GetNextWord();
+    if (word_result.is_number) {
+      uint32_t objnum = FXSYS_atoui(word_result.word.c_str());
       if (!objnum)
         break;
 
-      word = parser.GetNextWord(&bNumber);
-      if (!bNumber)
+      word_result = parser.GetNextWord();
+      if (!word_result.is_number)
         break;
 
-      word = parser.GetNextWord(nullptr);
-      if (word != "obj")
+      word_result = parser.GetNextWord();
+      if (word_result.word != "obj")
         break;
 
       RetainPtr<CPDF_Object> pObj = parser.GetObjectBody(this);
@@ -58,11 +57,11 @@ void CFDF_Document::ParseStream(RetainPtr<IFX_SeekableReadStream> pFile) {
         break;
 
       ReplaceIndirectObjectIfHigherGeneration(objnum, std::move(pObj));
-      word = parser.GetNextWord(nullptr);
-      if (word != "endobj")
+      word_result = parser.GetNextWord();
+      if (word_result.word != "endobj")
         break;
     } else {
-      if (word != "trailer")
+      if (word_result.word != "trailer")
         break;
 
       RetainPtr<CPDF_Dictionary> pMainDict =

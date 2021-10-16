@@ -1262,34 +1262,33 @@ FPDF_GetTrailerEnds(FPDF_DOCUMENT document,
   // Traverse the document.
   syntax->SetPos(0);
   while (1) {
-    bool number;
-    ByteString word = syntax->GetNextWord(&number);
-    if (number) {
+    CPDF_SyntaxParser::WordResult word_result = syntax->GetNextWord();
+    if (word_result.is_number) {
       // The object number was read. Read the generation number.
-      word = syntax->GetNextWord(&number);
-      if (!number)
+      word_result = syntax->GetNextWord();
+      if (!word_result.is_number)
         break;
 
-      word = syntax->GetNextWord(nullptr);
-      if (word != "obj")
+      word_result = syntax->GetNextWord();
+      if (word_result.word != "obj")
         break;
 
       syntax->GetObjectBody(nullptr);
 
-      word = syntax->GetNextWord(nullptr);
-      if (word != "endobj")
+      word_result = syntax->GetNextWord();
+      if (word_result.word != "endobj")
         break;
-    } else if (word == "trailer") {
+    } else if (word_result.word == "trailer") {
       syntax->GetObjectBody(nullptr);
-    } else if (word == "startxref") {
-      syntax->GetNextWord(nullptr);
-    } else if (word == "xref") {
+    } else if (word_result.word == "startxref") {
+      syntax->GetNextWord();
+    } else if (word_result.word == "xref") {
       while (1) {
-        word = syntax->GetNextWord(nullptr);
-        if (word.IsEmpty() || word == "startxref")
+        word_result = syntax->GetNextWord();
+        if (word_result.word.IsEmpty() || word_result.word == "startxref")
           break;
       }
-      syntax->GetNextWord(nullptr);
+      syntax->GetNextWord();
     } else {
       break;
     }

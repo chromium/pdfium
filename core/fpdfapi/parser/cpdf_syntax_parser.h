@@ -31,6 +31,11 @@ class CPDF_SyntaxParser {
  public:
   enum class ParseType { kStrict, kLoose };
 
+  struct WordResult {
+    ByteString word;
+    bool is_number;
+  };
+
   static std::unique_ptr<CPDF_SyntaxParser> CreateForTesting(
       const RetainPtr<IFX_SeekableReadStream>& pFileAccess,
       FX_FILESIZE HeaderOffset);
@@ -61,7 +66,7 @@ class CPDF_SyntaxParser {
   FX_FILESIZE FindTag(ByteStringView tag);
   bool ReadBlock(uint8_t* pBuf, uint32_t size);
   bool GetCharAt(FX_FILESIZE pos, uint8_t& ch);
-  ByteString GetNextWord(bool* bIsNumber);
+  WordResult GetNextWord();
   ByteString PeekNextWord();
 
   const RetainPtr<CPDF_ReadValidator>& GetValidator() const {

@@ -72,7 +72,7 @@ std::unique_ptr<CPDF_LinearizedHeader> CPDF_LinearizedHeader::Parse(
   }
   // Move parser to the start of the xref table for the documents first page.
   // (skpping endobj keyword)
-  if (parser->GetNextWord(nullptr) != "endobj")
+  if (parser->GetNextWord().word != "endobj")
     return nullptr;
 
   auto result = pdfium::WrapUnique(

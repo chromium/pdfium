@@ -157,5 +157,5 @@ TEST(cpdf_syntax_parser, PeekNextWord) {
   static const uint8_t data[] = "    WORD ";
   CPDF_SyntaxParser parser(pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(data));
   EXPECT_EQ("WORD", parser.PeekNextWord());
-  EXPECT_EQ("WORD", parser.GetNextWord(nullptr));
+  EXPECT_EQ("WORD", parser.GetNextWord().word);
 }
