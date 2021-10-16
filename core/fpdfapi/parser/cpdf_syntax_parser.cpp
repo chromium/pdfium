@@ -172,29 +172,27 @@ bool CPDF_SyntaxParser::ReadBlock(uint8_t* pBuf, uint32_t size) {
   return true;
 }
 
-void CPDF_SyntaxParser::GetNextWordInternal(bool* bIsNumber) {
+CPDF_SyntaxParser::WordType CPDF_SyntaxParser::GetNextWordInternal() {
   m_WordSize = 0;
-  if (bIsNumber)
-    *bIsNumber = true;
+  WordType word_type = WordType::kNumber;
 
   ToNextWord();
   uint8_t ch;
   if (!GetNextChar(ch))
-    return;
+    return word_type;
 
   if (PDFCharIsDelimiter(ch)) {
-    if (bIsNumber)
-      *bIsNumber = false;
+    word_type = WordType::kWord;
 
     m_WordBuffer[m_WordSize++] = ch;
     if (ch == '/') {
       while (1) {
         if (!GetNextChar(ch))
-          return;
+          return word_type;
 
         if (!PDFCharIsOther(ch) && !PDFCharIsNumeric(ch)) {
           m_Pos--;
-          return;
+          return word_type;
         }
 
         if (m_WordSize < sizeof(m_WordBuffer) - 1)
@@ -202,7 +200,7 @@ void CPDF_SyntaxParser::GetNextWordInternal(bool* bIsNumber) {
       }
     } else if (ch == '<') {
       if (!GetNextChar(ch))
-        return;
+        return word_type;
 
       if (ch == '<')
         m_WordBuffer[m_WordSize++] = ch;
@@ -210,33 +208,32 @@ void CPDF_SyntaxParser::GetNextWordInternal(bool* bIsNumber) {
         m_Pos--;
     } else if (ch == '>') {
       if (!GetNextChar(ch))
-        return;
+        return word_type;
 
       if (ch == '>')
         m_WordBuffer[m_WordSize++] = ch;
       else
         m_Pos--;
     }
-    return;
+    return word_type;
   }
 
   while (1) {
     if (m_WordSize < sizeof(m_WordBuffer) - 1)
       m_WordBuffer[m_WordSize++] = ch;
 
-    if (!PDFCharIsNumeric(ch)) {
-      if (bIsNumber)
-        *bIsNumber = false;
-    }
+    if (!PDFCharIsNumeric(ch))
+      word_type = WordType::kWord;
 
     if (!GetNextChar(ch))
-      return;
+      return word_type;
 
     if (PDFCharIsDelimiter(ch) || PDFCharIsWhitespace(ch)) {
       m_Pos--;
       break;
     }
   }
+  return word_type;
 }
 
 ByteString CPDF_SyntaxParser::ReadString() {
@@ -469,7 +466,9 @@ void CPDF_SyntaxParser::RecordingToNextWord() {
 
 ByteString CPDF_SyntaxParser::GetNextWord(bool* bIsNumber) {
   CPDF_ReadValidator::ScopedSession read_session(GetValidator());
-  GetNextWordInternal(bIsNumber);
+  WordType word_type = GetNextWordInternal();
+  if (bIsNumber)
+    *bIsNumber = word_type == WordType::kNumber;
   ByteString ret;
   if (!GetValidator()->has_read_problems())
     ret = ByteString(m_WordBuffer, m_WordSize);
@@ -750,7 +749,7 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
     CPDF_ReadValidator::ScopedSession read_session(GetValidator());
     m_Pos += ReadEOLMarkers(GetPos());
     memset(m_WordBuffer, 0, kEndStreamStr.GetLength() + 1);
-    GetNextWordInternal(nullptr);
+    GetNextWordInternal();
     if (GetValidator()->has_read_problems())
       return nullptr;
 
@@ -800,7 +799,7 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
   }
   const FX_FILESIZE end_stream_offset = GetPos();
   memset(m_WordBuffer, 0, kEndObjStr.GetLength() + 1);
-  GetNextWordInternal(nullptr);
+  GetNextWordInternal();
 
   // Allow whitespace after endstream and before a newline.
   unsigned char ch = 0;
@@ -820,9 +819,7 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
 }
 
 uint32_t CPDF_SyntaxParser::GetDirectNum() {
-  bool bIsNumber;
-  GetNextWordInternal(&bIsNumber);
-  if (!bIsNumber)
+  if (GetNextWordInternal() != WordType::kNumber)
     return 0;
 
   m_WordBuffer[m_WordSize] = 0;

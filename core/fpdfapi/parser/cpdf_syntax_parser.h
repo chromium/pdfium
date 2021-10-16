@@ -86,6 +86,8 @@ class CPDF_SyntaxParser {
   }
 
  private:
+  enum class WordType : bool { kWord, kNumber };
+
   friend class CPDF_DataAvail;
   friend class cpdf_syntax_parser_ReadHexString_Test;
 
@@ -94,7 +96,7 @@ class CPDF_SyntaxParser {
 
   bool ReadBlockAt(FX_FILESIZE read_pos);
   bool GetCharAtBackward(FX_FILESIZE pos, uint8_t* ch);
-  void GetNextWordInternal(bool* bIsNumber);
+  WordType GetNextWordInternal();
   bool IsWholeWord(FX_FILESIZE startpos,
                    FX_FILESIZE limit,
                    ByteStringView tag,
