@@ -29,7 +29,7 @@ class IFX_SeekableReadStream;
 
 class CPDF_SyntaxParser {
  public:
-  enum class ParseType { kStrict, kLoose };
+  enum class ParseType : bool { kStrict, kLoose };
 
   struct WordResult {
     ByteString word;
