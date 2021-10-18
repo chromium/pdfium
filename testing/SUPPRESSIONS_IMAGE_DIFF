@@ -10,6 +10,7 @@
 # Column 1: platform: *, win, mac, linux
 # Column 2: v8 support: *, nov8, v8
 # Column 3: xfa support: *, noxfa, xfa
+# Column 4: rendering support: *, agg, skia, skiapaths
 #
 # All columns on a line on a line must match, but filenames may be repeated
 # on subsequent lines to suppress more cases.  Within each column, any one of
@@ -21,12 +22,12 @@
 #
 # Corpus tests
 #
-FRC_3.5_CF_Strf_stmf_DefaultCryptFilter.pdf * * *
-FRC_3.5_EncryptMetadata_T.pdf * * *
-FRC_3.5_Encrypt_is_damage.pdf * * *
-FRC_3.5_Filter_PubSec_SubFilter_s5.pdf * * *
-FRC_3.5_Filter_PubSec_Sub_SubFilter_s4.pdf * * *
-MouseEvents.pdf * * *
-Oneof.pdf * * *
-bug_651304.pdf * * *
-outline.pdf * * *
+FRC_3.5_CF_Strf_stmf_DefaultCryptFilter.pdf * * * *
+FRC_3.5_EncryptMetadata_T.pdf * * * *
+FRC_3.5_Encrypt_is_damage.pdf * * * *
+FRC_3.5_Filter_PubSec_SubFilter_s5.pdf * * * *
+FRC_3.5_Filter_PubSec_Sub_SubFilter_s4.pdf * * * *
+MouseEvents.pdf * * * *
+Oneof.pdf * * * *
+bug_651304.pdf * * * *
+outline.pdf * * * *
