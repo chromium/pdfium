@@ -1248,7 +1248,7 @@ FPDFFont_GetFontName(FPDF_FONT font, char* buffer, unsigned long length);
 // font - the handle to the font object.
 //
 // Returns the bit flags specifying various characteristics of the font as
-// defined in ISO 32000-1 Table 123, -1 on failure.
+// defined in ISO 32000-1:2008, table 123, -1 on failure.
 FPDF_EXPORT int FPDF_CALLCONV FPDFFont_GetFlags(FPDF_FONT font);
 
 // Experimental API.

@@ -16,7 +16,7 @@ class CPDF_Stream;
 class IFX_SeekableReadStream;
 
 // Implementation of logic of PDF "Object Streams".
-// See "PDF 32000-1:2008" Spec. section 7.5.7.
+// See ISO 32000-1:2008 spec, section 7.5.7.
 class CPDF_ObjectStream {
  public:
   static bool IsObjectsStreamObject(const CPDF_Object* object);

@@ -11,8 +11,8 @@
 #include "core/fxcrt/retain_ptr.h"
 
 // Represents a color space that is based on another color space. This includes
-// all the special color spaces in ISO 32000, table 62, as well as the ICCBased
-// color space.
+// all the special color spaces in ISO 32000-1:2008, table 62, as well as the
+// ICCBased color space.
 class CPDF_BasedCS : public CPDF_ColorSpace {
  public:
   CONSTRUCT_VIA_MAKE_RETAIN;

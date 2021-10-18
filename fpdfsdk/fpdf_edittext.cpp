@@ -655,7 +655,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFFont_GetFlags(FPDF_FONT font) {
   if (!pFont)
     return -1;
 
-  // return only flags from ISO 32000-1 Table 123
+  // Return only flags from ISO 32000-1:2008, table 123.
   return pFont->GetFontFlags() & 0x7ffff;
 }
 

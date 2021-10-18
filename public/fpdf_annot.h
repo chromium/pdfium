@@ -209,8 +209,8 @@ FPDFAnnot_UpdateObject(FPDF_ANNOTATION annot, FPDF_PAGEOBJECT obj);
 // Experimental API.
 // Add a new InkStroke, represented by an array of points, to the InkList of
 // |annot|. The API creates an InkList if one doesn't already exist in |annot|.
-// This API works only for ink annotations. Please refer section 12.5.6.13 in
-// PDF 32000-1:2008 Specification.
+// This API works only for ink annotations. Please refer to ISO 32000-1:2008
+// spec, section 12.5.6.13.
 //
 //   annot       - handle to an annotation.
 //   points      - pointer to a FS_POINTF array representing input points.

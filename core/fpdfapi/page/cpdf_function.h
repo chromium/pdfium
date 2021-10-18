@@ -21,7 +21,7 @@ class CPDF_StitchFunc;
 
 class CPDF_Function {
  public:
-  // Valid values are from PDF 32000-1:2008 spec, table 38. DO NOT CHANGE.
+  // Valid values are from ISO 32000-1:2008 spec, table 38. DO NOT CHANGE.
   enum class Type {
     kTypeInvalid = -1,
     kType0Sampled = 0,

@@ -7,7 +7,7 @@
 namespace pdfium {
 namespace appearance {
 
-// ISO 32000 spec, table 189.
+// ISO 32000-1:2008 spec, table 189.
 // Entries in an appearance characteristics dictionary.
 const char kR[] = "R";
 const char kBC[] = "BC";

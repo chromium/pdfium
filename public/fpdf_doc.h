@@ -39,7 +39,7 @@ extern "C" {
 #define PDFDEST_VIEW_FITBV 8
 
 // The file identifier entry type. See section 14.4 "File Identifiers" of the
-// ISO 32000-1 standard.
+// ISO 32000-1:2008 spec.
 typedef enum {
   FILEIDTYPE_PERMANENT = 0,
   FILEIDTYPE_CHANGING = 1

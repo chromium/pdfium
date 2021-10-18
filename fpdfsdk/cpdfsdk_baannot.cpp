@@ -225,7 +225,7 @@ CPDF_Dest CPDFSDK_BAAnnot::GetDestination() const {
     return CPDF_Dest(nullptr);
 
   // Link annotations can have "Dest" entry defined as an explicit array.
-  // https://www.adobe.com/content/dam/acom/en/devnet/pdf/pdfs/PDF32000_2008.pdf#page=373
+  // See ISO 32000-1:2008 spec, section 12.3.2.1.
   return CPDF_Dest::Create(m_pPageView->GetPDFDocument(),
                            GetAnnotDict()->GetDirectObjectFor("Dest"));
 }
