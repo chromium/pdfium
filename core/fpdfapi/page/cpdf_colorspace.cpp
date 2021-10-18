@@ -698,9 +698,11 @@ void CPDF_CalGray::TranslateImageLine(pdfium::span<uint8_t> dest_span,
   uint8_t* pDestBuf = dest_span.data();
   const uint8_t* pSrcBuf = src_span.data();
   for (int i = 0; i < pixels; i++) {
-    *pDestBuf++ = pSrcBuf[i];
-    *pDestBuf++ = pSrcBuf[i];
-    *pDestBuf++ = pSrcBuf[i];
+    // Compiler can not conclude that src/dest don't overlap.
+    const uint8_t pix = pSrcBuf[i];
+    *pDestBuf++ = pix;
+    *pDestBuf++ = pix;
+    *pDestBuf++ = pix;
   }
 }
 
