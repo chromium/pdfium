@@ -350,6 +350,9 @@ bug_237527_1.in * * * *
 # TODO(chromium:451366): Remove after associated bug is fixed
 bug_451366.in * * * *
 
+# TODO(pdfium:1736): Remove after associated bug is fixed
+checkbox_radiobutton.in * * * skia
+
 # TODO(chromium:1028991): Remove after associated bug is fixed
 reset_button.in * * * *
 
