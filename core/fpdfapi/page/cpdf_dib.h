@@ -91,10 +91,11 @@ class CPDF_DIB final : public CFX_DIBBase {
   LoadState CreateDecoder();
   bool CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
                         const CPDF_Dictionary* pParams);
-  void TranslateScanline24bpp(uint8_t* dest_scan,
-                              const uint8_t* src_scan) const;
-  bool TranslateScanline24bppDefaultDecode(uint8_t* dest_scan,
-                                           const uint8_t* src_scan) const;
+  void TranslateScanline24bpp(pdfium::span<uint8_t> dest_scan,
+                              pdfium::span<const uint8_t> src_scan) const;
+  bool TranslateScanline24bppDefaultDecode(
+      pdfium::span<uint8_t> dest_scan,
+      pdfium::span<const uint8_t> src_scan) const;
   void ValidateDictParam(const ByteString& filter);
   bool TransMask() const;
   void SetMaskProperties();

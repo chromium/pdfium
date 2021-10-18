@@ -957,8 +957,9 @@ void CPDF_DIB::ValidateDictParam(const ByteString& filter) {
     m_bpc = 0;
 }
 
-void CPDF_DIB::TranslateScanline24bpp(uint8_t* dest_scan,
-                                      const uint8_t* src_scan) const {
+void CPDF_DIB::TranslateScanline24bpp(
+    pdfium::span<uint8_t> dest_scan,
+    pdfium::span<const uint8_t> src_scan) const {
   if (m_bpc == 0)
     return;
 
@@ -981,7 +982,7 @@ void CPDF_DIB::TranslateScanline24bpp(uint8_t* dest_scan,
         color_values[color] = m_CompData[color].m_DecodeMin +
                               m_CompData[color].m_DecodeStep * data;
       } else {
-        unsigned int data = GetBits8(src_scan, src_bit_pos, m_bpc);
+        unsigned int data = GetBits8(src_scan.data(), src_bit_pos, m_bpc);
         color_values[color] = m_CompData[color].m_DecodeMin +
                               m_CompData[color].m_DecodeStep * data;
         src_bit_pos += m_bpc;
@@ -1007,8 +1008,8 @@ void CPDF_DIB::TranslateScanline24bpp(uint8_t* dest_scan,
 }
 
 bool CPDF_DIB::TranslateScanline24bppDefaultDecode(
-    uint8_t* dest_scan,
-    const uint8_t* src_scan) const {
+    pdfium::span<uint8_t> dest_scan,
+    pdfium::span<const uint8_t> src_scan) const {
   if (!m_bDefaultDecode)
     return false;
 
@@ -1027,21 +1028,22 @@ bool CPDF_DIB::TranslateScanline24bppDefaultDecode(
   if (m_nComponents != 3)
     return true;
 
-  const uint8_t* src_pos = src_scan;
+  uint8_t* dest_pos = dest_scan.data();
+  const uint8_t* src_pos = src_scan.data();
   switch (m_bpc) {
     case 8:
       for (int column = 0; column < m_Width; column++) {
-        *dest_scan++ = src_pos[2];
-        *dest_scan++ = src_pos[1];
-        *dest_scan++ = *src_pos;
+        *dest_pos++ = src_pos[2];
+        *dest_pos++ = src_pos[1];
+        *dest_pos++ = *src_pos;
         src_pos += 3;
       }
       break;
     case 16:
       for (int col = 0; col < m_Width; col++) {
-        *dest_scan++ = src_pos[4];
-        *dest_scan++ = src_pos[2];
-        *dest_scan++ = *src_pos;
+        *dest_pos++ = src_pos[4];
+        *dest_pos++ = src_pos[2];
+        *dest_pos++ = *src_pos;
         src_pos += 6;
       }
       break;
@@ -1050,18 +1052,18 @@ bool CPDF_DIB::TranslateScanline24bppDefaultDecode(
       uint64_t src_bit_pos = 0;
       size_t dest_byte_pos = 0;
       for (int column = 0; column < m_Width; column++) {
-        unsigned int R = GetBits8(src_scan, src_bit_pos, m_bpc);
+        unsigned int R = GetBits8(src_scan.data(), src_bit_pos, m_bpc);
         src_bit_pos += m_bpc;
-        unsigned int G = GetBits8(src_scan, src_bit_pos, m_bpc);
+        unsigned int G = GetBits8(src_scan.data(), src_bit_pos, m_bpc);
         src_bit_pos += m_bpc;
-        unsigned int B = GetBits8(src_scan, src_bit_pos, m_bpc);
+        unsigned int B = GetBits8(src_scan.data(), src_bit_pos, m_bpc);
         src_bit_pos += m_bpc;
         R = std::min(R, max_data);
         G = std::min(G, max_data);
         B = std::min(B, max_data);
-        dest_scan[dest_byte_pos] = B * 255 / max_data;
-        dest_scan[dest_byte_pos + 1] = G * 255 / max_data;
-        dest_scan[dest_byte_pos + 2] = R * 255 / max_data;
+        dest_pos[dest_byte_pos] = B * 255 / max_data;
+        dest_pos[dest_byte_pos + 1] = G * 255 / max_data;
+        dest_pos[dest_byte_pos + 2] = R * 255 / max_data;
         dest_byte_pos += 3;
       }
       break;
@@ -1178,7 +1180,7 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
     }
   }
   if (m_pColorSpace) {
-    TranslateScanline24bpp(m_LineBuf.data(), pSrcLine.data());
+    TranslateScanline24bpp(m_LineBuf, pSrcLine);
     src_pitch_value = 3 * m_Width;
     pSrcLine = pdfium::make_span(m_LineBuf).first(src_pitch_value);
   }

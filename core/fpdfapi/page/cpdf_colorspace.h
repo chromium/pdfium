@@ -104,8 +104,9 @@ class CPDF_ColorSpace : public Retainable, public Observable {
                                float* value,
                                float* min,
                                float* max) const;
-  virtual void TranslateImageLine(uint8_t* dest_buf,
-                                  const uint8_t* src_buf,
+
+  virtual void TranslateImageLine(pdfium::span<uint8_t> dest_span,
+                                  pdfium::span<const uint8_t> src_span,
                                   int pixels,
                                   int image_width,
                                   int image_height,

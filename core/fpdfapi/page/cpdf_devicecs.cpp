@@ -77,12 +77,14 @@ bool CPDF_DeviceCS::GetRGB(pdfium::span<const float> pBuf,
   }
 }
 
-void CPDF_DeviceCS::TranslateImageLine(uint8_t* pDestBuf,
-                                       const uint8_t* pSrcBuf,
+void CPDF_DeviceCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
+                                       pdfium::span<const uint8_t> src_span,
                                        int pixels,
                                        int image_width,
                                        int image_height,
                                        bool bTransMask) const {
+  uint8_t* pDestBuf = dest_span.data();
+  const uint8_t* pSrcBuf = src_span.data();
   switch (m_Family) {
     case Family::kDeviceGray:
       for (int i = 0; i < pixels; i++) {
