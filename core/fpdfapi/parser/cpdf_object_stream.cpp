@@ -19,8 +19,9 @@
 #include "third_party/base/containers/contains.h"
 #include "third_party/base/ptr_util.h"
 
-// static
-bool CPDF_ObjectStream::IsObjectsStreamObject(const CPDF_Object* object) {
+namespace {
+
+bool IsObjectStream(const CPDF_Object* object) {
   const CPDF_Stream* stream = ToStream(object);
   if (!stream)
     return false;
@@ -51,10 +52,12 @@ bool CPDF_ObjectStream::IsObjectsStreamObject(const CPDF_Object* object) {
   return true;
 }
 
+}  // namespace
+
 //  static
 std::unique_ptr<CPDF_ObjectStream> CPDF_ObjectStream::Create(
     const CPDF_Stream* stream) {
-  if (!IsObjectsStreamObject(stream))
+  if (!IsObjectStream(stream))
     return nullptr;
 
   // Protected constructor.
@@ -62,13 +65,8 @@ std::unique_ptr<CPDF_ObjectStream> CPDF_ObjectStream::Create(
 }
 
 CPDF_ObjectStream::CPDF_ObjectStream(const CPDF_Stream* obj_stream)
-    : obj_num_(obj_stream->GetObjNum()),
-      first_object_offset_(obj_stream->GetDict()->GetIntegerFor("First")) {
-  DCHECK(IsObjectsStreamObject(obj_stream));
-  if (const auto* extends_ref =
-          ToReference(obj_stream->GetDict()->GetObjectFor("Extends"))) {
-    extends_obj_num_ = extends_ref->GetRefObjNum();
-  }
+    : first_object_offset_(obj_stream->GetDict()->GetIntegerFor("First")) {
+  DCHECK(IsObjectStream(obj_stream));
   Init(obj_stream);
 }
 

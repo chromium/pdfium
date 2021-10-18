@@ -19,14 +19,9 @@ class IFX_SeekableReadStream;
 // See ISO 32000-1:2008 spec, section 7.5.7.
 class CPDF_ObjectStream {
  public:
-  static bool IsObjectsStreamObject(const CPDF_Object* object);
-
   static std::unique_ptr<CPDF_ObjectStream> Create(const CPDF_Stream* stream);
 
   ~CPDF_ObjectStream();
-
-  uint32_t obj_num() const { return obj_num_; }
-  uint32_t extends_obj_num() const { return extends_obj_num_; }
 
   bool HasObject(uint32_t obj_number) const;
   RetainPtr<CPDF_Object> ParseObject(CPDF_IndirectObjectHolder* pObjList,
@@ -35,16 +30,13 @@ class CPDF_ObjectStream {
     return objects_offsets_;
   }
 
- protected:
+ private:
   explicit CPDF_ObjectStream(const CPDF_Stream* stream);
 
   void Init(const CPDF_Stream* stream);
   RetainPtr<CPDF_Object> ParseObjectAtOffset(
       CPDF_IndirectObjectHolder* pObjList,
       uint32_t object_offset) const;
-
-  uint32_t obj_num_ = CPDF_Object::kInvalidObjNum;
-  uint32_t extends_obj_num_ = CPDF_Object::kInvalidObjNum;
 
   RetainPtr<IFX_SeekableReadStream> data_stream_;
   int first_object_offset_ = 0;
