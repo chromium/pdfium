@@ -293,12 +293,15 @@ uint8_t PathPredictor(int a, int b, int c) {
   return (uint8_t)c;
 }
 
-void PNG_PredictLine(uint8_t* pDestData,
-                     const uint8_t* pSrcData,
-                     const uint8_t* pLastLine,
+void PNG_PredictLine(pdfium::span<uint8_t> dest_span,
+                     pdfium::span<const uint8_t> src_span,
+                     pdfium::span<const uint8_t> last_span,
                      int bpc,
                      int nColors,
                      int nPixels) {
+  uint8_t* pDestData = dest_span.data();
+  const uint8_t* pSrcData = src_span.data();
+  const uint8_t* pLastLine = last_span.data();
   const uint32_t row_size = CalculatePitch8OrDie(bpc, nColors, nPixels);
   const uint32_t BytesPerPixel = (bpc * nColors + 7) / 8;
   uint8_t tag = pSrcData[0];
@@ -737,8 +740,8 @@ void FlatePredictorScanlineDecoder::GetNextLineWithPredictedPitch() {
   switch (m_Predictor) {
     case PredictorType::kPng:
       FlateOutput(m_pFlate.get(), m_PredictRaw.data(), m_PredictPitch + 1);
-      PNG_PredictLine(m_Scanline.data(), m_PredictRaw.data(), m_LastLine.data(),
-                      m_BitsPerComponent, m_Colors, m_Columns);
+      PNG_PredictLine(m_Scanline, m_PredictRaw, m_LastLine, m_BitsPerComponent,
+                      m_Colors, m_Columns);
       memcpy(m_LastLine.data(), m_Scanline.data(), m_PredictPitch);
       break;
     case PredictorType::kFlate:
@@ -765,9 +768,8 @@ void FlatePredictorScanlineDecoder::GetNextLineWithoutPredictedPitch() {
     switch (m_Predictor) {
       case PredictorType::kPng:
         FlateOutput(m_pFlate.get(), m_PredictRaw.data(), m_PredictPitch + 1);
-        PNG_PredictLine(m_PredictBuffer.data(), m_PredictRaw.data(),
-                        m_LastLine.data(), m_BitsPerComponent, m_Colors,
-                        m_Columns);
+        PNG_PredictLine(m_PredictBuffer, m_PredictRaw, m_LastLine,
+                        m_BitsPerComponent, m_Colors, m_Columns);
         memcpy(m_LastLine.data(), m_PredictBuffer.data(), m_PredictPitch);
         break;
       case PredictorType::kFlate:
