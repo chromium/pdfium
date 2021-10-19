@@ -985,10 +985,8 @@ void CPDF_ICCBasedCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
                                          int image_width,
                                          int image_height,
                                          bool bTransMask) const {
-  uint8_t* pDestBuf = dest_span.data();
-  const uint8_t* pSrcBuf = src_span.data();
   if (m_pProfile->IsSRGB()) {
-    fxcodec::ReverseRGB(pDestBuf, pSrcBuf, pixels);
+    fxcodec::ReverseRGB(dest_span.data(), src_span.data(), pixels);
     return;
   }
   if (!m_pProfile->transform()) {
@@ -1014,7 +1012,7 @@ void CPDF_ICCBasedCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
       bTranslate = nPixelCount.ValueOrDie() < nMaxColors * 3 / 2;
   }
   if (bTranslate && m_pProfile->transform()) {
-    m_pProfile->transform()->TranslateScanline(pDestBuf, pSrcBuf, pixels);
+    m_pProfile->transform()->TranslateScanline(dest_span, src_span, pixels);
     return;
   }
   if (m_pCache.empty()) {
@@ -1033,10 +1031,12 @@ void CPDF_ICCBasedCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
       }
     }
     if (m_pProfile->transform()) {
-      m_pProfile->transform()->TranslateScanline(m_pCache.data(),
-                                                 temp_src.data(), nMaxColors);
+      m_pProfile->transform()->TranslateScanline(m_pCache, temp_src,
+                                                 nMaxColors);
     }
   }
+  uint8_t* pDestBuf = dest_span.data();
+  const uint8_t* pSrcBuf = src_span.data();
   for (int i = 0; i < pixels; i++) {
     int index = 0;
     for (uint32_t c = 0; c < nComponents; c++) {

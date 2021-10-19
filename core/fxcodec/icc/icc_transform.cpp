@@ -138,10 +138,10 @@ void IccTransform::Translate(pdfium::span<const float> pSrcValues,
   pDestValues[2] = output[0] / 255.0f;
 }
 
-void IccTransform::TranslateScanline(unsigned char* pDest,
-                                     const unsigned char* pSrc,
+void IccTransform::TranslateScanline(pdfium::span<uint8_t> pDest,
+                                     pdfium::span<const uint8_t> pSrc,
                                      int32_t pixels) {
-  cmsDoTransform(m_hTransform, pSrc, pDest, pixels);
+  cmsDoTransform(m_hTransform, pSrc.data(), pDest.data(), pixels);
 }
 
 }  // namespace fxcodec

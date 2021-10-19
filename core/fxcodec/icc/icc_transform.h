@@ -31,7 +31,9 @@ class IccTransform {
 
   void Translate(pdfium::span<const float> pSrcValues,
                  pdfium::span<float> pDestValues);
-  void TranslateScanline(uint8_t* pDest, const uint8_t* pSrc, int pixels);
+  void TranslateScanline(pdfium::span<uint8_t> pDest,
+                         pdfium::span<const uint8_t> pSrc,
+                         int pixels);
 
   int components() const { return m_nSrcComponents; }
   bool IsNormal() const { return m_bNormal; }
