@@ -24,6 +24,7 @@
 #include "third_party/base/check.h"
 #include "third_party/base/containers/contains.h"
 #include "third_party/base/cxx17_backports.h"
+#include "third_party/base/span.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/font/fgas_fontutils.h"
 
@@ -362,13 +363,12 @@ void ftStreamClose(FXFT_StreamRec* stream) {}
 
 }  // extern "C"
 
-// TODO(thestig): Pass in |name_table| as a std::vector?
-std::vector<WideString> GetNames(const uint8_t* name_table) {
+std::vector<WideString> GetNames(pdfium::span<const uint8_t> name_table) {
   std::vector<WideString> results;
-  if (!name_table)
+  if (name_table.empty())
     return results;
 
-  const uint8_t* pTable = name_table;
+  const uint8_t* pTable = name_table.data();
   WideString wsFamily;
   const uint8_t* sp = pTable + 2;
   const uint8_t* pNameRecord = pTable + 6;
@@ -718,7 +718,7 @@ void CFGAS_FontMgr::RegisterFace(RetainPtr<CFX_Face> pFace,
     if (FT_Load_Sfnt_Table(pFace->GetRec(), dwTag, 0, table.data(), nullptr))
       table.clear();
   }
-  pFont->m_wsFamilyNames = GetNames(table.empty() ? nullptr : table.data());
+  pFont->m_wsFamilyNames = GetNames(table);
   pFont->m_wsFamilyNames.push_back(
       WideString::FromUTF8(pFace->GetRec()->family_name));
   pFont->m_wsFaceName =
