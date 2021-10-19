@@ -140,6 +140,40 @@ TEST_F(FPDFStructTreeEmbedderTest, GetStringAttribute) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFStructTreeEmbedderTest, GetStringAttributeBadStructElement) {
+  ASSERT_TRUE(OpenDocument("tagged_table_bad_elem.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ASSERT_TRUE(struct_tree);
+    ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
+
+    FPDF_STRUCTELEMENT document =
+        FPDF_StructTree_GetChildAtIndex(struct_tree.get(), 0);
+    ASSERT_TRUE(document);
+
+    constexpr int kBufLen = 100;
+    uint16_t buffer[kBufLen] = {0};
+    EXPECT_EQ(18U, FPDF_StructElement_GetType(document, buffer, kBufLen));
+    EXPECT_EQ("Document", GetPlatformString(buffer));
+
+    ASSERT_EQ(1, FPDF_StructElement_CountChildren(document));
+    FPDF_STRUCTELEMENT table = FPDF_StructElement_GetChildAtIndex(document, 0);
+    ASSERT_TRUE(table);
+
+    EXPECT_EQ(12U, FPDF_StructElement_GetType(table, buffer, kBufLen));
+    EXPECT_EQ("Table", GetPlatformString(buffer));
+
+    // The table entry cannot be retrieved, as the element is malformed.
+    EXPECT_EQ(0U, FPDF_StructElement_GetStringAttribute(table, "Summary",
+                                                        buffer, kBufLen));
+  }
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFStructTreeEmbedderTest, GetID) {
   ASSERT_TRUE(OpenDocument("tagged_table.pdf"));
   FPDF_PAGE page = LoadPage(0);
