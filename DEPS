@@ -81,7 +81,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling instrumented_lib
   # and whatever else without interference from each other.
-  'instrumented_lib_revision': '47226fa33ef5c9b48668c74128f25ef82f10e7af',
+  'instrumented_lib_revision': '366653b98c9e779b6b49e7a1eed08850909e1ca8',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling jinja2
   # and whatever else without interference from each other.
@@ -473,7 +473,7 @@ hooks = [
                 '--no_resume',
                 '--no_auth',
                 '--bucket', 'chromium-instrumented-libraries',
-                '-s', 'third_party/instrumented_libraries/binaries/msan-chained-origins-trusty.tgz.sha1',
+                '-s', 'third_party/instrumented_libraries/binaries/msan-chained-origins.tgz.sha1',
               ],
   },
   {
@@ -485,7 +485,7 @@ hooks = [
                 '--no_resume',
                 '--no_auth',
                 '--bucket', 'chromium-instrumented-libraries',
-                '-s', 'third_party/instrumented_libraries/binaries/msan-no-origins-trusty.tgz.sha1',
+                '-s', 'third_party/instrumented_libraries/binaries/msan-no-origins.tgz.sha1',
               ],
   },
   {
