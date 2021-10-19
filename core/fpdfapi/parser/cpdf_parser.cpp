@@ -35,6 +35,7 @@
 #include "third_party/base/check_op.h"
 #include "third_party/base/containers/contains.h"
 #include "third_party/base/notreached.h"
+#include "third_party/base/span.h"
 
 namespace {
 
@@ -45,10 +46,10 @@ const int32_t kMaxXRefSize = 1048576;
 // "%PDF-1.7\n"
 constexpr FX_FILESIZE kPDFHeaderSize = 9;
 
-uint32_t GetVarInt(const uint8_t* p, int32_t n) {
+uint32_t GetVarInt(pdfium::span<const uint8_t> input) {
   uint32_t result = 0;
-  for (int32_t i = 0; i < n; ++i)
-    result = result * 256 + p[i];
+  for (uint8_t c : input)
+    result = result * 256 + c;
   return result;
 }
 
@@ -684,7 +685,7 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
         std::move(m_CrossRefTable));
   }
 
-  std::vector<std::pair<int32_t, int32_t>> arrIndex;
+  std::vector<std::pair<int32_t, int32_t>> indices;
   CPDF_Array* pArray = pDict->GetArrayFor("Index");
   if (pArray) {
     for (size_t i = 0; i < pArray->size() / 2; i++) {
@@ -695,50 +696,48 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
         int nStartNum = pStartNumObj->GetInteger();
         int nCount = pCountObj->GetInteger();
         if (nStartNum >= 0 && nCount > 0)
-          arrIndex.push_back(std::make_pair(nStartNum, nCount));
+          indices.push_back(std::make_pair(nStartNum, nCount));
       }
     }
   }
 
-  if (arrIndex.empty())
-    arrIndex.push_back(std::make_pair(0, size));
+  if (indices.empty())
+    indices.push_back(std::make_pair(0, size));
 
   pArray = pDict->GetArrayFor("W");
   if (!pArray)
     return false;
 
-  std::vector<uint32_t> WidthArray;
+  std::vector<uint32_t> field_widths;
   FX_SAFE_UINT32 dwAccWidth = 0;
   for (size_t i = 0; i < pArray->size(); ++i) {
-    WidthArray.push_back(pArray->GetIntegerAt(i));
-    dwAccWidth += WidthArray[i];
+    field_widths.push_back(pArray->GetIntegerAt(i));
+    dwAccWidth += field_widths[i];
   }
 
-  if (!dwAccWidth.IsValid() || WidthArray.size() < 3)
+  if (!dwAccWidth.IsValid() || field_widths.size() < 3)
     return false;
 
-  uint32_t totalWidth = dwAccWidth.ValueOrDie();
+  uint32_t total_width = dwAccWidth.ValueOrDie();
   auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
   pAcc->LoadAllDataFiltered();
 
-  const uint8_t* pData = pAcc->GetData();
-  uint32_t dwTotalSize = pAcc->GetSize();
+  pdfium::span<const uint8_t> data_span = pAcc->GetSpan();
   uint32_t segindex = 0;
-  for (const auto& index : arrIndex) {
+  for (const auto& index : indices) {
     const int32_t startnum = index.first;
     if (startnum < 0)
       continue;
 
     uint32_t count = pdfium::base::checked_cast<uint32_t>(index.second);
-    FX_SAFE_UINT32 dwCaculatedSize = segindex;
-    dwCaculatedSize += count;
-    dwCaculatedSize *= totalWidth;
-    if (!dwCaculatedSize.IsValid() ||
-        dwCaculatedSize.ValueOrDie() > dwTotalSize) {
+    FX_SAFE_UINT32 seg_end = segindex;
+    seg_end += count;
+    seg_end *= total_width;
+    if (!seg_end.IsValid() || seg_end.ValueOrDie() > data_span.size())
       continue;
-    }
 
-    const uint8_t* segstart = pData + segindex * totalWidth;
+    pdfium::span<const uint8_t> seg_span =
+        data_span.subspan(segindex * total_width, count * total_width);
     FX_SAFE_UINT32 dwMaxObjNum = startnum;
     dwMaxObjNum += count;
     uint32_t dwV5Size =
@@ -748,10 +747,11 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
 
     for (uint32_t i = 0; i < count; i++) {
       ObjectType type = ObjectType::kNotCompressed;
-      const uint8_t* entrystart = segstart + i * totalWidth;
-      if (WidthArray[0]) {
+      pdfium::span<const uint8_t> entry_span =
+          seg_span.subspan(i * total_width, total_width);
+      if (field_widths[0]) {
         const uint32_t cross_ref_stream_obj_type =
-            GetVarInt(entrystart, WidthArray[0]);
+            GetVarInt(entry_span.first(field_widths[0]));
         type = GetObjectTypeFromCrossRefStreamType(cross_ref_stream_obj_type);
         if (type == ObjectType::kNull)
           continue;
@@ -763,7 +763,8 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
 
       const ObjectType existing_type = GetObjectType(objnum);
       if (existing_type == ObjectType::kNull) {
-        uint32_t offset = GetVarInt(entrystart + WidthArray[0], WidthArray[1]);
+        uint32_t offset =
+            GetVarInt(entry_span.subspan(field_widths[0], field_widths[1]));
         if (pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(offset))
           m_CrossRefTable->AddNormal(objnum, 0, offset);
         continue;
@@ -778,7 +779,7 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
       }
 
       const uint32_t entry_value =
-          GetVarInt(entrystart + WidthArray[0], WidthArray[1]);
+          GetVarInt(entry_span.subspan(field_widths[0], field_widths[1]));
       if (type == ObjectType::kNotCompressed) {
         const uint32_t offset = entry_value;
         if (pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(offset))
