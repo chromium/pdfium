@@ -15,11 +15,11 @@ class CFX_UTF8Decoder {
   ~CFX_UTF8Decoder();
 
   void Input(uint8_t byte);
-  void AppendCodePoint(uint32_t ch);
-  void ClearStatus() { m_PendingBytes = 0; }
   WideStringView GetResult() const { return m_Buffer.AsStringView(); }
 
  private:
+  void AppendCodePoint(uint32_t ch);
+
   int m_PendingBytes = 0;
   uint32_t m_PendingChar = 0;
   CFX_WideTextBuf m_Buffer;
