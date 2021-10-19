@@ -849,8 +849,8 @@ void CFX_PSRenderer::PSCompressData(uint8_t* src_buf,
   if (m_Level.value() == RenderingLevel::kLevel3 ||
       m_Level.value() == RenderingLevel::kLevel3Type42) {
     std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf_unique;
-    if (m_pEncoderIface->pFlateEncodeFunc(src_buf, src_size, &dest_buf_unique,
-                                          &dest_size)) {
+    if (m_pEncoderIface->pFlateEncodeFunc(pdfium::make_span(src_buf, src_size),
+                                          &dest_buf_unique, &dest_size)) {
       dest_buf = dest_buf_unique.release();
       *filter = "/FlateDecode filter ";
     }

@@ -43,8 +43,7 @@ class FlateModule {
       std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
       uint32_t* dest_size);
 
-  static bool Encode(const uint8_t* src_buf,
-                     uint32_t src_size,
+  static bool Encode(pdfium::span<const uint8_t> src_span,
                      std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
                      uint32_t* dest_size);
 

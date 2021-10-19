@@ -861,10 +861,11 @@ uint32_t FlateModule::FlateOrLZWDecode(
 }
 
 // static
-bool FlateModule::Encode(const uint8_t* src_buf,
-                         uint32_t src_size,
+bool FlateModule::Encode(pdfium::span<const uint8_t> src_span,
                          std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
                          uint32_t* dest_size) {
+  const uint8_t* src_buf = src_span.data();
+  uint32_t src_size = src_span.size();
   *dest_size = src_size + src_size / 1000 + 12;
   dest_buf->reset(FX_Alloc(uint8_t, *dest_size));
   unsigned long temp_size = *dest_size;
