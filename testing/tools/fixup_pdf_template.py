@@ -11,10 +11,12 @@ script replaces {{name}}-style variables in the input with calculated results
   {{header}} - expands to the header comment required for PDF files.
   {{xref}} - expands to a generated xref table, noting the offset.
   {{trailer}} - expands to a standard trailer with "1 0 R" as the /Root.
-  {{trailersize}} - expands to |/Size n|, to be used in non-standard trailers.
+  {{trailersize}} - expands to `/Size n`, to be used in non-standard trailers.
   {{startxref} - expands to a startxref directive followed by correct offset.
-  {{object x y}} - expands to |x y obj| declaration, noting the offset.
-  {{streamlen}} - expands to |/Length n|.
+  {{startxrefobj x y} - expands to a startxref directive followed by correct
+                        offset pointing to the start of `x y obj`.
+  {{object x y}} - expands to `x y obj` declaration, noting the offset.
+  {{streamlen}} - expands to `/Length n`.
 """
 
 from __future__ import print_function
@@ -64,6 +66,8 @@ class TemplateProcessor:
 
   STARTXREF_TOKEN = b'{{startxref}}'
   STARTXREF_REPLACEMENT = b'startxref\n%d'
+
+  STARTXREFOBJ_PATTERN = b'\{\{startxrefobj\s+(\d+)\s+(\d+)\}\}'
 
   OBJECT_PATTERN = b'\{\{object\s+(\d+)\s+(\d+)\}\}'
   OBJECT_REPLACEMENT = b'\g<1> \g<2> obj'
@@ -132,6 +136,12 @@ class TemplateProcessor:
     if match:
       self.insert_xref_entry(int(match.group(1)), int(match.group(2)))
       line = re.sub(self.OBJECT_PATTERN, self.OBJECT_REPLACEMENT, line)
+    match = re.match(self.STARTXREFOBJ_PATTERN, line)
+    if match:
+      (offset, generation_number) = self.objects[int(match.group(1))]
+      assert int(match.group(2)) == generation_number
+      replacement = self.STARTXREF_REPLACEMENT % offset
+      line = re.sub(self.STARTXREFOBJ_PATTERN, replacement, line)
     self.offset += len(line)
     return line
 

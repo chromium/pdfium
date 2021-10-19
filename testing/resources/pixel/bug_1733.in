@@ -1,0 +1,107 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /MediaBox [0 0 100 100]
+  /Count 2
+  /Kids [3 0 R 4 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 5 0 R
+  /Resources <<
+    /XObject 9 0 R
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 5 0 R
+  /Resources <<
+    /XObject 10 0 R
+  >>
+>>
+endobj
+{{object 5 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+100 0 0 100 0 0 cm
+/X1 Do
+Q
+endstream
+endobj
+{{object 6 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  /Width 1
+  /Height 1
+  /BitsPerComponent 8
+  /ColorSpace /DeviceRGB
+  /Filter /ASCIIHexDecode
+  {{streamlen}}
+>>
+stream
+FF0000
+endstream
+endobj
+{{object 7 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  /Width 1
+  /Height 1
+  /BitsPerComponent 8
+  /ColorSpace /DeviceRGB
+  /Filter /ASCIIHexDecode
+  {{streamlen}}
+>>
+stream
+FFFF00
+endstream
+endobj
+% This object stream contains two different copies of object 9 and object 10.
+% To disambiguate them, a parser must use object 11 0 below, the cross-reference
+% stream, to look up the type 2 entries. Those entries reference this object,
+% and the position of the objects within this object.
+{{object 8 0}} <<
+  /Type /ObjStm
+  /N 4
+  /First 20
+  {{streamlen}}
+>>
+stream
+9 0 9 13 10 26 10 39<</X1 6 0 R>><</X1 7 0 R>><</X1 6 0 R>><</X1 7 0 R>>
+endstream
+endobj
+{{object 11 0}} <<
+  /Type /XRef
+  /Filter /ASCIIHexDecode
+  /Root 1 0 R
+  /Size 11
+  /W [1 2 2]
+  {{streamlen}}
+>>
+stream
+00 0000 FFFF
+01 000F 0000
+01 0044 0000
+01 00A3 0000
+01 0110 0000
+01 017E 0000
+01 01CF 0000
+01 028B 0000
+01 046A 0000
+02 0008 0000
+02 0008 0003
+endstream
+endobj
+{{startxrefobj 11 0}}
+%%EOF
