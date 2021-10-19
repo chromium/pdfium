@@ -50,7 +50,6 @@ class CPDF_StructElement final : public Retainable {
   };
 
   CPDF_StructElement(const CPDF_StructTree* pTree,
-                     const CPDF_StructElement* pParent,
                      const CPDF_Dictionary* pDict);
   ~CPDF_StructElement() override;
 
@@ -58,7 +57,6 @@ class CPDF_StructElement final : public Retainable {
   void LoadKid(uint32_t PageObjNum, const CPDF_Object* pKidObj, Kid* pKid);
 
   UnownedPtr<const CPDF_StructTree> const m_pTree;
-  UnownedPtr<const CPDF_StructElement> const m_pParent;
   RetainPtr<const CPDF_Dictionary> const m_pDict;
   const ByteString m_Type;
   std::vector<Kid> m_Kids;

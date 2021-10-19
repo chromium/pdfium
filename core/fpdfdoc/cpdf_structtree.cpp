@@ -93,7 +93,7 @@ RetainPtr<CPDF_StructElement> CPDF_StructTree::AddPageNode(
   if (it != map->end())
     return it->second;
 
-  auto pElement = pdfium::MakeRetain<CPDF_StructElement>(this, nullptr, pDict);
+  auto pElement = pdfium::MakeRetain<CPDF_StructElement>(this, pDict);
   (*map)[pDict] = pElement;
   const CPDF_Dictionary* pParent = pDict->GetDictFor("P");
   if (!pParent || pParent->GetNameFor("Type") == "StructTreeRoot") {
