@@ -44,15 +44,15 @@ class CPDF_TestParser final : public CPDF_Parser {
       return false;
 
     // For the test file, the header is set at the beginning.
-    m_pSyntax = std::make_unique<CPDF_SyntaxParser>(pFileAccess);
+    SetSyntaxParserForTesting(std::make_unique<CPDF_SyntaxParser>(pFileAccess));
     return true;
   }
 
   // Setup reading from a buffer and initial states.
   bool InitTestFromBufferWithOffset(pdfium::span<const uint8_t> buffer,
                                     FX_FILESIZE header_offset) {
-    m_pSyntax = CPDF_SyntaxParser::CreateForTesting(
-        pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(buffer), header_offset);
+    SetSyntaxParserForTesting(CPDF_SyntaxParser::CreateForTesting(
+        pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(buffer), header_offset));
     return true;
   }
 
@@ -60,14 +60,12 @@ class CPDF_TestParser final : public CPDF_Parser {
     return InitTestFromBufferWithOffset(buffer, 0 /*header_offset*/);
   }
 
- private:
-  // Add test cases here as private friend so that protected members in
-  // CPDF_Parser can be accessed by test cases.
-  // Need to access RebuildCrossRef.
-  FRIEND_TEST(cpdf_parser, RebuildCrossRefCorrectly);
-  FRIEND_TEST(cpdf_parser, RebuildCrossRefFailed);
-  // Need to access LoadCrossRefV4.
-  FRIEND_TEST(cpdf_parser, LoadCrossRefV4);
+  // Expose protected CPDF_Parser methods for testing.
+  using CPDF_Parser::LoadCrossRefV4;
+  using CPDF_Parser::ParseLinearizedHeader;
+  using CPDF_Parser::ParseStartXRef;
+  using CPDF_Parser::RebuildCrossRef;
+  using CPDF_Parser::StartParseInternal;
 };
 
 TEST(cpdf_parser, RebuildCrossRefCorrectly) {

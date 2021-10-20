@@ -1105,3 +1105,8 @@ CPDF_Parser::ObjectType CPDF_Parser::GetObjectTypeFromCrossRefStreamType(
       return CPDF_Parser::ObjectType::kNull;
   }
 }
+
+void CPDF_Parser::SetSyntaxParserForTesting(
+    std::unique_ptr<CPDF_SyntaxParser> parser) {
+  m_pSyntax = std::move(parser);
+}
