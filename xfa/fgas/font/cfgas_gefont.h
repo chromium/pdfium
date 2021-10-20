@@ -61,7 +61,6 @@ class CFGAS_GEFont final : public Retainable {
   bool LoadFontInternal(const wchar_t* pszFontFamily,
                         uint32_t dwFontStyles,
                         FX_CodePage wCodePage);
-  bool LoadFontInternal(const uint8_t* pBuffer, int32_t length);
 #endif
   bool LoadFontInternal(std::unique_ptr<CFX_Font> pInternalFont);
   bool LoadFontInternal(const RetainPtr<CPDF_Font>& pPDFFont);
