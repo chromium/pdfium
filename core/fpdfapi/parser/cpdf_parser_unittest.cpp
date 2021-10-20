@@ -437,19 +437,14 @@ TEST(cpdf_parser, XrefHasInvalidArchiveObjectNumber) {
   const auto& objects_info = parser.GetCrossRefTable()->objects_info();
   EXPECT_EQ(2u, objects_info.size());
 
-  // Found by rebuilding the xref table. There are no other objects besides this
-  // and the placeholder, because CPDF_Parser currently stops parsing altogether
-  // with a failure when it encounters an invalid archive object number. Thus
-  // triggering the rebuild.
-  auto rebuilt_object_it = objects_info.find(7);
-  ASSERT_NE(rebuilt_object_it, objects_info.end());
-  EXPECT_EQ(CPDF_Parser::ObjectType::kNormal, rebuilt_object_it->second.type);
-  EXPECT_EQ(14, rebuilt_object_it->second.pos);
+  // Skip over the first object, and continue parsing the remaining objects.
+  auto second_object_it = objects_info.find(1);
+  ASSERT_NE(second_object_it, objects_info.end());
+  EXPECT_EQ(CPDF_Parser::ObjectType::kNormal, second_object_it->second.type);
+  EXPECT_EQ(15, second_object_it->second.pos);
 
-  // TODO(thestig): Should the xref table contain object 2?
-  // Consider reworking CPDF_Parser's object representation to avoid having to
-  // store this placeholder object.
-  auto placeholder_object_it = objects_info.find(2);
-  ASSERT_NE(placeholder_object_it, objects_info.end());
-  EXPECT_EQ(CPDF_Parser::ObjectType::kFree, placeholder_object_it->second.type);
+  auto third_object_it = objects_info.find(2);
+  ASSERT_NE(third_object_it, objects_info.end());
+  EXPECT_EQ(CPDF_Parser::ObjectType::kNormal, third_object_it->second.type);
+  EXPECT_EQ(18, third_object_it->second.pos);
 }

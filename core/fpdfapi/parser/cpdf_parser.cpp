@@ -753,6 +753,10 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
       continue;
 
     for (uint32_t i = 0; i < index.obj_count; i++) {
+      const uint32_t obj_num = index.start_obj_num + i;
+      if (obj_num >= CPDF_Parser::kMaxObjectNumber)
+        break;
+
       ObjectType type = ObjectType::kNotCompressed;
       pdfium::span<const uint8_t> entry_span =
           seg_span.subspan(i * total_width, total_width);
@@ -764,16 +768,12 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
           continue;
       }
 
-      const uint32_t objnum = index.start_obj_num + i;
-      if (objnum >= CPDF_Parser::kMaxObjectNumber)
-        continue;
-
-      const ObjectType existing_type = GetObjectType(objnum);
+      const ObjectType existing_type = GetObjectType(obj_num);
       if (existing_type == ObjectType::kNull) {
         uint32_t offset =
             GetVarInt(entry_span.subspan(field_widths[0], field_widths[1]));
         if (pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(offset))
-          m_CrossRefTable->AddNormal(objnum, 0, offset);
+          m_CrossRefTable->AddNormal(obj_num, 0, offset);
         continue;
       }
 
@@ -781,7 +781,7 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
         continue;
 
       if (type == ObjectType::kFree) {
-        m_CrossRefTable->SetFree(objnum);
+        m_CrossRefTable->SetFree(obj_num);
         continue;
       }
 
@@ -790,16 +790,16 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
       if (type == ObjectType::kNotCompressed) {
         const uint32_t offset = entry_value;
         if (pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(offset))
-          m_CrossRefTable->AddNormal(objnum, 0, offset);
+          m_CrossRefTable->AddNormal(obj_num, 0, offset);
         continue;
       }
 
       DCHECK_EQ(type, ObjectType::kCompressed);
       const uint32_t archive_obj_num = entry_value;
       if (!IsValidObjectNumber(archive_obj_num))
-        return false;
+        continue;
 
-      m_CrossRefTable->AddCompressed(objnum, archive_obj_num);
+      m_CrossRefTable->AddCompressed(obj_num, archive_obj_num);
     }
     segindex += index.obj_count;
   }
