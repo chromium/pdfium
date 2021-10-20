@@ -25,6 +25,8 @@
 /tools/skia_goldctl
 /v8
 /xcodebuild
+.vscode/
+.vscode-server/
 .DS_Store
 .gclient
 .gclient_entries
