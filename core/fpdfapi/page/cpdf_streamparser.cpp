@@ -345,8 +345,7 @@ RetainPtr<CPDF_Object> CPDF_StreamParser::ReadNextObject(
       if (!pObj)
         return nullptr;
 
-      if (CPDF_Dictionary::IsValidKey(key))
-        pDict->SetFor(key, std::move(pObj));
+      pDict->SetFor(key, std::move(pObj));
     }
     return pDict;
   }
