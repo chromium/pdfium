@@ -93,22 +93,6 @@ CFX_FontMgr::CFX_FontMgr()
 
 CFX_FontMgr::~CFX_FontMgr() = default;
 
-void CFX_FontMgr::SetSystemFontInfo(
-    std::unique_ptr<SystemFontInfoIface> pFontInfo) {
-  m_pBuiltinMapper->SetSystemFontInfo(std::move(pFontInfo));
-}
-
-RetainPtr<CFX_Face> CFX_FontMgr::FindSubstFont(const ByteString& face_name,
-                                               bool bTrueType,
-                                               uint32_t flags,
-                                               int weight,
-                                               int italic_angle,
-                                               FX_CodePage code_page,
-                                               CFX_SubstFont* pSubstFont) {
-  return m_pBuiltinMapper->FindSubstFont(face_name, bTrueType, flags, weight,
-                                         italic_angle, code_page, pSubstFont);
-}
-
 RetainPtr<CFX_FontMgr::FontDesc> CFX_FontMgr::GetCachedFontDesc(
     const ByteString& face_name,
     int weight,

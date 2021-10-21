@@ -30,7 +30,7 @@ void CFX_GEModule::Create(const char** pUserFontPaths) {
   DCHECK(!g_pGEModule);
   g_pGEModule = new CFX_GEModule(pUserFontPaths);
   g_pGEModule->m_pPlatform->Init();
-  g_pGEModule->GetFontMgr()->SetSystemFontInfo(
+  g_pGEModule->GetFontMgr()->GetBuiltinMapper()->SetSystemFontInfo(
       g_pGEModule->m_pPlatform->CreateDefaultSystemFontInfo());
 }
 

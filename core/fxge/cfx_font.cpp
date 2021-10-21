@@ -17,6 +17,7 @@
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_fontcache.h"
+#include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_glyphcache.h"
@@ -355,7 +356,7 @@ void CFX_Font::LoadSubst(const ByteString& face_name,
   m_bVertical = bVertical;
   m_ObjectTag = 0;
   m_pSubstFont = std::make_unique<CFX_SubstFont>();
-  m_Face = CFX_GEModule::Get()->GetFontMgr()->FindSubstFont(
+  m_Face = CFX_GEModule::Get()->GetFontMgr()->GetBuiltinMapper()->FindSubstFont(
       face_name, bTrueType, flags, weight, italic_angle, code_page,
       m_pSubstFont.get());
   if (m_Face) {

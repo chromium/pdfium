@@ -140,7 +140,7 @@ FPDF_SetSystemFontInfo(FPDF_SYSFONTINFO* pFontInfoExt) {
   if (pFontInfoExt->version != 1)
     return;
 
-  CFX_GEModule::Get()->GetFontMgr()->SetSystemFontInfo(
+  CFX_GEModule::Get()->GetFontMgr()->GetBuiltinMapper()->SetSystemFontInfo(
       std::make_unique<CFX_ExternalFontInfo>(pFontInfoExt));
 }
 

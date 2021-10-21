@@ -27,7 +27,7 @@ XFATestEnvironment::~XFATestEnvironment() {
 }
 
 void XFATestEnvironment::SetUp() {
-  CFX_GEModule::Get()->GetFontMgr()->SetSystemFontInfo(
+  CFX_GEModule::Get()->GetFontMgr()->GetBuiltinMapper()->SetSystemFontInfo(
       CFX_GEModule::Get()->GetPlatform()->CreateDefaultSystemFontInfo());
 
   // The font loading that takes place in CFGAS_GEModule::Create() is slow,
