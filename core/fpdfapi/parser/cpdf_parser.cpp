@@ -62,6 +62,43 @@ uint32_t GetVarInt(pdfium::span<const uint8_t> input) {
   return result;
 }
 
+std::vector<CrossRefV5IndexEntry> GetCrossRefV5Indices(const CPDF_Array* array,
+                                                       uint32_t size) {
+  std::vector<CrossRefV5IndexEntry> indices;
+  if (array) {
+    for (size_t i = 0; i < array->size() / 2; i++) {
+      const CPDF_Number* pStartNumObj = ToNumber(array->GetObjectAt(i * 2));
+      const CPDF_Number* pCountObj = ToNumber(array->GetObjectAt(i * 2 + 1));
+
+      if (!pStartNumObj || !pCountObj)
+        continue;
+
+      int nStartNum = pStartNumObj->GetInteger();
+      int nCount = pCountObj->GetInteger();
+      if (nStartNum < 0 || nCount <= 0)
+        continue;
+
+      indices.push_back(
+          {static_cast<uint32_t>(nStartNum), static_cast<uint32_t>(nCount)});
+    }
+  }
+
+  if (indices.empty())
+    indices.push_back({0, size});
+  return indices;
+}
+
+std::vector<uint32_t> GetFieldWidths(const CPDF_Array* array) {
+  std::vector<uint32_t> results;
+  if (!array)
+    return results;
+
+  CPDF_ArrayLocker locker(array);
+  for (const auto& obj : locker)
+    results.push_back(obj->GetInteger());
+  return results;
+}
+
 class ObjectsHolderStub final : public CPDF_Parser::ParsedObjectsHolder {
  public:
   ObjectsHolderStub() = default;
@@ -677,7 +714,7 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
   if (!pStream)
     return false;
 
-  CPDF_Dictionary* pDict = pStream->GetDict();
+  const CPDF_Dictionary* pDict = pStream->GetDict();
   *pos = pDict->GetIntegerFor("Prev");
   int32_t size = pDict->GetIntegerFor("Size");
   if (size < 0)
@@ -694,41 +731,17 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
         std::move(m_CrossRefTable));
   }
 
-  std::vector<CrossRefV5IndexEntry> indices;
-  CPDF_Array* pArray = pDict->GetArrayFor("Index");
-  if (pArray) {
-    for (size_t i = 0; i < pArray->size() / 2; i++) {
-      CPDF_Number* pStartNumObj = ToNumber(pArray->GetObjectAt(i * 2));
-      CPDF_Number* pCountObj = ToNumber(pArray->GetObjectAt(i * 2 + 1));
+  std::vector<CrossRefV5IndexEntry> indices =
+      GetCrossRefV5Indices(pDict->GetArrayFor("Index"), size);
 
-      if (!pStartNumObj || !pCountObj)
-        continue;
-
-      int nStartNum = pStartNumObj->GetInteger();
-      int nCount = pCountObj->GetInteger();
-      if (nStartNum < 0 || nCount <= 0)
-        continue;
-
-      indices.push_back(
-          {static_cast<uint32_t>(nStartNum), static_cast<uint32_t>(nCount)});
-    }
-  }
-
-  if (indices.empty())
-    indices.push_back({0, static_cast<uint32_t>(size)});
-
-  pArray = pDict->GetArrayFor("W");
-  if (!pArray)
+  std::vector<uint32_t> field_widths = GetFieldWidths(pDict->GetArrayFor("W"));
+  if (field_widths.size() < kMinFieldCount)
     return false;
 
-  std::vector<uint32_t> field_widths;
-  FX_SAFE_UINT32 dwAccWidth = 0;
-  for (size_t i = 0; i < pArray->size(); ++i) {
-    field_widths.push_back(pArray->GetIntegerAt(i));
-    dwAccWidth += field_widths[i];
-  }
-
-  if (!dwAccWidth.IsValid() || field_widths.size() < kMinFieldCount)
+  FX_SAFE_UINT32 dwAccWidth;
+  for (uint32_t width : field_widths)
+    dwAccWidth += width;
+  if (!dwAccWidth.IsValid())
     return false;
 
   uint32_t total_width = dwAccWidth.ValueOrDie();
