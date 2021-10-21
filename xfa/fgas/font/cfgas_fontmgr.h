@@ -128,7 +128,6 @@ class CFGAS_FontMgr {
 
 #else   // defined(OS_WIN)
   bool EnumFontsFromFontMapper();
-  bool EnumFontsFromFiles();
   void RegisterFace(RetainPtr<CFX_Face> pFace, const WideString* pFaceName);
   void RegisterFaces(const RetainPtr<IFX_SeekableReadStream>& pFontStream,
                      const WideString* pFaceName);
