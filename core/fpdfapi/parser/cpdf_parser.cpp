@@ -55,6 +55,20 @@ struct CrossRefV5IndexEntry {
   uint32_t obj_count;
 };
 
+CPDF_Parser::ObjectType GetObjectTypeFromCrossRefStreamType(
+    uint32_t cross_ref_stream_type) {
+  switch (cross_ref_stream_type) {
+    case 0:
+      return CPDF_Parser::ObjectType::kFree;
+    case 1:
+      return CPDF_Parser::ObjectType::kNotCompressed;
+    case 2:
+      return CPDF_Parser::ObjectType::kCompressed;
+    default:
+      return CPDF_Parser::ObjectType::kNull;
+  }
+}
+
 uint32_t GetVarInt(pdfium::span<const uint8_t> input) {
   uint32_t result = 0;
   for (uint8_t c : input)
@@ -1115,20 +1129,6 @@ CPDF_Parser::Error CPDF_Parser::LoadLinearizedMainXRefTable() {
   }
 
   return SUCCESS;
-}
-
-CPDF_Parser::ObjectType CPDF_Parser::GetObjectTypeFromCrossRefStreamType(
-    uint32_t cross_ref_stream_type) const {
-  switch (cross_ref_stream_type) {
-    case 0:
-      return CPDF_Parser::ObjectType::kFree;
-    case 1:
-      return CPDF_Parser::ObjectType::kNotCompressed;
-    case 2:
-      return CPDF_Parser::ObjectType::kCompressed;
-    default:
-      return CPDF_Parser::ObjectType::kNull;
-  }
 }
 
 void CPDF_Parser::SetSyntaxParserForTesting(
