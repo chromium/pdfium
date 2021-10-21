@@ -146,6 +146,9 @@ class CPDF_Parser {
   bool LoadAllCrossRefV4(FX_FILESIZE xref_offset);
   bool LoadAllCrossRefV5(FX_FILESIZE xref_offset);
   bool LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef);
+  void ProcessCrossRefV5Entry(pdfium::span<const uint8_t> entry_span,
+                              pdfium::span<const uint32_t> field_widths,
+                              uint32_t obj_num);
   RetainPtr<CPDF_Dictionary> LoadTrailerV4();
   Error SetEncryptHandler();
   void ReleaseEncryptHandler();

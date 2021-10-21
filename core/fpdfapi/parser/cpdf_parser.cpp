@@ -46,6 +46,10 @@ const int32_t kMaxXRefSize = 1048576;
 // "%PDF-1.7\n"
 constexpr FX_FILESIZE kPDFHeaderSize = 9;
 
+// The required number of fields in a /W array in a cross-reference stream
+// dictionary.
+constexpr size_t kMinFieldCount = 3;
+
 struct CrossRefV5IndexEntry {
   uint32_t start_obj_num;
   uint32_t obj_count;
@@ -724,7 +728,7 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
     dwAccWidth += field_widths[i];
   }
 
-  if (!dwAccWidth.IsValid() || field_widths.size() < 3)
+  if (!dwAccWidth.IsValid() || field_widths.size() < kMinFieldCount)
     return false;
 
   uint32_t total_width = dwAccWidth.ValueOrDie();
@@ -752,58 +756,66 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
     if (!dwMaxObjNum.IsValid() || dwMaxObjNum.ValueOrDie() > dwV5Size)
       continue;
 
-    for (uint32_t i = 0; i < index.obj_count; i++) {
+    for (uint32_t i = 0; i < index.obj_count; ++i) {
       const uint32_t obj_num = index.start_obj_num + i;
       if (obj_num >= CPDF_Parser::kMaxObjectNumber)
         break;
 
-      ObjectType type = ObjectType::kNotCompressed;
-      pdfium::span<const uint8_t> entry_span =
-          seg_span.subspan(i * total_width, total_width);
-      if (field_widths[0]) {
-        const uint32_t cross_ref_stream_obj_type =
-            GetVarInt(entry_span.first(field_widths[0]));
-        type = GetObjectTypeFromCrossRefStreamType(cross_ref_stream_obj_type);
-        if (type == ObjectType::kNull)
-          continue;
-      }
-
-      const ObjectType existing_type = GetObjectType(obj_num);
-      if (existing_type == ObjectType::kNull) {
-        uint32_t offset =
-            GetVarInt(entry_span.subspan(field_widths[0], field_widths[1]));
-        if (pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(offset))
-          m_CrossRefTable->AddNormal(obj_num, 0, offset);
-        continue;
-      }
-
-      if (existing_type != ObjectType::kFree)
-        continue;
-
-      if (type == ObjectType::kFree) {
-        m_CrossRefTable->SetFree(obj_num);
-        continue;
-      }
-
-      const uint32_t entry_value =
-          GetVarInt(entry_span.subspan(field_widths[0], field_widths[1]));
-      if (type == ObjectType::kNotCompressed) {
-        const uint32_t offset = entry_value;
-        if (pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(offset))
-          m_CrossRefTable->AddNormal(obj_num, 0, offset);
-        continue;
-      }
-
-      DCHECK_EQ(type, ObjectType::kCompressed);
-      const uint32_t archive_obj_num = entry_value;
-      if (!IsValidObjectNumber(archive_obj_num))
-        continue;
-
-      m_CrossRefTable->AddCompressed(obj_num, archive_obj_num);
+      ProcessCrossRefV5Entry(seg_span.subspan(i * total_width, total_width),
+                             field_widths, obj_num);
     }
+
     segindex += index.obj_count;
   }
   return true;
+}
+
+void CPDF_Parser::ProcessCrossRefV5Entry(
+    pdfium::span<const uint8_t> entry_span,
+    pdfium::span<const uint32_t> field_widths,
+    uint32_t obj_num) {
+  DCHECK_GE(field_widths.size(), kMinFieldCount);
+  ObjectType type = ObjectType::kNotCompressed;
+  if (field_widths[0]) {
+    const uint32_t cross_ref_stream_obj_type =
+        GetVarInt(entry_span.first(field_widths[0]));
+    type = GetObjectTypeFromCrossRefStreamType(cross_ref_stream_obj_type);
+    if (type == ObjectType::kNull)
+      return;
+  }
+
+  const ObjectType existing_type = GetObjectType(obj_num);
+  if (existing_type == ObjectType::kNull) {
+    uint32_t offset =
+        GetVarInt(entry_span.subspan(field_widths[0], field_widths[1]));
+    if (pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(offset))
+      m_CrossRefTable->AddNormal(obj_num, 0, offset);
+    return;
+  }
+
+  if (existing_type != ObjectType::kFree)
+    return;
+
+  if (type == ObjectType::kFree) {
+    m_CrossRefTable->SetFree(obj_num);
+    return;
+  }
+
+  const uint32_t entry_value =
+      GetVarInt(entry_span.subspan(field_widths[0], field_widths[1]));
+  if (type == ObjectType::kNotCompressed) {
+    const uint32_t offset = entry_value;
+    if (pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(offset))
+      m_CrossRefTable->AddNormal(obj_num, 0, offset);
+    return;
+  }
+
+  DCHECK_EQ(type, ObjectType::kCompressed);
+  const uint32_t archive_obj_num = entry_value;
+  if (!IsValidObjectNumber(archive_obj_num))
+    return;
+
+  m_CrossRefTable->AddCompressed(obj_num, archive_obj_num);
 }
 
 const CPDF_Array* CPDF_Parser::GetIDArray() const {
