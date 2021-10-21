@@ -441,7 +441,7 @@ uint32_t GetFlags(FXFT_FaceRec* pFace) {
 }
 
 RetainPtr<IFX_SeekableReadStream> CreateFontStream(CFX_FontMapper* pFontMapper,
-                                                   uint32_t index) {
+                                                   size_t index) {
   size_t dwFileSize = 0;
   std::unique_ptr<uint8_t, FxFreeDeleter> pBuffer =
       pFontMapper->RawBytesForIndex(index, &dwFileSize);
@@ -457,7 +457,7 @@ RetainPtr<IFX_SeekableReadStream> CreateFontStream(
   CFX_FontMapper* pFontMapper = pFontMgr->GetBuiltinMapper();
   pFontMapper->LoadInstalledFonts();
 
-  for (int32_t i = 0; i < pFontMapper->GetFaceSize(); ++i) {
+  for (size_t i = 0; i < pFontMapper->GetFaceSize(); ++i) {
     if (pFontMapper->GetFaceName(i) == bsFaceName)
       return CreateFontStream(pFontMapper, i);
   }
@@ -614,7 +614,7 @@ bool CFGAS_FontMgr::EnumFontsFromFontMapper() {
       CFX_GEModule::Get()->GetFontMgr()->GetBuiltinMapper();
   pFontMapper->LoadInstalledFonts();
 
-  for (int32_t i = 0; i < pFontMapper->GetFaceSize(); ++i) {
+  for (size_t i = 0; i < pFontMapper->GetFaceSize(); ++i) {
     RetainPtr<IFX_SeekableReadStream> pFontStream =
         CreateFontStream(pFontMapper, i);
     if (!pFontStream)

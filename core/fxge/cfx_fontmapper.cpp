@@ -689,8 +689,8 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
   return face;
 }
 
-int CFX_FontMapper::GetFaceSize() const {
-  return fxcrt::CollectionSize<int>(m_FaceArray);
+size_t CFX_FontMapper::GetFaceSize() const {
+  return m_FaceArray.size();
 }
 
 bool CFX_FontMapper::HasInstalledFont(ByteStringView name) const {
@@ -731,7 +731,7 @@ absl::optional<ByteString> CFX_FontMapper::LocalizedFontNameStartingWith(
 
 #ifdef PDF_ENABLE_XFA
 std::unique_ptr<uint8_t, FxFreeDeleter> CFX_FontMapper::RawBytesForIndex(
-    uint32_t index,
+    size_t index,
     size_t* returned_length) {
   if (!m_pFontInfo)
     return nullptr;

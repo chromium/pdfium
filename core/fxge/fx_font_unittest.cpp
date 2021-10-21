@@ -52,6 +52,6 @@ TEST(FXFontTest, ReadFontNameFromMicrosoftEntries) {
     ASSERT_TRUE(folder_font_info.EnumFontList(&font_mapper));
   }
 
-  ASSERT_EQ(1, font_mapper.GetFaceSize());
+  ASSERT_EQ(1u, font_mapper.GetFaceSize());
   ASSERT_EQ("Test", font_mapper.GetFaceName(0));
 }

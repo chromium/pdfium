@@ -69,8 +69,8 @@ class CFX_FontMapper {
                                     CFX_SubstFont* pSubstFont);
 
   bool IsBuiltinFace(const RetainPtr<CFX_Face>& face) const;
-  int GetFaceSize() const;
-  ByteString GetFaceName(int index) const { return m_FaceArray[index].name; }
+  size_t GetFaceSize() const;
+  ByteString GetFaceName(size_t index) const { return m_FaceArray[index].name; }
   bool HasInstalledFont(ByteStringView name) const;
   bool HasLocalizedFont(ByteStringView name) const;
 
@@ -83,7 +83,7 @@ class CFX_FontMapper {
 
 #ifdef PDF_ENABLE_XFA
   std::unique_ptr<uint8_t, FxFreeDeleter> RawBytesForIndex(
-      uint32_t index,
+      size_t index,
       size_t* returned_length);
 #endif  // PDF_ENABLE_XFA
 
