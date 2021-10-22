@@ -4,6 +4,7 @@
 
 #include "xfa/fde/cfde_texteditengine.h"
 
+#include "build/build_config.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxge/text_char_pos.h"
@@ -39,7 +40,12 @@ class CFDE_TextEditEngineTest : public testing::Test {
   ~CFDE_TextEditEngineTest() override = default;
 
   void SetUp() override {
-    font_ = CFGAS_GEFont::LoadFont(L"Arial Black", 0, FX_CodePage::kDefANSI);
+#if defined(OS_LINUX) || defined(OS_CHROMEOS)
+    const wchar_t kFontFamily[] = L"Arimo Bold";
+#else
+    const wchar_t kFontFamily[] = L"Arial Bold";
+#endif
+    font_ = CFGAS_GEFont::LoadFont(kFontFamily, 0, FX_CodePage::kDefANSI);
     ASSERT_TRUE(font_);
 
     engine_ = std::make_unique<CFDE_TextEditEngine>();
@@ -140,7 +146,7 @@ TEST_F(CFDE_TextEditEngineTest, Insert) {
 
   // Insert with limited area and over-fill
   engine()->LimitHorizontalScroll(true);
-  engine()->SetAvailableWidth(60.0f);  // Fits 'Hello Wo'.
+  engine()->SetAvailableWidth(52.0f);  // Fits 'Hello Wo'.
   engine()->Insert(0, L"Hello");
   EXPECT_FALSE(delegate->text_is_full);
   engine()->Insert(5, L" World");
@@ -267,8 +273,8 @@ TEST_F(CFDE_TextEditEngineTest, GetWidthOfChar) {
   EXPECT_EQ(0U, engine()->GetWidthOfChar(0));
 
   engine()->Insert(0, L"Hello World");
-  EXPECT_EQ(199920U, engine()->GetWidthOfChar(0));
-  EXPECT_EQ(159840U, engine()->GetWidthOfChar(1));
+  EXPECT_EQ(173280U, engine()->GetWidthOfChar(0));
+  EXPECT_EQ(133440U, engine()->GetWidthOfChar(1));
 
   engine()->Insert(0, L"\t");
   EXPECT_EQ(0U, engine()->GetWidthOfChar(0));
@@ -469,7 +475,7 @@ TEST_F(CFDE_TextEditEngineTest, GetIndexForPoint) {
   EXPECT_EQ(11U, engine()->GetIndexForPoint({999999.0f, 9999999.0f}));
   EXPECT_EQ(11U, engine()->GetIndexForPoint({999999.0f, 0.0f}));
   EXPECT_EQ(1U, engine()->GetIndexForPoint({5.0f, 5.0f}));
-  EXPECT_EQ(1U, engine()->GetIndexForPoint({10.0f, 5.0f}));
+  EXPECT_EQ(2U, engine()->GetIndexForPoint({10.0f, 5.0f}));
 }
 
 TEST_F(CFDE_TextEditEngineTest, GetIndexForPointLineWrap) {
@@ -479,8 +485,8 @@ TEST_F(CFDE_TextEditEngineTest, GetIndexForPointLineWrap) {
                    L"getting indexes on multi-line edits.");
   EXPECT_EQ(0U, engine()->GetIndexForPoint({0.0f, 0.0f}));
   EXPECT_EQ(87U, engine()->GetIndexForPoint({999999.0f, 9999999.0f}));
-  EXPECT_EQ(11U, engine()->GetIndexForPoint({999999.0f, 0.0f}));
-  EXPECT_EQ(12U, engine()->GetIndexForPoint({1.0f, 10.0f}));
+  EXPECT_EQ(18U, engine()->GetIndexForPoint({999999.0f, 0.0f}));
+  EXPECT_EQ(19U, engine()->GetIndexForPoint({1.0f, 10.0f}));
   EXPECT_EQ(1U, engine()->GetIndexForPoint({5.0f, 5.0f}));
   EXPECT_EQ(2U, engine()->GetIndexForPoint({10.0f, 5.0f}));
 }
@@ -532,19 +538,19 @@ TEST_F(CFDE_TextEditEngineTest, GetCharacterInfo) {
   EXPECT_EQ(0, char_info.first);
   EXPECT_FLOAT_EQ(0.0f, char_info.second.Left());
   EXPECT_FLOAT_EQ(0.0f, char_info.second.Top());
-  EXPECT_FLOAT_EQ(9.996f, char_info.second.Width());
+  EXPECT_FLOAT_EQ(8.664f, char_info.second.Width());
   EXPECT_FLOAT_EQ(12.0f, char_info.second.Height());
 
   char_info = engine()->GetCharacterInfo(1);
   EXPECT_EQ(0, char_info.first);
-  EXPECT_FLOAT_EQ(9.996f, char_info.second.Left());
+  EXPECT_FLOAT_EQ(8.664f, char_info.second.Left());
   EXPECT_FLOAT_EQ(0.0f, char_info.second.Top());
-  EXPECT_FLOAT_EQ(3.996f, char_info.second.Width());
+  EXPECT_FLOAT_EQ(3.324f, char_info.second.Width());
   EXPECT_FLOAT_EQ(12.0f, char_info.second.Height());
 
   char_info = engine()->GetCharacterInfo(2);
   EXPECT_EQ(0, char_info.first);
-  EXPECT_FLOAT_EQ(13.992f, char_info.second.Left());
+  EXPECT_FLOAT_EQ(11.988f, char_info.second.Left());
   EXPECT_FLOAT_EQ(0.0f, char_info.second.Top());
   EXPECT_FLOAT_EQ(3.996f, char_info.second.Width());
   EXPECT_FLOAT_EQ(12.0f, char_info.second.Height());
@@ -554,7 +560,7 @@ TEST_F(CFDE_TextEditEngineTest, GetCharacterInfo) {
   // the end.
   char_info = engine()->GetCharacterInfo(3);
   EXPECT_EQ(0, char_info.first);
-  EXPECT_FLOAT_EQ(17.988f, char_info.second.Left());
+  EXPECT_FLOAT_EQ(15.984, char_info.second.Left());
   EXPECT_FLOAT_EQ(0.0f, char_info.second.Top());
   EXPECT_FLOAT_EQ(0.0f, char_info.second.Width());
   EXPECT_FLOAT_EQ(12.0f, char_info.second.Height());

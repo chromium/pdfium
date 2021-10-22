@@ -48,6 +48,9 @@ source_set("test_support") {
     ]
     configs += [ "//v8:external_startup_data" ]
   }
+  if (is_linux || is_chromeos) {
+    public_deps += [ "//third_party/test_fonts" ]
+  }
 }
 
 source_set("path_service") {

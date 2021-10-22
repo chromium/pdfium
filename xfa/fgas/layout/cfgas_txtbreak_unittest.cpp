@@ -17,7 +17,12 @@
 class CFGAS_TxtBreakTest : public testing::Test {
  public:
   void SetUp() override {
-    font_ = CFGAS_GEFont::LoadFont(L"Arial Black", 0, FX_CodePage::kDefANSI);
+#if defined(OS_LINUX) || defined(OS_CHROMEOS)
+    const wchar_t kFontFamily[] = L"Arimo Bold";
+#else
+    const wchar_t kFontFamily[] = L"Arial Bold";
+#endif
+    font_ = CFGAS_GEFont::LoadFont(kFontFamily, 0, FX_CodePage::kDefANSI);
     ASSERT_TRUE(font_);
   }
 

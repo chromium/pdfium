@@ -121,6 +121,10 @@ vars = {
   # and whatever else without interference from each other.
   'skia_revision': '2f7c3f51e48e8c5384b4679e2024e9369addb44f',
   # Three lines of non-changing comments so that
+  # the commit queue can handle CLs rolling test_fonts
+  # and whatever else without interference from each other.
+  'test_fonts_revision': '7f51783942943e965cd56facf786544ccfc07713',
+  # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling tools_memory
   # and whatever else without interference from each other.
   'tools_memory_revision': '4dc64cab424aec02f60d892e857cc9a0155ea4fc',
@@ -255,6 +259,10 @@ deps = {
 
   'third_party/skia':
     Var('chromium_git') + '/skia.git@' +  Var('skia_revision'),
+
+  'third_party/test_fonts':
+    Var('chromium_git') + '/chromium/src/third_party/test_fonts.git@' +
+        Var('test_fonts_revision'),
 
   'third_party/zlib':
     Var('chromium_git') + '/chromium/src/third_party/zlib.git@' +
@@ -463,6 +471,18 @@ hooks = [
     'condition': 'checkout_linux and checkout_x64',
     'action': ['python3', 'build/linux/sysroot_scripts/install-sysroot.py',
                '--arch=x64'],
+  },
+  {
+    'name': 'test_fonts',
+    'pattern': '.',
+    'action': [ 'python3',
+                'third_party/depot_tools/download_from_google_storage.py',
+                '--no_resume',
+                '--extract',
+                '--no_auth',
+                '--bucket', 'chromium-fonts',
+                '-s', 'third_party/test_fonts/test_fonts.tar.gz.sha1',
+    ],
   },
   {
     'name': 'msan_chained_origins',

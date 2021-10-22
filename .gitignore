@@ -18,6 +18,7 @@
 /third_party/markupsafe
 /third_party/nasm
 /third_party/skia
+/third_party/test_fonts
 /third_party/zlib
 /tools/clang
 /tools/code_coverage
