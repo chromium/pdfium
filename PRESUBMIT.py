@@ -40,6 +40,106 @@ _INCLUDE_ORDER_WARNING = (
 _KNOWN_ROBOTS = set() | set(
     '%s@skia-public.iam.gserviceaccount.com' % s for s in ('pdfium-autoroll',))
 
+_THIRD_PARTY = 'third_party/'
+
+# Format: Sequence of tuples containing:
+# * String pattern or, if starting with a slash, a regular expression.
+# * Sequence of strings to show when the pattern matches.
+# * Error flag. True if a match is a presubmit error, otherwise it's a warning.
+# * Sequence of paths to *not* check (regexps).
+_BANNED_CPP_FUNCTIONS = (
+    (
+        r'/\busing namespace ',
+        (
+            'Using directives ("using namespace x") are banned by the Google Style',
+            'Guide ( https://google.github.io/styleguide/cppguide.html#Namespaces ).',
+            'Explicitly qualify symbols or use using declarations ("using x::foo").',
+        ),
+        True,
+        [_THIRD_PARTY],
+    ),
+    (
+        'v8::Isolate::GetCurrent()',
+        (
+            'Avoid uses of v8::Isolate::GetCurrent(). Prefer holding a pointer to',
+            'the v8::Isolate that was entered.',
+        ),
+        False,
+        (),
+    ),
+)
+
+
+def _CheckNoBannedFunctions(input_api, output_api):
+  """Makes sure that banned functions are not used."""
+  warnings = []
+  errors = []
+
+  def _GetMessageForMatchingType(input_api, affected_file, line_number, line,
+                                 type_name, message):
+    """Returns an string composed of the name of the file, the line number where
+    the match has been found and the additional text passed as `message` in case
+    the target type name matches the text inside the line passed as parameter.
+    """
+    result = []
+
+    if input_api.re.search(r"^ *//",
+                           line):  # Ignore comments about banned types.
+      return result
+    if line.endswith(
+        " nocheck"):  # A // nocheck comment will bypass this error.
+      return result
+
+    matched = False
+    if type_name[0:1] == '/':
+      regex = type_name[1:]
+      if input_api.re.search(regex, line):
+        matched = True
+    elif type_name in line:
+      matched = True
+
+    if matched:
+      result.append('    %s:%d:' % (affected_file.LocalPath(), line_number))
+      for message_line in message:
+        result.append('      %s' % message_line)
+
+    return result
+
+  def IsExcludedFile(affected_file, excluded_paths):
+    local_path = affected_file.LocalPath()
+    for item in excluded_paths:
+      if input_api.re.match(item, local_path):
+        return True
+    return False
+
+  def CheckForMatch(affected_file, line_num, line, func_name, message, error):
+    problems = _GetMessageForMatchingType(input_api, f, line_num, line,
+                                          func_name, message)
+    if problems:
+      if error:
+        errors.extend(problems)
+      else:
+        warnings.extend(problems)
+
+  file_filter = lambda f: f.LocalPath().endswith(('.cc', '.cpp', '.h'))
+  for f in input_api.AffectedFiles(file_filter=file_filter):
+    for line_num, line in f.ChangedContents():
+      for func_name, message, error, excluded_paths in _BANNED_CPP_FUNCTIONS:
+        if IsExcludedFile(f, excluded_paths):
+          continue
+        CheckForMatch(f, line_num, line, func_name, message, error)
+
+  result = []
+  if (warnings):
+    result.append(
+        output_api.PresubmitPromptWarning('Banned functions were used.\n' +
+                                          '\n'.join(warnings)))
+  if (errors):
+    result.append(
+        output_api.PresubmitError('Banned functions were used.\n' +
+                                  '\n'.join(errors)))
+  return result
+
 
 def _CheckUnwantedDependencies(input_api, output_api):
   """Runs checkdeps on #include statements added in this
@@ -365,6 +465,7 @@ def _CheckUselessForwardDeclarations(input_api, output_api):
 
 def CheckChangeOnUpload(input_api, output_api):
   results = []
+  results.extend(_CheckNoBannedFunctions(input_api, output_api))
   results.extend(_CheckUnwantedDependencies(input_api, output_api))
   results.extend(
       input_api.canned_checks.CheckPatchFormatted(input_api, output_api))

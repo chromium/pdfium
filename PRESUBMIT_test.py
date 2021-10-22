@@ -9,6 +9,37 @@ import PRESUBMIT
 from PRESUBMIT_test_mocks import MockInputApi, MockOutputApi, MockFile
 
 
+class BannedTypeCheckTest(unittest.TestCase):
+
+  def testBannedCppFunctions(self):
+    input_api = MockInputApi()
+    input_api.files = [
+        MockFile('some/cpp/problematic/file.cc', ['using namespace std;']),
+        MockFile('third_party/some/cpp/problematic/file.cc',
+                 ['using namespace std;']),
+        MockFile('some/cpp/ok/file.cc', ['using std::string;']),
+        MockFile('some/cpp/nocheck/file.cc',
+                 ['using namespace std;  // nocheck']),
+        MockFile('some/cpp/comment/file.cc',
+                 ['  // A comment about `using namespace std;`']),
+        MockFile('some/cpp/v8/file.cc', ['v8::Isolate::GetCurrent()']),
+    ]
+
+    results = PRESUBMIT._CheckNoBannedFunctions(input_api, MockOutputApi())
+
+    # warnings are results[0], errors are results[1]
+    self.assertEqual(2, len(results))
+    self.assertTrue('some/cpp/problematic/file.cc' in results[1].message)
+    self.assertFalse(
+        'third_party/some/cpp/problematic/file.cc' in results[1].message)
+    self.assertFalse('some/cpp/ok/file.cc' in results[1].message)
+    self.assertFalse('some/cpp/nocheck/file.cc' in results[0].message)
+    self.assertFalse('some/cpp/nocheck/file.cc' in results[1].message)
+    self.assertFalse('some/cpp/comment/file.cc' in results[0].message)
+    self.assertFalse('some/cpp/comment/file.cc' in results[1].message)
+    self.assertTrue('some/cpp/v8/file.cc' in results[0].message)
+
+
 class CheckChangeOnUploadTest(unittest.TestCase):
 
   def testCheckPNGFormat(self):
