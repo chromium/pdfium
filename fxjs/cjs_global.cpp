@@ -25,7 +25,7 @@ namespace {
 
 void JSSpecialPropQuery(v8::Local<v8::String> property,
                         const v8::PropertyCallbackInfo<v8::Integer>& info) {
-  auto pObj = JSGetObject<CJS_Global>(info.Holder());
+  auto pObj = JSGetObject<CJS_Global>(info.GetIsolate(), info.Holder());
   if (!pObj)
     return;
 
@@ -44,7 +44,7 @@ void JSSpecialPropQuery(v8::Local<v8::String> property,
 
 void JSSpecialPropGet(v8::Local<v8::String> property,
                       const v8::PropertyCallbackInfo<v8::Value>& info) {
-  auto pObj = JSGetObject<CJS_Global>(info.Holder());
+  auto pObj = JSGetObject<CJS_Global>(info.GetIsolate(), info.Holder());
   if (!pObj)
     return;
 
@@ -66,7 +66,7 @@ void JSSpecialPropGet(v8::Local<v8::String> property,
 void JSSpecialPropPut(v8::Local<v8::String> property,
                       v8::Local<v8::Value> value,
                       const v8::PropertyCallbackInfo<v8::Value>& info) {
-  auto pObj = JSGetObject<CJS_Global>(info.Holder());
+  auto pObj = JSGetObject<CJS_Global>(info.GetIsolate(), info.Holder());
   if (!pObj)
     return;
 
@@ -84,7 +84,7 @@ void JSSpecialPropPut(v8::Local<v8::String> property,
 
 void JSSpecialPropDel(v8::Local<v8::String> property,
                       const v8::PropertyCallbackInfo<v8::Boolean>& info) {
-  auto pObj = JSGetObject<CJS_Global>(info.Holder());
+  auto pObj = JSGetObject<CJS_Global>(info.GetIsolate(), info.Holder());
   if (!pObj)
     return;
 

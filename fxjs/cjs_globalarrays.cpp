@@ -10,21 +10,22 @@
 #include "v8/include/v8-container.h"
 #include "v8/include/v8-isolate.h"
 
-#define GLOBAL_ARRAY(rt, name, ...)                                          \
-  {                                                                          \
-    static const wchar_t* const values[] = {__VA_ARGS__};                    \
-    v8::Local<v8::Array> array = (rt)->NewArray();                           \
-    v8::Local<v8::Context> ctx = (rt)->GetIsolate()->GetCurrentContext();    \
-    for (size_t i = 0; i < pdfium::size(values); ++i)                        \
-      array->Set(ctx, i, (rt)->NewString(values[i])).FromJust();             \
-    (rt)->SetConstArray((name), array);                                      \
-    (rt)->DefineGlobalConst(                                                 \
-        (name), [](const v8::FunctionCallbackInfo<v8::Value>& info) {        \
-          CJS_Object* pObj = CFXJS_Engine::GetObjectPrivate(info.Holder());  \
-          CJS_Runtime* pCurrentRuntime = pObj->GetRuntime();                 \
-          if (pCurrentRuntime)                                               \
-            info.GetReturnValue().Set(pCurrentRuntime->GetConstArray(name)); \
-        });                                                                  \
+#define GLOBAL_ARRAY(rt, name, ...)                                            \
+  {                                                                            \
+    static const wchar_t* const values[] = {__VA_ARGS__};                      \
+    v8::Local<v8::Array> array = (rt)->NewArray();                             \
+    v8::Local<v8::Context> ctx = (rt)->GetIsolate()->GetCurrentContext();      \
+    for (size_t i = 0; i < pdfium::size(values); ++i)                          \
+      array->Set(ctx, i, (rt)->NewString(values[i])).FromJust();               \
+    (rt)->SetConstArray((name), array);                                        \
+    (rt)->DefineGlobalConst(                                                   \
+        (name), [](const v8::FunctionCallbackInfo<v8::Value>& info) {          \
+          CJS_Object* pObj = CFXJS_Engine::GetObjectPrivate(info.GetIsolate(), \
+                                                            info.Holder());    \
+          CJS_Runtime* pCurrentRuntime = pObj->GetRuntime();                   \
+          if (pCurrentRuntime)                                                 \
+            info.GetReturnValue().Set(pCurrentRuntime->GetConstArray(name));   \
+        });                                                                    \
   }
 
 // static

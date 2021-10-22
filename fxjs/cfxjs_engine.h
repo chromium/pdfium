@@ -84,7 +84,8 @@ class CFXJS_Engine : public CFX_V8 {
   using Destructor = std::function<void(v8::Local<v8::Object> obj)>;
 
   static uint32_t GetObjDefnID(v8::Local<v8::Object> pObj);
-  static CJS_Object* GetObjectPrivate(v8::Local<v8::Object> pObj);
+  static CJS_Object* GetObjectPrivate(v8::Isolate* pIsolate,
+                                      v8::Local<v8::Object> pObj);
   static void SetObjectPrivate(v8::Local<v8::Object> pObj,
                                std::unique_ptr<CJS_Object> p);
   static void FreeObjectPrivate(v8::Local<v8::Object> pObj);

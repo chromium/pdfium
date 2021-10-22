@@ -65,12 +65,12 @@ CJS_Field* CJS_EventContext::SourceField() {
     return nullptr;
 
   auto* pFormFillEnv = GetFormFillEnv();
-  auto* pJSDocument =
-      static_cast<CJS_Document*>(CFXJS_Engine::GetObjectPrivate(pDocObj));
+  auto* pJSDocument = static_cast<CJS_Document*>(
+      CFXJS_Engine::GetObjectPrivate(m_pRuntime->GetIsolate(), pDocObj));
   pJSDocument->SetFormFillEnv(pFormFillEnv);
 
-  auto* pJSField =
-      static_cast<CJS_Field*>(CFXJS_Engine::GetObjectPrivate(pFieldObj));
+  auto* pJSField = static_cast<CJS_Field*>(
+      CFXJS_Engine::GetObjectPrivate(m_pRuntime->GetIsolate(), pFieldObj));
   pJSField->AttachField(pJSDocument, SourceName());
   return pJSField;
 }
@@ -87,12 +87,12 @@ CJS_Field* CJS_EventContext::TargetField() {
     return nullptr;
 
   auto* pFormFillEnv = GetFormFillEnv();
-  auto* pJSDocument =
-      static_cast<CJS_Document*>(CFXJS_Engine::GetObjectPrivate(pDocObj));
+  auto* pJSDocument = static_cast<CJS_Document*>(
+      CFXJS_Engine::GetObjectPrivate(m_pRuntime->GetIsolate(), pDocObj));
   pJSDocument->SetFormFillEnv(pFormFillEnv);
 
-  auto* pJSField =
-      static_cast<CJS_Field*>(CFXJS_Engine::GetObjectPrivate(pFieldObj));
+  auto* pJSField = static_cast<CJS_Field*>(
+      CFXJS_Engine::GetObjectPrivate(m_pRuntime->GetIsolate(), pFieldObj));
   pJSField->AttachField(pJSDocument, TargetName());
   return pJSField;
 }

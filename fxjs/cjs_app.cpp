@@ -93,7 +93,7 @@ CJS_App::~CJS_App() = default;
 
 CJS_Result CJS_App::get_active_docs(CJS_Runtime* pRuntime) {
   v8::Local<v8::Object> pObj = pRuntime->GetThisObj();
-  auto pJSDocument = JSGetObject<CJS_Document>(pObj);
+  auto pJSDocument = JSGetObject<CJS_Document>(pRuntime->GetIsolate(), pObj);
   if (!pJSDocument)
     return CJS_Result::Failure(JSMessage::kObjectTypeError);
   v8::Local<v8::Array> aDocs = pRuntime->NewArray();
@@ -317,8 +317,8 @@ CJS_Result CJS_App::setInterval(
   if (pRetObj.IsEmpty())
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-  auto* pJS_TimerObj =
-      static_cast<CJS_TimerObj*>(CFXJS_Engine::GetObjectPrivate(pRetObj));
+  auto* pJS_TimerObj = static_cast<CJS_TimerObj*>(
+      CFXJS_Engine::GetObjectPrivate(pRuntime->GetIsolate(), pRetObj));
 
   pJS_TimerObj->SetTimer(pTimerRef);
   return CJS_Result::Success(pRetObj);
@@ -346,8 +346,8 @@ CJS_Result CJS_App::setTimeOut(
   if (pRetObj.IsEmpty())
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-  auto* pJS_TimerObj =
-      static_cast<CJS_TimerObj*>(CFXJS_Engine::GetObjectPrivate(pRetObj));
+  auto* pJS_TimerObj = static_cast<CJS_TimerObj*>(
+      CFXJS_Engine::GetObjectPrivate(pRuntime->GetIsolate(), pRetObj));
 
   pJS_TimerObj->SetTimer(pTimerRef);
   return CJS_Result::Success(pRetObj);
@@ -379,7 +379,7 @@ void CJS_App::ClearTimerCommon(CJS_Runtime* pRuntime,
     return;
 
   v8::Local<v8::Object> pObj = pRuntime->ToObject(param);
-  auto pTimer = JSGetObject<CJS_TimerObj>(pObj);
+  auto pTimer = JSGetObject<CJS_TimerObj>(pRuntime->GetIsolate(), pObj);
   if (!pTimer)
     return;
 

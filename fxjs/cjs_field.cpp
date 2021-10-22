@@ -2264,7 +2264,8 @@ CJS_Result CJS_Field::buttonGetIcon(
   if (pObj.IsEmpty())
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-  auto* pJS_Icon = static_cast<CJS_Icon*>(CFXJS_Engine::GetObjectPrivate(pObj));
+  auto* pJS_Icon = static_cast<CJS_Icon*>(
+      CFXJS_Engine::GetObjectPrivate(pRuntime->GetIsolate(), pObj));
   return pJS_Icon ? CJS_Result::Success(pJS_Icon->ToV8Object())
                   : CJS_Result::Failure(JSMessage::kBadObjectError);
 }
@@ -2377,8 +2378,8 @@ CJS_Result CJS_Field::getArray(
     if (pObj.IsEmpty())
       return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-    auto* pJSField =
-        static_cast<CJS_Field*>(CFXJS_Engine::GetObjectPrivate(pObj));
+    auto* pJSField = static_cast<CJS_Field*>(
+        CFXJS_Engine::GetObjectPrivate(pRuntime->GetIsolate(), pObj));
     pJSField->AttachField(m_pJSDoc.Get(), *pStr);
     pRuntime->PutArrayElement(FormFieldArray, j++,
                               pJSField
