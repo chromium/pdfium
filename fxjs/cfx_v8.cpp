@@ -77,8 +77,7 @@ v8::Local<v8::Boolean> CFX_V8::NewBoolean(bool b) {
 }
 
 v8::Local<v8::String> CFX_V8::NewString(ByteStringView str) {
-  v8::Isolate* pIsolate = m_pIsolate ? GetIsolate() : v8::Isolate::GetCurrent();
-  return fxv8::NewStringHelper(pIsolate, str);
+  return fxv8::NewStringHelper(GetIsolate(), str);
 }
 
 v8::Local<v8::String> CFX_V8::NewString(WideStringView str) {

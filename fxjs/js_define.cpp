@@ -27,8 +27,7 @@ void JSDestructor(v8::Local<v8::Object> obj) {
   CFXJS_Engine::SetObjectPrivate(obj, nullptr);
 }
 
-double JS_DateParse(const WideString& str) {
-  v8::Isolate* pIsolate = v8::Isolate::GetCurrent();
+double JS_DateParse(v8::Isolate* pIsolate, const WideString& str) {
   v8::Isolate::Scope isolate_scope(pIsolate);
   v8::HandleScope scope(pIsolate);
 

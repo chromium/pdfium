@@ -18,7 +18,7 @@
 
 class CJS_Object;
 
-double JS_DateParse(const WideString& str);
+double JS_DateParse(v8::Isolate* pIsolate, const WideString& str);
 
 // Some JS methods have the bizarre convention that they may also be called
 // with a single argument which is an object containing the actual arguments

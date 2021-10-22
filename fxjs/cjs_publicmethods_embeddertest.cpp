@@ -32,80 +32,80 @@ TEST_F(CJS_PublicMethodsEmbedderTest, ParseDateUsingFormat) {
 
   // 1968
   bWrongFormat = false;
-  date = CJS_PublicMethods::ParseDateUsingFormat(L"06/25/1968", L"mm/dd/yyyy",
-                                                 &bWrongFormat);
+  date = CJS_PublicMethods::ParseDateUsingFormat(isolate(), L"06/25/1968",
+                                                 L"mm/dd/yyyy", &bWrongFormat);
   date = RoundDownDate(date);
   EXPECT_DOUBLE_EQ(-47865600000, date);
   EXPECT_FALSE(bWrongFormat);
 
   // 1968
   bWrongFormat = false;
-  date = CJS_PublicMethods::ParseDateUsingFormat(L"25061968", L"ddmmyyyy",
-                                                 &bWrongFormat);
+  date = CJS_PublicMethods::ParseDateUsingFormat(isolate(), L"25061968",
+                                                 L"ddmmyyyy", &bWrongFormat);
   date = RoundDownDate(date);
   EXPECT_DOUBLE_EQ(-47865600000, date);
   EXPECT_FALSE(bWrongFormat);
 
   // 1968
   bWrongFormat = false;
-  date = CJS_PublicMethods::ParseDateUsingFormat(L"19680625", L"yyyymmdd",
-                                                 &bWrongFormat);
+  date = CJS_PublicMethods::ParseDateUsingFormat(isolate(), L"19680625",
+                                                 L"yyyymmdd", &bWrongFormat);
   date = RoundDownDate(date);
   EXPECT_DOUBLE_EQ(-47865600000, date);
   EXPECT_FALSE(bWrongFormat);
 
   // 1985
   bWrongFormat = false;
-  date = CJS_PublicMethods::ParseDateUsingFormat(L"31121985", L"ddmmyyyy",
-                                                 &bWrongFormat);
+  date = CJS_PublicMethods::ParseDateUsingFormat(isolate(), L"31121985",
+                                                 L"ddmmyyyy", &bWrongFormat);
   date = RoundDownDate(date);
   EXPECT_DOUBLE_EQ(504835200000.0, date);
   EXPECT_FALSE(bWrongFormat);
 
   // 2085, the other '85.
   bWrongFormat = false;
-  date = CJS_PublicMethods::ParseDateUsingFormat(L"311285", L"ddmmyy",
-                                                 &bWrongFormat);
+  date = CJS_PublicMethods::ParseDateUsingFormat(isolate(), L"311285",
+                                                 L"ddmmyy", &bWrongFormat);
   date = RoundDownDate(date);
   EXPECT_DOUBLE_EQ(3660595200000.0, date);
   EXPECT_FALSE(bWrongFormat);
 
   // 1995
   bWrongFormat = false;
-  date = CJS_PublicMethods::ParseDateUsingFormat(L"01021995", L"ddmmyyyy",
-                                                 &bWrongFormat);
+  date = CJS_PublicMethods::ParseDateUsingFormat(isolate(), L"01021995",
+                                                 L"ddmmyyyy", &bWrongFormat);
   date = RoundDownDate(date);
   EXPECT_DOUBLE_EQ(791596800000.0, date);
   EXPECT_FALSE(bWrongFormat);
 
   // 2095, the other '95.
   bWrongFormat = false;
-  date = CJS_PublicMethods::ParseDateUsingFormat(L"010295", L"ddmmyy",
-                                                 &bWrongFormat);
+  date = CJS_PublicMethods::ParseDateUsingFormat(isolate(), L"010295",
+                                                 L"ddmmyy", &bWrongFormat);
   date = RoundDownDate(date);
   EXPECT_DOUBLE_EQ(3947356800000.0, date);
   EXPECT_FALSE(bWrongFormat);
 
   // 2005
   bWrongFormat = false;
-  date = CJS_PublicMethods::ParseDateUsingFormat(L"01022005", L"ddmmyyyy",
-                                                 &bWrongFormat);
+  date = CJS_PublicMethods::ParseDateUsingFormat(isolate(), L"01022005",
+                                                 L"ddmmyyyy", &bWrongFormat);
   date = RoundDownDate(date);
   EXPECT_DOUBLE_EQ(1107216000000.0, date);
   EXPECT_FALSE(bWrongFormat);
 
   // 2005
   bWrongFormat = false;
-  date = CJS_PublicMethods::ParseDateUsingFormat(L"010205", L"ddmmyy",
-                                                 &bWrongFormat);
+  date = CJS_PublicMethods::ParseDateUsingFormat(isolate(), L"010205",
+                                                 L"ddmmyy", &bWrongFormat);
   date = RoundDownDate(date);
   EXPECT_DOUBLE_EQ(1107216000000.0, date);
   EXPECT_FALSE(bWrongFormat);
 
   // 2005 in a different format. https://crbug.com/436572
   bWrongFormat = false;
-  date = CJS_PublicMethods::ParseDateUsingFormat(L"050201", L"yymmdd",
-                                                 &bWrongFormat);
+  date = CJS_PublicMethods::ParseDateUsingFormat(isolate(), L"050201",
+                                                 L"yymmdd", &bWrongFormat);
   date = RoundDownDate(date);
   EXPECT_DOUBLE_EQ(1107216000000.0, date);
   EXPECT_FALSE(bWrongFormat);

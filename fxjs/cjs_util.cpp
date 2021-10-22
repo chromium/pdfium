@@ -376,7 +376,8 @@ CJS_Result CJS_Util::scand(CJS_Runtime* pRuntime,
   WideString sDate = pRuntime->ToWideString(params[1]);
   double dDate = FX_GetDateTime();
   if (sDate.GetLength() > 0)
-    dDate = CJS_PublicMethods::ParseDateUsingFormat(sDate, sFormat, nullptr);
+    dDate = CJS_PublicMethods::ParseDateUsingFormat(pRuntime->GetIsolate(),
+                                                    sDate, sFormat, nullptr);
   if (isnan(dDate))
     return CJS_Result::Success(pRuntime->NewUndefined());
 

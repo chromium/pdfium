@@ -348,7 +348,8 @@ v8::Local<v8::Array> CJS_PublicMethods::AF_MakeArrayFromList(
   return StrArray;
 }
 
-double CJS_PublicMethods::ParseDate(const WideString& value,
+double CJS_PublicMethods::ParseDate(v8::Isolate* isolate,
+                                    const WideString& value,
                                     bool* bWrongFormat) {
   double dt = FX_GetDateTime();
   int nYear = FX_GetYearFromTime(dt);
@@ -422,11 +423,13 @@ double CJS_PublicMethods::ParseDate(const WideString& value,
   }
 
   // TODO(thestig): Should we set |bWrongFormat| to false here too?
-  return JS_DateParse(WideString::Format(L"%d/%d/%d %d:%d:%d", nMonth, nDay,
-                                         nYear, nHour, nMin, nSec));
+  return JS_DateParse(
+      isolate, WideString::Format(L"%d/%d/%d %d:%d:%d", nMonth, nDay, nYear,
+                                  nHour, nMin, nSec));
 }
 
-double CJS_PublicMethods::ParseDateUsingFormat(const WideString& value,
+double CJS_PublicMethods::ParseDateUsingFormat(v8::Isolate* isolate,
+                                               const WideString& value,
                                                const WideString& format,
                                                bool* bWrongFormat) {
   double dRet = nan("");
@@ -435,13 +438,13 @@ double CJS_PublicMethods::ParseDateUsingFormat(const WideString& value,
     return dRet;
 
   if (status == fxjs::ConversionStatus::kBadDate) {
-    dRet = JS_DateParse(value);
+    dRet = JS_DateParse(isolate, value);
     if (!isnan(dRet))
       return dRet;
   }
 
   bool bBadFormat = false;
-  dRet = ParseDate(value, &bBadFormat);
+  dRet = ParseDate(isolate, value, &bBadFormat);
   if (bWrongFormat)
     *bWrongFormat = bBadFormat;
 
@@ -892,9 +895,10 @@ CJS_Result CJS_PublicMethods::AFDate_FormatEx(
   double dDate;
   if (strValue.Contains(L"GMT")) {
     // e.g. "Tue Aug 11 14:24:16 GMT+08002009"
-    dDate = ParseDateAsGMT(strValue);
+    dDate = ParseDateAsGMT(pRuntime->GetIsolate(), strValue);
   } else {
-    dDate = ParseDateUsingFormat(strValue, sFormat, nullptr);
+    dDate = ParseDateUsingFormat(pRuntime->GetIsolate(), strValue, sFormat,
+                                 nullptr);
   }
 
   if (isnan(dDate)) {
@@ -908,7 +912,8 @@ CJS_Result CJS_PublicMethods::AFDate_FormatEx(
   return CJS_Result::Success();
 }
 
-double CJS_PublicMethods::ParseDateAsGMT(const WideString& strValue) {
+double CJS_PublicMethods::ParseDateAsGMT(v8::Isolate* isolate,
+                                         const WideString& strValue) {
   std::vector<WideString> wsArray;
   WideString sTemp;
   for (const auto& c : strValue) {
@@ -939,7 +944,7 @@ double CJS_PublicMethods::ParseDateAsGMT(const WideString& strValue) {
   double dRet = FX_MakeDate(FX_MakeDay(nYear, nMonth - 1, nDay),
                             FX_MakeTime(nHour, nMin, nSec, 0));
   if (isnan(dRet))
-    dRet = JS_DateParse(strValue);
+    dRet = JS_DateParse(isolate, strValue);
 
   return dRet;
 }
@@ -966,7 +971,8 @@ CJS_Result CJS_PublicMethods::AFDate_KeystrokeEx(
 
   bool bWrongFormat = false;
   WideString sFormat = pRuntime->ToWideString(params[0]);
-  double dRet = ParseDateUsingFormat(strValue, sFormat, &bWrongFormat);
+  double dRet = ParseDateUsingFormat(pRuntime->GetIsolate(), strValue, sFormat,
+                                     &bWrongFormat);
   if (bWrongFormat || isnan(dRet)) {
     WideString swMsg = WideString::Format(
         JSGetStringFromID(JSMessage::kParseDateError).c_str(), sFormat.c_str());
@@ -1222,7 +1228,8 @@ CJS_Result CJS_PublicMethods::AFParseDateEx(
 
   WideString sValue = pRuntime->ToWideString(params[0]);
   WideString sFormat = pRuntime->ToWideString(params[1]);
-  double dDate = ParseDateUsingFormat(sValue, sFormat, nullptr);
+  double dDate =
+      ParseDateUsingFormat(pRuntime->GetIsolate(), sValue, sFormat, nullptr);
   if (isnan(dDate)) {
     WideString swMsg = WideString::Format(
         JSGetStringFromID(JSMessage::kParseDateError).c_str(), sFormat.c_str());

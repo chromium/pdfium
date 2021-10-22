@@ -18,9 +18,12 @@ class CJS_PublicMethods final : public CJS_Object {
 
   static void DefineJSObjects(CFXJS_Engine* pEngine);
 
-  static double ParseDate(const WideString& value, bool* bWrongFormat);
-  static double ParseDateAsGMT(const WideString& value);
-  static double ParseDateUsingFormat(const WideString& value,
+  static double ParseDate(v8::Isolate* isolate,
+                          const WideString& value,
+                          bool* bWrongFormat);
+  static double ParseDateAsGMT(v8::Isolate* isolate, const WideString& value);
+  static double ParseDateUsingFormat(v8::Isolate* isolate,
+                                     const WideString& value,
                                      const WideString& format,
                                      bool* bWrongFormat);
 
