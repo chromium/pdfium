@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2020 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -32,8 +32,8 @@ class CheckChangeOnUploadTest(unittest.TestCase):
     mock_input_api = MockInputApi()
     mock_output_api = MockOutputApi()
     mock_input_api.files = map(MockFile, correct_paths + wrong_paths)
-    errors = map(str, PRESUBMIT._CheckPNGFormat(mock_input_api,
-                                                mock_output_api))
+    errors = list(
+        map(str, PRESUBMIT._CheckPNGFormat(mock_input_api, mock_output_api)))
 
     self.assertEqual(len(wrong_paths), len(errors))
     self.assertFalse('notpng.cc' in errors[0])
