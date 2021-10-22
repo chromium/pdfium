@@ -91,6 +91,6 @@ extern const FXJSE_CLASS_DESCRIPTOR NormalClassDescriptor;
 extern const FXJSE_CLASS_DESCRIPTOR VariablesClassDescriptor;
 extern const FXJSE_CLASS_DESCRIPTOR kFormCalcFM2JSDescriptor;
 
-void FXJSE_ThrowMessage(ByteStringView utf8Message);
+void FXJSE_ThrowMessage(v8::Isolate* pIsolate, ByteStringView utf8Message);
 
 #endif  // FXJS_XFA_FXJSE_H_

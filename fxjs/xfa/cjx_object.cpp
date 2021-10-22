@@ -26,6 +26,7 @@
 #include "third_party/base/check_op.h"
 #include "third_party/base/compiler_specific.h"
 #include "third_party/base/containers/contains.h"
+#include "v8/include/v8-forward.h"
 #include "v8/include/v8-object.h"
 #include "v8/include/v8-primitive.h"
 #include "xfa/fgas/crt/cfgas_decimal.h"
@@ -134,7 +135,7 @@ void CJX_Object::className(v8::Isolate* pIsolate,
                            bool bSetting,
                            XFA_Attribute eAttribute) {
   if (bSetting) {
-    ThrowInvalidPropertyException();
+    ThrowInvalidPropertyException(pIsolate);
     return;
   }
   *pValue = fxv8::NewStringHelper(pIsolate, GetXFAObject()->GetClassName());
@@ -168,35 +169,43 @@ CJS_Result CJX_Object::RunMethod(
                     params);
 }
 
-void CJX_Object::ThrowTooManyOccurrencesException(const WideString& obj) const {
-  ThrowException(WideString::FromASCII("The element [") + obj +
-                 WideString::FromASCII(
-                     "] has violated its allowable number of occurrences."));
+void CJX_Object::ThrowTooManyOccurrencesException(v8::Isolate* pIsolate,
+                                                  const WideString& obj) const {
+  ThrowException(
+      pIsolate, WideString::FromASCII("The element [") + obj +
+                    WideString::FromASCII(
+                        "] has violated its allowable number of occurrences."));
 }
 
-void CJX_Object::ThrowInvalidPropertyException() const {
-  ThrowException(WideString::FromASCII("Invalid property set operation."));
+void CJX_Object::ThrowInvalidPropertyException(v8::Isolate* pIsolate) const {
+  ThrowException(pIsolate,
+                 WideString::FromASCII("Invalid property set operation."));
 }
 
-void CJX_Object::ThrowIndexOutOfBoundsException() const {
-  ThrowException(WideString::FromASCII("Index value is out of bounds."));
+void CJX_Object::ThrowIndexOutOfBoundsException(v8::Isolate* pIsolate) const {
+  ThrowException(pIsolate,
+                 WideString::FromASCII("Index value is out of bounds."));
 }
 
 void CJX_Object::ThrowParamCountMismatchException(
+    v8::Isolate* pIsolate,
     const WideString& method) const {
   ThrowException(
+      pIsolate,
       WideString::FromASCII("Incorrect number of parameters calling method '") +
-      method + WideString::FromASCII("'."));
+          method + WideString::FromASCII("'."));
 }
 
-void CJX_Object::ThrowArgumentMismatchException() const {
-  ThrowException(WideString::FromASCII(
-      "Argument mismatch in property or function argument."));
+void CJX_Object::ThrowArgumentMismatchException(v8::Isolate* pIsolate) const {
+  ThrowException(pIsolate,
+                 WideString::FromASCII(
+                     "Argument mismatch in property or function argument."));
 }
 
-void CJX_Object::ThrowException(const WideString& str) const {
+void CJX_Object::ThrowException(v8::Isolate* pIsolate,
+                                const WideString& str) const {
   DCHECK(!str.IsEmpty());
-  FXJSE_ThrowMessage(str.ToUTF8().AsStringView());
+  FXJSE_ThrowMessage(pIsolate, str.ToUTF8().AsStringView());
 }
 
 bool CJX_Object::HasAttribute(XFA_Attribute eAttr) const {
@@ -1223,7 +1232,7 @@ void CJX_Object::ScriptSomMessage(v8::Isolate* pIsolate,
 
   if (!validate) {
     // TODO(dsinclair): Better error message?
-    ThrowInvalidPropertyException();
+    ThrowInvalidPropertyException(pIsolate);
     return;
   }
 
@@ -1338,7 +1347,7 @@ void CJX_Object::ScriptSomDefaultValue_Read(v8::Isolate* pIsolate,
                                             bool bSetting,
                                             XFA_Attribute eAttribute) {
   if (bSetting) {
-    ThrowInvalidPropertyException();
+    ThrowInvalidPropertyException(pIsolate);
     return;
   }
 
@@ -1355,7 +1364,7 @@ void CJX_Object::ScriptSomDataNode(v8::Isolate* pIsolate,
                                    bool bSetting,
                                    XFA_Attribute eAttribute) {
   if (bSetting) {
-    ThrowInvalidPropertyException();
+    ThrowInvalidPropertyException(pIsolate);
     return;
   }
 
@@ -1411,7 +1420,7 @@ void CJX_Object::ScriptSomInstanceIndex(v8::Isolate* pIsolate,
     return;
 
   auto* mgr = static_cast<CJX_InstanceManager*>(pManagerNode->JSObject());
-  mgr->MoveInstance(iTo, iFrom);
+  mgr->MoveInstance(pIsolate, iTo, iFrom);
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;

@@ -71,7 +71,8 @@ void CJX_LayoutPseudoModel::ready(v8::Isolate* pIsolate,
   if (!pNotify)
     return;
   if (bSetting) {
-    ThrowException(WideString::FromASCII("Unable to set ready value."));
+    ThrowException(pIsolate,
+                   WideString::FromASCII("Unable to set ready value."));
     return;
   }
 

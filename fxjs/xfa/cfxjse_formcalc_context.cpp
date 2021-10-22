@@ -5559,5 +5559,5 @@ void CFXJSE_FormCalcContext::ThrowArgumentMismatchException() const {
 
 void CFXJSE_FormCalcContext::ThrowException(const WideString& str) const {
   DCHECK(!str.IsEmpty());
-  FXJSE_ThrowMessage(str.ToUTF8().AsStringView());
+  FXJSE_ThrowMessage(GetIsolate(), str.ToUTF8().AsStringView());
 }

@@ -103,7 +103,7 @@ void CJX_Tree::all(v8::Isolate* pIsolate,
                    bool bSetting,
                    XFA_Attribute eAttribute) {
   if (bSetting) {
-    ThrowInvalidPropertyException();
+    ThrowInvalidPropertyException(pIsolate);
     return;
   }
   const Mask<XFA_ResolveFlag> kFlags = {XFA_ResolveFlag::kSiblings,
@@ -117,7 +117,7 @@ void CJX_Tree::classAll(v8::Isolate* pIsolate,
                         bool bSetting,
                         XFA_Attribute eAttribute) {
   if (bSetting) {
-    ThrowInvalidPropertyException();
+    ThrowInvalidPropertyException(pIsolate);
     return;
   }
   const Mask<XFA_ResolveFlag> kFlags = {XFA_ResolveFlag::kSiblings,
@@ -133,7 +133,7 @@ void CJX_Tree::nodes(v8::Isolate* pIsolate,
                      XFA_Attribute eAttribute) {
   if (bSetting) {
     WideString wsMessage = L"Unable to set ";
-    FXJSE_ThrowMessage(wsMessage.ToUTF8().AsStringView());
+    FXJSE_ThrowMessage(pIsolate, wsMessage.ToUTF8().AsStringView());
     return;
   }
 
@@ -152,7 +152,7 @@ void CJX_Tree::parent(v8::Isolate* pIsolate,
                       bool bSetting,
                       XFA_Attribute eAttribute) {
   if (bSetting) {
-    ThrowInvalidPropertyException();
+    ThrowInvalidPropertyException(pIsolate);
     return;
   }
 
@@ -169,7 +169,7 @@ void CJX_Tree::index(v8::Isolate* pIsolate,
                      bool bSetting,
                      XFA_Attribute eAttribute) {
   if (bSetting) {
-    ThrowInvalidPropertyException();
+    ThrowInvalidPropertyException(pIsolate);
     return;
   }
 
@@ -184,7 +184,7 @@ void CJX_Tree::classIndex(v8::Isolate* pIsolate,
                           bool bSetting,
                           XFA_Attribute eAttribute) {
   if (bSetting) {
-    ThrowInvalidPropertyException();
+    ThrowInvalidPropertyException(pIsolate);
     return;
   }
 
@@ -199,7 +199,7 @@ void CJX_Tree::somExpression(v8::Isolate* pIsolate,
                              bool bSetting,
                              XFA_Attribute eAttribute) {
   if (bSetting) {
-    ThrowInvalidPropertyException();
+    ThrowInvalidPropertyException(pIsolate);
     return;
   }
 

@@ -39,17 +39,18 @@ bool CJX_InstanceManager::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
 }
 
-int32_t CJX_InstanceManager::SetInstances(int32_t iDesired) {
+int32_t CJX_InstanceManager::SetInstances(v8::Isolate* pIsolate,
+                                          int32_t iDesired) {
   CXFA_Occur* occur = GetXFANode()->GetOccurIfExists();
   int32_t iMin = occur ? occur->GetMin() : CXFA_Occur::kDefaultMin;
   if (iDesired < iMin) {
-    ThrowTooManyOccurrencesException(L"min");
+    ThrowTooManyOccurrencesException(pIsolate, L"min");
     return 1;
   }
 
   int32_t iMax = occur ? occur->GetMax() : CXFA_Occur::kDefaultMax;
   if (iMax >= 0 && iDesired > iMax) {
-    ThrowTooManyOccurrencesException(L"max");
+    ThrowTooManyOccurrencesException(pIsolate, L"max");
     return 2;
   }
 
@@ -70,7 +71,7 @@ int32_t CJX_InstanceManager::SetInstances(int32_t iDesired) {
                                   : GetXFANode()->GetItemIfExists(iDesired - 1);
     if (!pPrevSibling) {
       // TODO(dsinclair): Better error?
-      ThrowIndexOutOfBoundsException();
+      ThrowIndexOutOfBoundsException(pIsolate);
       return 0;
     }
 
@@ -110,10 +111,12 @@ int32_t CJX_InstanceManager::SetInstances(int32_t iDesired) {
   return 0;
 }
 
-int32_t CJX_InstanceManager::MoveInstance(int32_t iTo, int32_t iFrom) {
+int32_t CJX_InstanceManager::MoveInstance(v8::Isolate* pIsolate,
+                                          int32_t iTo,
+                                          int32_t iFrom) {
   int32_t iCount = GetXFANode()->GetCount();
   if (iFrom > iCount || iTo > iCount - 1) {
-    ThrowIndexOutOfBoundsException();
+    ThrowIndexOutOfBoundsException(pIsolate);
     return 1;
   }
   if (iFrom < 0 || iTo < 0 || iFrom == iTo)
@@ -121,7 +124,7 @@ int32_t CJX_InstanceManager::MoveInstance(int32_t iTo, int32_t iFrom) {
 
   CXFA_Node* pMoveInstance = GetXFANode()->GetItemIfExists(iFrom);
   if (!pMoveInstance) {
-    ThrowIndexOutOfBoundsException();
+    ThrowIndexOutOfBoundsException(pIsolate);
     return 1;
   }
 
@@ -144,7 +147,7 @@ CJS_Result CJX_InstanceManager::moveInstance(
 
   int32_t iFrom = runtime->ToInt32(params[0]);
   int32_t iTo = runtime->ToInt32(params[1]);
-  MoveInstance(iTo, iFrom);
+  MoveInstance(runtime->GetIsolate(), iTo, iFrom);
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
@@ -214,7 +217,7 @@ CJS_Result CJX_InstanceManager::setInstances(
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
-  SetInstances(runtime->ToInt32(params[0]));
+  SetInstances(runtime->GetIsolate(), runtime->ToInt32(params[0]));
   return CJS_Result::Success();
 }
 
@@ -303,7 +306,7 @@ void CJX_InstanceManager::max(v8::Isolate* pIsolate,
                               bool bSetting,
                               XFA_Attribute eAttribute) {
   if (bSetting) {
-    ThrowInvalidPropertyException();
+    ThrowInvalidPropertyException(pIsolate);
     return;
   }
   CXFA_Occur* occur = GetXFANode()->GetOccurIfExists();
@@ -316,7 +319,7 @@ void CJX_InstanceManager::min(v8::Isolate* pIsolate,
                               bool bSetting,
                               XFA_Attribute eAttribute) {
   if (bSetting) {
-    ThrowInvalidPropertyException();
+    ThrowInvalidPropertyException(pIsolate);
     return;
   }
   CXFA_Occur* occur = GetXFANode()->GetOccurIfExists();
@@ -329,7 +332,7 @@ void CJX_InstanceManager::count(v8::Isolate* pIsolate,
                                 bool bSetting,
                                 XFA_Attribute eAttribute) {
   if (bSetting) {
-    SetInstances(fxv8::ReentrantToInt32Helper(pIsolate, *pValue));
+    SetInstances(pIsolate, fxv8::ReentrantToInt32Helper(pIsolate, *pValue));
     return;
   }
   *pValue = fxv8::NewNumberHelper(pIsolate, GetXFANode()->GetCount());

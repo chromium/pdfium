@@ -85,7 +85,7 @@ void CJX_HostPseudoModel::appType(v8::Isolate* pIsolate,
     return;
 
   if (bSetting) {
-    ThrowInvalidPropertyException();
+    ThrowInvalidPropertyException(pIsolate);
     return;
   }
   *pValue = fxv8::NewStringHelper(pIsolate, "Exchange");
@@ -133,7 +133,8 @@ void CJX_HostPseudoModel::language(v8::Isolate* pIsolate,
     return;
 
   if (bSetting) {
-    ThrowException(WideString::FromASCII("Unable to set language value."));
+    ThrowException(pIsolate,
+                   WideString::FromASCII("Unable to set language value."));
     return;
   }
   ByteString lang = pNotify->GetAppProvider()->GetLanguage().ToUTF8();
@@ -150,7 +151,8 @@ void CJX_HostPseudoModel::numPages(v8::Isolate* pIsolate,
 
   CXFA_FFDoc* hDoc = pNotify->GetFFDoc();
   if (bSetting) {
-    ThrowException(WideString::FromASCII("Unable to set numPages value."));
+    ThrowException(pIsolate,
+                   WideString::FromASCII("Unable to set numPages value."));
     return;
   }
   *pValue = fxv8::NewNumberHelper(pIsolate, hDoc->CountPages());
@@ -165,7 +167,8 @@ void CJX_HostPseudoModel::platform(v8::Isolate* pIsolate,
     return;
 
   if (bSetting) {
-    ThrowException(WideString::FromASCII("Unable to set platform value."));
+    ThrowException(pIsolate,
+                   WideString::FromASCII("Unable to set platform value."));
     return;
   }
   ByteString plat = pNotify->GetAppProvider()->GetPlatform().ToUTF8();
@@ -219,7 +222,8 @@ void CJX_HostPseudoModel::variation(v8::Isolate* pIsolate,
     return;
 
   if (bSetting) {
-    ThrowException(WideString::FromASCII("Unable to set variation value."));
+    ThrowException(pIsolate,
+                   WideString::FromASCII("Unable to set variation value."));
     return;
   }
   *pValue = fxv8::NewStringHelper(pIsolate, "Full");
@@ -230,7 +234,8 @@ void CJX_HostPseudoModel::version(v8::Isolate* pIsolate,
                                   bool bSetting,
                                   XFA_Attribute eAttribute) {
   if (bSetting) {
-    ThrowException(WideString::FromASCII("Unable to set version value."));
+    ThrowException(pIsolate,
+                   WideString::FromASCII("Unable to set version value."));
     return;
   }
   *pValue = fxv8::NewStringHelper(pIsolate, "11");
@@ -245,7 +250,7 @@ void CJX_HostPseudoModel::name(v8::Isolate* pIsolate,
     return;
 
   if (bSetting) {
-    ThrowInvalidPropertyException();
+    ThrowInvalidPropertyException(pIsolate);
     return;
   }
   ByteString bsName = pNotify->GetAppProvider()->GetAppName().ToUTF8();

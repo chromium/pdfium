@@ -20,6 +20,7 @@
 #include "third_party/base/span.h"
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/member.h"
+#include "v8/include/v8-forward.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
 class CFXJSE_MapModule;
@@ -210,11 +211,13 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
   CalcData* GetOrCreateCalcData(cppgc::Heap* heap);
   void TakeCalcDataFrom(CJX_Object* that);
 
-  void ThrowInvalidPropertyException() const;
-  void ThrowArgumentMismatchException() const;
-  void ThrowIndexOutOfBoundsException() const;
-  void ThrowParamCountMismatchException(const WideString& method) const;
-  void ThrowTooManyOccurrencesException(const WideString& obj) const;
+  void ThrowInvalidPropertyException(v8::Isolate* pIsolate) const;
+  void ThrowArgumentMismatchException(v8::Isolate* pIsolate) const;
+  void ThrowIndexOutOfBoundsException(v8::Isolate* pIsolate) const;
+  void ThrowParamCountMismatchException(v8::Isolate* pIsolate,
+                                        const WideString& method) const;
+  void ThrowTooManyOccurrencesException(v8::Isolate* pIsolate,
+                                        const WideString& obj) const;
 
  protected:
   enum class SOMMessageType {
@@ -239,7 +242,7 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
                     bool bScriptModify);
   void DefineMethods(pdfium::span<const CJX_MethodSpec> methods);
   void MoveBufferMapData(CXFA_Object* pSrcObj, CXFA_Object* pDstObj);
-  void ThrowException(const WideString& str) const;
+  void ThrowException(v8::Isolate* pIsolate, const WideString& str) const;
 
  private:
   using Type__ = CJX_Object;

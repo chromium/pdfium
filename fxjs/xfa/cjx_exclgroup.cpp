@@ -155,5 +155,5 @@ void CJX_ExclGroup::errorText(v8::Isolate* pIsolate,
                               bool bSetting,
                               XFA_Attribute eAttribute) {
   if (bSetting)
-    ThrowInvalidPropertyException();
+    ThrowInvalidPropertyException(pIsolate);
 }

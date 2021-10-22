@@ -63,10 +63,8 @@ double ftod(float fNumber) {
 
 }  // namespace
 
-void FXJSE_ThrowMessage(ByteStringView utf8Message) {
-  v8::Isolate* pIsolate = v8::Isolate::GetCurrent();
+void FXJSE_ThrowMessage(v8::Isolate* pIsolate, ByteStringView utf8Message) {
   DCHECK(pIsolate);
-
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(pIsolate);
   v8::Local<v8::String> hMessage = fxv8::NewStringHelper(pIsolate, utf8Message);
   v8::Local<v8::Value> hError = v8::Exception::Error(hMessage);

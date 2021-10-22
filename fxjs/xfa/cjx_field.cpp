@@ -351,7 +351,7 @@ void CJX_Field::length(v8::Isolate* pIsolate,
                        bool bSetting,
                        XFA_Attribute eAttribute) {
   if (bSetting) {
-    ThrowInvalidPropertyException();
+    ThrowInvalidPropertyException(pIsolate);
     return;
   }
 
@@ -365,7 +365,7 @@ void CJX_Field::parentSubform(v8::Isolate* pIsolate,
                               bool bSetting,
                               XFA_Attribute eAttribute) {
   if (bSetting) {
-    ThrowInvalidPropertyException();
+    ThrowInvalidPropertyException(pIsolate);
     return;
   }
   *pValue = fxv8::NewNullHelper(pIsolate);
