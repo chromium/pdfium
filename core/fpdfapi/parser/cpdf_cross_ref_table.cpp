@@ -33,7 +33,8 @@ CPDF_CrossRefTable::CPDF_CrossRefTable(RetainPtr<CPDF_Dictionary> trailer)
 CPDF_CrossRefTable::~CPDF_CrossRefTable() = default;
 
 void CPDF_CrossRefTable::AddCompressed(uint32_t obj_num,
-                                       uint32_t archive_obj_num) {
+                                       uint32_t archive_obj_num,
+                                       uint32_t archive_obj_index) {
   if (obj_num >= CPDF_Parser::kMaxObjectNumber ||
       archive_obj_num >= CPDF_Parser::kMaxObjectNumber) {
     NOTREACHED();
@@ -48,7 +49,8 @@ void CPDF_CrossRefTable::AddCompressed(uint32_t obj_num,
     return;
 
   info.type = ObjectType::kCompressed;
-  info.archive_obj_num = archive_obj_num;
+  info.archive.obj_num = archive_obj_num;
+  info.archive.obj_index = archive_obj_index;
   info.gennum = 0;
 
   objects_info_[archive_obj_num].type = ObjectType::kObjStream;

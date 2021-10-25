@@ -621,7 +621,8 @@ void CPDF_Parser::MergeCrossRefObjectsData(
         m_CrossRefTable->AddNormal(obj.obj_num, obj.info.gennum, obj.info.pos);
         break;
       case ObjectType::kCompressed:
-        m_CrossRefTable->AddCompressed(obj.obj_num, obj.info.archive_obj_num);
+        m_CrossRefTable->AddCompressed(obj.obj_num, obj.info.archive.obj_num,
+                                       obj.info.archive.obj_index);
         break;
       default:
         NOTREACHED();
@@ -699,11 +700,13 @@ bool CPDF_Parser::RebuildCrossRef() {
 
       if (obj_num < kMaxObjectNumber) {
         cross_ref_table->AddNormal(obj_num, gen_num, obj_pos);
-        if (const auto object_stream =
-                CPDF_ObjectStream::Create(pStream.Get())) {
-          for (const auto& info : object_stream->object_info()) {
+        const auto object_stream = CPDF_ObjectStream::Create(pStream.Get());
+        if (object_stream) {
+          const auto& object_info = object_stream->object_info();
+          for (size_t i = 0; i < object_info.size(); ++i) {
+            const auto& info = object_info[i];
             if (info.obj_num < kMaxObjectNumber)
-              cross_ref_table->AddCompressed(info.obj_num, obj_num);
+              cross_ref_table->AddCompressed(info.obj_num, obj_num, i);
           }
         }
       }
@@ -842,7 +845,9 @@ void CPDF_Parser::ProcessCrossRefV5Entry(
   if (!IsValidObjectNumber(archive_obj_num))
     return;
 
-  m_CrossRefTable->AddCompressed(obj_num, archive_obj_num);
+  const uint32_t archive_obj_index = GetVarInt(
+      entry_span.subspan(field_widths[0] + field_widths[1], field_widths[2]));
+  m_CrossRefTable->AddCompressed(obj_num, archive_obj_num, archive_obj_index);
 }
 
 const CPDF_Array* CPDF_Parser::GetIDArray() const {
@@ -925,12 +930,13 @@ RetainPtr<CPDF_Object> CPDF_Parser::ParseIndirectObject(uint32_t objnum) {
   if (GetObjectType(objnum) != ObjectType::kCompressed)
     return nullptr;
 
-  const CPDF_ObjectStream* pObjStream =
-      GetObjectStream(m_CrossRefTable->GetObjectInfo(objnum)->archive_obj_num);
+  const ObjectInfo& info = *m_CrossRefTable->GetObjectInfo(objnum);
+  const CPDF_ObjectStream* pObjStream = GetObjectStream(info.archive.obj_num);
   if (!pObjStream)
     return nullptr;
 
-  return pObjStream->ParseObject(m_pObjectsHolder.Get(), objnum);
+  return pObjStream->ParseObject(m_pObjectsHolder.Get(), objnum,
+                                 info.archive.obj_index);
 }
 
 const CPDF_ObjectStream* CPDF_Parser::GetObjectStream(uint32_t object_number) {

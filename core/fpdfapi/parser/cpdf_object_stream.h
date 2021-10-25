@@ -36,7 +36,8 @@ class CPDF_ObjectStream {
   ~CPDF_ObjectStream();
 
   RetainPtr<CPDF_Object> ParseObject(CPDF_IndirectObjectHolder* pObjList,
-                                     uint32_t obj_number) const;
+                                     uint32_t obj_number,
+                                     uint32_t archive_obj_index) const;
   const std::vector<ObjectInfo>& object_info() const { return object_info_; }
 
  private:

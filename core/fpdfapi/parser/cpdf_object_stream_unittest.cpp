@@ -44,24 +44,36 @@ TEST(CPDF_ObjectStreamTest, StreamDictNormal) {
                           CPDF_ObjectStream::ObjectInfo(11, 14),
                           CPDF_ObjectStream::ObjectInfo(12, 21)));
 
+  // Check expected indices.
   CPDF_IndirectObjectHolder holder;
-  RetainPtr<CPDF_Object> obj10 = obj_stream->ParseObject(&holder, 10);
+  RetainPtr<CPDF_Object> obj10 = obj_stream->ParseObject(&holder, 10, 0);
   ASSERT_TRUE(obj10);
   EXPECT_EQ(10u, obj10->GetObjNum());
   EXPECT_EQ(0u, obj10->GetGenNum());
   EXPECT_TRUE(obj10->IsDictionary());
 
-  RetainPtr<CPDF_Object> obj11 = obj_stream->ParseObject(&holder, 11);
+  RetainPtr<CPDF_Object> obj11 = obj_stream->ParseObject(&holder, 11, 1);
   ASSERT_TRUE(obj11);
   EXPECT_EQ(11u, obj11->GetObjNum());
   EXPECT_EQ(0u, obj11->GetGenNum());
   EXPECT_TRUE(obj11->IsArray());
 
-  RetainPtr<CPDF_Object> obj12 = obj_stream->ParseObject(&holder, 12);
+  RetainPtr<CPDF_Object> obj12 = obj_stream->ParseObject(&holder, 12, 2);
   ASSERT_TRUE(obj12);
   EXPECT_EQ(12u, obj12->GetObjNum());
   EXPECT_EQ(0u, obj12->GetGenNum());
   EXPECT_TRUE(obj12->IsNumber());
+
+  // Check bad indices.
+  EXPECT_FALSE(obj_stream->ParseObject(&holder, 10, 1));
+  EXPECT_FALSE(obj_stream->ParseObject(&holder, 10, 2));
+  EXPECT_FALSE(obj_stream->ParseObject(&holder, 10, 3));
+  EXPECT_FALSE(obj_stream->ParseObject(&holder, 11, 0));
+  EXPECT_FALSE(obj_stream->ParseObject(&holder, 11, 2));
+  EXPECT_FALSE(obj_stream->ParseObject(&holder, 11, 3));
+  EXPECT_FALSE(obj_stream->ParseObject(&holder, 12, 0));
+  EXPECT_FALSE(obj_stream->ParseObject(&holder, 12, 1));
+  EXPECT_FALSE(obj_stream->ParseObject(&holder, 12, 3));
 }
 
 TEST(CPDF_ObjectStreamTest, StreamNoDict) {
@@ -195,9 +207,9 @@ TEST(CPDF_ObjectStreamTest, StreamDictOffsetTooBig) {
                           CPDF_ObjectStream::ObjectInfo(12, 21)));
 
   CPDF_IndirectObjectHolder holder;
-  EXPECT_FALSE(obj_stream->ParseObject(&holder, 10));
-  EXPECT_FALSE(obj_stream->ParseObject(&holder, 11));
-  EXPECT_FALSE(obj_stream->ParseObject(&holder, 12));
+  EXPECT_FALSE(obj_stream->ParseObject(&holder, 10, 0));
+  EXPECT_FALSE(obj_stream->ParseObject(&holder, 11, 1));
+  EXPECT_FALSE(obj_stream->ParseObject(&holder, 12, 2));
 }
 
 TEST(CPDF_ObjectStreamTest, StreamDictTooFewCount) {
@@ -216,19 +228,19 @@ TEST(CPDF_ObjectStreamTest, StreamDictTooFewCount) {
                           CPDF_ObjectStream::ObjectInfo(11, 14)));
 
   CPDF_IndirectObjectHolder holder;
-  RetainPtr<CPDF_Object> obj10 = obj_stream->ParseObject(&holder, 10);
+  RetainPtr<CPDF_Object> obj10 = obj_stream->ParseObject(&holder, 10, 0);
   ASSERT_TRUE(obj10);
   EXPECT_EQ(10u, obj10->GetObjNum());
   EXPECT_EQ(0u, obj10->GetGenNum());
   EXPECT_TRUE(obj10->IsDictionary());
 
-  RetainPtr<CPDF_Object> obj11 = obj_stream->ParseObject(&holder, 11);
+  RetainPtr<CPDF_Object> obj11 = obj_stream->ParseObject(&holder, 11, 1);
   ASSERT_TRUE(obj11);
   EXPECT_EQ(11u, obj11->GetObjNum());
   EXPECT_EQ(0u, obj11->GetGenNum());
   EXPECT_TRUE(obj11->IsArray());
 
-  EXPECT_FALSE(obj_stream->ParseObject(&holder, 12));
+  EXPECT_FALSE(obj_stream->ParseObject(&holder, 12, 2));
 }
 
 TEST(CPDF_ObjectStreamTest, StreamDictTooManyObject) {
@@ -250,7 +262,11 @@ TEST(CPDF_ObjectStreamTest, StreamDictTooManyObject) {
                           CPDF_ObjectStream::ObjectInfo(2, 3)));
 
   CPDF_IndirectObjectHolder holder;
-  EXPECT_FALSE(obj_stream->ParseObject(&holder, 2));
+  EXPECT_FALSE(obj_stream->ParseObject(&holder, 2, 0));
+  EXPECT_FALSE(obj_stream->ParseObject(&holder, 2, 1));
+  EXPECT_FALSE(obj_stream->ParseObject(&holder, 2, 2));
+  EXPECT_FALSE(obj_stream->ParseObject(&holder, 2, 3));
+  EXPECT_FALSE(obj_stream->ParseObject(&holder, 2, 4));
 }
 
 TEST(CPDF_ObjectStreamTest, StreamDictGarbageObjNum) {
@@ -289,13 +305,13 @@ TEST(CPDF_ObjectStreamTest, StreamDictGarbageObjectOffset) {
                           CPDF_ObjectStream::ObjectInfo(12, 21)));
 
   CPDF_IndirectObjectHolder holder;
-  RetainPtr<CPDF_Object> obj10 = obj_stream->ParseObject(&holder, 10);
+  RetainPtr<CPDF_Object> obj10 = obj_stream->ParseObject(&holder, 10, 0);
   ASSERT_TRUE(obj10);
   EXPECT_EQ(10u, obj10->GetObjNum());
   EXPECT_EQ(0u, obj10->GetGenNum());
   EXPECT_TRUE(obj10->IsDictionary());
 
-  RetainPtr<CPDF_Object> obj11 = obj_stream->ParseObject(&holder, 11);
+  RetainPtr<CPDF_Object> obj11 = obj_stream->ParseObject(&holder, 11, 1);
   ASSERT_TRUE(obj11);
   EXPECT_EQ(11u, obj11->GetObjNum());
   EXPECT_EQ(0u, obj11->GetGenNum());
@@ -321,7 +337,7 @@ TEST(CPDF_ObjectStreamTest, StreamDictNegativeObjectOffset) {
                           CPDF_ObjectStream::ObjectInfo(12, 21)));
 
   CPDF_IndirectObjectHolder holder;
-  EXPECT_FALSE(obj_stream->ParseObject(&holder, 11));
+  EXPECT_FALSE(obj_stream->ParseObject(&holder, 11, 1));
 }
 
 TEST(CPDF_ObjectStreamTest, StreamDictObjectOffsetTooBig) {
@@ -343,7 +359,7 @@ TEST(CPDF_ObjectStreamTest, StreamDictObjectOffsetTooBig) {
                           CPDF_ObjectStream::ObjectInfo(12, 21)));
 
   CPDF_IndirectObjectHolder holder;
-  EXPECT_FALSE(obj_stream->ParseObject(&holder, 11));
+  EXPECT_FALSE(obj_stream->ParseObject(&holder, 11, 1));
 }
 
 TEST(CPDF_ObjectStreamTest, StreamDictDuplicateObjNum) {
@@ -358,20 +374,28 @@ TEST(CPDF_ObjectStreamTest, StreamDictDuplicateObjNum) {
   auto obj_stream = CPDF_ObjectStream::Create(stream.Get());
   ASSERT_TRUE(obj_stream);
 
-  // TODO(thestig): Should object 10 be at offset 0 instead?
   EXPECT_THAT(obj_stream->object_info(),
               ElementsAre(CPDF_ObjectStream::ObjectInfo(10, 0),
                           CPDF_ObjectStream::ObjectInfo(10, 14),
                           CPDF_ObjectStream::ObjectInfo(12, 21)));
 
   CPDF_IndirectObjectHolder holder;
-  RetainPtr<CPDF_Object> obj10 = obj_stream->ParseObject(&holder, 10);
+  RetainPtr<CPDF_Object> obj10 = obj_stream->ParseObject(&holder, 10, 0);
+  ASSERT_TRUE(obj10);
+  EXPECT_EQ(10u, obj10->GetObjNum());
+  EXPECT_EQ(0u, obj10->GetGenNum());
+  EXPECT_TRUE(obj10->IsDictionary());
+
+  obj10 = obj_stream->ParseObject(&holder, 10, 1);
   ASSERT_TRUE(obj10);
   EXPECT_EQ(10u, obj10->GetObjNum());
   EXPECT_EQ(0u, obj10->GetGenNum());
   EXPECT_TRUE(obj10->IsArray());
 
-  RetainPtr<CPDF_Object> obj12 = obj_stream->ParseObject(&holder, 12);
+  EXPECT_FALSE(obj_stream->ParseObject(&holder, 10, 2));
+  EXPECT_FALSE(obj_stream->ParseObject(&holder, 10, 3));
+
+  RetainPtr<CPDF_Object> obj12 = obj_stream->ParseObject(&holder, 12, 2);
   ASSERT_TRUE(obj12);
   EXPECT_EQ(12u, obj12->GetObjNum());
   EXPECT_EQ(0u, obj12->GetGenNum());
@@ -398,19 +422,19 @@ TEST(CPDF_ObjectStreamTest, StreamDictUnorderedObjectNumbers) {
                           CPDF_ObjectStream::ObjectInfo(10, 21)));
 
   CPDF_IndirectObjectHolder holder;
-  RetainPtr<CPDF_Object> obj10 = obj_stream->ParseObject(&holder, 10);
+  RetainPtr<CPDF_Object> obj10 = obj_stream->ParseObject(&holder, 10, 2);
   ASSERT_TRUE(obj10);
   EXPECT_EQ(10u, obj10->GetObjNum());
   EXPECT_EQ(0u, obj10->GetGenNum());
   EXPECT_TRUE(obj10->IsNumber());
 
-  RetainPtr<CPDF_Object> obj11 = obj_stream->ParseObject(&holder, 11);
+  RetainPtr<CPDF_Object> obj11 = obj_stream->ParseObject(&holder, 11, 0);
   ASSERT_TRUE(obj11);
   EXPECT_EQ(11u, obj11->GetObjNum());
   EXPECT_EQ(0u, obj11->GetGenNum());
   EXPECT_TRUE(obj11->IsDictionary());
 
-  RetainPtr<CPDF_Object> obj12 = obj_stream->ParseObject(&holder, 12);
+  RetainPtr<CPDF_Object> obj12 = obj_stream->ParseObject(&holder, 12, 1);
   ASSERT_TRUE(obj12);
   EXPECT_EQ(12u, obj12->GetObjNum());
   EXPECT_EQ(0u, obj12->GetGenNum());
@@ -439,19 +463,19 @@ TEST(CPDF_ObjectStreamTest, StreamDictUnorderedObjectOffsets) {
                           CPDF_ObjectStream::ObjectInfo(12, 14)));
 
   CPDF_IndirectObjectHolder holder;
-  RetainPtr<CPDF_Object> obj10 = obj_stream->ParseObject(&holder, 10);
+  RetainPtr<CPDF_Object> obj10 = obj_stream->ParseObject(&holder, 10, 0);
   ASSERT_TRUE(obj10);
   EXPECT_EQ(10u, obj10->GetObjNum());
   EXPECT_EQ(0u, obj10->GetGenNum());
   EXPECT_TRUE(obj10->IsNumber());
 
-  RetainPtr<CPDF_Object> obj11 = obj_stream->ParseObject(&holder, 11);
+  RetainPtr<CPDF_Object> obj11 = obj_stream->ParseObject(&holder, 11, 1);
   ASSERT_TRUE(obj11);
   EXPECT_EQ(11u, obj11->GetObjNum());
   EXPECT_EQ(0u, obj11->GetGenNum());
   EXPECT_TRUE(obj11->IsDictionary());
 
-  RetainPtr<CPDF_Object> obj12 = obj_stream->ParseObject(&holder, 12);
+  RetainPtr<CPDF_Object> obj12 = obj_stream->ParseObject(&holder, 12, 2);
   ASSERT_TRUE(obj12);
   EXPECT_EQ(12u, obj12->GetObjNum());
   EXPECT_EQ(0u, obj12->GetGenNum());

@@ -28,12 +28,15 @@ class CPDF_CrossRefTable {
 
   struct ObjectInfo {
     ObjectInfo() : pos(0), type(ObjectType::kFree), gennum(0) {}
-    // if type is ObjectType::kCompressed the archive_obj_num should be used.
-    // if type is ObjectType::kNotCompressed the pos should be used.
-    // In other cases its are unused.
+    // If `type` is `ObjectType::kCompressed`, `archive` should be used.
+    // If `type` is `ObjectType::kNotCompressed`, `pos` should be used.
+    // In other cases, it is unused.
     union {
       FX_FILESIZE pos;
-      uint32_t archive_obj_num;
+      struct {
+        uint32_t obj_num;
+        uint32_t obj_index;
+      } archive;
     };
     ObjectType type;
     uint16_t gennum;
@@ -48,7 +51,9 @@ class CPDF_CrossRefTable {
   explicit CPDF_CrossRefTable(RetainPtr<CPDF_Dictionary> trailer);
   ~CPDF_CrossRefTable();
 
-  void AddCompressed(uint32_t obj_num, uint32_t archive_obj_num);
+  void AddCompressed(uint32_t obj_num,
+                     uint32_t archive_obj_num,
+                     uint32_t archive_obj_index);
   void AddNormal(uint32_t obj_num, uint16_t gen_num, FX_FILESIZE pos);
   void SetFree(uint32_t obj_num);
 

@@ -16,7 +16,6 @@
 #include "core/fxcrt/cfx_readonlymemorystream.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/check.h"
-#include "third_party/base/containers/adapters.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -74,18 +73,20 @@ CPDF_ObjectStream::~CPDF_ObjectStream() = default;
 
 RetainPtr<CPDF_Object> CPDF_ObjectStream::ParseObject(
     CPDF_IndirectObjectHolder* pObjList,
-    uint32_t obj_number) const {
-  for (const ObjectInfo& info : pdfium::base::Reversed(object_info_)) {
-    if (info.obj_num != obj_number)
-      continue;
+    uint32_t obj_number,
+    uint32_t archive_obj_index) const {
+  if (archive_obj_index >= object_info_.size())
+    return nullptr;
 
-    RetainPtr<CPDF_Object> result =
-        ParseObjectAtOffset(pObjList, info.obj_offset);
-    if (result)
-      result->SetObjNum(obj_number);
-    return result;
-  }
-  return nullptr;
+  const auto& info = object_info_[archive_obj_index];
+  if (info.obj_num != obj_number)
+    return nullptr;
+
+  RetainPtr<CPDF_Object> result =
+      ParseObjectAtOffset(pObjList, info.obj_offset);
+  if (result)
+    result->SetObjNum(obj_number);
+  return result;
 }
 
 void CPDF_ObjectStream::Init(const CPDF_Stream* stream) {
