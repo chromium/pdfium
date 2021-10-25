@@ -5,8 +5,8 @@
 #ifndef CORE_FPDFAPI_PARSER_CPDF_OBJECT_STREAM_H_
 #define CORE_FPDFAPI_PARSER_CPDF_OBJECT_STREAM_H_
 
-#include <map>
 #include <memory>
+#include <vector>
 
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -19,16 +19,25 @@ class IFX_SeekableReadStream;
 // See ISO 32000-1:2008 spec, section 7.5.7.
 class CPDF_ObjectStream {
  public:
+  struct ObjectInfo {
+    ObjectInfo(uint32_t obj_num, uint32_t obj_offset)
+        : obj_num(obj_num), obj_offset(obj_offset) {}
+
+    bool operator==(const ObjectInfo& that) const {
+      return obj_num == that.obj_num && obj_offset == that.obj_offset;
+    }
+
+    uint32_t obj_num;
+    uint32_t obj_offset;
+  };
+
   static std::unique_ptr<CPDF_ObjectStream> Create(const CPDF_Stream* stream);
 
   ~CPDF_ObjectStream();
 
-  bool HasObject(uint32_t obj_number) const;
   RetainPtr<CPDF_Object> ParseObject(CPDF_IndirectObjectHolder* pObjList,
                                      uint32_t obj_number) const;
-  const std::map<uint32_t, uint32_t>& objects_offsets() const {
-    return objects_offsets_;
-  }
+  const std::vector<ObjectInfo>& object_info() const { return object_info_; }
 
  private:
   explicit CPDF_ObjectStream(const CPDF_Stream* stream);
@@ -40,7 +49,7 @@ class CPDF_ObjectStream {
 
   RetainPtr<IFX_SeekableReadStream> data_stream_;
   int first_object_offset_ = 0;
-  std::map<uint32_t, uint32_t> objects_offsets_;
+  std::vector<ObjectInfo> object_info_;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_OBJECT_STREAM_H_

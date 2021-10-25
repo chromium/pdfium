@@ -701,9 +701,9 @@ bool CPDF_Parser::RebuildCrossRef() {
         cross_ref_table->AddNormal(obj_num, gen_num, obj_pos);
         if (const auto object_stream =
                 CPDF_ObjectStream::Create(pStream.Get())) {
-          for (const auto& it : object_stream->objects_offsets()) {
-            if (it.first < kMaxObjectNumber)
-              cross_ref_table->AddCompressed(it.first, obj_num);
+          for (const auto& info : object_stream->object_info()) {
+            if (info.obj_num < kMaxObjectNumber)
+              cross_ref_table->AddCompressed(info.obj_num, obj_num);
           }
         }
       }

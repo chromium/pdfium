@@ -16,7 +16,7 @@
 #include "core/fxcrt/cfx_readonlymemorystream.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/check.h"
-#include "third_party/base/containers/contains.h"
+#include "third_party/base/containers/adapters.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -72,23 +72,20 @@ CPDF_ObjectStream::CPDF_ObjectStream(const CPDF_Stream* obj_stream)
 
 CPDF_ObjectStream::~CPDF_ObjectStream() = default;
 
-bool CPDF_ObjectStream::HasObject(uint32_t obj_number) const {
-  return pdfium::Contains(objects_offsets_, obj_number);
-}
-
 RetainPtr<CPDF_Object> CPDF_ObjectStream::ParseObject(
     CPDF_IndirectObjectHolder* pObjList,
     uint32_t obj_number) const {
-  const auto it = objects_offsets_.find(obj_number);
-  if (it == objects_offsets_.end())
-    return nullptr;
+  for (const ObjectInfo& info : pdfium::base::Reversed(object_info_)) {
+    if (info.obj_num != obj_number)
+      continue;
 
-  RetainPtr<CPDF_Object> result = ParseObjectAtOffset(pObjList, it->second);
-  if (!result)
-    return nullptr;
-
-  result->SetObjNum(obj_number);
-  return result;
+    RetainPtr<CPDF_Object> result =
+        ParseObjectAtOffset(pObjList, info.obj_offset);
+    if (result)
+      result->SetObjNum(obj_number);
+    return result;
+  }
+  return nullptr;
 }
 
 void CPDF_ObjectStream::Init(const CPDF_Stream* stream) {
@@ -111,7 +108,7 @@ void CPDF_ObjectStream::Init(const CPDF_Stream* stream) {
     if (!obj_num)
       continue;
 
-    objects_offsets_[obj_num] = obj_offset;
+    object_info_.push_back({obj_num, obj_offset});
   }
 }
 

@@ -15,7 +15,6 @@
 #include "third_party/base/cxx17_backports.h"
 
 using testing::ElementsAre;
-using testing::Pair;
 
 namespace {
 
@@ -40,8 +39,10 @@ TEST(CPDF_ObjectStreamTest, StreamDictNormal) {
   auto obj_stream = CPDF_ObjectStream::Create(stream.Get());
   ASSERT_TRUE(obj_stream);
 
-  EXPECT_THAT(obj_stream->objects_offsets(),
-              ElementsAre(Pair(10, 0), Pair(11, 14), Pair(12, 21)));
+  EXPECT_THAT(obj_stream->object_info(),
+              ElementsAre(CPDF_ObjectStream::ObjectInfo(10, 0),
+                          CPDF_ObjectStream::ObjectInfo(11, 14),
+                          CPDF_ObjectStream::ObjectInfo(12, 21)));
 
   CPDF_IndirectObjectHolder holder;
   RetainPtr<CPDF_Object> obj10 = obj_stream->ParseObject(&holder, 10);
@@ -188,8 +189,10 @@ TEST(CPDF_ObjectStreamTest, StreamDictOffsetTooBig) {
   auto obj_stream = CPDF_ObjectStream::Create(stream.Get());
   ASSERT_TRUE(obj_stream);
 
-  EXPECT_THAT(obj_stream->objects_offsets(),
-              ElementsAre(Pair(10, 0), Pair(11, 14), Pair(12, 21)));
+  EXPECT_THAT(obj_stream->object_info(),
+              ElementsAre(CPDF_ObjectStream::ObjectInfo(10, 0),
+                          CPDF_ObjectStream::ObjectInfo(11, 14),
+                          CPDF_ObjectStream::ObjectInfo(12, 21)));
 
   CPDF_IndirectObjectHolder holder;
   EXPECT_FALSE(obj_stream->ParseObject(&holder, 10));
@@ -208,8 +211,9 @@ TEST(CPDF_ObjectStreamTest, StreamDictTooFewCount) {
   auto obj_stream = CPDF_ObjectStream::Create(stream.Get());
   ASSERT_TRUE(obj_stream);
 
-  EXPECT_THAT(obj_stream->objects_offsets(),
-              ElementsAre(Pair(10, 0), Pair(11, 14)));
+  EXPECT_THAT(obj_stream->object_info(),
+              ElementsAre(CPDF_ObjectStream::ObjectInfo(10, 0),
+                          CPDF_ObjectStream::ObjectInfo(11, 14)));
 
   CPDF_IndirectObjectHolder holder;
   RetainPtr<CPDF_Object> obj10 = obj_stream->ParseObject(&holder, 10);
@@ -239,8 +243,11 @@ TEST(CPDF_ObjectStreamTest, StreamDictTooManyObject) {
   ASSERT_TRUE(obj_stream);
 
   // TODO(thestig): Can this avoid finding object 2?
-  EXPECT_THAT(obj_stream->objects_offsets(),
-              ElementsAre(Pair(2, 3), Pair(10, 0), Pair(11, 14), Pair(12, 21)));
+  EXPECT_THAT(obj_stream->object_info(),
+              ElementsAre(CPDF_ObjectStream::ObjectInfo(10, 0),
+                          CPDF_ObjectStream::ObjectInfo(11, 14),
+                          CPDF_ObjectStream::ObjectInfo(12, 21),
+                          CPDF_ObjectStream::ObjectInfo(2, 3)));
 
   CPDF_IndirectObjectHolder holder;
   EXPECT_FALSE(obj_stream->ParseObject(&holder, 2));
@@ -258,8 +265,9 @@ TEST(CPDF_ObjectStreamTest, StreamDictGarbageObjNum) {
   auto obj_stream = CPDF_ObjectStream::Create(stream.Get());
   ASSERT_TRUE(obj_stream);
 
-  EXPECT_THAT(obj_stream->objects_offsets(),
-              ElementsAre(Pair(10, 0), Pair(12, 21)));
+  EXPECT_THAT(obj_stream->object_info(),
+              ElementsAre(CPDF_ObjectStream::ObjectInfo(10, 0),
+                          CPDF_ObjectStream::ObjectInfo(12, 21)));
 }
 
 TEST(CPDF_ObjectStreamTest, StreamDictGarbageObjectOffset) {
@@ -275,8 +283,10 @@ TEST(CPDF_ObjectStreamTest, StreamDictGarbageObjectOffset) {
   ASSERT_TRUE(obj_stream);
 
   // TODO(thestig): Should object 11 be rejected?
-  EXPECT_THAT(obj_stream->objects_offsets(),
-              ElementsAre(Pair(10, 0), Pair(11, 0), Pair(12, 21)));
+  EXPECT_THAT(obj_stream->object_info(),
+              ElementsAre(CPDF_ObjectStream::ObjectInfo(10, 0),
+                          CPDF_ObjectStream::ObjectInfo(11, 0),
+                          CPDF_ObjectStream::ObjectInfo(12, 21)));
 
   CPDF_IndirectObjectHolder holder;
   RetainPtr<CPDF_Object> obj10 = obj_stream->ParseObject(&holder, 10);
@@ -305,8 +315,10 @@ TEST(CPDF_ObjectStreamTest, StreamDictNegativeObjectOffset) {
   ASSERT_TRUE(obj_stream);
 
   // TODO(thestig): Should object 11 be rejected?
-  EXPECT_THAT(obj_stream->objects_offsets(),
-              ElementsAre(Pair(10, 0), Pair(11, 4294967295), Pair(12, 21)));
+  EXPECT_THAT(obj_stream->object_info(),
+              ElementsAre(CPDF_ObjectStream::ObjectInfo(10, 0),
+                          CPDF_ObjectStream::ObjectInfo(11, 4294967295),
+                          CPDF_ObjectStream::ObjectInfo(12, 21)));
 
   CPDF_IndirectObjectHolder holder;
   EXPECT_FALSE(obj_stream->ParseObject(&holder, 11));
@@ -325,8 +337,10 @@ TEST(CPDF_ObjectStreamTest, StreamDictObjectOffsetTooBig) {
   ASSERT_TRUE(obj_stream);
 
   // TODO(thestig): Should object 11 be rejected?
-  EXPECT_THAT(obj_stream->objects_offsets(),
-              ElementsAre(Pair(10, 0), Pair(11, 999), Pair(12, 21)));
+  EXPECT_THAT(obj_stream->object_info(),
+              ElementsAre(CPDF_ObjectStream::ObjectInfo(10, 0),
+                          CPDF_ObjectStream::ObjectInfo(11, 999),
+                          CPDF_ObjectStream::ObjectInfo(12, 21)));
 
   CPDF_IndirectObjectHolder holder;
   EXPECT_FALSE(obj_stream->ParseObject(&holder, 11));
@@ -345,8 +359,10 @@ TEST(CPDF_ObjectStreamTest, StreamDictDuplicateObjNum) {
   ASSERT_TRUE(obj_stream);
 
   // TODO(thestig): Should object 10 be at offset 0 instead?
-  EXPECT_THAT(obj_stream->objects_offsets(),
-              ElementsAre(Pair(10, 14), Pair(12, 21)));
+  EXPECT_THAT(obj_stream->object_info(),
+              ElementsAre(CPDF_ObjectStream::ObjectInfo(10, 0),
+                          CPDF_ObjectStream::ObjectInfo(10, 14),
+                          CPDF_ObjectStream::ObjectInfo(12, 21)));
 
   CPDF_IndirectObjectHolder holder;
   RetainPtr<CPDF_Object> obj10 = obj_stream->ParseObject(&holder, 10);
@@ -376,8 +392,10 @@ TEST(CPDF_ObjectStreamTest, StreamDictUnorderedObjectNumbers) {
   auto obj_stream = CPDF_ObjectStream::Create(stream.Get());
   ASSERT_TRUE(obj_stream);
 
-  EXPECT_THAT(obj_stream->objects_offsets(),
-              ElementsAre(Pair(10, 21), Pair(11, 0), Pair(12, 14)));
+  EXPECT_THAT(obj_stream->object_info(),
+              ElementsAre(CPDF_ObjectStream::ObjectInfo(11, 0),
+                          CPDF_ObjectStream::ObjectInfo(12, 14),
+                          CPDF_ObjectStream::ObjectInfo(10, 21)));
 
   CPDF_IndirectObjectHolder holder;
   RetainPtr<CPDF_Object> obj10 = obj_stream->ParseObject(&holder, 10);
@@ -415,8 +433,10 @@ TEST(CPDF_ObjectStreamTest, StreamDictUnorderedObjectOffsets) {
   auto obj_stream = CPDF_ObjectStream::Create(stream.Get());
   ASSERT_TRUE(obj_stream);
 
-  EXPECT_THAT(obj_stream->objects_offsets(),
-              ElementsAre(Pair(10, 21), Pair(11, 0), Pair(12, 14)));
+  EXPECT_THAT(obj_stream->object_info(),
+              ElementsAre(CPDF_ObjectStream::ObjectInfo(10, 21),
+                          CPDF_ObjectStream::ObjectInfo(11, 0),
+                          CPDF_ObjectStream::ObjectInfo(12, 14)));
 
   CPDF_IndirectObjectHolder holder;
   RetainPtr<CPDF_Object> obj10 = obj_stream->ParseObject(&holder, 10);
