@@ -253,6 +253,9 @@ class TestRunner:
     if self.options.disable_xfa:
       cmd_to_run.append('--disable-xfa')
 
+    if self.options.render_oneshot:
+      cmd_to_run.append('--render-oneshot')
+
     if self.options.reverse_byte_order:
       cmd_to_run.append('--reverse-byte-order')
 
@@ -299,6 +302,12 @@ class TestRunner:
         action="store_true",
         dest="disable_xfa",
         help='Prevents processing XFA forms.')
+
+    parser.add_argument(
+        '--render-oneshot',
+        action="store_true",
+        dest="render_oneshot",
+        help='Sets whether to use the oneshot renderer.')
 
     parser.add_argument(
         '--run-skia-gold',
