@@ -99,7 +99,7 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
         }
         FALLTHROUGH;
       case FXBSTR_ID('T', 'R', '2', 0):
-        m_GeneralState.SetTR(pObject && !pObject->IsName() ? pObject : nullptr);
+        m_GeneralState.SetTR(!pObject->IsName() ? pObject : nullptr);
         break;
       case FXBSTR_ID('B', 'M', 0, 0): {
         CPDF_Array* pArray = pObject->AsArray();
