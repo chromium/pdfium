@@ -55,21 +55,25 @@ int CTextOnlyPrinterDriver::GetDeviceCaps(int caps_id) const {
   }
 }
 
+void CTextOnlyPrinterDriver::SaveState() {}
+
+void CTextOnlyPrinterDriver::RestoreState(bool bKeepSaved) {}
+
 bool CTextOnlyPrinterDriver::SetClip_PathFill(
-    const CFX_Path* pPath,
+    const CFX_Path& path,
     const CFX_Matrix* pObject2Device,
     const CFX_FillRenderOptions& fill_options) {
   return true;
 }
 
 bool CTextOnlyPrinterDriver::SetClip_PathStroke(
-    const CFX_Path* pPath,
+    const CFX_Path& path,
     const CFX_Matrix* pObject2Device,
     const CFX_GraphStateData* pGraphState) {
   return false;
 }
 
-bool CTextOnlyPrinterDriver::DrawPath(const CFX_Path* pPath,
+bool CTextOnlyPrinterDriver::DrawPath(const CFX_Path& path,
                                       const CFX_Matrix* pObject2Device,
                                       const CFX_GraphStateData* pGraphState,
                                       uint32_t fill_color,

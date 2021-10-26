@@ -715,7 +715,7 @@ struct PatchDrawer {
       if (bNoPathSmooth)
         fill_options.aliased_path = true;
       pDevice->DrawPath(
-          &path, nullptr, nullptr,
+          path, nullptr, nullptr,
           ArgbEncode(alpha, div_colors[0].comp[0], div_colors[0].comp[1],
                      div_colors[0].comp[2]),
           0, fill_options);

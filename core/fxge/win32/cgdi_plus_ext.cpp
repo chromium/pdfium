@@ -597,13 +597,13 @@ bool CGdiplusExt::StretchDIBits(HDC hDC,
 }
 
 bool CGdiplusExt::DrawPath(HDC hDC,
-                           const CFX_Path* pPath,
+                           const CFX_Path& path,
                            const CFX_Matrix* pObject2Device,
                            const CFX_GraphStateData* pGraphState,
                            uint32_t fill_argb,
                            uint32_t stroke_argb,
                            const CFX_FillRenderOptions& fill_options) {
-  pdfium::span<const CFX_Path::Point> points = pPath->GetPoints();
+  pdfium::span<const CFX_Path::Point> points = path.GetPoints();
   if (points.empty())
     return true;
 

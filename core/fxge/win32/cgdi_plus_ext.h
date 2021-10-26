@@ -38,7 +38,7 @@ class CGdiplusExt {
                      const FX_RECT* pClipRect,
                      const FXDIB_ResampleOptions& options);
   bool DrawPath(HDC hDC,
-                const CFX_Path* pPath,
+                const CFX_Path& path,
                 const CFX_Matrix* pObject2Device,
                 const CFX_GraphStateData* pGraphState,
                 uint32_t fill_argb,

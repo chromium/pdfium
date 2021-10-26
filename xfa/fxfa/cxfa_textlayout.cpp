@@ -1285,7 +1285,7 @@ void CXFA_TextLayout::RenderPath(CFX_RenderDevice* pDevice,
   graphState.m_LineWidth = 1;
   graphState.m_MiterLimit = 10;
   graphState.m_DashPhase = 0;
-  pDevice->DrawPath(&path, &mtDoc2Device, &graphState, 0, pPiece->dwColor,
+  pDevice->DrawPath(path, &mtDoc2Device, &graphState, 0, pPiece->dwColor,
                     CFX_FillRenderOptions());
 }
 

@@ -285,15 +285,15 @@ void CFX_PSRenderer::RestoreState(bool bKeepSaved) {
     m_ClipBoxStack.pop_back();
 }
 
-void CFX_PSRenderer::OutputPath(const CFX_Path* pPath,
+void CFX_PSRenderer::OutputPath(const CFX_Path& path,
                                 const CFX_Matrix* pObject2Device) {
   std::ostringstream buf;
-  size_t size = pPath->GetPoints().size();
+  size_t size = path.GetPoints().size();
 
   for (size_t i = 0; i < size; i++) {
-    CFX_Path::Point::Type type = pPath->GetType(i);
-    bool closing = pPath->IsClosingFigure(i);
-    CFX_PointF pos = pPath->GetPoint(i);
+    CFX_Path::Point::Type type = path.GetType(i);
+    bool closing = path.IsClosingFigure(i);
+    CFX_PointF pos = path.GetPoint(i);
     if (pObject2Device)
       pos = pObject2Device->Transform(pos);
 
@@ -308,8 +308,8 @@ void CFX_PSRenderer::OutputPath(const CFX_Path* pPath,
           buf << "h ";
         break;
       case CFX_Path::Point::Type::kBezier: {
-        CFX_PointF pos1 = pPath->GetPoint(i + 1);
-        CFX_PointF pos2 = pPath->GetPoint(i + 2);
+        CFX_PointF pos1 = path.GetPoint(i + 1);
+        CFX_PointF pos2 = path.GetPoint(i + 2);
         if (pObject2Device) {
           pos1 = pObject2Device->Transform(pos1);
           pos2 = pObject2Device->Transform(pos2);
@@ -328,12 +328,12 @@ void CFX_PSRenderer::OutputPath(const CFX_Path* pPath,
 }
 
 void CFX_PSRenderer::SetClip_PathFill(
-    const CFX_Path* pPath,
+    const CFX_Path& path,
     const CFX_Matrix* pObject2Device,
     const CFX_FillRenderOptions& fill_options) {
   StartRendering();
-  OutputPath(pPath, pObject2Device);
-  CFX_FloatRect rect = pPath->GetBoundingBox();
+  OutputPath(path, pObject2Device);
+  CFX_FloatRect rect = path.GetBoundingBox();
   if (pObject2Device)
     rect = pObject2Device->TransformRect(rect);
 
@@ -348,7 +348,7 @@ void CFX_PSRenderer::SetClip_PathFill(
   WriteString(" n\n");
 }
 
-void CFX_PSRenderer::SetClip_PathStroke(const CFX_Path* pPath,
+void CFX_PSRenderer::SetClip_PathStroke(const CFX_Path& path,
                                         const CFX_Matrix* pObject2Device,
                                         const CFX_GraphStateData* pGraphState) {
   StartRendering();
@@ -360,15 +360,15 @@ void CFX_PSRenderer::SetClip_PathStroke(const CFX_Path* pPath,
       << pObject2Device->e << " " << pObject2Device->f << "]cm ";
   WriteStream(buf);
 
-  OutputPath(pPath, nullptr);
-  CFX_FloatRect rect = pPath->GetBoundingBoxForStrokePath(
+  OutputPath(path, nullptr);
+  CFX_FloatRect rect = path.GetBoundingBoxForStrokePath(
       pGraphState->m_LineWidth, pGraphState->m_MiterLimit);
   m_ClipBox.Intersect(pObject2Device->TransformRect(rect).GetOuterRect());
 
   WriteString("strokepath W n sm\n");
 }
 
-bool CFX_PSRenderer::DrawPath(const CFX_Path* pPath,
+bool CFX_PSRenderer::DrawPath(const CFX_Path& path,
                               const CFX_Matrix* pObject2Device,
                               const CFX_GraphStateData* pGraphState,
                               uint32_t fill_color,
@@ -395,7 +395,7 @@ bool CFX_PSRenderer::DrawPath(const CFX_Path* pPath,
     }
   }
 
-  OutputPath(pPath, stroke_alpha ? nullptr : pObject2Device);
+  OutputPath(path, stroke_alpha ? nullptr : pObject2Device);
   if (fill_options.fill_type != CFX_FillRenderOptions::FillType::kNoFill &&
       fill_alpha) {
     SetColor(fill_color);

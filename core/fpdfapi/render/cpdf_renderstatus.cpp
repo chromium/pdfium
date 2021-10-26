@@ -428,7 +428,7 @@ bool CPDF_RenderStatus::ProcessPath(CPDF_PathObject* path_obj,
     return true;
 
   return m_pDevice->DrawPathWithBlend(
-      path_obj->path().GetObject(), &path_matrix,
+      *path_obj->path().GetObject(), &path_matrix,
       path_obj->m_GraphState.GetObject(), fill_argb, stroke_argb,
       GetFillOptionsForDrawPathWithBlend(options, path_obj, fill_type, stroke,
                                          m_pType3Char),
@@ -524,13 +524,14 @@ void CPDF_RenderStatus::ProcessClipPath(const CPDF_ClipPath& ClipPath,
       continue;
 
     if (pPath->GetPoints().empty()) {
-      CFX_Path EmptyPath;
-      EmptyPath.AppendRect(-1, -1, 0, 0);
-      m_pDevice->SetClip_PathFill(&EmptyPath, nullptr,
+      CFX_Path empty_path;
+      empty_path.AppendRect(-1, -1, 0, 0);
+      m_pDevice->SetClip_PathFill(empty_path, nullptr,
                                   CFX_FillRenderOptions::WindingOptions());
     } else {
       m_pDevice->SetClip_PathFill(
-          pPath, &mtObj2Device, CFX_FillRenderOptions(ClipPath.GetClipType(i)));
+          *pPath, &mtObj2Device,
+          CFX_FillRenderOptions(ClipPath.GetClipType(i)));
     }
   }
 
@@ -558,7 +559,8 @@ void CPDF_RenderStatus::ProcessClipPath(const CPDF_ClipPath& ClipPath,
     CFX_FillRenderOptions fill_options(CFX_FillRenderOptions::WindingOptions());
     if (m_Options.GetOptions().bNoTextSmooth)
       fill_options.aliased_path = true;
-    m_pDevice->SetClip_PathFill(pTextClippingPath.get(), nullptr, fill_options);
+    m_pDevice->SetClip_PathFill(*pTextClippingPath.get(), nullptr,
+                                fill_options);
     pTextClippingPath.reset();
   }
 }
@@ -580,7 +582,7 @@ bool CPDF_RenderStatus::SelectClipPath(const CPDF_PathObject* path_obj,
                                        bool stroke) {
   CFX_Matrix path_matrix = path_obj->matrix() * mtObj2Device;
   if (stroke) {
-    return m_pDevice->SetClip_PathStroke(path_obj->path().GetObject(),
+    return m_pDevice->SetClip_PathStroke(*path_obj->path().GetObject(),
                                          &path_matrix,
                                          path_obj->m_GraphState.GetObject());
   }
@@ -588,8 +590,8 @@ bool CPDF_RenderStatus::SelectClipPath(const CPDF_PathObject* path_obj,
   if (m_Options.GetOptions().bNoPathSmooth) {
     fill_options.aliased_path = true;
   }
-  return m_pDevice->SetClip_PathFill(path_obj->path().GetObject(), &path_matrix,
-                                     fill_options);
+  return m_pDevice->SetClip_PathFill(*path_obj->path().GetObject(),
+                                     &path_matrix, fill_options);
 }
 
 bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,

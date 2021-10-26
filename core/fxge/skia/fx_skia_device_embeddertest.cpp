@@ -64,9 +64,9 @@ void CommonTest(CFX_SkiaDeviceDriver* driver, const State& state) {
   if (state.m_save == State::Save::kYes)
     driver->SaveState();
   if (state.m_clip != State::Clip::kNo)
-    driver->SetClip_PathFill(&clipPath, &clipMatrix, CFX_FillRenderOptions());
+    driver->SetClip_PathFill(clipPath, &clipMatrix, CFX_FillRenderOptions());
   if (state.m_graphic == State::Graphic::kPath) {
-    driver->DrawPath(&path1, &matrix, &graphState, 0xFF112233, 0,
+    driver->DrawPath(path1, &matrix, &graphState, 0xFF112233, 0,
                      CFX_FillRenderOptions::WindingOptions(),
                      BlendMode::kNormal);
   } else if (state.m_graphic == State::Graphic::kText) {
@@ -84,13 +84,13 @@ void CommonTest(CFX_SkiaDeviceDriver* driver, const State& state) {
       fontSize = 2;
   }
   if (state.m_clip == State::Clip::kSame)
-    driver->SetClip_PathFill(&clipPath, &clipMatrix, CFX_FillRenderOptions());
+    driver->SetClip_PathFill(clipPath, &clipMatrix, CFX_FillRenderOptions());
   else if (state.m_clip == State::Clip::kDifferentPath)
-    driver->SetClip_PathFill(&clipPath2, &clipMatrix, CFX_FillRenderOptions());
+    driver->SetClip_PathFill(clipPath2, &clipMatrix, CFX_FillRenderOptions());
   else if (state.m_clip == State::Clip::kDifferentMatrix)
-    driver->SetClip_PathFill(&clipPath, &clipMatrix2, CFX_FillRenderOptions());
+    driver->SetClip_PathFill(clipPath, &clipMatrix2, CFX_FillRenderOptions());
   if (state.m_graphic == State::Graphic::kPath) {
-    driver->DrawPath(&path2, &matrix2, &graphState, 0xFF112233, 0,
+    driver->DrawPath(path2, &matrix2, &graphState, 0xFF112233, 0,
                      CFX_FillRenderOptions::WindingOptions(),
                      BlendMode::kNormal);
   } else if (state.m_graphic == State::Graphic::kText) {
@@ -107,18 +107,18 @@ void OutOfSequenceClipTest(CFX_SkiaDeviceDriver* driver, const State&) {
   clipPath.AppendRect(1, 0, 3, 1);
   CFX_Matrix clipMatrix;
   driver->SaveState();
-  driver->SetClip_PathFill(&clipPath, &clipMatrix, CFX_FillRenderOptions());
+  driver->SetClip_PathFill(clipPath, &clipMatrix, CFX_FillRenderOptions());
   driver->RestoreState(true);
   driver->SaveState();
-  driver->SetClip_PathFill(&clipPath, &clipMatrix, CFX_FillRenderOptions());
+  driver->SetClip_PathFill(clipPath, &clipMatrix, CFX_FillRenderOptions());
   driver->RestoreState(false);
   driver->RestoreState(false);
 
   driver->SaveState();
   driver->SaveState();
-  driver->SetClip_PathFill(&clipPath, &clipMatrix, CFX_FillRenderOptions());
+  driver->SetClip_PathFill(clipPath, &clipMatrix, CFX_FillRenderOptions());
   driver->RestoreState(true);
-  driver->SetClip_PathFill(&clipPath, &clipMatrix, CFX_FillRenderOptions());
+  driver->SetClip_PathFill(clipPath, &clipMatrix, CFX_FillRenderOptions());
   driver->RestoreState(false);
   driver->RestoreState(false);
 }

@@ -80,7 +80,7 @@ CPSPrinterDriver::CPSPrinterDriver(HDC hDC,
                           static_cast<float>(pRect->right),
                           static_cast<float>(pRect->top));
         }
-        m_PSRenderer.SetClip_PathFill(&path, nullptr,
+        m_PSRenderer.SetClip_PathFill(path, nullptr,
                                       CFX_FillRenderOptions::WindingOptions());
       }
     }
@@ -123,22 +123,22 @@ void CPSPrinterDriver::RestoreState(bool bKeepSaved) {
 }
 
 bool CPSPrinterDriver::SetClip_PathFill(
-    const CFX_Path* pPath,
+    const CFX_Path& path,
     const CFX_Matrix* pObject2Device,
     const CFX_FillRenderOptions& fill_options) {
-  m_PSRenderer.SetClip_PathFill(pPath, pObject2Device, fill_options);
+  m_PSRenderer.SetClip_PathFill(path, pObject2Device, fill_options);
   return true;
 }
 
 bool CPSPrinterDriver::SetClip_PathStroke(
-    const CFX_Path* pPath,
+    const CFX_Path& path,
     const CFX_Matrix* pObject2Device,
     const CFX_GraphStateData* pGraphState) {
-  m_PSRenderer.SetClip_PathStroke(pPath, pObject2Device, pGraphState);
+  m_PSRenderer.SetClip_PathStroke(path, pObject2Device, pGraphState);
   return true;
 }
 
-bool CPSPrinterDriver::DrawPath(const CFX_Path* pPath,
+bool CPSPrinterDriver::DrawPath(const CFX_Path& path,
                                 const CFX_Matrix* pObject2Device,
                                 const CFX_GraphStateData* pGraphState,
                                 FX_ARGB fill_color,
@@ -147,7 +147,7 @@ bool CPSPrinterDriver::DrawPath(const CFX_Path* pPath,
                                 BlendMode blend_type) {
   if (blend_type != BlendMode::kNormal)
     return false;
-  return m_PSRenderer.DrawPath(pPath, pObject2Device, pGraphState, fill_color,
+  return m_PSRenderer.DrawPath(path, pObject2Device, pGraphState, fill_color,
                                stroke_color, fill_options);
 }
 

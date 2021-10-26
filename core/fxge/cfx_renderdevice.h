@@ -72,20 +72,20 @@ class CFX_RenderDevice {
                               int height) const;
   const FX_RECT& GetClipBox() const { return m_ClipBox; }
   void SetBaseClip(const FX_RECT& rect);
-  bool SetClip_PathFill(const CFX_Path* pPath,
+  bool SetClip_PathFill(const CFX_Path& path,
                         const CFX_Matrix* pObject2Device,
                         const CFX_FillRenderOptions& fill_options);
-  bool SetClip_PathStroke(const CFX_Path* pPath,
+  bool SetClip_PathStroke(const CFX_Path& path,
                           const CFX_Matrix* pObject2Device,
                           const CFX_GraphStateData* pGraphState);
   bool SetClip_Rect(const FX_RECT& pRect);
-  bool DrawPath(const CFX_Path* pPath,
+  bool DrawPath(const CFX_Path& path,
                 const CFX_Matrix* pObject2Device,
                 const CFX_GraphStateData* pGraphState,
                 uint32_t fill_color,
                 uint32_t stroke_color,
                 const CFX_FillRenderOptions& fill_options);
-  bool DrawPathWithBlend(const CFX_Path* pPath,
+  bool DrawPathWithBlend(const CFX_Path& path,
                          const CFX_Matrix* pObject2Device,
                          const CFX_GraphStateData* pGraphState,
                          uint32_t fill_color,
@@ -231,7 +231,7 @@ class CFX_RenderDevice {
  private:
   void InitDeviceInfo();
   void UpdateClipBox();
-  bool DrawFillStrokePath(const CFX_Path* pPath,
+  bool DrawFillStrokePath(const CFX_Path& path,
                           const CFX_Matrix* pObject2Device,
                           const CFX_GraphStateData* pGraphState,
                           uint32_t fill_color,

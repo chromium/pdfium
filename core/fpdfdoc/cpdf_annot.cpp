@@ -520,6 +520,5 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
   if (pOptions && pOptions->GetOptions().bNoPathSmooth)
     fill_options.aliased_path = true;
 
-  pDevice->DrawPath(&path, pUser2Device, &graph_state, argb, argb,
-                    fill_options);
+  pDevice->DrawPath(path, pUser2Device, &graph_state, argb, argb, fill_options);
 }

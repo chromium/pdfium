@@ -15,7 +15,7 @@ class CFGAS_GEPath final {
   CFGAS_GEPath();
   ~CFGAS_GEPath();
 
-  const CFX_Path* GetPath() const { return &path_; }
+  const CFX_Path& GetPath() const { return path_; }
 
   void Clear();
   bool IsEmpty() const { return path_.GetPoints().empty(); }

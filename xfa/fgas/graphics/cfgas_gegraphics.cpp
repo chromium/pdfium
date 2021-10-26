@@ -258,7 +258,7 @@ void CFGAS_GEGraphics::FillPathWithPattern(
   mask->Create(data.width, data.height, FXDIB_Format::k1bppMask);
   memcpy(mask->GetBuffer(), data.maskBits, mask->GetPitch() * data.height);
   const CFX_FloatRect rectf =
-      matrix.TransformRect(path.GetPath()->GetBoundingBox());
+      matrix.TransformRect(path.GetPath().GetBoundingBox());
   const FX_RECT rect = rectf.ToRoundedFxRect();
 
   CFX_DefaultRenderDevice device;

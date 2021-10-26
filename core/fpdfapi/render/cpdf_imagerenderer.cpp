@@ -493,7 +493,7 @@ bool CPDF_ImageRenderer::StartBitmapAlpha() {
     uint32_t fill_color =
         ArgbEncode(0xff, m_BitmapAlpha, m_BitmapAlpha, m_BitmapAlpha);
     m_pRenderStatus->GetRenderDevice()->DrawPath(
-        &path, nullptr, nullptr, fill_color, 0,
+        path, nullptr, nullptr, fill_color, 0,
         CFX_FillRenderOptions::WindingOptions());
     return false;
   }
