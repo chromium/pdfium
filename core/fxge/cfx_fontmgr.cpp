@@ -15,7 +15,7 @@
 #include "core/fxge/fontdata/chromefontdata/chromefontdata.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/systemfontinfo_iface.h"
-#include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/cxx17_backports.h"
 
 namespace {
@@ -76,12 +76,12 @@ CFX_FontMgr::FontDesc::FontDesc(std::unique_ptr<uint8_t, FxFreeDeleter> pData,
 CFX_FontMgr::FontDesc::~FontDesc() = default;
 
 void CFX_FontMgr::FontDesc::SetFace(size_t index, CFX_Face* face) {
-  DCHECK(index < pdfium::size(m_TTCFaces));
+  CHECK_LT(index, pdfium::size(m_TTCFaces));
   m_TTCFaces[index].Reset(face);
 }
 
 CFX_Face* CFX_FontMgr::FontDesc::GetFace(size_t index) const {
-  DCHECK(index < pdfium::size(m_TTCFaces));
+  CHECK_LT(index, pdfium::size(m_TTCFaces));
   return m_TTCFaces[index].Get();
 }
 
