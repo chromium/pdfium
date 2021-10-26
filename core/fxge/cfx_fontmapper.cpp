@@ -28,11 +28,10 @@
 
 namespace {
 
-constexpr int kNumStandardFonts = 14;
-static_assert(CFX_FontMapper::kLast + 1 == kNumStandardFonts,
+static_assert(CFX_FontMapper::kLast + 1 == CFX_FontMapper::kNumStandardFonts,
               "StandardFont enum count mismatch");
 
-const char* const kBase14FontNames[kNumStandardFonts] = {
+const char* const kBase14FontNames[CFX_FontMapper::kNumStandardFonts] = {
     "Courier",
     "Courier-Bold",
     "Courier-BoldOblique",
@@ -376,34 +375,31 @@ RetainPtr<CFX_Face> CFX_FontMapper::UseInternalSubst(CFX_SubstFont* pSubstFont,
                                                      int weight,
                                                      int pitch_family) {
   if (iBaseFont < kNumStandardFonts) {
-    if (m_FoxitFaces[iBaseFont])
-      return m_FoxitFaces[iBaseFont];
-    absl::optional<pdfium::span<const uint8_t>> font_data =
-        m_pFontMgr->GetBuiltinFont(iBaseFont);
-    if (font_data.has_value()) {
-      m_FoxitFaces[iBaseFont] =
-          m_pFontMgr->NewFixedFace(nullptr, font_data.value(), 0);
-      return m_FoxitFaces[iBaseFont];
+    if (!m_StandardFaces[iBaseFont]) {
+      m_StandardFaces[iBaseFont] = m_pFontMgr->NewFixedFace(
+          nullptr, m_pFontMgr->GetStandardFont(iBaseFont), 0);
     }
+    return m_StandardFaces[iBaseFont];
   }
+
   pSubstFont->m_bFlagMM = true;
   pSubstFont->m_ItalicAngle = italic_angle;
   if (weight)
     pSubstFont->m_Weight = weight;
   if (FontFamilyIsRoman(pitch_family)) {
     pSubstFont->UseChromeSerif();
-    if (!m_MMFaces[1]) {
-      m_MMFaces[1] = m_pFontMgr->NewFixedFace(
-          nullptr, m_pFontMgr->GetBuiltinFont(14).value(), 0);
+    if (!m_GenericSerifFace) {
+      m_GenericSerifFace = m_pFontMgr->NewFixedFace(
+          nullptr, m_pFontMgr->GetGenericSerifFont(), 0);
     }
-    return m_MMFaces[1];
+    return m_GenericSerifFace;
   }
   pSubstFont->m_Family = "Chrome Sans";
-  if (!m_MMFaces[0]) {
-    m_MMFaces[0] = m_pFontMgr->NewFixedFace(
-        nullptr, m_pFontMgr->GetBuiltinFont(15).value(), 0);
+  if (!m_GenericSansFace) {
+    m_GenericSansFace =
+        m_pFontMgr->NewFixedFace(nullptr, m_pFontMgr->GetGenericSansFont(), 0);
   }
-  return m_MMFaces[0];
+  return m_GenericSansFace;
 }
 
 RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
@@ -752,18 +748,6 @@ std::unique_ptr<uint8_t, FxFreeDeleter> CFX_FontMapper::RawBytesForIndex(
   return pBuffer;
 }
 #endif  // PDF_ENABLE_XFA
-
-bool CFX_FontMapper::IsBuiltinFace(const RetainPtr<CFX_Face>& face) const {
-  for (size_t i = 0; i < MM_FACE_COUNT; ++i) {
-    if (m_MMFaces[i] == face)
-      return true;
-  }
-  for (size_t i = 0; i < FOXIT_FACE_COUNT; ++i) {
-    if (m_FoxitFaces[i] == face)
-      return true;
-  }
-  return false;
-}
 
 RetainPtr<CFX_Face> CFX_FontMapper::GetCachedTTCFace(void* hFont,
                                                      uint32_t ttc_size,

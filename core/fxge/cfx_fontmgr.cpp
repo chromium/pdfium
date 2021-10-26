@@ -25,7 +25,7 @@ struct BuiltinFont {
   uint32_t m_dwSize;
 };
 
-constexpr BuiltinFont kFoxitFonts[14] = {
+constexpr BuiltinFont kFoxitFonts[] = {
     {kFoxitFixedFontData, 17597},
     {kFoxitFixedBoldFontData, 18055},
     {kFoxitFixedBoldItalicFontData, 19151},
@@ -41,11 +41,11 @@ constexpr BuiltinFont kFoxitFonts[14] = {
     {kFoxitSymbolFontData, 16729},
     {kFoxitDingbatsFontData, 29513},
 };
+static_assert(pdfium::size(kFoxitFonts) == CFX_FontMapper::kNumStandardFonts,
+              "Wrong font count");
 
-const BuiltinFont kMMFonts[2] = {
-    {kFoxitSerifMMFontData, 113417},
-    {kFoxitSansMMFontData, 66919},
-};
+constexpr BuiltinFont kGenericSansFont = {kFoxitSansMMFontData, 66919};
+constexpr BuiltinFont kGenericSerifFont = {kFoxitSerifMMFontData, 113417};
 
 ByteString KeyNameFromFace(const ByteString& face_name,
                            int weight,
@@ -144,18 +144,22 @@ RetainPtr<CFX_Face> CFX_FontMgr::NewFixedFace(const RetainPtr<FontDesc>& pDesc,
 }
 
 // static
-absl::optional<pdfium::span<const uint8_t>> CFX_FontMgr::GetBuiltinFont(
-    size_t index) {
-  if (index < pdfium::size(kFoxitFonts)) {
-    return pdfium::make_span(kFoxitFonts[index].m_pFontData,
-                             kFoxitFonts[index].m_dwSize);
-  }
-  size_t mm_index = index - pdfium::size(kFoxitFonts);
-  if (mm_index < pdfium::size(kMMFonts)) {
-    return pdfium::make_span(kMMFonts[mm_index].m_pFontData,
-                             kMMFonts[mm_index].m_dwSize);
-  }
-  return absl::nullopt;
+pdfium::span<const uint8_t> CFX_FontMgr::GetStandardFont(size_t index) {
+  CHECK_LT(index, pdfium::size(kFoxitFonts));
+  return pdfium::make_span(kFoxitFonts[index].m_pFontData,
+                           kFoxitFonts[index].m_dwSize);
+}
+
+// static
+pdfium::span<const uint8_t> CFX_FontMgr::GetGenericSansFont() {
+  return pdfium::make_span(kGenericSansFont.m_pFontData,
+                           kGenericSansFont.m_dwSize);
+}
+
+// static
+pdfium::span<const uint8_t> CFX_FontMgr::GetGenericSerifFont() {
+  return pdfium::make_span(kGenericSerifFont.m_pFontData,
+                           kGenericSerifFont.m_dwSize);
 }
 
 bool CFX_FontMgr::FreeTypeVersionSupportsHinting() const {

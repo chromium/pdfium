@@ -15,7 +15,6 @@
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/fx_freetype.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/span.h"
 
 class CFX_Face;
@@ -42,8 +41,10 @@ class CFX_FontMgr {
     ObservedPtr<CFX_Face> m_TTCFaces[16];
   };
 
-  static absl::optional<pdfium::span<const uint8_t>> GetBuiltinFont(
-      size_t index);
+  // `index` must be less than `CFX_FontMapper::kNumStandardFonts`.
+  static pdfium::span<const uint8_t> GetStandardFont(size_t index);
+  static pdfium::span<const uint8_t> GetGenericSansFont();
+  static pdfium::span<const uint8_t> GetGenericSerifFont();
 
   CFX_FontMgr();
   ~CFX_FontMgr();
