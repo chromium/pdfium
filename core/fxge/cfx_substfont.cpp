@@ -10,6 +10,7 @@ CFX_SubstFont::CFX_SubstFont() = default;
 
 CFX_SubstFont::~CFX_SubstFont() = default;
 
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 int CFX_SubstFont::GetOriginalWeight() const {
   int weight = m_Weight;
 
@@ -19,6 +20,7 @@ int CFX_SubstFont::GetOriginalWeight() const {
     weight = weight * 5 / 4;
   return weight;
 }
+#endif
 
 void CFX_SubstFont::UseChromeSerif() {
   m_Weight = m_Weight * 4 / 5;
