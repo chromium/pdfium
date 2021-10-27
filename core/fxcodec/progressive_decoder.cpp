@@ -640,7 +640,7 @@ bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
     CFX_DIBAttribute* pAttribute) {
   std::unique_ptr<ProgressiveDecoderIface::Context> pBmpContext =
       BmpDecoder::StartDecode(this);
-  BmpDecoder::Input(pBmpContext.get(), m_pCodecMemory, nullptr);
+  BmpDecoder::Input(pBmpContext.get(), m_pCodecMemory);
 
   const std::vector<uint32_t>* palette;
   BmpDecoder::Status read_result = BmpDecoder::ReadHeader(
@@ -766,7 +766,7 @@ bool ProgressiveDecoder::GifReadMoreData(FXCODEC_STATUS* err_status) {
 
 bool ProgressiveDecoder::GifDetectImageTypeInBuffer() {
   m_pGifContext = GifDecoder::StartDecode(this);
-  GifDecoder::Input(m_pGifContext.get(), m_pCodecMemory, nullptr);
+  GifDecoder::Input(m_pGifContext.get(), m_pCodecMemory);
   m_SrcComponents = 1;
   GifDecoder::Status readResult =
       GifDecoder::ReadHeader(m_pGifContext.get(), &m_SrcWidth, &m_SrcHeight,
@@ -935,7 +935,7 @@ bool ProgressiveDecoder::JpegDetectImageTypeInBuffer(
     return false;
   }
   JpegProgressiveDecoder::GetInstance()->Input(m_pJpegContext.get(),
-                                               m_pCodecMemory, nullptr);
+                                               m_pCodecMemory);
 
   // Setting jump marker before calling ReadHeader, since a longjmp to
   // the marker indicates a fatal error.
@@ -1486,7 +1486,7 @@ bool ProgressiveDecoder::ReadMoreData(
     return false;
   }
   m_offSet += dwBytesToFetchFromFile;
-  return pModule->Input(pContext, m_pCodecMemory, nullptr);
+  return pModule->Input(pContext, m_pCodecMemory);
 }
 
 FXCODEC_STATUS ProgressiveDecoder::LoadImageInfo(

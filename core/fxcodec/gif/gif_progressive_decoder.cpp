@@ -26,9 +26,8 @@ FX_FILESIZE GifProgressiveDecoder::GetAvailInput(Context* context) const {
 }
 
 bool GifProgressiveDecoder::Input(Context* context,
-                                  RetainPtr<CFX_CodecMemory> codec_memory,
-                                  CFX_DIBAttribute* pAttribute) {
-  return GifDecoder::Input(context, codec_memory, pAttribute);
+                                  RetainPtr<CFX_CodecMemory> codec_memory) {
+  return GifDecoder::Input(context, codec_memory);
 }
 
 }  // namespace fxcodec

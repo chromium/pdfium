@@ -47,8 +47,7 @@ class BmpDecoder {
   static Status LoadImage(ProgressiveDecoderIface::Context* pContext);
   static FX_FILESIZE GetAvailInput(ProgressiveDecoderIface::Context* pContext);
   static bool Input(ProgressiveDecoderIface::Context* pContext,
-                    RetainPtr<CFX_CodecMemory> codec_memory,
-                    CFX_DIBAttribute* pAttribute);
+                    RetainPtr<CFX_CodecMemory> codec_memory);
 
   BmpDecoder() = delete;
   BmpDecoder(const BmpDecoder&) = delete;

@@ -66,8 +66,7 @@ FX_FILESIZE GifDecoder::GetAvailInput(
 
 // static
 bool GifDecoder::Input(ProgressiveDecoderIface::Context* pContext,
-                       RetainPtr<CFX_CodecMemory> codec_memory,
-                       CFX_DIBAttribute*) {
+                       RetainPtr<CFX_CodecMemory> codec_memory) {
   auto* ctx = static_cast<CFX_GifContext*>(pContext);
   ctx->SetInputBuffer(std::move(codec_memory));
   return true;

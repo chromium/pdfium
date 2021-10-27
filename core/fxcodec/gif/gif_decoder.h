@@ -20,8 +20,6 @@
 
 namespace fxcodec {
 
-class CFX_DIBAttribute;
-
 class GifDecoder {
  public:
   enum class Status {
@@ -56,8 +54,7 @@ class GifDecoder {
                           size_t frame_num);
   static FX_FILESIZE GetAvailInput(ProgressiveDecoderIface::Context* context);
   static bool Input(ProgressiveDecoderIface::Context* context,
-                    RetainPtr<CFX_CodecMemory> codec_memory,
-                    CFX_DIBAttribute* pAttribute);
+                    RetainPtr<CFX_CodecMemory> codec_memory);
 
   GifDecoder() = delete;
   GifDecoder(const GifDecoder&) = delete;

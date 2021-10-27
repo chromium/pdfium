@@ -18,6 +18,8 @@
 
 namespace fxcodec {
 
+class CFX_DIBAttribute;
+
 class PngDecoder {
  public:
   class Delegate {

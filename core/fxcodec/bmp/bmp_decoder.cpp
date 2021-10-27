@@ -66,8 +66,7 @@ FX_FILESIZE BmpDecoder::GetAvailInput(
 
 // static
 bool BmpDecoder::Input(ProgressiveDecoderIface::Context* pContext,
-                       RetainPtr<CFX_CodecMemory> codec_memory,
-                       CFX_DIBAttribute*) {
+                       RetainPtr<CFX_CodecMemory> codec_memory) {
   auto* ctx = static_cast<CFX_BmpContext*>(pContext);
   ctx->m_Bmp.SetInputBuffer(std::move(codec_memory));
   return true;

@@ -26,9 +26,8 @@ FX_FILESIZE BmpProgressiveDecoder::GetAvailInput(Context* context) const {
 }
 
 bool BmpProgressiveDecoder::Input(Context* context,
-                                  RetainPtr<CFX_CodecMemory> codec_memory,
-                                  CFX_DIBAttribute* pAttribute) {
-  return BmpDecoder::Input(context, codec_memory, pAttribute);
+                                  RetainPtr<CFX_CodecMemory> codec_memory) {
+  return BmpDecoder::Input(context, codec_memory);
 }
 
 }  // namespace fxcodec

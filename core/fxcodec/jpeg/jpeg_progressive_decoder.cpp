@@ -154,8 +154,7 @@ FX_FILESIZE JpegProgressiveDecoder::GetAvailInput(Context* pContext) const {
 }
 
 bool JpegProgressiveDecoder::Input(Context* pContext,
-                                   RetainPtr<CFX_CodecMemory> codec_memory,
-                                   CFX_DIBAttribute*) {
+                                   RetainPtr<CFX_CodecMemory> codec_memory) {
   pdfium::span<uint8_t> src_buf = codec_memory->GetSpan();
   auto* ctx = static_cast<CJpegContext*>(pContext);
   if (ctx->m_SkipSize) {
