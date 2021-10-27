@@ -173,7 +173,7 @@ CStretchEngine::CStretchEngine(ScanlineComposerIface* pDestBitmap,
                                int dest_width,
                                int dest_height,
                                const FX_RECT& clip_rect,
-                               const RetainPtr<CFX_DIBBase>& pSrcBitmap,
+                               const RetainPtr<const CFX_DIBBase>& pSrcBitmap,
                                const FXDIB_ResampleOptions& options)
     : m_DestFormat(dest_format),
       m_DestBpp(GetBppFromFormat(dest_format)),

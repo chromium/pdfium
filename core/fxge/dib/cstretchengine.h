@@ -106,7 +106,7 @@ class CStretchEngine {
                  int dest_width,
                  int dest_height,
                  const FX_RECT& clip_rect,
-                 const RetainPtr<CFX_DIBBase>& pSrcBitmap,
+                 const RetainPtr<const CFX_DIBBase>& pSrcBitmap,
                  const FXDIB_ResampleOptions& options);
   ~CStretchEngine();
 
@@ -137,7 +137,7 @@ class CStretchEngine {
   const int m_DestBpp;
   const int m_SrcBpp;
   const bool m_bHasAlpha;
-  RetainPtr<CFX_DIBBase> const m_pSource;
+  RetainPtr<const CFX_DIBBase> const m_pSource;
   pdfium::span<const uint32_t> m_pSrcPalette;
   const int m_SrcWidth;
   const int m_SrcHeight;

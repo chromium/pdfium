@@ -61,14 +61,14 @@ class CFX_DIBBase : public Retainable {
   void SetPalette(pdfium::span<const uint32_t> src_palette);
 
   RetainPtr<CFX_DIBitmap> Clone(const FX_RECT* pClip) const;
-  RetainPtr<CFX_DIBitmap> CloneConvert(FXDIB_Format format);
+  RetainPtr<CFX_DIBitmap> CloneConvert(FXDIB_Format format) const;
   RetainPtr<CFX_DIBitmap> StretchTo(int dest_width,
                                     int dest_height,
                                     const FXDIB_ResampleOptions& options,
-                                    const FX_RECT* pClip);
+                                    const FX_RECT* pClip) const;
   RetainPtr<CFX_DIBitmap> TransformTo(const CFX_Matrix& mtDest,
                                       int* left,
-                                      int* top);
+                                      int* top) const;
   RetainPtr<CFX_DIBitmap> SwapXY(bool bXFlip, bool bYFlip) const;
   RetainPtr<CFX_DIBitmap> FlipImage(bool bXFlip, bool bYFlip) const;
 
@@ -107,7 +107,7 @@ class CFX_DIBBase : public Retainable {
       int dest_pitch,
       int width,
       int height,
-      const RetainPtr<CFX_DIBBase>& pSrcBitmap,
+      const RetainPtr<const CFX_DIBBase>& pSrcBitmap,
       int src_left,
       int src_top,
       std::vector<uint32_t, FxAllocAllocator<uint32_t>>* pal);

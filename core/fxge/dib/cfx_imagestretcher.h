@@ -22,7 +22,7 @@ class PauseIndicatorIface;
 class CFX_ImageStretcher {
  public:
   CFX_ImageStretcher(ScanlineComposerIface* pDest,
-                     const RetainPtr<CFX_DIBBase>& pSource,
+                     const RetainPtr<const CFX_DIBBase>& pSource,
                      int dest_width,
                      int dest_height,
                      const FX_RECT& bitmap_rect,
@@ -32,14 +32,14 @@ class CFX_ImageStretcher {
   bool Start();
   bool Continue(PauseIndicatorIface* pPause);
 
-  RetainPtr<CFX_DIBBase> source();
+  RetainPtr<const CFX_DIBBase> source();
 
  private:
   bool StartStretch();
   bool ContinueStretch(PauseIndicatorIface* pPause);
 
   UnownedPtr<ScanlineComposerIface> const m_pDest;
-  RetainPtr<CFX_DIBBase> m_pSource;
+  RetainPtr<const CFX_DIBBase> const m_pSource;
   std::unique_ptr<CStretchEngine> m_pStretchEngine;
   const FXDIB_ResampleOptions m_ResampleOptions;
   const int m_DestWidth;

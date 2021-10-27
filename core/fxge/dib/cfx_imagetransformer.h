@@ -38,7 +38,7 @@ class CFX_ImageTransformer {
     uint32_t pitch;
   };
 
-  CFX_ImageTransformer(const RetainPtr<CFX_DIBBase>& pSrc,
+  CFX_ImageTransformer(const RetainPtr<const CFX_DIBBase>& pSrc,
                        const CFX_Matrix& matrix,
                        const FXDIB_ResampleOptions& options,
                        const FX_RECT* pClip);
@@ -65,7 +65,7 @@ class CFX_ImageTransformer {
   void CalcMono(const CalcData& calc_data);
   void CalcColor(const CalcData& calc_data, FXDIB_Format format, int Bpp);
 
-  RetainPtr<CFX_DIBBase> const m_pSrc;
+  RetainPtr<const CFX_DIBBase> const m_pSrc;
   const CFX_Matrix m_matrix;
   FX_RECT m_StretchClip;
   FX_RECT m_result;
