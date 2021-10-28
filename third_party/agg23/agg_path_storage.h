@@ -50,6 +50,10 @@ public:
     };
     ~path_storage();
     path_storage();
+    path_storage(path_storage&& other);
+    path_storage& operator=(path_storage&&) = delete;
+    path_storage(const path_storage&) = delete;
+    path_storage& operator=(const path_storage&) = delete;
     unsigned last_vertex(float* x, float* y) const;
     unsigned prev_vertex(float* x, float* y) const;
     void move_to(float x, float y);
@@ -116,12 +120,12 @@ private:
     void allocate_block(unsigned nb);
     unsigned char* storage_ptrs(float** xy_ptr);
 private:
-    unsigned        m_total_vertices;
-    unsigned        m_total_blocks;
-    unsigned        m_max_blocks;
-    float**   m_coord_blocks;
-    unsigned char** m_cmd_blocks;
-    unsigned        m_iterator;
+    unsigned        m_total_vertices = 0;
+    unsigned        m_total_blocks = 0;
+    unsigned        m_max_blocks = 0;
+    float**         m_coord_blocks = nullptr;
+    unsigned char** m_cmd_blocks = nullptr;
+    unsigned        m_iterator = 0;
 };
 inline unsigned path_storage::vertex(float* x, float* y)
 {

@@ -14,7 +14,7 @@ Various changes to use FX_ library functions.
 Possibly more?
 0001-gcc-warning.patch: Fix a GCC warning about both enumeral and
 non-enumeral type in conditional.
-0002-ubsan-error-fixes.path: Fix UBSan errors for overflows.
+0002-ubsan-error-fixes.patch: Fix UBSan errors for overflows.
 0003-ubsan-render-line-error.patch: Fix UBSan overflow error in render_line.
 0004-ubsan-sweep-scanline-error.patch: Fix UBSan left shift of negative value
 error in sweep_scanline.
@@ -27,3 +27,4 @@ shadow variable.
 0008-namespace.patch: Wrap all AGG code in namespace pdfium.
 0009-infinite-loop.patch: avoid hang in agg_math_stroke.h
 0010-math.patch: includes <math.h>
+0011-path-storage-move-ctor.patch: Add a move ctor for path_storage.

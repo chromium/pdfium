@@ -1,0 +1,67 @@
+diff --git a/third_party/agg23/agg_path_storage.cpp b/third_party/agg23/agg_path_storage.cpp
+index 2cd0caed1..1491e9e33 100644
+--- a/third_party/agg23/agg_path_storage.cpp
++++ b/third_party/agg23/agg_path_storage.cpp
+@@ -43,14 +43,20 @@ path_storage::~path_storage()
+         FX_Free(m_coord_blocks);
+     }
+ }
+-path_storage::path_storage() :
+-    m_total_vertices(0),
+-    m_total_blocks(0),
+-    m_max_blocks(0),
+-    m_coord_blocks(0),
+-    m_cmd_blocks(0),
+-    m_iterator(0)
+-{
++path_storage::path_storage() = default;
++path_storage::path_storage(path_storage&& other) {
++    m_total_vertices = other.m_total_vertices;
++    m_total_blocks = other.m_total_blocks;
++    m_max_blocks = other.m_max_blocks;
++    m_coord_blocks = other.m_coord_blocks;
++    m_cmd_blocks = other.m_cmd_blocks;
++    m_iterator = other.m_iterator;
++    other.m_total_vertices = 0;
++    other.m_total_blocks = 0;
++    other.m_max_blocks = 0;
++    other.m_coord_blocks = nullptr;
++    other.m_cmd_blocks = nullptr;
++    other.m_iterator = 0;
+ }
+ void path_storage::allocate_block(unsigned nb)
+ {
+diff --git a/third_party/agg23/agg_path_storage.h b/third_party/agg23/agg_path_storage.h
+index 55d6df001..8f10ff36d 100644
+--- a/third_party/agg23/agg_path_storage.h
++++ b/third_party/agg23/agg_path_storage.h
+@@ -50,6 +50,10 @@ public:
+     };
+     ~path_storage();
+     path_storage();
++    path_storage(path_storage&& other);
++    path_storage& operator=(path_storage&&) = delete;
++    path_storage(const path_storage&) = delete;
++    path_storage& operator=(const path_storage&) = delete;
+     unsigned last_vertex(float* x, float* y) const;
+     unsigned prev_vertex(float* x, float* y) const;
+     void move_to(float x, float y);
+@@ -116,12 +120,12 @@ private:
+     void allocate_block(unsigned nb);
+     unsigned char* storage_ptrs(float** xy_ptr);
+ private:
+-    unsigned        m_total_vertices;
+-    unsigned        m_total_blocks;
+-    unsigned        m_max_blocks;
+-    float**   m_coord_blocks;
+-    unsigned char** m_cmd_blocks;
+-    unsigned        m_iterator;
++    unsigned        m_total_vertices = 0;
++    unsigned        m_total_blocks = 0;
++    unsigned        m_max_blocks = 0;
++    float**         m_coord_blocks = nullptr;
++    unsigned char** m_cmd_blocks = nullptr;
++    unsigned        m_iterator = 0;
+ };
+ inline unsigned path_storage::vertex(float* x, float* y)
+ {
