@@ -61,7 +61,7 @@ class CFX_DIBBase : public Retainable {
   void SetPalette(pdfium::span<const uint32_t> src_palette);
 
   RetainPtr<CFX_DIBitmap> Realize() const;
-  RetainPtr<CFX_DIBitmap> ClipTo(const FX_RECT& clip) const;
+  RetainPtr<CFX_DIBitmap> ClipTo(const FX_RECT& rect) const;
   RetainPtr<CFX_DIBitmap> ConvertTo(FXDIB_Format format) const;
   RetainPtr<CFX_DIBitmap> StretchTo(int dest_width,
                                     int dest_height,

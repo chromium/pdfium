@@ -675,9 +675,9 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
       if (pSource->HasPalette()) {
         dst32Storage.reset(FX_Alloc2D(uint32_t, width, height));
         SkPMColor* dst32Pixels = dst32Storage.get();
-        const unsigned src_palette_size = pSource->GetRequiredPaletteSize();
+        const size_t src_palette_size = pSource->GetRequiredPaletteSize();
         pdfium::span<const uint32_t> src_palette = pSource->GetPaletteSpan();
-        CHECK(src_palette_size <= src_palette.size());
+        CHECK_LE(src_palette_size, src_palette.size());
         for (int y = 0; y < height; ++y) {
           const uint8_t* srcRow =
               static_cast<const uint8_t*>(buffer) + y * rowBytes;

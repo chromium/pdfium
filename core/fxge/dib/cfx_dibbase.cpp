@@ -256,7 +256,7 @@ void ConvertBuffer_Plt2PltRgb8(uint8_t* dest_buf,
                           src_left, src_top);
   const size_t plt_size = pSrcBitmap->GetRequiredPaletteSize();
   pdfium::span<const uint32_t> src_span = pSrcBitmap->GetPaletteSpan();
-  CHECK(plt_size <= src_span.size());
+  CHECK_LE(plt_size, src_span.size());
 
   const uint32_t* src_plt = src_span.data();
   for (size_t i = 0; i < plt_size; ++i)
@@ -770,8 +770,8 @@ bool CFX_DIBBase::GetOverlapRect(int& dest_left,
   if (width == 0 || height == 0)
     return false;
 
-  DCHECK(width > 0);
-  DCHECK(height > 0);
+  DCHECK_GT(width, 0);
+  DCHECK_GT(height, 0);
 
   if (dest_left > m_Width || dest_top > m_Height)
     return false;
