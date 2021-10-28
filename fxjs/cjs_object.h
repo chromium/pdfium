@@ -48,12 +48,12 @@ class CJS_Object {
   CJS_Object(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
   virtual ~CJS_Object();
 
-  v8::Local<v8::Object> ToV8Object() { return m_pV8Object.Get(GetIsolate()); }
-  v8::Isolate* GetIsolate() const { return m_pIsolate.Get(); }
+  v8::Local<v8::Object> ToV8Object() {
+    return m_pV8Object.Get(GetRuntime()->GetIsolate());
+  }
   CJS_Runtime* GetRuntime() const { return m_pRuntime.Get(); }
 
  private:
-  UnownedPtr<v8::Isolate> m_pIsolate;
   v8::Global<v8::Object> m_pV8Object;
   ObservedPtr<CJS_Runtime> m_pRuntime;
 };

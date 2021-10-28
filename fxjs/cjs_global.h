@@ -76,7 +76,8 @@ class CJS_Global final : public CJS_Object {
   static const JSMethodSpec MethodSpecs[];
 
   void UpdateGlobalPersistentVariables();
-  void CommitGlobalPersisitentVariables(CJS_Runtime* pRuntime);
+  // TODO(crbug.com/pdfium/926): This method is never called.
+  void CommitGlobalPersisitentVariables();
   void DestroyGlobalPersisitentVariables();
   CJS_Result SetGlobalVariables(const ByteString& propname,
                                 CFX_Value::DataType nType,

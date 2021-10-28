@@ -334,7 +334,11 @@ void CJS_Global::UpdateGlobalPersistentVariables() {
   }
 }
 
-void CJS_Global::CommitGlobalPersisitentVariables(CJS_Runtime* pRuntime) {
+void CJS_Global::CommitGlobalPersisitentVariables() {
+  CJS_Runtime* pRuntime = GetRuntime();
+  if (!pRuntime)
+    return;
+
   for (const auto& iter : m_MapGlobal) {
     ByteString name = iter.first;
     JSGlobalData* pData = iter.second.get();
@@ -357,7 +361,7 @@ void CJS_Global::CommitGlobalPersisitentVariables(CJS_Runtime* pRuntime) {
         break;
       case CFX_Value::DataType::kObject: {
         v8::Local<v8::Object> obj =
-            v8::Local<v8::Object>::New(GetIsolate(), pData->pData);
+            v8::Local<v8::Object>::New(pRuntime->GetIsolate(), pData->pData);
         m_pGlobalData->SetGlobalVariableObject(name,
                                                ObjectToArray(pRuntime, obj));
         m_pGlobalData->SetGlobalVariablePersistent(name, pData->bPersistent);
