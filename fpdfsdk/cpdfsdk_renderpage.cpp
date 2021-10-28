@@ -75,7 +75,7 @@ void RenderPageImpl(CPDF_PageRenderContext* pContext,
     const bool bShowWidget = false;
     pList->DisplayAnnots(pPage, pContext->m_pDevice.get(),
                          pContext->m_pContext.get(), bPrinting, matrix,
-                         bShowWidget, nullptr);
+                         bShowWidget);
   }
 
   pContext->m_pRenderer = std::make_unique<CPDF_ProgressiveRenderer>(

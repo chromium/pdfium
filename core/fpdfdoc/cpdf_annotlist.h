@@ -22,7 +22,6 @@ class CPDF_Annot;
 class CPDF_Document;
 class CPDF_Page;
 class CPDF_RenderContext;
-class CPDF_RenderOptions;
 
 class CPDF_AnnotList final : public CPDF_PageRenderContext::AnnotListIface {
  public:
@@ -30,21 +29,11 @@ class CPDF_AnnotList final : public CPDF_PageRenderContext::AnnotListIface {
   ~CPDF_AnnotList() override;
 
   void DisplayAnnots(CPDF_Page* pPage,
-                     CFX_RenderDevice* device,
-                     CPDF_RenderContext* pContext,
-                     bool bPrinting,
-                     const CFX_Matrix& mtMatrix,
-                     bool bShowWidget,
-                     CPDF_RenderOptions* pOptions);
-
-  void DisplayAnnots(CPDF_Page* pPage,
                      CFX_RenderDevice* pDevice,
                      CPDF_RenderContext* pContext,
                      bool bPrinting,
                      const CFX_Matrix& mtUser2Device,
-                     uint32_t dwAnnotFlags,
-                     CPDF_RenderOptions* pOptions,
-                     FX_RECT* pClipRect);
+                     bool bShowWidget);
 
   size_t Count() const { return m_AnnotList.size(); }
   CPDF_Annot* GetAt(size_t index) const { return m_AnnotList[index].get(); }
@@ -58,9 +47,7 @@ class CPDF_AnnotList final : public CPDF_PageRenderContext::AnnotListIface {
                    CPDF_RenderContext* pContext,
                    bool bPrinting,
                    const CFX_Matrix& mtMatrix,
-                   bool bWidget,
-                   CPDF_RenderOptions* pOptions,
-                   FX_RECT* clip_rect);
+                   bool bWidget);
 
   UnownedPtr<CPDF_Document> const m_pDocument;
 
