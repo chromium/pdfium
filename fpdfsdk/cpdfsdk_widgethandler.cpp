@@ -86,7 +86,7 @@ void CPDFSDK_WidgetHandler::OnDraw(CPDFSDK_Annot* pAnnot,
   CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
   if (pWidget->IsSignatureWidget()) {
     pWidget->DrawAppearance(pDevice, mtUser2Device,
-                            CPDF_Annot::AppearanceMode::kNormal, nullptr);
+                            CPDF_Annot::AppearanceMode::kNormal);
   } else {
     GetFormFillEnvironment()->GetInteractiveFormFiller()->OnDraw(
         pWidget->GetPageView(), pWidget, pDevice, mtUser2Device);

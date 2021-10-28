@@ -22,7 +22,6 @@ class CFX_RenderDevice;
 class CPDF_Annot;
 class CPDF_FormControl;
 class CPDF_FormField;
-class CPDF_RenderOptions;
 class CPDFSDK_FormFillEnvironment;
 class CPDFSDK_InteractiveForm;
 class CPDFSDK_PageView;
@@ -52,9 +51,10 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
   // CPDFSDK_BAAnnot:
   CPDF_Action GetAAction(CPDF_AAction::AActionType eAAT) override;
   bool IsAppearanceValid() override;
-
-  // CPDFSDK_Annot:
   int GetLayoutOrder() const override;
+  void DrawAppearance(CFX_RenderDevice* pDevice,
+                      const CFX_Matrix& mtUser2Device,
+                      CPDF_Annot::AppearanceMode mode) override;
 
   bool IsSignatureWidget() const;
   void SetRect(const CFX_FloatRect& rect);
@@ -121,11 +121,6 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
   uint32_t GetValueAge() const { return m_nValueAge; }
 
   bool IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode mode);
-  void DrawAppearance(CFX_RenderDevice* pDevice,
-                      const CFX_Matrix& mtUser2Device,
-                      CPDF_Annot::AppearanceMode mode,
-                      const CPDF_RenderOptions* pOptions) override;
-
   CFX_Matrix GetMatrix() const;
   CFX_FloatRect GetClientRect() const;
   CFX_FloatRect GetRotatedRect() const;

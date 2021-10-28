@@ -379,8 +379,7 @@ size_t CPDF_Annot::QuadPointCount(const CPDF_Array* pArray) {
 bool CPDF_Annot::DrawAppearance(CPDF_Page* pPage,
                                 CFX_RenderDevice* pDevice,
                                 const CFX_Matrix& mtUser2Device,
-                                AppearanceMode mode,
-                                const CPDF_RenderOptions* pOptions) {
+                                AppearanceMode mode) {
   if (!ShouldDrawAnnotation())
     return false;
 
@@ -400,7 +399,7 @@ bool CPDF_Annot::DrawAppearance(CPDF_Page* pPage,
       pPage->GetDocument(), pPage->GetPageResources(),
       static_cast<CPDF_PageRenderCache*>(pPage->GetRenderCache()));
   context.AppendLayer(pForm, matrix);
-  context.Render(pDevice, pOptions, nullptr);
+  context.Render(pDevice, nullptr, nullptr);
   return true;
 }
 
@@ -428,8 +427,7 @@ bool CPDF_Annot::DrawInContext(const CPDF_Page* pPage,
 }
 
 void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
-                            const CFX_Matrix* pUser2Device,
-                            const CPDF_RenderOptions* pOptions) {
+                            const CFX_Matrix* pUser2Device) {
   if (GetSubtype() == CPDF_Annot::Subtype::POPUP)
     return;
 
@@ -513,12 +511,9 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
 
   CFX_FloatRect rect = GetRect();
   rect.Deflate(width / 2, width / 2);
+
   CFX_Path path;
   path.AppendFloatRect(rect);
-
-  CFX_FillRenderOptions fill_options;
-  if (pOptions && pOptions->GetOptions().bNoPathSmooth)
-    fill_options.aliased_path = true;
-
-  pDevice->DrawPath(path, pUser2Device, &graph_state, argb, argb, fill_options);
+  pDevice->DrawPath(path, pUser2Device, &graph_state, argb, argb,
+                    CFX_FillRenderOptions());
 }

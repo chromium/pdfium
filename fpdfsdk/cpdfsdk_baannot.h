@@ -18,7 +18,6 @@
 
 class CFX_Matrix;
 class CPDF_Dictionary;
-class CPDF_RenderOptions;
 class CPDFSDK_PageView;
 
 class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
@@ -37,8 +36,7 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
   virtual bool IsAppearanceValid();
   virtual void DrawAppearance(CFX_RenderDevice* pDevice,
                               const CFX_Matrix& mtUser2Device,
-                              CPDF_Annot::AppearanceMode mode,
-                              const CPDF_RenderOptions* pOptions);
+                              CPDF_Annot::AppearanceMode mode);
 
   CPDF_Dictionary* GetAnnotDict() const;
   CPDF_Annot* GetPDFPopupAnnot() const;

@@ -82,7 +82,7 @@ void CFFL_InteractiveFormFiller::OnDraw(CPDFSDK_PageView* pPageView,
     pFormField->OnDrawDeactive(pPageView, pWidget, pDevice, mtUser2Device);
   } else {
     pWidget->DrawAppearance(pDevice, mtUser2Device,
-                            CPDF_Annot::AppearanceMode::kNormal, nullptr);
+                            CPDF_Annot::AppearanceMode::kNormal);
   }
 
   if (!IsReadOnly(pWidget) && IsFillingAllowed(pWidget))

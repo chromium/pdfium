@@ -668,8 +668,7 @@ void CPDFSDK_Widget::ResetFieldAppearance() {
 
 void CPDFSDK_Widget::DrawAppearance(CFX_RenderDevice* pDevice,
                                     const CFX_Matrix& mtUser2Device,
-                                    CPDF_Annot::AppearanceMode mode,
-                                    const CPDF_RenderOptions* pOptions) {
+                                    CPDF_Annot::AppearanceMode mode) {
   FormFieldType fieldType = GetFieldType();
 
   if ((fieldType == FormFieldType::kCheckBox ||
@@ -684,7 +683,7 @@ void CPDFSDK_Widget::DrawAppearance(CFX_RenderDevice* pDevice,
     pDevice->DrawPath(path, &mtUser2Device, &gsd, 0, 0xFFAAAAAA,
                       CFX_FillRenderOptions::EvenOddOptions());
   } else {
-    CPDFSDK_BAAnnot::DrawAppearance(pDevice, mtUser2Device, mode, pOptions);
+    CPDFSDK_BAAnnot::DrawAppearance(pDevice, mtUser2Device, mode);
   }
 }
 
