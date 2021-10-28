@@ -730,11 +730,10 @@ CPDFSDK_InteractiveForm* CPDFSDK_FormFillEnvironment::GetInteractiveForm() {
   return m_pInteractiveForm.get();
 }
 
-void CPDFSDK_FormFillEnvironment::UpdateAllViews(CPDFSDK_PageView* pSender,
-                                                 CPDFSDK_Annot* pAnnot) {
+void CPDFSDK_FormFillEnvironment::UpdateAllViews(CPDFSDK_Annot* pAnnot) {
   for (const auto& it : m_PageMap) {
     CPDFSDK_PageView* pPageView = it.second.get();
-    if (pPageView != pSender)
+    if (pPageView)
       pPageView->UpdateView(pAnnot);
   }
 }

@@ -96,7 +96,7 @@ void UpdateFormField(CPDFSDK_FormFillEnvironment* pFormFillEnv,
       if (pObserved) {
         CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pObserved.Get());
         pWidget->GetInteractiveForm()->GetFormFillEnv()->UpdateAllViews(
-            nullptr, pWidget);
+            pWidget);
       }
     }
   }
@@ -135,7 +135,7 @@ void UpdateFormControl(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 
     if (bRefresh) {
       CPDFSDK_InteractiveForm* pWidgetForm = pWidget->GetInteractiveForm();
-      pWidgetForm->GetFormFillEnv()->UpdateAllViews(nullptr, pWidget);
+      pWidgetForm->GetFormFillEnv()->UpdateAllViews(pWidget);
     }
   }
 

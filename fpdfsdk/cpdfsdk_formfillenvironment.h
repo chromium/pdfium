@@ -86,7 +86,7 @@ class CPDFSDK_FormFillEnvironment final
 
   CPDFSDK_PageView* GetPageViewAtIndex(int nIndex);
   void RemovePageView(IPDF_Page* pUnderlyingPage);
-  void UpdateAllViews(CPDFSDK_PageView* pSender, CPDFSDK_Annot* pAnnot);
+  void UpdateAllViews(CPDFSDK_Annot* pAnnot);
 
   bool KillFocusAnnot(Mask<FWL_EVENTFLAG> nFlag);
   void ClearAllFocusedAnnots();
