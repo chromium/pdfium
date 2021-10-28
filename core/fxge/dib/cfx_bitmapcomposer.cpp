@@ -6,6 +6,7 @@
 
 #include "core/fxge/dib/cfx_bitmapcomposer.h"
 
+#include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 
@@ -109,8 +110,17 @@ void CFX_BitmapComposer::ComposeScanline(int line,
                     m_pClipMask->GetPitch() +
                 (m_DestLeft - m_pClipRgn->GetBox().left);
   }
-  uint8_t* dest_scan = m_pBitmap->GetWritableScanline(line + m_DestTop) +
-                       m_DestLeft * m_pBitmap->GetBPP() / 8;
+  uint8_t* dest_scan = m_pBitmap->GetWritableScanline(line + m_DestTop);
+  if (dest_scan) {
+    FX_SAFE_UINT32 offset = m_DestLeft;
+    offset *= m_pBitmap->GetBPP();
+    offset /= 8;
+    if (!offset.IsValid())
+      return;
+
+    // Help some compilers perform pointer arithmetic against safe numerics.
+    dest_scan += static_cast<uint32_t>(offset.ValueOrDie());
+  }
   uint8_t* dest_alpha_scan =
       m_pBitmap->m_pAlphaMask
           ? m_pBitmap->m_pAlphaMask->GetWritableScanline(line + m_DestTop) +

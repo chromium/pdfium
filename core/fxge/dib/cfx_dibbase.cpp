@@ -628,15 +628,25 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::Clone(const FX_RECT* pClip) const {
       }
     }
   } else {
-    int copy_len = (pNewBitmap->GetWidth() * pNewBitmap->GetBPP() + 7) / 8;
-    if (m_Pitch < static_cast<uint32_t>(copy_len))
-      copy_len = m_Pitch;
+    FX_SAFE_UINT32 copy_len = pNewBitmap->GetWidth();
+    copy_len *= pNewBitmap->GetBPP();
+    copy_len += 7;
+    copy_len /= 8;
+    if (!copy_len.IsValid())
+      return nullptr;
+
+    copy_len = std::min<uint32_t>(m_Pitch, copy_len.ValueOrDie());
+
+    FX_SAFE_UINT32 offset = rect.left;
+    offset *= GetBppFromFormat(m_Format);
+    offset /= 8;
+    if (!offset.IsValid())
+      return nullptr;
 
     for (int row = rect.top; row < rect.bottom; ++row) {
-      const uint8_t* src_scan =
-          GetScanline(row) + rect.left * GetBppFromFormat(m_Format) / 8;
+      const uint8_t* src_scan = GetScanline(row) + offset.ValueOrDie();
       uint8_t* dest_scan = pNewBitmap->GetWritableScanline(row - rect.top);
-      memcpy(dest_scan, src_scan, copy_len);
+      memcpy(dest_scan, src_scan, copy_len.ValueOrDie());
     }
   }
   return pNewBitmap;
