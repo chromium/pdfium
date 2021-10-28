@@ -56,7 +56,7 @@ RetainPtr<CFX_DIBBase> CPDF_ImageLoader::TranslateImage(
 
   m_pBitmap = pTransferFunc->TranslateImage(m_pBitmap);
   if (m_bCached && m_pMask)
-    m_pMask = m_pMask->Clone(nullptr);
+    m_pMask = m_pMask->Realize();
   m_bCached = false;
   return m_pBitmap;
 }

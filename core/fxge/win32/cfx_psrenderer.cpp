@@ -545,11 +545,11 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
     switch (pSource->GetFormat()) {
       case FXDIB_Format::k1bppRgb:
       case FXDIB_Format::kRgb32:
-        pConverted = pConverted->CloneConvert(FXDIB_Format::kRgb);
+        pConverted = pConverted->ConvertTo(FXDIB_Format::kRgb);
         break;
       case FXDIB_Format::k8bppRgb:
         if (pSource->HasPalette())
-          pConverted = pConverted->CloneConvert(FXDIB_Format::kRgb);
+          pConverted = pConverted->ConvertTo(FXDIB_Format::kRgb);
         break;
       default:
         break;

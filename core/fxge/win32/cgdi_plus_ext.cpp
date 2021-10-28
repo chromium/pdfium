@@ -203,25 +203,26 @@ Gdiplus::GpBrush* GdipCreateBrushImpl(DWORD argb) {
 
 void OutputImage(Gdiplus::GpGraphics* pGraphics,
                  const RetainPtr<CFX_DIBitmap>& pBitmap,
-                 const FX_RECT* pSrcRect,
+                 const FX_RECT& src_rect,
                  int dest_left,
                  int dest_top,
                  int dest_width,
                  int dest_height) {
-  int src_width = pSrcRect->Width(), src_height = pSrcRect->Height();
+  int src_width = src_rect.Width();
+  int src_height = src_rect.Height();
   const CGdiplusExt& GdiplusExt = GetGdiplusExt();
-  if (pBitmap->GetBPP() == 1 && (pSrcRect->left % 8)) {
+  if (pBitmap->GetBPP() == 1 && (src_rect.left % 8)) {
     FX_RECT new_rect(0, 0, src_width, src_height);
-    RetainPtr<CFX_DIBitmap> pCloned = pBitmap->Clone(pSrcRect);
+    RetainPtr<CFX_DIBitmap> pCloned = pBitmap->ClipTo(src_rect);
     if (!pCloned)
       return;
-    OutputImage(pGraphics, pCloned, &new_rect, dest_left, dest_top, dest_width,
+    OutputImage(pGraphics, pCloned, new_rect, dest_left, dest_top, dest_width,
                 dest_height);
     return;
   }
   int src_pitch = pBitmap->GetPitch();
-  uint8_t* scan0 = pBitmap->GetBuffer() + pSrcRect->top * src_pitch +
-                   pBitmap->GetBPP() * pSrcRect->left / 8;
+  uint8_t* scan0 = pBitmap->GetBuffer() + src_rect.top * src_pitch +
+                   pBitmap->GetBPP() * src_rect.left / 8;
   Gdiplus::GpBitmap* bitmap = nullptr;
   switch (pBitmap->GetFormat()) {
     case FXDIB_Format::kArgb:
@@ -589,7 +590,7 @@ bool CGdiplusExt::StretchDIBits(HDC hDC,
                                        Gdiplus::InterpolationModeBilinear);
   }
   FX_RECT src_rect(0, 0, pBitmap->GetWidth(), pBitmap->GetHeight());
-  OutputImage(pGraphics, pBitmap, &src_rect, dest_left, dest_top, dest_width,
+  OutputImage(pGraphics, pBitmap, src_rect, dest_left, dest_top, dest_width,
               dest_height);
   CallFunc(GdipDeleteGraphics)(pGraphics);
   CallFunc(GdipDeleteGraphics)(pGraphics);

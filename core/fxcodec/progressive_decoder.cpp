@@ -1300,7 +1300,7 @@ FXCODEC_STATUS ProgressiveDecoder::TiffContinueDecode() {
       (m_clipBox.left == 0 && m_clipBox.top == 0 &&
        m_clipBox.right == m_SrcWidth && m_clipBox.bottom == m_SrcHeight)
           ? pDIBitmap
-          : pDIBitmap->Clone(&m_clipBox);
+          : pDIBitmap->ClipTo(m_clipBox);
   if (!pClipBitmap) {
     m_pDeviceBitmap = nullptr;
     m_pFile = nullptr;

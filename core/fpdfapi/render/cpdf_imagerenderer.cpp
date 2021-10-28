@@ -103,7 +103,7 @@ bool CPDF_ImageRenderer::StartRenderDIBBase() {
     }
     m_FillArgb = m_pRenderStatus->GetFillArgb(m_pImageObject.Get());
   } else if (GetRenderOptions().ColorModeIs(CPDF_RenderOptions::kGray)) {
-    RetainPtr<CFX_DIBitmap> pClone = m_pDIBBase->Clone(nullptr);
+    RetainPtr<CFX_DIBitmap> pClone = m_pDIBBase->Realize();
     if (!pClone)
       return false;
 
@@ -392,7 +392,7 @@ bool CPDF_ImageRenderer::StartDIBBase() {
     }
   }
 #if defined(_SKIA_SUPPORT_)
-  RetainPtr<CFX_DIBitmap> premultiplied = m_pDIBBase->Clone(nullptr);
+  RetainPtr<CFX_DIBitmap> premultiplied = m_pDIBBase->Realize();
   if (m_pDIBBase->IsAlphaFormat())
     CFX_SkiaDeviceDriver::PreMultiply(premultiplied);
   if (m_pRenderStatus->GetRenderDevice()->StartDIBitsWithBlend(

@@ -1321,14 +1321,14 @@ bool CFX_AggDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
                top + pBitmap->GetHeight());
   RetainPtr<CFX_DIBitmap> pBack;
   if (m_pBackdropBitmap) {
-    pBack = m_pBackdropBitmap->Clone(&rect);
+    pBack = m_pBackdropBitmap->ClipTo(rect);
     if (!pBack)
       return true;
 
     pBack->CompositeBitmap(0, 0, pBack->GetWidth(), pBack->GetHeight(),
                            m_pBitmap, 0, 0, BlendMode::kNormal, nullptr, false);
   } else {
-    pBack = m_pBitmap->Clone(&rect);
+    pBack = m_pBitmap->ClipTo(rect);
     if (!pBack)
       return true;
   }

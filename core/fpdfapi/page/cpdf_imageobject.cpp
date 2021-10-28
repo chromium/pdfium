@@ -60,12 +60,13 @@ RetainPtr<CPDF_Image> CPDF_ImageObject::GetImage() const {
 RetainPtr<CFX_DIBitmap> CPDF_ImageObject::GetIndependentBitmap() const {
   RetainPtr<CFX_DIBBase> pSource = GetImage()->LoadDIBBase();
 
-  // Clone() is non-virtual, and can't be overloaded by CPDF_DIB to
-  // return a clone of the subclass as one would typically expect from a
-  // such a method. Instead, it only clones the CFX_DIBBase, none of whose
-  // members point to objects owned by |this| or the form containing |this|.
-  // As a result, the clone may outlive them.
-  return pSource ? pSource->Clone(nullptr) : nullptr;
+  // Realize() is non-virtual, and can't be overloaded by CPDF_DIB to
+  // return a full-up CPDF_DIB subclass. Instead, it only works upon the
+  // CFX_DIBBase, which is convenient since none of its members point to
+  // objects owned by |this| or the form containing |this|. As a result,
+  // the new bitmap may outlive them, giving the "independent" property
+  // this method is named after.
+  return pSource ? pSource->Realize() : nullptr;
 }
 
 void CPDF_ImageObject::SetImageMatrix(const CFX_Matrix& matrix) {

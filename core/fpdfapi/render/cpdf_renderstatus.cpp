@@ -1310,7 +1310,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(
     rect.Intersect(m_pDevice->GetClipBox());
     RetainPtr<CFX_DIBitmap> pClone;
     if (m_pDevice->GetBackDrop() && m_pDevice->GetBitmap()) {
-      pClone = m_pDevice->GetBackDrop()->Clone(&rect);
+      pClone = m_pDevice->GetBackDrop()->ClipTo(rect);
       if (!pClone)
         return;
 

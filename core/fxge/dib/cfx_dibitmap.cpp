@@ -301,7 +301,7 @@ bool CFX_DIBitmap::SetChannelFromBitmap(
     return false;
 
   if (pSrcBitmap->GetBPP() == 1) {
-    pSrcClone = pSrcBitmap->CloneConvert(FXDIB_Format::k8bppMask);
+    pSrcClone = pSrcBitmap->ConvertTo(FXDIB_Format::k8bppMask);
     if (!pSrcClone)
       return false;
   }

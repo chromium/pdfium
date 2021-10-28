@@ -42,7 +42,7 @@ bool CXFA_ImageRenderer::Start() {
     if (m_pDIBBase->IsAlphaFormat() &&
         !(m_pDevice->GetRenderCaps() & FXRC_ALPHA_IMAGE) &&
         !(m_pDevice->GetRenderCaps() & FXRC_GET_BITS)) {
-      m_pCloneConvert = m_pDIBBase->CloneConvert(FXDIB_Format::kRgb);
+      m_pCloneConvert = m_pDIBBase->ConvertTo(FXDIB_Format::kRgb);
       if (!m_pCloneConvert)
         return false;
 
@@ -144,12 +144,11 @@ void CXFA_ImageRenderer::CompositeDIBitmap(
     return;
   }
 
-  RetainPtr<CFX_DIBitmap> pCloneConvert =
-      pDIBitmap->CloneConvert(FXDIB_Format::kRgb);
-  if (!pCloneConvert)
+  RetainPtr<CFX_DIBitmap> pConverted = pDIBitmap->ConvertTo(FXDIB_Format::kRgb);
+  if (!pConverted)
     return;
 
-  CXFA_ImageRenderer imageRender(m_pDevice.Get(), pCloneConvert, m_ImageMatrix);
+  CXFA_ImageRenderer imageRender(m_pDevice.Get(), pConverted, m_ImageMatrix);
   if (!imageRender.Start())
     return;
 

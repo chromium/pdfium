@@ -618,7 +618,16 @@ uint32_t CFX_DIBBase::GetEstimatedImageMemoryBurden() const {
   return GetRequiredPaletteSize() * sizeof(uint32_t);
 }
 
-RetainPtr<CFX_DIBitmap> CFX_DIBBase::Clone(const FX_RECT* pClip) const {
+RetainPtr<CFX_DIBitmap> CFX_DIBBase::Realize() const {
+  return ClipToInternal(nullptr);
+}
+
+RetainPtr<CFX_DIBitmap> CFX_DIBBase::ClipTo(const FX_RECT& rect) const {
+  return ClipToInternal(&rect);
+}
+
+RetainPtr<CFX_DIBitmap> CFX_DIBBase::ClipToInternal(
+    const FX_RECT* pClip) const {
   FX_RECT rect(0, 0, m_Width, m_Height);
   if (pClip) {
     rect.Intersect(*pClip);
@@ -999,10 +1008,9 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::FlipImage(bool bXFlip, bool bYFlip) const {
   return pFlipped;
 }
 
-RetainPtr<CFX_DIBitmap> CFX_DIBBase::CloneConvert(
-    FXDIB_Format dest_format) const {
+RetainPtr<CFX_DIBitmap> CFX_DIBBase::ConvertTo(FXDIB_Format dest_format) const {
   if (dest_format == GetFormat())
-    return Clone(nullptr);
+    return Realize();
 
   auto pClone = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!pClone->Create(m_Width, m_Height, dest_format))
@@ -1158,7 +1166,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::StretchTo(
     return nullptr;
 
   if (dest_width == m_Width && dest_height == m_Height)
-    return Clone(&clip_rect);
+    return ClipTo(clip_rect);
 
   CFX_BitmapStorer storer;
   CFX_ImageStretcher stretcher(&storer, holder, dest_width, dest_height,

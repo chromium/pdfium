@@ -11,7 +11,7 @@
 
 CFX_DIBExtractor::CFX_DIBExtractor(const RetainPtr<CFX_DIBBase>& pSrc) {
   if (!pSrc->GetBuffer()) {
-    m_pBitmap = pSrc->Clone(nullptr);
+    m_pBitmap = pSrc->Realize();
     return;
   }
   RetainPtr<CFX_DIBBase> pOldSrc(pSrc);

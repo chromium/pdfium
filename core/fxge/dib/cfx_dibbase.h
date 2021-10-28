@@ -60,8 +60,9 @@ class CFX_DIBBase : public Retainable {
   // Copies into internally-owned palette.
   void SetPalette(pdfium::span<const uint32_t> src_palette);
 
-  RetainPtr<CFX_DIBitmap> Clone(const FX_RECT* pClip) const;
-  RetainPtr<CFX_DIBitmap> CloneConvert(FXDIB_Format format) const;
+  RetainPtr<CFX_DIBitmap> Realize() const;
+  RetainPtr<CFX_DIBitmap> ClipTo(const FX_RECT& clip) const;
+  RetainPtr<CFX_DIBitmap> ConvertTo(FXDIB_Format format) const;
   RetainPtr<CFX_DIBitmap> StretchTo(int dest_width,
                                     int dest_height,
                                     const FXDIB_ResampleOptions& options,
@@ -112,6 +113,7 @@ class CFX_DIBBase : public Retainable {
       int src_top,
       std::vector<uint32_t, FxAllocAllocator<uint32_t>>* pal);
 
+  RetainPtr<CFX_DIBitmap> ClipToInternal(const FX_RECT* pClip) const;
   void BuildPalette();
   bool BuildAlphaMask();
   int FindPalette(uint32_t color) const;
