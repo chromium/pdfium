@@ -258,11 +258,6 @@ void CFWL_Widget::SetGrab(bool bSet) {
   pDriver->SetGrab(bSet ? this : nullptr);
 }
 
-void CFWL_Widget::RegisterEventTarget(CFWL_Widget* pEventSource) {
-  CFWL_NoteDriver* pNoteDriver = GetFWLApp()->GetNoteDriver();
-  pNoteDriver->RegisterEventTarget(this, pEventSource);
-}
-
 void CFWL_Widget::UnregisterEventTarget() {
   CFWL_NoteDriver* pNoteDriver = GetFWLApp()->GetNoteDriver();
   pNoteDriver->UnregisterEventTarget(this);
@@ -349,9 +344,6 @@ void CFWL_Widget::OnProcessMessage(CFWL_Message* pMessage) {
 }
 
 void CFWL_Widget::OnProcessEvent(CFWL_Event* pEvent) {}
-
-void CFWL_Widget::OnDrawWidget(CFGAS_GEGraphics* pGraphics,
-                               const CFX_Matrix& matrix) {}
 
 CFWL_Widget::ScopedUpdateLock::ScopedUpdateLock(CFWL_Widget* widget)
     : widget_(widget) {

@@ -39,8 +39,9 @@ CFWL_DateTimePicker::CFWL_DateTimePicker(CFWL_App* app)
   m_pMonthCal->SetWidgetRect(
       CFX_RectF(0, 0, m_pMonthCal->GetAutosizedWidgetRect().Size()));
 
-  RegisterEventTarget(m_pMonthCal);
-  RegisterEventTarget(m_pEdit);
+  CFWL_NoteDriver* pNoteDriver = GetFWLApp()->GetNoteDriver();
+  pNoteDriver->RegisterEventTarget(this, m_pMonthCal);
+  pNoteDriver->RegisterEventTarget(this, m_pEdit);
 }
 
 CFWL_DateTimePicker::~CFWL_DateTimePicker() = default;

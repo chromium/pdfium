@@ -118,8 +118,6 @@ class CFWL_Widget : public cppgc::GarbageCollected<CFWL_Widget>,
   // IFWL_WidgetDelegate:
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
-  void OnDrawWidget(CFGAS_GEGraphics* pGraphics,
-                    const CFX_Matrix& matrix) override;
 
   void InflateWidgetRect(CFX_RectF& rect);
   void SetWidgetRect(const CFX_RectF& rect);
@@ -172,7 +170,6 @@ class CFWL_Widget : public cppgc::GarbageCollected<CFWL_Widget>,
                     FDE_TextAlignment iTTOAlign,
                     CFX_RectF* pRect);
   void SetGrab(bool bSet);
-  void RegisterEventTarget(CFWL_Widget* pEventSource);
   void UnregisterEventTarget();
   void DispatchEvent(CFWL_Event* pEvent);
   void DrawBorder(CFGAS_GEGraphics* pGraphics,
