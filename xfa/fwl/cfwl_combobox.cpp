@@ -482,7 +482,7 @@ void CFWL_ComboBox::OnFocusGained() {
 void CFWL_ComboBox::OnFocusLost() {
   m_Properties.m_dwStates &= ~FWL_STATE_WGT_Focused;
   HideDropDownList();
-  CFWL_MessageKillFocus msg(m_pEdit);
+  CFWL_MessageKillFocus msg(m_pEdit, nullptr);
   m_pEdit->GetDelegate()->OnProcessMessage(&msg);
 }
 
