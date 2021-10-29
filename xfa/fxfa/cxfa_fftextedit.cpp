@@ -179,13 +179,13 @@ bool CXFA_FFTextEdit::OnSetFocus(CXFA_FFWidget* pOldWidget) {
   if (!CXFA_FFWidget::OnSetFocus(pOldWidget))
     return false;
 
-  CFWL_MessageSetFocus msg(nullptr, GetNormalWidget());
+  CFWL_MessageSetFocus msg(GetNormalWidget());
   SendMessageToFWLWidget(&msg);
   return true;
 }
 
 bool CXFA_FFTextEdit::OnKillFocus(CXFA_FFWidget* pNewWidget) {
-  CFWL_MessageKillFocus msg(nullptr, GetNormalWidget());
+  CFWL_MessageKillFocus msg(GetNormalWidget());
   SendMessageToFWLWidget(&msg);
 
   GetLayoutItem()->ClearStatusBits(XFA_WidgetStatus::kFocused);

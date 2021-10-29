@@ -6,9 +6,7 @@
 
 #include "xfa/fwl/cfwl_message.h"
 
-CFWL_Message::CFWL_Message(Type type,
-                           CFWL_Widget* pSrcTarget,
-                           CFWL_Widget* pDstTarget)
-    : m_type(type), m_pSrcTarget(pSrcTarget), m_pDstTarget(pDstTarget) {}
+CFWL_Message::CFWL_Message(Type type, CFWL_Widget* pDstTarget)
+    : m_type(type), m_pDstTarget(pDstTarget) {}
 
 CFWL_Message::~CFWL_Message() = default;

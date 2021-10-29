@@ -6,8 +6,7 @@
 
 #include "xfa/fwl/cfwl_messagesetfocus.h"
 
-CFWL_MessageSetFocus::CFWL_MessageSetFocus(CFWL_Widget* pSrcTarget,
-                                           CFWL_Widget* pDstTarget)
-    : CFWL_Message(CFWL_Message::Type::kSetFocus, pSrcTarget, pDstTarget) {}
+CFWL_MessageSetFocus::CFWL_MessageSetFocus(CFWL_Widget* pDstTarget)
+    : CFWL_Message(CFWL_Message::Type::kSetFocus, pDstTarget) {}
 
 CFWL_MessageSetFocus::~CFWL_MessageSetFocus() = default;

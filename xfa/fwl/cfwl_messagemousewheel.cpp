@@ -9,7 +9,7 @@
 CFWL_MessageMouseWheel::CFWL_MessageMouseWheel(CFWL_Widget* destination,
                                                const CFX_PointF& pos,
                                                const CFX_Vector& delta)
-    : CFWL_Message(CFWL_Message::Type::kMouseWheel, nullptr, destination),
+    : CFWL_Message(CFWL_Message::Type::kMouseWheel, destination),
       pos_(pos),
       delta_(delta) {}
 

@@ -474,7 +474,7 @@ void CFWL_ComboBox::OnLButtonDown(CFWL_MessageMouse* pMsg) {
 void CFWL_ComboBox::OnFocusGained() {
   m_Properties.m_dwStates |= FWL_STATE_WGT_Focused;
   if ((m_pEdit->GetStates() & FWL_STATE_WGT_Focused) == 0) {
-    CFWL_MessageSetFocus msg(nullptr, m_pEdit);
+    CFWL_MessageSetFocus msg(m_pEdit);
     m_pEdit->GetDelegate()->OnProcessMessage(&msg);
   }
 }
@@ -482,7 +482,7 @@ void CFWL_ComboBox::OnFocusGained() {
 void CFWL_ComboBox::OnFocusLost() {
   m_Properties.m_dwStates &= ~FWL_STATE_WGT_Focused;
   HideDropDownList();
-  CFWL_MessageKillFocus msg(m_pEdit, nullptr);
+  CFWL_MessageKillFocus msg(nullptr);
   m_pEdit->GetDelegate()->OnProcessMessage(&msg);
 }
 

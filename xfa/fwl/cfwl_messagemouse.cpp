@@ -10,7 +10,7 @@ CFWL_MessageMouse::CFWL_MessageMouse(CFWL_Widget* pDstTarget,
                                      MouseCommand cmd,
                                      Mask<XFA_FWL_KeyFlag> flags,
                                      CFX_PointF pos)
-    : CFWL_Message(CFWL_Message::Type::kMouse, nullptr, pDstTarget),
+    : CFWL_Message(CFWL_Message::Type::kMouse, pDstTarget),
       m_dwCmd(cmd),
       m_dwFlags(flags),
       m_pos(pos) {}

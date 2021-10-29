@@ -216,7 +216,7 @@ void CFWL_DateTimePicker::ShowMonthCalendar() {
   m_pMonthCal->Update();
   m_pMonthCal->RemoveStates(FWL_STATE_WGT_Invisible);
 
-  CFWL_MessageSetFocus msg(m_pEdit, m_pMonthCal);
+  CFWL_MessageSetFocus msg(m_pMonthCal);
   m_pEdit->GetDelegate()->OnProcessMessage(&msg);
   RepaintInflatedMonthCalRect();
 }
@@ -368,10 +368,8 @@ void CFWL_DateTimePicker::OnFocusLost(CFWL_Message* pMsg) {
   m_Properties.m_dwStates &= ~FWL_STATE_WGT_Focused;
   m_BtnRect = CFX_RectF();
   HideMonthCalendar();
-  if (m_pEdit->GetStates() & FWL_STATE_WGT_Focused) {
-    pMsg->SetSrcTarget(m_pEdit);
+  if (m_pEdit->GetStates() & FWL_STATE_WGT_Focused)
     m_pEdit->GetDelegate()->OnProcessMessage(pMsg);
-  }
   rtInvalidate.Inflate(2, 2);
   RepaintRect(rtInvalidate);
 }

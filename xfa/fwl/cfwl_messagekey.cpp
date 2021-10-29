@@ -10,7 +10,7 @@ CFWL_MessageKey::CFWL_MessageKey(CFWL_Widget* pDstTarget,
                                  KeyCommand cmd,
                                  Mask<XFA_FWL_KeyFlag> flags,
                                  uint32_t dwKeyCodeOrChar)
-    : CFWL_Message(CFWL_Message::Type::kKey, nullptr, pDstTarget),
+    : CFWL_Message(CFWL_Message::Type::kKey, pDstTarget),
       m_dwCmd(cmd),
       m_dwFlags(flags),
       m_dwKeyCodeOrChar(dwKeyCodeOrChar) {}
