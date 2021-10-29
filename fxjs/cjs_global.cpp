@@ -34,7 +34,7 @@ void JSSpecialPropQuery(v8::Local<v8::String> property,
     return;
 
   WideString wsProp = fxv8::ToWideString(info.GetIsolate(), property);
-  CJS_Result result = pObj->QueryProperty(wsProp.c_str());
+  CJS_Result result = pObj->QueryProperty(wsProp);
   v8::PropertyAttribute attr = !result.HasError()
                                    ? v8::PropertyAttribute::DontDelete
                                    : v8::PropertyAttribute::None;
@@ -53,7 +53,7 @@ void JSSpecialPropGet(v8::Local<v8::String> property,
     return;
 
   WideString wsProp = fxv8::ToWideString(info.GetIsolate(), property);
-  CJS_Result result = pObj->GetProperty(pRuntime, wsProp.c_str());
+  CJS_Result result = pObj->GetProperty(pRuntime, wsProp);
   if (result.HasError()) {
     pRuntime->Error(
         JSFormatErrorString("global", "GetProperty", result.Error()));
@@ -75,7 +75,7 @@ void JSSpecialPropPut(v8::Local<v8::String> property,
     return;
 
   WideString wsProp = fxv8::ToWideString(info.GetIsolate(), property);
-  CJS_Result result = pObj->SetProperty(pRuntime, wsProp.c_str(), value);
+  CJS_Result result = pObj->SetProperty(pRuntime, wsProp, value);
   if (result.HasError()) {
     pRuntime->Error(
         JSFormatErrorString("global", "PutProperty", result.Error()));
@@ -93,7 +93,7 @@ void JSSpecialPropDel(v8::Local<v8::String> property,
     return;
 
   WideString wsProp = fxv8::ToWideString(info.GetIsolate(), property);
-  pObj->DelProperty(pRuntime, wsProp.c_str());  // Silently ignore error.
+  pObj->DelProperty(pRuntime, wsProp);  // Silently ignore error.
 }
 
 v8::Local<v8::String> GetV8StringFromName(v8::Isolate* pIsolate,
@@ -184,16 +184,16 @@ CJS_Global::~CJS_Global() {
   m_pGlobalData.Release()->Release();
 }
 
-CJS_Result CJS_Global::QueryProperty(const wchar_t* propname) {
-  if (WideString(propname).EqualsASCII("setPersistent"))
+CJS_Result CJS_Global::QueryProperty(const WideString& propname) {
+  if (propname.EqualsASCII("setPersistent"))
     return CJS_Result::Success();
 
   return CJS_Result::Failure(JSMessage::kUnknownProperty);
 }
 
 CJS_Result CJS_Global::DelProperty(CJS_Runtime* pRuntime,
-                                   const wchar_t* propname) {
-  auto it = m_MapGlobal.find(WideString(propname).ToDefANSI());
+                                   const WideString& propname) {
+  auto it = m_MapGlobal.find(propname.ToDefANSI());
   if (it == m_MapGlobal.end())
     return CJS_Result::Failure(JSMessage::kUnknownProperty);
 
@@ -202,8 +202,8 @@ CJS_Result CJS_Global::DelProperty(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Global::GetProperty(CJS_Runtime* pRuntime,
-                                   const wchar_t* propname) {
-  auto it = m_MapGlobal.find(WideString(propname).ToDefANSI());
+                                   const WideString& propname) {
+  auto it = m_MapGlobal.find(propname.ToDefANSI());
   if (it == m_MapGlobal.end())
     return CJS_Result::Success();
 
@@ -231,9 +231,9 @@ CJS_Result CJS_Global::GetProperty(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Global::SetProperty(CJS_Runtime* pRuntime,
-                                   const wchar_t* propname,
+                                   const WideString& propname,
                                    v8::Local<v8::Value> vp) {
-  ByteString sPropName = WideString(propname).ToDefANSI();
+  ByteString sPropName = propname.ToDefANSI();
   if (vp->IsNumber()) {
     return SetGlobalVariables(sPropName, CFX_Value::DataType::kNumber,
                               pRuntime->ToDouble(vp), false, ByteString(),
