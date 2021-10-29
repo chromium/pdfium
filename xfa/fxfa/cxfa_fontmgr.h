@@ -24,7 +24,7 @@ class CXFA_FontMgr final : public cppgc::GarbageCollected<CXFA_FontMgr> {
 
   void Trace(cppgc::Visitor* visitor) const;
   RetainPtr<CFGAS_GEFont> GetFont(CXFA_FFDoc* hDoc,
-                                  WideStringView wsFontFamily,
+                                  const WideString& wsFontFamily,
                                   uint32_t dwFontStyles);
 
  private:

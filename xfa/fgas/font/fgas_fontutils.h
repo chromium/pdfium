@@ -29,7 +29,7 @@ struct FGAS_FontInfo {
   FX_CodePage wCodePage;
 };
 
-WideString FGAS_FontNameToEnglishName(WideStringView wsLocalName);
-const FGAS_FontInfo* FGAS_FontInfoByFontName(WideStringView wsFontName);
+WideString FGAS_FontNameToEnglishName(const WideString& wsLocalName);
+const FGAS_FontInfo* FGAS_FontInfoByFontName(const WideString& wsFontName);
 
 #endif  // XFA_FGAS_FONT_FGAS_FONTUTILS_H_

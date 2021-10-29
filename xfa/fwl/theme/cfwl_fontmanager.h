@@ -23,7 +23,7 @@ class CFWL_FontManager final {
   static CFWL_FontManager* GetInstance();
   static void DestroyInstance();
 
-  RetainPtr<CFGAS_GEFont> FindFont(WideStringView wsFontFamily,
+  RetainPtr<CFGAS_GEFont> FindFont(const WideString& wsFontFamily,
                                    uint32_t dwFontStyles,
                                    FX_CodePage dwCodePage);
 
@@ -33,10 +33,10 @@ class CFWL_FontManager final {
     FontData();
     ~FontData();
 
-    bool Equal(WideStringView wsFontFamily,
+    bool Equal(const WideString& wsFontFamily,
                uint32_t dwFontStyles,
                FX_CodePage wCodePage);
-    bool LoadFont(WideStringView wsFontFamily,
+    bool LoadFont(const WideString& wsFontFamily,
                   uint32_t dwFontStyles,
                   FX_CodePage wCodePage);
     RetainPtr<CFGAS_GEFont> GetFont() const;

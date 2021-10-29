@@ -21,17 +21,17 @@
 #include "xfa/fgas/font/fgas_fontutils.h"
 
 // static
-RetainPtr<CFGAS_GEFont> CFGAS_GEFont::LoadFont(const wchar_t* pszFontFamily,
+RetainPtr<CFGAS_GEFont> CFGAS_GEFont::LoadFont(const WideString& wsFontFamily,
                                                uint32_t dwFontStyles,
                                                FX_CodePage wCodePage) {
 #if defined(OS_WIN)
   auto pFont = pdfium::MakeRetain<CFGAS_GEFont>();
-  if (!pFont->LoadFontInternal(pszFontFamily, dwFontStyles, wCodePage))
+  if (!pFont->LoadFontInternal(wsFontFamily, dwFontStyles, wCodePage))
     return nullptr;
   return pFont;
 #else
   return CFGAS_GEModule::Get()->GetFontMgr()->GetFontByCodePage(
-      wCodePage, dwFontStyles, pszFontFamily);
+      wCodePage, dwFontStyles, wsFontFamily);
 #endif
 }
 
@@ -69,18 +69,15 @@ CFGAS_GEFont::CFGAS_GEFont() = default;
 CFGAS_GEFont::~CFGAS_GEFont() = default;
 
 #if defined(OS_WIN)
-bool CFGAS_GEFont::LoadFontInternal(const wchar_t* pszFontFamily,
+bool CFGAS_GEFont::LoadFontInternal(const WideString& wsFontFamily,
                                     uint32_t dwFontStyles,
                                     FX_CodePage wCodePage) {
   if (m_pFont)
     return false;
-  ByteString csFontFamily;
-  if (pszFontFamily)
-    csFontFamily = WideString(pszFontFamily).ToDefANSI();
 
+  ByteString csFontFamily = wsFontFamily.ToDefANSI();
   int32_t iWeight =
       FontStyleIsForceBold(dwFontStyles) ? FXFONT_FW_BOLD : FXFONT_FW_NORMAL;
-  m_pFont = std::make_unique<CFX_Font>();
   if (FontStyleIsItalic(dwFontStyles) && FontStyleIsForceBold(dwFontStyles))
     csFontFamily += ",BoldItalic";
   else if (FontStyleIsForceBold(dwFontStyles))
@@ -88,6 +85,7 @@ bool CFGAS_GEFont::LoadFontInternal(const wchar_t* pszFontFamily,
   else if (FontStyleIsItalic(dwFontStyles))
     csFontFamily += ",Italic";
 
+  m_pFont = std::make_unique<CFX_Font>();
   m_pFont->LoadSubst(csFontFamily, true, dwFontStyles, iWeight, 0, wCodePage,
                      false);
   return m_pFont->GetFaceRec() && InitFont();
@@ -241,7 +239,7 @@ std::pair<int32_t, RetainPtr<CFGAS_GEFont>> CFGAS_GEFont::GetGlyphIndexAndFont(
       pFontMgr->GetFontByUnicode(wUnicode, GetFontStyles(), wsFamily.c_str());
 #if !defined(OS_WIN)
   if (!pFont)
-    pFont = pFontMgr->GetFontByUnicode(wUnicode, GetFontStyles(), nullptr);
+    pFont = pFontMgr->GetFontByUnicode(wUnicode, GetFontStyles(), WideString());
 #endif
   if (!pFont || pFont == this)  // Avoids direct cycles below.
     return {0xFFFF, nullptr};

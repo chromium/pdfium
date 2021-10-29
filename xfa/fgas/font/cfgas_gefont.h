@@ -31,7 +31,7 @@ class CFGAS_GEFont final : public Retainable {
  public:
   CONSTRUCT_VIA_MAKE_RETAIN;
 
-  static RetainPtr<CFGAS_GEFont> LoadFont(const wchar_t* pszFontFamily,
+  static RetainPtr<CFGAS_GEFont> LoadFont(const WideString& wsFontFamily,
                                           uint32_t dwFontStyles,
                                           FX_CodePage wCodePage);
   static RetainPtr<CFGAS_GEFont> LoadFont(const RetainPtr<CPDF_Font>& pFont);
@@ -58,7 +58,7 @@ class CFGAS_GEFont final : public Retainable {
   ~CFGAS_GEFont() override;
 
 #if defined(OS_WIN)
-  bool LoadFontInternal(const wchar_t* pszFontFamily,
+  bool LoadFontInternal(const WideString& wsFontFamily,
                         uint32_t dwFontStyles,
                         FX_CodePage wCodePage);
 #endif
