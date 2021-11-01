@@ -474,7 +474,7 @@ ConversionStatus FX_ParseDateUsingFormat(const WideString& value,
                 for (size_t m = 0; m < pdfium::size(kFullMonths); ++m) {
                   WideString sFullMonths = WideString(kFullMonths[m]);
                   sFullMonths.MakeLower();
-                  if (sFullMonths.Contains(sMonth.c_str())) {
+                  if (sFullMonths.Contains(sMonth.AsStringView())) {
                     nMonth = m + 1;
                     i += 4;
                     j += nSkip;
@@ -483,7 +483,6 @@ ConversionStatus FX_ParseDateUsingFormat(const WideString& value,
                   }
                 }
               }
-
               if (!bFind) {
                 nMonth = FX_ParseStringInteger(value, j, &nSkip, 4);
                 i += 4;
