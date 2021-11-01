@@ -164,8 +164,7 @@ const char kNarrowFamily[] = "RobotoCondensed";
 const char kNarrowFamily[] = "ArialNarrow";
 #endif  // defined(OS_LINUX) || defined(OS_CHROMEOS) || defined(OS_ASMJS)
 
-ByteString TT_NormalizeName(const char* family) {
-  ByteString norm(family);
+ByteString TT_NormalizeName(ByteString norm) {
   norm.Remove(' ');
   norm.Remove('-');
   norm.Remove(',');
@@ -357,13 +356,11 @@ ByteString CFX_FontMapper::MatchInstalledFonts(const ByteString& norm_name) {
   LoadInstalledFonts();
   int i;
   for (i = fxcrt::CollectionSize<int>(m_InstalledTTFonts) - 1; i >= 0; i--) {
-    ByteString norm1 = TT_NormalizeName(m_InstalledTTFonts[i].c_str());
-    if (norm1 == norm_name)
+    if (TT_NormalizeName(m_InstalledTTFonts[i]) == norm_name)
       return m_InstalledTTFonts[i];
   }
   for (i = fxcrt::CollectionSize<int>(m_LocalizedTTFonts) - 1; i >= 0; i--) {
-    ByteString norm1 = TT_NormalizeName(m_LocalizedTTFonts[i].first.c_str());
-    if (norm1 == norm_name)
+    if (TT_NormalizeName(m_LocalizedTTFonts[i].first) == norm_name)
       return m_LocalizedTTFonts[i].second;
   }
   return ByteString();
@@ -553,10 +550,10 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
   bool bItalic = FontStyleIsItalic(nStyle);
 
   GetFontFamily(nStyle, &family);
-  ByteString match = MatchInstalledFonts(TT_NormalizeName(family.c_str()));
+  ByteString match = MatchInstalledFonts(TT_NormalizeName(family));
   if (match.IsEmpty() && family != SubstName &&
       (!bHasComma && (!bHasHyphen || (bHasHyphen && !bStyleAvail)))) {
-    match = MatchInstalledFonts(TT_NormalizeName(SubstName.c_str()));
+    match = MatchInstalledFonts(TT_NormalizeName(SubstName));
   }
   if (match.IsEmpty() && iBaseFont >= kNumStandardFonts) {
     if (!bCJK) {
