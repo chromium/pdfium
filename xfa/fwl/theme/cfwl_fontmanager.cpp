@@ -33,10 +33,9 @@ CFWL_FontManager::CFWL_FontManager() = default;
 
 CFWL_FontManager::~CFWL_FontManager() = default;
 
-RetainPtr<CFGAS_GEFont> CFWL_FontManager::FindFont(
-    const WideString& wsFontFamily,
-    uint32_t dwFontStyles,
-    FX_CodePage wCodePage) {
+RetainPtr<CFGAS_GEFont> CFWL_FontManager::FindFont(WideStringView wsFontFamily,
+                                                   uint32_t dwFontStyles,
+                                                   FX_CodePage wCodePage) {
   for (const auto& pData : m_FontsArray) {
     if (pData->Equal(wsFontFamily, dwFontStyles, wCodePage))
       return pData->GetFont();
@@ -53,21 +52,23 @@ CFWL_FontManager::FontData::FontData() = default;
 
 CFWL_FontManager::FontData::~FontData() = default;
 
-bool CFWL_FontManager::FontData::Equal(const WideString& wsFontFamily,
+bool CFWL_FontManager::FontData::Equal(WideStringView wsFontFamily,
                                        uint32_t dwFontStyles,
                                        FX_CodePage wCodePage) {
   return m_wsFamily == wsFontFamily && m_dwStyles == dwFontStyles &&
          m_dwCodePage == wCodePage;
 }
 
-bool CFWL_FontManager::FontData::LoadFont(const WideString& wsFontFamily,
+bool CFWL_FontManager::FontData::LoadFont(WideStringView wsFontFamily,
                                           uint32_t dwFontStyles,
                                           FX_CodePage dwCodePage) {
   m_wsFamily = wsFontFamily;
   m_dwStyles = dwFontStyles;
   m_dwCodePage = dwCodePage;
 
-  m_pFont = CFGAS_GEFont::LoadFont(wsFontFamily, dwFontStyles, dwCodePage);
+  // TODO(tsepez): check usage of c_str() below.
+  m_pFont = CFGAS_GEFont::LoadFont(wsFontFamily.unterminated_c_str(),
+                                   dwFontStyles, dwCodePage);
   return !!m_pFont;
 }
 

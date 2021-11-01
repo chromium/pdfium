@@ -102,24 +102,24 @@ class CFGAS_FontMgr {
   bool EnumFonts();
   RetainPtr<CFGAS_GEFont> GetFontByCodePage(FX_CodePage wCodePage,
                                             uint32_t dwFontStyles,
-                                            const WideString& wsFontFamily);
+                                            const wchar_t* pszFontFamily);
   RetainPtr<CFGAS_GEFont> GetFontByUnicode(wchar_t wUnicode,
                                            uint32_t dwFontStyles,
-                                           const WideString& wsFontFamily);
-  RetainPtr<CFGAS_GEFont> LoadFont(FX_CodePage wCodePage,
+                                           const wchar_t* pszFontFamily);
+  RetainPtr<CFGAS_GEFont> LoadFont(const wchar_t* pszFontFamily,
                                    uint32_t dwFontStyles,
-                                   const WideString& wsFontFamily);
+                                   FX_CodePage wCodePage);
 
  private:
   RetainPtr<CFGAS_GEFont> GetFontByUnicodeImpl(wchar_t wUnicode,
                                                uint32_t dwFontStyles,
-                                               const WideString& wsFontFamily,
+                                               const wchar_t* pszFontFamily,
                                                uint32_t dwHash,
                                                FX_CodePage wCodePage,
                                                uint16_t wBitField);
 
 #if defined(OS_WIN)
-  const FX_FONTDESCRIPTOR* FindFont(const WideString& wsFontFamily,
+  const FX_FONTDESCRIPTOR* FindFont(const wchar_t* pszFontFamily,
                                     uint32_t dwFontStyles,
                                     bool matchParagraphStyle,
                                     FX_CodePage wCodePage,
@@ -128,9 +128,9 @@ class CFGAS_FontMgr {
 
 #else   // defined(OS_WIN)
   bool EnumFontsFromFontMapper();
-  void RegisterFace(RetainPtr<CFX_Face> pFace, const WideString& pFaceName);
+  void RegisterFace(RetainPtr<CFX_Face> pFace, const WideString* pFaceName);
   void RegisterFaces(const RetainPtr<IFX_SeekableReadStream>& pFontStream,
-                     const WideString& pFaceName);
+                     const WideString* pFaceName);
   std::vector<CFGAS_FontDescriptorInfo> MatchFonts(FX_CodePage wCodePage,
                                                    uint32_t dwFontStyles,
                                                    const WideString& FontName,
