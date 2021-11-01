@@ -8,7 +8,6 @@
 
 #include "fxjs/gc/container_trace.h"
 #include "fxjs/xfa/cjx_object.h"
-#include "third_party/base/containers/contains.h"
 #include "v8/include/cppgc/heap.h"
 #include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
 #include "xfa/fxfa/layout/cxfa_contentlayoutprocessor.h"
@@ -36,7 +35,6 @@ void CXFA_LayoutProcessor::Trace(cppgc::Visitor* visitor) const {
   CXFA_Document::LayoutProcessorIface::Trace(visitor);
   visitor->Trace(m_pViewLayoutProcessor);
   visitor->Trace(m_pContentLayoutProcessor);
-  ContainerTrace(visitor, m_rgChangedContainers);
 }
 
 void CXFA_LayoutProcessor::SetForceRelayout() {
@@ -107,8 +105,8 @@ int32_t CXFA_LayoutProcessor::DoLayout() {
   if (eStatus == CXFA_ContentLayoutProcessor::Result::kDone) {
     m_pViewLayoutProcessor->FinishPaginatedPageSets();
     m_pViewLayoutProcessor->SyncLayoutData();
+    m_bHasChangedContainers = false;
     m_bNeedLayout = false;
-    m_rgChangedContainers.clear();
   }
   return 100 *
          (eStatus == CXFA_ContentLayoutProcessor::Result::kDone
@@ -122,7 +120,7 @@ bool CXFA_LayoutProcessor::IncrementLayout() {
     RestartLayout();
     return DoLayout() == 100;
   }
-  return m_rgChangedContainers.empty();
+  return !m_bHasChangedContainers;
 }
 
 int32_t CXFA_LayoutProcessor::CountPages() const {
@@ -138,11 +136,10 @@ CXFA_LayoutItem* CXFA_LayoutProcessor::GetLayoutItem(CXFA_Node* pFormItem) {
   return pFormItem->JSObject()->GetLayoutItem();
 }
 
-void CXFA_LayoutProcessor::AddChangedContainer(CXFA_Node* pContainer) {
-  if (!pdfium::Contains(m_rgChangedContainers, pContainer))
-    m_rgChangedContainers.push_back(pContainer);
+void CXFA_LayoutProcessor::SetHasChangedContainer() {
+  m_bHasChangedContainers = true;
 }
 
 bool CXFA_LayoutProcessor::NeedLayout() const {
-  return m_bNeedLayout || !m_rgChangedContainers.empty();
+  return m_bNeedLayout || m_bHasChangedContainers;
 }

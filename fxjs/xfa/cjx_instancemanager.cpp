@@ -106,8 +106,7 @@ int32_t CJX_InstanceManager::SetInstances(v8::Isolate* pIsolate,
       pNotify->RunNodeInitialize(pNewInstance);
     }
   }
-  GetDocument()->GetLayoutProcessor()->AddChangedContainer(
-      ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form)));
+  GetDocument()->GetLayoutProcessor()->SetHasChangedContainer();
   return 0;
 }
 
@@ -130,8 +129,7 @@ int32_t CJX_InstanceManager::MoveInstance(v8::Isolate* pIsolate,
 
   GetXFANode()->RemoveItem(pMoveInstance, false);
   GetXFANode()->InsertItem(pMoveInstance, iTo, iCount - 1, true);
-  GetDocument()->GetLayoutProcessor()->AddChangedContainer(
-      ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form)));
+  GetDocument()->GetLayoutProcessor()->SetHasChangedContainer();
   return 0;
 }
 
@@ -202,8 +200,7 @@ CJS_Result CJX_InstanceManager::removeInstance(
       }
     }
   }
-  GetDocument()->GetLayoutProcessor()->AddChangedContainer(
-      ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form)));
+  GetDocument()->GetLayoutProcessor()->SetHasChangedContainer();
   return CJS_Result::Success();
 }
 
@@ -250,8 +247,7 @@ CJS_Result CJX_InstanceManager::addInstance(
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (pNotify) {
     pNotify->RunNodeInitialize(pNewInstance);
-    GetDocument()->GetLayoutProcessor()->AddChangedContainer(
-        ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form)));
+    GetDocument()->GetLayoutProcessor()->SetHasChangedContainer();
   }
 
   return CJS_Result::Success(
@@ -292,8 +288,7 @@ CJS_Result CJX_InstanceManager::insertInstance(
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (pNotify) {
     pNotify->RunNodeInitialize(pNewInstance);
-    GetDocument()->GetLayoutProcessor()->AddChangedContainer(
-        ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form)));
+    GetDocument()->GetLayoutProcessor()->SetHasChangedContainer();
   }
 
   return CJS_Result::Success(

@@ -434,8 +434,8 @@ void CXFA_FFNotify::OnValueChanged(CXFA_Node* pSender,
   }
 }
 
-void CXFA_FFNotify::OnContainerChanged(CXFA_Node* pNode) {
-  m_pDoc->GetXFADoc()->GetLayoutProcessor()->AddChangedContainer(pNode);
+void CXFA_FFNotify::OnContainerChanged() {
+  m_pDoc->GetXFADoc()->GetLayoutProcessor()->SetHasChangedContainer();
 }
 
 void CXFA_FFNotify::OnChildAdded(CXFA_Node* pSender) {

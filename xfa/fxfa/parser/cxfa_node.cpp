@@ -2183,7 +2183,7 @@ void CXFA_Node::SendAttributeChangeMessage(XFA_Attribute eAttribute,
     case XFA_Element::Field:
     case XFA_Element::Subform:
     case XFA_Element::SubformSet:
-      pNotify->OnContainerChanged(this);
+      pNotify->OnContainerChanged();
       pNotify->OnValueChanged(this, eAttribute, this, this);
       break;
     case XFA_Element::Sharptext:
@@ -2231,7 +2231,7 @@ void CXFA_Node::SendAttributeChangeMessage(XFA_Attribute eAttribute,
     pParent = pParent->GetParent();
 
   if (pParent)
-    pNotify->OnContainerChanged(pParent);
+    pNotify->OnContainerChanged();
 }
 
 void CXFA_Node::SyncValue(const WideString& wsValue, bool bNotify) {

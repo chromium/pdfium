@@ -46,7 +46,7 @@ class CXFA_FFNotify : public cppgc::GarbageCollected<CXFA_FFNotify> {
                       XFA_Attribute eAttr,
                       CXFA_Node* pParentNode,
                       CXFA_Node* pWidgetNode);
-  void OnContainerChanged(CXFA_Node* pNode);
+  void OnContainerChanged();
   void OnChildAdded(CXFA_Node* pSender);
   void OnChildRemoved();
 
