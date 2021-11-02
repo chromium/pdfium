@@ -24,9 +24,9 @@ struct FX_FolderHandle {
   UnownedPtr<DIR> m_Dir;
 };
 
-FX_FolderHandle* FX_OpenFolder(const char* path) {
+FX_FolderHandle* FX_OpenFolder(const ByteString& path) {
   auto handle = std::make_unique<FX_FolderHandle>();
-  DIR* dir = opendir(path);
+  DIR* dir = opendir(path.c_str());
   if (!dir)
     return nullptr;
 

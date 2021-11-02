@@ -22,10 +22,11 @@ struct FX_FolderHandle {
   WIN32_FIND_DATAA m_FindData;
 };
 
-FX_FolderHandle* FX_OpenFolder(const char* path) {
+FX_FolderHandle* FX_OpenFolder(const ByteString& path) {
   auto handle = std::make_unique<FX_FolderHandle>();
+  ByteString search_path = path + "/*.*";
   handle->m_Handle =
-      FindFirstFileExA((ByteString(path) + "/*.*").c_str(), FindExInfoStandard,
+      FindFirstFileExA(search_path.c_str(), FindExInfoStandard,
                        &handle->m_FindData, FindExSearchNameMatch, nullptr, 0);
   if (handle->m_Handle == INVALID_HANDLE_VALUE)
     return nullptr;

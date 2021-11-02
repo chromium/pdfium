@@ -11,7 +11,7 @@
 
 struct FX_FolderHandle;
 
-FX_FolderHandle* FX_OpenFolder(const char* path);
+FX_FolderHandle* FX_OpenFolder(const ByteString& path);
 bool FX_GetNextFile(FX_FolderHandle* handle,
                     ByteString* filename,
                     bool* bFolder);
