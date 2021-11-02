@@ -14,6 +14,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/gc/heap.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
@@ -145,6 +146,10 @@ class CXFA_Document final : public cppgc::GarbageCollected<CXFA_Document> {
   void SetPendingNodesUnusedAndUnbound();
 
  private:
+  friend class CXFA_DocumentTest_ParseXFAVersion_Test;
+
+  static XFA_VERSION ParseXFAVersion(const WideString& wsTemplateNS);
+
   CXFA_Document(CXFA_FFNotify* notify,
                 cppgc::Heap* heap,
                 LayoutProcessorIface* pLayout);

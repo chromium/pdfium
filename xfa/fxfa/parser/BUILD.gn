@@ -698,6 +698,7 @@ source_set("parser") {
 pdfium_unittest_source_set("unittests") {
   sources = [
     "cxfa_document_builder_unittest.cpp",
+    "cxfa_document_unittest.cpp",
     "cxfa_localevalue_unittest.cpp",
     "cxfa_measurement_unittest.cpp",
     "cxfa_node_unittest.cpp",

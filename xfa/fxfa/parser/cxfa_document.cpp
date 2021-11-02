@@ -1467,6 +1467,15 @@ CFXJSE_Engine* CXFA_Document::GetScriptContext() const {
 
 XFA_VERSION CXFA_Document::RecognizeXFAVersionNumber(
     const WideString& wsTemplateNS) {
+  XFA_VERSION eVersion = ParseXFAVersion(wsTemplateNS);
+  if (eVersion != XFA_VERSION_UNKNOWN)
+    m_eCurVersionMode = eVersion;
+
+  return eVersion;
+}
+
+// static
+XFA_VERSION CXFA_Document::ParseXFAVersion(const WideString& wsTemplateNS) {
   WideStringView wsTemplateURIPrefix(kTemplateNS);
   if (wsTemplateNS.GetLength() <= wsTemplateURIPrefix.GetLength())
     return XFA_VERSION_UNKNOWN;
@@ -1485,14 +1494,13 @@ XFA_VERSION CXFA_Document::RecognizeXFAVersionNumber(
   int8_t iMinor =
       FXSYS_wtoi(wsTemplateNS
                      .Substr(nDotPos.value() + 1,
-                             wsTemplateNS.GetLength() - nDotPos.value() - 2)
+                             wsTemplateNS.GetLength() - nDotPos.value() - 1)
                      .c_str());
   XFA_VERSION eVersion =
       static_cast<XFA_VERSION>(static_cast<int32_t>(iMajor) * 100 + iMinor);
   if (eVersion < XFA_VERSION_MIN || eVersion > XFA_VERSION_MAX)
     return XFA_VERSION_UNKNOWN;
 
-  m_eCurVersionMode = eVersion;
   return eVersion;
 }
 
