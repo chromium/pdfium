@@ -147,8 +147,17 @@ class CXFA_Document final : public cppgc::GarbageCollected<CXFA_Document> {
 
  private:
   friend class CXFA_DocumentTest_ParseXFAVersion_Test;
+  friend class CXFA_DocumentTest_ParseUseHref_Test;
+  friend class CXFA_DocumentTest_ParseUse_Test;
 
   static XFA_VERSION ParseXFAVersion(const WideString& wsTemplateNS);
+  static void ParseUseHref(const WideString& wsUseVal,
+                           WideStringView& wsURI,
+                           WideStringView& wsID,
+                           WideStringView& wsSOM);
+  static void ParseUse(const WideString& wsUseVal,
+                       WideStringView& wsID,
+                       WideStringView& wsSOM);
 
   CXFA_Document(CXFA_FFNotify* notify,
                 cppgc::Heap* heap,

@@ -1554,36 +1554,14 @@ void CXFA_Document::DoProtoMerge() {
     WideStringView wsURI;
     WideStringView wsID;
     WideStringView wsSOM;
-
     if (!wsUseVal.IsEmpty()) {
-      auto uSharpPos = wsUseVal.Find('#');
-      if (!uSharpPos.has_value()) {
-        wsURI = wsUseVal.AsStringView();
-      } else {
-        wsURI = WideStringView(wsUseVal.c_str(), uSharpPos.value());
-        size_t uLen = wsUseVal.GetLength();
-        if (uLen >= uSharpPos.value() + 5 &&
-            WideStringView(wsUseVal.c_str() + uSharpPos.value(), 5) ==
-                L"#som(" &&
-            wsUseVal[uLen - 1] == ')') {
-          wsSOM = WideStringView(wsUseVal.c_str() + uSharpPos.value() + 5,
-                                 uLen - 1 - uSharpPos.value() - 5);
-        } else {
-          wsID = WideStringView(wsUseVal.c_str() + uSharpPos.value() + 1,
-                                uLen - uSharpPos.value() - 1);
-        }
-      }
+      ParseUseHref(wsUseVal, wsURI, wsID, wsSOM);
+      if (!wsURI.IsEmpty() && !wsURI.EqualsASCII("."))
+        continue;
     } else {
       wsUseVal = pUseHrefNode->JSObject()->GetCData(XFA_Attribute::Use);
-      if (!wsUseVal.IsEmpty()) {
-        if (wsUseVal[0] == '#')
-          wsID = WideStringView(wsUseVal.c_str() + 1, wsUseVal.GetLength() - 1);
-        else
-          wsSOM = WideStringView(wsUseVal.c_str(), wsUseVal.GetLength());
-      }
+      ParseUse(wsUseVal, wsID, wsSOM);
     }
-    if (!wsURI.IsEmpty() && !wsURI.EqualsASCII("."))
-      continue;
 
     CXFA_Node* pProtoNode = nullptr;
     if (!wsSOM.IsEmpty()) {
@@ -1610,6 +1588,46 @@ void CXFA_Document::DoProtoMerge() {
 
     MergeNode(pUseHrefNode, pProtoNode);
   }
+}
+
+// static
+void CXFA_Document::ParseUseHref(const WideString& wsUseVal,
+                                 WideStringView& wsURI,
+                                 WideStringView& wsID,
+                                 WideStringView& wsSOM) {
+  if (wsUseVal.IsEmpty())
+    return;
+
+  auto uSharpPos = wsUseVal.Find('#');
+  if (!uSharpPos.has_value()) {
+    wsURI = wsUseVal.AsStringView();
+    return;
+  }
+  wsURI = WideStringView(wsUseVal.c_str(), uSharpPos.value());
+  size_t uLen = wsUseVal.GetLength();
+  if (uLen >= uSharpPos.value() + 5 &&
+      WideStringView(wsUseVal.c_str() + uSharpPos.value(), 5) == L"#som(" &&
+      wsUseVal[uLen - 1] == ')') {
+    wsSOM = WideStringView(wsUseVal.c_str() + uSharpPos.value() + 5,
+                           uLen - 1 - uSharpPos.value() - 5);
+    return;
+  }
+  wsID = WideStringView(wsUseVal.c_str() + uSharpPos.value() + 1,
+                        uLen - uSharpPos.value() - 1);
+}
+
+// static
+void CXFA_Document::ParseUse(const WideString& wsUseVal,
+                             WideStringView& wsID,
+                             WideStringView& wsSOM) {
+  if (wsUseVal.IsEmpty())
+    return;
+
+  if (wsUseVal[0] == '#') {
+    wsID = WideStringView(wsUseVal.c_str() + 1, wsUseVal.GetLength() - 1);
+    return;
+  }
+  wsSOM = WideStringView(wsUseVal.c_str(), wsUseVal.GetLength());
 }
 
 CXFA_Node* CXFA_Document::DataMerge_CopyContainer(CXFA_Node* pTemplateNode,

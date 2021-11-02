@@ -81,3 +81,94 @@ TEST(CXFA_DocumentTest, ParseXFAVersion) {
   EXPECT_EQ(317, CXFA_Document::ParseXFAVersion(
                      L"http://www.xfa.org/schema/xfa-template/3.17"));
 }
+
+TEST(CXFA_DocumentTest, ParseUseHref) {
+  {
+    WideString wsEmpty;  // Must outlive views.
+    WideStringView wsURI;
+    WideStringView wsID;
+    WideStringView wsSOM;
+    CXFA_Document::ParseUseHref(wsEmpty, wsURI, wsID, wsSOM);
+    EXPECT_EQ(L"", wsURI);
+    EXPECT_EQ(L"", wsID);
+    EXPECT_EQ(L"", wsSOM);
+  }
+  {
+    WideString wsNoSharp(L"url-part-only");  // Must outlive views.
+    WideStringView wsURI;
+    WideStringView wsID;
+    WideStringView wsSOM;
+    CXFA_Document::ParseUseHref(wsNoSharp, wsURI, wsID, wsSOM);
+    EXPECT_EQ(L"url-part-only", wsURI);
+    EXPECT_EQ(L"", wsID);
+    EXPECT_EQ(L"", wsSOM);
+  }
+  {
+    WideString wsNoSom(L"url-part#frag");  // Must outlive views.
+    WideStringView wsURI;
+    WideStringView wsID;
+    WideStringView wsSOM;
+    CXFA_Document::ParseUseHref(wsNoSom, wsURI, wsID, wsSOM);
+    EXPECT_EQ(L"url-part", wsURI);
+    EXPECT_EQ(L"frag", wsID);
+    EXPECT_EQ(L"", wsSOM);
+  }
+  {
+    WideString wsIncompleteSom(L"url-part#som(");  // Must outlive views.
+    WideStringView wsURI;
+    WideStringView wsID;
+    WideStringView wsSOM;
+    CXFA_Document::ParseUseHref(wsIncompleteSom, wsURI, wsID, wsSOM);
+    EXPECT_EQ(L"url-part", wsURI);
+    EXPECT_EQ(L"som(", wsID);
+    EXPECT_EQ(L"", wsSOM);
+  }
+  {
+    WideString wsEmptySom(L"url-part#som()");  // Must outlive views.
+    WideStringView wsURI;
+    WideStringView wsID;
+    WideStringView wsSOM;
+    CXFA_Document::ParseUseHref(wsEmptySom, wsURI, wsID, wsSOM);
+    EXPECT_EQ(L"url-part", wsURI);
+    EXPECT_EQ(L"", wsID);
+    EXPECT_EQ(L"", wsSOM);
+  }
+  {
+    WideString wsHasSom(
+        L"url-part#som(nested(foo.bar))");  // Must outlive views.
+    WideStringView wsURI;
+    WideStringView wsID;
+    WideStringView wsSOM;
+    CXFA_Document::ParseUseHref(wsHasSom, wsURI, wsID, wsSOM);
+    EXPECT_EQ(L"url-part", wsURI);
+    EXPECT_EQ(L"", wsID);
+    EXPECT_EQ(L"nested(foo.bar)", wsSOM);
+  }
+}
+
+TEST(CXFA_DocumentTest, ParseUse) {
+  {
+    WideString wsUseVal(L"");  // Must outlive views.
+    WideStringView wsID;
+    WideStringView wsSOM;
+    CXFA_Document::ParseUse(wsUseVal, wsID, wsSOM);
+    EXPECT_EQ(L"", wsID);
+    EXPECT_EQ(L"", wsSOM);
+  }
+  {
+    WideString wsUseVal(L"clams");  // Must outlive views.
+    WideStringView wsID;
+    WideStringView wsSOM;
+    CXFA_Document::ParseUse(wsUseVal, wsID, wsSOM);
+    EXPECT_EQ(L"", wsID);
+    EXPECT_EQ(L"clams", wsSOM);
+  }
+  {
+    WideString wsUseVal(L"#clams");  // Must outlive views.
+    WideStringView wsID;
+    WideStringView wsSOM;
+    CXFA_Document::ParseUse(wsUseVal, wsID, wsSOM);
+    EXPECT_EQ(L"clams", wsID);
+    EXPECT_EQ(L"", wsSOM);
+  }
+}
