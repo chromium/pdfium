@@ -232,6 +232,8 @@ CXFA_DocumentBuilder::~CXFA_DocumentBuilder() = default;
 
 bool CXFA_DocumentBuilder::BuildDocument(CFX_XMLDocument* pXML,
                                          XFA_PacketType ePacketID) {
+  DCHECK(pXML);
+
   CFX_XMLNode* root = Build(pXML);
   if (!root)
     return false;

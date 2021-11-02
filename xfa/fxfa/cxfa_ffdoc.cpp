@@ -90,8 +90,7 @@ void CXFA_FFDoc::Trace(cppgc::Visitor* visitor) const {
 }
 
 bool CXFA_FFDoc::BuildDoc(CFX_XMLDocument* pXML) {
-  if (!pXML)
-    return false;
+  DCHECK(pXML);
 
   CXFA_DocumentBuilder builder(m_pDocument);
   if (!builder.BuildDocument(pXML, XFA_PacketType::Xdp))
