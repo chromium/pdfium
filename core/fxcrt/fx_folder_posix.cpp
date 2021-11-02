@@ -10,6 +10,7 @@
 
 #include "build/build_config.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "third_party/base/ptr_util.h"
 
 #if defined(OS_WIN)
 #error "built on wrong platform"
@@ -19,33 +20,42 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-struct FX_FolderHandle {
-  ByteString m_Path;
+class FX_PosixFolder : public FX_Folder {
+ public:
+  ~FX_PosixFolder() override;
+
+  bool GetNextFile(ByteString* filename, bool* bFolder) override;
+
+ private:
+  friend class FX_Folder;
+  FX_PosixFolder(const ByteString& path, DIR* dir);
+
+  const ByteString m_Path;
   UnownedPtr<DIR> m_Dir;
 };
 
-FX_FolderHandle* FX_OpenFolder(const ByteString& path) {
-  auto handle = std::make_unique<FX_FolderHandle>();
+std::unique_ptr<FX_Folder> FX_Folder::OpenFolder(const ByteString& path) {
   DIR* dir = opendir(path.c_str());
   if (!dir)
     return nullptr;
 
-  handle->m_Path = path;
-  handle->m_Dir = dir;
-  return handle.release();
+  // Private ctor.
+  return pdfium::WrapUnique(new FX_PosixFolder(path, dir));
 }
 
-bool FX_GetNextFile(FX_FolderHandle* handle,
-                    ByteString* filename,
-                    bool* bFolder) {
-  if (!handle)
-    return false;
+FX_PosixFolder::FX_PosixFolder(const ByteString& path, DIR* dir)
+    : m_Path(path), m_Dir(dir) {}
 
-  struct dirent* de = readdir(handle->m_Dir);
+FX_PosixFolder::~FX_PosixFolder() {
+  closedir(m_Dir.Release());
+}
+
+bool FX_PosixFolder::GetNextFile(ByteString* filename, bool* bFolder) {
+  struct dirent* de = readdir(m_Dir);
   if (!de)
     return false;
 
-  ByteString fullpath = handle->m_Path + "/" + de->d_name;
+  ByteString fullpath = m_Path + "/" + de->d_name;
   struct stat deStat;
   if (stat(fullpath.c_str(), &deStat) < 0)
     return false;
@@ -53,12 +63,4 @@ bool FX_GetNextFile(FX_FolderHandle* handle,
   *filename = de->d_name;
   *bFolder = S_ISDIR(deStat.st_mode);
   return true;
-}
-
-void FX_CloseFolder(FX_FolderHandle* handle) {
-  if (!handle)
-    return;
-
-  closedir(handle->m_Dir.Release());
-  delete handle;
 }

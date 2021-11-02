@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "build/build_config.h"
+#include "third_party/base/ptr_util.h"
 
 #if !defined(OS_WIN)
 #error "built on wrong platform"
@@ -16,14 +17,23 @@
 
 #include <direct.h>
 
-struct FX_FolderHandle {
-  HANDLE m_Handle;
-  bool m_bReachedEnd;
+class FX_WindowsFolder : public FX_Folder {
+ public:
+  ~FX_WindowsFolder() override;
+  bool GetNextFile(ByteString* filename, bool* bFolder) override;
+
+ private:
+  friend class FX_Folder;
+  FX_WindowsFolder();
+
+  HANDLE m_Handle = INVALID_HANDLE_VALUE;
+  bool m_bReachedEnd = false;
   WIN32_FIND_DATAA m_FindData;
 };
 
-FX_FolderHandle* FX_OpenFolder(const ByteString& path) {
-  auto handle = std::make_unique<FX_FolderHandle>();
+std::unique_ptr<FX_Folder> FX_Folder::OpenFolder(const ByteString& path) {
+  // Private ctor.
+  auto handle = pdfium::WrapUnique(new FX_WindowsFolder());
   ByteString search_path = path + "/*.*";
   handle->m_Handle =
       FindFirstFileExA(search_path.c_str(), FindExInfoStandard,
@@ -31,31 +41,23 @@ FX_FolderHandle* FX_OpenFolder(const ByteString& path) {
   if (handle->m_Handle == INVALID_HANDLE_VALUE)
     return nullptr;
 
-  handle->m_bReachedEnd = false;
-  return handle.release();
+  return handle;
 }
 
-bool FX_GetNextFile(FX_FolderHandle* handle,
-                    ByteString* filename,
-                    bool* bFolder) {
-  if (!handle)
+FX_WindowsFolder::FX_WindowsFolder() = default;
+
+FX_WindowsFolder::~FX_WindowsFolder() {
+  if (m_Handle != INVALID_HANDLE_VALUE)
+    FindClose(m_Handle);
+}
+
+bool FX_WindowsFolder::GetNextFile(ByteString* filename, bool* bFolder) {
+  if (m_bReachedEnd)
     return false;
 
-  if (handle->m_bReachedEnd)
-    return false;
-
-  *filename = handle->m_FindData.cFileName;
-  *bFolder =
-      (handle->m_FindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
-  if (!FindNextFileA(handle->m_Handle, &handle->m_FindData))
-    handle->m_bReachedEnd = true;
+  *filename = m_FindData.cFileName;
+  *bFolder = !!(m_FindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY);
+  if (!FindNextFileA(m_Handle, &m_FindData))
+    m_bReachedEnd = true;
   return true;
-}
-
-void FX_CloseFolder(FX_FolderHandle* handle) {
-  if (!handle)
-    return;
-
-  FindClose(handle->m_Handle);
-  delete handle;
 }
