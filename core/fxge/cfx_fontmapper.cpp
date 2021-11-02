@@ -328,7 +328,7 @@ void CFX_FontMapper::AddInstalledFont(const ByteString& name,
   });
 
   if (bLocalized) {
-    void* hFont = m_pFontInfo->GetFont(name.c_str());
+    void* hFont = m_pFontInfo->GetFont(name);
     if (!hFont) {
       hFont = m_pFontInfo->MapFont(0, 0, FX_Charset::kDefault, 0, name);
       if (!hFont)
@@ -605,7 +605,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
       weight = old_weight;
     }
     if (!match.IsEmpty()) {
-      hFont = m_pFontInfo->GetFont(match.c_str());
+      hFont = m_pFontInfo->GetFont(match);
       if (!hFont) {
         return UseInternalSubst(pSubstFont, iBaseFont, italic_angle, old_weight,
                                 PitchFamily);
@@ -638,7 +638,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
         return UseInternalSubst(pSubstFont, iBaseFont, italic_angle, old_weight,
                                 PitchFamily);
       }
-      hFont = m_pFontInfo->GetFont(it->name.c_str());
+      hFont = m_pFontInfo->GetFont(it->name);
     }
   }
   if (!hFont)
