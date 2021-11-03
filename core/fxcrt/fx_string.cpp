@@ -141,7 +141,7 @@ float StringToFloat(ByteStringView strc) {
 }
 
 float StringToFloat(WideStringView wsStr) {
-  return StringToFloat(FX_UTF8Encode(wsStr).c_str());
+  return StringToFloat(FX_UTF8Encode(wsStr).AsStringView());
 }
 
 size_t FloatToString(float f, char* buf) {
@@ -154,7 +154,7 @@ double StringToDouble(ByteStringView strc) {
 }
 
 double StringToDouble(WideStringView wsStr) {
-  return StringToDouble(FX_UTF8Encode(wsStr).c_str());
+  return StringToDouble(FX_UTF8Encode(wsStr).AsStringView());
 }
 
 size_t DoubleToString(double d, char* buf) {
