@@ -210,18 +210,18 @@ void NormalizeDecimalMarkW(WideString* str) {
   str->Replace(L",", L".");
 }
 
-absl::optional<double> ApplyNamedOperation(const wchar_t* sFunction,
+absl::optional<double> ApplyNamedOperation(const WideString& wsFunction,
                                            double dValue1,
                                            double dValue2) {
-  if (FXSYS_wcsicmp(sFunction, L"AVG") == 0 ||
-      FXSYS_wcsicmp(sFunction, L"SUM") == 0) {
+  if (wsFunction.EqualsASCIINoCase("AVG") ||
+      wsFunction.EqualsASCIINoCase("SUM")) {
     return dValue1 + dValue2;
   }
-  if (FXSYS_wcsicmp(sFunction, L"PRD") == 0)
+  if (wsFunction.EqualsASCIINoCase("PRD"))
     return dValue1 * dValue2;
-  if (FXSYS_wcsicmp(sFunction, L"MIN") == 0)
+  if (wsFunction.EqualsASCIINoCase("MIN"))
     return std::min(dValue1, dValue2);
-  if (FXSYS_wcsicmp(sFunction, L"MAX") == 0)
+  if (wsFunction.EqualsASCIINoCase("MAX"))
     return std::max(dValue1, dValue2);
   return absl::nullopt;
 }
@@ -1253,8 +1253,7 @@ CJS_Result CJS_PublicMethods::AFSimple(
   if (isnan(arg1) || isnan(arg2))
     return CJS_Result::Failure(JSMessage::kValueError);
 
-  absl::optional<double> result =
-      ApplyNamedOperation(sFunction.c_str(), arg1, arg2);
+  absl::optional<double> result = ApplyNamedOperation(sFunction, arg1, arg2);
   if (!result.has_value())
     return CJS_Result::Failure(JSMessage::kValueError);
 
@@ -1354,7 +1353,7 @@ CJS_Result CJS_PublicMethods::AFSimple_Calculate(
         dValue = dTemp;
       }
       absl::optional<double> dResult =
-          ApplyNamedOperation(sFunction.c_str(), dValue, dTemp);
+          ApplyNamedOperation(sFunction, dValue, dTemp);
       if (!dResult.has_value())
         return CJS_Result::Failure(JSMessage::kValueError);
 
