@@ -41,7 +41,7 @@ class CFXJSE_Context {
   void EnableCompatibleMode();
 
   // Note: `pNewThisObject` may be empty.
-  bool ExecuteScript(const char* szScript,
+  bool ExecuteScript(ByteStringView bsScript,
                      CFXJSE_Value* pRetValue,
                      v8::Local<v8::Object> pNewThisObject);
 

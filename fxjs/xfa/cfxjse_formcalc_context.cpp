@@ -3311,14 +3311,13 @@ void CFXJSE_FormCalcContext::Eval(
     pContext->ThrowCompilerErrorException();
     return;
   }
-
   std::unique_ptr<CFXJSE_Context> pNewContext =
       CFXJSE_Context::Create(pIsolate, nullptr, nullptr, nullptr);
 
   auto returnValue = std::make_unique<CFXJSE_Value>();
-  pNewContext->ExecuteScript(
-      FX_UTF8Encode(wsJavaScriptBuf.value().AsStringView()).c_str(),
-      returnValue.get(), v8::Local<v8::Object>());
+  ByteString bsScript = FX_UTF8Encode(wsJavaScriptBuf.value().AsStringView());
+  pNewContext->ExecuteScript(bsScript.AsStringView(), returnValue.get(),
+                             v8::Local<v8::Object>());
 
   info.GetReturnValue().Set(returnValue->DirectGetValue());
 }

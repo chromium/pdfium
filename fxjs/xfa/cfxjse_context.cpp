@@ -239,14 +239,14 @@ void CFXJSE_Context::EnableCompatibleMode() {
   ExecuteScript(szConsoleScript, nullptr, v8::Local<v8::Object>());
 }
 
-bool CFXJSE_Context::ExecuteScript(const char* szScript,
+bool CFXJSE_Context::ExecuteScript(ByteStringView bsScript,
                                    CFXJSE_Value* pRetValue,
                                    v8::Local<v8::Object> hNewThis) {
   CFXJSE_ScopeUtil_IsolateHandleContext scope(this);
   v8::Local<v8::Context> hContext = GetIsolate()->GetCurrentContext();
   v8::TryCatch trycatch(GetIsolate());
   v8::Local<v8::String> hScriptString =
-      fxv8::NewStringHelper(GetIsolate(), szScript);
+      fxv8::NewStringHelper(GetIsolate(), bsScript);
   if (hNewThis.IsEmpty()) {
     v8::Local<v8::Script> hScript;
     if (v8::Script::Compile(hContext, hScriptString).ToLocal(&hScript)) {
