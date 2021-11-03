@@ -1481,7 +1481,7 @@ XFA_VERSION CXFA_Document::ParseXFAVersion(const WideString& wsTemplateNS) {
     return XFA_VERSION_UNKNOWN;
 
   size_t prefixLength = wsTemplateURIPrefix.GetLength();
-  if (WideStringView(wsTemplateNS.c_str(), prefixLength) != wsTemplateURIPrefix)
+  if (wsTemplateNS.AsStringView().First(prefixLength) != wsTemplateURIPrefix)
     return XFA_VERSION_UNKNOWN;
 
   auto nDotPos = wsTemplateNS.Find('.', prefixLength);
@@ -1603,17 +1603,17 @@ void CXFA_Document::ParseUseHref(const WideString& wsUseVal,
     wsURI = wsUseVal.AsStringView();
     return;
   }
-  wsURI = WideStringView(wsUseVal.c_str(), uSharpPos.value());
+  wsURI = wsUseVal.AsStringView().First(uSharpPos.value());
   size_t uLen = wsUseVal.GetLength();
   if (uLen >= uSharpPos.value() + 5 &&
-      WideStringView(wsUseVal.c_str() + uSharpPos.value(), 5) == L"#som(" &&
+      wsUseVal.AsStringView().Substr(uSharpPos.value(), 5) == L"#som(" &&
       wsUseVal[uLen - 1] == ')') {
-    wsSOM = WideStringView(wsUseVal.c_str() + uSharpPos.value() + 5,
-                           uLen - 1 - uSharpPos.value() - 5);
+    wsSOM = wsUseVal.AsStringView().Substr(uSharpPos.value() + 5,
+                                           uLen - 1 - uSharpPos.value() - 5);
     return;
   }
-  wsID = WideStringView(wsUseVal.c_str() + uSharpPos.value() + 1,
-                        uLen - uSharpPos.value() - 1);
+  wsID = wsUseVal.AsStringView().Substr(uSharpPos.value() + 1,
+                                        uLen - uSharpPos.value() - 1);
 }
 
 // static
@@ -1624,10 +1624,10 @@ void CXFA_Document::ParseUse(const WideString& wsUseVal,
     return;
 
   if (wsUseVal[0] == '#') {
-    wsID = WideStringView(wsUseVal.c_str() + 1, wsUseVal.GetLength() - 1);
+    wsID = wsUseVal.AsStringView().Substr(1, wsUseVal.GetLength() - 1);
     return;
   }
-  wsSOM = WideStringView(wsUseVal.c_str(), wsUseVal.GetLength());
+  wsSOM = wsUseVal.AsStringView();
 }
 
 CXFA_Node* CXFA_Document::DataMerge_CopyContainer(CXFA_Node* pTemplateNode,
