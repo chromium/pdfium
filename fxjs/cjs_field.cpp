@@ -2086,7 +2086,7 @@ CJS_Result CJS_Field::get_value(CJS_Runtime* pRuntime) {
           iIndex = pFormField->GetSelectedIndex(i);
           ElementValue = pRuntime->NewString(
               pFormField->GetOptionValue(iIndex).AsStringView());
-          if (wcslen(pRuntime->ToWideString(ElementValue).c_str()) == 0) {
+          if (pRuntime->ToWideString(ElementValue).IsEmpty()) {
             ElementValue = pRuntime->NewString(
                 pFormField->GetOptionLabel(iIndex).AsStringView());
           }
