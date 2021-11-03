@@ -352,9 +352,9 @@ uint32_t CPDF_PageOrganizer::GetNewObjId(CPDF_Reference* pRef) {
   if (CPDF_Dictionary* pDictClone = pClone->AsDictionary()) {
     if (pDictClone->KeyExist("Type")) {
       ByteString strType = pDictClone->GetStringFor("Type");
-      if (!FXSYS_stricmp(strType.c_str(), "Pages"))
+      if (strType.EqualNoCase("Pages"))
         return 4;
-      if (!FXSYS_stricmp(strType.c_str(), "Page"))
+      if (strType.EqualNoCase("Page"))
         return 0;
     }
   }
