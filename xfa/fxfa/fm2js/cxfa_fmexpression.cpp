@@ -384,7 +384,7 @@ bool CXFA_FMUnaryExpression::ToJavaScript(CFX_WideTextBuf* js,
   if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth())
     return false;
 
-  *js << "pfm_rt." << m_OpName.c_str() << "(";
+  *js << "pfm_rt." << m_OpName << "(";
   if (!m_pExp->ToJavaScript(js, ReturnType::kInferred))
     return false;
   *js << ")";
