@@ -469,6 +469,13 @@ intptr_t ByteString::ReferenceCountForTesting() const {
   return m_pData ? m_pData->m_nRefs : 0;
 }
 
+ByteString ByteString::Substr(size_t offset) const {
+  if (offset >= GetLength())
+    return ByteString();
+
+  return Substr(offset, GetLength() - offset);
+}
+
 ByteString ByteString::Substr(size_t first, size_t count) const {
   if (!m_pData)
     return ByteString();

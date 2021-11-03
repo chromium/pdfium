@@ -947,9 +947,10 @@ CJS_Result CJS_Document::get_document_file_name(CJS_Runtime* pRuntime) {
     if (wsFilePath[i - 1] == L'\\' || wsFilePath[i - 1] == L'/')
       break;
   }
-  if (i > 0 && i < wsFilePath.GetLength())
-    return CJS_Result::Success(pRuntime->NewString(wsFilePath.c_str() + i));
-
+  if (i > 0 && i < wsFilePath.GetLength()) {
+    return CJS_Result::Success(
+        pRuntime->NewString(wsFilePath.AsStringView().Substr(i)));
+  }
   return CJS_Result::Success(pRuntime->NewString(""));
 }
 

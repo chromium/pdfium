@@ -704,6 +704,13 @@ WideString WideString::EncodeEntities() const {
   return ret;
 }
 
+WideString WideString::Substr(size_t offset) const {
+  if (offset >= GetLength())
+    return WideString();
+
+  return Substr(offset, GetLength() - offset);
+}
+
 WideString WideString::Substr(size_t first, size_t count) const {
   if (!m_pData)
     return WideString();

@@ -26,6 +26,11 @@ namespace fxcrt {
 //
 // String view arguments should be passed by value, since they are small,
 // rather than const-ref, even if they are not modified.
+//
+// Front() and Back() tolerate empty strings and must return NUL in those
+// cases. Substr(), First(), and Last() tolerate out-of-range indices and
+// must return an empty string view in those cases. The aim here is allowing
+// callers to avoid range-checking first.
 template <typename T>
 class StringViewTemplate {
  public:
@@ -198,6 +203,13 @@ class StringViewTemplate {
   }
 
   bool Contains(CharType ch) const { return Find(ch).has_value(); }
+
+  StringViewTemplate Substr(size_t offset) const {
+    if (offset >= GetLength())
+      return StringViewTemplate();
+
+    return Substr(offset, GetLength() - offset);
+  }
 
   StringViewTemplate Substr(size_t first, size_t count) const {
     if (!m_Span.data())

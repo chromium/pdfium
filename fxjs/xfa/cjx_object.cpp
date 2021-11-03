@@ -1010,7 +1010,7 @@ void CJX_Object::ScriptAttributeString(v8::Isolate* pIsolate,
   WideString wsSOM;
   if (!wsValue.IsEmpty()) {
     if (wsValue[0] == '#')
-      wsID = wsValue.Substr(1, wsValue.GetLength() - 1);
+      wsID = wsValue.Substr(1);
     else
       wsSOM = std::move(wsValue);
   }

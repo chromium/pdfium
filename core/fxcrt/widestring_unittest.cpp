@@ -651,7 +651,20 @@ TEST(WideString, Delete) {
   EXPECT_EQ(L"", empty);
 }
 
-TEST(WideString, Substr) {
+TEST(WideString, OneArgSubstr) {
+  WideString fred(L"FRED");
+  EXPECT_EQ(L"FRED", fred.Substr(0));
+  EXPECT_EQ(L"RED", fred.Substr(1));
+  EXPECT_EQ(L"ED", fred.Substr(2));
+  EXPECT_EQ(L"D", fred.Substr(3));
+  EXPECT_EQ(L"", fred.Substr(4));
+
+  WideString empty;
+  EXPECT_EQ(L"", empty.Substr(0));
+  EXPECT_EQ(L"", empty.Substr(1));
+}
+
+TEST(WideString, TwoArgSubstr) {
   WideString fred(L"FRED");
   EXPECT_EQ(L"", fred.Substr(0, 0));
   EXPECT_EQ(L"", fred.Substr(3, 0));

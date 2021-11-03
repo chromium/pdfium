@@ -1491,11 +1491,7 @@ XFA_VERSION CXFA_Document::ParseXFAVersion(const WideString& wsTemplateNS) {
   int8_t iMajor = FXSYS_wtoi(
       wsTemplateNS.Substr(prefixLength, nDotPos.value() - prefixLength)
           .c_str());
-  int8_t iMinor =
-      FXSYS_wtoi(wsTemplateNS
-                     .Substr(nDotPos.value() + 1,
-                             wsTemplateNS.GetLength() - nDotPos.value() - 1)
-                     .c_str());
+  int8_t iMinor = FXSYS_wtoi(wsTemplateNS.Substr(nDotPos.value() + 1).c_str());
   XFA_VERSION eVersion =
       static_cast<XFA_VERSION>(static_cast<int32_t>(iMajor) * 100 + iMinor);
   if (eVersion < XFA_VERSION_MIN || eVersion > XFA_VERSION_MAX)
@@ -1604,16 +1600,14 @@ void CXFA_Document::ParseUseHref(const WideString& wsUseVal,
     return;
   }
   wsURI = wsUseVal.AsStringView().First(uSharpPos.value());
-  size_t uLen = wsUseVal.GetLength();
-  if (uLen >= uSharpPos.value() + 5 &&
-      wsUseVal.AsStringView().Substr(uSharpPos.value(), 5) == L"#som(" &&
-      wsUseVal[uLen - 1] == ')') {
-    wsSOM = wsUseVal.AsStringView().Substr(uSharpPos.value() + 5,
-                                           uLen - 1 - uSharpPos.value() - 5);
+  if (wsUseVal.AsStringView().Substr(uSharpPos.value(), 5) == L"#som(" &&
+      wsUseVal.Back() == ')') {
+    wsSOM = wsUseVal.AsStringView().Substr(
+        uSharpPos.value() + 5,
+        wsUseVal.GetLength() - 1 - uSharpPos.value() - 5);
     return;
   }
-  wsID = wsUseVal.AsStringView().Substr(uSharpPos.value() + 1,
-                                        uLen - uSharpPos.value() - 1);
+  wsID = wsUseVal.AsStringView().Substr(uSharpPos.value() + 1);
 }
 
 // static
@@ -1624,7 +1618,7 @@ void CXFA_Document::ParseUse(const WideString& wsUseVal,
     return;
 
   if (wsUseVal[0] == '#') {
-    wsID = wsUseVal.AsStringView().Substr(1, wsUseVal.GetLength() - 1);
+    wsID = wsUseVal.AsStringView().Substr(1);
     return;
   }
   wsSOM = wsUseVal.AsStringView();
