@@ -76,8 +76,6 @@ void EmbedderTest::TearDown() {
   EXPECT_EQ(0U, saved_page_map_.size());
   if (document_)
     CloseDocument();
-
-  FPDFAvail_Destroy(avail_);
 }
 
 bool EmbedderTest::CreateEmptyDocument() {
@@ -147,31 +145,32 @@ bool EmbedderTest::OpenDocumentHelper(const char* password,
                                       JavaScriptOption javascript_option,
                                       FakeFileAccess* network_simulator,
                                       FPDF_DOCUMENT* document,
-                                      FPDF_AVAIL* avail,
+                                      ScopedFPDFAvail* avail,
                                       FPDF_FORMHANDLE* form_handle) {
   network_simulator->AddSegment(0, 1024);
   network_simulator->SetRequestedDataAvailable();
-  *avail = FPDFAvail_Create(network_simulator->GetFileAvail(),
-                            network_simulator->GetFileAccess());
-  if (FPDFAvail_IsLinearized(*avail) == PDF_LINEARIZED) {
+  avail->reset(FPDFAvail_Create(network_simulator->GetFileAvail(),
+                                network_simulator->GetFileAccess()));
+  FPDF_AVAIL avail_ptr = avail->get();
+  if (FPDFAvail_IsLinearized(avail_ptr) == PDF_LINEARIZED) {
     int32_t nRet = PDF_DATA_NOTAVAIL;
     while (nRet == PDF_DATA_NOTAVAIL) {
       network_simulator->SetRequestedDataAvailable();
-      nRet =
-          FPDFAvail_IsDocAvail(*avail, network_simulator->GetDownloadHints());
+      nRet = FPDFAvail_IsDocAvail(avail_ptr,
+                                  network_simulator->GetDownloadHints());
     }
     if (nRet == PDF_DATA_ERROR)
       return false;
 
-    *document = FPDFAvail_GetDocument(*avail, password);
+    *document = FPDFAvail_GetDocument(avail_ptr, password);
     if (!*document)
       return false;
 
     nRet = PDF_DATA_NOTAVAIL;
     while (nRet == PDF_DATA_NOTAVAIL) {
       network_simulator->SetRequestedDataAvailable();
-      nRet =
-          FPDFAvail_IsFormAvail(*avail, network_simulator->GetDownloadHints());
+      nRet = FPDFAvail_IsFormAvail(avail_ptr,
+                                   network_simulator->GetDownloadHints());
     }
     if (nRet == PDF_FORM_ERROR)
       return false;
@@ -181,7 +180,7 @@ bool EmbedderTest::OpenDocumentHelper(const char* password,
       nRet = PDF_DATA_NOTAVAIL;
       while (nRet == PDF_DATA_NOTAVAIL) {
         network_simulator->SetRequestedDataAvailable();
-        nRet = FPDFAvail_IsPageAvail(*avail, i,
+        nRet = FPDFAvail_IsPageAvail(avail_ptr, i,
                                      network_simulator->GetDownloadHints());
       }
       if (nRet == PDF_DATA_ERROR)
@@ -252,7 +251,7 @@ void EmbedderTest::DoOpenActions() {
 
 int EmbedderTest::GetFirstPageNum() {
   int first_page = FPDFAvail_GetFirstPageNum(document_);
-  (void)FPDFAvail_IsPageAvail(avail_, first_page,
+  (void)FPDFAvail_IsPageAvail(avail(), first_page,
                               fake_file_access_->GetDownloadHints());
   return first_page;
 }
@@ -260,7 +259,7 @@ int EmbedderTest::GetFirstPageNum() {
 int EmbedderTest::GetPageCount() {
   int page_count = FPDF_GetPageCount(document_);
   for (int i = 0; i < page_count; ++i)
-    (void)FPDFAvail_IsPageAvail(avail_, i,
+    (void)FPDFAvail_IsPageAvail(avail(), i,
                                 fake_file_access_->GetDownloadHints());
   return page_count;
 }
@@ -470,11 +469,10 @@ void EmbedderTest::CloseSavedDocument() {
 
   FPDFDOC_ExitFormFillEnvironment(saved_form_handle_);
   FPDF_CloseDocument(saved_document_);
-  FPDFAvail_Destroy(saved_avail_);
+  saved_avail_.reset();
 
   saved_form_handle_ = nullptr;
   saved_document_ = nullptr;
-  saved_avail_ = nullptr;
 }
 
 FPDF_PAGE EmbedderTest::LoadSavedPage(int page_number) {
@@ -530,6 +528,11 @@ void EmbedderTest::VerifySavedDocument(int width, int height, const char* md5) {
 void EmbedderTest::SetWholeFileAvailable() {
   DCHECK(fake_file_access_);
   fake_file_access_->SetWholeFileAvailable();
+}
+
+void EmbedderTest::CreateAvail(FX_FILEAVAIL* file_avail,
+                               FPDF_FILEACCESS* file) {
+  avail_.reset(FPDFAvail_Create(file_avail, file));
 }
 
 FPDF_PAGE EmbedderTest::Delegate::GetPage(FPDF_FORMFILLINFO* info,

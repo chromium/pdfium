@@ -67,18 +67,18 @@ TEST_F(CPDF_CreatorEmbedderTest, SaveLinearizedInfo) {
   FileAccessForTesting file_acc("linearized.pdf");
   FakeFileAccess fake_acc(&file_acc);
 
-  avail_ = FPDFAvail_Create(fake_acc.GetFileAvail(), fake_acc.GetFileAccess());
+  CreateAvail(fake_acc.GetFileAvail(), fake_acc.GetFileAccess());
   while (PDF_DATA_AVAIL !=
-         FPDFAvail_IsDocAvail(avail_, fake_acc.GetDownloadHints())) {
+         FPDFAvail_IsDocAvail(avail(), fake_acc.GetDownloadHints())) {
     fake_acc.SetRequestedDataAvailable();
   }
 
-  document_ = FPDFAvail_GetDocument(avail_, nullptr);
+  document_ = FPDFAvail_GetDocument(avail(), nullptr);
   ASSERT_TRUE(document_);
 
   // Load second page, to parse additional crossref sections.
   while (PDF_DATA_AVAIL !=
-         FPDFAvail_IsPageAvail(avail_, 1, fake_acc.GetDownloadHints())) {
+         FPDFAvail_IsPageAvail(avail(), 1, fake_acc.GetDownloadHints())) {
     fake_acc.SetRequestedDataAvailable();
   }
   // Simulate downloading of whole file.

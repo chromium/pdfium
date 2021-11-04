@@ -163,23 +163,23 @@ TEST_F(FPDFDataAvailEmbedderTest, TrailerUnterminated) {
   // Document must load without crashing but is too malformed to be available.
   EXPECT_FALSE(OpenDocument("trailer_unterminated.pdf"));
   MockDownloadHints hints;
-  EXPECT_FALSE(FPDFAvail_IsDocAvail(avail_, &hints));
+  EXPECT_FALSE(FPDFAvail_IsDocAvail(avail(), &hints));
 }
 
 TEST_F(FPDFDataAvailEmbedderTest, TrailerAsHexstring) {
   // Document must load without crashing but is too malformed to be available.
   EXPECT_FALSE(OpenDocument("trailer_as_hexstring.pdf"));
   MockDownloadHints hints;
-  EXPECT_FALSE(FPDFAvail_IsDocAvail(avail_, &hints));
+  EXPECT_FALSE(FPDFAvail_IsDocAvail(avail(), &hints));
 }
 
 TEST_F(FPDFDataAvailEmbedderTest, LoadUsingHintTables) {
   TestAsyncLoader loader("feature_linearized_loading.pdf");
-  avail_ = FPDFAvail_Create(loader.file_avail(), loader.file_access());
-  ASSERT_EQ(PDF_DATA_AVAIL, FPDFAvail_IsDocAvail(avail_, loader.hints()));
-  document_ = FPDFAvail_GetDocument(avail_, nullptr);
+  CreateAvail(loader.file_avail(), loader.file_access());
+  ASSERT_EQ(PDF_DATA_AVAIL, FPDFAvail_IsDocAvail(avail(), loader.hints()));
+  document_ = FPDFAvail_GetDocument(avail(), nullptr);
   ASSERT_TRUE(document_);
-  ASSERT_EQ(PDF_DATA_AVAIL, FPDFAvail_IsPageAvail(avail_, 1, loader.hints()));
+  ASSERT_EQ(PDF_DATA_AVAIL, FPDFAvail_IsPageAvail(avail(), 1, loader.hints()));
 
   // No new data available, to prevent load "Pages" node.
   loader.set_is_new_data_available(false);
@@ -189,9 +189,9 @@ TEST_F(FPDFDataAvailEmbedderTest, LoadUsingHintTables) {
 
 TEST_F(FPDFDataAvailEmbedderTest, CheckFormAvailIfLinearized) {
   TestAsyncLoader loader("feature_linearized_loading.pdf");
-  avail_ = FPDFAvail_Create(loader.file_avail(), loader.file_access());
-  ASSERT_EQ(PDF_DATA_AVAIL, FPDFAvail_IsDocAvail(avail_, loader.hints()));
-  document_ = FPDFAvail_GetDocument(avail_, nullptr);
+  CreateAvail(loader.file_avail(), loader.file_access());
+  ASSERT_EQ(PDF_DATA_AVAIL, FPDFAvail_IsDocAvail(avail(), loader.hints()));
+  document_ = FPDFAvail_GetDocument(avail(), nullptr);
   ASSERT_TRUE(document_);
 
   // Prevent access to non-requested data to coerce the parser to send new
@@ -202,7 +202,7 @@ TEST_F(FPDFDataAvailEmbedderTest, CheckFormAvailIfLinearized) {
   int status = PDF_FORM_NOTAVAIL;
   while (status == PDF_FORM_NOTAVAIL) {
     loader.FlushRequestedData();
-    status = FPDFAvail_IsFormAvail(avail_, loader.hints());
+    status = FPDFAvail_IsFormAvail(avail(), loader.hints());
   }
   EXPECT_NE(PDF_FORM_ERROR, status);
 }
@@ -210,9 +210,9 @@ TEST_F(FPDFDataAvailEmbedderTest, CheckFormAvailIfLinearized) {
 TEST_F(FPDFDataAvailEmbedderTest,
        DoNotLoadMainCrossRefForFirstPageIfLinearized) {
   TestAsyncLoader loader("feature_linearized_loading.pdf");
-  avail_ = FPDFAvail_Create(loader.file_avail(), loader.file_access());
-  ASSERT_EQ(PDF_DATA_AVAIL, FPDFAvail_IsDocAvail(avail_, loader.hints()));
-  document_ = FPDFAvail_GetDocument(avail_, nullptr);
+  CreateAvail(loader.file_avail(), loader.file_access());
+  ASSERT_EQ(PDF_DATA_AVAIL, FPDFAvail_IsDocAvail(avail(), loader.hints()));
+  document_ = FPDFAvail_GetDocument(avail(), nullptr);
   ASSERT_TRUE(document_);
   const int first_page_num = FPDFAvail_GetFirstPageNum(document_);
 
@@ -224,7 +224,7 @@ TEST_F(FPDFDataAvailEmbedderTest,
   // Prevent access to non-requested data to coerce the parser to send new
   // request for non available (non-requested before) data.
   loader.set_is_new_data_available(false);
-  FPDFAvail_IsPageAvail(avail_, first_page_num, loader.hints());
+  FPDFAvail_IsPageAvail(avail(), first_page_num, loader.hints());
 
   // The main cross ref table should not be requested.
   // (It is always at file end)
@@ -233,7 +233,7 @@ TEST_F(FPDFDataAvailEmbedderTest,
   // Allow parse page.
   loader.set_is_new_data_available(true);
   ASSERT_EQ(PDF_DATA_AVAIL,
-            FPDFAvail_IsPageAvail(avail_, first_page_num, loader.hints()));
+            FPDFAvail_IsPageAvail(avail(), first_page_num, loader.hints()));
 
   // The main cross ref table should not be processed.
   // (It is always at file end)
@@ -248,9 +248,9 @@ TEST_F(FPDFDataAvailEmbedderTest,
 
 TEST_F(FPDFDataAvailEmbedderTest, LoadSecondPageIfLinearizedWithHints) {
   TestAsyncLoader loader("feature_linearized_loading.pdf");
-  avail_ = FPDFAvail_Create(loader.file_avail(), loader.file_access());
-  ASSERT_EQ(PDF_DATA_AVAIL, FPDFAvail_IsDocAvail(avail_, loader.hints()));
-  document_ = FPDFAvail_GetDocument(avail_, nullptr);
+  CreateAvail(loader.file_avail(), loader.file_access());
+  ASSERT_EQ(PDF_DATA_AVAIL, FPDFAvail_IsDocAvail(avail(), loader.hints()));
+  document_ = FPDFAvail_GetDocument(avail(), nullptr);
   ASSERT_TRUE(document_);
 
   static constexpr uint32_t kSecondPageNum = 1;
@@ -263,7 +263,7 @@ TEST_F(FPDFDataAvailEmbedderTest, LoadSecondPageIfLinearizedWithHints) {
   int status = PDF_DATA_NOTAVAIL;
   while (status == PDF_DATA_NOTAVAIL) {
     loader.FlushRequestedData();
-    status = FPDFAvail_IsPageAvail(avail_, kSecondPageNum, loader.hints());
+    status = FPDFAvail_IsPageAvail(avail(), kSecondPageNum, loader.hints());
   }
   EXPECT_EQ(PDF_DATA_AVAIL, status);
 
@@ -276,12 +276,12 @@ TEST_F(FPDFDataAvailEmbedderTest, LoadSecondPageIfLinearizedWithHints) {
 TEST_F(FPDFDataAvailEmbedderTest, LoadInfoAfterReceivingWholeDocument) {
   TestAsyncLoader loader("linearized.pdf");
   loader.set_is_new_data_available(false);
-  avail_ = FPDFAvail_Create(loader.file_avail(), loader.file_access());
-  while (PDF_DATA_AVAIL != FPDFAvail_IsDocAvail(avail_, loader.hints())) {
+  CreateAvail(loader.file_avail(), loader.file_access());
+  while (PDF_DATA_AVAIL != FPDFAvail_IsDocAvail(avail(), loader.hints())) {
     loader.FlushRequestedData();
   }
 
-  document_ = FPDFAvail_GetDocument(avail_, nullptr);
+  document_ = FPDFAvail_GetDocument(avail(), nullptr);
   ASSERT_TRUE(document_);
 
   // The "info" dictionary should still be unavailable.
@@ -290,7 +290,7 @@ TEST_F(FPDFDataAvailEmbedderTest, LoadInfoAfterReceivingWholeDocument) {
   // Simulate receiving whole file.
   loader.set_is_new_data_available(true);
   // Load second page, to parse additional crossref sections.
-  EXPECT_EQ(PDF_DATA_AVAIL, FPDFAvail_IsPageAvail(avail_, 1, loader.hints()));
+  EXPECT_EQ(PDF_DATA_AVAIL, FPDFAvail_IsPageAvail(avail(), 1, loader.hints()));
 
   EXPECT_TRUE(FPDF_GetMetaText(document_, "CreationDate", nullptr, 0));
 }
@@ -305,12 +305,12 @@ TEST_F(FPDFDataAvailEmbedderTest, LoadInfoAfterReceivingFirstPage) {
   memcpy(loader.file_contents() + *index, "/Info 29 0 R", 12);
 
   loader.set_is_new_data_available(false);
-  avail_ = FPDFAvail_Create(loader.file_avail(), loader.file_access());
-  while (PDF_DATA_AVAIL != FPDFAvail_IsDocAvail(avail_, loader.hints())) {
+  CreateAvail(loader.file_avail(), loader.file_access());
+  while (PDF_DATA_AVAIL != FPDFAvail_IsDocAvail(avail(), loader.hints())) {
     loader.FlushRequestedData();
   }
 
-  document_ = FPDFAvail_GetDocument(avail_, nullptr);
+  document_ = FPDFAvail_GetDocument(avail(), nullptr);
   ASSERT_TRUE(document_);
 
   // The "Info" dictionary should be available for the linearized document, if
@@ -332,18 +332,18 @@ TEST_F(FPDFDataAvailEmbedderTest, TryLoadInvalidInfo) {
   memcpy(loader.file_contents() + *index, "/Info 99 0 R", 12);
 
   loader.set_is_new_data_available(false);
-  avail_ = FPDFAvail_Create(loader.file_avail(), loader.file_access());
-  while (PDF_DATA_AVAIL != FPDFAvail_IsDocAvail(avail_, loader.hints())) {
+  CreateAvail(loader.file_avail(), loader.file_access());
+  while (PDF_DATA_AVAIL != FPDFAvail_IsDocAvail(avail(), loader.hints())) {
     loader.FlushRequestedData();
   }
 
-  document_ = FPDFAvail_GetDocument(avail_, nullptr);
+  document_ = FPDFAvail_GetDocument(avail(), nullptr);
   ASSERT_TRUE(document_);
 
   // Set all data available.
   loader.set_is_new_data_available(true);
   // Check second page, to load additional crossrefs.
-  ASSERT_EQ(PDF_DATA_AVAIL, FPDFAvail_IsPageAvail(avail_, 0, loader.hints()));
+  ASSERT_EQ(PDF_DATA_AVAIL, FPDFAvail_IsPageAvail(avail(), 0, loader.hints()));
 
   // Test that api is robust enough to handle the bad case.
   EXPECT_FALSE(FPDF_GetMetaText(document_, "Type", nullptr, 0));
@@ -358,18 +358,18 @@ TEST_F(FPDFDataAvailEmbedderTest, TryLoadNonExistsInfo) {
   memcpy(loader.file_contents() + *index, "/I_fo 27 0 R", 12);
 
   loader.set_is_new_data_available(false);
-  avail_ = FPDFAvail_Create(loader.file_avail(), loader.file_access());
-  while (PDF_DATA_AVAIL != FPDFAvail_IsDocAvail(avail_, loader.hints())) {
+  CreateAvail(loader.file_avail(), loader.file_access());
+  while (PDF_DATA_AVAIL != FPDFAvail_IsDocAvail(avail(), loader.hints())) {
     loader.FlushRequestedData();
   }
 
-  document_ = FPDFAvail_GetDocument(avail_, nullptr);
+  document_ = FPDFAvail_GetDocument(avail(), nullptr);
   ASSERT_TRUE(document_);
 
   // Set all data available.
   loader.set_is_new_data_available(true);
   // Check second page, to load additional crossrefs.
-  ASSERT_EQ(PDF_DATA_AVAIL, FPDFAvail_IsPageAvail(avail_, 0, loader.hints()));
+  ASSERT_EQ(PDF_DATA_AVAIL, FPDFAvail_IsPageAvail(avail(), 0, loader.hints()));
 
   // Test that api is robust enough to handle the bad case.
   EXPECT_FALSE(FPDF_GetMetaText(document_, "Type", nullptr, 0));
@@ -386,8 +386,8 @@ TEST_F(FPDFDataAvailEmbedderTest, BadInputsToAPIs) {
 
 TEST_F(FPDFDataAvailEmbedderTest, NegativePageIndex) {
   TestAsyncLoader loader("linearized.pdf");
-  avail_ = FPDFAvail_Create(loader.file_avail(), loader.file_access());
-  ASSERT_EQ(PDF_DATA_AVAIL, FPDFAvail_IsDocAvail(avail_, loader.hints()));
+  CreateAvail(loader.file_avail(), loader.file_access());
+  ASSERT_EQ(PDF_DATA_AVAIL, FPDFAvail_IsDocAvail(avail(), loader.hints()));
   EXPECT_EQ(PDF_DATA_NOTAVAIL,
-            FPDFAvail_IsPageAvail(avail_, -1, loader.hints()));
+            FPDFAvail_IsPageAvail(avail(), -1, loader.hints()));
 }

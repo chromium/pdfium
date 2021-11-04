@@ -104,6 +104,10 @@ class EmbedderTest : public ::testing::Test,
   FPDF_DOCUMENT document() const { return document_; }
   FPDF_FORMHANDLE form_handle() const { return form_handle_; }
 
+  // Wrapper for FPDFAvail_Create() to set `avail_`.
+  void CreateAvail(FX_FILEAVAIL* file_avail, FPDF_FILEACCESS* file);
+  FPDF_AVAIL avail() { return avail_.get(); }
+
   // Create an empty document, and its form fill environment. Returns true
   // on success or false on failure.
   bool CreateEmptyDocument();
@@ -211,7 +215,7 @@ class EmbedderTest : public ::testing::Test,
                           JavaScriptOption javascript_option,
                           FakeFileAccess* network_simulator,
                           FPDF_DOCUMENT* document,
-                          FPDF_AVAIL* avail,
+                          ScopedFPDFAvail* avail,
                           FPDF_FORMHANDLE* form_handle);
 
   FPDF_FORMHANDLE SetupFormFillEnvironment(FPDF_DOCUMENT doc,
@@ -282,7 +286,7 @@ class EmbedderTest : public ::testing::Test,
   FPDF_FORMHANDLE form_handle_ = nullptr;
   FPDF_FILEACCESS file_access_;                       // must outlive `avail_`.
   std::unique_ptr<FakeFileAccess> fake_file_access_;  // must outlive `avail_`.
-  FPDF_AVAIL avail_ = nullptr;
+  ScopedFPDFAvail avail_;
   PageNumberToHandleMap page_map_;
 
   FPDF_DOCUMENT saved_document_ = nullptr;
@@ -290,7 +294,7 @@ class EmbedderTest : public ::testing::Test,
   FPDF_FILEACCESS saved_file_access_;  // must outlive `saved_avail_`.
   // must outlive `saved_avail_`.
   std::unique_ptr<FakeFileAccess> saved_fake_file_access_;
-  FPDF_AVAIL saved_avail_ = nullptr;
+  ScopedFPDFAvail saved_avail_;
   PageNumberToHandleMap saved_page_map_;
 
  private:

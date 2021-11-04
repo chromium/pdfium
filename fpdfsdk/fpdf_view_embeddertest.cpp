@@ -794,7 +794,7 @@ TEST_F(FPDFViewEmbedderTest, CrossRefV4Loop) {
   // loop either. See bug 875.
   int ret = PDF_DATA_NOTAVAIL;
   while (ret == PDF_DATA_NOTAVAIL)
-    ret = FPDFAvail_IsDocAvail(avail_, &hints);
+    ret = FPDFAvail_IsDocAvail(avail(), &hints);
   EXPECT_EQ(PDF_DATA_AVAIL, ret);
 }
 
@@ -1702,11 +1702,11 @@ TEST_F(FPDFViewEmbedderTest, GetTrailerEndsLinearized) {
   // Set up linearized PDF.
   FileAccessForTesting file_acc("linearized.pdf");
   FakeFileAccess fake_acc(&file_acc);
-  avail_ = FPDFAvail_Create(fake_acc.GetFileAvail(), fake_acc.GetFileAccess());
+  CreateAvail(fake_acc.GetFileAvail(), fake_acc.GetFileAccess());
   fake_acc.SetWholeFileAvailable();
 
   // Multiple trailers, \r line ending at the trailer ends (no \n).
-  document_ = FPDFAvail_GetDocument(avail_, nullptr);
+  document_ = FPDFAvail_GetDocument(avail(), nullptr);
   ASSERT_TRUE(document());
 
   // FPDF_GetTrailerEnds() positive testing.
