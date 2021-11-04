@@ -102,7 +102,8 @@ class EmbedderTest : public ::testing::Test,
   }
 
   FPDF_DOCUMENT document() const { return document_; }
-  FPDF_FORMHANDLE form_handle() const { return form_handle_; }
+  FPDF_FORMHANDLE form_handle() const { return form_handle_.get(); }
+  FPDF_FORMHANDLE saved_form_handle() const { return saved_form_handle_.get(); }
 
   // Wrapper for FPDFAvail_Create() to set `avail_`.
   void CreateAvail(FX_FILEAVAIL* file_avail, FPDF_FILEACCESS* file);
@@ -216,7 +217,7 @@ class EmbedderTest : public ::testing::Test,
                           FakeFileAccess* network_simulator,
                           FPDF_DOCUMENT* document,
                           ScopedFPDFAvail* avail,
-                          FPDF_FORMHANDLE* form_handle);
+                          ScopedFPDFFormHandle* form_handle);
 
   FPDF_FORMHANDLE SetupFormFillEnvironment(FPDF_DOCUMENT doc,
                                            JavaScriptOption javascript_option);
@@ -282,19 +283,19 @@ class EmbedderTest : public ::testing::Test,
   // must outlive `loader_`.
   std::unique_ptr<char, pdfium::FreeDeleter> file_contents_;
   std::unique_ptr<TestLoader> loader_;
-  FPDF_DOCUMENT document_ = nullptr;
-  FPDF_FORMHANDLE form_handle_ = nullptr;
   FPDF_FILEACCESS file_access_;                       // must outlive `avail_`.
   std::unique_ptr<FakeFileAccess> fake_file_access_;  // must outlive `avail_`.
   ScopedFPDFAvail avail_;
+  FPDF_DOCUMENT document_ = nullptr;
+  ScopedFPDFFormHandle form_handle_;
   PageNumberToHandleMap page_map_;
 
-  FPDF_DOCUMENT saved_document_ = nullptr;
-  FPDF_FORMHANDLE saved_form_handle_ = nullptr;
   FPDF_FILEACCESS saved_file_access_;  // must outlive `saved_avail_`.
   // must outlive `saved_avail_`.
   std::unique_ptr<FakeFileAccess> saved_fake_file_access_;
   ScopedFPDFAvail saved_avail_;
+  FPDF_DOCUMENT saved_document_ = nullptr;
+  ScopedFPDFFormHandle saved_form_handle_;
   PageNumberToHandleMap saved_page_map_;
 
  private:

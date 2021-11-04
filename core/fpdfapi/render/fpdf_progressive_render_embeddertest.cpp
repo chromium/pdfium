@@ -228,7 +228,7 @@ FPDFProgressiveRenderEmbedderTest::RenderPageWithForcedColorScheme(
   while (!render_done) {
     render_done = ContinueRenderPage(page, &pause);
   }
-  return FinishRenderPageWithForms(page, form_handle_);
+  return FinishRenderPageWithForms(page, form_handle());
 }
 
 TEST_F(FPDFProgressiveRenderEmbedderTest, RenderWithoutPause) {
@@ -295,7 +295,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderFormsWithPause) {
   while (!render_done) {
     render_done = ContinueRenderPage(page, &pause);
   }
-  ScopedFPDFBitmap bitmap = FinishRenderPageWithForms(page, form_handle_);
+  ScopedFPDFBitmap bitmap = FinishRenderPageWithForms(page, form_handle());
   CompareBitmap(bitmap.get(), 300, 300, pdfium::kTextFormChecksum);
   UnloadPage(page);
 }
@@ -314,7 +314,7 @@ void FPDFProgressiveRenderEmbedderTest::VerifyRenderingWithColorScheme(
   ASSERT_TRUE(page);
 
   ScopedFPDFBitmap bitmap = RenderPageWithForcedColorScheme(
-      page, form_handle_, flags, color_scheme, background_color);
+      page, form_handle(), flags, color_scheme, background_color);
   ASSERT_TRUE(bitmap);
   CompareBitmap(bitmap.get(), bitmap_width, bitmap_height, md5);
   UnloadPage(page);

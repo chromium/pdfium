@@ -83,8 +83,8 @@ bool EmbedderTest::CreateEmptyDocument() {
   if (!document_)
     return false;
 
-  form_handle_ =
-      SetupFormFillEnvironment(document_, JavaScriptOption::kEnableJavaScript);
+  form_handle_.reset(
+      SetupFormFillEnvironment(document_, JavaScriptOption::kEnableJavaScript));
   return true;
 }
 
@@ -146,7 +146,7 @@ bool EmbedderTest::OpenDocumentHelper(const char* password,
                                       FakeFileAccess* network_simulator,
                                       FPDF_DOCUMENT* document,
                                       ScopedFPDFAvail* avail,
-                                      FPDF_FORMHANDLE* form_handle) {
+                                      ScopedFPDFFormHandle* form_handle) {
   network_simulator->AddSegment(0, 1024);
   network_simulator->SetRequestedDataAvailable();
   avail->reset(FPDFAvail_Create(network_simulator->GetFileAvail(),
@@ -195,7 +195,7 @@ bool EmbedderTest::OpenDocumentHelper(const char* password,
     if (!*document)
       return false;
   }
-  *form_handle = SetupFormFillEnvironment(*document, javascript_option);
+  form_handle->reset(SetupFormFillEnvironment(*document, javascript_option));
 
   int doc_type = FPDF_GetFormType(*document);
   if (doc_type == FORMTYPE_XFA_FULL || doc_type == FORMTYPE_XFA_FOREGROUND)
@@ -206,9 +206,8 @@ bool EmbedderTest::OpenDocumentHelper(const char* password,
 }
 
 void EmbedderTest::CloseDocument() {
-  FORM_DoDocumentAAction(form_handle_, FPDFDOC_AACTION_WC);
-  FPDFDOC_ExitFormFillEnvironment(form_handle_);
-  form_handle_ = nullptr;
+  FORM_DoDocumentAAction(form_handle(), FPDFDOC_AACTION_WC);
+  form_handle_.reset();
 
   FPDF_CloseDocument(document_);
   document_ = nullptr;
@@ -244,9 +243,9 @@ FPDF_FORMHANDLE EmbedderTest::SetupFormFillEnvironment(
 }
 
 void EmbedderTest::DoOpenActions() {
-  DCHECK(form_handle_);
-  FORM_DoDocumentJSAction(form_handle_);
-  FORM_DoDocumentOpenAction(form_handle_);
+  DCHECK(form_handle());
+  FORM_DoDocumentJSAction(form_handle());
+  FORM_DoDocumentOpenAction(form_handle());
 }
 
 int EmbedderTest::GetFirstPageNum() {
@@ -273,7 +272,7 @@ FPDF_PAGE EmbedderTest::LoadPageNoEvents(int page_number) {
 }
 
 FPDF_PAGE EmbedderTest::LoadPageCommon(int page_number, bool do_events) {
-  DCHECK(form_handle_);
+  DCHECK(form_handle());
   DCHECK(page_number >= 0);
   DCHECK(!pdfium::Contains(page_map_, page_number));
 
@@ -282,8 +281,8 @@ FPDF_PAGE EmbedderTest::LoadPageCommon(int page_number, bool do_events) {
     return nullptr;
 
   if (do_events) {
-    FORM_OnAfterLoadPage(page, form_handle_);
-    FORM_DoPageAAction(page, form_handle_, FPDFPAGE_AACTION_OPEN);
+    FORM_OnAfterLoadPage(page, form_handle());
+    FORM_DoPageAAction(page, form_handle(), FPDFPAGE_AACTION_OPEN);
   }
   page_map_[page_number] = page;
   return page;
@@ -298,15 +297,15 @@ void EmbedderTest::UnloadPageNoEvents(FPDF_PAGE page) {
 }
 
 void EmbedderTest::UnloadPageCommon(FPDF_PAGE page, bool do_events) {
-  DCHECK(form_handle_);
+  DCHECK(form_handle());
   int page_number = GetPageNumberForLoadedPage(page);
   if (page_number < 0) {
     NOTREACHED();
     return;
   }
   if (do_events) {
-    FORM_DoPageAAction(page, form_handle_, FPDFPAGE_AACTION_CLOSE);
-    FORM_OnBeforeClosePage(page, form_handle_);
+    FORM_DoPageAAction(page, form_handle(), FPDFPAGE_AACTION_CLOSE);
+    FORM_OnBeforeClosePage(page, form_handle());
   }
   FPDF_ClosePage(page);
   page_map_.erase(page_number);
@@ -327,7 +326,7 @@ ScopedFPDFBitmap EmbedderTest::RenderLoadedPageWithFlags(FPDF_PAGE page,
     NOTREACHED();
     return nullptr;
   }
-  return RenderPageWithFlags(page, form_handle_, flags);
+  return RenderPageWithFlags(page, form_handle(), flags);
 }
 
 ScopedFPDFBitmap EmbedderTest::RenderSavedPage(FPDF_PAGE page) {
@@ -340,7 +339,7 @@ ScopedFPDFBitmap EmbedderTest::RenderSavedPageWithFlags(FPDF_PAGE page,
     NOTREACHED();
     return nullptr;
   }
-  return RenderPageWithFlags(page, saved_form_handle_, flags);
+  return RenderPageWithFlags(page, saved_form_handle(), flags);
 }
 
 // static
@@ -467,16 +466,15 @@ FPDF_DOCUMENT EmbedderTest::OpenSavedDocumentWithPassword(
 void EmbedderTest::CloseSavedDocument() {
   DCHECK(saved_document_);
 
-  FPDFDOC_ExitFormFillEnvironment(saved_form_handle_);
+  saved_form_handle_.reset();
   FPDF_CloseDocument(saved_document_);
   saved_avail_.reset();
 
-  saved_form_handle_ = nullptr;
   saved_document_ = nullptr;
 }
 
 FPDF_PAGE EmbedderTest::LoadSavedPage(int page_number) {
-  DCHECK(saved_form_handle_);
+  DCHECK(saved_form_handle());
   DCHECK(page_number >= 0);
   DCHECK(!pdfium::Contains(saved_page_map_, page_number));
 
@@ -484,14 +482,14 @@ FPDF_PAGE EmbedderTest::LoadSavedPage(int page_number) {
   if (!page)
     return nullptr;
 
-  FORM_OnAfterLoadPage(page, saved_form_handle_);
-  FORM_DoPageAAction(page, saved_form_handle_, FPDFPAGE_AACTION_OPEN);
+  FORM_OnAfterLoadPage(page, saved_form_handle());
+  FORM_DoPageAAction(page, saved_form_handle(), FPDFPAGE_AACTION_OPEN);
   saved_page_map_[page_number] = page;
   return page;
 }
 
 void EmbedderTest::CloseSavedPage(FPDF_PAGE page) {
-  DCHECK(saved_form_handle_);
+  DCHECK(saved_form_handle());
 
   int page_number = GetPageNumberForSavedPage(page);
   if (page_number < 0) {
@@ -499,8 +497,8 @@ void EmbedderTest::CloseSavedPage(FPDF_PAGE page) {
     return;
   }
 
-  FORM_DoPageAAction(page, saved_form_handle_, FPDFPAGE_AACTION_CLOSE);
-  FORM_OnBeforeClosePage(page, saved_form_handle_);
+  FORM_DoPageAAction(page, saved_form_handle(), FPDFPAGE_AACTION_CLOSE);
+  FORM_OnBeforeClosePage(page, saved_form_handle());
   FPDF_ClosePage(page);
 
   saved_page_map_.erase(page_number);
