@@ -276,9 +276,9 @@ class EmbedderTest : public ::testing::Test,
 
   FPDF_DOCUMENT document_ = nullptr;
   FPDF_FORMHANDLE form_handle_ = nullptr;
+  FPDF_FILEACCESS file_access_;                       // must outlive `avail_`.
+  std::unique_ptr<FakeFileAccess> fake_file_access_;  // must outlive `avail_`.
   FPDF_AVAIL avail_ = nullptr;
-  FPDF_FILEACCESS file_access_;                       // must outlive |avail_|.
-  std::unique_ptr<FakeFileAccess> fake_file_access_;  // must outlive |avail_|.
 
   std::unique_ptr<TestLoader> loader_;
   size_t file_length_ = 0;
@@ -287,10 +287,10 @@ class EmbedderTest : public ::testing::Test,
 
   FPDF_DOCUMENT saved_document_ = nullptr;
   FPDF_FORMHANDLE saved_form_handle_ = nullptr;
-  FPDF_AVAIL saved_avail_ = nullptr;
-  FPDF_FILEACCESS saved_file_access_;  // must outlive |saved_avail_|.
-  // must outlive |saved_avail_|.
+  FPDF_FILEACCESS saved_file_access_;  // must outlive `saved_avail_`.
+  // must outlive `saved_avail_`.
   std::unique_ptr<FakeFileAccess> saved_fake_file_access_;
+  FPDF_AVAIL saved_avail_ = nullptr;
   PageNumberToHandleMap saved_page_map_;
 
  private:
