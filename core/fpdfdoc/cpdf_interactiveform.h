@@ -21,6 +21,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "third_party/base/span.h"
 
 class CFieldTree;
 class CFDF_Document;
@@ -84,10 +85,7 @@ class CPDF_InteractiveForm {
       bool bIncludeOrExclude) const;
 
   void ResetForm();
-
-  // TODO(tsepez): Use a span.
-  void ResetForm(const std::vector<CPDF_FormField*>& fields,
-                 bool bIncludeOrExclude);
+  void ResetForm(pdfium::span<CPDF_FormField*> fields, bool bIncludeOrExclude);
 
   void SetNotifierIface(NotifierIface* pNotify);
   void FixPageFields(CPDF_Page* pPage);

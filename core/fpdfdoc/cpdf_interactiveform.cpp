@@ -744,7 +744,7 @@ int CPDF_InteractiveForm::GetFormAlignment() const {
   return m_pFormDict ? m_pFormDict->GetIntegerFor("Q", 0) : 0;
 }
 
-void CPDF_InteractiveForm::ResetForm(const std::vector<CPDF_FormField*>& fields,
+void CPDF_InteractiveForm::ResetForm(pdfium::span<CPDF_FormField*> fields,
                                      bool bIncludeOrExclude) {
   CFieldTree::Node* pRoot = m_pFieldTree->GetRoot();
   const size_t nCount = pRoot->CountFields();
