@@ -274,15 +274,15 @@ class EmbedderTest : public ::testing::Test,
   int form_fill_info_version_ = 1;
 #endif  // PDF_ENABLE_XFA
 
+  size_t file_length_ = 0;
+  // must outlive `loader_`.
+  std::unique_ptr<char, pdfium::FreeDeleter> file_contents_;
+  std::unique_ptr<TestLoader> loader_;
   FPDF_DOCUMENT document_ = nullptr;
   FPDF_FORMHANDLE form_handle_ = nullptr;
   FPDF_FILEACCESS file_access_;                       // must outlive `avail_`.
   std::unique_ptr<FakeFileAccess> fake_file_access_;  // must outlive `avail_`.
   FPDF_AVAIL avail_ = nullptr;
-
-  std::unique_ptr<TestLoader> loader_;
-  size_t file_length_ = 0;
-  std::unique_ptr<char, pdfium::FreeDeleter> file_contents_;
   PageNumberToHandleMap page_map_;
 
   FPDF_DOCUMENT saved_document_ = nullptr;

@@ -78,7 +78,6 @@ void EmbedderTest::TearDown() {
     CloseDocument();
 
   FPDFAvail_Destroy(avail_);
-  loader_.reset();
 }
 
 bool EmbedderTest::CreateEmptyDocument() {
