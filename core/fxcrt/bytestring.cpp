@@ -470,9 +470,7 @@ intptr_t ByteString::ReferenceCountForTesting() const {
 }
 
 ByteString ByteString::Substr(size_t offset) const {
-  if (offset >= GetLength())
-    return ByteString();
-
+  // Unsigned underflow is well-defined and out-of-range is handled by Substr().
   return Substr(offset, GetLength() - offset);
 }
 

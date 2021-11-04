@@ -205,9 +205,8 @@ class StringViewTemplate {
   bool Contains(CharType ch) const { return Find(ch).has_value(); }
 
   StringViewTemplate Substr(size_t offset) const {
-    if (offset >= GetLength())
-      return StringViewTemplate();
-
+    // Unsigned underflow is well-defined and out-of-range is handled by
+    // Substr().
     return Substr(offset, GetLength() - offset);
   }
 

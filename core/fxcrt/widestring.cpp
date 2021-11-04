@@ -705,9 +705,7 @@ WideString WideString::EncodeEntities() const {
 }
 
 WideString WideString::Substr(size_t offset) const {
-  if (offset >= GetLength())
-    return WideString();
-
+  // Unsigned underflow is well-defined and out-of-range is handled by Substr().
   return Substr(offset, GetLength() - offset);
 }
 
