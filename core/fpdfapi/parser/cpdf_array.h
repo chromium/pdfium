@@ -99,9 +99,15 @@ class CPDF_Array final : public CPDF_Object {
         index, pdfium::MakeRetain<T>(m_pPool, std::forward<Args>(args)...)));
   }
 
-  // Takes ownership of |pObj|, returns unowned pointer to it.
+  // Retains reference to `pObj`, returns raw pointer to it.
   CPDF_Object* Append(RetainPtr<CPDF_Object> pObj);
+  // Overwrites the object at `index`. `index` must be less than the array size.
   CPDF_Object* SetAt(size_t index, RetainPtr<CPDF_Object> pObj);
+  // Inserts `pObj` and shifts existing objects starting at `index` over, like
+  // std::vector::insert(). Unlike std::vector::insert(), where
+  // std::vector::end() is the last possible position, `index` can be greater
+  // than or equal to the array size. In which case, the array will be resized
+  // such that `index` is the last object.
   CPDF_Object* InsertAt(size_t index, RetainPtr<CPDF_Object> pObj);
 
   void Clear();
