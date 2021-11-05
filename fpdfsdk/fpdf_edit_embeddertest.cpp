@@ -246,7 +246,7 @@ const char kExpectedPDF[] =
 }  // namespace
 
 TEST_F(FPDFEditEmbedderTest, EmbedNotoSansSCFont) {
-  ASSERT_TRUE(CreateEmptyDocument());
+  CreateEmptyDocument();
   ScopedFPDFPage page(FPDFPage_New(document(), 0, 400, 400));
   std::string font_path;
   ASSERT_TRUE(PathService::GetThirdPartyFilePath(
@@ -290,7 +290,7 @@ TEST_F(FPDFEditEmbedderTest, EmbedNotoSansSCFont) {
 }
 
 TEST_F(FPDFEditEmbedderTest, EmbedNotoSansSCFontWithCharcodes) {
-  ASSERT_TRUE(CreateEmptyDocument());
+  CreateEmptyDocument();
   ScopedFPDFPage page(FPDFPage_New(document(), 0, 400, 400));
   std::string font_path;
   ASSERT_TRUE(PathService::GetThirdPartyFilePath(
@@ -335,7 +335,7 @@ TEST_F(FPDFEditEmbedderTest, EmbedNotoSansSCFontWithCharcodes) {
 }
 
 TEST_F(FPDFEditEmbedderTest, EmptyCreation) {
-  EXPECT_TRUE(CreateEmptyDocument());
+  CreateEmptyDocument();
   FPDF_PAGE page = FPDFPage_New(document(), 0, 640.0, 480.0);
   EXPECT_NE(nullptr, page);
   // The FPDFPage_GenerateContent call should do nothing.

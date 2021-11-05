@@ -78,14 +78,12 @@ void EmbedderTest::TearDown() {
     CloseDocument();
 }
 
-bool EmbedderTest::CreateEmptyDocument() {
+void EmbedderTest::CreateEmptyDocument() {
   document_ = FPDF_CreateNewDocument();
-  if (!document_)
-    return false;
+  DCHECK(document_);
 
   form_handle_.reset(
       SetupFormFillEnvironment(document_, JavaScriptOption::kEnableJavaScript));
-  return true;
 }
 
 bool EmbedderTest::OpenDocument(const std::string& filename) {

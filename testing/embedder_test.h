@@ -109,9 +109,8 @@ class EmbedderTest : public ::testing::Test,
   void CreateAvail(FX_FILEAVAIL* file_avail, FPDF_FILEACCESS* file);
   FPDF_AVAIL avail() { return avail_.get(); }
 
-  // Create an empty document, and its form fill environment. Returns true
-  // on success or false on failure.
-  bool CreateEmptyDocument();
+  // Create an empty document, and its form fill environment.
+  void CreateEmptyDocument();
 
   // Open the document specified by |filename|, and create its form fill
   // environment, or return false on failure. The |filename| is relative to
