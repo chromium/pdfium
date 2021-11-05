@@ -35,23 +35,22 @@ namespace {
 constexpr wchar_t kWideTrimChars[] = L"\x09\x0a\x0b\x0c\x0d\x20";
 
 const wchar_t* FX_wcsstr(const wchar_t* haystack,
-                         int haystack_len,
+                         size_t haystack_len,
                          const wchar_t* needle,
-                         int needle_len) {
-  if (needle_len > haystack_len || needle_len == 0) {
+                         size_t needle_len) {
+  if (needle_len > haystack_len || needle_len == 0)
     return nullptr;
-  }
+
   const wchar_t* end_ptr = haystack + haystack_len - needle_len;
   while (haystack <= end_ptr) {
-    int i = 0;
+    size_t i = 0;
     while (1) {
-      if (haystack[i] != needle[i]) {
+      if (haystack[i] != needle[i])
         break;
-      }
+
       i++;
-      if (i == needle_len) {
+      if (i == needle_len)
         return haystack;
-      }
     }
     haystack++;
   }
@@ -679,11 +678,11 @@ ByteString WideString::ToUTF16LE() const {
     return ByteString("\0\0", 2);
 
   ByteString result;
-  int len = m_pData->m_nDataLength;
+  size_t len = m_pData->m_nDataLength;
   {
     // Span's lifetime must end before ReleaseBuffer() below.
     pdfium::span<char> buffer = result.GetBuffer(len * 2 + 2);
-    for (int i = 0; i < len; i++) {
+    for (size_t i = 0; i < len; i++) {
       buffer[i * 2] = m_pData->m_String[i] & 0xff;
       buffer[i * 2 + 1] = m_pData->m_String[i] >> 8;
     }
