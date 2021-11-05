@@ -49,9 +49,9 @@ T StringTo(ByteStringView strc,
   if (strc.IsEmpty())
     return 0;
 
-  int cc = 0;
   bool bNegative = false;
-  int len = strc.GetLength();
+  size_t cc = 0;
+  size_t len = strc.GetLength();
   if (strc[0] == '+') {
     cc++;
   } else if (strc[0] == '-') {
