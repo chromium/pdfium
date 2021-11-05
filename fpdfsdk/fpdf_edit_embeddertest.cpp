@@ -94,7 +94,7 @@ const char kEmbeddedImage33Checksum[] = "cb3637934bb3b95a6e4ae1ea9eb9e56e";
 class FPDFEditEmbedderTest : public EmbedderTest {
  protected:
   FPDF_DOCUMENT CreateNewDocument() {
-    document_ = FPDF_CreateNewDocument();
+    CreateEmptyDocumentWithoutFormFillEnvironment();
     cpdf_doc_ = CPDFDocumentFromFPDFDocument(document_);
     return document_;
   }

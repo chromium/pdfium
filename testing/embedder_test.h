@@ -112,6 +112,9 @@ class EmbedderTest : public ::testing::Test,
   // Create an empty document, and its form fill environment.
   void CreateEmptyDocument();
 
+  // Create an empty document without a form fill environment.
+  void CreateEmptyDocumentWithoutFormFillEnvironment();
+
   // Open the document specified by |filename|, and create its form fill
   // environment, or return false on failure. The |filename| is relative to
   // the test data directory where we store all the test files. |password| can
