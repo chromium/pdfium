@@ -308,7 +308,7 @@ void FPDFProgressiveRenderEmbedderTest::VerifyRenderingWithColorScheme(
     int bitmap_width,
     int bitmap_height,
     const char* md5) {
-  ASSERT_TRUE(document_);
+  ASSERT_TRUE(document());
 
   FPDF_PAGE page = LoadPage(page_num);
   ASSERT_TRUE(page);

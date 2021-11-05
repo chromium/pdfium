@@ -73,8 +73,8 @@ TEST_F(CPDF_CreatorEmbedderTest, SaveLinearizedInfo) {
     fake_acc.SetRequestedDataAvailable();
   }
 
-  document_ = FPDFAvail_GetDocument(avail(), nullptr);
-  ASSERT_TRUE(document_);
+  SetDocumentFromAvail();
+  ASSERT_TRUE(document());
 
   // Load second page, to parse additional crossref sections.
   while (PDF_DATA_AVAIL !=
@@ -84,7 +84,7 @@ TEST_F(CPDF_CreatorEmbedderTest, SaveLinearizedInfo) {
   // Simulate downloading of whole file.
   fake_acc.SetWholeFileAvailable();
   // Save document.
-  EXPECT_TRUE(FPDF_SaveAsCopy(document_, this, 0));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   const std::string saved_doc = GetString();
 
   EXPECT_THAT(saved_doc, ::testing::HasSubstr("/Info"));

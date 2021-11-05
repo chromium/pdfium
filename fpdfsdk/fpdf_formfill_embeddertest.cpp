@@ -1446,22 +1446,22 @@ TEST_F(FPDFFormFillEmbedderTest, RemoveFormFieldHighlight) {
 
 TEST_F(FPDFFormFillEmbedderTest, HasFormInfoNone) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
-  EXPECT_EQ(FORMTYPE_NONE, FPDF_GetFormType(document_));
+  EXPECT_EQ(FORMTYPE_NONE, FPDF_GetFormType(document()));
 }
 
 TEST_F(FPDFFormFillEmbedderTest, HasFormInfoAcroForm) {
   ASSERT_TRUE(OpenDocument("text_form.pdf"));
-  EXPECT_EQ(FORMTYPE_ACRO_FORM, FPDF_GetFormType(document_));
+  EXPECT_EQ(FORMTYPE_ACRO_FORM, FPDF_GetFormType(document()));
 }
 
 TEST_F(FPDFFormFillEmbedderTest, HasFormInfoXFAFull) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
-  EXPECT_EQ(FORMTYPE_XFA_FULL, FPDF_GetFormType(document_));
+  EXPECT_EQ(FORMTYPE_XFA_FULL, FPDF_GetFormType(document()));
 }
 
 TEST_F(FPDFFormFillEmbedderTest, HasFormInfoXFAForeground) {
   ASSERT_TRUE(OpenDocument("bug_216.pdf"));
-  EXPECT_EQ(FORMTYPE_XFA_FOREGROUND, FPDF_GetFormType(document_));
+  EXPECT_EQ(FORMTYPE_XFA_FOREGROUND, FPDF_GetFormType(document()));
 }
 
 TEST_F(FPDFFormFillEmbedderTest, BadApiInputsText) {
