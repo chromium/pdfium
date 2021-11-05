@@ -10,11 +10,11 @@
 
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
-#include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 
 CFX_BitStream::CFX_BitStream(pdfium::span<const uint8_t> pData)
     : m_BitSize(pData.size() * 8), m_pData(pData.data()) {
-  DCHECK(pData.size() <= std::numeric_limits<uint32_t>::max() / 8);
+  CHECK_LE(pData.size(), std::numeric_limits<size_t>::max() / 8);
 }
 
 CFX_BitStream::~CFX_BitStream() = default;
@@ -30,12 +30,12 @@ uint32_t CFX_BitStream::GetBits(uint32_t nBits) {
     return 0;
 
   const uint32_t bit_pos = m_BitPos % 8;
-  uint32_t byte_pos = m_BitPos / 8;
+  size_t byte_pos = m_BitPos / 8;
   const uint8_t* data = m_pData.Get();
   uint8_t current_byte = data[byte_pos];
 
   if (nBits == 1) {
-    int bit = (current_byte & (1 << (7 - bit_pos))) ? 1 : 0;
+    uint32_t bit = (current_byte & (1 << (7 - bit_pos))) ? 1 : 0;
     m_BitPos++;
     return bit;
   }
