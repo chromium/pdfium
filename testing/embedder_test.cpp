@@ -211,8 +211,12 @@ bool EmbedderTest::OpenDocumentHelper(const char* password,
 void EmbedderTest::CloseDocument() {
   FORM_DoDocumentAAction(form_handle(), FPDFDOC_AACTION_WC);
   form_handle_.reset();
-
   document_.reset();
+  avail_.reset();
+  fake_file_access_.reset();
+  memset(&file_access_, 0, sizeof(file_access_));
+  loader_.reset();
+  file_contents_.reset();
 }
 
 FPDF_FORMHANDLE EmbedderTest::SetupFormFillEnvironment(

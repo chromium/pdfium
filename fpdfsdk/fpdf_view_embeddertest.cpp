@@ -341,6 +341,20 @@ TEST_F(FPDFViewEmbedderTest, Document) {
 
   EXPECT_EQ(0xFFFFFFFF, FPDF_GetDocPermissions(document()));
   EXPECT_EQ(-1, FPDF_GetSecurityHandlerRevision(document()));
+  CloseDocument();
+
+  // Safe to open again and do the same things all over again.
+  ASSERT_TRUE(OpenDocument("about_blank.pdf"));
+  EXPECT_EQ(1, GetPageCount());
+  EXPECT_EQ(0, GetFirstPageNum());
+
+  version = 42;
+  EXPECT_TRUE(FPDF_GetFileVersion(document(), &version));
+  EXPECT_EQ(14, version);
+
+  EXPECT_EQ(0xFFFFFFFF, FPDF_GetDocPermissions(document()));
+  EXPECT_EQ(-1, FPDF_GetSecurityHandlerRevision(document()));
+  // CloseDocument() called by TearDown().
 }
 
 TEST_F(FPDFViewEmbedderTest, LoadDocument64) {
