@@ -36,23 +36,22 @@ namespace {
 constexpr char kTrimChars[] = "\x09\x0a\x0b\x0c\x0d\x20";
 
 const char* FX_strstr(const char* haystack,
-                      int haystack_len,
+                      size_t haystack_len,
                       const char* needle,
-                      int needle_len) {
-  if (needle_len > haystack_len || needle_len == 0) {
+                      size_t needle_len) {
+  if (needle_len > haystack_len || needle_len == 0)
     return nullptr;
-  }
+
   const char* end_ptr = haystack + haystack_len - needle_len;
   while (haystack <= end_ptr) {
-    int i = 0;
+    size_t i = 0;
     while (1) {
-      if (haystack[i] != needle[i]) {
+      if (haystack[i] != needle[i])
         break;
-      }
+
       i++;
-      if (i == needle_len) {
+      if (i == needle_len)
         return haystack;
-      }
     }
     haystack++;
   }
