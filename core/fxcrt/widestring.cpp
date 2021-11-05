@@ -65,38 +65,39 @@ absl::optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
       ++nMaxLen;
       continue;
     }
-    int nItemLen = 0;
-    int nWidth = 0;
+    int iWidth = 0;
     for (; *pStr != 0; pStr++) {
       if (*pStr == '#') {
         nMaxLen += 2;
       } else if (*pStr == '*') {
-        nWidth = va_arg(argList, int);
+        iWidth = va_arg(argList, int);
       } else if (*pStr != '-' && *pStr != '+' && *pStr != '0' && *pStr != ' ') {
         break;
       }
     }
-    if (nWidth == 0) {
-      nWidth = FXSYS_wtoi(pStr);
+    if (iWidth == 0) {
+      iWidth = FXSYS_wtoi(pStr);
       while (FXSYS_IsDecimalDigit(*pStr))
         ++pStr;
     }
-    if (nWidth < 0 || nWidth > 128 * 1024)
+    if (iWidth < 0 || iWidth > 128 * 1024)
       return absl::nullopt;
-    int nPrecision = 0;
+    uint32_t nWidth = static_cast<uint32_t>(iWidth);
+    int iPrecision = 0;
     if (*pStr == '.') {
       pStr++;
       if (*pStr == '*') {
-        nPrecision = va_arg(argList, int);
+        iPrecision = va_arg(argList, int);
         pStr++;
       } else {
-        nPrecision = FXSYS_wtoi(pStr);
+        iPrecision = FXSYS_wtoi(pStr);
         while (FXSYS_IsDecimalDigit(*pStr))
           ++pStr;
       }
     }
-    if (nPrecision < 0 || nPrecision > 128 * 1024)
+    if (iPrecision < 0 || iPrecision > 128 * 1024)
       return absl::nullopt;
+    uint32_t nPrecision = static_cast<uint32_t>(iPrecision);
     int nModifier = 0;
     if (*pStr == L'I' && *(pStr + 1) == L'6' && *(pStr + 2) == L'4') {
       pStr += 3;
@@ -118,6 +119,7 @@ absl::optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
           break;
       }
     }
+    size_t nItemLen = 0;
     switch (*pStr | nModifier) {
       case 'c':
       case 'C':
