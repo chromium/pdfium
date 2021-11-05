@@ -41,33 +41,54 @@ void CheckLimitsArray(CPDF_Dictionary* pNode,
   EXPECT_STREQ(greatest, pLimits->GetStringAt(1).c_str());
 }
 
+// Set up a name tree with 3 levels and 5 nodes, per diagram:
+//
+//   [root]
+//     |
+//     |
+//     |
+//   [pKid1]
+//     |
+//     +------------+
+//     |            |
+//   [pGrandKid2] [pGrandKid3]
+//     |          {9.txt: 999}
+//     |
+//     +-----------------+
+//     |                 |
+//   [pGreatGrandKid4] [pGreatGrandKid5]
+//   {1.txt: 111}      {3.txt: 333}
+//   {2.txt: 222}      {5.txt: 555}
+//
 void FillNameTreeDict(CPDF_Dictionary* pRootDict) {
-  CPDF_Array* pKids = pRootDict->SetNewFor<CPDF_Array>("Kids");
-  CPDF_Dictionary* pKid1 = pKids->AppendNew<CPDF_Dictionary>();
+  CPDF_Array* pRootKids = pRootDict->SetNewFor<CPDF_Array>("Kids");
+  CPDF_Dictionary* pKid1 = pRootKids->AppendNew<CPDF_Dictionary>();
 
   // Make the lower and upper limit out of order on purpose.
   AddLimitsArray(pKid1, "9.txt", "1.txt");
-  pKids = pKid1->SetNewFor<CPDF_Array>("Kids");
-  CPDF_Dictionary* pKid2 = pKids->AppendNew<CPDF_Dictionary>();
-  CPDF_Dictionary* pKid3 = pKids->AppendNew<CPDF_Dictionary>();
+  CPDF_Array* pKids1Kids = pKid1->SetNewFor<CPDF_Array>("Kids");
+  CPDF_Dictionary* pGrandKid2 = pKids1Kids->AppendNew<CPDF_Dictionary>();
+  CPDF_Dictionary* pGrandKid3 = pKids1Kids->AppendNew<CPDF_Dictionary>();
 
-  AddLimitsArray(pKid2, "1.txt", "5.txt");
-  pKids = pKid2->SetNewFor<CPDF_Array>("Kids");
-  CPDF_Dictionary* pKid4 = pKids->AppendNew<CPDF_Dictionary>();
-  CPDF_Dictionary* pKid5 = pKids->AppendNew<CPDF_Dictionary>();
+  AddLimitsArray(pGrandKid2, "1.txt", "5.txt");
+  CPDF_Array* pGrandKid2Kids = pGrandKid2->SetNewFor<CPDF_Array>("Kids");
+  CPDF_Dictionary* pGreatGrandKid4 =
+      pGrandKid2Kids->AppendNew<CPDF_Dictionary>();
+  CPDF_Dictionary* pGreatGrandKid5 =
+      pGrandKid2Kids->AppendNew<CPDF_Dictionary>();
 
-  AddLimitsArray(pKid3, "9.txt", "9.txt");
-  CPDF_Array* pNames = pKid3->SetNewFor<CPDF_Array>("Names");
+  AddLimitsArray(pGrandKid3, "9.txt", "9.txt");
+  CPDF_Array* pNames = pGrandKid3->SetNewFor<CPDF_Array>("Names");
   AddNameKeyValue(pNames, "9.txt", 999);
 
   // Make the lower and upper limit out of order on purpose.
-  AddLimitsArray(pKid4, "2.txt", "1.txt");
-  pNames = pKid4->SetNewFor<CPDF_Array>("Names");
+  AddLimitsArray(pGreatGrandKid4, "2.txt", "1.txt");
+  pNames = pGreatGrandKid4->SetNewFor<CPDF_Array>("Names");
   AddNameKeyValue(pNames, "1.txt", 111);
   AddNameKeyValue(pNames, "2.txt", 222);
 
-  AddLimitsArray(pKid5, "3.txt", "5.txt");
-  pNames = pKid5->SetNewFor<CPDF_Array>("Names");
+  AddLimitsArray(pGreatGrandKid5, "3.txt", "5.txt");
+  pNames = pGreatGrandKid5->SetNewFor<CPDF_Array>("Names");
   AddNameKeyValue(pNames, "3.txt", 333);
   AddNameKeyValue(pNames, "5.txt", 555);
 }
@@ -171,7 +192,6 @@ TEST(cpdf_nametree, AddIntoEmptyNames) {
 }
 
 TEST(cpdf_nametree, AddIntoKids) {
-  // Set up a name tree with five nodes of three levels.
   auto pRootDict = pdfium::MakeRetain<CPDF_Dictionary>();
   FillNameTreeDict(pRootDict.Get());
   std::unique_ptr<CPDF_NameTree> name_tree =
@@ -212,32 +232,34 @@ TEST(cpdf_nametree, AddIntoKids) {
   CheckLimitsArray(pKid1, "0.txt", "99.txt");
 
   // Check that the nodes on the second level has the expected limits and names.
-  CPDF_Dictionary* pKid2 = pKid1->GetArrayFor("Kids")->GetDictAt(0);
-  ASSERT_TRUE(pKid2);
-  CheckLimitsArray(pKid2, "0.txt", "6.txt");
+  CPDF_Dictionary* pGrandKid2 = pKid1->GetArrayFor("Kids")->GetDictAt(0);
+  ASSERT_TRUE(pGrandKid2);
+  CheckLimitsArray(pGrandKid2, "0.txt", "6.txt");
 
-  CPDF_Dictionary* pKid3 = pKid1->GetArrayFor("Kids")->GetDictAt(1);
-  ASSERT_TRUE(pKid3);
-  CheckLimitsArray(pKid3, "9.txt", "99.txt");
-  CPDF_Array* pNames = pKid3->GetArrayFor("Names");
+  CPDF_Dictionary* pGrandKid3 = pKid1->GetArrayFor("Kids")->GetDictAt(1);
+  ASSERT_TRUE(pGrandKid3);
+  CheckLimitsArray(pGrandKid3, "9.txt", "99.txt");
+  CPDF_Array* pNames = pGrandKid3->GetArrayFor("Names");
   ASSERT_TRUE(pNames);
   CheckNameKeyValue(pNames, 0, "9.txt", 999);
   CheckNameKeyValue(pNames, 1, "99.txt", 99);
 
   // Check that the nodes on the third level has the expected limits and names.
-  CPDF_Dictionary* pKid4 = pKid2->GetArrayFor("Kids")->GetDictAt(0);
-  ASSERT_TRUE(pKid4);
-  CheckLimitsArray(pKid4, "0.txt", "2.txt");
-  pNames = pKid4->GetArrayFor("Names");
+  CPDF_Dictionary* pGreatGrandKid4 =
+      pGrandKid2->GetArrayFor("Kids")->GetDictAt(0);
+  ASSERT_TRUE(pGreatGrandKid4);
+  CheckLimitsArray(pGreatGrandKid4, "0.txt", "2.txt");
+  pNames = pGreatGrandKid4->GetArrayFor("Names");
   ASSERT_TRUE(pNames);
   CheckNameKeyValue(pNames, 0, "0.txt", -5);
   CheckNameKeyValue(pNames, 1, "1.txt", 111);
   CheckNameKeyValue(pNames, 2, "2.txt", 222);
 
-  CPDF_Dictionary* pKid5 = pKid2->GetArrayFor("Kids")->GetDictAt(1);
-  ASSERT_TRUE(pKid5);
-  CheckLimitsArray(pKid5, "3.txt", "6.txt");
-  pNames = pKid5->GetArrayFor("Names");
+  CPDF_Dictionary* pGreatGrandKid5 =
+      pGrandKid2->GetArrayFor("Kids")->GetDictAt(1);
+  ASSERT_TRUE(pGreatGrandKid5);
+  CheckLimitsArray(pGreatGrandKid5, "3.txt", "6.txt");
+  pNames = pGreatGrandKid5->GetArrayFor("Names");
   ASSERT_TRUE(pNames);
   CheckNameKeyValue(pNames, 0, "3.txt", 333);
   CheckNameKeyValue(pNames, 1, "4.txt", 444);
@@ -246,7 +268,6 @@ TEST(cpdf_nametree, AddIntoKids) {
 }
 
 TEST(cpdf_nametree, DeleteFromKids) {
-  // Set up a name tree with five nodes of three levels.
   auto pRootDict = pdfium::MakeRetain<CPDF_Dictionary>();
   FillNameTreeDict(pRootDict.Get());
   std::unique_ptr<CPDF_NameTree> name_tree =
@@ -256,14 +277,16 @@ TEST(cpdf_nametree, DeleteFromKids) {
   CPDF_Dictionary* pKid1 =
       name_tree->GetRootForTesting()->GetArrayFor("Kids")->GetDictAt(0);
   ASSERT_TRUE(pKid1);
-  CPDF_Dictionary* pKid2 = pKid1->GetArrayFor("Kids")->GetDictAt(0);
-  ASSERT_TRUE(pKid2);
-  CPDF_Dictionary* pKid3 = pKid1->GetArrayFor("Kids")->GetDictAt(1);
-  ASSERT_TRUE(pKid3);
-  CPDF_Dictionary* pKid4 = pKid2->GetArrayFor("Kids")->GetDictAt(0);
-  ASSERT_TRUE(pKid4);
-  CPDF_Dictionary* pKid5 = pKid2->GetArrayFor("Kids")->GetDictAt(1);
-  ASSERT_TRUE(pKid5);
+  CPDF_Dictionary* pGrandKid2 = pKid1->GetArrayFor("Kids")->GetDictAt(0);
+  ASSERT_TRUE(pGrandKid2);
+  CPDF_Dictionary* pGrandKid3 = pKid1->GetArrayFor("Kids")->GetDictAt(1);
+  ASSERT_TRUE(pGrandKid3);
+  CPDF_Dictionary* pGreatGrandKid4 =
+      pGrandKid2->GetArrayFor("Kids")->GetDictAt(0);
+  ASSERT_TRUE(pGreatGrandKid4);
+  CPDF_Dictionary* pGreatGrandKid5 =
+      pGrandKid2->GetArrayFor("Kids")->GetDictAt(1);
+  ASSERT_TRUE(pGreatGrandKid5);
 
   // Check that deleting an out-of-bound index would fail.
   EXPECT_FALSE(name_tree->DeleteValueAndName(5));
@@ -286,11 +309,11 @@ TEST(cpdf_nametree, DeleteFromKids) {
   EXPECT_EQ(222, name_tree->LookupValue(L"2.txt")->GetInteger());
   EXPECT_TRUE(name_tree->LookupValueAndName(1, &csName));
   EXPECT_STREQ(L"2.txt", csName.c_str());
-  EXPECT_EQ(4u, pKid4->GetArrayFor("Names")->size());
+  EXPECT_EQ(4u, pGreatGrandKid4->GetArrayFor("Names")->size());
   EXPECT_TRUE(name_tree->DeleteValueAndName(1));
-  EXPECT_EQ(2u, pKid4->GetArrayFor("Names")->size());
-  CheckLimitsArray(pKid4, "1.txt", "1.txt");
-  CheckLimitsArray(pKid2, "1.txt", "5.txt");
+  EXPECT_EQ(2u, pGreatGrandKid4->GetArrayFor("Names")->size());
+  CheckLimitsArray(pGreatGrandKid4, "1.txt", "1.txt");
+  CheckLimitsArray(pGrandKid2, "1.txt", "5.txt");
   CheckLimitsArray(pKid1, "1.txt", "5.txt");
 
   // Delete the name "1.txt", and check that its node gets deleted, and its
@@ -299,10 +322,10 @@ TEST(cpdf_nametree, DeleteFromKids) {
   EXPECT_EQ(111, name_tree->LookupValue(L"1.txt")->GetInteger());
   EXPECT_TRUE(name_tree->LookupValueAndName(0, &csName));
   EXPECT_STREQ(L"1.txt", csName.c_str());
-  EXPECT_EQ(2u, pKid2->GetArrayFor("Kids")->size());
+  EXPECT_EQ(2u, pGrandKid2->GetArrayFor("Kids")->size());
   EXPECT_TRUE(name_tree->DeleteValueAndName(0));
-  EXPECT_EQ(1u, pKid2->GetArrayFor("Kids")->size());
-  CheckLimitsArray(pKid2, "3.txt", "5.txt");
+  EXPECT_EQ(1u, pGrandKid2->GetArrayFor("Kids")->size());
+  CheckLimitsArray(pGrandKid2, "3.txt", "5.txt");
   CheckLimitsArray(pKid1, "3.txt", "5.txt");
 
   // Delete the name "3.txt", and check that its node does not get deleted, and
@@ -311,11 +334,11 @@ TEST(cpdf_nametree, DeleteFromKids) {
   EXPECT_EQ(333, name_tree->LookupValue(L"3.txt")->GetInteger());
   EXPECT_TRUE(name_tree->LookupValueAndName(0, &csName));
   EXPECT_STREQ(L"3.txt", csName.c_str());
-  EXPECT_EQ(4u, pKid5->GetArrayFor("Names")->size());
+  EXPECT_EQ(4u, pGreatGrandKid5->GetArrayFor("Names")->size());
   EXPECT_TRUE(name_tree->DeleteValueAndName(0));
-  EXPECT_EQ(2u, pKid5->GetArrayFor("Names")->size());
-  CheckLimitsArray(pKid5, "5.txt", "5.txt");
-  CheckLimitsArray(pKid2, "5.txt", "5.txt");
+  EXPECT_EQ(2u, pGreatGrandKid5->GetArrayFor("Names")->size());
+  CheckLimitsArray(pGreatGrandKid5, "5.txt", "5.txt");
+  CheckLimitsArray(pGrandKid2, "5.txt", "5.txt");
   CheckLimitsArray(pKid1, "5.txt", "5.txt");
 
   // Delete the name "5.txt", and check that all nodes in the tree get deleted
