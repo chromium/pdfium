@@ -107,25 +107,21 @@ TEST(cpdf_nametree, GetUnicodeNameWithBOM) {
   CPDF_Array* pNames = pRootDict->SetNewFor<CPDF_Array>("Names");
 
   // Add the key "1" (with BOM) and value 100 into the array.
-  std::ostringstream buf;
   constexpr char kData[] = "\xFE\xFF\x00\x31";
-  for (size_t i = 0; i < sizeof(kData); ++i)
-    buf.put(kData[i]);
-  pNames->AppendNew<CPDF_String>(ByteString(buf), true);
+  pNames->AppendNew<CPDF_String>(ByteString(kData, sizeof(kData) - 1), true);
   pNames->AppendNew<CPDF_Number>(100);
 
   // Check that the key is as expected.
   std::unique_ptr<CPDF_NameTree> name_tree =
       CPDF_NameTree::CreateForTesting(pRootDict.Get());
-  WideString storedName;
-  name_tree->LookupValueAndName(0, &storedName);
-  EXPECT_STREQ(L"1", storedName.c_str());
+  WideString stored_name;
+  name_tree->LookupValueAndName(0, &stored_name);
+  EXPECT_STREQ(L"1", stored_name.c_str());
 
   // Check that the correct value object can be obtained by looking up "1".
-  WideString matchName = L"1";
-  CPDF_Object* pObj = name_tree->LookupValue(matchName);
-  ASSERT_TRUE(pObj->IsNumber());
-  EXPECT_EQ(100, pObj->AsNumber()->GetInteger());
+  const CPDF_Number* pNumber = ToNumber(name_tree->LookupValue(L"1"));
+  ASSERT_TRUE(pNumber);
+  EXPECT_EQ(100, pNumber->GetInteger());
 }
 
 TEST(cpdf_nametree, AddIntoNames) {
