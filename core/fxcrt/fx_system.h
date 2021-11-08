@@ -118,20 +118,24 @@ inline const wchar_t* FXSYS_chr(const wchar_t* ptr, wchar_t ch, size_t len) {
 }
 
 // Could be C, but uses C++-style casting.
-#define FXSYS_UINT16_GET_LSBFIRST(p)                            \
-  (static_cast<uint16_t>((static_cast<uint32_t>((p)[1]) << 8) | \
-                         (static_cast<uint32_t>((p)[0]))))
-#define FXSYS_UINT16_GET_MSBFIRST(p)                            \
-  (static_cast<uint16_t>((static_cast<uint32_t>((p)[0]) << 8) | \
-                         (static_cast<uint32_t>((p)[1]))))
-#define FXSYS_UINT32_GET_LSBFIRST(p)       \
-  ((static_cast<uint32_t>((p)[3]) << 24) | \
-   (static_cast<uint32_t>((p)[2]) << 16) | \
-   (static_cast<uint32_t>((p)[1]) << 8) | (static_cast<uint32_t>((p)[0])))
-#define FXSYS_UINT32_GET_MSBFIRST(p)       \
-  ((static_cast<uint32_t>((p)[0]) << 24) | \
-   (static_cast<uint32_t>((p)[1]) << 16) | \
-   (static_cast<uint32_t>((p)[2]) << 8) | (static_cast<uint32_t>((p)[3])))
+#define FXSYS_UINT16_GET_LSBFIRST(p)                               \
+  (static_cast<uint16_t>(                                          \
+      (static_cast<uint32_t>(static_cast<uint8_t>((p)[1])) << 8) | \
+      (static_cast<uint32_t>(static_cast<uint8_t>((p)[0])))))
+#define FXSYS_UINT16_GET_MSBFIRST(p)                               \
+  (static_cast<uint16_t>(                                          \
+      (static_cast<uint32_t>(static_cast<uint8_t>((p)[0])) << 8) | \
+      (static_cast<uint32_t>(static_cast<uint8_t>((p)[1])))))
+#define FXSYS_UINT32_GET_LSBFIRST(p)                             \
+  ((static_cast<uint32_t>(static_cast<uint8_t>((p)[3])) << 24) | \
+   (static_cast<uint32_t>(static_cast<uint8_t>((p)[2])) << 16) | \
+   (static_cast<uint32_t>(static_cast<uint8_t>((p)[1])) << 8) |  \
+   (static_cast<uint32_t>(static_cast<uint8_t>((p)[0]))))
+#define FXSYS_UINT32_GET_MSBFIRST(p)                             \
+  ((static_cast<uint32_t>(static_cast<uint8_t>((p)[0])) << 24) | \
+   (static_cast<uint32_t>(static_cast<uint8_t>((p)[1])) << 16) | \
+   (static_cast<uint32_t>(static_cast<uint8_t>((p)[2])) << 8) |  \
+   (static_cast<uint32_t>(static_cast<uint8_t>((p)[3]))))
 #endif  // __cplusplus
 
 #endif  // CORE_FXCRT_FX_SYSTEM_H_

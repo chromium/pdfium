@@ -25,6 +25,10 @@ TEST(ByteOrder, ByteSwapToLE16) {
     uint16_t expected =
         FXSYS_UINT16_GET_LSBFIRST(reinterpret_cast<const uint8_t*>(&v16));
     EXPECT_EQ(expected, ByteSwapToLE16(v16)) << v;
+
+    // Check safety against unexpectedly signed bytes.
+    expected = FXSYS_UINT16_GET_LSBFIRST(reinterpret_cast<const int8_t*>(&v16));
+    EXPECT_EQ(expected, ByteSwapToLE16(v16)) << v;
   }
 }
 
@@ -32,6 +36,10 @@ TEST(ByteOrder, ByteSwapToLE32) {
   for (uint32_t v : kTestValues32) {
     uint32_t expected =
         FXSYS_UINT32_GET_LSBFIRST(reinterpret_cast<const uint8_t*>(&v));
+    EXPECT_EQ(expected, ByteSwapToLE32(v)) << v;
+
+    // Check safety against unexpectedly signed bytes.
+    expected = FXSYS_UINT32_GET_LSBFIRST(reinterpret_cast<const int8_t*>(&v));
     EXPECT_EQ(expected, ByteSwapToLE32(v)) << v;
   }
 }
@@ -43,6 +51,10 @@ TEST(ByteOrder, ByteSwapToBE16) {
     uint16_t expected =
         FXSYS_UINT16_GET_MSBFIRST(reinterpret_cast<const uint8_t*>(&v16));
     EXPECT_EQ(expected, ByteSwapToBE16(v16)) << v;
+
+    // Check safety against unexpectedly signed bytes.
+    expected = FXSYS_UINT16_GET_MSBFIRST(reinterpret_cast<const int8_t*>(&v16));
+    EXPECT_EQ(expected, ByteSwapToBE16(v16)) << v;
   }
 }
 
@@ -50,6 +62,10 @@ TEST(ByteOrder, ByteSwapToBE32) {
   for (uint32_t v : kTestValues32) {
     uint32_t expected =
         FXSYS_UINT32_GET_MSBFIRST(reinterpret_cast<const uint8_t*>(&v));
+    EXPECT_EQ(expected, ByteSwapToBE32(v)) << v;
+
+    // Check safety against unexpectedly signed bytes.
+    expected = FXSYS_UINT32_GET_MSBFIRST(reinterpret_cast<const int8_t*>(&v));
     EXPECT_EQ(expected, ByteSwapToBE32(v)) << v;
   }
 }
