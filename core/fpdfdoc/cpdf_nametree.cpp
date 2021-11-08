@@ -22,7 +22,8 @@ namespace {
 
 constexpr int kNameTreeMaxRecursion = 32;
 
-std::pair<WideString, WideString> GetNodeLimitsMaybeSwap(CPDF_Array* pLimits) {
+std::pair<WideString, WideString> GetNodeLimitsAndSanitize(
+    CPDF_Array* pLimits) {
   DCHECK(pLimits);
   WideString csLeft = pLimits->GetUnicodeTextAt(0);
   WideString csRight = pLimits->GetUnicodeTextAt(1);
@@ -33,6 +34,8 @@ std::pair<WideString, WideString> GetNodeLimitsMaybeSwap(CPDF_Array* pLimits) {
     csLeft = pLimits->GetUnicodeTextAt(0);
     csRight = pLimits->GetUnicodeTextAt(1);
   }
+  while (pLimits->size() > 2)
+    pLimits->RemoveAt(pLimits->size() - 1);
   return {csLeft, csRight};
 }
 
@@ -82,7 +85,7 @@ bool UpdateNodesAndLimitsUponDeletion(CPDF_Dictionary* pNode,
   WideString csLeft;
   WideString csRight;
   if (pLimits)
-    std::tie(csLeft, csRight) = GetNodeLimitsMaybeSwap(pLimits);
+    std::tie(csLeft, csRight) = GetNodeLimitsAndSanitize(pLimits);
 
   CPDF_Array* pNames = pNode->GetArrayFor("Names");
   if (pNames) {
@@ -170,7 +173,7 @@ CPDF_Object* SearchNameNodeByName(CPDF_Dictionary* pNode,
   if (pLimits) {
     WideString csLeft;
     WideString csRight;
-    std::tie(csLeft, csRight) = GetNodeLimitsMaybeSwap(pLimits);
+    std::tie(csLeft, csRight) = GetNodeLimitsAndSanitize(pLimits);
     // Skip this node if the name to look for is smaller than its lower limit.
     if (csName.Compare(csLeft) < 0)
       return nullptr;

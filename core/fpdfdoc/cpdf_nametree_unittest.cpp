@@ -39,6 +39,7 @@ void CheckLimitsArray(const CPDF_Dictionary* node,
   ASSERT_TRUE(node);
   const CPDF_Array* limits = node->GetArrayFor("Limits");
   ASSERT_TRUE(limits);
+  EXPECT_EQ(2u, limits->size());
   const CPDF_String* left = ToString(limits->GetObjectAt(0));
   ASSERT_TRUE(left);
   const CPDF_String* right = ToString(limits->GetObjectAt(1));
@@ -122,6 +123,28 @@ TEST(cpdf_nametree, GetUnicodeNameWithBOM) {
   const CPDF_Number* pNumber = ToNumber(name_tree->LookupValue(L"1"));
   ASSERT_TRUE(pNumber);
   EXPECT_EQ(100, pNumber->GetInteger());
+}
+
+TEST(cpdf_nametree, GetFromTreeWithLimitsArrayWith4Items) {
+  // After creating a name tree, mutate a /Limits array so it has excess
+  // elements.
+  auto pRootDict = pdfium::MakeRetain<CPDF_Dictionary>();
+  FillNameTreeDict(pRootDict.Get());
+  CPDF_Dictionary* pKid1 = pRootDict->GetArrayFor("Kids")->GetDictAt(0);
+  CPDF_Dictionary* pGrandKid3 = pKid1->GetArrayFor("Kids")->GetDictAt(1);
+  CPDF_Array* pLimits = pGrandKid3->GetArrayFor("Limits");
+  ASSERT_EQ(2u, pLimits->size());
+  pLimits->AppendNew<CPDF_Number>(5);
+  pLimits->AppendNew<CPDF_Number>(6);
+  ASSERT_EQ(4u, pLimits->size());
+  std::unique_ptr<CPDF_NameTree> name_tree =
+      CPDF_NameTree::CreateForTesting(pRootDict.Get());
+
+  const CPDF_Number* pNumber = ToNumber(name_tree->LookupValue(L"9.txt"));
+  ASSERT_TRUE(pNumber);
+  EXPECT_EQ(999, pNumber->GetInteger());
+  CheckLimitsArray(pKid1, "1.txt", "9.txt");
+  CheckLimitsArray(pGrandKid3, "9.txt", "9.txt");
 }
 
 TEST(cpdf_nametree, AddIntoNames) {
