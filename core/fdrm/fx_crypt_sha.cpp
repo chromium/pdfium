@@ -162,14 +162,14 @@ void sha256_process(CRYPT_sha2_context* ctx, const uint8_t data[64]) {
   SHA_GET_UINT32(W[14], data, 56);
   SHA_GET_UINT32(W[15], data, 60);
 
-  uint32_t A = ctx->state[0];
-  uint32_t B = ctx->state[1];
-  uint32_t C = ctx->state[2];
-  uint32_t D = ctx->state[3];
-  uint32_t E = ctx->state[4];
-  uint32_t F = ctx->state[5];
-  uint32_t G = ctx->state[6];
-  uint32_t H = ctx->state[7];
+  uint32_t A = static_cast<uint32_t>(ctx->state[0]);
+  uint32_t B = static_cast<uint32_t>(ctx->state[1]);
+  uint32_t C = static_cast<uint32_t>(ctx->state[2]);
+  uint32_t D = static_cast<uint32_t>(ctx->state[3]);
+  uint32_t E = static_cast<uint32_t>(ctx->state[4]);
+  uint32_t F = static_cast<uint32_t>(ctx->state[5]);
+  uint32_t G = static_cast<uint32_t>(ctx->state[6]);
+  uint32_t H = static_cast<uint32_t>(ctx->state[7]);
   PS(A, B, C, D, E, F, G, H, W[0], 0x428A2F98);
   PS(H, A, B, C, D, E, F, G, W[1], 0x71374491);
   PS(G, H, A, B, C, D, E, F, W[2], 0xB5C0FBCF);
