@@ -8,15 +8,11 @@
 
 #include <string.h>
 
+#include "core/fxcrt/fx_system.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 
 #define mulby2(x) (((x & 0x7F) << 1) ^ (x & 0x80 ? 0x1B : 0))
-#define GET_32BIT_MSB_FIRST(cp)                    \
-  (((unsigned long)(unsigned char)(cp)[3]) |       \
-   ((unsigned long)(unsigned char)(cp)[2] << 8) |  \
-   ((unsigned long)(unsigned char)(cp)[1] << 16) | \
-   ((unsigned long)(unsigned char)(cp)[0] << 24))
 #define PUT_32BIT_MSB_FIRST(cp, value) \
   do {                                 \
     (cp)[3] = (value);                 \
@@ -533,7 +529,7 @@ void aes_setup(CRYPT_aes_context* ctx, const unsigned char* key, int keylen) {
   int rconst = 1;
   for (int i = 0; i < (ctx->Nr + 1) * ctx->Nb; i++) {
     if (i < Nk) {
-      ctx->keysched[i] = GET_32BIT_MSB_FIRST(key + 4 * i);
+      ctx->keysched[i] = FXSYS_UINT32_GET_MSBFIRST(key + 4 * i);
     } else {
       unsigned int temp = ctx->keysched[i - 1];
       if (i % Nk == 0) {
@@ -594,7 +590,7 @@ void aes_decrypt_cbc(unsigned char* dest,
   memcpy(iv, ctx->iv, sizeof(iv));
   while (len > 0) {
     for (i = 0; i < 4; i++) {
-      x[i] = ct[i] = GET_32BIT_MSB_FIRST(src + 4 * i);
+      x[i] = ct[i] = FXSYS_UINT32_GET_MSBFIRST(src + 4 * i);
     }
     aes_decrypt(ctx, x);
     for (i = 0; i < 4; i++) {
@@ -622,7 +618,7 @@ void aes_encrypt_cbc(unsigned char* dest,
   memcpy(iv, ctx->iv, sizeof(iv));
   while (len > 0) {
     for (i = 0; i < 4; i++) {
-      iv[i] ^= GET_32BIT_MSB_FIRST(src + 4 * i);
+      iv[i] ^= FXSYS_UINT32_GET_MSBFIRST(src + 4 * i);
     }
     aes_encrypt(ctx, iv);
     for (i = 0; i < 4; i++) {
@@ -645,7 +641,7 @@ void CRYPT_AESSetKey(CRYPT_aes_context* context,
 
 void CRYPT_AESSetIV(CRYPT_aes_context* context, const uint8_t* iv) {
   for (int i = 0; i < context->Nb; i++)
-    context->iv[i] = GET_32BIT_MSB_FIRST(iv + 4 * i);
+    context->iv[i] = FXSYS_UINT32_GET_MSBFIRST(iv + 4 * i);
 }
 
 void CRYPT_AESDecrypt(CRYPT_aes_context* context,
