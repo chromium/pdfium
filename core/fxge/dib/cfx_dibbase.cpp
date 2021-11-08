@@ -614,7 +614,7 @@ bool CFX_DIBBase::SkipToScanline(int line, PauseIndicatorIface* pPause) const {
   return false;
 }
 
-uint32_t CFX_DIBBase::GetEstimatedImageMemoryBurden() const {
+size_t CFX_DIBBase::GetEstimatedImageMemoryBurden() const {
   return GetRequiredPaletteSize() * sizeof(uint32_t);
 }
 

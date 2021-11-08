@@ -84,14 +84,15 @@ ByteString LoadTableFromTT(FILE* pFile,
                            const uint8_t* pTables,
                            uint32_t nTables,
                            uint32_t tag,
-                           uint32_t fileSize) {
+                           FX_FILESIZE fileSize) {
   for (uint32_t i = 0; i < nTables; i++) {
     const uint8_t* p = pTables + i * 16;
     if (FXSYS_UINT32_GET_MSBFIRST(p) == tag) {
       uint32_t offset = FXSYS_UINT32_GET_MSBFIRST(p + 8);
       uint32_t size = FXSYS_UINT32_GET_MSBFIRST(p + 12);
       if (offset > std::numeric_limits<uint32_t>::max() - size ||
-          offset + size > fileSize || fseek(pFile, offset, SEEK_SET) < 0) {
+          static_cast<FX_FILESIZE>(offset + size) > fileSize ||
+          fseek(pFile, offset, SEEK_SET) < 0) {
         return ByteString();
       }
       return ReadStringFromFile(pFile, size);
@@ -197,7 +198,7 @@ void CFX_FolderFontInfo::ScanFile(const ByteString& path) {
 
   fseek(pFile.get(), 0, SEEK_END);
 
-  uint32_t filesize = ftell(pFile.get());
+  FX_FILESIZE filesize = ftell(pFile.get());
   uint8_t buffer[16];
   fseek(pFile.get(), 0, SEEK_SET);
 
@@ -232,7 +233,7 @@ void CFX_FolderFontInfo::ScanFile(const ByteString& path) {
 
 void CFX_FolderFontInfo::ReportFace(const ByteString& path,
                                     FILE* pFile,
-                                    uint32_t filesize,
+                                    FX_FILESIZE filesize,
                                     uint32_t offset) {
   char buffer[16];
   if (fseek(pFile, offset, SEEK_SET) < 0 || !fread(buffer, 12, 1, pFile))
@@ -369,8 +370,8 @@ uint32_t CFX_FolderFontInfo::GetFontData(void* hFont,
   } else if (table == kTableTTCF) {
     datasize = pFont->m_FontOffset ? pFont->m_FileSize : 0;
   } else {
-    uint32_t nTables = pFont->m_FontTables.GetLength() / 16;
-    for (uint32_t i = 0; i < nTables; i++) {
+    size_t nTables = pFont->m_FontTables.GetLength() / 16;
+    for (size_t i = 0; i < nTables; i++) {
       const uint8_t* p = pFont->m_FontTables.raw_str() + i * 16;
       if (FXSYS_UINT32_GET_MSBFIRST(p) == table) {
         offset = FXSYS_UINT32_GET_MSBFIRST(p + 8);

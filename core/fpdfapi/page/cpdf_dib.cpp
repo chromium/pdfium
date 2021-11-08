@@ -1203,7 +1203,7 @@ bool CPDF_DIB::SkipToScanline(int line, PauseIndicatorIface* pPause) const {
   return m_pDecoder && m_pDecoder->SkipToScanline(line, pPause);
 }
 
-uint32_t CPDF_DIB::GetEstimatedImageMemoryBurden() const {
+size_t CPDF_DIB::GetEstimatedImageMemoryBurden() const {
   return m_pCachedBitmap ? m_pCachedBitmap->GetEstimatedImageMemoryBurden() : 0;
 }
 

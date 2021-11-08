@@ -43,7 +43,7 @@ std::vector<float> CFX_GraphState::GetLineDashArray() const {
   return ret;
 }
 
-int CFX_GraphState::GetLineDashSize() const {
+size_t CFX_GraphState::GetLineDashSize() const {
   return m_Ref.GetObject() ? m_Ref.GetObject()->m_DashArray.size() : 0;
 }
 

@@ -2964,8 +2964,10 @@ void CFX_ScanlineCompositor::InitSourcePalette(
     pPalette[0] = 0xff000000;
     pPalette[1] = 0xffffffff;
   } else {
-    for (size_t i = 0; i < pal_count; ++i)
-      pPalette[i] = ArgbEncode(0, i, i, i);
+    for (size_t i = 0; i < pal_count; ++i) {
+      uint32_t v = static_cast<uint32_t>(i);
+      pPalette[i] = ArgbEncode(0, v, v, v);
+    }
   }
 }
 

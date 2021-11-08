@@ -69,7 +69,7 @@ class CFX_FolderFontInfo : public SystemFontInfoIface {
   void ScanFile(const ByteString& path);
   void ReportFace(const ByteString& path,
                   FILE* pFile,
-                  uint32_t filesize,
+                  FX_FILESIZE filesize,
                   uint32_t offset);
   void* GetSubstFont(const ByteString& face);
   void* FindFont(int weight,

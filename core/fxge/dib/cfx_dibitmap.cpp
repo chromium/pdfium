@@ -106,12 +106,12 @@ pdfium::span<const uint8_t> CFX_DIBitmap::GetScanline(int line) const {
   return {m_pBuffer.Get() + line * m_Pitch, m_Pitch};
 }
 
-uint32_t CFX_DIBitmap::GetEstimatedImageMemoryBurden() const {
-  uint32_t result = CFX_DIBBase::GetEstimatedImageMemoryBurden();
+size_t CFX_DIBitmap::GetEstimatedImageMemoryBurden() const {
+  size_t result = CFX_DIBBase::GetEstimatedImageMemoryBurden();
   if (GetBuffer()) {
     int height = GetHeight();
-    DCHECK(pdfium::base::IsValueInRangeForNumericType<uint32_t>(height));
-    result += static_cast<uint32_t>(height) * GetPitch();
+    CHECK(pdfium::base::IsValueInRangeForNumericType<size_t>(height));
+    result += static_cast<size_t>(height) * GetPitch();
   }
   return result;
 }

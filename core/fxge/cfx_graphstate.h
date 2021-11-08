@@ -7,6 +7,8 @@
 #ifndef CORE_FXGE_CFX_GRAPHSTATE_H_
 #define CORE_FXGE_CFX_GRAPHSTATE_H_
 
+#include <stddef.h>
+
 #include <vector>
 
 #include "core/fxcrt/shared_copy_on_write.h"
@@ -23,7 +25,7 @@ class CFX_GraphState {
   void SetLineDash(std::vector<float> dashes, float phase, float scale);
   void SetLineDashPhase(float phase);
   std::vector<float> GetLineDashArray() const;
-  int GetLineDashSize() const;
+  size_t GetLineDashSize() const;
   float GetLineDashPhase() const;
 
   float GetLineWidth() const;

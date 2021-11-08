@@ -48,7 +48,7 @@ class CPDF_DIB final : public CFX_DIBBase {
   uint8_t* GetBuffer() const override;
   pdfium::span<const uint8_t> GetScanline(int line) const override;
   bool SkipToScanline(int line, PauseIndicatorIface* pPause) const override;
-  uint32_t GetEstimatedImageMemoryBurden() const override;
+  size_t GetEstimatedImageMemoryBurden() const override;
 
   RetainPtr<CPDF_ColorSpace> GetColorSpace() const { return m_pColorSpace; }
   uint32_t GetMatteColor() const { return m_MatteColor; }

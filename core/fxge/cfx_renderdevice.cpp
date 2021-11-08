@@ -365,9 +365,9 @@ bool CheckPalindromicPath(pdfium::span<const CFX_Path::Point> points,
   if (points.size() <= 3 || !(points.size() % 2))
     return false;
 
-  const int mid = points.size() / 2;
+  const size_t mid = points.size() / 2;
   CFX_Path temp_path;
-  for (int i = 0; i < mid; i++) {
+  for (size_t i = 0; i < mid; i++) {
     const CFX_Path::Point& left = points[mid - i - 1];
     const CFX_Path::Point& right = points[mid + i + 1];
     bool zero_area = left.m_Point == right.m_Point &&
