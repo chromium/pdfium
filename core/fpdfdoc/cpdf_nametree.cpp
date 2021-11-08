@@ -42,10 +42,10 @@ std::pair<WideString, WideString> GetNodeLimitsAndSanitize(
 // Get the limit arrays that leaf array |pFind| is under in the tree with root
 // |pNode|. |pLimits| will hold all the limit arrays from the leaf up to before
 // the root. Return true if successful.
-bool GetNodeAncestorsLimits(CPDF_Dictionary* pNode,
-                            const CPDF_Array* pFind,
-                            int nLevel,
-                            std::vector<CPDF_Array*>* pLimits) {
+bool GetNodeAncestorsLimitsInternal(CPDF_Dictionary* pNode,
+                                    const CPDF_Array* pFind,
+                                    int nLevel,
+                                    std::vector<CPDF_Array*>* pLimits) {
   if (nLevel > kNameTreeMaxRecursion)
     return false;
 
@@ -63,12 +63,21 @@ bool GetNodeAncestorsLimits(CPDF_Dictionary* pNode,
     if (!pKid)
       continue;
 
-    if (GetNodeAncestorsLimits(pKid, pFind, nLevel + 1, pLimits)) {
+    if (GetNodeAncestorsLimitsInternal(pKid, pFind, nLevel + 1, pLimits)) {
       pLimits->push_back(pNode->GetArrayFor("Limits"));
       return true;
     }
   }
   return false;
+}
+
+// Wrapper for GetNodeAncestorsLimitsInternal() so callers do not need to know
+// about the details.
+std::vector<CPDF_Array*> GetNodeAncestorsLimits(CPDF_Dictionary* pNode,
+                                                const CPDF_Array* pFind) {
+  std::vector<CPDF_Array*> results;
+  GetNodeAncestorsLimitsInternal(pNode, pFind, 0, &results);
+  return results;
 }
 
 // Upon the deletion of |csName| from leaf array |pFind|, update the ancestors
@@ -437,17 +446,17 @@ bool CPDF_NameTree::AddValueAndName(RetainPtr<CPDF_Object> pObj,
 
   // Expand the limits that the newly added name is under, if the name falls
   // outside of the limits of its leaf array or any arrays above it.
-  std::vector<CPDF_Array*> pLimits;
-  GetNodeAncestorsLimits(m_pRoot.Get(), pFind, 0, &pLimits);
-  for (auto* pLimit : pLimits) {
-    if (!pLimit)
+  std::vector<CPDF_Array*> all_limits =
+      GetNodeAncestorsLimits(m_pRoot.Get(), pFind);
+  for (auto* pLimits : all_limits) {
+    if (!pLimits)
       continue;
 
-    if (name.Compare(pLimit->GetUnicodeTextAt(0)) < 0)
-      pLimit->SetNewAt<CPDF_String>(0, name);
+    if (name.Compare(pLimits->GetUnicodeTextAt(0)) < 0)
+      pLimits->SetNewAt<CPDF_String>(0, name);
 
-    if (name.Compare(pLimit->GetUnicodeTextAt(1)) > 0)
-      pLimit->SetNewAt<CPDF_String>(1, name);
+    if (name.Compare(pLimits->GetUnicodeTextAt(1)) > 0)
+      pLimits->SetNewAt<CPDF_String>(1, name);
   }
   return true;
 }
