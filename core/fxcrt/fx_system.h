@@ -51,37 +51,6 @@ extern "C" {
 #define FXSYS_sprintf DO_NOT_USE_SPRINTF_DIE_DIE_DIE
 #define FXSYS_vsprintf DO_NOT_USE_VSPRINTF_DIE_DIE_DIE
 
-#ifdef __cplusplus
-}  // extern "C"
-
-// Overloaded functions for C++ templates
-inline size_t FXSYS_len(const char* ptr) {
-  return strlen(ptr);
-}
-
-inline size_t FXSYS_len(const wchar_t* ptr) {
-  return wcslen(ptr);
-}
-
-inline int FXSYS_cmp(const char* ptr1, const char* ptr2, size_t len) {
-  return memcmp(ptr1, ptr2, len);
-}
-
-inline int FXSYS_cmp(const wchar_t* ptr1, const wchar_t* ptr2, size_t len) {
-  return wmemcmp(ptr1, ptr2, len);
-}
-
-inline const char* FXSYS_chr(const char* ptr, char ch, size_t len) {
-  return reinterpret_cast<const char*>(memchr(ptr, ch, len));
-}
-
-inline const wchar_t* FXSYS_chr(const wchar_t* ptr, wchar_t ch, size_t len) {
-  return wmemchr(ptr, ch, len);
-}
-
-extern "C" {
-#endif  // __cplusplus
-
 #if defined(OS_WIN)
 #define FXSYS_itoa _itoa
 #define FXSYS_strlwr _strlwr
@@ -109,6 +78,46 @@ void FXSYS_SetLastError(uint32_t err);
 uint32_t FXSYS_GetLastError();
 #endif  // defined(OS_WIN)
 
+int32_t FXSYS_atoi(const char* str);
+uint32_t FXSYS_atoui(const char* str);
+int32_t FXSYS_wtoi(const wchar_t* str);
+int64_t FXSYS_atoi64(const char* str);
+const char* FXSYS_i64toa(int64_t value, char* str, int radix);
+int FXSYS_roundf(float f);
+int FXSYS_round(double d);
+float FXSYS_sqrt2(float a, float b);
+
+#ifdef __cplusplus
+}  // extern "C"
+
+// C++-only section
+
+// Overloaded functions for C++ templates
+inline size_t FXSYS_len(const char* ptr) {
+  return strlen(ptr);
+}
+
+inline size_t FXSYS_len(const wchar_t* ptr) {
+  return wcslen(ptr);
+}
+
+inline int FXSYS_cmp(const char* ptr1, const char* ptr2, size_t len) {
+  return memcmp(ptr1, ptr2, len);
+}
+
+inline int FXSYS_cmp(const wchar_t* ptr1, const wchar_t* ptr2, size_t len) {
+  return wmemcmp(ptr1, ptr2, len);
+}
+
+inline const char* FXSYS_chr(const char* ptr, char ch, size_t len) {
+  return reinterpret_cast<const char*>(memchr(ptr, ch, len));
+}
+
+inline const wchar_t* FXSYS_chr(const wchar_t* ptr, wchar_t ch, size_t len) {
+  return wmemchr(ptr, ch, len);
+}
+
+// Could be C, but uses C++-style casting.
 #define FXSYS_UINT16_GET_LSBFIRST(p)                            \
   (static_cast<uint16_t>((static_cast<uint32_t>((p)[1]) << 8) | \
                          (static_cast<uint32_t>((p)[0]))))
@@ -123,18 +132,6 @@ uint32_t FXSYS_GetLastError();
   ((static_cast<uint32_t>((p)[0]) << 24) | \
    (static_cast<uint32_t>((p)[1]) << 16) | \
    (static_cast<uint32_t>((p)[2]) << 8) | (static_cast<uint32_t>((p)[3])))
-
-int32_t FXSYS_atoi(const char* str);
-uint32_t FXSYS_atoui(const char* str);
-int32_t FXSYS_wtoi(const wchar_t* str);
-int64_t FXSYS_atoi64(const char* str);
-const char* FXSYS_i64toa(int64_t value, char* str, int radix);
-int FXSYS_roundf(float f);
-int FXSYS_round(double d);
-float FXSYS_sqrt2(float a, float b);
-
-#ifdef __cplusplus
-}  // extern C
 #endif  // __cplusplus
 
 #endif  // CORE_FXCRT_FX_SYSTEM_H_
