@@ -129,40 +129,40 @@ TEST(fxcrt, FXSYS_ToUTF16BE) {
 }
 
 TEST(fxcrt, FXSYS_wcstof) {
-  int32_t used_len = 0;
+  size_t used_len = 0;
   EXPECT_FLOAT_EQ(-12.0f, FXSYS_wcstof(L"-12", 3, &used_len));
-  EXPECT_EQ(3, used_len);
+  EXPECT_EQ(3u, used_len);
 
   used_len = 0;
   EXPECT_FLOAT_EQ(1.5362f, FXSYS_wcstof(L"1.5362", 6, &used_len));
-  EXPECT_EQ(6, used_len);
+  EXPECT_EQ(6u, used_len);
 
   used_len = 0;
   EXPECT_FLOAT_EQ(0.875f, FXSYS_wcstof(L"0.875", 5, &used_len));
-  EXPECT_EQ(5, used_len);
+  EXPECT_EQ(5u, used_len);
 
   used_len = 0;
   EXPECT_FLOAT_EQ(5.56e-2f, FXSYS_wcstof(L"5.56e-2", 7, &used_len));
-  EXPECT_EQ(7, used_len);
+  EXPECT_EQ(7u, used_len);
 
   used_len = 0;
   EXPECT_FLOAT_EQ(1.234e10f, FXSYS_wcstof(L"1.234E10", 8, &used_len));
-  EXPECT_EQ(8, used_len);
+  EXPECT_EQ(8u, used_len);
 
   used_len = 0;
   EXPECT_FLOAT_EQ(0.0f, FXSYS_wcstof(L"1.234E100000000000000", 21, &used_len));
-  EXPECT_EQ(0, used_len);
+  EXPECT_EQ(0u, used_len);
 
   used_len = 0;
   EXPECT_FLOAT_EQ(0.0f, FXSYS_wcstof(L"1.234E-128", 21, &used_len));
-  EXPECT_EQ(0, used_len);
+  EXPECT_EQ(0u, used_len);
 
   // TODO(dsinclair): This should round as per IEEE 64-bit values.
   // EXPECT_EQ(L"123456789.01234567", FXSYS_wcstof(L"123456789.012345678"));
   used_len = 0;
   EXPECT_FLOAT_EQ(123456789.012345678f,
                   FXSYS_wcstof(L"123456789.012345678", 19, &used_len));
-  EXPECT_EQ(19, used_len);
+  EXPECT_EQ(19u, used_len);
 
   // TODO(dsinclair): This is spec'd as rounding when > 16 significant digits
   // prior to the exponent.
@@ -170,7 +170,7 @@ TEST(fxcrt, FXSYS_wcstof) {
   used_len = 0;
   EXPECT_FLOAT_EQ(99999999999999999.0f,
                   FXSYS_wcstof(L"99999999999999999", 17, &used_len));
-  EXPECT_EQ(17, used_len);
+  EXPECT_EQ(17u, used_len);
 
   // For https://crbug.com/pdfium/1217
   EXPECT_FLOAT_EQ(0.0f, FXSYS_wcstof(L"e76", 3, nullptr));
@@ -181,14 +181,14 @@ TEST(fxcrt, FXSYS_wcstof) {
       L"88888888888888888888888888888888888888888888888888888888888888888888888"
       L"88888888888888888888888888888888888888888888888888888888888",
       130, &used_len)));
-  EXPECT_EQ(130, used_len);
+  EXPECT_EQ(130u, used_len);
 
   used_len = 0;
   EXPECT_TRUE(isinf(FXSYS_wcstof(
       L"-8888888888888888888888888888888888888888888888888888888888888888888888"
       L"888888888888888888888888888888888888888888888888888888888888",
       131, &used_len)));
-  EXPECT_EQ(131, used_len);
+  EXPECT_EQ(131u, used_len);
 }
 
 TEST(fxcrt, FXSYS_SafeOps) {

@@ -28,39 +28,36 @@ struct tm* (*g_localtime_func)(const time_t*) = DefaultLocaltimeFunction;
 
 }  // namespace
 
-float FXSYS_wcstof(const wchar_t* pwsStr, int32_t iLength, int32_t* pUsedLen) {
+float FXSYS_wcstof(const wchar_t* pwsStr, size_t nLength, size_t* pUsedLen) {
   DCHECK(pwsStr);
-
-  if (iLength < 0)
-    iLength = static_cast<int32_t>(wcslen(pwsStr));
-  if (iLength == 0)
+  if (nLength == 0)
     return 0.0f;
 
-  int32_t iUsedLen = 0;
+  size_t nUsedLen = 0;
   bool bNegtive = false;
-  switch (pwsStr[iUsedLen]) {
+  switch (pwsStr[nUsedLen]) {
     case '-':
       bNegtive = true;
       FALLTHROUGH;
     case '+':
-      iUsedLen++;
+      nUsedLen++;
       break;
   }
 
   float fValue = 0.0f;
-  while (iUsedLen < iLength) {
-    wchar_t wch = pwsStr[iUsedLen];
+  while (nUsedLen < nLength) {
+    wchar_t wch = pwsStr[nUsedLen];
     if (!FXSYS_IsDecimalDigit(wch))
       break;
 
     fValue = fValue * 10.0f + (wch - L'0');
-    iUsedLen++;
+    nUsedLen++;
   }
 
-  if (iUsedLen < iLength && pwsStr[iUsedLen] == L'.') {
+  if (nUsedLen < nLength && pwsStr[nUsedLen] == L'.') {
     float fPrecise = 0.1f;
-    while (++iUsedLen < iLength) {
-      wchar_t wch = pwsStr[iUsedLen];
+    while (++nUsedLen < nLength) {
+      wchar_t wch = pwsStr[nUsedLen];
       if (!FXSYS_IsDecimalDigit(wch))
         break;
 
@@ -69,20 +66,20 @@ float FXSYS_wcstof(const wchar_t* pwsStr, int32_t iLength, int32_t* pUsedLen) {
     }
   }
 
-  if (iUsedLen < iLength &&
-      (pwsStr[iUsedLen] == 'e' || pwsStr[iUsedLen] == 'E')) {
-    ++iUsedLen;
+  if (nUsedLen < nLength &&
+      (pwsStr[nUsedLen] == 'e' || pwsStr[nUsedLen] == 'E')) {
+    ++nUsedLen;
 
     bool negative_exponent = false;
-    if (iUsedLen < iLength &&
-        (pwsStr[iUsedLen] == '-' || pwsStr[iUsedLen] == '+')) {
-      negative_exponent = pwsStr[iUsedLen] == '-';
-      ++iUsedLen;
+    if (nUsedLen < nLength &&
+        (pwsStr[nUsedLen] == '-' || pwsStr[nUsedLen] == '+')) {
+      negative_exponent = pwsStr[nUsedLen] == '-';
+      ++nUsedLen;
     }
 
     int32_t exp_value = 0;
-    while (iUsedLen < iLength) {
-      wchar_t wch = pwsStr[iUsedLen];
+    while (nUsedLen < nLength) {
+      wchar_t wch = pwsStr[nUsedLen];
       if (!FXSYS_IsDecimalDigit(wch))
         break;
 
@@ -97,7 +94,7 @@ float FXSYS_wcstof(const wchar_t* pwsStr, int32_t iLength, int32_t* pUsedLen) {
         return 0.0f;
       }
 
-      ++iUsedLen;
+      ++nUsedLen;
     }
 
     for (size_t i = exp_value; i > 0; --i) {
@@ -111,7 +108,7 @@ float FXSYS_wcstof(const wchar_t* pwsStr, int32_t iLength, int32_t* pUsedLen) {
   }
 
   if (pUsedLen)
-    *pUsedLen = iUsedLen;
+    *pUsedLen = nUsedLen;
 
   return bNegtive ? -fValue : fValue;
 }

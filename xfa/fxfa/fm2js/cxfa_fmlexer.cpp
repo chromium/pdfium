@@ -306,7 +306,7 @@ CXFA_FMLexer::Token CXFA_FMLexer::NextToken() {
 
 CXFA_FMLexer::Token CXFA_FMLexer::AdvanceForNumber() {
   // This will set end to the character after the end of the number.
-  int32_t used_length = 0;
+  size_t used_length = 0;
   if (m_nCursor < m_spInput.size()) {
     FXSYS_wcstof(&m_spInput[m_nCursor], m_spInput.size() - m_nCursor,
                  &used_length);

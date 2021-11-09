@@ -22,7 +22,7 @@
 
 #define FX_IsOdd(a) ((a)&1)
 
-float FXSYS_wcstof(const wchar_t* pwsStr, int32_t iLength, int32_t* pUsedLen);
+float FXSYS_wcstof(const wchar_t* pwsStr, size_t nLength, size_t* pUsedLen);
 wchar_t* FXSYS_wcsncpy(wchar_t* dstStr, const wchar_t* srcStr, size_t count);
 int32_t FXSYS_wcsnicmp(const wchar_t* s1, const wchar_t* s2, size_t count);
 
