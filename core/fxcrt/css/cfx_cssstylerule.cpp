@@ -16,7 +16,7 @@ size_t CFX_CSSStyleRule::CountSelectorLists() const {
   return m_ppSelector.size();
 }
 
-CFX_CSSSelector* CFX_CSSStyleRule::GetSelectorList(int32_t index) const {
+CFX_CSSSelector* CFX_CSSStyleRule::GetSelectorList(size_t index) const {
   return m_ppSelector[index].get();
 }
 

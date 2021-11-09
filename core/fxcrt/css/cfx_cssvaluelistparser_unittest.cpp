@@ -14,7 +14,7 @@
 TEST(CFX_CSSValueListParserTest, rgb_short) {
   CFX_CSSValue::PrimitiveType type;
   const wchar_t* start;
-  int32_t len;
+  size_t len;
 
   auto parser = std::make_unique<CFX_CSSValueListParser>(L"#abc", 4, L' ');
   EXPECT_TRUE(parser->NextValue(&type, &start, &len));
@@ -44,7 +44,7 @@ TEST(CFX_CSSValueListParserTest, rgb_short) {
 TEST(CFX_CSSValueListParserTest, number_parsing) {
   CFX_CSSValue::PrimitiveType type;
   const wchar_t* start;
-  int32_t len;
+  size_t len;
 
   auto parser = std::make_unique<CFX_CSSValueListParser>(L"1234", 4, L' ');
   EXPECT_TRUE(parser->NextValue(&type, &start, &len));
@@ -86,7 +86,7 @@ TEST(CFX_CSSValueListParserTest, number_parsing) {
 TEST(CFX_CSSValueListParserTest, string_parsing) {
   CFX_CSSValue::PrimitiveType type;
   const wchar_t* start;
-  int32_t len;
+  size_t len;
 
   auto parser = std::make_unique<CFX_CSSValueListParser>(L"'string'", 8, L' ');
   EXPECT_TRUE(parser->NextValue(&type, &start, &len));
@@ -108,7 +108,7 @@ TEST(CFX_CSSValueListParserTest, string_parsing) {
 TEST(CFX_CSSValueListParserTest, multiparsing) {
   CFX_CSSValue::PrimitiveType type;
   const wchar_t* start;
-  int32_t len;
+  size_t len;
 
   auto parser = std::make_unique<CFX_CSSValueListParser>(L"1, 2, 3", 7, L',');
   EXPECT_TRUE(parser->NextValue(&type, &start, &len));
