@@ -42,12 +42,12 @@ class CPDF_CryptoHandler {
                       uint32_t gennum,
                       pdfium::span<const uint8_t> source,
                       uint8_t* dest_buf,
-                      uint32_t& dest_size) const;
+                      size_t& dest_size) const;
 
   bool IsCipherAES() const;
 
  private:
-  uint32_t DecryptGetSize(uint32_t src_size);
+  size_t DecryptGetSize(size_t src_size);
   void* DecryptStart(uint32_t objnum, uint32_t gennum);
   ByteString Decrypt(uint32_t objnum, uint32_t gennum, const ByteString& str);
   bool DecryptStream(void* context,
@@ -61,7 +61,7 @@ class CPDF_CryptoHandler {
                   uint32_t gennum,
                   pdfium::span<const uint8_t> source,
                   uint8_t* dest_buf,
-                  uint32_t& dest_size) const;
+                  size_t& dest_size) const;
   bool CryptStream(void* context,
                    pdfium::span<const uint8_t> source,
                    CFX_BinaryBuf& dest_buf,

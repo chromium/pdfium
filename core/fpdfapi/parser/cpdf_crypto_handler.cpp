@@ -49,7 +49,7 @@ void CPDF_CryptoHandler::CryptBlock(bool bEncrypt,
                                     uint32_t gennum,
                                     pdfium::span<const uint8_t> source,
                                     uint8_t* dest_buf,
-                                    uint32_t& dest_size) const {
+                                    size_t& dest_size) const {
   if (m_Cipher == Cipher::kNone) {
     memcpy(dest_buf, source.data(), source.size());
     return;
@@ -248,7 +248,7 @@ ByteString CPDF_CryptoHandler::Decrypt(uint32_t objnum,
   return ByteString(dest_buf.GetBuffer(), dest_buf.GetSize());
 }
 
-uint32_t CPDF_CryptoHandler::DecryptGetSize(uint32_t src_size) {
+size_t CPDF_CryptoHandler::DecryptGetSize(size_t src_size) {
   return m_Cipher == Cipher::kAES ? src_size - 16 : src_size;
 }
 
@@ -356,7 +356,7 @@ bool CPDF_CryptoHandler::EncryptContent(uint32_t objnum,
                                         uint32_t gennum,
                                         pdfium::span<const uint8_t> source,
                                         uint8_t* dest_buf,
-                                        uint32_t& dest_size) const {
+                                        size_t& dest_size) const {
   CryptBlock(true, objnum, gennum, source, dest_buf, dest_size);
   return true;
 }

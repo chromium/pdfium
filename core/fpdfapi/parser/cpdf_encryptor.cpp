@@ -20,7 +20,7 @@ std::vector<uint8_t, FxAllocAllocator<uint8_t>> CPDF_Encryptor::Encrypt(
     return std::vector<uint8_t, FxAllocAllocator<uint8_t>>();
 
   std::vector<uint8_t, FxAllocAllocator<uint8_t>> result;
-  uint32_t buf_size = m_pHandler->EncryptGetSize(src_data);
+  size_t buf_size = m_pHandler->EncryptGetSize(src_data);
   result.resize(buf_size);
   m_pHandler->EncryptContent(m_ObjNum, 0, src_data, result.data(),
                              buf_size);  // Updates |buf_size| with actual.
