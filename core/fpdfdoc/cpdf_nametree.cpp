@@ -485,7 +485,7 @@ bool CPDF_NameTree::AddValueAndName(RetainPtr<CPDF_Object> pObj,
   return true;
 }
 
-bool CPDF_NameTree::DeleteValueAndName(int nIndex) {
+bool CPDF_NameTree::DeleteValueAndName(size_t nIndex) {
   absl::optional<IndexSearchResult> result =
       SearchNameNodeByIndex(m_pRoot.Get(), nIndex);
   if (!result) {
@@ -503,7 +503,7 @@ bool CPDF_NameTree::DeleteValueAndName(int nIndex) {
   return true;
 }
 
-CPDF_Object* CPDF_NameTree::LookupValueAndName(int nIndex,
+CPDF_Object* CPDF_NameTree::LookupValueAndName(size_t nIndex,
                                                WideString* csName) const {
   absl::optional<IndexSearchResult> result =
       SearchNameNodeByIndex(m_pRoot.Get(), nIndex);

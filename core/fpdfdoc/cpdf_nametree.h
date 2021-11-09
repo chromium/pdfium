@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFDOC_CPDF_NAMETREE_H_
 #define CORE_FPDFDOC_CPDF_NAMETREE_H_
 
+#include <stddef.h>
+
 #include <memory>
 
 #include "core/fxcrt/fx_string.h"
@@ -40,9 +42,9 @@ class CPDF_NameTree {
                                      const ByteString& name);
 
   bool AddValueAndName(RetainPtr<CPDF_Object> pObj, const WideString& name);
-  bool DeleteValueAndName(int nIndex);
+  bool DeleteValueAndName(size_t nIndex);
 
-  CPDF_Object* LookupValueAndName(int nIndex, WideString* csName) const;
+  CPDF_Object* LookupValueAndName(size_t nIndex, WideString* csName) const;
   CPDF_Object* LookupValue(const WideString& csName) const;
 
   size_t GetCount() const;
