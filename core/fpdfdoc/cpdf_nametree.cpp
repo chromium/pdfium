@@ -250,25 +250,26 @@ struct IndexSearchResult {
   int pair_index;
 };
 
-// Find the `nIndex` node in the tree with root `pNode`. `nLevel` tracks the
-// recursion level and `nCurIndex` tracks the progress towards `nIndex`.
+// Find the `nTargetPairIndex` node in the tree with root `pNode`. `nLevel`
+// tracks the recursion level and `nCurPairIndex` tracks the progress towards
+// `nTargetPairIndex`.
 absl::optional<IndexSearchResult> SearchNameNodeByIndexInternal(
     CPDF_Dictionary* pNode,
-    size_t nIndex,
+    size_t nTargetPairIndex,
     int nLevel,
-    size_t* nCurIndex) {
+    size_t* nCurPairIndex) {
   if (nLevel > kNameTreeMaxRecursion)
     return absl::nullopt;
 
   CPDF_Array* pNames = pNode->GetArrayFor("Names");
   if (pNames) {
     size_t nCount = pNames->size() / 2;
-    if (nIndex >= *nCurIndex + nCount) {
-      *nCurIndex += nCount;
+    if (nTargetPairIndex >= *nCurPairIndex + nCount) {
+      *nCurPairIndex += nCount;
       return absl::nullopt;
     }
 
-    int pair_index = nIndex - *nCurIndex;
+    int pair_index = nTargetPairIndex - *nCurPairIndex;
     CPDF_Object* value = pNames->GetDirectObjectAt(pair_index * 2 + 1);
     if (!value)
       return absl::nullopt;
@@ -289,8 +290,8 @@ absl::optional<IndexSearchResult> SearchNameNodeByIndexInternal(
     CPDF_Dictionary* pKid = pKids->GetDictAt(i);
     if (!pKid)
       continue;
-    absl::optional<IndexSearchResult> result =
-        SearchNameNodeByIndexInternal(pKid, nIndex, nLevel + 1, nCurIndex);
+    absl::optional<IndexSearchResult> result = SearchNameNodeByIndexInternal(
+        pKid, nTargetPairIndex, nLevel + 1, nCurPairIndex);
     if (result.has_value())
       return result;
   }
@@ -299,10 +300,12 @@ absl::optional<IndexSearchResult> SearchNameNodeByIndexInternal(
 
 // Wrapper for SearchNameNodeByIndexInternal() so callers do not need to know
 // about the details.
-absl::optional<IndexSearchResult> SearchNameNodeByIndex(CPDF_Dictionary* pNode,
-                                                        size_t nIndex) {
-  size_t nCurIndex = 0;
-  return SearchNameNodeByIndexInternal(pNode, nIndex, 0, &nCurIndex);
+absl::optional<IndexSearchResult> SearchNameNodeByIndex(
+    CPDF_Dictionary* pNode,
+    size_t nTargetPairIndex) {
+  size_t nCurPairIndex = 0;
+  return SearchNameNodeByIndexInternal(pNode, nTargetPairIndex, 0,
+                                       &nCurPairIndex);
 }
 
 // Get the total number of key-value pairs in the tree with root |pNode|.
