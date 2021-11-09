@@ -154,11 +154,11 @@ GifDecoder::Status CFX_GifContext::GetFrame() {
   }
 }
 
-GifDecoder::Status CFX_GifContext::LoadFrame(int32_t frame_num) {
-  if (!fxcrt::IndexInBounds(images_, frame_num))
+GifDecoder::Status CFX_GifContext::LoadFrame(size_t frame_num) {
+  if (frame_num >= images_.size())
     return GifDecoder::Status::kError;
 
-  CFX_GifImage* gif_image = images_[static_cast<size_t>(frame_num)].get();
+  CFX_GifImage* gif_image = images_[frame_num].get();
   if (gif_image->image_info.height == 0)
     return GifDecoder::Status::kError;
 

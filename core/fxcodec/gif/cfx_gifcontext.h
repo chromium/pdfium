@@ -38,7 +38,7 @@ class CFX_GifContext : public ProgressiveDecoderIface::Context {
                          bool interlace);
   GifDecoder::Status ReadHeader();
   GifDecoder::Status GetFrame();
-  GifDecoder::Status LoadFrame(int32_t frame_num);
+  GifDecoder::Status LoadFrame(size_t frame_num);
   void SetInputBuffer(RetainPtr<CFX_CodecMemory> codec_memory);
   uint32_t GetAvailInput() const;
   size_t GetFrameNum() const { return images_.size(); }
