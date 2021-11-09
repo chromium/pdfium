@@ -168,12 +168,12 @@ bool UpdateNodesAndLimitsUponDeletion(CPDF_Dictionary* pNode,
 // will be the index of |csName| in |ppFind|. If |csName| is not found, |ppFind|
 // will be the leaf array that |csName| should be added to, and |pFindIndex|
 // will be the index that it should be added at.
-CPDF_Object* SearchNameNodeByName(CPDF_Dictionary* pNode,
-                                  const WideString& csName,
-                                  int nLevel,
-                                  size_t* nIndex,
-                                  CPDF_Array** ppFind,
-                                  int* pFindIndex) {
+CPDF_Object* SearchNameNodeByNameInternal(CPDF_Dictionary* pNode,
+                                          const WideString& csName,
+                                          int nLevel,
+                                          size_t* nIndex,
+                                          CPDF_Array** ppFind,
+                                          int* pFindIndex) {
   if (nLevel > kNameTreeMaxRecursion)
     return nullptr;
 
@@ -231,12 +231,23 @@ CPDF_Object* SearchNameNodeByName(CPDF_Dictionary* pNode,
     if (!pKid)
       continue;
 
-    CPDF_Object* pFound = SearchNameNodeByName(pKid, csName, nLevel + 1, nIndex,
-                                               ppFind, pFindIndex);
+    CPDF_Object* pFound = SearchNameNodeByNameInternal(
+        pKid, csName, nLevel + 1, nIndex, ppFind, pFindIndex);
     if (pFound)
       return pFound;
   }
   return nullptr;
+}
+
+// Wrapper for SearchNameNodeByNameInternal() so callers do not need to know
+// about the details.
+CPDF_Object* SearchNameNodeByName(CPDF_Dictionary* pNode,
+                                  const WideString& csName,
+                                  CPDF_Array** ppFind,
+                                  int* pFindIndex) {
+  size_t nIndex = 0;
+  return SearchNameNodeByNameInternal(pNode, csName, 0, &nIndex, ppFind,
+                                      pFindIndex);
 }
 
 struct IndexSearchResult {
@@ -428,7 +439,6 @@ size_t CPDF_NameTree::GetCount() const {
 
 bool CPDF_NameTree::AddValueAndName(RetainPtr<CPDF_Object> pObj,
                                     const WideString& name) {
-  size_t nIndex = 0;
   CPDF_Array* pFind = nullptr;
   int nFindIndex = -1;
   // Handle the corner case where the root node is empty. i.e. No kids and no
@@ -439,10 +449,8 @@ bool CPDF_NameTree::AddValueAndName(RetainPtr<CPDF_Object> pObj,
 
   if (!pFind) {
     // Fail if the tree already contains this name or if the tree is too deep.
-    if (SearchNameNodeByName(m_pRoot.Get(), name, 0, &nIndex, &pFind,
-                             &nFindIndex)) {
+    if (SearchNameNodeByName(m_pRoot.Get(), name, &pFind, &nFindIndex))
       return false;
-    }
   }
 
   // If the returned |pFind| is a nullptr, then |name| is smaller than all
@@ -517,9 +525,7 @@ CPDF_Object* CPDF_NameTree::LookupValueAndName(size_t nIndex,
 }
 
 CPDF_Object* CPDF_NameTree::LookupValue(const WideString& csName) const {
-  size_t nIndex = 0;
-  return SearchNameNodeByName(m_pRoot.Get(), csName, 0, &nIndex, nullptr,
-                              nullptr);
+  return SearchNameNodeByName(m_pRoot.Get(), csName, nullptr, nullptr);
 }
 
 CPDF_Array* CPDF_NameTree::LookupNewStyleNamedDest(const ByteString& sName) {
