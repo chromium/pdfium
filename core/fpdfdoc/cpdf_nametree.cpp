@@ -245,9 +245,8 @@ struct IndexSearchResult {
   CPDF_Object* value;
   // The leaf node that holds `key` and `value`.
   CPDF_Array* container;
-  // The pair index for `key` and `value` in `container`.
-  // Note that a value of 3 means `key` is at index 6 and `value` is at index 7.
-  int pair_index;
+  // The index for `key` in `container`. Must be even.
+  int index;
 };
 
 // Find the `nTargetPairIndex` node in the tree with root `pNode`. `nLevel`
@@ -269,16 +268,16 @@ absl::optional<IndexSearchResult> SearchNameNodeByIndexInternal(
       return absl::nullopt;
     }
 
-    int pair_index = nTargetPairIndex - *nCurPairIndex;
-    CPDF_Object* value = pNames->GetDirectObjectAt(pair_index * 2 + 1);
+    int index = 2 * (nTargetPairIndex - *nCurPairIndex);
+    CPDF_Object* value = pNames->GetDirectObjectAt(index + 1);
     if (!value)
       return absl::nullopt;
 
     IndexSearchResult result;
-    result.key = pNames->GetUnicodeTextAt(pair_index * 2);
+    result.key = pNames->GetUnicodeTextAt(index);
     result.value = value;
     result.container = pNames;
-    result.pair_index = pair_index;
+    result.index = index;
     return result;
   }
 
@@ -496,8 +495,8 @@ bool CPDF_NameTree::DeleteValueAndName(int nIndex) {
 
   // Remove the name and the object from the leaf array |pFind|.
   CPDF_Array* pFind = result.value().container;
-  pFind->RemoveAt(result.value().pair_index * 2 + 1);
-  pFind->RemoveAt(result.value().pair_index * 2);
+  pFind->RemoveAt(result.value().index + 1);
+  pFind->RemoveAt(result.value().index);
 
   // Delete empty nodes and update the limits of |pFind|'s ancestors as needed.
   UpdateNodesAndLimitsUponDeletion(m_pRoot.Get(), pFind, result.value().key, 0);
