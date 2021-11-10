@@ -6,6 +6,7 @@
 
 #include "fxjs/fxv8.h"
 
+#include "third_party/base/numerics/safe_conversions.h"
 #include "v8/include/v8-container.h"
 #include "v8/include/v8-date.h"
 #include "v8/include/v8-exception.h"
@@ -289,31 +290,36 @@ void ReentrantDeleteObjectPropertyHelper(v8::Isolate* pIsolate,
 
 bool ReentrantPutArrayElementHelper(v8::Isolate* pIsolate,
                                     v8::Local<v8::Array> pArray,
-                                    unsigned index,
+                                    size_t index,
                                     v8::Local<v8::Value> pValue) {
   if (pArray.IsEmpty())
     return false;
 
   v8::TryCatch squash_exceptions(pIsolate);
   v8::Maybe<bool> result =
-      pArray->Set(pIsolate->GetCurrentContext(), index, pValue);
+      pArray->Set(pIsolate->GetCurrentContext(),
+                  pdfium::base::checked_cast<uint32_t>(index), pValue);
   return result.IsJust() && result.FromJust();
 }
 
 v8::Local<v8::Value> ReentrantGetArrayElementHelper(v8::Isolate* pIsolate,
                                                     v8::Local<v8::Array> pArray,
-                                                    unsigned index) {
+                                                    size_t index) {
   if (pArray.IsEmpty())
     return v8::Local<v8::Value>();
 
   v8::TryCatch squash_exceptions(pIsolate);
   v8::Local<v8::Value> val;
-  if (!pArray->Get(pIsolate->GetCurrentContext(), index).ToLocal(&val))
+  if (!pArray
+           ->Get(pIsolate->GetCurrentContext(),
+                 pdfium::base::checked_cast<uint32_t>(index))
+           .ToLocal(&val)) {
     return v8::Local<v8::Value>();
+  }
   return val;
 }
 
-unsigned GetArrayLengthHelper(v8::Local<v8::Array> pArray) {
+size_t GetArrayLengthHelper(v8::Local<v8::Array> pArray) {
   if (pArray.IsEmpty())
     return 0;
   return pArray->Length();

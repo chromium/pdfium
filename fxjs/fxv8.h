@@ -7,13 +7,17 @@
 #ifndef FXJS_FXV8_H_
 #define FXJS_FXV8_H_
 
+#include <stddef.h>
+
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
 #include "third_party/base/span.h"
 #include "v8/include/v8-forward.h"
 
-// The fxv8 functions soften up the interface to the V8 API.
+// The fxv8 functions soften up the interface to the V8 API. In particular,
+// PDFium uses size_t for sizes and indices, but V8 mostly uses ints, so
+// these routines perform checked conversions.
 
 namespace fxv8 {
 
@@ -85,18 +89,18 @@ bool ReentrantPutObjectPropertyHelper(v8::Isolate* pIsolate,
                                       v8::Local<v8::Object> pObj,
                                       ByteStringView bsUTF8PropertyName,
                                       v8::Local<v8::Value> pPut);
-bool ReentrantPutArrayElementHelper(v8::Isolate* pIsolate,
-                                    v8::Local<v8::Array> pArray,
-                                    unsigned index,
-                                    v8::Local<v8::Value> pValue);
 void ReentrantDeleteObjectPropertyHelper(v8::Isolate* pIsolate,
                                          v8::Local<v8::Object> pObj,
                                          ByteStringView bsUTF8PropertyName);
+
+bool ReentrantPutArrayElementHelper(v8::Isolate* pIsolate,
+                                    v8::Local<v8::Array> pArray,
+                                    size_t index,
+                                    v8::Local<v8::Value> pValue);
 v8::Local<v8::Value> ReentrantGetArrayElementHelper(v8::Isolate* pIsolate,
                                                     v8::Local<v8::Array> pArray,
-                                                    unsigned index);
-
-unsigned GetArrayLengthHelper(v8::Local<v8::Array> pArray);
+                                                    size_t index);
+size_t GetArrayLengthHelper(v8::Local<v8::Array> pArray);
 
 void ThrowExceptionHelper(v8::Isolate* pIsolate, ByteStringView str);
 void ThrowExceptionHelper(v8::Isolate* pIsolate, WideStringView str);
