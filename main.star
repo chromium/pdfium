@@ -436,10 +436,6 @@ luci.console_view(
     name = "main",
     header = _CONSOLE_HEADER,
     title = "PDFium Main Console",
-    refs = [
-        "refs/heads/main",
-        "refs/heads/master",
-    ],
     repo = "https://pdfium.googlesource.com/pdfium",
     include_experimental_builds = True,
 )
@@ -471,7 +467,7 @@ luci.cq_group(
     name = "pdfium",
     watch = cq.refset(
         "https://pdfium.googlesource.com/pdfium",
-        refs = [r"refs/heads/master", r"refs/heads/main", r"refs/heads/chromium/.+"],
+        refs = [r"refs/heads/main", r"refs/heads/chromium/.+"],
     ),
     tree_status_host = "pdfium-status.appspot.com",
     acls = [
