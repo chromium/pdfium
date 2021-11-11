@@ -20,20 +20,19 @@
 
 namespace {
 
-int32_t FilterName(WideStringView wsExpression,
-                   int32_t nStart,
-                   WideString& wsFilter) {
-  DCHECK(nStart > -1);
-  int32_t iLength = wsExpression.GetLength();
-  if (nStart >= iLength)
-    return iLength;
+size_t FilterName(WideStringView wsExpression,
+                  size_t nStart,
+                  WideString& wsFilter) {
+  const size_t nLength = wsExpression.GetLength();
+  if (nStart >= nLength)
+    return nLength;
 
-  int32_t nCount = 0;
+  size_t nCount = 0;
   {
     // Span's lifetime must end before ReleaseBuffer() below.
-    pdfium::span<wchar_t> pBuf = wsFilter.GetBuffer(iLength - nStart);
+    pdfium::span<wchar_t> pBuf = wsFilter.GetBuffer(nLength - nStart);
     const wchar_t* pSrc = wsExpression.unterminated_c_str();
-    while (nStart < iLength) {
+    while (nStart < nLength) {
       wchar_t wCur = pSrc[nStart++];
       if (wCur == ',')
         break;
@@ -372,12 +371,12 @@ CJS_Result CJX_HostPseudoModel::resetData(
     return CJS_Result::Success();
   }
 
-  int32_t iStart = 0;
   WideString wsName;
   CXFA_Node* pNode = nullptr;
-  int32_t iExpLength = expression.GetLength();
-  while (iStart < iExpLength) {
-    iStart = FilterName(expression.AsStringView(), iStart, wsName);
+  size_t nStart = 0;
+  const size_t nExpLength = expression.GetLength();
+  while (nStart < nExpLength) {
+    nStart = FilterName(expression.AsStringView(), nStart, wsName);
     CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
     CXFA_Object* pObject = pScriptContext->GetThisObject();
     if (!pObject)
