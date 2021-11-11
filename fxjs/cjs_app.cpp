@@ -458,8 +458,8 @@ CJS_Result CJS_App::mailMsg(CJS_Runtime* pRuntime,
     cMsg = pRuntime->ToWideString(newParams[5]);
 
   pRuntime->BeginBlock();
-  pRuntime->GetFormFillEnv()->JS_docmailForm(nullptr, 0, bUI, cTo, cSubject,
-                                             cCc, cBcc, cMsg);
+  pRuntime->GetFormFillEnv()->JS_docmailForm(pdfium::span<uint8_t>(), bUI, cTo,
+                                             cSubject, cCc, cBcc, cMsg);
   pRuntime->EndBlock();
   return CJS_Result::Success();
 }
@@ -549,8 +549,8 @@ CJS_Result CJS_App::response(CJS_Runtime* pRuntime,
   const int MAX_INPUT_BYTES = 2048;
   std::vector<uint8_t, FxAllocAllocator<uint8_t>> pBuff(MAX_INPUT_BYTES + 2);
   int nLengthBytes = pRuntime->GetFormFillEnv()->JS_appResponse(
-      swQuestion, swTitle, swDefault, swLabel, bPassword, pBuff.data(),
-      MAX_INPUT_BYTES);
+      swQuestion, swTitle, swDefault, swLabel, bPassword,
+      pdfium::make_span(pBuff).first(MAX_INPUT_BYTES));
 
   if (nLengthBytes < 0 || nLengthBytes > MAX_INPUT_BYTES)
     return CJS_Result::Failure(JSMessage::kParamTooLongError);

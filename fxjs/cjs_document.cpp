@@ -345,8 +345,8 @@ CJS_Result CJS_Document::mailDoc(
     cMsg = pRuntime->ToWideString(newParams[5]);
 
   pRuntime->BeginBlock();
-  m_pFormFillEnv->JS_docmailForm(nullptr, 0, bUI, cTo, cSubject, cCc, cBcc,
-                                 cMsg);
+  m_pFormFillEnv->JS_docmailForm(pdfium::span<uint8_t>(), bUI, cTo, cSubject,
+                                 cCc, cBcc, cMsg);
   pRuntime->EndBlock();
   return CJS_Result::Success();
 }
@@ -396,11 +396,11 @@ CJS_Result CJS_Document::mailForm(
   if (IsExpandedParamKnown(newParams[5]))
     cMsg = pRuntime->ToWideString(newParams[5]);
 
-  std::vector<char, FxAllocAllocator<char>> mutable_buf(sTextBuf.begin(),
-                                                        sTextBuf.end());
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> mutable_buf(sTextBuf.begin(),
+                                                              sTextBuf.end());
   pRuntime->BeginBlock();
-  m_pFormFillEnv->JS_docmailForm(mutable_buf.data(), mutable_buf.size(), bUI,
-                                 cTo, cSubject, cCc, cBcc, cMsg);
+  m_pFormFillEnv->JS_docmailForm(mutable_buf, bUI, cTo, cSubject, cCc, cBcc,
+                                 cMsg);
   pRuntime->EndBlock();
   return CJS_Result::Success();
 }
