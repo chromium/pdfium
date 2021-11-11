@@ -619,7 +619,7 @@ size_t CPDF_InteractiveForm::CountFields(const WideString& csFieldName) const {
 }
 
 CPDF_FormField* CPDF_InteractiveForm::GetField(
-    uint32_t index,
+    size_t index,
     const WideString& csFieldName) const {
   if (csFieldName.IsEmpty())
     return m_pFieldTree->GetRoot()->GetFieldAtIndex(index);
