@@ -10,6 +10,7 @@
 
 #include "core/fdrm/fx_crypt.h"
 #include "core/fxcrt/stl_util.h"
+#include "third_party/base/numerics/safe_conversions.h"
 
 namespace {
 
@@ -384,7 +385,7 @@ bool CFX_GlobalData::SaveGlobalPersisitentVariables() {
   sFile.AppendBlock(&wVersion, sizeof(uint16_t));
   sFile.AppendBlock(&nCount, sizeof(uint32_t));
 
-  uint32_t dwSize = sData.GetSize();
+  uint32_t dwSize = pdfium::base::checked_cast<uint32_t>(sData.GetSize());
   sFile.AppendBlock(&dwSize, sizeof(uint32_t));
   sFile.AppendSpan(sData.GetSpan());
 

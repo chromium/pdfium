@@ -179,8 +179,10 @@ std::vector<CPDF_FormField*> GetFormFieldsForName(
   std::vector<CPDF_FormField*> fields;
   CPDFSDK_InteractiveForm* pReaderForm = pFormFillEnv->GetInteractiveForm();
   CPDF_InteractiveForm* pForm = pReaderForm->GetInteractiveForm();
-  for (int i = 0, sz = pForm->CountFields(csFieldName); i < sz; ++i) {
-    if (CPDF_FormField* pFormField = pForm->GetField(i, csFieldName))
+  const size_t sz = pForm->CountFields(csFieldName);
+  for (size_t i = 0; i < sz; ++i) {
+    CPDF_FormField* pFormField = pForm->GetField(i, csFieldName);
+    if (pFormField)
       fields.push_back(pFormField);
   }
   return fields;
@@ -2209,8 +2211,7 @@ CJS_Result CJS_Field::buttonGetCaption(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   int nface = 0;
-  int iSize = params.size();
-  if (iSize >= 1)
+  if (params.size() >= 1)
     nface = pRuntime->ToInt32(params[0]);
 
   CPDF_FormField* pFormField = GetFirstFormField();
@@ -2291,8 +2292,8 @@ CJS_Result CJS_Field::buttonSetIcon(
 CJS_Result CJS_Field::checkThisBox(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  int iSize = params.size();
-  if (iSize < 1)
+  const size_t nSize = params.size();
+  if (nSize == 0)
     return CJS_Result::Failure(JSMessage::kParamError);
 
   if (!m_bCanSet)
@@ -2300,7 +2301,7 @@ CJS_Result CJS_Field::checkThisBox(
 
   int nWidget = pRuntime->ToInt32(params[0]);
   bool bCheckit = true;
-  if (iSize >= 2)
+  if (nSize >= 2)
     bCheckit = pRuntime->ToBoolean(params[1]);
 
   CPDF_FormField* pFormField = GetFirstFormField();
@@ -2332,8 +2333,7 @@ CJS_Result CJS_Field::defaultIsChecked(
   if (!m_bCanSet)
     return CJS_Result::Failure(JSMessage::kReadOnlyError);
 
-  int iSize = params.size();
-  if (iSize < 1)
+  if (params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);
 
   CPDF_FormField* pFormField = GetFirstFormField();
@@ -2392,13 +2392,13 @@ CJS_Result CJS_Field::getArray(
 CJS_Result CJS_Field::getItemAt(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  int iSize = params.size();
+  const size_t nSize = params.size();
   int nIdx = -1;
-  if (iSize >= 1)
+  if (nSize >= 1)
     nIdx = pRuntime->ToInt32(params[0]);
 
   bool bExport = true;
-  if (iSize >= 2)
+  if (nSize >= 2)
     bExport = pRuntime->ToBoolean(params[1]);
 
   CPDF_FormField* pFormField = GetFirstFormField();

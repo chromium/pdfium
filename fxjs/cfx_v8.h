@@ -7,6 +7,8 @@
 #ifndef FXJS_CFX_V8_H_
 #define FXJS_CFX_V8_H_
 
+#include <stddef.h>
+
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
@@ -41,11 +43,11 @@ class CFX_V8 {
   v8::Local<v8::Array> ToArray(v8::Local<v8::Value> pValue);
 
   // Arrays.
-  unsigned GetArrayLength(v8::Local<v8::Array> pArray);
+  size_t GetArrayLength(v8::Local<v8::Array> pArray);
   v8::Local<v8::Value> GetArrayElement(v8::Local<v8::Array> pArray,
-                                       unsigned index);
+                                       size_t index);
   void PutArrayElement(v8::Local<v8::Array> pArray,
-                       unsigned index,
+                       size_t index,
                        v8::Local<v8::Value> pValue);
 
   // Objects.

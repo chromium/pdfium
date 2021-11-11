@@ -218,12 +218,14 @@ CJS_Result CJS_Util::printd(CJS_Runtime* pRuntime,
                 cFormat.end());
 
   for (size_t i = 0; i < pdfium::size(TbConvertTable); ++i) {
-    int iStart = 0;
-    int iEnd;
-    while ((iEnd = cFormat.find(TbConvertTable[i].lpszJSMark, iStart)) != -1) {
-      cFormat.replace(iEnd, wcslen(TbConvertTable[i].lpszJSMark),
+    size_t nFound = 0;
+    while (1) {
+      nFound = cFormat.find(TbConvertTable[i].lpszJSMark, nFound);
+      if (nFound == std::wstring::npos)
+        break;
+
+      cFormat.replace(nFound, wcslen(TbConvertTable[i].lpszJSMark),
                       TbConvertTable[i].lpszCppMark);
-      iStart = iEnd;
     }
   }
 
@@ -237,18 +239,18 @@ CJS_Result CJS_Util::printd(CJS_Runtime* pRuntime,
   };
 
   for (size_t i = 0; i < pdfium::size(cTableAd); ++i) {
-    int iStart = 0;
-    int iEnd;
-    while ((iEnd = cFormat.find(cTableAd[i].js_mark, iStart)) != -1) {
-      if (iEnd > 0) {
-        if (cFormat[iEnd - 1] == L'%') {
-          iStart = iEnd + 1;
-          continue;
-        }
+    size_t nFound = 0;
+    while (1) {
+      nFound = cFormat.find(cTableAd[i].js_mark, nFound);
+      if (nFound == std::wstring::npos)
+        break;
+
+      if (nFound != 0 && cFormat[nFound - 1] == L'%') {
+        ++nFound;
+        continue;
       }
-      cFormat.replace(iEnd, 1,
+      cFormat.replace(nFound, 1,
                       WideString::Format(L"%d", cTableAd[i].value).c_str());
-      iStart = iEnd;
     }
   }
 

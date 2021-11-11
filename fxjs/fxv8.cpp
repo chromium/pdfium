@@ -82,8 +82,9 @@ v8::Local<v8::Boolean> NewBooleanHelper(v8::Isolate* pIsolate, bool b) {
 
 v8::Local<v8::String> NewStringHelper(v8::Isolate* pIsolate,
                                       ByteStringView str) {
-  return v8::String::NewFromUtf8(pIsolate, str.unterminated_c_str(),
-                                 v8::NewStringType::kNormal, str.GetLength())
+  return v8::String::NewFromUtf8(
+             pIsolate, str.unterminated_c_str(), v8::NewStringType::kNormal,
+             pdfium::base::checked_cast<int>(str.GetLength()))
       .ToLocalChecked();
 }
 

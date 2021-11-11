@@ -7,6 +7,7 @@
 #include "fxjs/cjs_globalarrays.h"
 
 #include "third_party/base/cxx17_backports.h"
+#include "third_party/base/numerics/safe_conversions.h"
 #include "v8/include/v8-container.h"
 #include "v8/include/v8-isolate.h"
 
@@ -15,8 +16,12 @@
     static const wchar_t* const values[] = {__VA_ARGS__};                      \
     v8::Local<v8::Array> array = (rt)->NewArray();                             \
     v8::Local<v8::Context> ctx = (rt)->GetIsolate()->GetCurrentContext();      \
-    for (size_t i = 0; i < pdfium::size(values); ++i)                          \
-      array->Set(ctx, i, (rt)->NewString(values[i])).FromJust();               \
+    for (size_t i = 0; i < pdfium::size(values); ++i) {                        \
+      array                                                                    \
+          ->Set(ctx, pdfium::base::checked_cast<uint32_t>(i),                  \
+                (rt)->NewString(values[i]))                                    \
+          .FromJust();                                                         \
+    }                                                                          \
     (rt)->SetConstArray((name), array);                                        \
     (rt)->DefineGlobalConst(                                                   \
         (name), [](const v8::FunctionCallbackInfo<v8::Value>& info) {          \

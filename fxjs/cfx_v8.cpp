@@ -46,17 +46,17 @@ v8::Local<v8::Object> CFX_V8::NewObject() {
 }
 
 void CFX_V8::PutArrayElement(v8::Local<v8::Array> pArray,
-                             unsigned index,
+                             size_t index,
                              v8::Local<v8::Value> pValue) {
   fxv8::ReentrantPutArrayElementHelper(GetIsolate(), pArray, index, pValue);
 }
 
 v8::Local<v8::Value> CFX_V8::GetArrayElement(v8::Local<v8::Array> pArray,
-                                             unsigned index) {
+                                             size_t index) {
   return fxv8::ReentrantGetArrayElementHelper(GetIsolate(), pArray, index);
 }
 
-unsigned CFX_V8::GetArrayLength(v8::Local<v8::Array> pArray) {
+size_t CFX_V8::GetArrayLength(v8::Local<v8::Array> pArray) {
   return fxv8::GetArrayLengthHelper(pArray);
 }
 

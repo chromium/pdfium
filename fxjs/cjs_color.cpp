@@ -86,8 +86,8 @@ v8::Local<v8::Array> CJS_Color::ConvertPWLColorToArray(CJS_Runtime* pRuntime,
 // static
 CFX_Color CJS_Color::ConvertArrayToPWLColor(CJS_Runtime* pRuntime,
                                             v8::Local<v8::Array> array) {
-  int nArrayLen = pRuntime->GetArrayLength(array);
-  if (nArrayLen < 1)
+  size_t nArrayLen = pRuntime->GetArrayLength(array);
+  if (nArrayLen == 0)
     return CFX_Color();
 
   WideString sSpace =
