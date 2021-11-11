@@ -156,8 +156,8 @@ bool CFXJSE_ResolveProcessor::ResolveDollar(v8::Isolate* pIsolate,
                                             CFXJSE_ResolveNodeData& rnd) {
   WideString wsName = rnd.m_wsName;
   WideString wsCondition = rnd.m_wsCondition;
-  int32_t iNameLen = wsName.GetLength();
-  if (iNameLen == 1) {
+  size_t nNameLen = wsName.GetLength();
+  if (nNameLen == 1) {
     rnd.m_Result.objects.emplace_back(rnd.m_CurObject.Get());
     return true;
   }
@@ -165,7 +165,7 @@ bool CFXJSE_ResolveProcessor::ResolveDollar(v8::Isolate* pIsolate,
     return false;
 
   XFA_HashCode dwNameHash = static_cast<XFA_HashCode>(
-      FX_HashCode_GetW(wsName.AsStringView().Last(iNameLen - 1)));
+      FX_HashCode_GetW(wsName.AsStringView().Last(nNameLen - 1)));
   if (dwNameHash == XFA_HASHCODE_Xfa) {
     rnd.m_Result.objects.emplace_back(rnd.m_pSC->GetDocument()->GetRoot());
   } else {
@@ -681,8 +681,8 @@ void CFXJSE_ResolveProcessor::FilterCondition(v8::Isolate* pIsolate,
   size_t iFoundCount = pRnd->m_Result.objects.size();
   wsCondition.Trim();
 
-  int32_t iLen = wsCondition.GetLength();
-  if (!iLen) {
+  const size_t nLen = wsCondition.GetLength();
+  if (nLen == 0) {
     if (pRnd->m_dwStyles & XFA_ResolveFlag::kALL)
       return;
     if (iFoundCount == 1)
@@ -708,7 +708,7 @@ void CFXJSE_ResolveProcessor::FilterCondition(v8::Isolate* pIsolate,
       ConditionArray(iCurIndex, wsCondition, iFoundCount, pRnd);
       return;
     case '.':
-      if (iLen > 1 && (wsCondition[1] == '[' || wsCondition[1] == '('))
+      if (nLen > 1 && (wsCondition[1] == '[' || wsCondition[1] == '('))
         DoPredicateFilter(pIsolate, wsCondition, iFoundCount, pRnd);
       return;
     case '(':

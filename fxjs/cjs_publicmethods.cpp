@@ -36,6 +36,7 @@
 #include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/check.h"
 #include "third_party/base/cxx17_backports.h"
+#include "third_party/base/numerics/safe_conversions.h"
 #include "v8/include/v8-container.h"
 
 // static
@@ -121,7 +122,8 @@ ByteString CalculateString(double dValue,
   ss << std::fixed << std::setprecision(iDec) << dValue;
   std::string value = ss.str();
   size_t pos = value.find('.');
-  *iDec2 = pos == std::string::npos ? value.size() : static_cast<int>(pos);
+  *iDec2 = pdfium::base::checked_cast<int>(
+      pos == std::string::npos ? value.size() : pos);
   return ByteString(value.c_str());
 }
 #endif
@@ -932,7 +934,7 @@ double CJS_PublicMethods::ParseDateAsGMT(v8::Isolate* isolate,
   sTemp = wsArray[1];
   for (size_t i = 0; i < pdfium::size(fxjs::kMonths); ++i) {
     if (sTemp == fxjs::kMonths[i]) {
-      nMonth = i + 1;
+      nMonth = static_cast<int>(i) + 1;
       break;
     }
   }

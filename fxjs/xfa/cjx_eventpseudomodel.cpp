@@ -12,6 +12,7 @@
 #include "fxjs/fxv8.h"
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "third_party/base/notreached.h"
+#include "third_party/base/numerics/safe_conversions.h"
 #include "v8/include/v8-primitive.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
@@ -286,18 +287,18 @@ void CJX_EventPseudoModel::Property(v8::Isolate* pIsolate,
       IntegerProperty(pIsolate, pValue, &pEventParam->m_iSelEnd, bSetting);
 
       pEventParam->m_iSelEnd = std::max(0, pEventParam->m_iSelEnd);
-      pEventParam->m_iSelEnd =
-          std::min(static_cast<size_t>(pEventParam->m_iSelEnd),
-                   pEventParam->m_wsPrevText.GetLength());
+      pEventParam->m_iSelEnd = std::min(
+          pEventParam->m_iSelEnd, pdfium::base::checked_cast<int32_t>(
+                                      pEventParam->m_wsPrevText.GetLength()));
       pEventParam->m_iSelStart =
           std::min(pEventParam->m_iSelStart, pEventParam->m_iSelEnd);
       break;
     case XFA_Event::SelectionStart:
       IntegerProperty(pIsolate, pValue, &pEventParam->m_iSelStart, bSetting);
       pEventParam->m_iSelStart = std::max(0, pEventParam->m_iSelStart);
-      pEventParam->m_iSelStart =
-          std::min(static_cast<size_t>(pEventParam->m_iSelStart),
-                   pEventParam->m_wsPrevText.GetLength());
+      pEventParam->m_iSelStart = std::min(
+          pEventParam->m_iSelStart, pdfium::base::checked_cast<int32_t>(
+                                        pEventParam->m_wsPrevText.GetLength()));
       pEventParam->m_iSelEnd =
           std::max(pEventParam->m_iSelStart, pEventParam->m_iSelEnd);
       break;
