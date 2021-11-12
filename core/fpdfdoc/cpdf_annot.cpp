@@ -399,7 +399,7 @@ bool CPDF_Annot::DrawAppearance(CPDF_Page* pPage,
       pPage->GetDocument(), pPage->GetPageResources(),
       static_cast<CPDF_PageRenderCache*>(pPage->GetRenderCache()));
   context.AppendLayer(pForm, matrix);
-  context.Render(pDevice, nullptr);
+  context.Render(pDevice, nullptr, nullptr, nullptr);
   return true;
 }
 

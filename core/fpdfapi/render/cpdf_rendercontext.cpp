@@ -47,11 +47,6 @@ void CPDF_RenderContext::AppendLayer(CPDF_PageObjectHolder* pObjectHolder,
 }
 
 void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,
-                                const CPDF_RenderOptions* pOptions) {
-  Render(pDevice, nullptr, pOptions, nullptr);
-}
-
-void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,
                                 const CPDF_PageObject* pStopObj,
                                 const CPDF_RenderOptions* pOptions,
                                 const CFX_Matrix* pLastMatrix) {
