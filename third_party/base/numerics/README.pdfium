@@ -1,0 +1,7 @@
+Description:
+Chromium's safe numerics library
+
+Local Modifications:
+
+Namespaced from base:: to pdfium::base:: in all files.
+Remove ostream operators in safe_conversions.h and clamped_math.h
