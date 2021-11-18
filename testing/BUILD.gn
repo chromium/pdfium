@@ -27,7 +27,10 @@ source_set("test_support") {
     "utils/hash.h",
   ]
   data = [ "resources/" ]
-  public_deps = [ ":path_service" ]
+  public_deps = [
+    ":path_service",
+    "//third_party/test_fonts",
+  ]
   deps = [
     "../:pdfium_public_headers",
     "../core/fdrm",
@@ -47,9 +50,6 @@ source_set("test_support") {
       "//v8:v8_libplatform",
     ]
     configs += [ "//v8:external_startup_data" ]
-  }
-  if (is_linux || is_chromeos) {
-    public_deps += [ "//third_party/test_fonts" ]
   }
 }
 

@@ -4,7 +4,6 @@
 
 #include "xfa/fde/cfde_texteditengine.h"
 
-#include "build/build_config.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxge/text_char_pos.h"
@@ -40,11 +39,7 @@ class CFDE_TextEditEngineTest : public testing::Test {
   ~CFDE_TextEditEngineTest() override = default;
 
   void SetUp() override {
-#if defined(OS_LINUX) || defined(OS_CHROMEOS)
     const wchar_t kFontFamily[] = L"Arimo Bold";
-#else
-    const wchar_t kFontFamily[] = L"Arial Bold";
-#endif
     font_ = CFGAS_GEFont::LoadFont(kFontFamily, 0, FX_CodePage::kDefANSI);
     ASSERT_TRUE(font_);
 

@@ -20,11 +20,7 @@
 class CFGAS_RTFBreakTest : public testing::Test {
  public:
   void SetUp() override {
-#if defined(OS_LINUX) || defined(OS_CHROMEOS)
     const wchar_t kFontFamily[] = L"Arimo Bold";
-#else
-    const wchar_t kFontFamily[] = L"Arial Bold";
-#endif
     font_ = CFGAS_GEFont::LoadFont(kFontFamily, 0, FX_CodePage::kDefANSI);
     ASSERT_TRUE(font_);
   }
