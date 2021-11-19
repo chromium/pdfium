@@ -4,96 +4,66 @@
   /Pages 2 0 R
 >>
 endobj
-
 {{object 2 0}} <<
   /Type /Pages
-  /MediaBox [ 0 0 100 100 ]
   /Count 1
-  /Kids [ 3 0 R ]
+  /Kids [3 0 R]
+  /MediaBox [0 0 100 100]
 >>
 endobj
-
 {{object 3 0}} <<
   /Type /Page
   /Parent 2 0 R
-  /Resources
-  <<
-    /Font << /F1 4 0 R >>
+  /Contents 4 0 R
+  /Resources <<
+    /Font <<
+      /F1 5 0 R
+    >>
   >>
-  /Contents 8 0 R
 >>
 endobj
-
 {{object 4 0}} <<
-  /Type /Font
-  /Subtype /TrueType
-  /BaseFont /ChromeSansMM
-  /Encoding 5 0 R
-  /FirstChar 32
-  /LastChar 255
-  /Name /F1
-  /ToUnicode 6 0 R
-  /FontDescriptor 7 0 R
->>
-endobj
-
-{{object 5 0}} <<
-  /Differences [ 161 /someunknownname ]
-  /Type /Encoding
->>
-endobj
-
-{{object 6 0}} <<
->>
-stream
-/CIDInit /ProcSet findresource begin
-12 dict begin
-begincmap
-/CIDSystemInfo
-<</Registry (Adobe)
-/Ordering (Identity)
-/Supplement 0
->> def
-/CMapName /Adobe-Identity-H def
-CMapType 2 def
-1 begincodespacerange
-<00> <FF>
-endcodespacerange
-1 beginbfchar
-<A1> <043B>
-endbfchar
-endcmap
-CMapName currentdict /CMap defineresource pop
-end
-end
-endstream
-endobj
-
-{{object 7 0}} <<
-  << /Ascent 1000
-  /CapHeight 0
-  /Descent -200
-  /Flags 32
-  /FontBBox [ -599 -207 1338 1034 ]
-  /FontName /ChromeSansMM
-  /ItalicAngle 0
-  /StemV 0
-  /Type /FontDescriptor
->>
-endobj
-
-{{object 8 0}} <<
+  {{streamlen}}
 >>
 stream
 BT
-50 50 Td /F1 15 Tf <A1> Tj
+50 50 Td
+/F1 15 Tf
+[<8C>]TJ
 ET
 endstream
 endobj
-
-{{xref}}
-trailer <<
-  /Root 1 0 R
+{{object 5 0}} <<
+  /Type /Font
+  /Subtype /TrueType
+  /BaseFont /Tahoma
+  /Encoding 6 0 R
+  /FirstChar 139
+  /FontDescriptor 7 0 R
+  /LastChar 140
+  /Widths [943 677]
 >>
+endobj
+{{object 6 0}} <<
+  /Type /Encoding
+  /Differences [
+    140 /Elcyrillic
+  ]
+>>
+endobj
+{{object 7 0}} <<
+  /Type /FontDescriptor
+  /Ascent 1034
+  /CapHeight 0
+  /Descent -207
+  /Flags 32
+  /FontBBox [-599 -207 1338 1034]
+  /FontName /Tahoma
+  /ItalicAngle 0
+  /StemV 0
+>>
+endobj
+{{xref}}
+{{trailer}}
 {{startxref}}
 %%EOF
