@@ -46,6 +46,13 @@ std::vector<StrType> Split(const StrType& that, typename StrType::CharType ch) {
   return result;
 }
 
+extern template std::vector<ByteString> Split<ByteString>(
+    const ByteString& that,
+    ByteString::CharType ch);
+extern template std::vector<WideString> Split<WideString>(
+    const WideString& that,
+    WideString::CharType ch);
+
 }  // namespace fxcrt
 
 #endif  // CORE_FXCRT_FX_STRING_H_

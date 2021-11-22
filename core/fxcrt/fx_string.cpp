@@ -160,3 +160,12 @@ double StringToDouble(WideStringView wsStr) {
 size_t DoubleToString(double d, char* buf) {
   return ToString<double>(d, FXSYS_round, buf);
 }
+
+namespace fxcrt {
+
+template std::vector<ByteString> Split<ByteString>(const ByteString& that,
+                                                   ByteString::CharType ch);
+template std::vector<WideString> Split<WideString>(const WideString& that,
+                                                   WideString::CharType ch);
+
+}  // namespace fxcrt
