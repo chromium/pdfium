@@ -324,13 +324,33 @@ resolve_nodes_1.pdf * * * *
 #
 # Pixel tests
 #
-bug_492.in * nov8 * *
+
+# TODO(pdfium:1746): Remove after associated bug is fixed
+bug_1128284.in * * * skia
+
+# TODO(pdfium:1747): Remove after associated bug is fixed
+bug_1241587.in * * * skia
+
+# TODO(pdfium:1747): Remove after associated bug is fixed
+bug_1258634.in * * * skia
+
+# TODO(pdfium:1748): Remove after associated bug is fixed
+bug_1286.in * * * skia
+
+# TODO(pdfium:1744): Remove after associated bug is fixed
+bug_1288_1.in * * * skia,skiapaths
+
+# TODO(pdfium:1745): Remove after associated bug is fixed
+bug_1288_2.in * * * skia
 
 # TODO(pdfium:1331): Remove after associated bug is fixed
 bug_1331.in * * * *
 
 # TODO(pdfium:1461): Remove after associated bug is fixed
 bug_1402.in win * * *
+
+# TODO(pdfium:1740): Remove after associated bug is fixed
+bug_1402.in * * * skia,skiapaths
 
 # TODO(pdfium:1466): Remove after associated bug is fixed
 bug_1449.in linux * * *
@@ -350,23 +370,77 @@ bug_237527_1.in * * * *
 # TODO(chromium:451366): Remove after associated bug is fixed
 bug_451366.in * * * *
 
+# TODO(pdfium:492): Remove after associated bug is fixed
+bug_492.in * nov8 * *
+
+# TODO(pdfium:1746): Remove after associated bug is fixed
+bug_591137.in * * * skia
+
+# TODO(chromium:725555, skia:9265): Remove after associated bug is fixed
+bug_725555.in * * * skia,skiapaths
+
+# TODO(pdfium:1703): Remove after associated bug is fixed
+bug_736695_1.in * * * skia
+
+# TODO(pdfium:1703): Remove after associated bug is fixed
+bug_736695_2.in * * * skia
+
+# TODO(pdfium:1703): Remove after associated bug is fixed
+bug_736695_3.in * * * skia
+
+# TODO(pdfium:1703): Remove after associated bug is fixed
+bug_736695_4.in * * * skia
+
+# TODO(pdfium:1752): Remove after associated bug is fixed
+bug_845697.in * * * skia,skiapaths
+
+# TODO(pdfium:1749): Remove after associated bug is fixed
+bug_966263.in * * * skia
+
 # TODO(pdfium:1736): Remove after associated bug is fixed
 checkbox_radiobutton.in * * * skia
+
+# TODO(pdfium:1750): Remove after associated bug is fixed
+image_transformer_other.in * * * skia
+
+# TODO(pdfiu,:1310): Remove after associated bug is fixed
+radial_shading_point_at_border.in * * * skia,skiapaths
 
 # TODO(chromium:1028991): Remove after associated bug is fixed
 reset_button.in * * * *
 
+# TODO(pdfium:1749): Remove after associated bug is fixed (skia doesn't render right, between 2 straight lines.)
+type3.in * * * skia
+
 # xfa_specific
 
+# TODO(pdfium:1743): Remove after associated bug is fixed
+barcode_test.pdf * * * skia,skiapaths
 # TODO(pdfium:1095): Remove after associated bug is fixed
 bug_997412.in win * * *
+# TODO(pdfium:1354): Remove after associated bug is fixed
+bug_997412.in * * * skia,skiapaths
+# TODO(pdfium:1743): Remove after associated bug is fixed
+dynamic_list_box_allow_multiple_selection.pdf * * * skia,skiapaths
+# TODO(pdfium:1743): Remove after associated bug is fixed
+dynamic_password_field_background_fill.pdf * * * skia,skiapaths
+# TODO(pdfium:1743): Remove after associated bug is fixed
+dynamic_table_color_and_width.pdf * * * skia,skiapaths
+# TODO(pdfium:1743): Remove after associated bug is fixed
+resolve_nodes_0.pdf * * * skia,skiapaths
 # TODO(pdfium:1107): Remove after associated bug is fixed
 standard_symbols.pdf * * * *
 # TODO(pdfium:1168): Remove after associated bug is fixed
 xfa_bmp_image.in * * * *
 # TODO(pdfium:1095): Remove after associated bug is fixed
 xfa_example.in win * * *
+# TODO(pdfium:1354): Remove after associated bug is fixed
+xfa_example.in * * * skia,skiapaths
 # TODO(pdfium:1167): Remove after associated bug is fixed
 xfa_gif_image.in * * * *
+# TODO(pdfium:1743): Remove after associated bug is fixed
+xfa_node_caption.pdf * * * skia,skiapaths
 # TODO(pdfium:1095): Remove after associated bug is fixed
 xfa_textfield.in win * * *
+# TODO(pdfium:1354): Remove after associated bug is fixed
+xfa_textfield.in * * * skia,skiapaths
