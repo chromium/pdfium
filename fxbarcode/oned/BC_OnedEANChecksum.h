@@ -5,7 +5,7 @@
 #ifndef FXBARCODE_ONED_BC_ONEDEANCHECKSUM_H_
 #define FXBARCODE_ONED_BC_ONEDEANCHECKSUM_H_
 
-#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/bytestring.h"
 
 int32_t EANCalcChecksum(const ByteString& contents);
 

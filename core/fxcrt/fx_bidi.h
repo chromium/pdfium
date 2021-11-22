@@ -11,7 +11,7 @@
 
 #include <vector>
 
-#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/widestring.h"
 
 // Processes characters and group them into segments based on text direction.
 class CFX_BidiChar {

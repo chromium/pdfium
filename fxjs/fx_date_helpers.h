@@ -9,7 +9,7 @@
 
 #include <stddef.h>
 
-#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/widestring.h"
 
 namespace fxjs {
 

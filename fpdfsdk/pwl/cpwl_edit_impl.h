@@ -14,6 +14,7 @@
 
 #include "core/fpdfdoc/cpvt_variabletext.h"
 #include "core/fpdfdoc/cpvt_wordrange.h"
+#include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_codepage_forward.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/fx_dib.h"

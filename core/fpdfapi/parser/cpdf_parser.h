@@ -18,7 +18,7 @@
 
 #include "core/fpdfapi/parser/cpdf_cross_ref_table.h"
 #include "core/fpdfapi/parser/cpdf_indirect_object_holder.h"
-#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_types.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"

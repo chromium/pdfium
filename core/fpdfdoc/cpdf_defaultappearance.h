@@ -7,7 +7,7 @@
 #ifndef CORE_FPDFDOC_CPDF_DEFAULTAPPEARANCE_H_
 #define CORE_FPDFDOC_CPDF_DEFAULTAPPEARANCE_H_
 
-#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/bytestring.h"
 #include "core/fxge/cfx_color.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 

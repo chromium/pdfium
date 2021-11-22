@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/widestring.h"
 #include "fxbarcode/cbc_onecode.h"
 
 class CBC_OneDimEANWriter;

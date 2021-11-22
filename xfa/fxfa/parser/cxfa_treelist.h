@@ -7,7 +7,7 @@
 #ifndef XFA_FXFA_PARSER_CXFA_TREELIST_H_
 #define XFA_FXFA_PARSER_CXFA_TREELIST_H_
 
-#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/widestring.h"
 #include "xfa/fxfa/parser/cxfa_list.h"
 
 class CXFA_Node;

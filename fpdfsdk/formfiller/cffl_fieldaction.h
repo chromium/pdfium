@@ -7,7 +7,7 @@
 #ifndef FPDFSDK_FORMFILLER_CFFL_FIELDACTION_H_
 #define FPDFSDK_FORMFILLER_CFFL_FIELDACTION_H_
 
-#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/widestring.h"
 
 struct CFFL_FieldAction {
   CFFL_FieldAction();

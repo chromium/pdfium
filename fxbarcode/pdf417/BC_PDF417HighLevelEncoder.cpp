@@ -23,6 +23,7 @@
 #include "fxbarcode/pdf417/BC_PDF417HighLevelEncoder.h"
 
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_string.h"
 #include "third_party/bigint/BigIntegerLibrary.hh"
 
 namespace {

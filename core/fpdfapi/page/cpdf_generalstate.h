@@ -8,8 +8,8 @@
 #define CORE_FPDFAPI_PAGE_CPDF_GENERALSTATE_H_
 
 #include "constants/transparency.h"
+#include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/shared_copy_on_write.h"
 #include "core/fxge/dib/fx_dib.h"

@@ -7,7 +7,7 @@
 #ifndef XFA_FXFA_CXFA_FFNUMERICEDIT_H_
 #define XFA_FXFA_CXFA_FFNUMERICEDIT_H_
 
-#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/widestring.h"
 #include "xfa/fxfa/cxfa_fftextedit.h"
 
 class CFWL_Event;

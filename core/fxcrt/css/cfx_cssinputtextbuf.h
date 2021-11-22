@@ -7,7 +7,7 @@
 #ifndef CORE_FXCRT_CSS_CFX_CSSINPUTTEXTBUF_H_
 #define CORE_FXCRT_CSS_CFX_CSSINPUTTEXTBUF_H_
 
-#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/widestring.h"
 
 class CFX_CSSInputTextBuf {
  public:

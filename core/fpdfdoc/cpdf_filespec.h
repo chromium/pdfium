@@ -7,10 +7,10 @@
 #ifndef CORE_FPDFDOC_CPDF_FILESPEC_H_
 #define CORE_FPDFDOC_CPDF_FILESPEC_H_
 
-#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/string_pool_template.h"
 #include "core/fxcrt/weak_ptr.h"
+#include "core/fxcrt/widestring.h"
 
 class CPDF_Dictionary;
 class CPDF_Object;

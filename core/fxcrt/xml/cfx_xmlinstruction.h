@@ -9,7 +9,7 @@
 
 #include <vector>
 
-#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/widestring.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 
 class CFX_XMLDocument;

@@ -7,7 +7,7 @@
 #ifndef FXBARCODE_CBC_CODE39_H_
 #define FXBARCODE_CBC_CODE39_H_
 
-#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/widestring.h"
 #include "fxbarcode/BC_Library.h"
 #include "fxbarcode/cbc_onecode.h"
 

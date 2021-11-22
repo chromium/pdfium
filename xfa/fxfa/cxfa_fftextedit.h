@@ -8,7 +8,7 @@
 #define XFA_FXFA_CXFA_FFTEXTEDIT_H_
 
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/widestring.h"
 #include "v8/include/cppgc/prefinalizer.h"
 #include "xfa/fxfa/cxfa_fffield.h"
 

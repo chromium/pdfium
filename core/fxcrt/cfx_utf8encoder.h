@@ -9,8 +9,8 @@
 
 #include <vector>
 
+#include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
-#include "core/fxcrt/fx_string.h"
 
 class CFX_UTF8Encoder {
  public:

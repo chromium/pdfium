@@ -12,6 +12,7 @@
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/mask.h"
+#include "core/fxcrt/widestring.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "public/fpdf_fwlevent.h"
 

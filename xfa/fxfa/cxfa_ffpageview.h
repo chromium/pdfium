@@ -9,8 +9,8 @@
 
 #include <vector>
 
-#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/mask.h"
+#include "core/fxcrt/widestring.h"
 #include "fxjs/gc/heap.h"
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/member.h"

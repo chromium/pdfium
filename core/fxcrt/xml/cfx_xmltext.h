@@ -7,7 +7,7 @@
 #ifndef CORE_FXCRT_XML_CFX_XMLTEXT_H_
 #define CORE_FXCRT_XML_CFX_XMLTEXT_H_
 
-#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/widestring.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 
 class CFX_XMLDocument;

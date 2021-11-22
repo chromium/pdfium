@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 
-#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/bytestring.h"
 #include "third_party/base/span.h"
 
 class CPDF_SimpleParser {

@@ -13,8 +13,8 @@
 #include <vector>
 
 #include "core/fxcrt/fx_codepage.h"
-#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/widestring.h"
 
 class CFGAS_GEFont;
 

@@ -9,8 +9,8 @@
 
 #include <stdint.h>
 
-#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "core/fxcrt/widestring.h"
 #include "v8/include/cppgc/macros.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 

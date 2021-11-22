@@ -7,7 +7,7 @@
 #ifndef XFA_FGAS_CRT_CFGAS_DECIMAL_H_
 #define XFA_FGAS_CRT_CFGAS_DECIMAL_H_
 
-#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/widestring.h"
 
 class CFGAS_Decimal {
  public:

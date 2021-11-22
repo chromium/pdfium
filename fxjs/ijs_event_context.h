@@ -7,7 +7,7 @@
 #ifndef FXJS_IJS_EVENT_CONTEXT_H_
 #define FXJS_IJS_EVENT_CONTEXT_H_
 
-#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/widestring.h"
 #include "fxjs/ijs_runtime.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 

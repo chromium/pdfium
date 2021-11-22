@@ -7,7 +7,7 @@
 #ifndef XFA_FGAS_CRT_LOCALE_MGR_IFACE_H_
 #define XFA_FGAS_CRT_LOCALE_MGR_IFACE_H_
 
-#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/widestring.h"
 
 class LocaleIface;
 

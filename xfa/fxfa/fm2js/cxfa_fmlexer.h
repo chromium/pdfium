@@ -7,7 +7,7 @@
 #ifndef XFA_FXFA_FM2JS_CXFA_FMLEXER_H_
 #define XFA_FXFA_FM2JS_CXFA_FMLEXER_H_
 
-#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/widestring.h"
 #include "v8/include/cppgc/macros.h"
 
 enum XFA_FM_TOKEN {

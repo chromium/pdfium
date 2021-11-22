@@ -10,8 +10,8 @@
 #include <map>
 #include <memory>
 
+#include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
-#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/fx_freetype.h"

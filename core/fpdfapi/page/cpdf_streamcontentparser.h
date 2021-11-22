@@ -14,9 +14,9 @@
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_contentmarks.h"
+#include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_number.h"
-#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_fillrenderoptions.h"

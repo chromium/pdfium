@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_memory_wrappers.h"
-#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/widestring.h"
 
 class CFX_CSSOutputTextBuf {
  public:

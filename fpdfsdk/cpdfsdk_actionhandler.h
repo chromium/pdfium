@@ -12,8 +12,8 @@
 
 #include "core/fpdfdoc/cpdf_aaction.h"
 #include "core/fpdfdoc/cpdf_action.h"
-#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/mask.h"
+#include "core/fxcrt/widestring.h"
 #include "fpdfsdk/formfiller/cffl_fieldaction.h"
 #include "public/fpdf_fwlevent.h"
 

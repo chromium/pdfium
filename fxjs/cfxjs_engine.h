@@ -19,7 +19,7 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/widestring.h"
 #include "fxjs/cfx_v8.h"
 #include "fxjs/ijs_runtime.h"
 #include "v8/include/v8-forward.h"

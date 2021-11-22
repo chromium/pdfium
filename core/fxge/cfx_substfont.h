@@ -7,8 +7,8 @@
 #ifndef CORE_FXGE_CFX_SUBSTFONT_H_
 #define CORE_FXGE_CFX_SUBSTFONT_H_
 
+#include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_codepage.h"
-#include "core/fxcrt/fx_string.h"
 
 class CFX_SubstFont {
  public:

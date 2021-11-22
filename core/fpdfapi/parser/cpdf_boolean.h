@@ -8,7 +8,7 @@
 #define CORE_FPDFAPI_PARSER_CPDF_BOOLEAN_H_
 
 #include "core/fpdfapi/parser/cpdf_object.h"
-#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/retain_ptr.h"
 
 class CPDF_Boolean final : public CPDF_Object {

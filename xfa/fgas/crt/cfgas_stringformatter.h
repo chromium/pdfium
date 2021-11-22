@@ -9,7 +9,7 @@
 
 #include <vector>
 
-#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/widestring.h"
 #include "third_party/base/span.h"
 #include "xfa/fgas/crt/locale_iface.h"
 

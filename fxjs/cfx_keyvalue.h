@@ -10,7 +10,7 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/bytestring.h"
 
 class CFX_KeyValue;
 

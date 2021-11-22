@@ -28,6 +28,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/fx_string.h"
 #include "fxbarcode/common/BC_CommonByteMatrix.h"
 #include "fxbarcode/common/reedsolomon/BC_ReedSolomon.h"
 #include "fxbarcode/common/reedsolomon/BC_ReedSolomonGF256.h"

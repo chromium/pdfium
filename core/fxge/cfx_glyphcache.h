@@ -11,7 +11,7 @@
 #include <memory>
 #include <tuple>
 
-#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_face.h"

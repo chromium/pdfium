@@ -14,9 +14,9 @@
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_codepage_forward.h"
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 

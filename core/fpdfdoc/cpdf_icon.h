@@ -7,8 +7,8 @@
 #ifndef CORE_FPDFDOC_CPDF_ICON_H_
 #define CORE_FPDFDOC_CPDF_ICON_H_
 
+#include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
 
 class CPDF_Stream;

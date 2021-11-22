@@ -14,10 +14,10 @@
 #include <vector>
 
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/mask.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "core/fxcrt/widestring.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "fxjs/gc/gced_tree_node_mixin.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"

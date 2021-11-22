@@ -11,7 +11,7 @@
 
 #include <memory>
 
-#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/widestring.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "fxbarcode/BC_Library.h"
 

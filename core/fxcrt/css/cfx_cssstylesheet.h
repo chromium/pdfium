@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "core/fxcrt/css/cfx_csssyntaxparser.h"
-#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/widestring.h"
 
 class CFX_CSSStyleRule;
 

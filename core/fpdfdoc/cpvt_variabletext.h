@@ -19,8 +19,8 @@
 #include "core/fpdfdoc/cpvt_wordrange.h"
 #include "core/fxcrt/fx_codepage_forward.h"
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "core/fxcrt/widestring.h"
 
 class CPVT_Section;
 class CPVT_Word;

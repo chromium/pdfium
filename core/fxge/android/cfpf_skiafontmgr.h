@@ -11,8 +11,8 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_codepage_forward.h"
-#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_face.h"
 #include "core/fxge/fx_freetype.h"

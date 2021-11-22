@@ -12,8 +12,8 @@
 
 #include "core/fpdfdoc/cpvt_wordrange.h"
 #include "core/fxcrt/fx_codepage.h"
-#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "core/fxcrt/widestring.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "fpdfsdk/pwl/ipwl_systemhandler.h"
 

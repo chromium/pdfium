@@ -7,7 +7,6 @@
 #ifndef XFA_FXFA_PARSER_CXFA_DOCUMENT_BUILDER_H_
 #define XFA_FXFA_PARSER_CXFA_DOCUMENT_BUILDER_H_
 
-#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "v8/include/cppgc/macros.h"
 #include "xfa/fxfa/fxfa_basic.h"

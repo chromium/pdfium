@@ -10,7 +10,7 @@
 #include <iosfwd>
 #include <vector>
 
-#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 

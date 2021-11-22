@@ -12,8 +12,8 @@
 #include <vector>
 
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "core/fxcrt/widestring.h"
 #include "fpdfsdk/pwl/cpwl_edit_impl.h"
 
 class IPVT_FontMap;
