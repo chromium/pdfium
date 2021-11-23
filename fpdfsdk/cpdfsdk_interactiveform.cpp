@@ -88,8 +88,7 @@ bool FDFToURLEncodedData(
     CPDF_Dictionary* pField = pFields->GetDictAt(i);
     if (!pField)
       continue;
-    WideString name;
-    name = pField->GetUnicodeTextFor("T");
+    WideString name = pField->GetUnicodeTextFor("T");
     ByteString name_b = name.ToDefANSI();
     ByteString csBValue = pField->GetStringFor("V");
     WideString csWValue = PDF_DecodeText(csBValue.raw_span());
@@ -99,7 +98,7 @@ bool FDFToURLEncodedData(
       fdfEncodedData << "&";
   }
 
-  size_t nBufSize = fdfEncodedData.tellp();
+  auto nBufSize = fdfEncodedData.tellp();
   if (nBufSize <= 0)
     return false;
 
