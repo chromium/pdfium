@@ -6,3 +6,6 @@ weili@chromium.org
 
 # For Skia related changes
 reed@google.com
+
+# Autorollers need to own DEPS
+per-file DEPS=*
