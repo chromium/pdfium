@@ -33,7 +33,7 @@ RATING_TO_COLOR = {
 }
 
 
-class ComparisonConclusions(object):
+class ComparisonConclusions:
   """All conclusions drawn from a comparison.
 
   This is initialized empty and then processes pairs of results for each test
@@ -184,7 +184,7 @@ class ComparisonConclusions(object):
     return output_dict
 
 
-class ComparisonSummary(object):
+class ComparisonSummary:
   """Totals computed for a comparison."""
 
   def __init__(self):
@@ -209,7 +209,7 @@ class ComparisonSummary(object):
     return result
 
 
-class CaseResult(object):
+class CaseResult:
   """The conclusion for the comparison of a single test case."""
 
   def __init__(self, case_name, before, after, ratio, rating):

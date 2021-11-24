@@ -11,7 +11,6 @@ import os
 import shutil
 import sys
 
-# pylint: disable=relative-import
 import common
 
 
@@ -42,7 +41,6 @@ class PathMode:
 
 class NotFoundError(Exception):
   """Raised when file doesn't exist"""
-  pass
 
 
 class PNGDiffer():
@@ -165,7 +163,8 @@ class PNGDiffer():
 
 ACTUAL_TEMPLATE = '.pdf.%d.png'
 
-class PathTemplates(object):
+
+class PathTemplates:
 
   def __init__(self, input_filename, source_dir, working_dir, os_name,
                max_path_mode):

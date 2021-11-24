@@ -5,11 +5,10 @@
 
 import subprocess
 
-# pylint: disable=relative-import
 from common import RunCommandPropagateErr
 
 
-class GitHelper(object):
+class GitHelper:
   """Issues git commands. Stateful."""
 
   def __init__(self):

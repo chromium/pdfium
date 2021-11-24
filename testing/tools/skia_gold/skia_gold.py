@@ -97,7 +97,7 @@ def clear_gold_output_dir(output_dir):
   os.makedirs(output_dir)
 
 
-class SkiaGoldTester(object):
+class SkiaGoldTester:
 
   def __init__(self, source_type, skia_gold_args, process_name=None):
     """
@@ -175,7 +175,7 @@ class SkiaGoldTester(object):
         self.GetSkiaGoldSessionManager().GetSessionClass().StatusCodes
     if status == status_codes.SUCCESS:
       return True
-    elif status == status_codes.AUTH_FAILURE:
+    if status == status_codes.AUTH_FAILURE:
       logging.error('Gold authentication failed with output %s', error)
     elif status == status_codes.INIT_FAILURE:
       logging.error('Gold initialization failed with output %s', error)

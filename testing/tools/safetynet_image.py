@@ -15,7 +15,6 @@ import subprocess
 import sys
 import webbrowser
 
-# pylint: disable=relative-import
 from common import DirectoryFinder
 
 
@@ -23,7 +22,7 @@ def GenerateOneDiffParallel(image_comparison, image):
   return image_comparison.GenerateOneDiff(image)
 
 
-class ImageComparison(object):
+class ImageComparison:
   """Compares pairs of page images and generates an HTML to look at differences.
 
   The images are all assumed to have the same name and be in two directories:
@@ -241,7 +240,7 @@ class ImageComparison(object):
       f.write('</td></tr>')
 
 
-class ImageLocations(object):
+class ImageLocations:
   """Contains the locations of input and output image files.
   """
 

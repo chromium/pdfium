@@ -496,6 +496,9 @@ def CheckChangeOnUpload(input_api, output_api):
                 input_api,
                 output_api,
                 full_path,
-                files_to_check=[r'^PRESUBMIT_test\.py$']))
+                files_to_check=[r'^PRESUBMIT_test\.py$'],
+                run_on_python2=not USE_PYTHON3,
+                run_on_python3=USE_PYTHON3,
+                skip_shebang_check=True))
 
   return results

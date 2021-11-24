@@ -18,7 +18,6 @@ import subprocess
 import sys
 import tempfile
 
-# pylint: disable=relative-import
 from common import GetBooleanGnArg
 from common import PrintErr
 from common import RunCommandPropagateErr
@@ -35,7 +34,7 @@ def RunSingleTestCaseParallel(this, run_label, build_dir, test_case):
   return (test_case, result)
 
 
-class CompareRun(object):
+class CompareRun:
   """A comparison between two branches of pdfium."""
 
   def __init__(self, args):
@@ -529,8 +528,7 @@ class CompareRun(object):
       output_filename = (
           'callgrind.out.%s.%s' % (test_case.replace('/', '_'), run_label))
       return os.path.join(self.args.output_dir, output_filename)
-    else:
-      return None
+    return None
 
   def _DrawConclusions(self, times_before_branch, times_after_branch):
     """Draws conclusions comparing results of test runs in two branches.

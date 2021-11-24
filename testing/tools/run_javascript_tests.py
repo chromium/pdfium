@@ -5,7 +5,6 @@
 
 import sys
 
-# pylint: disable=relative-import
 import test_runner
 
 

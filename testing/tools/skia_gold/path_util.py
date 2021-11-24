@@ -8,6 +8,7 @@ import sys
 
 
 def AddDirToPathIfNeeded(*path_parts):
+  # pylint: disable=no-value-for-parameter
   path = os.path.abspath(os.path.join(*path_parts))
   if os.path.isdir(path) and path not in sys.path:
     sys.path.append(path)

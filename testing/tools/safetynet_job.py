@@ -15,14 +15,13 @@ import json
 import os
 import sys
 
-# pylint: disable=relative-import
 from common import PrintWithTime
 from common import RunCommandPropagateErr
 from githelper import GitHelper
 from safetynet_conclusions import PrintConclusionsDictHumanReadable
 
 
-class JobContext(object):
+class JobContext:
   """Context for a single run, including name and directory paths."""
 
   def __init__(self, args):
@@ -36,7 +35,7 @@ class JobContext(object):
                                             '%s.log' % self.datetime)
 
 
-class JobRun(object):
+class JobRun:
   """A single run looking for regressions since the last one."""
 
   def __init__(self, args, context):

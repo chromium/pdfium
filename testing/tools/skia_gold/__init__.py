@@ -1,3 +1,3 @@
-from . import path_util
+from .path_util import AddDirToPathIfNeeded, GetPDFiumDir
 
-path_util.AddDirToPathIfNeeded(path_util.GetPDFiumDir(), 'build')
+AddDirToPathIfNeeded(GetPDFiumDir(), 'build')

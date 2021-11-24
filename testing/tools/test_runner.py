@@ -15,7 +15,6 @@ import shutil
 import subprocess
 import sys
 
-# pylint: disable=relative-import
 import common
 import pngdiffer
 import suppressor
@@ -49,6 +48,9 @@ def TestOneFileParallel(this, test_case):
     result = this.GenerateAndTest(input_filename, source_dir)
     return (result, input_filename, source_dir)
   except KeyboardInterrupt:
+    # TODO(https://crbug.com/pdfium/1674): Re-enable this check after try bots
+    # can run with Python3.
+    # pylint: disable=raise-missing-from
     raise KeyboardInterruptError()
 
 
@@ -64,6 +66,9 @@ def RunSkiaWrapper(this, input_chunk):
       results.append((test_name, skia_success, input_filename))
     return results
   except KeyboardInterrupt:
+    # TODO(https://crbug.com/pdfium/1674): Re-enable this check after try bots
+    # can run with Python3.
+    # pylint: disable=raise-missing-from
     raise KeyboardInterruptError()
 
 
@@ -227,7 +232,7 @@ class TestRunner:
     try:
       with open(txt_path, "r") as txt_file:
         txt_data = txt_file.readlines()
-      if not len(txt_data):
+      if not txt_data:
         return None
       sys.stdout.write('Unexpected output:\n')
       for line in txt_data:

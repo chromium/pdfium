@@ -101,7 +101,7 @@ def _GetFunctionsFromTest(api_test_path):
 
 
 def _FindDuplicates(functions):
-  return set([f for f in functions if functions.count(f) > 1])
+  return {f for f in functions if functions.count(f) > 1}
 
 
 def _CheckAndPrintFailures(failure_list, failure_message):

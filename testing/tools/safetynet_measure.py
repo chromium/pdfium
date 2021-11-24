@@ -15,7 +15,6 @@ import re
 import subprocess
 import sys
 
-# pylint: disable=relative-import
 from common import PrintErr
 
 CALLGRIND_PROFILER = 'callgrind'
@@ -25,7 +24,7 @@ NONE_PROFILER = 'none'
 PDFIUM_TEST = 'pdfium_test'
 
 
-class PerformanceRun(object):
+class PerformanceRun:
   """A single measurement of a test case."""
 
   def __init__(self, args):

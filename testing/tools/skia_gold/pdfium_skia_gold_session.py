@@ -4,13 +4,12 @@
 # found in the LICENSE file.
 """PDFium implementation of //build/skia_gold_common/skia_gold_session.py."""
 
-# pylint: disable=relative-import
 from skia_gold_common import output_managerless_skia_gold_session as omsgs
 
 
 # ComparisonResults nested inside the SkiaGoldSession causes issues with
 # multiprocessing and pickling, so it was moved out here.
-class PDFiumComparisonResults(object):
+class PDFiumComparisonResults:
   """Struct-like object for storing results of an image comparison."""
 
   def __init__(self):
