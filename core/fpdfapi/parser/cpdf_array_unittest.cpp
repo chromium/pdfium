@@ -74,39 +74,35 @@ TEST(cpdf_array, Clear) {
   EXPECT_EQ(0U, arr->size());
 }
 
+TEST(cpdf_array, SetAtBeyond) {
+  auto arr = pdfium::MakeRetain<CPDF_Array>();
+  EXPECT_EQ(nullptr, arr->SetNewAt<CPDF_Number>(0, 0));
+  EXPECT_NE(nullptr, arr->InsertNewAt<CPDF_Number>(0, 0));
+  EXPECT_EQ(nullptr, arr->SetNewAt<CPDF_Number>(1, 0));
+}
+
 TEST(cpdf_array, InsertAt) {
-  {
-    const int elems[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    auto arr = pdfium::MakeRetain<CPDF_Array>();
-    for (size_t i = 0; i < pdfium::size(elems); ++i)
-      arr->InsertNewAt<CPDF_Number>(i, elems[i]);
-    ASSERT_EQ(pdfium::size(elems), arr->size());
-    for (size_t i = 0; i < pdfium::size(elems); ++i)
-      EXPECT_EQ(elems[i], arr->GetIntegerAt(i));
-    arr->InsertNewAt<CPDF_Number>(3, 33);
-    arr->InsertNewAt<CPDF_Number>(6, 55);
-    arr->InsertNewAt<CPDF_Number>(12, 12);
-    const int expected[] = {1, 2, 3, 33, 4, 5, 55, 6, 7, 8, 9, 10, 12};
-    ASSERT_EQ(pdfium::size(expected), arr->size());
-    for (size_t i = 0; i < pdfium::size(expected); ++i)
-      EXPECT_EQ(expected[i], arr->GetIntegerAt(i));
-  }
-  {
-    // When the position to insert is beyond the upper bound,
-    // an element is inserted at that position while other unfilled
-    // positions have nullptr.
-    const int elems[] = {1, 2};
-    auto arr = pdfium::MakeRetain<CPDF_Array>();
-    for (size_t i = 0; i < pdfium::size(elems); ++i)
-      arr->InsertNewAt<CPDF_Number>(i, elems[i]);
-    arr->InsertNewAt<CPDF_Number>(10, 10);
-    ASSERT_EQ(11u, arr->size());
-    for (size_t i = 0; i < pdfium::size(elems); ++i)
-      EXPECT_EQ(elems[i], arr->GetIntegerAt(i));
-    for (size_t i = pdfium::size(elems); i < 10; ++i)
-      EXPECT_EQ(nullptr, arr->GetObjectAt(i));
-    EXPECT_EQ(10, arr->GetIntegerAt(10));
-  }
+  const int elems[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+  auto arr = pdfium::MakeRetain<CPDF_Array>();
+  for (size_t i = 0; i < pdfium::size(elems); ++i)
+    arr->InsertNewAt<CPDF_Number>(i, elems[i]);
+  ASSERT_EQ(pdfium::size(elems), arr->size());
+  for (size_t i = 0; i < pdfium::size(elems); ++i)
+    EXPECT_EQ(elems[i], arr->GetIntegerAt(i));
+  arr->InsertNewAt<CPDF_Number>(3, 33);
+  arr->InsertNewAt<CPDF_Number>(6, 55);
+  arr->InsertNewAt<CPDF_Number>(12, 12);
+  const int expected[] = {1, 2, 3, 33, 4, 5, 55, 6, 7, 8, 9, 10, 12};
+  ASSERT_EQ(pdfium::size(expected), arr->size());
+  for (size_t i = 0; i < pdfium::size(expected); ++i)
+    EXPECT_EQ(expected[i], arr->GetIntegerAt(i));
+}
+
+TEST(cpdf_array, InsertAtBeyond) {
+  auto arr = pdfium::MakeRetain<CPDF_Array>();
+  EXPECT_EQ(nullptr, arr->InsertNewAt<CPDF_Number>(1, 0));
+  EXPECT_NE(nullptr, arr->InsertNewAt<CPDF_Number>(0, 0));
+  EXPECT_EQ(nullptr, arr->InsertNewAt<CPDF_Number>(2, 0));
 }
 
 TEST(cpdf_array, Clone) {

@@ -592,7 +592,7 @@ TEST(PDFArrayTest, GetTypeAt) {
       vals[i] = arr->AppendNew<CPDF_Array>();
       for (size_t j = 0; j < 3; ++j) {
         int value = j + 100;
-        vals[i]->InsertNewAt<CPDF_Number>(i, value);
+        vals[i]->InsertNewAt<CPDF_Number>(j, value);
       }
     }
     for (size_t i = 0; i < 3; ++i) {

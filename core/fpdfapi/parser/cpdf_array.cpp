@@ -28,7 +28,7 @@ CPDF_Array::~CPDF_Array() {
   // Break cycles for cyclic references.
   m_ObjNum = kInvalidObjNum;
   for (auto& it : m_Objects) {
-    if (it && it->GetObjNum() == kInvalidObjNum)
+    if (it->GetObjNum() == kInvalidObjNum)
       it.Leak();
   }
 }
@@ -207,11 +207,11 @@ void CPDF_Array::ConvertToIndirectObjectAt(size_t index,
 
 CPDF_Object* CPDF_Array::SetAt(size_t index, RetainPtr<CPDF_Object> pObj) {
   CHECK(!IsLocked());
-  DCHECK(!pObj || pObj->IsInline());
-  if (index >= m_Objects.size()) {
-    NOTREACHED();
+  CHECK(pObj);
+  CHECK(pObj->IsInline());
+  if (index >= m_Objects.size())
     return nullptr;
-  }
+
   CPDF_Object* pRet = pObj.Get();
   m_Objects[index] = std::move(pObj);
   return pRet;
@@ -219,22 +219,20 @@ CPDF_Object* CPDF_Array::SetAt(size_t index, RetainPtr<CPDF_Object> pObj) {
 
 CPDF_Object* CPDF_Array::InsertAt(size_t index, RetainPtr<CPDF_Object> pObj) {
   CHECK(!IsLocked());
-  CHECK(!pObj || pObj->IsInline());
+  CHECK(pObj);
+  CHECK(pObj->IsInline());
+  if (index > m_Objects.size())
+    return nullptr;
+
   CPDF_Object* pRet = pObj.Get();
-  if (index >= m_Objects.size()) {
-    // Allocate space first.
-    m_Objects.resize(index + 1);
-    m_Objects[index] = std::move(pObj);
-  } else {
-    // Directly insert.
-    m_Objects.insert(m_Objects.begin() + index, std::move(pObj));
-  }
+  m_Objects.insert(m_Objects.begin() + index, std::move(pObj));
   return pRet;
 }
 
 CPDF_Object* CPDF_Array::Append(RetainPtr<CPDF_Object> pObj) {
   CHECK(!IsLocked());
-  CHECK(!pObj || pObj->IsInline());
+  CHECK(pObj);
+  CHECK(pObj->IsInline());
   CPDF_Object* pRet = pObj.Get();
   m_Objects.push_back(std::move(pObj));
   return pRet;
