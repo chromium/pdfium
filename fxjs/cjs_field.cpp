@@ -950,8 +950,8 @@ CJS_Result CJS_Field::get_calc_order_index(CJS_Runtime* pRuntime) {
 
   CPDFSDK_InteractiveForm* pRDForm = m_pFormFillEnv->GetInteractiveForm();
   CPDF_InteractiveForm* pForm = pRDForm->GetInteractiveForm();
-  return CJS_Result::Success(pRuntime->NewNumber(
-      static_cast<int32_t>(pForm->FindFieldInCalculationOrder(pFormField))));
+  return CJS_Result::Success(
+      pRuntime->NewNumber(pForm->FindFieldInCalculationOrder(pFormField)));
 }
 
 CJS_Result CJS_Field::set_calc_order_index(CJS_Runtime* pRuntime,

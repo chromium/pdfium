@@ -30,8 +30,10 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fx_font.h"
+#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/contains.h"
+#include "third_party/base/numerics/safe_conversions.h"
 
 namespace {
 
@@ -698,19 +700,18 @@ CPDF_FormField* CPDF_InteractiveForm::GetFieldInCalculationOrder(int index) {
 
 int CPDF_InteractiveForm::FindFieldInCalculationOrder(
     const CPDF_FormField* pField) {
-  if (!m_pFormDict || !pField)
+  if (!m_pFormDict)
     return -1;
 
   CPDF_Array* pArray = m_pFormDict->GetArrayFor("CO");
   if (!pArray)
     return -1;
 
-  for (size_t i = 0; i < pArray->size(); i++) {
-    CPDF_Object* pElement = pArray->GetDirectObjectAt(i);
-    if (pElement == pField->GetDict())
-      return i;
-  }
-  return -1;
+  absl::optional<size_t> maybe_found = pArray->Find(pField->GetDict());
+  if (!maybe_found.has_value())
+    return -1;
+
+  return pdfium::base::checked_cast<int>(maybe_found.value());
 }
 
 RetainPtr<CPDF_Font> CPDF_InteractiveForm::GetFormFont(

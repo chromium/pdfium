@@ -189,6 +189,29 @@ TEST(cpdf_array, Clone) {
   }
 }
 
+TEST(cpdf_array, Find) {
+  auto arr = pdfium::MakeRetain<CPDF_Array>();
+  auto dict0 = pdfium::MakeRetain<CPDF_Dictionary>();
+  auto dict1 = pdfium::MakeRetain<CPDF_Dictionary>();
+  auto dict2 = pdfium::MakeRetain<CPDF_Dictionary>();
+  arr->Append(dict0);
+  arr->Append(dict1);
+
+  absl::optional<size_t> maybe_found = arr->Find(nullptr);
+  EXPECT_FALSE(maybe_found.has_value());
+
+  maybe_found = arr->Find(dict0.Get());
+  ASSERT_TRUE(maybe_found.has_value());
+  EXPECT_EQ(0u, maybe_found.value());
+
+  maybe_found = arr->Find(dict1.Get());
+  ASSERT_TRUE(maybe_found.has_value());
+  EXPECT_EQ(1u, maybe_found.value());
+
+  maybe_found = arr->Find(dict2.Get());
+  EXPECT_FALSE(maybe_found.has_value());
+}
+
 TEST(cpdf_array, Contains) {
   auto arr = pdfium::MakeRetain<CPDF_Array>();
   auto dict0 = pdfium::MakeRetain<CPDF_Dictionary>();
