@@ -8,6 +8,7 @@
 #include <utility>
 
 #include "core/fpdfapi/parser/cpdf_boolean.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "testing/gtest/include/gtest/gtest.h"
@@ -186,6 +187,18 @@ TEST(cpdf_array, Clone) {
       }
     }
   }
+}
+
+TEST(cpdf_array, Contains) {
+  auto arr = pdfium::MakeRetain<CPDF_Array>();
+  auto dict0 = pdfium::MakeRetain<CPDF_Dictionary>();
+  auto dict1 = pdfium::MakeRetain<CPDF_Dictionary>();
+  auto dict2 = pdfium::MakeRetain<CPDF_Dictionary>();
+  arr->Append(dict0);
+  arr->Append(dict1);
+  EXPECT_TRUE(arr->Contains(dict0.Get()));
+  EXPECT_TRUE(arr->Contains(dict1.Get()));
+  EXPECT_FALSE(arr->Contains(dict2.Get()));
 }
 
 TEST(cpdf_array, Iterator) {

@@ -88,6 +88,14 @@ CFX_Matrix CPDF_Array::GetMatrix() const {
                     GetNumberAt(3), GetNumberAt(4), GetNumberAt(5));
 }
 
+bool CPDF_Array::Contains(const CPDF_Object* pThat) const {
+  for (size_t i = 0; i < m_Objects.size(); ++i) {
+    if (GetDirectObjectAt(i) == pThat)
+      return true;
+  }
+  return false;
+}
+
 CPDF_Object* CPDF_Array::GetObjectAt(size_t index) {
   if (index >= m_Objects.size())
     return nullptr;
@@ -101,15 +109,13 @@ const CPDF_Object* CPDF_Array::GetObjectAt(size_t index) const {
 }
 
 CPDF_Object* CPDF_Array::GetDirectObjectAt(size_t index) {
-  if (index >= m_Objects.size())
-    return nullptr;
-  return m_Objects[index]->GetDirect();
+  CPDF_Object* pObj = GetObjectAt(index);
+  return pObj ? pObj->GetDirect() : nullptr;
 }
 
 const CPDF_Object* CPDF_Array::GetDirectObjectAt(size_t index) const {
-  if (index >= m_Objects.size())
-    return nullptr;
-  return m_Objects[index]->GetDirect();
+  const CPDF_Object* pObj = GetObjectAt(index);
+  return pObj ? pObj->GetDirect() : nullptr;
 }
 
 ByteString CPDF_Array::GetStringAt(size_t index) const {

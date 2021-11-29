@@ -14,17 +14,6 @@
 
 namespace {
 
-int32_t FindGroup(const CPDF_Array* pArray, const CPDF_Dictionary* pGroupDict) {
-  if (!pArray || !pGroupDict)
-    return -1;
-
-  for (size_t i = 0; i < pArray->size(); i++) {
-    if (pArray->GetDictAt(i) == pGroupDict)
-      return i;
-  }
-  return -1;
-}
-
 bool HasIntent(const CPDF_Dictionary* pDict,
                ByteStringView csElement,
                ByteStringView csDef) {
@@ -56,7 +45,7 @@ CPDF_Dictionary* GetConfig(CPDF_Document* pDoc,
   if (!pOCGs)
     return nullptr;
 
-  if (FindGroup(pOCGs, pOCGDict) < 0)
+  if (!pOCGs->Contains(pOCGDict))
     return nullptr;
 
   CPDF_Dictionary* pConfig = pOCProperties->GetDictFor("D");
@@ -109,15 +98,13 @@ bool CPDF_OCContext::LoadOCGStateFromConfig(
 
   bool bState = pConfig->GetStringFor("BaseState", "ON") != "OFF";
   CPDF_Array* pArray = pConfig->GetArrayFor("ON");
-  if (pArray) {
-    if (FindGroup(pArray, pOCGDict) >= 0)
-      bState = true;
-  }
+  if (pArray && pArray->Contains(pOCGDict))
+    bState = true;
+
   pArray = pConfig->GetArrayFor("OFF");
-  if (pArray) {
-    if (FindGroup(pArray, pOCGDict) >= 0)
-      bState = false;
-  }
+  if (pArray && pArray->Contains(pOCGDict))
+    bState = false;
+
   pArray = pConfig->GetArrayFor("AS");
   if (!pArray)
     return bState;
@@ -135,7 +122,7 @@ bool CPDF_OCContext::LoadOCGStateFromConfig(
     if (!pOCGs)
       continue;
 
-    if (FindGroup(pOCGs, pOCGDict) < 0)
+    if (!pOCGs->Contains(pOCGDict))
       continue;
 
     CPDF_Dictionary* pState = pUsage->GetDictFor(csConfig);
