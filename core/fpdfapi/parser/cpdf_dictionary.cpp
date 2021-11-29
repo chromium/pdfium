@@ -33,7 +33,7 @@ CPDF_Dictionary::~CPDF_Dictionary() {
   // and break cyclic references.
   m_ObjNum = kInvalidObjNum;
   for (auto& it : m_Map) {
-    if (it.second && it.second->GetObjNum() == kInvalidObjNum)
+    if (it.second->GetObjNum() == kInvalidObjNum)
       it.second.Leak();
   }
 }
@@ -75,7 +75,8 @@ RetainPtr<CPDF_Object> CPDF_Dictionary::CloneNonCyclic(
   for (const auto& it : locker) {
     if (!pdfium::Contains(*pVisited, it.second.Get())) {
       std::set<const CPDF_Object*> visited(*pVisited);
-      if (auto obj = it.second->CloneNonCyclic(bDirect, &visited))
+      auto obj = it.second->CloneNonCyclic(bDirect, &visited);
+      if (obj)
         pCopy->m_Map.insert(std::make_pair(it.first, std::move(obj)));
     }
   }

@@ -22,6 +22,8 @@
 
 class CPDF_IndirectObjectHolder;
 
+// Dictionaries never contain nullptr for valid keys, but some of the methods
+// will return nullptr to indicate non-existent keys.
 class CPDF_Dictionary final : public CPDF_Object {
  public:
   using const_iterator =
@@ -77,9 +79,10 @@ class CPDF_Dictionary final : public CPDF_Object {
   std::vector<ByteString> GetKeys() const;
 
   // Creates a new object owned by the dictionary and returns an unowned
-  // pointer to it. Prefer using these templates over calls to SetFor(),
-  // since by creating a new object with no previous references, they ensure
-  // cycles can not be introduced.
+  // pointer to it. Invalidates iterators for the element with the key |key|.
+  // Prefer using these templates over calls to SetFor(), since by creating
+  // a new object with no previous references, they ensure cycles can not be
+  // introduced.
   template <typename T, typename... Args>
   typename std::enable_if<!CanInternStrings<T>::value, T*>::type SetNewFor(
       const ByteString& key,
@@ -95,13 +98,14 @@ class CPDF_Dictionary final : public CPDF_Object {
         key, pdfium::MakeRetain<T>(m_pPool, std::forward<Args>(args)...)));
   }
 
+  // If |pObj| is null, then |key| is erased from the map. Otherwise, takes
+  // ownership of |pObj|, returns an unowned pointer to it. Invalidates
+  // iterators for the element with the key |key|.
+  CPDF_Object* SetFor(const ByteString& key, RetainPtr<CPDF_Object> pObj);
+
   // Convenience functions to convert native objects to array form.
   void SetRectFor(const ByteString& key, const CFX_FloatRect& rect);
   void SetMatrixFor(const ByteString& key, const CFX_Matrix& matrix);
-
-  // Set* functions invalidate iterators for the element with the key |key|.
-  // Takes ownership of |pObj|, returns an unowned pointer to it.
-  CPDF_Object* SetFor(const ByteString& key, RetainPtr<CPDF_Object> pObj);
 
   void ConvertToIndirectObjectFor(const ByteString& key,
                                   CPDF_IndirectObjectHolder* pHolder);
