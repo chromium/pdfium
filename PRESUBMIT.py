@@ -59,12 +59,13 @@ _BANNED_CPP_FUNCTIONS = (
         [_THIRD_PARTY],
     ),
     (
-        'v8::Isolate::GetCurrent()',
+        r'/v8::Isolate::(?:|Try)GetCurrent()',
         (
-            'Avoid uses of v8::Isolate::GetCurrent(). Prefer holding a pointer to',
-            'the v8::Isolate that was entered.',
+            'v8::Isolate::GetCurrent() and v8::Isolate::TryGetCurrent() are banned. Hold',
+            'a pointer to the v8::Isolate that was entered. Use v8::Isolate::IsCurrent()',
+            'to check whether a given v8::Isolate is entered.',
         ),
-        False,
+        True,
         (),
     ),
 )

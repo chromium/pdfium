@@ -22,10 +22,18 @@ class BannedTypeCheckTest(unittest.TestCase):
                  ['using namespace std;  // nocheck']),
         MockFile('some/cpp/comment/file.cc',
                  ['  // A comment about `using namespace std;`']),
-        MockFile('some/cpp/v8/file.cc', ['v8::Isolate::GetCurrent()']),
+        MockFile('some/cpp/v8/get-current.cc', ['v8::Isolate::GetCurrent()']),
+        MockFile('some/cpp/v8/try-get-current.cc',
+                 ['v8::Isolate::TryGetCurrent()']),
     ]
 
     results = PRESUBMIT._CheckNoBannedFunctions(input_api, MockOutputApi())
+
+    # There are no warnings to test, so add an empty warning to keep the test
+    # extendable for the future. This block can be removed once warnings are
+    # added.
+    self.assertEqual(1, len(results))
+    results.insert(0, MockOutputApi().PresubmitPromptWarning(''))
 
     # warnings are results[0], errors are results[1]
     self.assertEqual(2, len(results))
@@ -37,7 +45,8 @@ class BannedTypeCheckTest(unittest.TestCase):
     self.assertFalse('some/cpp/nocheck/file.cc' in results[1].message)
     self.assertFalse('some/cpp/comment/file.cc' in results[0].message)
     self.assertFalse('some/cpp/comment/file.cc' in results[1].message)
-    self.assertTrue('some/cpp/v8/file.cc' in results[0].message)
+    self.assertTrue('some/cpp/v8/get-current.cc' in results[1].message)
+    self.assertTrue('some/cpp/v8/try-get-current.cc' in results[1].message)
 
 
 class CheckChangeOnUploadTest(unittest.TestCase):
