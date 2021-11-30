@@ -215,7 +215,7 @@ std::ostream& operator<<(std::ostream& buf, const CPDF_Object* pObj) {
       buf << "[";
       for (size_t i = 0; i < p->size(); i++) {
         const CPDF_Object* pElement = p->GetObjectAt(i);
-        if (pElement && !pElement->IsInline()) {
+        if (!pElement->IsInline()) {
           buf << " " << pElement->GetObjNum() << " 0 R";
         } else {
           buf << pElement;
