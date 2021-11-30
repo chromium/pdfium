@@ -21,6 +21,7 @@ vars = {
 
   'chromium_git': 'https://chromium.googlesource.com',
   'pdfium_git': 'https://pdfium.googlesource.com',
+  'skia_git': 'https://skia.googlesource.com',
 
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling abseil
@@ -258,7 +259,7 @@ deps = {
         Var('nasm_source_revision'),
 
   'third_party/skia':
-    Var('chromium_git') + '/skia.git@' +  Var('skia_revision'),
+    Var('skia_git') + '/skia.git@' + Var('skia_revision'),
 
   'third_party/test_fonts':
     Var('chromium_git') + '/chromium/src/third_party/test_fonts.git@' +
