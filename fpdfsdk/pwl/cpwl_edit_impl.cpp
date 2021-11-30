@@ -1873,31 +1873,29 @@ void CPWL_EditImpl::EnableUndo(bool bUndo) {
 CPVT_WordPlace CPWL_EditImpl::DoInsertText(const CPVT_WordPlace& place,
                                            const WideString& sText,
                                            FX_Charset charset) {
-  CPVT_WordPlace wp = place;
+  if (!m_pVT->IsValid())
+    return place;
 
-  if (m_pVT->IsValid()) {
-    for (int32_t i = 0, sz = sText.GetLength(); i < sz; i++) {
-      uint16_t word = sText[i];
-      switch (word) {
-        case '\r':
-          wp = m_pVT->InsertSection(wp);
-          if (i + 1 < sz && sText[i + 1] == '\n')
-            i++;
-          break;
-        case '\n':
-          wp = m_pVT->InsertSection(wp);
-          break;
-        case '\t':
-          word = ' ';
-          FALLTHROUGH;
-        default:
-          wp =
-              m_pVT->InsertWord(wp, word, GetCharSetFromUnicode(word, charset));
-          break;
-      }
+  CPVT_WordPlace wp = place;
+  for (size_t i = 0; i < sText.GetLength(); ++i) {
+    uint16_t word = sText[i];
+    switch (word) {
+      case '\r':
+        wp = m_pVT->InsertSection(wp);
+        if (i + 1 < sText.GetLength() && sText[i + 1] == '\n')
+          i++;
+        break;
+      case '\n':
+        wp = m_pVT->InsertSection(wp);
+        break;
+      case '\t':
+        word = ' ';
+        FALLTHROUGH;
+      default:
+        wp = m_pVT->InsertWord(wp, word, GetCharSetFromUnicode(word, charset));
+        break;
     }
   }
-
   return wp;
 }
 
