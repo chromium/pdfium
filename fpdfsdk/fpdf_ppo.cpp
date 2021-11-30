@@ -303,8 +303,6 @@ bool CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj) {
           if (key == "Parent" || key == "Prev" || key == "First")
             continue;
           CPDF_Object* pNextObj = it.second.Get();
-          if (!pNextObj)
-            return false;
           if (!UpdateReference(pNextObj))
             bad_keys.push_back(key);
         }

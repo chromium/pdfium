@@ -47,13 +47,11 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
                                   CPDF_StreamContentParser* pParser) {
   CPDF_DictionaryLocker locker(pGS);
   for (const auto& it : locker) {
-    const ByteString& key_str = it.first;
-    CPDF_Object* pElement = it.second.Get();
-    CPDF_Object* pObject = pElement ? pElement->GetDirect() : nullptr;
+    CPDF_Object* pObject = it.second->GetDirect();
     if (!pObject)
       continue;
 
-    uint32_t key = key_str.GetID();
+    uint32_t key = it.first.GetID();
     switch (key) {
       case FXBSTR_ID('L', 'W', 0, 0):
         m_GraphState.SetLineWidth(pObject->GetNumber());

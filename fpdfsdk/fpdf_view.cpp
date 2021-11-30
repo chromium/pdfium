@@ -1165,8 +1165,6 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
     for (const auto& it : locker) {
       bsName = it.first.AsStringView();
       pDestObj = it.second.Get();
-      if (!pDestObj)
-        continue;
       if (i == index)
         break;
       i++;
