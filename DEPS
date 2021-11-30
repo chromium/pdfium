@@ -143,6 +143,15 @@ vars = {
   'zlib_revision': '2231b7c84b443385f2bd65dd6c46b3c7b957eae1',
 }
 
+# Only these hosts are allowed for dependencies in this DEPS file.
+# If you need to add a new host, and the new host is not in Chromium's DEPS
+# file's allowed_hosts list, contact Chrome infrastructure team.
+allowed_hosts = [
+  'chromium.googlesource.com',
+  'pdfium.googlesource.com',
+  'skia.googlesource.com',
+]
+
 deps = {
   'base/trace_event/common':
     Var('chromium_git') + '/chromium/src/base/trace_event/common.git@' +
