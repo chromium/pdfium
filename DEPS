@@ -156,8 +156,9 @@ deps = {
         Var('buildtools_revision'),
 
   'buildtools/clang_format/script':
-    Var('chromium_git') + '/external/github.com/llvm/llvm-project/clang/tools/clang-format.git@' +
-    Var('clang_format_revision'),
+    Var('chromium_git') +
+        '/external/github.com/llvm/llvm-project/clang/tools/clang-format.git@' +
+        Var('clang_format_revision'),
 
   'buildtools/linux64': {
     'packages': [
@@ -182,16 +183,19 @@ deps = {
   },
 
   'buildtools/third_party/libc++/trunk':
-    Var('chromium_git') + '/external/github.com/llvm/llvm-project/libcxx.git' + '@' +
-    Var('libcxx_revision'),
+    Var('chromium_git') +
+        '/external/github.com/llvm/llvm-project/libcxx.git@' +
+        Var('libcxx_revision'),
 
   'buildtools/third_party/libc++abi/trunk':
-    Var('chromium_git') + '/external/github.com/llvm/llvm-project/libcxxabi.git' + '@' +
-    Var('libcxxabi_revision'),
+    Var('chromium_git') +
+        '/external/github.com/llvm/llvm-project/libcxxabi.git@' +
+        Var('libcxxabi_revision'),
 
   'buildtools/third_party/libunwind/trunk':
-    Var('chromium_git') + '/external/github.com/llvm/llvm-project/libunwind.git' + '@' +
-    Var('libunwind_revision'),
+    Var('chromium_git') +
+        '/external/github.com/llvm/llvm-project/libunwind.git@' +
+        Var('libunwind_revision'),
 
   'buildtools/win': {
     'packages': [
@@ -270,7 +274,7 @@ deps = {
         Var('zlib_revision'),
 
   'tools/clang':
-    Var('chromium_git') + '/chromium/src/tools/clang@' +  Var('clang_revision'),
+    Var('chromium_git') + '/chromium/src/tools/clang@' + Var('clang_revision'),
 
   'tools/clang/dsymutil': {
     'packages': [
