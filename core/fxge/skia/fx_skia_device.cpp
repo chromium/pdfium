@@ -2330,7 +2330,8 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
         colors[i] = SkColorSetARGB(0xFF, (U8CPU)(r * 255), (U8CPU)(g * 255),
                                    (U8CPU)(b * 255));
       }
-      m_pCanvas->drawPatch(cubics, colors, nullptr, paint);
+      m_pCanvas->drawPatch(cubics, colors, nullptr, SkBlendMode::kModulate,
+                           paint);
     }
     return true;
   }
