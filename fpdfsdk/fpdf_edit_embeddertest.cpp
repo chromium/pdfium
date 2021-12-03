@@ -44,45 +44,32 @@ const wchar_t kBottomText[] = L"I'm at the bottom of the page";
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 static constexpr char kBottomTextChecksum[] =
-    "5df7be86df1e18819723cdd9c81c2c7d";
-#else
-#if defined(OS_WIN)
-static constexpr char kBottomTextChecksum[] =
-    "08d1ff3e5a42801bee6077fd366bef00";
+    "84461cd5d952b6ae3d57a5070da84e19";
 #elif defined(OS_APPLE)
 static constexpr char kBottomTextChecksum[] =
-    "324e1db8164a040cf6104538baa95ba6";
+    "81636489006a31fcb00cf29efcdf7909";
 #else
 static constexpr char kBottomTextChecksum[] =
-    "eacaa24573b8ce997b3882595f096f00";
+    "891dcb6e914c8360998055f1f47c9727";
 #endif
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-const char kFirstRemovedChecksum[] = "0c79dc1065b1d06991e3ac4aaa35d25c";
-#else
-#if defined(OS_WIN)
-const char kFirstRemovedChecksum[] = "aae6c5334721f90ec30d3d59f4ef7deb";
+const char kFirstRemovedChecksum[] = "f46cbf12eb4e9bbdc3a5d8e1f2103446";
 #elif defined(OS_APPLE)
-const char kFirstRemovedChecksum[] = "17ca3778fd8bb395b46532f1fa17f702";
+const char kFirstRemovedChecksum[] = "a1dc2812692fcc7ee4f01ca77435df9d";
 #else
-const char kFirstRemovedChecksum[] = "b76df015fe88009c3c342395df96abf1";
+const char kFirstRemovedChecksum[] = "e1477dc3b5b3b9c560814c4d1135a02b";
 #endif
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
 const wchar_t kLoadedFontText[] = L"I am testing my loaded font, WEE.";
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-const char kLoadedFontTextChecksum[] = "a1dffe52c1b9ded5fe8d77eb10d8cc19";
-#else
-#if defined(OS_WIN)
-const char kLoadedFontTextChecksum[] = "d60ba39f9698e32360d99e727dd93165";
+const char kLoadedFontTextChecksum[] = "fc2334c350cbd0d2ae6076689da09741";
 #elif defined(OS_APPLE)
-const char kLoadedFontTextChecksum[] = "fc921c0bbdde73986ac13c15a85db4c3";
+const char kLoadedFontTextChecksum[] = "0f3e4a7d71f9e7eb8a1a0d69403b9848";
 #else
-const char kLoadedFontTextChecksum[] = "70592859010ffbf532a2237b8118bcc4";
+const char kLoadedFontTextChecksum[] = "d58570cc045dfb818b92cbabbd1a364c";
 #endif
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
 const char kRedRectangleChecksum[] = "66d02eaa6181e2c069ce2ea99beda497";
 
@@ -195,7 +182,7 @@ class FPDFEditEmbedderTest : public EmbedderTest {
       num_cids_checked += last_cid - cid + 1;
     }
     // Make sure we have a good amount of cids described
-    EXPECT_GT(num_cids_checked, 900);
+    EXPECT_GT(num_cids_checked, 200);
   }
   CPDF_Document* cpdf_doc() { return cpdf_doc_; }
 
@@ -747,16 +734,12 @@ TEST_F(FPDFEditEmbedderTest, SetText) {
   ASSERT_EQ(2, FPDFPage_CountObjects(page));
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  const char kChangedChecksum[] = "6bc5171f4eb329474989c6ccfa3d6303";
-#else
-#if defined(OS_WIN)
-  const char kChangedChecksum[] = "3137fdb27962671f5c3963a5e965eff5";
+  const char kChangedChecksum[] = "49c8602cb60508009a34d0caaac63bb4";
 #elif defined(OS_APPLE)
-  const char kChangedChecksum[] = "904132275a1144ea06b0694537c80b4c";
+  const char kChangedChecksum[] = "b720e83476fd6819d47c533f1f43c728";
 #else
-  const char kChangedChecksum[] = "a0c4ea6620772991f66bf7130379b08a";
+  const char kChangedChecksum[] = "9a85b9354a69c61772ed24151c140f46";
 #endif
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
     CompareBitmap(page_bitmap.get(), 200, 200, kChangedChecksum);
@@ -809,19 +792,14 @@ TEST_F(FPDFEditEmbedderTest, SetTextKeepClippingPath) {
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   static constexpr char kOriginalChecksum[] =
-      "1e08d555f4863ff34a90f849c9464ed2";
-#else
-#if defined(OS_WIN)
-  static constexpr char kOriginalChecksum[] =
-      "220bf2086398fc46ac094952b244c8d9";
+      "92ff84385a0f986eacfa4bbecf8d7a7a";
 #elif defined(OS_APPLE)
   static constexpr char kOriginalChecksum[] =
-      "53cbaad93551ef2ccc27ddd63f2ca2b3";
+      "ae7a25c85e0e2dd0c5cb9dd5cd37f6df";
 #else
   static constexpr char kOriginalChecksum[] =
-      "ba1936fa8ca1e8cca108da76ff3500a6";
+      "7af7fe5b281298261eb66ac2d22f5054";
 #endif
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   {
     // When opened before any editing and saving, the clipping path is rendered.
     ScopedFPDFBitmap original_bitmap = RenderPage(page);
@@ -882,19 +860,14 @@ TEST_F(FPDFEditEmbedderTest, BUG_1574) {
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   static constexpr char kOriginalChecksum[] =
-      "c17ce567e0fd2ecd14352cf56d8d574b";
-#else
-#if defined(OS_WIN)
-  static constexpr char kOriginalChecksum[] =
-      "297c5e52c38802106d570e35f94b5cfd";
+      "1e022a0360f053ecb41cc431a36834a6";
 #elif defined(OS_APPLE)
   static constexpr char kOriginalChecksum[] =
-      "6a11148c99a141eea7c2b91e6987eb97";
+      "1226bc2b8072622eb28f52321876e814";
 #else
   static constexpr char kOriginalChecksum[] =
-      "75b6f6da7c24f2e395edb1c7d81dc906";
+      "c5241eef60b9eac68ed1f2a5fd002703";
 #endif
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   {
     // When opened before any editing and saving, the text object is rendered.
     ScopedFPDFBitmap original_bitmap = RenderPage(page);
@@ -1091,16 +1064,14 @@ TEST_F(FPDFEditEmbedderTest, RemoveMarkedObjectsPrime) {
   {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
     static constexpr char kOriginalChecksum[] =
-        "748ed321a485d246ca6260b9e30dd200";
-#else
-#if defined(OS_APPLE)
+        "8a8bed7820764522955f422e27f4292f";
+#elif defined(OS_APPLE)
     static constexpr char kOriginalChecksum[] =
-        "adf815e53c788a5272b4df07c610a1da";
+        "966579fb98206858ce2f0a1f94a74d05";
 #else
     static constexpr char kOriginalChecksum[] =
-        "41647268d5911d049801803b15c2dfb0";
-#endif  // defined(OS_APPLE)
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+        "3d5a3de53d5866044c2b6bf339742c97";
+#endif
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
     CompareBitmap(page_bitmap.get(), 200, 200, kOriginalChecksum);
   }
@@ -1140,22 +1111,20 @@ TEST_F(FPDFEditEmbedderTest, RemoveMarkedObjectsPrime) {
   EXPECT_EQ(11, FPDFPage_CountObjects(page));
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   static constexpr char kNonPrimesChecksum[] =
-      "e2927fe2b7bbb595aca2a0e19ef3f1e8";
+      "1573b85dd9a2c59401c1c30abbee3b25";
   static constexpr char kNonPrimesAfterSaveChecksum[] =
-      "e2927fe2b7bbb595aca2a0e19ef3f1e8";
-#else
-#if defined(OS_APPLE)
+      "1573b85dd9a2c59401c1c30abbee3b25";
+#elif defined(OS_APPLE)
   static constexpr char kNonPrimesChecksum[] =
-      "d29e2ddff56e0d12f340794d26796400";
+      "6e19a4dd674b522cd39cf41956559bd6";
   static constexpr char kNonPrimesAfterSaveChecksum[] =
-      "10eff2cd0037b661496981779601fa6f";
+      "3cb35c681f8fb5a43a49146ac7caa818";
 #else
   static constexpr char kNonPrimesChecksum[] =
-      "67ab13115d0cc34e99a1003c28047b40";
+      "bc8623c052f12376c3d8dd09a6cd27df";
   static constexpr char kNonPrimesAfterSaveChecksum[] =
-      "67ab13115d0cc34e99a1003c28047b40";
-#endif  // defined(OS_APPLE)
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+      "bc8623c052f12376c3d8dd09a6cd27df";
+#endif
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
     CompareBitmap(page_bitmap.get(), 200, 200, kNonPrimesChecksum);
@@ -1430,16 +1399,12 @@ TEST_F(FPDFEditEmbedderTest, RemoveExistingPageObjectSplitStreamsNotLonely) {
   // Verify the "Hello, world!" text is gone.
   ASSERT_EQ(2, FPDFPage_CountObjects(page));
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  const char kHelloRemovedChecksum[] = "deed7dc2754dc80930f3b05e2ac86c94";
-#else
-#if defined(OS_WIN)
-  const char kHelloRemovedChecksum[] = "55c45c5f13230f504c2e3b9e8d0347a0";
+  const char kHelloRemovedChecksum[] = "fc2a40a3d1edfe6e972be104b5ae87ad";
 #elif defined(OS_APPLE)
-  const char kHelloRemovedChecksum[] = "3b3b27602a86dfe5996a33c42c59885b";
+  const char kHelloRemovedChecksum[] = "5508c2f06d104050f74f655693e38c2c";
 #else
-  const char kHelloRemovedChecksum[] = "95b92950647a2190e1230911e7a1a0e9";
+  const char kHelloRemovedChecksum[] = "a8cd82499cf744e0862ca468c9d4ceb8";
 #endif
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
     CompareBitmap(page_bitmap.get(), 200, 200, kHelloRemovedChecksum);
@@ -1592,14 +1557,12 @@ TEST_F(FPDFEditEmbedderTest, RemoveAllFromStream) {
   }
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  const char kStream1RemovedChecksum[] = "89358c444a398b0b56b35738edd8fe43";
+  const char kStream1RemovedChecksum[] = "7fe07f182b37d40afc6ae36a4e89fe73";
+#elif defined(OS_APPLE)
+  const char kStream1RemovedChecksum[] = "3cdc75af44c15bed80998facd6e674c9";
 #else
-#if defined(OS_APPLE)
-  const char kStream1RemovedChecksum[] = "0e8856ca9abc7049412e64f9230c7c43";
-#else
-  const char kStream1RemovedChecksum[] = "e86a3efc160ede6cfcb1f59bcacf1105";
-#endif  // defined(OS_APPLE)
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+  const char kStream1RemovedChecksum[] = "b474826df1acedb05c7b82e1e49e64a6";
+#endif
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
     CompareBitmap(page_bitmap.get(), 200, 200, kStream1RemovedChecksum);
@@ -2106,16 +2069,12 @@ TEST_F(FPDFEditEmbedderTest, PathOnTopOfText) {
   // Render and check the result.
   ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  const char kChecksum[] = "d082f9756c86bb47e1abbc2b1df7138a";
-#else
-#if defined(OS_WIN)
-  const char kChecksum[] = "74dd9c393b8b2578d2b7feb032b7daad";
+  const char kChecksum[] = "3490f699d894351a554d79e1fcdf7981";
 #elif defined(OS_APPLE)
-  const char kChecksum[] = "e55bcd1facb7243dc6e16dd5f912265b";
+  const char kChecksum[] = "279693baca9f48da2d75a8e289aed58e";
 #else
-  const char kChecksum[] = "aa71b09b93b55f467f1290e5111babee";
+  const char kChecksum[] = "fe415d47945c10b9cc8e9ca08887369e";
 #endif
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   CompareBitmap(bitmap.get(), 200, 200, kChecksum);
   UnloadPage(page);
 }
@@ -2300,14 +2259,12 @@ TEST_F(FPDFEditEmbedderTest, AddStandardFontText) {
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page.get());
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-    static constexpr char md5[] = "285cf09ca5600fc4ec061dc5ad5c6400";
+    static constexpr char md5[] = "fa64eb3808b541342496281277fad5f2";
 #else
-#if defined(OS_WIN)
-    static constexpr char md5[] = "5f8228bda9b4289240112a93eae1c2fb";
-#elif defined(OS_APPLE)
-    static constexpr char md5[] = "26a516d923b0a18fbea0a24e3aca5562";
+#if defined(OS_APPLE)
+    static constexpr char md5[] = "983baaa1f688eff7a14b1bf91c171a1a";
 #else
-    static constexpr char md5[] = "ad25881ed8ea4f0e3b22963a7beeda51";
+    static constexpr char md5[] = "161523e196eb5341604cd73e12c97922";
 #endif
 #endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
     CompareBitmap(page_bitmap.get(), 612, 792, md5);
@@ -2328,16 +2285,12 @@ TEST_F(FPDFEditEmbedderTest, AddStandardFontText) {
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page.get());
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-    static constexpr char md5[] = "177285dd8cdaf476683173fce64034ea";
-#else
-#if defined(OS_WIN)
-    static constexpr char md5[] = "8838d0af7eb87b6930c16941f2eeec81";
+    static constexpr char md5[] = "abc65660389911aab95550ca8cd97a2b";
 #elif defined(OS_APPLE)
-    static constexpr char md5[] = "532024c9ded47843313bb64a060118f3";
+    static constexpr char md5[] = "e0b3493c5c16e41d0d892ffb48e63fba";
 #else
-    static constexpr char md5[] = "ca120ec6aeabfe96934e103890811ffc";
+    static constexpr char md5[] = "1fbf772dca8d82b960631e6683934964";
 #endif
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
     CompareBitmap(page_bitmap.get(), 612, 792, md5);
 
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
@@ -2412,18 +2365,15 @@ TEST_F(FPDFEditEmbedderTest, GetTextRenderMode) {
 
 TEST_F(FPDFEditEmbedderTest, SetTextRenderMode) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  const char kOriginalChecksum[] = "4960c720a6cdb7b2b16be809cce58aff";
-  const char kStrokeChecksum[] = "4c099cf9abc1565806bd7cd1cca5ac1a";
-#else
-#if defined(OS_WIN)
-  const char kOriginalChecksum[] = "de6e86bad3e9fda753a8471a45cfbb58";
+  const char kOriginalChecksum[] = "bf87e8b36380ebd96ca429213fa23a09";
+  const char kStrokeChecksum[] = "d16eb1bb4748eeb5fb801594da70d519";
 #elif defined(OS_APPLE)
-  const char kOriginalChecksum[] = "2453a9a524ee3f5f525dd21345ec4d81";
+  const char kOriginalChecksum[] = "c488514ce0fc949069ff560407edacd2";
+  const char kStrokeChecksum[] = "e06ee84aeebe926e8c980b7822027e8a";
 #else
-  const char kOriginalChecksum[] = "5a012d2920ac075c39ffa9437ea42faa";
+  const char kOriginalChecksum[] = "97a4fcf3c9581e19917895631af31d41";
+  const char kStrokeChecksum[] = "e06ee84aeebe926e8c980b7822027e8a";
 #endif
-  const char kStrokeChecksum[] = "412e52e621b46bd77baf2162e1fb1a1d";
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
   {
     ASSERT_TRUE(OpenDocument("text_render_mode.pdf"));
@@ -2650,20 +2600,15 @@ TEST_F(FPDFEditEmbedderTest, FormGetObjects) {
 
 TEST_F(FPDFEditEmbedderTest, ModifyFormObject) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  const char kOrigChecksum[] = "6332486c11a830d52163e453cac3f0f7";
-  const char kNewChecksum[] = "9851fb1b59d91655ac8961ac89f383ae";
-#else
-#if defined(OS_WIN)
-  const char kOrigChecksum[] = "9993d8fd85dfc1f9522c4e5f1533ed78";
-  const char kNewChecksum[] = "ba6450c9060786c5aca3b7552ba7ec9e";
+  const char kOrigChecksum[] = "e15086e54078e4d22fa3fb12105c579e";
+  const char kNewChecksum[] = "7282fe98693c0a7ad2c1b3f3f9563977";
 #elif defined(OS_APPLE)
-  const char kOrigChecksum[] = "98c13e90ec592eea79b6458c0ca2822b";
-  const char kNewChecksum[] = "8cbad8c9281e1f3bac2306a5beb1fdcd";
+  const char kOrigChecksum[] = "a637057185f50aac1aa5490f726aef95";
+  const char kNewChecksum[] = "8ad9d79b02b609ff734e2a2195c96e2d";
 #else
-  const char kOrigChecksum[] = "26e65fb47da5674d1b7284932c3c94d6";
-  const char kNewChecksum[] = "fd408e99373b275316f7816ae8d35842";
-#endif  // defined(OS_WIN)
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+  const char kOrigChecksum[] = "34a9ec0a9581a7970e073c0bcc4ca676";
+  const char kNewChecksum[] = "609b5632a21c886fa93182dbc290bf7a";
+#endif
 
   ASSERT_TRUE(OpenDocument("form_object.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -2888,7 +2833,7 @@ TEST_F(FPDFEditEmbedderTest, LoadSimpleType1Font) {
   const CPDF_Dictionary* font_dict = typed_font->GetFontDict();
   EXPECT_EQ("Font", font_dict->GetNameFor("Type"));
   EXPECT_EQ("Type1", font_dict->GetNameFor("Subtype"));
-  EXPECT_EQ("TimesNewRomanPS-BoldMT", font_dict->GetNameFor("BaseFont"));
+  EXPECT_EQ("Tinos-Bold", font_dict->GetNameFor("BaseFont"));
   ASSERT_TRUE(font_dict->KeyExist("FirstChar"));
   ASSERT_TRUE(font_dict->KeyExist("LastChar"));
   EXPECT_EQ(32, font_dict->GetIntegerFor("FirstChar"));
@@ -2917,7 +2862,7 @@ TEST_F(FPDFEditEmbedderTest, LoadSimpleTrueTypeFont) {
   const CPDF_Dictionary* font_dict = typed_font->GetFontDict();
   EXPECT_EQ("Font", font_dict->GetNameFor("Type"));
   EXPECT_EQ("TrueType", font_dict->GetNameFor("Subtype"));
-  EXPECT_EQ("CourierNewPSMT", font_dict->GetNameFor("BaseFont"));
+  EXPECT_EQ("Cousine-Regular", font_dict->GetNameFor("BaseFont"));
   ASSERT_TRUE(font_dict->KeyExist("FirstChar"));
   ASSERT_TRUE(font_dict->KeyExist("LastChar"));
   EXPECT_EQ(32, font_dict->GetIntegerFor("FirstChar"));
@@ -2947,7 +2892,7 @@ TEST_F(FPDFEditEmbedderTest, LoadCIDType0Font) {
   const CPDF_Dictionary* font_dict = typed_font->GetFontDict();
   EXPECT_EQ("Font", font_dict->GetNameFor("Type"));
   EXPECT_EQ("Type0", font_dict->GetNameFor("Subtype"));
-  EXPECT_EQ("TimesNewRomanPSMT-Identity-H", font_dict->GetNameFor("BaseFont"));
+  EXPECT_EQ("Tinos-Regular-Identity-H", font_dict->GetNameFor("BaseFont"));
   EXPECT_EQ("Identity-H", font_dict->GetNameFor("Encoding"));
   const CPDF_Array* descendant_array =
       font_dict->GetArrayFor("DescendantFonts");
@@ -2958,7 +2903,7 @@ TEST_F(FPDFEditEmbedderTest, LoadCIDType0Font) {
   const CPDF_Dictionary* cidfont_dict = descendant_array->GetDictAt(0);
   EXPECT_EQ("Font", cidfont_dict->GetNameFor("Type"));
   EXPECT_EQ("CIDFontType0", cidfont_dict->GetNameFor("Subtype"));
-  EXPECT_EQ("TimesNewRomanPSMT", cidfont_dict->GetNameFor("BaseFont"));
+  EXPECT_EQ("Tinos-Regular", cidfont_dict->GetNameFor("BaseFont"));
   const CPDF_Dictionary* cidinfo_dict =
       cidfont_dict->GetDictFor("CIDSystemInfo");
   ASSERT_TRUE(cidinfo_dict);
@@ -2995,7 +2940,7 @@ TEST_F(FPDFEditEmbedderTest, LoadCIDType2Font) {
   const CPDF_Dictionary* font_dict = typed_font->GetFontDict();
   EXPECT_EQ("Font", font_dict->GetNameFor("Type"));
   EXPECT_EQ("Type0", font_dict->GetNameFor("Subtype"));
-  EXPECT_EQ("Arial-ItalicMT", font_dict->GetNameFor("BaseFont"));
+  EXPECT_EQ("Arimo-Italic", font_dict->GetNameFor("BaseFont"));
   EXPECT_EQ("Identity-H", font_dict->GetNameFor("Encoding"));
   const CPDF_Array* descendant_array =
       font_dict->GetArrayFor("DescendantFonts");
@@ -3006,7 +2951,7 @@ TEST_F(FPDFEditEmbedderTest, LoadCIDType2Font) {
   const CPDF_Dictionary* cidfont_dict = descendant_array->GetDictAt(0);
   EXPECT_EQ("Font", cidfont_dict->GetNameFor("Type"));
   EXPECT_EQ("CIDFontType2", cidfont_dict->GetNameFor("Subtype"));
-  EXPECT_EQ("Arial-ItalicMT", cidfont_dict->GetNameFor("BaseFont"));
+  EXPECT_EQ("Arimo-Italic", cidfont_dict->GetNameFor("BaseFont"));
   const CPDF_Dictionary* cidinfo_dict =
       cidfont_dict->GetDictFor("CIDSystemInfo");
   ASSERT_TRUE(cidinfo_dict);
@@ -3063,16 +3008,12 @@ TEST_F(FPDFEditEmbedderTest, AddTrueTypeFontText) {
   }
   ScopedFPDFBitmap page_bitmap2 = RenderPage(page);
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  const char kInsertTrueTypeChecksum[] = "f2ee263957a5584f3c72424e8683ac8c";
-#else
-#if defined(OS_WIN)
-  const char kInsertTrueTypeChecksum[] = "2199b579c49ab5f80c246a586a80ee90";
+  const char kInsertTrueTypeChecksum[] = "4f9a6c7752ac7d4e4c731260fdb5af15";
 #elif defined(OS_APPLE)
-  const char kInsertTrueTypeChecksum[] = "9a1a7dfebe659513691aadd0d95b8d50";
+  const char kInsertTrueTypeChecksum[] = "c7e2271a7f30e5b919a13ead47cea105";
 #else
-  const char kInsertTrueTypeChecksum[] = "c1d10cce1761c4a998a16b2562030568";
+  const char kInsertTrueTypeChecksum[] = "683f4a385a891494100192cb338b11f0";
 #endif
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   CompareBitmap(page_bitmap2.get(), 612, 792, kInsertTrueTypeChecksum);
 
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
@@ -3109,8 +3050,9 @@ TEST_F(FPDFEditEmbedderTest, AddCIDFontText) {
   CFX_Font CIDfont;
   {
     // First, get the data from the font
-    CIDfont.LoadSubst("IPAGothic", 1, 0, 400, 0, FX_CodePage::kShiftJIS, 0);
-    EXPECT_EQ("IPAGothic", CIDfont.GetFaceName());
+    CIDfont.LoadSubst("Noto Sans CJK JP", 1, 0, 400, 0, FX_CodePage::kShiftJIS,
+                      0);
+    EXPECT_EQ("Noto Sans CJK JP", CIDfont.GetFaceName());
     pdfium::span<const uint8_t> span = CIDfont.GetFontSpan();
 
     // Load the data into a FPDF_Font.
@@ -3143,9 +3085,9 @@ TEST_F(FPDFEditEmbedderTest, AddCIDFontText) {
 
   // Check that the text renders properly.
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  static constexpr char md5[] = "683eefd6c31206de23b7f709b66e6daf";
+  static constexpr char md5[] = "2e174d17de96a760d42ca3a06acbf36a";
 #else
-  static constexpr char md5[] = "4d7ad0dc333fde3987b79122c00a3f2a";
+  static constexpr char md5[] = "84d31d11b76845423a2cfc1879c0fbb9";
 #endif
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);

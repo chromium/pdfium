@@ -9,23 +9,15 @@
 namespace pdfium {
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#if defined(OS_LINUX) || defined(OS_CHROMEOS)
 const char kAnnotationStampWithApChecksum[] =
-    "db83eaadc92967e3ac9bebfc6178ca75";
+    "e4e7dc6446fa763a245e03eb5de6ed28";
+#else
+#if defined(OS_APPLE)
+const char kAnnotationStampWithApChecksum[] =
+    "d243b5d64752be0f45b86df7bd2e2708";
 #else
 const char kAnnotationStampWithApChecksum[] =
-    "3c87b4a8e51245964357fb5f5fbc612b";
-#endif  // defined(OS_LINUX) || defined(OS_CHROMEOS)
-#else
-#if defined(OS_WIN)
-const char kAnnotationStampWithApChecksum[] =
-    "6712a912af61cb45809e343f59b62432";
-#elif defined(OS_APPLE)
-const char kAnnotationStampWithApChecksum[] =
-    "80d7b6cc7b13a78d77a6151bc846e80b";
-#else
-const char kAnnotationStampWithApChecksum[] =
-    "b42cef463483e668eaf4055a65e4f1f5";
+    "cdde6c161679ab10b07c38c1ef04b7e8";
 #endif
 #endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
@@ -38,28 +30,20 @@ const char kBug890322Checksum[] = "6c674642154408e877d88c6c082d67e9";
 #endif
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-const char kHelloWorldChecksum[] = "66ecb880a880dd263ff495b28aeda0d1";
-#else
-#if defined(OS_WIN)
-const char kHelloWorldChecksum[] = "795b7ce1626931aa06af0fa23b7d80bb";
+const char kHelloWorldChecksum[] = "fea3e59b7ac7b7a6940018497034f6cf";
 #elif defined(OS_APPLE)
-const char kHelloWorldChecksum[] = "c38b75e16a13852aee3b97d77a0f0ee7";
+const char kHelloWorldChecksum[] = "6eef7237f7591f07616e238422086737";
 #else
-const char kHelloWorldChecksum[] = "2baa4c0e1758deba1b9c908e1fbd04ed";
+const char kHelloWorldChecksum[] = "c1c548442e0e0f949c5550d89bf8ae3b";
 #endif
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-const char kHelloWorldRemovedChecksum[] = "f87c63cbbc83fbb0f5b7b1d9e67448d0";
-#else
-#if defined(OS_WIN)
-const char kHelloWorldRemovedChecksum[] = "93db13099042bafefb3c22a165bad684";
+const char kHelloWorldRemovedChecksum[] = "e51fe51cc5f03ad66f603030df9b0400";
 #elif defined(OS_APPLE)
-const char kHelloWorldRemovedChecksum[] = "572b1022bb3e8f43dc671162fc62cf7f";
+const char kHelloWorldRemovedChecksum[] = "6e1cae48a2e35c521dee4ca502f48af6";
 #else
-const char kHelloWorldRemovedChecksum[] = "93dcc09055f87a2792c8e3065af99a1b";
+const char kHelloWorldRemovedChecksum[] = "4a9b80f675f7f3bf2da1b02f12449e4b";
 #endif
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 const char kManyRectanglesChecksum[] = "4e7e280c1597222afcb0ee3bb90ec119";
@@ -70,15 +54,11 @@ const char kRectanglesChecksum[] = "0a90de37f52127619c3dfb642b5fa2fe";
 #endif
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-const char kTextFormChecksum[] = "17efe329169f5b7681fbe939894a35de";
-#else
-#if defined(OS_WIN)
-const char kTextFormChecksum[] = "d3204faa62b607f0bd3893c9c22cabcb";
+const char kTextFormChecksum[] = "f8f0817b19ef07d0404caf008964b7f2";
 #elif defined(OS_APPLE)
-const char kTextFormChecksum[] = "d485541d958fef08d24e8eca3e537023";
+const char kTextFormChecksum[] = "fa2bf756942a950101fc147fc4ef3f82";
 #else
-const char kTextFormChecksum[] = "b890950d4b9bc163b1a96797f3004b53";
+const char kTextFormChecksum[] = "6f86fe1dbed5965d91aec6e0b829e29f";
 #endif
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
 }  // namespace pdfium

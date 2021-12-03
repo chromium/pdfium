@@ -7,6 +7,7 @@
 
 #include "public/fpdfview.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "testing/test_fonts.h"
 
 class EmbedderTestEnvironment : public testing::Environment {
  public:
@@ -20,6 +21,9 @@ class EmbedderTestEnvironment : public testing::Environment {
   // testing::Environment:
   void SetUp() override;
   void TearDown() override;
+
+ private:
+  TestFonts test_fonts_;
 };
 
 #endif  // TESTING_EMBEDDER_TEST_ENVIRONMENT_H_

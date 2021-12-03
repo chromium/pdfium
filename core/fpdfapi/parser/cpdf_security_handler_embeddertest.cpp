@@ -135,20 +135,12 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPassword) {
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, PasswordAfterGenerateSave) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#if defined(OS_WIN)
-  const char kChecksum[] = "06fe5a97341b3e0f0a22ccc242fd9040";
-#else
-  const char kChecksum[] = "169c8e3acea8fba5a40f695bbbc96273";
-#endif  // defined(OS_WIN)
-#else
-#if defined(OS_WIN)
-  const char kChecksum[] = "041c2fb541c8907cc22ce101b686c79e";
+  const char kChecksum[] = "c3c4fc0032f5d252327bf52d29a074fa";
 #elif defined(OS_APPLE)
-  const char kChecksum[] = "1ace03eb7c466c132aacf319cb9d69d3";
+  const char kChecksum[] = "2a308e8cc20a6221112c387d122075a8";
 #else
-  const char kChecksum[] = "7048dca58e2ed8f93339008b91e4eb4e";
+  const char kChecksum[] = "9fe7eef8e51d15a604001854be6ed1ee";
 #endif
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   {
     ASSERT_TRUE(OpenDocumentWithOptions("encrypted.pdf", "5678",
                                         LinearizeOption::kMustLinearize,

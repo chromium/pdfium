@@ -292,6 +292,10 @@ void CFX_FontMapper::SetSystemFontInfo(
   m_pFontInfo = std::move(pFontInfo);
 }
 
+std::unique_ptr<SystemFontInfoIface> CFX_FontMapper::TakeSystemFontInfo() {
+  return std::move(m_pFontInfo);
+}
+
 uint32_t CFX_FontMapper::GetChecksumFromTT(void* hFont) {
   uint32_t buffer[256];
   m_pFontInfo->GetFontData(

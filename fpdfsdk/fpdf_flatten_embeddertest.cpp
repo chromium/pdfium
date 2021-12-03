@@ -71,24 +71,18 @@ TEST_F(FPDFFlattenEmbedderTest, BUG_861842) {
 
 TEST_F(FPDFFlattenEmbedderTest, BUG_889099) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  static constexpr char kPageHash[] = "ee08bafede5faf129e866cbf173bb0f3";
+  static constexpr char kPageHash[] = "1ce2e06c12972973b8f04a2f79245313";
   static constexpr char kFlattenedPageHash[] =
-      "e4b95ee3d450cf9ede225a2d16d101f0";
-#else
-#if defined(OS_WIN)
-  static constexpr char kPageHash[] = "8c6e1dab0a15072f2c9c0ca240fdc739";
-  static constexpr char kFlattenedPageHash[] =
-      "9fb932ce7f370c0e68eec0a5d4d76271";
+      "e03b1b8157c30c77ea94f9c24dc85a00";
 #elif defined(OS_APPLE)
-  static constexpr char kPageHash[] = "d43f54c60b325726392a558f861402a9";
+  static constexpr char kPageHash[] = "049ed3f1e21fc72f929af3410c64bc8f";
   static constexpr char kFlattenedPageHash[] =
-      "627f143efb920a5e7ddd311e963b9c66";
+      "41debc60cf2a8f74c710ec6082d77b18";
 #else
-  static constexpr char kPageHash[] = "51f35e80dbc8a69a024b5a02aa64d463";
+  static constexpr char kPageHash[] = "3db87245e3f4e37f4cb18654bbe22d97";
   static constexpr char kFlattenedPageHash[] =
-      "ef01f57507662ec9aef7cc7cff92f96c";
+      "0832157462ea70fbbf053e14b1d6457f";
 #endif
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
   ASSERT_TRUE(OpenDocument("bug_889099.pdf"));
   FPDF_PAGE page = LoadPage(0);

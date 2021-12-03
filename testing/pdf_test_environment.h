@@ -5,9 +5,8 @@
 #ifndef TESTING_PDF_TEST_ENVIRONMENT_H_
 #define TESTING_PDF_TEST_ENVIRONMENT_H_
 
-#include <string>
-
 #include "testing/gtest/include/gtest/gtest.h"
+#include "testing/test_fonts.h"
 
 class PDFTestEnvironment : public testing::Environment {
  public:
@@ -19,8 +18,7 @@ class PDFTestEnvironment : public testing::Environment {
   void TearDown() override;
 
  private:
-  std::string font_path_;
-  const char* font_paths_[2];
+  TestFonts test_fonts_;
 };
 
 #endif  // TESTING_PDF_TEST_ENVIRONMENT_H_

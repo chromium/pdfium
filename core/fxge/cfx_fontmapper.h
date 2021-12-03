@@ -58,6 +58,7 @@ class CFX_FontMapper {
   }
 
   void SetSystemFontInfo(std::unique_ptr<SystemFontInfoIface> pFontInfo);
+  std::unique_ptr<SystemFontInfoIface> TakeSystemFontInfo();
   void AddInstalledFont(const ByteString& name, FX_Charset charset);
   void LoadInstalledFonts();
 

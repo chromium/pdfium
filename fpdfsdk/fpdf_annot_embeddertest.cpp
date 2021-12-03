@@ -1115,30 +1115,18 @@ TEST_F(FPDFAnnotEmbedderTest, RemoveAnnotation) {
 
 TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#if defined(OS_LINUX) || defined(OS_CHROMEOS)
-  static const char kMd5ModifiedPath[] = "d76382fd57fafad0233f7549f871dafa";
-  static const char kMd5TwoPaths[] = "323151317b8cb62130546c7b8d70f622";
-  static const char kMd5NewAnnot[] = "9a3b02d876620d19787549ee1100b63c";
-#else
-  static const char kMd5ModifiedPath[] = "c9ba60887a312370d9a32198aa53aca4";
-  static const char kMd5TwoPaths[] = "0768d56373094fcdf4ddf3f3364c006f";
-  static const char kMd5NewAnnot[] = "6f7e1c189bcfac90ffccf2a527857006";
-#endif  // defined(OS_LINUX) || defined(OS_CHROMEOS)
-#else
-#if defined(OS_WIN)
-  static const char kMd5ModifiedPath[] = "15683598de2364925c42a50513dad71f";
-  static const char kMd5TwoPaths[] = "9e53f315535e6f570560f46934442fbe";
-  static const char kMd5NewAnnot[] = "5f2a2998b320b1ae035528f2b10a1b38";
+  static const char kMd5ModifiedPath[] = "b820e4ae359db95cbac9823937c6da1a";
+  static const char kMd5TwoPaths[] = "c53837b7bb6a9a21a846aa786526aa56";
+  static const char kMd5NewAnnot[] = "4f0f4217156e4251036f369184a48967";
 #elif defined(OS_APPLE)
-  static const char kMd5ModifiedPath[] = "8cfae6d547fc5d6702f5f1ac631beb5e";
-  static const char kMd5TwoPaths[] = "9677e4892bb02950d3e4dbe74470578f";
-  static const char kMd5NewAnnot[] = "e8ebddac4db8c0a4b556ddf79aa1a26d";
+  static const char kMd5ModifiedPath[] = "e31421f86c61d4e9cda138f15f561ca3";
+  static const char kMd5TwoPaths[] = "58d932492f9d485d6a4bc0ba76c04557";
+  static const char kMd5NewAnnot[] = "61f9ad13f2fd235753db198cf9704773";
 #else
-  static const char kMd5ModifiedPath[] = "6ff77d6d1fec4ea571fabe0c7a19b517";
-  static const char kMd5TwoPaths[] = "ca37ad549e74ac5b359a055708f3e7b6";
-  static const char kMd5NewAnnot[] = "0d7a0e33fbf41ff7fa5d732ab2c5edff";
+  static const char kMd5ModifiedPath[] = "980e7636d864f7f7d323a31ad4e8fa04";
+  static const char kMd5TwoPaths[] = "4c779c394b6790f8cf80305b566b663b";
+  static const char kMd5NewAnnot[] = "97effd68dcf86273f68d126d6b45152e";
 #endif
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
   // Open a file with two annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
@@ -1340,23 +1328,15 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyAnnotationFlags) {
 #endif
 TEST_F(FPDFAnnotEmbedderTest, MAYBE_AddAndModifyImage) {
 #if defined(_SKIA_SUPPORT_PATHS_)
-#if defined(OS_LINUX) || defined(OS_CHROMEOS)
-  static const char kMd5NewImage[] = "26a8eb30937226a677839379e0d7ae1a";
-  static const char kMd5ModifiedImage[] = "2985114b32ba1a96be78ee643fe31aa5";
-#else
-  static const char kMd5NewImage[] = "14012ab500b4671fa73dd760129a8a93";
-  static const char kMd5ModifiedImage[] = "5f97f98f58ed04dc393f31460485f1a2";
-#endif  // defined(OS_LINUX) || defined(OS_CHROMEOS)
+  static const char kMd5NewImage[] = "beb7db3647706d7fe4689f92073847aa";
+  static const char kMd5ModifiedImage[] = "baa9b065469268e215ef958fe6987d6b";
 #else
 #if defined(OS_APPLE)
-  static const char kMd5NewImage[] = "dd18709d90c245a12ce0b8c4d092bea9";
-  static const char kMd5ModifiedImage[] = "8d6f478ff8c7e67d49b253f1af587a99";
-#elif defined(OS_WIN)
-  static const char kMd5NewImage[] = "a822fffc257c445467aa91876e1f8611";
-  static const char kMd5ModifiedImage[] = "a5afb12f4f516e1f5f675c67f99e043a";
+  static const char kMd5NewImage[] = "c6fcbceb2f079bef10458ac60db3a10c";
+  static const char kMd5ModifiedImage[] = "8068eb568e5c1c5fbe84e98f7a980ac3";
 #else
-  static const char kMd5NewImage[] = "528e6243dc29d54f36b61e0d3287d935";
-  static const char kMd5ModifiedImage[] = "6d9e59f3e57a1ff82fb258356b7eb731";
+  static const char kMd5NewImage[] = "62c2706511cb50e32e7caeb82b1d3d49";
+  static const char kMd5ModifiedImage[] = "83093ce9fac746db69fbd2fb394434ac";
 #endif
 #endif  // defined(_SKIA_SUPPORT_PATHS_)
 
@@ -1433,25 +1413,15 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_AddAndModifyImage) {
 
 TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#if defined(OS_LINUX) || defined(OS_CHROMEOS)
-  static const char kMd5NewText[] = "c9d853a5fb6bca31e9696ccc4462c74a";
-  static const char kMd5ModifiedText[] = "bc681fa9174223983c5e4357e919d36c";
-#else
-  static const char kMd5NewText[] = "4aaa34e9df2e41d621dbd81b1d535c48";
-  static const char kMd5ModifiedText[] = "d6ea20beb7834ef4b6d370581ce425fc";
-#endif  // defined(OS_LINUX) || defined(OS_CHROMEOS)
-#else
-#if defined(OS_WIN)
-  static const char kMd5NewText[] = "31e106afba1b9af2c8613c9d6bd77153";
-  static const char kMd5ModifiedText[] = "c5ef84b480cd762b0b9dad715beb92b6";
+  static const char kMd5NewText[] = "310d9de5f17fb288fb243f5dbaf2b6dc";
+  static const char kMd5ModifiedText[] = "22be42c136c3bf5a8ecea3dd83770a02";
 #elif defined(OS_APPLE)
-  static const char kMd5NewText[] = "e657266260b88c964938efe6c9b292da";
-  static const char kMd5ModifiedText[] = "7accdf2bac64463101783221f53d3188";
+  static const char kMd5NewText[] = "57a0fb3fba33e17de26bcde4c40b9a75";
+  static const char kMd5ModifiedText[] = "072574999f2e3f36774ee0b5bc94d4dd";
 #else
-  static const char kMd5NewText[] = "00197ad6206f763febad5719e5935306";
-  static const char kMd5ModifiedText[] = "85853bc0aaa5a4e3af04e58b9cbfff23";
+  static const char kMd5NewText[] = "1c4198c38f890c208c5cbaad57be4dc6";
+  static const char kMd5ModifiedText[] = "cfa78d01406865f41f486bd34a8b9f7b";
 #endif
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
   // Open a file with two annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
@@ -1580,20 +1550,12 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
   UnloadPage(page);
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#if defined(OS_LINUX) || defined(OS_CHROMEOS)
-  static const char kMd5[] = "7a2b712ca88d7b71f125ea3f9c88e57a";
+  static const char kMd5[] = "aa0e47d966c60d59102a2466542e0e46";
+#elif defined(OS_APPLE)
+  static const char kMd5[] = "cd90315b250dfe08265ce0ac335c5f76";
 #else
-  static const char kMd5[] = "626d25c5aa5baf67d22d9a0e1c23f6aa";
-#endif  // defined(OS_LINUX) || defined(OS_CHROMEOS)
-#else
-#if defined(OS_APPLE)
-  static const char kMd5[] = "5e7e185b386ad21ca83b0287268c50fb";
-#elif defined(OS_WIN)
-  static const char kMd5[] = "64631cd3422201a36ea8f7ec63b34ae7";
-#else
-  static const char kMd5[] = "1d7bea2042c6fea0558ff2aef05811b5";
+  static const char kMd5[] = "c4fb6911f2a87f490be196f8898de738";
 #endif
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
   // Open the saved annotation.
   ASSERT_TRUE(OpenSavedDocument());
@@ -2130,7 +2092,7 @@ TEST_F(FPDFAnnotEmbedderTest, BUG_1206) {
 #else
   static const char kExpectedBitmap[] = "0d9fc05c6762fd788bd23fd87a4967bc";
 #endif
-  static constexpr size_t kExpectedSize = 1609;
+  static constexpr size_t kExpectedSize = 1590;
 
   ASSERT_TRUE(OpenDocument("bug_1206.pdf"));
 
@@ -3050,16 +3012,12 @@ TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotRendering) {
 
   {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-    static const char kMd5sum[] = "4ca14c670396711194b40ecc2514969b";
-#else
-#if defined(OS_WIN)
-    static const char kMd5sum[] = "3877bec7cb3e3144eaa6d10f38bf7a30";
+    static const char kMd5sum[] = "b4c8f1dab175508810c476d078ebc5a6";
 #elif defined(OS_APPLE)
-    static const char kMd5sum[] = "04b16db5026b5490a50fb6ff0954c867";
+    static const char kMd5sum[] = "108a46c517c4eaace9982ee83e8e3296";
 #else
-    static const char kMd5sum[] = "40a7354d1f653127bcdac10e15f81654";
+    static const char kMd5sum[] = "5550d8dcb4d1af1f50e8b4bcaef2ee60";
 #endif
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
     // Check the initial rendering.
     ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 612, 792, kMd5sum);
@@ -3080,16 +3038,12 @@ TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotRendering) {
 
   {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-    static const char kMd5sum[] = "48cb60b3f9bc364c73582aff3418451e";
-#else
-#if defined(OS_WIN)
-    static const char kMd5sum[] = "a30f1bd1cac022d08ceb100df4940b5f";
+    static const char kMd5sum[] = "9173db3a892bc1697eef5cdaed19eda6";
 #elif defined(OS_APPLE)
-    static const char kMd5sum[] = "3f984a164f2f6d6e3d69f27fd430e346";
+    static const char kMd5sum[] = "eb3869335e7a219e1b5f25c1c6037b97";
 #else
-    static const char kMd5sum[] = "e4c4de73addabf10672c308870e8a4ee";
+    static const char kMd5sum[] = "805fe7bb751ac4ed2b82bb66efe6db40";
 #endif
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
     // Focus the first link and check the rendering.
     ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
     ASSERT_TRUE(annot);
@@ -3101,16 +3055,12 @@ TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotRendering) {
 
   {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-    static const char kMd5sum[] = "d09869ff0a209daf179da2d7a58142b1";
-#else
-#if defined(OS_WIN)
-    static const char kMd5sum[] = "467f5a4db98fcadd5121807ff4e2eb10";
+    static const char kMd5sum[] = "174dbdb218c2b14011c9c1db67fe41c3";
 #elif defined(OS_APPLE)
-    static const char kMd5sum[] = "c6d6f9dc7090e8eaf3867ba714023b1e";
+    static const char kMd5sum[] = "d20b1978da2362d3942ea0fc6d230997";
 #else
-    static const char kMd5sum[] = "65e831885e16b7ecc977cce2e4a27110";
+    static const char kMd5sum[] = "c5c5dcb462af3ef5f43b298ec048feef";
 #endif
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
     // Focus the first highlight and check the rendering.
     ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 4));
     ASSERT_TRUE(annot);
@@ -3614,17 +3564,14 @@ TEST_F(FPDFAnnotEmbedderTest, AnnotationBorderRendering) {
   EXPECT_EQ(3, FPDFPage_GetAnnotCount(page));
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  constexpr char kOriginalChecksum[] = "bc9ba381d6d46ff93ed0b5288b763b60";
-  constexpr char kModifiedChecksum[] = "0f3e10336f67cb6a8731a06d26d01e50";
-#elif defined(OS_WIN)
-  constexpr char kOriginalChecksum[] = "768b9edd280a535b4223e57bf17940e3";
-  constexpr char kModifiedChecksum[] = "ab367296994b5dc1a178820626601ffc";
+  constexpr char kOriginalChecksum[] = "4f35703e89202bcc8419ca2df739bb4e";
+  constexpr char kModifiedChecksum[] = "cee0a1b41f33d487af8fb70c4c82e3c9";
 #elif defined(OS_APPLE)
-  constexpr char kOriginalChecksum[] = "1839f5df5fb4fae10cf3793568e73ede";
-  constexpr char kModifiedChecksum[] = "abd4f5d1c3b8d8cfc572b389e589da5a";
+  constexpr char kOriginalChecksum[] = "522a4a6b6c7eab5bf95ded1f21ea372e";
+  constexpr char kModifiedChecksum[] = "6844019e07b83cc01723415f58218d06";
 #else
-  constexpr char kOriginalChecksum[] = "ccf6667b34ec2452bea0b5f1a0194191";
-  constexpr char kModifiedChecksum[] = "1bbdb473d0757843e82053b0bd3298bc";
+  constexpr char kOriginalChecksum[] = "12127303aecd80c6288460f7c0d79f3f";
+  constexpr char kModifiedChecksum[] = "73d06ff4c665fe85029acef30240dcca";
 #endif
 
   {

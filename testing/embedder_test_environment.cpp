@@ -39,6 +39,9 @@ void EmbedderTestEnvironment::SetUp() {
   config.m_pUserFontPaths = nullptr;
   config.m_v8EmbedderSlot = 0;
   config.m_pPlatform = nullptr;
+
+  config.m_pUserFontPaths = test_fonts_.font_paths();
+
 #ifdef PDF_ENABLE_V8
   config.m_pIsolate = V8TestEnvironment::GetInstance()->isolate();
   config.m_pPlatform = V8TestEnvironment::GetInstance()->platform();
@@ -48,6 +51,8 @@ void EmbedderTestEnvironment::SetUp() {
 #endif  // PDF_ENABLE_V8
 
   FPDF_InitLibraryWithConfig(&config);
+
+  test_fonts_.InstallFontMapper();
 }
 
 void EmbedderTestEnvironment::TearDown() {

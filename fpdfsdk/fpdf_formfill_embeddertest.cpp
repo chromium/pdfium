@@ -1321,27 +1321,20 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_765384) {
 TEST_F(FPDFFormFillEmbedderTest, FormText) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   const char kFocusedTextFormWithAbcChecksum[] =
-      "42af2135e20deb09cbdbfb6418d86382";
+      "199536b979a42da3c2745297f6e87a77";
   const char kUnfocusedTextFormWithAbcChecksum[] =
-      "4a961599a512a08468b26b89d389c30a";
-#else
-#if defined(OS_WIN)
-  const char kFocusedTextFormWithAbcChecksum[] =
-      "29d1c3fd226ca6a69597f75937690320";
-  const char kUnfocusedTextFormWithAbcChecksum[] =
-      "5e678a55912cb568fd677bf34abb8727";
+      "574aa06445957315f0dadd24a0c59811";
 #elif defined(OS_APPLE)
   const char kFocusedTextFormWithAbcChecksum[] =
-      "c6e4a2fb10661116771ee74f54d9c5e0";
+      "9fb14198d75ca0a107060c60ca21b0c7";
   const char kUnfocusedTextFormWithAbcChecksum[] =
-      "e0c8d5099301d7c10ed831a43e974d9d";
+      "3c3209357e0c057a0620afa7d83eb784";
 #else
   const char kFocusedTextFormWithAbcChecksum[] =
-      "11487d5597599a26e8912b9c1d9422cb";
+      "6e6f790bb14c4fc6107faf8c17d23dbd";
   const char kUnfocusedTextFormWithAbcChecksum[] =
-      "bffe0ecea9a533f217047ee41d6be466";
+      "94b7e10ac8c662b73e33628ca2f5e63b";
 #endif
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   {
     ASSERT_TRUE(OpenDocument("text_form.pdf"));
     FPDF_PAGE page = LoadPage(0);
@@ -1414,16 +1407,12 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_1281) {
 
 TEST_F(FPDFFormFillEmbedderTest, RemoveFormFieldHighlight) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  const char kMd5NoHighlight[] = "6fe3921e4fe3f4190c248acf34e9bd3b";
+  const char kMd5NoHighlight[] = "013aa241c39c02505d9525550be04e48";
+#elif defined(OS_APPLE)
+  const char kMd5NoHighlight[] = "5c82aa43e3b478aa1e4c94bb9ef1f11f";
 #else
-#if defined(OS_APPLE)
-  const char kMd5NoHighlight[] = "5e4b87c5b304c6fa9bd5f6311260494e";
-#elif defined(OS_WIN)
-  const char kMd5NoHighlight[] = "3ec0938828e0a37ef23f687ee95a80e1";
-#else
-  const char kMd5NoHighlight[] = "006010c318457810a518aa5e0b33c498";
+  const char kMd5NoHighlight[] = "a6268304f7eedfa9ee98fac3caaf2efb";
 #endif
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
   ASSERT_TRUE(OpenDocument("text_form.pdf"));
   FPDF_PAGE page = LoadPage(0);

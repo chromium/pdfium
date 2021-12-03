@@ -23,25 +23,15 @@ constexpr FX_ARGB kRed = 0xFFFF0000;
 constexpr FX_ARGB kWhite = 0xFFFFFFFF;
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#if defined(OS_LINUX) || defined(OS_CHROMEOS)
 static constexpr char kAnnotationStampWithApBaseContentChecksum[] =
-    "fbd62f1df1cae1fd2fbf5a24bed6b4cd";
-#else
-static constexpr char kAnnotationStampWithApBaseContentChecksum[] =
-    "44e6dd3c36d8bbfb38d306b442e61241";
-#endif  // defined(OS_LINUX) || defined(OS_CHROMEOS)
-#else
-#if defined(OS_WIN)
-static constexpr char kAnnotationStampWithApBaseContentChecksum[] =
-    "91c59c89f03be6c12a9af956b9955c47";
+    "1a6cb54b1cfc5bb9f6ec3923a52ea7cc";
 #elif defined(OS_APPLE)
 static constexpr char kAnnotationStampWithApBaseContentChecksum[] =
-    "83e9f5222c4c959b0b63a5cd24f773a1";
+    "243f3d6267d9db09198fed9f8c4957fd";
 #else
 static constexpr char kAnnotationStampWithApBaseContentChecksum[] =
-    "a24edc7740f1d6f76899652dcf825dea";
+    "e31414933c9ff3950773981e5bf61678";
 #endif
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
 }  // namespace
 
@@ -324,19 +314,14 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderTextWithColorScheme) {
 // Test rendering of text with forced color scheme on.
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   static constexpr char kContentWithTextChecksum[] =
-      "f6d0e8b9e508d4e993bae678f5f3baa7";
-#else
-#if defined(OS_WIN)
-  static constexpr char kContentWithTextChecksum[] =
-      "4245f32cc11748a00fd69852a5e5808d";
+      "6bbe5a547115b4aa30b49fe7c34030e3";
 #elif defined(OS_APPLE)
   static constexpr char kContentWithTextChecksum[] =
-      "754a742f10ce0926b766dc3dd47d1f64";
+      "ee4ec12f54ce8d117a73bd9b85a8954d";
 #else
   static constexpr char kContentWithTextChecksum[] =
-      "f14d3caba5a973a28be8653aac9e4df3";
+      "704db63ed2bf77254ecaa8035b85f21a";
 #endif
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
 
@@ -488,25 +473,15 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderInkWithColorScheme) {
 TEST_F(FPDFProgressiveRenderEmbedderTest, RenderStampWithColorScheme) {
 // Test rendering of static annotation with forced color scheme on.
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#if defined(OS_WIN) || defined(OS_APPLE)
   static constexpr char kContentWithStampChecksum[] =
-      "77cd4865c3780d69a61d4225ee10c41f";
-#else
-  static constexpr char kContentWithStampChecksum[] =
-      "6d8cb124dee49ebda757f8872a7bbef2";
-#endif  // defined(OS_WIN) || defined(OS_APPLE)
-#else
-#if defined(OS_WIN)
-  static constexpr char kContentWithStampChecksum[] =
-      "2f91d6e380cc85b3f700bc7eb9bc0cef";
+      "bdcd2b91223b1a73582b341d0153a73f";
 #elif defined(OS_APPLE)
   static constexpr char kContentWithStampChecksum[] =
-      "e2d9bef817d366021e5727d9350bde43";
+      "7a209e29caeeab7d2b25b34570a4ace6";
 #else
   static constexpr char kContentWithStampChecksum[] =
-      "d5518b1d9765fa62897a24d12244080f";
+      "3bbbfc6cc18801906285a232c4a20617";
 #endif
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
 
