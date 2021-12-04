@@ -162,20 +162,20 @@ std::vector<float> ReadArrayElementsToVector(const CPDF_Array* pArray,
   return ret;
 }
 
-bool ValidateDictType(const CPDF_Dictionary* dict, const ByteString& type) {
+bool ValidateDictType(const CPDF_Dictionary* dict, ByteStringView type) {
   DCHECK(!type.IsEmpty());
-  return dict->GetNameFor("Type") == type;
+  return dict && dict->GetNameFor("Type") == type;
 }
 
 bool ValidateDictAllResourcesOfType(const CPDF_Dictionary* dict,
-                                    const ByteString& type) {
+                                    ByteStringView type) {
   if (!dict)
     return false;
 
   CPDF_DictionaryLocker locker(dict);
   for (const auto& it : locker) {
-    const CPDF_Dictionary* entry = ToDictionary(it.second.Get()->GetDirect());
-    if (!entry || !ValidateDictType(entry, type))
+    const CPDF_Dictionary* entry = ToDictionary(it.second->GetDirect());
+    if (!ValidateDictType(entry, type))
       return false;
   }
   return true;

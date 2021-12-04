@@ -12,6 +12,7 @@
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxge/fx_font.h"
 #include "third_party/base/check.h"
 #include "third_party/base/cxx17_backports.h"
@@ -61,7 +62,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_PDFFontMgr::FindFont(const ByteString& strPsName,
       continue;
     }
     CPDF_Dictionary* pFontDict = ToDictionary(pObj->GetDirect());
-    if (!pFontDict || pFontDict->GetNameFor("Type") != "Font")
+    if (!ValidateDictType(pFontDict, "Font"))
       return nullptr;
 
     RetainPtr<CPDF_Font> pPDFFont = pData->GetFont(pFontDict);

@@ -185,7 +185,7 @@ bool FindFont(CPDF_Dictionary* pFormDict,
   for (const auto& it : locker) {
     const ByteString& csKey = it.first;
     const CPDF_Dictionary* pElement = ToDictionary(it.second->GetDirect());
-    if (!pElement || pElement->GetNameFor("Type") != "Font")
+    if (!ValidateDictType(pElement, "Font"))
       continue;
     if (pFont->GetFontDict() == pElement) {
       *csNameTag = csKey;
@@ -216,7 +216,7 @@ bool FindFontFromDoc(CPDF_Dictionary* pFormDict,
   for (const auto& it : locker) {
     const ByteString& csKey = it.first;
     CPDF_Dictionary* pElement = ToDictionary(it.second->GetDirect());
-    if (!pElement || pElement->GetNameFor("Type") != "Font")
+    if (!ValidateDictType(pElement, "Font"))
       continue;
 
     pFont = CPDF_DocPageData::FromDocument(pDocument)->GetFont(pElement);
@@ -321,7 +321,7 @@ RetainPtr<CPDF_Font> GetNativeFont(CPDF_Dictionary* pFormDict,
   for (const auto& it : locker) {
     const ByteString& csKey = it.first;
     CPDF_Dictionary* pElement = ToDictionary(it.second->GetDirect());
-    if (!pElement || pElement->GetNameFor("Type") != "Font")
+    if (!ValidateDictType(pElement, "Font"))
       continue;
 
     auto* pData = CPDF_DocPageData::FromDocument(pDocument);
@@ -719,7 +719,7 @@ RetainPtr<CPDF_Font> CPDF_InteractiveForm::GetFormFont(
     return nullptr;
 
   CPDF_Dictionary* pElement = pFonts->GetDictFor(csAlias);
-  if (!pElement || pElement->GetNameFor("Type") != "Font")
+  if (!ValidateDictType(pElement, "Font"))
     return nullptr;
 
   return CPDF_DocPageData::FromDocument(m_pDocument)->GetFont(pElement);
