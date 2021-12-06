@@ -25,15 +25,6 @@ class CFGAS_GEFont;
 class IFX_SeekableReadStream;
 
 #if defined(OS_WIN)
-struct FX_FONTMATCHPARAMS {
-  const wchar_t* pwsFamily;
-  uint32_t dwFontStyles;
-  uint32_t dwUSB;
-  bool matchParagraphStyle;
-  wchar_t wUnicode;
-  FX_CodePage wCodePage;
-};
-
 struct FX_FONTSIGNATURE {
   uint32_t fsUsb[4];
   uint32_t fsCsb[2];

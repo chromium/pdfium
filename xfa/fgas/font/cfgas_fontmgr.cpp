@@ -53,6 +53,15 @@ bool VerifyUnicode(const RetainPtr<CFGAS_GEFont>& pFont, wchar_t wcUnicode) {
 
 namespace {
 
+struct FX_FONTMATCHPARAMS {
+  const wchar_t* pwsFamily;
+  uint32_t dwFontStyles;
+  uint32_t dwUSB;
+  bool matchParagraphStyle;
+  wchar_t wUnicode;
+  FX_CodePage wCodePage;
+};
+
 int32_t GetSimilarityScore(FX_FONTDESCRIPTOR const* pFont,
                            uint32_t dwFontStyles) {
   int32_t iValue = 0;
