@@ -13,6 +13,8 @@
 #include "core/fxcrt/widestring.h"
 
 struct FGAS_FONTUSB {
+  static constexpr uint16_t kNoBitField = 999;
+
   uint16_t wStartUnicode;
   uint16_t wEndUnicode;
   uint16_t wBitField;
