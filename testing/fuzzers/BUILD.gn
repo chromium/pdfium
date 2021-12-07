@@ -73,7 +73,10 @@ if (is_clang) {
     "pdf_nametree_fuzzer",
   ]
   if (pdf_enable_xfa) {
-    fuzzer_list += [ "pdf_xfa_fdp_fuzzer" ]
+    fuzzer_list += [
+      "pdf_xfa_fdp_fuzzer",
+      "pdf_xfa_raw_fuzzer",
+    ]
   }
 }
 
@@ -89,6 +92,10 @@ group("fuzzers") {
   if (is_component_build) {
     deps += [ ":fuzzer_impls" ]
   }
+}
+
+source_set("fuzzer_pdf_templates") {
+  sources = [ "pdf_fuzzer_templates.h" ]
 }
 
 source_set("fuzzer_init") {
@@ -465,6 +472,16 @@ if (is_clang) {
       sources = [ "pdf_xfa_fdp_fuzzer.cc" ]
       deps = [
         ":fuzzer_helper",
+        ":fuzzer_pdf_templates",
+        "../../third_party:pdfium_base",
+      ]
+      public_fuzzer = true
+    }
+    pdfium_fuzzer("pdf_xfa_raw_fuzzer") {
+      sources = [ "pdf_xfa_raw_fuzzer.cc" ]
+      deps = [
+        ":fuzzer_helper",
+        ":fuzzer_pdf_templates",
         "../../third_party:pdfium_base",
       ]
       public_fuzzer = true

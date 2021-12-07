@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "public/fpdf_formfill.h"
+#include "testing/fuzzers/pdf_fuzzer_templates.h"
 #include "testing/fuzzers/pdfium_fuzzer_helper.h"
 #include "third_party/base/containers/adapters.h"
 #include "third_party/base/cxx17_backports.h"
@@ -591,26 +592,6 @@ std::string GenXfaTree(FuzzedDataProvider* data_provider) {
   xfa_string += "</xdp>";
   return xfa_string;
 }
-
-const char kSimplePdfTemplate[] = R"(%PDF-1.7
-1 0 obj
-<</Type /Catalog /Pages 2 0 R /AcroForm <</XFA 30 0 R>> /NeedsRendering true>>
-endobj
-2 0 obj
-<</Type /Pages /Kids [3 0 R] /Count 1>>
-endobj
-3 0 obj
-<</Type /Page /Parent 2 0 R /MediaBox [0 0 3 3]>>
-endobj
-30 0 obj
-<</Length $1>>
-stream
-$2
-endstream
-endobj
-trailer
-<</Root 1 0 R /Size 31>>
-%%EOF)";
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   FuzzedDataProvider data_provider(data, size);
