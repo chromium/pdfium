@@ -35,3 +35,12 @@ source_set("font") {
   ]
   visibility = [ "../../../*" ]
 }
+
+pdfium_unittest_source_set("unittests") {
+  sources = [ "fgas_fontutils_unittest.cpp" ]
+  deps = [
+    ":font",
+    "../../../core/fxcrt",
+  ]
+  pdfium_root_dir = "../../../"
+}
