@@ -666,11 +666,11 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByUnicodeImpl(
     uint32_t dwHash,
     FX_CodePage wCodePage,
     uint16_t /* wBitField*/) {
-  if (!m_Hash2CandidateList[dwHash].has_value()) {
+  if (!pdfium::Contains(m_Hash2CandidateList, dwHash)) {
     m_Hash2CandidateList[dwHash] =
         MatchFonts(wCodePage, dwFontStyles, pszFontFamily, wUnicode);
   }
-  for (const auto& info : m_Hash2CandidateList[dwHash].value()) {
+  for (const auto& info : m_Hash2CandidateList[dwHash]) {
     CFGAS_FontDescriptor* pDesc = info.pFont;
     if (!VerifyUnicodeForFontDescriptor(pDesc, wUnicode))
       continue;
@@ -806,16 +806,14 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByCodePage(
   RetainPtr<CFGAS_GEFont> pFont =
       CFGAS_GEFont::LoadFont(pFD->wsFontFace, dwFontStyles, wCodePage);
 #else   // defined(OS_WIN)
-  if (!m_Hash2CandidateList[dwHash].has_value()) {
+  if (!pdfium::Contains(m_Hash2CandidateList, dwHash)) {
     m_Hash2CandidateList[dwHash] =
         MatchFonts(wCodePage, dwFontStyles, WideString(pszFontFamily), 0);
   }
-  std::vector<CFGAS_FontDescriptorInfo>* sortedFontInfos =
-      &m_Hash2CandidateList[dwHash].value();
-  if (sortedFontInfos->empty())
+  if (m_Hash2CandidateList[dwHash].empty())
     return nullptr;
 
-  CFGAS_FontDescriptor* pDesc = (*sortedFontInfos)[0].pFont;
+  CFGAS_FontDescriptor* pDesc = m_Hash2CandidateList[dwHash].front().pFont;
   RetainPtr<CFGAS_GEFont> pFont =
       LoadFontInternal(pDesc->m_wsFaceName, pDesc->m_nFaceIndex);
 #endif  // defined(OS_WIN)
