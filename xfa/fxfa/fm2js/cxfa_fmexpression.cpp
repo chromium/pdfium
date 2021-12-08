@@ -567,21 +567,22 @@ bool CXFA_FMDotAccessorExpression::ToJavaScript(CFX_WideTextBuf* js,
 
   *js << "pfm_rt.dot_acc(";
 
-  CFX_WideTextBuf tempExp1;
   CXFA_FMSimpleExpression* exp1 = GetFirstExpression();
   if (exp1) {
-    if (!exp1->ToJavaScript(&tempExp1, ReturnType::kInferred))
+    // Write directly to the buffer with each recursion. Creating
+    // and copying temporaries here becomes expensive when there
+    // is deep recursion, even though we may need to re-create the
+    // same thing again below. See https://crbug.com/1274018.
+    if (!exp1->ToJavaScript(js, ReturnType::kInferred))
       return false;
-
-    *js << tempExp1;
   } else {
     *js << "null";
   }
   *js << ", \"";
-
-  if (exp1 && exp1->GetOperatorToken() == TOKidentifier)
-    *js << tempExp1;
-
+  if (exp1 && exp1->GetOperatorToken() == TOKidentifier) {
+    if (!exp1->ToJavaScript(js, ReturnType::kInferred))
+      return false;
+  }
   *js << "\", ";
   if (GetOperatorToken() == TOKdotscream)
     *js << "\"#" << m_wsIdentifier << "\", ";
