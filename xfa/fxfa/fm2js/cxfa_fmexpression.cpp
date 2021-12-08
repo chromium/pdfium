@@ -698,15 +698,16 @@ bool CXFA_FMMethodCallExpression::ToJavaScript(CFX_WideTextBuf* js,
   if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth())
     return false;
 
-  CFX_WideTextBuf buf;
-  if (!GetFirstExpression()->ToJavaScript(&buf, ReturnType::kInferred))
+  *js << "(function() {\n";
+  *js << "  return pfm_method_runner(";
+  if (!GetFirstExpression()->ToJavaScript(js, ReturnType::kInferred))
     return false;
 
-  *js << "(function() {\n";
-  *js << "  return pfm_method_runner(" << buf << ", function(obj) {\n";
+  *js << ", function(obj) {\n";
   *js << "    return obj.";
   if (!GetSecondExpression()->ToJavaScript(js, ReturnType::kInferred))
     return false;
+
   *js << ";\n";
   *js << "  });\n";
   *js << "}).call(this)";
