@@ -1086,6 +1086,10 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Space) {
 
   for (size_t i = 0; i < pdfium::size(tests); ++i)
     ExecuteExpectString(tests[i].program, tests[i].result);
+
+  const char* const kErrorCases[] = {"Space(15654909)", "Space(99999999)"};
+  for (const char* error_case : kErrorCases)
+    ExecuteExpectError(error_case);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Str) {

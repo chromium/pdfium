@@ -4179,7 +4179,13 @@ void CFXJSE_FormCalcContext::Space(
     return;
   }
 
+  // Maximum number of characters Acrobat can fit in a text box.
+  constexpr int kMaxCharCount = 15654908;
   int count = std::max(0, ValueToInteger(info.GetIsolate(), argOne));
+  if (count > kMaxCharCount) {
+    ToFormCalcContext(pThis)->ThrowException(L"String too long.");
+    return;
+  }
   std::vector<char, FxAllocAllocator<char>> space_string(count, ' ');
   info.GetReturnValue().Set(
       fxv8::NewStringHelper(info.GetIsolate(), ByteStringView(space_string)));
