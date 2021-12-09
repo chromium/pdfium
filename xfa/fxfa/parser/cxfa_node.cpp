@@ -6325,8 +6325,27 @@ CXFA_Node* CXFA_Node::Create(CXFA_Document* doc,
       node = cppgc::MakeGarbageCollected<CXFA_Items>(
           doc->GetHeap()->GetAllocationHandle(), doc, packet);
       break;
-    default:
-      NOTREACHED();
+    case XFA_Element::DataWindow:
+    case XFA_Element::Deltas:
+    case XFA_Element::EventPseudoModel:
+    case XFA_Element::HostPseudoModel:
+    case XFA_Element::LayoutPseudoModel:
+    case XFA_Element::List:
+    case XFA_Element::ListDuplicate:
+    case XFA_Element::LogPseudoModel:
+    case XFA_Element::Model:
+    case XFA_Element::Node:
+    case XFA_Element::NodeWithDesc:
+    case XFA_Element::NodeWithUse:
+    case XFA_Element::NodeWithValue:
+    case XFA_Element::Object:
+    case XFA_Element::SignaturePseudoModel:
+    case XFA_Element::Tree:
+    case XFA_Element::TreeList:
+    case XFA_Element::Unknown:
+      // These defined elements can not be made from an XML parse. Some are
+      // not CXFA_Node sub-classes, some are only used as intermediate classes,
+      // and so forth.
       return nullptr;
   }
   if (!node || !node->IsValidInPacket(packet))
