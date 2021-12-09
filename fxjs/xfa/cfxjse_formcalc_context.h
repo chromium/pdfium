@@ -300,10 +300,10 @@ class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
   void ThrowCompilerErrorException() const;
   void ThrowDivideByZeroException() const;
   void ThrowServerDeniedException() const;
-  void ThrowPropertyNotInObjectException(const WideString& name,
-                                         const WideString& exp) const;
-  void ThrowParamCountMismatchException(const WideString& method) const;
-  void ThrowException(const WideString& str) const;
+  void ThrowPropertyNotInObjectException(ByteStringView name,
+                                         ByteStringView exp) const;
+  void ThrowParamCountMismatchException(ByteStringView method) const;
+  void ThrowException(ByteStringView str) const;
 
   UnownedPtr<v8::Isolate> const m_pIsolate;
   v8::Global<v8::Value> m_Value;
