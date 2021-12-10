@@ -2887,7 +2887,6 @@ CXFA_Node::CreateChildUIAndValueNodesIfNeeded() {
         widget_type = XFA_FFWidgetType::kRectangle;
         break;
       default:
-        NOTREACHED();
         break;
     }
   }
