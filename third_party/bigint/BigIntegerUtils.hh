@@ -9,7 +9,7 @@
 
 #include "BigInteger.hh"
 #include <string>
-#include <ostream>
+#include <iosfwd>
 
 /* This file provides:
  * - Convenient std::string <-> BigUnsigned/BigInteger conversion routines

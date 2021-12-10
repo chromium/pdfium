@@ -4,6 +4,8 @@
 
 // Original code by Matt McCutchen, see the LICENSE file.
 
+#include <ostream>
+
 #include "BigIntegerUtils.hh"
 #include "BigUnsignedInABase.hh"
 
