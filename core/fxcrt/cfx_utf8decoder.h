@@ -7,7 +7,7 @@
 #ifndef CORE_FXCRT_CFX_UTF8DECODER_H_
 #define CORE_FXCRT_CFX_UTF8DECODER_H_
 
-#include "core/fxcrt/cfx_widetextbuf.h"
+#include "core/fxcrt/widestring.h"
 
 class CFX_UTF8Decoder {
  public:
@@ -15,14 +15,14 @@ class CFX_UTF8Decoder {
   ~CFX_UTF8Decoder();
 
   void Input(uint8_t byte);
-  WideStringView GetResult() const { return m_Buffer.AsStringView(); }
+  WideString TakeResult();
 
  private:
   void AppendCodePoint(uint32_t ch);
 
   int m_PendingBytes = 0;
   uint32_t m_PendingChar = 0;
-  CFX_WideTextBuf m_Buffer;
+  WideString m_Buffer;
 };
 
 #endif  // CORE_FXCRT_CFX_UTF8DECODER_H_

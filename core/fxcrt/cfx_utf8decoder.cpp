@@ -6,18 +6,24 @@
 
 #include "core/fxcrt/cfx_utf8decoder.h"
 
+#include <utility>
+
 CFX_UTF8Decoder::CFX_UTF8Decoder() = default;
 
 CFX_UTF8Decoder::~CFX_UTF8Decoder() = default;
 
+WideString CFX_UTF8Decoder::TakeResult() {
+  return std::move(m_Buffer);
+}
+
 void CFX_UTF8Decoder::AppendCodePoint(uint32_t ch) {
-  m_Buffer.AppendChar(static_cast<wchar_t>(ch));
+  m_Buffer += static_cast<wchar_t>(ch);
 }
 
 void CFX_UTF8Decoder::Input(uint8_t byte) {
   if (byte < 0x80) {
     m_PendingBytes = 0;
-    m_Buffer.AppendChar(byte);
+    AppendCodePoint(byte);
   } else if (byte < 0xc0) {
     if (m_PendingBytes == 0) {
       return;

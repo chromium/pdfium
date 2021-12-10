@@ -28,7 +28,7 @@ WideString FX_UTF8Decode(ByteStringView bsStr) {
   for (size_t i = 0; i < bsStr.GetLength(); i++)
     decoder.Input(bsStr[i]);
 
-  return WideString(decoder.GetResult());
+  return decoder.TakeResult();
 }
 
 namespace {
