@@ -26,8 +26,6 @@ class CFX_WideTextBuf final : public CFX_BinaryBuf {
   void AppendChar(wchar_t wch);
   void Delete(int start_index, int count);
 
-  CFX_WideTextBuf& operator<<(int i);
-  CFX_WideTextBuf& operator<<(double f);
   CFX_WideTextBuf& operator<<(ByteStringView ascii);
   CFX_WideTextBuf& operator<<(const wchar_t* lpsz);
   CFX_WideTextBuf& operator<<(WideStringView str);

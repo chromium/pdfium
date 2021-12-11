@@ -57,25 +57,6 @@ CFX_WideTextBuf& CFX_WideTextBuf::operator<<(const WideString& str) {
   return *this;
 }
 
-CFX_WideTextBuf& CFX_WideTextBuf::operator<<(int i) {
-  char buf[32];
-  FXSYS_itoa(i, buf, 10);
-  size_t len = strlen(buf);
-  pdfium::span<wchar_t> new_span = ExpandWideBuf(len);
-  for (size_t j = 0; j < len; j++)
-    new_span[j] = buf[j];
-  return *this;
-}
-
-CFX_WideTextBuf& CFX_WideTextBuf::operator<<(double f) {
-  char buf[32];
-  size_t len = FloatToString((float)f, buf);
-  pdfium::span<wchar_t> new_span = ExpandWideBuf(len);
-  for (size_t i = 0; i < len; i++)
-    new_span[i] = buf[i];
-  return *this;
-}
-
 CFX_WideTextBuf& CFX_WideTextBuf::operator<<(const wchar_t* lpsz) {
   AppendBlock(lpsz, wcslen(lpsz) * sizeof(wchar_t));
   return *this;
