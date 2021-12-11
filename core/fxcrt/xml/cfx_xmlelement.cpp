@@ -6,7 +6,6 @@
 
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 
-#include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/xml/cfx_xmlchardata.h"
 #include "core/fxcrt/xml/cfx_xmldocument.h"
@@ -68,14 +67,14 @@ WideString CFX_XMLElement::GetNamespaceURI() const {
 }
 
 WideString CFX_XMLElement::GetTextData() const {
-  CFX_WideTextBuf buffer;
+  WideString buffer;
   for (CFX_XMLNode* pChild = GetFirstChild(); pChild;
        pChild = pChild->GetNextSibling()) {
     CFX_XMLText* pText = ToXMLText(pChild);
     if (pText)
-      buffer << pText->GetText();
+      buffer += pText->GetText();
   }
-  return buffer.MakeString();
+  return buffer;
 }
 
 void CFX_XMLElement::Save(
