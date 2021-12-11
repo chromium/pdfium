@@ -39,7 +39,7 @@ class CJS_Result {
   ~CJS_Result();
 
   bool HasError() const { return error_.has_value(); }
-  WideString Error() const { return error_.value(); }
+  const WideString& Error() const { return error_.value(); }
 
   bool HasReturn() const { return !return_.IsEmpty(); }
   v8::Local<v8::Value> Return() const { return return_; }
