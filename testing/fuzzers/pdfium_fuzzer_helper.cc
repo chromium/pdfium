@@ -216,6 +216,8 @@ bool PDFiumFuzzerHelper::RenderPage(FPDF_DOCUMENT doc,
   FORM_OnAfterLoadPage(page.get(), form);
   FORM_DoPageAAction(page.get(), form, FPDFPAGE_AACTION_OPEN);
 
+  FormActionHandler(form, doc, page.get());
+
   const double scale = 1.0;
   int width = static_cast<int>(FPDF_GetPageWidthF(page.get()) * scale);
   int height = static_cast<int>(FPDF_GetPageHeightF(page.get()) * scale);

@@ -20,6 +20,8 @@ class PDFiumXFAFuzzer : public PDFiumFuzzerHelper {
 
   int GetFormCallbackVersion() const override { return 2; }
 
+  void SetFdp(FuzzedDataProvider* fdp) { fdp_ = fdp; }
+
   // Return false if XFA doesn't load as otherwise we're duplicating the work
   // done by the non-xfa fuzzer.
   bool OnFormFillEnvLoaded(FPDF_DOCUMENT doc) override {
@@ -28,6 +30,169 @@ class PDFiumXFAFuzzer : public PDFiumFuzzerHelper {
       return false;
     return FPDF_LoadXFA(doc);
   }
+
+  void FormActionHandler(FPDF_FORMHANDLE form,
+                         FPDF_DOCUMENT doc,
+                         FPDF_PAGE page) override {
+    if (!fdp_) {
+      return;
+    }
+    char local_buf[50];
+    int number_of_calls = fdp_->ConsumeIntegralInRange<int>(0, 250);
+    for (int i = 0; i < number_of_calls; i++) {
+      UserInteraction selector = fdp_->ConsumeEnum<UserInteraction>();
+      switch (selector) {
+        case kOnLButtonUp: {
+          FORM_OnLButtonUp(form, page, fdp_->ConsumeIntegral<int>(),
+                           fdp_->ConsumeIntegralInRange<int>(-100, 1000),
+                           fdp_->ConsumeIntegralInRange<int>(-100, 1000));
+          break;
+        }
+        case kOnRButtonUp: {
+          FORM_OnRButtonUp(form, page, fdp_->ConsumeIntegral<int>(),
+                           fdp_->ConsumeIntegralInRange<int>(-100, 1000),
+                           fdp_->ConsumeIntegralInRange<int>(-100, 1000));
+          break;
+        }
+        case kOnLButtonDown: {
+          FORM_OnLButtonDown(form, page, fdp_->ConsumeIntegral<int>(),
+                             fdp_->ConsumeIntegralInRange<int>(-100, 1000),
+                             fdp_->ConsumeIntegralInRange<int>(-100, 1000));
+          break;
+        }
+        case kOnRButtonDown: {
+          FORM_OnRButtonDown(form, page, fdp_->ConsumeIntegral<int>(),
+                             fdp_->ConsumeIntegralInRange<int>(-100, 1000),
+                             fdp_->ConsumeIntegralInRange<int>(-100, 1000));
+          break;
+        }
+        case kOnChar: {
+          FORM_OnChar(form, page, fdp_->ConsumeIntegral<int>(),
+                      fdp_->ConsumeIntegral<int>());
+          break;
+        }
+        case kOnKeyDown: {
+          FORM_OnKeyDown(form, page, fdp_->ConsumeIntegral<int>(),
+                         fdp_->ConsumeIntegral<int>());
+          break;
+        }
+        case kOnKeyUp: {
+          FORM_OnKeyUp(form, page, fdp_->ConsumeIntegral<int>(),
+                       fdp_->ConsumeIntegral<int>());
+          break;
+        }
+        case kOnLButtonDoubleClick: {
+          FORM_OnLButtonDoubleClick(form, page, fdp_->ConsumeIntegral<int>(),
+                                    fdp_->ConsumeIntegral<int>(),
+                                    fdp_->ConsumeIntegral<int>());
+          break;
+        }
+        case kOnMouseMove: {
+          FORM_OnMouseMove(form, page, fdp_->ConsumeIntegral<int>(),
+                           fdp_->ConsumeIntegral<int>(),
+                           fdp_->ConsumeIntegral<int>());
+          break;
+        }
+        case kOnMouseWheel: {
+          const FS_POINTF point = {fdp_->ConsumeFloatingPoint<float>(),
+                                   fdp_->ConsumeFloatingPoint<float>()};
+          FORM_OnMouseWheel(form, page, fdp_->ConsumeIntegral<int>(), &point,
+                            fdp_->ConsumeIntegral<int>(),
+                            fdp_->ConsumeIntegral<int>());
+          break;
+        }
+        case kOnFocus: {
+          FORM_OnFocus(form, page, fdp_->ConsumeIntegral<int>(),
+                       fdp_->ConsumeIntegral<int>(),
+                       fdp_->ConsumeIntegral<int>());
+          break;
+        }
+        case kUndo: {
+          if (FORM_CanUndo(form, page)) {
+            FORM_Undo(form, page);
+          }
+          break;
+        }
+        case kSelectAllText: {
+          FORM_SelectAllText(form, page);
+          break;
+        }
+        case kRedo: {
+          if (FORM_CanRedo(form, page)) {
+            FORM_Redo(form, page);
+          }
+          break;
+        }
+        case kAnnot: {
+          FPDF_ANNOTATION annot = nullptr;
+          int page_index = -2;
+          FORM_GetFocusedAnnot(form, &page_index, &annot);
+          if (annot) {
+            FORM_SetFocusedAnnot(form, annot);
+          }
+          break;
+        }
+        case kSetIndexSelected: {
+          FORM_SetIndexSelected(form, page, fdp_->ConsumeIntegral<int>(),
+                                fdp_->ConsumeBool());
+          break;
+        }
+        case kIsIndexSelected: {
+          FORM_IsIndexSelected(form, page, fdp_->ConsumeIntegral<int>());
+          break;
+        }
+        case kHasFormFieldAtPoint: {
+          FPDFPage_HasFormFieldAtPoint(form, page, fdp_->ConsumeIntegral<int>(),
+                                       fdp_->ConsumeIntegral<int>());
+          break;
+        }
+        case kFormFieldZOrderAtPoint: {
+          FPDFPage_FormFieldZOrderAtPoint(form, page,
+                                          fdp_->ConsumeIntegral<int>(),
+                                          fdp_->ConsumeIntegral<int>());
+          break;
+        }
+        case kGetSelectedText: {
+          FORM_GetSelectedText(form, page, local_buf, sizeof(local_buf));
+          break;
+        }
+        case kGetFocusedText: {
+          FORM_GetFocusedText(form, page, local_buf, sizeof(local_buf));
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    }
+  }
+
+ private:
+  enum UserInteraction {
+    kOnLButtonUp = 0,
+    kOnRButtonUp,
+    kOnLButtonDown,
+    kOnRButtonDown,
+    kOnChar,
+    kOnKeyDown,
+    kOnKeyUp,
+    kOnLButtonDoubleClick,
+    kOnMouseMove,
+    kOnMouseWheel,
+    kOnFocus,
+    kUndo,
+    kSelectAllText,
+    kRedo,
+    kAnnot,
+    kSetIndexSelected,
+    kIsIndexSelected,
+    kHasFormFieldAtPoint,
+    kFormFieldZOrderAtPoint,
+    kGetSelectedText,
+    kGetFocusedText,
+    kMaxValue = kGetFocusedText
+  };
+  FuzzedDataProvider* fdp_ = nullptr;
 };
 
 // Possible names of an XFA script function
@@ -612,6 +777,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
 #endif
 
   PDFiumXFAFuzzer fuzzer;
+  fuzzer.SetFdp(&data_provider);
   fuzzer.RenderPdf(xfa_final_str.c_str(), xfa_final_str.size());
   return 0;
 }

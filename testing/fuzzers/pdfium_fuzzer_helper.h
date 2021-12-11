@@ -16,6 +16,9 @@ class PDFiumFuzzerHelper {
   virtual int GetFormCallbackVersion() const = 0;
   virtual bool OnFormFillEnvLoaded(FPDF_DOCUMENT doc);
   virtual void OnRenderFinished(FPDF_DOCUMENT doc) {}
+  virtual void FormActionHandler(FPDF_FORMHANDLE form,
+                                 FPDF_DOCUMENT doc,
+                                 FPDF_PAGE page) {}
 
  protected:
   PDFiumFuzzerHelper();
