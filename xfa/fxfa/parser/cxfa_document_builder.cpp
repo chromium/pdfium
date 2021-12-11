@@ -11,7 +11,6 @@
 
 #include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/cfx_readonlymemorystream.h"
-#include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/xml/cfx_xmlchardata.h"
@@ -909,8 +908,8 @@ void CXFA_DocumentBuilder::ParseDataGroup(CXFA_Node* pXFANode,
 void CXFA_DocumentBuilder::ParseDataValue(CXFA_Node* pXFANode,
                                           CFX_XMLNode* pXMLNode,
                                           XFA_PacketType ePacketID) {
-  CFX_WideTextBuf wsValueTextBuf;
-  CFX_WideTextBuf wsCurValueTextBuf;
+  WideString wsValue;
+  WideString wsCurValue;
   bool bMarkAsCompound = false;
   CFX_XMLNode* pXMLCurValueNode = nullptr;
   for (CFX_XMLNode* pXMLChild = pXMLNode->GetFirstChild(); pXMLChild;
@@ -924,19 +923,18 @@ void CXFA_DocumentBuilder::ParseDataValue(CXFA_Node* pXFANode,
       WideString wsText = pText->GetText();
       if (!pXMLCurValueNode)
         pXMLCurValueNode = pXMLChild;
-      wsCurValueTextBuf << wsText;
+      wsCurValue += wsText;
       continue;
     }
     if (XFA_RecognizeRichText(ToXMLElement(pXMLChild))) {
       WideString wsText = GetPlainTextFromRichText(ToXMLElement(pXMLChild));
       if (!pXMLCurValueNode)
         pXMLCurValueNode = pXMLChild;
-      wsCurValueTextBuf << wsText;
+      wsCurValue += wsText;
       continue;
     }
     bMarkAsCompound = true;
     if (pXMLCurValueNode) {
-      WideString wsCurValue = wsCurValueTextBuf.MakeString();
       if (!wsCurValue.IsEmpty()) {
         CXFA_Node* pXFAChild =
             node_factory_->CreateNode(ePacketID, XFA_Element::DataValue);
@@ -948,8 +946,8 @@ void CXFA_DocumentBuilder::ParseDataValue(CXFA_Node* pXFANode,
         pXFANode->InsertChildAndNotify(pXFAChild, nullptr);
         pXFAChild->SetXMLMappingNode(pXMLCurValueNode);
         pXFAChild->SetFlag(XFA_NodeFlag::kInitialized);
-        wsValueTextBuf << wsCurValue;
-        wsCurValueTextBuf.Clear();
+        wsValue += wsCurValue;
+        wsCurValue.clear();
       }
       pXMLCurValueNode = nullptr;
     }
@@ -964,13 +962,10 @@ void CXFA_DocumentBuilder::ParseDataValue(CXFA_Node* pXFANode,
     pXFANode->InsertChildAndNotify(pXFAChild, nullptr);
     pXFAChild->SetXMLMappingNode(pXMLChild);
     pXFAChild->SetFlag(XFA_NodeFlag::kInitialized);
-    WideString wsCurValue =
-        pXFAChild->JSObject()->GetCData(XFA_Attribute::Value);
-    wsValueTextBuf << wsCurValue;
+    wsValue += pXFAChild->JSObject()->GetCData(XFA_Attribute::Value);
   }
 
   if (pXMLCurValueNode) {
-    WideString wsCurValue = wsCurValueTextBuf.MakeString();
     if (!wsCurValue.IsEmpty()) {
       if (bMarkAsCompound) {
         CXFA_Node* pXFAChild =
@@ -984,13 +979,12 @@ void CXFA_DocumentBuilder::ParseDataValue(CXFA_Node* pXFANode,
         pXFAChild->SetXMLMappingNode(pXMLCurValueNode);
         pXFAChild->SetFlag(XFA_NodeFlag::kInitialized);
       }
-      wsValueTextBuf << wsCurValue;
-      wsCurValueTextBuf.Clear();
+      wsValue += wsCurValue;
+      wsCurValue.clear();
     }
     pXMLCurValueNode = nullptr;
   }
-  WideString wsNodeValue = wsValueTextBuf.MakeString();
-  pXFANode->JSObject()->SetCData(XFA_Attribute::Value, wsNodeValue);
+  pXFANode->JSObject()->SetCData(XFA_Attribute::Value, wsValue);
 }
 
 void CXFA_DocumentBuilder::ParseInstruction(CXFA_Node* pXFANode,
