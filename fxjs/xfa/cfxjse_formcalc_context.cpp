@@ -735,45 +735,29 @@ bool IsIsoDateTimeFormat(pdfium::span<const char> pData,
                          int32_t* pMilliSecond,
                          int32_t* pZoneHour,
                          int32_t* pZoneMinute) {
-  int32_t& iYear = *pYear;
-  int32_t& iMonth = *pMonth;
-  int32_t& iDay = *pDay;
-  int32_t& iHour = *pHour;
-  int32_t& iMinute = *pMinute;
-  int32_t& iSecond = *pSecond;
-  int32_t& iMilliSecond = *pMilliSecond;
-  int32_t& iZoneHour = *pZoneHour;
-  int32_t& iZoneMinute = *pZoneMinute;
-
-  iYear = 0;
-  iMonth = 0;
-  iDay = 0;
-  iHour = 0;
-  iMinute = 0;
-  iSecond = 0;
-
-  if (pData.empty())
-    return false;
+  *pYear = 0;
+  *pMonth = 0;
+  *pDay = 0;
+  *pHour = 0;
+  *pMinute = 0;
+  *pSecond = 0;
 
   size_t iIndex = 0;
-  while (pData[iIndex] != 'T' && pData[iIndex] != 't') {
-    if (iIndex >= pData.size())
-      return false;
+  while (iIndex < pData.size()) {
+    if (pData[iIndex] == 'T' || pData[iIndex] == 't')
+      break;
     ++iIndex;
   }
-  if (iIndex != 8 && iIndex != 10)
+  if (iIndex == pData.size() || (iIndex != 8 && iIndex != 10))
     return false;
+
+  pdfium::span<const char> pDateSpan = pData.subspan(0, iIndex);
+  pdfium::span<const char> pTimeSpan = pData.subspan(iIndex + 1);
 
   int32_t iStyle = -1;
-  if (!IsIsoDateFormat(pData.subspan(0, iIndex), &iStyle, &iYear, &iMonth,
-                       &iDay)) {
-    return false;
-  }
-  if (pData[iIndex] != 'T' && pData[iIndex] != 't')
-    return true;
-
-  return IsIsoTimeFormat(pData.subspan(iIndex + 1), &iHour, &iMinute, &iSecond,
-                         &iMilliSecond, &iZoneHour, &iZoneMinute);
+  return IsIsoDateFormat(pDateSpan, &iStyle, pYear, pMonth, pDay) &&
+         IsIsoTimeFormat(pTimeSpan, pHour, pMinute, pSecond, pMilliSecond,
+                         pZoneHour, pZoneMinute);
 }
 
 int32_t DateString2Num(ByteStringView bsDate) {
