@@ -714,7 +714,7 @@ std::string GenXfacript(FuzzedDataProvider* data_provider) {
 // Will create a single XFA attributes, with both lhs and rhs.
 std::string getXfaElemAttributes(FuzzedDataProvider* data_provider) {
   // Generate a set of tags, and a set of values for the tags.
-  return GenXfaTagName(data_provider) + " = " + GenXfaTagValue(data_provider);
+  return GenXfaTagName(data_provider) + "=" + GenXfaTagValue(data_provider);
 }
 
 // Creates an XFA structure wrapped in <xdp tags.
@@ -728,19 +728,17 @@ std::string GenXfaTree(FuzzedDataProvider* data_provider) {
     std::vector<std::string> xml_stack;
     xml_stack.reserve(elem_count);
     for (int i = 0; i < elem_count; i++) {
-      xfa_string += "<";
       std::string tag = GenXfaTag(data_provider);
+      xfa_string += "<" + tag;
 
       // in 30% of cases, add attributes
-      std::string attribute_string;
       if (data_provider->ConsumeIntegralInRange(1, 100) > 70) {
         size_t attribute_count = data_provider->ConsumeIntegralInRange(1, 5);
         for (; 0 < attribute_count; attribute_count--) {
-          attribute_string += getXfaElemAttributes(data_provider);
+          xfa_string += " " + getXfaElemAttributes(data_provider);
         }
       }
-      xfa_string += attribute_string;
-      xfa_string += tag + ">";
+      xfa_string += ">";
 
       // If needed, add a body to the tag
       if (tag == "script") {
