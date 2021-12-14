@@ -349,9 +349,6 @@ bug_1331.in * * * *
 # TODO(pdfium:1461): Remove after associated bug is fixed
 bug_1402.in win * * *
 
-# TODO(pdfium:1740): Remove after associated bug is fixed
-bug_1402.in * * * skia,skiapaths
-
 # TODO(pdfium:1466): Remove after associated bug is fixed
 bug_1449.in linux * * *
 

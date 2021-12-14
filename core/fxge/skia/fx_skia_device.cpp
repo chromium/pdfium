@@ -965,7 +965,7 @@ class SkiaState {
           rsxform->fSCos = cp.m_AdjustMatrix[0];
           rsxform->fSSin = cp.m_AdjustMatrix[1];
           rsxform->fTx = cp.m_AdjustMatrix[0] * positions[index].fX;
-          rsxform->fTy = cp.m_AdjustMatrix[1] * positions[index].fY;
+          rsxform->fTy = -cp.m_AdjustMatrix[3] * positions[index].fY;
         } else {
           rsxform->fSCos = 1;
           rsxform->fSSin = 0;
@@ -1776,7 +1776,7 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(
         rsxform->fSCos = cp.m_AdjustMatrix[0];
         rsxform->fSSin = cp.m_AdjustMatrix[1];
         rsxform->fTx = cp.m_AdjustMatrix[0] * positions[index].fX;
-        rsxform->fTy = cp.m_AdjustMatrix[1] * positions[index].fY;
+        rsxform->fTy = -cp.m_AdjustMatrix[3] * positions[index].fY;
       } else {
         rsxform->fSCos = 1;
         rsxform->fSSin = 0;
