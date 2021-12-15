@@ -31,31 +31,28 @@ namespace {
 
 const char kFormNS[] = "http://www.xfa.org/schema/xfa-form/";
 
-WideString ExportEncodeAttribute(const WideString& str) {
-  CFX_WideTextBuf textBuf;
-  int32_t iLen = str.GetLength();
-  for (int32_t i = 0; i < iLen; i++) {
+void ExportEncodeAttribute(const WideString& str, WideString& textBuf) {
+  for (size_t i = 0; i < str.GetLength(); i++) {
     switch (str[i]) {
       case '&':
-        textBuf << "&amp;";
+        textBuf += L"&amp;";
         break;
       case '<':
-        textBuf << "&lt;";
+        textBuf += L"&lt;";
         break;
       case '>':
-        textBuf << "&gt;";
+        textBuf += L"&gt;";
         break;
       case '\'':
-        textBuf << "&apos;";
+        textBuf += L"&apos;";
         break;
       case '\"':
-        textBuf << "&quot;";
+        textBuf += L"&quot;";
         break;
       default:
-        textBuf.AppendChar(str[i]);
+        textBuf += str[i];
     }
   }
-  return textBuf.MakeString();
 }
 
 bool IsXMLValidChar(wchar_t ch) {
@@ -148,7 +145,7 @@ void SaveAttribute(CXFA_Node* pNode,
   wsOutput += L" ";
   wsOutput += wsName;
   wsOutput += L"=\"";
-  wsOutput += ExportEncodeAttribute(value.value());
+  ExportEncodeAttribute(value.value(), wsOutput);
   wsOutput += L"\"";
 }
 
