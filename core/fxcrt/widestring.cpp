@@ -809,7 +809,7 @@ absl::optional<size_t> WideString::ReverseFind(wchar_t ch) const {
 }
 
 void WideString::MakeLower() {
-  if (!m_pData)
+  if (IsEmpty())
     return;
 
   ReallocBeforeWrite(m_pData->m_nDataLength);
@@ -817,7 +817,7 @@ void WideString::MakeLower() {
 }
 
 void WideString::MakeUpper() {
-  if (!m_pData)
+  if (IsEmpty())
     return;
 
   ReallocBeforeWrite(m_pData->m_nDataLength);
@@ -825,7 +825,7 @@ void WideString::MakeUpper() {
 }
 
 size_t WideString::Remove(wchar_t chRemove) {
-  if (!m_pData || m_pData->m_nDataLength == 0)
+  if (IsEmpty())
     return 0;
 
   wchar_t* pstrSource = m_pData->m_String;

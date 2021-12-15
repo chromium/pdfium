@@ -809,6 +809,17 @@ TEST(WideString, UpperLower) {
   EXPECT_EQ(L"", empty);
   empty.MakeUpper();
   EXPECT_EQ(L"", empty);
+
+  WideString empty_with_buffer(L"x");
+  empty_with_buffer.Delete(0);
+
+  WideString additional_empty_with_buffer_ref = empty_with_buffer;
+  additional_empty_with_buffer_ref.MakeLower();
+  EXPECT_EQ(L"", additional_empty_with_buffer_ref);
+
+  additional_empty_with_buffer_ref = empty_with_buffer;
+  additional_empty_with_buffer_ref.MakeUpper();
+  EXPECT_EQ(L"", additional_empty_with_buffer_ref);
 }
 
 TEST(WideString, Trim) {

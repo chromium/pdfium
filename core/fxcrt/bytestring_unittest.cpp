@@ -803,6 +803,17 @@ TEST(ByteString, UpperLower) {
   EXPECT_EQ("", empty);
   empty.MakeUpper();
   EXPECT_EQ("", empty);
+
+  ByteString empty_with_buffer("x");
+  empty_with_buffer.Delete(0);
+
+  ByteString additional_empty_with_buffer_ref = empty_with_buffer;
+  additional_empty_with_buffer_ref.MakeLower();
+  EXPECT_EQ("", additional_empty_with_buffer_ref);
+
+  additional_empty_with_buffer_ref = empty_with_buffer;
+  additional_empty_with_buffer_ref.MakeUpper();
+  EXPECT_EQ("", additional_empty_with_buffer_ref);
 }
 
 TEST(ByteString, Trim) {
