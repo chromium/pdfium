@@ -50,11 +50,11 @@ void CFX_BinaryBuf::Delete(size_t start_index, size_t count) {
 }
 
 pdfium::span<uint8_t> CFX_BinaryBuf::GetSpan() {
-  return {GetBuffer(), GetSize()};
+  return {m_pBuffer.get(), GetSize()};
 }
 
 pdfium::span<const uint8_t> CFX_BinaryBuf::GetSpan() const {
-  return {GetBuffer(), GetSize()};
+  return {m_pBuffer.get(), GetSize()};
 }
 
 size_t CFX_BinaryBuf::GetLength() const {

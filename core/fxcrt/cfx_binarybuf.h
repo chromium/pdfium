@@ -27,10 +27,9 @@ class CFX_BinaryBuf {
 
   pdfium::span<uint8_t> GetSpan();
   pdfium::span<const uint8_t> GetSpan() const;
-  uint8_t* GetBuffer() const { return m_pBuffer.get(); }
-  size_t GetSize() const { return m_DataSize; }
-  virtual size_t GetLength() const;
   bool IsEmpty() const { return GetLength() == 0; }
+  size_t GetSize() const { return m_DataSize; }  // In bytes.
+  virtual size_t GetLength() const;              // In subclass-specific units.
 
   void Clear();
   void SetAllocStep(size_t step) { m_AllocStep = step; }
