@@ -372,9 +372,10 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRGB() {
   std::vector<uint8_t, FxAllocAllocator<uint8_t>> dest_buf(src_row_bytes_);
   while (row_num_ < height_) {
     size_t idx = 0;
-    if (!ReadData(dest_buf.data(), src_row_bytes_))
+    if (!ReadData(dest_buf.data(),
+                  pdfium::base::checked_cast<uint32_t>(src_row_bytes_))) {
       return BmpDecoder::Status::kContinue;
-
+    }
     SaveDecodingStatus(DecodeStatus::kData);
     switch (bit_counts_) {
       case 1: {
@@ -489,7 +490,8 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE8() {
             break;
           }
           default: {
-            int32_t avail_size = out_row_bytes_ - col_num_;
+            int32_t avail_size =
+                pdfium::base::checked_cast<int32_t>(out_row_bytes_ - col_num_);
             if (!avail_size || static_cast<int32_t>(first_part) > avail_size)
               return BmpDecoder::Status::kFail;
 
@@ -498,7 +500,9 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE8() {
             std::vector<uint8_t, FxAllocAllocator<uint8_t>> second_part(
                 second_part_size);
             uint8_t* second_part_data = second_part.data();
-            if (!ReadData(second_part_data, second_part_size))
+            if (!ReadData(
+                    second_part_data,
+                    pdfium::base::checked_cast<uint32_t>(second_part_size)))
               return BmpDecoder::Status::kContinue;
 
             std::copy(second_part_data, second_part_data + first_part,
@@ -513,7 +517,8 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE8() {
         break;
       }
       default: {
-        int32_t avail_size = out_row_bytes_ - col_num_;
+        int32_t avail_size =
+            pdfium::base::checked_cast<int32_t>(out_row_bytes_ - col_num_);
         if (!avail_size || static_cast<int32_t>(first_part) > avail_size)
           return BmpDecoder::Status::kFail;
 
@@ -579,7 +584,8 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE4() {
             break;
           }
           default: {
-            int32_t avail_size = out_row_bytes_ - col_num_;
+            int32_t avail_size =
+                pdfium::base::checked_cast<int32_t>(out_row_bytes_ - col_num_);
             if (!avail_size)
               return BmpDecoder::Status::kFail;
             uint8_t size = HalfRoundUp(first_part);
@@ -593,9 +599,11 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE4() {
             std::vector<uint8_t, FxAllocAllocator<uint8_t>> second_part(
                 second_part_size);
             uint8_t* second_part_data = second_part.data();
-            if (!ReadData(second_part_data, second_part_size))
+            if (!ReadData(
+                    second_part_data,
+                    pdfium::base::checked_cast<uint32_t>(second_part_size))) {
               return BmpDecoder::Status::kContinue;
-
+            }
             for (uint8_t i = 0; i < first_part; i++) {
               uint8_t color = (i & 0x01) ? (*second_part_data++ & 0x0F)
                                          : (*second_part_data & 0xF0) >> 4;
@@ -609,7 +617,8 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE4() {
         break;
       }
       default: {
-        int32_t avail_size = out_row_bytes_ - col_num_;
+        int32_t avail_size =
+            pdfium::base::checked_cast<int32_t>(out_row_bytes_ - col_num_);
         if (!avail_size)
           return BmpDecoder::Status::kFail;
 

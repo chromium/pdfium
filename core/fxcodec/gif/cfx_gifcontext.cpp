@@ -329,7 +329,8 @@ uint32_t CFX_GifContext::GetAvailInput() const {
   if (!input_buffer_)
     return 0;
 
-  return input_buffer_->GetSize() - input_buffer_->GetPosition();
+  return pdfium::base::checked_cast<uint32_t>(input_buffer_->GetSize() -
+                                              input_buffer_->GetPosition());
 }
 
 bool CFX_GifContext::ReadAllOrNone(uint8_t* dest, uint32_t size) {

@@ -8,6 +8,8 @@
 
 #include <algorithm>
 
+#include "third_party/base/numerics/safe_conversions.h"
+
 namespace {
 
 pdfium::span<const uint8_t> ValidatedSpan(pdfium::span<const uint8_t> sp) {
@@ -143,7 +145,7 @@ uint32_t CJBig2_BitStream::getOffset() const {
 }
 
 void CJBig2_BitStream::setOffset(uint32_t dwOffset) {
-  m_dwByteIdx = std::min<size_t>(dwOffset, m_Span.size());
+  m_dwByteIdx = std::min(dwOffset, getLength());
 }
 
 uint32_t CJBig2_BitStream::getBitPos() const {
@@ -159,6 +161,10 @@ const uint8_t* CJBig2_BitStream::getBuf() const {
   return m_Span.data();
 }
 
+uint32_t CJBig2_BitStream::getLength() const {
+  return pdfium::base::checked_cast<uint32_t>(m_Span.size());
+}
+
 const uint8_t* CJBig2_BitStream::getPointer() const {
   return getBuf() + m_dwByteIdx;
 }
@@ -168,7 +174,7 @@ void CJBig2_BitStream::offset(uint32_t dwOffset) {
 }
 
 uint32_t CJBig2_BitStream::getByteLeft() const {
-  return m_Span.size() - m_dwByteIdx;
+  return getLength() - m_dwByteIdx;
 }
 
 void CJBig2_BitStream::AdvanceBit() {
@@ -181,9 +187,9 @@ void CJBig2_BitStream::AdvanceBit() {
 }
 
 bool CJBig2_BitStream::IsInBounds() const {
-  return m_dwByteIdx < m_Span.size();
+  return m_dwByteIdx < getLength();
 }
 
 uint32_t CJBig2_BitStream::LengthInBits() const {
-  return m_Span.size() << 3;
+  return getLength() << 3;
 }
