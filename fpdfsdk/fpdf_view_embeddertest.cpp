@@ -1259,17 +1259,22 @@ TEST_F(FPDFViewEmbedderTest, LoadDocumentWithEmptyXRefConsistently) {
   }
 }
 
-// TODO(crbug.com/pdfium/1500): Fix this test and enable.
+TEST_F(FPDFViewEmbedderTest, RenderBug664284WithNoNativeText) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_RenderBug664284WithNoNativeText \
-  DISABLED_RenderBug664284WithNoNativeText
+  // For Skia/SkiaPaths, since the font used in bug_664284.pdf is not a CID
+  // font, ShouldDrawDeviceText() will always return true. Therefore
+  // FPDF_NO_NATIVETEXT determines whether to go through the rendering path in
+  // CFX_SkiaDeviceDriver::DrawDeviceText() and it will always affect the
+  // rendering results across all platforms.
+  static const char kOriginalChecksum[] = "cfcdc544325a9780be241685d200c47b";
+  static const char kNoNativeTextChecksum[] =
+      "288502887ffc63291f35a0573b944375";
 #else
-#define MAYBE_RenderBug664284WithNoNativeText RenderBug664284WithNoNativeText
-#endif
-TEST_F(FPDFViewEmbedderTest, MAYBE_RenderBug664284WithNoNativeText) {
-// FPDF_NO_NATIVETEXT flag only disables native text support on macOS, therefore
-// Windows and Linux rendering results remain the same as rendering with no
-// flags, while the macOS rendering result doesn't.
+// For AGG, since CFX_AggDeviceDriver::DrawDeviceText() always returns false,
+// FPDF_NO_NATIVETEXT won't affect device-specific rendering path and it will
+// only disable native text support on macOS. Therefore Windows and Linux
+// rendering results remain the same as rendering with no flags, while the macOS
+// rendering result doesn't.
 #if defined(OS_APPLE)
   static const char kOriginalChecksum[] = "0e339d606aafb63077f49e238dc27cb0";
   static const char kNoNativeTextChecksum[] =
@@ -1278,8 +1283,8 @@ TEST_F(FPDFViewEmbedderTest, MAYBE_RenderBug664284WithNoNativeText) {
   static const char kOriginalChecksum[] = "288502887ffc63291f35a0573b944375";
   static const char kNoNativeTextChecksum[] =
       "288502887ffc63291f35a0573b944375";
-#endif
-
+#endif  // defined(OS_APPLE)
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   ASSERT_TRUE(OpenDocument("bug_664284.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
