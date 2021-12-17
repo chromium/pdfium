@@ -9,6 +9,7 @@
 #include <utility>
 
 #include "core/fxcrt/fx_safe_types.h"
+#include "third_party/base/numerics/safe_conversions.h"
 
 CFX_ReadOnlyMemoryStream::CFX_ReadOnlyMemoryStream(
     std::unique_ptr<uint8_t, FxFreeDeleter> data,
@@ -36,7 +37,8 @@ bool CFX_ReadOnlyMemoryStream::ReadBlockAtOffset(void* buffer,
   if (!pos.IsValid() || pos.ValueOrDie() > m_span.size())
     return false;
 
-  auto copy_span = m_span.subspan(offset, size);
+  auto copy_span =
+      m_span.subspan(pdfium::base::checked_cast<size_t>(offset), size);
   memcpy(buffer, copy_span.data(), copy_span.size());
   return true;
 }

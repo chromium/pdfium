@@ -95,8 +95,8 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
   if (!alloc_size_safe.IsValid())
     return false;
 
-  FX_FILESIZE current_buffer_idx = 0;
-  FX_FILESIZE buffer_size = 0;
+  size_t current_buffer_idx = 0;
+  size_t buffer_size = 0;
 
   std::vector<wchar_t, FxAllocAllocator<wchar_t>> buffer;
   buffer.resize(alloc_size_safe.ValueOrDie());
