@@ -99,6 +99,10 @@ source_set("fxcrt") {
     "xml/cfx_xmltext.h",
   ]
   configs += [ "../../:pdfium_strict_config" ]
+  cflags = []
+  if (is_clang) {
+    cflags += [ "-Wshorten-64-to-32" ]
+  }
   visibility = [
     "../*",
     "../../:*",
