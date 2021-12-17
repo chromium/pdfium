@@ -1804,12 +1804,11 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(
         } else {
           SkAutoCanvasRestore scoped_save_restore2(m_pCanvas, /*doSave=*/true);
           SkMatrix adjust;
-          adjust.reset();
+          adjust.preTranslate(positions[index].fX, -positions[index].fY);
           adjust.setScaleX(cp.m_AdjustMatrix[0]);
           adjust.setSkewX(cp.m_AdjustMatrix[1]);
           adjust.setSkewY(cp.m_AdjustMatrix[2]);
           adjust.setScaleY(cp.m_AdjustMatrix[3]);
-          adjust.preTranslate(positions[index].fX, positions[index].fY);
           m_pCanvas->concat(adjust);
           auto blob =
               SkTextBlob::MakeFromText(&glyphs[index], sizeof(glyphs[index]),
