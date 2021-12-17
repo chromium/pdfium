@@ -389,6 +389,14 @@ WideString::WideString(const std::initializer_list<WideStringView>& list) {
 
 WideString::~WideString() = default;
 
+void WideString::clear() {
+  if (m_pData && m_pData->CanOperateInPlace(0)) {
+    m_pData->m_nDataLength = 0;
+    return;
+  }
+  m_pData.Reset();
+}
+
 WideString& WideString::operator=(const wchar_t* str) {
   if (!str || !str[0])
     clear();

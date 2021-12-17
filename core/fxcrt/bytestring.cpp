@@ -189,6 +189,14 @@ ByteString::ByteString(const std::ostringstream& outStream) {
 
 ByteString::~ByteString() = default;
 
+void ByteString::clear() {
+  if (m_pData && m_pData->CanOperateInPlace(0)) {
+    m_pData->m_nDataLength = 0;
+    return;
+  }
+  m_pData.Reset();
+}
+
 ByteString& ByteString::operator=(const char* str) {
   if (!str || !str[0])
     clear();

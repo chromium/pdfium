@@ -107,7 +107,9 @@ class WideString {
     return const_reverse_iterator(begin());
   }
 
-  void clear() { m_pData.Reset(); }
+  // Holds on to buffer if possible for later re-use. Assign WideString()
+  // to force immediate release if desired.
+  void clear();
 
   size_t GetLength() const { return m_pData ? m_pData->m_nDataLength : 0; }
   size_t GetStringLength() const {

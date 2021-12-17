@@ -67,7 +67,9 @@ class ByteString {
 
   ~ByteString();
 
-  void clear() { m_pData.Reset(); }
+  // Holds on to buffer if possible for later re-use. Assign ByteString()
+  // to force immediate release if desired.
+  void clear();
 
   // Explicit conversion to C-style string.
   // Note: Any subsequent modification of |this| will invalidate the result.
