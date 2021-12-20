@@ -334,9 +334,9 @@ CFX_FloatRect CFX_Path::GetBoundingBoxForStrokePath(float line_width,
   CFX_FloatRect rect(100000.0f, 100000.0f, -100000.0f, -100000.0f);
   size_t iPoint = 0;
   float half_width = line_width;
-  int iStartPoint = 0;
-  int iEndPoint = 0;
-  int iMiddlePoint = 0;
+  size_t iStartPoint = 0;
+  size_t iEndPoint = 0;
+  size_t iMiddlePoint = 0;
   bool bJoin;
   while (iPoint < m_Points.size()) {
     if (m_Points[iPoint].IsTypeAndOpen(CFX_Path::Point::Type::kMove)) {
@@ -348,6 +348,10 @@ CFX_FloatRect CFX_Path::GetBoundingBoxForStrokePath(float line_width,
       bJoin = false;
     } else {
       if (m_Points[iPoint].IsTypeAndOpen(CFX_Path::Point::Type::kBezier)) {
+        // Callers are responsible for adding Beziers in sets of 3.
+        CHECK_LT(iPoint + 2, m_Points.size());
+        DCHECK_EQ(m_Points[iPoint + 1].m_Type, CFX_Path::Point::Type::kBezier);
+        DCHECK_EQ(m_Points[iPoint + 2].m_Type, CFX_Path::Point::Type::kBezier);
         rect.UpdateRect(m_Points[iPoint].m_Point);
         rect.UpdateRect(m_Points[iPoint + 1].m_Point);
         iPoint += 2;
@@ -364,10 +368,12 @@ CFX_FloatRect CFX_Path::GetBoundingBoxForStrokePath(float line_width,
         bJoin = true;
       }
     }
-
+    CHECK_LT(iStartPoint, m_Points.size());
+    CHECK_LT(iEndPoint, m_Points.size());
     CFX_PointF start_pos = m_Points[iStartPoint].m_Point;
     CFX_PointF end_pos = m_Points[iEndPoint].m_Point;
     if (bJoin) {
+      CHECK_LT(iMiddlePoint, m_Points.size());
       CFX_PointF mid_pos = m_Points[iMiddlePoint].m_Point;
       UpdateLineJoinPoints(&rect, start_pos, mid_pos, end_pos, half_width,
                            miter_limit);
