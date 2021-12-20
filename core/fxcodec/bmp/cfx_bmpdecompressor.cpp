@@ -34,7 +34,6 @@ static_assert(sizeof(BmpInfoHeader) == kBmpInfoHeaderSize,
               "BmpInfoHeader has wrong size");
 
 constexpr uint16_t kBmpSignature = 0x4D42;
-constexpr int32_t kBmpPalOld = 1;
 constexpr uint8_t kRleMarker = 0;
 constexpr uint8_t kRleEol = 0;
 constexpr uint8_t kRleEoi = 1;
@@ -109,7 +108,7 @@ BmpDecoder::Status CFX_BmpDecompressor::ReadBmpHeader() {
 
   img_ifh_size_ =
       FXSYS_UINT32_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&img_ifh_size_));
-  pal_type_ = 0;
+  pal_type_ = PalType::kNew;
   BmpDecoder::Status status = ReadBmpHeaderIfh();
   if (status != BmpDecoder::Status::kSuccess)
     return status;
@@ -119,7 +118,7 @@ BmpDecoder::Status CFX_BmpDecompressor::ReadBmpHeader() {
 
 BmpDecoder::Status CFX_BmpDecompressor::ReadBmpHeaderIfh() {
   if (img_ifh_size_ == kBmpCoreHeaderSize) {
-    pal_type_ = 1;
+    pal_type_ = PalType::kOld;
     BmpCoreHeader bmp_core_header;
     if (!ReadData(pdfium::as_writable_bytes(
             pdfium::make_span(&bmp_core_header, 1)))) {
@@ -295,7 +294,7 @@ BmpDecoder::Status CFX_BmpDecompressor::ReadBmpPalette() {
     pal_num_ = 1 << bit_counts_;
     if (color_used_ != 0)
       pal_num_ = color_used_;
-    size_t src_pal_size = pal_num_ * (pal_type_ ? 3 : 4);
+    size_t src_pal_size = pal_num_ * PaletteChannelCount();
     std::vector<uint8_t, FxAllocAllocator<uint8_t>> src_pal(src_pal_size);
     uint8_t* src_pal_data = src_pal.data();
     if (!ReadData(src_pal))
@@ -303,7 +302,7 @@ BmpDecoder::Status CFX_BmpDecompressor::ReadBmpPalette() {
 
     palette_.resize(pal_num_);
     int32_t src_pal_index = 0;
-    if (pal_type_ == kBmpPalOld) {
+    if (pal_type_ == PalType::kOld) {
       while (src_pal_index < pal_num_) {
         palette_[src_pal_index++] = BMP_PAL_ENCODE(
             0x00, src_pal_data[2], src_pal_data[1], src_pal_data[0]);
@@ -318,7 +317,7 @@ BmpDecoder::Status CFX_BmpDecompressor::ReadBmpPalette() {
     }
   }
   header_offset_ = std::max(
-      header_offset_, 14 + img_ifh_size_ + pal_num_ * (pal_type_ ? 3 : 4));
+      header_offset_, 14 + img_ifh_size_ + pal_num_ * PaletteChannelCount());
   SaveDecodingStatus(DecodeStatus::kDataPre);
   return BmpDecoder::Status::kSuccess;
 }

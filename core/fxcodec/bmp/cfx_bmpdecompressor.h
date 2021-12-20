@@ -50,6 +50,8 @@ class CFX_BmpDecompressor {
     kTail,
   };
 
+  enum class PalType : bool { kNew, kOld };
+
   BmpDecoder::Status ReadBmpHeader();
   BmpDecoder::Status ReadBmpHeaderIfh();
   BmpDecoder::Status ReadBmpHeaderDimensions();
@@ -65,6 +67,7 @@ class CFX_BmpDecompressor {
   bool ValidateColorIndex(uint8_t val) const;
   bool ValidateFlag() const;
   bool SetHeight(int32_t signed_height);
+  int PaletteChannelCount() const { return pal_type_ == PalType::kNew ? 4 : 3; }
 
   UnownedPtr<const CFX_BmpContext> const context_;
   std::vector<uint8_t, FxAllocAllocator<uint8_t>> out_row_buffer_;
@@ -80,7 +83,7 @@ class CFX_BmpDecompressor {
   uint16_t bit_counts_ = 0;
   uint32_t color_used_ = 0;
   int32_t pal_num_ = 0;
-  int32_t pal_type_ = 0;
+  PalType pal_type_ = PalType::kNew;
   uint32_t data_size_ = 0;
   uint32_t img_ifh_size_ = 0;
   uint32_t row_num_ = 0;
