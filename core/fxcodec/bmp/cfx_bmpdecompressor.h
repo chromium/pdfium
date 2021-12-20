@@ -14,6 +14,7 @@
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "third_party/base/span.h"
 
 class CFX_CodecMemory;
 
@@ -59,7 +60,7 @@ class CFX_BmpDecompressor {
   BmpDecoder::Status DecodeRGB();
   BmpDecoder::Status DecodeRLE8();
   BmpDecoder::Status DecodeRLE4();
-  bool ReadData(uint8_t* destination, uint32_t size);
+  bool ReadData(pdfium::span<uint8_t> buf);
   void SaveDecodingStatus(DecodeStatus status);
   bool ValidateColorIndex(uint8_t val) const;
   bool ValidateFlag() const;
