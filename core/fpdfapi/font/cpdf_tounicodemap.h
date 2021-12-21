@@ -8,9 +8,11 @@
 #define CORE_FPDFAPI_FONT_CPDF_TOUNICODEMAP_H_
 
 #include <map>
+#include <vector>
 
-#include "core/fxcrt/cfx_widetextbuf.h"
+#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "third_party/abseil-cpp/absl/types/optional.h"
 
 class CPDF_CID2UnicodeMap;
 class CPDF_SimpleParser;
@@ -34,12 +36,12 @@ class CPDF_ToUnicodeMap {
   void Load(const CPDF_Stream* pStream);
   void HandleBeginBFChar(CPDF_SimpleParser* pParser);
   void HandleBeginBFRange(CPDF_SimpleParser* pParser);
-  uint32_t GetUnicode() const;
+  uint32_t GetMultiCharIndexIndicator() const;
   void SetCode(uint32_t srccode, WideString destcode);
 
   std::multimap<uint32_t, uint32_t> m_Multimap;
   UnownedPtr<const CPDF_CID2UnicodeMap> m_pBaseMap;
-  CFX_WideTextBuf m_MultiCharBuf;
+  std::vector<WideString> m_MultiCharVec;
 };
 
 #endif  // CORE_FPDFAPI_FONT_CPDF_TOUNICODEMAP_H_

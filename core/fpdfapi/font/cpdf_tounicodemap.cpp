@@ -54,13 +54,10 @@ WideString CPDF_ToUnicodeMap::Lookup(uint32_t charcode) const {
   uint32_t value = it->second;
   wchar_t unicode = static_cast<wchar_t>(value & 0xffff);
   if (unicode != 0xffff)
-    return unicode;
+    return WideString(unicode);
 
-  WideStringView buf = m_MultiCharBuf.AsStringView();
   size_t index = value >> 16;
-  if (!buf.IsValidIndex(index))
-    return WideString();
-  return WideString(buf.Substr(index + 1, buf[index]));
+  return index < m_MultiCharVec.size() ? m_MultiCharVec[index] : WideString();
 }
 
 uint32_t CPDF_ToUnicodeMap::ReverseLookup(wchar_t unicode) const {
@@ -195,17 +192,16 @@ void CPDF_ToUnicodeMap::HandleBeginBFRange(CPDF_SimpleParser* pParser) {
       for (uint32_t code = lowcode; code <= highcode; code++) {
         WideString retcode =
             code == lowcode ? destcode : StringDataAdd(destcode);
-        m_Multimap.emplace(code, GetUnicode());
-        m_MultiCharBuf.AppendChar(retcode.GetLength());
-        m_MultiCharBuf << retcode;
+        m_Multimap.emplace(code, GetMultiCharIndexIndicator());
+        m_MultiCharVec.push_back(retcode);
         destcode = std::move(retcode);
       }
     }
   }
 }
 
-uint32_t CPDF_ToUnicodeMap::GetUnicode() const {
-  FX_SAFE_UINT32 uni = m_MultiCharBuf.GetLength();
+uint32_t CPDF_ToUnicodeMap::GetMultiCharIndexIndicator() const {
+  FX_SAFE_UINT32 uni = m_MultiCharVec.size();
   uni = uni * 0x10000 + 0xffff;
   return uni.ValueOrDefault(0);
 }
@@ -218,8 +214,7 @@ void CPDF_ToUnicodeMap::SetCode(uint32_t srccode, WideString destcode) {
   if (len == 1) {
     m_Multimap.emplace(srccode, destcode[0]);
   } else {
-    m_Multimap.emplace(srccode, GetUnicode());
-    m_MultiCharBuf.AppendChar(len);
-    m_MultiCharBuf << destcode;
+    m_Multimap.emplace(srccode, GetMultiCharIndexIndicator());
+    m_MultiCharVec.push_back(destcode);
   }
 }
