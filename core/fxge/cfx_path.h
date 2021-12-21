@@ -42,12 +42,11 @@ class CFX_Path {
 
   void Clear();
 
-  Point::Type GetType(int index) const { return m_Points[index].m_Type; }
-  bool IsClosingFigure(int index) const {
+  Point::Type GetType(size_t index) const { return m_Points[index].m_Type; }
+  bool IsClosingFigure(size_t index) const {
     return m_Points[index].m_CloseFigure;
   }
-
-  CFX_PointF GetPoint(int index) const { return m_Points[index].m_Point; }
+  CFX_PointF GetPoint(size_t index) const { return m_Points[index].m_Point; }
   const std::vector<Point>& GetPoints() const { return m_Points; }
   std::vector<Point>& GetPoints() { return m_Points; }
 
