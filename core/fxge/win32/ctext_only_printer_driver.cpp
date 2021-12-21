@@ -176,7 +176,7 @@ bool CTextOnlyPrinterDriver::DrawDeviceText(
     size_t send_len = std::min<size_t>(text_span.size(), 1024);
     *(reinterpret_cast<uint16_t*>(buffer)) = static_cast<uint16_t>(send_len);
     memcpy(buffer + 2, text_span.data(), send_len);
-    ::GdiComment(m_hDC, send_len + 2, buffer);
+    ::GdiComment(m_hDC, static_cast<UINT>(send_len + 2), buffer);
     text_span = text_span.subspan(send_len);
   }
   return true;

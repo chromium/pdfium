@@ -7,11 +7,13 @@
 #include "core/fxge/win32/cwin32_platform.h"
 
 #include <memory>
+#include <utility>
 
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_folderfontinfo.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "third_party/base/cxx17_backports.h"
+#include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/win/win_util.h"
 
@@ -399,7 +401,9 @@ uint32_t CFX_Win32FontInfo::GetFontData(void* hFont,
                                         pdfium::span<uint8_t> buffer) {
   HFONT hOldFont = (HFONT)::SelectObject(m_hDC, (HFONT)hFont);
   table = FXSYS_UINT32_GET_MSBFIRST(reinterpret_cast<uint8_t*>(&table));
-  uint32_t size = ::GetFontData(m_hDC, table, 0, buffer.data(), buffer.size());
+  uint32_t size =
+      ::GetFontData(m_hDC, table, 0, buffer.data(),
+                    pdfium::base::checked_cast<DWORD>(buffer.size()));
   ::SelectObject(m_hDC, hOldFont);
   if (size == GDI_ERROR) {
     return 0;

@@ -22,6 +22,7 @@
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/notreached.h"
+#include "third_party/base/numerics/safe_conversions.h"
 
 #if !defined(_SKIA_SUPPORT_)
 #include "core/fxge/agg/fx_agg_driver.h"
@@ -98,9 +99,10 @@ HPEN CreateExtPen(const CFX_GraphStateData* pGraphState,
       dashes[i] = std::max(dashes[i], 1U);
     }
   }
-  return ExtCreatePen(PenStyle, (DWORD)ceil(width), &lb,
-                      pGraphState->m_DashArray.size(),
-                      reinterpret_cast<const DWORD*>(dashes.data()));
+  return ExtCreatePen(
+      PenStyle, (DWORD)ceil(width), &lb,
+      pdfium::base::checked_cast<DWORD>(pGraphState->m_DashArray.size()),
+      reinterpret_cast<const DWORD*>(dashes.data()));
 }
 
 HBRUSH CreateBrush(uint32_t argb) {

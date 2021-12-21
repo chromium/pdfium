@@ -433,7 +433,8 @@ class GpStream final : public IStream {
     if (m_ReadPos >= m_InterStream.tellp())
       return HRESULT_FROM_WIN32(ERROR_END_OF_MEDIA);
 
-    size_t bytes_left = m_InterStream.tellp() - m_ReadPos;
+    size_t bytes_left = pdfium::base::checked_cast<size_t>(
+        std::streamoff(m_InterStream.tellp()) - m_ReadPos);
     size_t bytes_out =
         std::min(pdfium::base::checked_cast<size_t>(cb), bytes_left);
     memcpy(output, m_InterStream.str().c_str() + m_ReadPos, bytes_out);
@@ -624,9 +625,9 @@ bool CGdiplusExt::DrawPath(HDC hDC,
   std::vector<BYTE> gp_types(points.size());
   int nSubPathes = 0;
   bool bSubClose = false;
-  int pos_subclose = 0;
   bool bSmooth = false;
-  int startpoint = 0;
+  size_t pos_subclose = 0;
+  size_t startpoint = 0;
   for (size_t i = 0; i < points.size(); ++i) {
     gp_points[i].X = points[i].m_Point.x;
     gp_points[i].Y = points[i].m_Point.y;
@@ -714,7 +715,8 @@ bool CGdiplusExt::DrawPath(HDC hDC,
   Gdiplus::GpPath* pGpPath = nullptr;
   const Gdiplus::GpFillMode gp_fill_mode =
       FillType2Gdip(fill_options.fill_type);
-  CallFunc(GdipCreatePath2)(gp_points.data(), gp_types.data(), points.size(),
+  CallFunc(GdipCreatePath2)(gp_points.data(), gp_types.data(),
+                            pdfium::base::checked_cast<int>(points.size()),
                             gp_fill_mode, &pGpPath);
   if (!pGpPath) {
     if (pMatrix)
@@ -736,13 +738,15 @@ bool CGdiplusExt::DrawPath(HDC hDC,
     if (nSubPathes == 1) {
       CallFunc(GdipDrawPath)(pGraphics, pPen, pGpPath);
     } else {
-      int iStart = 0;
+      size_t iStart = 0;
       for (size_t i = 0; i < points.size(); ++i) {
         if (i == points.size() - 1 ||
             gp_types[i + 1] == Gdiplus::PathPointTypeStart) {
           Gdiplus::GpPath* pSubPath;
-          CallFunc(GdipCreatePath2)(&gp_points[iStart], &gp_types[iStart],
-                                    i - iStart + 1, gp_fill_mode, &pSubPath);
+          CallFunc(GdipCreatePath2)(
+              &gp_points[iStart], &gp_types[iStart],
+              pdfium::base::checked_cast<int>(i - iStart + 1), gp_fill_mode,
+              &pSubPath);
           iStart = i + 1;
           CallFunc(GdipDrawPath)(pGraphics, pPen, pSubPath);
           CallFunc(GdipDeletePath)(pSubPath);
