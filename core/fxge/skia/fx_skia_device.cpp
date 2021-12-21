@@ -39,6 +39,7 @@
 #include "third_party/base/check_op.h"
 #include "third_party/base/cxx17_backports.h"
 #include "third_party/base/notreached.h"
+#include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/span.h"
 #include "third_party/skia/include/core/SkBitmap.h"
@@ -490,8 +491,8 @@ bool AddStitching(const CPDF_StitchFunc* pFunc,
   float boundsStart = pFunc->GetDomain(0);
 
   const auto& subFunctions = pFunc->GetSubFunctions();
-  int subFunctionCount = subFunctions.size();
-  for (int i = 0; i < subFunctionCount; ++i) {
+  size_t subFunctionCount = subFunctions.size();
+  for (size_t i = 0; i < subFunctionCount; ++i) {
     const CPDF_ExpIntFunc* pSubFunc = subFunctions[i]->ToExpIntFunc();
     if (!pSubFunc)
       return false;
@@ -1620,7 +1621,8 @@ void CFX_SkiaDeviceDriver::PaintStroke(SkPaint* spaint,
       intervals[i * 2 + 1] = off;
     }
     spaint->setPathEffect(SkDashPathEffect::Make(
-        intervals.data(), intervals.size(), pGraphState->m_DashPhase));
+        intervals.data(), pdfium::base::checked_cast<int>(intervals.size()),
+        pGraphState->m_DashPhase));
   }
   spaint->setStyle(SkPaint::kStroke_Style);
   spaint->setAntiAlias(!m_FillOptions.aliased_path);
@@ -2176,7 +2178,7 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
   }
   const std::vector<std::unique_ptr<CPDF_Function>>& pFuncs =
       pPattern->GetFuncs();
-  int nFuncs = pFuncs.size();
+  size_t nFuncs = pFuncs.size();
   if (nFuncs > 1)  // TODO(caryclark) remove this restriction
     return false;
   const CPDF_Dictionary* pDict = pPattern->GetShadingObject()->GetDict();
@@ -2187,7 +2189,7 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
   // yet.)
   SkTDArray<SkColor> skColors;
   SkTDArray<SkScalar> skPos;
-  for (int j = 0; j < nFuncs; j++) {
+  for (size_t j = 0; j < nFuncs; j++) {
     if (!pFuncs[j])
       continue;
 
