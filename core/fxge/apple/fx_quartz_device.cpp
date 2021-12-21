@@ -46,9 +46,9 @@ void CQuartz2D::DestroyGraphics(void* graphics) {
     CGContextRelease((CGContextRef)graphics);
 }
 
-void* CQuartz2D::CreateFont(const uint8_t* pFontData, uint32_t dwFontSize) {
+void* CQuartz2D::CreateFont(pdfium::span<const uint8_t> pFontData) {
   CGDataProviderRef pDataProvider = CGDataProviderCreateWithData(
-      nullptr, pFontData, static_cast<size_t>(dwFontSize), nullptr);
+      nullptr, pFontData.data(), pFontData.size(), nullptr);
   if (!pDataProvider)
     return nullptr;
 

@@ -54,8 +54,7 @@ bool CGDrawGlyphRun(CGContextRef pContext,
     if (pFont->GetPsName() == "DFHeiStd-W5")
       return false;
 
-    pdfium::span<const uint8_t> span = pFont->GetFontSpan();
-    pFont->SetPlatformFont(quartz2d.CreateFont(span.data(), span.size()));
+    pFont->SetPlatformFont(quartz2d.CreateFont(pFont->GetFontSpan()));
     if (!pFont->GetPlatformFont())
       return false;
   }

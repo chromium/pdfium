@@ -154,7 +154,7 @@ CApplePlatform::CreateDefaultSystemFontInfo() {
 
 void* CApplePlatform::CreatePlatformFont(
     pdfium::span<const uint8_t> font_span) {
-  return m_quartz2d.CreateFont(font_span.data(), font_span.size());
+  return m_quartz2d.CreateFont(font_span);
 }
 
 // static
