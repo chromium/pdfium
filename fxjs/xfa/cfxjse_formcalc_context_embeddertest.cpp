@@ -68,16 +68,16 @@ class CFXJSE_FormCalcContextEmbedderTest : public XFAJSEmbedderTest {
         << "Program: " << input;
   }
 
-  void ExecuteExpectFloatNear(ByteStringView input,
-                              float expected,
-                              float precision) {
+  void ExecuteExpectFloatNear(ByteStringView input, float expected) {
+    constexpr float kPrecision = 0.000001f;
+
     EXPECT_TRUE(Execute(input)) << "Program: " << input;
 
     CFXJSE_ScopeUtil_IsolateHandleContext scope(GetJseContext());
     v8::Local<v8::Value> value = GetValue();
     EXPECT_TRUE(fxv8::IsNumber(value));
     EXPECT_NEAR(expected, fxv8::ReentrantToFloatHelper(isolate(), value),
-                precision)
+                kPrecision)
         << "Program: " << input;
   }
 
@@ -121,189 +121,141 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, TranslateNumber) {
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Numeric) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    int result;
-  } tests[] = {{"123 + 456", 579},
-               {"2 - 3 * 10 / 2 + 7", -6},
-               {"10 * 3 + 5 * 4", 50},
-               {"(5 - \"abc\") * 3", 15},
-               {"\"100\" / 10e1", 1},
-               {"5 + null + 3", 8},
-               // {"if (\"abc\") then\n"
-               //  "  10\n"
-               //  "else\n"
-               //  "  20\n"
-               //  "endif",
-               //  20},
-               // {"3 / 0 + 1", 0},
-               {"-(17)", -17},
-               {"-(-17)", 17},
-               {"+(17)", 17},
-               {"+(-17)", -17},
-               {"if (1 < 2) then\n1\nendif", 1},
-               {"if (\"abc\" > \"def\") then\n"
-                "  1 and 0\n"
-                "else\n"
-                "  0\n"
-                "endif",
-                0}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectInt32(tests[i].program, tests[i].result);
+  ExecuteExpectInt32("123 + 456", 579);
+  ExecuteExpectInt32("2 - 3 * 10 / 2 + 7", -6);
+  ExecuteExpectInt32("10 * 3 + 5 * 4", 50);
+  ExecuteExpectInt32("(5 - \"abc\") * 3", 15);
+  ExecuteExpectInt32("\"100\" / 10e1", 1);
+  ExecuteExpectInt32("5 + null + 3", 8);
+#if 0
+  // TODO(thestig): Investigate these cases.
+  ExecuteExpectInt32(
+      "if (\"abc\") then\n"
+      "  10\n"
+      "else\n"
+      "  20\n"
+      "endif",
+      20);
+  ExecuteExpectInt32("3 / 0 + 1", 0);
+#endif
+  ExecuteExpectInt32("-(17)", -17);
+  ExecuteExpectInt32("-(-17)", 17);
+  ExecuteExpectInt32("+(17)", 17);
+  ExecuteExpectInt32("+(-17)", -17);
+  ExecuteExpectInt32("if (1 < 2) then\n1\nendif", 1);
+  ExecuteExpectInt32(
+      "if (\"abc\" > \"def\") then\n"
+      "  1 and 0\n"
+      "else\n"
+      "  0\n"
+      "endif",
+      0);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Strings) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    const char* result;
-  } tests[] = {
-      {"\"abc\"", "abc"},
-      {"concat(\"The total is \", 2, \" dollars and \", 57, \" cents.\")",
-       "The total is 2 dollars and 57 cents."}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectString(tests[i].program, tests[i].result);
+  ExecuteExpectString("\"abc\"", "abc");
+  ExecuteExpectString(
+      "concat(\"The total is \", 2, \" dollars and \", 57, \" cents.\")",
+      "The total is 2 dollars and 57 cents.");
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Booleans) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    bool result;
-  } tests[] = {{"0 and 1 or 2 > 1", true},
-               {"2 < 3 not 1 == 1", false},
-               {"\"abc\" | 2", true},
-               {"1 or 0", true},
-               {"0 | 0", false},
-               {"0 or 1 | 0 or 0", true},
-               {"1 and 0", false},
-               // {"0 & 0", true},  // TODO(dsinclair) Confirm with Reader.
-               {"0 and 1 & 0 and 0", false},
-               {"not(\"true\")", true},
-               {"not(1)", false},
-               {"3 == 3", true},
-               {"3 <> 4", true},
-               {"\"abc\" eq \"def\"", false},
-               {"\"def\" ne \"abc\"", true},
-               {"5 + 5 == 10", true},
-               {"5 + 5 <> \"10\"", false},
-               {"3 < 3", false},
-               {"3 > 4", false},
-               {"\"abc\" <= \"def\"", true},
-               {"\"def\" > \"abc\"", true},
-               {"12 >= 12", true},
-               {"\"true\" < \"false\"", false}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectBool(tests[i].program, tests[i].result);
+  ExecuteExpectBool("0 and 1 or 2 > 1", true);
+  ExecuteExpectBool("2 < 3 not 1 == 1", false);
+  ExecuteExpectBool("\"abc\" | 2", true);
+  ExecuteExpectBool("1 or 0", true);
+  ExecuteExpectBool("0 | 0", false);
+  ExecuteExpectBool("0 or 1 | 0 or 0", true);
+  ExecuteExpectBool("1 and 0", false);
+  ExecuteExpectBool("0 and 1 & 0 and 0", false);
+  ExecuteExpectBool("not(\"true\")", true);
+  ExecuteExpectBool("not(1)", false);
+  ExecuteExpectBool("3 == 3", true);
+  ExecuteExpectBool("3 <> 4", true);
+  ExecuteExpectBool("\"abc\" eq \"def\"", false);
+  ExecuteExpectBool("\"def\" ne \"abc\"", true);
+  ExecuteExpectBool("5 + 5 == 10", true);
+  ExecuteExpectBool("5 + 5 <> \"10\"", false);
+  ExecuteExpectBool("3 < 3", false);
+  ExecuteExpectBool("3 > 4", false);
+  ExecuteExpectBool("\"abc\" <= \"def\"", true);
+  ExecuteExpectBool("\"def\" > \"abc\"", true);
+  ExecuteExpectBool("12 >= 12", true);
+  ExecuteExpectBool("\"true\" < \"false\"", false);
+#if 0
+  // TODO(thestig): Investigate this case.
+  // Confirm with Reader.
+  ExecuteExpectBool("0 & 0", true);
+#endif
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Abs) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    float result;
-  } tests[] = {{"Abs(1.03)", 1.03f}, {"Abs(-1.03)", 1.03f}, {"Abs(0)", 0.0f}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectFloat(tests[i].program, tests[i].result);
+  ExecuteExpectFloat("Abs(1.03)", 1.03f);
+  ExecuteExpectFloat("Abs(-1.03)", 1.03f);
+  ExecuteExpectFloat("Abs(0)", 0.0f);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Avg) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    float result;
-  } tests[] = {{"Avg(0, 32, 16)", 16.0f}, {"Avg(2.5, 17, null)", 9.75f}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectFloat(tests[i].program, tests[i].result);
+  ExecuteExpectFloat("Avg(0, 32, 16)", 16.0f);
+  ExecuteExpectFloat("Avg(2.5, 17, null)", 9.75f);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Ceil) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    int result;
-  } tests[] = {{"Ceil(2.5875)", 3}, {"Ceil(-5.9)", -5}, {"Ceil(\"abc\")", 0}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectInt32(tests[i].program, tests[i].result);
+  ExecuteExpectInt32("Ceil(2.5875)", 3);
+  ExecuteExpectInt32("Ceil(-5.9)", -5);
+  ExecuteExpectInt32("Ceil(\"abc\")", 0);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Count) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    int result;
-  } tests[] = {{"Count(\"Tony\", \"Blue\", 41)", 3}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectInt32(tests[i].program, tests[i].result);
+  ExecuteExpectInt32("Count(\"Tony\", \"Blue\", 41)", 3);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Floor) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    int result;
-  } tests[] = {{"Floor(21.3409873)", 21},
-               {"Floor(5.999965342)", 5},
-               {"Floor(3.2 * 15)", 48}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectInt32(tests[i].program, tests[i].result);
+  ExecuteExpectInt32("Floor(21.3409873)", 21);
+  ExecuteExpectInt32("Floor(5.999965342)", 5);
+  ExecuteExpectInt32("Floor(3.2 * 15)", 48);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Max) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    int result;
-  } tests[] = {{"Max(234, 15, 107)", 234},
-               {"Max(\"abc\", 15, \"Tony Blue\")", 15},
-               {"Max(\"abc\")", 0}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectInt32(tests[i].program, tests[i].result);
+  ExecuteExpectInt32("Max(234, 15, 107)", 234);
+  ExecuteExpectInt32("Max(\"abc\", 15, \"Tony Blue\")", 15);
+  ExecuteExpectInt32("Max(\"abc\")", 0);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Min) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    int result;
-  } tests[] = {{"Min(234, 15, 107)", 15},
-               // TODO(dsinclair): Verify with Reader; I believe this should
-               // have a return of 0.
-               // {"Min(\"abc\", 15, \"Tony Blue\")", 15},
-               {"Min(\"abc\")", 0}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectInt32(tests[i].program, tests[i].result);
+  ExecuteExpectInt32("Min(234, 15, 107)", 15);
+#if 0
+  // TODO(thestig): Investigate these cases.
+  // Verify with Reader; This should have a return value of 0.
+  ExecuteExpectInt32("Min(\"abc\", 15, \"Tony Blue\")", 15);
+#endif
+  ExecuteExpectInt32("Min(\"abc\")", 0);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Mod) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    int result;
-  } tests[] = {{"Mod(64, -3)", 1}, {"Mod(-13, 3)", -1}, {"Mod(\"abc\", 2)", 0}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectInt32(tests[i].program, tests[i].result);
+  ExecuteExpectInt32("Mod(64, -3)", 1);
+  ExecuteExpectInt32("Mod(-13, 3)", -1);
+  ExecuteExpectInt32("Mod(\"abc\", 2)", 0);
 
   ExecuteExpectNaN("Mod(10, NaN)");
   ExecuteExpectNaN("Mod(10, Infinity)");
@@ -312,30 +264,18 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Mod) {
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Round) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    float result;
-  } tests[] = {{"Round(12.389764537, 4)", 12.3898f},
-               {"Round(20/3, 2)", 6.67f},
-               {"Round(8.9897, \"abc\")", 9.0f},
-               {"Round(FV(400, 0.10/12, 30*12), 2)", 904195.17f}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectFloat(tests[i].program, tests[i].result);
+  ExecuteExpectFloat("Round(12.389764537, 4)", 12.3898f);
+  ExecuteExpectFloat("Round(20/3, 2)", 6.67f);
+  ExecuteExpectFloat("Round(8.9897, \"abc\")", 9.0f);
+  ExecuteExpectFloat("Round(FV(400, 0.10/12, 30*12), 2)", 904195.17f);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Sum) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    int result;
-  } tests[] = {{"Sum(2, 4, 6, 8)", 20},
-               {"Sum(-2, 4, -6, 8)", 4},
-               {"Sum(4, 16, \"abc\", 19)", 39}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectInt32(tests[i].program, tests[i].result);
+  ExecuteExpectInt32("Sum(2, 4, 6, 8)", 20);
+  ExecuteExpectInt32("Sum(-2, 4, -6, 8)", 4);
+  ExecuteExpectInt32("Sum(4, 16, \"abc\", 19)", 39);
 }
 
 // TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Date) {
@@ -355,143 +295,100 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Sum) {
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Date2Num) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    int result;
-  } tests[] = {
-      // {"Date2Num(\"Mar 15, 1996\")", 35138},
-      {"Date2Num(\"1/1/1900\", \"D/M/YYYY\")", 1},
-      {"Date2Num(\"03/15/96\", \"MM/DD/YY\")", 35138},
-      // {"Date2Num(\"Aug 1, 1996\", \"MMM D, YYYY\")", 35277},
-      {"Date2Num(\"96-08-20\", \"YY-MM-DD\", \"fr_FR\")", 35296},
-      {"Date2Num(\"1/3/00\", \"D/M/YY\") - Date2Num(\"1/2/00\", \"D/M/YY\")",
-       29}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectInt32(tests[i].program, tests[i].result);
+  ExecuteExpectInt32("Date2Num(\"1/1/1900\", \"D/M/YYYY\")", 1);
+  ExecuteExpectInt32("Date2Num(\"03/15/96\", \"MM/DD/YY\")", 35138);
+  ExecuteExpectInt32("Date2Num(\"96-08-20\", \"YY-MM-DD\", \"fr_FR\")", 35296);
+  ExecuteExpectInt32(
+      "Date2Num(\"1/3/00\", \"D/M/YY\") - Date2Num(\"1/2/00\", \"D/M/YY\")",
+      29);
+#if 0
+  // TODO(thestig): Investigate these cases.
+  ExecuteExpectInt32("Date2Num(\"Mar 15, 1996\")", 35138);
+  ExecuteExpectInt32("Date2Num(\"Aug 1, 1996\", \"MMM D, YYYY\")", 35277);
+#endif
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, DateFmt) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    const char* result;
-  } tests[] = {
-      // {"DateFmt(1)", "M/D/YY"},
-      // {"DateFmt(2, \"fr_CA\")", "YY-MM-DD"},
-      {"DateFmt(3, \"de_DE\")", "D. MMMM YYYY"},
-      // {"DateFmt(4, \"fr_FR\")", "EEE D' MMMM YYYY"}
-  };
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectString(tests[i].program, tests[i].result);
+  ExecuteExpectString("DateFmt(3, \"de_DE\")", "D. MMMM YYYY");
+#if 0
+  // TODO(thestig): Investigate these cases.
+  ExecuteExpectString("DateFmt(1)", "M/D/YY");
+  ExecuteExpectString("DateFmt(2, \"fr_CA\")", "YY-MM-DD");
+  ExecuteExpectString("DateFmt(4, \"fr_FR\")", "EEE D' MMMM YYYY");
+#endif
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, IsoDate2Num) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    int result;
-  } tests[] = {{"IsoDate2Num(\"1900\")", 1},
-               {"IsoDate2Num(\"1900-01\")", 1},
-               {"IsoDate2Num(\"1900-01-01\")", 1},
-               {"IsoDate2Num(\"19960315T20:20:20\")", 35138},
-               {"IsoDate2Num(\"2000-03-01\") - IsoDate2Num(\"20000201\")", 29}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectInt32(tests[i].program, tests[i].result);
+  ExecuteExpectInt32("IsoDate2Num(\"1900\")", 1);
+  ExecuteExpectInt32("IsoDate2Num(\"1900-01\")", 1);
+  ExecuteExpectInt32("IsoDate2Num(\"1900-01-01\")", 1);
+  ExecuteExpectInt32("IsoDate2Num(\"19960315T20:20:20\")", 35138);
+  ExecuteExpectInt32("IsoDate2Num(\"2000-03-01\") - IsoDate2Num(\"20000201\")",
+                     29);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_IsoTime2Num) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    int result;
-  } tests[] = {{"IsoTime2Num(\"00:00:00Z\")", 1}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectInt32(tests[i].program, tests[i].result);
+  ExecuteExpectInt32("IsoTime2Num(\"00:00:00Z\")", 1);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, LocalDateFmt) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    const char* result;
-  } tests[] = {// {"LocalDateFmt(1, \"de_DE\")", "tt.MM.uu"},
-               // {"LocalDateFmt(2, \"fr_CA\")", "aa-MM-jj"},
-               {"LocalDateFmt(3, \"de_CH\")", "t. MMMM jjjj"},
-               {"LocalDateFmt(4, \"fr_FR\")", "EEEE j MMMM aaaa"}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectString(tests[i].program, tests[i].result);
+  ExecuteExpectString("LocalDateFmt(3, \"de_CH\")", "t. MMMM jjjj");
+  ExecuteExpectString("LocalDateFmt(4, \"fr_FR\")", "EEEE j MMMM aaaa");
+#if 0
+  // TODO(thestig): Investigate these cases.
+  ExecuteExpectString("LocalDateFmt(1, \"de_DE\")", "tt.MM.uu");
+  ExecuteExpectString("LocalDateFmt(2, \"fr_CA\")", "aa-MM-jj");
+#endif
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_LocalTimeFmt) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    const char* result;
-  } tests[] = {{"LocalTimeFmt(1, \"de_DE\")", "HH:mm"},
-               {"LocalTimeFmt(2, \"fr_CA\")", "HH:mm::ss"},
-               {"LocalTimeFmt(3, \"de_CH\")", "HH:mm:ss z"},
-               {"LocalTimeFmt(4, \"fr_FR\")", "HH' h 'mm z"}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectString(tests[i].program, tests[i].result);
+  ExecuteExpectString("LocalTimeFmt(1, \"de_DE\")", "HH:mm");
+  ExecuteExpectString("LocalTimeFmt(2, \"fr_CA\")", "HH:mm::ss");
+  ExecuteExpectString("LocalTimeFmt(3, \"de_CH\")", "HH:mm:ss z");
+  ExecuteExpectString("LocalTimeFmt(4, \"fr_FR\")", "HH' h 'mm z");
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Num2Date) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    const char* result;
-  } tests[] = {
-      {"Num2Date(1, \"DD/MM/YYYY\")", "01/01/1900"},
-      {"Num2Date(35139, \"DD-MMM-YYYY\", \"de_DE\")", "16-Mrz-1996"},
-      // {"Num2Date(Date2Num(\"Mar 15, 2000\") - Date2Num(\"98-03-15\", "
-      //  "\"YY-MM-DD\", \"fr_CA\"))",
-      //  "Jan 1, 1902"}
-  };
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectString(tests[i].program, tests[i].result);
+  ExecuteExpectString("Num2Date(1, \"DD/MM/YYYY\")", "01/01/1900");
+  ExecuteExpectString("Num2Date(35139, \"DD-MMM-YYYY\", \"de_DE\")",
+                      "16-Mrz-1996");
+#if 0
+  // TODO(thestig): Investigate this case.
+  ExecuteExpectString(
+      "Num2Date(Date2Num(\"Mar 15, 2000\") - Date2Num(\"98-03-15\", "
+      "\"YY-MM-DD\", \"fr_CA\"))",
+      "Jan 1, 1902");
+#endif
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Num2GMTime) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    const char* result;
-  } tests[] = {// Broken on Windows only.
-               {"Num2GMTime(1, \"HH:MM:SS\")", "00:00:00"},
-               // Below broken on other platforms.
-               {"Num2GMTime(65593001, \"HH:MM:SS Z\")", "18:13:13 GMT"},
-               {"Num2GMTime(43993001, TimeFmt(4, \"de_DE\"), \"de_DE\")",
-                "12.13 Uhr GMT"}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectString(tests[i].program, tests[i].result);
+  // Broken on Windows only.
+  ExecuteExpectString("Num2GMTime(1, \"HH:MM:SS\")", "00:00:00");
+  // Below broken on other platforms.
+  ExecuteExpectString("Num2GMTime(65593001, \"HH:MM:SS Z\")", "18:13:13 GMT");
+  ExecuteExpectString("Num2GMTime(43993001, TimeFmt(4, \"de_DE\"), \"de_DE\")",
+                      "12.13 Uhr GMT");
 }
 
 // TODO(dsinclair): Broken on Mac ...
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Num2Time) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    const char* result;
-  } tests[] = {{"Num2Time(1, \"HH:MM:SS\")", "00:00:00"}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectString(tests[i].program, tests[i].result);
+  ExecuteExpectString("Num2Time(1, \"HH:MM:SS\")", "00:00:00");
 }
 
 // TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Time) {
@@ -511,21 +408,15 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Num2Time) {
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Time2Num) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    int result;
-  } tests[] = {
-      {"Time2Num(\"00:00:00 GMT\", \"HH:MM:SS Z\")", 1},
-      {"Time2Num(\"00:00:01 GMT\", \"HH:MM:SS Z\")", 1001},
-      {"Time2Num(\"00:01:00 GMT\", \"HH:MM:SS Z\")", 60001},
-      {"Time2Num(\"01:00:00 GMT\", \"HH:MM:SS Z\")", 3600001},
-      {"Time2Num(\"23:59:59 GMT\", \"HH:MM:SS Z\")", 86399001},
-      {"Time2Num(\"\", \"\", 1)", 0},  // https://crbug.com/pdfium/1257
-      {"Time2Num(\"13:13:13 GMT\", \"HH:MM:SS Z\", \"fr_FR\")", 47593001},
-  };
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectInt32(tests[i].program, tests[i].result);
+  ExecuteExpectInt32("Time2Num(\"00:00:00 GMT\", \"HH:MM:SS Z\")", 1);
+  ExecuteExpectInt32("Time2Num(\"00:00:01 GMT\", \"HH:MM:SS Z\")", 1001);
+  ExecuteExpectInt32("Time2Num(\"00:01:00 GMT\", \"HH:MM:SS Z\")", 60001);
+  ExecuteExpectInt32("Time2Num(\"01:00:00 GMT\", \"HH:MM:SS Z\")", 3600001);
+  ExecuteExpectInt32("Time2Num(\"23:59:59 GMT\", \"HH:MM:SS Z\")", 86399001);
+  // https://crbug.com/pdfium/1257
+  ExecuteExpectInt32("Time2Num(\"\", \"\", 1)", 0);
+  ExecuteExpectInt32("Time2Num(\"13:13:13 GMT\", \"HH:MM:SS Z\", \"fr_FR\")",
+                     47593001);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Time2NumWithTZ) {
@@ -554,174 +445,115 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Time2NumWithTZ) {
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, TimeFmt) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    const char* result;
-  } tests[] = {
-      // {"TimeFmt(1)", "h::MM A"},
-      {"TimeFmt(2, \"fr_CA\")", "HH:MM:SS"},
-      {"TimeFmt(3, \"fr_FR\")", "HH:MM:SS Z"},
-      // {"TimeFmt(4, \"de_DE\")", "H.MM' Uhr 'Z"}
-  };
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectString(tests[i].program, tests[i].result);
+  ExecuteExpectString("TimeFmt(2, \"fr_CA\")", "HH:MM:SS");
+  ExecuteExpectString("TimeFmt(3, \"fr_FR\")", "HH:MM:SS Z");
+#if 0
+  // TODO(thestig): Investigate these cases.
+  ExecuteExpectString("TimeFmt(1)", "h::MM A");
+  ExecuteExpectString("TimeFmt(4, \"de_DE\")", "H.MM' Uhr 'Z");
+#endif
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Apr) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    float result;
-  } tests[] = {{"Apr(35000, 269.50, 360)", 0.08515404566f},
-               {"Apr(210000 * 0.75, 850 + 110, 25 * 26)", 0.07161332404f}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectFloatNear(tests[i].program, tests[i].result, 0.000001);
+  ExecuteExpectFloatNear("Apr(35000, 269.50, 360)", 0.08515404566f);
+  ExecuteExpectFloatNear("Apr(210000 * 0.75, 850 + 110, 25 * 26)",
+                         0.07161332404f);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, CTerm) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    float result;
-  } tests[] = {
-      // {"CTerm(0.02, 1000, 100)", 116.2767474515f},
-      {"CTerm(0.10, 500000, 12000)", 39.13224648502f},
-      // {"CTerm(0.0275 + 0.0025, 1000000, 55000 * 0.10)", 176.02226044975f}
-  };
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectFloat(tests[i].program, tests[i].result);
+  ExecuteExpectFloat("CTerm(0.10, 500000, 12000)", 39.13224648502f);
+#if 0
+  // TODO(thestig): Investigate these cases.
+  ExecuteExpectFloat("CTerm(0.02, 1000, 100)", 116.2767474515f);
+  ExecuteExpectFloat("CTerm(0.0275 + 0.0025, 1000000, 55000 * 0.10)",
+                     176.02226044975f);
+#endif
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, FV) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    float result;
-  } tests[] = {{"FV(400, 0.10 / 12, 30 * 12)", 904195.16991842445f},
-               {"FV(1000, 0.075 / 4, 10 * 4)", 58791.96145535981f}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectFloat(tests[i].program, tests[i].result);
+  ExecuteExpectFloat("FV(400, 0.10 / 12, 30 * 12)", 904195.16991842445f);
+  ExecuteExpectFloat("FV(1000, 0.075 / 4, 10 * 4)", 58791.96145535981f);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, IPmt) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    float result;
-  } tests[] = {{"IPmt(30000, 0.085, 295.50, 7, 3)", 624.8839283142f},
-               {"IPmt(160000, 0.0475, 980, 24, 12)", 7103.80833569485f},
-               {"IPmt(15000, 0.065, 65.50, 15, 1)", 0.0f}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectFloat(tests[i].program, tests[i].result);
+  ExecuteExpectFloat("IPmt(30000, 0.085, 295.50, 7, 3)", 624.8839283142f);
+  ExecuteExpectFloat("IPmt(160000, 0.0475, 980, 24, 12)", 7103.80833569485f);
+  ExecuteExpectFloat("IPmt(15000, 0.065, 65.50, 15, 1)", 0.0f);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, NPV) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    float result;
-  } tests[] = {{"NPV(0.065, 5000)", 4694.83568075117f},
-               {"NPV(0.10, 500, 1500, 4000, 10000)", 11529.60863329007f},
-               {"NPV(0.0275 / 12, 50, 60, 40, 100, 25)", 273.14193838457f}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectFloat(tests[i].program, tests[i].result);
+  ExecuteExpectFloat("NPV(0.065, 5000)", 4694.83568075117f);
+  ExecuteExpectFloat("NPV(0.10, 500, 1500, 4000, 10000)", 11529.60863329007f);
+  ExecuteExpectFloat("NPV(0.0275 / 12, 50, 60, 40, 100, 25)", 273.14193838457f);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Pmt) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    float result;
-  } tests[] = {// {"Pmt(150000, 0.0475 / 12, 25 * 12)", 855.17604207164f},
-               {"Pmt(25000, 0.085, 12)", 3403.82145169876f}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectFloat(tests[i].program, tests[i].result);
+  ExecuteExpectFloat("Pmt(25000, 0.085, 12)", 3403.82145169876f);
+#if 0
+  // TODO(thestig): Investigate this case.
+  ExecuteExpectFloat("Pmt(150000, 0.0475 / 12, 25 * 12)", 855.17604207164f);
+#endif
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, PPmt) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    float result;
-  } tests[] = {
-      {"PPmt(30000, 0.085, 295.50, 7, 3)", 261.6160716858f},
-      {"PPmt(160000, 0.0475, 980, 24, 12)", 4656.19166430515f},
-      // {"PPmt(15000, 0.065, 65.50, 15, 1)", 0.0f}
-  };
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectFloat(tests[i].program, tests[i].result);
+  ExecuteExpectFloat("PPmt(30000, 0.085, 295.50, 7, 3)", 261.6160716858f);
+  ExecuteExpectFloat("PPmt(160000, 0.0475, 980, 24, 12)", 4656.19166430515f);
+#if 0
+  // TODO(thestig): Investigate this case.
+  ExecuteExpectFloat("PPmt(15000, 0.065, 65.50, 15, 1)", 0.0f);
+#endif
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, PV) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    float result;
-  } tests[] = {
-      {"PV(400, 0.10 / 12, 30 * 12)", 45580.32799074439f},
-      // {"PV(1000, 0.075 / 4, 10 * 4)", 58791.96145535981f}
-  };
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectFloat(tests[i].program, tests[i].result);
+  ExecuteExpectFloat("PV(400, 0.10 / 12, 30 * 12)", 45580.32799074439f);
+#if 0
+  // TODO(thestig): Investigate this case.
+  ExecuteExpectFloat("PV(1000, 0.075 / 4, 10 * 4)", 58791.96145535981f);
+#endif
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Rate) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    float result;
-  } tests[] = {{"Rate(12000, 8000, 5)", 0.0844717712f},
-               {"Rate(10000, 0.25 * 5000, 4 * 12)", 0.04427378243f}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectFloatNear(tests[i].program, tests[i].result, 0.000001);
+  ExecuteExpectFloatNear("Rate(12000, 8000, 5)", 0.0844717712f);
+  ExecuteExpectFloatNear("Rate(10000, 0.25 * 5000, 4 * 12)", 0.04427378243f);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Term) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    float result;
-  } tests[] = {// {"Term(475, .05, 1500)", 3.00477517728f},
-               {"Term(2500, 0.0275 + 0.0025, 5000)", 1.97128786369f}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectFloat(tests[i].program, tests[i].result);
+  ExecuteExpectFloat("Term(2500, 0.0275 + 0.0025, 5000)", 1.97128786369f);
+#if 0
+  // TODO(thestig): Investigate this case.
+  ExecuteExpectFloat("Term(475, .05, 1500)", 3.00477517728f);
+#endif
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Choose) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    const char* result;
-  } tests[] = {
-      {"Choose(3, \"Taxes\", \"Price\", \"Person\", \"Teller\")", "Person"},
-      {"Choose(2, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)", "9"},
-      {"Choose(20/3, \"A\", \"B\", \"C\", \"D\", \"E\", \"F\", \"G\", \"H\")",
-       "F"}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectString(tests[i].program, tests[i].result);
+  ExecuteExpectString("Choose(3, \"Taxes\", \"Price\", \"Person\", \"Teller\")",
+                      "Person");
+  ExecuteExpectString("Choose(2, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)", "9");
+  ExecuteExpectString(
+      "Choose(20/3, \"A\", \"B\", \"C\", \"D\", \"E\", \"F\", \"G\", \"H\")",
+      "F");
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Exists) {
@@ -732,269 +564,186 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Exists) {
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, HasValue) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    bool result;
-  } tests[] = {{"HasValue(2)", true}, {"HasValue(\" \")", false}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectBool(tests[i].program, tests[i].result);
+  ExecuteExpectBool("HasValue(2)", true);
+  ExecuteExpectBool("HasValue(\" \")", false);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Oneof) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    bool result;
-  } tests[] = {
-      {"Oneof(3, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)", true},
-      {"Oneof(\"John\", \"Bill\", \"Gary\", \"Joan\", \"John\", \"Lisa\")",
-       true},
-      {"Oneof(3, 1, 25)", false},
-      {"Oneof(3, 3, null)", true},
-      {"Oneof(3, null, null)", false},
-  };
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectBool(tests[i].program, tests[i].result);
+  ExecuteExpectBool("Oneof(3, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)", true);
+  ExecuteExpectBool(
+      "Oneof(\"John\", \"Bill\", \"Gary\", \"Joan\", \"John\", \"Lisa\")",
+      true);
+  ExecuteExpectBool("Oneof(3, 1, 25)", false);
+  ExecuteExpectBool("Oneof(3, 3, null)", true);
+  ExecuteExpectBool("Oneof(3, null, null)", false);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Within) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    bool result;
-  } tests[] = {{"Within(\"C\", \"A\", \"D\")", true},
-               {"Within(1.5, 0, 2)", true},
-               {"Within(-1, 0, 2)", false}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectBool(tests[i].program, tests[i].result);
+  ExecuteExpectBool("Within(\"C\", \"A\", \"D\")", true);
+  ExecuteExpectBool("Within(1.5, 0, 2)", true);
+  ExecuteExpectBool("Within(-1, 0, 2)", false);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Eval) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    int result;
-  } tests[] = {{"eval(\"10*3+5*4\")", 50}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectInt32(tests[i].program, tests[i].result);
+  ExecuteExpectInt32("eval(\"10*3+5*4\")", 50);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Null) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    const char* result;
-  } tests[] = {{"Null()", "null"},
-               {"Concat(\"ABC\", Null(), \"DEF\")", "ABCDEF"}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectString(tests[i].program, tests[i].result);
-
+  ExecuteExpectString("Null()", "null");
+  ExecuteExpectString("Concat(\"ABC\", Null(), \"DEF\")", "ABCDEF");
   ExecuteExpectInt32("Null() + 5", 5);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Ref) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    const char* result;
-  } tests[] = {{"Ref(\"10*3+5*4\")", "10*3+5*4"}, {"Ref(\"hello\")", "hello"}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectString(tests[i].program, tests[i].result);
+  ExecuteExpectString("Ref(\"10*3+5*4\")", "10*3+5*4");
+  ExecuteExpectString("Ref(\"hello\")", "hello");
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, UnitType) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    const char* result;
-  } tests[] = {{"UnitType(\"36 in\")", "in"},
-               {"UnitType(\"2.54centimeters\")", "cm"},
-               {"UnitType(\"picas\")", "pt"},
-               {"UnitType(\"2.cm\")", "cm"},
-               {"UnitType(\"2.zero cm\")", "in"},
-               {"UnitType(\"kilometers\")", "in"}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectString(tests[i].program, tests[i].result);
+  ExecuteExpectString("UnitType(\"36 in\")", "in");
+  ExecuteExpectString("UnitType(\"2.54centimeters\")", "cm");
+  ExecuteExpectString("UnitType(\"picas\")", "pt");
+  ExecuteExpectString("UnitType(\"2.cm\")", "cm");
+  ExecuteExpectString("UnitType(\"2.zero cm\")", "in");
+  ExecuteExpectString("UnitType(\"kilometers\")", "in");
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, UnitValue) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    float result;
-  } tests[] = {
-      {"UnitValue(\"2in\")", 2.0f}, {"UnitValue(\"2in\", \"cm\")", 5.08f},
-      // {"UnitValue(\"6\", \"pt\")", 432f},
-      // {"UnitType(\"A\", \"cm\")", 0.0f},
-      // {"UnitType(\"5.08cm\", \"kilograms\")", 2.0f}
-  };
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectFloat(tests[i].program, tests[i].result);
+  ExecuteExpectFloat("UnitValue(\"2in\")", 2.0f);
+  ExecuteExpectFloat("UnitValue(\"2in\", \"cm\")", 5.08f);
+#if 0
+  // TODO(thestig): Investigate these cases.
+  // Should the UnitType cases move into the UnitType test case?
+  ExecuteExpectFloat("UnitValue(\"6\", \"pt\")", 432f);
+  ExecuteExpectFloat("UnitType(\"A\", \"cm\")", 0.0f);
+  ExecuteExpectFloat("UnitType(\"5.08cm\", \"kilograms\")", 2.0f);
+#endif
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, At) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    int result;
-  } tests[] = {{"At(\"ABCDEFGH\", \"AB\")", 1},
-               {"At(\"ABCDEFGH\", \"F\")", 6},
-               {"At(23412931298471, 29)", 5}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectInt32(tests[i].program, tests[i].result);
+  ExecuteExpectInt32("At(\"ABCDEFGH\", \"AB\")", 1);
+  ExecuteExpectInt32("At(\"ABCDEFGH\", \"F\")", 6);
+  ExecuteExpectInt32("At(23412931298471, 29)", 5);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Concat) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    const char* result;
-  } tests[] = {{"Concat(\"ABC\", \"DEF\")", "ABCDEF"},
-               {"Concat(\"Tony\", Space(1), \"Blue\")", "Tony Blue"},
-               {"Concat(\"You owe \", WordNum(1154.67, 2), \".\")",
-                "You owe One Thousand One Hundred Fifty-four Dollars And "
-                "Sixty-seven Cents."}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectString(tests[i].program, tests[i].result);
+  ExecuteExpectString("Concat(\"ABC\", \"DEF\")", "ABCDEF");
+  ExecuteExpectString("Concat(\"Tony\", Space(1), \"Blue\")", "Tony Blue");
+  ExecuteExpectString("Concat(\"You owe \", WordNum(1154.67, 2), \".\")",
+                      "You owe One Thousand One Hundred Fifty-four Dollars And "
+                      "Sixty-seven Cents.");
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Decode) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    const char* result;
-  } tests[] = {
-      // HTML
-      {R"(Decode("", "html"))", ""},
-      {R"(Decode("abc&Acirc;xyz", "html"))", "abc\xC3\x82xyz"},
-      {R"(Decode("abc&NoneSuchButVeryLongIndeed;", "html"))", "abc"},
-      {R"(Decode("&#x0041;&AElig;&Aacute;", "html"))", "A\xC3\x86\xC3\x81"},
-      {R"(Decode("xyz&#", "html"))", "xyz"},
-      {R"(Decode("|&zzzzzz;|", "html"))", "||"},
+  // HTML
+  ExecuteExpectString(R"(Decode("", "html"))", "");
+  ExecuteExpectString(R"(Decode("abc&Acirc;xyz", "html"))", "abc\xC3\x82xyz");
+  ExecuteExpectString(R"(Decode("abc&NoneSuchButVeryLongIndeed;", "html"))",
+                      "abc");
+  ExecuteExpectString(R"(Decode("&#x0041;&AElig;&Aacute;", "html"))",
+                      "A\xC3\x86\xC3\x81");
+  ExecuteExpectString(R"(Decode("xyz&#", "html"))", "xyz");
+  ExecuteExpectString(R"(Decode("|&zzzzzz;|", "html"))", "||");
 
-      // XML
-      {R"(Decode("", "xml"))", ""},
-      {R"(Decode("~!@#$%%^&amp;*()_+|`", "xml"))", "~!@#$%%^&*()_+|`"},
-      {R"(Decode("abc&nonesuchbutverylongindeed;", "xml"))", "abc"},
-      {R"(Decode("&quot;&#x45;&lt;&gt;[].&apos;", "xml"))", "\"E<>[].'"},
-      {R"(Decode("xyz&#", "xml"))", "xyz"},
-      {R"(Decode("|&zzzzzz;|", "xml"))", "||"},
+  // XML
+  ExecuteExpectString(R"(Decode("", "xml"))", "");
+  ExecuteExpectString(R"(Decode("~!@#$%%^&amp;*()_+|`", "xml"))",
+                      "~!@#$%%^&*()_+|`");
+  ExecuteExpectString(R"(Decode("abc&nonesuchbutverylongindeed;", "xml"))",
+                      "abc");
+  ExecuteExpectString(R"(Decode("&quot;&#x45;&lt;&gt;[].&apos;", "xml"))",
+                      "\"E<>[].'");
+  ExecuteExpectString(R"(Decode("xyz&#", "xml"))", "xyz");
+  ExecuteExpectString(R"(Decode("|&zzzzzz;|", "xml"))", "||");
 
-      // URL
-      {R"(Decode("", "url"))", ""},
-      {R"(Decode("~%26^&*()_+|`{", "url"))", "~&^&*()_+|`{"},
-      {R"(Decode("~%26^&*()_+|`{", "mbogo"))", "~&^&*()_+|`{"},
-      {R"(Decode("~%26^&*()_+|`{"))", "~&^&*()_+|`{"},
-      {R"(Decode("~%~~"))", ""},
-      {R"(Decode("?%~"))", ""},
-      {R"(Decode("?%"))", "?"},
-  };
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectString(tests[i].program, tests[i].result);
+  // URL
+  ExecuteExpectString(R"(Decode("", "url"))", "");
+  ExecuteExpectString(R"(Decode("~%26^&*()_+|`{", "url"))", "~&^&*()_+|`{");
+  ExecuteExpectString(R"(Decode("~%26^&*()_+|`{", "mbogo"))", "~&^&*()_+|`{");
+  ExecuteExpectString(R"(Decode("~%26^&*()_+|`{"))", "~&^&*()_+|`{");
+  ExecuteExpectString(R"(Decode("~%~~"))", "");
+  ExecuteExpectString(R"(Decode("?%~"))", "");
+  ExecuteExpectString(R"(Decode("?%"))", "?");
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Encode) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    const char* result;
-  } tests[] = {
-    {"Encode(\"X/~&^*<=>?|\")", "X%2f%7e%26%5e*%3c%3d%3e%3f%7c"},
-    {"Encode(\"X/~&^*<=>?|\", \"mbogo\")", "X%2f%7e%26%5e*%3c%3d%3e%3f%7c"},
-    {"Encode(\"X/~&^*<=>?|\", \"url\")", "X%2f%7e%26%5e*%3c%3d%3e%3f%7c"},
-    {"Encode(\"X/~&^*<=>?|\", \"xml\")", "X/~&amp;^*&lt;=&gt;?|"},
-    {"Encode(\"X/~&^*<=>?|\", \"html\")", "X/~&amp;^*&lt;=&gt;?|"},
+  ExecuteExpectString("Encode(\"X/~&^*<=>?|\")",
+                      "X%2f%7e%26%5e*%3c%3d%3e%3f%7c");
+  ExecuteExpectString("Encode(\"X/~&^*<=>?|\", \"mbogo\")",
+                      "X%2f%7e%26%5e*%3c%3d%3e%3f%7c");
+  ExecuteExpectString("Encode(\"X/~&^*<=>?|\", \"url\")",
+                      "X%2f%7e%26%5e*%3c%3d%3e%3f%7c");
+  ExecuteExpectString("Encode(\"X/~&^*<=>?|\", \"xml\")",
+                      "X/~&amp;^*&lt;=&gt;?|");
+  ExecuteExpectString("Encode(\"X/~&^*<=>?|\", \"html\")",
+                      "X/~&amp;^*&lt;=&gt;?|");
 
-    {"Encode(\"\\u0022\\u00f5\\ufed0\", \"url\")", "%22%f5%fe%d0"},
-    {"Encode(\"\\u0022\\u00f4\\ufed0\", \"xml\")", "&quot;&#xf4;&#xfed0;"},
-    {"Encode(\"\\u0022\\u00f5\\ufed0\", \"html\")", "&quot;&otilde;&#xfed0;"},
+  ExecuteExpectString("Encode(\"\\u0022\\u00f5\\ufed0\", \"url\")",
+                      "%22%f5%fe%d0");
+  ExecuteExpectString("Encode(\"\\u0022\\u00f4\\ufed0\", \"xml\")",
+                      "&quot;&#xf4;&#xfed0;");
+  ExecuteExpectString("Encode(\"\\u0022\\u00f5\\ufed0\", \"html\")",
+                      "&quot;&otilde;&#xfed0;");
 
 #if !defined(OS_WIN)
-    // Windows wchar_t isn't wide enough to handle these anyways.
-    // TODO(tsepez): fix surrogate encodings.
-    {"Encode(\"\\uD83D\\uDCA9\", \"url\")", "%01%f4%a9"},
-    {"Encode(\"\\uD83D\\uDCA9\", \"xml\")", ""},
-    {"Encode(\"\\uD83D\\uDCA9\", \"html\")", ""},
+  // Windows wchar_t isn't wide enough to handle these anyways.
+  // TODO(tsepez): fix surrogate encodings.
+  ExecuteExpectString("Encode(\"\\uD83D\\uDCA9\", \"url\")", "%01%f4%a9");
+  ExecuteExpectString("Encode(\"\\uD83D\\uDCA9\", \"xml\")", "");
+  ExecuteExpectString("Encode(\"\\uD83D\\uDCA9\", \"html\")", "");
 #endif  // !defined(OS_WIN)
-  };
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectString(tests[i].program, tests[i].result);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Format) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    const char* result;
-  } tests[] = {{"Format(\"MMM D, YYYY\", \"20020901\")", "Sep 1, 2002"},
-               {"Format(\"$9,999,999.99\", 1234567.89)", "$1,234,567.89"}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectString(tests[i].program, tests[i].result);
+  ExecuteExpectString("Format(\"MMM D, YYYY\", \"20020901\")", "Sep 1, 2002");
+  ExecuteExpectString("Format(\"$9,999,999.99\", 1234567.89)", "$1,234,567.89");
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Left) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    const char* result;
-  } tests[] = {{"Left(\"ABCDEFGH\", 3)", "ABC"},
-               {"Left(\"Tony Blue\", 5)", "Tony "}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectString(tests[i].program, tests[i].result);
+  ExecuteExpectString("Left(\"ABCDEFGH\", 3)", "ABC");
+  ExecuteExpectString("Left(\"Tony Blue\", 5)", "Tony ");
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Len) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    int result;
-  } tests[] = {
-      {"Len(\"ABCDEFGH\")", 8}, {"Len(4)", 1}, {"Len(Str(4.532, 6, 4))", 6}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectBool(tests[i].program, tests[i].result);
+  ExecuteExpectBool("Len(\"ABCDEFGH\")", 8);
+  ExecuteExpectBool("Len(4)", 1);
+  ExecuteExpectBool("Len(Str(4.532, 6, 4))", 6);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Lower) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    const char* result;
-  } tests[] = {{"Lower(\"ABC\")", "abc"},
-               {"Lower(\"21 Main St.\")", "21 main st."},
-               {"Lower(15)", "15"}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectString(tests[i].program, tests[i].result);
+  ExecuteExpectString("Lower(\"ABC\")", "abc");
+  ExecuteExpectString("Lower(\"21 Main St.\")", "21 main st.");
+  ExecuteExpectString("Lower(15)", "15");
 }
 
 // This is testing for an OOB read, so will likely only fail under ASAN.
@@ -1010,27 +759,14 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, bug_854623) {
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Ltrim) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    const char* result;
-  } tests[] = {{"Ltrim(\"   ABCD\")", "ABCD"},
-               {"Ltrim(Rtrim(\"    Tony Blue    \"))", "Tony Blue"}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectString(tests[i].program, tests[i].result);
+  ExecuteExpectString("Ltrim(\"   ABCD\")", "ABCD");
+  ExecuteExpectString("Ltrim(Rtrim(\"    Tony Blue    \"))", "Tony Blue");
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Parse) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    const char* result;
-  } tests[] = {{"Parse(\"MMM D, YYYY\", \"Sep 1, 2002\")", "2002-09-01"}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectString(tests[i].program, tests[i].result);
-
+  ExecuteExpectString("Parse(\"MMM D, YYYY\", \"Sep 1, 2002\")", "2002-09-01");
   ExecuteExpectFloat("Parse(\"$9,999,999.99\", \"$1,234,567.89\")",
                      1234567.89f);
 }
@@ -1038,88 +774,53 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Parse) {
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Replace) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    const char* result;
-  } tests[] = {{"Replace(\"Tony Blue\", \"Tony\", \"Chris\")", "Chris Blue"},
-               {"Replace(\"ABCDEFGH\", \"D\")", "ABCEFGH"},
-               {"Replace(\"ABCDEFGH\", \"d\")", "ABCDEFGH"}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectString(tests[i].program, tests[i].result);
+  ExecuteExpectString("Replace(\"Tony Blue\", \"Tony\", \"Chris\")",
+                      "Chris Blue");
+  ExecuteExpectString("Replace(\"ABCDEFGH\", \"D\")", "ABCEFGH");
+  ExecuteExpectString("Replace(\"ABCDEFGH\", \"d\")", "ABCDEFGH");
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Right) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    const char* result;
-  } tests[] = {{"Right(\"ABCDEFGH\", 3)", "FGH"},
-               {"Right(\"Tony Blue\", 5)", " Blue"}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectString(tests[i].program, tests[i].result);
+  ExecuteExpectString("Right(\"ABCDEFGH\", 3)", "FGH");
+  ExecuteExpectString("Right(\"Tony Blue\", 5)", " Blue");
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Rtrim) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    const char* result;
-  } tests[] = {{"Rtrim(\"ABCD   \")", "ABCD"},
-               {"Rtrim(\"Tony Blue      \t\")", "Tony Blue"}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectString(tests[i].program, tests[i].result);
+  ExecuteExpectString("Rtrim(\"ABCD   \")", "ABCD");
+  ExecuteExpectString("Rtrim(\"Tony Blue      \t\")", "Tony Blue");
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Space) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    const char* result;
-  } tests[] = {{"Space(5)", "     "},
-               {"Concat(\"Tony\", Space(1), \"Blue\")", "Tony Blue"}};
+  ExecuteExpectString("Space(5)", "     ");
+  ExecuteExpectString("Concat(\"Tony\", Space(1), \"Blue\")", "Tony Blue");
 
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectString(tests[i].program, tests[i].result);
-
-  const char* const kErrorCases[] = {"Space(15654909)", "Space(99999999)"};
-  for (const char* error_case : kErrorCases)
-    ExecuteExpectError(error_case);
+  // Error cases.
+  ExecuteExpectError("Space(15654909)");
+  ExecuteExpectError("Space(99999999)");
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Str) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    const char* result;
-  } tests[] = {{"Str(2.456)", "         2"},
-               {"Str(4.532, 6, 4)", "4.5320"},
-               {"Str(234.458, 4)", " 234"},
-               {"Str(31.2345, 4, 2)", "****"}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectString(tests[i].program, tests[i].result);
+  ExecuteExpectString("Str(2.456)", "         2");
+  ExecuteExpectString("Str(4.532, 6, 4)", "4.5320");
+  ExecuteExpectString("Str(234.458, 4)", " 234");
+  ExecuteExpectString("Str(31.2345, 4, 2)", "****");
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Stuff) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    const char* result;
-  } tests[] = {{"Stuff(\"TonyBlue\", 5, 0, \" \")", "Tony Blue"},
-               {"Stuff(\"ABCDEFGH\", 4, 2)", "ABCFGH"},
-               {"Stuff(\"members-list@myweb.com\", 0, 0, \"cc:\")",
-                "cc:members-list@myweb.com"}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectString(tests[i].program, tests[i].result);
+  ExecuteExpectString("Stuff(\"TonyBlue\", 5, 0, \" \")", "Tony Blue");
+  ExecuteExpectString("Stuff(\"ABCDEFGH\", 4, 2)", "ABCFGH");
+  ExecuteExpectString("Stuff(\"members-list@myweb.com\", 0, 0, \"cc:\")",
+                      "cc:members-list@myweb.com");
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Substr) {
@@ -1140,26 +841,20 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Substr) {
   ExecuteExpectNull("Substr(\"ABCDEFG\", null, null)");
   ExecuteExpectNull("Substr(null, null, null)");
 
-  struct {
-    const char* program;
-    const char* result;
-  } static const kTests[] = {{"Substr(\"ABCDEFG\", -1, 4)", "ABCD"},
-                             {"Substr(\"ABCDEFG\", 0, 4)", "ABCD"},
-                             {"Substr(\"ABCDEFG\", 3, 4)", "CDEF"},
-                             {"Substr(\"ABCDEFG\", 4, 4)", "DEFG"},
-                             {"Substr(\"ABCDEFG\", 5, 4)", "EFG"},
-                             {"Substr(\"ABCDEFG\", 6, 4)", "FG"},
-                             {"Substr(\"ABCDEFG\", 7, 4)", "G"},
-                             {"Substr(\"ABCDEFG\", 8, 4)", ""},
-                             {"Substr(\"ABCDEFG\", 5, -1)", ""},
-                             {"Substr(\"ABCDEFG\", 5, 0)", ""},
-                             {"Substr(\"ABCDEFG\", 5, 1)", "E"},
-                             {"Substr(\"abcdefghi\", 5, 3)", "efg"},
-                             {"Substr(3214, 2, 1)", "2"},
-                             {"Substr(\"21 Waterloo St.\", 4, 5)", "Water"}};
-
-  for (size_t i = 0; i < pdfium::size(kTests); ++i)
-    ExecuteExpectString(kTests[i].program, kTests[i].result);
+  ExecuteExpectString("Substr(\"ABCDEFG\", -1, 4)", "ABCD");
+  ExecuteExpectString("Substr(\"ABCDEFG\", 0, 4)", "ABCD");
+  ExecuteExpectString("Substr(\"ABCDEFG\", 3, 4)", "CDEF");
+  ExecuteExpectString("Substr(\"ABCDEFG\", 4, 4)", "DEFG");
+  ExecuteExpectString("Substr(\"ABCDEFG\", 5, 4)", "EFG");
+  ExecuteExpectString("Substr(\"ABCDEFG\", 6, 4)", "FG");
+  ExecuteExpectString("Substr(\"ABCDEFG\", 7, 4)", "G");
+  ExecuteExpectString("Substr(\"ABCDEFG\", 8, 4)", "");
+  ExecuteExpectString("Substr(\"ABCDEFG\", 5, -1)", "");
+  ExecuteExpectString("Substr(\"ABCDEFG\", 5, 0)", "");
+  ExecuteExpectString("Substr(\"ABCDEFG\", 5, 1)", "E");
+  ExecuteExpectString("Substr(\"abcdefghi\", 5, 3)", "efg");
+  ExecuteExpectString("Substr(3214, 2, 1)", "2");
+  ExecuteExpectString("Substr(\"21 Waterloo St.\", 4, 5)", "Water");
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Uuid) {
@@ -1174,34 +869,24 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Uuid) {
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Upper) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    const char* result;
-  } tests[] = {{"Upper(\"abc\")", "ABC"},
-               {"Upper(\"21 Main St.\")", "21 MAIN ST."},
-               {"Upper(15)", "15"}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectString(tests[i].program, tests[i].result);
+  ExecuteExpectString("Upper(\"abc\")", "ABC");
+  ExecuteExpectString("Upper(\"21 Main St.\")", "21 MAIN ST.");
+  ExecuteExpectString("Upper(15)", "15");
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, WordNum) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  struct {
-    const char* program;
-    const char* result;
-  } tests[] = {
-      // {"WordNum(123.45)",
-      //  "One Hundred and Twenty-three"},  // This looks like it's wrong in the
-      //                                    // Formcalc document.
-      // {"WordNum(123.45, 1)", "One Hundred and Twenty-three Dollars"},
-      {"WordNum(1154.67, 2)",
-       "One Thousand One Hundred Fifty-four Dollars And Sixty-seven Cents"},
-      {"WordNum(43, 2)", "Forty-three Dollars And Zero Cents"}};
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i)
-    ExecuteExpectString(tests[i].program, tests[i].result);
+#if 0
+  // TODO(thestig): Investigate these cases.
+  // This looks like it's wrong in the Formcalc document.
+  ExecuteExpectString("WordNum(123.45)", "One Hundred and Twenty-three");
+  ExecuteExpectString("WordNum(123.45, 1)", "One Hundred and Twenty-three Dollars");
+#endif
+  ExecuteExpectString(
+      "WordNum(1154.67, 2)",
+      "One Thousand One Hundred Fifty-four Dollars And Sixty-seven Cents");
+  ExecuteExpectString("WordNum(43, 2)", "Forty-three Dollars And Zero Cents");
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Get) {
@@ -1219,16 +904,10 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Put) {
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, InvalidFunctions) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  const char* const tests[] = {
-      "F()",
-      "()",
-      "()()()",
-      "Round(2.0)()",
-  };
-
-  for (size_t i = 0; i < pdfium::size(tests); ++i) {
-    EXPECT_FALSE(ExecuteSilenceFailure(tests[i]));
-  }
+  EXPECT_FALSE(ExecuteSilenceFailure("F()"));
+  EXPECT_FALSE(ExecuteSilenceFailure("()"));
+  EXPECT_FALSE(ExecuteSilenceFailure("()()()"));
+  EXPECT_FALSE(ExecuteSilenceFailure("Round(2.0)()"));
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, MethodCall) {
