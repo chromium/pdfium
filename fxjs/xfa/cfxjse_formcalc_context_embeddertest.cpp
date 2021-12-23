@@ -803,6 +803,9 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Space) {
   // Error cases.
   ExecuteExpectError("Space(15654909)");
   ExecuteExpectError("Space(99999999)");
+  ExecuteExpectError("Space()");
+  ExecuteExpectError("Space(1, 2)");
+  ExecuteExpectNull("Space( $)");
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Str) {
@@ -812,6 +815,11 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Str) {
   ExecuteExpectString("Str(4.532, 6, 4)", "4.5320");
   ExecuteExpectString("Str(234.458, 4)", " 234");
   ExecuteExpectString("Str(31.2345, 4, 2)", "****");
+
+  // Error cases.
+  ExecuteExpectError("Str()");
+  ExecuteExpectError("Str(1, 2, 3, 4)");
+  ExecuteExpectNull("Str( $)");
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Stuff) {
