@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxcrt/stl_util.h"
 #include "third_party/base/notreached.h"
@@ -24,10 +25,10 @@ CPDF_SeekableMultiStream::CPDF_SeekableMultiStream(
 CPDF_SeekableMultiStream::~CPDF_SeekableMultiStream() = default;
 
 FX_FILESIZE CPDF_SeekableMultiStream::GetSize() {
-  uint32_t dwSize = 0;
+  FX_SAFE_FILESIZE dwSize = 0;
   for (const auto& acc : m_Data)
     dwSize += acc->GetSize();
-  return dwSize;
+  return dwSize.ValueOrDie();
 }
 
 bool CPDF_SeekableMultiStream::ReadBlockAtOffset(void* buffer,

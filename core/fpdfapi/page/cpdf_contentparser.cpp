@@ -160,7 +160,6 @@ CPDF_ContentParser::Stage CPDF_ContentParser::PrepareContent() {
   FX_SAFE_UINT32 safeSize = 0;
   for (const auto& stream : m_StreamArray) {
     m_StreamSegmentOffsets.push_back(safeSize.ValueOrDie());
-
     safeSize += stream->GetSize();
     safeSize += 1;
     if (!safeSize.IsValid())
@@ -173,7 +172,7 @@ CPDF_ContentParser::Stage CPDF_ContentParser::PrepareContent() {
   if (!m_pData)
     return Stage::kComplete;
 
-  uint32_t pos = 0;
+  size_t pos = 0;
   auto data_span = pdfium::make_span(m_pData.Get(), m_Size);
   for (const auto& stream : m_StreamArray) {
     fxcrt::spancpy(data_span.subspan(pos), stream->GetSpan());

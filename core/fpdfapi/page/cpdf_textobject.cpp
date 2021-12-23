@@ -191,13 +191,15 @@ void CPDF_TextObject::SetTextMatrix(const CFX_Matrix& matrix) {
 void CPDF_TextObject::SetSegments(const ByteString* pStrs,
                                   const std::vector<float>& kernings,
                                   size_t nSegs) {
+  CHECK(nSegs);
   m_CharCodes.clear();
   m_CharPos.clear();
   RetainPtr<CPDF_Font> pFont = GetFont();
-  int nChars = 0;
+  size_t nChars = nSegs - 1;
   for (size_t i = 0; i < nSegs; ++i)
     nChars += pFont->CountChar(pStrs[i].AsStringView());
-  nChars += nSegs - 1;
+
+  CHECK(nChars);
   m_CharCodes.resize(nChars);
   m_CharPos.resize(nChars - 1);
   size_t index = 0;
