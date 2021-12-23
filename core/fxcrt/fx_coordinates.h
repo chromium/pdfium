@@ -9,8 +9,6 @@
 
 #include <stdint.h>
 
-#include <algorithm>
-
 #ifndef NDEBUG
 #include <iosfwd>
 #endif
@@ -409,43 +407,10 @@ class CFX_RectF {
   PointType Center() const {
     return PointType(left + width / 2, top + height / 2);
   }
-  void Union(float x, float y) {
-    float r = right();
-    float b = bottom();
-
-    left = std::min(left, x);
-    top = std::min(top, y);
-    r = std::max(r, x);
-    b = std::max(b, y);
-
-    width = r - left;
-    height = b - top;
-  }
+  void Union(float x, float y);
   void Union(const PointType& p) { Union(p.x, p.y); }
-  void Union(const CFX_RectF& rt) {
-    float r = right();
-    float b = bottom();
-
-    left = std::min(left, rt.left);
-    top = std::min(top, rt.top);
-    r = std::max(r, rt.right());
-    b = std::max(b, rt.bottom());
-
-    width = r - left;
-    height = b - top;
-  }
-  void Intersect(const CFX_RectF& rt) {
-    float r = right();
-    float b = bottom();
-
-    left = std::max(left, rt.left);
-    top = std::max(top, rt.top);
-    r = std::min(r, rt.right());
-    b = std::min(b, rt.bottom());
-
-    width = r - left;
-    height = b - top;
-  }
+  void Union(const CFX_RectF& rt);
+  void Intersect(const CFX_RectF& rt);
   bool IntersectWith(const CFX_RectF& rt) const {
     CFX_RectF rect = rt;
     rect.Intersect(*this);

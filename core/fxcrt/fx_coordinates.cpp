@@ -8,6 +8,7 @@
 
 #include <math.h>
 
+#include <algorithm>
 #include <utility>
 
 #include "build/build_config.h"
@@ -323,6 +324,45 @@ FX_RECT CFX_FloatRect::ToFxRect() const {
 FX_RECT CFX_FloatRect::ToRoundedFxRect() const {
   return FX_RECT(FXSYS_roundf(left), FXSYS_roundf(top), FXSYS_roundf(right),
                  FXSYS_roundf(bottom));
+}
+
+void CFX_RectF::Union(float x, float y) {
+  float r = right();
+  float b = bottom();
+
+  left = std::min(left, x);
+  top = std::min(top, y);
+  r = std::max(r, x);
+  b = std::max(b, y);
+
+  width = r - left;
+  height = b - top;
+}
+
+void CFX_RectF::Union(const CFX_RectF& rt) {
+  float r = right();
+  float b = bottom();
+
+  left = std::min(left, rt.left);
+  top = std::min(top, rt.top);
+  r = std::max(r, rt.right());
+  b = std::max(b, rt.bottom());
+
+  width = r - left;
+  height = b - top;
+}
+
+void CFX_RectF::Intersect(const CFX_RectF& rt) {
+  float r = right();
+  float b = bottom();
+
+  left = std::max(left, rt.left);
+  top = std::max(top, rt.top);
+  r = std::min(r, rt.right());
+  b = std::min(b, rt.bottom());
+
+  width = r - left;
+  height = b - top;
 }
 
 FX_RECT CFX_RectF::GetOuterRect() const {

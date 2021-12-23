@@ -14,7 +14,6 @@
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_occontext.h"
-#include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/cfx_timer.h"
 #include "core/fxcrt/mask.h"
@@ -33,6 +32,7 @@ class CPDFSDK_AnnotHandlerMgr;
 class CPDFSDK_InteractiveForm;
 class CPDFSDK_PageView;
 class IJS_Runtime;
+class IPDF_Page;
 
 // NOTE: |bsUTF16LE| must outlive the use of the result. Care must be taken
 // since modifying the result would impact |bsUTF16LE|.
