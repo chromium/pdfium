@@ -733,9 +733,9 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Left) {
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Len) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  ExecuteExpectBool("Len(\"ABCDEFGH\")", 8);
-  ExecuteExpectBool("Len(4)", 1);
-  ExecuteExpectBool("Len(Str(4.532, 6, 4))", 6);
+  ExecuteExpectInt32("Len(\"ABCDEFGH\")", 8);
+  ExecuteExpectInt32("Len(4)", 1);
+  ExecuteExpectInt32("Len(Str(4.532, 6, 4))", 6);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Lower) {
