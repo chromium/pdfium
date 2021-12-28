@@ -100,7 +100,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libc++abi
   # and whatever else without interference from each other.
-  'libcxxabi_revision': '665b74f7d1b3bb295cd6ba7d8fcec1acd3d2ac84',
+  'libcxxabi_revision': '2715a6c0de8dac4c7674934a6b3d30ba0c685271',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libunwind
   # and whatever else without interference from each other.
