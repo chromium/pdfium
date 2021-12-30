@@ -199,7 +199,7 @@ void DebugShowSkiaPath(const SkPath& path) {
   printf(" **\n");
 #else
   SkDynamicMemoryWStream stream;
-  path.dump(&stream, false, false);
+  path.dump(&stream, false);
   std::unique_ptr<char, FxFreeDeleter> storage;
   storage.reset(FX_Alloc(char, stream.bytesWritten()));
   stream.copyTo(storage.get());
@@ -1302,7 +1302,7 @@ class SkiaState {
 #endif  // SHOW_SKIA_PATH
 
   void Dump(const char* where) const {
-#if SHOW_SKIA_PATH
+#if SHOW_SKIA_PATH && defined(_SKIA_SUPPORT_PATHS_)
     if (m_debugDisable)
       return;
     printf(
@@ -1350,10 +1350,10 @@ class SkiaState {
     for (int index = 0; index < m_clipIndex; ++index)
       cacheSaveCount += Clip::kSave == m_commands[index];
     DCHECK_EQ(skCanvasSaveCount, cacheSaveCount);
-#endif  // SHOW_SKIA_PATH
+#endif  // SHOW_SKIA_PATH && defined(_SKIA_SUPPORT_PATHS_)
   }
 
-#if SHOW_SKIA_PATH
+#if SHOW_SKIA_PATH && defined(_SKIA_SUPPORT_PATHS_)
   static int AggSaveCount(const UnownedPtr<CFX_SkiaDeviceDriver> driver) {
     FX_RECT last;
     int aggSaveCount = 0;
@@ -1362,7 +1362,7 @@ class SkiaState {
       if (!driver->stack()[index]) {
         continue;
       }
-      if (driver->stack()[index]->GetType() != CFX_ClipRgn::RectI) {
+      if (driver->stack()[index]->GetType() != CFX_ClipRgn::kRectI) {
         aggSaveCount += 1;
         foundLast = false;
         continue;
@@ -1376,7 +1376,7 @@ class SkiaState {
     }
     if (driver->clip_region()) {
       CFX_ClipRgn::ClipType clipType = driver->clip_region()->GetType();
-      if (clipType != CFX_ClipRgn::RectI || !foundLast ||
+      if (clipType != CFX_ClipRgn::kRectI || !foundLast ||
           memcmp(&last, &driver->clip_region()->GetBox(), sizeof(FX_RECT))) {
         aggSaveCount += 1;
       }
@@ -1398,10 +1398,10 @@ class SkiaState {
     }
     return cacheSaveCount;
   }
-#endif
+#endif  // SHOW_SKIA_PATH && defined(_SKIA_SUPPORT_PATHS_)
 
   void DebugCheckClip() {
-#if SHOW_SKIA_PATH
+#if SHOW_SKIA_PATH && defined(_SKIA_SUPPORT_PATHS_)
     if (m_debugDisable)
       return;
     int aggSaveCount = AggSaveCount(m_pDriver);
@@ -1417,7 +1417,7 @@ class SkiaState {
          ++aggIndex) {
       if (!m_pDriver->stack()[aggIndex])
         continue;
-      if (m_pDriver->stack()[aggIndex]->GetType() != CFX_ClipRgn::RectI)
+      if (m_pDriver->stack()[aggIndex]->GetType() != CFX_ClipRgn::kRectI)
         continue;
       const FX_RECT& aggRect = m_pDriver->stack()[aggIndex]->GetBox();
       SkRect skRect = SkRect::MakeLTRB(aggRect.left, aggRect.top, aggRect.right,
@@ -1441,10 +1441,10 @@ class SkiaState {
         NOTREACHED();
       }
     }
-#endif  // SHOW_SKIA_PATH
+#endif  // SHOW_SKIA_PATH && defined(_SKIA_SUPPORT_PATHS_)
   }
 
-#if SHOW_SKIA_PATH
+#if SHOW_SKIA_PATH && defined(_SKIA_SUPPORT_PATHS_)
   void DumpClipStacks() const {
     if (m_debugDisable)
       return;
@@ -1472,21 +1472,21 @@ class SkiaState {
       const FX_RECT& box = m_pDriver->stack()[index]->GetBox();
       printf("stack rect: %d,%d,%d,%d mask=%s\n", box.left, box.top, box.right,
              box.bottom,
-             CFX_ClipRgn::MaskF == clipType
+             CFX_ClipRgn::kMaskF == clipType
                  ? "1"
-                 : CFX_ClipRgn::RectI == clipType ? "0" : "?");
+                 : CFX_ClipRgn::kRectI == clipType ? "0" : "?");
     }
     if (m_pDriver->clip_region()) {
       const FX_RECT& box = m_pDriver->clip_region()->GetBox();
       CFX_ClipRgn::ClipType clipType = m_pDriver->clip_region()->GetType();
       printf("clip rect: %d,%d,%d,%d mask=%s\n", box.left, box.top, box.right,
              box.bottom,
-             CFX_ClipRgn::MaskF == clipType
+             CFX_ClipRgn::kMaskF == clipType
                  ? "1"
-                 : CFX_ClipRgn::RectI == clipType ? "0" : "?");
+                 : CFX_ClipRgn::kRectI == clipType ? "0" : "?");
     }
   }
-#endif  // SHOW_SKIA_PATH
+#endif  // SHOW_SKIA_PATH && defined(_SKIA_SUPPORT_PATHS_)
 
  private:
   class CharDetail {
@@ -2725,7 +2725,7 @@ void CFX_SkiaDeviceDriver::Clear(uint32_t color) {
 void CFX_SkiaDeviceDriver::Dump() const {
 #if SHOW_SKIA_PATH && defined(_SKIA_SUPPORT_)
   if (m_pCache)
-    m_pCache->Dump(this);
+    m_pCache->Dump(__func__);
 #endif
 }
 
