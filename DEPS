@@ -34,7 +34,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling build
   # and whatever else without interference from each other.
-  'build_revision': 'b6006fa9fd952832a3df916696dad371347bba29',
+  'build_revision': 'b0cb70ee02dc30c5f7a5f126e032c862796823eb',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling buildtools
   # and whatever else without interference from each other.
@@ -316,10 +316,34 @@ deps = {
     'condition': 'checkout_linux',
   },
 
+  # TODO(crbug.com/pdfium/1650, crbug.com/1280002): Remove this entry once there
+  # is an autoroller has been updated to roll the mac_amd64 version.
   'tools/skia_goldctl/mac': {
     'packages': [
       {
         'package': 'skia/tools/goldctl/mac-amd64',
+        'version': 'git_revision:11b8d9e1b976c7ef4dd60521c87d00a8970f889b',
+      }
+    ],
+    'dep_type': 'cipd',
+    'condition': 'checkout_mac',
+  },
+
+  'tools/skia_goldctl/mac_amd64': {
+    'packages': [
+      {
+        'package': 'skia/tools/goldctl/mac-amd64',
+        'version': 'git_revision:11b8d9e1b976c7ef4dd60521c87d00a8970f889b',
+      }
+    ],
+    'dep_type': 'cipd',
+    'condition': 'checkout_mac',
+  },
+
+  'tools/skia_goldctl/mac_arm64': {
+    'packages': [
+      {
+        'package': 'skia/tools/goldctl/mac-arm64',
         'version': 'git_revision:11b8d9e1b976c7ef4dd60521c87d00a8970f889b',
       }
     ],
