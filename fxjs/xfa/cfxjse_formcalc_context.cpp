@@ -4223,19 +4223,14 @@ void CFXJSE_FormCalcContext::Str(
     ++u;
   }
 
-  std::ostringstream resultBuf;
   if (u > iWidth || (iPrecision + u) >= iWidth) {
-    int32_t i = 0;
-    while (i < iWidth) {
-      resultBuf << '*';
-      ++i;
-    }
-    resultBuf << '\0';
-    info.GetReturnValue().Set(fxv8::NewStringHelper(
-        info.GetIsolate(), ByteStringView(resultBuf.str().c_str())));
+    std::vector<char, FxAllocAllocator<char>> stars(std::max(iWidth, 0), '*');
+    info.GetReturnValue().Set(
+        fxv8::NewStringHelper(info.GetIsolate(), ByteStringView(stars)));
     return;
   }
 
+  std::ostringstream resultBuf;
   if (u == iLength) {
     if (iLength > iWidth) {
       int32_t i = 0;
