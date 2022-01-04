@@ -69,4 +69,8 @@ TEST(CXFAMeasurementTest, InvalidValues) {
   CXFA_Measurement empty(L"");
   EXPECT_EQ(XFA_Unit::Unknown, empty.GetUnit());
   EXPECT_FLOAT_EQ(0.0f, empty.GetValue());
+
+  CXFA_Measurement equals(L"=");
+  EXPECT_EQ(XFA_Unit::Unknown, equals.GetUnit());
+  EXPECT_FLOAT_EQ(0.0f, equals.GetValue());
 }
