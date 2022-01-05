@@ -916,16 +916,66 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Upper) {
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, WordNum) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-#if 0
-  // TODO(thestig): Investigate these cases.
-  // This looks like it's wrong in the Formcalc document.
-  ExecuteExpectString("WordNum(123.45)", "One Hundred and Twenty-three");
-  ExecuteExpectString("WordNum(123.45, 1)", "One Hundred and Twenty-three Dollars");
-#endif
+  // Wrong number of parameters.
+  ExecuteExpectError("WordNum()");
+  ExecuteExpectError("WordNum(1, 2, 3, 4)");
+
+  // Normal format codes.
+  ExecuteExpectString("WordNum(123.45)", "One Hundred Twenty-three");
+  ExecuteExpectString("WordNum(123.45, 0)", "One Hundred Twenty-three");
+  ExecuteExpectString("WordNum(123.45, 1)", "One Hundred Twenty-three Dollars");
+  ExecuteExpectString("WordNum(123.45, 2)",
+                      "One Hundred Twenty-three Dollars And Forty-five Cents");
+
+  // Invalid format code.
+  ExecuteExpectString("WordNum(123.45, -1)", "");
+  ExecuteExpectString("WordNum(123.45, 3)", "");
+
+  // Locale string is ignored.
+  ExecuteExpectString("WordNum(123.45, 0, \"zh_CN\")",
+                      "One Hundred Twenty-three");
+
+  // Zero (and near zero) values.
+  ExecuteExpectString("WordNum(0, 0)", "Zero");
+  ExecuteExpectString("WordNum(0, 1)", "Zero Dollars");
+  ExecuteExpectString("WordNum(0, 2)", "Zero Dollars And Zero Cents");
+  ExecuteExpectString("WordNum(0.12, 0)", "Zero");
+  ExecuteExpectString("WordNum(0.12, 1)", "Zero Dollars");
+  ExecuteExpectString("WordNum(0.12, 2)", "Zero Dollars And Twelve Cents");
+
+  // Negative values.
+  ExecuteExpectString("WordNum(-1, 0)", "*");
+  ExecuteExpectString("WordNum(-1, 1)", "*");
+  ExecuteExpectString("WordNum(-1, 2)", "*");
+
+  // Test larger values
+  // TODO(tsepez): check on "Thousand Zero"
+  ExecuteExpectString("WordNum(1.234e+6)",
+                      "One Million Two Hundred Thirty-four Thousand Zero");
+
+  // TODO(tsepez): check on "Zero Thousand Zero"
   ExecuteExpectString(
-      "WordNum(1154.67, 2)",
-      "One Thousand One Hundred Fifty-four Dollars And Sixty-seven Cents");
-  ExecuteExpectString("WordNum(43, 2)", "Forty-three Dollars And Zero Cents");
+      "WordNum(1.234e+9)",
+      "One Billion Two Hundred Thirty-four Million Zero Thousand Zero");
+
+  // TODO(tsepez): check on "Zero Million"
+  ExecuteExpectString(
+      "WordNum(1.234e+12)",
+      "One Trillion Two Hundred Thirty-four Billion Zero Million Nineteen "
+      "Thousand Four Hundred Fifty-six");
+
+  ExecuteExpectString(
+      "WordNum(1.234e+15)",
+      "One Thousand Two Hundred Thirty-three Trillion Nine Hundred Ninety-nine "
+      "Billion Nine Hundred Thirty-eight Million Seven Hundred Fifteen "
+      "Thousand "
+      "Six Hundred Forty-eight");
+
+  // Out-of-range.
+  ExecuteExpectString("WordNum(1.234e+18)", "*");
+  ExecuteExpectString("WordNum(1.234e+21)", "*");
+  ExecuteExpectString("WordNum(1.234e+24)", "*");
+  ExecuteExpectString("WordNum(1.234e+30)", "*");
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Get) {
