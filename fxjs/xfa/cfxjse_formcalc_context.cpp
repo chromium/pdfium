@@ -12,7 +12,6 @@
 
 #include <algorithm>
 #include <memory>
-#include <sstream>
 #include <utility>
 #include <vector>
 
@@ -1189,89 +1188,86 @@ ByteString TrillionUS(ByteStringView bsData) {
   if (iFirstCount == 0)
     iFirstCount = 3;
 
-  std::ostringstream strBuf;
+  ByteString strBuf;
   int32_t iIndex = 0;
   if (iFirstCount == 3) {
     if (pData[iIndex] != '0') {
-      strBuf << kCapUnits[pData[iIndex] - '0'];
-      strBuf << kComm[0];
+      strBuf += kCapUnits[pData[iIndex] - '0'];
+      strBuf += kComm[0];
     }
     if (pData[iIndex + 1] == '0') {
-      strBuf << kCapUnits[pData[iIndex + 2] - '0'];
+      strBuf += kCapUnits[pData[iIndex + 2] - '0'];
     } else {
       if (pData[iIndex + 1] > '1') {
-        strBuf << kLastTens[pData[iIndex + 1] - '2'];
-        strBuf << "-";
-        strBuf << kUnits[pData[iIndex + 2] - '0'];
+        strBuf += kLastTens[pData[iIndex + 1] - '2'];
+        strBuf += "-";
+        strBuf += kUnits[pData[iIndex + 2] - '0'];
       } else if (pData[iIndex + 1] == '1') {
-        strBuf << kTens[pData[iIndex + 2] - '0'];
+        strBuf += kTens[pData[iIndex + 2] - '0'];
       } else if (pData[iIndex + 1] == '0') {
-        strBuf << kCapUnits[pData[iIndex + 2] - '0'];
+        strBuf += kCapUnits[pData[iIndex + 2] - '0'];
       }
     }
     iIndex += 3;
   } else if (iFirstCount == 2) {
     if (pData[iIndex] == '0') {
-      strBuf << kCapUnits[pData[iIndex + 1] - '0'];
+      strBuf += kCapUnits[pData[iIndex + 1] - '0'];
     } else {
       if (pData[iIndex] > '1') {
-        strBuf << kLastTens[pData[iIndex] - '2'];
-        strBuf << "-";
-        strBuf << kUnits[pData[iIndex + 1] - '0'];
+        strBuf += kLastTens[pData[iIndex] - '2'];
+        strBuf += "-";
+        strBuf += kUnits[pData[iIndex + 1] - '0'];
       } else if (pData[iIndex] == '1') {
-        strBuf << kTens[pData[iIndex + 1] - '0'];
+        strBuf += kTens[pData[iIndex + 1] - '0'];
       } else if (pData[iIndex] == '0') {
-        strBuf << kCapUnits[pData[iIndex + 1] - '0'];
+        strBuf += kCapUnits[pData[iIndex + 1] - '0'];
       }
     }
     iIndex += 2;
   } else if (iFirstCount == 1) {
-    strBuf << kCapUnits[pData[iIndex] - '0'];
+    strBuf += kCapUnits[pData[iIndex] - '0'];
     ++iIndex;
   }
   if (iLength > 3 && iFirstCount > 0) {
-    strBuf << kComm[iComm];
+    strBuf += kComm[iComm];
     --iComm;
   }
   while (iIndex < iLength) {
     if (pData[iIndex] != '0') {
-      strBuf << kCapUnits[pData[iIndex] - '0'];
-      strBuf << kComm[0];
+      strBuf += kCapUnits[pData[iIndex] - '0'];
+      strBuf += kComm[0];
     }
     if (pData[iIndex + 1] == '0') {
-      strBuf << kCapUnits[pData[iIndex + 2] - '0'];
+      strBuf += kCapUnits[pData[iIndex + 2] - '0'];
     } else {
       if (pData[iIndex + 1] > '1') {
-        strBuf << kLastTens[pData[iIndex + 1] - '2'];
-        strBuf << "-";
-        strBuf << kUnits[pData[iIndex + 2] - '0'];
+        strBuf += kLastTens[pData[iIndex + 1] - '2'];
+        strBuf += "-";
+        strBuf += kUnits[pData[iIndex + 2] - '0'];
       } else if (pData[iIndex + 1] == '1') {
-        strBuf << kTens[pData[iIndex + 2] - '0'];
+        strBuf += kTens[pData[iIndex + 2] - '0'];
       } else if (pData[iIndex + 1] == '0') {
-        strBuf << kCapUnits[pData[iIndex + 2] - '0'];
+        strBuf += kCapUnits[pData[iIndex + 2] - '0'];
       }
     }
     if (iIndex < iLength - 3) {
-      strBuf << kComm[iComm];
+      strBuf += kComm[iComm];
       --iComm;
     }
     iIndex += 3;
   }
-  return ByteString(strBuf);
+  return strBuf;
 }
 
-ByteString WordUS(const ByteString& bsData, int32_t iStyle) {
-  const char* pData = bsData.c_str();
-  int32_t iLength = bsData.GetLength();
-  if (iStyle < 0 || iStyle > 2) {
+ByteString WordUS(ByteStringView bsData, int32_t iStyle) {
+  if (iStyle < 0 || iStyle > 2)
     return ByteString();
-  }
 
-  std::ostringstream strBuf;
-
+  int32_t iLength = bsData.GetLength();
+  ByteString strBuf;
   int32_t iIndex = 0;
   while (iIndex < iLength) {
-    if (pData[iIndex] == '.')
+    if (bsData[iIndex] == '.')
       break;
     ++iIndex;
   }
@@ -1282,31 +1278,31 @@ ByteString WordUS(const ByteString& bsData, int32_t iStyle) {
     if (!iCount && iInteger - iIndex > 0)
       iCount = 12;
 
-    strBuf << TrillionUS(ByteStringView(pData + iIndex, iCount));
+    strBuf += TrillionUS(bsData.Substr(iIndex, iCount));
     iIndex += iCount;
     if (iIndex < iInteger)
-      strBuf << " Trillion ";
+      strBuf += " Trillion ";
   }
 
   if (iStyle > 0)
-    strBuf << " Dollars";
+    strBuf += " Dollars";
 
   if (iStyle > 1 && iInteger < iLength) {
-    strBuf << " And ";
+    strBuf += " And ";
     iIndex = iInteger + 1;
     while (iIndex < iLength) {
       int32_t iCount = (iLength - iIndex) % 12;
       if (!iCount && iLength - iIndex > 0)
         iCount = 12;
 
-      strBuf << TrillionUS(ByteStringView(pData + iIndex, iCount));
+      strBuf += TrillionUS(bsData.Substr(iIndex, iCount));
       iIndex += iCount;
       if (iIndex < iLength)
-        strBuf << " Trillion ";
+        strBuf += " Trillion ";
     }
-    strBuf << " Cents";
+    strBuf += " Cents";
   }
-  return ByteString(strBuf);
+  return strBuf;
 }
 
 v8::Local<v8::Value> GetObjectDefaultValue(v8::Isolate* pIsolate,
@@ -4231,24 +4227,24 @@ void CFXJSE_FormCalcContext::Str(
     return;
   }
 
-  std::ostringstream resultBuf;
+  ByteString resultBuf;
   if (u == iLength) {
     if (iLength > iWidth) {
       int32_t i = 0;
       while (i < iWidth) {
-        resultBuf << '*';
+        resultBuf += '*';
         ++i;
       }
     } else {
       int32_t i = 0;
       while (i < iWidth - iLength) {
-        resultBuf << ' ';
+        resultBuf += ' ';
         ++i;
       }
-      resultBuf << pData;
+      resultBuf += pData;
     }
-    info.GetReturnValue().Set(fxv8::NewStringHelper(
-        info.GetIsolate(), ByteStringView(resultBuf.str().c_str())));
+    info.GetReturnValue().Set(
+        fxv8::NewStringHelper(info.GetIsolate(), resultBuf.AsStringView()));
     return;
   }
 
@@ -4258,16 +4254,16 @@ void CFXJSE_FormCalcContext::Str(
 
   int32_t i = 0;
   while (i < iLeavingSpace) {
-    resultBuf << ' ';
+    resultBuf += ' ';
     ++i;
   }
   i = 0;
   while (i < u) {
-    resultBuf << pData[i];
+    resultBuf += pData[i];
     ++i;
   }
   if (iPrecision != 0)
-    resultBuf << '.';
+    resultBuf += '.';
 
   u++;
   i = 0;
@@ -4275,17 +4271,16 @@ void CFXJSE_FormCalcContext::Str(
     if (i >= iPrecision)
       break;
 
-    resultBuf << pData[u];
+    resultBuf += pData[u];
     ++i;
     ++u;
   }
   while (i < iPrecision) {
-    resultBuf << '0';
+    resultBuf += '0';
     ++i;
   }
-  resultBuf << '\0';
-  info.GetReturnValue().Set(fxv8::NewStringHelper(
-      info.GetIsolate(), ByteStringView(resultBuf.str().c_str())));
+  info.GetReturnValue().Set(
+      fxv8::NewStringHelper(info.GetIsolate(), resultBuf.AsStringView()));
 }
 
 // static
@@ -4473,10 +4468,10 @@ void CFXJSE_FormCalcContext::WordNum(
     info.GetReturnValue().Set(fxv8::NewStringHelper(info.GetIsolate(), "*"));
     return;
   }
-
-  info.GetReturnValue().Set(fxv8::NewStringHelper(
-      info.GetIsolate(),
-      WordUS(ByteString::Format("%.2f", fNumber), iIdentifier).AsStringView()));
+  ByteString bsFormatted = ByteString::Format("%.2f", fNumber);
+  ByteString bsWorded = WordUS(bsFormatted.AsStringView(), iIdentifier);
+  info.GetReturnValue().Set(
+      fxv8::NewStringHelper(info.GetIsolate(), bsWorded.AsStringView()));
 }
 
 // static
