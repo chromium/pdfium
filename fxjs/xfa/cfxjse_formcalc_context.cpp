@@ -30,6 +30,7 @@
 #include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/check.h"
 #include "third_party/base/cxx17_backports.h"
+#include "third_party/base/numerics/safe_conversions.h"
 #include "v8/include/v8-container.h"
 #include "v8/include/v8-function-callback.h"
 #include "v8/include/v8-object.h"
@@ -4297,31 +4298,35 @@ void CFXJSE_FormCalcContext::Stuff(
     return;
   }
 
-  ByteString bsSource;
-  ByteString bsInsert;
-  int32_t iLength = 0;
-  int32_t iStart = 0;
-  int32_t iDelete = 0;
   v8::Local<v8::Value> sourceValue = GetSimpleValue(info, 0);
   v8::Local<v8::Value> startValue = GetSimpleValue(info, 1);
   v8::Local<v8::Value> deleteValue = GetSimpleValue(info, 2);
-  if (!fxv8::IsNull(sourceValue) && !fxv8::IsNull(startValue) &&
-      !fxv8::IsNull(deleteValue)) {
-    bsSource = ValueToUTF8String(info.GetIsolate(), sourceValue);
-    iLength = bsSource.GetLength();
+  if (fxv8::IsNull(sourceValue) || fxv8::IsNull(startValue) ||
+      fxv8::IsNull(deleteValue)) {
+    info.GetReturnValue().SetNull();
+    return;
+  }
+
+  int32_t iStart = 1;  // one-based character indexing.
+  int32_t iDelete = 0;
+  ByteString bsSource = ValueToUTF8String(info.GetIsolate(), sourceValue);
+  int32_t iLength = pdfium::base::checked_cast<int32_t>(bsSource.GetLength());
+  if (iLength) {
     iStart = pdfium::clamp(
         static_cast<int32_t>(ValueToFloat(info.GetIsolate(), startValue)), 1,
         iLength);
-    iDelete = std::max(
-        0, static_cast<int32_t>(ValueToFloat(info.GetIsolate(), deleteValue)));
+    iDelete = pdfium::clamp(
+        static_cast<int32_t>(ValueToFloat(info.GetIsolate(), deleteValue)), 0,
+        iLength - iStart + 1);
   }
 
+  ByteString bsInsert;
   if (argc > 3) {
     v8::Local<v8::Value> insertValue = GetSimpleValue(info, 3);
     bsInsert = ValueToUTF8String(info.GetIsolate(), insertValue);
   }
 
-  --iStart;
+  --iStart;  // now zero-based.
   std::ostringstream szResult;
   int32_t i = 0;
   while (i < iStart) {

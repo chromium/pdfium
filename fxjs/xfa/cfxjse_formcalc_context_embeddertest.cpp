@@ -825,10 +825,41 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Str) {
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Stuff) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
+  // Test wrong number of parameters.
+  ExecuteExpectError("Stuff(1, 2)");
+  ExecuteExpectError("Stuff(1, 2, 3, 4, 5)");
+
+  // Test null arguments.
+  ExecuteExpectNull("Stuff(null, 0, 4)");
+  ExecuteExpectNull("Stuff(\"ABCDEFG\", null, 4)");
+  ExecuteExpectNull("Stuff(\"ABCDEFG\", 0, null)");
+
+  // Insertions.
+  ExecuteExpectString("Stuff(\"\", 0, 0, \"clams\")", "clams");
   ExecuteExpectString("Stuff(\"TonyBlue\", 5, 0, \" \")", "Tony Blue");
+
+  // Deletions.
+  ExecuteExpectString("Stuff(\"A\", 1, 0)", "A");
+  ExecuteExpectString("Stuff(\"A\", 1, 1)", "");
   ExecuteExpectString("Stuff(\"ABCDEFGH\", 4, 2)", "ABCFGH");
-  ExecuteExpectString("Stuff(\"members-list@myweb.com\", 0, 0, \"cc:\")",
-                      "cc:members-list@myweb.com");
+  ExecuteExpectString("Stuff(\"ABCDEFGH\", 7, 2)", "ABCDEF");
+
+  // Test index clamping.
+  ExecuteExpectString("Stuff(\"ABCDEFGH\", -400, 400)", "");
+
+  // Need significant amount of text to test start + count overflow due to
+  // intermediate float representation of count not being able to hold
+  // INT_MAX.
+  ExecuteExpectString(
+      "Stuff(\""
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345678900"
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345678900"
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345678900"
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345678900"
+      "\", 133, 2147483520)",
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345678900"
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345678900"
+      "abcd");
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Substr) {
