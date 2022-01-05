@@ -4327,21 +4327,11 @@ void CFXJSE_FormCalcContext::Stuff(
   }
 
   --iStart;  // now zero-based.
-  std::ostringstream szResult;
-  int32_t i = 0;
-  while (i < iStart) {
-    szResult << static_cast<char>(bsSource[i]);
-    ++i;
-  }
-  szResult << bsInsert.AsStringView();
-  i = iStart + iDelete;
-  while (i < iLength) {
-    szResult << static_cast<char>(bsSource[i]);
-    ++i;
-  }
-  szResult << '\0';
-  info.GetReturnValue().Set(fxv8::NewStringHelper(
-      info.GetIsolate(), ByteStringView(szResult.str().c_str())));
+  ByteString bsResult = {bsSource.AsStringView().First(iStart),
+                         bsInsert.AsStringView(),
+                         bsSource.AsStringView().Substr(iStart + iDelete)};
+  info.GetReturnValue().Set(
+      fxv8::NewStringHelper(info.GetIsolate(), bsResult.AsStringView()));
 }
 
 // static
