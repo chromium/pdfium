@@ -268,7 +268,7 @@ std::string GenXfaScriptParam(FuzzedDataProvider* data_provider) {
       "99999999999",
       "A",
       "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-      "ÁÂÃÄÅÆ",
+      "\xc3\x81\xc3\x82\xc3\x83\xc3\x84\xc3\x85\xc3\x86",
       "<a><b></b></a>",
       "&Acirc;",
       "&AElig;&Aacute;&Acirc;&Aacute;",
