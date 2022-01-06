@@ -188,7 +188,8 @@ FPDFAttachment_GetStringValue(FPDF_ATTACHMENT attachment,
   if (bsKey == kChecksumKey && !value.IsEmpty()) {
     CPDF_String* stringValue = pParamsDict->GetObjectFor(bsKey)->AsString();
     if (stringValue->IsHex()) {
-      ByteString encoded = PDF_HexEncodeString(stringValue->GetString());
+      ByteString encoded =
+          PDF_HexEncodeString(stringValue->GetString().AsStringView());
       value = pdfium::MakeRetain<CPDF_String>(nullptr, encoded, false)
                   ->GetUnicodeText();
     }

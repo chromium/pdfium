@@ -580,10 +580,10 @@ ByteString GetFontSetString(IPVT_FontMap* pFontMap,
   return ByteString(sRet);
 }
 
-ByteString GetWordRenderString(const ByteString& strWords) {
-  if (strWords.GetLength() > 0)
-    return PDF_EncodeString(strWords) + " " + kShowTextOperator + "\n";
-  return ByteString();
+ByteString GetWordRenderString(ByteStringView strWords) {
+  if (strWords.IsEmpty())
+    return ByteString();
+  return PDF_EncodeString(strWords) + " " + kShowTextOperator + "\n";
 }
 
 ByteString GetEditAppStream(CPWL_EditImpl* pEdit,
@@ -605,7 +605,7 @@ ByteString GetEditAppStream(CPWL_EditImpl* pEdit,
     if (bContinuous) {
       if (place.LineCmp(oldplace) != 0) {
         if (!sWords.IsEmpty()) {
-          sEditStream << GetWordRenderString(sWords);
+          sEditStream << GetWordRenderString(sWords.AsStringView());
           sWords.clear();
         }
 
@@ -632,7 +632,7 @@ ByteString GetEditAppStream(CPWL_EditImpl* pEdit,
       if (pIterator->GetWord(word)) {
         if (word.nFontIndex != nCurFontIndex) {
           if (!sWords.IsEmpty()) {
-            sEditStream << GetWordRenderString(sWords);
+            sEditStream << GetWordRenderString(sWords.AsStringView());
             sWords.clear();
           }
           sEditStream << GetFontSetString(pEdit->GetFontMap(), word.nFontIndex,
@@ -660,13 +660,14 @@ ByteString GetEditAppStream(CPWL_EditImpl* pEdit,
           nCurFontIndex = word.nFontIndex;
         }
         sEditStream << GetWordRenderString(
-            pEdit->GetPDFWordString(nCurFontIndex, word.Word, SubWord));
+            pEdit->GetPDFWordString(nCurFontIndex, word.Word, SubWord)
+                .AsStringView());
       }
     }
   }
 
   if (!sWords.IsEmpty())
-    sEditStream << GetWordRenderString(sWords);
+    sEditStream << GetWordRenderString(sWords.AsStringView());
 
   std::ostringstream sAppStream;
   if (sEditStream.tellp() > 0) {

@@ -30,8 +30,8 @@ extern const uint16_t kPDFDocEncoding[256];
 
 bool ValidateDecoderPipeline(const CPDF_Array* pDecoders);
 
-ByteString PDF_EncodeString(const ByteString& src);
-ByteString PDF_HexEncodeString(const ByteString& src);
+ByteString PDF_EncodeString(ByteStringView src);
+ByteString PDF_HexEncodeString(ByteStringView src);
 WideString PDF_DecodeText(pdfium::span<const uint8_t> span);
 ByteString PDF_EncodeText(const WideString& str);
 

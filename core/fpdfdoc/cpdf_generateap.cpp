@@ -75,10 +75,10 @@ ByteString GetPDFWordString(IPVT_FontMap* pFontMap,
   return sWord;
 }
 
-ByteString GetWordRenderString(const ByteString& strWords) {
-  if (strWords.GetLength() > 0)
-    return PDF_EncodeString(strWords) + " Tj\n";
-  return ByteString();
+ByteString GetWordRenderString(ByteStringView strWords) {
+  if (strWords.IsEmpty())
+    return ByteString();
+  return PDF_EncodeString(strWords) + " Tj\n";
 }
 
 ByteString GetFontSetString(IPVT_FontMap* pFontMap,
@@ -111,7 +111,7 @@ ByteString GenerateEditAP(IPVT_FontMap* pFontMap,
     if (bContinuous) {
       if (place.LineCmp(oldplace) != 0) {
         if (!sWords.IsEmpty()) {
-          sLineStream << GetWordRenderString(sWords);
+          sLineStream << GetWordRenderString(sWords.AsStringView());
           sEditStream << sLineStream.str();
           sLineStream.str("");
           sWords.clear();
@@ -136,7 +136,7 @@ ByteString GenerateEditAP(IPVT_FontMap* pFontMap,
       if (pIterator->GetWord(word)) {
         if (word.nFontIndex != nCurFontIndex) {
           if (!sWords.IsEmpty()) {
-            sLineStream << GetWordRenderString(sWords);
+            sLineStream << GetWordRenderString(sWords.AsStringView());
             sWords.clear();
           }
           sLineStream << GetFontSetString(pFontMap, word.nFontIndex,
@@ -162,12 +162,13 @@ ByteString GenerateEditAP(IPVT_FontMap* pFontMap,
           nCurFontIndex = word.nFontIndex;
         }
         sEditStream << GetWordRenderString(
-            GetPDFWordString(pFontMap, nCurFontIndex, word.Word, SubWord));
+            GetPDFWordString(pFontMap, nCurFontIndex, word.Word, SubWord)
+                .AsStringView());
       }
     }
   }
   if (!sWords.IsEmpty()) {
-    sLineStream << GetWordRenderString(sWords);
+    sLineStream << GetWordRenderString(sWords.AsStringView());
     sEditStream << sLineStream.str();
   }
   return ByteString(sEditStream);

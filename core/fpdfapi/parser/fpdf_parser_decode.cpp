@@ -10,7 +10,6 @@
 #include <limits.h>
 
 #include <algorithm>
-#include <sstream>
 #include <utility>
 #include <vector>
 
@@ -560,40 +559,40 @@ ByteString PDF_EncodeText(const WideString& str) {
   return result;
 }
 
-ByteString PDF_EncodeString(const ByteString& src) {
-  std::ostringstream result;
-  int srclen = src.GetLength();
-  result << '(';
-  for (int i = 0; i < srclen; ++i) {
+ByteString PDF_EncodeString(ByteStringView src) {
+  ByteString result;
+  result.Reserve(src.GetLength() + 2);
+  result += '(';
+  for (size_t i = 0; i < src.GetLength(); ++i) {
     uint8_t ch = src[i];
     if (ch == 0x0a) {
-      result << "\\n";
+      result += "\\n";
       continue;
     }
     if (ch == 0x0d) {
-      result << "\\r";
+      result += "\\r";
       continue;
     }
     if (ch == ')' || ch == '\\' || ch == '(')
-      result << '\\';
-    result << static_cast<char>(ch);
+      result += '\\';
+    result += static_cast<char>(ch);
   }
-  result << ')';
-  return ByteString(result);
+  result += ')';
+  return result;
 }
 
-ByteString PDF_HexEncodeString(const ByteString& src) {
-  std::ostringstream result;
-  int srclen = src.GetLength();
-  result << '<';
-  for (int i = 0; i < srclen; ++i) {
+ByteString PDF_HexEncodeString(ByteStringView src) {
+  ByteString result;
+  result.Reserve(2 * src.GetLength() + 2);
+  result += '<';
+  for (size_t i = 0; i < src.GetLength(); ++i) {
     char buf[2];
     FXSYS_IntToTwoHexChars(src[i], buf);
-    result << buf[0];
-    result << buf[1];
+    result += buf[0];
+    result += buf[1];
   }
-  result << '>';
-  return ByteString(result);
+  result += '>';
+  return result;
 }
 
 bool FlateEncode(pdfium::span<const uint8_t> src_span,

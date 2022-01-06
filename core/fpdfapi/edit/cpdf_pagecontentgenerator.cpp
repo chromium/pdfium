@@ -589,6 +589,6 @@ void CPDF_PageContentGenerator::ProcessText(std::ostringstream* buf,
     if (charcode != CPDF_Font::kInvalidCharCode)
       pFont->AppendChar(&text, charcode);
   }
-  *buf << PDF_HexEncodeString(text) << " Tj ET";
+  *buf << PDF_HexEncodeString(text.AsStringView()) << " Tj ET";
   *buf << " Q\n";
 }
