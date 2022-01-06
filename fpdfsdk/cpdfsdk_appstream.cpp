@@ -594,19 +594,19 @@ ByteString GetEditAppStream(CPWL_EditImpl* pEdit,
   pIterator->SetAt(0);
 
   std::ostringstream sEditStream;
-  std::ostringstream sWords;
   int32_t nCurFontIndex = -1;
   CFX_PointF ptOld;
   CFX_PointF ptNew;
   CPVT_WordPlace oldplace;
+  ByteString sWords;
 
   while (pIterator->NextWord()) {
     CPVT_WordPlace place = pIterator->GetAt();
     if (bContinuous) {
       if (place.LineCmp(oldplace) != 0) {
-        if (sWords.tellp() > 0) {
-          sEditStream << GetWordRenderString(ByteString(sWords));
-          sWords.str("");
+        if (!sWords.IsEmpty()) {
+          sEditStream << GetWordRenderString(sWords);
+          sWords.clear();
         }
 
         CPVT_Word word;
@@ -631,18 +631,17 @@ ByteString GetEditAppStream(CPWL_EditImpl* pEdit,
       CPVT_Word word;
       if (pIterator->GetWord(word)) {
         if (word.nFontIndex != nCurFontIndex) {
-          if (sWords.tellp() > 0) {
-            sEditStream << GetWordRenderString(ByteString(sWords));
-            sWords.str("");
+          if (!sWords.IsEmpty()) {
+            sEditStream << GetWordRenderString(sWords);
+            sWords.clear();
           }
           sEditStream << GetFontSetString(pEdit->GetFontMap(), word.nFontIndex,
                                           word.fFontSize);
           nCurFontIndex = word.nFontIndex;
         }
 
-        sWords << pEdit->GetPDFWordString(nCurFontIndex, word.Word, SubWord);
+        sWords += pEdit->GetPDFWordString(nCurFontIndex, word.Word, SubWord);
       }
-
       oldplace = place;
     } else {
       CPVT_Word word;
@@ -655,23 +654,19 @@ ByteString GetEditAppStream(CPWL_EditImpl* pEdit,
                       << kMoveTextPositionOperator << "\n";
           ptOld = ptNew;
         }
-
         if (word.nFontIndex != nCurFontIndex) {
           sEditStream << GetFontSetString(pEdit->GetFontMap(), word.nFontIndex,
                                           word.fFontSize);
           nCurFontIndex = word.nFontIndex;
         }
-
         sEditStream << GetWordRenderString(
             pEdit->GetPDFWordString(nCurFontIndex, word.Word, SubWord));
       }
     }
   }
 
-  if (sWords.tellp() > 0) {
-    sEditStream << GetWordRenderString(ByteString(sWords));
-    sWords.str("");
-  }
+  if (!sWords.IsEmpty())
+    sEditStream << GetWordRenderString(sWords);
 
   std::ostringstream sAppStream;
   if (sEditStream.tellp() > 0) {

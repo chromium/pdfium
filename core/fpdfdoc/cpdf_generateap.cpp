@@ -100,22 +100,21 @@ ByteString GenerateEditAP(IPVT_FontMap* pFontMap,
                           uint16_t SubWord) {
   std::ostringstream sEditStream;
   std::ostringstream sLineStream;
-  std::ostringstream sWords;
   CFX_PointF ptOld;
   CFX_PointF ptNew;
   int32_t nCurFontIndex = -1;
   CPVT_WordPlace oldplace;
-
+  ByteString sWords;
   pIterator->SetAt(0);
   while (pIterator->NextWord()) {
     CPVT_WordPlace place = pIterator->GetWordPlace();
     if (bContinuous) {
       if (place.LineCmp(oldplace) != 0) {
-        if (sWords.tellp() > 0) {
-          sLineStream << GetWordRenderString(ByteString(sWords));
+        if (!sWords.IsEmpty()) {
+          sLineStream << GetWordRenderString(sWords);
           sEditStream << sLineStream.str();
           sLineStream.str("");
-          sWords.str("");
+          sWords.clear();
         }
         CPVT_Word word;
         if (pIterator->GetWord(word)) {
@@ -136,15 +135,15 @@ ByteString GenerateEditAP(IPVT_FontMap* pFontMap,
       CPVT_Word word;
       if (pIterator->GetWord(word)) {
         if (word.nFontIndex != nCurFontIndex) {
-          if (sWords.tellp() > 0) {
-            sLineStream << GetWordRenderString(ByteString(sWords));
-            sWords.str("");
+          if (!sWords.IsEmpty()) {
+            sLineStream << GetWordRenderString(sWords);
+            sWords.clear();
           }
           sLineStream << GetFontSetString(pFontMap, word.nFontIndex,
                                           word.fFontSize);
           nCurFontIndex = word.nFontIndex;
         }
-        sWords << GetPDFWordString(pFontMap, nCurFontIndex, word.Word, SubWord);
+        sWords += GetPDFWordString(pFontMap, nCurFontIndex, word.Word, SubWord);
       }
       oldplace = place;
     } else {
@@ -167,10 +166,9 @@ ByteString GenerateEditAP(IPVT_FontMap* pFontMap,
       }
     }
   }
-  if (sWords.tellp() > 0) {
-    sLineStream << GetWordRenderString(ByteString(sWords));
+  if (!sWords.IsEmpty()) {
+    sLineStream << GetWordRenderString(sWords);
     sEditStream << sLineStream.str();
-    sWords.str("");
   }
   return ByteString(sEditStream);
 }
