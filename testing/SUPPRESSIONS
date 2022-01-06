@@ -377,26 +377,11 @@ bug_591137.in * * * skia
 # TODO(chromium:725555, skia:9265): Remove after associated bug is fixed
 bug_725555.in * * * skia,skiapaths
 
-# TODO(pdfium:1703): Remove after associated bug is fixed
-bug_736695_1.in * * * skia
-
-# TODO(pdfium:1703): Remove after associated bug is fixed
-bug_736695_2.in * * * skia
-
-# TODO(pdfium:1703): Remove after associated bug is fixed
-bug_736695_3.in * * * skia
-
-# TODO(pdfium:1703): Remove after associated bug is fixed
-bug_736695_4.in * * * skia
-
 # TODO(pdfium:1752): Remove after associated bug is fixed
 bug_845697.in * * * skia,skiapaths
 
 # TODO(pdfium:1749): Remove after associated bug is fixed
 bug_966263.in * * * skia
-
-# TODO(pdfium:1736): Remove after associated bug is fixed
-checkbox_radiobutton.in * * * skia
 
 # TODO(pdfium:1750): Remove after associated bug is fixed
 image_transformer_other.in * * * skia
