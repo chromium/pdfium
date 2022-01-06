@@ -8,7 +8,6 @@
 
 #include <algorithm>
 #include <memory>
-#include <sstream>
 #include <tuple>
 #include <utility>
 #include <vector>
@@ -195,17 +194,10 @@ void GetFontFamily(uint32_t nStyle, ByteString* fontName) {
   }
 }
 
-ByteString ParseStyle(const char* pStyle, size_t iLen, size_t iIndex) {
-  std::ostringstream buf;
-  if (!iLen || iLen <= iIndex)
-    return ByteString(buf);
-  while (iIndex < iLen) {
-    if (pStyle[iIndex] == ',')
-      break;
-    buf << pStyle[iIndex];
-    ++iIndex;
-  }
-  return ByteString(buf);
+ByteString ParseStyle(const ByteString& bsStyle, size_t iStart) {
+  ByteStringView bsRegion = bsStyle.AsStringView().Substr(iStart);
+  size_t iIndex = bsRegion.Find(',').value_or(bsRegion.GetLength());
+  return ByteString(bsRegion.First(iIndex));
 }
 
 struct FX_FontStyle {
@@ -494,14 +486,10 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
     weight = FXFONT_FW_BOLD;
 
   if (!style.IsEmpty()) {
-    size_t nLen = style.GetLength();
-    const char* pStyle = style.c_str();
     size_t i = 0;
     bool bFirstItem = true;
-    ByteString buf;
-    while (i < nLen) {
-      buf = ParseStyle(pStyle, nLen, i);
-
+    while (i < style.GetLength()) {
+      ByteString buf = ParseStyle(style, i);
       bool hasStyleType;
       uint32_t styleType;
       size_t len;
