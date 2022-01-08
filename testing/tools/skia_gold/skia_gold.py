@@ -21,7 +21,7 @@ def _ParseKeyValuePairs(kv_str):
   kv_pairs = shlex.split(kv_str)
   if len(kv_pairs) % 2:
     raise ValueError('Uneven number of key/value pairs. Got %s' % kv_str)
-  return {kv_pairs[i]: kv_pairs[i + 1] for i in xrange(0, len(kv_pairs), 2)}
+  return {kv_pairs[i]: kv_pairs[i + 1] for i in range(0, len(kv_pairs), 2)}
 
 
 def add_skia_gold_args(parser):
