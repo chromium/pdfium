@@ -371,8 +371,8 @@ ByteString GetPopupContentsString(CPDF_Document* pDoc,
   WideString swValue(pAnnotDict.GetUnicodeTextFor(pdfium::form_fields::kT));
   swValue += L'\n';
   swValue += pAnnotDict.GetUnicodeTextFor(pdfium::annotation::kContents);
-  CPVT_FontMap map(pDoc, nullptr, pDefFont, sFontName);
 
+  CPVT_FontMap map(pDoc, nullptr, pDefFont, sFontName);
   CPVT_VariableText::Provider prd(&map);
   CPVT_VariableText vt;
   vt.SetProvider(&prd);
@@ -380,10 +380,10 @@ ByteString GetPopupContentsString(CPDF_Document* pDoc,
   vt.SetFontSize(12);
   vt.SetAutoReturn(true);
   vt.SetMultiLine(true);
-
   vt.Initialize();
   vt.SetText(swValue);
   vt.RearrangeAll();
+
   CFX_PointF ptOffset(3.0f, -3.0f);
   ByteString sContent =
       GenerateEditAP(&map, vt.GetIterator(), ptOffset, false, 0);
@@ -391,13 +391,11 @@ ByteString GetPopupContentsString(CPDF_Document* pDoc,
   if (sContent.IsEmpty())
     return ByteString();
 
-  std::ostringstream sAppStream;
-  sAppStream << "BT\n"
-             << GenerateColorAP(CFX_Color(CFX_Color::Type::kRGB, 0, 0, 0),
-                                PaintOperation::kFill)
-             << sContent << "ET\n"
-             << "Q\n";
-  return ByteString(sAppStream);
+  ByteString sColorAP = GenerateColorAP(
+      CFX_Color(CFX_Color::Type::kRGB, 0, 0, 0), PaintOperation::kFill);
+
+  return ByteString{"BT\n", sColorAP.AsStringView(), sContent.AsStringView(),
+                    "ET\n", "Q\n"};
 }
 
 RetainPtr<CPDF_Dictionary> GenerateResourceFontDict(
