@@ -10,7 +10,6 @@
 
 #include <algorithm>
 #include <memory>
-#include <sstream>
 #include <utility>
 
 #include "constants/stream_dict_common.h"
@@ -461,32 +460,27 @@ ByteString CPDF_StreamParser::ReadString() {
   if (!PositionIsInBounds())
     return ByteString();
 
-  uint8_t ch = m_pBuf[m_Pos++];
-  std::ostringstream buf;
+  ByteString buf;
   int parlevel = 0;
   int status = 0;
   int iEscCode = 0;
+  uint8_t ch = m_pBuf[m_Pos++];
   while (1) {
     switch (status) {
       case 0:
         if (ch == ')') {
           if (parlevel == 0) {
-            if (buf.tellp() <= 0)
-              return ByteString();
-
-            return ByteString(
-                buf.str().c_str(),
-                std::min(static_cast<size_t>(buf.tellp()), kMaxStringLength));
+            return buf.First(std::min(buf.GetLength(), kMaxStringLength));
           }
           parlevel--;
-          buf << ')';
+          buf += ')';
         } else if (ch == '(') {
           parlevel++;
-          buf << '(';
+          buf += '(';
         } else if (ch == '\\') {
           status = 1;
         } else {
-          buf << static_cast<char>(ch);
+          buf += static_cast<char>(ch);
         }
         break;
       case 1:
@@ -502,17 +496,17 @@ ByteString CPDF_StreamParser::ReadString() {
         if (ch == '\n') {
           // Do nothing.
         } else if (ch == 'n') {
-          buf << '\n';
+          buf += '\n';
         } else if (ch == 'r') {
-          buf << '\r';
+          buf += '\r';
         } else if (ch == 't') {
-          buf << '\t';
+          buf += '\t';
         } else if (ch == 'b') {
-          buf << '\b';
+          buf += '\b';
         } else if (ch == 'f') {
-          buf << '\f';
+          buf += '\f';
         } else {
-          buf << static_cast<char>(ch);
+          buf += static_cast<char>(ch);
         }
         status = 0;
         break;
@@ -522,7 +516,7 @@ ByteString CPDF_StreamParser::ReadString() {
               iEscCode * 8 + FXSYS_DecimalCharToInt(static_cast<char>(ch));
           status = 3;
         } else {
-          buf << static_cast<char>(iEscCode);
+          buf += static_cast<char>(iEscCode);
           status = 0;
           continue;
         }
@@ -531,10 +525,10 @@ ByteString CPDF_StreamParser::ReadString() {
         if (FXSYS_IsOctalDigit(ch)) {
           iEscCode =
               iEscCode * 8 + FXSYS_DecimalCharToInt(static_cast<char>(ch));
-          buf << static_cast<char>(iEscCode);
+          buf += static_cast<char>(iEscCode);
           status = 0;
         } else {
-          buf << static_cast<char>(iEscCode);
+          buf += static_cast<char>(iEscCode);
           status = 0;
           continue;
         }
@@ -546,26 +540,17 @@ ByteString CPDF_StreamParser::ReadString() {
         break;
     }
     if (!PositionIsInBounds())
-      break;
+      return buf.First(std::min(buf.GetLength(), kMaxStringLength));
 
     ch = m_pBuf[m_Pos++];
   }
-  if (PositionIsInBounds())
-    ++m_Pos;
-
-  if (buf.tellp() <= 0)
-    return ByteString();
-
-  return ByteString(
-      buf.str().c_str(),
-      std::min(static_cast<size_t>(buf.tellp()), kMaxStringLength));
 }
 
 ByteString CPDF_StreamParser::ReadHexString() {
   if (!PositionIsInBounds())
     return ByteString();
 
-  std::ostringstream buf;
+  ByteString buf;
   bool bFirst = true;
   int code = 0;
   while (PositionIsInBounds()) {
@@ -581,19 +566,14 @@ ByteString CPDF_StreamParser::ReadHexString() {
       code = val * 16;
     } else {
       code += val;
-      buf << static_cast<uint8_t>(code);
+      buf += static_cast<uint8_t>(code);
     }
     bFirst = !bFirst;
   }
   if (!bFirst)
-    buf << static_cast<char>(code);
+    buf += static_cast<char>(code);
 
-  if (buf.tellp() <= 0)
-    return ByteString();
-
-  return ByteString(
-      buf.str().c_str(),
-      std::min(static_cast<size_t>(buf.tellp()), kMaxStringLength));
+  return buf.First(std::min<size_t>(buf.GetLength(), kMaxStringLength));
 }
 
 bool CPDF_StreamParser::PositionIsInBounds() const {
