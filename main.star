@@ -107,7 +107,7 @@ def get_properties_by_name(name):
 
     if name.find("msvc") != -1:
         properties.update({"msvc": True})
-        properties["$build/goma"] = None
+        properties["$build/goma"] = {}
 
     if name.endswith("32"):
         properties.update({"target_cpu": "x86"})
