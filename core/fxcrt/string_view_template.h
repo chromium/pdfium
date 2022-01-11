@@ -286,12 +286,8 @@ inline bool operator<(const T* lhs, const StringViewTemplate<T>& rhs) {
   return rhs > lhs;
 }
 
-// Workaround for one of the cases external template classes are
-// failing in GCC before version 7 with -O0
-#if !defined(__GNUC__) || __GNUC__ >= 7
 extern template class StringViewTemplate<char>;
 extern template class StringViewTemplate<wchar_t>;
-#endif
 
 using ByteStringView = StringViewTemplate<char>;
 using WideStringView = StringViewTemplate<wchar_t>;

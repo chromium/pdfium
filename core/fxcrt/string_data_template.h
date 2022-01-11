@@ -50,6 +50,9 @@ class StringDataTemplate {
   ~StringDataTemplate() = delete;
 };
 
+extern template class StringDataTemplate<char>;
+extern template class StringDataTemplate<wchar_t>;
+
 }  // namespace fxcrt
 
 using fxcrt::StringDataTemplate;
