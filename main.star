@@ -311,18 +311,21 @@ luci.recipe(
     name = "pdfium",
     cipd_package = _CIPD_PACKAGE,
     use_bbagent=True,
+    use_python3=True,
 )
 
 luci.recipe(
     name = "pdfium_analysis",
     cipd_package = _CIPD_PACKAGE,
     use_bbagent=True,
+    use_python3=True,
 )
 
 luci.recipe(
     name = "presubmit",
     cipd_package = _CIPD_PACKAGE,
     use_bbagent=True,
+    use_python3=True,
 )
 
 # Buckets
