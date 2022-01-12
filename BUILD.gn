@@ -216,6 +216,9 @@ config("pdfium_common_config") {
     # TODO(crbug.com/1213098): Remove once this is in //build.
     cflags += [ "-Wdeprecated-copy" ]
 
+    # May flag some issues when converting int to size_t.
+    cflags += [ "-Wtautological-unsigned-zero-compare" ]
+
     # Catch misuse of cppgc in XFA.
     if (pdf_enable_xfa && clang_use_chrome_plugins) {
       cflags += [

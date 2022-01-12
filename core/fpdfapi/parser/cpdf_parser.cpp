@@ -768,9 +768,6 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
   pdfium::span<const uint8_t> data_span = pAcc->GetSpan();
   uint32_t segindex = 0;
   for (const auto& index : indices) {
-    if (index.start_obj_num < 0)
-      continue;
-
     FX_SAFE_UINT32 seg_end = segindex;
     seg_end += index.obj_count;
     seg_end *= total_width;
