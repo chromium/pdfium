@@ -6,9 +6,12 @@
 
 #include "core/fxcrt/string_data_template.h"
 
+#include <string.h>
+
+#include <new>
+
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
-#include "third_party/base/allocator/partition_allocator/partition_alloc.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 
@@ -37,8 +40,7 @@ StringDataTemplate<CharType>* StringDataTemplate<CharType>::Create(
   size_t usableLen = (totalSize - overhead) / sizeof(CharType);
   DCHECK(usableLen >= nLen);
 
-  void* pData = GetStringPartitionAllocator().root()->Alloc(
-      totalSize, "StringDataTemplate");
+  void* pData = FX_StringAlloc(char, totalSize);
   return new (pData) StringDataTemplate(nLen, usableLen);
 }
 
@@ -55,7 +57,7 @@ StringDataTemplate<CharType>* StringDataTemplate<CharType>::Create(
 template <typename CharType>
 void StringDataTemplate<CharType>::Release() {
   if (--m_nRefs <= 0)
-    GetStringPartitionAllocator().root()->Free(this);
+    FX_Free(this);
 }
 
 template <typename CharType>

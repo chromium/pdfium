@@ -37,6 +37,8 @@ pdfium::base::PartitionAllocatorGeneric& GetStringPartitionAllocator();
 void FXMEM_InitializePartitionAlloc();
 NOINLINE void FX_OutOfMemoryTerminate(size_t size);
 
+// General Partition Allocators.
+
 // These never return nullptr, and must return cleared memory.
 #define FX_Alloc(type, size) \
   static_cast<type*>(pdfium::internal::CallocOrDie(size, sizeof(type)))
@@ -58,20 +60,31 @@ NOINLINE void FX_OutOfMemoryTerminate(size_t size);
 #define FX_AllocUninit2D(type, w, h) \
   static_cast<type*>(pdfium::internal::AllocOrDie2D(w, h, sizeof(type)))
 
+// String Partition Allocators.
+
+// This never returns nullptr, but returns uninitialized memory.
+#define FX_StringAlloc(type, size) \
+  static_cast<type*>(pdfium::internal::StringAllocOrDie(size, sizeof(type)))
+
+// Free accepts memory from all of the above.
 void FX_Free(void* ptr);
 
 namespace pdfium {
 namespace internal {
 
+// General partition.
 void* Alloc(size_t num_members, size_t member_size);
 void* AllocOrDie(size_t num_members, size_t member_size);
 void* AllocOrDie2D(size_t w, size_t h, size_t member_size);
-
 void* Calloc(size_t num_members, size_t member_size);
 void* Realloc(void* ptr, size_t num_members, size_t member_size);
 void* CallocOrDie(size_t num_members, size_t member_size);
 void* CallocOrDie2D(size_t w, size_t h, size_t member_size);
 void* ReallocOrDie(void* ptr, size_t num_members, size_t member_size);
+
+// String partition.
+void* StringAlloc(size_t num_members, size_t member_size);
+void* StringAllocOrDie(size_t num_members, size_t member_size);
 
 }  // namespace internal
 }  // namespace pdfium

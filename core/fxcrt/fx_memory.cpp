@@ -154,6 +154,26 @@ void* ReallocOrDie(void* ptr, size_t num_members, size_t member_size) {
   return result;
 }
 
+void* StringAllocOrDie(size_t num_members, size_t member_size) {
+  void* result = StringAlloc(num_members, member_size);
+  if (!result)
+    FX_OutOfMemoryTerminate(0);  // Never returns.
+
+  return result;
+}
+
+void* StringAlloc(size_t num_members, size_t member_size) {
+  FX_SAFE_SIZE_T total = member_size;
+  total *= num_members;
+  if (!total.IsValid())
+    return nullptr;
+
+  constexpr int kFlags = pdfium::base::PartitionAllocReturnNull;
+  return pdfium::base::PartitionAllocGenericFlags(
+      GetStringPartitionAllocator().root(), kFlags, total.ValueOrDie(),
+      "StringPartition");
+}
+
 }  // namespace internal
 }  // namespace pdfium
 
