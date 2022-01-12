@@ -126,7 +126,7 @@ class SkiaGoldTester:
     if os.path.exists(output_file_name):
       os.remove(output_file_name)
     with open(output_file_name, 'wb') as outfile:
-      outfile.write(link)
+      outfile.write(link.encode('utf8'))
 
   def GetSkiaGoldProperties(self):
     if not self._skia_gold_properties:
