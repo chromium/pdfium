@@ -5,11 +5,15 @@
 #ifndef CORE_FXCRT_AUTORESTORER_H_
 #define CORE_FXCRT_AUTORESTORER_H_
 
+#include "core/fxcrt/fx_memory.h"
+
 namespace fxcrt {
 
 template <typename T>
 class AutoRestorer {
  public:
+  FX_STACK_ALLOCATED();
+
   explicit AutoRestorer(T* location)
       : m_Location(location), m_OldValue(*location) {}
   ~AutoRestorer() {
