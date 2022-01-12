@@ -10,6 +10,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "core/fxcrt/unowned_ptr.h"
+
 class CBC_SymbolInfo {
  public:
   struct Data {
@@ -52,7 +54,7 @@ class CBC_SymbolInfo {
     return data_->matrix_width != data_->matrix_height;
   }
 
-  const Data* const data_;
+  UnownedPtr<const Data> const data_;
 };
 
 #endif  // FXBARCODE_DATAMATRIX_BC_SYMBOLINFO_H_
