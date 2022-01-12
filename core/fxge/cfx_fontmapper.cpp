@@ -694,7 +694,7 @@ bool CFX_FontMapper::HasLocalizedFont(ByteStringView name) const {
   return false;
 }
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 absl::optional<ByteString> CFX_FontMapper::InstalledFontNameStartingWith(
     const ByteString& name) const {
   for (const auto& thisname : m_InstalledTTFonts) {
@@ -712,7 +712,7 @@ absl::optional<ByteString> CFX_FontMapper::LocalizedFontNameStartingWith(
   }
   return absl::nullopt;
 }
-#endif  // defined(OS_WIN)
+#endif  // BUILDFLAG(IS_WIN)
 
 #ifdef PDF_ENABLE_XFA
 std::unique_ptr<uint8_t, FxFreeDeleter> CFX_FontMapper::RawBytesForIndex(

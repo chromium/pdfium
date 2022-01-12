@@ -24,7 +24,7 @@ TEST(cpdf_filespec, EncodeDecodeFileName) {
     {L"", L""},
     // only file name.
     {L"test.pdf", L"test.pdf"},
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
     // With drive identifier.
     {L"r:\\pdfdocs\\spec.pdf", L"/r/pdfdocs/spec.pdf"},
     // Relative path.
@@ -62,7 +62,7 @@ TEST(cpdf_filespec, GetFileName) {
   {
     // String object.
     static const pdfium::NullTermWstrFuncTestData test_data = {
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
       L"/C/docs/test.pdf",
       L"C:\\docs\\test.pdf"
 #elif defined(OS_APPLE)
@@ -80,7 +80,7 @@ TEST(cpdf_filespec, GetFileName) {
   {
     // Dictionary object.
     static const pdfium::NullTermWstrFuncTestData test_data[] = {
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
       {L"/C/docs/test.pdf", L"C:\\docs\\test.pdf"},
       {L"/D/docs/test.pdf", L"D:\\docs\\test.pdf"},
       {L"/E/docs/test.pdf", L"E:\\docs\\test.pdf"},
@@ -138,7 +138,7 @@ TEST(cpdf_filespec, GetFileName) {
 
 TEST(cpdf_filespec, SetFileName) {
   static const pdfium::NullTermWstrFuncTestData test_data = {
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
     L"C:\\docs\\test.pdf",
     L"/C/docs/test.pdf"
 #elif defined(OS_APPLE)

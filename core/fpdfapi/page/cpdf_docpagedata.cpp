@@ -62,7 +62,7 @@ void InsertWidthArrayImpl(std::vector<int> widths, CPDF_Array* pWidthArray) {
     pWidthArray1->AppendNew<CPDF_Number>(w);
 }
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 void InsertWidthArray(HDC hDC, int start, int end, CPDF_Array* pWidthArray) {
   std::vector<int> widths(end - start + 1);
   GetCharWidth(hDC, start, end, widths.data());
@@ -80,7 +80,7 @@ ByteString GetPSNameFromTT(HDC hDC) {
   }
   return result;
 }
-#endif  // defined(OS_WIN)
+#endif  // BUILDFLAG(IS_WIN)
 
 void InsertWidthArray1(CFX_Font* pFont,
                        CFX_UnicodeEncoding* pEncoding,
@@ -549,7 +549,7 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::AddFont(std::unique_ptr<CFX_Font> pFont,
   return GetFont(pBaseDict);
 }
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 RetainPtr<CPDF_Font> CPDF_DocPageData::AddWindowsFont(LOGFONTA* pLogFont) {
   pLogFont->lfHeight = -1000;
   pLogFont->lfWidth = 0;
@@ -631,7 +631,7 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::AddWindowsFont(LOGFONTA* pLogFont) {
   DeleteDC(hDC);
   return GetFont(pBaseDict);
 }
-#endif  //  defined(OS_WIN)
+#endif  //  BUILDFLAG(IS_WIN)
 
 size_t CPDF_DocPageData::CalculateEncodingDict(FX_Charset charset,
                                                CPDF_Dictionary* pBaseDict) {

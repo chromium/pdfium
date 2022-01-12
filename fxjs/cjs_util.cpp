@@ -52,7 +52,7 @@ const TbConvert TbConvertTable[] = {
     {L"ddd", L"%a"},  {L"dd", L"%d"},  {L"yyyy", L"%Y"}, {L"yy", L"%y"},
     {L"HH", L"%H"},   {L"hh", L"%I"},  {L"MM", L"%M"},   {L"ss", L"%S"},
     {L"TT", L"%p"},
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
     {L"tt", L"%p"},   {L"h", L"%#I"},
 #else
     {L"tt", L"%P"},   {L"h", L"%l"},

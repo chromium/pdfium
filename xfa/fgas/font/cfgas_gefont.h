@@ -57,7 +57,7 @@ class CFGAS_GEFont final : public Retainable {
   CFGAS_GEFont();
   ~CFGAS_GEFont() override;
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
   bool LoadFontInternal(const wchar_t* pszFontFamily,
                         uint32_t dwFontStyles,
                         FX_CodePage wCodePage);

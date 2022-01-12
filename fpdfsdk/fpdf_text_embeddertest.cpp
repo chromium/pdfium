@@ -493,7 +493,7 @@ TEST_F(FPDFTextEmbedderTest, TextSearchConsecutive) {
 }
 
 // Fails on Windows. https://crbug.com/pdfium/1370
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 #define MAYBE_TextSearchLatinExtended DISABLED_TextSearchLatinExtended
 #else
 #define MAYBE_TextSearchLatinExtended TextSearchLatinExtended

@@ -39,7 +39,7 @@ namespace {
 
 const int nMaxRecursion = 32;
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 struct PDF_FONTDATA {
   bool bFind;
   LOGFONTA lf;
@@ -81,11 +81,11 @@ bool RetrieveSpecificFont(FX_Charset charSet,
 
   return fd.bFind;
 }
-#endif  // defined(OS_WIN)
+#endif  // BUILDFLAG(IS_WIN)
 
 ByteString GetNativeFontName(FX_Charset charSet, void* pLogFont) {
   ByteString csFontName;
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
   LOGFONTA lf = {};
   if (charSet == FX_Charset::kANSI) {
     csFontName = CFX_Font::kDefaultAnsiFontName;
@@ -158,7 +158,7 @@ RetainPtr<CPDF_Font> AddNativeFont(FX_Charset charSet,
                                    CPDF_Document* pDocument) {
   DCHECK(pDocument);
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
   LOGFONTA lf;
   ByteString csFontName = GetNativeFontName(charSet, &lf);
   if (!csFontName.IsEmpty()) {

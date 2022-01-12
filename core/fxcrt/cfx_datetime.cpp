@@ -99,7 +99,7 @@ bool FX_IsLeapYear(int32_t iYear) {
 // static
 CFX_DateTime CFX_DateTime::Now() {
   FXUT_SYSTEMTIME utLocal;
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
   ::GetLocalTime((LPSYSTEMTIME)&utLocal);
 #else
   timeval curTime;
@@ -115,7 +115,7 @@ CFX_DateTime CFX_DateTime::Now() {
   utLocal.wMinute = st.tm_min;
   utLocal.wSecond = st.tm_sec;
   utLocal.wMillisecond = curTime.tv_usec / 1000;
-#endif  // defined(OS_WIN)
+#endif  // BUILDFLAG(IS_WIN)
 
   return CFX_DateTime(utLocal.wYear, static_cast<uint8_t>(utLocal.wMonth),
                       static_cast<uint8_t>(utLocal.wDay),

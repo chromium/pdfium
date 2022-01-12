@@ -37,7 +37,7 @@ int GetBitmapBytesPerPixel(FPDF_BITMAP bitmap) {
   return EmbedderTest::BytesPerPixelForFormat(FPDFBitmap_GetFormat(bitmap));
 }
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 int CALLBACK GetRecordProc(HDC hdc,
                            HANDLETABLE* handle_table,
                            const ENHMETARECORD* record,
@@ -47,7 +47,7 @@ int CALLBACK GetRecordProc(HDC hdc,
   records.push_back(record);
   return 1;
 }
-#endif  // defined(OS_WIN)
+#endif  // BUILDFLAG(IS_WIN)
 
 }  // namespace
 
@@ -368,7 +368,7 @@ ScopedFPDFBitmap EmbedderTest::RenderPage(FPDF_PAGE page) {
   return RenderPageWithFlags(page, nullptr, 0);
 }
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 // static
 std::vector<uint8_t> EmbedderTest::RenderPageWithFlagsToEmf(FPDF_PAGE page,
                                                             int flags) {
@@ -428,7 +428,7 @@ std::string EmbedderTest::GetPostScriptFromEmf(
   DeleteEnhMetaFile(emf);
   return ps_data;
 }
-#endif  // defined(OS_WIN)
+#endif  // BUILDFLAG(IS_WIN)
 
 FPDF_DOCUMENT EmbedderTest::OpenSavedDocument() {
   return OpenSavedDocumentWithPassword(nullptr);

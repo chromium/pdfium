@@ -499,7 +499,7 @@ static size_t PartitionPurgePage(internal::PartitionPage* page, bool discard) {
   DCHECK(page->num_unprovisioned_slots < bucket_num_slots);
   size_t num_slots = bucket_num_slots - page->num_unprovisioned_slots;
   char slot_usage[kMaxSlotCount];
-#if !defined(OS_WIN)
+#if !BUILDFLAG(IS_WIN)
   // The last freelist entry should not be discarded when using OS_WIN.
   // DiscardVirtualMemory makes the contents of discarded memory undefined.
   size_t last_slot = static_cast<size_t>(-1);
@@ -514,7 +514,7 @@ static size_t PartitionPurgePage(internal::PartitionPage* page, bool discard) {
     DCHECK(slot_index < num_slots);
     slot_usage[slot_index] = 0;
     entry = internal::EncodedPartitionFreelistEntry::Decode(entry->next);
-#if !defined(OS_WIN)
+#if !BUILDFLAG(IS_WIN)
     // If we have a slot where the masked freelist entry is 0, we can actually
     // discard that freelist entry because touching a discarded page is
     // guaranteed to return original content or 0. (Note that this optimization
@@ -572,7 +572,7 @@ static size_t PartitionPurgePage(internal::PartitionPage* page, bool discard) {
           back = entry;
         }
         num_new_entries++;
-#if !defined(OS_WIN)
+#if !BUILDFLAG(IS_WIN)
         last_slot = slot_index;
 #endif
       }
@@ -598,7 +598,7 @@ static size_t PartitionPurgePage(internal::PartitionPage* page, bool discard) {
     // can discard that pointer value too.
     char* begin_ptr = ptr + (i * slot_size);
     char* end_ptr = begin_ptr + slot_size;
-#if !defined(OS_WIN)
+#if !BUILDFLAG(IS_WIN)
     if (i != last_slot)
       begin_ptr += sizeof(internal::PartitionFreelistEntry);
 #else

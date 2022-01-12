@@ -41,7 +41,7 @@ void MatchFloatRange(float f1, float f2, int* i1, int* i2) {
   }
 }
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 static_assert(sizeof(FX_RECT) == sizeof(RECT), "FX_RECT vs. RECT mismatch");
 static_assert(offsetof(FX_RECT, left) == offsetof(RECT, left),
               "FX_RECT vs. RECT mismatch");

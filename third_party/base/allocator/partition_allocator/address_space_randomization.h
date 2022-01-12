@@ -53,7 +53,7 @@ AslrMask(uintptr_t bits) {
       return AslrAddress(0x7e8000000000ULL);
     }
 
-  #elif defined(OS_WIN)
+  #elif BUILDFLAG(IS_WIN)
 
     // Windows 8.10 and newer support the full 48 bit address range. Older
     // versions of Windows only support 44 bits. Since ASLROffset() is non-zero

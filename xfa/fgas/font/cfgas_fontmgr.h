@@ -23,7 +23,7 @@
 class CFGAS_GEFont;
 class IFX_SeekableReadStream;
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 struct FX_FONTSIGNATURE {
   uint32_t fsUsb[4];
   uint32_t fsCsb[2];
@@ -51,7 +51,7 @@ inline bool operator==(const FX_FONTDESCRIPTOR& left,
          wcscmp(left.wsFontFace, right.wsFontFace) == 0;
 }
 
-#else  // defined(OS_WIN)
+#else  // BUILDFLAG(IS_WIN)
 
 class CFGAS_FontDescriptor {
  public:
@@ -82,7 +82,7 @@ class CFGAS_FontDescriptorInfo {
   }
 };
 
-#endif  // defined(OS_WIN)
+#endif  // BUILDFLAG(IS_WIN)
 
 class CFGAS_FontMgr {
  public:
@@ -108,7 +108,7 @@ class CFGAS_FontMgr {
                                                FX_CodePage wCodePage,
                                                uint16_t wBitField);
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
   const FX_FONTDESCRIPTOR* FindFont(const wchar_t* pszFontFamily,
                                     uint32_t dwFontStyles,
                                     bool matchParagraphStyle,
@@ -116,7 +116,7 @@ class CFGAS_FontMgr {
                                     uint32_t dwUSB,
                                     wchar_t wUnicode);
 
-#else   // defined(OS_WIN)
+#else   // BUILDFLAG(IS_WIN)
   bool EnumFontsFromFontMapper();
   void RegisterFace(RetainPtr<CFX_Face> pFace, const WideString* pFaceName);
   void RegisterFaces(const RetainPtr<IFX_SeekableReadStream>& pFontStream,
@@ -127,18 +127,18 @@ class CFGAS_FontMgr {
                                                    wchar_t wcUnicode);
   RetainPtr<CFGAS_GEFont> LoadFontInternal(const WideString& wsFaceName,
                                            int32_t iFaceIndex);
-#endif  // defined(OS_WIN)
+#endif  // BUILDFLAG(IS_WIN)
 
   std::map<uint32_t, std::vector<RetainPtr<CFGAS_GEFont>>> m_Hash2Fonts;
   std::set<wchar_t> m_FailedUnicodesSet;
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
   std::deque<FX_FONTDESCRIPTOR> m_FontFaces;
 #else
   std::vector<std::unique_ptr<CFGAS_FontDescriptor>> m_InstalledFonts;
   std::map<uint32_t, std::vector<CFGAS_FontDescriptorInfo>>
       m_Hash2CandidateList;
-#endif  // defined(OS_WIN)
+#endif  // BUILDFLAG(IS_WIN)
 };
 
 #endif  // XFA_FGAS_FONT_CFGAS_FONTMGR_H_

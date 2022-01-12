@@ -60,7 +60,7 @@
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
 #endif  // PDF_ENABLE_XFA
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 #include "core/fpdfapi/render/cpdf_progressiverenderer.h"
 #include "core/fpdfapi/render/cpdf_windowsrenderdevice.h"
 #include "public/fpdf_edit.h"
@@ -93,7 +93,7 @@ static_assert(
     static_cast<int>(WindowsPrintMode::kPostScript3Type42PassThrough) ==
         FPDF_PRINTMODE_POSTSCRIPT3_TYPE42_PASSTHROUGH,
     "WindowsPrintMode::kPostScript3Type42PassThrough value mismatch");
-#endif  // defined(OS_WIN)
+#endif  // BUILDFLAG(IS_WIN)
 
 namespace {
 
@@ -216,7 +216,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_SetSandBoxPolicy(FPDF_DWORD policy,
   return SetPDFSandboxPolicy(policy, enable);
 }
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 #if defined(PDFIUM_PRINT_TEXT_WITH_GDI)
 FPDF_EXPORT void FPDF_CALLCONV
 FPDF_SetTypefaceAccessibleFunc(PDFiumEnsureTypefaceCharactersAccessible func) {
@@ -237,7 +237,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_SetPrintMode(int mode) {
   g_pdfium_print_mode = static_cast<WindowsPrintMode>(mode);
   return TRUE;
 }
-#endif  // defined(OS_WIN)
+#endif  // BUILDFLAG(IS_WIN)
 
 FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV
 FPDF_LoadDocument(FPDF_STRING file_path, FPDF_BYTESTRING password) {
@@ -415,7 +415,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_GetPageBoundingBox(FPDF_PAGE page,
   return true;
 }
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 namespace {
 
 constexpr float kEpsilonSize = 0.01f;
@@ -612,7 +612,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
     pContext->m_pRenderer->Continue(nullptr);
   }
 }
-#endif  // defined(OS_WIN)
+#endif  // BUILDFLAG(IS_WIN)
 
 FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
                                                      FPDF_PAGE page,

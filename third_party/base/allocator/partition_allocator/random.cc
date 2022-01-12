@@ -8,7 +8,7 @@
 #include "third_party/base/allocator/partition_allocator/spin_lock.h"
 #include "third_party/base/no_destructor.h"
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 #include <windows.h>
 #else
 #include <sys/time.h>
@@ -54,7 +54,7 @@ RandomContext* GetRandomContext() {
     uint32_t seed = static_cast<uint32_t>(reinterpret_cast<uintptr_t>(&c));
     uint32_t pid;
     uint32_t usec;
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
     pid = GetCurrentProcessId();
     SYSTEMTIME st;
     GetSystemTime(&st);

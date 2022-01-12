@@ -190,7 +190,7 @@ const FGAS_FONTUSB kFXGdiFontUSBTable[] = {
     {0xFFA0, 0xFFEF, 68, FX_CodePage::kFailure},
 };
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 const FGAS_FontInfo kXFAFontsMap[] = {
     {0x01d5d33e, "SimSun", "Arial", 0, FX_CodePage::kChineseSimplified},
     {0x01e4f102, "YouYuan", "Arial", 1, FX_CodePage::kChineseSimplified},

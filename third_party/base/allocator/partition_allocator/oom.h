@@ -8,7 +8,7 @@
 #include "third_party/base/allocator/partition_allocator/oom_callback.h"
 #include "third_party/base/immediate_crash.h"
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 #include <windows.h>
 #endif
 
@@ -20,7 +20,7 @@
 
 // OOM_CRASH() - Specialization of IMMEDIATE_CRASH which will raise a custom
 // exception on Windows to signal this is OOM and not a normal assert.
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 #define OOM_CRASH(size)                                                 \
   do {                                                                  \
     OOM_CRASH_PREVENT_ICF();                                            \

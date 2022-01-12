@@ -231,7 +231,7 @@ const CFX_Font::CharsetFontMap CFX_Font::kDefaultTTFMap[] = {
     {static_cast<int>(FX_Charset::kShiftJIS), "MS Gothic"},
     {static_cast<int>(FX_Charset::kHangul), "Batang"},
     {static_cast<int>(FX_Charset::kMSWin_Cyrillic), "Arial"},
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
     {static_cast<int>(FX_Charset::kMSWin_EasternEuropean), "Tahoma"},
 #else
     {static_cast<int>(FX_Charset::kMSWin_EasternEuropean), "Arial"},
@@ -344,7 +344,7 @@ bool CFX_Font::LoadFile(RetainPtr<IFX_SeekableReadStream> pFile,
   return true;
 }
 
-#if !defined(OS_WIN)
+#if !BUILDFLAG(IS_WIN)
 void CFX_Font::SetFace(RetainPtr<CFX_Face> face) {
   ClearGlyphCache();
   m_ObjectTag = 0;
@@ -354,7 +354,7 @@ void CFX_Font::SetFace(RetainPtr<CFX_Face> face) {
 void CFX_Font::SetSubstFont(std::unique_ptr<CFX_SubstFont> subst) {
   m_pSubstFont = std::move(subst);
 }
-#endif  // !defined(OS_WIN)
+#endif  // !BUILDFLAG(IS_WIN)
 #endif  // PDF_ENABLE_XFA
 
 CFX_Font::~CFX_Font() {

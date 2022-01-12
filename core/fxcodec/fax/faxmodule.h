@@ -41,14 +41,14 @@ class FaxModule {
                          int pitch,
                          uint8_t* dest_buf);
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
   static void FaxEncode(const uint8_t* src_buf,
                         int width,
                         int height,
                         int pitch,
                         std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
                         uint32_t* dest_size);
-#endif  // defined(OS_WIN)
+#endif  // BUILDFLAG(IS_WIN)
 
   FaxModule() = delete;
   FaxModule(const FaxModule&) = delete;

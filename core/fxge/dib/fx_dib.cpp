@@ -11,11 +11,11 @@
 
 #include "build/build_config.h"
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 #include <windows.h>
 #endif
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 static_assert(sizeof(FX_COLORREF) == sizeof(COLORREF),
               "FX_COLORREF vs. COLORREF mismatch");
 #endif

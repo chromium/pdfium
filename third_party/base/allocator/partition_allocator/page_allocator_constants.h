@@ -42,7 +42,7 @@ namespace {
 #if !defined(OS_APPLE)
 
 constexpr ALWAYS_INLINE int PageAllocationGranularityShift() {
-#if defined(OS_WIN) || defined(ARCH_CPU_PPC64)
+#if BUILDFLAG(IS_WIN) || defined(ARCH_CPU_PPC64)
   // Modern ppc64 systems support 4kB (shift = 12) and 64kB (shift = 16) page
   // sizes.  Since 64kB is the de facto standard on the platform and binaries
   // compiled for 64kB are likely to work on 4kB systems, 64kB is a good choice
@@ -82,7 +82,7 @@ PageAllocationGranularityBaseMask() {
 
 PAGE_ALLOCATOR_CONSTANTS_DECLARE_CONSTEXPR ALWAYS_INLINE size_t
 SystemPageSize() {
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
   return 4096;
 #else
   return PageAllocationGranularity();

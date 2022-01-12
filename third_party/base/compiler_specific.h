@@ -141,11 +141,11 @@
 
 // Macro useful for writing cross-platform function pointers.
 #if !defined(CDECL)
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 #define CDECL __cdecl
-#else  // defined(OS_WIN)
+#else  // BUILDFLAG(IS_WIN)
 #define CDECL
-#endif  // defined(OS_WIN)
+#endif  // BUILDFLAG(IS_WIN)
 #endif  // !defined(CDECL)
 
 // Macro for hinting that an expression is likely to be false.

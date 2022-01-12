@@ -33,7 +33,7 @@ namespace {
 constexpr char kFirstAlternate[] = "FirstAlternate";
 constexpr char kLastAlternate[] = "LastAlternate";
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 const char kExpectedRectanglePostScript[] = R"(
 save
 /im/initmatrix load def
@@ -80,7 +80,7 @@ Q
 
 restore
 )";
-#endif  // defined(OS_WIN)
+#endif  // BUILDFLAG(IS_WIN)
 
 class MockDownloadHints final : public FX_DOWNLOADHINTS {
  public:
@@ -1428,7 +1428,7 @@ TEST_F(FPDFViewEmbedderTest, RenderHelloWorldWithFlags) {
   UnloadPage(page);
 }
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 TEST_F(FPDFViewEmbedderTest, FPDFRenderPageEmf) {
   ASSERT_TRUE(OpenDocument("rectangles.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -1656,7 +1656,7 @@ TEST_F(FPDFViewEmbedderTest, MAYBE_ImageMask) {
 
   UnloadPage(page);
 }
-#endif  // defined(OS_WIN)
+#endif  // BUILDFLAG(IS_WIN)
 
 TEST_F(FPDFViewEmbedderTest, GetTrailerEnds) {
   ASSERT_TRUE(OpenDocument("two_signatures.pdf"));

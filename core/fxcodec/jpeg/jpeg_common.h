@@ -14,7 +14,7 @@
 
 #include "build/build_config.h"
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 // windows.h must come before the third_party/libjpeg_turbo includes.
 #include <windows.h>
 #endif

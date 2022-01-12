@@ -14,7 +14,7 @@
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 #include <memory>
 #endif
 
@@ -24,7 +24,7 @@ class CPDF_TransferFunc;
 class CPDF_Type3Cache;
 class CPDF_Type3Font;
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 class CFX_PSFontTracker;
 #endif
 
@@ -41,7 +41,7 @@ class CPDF_DocRenderData : public CPDF_Document::RenderDataIface {
   RetainPtr<CPDF_Type3Cache> GetCachedType3(CPDF_Type3Font* pFont);
   RetainPtr<CPDF_TransferFunc> GetTransferFunc(const CPDF_Object* pObj);
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
   CFX_PSFontTracker* GetPSFontTracker();
 #endif
 
@@ -55,7 +55,7 @@ class CPDF_DocRenderData : public CPDF_Document::RenderDataIface {
   std::map<const CPDF_Object*, ObservedPtr<CPDF_TransferFunc>>
       m_TransferFuncMap;
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
   std::unique_ptr<CFX_PSFontTracker> m_PSFontTracker;
 #endif
 };

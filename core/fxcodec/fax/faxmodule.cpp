@@ -627,7 +627,7 @@ int FaxModule::FaxG4Decode(const uint8_t* src_buf,
   return bitpos;
 }
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 namespace {
 const uint8_t BlackRunTerminator[128] = {
     0x37, 10, 0x02, 3,  0x03, 2,  0x02, 2,  0x03, 3,  0x03, 4,  0x02, 4,
@@ -817,6 +817,6 @@ void FaxModule::FaxEncode(const uint8_t* src_buf,
   encoder.Encode(dest_buf, dest_size);
 }
 
-#endif  // defined(OS_WIN)
+#endif  // BUILDFLAG(IS_WIN)
 
 }  // namespace fxcodec

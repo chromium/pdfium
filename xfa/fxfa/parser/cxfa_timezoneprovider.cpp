@@ -13,7 +13,7 @@
 
 static bool g_bProviderTimeZoneSet = false;
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 #define TIMEZONE _timezone
 #define TZSET _tzset
 #else

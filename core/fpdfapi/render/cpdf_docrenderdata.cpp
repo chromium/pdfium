@@ -20,7 +20,7 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/render/cpdf_type3cache.h"
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 #include "core/fxge/win32/cfx_psfonttracker.h"
 #endif
 
@@ -65,7 +65,7 @@ RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::GetTransferFunc(
   return pFunc;
 }
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 CFX_PSFontTracker* CPDF_DocRenderData::GetPSFontTracker() {
   if (!m_PSFontTracker)
     m_PSFontTracker = std::make_unique<CFX_PSFontTracker>();

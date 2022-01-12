@@ -550,7 +550,7 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractInkMultiple) {
     static constexpr char kExpectedHash[] = "acddfe688a117ead56af7b249a2cf8a1";
 #elif defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
     static constexpr char kExpectedHash[] = "1fb0dd8dd5f0b9bb8d076e48eb59296d";
-#elif defined(OS_WIN)
+#elif BUILDFLAG(IS_WIN)
     static constexpr char kExpectedHash[] = "49d0a81c636531a337429325273d0508";
 #else
     static constexpr char kExpectedHash[] = "354002e1c4386d38fdde29ef8d61074a";
@@ -905,7 +905,7 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_ModifyRectQuadpointsWithAP) {
       "7638c4a8fe4aabbf8704e198f49b3198";
   static const char kMd5ModifiedSquare[] = "54f507af6af63de877b9cafdab1bbdaa";
 #else
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
   static const char kMd5Original[] = "0e27376094f11490f74c65f3dc3a42c5";
   static const char kMd5ModifiedHighlight[] =
       "66f3caef3a7d488a4fa1ad37fc06310e";

@@ -12,7 +12,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/ptr_util.h"
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 #error "built on wrong platform"
 #endif
 

@@ -1224,7 +1224,7 @@ TEST(WideString, ToLatin1) {
 
 TEST(WideString, ToDefANSI) {
   EXPECT_EQ("", WideString().ToDefANSI());
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
   const char* kResult =
       "x"
       "?"
@@ -1276,7 +1276,7 @@ TEST(WideString, FromLatin1) {
 
 TEST(WideString, FromDefANSI) {
   EXPECT_EQ(L"", WideString::FromDefANSI(ByteStringView()));
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
   const wchar_t* kResult =
       L"x"
       L"\u20ac"

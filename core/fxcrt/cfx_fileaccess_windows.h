@@ -14,7 +14,7 @@
 #include "core/fxcrt/fileaccess_iface.h"
 #include "core/fxcrt/fx_types.h"
 
-#if !defined(OS_WIN)
+#if !BUILDFLAG(IS_WIN)
 #error "Included on the wrong platform"
 #endif
 

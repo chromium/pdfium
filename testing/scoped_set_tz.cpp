@@ -14,7 +14,7 @@ namespace {
 
 constexpr char kTZ[] = "TZ";
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 #define SETENV(name, value) _putenv_s(name, value)
 #define TZSET _tzset
 #define UNSETENV(name) _putenv_s(name, "")

@@ -13,7 +13,7 @@
 #include "build/build_config.h"
 #include "third_party/base/numerics/safe_math.h"
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 #include <windows.h>
 #endif
 
@@ -216,7 +216,7 @@ const FX_CharsetUnicodes kFX_CharsetUnicodes[8] = {
 };
 
 FX_CodePage FX_GetACP() {
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
   return static_cast<FX_CodePage>(GetACP());
 #else
   return FX_CodePage::kDefANSI;
@@ -293,7 +293,7 @@ bool FX_CharSetIsCJK(FX_Charset uCharset) {
 size_t FX_WideCharToMultiByte(FX_CodePage codepage,
                               WideStringView wstr,
                               pdfium::span<char> buf) {
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
   int input_len = pdfium::base::checked_cast<int>(wstr.GetLength());
   int output_len = pdfium::base::checked_cast<int>(buf.size());
   return WideCharToMultiByte(static_cast<UINT>(codepage), 0,
@@ -315,7 +315,7 @@ size_t FX_WideCharToMultiByte(FX_CodePage codepage,
 size_t FX_MultiByteToWideChar(FX_CodePage codepage,
                               ByteStringView bstr,
                               pdfium::span<wchar_t> buf) {
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
   const int input_len = pdfium::base::checked_cast<int>(bstr.GetLength());
   const int output_len = pdfium::base::checked_cast<int>(buf.size());
   return MultiByteToWideChar(static_cast<UINT>(codepage), 0,

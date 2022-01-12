@@ -15,7 +15,7 @@
 #include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/span.h"
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 #include "core/fxcrt/retain_ptr.h"
 #endif
 
@@ -45,11 +45,11 @@ class JpegModule {
   static absl::optional<ImageInfo> LoadInfo(
       pdfium::span<const uint8_t> src_span);
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
   static bool JpegEncode(const RetainPtr<CFX_DIBBase>& pSource,
                          uint8_t** dest_buf,
                          size_t* dest_size);
-#endif  // defined(OS_WIN)
+#endif  // BUILDFLAG(IS_WIN)
 
   JpegModule() = delete;
   JpegModule(const JpegModule&) = delete;

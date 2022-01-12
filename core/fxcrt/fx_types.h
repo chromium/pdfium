@@ -11,12 +11,12 @@
 
 // PDFium file sizes match the platform. The value must be signed to support -1
 // error returns.
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 #include <stdint.h>
 #define FX_FILESIZE int64_t
 #else
 #include <sys/types.h>  // For off_t.
 #define FX_FILESIZE off_t
-#endif  // defined(OS_WIN)
+#endif  // BUILDFLAG(IS_WIN)
 
 #endif  // CORE_FXCRT_FX_TYPES_H_

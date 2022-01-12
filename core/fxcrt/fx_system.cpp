@@ -15,7 +15,7 @@
 
 namespace {
 
-#if !defined(OS_WIN)
+#if !BUILDFLAG(IS_WIN)
 uint32_t g_last_error = 0;
 #endif
 
@@ -125,7 +125,7 @@ const char* FXSYS_i64toa(int64_t value, char* str, int radix) {
   return FXSYS_IntToStr<int64_t, uint64_t, char*>(value, str, radix);
 }
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 
 size_t FXSYS_wcsftime(wchar_t* strDest,
                       size_t maxsize,
@@ -145,7 +145,7 @@ size_t FXSYS_wcsftime(wchar_t* strDest,
   return wcsftime(strDest, maxsize, format, timeptr);
 }
 
-#else   // defined(OS_WIN)
+#else   // BUILDFLAG(IS_WIN)
 
 char* FXSYS_strlwr(char* str) {
   if (!str) {
@@ -227,7 +227,7 @@ void FXSYS_SetLastError(uint32_t err) {
 uint32_t FXSYS_GetLastError() {
   return g_last_error;
 }
-#endif  // defined(OS_WIN)
+#endif  // BUILDFLAG(IS_WIN)
 
 float FXSYS_sqrt2(float a, float b) {
   return sqrtf(a * a + b * b);

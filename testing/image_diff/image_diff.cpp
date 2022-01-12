@@ -23,7 +23,7 @@
 #include "third_party/base/cxx17_backports.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 #include <windows.h>
 #endif
 

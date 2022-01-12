@@ -180,7 +180,7 @@ void CFX_FolderFontInfo::ScanPath(const ByteString& path) {
     }
 
     ByteString fullpath = path;
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
     fullpath += "\\";
 #else
     fullpath += "/";

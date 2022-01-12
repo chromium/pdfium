@@ -25,9 +25,9 @@
 #error Cannot compile v8 with wasm.
 #endif  // PDF_ENABLE_V8
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 #include <windows.h>
-#endif  // defined(OS_WIN)
+#endif  // BUILDFLAG(IS_WIN)
 
 #ifdef __cplusplus
 extern "C" {
@@ -51,7 +51,7 @@ extern "C" {
 #define FXSYS_sprintf DO_NOT_USE_SPRINTF_DIE_DIE_DIE
 #define FXSYS_vsprintf DO_NOT_USE_VSPRINTF_DIE_DIE_DIE
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 #define FXSYS_itoa _itoa
 #define FXSYS_strlwr _strlwr
 #define FXSYS_strupr _strupr
@@ -65,7 +65,7 @@ size_t FXSYS_wcsftime(wchar_t* strDest,
                       const struct tm* timeptr);
 #define FXSYS_SetLastError SetLastError
 #define FXSYS_GetLastError GetLastError
-#else  // defined(OS_WIN)
+#else  // BUILDFLAG(IS_WIN)
 char* FXSYS_itoa(int value, char* str, int radix);
 char* FXSYS_strlwr(char* str);
 char* FXSYS_strupr(char* str);
@@ -76,7 +76,7 @@ wchar_t* FXSYS_wcsupr(wchar_t* str);
 #define FXSYS_wcsftime wcsftime
 void FXSYS_SetLastError(uint32_t err);
 uint32_t FXSYS_GetLastError();
-#endif  // defined(OS_WIN)
+#endif  // BUILDFLAG(IS_WIN)
 
 int32_t FXSYS_atoi(const char* str);
 uint32_t FXSYS_atoui(const char* str);

@@ -24,7 +24,7 @@
 RetainPtr<CFGAS_GEFont> CFGAS_GEFont::LoadFont(const wchar_t* pszFontFamily,
                                                uint32_t dwFontStyles,
                                                FX_CodePage wCodePage) {
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
   auto pFont = pdfium::MakeRetain<CFGAS_GEFont>();
   if (!pFont->LoadFontInternal(pszFontFamily, dwFontStyles, wCodePage))
     return nullptr;
@@ -68,7 +68,7 @@ CFGAS_GEFont::CFGAS_GEFont() = default;
 
 CFGAS_GEFont::~CFGAS_GEFont() = default;
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 bool CFGAS_GEFont::LoadFontInternal(const wchar_t* pszFontFamily,
                                     uint32_t dwFontStyles,
                                     FX_CodePage wCodePage) {
@@ -92,7 +92,7 @@ bool CFGAS_GEFont::LoadFontInternal(const wchar_t* pszFontFamily,
                      false);
   return m_pFont->GetFaceRec() && InitFont();
 }
-#endif  // defined(OS_WIN)
+#endif  // BUILDFLAG(IS_WIN)
 
 bool CFGAS_GEFont::LoadFontInternal(const RetainPtr<CPDF_Font>& pPDFFont) {
   if (m_pFont)
@@ -239,7 +239,7 @@ std::pair<int32_t, RetainPtr<CFGAS_GEFont>> CFGAS_GEFont::GetGlyphIndexAndFont(
   WideString wsFamily = GetFamilyName();
   RetainPtr<CFGAS_GEFont> pFont =
       pFontMgr->GetFontByUnicode(wUnicode, GetFontStyles(), wsFamily.c_str());
-#if !defined(OS_WIN)
+#if !BUILDFLAG(IS_WIN)
   if (!pFont)
     pFont = pFontMgr->GetFontByUnicode(wUnicode, GetFontStyles(), nullptr);
 #endif

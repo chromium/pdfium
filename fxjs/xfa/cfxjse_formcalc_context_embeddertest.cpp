@@ -707,13 +707,13 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Encode) {
   ExecuteExpectString("Encode(\"\\u0022\\u00f5\\ufed0\", \"html\")",
                       "&quot;&otilde;&#xfed0;");
 
-#if !defined(OS_WIN)
+#if !BUILDFLAG(IS_WIN)
   // Windows wchar_t isn't wide enough to handle these anyways.
   // TODO(tsepez): fix surrogate encodings.
   ExecuteExpectString("Encode(\"\\uD83D\\uDCA9\", \"url\")", "%01%f4%a9");
   ExecuteExpectString("Encode(\"\\uD83D\\uDCA9\", \"xml\")", "");
   ExecuteExpectString("Encode(\"\\uD83D\\uDCA9\", \"html\")", "");
-#endif  // !defined(OS_WIN)
+#endif  // !BUILDFLAG(IS_WIN)
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Format) {

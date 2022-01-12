@@ -58,7 +58,7 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
     }
   }
 
-#if !defined(OS_WIN)
+#if !BUILDFLAG(IS_WIN)
   uint32_t dwFontStyle = pFont->GetFontStyles();
   CFX_Font FxFont;
   auto SubstFxFont = std::make_unique<CFX_SubstFont>();
@@ -83,7 +83,7 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
         pFxFont = pCurFont->GetDevFont();
 
         CFX_Font* font;
-#if !defined(OS_WIN)
+#if !BUILDFLAG(IS_WIN)
         FxFont.SetFace(pFxFont->GetFace());
         FxFont.SetFontSpan(pFxFont->GetFontSpan());
         font = &FxFont;
@@ -106,7 +106,7 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
   if (pCurFont && iCurCount) {
     pFxFont = pCurFont->GetDevFont();
     CFX_Font* font;
-#if !defined(OS_WIN)
+#if !BUILDFLAG(IS_WIN)
     FxFont.SetFace(pFxFont->GetFace());
     FxFont.SetFontSpan(pFxFont->GetFontSpan());
     font = &FxFont;

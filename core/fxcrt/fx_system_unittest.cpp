@@ -15,7 +15,7 @@
 // Unit test covering cases where PDFium replaces well-known library
 // functionality on any given platformn.
 
-#if !defined(OS_WIN)
+#if !BUILDFLAG(IS_WIN)
 
 namespace {
 
@@ -263,7 +263,7 @@ TEST(fxcrt, FXSYS_i64toa) {
       "111111111111111111111111111111111111111111111111111111111111111");
 }
 
-#endif  // !defined(OS_WIN)
+#endif  // !BUILDFLAG(IS_WIN)
 
 TEST(fxcrt, FXSYS_wcsftime) {
   struct tm good_time = {};
