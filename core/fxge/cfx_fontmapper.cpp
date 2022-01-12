@@ -155,13 +155,13 @@ constexpr AltFontFamily kAltFontFamilies[] = {
     {"ForteMT", "Forte"},
 };
 
-#if defined(OS_LINUX) || defined(OS_CHROMEOS) || defined(OS_ASMJS)
+#if BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS) || defined(OS_ASMJS)
 const char kNarrowFamily[] = "LiberationSansNarrow";
-#elif defined(OS_ANDROID)
+#elif BUILDFLAG(IS_ANDROID)
 const char kNarrowFamily[] = "RobotoCondensed";
 #else
 const char kNarrowFamily[] = "ArialNarrow";
-#endif  // defined(OS_LINUX) || defined(OS_CHROMEOS) || defined(OS_ASMJS)
+#endif  // BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS) || defined(OS_ASMJS)
 
 ByteString TT_NormalizeName(ByteString norm) {
   norm.Remove(' ');
@@ -604,7 +604,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
       }
     } else {
       if (Charset == FX_Charset::kSymbol) {
-#if BUILDFLAG(IS_APPLE) || defined(OS_ANDROID)
+#if BUILDFLAG(IS_APPLE) || BUILDFLAG(IS_ANDROID)
         if (SubstName == "Symbol") {
           pSubstFont->m_Family = "Chrome Symbol";
           pSubstFont->m_Charset = FX_Charset::kSymbol;

@@ -41,7 +41,7 @@
 
 #if defined(COMPILER_GCC)
 
-#if defined(OS_NACL)
+#if BUILDFLAG(IS_NACL)
 
 // Crash report accuracy is not guaranteed on NaCl.
 #define TRAP_SEQUENCE1_() __builtin_trap()

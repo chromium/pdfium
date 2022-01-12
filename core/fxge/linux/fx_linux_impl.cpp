@@ -17,7 +17,7 @@
 #include "third_party/base/check.h"
 #include "third_party/base/cxx17_backports.h"
 
-#if !defined(OS_LINUX) && !defined(OS_CHROMEOS) && !defined(OS_ASMJS)
+#if !BUILDFLAG(IS_LINUX) && !BUILDFLAG(IS_CHROMEOS) && !defined(OS_ASMJS)
 #error "Included on the wrong platform"
 #endif
 

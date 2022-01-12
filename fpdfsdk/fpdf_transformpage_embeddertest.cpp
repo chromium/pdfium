@@ -8,7 +8,7 @@
 #include "testing/embedder_test.h"
 #include "testing/embedder_test_constants.h"
 
-#if defined(OS_LINUX) || defined(OS_CHROMEOS) || defined(OS_FUCHSIA)
+#if BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS) || BUILDFLAG(IS_FUCHSIA)
 #include "third_party/base/test/scoped_locale.h"
 #endif
 
@@ -473,7 +473,7 @@ TEST_F(FPDFTransformEmbedderTest, TransFormWithClipAndSave) {
   }
 }
 
-#if defined(OS_LINUX) || defined(OS_CHROMEOS) || defined(OS_FUCHSIA)
+#if BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS) || BUILDFLAG(IS_FUCHSIA)
 TEST_F(FPDFTransformEmbedderTest, TransFormWithClipAndSaveWithLocale) {
   pdfium::base::ScopedLocale scoped_locale("da_DK.UTF-8");
 
@@ -529,4 +529,5 @@ TEST_F(FPDFTransformEmbedderTest, TransFormWithClipAndSaveWithLocale) {
     CloseSavedDocument();
   }
 }
-#endif  // defined(OS_LINUX) || defined(OS_CHROMEOS) || defined(OS_FUCHSIA)
+#endif  // BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS) ||
+        // BUILDFLAG(IS_FUCHSIA)

@@ -10,7 +10,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/check.h"
 
-#if defined(OS_ANDROID) || defined(OS_LINUX) || defined(OS_CHROMEOS) || \
+#if BUILDFLAG(IS_ANDROID) || BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS) || \
     BUILDFLAG(IS_APPLE) || defined(OS_ASMJS)
 #include <sys/time.h>
 #include <time.h>

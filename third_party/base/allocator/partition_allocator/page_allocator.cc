@@ -22,7 +22,7 @@
 
 #if BUILDFLAG(IS_WIN)
 #include "third_party/base/allocator/partition_allocator/page_allocator_internals_win.h"
-#elif defined(OS_POSIX) || defined(OS_FUCHSIA)
+#elif BUILDFLAG(IS_POSIX) || BUILDFLAG(IS_FUCHSIA)
 #include "third_party/base/allocator/partition_allocator/page_allocator_internals_posix.h"
 #else
 #error Platform not supported.

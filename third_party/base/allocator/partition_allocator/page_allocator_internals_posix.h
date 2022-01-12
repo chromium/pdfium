@@ -13,10 +13,10 @@
 #if BUILDFLAG(IS_APPLE)
 #include <mach/mach.h>
 #endif
-#if defined(OS_ANDROID)
+#if BUILDFLAG(IS_ANDROID)
 #include <sys/prctl.h>
 #endif
-#if defined(OS_LINUX) || defined(OS_CHROMEOS)
+#if BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS)
 #include <sys/resource.h>
 
 #include <algorithm>
@@ -33,7 +33,7 @@
 namespace pdfium {
 namespace base {
 
-#if defined(OS_ANDROID)
+#if BUILDFLAG(IS_ANDROID)
 namespace {
 const char* PageTagToName(PageTag tag) {
   // Important: All the names should be string literals. As per prctl.h in
@@ -57,7 +57,7 @@ const char* PageTagToName(PageTag tag) {
   }
 }
 }  // namespace
-#endif  // defined(OS_ANDROID)
+#endif  // BUILDFLAG(IS_ANDROID)
 
 // |mmap| uses a nearby address if the hint address is blocked.
 constexpr bool kHintIsAdvisory = true;
@@ -101,7 +101,7 @@ void* SystemAllocPagesInternal(void* hint,
 
   // TODO(https://crbug.com/927411): Remove once Fuchsia uses a native page
   // allocator, rather than relying on POSIX compatibility.
-#if defined(OS_FUCHSIA)
+#if BUILDFLAG(IS_FUCHSIA)
   if (page_tag == PageTag::kV8) {
     map_flags |= MAP_JIT;
   }
@@ -113,7 +113,7 @@ void* SystemAllocPagesInternal(void* hint,
     ret = nullptr;
   }
 
-#if defined(OS_ANDROID)
+#if BUILDFLAG(IS_ANDROID)
   // On Android, anonymous mappings can have a name attached to them. This is
   // useful for debugging, and double-checking memory attribution.
   if (ret) {

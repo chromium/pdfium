@@ -67,7 +67,7 @@ const JSMethodSpec CJS_PublicMethods::GlobalFunctionSpecs[] = {
 
 namespace {
 
-#if !defined(OS_ANDROID)
+#if !BUILDFLAG(IS_ANDROID)
 constexpr double kDoubleCorrect = 0.000000000000001;
 #endif
 
@@ -106,7 +106,7 @@ void AlertIfPossible(CJS_EventContext* pContext,
   }
 }
 
-#if !defined(OS_ANDROID)
+#if !BUILDFLAG(IS_ANDROID)
 ByteString CalculateString(double dValue,
                            int iDec,
                            int* iDec2,
@@ -179,7 +179,7 @@ bool IsDigitSeparatorOrDecimalMark(int c) {
   return c == '.' || c == ',';
 }
 
-#if !defined(OS_ANDROID)
+#if !BUILDFLAG(IS_ANDROID)
 bool IsStyleWithDigitSeparator(int style) {
   return style == 0 || style == 2;
 }
@@ -202,7 +202,7 @@ char DecimalMarkForStyle(int style) {
   return IsStyleWithCommaDecimalMark(style) ? ',' : '.';
 }
 
-#if !defined(OS_ANDROID)
+#if !BUILDFLAG(IS_ANDROID)
 void NormalizeDecimalMark(ByteString* str) {
   str->Replace(",", ".");
 }
@@ -593,7 +593,7 @@ WideString CJS_PublicMethods::PrintDateUsingFormat(double dDate,
 CJS_Result CJS_PublicMethods::AFNumber_Format(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
-#if !defined(OS_ANDROID)
+#if !BUILDFLAG(IS_ANDROID)
   if (params.size() != 6)
     return CJS_Result::Failure(JSMessage::kParamError);
 
@@ -787,7 +787,7 @@ CJS_Result CJS_PublicMethods::AFNumber_Keystroke(
 CJS_Result CJS_PublicMethods::AFPercent_Format(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
-#if !defined(OS_ANDROID)
+#if !BUILDFLAG(IS_ANDROID)
   if (params.size() < 2)
     return CJS_Result::Failure(JSMessage::kParamError);
 

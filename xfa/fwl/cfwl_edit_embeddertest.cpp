@@ -162,11 +162,11 @@ TEST_F(CFWLEditEmbedderTest, DISABLED_FillWithNewLineWithMultiline) {
   // abcde
   // fghij|
   {
-#if defined(OS_LINUX) || defined(OS_CHROMEOS)
+#if BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS)
     const char kFilledMultilineMD5[] = "fc1f4d5fdb2c5755005fc525b0a60ec9";
 #else
     const char kFilledMultilineMD5[] = "a5654e027d8b1667c20f3b86d1918003";
-#endif  // defined(OS_LINUX) || defined(OS_CHROMEOS)
+#endif  // BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS)
     ScopedFPDFBitmap page_bitmap =
         RenderLoadedPageWithFlags(page(), FPDF_ANNOT);
     CompareBitmap(page_bitmap.get(), 612, 792, kFilledMultilineMD5);
@@ -187,11 +187,11 @@ TEST_F(CFWLEditEmbedderTest, DISABLED_FillWithNewLineWithMultiline) {
   // Should look like:
   // abcde|ghij
   {
-#if defined(OS_LINUX) || defined(OS_CHROMEOS)
+#if BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS)
     const char kMultilineBackspaceMD5[] = "8bb62a8100ff1e1cc113d4033e0d824e";
 #else
     const char kMultilineBackspaceMD5[] = "a2f1dcab92bb1fb7c2f9ccc70100c989";
-#endif  // defined(OS_LINUX) || defined(OS_CHROMEOS)
+#endif  // BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS)
     ScopedFPDFBitmap page_bitmap =
         RenderLoadedPageWithFlags(page(), FPDF_ANNOT);
     CompareBitmap(page_bitmap.get(), 612, 792, kMultilineBackspaceMD5);

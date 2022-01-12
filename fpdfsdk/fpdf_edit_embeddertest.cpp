@@ -3043,7 +3043,7 @@ TEST_F(FPDFEditEmbedderTest, TransformAnnot) {
 }
 
 // TODO(npm): Add tests using Japanese fonts in other OS.
-#if defined(OS_LINUX) || defined(OS_CHROMEOS)
+#if BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS)
 TEST_F(FPDFEditEmbedderTest, AddCIDFontText) {
   // Start with a blank page
   FPDF_PAGE page = FPDFPage_New(CreateNewDocument(), 0, 612, 792);
@@ -3101,7 +3101,7 @@ TEST_F(FPDFEditEmbedderTest, AddCIDFontText) {
 
   VerifySavedDocument(612, 792, md5);
 }
-#endif  // defined(OS_LINUX) || defined(OS_CHROMEOS)
+#endif  // BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS)
 
 // TODO(crbug.com/pdfium/1651): Fix this issue and enable the test for Skia.
 #if defined(_SKIA_SUPPORT_)
