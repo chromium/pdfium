@@ -301,7 +301,7 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
 
 bool ShouldDrawDeviceText(const CFX_Font* pFont,
                           const CFX_TextRenderOptions& options) {
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
   if (options.font_is_cid)
     return false;
 

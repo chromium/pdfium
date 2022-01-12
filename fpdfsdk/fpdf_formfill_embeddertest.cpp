@@ -1324,7 +1324,7 @@ TEST_F(FPDFFormFillEmbedderTest, FormText) {
       "199536b979a42da3c2745297f6e87a77";
   const char kUnfocusedTextFormWithAbcChecksum[] =
       "574aa06445957315f0dadd24a0c59811";
-#elif defined(OS_APPLE)
+#elif BUILDFLAG(IS_APPLE)
   const char kFocusedTextFormWithAbcChecksum[] =
       "9fb14198d75ca0a107060c60ca21b0c7";
   const char kUnfocusedTextFormWithAbcChecksum[] =
@@ -1408,7 +1408,7 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_1281) {
 TEST_F(FPDFFormFillEmbedderTest, RemoveFormFieldHighlight) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   const char kMd5NoHighlight[] = "013aa241c39c02505d9525550be04e48";
-#elif defined(OS_APPLE)
+#elif BUILDFLAG(IS_APPLE)
   const char kMd5NoHighlight[] = "5c82aa43e3b478aa1e4c94bb9ef1f11f";
 #else
   const char kMd5NoHighlight[] = "a6268304f7eedfa9ee98fac3caaf2efb";
@@ -3122,7 +3122,7 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, SelectAllWithKeyboardShortcut) {
   CheckSelection(L"");
 
   // Select all with the keyboard shortcut.
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
   constexpr int kCorrectModifier = FWL_EVENTFLAG_MetaKey;
 #else
   constexpr int kCorrectModifier = FWL_EVENTFLAG_ControlKey;
@@ -3136,7 +3136,7 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, SelectAllWithKeyboardShortcut) {
   CheckSelection(L"");
 
   // Select all with the keyboard shortcut using the wrong modifier key.
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
   constexpr int kWrongModifier = FWL_EVENTFLAG_ControlKey;
 #else
   constexpr int kWrongModifier = FWL_EVENTFLAG_MetaKey;

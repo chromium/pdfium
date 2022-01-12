@@ -814,7 +814,7 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
       }
       if (!bEmptyChar || (bEmptyChar && !bSkipSpace)) {
         pCharPos->m_GlyphIndex = pFont->GetGlyphIndex(wForm);
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
         pCharPos->m_ExtGID = pCharPos->m_GlyphIndex;
 #endif
         pCharPos->m_FontCharWidth = iCharWidth;

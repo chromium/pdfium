@@ -18,13 +18,13 @@
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
 
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
 #include <Carbon/Carbon.h>
-#endif  // defined(OS_APPLE)
+#endif  // BUILDFLAG(IS_APPLE)
 
 namespace {
 
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
 struct GlyphNameMap {
   const char* m_pStrAdobe;    // Raw, POD struct.
   const char* m_pStrUnicode;  // Raw, POD struct.
@@ -44,7 +44,7 @@ const char* GlyphNameRemap(const char* pStrAdobe) {
   return nullptr;
 }
 
-#endif  // defined(OS_APPLE)
+#endif  // BUILDFLAG(IS_APPLE)
 
 bool FT_UseType1Charmap(FXFT_FaceRec* face) {
   if (FXFT_Get_Face_CharmapCount(face) == 0) {
@@ -69,7 +69,7 @@ bool FT_UseType1Charmap(FXFT_FaceRec* face) {
 CPDF_Type1Font::CPDF_Type1Font(CPDF_Document* pDocument,
                                CPDF_Dictionary* pFontDict)
     : CPDF_SimpleFont(pDocument, pFontDict) {
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
   memset(m_ExtGID, 0xff, sizeof(m_ExtGID));
 #endif
 }
@@ -113,7 +113,7 @@ bool CPDF_Type1Font::Load() {
   return LoadCommon();
 }
 
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
 int CPDF_Type1Font::GlyphFromCharCodeExt(uint32_t charcode) {
   if (charcode > 0xff)
     return -1;
@@ -127,7 +127,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
   if (!m_Font.GetFaceRec())
     return;
 
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
   bool bCoreText = true;
   if (!m_Font.GetPlatformFont()) {
     if (m_Font.GetPsName() == "DFHeiStd-W5")
@@ -149,7 +149,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
           uint16_t unicode = prefix[j] * 256 + charcode;
           m_GlyphIndex[charcode] =
               FT_Get_Char_Index(m_Font.GetFaceRec(), unicode);
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
           CalcExtGID(charcode);
 #endif
           if (m_GlyphIndex[charcode]) {
@@ -159,7 +159,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
         }
       }
       if (bGotOne) {
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
         if (!bCoreText)
           memcpy(m_ExtGID, m_GlyphIndex, sizeof(m_ExtGID));
 #endif
@@ -179,18 +179,18 @@ void CPDF_Type1Font::LoadGlyphMap() {
       m_Encoding.SetUnicode(charcode, PDF_UnicodeFromAdobeName(name));
       m_GlyphIndex[charcode] = FT_Get_Char_Index(
           m_Font.GetFaceRec(), m_Encoding.UnicodeFromCharCode(charcode));
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
       CalcExtGID(charcode);
 #endif
       if (m_GlyphIndex[charcode] == 0 && strcmp(name, ".notdef") == 0) {
         m_Encoding.SetUnicode(charcode, 0x20);
         m_GlyphIndex[charcode] = FT_Get_Char_Index(m_Font.GetFaceRec(), 0x20);
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
         CalcExtGID(charcode);
 #endif
       }
     }
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
     if (!bCoreText) {
       fxcrt::spancpy(pdfium::make_span(m_ExtGID),
                      pdfium::make_span(m_GlyphIndex));
@@ -199,7 +199,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
     return;
   }
   FT_UseType1Charmap(m_Font.GetFaceRec());
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
   if (bCoreText) {
     if (FontStyleIsSymbolic(m_Flags)) {
       for (uint32_t charcode = 0; charcode < kInternalTableSize; charcode++) {
@@ -264,7 +264,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
     }
     return;
   }
-#endif  // defined(OS_APPLE)
+#endif  // BUILDFLAG(IS_APPLE)
   if (FontStyleIsSymbolic(m_Flags)) {
     for (size_t charcode = 0; charcode < kInternalTableSize; charcode++) {
       const char* name =
@@ -290,7 +290,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
         }
       }
     }
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
     if (!bCoreText)
       memcpy(m_ExtGID, m_GlyphIndex, sizeof(m_ExtGID));
 #endif
@@ -318,7 +318,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
       m_GlyphIndex[charcode] = 0xffff;
     }
   }
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
   if (!bCoreText)
     memcpy(m_ExtGID, m_GlyphIndex, sizeof(m_ExtGID));
 #endif
@@ -334,7 +334,7 @@ bool CPDF_Type1Font::IsFixedFont() const {
          CFX_FontMapper::IsFixedFont(m_Base14Font.value());
 }
 
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
 void CPDF_Type1Font::SetExtGID(const char* name, uint32_t charcode) {
   CFStringRef name_ct = CFStringCreateWithCStringNoCopy(
       kCFAllocatorDefault, name, kCFStringEncodingASCII, kCFAllocatorNull);
@@ -351,4 +351,4 @@ void CPDF_Type1Font::CalcExtGID(uint32_t charcode) {
   name_glyph[kInternalTableSize - 1] = 0;
   SetExtGID(name_glyph, charcode);
 }
-#endif  // defined(OS_APPLE)
+#endif  // BUILDFLAG(IS_APPLE)

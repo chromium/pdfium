@@ -63,7 +63,7 @@ void CPDF_TransferFuncDIB::TranslateScanline(
           m_Scanline[index++] = g0;
           m_Scanline[index++] = r0;
         }
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
         index++;
 #endif
       }
@@ -97,7 +97,7 @@ void CPDF_TransferFuncDIB::TranslateScanline(
           m_Scanline[index++] = m_RampR[src_byte];
         }
         src_buf++;
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
         index++;
 #endif
       }
@@ -115,7 +115,7 @@ void CPDF_TransferFuncDIB::TranslateScanline(
         m_Scanline[index++] = m_RampB[*(src_buf++)];
         m_Scanline[index++] = m_RampG[*(src_buf++)];
         m_Scanline[index++] = m_RampR[*(src_buf++)];
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
         index++;
 #endif
       }
@@ -132,7 +132,7 @@ void CPDF_TransferFuncDIB::TranslateScanline(
         m_Scanline[index++] = m_RampR[*(src_buf++)];
         if (!bSkip) {
           m_Scanline[index++] = *src_buf;
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
         } else {
           index++;
 #endif

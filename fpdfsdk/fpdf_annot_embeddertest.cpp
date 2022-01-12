@@ -544,9 +544,9 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractInkMultiple) {
     EXPECT_EQ(681.535034f, rect.top);
   }
   {
-#if defined(_SKIA_SUPPORT_) && defined(OS_APPLE)
+#if defined(_SKIA_SUPPORT_) && BUILDFLAG(IS_APPLE)
     static constexpr char kExpectedHash[] = "fad91b9c968fe8019a774f5e2419b8fc";
-#elif defined(_SKIA_SUPPORT_PATHS_) && defined(OS_APPLE)
+#elif defined(_SKIA_SUPPORT_PATHS_) && BUILDFLAG(IS_APPLE)
     static constexpr char kExpectedHash[] = "acddfe688a117ead56af7b249a2cf8a1";
 #elif defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
     static constexpr char kExpectedHash[] = "1fb0dd8dd5f0b9bb8d076e48eb59296d";
@@ -771,9 +771,9 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndSaveUnderlineAnnotation) {
   UnloadPage(page);
 
   // Open the saved document.
-#if defined(_SKIA_SUPPORT_) && defined(OS_APPLE)
+#if defined(_SKIA_SUPPORT_) && BUILDFLAG(IS_APPLE)
   static const char kChecksum[] = "899387ae792390cd0d83cf7e2bbebfb5";
-#elif defined(_SKIA_SUPPORT_PATHS_) && defined(OS_APPLE)
+#elif defined(_SKIA_SUPPORT_PATHS_) && BUILDFLAG(IS_APPLE)
   static const char kChecksum[] = "e40e235ee35f47ff28dda009aaaf36df";
 #elif defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   static const char kChecksum[] = "798fa41303381c9ba6d99092f5cd4d2b";
@@ -910,7 +910,7 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_ModifyRectQuadpointsWithAP) {
   static const char kMd5ModifiedHighlight[] =
       "66f3caef3a7d488a4fa1ad37fc06310e";
   static const char kMd5ModifiedSquare[] = "a456dad0bc6801ee2d6408a4394af563";
-#elif defined(OS_APPLE)
+#elif BUILDFLAG(IS_APPLE)
   static const char kMd5Original[] = "fc59468d154f397fd298c69f47ef565a";
   static const char kMd5ModifiedHighlight[] =
       "e64bf648f6e9354d1f3eedb47a2c9498";
@@ -1118,7 +1118,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
   static const char kMd5ModifiedPath[] = "b820e4ae359db95cbac9823937c6da1a";
   static const char kMd5TwoPaths[] = "c53837b7bb6a9a21a846aa786526aa56";
   static const char kMd5NewAnnot[] = "4f0f4217156e4251036f369184a48967";
-#elif defined(OS_APPLE)
+#elif BUILDFLAG(IS_APPLE)
   static const char kMd5ModifiedPath[] = "e31421f86c61d4e9cda138f15f561ca3";
   static const char kMd5TwoPaths[] = "58d932492f9d485d6a4bc0ba76c04557";
   static const char kMd5NewAnnot[] = "61f9ad13f2fd235753db198cf9704773";
@@ -1331,7 +1331,7 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_AddAndModifyImage) {
   static const char kMd5NewImage[] = "beb7db3647706d7fe4689f92073847aa";
   static const char kMd5ModifiedImage[] = "baa9b065469268e215ef958fe6987d6b";
 #else
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
   static const char kMd5NewImage[] = "c6fcbceb2f079bef10458ac60db3a10c";
   static const char kMd5ModifiedImage[] = "8068eb568e5c1c5fbe84e98f7a980ac3";
 #else
@@ -1415,7 +1415,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   static const char kMd5NewText[] = "310d9de5f17fb288fb243f5dbaf2b6dc";
   static const char kMd5ModifiedText[] = "22be42c136c3bf5a8ecea3dd83770a02";
-#elif defined(OS_APPLE)
+#elif BUILDFLAG(IS_APPLE)
   static const char kMd5NewText[] = "57a0fb3fba33e17de26bcde4c40b9a75";
   static const char kMd5ModifiedText[] = "072574999f2e3f36774ee0b5bc94d4dd";
 #else
@@ -1551,7 +1551,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   static const char kMd5[] = "aa0e47d966c60d59102a2466542e0e46";
-#elif defined(OS_APPLE)
+#elif BUILDFLAG(IS_APPLE)
   static const char kMd5[] = "cd90315b250dfe08265ce0ac335c5f76";
 #else
   static const char kMd5[] = "c4fb6911f2a87f490be196f8898de738";
@@ -3013,7 +3013,7 @@ TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotRendering) {
   {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
     static const char kMd5sum[] = "b4c8f1dab175508810c476d078ebc5a6";
-#elif defined(OS_APPLE)
+#elif BUILDFLAG(IS_APPLE)
     static const char kMd5sum[] = "108a46c517c4eaace9982ee83e8e3296";
 #else
     static const char kMd5sum[] = "5550d8dcb4d1af1f50e8b4bcaef2ee60";
@@ -3039,7 +3039,7 @@ TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotRendering) {
   {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
     static const char kMd5sum[] = "9173db3a892bc1697eef5cdaed19eda6";
-#elif defined(OS_APPLE)
+#elif BUILDFLAG(IS_APPLE)
     static const char kMd5sum[] = "eb3869335e7a219e1b5f25c1c6037b97";
 #else
     static const char kMd5sum[] = "805fe7bb751ac4ed2b82bb66efe6db40";
@@ -3056,7 +3056,7 @@ TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotRendering) {
   {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
     static const char kMd5sum[] = "174dbdb218c2b14011c9c1db67fe41c3";
-#elif defined(OS_APPLE)
+#elif BUILDFLAG(IS_APPLE)
     static const char kMd5sum[] = "d20b1978da2362d3942ea0fc6d230997";
 #else
     static const char kMd5sum[] = "c5c5dcb462af3ef5f43b298ec048feef";
@@ -3566,7 +3566,7 @@ TEST_F(FPDFAnnotEmbedderTest, AnnotationBorderRendering) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   constexpr char kOriginalChecksum[] = "4f35703e89202bcc8419ca2df739bb4e";
   constexpr char kModifiedChecksum[] = "cee0a1b41f33d487af8fb70c4c82e3c9";
-#elif defined(OS_APPLE)
+#elif BUILDFLAG(IS_APPLE)
   constexpr char kOriginalChecksum[] = "522a4a6b6c7eab5bf95ded1f21ea372e";
   constexpr char kModifiedChecksum[] = "6844019e07b83cc01723415f58218d06";
 #else

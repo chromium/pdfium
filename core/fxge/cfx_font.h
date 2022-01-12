@@ -140,7 +140,7 @@ class CFX_Font {
   bool IsSubstFontBold() const;
 #endif
 
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
   void* GetPlatformFont() const { return m_pPlatformFont; }
   void SetPlatformFont(void* font) { m_pPlatformFont = font; }
 #endif
@@ -148,7 +148,7 @@ class CFX_Font {
  private:
   RetainPtr<CFX_GlyphCache> GetOrCreateGlyphCache() const;
   void ClearGlyphCache();
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
   void ReleasePlatformResource();
 #endif
   ByteString GetFamilyNameOrUntitled() const;
@@ -169,7 +169,7 @@ class CFX_Font {
   uint64_t m_ObjectTag = 0;
   bool m_bEmbedded = false;
   bool m_bVertical = false;
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
   void* m_pPlatformFont = nullptr;
 #endif
 };

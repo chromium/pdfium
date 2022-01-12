@@ -43,13 +43,13 @@ TEST_F(FPDFFlattenEmbedderTest, BUG_861842) {
   static constexpr char kCheckboxChecksum[] =
       "95fdaa000e81c80892b8d370f77be970";
 #else
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
   static constexpr char kCheckboxChecksum[] =
       "6aafcb2d98da222964bcdbf5aa1f4f1f";
 #else
   static constexpr char kCheckboxChecksum[] =
       "594265790b81df2d93120d33b72a6ada";
-#endif  // defined(OS_APPLE)
+#endif  // BUILDFLAG(IS_APPLE)
 #endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
   ASSERT_TRUE(OpenDocument("bug_861842.pdf"));
@@ -74,7 +74,7 @@ TEST_F(FPDFFlattenEmbedderTest, BUG_889099) {
   static constexpr char kPageHash[] = "1ce2e06c12972973b8f04a2f79245313";
   static constexpr char kFlattenedPageHash[] =
       "e03b1b8157c30c77ea94f9c24dc85a00";
-#elif defined(OS_APPLE)
+#elif BUILDFLAG(IS_APPLE)
   static constexpr char kPageHash[] = "049ed3f1e21fc72f929af3410c64bc8f";
   static constexpr char kFlattenedPageHash[] =
       "41debc60cf2a8f74c710ec6082d77b18";

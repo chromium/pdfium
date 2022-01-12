@@ -679,7 +679,7 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
     uint16_t cid = CIDFromCharCode(charcode);
     wchar_t unicode = 0;
     if (m_bCIDIsGID) {
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
       if (FontStyleIsSymbolic(m_Flags))
         return cid;
 
@@ -744,7 +744,7 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
     if (m_Charset == CIDSET_JAPAN1) {
       if (unicode == '\\') {
         unicode = '/';
-#if !defined(OS_APPLE)
+#if !BUILDFLAG(IS_APPLE)
       } else if (unicode == 0xa5) {
         unicode = 0x5c;
 #endif

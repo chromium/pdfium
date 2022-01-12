@@ -1029,7 +1029,7 @@ CFX_AggDeviceDriver::~CFX_AggDeviceDriver() {
   DestroyPlatform();
 }
 
-#if !defined(OS_APPLE)
+#if !BUILDFLAG(IS_APPLE)
 void CFX_AggDeviceDriver::InitPlatform() {}
 
 void CFX_AggDeviceDriver::DestroyPlatform() {}
@@ -1043,7 +1043,7 @@ bool CFX_AggDeviceDriver::DrawDeviceText(int nChars,
                                          const CFX_TextRenderOptions& options) {
   return false;
 }
-#endif  // !defined(OS_APPLE)
+#endif  // !BUILDFLAG(IS_APPLE)
 
 DeviceType CFX_AggDeviceDriver::GetDeviceType() const {
   return DeviceType::kDisplay;

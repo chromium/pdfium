@@ -13,7 +13,7 @@
 
 #include "build/build_config.h"
 
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
 #include "third_party/base/span.h"
 #endif
 
@@ -31,7 +31,7 @@ class CFX_GEModule {
     virtual void Init() = 0;
     virtual std::unique_ptr<SystemFontInfoIface>
     CreateDefaultSystemFontInfo() = 0;
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
     virtual void* CreatePlatformFont(pdfium::span<const uint8_t> font_span) = 0;
 #endif
   };

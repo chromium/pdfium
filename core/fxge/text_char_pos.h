@@ -20,7 +20,7 @@ class TextCharPos {
   uint32_t m_Unicode = 0;
   uint32_t m_GlyphIndex = 0;
   int m_FontCharWidth = 0;
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
   uint32_t m_ExtGID = 0;
 #endif
   int32_t m_FallbackFontPosition = 0;

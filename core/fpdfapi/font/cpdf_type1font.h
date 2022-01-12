@@ -23,7 +23,7 @@ class CPDF_Type1Font final : public CPDF_SimpleFont {
   bool IsType1Font() const override;
   const CPDF_Type1Font* AsType1Font() const override;
   CPDF_Type1Font* AsType1Font() override;
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
   int GlyphFromCharCodeExt(uint32_t charcode) override;
 #endif
 
@@ -41,7 +41,7 @@ class CPDF_Type1Font final : public CPDF_SimpleFont {
   bool IsSymbolicFont() const;
   bool IsFixedFont() const;
 
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
   void SetExtGID(const char* name, uint32_t charcode);
   void CalcExtGID(uint32_t charcode);
 

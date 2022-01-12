@@ -17,7 +17,7 @@
 
 namespace {
 
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
 constexpr bool kScaleDeviceBuffer = false;
 #else
 constexpr bool kScaleDeviceBuffer = true;

@@ -361,7 +361,7 @@ CFX_Font::~CFX_Font() {
   m_FontData = {};  // m_FontData can't outive m_Face.
   m_Face.Reset();
 
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
   ReleasePlatformResource();
 #endif
 }

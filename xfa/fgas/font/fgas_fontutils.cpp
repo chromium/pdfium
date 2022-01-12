@@ -540,7 +540,7 @@ const FGAS_FontInfo kXFAFontsMap[] = {
     {0xfef135f8, "AdobeHeitiStd-Regular", "Batang,Century,Dotum", 0,
      FX_CodePage::kChineseSimplified},
 };
-#elif defined(OS_APPLE)
+#elif BUILDFLAG(IS_APPLE)
 const FGAS_FontInfo kXFAFontsMap[] = {
     {0x01d5d33e, "SimSun", "STHeiti,Heiti TC,STFangsong", 0,
      FX_CodePage::kChineseSimplified},

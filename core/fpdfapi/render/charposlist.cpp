@@ -37,7 +37,7 @@ std::vector<TextCharPos> GetCharPosList(pdfium::span<const uint32_t> char_codes,
     text_char_pos.m_GlyphIndex =
         font->GlyphFromCharCode(char_code, &is_vertical_glyph);
     uint32_t glyph_id = text_char_pos.m_GlyphIndex;
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
     text_char_pos.m_ExtGID = font->GlyphFromCharCodeExt(char_code);
     glyph_id = text_char_pos.m_ExtGID != static_cast<uint32_t>(-1)
                    ? text_char_pos.m_ExtGID
@@ -73,7 +73,7 @@ std::vector<TextCharPos> GetCharPosList(pdfium::span<const uint32_t> char_codes,
     if (use_fallback_font) {
       current_font =
           font->GetFontFallback(text_char_pos.m_FallbackFontPosition);
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
       text_char_pos.m_ExtGID = text_char_pos.m_GlyphIndex;
 #endif
     } else {

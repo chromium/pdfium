@@ -155,7 +155,7 @@ bool CFWL_NoteDriver::DoKillFocus(CFWL_Message* pMessage,
 
 bool CFWL_NoteDriver::DoKey(CFWL_Message* pMessage, CFWL_Widget* pMessageForm) {
   CFWL_MessageKey* pMsg = static_cast<CFWL_MessageKey*>(pMessage);
-#if !defined(OS_APPLE)
+#if !BUILDFLAG(IS_APPLE)
   if (pMsg->m_dwCmd == CFWL_MessageKey::KeyCommand::kKeyDown &&
       pMsg->m_dwKeyCodeOrChar == XFA_FWL_VKEY_Tab) {
     return true;

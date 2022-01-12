@@ -25,7 +25,7 @@ constexpr FX_ARGB kWhite = 0xFFFFFFFF;
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 static constexpr char kAnnotationStampWithApBaseContentChecksum[] =
     "1a6cb54b1cfc5bb9f6ec3923a52ea7cc";
-#elif defined(OS_APPLE)
+#elif BUILDFLAG(IS_APPLE)
 static constexpr char kAnnotationStampWithApBaseContentChecksum[] =
     "243f3d6267d9db09198fed9f8c4957fd";
 #else
@@ -315,7 +315,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderTextWithColorScheme) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   static constexpr char kContentWithTextChecksum[] =
       "6bbe5a547115b4aa30b49fe7c34030e3";
-#elif defined(OS_APPLE)
+#elif BUILDFLAG(IS_APPLE)
   static constexpr char kContentWithTextChecksum[] =
       "ee4ec12f54ce8d117a73bd9b85a8954d";
 #else
@@ -386,13 +386,13 @@ TEST_F(FPDFProgressiveRenderEmbedderTest,
   static constexpr char kContentWithHighlightFillChecksum[] =
       "fa25846c61d0253e86e8512d3be06ebb";
 #else
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
   static constexpr char kContentWithHighlightFillChecksum[] =
       "a820afec9b99d3d3f2e9e9382bbad7c1";
 #else
   static constexpr char kContentWithHighlightFillChecksum[] =
       "a08a0639f89446f66f3689ee8e08b9fe";
-#endif  // defined(OS_APPLE)
+#endif  // BUILDFLAG(IS_APPLE)
 #endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
   ASSERT_TRUE(OpenDocument("annotation_highlight_square_with_ap.pdf"));
@@ -419,7 +419,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest,
 // Note: The stroke color rendered for highlight is different from the normal
 // path since highlights have Multiply blend mode, while the other path has
 // Normal blend mode.
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
   static constexpr char kMD5ContentWithHighlight[] =
       "8837bea0b3520164b1784e513c882a2d";
 #else
@@ -446,13 +446,13 @@ TEST_F(FPDFProgressiveRenderEmbedderTest,
 TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderInkWithColorScheme) {
 // Test rendering of multiple ink with forced color scheme on.
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
   static constexpr char kContentWithInkChecksum[] =
       "ebc57721e4c8da34156e09b9b2e62fb0";
 #else
   static constexpr char kContentWithInkChecksum[] =
       "b39d9f68ff71963d82c43eb20caa8f4d";
-#endif  // defined(OS_APPLE)
+#endif  // BUILDFLAG(IS_APPLE)
 #else
 #if BUILDFLAG(IS_WIN)
   static constexpr char kContentWithInkChecksum[] =
@@ -475,7 +475,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderStampWithColorScheme) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   static constexpr char kContentWithStampChecksum[] =
       "bdcd2b91223b1a73582b341d0153a73f";
-#elif defined(OS_APPLE)
+#elif BUILDFLAG(IS_APPLE)
   static constexpr char kContentWithStampChecksum[] =
       "7a209e29caeeab7d2b25b34570a4ace6";
 #else

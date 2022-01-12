@@ -126,7 +126,7 @@ bool CPWL_Wnd::IsMETAKeyDown(Mask<FWL_EVENTFLAG> nFlag) {
 
 // static
 bool CPWL_Wnd::IsPlatformShortcutKey(Mask<FWL_EVENTFLAG> nFlag) {
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
   return IsMETAKeyDown(nFlag);
 #else
   return IsCTRLKeyDown(nFlag);

@@ -39,7 +39,7 @@ namespace {
 
 constexpr int kEditMargin = 3;
 
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
 constexpr XFA_FWL_KeyFlag kEditingModifier = XFA_FWL_KeyFlag::kCommand;
 #else
 constexpr XFA_FWL_KeyFlag kEditingModifier = XFA_FWL_KeyFlag::kCtrl;

@@ -11,7 +11,7 @@
 #include "third_party/base/check.h"
 
 #if defined(OS_ANDROID) || defined(OS_LINUX) || defined(OS_CHROMEOS) || \
-    defined(OS_APPLE) || defined(OS_ASMJS)
+    BUILDFLAG(IS_APPLE) || defined(OS_ASMJS)
 #include <sys/time.h>
 #include <time.h>
 #endif

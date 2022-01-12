@@ -1275,7 +1275,7 @@ TEST_F(FPDFViewEmbedderTest, RenderBug664284WithNoNativeText) {
 // only disable native text support on macOS. Therefore Windows and Linux
 // rendering results remain the same as rendering with no flags, while the macOS
 // rendering result doesn't.
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
   static const char kOriginalChecksum[] = "0e339d606aafb63077f49e238dc27cb0";
   static const char kNoNativeTextChecksum[] =
       "288502887ffc63291f35a0573b944375";
@@ -1283,7 +1283,7 @@ TEST_F(FPDFViewEmbedderTest, RenderBug664284WithNoNativeText) {
   static const char kOriginalChecksum[] = "288502887ffc63291f35a0573b944375";
   static const char kNoNativeTextChecksum[] =
       "288502887ffc63291f35a0573b944375";
-#endif  // defined(OS_APPLE)
+#endif  // BUILDFLAG(IS_APPLE)
 #endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   ASSERT_TRUE(OpenDocument("bug_664284.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -1406,7 +1406,7 @@ TEST_F(FPDFViewEmbedderTest, RenderHelloWorldWithFlags) {
   static const char kLcdTextChecksum[] = "fea3e59b7ac7b7a6940018497034f6cf";
   static const char kNoSmoothtextChecksum[] =
       "c4173cf724618e5b68efb74543519bb9";
-#elif defined(OS_APPLE)
+#elif BUILDFLAG(IS_APPLE)
   static const char kLcdTextChecksum[] = "6eef7237f7591f07616e238422086737";
   static const char kNoSmoothtextChecksum[] =
       "6eef7237f7591f07616e238422086737";

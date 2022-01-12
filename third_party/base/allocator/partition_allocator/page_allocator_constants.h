@@ -10,7 +10,7 @@
 #include "build/build_config.h"
 #include "third_party/base/compiler_specific.h"
 
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
 
 #include <mach/vm_page_size.h>
 
@@ -39,7 +39,7 @@
 namespace pdfium {
 namespace {
 
-#if !defined(OS_APPLE)
+#if !BUILDFLAG(IS_APPLE)
 
 constexpr ALWAYS_INLINE int PageAllocationGranularityShift() {
 #if BUILDFLAG(IS_WIN) || defined(ARCH_CPU_PPC64)
@@ -63,7 +63,7 @@ namespace base {
 
 PAGE_ALLOCATOR_CONSTANTS_DECLARE_CONSTEXPR ALWAYS_INLINE size_t
 PageAllocationGranularity() {
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
   return vm_page_size;
 #else
   return 1ULL << PageAllocationGranularityShift();
@@ -105,7 +105,7 @@ static constexpr size_t kPageMetadataSize = 1 << kPageMetadataShift;
 // See DecommitSystemPages(), this is not guaranteed to be synchronous on all
 // platforms.
 static constexpr bool kDecommittedPagesAreAlwaysZeroed =
-#if defined(OS_APPLE)
+#if BUILDFLAG(IS_APPLE)
     false;
 #else
     true;
