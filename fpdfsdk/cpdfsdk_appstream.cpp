@@ -95,7 +95,7 @@ class AutoClosedCommand {
   virtual ~AutoClosedCommand() { *stream_ << close_ << "\n"; }
 
  private:
-  std::ostringstream* stream_;
+  UnownedPtr<std::ostringstream> const stream_;
   ByteString close_;
 };
 
