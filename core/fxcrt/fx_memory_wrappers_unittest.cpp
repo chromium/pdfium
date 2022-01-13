@@ -5,6 +5,8 @@
 #include "core/fxcrt/fx_memory_wrappers.h"
 
 #include <memory>
+#include <sstream>
+#include <string>
 #include <vector>
 
 #include "build/build_config.h"
@@ -20,6 +22,7 @@ TEST(fxcrt, FxFreeDeleter) {
 }
 
 TEST(fxcrt, FxAllocAllocator) {
+  // Let ASAN sanity check some simple operations.
   std::vector<int, FxAllocAllocator<int>> vec;
   vec.push_back(42);
   vec.reserve(100);
@@ -30,4 +33,16 @@ TEST(fxcrt, FxAllocAllocator) {
   vec = std::move(vec2);
   vec2.resize(0);
   vec2.push_back(42);
+}
+
+TEST(fxcrt, FxStringAllocator) {
+  // Let ASAN sanity check some simple operations.
+  std::basic_ostringstream<char, std::char_traits<char>,
+                           FxStringAllocator<char>>
+      str;
+  str << 'B';
+  str << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+  str << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+  str << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+  str << 42.0f;
 }
