@@ -408,28 +408,31 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
       return JBig2_Result::kFailure;
   }
   CJBig2_Segment* pLRSeg = nullptr;
-  pSymbolDictDecoder->SDNUMINSYMS = 0;
+  FX_SAFE_UINT32 dwNumSyms = 0;
   for (int32_t i = 0; i < pSegment->m_nReferred_to_segment_count; ++i) {
     CJBig2_Segment* pSeg =
         FindSegmentByNumber(pSegment->m_Referred_to_segment_numbers[i]);
     if (pSeg->m_cFlags.s.type == 0) {
-      pSymbolDictDecoder->SDNUMINSYMS += pSeg->m_SymbolDict->NumImages();
+      dwNumSyms += pSeg->m_SymbolDict->NumImages();
       pLRSeg = pSeg;
     }
   }
+  pSymbolDictDecoder->SDNUMINSYMS = dwNumSyms.ValueOrDie();
 
   std::unique_ptr<CJBig2_Image*, FxFreeDeleter> SDINSYMS;
   if (pSymbolDictDecoder->SDNUMINSYMS != 0) {
     SDINSYMS.reset(FX_Alloc(CJBig2_Image*, pSymbolDictDecoder->SDNUMINSYMS));
-    uint32_t dwTemp = 0;
+    dwNumSyms = 0;
     for (int32_t i = 0; i < pSegment->m_nReferred_to_segment_count; ++i) {
       CJBig2_Segment* pSeg =
           FindSegmentByNumber(pSegment->m_Referred_to_segment_numbers[i]);
       if (pSeg->m_cFlags.s.type == 0) {
         const CJBig2_SymbolDict& dict = *pSeg->m_SymbolDict;
-        for (size_t j = 0; j < dict.NumImages(); ++j)
-          SDINSYMS.get()[dwTemp + j] = dict.GetImage(j);
-        dwTemp += dict.NumImages();
+        for (uint32_t j = 0; j < dict.NumImages(); ++j) {
+          uint32_t dwTemp = (dwNumSyms + j).ValueOrDie();
+          SDINSYMS.get()[dwTemp] = dict.GetImage(j);
+        }
+        dwNumSyms += dict.NumImages();
       }
     }
   }
@@ -622,27 +625,30 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
       return JBig2_Result::kFailure;
   }
 
-  pTRD->SBNUMSYMS = 0;
+  FX_SAFE_UINT32 dwNumSyms = 0;
   for (int32_t i = 0; i < pSegment->m_nReferred_to_segment_count; ++i) {
     CJBig2_Segment* pSeg =
         FindSegmentByNumber(pSegment->m_Referred_to_segment_numbers[i]);
     if (pSeg->m_cFlags.s.type == 0) {
-      pTRD->SBNUMSYMS += pSeg->m_SymbolDict->NumImages();
+      dwNumSyms += pSeg->m_SymbolDict->NumImages();
     }
   }
+  pTRD->SBNUMSYMS = dwNumSyms.ValueOrDie();
 
   std::unique_ptr<CJBig2_Image*, FxFreeDeleter> SBSYMS;
   if (pTRD->SBNUMSYMS > 0) {
     SBSYMS.reset(FX_Alloc(CJBig2_Image*, pTRD->SBNUMSYMS));
-    dwTemp = 0;
+    dwNumSyms = 0;
     for (int32_t i = 0; i < pSegment->m_nReferred_to_segment_count; ++i) {
       CJBig2_Segment* pSeg =
           FindSegmentByNumber(pSegment->m_Referred_to_segment_numbers[i]);
       if (pSeg->m_cFlags.s.type == 0) {
         const CJBig2_SymbolDict& dict = *pSeg->m_SymbolDict;
-        for (size_t j = 0; j < dict.NumImages(); ++j)
-          SBSYMS.get()[dwTemp + j] = dict.GetImage(j);
-        dwTemp += dict.NumImages();
+        for (uint32_t j = 0; j < dict.NumImages(); ++j) {
+          uint32_t dwIndex = (dwNumSyms + j).ValueOrDie();
+          SBSYMS.get()[dwIndex] = dict.GetImage(j);
+        }
+        dwNumSyms += dict.NumImages();
       }
     }
     pTRD->SBSYMS = SBSYMS.get();
