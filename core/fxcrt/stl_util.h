@@ -47,6 +47,10 @@ std::vector<T, A> Vector2D(size_t w, size_t h) {
   return std::vector<T, A>(safe_size.ValueOrDie());
 }
 
+// String that uses partition alloc for backing store.
+using string =
+    std::basic_string<char, std::char_traits<char>, FxStringAllocator<char>>;
+
 // String stream that uses PartitionAlloc for backing store.
 using ostringstream = std::
     basic_ostringstream<char, std::char_traits<char>, FxStringAllocator<char>>;

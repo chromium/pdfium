@@ -21,6 +21,7 @@
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_color.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
@@ -118,12 +119,12 @@ ByteString CalculateString(double dValue,
   // Make sure the number of precision characters will fit.
   iDec = std::min(iDec, std::numeric_limits<double>::digits10);
 
-  std::stringstream ss;
+  fxcrt::ostringstream ss;
   ss << std::fixed << std::setprecision(iDec) << dValue;
-  std::string value = ss.str();
+  fxcrt::string value = ss.str();
   size_t pos = value.find('.');
   *iDec2 = pdfium::base::checked_cast<int>(
-      pos == std::string::npos ? value.size() : pos);
+      pos == fxcrt::string::npos ? value.size() : pos);
   return ByteString(value.c_str());
 }
 #endif
