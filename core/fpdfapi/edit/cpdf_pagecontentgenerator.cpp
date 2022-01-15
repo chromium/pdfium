@@ -9,6 +9,7 @@
 #include <map>
 #include <memory>
 #include <set>
+#include <sstream>
 #include <tuple>
 #include <utility>
 
@@ -73,7 +74,7 @@ void CPDF_PageContentGenerator::GenerateContent() {
   UpdateContentStreams(GenerateModifiedStreams());
 }
 
-std::map<int32_t, std::ostringstream>
+std::map<int32_t, fxcrt::ostringstream>
 CPDF_PageContentGenerator::GenerateModifiedStreams() {
   // Make sure default graphics are created.
   GetOrCreateDefaultGraphics();
@@ -89,14 +90,14 @@ CPDF_PageContentGenerator::GenerateModifiedStreams() {
                            marked_dirty_streams.end());
 
   // Start regenerating dirty streams.
-  std::map<int32_t, std::ostringstream> streams;
+  std::map<int32_t, fxcrt::ostringstream> streams;
   std::set<int32_t> empty_streams;
   std::unique_ptr<const CPDF_ContentMarks> empty_content_marks =
       std::make_unique<CPDF_ContentMarks>();
   std::map<int32_t, const CPDF_ContentMarks*> current_content_marks;
 
   for (int32_t dirty_stream : all_dirty_streams) {
-    std::ostringstream buf;
+    fxcrt::ostringstream buf;
 
     // Set the default graphic state values
     buf << "q\n";
@@ -116,7 +117,7 @@ CPDF_PageContentGenerator::GenerateModifiedStreams() {
     if (it == streams.end())
       continue;
 
-    std::ostringstream* buf = &it->second;
+    fxcrt::ostringstream* buf = &it->second;
     empty_streams.erase(stream_index);
     current_content_marks[stream_index] = ProcessContentMarks(
         buf, pPageObj.Get(), current_content_marks[stream_index]);
@@ -125,7 +126,7 @@ CPDF_PageContentGenerator::GenerateModifiedStreams() {
 
   // Finish dirty streams.
   for (int32_t dirty_stream : all_dirty_streams) {
-    std::ostringstream* buf = &streams[dirty_stream];
+    fxcrt::ostringstream* buf = &streams[dirty_stream];
     if (pdfium::Contains(empty_streams, dirty_stream)) {
       // Clear to show that this stream needs to be deleted.
       buf->str("");
@@ -141,7 +142,7 @@ CPDF_PageContentGenerator::GenerateModifiedStreams() {
 }
 
 void CPDF_PageContentGenerator::UpdateContentStreams(
-    std::map<int32_t, std::ostringstream>&& new_stream_data) {
+    std::map<int32_t, fxcrt::ostringstream>&& new_stream_data) {
   // If no streams were regenerated or removed, nothing to do here.
   if (new_stream_data.empty())
     return;
@@ -150,7 +151,7 @@ void CPDF_PageContentGenerator::UpdateContentStreams(
 
   for (auto& pair : new_stream_data) {
     int32_t stream_index = pair.first;
-    std::ostringstream* buf = &pair.second;
+    fxcrt::ostringstream* buf = &pair.second;
 
     if (stream_index == CPDF_PageObject::kNoContentStream) {
       int new_stream_index = page_content_manager.AddStream(buf);
@@ -200,7 +201,7 @@ ByteString CPDF_PageContentGenerator::RealizeResource(
   return name;
 }
 
-bool CPDF_PageContentGenerator::ProcessPageObjects(std::ostringstream* buf) {
+bool CPDF_PageContentGenerator::ProcessPageObjects(fxcrt::ostringstream* buf) {
   bool bDirty = false;
   std::unique_ptr<const CPDF_ContentMarks> empty_content_marks =
       std::make_unique<CPDF_ContentMarks>();
@@ -227,7 +228,7 @@ void CPDF_PageContentGenerator::UpdateStreamlessPageObjects(
 }
 
 const CPDF_ContentMarks* CPDF_PageContentGenerator::ProcessContentMarks(
-    std::ostringstream* buf,
+    fxcrt::ostringstream* buf,
     const CPDF_PageObject* pPageObj,
     const CPDF_ContentMarks* pPrev) {
   const CPDF_ContentMarks* pNext = pPageObj->GetContentMarks();
@@ -278,7 +279,7 @@ const CPDF_ContentMarks* CPDF_PageContentGenerator::ProcessContentMarks(
 }
 
 void CPDF_PageContentGenerator::FinishMarks(
-    std::ostringstream* buf,
+    fxcrt::ostringstream* buf,
     const CPDF_ContentMarks* pContentMarks) {
   // Technically we should iterate backwards to close from the top to the
   // bottom, but since the EMC operators do not identify which mark they are
@@ -287,7 +288,7 @@ void CPDF_PageContentGenerator::FinishMarks(
     *buf << "EMC\n";
 }
 
-void CPDF_PageContentGenerator::ProcessPageObject(std::ostringstream* buf,
+void CPDF_PageContentGenerator::ProcessPageObject(fxcrt::ostringstream* buf,
                                                   CPDF_PageObject* pPageObj) {
   if (CPDF_ImageObject* pImageObject = pPageObj->AsImage())
     ProcessImage(buf, pImageObject);
@@ -300,7 +301,7 @@ void CPDF_PageContentGenerator::ProcessPageObject(std::ostringstream* buf,
   pPageObj->SetDirty(false);
 }
 
-void CPDF_PageContentGenerator::ProcessImage(std::ostringstream* buf,
+void CPDF_PageContentGenerator::ProcessImage(fxcrt::ostringstream* buf,
                                              CPDF_ImageObject* pImageObj) {
   if ((pImageObj->matrix().a == 0 && pImageObj->matrix().b == 0) ||
       (pImageObj->matrix().c == 0 && pImageObj->matrix().d == 0)) {
@@ -330,7 +331,7 @@ void CPDF_PageContentGenerator::ProcessImage(std::ostringstream* buf,
   *buf << "/" << PDF_NameEncode(name) << " Do Q\n";
 }
 
-void CPDF_PageContentGenerator::ProcessForm(std::ostringstream* buf,
+void CPDF_PageContentGenerator::ProcessForm(fxcrt::ostringstream* buf,
                                             CPDF_FormObject* pFormObj) {
   if ((pFormObj->form_matrix().a == 0 && pFormObj->form_matrix().b == 0) ||
       (pFormObj->form_matrix().c == 0 && pFormObj->form_matrix().d == 0)) {
@@ -355,7 +356,7 @@ void CPDF_PageContentGenerator::ProcessForm(std::ostringstream* buf,
 // points as the Bezier control points
 // Note: "l", "c" change the current point
 // "h" closes the subpath (appends a line from current to starting point)
-void CPDF_PageContentGenerator::ProcessPathPoints(std::ostringstream* buf,
+void CPDF_PageContentGenerator::ProcessPathPoints(fxcrt::ostringstream* buf,
                                                   CPDF_Path* pPath) {
   pdfium::span<const CFX_Path::Point> points = pPath->GetPoints();
   if (pPath->IsRect()) {
@@ -397,7 +398,7 @@ void CPDF_PageContentGenerator::ProcessPathPoints(std::ostringstream* buf,
 // Path painting operators: "S", "n", "B", "f", "B*", "f*", depending on
 // the filling mode and whether we want stroking the path or not.
 // "Q" restores the graphics state imposed by the ProcessGraphics method.
-void CPDF_PageContentGenerator::ProcessPath(std::ostringstream* buf,
+void CPDF_PageContentGenerator::ProcessPath(fxcrt::ostringstream* buf,
                                             CPDF_PathObject* pPathObj) {
   ProcessGraphics(buf, pPathObj);
 
@@ -423,7 +424,7 @@ void CPDF_PageContentGenerator::ProcessPath(std::ostringstream* buf,
 // "W" and "W*" modify the clipping path using the nonzero winding rule and
 // even-odd rules, respectively.
 // "q" saves the graphics state, so that the settings can later be reversed
-void CPDF_PageContentGenerator::ProcessGraphics(std::ostringstream* buf,
+void CPDF_PageContentGenerator::ProcessGraphics(fxcrt::ostringstream* buf,
                                                 CPDF_PageObject* pPageObj) {
   *buf << "q ";
   float fillColor[3];
@@ -503,7 +504,7 @@ void CPDF_PageContentGenerator::ProcessGraphics(std::ostringstream* buf,
 }
 
 void CPDF_PageContentGenerator::ProcessDefaultGraphics(
-    std::ostringstream* buf) {
+    fxcrt::ostringstream* buf) {
   *buf << "0 0 0 RG 0 0 0 rg 1 w "
        << static_cast<int>(CFX_GraphStateData::LineCap::kButt) << " J "
        << static_cast<int>(CFX_GraphStateData::LineJoin::kMiter) << " j\n";
@@ -537,7 +538,7 @@ ByteString CPDF_PageContentGenerator::GetOrCreateDefaultGraphics() const {
 // Tf sets the font name (from Font in Resources) and font size.
 // Tr sets the text rendering mode.
 // Tj sets the actual text, <####...> is used when specifying charcodes.
-void CPDF_PageContentGenerator::ProcessText(std::ostringstream* buf,
+void CPDF_PageContentGenerator::ProcessText(fxcrt::ostringstream* buf,
                                             CPDF_TextObject* pTextObj) {
   ProcessGraphics(buf, pTextObj);
   *buf << "BT " << pTextObj->GetTextMatrix() << " Tm ";

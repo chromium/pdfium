@@ -34,7 +34,7 @@ class CPDF_PageContentGeneratorTest : public testing::Test {
   void TearDown() override { CPDF_PageModule::Destroy(); }
 
   void TestProcessPath(CPDF_PageContentGenerator* pGen,
-                       std::ostringstream* buf,
+                       fxcrt::ostringstream* buf,
                        CPDF_PathObject* pPathObj) {
     pGen->ProcessPath(buf, pPathObj);
   }
@@ -47,7 +47,7 @@ class CPDF_PageContentGeneratorTest : public testing::Test {
   }
 
   void TestProcessText(CPDF_PageContentGenerator* pGen,
-                       std::ostringstream* buf,
+                       fxcrt::ostringstream* buf,
                        CPDF_TextObject* pTextObj) {
     pGen->ProcessText(buf, pTextObj);
   }
@@ -63,7 +63,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessRect) {
   auto pTestPage =
       pdfium::MakeRetain<CPDF_Page>(nullptr, dummy_page_dict.Get());
   CPDF_PageContentGenerator generator(pTestPage.Get());
-  std::ostringstream buf;
+  fxcrt::ostringstream buf;
   TestProcessPath(&generator, &buf, pPathObj.get());
   EXPECT_EQ("q 1 0 0 1 0 0 cm 10 5 3 25 re B* Q\n", ByteString(buf));
 
@@ -102,7 +102,7 @@ TEST_F(CPDF_PageContentGeneratorTest, BUG_937) {
     auto pTestPage =
         pdfium::MakeRetain<CPDF_Page>(nullptr, dummy_page_dict.Get());
     CPDF_PageContentGenerator generator(pTestPage.Get());
-    std::ostringstream buf;
+    fxcrt::ostringstream buf;
     TestProcessPath(&generator, &buf, pPathObj.get());
     EXPECT_EQ(
         "q 0 0.701961 0.34902 rg 0 0.701961 0.34902 RG 200000000000000000000 w"
@@ -136,7 +136,7 @@ TEST_F(CPDF_PageContentGeneratorTest, BUG_937) {
     auto pTestPage =
         pdfium::MakeRetain<CPDF_Page>(nullptr, dummy_page_dict.Get());
     CPDF_PageContentGenerator generator(pTestPage.Get());
-    std::ostringstream buf;
+    fxcrt::ostringstream buf;
 
     TestProcessPath(&generator, &buf, pPathObj.get());
     EXPECT_EQ(
@@ -176,7 +176,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessPath) {
   auto pTestPage =
       pdfium::MakeRetain<CPDF_Page>(nullptr, dummy_page_dict.Get());
   CPDF_PageContentGenerator generator(pTestPage.Get());
-  std::ostringstream buf;
+  fxcrt::ostringstream buf;
   TestProcessPath(&generator, &buf, pPathObj.get());
   EXPECT_EQ(
       "q 1 0 0 1 0 0 cm 3.102 4.6700001 m 5.4499998 .28999999 l 4.2399998 "
@@ -213,7 +213,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessGraphics) {
   CPDF_Dictionary* pPageDict = pDoc->CreateNewPage(0);
   auto pTestPage = pdfium::MakeRetain<CPDF_Page>(pDoc.get(), pPageDict);
   CPDF_PageContentGenerator generator(pTestPage.Get());
-  std::ostringstream buf;
+  fxcrt::ostringstream buf;
   TestProcessPath(&generator, &buf, pPathObj.get());
   ByteString pathString(buf);
 
@@ -273,7 +273,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessStandardText) {
   pTextObj->m_GeneralState.SetStrokeAlpha(0.8f);
   pTextObj->Transform(CFX_Matrix(1, 0, 0, 1, 100, 100));
   pTextObj->SetText("Hello World");
-  std::ostringstream buf;
+  fxcrt::ostringstream buf;
   TestProcessText(&generator, &buf, pTextObj.get());
   ByteString textString(buf);
   auto firstResourceAt = textString.Find('/');
@@ -326,7 +326,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
   auto pTestPage = pdfium::MakeRetain<CPDF_Page>(pDoc.get(), pPageDict);
   CPDF_PageContentGenerator generator(pTestPage.Get());
 
-  std::ostringstream buf;
+  fxcrt::ostringstream buf;
   {
     // Set the text object font and text
     auto pTextObj = std::make_unique<CPDF_TextObject>();
@@ -412,7 +412,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessEmptyForm) {
 
   // The generated stream for the empty form should be an empty string.
   CPDF_PageContentGenerator generator(pTestForm.get());
-  std::ostringstream buf;
+  fxcrt::ostringstream buf;
   generator.ProcessPageObjects(&buf);
   EXPECT_EQ("", ByteString(buf));
 }
@@ -440,7 +440,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessFormWithPath) {
             pTestForm->GetParseState());
 
   CPDF_PageContentGenerator generator(pTestForm.get());
-  std::ostringstream process_buf;
+  fxcrt::ostringstream process_buf;
   generator.ProcessPageObjects(&process_buf);
   EXPECT_STREQ(
       "q 1 0 0 1 0 0 cm 3.102 4.6700001 m 5.4500012 .28999999 l 4.2399998 3.14"

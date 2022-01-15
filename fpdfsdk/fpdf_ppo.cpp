@@ -584,7 +584,7 @@ ByteString CPDF_NPageToOneExporter::AddSubPage(
   matrix.Scale(settings.scale, settings.scale);
   matrix.Translate(settings.subPageStartPoint.x, settings.subPageStartPoint.y);
 
-  std::ostringstream contentStream;
+  fxcrt::ostringstream contentStream;
   contentStream << "q\n"
                 << matrix.a << " " << matrix.b << " " << matrix.c << " "
                 << matrix.d << " " << matrix.e << " " << matrix.f << " cm\n"

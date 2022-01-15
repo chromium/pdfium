@@ -181,8 +181,8 @@ ByteString::ByteString(const std::initializer_list<ByteStringView>& list) {
   }
 }
 
-ByteString::ByteString(const std::ostringstream& outStream) {
-  std::string str = outStream.str();
+ByteString::ByteString(const fxcrt::ostringstream& outStream) {
+  auto str = outStream.str();
   if (str.length() > 0)
     m_pData.Reset(StringData::Create(str.c_str(), str.length()));
 }

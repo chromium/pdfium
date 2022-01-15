@@ -85,7 +85,7 @@ const char kTextEndOperator[] = "ET";
 
 class AutoClosedCommand {
  public:
-  AutoClosedCommand(std::ostringstream* stream,
+  AutoClosedCommand(fxcrt::ostringstream* stream,
                     ByteString open,
                     ByteString close)
       : stream_(stream), close_(close) {
@@ -95,21 +95,20 @@ class AutoClosedCommand {
   virtual ~AutoClosedCommand() { *stream_ << close_ << "\n"; }
 
  private:
-  UnownedPtr<std::ostringstream> const stream_;
+  UnownedPtr<fxcrt::ostringstream> const stream_;
   ByteString close_;
 };
 
 class AutoClosedQCommand final : public AutoClosedCommand {
  public:
-  explicit AutoClosedQCommand(std::ostringstream* stream)
+  explicit AutoClosedQCommand(fxcrt::ostringstream* stream)
       : AutoClosedCommand(stream, kStateSaveOperator, kStateRestoreOperator) {}
   ~AutoClosedQCommand() override = default;
 };
 
 ByteString GetColorAppStream(const CFX_Color& color,
                              const bool& bFillOrStroke) {
-  std::ostringstream sColorStream;
-
+  fxcrt::ostringstream sColorStream;
   switch (color.nColorType) {
     case CFX_Color::Type::kTransparent:
       break;
@@ -165,7 +164,7 @@ ByteString GetAP_Check(const CFX_FloatRect& crBBox) {
     }
   }
 
-  std::ostringstream csAP;
+  fxcrt::ostringstream csAP;
   csAP << pts[0][0].x << " " << pts[0][0].y << " " << kMoveToOperator << "\n";
 
   for (size_t i = 0; i < pdfium::size(pts); ++i) {
@@ -187,7 +186,7 @@ ByteString GetAP_Check(const CFX_FloatRect& crBBox) {
 }
 
 ByteString GetAP_Circle(const CFX_FloatRect& crBBox) {
-  std::ostringstream csAP;
+  fxcrt::ostringstream csAP;
 
   float fWidth = crBBox.Width();
   float fHeight = crBBox.Height();
@@ -231,7 +230,7 @@ ByteString GetAP_Circle(const CFX_FloatRect& crBBox) {
 }
 
 ByteString GetAP_Cross(const CFX_FloatRect& crBBox) {
-  std::ostringstream csAP;
+  fxcrt::ostringstream csAP;
 
   csAP << crBBox.left << " " << crBBox.top << " " << kMoveToOperator << "\n";
   csAP << crBBox.right << " " << crBBox.bottom << " " << kLineToOperator
@@ -243,7 +242,7 @@ ByteString GetAP_Cross(const CFX_FloatRect& crBBox) {
 }
 
 ByteString GetAP_Diamond(const CFX_FloatRect& crBBox) {
-  std::ostringstream csAP;
+  fxcrt::ostringstream csAP;
 
   float fWidth = crBBox.Width();
   float fHeight = crBBox.Height();
@@ -263,7 +262,7 @@ ByteString GetAP_Diamond(const CFX_FloatRect& crBBox) {
 }
 
 ByteString GetAP_Square(const CFX_FloatRect& crBBox) {
-  std::ostringstream csAP;
+  fxcrt::ostringstream csAP;
 
   csAP << crBBox.left << " " << crBBox.top << " " << kMoveToOperator << "\n";
   csAP << crBBox.right << " " << crBBox.top << " " << kLineToOperator << "\n";
@@ -276,7 +275,7 @@ ByteString GetAP_Square(const CFX_FloatRect& crBBox) {
 }
 
 ByteString GetAP_Star(const CFX_FloatRect& crBBox) {
-  std::ostringstream csAP;
+  fxcrt::ostringstream csAP;
 
   float fRadius = (crBBox.top - crBBox.bottom) / (1 + cosf(FXSYS_PI / 5.0f));
   CFX_PointF ptCenter = CFX_PointF((crBBox.left + crBBox.right) / 2.0f,
@@ -303,7 +302,7 @@ ByteString GetAP_Star(const CFX_FloatRect& crBBox) {
 }
 
 ByteString GetAP_HalfCircle(const CFX_FloatRect& crBBox, float fRotate) {
-  std::ostringstream csAP;
+  fxcrt::ostringstream csAP;
 
   float fWidth = crBBox.Width();
   float fHeight = crBBox.Height();
@@ -340,7 +339,7 @@ ByteString GetAP_HalfCircle(const CFX_FloatRect& crBBox, float fRotate) {
 
 ByteString GetAppStream_Check(const CFX_FloatRect& rcBBox,
                               const CFX_Color& crText) {
-  std::ostringstream sAP;
+  fxcrt::ostringstream sAP;
   {
     AutoClosedQCommand q(&sAP);
     sAP << GetColorAppStream(crText, true) << GetAP_Check(rcBBox)
@@ -351,7 +350,7 @@ ByteString GetAppStream_Check(const CFX_FloatRect& rcBBox,
 
 ByteString GetAppStream_Circle(const CFX_FloatRect& rcBBox,
                                const CFX_Color& crText) {
-  std::ostringstream sAP;
+  fxcrt::ostringstream sAP;
   {
     AutoClosedQCommand q(&sAP);
     sAP << GetColorAppStream(crText, true) << GetAP_Circle(rcBBox)
@@ -362,7 +361,7 @@ ByteString GetAppStream_Circle(const CFX_FloatRect& rcBBox,
 
 ByteString GetAppStream_Cross(const CFX_FloatRect& rcBBox,
                               const CFX_Color& crText) {
-  std::ostringstream sAP;
+  fxcrt::ostringstream sAP;
   {
     AutoClosedQCommand q(&sAP);
     sAP << GetColorAppStream(crText, false) << GetAP_Cross(rcBBox)
@@ -373,7 +372,7 @@ ByteString GetAppStream_Cross(const CFX_FloatRect& rcBBox,
 
 ByteString GetAppStream_Diamond(const CFX_FloatRect& rcBBox,
                                 const CFX_Color& crText) {
-  std::ostringstream sAP;
+  fxcrt::ostringstream sAP;
   {
     AutoClosedQCommand q(&sAP);
     sAP << "1 " << kSetLineWidthOperator << "\n"
@@ -385,7 +384,7 @@ ByteString GetAppStream_Diamond(const CFX_FloatRect& rcBBox,
 
 ByteString GetAppStream_Square(const CFX_FloatRect& rcBBox,
                                const CFX_Color& crText) {
-  std::ostringstream sAP;
+  fxcrt::ostringstream sAP;
   {
     AutoClosedQCommand q(&sAP);
     sAP << GetColorAppStream(crText, true) << GetAP_Square(rcBBox)
@@ -396,7 +395,7 @@ ByteString GetAppStream_Square(const CFX_FloatRect& rcBBox,
 
 ByteString GetAppStream_Star(const CFX_FloatRect& rcBBox,
                              const CFX_Color& crText) {
-  std::ostringstream sAP;
+  fxcrt::ostringstream sAP;
   {
     AutoClosedQCommand q(&sAP);
     sAP << GetColorAppStream(crText, true) << GetAP_Star(rcBBox)
@@ -407,7 +406,7 @@ ByteString GetAppStream_Star(const CFX_FloatRect& rcBBox,
 
 ByteString GetCircleFillAppStream(const CFX_FloatRect& rect,
                                   const CFX_Color& color) {
-  std::ostringstream sAppStream;
+  fxcrt::ostringstream sAppStream;
   ByteString sColor = GetColorAppStream(color, true);
   if (sColor.GetLength() > 0) {
     AutoClosedQCommand q(&sAppStream);
@@ -423,7 +422,7 @@ ByteString GetCircleBorderAppStream(const CFX_FloatRect& rect,
                                     const CFX_Color& crRightBottom,
                                     BorderStyle nStyle,
                                     const CPWL_Dash& dash) {
-  std::ostringstream sAppStream;
+  fxcrt::ostringstream sAppStream;
   ByteString sColor;
 
   if (fWidth > 0.0f) {
@@ -574,7 +573,7 @@ ByteString GetFontSetString(IPVT_FontMap* pFontMap,
   if (sFontAlias.GetLength() <= 0 || fFontSize <= 0)
     return ByteString();
 
-  std::ostringstream sRet;
+  fxcrt::ostringstream sRet;
   sRet << "/" << sFontAlias << " " << fFontSize << " "
        << kSetTextFontAndSizeOperator << "\n";
   return ByteString(sRet);
@@ -593,7 +592,7 @@ ByteString GetEditAppStream(CPWL_EditImpl* pEdit,
   CPWL_EditImpl::Iterator* pIterator = pEdit->GetIterator();
   pIterator->SetAt(0);
 
-  std::ostringstream sEditStream;
+  fxcrt::ostringstream sEditStream;
   int32_t nCurFontIndex = -1;
   CFX_PointF ptOld;
   CFX_PointF ptNew;
@@ -669,7 +668,7 @@ ByteString GetEditAppStream(CPWL_EditImpl* pEdit,
   if (!sWords.IsEmpty())
     sEditStream << GetWordRenderString(sWords.AsStringView());
 
-  std::ostringstream sAppStream;
+  fxcrt::ostringstream sAppStream;
   if (sEditStream.tellp() > 0) {
     sAppStream << sEditStream.str();
   }
@@ -701,7 +700,7 @@ ByteString GenerateIconAppStream(CPDF_IconFit& fit,
   const CFX_VectorF scale = fit.GetScale(image_size, rcPlate);
   const CFX_VectorF offset = fit.GetImageOffset(image_size, scale, rcPlate);
 
-  std::ostringstream str;
+  fxcrt::ostringstream str;
   {
     AutoClosedQCommand q(&str);
     str << rcPlate.left << " " << rcPlate.bottom << " "
@@ -886,7 +885,7 @@ ByteString GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
       break;
   }
 
-  std::ostringstream sTemp;
+  fxcrt::ostringstream sTemp;
   sTemp << GenerateIconAppStream(IconFit, pIconStream, rcIcon);
 
   if (!rcLabel.IsEmpty()) {
@@ -903,7 +902,7 @@ ByteString GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
   if (sTemp.tellp() <= 0)
     return ByteString();
 
-  std::ostringstream sAppStream;
+  fxcrt::ostringstream sAppStream;
   {
     AutoClosedQCommand q(&sAppStream);
     sAppStream << rcBBox.left << " " << rcBBox.bottom << " "
@@ -923,7 +922,7 @@ ByteString GetBorderAppStreamInternal(const CFX_FloatRect& rect,
                                       const CFX_Color& crRightBottom,
                                       BorderStyle nStyle,
                                       const CPWL_Dash& dash) {
-  std::ostringstream sAppStream;
+  fxcrt::ostringstream sAppStream;
   ByteString sColor;
 
   float fLeft = rect.left;
@@ -1041,7 +1040,7 @@ ByteString GetDropButtonAppStream(const CFX_FloatRect& rcBBox) {
   if (rcBBox.IsEmpty())
     return ByteString();
 
-  std::ostringstream sAppStream;
+  fxcrt::ostringstream sAppStream;
   {
     AutoClosedQCommand q(&sAppStream);
     sAppStream << GetColorAppStream(
@@ -1084,7 +1083,7 @@ ByteString GetDropButtonAppStream(const CFX_FloatRect& rcBBox) {
 
 ByteString GetRectFillAppStream(const CFX_FloatRect& rect,
                                 const CFX_Color& color) {
-  std::ostringstream sAppStream;
+  fxcrt::ostringstream sAppStream;
   ByteString sColor = GetColorAppStream(color, true);
   if (sColor.GetLength() > 0) {
     AutoClosedQCommand q(&sAppStream);
@@ -1517,7 +1516,7 @@ void CPDFSDK_AppStream::SetAsRadioButton() {
 void CPDFSDK_AppStream::SetAsComboBox(absl::optional<WideString> sValue) {
   CPDF_FormControl* pControl = widget_->GetFormControl();
   CPDF_FormField* pField = pControl->GetField();
-  std::ostringstream sBody;
+  fxcrt::ostringstream sBody;
 
   CFX_FloatRect rcClient = widget_->GetClientRect();
   CFX_FloatRect rcButton = rcClient;
@@ -1589,7 +1588,7 @@ void CPDFSDK_AppStream::SetAsListBox() {
   CPDF_FormControl* pControl = widget_->GetFormControl();
   CPDF_FormField* pField = pControl->GetField();
   CFX_FloatRect rcClient = widget_->GetClientRect();
-  std::ostringstream sBody;
+  fxcrt::ostringstream sBody;
 
   // Font map must outlive |pEdit|.
   CPDF_BAFontMap font_map(widget_->GetPDFPage()->GetDocument(),
@@ -1604,7 +1603,7 @@ void CPDFSDK_AppStream::SetAsListBox() {
   pEdit->SetFontSize(FXSYS_IsFloatZero(fFontSize) ? 12.0f : fFontSize);
   pEdit->Initialize();
 
-  std::ostringstream sList;
+  fxcrt::ostringstream sList;
   float fy = rcClient.top;
 
   int32_t nTop = pField->GetTopVisibleIndex();
@@ -1673,8 +1672,8 @@ void CPDFSDK_AppStream::SetAsListBox() {
 void CPDFSDK_AppStream::SetAsTextField(absl::optional<WideString> sValue) {
   CPDF_FormControl* pControl = widget_->GetFormControl();
   CPDF_FormField* pField = pControl->GetField();
-  std::ostringstream sBody;
-  std::ostringstream sLines;
+  fxcrt::ostringstream sBody;
+  fxcrt::ostringstream sLines;
 
   // Font map must outlive |pEdit|.
   CPDF_BAFontMap font_map(widget_->GetPDFPage()->GetDocument(),

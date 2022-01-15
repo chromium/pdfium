@@ -61,7 +61,7 @@ CPDF_Stream* CPDF_PageContentManager::GetStreamByIndex(size_t stream_index) {
   return nullptr;
 }
 
-size_t CPDF_PageContentManager::AddStream(std::ostringstream* buf) {
+size_t CPDF_PageContentManager::AddStream(fxcrt::ostringstream* buf) {
   CPDF_Stream* new_stream = doc_->NewIndirect<CPDF_Stream>();
   new_stream->SetDataFromStringstream(buf);
 

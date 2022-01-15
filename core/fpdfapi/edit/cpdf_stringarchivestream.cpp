@@ -8,7 +8,7 @@
 
 #include "third_party/base/notreached.h"
 
-CPDF_StringArchiveStream::CPDF_StringArchiveStream(std::ostringstream* stream)
+CPDF_StringArchiveStream::CPDF_StringArchiveStream(fxcrt::ostringstream* stream)
     : stream_(stream) {}
 
 CPDF_StringArchiveStream::~CPDF_StringArchiveStream() = default;

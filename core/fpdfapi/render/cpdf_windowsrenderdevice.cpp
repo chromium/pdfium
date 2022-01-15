@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/render/cpdf_windowsrenderdevice.h"
 
+#include <sstream>
+
 #include "core/fxcodec/basic/basicmodule.h"
 #include "core/fxcodec/fax/faxmodule.h"
 #include "core/fxcodec/flate/flatemodule.h"

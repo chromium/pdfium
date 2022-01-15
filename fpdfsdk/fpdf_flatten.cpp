@@ -28,6 +28,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfdoc/cpdf_annot.h"
+#include "core/fxcrt/stl_util.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "third_party/base/notreached.h"
 
@@ -414,7 +415,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     CFX_Matrix m = GetMatrix(rcAnnot, rcStream, matrix);
     m.b = 0;
     m.c = 0;
-    std::ostringstream buf;
+    fxcrt::ostringstream buf;
     buf << m;
     ByteString str(buf);
     sStream += ByteString::Format("q %s cm /%s Do Q\n", str.c_str(),

@@ -5,13 +5,12 @@
 #ifndef CORE_FPDFAPI_EDIT_CPDF_STRINGARCHIVESTREAM_H_
 #define CORE_FPDFAPI_EDIT_CPDF_STRINGARCHIVESTREAM_H_
 
-#include <iosfwd>
-
 #include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/stl_util.h"
 
 class CPDF_StringArchiveStream final : public IFX_ArchiveStream {
  public:
-  explicit CPDF_StringArchiveStream(std::ostringstream* stream);
+  explicit CPDF_StringArchiveStream(fxcrt::ostringstream* stream);
   ~CPDF_StringArchiveStream() override;
 
   // IFX_ArchiveStream:
@@ -19,7 +18,7 @@ class CPDF_StringArchiveStream final : public IFX_ArchiveStream {
   FX_FILESIZE CurrentOffset() const override;
 
  private:
-  std::ostringstream* stream_;
+  fxcrt::ostringstream* stream_;
 };
 
 #endif  // CORE_FPDFAPI_EDIT_CPDF_STRINGARCHIVESTREAM_H_

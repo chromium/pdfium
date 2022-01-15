@@ -145,7 +145,7 @@ const char ToUnicodeEnd[] =
     "end\n"
     "end\n";
 
-void AddCharcode(std::ostringstream* pBuffer, uint32_t number) {
+void AddCharcode(fxcrt::ostringstream* pBuffer, uint32_t number) {
   DCHECK(number <= 0xFFFF);
   *pBuffer << "<";
   char ans[4];
@@ -157,7 +157,7 @@ void AddCharcode(std::ostringstream* pBuffer, uint32_t number) {
 
 // PDF spec 1.7 Section 5.9.2: "Unicode character sequences as expressed in
 // UTF-16BE encoding." See https://en.wikipedia.org/wiki/UTF-16#Description
-void AddUnicode(std::ostringstream* pBuffer, uint32_t unicode) {
+void AddUnicode(fxcrt::ostringstream* pBuffer, uint32_t unicode) {
   if (unicode >= 0xD800 && unicode <= 0xDFFF)
     unicode = 0;
 
@@ -234,7 +234,7 @@ CPDF_Stream* LoadUnicode(CPDF_Document* pDoc,
     }
     map_range[std::make_pair(firstCharcode, curCharcode)] = firstUnicode;
   }
-  std::ostringstream buffer;
+  fxcrt::ostringstream buffer;
   buffer << ToUnicodeStart;
   // Add maps to buffer
   buffer << static_cast<uint32_t>(char_to_uni.size()) << " beginbfchar\n";

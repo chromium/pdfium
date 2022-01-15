@@ -123,7 +123,7 @@ void CPDF_Stream::SetDataAndRemoveFilter(pdfium::span<const uint8_t> pData) {
 }
 
 void CPDF_Stream::SetDataFromStringstreamAndRemoveFilter(
-    std::ostringstream* stream) {
+    fxcrt::ostringstream* stream) {
   if (stream->tellp() <= 0) {
     SetDataAndRemoveFilter({});
     return;
@@ -155,7 +155,7 @@ void CPDF_Stream::TakeData(std::unique_ptr<uint8_t, FxFreeDeleter> pData,
   m_pDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(size));
 }
 
-void CPDF_Stream::SetDataFromStringstream(std::ostringstream* stream) {
+void CPDF_Stream::SetDataFromStringstream(fxcrt::ostringstream* stream) {
   if (stream->tellp() <= 0) {
     SetData({});
     return;

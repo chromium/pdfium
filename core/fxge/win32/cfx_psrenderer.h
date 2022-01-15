@@ -19,6 +19,7 @@
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
@@ -135,12 +136,12 @@ class CFX_PSRenderer {
                            const TextCharPos* char_pos,
                            CFX_Font* font,
                            float font_size,
-                           std::ostringstream& buf);
+                           fxcrt::ostringstream& buf);
   bool DrawTextAsType42Font(int char_count,
                             const TextCharPos* char_pos,
                             CFX_Font* font,
                             float font_size,
-                            std::ostringstream& buf);
+                            fxcrt::ostringstream& buf);
   bool FaxCompressData(std::unique_ptr<uint8_t, FxFreeDeleter> src_buf,
                        int width,
                        int height,
@@ -153,7 +154,7 @@ class CFX_PSRenderer {
                       const char** filter) const;
   void WritePreambleString(ByteStringView str);
   void WritePSBinary(pdfium::span<const uint8_t> data);
-  void WriteStream(std::ostringstream& stream);
+  void WriteStream(fxcrt::ostringstream& stream);
   void WriteString(ByteStringView str);
 
   bool m_bInited = false;
@@ -167,8 +168,8 @@ class CFX_PSRenderer {
   UnownedPtr<const EncoderIface> const m_pEncoderIface;
   RetainPtr<IFX_RetainableWriteStream> m_pStream;
   std::vector<std::unique_ptr<Glyph>> m_PSFontList;
-  std::ostringstream m_PreambleOutput;
-  std::ostringstream m_Output;
+  fxcrt::ostringstream m_PreambleOutput;
+  fxcrt::ostringstream m_Output;
   std::vector<FX_RECT> m_ClipBoxStack;
 };
 

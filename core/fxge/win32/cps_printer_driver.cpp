@@ -8,6 +8,7 @@
 
 #include <stdint.h>
 
+#include <sstream>
 #include <vector>
 
 #include "core/fxcrt/fx_system.h"

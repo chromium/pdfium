@@ -7,7 +7,6 @@
 #ifndef CORE_FPDFAPI_PARSER_CPDF_STREAM_H_
 #define CORE_FPDFAPI_PARSER_CPDF_STREAM_H_
 
-#include <iosfwd>
 #include <memory>
 #include <set>
 
@@ -15,6 +14,7 @@
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/stl_util.h"
 
 class CPDF_Stream final : public CPDF_Object {
  public:
@@ -44,12 +44,12 @@ class CPDF_Stream final : public CPDF_Object {
 
   void TakeData(std::unique_ptr<uint8_t, FxFreeDeleter> pData, uint32_t size);
 
-  void SetDataFromStringstream(std::ostringstream* stream);
+  void SetDataFromStringstream(fxcrt::ostringstream* stream);
 
   // Set data and remove "Filter" and "DecodeParms" fields from stream
   // dictionary.
   void SetDataAndRemoveFilter(pdfium::span<const uint8_t> pData);
-  void SetDataFromStringstreamAndRemoveFilter(std::ostringstream* stream);
+  void SetDataFromStringstreamAndRemoveFilter(fxcrt::ostringstream* stream);
 
   void InitStream(pdfium::span<const uint8_t> pData,
                   RetainPtr<CPDF_Dictionary> pDict);
