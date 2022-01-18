@@ -128,7 +128,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling tools_memory
   # and whatever else without interference from each other.
-  'tools_memory_revision': '0639a8c19c66272f5064fcaf4e60ca1d03a84976',
+  'tools_memory_revision': '8e8704fdfac5e10c5777f3093627a482f9dd2d47',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling trace_event
   # and whatever else without interference from each other.
