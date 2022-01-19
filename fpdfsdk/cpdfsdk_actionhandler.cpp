@@ -99,8 +99,7 @@ bool CPDFSDK_ActionHandler::DoAction_Destination(
   }
 
   form_fill_env->DoGoToAction(dest.GetDestPageIndex(document),
-                              dest.GetZoomMode(), dest_positions.data(),
-                              dest_positions.size());
+                              dest.GetZoomMode(), dest_positions);
   return true;
 }
 

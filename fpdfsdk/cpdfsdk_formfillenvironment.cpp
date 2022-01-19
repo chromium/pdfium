@@ -450,11 +450,10 @@ void CPDFSDK_FormFillEnvironment::DoURIAction(const ByteString& bsURI,
 
 void CPDFSDK_FormFillEnvironment::DoGoToAction(int nPageIndex,
                                                int zoomMode,
-                                               float* fPosArray,
-                                               int sizeOfArray) {
+                                               pdfium::span<float> fPosArray) {
   if (m_pInfo && m_pInfo->FFI_DoGoToAction) {
-    m_pInfo->FFI_DoGoToAction(m_pInfo, nPageIndex, zoomMode, fPosArray,
-                              sizeOfArray);
+    m_pInfo->FFI_DoGoToAction(m_pInfo, nPageIndex, zoomMode, fPosArray.data(),
+                              fxcrt::CollectionSize<int>(fPosArray));
   }
 }
 

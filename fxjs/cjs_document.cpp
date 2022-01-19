@@ -1408,8 +1408,7 @@ CJS_Result CJS_Document::gotoNamedDest(
   }
   pRuntime->BeginBlock();
   m_pFormFillEnv->DoGoToAction(dest.GetDestPageIndex(pDocument),
-                               dest.GetZoomMode(), scrollPositionArray.data(),
-                               scrollPositionArray.size());
+                               dest.GetZoomMode(), scrollPositionArray);
   pRuntime->EndBlock();
   return CJS_Result::Success();
 }

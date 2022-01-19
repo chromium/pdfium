@@ -107,8 +107,7 @@ class CPDFSDK_FormFillEnvironment final
   void DoURIAction(const ByteString& bsURI, Mask<FWL_EVENTFLAG> modifiers);
   void DoGoToAction(int nPageIndex,
                     int zoomMode,
-                    float* fPosArray,
-                    int sizeOfArray);
+                    pdfium::span<float> fPosArray);
 
   CPDF_Document* GetPDFDocument() const { return m_pCPDFDoc.Get(); }
   CPDF_Document::Extension* GetDocExtension() const {
