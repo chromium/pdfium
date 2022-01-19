@@ -91,11 +91,11 @@ std::unique_ptr<IccTransform> IccTransform::CreateTransformSRGB(
     return nullptr;
 
   cmsHTRANSFORM hTransform = nullptr;
-  const int intent = 0;
   switch (dstCS) {
     case cmsSigRgbData:
-      hTransform = cmsCreateTransform(srcProfile.get(), srcFormat,
-                                      dstProfile.get(), TYPE_BGR_8, intent, 0);
+      hTransform =
+          cmsCreateTransform(srcProfile.get(), srcFormat, dstProfile.get(),
+                             TYPE_BGR_8, INTENT_PERCEPTUAL, /*dwFlags=*/0);
       break;
     case cmsSigGrayData:
     case cmsSigCmykData:
