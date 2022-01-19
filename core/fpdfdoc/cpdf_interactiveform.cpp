@@ -673,7 +673,7 @@ int CPDF_InteractiveForm::CountFieldsInCalculationOrder() {
     return 0;
 
   CPDF_Array* pArray = m_pFormDict->GetArrayFor("CO");
-  return pArray ? pArray->size() : 0;
+  return pArray ? fxcrt::CollectionSize<int>(*pArray) : 0;
 }
 
 CPDF_FormField* CPDF_InteractiveForm::GetFieldInCalculationOrder(int index) {

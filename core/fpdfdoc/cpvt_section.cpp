@@ -232,7 +232,8 @@ CPVT_WordPlace CPVT_Section::AddWord(const CPVT_WordPlace& place,
 
 CPVT_WordPlace CPVT_Section::AddLine(const CPVT_LineInfo& lineinfo) {
   m_LineArray.push_back(std::make_unique<Line>(lineinfo));
-  return CPVT_WordPlace(m_SecPlace.nSecIndex, m_LineArray.size() - 1, -1);
+  return CPVT_WordPlace(m_SecPlace.nSecIndex,
+                        fxcrt::CollectionSize<int32_t>(m_LineArray) - 1, -1);
 }
 
 CPVT_FloatRect CPVT_Section::Rearrange() {

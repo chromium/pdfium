@@ -232,7 +232,10 @@ int CPDF_FormField::GetControlIndex(const CPDF_FormControl* pControl) const {
 
   const auto& controls = GetControls();
   auto it = std::find(controls.begin(), controls.end(), pControl);
-  return it != controls.end() ? it - controls.begin() : -1;
+  if (it == controls.end())
+    return -1;
+
+  return pdfium::base::checked_cast<int>(it - controls.begin());
 }
 
 FormFieldType CPDF_FormField::GetFieldType() const {
@@ -422,7 +425,7 @@ int CPDF_FormField::CountSelectedItems() const {
   if (pValue->IsString() || pValue->IsNumber())
     return pValue->GetString().IsEmpty() ? 0 : 1;
   const CPDF_Array* pArray = pValue->AsArray();
-  return pArray ? pArray->size() : 0;
+  return pArray ? fxcrt::CollectionSize<int>(*pArray) : 0;
 }
 
 int CPDF_FormField::GetSelectedIndex(int index) const {
@@ -555,7 +558,7 @@ int CPDF_FormField::GetDefaultSelectedItem() const {
 
 int CPDF_FormField::CountOptions() const {
   const CPDF_Array* pArray = ToArray(GetFieldAttr(m_pDict.Get(), "Opt"));
-  return pArray ? pArray->size() : 0;
+  return pArray ? fxcrt::CollectionSize<int>(*pArray) : 0;
 }
 
 WideString CPDF_FormField::GetOptionText(int index, int sub_index) const {
@@ -687,18 +690,20 @@ int CPDF_FormField::GetTopVisibleIndex() const {
 
 int CPDF_FormField::CountSelectedOptions() const {
   const CPDF_Array* pArray = ToArray(GetSelectedIndicesObject());
-  return pArray ? pArray->size() : 0;
+  return pArray ? fxcrt::CollectionSize<int>(*pArray) : 0;
 }
 
 int CPDF_FormField::GetSelectedOptionIndex(int index) const {
+  if (index < 0)
+    return 0;
+
   const CPDF_Array* pArray = ToArray(GetSelectedIndicesObject());
   if (!pArray)
     return -1;
 
-  int iCount = pArray->size();
-  if (iCount < 0 || index >= iCount)
-    return -1;
-  return pArray->GetIntegerAt(index);
+  return index < fxcrt::CollectionSize<int>(*pArray)
+             ? pArray->GetIntegerAt(index)
+             : -1;
 }
 
 bool CPDF_FormField::IsSelectedOption(const WideString& wsOptValue) const {

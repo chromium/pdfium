@@ -33,7 +33,7 @@ CPDF_Link CPDF_LinkList::GetLinkAtPoint(CPDF_Page* pPage,
       continue;
 
     if (z_order)
-      *z_order = annot_index;
+      *z_order = pdfium::base::checked_cast<int32_t>(annot_index);
     return link;
   }
   return CPDF_Link();

@@ -15,6 +15,7 @@
 #include "core/fpdfdoc/cpvt_wordinfo.h"
 #include "core/fpdfdoc/ipvt_fontmap.h"
 #include "core/fxcrt/fx_codepage.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/stl_util.h"
 #include "third_party/base/check.h"
 #include "third_party/base/compiler_specific.h"
@@ -266,11 +267,11 @@ void CPVT_VariableText::SetText(const WideString& swText) {
   if (!m_SectionArray.empty())
     m_SectionArray.front()->SetRect(CPVT_FloatRect());
 
-  int32_t nCharCount = 0;
-  for (int32_t i = 0, sz = swText.GetLength(); i < sz; i++) {
-    if (m_nLimitChar > 0 && nCharCount >= m_nLimitChar)
+  FX_SAFE_INT32 nCharCount = 0;
+  for (size_t i = 0, sz = swText.GetLength(); i < sz; i++) {
+    if (m_nLimitChar > 0 && nCharCount.ValueOrDie() >= m_nLimitChar)
       break;
-    if (m_nCharArray > 0 && nCharCount >= m_nCharArray)
+    if (m_nCharArray > 0 && nCharCount.ValueOrDie() >= m_nCharArray)
       break;
 
     uint16_t word = swText[i];

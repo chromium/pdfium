@@ -28,8 +28,8 @@ class CPDF_Dest {
   // Returns the zoom mode, as one of the PDFDEST_VIEW_* values in fpdf_doc.h.
   int GetZoomMode() const;
 
-  unsigned long GetNumParams() const;
-  float GetParam(int index) const;
+  size_t GetNumParams() const;
+  float GetParam(size_t index) const;
 
   bool GetXYZ(bool* pHasX,
               bool* pHasY,

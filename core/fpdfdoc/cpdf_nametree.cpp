@@ -193,8 +193,7 @@ CPDF_Object* SearchNameNodeByNameInternal(CPDF_Dictionary* pNode,
       if (ppFind)
         *ppFind = pNames;
       if (pFindIndex)
-        *pFindIndex = pNames->size() / 2 - 1;
-
+        *pFindIndex = fxcrt::CollectionSize<int32_t>(*pNames) / 2 - 1;
       return nullptr;
     }
   }
@@ -210,7 +209,7 @@ CPDF_Object* SearchNameNodeByNameInternal(CPDF_Dictionary* pNode,
       if (ppFind)
         *ppFind = pNames;
       if (pFindIndex)
-        *pFindIndex = i;
+        *pFindIndex = pdfium::base::checked_cast<int32_t>(i);
       if (iCompare < 0)
         continue;
 
@@ -257,7 +256,7 @@ struct IndexSearchResult {
   // The leaf node that holds `key` and `value`.
   CPDF_Array* container;
   // The index for `key` in `container`. Must be even.
-  int index;
+  size_t index;
 };
 
 // Find the `nTargetPairIndex` node in the tree with root `pNode`. `nLevel`
@@ -279,7 +278,7 @@ absl::optional<IndexSearchResult> SearchNameNodeByIndexInternal(
       return absl::nullopt;
     }
 
-    int index = 2 * (nTargetPairIndex - *nCurPairIndex);
+    size_t index = 2 * (nTargetPairIndex - *nCurPairIndex);
     CPDF_Object* value = pNames->GetDirectObjectAt(index + 1);
     if (!value)
       return absl::nullopt;
