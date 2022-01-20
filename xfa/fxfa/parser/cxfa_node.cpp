@@ -3586,6 +3586,9 @@ CFX_SizeF CXFA_Node::CalculateAccWidthAndHeight(CXFA_FFDoc* doc, float fWidth) {
 absl::optional<float> CXFA_Node::FindSplitPos(CXFA_FFDocView* pDocView,
                                               size_t szBlockIndex,
                                               float fCalcHeight) {
+  if (!HasCreatedUIWidget())
+    return absl::nullopt;
+
   if (GetFFWidgetType() == XFA_FFWidgetType::kSubform)
     return absl::nullopt;
 
