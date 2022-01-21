@@ -7,7 +7,6 @@
 #include "core/fpdfapi/font/cpdf_font.h"
 
 #include <algorithm>
-#include <limits>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -34,6 +33,7 @@
 #include "core/fxge/fx_freetype.h"
 #include "third_party/base/check.h"
 #include "third_party/base/cxx17_backports.h"
+#include "third_party/base/numerics/safe_conversions.h"
 
 namespace {
 
@@ -402,15 +402,13 @@ CFX_Font* CPDF_Font::GetFontFallback(int position) {
 }
 
 // static
-int CPDF_Font::TT2PDF(int m, FXFT_FaceRec* face) {
+int CPDF_Font::TT2PDF(FT_Pos m, FXFT_FaceRec* face) {
   int upm = FXFT_Get_Face_UnitsPerEM(face);
   if (upm == 0)
-    return m;
+    return pdfium::base::saturated_cast<int>(m);
 
-  return static_cast<int>(
-      pdfium::clamp((m * 1000.0 + upm / 2) / upm,
-                    static_cast<double>(std::numeric_limits<int>::min()),
-                    static_cast<double>(std::numeric_limits<int>::max())));
+  const double dm = (m * 1000.0 + upm / 2) / upm;
+  return pdfium::base::saturated_cast<int>(dm);
 }
 
 // static

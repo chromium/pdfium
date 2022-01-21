@@ -132,12 +132,15 @@ constexpr CIDTransform kJapan1VerticalCIDs[] = {
     {8818, 0, 129, 127, 0, 19, 114}, {8819, 0, 129, 127, 0, 218, 108},
 };
 
-// Boundary values to avoid integer overflow when multiplied by 1000.
-constexpr long kMinCBox = -2147483;
-constexpr long kMaxCBox = 2147483;
-
 // Boundary value to avoid integer overflow when adding 1/64th of the value.
 constexpr int kMaxRectTop = 2114445437;
+
+int FTPosToCBoxInt(FT_Pos pos) {
+  // Boundary values to avoid integer overflow when multiplied by 1000.
+  constexpr FT_Pos kMinCBox = -2147483;
+  constexpr FT_Pos kMaxCBox = 2147483;
+  return static_cast<int>(pdfium::clamp(pos, kMinCBox, kMaxCBox));
+}
 
 #if !BUILDFLAG(IS_WIN)
 
@@ -518,19 +521,18 @@ FX_RECT CPDF_CIDFont::GetCharBBox(uint32_t charcode) {
         if (!err) {
           FT_BBox cbox;
           FT_Glyph_Get_CBox(glyph, FT_GLYPH_BBOX_PIXELS, &cbox);
-          cbox.xMin = pdfium::clamp(cbox.xMin, kMinCBox, kMaxCBox);
-          cbox.xMax = pdfium::clamp(cbox.xMax, kMinCBox, kMaxCBox);
-          cbox.yMin = pdfium::clamp(cbox.yMin, kMinCBox, kMaxCBox);
-          cbox.yMax = pdfium::clamp(cbox.yMax, kMinCBox, kMaxCBox);
-          int pixel_size_x = face->size->metrics.x_ppem;
-          int pixel_size_y = face->size->metrics.y_ppem;
+          const int xMin = FTPosToCBoxInt(cbox.xMin);
+          const int xMax = FTPosToCBoxInt(cbox.xMax);
+          const int yMin = FTPosToCBoxInt(cbox.yMin);
+          const int yMax = FTPosToCBoxInt(cbox.yMax);
+          const int pixel_size_x = face->size->metrics.x_ppem;
+          const int pixel_size_y = face->size->metrics.y_ppem;
           if (pixel_size_x == 0 || pixel_size_y == 0) {
-            rect = FX_RECT(cbox.xMin, cbox.yMax, cbox.xMax, cbox.yMin);
+            rect = FX_RECT(xMin, yMax, xMax, yMin);
           } else {
-            rect = FX_RECT(cbox.xMin * 1000 / pixel_size_x,
-                           cbox.yMax * 1000 / pixel_size_y,
-                           cbox.xMax * 1000 / pixel_size_x,
-                           cbox.yMin * 1000 / pixel_size_y);
+            rect =
+                FX_RECT(xMin * 1000 / pixel_size_x, yMax * 1000 / pixel_size_y,
+                        xMax * 1000 / pixel_size_x, yMin * 1000 / pixel_size_y);
           }
           rect.top = std::min(rect.top,
                               static_cast<int>(FXFT_Get_Face_Ascender(face)));

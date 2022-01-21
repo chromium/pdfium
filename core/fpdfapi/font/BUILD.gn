@@ -40,6 +40,7 @@ source_set("font") {
     "cpdf_type3font.cpp",
     "cpdf_type3font.h",
   ]
+  cflags = []
   configs += [ "../../../:pdfium_strict_config" ]
   deps = [
     "../../fxcrt",
@@ -47,10 +48,13 @@ source_set("font") {
     "../cmaps",
     "../parser",
   ]
+  visibility = [ "../../../*" ]
   if (is_mac) {
     frameworks = [ "CoreFoundation.framework" ]
   }
-  visibility = [ "../../../*" ]
+  if (is_clang) {
+    cflags += [ "-Wshorten-64-to-32" ]
+  }
 }
 
 pdfium_unittest_source_set("unittests") {

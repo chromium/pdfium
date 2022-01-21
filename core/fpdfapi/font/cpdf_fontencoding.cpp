@@ -1646,7 +1646,7 @@ const char* const kZapfEncodingNames[kEncodingNamesTableSize] = {
 uint32_t PDF_FindCode(const uint16_t* pCodes, uint16_t unicode) {
   for (size_t i = 0; i < CPDF_FontEncoding::kEncodingTableSize; i++) {
     if (pCodes[i] == unicode)
-      return i;
+      return static_cast<uint32_t>(i);
   }
   return 0;
 }
@@ -1656,7 +1656,7 @@ uint32_t PDF_FindCode(const uint16_t* pCodes, uint16_t unicode) {
 int CPDF_FontEncoding::CharCodeFromUnicode(wchar_t unicode) const {
   for (size_t i = 0; i < pdfium::size(m_Unicodes); i++) {
     if (m_Unicodes[i] == unicode)
-      return i;
+      return static_cast<int>(i);
   }
   return -1;
 }

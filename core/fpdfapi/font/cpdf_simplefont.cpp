@@ -83,8 +83,8 @@ void CPDF_SimpleFont::LoadCharMetrics(int charcode) {
   if (err)
     return;
 
-  int iHoriBearingX = FXFT_Get_Glyph_HoriBearingX(face);
-  int iHoriBearingY = FXFT_Get_Glyph_HoriBearingY(face);
+  FT_Pos iHoriBearingX = FXFT_Get_Glyph_HoriBearingX(face);
+  FT_Pos iHoriBearingY = FXFT_Get_Glyph_HoriBearingY(face);
   m_CharBBox[charcode] =
       FX_RECT(TT2PDF(iHoriBearingX, face), TT2PDF(iHoriBearingY, face),
               TT2PDF(iHoriBearingX + FXFT_Get_Glyph_Width(face), face),
