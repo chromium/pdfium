@@ -569,7 +569,7 @@ bool CPDF_Parser::ParseCrossRefV4(std::vector<CrossRefObjData>* out_objects) {
   if (m_pSyntax->GetKeyword() != "xref")
     return false;
   std::vector<CrossRefObjData> result_objects;
-  while (1) {
+  while (true) {
     FX_FILESIZE saved_pos = m_pSyntax->GetPos();
     CPDF_SyntaxParser::WordResult word_result = m_pSyntax->GetNextWord();
     const ByteString& word = word_result.word;

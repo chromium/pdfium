@@ -45,7 +45,7 @@ const char* FX_strstr(const char* haystack,
   const char* end_ptr = haystack + haystack_len - needle_len;
   while (haystack <= end_ptr) {
     size_t i = 0;
-    while (1) {
+    while (true) {
       if (haystack[i] != needle[i])
         break;
 
@@ -643,7 +643,7 @@ size_t ByteString::Replace(ByteStringView pOld, ByteStringView pNew) {
   size_t nCount = 0;
   const char* pStart = m_pData->m_String;
   char* pEnd = m_pData->m_String + m_pData->m_nDataLength;
-  while (1) {
+  while (true) {
     const char* pTarget = FX_strstr(pStart, static_cast<int>(pEnd - pStart),
                                     pOld.unterminated_c_str(), nSourceLen);
     if (!pTarget)

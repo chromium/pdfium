@@ -485,7 +485,7 @@ bool CFieldTree::SetField(const WideString& full_name,
   Node* pNode = GetRoot();
   Node* pLast = nullptr;
   CFieldNameExtractor name_extractor(full_name);
-  while (1) {
+  while (true) {
     WideStringView name_view = name_extractor.GetNext();
     if (name_view.IsEmpty())
       break;

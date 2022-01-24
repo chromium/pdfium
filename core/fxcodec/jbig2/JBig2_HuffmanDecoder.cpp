@@ -18,7 +18,7 @@ int CJBig2_HuffmanDecoder::DecodeAValue(const CJBig2_HuffmanTable* pTable,
                                         int* nResult) {
   FX_SAFE_INT32 nSafeVal = 0;
   int nBits = 0;
-  while (1) {
+  while (true) {
     uint32_t nTmp;
     if (m_pStream->read1Bit(&nTmp) == -1)
       break;

@@ -147,7 +147,7 @@ void CFX_CSSStyleSelector::AppendInlineStyle(CFX_CSSDeclaration* pDecl,
   int32_t iLen2 = 0;
   const CFX_CSSData::Property* property = nullptr;
   WideString wsName;
-  while (1) {
+  while (true) {
     CFX_CSSSyntaxParser::Status eStatus = pSyntax->DoSyntaxParse();
     if (eStatus == CFX_CSSSyntaxParser::Status::kPropertyName) {
       WideStringView strValue = pSyntax->GetCurrentString();

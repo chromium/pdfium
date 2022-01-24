@@ -29,7 +29,7 @@ bool FindTagParamFromStart(CPDF_SimpleParser* parser,
   int buf_count = 0;
 
   parser->SetCurPos(0);
-  while (1) {
+  while (true) {
     pBuf[buf_index++] = parser->GetCurPos();
     if (buf_index == nParams)
       buf_index = 0;

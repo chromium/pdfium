@@ -77,7 +77,7 @@ void CPDF_Page::ParseContent() {
 CPDF_Object* CPDF_Page::GetPageAttr(const ByteString& name) const {
   CPDF_Dictionary* pPageDict = GetDict();
   std::set<CPDF_Dictionary*> visited;
-  while (1) {
+  while (true) {
     visited.insert(pPageDict);
     if (CPDF_Object* pObj = pPageDict->GetDirectObjectFor(name))
       return pObj;

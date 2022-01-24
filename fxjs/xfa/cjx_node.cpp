@@ -215,7 +215,7 @@ CJS_Result CJX_Node::loadXML(CFX_V8* runtime,
   if (params.size() >= 2)
     bIgnoreRoot = runtime->ToBoolean(params[1]);
 
-  bool bOverwrite = 0;
+  bool bOverwrite = false;
   if (params.size() >= 3)
     bOverwrite = runtime->ToBoolean(params[2]);
 

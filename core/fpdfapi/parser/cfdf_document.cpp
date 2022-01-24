@@ -38,7 +38,7 @@ std::unique_ptr<CFDF_Document> CFDF_Document::ParseMemory(
 void CFDF_Document::ParseStream(RetainPtr<IFX_SeekableReadStream> pFile) {
   m_pFile = std::move(pFile);
   CPDF_SyntaxParser parser(m_pFile);
-  while (1) {
+  while (true) {
     CPDF_SyntaxParser::WordResult word_result = parser.GetNextWord();
     if (word_result.is_number) {
       uint32_t objnum = FXSYS_atoui(word_result.word.c_str());

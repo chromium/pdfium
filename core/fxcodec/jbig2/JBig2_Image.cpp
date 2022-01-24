@@ -671,5 +671,5 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
       }
     }
   }
-  return 1;
+  return true;
 }

@@ -304,7 +304,7 @@ CFGAS_Decimal::CFGAS_Decimal(WideStringView strObj) {
   while (str != strBound && *str == ' ')
     str++;
   if (str != strBound && *str == '-') {
-    negmet = 1;
+    negmet = true;
     str++;
   } else if (str != strBound && *str == '+') {
     str++;
@@ -314,7 +314,7 @@ CFGAS_Decimal::CFGAS_Decimal(WideStringView strObj) {
          scale < FXMATH_DECIMAL_SCALELIMIT) {
     if (*str == '.') {
       if (!pointmet)
-        pointmet = 1;
+        pointmet = true;
     } else {
       m_uHi = m_uHi * 0xA + FXMATH_DECIMAL_RSHIFT32BIT((uint64_t)m_uMid * 0xA);
       m_uMid = m_uMid * 0xA + FXMATH_DECIMAL_RSHIFT32BIT((uint64_t)m_uLo * 0xA);
@@ -437,7 +437,7 @@ CFGAS_Decimal CFGAS_Decimal::operator/(const CFGAS_Decimal& val) const {
 
   uint8_t minscale = scale;
   if (!IsNotZero())
-    return CFGAS_Decimal(0, 0, 0, 0, minscale);
+    return CFGAS_Decimal(0, 0, 0, false, minscale);
 
   while (!a[6]) {
     decimal_helper_mul10_any(a, 7);

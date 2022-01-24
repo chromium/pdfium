@@ -44,7 +44,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate0Unopt(
   if (!GRREG->data())
     return nullptr;
 
-  GRREG->Fill(0);
+  GRREG->Fill(false);
   int LTP = 0;
   for (uint32_t h = 0; h < GRH; h++) {
     if (TPGRON) {
@@ -285,7 +285,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate1Unopt(
   if (!GRREG->data())
     return nullptr;
 
-  GRREG->Fill(0);
+  GRREG->Fill(false);
   int LTP = 0;
   for (uint32_t h = 0; h < GRH; h++) {
     if (TPGRON) {

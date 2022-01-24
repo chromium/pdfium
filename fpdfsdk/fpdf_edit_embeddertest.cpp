@@ -3050,8 +3050,8 @@ TEST_F(FPDFEditEmbedderTest, AddCIDFontText) {
   CFX_Font CIDfont;
   {
     // First, get the data from the font
-    CIDfont.LoadSubst("Noto Sans CJK JP", 1, 0, 400, 0, FX_CodePage::kShiftJIS,
-                      0);
+    CIDfont.LoadSubst("Noto Sans CJK JP", true, 0, 400, 0,
+                      FX_CodePage::kShiftJIS, false);
     EXPECT_EQ("Noto Sans CJK JP", CIDfont.GetFaceName());
     pdfium::span<const uint8_t> span = CIDfont.GetFontSpan();
 

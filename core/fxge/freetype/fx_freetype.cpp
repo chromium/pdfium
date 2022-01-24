@@ -18,7 +18,7 @@ int xyq_search_node(char* glyph_name,
                     int table_offset,
                     wchar_t unicode) {
   // copy letters
-  while (1) {
+  while (true) {
     glyph_name[name_offset] = ft_adobe_glyph_list[table_offset] & 0x7f;
     name_offset++;
     table_offset++;

@@ -28,7 +28,7 @@ CFX_CSSStyleRule* CFX_CSSStyleSheet::GetRule(size_t index) const {
 bool CFX_CSSStyleSheet::LoadBuffer(WideStringView buffer) {
   m_RuleArray.clear();
   auto pSyntax = std::make_unique<CFX_CSSSyntaxParser>(buffer);
-  while (1) {
+  while (true) {
     CFX_CSSSyntaxParser::Status eStatus = pSyntax->DoSyntaxParse();
     if (eStatus == CFX_CSSSyntaxParser::Status::kStyleRule)
       eStatus = LoadStyleRule(pSyntax.get());
@@ -46,7 +46,7 @@ CFX_CSSSyntaxParser::Status CFX_CSSStyleSheet::LoadStyleRule(
   int32_t iValueLen = 0;
   const CFX_CSSData::Property* property = nullptr;
   WideString wsName;
-  while (1) {
+  while (true) {
     switch (pSyntax->DoSyntaxParse()) {
       case CFX_CSSSyntaxParser::Status::kSelector: {
         WideStringView strValue = pSyntax->GetCurrentString();
@@ -105,7 +105,7 @@ CFX_CSSSyntaxParser::Status CFX_CSSStyleSheet::LoadStyleRule(
 }
 
 void CFX_CSSStyleSheet::SkipRuleSet(CFX_CSSSyntaxParser* pSyntax) {
-  while (1) {
+  while (true) {
     switch (pSyntax->DoSyntaxParse()) {
       case CFX_CSSSyntaxParser::Status::kSelector:
       case CFX_CSSSyntaxParser::Status::kDeclOpen:

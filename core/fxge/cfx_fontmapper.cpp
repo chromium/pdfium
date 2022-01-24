@@ -326,7 +326,7 @@ void CFX_FontMapper::AddInstalledFont(const ByteString& name,
   if (bLocalized) {
     void* hFont = m_pFontInfo->GetFont(name);
     if (!hFont) {
-      hFont = m_pFontInfo->MapFont(0, 0, FX_Charset::kDefault, 0, name);
+      hFont = m_pFontInfo->MapFont(0, false, FX_Charset::kDefault, 0, name);
       if (!hFont)
         return;
     }
@@ -721,8 +721,8 @@ std::unique_ptr<uint8_t, FxFreeDeleter> CFX_FontMapper::RawBytesForIndex(
   if (!m_pFontInfo)
     return nullptr;
 
-  void* hFont =
-      m_pFontInfo->MapFont(0, 0, FX_Charset::kDefault, 0, GetFaceName(index));
+  void* hFont = m_pFontInfo->MapFont(0, false, FX_Charset::kDefault, 0,
+                                     GetFaceName(index));
   if (!hFont)
     return nullptr;
 

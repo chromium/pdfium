@@ -992,7 +992,7 @@ void CXFA_ContentLayoutProcessor::DoLayoutPageArea(
   CXFA_Node* pCurChildNode = nullptr;
   CXFA_LayoutItem* pBeforeItem = nullptr;
   Stage nCurChildNodeStage = Stage::kNone;
-  while (1) {
+  while (true) {
     std::tie(nCurChildNodeStage, pCurChildNode) = GotoNextContainerNode(
         nCurChildNodeStage, false, pFormNode, pCurChildNode);
     if (!pCurChildNode)

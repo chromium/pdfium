@@ -35,7 +35,7 @@ template <typename StrType>
 std::vector<StrType> Split(const StrType& that, typename StrType::CharType ch) {
   std::vector<StrType> result;
   StringViewTemplate<typename StrType::CharType> remaining(that.span());
-  while (1) {
+  while (true) {
     absl::optional<size_t> index = remaining.Find(ch);
     if (!index.has_value())
       break;

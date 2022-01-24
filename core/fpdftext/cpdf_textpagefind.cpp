@@ -128,7 +128,7 @@ std::vector<WideString> ExtractFindWhat(const WideString& findwhat) {
   }
 
   int index = 0;
-  while (1) {
+  while (true) {
     absl::optional<WideString> word = ExtractSubString(findwhat.c_str(), index);
     if (!word.has_value())
       break;

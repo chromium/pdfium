@@ -42,7 +42,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_HTRDProc::DecodeArith(
   GRD.GBW = HGW;
   GRD.GBH = HGH;
   GRD.GBTEMPLATE = HTEMPLATE;
-  GRD.TPGDON = 0;
+  GRD.TPGDON = false;
   GRD.USESKIP = HENABLESKIP;
   GRD.SKIP = HSKIP.get();
   if (HTEMPLATE <= 1)

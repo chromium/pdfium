@@ -154,7 +154,7 @@ bool DoDocSave(FPDF_DOCUMENT document,
                absl::optional<int> version) {
   CPDF_Document* pPDFDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pPDFDoc)
-    return 0;
+    return false;
 
 #ifdef PDF_ENABLE_XFA
   auto* pContext = static_cast<CPDFXFA_Context*>(pPDFDoc->GetExtension());

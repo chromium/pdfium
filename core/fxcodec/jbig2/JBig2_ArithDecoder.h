@@ -32,7 +32,7 @@ class JBig2ArithCtx {
   unsigned int I() const { return m_I; }
 
  private:
-  bool m_MPS = 0;
+  bool m_MPS = false;
   unsigned int m_I = 0;
 };
 

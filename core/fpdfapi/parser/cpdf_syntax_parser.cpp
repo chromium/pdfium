@@ -185,7 +185,7 @@ CPDF_SyntaxParser::WordType CPDF_SyntaxParser::GetNextWordInternal() {
 
     m_WordBuffer[m_WordSize++] = ch;
     if (ch == '/') {
-      while (1) {
+      while (true) {
         if (!GetNextChar(ch))
           return word_type;
 
@@ -217,7 +217,7 @@ CPDF_SyntaxParser::WordType CPDF_SyntaxParser::GetNextWordInternal() {
     return word_type;
   }
 
-  while (1) {
+  while (true) {
     if (m_WordSize < sizeof(m_WordBuffer) - 1)
       m_WordBuffer[m_WordSize++] = ch;
 
@@ -244,7 +244,7 @@ ByteString CPDF_SyntaxParser::ReadString() {
   int32_t parlevel = 0;
   ReadStatus status = ReadStatus::kNormal;
   int32_t iEscCode = 0;
-  while (1) {
+  while (true) {
     switch (status) {
       case ReadStatus::kNormal:
         if (ch == ')') {
@@ -329,7 +329,7 @@ ByteString CPDF_SyntaxParser::ReadHexString() {
   ByteString buf;
   bool bFirst = true;
   uint8_t code = 0;
-  while (1) {
+  while (true) {
     if (ch == '>')
       break;
 
@@ -378,7 +378,7 @@ void CPDF_SyntaxParser::ToNextWord() {
   if (!GetNextChar(ch))
     return;
 
-  while (1) {
+  while (true) {
     while (PDFCharIsWhitespace(ch)) {
       if (!GetNextChar(ch))
         return;
@@ -387,7 +387,7 @@ void CPDF_SyntaxParser::ToNextWord() {
     if (ch != '%')
       break;
 
-    while (1) {
+    while (true) {
       if (!GetNextChar(ch))
         return;
       if (PDFCharIsLineEnding(ch))
@@ -414,7 +414,7 @@ void CPDF_SyntaxParser::RecordingToNextWord() {
   EofState eof_state = EofState::kInitial;
   // Find the first character which is neither whitespace, nor part of a
   // comment.
-  while (1) {
+  while (true) {
     uint8_t ch;
     if (!GetNextChar(ch))
       return;
@@ -556,7 +556,7 @@ RetainPtr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyInternal(
   if (word == "<<") {
     RetainPtr<CPDF_Dictionary> pDict =
         pdfium::MakeRetain<CPDF_Dictionary>(m_pPool);
-    while (1) {
+    while (true) {
       WordResult inner_word_result = GetNextWord();
       const ByteString& inner_word = inner_word_result.word;
       if (inner_word.IsEmpty())
@@ -859,7 +859,7 @@ bool CPDF_SyntaxParser::BackwardsSearchToWord(ByteStringView word,
 
   FX_FILESIZE pos = m_Pos;
   int32_t offset = taglen - 1;
-  while (1) {
+  while (true) {
     if (limit && pos <= m_Pos - limit)
       return false;
 
@@ -891,7 +891,7 @@ FX_FILESIZE CPDF_SyntaxParser::FindTag(ByteStringView tag) {
   DCHECK_GT(taglen, 0);
 
   int32_t match = 0;
-  while (1) {
+  while (true) {
     uint8_t ch;
     if (!GetNextChar(ch))
       return -1;

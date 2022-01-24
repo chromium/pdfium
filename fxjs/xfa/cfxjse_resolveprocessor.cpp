@@ -362,7 +362,7 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(v8::Isolate* pIsolate,
   }
   if (dwStyles & XFA_ResolveFlag::kAttributes) {
     if (ResolveForAttributeRs(curNode, &rnd.m_Result, wsName.AsStringView()))
-      return 1;
+      return true;
   }
   if (dwStyles & XFA_ResolveFlag::kProperties) {
     for (CXFA_Node* pChildProperty : properties) {

@@ -304,7 +304,7 @@ void CPDFXFA_Page::DrawFocusAnnot(CFX_RenderDevice* pDevice,
       xfaView->CreateGCedFormWidgetIterator(Mask<XFA_WidgetStatus>{
           XFA_WidgetStatus::kVisible, XFA_WidgetStatus::kViewable});
 
-  while (1) {
+  while (true) {
     CXFA_FFWidget* pWidget = pWidgetIterator->MoveToNext();
     if (!pWidget)
       break;

@@ -158,7 +158,7 @@ void CLZWDecoder::AddCode(uint32_t prefix_code, uint8_t append_char) {
 }
 
 void CLZWDecoder::DecodeString(uint32_t code) {
-  while (1) {
+  while (true) {
     int index = code - 258;
     if (index < 0 || static_cast<uint32_t>(index) >= current_code_)
       break;
@@ -196,7 +196,7 @@ bool CLZWDecoder::Decode() {
   // this size.
   dest_buf_size_ = 512;
   dest_buf_.reset(FX_Alloc(uint8_t, dest_buf_size_));
-  while (1) {
+  while (true) {
     if (src_bit_pos_ + code_len_ > src_span_.size() * 8)
       break;
 
@@ -547,7 +547,7 @@ void FlateUncompress(pdfium::span<const uint8_t> src_buf,
   std::vector<std::unique_ptr<uint8_t, FxFreeDeleter>> result_tmp_bufs;
   {
     std::unique_ptr<uint8_t, FxFreeDeleter> cur_buf = std::move(guess_buf);
-    while (1) {
+    while (true) {
       uint32_t ret = FlateOutput(context.get(), cur_buf.get(), buf_size);
       uint32_t avail_buf_size = FlateGetAvailOut(context.get());
       if (ret != Z_OK || avail_buf_size != 0) {

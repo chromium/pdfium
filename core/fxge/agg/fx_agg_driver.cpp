@@ -860,7 +860,7 @@ void CFX_Renderer::render(const Scanline& sl) {
   bool bDestAlpha = m_pDevice->IsAlphaFormat() || m_pDevice->IsMaskFormat();
   unsigned num_spans = sl.num_spans();
   typename Scanline::const_iterator span = sl.begin();
-  while (1) {
+  while (true) {
     if (span->len <= 0)
       break;
 
@@ -941,7 +941,7 @@ class RendererScanLineAaOffset {
     int y = sl.y();
     unsigned num_spans = sl.num_spans();
     typename Scanline::const_iterator span = sl.begin();
-    while (1) {
+    while (true) {
       int x = span->x;
       if (span->len > 0) {
         m_ren->blend_solid_hspan(x - m_left, y - m_top, (unsigned)span->len,

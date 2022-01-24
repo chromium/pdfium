@@ -133,7 +133,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeHuffman(
         if (IDI < SBNUMSYMS)
           break;
       }
-      bool RI = 0;
+      bool RI = false;
       if (SBREFINE != 0 && pStream->read1Bit(&RI) != 0)
         return nullptr;
 
@@ -179,7 +179,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeHuffman(
         pGRRD->GRREFERENCE = IBOI;
         pGRRD->GRREFERENCEDX = GRREFERENCEDX.value();
         pGRRD->GRREFERENCEDY = GRREFERENCEDY.value();
-        pGRRD->TPGRON = 0;
+        pGRRD->TPGRON = false;
         pGRRD->GRAT[0] = SBRAT[0];
         pGRRD->GRAT[1] = SBRAT[1];
         pGRRD->GRAT[2] = SBRAT[2];
@@ -359,7 +359,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeArith(
         pGRRD->GRREFERENCE = IBOI;
         pGRRD->GRREFERENCEDX = GRREFERENCEDX.value();
         pGRRD->GRREFERENCEDY = GRREFERENCEDY.value();
-        pGRRD->TPGRON = 0;
+        pGRRD->TPGRON = false;
         pGRRD->GRAT[0] = SBRAT[0];
         pGRRD->GRAT[1] = SBRAT[1];
         pGRRD->GRAT[2] = SBRAT[2];

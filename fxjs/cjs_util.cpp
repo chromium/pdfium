@@ -219,7 +219,7 @@ CJS_Result CJS_Util::printd(CJS_Runtime* pRuntime,
 
   for (size_t i = 0; i < pdfium::size(TbConvertTable); ++i) {
     size_t nFound = 0;
-    while (1) {
+    while (true) {
       nFound = cFormat.find(TbConvertTable[i].lpszJSMark, nFound);
       if (nFound == std::wstring::npos)
         break;
@@ -240,7 +240,7 @@ CJS_Result CJS_Util::printd(CJS_Runtime* pRuntime,
 
   for (size_t i = 0; i < pdfium::size(cTableAd); ++i) {
     size_t nFound = 0;
-    while (1) {
+    while (true) {
       nFound = cFormat.find(cTableAd[i].js_mark, nFound);
       if (nFound == std::wstring::npos)
         break;

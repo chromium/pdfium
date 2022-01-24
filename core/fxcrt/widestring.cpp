@@ -45,7 +45,7 @@ const wchar_t* FX_wcsstr(const wchar_t* haystack,
   const wchar_t* end_ptr = haystack + haystack_len - needle_len;
   while (haystack <= end_ptr) {
     size_t i = 0;
-    while (1) {
+    while (true) {
       if (haystack[i] != needle[i])
         break;
 
@@ -875,7 +875,7 @@ size_t WideString::Replace(WideStringView pOld, WideStringView pNew) {
   size_t count = 0;
   const wchar_t* pStart = m_pData->m_String;
   wchar_t* pEnd = m_pData->m_String + m_pData->m_nDataLength;
-  while (1) {
+  while (true) {
     const wchar_t* pTarget =
         FX_wcsstr(pStart, static_cast<size_t>(pEnd - pStart),
                   pOld.unterminated_c_str(), nSourceLen);

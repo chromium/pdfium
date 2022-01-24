@@ -192,7 +192,7 @@ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
 
     uint32_t dwSavePos = m_Pos;
     m_Pos += dwStreamSize;
-    while (1) {
+    while (true) {
       uint32_t dwPrevPos = m_Pos;
       ElementType type = ParseNextElement();
       if (type == ElementType::kEndOfData)
@@ -226,7 +226,7 @@ CPDF_StreamParser::ElementType CPDF_StreamParser::ParseNextElement() {
     return ElementType::kEndOfData;
 
   uint8_t ch = m_pBuf[m_Pos++];
-  while (1) {
+  while (true) {
     while (PDFCharIsWhitespace(ch)) {
       if (!PositionIsInBounds())
         return ElementType::kEndOfData;
@@ -237,7 +237,7 @@ CPDF_StreamParser::ElementType CPDF_StreamParser::ParseNextElement() {
     if (ch != '%')
       break;
 
-    while (1) {
+    while (true) {
       if (!PositionIsInBounds())
         return ElementType::kEndOfData;
 
@@ -254,7 +254,7 @@ CPDF_StreamParser::ElementType CPDF_StreamParser::ParseNextElement() {
   }
 
   bool bIsNumber = true;
-  while (1) {
+  while (true) {
     if (m_WordSize < kMaxWordLength)
       m_WordBuffer[m_WordSize++] = ch;
 
@@ -330,7 +330,7 @@ RetainPtr<CPDF_Object> CPDF_StreamParser::ReadNextObject(
       return pdfium::MakeRetain<CPDF_String>(m_pPool, ReadHexString(), true);
 
     auto pDict = pdfium::MakeRetain<CPDF_Dictionary>(m_pPool);
-    while (1) {
+    while (true) {
       GetNextWord(bIsNumber);
       if (m_WordSize == 2 && m_WordBuffer[0] == '>')
         break;
@@ -355,7 +355,7 @@ RetainPtr<CPDF_Object> CPDF_StreamParser::ReadNextObject(
       return nullptr;
 
     auto pArray = pdfium::MakeRetain<CPDF_Array>();
-    while (1) {
+    while (true) {
       RetainPtr<CPDF_Object> pObj =
           ReadNextObject(bAllowNestedArray, true, dwRecursionLevel + 1);
       if (pObj) {
@@ -385,7 +385,7 @@ void CPDF_StreamParser::GetNextWord(bool& bIsNumber) {
     return;
 
   uint8_t ch = m_pBuf[m_Pos++];
-  while (1) {
+  while (true) {
     while (PDFCharIsWhitespace(ch)) {
       if (!PositionIsInBounds()) {
         return;
@@ -396,7 +396,7 @@ void CPDF_StreamParser::GetNextWord(bool& bIsNumber) {
     if (ch != '%')
       break;
 
-    while (1) {
+    while (true) {
       if (!PositionIsInBounds())
         return;
       ch = m_pBuf[m_Pos++];
@@ -409,7 +409,7 @@ void CPDF_StreamParser::GetNextWord(bool& bIsNumber) {
     bIsNumber = false;
     m_WordBuffer[m_WordSize++] = ch;
     if (ch == '/') {
-      while (1) {
+      while (true) {
         if (!PositionIsInBounds())
           return;
         ch = m_pBuf[m_Pos++];
@@ -440,7 +440,7 @@ void CPDF_StreamParser::GetNextWord(bool& bIsNumber) {
     return;
   }
 
-  while (1) {
+  while (true) {
     if (m_WordSize < kMaxWordLength)
       m_WordBuffer[m_WordSize++] = ch;
     if (!PDFCharIsNumeric(ch))
@@ -465,7 +465,7 @@ ByteString CPDF_StreamParser::ReadString() {
   int status = 0;
   int iEscCode = 0;
   uint8_t ch = m_pBuf[m_Pos++];
-  while (1) {
+  while (true) {
     switch (status) {
       case 0:
         if (ch == ')') {

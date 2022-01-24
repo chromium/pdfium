@@ -198,7 +198,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplateUnopt(
   if (!GBREG->data())
     return nullptr;
 
-  GBREG->Fill(0);
+  GBREG->Fill(false);
   int LTP = 0;
   uint8_t MOD2 = UNOPT % 2;
   uint8_t DIV2 = UNOPT / 2;
@@ -344,7 +344,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate3Unopt(
   if (!GBREG->data())
     return nullptr;
 
-  GBREG->Fill(0);
+  GBREG->Fill(false);
   int LTP = 0;
   for (uint32_t h = 0; h < GBH; h++) {
     if (TPGDON) {
@@ -398,7 +398,7 @@ FXCODEC_STATUS CJBig2_GRDProc::StartDecodeArith(
     m_ProgressiveStatus = FXCODEC_STATUS::kError;
     return FXCODEC_STATUS::kError;
   }
-  pImage->get()->Fill(0);
+  pImage->get()->Fill(false);
   m_DecodeType = 1;
   m_LTP = 0;
   m_pLine = nullptr;

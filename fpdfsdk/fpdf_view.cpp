@@ -1259,7 +1259,7 @@ FPDF_GetTrailerEnds(FPDF_DOCUMENT document,
 
   // Traverse the document.
   syntax->SetPos(0);
-  while (1) {
+  while (true) {
     CPDF_SyntaxParser::WordResult word_result = syntax->GetNextWord();
     if (word_result.is_number) {
       // The object number was read. Read the generation number.
@@ -1281,7 +1281,7 @@ FPDF_GetTrailerEnds(FPDF_DOCUMENT document,
     } else if (word_result.word == "startxref") {
       syntax->GetNextWord();
     } else if (word_result.word == "xref") {
-      while (1) {
+      while (true) {
         word_result = syntax->GetNextWord();
         if (word_result.word.IsEmpty() || word_result.word == "startxref")
           break;

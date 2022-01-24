@@ -476,7 +476,7 @@ void DrawLatticeGouraudShading(
     return;
 
   int last_index = 0;
-  while (1) {
+  while (true) {
     vertices[1 - last_index] = stream.ReadVertexRow(mtObject2Bitmap, row_verts);
     if (vertices[1 - last_index].empty())
       return;

@@ -167,7 +167,7 @@ bool CPDF_CryptoHandler::CryptStream(void* context,
   }
   uint32_t src_off = 0;
   uint32_t src_left = source.size();
-  while (1) {
+  while (true) {
     uint32_t copy_size = 16 - pContext->m_BlockOffset;
     if (copy_size > src_left) {
       copy_size = src_left;

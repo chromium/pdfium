@@ -118,7 +118,7 @@ CXFA_FMExpression* CXFA_FMParser::ParseFunction() {
 
   std::vector<WideString> arguments;
   bool last_was_comma = false;
-  while (1) {
+  while (true) {
     if (m_token.m_type == TOKrparen)
       break;
     if (m_token.m_type != TOKidentifier)
@@ -282,7 +282,7 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParseLogicalOrExpression() {
   if (!e1)
     return nullptr;
 
-  while (1) {
+  while (true) {
     if (!IncrementParseDepthAndCheck())
       return nullptr;
 
@@ -315,7 +315,7 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParseLogicalAndExpression() {
   if (!e1)
     return nullptr;
 
-  while (1) {
+  while (true) {
     if (!IncrementParseDepthAndCheck())
       return nullptr;
 
@@ -348,7 +348,7 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParseEqualityExpression() {
   if (!e1)
     return nullptr;
 
-  while (1) {
+  while (true) {
     if (!IncrementParseDepthAndCheck())
       return nullptr;
 
@@ -392,7 +392,7 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParseRelationalExpression() {
   if (!e1)
     return nullptr;
 
-  while (1) {
+  while (true) {
     if (!IncrementParseDepthAndCheck())
       return nullptr;
 
@@ -458,7 +458,7 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParseAdditiveExpression() {
   if (!e1)
     return nullptr;
 
-  while (1) {
+  while (true) {
     if (!IncrementParseDepthAndCheck())
       return nullptr;
 
@@ -500,7 +500,7 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParseMultiplicativeExpression() {
   if (!e1)
     return nullptr;
 
-  while (1) {
+  while (true) {
     if (!IncrementParseDepthAndCheck())
       return nullptr;
 
@@ -641,7 +641,7 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParsePostExpression(
     return nullptr;
 
   size_t expr_count = 0;
-  while (1) {
+  while (true) {
     ++expr_count;
     // Limit the number of expressions allowed in the post expression statement.
     // If we don't do this then its possible to generate a stack overflow

@@ -100,12 +100,12 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
       TOTWIDTH = TOTWIDTH + SYMWIDTH;
       if (SDREFAGG == 0) {
         auto pGRD = std::make_unique<CJBig2_GRDProc>();
-        pGRD->MMR = 0;
+        pGRD->MMR = false;
         pGRD->GBW = SYMWIDTH;
         pGRD->GBH = HCHEIGHT;
         pGRD->GBTEMPLATE = SDTEMPLATE;
-        pGRD->TPGDON = 0;
-        pGRD->USESKIP = 0;
+        pGRD->TPGDON = false;
+        pGRD->USESKIP = false;
         pGRD->GBAT[0] = SDAT[0];
         pGRD->GBAT[1] = SDAT[1];
         pGRD->GBAT[2] = SDAT[2];
@@ -131,7 +131,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
           auto SBHUFFRSIZE = std::make_unique<CJBig2_HuffmanTable>(1);
           auto pDecoder = std::make_unique<CJBig2_TRDProc>();
           pDecoder->SBHUFF = SDHUFF;
-          pDecoder->SBREFINE = 1;
+          pDecoder->SBREFINE = true;
           pDecoder->SBW = SYMWIDTH;
           pDecoder->SBH = HCHEIGHT;
           pDecoder->SBNUMINSTANCES = REFAGGNINST;
@@ -149,9 +149,9 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
           for (size_t i = 0; i < NSYMSDECODED; ++i)
             SBSYMS[i + SDNUMINSYMS] = SDNEWSYMS[i].get();
           pDecoder->SBSYMS = SBSYMS.data();
-          pDecoder->SBDEFPIXEL = 0;
+          pDecoder->SBDEFPIXEL = false;
           pDecoder->SBCOMBOP = JBIG2_COMPOSE_OR;
-          pDecoder->TRANSPOSED = 0;
+          pDecoder->TRANSPOSED = false;
           pDecoder->REFCORNER = JBIG2_CORNER_TOPLEFT;
           pDecoder->SBDSOFFSET = 0;
           pDecoder->SBHUFFFS = SBHUFFFS.get();
@@ -204,7 +204,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
           pGRRD->GRREFERENCE = SBSYMS[IDI];
           pGRRD->GRREFERENCEDX = RDXI;
           pGRRD->GRREFERENCEDY = RDYI;
-          pGRRD->TPGRON = 0;
+          pGRRD->TPGRON = false;
           pGRRD->GRAT[0] = SDRAT[0];
           pGRRD->GRAT[1] = SDRAT[1];
           pGRRD->GRAT[2] = SDRAT[2];
@@ -219,7 +219,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
     }
   }
   EXINDEX = 0;
-  CUREXFLAG = 0;
+  CUREXFLAG = false;
   EXFLAGS.resize(SDNUMINSYMS + SDNUMNEWSYMS);
   num_ex_syms = 0;
   while (EXINDEX < SDNUMINSYMS + SDNUMNEWSYMS) {
@@ -339,7 +339,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
           auto SBHUFFRSIZE = std::make_unique<CJBig2_HuffmanTable>(1);
           auto pDecoder = std::make_unique<CJBig2_TRDProc>();
           pDecoder->SBHUFF = SDHUFF;
-          pDecoder->SBREFINE = 1;
+          pDecoder->SBREFINE = true;
           pDecoder->SBW = SYMWIDTH;
           pDecoder->SBH = HCHEIGHT;
           pDecoder->SBNUMINSTANCES = REFAGGNINST;
@@ -360,9 +360,9 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
           for (size_t i = 0; i < NSYMSDECODED; ++i)
             SBSYMS[i + SDNUMINSYMS] = SDNEWSYMS[i].get();
           pDecoder->SBSYMS = SBSYMS.data();
-          pDecoder->SBDEFPIXEL = 0;
+          pDecoder->SBDEFPIXEL = false;
           pDecoder->SBCOMBOP = JBIG2_COMPOSE_OR;
-          pDecoder->TRANSPOSED = 0;
+          pDecoder->TRANSPOSED = false;
           pDecoder->REFCORNER = JBIG2_CORNER_TOPLEFT;
           pDecoder->SBDSOFFSET = 0;
           pDecoder->SBHUFFFS = SBHUFFFS.get();
@@ -422,7 +422,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
           pGRRD->GRREFERENCE = SBSYMS[IDI];
           pGRRD->GRREFERENCEDX = RDXI;
           pGRRD->GRREFERENCEDY = RDYI;
-          pGRRD->TPGRON = 0;
+          pGRRD->TPGRON = false;
           pGRRD->GRAT[0] = SDRAT[0];
           pGRRD->GRAT[1] = SDRAT[1];
           pGRRD->GRAT[2] = SDRAT[2];
@@ -470,7 +470,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
         }
       } else {
         auto pGRD = std::make_unique<CJBig2_GRDProc>();
-        pGRD->MMR = 1;
+        pGRD->MMR = true;
         pGRD->GBW = TOTWIDTH;
         pGRD->GBH = HCHEIGHT;
         pGRD->StartDecodeMMR(&BHC, pStream);
@@ -487,7 +487,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
     }
   }
   EXINDEX = 0;
-  CUREXFLAG = 0;
+  CUREXFLAG = false;
   pTable = std::make_unique<CJBig2_HuffmanTable>(1);
   EXFLAGS.resize(SDNUMINSYMS + SDNUMNEWSYMS);
   num_ex_syms = 0;

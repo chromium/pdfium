@@ -122,7 +122,7 @@ bool CPDF_PSProc::Parse(CPDF_SimpleParser* parser, int depth) {
   if (depth > kMaxDepth)
     return false;
 
-  while (1) {
+  while (true) {
     ByteStringView word = parser->GetWord();
     if (word.IsEmpty())
       return false;

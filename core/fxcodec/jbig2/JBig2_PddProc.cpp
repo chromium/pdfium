@@ -21,8 +21,8 @@ std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::DecodeArith(
     return nullptr;
 
   pGRD->GBTEMPLATE = HDTEMPLATE;
-  pGRD->TPGDON = 0;
-  pGRD->USESKIP = 0;
+  pGRD->TPGDON = false;
+  pGRD->USESKIP = false;
   pGRD->GBAT[0] = -1 * static_cast<int32_t>(HDPW);
   pGRD->GBAT[1] = 0;
   if (pGRD->GBTEMPLATE == 0) {

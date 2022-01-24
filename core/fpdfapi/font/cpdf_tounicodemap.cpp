@@ -115,7 +115,7 @@ void CPDF_ToUnicodeMap::Load(const CPDF_Stream* pStream) {
   auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
   pAcc->LoadAllDataFiltered();
   CPDF_SimpleParser parser(pAcc->GetSpan());
-  while (1) {
+  while (true) {
     ByteStringView word = parser.GetWord();
     if (word.IsEmpty())
       break;
@@ -140,7 +140,7 @@ void CPDF_ToUnicodeMap::Load(const CPDF_Stream* pStream) {
 }
 
 void CPDF_ToUnicodeMap::HandleBeginBFChar(CPDF_SimpleParser* pParser) {
-  while (1) {
+  while (true) {
     ByteStringView word = pParser->GetWord();
     if (word.IsEmpty() || word == "endbfchar")
       return;
@@ -154,7 +154,7 @@ void CPDF_ToUnicodeMap::HandleBeginBFChar(CPDF_SimpleParser* pParser) {
 }
 
 void CPDF_ToUnicodeMap::HandleBeginBFRange(CPDF_SimpleParser* pParser) {
-  while (1) {
+  while (true) {
     ByteStringView lowcode_str = pParser->GetWord();
     if (lowcode_str.IsEmpty() || lowcode_str == "endbfrange")
       return;

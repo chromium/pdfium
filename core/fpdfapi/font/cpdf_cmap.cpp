@@ -321,7 +321,7 @@ CPDF_CMap::CPDF_CMap(pdfium::span<const uint8_t> spEmbeddedData)
     : m_DirectCharcodeToCIDTable(65536) {
   CPDF_CMapParser parser(this);
   CPDF_SimpleParser syntax(spEmbeddedData);
-  while (1) {
+  while (true) {
     ByteStringView word = syntax.GetWord();
     if (word.IsEmpty())
       break;
@@ -380,7 +380,7 @@ uint32_t CPDF_CMap::GetNextChar(ByteStringView pString, size_t* pOffset) const {
       uint8_t codes[4];
       int char_size = 1;
       codes[0] = offset < pBytes.size() ? pBytes[offset++] : 0;
-      while (1) {
+      while (true) {
         int ret = CheckFourByteCodeRange(codes, char_size,
                                          m_MixedFourByteLeadingRanges);
         if (ret == 0)

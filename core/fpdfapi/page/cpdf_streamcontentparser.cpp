@@ -604,7 +604,7 @@ void CPDF_StreamContentParser::Handle_BeginMarkedContent_Dictionary() {
 void CPDF_StreamContentParser::Handle_BeginImage() {
   FX_FILESIZE savePos = m_pSyntax->GetPos();
   auto pDict = m_pDocument->New<CPDF_Dictionary>();
-  while (1) {
+  while (true) {
     CPDF_StreamParser::ElementType type = m_pSyntax->ParseNextElement();
     if (type == CPDF_StreamParser::ElementType::kKeyword) {
       if (m_pSyntax->GetWord() != "ID") {
@@ -641,7 +641,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
   pDict->SetNewFor<CPDF_Name>("Subtype", "Image");
   RetainPtr<CPDF_Stream> pStream =
       m_pSyntax->ReadInlineStream(m_pDocument.Get(), std::move(pDict), pCSObj);
-  while (1) {
+  while (true) {
     CPDF_StreamParser::ElementType type = m_pSyntax->ParseNextElement();
     if (type == CPDF_StreamParser::ElementType::kEndOfData)
       break;
@@ -1516,7 +1516,7 @@ uint32_t CPDF_StreamContentParser::Parse(
   m_pSyntax = std::make_unique<CPDF_StreamParser>(
       pDataStart, m_pDocument->GetByteStringPool());
 
-  while (1) {
+  while (true) {
     uint32_t cost = m_pObjectHolder->GetPageObjectCount() - init_obj_count;
     if (max_cost && cost >= max_cost) {
       break;
@@ -1547,7 +1547,7 @@ void CPDF_StreamContentParser::ParsePathObject() {
   float params[6] = {};
   int nParams = 0;
   int last_pos = m_pSyntax->GetPos();
-  while (1) {
+  while (true) {
     CPDF_StreamParser::ElementType type = m_pSyntax->ParseNextElement();
     bool bProcessed = true;
     switch (type) {

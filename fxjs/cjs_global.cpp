@@ -485,7 +485,7 @@ CJS_Result CJS_Global::SetGlobalVariables(const ByteString& propname,
     JSGlobalData* pTemp = it->second.get();
     if (pTemp->bDeleted || pTemp->nType != nType) {
       pTemp->dData = 0;
-      pTemp->bData = 0;
+      pTemp->bData = false;
       pTemp->sData.clear();
       pTemp->nType = nType;
     }

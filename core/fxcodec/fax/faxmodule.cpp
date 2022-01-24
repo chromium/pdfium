@@ -261,7 +261,7 @@ int FaxGetRun(const uint8_t* ins_array,
               int bitsize) {
   uint32_t code = 0;
   int ins_off = 0;
-  while (1) {
+  while (true) {
     uint8_t ins = ins_array[ins_off++];
     if (ins == 0xff)
       return -1;
@@ -290,7 +290,7 @@ void FaxG4GetRow(const uint8_t* src_buf,
                  int columns) {
   int a0 = -1;
   bool a0color = true;
-  while (1) {
+  while (true) {
     if (*bitpos >= bitsize)
       return;
 
@@ -314,7 +314,7 @@ void FaxG4GetRow(const uint8_t* src_buf,
         v_delta = bit2 ? 1 : -1;
       } else if (bit2) {
         int run_len1 = 0;
-        while (1) {
+        while (true) {
           int run = FaxGetRun(a0color ? FaxWhiteRunIns : FaxBlackRunIns,
                               src_buf, bitpos, bitsize);
           run_len1 += run;
@@ -331,7 +331,7 @@ void FaxG4GetRow(const uint8_t* src_buf,
           FaxFillBits(dest_buf, columns, a0, a1);
 
         int run_len2 = 0;
-        while (1) {
+        while (true) {
           int run = FaxGetRun(a0color ? FaxBlackRunIns : FaxWhiteRunIns,
                               src_buf, bitpos, bitsize);
           run_len2 += run;
@@ -426,12 +426,12 @@ void FaxGet1DLine(const uint8_t* src_buf,
                   int columns) {
   bool color = true;
   int startpos = 0;
-  while (1) {
+  while (true) {
     if (*bitpos >= bitsize)
       return;
 
     int run_len = 0;
-    while (1) {
+    while (true) {
       int run = FaxGetRun(color ? FaxWhiteRunIns : FaxBlackRunIns, src_buf,
                           bitpos, bitsize);
       if (run < 0) {
