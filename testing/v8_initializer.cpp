@@ -112,5 +112,6 @@ void ShutdownV8ForPDFium() {
 #ifdef PDF_ENABLE_XFA
   cppgc::ShutdownProcess();
 #endif
+  v8::V8::Dispose();
   v8::V8::DisposePlatform();
 }
