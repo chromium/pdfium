@@ -887,8 +887,8 @@ CJS_Result CJS_Field::get_button_scale_how(CJS_Runtime* pRuntime) {
   if (!pFormControl)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-  return CJS_Result::Success(pRuntime->NewBoolean(
-      pFormControl->GetIconFit().IsProportionalScale() ? false : true));
+  return CJS_Result::Success(
+      pRuntime->NewBoolean(!pFormControl->GetIconFit().IsProportionalScale()));
 }
 
 CJS_Result CJS_Field::set_button_scale_how(CJS_Runtime* pRuntime,

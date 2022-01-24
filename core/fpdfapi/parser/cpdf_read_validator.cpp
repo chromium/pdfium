@@ -113,8 +113,7 @@ bool CPDF_ReadValidator::IsWholeFileAvailable() {
   const FX_SAFE_SIZE_T safe_size = file_size_;
   whole_file_already_available_ =
       whole_file_already_available_ ||
-      (safe_size.IsValid() ? IsDataRangeAvailable(0, safe_size.ValueOrDie())
-                           : false);
+      (safe_size.IsValid() && IsDataRangeAvailable(0, safe_size.ValueOrDie()));
 
   return whole_file_already_available_;
 }
