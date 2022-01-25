@@ -319,18 +319,21 @@ JBig2_Result CJBig2_Context::ProcessingParseSegmentData(
         return JBig2_Result::kFailure;
       return ParseGenericRefinementRegion(pSegment);
     case 48: {
-      uint16_t wTemp;
+      uint8_t segment_flags;
+      uint16_t striping_info;
       auto pPageInfo = std::make_unique<JBig2PageInfo>();
       if (m_pStream->readInteger(&pPageInfo->m_dwWidth) != 0 ||
           m_pStream->readInteger(&pPageInfo->m_dwHeight) != 0 ||
           m_pStream->readInteger(&pPageInfo->m_dwResolutionX) != 0 ||
           m_pStream->readInteger(&pPageInfo->m_dwResolutionY) != 0 ||
-          m_pStream->read1Byte(&pPageInfo->m_cFlags) != 0 ||
-          m_pStream->readShortInteger(&wTemp) != 0) {
+          m_pStream->read1Byte(&segment_flags) != 0 ||
+          m_pStream->readShortInteger(&striping_info) != 0) {
         return JBig2_Result::kFailure;
       }
-      pPageInfo->m_bIsStriped = !!(wTemp & 0x8000);
-      pPageInfo->m_wMaxStripeSize = wTemp & 0x7fff;
+
+      pPageInfo->m_bDefaultPixelValue = !!(segment_flags & 4);
+      pPageInfo->m_bIsStriped = !!(striping_info & 0x8000);
+      pPageInfo->m_wMaxStripeSize = striping_info & 0x7fff;
       bool bMaxHeight = (pPageInfo->m_dwHeight == 0xffffffff);
       if (bMaxHeight && !pPageInfo->m_bIsStriped)
         pPageInfo->m_bIsStriped = true;
@@ -346,10 +349,11 @@ JBig2_Result CJBig2_Context::ProcessingParseSegmentData(
         return JBig2_Result::kFailure;
       }
 
-      m_pPage->Fill(!!(pPageInfo->m_cFlags & 4));
+      m_pPage->Fill(pPageInfo->m_bDefaultPixelValue);
       m_PageInfoList.push_back(std::move(pPageInfo));
       m_bInPage = true;
-    } break;
+      break;
+    }
     case 49:
       m_bInPage = false;
       return JBig2_Result::kEndReached;
@@ -803,7 +807,7 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
       const auto& pPageInfo = m_PageInfoList.back();
       if ((pPageInfo->m_bIsStriped == 1) &&
           (ri.y + ri.height > m_pPage->height())) {
-        m_pPage->Expand(ri.y + ri.height, !!(pPageInfo->m_cFlags & 4));
+        m_pPage->Expand(ri.y + ri.height, pPageInfo->m_bDefaultPixelValue);
       }
     }
     m_pPage->ComposeFrom(ri.x, ri.y, pSegment->m_Image.get(),
@@ -919,7 +923,7 @@ JBig2_Result CJBig2_Context::ParseHalftoneRegion(CJBig2_Segment* pSegment,
       const auto& pPageInfo = m_PageInfoList.back();
       if (pPageInfo->m_bIsStriped == 1 &&
           ri.y + ri.height > m_pPage->height()) {
-        m_pPage->Expand(ri.y + ri.height, !!(pPageInfo->m_cFlags & 4));
+        m_pPage->Expand(ri.y + ri.height, pPageInfo->m_bDefaultPixelValue);
       }
     }
     m_pPage->ComposeFrom(ri.x, ri.y, pSegment->m_Image.get(),
@@ -986,7 +990,7 @@ JBig2_Result CJBig2_Context::ParseGenericRegion(CJBig2_Segment* pSegment,
             if ((pPageInfo->m_bIsStriped == 1) &&
                 (m_ri.y + m_ri.height > m_pPage->height())) {
               m_pPage->Expand(m_ri.y + m_ri.height,
-                              !!(pPageInfo->m_cFlags & 4));
+                              pPageInfo->m_bDefaultPixelValue);
             }
           }
           const FX_RECT& rect = m_pGRD->GetReplaceRect();
@@ -1019,7 +1023,7 @@ JBig2_Result CJBig2_Context::ParseGenericRegion(CJBig2_Segment* pSegment,
       JBig2PageInfo* pPageInfo = m_PageInfoList.back().get();
       if ((pPageInfo->m_bIsStriped == 1) &&
           (m_ri.y + m_ri.height > m_pPage->height())) {
-        m_pPage->Expand(m_ri.y + m_ri.height, !!(pPageInfo->m_cFlags & 4));
+        m_pPage->Expand(m_ri.y + m_ri.height, pPageInfo->m_bDefaultPixelValue);
       }
     }
     const FX_RECT& rect = m_pGRD->GetReplaceRect();
@@ -1092,7 +1096,7 @@ JBig2_Result CJBig2_Context::ParseGenericRefinementRegion(
       JBig2PageInfo* pPageInfo = m_PageInfoList.back().get();
       if ((pPageInfo->m_bIsStriped == 1) &&
           (ri.y + ri.height > m_pPage->height())) {
-        m_pPage->Expand(ri.y + ri.height, !!(pPageInfo->m_cFlags & 4));
+        m_pPage->Expand(ri.y + ri.height, pPageInfo->m_bDefaultPixelValue);
       }
     }
     m_pPage->ComposeFrom(ri.x, ri.y, pSegment->m_Image.get(),
