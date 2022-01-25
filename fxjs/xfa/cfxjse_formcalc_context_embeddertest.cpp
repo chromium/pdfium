@@ -819,6 +819,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Str) {
   // Error cases.
   ExecuteExpectError("Str()");
   ExecuteExpectError("Str(1, 2, 3, 4)");
+  ExecuteExpectError("Str(42, 15654909)");
   ExecuteExpectNull("Str( $)");
 }
 

@@ -51,6 +51,9 @@ using pdfium::fxjse::kFuncTag;
 
 namespace {
 
+// Maximum number of characters Acrobat can fit in a text box.
+constexpr int kMaxCharCount = 15654908;
+
 const double kFinancialPrecision = 0.00000001;
 
 const wchar_t kStrCode[] = L"0123456789abcdef";
@@ -4160,8 +4163,6 @@ void CFXJSE_FormCalcContext::Space(
     return;
   }
 
-  // Maximum number of characters Acrobat can fit in a text box.
-  constexpr int kMaxCharCount = 15654908;
   int count = std::max(0, ValueToInteger(info.GetIsolate(), argOne));
   if (count > kMaxCharCount) {
     ToFormCalcContext(pThis)->ThrowException("String too long.");
@@ -4193,6 +4194,10 @@ void CFXJSE_FormCalcContext::Str(
   if (argc > 1) {
     v8::Local<v8::Value> widthValue = GetSimpleValue(info, 1);
     iWidth = static_cast<int32_t>(ValueToFloat(info.GetIsolate(), widthValue));
+    if (iWidth > kMaxCharCount) {
+      ToFormCalcContext(pThis)->ThrowException("String too long.");
+      return;
+    }
   }
 
   int32_t iPrecision = 0;
