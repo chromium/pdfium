@@ -387,7 +387,7 @@ bug_845697.in * * * skia,skiapaths
 bug_966263.in * * * skia
 
 # TODO(pdfium:1750): Remove after associated bug is fixed
-image_transformer_other.in * * * skia
+image_transformer_other.in * * * *
 
 # TODO(pdfiu,:1310): Remove after associated bug is fixed
 radial_shading_point_at_border.in * * * skia,skiapaths
