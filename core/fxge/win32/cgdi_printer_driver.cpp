@@ -26,40 +26,6 @@
 #include "third_party/base/check_op.h"
 
 #if defined(PDFIUM_PRINT_TEXT_WITH_GDI)
-#include "core/fxcrt/widestring.h"
-#endif
-
-#if defined(PDFIUM_PRINT_TEXT_WITH_GDI)
-namespace {
-
-class ScopedState {
- public:
-  FX_STACK_ALLOCATED();
-
-  ScopedState(HDC hDC, HFONT hFont)
-      : m_hDC(hDC),
-        m_iState(SaveDC(m_hDC)),
-        m_hFont(SelectObject(m_hDC, hFont)) {}
-
-  ScopedState(const ScopedState&) = delete;
-  ScopedState& operator=(const ScopedState&) = delete;
-
-  ~ScopedState() {
-    HGDIOBJ hFont = SelectObject(m_hDC, m_hFont);
-    DeleteObject(hFont);
-    RestoreDC(m_hDC, m_iState);
-  }
-
- private:
-  const HDC m_hDC;
-  const int m_iState;
-  const HGDIOBJ m_hFont;
-};
-
-}  // namespace
-
-bool g_pdfium_print_text_with_gdi = false;
-
 PDFiumEnsureTypefaceCharactersAccessible g_pdfium_typeface_accessible_func =
     nullptr;
 #endif
@@ -207,137 +173,12 @@ bool CGdiPrinterDriver::StartDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                        FXDIB_ResampleOptions(), blend_type);
 }
 
-bool CGdiPrinterDriver::DrawDeviceText(
-    int nChars,
-    const TextCharPos* pCharPos,
-    CFX_Font* pFont,
-    const CFX_Matrix& mtObject2Device,
-    float font_size,
-    uint32_t color,
-    const CFX_TextRenderOptions& /*options*/) {
-#if defined(PDFIUM_PRINT_TEXT_WITH_GDI)
-  if (!g_pdfium_print_text_with_gdi)
-    return false;
-
-  if (nChars < 1 || !pFont || !pFont->IsEmbedded() || !pFont->IsTTFont())
-    return false;
-
-  // Scale factor used to minimize the kerning problems caused by rounding
-  // errors below. Value chosen based on the title of https://crbug.com/18383
-  const double kScaleFactor = 10;
-
-  // Font
-  //
-  // Note that |pFont| has the actual font to render with embedded within, but
-  // but unfortunately AddFontMemResourceEx() does not seem to cooperate.
-  // Loading font data to memory seems to work, but then enumerating the fonts
-  // fails to find it. This requires more investigation. In the meanwhile,
-  // assume the printing is happening on the machine that generated the PDF, so
-  // the embedded font, if not a web font, is available through GDI anyway.
-  // TODO(thestig): Figure out why AddFontMemResourceEx() does not work.
-  // Generalize this method to work for all PDFs with embedded fonts.
-  // In sandboxed environments, font loading may not work at all, so this may be
-  // the best possible effort.
-  LOGFONT lf = {};
-  lf.lfHeight = -font_size * kScaleFactor;
-  lf.lfWeight = pFont->IsBold() ? FW_BOLD : FW_NORMAL;
-  lf.lfItalic = pFont->IsItalic();
-  lf.lfCharSet = DEFAULT_CHARSET;
-
-  const WideString wsName =
-      WideString::FromUTF8(pFont->GetFaceName().AsStringView());
-  size_t iNameLen =
-      std::min(wsName.GetLength(), static_cast<size_t>(LF_FACESIZE - 1));
-  memcpy(lf.lfFaceName, wsName.c_str(), sizeof(lf.lfFaceName[0]) * iNameLen);
-  lf.lfFaceName[iNameLen] = 0;
-
-  HFONT hFont = CreateFontIndirect(&lf);
-  if (!hFont)
-    return false;
-
-  ScopedState state(m_hDC, hFont);
-  size_t nTextMetricSize = GetOutlineTextMetrics(m_hDC, 0, nullptr);
-  if (nTextMetricSize == 0) {
-    // Give up and fail if there is no way to get the font to try again.
-    if (!g_pdfium_typeface_accessible_func)
-      return false;
-
-    // Try to get the font. Any letter will do.
-    g_pdfium_typeface_accessible_func(&lf, L"A", 1);
-    nTextMetricSize = GetOutlineTextMetrics(m_hDC, 0, nullptr);
-    if (nTextMetricSize == 0)
-      return false;
-  }
-
-  std::vector<BYTE, FxAllocAllocator<BYTE>> buf(nTextMetricSize);
-  OUTLINETEXTMETRIC* pTextMetric =
-      reinterpret_cast<OUTLINETEXTMETRIC*>(buf.data());
-  if (GetOutlineTextMetrics(m_hDC, nTextMetricSize, pTextMetric) == 0)
-    return false;
-
-  // If the selected font is not the requested font, then bail out. This can
-  // happen with web fonts, for example.
-  wchar_t* wsSelectedName = reinterpret_cast<wchar_t*>(
-      buf.data() + reinterpret_cast<size_t>(pTextMetric->otmpFaceName));
-  if (wsName != wsSelectedName)
-    return false;
-
-  // Transforms
-  SetGraphicsMode(m_hDC, GM_ADVANCED);
-  XFORM xform;
-  xform.eM11 = mtObject2Device.a / kScaleFactor;
-  xform.eM12 = mtObject2Device.b / kScaleFactor;
-  xform.eM21 = -mtObject2Device.c / kScaleFactor;
-  xform.eM22 = -mtObject2Device.d / kScaleFactor;
-  xform.eDx = mtObject2Device.e;
-  xform.eDy = mtObject2Device.f;
-  ModifyWorldTransform(m_hDC, &xform, MWT_LEFTMULTIPLY);
-
-  // Color
-  FX_COLORREF colorref = ArgbToColorRef(color);
-  SetTextColor(m_hDC, colorref);
-  SetBkMode(m_hDC, TRANSPARENT);
-
-  // Text
-  WideString wsText;
-  std::vector<INT, FxAllocAllocator<INT>> spacing(nChars);
-  float fPreviousOriginX = 0;
-  for (int i = 0; i < nChars; ++i) {
-    // Only works with PDFs from Skia's PDF generator. Cannot handle arbitrary
-    // values from PDFs.
-    const TextCharPos& charpos = pCharPos[i];
-    DCHECK_EQ(charpos.m_AdjustMatrix[0], 0);
-    DCHECK_EQ(charpos.m_AdjustMatrix[1], 0);
-    DCHECK_EQ(charpos.m_AdjustMatrix[2], 0);
-    DCHECK_EQ(charpos.m_AdjustMatrix[3], 0);
-    DCHECK_EQ(charpos.m_Origin.y, 0);
-
-    // Round the spacing to the nearest integer, but keep track of the rounding
-    // error for calculating the next spacing value.
-    float fOriginX = charpos.m_Origin.x * kScaleFactor;
-    float fPixelSpacing = fOriginX - fPreviousOriginX;
-    spacing[i] = FXSYS_roundf(fPixelSpacing);
-    fPreviousOriginX = fOriginX - (fPixelSpacing - spacing[i]);
-
-    wsText += charpos.m_GlyphIndex;
-  }
-
-  // Draw
-  SetTextAlign(m_hDC, TA_LEFT | TA_BASELINE);
-  if (ExtTextOutW(m_hDC, 0, 0, ETO_GLYPH_INDEX, nullptr, wsText.c_str(), nChars,
-                  nChars > 1 ? &spacing[1] : nullptr)) {
-    return true;
-  }
-
-  // Give up and fail if there is no way to get the font to try again.
-  if (!g_pdfium_typeface_accessible_func)
-    return false;
-
-  // Try to get the font and draw again.
-  g_pdfium_typeface_accessible_func(&lf, wsText.c_str(), nChars);
-  return !!ExtTextOutW(m_hDC, 0, 0, ETO_GLYPH_INDEX, nullptr, wsText.c_str(),
-                       nChars, nChars > 1 ? &spacing[1] : nullptr);
-#else
+bool CGdiPrinterDriver::DrawDeviceText(int nChars,
+                                       const TextCharPos* pCharPos,
+                                       CFX_Font* pFont,
+                                       const CFX_Matrix& mtObject2Device,
+                                       float font_size,
+                                       uint32_t color,
+                                       const CFX_TextRenderOptions& options) {
   return false;
-#endif
 }

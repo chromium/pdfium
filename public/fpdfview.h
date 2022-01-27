@@ -310,15 +310,6 @@ typedef void (*PDFiumEnsureTypefaceCharactersAccessible)(const LOGFONT* font,
 //          None.
 FPDF_EXPORT void FPDF_CALLCONV
 FPDF_SetTypefaceAccessibleFunc(PDFiumEnsureTypefaceCharactersAccessible func);
-
-// Experimental API.
-// Function: FPDF_SetPrintTextWithGDI
-//          Set whether to use GDI to draw fonts when printing on Windows.
-// Parameters:
-//          use_gdi -   Set to true to enable printing text with GDI.
-// Return value:
-//          None.
-FPDF_EXPORT void FPDF_CALLCONV FPDF_SetPrintTextWithGDI(FPDF_BOOL use_gdi);
 #endif  // PDFIUM_PRINT_TEXT_WITH_GDI
 
 // Experimental API.

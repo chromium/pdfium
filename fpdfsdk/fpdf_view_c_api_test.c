@@ -497,9 +497,6 @@ int CheckPDFiumCApi() {
 #endif
 #if defined(_WIN32)
     CHK(FPDF_SetPrintMode);
-#if defined(PDFIUM_PRINT_TEXT_WITH_GDI)
-    CHK(FPDF_SetPrintTextWithGDI);
-#endif
 #endif
     CHK(FPDF_SetSandBoxPolicy);
 #if defined(_WIN32) && defined(PDFIUM_PRINT_TEXT_WITH_GDI)

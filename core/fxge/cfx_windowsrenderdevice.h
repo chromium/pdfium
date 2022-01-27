@@ -31,7 +31,6 @@ typedef void (*PDFiumEnsureTypefaceCharactersAccessible)(const LOGFONT* font,
                                                          const wchar_t* text,
                                                          size_t text_length);
 
-extern bool g_pdfium_print_text_with_gdi;
 extern PDFiumEnsureTypefaceCharactersAccessible
     g_pdfium_typeface_accessible_func;
 #endif
