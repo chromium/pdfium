@@ -362,9 +362,6 @@ bug_1519.in * * * *
 # TODO(pdfium:1571): Remove after associated bug is fixed
 bug_1571.in * * * *
 
-# TODO(pdfium:1750): Remove after associated bug is fixed
-bug_1750.in * * * skia
-
 # TODO(chromium:237527): Remove after associated bug is fixed
 bug_237527_1.in * * * *
 
@@ -385,9 +382,6 @@ bug_845697.in * * * skia,skiapaths
 
 # TODO(pdfium:1749): Remove after associated bug is fixed
 bug_966263.in * * * skia
-
-# TODO(pdfium:1750): Remove after associated bug is fixed
-image_transformer_other.in * * * skia
 
 # TODO(pdfiu,:1310): Remove after associated bug is fixed
 radial_shading_point_at_border.in * * * skia,skiapaths
