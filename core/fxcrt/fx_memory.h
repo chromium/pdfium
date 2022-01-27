@@ -89,7 +89,11 @@ void* StringAllocOrDie(size_t num_members, size_t member_size);
 }  // namespace internal
 }  // namespace pdfium
 
-// Force stack allocation of a class.
+// Force stack allocation of a class. Classes that do complex work in a
+// destructor, such as the flushing of buffers, should be declared as
+// stack-allocated as possible, since future memory allocation schemes
+// may not run destructors in a predictable manner if an instance is
+// heap-allocated.
 #define FX_STACK_ALLOCATED()           \
   void* operator new(size_t) = delete; \
   void* operator new(size_t, void*) = delete

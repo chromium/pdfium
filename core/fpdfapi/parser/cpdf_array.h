@@ -162,6 +162,7 @@ class CPDF_Array final : public CPDF_Object {
 
 class CPDF_ArrayLocker {
  public:
+  FX_STACK_ALLOCATED();
   using const_iterator = CPDF_Array::const_iterator;
 
   explicit CPDF_ArrayLocker(const CPDF_Array* pArray);

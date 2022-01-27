@@ -13,6 +13,7 @@
 #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
 #include "core/fpdfapi/page/ipdf_page.h"
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -43,6 +44,7 @@ class CPDF_Page final : public IPDF_Page, public CPDF_PageObjectHolder {
 
   class RenderContextClearer {
    public:
+    FX_STACK_ALLOCATED();
     explicit RenderContextClearer(CPDF_Page* pPage);
     ~RenderContextClearer();
 

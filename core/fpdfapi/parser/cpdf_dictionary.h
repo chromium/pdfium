@@ -137,6 +137,7 @@ class CPDF_Dictionary final : public CPDF_Object {
 
 class CPDF_DictionaryLocker {
  public:
+  FX_STACK_ALLOCATED();
   using const_iterator = CPDF_Dictionary::const_iterator;
 
   explicit CPDF_DictionaryLocker(const CPDF_Dictionary* pDictionary);
