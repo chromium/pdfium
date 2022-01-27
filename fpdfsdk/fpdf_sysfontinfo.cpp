@@ -36,11 +36,22 @@ static_assert(FXFONT_GB2312_CHARSET ==
 static_assert(FXFONT_CHINESEBIG5_CHARSET ==
                   static_cast<int>(FX_Charset::kChineseTraditional),
               "Charset must match");
+static_assert(FXFONT_GREEK_CHARSET ==
+                  static_cast<int>(FX_Charset::kMSWin_Greek),
+              "Charset must match");
+static_assert(FXFONT_VIETNAMESE_CHARSET ==
+                  static_cast<int>(FX_Charset::kMSWin_Vietnamese),
+              "Charset must match");
+static_assert(FXFONT_HEBREW_CHARSET ==
+                  static_cast<int>(FX_Charset::kMSWin_Hebrew),
+              "Charset must match");
 static_assert(FXFONT_ARABIC_CHARSET ==
                   static_cast<int>(FX_Charset::kMSWin_Arabic),
               "Charset must match");
 static_assert(FXFONT_CYRILLIC_CHARSET ==
                   static_cast<int>(FX_Charset::kMSWin_Cyrillic),
+              "Charset must match");
+static_assert(FXFONT_THAI_CHARSET == static_cast<int>(FX_Charset::kThai),
               "Charset must match");
 static_assert(FXFONT_EASTERNEUROPEAN_CHARSET ==
                   static_cast<int>(FX_Charset::kMSWin_EasternEuropean),
