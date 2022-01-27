@@ -15,6 +15,7 @@
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/cpdf_image.h"
 #include "core/fpdfapi/page/cpdf_imageobject.h"
+#include "core/fpdfapi/page/cpdf_indexedcs.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -888,12 +889,22 @@ void CPDF_DIB::LoadPalette() {
 
     FX_ARGB argb0 = ArgbEncode(255, FXSYS_roundf(R * 255),
                                FXSYS_roundf(G * 255), FXSYS_roundf(B * 255));
-    color_values[0] += m_CompData[0].m_DecodeStep;
-    color_values[1] += m_CompData[0].m_DecodeStep;
-    color_values[2] += m_CompData[0].m_DecodeStep;
-    m_pColorSpace->GetRGB(color_values, &R, &G, &B);
-    FX_ARGB argb1 = ArgbEncode(255, FXSYS_roundf(R * 255),
-                               FXSYS_roundf(G * 255), FXSYS_roundf(B * 255));
+    FX_ARGB argb1;
+    const CPDF_IndexedCS* indexed_cs = m_pColorSpace->AsIndexedCS();
+    if (indexed_cs && indexed_cs->GetMaxIndex() == 0) {
+      // If an indexed color space's hival value is 0, only 1 color is specified
+      // in the lookup table. Another color should be set to 0xFF000000 by
+      // default to set the range of the color space.
+      argb1 = 0xFF000000;
+    } else {
+      color_values[0] += m_CompData[0].m_DecodeStep;
+      color_values[1] += m_CompData[0].m_DecodeStep;
+      color_values[2] += m_CompData[0].m_DecodeStep;
+      m_pColorSpace->GetRGB(color_values, &R, &G, &B);
+      argb1 = ArgbEncode(255, FXSYS_roundf(R * 255), FXSYS_roundf(G * 255),
+                         FXSYS_roundf(B * 255));
+    }
+
     if (argb0 != 0xFF000000 || argb1 != 0xFFFFFFFF) {
       SetPaletteArgb(0, argb0);
       SetPaletteArgb(1, argb1);

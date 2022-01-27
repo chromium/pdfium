@@ -29,6 +29,8 @@ class CPDF_IndexedCS final : public CPDF_BasedCS {
                   const CPDF_Array* pArray,
                   std::set<const CPDF_Object*>* pVisited) override;
 
+  int GetMaxIndex() const { return m_MaxIndex; }
+
  private:
   CPDF_IndexedCS();
 
