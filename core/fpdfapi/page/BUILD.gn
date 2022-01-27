@@ -51,6 +51,8 @@ source_set("page") {
     "cpdf_image.h",
     "cpdf_imageobject.cpp",
     "cpdf_imageobject.h",
+    "cpdf_indexedcs.cpp",
+    "cpdf_indexedcs.h",
     "cpdf_meshstream.cpp",
     "cpdf_meshstream.h",
     "cpdf_occontext.cpp",

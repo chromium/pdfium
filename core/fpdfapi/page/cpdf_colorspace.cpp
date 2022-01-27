@@ -19,6 +19,7 @@
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/cpdf_function.h"
 #include "core/fpdfapi/page/cpdf_iccprofile.h"
+#include "core/fpdfapi/page/cpdf_indexedcs.h"
 #include "core/fpdfapi/page/cpdf_pagemodule.h"
 #include "core/fpdfapi/page/cpdf_pattern.h"
 #include "core/fpdfapi/page/cpdf_patterncs.h"
@@ -28,8 +29,6 @@
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
-#include "core/fpdfapi/parser/cpdf_stream_acc.h"
-#include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/icc/icc_transform.h"
@@ -248,29 +247,6 @@ class CPDF_ICCBasedCS final : public CPDF_BasedCS {
   RetainPtr<CPDF_IccProfile> m_pProfile;
   mutable std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_pCache;
   std::vector<float> m_pRanges;
-};
-
-class CPDF_IndexedCS final : public CPDF_BasedCS {
- public:
-  CONSTRUCT_VIA_MAKE_RETAIN;
-  ~CPDF_IndexedCS() override;
-
-  // CPDF_ColorSpace:
-  bool GetRGB(pdfium::span<const float> pBuf,
-              float* R,
-              float* G,
-              float* B) const override;
-  uint32_t v_Load(CPDF_Document* pDoc,
-                  const CPDF_Array* pArray,
-                  std::set<const CPDF_Object*>* pVisited) override;
-
- private:
-  CPDF_IndexedCS();
-
-  uint32_t m_nBaseComponents = 0;
-  int m_MaxIndex = 0;
-  ByteString m_Table;
-  std::vector<float> m_pCompMinMax;
 };
 
 class CPDF_SeparationCS final : public CPDF_BasedCS {
@@ -646,6 +622,10 @@ bool CPDF_ColorSpace::IsNormal() const {
 }
 
 const CPDF_PatternCS* CPDF_ColorSpace::AsPatternCS() const {
+  return nullptr;
+}
+
+const CPDF_IndexedCS* CPDF_ColorSpace::AsIndexedCS() const {
   return nullptr;
 }
 
@@ -1111,85 +1091,6 @@ std::vector<float> CPDF_ICCBasedCS::GetRanges(const CPDF_Dictionary* pDict,
     ranges.push_back(1.0f);
   }
   return ranges;
-}
-
-CPDF_IndexedCS::CPDF_IndexedCS() : CPDF_BasedCS(Family::kIndexed) {}
-
-CPDF_IndexedCS::~CPDF_IndexedCS() = default;
-
-uint32_t CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
-                                const CPDF_Array* pArray,
-                                std::set<const CPDF_Object*>* pVisited) {
-  if (pArray->size() < 4)
-    return 0;
-
-  const CPDF_Object* pBaseObj = pArray->GetDirectObjectAt(1);
-  if (pBaseObj == m_pArray)
-    return 0;
-
-  auto* pDocPageData = CPDF_DocPageData::FromDocument(pDoc);
-  m_pBaseCS = pDocPageData->GetColorSpaceGuarded(pBaseObj, nullptr, pVisited);
-  if (!m_pBaseCS)
-    return 0;
-
-  // The base color space cannot be a Pattern or Indexed space, according to the
-  // PDF 1.7 spec, page 263.
-  Family family = m_pBaseCS->GetFamily();
-  if (family == Family::kIndexed || family == Family::kPattern)
-    return 0;
-
-  m_nBaseComponents = m_pBaseCS->CountComponents();
-  m_pCompMinMax = fxcrt::Vector2D<float>(m_nBaseComponents, 2);
-  float defvalue;
-  for (uint32_t i = 0; i < m_nBaseComponents; i++) {
-    m_pBaseCS->GetDefaultValue(i, &defvalue, &m_pCompMinMax[i * 2],
-                               &m_pCompMinMax[i * 2 + 1]);
-    m_pCompMinMax[i * 2 + 1] -= m_pCompMinMax[i * 2];
-  }
-  m_MaxIndex = pArray->GetIntegerAt(2);
-
-  const CPDF_Object* pTableObj = pArray->GetDirectObjectAt(3);
-  if (!pTableObj)
-    return 0;
-
-  if (const CPDF_String* pString = pTableObj->AsString()) {
-    m_Table = pString->GetString();
-  } else if (const CPDF_Stream* pStream = pTableObj->AsStream()) {
-    auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
-    pAcc->LoadAllDataFiltered();
-    m_Table = ByteStringView(pAcc->GetSpan());
-  }
-  return 1;
-}
-
-bool CPDF_IndexedCS::GetRGB(pdfium::span<const float> pBuf,
-                            float* R,
-                            float* G,
-                            float* B) const {
-  int32_t index = static_cast<int32_t>(pBuf[0]);
-  if (index < 0 || index > m_MaxIndex)
-    return false;
-
-  if (m_nBaseComponents) {
-    FX_SAFE_SIZE_T length = index;
-    length += 1;
-    length *= m_nBaseComponents;
-    if (!length.IsValid() || length.ValueOrDie() > m_Table.GetLength()) {
-      *R = 0;
-      *G = 0;
-      *B = 0;
-      return false;
-    }
-  }
-  std::vector<float> comps(m_nBaseComponents);
-  const uint8_t* pTable = m_Table.raw_str();
-  for (uint32_t i = 0; i < m_nBaseComponents; ++i) {
-    comps[i] =
-        m_pCompMinMax[i * 2] +
-        m_pCompMinMax[i * 2 + 1] * pTable[index * m_nBaseComponents + i] / 255;
-  }
-  DCHECK_EQ(m_nBaseComponents, m_pBaseCS->CountComponents());
-  return m_pBaseCS->GetRGB(comps, R, G, B);
 }
 
 CPDF_SeparationCS::CPDF_SeparationCS() : CPDF_BasedCS(Family::kSeparation) {}

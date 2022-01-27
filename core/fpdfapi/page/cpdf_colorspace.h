@@ -23,6 +23,7 @@
 
 class CPDF_Array;
 class CPDF_Document;
+class CPDF_IndexedCS;
 class CPDF_Object;
 class CPDF_PatternCS;
 
@@ -114,8 +115,11 @@ class CPDF_ColorSpace : public Retainable, public Observable {
   virtual void EnableStdConversion(bool bEnabled);
   virtual bool IsNormal() const;
 
-  // Returns |this| as a CPDF_PatternCS* if |this| is a pattern.
+  // Returns `this` as a CPDF_PatternCS* if `this` is a pattern.
   virtual const CPDF_PatternCS* AsPatternCS() const;
+
+  // Returns `this` as a CPDF_IndexedCS* if `this` is indexed.
+  virtual const CPDF_IndexedCS* AsIndexedCS() const;
 
  protected:
   explicit CPDF_ColorSpace(Family family);
