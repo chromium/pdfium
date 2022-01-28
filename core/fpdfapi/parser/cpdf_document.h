@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "core/fpdfapi/parser/cpdf_parser.h"
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -141,6 +142,8 @@ class CPDF_Document : public Observable,
  private:
   class StockFontClearer {
    public:
+    FX_STACK_ALLOCATED();
+
     explicit StockFontClearer(CPDF_Document::PageDataIface* pPageData);
     ~StockFontClearer();
 
