@@ -7,7 +7,7 @@
 #ifndef CORE_FXCODEC_FX_CODEC_H_
 #define CORE_FXCODEC_FX_CODEC_H_
 
-#include <map>
+#include <stdint.h>
 
 #include "third_party/abseil-cpp/absl/types/optional.h"
 
@@ -22,7 +22,6 @@ class CFX_DIBAttribute {
   int32_t m_nXDPI = -1;
   int32_t m_nYDPI = -1;
   uint16_t m_wDPIUnit = 0;
-  std::map<uint32_t, void*> m_Exif;
 };
 #endif  // PDF_ENABLE_XFA
 

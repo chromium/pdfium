@@ -41,10 +41,7 @@ FX_SAFE_UINT32 CalculatePitch32Safely(int bpp, int width) {
 #ifdef PDF_ENABLE_XFA
 CFX_DIBAttribute::CFX_DIBAttribute() = default;
 
-CFX_DIBAttribute::~CFX_DIBAttribute() {
-  for (const auto& pair : m_Exif)
-    FX_Free(pair.second);
-}
+CFX_DIBAttribute::~CFX_DIBAttribute() = default;
 #endif  // PDF_ENABLE_XFA
 
 void ReverseRGB(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels) {

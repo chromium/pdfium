@@ -195,32 +195,6 @@ TIFF* tiff_open(void* context, const char* mode) {
   return tif;
 }
 
-template <class T>
-bool Tiff_Exif_GetInfo(TIFF* tif_ctx, ttag_t tag, CFX_DIBAttribute* pAttr) {
-  T val = 0;
-  TIFFGetField(tif_ctx, tag, &val);
-  if (!val)
-    return false;
-  T* ptr = FX_Alloc(T, 1);
-  *ptr = val;
-  pAttr->m_Exif[tag] = ptr;
-  return true;
-}
-
-void Tiff_Exif_GetStringInfo(TIFF* tif_ctx,
-                             ttag_t tag,
-                             CFX_DIBAttribute* pAttr) {
-  char* buf = nullptr;
-  TIFFGetField(tif_ctx, tag, &buf);
-  if (!buf)
-    return;
-  size_t size = strlen(buf);
-  uint8_t* ptr = FX_AllocUninit(uint8_t, size + 1);
-  memcpy(ptr, buf, size);
-  ptr[size] = 0;
-  pAttr->m_Exif[tag] = ptr;
-}
-
 void TiffBGRA2RGBA(uint8_t* pBuf, int32_t pixel, int32_t spp) {
   for (int32_t n = 0; n < pixel; n++) {
     uint8_t tmp = pBuf[0];
@@ -259,28 +233,22 @@ bool CTiffContext::LoadFrameInfo(int32_t frame,
   TIFFGetField(m_tif_ctx.get(), TIFFTAG_BITSPERSAMPLE, &tif_bpc);
   TIFFGetField(m_tif_ctx.get(), TIFFTAG_ROWSPERSTRIP, &tif_rps);
 
-  pAttribute->m_wDPIUnit = FXCODEC_RESUNIT_INCH;
-  if (TIFFGetField(m_tif_ctx.get(), TIFFTAG_RESOLUTIONUNIT,
-                   &pAttribute->m_wDPIUnit)) {
-    pAttribute->m_wDPIUnit--;
+  uint16_t tif_resunit = 0;
+  if (TIFFGetField(m_tif_ctx.get(), TIFFTAG_RESOLUTIONUNIT, &tif_resunit)) {
+    pAttribute->m_wDPIUnit = tif_resunit - 1;
+  } else {
+    pAttribute->m_wDPIUnit = FXCODEC_RESUNIT_INCH;
   }
-  Tiff_Exif_GetInfo<uint16_t>(m_tif_ctx.get(), TIFFTAG_ORIENTATION, pAttribute);
-  if (Tiff_Exif_GetInfo<float>(m_tif_ctx.get(), TIFFTAG_XRESOLUTION,
-                               pAttribute)) {
-    void* val = pAttribute->m_Exif[TIFFTAG_XRESOLUTION];
-    float fDpi = val ? *reinterpret_cast<float*>(val) : 0;
-    pAttribute->m_nXDPI = static_cast<int32_t>(fDpi + 0.5f);
-  }
-  if (Tiff_Exif_GetInfo<float>(m_tif_ctx.get(), TIFFTAG_YRESOLUTION,
-                               pAttribute)) {
-    void* val = pAttribute->m_Exif[TIFFTAG_YRESOLUTION];
-    float fDpi = val ? *reinterpret_cast<float*>(val) : 0;
-    pAttribute->m_nYDPI = static_cast<int32_t>(fDpi + 0.5f);
-  }
-  Tiff_Exif_GetStringInfo(m_tif_ctx.get(), TIFFTAG_IMAGEDESCRIPTION,
-                          pAttribute);
-  Tiff_Exif_GetStringInfo(m_tif_ctx.get(), TIFFTAG_MAKE, pAttribute);
-  Tiff_Exif_GetStringInfo(m_tif_ctx.get(), TIFFTAG_MODEL, pAttribute);
+
+  float tif_xdpi = 0.0f;
+  TIFFGetField(m_tif_ctx.get(), TIFFTAG_XRESOLUTION, &tif_xdpi);
+  if (tif_xdpi)
+    pAttribute->m_nXDPI = static_cast<int32_t>(tif_xdpi + 0.5f);
+
+  float tif_ydpi = 0.0f;
+  TIFFGetField(m_tif_ctx.get(), TIFFTAG_YRESOLUTION, &tif_ydpi);
+  if (tif_ydpi)
+    pAttribute->m_nYDPI = static_cast<int32_t>(tif_ydpi + 0.5f);
 
   FX_SAFE_INT32 checked_width = tif_width;
   FX_SAFE_INT32 checked_height = tif_height;
