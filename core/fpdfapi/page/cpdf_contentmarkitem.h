@@ -24,7 +24,6 @@ class CPDF_ContentMarkItem final : public Retainable {
   const CPDF_Dictionary* GetParam() const;
   CPDF_Dictionary* GetParam();
   const ByteString& GetPropertyName() const { return m_PropertyName; }
-  bool HasMCID() const;
 
   void SetDirectDict(RetainPtr<CPDF_Dictionary> pDict);
   void SetPropertiesHolder(CPDF_Dictionary* pHolder,

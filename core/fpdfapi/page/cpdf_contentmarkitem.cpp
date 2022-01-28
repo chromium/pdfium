@@ -32,11 +32,6 @@ CPDF_Dictionary* CPDF_ContentMarkItem::GetParam() {
       static_cast<const CPDF_ContentMarkItem*>(this)->GetParam());
 }
 
-bool CPDF_ContentMarkItem::HasMCID() const {
-  const CPDF_Dictionary* pDict = GetParam();
-  return pDict && pDict->KeyExist("MCID");
-}
-
 void CPDF_ContentMarkItem::SetDirectDict(RetainPtr<CPDF_Dictionary> pDict) {
   m_ParamType = kDirectDict;
   m_pDirectDict = std::move(pDict);
