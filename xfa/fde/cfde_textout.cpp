@@ -91,8 +91,8 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
         font = pFxFont;
 #endif
 
-        device->DrawNormalText(iCurCount, pCurCP, font, -fFontSize, matrix,
-                               color, kOptions);
+        device->DrawNormalText(pdfium::make_span(pCurCP, iCurCount), font,
+                               -fFontSize, matrix, color, kOptions);
       }
       pCurFont = pSTFont;
       pCurCP = &pos;
@@ -114,8 +114,8 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
     font = pFxFont;
 #endif
 
-    bRet = device->DrawNormalText(iCurCount, pCurCP, font, -fFontSize, matrix,
-                                  color, kOptions);
+    bRet = device->DrawNormalText(pdfium::make_span(pCurCP, iCurCount), font,
+                                  -fFontSize, matrix, color, kOptions);
   }
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   device->Flush(false);

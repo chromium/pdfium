@@ -33,13 +33,12 @@ namespace {
 void DoNothing(void* info, const void* data, size_t size) {}
 
 bool CGDrawGlyphRun(CGContextRef pContext,
-                    int nChars,
-                    const TextCharPos* pCharPos,
+                    pdfium::span<const TextCharPos> pCharPos,
                     CFX_Font* pFont,
                     const CFX_Matrix& mtObject2Device,
                     float font_size,
                     uint32_t argb) {
-  if (nChars == 0)
+  if (pCharPos.empty())
     return true;
 
   bool bNegSize = font_size < 0;
@@ -58,9 +57,10 @@ bool CGDrawGlyphRun(CGContextRef pContext,
     if (!pFont->GetPlatformFont())
       return false;
   }
-  std::vector<uint16_t, FxAllocAllocator<uint16_t>> glyph_indices(nChars);
-  std::vector<CGPoint> glyph_positions(nChars);
-  for (int i = 0; i < nChars; i++) {
+  std::vector<uint16_t, FxAllocAllocator<uint16_t>> glyph_indices(
+      pCharPos.size());
+  std::vector<CGPoint> glyph_positions(pCharPos.size());
+  for (size_t i = 0; i < pCharPos.size(); i++) {
     glyph_indices[i] =
         pCharPos[i].m_ExtGID ? pCharPos[i].m_ExtGID : pCharPos[i].m_GlyphIndex;
     if (bNegSize)
@@ -78,8 +78,8 @@ bool CGDrawGlyphRun(CGContextRef pContext,
   }
   quartz2d.SetGraphicsTextMatrix(pContext, new_matrix);
   return quartz2d.DrawGraphicsString(pContext, pFont->GetPlatformFont(),
-                                     font_size, glyph_indices.data(),
-                                     glyph_positions.data(), nChars, argb);
+                                     font_size, glyph_indices, glyph_positions,
+                                     argb);
 }
 
 }  // namespace
@@ -104,8 +104,7 @@ void CFX_AggDeviceDriver::DestroyPlatform() {
 }
 
 bool CFX_AggDeviceDriver::DrawDeviceText(
-    int nChars,
-    const TextCharPos* pCharPos,
+    pdfium::span<const TextCharPos> pCharPos,
     CFX_Font* pFont,
     const CFX_Matrix& mtObject2Device,
     float font_size,
@@ -120,8 +119,8 @@ bool CFX_AggDeviceDriver::DrawDeviceText(
       pFont->GetSubstFont()->m_Weight <= 600) {
     return false;
   }
-  for (int i = 0; i < nChars; i++) {
-    if (pCharPos[i].m_bGlyphAdjust)
+  for (const auto& cp : pCharPos) {
+    if (cp.m_bGlyphAdjust)
       return false;
   }
   CGContextRef ctx = CGContextRef(m_pPlatformGraphics);
@@ -156,8 +155,8 @@ bool CFX_AggDeviceDriver::DrawDeviceText(
   else
     CGContextClipToRect(ctx, rect_cg);
 
-  bool ret = CGDrawGlyphRun(ctx, nChars, pCharPos, pFont, mtObject2Device,
-                            font_size, argb);
+  bool ret =
+      CGDrawGlyphRun(ctx, pCharPos, pFont, mtObject2Device, font_size, argb);
   if (pImageCG)
     CGImageRelease(pImageCG);
   CGContextRestoreGState(ctx);

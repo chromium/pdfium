@@ -75,9 +75,8 @@ void CQuartz2D::SetGraphicsTextMatrix(void* graphics,
 bool CQuartz2D::DrawGraphicsString(void* graphics,
                                    void* font,
                                    float fontSize,
-                                   uint16_t* glyphIndices,
-                                   CGPoint* glyphPositions,
-                                   int32_t charsCount,
+                                   pdfium::span<uint16_t> glyphIndices,
+                                   pdfium::span<CGPoint> glyphPositions,
                                    FX_ARGB argb) {
   if (!graphics)
     return false;
@@ -94,17 +93,17 @@ bool CQuartz2D::DrawGraphicsString(void* graphics,
   CGContextSetRGBFillColor(context, r / 255.f, g / 255.f, b / 255.f, a / 255.f);
   CGContextSaveGState(context);
 #if CGFLOAT_IS_DOUBLE
-  CGPoint* glyphPositionsCG = new CGPoint[charsCount];
-  for (int index = 0; index < charsCount; ++index) {
+  CGPoint* glyphPositionsCG = new CGPoint[glyphPositions.size()];
+  for (size_t index = 0; index < glyphPositions.size(); ++index) {
     glyphPositionsCG[index].x = glyphPositions[index].x;
     glyphPositionsCG[index].y = glyphPositions[index].y;
   }
 #else
-  CGPoint* glyphPositionsCG = glyphPositions;
+  CGPoint* glyphPositionsCG = glyphPositions.data();
 #endif
-  CGContextShowGlyphsAtPositions(context,
-                                 reinterpret_cast<CGGlyph*>(glyphIndices),
-                                 glyphPositionsCG, charsCount);
+  CGContextShowGlyphsAtPositions(
+      context, reinterpret_cast<CGGlyph*>(glyphIndices.data()),
+      glyphPositionsCG, glyphPositions.size());
 #if CGFLOAT_IS_DOUBLE
   delete[] glyphPositionsCG;
 #endif

@@ -24,6 +24,7 @@
 #include "core/fxcrt/cfx_bitstream.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_graphstatedata.h"
@@ -1715,15 +1716,15 @@ void CFX_SkiaDeviceDriver::PreMultiply() {
 }
 
 bool CFX_SkiaDeviceDriver::DrawDeviceText(
-    int nChars,
-    const TextCharPos* pCharPos,
+    pdfium::span<const TextCharPos> pCharPos,
     CFX_Font* pFont,
     const CFX_Matrix& mtObject2Device,
     float font_size,
     uint32_t color,
     const CFX_TextRenderOptions& options) {
-  if (m_pCache->DrawText(nChars, pCharPos, pFont, mtObject2Device, font_size,
-                         color, options)) {
+  int nChars = fxcrt::CollectionSize<int>(pCharPos);
+  if (m_pCache->DrawText(nChars, pCharPos.data(), pFont, mtObject2Device,
+                         font_size, color, options)) {
     return true;
   }
   sk_sp<SkTypeface> typeface(SkSafeRef(pFont->GetDeviceCache()));

@@ -183,9 +183,9 @@ void CBC_OneDimWriter::ShowDeviceChars(CFX_RenderDevice* device,
   CFX_Matrix affine_matrix(1.0, 0.0, 0.0, -1.0, (float)locX,
                            (float)(locY + iFontSize));
   affine_matrix.Concat(matrix);
-  device->DrawNormalText(str.GetLength(), pCharPos, m_pFont.Get(),
-                         static_cast<float>(iFontSize), affine_matrix,
-                         m_fontColor, GetTextRenderOptions());
+  device->DrawNormalText(pdfium::make_span(pCharPos, str.GetLength()),
+                         m_pFont.Get(), static_cast<float>(iFontSize),
+                         affine_matrix, m_fontColor, GetTextRenderOptions());
 }
 
 bool CBC_OneDimWriter::ShowChars(WideStringView contents,

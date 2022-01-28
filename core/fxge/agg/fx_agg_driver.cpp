@@ -1034,13 +1034,13 @@ void CFX_AggDeviceDriver::InitPlatform() {}
 
 void CFX_AggDeviceDriver::DestroyPlatform() {}
 
-bool CFX_AggDeviceDriver::DrawDeviceText(int nChars,
-                                         const TextCharPos* pCharPos,
-                                         CFX_Font* pFont,
-                                         const CFX_Matrix& mtObject2Device,
-                                         float font_size,
-                                         uint32_t color,
-                                         const CFX_TextRenderOptions& options) {
+bool CFX_AggDeviceDriver::DrawDeviceText(
+    pdfium::span<const TextCharPos> pCharPos,
+    CFX_Font* pFont,
+    const CFX_Matrix& mtObject2Device,
+    float font_size,
+    uint32_t color,
+    const CFX_TextRenderOptions& options) {
   return false;
 }
 #endif  // !BUILDFLAG(IS_APPLE)

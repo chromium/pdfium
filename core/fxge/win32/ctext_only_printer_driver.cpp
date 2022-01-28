@@ -125,8 +125,7 @@ bool CTextOnlyPrinterDriver::StartDIBits(
 }
 
 bool CTextOnlyPrinterDriver::DrawDeviceText(
-    int nChars,
-    const TextCharPos* pCharPos,
+    pdfium::span<const TextCharPos> pCharPos,
     CFX_Font* pFont,
     const CFX_Matrix& mtObject2Device,
     float font_size,
@@ -134,7 +133,7 @@ bool CTextOnlyPrinterDriver::DrawDeviceText(
     const CFX_TextRenderOptions& /*options*/) {
   if (g_pdfium_print_mode != WindowsPrintMode::kTextOnly)
     return false;
-  if (nChars < 1 || !pFont || !pFont->IsEmbedded() || !pFont->IsTTFont())
+  if (pCharPos.empty() || !pFont || !pFont->IsEmbedded() || !pFont->IsTTFont())
     return false;
 
   // Scale factor used to minimize the kerning problems caused by rounding
@@ -146,7 +145,7 @@ bool CTextOnlyPrinterDriver::DrawDeviceText(
   // preserved in the text location. clrf characters seem to be ignored by
   // label printers that use this driver.
   WideString wsText;
-  size_t len = nChars;
+  size_t len = pCharPos.size();
   float fOffsetY = mtObject2Device.f * kScaleFactor;
   if (m_SetOrigin && FXSYS_roundf(m_OriginY) != FXSYS_roundf(fOffsetY)) {
     wsText += L"\r\n";
@@ -157,16 +156,14 @@ bool CTextOnlyPrinterDriver::DrawDeviceText(
   m_SetOrigin = true;
 
   // Text
-  for (int i = 0; i < nChars; ++i) {
+  for (const auto& charpos : pCharPos) {
     // Only works with PDFs from Skia's PDF generator. Cannot handle arbitrary
     // values from PDFs.
-    const TextCharPos& charpos = pCharPos[i];
     DCHECK_EQ(charpos.m_AdjustMatrix[0], 0);
     DCHECK_EQ(charpos.m_AdjustMatrix[1], 0);
     DCHECK_EQ(charpos.m_AdjustMatrix[2], 0);
     DCHECK_EQ(charpos.m_AdjustMatrix[3], 0);
     DCHECK_EQ(charpos.m_Origin.y, 0);
-
     wsText += charpos.m_Unicode;
   }
   ByteString text = wsText.ToDefANSI();

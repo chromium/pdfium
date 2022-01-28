@@ -161,9 +161,9 @@ bool CBC_OnedUPCAWriter::ShowChars(WideStringView contents,
                               (float)leftPosition * m_outputHScale,
                               (float)(m_Height - iTextHeight + iFontSize));
     affine_matrix1.Concat(matrix);
-    device->DrawNormalText(length, &charpos[1], m_pFont.Get(),
-                           static_cast<float>(iFontSize), affine_matrix1,
-                           m_fontColor, GetTextRenderOptions());
+    device->DrawNormalText(pdfium::make_span(charpos).subspan(1, length),
+                           m_pFont.Get(), static_cast<float>(iFontSize),
+                           affine_matrix1, m_fontColor, GetTextRenderOptions());
   }
   tempStr = str.Substr(6, 5);
   length = tempStr.GetLength();
@@ -174,9 +174,9 @@ bool CBC_OnedUPCAWriter::ShowChars(WideStringView contents,
         (float)(leftPosition + 40 * multiple) * m_outputHScale,
         (float)(m_Height - iTextHeight + iFontSize));
     affine_matrix1.Concat(matrix);
-    device->DrawNormalText(length, &charpos[6], m_pFont.Get(),
-                           static_cast<float>(iFontSize), affine_matrix1,
-                           m_fontColor, GetTextRenderOptions());
+    device->DrawNormalText(pdfium::make_span(charpos).subspan(6, length),
+                           m_pFont.Get(), static_cast<float>(iFontSize),
+                           affine_matrix1, m_fontColor, GetTextRenderOptions());
   }
   tempStr = str.First(1);
   length = tempStr.GetLength();
@@ -189,9 +189,9 @@ bool CBC_OnedUPCAWriter::ShowChars(WideStringView contents,
     CFX_Matrix affine_matrix1(1.0, 0.0, 0.0, -1.0, 0,
                               (float)(m_Height - iTextHeight + iFontSize));
     affine_matrix1.Concat(matrix);
-    device->DrawNormalText(length, charpos.data(), m_pFont.Get(),
-                           static_cast<float>(iFontSize), affine_matrix1,
-                           m_fontColor, GetTextRenderOptions());
+    device->DrawNormalText(pdfium::make_span(charpos).first(length),
+                           m_pFont.Get(), static_cast<float>(iFontSize),
+                           affine_matrix1, m_fontColor, GetTextRenderOptions());
   }
   tempStr = str.Substr(11, 1);
   length = tempStr.GetLength();
@@ -203,9 +203,9 @@ bool CBC_OnedUPCAWriter::ShowChars(WideStringView contents,
         (float)(leftPosition + 85 * multiple) * m_outputHScale,
         (float)(m_Height - iTextHeight + iFontSize));
     affine_matrix1.Concat(matrix);
-    device->DrawNormalText(length, &charpos[11], m_pFont.Get(),
-                           static_cast<float>(iFontSize), affine_matrix1,
-                           m_fontColor, GetTextRenderOptions());
+    device->DrawNormalText(pdfium::make_span(charpos).subspan(11, length),
+                           m_pFont.Get(), static_cast<float>(iFontSize),
+                           affine_matrix1, m_fontColor, GetTextRenderOptions());
   }
   return true;
 }

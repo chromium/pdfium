@@ -1011,8 +1011,7 @@ bool CFX_RenderDevice::SetBitsWithMask(const RetainPtr<CFX_DIBBase>& pBitmap,
 }
 #endif
 
-bool CFX_RenderDevice::DrawNormalText(int nChars,
-                                      const TextCharPos* pCharPos,
+bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
                                       CFX_Font* pFont,
                                       float font_size,
                                       const CFX_Matrix& mtText2Device,
@@ -1063,7 +1062,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
 
   if (GetDeviceType() != DeviceType::kDisplay) {
     if (ShouldDrawDeviceText(pFont, options) &&
-        m_pDeviceDriver->DrawDeviceText(nChars, pCharPos, pFont, mtText2Device,
+        m_pDeviceDriver->DrawDeviceText(pCharPos, pFont, mtText2Device,
                                         font_size, fill_color, text_options)) {
       return true;
     }
@@ -1071,7 +1070,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
       return false;
   } else if (options.native_text) {
     if (ShouldDrawDeviceText(pFont, options) &&
-        m_pDeviceDriver->DrawDeviceText(nChars, pCharPos, pFont, mtText2Device,
+        m_pDeviceDriver->DrawDeviceText(pCharPos, pFont, mtText2Device,
                                         font_size, fill_color, text_options)) {
       return true;
     }
@@ -1085,12 +1084,11 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
     if (pFont->GetFaceRec()) {
       CFX_FillRenderOptions path_options;
       path_options.aliased_path = !is_text_smooth;
-      return DrawTextPath(nChars, pCharPos, pFont, font_size, mtText2Device,
-                          nullptr, nullptr, fill_color, 0, nullptr,
-                          path_options);
+      return DrawTextPath(pCharPos, pFont, font_size, mtText2Device, nullptr,
+                          nullptr, fill_color, 0, nullptr, path_options);
     }
   }
-  std::vector<TextGlyphPos> glyphs(nChars);
+  std::vector<TextGlyphPos> glyphs(pCharPos.size());
   CFX_Matrix deviceCtm = char2device;
 
   for (size_t i = 0; i < glyphs.size(); ++i) {
@@ -1225,8 +1223,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
   return true;
 }
 
-bool CFX_RenderDevice::DrawTextPath(int nChars,
-                                    const TextCharPos* pCharPos,
+bool CFX_RenderDevice::DrawTextPath(pdfium::span<const TextCharPos> pCharPos,
                                     CFX_Font* pFont,
                                     float font_size,
                                     const CFX_Matrix& mtText2User,
@@ -1236,8 +1233,7 @@ bool CFX_RenderDevice::DrawTextPath(int nChars,
                                     FX_ARGB stroke_color,
                                     CFX_Path* pClippingPath,
                                     const CFX_FillRenderOptions& fill_options) {
-  for (int iChar = 0; iChar < nChars; ++iChar) {
-    const TextCharPos& charpos = pCharPos[iChar];
+  for (const auto& charpos : pCharPos) {
     CFX_Matrix matrix;
     if (charpos.m_bGlyphAdjust) {
       matrix = CFX_Matrix(charpos.m_AdjustMatrix[0], charpos.m_AdjustMatrix[1],

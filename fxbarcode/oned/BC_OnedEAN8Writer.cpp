@@ -168,9 +168,9 @@ bool CBC_OnedEAN8Writer::ShowChars(WideStringView contents,
                               (float)leftPosition * m_outputHScale,
                               (float)(m_Height - iTextHeight + iFontSize));
     affine_matrix1.Concat(matrix);
-    device->DrawNormalText(iLen, charpos.data(), m_pFont.Get(),
-                           static_cast<float>(iFontSize), affine_matrix1,
-                           m_fontColor, GetTextRenderOptions());
+    device->DrawNormalText(pdfium::make_span(charpos).first(iLen),
+                           m_pFont.Get(), static_cast<float>(iFontSize),
+                           affine_matrix1, m_fontColor, GetTextRenderOptions());
   }
   tempStr = str.Substr(4, 4);
   iLen = tempStr.GetLength();
@@ -182,9 +182,9 @@ bool CBC_OnedEAN8Writer::ShowChars(WideStringView contents,
         (float)(leftPosition + 33 * multiple) * m_outputHScale,
         (float)(m_Height - iTextHeight + iFontSize));
     affine_matrix1.Concat(matrix);
-    device->DrawNormalText(iLen, &charpos[4], m_pFont.Get(),
-                           static_cast<float>(iFontSize), affine_matrix1,
-                           m_fontColor, GetTextRenderOptions());
+    device->DrawNormalText(pdfium::make_span(charpos).subspan(4, iLen),
+                           m_pFont.Get(), static_cast<float>(iFontSize),
+                           affine_matrix1, m_fontColor, GetTextRenderOptions());
   }
   return true;
 }

@@ -28,9 +28,8 @@ class CQuartz2D {
   bool DrawGraphicsString(void* graphics,
                           void* font,
                           float fontSize,
-                          uint16_t* glyphIndices,
-                          CGPoint* glyphPositions,
-                          int32_t chars,
+                          pdfium::span<uint16_t> glyphIndices,
+                          pdfium::span<CGPoint> glyphPositions,
                           FX_ARGB argb);
 };
 

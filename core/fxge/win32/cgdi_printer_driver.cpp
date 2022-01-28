@@ -173,12 +173,12 @@ bool CGdiPrinterDriver::StartDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                        FXDIB_ResampleOptions(), blend_type);
 }
 
-bool CGdiPrinterDriver::DrawDeviceText(int nChars,
-                                       const TextCharPos* pCharPos,
-                                       CFX_Font* pFont,
-                                       const CFX_Matrix& mtObject2Device,
-                                       float font_size,
-                                       uint32_t color,
-                                       const CFX_TextRenderOptions& options) {
+bool CGdiPrinterDriver::DrawDeviceText(
+    pdfium::span<const TextCharPos> pCharPos,
+    CFX_Font* pFont,
+    const CFX_Matrix& mtObject2Device,
+    float font_size,
+    uint32_t color,
+    const CFX_TextRenderOptions& /*options*/) {
   return false;
 }
