@@ -73,15 +73,6 @@ void CPDF_ContentMarks::EnsureMarkDataExists() {
     m_pMarkData = pdfium::MakeRetain<MarkData>();
 }
 
-void CPDF_ContentMarks::DeleteLastMark() {
-  if (!m_pMarkData)
-    return;
-
-  m_pMarkData->DeleteLastMark();
-  if (CountItems() == 0)
-    m_pMarkData.Reset();
-}
-
 size_t CPDF_ContentMarks::FindFirstDifference(
     const CPDF_ContentMarks* other) const {
   if (m_pMarkData == other->m_pMarkData)
@@ -164,9 +155,4 @@ bool CPDF_ContentMarks::MarkData::RemoveMark(CPDF_ContentMarkItem* pMarkItem) {
     }
   }
   return false;
-}
-
-void CPDF_ContentMarks::MarkData::DeleteLastMark() {
-  if (!m_Marks.empty())
-    m_Marks.pop_back();
 }

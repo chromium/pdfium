@@ -37,7 +37,6 @@ class CPDF_ContentMarks {
                                    CPDF_Dictionary* pDict,
                                    const ByteString& property_name);
   bool RemoveMark(CPDF_ContentMarkItem* pMarkItem);
-  void DeleteLastMark();
   size_t FindFirstDifference(const CPDF_ContentMarks* other) const;
 
  private:
@@ -59,7 +58,6 @@ class CPDF_ContentMarks {
                                      CPDF_Dictionary* pDict,
                                      const ByteString& property_name);
     bool RemoveMark(CPDF_ContentMarkItem* pMarkItem);
-    void DeleteLastMark();
 
    private:
     std::vector<RetainPtr<CPDF_ContentMarkItem>> m_Marks;
