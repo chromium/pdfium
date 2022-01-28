@@ -133,9 +133,7 @@ CPDF_Parser::CPDF_Parser(ParsedObjectsHolder* holder)
 
 CPDF_Parser::CPDF_Parser() : CPDF_Parser(nullptr) {}
 
-CPDF_Parser::~CPDF_Parser() {
-  ReleaseEncryptHandler();
-}
+CPDF_Parser::~CPDF_Parser() = default;
 
 uint32_t CPDF_Parser::GetLastObjNum() const {
   return m_CrossRefTable->objects_info().empty()

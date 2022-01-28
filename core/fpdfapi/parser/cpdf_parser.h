@@ -183,11 +183,11 @@ class CPDF_Parser {
   bool m_bXRefStream = false;
   bool m_bXRefTableRebuilt = false;
   int m_FileVersion = 0;
+  uint32_t m_MetadataObjnum = 0;
   // m_CrossRefTable must be destroyed after m_pSecurityHandler due to the
   // ownership of the ID array data.
   std::unique_ptr<CPDF_CrossRefTable> m_CrossRefTable;
   FX_FILESIZE m_LastXRefOffset;
-  RetainPtr<CPDF_SecurityHandler> m_pSecurityHandler;
   ByteString m_Password;
   std::unique_ptr<CPDF_LinearizedHeader> m_pLinearized;
 
@@ -197,7 +197,7 @@ class CPDF_Parser {
   // All indirect object numbers that are being parsed.
   std::set<uint32_t> m_ParsingObjNums;
 
-  uint32_t m_MetadataObjnum = 0;
+  RetainPtr<CPDF_SecurityHandler> m_pSecurityHandler;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_PARSER_H_
