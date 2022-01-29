@@ -26,7 +26,3 @@ pdf_use_skia_override = false
 # support.
 # Default: Use agg.
 pdf_use_skia_paths_override = false
-
-# Build PDFium either with or without experimental win32 GDI APIs.
-# Default: Without experimental win32 GDI APIs.
-pdf_use_win32_gdi_override = false

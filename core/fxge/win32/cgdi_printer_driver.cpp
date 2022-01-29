@@ -25,11 +25,6 @@
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 
-#if defined(PDFIUM_PRINT_TEXT_WITH_GDI)
-PDFiumEnsureTypefaceCharactersAccessible g_pdfium_typeface_accessible_func =
-    nullptr;
-#endif
-
 CGdiPrinterDriver::CGdiPrinterDriver(HDC hDC)
     : CGdiDeviceDriver(hDC, DeviceType::kPrinter),
       m_HorzSize(::GetDeviceCaps(m_hDC, HORZSIZE)),

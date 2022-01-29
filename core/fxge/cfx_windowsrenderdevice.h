@@ -26,14 +26,6 @@ enum class WindowsPrintMode {
 class CFX_PSFontTracker;
 struct EncoderIface;
 
-#if defined(PDFIUM_PRINT_TEXT_WITH_GDI)
-typedef void (*PDFiumEnsureTypefaceCharactersAccessible)(const LOGFONT* font,
-                                                         const wchar_t* text,
-                                                         size_t text_length);
-
-extern PDFiumEnsureTypefaceCharactersAccessible
-    g_pdfium_typeface_accessible_func;
-#endif
 extern WindowsPrintMode g_pdfium_print_mode;
 
 class CFX_WindowsRenderDevice : public CFX_RenderDevice {

@@ -263,10 +263,6 @@ config("pdfium_public_config") {
       }
     }
   }
-
-  if (pdf_use_win32_gdi) {
-    defines += [ "PDFIUM_PRINT_TEXT_WITH_GDI" ]
-  }
 }
 
 config("pdfium_core_config") {

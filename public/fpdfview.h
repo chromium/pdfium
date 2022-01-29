@@ -292,26 +292,6 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_SetSandBoxPolicy(FPDF_DWORD policy,
                                                      FPDF_BOOL enable);
 
 #if defined(_WIN32)
-#if defined(PDFIUM_PRINT_TEXT_WITH_GDI)
-// Pointer to a helper function to make |font| with |text| of |text_length|
-// accessible when printing text with GDI. This is useful in sandboxed
-// environments where PDFium's access to GDI may be restricted.
-typedef void (*PDFiumEnsureTypefaceCharactersAccessible)(const LOGFONT* font,
-                                                         const wchar_t* text,
-                                                         size_t text_length);
-
-// Experimental API.
-// Function: FPDF_SetTypefaceAccessibleFunc
-//          Set the function pointer that makes GDI fonts available in sandboxed
-//          environments.
-// Parameters:
-//          func -   A function pointer. See description above.
-// Return value:
-//          None.
-FPDF_EXPORT void FPDF_CALLCONV
-FPDF_SetTypefaceAccessibleFunc(PDFiumEnsureTypefaceCharactersAccessible func);
-#endif  // PDFIUM_PRINT_TEXT_WITH_GDI
-
 // Experimental API.
 // Function: FPDF_SetPrintMode
 //          Set printing mode when printing on Windows.
