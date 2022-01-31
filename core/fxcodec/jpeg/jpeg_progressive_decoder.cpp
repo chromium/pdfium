@@ -58,7 +58,8 @@ static void JpegLoadAttribute(const jpeg_decompress_struct& info,
                               CFX_DIBAttribute* pAttribute) {
   pAttribute->m_nXDPI = info.X_density;
   pAttribute->m_nYDPI = info.Y_density;
-  pAttribute->m_wDPIUnit = info.density_unit;
+  pAttribute->m_wDPIUnit =
+      static_cast<CFX_DIBAttribute::ResUnit>(info.density_unit);
 }
 
 CJpegContext::CJpegContext() {

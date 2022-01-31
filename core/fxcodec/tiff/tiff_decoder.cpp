@@ -235,9 +235,10 @@ bool CTiffContext::LoadFrameInfo(int32_t frame,
 
   uint16_t tif_resunit = 0;
   if (TIFFGetField(m_tif_ctx.get(), TIFFTAG_RESOLUTIONUNIT, &tif_resunit)) {
-    pAttribute->m_wDPIUnit = tif_resunit - 1;
+    pAttribute->m_wDPIUnit =
+        static_cast<CFX_DIBAttribute::ResUnit>(tif_resunit - 1);
   } else {
-    pAttribute->m_wDPIUnit = FXCODEC_RESUNIT_INCH;
+    pAttribute->m_wDPIUnit = CFX_DIBAttribute::kResUnitInch;
   }
 
   float tif_xdpi = 0.0f;

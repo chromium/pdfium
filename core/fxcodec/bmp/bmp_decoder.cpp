@@ -46,7 +46,7 @@ BmpDecoder::Status BmpDecoder::ReadHeader(
   *components = ctx->m_Bmp.components();
   *pal_num = ctx->m_Bmp.pal_num();
   *palette = ctx->m_Bmp.palette();
-  pAttribute->m_wDPIUnit = FXCODEC_RESUNIT_METER;
+  pAttribute->m_wDPIUnit = CFX_DIBAttribute::kResUnitMeter;
   pAttribute->m_nXDPI = ctx->m_Bmp.dpi_x();
   pAttribute->m_nYDPI = ctx->m_Bmp.dpi_y();
   return Status::kSuccess;
