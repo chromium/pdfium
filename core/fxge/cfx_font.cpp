@@ -44,6 +44,30 @@ struct OUTLINE_PARAMS {
   float m_CoordUnit;
 };
 
+// TODO(crbug.com/pdfium/1400): When FT_Done_MM_Var() is more likely to be
+// available to all users in the future, remove FreeMMVar() and use
+// FT_Done_MM_Var() directly.
+//
+// Use weak symbols to check if FT_Done_MM_Var() is available at runtime.
+#if !BUILDFLAG(IS_WIN)
+extern "C" __attribute__((weak)) decltype(FT_Done_MM_Var) FT_Done_MM_Var;
+#endif
+
+void FreeMMVar(FXFT_FaceRec* rec, FXFT_MM_VarPtr variation_desc) {
+#if BUILDFLAG(IS_WIN)
+  // Assume `use_system_freetype` GN var is never set on Windows.
+  constexpr bool has_ft_done_mm_var_func = true;
+#else
+  static const bool has_ft_done_mm_var_func = !!FT_Done_MM_Var;
+#endif
+  if (has_ft_done_mm_var_func) {
+    FT_Done_MM_Var(CFX_GEModule::Get()->GetFontMgr()->GetFTLibrary(),
+                   variation_desc);
+  } else {
+    FXFT_Free(rec, variation_desc);
+  }
+}
+
 FX_RECT FXRectFromFTPos(FT_Pos left, FT_Pos top, FT_Pos right, FT_Pos bottom) {
   return FX_RECT(pdfium::base::checked_cast<int32_t>(left),
                  pdfium::base::checked_cast<int32_t>(top),
@@ -645,7 +669,7 @@ void CFX_Font::AdjustMMParams(int glyph_index,
     FT_Pos max_width = FXFT_Get_Glyph_HoriAdvance(m_Face->GetRec()) * 1000 /
                        FXFT_Get_Face_UnitsPerEM(m_Face->GetRec());
     if (max_width == min_width) {
-      FXFT_Free(m_Face->GetRec(), pMasters);
+      FreeMMVar(m_Face->GetRec(), pMasters);
       return;
     }
     FT_Pos param = min_param + (max_param - min_param) *
@@ -653,7 +677,7 @@ void CFX_Font::AdjustMMParams(int glyph_index,
                                    (max_width - min_width);
     coords[1] = param;
   }
-  FXFT_Free(m_Face->GetRec(), pMasters);
+  FreeMMVar(m_Face->GetRec(), pMasters);
   FT_Set_MM_Design_Coordinates(m_Face->GetRec(), 2, coords);
 }
 
