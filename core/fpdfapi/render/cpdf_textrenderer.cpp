@@ -106,8 +106,8 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
   if (pFont->IsType3Font())
     return;
 
-  int nChars = pFont->CountChar(str.AsStringView());
-  if (nChars <= 0)
+  size_t nChars = pFont->CountChar(str.AsStringView());
+  if (nChars == 0)
     return;
 
   size_t offset = 0;
@@ -116,7 +116,7 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
   codes.resize(nChars);
   positions.resize(nChars - 1);
   float cur_pos = 0;
-  for (int i = 0; i < nChars; i++) {
+  for (size_t i = 0; i < nChars; i++) {
     codes[i] = pFont->GetNextChar(str.AsStringView(), &offset);
     if (i)
       positions[i - 1] = cur_pos;
