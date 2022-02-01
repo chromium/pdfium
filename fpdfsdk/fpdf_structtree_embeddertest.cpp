@@ -485,3 +485,22 @@ TEST_F(FPDFStructTreeEmbedderTest, MarkedContentReferenceAndObjectReference) {
 
   UnloadPage(page);
 }
+
+TEST_F(FPDFStructTreeEmbedderTest, Bug1768) {
+  ASSERT_TRUE(OpenDocument("bug_1768.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ASSERT_TRUE(struct_tree);
+    ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
+
+    // TODO(crbug.com/pdfium/1768): Fetch this child element. Then consider
+    // writing more of the test to make sure other elements in the tree can be
+    // fetched correctly as well.
+    EXPECT_FALSE(FPDF_StructTree_GetChildAtIndex(struct_tree.get(), 0));
+  }
+
+  UnloadPage(page);
+}
