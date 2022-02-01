@@ -1684,3 +1684,24 @@ TEST_F(FPDFTextEmbedderTest, BigtableTextExtraction) {
 
   UnloadPage(page);
 }
+
+TEST_F(FPDFTextEmbedderTest, Bug1769) {
+  ASSERT_TRUE(OpenDocument("bug_1769.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFTextPage textpage(FPDFText_LoadPage(page));
+    ASSERT_TRUE(textpage);
+
+    unsigned short buffer[128] = {};
+    // TODO(crbug.com/pdfium/1769): Improve text extraction.
+    // The first instance of "world" is visible to the human eye and should be
+    // extracted as is. The second instance is not, so how it should be
+    // extracted is debatable.
+    ASSERT_EQ(10, FPDFText_GetText(textpage.get(), 0, 128, buffer));
+    EXPECT_TRUE(check_unsigned_shorts("wo d wo d", buffer, 10));
+  }
+
+  UnloadPage(page);
+}
