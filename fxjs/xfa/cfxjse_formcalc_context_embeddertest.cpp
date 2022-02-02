@@ -501,6 +501,10 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Pmt) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectFloat("Pmt(25000, 0.085, 12)", 3403.82145169876f);
+
+  // https://crbug.com/1293179
+  ExecuteExpectError("Pmt(2, 2, 99999997952)");
+
 #if 0
   // TODO(thestig): Investigate this case.
   ExecuteExpectFloat("Pmt(150000, 0.0475 / 12, 25 * 12)", 855.17604207164f);

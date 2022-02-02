@@ -11,6 +11,7 @@
 #include <stdlib.h>
 
 #include <algorithm>
+#include <limits>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -2919,7 +2920,8 @@ void CFXJSE_FormCalcContext::Pmt(
   float nPrincipal = ValueToFloat(info.GetIsolate(), argOne);
   float nRate = ValueToFloat(info.GetIsolate(), argTwo);
   float nPeriods = ValueToFloat(info.GetIsolate(), argThree);
-  if ((nPrincipal <= 0) || (nRate <= 0) || (nPeriods <= 0)) {
+  if (nPrincipal <= 0 || nRate <= 0 || nPeriods <= 0 ||
+      nPeriods > static_cast<float>(std::numeric_limits<int32_t>::max())) {
     pContext->ThrowArgumentMismatchException();
     return;
   }
