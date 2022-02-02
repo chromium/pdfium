@@ -2917,17 +2917,17 @@ void CFXJSE_FormCalcContext::Pmt(
     return;
   }
 
-  float nPrincipal = ValueToFloat(info.GetIsolate(), argOne);
-  float nRate = ValueToFloat(info.GetIsolate(), argTwo);
-  float nPeriods = ValueToFloat(info.GetIsolate(), argThree);
+  double nPrincipal = ValueToDouble(info.GetIsolate(), argOne);
+  double nRate = ValueToDouble(info.GetIsolate(), argTwo);
+  double nPeriods = ValueToDouble(info.GetIsolate(), argThree);
   if (nPrincipal <= 0 || nRate <= 0 || nPeriods <= 0 ||
-      nPeriods > static_cast<float>(std::numeric_limits<int32_t>::max())) {
+      nPeriods > static_cast<double>(std::numeric_limits<int32_t>::max())) {
     pContext->ThrowArgumentMismatchException();
     return;
   }
 
-  float nTmp = 1 + nRate;
-  float nSum = nTmp;
+  double nTmp = 1 + nRate;
+  double nSum = nTmp;
   for (int32_t i = 0; i < nPeriods - 1; ++i)
     nSum *= nTmp;
 

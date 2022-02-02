@@ -501,14 +501,13 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Pmt) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectFloat("Pmt(25000, 0.085, 12)", 3403.82145169876f);
+  ExecuteExpectFloat("Pmt(5000, 0.01, 1)", 5050);
+  ExecuteExpectFloat("Pmt(30000.00, .085 / 12, 12 * 12)", 333.01666929435f);
+  ExecuteExpectFloat("Pmt(10000, .08 / 12, 10)", 1037.03208935916f);
+  ExecuteExpectFloat("Pmt(150000, 0.0475 / 12, 25 * 12)", 855.17604207164f);
 
   // https://crbug.com/1293179
   ExecuteExpectError("Pmt(2, 2, 99999997952)");
-
-#if 0
-  // TODO(thestig): Investigate this case.
-  ExecuteExpectFloat("Pmt(150000, 0.0475 / 12, 25 * 12)", 855.17604207164f);
-#endif
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, PPmt) {
