@@ -2920,7 +2920,7 @@ void CFXJSE_FormCalcContext::Pmt(
   double nPrincipal = ValueToDouble(info.GetIsolate(), argOne);
   double nRate = ValueToDouble(info.GetIsolate(), argTwo);
   double nPeriods = ValueToDouble(info.GetIsolate(), argThree);
-  if (nPrincipal <= 0 || nRate <= 0 || nPeriods <= 0 ||
+  if (nPrincipal <= 0 || nRate <= 0 || nPeriods < 1 ||
       nPeriods > static_cast<double>(std::numeric_limits<int32_t>::max())) {
     pContext->ThrowArgumentMismatchException();
     return;
@@ -2928,7 +2928,7 @@ void CFXJSE_FormCalcContext::Pmt(
 
   double nTmp = 1 + nRate;
   double nSum = nTmp;
-  for (int32_t i = 0; i < nPeriods - 1; ++i)
+  for (int32_t i = 0; i < static_cast<int>(nPeriods) - 1; ++i)
     nSum *= nTmp;
 
   info.GetReturnValue().Set((nPrincipal * nRate * nSum) / (nSum - 1));

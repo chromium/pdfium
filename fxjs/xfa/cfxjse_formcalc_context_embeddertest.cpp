@@ -502,6 +502,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Pmt) {
 
   ExecuteExpectFloat("Pmt(25000, 0.085, 12)", 3403.82145169876f);
   ExecuteExpectFloat("Pmt(5000, 0.01, 1)", 5050);
+  ExecuteExpectFloat("Pmt(5000, 0.01, 1.5)", 5050);
   ExecuteExpectFloat("Pmt(30000.00, .085 / 12, 12 * 12)", 333.01666929435f);
   ExecuteExpectFloat("Pmt(10000, .08 / 12, 10)", 1037.03208935916f);
   ExecuteExpectFloat("Pmt(150000, 0.0475 / 12, 25 * 12)", 855.17604207164f);
