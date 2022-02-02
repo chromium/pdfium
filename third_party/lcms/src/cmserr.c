@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------
 //
 //  Little Color Management System
-//  Copyright (c) 1998-2020 Marti Maria Saguer
+//  Copyright (c) 1998-2022 Marti Maria Saguer
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the "Software"),
@@ -166,7 +166,7 @@ void _cmsInstallAllocFunctions(cmsPluginMemHandler* Plugin, _cmsMemPluginChunkTy
 
 // Sub allocation takes care of many pointers of small size. The memory allocated in
 // this way have be freed at once. Next function allocates a single chunk for linked list
-// I prefer this method over realloc due to the big inpact on xput realloc may have if
+// I prefer this method over realloc due to the big impact on xput realloc may have if
 // memory is being swapped to disk. This approach is safer (although that may not be true on all platforms)
 static
 _cmsSubAllocator_chunk* _cmsCreateSubAllocChunk(cmsContext ContextID, cmsUInt32Number Initial)

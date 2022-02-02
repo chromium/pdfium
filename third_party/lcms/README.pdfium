@@ -1,6 +1,6 @@
 Name: Little CMS
 URL: http://www.littlecms.com/
-Version: 2.9
+Version: 2.13
 Security Critical: yes
 License: MIT License
 
@@ -20,4 +20,3 @@ Local Modifications:
 0029-drop-register-keyword.patch: Remove deprecated 'register' keyword.
 0030-const-data.patch: Mark many data structures as const.
 0033-opt-integer-overflow.patch: Protect against integer overflow.
-0034-uninitialized-reads.patch: Protect against corrupt profiles.

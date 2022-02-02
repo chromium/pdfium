@@ -27,7 +27,7 @@ index 700152ee3..3c3848b2a 100644
 -
 -// User may override this behaviour by using a memory plug-in, which basically replaces
 -// the default memory management functions. In this case, no check is performed and it
--// is up to the plug-in writter to keep in the safe side. There are only three functions
+-// is up to the plug-in writer to keep in the safe side. There are only three functions
 -// required to be implemented: malloc, realloc and free, although the user may want to
 -// replace the optional mallocZero, calloc and dup as well.
 -
