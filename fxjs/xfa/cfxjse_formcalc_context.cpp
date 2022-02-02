@@ -2926,11 +2926,7 @@ void CFXJSE_FormCalcContext::Pmt(
     return;
   }
 
-  double nTmp = 1 + nRate;
-  double nSum = nTmp;
-  for (int32_t i = 0; i < static_cast<int>(nPeriods) - 1; ++i)
-    nSum *= nTmp;
-
+  double nSum = pow(nRate + 1, static_cast<int>(nPeriods));
   info.GetReturnValue().Set((nPrincipal * nRate * nSum) / (nSum - 1));
 }
 
