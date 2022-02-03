@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "core/fxcrt/fx_string.h"
 #include "public/fpdf_structtree.h"
 #include "testing/embedder_test.h"
 #include "testing/fx_string_testhelpers.h"
@@ -64,9 +63,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetAltText) {
     EXPECT_EQ(-1, FPDF_StructElement_GetMarkedContentID(gchild_element));
     ASSERT_EQ(24U, FPDF_StructElement_GetAltText(gchild_element, buffer,
                                                  sizeof(buffer)));
-    const wchar_t kExpected[] = L"Black Image";
-    EXPECT_EQ(WideString(kExpected),
-              WideString::FromUTF16LE(buffer, FXSYS_len(kExpected)));
+    EXPECT_EQ(L"Black Image", GetPlatformWString(buffer));
 
     ASSERT_EQ(1, FPDF_StructElement_CountChildren(gchild_element));
     FPDF_STRUCTELEMENT ggchild_element =
@@ -310,9 +307,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetType) {
       EXPECT_EQ(0U, buffer[i]);
 
     ASSERT_EQ(18U, FPDF_StructElement_GetType(element, buffer, sizeof(buffer)));
-    const wchar_t kExpected[] = L"Document";
-    EXPECT_EQ(WideString(kExpected),
-              WideString::FromUTF16LE(buffer, FXSYS_len(kExpected)));
+    EXPECT_EQ(L"Document", GetPlatformWString(buffer));
   }
 
   UnloadPage(page);
@@ -348,9 +343,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetTitle) {
     ASSERT_EQ(20U,
               FPDF_StructElement_GetTitle(element, buffer, sizeof(buffer)));
 
-    const wchar_t kExpected[] = L"TitleText";
-    EXPECT_EQ(WideString(kExpected),
-              WideString::FromUTF16LE(buffer, FXSYS_len(kExpected)));
+    EXPECT_EQ(L"TitleText", GetPlatformWString(buffer));
 
     ASSERT_EQ(1, FPDF_StructElement_CountChildren(element));
     FPDF_STRUCTELEMENT child_element =
@@ -359,9 +352,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetTitle) {
 
     ASSERT_EQ(26U, FPDF_StructElement_GetTitle(child_element, buffer,
                                                sizeof(buffer)));
-    const wchar_t kChildExpected[] = L"symbol: 100k";
-    EXPECT_EQ(WideString(kChildExpected),
-              WideString::FromUTF16LE(buffer, FXSYS_len(kChildExpected)));
+    EXPECT_EQ(L"symbol: 100k", GetPlatformWString(buffer));
   }
 
   UnloadPage(page);
@@ -395,9 +386,7 @@ TEST_F(FPDFStructTreeEmbedderTest, MarkedContentReferenceAndObjectReference) {
     ASSERT_TRUE(object8);
     unsigned short buffer[12];
     ASSERT_EQ(18U, FPDF_StructElement_GetType(object8, buffer, sizeof(buffer)));
-    const wchar_t kExpectedObject8Type[] = L"Document";
-    EXPECT_EQ(WideString(kExpectedObject8Type),
-              WideString::FromUTF16LE(buffer, FXSYS_len(kExpectedObject8Type)));
+    EXPECT_EQ(L"Document", GetPlatformWString(buffer));
     EXPECT_EQ(-1, FPDF_StructElement_GetMarkedContentID(object8));
     ASSERT_EQ(2, FPDF_StructElement_CountChildren(object8));
 
@@ -407,10 +396,7 @@ TEST_F(FPDFStructTreeEmbedderTest, MarkedContentReferenceAndObjectReference) {
     ASSERT_TRUE(object10);
     ASSERT_EQ(20U,
               FPDF_StructElement_GetType(object10, buffer, sizeof(buffer)));
-    const wchar_t kExpectedObject10Type[] = L"NonStruct";
-    EXPECT_EQ(
-        WideString(kExpectedObject10Type),
-        WideString::FromUTF16LE(buffer, FXSYS_len(kExpectedObject10Type)));
+    EXPECT_EQ(L"NonStruct", GetPlatformWString(buffer));
     EXPECT_EQ(-1, FPDF_StructElement_GetMarkedContentID(object10));
     ASSERT_EQ(1, FPDF_StructElement_CountChildren(object10));
 
@@ -418,10 +404,7 @@ TEST_F(FPDFStructTreeEmbedderTest, MarkedContentReferenceAndObjectReference) {
         FPDF_StructElement_GetChildAtIndex(object10, 0);
     ASSERT_TRUE(object12);
     ASSERT_EQ(4U, FPDF_StructElement_GetType(object12, buffer, sizeof(buffer)));
-    const wchar_t kExpectedObject12Type[] = L"P";
-    EXPECT_EQ(
-        WideString(kExpectedObject12Type),
-        WideString::FromUTF16LE(buffer, FXSYS_len(kExpectedObject12Type)));
+    EXPECT_EQ(L"P", GetPlatformWString(buffer));
     EXPECT_EQ(-1, FPDF_StructElement_GetMarkedContentID(object12));
     ASSERT_EQ(1, FPDF_StructElement_CountChildren(object12));
 
@@ -430,10 +413,7 @@ TEST_F(FPDFStructTreeEmbedderTest, MarkedContentReferenceAndObjectReference) {
     ASSERT_TRUE(object13);
     ASSERT_EQ(20U,
               FPDF_StructElement_GetType(object13, buffer, sizeof(buffer)));
-    const wchar_t kExpectedObject13Type[] = L"NonStruct";
-    EXPECT_EQ(
-        WideString(kExpectedObject13Type),
-        WideString::FromUTF16LE(buffer, FXSYS_len(kExpectedObject13Type)));
+    EXPECT_EQ(L"NonStruct", GetPlatformWString(buffer));
     EXPECT_EQ(-1, FPDF_StructElement_GetMarkedContentID(object13));
     ASSERT_EQ(1, FPDF_StructElement_CountChildren(object13));
 
@@ -446,10 +426,7 @@ TEST_F(FPDFStructTreeEmbedderTest, MarkedContentReferenceAndObjectReference) {
         FPDF_StructElement_GetChildAtIndex(object8, 1);
     ASSERT_TRUE(object11);
     ASSERT_EQ(4U, FPDF_StructElement_GetType(object11, buffer, sizeof(buffer)));
-    const wchar_t kExpectedObject11Type[] = L"P";
-    EXPECT_EQ(
-        WideString(kExpectedObject11Type),
-        WideString::FromUTF16LE(buffer, FXSYS_len(kExpectedObject11Type)));
+    EXPECT_EQ(L"P", GetPlatformWString(buffer));
     EXPECT_EQ(-1, FPDF_StructElement_GetMarkedContentID(object11));
     ASSERT_EQ(1, FPDF_StructElement_CountChildren(object11));
 
@@ -458,10 +435,7 @@ TEST_F(FPDFStructTreeEmbedderTest, MarkedContentReferenceAndObjectReference) {
     ASSERT_TRUE(object14);
     ASSERT_EQ(20U,
               FPDF_StructElement_GetType(object14, buffer, sizeof(buffer)));
-    const wchar_t kExpectedObject14Type[] = L"NonStruct";
-    EXPECT_EQ(
-        WideString(kExpectedObject14Type),
-        WideString::FromUTF16LE(buffer, FXSYS_len(kExpectedObject14Type)));
+    EXPECT_EQ(L"NonStruct", GetPlatformWString(buffer));
     EXPECT_EQ(-1, FPDF_StructElement_GetMarkedContentID(object14));
     ASSERT_EQ(2, FPDF_StructElement_CountChildren(object14));
 
@@ -472,10 +446,7 @@ TEST_F(FPDFStructTreeEmbedderTest, MarkedContentReferenceAndObjectReference) {
     ASSERT_TRUE(object15);
     ASSERT_EQ(20U,
               FPDF_StructElement_GetType(object15, buffer, sizeof(buffer)));
-    const wchar_t kExpectedObject15Type[] = L"NonStruct";
-    EXPECT_EQ(
-        WideString(kExpectedObject15Type),
-        WideString::FromUTF16LE(buffer, FXSYS_len(kExpectedObject15Type)));
+    EXPECT_EQ(L"NonStruct", GetPlatformWString(buffer));
     EXPECT_EQ(-1, FPDF_StructElement_GetMarkedContentID(object15));
     ASSERT_EQ(1, FPDF_StructElement_CountChildren(object15));
 

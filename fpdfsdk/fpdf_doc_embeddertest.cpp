@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "core/fpdfapi/parser/cpdf_document.h"
-#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/bytestring.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_doc.h"
@@ -476,7 +476,7 @@ TEST_F(FPDFDocEmbedderTest, Bookmarks) {
   FPDF_BOOKMARK child = FPDFBookmark_GetFirstChild(document(), nullptr);
   EXPECT_TRUE(child);
   EXPECT_EQ(34u, FPDFBookmark_GetTitle(child, buf, sizeof(buf)));
-  EXPECT_EQ(WideString(L"A Good Beginning"), WideString::FromUTF16LE(buf, 16));
+  EXPECT_EQ(L"A Good Beginning", GetPlatformWString(buf));
 
   FPDF_DEST dest = FPDFBookmark_GetDest(document(), child);
   EXPECT_FALSE(dest);  // TODO(tsepez): put real dest into bookmarks.pdf
@@ -490,7 +490,7 @@ TEST_F(FPDFDocEmbedderTest, Bookmarks) {
   FPDF_BOOKMARK sibling = FPDFBookmark_GetNextSibling(document(), child);
   EXPECT_TRUE(sibling);
   EXPECT_EQ(28u, FPDFBookmark_GetTitle(sibling, buf, sizeof(buf)));
-  EXPECT_EQ(WideString(L"A Good Ending"), WideString::FromUTF16LE(buf, 13));
+  EXPECT_EQ(L"A Good Ending", GetPlatformWString(buf));
 
   EXPECT_EQ(nullptr, FPDFBookmark_GetNextSibling(document(), sibling));
 }
@@ -508,7 +508,7 @@ TEST_F(FPDFDocEmbedderTest, FindBookmarks) {
 
   // Check that the string matches.
   EXPECT_EQ(34u, FPDFBookmark_GetTitle(child, buf, sizeof(buf)));
-  EXPECT_EQ(WideString(L"A Good Beginning"), WideString::FromUTF16LE(buf, 16));
+  EXPECT_EQ(L"A Good Beginning", GetPlatformWString(buf));
 
   // Check that it is them same as the one returned by GetFirstChild.
   EXPECT_EQ(child, FPDFBookmark_GetFirstChild(document(), nullptr));
@@ -612,32 +612,24 @@ TEST_F(FPDFDocEmbedderTest, GetMetaText) {
   ASSERT_EQ(2u, FPDF_GetMetaText(document(), "Keywords", buf, sizeof(buf)));
   ASSERT_EQ(2u, FPDF_GetMetaText(document(), "Producer", buf, sizeof(buf)));
 
-  constexpr wchar_t kExpectedCreator[] = L"Microsoft Word";
   ASSERT_EQ(30u, FPDF_GetMetaText(document(), "Creator", buf, sizeof(buf)));
-  EXPECT_EQ(WideString(kExpectedCreator),
-            WideString::FromUTF16LE(buf, FXSYS_len(kExpectedCreator)));
+  EXPECT_EQ(L"Microsoft Word", GetPlatformWString(buf));
 
-  constexpr wchar_t kExpectedCreationDate[] = L"D:20160411190039+00'00'";
   ASSERT_EQ(48u,
             FPDF_GetMetaText(document(), "CreationDate", buf, sizeof(buf)));
-  EXPECT_EQ(WideString(kExpectedCreationDate),
-            WideString::FromUTF16LE(buf, FXSYS_len(kExpectedCreationDate)));
+  EXPECT_EQ(L"D:20160411190039+00'00'", GetPlatformWString(buf));
 
-  constexpr wchar_t kExpectedModDate[] = L"D:20160411190039+00'00'";
   ASSERT_EQ(48u, FPDF_GetMetaText(document(), "ModDate", buf, sizeof(buf)));
-  EXPECT_EQ(WideString(kExpectedModDate),
-            WideString::FromUTF16LE(buf, FXSYS_len(kExpectedModDate)));
+  EXPECT_EQ(L"D:20160411190039+00'00'", GetPlatformWString(buf));
 }
 
 TEST_F(FPDFDocEmbedderTest, Bug_182) {
   ASSERT_TRUE(OpenDocument("bug_182.pdf"));
 
   unsigned short buf[128];
-  constexpr wchar_t kExpectedTitle[] = L"Super Visual Formade 印刷";
 
   ASSERT_EQ(48u, FPDF_GetMetaText(document(), "Title", buf, sizeof(buf)));
-  EXPECT_EQ(WideString(kExpectedTitle),
-            WideString::FromUTF16LE(buf, FXSYS_len(kExpectedTitle)));
+  EXPECT_EQ(L"Super Visual Formade 印刷", GetPlatformWString(buf));
 }
 
 TEST_F(FPDFDocEmbedderTest, GetMetaTextSameObjectNumber) {
@@ -647,10 +639,8 @@ TEST_F(FPDFDocEmbedderTest, GetMetaTextSameObjectNumber) {
   // (1 0). Both objects are /Info dictionaries, but contain different data.
   // Make sure ModDate is the date of the last modification.
   unsigned short buf[128];
-  constexpr wchar_t kExpectedModDate[] = L"D:20170612232940-04'00'";
   ASSERT_EQ(48u, FPDF_GetMetaText(document(), "ModDate", buf, sizeof(buf)));
-  EXPECT_EQ(WideString(kExpectedModDate),
-            WideString::FromUTF16LE(buf, FXSYS_len(kExpectedModDate)));
+  EXPECT_EQ(L"D:20170612232940-04'00'", GetPlatformWString(buf));
 }
 
 TEST_F(FPDFDocEmbedderTest, GetMetaTextInAttachmentFile) {
@@ -658,10 +648,8 @@ TEST_F(FPDFDocEmbedderTest, GetMetaTextInAttachmentFile) {
 
   // Make sure this is the date from the PDF itself and not the attached PDF.
   unsigned short buf[128];
-  constexpr wchar_t kExpectedModDate[] = L"D:20170712214448-07'00'";
   ASSERT_EQ(48u, FPDF_GetMetaText(document(), "ModDate", buf, sizeof(buf)));
-  EXPECT_EQ(WideString(kExpectedModDate),
-            WideString::FromUTF16LE(buf, FXSYS_len(kExpectedModDate)));
+  EXPECT_EQ(L"D:20170712214448-07'00'", GetPlatformWString(buf));
 }
 
 TEST_F(FPDFDocEmbedderTest, GetMetaTextFromNewDocument) {
@@ -722,40 +710,26 @@ TEST_F(FPDFDocEmbedderTest, GetPageLabels) {
   EXPECT_EQ(0u, FPDF_GetPageLabel(document(), -2, buf, sizeof(buf)));
   EXPECT_EQ(0u, FPDF_GetPageLabel(document(), -1, buf, sizeof(buf)));
 
-  const wchar_t kExpectedPageLabel0[] = L"i";
   ASSERT_EQ(4u, FPDF_GetPageLabel(document(), 0, buf, sizeof(buf)));
-  EXPECT_EQ(WideString(kExpectedPageLabel0),
-            WideString::FromUTF16LE(buf, FXSYS_len(kExpectedPageLabel0)));
+  EXPECT_EQ(L"i", GetPlatformWString(buf));
 
-  const wchar_t kExpectedPageLabel1[] = L"ii";
   ASSERT_EQ(6u, FPDF_GetPageLabel(document(), 1, buf, sizeof(buf)));
-  EXPECT_EQ(WideString(kExpectedPageLabel1),
-            WideString::FromUTF16LE(buf, FXSYS_len(kExpectedPageLabel1)));
+  EXPECT_EQ(L"ii", GetPlatformWString(buf));
 
-  const wchar_t kExpectedPageLabel2[] = L"1";
   ASSERT_EQ(4u, FPDF_GetPageLabel(document(), 2, buf, sizeof(buf)));
-  EXPECT_EQ(WideString(kExpectedPageLabel2),
-            WideString::FromUTF16LE(buf, FXSYS_len(kExpectedPageLabel2)));
+  EXPECT_EQ(L"1", GetPlatformWString(buf));
 
-  const wchar_t kExpectedPageLabel3[] = L"2";
   ASSERT_EQ(4u, FPDF_GetPageLabel(document(), 3, buf, sizeof(buf)));
-  EXPECT_EQ(WideString(kExpectedPageLabel3),
-            WideString::FromUTF16LE(buf, FXSYS_len(kExpectedPageLabel3)));
+  EXPECT_EQ(L"2", GetPlatformWString(buf));
 
-  const wchar_t kExpectedPageLabel4[] = L"zzA";
   ASSERT_EQ(8u, FPDF_GetPageLabel(document(), 4, buf, sizeof(buf)));
-  EXPECT_EQ(WideString(kExpectedPageLabel4),
-            WideString::FromUTF16LE(buf, FXSYS_len(kExpectedPageLabel4)));
+  EXPECT_EQ(L"zzA", GetPlatformWString(buf));
 
-  const wchar_t kExpectedPageLabel5[] = L"zzB";
   ASSERT_EQ(8u, FPDF_GetPageLabel(document(), 5, buf, sizeof(buf)));
-  EXPECT_EQ(WideString(kExpectedPageLabel5),
-            WideString::FromUTF16LE(buf, FXSYS_len(kExpectedPageLabel5)));
+  EXPECT_EQ(L"zzB", GetPlatformWString(buf));
 
-  const wchar_t kExpectedPageLabel6[] = L"";
   ASSERT_EQ(2u, FPDF_GetPageLabel(document(), 6, buf, sizeof(buf)));
-  EXPECT_EQ(WideString(kExpectedPageLabel6),
-            WideString::FromUTF16LE(buf, FXSYS_len(kExpectedPageLabel6)));
+  EXPECT_EQ(L"", GetPlatformWString(buf));
 
   ASSERT_EQ(0u, FPDF_GetPageLabel(document(), 7, buf, sizeof(buf)));
   ASSERT_EQ(0u, FPDF_GetPageLabel(document(), 8, buf, sizeof(buf)));
