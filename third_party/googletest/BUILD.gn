@@ -70,6 +70,7 @@ source_set("gtest") {
     "custom/gtest/internal/custom/gtest_port_wrapper.cc",
     "custom/gtest/internal/custom/pdfium_custom_temp_dir.cc",
     "custom/gtest/internal/custom/pdfium_custom_temp_dir.h",
+    "src/googletest/include/gtest/gtest-assertion-result.h",
     "src/googletest/include/gtest/gtest-death-test.h",
     "src/googletest/include/gtest/gtest-matchers.h",
     "src/googletest/include/gtest/gtest-message.h",
@@ -95,6 +96,7 @@ source_set("gtest") {
     "src/googletest/include/gtest/internal/gtest-type-util.h",
 
     #"src/googletest/src/gtest-all.cc",  # Not needed by our build.
+    "src/googletest/src/gtest-assertion-result.cc",
     "src/googletest/src/gtest-death-test.cc",
     "src/googletest/src/gtest-filepath.cc",
     "src/googletest/src/gtest-internal-inl.h",
