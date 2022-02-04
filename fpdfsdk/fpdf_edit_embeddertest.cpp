@@ -3557,6 +3557,67 @@ TEST_F(FPDFEditEmbedderTest, MarkGetStringParam) {
   UnloadPage(page);
 }
 
+// See also FPDFStructTreeEmbedderTest.GetMarkedContentID, which traverses the
+// marked contents using FPDF_StructTree_GetForPage() and related API.
+TEST_F(FPDFEditEmbedderTest, TraverseMarkedContentID) {
+  ASSERT_TRUE(OpenDocument("marked_content_id.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  ASSERT_EQ(2, FPDFPage_CountObjects(page));
+  FPDF_PAGEOBJECT object1 = FPDFPage_GetObject(page, 0);
+  ASSERT_TRUE(object1);
+  ASSERT_EQ(1, FPDFPageObj_CountMarks(object1));
+
+  FPDF_PAGEOBJECTMARK mark11 = FPDFPageObj_GetMark(object1, 0);
+  ASSERT_TRUE(mark11);
+  unsigned long len = 0;
+  unsigned short buf[40];
+  ASSERT_TRUE(FPDFPageObjMark_GetName(mark11, buf, sizeof(buf), &len));
+  EXPECT_EQ(18u, len);
+  EXPECT_EQ(L"Artifact", GetPlatformWString(buf));
+  ASSERT_EQ(2, FPDFPageObjMark_CountParams(mark11));
+  ASSERT_TRUE(FPDFPageObjMark_GetParamKey(mark11, 0, buf, sizeof(buf), &len));
+  EXPECT_EQ(10u, len);
+  EXPECT_EQ(L"BBox", GetPlatformWString(buf));
+  EXPECT_EQ(FPDF_OBJECT_ARRAY,
+            FPDFPageObjMark_GetParamValueType(mark11, "BBox"));
+  ASSERT_TRUE(FPDFPageObjMark_GetParamKey(mark11, 1, buf, sizeof(buf), &len));
+  EXPECT_EQ(10u, len);
+  EXPECT_EQ(L"Type", GetPlatformWString(buf));
+  EXPECT_EQ(FPDF_OBJECT_NAME,
+            FPDFPageObjMark_GetParamValueType(mark11, "Type"));
+
+  FPDF_PAGEOBJECT object2 = FPDFPage_GetObject(page, 1);
+  ASSERT_TRUE(object2);
+  ASSERT_EQ(2, FPDFPageObj_CountMarks(object2));
+  EXPECT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(object2));
+
+  FPDF_PAGEOBJECTMARK mark21 = FPDFPageObj_GetMark(object2, 0);
+  ASSERT_TRUE(mark21);
+  ASSERT_TRUE(FPDFPageObjMark_GetName(mark21, buf, sizeof(buf), &len));
+  EXPECT_EQ(14u, len);
+  EXPECT_EQ(L"Figure", GetPlatformWString(buf));
+  ASSERT_EQ(1, FPDFPageObjMark_CountParams(mark21));
+  ASSERT_TRUE(FPDFPageObjMark_GetParamKey(mark21, 0, buf, sizeof(buf), &len));
+  EXPECT_EQ(10u, len);
+  EXPECT_EQ(L"MCID", GetPlatformWString(buf));
+  ASSERT_EQ(FPDF_OBJECT_NUMBER,
+            FPDFPageObjMark_GetParamValueType(mark21, "MCID"));
+  int mcid = -1;
+  ASSERT_TRUE(FPDFPageObjMark_GetParamIntValue(mark21, "MCID", &mcid));
+  EXPECT_EQ(0, mcid);
+
+  FPDF_PAGEOBJECTMARK mark22 = FPDFPageObj_GetMark(object2, 1);
+  ASSERT_TRUE(mark22);
+  ASSERT_TRUE(FPDFPageObjMark_GetName(mark22, buf, sizeof(buf), &len));
+  EXPECT_EQ(18u, len);
+  EXPECT_EQ(L"ClipSpan", GetPlatformWString(buf));
+  EXPECT_EQ(0, FPDFPageObjMark_CountParams(mark22));
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFEditEmbedderTest, GetBitmap) {
   ASSERT_TRUE(OpenDocument("embedded_images.pdf"));
   FPDF_PAGE page = LoadPage(0);

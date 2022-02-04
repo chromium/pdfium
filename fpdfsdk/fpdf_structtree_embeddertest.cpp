@@ -261,6 +261,8 @@ TEST_F(FPDFStructTreeEmbedderTest, GetLang) {
   UnloadPage(page);
 }
 
+// See also FPDFEditEmbedderTest.TraverseMarkedContentID, which traverses the
+// marked contents using FPDFPageObj_GetMark() and related API.
 TEST_F(FPDFStructTreeEmbedderTest, GetMarkedContentID) {
   ASSERT_TRUE(OpenDocument("marked_content_id.pdf"));
   FPDF_PAGE page = LoadPage(0);
