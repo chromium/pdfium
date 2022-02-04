@@ -30,7 +30,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling android_ndk
   # and whatever else without interference from each other.
-  'android_ndk_revision': '401019bf85744311b26c88ced255cd53401af8b7',
+  'android_ndk_revision': '9644104c8cf85bf1bdce5b1c0691e9778572c3f8',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling build
   # and whatever else without interference from each other.
