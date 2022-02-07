@@ -1,0 +1,4 @@
+include_rules = [
+  # fwl is standalone vis-a-vis fxfa. https://crbug.com/pdfium/507
+  '-xfa/fxfa',
+]
