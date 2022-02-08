@@ -16,15 +16,19 @@ source_set("crt") {
     "locale_iface.h",
     "locale_mgr_iface.h",
   ]
-  deps = [
-    "../../../core/fpdfapi/page",
-    "../../../core/fxcrt",
-  ]
+  cflags = []
   configs += [
     "../../../:pdfium_strict_config",
     "../../:xfa_warnings",
   ]
+  deps = [
+    "../../../core/fpdfapi/page",
+    "../../../core/fxcrt",
+  ]
   visibility = [ "../../../*" ]
+  if (is_clang) {
+    cflags += [ "-Wshorten-64-to-32" ]
+  }
 }
 
 pdfium_unittest_source_set("unittests") {

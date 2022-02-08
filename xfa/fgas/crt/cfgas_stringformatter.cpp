@@ -177,9 +177,9 @@ WideString GetLiteralTextReverse(pdfium::span<const wchar_t> spStrPattern,
                spStrPattern[*iPattern + 1] == 'u') {
       (*iPattern)--;
       int32_t iKeyValue = 0;
-      int32_t iLen = wsOutput.GetLength();
-      int32_t i = 1;
-      for (; i < iLen && i < 5; i++) {
+      size_t iLen = std::min<size_t>(wsOutput.GetLength(), 5);
+      size_t i = 1;
+      for (; i < iLen; i++) {
         wchar_t ch = wsOutput[i];
         iKeyValue = ConvertHex(iKeyValue, ch);
       }
@@ -251,7 +251,7 @@ bool ParseLocaleDate(const WideString& wsDate,
   while (*cc < spDate.size() && ccf < spDatePattern.size()) {
     if (spDatePattern[ccf] == '\'') {
       WideString wsLiteral = GetLiteralText(spDatePattern, &ccf);
-      int32_t iLiteralLen = wsLiteral.GetLength();
+      size_t iLiteralLen = wsLiteral.GetLength();
       if (*cc + iLiteralLen > spDate.size() ||
           wcsncmp(spDate.data() + *cc, wsLiteral.c_str(), iLiteralLen) != 0) {
         return false;
@@ -370,7 +370,7 @@ bool ParseLocaleTime(const WideString& wsTime,
   while (*cc < spTime.size() && ccf < spTimePattern.size()) {
     if (spTimePattern[ccf] == '\'') {
       WideString wsLiteral = GetLiteralText(spTimePattern, &ccf);
-      int32_t iLiteralLen = wsLiteral.GetLength();
+      size_t iLiteralLen = wsLiteral.GetLength();
       if (*cc + iLiteralLen > spTime.size() ||
           wcsncmp(spTime.data() + *cc, wsLiteral.c_str(), iLiteralLen) != 0) {
         return false;
@@ -939,7 +939,7 @@ WideString CFGAS_StringFormatter::GetTextFormat(
   WideString wsPurgePattern;
   while (ccf < m_spPattern.size()) {
     if (m_spPattern[ccf] == '\'') {
-      int32_t iCurChar = ccf;
+      size_t iCurChar = ccf;
       GetLiteralText(m_spPattern, &ccf);
       wsPurgePattern +=
           WideStringView(m_spPattern.data() + iCurChar, ccf - iCurChar + 1);
@@ -990,7 +990,7 @@ LocaleIface* CFGAS_StringFormatter::GetNumericFormat(
   bool bBrackOpen = false;
   while (ccf < m_spPattern.size()) {
     if (m_spPattern[ccf] == '\'') {
-      int32_t iCurChar = ccf;
+      size_t iCurChar = ccf;
       GetLiteralText(m_spPattern, &ccf);
       *wsPurgePattern +=
           WideStringView(m_spPattern.data() + iCurChar, ccf - iCurChar + 1);
@@ -1098,7 +1098,7 @@ bool CFGAS_StringFormatter::ParseText(const WideString& wsSrcText,
     switch (spTextFormat[iPattern]) {
       case '\'': {
         WideString wsLiteral = GetLiteralText(spTextFormat, &iPattern);
-        int32_t iLiteralLen = wsLiteral.GetLength();
+        size_t iLiteralLen = wsLiteral.GetLength();
         if (iText + iLiteralLen > spSrcText.size() ||
             wcsncmp(spSrcText.data() + iText, wsLiteral.c_str(), iLiteralLen) !=
                 0) {
@@ -1168,9 +1168,9 @@ bool CFGAS_StringFormatter::ParseNum(LocaleMgrIface* pLocaleMgr,
   int32_t iExponent = 0;
   WideString wsDotSymbol = pLocale->GetDecimalSymbol();
   WideString wsGroupSymbol = pLocale->GetGroupingSymbol();
-  int32_t iGroupLen = wsGroupSymbol.GetLength();
   WideString wsMinus = pLocale->GetMinusSymbol();
-  int32_t iMinusLen = wsMinus.GetLength();
+  size_t iGroupLen = wsGroupSymbol.GetLength();
+  size_t iMinusLen = wsMinus.GetLength();
 
   pdfium::span<const wchar_t> spSrcNum = wsSrcNum.span();
   pdfium::span<const wchar_t> spNumFormat = wsNumFormat.span();
@@ -1200,7 +1200,7 @@ bool CFGAS_StringFormatter::ParseNum(LocaleMgrIface* pLocaleMgr,
     switch (spNumFormat[ccf]) {
       case '\'': {
         WideString wsLiteral = GetLiteralTextReverse(spNumFormat, &ccf);
-        int32_t iLiteralLen = wsLiteral.GetLength();
+        size_t iLiteralLen = wsLiteral.GetLength();
         cc -= iLiteralLen - 1;
         if (cc >= spSrcNum.size() ||
             wcsncmp(spSrcNum.data() + cc, wsLiteral.c_str(), iLiteralLen) !=
@@ -1281,7 +1281,7 @@ bool CFGAS_StringFormatter::ParseNum(LocaleMgrIface* pLocaleMgr,
       }
       case '$': {
         WideString wsSymbol = pLocale->GetCurrencySymbol();
-        int32_t iSymbolLen = wsSymbol.GetLength();
+        size_t iSymbolLen = wsSymbol.GetLength();
         cc -= iSymbolLen - 1;
         if (cc >= spSrcNum.size() ||
             wcsncmp(spSrcNum.data() + cc, wsSymbol.c_str(), iSymbolLen) != 0) {
@@ -1327,10 +1327,10 @@ bool CFGAS_StringFormatter::ParseNum(LocaleMgrIface* pLocaleMgr,
         break;
       case '%': {
         WideString wsSymbol = pLocale->GetPercentSymbol();
-        int32_t iSysmbolLen = wsSymbol.GetLength();
-        cc -= iSysmbolLen - 1;
+        size_t iSymbolLen = wsSymbol.GetLength();
+        cc -= iSymbolLen - 1;
         if (cc >= spSrcNum.size() ||
-            wcsncmp(spSrcNum.data() + cc, wsSymbol.c_str(), iSysmbolLen) != 0) {
+            wcsncmp(spSrcNum.data() + cc, wsSymbol.c_str(), iSymbolLen) != 0) {
           return false;
         }
         cc--;
@@ -1393,7 +1393,7 @@ bool CFGAS_StringFormatter::ParseNum(LocaleMgrIface* pLocaleMgr,
       switch (spNumFormat[ccf]) {
         case '\'': {
           WideString wsLiteral = GetLiteralText(spNumFormat, &ccf);
-          int32_t iLiteralLen = wsLiteral.GetLength();
+          size_t iLiteralLen = wsLiteral.GetLength();
           if (cc + iLiteralLen > spSrcNum.size() ||
               wcsncmp(spSrcNum.data() + cc, wsLiteral.c_str(), iLiteralLen) !=
                   0) {
@@ -1465,7 +1465,7 @@ bool CFGAS_StringFormatter::ParseNum(LocaleMgrIface* pLocaleMgr,
         }
         case '$': {
           WideString wsSymbol = pLocale->GetCurrencySymbol();
-          int32_t iSymbolLen = wsSymbol.GetLength();
+          size_t iSymbolLen = wsSymbol.GetLength();
           if (cc + iSymbolLen > spSrcNum.size() ||
               wcsncmp(spSrcNum.data() + cc, wsSymbol.c_str(), iSymbolLen) !=
                   0) {
@@ -1510,11 +1510,11 @@ bool CFGAS_StringFormatter::ParseNum(LocaleMgrIface* pLocaleMgr,
           return false;
         case '%': {
           WideString wsSymbol = pLocale->GetPercentSymbol();
-          int32_t iSysmbolLen = wsSymbol.GetLength();
-          if (cc + iSysmbolLen <= spSrcNum.size() &&
-              wcsncmp(spSrcNum.data() + cc, wsSymbol.c_str(), iSysmbolLen) ==
+          size_t iSymbolLen = wsSymbol.GetLength();
+          if (cc + iSymbolLen <= spSrcNum.size() &&
+              wcsncmp(spSrcNum.data() + cc, wsSymbol.c_str(), iSymbolLen) ==
                   0) {
-            cc += iSysmbolLen;
+            cc += iSymbolLen;
           }
           bHavePercentSymbol = true;
         } break;
@@ -1581,7 +1581,7 @@ CFGAS_StringFormatter::DateTimeType CFGAS_StringFormatter::GetDateTimeFormat(
   bool bBraceOpen = false;
   while (ccf < m_spPattern.size()) {
     if (m_spPattern[ccf] == '\'') {
-      int32_t iCurChar = ccf;
+      size_t iCurChar = ccf;
       GetLiteralText(m_spPattern, &ccf);
       wsTempPattern +=
           WideStringView(m_spPattern.data() + iCurChar, ccf - iCurChar + 1);
@@ -1751,7 +1751,7 @@ bool CFGAS_StringFormatter::ParseZero(const WideString& wsSrcText) const {
   while (iPattern < spTextFormat.size() && iText < spSrcText.size()) {
     if (spTextFormat[iPattern] == '\'') {
       WideString wsLiteral = GetLiteralText(spTextFormat, &iPattern);
-      int32_t iLiteralLen = wsLiteral.GetLength();
+      size_t iLiteralLen = wsLiteral.GetLength();
       if (iText + iLiteralLen > spSrcText.size() ||
           wcsncmp(spSrcText.data() + iText, wsLiteral.c_str(), iLiteralLen)) {
         return false;
@@ -1779,7 +1779,7 @@ bool CFGAS_StringFormatter::ParseNull(const WideString& wsSrcText) const {
   while (iPattern < spTextFormat.size() && iText < spSrcText.size()) {
     if (spTextFormat[iPattern] == '\'') {
       WideString wsLiteral = GetLiteralText(spTextFormat, &iPattern);
-      int32_t iLiteralLen = wsLiteral.GetLength();
+      size_t iLiteralLen = wsLiteral.GetLength();
       if (iText + iLiteralLen > spSrcText.size() ||
           wcsncmp(spSrcText.data() + iText, wsLiteral.c_str(), iLiteralLen)) {
         return false;
@@ -1926,9 +1926,9 @@ bool CFGAS_StringFormatter::FormatNum(LocaleMgrIface* pLocaleMgr,
   }
 
   bool bTrimTailZeros = false;
-  int32_t iTreading =
+  size_t iTreading =
       GetNumTrailingLimit(wsNumFormat, dot_index_f, &bTrimTailZeros);
-  int32_t scale = decimal.GetScale();
+  uint8_t scale = decimal.GetScale();
   if (iTreading < scale) {
     decimal.SetScale(iTreading);
     wsSrcNum = decimal.ToWideString();
