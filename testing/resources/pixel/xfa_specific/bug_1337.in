@@ -1,0 +1,38 @@
+{{header}}
+{{include ../../xfa_catalog_1_0.fragment}}
+{{include ../../xfa_object_2_0.fragment}}
+{{include ../../xfa_preamble_3_0.fragment}}
+{{include ../../xfa_config_4_0.fragment}}
+{{object 5 0}} <<
+  {{streamlen}}
+>>
+stream
+<template xmlns="http://www.xfa.org/schema/xfa-template/3.3/">
+  <subform name="form1" layout="tb" locale="en_US" restoreState="auto">
+    <pageSet>
+      <pageArea name="Page1" id="Page1">
+        <contentArea x="18pt" y="18pt" w="612pt" h="792pt"/>
+        <medium stock="default" short="612pt" long="792pt"/>
+      </pageArea>
+    </pageSet>
+    <subform w="576pt" h="756pt" name="Page1">
+      <draw name="StaticImage1" w="250pt" h="250pt" x="10pt" y="10pt">
+        <value>
+          <image contentType="image/gif">R0lGODdh+gD6AIABAP8AAP///ywAAAAA+gD6AAAC/oSPqcvtD6OctNqLs968+w+G4kiW5omm6sq27gvH8kzX9o3n+s73/g8MCofEovGITCqXzKbzCY1Kp9Sq9YrNarfcrvcLDovH5LL5jE6r1+y2+w2Py+f0uv2Oz+v3/L7/DxgoOEhYaHiImKi4yNjo+AgZKTlJWWl5iZmpucnZ6fkJGio6SlpqeoqaqrrK2ur6ChsrO0tba3uLm6u7y9vr+wscLDxMXGx8jJysvMzc7PwMHS09TV1tfY2drb3N3e39DR4uPk5ebn6Onq6+zt7u/g4fLz9PX29/j5+vv8/f7/8PMKDAgQQLGjyIMKHChQwbOnwIMaLEiRQrWryIMaPGV40cO3r8CDKkyJEkS5o8iTKlypUsW7p8CTOmzJk0a9q8iTOnzp08e/r8CTSo0KFEixo9ijSp0qVMmzp9CjWq1KlUq1q9ijWr1q1cu3r9Cjas2LFky14oAAA7</image>
+        </value>
+        <ui>
+          <imageEdit/>
+        </ui>
+      </draw>
+    </subform>
+  </subform>
+</template>
+endstream
+endobj
+{{include ../../xfa_locale_6_0.fragment}}
+{{include ../../xfa_postamble_7_0.fragment}}
+{{include ../../xfa_pages_8_0.fragment}}
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
