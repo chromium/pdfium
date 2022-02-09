@@ -218,9 +218,8 @@ def add_entries_for_builder(name, category = None, short_name = None, skip_ci_bu
 
 # End of helpers and constants. Below we actually generate the configs.
 
-# Enable LUCI Realms support.
-lucicfg.enable_experiment("crbug.com/1085650")
-luci.builder.defaults.experiments.set({"luci.use_realms": 100})
+# Use LUCI Scheduler BBv2 names and add Scheduler realms configs.
+lucicfg.enable_experiment("crbug.com/1182002")
 
 lucicfg.config(
     config_dir = "generated",
