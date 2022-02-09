@@ -114,6 +114,7 @@ source_set("fxcrt") {
     "../../third_party:fx_agg",
     "../../third_party:fx_lcms2",
     "../../third_party:fx_libopenjpeg",
+    "../../third_party:fx_lpng",
     "../../third_party:fx_tiff",
     "../../xfa/*",
   ]

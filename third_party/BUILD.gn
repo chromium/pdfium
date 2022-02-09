@@ -468,7 +468,10 @@ source_set("fx_lpng") {
 
   defines = []
   cflags = []
-  deps = [ ":zlib" ]
+  deps = [
+    ":zlib",
+    "../core/fxcrt",
+  ]
 
   if (current_cpu == "x86" || current_cpu == "x64") {
     sources += [

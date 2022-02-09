@@ -1,17 +1,16 @@
 diff a/third_party/libpng16/pngmem.c b/third_party/libpng16/pngmem.c
 --- a/third_party/libpng16/pngmem.c
 +++ b/third_party/libpng16/pngmem.c
-@@ -19,6 +19,9 @@
+@@ -19,6 +19,8 @@
  
  #include "pngpriv.h"
  
-+void*	FXMEM_DefaultAlloc(size_t byte_size);
-+void	FXMEM_DefaultFree(void* pointer);
++#include "core/fxcrt/fx_memory.h"
 +
  #if defined(PNG_READ_SUPPORTED) || defined(PNG_WRITE_SUPPORTED)
  /* Free a png_struct */
  void /* PRIVATE */
-@@ -92,7 +95,7 @@
+@@ -91,7 +94,7 @@
  
        else
  #endif
@@ -20,7 +19,7 @@ diff a/third_party/libpng16/pngmem.c b/third_party/libpng16/pngmem.c
     }
  
     else
-@@ -249,7 +252,7 @@
+@@ -248,7 +251,7 @@
        return;
  #endif /* USER_MEM */
  

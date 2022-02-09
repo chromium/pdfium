@@ -19,8 +19,7 @@
 
 #include "pngpriv.h"
 
-void*	FXMEM_DefaultAlloc(size_t byte_size);
-void	FXMEM_DefaultFree(void* pointer);
+#include "core/fxcrt/fx_memory.h"
 
 #if defined(PNG_READ_SUPPORTED) || defined(PNG_WRITE_SUPPORTED)
 /* Free a png_struct */
