@@ -23,6 +23,7 @@ class CPDF_StructElement final : public Retainable {
 
   ByteString GetType() const { return m_Type; }
   WideString GetAltText() const;
+  WideString GetActualText() const;
   WideString GetTitle() const;
 
   // Never returns nullptr.

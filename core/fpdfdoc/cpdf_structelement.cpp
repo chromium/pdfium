@@ -53,6 +53,10 @@ WideString CPDF_StructElement::GetAltText() const {
   return GetDict()->GetUnicodeTextFor("Alt");
 }
 
+WideString CPDF_StructElement::GetActualText() const {
+  return GetDict()->GetUnicodeTextFor("ActualText");
+}
+
 WideString CPDF_StructElement::GetTitle() const {
   return GetDict()->GetUnicodeTextFor("T");
 }

@@ -353,6 +353,7 @@ int CheckPDFiumCApi() {
 
     // fpdf_structtree.h
     CHK(FPDF_StructElement_CountChildren);
+    CHK(FPDF_StructElement_GetActualText);
     CHK(FPDF_StructElement_GetAltText);
     CHK(FPDF_StructElement_GetChildAtIndex);
     CHK(FPDF_StructElement_GetID);

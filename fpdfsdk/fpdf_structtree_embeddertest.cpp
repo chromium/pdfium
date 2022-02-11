@@ -74,6 +74,50 @@ TEST_F(FPDFStructTreeEmbedderTest, GetAltText) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFStructTreeEmbedderTest, GetActualText) {
+  ASSERT_TRUE(OpenDocument("tagged_actual_text.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ASSERT_TRUE(struct_tree);
+    ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
+
+    EXPECT_EQ(0U, FPDF_StructElement_GetActualText(nullptr, nullptr, 0));
+
+    FPDF_STRUCTELEMENT element =
+        FPDF_StructTree_GetChildAtIndex(struct_tree.get(), 0);
+    ASSERT_TRUE(element);
+    EXPECT_EQ(0U, FPDF_StructElement_GetActualText(element, nullptr, 0));
+
+    ASSERT_EQ(1, FPDF_StructElement_CountChildren(element));
+    FPDF_STRUCTELEMENT child_element =
+        FPDF_StructElement_GetChildAtIndex(element, 0);
+    ASSERT_TRUE(child_element);
+    EXPECT_EQ(0U, FPDF_StructElement_GetActualText(child_element, nullptr, 0));
+
+    ASSERT_EQ(1, FPDF_StructElement_CountChildren(child_element));
+    FPDF_STRUCTELEMENT gchild_element =
+        FPDF_StructElement_GetChildAtIndex(child_element, 0);
+    ASSERT_TRUE(gchild_element);
+    ASSERT_EQ(24U,
+              FPDF_StructElement_GetActualText(gchild_element, nullptr, 0));
+
+    unsigned short buffer[12] = {};
+    // Deliberately pass in a small buffer size to make sure |buffer| remains
+    // untouched.
+    ASSERT_EQ(24U, FPDF_StructElement_GetActualText(gchild_element, buffer, 1));
+    for (size_t i = 0; i < pdfium::size(buffer); ++i)
+      EXPECT_EQ(0U, buffer[i]);
+    ASSERT_EQ(24U, FPDF_StructElement_GetActualText(gchild_element, buffer,
+                                                    sizeof(buffer)));
+    EXPECT_EQ(L"Actual Text", GetPlatformWString(buffer));
+  }
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFStructTreeEmbedderTest, GetStringAttribute) {
   ASSERT_TRUE(OpenDocument("tagged_table.pdf"));
   FPDF_PAGE page = LoadPage(0);

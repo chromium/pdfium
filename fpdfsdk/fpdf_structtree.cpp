@@ -80,6 +80,15 @@ FPDF_StructElement_GetAltText(FPDF_STRUCTELEMENT struct_element,
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDF_StructElement_GetActualText(FPDF_STRUCTELEMENT struct_element,
+                                 void* buffer,
+                                 unsigned long buflen) {
+  CPDF_StructElement* elem =
+      CPDFStructElementFromFPDFStructElement(struct_element);
+  return elem ? WideStringToBuffer(elem->GetActualText(), buffer, buflen) : 0;
+}
+
+FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDF_StructElement_GetID(FPDF_STRUCTELEMENT struct_element,
                          void* buffer,
                          unsigned long buflen) {
