@@ -108,3 +108,21 @@ TEST(fpdf_parser_utility, ValidateDictAllResourcesOfType) {
 
   CPDF_PageModule::Destroy();
 }
+
+TEST(fpdf_parser_utility, ValidateDictOptionalType) {
+  auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
+
+  // No type is ok.
+  EXPECT_TRUE(ValidateDictOptionalType(dict.Get(), "foo"));
+  EXPECT_TRUE(ValidateDictOptionalType(dict.Get(), "bar"));
+
+  // Add the wrong object type.
+  dict->SetNewFor<CPDF_String>("Type", L"foo");
+  EXPECT_FALSE(ValidateDictOptionalType(dict.Get(), "foo"));
+  EXPECT_FALSE(ValidateDictOptionalType(dict.Get(), "bar"));
+
+  // Add the correct object type.
+  dict->SetNewFor<CPDF_Name>("Type", "foo");
+  EXPECT_TRUE(ValidateDictOptionalType(dict.Get(), "foo"));
+  EXPECT_FALSE(ValidateDictOptionalType(dict.Get(), "bar"));
+}

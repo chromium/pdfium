@@ -185,6 +185,12 @@ bool ValidateFontResourceDict(const CPDF_Dictionary* dict) {
   return ValidateDictAllResourcesOfType(dict, "Font");
 }
 
+bool ValidateDictOptionalType(const CPDF_Dictionary* dict,
+                              ByteStringView type) {
+  DCHECK(!type.IsEmpty());
+  return dict && (!dict->KeyExist("Type") || dict->GetNameFor("Type") == type);
+}
+
 std::ostream& operator<<(std::ostream& buf, const CPDF_Object* pObj) {
   if (!pObj) {
     buf << " null";

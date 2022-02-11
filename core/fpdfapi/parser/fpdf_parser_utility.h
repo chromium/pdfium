@@ -67,6 +67,9 @@ bool ValidateDictAllResourcesOfType(const CPDF_Dictionary* dict,
 // Shorthand for ValidateDictAllResourcesOfType(dict, "Font").
 bool ValidateFontResourceDict(const CPDF_Dictionary* dict);
 
+// Like ValidateDictType(), but /Type can also not exist.
+bool ValidateDictOptionalType(const CPDF_Dictionary* dict, ByteStringView type);
+
 std::ostream& operator<<(std::ostream& buf, const CPDF_Object* pObj);
 
 #endif  // CORE_FPDFAPI_PARSER_FPDF_PARSER_UTILITY_H_
