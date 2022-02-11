@@ -114,7 +114,7 @@ endobj
 9 0 obj <<
   /Nums [
     0
-    [10 0 R 11 0 R]
+    [10 0 R 11 0 R 12 0 R]
   ]
 >>
 endobj
@@ -129,8 +129,9 @@ endobj
 >>
 endobj
 11 0 obj <<
-  /Type /StructElem
+  % Deliberately missing /Type
   /S /Table
+  /K [12 0 R]
   /P 10 0 R
   /Pg 3 0 R
   /A [(bogus type)]
@@ -138,8 +139,17 @@ endobj
   /Lang (hu)
 >>
 endobj
+12 0 obj <<
+  % Deliberately bad /Type.
+  /Type /NotStructElem
+  /S /TR
+  /P 11 0 R
+  /Pg 3 0 R
+  /ID ()
+>>
+endobj
 xref
-0 12
+0 13
 0000000000 65535 f 
 0000000015 00000 n 
 0000000145 00000 n 
@@ -150,12 +160,13 @@ xref
 0000001212 00000 n 
 0000001253 00000 n 
 0000001412 00000 n 
-0000001473 00000 n 
-0000001600 00000 n 
+0000001480 00000 n 
+0000001607 00000 n 
+0000001758 00000 n 
 trailer <<
   /Root 1 0 R
-  /Size 12
+  /Size 13
 >>
 startxref
-1726
+1873
 %%EOF
