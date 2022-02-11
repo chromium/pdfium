@@ -5,6 +5,7 @@
 #include "core/fpdfapi/parser/cpdf_page_object_avail.h"
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fpdfapi/parser/fpdf_parser_utility.h"
 
 CPDF_PageObjectAvail::~CPDF_PageObjectAvail() = default;
 
@@ -12,6 +13,6 @@ bool CPDF_PageObjectAvail::ExcludeObject(const CPDF_Object* object) const {
   if (CPDF_ObjectAvail::ExcludeObject(object))
     return true;
 
-  return object->IsDictionary() &&
-         object->GetDict()->GetNameFor("Type") == "Page";
+  // See ISO 32000-1:2008 spec, table 30.
+  return ValidateDictType(ToDictionary(object), "Page");
 }

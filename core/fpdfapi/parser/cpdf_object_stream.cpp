@@ -13,6 +13,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
+#include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcrt/cfx_readonlymemorystream.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/check.h"
@@ -25,11 +26,9 @@ bool IsObjectStream(const CPDF_Object* object) {
   if (!stream)
     return false;
 
+  // See ISO 32000-1:2008 spec, table 16.
   const CPDF_Dictionary* stream_dict = stream->GetDict();
-  if (!stream_dict)
-    return false;
-
-  if (stream_dict->GetNameFor("Type") != "ObjStm")
+  if (!ValidateDictType(stream_dict, "ObjStm"))
     return false;
 
   const CPDF_Number* number_of_objects =

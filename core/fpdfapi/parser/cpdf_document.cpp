@@ -14,6 +14,7 @@
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_read_validator.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
+#include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcodec/jbig2/JBig2_DocumentContext.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/scoped_set_insertion.h"
@@ -122,8 +123,8 @@ CPDF_Document::~CPDF_Document() {
 
 // static
 bool CPDF_Document::IsValidPageObject(const CPDF_Object* obj) {
-  const CPDF_Dictionary* dict = ToDictionary(obj);
-  return dict && dict->GetNameFor("Type") == "Page";
+  // See ISO 32000-1:2008 spec, table 30.
+  return ValidateDictType(ToDictionary(obj), "Page");
 }
 
 RetainPtr<CPDF_Object> CPDF_Document::ParseIndirectObject(uint32_t objnum) {
