@@ -285,6 +285,9 @@ TEST_F(FPDFStructTreeEmbedderTest, GetLang) {
     EXPECT_EQ(18U, FPDF_StructElement_GetType(document, buffer, kBufLen));
     EXPECT_EQ("Document", GetPlatformString(buffer));
 
+    // Nullptr test
+    EXPECT_EQ(0U, FPDF_StructElement_GetLang(nullptr, buffer, kBufLen));
+
     // The document has a language.
     EXPECT_EQ(12U, FPDF_StructElement_GetLang(document, buffer, kBufLen));
     EXPECT_EQ("en-US", GetPlatformString(buffer));

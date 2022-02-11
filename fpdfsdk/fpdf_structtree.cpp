@@ -111,6 +111,8 @@ FPDF_StructElement_GetLang(FPDF_STRUCTELEMENT struct_element,
   CPDF_StructElement* elem =
       CPDFStructElementFromFPDFStructElement(struct_element);
   const CPDF_Dictionary* dict = elem ? elem->GetDict() : nullptr;
+  if (!dict)
+    return 0;
   const CPDF_Object* obj = dict->GetObjectFor("Lang");
   if (!obj || !obj->IsString())
     return 0;
