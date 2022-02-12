@@ -47,7 +47,13 @@ CPDF_StructElement::CPDF_StructElement(const CPDF_StructTree* pTree,
   LoadKids(m_pDict.Get());
 }
 
-CPDF_StructElement::~CPDF_StructElement() = default;
+CPDF_StructElement::~CPDF_StructElement() {
+  for (auto& kid : m_Kids) {
+    if (kid.m_Type == Kid::kElement) {
+      kid.m_pElement->SetParent(nullptr);
+    }
+  }
+}
 
 ByteString CPDF_StructElement::GetObjType() const {
   return GetDict()->GetStringFor("Type");

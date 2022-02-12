@@ -420,6 +420,38 @@ TEST_F(FPDFStructTreeEmbedderTest, GetObjType) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFStructTreeEmbedderTest, GetParent) {
+  ASSERT_TRUE(OpenDocument("tagged_alt_text.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ASSERT_TRUE(struct_tree);
+    ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
+
+    FPDF_STRUCTELEMENT parent =
+        FPDF_StructTree_GetChildAtIndex(struct_tree.get(), 0);
+    ASSERT_TRUE(parent);
+
+    ASSERT_EQ(1, FPDF_StructElement_CountChildren(parent));
+
+    FPDF_STRUCTELEMENT child = FPDF_StructElement_GetChildAtIndex(parent, 0);
+    ASSERT_TRUE(child);
+
+    // test nullptr inputs
+    ASSERT_EQ(nullptr, FPDF_StructElement_GetParent(nullptr));
+
+    ASSERT_EQ(parent, FPDF_StructElement_GetParent(child));
+
+    // The parent of `parent` is StructTreeRoot and no longer a StructElement.
+    // We currently handle this case by returning a nullptr.
+    ASSERT_EQ(nullptr, FPDF_StructElement_GetParent(parent));
+  }
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFStructTreeEmbedderTest, GetTitle) {
   ASSERT_TRUE(OpenDocument("tagged_alt_text.pdf"));
   FPDF_PAGE page = LoadPage(0);

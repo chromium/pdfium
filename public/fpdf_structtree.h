@@ -254,6 +254,19 @@ FPDF_EXPORT FPDF_STRUCTELEMENT FPDF_CALLCONV
 FPDF_StructElement_GetChildAtIndex(FPDF_STRUCTELEMENT struct_element,
                                    int index);
 
+// Experimental API.
+// Function: FPDF_StructElement_GetParent
+//          Get the parent of the structure element.
+// Parameters:
+//          struct_tree -   Handle to the struct element.
+// Return value:
+//          The parent structure element or NULL on error.
+// Comments:
+//          If structure element is StructTreeRoot, then this function will
+//          return NULL.
+FPDF_EXPORT FPDF_STRUCTELEMENT FPDF_CALLCONV
+FPDF_StructElement_GetParent(FPDF_STRUCTELEMENT struct_element);
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif
