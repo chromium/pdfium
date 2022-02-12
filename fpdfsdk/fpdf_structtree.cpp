@@ -166,6 +166,18 @@ FPDF_StructElement_GetType(FPDF_STRUCTELEMENT struct_element,
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDF_StructElement_GetObjType(FPDF_STRUCTELEMENT struct_element,
+                              void* buffer,
+                              unsigned long buflen) {
+  CPDF_StructElement* elem =
+      CPDFStructElementFromFPDFStructElement(struct_element);
+  return elem ? WideStringToBuffer(
+                    WideString::FromUTF8(elem->GetObjType().AsStringView()),
+                    buffer, buflen)
+              : 0;
+}
+
+FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDF_StructElement_GetTitle(FPDF_STRUCTELEMENT struct_element,
                             void* buffer,
                             unsigned long buflen) {

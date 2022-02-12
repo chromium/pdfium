@@ -368,6 +368,58 @@ TEST_F(FPDFStructTreeEmbedderTest, GetType) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFStructTreeEmbedderTest, GetObjType) {
+  ASSERT_TRUE(OpenDocument("tagged_table_bad_elem.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ASSERT_TRUE(struct_tree);
+    ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
+
+    FPDF_STRUCTELEMENT child =
+        FPDF_StructTree_GetChildAtIndex(struct_tree.get(), 0);
+    ASSERT_TRUE(child);
+
+    // test nullptr inputs
+    unsigned short buffer[28] = {};
+    ASSERT_EQ(0U,
+              FPDF_StructElement_GetObjType(nullptr, buffer, sizeof(buffer)));
+    ASSERT_EQ(0U, FPDF_StructElement_GetObjType(nullptr, nullptr, 0));
+    ASSERT_EQ(22U, FPDF_StructElement_GetObjType(child, nullptr, 0));
+
+    // Deliberately pass in a small buffer size to make sure `buffer` remains
+    // untouched.
+    ASSERT_EQ(22U, FPDF_StructElement_GetObjType(child, buffer, 1));
+    for (size_t i = 0; i < pdfium::size(buffer); ++i)
+      EXPECT_EQ(0U, buffer[i]);
+
+    ASSERT_EQ(22U,
+              FPDF_StructElement_GetObjType(child, buffer, sizeof(buffer)));
+    EXPECT_EQ(L"StructElem", GetPlatformWString(buffer));
+
+    ASSERT_EQ(1, FPDF_StructElement_CountChildren(child));
+    FPDF_STRUCTELEMENT gchild = FPDF_StructElement_GetChildAtIndex(child, 0);
+    memset(buffer, 0, sizeof(buffer));
+    // Missing /Type in `gchild`
+    ASSERT_EQ(0U,
+              FPDF_StructElement_GetObjType(gchild, buffer, sizeof(buffer)));
+    // Buffer is untouched.
+    for (size_t i = 0; i < pdfium::size(buffer); ++i)
+      EXPECT_EQ(0U, buffer[i]);
+
+    ASSERT_EQ(1, FPDF_StructElement_CountChildren(gchild));
+    FPDF_STRUCTELEMENT ggchild = FPDF_StructElement_GetChildAtIndex(gchild, 0);
+    ASSERT_EQ(28U,
+              FPDF_StructElement_GetObjType(ggchild, buffer, sizeof(buffer)));
+    // Reading bad elem also works.
+    EXPECT_EQ(L"NotStructElem", GetPlatformWString(buffer));
+  }
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFStructTreeEmbedderTest, GetTitle) {
   ASSERT_TRUE(OpenDocument("tagged_alt_text.pdf"));
   FPDF_PAGE page = LoadPage(0);

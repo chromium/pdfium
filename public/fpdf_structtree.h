@@ -190,6 +190,27 @@ FPDF_StructElement_GetType(FPDF_STRUCTELEMENT struct_element,
                            void* buffer,
                            unsigned long buflen);
 
+// Experimental API.
+// Function: FPDF_StructElement_GetObjType
+//           Get the object type (/Type) for a given element.
+// Parameters:
+//           struct_element - Handle to the struct element.
+//           buffer         - A buffer for output. May be NULL.
+//           buflen         - The length of the buffer, in bytes. May be 0.
+// Return value:
+//           The number of bytes in the object type, including the terminating
+//           NUL character. The number of bytes is returned regardless of the
+//           |buffer| and |buflen| parameters.
+// Comments:
+//           Regardless of the platform, the |buffer| is always in UTF-16LE
+//           encoding. The string is terminated by a UTF16 NUL character. If
+//           |buflen| is less than the required length, or |buffer| is NULL,
+//           |buffer| will not be modified.
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDF_StructElement_GetObjType(FPDF_STRUCTELEMENT struct_element,
+                              void* buffer,
+                              unsigned long buflen);
+
 // Function: FPDF_StructElement_GetTitle
 //           Get the title (/T) for a given element.
 // Parameters:

@@ -22,6 +22,7 @@ class CPDF_StructElement final : public Retainable {
   CONSTRUCT_VIA_MAKE_RETAIN;
 
   ByteString GetType() const { return m_Type; }
+  ByteString GetObjType() const;
   WideString GetAltText() const;
   WideString GetActualText() const;
   WideString GetTitle() const;

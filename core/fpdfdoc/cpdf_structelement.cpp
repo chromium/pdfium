@@ -49,6 +49,10 @@ CPDF_StructElement::CPDF_StructElement(const CPDF_StructTree* pTree,
 
 CPDF_StructElement::~CPDF_StructElement() = default;
 
+ByteString CPDF_StructElement::GetObjType() const {
+  return GetDict()->GetStringFor("Type");
+}
+
 WideString CPDF_StructElement::GetAltText() const {
   return GetDict()->GetUnicodeTextFor("Alt");
 }
