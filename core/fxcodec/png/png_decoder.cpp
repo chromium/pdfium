@@ -58,10 +58,10 @@ void _png_load_bmp_attribute(png_structp png_ptr,
     png_get_pHYs(png_ptr, info_ptr, &res_x, &res_y, &unit_type);
     switch (unit_type) {
       case PNG_RESOLUTION_METER:
-        pAttribute->m_wDPIUnit = FXCODEC_RESUNIT_METER;
+        pAttribute->m_wDPIUnit = CFX_DIBAttribute::kResUnitMeter;
         break;
       default:
-        pAttribute->m_wDPIUnit = FXCODEC_RESUNIT_NONE;
+        pAttribute->m_wDPIUnit = CFX_DIBAttribute::kResUnitNone;
     }
 #endif
 #if defined(PNG_iCCP_SUPPORTED)
