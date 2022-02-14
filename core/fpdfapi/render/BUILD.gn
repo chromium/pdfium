@@ -44,8 +44,10 @@ source_set("render") {
     "cpdf_type3glyphmap.cpp",
     "cpdf_type3glyphmap.h",
   ]
-  cflags = []
-  configs += [ "../../../:pdfium_strict_config" ]
+  configs += [
+    "../../../:pdfium_strict_config",
+    "../../../:pdfium_noshorten_config",
+  ]
   deps = [
     "../../../constants",
     "../../fxcodec",
@@ -56,9 +58,6 @@ source_set("render") {
     "../parser",
   ]
   visibility = [ "../../../*" ]
-  if (is_clang) {
-    cflags += [ "-Wshorten-64-to-32" ]
-  }
   if (is_win) {
     sources += [
       "cpdf_windowsrenderdevice.cpp",

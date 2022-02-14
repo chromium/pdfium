@@ -77,8 +77,10 @@ source_set("fpdfdoc") {
     "cpvt_wordrange.h",
     "ipvt_fontmap.h",
   ]
-  cflags = []
-  configs += [ "../../:pdfium_strict_config" ]
+  configs += [
+    "../../:pdfium_strict_config",
+    "../../:pdfium_noshorten_config",
+  ]
   deps = [
     "../../constants",
     "../fpdfapi/font",
@@ -89,9 +91,6 @@ source_set("fpdfdoc") {
     "../fxge",
   ]
   visibility = [ "../../*" ]
-  if (is_clang) {
-    cflags += [ "-Wshorten-64-to-32" ]
-  }
 }
 
 pdfium_unittest_source_set("unittests") {

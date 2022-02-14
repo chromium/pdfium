@@ -40,8 +40,10 @@ source_set("font") {
     "cpdf_type3font.cpp",
     "cpdf_type3font.h",
   ]
-  cflags = []
-  configs += [ "../../../:pdfium_strict_config" ]
+  configs += [
+    "../../../:pdfium_strict_config",
+    "../../../:pdfium_noshorten_config",
+  ]
   deps = [
     "../../fxcrt",
     "../../fxge",
@@ -51,9 +53,6 @@ source_set("font") {
   visibility = [ "../../../*" ]
   if (is_mac) {
     frameworks = [ "CoreFoundation.framework" ]
-  }
-  if (is_clang) {
-    cflags += [ "-Wshorten-64-to-32" ]
   }
 }
 

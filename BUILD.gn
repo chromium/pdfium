@@ -289,6 +289,13 @@ config("pdfium_strict_config") {
   ]
 }
 
+config("pdfium_noshorten_config") {
+  cflags = []
+  if (is_clang) {
+    cflags += [ "-Wshorten-64-to-32" ]
+  }
+}
+
 source_set("pdfium_public_headers_impl") {
   sources = [
     "public/cpp/fpdf_deleters.h",

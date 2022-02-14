@@ -16,9 +16,9 @@ source_set("crt") {
     "locale_iface.h",
     "locale_mgr_iface.h",
   ]
-  cflags = []
   configs += [
     "../../../:pdfium_strict_config",
+    "../../../:pdfium_noshorten_config",
     "../../:xfa_warnings",
   ]
   deps = [
@@ -26,9 +26,6 @@ source_set("crt") {
     "../../../core/fxcrt",
   ]
   visibility = [ "../../../*" ]
-  if (is_clang) {
-    cflags += [ "-Wshorten-64-to-32" ]
-  }
 }
 
 pdfium_unittest_source_set("unittests") {

@@ -10,8 +10,6 @@ config("fxge_warnings") {
   visibility = [ ":*" ]
   if (is_clang) {
     cflags = [
-      "-Wshorten-64-to-32",
-
       # http://code.google.com/p/pdfium/issues/detail?id=188
       "-Wno-switch",
     ]
@@ -118,6 +116,7 @@ source_set("fxge") {
   configs += [
     ":fxge_warnings",
     "../../:pdfium_strict_config",
+    "../../:pdfium_noshorten_config",
   ]
 
   deps = [ "../fxcrt" ]

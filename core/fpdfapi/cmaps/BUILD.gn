@@ -70,11 +70,10 @@ source_set("cmaps") {
     "fpdf_cmaps.cpp",
     "fpdf_cmaps.h",
   ]
-  cflags = []
-  configs += [ "../../../:pdfium_strict_config" ]
+  configs += [
+    "../../../:pdfium_strict_config",
+    "../../../:pdfium_noshorten_config",
+  ]
   deps = [ "../../fxcrt" ]
   visibility = [ "../../../*" ]
-  if (is_clang) {
-    cflags += [ "-Wshorten-64-to-32" ]
-  }
 }
