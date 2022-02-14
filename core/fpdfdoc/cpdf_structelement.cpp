@@ -49,7 +49,7 @@ CPDF_StructElement::CPDF_StructElement(const CPDF_StructTree* pTree,
 
 CPDF_StructElement::~CPDF_StructElement() {
   for (auto& kid : m_Kids) {
-    if (kid.m_Type == Kid::kElement) {
+    if (kid.m_Type == Kid::kElement && kid.m_pElement) {
       kid.m_pElement->SetParent(nullptr);
     }
   }
