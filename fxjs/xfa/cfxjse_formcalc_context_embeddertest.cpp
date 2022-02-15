@@ -530,10 +530,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, PV) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectFloat("PV(400, 0.10 / 12, 30 * 12)", 45580.32799074439f);
-#if 0
-  // TODO(thestig): Investigate this case.
-  ExecuteExpectFloat("PV(1000, 0.075 / 4, 10 * 4)", 58791.96145535981f);
-#endif
+  ExecuteExpectFloat("PV(1000, 0.075 / 4, 10 * 4)", 27964.88770467326f);
 
   // https://crbug.com/1296840
   ExecuteExpectError("PV(2, 2, 2147483648)");
