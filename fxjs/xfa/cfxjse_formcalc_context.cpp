@@ -2936,7 +2936,7 @@ void CFXJSE_FormCalcContext::Pmt(
     return;
   }
 
-  double nSum = pow(nRate + 1, nPeriods);
+  double nSum = pow(1.0 + nRate, nPeriods);
   info.GetReturnValue().Set((nPrincipal * nRate * nSum) / (nSum - 1));
 }
 
@@ -3029,12 +3029,8 @@ void CFXJSE_FormCalcContext::PV(
     return;
   }
 
-  double nTemp = 1;
-  for (int32_t i = 0; i < nPeriods; ++i)
-    nTemp *= 1 + nRate;
-
-  nTemp = 1 / nTemp;
-  info.GetReturnValue().Set(nAmount * ((1 - nTemp) / nRate));
+  double nTemp = 1 / pow(1.0 + nRate, nPeriods);
+  info.GetReturnValue().Set(nAmount * ((1.0 - nTemp) / nRate));
 }
 
 // static
