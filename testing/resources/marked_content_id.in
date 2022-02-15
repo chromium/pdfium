@@ -1,6 +1,5 @@
-%PDF-1.7
-% ò¤ô
-1 0 obj <<
+{{header}}
+{{object 1 0}} <<
   /Type /Catalog
   /MarkInfo <<
     /Marked true
@@ -9,13 +8,13 @@
   /StructTreeRoot 11 0 R
 >>
 endobj
-2 0 obj <<
+{{object 2 0}} <<
   /Type /Pages
   /Count 1
   /Kids [3 0 R]
 >>
 endobj
-3 0 obj <<
+{{object 3 0}} <<
   /Type /Page
   /Contents 4 0 R
   /MediaBox [0 0 612 792]
@@ -36,8 +35,8 @@ endobj
   /Tabs /S
 >>
 endobj
-4 0 obj <<
-  /Length 317
+{{object 4 0}} <<
+  {{streamlen}}
 >>
 stream
 /Artifact <<
@@ -78,7 +77,7 @@ EMC
 Q
 endstream
 endobj
-5 0 obj <<
+{{object 5 0}} <<
   /Type /Font
   /Subtype /TrueType
   /BaseFont /KPRGOG+Calibri
@@ -89,7 +88,7 @@ endobj
   /Widths [226]
 >>
 endobj
-6 0 obj <<
+{{object 6 0}} <<
   /Type /FontDescriptor
   /Ascent 952
   /AvgWidth 521
@@ -105,9 +104,9 @@ endobj
   /XHeight 476
 >>
 endobj
-7 0 obj <<
+{{object 7 0}} <<
   /Filter [/ASCII85Decode /FlateDecode]
-  /Length 604
+  {{streamlen}}
 >>
 stream
 GhOYs.SXL4?t`qUAme0T9e9ZP"3(Hd+dJWtR0Mc^!/VL0WJN&85/SHb2Tl(-5ik^jKM"^O8Hk>#!@0XF
@@ -120,8 +119,8 @@ hf!.nSDR84frS]M<L@E<EA4Z%Z0dX:OOUR:oF0ar(1?):((_2??l'I:d;Xs<gEnBP1.+N1'OoX#?V"9)
 62f*K!":%>J09&cGAZN]SBRe'9J-<tdVIk~>
 endstream
 endobj
-8 0 obj <<
-  /Length 342
+{{object 8 0}} <<
+  {{streamlen}}
 >>
 stream
 /CIDInit /ProcSet findresource begin
@@ -146,7 +145,7 @@ end
 end
 endstream
 endobj
-9 0 obj <<
+{{object 9 0}} <<
   /Type /XObject
   /Subtype /Image
   /BitsPerComponent 8
@@ -157,7 +156,7 @@ endobj
   /Interpolate true
   /SMask 10 0 R
   /Width 273
-  /Length 1974
+  {{streamlen}}
 >>
 stream
 GhVQ=BrkT/*<>Tnp)[K];NNO';(,Y,e3[reZBQQ?W!Kf<[A?;p.U_Il/M348;ME%+5X5%[`$K.l1b(tG
@@ -187,7 +186,7 @@ dBg6iBe%]J62X9a(XZ!F3XY7EgQG`YM1Hp%jI;53^`H0$jf:6@!PibJ?l[O&ZY(FDnq(4%U8'gO<>.9V
 zzzzzzzzzz!!!#Ws20Ni!j00"QN~>
 endstream
 endobj
-10 0 obj <<
+{{object 10 0}} <<
   /Type /XObject
   /Subtype /Image
   /BitsPerComponent 8
@@ -196,13 +195,13 @@ endobj
   /Height 272
   /Interpolate true
   /Width 273
-  /Length 55
+  {{streamlen}}
 >>
 stream
 GhVQ$0b"*_!!8hNrdD20"'P[)zzzzzzzzzzzzzzzzz!8pQUgs,iQ~>
 endstream
 endobj
-11 0 obj <<
+{{object 11 0}} <<
   /Type /StructTreeRoot
   /K 12 0 R
   /ParentTree <<
@@ -211,7 +210,7 @@ endobj
   /ParentTreeNextKey 1
 >>
 endobj
-12 0 obj <<
+{{object 12 0}} <<
   /S /Figure
   /P 11 0 R
   /A 14 0 R
@@ -220,37 +219,17 @@ endobj
   /Pg 3 0 R
 >>
 endobj
-13 0 obj
+{{object 13 0}}
   [12 0 R]
 endobj
-14 0 obj <<
+{{object 14 0}} <<
   /BBox [204 516 408 720]
   /InlineAlign /Center
   /O /Layout
   /Placement /Block
 >>
 endobj
-xref
-0 15
-0000000000 65535 f 
-0000000015 00000 n 
-0000000130 00000 n 
-0000000193 00000 n 
-0000000498 00000 n 
-0000000867 00000 n 
-0000001041 00000 n 
-0000001301 00000 n 
-0000001997 00000 n 
-0000002391 00000 n 
-0000004625 00000 n 
-0000004902 00000 n 
-0000005026 00000 n 
-0000005124 00000 n 
-0000005151 00000 n 
-trailer <<
-  /Root 1 0 R
-  /Size 15
->>
-startxref
-5255
+{{xref}}
+{{trailer}}
+{{startxref}}
 %%EOF
