@@ -23,6 +23,8 @@ source_set("constants") {
     "transparency.cpp",
     "transparency.h",
   ]
-
-  configs += [ "../:pdfium_strict_config" ]
+  configs += [
+    "../:pdfium_strict_config",
+    "../:pdfium_noshorten_config",
+  ]
 }

@@ -51,11 +51,14 @@ source_set("css") {
     "cfx_cssvaluelistparser.cpp",
     "cfx_cssvaluelistparser.h",
   ]
+  configs += [
+    "../../../:pdfium_strict_config",
+    "../../../:pdfium_noshorten_config",
+  ]
   deps = [
     "../",
     "../../fxge",
   ]
-  configs += [ "../../../:pdfium_strict_config" ]
   visibility = [ "../../../*" ]
 }
 
