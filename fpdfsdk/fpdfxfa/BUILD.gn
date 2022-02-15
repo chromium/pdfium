@@ -20,6 +20,10 @@ source_set("fpdfxfa") {
     "cpdfxfa_widgethandler.cpp",
     "cpdfxfa_widgethandler.h",
   ]
+  configs += [
+    "../../:pdfium_strict_config",
+    "../../:pdfium_noshorten_config",
+  ]
   deps = [
     "../../:pdfium_public_headers",
     "../../core/fpdfapi/page",
@@ -35,7 +39,6 @@ source_set("fpdfxfa") {
     "../../xfa/fxfa",
     "../../xfa/fxfa/parser",
   ]
-  configs += [ "../../:pdfium_strict_config" ]
   visibility = [ "../../*" ]
 }
 
