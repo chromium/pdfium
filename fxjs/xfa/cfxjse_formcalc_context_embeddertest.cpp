@@ -460,6 +460,8 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Apr) {
   ExecuteExpectFloatNear("Apr(35000, 269.50, 360)", 0.08515404566f);
   ExecuteExpectFloatNear("Apr(210000 * 0.75, 850 + 110, 25 * 26)",
                          0.07161332404f);
+
+  ExecuteExpectError("Apr(2, 2, 2147483648)");
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, CTerm) {
@@ -479,6 +481,8 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, FV) {
 
   ExecuteExpectFloat("FV(400, 0.10 / 12, 30 * 12)", 904195.16991842445f);
   ExecuteExpectFloat("FV(1000, 0.075 / 4, 10 * 4)", 58791.96145535981f);
+
+  ExecuteExpectError("FV(2, 2, 2147483648)");
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, IPmt) {
@@ -530,6 +534,9 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, PV) {
   // TODO(thestig): Investigate this case.
   ExecuteExpectFloat("PV(1000, 0.075 / 4, 10 * 4)", 58791.96145535981f);
 #endif
+
+  // https://crbug.com/1296840
+  ExecuteExpectError("PV(2, 2, 2147483648)");
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Rate) {
@@ -537,6 +544,8 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Rate) {
 
   ExecuteExpectFloatNear("Rate(12000, 8000, 5)", 0.0844717712f);
   ExecuteExpectFloatNear("Rate(10000, 0.25 * 5000, 4 * 12)", 0.04427378243f);
+
+  ExecuteExpectError("Rate(2, 2, 2147483648)");
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Term) {
