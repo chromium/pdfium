@@ -15,6 +15,7 @@
 #include "fpdfsdk/pwl/cpwl_scroll_bar.h"
 #include "fpdfsdk/pwl/ipwl_fillernotify.h"
 #include "public/fpdf_fwlevent.h"
+#include "third_party/base/numerics/safe_conversions.h"
 
 CPWL_ListBox::CPWL_ListBox(
     const CreateParams& cp,
@@ -211,7 +212,7 @@ bool CPWL_ListBox::OnNotifySelectionChanged(bool bKeyDown,
   WideString swChange = GetText();
   WideString strChangeEx;
   int nSelStart = 0;
-  int nSelEnd = swChange.GetLength();
+  int nSelEnd = pdfium::base::checked_cast<int>(swChange.GetLength());
   bool bRC;
   bool bExit;
   std::tie(bRC, bExit) = m_pFillerNotify->OnBeforeKeyStroke(

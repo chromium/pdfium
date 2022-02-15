@@ -36,7 +36,10 @@ source_set("pwl") {
     "ipwl_fillernotify.h",
     "ipwl_systemhandler.h",
   ]
-  configs += [ "../../:pdfium_strict_config" ]
+  configs += [
+    "../../:pdfium_strict_config",
+    "../../:pdfium_noshorten_config",
+  ]
   deps = [
     "../../:pdfium_public_headers",
     "../../constants",
