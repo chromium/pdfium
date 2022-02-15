@@ -313,10 +313,10 @@ CFGAS_Char::BreakType CFGAS_RTFBreak::EndBreak(CFGAS_Char::BreakType dwStatus) {
     return m_Lines[m_iReadyLineIndex].m_LinePieces.back().m_dwStatus;
   }
 
-  if (m_pCurLine->m_LineChars.empty())
+  CFGAS_Char* tc = m_pCurLine->LastChar();
+  if (!tc)
     return CFGAS_Char::BreakType::kNone;
 
-  CFGAS_Char* tc = m_pCurLine->GetChar(m_pCurLine->m_LineChars.size() - 1);
   tc->m_dwStatus = dwStatus;
   if (dwStatus == CFGAS_Char::BreakType::kPiece)
     return dwStatus;
@@ -344,8 +344,7 @@ bool CFGAS_RTFBreak::EndBreakSplitLine(CFGAS_BreakLine* pNextLine,
                                        CFGAS_Char::BreakType dwStatus) {
   bool bDone = false;
   if (IsGreaterThanLineWidth(m_pCurLine->GetLineEnd())) {
-    const CFGAS_Char* tc =
-        m_pCurLine->GetChar(m_pCurLine->m_LineChars.size() - 1);
+    const CFGAS_Char* tc = m_pCurLine->LastChar();
     switch (tc->GetCharType()) {
       case FX_CHARTYPE::kTab:
       case FX_CHARTYPE::kControl:

@@ -13,9 +13,11 @@ CFGAS_BreakLine::CFGAS_BreakLine() = default;
 
 CFGAS_BreakLine::~CFGAS_BreakLine() = default;
 
-CFGAS_Char* CFGAS_BreakLine::GetChar(int32_t index) {
-  DCHECK(fxcrt::IndexInBounds(m_LineChars, index));
-  return &m_LineChars[index];
+CFGAS_Char* CFGAS_BreakLine::LastChar() {
+  if (m_LineChars.empty())
+    return nullptr;
+
+  return &m_LineChars.back();
 }
 
 int32_t CFGAS_BreakLine::GetLineEnd() const {

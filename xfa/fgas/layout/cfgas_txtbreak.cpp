@@ -16,6 +16,7 @@
 #include "core/fxge/text_char_pos.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/adapters.h"
+#include "third_party/base/numerics/safe_conversions.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/cfgas_char.h"
 #include "xfa/fgas/layout/fgas_arabic.h"
@@ -272,7 +273,7 @@ void CFGAS_TxtBreak::EndBreakSplitLine(CFGAS_BreakLine* pNextLine,
   bool bDone = false;
   CFGAS_Char* pTC;
   if (!m_bSingleLine && IsGreaterThanLineWidth(m_pCurLine->m_iWidth)) {
-    pTC = m_pCurLine->GetChar(m_pCurLine->m_LineChars.size() - 1);
+    pTC = m_pCurLine->LastChar();
     switch (pTC->GetCharType()) {
       case FX_CHARTYPE::kTab:
       case FX_CHARTYPE::kControl:
@@ -301,7 +302,7 @@ std::deque<CFGAS_Break::TPO> CFGAS_TxtBreak::EndBreakBidiLine(
     tp.m_iStartPos = m_pCurLine->m_iStart;
     tp.m_iWidth = m_pCurLine->m_iWidth;
     tp.m_iStartChar = 0;
-    tp.m_iCharCount = m_pCurLine->m_LineChars.size();
+    tp.m_iCharCount = fxcrt::CollectionSize<int32_t>(m_pCurLine->m_LineChars);
     tp.m_pChars = &m_pCurLine->m_LineChars;
     pTC = &chars[0];
     tp.m_dwCharStyles = pTC->m_dwCharStyles;
@@ -676,7 +677,8 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
     wchar_t wch;
     if (pEngine) {
       wch = pEngine->GetChar(iAbsolute);
-      iWidth = pEngine->GetWidthOfChar(iAbsolute);
+      iWidth = pdfium::base::checked_cast<int32_t>(
+          pEngine->GetWidthOfChar(iAbsolute));
     } else {
       wch = *pStr++;
       iWidth = *pWidths++;
@@ -903,7 +905,8 @@ std::vector<CFX_RectF> CFGAS_TxtBreak::GetCharRects(const Run& run) const {
     if (pEngine) {
       int32_t iAbsolute = i + run.iStart;
       wch = pEngine->GetChar(iAbsolute);
-      iCharSize = pEngine->GetWidthOfChar(iAbsolute);
+      iCharSize = pdfium::base::checked_cast<int32_t>(
+          pEngine->GetWidthOfChar(iAbsolute));
     } else {
       wch = *pStr++;
       iCharSize = *pWidths++;

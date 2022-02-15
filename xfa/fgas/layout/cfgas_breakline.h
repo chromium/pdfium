@@ -17,7 +17,7 @@ class CFGAS_BreakLine {
   CFGAS_BreakLine();
   ~CFGAS_BreakLine();
 
-  CFGAS_Char* GetChar(int32_t index);
+  CFGAS_Char* LastChar();
   int32_t GetLineEnd() const;
 
   void Clear();

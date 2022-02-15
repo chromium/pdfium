@@ -71,11 +71,9 @@ void CFGAS_Break::SetFontSize(float fFontSize) {
 
 void CFGAS_Break::SetBreakStatus() {
   ++m_dwIdentity;
-  if (m_pCurLine->m_LineChars.empty())
-    return;
 
-  CFGAS_Char* tc = m_pCurLine->GetChar(m_pCurLine->m_LineChars.size() - 1);
-  if (tc->m_dwStatus == CFGAS_Char::BreakType::kNone)
+  CFGAS_Char* tc = m_pCurLine->LastChar();
+  if (tc && tc->m_dwStatus == CFGAS_Char::BreakType::kNone)
     tc->m_dwStatus = CFGAS_Char::BreakType::kPiece;
 }
 
