@@ -5,6 +5,7 @@
 #include "core/fxge/skia/fx_skia_device.h"
 
 #include <limits.h>
+#include <math.h>
 
 #include <algorithm>
 #include <utility>
@@ -2570,9 +2571,15 @@ bool CFX_SkiaDeviceDriver::StartDIBits(
         for (int x = 0; x < m_pBitmap->GetWidth(); ++x) {
           SkPoint src = {x + 0.5f, y + 0.5f};
           inv.mapPoints(&src, 1);
-          // TODO(caryclark) Why does the matrix map require clamping?
-          src.fX = pdfium::clamp(src.fX, 0.5f, width - 0.5f);
-          src.fY = pdfium::clamp(src.fY, 0.5f, height - 0.5f);
+          // SkMatrix::mapPoints() can sometimes output NaN values or values
+          // outside the boundary of the `skBitmap`. Therefore clamping these
+          // values is necessary before getting color information within the
+          // `skBitmap`.
+          src.fX =
+              isnan(src.fX) ? 0.5f : pdfium::clamp(src.fX, 0.5f, width - 0.5f);
+          src.fY =
+              isnan(src.fY) ? 0.5f : pdfium::clamp(src.fY, 0.5f, height - 0.5f);
+
           m_pBitmap->SetPixel(x, y, skBitmap.getColor(src.fX, src.fY));
         }
       }
