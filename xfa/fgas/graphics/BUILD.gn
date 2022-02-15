@@ -21,6 +21,7 @@ source_set("graphics") {
   ]
   configs += [
     "../../../:pdfium_strict_config",
+    "../../../:pdfium_noshorten_config",
     "../../:xfa_warnings",
   ]
   deps = [
