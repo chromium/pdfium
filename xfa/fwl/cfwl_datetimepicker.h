@@ -49,7 +49,7 @@ class CFWL_DateTimePicker final : public CFWL_Widget {
   void SetCurSel(int32_t iYear, int32_t iMonth, int32_t iDay);
 
   void SetEditText(const WideString& wsText);
-  int32_t GetEditTextLength() const;
+  size_t GetEditTextLength() const;
   WideString GetEditText() const;
   void ClearText();
 

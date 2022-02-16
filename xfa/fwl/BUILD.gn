@@ -108,6 +108,11 @@ source_set("fwl") {
     "theme/cfwl_widgettp.cpp",
     "theme/cfwl_widgettp.h",
   ]
+  configs += [
+    "../../:pdfium_strict_config",
+    "../../:pdfium_noshorten_config",
+    "../:xfa_warnings",
+  ]
   deps = [
     "../../core/fxcrt",
     "../../core/fxge",
@@ -116,10 +121,6 @@ source_set("fwl") {
     "../fde",
     "../fgas/font",
     "../fgas/graphics",
-  ]
-  configs += [
-    "../../:pdfium_strict_config",
-    "../:xfa_warnings",
   ]
   visibility = [ "../../*" ]
 }

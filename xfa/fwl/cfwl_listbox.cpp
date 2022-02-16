@@ -12,6 +12,7 @@
 
 #include "core/fxcrt/stl_util.h"
 #include "third_party/base/cxx17_backports.h"
+#include "third_party/base/numerics/safe_conversions.h"
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fgas/graphics/cfgas_gegraphics.h"
@@ -832,7 +833,9 @@ int32_t CFWL_ListBox::GetItemIndex(CFWL_Widget* pWidget, Item* pItem) {
                          [pItem](const std::unique_ptr<Item>& candidate) {
                            return candidate.get() == pItem;
                          });
-  return it != m_ItemArray.end() ? it - m_ItemArray.begin() : -1;
+  return it != m_ItemArray.end()
+             ? pdfium::base::checked_cast<int32_t>(it - m_ItemArray.begin())
+             : -1;
 }
 
 CFWL_ListBox::Item* CFWL_ListBox::AddString(const WideString& wsAdd) {

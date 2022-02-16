@@ -67,7 +67,7 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   virtual void SetText(const WideString& wsText);
   virtual void SetTextSkipNotify(const WideString& wsText);
 
-  int32_t GetTextLength() const;
+  size_t GetTextLength() const;
   WideString GetText() const;
   void ClearText();
 

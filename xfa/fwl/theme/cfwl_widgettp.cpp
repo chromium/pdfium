@@ -32,8 +32,7 @@ void CFWL_WidgetTP::DrawBackground(const CFWL_ThemeBackground& pParams) {}
 
 void CFWL_WidgetTP::DrawText(const CFWL_ThemeText& pParams) {
   EnsureTTOInitialized();
-  int32_t iLen = pParams.m_wsText.GetLength();
-  if (iLen <= 0)
+  if (pParams.m_wsText.IsEmpty())
     return;
 
   CFGAS_GEGraphics* pGraphics = pParams.GetGraphics();
@@ -44,7 +43,7 @@ void CFWL_WidgetTP::DrawText(const CFWL_ThemeText& pParams) {
   matrix.Concat(*pGraphics->GetMatrix());
   m_pTextOut->SetMatrix(matrix);
   m_pTextOut->DrawLogicText(pGraphics->GetRenderDevice(),
-                            WideStringView(pParams.m_wsText.c_str(), iLen),
+                            pParams.m_wsText.AsStringView(),
                             pParams.m_PartRect);
 }
 
