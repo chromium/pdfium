@@ -370,15 +370,14 @@ CFX_FloatRect CFX_Path::GetBoundingBoxForStrokePath(float line_width,
     }
     CHECK_LT(iStartPoint, m_Points.size());
     CHECK_LT(iEndPoint, m_Points.size());
-    CFX_PointF start_pos = m_Points[iStartPoint].m_Point;
-    CFX_PointF end_pos = m_Points[iEndPoint].m_Point;
     if (bJoin) {
       CHECK_LT(iMiddlePoint, m_Points.size());
-      CFX_PointF mid_pos = m_Points[iMiddlePoint].m_Point;
-      UpdateLineJoinPoints(&rect, start_pos, mid_pos, end_pos, half_width,
-                           miter_limit);
+      UpdateLineJoinPoints(
+          &rect, m_Points[iStartPoint].m_Point, m_Points[iMiddlePoint].m_Point,
+          m_Points[iEndPoint].m_Point, half_width, miter_limit);
     } else {
-      UpdateLineEndPoints(&rect, start_pos, end_pos, half_width);
+      UpdateLineEndPoints(&rect, m_Points[iStartPoint].m_Point,
+                          m_Points[iEndPoint].m_Point, half_width);
     }
     iPoint++;
   }
