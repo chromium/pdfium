@@ -40,7 +40,7 @@ CFX_BinaryBuf& CFX_BinaryBuf::operator=(CFX_BinaryBuf&& that) noexcept {
   return *this;
 }
 
-void CFX_BinaryBuf::Delete(size_t start_index, size_t count) {
+void CFX_BinaryBuf::DeleteBuf(size_t start_index, size_t count) {
   if (!m_pBuffer || count > m_DataSize || start_index > m_DataSize - count)
     return;
 

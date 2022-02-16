@@ -24,7 +24,7 @@ class CFX_WideTextBuf final : public CFX_BinaryBuf {
   WideString MakeString() const;
 
   void AppendChar(wchar_t wch);
-  void Delete(int start_index, int count);
+  void Delete(size_t start_index, size_t count);
 
   CFX_WideTextBuf& operator<<(ByteStringView ascii);
   CFX_WideTextBuf& operator<<(const wchar_t* lpsz);

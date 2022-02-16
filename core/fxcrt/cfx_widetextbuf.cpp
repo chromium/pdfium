@@ -36,8 +36,8 @@ void CFX_WideTextBuf::AppendChar(wchar_t ch) {
   new_span[0] = ch;
 }
 
-void CFX_WideTextBuf::Delete(int start_index, int count) {
-  CFX_BinaryBuf::Delete(start_index * sizeof(wchar_t), count * sizeof(wchar_t));
+void CFX_WideTextBuf::Delete(size_t start_index, size_t count) {
+  DeleteBuf(start_index * sizeof(wchar_t), count * sizeof(wchar_t));
 }
 
 CFX_WideTextBuf& CFX_WideTextBuf::operator<<(ByteStringView ascii) {

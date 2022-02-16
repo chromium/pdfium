@@ -45,13 +45,12 @@ class CFX_BinaryBuf {
     m_pBuffer.get()[m_DataSize++] = byte;
   }
 
-  void Delete(size_t start_index, size_t count);
-
   // Releases ownership of |m_pBuffer| and returns it.
   std::unique_ptr<uint8_t, FxFreeDeleter> DetachBuffer();
 
  protected:
   void ExpandBuf(size_t size);
+  void DeleteBuf(size_t start_index, size_t count);
 
   size_t m_AllocStep = 0;
   size_t m_AllocSize = 0;
