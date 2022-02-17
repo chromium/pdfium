@@ -505,7 +505,7 @@ size_t CFDE_TextOut::GetDisplayPos(const Piece* pPiece) {
     m_CharPos.resize(pPiece->char_count, TextCharPos());
 
   CFGAS_TxtBreak::Run tr;
-  tr.wsStr = m_wsText + pPiece->start_char;
+  tr.wsStr = m_wsText.Substr(pPiece->start_char);
   tr.pWidths = &m_CharWidths[pPiece->start_char];
   tr.iLength = pPiece->char_count;
   tr.pFont = m_pFont;
