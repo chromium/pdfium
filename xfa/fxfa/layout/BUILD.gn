@@ -23,16 +23,17 @@ source_set("layout") {
     "cxfa_viewlayoutprocessor.cpp",
     "cxfa_viewlayoutprocessor.h",
   ]
+  allow_circular_includes_from = [ "../../../fxjs" ]
+  configs += [
+    "../../../:pdfium_strict_config",
+    "../../../:pdfium_noshorten_config",
+    "../../:xfa_warnings",
+  ]
   deps = [
     "../../../core/fxcrt",
     "../../../fxjs",
     "../../../fxjs:gc",
     "../parser",
-  ]
-  allow_circular_includes_from = [ "../../../fxjs" ]
-  configs += [
-    "../../../:pdfium_strict_config",
-    "../../:xfa_warnings",
   ]
   visibility = [ "../../../*" ]
 }

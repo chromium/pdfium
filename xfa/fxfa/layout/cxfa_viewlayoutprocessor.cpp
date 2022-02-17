@@ -181,9 +181,9 @@ CXFA_Node* ResolveBreakTarget(CXFA_Node* pPageSetRoot,
     return nullptr;
 
   pTargetAll->Trim();
-  int32_t iSplitIndex = 0;
+  size_t iSplitIndex = 0;
   bool bTargetAllFind = true;
-  while (iSplitIndex != -1) {
+  while (true) {
     WideString wsExpr;
     absl::optional<size_t> iSplitNextIndex = 0;
     if (!bTargetAllFind) {
@@ -224,7 +224,6 @@ CXFA_Node* ResolveBreakTarget(CXFA_Node* pPageSetRoot,
     }
     iSplitIndex = iSplitNextIndex.value();
   }
-  return nullptr;
 }
 
 void SetLayoutGeneratedNodeFlag(CXFA_Node* pNode) {
@@ -759,7 +758,9 @@ CXFA_ViewLayoutItem* CXFA_ViewLayoutProcessor::GetPage(int32_t index) const {
 int32_t CXFA_ViewLayoutProcessor::GetPageIndex(
     const CXFA_ViewLayoutItem* pPage) const {
   auto it = std::find(m_PageArray.begin(), m_PageArray.end(), pPage);
-  return it != m_PageArray.end() ? it - m_PageArray.begin() : -1;
+  return it != m_PageArray.end()
+             ? pdfium::base::checked_cast<int32_t>(it - m_PageArray.begin())
+             : -1;
 }
 
 bool CXFA_ViewLayoutProcessor::RunBreak(XFA_Element eBreakType,
