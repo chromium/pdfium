@@ -8,6 +8,7 @@
 
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/fx_font.h"
+#include "third_party/base/numerics/safe_conversions.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/font/cfgas_gemodule.h"
@@ -37,7 +38,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_DefaultFontManager::GetFont(
     dwStyle |= FXFONT_ITALIC;
 
   const char* pReplace = pCurFont->pReplaceFont;
-  int32_t iLength = strlen(pReplace);
+  int32_t iLength = pdfium::base::checked_cast<int32_t>(strlen(pReplace));
   while (iLength > 0) {
     const char* pNameText = pReplace;
     while (*pNameText != ',' && iLength > 0) {

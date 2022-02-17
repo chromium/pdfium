@@ -22,16 +22,17 @@ source_set("font") {
     "fgas_fontutils.cpp",
     "fgas_fontutils.h",
   ]
+  configs += [
+    "../../../:pdfium_strict_config",
+    "../../../:pdfium_noshorten_config",
+    "../../:xfa_warnings",
+  ]
   deps = [
     "../../../core/fpdfapi/font",
     "../../../core/fpdfapi/page",
     "../../../core/fpdfapi/parser",
     "../../../core/fxcrt",
     "../../../core/fxge",
-  ]
-  configs += [
-    "../../../:pdfium_strict_config",
-    "../../:xfa_warnings",
   ]
   visibility = [ "../../../*" ]
 }

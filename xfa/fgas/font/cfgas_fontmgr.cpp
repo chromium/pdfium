@@ -24,6 +24,7 @@
 #include "third_party/base/check.h"
 #include "third_party/base/containers/contains.h"
 #include "third_party/base/cxx17_backports.h"
+#include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/span.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/font/fgas_fontutils.h"
@@ -436,12 +437,12 @@ void GetUSBCSB(FXFT_FaceRec* pFace, uint32_t* USB, uint32_t* CSB) {
     CSB[1] = 0;
     return;
   }
-  USB[0] = pOS2->ulUnicodeRange1;
-  USB[1] = pOS2->ulUnicodeRange2;
-  USB[2] = pOS2->ulUnicodeRange3;
-  USB[3] = pOS2->ulUnicodeRange4;
-  CSB[0] = pOS2->ulCodePageRange1;
-  CSB[1] = pOS2->ulCodePageRange2;
+  USB[0] = static_cast<uint32_t>(pOS2->ulUnicodeRange1);
+  USB[1] = static_cast<uint32_t>(pOS2->ulUnicodeRange2);
+  USB[2] = static_cast<uint32_t>(pOS2->ulUnicodeRange3);
+  USB[3] = static_cast<uint32_t>(pOS2->ulUnicodeRange4);
+  CSB[0] = static_cast<uint32_t>(pOS2->ulCodePageRange1);
+  CSB[1] = static_cast<uint32_t>(pOS2->ulCodePageRange2);
 }
 
 uint32_t GetFlags(FXFT_FaceRec* pFace) {
@@ -750,7 +751,8 @@ void CFGAS_FontMgr::RegisterFace(RetainPtr<CFX_Face> pFace,
       pFaceName
           ? *pFaceName
           : WideString::FromDefANSI(FT_Get_Postscript_Name(pFace->GetRec()));
-  pFont->m_nFaceIndex = pFace->GetRec()->face_index;
+  pFont->m_nFaceIndex =
+      pdfium::base::checked_cast<int32_t>(pFace->GetRec()->face_index);
   m_InstalledFonts.push_back(std::move(pFont));
 }
 
@@ -764,8 +766,10 @@ void CFGAS_FontMgr::RegisterFaces(
     if (!pFace)
       continue;
     // All faces keep number of faces. It can be retrieved from any one face.
-    if (num_faces == 0)
-      num_faces = pFace->GetRec()->num_faces;
+    if (num_faces == 0) {
+      num_faces =
+          pdfium::base::checked_cast<int32_t>(pFace->GetRec()->num_faces);
+    }
     RegisterFace(pFace, pFaceName);
     if (FXFT_Get_Face_External_Stream(pFace->GetRec()))
       FXFT_Clear_Face_External_Stream(pFace->GetRec());
