@@ -22,6 +22,7 @@
 #include "core/fxge/fx_font.h"
 #include "core/fxge/text_char_pos.h"
 #include "third_party/base/check.h"
+#include "third_party/base/numerics/safe_conversions.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/cfgas_txtbreak.h"
 
@@ -372,7 +373,7 @@ bool CFDE_TextOut::RetrievePieces(CFGAS_Char::BreakType dwBreakStatus,
   for (int32_t i = 0; i < iCount; i++) {
     const CFGAS_BreakPiece* pPiece = m_pTxtBreak->GetBreakPieceUnstable(i);
     int32_t iPieceChars = pPiece->GetLength();
-    int32_t iChar = *pStartChar;
+    size_t iChar = *pStartChar;
     int32_t iWidth = 0;
     int32_t j = 0;
     for (; j < iPieceChars; j++) {
@@ -507,7 +508,7 @@ size_t CFDE_TextOut::GetDisplayPos(const Piece* pPiece) {
   CFGAS_TxtBreak::Run tr;
   tr.wsStr = m_wsText.Substr(pPiece->start_char);
   tr.pWidths = &m_CharWidths[pPiece->start_char];
-  tr.iLength = pPiece->char_count;
+  tr.iLength = pdfium::base::checked_cast<int32_t>(pPiece->char_count);
   tr.pFont = m_pFont;
   tr.fFontSize = m_fFontSize;
   tr.dwStyles = m_dwTxtBkStyles;

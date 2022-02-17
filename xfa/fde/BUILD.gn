@@ -17,15 +17,16 @@ source_set("fde") {
     "cfde_wordbreak_data.cpp",
     "cfde_wordbreak_data.h",
   ]
+  configs += [
+    "../../:pdfium_strict_config",
+    "../../:pdfium_noshorten_config",
+    "../:xfa_warnings",
+  ]
   deps = [
     "../../core/fxcrt",
     "../../core/fxge",
     "../fgas/font",
     "../fgas/layout",
-  ]
-  configs += [
-    "../../:pdfium_strict_config",
-    "../:xfa_warnings",
   ]
   visibility = [ "../../*" ]
 }
