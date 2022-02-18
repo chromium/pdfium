@@ -243,8 +243,8 @@ FPDF_StructElement_CountChildren(FPDF_STRUCTELEMENT struct_element);
 // Function: FPDF_StructElement_GetChildAtIndex
 //          Get a child in the structure element.
 // Parameters:
-//          struct_tree -   Handle to the struct element.
-//          index       -   The index for the child, 0-based.
+//          struct_element -   Handle to the struct element.
+//          index          -   The index for the child, 0-based.
 // Return value:
 //          The child at the n-th index or NULL on error.
 // Comments:
@@ -258,7 +258,7 @@ FPDF_StructElement_GetChildAtIndex(FPDF_STRUCTELEMENT struct_element,
 // Function: FPDF_StructElement_GetParent
 //          Get the parent of the structure element.
 // Parameters:
-//          struct_tree -   Handle to the struct element.
+//          struct_element -   Handle to the struct element.
 // Return value:
 //          The parent structure element or NULL on error.
 // Comments:
@@ -266,6 +266,163 @@ FPDF_StructElement_GetChildAtIndex(FPDF_STRUCTELEMENT struct_element,
 //          return NULL.
 FPDF_EXPORT FPDF_STRUCTELEMENT FPDF_CALLCONV
 FPDF_StructElement_GetParent(FPDF_STRUCTELEMENT struct_element);
+
+// Function: FPDF_StructElement_GetAttributeCount
+//          Count the number of attributes for the structure element.
+// Parameters:
+//          struct_element -   Handle to the struct element.
+// Return value:
+//          The number of attributes, or -1 on error.
+FPDF_EXPORT int FPDF_CALLCONV
+FPDF_StructElement_GetAttributeCount(FPDF_STRUCTELEMENT struct_element);
+
+// Experimental API.
+// Function: FPDF_StructElement_GetAttributeAtIndex
+//          Get an attribute object in the structure element.
+// Parameters:
+//          struct_element -   Handle to the struct element.
+//          index          -   The index for the attribute object, 0-based.
+// Return value:
+//          The attribute object at the n-th index or NULL on error.
+// Comments:
+//          If the attribute object exists but is not a dict, then this
+//          function will return NULL. This will also return NULL for out of
+//          bounds indices.
+FPDF_EXPORT FPDF_STRUCTELEMENT_ATTR FPDF_CALLCONV
+FPDF_StructElement_GetAttributeAtIndex(FPDF_STRUCTELEMENT struct_element, int index);
+
+// Experimental API.
+// Function: FPDF_StructElement_Attr_GetCount
+//          Count the number of attributes in a structure element attribute map.
+// Parameters:
+//          struct_attribute - Handle to the struct element attribute.
+// Return value:
+//          The number of attributes, or -1 on error.
+FPDF_EXPORT int FPDF_CALLCONV
+FPDF_StructElement_Attr_GetCount(FPDF_STRUCTELEMENT_ATTR struct_attribute);
+
+
+// Experimental API.
+// Function: FPDF_StructElement_Attr_GetName
+//          Get the name of an attribute in a structure element attribute map.
+// Parameters:
+//          struct_attribute   - Handle to the struct element attribute.
+//          index              - The index of attribute in the map.
+//          buffer             - A buffer for output. May be NULL. This is only
+//                               modified if |buflen| is longer than the length
+//                               of the key. Optional, pass null to just
+//                               retrieve the size of the buffer needed.
+//          buflen             - The length of the buffer.
+//          out_buflen         - A pointer to variable that will receive the
+//                               minimum buffer size to contain the key. Not
+//                               filled if FALSE is returned.
+// Return value:
+//          TRUE if the operation was successful, FALSE otherwise.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDF_StructElement_Attr_GetName(FPDF_STRUCTELEMENT_ATTR struct_attribute,
+                                int index,
+                                void* buffer,
+                                unsigned long buflen,
+                                unsigned long* out_buflen);
+
+// Experimental API.
+// Function: FPDF_StructElement_Attr_GetType
+//          Get the type of an attribute in a structure element attribute map.
+// Parameters:
+//          struct_attribute   - Handle to the struct element attribute.
+//          name               - The attribute name.
+// Return value:
+//          Returns the type of the value, or FPDF_OBJECT_UNKNOWN in case of
+//          failure.
+FPDF_EXPORT FPDF_OBJECT_TYPE FPDF_CALLCONV
+FPDF_StructElement_Attr_GetType(FPDF_STRUCTELEMENT_ATTR struct_attribute,
+                                FPDF_BYTESTRING name);
+
+// Experimental API.
+// Function: FPDF_StructElement_Attr_GetBooleanValue
+//          Get the value of a boolean attribute in an attribute map by name as
+//          FPDF_BOOL. FPDF_StructElement_Attr_GetType() should have returned
+//          FPDF_OBJECT_BOOLEAN for this property.
+// Parameters:
+//          struct_attribute   - Handle to the struct element attribute.
+//          name               - The attribute name.
+//          out_value          - A pointer to variable that will receive the
+//                               value. Not filled if false is returned.
+// Return value:
+//          Returns TRUE if the name maps to a boolean value, FALSE otherwise.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDF_StructElement_Attr_GetBooleanValue(
+    FPDF_STRUCTELEMENT_ATTR struct_attribute,
+    FPDF_BYTESTRING name,
+    FPDF_BOOL* out_value);
+
+// Experimental API.
+// Function: FPDF_StructElement_Attr_GetNumberValue
+//          Get the value of a number attribute in an attribute map by name as
+//          float. FPDF_StructElement_Attr_GetType() should have returned
+//          FPDF_OBJECT_NUMBER for this property.
+// Parameters:
+//          struct_attribute   - Handle to the struct element attribute.
+//          name               - The attribute name.
+//          out_value          - A pointer to variable that will receive the
+//                               value. Not filled if false is returned.
+// Return value:
+//          Returns TRUE if the name maps to a number value, FALSE otherwise.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDF_StructElement_Attr_GetNumberValue(FPDF_STRUCTELEMENT_ATTR struct_attribute,
+                                       FPDF_BYTESTRING name,
+                                       float* out_value);
+
+// Experimental API.
+// Function: FPDF_StructElement_Attr_GetStringValue
+//          Get the value of a string attribute in an attribute map by name as
+//          string. FPDF_StructElement_Attr_GetType() should have returned
+//          FPDF_OBJECT_STRING or FPDF_OBJECT_NAME for this property.
+// Parameters:
+//          struct_attribute   - Handle to the struct element attribute.
+//          name               - The attribute name.
+//          buffer             - A buffer for holding the returned key in
+//                               UTF-16LE. This is only modified if |buflen| is
+//                               longer than the length of the key. Optional,
+//                               pass null to just retrieve the size of the
+//                               buffer needed.
+//          buflen             - The length of the buffer.
+//          out_buflen         - A pointer to variable that will receive the
+//                               minimum buffer size to contain the key. Not
+//                               filled if FALSE is returned.
+// Return value:
+//          Returns TRUE if the name maps to a string value, FALSE otherwise.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDF_StructElement_Attr_GetStringValue(FPDF_STRUCTELEMENT_ATTR struct_attribute,
+                                       FPDF_BYTESTRING name,
+                                       void* buffer,
+                                       unsigned long buflen,
+                                       unsigned long* out_buflen);
+
+// Experimental API.
+// Function: FPDF_StructElement_Attr_GetBlobValue
+//          Get the value of a blob attribute in an attribute map by name as
+//          string.
+// Parameters:
+//          struct_attribute   - Handle to the struct element attribute.
+//          name               - The attribute name.
+//          buffer             - A buffer for holding the returned value. This
+//                               is only modified if |buflen| is at least as
+//                               long as the length of the value. Optional, pass
+//                               null to just retrieve the size of the buffer
+//                               needed.
+//          buflen             - The length of the buffer.
+//          out_buflen         - A pointer to variable that will receive the
+//                               minimum buffer size to contain the key. Not
+//                               filled if FALSE is returned.
+// Return value:
+//          Returns TRUE if the name maps to a string value, FALSE otherwise.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDF_StructElement_Attr_GetBlobValue(FPDF_STRUCTELEMENT_ATTR struct_attribute,
+                                     FPDF_BYTESTRING name,
+                                     void* buffer,
+                                     unsigned long buflen,
+                                     unsigned long* out_buflen);
 
 #ifdef __cplusplus
 }  // extern "C"

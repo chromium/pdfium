@@ -156,6 +156,9 @@ endobj
   /K [16 0 R 17 0 R]
   /P 11 0 R
   /Pg 3 0 R
+  /A <<
+      /O /Table
+     >>
   /ID (node14)
 >>
 endobj
@@ -200,6 +203,11 @@ endobj
   /S /TD
   /P 13 0 R
   /Pg 3 0 R
+  /A [<<
+        /O /Table
+        /ColProp (Sum)
+        /CurUSD true
+     >>]
   /ID (node18)
 >>
 endobj

@@ -352,9 +352,18 @@ int CheckPDFiumCApi() {
     CHK(FPDF_GetSignatureObject);
 
     // fpdf_structtree.h
+    CHK(FPDF_StructElement_Attr_GetBlobValue);
+    CHK(FPDF_StructElement_Attr_GetBooleanValue);
+    CHK(FPDF_StructElement_Attr_GetCount);
+    CHK(FPDF_StructElement_Attr_GetName);
+    CHK(FPDF_StructElement_Attr_GetNumberValue);
+    CHK(FPDF_StructElement_Attr_GetStringValue);
+    CHK(FPDF_StructElement_Attr_GetType);
     CHK(FPDF_StructElement_CountChildren);
     CHK(FPDF_StructElement_GetActualText);
     CHK(FPDF_StructElement_GetAltText);
+    CHK(FPDF_StructElement_GetAttributeAtIndex);
+    CHK(FPDF_StructElement_GetAttributeCount);
     CHK(FPDF_StructElement_GetChildAtIndex);
     CHK(FPDF_StructElement_GetID);
     CHK(FPDF_StructElement_GetLang);
