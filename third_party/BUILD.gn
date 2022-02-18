@@ -406,7 +406,7 @@ source_set("fx_libopenjpeg") {
     "libopenjpeg20/mct.c",
     "libopenjpeg20/mqc.c",
     "libopenjpeg20/openjpeg.c",
-    "libopenjpeg20/opj_clock.c",
+    # NOTE: libopenjpeg20/opj_clock.c is not used.
     "libopenjpeg20/opj_malloc.cc",
     "libopenjpeg20/opj_malloc.h",
     "libopenjpeg20/pi.c",

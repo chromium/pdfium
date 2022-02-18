@@ -29,3 +29,4 @@ Local Modifications:
 0035-opj_image_data_free.patch: Use the right free function in opj_jp2_apply_pclr.
 0039-opj_mqc_renorme.patch: Remove unused opj_mqc_renorme().
 0040-dwt_overflows.patch: Avoid integer overflows in DWT.
+0041-remove_opj_clock.patch: Remove unused opj_clock.h include.

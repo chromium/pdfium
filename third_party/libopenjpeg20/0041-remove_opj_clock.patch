@@ -1,0 +1,12 @@
+diff --git a/third_party/libopenjpeg20/opj_includes.h b/third_party/libopenjpeg20/opj_includes.h
+index 0a8628c96..43c00a556 100644
+--- a/third_party/libopenjpeg20/opj_includes.h
++++ b/third_party/libopenjpeg20/opj_includes.h
+@@ -219,7 +219,6 @@ typedef unsigned int OPJ_BITFIELD;
+ #define OPJ_UNUSED(x) (void)x
+ 
+ #include "opj_inttypes.h"
+-#include "opj_clock.h"
+ #include "opj_malloc.h"
+ #include "event.h"
+ #include "function_list.h"

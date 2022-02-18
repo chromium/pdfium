@@ -219,7 +219,6 @@ typedef unsigned int OPJ_BITFIELD;
 #define OPJ_UNUSED(x) (void)x
 
 #include "opj_inttypes.h"
-#include "opj_clock.h"
 #include "opj_malloc.h"
 #include "event.h"
 #include "function_list.h"
