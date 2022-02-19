@@ -42,24 +42,125 @@ void DumpBoxInfo(GetBoxInfoFunc func,
          rect.left, rect.bottom, rect.right, rect.top);
 }
 
+void DumpStructureElementAttributes(FPDF_STRUCTELEMENT_ATTR attr, int indent) {
+  static const size_t kBufSize = 1024;
+  int count = FPDF_StructElement_Attr_GetCount(attr);
+  for (int i = 0; i < count; i++) {
+    char name[kBufSize] = {};
+    unsigned long len = ULONG_MAX;
+    if (!FPDF_StructElement_Attr_GetName(attr, i, name, sizeof(name), &len)) {
+      printf("%*s FPDF_StructElement_Attr_GetName failed for %d\n", indent, "",
+             i);
+      continue;
+    }
+
+    FPDF_OBJECT_TYPE type = FPDF_StructElement_Attr_GetType(attr, name);
+    if (type == FPDF_OBJECT_BOOLEAN) {
+      int value;
+      if (!FPDF_StructElement_Attr_GetBooleanValue(attr, name, &value)) {
+        printf("%*s %s: Failed FPDF_StructElement_Attr_GetBooleanValue\n",
+               indent, "", name);
+        continue;
+      }
+      printf("%*s %s: %d\n", indent, "", name, value);
+    } else if (type == FPDF_OBJECT_NUMBER) {
+      float value;
+      if (!FPDF_StructElement_Attr_GetNumberValue(attr, name, &value)) {
+        printf("%*s %s: Failed FPDF_StructElement_Attr_GetNumberValue\n",
+               indent, "", name);
+        continue;
+      }
+      printf("%*s %s: %f\n", indent, "", name, value);
+    } else if (type == FPDF_OBJECT_STRING || type == FPDF_OBJECT_NAME) {
+      unsigned short buffer[kBufSize] = {};
+      if (!FPDF_StructElement_Attr_GetStringValue(attr, name, buffer,
+                                                  sizeof(buffer), &len)) {
+        printf("%*s %s: Failed FPDF_StructElement_Attr_GetStringValue\n",
+               indent, "", name);
+        continue;
+      }
+      printf("%*s %s: %ls\n", indent, "", name,
+             ConvertToWString(buffer, len).c_str());
+    } else if (type == FPDF_OBJECT_UNKNOWN) {
+      printf("%*s %s: FPDF_OBJECT_UNKNOWN\n", indent, "", name);
+    } else {
+      printf("%*s %s: NOT_YET_IMPLEMENTED: %d\n", indent, "", name, type);
+    }
+  }
+}
+
 }  // namespace
 
 void DumpChildStructure(FPDF_STRUCTELEMENT child, int indent) {
   static const size_t kBufSize = 1024;
   unsigned short buf[kBufSize];
   unsigned long len = FPDF_StructElement_GetType(child, buf, kBufSize);
-  printf("%*s%ls", indent * 2, "", ConvertToWString(buf, len).c_str());
+  if (len > 0)
+    printf("%*s S: %ls\n", indent * 2, "", ConvertToWString(buf, len).c_str());
+
+  int attr_count = FPDF_StructElement_GetAttributeCount(child);
+  for (int i = 0; i < attr_count; i++) {
+    FPDF_STRUCTELEMENT_ATTR child_attr =
+        FPDF_StructElement_GetAttributeAtIndex(child, i);
+    if (!child_attr)
+      continue;
+    printf("%*s A[%d]:\n", indent * 2, "", i);
+    DumpStructureElementAttributes(child_attr, indent * 2 + 2);
+  }
 
   memset(buf, 0, sizeof(buf));
-  len = FPDF_StructElement_GetTitle(child, buf, kBufSize);
-  if (len > 0)
-    printf(": '%ls'", ConvertToWString(buf, len).c_str());
+  len = FPDF_StructElement_GetActualText(child, buf, kBufSize);
+  if (len > 0) {
+    printf("%*s ActualText: %ls\n", indent * 2, "",
+           ConvertToWString(buf, len).c_str());
+  }
 
   memset(buf, 0, sizeof(buf));
   len = FPDF_StructElement_GetAltText(child, buf, kBufSize);
+  if (len > 0) {
+    printf("%*s AltText: %ls\n", indent * 2, "",
+           ConvertToWString(buf, len).c_str());
+  }
+
+  memset(buf, 0, sizeof(buf));
+  len = FPDF_StructElement_GetID(child, buf, kBufSize);
   if (len > 0)
-    printf(" (%ls)", ConvertToWString(buf, len).c_str());
-  printf("\n");
+    printf("%*s ID: %ls\n", indent * 2, "", ConvertToWString(buf, len).c_str());
+
+  memset(buf, 0, sizeof(buf));
+  len = FPDF_StructElement_GetLang(child, buf, kBufSize);
+  if (len > 0) {
+    printf("%*s Lang: %ls\n", indent * 2, "",
+           ConvertToWString(buf, len).c_str());
+  }
+
+  int mcid = FPDF_StructElement_GetMarkedContentID(child);
+  if (mcid != -1)
+    printf("%*s MCID: %d\n", indent * 2, "", mcid);
+
+  FPDF_STRUCTELEMENT parent = FPDF_StructElement_GetParent(child);
+  if (parent) {
+    memset(buf, 0, sizeof(buf));
+    len = FPDF_StructElement_GetID(parent, buf, kBufSize);
+    if (len > 0) {
+      printf("%*s Parent ID: %ls\n", indent * 2, "",
+             ConvertToWString(buf, len).c_str());
+    }
+  }
+
+  memset(buf, 0, sizeof(buf));
+  len = FPDF_StructElement_GetTitle(child, buf, kBufSize);
+  if (len > 0) {
+    printf("%*s Title: %ls\n", indent * 2, "",
+           ConvertToWString(buf, len).c_str());
+  }
+
+  memset(buf, 0, sizeof(buf));
+  len = FPDF_StructElement_GetObjType(child, buf, kBufSize);
+  if (len > 0) {
+    printf("%*s Type: %ls\n", indent * 2, "",
+           ConvertToWString(buf, len).c_str());
+  }
 
   for (int i = 0; i < FPDF_StructElement_CountChildren(child); ++i) {
     FPDF_STRUCTELEMENT sub_child = FPDF_StructElement_GetChildAtIndex(child, i);
