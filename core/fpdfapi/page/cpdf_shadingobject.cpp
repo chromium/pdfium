@@ -16,7 +16,7 @@ CPDF_ShadingObject::CPDF_ShadingObject(int32_t content_stream,
 CPDF_ShadingObject::~CPDF_ShadingObject() = default;
 
 CPDF_PageObject::Type CPDF_ShadingObject::GetType() const {
-  return SHADING;
+  return Type::kShading;
 }
 
 void CPDF_ShadingObject::Transform(const CFX_Matrix& matrix) {

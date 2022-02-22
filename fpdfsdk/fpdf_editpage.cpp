@@ -46,15 +46,20 @@
 
 namespace {
 
-static_assert(FPDF_PAGEOBJ_TEXT == CPDF_PageObject::TEXT,
+static_assert(FPDF_PAGEOBJ_TEXT ==
+                  static_cast<int>(CPDF_PageObject::Type::kText),
               "FPDF_PAGEOBJ_TEXT/CPDF_PageObject::TEXT mismatch");
-static_assert(FPDF_PAGEOBJ_PATH == CPDF_PageObject::PATH,
+static_assert(FPDF_PAGEOBJ_PATH ==
+                  static_cast<int>(CPDF_PageObject::Type::kPath),
               "FPDF_PAGEOBJ_PATH/CPDF_PageObject::PATH mismatch");
-static_assert(FPDF_PAGEOBJ_IMAGE == CPDF_PageObject::IMAGE,
+static_assert(FPDF_PAGEOBJ_IMAGE ==
+                  static_cast<int>(CPDF_PageObject::Type::kImage),
               "FPDF_PAGEOBJ_IMAGE/CPDF_PageObject::IMAGE mismatch");
-static_assert(FPDF_PAGEOBJ_SHADING == CPDF_PageObject::SHADING,
+static_assert(FPDF_PAGEOBJ_SHADING ==
+                  static_cast<int>(CPDF_PageObject::Type::kShading),
               "FPDF_PAGEOBJ_SHADING/CPDF_PageObject::SHADING mismatch");
-static_assert(FPDF_PAGEOBJ_FORM == CPDF_PageObject::FORM,
+static_assert(FPDF_PAGEOBJ_FORM ==
+                  static_cast<int>(CPDF_PageObject::Type::kForm),
               "FPDF_PAGEOBJ_FORM/CPDF_PageObject::FORM mismatch");
 
 bool IsPageObject(CPDF_Page* pPage) {
@@ -72,25 +77,25 @@ bool IsPageObject(CPDF_Page* pPage) {
 
 void CalcBoundingBox(CPDF_PageObject* pPageObj) {
   switch (pPageObj->GetType()) {
-    case CPDF_PageObject::TEXT: {
+    case CPDF_PageObject::Type::kText: {
       break;
     }
-    case CPDF_PageObject::PATH: {
+    case CPDF_PageObject::Type::kPath: {
       CPDF_PathObject* pPathObj = pPageObj->AsPath();
       pPathObj->CalcBoundingBox();
       break;
     }
-    case CPDF_PageObject::IMAGE: {
+    case CPDF_PageObject::Type::kImage: {
       CPDF_ImageObject* pImageObj = pPageObj->AsImage();
       pImageObj->CalcBoundingBox();
       break;
     }
-    case CPDF_PageObject::SHADING: {
+    case CPDF_PageObject::Type::kShading: {
       CPDF_ShadingObject* pShadingObj = pPageObj->AsShading();
       pShadingObj->CalcBoundingBox();
       break;
     }
-    case CPDF_PageObject::FORM: {
+    case CPDF_PageObject::Type::kForm: {
       CPDF_FormObject* pFormObj = pPageObj->AsForm();
       pFormObj->CalcBoundingBox();
       break;
@@ -587,7 +592,8 @@ FPDFPageObjMark_RemoveParam(FPDF_PAGEOBJECT page_object,
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFPageObj_GetType(FPDF_PAGEOBJECT page_object) {
   CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
-  return pPageObj ? pPageObj->GetType() : FPDF_PAGEOBJ_UNKNOWN;
+  return pPageObj ? static_cast<int>(pPageObj->GetType())
+                  : FPDF_PAGEOBJ_UNKNOWN;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_GenerateContent(FPDF_PAGE page) {
@@ -623,18 +629,18 @@ FPDFPageObj_GetMatrix(FPDF_PAGEOBJECT page_object, FS_MATRIX* matrix) {
     return false;
 
   switch (pPageObj->GetType()) {
-    case CPDF_PageObject::TEXT:
+    case CPDF_PageObject::Type::kText:
       *matrix = FSMatrixFromCFXMatrix(pPageObj->AsText()->GetTextMatrix());
       return true;
-    case CPDF_PageObject::PATH:
+    case CPDF_PageObject::Type::kPath:
       *matrix = FSMatrixFromCFXMatrix(pPageObj->AsPath()->matrix());
       return true;
-    case CPDF_PageObject::IMAGE:
+    case CPDF_PageObject::Type::kImage:
       *matrix = FSMatrixFromCFXMatrix(pPageObj->AsImage()->matrix());
       return true;
-    case CPDF_PageObject::SHADING:
+    case CPDF_PageObject::Type::kShading:
       return false;
-    case CPDF_PageObject::FORM:
+    case CPDF_PageObject::Type::kForm:
       *matrix = FSMatrixFromCFXMatrix(pPageObj->AsForm()->form_matrix());
       return true;
     default:
@@ -651,18 +657,18 @@ FPDFPageObj_SetMatrix(FPDF_PAGEOBJECT page_object, const FS_MATRIX* matrix) {
 
   CFX_Matrix cmatrix = CFXMatrixFromFSMatrix(*matrix);
   switch (pPageObj->GetType()) {
-    case CPDF_PageObject::TEXT:
+    case CPDF_PageObject::Type::kText:
       pPageObj->AsText()->SetTextMatrix(cmatrix);
       break;
-    case CPDF_PageObject::PATH:
+    case CPDF_PageObject::Type::kPath:
       pPageObj->AsPath()->SetPathMatrix(cmatrix);
       break;
-    case CPDF_PageObject::IMAGE:
+    case CPDF_PageObject::Type::kImage:
       pPageObj->AsImage()->SetImageMatrix(cmatrix);
       break;
-    case CPDF_PageObject::SHADING:
+    case CPDF_PageObject::Type::kShading:
       return false;
-    case CPDF_PageObject::FORM:
+    case CPDF_PageObject::Type::kForm:
       pPageObj->AsForm()->SetFormMatrix(cmatrix);
       break;
     default:

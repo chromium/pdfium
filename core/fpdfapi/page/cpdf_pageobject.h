@@ -21,12 +21,13 @@ class CPDF_TextObject;
 
 class CPDF_PageObject : public CPDF_GraphicStates {
  public:
-  enum Type {
-    TEXT = 1,
-    PATH,
-    IMAGE,
-    SHADING,
-    FORM,
+  // Values must match corresponding values in //public.
+  enum class Type {
+    kText = 1,
+    kPath,
+    kImage,
+    kShading,
+    kForm,
   };
 
   static constexpr int32_t kNoContentStream = -1;
@@ -81,7 +82,6 @@ class CPDF_PageObject : public CPDF_GraphicStates {
   void SetContentStream(int32_t new_content_stream) {
     m_ContentStream = new_content_stream;
   }
-
 
  protected:
   void CopyData(const CPDF_PageObject* pSrcObject);

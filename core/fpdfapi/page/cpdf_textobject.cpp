@@ -152,7 +152,7 @@ std::unique_ptr<CPDF_TextObject> CPDF_TextObject::Clone() const {
 }
 
 CPDF_PageObject::Type CPDF_TextObject::GetType() const {
-  return TEXT;
+  return Type::kText;
 }
 
 void CPDF_TextObject::Transform(const CFX_Matrix& matrix) {

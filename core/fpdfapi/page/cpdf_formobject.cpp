@@ -38,7 +38,7 @@ const CPDF_FormObject* CPDF_FormObject::AsForm() const {
 }
 
 CPDF_PageObject::Type CPDF_FormObject::GetType() const {
-  return FORM;
+  return Type::kForm;
 }
 
 void CPDF_FormObject::CalcBoundingBox() {

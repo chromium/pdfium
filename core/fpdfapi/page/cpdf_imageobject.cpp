@@ -22,7 +22,7 @@ CPDF_ImageObject::~CPDF_ImageObject() {
 }
 
 CPDF_PageObject::Type CPDF_ImageObject::GetType() const {
-  return IMAGE;
+  return Type::kImage;
 }
 
 void CPDF_ImageObject::Transform(const CFX_Matrix& matrix) {

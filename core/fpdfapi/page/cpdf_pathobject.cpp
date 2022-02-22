@@ -14,7 +14,7 @@ CPDF_PathObject::CPDF_PathObject() : CPDF_PathObject(kNoContentStream) {}
 CPDF_PathObject::~CPDF_PathObject() = default;
 
 CPDF_PageObject::Type CPDF_PathObject::GetType() const {
-  return PATH;
+  return Type::kPath;
 }
 
 void CPDF_PathObject::Transform(const CFX_Matrix& matrix) {

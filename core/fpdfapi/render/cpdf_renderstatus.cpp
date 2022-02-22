@@ -304,19 +304,19 @@ void CPDF_RenderStatus::ProcessObjectNoClip(CPDF_PageObject* pObj,
 #endif
   bool bRet = false;
   switch (pObj->GetType()) {
-    case CPDF_PageObject::TEXT:
+    case CPDF_PageObject::Type::kText:
       bRet = ProcessText(pObj->AsText(), mtObj2Device, nullptr);
       break;
-    case CPDF_PageObject::PATH:
+    case CPDF_PageObject::Type::kPath:
       bRet = ProcessPath(pObj->AsPath(), mtObj2Device);
       break;
-    case CPDF_PageObject::IMAGE:
+    case CPDF_PageObject::Type::kImage:
       bRet = ProcessImage(pObj->AsImage(), mtObj2Device);
       break;
-    case CPDF_PageObject::SHADING:
+    case CPDF_PageObject::Type::kShading:
       ProcessShading(pObj->AsShading(), mtObj2Device);
       return;
-    case CPDF_PageObject::FORM:
+    case CPDF_PageObject::Type::kForm:
       bRet = ProcessForm(pObj->AsForm(), mtObj2Device);
       break;
   }
@@ -330,11 +330,11 @@ void CPDF_RenderStatus::ProcessObjectNoClip(CPDF_PageObject* pObj,
 bool CPDF_RenderStatus::DrawObjWithBlend(CPDF_PageObject* pObj,
                                          const CFX_Matrix& mtObj2Device) {
   switch (pObj->GetType()) {
-    case CPDF_PageObject::PATH:
+    case CPDF_PageObject::Type::kPath:
       return ProcessPath(pObj->AsPath(), mtObj2Device);
-    case CPDF_PageObject::IMAGE:
+    case CPDF_PageObject::Type::kImage:
       return ProcessImage(pObj->AsImage(), mtObj2Device);
-    case CPDF_PageObject::FORM:
+    case CPDF_PageObject::Type::kForm:
       return ProcessForm(pObj->AsForm(), mtObj2Device);
     default:
       return false;

@@ -53,10 +53,10 @@ FX_ARGB CPDF_RenderOptions::TranslateObjectColor(
     return TranslateColor(argb);
 
   switch (object_type) {
-    case CPDF_PageObject::Type::PATH:
+    case CPDF_PageObject::Type::kPath:
       return render_type == RenderType::kFill ? m_ColorScheme.path_fill_color
                                               : m_ColorScheme.path_stroke_color;
-    case CPDF_PageObject::Type::TEXT:
+    case CPDF_PageObject::Type::kText:
       return render_type == RenderType::kFill ? m_ColorScheme.text_fill_color
                                               : m_ColorScheme.text_stroke_color;
     default:
