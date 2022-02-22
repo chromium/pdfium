@@ -110,6 +110,7 @@ source_set("fxfa") {
   ]
   configs += [
     "../../:pdfium_strict_config",
+    "../../:pdfium_noshorten_config",
     "../:xfa_warnings",
   ]
   visibility = [ "../../*" ]

@@ -43,16 +43,16 @@ namespace {
 constexpr float kHeightTolerance = 0.001f;
 
 void ProcessText(WideString* pText) {
-  int32_t iLen = pText->GetLength();
+  size_t iLen = pText->GetLength();
   if (iLen == 0)
     return;
 
-  int32_t iTrimLeft = 0;
+  size_t iTrimLeft = 0;
   {
     // Span's lifetime must end before ReleaseBuffer() below.
     pdfium::span<wchar_t> psz = pText->GetBuffer(iLen);
     wchar_t wPrev = 0;
-    for (int32_t i = 0; i < iLen; i++) {
+    for (size_t i = 0; i < iLen; i++) {
       wchar_t wch = psz[i];
       if (wch < 0x20)
         wch = 0x20;
@@ -475,7 +475,7 @@ float CXFA_TextLayout::Layout(const CFX_SizeF& size) {
   m_pBreak = CreateBreak(true);
   if (m_pLoader) {
     m_pLoader->iTotalLines = -1;
-    m_pLoader->iChar = 0;
+    m_pLoader->nCharIdx = 0;
   }
 
   m_iLines = 0;
@@ -506,17 +506,19 @@ bool CXFA_TextLayout::LayoutInternal(size_t szBlockIndex) {
     for (size_t i = 0; i < m_pLoader->blockHeights.size(); ++i)
       fLinePos -= m_pLoader->blockHeights[i].fHeight;
 
-    m_pLoader->iChar = 0;
-    if (!m_Blocks.empty())
-      m_pLoader->iTotalLines = m_Blocks[szBlockIndex].szLength;
-
+    m_pLoader->nCharIdx = 0;
+    if (!m_Blocks.empty()) {
+      m_pLoader->iTotalLines =
+          pdfium::base::checked_cast<int32_t>(m_Blocks[szBlockIndex].szLength);
+    }
     Loader(szText.width, &fLinePos, true);
     if (m_Blocks.empty() && m_pLoader->fStartLineOffset < 0.1f)
       UpdateAlign(szText.height, fLinePos);
   } else if (m_pTextDataNode) {
-    if (!m_Blocks.empty() && szBlockIndex < m_Blocks.size() - 1)
-      m_pLoader->iTotalLines = m_Blocks[szBlockIndex].szLength;
-
+    if (!m_Blocks.empty() && szBlockIndex < m_Blocks.size() - 1) {
+      m_pLoader->iTotalLines =
+          pdfium::base::checked_cast<int32_t>(m_Blocks[szBlockIndex].szLength);
+    }
     m_pBreak->Reset();
     if (m_bRichText) {
       CFX_XMLNode* pContainerNode = GetXMLContainerNode();
@@ -819,8 +821,7 @@ bool CXFA_TextLayout::LoadRichText(
         }
       }
 
-      int32_t iLength = wsText.GetLength();
-      if (iLength > 0 && bContentNode && !bSpaceRun)
+      if (!wsText.IsEmpty() && bContentNode && !bSpaceRun)
         ProcessText(&wsText);
 
       if (m_pLoader) {
@@ -840,7 +841,7 @@ bool CXFA_TextLayout::LoadRichText(
       }
 
       if (wsText.GetLength() > 0) {
-        if (!m_pLoader || m_pLoader->iChar == 0) {
+        if (!m_pLoader || m_pLoader->nCharIdx == 0) {
           auto pUserData = pdfium::MakeRetain<CFGAS_TextUserData>(
               bContentNode ? pParentStyle : pStyle, pLinkData);
           m_pBreak->SetUserData(pUserData);
@@ -909,12 +910,9 @@ bool CXFA_TextLayout::AppendChar(const WideString& wsText,
                                  float fSpaceAbove,
                                  bool bSavePieces) {
   CFGAS_Char::BreakType dwStatus = CFGAS_Char::BreakType::kNone;
-  int32_t iChar = 0;
-  if (m_pLoader)
-    iChar = m_pLoader->iChar;
-
-  int32_t iLength = wsText.GetLength();
-  for (int32_t i = iChar; i < iLength; i++) {
+  size_t iChar = m_pLoader ? m_pLoader->nCharIdx : 0;
+  size_t iLength = wsText.GetLength();
+  for (size_t i = iChar; i < iLength; i++) {
     wchar_t wch = wsText[i];
     if (wch == 0xA0)
       wch = 0x20;
@@ -925,7 +923,7 @@ bool CXFA_TextLayout::AppendChar(const WideString& wsText,
       AppendTextLine(dwStatus, pLinePos, bSavePieces, false);
       if (IsEnd(bSavePieces)) {
         if (m_pLoader)
-          m_pLoader->iChar = i;
+          m_pLoader->nCharIdx = i;
         return true;
       }
       if (dwStatus == CFGAS_Char::BreakType::kParagraph && m_bRichText)
@@ -933,7 +931,7 @@ bool CXFA_TextLayout::AppendChar(const WideString& wsText,
     }
   }
   if (m_pLoader)
-    m_pLoader->iChar = 0;
+    m_pLoader->nCharIdx = 0;
 
   return false;
 }

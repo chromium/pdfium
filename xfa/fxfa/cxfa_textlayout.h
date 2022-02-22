@@ -110,7 +110,7 @@ class CXFA_TextLayout final : public cppgc::GarbageCollected<CXFA_TextLayout> {
     float fHeight = 0;
     float fLastPos = 0;
     float fStartLineOffset = 0;
-    int32_t iChar = 0;
+    size_t nCharIdx = 0;
     // TODO(thestig): Make this size_t?
     int32_t iTotalLines = -1;
     UnownedPtr<const CFX_XMLNode> pXMLNode;
