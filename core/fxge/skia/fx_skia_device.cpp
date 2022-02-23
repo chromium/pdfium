@@ -1666,7 +1666,7 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
   SkColorType color_type;
   const int bpp = pBitmap->GetBPP();
   if (bpp == 8) {
-    color_type = GetIsAlphaFromFormat(pBitmap->GetFormat())
+    color_type = pBitmap->IsAlphaFormat() || pBitmap->IsMaskFormat()
                      ? kAlpha_8_SkColorType
                      : kGray_8_SkColorType;
   } else {
