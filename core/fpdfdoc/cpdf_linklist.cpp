@@ -9,6 +9,7 @@
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "third_party/base/numerics/safe_conversions.h"
 
 CPDF_LinkList::CPDF_LinkList() = default;
 

@@ -24,6 +24,7 @@
 #include "core/fpdfapi/render/charposlist.h"
 #include "core/fpdftext/cpdf_textpage.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_string_wrappers.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/fx_font.h"

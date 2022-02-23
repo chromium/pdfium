@@ -11,6 +11,7 @@
 #include "fxjs/cfx_v8.h"
 #include "fxjs/fxv8.h"
 #include "fxjs/js_resources.h"
+#include "third_party/base/numerics/safe_conversions.h"
 #include "v8/include/v8-primitive.h"
 #include "xfa/fgas/crt/cfgas_decimal.h"
 #include "xfa/fxfa/cxfa_eventparam.h"

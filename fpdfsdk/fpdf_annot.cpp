@@ -30,6 +30,7 @@
 #include "core/fpdfdoc/cpdf_generateap.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/fx_string_wrappers.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_color.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"

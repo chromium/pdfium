@@ -23,7 +23,7 @@
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fxcrt/autorestorer.h"
-#include "core/fxcrt/stl_util.h"
+#include "core/fxcrt/fx_string_wrappers.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_path.h"
 #include "fpdfsdk/cpdfsdk_actionhandler.h"

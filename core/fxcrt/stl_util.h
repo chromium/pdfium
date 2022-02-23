@@ -5,12 +5,9 @@
 #ifndef CORE_FXCRT_STL_UTIL_H_
 #define CORE_FXCRT_STL_UTIL_H_
 
-#include <iosfwd>
 #include <memory>
-#include <string>
 #include <vector>
 
-#include "core/fxcrt/fx_memory_wrappers.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/numerics/safe_math.h"
 
@@ -46,14 +43,6 @@ std::vector<T, A> Vector2D(size_t w, size_t h) {
   safe_size *= h;
   return std::vector<T, A>(safe_size.ValueOrDie());
 }
-
-// String that uses partition alloc for backing store.
-using string =
-    std::basic_string<char, std::char_traits<char>, FxStringAllocator<char>>;
-
-// String stream that uses PartitionAlloc for backing store.
-using ostringstream = std::
-    basic_ostringstream<char, std::char_traits<char>, FxStringAllocator<char>>;
 
 }  // namespace fxcrt
 

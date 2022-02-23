@@ -17,8 +17,8 @@
 
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/fx_string_wrappers.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_graphstatedata.h"

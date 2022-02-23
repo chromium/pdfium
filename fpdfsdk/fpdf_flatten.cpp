@@ -28,7 +28,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfdoc/cpdf_annot.h"
-#include "core/fxcrt/stl_util.h"
+#include "core/fxcrt/fx_string_wrappers.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "third_party/base/notreached.h"
 

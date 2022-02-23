@@ -13,7 +13,7 @@
 #include <vector>
 
 #include "core/fxcrt/bytestring.h"
-#include "core/fxcrt/stl_util.h"
+#include "core/fxcrt/fx_string_wrappers.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_ContentMarks;

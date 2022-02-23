@@ -7,8 +7,8 @@
 
 #include <set>
 
+#include "core/fxcrt/fx_string_wrappers.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "core/fxcrt/stl_util.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_Array;

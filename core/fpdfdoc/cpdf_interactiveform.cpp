@@ -28,6 +28,7 @@
 #include "core/fpdfdoc/cpdf_filespec.h"
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "core/fxcrt/fx_codepage.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fx_font.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
