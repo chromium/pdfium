@@ -16,6 +16,7 @@
 #include "build/build_config.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxge/calculate_pitch.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/dib/cfx_scanlinecompositor.h"
 #include "third_party/base/check.h"
@@ -1068,7 +1069,7 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
     return true;
   }
   int dest_bpp = GetBppFromFormat(dest_format);
-  int dest_pitch = (dest_bpp * m_Width + 31) / 32 * 4;
+  int dest_pitch = fxge::CalculatePitch32OrDie(dest_bpp, m_Width);
   std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf(
       FX_TryAlloc(uint8_t, dest_pitch * m_Height + 4));
   if (!dest_buf)

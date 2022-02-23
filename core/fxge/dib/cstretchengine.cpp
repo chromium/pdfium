@@ -6,7 +6,6 @@
 
 #include "core/fxge/dib/cstretchengine.h"
 
-#include <limits.h>
 #include <math.h>
 
 #include <algorithm>
@@ -16,6 +15,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/pauseindicator_iface.h"
+#include "core/fxge/calculate_pitch.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
@@ -26,14 +26,6 @@
 static_assert(
     std::is_trivially_destructible<CStretchEngine::PixelWeight>::value,
     "PixelWeight storage may be re-used without invoking its destructor");
-
-namespace {
-
-int GetPitchRoundUpTo4Bytes(int bits_per_pixel) {
-  return (bits_per_pixel + 31) / 32 * 4;
-}
-
-}  // namespace
 
 // static
 size_t CStretchEngine::PixelWeight::TotalBytesForWeightCount(
@@ -187,20 +179,16 @@ CStretchEngine::CStretchEngine(ScanlineComposerIface* pDestBitmap,
       m_DestWidth(dest_width),
       m_DestHeight(dest_height),
       m_DestClip(clip_rect) {
-  uint32_t size = clip_rect.Width();
-  if (size && m_DestBpp > static_cast<int>(INT_MAX / size))
+  absl::optional<uint32_t> maybe_size =
+      fxge::CalculatePitch32(m_DestBpp, clip_rect.Width());
+  if (!maybe_size.has_value())
     return;
 
-  size *= m_DestBpp;
-  if (size > INT_MAX - 31)
-    return;
-
-  size = GetPitchRoundUpTo4Bytes(size);
-  m_DestScanline.resize(size);
+  m_DestScanline.resize(maybe_size.value());
   if (dest_format == FXDIB_Format::kRgb32)
     std::fill(m_DestScanline.begin(), m_DestScanline.end(), 255);
-  m_InterPitch = GetPitchRoundUpTo4Bytes(m_DestClip.Width() * m_DestBpp);
-  m_ExtraMaskPitch = GetPitchRoundUpTo4Bytes(m_DestClip.Width() * 8);
+  m_InterPitch = fxge::CalculatePitch32OrDie(m_DestBpp, m_DestClip.Width());
+  m_ExtraMaskPitch = fxge::CalculatePitch32OrDie(8, m_DestClip.Width());
   if (options.bNoSmoothing) {
     m_ResampleOptions.bNoSmoothing = true;
   } else {

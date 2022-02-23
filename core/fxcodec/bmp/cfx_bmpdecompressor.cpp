@@ -12,10 +12,10 @@
 
 #include "core/fxcodec/bmp/cfx_bmpcontext.h"
 #include "core/fxcodec/cfx_codec_memory.h"
-#include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxge/calculate_pitch.h"
 #include "third_party/base/numerics/safe_math.h"
 
 namespace fxcodec {
@@ -224,7 +224,7 @@ BmpDecoder::Status CFX_BmpDecompressor::ReadBmpHeaderDimensions() {
     default:
       return BmpDecoder::Status::kFail;
   }
-  absl::optional<uint32_t> stride = CalculatePitch32(bit_counts_, width_);
+  absl::optional<uint32_t> stride = fxge::CalculatePitch32(bit_counts_, width_);
   if (!stride.has_value())
     return BmpDecoder::Status::kFail;
 
@@ -233,7 +233,7 @@ BmpDecoder::Status CFX_BmpDecompressor::ReadBmpHeaderDimensions() {
     case 1:
     case 4:
     case 8:
-      stride = CalculatePitch32(8, width_);
+      stride = fxge::CalculatePitch32(8, width_);
       if (!stride.has_value())
         return BmpDecoder::Status::kFail;
       out_row_bytes_ = stride.value();
@@ -241,7 +241,7 @@ BmpDecoder::Status CFX_BmpDecompressor::ReadBmpHeaderDimensions() {
       break;
     case 16:
     case 24:
-      stride = CalculatePitch32(24, width_);
+      stride = fxge::CalculatePitch32(24, width_);
       if (!stride.has_value())
         return BmpDecoder::Status::kFail;
       out_row_bytes_ = stride.value();

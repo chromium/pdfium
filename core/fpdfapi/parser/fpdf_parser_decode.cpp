@@ -19,7 +19,6 @@
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcodec/fax/faxmodule.h"
 #include "core/fxcodec/flate/flatemodule.h"
-#include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/scanlinedecoder.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"

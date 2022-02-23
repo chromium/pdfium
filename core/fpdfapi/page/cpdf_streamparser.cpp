@@ -24,13 +24,13 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
-#include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/jpeg/jpegmodule.h"
 #include "core/fxcodec/scanlinedecoder.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/span_util.h"
+#include "core/fxge/calculate_pitch.h"
 #include "third_party/base/check.h"
 
 namespace {
@@ -54,7 +54,7 @@ uint32_t DecodeAllScanlines(std::unique_ptr<ScanlineDecoder> pDecoder) {
     return FX_INVALID_OFFSET;
 
   absl::optional<uint32_t> maybe_size =
-      fxcodec::CalculatePitch8(bpc, ncomps, width);
+      fxge::CalculatePitch8(bpc, ncomps, width);
   if (!maybe_size.has_value())
     return FX_INVALID_OFFSET;
 
@@ -165,7 +165,7 @@ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
     bpc = pDict->GetIntegerFor("BitsPerComponent");
   }
   absl::optional<uint32_t> maybe_size =
-      fxcodec::CalculatePitch8(bpc, nComponents, width);
+      fxge::CalculatePitch8(bpc, nComponents, width);
   if (!maybe_size.has_value())
     return nullptr;
 

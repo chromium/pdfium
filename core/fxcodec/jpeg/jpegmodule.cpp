@@ -15,7 +15,6 @@
 
 #include "build/build_config.h"
 #include "core/fxcodec/cfx_codec_memory.h"
-#include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/jpeg/jpeg_common.h"
 #include "core/fxcodec/scanlinedecoder.h"
 #include "core/fxcrt/fx_memory_wrappers.h"

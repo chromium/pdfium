@@ -9,6 +9,7 @@
 #include "build/build_config.h"
 #include "core/fpdfapi/page/cpdf_transferfunc.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fxge/calculate_pitch.h"
 #include "third_party/base/check.h"
 #include "third_party/base/compiler_specific.h"
 
@@ -23,7 +24,7 @@ CPDF_TransferFuncDIB::CPDF_TransferFuncDIB(
   m_Width = pSrc->GetWidth();
   m_Height = pSrc->GetHeight();
   m_Format = GetDestFormat();
-  m_Pitch = (m_Width * GetBppFromFormat(m_Format) + 31) / 32 * 4;
+  m_Pitch = fxge::CalculatePitch32OrDie(GetBppFromFormat(m_Format), m_Width);
   m_Scanline.resize(m_Pitch);
   DCHECK(m_palette.empty());
 }

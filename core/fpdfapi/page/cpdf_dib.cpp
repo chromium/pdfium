@@ -26,7 +26,6 @@
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcodec/basic/basicmodule.h"
-#include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/jbig2/jbig2_decoder.h"
 #include "core/fxcodec/jpeg/jpegmodule.h"
 #include "core/fxcodec/jpx/cjpx_decoder.h"
@@ -34,6 +33,7 @@
 #include "core/fxcrt/cfx_fixedbufgrow.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/span_util.h"
+#include "core/fxge/calculate_pitch.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
@@ -184,7 +184,7 @@ bool CPDF_DIB::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream) {
     return false;
 
   const absl::optional<uint32_t> maybe_size =
-      fxcodec::CalculatePitch8(m_bpc, m_nComponents, m_Width);
+      fxge::CalculatePitch8(m_bpc, m_nComponents, m_Width);
   if (!maybe_size.has_value())
     return false;
 
@@ -207,7 +207,7 @@ bool CPDF_DIB::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream) {
     m_Format = MakeRGBFormat(CalculateBitsPerPixel(m_bpc, m_nComponents));
 
   absl::optional<uint32_t> pitch =
-      fxcodec::CalculatePitch32(GetBppFromFormat(m_Format), m_Width);
+      fxge::CalculatePitch32(GetBppFromFormat(m_Format), m_Width);
   if (!pitch.has_value())
     return false;
 
@@ -215,7 +215,7 @@ bool CPDF_DIB::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream) {
   LoadPalette();
   if (m_bColorKey) {
     m_Format = FXDIB_Format::kArgb;
-    pitch = fxcodec::CalculatePitch32(GetBppFromFormat(m_Format), m_Width);
+    pitch = fxge::CalculatePitch32(GetBppFromFormat(m_Format), m_Width);
     if (!pitch.has_value())
       return false;
 
@@ -236,7 +236,7 @@ bool CPDF_DIB::ContinueToLoadMask() {
   }
 
   absl::optional<uint32_t> pitch =
-      fxcodec::CalculatePitch32(GetBppFromFormat(m_Format), m_Width);
+      fxge::CalculatePitch32(GetBppFromFormat(m_Format), m_Width);
   if (!pitch.has_value())
     return false;
 
@@ -247,7 +247,7 @@ bool CPDF_DIB::ContinueToLoadMask() {
   LoadPalette();
   if (m_bColorKey) {
     m_Format = FXDIB_Format::kArgb;
-    pitch = fxcodec::CalculatePitch32(GetBppFromFormat(m_Format), m_Width);
+    pitch = fxge::CalculatePitch32(GetBppFromFormat(m_Format), m_Width);
     if (!pitch.has_value())
       return false;
     m_MaskBuf = std::vector<uint8_t, FxAllocAllocator<uint8_t>>(pitch.value());
@@ -288,7 +288,7 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadDIBBase(
     return LoadState::kFail;
 
   const absl::optional<uint32_t> maybe_size =
-      fxcodec::CalculatePitch8(m_bpc, m_nComponents, m_Width);
+      fxge::CalculatePitch8(m_bpc, m_nComponents, m_Width);
   if (!maybe_size.has_value())
     return LoadState::kFail;
 
@@ -553,10 +553,10 @@ CPDF_DIB::LoadState CPDF_DIB::CreateDecoder() {
     return LoadState::kFail;
 
   const absl::optional<uint32_t> requested_pitch =
-      fxcodec::CalculatePitch8(m_bpc, m_nComponents, m_Width);
+      fxge::CalculatePitch8(m_bpc, m_nComponents, m_Width);
   if (!requested_pitch.has_value())
     return LoadState::kFail;
-  const absl::optional<uint32_t> provided_pitch = fxcodec::CalculatePitch8(
+  const absl::optional<uint32_t> provided_pitch = fxge::CalculatePitch8(
       m_pDecoder->GetBPC(), m_pDecoder->CountComps(), m_pDecoder->GetWidth());
   if (!provided_pitch.has_value())
     return LoadState::kFail;
@@ -1091,7 +1091,7 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
     return pdfium::span<const uint8_t>();
 
   const absl::optional<uint32_t> src_pitch =
-      fxcodec::CalculatePitch8(m_bpc, m_nComponents, m_Width);
+      fxge::CalculatePitch8(m_bpc, m_nComponents, m_Width);
   if (!src_pitch.has_value())
     return pdfium::span<const uint8_t>();
 

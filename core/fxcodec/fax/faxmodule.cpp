@@ -12,11 +12,11 @@
 #include <vector>
 
 #include "build/build_config.h"
-#include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/scanlinedecoder.h"
 #include "core/fxcrt/cfx_binarybuf.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/stl_util.h"
+#include "core/fxge/calculate_pitch.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/cxx17_backports.h"
@@ -498,7 +498,7 @@ FaxDecoder::FaxDecoder(pdfium::span<const uint8_t> src_span,
                       height,
                       kFaxComps,
                       kFaxBpc,
-                      CalculatePitch32OrDie(kFaxBpc, width)),
+                      fxge::CalculatePitch32OrDie(kFaxBpc, width)),
       m_Encoding(K),
       m_bByteAlign(EncodedByteAlign),
       m_bEndOfLine(EndOfLine),

@@ -14,11 +14,11 @@
 #include <utility>
 #include <vector>
 
-#include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/scanlinedecoder.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxge/calculate_pitch.h"
 #include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/numerics/safe_conversions.h"
@@ -302,7 +302,7 @@ void PNG_PredictLine(pdfium::span<uint8_t> dest_span,
   uint8_t* pDestData = dest_span.data();
   const uint8_t* pSrcData = src_span.data();
   const uint8_t* pLastLine = last_span.data();
-  const uint32_t row_size = CalculatePitch8OrDie(bpc, nColors, nPixels);
+  const uint32_t row_size = fxge::CalculatePitch8OrDie(bpc, nColors, nPixels);
   const uint32_t BytesPerPixel = (bpc * nColors + 7) / 8;
   uint8_t tag = pSrcData[0];
   if (tag == 0) {
@@ -630,7 +630,7 @@ FlateScanlineDecoder::FlateScanlineDecoder(pdfium::span<const uint8_t> src_span,
                       height,
                       nComps,
                       bpc,
-                      CalculatePitch8OrDie(bpc, nComps, width)),
+                      fxge::CalculatePitch8OrDie(bpc, nComps, width)),
       m_SrcBuf(src_span),
       m_Scanline(m_Pitch) {}
 
@@ -711,7 +711,7 @@ FlatePredictorScanlineDecoder::FlatePredictorScanlineDecoder(
   m_BitsPerComponent = BitsPerComponent;
   m_Columns = Columns;
   m_PredictPitch =
-      CalculatePitch8OrDie(m_BitsPerComponent, m_Colors, m_Columns);
+      fxge::CalculatePitch8OrDie(m_BitsPerComponent, m_Colors, m_Columns);
   m_LastLine.resize(m_PredictPitch);
   m_PredictBuffer.resize(m_PredictPitch);
   m_PredictRaw.resize(m_PredictPitch + 1);

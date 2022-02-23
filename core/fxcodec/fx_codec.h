@@ -9,8 +9,6 @@
 
 #include <stdint.h>
 
-#include "third_party/abseil-cpp/absl/types/optional.h"
-
 namespace fxcodec {
 
 #ifdef PDF_ENABLE_XFA
@@ -35,13 +33,6 @@ class CFX_DIBAttribute {
 #endif  // PDF_ENABLE_XFA
 
 void ReverseRGB(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels);
-
-uint32_t CalculatePitch8OrDie(uint32_t bpc, uint32_t components, int width);
-uint32_t CalculatePitch32OrDie(int bpp, int width);
-absl::optional<uint32_t> CalculatePitch8(uint32_t bpc,
-                                         uint32_t components,
-                                         int width);
-absl::optional<uint32_t> CalculatePitch32(int bpp, int width);
 
 }  // namespace fxcodec
 
