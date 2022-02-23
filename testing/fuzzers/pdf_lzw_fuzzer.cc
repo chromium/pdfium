@@ -12,6 +12,8 @@
 constexpr uint32_t kMinCompressionRatio = 2;
 constexpr uint32_t kMaxCompressionRatio = 10;
 
+static constexpr size_t kMaxFuzzBytes = 1024 * 1024 * 1024;  // 1 GB.
+
 void LZWFuzz(const uint8_t* src_buf,
              size_t src_size,
              uint8_t color_exp,
@@ -28,7 +30,8 @@ void LZWFuzz(const uint8_t* src_buf,
     // the initial data.
     uint32_t dest_size = static_cast<uint32_t>(dest_buf.size());
     if (LZWDecompressor::Status::kInsufficientDestSize !=
-        decompressor->Decode(src_buf, src_size, dest_buf.data(), &dest_size)) {
+        decompressor->Decode(src_buf, static_cast<uint32_t>(src_size),
+                             dest_buf.data(), &dest_size)) {
       return;
     }
   }
@@ -36,7 +39,7 @@ void LZWFuzz(const uint8_t* src_buf,
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   // Need at least 3 bytes to do anything.
-  if (size < 3)
+  if (size < 3 || size > kMaxFuzzBytes)
     return 0;
 
   // Normally the GIF would provide the code and color sizes, instead, going

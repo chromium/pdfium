@@ -6,8 +6,10 @@
 #include "public/fpdf_edit.h"
 #include "public/fpdfview.h"
 
+static constexpr size_t kMaxFuzzBytes = 1024 * 1024 * 1024;  // 1 GB.
+
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
-  if (size < 2)
+  if (size < 2 || size > kMaxFuzzBytes)
     return 0;
 
   ScopedFPDFDocument doc(FPDF_CreateNewDocument());
@@ -16,7 +18,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   FPDF_BOOL cid = data[1];
   data += 2;
   size -= 2;
-  ScopedFPDFFont font(FPDFText_LoadFont(doc.get(), data, size, font_type, cid));
+  ScopedFPDFFont font(FPDFText_LoadFont(
+      doc.get(), data, static_cast<uint32_t>(size), font_type, cid));
   if (!font)
     return 0;
 
