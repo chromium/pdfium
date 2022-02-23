@@ -27,8 +27,8 @@ class CXFA_Box : public CXFA_Node {
   XFA_AttributeValue GetPresence();
   std::tuple<XFA_AttributeValue, bool, float> Get3DStyle();
 
-  int32_t CountEdges();
-  CXFA_Edge* GetEdgeIfExists(int32_t nIndex);
+  size_t CountEdges();
+  CXFA_Edge* GetEdgeIfExists(size_t nIndex);
   CXFA_Fill* GetOrCreateFillIfPossible();
 
   std::vector<CXFA_Stroke*> GetStrokes();

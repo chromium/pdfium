@@ -687,8 +687,8 @@ bool CXFA_LocaleValue::ValidateNumericTemp(const WideString& wsNumeric,
 
   pdfium::span<const wchar_t> spNum = wsNumeric.span();
   pdfium::span<const wchar_t> spFmt = wsFormat.span();
-  int32_t n = 0;
-  int32_t nf = 0;
+  size_t n = 0;
+  size_t nf = 0;
   wchar_t c = spNum[n];
   wchar_t cf = spFmt[nf];
   if (cf == L's') {
@@ -698,8 +698,8 @@ bool CXFA_LocaleValue::ValidateNumericTemp(const WideString& wsNumeric,
   }
 
   bool bLimit = true;
-  int32_t nCount = wsNumeric.GetLength();
-  int32_t nCountFmt = wsFormat.GetLength();
+  size_t nCount = wsNumeric.GetLength();
+  size_t nCountFmt = wsFormat.GetLength();
   while (n < nCount && (!bLimit || nf < nCountFmt) &&
          FXSYS_IsDecimalDigit(c = spNum[n])) {
     if (bLimit) {

@@ -276,8 +276,10 @@ void CPDFSDK_Widget::Synchronize(bool bSynchronizeElse) {
       node->ClearAllSelections();
       for (int i = 0; i < pFormField->CountSelectedItems(); ++i) {
         int nIndex = pFormField->GetSelectedIndex(i);
-        if (nIndex > -1 && nIndex < node->CountChoiceListItems(false))
+        if (nIndex > -1 &&
+            static_cast<size_t>(nIndex) < node->CountChoiceListItems(false)) {
           node->SetItemState(nIndex, true, false, false, true);
+        }
       }
       if (GetFieldType() == FormFieldType::kComboBox)
         node->SetValue(XFA_ValuePicture::kEdit, pFormField->GetValue());
@@ -516,9 +518,10 @@ bool CPDFSDK_Widget::IsOptionSelected(int nIndex) const {
   if (CXFA_FFWidget* hWidget = GetMixXFAWidget()) {
     CXFA_Node* node = hWidget->GetNode();
     if (node->IsWidgetReady()) {
-      if (nIndex > -1 && nIndex < node->CountChoiceListItems(false))
+      if (nIndex > -1 &&
+          static_cast<size_t>(nIndex) < node->CountChoiceListItems(false)) {
         return node->GetItemState(nIndex);
-
+      }
       return false;
     }
   }

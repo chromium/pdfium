@@ -4190,7 +4190,7 @@ bool CXFA_Node::IsListBox() {
          attr == XFA_AttributeValue::MultiSelect;
 }
 
-int32_t CXFA_Node::CountChoiceListItems(bool bSaveValue) {
+size_t CXFA_Node::CountChoiceListItems(bool bSaveValue) {
   std::vector<CXFA_Node*> pItems;
   int32_t iCount = 0;
   for (CXFA_Node* pNode = GetFirstChild(); pNode;
@@ -4304,7 +4304,9 @@ int32_t CXFA_Node::GetSelectedItem(int32_t nIndex) {
   std::vector<WideString> wsSaveTextArray = GetChoiceListItems(true);
   auto it = std::find(wsSaveTextArray.begin(), wsSaveTextArray.end(),
                       wsValueArray[nIndex]);
-  return it != wsSaveTextArray.end() ? it - wsSaveTextArray.begin() : -1;
+  return it != wsSaveTextArray.end()
+             ? pdfium::base::checked_cast<int32_t>(it - wsSaveTextArray.begin())
+             : -1;
 }
 
 std::vector<int32_t> CXFA_Node::GetSelectedItems() {
@@ -4313,8 +4315,10 @@ std::vector<int32_t> CXFA_Node::GetSelectedItems() {
   std::vector<WideString> wsSaveTextArray = GetChoiceListItems(true);
   for (const auto& value : wsValueArray) {
     auto it = std::find(wsSaveTextArray.begin(), wsSaveTextArray.end(), value);
-    if (it != wsSaveTextArray.end())
-      iSelArray.push_back(it - wsSaveTextArray.begin());
+    if (it != wsSaveTextArray.end()) {
+      iSelArray.push_back(
+          pdfium::base::checked_cast<int32_t>(it - wsSaveTextArray.begin()));
+    }
   }
   return iSelArray;
 }
@@ -4348,9 +4352,10 @@ void CXFA_Node::SetItemState(int32_t nIndex,
   std::vector<WideString> wsValueArray = GetSelectedItemsValue();
   auto value_iter = std::find(wsValueArray.begin(), wsValueArray.end(),
                               wsSaveTextArray[nIndex]);
-  if (value_iter != wsValueArray.end())
-    iSel = value_iter - wsValueArray.begin();
-
+  if (value_iter != wsValueArray.end()) {
+    iSel =
+        pdfium::base::checked_cast<int32_t>(value_iter - wsValueArray.begin());
+  }
   if (IsChoiceListMultiSelect()) {
     if (bSelected) {
       if (iSel < 0) {
@@ -4984,7 +4989,7 @@ WideString CXFA_Node::NumericLimit(const WideString& wsValue) {
   if (iLead == -1 && iTread == -1)
     return wsValue;
 
-  int32_t iCount = wsValue.GetLength();
+  int32_t iCount = pdfium::base::checked_cast<int32_t>(wsValue.GetLength());
   if (iCount == 0)
     return wsValue;
 

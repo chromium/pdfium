@@ -32,9 +32,9 @@ FX_ARGB CXFA_Color::StringToFXARGB(WideStringView view) {
   if (view.IsEmpty())
     return kDefaultValue;
 
-  int cc = 0;
   const wchar_t* str = view.unterminated_c_str();
-  int len = view.GetLength();
+  size_t len = view.GetLength();
+  size_t cc = 0;
   while (cc < len && FXSYS_iswspace(str[cc]))
     cc++;
 

@@ -62,8 +62,8 @@ bool IsXMLValidChar(wchar_t ch) {
 
 WideString ExportEncodeContent(const WideString& str) {
   CFX_WideTextBuf textBuf;
-  int32_t iLen = str.GetLength();
-  for (int32_t i = 0; i < iLen; i++) {
+  size_t iLen = str.GetLength();
+  for (size_t i = 0; i < iLen; i++) {
     wchar_t ch = str[i];
     if (!IsXMLValidChar(ch))
       continue;
@@ -200,7 +200,8 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
         auto pMemStream = pdfium::MakeRetain<CFX_MemoryStream>();
         pRichTextXML->Save(pMemStream);
         wsChildren += WideString::FromUTF8(
-            ByteStringView(pMemStream->GetBuffer(), pMemStream->GetSize()));
+            ByteStringView(pMemStream->GetBuffer(),
+                           static_cast<size_t>(pMemStream->GetSize())));
       } else if (pRawValueNode->GetElementType() == XFA_Element::Sharpxml &&
                  contentType.has_value() &&
                  contentType.value().EqualsASCII("text/xml")) {

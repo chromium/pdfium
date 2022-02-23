@@ -357,7 +357,9 @@ void CJX_Field::length(v8::Isolate* pIsolate,
 
   CXFA_Node* node = GetXFANode();
   *pValue = fxv8::NewNumberHelper(
-      pIsolate, node->IsWidgetReady() ? node->CountChoiceListItems(true) : 0);
+      pIsolate, node->IsWidgetReady() ? pdfium::base::checked_cast<int>(
+                                            node->CountChoiceListItems(true))
+                                      : 0);
 }
 
 void CJX_Field::parentSubform(v8::Isolate* pIsolate,

@@ -676,6 +676,12 @@ source_set("parser") {
     "xfa_utils.cpp",
     "xfa_utils.h",
   ]
+  allow_circular_includes_from = [ "../../../fxjs" ]
+  configs += [
+    "../../../:pdfium_strict_config",
+    "../../../:pdfium_noshorten_config",
+    "../../:xfa_warnings",
+  ]
   deps = [
     "../../../core/fxcodec",
     "../../../core/fxcrt",
@@ -686,11 +692,6 @@ source_set("parser") {
     "../../fgas/crt",
     "../../fgas/font",
     "../../fgas/graphics",
-  ]
-  allow_circular_includes_from = [ "../../../fxjs" ]
-  configs += [
-    "../../../:pdfium_strict_config",
-    "../../:xfa_warnings",
   ]
   visibility = [ "../../../*" ]
 }
