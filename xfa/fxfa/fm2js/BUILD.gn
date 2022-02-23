@@ -18,13 +18,14 @@ source_set("fm2js") {
     "cxfa_fmtojavascriptdepth.cpp",
     "cxfa_fmtojavascriptdepth.h",
   ]
+  configs += [
+    "../../../:pdfium_strict_config",
+    "../../../:pdfium_noshorten_config",
+    "../../:xfa_warnings",
+  ]
   deps = [
     "../../../core/fxcrt",
     "../../../fxjs:gc",
-  ]
-  configs += [
-    "../../../:pdfium_strict_config",
-    "../../:xfa_warnings",
   ]
   visibility = [ "../../../*" ]
 }
