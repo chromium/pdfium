@@ -97,6 +97,7 @@ pdfium_unittest_source_set("unittests") {
   sources = [
     "cpdf_action_unittest.cpp",
     "cpdf_annot_unittest.cpp",
+    "cpdf_bafontmap_unittest.cpp",
     "cpdf_defaultappearance_unittest.cpp",
     "cpdf_dest_unittest.cpp",
     "cpdf_filespec_unittest.cpp",
@@ -107,7 +108,9 @@ pdfium_unittest_source_set("unittests") {
   deps = [
     ":fpdfdoc",
     "../../constants",
+    "../fpdfapi/font",
     "../fpdfapi/page",
+    "../fpdfapi/page:unit_test_support",
     "../fpdfapi/parser",
     "../fpdfapi/parser:unit_test_support",
     "../fpdfapi/render",
