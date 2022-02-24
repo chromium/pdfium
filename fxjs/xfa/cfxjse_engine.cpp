@@ -157,8 +157,8 @@ bool CFXJSE_Engine::RunScript(CXFA_Script::Type eScriptType,
 
   ByteString btScript;
   if (eScriptType == CXFA_Script::Type::Formcalc) {
-    if (!m_FM2JSContext) {
-      m_FM2JSContext = std::make_unique<CFXJSE_FormCalcContext>(
+    if (!m_FormCalcContext) {
+      m_FormCalcContext = std::make_unique<CFXJSE_FormCalcContext>(
           GetIsolate(), m_JsContext.get(), m_pDocument.Get());
     }
     absl::optional<CFX_WideTextBuf> wsJavaScript =
@@ -286,7 +286,7 @@ v8::Local<v8::Value> CFXJSE_Engine::GlobalPropertyGetter(
 
   if (pScriptContext->GetType() == CXFA_Script::Type::Formcalc) {
     if (szPropName == kFormCalcRuntime)
-      return pScriptContext->m_FM2JSContext->GlobalPropertyGetter();
+      return pScriptContext->m_FormCalcContext->GlobalPropertyGetter();
 
     XFA_HashCode uHashCode =
         static_cast<XFA_HashCode>(FX_HashCode_GetW(wsPropName.AsStringView()));

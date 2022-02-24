@@ -26,7 +26,7 @@ tag and contains either:
     GlobalClassDescriptor
     NormalClassDescriptor
     VariablesClassDescriptor
-    formcalc_fm2js_descriptor
+    kFormCalcDescriptor
 
 Slot 1's contents are determined by these tags:
   kPerObjectDataTag means an aligned pointer to CFXJS_PerObjectData.

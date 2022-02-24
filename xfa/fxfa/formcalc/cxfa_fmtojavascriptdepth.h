@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef XFA_FXFA_FM2JS_CXFA_FMTOJAVASCRIPTDEPTH_H_
-#define XFA_FXFA_FM2JS_CXFA_FMTOJAVASCRIPTDEPTH_H_
+#ifndef XFA_FXFA_FORMCALC_CXFA_FMTOJAVASCRIPTDEPTH_H_
+#define XFA_FXFA_FORMCALC_CXFA_FMTOJAVASCRIPTDEPTH_H_
 
 class CXFA_FMToJavaScriptDepth {
  public:
@@ -23,4 +23,4 @@ class CXFA_FMToJavaScriptDepth {
   static unsigned long depth_;
 };
 
-#endif  // XFA_FXFA_FM2JS_CXFA_FMTOJAVASCRIPTDEPTH_H_
+#endif  // XFA_FXFA_FORMCALC_CXFA_FMTOJAVASCRIPTDEPTH_H_

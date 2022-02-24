@@ -89,7 +89,7 @@ struct FXJSE_CLASS_DESCRIPTOR {
 extern const FXJSE_CLASS_DESCRIPTOR GlobalClassDescriptor;
 extern const FXJSE_CLASS_DESCRIPTOR NormalClassDescriptor;
 extern const FXJSE_CLASS_DESCRIPTOR VariablesClassDescriptor;
-extern const FXJSE_CLASS_DESCRIPTOR kFormCalcFM2JSDescriptor;
+extern const FXJSE_CLASS_DESCRIPTOR kFormCalcDescriptor;
 
 void FXJSE_ThrowMessage(v8::Isolate* pIsolate, ByteStringView utf8Message);
 

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_FM2JS_CXFA_FMPARSER_H_
-#define XFA_FXFA_FM2JS_CXFA_FMPARSER_H_
+#ifndef XFA_FXFA_FORMCALC_CXFA_FMPARSER_H_
+#define XFA_FXFA_FORMCALC_CXFA_FMPARSER_H_
 
 #include <vector>
 
@@ -14,8 +14,8 @@
 #include "third_party/abseil-cpp/absl/types/optional.h"
 #include "v8/include/cppgc/macros.h"
 #include "v8/include/cppgc/member.h"
-#include "xfa/fxfa/fm2js/cxfa_fmexpression.h"
-#include "xfa/fxfa/fm2js/cxfa_fmlexer.h"
+#include "xfa/fxfa/formcalc/cxfa_fmexpression.h"
+#include "xfa/fxfa/formcalc/cxfa_fmlexer.h"
 
 class CXFA_FMParser {
   CPPGC_STACK_ALLOCATED();  // Allow Raw/Unowned pointers.
@@ -71,4 +71,4 @@ class CXFA_FMParser {
   unsigned long m_max_parse_depth;
 };
 
-#endif  // XFA_FXFA_FM2JS_CXFA_FMPARSER_H_
+#endif  // XFA_FXFA_FORMCALC_CXFA_FMPARSER_H_

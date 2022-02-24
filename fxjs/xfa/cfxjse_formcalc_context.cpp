@@ -37,8 +37,8 @@
 #include "v8/include/v8-primitive.h"
 #include "xfa/fgas/crt/cfgas_decimal.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
-#include "xfa/fxfa/fm2js/cxfa_fmparser.h"
-#include "xfa/fxfa/fm2js/cxfa_fmtojavascriptdepth.h"
+#include "xfa/fxfa/formcalc/cxfa_fmparser.h"
+#include "xfa/fxfa/formcalc/cxfa_fmtojavascriptdepth.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
@@ -199,7 +199,7 @@ const XFA_FMHtmlReserveCode kReservesForEncode[] = {
     {9824, "spades"}, {9827, "clubs"},  {9829, "hearts"},  {9830, "diams"},
 };
 
-const FXJSE_FUNCTION_DESCRIPTOR kFormCalcFM2JSFunctions[] = {
+const FXJSE_FUNCTION_DESCRIPTOR kFormCalcFunctions[] = {
     {kFuncTag, "Abs", CFXJSE_FormCalcContext::Abs},
     {kFuncTag, "Avg", CFXJSE_FormCalcContext::Avg},
     {kFuncTag, "Ceil", CFXJSE_FormCalcContext::Ceil},
@@ -1665,15 +1665,15 @@ int GetValidatedPaymentPeriods(v8::Isolate* isolate, v8::Local<v8::Value> arg) {
 
 }  // namespace
 
-const FXJSE_CLASS_DESCRIPTOR kFormCalcFM2JSDescriptor = {
-    kClassTag,                              // tag
-    "XFA_FM2JS_FormCalcClass",              // name
-    kFormCalcFM2JSFunctions,                // methods
-    pdfium::size(kFormCalcFM2JSFunctions),  // number of methods
-    nullptr,                                // dynamic prop type
-    nullptr,                                // dynamic prop getter
-    nullptr,                                // dynamic prop setter
-    nullptr,                                // dynamic prop method call
+const FXJSE_CLASS_DESCRIPTOR kFormCalcDescriptor = {
+    kClassTag,                         // tag
+    "XFA_FormCalcClass",               // name
+    kFormCalcFunctions,                // methods
+    pdfium::size(kFormCalcFunctions),  // number of methods
+    nullptr,                           // dynamic prop type
+    nullptr,                           // dynamic prop getter
+    nullptr,                           // dynamic prop setter
+    nullptr,                           // dynamic prop method call
 };
 
 // static
@@ -3377,7 +3377,7 @@ void CFXJSE_FormCalcContext::UnitType(
     return;
   }
 
-  enum XFA_FM2JS_VALUETYPE_ParserStatus {
+  enum XFA_FormCalc_VALUETYPE_ParserStatus {
     VALUETYPE_START,
     VALUETYPE_HAVEINVALIDCHAR,
     VALUETYPE_HAVEDIGIT,
@@ -3396,7 +3396,7 @@ void CFXJSE_FormCalcContext::UnitType(
   while (IsWhitespace(pData[u]))
     u++;
 
-  XFA_FM2JS_VALUETYPE_ParserStatus eParserStatus = VALUETYPE_START;
+  XFA_FormCalc_VALUETYPE_ParserStatus eParserStatus = VALUETYPE_START;
   wchar_t typeChar;
   // TODO(dsinclair): Cleanup this parser, figure out what the various checks
   //    are for.
@@ -5300,12 +5300,11 @@ CFXJSE_FormCalcContext::CFXJSE_FormCalcContext(v8::Isolate* pIsolate,
                                                CFXJSE_Context* pScriptContext,
                                                CXFA_Document* pDoc)
     : m_pIsolate(pIsolate), m_pDocument(pDoc) {
-  m_Value.Reset(
-      m_pIsolate,
-      NewBoundV8Object(
-          m_pIsolate,
-          CFXJSE_Class::Create(pScriptContext, &kFormCalcFM2JSDescriptor, false)
-              ->GetTemplate(m_pIsolate)));
+  m_Value.Reset(m_pIsolate,
+                NewBoundV8Object(
+                    m_pIsolate, CFXJSE_Class::Create(
+                                    pScriptContext, &kFormCalcDescriptor, false)
+                                    ->GetTemplate(m_pIsolate)));
 }
 
 CFXJSE_FormCalcContext::~CFXJSE_FormCalcContext() = default;

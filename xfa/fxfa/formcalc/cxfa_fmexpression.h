@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_FM2JS_CXFA_FMEXPRESSION_H_
-#define XFA_FXFA_FM2JS_CXFA_FMEXPRESSION_H_
+#ifndef XFA_FXFA_FORMCALC_CXFA_FMEXPRESSION_H_
+#define XFA_FXFA_FORMCALC_CXFA_FMEXPRESSION_H_
 
 #include <vector>
 
@@ -14,7 +14,7 @@
 #include "third_party/abseil-cpp/absl/types/optional.h"
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/member.h"
-#include "xfa/fxfa/fm2js/cxfa_fmlexer.h"
+#include "xfa/fxfa/formcalc/cxfa_fmlexer.h"
 
 class CFX_WideTextBuf;
 
@@ -606,4 +606,4 @@ class CXFA_FMAST : public cppgc::GarbageCollected<CXFA_FMAST> {
 
 bool CXFA_IsTooBig(const CFX_WideTextBuf& js);
 
-#endif  // XFA_FXFA_FM2JS_CXFA_FMEXPRESSION_H_
+#endif  // XFA_FXFA_FORMCALC_CXFA_FMEXPRESSION_H_

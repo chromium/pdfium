@@ -6,7 +6,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "testing/fuzzers/pdfium_fuzzer_util.h"
 #include "testing/fuzzers/xfa_process_state.h"
-#include "xfa/fxfa/fm2js/cxfa_fmparser.h"
+#include "xfa/fxfa/formcalc/cxfa_fmparser.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   auto* state = static_cast<XFAProcessState*>(FPDF_GetFuzzerPerProcessState());

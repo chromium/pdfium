@@ -2,12 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "xfa/fxfa/fm2js/cxfa_fmparser.h"
+#include "xfa/fxfa/formcalc/cxfa_fmparser.h"
 
 #include "core/fxcrt/cfx_widetextbuf.h"
 #include "testing/fxgc_unittest.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "xfa/fxfa/fm2js/cxfa_fmtojavascriptdepth.h"
+#include "xfa/fxfa/formcalc/cxfa_fmtojavascriptdepth.h"
 
 class CXFA_FMParserTest : public FXGCUnitTest {};
 

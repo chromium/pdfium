@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "xfa/fxfa/fm2js/cxfa_fmexpression.h"
+#include "xfa/fxfa/formcalc/cxfa_fmexpression.h"
 
 #include <utility>
 
@@ -11,8 +11,8 @@
 #include "testing/fxgc_unittest.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "v8/include/cppgc/heap.h"
-#include "xfa/fxfa/fm2js/cxfa_fmlexer.h"
-#include "xfa/fxfa/fm2js/cxfa_fmtojavascriptdepth.h"
+#include "xfa/fxfa/formcalc/cxfa_fmlexer.h"
+#include "xfa/fxfa/formcalc/cxfa_fmtojavascriptdepth.h"
 
 class FMExpressionTest : public FXGCUnitTest {};
 class FMCallExpressionTest : public FXGCUnitTest {};

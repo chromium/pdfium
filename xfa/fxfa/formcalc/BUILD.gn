@@ -7,7 +7,7 @@ import("../../../testing/test.gni")
 
 assert(pdf_enable_xfa)
 
-source_set("fm2js") {
+source_set("formcalc") {
   sources = [
     "cxfa_fmexpression.cpp",
     "cxfa_fmexpression.h",
@@ -37,7 +37,7 @@ pdfium_unittest_source_set("unittests") {
     "cxfa_fmparser_unittest.cpp",
   ]
   deps = [
-    ":fm2js",
+    ":formcalc",
     "../../../fxjs:gc",
   ]
   pdfium_root_dir = "../../../"

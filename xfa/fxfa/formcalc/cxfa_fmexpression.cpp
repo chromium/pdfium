@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/fm2js/cxfa_fmexpression.h"
+#include "xfa/fxfa/formcalc/cxfa_fmexpression.h"
 
 #include <algorithm>
 #include <utility>
@@ -15,7 +15,7 @@
 #include "fxjs/gc/container_trace.h"
 #include "third_party/base/check.h"
 #include "v8/include/cppgc/visitor.h"
-#include "xfa/fxfa/fm2js/cxfa_fmtojavascriptdepth.h"
+#include "xfa/fxfa/formcalc/cxfa_fmtojavascriptdepth.h"
 
 namespace {
 

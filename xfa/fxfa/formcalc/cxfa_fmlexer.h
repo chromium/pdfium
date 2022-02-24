@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_FM2JS_CXFA_FMLEXER_H_
-#define XFA_FXFA_FM2JS_CXFA_FMLEXER_H_
+#ifndef XFA_FXFA_FORMCALC_CXFA_FMLEXER_H_
+#define XFA_FXFA_FORMCALC_CXFA_FMLEXER_H_
 
 #include "core/fxcrt/widestring.h"
 #include "v8/include/cppgc/macros.h"
@@ -118,4 +118,4 @@ class CXFA_FMLexer {
   bool m_bLexerError = false;
 };
 
-#endif  // XFA_FXFA_FM2JS_CXFA_FMLEXER_H_
+#endif  // XFA_FXFA_FORMCALC_CXFA_FMLEXER_H_

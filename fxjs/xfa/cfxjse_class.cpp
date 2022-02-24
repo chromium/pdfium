@@ -98,7 +98,7 @@ void DynPropGetterAdapter_MethodCallback(
   if (pClassDescriptor != &GlobalClassDescriptor &&
       pClassDescriptor != &NormalClassDescriptor &&
       pClassDescriptor != &VariablesClassDescriptor &&
-      pClassDescriptor != &kFormCalcFM2JSDescriptor) {
+      pClassDescriptor != &kFormCalcDescriptor) {
     return;
   }
 
