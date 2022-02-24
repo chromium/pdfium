@@ -77,11 +77,6 @@ class IFX_SeekableStream : public IFX_SeekableReadStream,
   static RetainPtr<IFX_SeekableStream> CreateFromFilename(const char* filename,
                                                           uint32_t dwModes);
 
-  // dwModes is a mask of FX_FILEMODE_* from above.
-  static RetainPtr<IFX_SeekableStream> CreateFromFilename(
-      const wchar_t* filename,
-      uint32_t dwModes);
-
   // IFX_SeekableWriteStream:
   bool WriteBlock(const void* buffer, size_t size) override;
 };

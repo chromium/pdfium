@@ -25,7 +25,6 @@ class CFX_FileAccess_Posix final : public FileAccessIface {
 
   // FileAccessIface:
   bool Open(ByteStringView fileName, uint32_t dwMode) override;
-  bool Open(WideStringView fileName, uint32_t dwMode) override;
   void Close() override;
   FX_FILESIZE GetSize() const override;
   FX_FILESIZE GetPosition() const override;

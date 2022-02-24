@@ -44,25 +44,14 @@ bool CFX_FileAccess_Windows::Open(ByteStringView fileName, uint32_t dwMode) {
   if (m_hFile)
     return false;
 
-  uint32_t dwAccess, dwShare, dwCreation;
+  uint32_t dwAccess;
+  uint32_t dwShare;
+  uint32_t dwCreation;
   GetFileMode(dwMode, dwAccess, dwShare, dwCreation);
-  m_hFile = ::CreateFileA(fileName.unterminated_c_str(), dwAccess, dwShare,
-                          nullptr, dwCreation, FILE_ATTRIBUTE_NORMAL, nullptr);
-  if (m_hFile == INVALID_HANDLE_VALUE)
-    m_hFile = nullptr;
 
-  return !!m_hFile;
-}
-
-bool CFX_FileAccess_Windows::Open(WideStringView fileName, uint32_t dwMode) {
-  if (m_hFile)
-    return false;
-
-  uint32_t dwAccess, dwShare, dwCreation;
-  GetFileMode(dwMode, dwAccess, dwShare, dwCreation);
-  m_hFile =
-      ::CreateFileW((LPCWSTR)fileName.unterminated_c_str(), dwAccess, dwShare,
-                    nullptr, dwCreation, FILE_ATTRIBUTE_NORMAL, nullptr);
+  WideString wname = FX_UTF8Decode(fileName);
+  m_hFile = ::CreateFileW(wname.c_str(), dwAccess, dwShare, nullptr, dwCreation,
+                          FILE_ATTRIBUTE_NORMAL, nullptr);
   if (m_hFile == INVALID_HANDLE_VALUE)
     m_hFile = nullptr;
 

@@ -335,6 +335,8 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_SetPrintMode(int mode);
 //          If this function fails, you can use FPDF_GetLastError() to retrieve
 //          the reason why it failed.
 //
+//          The encoding for |file_path| is UTF-8.
+//
 //          The encoding for |password| can be either UTF-8 or Latin-1. PDFs,
 //          depending on the security handler revision, will only accept one or
 //          the other encoding. If |password|'s encoding and the PDF's expected
