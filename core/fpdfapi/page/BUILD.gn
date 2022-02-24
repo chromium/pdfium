@@ -119,6 +119,19 @@ source_set("page") {
   visibility = [ "../../../*" ]
 }
 
+source_set("unit_test_support") {
+  testonly = true
+  sources = [
+    "test_with_page_module.cpp",
+    "test_with_page_module.h",
+  ]
+  configs += [ "../../../:pdfium_strict_config" ]
+  deps = [
+    "../page",
+    "//testing/gtest",
+  ]
+}
+
 pdfium_unittest_source_set("unittests") {
   sources = [
     "cpdf_colorspace_unittest.cpp",

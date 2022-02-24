@@ -6,7 +6,7 @@
 
 #include <memory>
 
-#include "core/fpdfapi/page/cpdf_pagemodule.h"
+#include "core/fpdfapi/page/test_with_page_module.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
@@ -17,10 +17,10 @@
 #include "public/cpp/fpdf_scopers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-class PDFCatalogTest : public testing::Test {
+class PDFCatalogTest : public TestWithPageModule {
  public:
   void SetUp() override {
-    CPDF_PageModule::Create();
+    TestWithPageModule::SetUp();
     auto pTestDoc = std::make_unique<CPDF_TestDocument>();
     m_pDoc.reset(FPDFDocumentFromCPDFDocument(pTestDoc.release()));
     m_pRootObj = pdfium::MakeRetain<CPDF_Dictionary>();
@@ -28,7 +28,7 @@ class PDFCatalogTest : public testing::Test {
 
   void TearDown() override {
     m_pDoc.reset();
-    CPDF_PageModule::Destroy();
+    TestWithPageModule::TearDown();
   }
 
  protected:

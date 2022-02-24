@@ -13,7 +13,6 @@
 #include "build/build_config.h"
 #include "constants/annotation_common.h"
 #include "core/fpdfapi/page/cpdf_annotcontext.h"
-#include "core/fpdfapi/page/cpdf_pagemodule.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fxcrt/fx_system.h"

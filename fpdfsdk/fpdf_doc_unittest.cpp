@@ -7,7 +7,7 @@
 #include <memory>
 #include <vector>
 
-#include "core/fpdfapi/page/cpdf_pagemodule.h"
+#include "core/fpdfapi/page/test_with_page_module.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -24,7 +24,7 @@
 #include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-class PDFDocTest : public testing::Test {
+class PDFDocTest : public TestWithPageModule {
  public:
   struct DictObjInfo {
     uint32_t num;
@@ -32,7 +32,7 @@ class PDFDocTest : public testing::Test {
   };
 
   void SetUp() override {
-    CPDF_PageModule::Create();
+    TestWithPageModule::SetUp();
     auto pTestDoc = std::make_unique<CPDF_TestDocument>();
     m_pIndirectObjs = pTestDoc.get();
     m_pRootObj.Reset(m_pIndirectObjs->NewIndirect<CPDF_Dictionary>());
@@ -44,7 +44,7 @@ class PDFDocTest : public testing::Test {
     m_pRootObj = nullptr;
     m_pIndirectObjs = nullptr;
     m_pDoc.reset();
-    CPDF_PageModule::Destroy();
+    TestWithPageModule::TearDown();
   }
 
   std::vector<DictObjInfo> CreateDictObjs(int num) {

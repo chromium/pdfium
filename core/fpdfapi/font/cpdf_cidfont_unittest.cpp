@@ -6,7 +6,7 @@
 
 #include <utility>
 
-#include "core/fpdfapi/page/cpdf_pagemodule.h"
+#include "core/fpdfapi/page/test_with_page_module.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -14,11 +14,7 @@
 #include "core/fpdfapi/parser/cpdf_test_document.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-class CPDF_CIDFontTest : public testing::Test {
- protected:
-  void SetUp() override { CPDF_PageModule::Create(); }
-  void TearDown() override { CPDF_PageModule::Destroy(); }
-};
+using CPDF_CIDFontTest = TestWithPageModule;
 
 TEST_F(CPDF_CIDFontTest, BUG_920636) {
   CPDF_TestDocument doc;

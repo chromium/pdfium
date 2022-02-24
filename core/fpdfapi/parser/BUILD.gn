@@ -135,6 +135,7 @@ pdfium_unittest_source_set("unittests") {
     ":unit_test_support",
     "../../../constants",
     "../page",
+    "../page:unit_test_support",
     "../render",
   ]
   pdfium_root_dir = "../../../"

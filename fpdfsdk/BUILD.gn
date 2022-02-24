@@ -117,7 +117,7 @@ pdfium_unittest_source_set("unittests") {
     ":fpdfsdk",
     "../:pdfium_public_headers",
     "../constants",
-    "../core/fpdfapi/page",
+    "../core/fpdfapi/page:unit_test_support",
     "../core/fpdfapi/parser",
     "../core/fpdfapi/parser:unit_test_support",
     "../core/fpdfapi/render",

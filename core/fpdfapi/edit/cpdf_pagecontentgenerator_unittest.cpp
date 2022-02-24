@@ -12,10 +12,10 @@
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/page/cpdf_page.h"
-#include "core/fpdfapi/page/cpdf_pagemodule.h"
 #include "core/fpdfapi/page/cpdf_pathobject.h"
 #include "core/fpdfapi/page/cpdf_textobject.h"
 #include "core/fpdfapi/page/cpdf_textstate.h"
+#include "core/fpdfapi/page/test_with_page_module.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
@@ -28,11 +28,8 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/cxx17_backports.h"
 
-class CPDF_PageContentGeneratorTest : public testing::Test {
+class CPDF_PageContentGeneratorTest : public TestWithPageModule {
  protected:
-  void SetUp() override { CPDF_PageModule::Create(); }
-  void TearDown() override { CPDF_PageModule::Destroy(); }
-
   void TestProcessPath(CPDF_PageContentGenerator* pGen,
                        fxcrt::ostringstream* buf,
                        CPDF_PathObject* pPathObj) {

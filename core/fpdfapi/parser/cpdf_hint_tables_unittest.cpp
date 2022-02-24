@@ -8,7 +8,7 @@
 #include <string>
 #include <utility>
 
-#include "core/fpdfapi/page/cpdf_pagemodule.h"
+#include "core/fpdfapi/page/test_with_page_module.h"
 #include "core/fpdfapi/parser/cpdf_data_avail.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_linearized_header.h"
@@ -59,15 +59,8 @@ class TestLinearizedHeader final : public CPDF_LinearizedHeader {
 
 }  // namespace
 
-class CPDF_HintTablesTest : public testing::Test {
- public:
-  CPDF_HintTablesTest() {
-    // Needs for encoding Hint table stream.
-    CPDF_PageModule::Create();
-  }
-
-  ~CPDF_HintTablesTest() override { CPDF_PageModule::Destroy(); }
-};
+// Needs page module for encoding Hint table stream.
+using CPDF_HintTablesTest = TestWithPageModule;
 
 TEST_F(CPDF_HintTablesTest, Load) {
   auto data_avail = MakeDataAvailFromFile("feature_linearized_loading.pdf");
