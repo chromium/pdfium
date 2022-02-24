@@ -149,9 +149,9 @@ class CPDF_TestDocumentAllowSetParser final : public CPDF_TestDocument {
 
 }  // namespace
 
-using cpdf_document_test = TestWithPageModule;
+using DocumentTest = TestWithPageModule;
 
-TEST_F(cpdf_document_test, GetPages) {
+TEST_F(DocumentTest, GetPages) {
   std::unique_ptr<CPDF_TestDocumentForPages> document =
       std::make_unique<CPDF_TestDocumentForPages>();
   for (int i = 0; i < kNumTestPages; i++) {
@@ -164,7 +164,7 @@ TEST_F(cpdf_document_test, GetPages) {
   EXPECT_FALSE(page);
 }
 
-TEST_F(cpdf_document_test, GetPageWithoutObjNumTwice) {
+TEST_F(DocumentTest, GetPageWithoutObjNumTwice) {
   auto document = std::make_unique<CPDF_TestDocumentWithPageWithoutPageNum>();
   CPDF_Dictionary* page = document->GetPageDictionary(2);
   ASSERT_TRUE(page);
@@ -175,7 +175,7 @@ TEST_F(cpdf_document_test, GetPageWithoutObjNumTwice) {
   EXPECT_EQ(page, second_call_page);
 }
 
-TEST_F(cpdf_document_test, GetPagesReverseOrder) {
+TEST_F(DocumentTest, GetPagesReverseOrder) {
   std::unique_ptr<CPDF_TestDocumentForPages> document =
       std::make_unique<CPDF_TestDocumentForPages>();
   for (int i = 6; i >= 0; i--) {
@@ -188,7 +188,7 @@ TEST_F(cpdf_document_test, GetPagesReverseOrder) {
   EXPECT_FALSE(page);
 }
 
-TEST_F(cpdf_document_test, GetPagesInDisorder) {
+TEST_F(DocumentTest, GetPagesInDisorder) {
   std::unique_ptr<CPDF_TestDocumentForPages> document =
       std::make_unique<CPDF_TestDocumentForPages>();
 
@@ -211,7 +211,7 @@ TEST_F(cpdf_document_test, GetPagesInDisorder) {
   EXPECT_EQ(6, page->GetIntegerFor("PageNumbering"));
 }
 
-TEST_F(cpdf_document_test, IsValidPageObject) {
+TEST_F(DocumentTest, IsValidPageObject) {
   CPDF_TestDocumentForPages document;
 
   auto dict_type_name_page = pdfium::MakeRetain<CPDF_Dictionary>();
@@ -233,7 +233,7 @@ TEST_F(cpdf_document_test, IsValidPageObject) {
   EXPECT_FALSE(CPDF_Document::IsValidPageObject(obj_no_type));
 }
 
-TEST_F(cpdf_document_test, UseCachedPageObjNumIfHaveNotPagesDict) {
+TEST_F(DocumentTest, UseCachedPageObjNumIfHaveNotPagesDict) {
   // ObjNum can be added in CPDF_DataAvail::IsPageAvail(), and PagesDict may not
   // exist in this case, e.g. when hint table is used to page check in
   // CPDF_DataAvail.
@@ -273,7 +273,7 @@ TEST_F(cpdf_document_test, UseCachedPageObjNumIfHaveNotPagesDict) {
   EXPECT_EQ(page_stub, document.GetPageDictionary(kTestPageNum));
 }
 
-TEST_F(cpdf_document_test, CountGreaterThanPageTree) {
+TEST_F(DocumentTest, CountGreaterThanPageTree) {
   std::unique_ptr<CPDF_TestDocumentForPages> document =
       std::make_unique<CPDF_TestDocumentForPages>();
   document->SetTreeSize(kNumTestPages + 3);
@@ -284,7 +284,7 @@ TEST_F(cpdf_document_test, CountGreaterThanPageTree) {
   EXPECT_TRUE(document->GetPageDictionary(kNumTestPages - 1));
 }
 
-TEST_F(cpdf_document_test, PagesWithoutKids) {
+TEST_F(DocumentTest, PagesWithoutKids) {
   // Set up a document with Pages dict without kids, and Count = 3
   auto pDoc = std::make_unique<CPDF_TestDocPagesWithoutKids>();
   EXPECT_TRUE(pDoc->GetPageDictionary(0));

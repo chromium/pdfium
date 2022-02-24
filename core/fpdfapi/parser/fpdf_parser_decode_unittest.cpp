@@ -13,7 +13,7 @@
 #include "testing/test_support.h"
 #include "third_party/base/cxx17_backports.h"
 
-TEST(fpdf_parser_decode, ValidateDecoderPipeline) {
+TEST(ParserDecodeTest, ValidateDecoderPipeline) {
   {
     // Empty decoder list is always valid.
     auto decoders = pdfium::MakeRetain<CPDF_Array>();
@@ -115,7 +115,7 @@ TEST(fpdf_parser_decode, ValidateDecoderPipeline) {
 }
 
 // TODO(thestig): Test decoder params.
-TEST(fpdf_parser_decode, GetDecoderArray) {
+TEST(ParserDecodeTest, GetDecoderArray) {
   {
     // Treat no filter as an empty filter array.
     auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
@@ -180,7 +180,7 @@ TEST(fpdf_parser_decode, GetDecoderArray) {
   }
 }
 
-TEST(fpdf_parser_decode, A85Decode) {
+TEST(ParserDecodeTest, A85Decode) {
   const pdfium::DecodeTestData kTestData[] = {
       // Empty src string.
       STR_IN_OUT_CASE("", "", 0),
@@ -255,7 +255,7 @@ TEST(FPDFParserDecodeEmbedderTest, FlateDecode) {
   }
 }
 
-TEST(fpdf_parser_decode, FlateEncode) {
+TEST(ParserDecodeTest, FlateEncode) {
   static const pdfium::StrFuncTestData flate_encode_cases[] = {
       STR_IN_OUT_CASE("", "\x78\x9c\x03\x00\x00\x00\x00\x01"),
       STR_IN_OUT_CASE(" ", "\x78\x9c\x53\x00\x00\x00\x21\x00\x21"),
@@ -287,7 +287,7 @@ TEST(fpdf_parser_decode, FlateEncode) {
   }
 }
 
-TEST(fpdf_parser_decode, HexDecode) {
+TEST(ParserDecodeTest, HexDecode) {
   const pdfium::DecodeTestData kTestData[] = {
       // Empty src string.
       STR_IN_OUT_CASE("", "", 0),
@@ -322,7 +322,7 @@ TEST(fpdf_parser_decode, HexDecode) {
   }
 }
 
-TEST(fpdf_parser_decode, DecodeText) {
+TEST(ParserDecodeTest, DecodeText) {
   const struct DecodeTestData {
     const char* input;
     size_t input_length;
@@ -371,7 +371,7 @@ TEST(fpdf_parser_decode, DecodeText) {
   }
 }
 
-TEST(fpdf_parser_decode, EncodeText) {
+TEST(ParserDecodeTest, EncodeText) {
   const struct EncodeTestData {
     const wchar_t* input;
     const char* expected_output;

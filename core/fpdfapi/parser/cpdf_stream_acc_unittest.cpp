@@ -10,7 +10,7 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/invalid_seekable_read_stream.h"
 
-TEST(CPDF_StreamAccTest, ReadRawDataFailed) {
+TEST(StreamAccTest, ReadRawDataFailed) {
   auto stream = pdfium::MakeRetain<CPDF_Stream>();
   stream->InitStreamFromFile(
       pdfium::MakeRetain<InvalidSeekableReadStream>(1024),

@@ -127,7 +127,7 @@ class CPDF_ObjectAvailExcludeTypeKey final : public CPDF_ObjectAvail {
 
 }  // namespace
 
-TEST(CPDF_ObjectAvailTest, OneObject) {
+TEST(ObjectAvailTest, OneObject) {
   TestHolder holder;
   holder.AddObject(1, pdfium::MakeRetain<CPDF_String>(nullptr, "string", false),
                    TestHolder::ObjectState::Unavailable);
@@ -137,7 +137,7 @@ TEST(CPDF_ObjectAvailTest, OneObject) {
   EXPECT_EQ(CPDF_DataAvail::kDataAvailable, avail.CheckAvail());
 }
 
-TEST(CPDF_ObjectAvailTest, OneReferencedObject) {
+TEST(ObjectAvailTest, OneReferencedObject) {
   TestHolder holder;
   holder.AddObject(1, pdfium::MakeRetain<CPDF_Reference>(&holder, 2),
                    TestHolder::ObjectState::Unavailable);
@@ -153,7 +153,7 @@ TEST(CPDF_ObjectAvailTest, OneReferencedObject) {
   EXPECT_EQ(CPDF_DataAvail::kDataAvailable, avail.CheckAvail());
 }
 
-TEST(CPDF_ObjectAvailTest, CycledReferences) {
+TEST(ObjectAvailTest, CycledReferences) {
   TestHolder holder;
   holder.AddObject(1, pdfium::MakeRetain<CPDF_Reference>(&holder, 2),
                    TestHolder::ObjectState::Unavailable);
@@ -175,7 +175,7 @@ TEST(CPDF_ObjectAvailTest, CycledReferences) {
   EXPECT_EQ(CPDF_DataAvail::kDataAvailable, avail.CheckAvail());
 }
 
-TEST(CPDF_ObjectAvailTest, DoNotCheckParent) {
+TEST(ObjectAvailTest, DoNotCheckParent) {
   TestHolder holder;
   holder.AddObject(1, pdfium::MakeRetain<CPDF_Dictionary>(),
                    TestHolder::ObjectState::Unavailable);
@@ -193,7 +193,7 @@ TEST(CPDF_ObjectAvailTest, DoNotCheckParent) {
   EXPECT_EQ(CPDF_DataAvail::kDataAvailable, avail.CheckAvail());
 }
 
-TEST(CPDF_ObjectAvailTest, Generic) {
+TEST(ObjectAvailTest, Generic) {
   TestHolder holder;
   const uint32_t kDepth = 100;
   for (uint32_t i = 1; i < kDepth; ++i) {
@@ -215,7 +215,7 @@ TEST(CPDF_ObjectAvailTest, Generic) {
   EXPECT_EQ(CPDF_DataAvail::kDataAvailable, avail.CheckAvail());
 }
 
-TEST(CPDF_ObjectAvailTest, NotExcludeRoot) {
+TEST(ObjectAvailTest, NotExcludeRoot) {
   TestHolder holder;
   holder.AddObject(1, pdfium::MakeRetain<CPDF_Dictionary>(),
                    TestHolder::ObjectState::Available);
@@ -223,7 +223,7 @@ TEST(CPDF_ObjectAvailTest, NotExcludeRoot) {
   EXPECT_EQ(CPDF_DataAvail::kDataAvailable, avail.CheckAvail());
 }
 
-TEST(CPDF_ObjectAvailTest, NotExcludeReferedRoot) {
+TEST(ObjectAvailTest, NotExcludeReferedRoot) {
   TestHolder holder;
   holder.AddObject(1, pdfium::MakeRetain<CPDF_Reference>(&holder, 2),
                    TestHolder::ObjectState::Available);
@@ -233,7 +233,7 @@ TEST(CPDF_ObjectAvailTest, NotExcludeReferedRoot) {
   EXPECT_EQ(CPDF_DataAvail::kDataAvailable, avail.CheckAvail());
 }
 
-TEST(CPDF_ObjectAvailTest, Exclude) {
+TEST(ObjectAvailTest, Exclude) {
   TestHolder holder;
   holder.AddObject(1, pdfium::MakeRetain<CPDF_Dictionary>(),
                    TestHolder::ObjectState::Available);
@@ -252,7 +252,7 @@ TEST(CPDF_ObjectAvailTest, Exclude) {
   EXPECT_EQ(CPDF_DataAvail::kDataAvailable, avail.CheckAvail());
 }
 
-TEST(CPDF_ObjectAvailTest, ReadErrorOnExclude) {
+TEST(ObjectAvailTest, ReadErrorOnExclude) {
   TestHolder holder;
   holder.AddObject(1, pdfium::MakeRetain<CPDF_Dictionary>(),
                    TestHolder::ObjectState::Available);
@@ -289,7 +289,7 @@ TEST(CPDF_ObjectAvailTest, ReadErrorOnExclude) {
   EXPECT_EQ(CPDF_DataAvail::kDataAvailable, avail.CheckAvail());
 }
 
-TEST(CPDF_ObjectAvailTest, IgnoreNotExistsObject) {
+TEST(ObjectAvailTest, IgnoreNotExistsObject) {
   TestHolder holder;
   holder.AddObject(1, pdfium::MakeRetain<CPDF_Dictionary>(),
                    TestHolder::ObjectState::Available);
@@ -301,7 +301,7 @@ TEST(CPDF_ObjectAvailTest, IgnoreNotExistsObject) {
   EXPECT_EQ(CPDF_DataAvail::kDataAvailable, avail.CheckAvail());
 }
 
-TEST(CPDF_ObjectAvailTest, CheckTwice) {
+TEST(ObjectAvailTest, CheckTwice) {
   TestHolder holder;
   holder.AddObject(1, pdfium::MakeRetain<CPDF_String>(nullptr, "string", false),
                    TestHolder::ObjectState::Unavailable);
@@ -313,7 +313,7 @@ TEST(CPDF_ObjectAvailTest, CheckTwice) {
   EXPECT_EQ(avail.CheckAvail(), avail.CheckAvail());
 }
 
-TEST(CPDF_ObjectAvailTest, SelfReferedInlinedObject) {
+TEST(ObjectAvailTest, SelfReferedInlinedObject) {
   TestHolder holder;
   holder.AddObject(1, pdfium::MakeRetain<CPDF_Dictionary>(),
                    TestHolder::ObjectState::Available);

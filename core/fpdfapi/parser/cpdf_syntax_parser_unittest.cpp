@@ -12,7 +12,7 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/path_service.h"
 
-TEST(cpdf_syntax_parser, ReadHexString) {
+TEST(SyntaxParserTest, ReadHexString) {
   {
     // Empty string.
     static const uint8_t data[] = "";
@@ -144,7 +144,7 @@ TEST(cpdf_syntax_parser, ReadHexString) {
   }
 }
 
-TEST(cpdf_syntax_parser, GetInvalidReference) {
+TEST(SyntaxParserTest, GetInvalidReference) {
   // Data with a reference with number CPDF_Object::kInvalidObjNum
   static const uint8_t data[] = "4294967295 0 R";
   CPDF_SyntaxParser parser(pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
@@ -153,7 +153,7 @@ TEST(cpdf_syntax_parser, GetInvalidReference) {
   EXPECT_FALSE(ref);
 }
 
-TEST(cpdf_syntax_parser, PeekNextWord) {
+TEST(SyntaxParserTest, PeekNextWord) {
   static const uint8_t data[] = "    WORD ";
   CPDF_SyntaxParser parser(pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(data));
   EXPECT_EQ("WORD", parser.PeekNextWord());

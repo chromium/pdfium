@@ -64,7 +64,7 @@ class MockDownloadHints final : public CPDF_DataAvail::DownloadHints {
 
 }  // namespace
 
-TEST(CPDF_ReadValidatorTest, UnavailableData) {
+TEST(ReadValidatorTest, UnavailableData) {
   std::vector<uint8_t, FxAllocAllocator<uint8_t>> test_data(kTestDataSize);
   auto file = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(test_data);
   MockFileAvail file_avail;
@@ -87,7 +87,7 @@ TEST(CPDF_ReadValidatorTest, UnavailableData) {
   EXPECT_FALSE(validator->has_unavailable_data());
 }
 
-TEST(CPDF_ReadValidatorTest, UnavailableDataWithHints) {
+TEST(ReadValidatorTest, UnavailableDataWithHints) {
   std::vector<uint8_t, FxAllocAllocator<uint8_t>> test_data(kTestDataSize);
   auto file = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(test_data);
   MockFileAvail file_avail;
@@ -130,7 +130,7 @@ TEST(CPDF_ReadValidatorTest, UnavailableDataWithHints) {
   validator->SetDownloadHints(nullptr);
 }
 
-TEST(CPDF_ReadValidatorTest, ReadError) {
+TEST(ReadValidatorTest, ReadError) {
   auto file = pdfium::MakeRetain<InvalidSeekableReadStream>(kTestDataSize);
   auto validator = pdfium::MakeRetain<CPDF_ReadValidator>(file, nullptr);
 
@@ -142,7 +142,7 @@ TEST(CPDF_ReadValidatorTest, ReadError) {
   EXPECT_TRUE(validator->has_unavailable_data());
 }
 
-TEST(CPDF_ReadValidatorTest, IntOverflow) {
+TEST(ReadValidatorTest, IntOverflow) {
   std::vector<uint8_t, FxAllocAllocator<uint8_t>> test_data(kTestDataSize);
   auto file = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(test_data);
   MockFileAvail file_avail;
@@ -160,7 +160,7 @@ TEST(CPDF_ReadValidatorTest, IntOverflow) {
   EXPECT_FALSE(validator->has_unavailable_data());
 }
 
-TEST(CPDF_ReadValidatorTest, Session) {
+TEST(ReadValidatorTest, Session) {
   std::vector<uint8_t, FxAllocAllocator<uint8_t>> test_data(kTestDataSize);
 
   auto file = pdfium::MakeRetain<InvalidSeekableReadStream>(kTestDataSize);
@@ -198,7 +198,7 @@ TEST(CPDF_ReadValidatorTest, Session) {
   EXPECT_TRUE(validator->read_error());
 }
 
-TEST(CPDF_ReadValidatorTest, SessionReset) {
+TEST(ReadValidatorTest, SessionReset) {
   std::vector<uint8_t, FxAllocAllocator<uint8_t>> test_data(kTestDataSize);
 
   auto file = pdfium::MakeRetain<InvalidSeekableReadStream>(kTestDataSize);
@@ -240,7 +240,7 @@ TEST(CPDF_ReadValidatorTest, SessionReset) {
   EXPECT_FALSE(validator->read_error());
 }
 
-TEST(CPDF_ReadValidatorTest, CheckDataRangeAndRequestIfUnavailable) {
+TEST(ReadValidatorTest, CheckDataRangeAndRequestIfUnavailable) {
   std::vector<uint8_t, FxAllocAllocator<uint8_t>> test_data(kTestDataSize);
   auto file = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(test_data);
   MockFileAvail file_avail;

@@ -60,9 +60,9 @@ class TestLinearizedHeader final : public CPDF_LinearizedHeader {
 }  // namespace
 
 // Needs page module for encoding Hint table stream.
-using CPDF_HintTablesTest = TestWithPageModule;
+using HintTablesTest = TestWithPageModule;
 
-TEST_F(CPDF_HintTablesTest, Load) {
+TEST_F(HintTablesTest, Load) {
   auto data_avail = MakeDataAvailFromFile("feature_linearized_loading.pdf");
   ASSERT_EQ(CPDF_DataAvail::kDataAvailable, data_avail->IsDocAvail(nullptr));
 
@@ -89,7 +89,7 @@ TEST_F(CPDF_HintTablesTest, Load) {
       hint_tables->GetPagePos(2, &page_start, &page_length, &page_obj_num));
 }
 
-TEST_F(CPDF_HintTablesTest, PageAndGroupInfos) {
+TEST_F(HintTablesTest, PageAndGroupInfos) {
   auto data_avail = MakeDataAvailFromFile("feature_linearized_loading.pdf");
   ASSERT_EQ(CPDF_DataAvail::kDataAvailable, data_avail->IsDocAvail(nullptr));
 
@@ -150,7 +150,7 @@ TEST_F(CPDF_HintTablesTest, PageAndGroupInfos) {
   EXPECT_EQ(1u, hint_tables->SharedGroupInfos()[5].m_dwObjectsCount);
 }
 
-TEST_F(CPDF_HintTablesTest, FirstPageOffset) {
+TEST_F(HintTablesTest, FirstPageOffset) {
   // Test that valid hint table is loaded, and have correct offset of first page
   // object.
   const auto linearized_header = TestLinearizedHeader::MakeHeader(

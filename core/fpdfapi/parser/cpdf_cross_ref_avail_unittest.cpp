@@ -21,7 +21,7 @@ std::unique_ptr<CPDF_SyntaxParser> MakeParserForBuffer(
 
 }  // namespace
 
-TEST(CPDF_CrossRefAvailTest, CheckCrossRefV4) {
+TEST(CrossRefAvailTest, CheckCrossRefV4) {
   const unsigned char xref_table[] =
       "xref \n"
       "0 6 \n"
@@ -44,7 +44,7 @@ TEST(CPDF_CrossRefAvailTest, CheckCrossRefV4) {
   EXPECT_EQ(CPDF_DataAvail::kDataAvailable, cross_ref_avail->CheckAvail());
 }
 
-TEST(CPDF_CrossRefAvailTest, CheckCrossRefStream) {
+TEST(CrossRefAvailTest, CheckCrossRefStream) {
   const unsigned char xref_stream[] =
       "16 0 obj\n"
       "<</Filter /FlateDecode>>"
@@ -61,7 +61,7 @@ TEST(CPDF_CrossRefAvailTest, CheckCrossRefStream) {
   EXPECT_EQ(CPDF_DataAvail::kDataAvailable, cross_ref_avail->CheckAvail());
 }
 
-TEST(CPDF_CrossRefAvailTest, IncorrectStartOffset) {
+TEST(CrossRefAvailTest, IncorrectStartOffset) {
   const unsigned char xref_stream[] =
       "16 0 obj\n"
       "<</Filter /FlateDecode>>"
@@ -79,7 +79,7 @@ TEST(CPDF_CrossRefAvailTest, IncorrectStartOffset) {
   EXPECT_EQ(CPDF_DataAvail::kDataError, cross_ref_avail->CheckAvail());
 }
 
-TEST(CPDF_CrossRefAvailTest, IncorrectPrevOffset) {
+TEST(CrossRefAvailTest, IncorrectPrevOffset) {
   const unsigned char xref_stream[] =
       "16 0 obj\n"
       "<</Type /XRef /Prev 70000>>"
@@ -95,7 +95,7 @@ TEST(CPDF_CrossRefAvailTest, IncorrectPrevOffset) {
   EXPECT_EQ(CPDF_DataAvail::kDataError, cross_ref_avail->CheckAvail());
 }
 
-TEST(CPDF_CrossRefAvailTest, IncorrectPrevStreamOffset) {
+TEST(CrossRefAvailTest, IncorrectPrevStreamOffset) {
   const unsigned char xref_table[] =
       "xref \n"
       "0 6 \n"
@@ -117,7 +117,7 @@ TEST(CPDF_CrossRefAvailTest, IncorrectPrevStreamOffset) {
   EXPECT_EQ(CPDF_DataAvail::kDataError, cross_ref_avail->CheckAvail());
 }
 
-TEST(CPDF_CrossRefAvailTest, IncorrectData) {
+TEST(CrossRefAvailTest, IncorrectData) {
   const unsigned char incorrect_data[] =
       "fiajaoilf w9ifaoihwoiafhja wfijaofijoiaw fhj oiawhfoiah "
       "wfoihoiwfghouiafghwoigahfi";
@@ -129,7 +129,7 @@ TEST(CPDF_CrossRefAvailTest, IncorrectData) {
   EXPECT_EQ(CPDF_DataAvail::kDataError, cross_ref_avail->CheckAvail());
 }
 
-TEST(CPDF_CrossRefAvailTest, ThreeCrossRefV4) {
+TEST(CrossRefAvailTest, ThreeCrossRefV4) {
   char int_buffer[100];
   std::string table = "pdf blah blah blah\n";
   size_t cur_offset = table.size();
@@ -177,7 +177,7 @@ TEST(CPDF_CrossRefAvailTest, ThreeCrossRefV4) {
   EXPECT_EQ(CPDF_DataAvail::kDataAvailable, cross_ref_avail->CheckAvail());
 }
 
-TEST(CPDF_CrossRefAvailTest, ThreeCrossRefV5) {
+TEST(CrossRefAvailTest, ThreeCrossRefV5) {
   char int_buffer[100];
   std::string table = "pdf blah blah blah\n";
   size_t cur_offset = table.size();
@@ -221,7 +221,7 @@ TEST(CPDF_CrossRefAvailTest, ThreeCrossRefV5) {
   EXPECT_EQ(CPDF_DataAvail::kDataAvailable, cross_ref_avail->CheckAvail());
 }
 
-TEST(CPDF_CrossRefAvailTest, Mixed) {
+TEST(CrossRefAvailTest, Mixed) {
   char int_buffer[100];
   std::string table = "pdf blah blah blah\n";
 
@@ -270,7 +270,7 @@ TEST(CPDF_CrossRefAvailTest, Mixed) {
   EXPECT_EQ(CPDF_DataAvail::kDataAvailable, cross_ref_avail->CheckAvail());
 }
 
-TEST(CPDF_CrossRefAvailTest, CrossRefV5IsNotStream) {
+TEST(CrossRefAvailTest, CrossRefV5IsNotStream) {
   const unsigned char invalid_xref_stream[] =
       "16 0 obj\n"
       "[/array /object]\n"
@@ -284,7 +284,7 @@ TEST(CPDF_CrossRefAvailTest, CrossRefV5IsNotStream) {
   EXPECT_EQ(CPDF_DataAvail::kDataError, cross_ref_avail->CheckAvail());
 }
 
-TEST(CPDF_CrossRefAvailTest, CrossRefV4WithEncryptRef) {
+TEST(CrossRefAvailTest, CrossRefV4WithEncryptRef) {
   const unsigned char xref_table[] =
       "xref \n"
       "0 6 \n"
@@ -307,7 +307,7 @@ TEST(CPDF_CrossRefAvailTest, CrossRefV4WithEncryptRef) {
   EXPECT_EQ(CPDF_DataAvail::kDataError, cross_ref_avail->CheckAvail());
 }
 
-TEST(CPDF_CrossRefAvailTest, CrossRefStreamWithEncryptRef) {
+TEST(CrossRefAvailTest, CrossRefStreamWithEncryptRef) {
   const unsigned char xref_stream[] =
       "16 0 obj\n"
       "<</Filter /FlateDecode /Encrypt 77 0 R>>"

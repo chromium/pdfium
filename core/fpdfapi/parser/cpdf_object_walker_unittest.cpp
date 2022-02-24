@@ -53,7 +53,7 @@ std::string Walk(CPDF_Object* object) {
 
 }  // namespace
 
-TEST(CPDF_ObjectWalkerTest, Simple) {
+TEST(ObjectWalkerTest, Simple) {
   EXPECT_EQ(Walk(pdfium::MakeRetain<CPDF_Null>().Get()), "Null");
   EXPECT_EQ(Walk(pdfium::MakeRetain<CPDF_Dictionary>().Get()), "Dict");
   EXPECT_EQ(Walk(pdfium::MakeRetain<CPDF_Array>().Get()), "Arr");
@@ -63,7 +63,7 @@ TEST(CPDF_ObjectWalkerTest, Simple) {
   EXPECT_EQ(Walk(pdfium::MakeRetain<CPDF_Reference>(nullptr, 0).Get()), "Ref");
 }
 
-TEST(CPDF_ObjectWalkerTest, CombinedObject) {
+TEST(ObjectWalkerTest, CombinedObject) {
   auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
   dict->SetFor("1", pdfium::MakeRetain<CPDF_String>());
   dict->SetFor("2", pdfium::MakeRetain<CPDF_Boolean>());
@@ -77,7 +77,7 @@ TEST(CPDF_ObjectWalkerTest, CombinedObject) {
   EXPECT_EQ(Walk(dict.Get()), "Dict Str Bool Arr Ref Null Stream Dict Num");
 }
 
-TEST(CPDF_ObjectWalkerTest, GetParent) {
+TEST(ObjectWalkerTest, GetParent) {
   auto level_4 = pdfium::MakeRetain<CPDF_Number>(0);
   auto level_3 = pdfium::MakeRetain<CPDF_Dictionary>();
   level_3->SetFor("Length", std::move(level_4));
@@ -99,7 +99,7 @@ TEST(CPDF_ObjectWalkerTest, GetParent) {
   }
 }
 
-TEST(CPDF_ObjectWalkerTest, SkipWalkIntoCurrentObject) {
+TEST(ObjectWalkerTest, SkipWalkIntoCurrentObject) {
   auto root_array = pdfium::MakeRetain<CPDF_Array>();
   // Add 2 null objects into |root_array|. [ null1, null2 ]
   root_array->AppendNew<CPDF_Null>();
@@ -122,7 +122,7 @@ TEST(CPDF_ObjectWalkerTest, SkipWalkIntoCurrentObject) {
   EXPECT_EQ(2, non_array_objects);
 }
 
-TEST(CPDF_ObjectWalkerTest, DictionaryKey) {
+TEST(ObjectWalkerTest, DictionaryKey) {
   auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
   dict->SetFor("1", pdfium::MakeRetain<CPDF_Null>());
   dict->SetFor("2", pdfium::MakeRetain<CPDF_Null>());

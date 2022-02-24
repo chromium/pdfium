@@ -15,7 +15,7 @@
 #include "core/fpdfapi/parser/cpdf_test_document.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-TEST(fpdf_parser_utility, PDF_NameDecode) {
+TEST(ParserUtilityTest, NameDecode) {
   EXPECT_EQ("", PDF_NameDecode(""));
   EXPECT_EQ("A", PDF_NameDecode("A"));
   EXPECT_EQ("#", PDF_NameDecode("#"));
@@ -24,7 +24,7 @@ TEST(fpdf_parser_utility, PDF_NameDecode) {
   EXPECT_EQ("A1", PDF_NameDecode("#411"));
 }
 
-TEST(fpdf_parser_utility, PDF_NameEncode) {
+TEST(ParserUtilityTest, NameEncode) {
   EXPECT_EQ("", PDF_NameEncode(""));
   EXPECT_EQ("A", PDF_NameEncode("A"));
   EXPECT_EQ("#23", PDF_NameEncode("#"));
@@ -34,7 +34,7 @@ TEST(fpdf_parser_utility, PDF_NameEncode) {
   EXPECT_EQ("f#C2#A5", PDF_NameEncode("f\xc2\xa5"));
 }
 
-TEST(fpdf_parser_utility, ValidateDictType) {
+TEST(ParserUtilityTest, ValidateDictType) {
   auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
 
   // No type.
@@ -52,7 +52,7 @@ TEST(fpdf_parser_utility, ValidateDictType) {
   EXPECT_FALSE(ValidateDictType(dict.Get(), "bar"));
 }
 
-TEST(fpdf_parser_utility, ValidateDictAllResourcesOfType) {
+TEST(ParserUtilityTest, ValidateDictAllResourcesOfType) {
   CPDF_PageModule::Create();
 
   {
@@ -105,7 +105,7 @@ TEST(fpdf_parser_utility, ValidateDictAllResourcesOfType) {
   CPDF_PageModule::Destroy();
 }
 
-TEST(fpdf_parser_utility, ValidateDictOptionalType) {
+TEST(ParserUtilityTest, ValidateDictOptionalType) {
   auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
 
   // No type is ok.

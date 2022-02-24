@@ -21,7 +21,7 @@ class MockIndirectObjectHolder final : public CPDF_IndirectObjectHolder {
 
 }  // namespace
 
-TEST(CPDF_IndirectObjectHolderTest, RecursiveParseOfSameObject) {
+TEST(IndirectObjectHolderTest, RecursiveParseOfSameObject) {
   MockIndirectObjectHolder mock_holder;
   // ParseIndirectObject should not be called again on recursively same object
   // parse request.
@@ -37,7 +37,7 @@ TEST(CPDF_IndirectObjectHolderTest, RecursiveParseOfSameObject) {
   EXPECT_TRUE(mock_holder.GetOrParseIndirectObject(1000));
 }
 
-TEST(CPDF_IndirectObjectHolderTest, GetObjectMethods) {
+TEST(IndirectObjectHolderTest, GetObjectMethods) {
   static constexpr uint32_t kObjNum = 1000;
   MockIndirectObjectHolder mock_holder;
 
@@ -60,7 +60,7 @@ TEST(CPDF_IndirectObjectHolderTest, GetObjectMethods) {
   EXPECT_EQ(kObjNum, mock_holder.GetIndirectObject(kObjNum)->GetObjNum());
 }
 
-TEST(CPDF_IndirectObjectHolderTest, ParseInvalidObjNum) {
+TEST(IndirectObjectHolderTest, ParseInvalidObjNum) {
   MockIndirectObjectHolder mock_holder;
 
   EXPECT_CALL(mock_holder, ParseIndirectObject(::testing::_)).Times(0);
@@ -68,7 +68,7 @@ TEST(CPDF_IndirectObjectHolderTest, ParseInvalidObjNum) {
       mock_holder.GetOrParseIndirectObject(CPDF_Object::kInvalidObjNum));
 }
 
-TEST(CPDF_IndirectObjectHolderTest, ReplaceObjectWithInvalidObjNum) {
+TEST(IndirectObjectHolderTest, ReplaceObjectWithInvalidObjNum) {
   MockIndirectObjectHolder mock_holder;
 
   EXPECT_CALL(mock_holder, ParseIndirectObject(::testing::_)).Times(0);

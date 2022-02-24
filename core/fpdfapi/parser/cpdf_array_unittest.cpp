@@ -14,7 +14,7 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/cxx17_backports.h"
 
-TEST(cpdf_array, GetBooleanAt) {
+TEST(ArrayTest, GetBooleanAt) {
   auto arr = pdfium::MakeRetain<CPDF_Array>();
   arr->AppendNew<CPDF_Boolean>(true);
   arr->AppendNew<CPDF_Boolean>(false);
@@ -34,7 +34,7 @@ TEST(cpdf_array, GetBooleanAt) {
   EXPECT_FALSE(arr->GetBooleanAt(99, false));
 }
 
-TEST(cpdf_array, RemoveAt) {
+TEST(ArrayTest, RemoveAt) {
   {
     const int elems[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     auto arr = pdfium::MakeRetain<CPDF_Array>();
@@ -64,7 +64,7 @@ TEST(cpdf_array, RemoveAt) {
   }
 }
 
-TEST(cpdf_array, Clear) {
+TEST(ArrayTest, Clear) {
   const int elems[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
   auto arr = pdfium::MakeRetain<CPDF_Array>();
   EXPECT_EQ(0U, arr->size());
@@ -75,14 +75,14 @@ TEST(cpdf_array, Clear) {
   EXPECT_EQ(0U, arr->size());
 }
 
-TEST(cpdf_array, SetAtBeyond) {
+TEST(ArrayTest, SetAtBeyond) {
   auto arr = pdfium::MakeRetain<CPDF_Array>();
   EXPECT_EQ(nullptr, arr->SetNewAt<CPDF_Number>(0, 0));
   EXPECT_NE(nullptr, arr->InsertNewAt<CPDF_Number>(0, 0));
   EXPECT_EQ(nullptr, arr->SetNewAt<CPDF_Number>(1, 0));
 }
 
-TEST(cpdf_array, InsertAt) {
+TEST(ArrayTest, InsertAt) {
   const int elems[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
   auto arr = pdfium::MakeRetain<CPDF_Array>();
   for (size_t i = 0; i < pdfium::size(elems); ++i)
@@ -99,14 +99,14 @@ TEST(cpdf_array, InsertAt) {
     EXPECT_EQ(expected[i], arr->GetIntegerAt(i));
 }
 
-TEST(cpdf_array, InsertAtBeyond) {
+TEST(ArrayTest, InsertAtBeyond) {
   auto arr = pdfium::MakeRetain<CPDF_Array>();
   EXPECT_EQ(nullptr, arr->InsertNewAt<CPDF_Number>(1, 0));
   EXPECT_NE(nullptr, arr->InsertNewAt<CPDF_Number>(0, 0));
   EXPECT_EQ(nullptr, arr->InsertNewAt<CPDF_Number>(2, 0));
 }
 
-TEST(cpdf_array, Clone) {
+TEST(ArrayTest, Clone) {
   {
     // Basic case.
     const int elems[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
@@ -189,7 +189,7 @@ TEST(cpdf_array, Clone) {
   }
 }
 
-TEST(cpdf_array, Find) {
+TEST(ArrayTest, Find) {
   auto arr = pdfium::MakeRetain<CPDF_Array>();
   auto dict0 = pdfium::MakeRetain<CPDF_Dictionary>();
   auto dict1 = pdfium::MakeRetain<CPDF_Dictionary>();
@@ -212,7 +212,7 @@ TEST(cpdf_array, Find) {
   EXPECT_FALSE(maybe_found.has_value());
 }
 
-TEST(cpdf_array, Contains) {
+TEST(ArrayTest, Contains) {
   auto arr = pdfium::MakeRetain<CPDF_Array>();
   auto dict0 = pdfium::MakeRetain<CPDF_Dictionary>();
   auto dict1 = pdfium::MakeRetain<CPDF_Dictionary>();
@@ -224,7 +224,7 @@ TEST(cpdf_array, Contains) {
   EXPECT_FALSE(arr->Contains(dict2.Get()));
 }
 
-TEST(cpdf_array, Iterator) {
+TEST(ArrayTest, Iterator) {
   const int elems[] = {-23, -11,     3,         455,   2345877,
                        0,   7895330, -12564334, 10000, -100000};
   auto arr = pdfium::MakeRetain<CPDF_Array>();
