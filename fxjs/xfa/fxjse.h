@@ -86,9 +86,9 @@ struct FXJSE_CLASS_DESCRIPTOR {
   FXJSE_MethodCallback dynMethodCall;
 };
 
-extern const FXJSE_CLASS_DESCRIPTOR GlobalClassDescriptor;
-extern const FXJSE_CLASS_DESCRIPTOR NormalClassDescriptor;
-extern const FXJSE_CLASS_DESCRIPTOR VariablesClassDescriptor;
+extern const FXJSE_CLASS_DESCRIPTOR kGlobalClassDescriptor;
+extern const FXJSE_CLASS_DESCRIPTOR kNormalClassDescriptor;
+extern const FXJSE_CLASS_DESCRIPTOR kVariablesClassDescriptor;
 extern const FXJSE_CLASS_DESCRIPTOR kFormCalcDescriptor;
 
 void FXJSE_ThrowMessage(v8::Isolate* pIsolate, ByteStringView utf8Message);

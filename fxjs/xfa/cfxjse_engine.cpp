@@ -39,7 +39,7 @@
 
 using pdfium::fxjse::kClassTag;
 
-const FXJSE_CLASS_DESCRIPTOR GlobalClassDescriptor = {
+const FXJSE_CLASS_DESCRIPTOR kGlobalClassDescriptor = {
     kClassTag,  // tag
     "Root",     // name
     nullptr,    // methods
@@ -50,7 +50,7 @@ const FXJSE_CLASS_DESCRIPTOR GlobalClassDescriptor = {
     CFXJSE_Engine::NormalMethodCall,
 };
 
-const FXJSE_CLASS_DESCRIPTOR NormalClassDescriptor = {
+const FXJSE_CLASS_DESCRIPTOR kNormalClassDescriptor = {
     kClassTag,    // tag
     "XFAObject",  // name
     nullptr,      // methods
@@ -61,7 +61,7 @@ const FXJSE_CLASS_DESCRIPTOR NormalClassDescriptor = {
     CFXJSE_Engine::NormalMethodCall,
 };
 
-const FXJSE_CLASS_DESCRIPTOR VariablesClassDescriptor = {
+const FXJSE_CLASS_DESCRIPTOR kVariablesClassDescriptor = {
     kClassTag,          // tag
     "XFAScriptObject",  // name
     nullptr,            // methods
@@ -124,7 +124,7 @@ CFXJSE_Engine::CFXJSE_Engine(CXFA_Document* pDocument,
       m_pSubordinateRuntime(fxjs_runtime),
       m_pDocument(pDocument),
       m_JsContext(CFXJSE_Context::Create(fxjs_runtime->GetIsolate(),
-                                         &GlobalClassDescriptor,
+                                         &kGlobalClassDescriptor,
                                          pDocument->GetRoot()->JSObject(),
                                          nullptr)),
       m_ResolveProcessor(std::make_unique<CFXJSE_ResolveProcessor>()) {
@@ -134,7 +134,7 @@ CFXJSE_Engine::CFXJSE_Engine(CXFA_Document* pDocument,
   // Don't know if this can happen before we remove the builtin objs and set
   // compatibility mode.
   m_pJsClass =
-      CFXJSE_Class::Create(m_JsContext.get(), &NormalClassDescriptor, false);
+      CFXJSE_Class::Create(m_JsContext.get(), &kNormalClassDescriptor, false);
 }
 
 CFXJSE_Engine::~CFXJSE_Engine() {
@@ -544,7 +544,7 @@ CFXJSE_Context* CFXJSE_Engine::CreateVariablesContext(CXFA_Node* pScriptNode,
       pScriptNode->GetDocument()->GetHeap()->GetAllocationHandle(), pSubform,
       pScriptNode);
   auto pNewContext = CFXJSE_Context::Create(
-      GetIsolate(), &VariablesClassDescriptor, proxy->JSObject(), proxy);
+      GetIsolate(), &kVariablesClassDescriptor, proxy->JSObject(), proxy);
   RemoveBuiltInObjs(pNewContext.get());
   pNewContext->EnableCompatibleMode();
   CFXJSE_Context* pResult = pNewContext.get();

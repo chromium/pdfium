@@ -23,9 +23,9 @@ tag and contains either:
   kFXJSEHostObjectTag for FXJSE Host objects, or
   kFXJSEProxyObjectTag for a global proxy object under FXJSE, or
   One of 4 specific FXJSE_CLASS_DESCRIPTOR globals for FXJSE classes:
-    GlobalClassDescriptor
-    NormalClassDescriptor
-    VariablesClassDescriptor
+    kGlobalClassDescriptor
+    kNormalClassDescriptor
+    kVariablesClassDescriptor
     kFormCalcDescriptor
 
 Slot 1's contents are determined by these tags:
