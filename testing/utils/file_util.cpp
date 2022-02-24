@@ -8,6 +8,7 @@
 #include <string.h>
 
 #include "testing/utils/path_service.h"
+#include "third_party/base/numerics/safe_conversions.h"
 
 std::unique_ptr<char, pdfium::FreeDeleter> GetFileContents(const char* filename,
                                                            size_t* retlen) {
@@ -55,7 +56,7 @@ int FileAccessForTesting::GetBlockImpl(unsigned long pos,
                                        unsigned char* pBuf,
                                        unsigned long size) {
   memcpy(pBuf, file_contents_.get() + pos, size);
-  return size;
+  return pdfium::base::checked_cast<int>(size);
 }
 
 // static

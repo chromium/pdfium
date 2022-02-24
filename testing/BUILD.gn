@@ -40,7 +40,10 @@ source_set("test_support") {
     "../core/fxge",
     "image_diff",
   ]
-  configs += [ "../:pdfium_strict_config" ]
+  configs += [
+    "../:pdfium_strict_config",
+    "../:pdfium_noshorten_config",
+  ]
   visibility = [ "../*" ]
   if (pdf_enable_v8) {
     sources += [
@@ -62,7 +65,10 @@ source_set("path_service") {
     "utils/path_service.h",
   ]
   deps = [ "../core/fxcrt" ]
-  configs += [ "../:pdfium_strict_config" ]
+  configs += [
+    "../:pdfium_strict_config",
+    "../:pdfium_noshorten_config",
+  ]
   visibility = [ "../*" ]
 }
 
@@ -78,7 +84,10 @@ source_set("test_environments") {
     "../core/fxge",
     "//testing/gtest",
   ]
-  configs += [ "../:pdfium_strict_config" ]
+  configs += [
+    "../:pdfium_strict_config",
+    "../:pdfium_noshorten_config",
+  ]
   if (pdf_enable_v8) {
     sources += [
       "v8_test_environment.cpp",
@@ -107,7 +116,10 @@ source_set("unit_test_support") {
   testonly = true
   sources = []
   deps = []
-  configs += [ "../:pdfium_strict_config" ]
+  configs += [
+    "../:pdfium_strict_config",
+    "../:pdfium_noshorten_config",
+  ]
   public_deps = [
     ":test_environments",
     ":test_support",
@@ -164,7 +176,10 @@ source_set("embedder_test_support") {
     ":test_environments",
     ":test_support",
   ]
-  configs += [ "../:pdfium_strict_config" ]
+  configs += [
+    "../:pdfium_strict_config",
+    "../:pdfium_noshorten_config",
+  ]
   visibility = [ "../*" ]
   if (pdf_enable_v8) {
     sources += [

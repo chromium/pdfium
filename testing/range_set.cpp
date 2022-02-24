@@ -53,9 +53,8 @@ void RangeSet::Union(const Range& range) {
 
   --end;
 
-  const int new_start = std::min<size_t>(start->first, fixed_range.first);
-  const int new_end = std::max(end->second, fixed_range.second);
-
+  const size_t new_start = std::min(start->first, fixed_range.first);
+  const size_t new_end = std::max(end->second, fixed_range.second);
   ranges_.erase(start, ++end);
   ranges_.insert(Range(new_start, new_end));
 }
