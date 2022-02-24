@@ -27,7 +27,7 @@ class CBC_CommonBitMatrix {
   int32_t m_width = 0;
   int32_t m_height = 0;
   int32_t m_rowSize = 0;
-  std::vector<int32_t> m_bits;
+  std::vector<uint32_t> m_bits;
 };
 
 #endif  // FXBARCODE_COMMON_BC_COMMONBITMATRIX_H_
