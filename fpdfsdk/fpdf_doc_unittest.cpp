@@ -7,7 +7,6 @@
 #include <memory>
 #include <vector>
 
-#include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/cpdf_pagemodule.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -18,22 +17,12 @@
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
-#include "core/fpdfapi/render/cpdf_docrenderdata.h"
+#include "core/fpdfapi/parser/cpdf_test_document.h"
 #include "core/fpdfdoc/cpdf_dest.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/cpp/fpdf_scopers.h"
 #include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
-
-class CPDF_TestDocument final : public CPDF_Document {
- public:
-  CPDF_TestDocument()
-      : CPDF_Document(std::make_unique<CPDF_DocRenderData>(),
-                      std::make_unique<CPDF_DocPageData>()) {}
-
-  void SetRoot(CPDF_Dictionary* root) { SetRootForTesting(root); }
-  CPDF_IndirectObjectHolder* GetHolder() { return this; }
-};
 
 class PDFDocTest : public testing::Test {
  public:
@@ -45,7 +34,7 @@ class PDFDocTest : public testing::Test {
   void SetUp() override {
     CPDF_PageModule::Create();
     auto pTestDoc = std::make_unique<CPDF_TestDocument>();
-    m_pIndirectObjs = pTestDoc->GetHolder();
+    m_pIndirectObjs = pTestDoc.get();
     m_pRootObj.Reset(m_pIndirectObjs->NewIndirect<CPDF_Dictionary>());
     pTestDoc->SetRoot(m_pRootObj.Get());
     m_pDoc.reset(FPDFDocumentFromCPDFDocument(pTestDoc.release()));

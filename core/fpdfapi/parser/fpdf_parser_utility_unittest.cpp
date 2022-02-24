@@ -6,14 +6,13 @@
 
 #include <memory>
 
-#include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/cpdf_pagemodule.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
-#include "core/fpdfapi/render/cpdf_docrenderdata.h"
+#include "core/fpdfapi/parser/cpdf_test_document.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(fpdf_parser_utility, PDF_NameDecode) {
@@ -91,10 +90,7 @@ TEST(fpdf_parser_utility, ValidateDictAllResourcesOfType) {
 
   {
     // Indirect dictionary.
-    auto doc =
-        std::make_unique<CPDF_Document>(std::make_unique<CPDF_DocRenderData>(),
-                                        std::make_unique<CPDF_DocPageData>());
-
+    auto doc = std::make_unique<CPDF_TestDocument>();
     auto dict = doc->New<CPDF_Dictionary>();
 
     // Add a correct dictionary entry.

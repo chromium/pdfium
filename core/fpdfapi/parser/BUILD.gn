@@ -79,8 +79,8 @@ source_set("parser") {
     "../../../constants",
     "../../fdrm",
     "../../fxcodec",
-    "../../fxcrt",
   ]
+  public_deps = [ "../../fxcrt" ]
   allow_circular_includes_from = []
   visibility = [ "../../../*" ]
 
@@ -94,6 +94,20 @@ source_set("parser") {
     deps += [ "../../fxge" ]
     allow_circular_includes_from += [ "../../fxge" ]
   }
+}
+
+source_set("unit_test_support") {
+  testonly = true
+  sources = [
+    "cpdf_test_document.cpp",
+    "cpdf_test_document.h",
+  ]
+  configs += [ "../../../:pdfium_strict_config" ]
+  deps = [
+    ":parser",
+    "../page",
+    "../render",
+  ]
 }
 
 pdfium_unittest_source_set("unittests") {
@@ -118,6 +132,7 @@ pdfium_unittest_source_set("unittests") {
   ]
   deps = [
     ":parser",
+    ":unit_test_support",
     "../../../constants",
     "../page",
     "../render",

@@ -66,6 +66,7 @@ pdfium_unittest_source_set("unittests") {
     ":font",
     "../page",
     "../parser",
+    "../parser:unit_test_support",
     "../render",
   ]
   pdfium_root_dir = "../../../"
