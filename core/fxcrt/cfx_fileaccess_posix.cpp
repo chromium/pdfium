@@ -23,24 +23,6 @@
 #define O_LARGEFILE 0
 #endif  // O_LARGEFILE
 
-namespace {
-
-void GetFileMode(uint32_t dwModes, int32_t& nFlags, int32_t& nMasks) {
-  nFlags = O_BINARY | O_LARGEFILE;
-  if (dwModes & FX_FILEMODE_ReadOnly) {
-    nFlags |= O_RDONLY;
-    nMasks = 0;
-  } else {
-    nFlags |= O_RDWR | O_CREAT;
-    if (dwModes & FX_FILEMODE_Truncate) {
-      nFlags |= O_TRUNC;
-    }
-    nMasks = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
-  }
-}
-
-}  // namespace
-
 // static
 std::unique_ptr<FileAccessIface> FileAccessIface::Create() {
   return std::make_unique<CFX_FileAccess_Posix>();
@@ -52,16 +34,13 @@ CFX_FileAccess_Posix::~CFX_FileAccess_Posix() {
   Close();
 }
 
-bool CFX_FileAccess_Posix::Open(ByteStringView fileName, uint32_t dwMode) {
+bool CFX_FileAccess_Posix::Open(ByteStringView fileName) {
   if (m_nFD > -1)
     return false;
 
-  int32_t nFlags;
-  int32_t nMasks;
-  GetFileMode(dwMode, nFlags, nMasks);
-
   // TODO(tsepez): check usage of c_str() below.
-  m_nFD = open(fileName.unterminated_c_str(), nFlags, nMasks);
+  m_nFD =
+      open(fileName.unterminated_c_str(), O_BINARY | O_LARGEFILE | O_RDONLY);
   return m_nFD > -1;
 }
 

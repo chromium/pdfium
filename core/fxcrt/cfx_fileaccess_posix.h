@@ -24,7 +24,7 @@ class CFX_FileAccess_Posix final : public FileAccessIface {
   ~CFX_FileAccess_Posix() override;
 
   // FileAccessIface:
-  bool Open(ByteStringView fileName, uint32_t dwMode) override;
+  bool Open(ByteStringView fileName) override;
   void Close() override;
   FX_FILESIZE GetSize() const override;
   FX_FILESIZE GetPosition() const override;
@@ -39,7 +39,7 @@ class CFX_FileAccess_Posix final : public FileAccessIface {
   bool Truncate(FX_FILESIZE szFile) override;
 
  private:
-  int32_t m_nFD;
+  int32_t m_nFD = -1;
 };
 
 #endif  // CORE_FXCRT_CFX_FILEACCESS_POSIX_H_

@@ -14,9 +14,6 @@
 #include "core/fxcrt/fx_types.h"
 #include "core/fxcrt/retain_ptr.h"
 
-constexpr uint32_t FX_FILEMODE_ReadOnly = 1 << 0;
-constexpr uint32_t FX_FILEMODE_Truncate = 1 << 1;
-
 class IFX_WriteStream {
  public:
   virtual bool WriteBlock(const void* pData, size_t size) = 0;
@@ -73,10 +70,6 @@ class IFX_SeekableReadStream : virtual public Retainable,
 class IFX_SeekableStream : public IFX_SeekableReadStream,
                            public IFX_SeekableWriteStream {
  public:
-  // dwModes is a mask of FX_FILEMODE_* from above.
-  static RetainPtr<IFX_SeekableStream> CreateFromFilename(const char* filename,
-                                                          uint32_t dwModes);
-
   // IFX_SeekableWriteStream:
   bool WriteBlock(const void* buffer, size_t size) override;
 };

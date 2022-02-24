@@ -67,19 +67,12 @@ bool IFX_WriteStream::WriteFilesize(FX_FILESIZE size) {
 }
 
 // static
-RetainPtr<IFX_SeekableStream> IFX_SeekableStream::CreateFromFilename(
-    const char* filename,
-    uint32_t dwModes) {
-  std::unique_ptr<FileAccessIface> pFA = FileAccessIface::Create();
-  if (!pFA->Open(filename, dwModes))
-    return nullptr;
-  return pdfium::MakeRetain<CFX_CRTFileStream>(std::move(pFA));
-}
-
-// static
 RetainPtr<IFX_SeekableReadStream> IFX_SeekableReadStream::CreateFromFilename(
     const char* filename) {
-  return IFX_SeekableStream::CreateFromFilename(filename, FX_FILEMODE_ReadOnly);
+  std::unique_ptr<FileAccessIface> pFA = FileAccessIface::Create();
+  if (!pFA->Open(filename))
+    return nullptr;
+  return pdfium::MakeRetain<CFX_CRTFileStream>(std::move(pFA));
 }
 
 bool IFX_SeekableWriteStream::WriteBlock(const void* pData, size_t size) {
