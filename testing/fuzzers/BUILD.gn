@@ -45,7 +45,6 @@ if (pdf_enable_v8) {
       "pdf_cfx_barcode_fuzzer",
       "pdf_codec_jpeg_fuzzer",
       "pdf_css_fuzzer",
-      "pdf_fm2js_fuzzer",
       "pdf_formcalc_context_fuzzer",
       "pdf_formcalc_fuzzer",
       "pdf_formcalc_translate_fuzzer",
@@ -394,19 +393,6 @@ if (pdf_enable_v8) {
     }
 
     pdfium_fuzzer("pdf_formcalc_translate_fuzzer") {
-      sources = [ "pdf_formcalc_translate_fuzzer.cc" ]
-      deps = [
-        ":fuzzer_utils",
-        "../../core/fxcrt",
-        "../../fpdfsdk",
-        "../../fxjs",
-      ]
-      public_fuzzer = true
-    }
-
-    # TODO(crbug.com/pdfium/458): Remove once Chromium depends on
-    # pdf_formcalc_translate_fuzzer instead.
-    pdfium_fuzzer("pdf_fm2js_fuzzer") {
       sources = [ "pdf_formcalc_translate_fuzzer.cc" ]
       deps = [
         ":fuzzer_utils",
