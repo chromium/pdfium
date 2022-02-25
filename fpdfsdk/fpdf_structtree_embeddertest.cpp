@@ -760,3 +760,19 @@ TEST_F(FPDFStructTreeEmbedderTest, Bug1768) {
 
   UnloadPage(page);
 }
+
+TEST_F(FPDFStructTreeEmbedderTest, Bug1296920) {
+  ASSERT_TRUE(OpenDocument("bug_1296920.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ASSERT_TRUE(struct_tree);
+    ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
+
+    // Destroying this tree should not crash.
+  }
+
+  UnloadPage(page);
+}
