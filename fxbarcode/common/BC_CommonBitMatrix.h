@@ -13,20 +13,15 @@
 
 class CBC_CommonBitMatrix {
  public:
-  CBC_CommonBitMatrix();
+  CBC_CommonBitMatrix(size_t width, size_t height);
   ~CBC_CommonBitMatrix();
 
-  void Init(int32_t width, int32_t height);
-
-  bool Get(int32_t x, int32_t y) const;
-  void Set(int32_t x, int32_t y);
-  int32_t GetWidth() const { return m_width; }
-  int32_t GetHeight() const { return m_height; }
+  bool Get(size_t x, size_t y) const;
+  void Set(size_t x, size_t y);
 
  private:
-  int32_t m_width = 0;
-  int32_t m_height = 0;
-  int32_t m_rowSize = 0;
+  const size_t m_height;
+  const size_t m_rowSize;
   std::vector<uint32_t> m_bits;
 };
 

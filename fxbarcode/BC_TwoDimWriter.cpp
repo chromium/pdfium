@@ -72,9 +72,7 @@ bool CBC_TwoDimWriter::RenderResult(pdfium::span<const uint8_t> code,
   m_leftPadding = std::max((m_Width - m_outputWidth) / 2, 0);
   m_topPadding = std::max((m_Height - m_outputHeight) / 2, 0);
 
-  m_output = std::make_unique<CBC_CommonBitMatrix>();
-  m_output->Init(m_inputWidth, m_inputHeight);
-
+  m_output = std::make_unique<CBC_CommonBitMatrix>(m_inputWidth, m_inputHeight);
   for (int32_t y = 0; y < m_inputHeight; ++y) {
     for (int32_t x = 0; x < m_inputWidth; ++x) {
       if (code[x + y * m_inputWidth] == 1)
