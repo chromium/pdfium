@@ -1,0 +1,140 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+  /StructTreeRoot 7 0 R
+  /MarkInfo <<
+    /Type /MarkInfo
+    /Marked true
+  >>
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /StructParents 0
+  /Annots [4 0 R]
+  /Contents 5 0 R
+  /MediaBox [0 0 612 792]
+  /Resources <<
+    /ProcSet [/PDF /Text]
+    /Font <<
+      /F4 6 0 R
+    >>
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  /Type /Annot
+  /Subtype /Link
+  /Border [0 0 0]
+  /Dest /top
+  /F 4
+  /Rect [20 46 68 61]
+>>
+endobj
+{{object 5 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+BT
+/P <</MCID 0 >>BDC
+/F4 16 Tf
+20 650 Td
+(Top Left) Tj
+EMC
+ET
+BT
+/P <</MCID 1 >>BDC
+/F4 16 Tf
+20 50 Td
+(Bottom Left) Tj
+EMC
+ET
+BT
+/P <</MCID 2 >>BDC
+/F4 16 Tf
+400 50 Td
+(Bottom Right) Tj
+EMC
+ET
+BT
+/P <</MCID 3 >>BDC
+/F4 16 Tf
+400 650 Td
+(Top Right) Tj
+EMC
+ET
+Q
+endstream
+endobj
+{{object 6 0}} <<
+  /Type /Font
+  /Subtype /Type1
+  /BaseFont /Times-Roman
+>>
+endobj
+{{object 7 0}} <<
+  /Type /StructTreeRoot
+  /K [9 0 R 10 0 R 11 0 R 12 0 R]
+  /ParentTree 8 0 R
+  /ParentTreeNextKey 1
+>>
+endobj
+{{object 8 0}} <<
+  /Type /ParentTree
+  /Nums [0 [9 0 R 10 0 R 11 0 R 12 0 R]]
+>>
+endobj
+{{object 9 0}} <<
+  /Type /StructElem
+  /S /NonStruct
+  /P 7 0 R
+  /K 0
+  /ID /3
+>>
+endobj
+{{object 10 0}} <<
+  /Type /StructElem
+  /S /NonStruct
+  /P 7 0 R
+  /K <<
+      /Type /MCR
+      /MCID 1
+      /Pg 3 0 R
+     >>
+  /ID /4
+>>
+endobj
+{{object 11 0}} <<
+  /Type /StructElem
+  /S /NonStruct
+  /P 7 0 R
+  /K [
+      <<
+       /Type /MCR
+       /MCID 2
+       /Pg 3 0 R
+      >>
+      3]
+  /ID /5
+>>
+endobj
+{{object 12 0}} <<
+  /Type /StructElem
+  /S /NonStruct
+  /P 7 0 R
+  /ID /6
+>>
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

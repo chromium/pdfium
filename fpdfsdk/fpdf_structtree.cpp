@@ -30,6 +30,15 @@ unsigned long WideStringToBuffer(const WideString& str,
   return len;
 }
 
+int GetMcidFromDict(const CPDF_Dictionary* dict) {
+  if (dict && dict->GetNameFor("Type") == "MCR") {
+    const CPDF_Object* obj = dict->GetObjectFor("MCID");
+    if (obj && obj->IsNumber())
+      return obj->GetInteger();
+  }
+  return -1;
+}
+
 }  // namespace
 
 FPDF_EXPORT FPDF_STRUCTTREE FPDF_CALLCONV
@@ -396,4 +405,49 @@ FPDF_StructElement_Attr_GetBlobValue(FPDF_STRUCTELEMENT_ATTR struct_attribute,
 
   *out_buflen = len;
   return true;
+}
+
+FPDF_EXPORT int FPDF_CALLCONV
+FPDF_StructElement_GetMarkedContentIdCount(FPDF_STRUCTELEMENT struct_element) {
+  CPDF_StructElement* elem =
+      CPDFStructElementFromFPDFStructElement(struct_element);
+  const CPDF_Dictionary* dict = elem ? elem->GetDict() : nullptr;
+  const CPDF_Object* p = dict ? dict->GetObjectFor("K") : nullptr;
+  if (!p)
+    return -1;
+
+  if (p->IsNumber() || p->IsDictionary())
+    return 1;
+
+  return p->IsArray() ? fxcrt::CollectionSize<int>(*p->AsArray()) : -1;
+}
+
+FPDF_EXPORT int FPDF_CALLCONV
+FPDF_StructElement_GetMarkedContentIdAtIndex(FPDF_STRUCTELEMENT struct_element,
+                                             int index) {
+  CPDF_StructElement* elem =
+      CPDFStructElementFromFPDFStructElement(struct_element);
+  const CPDF_Dictionary* dict = elem ? elem->GetDict() : nullptr;
+  const CPDF_Object* p = dict ? dict->GetObjectFor("K") : nullptr;
+  if (!p)
+    return -1;
+
+  if (p->IsNumber())
+    return index == 0 ? p->GetInteger() : -1;
+
+  if (p->IsDictionary())
+    return GetMcidFromDict(p->GetDict());
+
+  if (p->IsArray()) {
+    const CPDF_Array* array = p->AsArray();
+    if (index < 0 || static_cast<size_t>(index) >= array->size())
+      return -1;
+    const CPDF_Object* array_elem = array->GetObjectAt(index);
+    if (array_elem->IsNumber())
+      return array_elem->GetInteger();
+    if (array_elem->IsDictionary()) {
+      return GetMcidFromDict(array_elem->GetDict());
+    }
+  }
+  return -1;
 }

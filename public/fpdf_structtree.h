@@ -424,6 +424,29 @@ FPDF_StructElement_Attr_GetBlobValue(FPDF_STRUCTELEMENT_ATTR struct_attribute,
                                      unsigned long buflen,
                                      unsigned long* out_buflen);
 
+// Experimental API.
+// Function: FPDF_StructElement_GetMarkedContentIdCount
+//          Get the count of marked content ids for a given element.
+// Parameters:
+//          struct_element -   Handle to the struct element.
+// Return value:
+//          The count of marked content ids or -1 if none exists.
+FPDF_EXPORT int FPDF_CALLCONV
+FPDF_StructElement_GetMarkedContentIdCount(FPDF_STRUCTELEMENT struct_element);
+
+// Experimental API.
+// Function: FPDF_StructElement_GetMarkedContentIdAtIndex
+//          Get the marked content id at a given index for a given element.
+// Parameters:
+//          struct_element -   Handle to the struct element.
+//          index          -   The index of the marked content id, 0-based.
+// Return value:
+//          The marked content ID of the element. If no ID exists, returns
+//          -1.
+FPDF_EXPORT int FPDF_CALLCONV
+FPDF_StructElement_GetMarkedContentIdAtIndex(FPDF_STRUCTELEMENT struct_element,
+                                             int index);
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif
