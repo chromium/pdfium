@@ -37,14 +37,12 @@ CBC_CommonBitMatrix::~CBC_CommonBitMatrix() = default;
 
 bool CBC_CommonBitMatrix::Get(size_t x, size_t y) const {
   size_t offset = y * m_rowSize + (x >> 5);
-  if (offset >= m_rowSize * m_height)
-    return false;
+  CHECK_LT(offset, m_rowSize * m_height);
   return ((m_bits[offset] >> (x & 0x1f)) & 1) != 0;
 }
 
 void CBC_CommonBitMatrix::Set(size_t x, size_t y) {
   size_t offset = y * m_rowSize + (x >> 5);
-  if (offset >= m_rowSize * m_height)
-    return;
+  CHECK_LT(offset, m_rowSize * m_height);
   m_bits[offset] |= 1u << (x & 0x1f);
 }
