@@ -26,6 +26,7 @@
 #include "fxbarcode/qrcode/BC_QRCoder.h"
 #include "fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"
 #include "fxbarcode/qrcode/BC_QRCoderMode.h"
+#include "third_party/base/numerics/safe_conversions.h"
 
 CBC_QRCoder::CBC_QRCoder() = default;
 
@@ -69,7 +70,8 @@ bool CBC_QRCoder::IsValid() const {
          m_numECBytes != -1 && m_numRSBlocks != -1 &&
          IsValidMaskPattern(m_maskPattern) &&
          m_numTotalBytes == m_numDataBytes + m_numECBytes && m_matrix &&
-         m_matrixWidth == m_matrix->GetWidth() &&
+         m_matrixWidth ==
+             pdfium::base::checked_cast<int32_t>(m_matrix->GetWidth()) &&
          m_matrix->GetWidth() == m_matrix->GetHeight();
 }
 

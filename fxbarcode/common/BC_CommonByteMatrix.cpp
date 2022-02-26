@@ -24,28 +24,30 @@
 #include <algorithm>
 #include <iterator>
 #include "core/fxcrt/stl_util.h"
+#include "third_party/base/check_op.h"
 
-CBC_CommonByteMatrix::CBC_CommonByteMatrix(int32_t width, int32_t height)
+CBC_CommonByteMatrix::CBC_CommonByteMatrix(size_t width, size_t height)
     : m_width(width), m_height(height) {
-  m_bytes =
-      fxcrt::Vector2D<uint8_t, FxAllocAllocator<uint8_t>>(m_height, m_width);
-  clear(0xff);
+  static constexpr size_t kMaxBytes = 256 * 1024 * 1024;  // 256 MB.
+  CHECK_LT(width, kMaxBytes / height);
+  m_bytes = fxcrt::Vector2D<uint8_t, FxAllocAllocator<uint8_t>>(height, width);
+  Fill(0xff);
 }
 
 CBC_CommonByteMatrix::~CBC_CommonByteMatrix() = default;
 
-uint8_t CBC_CommonByteMatrix::Get(int32_t x, int32_t y) const {
-  return m_bytes[y * m_width + x];
+uint8_t CBC_CommonByteMatrix::Get(size_t x, size_t y) const {
+  const size_t offset = y * m_width + x;
+  CHECK_LT(offset, m_bytes.size());
+  return m_bytes[offset];
 }
 
-void CBC_CommonByteMatrix::Set(int32_t x, int32_t y, int32_t value) {
-  m_bytes[y * m_width + x] = (uint8_t)value;
+void CBC_CommonByteMatrix::Set(size_t x, size_t y, uint8_t value) {
+  const size_t offset = y * m_width + x;
+  CHECK_LT(offset, m_bytes.size());
+  m_bytes[offset] = value;
 }
 
-void CBC_CommonByteMatrix::Set(int32_t x, int32_t y, uint8_t value) {
-  m_bytes[y * m_width + x] = value;
-}
-
-void CBC_CommonByteMatrix::clear(uint8_t value) {
+void CBC_CommonByteMatrix::Fill(uint8_t value) {
   std::fill(std::begin(m_bytes), std::end(m_bytes), value);
 }

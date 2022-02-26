@@ -16,21 +16,20 @@
 
 class CBC_CommonByteMatrix final {
  public:
-  CBC_CommonByteMatrix(int32_t width, int32_t height);
+  CBC_CommonByteMatrix(size_t width, size_t height);
   ~CBC_CommonByteMatrix();
 
-  int32_t GetWidth() const { return m_width; }
-  int32_t GetHeight() const { return m_height; }
+  size_t GetWidth() const { return m_width; }
+  size_t GetHeight() const { return m_height; }
   pdfium::span<const uint8_t> GetArray() const { return m_bytes; }
-  uint8_t Get(int32_t x, int32_t y) const;
 
-  void Set(int32_t x, int32_t y, int32_t value);
-  void Set(int32_t x, int32_t y, uint8_t value);
-  void clear(uint8_t value);
+  uint8_t Get(size_t x, size_t y) const;
+  void Set(size_t x, size_t y, uint8_t value);
+  void Fill(uint8_t value);
 
  private:
-  int32_t m_width;
-  int32_t m_height;
+  const size_t m_width;
+  const size_t m_height;
   std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_bytes;
 };
 
