@@ -165,6 +165,7 @@ pdfium_unittest_source_set("unittests") {
     "fx_memory_wrappers_unittest.cpp",
     "fx_number_unittest.cpp",
     "fx_random_unittest.cpp",
+    "fx_safe_types_unittest.cpp",
     "fx_string_unittest.cpp",
     "fx_string_wrappers_unittest.cpp",
     "fx_system_unittest.cpp",
