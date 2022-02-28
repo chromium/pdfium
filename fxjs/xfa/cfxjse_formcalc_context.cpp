@@ -28,7 +28,7 @@
 #include "fxjs/xfa/cfxjse_value.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
-#include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/cxx17_backports.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "v8/include/v8-container.h"
@@ -5253,6 +5253,8 @@ ByteString CFXJSE_FormCalcContext::GenerateSomExpression(ByteStringView bsName,
   if (bIsStar)
     return ByteString(bsName, "[*]");
 
+  // `iIndexFlags` values are the same as enum class
+  // `CXFA_FMIndexExpression::AccessorIndex` values.
   if (iIndexFlags == 0)
     return ByteString(bsName);
 
@@ -5263,10 +5265,12 @@ ByteString CFXJSE_FormCalcContext::GenerateSomExpression(ByteStringView bsName,
 
   const bool bNegative = iIndexValue < 0;
   ByteString bsSomExp(bsName);
-  if (iIndexFlags == 2)
+  if (iIndexFlags == 2) {
     bsSomExp += bNegative ? "[-" : "[+";
-  else
+  } else {
+    DCHECK_EQ(iIndexFlags, 3);
     bsSomExp += bNegative ? "[" : "[-";
+  }
   iIndexValue = bNegative ? 0 - iIndexValue : iIndexValue;
   bsSomExp += ByteString::FormatInteger(iIndexValue);
   bsSomExp += "]";

@@ -259,6 +259,7 @@ if (pdf_enable_v8) {
         "gc/gced_tree_node_unittest.cpp",
         "gc/heap_unittest.cpp",
         "gc/move_unittest.cpp",
+        "xfa/cfxjse_formcalc_context_unittest.cpp",
         "xfa/cfxjse_mapmodule_unittest.cpp",
       ]
       deps += [
