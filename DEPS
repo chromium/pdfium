@@ -19,6 +19,9 @@ vars = {
 
   'checkout_instrumented_libraries': 'checkout_linux and checkout_configuration != "small"',
 
+  # By default, download the fuchsia sdk from the fuchsia GCS bucket.
+  'fuchsia_sdk_bucket': 'fuchsia',
+
   'chromium_git': 'https://chromium.googlesource.com',
   'pdfium_git': 'https://pdfium.googlesource.com',
   'skia_git': 'https://skia.googlesource.com',
@@ -429,6 +432,17 @@ hooks = [
     'pattern': '.',
     'condition': 'checkout_mac',
     'action': ['python3', 'build/mac_toolchain.py'],
+  },
+  {
+    # Update the Fuchsia SDK if necessary.
+    'name': 'Download Fuchsia SDK',
+    'pattern': '.',
+    'condition': 'checkout_fuchsia',
+    'action': [
+      'python3',
+      'build/fuchsia/update_sdk.py',
+      '--default-bucket={fuchsia_sdk_bucket}',
+    ],
   },
   # Pull clang-format binaries using checked-in hashes.
   {

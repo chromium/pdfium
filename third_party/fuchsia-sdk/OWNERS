@@ -1,0 +1,9 @@
+# Cannot use file://build/fuchsia/OWNERS here, as it is in a different git repo.
+# Manually keep in sync on a best-effort basis.
+
+ddorwin@chromium.org
+fdegans@chromium.org
+kmarshall@chromium.org
+qsr@chromium.org
+sergeyu@chromium.org
+wez@chromium.org
