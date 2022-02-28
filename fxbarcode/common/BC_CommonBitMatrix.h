@@ -7,6 +7,7 @@
 #ifndef FXBARCODE_COMMON_BC_COMMONBITMATRIX_H_
 #define FXBARCODE_COMMON_BC_COMMONBITMATRIX_H_
 
+#include <stddef.h>
 #include <stdint.h>
 
 #include <vector>
