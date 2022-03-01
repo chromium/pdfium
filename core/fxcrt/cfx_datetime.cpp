@@ -101,6 +101,8 @@ CFX_DateTime CFX_DateTime::Now() {
   FXUT_SYSTEMTIME utLocal;
 #if BUILDFLAG(IS_WIN)
   ::GetLocalTime((LPSYSTEMTIME)&utLocal);
+#elif BUILDFLAG(IS_FUCHSIA)
+  // TODO(crbug.com/pdfium/1775): Implement using ICU.
 #else
   timeval curTime;
   gettimeofday(&curTime, nullptr);

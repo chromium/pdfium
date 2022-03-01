@@ -22,6 +22,9 @@
 #include <windows.h>
 #elif defined(__APPLE__)
 #include <mach-o/dyld.h>
+#elif defined(__Fuchsia__)
+#include <limits.h>
+#include <unistd.h>
 #else  // Linux
 #include <linux/limits.h>
 #include <unistd.h>

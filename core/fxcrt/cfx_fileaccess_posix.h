@@ -14,7 +14,7 @@
 #include "core/fxcrt/fileaccess_iface.h"
 #include "core/fxcrt/fx_types.h"
 
-#if !BUILDFLAG(IS_POSIX)
+#if !BUILDFLAG(IS_POSIX) && !BUILDFLAG(IS_FUCHSIA)
 #error "Included on the wrong platform"
 #endif
 

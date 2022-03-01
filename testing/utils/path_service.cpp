@@ -11,6 +11,9 @@
 #elif defined(__APPLE__)
 #include <mach-o/dyld.h>
 #include <sys/stat.h>
+#elif defined(__Fuchsia__)
+#include <sys/stat.h>
+#include <unistd.h>
 #else  // Linux
 #include <linux/limits.h>
 #include <sys/stat.h>
@@ -24,7 +27,8 @@
 
 namespace {
 
-#if defined(__APPLE__) || (defined(ANDROID) && __ANDROID_API__ < 21)
+#if defined(__APPLE__) || defined(__Fuchsia__) || \
+    (defined(ANDROID) && __ANDROID_API__ < 21)
 using stat_wrapper_t = struct stat;
 
 int CallStat(const char* path, stat_wrapper_t* sb) {

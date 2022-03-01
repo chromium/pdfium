@@ -1747,7 +1747,7 @@ const FGAS_FontInfo kXFAFontsMap[] = {
     {0xfef135f8, "AdobeHeitiStd-Regular", "Droid Sans Fallback", 0,
      FX_CodePage::kChineseSimplified},
 };
-#elif BUILDFLAG(IS_POSIX)
+#elif BUILDFLAG(IS_POSIX) || BUILDFLAG(IS_FUCHSIA)
 const FGAS_FontInfo kXFAFontsMap[] = {
     {0x01d5d33e, "SimSun",
      "WenQuanYi Zen Hei Mono,AR PL UMing CN,AR PL UMing HK,AR PL UMing TW,AR "
