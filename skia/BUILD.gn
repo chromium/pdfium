@@ -289,10 +289,10 @@ component("skia") {
     ]
   }
 
-  if (is_linux || is_chromeos || is_android) {
+  if (is_android) {
     sources += [
-      # Retain the files for the SkFontMgr_Android on linux to emulate android
-      # fonts. See content/zygote/zygote_main_linux.cc
+      # Unlike Chromium, standalone PDFium on Linux and Chrome OS does not
+      # require these files, since PDFium does not perform Android emulation.
       # Note that this requires expat.
       "//third_party/skia/src/ports/SkFontMgr_android.cpp",
       "//third_party/skia/src/ports/SkFontMgr_android_parser.cpp",
