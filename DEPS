@@ -312,31 +312,18 @@ deps = {
     'packages': [
       {
         'package': 'skia/tools/goldctl/linux-amd64',
-        'version': 'git_revision:11b8d9e1b976c7ef4dd60521c87d00a8970f889b',
+        'version': 'eZ3k373CYgRxlu4JKph6e-_7xkP02swy_jePFFMiyIQC',
       }
     ],
     'dep_type': 'cipd',
     'condition': 'checkout_linux',
   },
 
-  # TODO(crbug.com/pdfium/1650, crbug.com/1280002): Remove this entry once there
-  # is an autoroller has been updated to roll the mac_amd64 version.
-  'tools/skia_goldctl/mac': {
-    'packages': [
-      {
-        'package': 'skia/tools/goldctl/mac-amd64',
-        'version': 'git_revision:11b8d9e1b976c7ef4dd60521c87d00a8970f889b',
-      }
-    ],
-    'dep_type': 'cipd',
-    'condition': 'checkout_mac',
-  },
-
   'tools/skia_goldctl/mac_amd64': {
     'packages': [
       {
         'package': 'skia/tools/goldctl/mac-amd64',
-        'version': 'git_revision:11b8d9e1b976c7ef4dd60521c87d00a8970f889b',
+        'version': 'nHUjLIViYsLxRjv-zDdmzqT8p1R3VoyHq5gdGkKeMYwC',
       }
     ],
     'dep_type': 'cipd',
@@ -347,7 +334,7 @@ deps = {
     'packages': [
       {
         'package': 'skia/tools/goldctl/mac-arm64',
-        'version': 'git_revision:11b8d9e1b976c7ef4dd60521c87d00a8970f889b',
+        'version': '-mc865SGfJAqreLZM6fkn8tgCJ7u5QLk5zm7r-ZRJ9gC',
       }
     ],
     'dep_type': 'cipd',
@@ -358,7 +345,7 @@ deps = {
     'packages': [
       {
         'package': 'skia/tools/goldctl/windows-amd64',
-        'version': 'git_revision:11b8d9e1b976c7ef4dd60521c87d00a8970f889b',
+        'version': 'iEqqRADI7znrc6pG-MVnc5pBZwD25koILREPC6x2AFAC',
       }
     ],
     'dep_type': 'cipd',
