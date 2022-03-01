@@ -200,7 +200,14 @@ if (pdf_bundle_freetype) {
   }
 }
 
-if (!pdf_use_skia && !pdf_use_skia_paths) {
+if (pdf_use_skia || pdf_use_skia_paths) {
+  config("system_fontconfig") {
+    libs = [ "fontconfig" ]
+  }
+  group("fontconfig") {
+    public_configs = [ ":system_fontconfig" ]
+  }
+} else {
   config("fx_agg_warnings") {
     visibility = [ ":*" ]
     if (is_clang) {

@@ -323,7 +323,10 @@ component("skia") {
   public_deps = [ ":skia_core_and_effects" ]
 
   if (is_linux || is_chromeos) {
-    deps += [ "//third_party/icu:icuuc" ]
+    deps += [
+      "//third_party:fontconfig",
+      "//third_party/icu:icuuc",
+    ]
   }
 
   if (is_android) {
