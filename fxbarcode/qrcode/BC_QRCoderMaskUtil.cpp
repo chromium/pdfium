@@ -35,13 +35,13 @@ int32_t ApplyMaskPenaltyRule1Internal(CBC_CommonByteMatrix* matrix,
   int32_t penalty = 0;
   int32_t numSameBitCells = 0;
   int32_t prevBit = -1;
-  int32_t width = matrix->GetWidth();
-  int32_t height = matrix->GetHeight();
-  int32_t iLimit = isHorizontal ? height : width;
-  int32_t jLimit = isHorizontal ? width : height;
+  size_t width = matrix->GetWidth();
+  size_t height = matrix->GetHeight();
+  size_t iLimit = isHorizontal ? height : width;
+  size_t jLimit = isHorizontal ? width : height;
   pdfium::span<const uint8_t> array = matrix->GetArray();
-  for (int32_t i = 0; i < iLimit; ++i) {
-    for (int32_t j = 0; j < jLimit; ++j) {
+  for (size_t i = 0; i < iLimit; ++i) {
+    for (size_t j = 0; j < jLimit; ++j) {
       int32_t bit = isHorizontal ? array[i * width + j] : array[j * width + i];
       if (bit == prevBit) {
         numSameBitCells += 1;
@@ -74,10 +74,10 @@ int32_t CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule2(
     CBC_CommonByteMatrix* matrix) {
   int32_t penalty = 0;
   pdfium::span<const uint8_t> array = matrix->GetArray();
-  int32_t width = matrix->GetWidth();
-  int32_t height = matrix->GetHeight();
-  for (int32_t y = 0; y < height - 1; y++) {
-    for (int32_t x = 0; x < width - 1; x++) {
+  size_t width = matrix->GetWidth();
+  size_t height = matrix->GetHeight();
+  for (size_t y = 0; y + 1 < height; y++) {
+    for (size_t x = 0; x + 1 < width; x++) {
       int32_t value = array[y * width + x];
       if (value == array[y * width + x + 1] &&
           value == array[(y + 1) * width + x] &&
@@ -94,22 +94,20 @@ int32_t CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule3(
     CBC_CommonByteMatrix* matrix) {
   int32_t penalty = 0;
   pdfium::span<const uint8_t> array = matrix->GetArray();
-  int32_t width = matrix->GetWidth();
-  int32_t height = matrix->GetHeight();
-  for (int32_t y = 0; y < height; ++y) {
-    for (int32_t x = 0; x < width; ++x) {
-      if (x == 0 &&
-          ((y >= 0 && y <= 6) || (y >= height - 7 && y <= height - 1))) {
+  size_t width = matrix->GetWidth();
+  size_t height = matrix->GetHeight();
+  for (size_t y = 0; y < height; ++y) {
+    for (size_t x = 0; x < width; ++x) {
+      if (x == 0 && (y <= 6 || (y + 7 >= height && y + 1 <= height))) {
         continue;
       }
-      if (x == width - 7 && (y >= 0 && y <= 6)) {
+      if (x + 7 == width && y <= 6) {
         continue;
       }
-      if (y == 0 &&
-          ((x >= 0 && x <= 6) || (x >= width - 7 && x <= width - 1))) {
+      if (y == 0 && (x <= 6 || (x + 7 >= width && x + 1 <= width))) {
         continue;
       }
-      if (y == height - 7 && (x >= 0 && x <= 6)) {
+      if (y + 7 == height && x <= 6) {
         continue;
       }
       if (x + 6 < width && array[y * width + x] == 1 &&
@@ -119,7 +117,7 @@ int32_t CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule3(
           ((x + 10 < width && array[y * width + x + 7] == 0 &&
             array[y * width + x + 8] == 0 && array[y * width + x + 9] == 0 &&
             array[y * width + x + 10] == 0) ||
-           (x - 4 >= 0 && array[y * width + x - 1] == 0 &&
+           (x >= 4 && array[y * width + x - 1] == 0 &&
             array[y * width + x - 2] == 0 && array[y * width + x - 3] == 0 &&
             array[y * width + x - 4] == 0))) {
         penalty += 40;
@@ -132,7 +130,7 @@ int32_t CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule3(
             array[(y + 8) * width + x] == 0 &&
             array[(y + 9) * width + x] == 0 &&
             array[(y + 10) * width + x] == 0) ||
-           (y - 4 >= 0 && array[(y - 1) * width + x] == 0 &&
+           (y >= 4 && array[(y - 1) * width + x] == 0 &&
             array[(y - 2) * width + x] == 0 &&
             array[(y - 3) * width + x] == 0 &&
             array[(y - 4) * width + x] == 0))) {
@@ -148,15 +146,15 @@ int32_t CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule4(
     CBC_CommonByteMatrix* matrix) {
   int32_t numDarkCells = 0;
   pdfium::span<const uint8_t> array = matrix->GetArray();
-  int32_t width = matrix->GetWidth();
-  int32_t height = matrix->GetHeight();
-  for (int32_t y = 0; y < height; ++y) {
-    for (int32_t x = 0; x < width; ++x) {
+  size_t width = matrix->GetWidth();
+  size_t height = matrix->GetHeight();
+  for (size_t y = 0; y < height; ++y) {
+    for (size_t x = 0; x < width; ++x) {
       if (array[y * width + x] == 1)
         numDarkCells += 1;
     }
   }
-  int32_t numTotalCells = matrix->GetHeight() * matrix->GetWidth();
+  size_t numTotalCells = matrix->GetHeight() * matrix->GetWidth();
   double darkRatio = static_cast<double>(numDarkCells) / numTotalCells;
   return abs(static_cast<int32_t>(darkRatio * 100 - 50) / 5) * 5 * 10;
 }
