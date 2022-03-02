@@ -42,7 +42,7 @@ CPDF_Stream::CPDF_Stream(pdfium::span<const uint8_t> pData,
 }
 
 CPDF_Stream::CPDF_Stream(std::unique_ptr<uint8_t, FxFreeDeleter> pData,
-                         uint32_t size,
+                         size_t size,
                          RetainPtr<CPDF_Dictionary> pDict)
     : m_pDict(std::move(pDict)) {
   TakeData(std::move(pData), size);
@@ -147,14 +147,15 @@ void CPDF_Stream::SetData(pdfium::span<const uint8_t> pData) {
 }
 
 void CPDF_Stream::TakeData(std::unique_ptr<uint8_t, FxFreeDeleter> pData,
-                           uint32_t size) {
+                           size_t size) {
   m_bMemoryBased = true;
   m_pFile = nullptr;
   m_pDataBuf = std::move(pData);
   m_dwSize = size;
   if (!m_pDict)
     m_pDict = pdfium::MakeRetain<CPDF_Dictionary>();
-  m_pDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(size));
+  m_pDict->SetNewFor<CPDF_Number>("Length",
+                                  pdfium::base::checked_cast<int>(size));
 }
 
 void CPDF_Stream::SetDataFromStringstream(fxcrt::ostringstream* stream) {
@@ -168,7 +169,7 @@ void CPDF_Stream::SetDataFromStringstream(fxcrt::ostringstream* stream) {
 
 bool CPDF_Stream::ReadRawData(FX_FILESIZE offset,
                               uint8_t* buf,
-                              uint32_t size) const {
+                              size_t size) const {
   if (!m_bMemoryBased && m_pFile)
     return m_pFile->ReadBlockAtOffset(buf, offset, size);
 

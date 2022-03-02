@@ -34,20 +34,19 @@ class CPDF_Stream final : public CPDF_Object {
   bool WriteTo(IFX_ArchiveStream* archive,
                const CPDF_Encryptor* encryptor) const override;
 
-  uint32_t GetRawSize() const { return m_dwSize; }
+  size_t GetRawSize() const { return m_dwSize; }
   // Will be null in case when stream is not memory based.
   // Use CPDF_StreamAcc to data access in all cases.
   uint8_t* GetInMemoryRawData() const { return m_pDataBuf.get(); }
 
-  // Copies span into internally-owned buffer.
+  // Copies span or stream into internally-owned buffer.
   void SetData(pdfium::span<const uint8_t> pData);
-
-  void TakeData(std::unique_ptr<uint8_t, FxFreeDeleter> pData, uint32_t size);
-
   void SetDataFromStringstream(fxcrt::ostringstream* stream);
 
+  void TakeData(std::unique_ptr<uint8_t, FxFreeDeleter> pData, size_t size);
+
   // Set data and remove "Filter" and "DecodeParms" fields from stream
-  // dictionary.
+  // dictionary. Copies span or stream into internally-owned buffer.
   void SetDataAndRemoveFilter(pdfium::span<const uint8_t> pData);
   void SetDataFromStringstreamAndRemoveFilter(fxcrt::ostringstream* stream);
 
@@ -56,7 +55,7 @@ class CPDF_Stream final : public CPDF_Object {
   void InitStreamFromFile(const RetainPtr<IFX_SeekableReadStream>& pFile,
                           RetainPtr<CPDF_Dictionary> pDict);
 
-  bool ReadRawData(FX_FILESIZE offset, uint8_t* pBuf, uint32_t buf_size) const;
+  bool ReadRawData(FX_FILESIZE offset, uint8_t* pBuf, size_t buf_size) const;
 
   bool IsMemoryBased() const { return m_bMemoryBased; }
   bool HasFilter() const;
@@ -66,7 +65,7 @@ class CPDF_Stream final : public CPDF_Object {
   CPDF_Stream(pdfium::span<const uint8_t> pData,
               RetainPtr<CPDF_Dictionary> pDict);
   CPDF_Stream(std::unique_ptr<uint8_t, FxFreeDeleter> pData,
-              uint32_t size,
+              size_t size,
               RetainPtr<CPDF_Dictionary> pDict);
   ~CPDF_Stream() override;
 
@@ -75,7 +74,7 @@ class CPDF_Stream final : public CPDF_Object {
       std::set<const CPDF_Object*>* pVisited) const override;
 
   bool m_bMemoryBased = true;
-  uint32_t m_dwSize = 0;
+  size_t m_dwSize = 0;
   RetainPtr<CPDF_Dictionary> m_pDict;
   std::unique_ptr<uint8_t, FxFreeDeleter> m_pDataBuf;
   RetainPtr<IFX_SeekableReadStream> m_pFile;
