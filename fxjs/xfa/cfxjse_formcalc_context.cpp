@@ -21,6 +21,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_random.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "fxjs/fxv8.h"
 #include "fxjs/xfa/cfxjse_class.h"
 #include "fxjs/xfa/cfxjse_context.h"
@@ -5271,8 +5272,11 @@ ByteString CFXJSE_FormCalcContext::GenerateSomExpression(ByteStringView bsName,
     DCHECK_EQ(iIndexFlags, 3);
     bsSomExp += bNegative ? "[" : "[-";
   }
-  iIndexValue = bNegative ? 0 - iIndexValue : iIndexValue;
-  bsSomExp += ByteString::FormatInteger(iIndexValue);
+
+  FX_SAFE_INT32 safe_index = iIndexValue;
+  if (bNegative)
+    safe_index = -safe_index;
+  bsSomExp += ByteString::FormatInteger(safe_index.ValueOrDefault(0));
   bsSomExp += "]";
   return bsSomExp;
 }
