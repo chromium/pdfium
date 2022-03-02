@@ -4,6 +4,8 @@
 
 #include "testing/test_fonts.h"
 
+#include <utility>
+
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
@@ -59,9 +61,9 @@ class SystemFontInfoWrapper : public SystemFontInfoIface {
   void* GetFont(const ByteString& face) override {
     return impl_->GetFont(RenameFontForTesting(face));
   }
-  uint32_t GetFontData(void* hFont,
-                       uint32_t table,
-                       pdfium::span<uint8_t> buffer) override {
+  size_t GetFontData(void* hFont,
+                     uint32_t table,
+                     pdfium::span<uint8_t> buffer) override {
     return impl_->GetFontData(hFont, table, buffer);
   }
   bool GetFaceName(void* hFont, ByteString* name) override {

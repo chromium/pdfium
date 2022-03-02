@@ -301,12 +301,12 @@ uint32_t CFX_FontMapper::GetChecksumFromTT(void* hFont) {
 }
 
 ByteString CFX_FontMapper::GetPSNameFromTT(void* hFont) {
-  uint32_t size = m_pFontInfo->GetFontData(hFont, kTableNAME, {});
+  size_t size = m_pFontInfo->GetFontData(hFont, kTableNAME, {});
   if (!size)
     return ByteString();
 
   std::vector<uint8_t, FxAllocAllocator<uint8_t>> buffer(size);
-  uint32_t bytes_read = m_pFontInfo->GetFontData(hFont, kTableNAME, buffer);
+  size_t bytes_read = m_pFontInfo->GetFontData(hFont, kTableNAME, buffer);
   return bytes_read == size ? GetNameFromTT(buffer, 6) : ByteString();
 }
 
@@ -639,8 +639,8 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
   m_pFontInfo->GetFaceName(hFont, &SubstName);
   if (Charset == FX_Charset::kDefault)
     m_pFontInfo->GetFontCharset(hFont, &Charset);
-  uint32_t ttc_size = m_pFontInfo->GetFontData(hFont, kTableTTCF, {});
-  uint32_t font_size = m_pFontInfo->GetFontData(hFont, 0, {});
+  size_t ttc_size = m_pFontInfo->GetFontData(hFont, kTableTTCF, {});
+  size_t font_size = m_pFontInfo->GetFontData(hFont, 0, {});
   if (font_size == 0 && ttc_size == 0) {
     m_pFontInfo->DeleteFont(hFont);
     return nullptr;
@@ -726,7 +726,7 @@ std::unique_ptr<uint8_t, FxFreeDeleter> CFX_FontMapper::RawBytesForIndex(
   if (!hFont)
     return nullptr;
 
-  uint32_t required_size = m_pFontInfo->GetFontData(hFont, 0, {});
+  size_t required_size = m_pFontInfo->GetFontData(hFont, 0, {});
   if (required_size == 0)
     return nullptr;
 
@@ -739,8 +739,8 @@ std::unique_ptr<uint8_t, FxFreeDeleter> CFX_FontMapper::RawBytesForIndex(
 #endif  // PDF_ENABLE_XFA
 
 RetainPtr<CFX_Face> CFX_FontMapper::GetCachedTTCFace(void* hFont,
-                                                     uint32_t ttc_size,
-                                                     uint32_t font_size) {
+                                                     size_t ttc_size,
+                                                     size_t data_size) {
   uint32_t checksum = GetChecksumFromTT(hFont);
   RetainPtr<CFX_FontMgr::FontDesc> pFontDesc =
       m_pFontMgr->GetCachedTTCFontDesc(ttc_size, checksum);
@@ -751,9 +751,9 @@ RetainPtr<CFX_Face> CFX_FontMapper::GetCachedTTCFace(void* hFont,
     pFontDesc = m_pFontMgr->AddCachedTTCFontDesc(
         ttc_size, checksum, std::move(pFontData), ttc_size);
   }
-  DCHECK(ttc_size >= font_size);
-  uint32_t font_offset = ttc_size - font_size;
-  int face_index =
+  CHECK(ttc_size >= data_size);
+  size_t font_offset = ttc_size - data_size;
+  size_t face_index =
       GetTTCIndex(pFontDesc->FontData().first(ttc_size), font_offset);
   RetainPtr<CFX_Face> pFace(pFontDesc->GetFace(face_index));
   if (pFace)
@@ -772,22 +772,22 @@ RetainPtr<CFX_Face> CFX_FontMapper::GetCachedFace(void* hFont,
                                                   ByteString SubstName,
                                                   int weight,
                                                   bool bItalic,
-                                                  uint32_t font_size) {
+                                                  size_t data_size) {
   RetainPtr<CFX_FontMgr::FontDesc> pFontDesc =
       m_pFontMgr->GetCachedFontDesc(SubstName, weight, bItalic);
   if (!pFontDesc) {
     std::unique_ptr<uint8_t, FxFreeDeleter> pFontData(
-        FX_Alloc(uint8_t, font_size));
-    m_pFontInfo->GetFontData(hFont, 0, {pFontData.get(), font_size});
+        FX_Alloc(uint8_t, data_size));
+    m_pFontInfo->GetFontData(hFont, 0, {pFontData.get(), data_size});
     pFontDesc = m_pFontMgr->AddCachedFontDesc(SubstName, weight, bItalic,
-                                              std::move(pFontData), font_size);
+                                              std::move(pFontData), data_size);
   }
   RetainPtr<CFX_Face> pFace(pFontDesc->GetFace(0));
   if (pFace)
     return pFace;
 
   pFace = m_pFontMgr->NewFixedFace(pFontDesc,
-                                   pFontDesc->FontData().first(font_size), 0);
+                                   pFontDesc->FontData().first(data_size), 0);
   if (!pFace)
     return nullptr;
 

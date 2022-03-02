@@ -57,8 +57,8 @@ ByteString KeyNameFromFace(const ByteString& face_name,
   return key;
 }
 
-ByteString KeyNameFromSize(int ttc_size, uint32_t checksum) {
-  return ByteString::Format("%d:%d", ttc_size, checksum);
+ByteString KeyNameFromSize(size_t ttc_size, uint32_t checksum) {
+  return ByteString::Format("%zu:%u", ttc_size, checksum);
 }
 
 FXFT_LibraryRec* FTLibraryInitHelper() {
@@ -106,24 +106,24 @@ RetainPtr<CFX_FontMgr::FontDesc> CFX_FontMgr::AddCachedFontDesc(
     int weight,
     bool bItalic,
     std::unique_ptr<uint8_t, FxFreeDeleter> pData,
-    uint32_t size) {
+    size_t size) {
   auto pFontDesc = pdfium::MakeRetain<FontDesc>(std::move(pData), size);
   m_FaceMap[KeyNameFromFace(face_name, weight, bItalic)].Reset(pFontDesc.Get());
   return pFontDesc;
 }
 
 RetainPtr<CFX_FontMgr::FontDesc> CFX_FontMgr::GetCachedTTCFontDesc(
-    int ttc_size,
+    size_t ttc_size,
     uint32_t checksum) {
   auto it = m_FaceMap.find(KeyNameFromSize(ttc_size, checksum));
   return it != m_FaceMap.end() ? pdfium::WrapRetain(it->second.Get()) : nullptr;
 }
 
 RetainPtr<CFX_FontMgr::FontDesc> CFX_FontMgr::AddCachedTTCFontDesc(
-    int ttc_size,
+    size_t ttc_size,
     uint32_t checksum,
     std::unique_ptr<uint8_t, FxFreeDeleter> pData,
-    uint32_t size) {
+    size_t size) {
   auto pNewDesc = pdfium::MakeRetain<FontDesc>(std::move(pData), size);
   m_FaceMap[KeyNameFromSize(ttc_size, checksum)].Reset(pNewDesc.Get());
   return pNewDesc;
@@ -131,9 +131,9 @@ RetainPtr<CFX_FontMgr::FontDesc> CFX_FontMgr::AddCachedTTCFontDesc(
 
 RetainPtr<CFX_Face> CFX_FontMgr::NewFixedFace(const RetainPtr<FontDesc>& pDesc,
                                               pdfium::span<const uint8_t> span,
-                                              int face_index) {
-  RetainPtr<CFX_Face> face =
-      CFX_Face::New(m_FTLibrary.get(), pDesc, span, face_index);
+                                              size_t face_index) {
+  RetainPtr<CFX_Face> face = CFX_Face::New(m_FTLibrary.get(), pDesc, span,
+                                           static_cast<FT_Long>(face_index));
   if (!face)
     return nullptr;
 

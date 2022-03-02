@@ -7,6 +7,9 @@
 #ifndef CORE_FXGE_SYSTEMFONTINFO_IFACE_H_
 #define CORE_FXGE_SYSTEMFONTINFO_IFACE_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_codepage_forward.h"
 #include "core/fxge/cfx_fontmapper.h"
@@ -26,9 +29,9 @@ class SystemFontInfoIface {
                         int pitch_family,
                         const ByteString& face) = 0;
   virtual void* GetFont(const ByteString& face) = 0;
-  virtual uint32_t GetFontData(void* hFont,
-                               uint32_t table,
-                               pdfium::span<uint8_t> buffer) = 0;
+  virtual size_t GetFontData(void* hFont,
+                             uint32_t table,
+                             pdfium::span<uint8_t> buffer) = 0;
   virtual bool GetFaceName(void* hFont, ByteString* name) = 0;
   virtual bool GetFontCharset(void* hFont, FX_Charset* charset) = 0;
   virtual void DeleteFont(void* hFont) = 0;

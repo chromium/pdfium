@@ -7,6 +7,9 @@
 #ifndef CORE_FXGE_CFX_FONTMGR_H_
 #define CORE_FXGE_CFX_FONTMGR_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include <map>
 #include <memory>
 
@@ -57,18 +60,18 @@ class CFX_FontMgr {
       int weight,
       bool bItalic,
       std::unique_ptr<uint8_t, FxFreeDeleter> pData,
-      uint32_t size);
+      size_t size);
 
-  RetainPtr<FontDesc> GetCachedTTCFontDesc(int ttc_size, uint32_t checksum);
+  RetainPtr<FontDesc> GetCachedTTCFontDesc(size_t ttc_size, uint32_t checksum);
   RetainPtr<FontDesc> AddCachedTTCFontDesc(
-      int ttc_size,
+      size_t ttc_size,
       uint32_t checksum,
       std::unique_ptr<uint8_t, FxFreeDeleter> pData,
-      uint32_t size);
+      size_t size);
 
   RetainPtr<CFX_Face> NewFixedFace(const RetainPtr<FontDesc>& pDesc,
                                    pdfium::span<const uint8_t> span,
-                                   int face_index);
+                                   size_t face_index);
 
   // Always present.
   CFX_FontMapper* GetBuiltinMapper() const { return m_pBuiltinMapper.get(); }

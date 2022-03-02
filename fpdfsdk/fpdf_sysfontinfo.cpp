@@ -100,9 +100,9 @@ class CFX_ExternalFontInfo final : public SystemFontInfoIface {
     return m_pInfo->GetFont(m_pInfo, family.c_str());
   }
 
-  uint32_t GetFontData(void* hFont,
-                       uint32_t table,
-                       pdfium::span<uint8_t> buffer) override {
+  size_t GetFontData(void* hFont,
+                     uint32_t table,
+                     pdfium::span<uint8_t> buffer) override {
     if (!m_pInfo->GetFontData)
       return 0;
     return m_pInfo->GetFontData(m_pInfo, hFont, table, buffer.data(),

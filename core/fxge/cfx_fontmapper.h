@@ -98,13 +98,13 @@ class CFX_FontMapper {
                                        int weight,
                                        int pitch_family);
   RetainPtr<CFX_Face> GetCachedTTCFace(void* hFont,
-                                       uint32_t ttc_size,
-                                       uint32_t font_size);
+                                       size_t ttc_size,
+                                       size_t data_size);
   RetainPtr<CFX_Face> GetCachedFace(void* hFont,
                                     ByteString SubstName,
                                     int weight,
                                     bool bItalic,
-                                    uint32_t font_size);
+                                    size_t data_size);
 
   struct FaceData {
     ByteString name;

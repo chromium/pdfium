@@ -359,9 +359,9 @@ void* CFX_FolderFontInfo::GetFont(const ByteString& face) {
   return it != m_FontList.end() ? it->second.get() : nullptr;
 }
 
-uint32_t CFX_FolderFontInfo::GetFontData(void* hFont,
-                                         uint32_t table,
-                                         pdfium::span<uint8_t> buffer) {
+size_t CFX_FolderFontInfo::GetFontData(void* hFont,
+                                       uint32_t table,
+                                       pdfium::span<uint8_t> buffer) {
   if (!hFont)
     return 0;
 

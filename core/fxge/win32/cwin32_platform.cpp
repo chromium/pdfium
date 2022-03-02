@@ -96,9 +96,9 @@ class CFX_Win32FontInfo final : public SystemFontInfoIface {
                 int pitch_family,
                 const ByteString& face) override;
   void* GetFont(const ByteString& face) override { return nullptr; }
-  uint32_t GetFontData(void* hFont,
-                       uint32_t table,
-                       pdfium::span<uint8_t> buffer) override;
+  size_t GetFontData(void* hFont,
+                     uint32_t table,
+                     pdfium::span<uint8_t> buffer) override;
   bool GetFaceName(void* hFont, ByteString* name) override;
   bool GetFontCharset(void* hFont, FX_Charset* charset) override;
   void DeleteFont(void* hFont) override;
@@ -135,7 +135,7 @@ CFX_Win32FontInfo::~CFX_Win32FontInfo() {
 bool CFX_Win32FontInfo::IsOpenTypeFromDiv(const LOGFONTA* plf) {
   HFONT hFont = CreateFontIndirectA(plf);
   bool ret = false;
-  uint32_t font_size = GetFontData(hFont, 0, {});
+  size_t font_size = GetFontData(hFont, 0, {});
   if (font_size != GDI_ERROR && font_size >= sizeof(uint32_t)) {
     uint32_t lVersion = 0;
     GetFontData(hFont, 0, {(uint8_t*)(&lVersion), sizeof(uint32_t)});
@@ -156,7 +156,7 @@ bool CFX_Win32FontInfo::IsOpenTypeFromDiv(const LOGFONTA* plf) {
 bool CFX_Win32FontInfo::IsSupportFontFormDiv(const LOGFONTA* plf) {
   HFONT hFont = CreateFontIndirectA(plf);
   bool ret = false;
-  uint32_t font_size = GetFontData(hFont, 0, {});
+  size_t font_size = GetFontData(hFont, 0, {});
   if (font_size != GDI_ERROR && font_size >= sizeof(uint32_t)) {
     uint32_t lVersion = 0;
     GetFontData(hFont, 0, {(uint8_t*)(&lVersion), sizeof(lVersion)});
@@ -396,14 +396,13 @@ void CFX_Win32FontInfo::DeleteFont(void* hFont) {
   ::DeleteObject(hFont);
 }
 
-uint32_t CFX_Win32FontInfo::GetFontData(void* hFont,
-                                        uint32_t table,
-                                        pdfium::span<uint8_t> buffer) {
+size_t CFX_Win32FontInfo::GetFontData(void* hFont,
+                                      uint32_t table,
+                                      pdfium::span<uint8_t> buffer) {
   HFONT hOldFont = (HFONT)::SelectObject(m_hDC, (HFONT)hFont);
   table = FXSYS_UINT32_GET_MSBFIRST(reinterpret_cast<uint8_t*>(&table));
-  uint32_t size =
-      ::GetFontData(m_hDC, table, 0, buffer.data(),
-                    pdfium::base::checked_cast<DWORD>(buffer.size()));
+  size_t size = ::GetFontData(m_hDC, table, 0, buffer.data(),
+                              pdfium::base::checked_cast<DWORD>(buffer.size()));
   ::SelectObject(m_hDC, hOldFont);
   if (size == GDI_ERROR) {
     return 0;
