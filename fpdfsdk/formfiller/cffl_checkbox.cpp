@@ -102,16 +102,6 @@ void CFFL_CheckBox::SaveData(const CPDFSDK_PageView* pPageView) {
     return;
 
   bool bNewChecked = pWnd->IsChecked();
-  if (bNewChecked) {
-    CPDF_FormField* pField = m_pWidget->GetFormField();
-    for (int32_t i = 0, sz = pField->CountControls(); i < sz; i++) {
-      if (CPDF_FormControl* pCtrl = pField->GetControl(i)) {
-        if (pCtrl->IsChecked()) {
-          break;
-        }
-      }
-    }
-  }
   ObservedPtr<CPDFSDK_Widget> observed_widget(m_pWidget.Get());
   ObservedPtr<CFFL_CheckBox> observed_this(this);
   m_pWidget->SetCheck(bNewChecked);
