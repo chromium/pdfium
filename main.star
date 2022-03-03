@@ -82,7 +82,7 @@ def get_properties_by_name(name):
         # Android
         properties.update(_ANDROID_PROPERTIES)
 
-    if name.endswith("no_v8"):
+    if name.find("no_v8") != -1:
         properties.update({"v8": False})
 
     if name.find("asan") != -1:
@@ -110,6 +110,8 @@ def get_properties_by_name(name):
         properties["$build/goma"] = {}
 
     if name.endswith("32"):
+      # Android bots default to "arm". (32-bit)
+      if not name.startswith("android"):
         properties.update({"target_cpu": "x86"})
 
     if name.find("component") != -1:
@@ -399,8 +401,8 @@ luci.builder(
     },
 )
 
-add_entries_for_builder(name = "android", category = "main|android")
-add_entries_for_builder(name = "android_no_v8", category = "no v8", short_name = "android")
+add_entries_for_builder(name = "android_32", category = "main|android")
+add_entries_for_builder(name = "android_no_v8_32", category = "no v8", short_name = "android_32")
 add_entries_for_builder(name = "linux", category = "main|linux")
 add_entries_for_builder(name = "linux_asan_lsan", category = "main|linux", short_name = "asan")
 add_entries_for_builder(name = "linux_msan", category = "main|linux", short_name = "msan")
