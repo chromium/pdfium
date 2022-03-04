@@ -67,7 +67,7 @@ void CFWL_NoteDriver::UnregisterEventTarget(CFWL_Widget* pListener) {
 
   auto it = m_eventTargets.find(key);
   if (it != m_eventTargets.end())
-    it->second->FlagInvalid();
+    it->second->Invalidate();
 }
 
 void CFWL_NoteDriver::NotifyTargetHide(CFWL_Widget* pNoteTarget) {

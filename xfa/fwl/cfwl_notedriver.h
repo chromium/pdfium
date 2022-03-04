@@ -45,7 +45,7 @@ class CFWL_NoteDriver final : public cppgc::GarbageCollected<CFWL_NoteDriver> {
     void SetEventSource(CFWL_Widget* pSource);
     bool ProcessEvent(CFWL_Event* pEvent);
     bool IsValid() const { return m_bValid; }
-    void FlagInvalid() { m_bValid = false; }
+    void Invalidate() { m_bValid = false; }
 
    private:
     bool m_bValid = true;

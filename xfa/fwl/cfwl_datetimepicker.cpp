@@ -18,9 +18,10 @@
 
 namespace {
 
-const int kDateTimePickerHeight = 20;
+constexpr int kDateTimePickerHeight = 20;
 
 }  // namespace
+
 CFWL_DateTimePicker::CFWL_DateTimePicker(CFWL_App* app)
     : CFWL_Widget(app,
                   Properties{0, FWL_STYLEEXT_DTP_ShortDateFormat, 0},

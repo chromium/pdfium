@@ -21,7 +21,7 @@ class CFWL_MonthCalendar final : public CFWL_Widget {
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CFWL_MonthCalendar() override;
 
-  // FWL_WidgetImp
+  // CFWL_Widget:
   FWL_Type GetClassID() const override;
   CFX_RectF GetAutosizedWidgetRect() override;
   void Update() override;
