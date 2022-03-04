@@ -57,8 +57,9 @@ int32_t CFPF_SkiaFont::GetGlyphWidth(int32_t iGlyphIndex) {
                     FT_LOAD_NO_SCALE | FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH)) {
     return 0;
   }
-  return FPF_EM_ADJUST(FXFT_Get_Face_UnitsPerEM(GetFaceRec()),
-                       FXFT_Get_Glyph_HoriAdvance(GetFaceRec()));
+  return static_cast<int32_t>(
+      FPF_EM_ADJUST(FXFT_Get_Face_UnitsPerEM(GetFaceRec()),
+                    FXFT_Get_Glyph_HoriAdvance(GetFaceRec())));
 }
 
 int32_t CFPF_SkiaFont::GetAscent() const {
@@ -95,10 +96,10 @@ bool CFPF_SkiaFont::GetGlyphBBox(int32_t iGlyphIndex, FX_RECT& rtBBox) {
     FT_Glyph_Get_CBox(glyph, FT_GLYPH_BBOX_PIXELS, &cbox);
     int32_t x_ppem = GetFaceRec()->size->metrics.x_ppem;
     int32_t y_ppem = GetFaceRec()->size->metrics.y_ppem;
-    rtBBox.left = FPF_EM_ADJUST(x_ppem, cbox.xMin);
-    rtBBox.right = FPF_EM_ADJUST(x_ppem, cbox.xMax);
-    rtBBox.top = FPF_EM_ADJUST(y_ppem, cbox.yMax);
-    rtBBox.bottom = FPF_EM_ADJUST(y_ppem, cbox.yMin);
+    rtBBox.left = static_cast<int32_t>(FPF_EM_ADJUST(x_ppem, cbox.xMin));
+    rtBBox.right = static_cast<int32_t>(FPF_EM_ADJUST(x_ppem, cbox.xMax));
+    rtBBox.top = static_cast<int32_t>(FPF_EM_ADJUST(y_ppem, cbox.yMax));
+    rtBBox.bottom = static_cast<int32_t>(FPF_EM_ADJUST(y_ppem, cbox.yMin));
     rtBBox.top = std::min(rtBBox.top, GetAscent());
     rtBBox.bottom = std::max(rtBBox.bottom, GetDescent());
     FT_Done_Glyph(glyph);
@@ -108,16 +109,20 @@ bool CFPF_SkiaFont::GetGlyphBBox(int32_t iGlyphIndex, FX_RECT& rtBBox) {
                     FT_LOAD_NO_SCALE | FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH)) {
     return false;
   }
-  rtBBox.left = FPF_EM_ADJUST(FXFT_Get_Face_UnitsPerEM(GetFaceRec()),
-                              FXFT_Get_Glyph_HoriBearingX(GetFaceRec()));
-  rtBBox.bottom = FPF_EM_ADJUST(FXFT_Get_Face_UnitsPerEM(GetFaceRec()),
-                                FXFT_Get_Glyph_HoriBearingY(GetFaceRec()));
-  rtBBox.right = FPF_EM_ADJUST(FXFT_Get_Face_UnitsPerEM(GetFaceRec()),
-                               FXFT_Get_Glyph_HoriBearingX(GetFaceRec()) +
-                                   FXFT_Get_Glyph_Width(GetFaceRec()));
-  rtBBox.top = FPF_EM_ADJUST(FXFT_Get_Face_UnitsPerEM(GetFaceRec()),
-                             FXFT_Get_Glyph_HoriBearingY(GetFaceRec()) -
-                                 FXFT_Get_Glyph_Height(GetFaceRec()));
+  rtBBox.left = static_cast<int32_t>(
+      FPF_EM_ADJUST(FXFT_Get_Face_UnitsPerEM(GetFaceRec()),
+                    FXFT_Get_Glyph_HoriBearingX(GetFaceRec())));
+  rtBBox.bottom = static_cast<int32_t>(
+      FPF_EM_ADJUST(FXFT_Get_Face_UnitsPerEM(GetFaceRec()),
+                    FXFT_Get_Glyph_HoriBearingY(GetFaceRec())));
+  rtBBox.right = static_cast<int32_t>(
+      FPF_EM_ADJUST(FXFT_Get_Face_UnitsPerEM(GetFaceRec()),
+                    FXFT_Get_Glyph_HoriBearingX(GetFaceRec()) +
+                        FXFT_Get_Glyph_Width(GetFaceRec())));
+  rtBBox.top = static_cast<int32_t>(
+      FPF_EM_ADJUST(FXFT_Get_Face_UnitsPerEM(GetFaceRec()),
+                    FXFT_Get_Glyph_HoriBearingY(GetFaceRec()) -
+                        FXFT_Get_Glyph_Height(GetFaceRec())));
   return true;
 }
 
@@ -125,14 +130,18 @@ bool CFPF_SkiaFont::GetBBox(FX_RECT& rtBBox) {
   if (!m_Face) {
     return false;
   }
-  rtBBox.left = FPF_EM_ADJUST(FXFT_Get_Face_UnitsPerEM(GetFaceRec()),
-                              FXFT_Get_Face_xMin(GetFaceRec()));
-  rtBBox.top = FPF_EM_ADJUST(FXFT_Get_Face_UnitsPerEM(GetFaceRec()),
-                             FXFT_Get_Face_yMin(GetFaceRec()));
-  rtBBox.right = FPF_EM_ADJUST(FXFT_Get_Face_UnitsPerEM(GetFaceRec()),
-                               FXFT_Get_Face_xMax(GetFaceRec()));
-  rtBBox.bottom = FPF_EM_ADJUST(FXFT_Get_Face_UnitsPerEM(GetFaceRec()),
-                                FXFT_Get_Face_yMax(GetFaceRec()));
+  rtBBox.left =
+      static_cast<int32_t>(FPF_EM_ADJUST(FXFT_Get_Face_UnitsPerEM(GetFaceRec()),
+                                         FXFT_Get_Face_xMin(GetFaceRec())));
+  rtBBox.top =
+      static_cast<int32_t>(FPF_EM_ADJUST(FXFT_Get_Face_UnitsPerEM(GetFaceRec()),
+                                         FXFT_Get_Face_yMin(GetFaceRec())));
+  rtBBox.right =
+      static_cast<int32_t>(FPF_EM_ADJUST(FXFT_Get_Face_UnitsPerEM(GetFaceRec()),
+                                         FXFT_Get_Face_xMax(GetFaceRec())));
+  rtBBox.bottom =
+      static_cast<int32_t>(FPF_EM_ADJUST(FXFT_Get_Face_UnitsPerEM(GetFaceRec()),
+                                         FXFT_Get_Face_yMax(GetFaceRec())));
   return true;
 }
 
@@ -149,7 +158,7 @@ int32_t CFPF_SkiaFont::GetItalicAngle() const {
 
   auto* info = static_cast<TT_Postscript*>(
       FT_Get_Sfnt_Table(GetFaceRec(), ft_sfnt_post));
-  return info ? info->italicAngle : 0;
+  return info ? static_cast<int32_t>(info->italicAngle) : 0;
 }
 
 uint32_t CFPF_SkiaFont::GetFontData(uint32_t dwTable,
