@@ -123,16 +123,9 @@ uint32_t FPF_SkiaGetCharset(FX_Charset uCharset) {
   return FPF_SKIACHARSET_Default;
 }
 
-uint32_t FPF_GetHashCode_StringA(ByteStringView bsStr) {
-  uint32_t uHashCode = 0;
-  for (char ch : bsStr)
-    uHashCode = 31 * uHashCode + tolower(ch);
-  return uHashCode;
-}
-
 uint32_t FPF_SKIANormalizeFontName(ByteStringView bsFamily) {
   uint32_t uHashCode = 0;
-  for (char ch : bsFamily) {
+  for (unsigned char ch : bsFamily) {
     if (ch == ' ' || ch == '-' || ch == ',')
       continue;
     uHashCode = 31 * uHashCode + tolower(ch);
@@ -151,7 +144,7 @@ uint32_t FPF_SKIAGetFamilyHash(ByteStringView bsFamily,
   if (FontStyleIsSerif(dwStyle))
     bsFont += "Serif";
   bsFont += static_cast<uint8_t>(uCharset);
-  return FPF_GetHashCode_StringA(bsFont.AsStringView());
+  return FX_HashCode_GetA(bsFont.AsStringView());
 }
 
 bool FPF_SkiaIsCJK(FX_Charset uCharset) {
