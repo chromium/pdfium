@@ -55,9 +55,9 @@ void* CFX_AndroidFontInfo::GetFont(const ByteString& face) {
   return nullptr;
 }
 
-uint32_t CFX_AndroidFontInfo::GetFontData(void* hFont,
-                                          uint32_t table,
-                                          pdfium::span<uint8_t> buffer) {
+size_t CFX_AndroidFontInfo::GetFontData(void* hFont,
+                                        uint32_t table,
+                                        pdfium::span<uint8_t> buffer) {
   if (!hFont)
     return 0;
   return static_cast<CFPF_SkiaFont*>(hFont)->GetFontData(table, buffer);
