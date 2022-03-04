@@ -161,6 +161,9 @@ source_set("fxge") {
       "android/cfx_androidfontinfo.h",
       "android/fx_android_impl.cpp",
     ]
+
+    # TODO(tsepez): Enable on Android.
+    configs -= [ "../../:pdfium_noshorten_config" ]
   }
 
   if (is_linux || is_chromeos || is_fuchsia) {
