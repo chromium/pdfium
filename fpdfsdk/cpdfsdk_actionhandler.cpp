@@ -152,7 +152,7 @@ bool CPDFSDK_ActionHandler::ExecuteDocumentOpenAction(
                   pFormFillEnv);
   }
 
-  for (int32_t i = 0, sz = action.GetSubActionsCount(); i < sz; i++) {
+  for (size_t i = 0, sz = action.GetSubActionsCount(); i < sz; i++) {
     CPDF_Action subaction = action.GetSubAction(i);
     if (!ExecuteDocumentOpenAction(subaction, pFormFillEnv, visited))
       return false;
@@ -185,7 +185,7 @@ bool CPDFSDK_ActionHandler::ExecuteDocumentPageAction(
 
   DCHECK(pFormFillEnv);
 
-  for (int32_t i = 0, sz = action.GetSubActionsCount(); i < sz; i++) {
+  for (size_t i = 0, sz = action.GetSubActionsCount(); i < sz; i++) {
     CPDF_Action subaction = action.GetSubAction(i);
     if (!ExecuteDocumentPageAction(subaction, type, pFormFillEnv, visited))
       return false;
@@ -231,7 +231,7 @@ bool CPDFSDK_ActionHandler::ExecuteFieldAction(
     DoAction_NoJs(action, type, pFormFillEnv);
   }
 
-  for (int32_t i = 0, sz = action.GetSubActionsCount(); i < sz; i++) {
+  for (size_t i = 0, sz = action.GetSubActionsCount(); i < sz; i++) {
     CPDF_Action subaction = action.GetSubAction(i);
     if (!ExecuteFieldAction(subaction, type, pFormFillEnv, pFormField, data,
                             visited))
