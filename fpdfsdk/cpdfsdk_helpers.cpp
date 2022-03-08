@@ -445,10 +445,14 @@ void ProcessParseError(CPDF_Parser::Error err) {
 void SetColorFromScheme(const FPDF_COLORSCHEME* pColorScheme,
                         CPDF_RenderOptions* pRenderOptions) {
   CPDF_RenderOptions::ColorScheme color_scheme;
-  color_scheme.path_fill_color = pColorScheme->path_fill_color;
-  color_scheme.path_stroke_color = pColorScheme->path_stroke_color;
-  color_scheme.text_fill_color = pColorScheme->text_fill_color;
-  color_scheme.text_stroke_color = pColorScheme->text_stroke_color;
+  color_scheme.path_fill_color =
+      static_cast<FX_ARGB>(pColorScheme->path_fill_color);
+  color_scheme.path_stroke_color =
+      static_cast<FX_ARGB>(pColorScheme->path_stroke_color);
+  color_scheme.text_fill_color =
+      static_cast<FX_ARGB>(pColorScheme->text_fill_color);
+  color_scheme.text_stroke_color =
+      static_cast<FX_ARGB>(pColorScheme->text_stroke_color);
   pRenderOptions->SetColorScheme(color_scheme);
 }
 

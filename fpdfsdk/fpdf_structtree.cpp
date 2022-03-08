@@ -140,7 +140,7 @@ FPDF_StructElement_GetAttributeCount(FPDF_STRUCTELEMENT struct_element) {
     return -1;
 
   if (attr_obj->IsArray())
-    return attr_obj->AsArray()->size();
+    return fxcrt::CollectionSize<int>(*attr_obj->AsArray());
   return attr_obj->IsDictionary() ? 1 : -1;
 }
 

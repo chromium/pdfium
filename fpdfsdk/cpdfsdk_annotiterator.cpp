@@ -10,6 +10,7 @@
 
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fxcrt/stl_util.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
@@ -94,8 +95,8 @@ void CPDFSDK_AnnotIterator::AddSelectedToAnnots(
   for (size_t i = 0; i < aSelect->size(); ++i)
     m_Annots.emplace_back(sa->at(aSelect->at(i)));
 
-  for (int i = aSelect->size() - 1; i >= 0; --i)
-    sa->erase(sa->begin() + aSelect->at(i));
+  for (size_t i = aSelect->size(); i > 0; --i)
+    sa->erase(sa->begin() + aSelect->at(i - 1));
 }
 
 // static
@@ -124,7 +125,7 @@ void CPDFSDK_AnnotIterator::GenerateResults() {
       while (!sa.empty()) {
         int nLeftTopIndex = -1;
         float fTop = 0.0f;
-        for (int i = sa.size() - 1; i >= 0; i--) {
+        for (int i = fxcrt::CollectionSize<int>(sa) - 1; i >= 0; i--) {
           CFX_FloatRect rcAnnot = GetAnnotRect(sa[i]);
           if (rcAnnot.top > fTop) {
             nLeftTopIndex = i;
@@ -156,7 +157,7 @@ void CPDFSDK_AnnotIterator::GenerateResults() {
       while (!sa.empty()) {
         int nLeftTopIndex = -1;
         float fLeft = -1.0f;
-        for (int i = sa.size() - 1; i >= 0; --i) {
+        for (int i = fxcrt::CollectionSize<int>(sa) - 1; i >= 0; --i) {
           CFX_FloatRect rcAnnot = GetAnnotRect(sa[i]);
           if (fLeft < 0) {
             nLeftTopIndex = 0;

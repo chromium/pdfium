@@ -112,7 +112,7 @@ class CFX_ExternalFontInfo final : public SystemFontInfoIface {
   bool GetFaceName(void* hFont, ByteString* name) override {
     if (!m_pInfo->GetFaceName)
       return false;
-    uint32_t size = m_pInfo->GetFaceName(m_pInfo, hFont, nullptr, 0);
+    size_t size = m_pInfo->GetFaceName(m_pInfo, hFont, nullptr, 0);
     if (size == 0)
       return false;
     char* buffer = FX_Alloc(char, size);

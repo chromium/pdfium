@@ -18,6 +18,7 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/stl_util.h"
 #include "fpdfsdk/cpdfsdk_filewriteadapter.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/fpdf_edit.h"
@@ -61,7 +62,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
   if (!pArray)
     return false;
 
-  int size = pArray->size();
+  int size = fxcrt::CollectionSize<int>(*pArray);
   int iFormIndex = -1;
   int iDataSetsIndex = -1;
   for (int i = 0; i < size - 1; i++) {
@@ -116,7 +117,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
       } else {
         CPDF_Stream* pData = pPDFDocument->NewIndirect<CPDF_Stream>();
         pData->InitStreamFromFile(pFileWrite, std::move(pDataDict));
-        int iLast = pArray->size() - 2;
+        int iLast = fxcrt::CollectionSize<int>(*pArray) - 2;
         pArray->InsertNewAt<CPDF_String>(iLast, "datasets", false);
         pArray->InsertNewAt<CPDF_Reference>(iLast + 1, pPDFDocument,
                                             pData->GetObjNum());
@@ -136,7 +137,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
       } else {
         CPDF_Stream* pData = pPDFDocument->NewIndirect<CPDF_Stream>();
         pData->InitStreamFromFile(pFileWrite, std::move(pDataDict));
-        int iLast = pArray->size() - 2;
+        int iLast = fxcrt::CollectionSize<int>(*pArray) - 2;
         pArray->InsertNewAt<CPDF_String>(iLast, "form", false);
         pArray->InsertNewAt<CPDF_Reference>(iLast + 1, pPDFDocument,
                                             pData->GetObjNum());
@@ -177,7 +178,7 @@ bool DoDocSave(FPDF_DOCUMENT document,
     fileMaker.RemoveSecurity();
   }
 
-  bool bRet = fileMaker.Create(flags);
+  bool bRet = fileMaker.Create(static_cast<uint32_t>(flags));
 
 #ifdef PDF_ENABLE_XFA
   if (pContext)

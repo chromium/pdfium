@@ -340,7 +340,8 @@ void CPDFSDK_FormFillEnvironment::SubmitForm(pdfium::span<uint8_t> form_data,
     return;
 
   ByteString bsUrl = URL.ToUTF16LE();
-  js_platform->Doc_submitForm(js_platform, form_data.data(), form_data.size(),
+  js_platform->Doc_submitForm(js_platform, form_data.data(),
+                              fxcrt::CollectionSize<int>(form_data),
                               AsFPDFWideString(&bsUrl));
 }
 
@@ -404,7 +405,7 @@ void CPDFSDK_FormFillEnvironment::OnSetFieldInputFocusInternal(
     const WideString& text,
     bool bFocus) {
   if (m_pInfo && m_pInfo->FFI_SetTextFieldFocus) {
-    int nCharacters = text.GetLength();
+    size_t nCharacters = text.GetLength();
     ByteString bsUTFText = text.ToUTF16LE();
     auto* pBuffer = reinterpret_cast<const unsigned short*>(bsUTFText.c_str());
     m_pInfo->FFI_SetTextFieldFocus(m_pInfo, pBuffer, nCharacters, bFocus);

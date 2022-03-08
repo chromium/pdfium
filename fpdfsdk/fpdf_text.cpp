@@ -20,7 +20,7 @@
 #include "core/fpdftext/cpdf_textpagefind.h"
 #include "core/fxcrt/stl_util.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
-#include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
 namespace {
@@ -310,11 +310,13 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetText(FPDF_TEXTPAGE page,
   // the number of items to stay the same.
   ByteString byte_str = str.ToUTF16LE();
   size_t byte_str_len = byte_str.GetLength();
-  int ret_count = byte_str_len / kBytesPerCharacter;
+  size_t ret_count = byte_str_len / kBytesPerCharacter;
 
-  DCHECK(ret_count <= char_count + 1);  // +1 to account for the NUL terminator.
+  // +1 to account for the NUL terminator.
+  DCHECK_LE(ret_count, static_cast<size_t>(char_count) + 1);
+
   memcpy(result, byte_str.c_str(), byte_str_len);
-  return ret_count;
+  return pdfium::base::checked_cast<int>(ret_count);
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFText_CountRects(FPDF_TEXTPAGE text_page,
@@ -359,14 +361,14 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetBoundedText(FPDF_TEXTPAGE text_page,
   WideString str = textpage->GetTextByRect(rect);
 
   if (buflen <= 0 || !buffer)
-    return str.GetLength();
+    return pdfium::base::checked_cast<int>(str.GetLength());
 
   ByteString cbUTF16Str = str.ToUTF16LE();
-  int len = cbUTF16Str.GetLength() / sizeof(unsigned short);
+  int len = pdfium::base::checked_cast<int>(cbUTF16Str.GetLength()) /
+            sizeof(unsigned short);
   int size = buflen > len ? len : buflen;
   memcpy(buffer, cbUTF16Str.c_str(), size * sizeof(unsigned short));
   cbUTF16Str.ReleaseBuffer(size * sizeof(unsigned short));
-
   return size;
 }
 
@@ -465,7 +467,8 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFLink_GetURL(FPDF_PAGELINK link_page,
     wsUrl = pageLink->GetURL(link_index);
   }
   ByteString cbUTF16URL = wsUrl.ToUTF16LE();
-  int required = cbUTF16URL.GetLength() / sizeof(unsigned short);
+  int required = pdfium::base::checked_cast<int>(cbUTF16URL.GetLength() /
+                                                 sizeof(unsigned short));
   if (!buffer || buflen <= 0)
     return required;
 

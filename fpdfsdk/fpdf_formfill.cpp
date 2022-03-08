@@ -713,7 +713,7 @@ FPDF_SetFormFieldHighlightColor(FPDF_FORMHANDLE hHandle,
     return;
 
   if (cast_input.value() == FormFieldType::kUnknown)
-    pForm->SetAllHighlightColors(color);
+    pForm->SetAllHighlightColors(static_cast<FX_COLORREF>(color));
   else
     pForm->SetHighlightColor(color, cast_input.value());
 }
