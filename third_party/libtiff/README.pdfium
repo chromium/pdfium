@@ -17,3 +17,4 @@ Local Modifications:
 0031-safe_size_ingtStripContig.patch: return error if the size to read overflow from int32.
 0032-builtin-codecs.patch: make _TIFFBuiltinCODECS const data.
 0033-avail-out-overflow.patch: signed comparison in PixarLogDecode().
+0034-memcpy-nullptr.patch: Check size before calling memcpy().
