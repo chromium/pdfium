@@ -116,7 +116,7 @@ function testBadPushButtonPropertiesCase(field) {
 
 function testRadioButtonPropertiesCase(field) {
   try {
-    testROProperty(field, "exportValues", "N");
+    testROProperty(field, "exportValues", "Yes");
     testRIProperty(field, "radiosInUnison", false);
     testRIProperty(field, "style", "check");
     testROProperty(field, "type", "radiobutton");
@@ -129,7 +129,7 @@ function testRadioButtonPropertiesCase(field) {
 
 function testCheckBoxPropertiesCase(field) {
   try {
-    testROProperty(field, "exportValues", "N");
+    testROProperty(field, "exportValues", "Yes");
     testRIProperty(field, "style", "check");
     testROProperty(field, "type", "checkbox");
     testRIProperty(field, "value", "Off");

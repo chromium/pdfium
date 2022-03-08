@@ -96,7 +96,7 @@ Alert: PASS: type = button
 Alert: PASS: type threw Field.type: Operation not supported.
 Alert: PASS: buttonPosition = 7
 Alert: PASS: buttonPosition = 7
-Alert: PASS: exportValues = N
+Alert: PASS: exportValues = Yes
 Alert: PASS: exportValues threw Field.exportValues: Object no longer exists.
 Alert: PASS: radiosInUnison = false
 Alert: PASS: radiosInUnison = false
@@ -108,7 +108,7 @@ Alert: PASS: value = Off
 Alert: PASS: value = Off
 Alert: PASS: valueAsString = Off
 Alert: PASS: valueAsString threw Field.valueAsString: Operation not supported.
-Alert: PASS: exportValues = N
+Alert: PASS: exportValues = Yes
 Alert: PASS: exportValues threw Field.exportValues: Object no longer exists.
 Alert: PASS: style = check
 Alert: PASS: style = check

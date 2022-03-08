@@ -1844,24 +1844,27 @@ void CPDFSDK_AppStream::AddImage(const ByteString& sAPType,
 void CPDFSDK_AppStream::Write(const ByteString& sAPType,
                               const ByteString& sContents,
                               const ByteString& sAPState) {
-  CPDF_Stream* pStream = nullptr;
-  CPDF_Dictionary* pParentDict = nullptr;
+  CPDF_Dictionary* pParentDict;
+  ByteString key;
   if (sAPState.IsEmpty()) {
     pParentDict = dict_.Get();
-    pStream = dict_->GetStreamFor(sAPType);
+    key = sAPType;
   } else {
     CPDF_Dictionary* pAPTypeDict = dict_->GetDictFor(sAPType);
     if (!pAPTypeDict)
       pAPTypeDict = dict_->SetNewFor<CPDF_Dictionary>(sAPType);
 
     pParentDict = pAPTypeDict;
-    pStream = pAPTypeDict->GetStreamFor(sAPState);
+    key = sAPState;
   }
 
-  if (!pStream) {
-    CPDF_Document* doc = widget_->GetPageView()->GetPDFDocument();
-    pStream = doc->NewIndirect<CPDF_Stream>();
-    pParentDict->SetNewFor<CPDF_Reference>(sAPType, doc, pStream->GetObjNum());
+  // If `pStream` is created by CreateModifiedAPStream(), then it is safe to
+  // edit, as it is not shared.
+  CPDF_Stream* pStream = pParentDict->GetStreamFor(key);
+  CPDF_Document* doc = widget_->GetPageView()->GetPDFDocument();
+  if (!doc->IsModifiedAPStream(pStream)) {
+    pStream = doc->CreateModifiedAPStream();
+    pParentDict->SetNewFor<CPDF_Reference>(key, doc, pStream->GetObjNum());
   }
 
   CPDF_Dictionary* pStreamDict = pStream->GetDict();

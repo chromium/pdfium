@@ -14,6 +14,7 @@
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_read_validator.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
+#include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcodec/jbig2/JBig2_DocumentContext.h"
 #include "core/fxcrt/fx_codepage.h"
@@ -310,6 +311,16 @@ JBig2_DocumentContext* CPDF_Document::GetOrCreateCodecContext() {
   if (!m_pCodecContext)
     m_pCodecContext = std::make_unique<JBig2_DocumentContext>();
   return m_pCodecContext.get();
+}
+
+CPDF_Stream* CPDF_Document::CreateModifiedAPStream() {
+  auto* stream = NewIndirect<CPDF_Stream>();
+  m_ModifiedAPStreamIDs.insert(stream->GetObjNum());
+  return stream;
+}
+
+bool CPDF_Document::IsModifiedAPStream(const CPDF_Stream* stream) const {
+  return stream && pdfium::Contains(m_ModifiedAPStreamIDs, stream->GetObjNum());
 }
 
 int CPDF_Document::GetPageIndex(uint32_t objnum) {
