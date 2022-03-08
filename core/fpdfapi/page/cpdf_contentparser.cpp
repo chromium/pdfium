@@ -20,6 +20,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/pauseindicator_iface.h"
 #include "core/fxcrt/span_util.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
@@ -239,7 +240,7 @@ void CPDF_ContentParser::HandlePageContentStream(CPDF_Stream* pStream) {
 }
 
 bool CPDF_ContentParser::HandlePageContentArray(CPDF_Array* pArray) {
-  m_nStreams = pArray->size();
+  m_nStreams = fxcrt::CollectionSize<uint32_t>(*pArray);
   if (m_nStreams == 0)
     return false;
 

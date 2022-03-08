@@ -18,6 +18,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/scoped_set_insertion.h"
+#include "core/fxcrt/stl_util.h"
 #include "third_party/base/containers/contains.h"
 #include "third_party/base/cxx17_backports.h"
 
@@ -92,7 +93,7 @@ bool CPDF_Function::Init(const CPDF_Object* pObj,
   if (!pDomains)
     return false;
 
-  m_nInputs = pDomains->size() / 2;
+  m_nInputs = fxcrt::CollectionSize<uint32_t>(*pDomains) / 2;
   if (m_nInputs == 0)
     return false;
 
@@ -100,7 +101,7 @@ bool CPDF_Function::Init(const CPDF_Object* pObj,
   m_Domains = ReadArrayElementsToVector(pDomains, nInputs);
 
   const CPDF_Array* pRanges = pDict->GetArrayFor("Range");
-  m_nOutputs = pRanges ? pRanges->size() / 2 : 0;
+  m_nOutputs = pRanges ? fxcrt::CollectionSize<uint32_t>(*pRanges) / 2 : 0;
 
   // Ranges are required for type 0 and type 4 functions. A non-zero
   // |m_nOutputs| here implied Ranges meets the requirements.

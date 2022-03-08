@@ -37,6 +37,7 @@
 #include "core/fxcrt/autonuller.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/scoped_set_insertion.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/contains.h"
@@ -1503,7 +1504,7 @@ uint32_t CPDF_StreamContentParser::Parse(
   m_StartParseOffset = start_offset;
   if (m_ParsedSet->size() > kMaxFormLevel ||
       pdfium::Contains(*m_ParsedSet, pDataStart.data())) {
-    return pDataStart.size();
+    return fxcrt::CollectionSize<uint32_t>(pDataStart);
   }
 
   m_StreamStartOffsets = stream_start_offsets;

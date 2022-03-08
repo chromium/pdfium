@@ -1201,7 +1201,7 @@ uint32_t CPDF_DeviceNCS::v_Load(CPDF_Document* pDoc,
   if (m_pFunc->CountOutputs() < m_pBaseCS->CountComponents())
     return 0;
 
-  return pObj->size();
+  return fxcrt::CollectionSize<uint32_t>(*pObj);
 }
 
 bool CPDF_DeviceNCS::GetRGB(pdfium::span<const float> pBuf,
