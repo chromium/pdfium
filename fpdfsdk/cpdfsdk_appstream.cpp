@@ -36,6 +36,7 @@
 #include "fpdfsdk/pwl/cpwl_edit_impl.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "third_party/base/cxx17_backports.h"
+#include "third_party/base/numerics/safe_conversions.h"
 
 namespace {
 
@@ -1721,7 +1722,7 @@ void CPDFSDK_AppStream::SetAsTextField(absl::optional<WideString> sValue) {
       }
     } else {
       if (sValue.has_value())
-        nMaxLen = sValue.value().GetLength();
+        nMaxLen = pdfium::base::checked_cast<int>(sValue.value().GetLength());
       pEdit->SetLimitChar(nMaxLen);
     }
   }

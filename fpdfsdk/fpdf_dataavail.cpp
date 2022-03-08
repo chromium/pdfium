@@ -19,6 +19,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/fpdf_formfill.h"
+#include "third_party/base/numerics/safe_conversions.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
@@ -58,7 +59,8 @@ class FPDF_FileAvailContext final : public CPDF_DataAvail::FileAvail {
 
   // CPDF_DataAvail::FileAvail:
   bool IsDataAvail(FX_FILESIZE offset, size_t size) override {
-    return !!avail_->IsDataAvail(avail_, offset, size);
+    return !!avail_->IsDataAvail(
+        avail_, pdfium::base::checked_cast<size_t>(offset), size);
   }
 
  private:
@@ -84,8 +86,10 @@ class FPDF_FileAccessContext final : public IFX_SeekableReadStream {
     FX_SAFE_FILESIZE new_pos = size;
     new_pos += offset;
     return new_pos.IsValid() && new_pos.ValueOrDie() <= GetSize() &&
-           file_->m_GetBlock(file_->m_Param, offset,
-                             static_cast<uint8_t*>(buffer), size);
+           file_->m_GetBlock(file_->m_Param,
+                             pdfium::base::checked_cast<unsigned long>(offset),
+                             static_cast<uint8_t*>(buffer),
+                             pdfium::base::checked_cast<unsigned long>(size));
   }
 
  private:
@@ -103,8 +107,10 @@ class FPDF_DownloadHintsContext final : public CPDF_DataAvail::DownloadHints {
 
   // IFX_DownloadHints
   void AddSegment(FX_FILESIZE offset, size_t size) override {
-    if (m_pDownloadHints)
-      m_pDownloadHints->AddSegment(m_pDownloadHints, offset, size);
+    if (m_pDownloadHints) {
+      m_pDownloadHints->AddSegment(m_pDownloadHints,
+                                   static_cast<size_t>(offset), size);
+    }
   }
 
  private:

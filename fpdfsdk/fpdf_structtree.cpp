@@ -14,6 +14,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/stl_util.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
+#include "third_party/base/numerics/safe_conversions.h"
 
 namespace {
 
@@ -24,7 +25,8 @@ unsigned long WideStringToBuffer(const WideString& str,
     return 0;
 
   ByteString encodedStr = str.ToUTF16LE();
-  const unsigned long len = encodedStr.GetLength();
+  const unsigned long len =
+      pdfium::base::checked_cast<unsigned long>(encodedStr.GetLength());
   if (buffer && len <= buflen)
     memcpy(buffer, encodedStr.c_str(), len);
   return len;
@@ -398,8 +400,8 @@ FPDF_StructElement_Attr_GetBlobValue(FPDF_STRUCTELEMENT_ATTR struct_attribute,
     return false;
 
   ByteString result = obj->GetString();
-  unsigned long len = result.GetLength();
-
+  const unsigned long len =
+      pdfium::base::checked_cast<unsigned long>(result.GetLength());
   if (buffer && len <= buflen)
     memcpy(buffer, result.c_str(), len);
 

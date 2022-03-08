@@ -29,6 +29,7 @@
 #include "public/fpdf_formfill.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/contains.h"
+#include "third_party/base/numerics/safe_conversions.h"
 
 namespace {
 
@@ -220,7 +221,8 @@ FPDFAction_GetURIPath(FPDF_DOCUMENT document,
 
   CPDF_Action cAction(CPDFDictionaryFromFPDFAction(action));
   ByteString path = cAction.GetURI(pDoc);
-  unsigned long len = path.GetLength() + 1;
+  const unsigned long len =
+      pdfium::base::checked_cast<unsigned long>(path.GetLength() + 1);
   if (buffer && len <= buflen)
     memcpy(buffer, path.c_str(), len);
   return len;
@@ -247,7 +249,8 @@ FPDFDest_GetView(FPDF_DEST dest, unsigned long* pNumParams, FS_FLOAT* pParams) {
   }
 
   CPDF_Dest destination(CPDFArrayFromFPDFDest(dest));
-  unsigned long nParams = destination.GetNumParams();
+  const unsigned long nParams =
+      pdfium::base::checked_cast<unsigned long>(destination.GetNumParams());
   DCHECK(nParams <= 4);
   *pNumParams = nParams;
   for (unsigned long i = 0; i < nParams; ++i)

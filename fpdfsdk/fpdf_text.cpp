@@ -99,7 +99,8 @@ FPDFText_GetFontInfo(FPDF_TEXTPAGE text_page,
     *flags = font->GetFontFlags();
 
   ByteString basefont = font->GetBaseFontName();
-  unsigned long length = basefont.GetLength() + 1;
+  const unsigned long length =
+      pdfium::base::checked_cast<unsigned long>(basefont.GetLength() + 1);
   if (buffer && buflen >= length)
     memcpy(buffer, basefont.c_str(), length);
 

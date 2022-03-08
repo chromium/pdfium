@@ -281,7 +281,8 @@ FS_MATRIX FSMatrixFromCFXMatrix(const CFX_Matrix& matrix) {
 unsigned long NulTerminateMaybeCopyAndReturnLength(const ByteString& text,
                                                    void* buffer,
                                                    unsigned long buflen) {
-  unsigned long len = text.GetLength() + 1;
+  const unsigned long len =
+      pdfium::base::checked_cast<unsigned long>(text.GetLength() + 1);
   if (buffer && len <= buflen)
     memcpy(buffer, text.c_str(), len);
   return len;
@@ -291,7 +292,8 @@ unsigned long Utf16EncodeMaybeCopyAndReturnLength(const WideString& text,
                                                   void* buffer,
                                                   unsigned long buflen) {
   ByteString encoded_text = text.ToUTF16LE();
-  unsigned long len = encoded_text.GetLength();
+  const unsigned long len =
+      pdfium::base::checked_cast<unsigned long>(encoded_text.GetLength());
   if (buffer && len <= buflen)
     memcpy(buffer, encoded_text.c_str(), len);
   return len;

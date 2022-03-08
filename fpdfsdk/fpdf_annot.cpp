@@ -38,6 +38,7 @@
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
 #include "third_party/base/check.h"
 #include "third_party/base/cxx17_backports.h"
+#include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -363,7 +364,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_GetAnnotCount(FPDF_PAGE page) {
     return 0;
 
   const CPDF_Array* pAnnots = pPage->GetDict()->GetArrayFor("Annots");
-  return pAnnots ? pAnnots->size() : 0;
+  return pAnnots ? fxcrt::CollectionSize<int>(*pAnnots) : 0;
 }
 
 FPDF_EXPORT FPDF_ANNOTATION FPDF_CALLCONV FPDFPage_GetAnnot(FPDF_PAGE page,
@@ -410,7 +411,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_GetAnnotIndex(FPDF_PAGE page,
   if (it == locker.end())
     return -1;
 
-  return it - locker.begin();
+  return pdfium::base::checked_cast<int>(it - locker.begin());
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FPDFPage_CloseAnnot(FPDF_ANNOTATION annot) {
@@ -582,7 +583,8 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAnnot_GetObjectCount(FPDF_ANNOTATION annot) {
 
     pAnnot->SetForm(pStream);
   }
-  return pAnnot->GetForm()->GetPageObjectCount();
+  return pdfium::base::checked_cast<int>(
+      pAnnot->GetForm()->GetPageObjectCount());
 }
 
 FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV
@@ -851,7 +853,8 @@ FPDFAnnot_GetVertices(FPDF_ANNOTATION annot,
     return 0;
 
   // Truncate to an even number.
-  unsigned long points_len = vertices->size() / 2;
+  const unsigned long points_len =
+      fxcrt::CollectionSize<unsigned long>(*vertices) / 2;
   if (buffer && length >= points_len) {
     for (unsigned long i = 0; i < points_len; ++i) {
       buffer[i].x = vertices->GetNumberAt(i * 2);
@@ -864,7 +867,7 @@ FPDFAnnot_GetVertices(FPDF_ANNOTATION annot,
 FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFAnnot_GetInkListCount(FPDF_ANNOTATION annot) {
   const CPDF_Array* ink_list = GetInkList(annot);
-  return ink_list ? ink_list->size() : 0;
+  return ink_list ? fxcrt::CollectionSize<unsigned long>(*ink_list) : 0;
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
@@ -881,7 +884,8 @@ FPDFAnnot_GetInkListPath(FPDF_ANNOTATION annot,
     return 0;
 
   // Truncate to an even number.
-  unsigned long points_len = path->size() / 2;
+  const unsigned long points_len =
+      fxcrt::CollectionSize<unsigned long>(*path) / 2;
   if (buffer && length >= points_len) {
     for (unsigned long i = 0; i < points_len; ++i) {
       buffer[i].x = path->GetNumberAt(i * 2);

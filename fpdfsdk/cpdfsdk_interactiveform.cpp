@@ -24,6 +24,7 @@
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/fx_string_wrappers.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_path.h"
 #include "fpdfsdk/cpdfsdk_actionhandler.h"
@@ -103,8 +104,9 @@ bool FDFToURLEncodedData(
   if (nBufSize <= 0)
     return false;
 
-  pBuffer->resize(nBufSize);
-  memcpy(pBuffer->data(), fdfEncodedData.str().c_str(), nBufSize);
+  size_t copy_size = static_cast<size_t>(nBufSize);
+  pBuffer->resize(copy_size);
+  memcpy(pBuffer->data(), fdfEncodedData.str().c_str(), copy_size);
   return true;
 }
 
@@ -181,17 +183,20 @@ int CPDFSDK_InteractiveForm::GetPageIndexByAnnotDict(
   DCHECK(pAnnotDict);
 
   for (int i = 0, sz = pDocument->GetPageCount(); i < sz; i++) {
-    if (CPDF_Dictionary* pPageDict = pDocument->GetPageDictionary(i)) {
-      if (CPDF_Array* pAnnots = pPageDict->GetArrayFor("Annots")) {
-        for (int j = 0, jsz = pAnnots->size(); j < jsz; j++) {
-          CPDF_Object* pDict = pAnnots->GetDirectObjectAt(j);
-          if (pAnnotDict == pDict)
-            return i;
-        }
-      }
+    CPDF_Dictionary* pPageDict = pDocument->GetPageDictionary(i);
+    if (!pPageDict)
+      continue;
+
+    CPDF_Array* pAnnots = pPageDict->GetArrayFor("Annots");
+    if (!pAnnots)
+      continue;
+
+    for (size_t j = 0, jsz = pAnnots->size(); j < jsz; j++) {
+      CPDF_Object* pDict = pAnnots->GetDirectObjectAt(j);
+      if (pAnnotDict == pDict)
+        return i;
     }
   }
-
   return -1;
 }
 

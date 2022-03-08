@@ -7,6 +7,7 @@
 #include "fpdfsdk/cpdfsdk_filewriteadapter.h"
 
 #include "third_party/base/check.h"
+#include "third_party/base/numerics/safe_conversions.h"
 
 CPDFSDK_FileWriteAdapter::CPDFSDK_FileWriteAdapter(FPDF_FILEWRITE* file_write)
     : file_write_(file_write) {
@@ -16,5 +17,7 @@ CPDFSDK_FileWriteAdapter::CPDFSDK_FileWriteAdapter(FPDF_FILEWRITE* file_write)
 CPDFSDK_FileWriteAdapter::~CPDFSDK_FileWriteAdapter() = default;
 
 bool CPDFSDK_FileWriteAdapter::WriteBlock(const void* data, size_t size) {
-  return file_write_->WriteBlock(file_write_.Get(), data, size) != 0;
+  return file_write_->WriteBlock(
+             file_write_.Get(), data,
+             pdfium::base::checked_cast<unsigned long>(size)) != 0;
 }

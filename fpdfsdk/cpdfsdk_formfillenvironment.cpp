@@ -408,7 +408,9 @@ void CPDFSDK_FormFillEnvironment::OnSetFieldInputFocusInternal(
     size_t nCharacters = text.GetLength();
     ByteString bsUTFText = text.ToUTF16LE();
     auto* pBuffer = reinterpret_cast<const unsigned short*>(bsUTFText.c_str());
-    m_pInfo->FFI_SetTextFieldFocus(m_pInfo, pBuffer, nCharacters, bFocus);
+    m_pInfo->FFI_SetTextFieldFocus(
+        m_pInfo, pBuffer, pdfium::base::checked_cast<FPDF_DWORD>(nCharacters),
+        bFocus);
   }
 }
 

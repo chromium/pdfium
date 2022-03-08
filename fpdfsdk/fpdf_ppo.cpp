@@ -536,15 +536,15 @@ bool CPDF_NPageToOneExporter::ExportNPagesToOne(
   size_t nPagesPerSheet = nSafePagesPerSheet.ValueOrDie();
   NupState nupState(destPageSize, nPagesOnXAxis, nPagesOnYAxis);
 
-  size_t curpage = 0;
+  FX_SAFE_INT32 curpage = 0;
   const CFX_FloatRect destPageRect(0, 0, destPageSize.width,
                                    destPageSize.height);
   for (size_t iOuterPage = 0; iOuterPage < pageIndices.size();
        iOuterPage += nPagesPerSheet) {
     m_XObjectNameToNumberMap.clear();
 
-    // Create a new page
-    CPDF_Dictionary* pDestPageDict = dest()->CreateNewPage(curpage);
+    CPDF_Dictionary* pDestPageDict =
+        dest()->CreateNewPage(curpage.ValueOrDie());
     if (!pDestPageDict)
       return false;
 
