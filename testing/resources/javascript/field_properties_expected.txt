@@ -100,8 +100,8 @@ Alert: PASS: exportValues = Yes
 Alert: PASS: exportValues threw Field.exportValues: Object no longer exists.
 Alert: PASS: radiosInUnison = false
 Alert: PASS: radiosInUnison = false
-Alert: PASS: style = check
-Alert: PASS: style = check
+Alert: PASS: style = circle
+Alert: PASS: style = circle
 Alert: PASS: type = radiobutton
 Alert: PASS: type threw Field.type: Operation not supported.
 Alert: PASS: value = Off

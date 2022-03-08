@@ -118,7 +118,7 @@ function testRadioButtonPropertiesCase(field) {
   try {
     testROProperty(field, "exportValues", "Yes");
     testRIProperty(field, "radiosInUnison", false);
-    testRIProperty(field, "style", "check");
+    testRIProperty(field, "style", "circle");
     testROProperty(field, "type", "radiobutton");
     testRIProperty(field, "value", "Off");
     testROProperty(field, "valueAsString", "Off");

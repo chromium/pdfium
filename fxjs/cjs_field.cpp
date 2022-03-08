@@ -34,6 +34,13 @@
 
 namespace {
 
+constexpr wchar_t kCheckSelector = L'4';
+constexpr wchar_t kCircleSelector = L'l';
+constexpr wchar_t kCrossSelector = L'8';
+constexpr wchar_t kDiamondSelector = L'u';
+constexpr wchar_t kSquareSelector = L'n';
+constexpr wchar_t kStarSelector = L'H';
+
 bool IsCheckBoxOrRadioButton(const CPDF_FormField* pFormField) {
   return pFormField->GetFieldType() == FormFieldType::kCheckBox ||
          pFormField->GetFieldType() == FormFieldType::kRadioButton;
@@ -525,6 +532,19 @@ void SetFieldValue(CPDFSDK_FormFillEnvironment* pFormFillEnv,
       default:
         break;
     }
+  }
+}
+
+wchar_t GetSelectorFromCaptionForFieldType(const WideString& caption,
+                                           CPDF_FormField::Type type) {
+  if (!caption.IsEmpty())
+    return caption[0];
+
+  switch (type) {
+    case CPDF_FormField::kRadioButton:
+      return kCircleSelector;
+    default:
+      return kCheckSelector;
   }
 }
 
@@ -1865,27 +1885,28 @@ CJS_Result CJS_Field::get_style(CJS_Runtime* pRuntime) {
   if (!pFormControl)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-  WideString csWCaption = pFormControl->GetNormalCaption();
-  wchar_t selector = !csWCaption.IsEmpty() ? csWCaption[0] : L'4';
+  wchar_t selector = GetSelectorFromCaptionForFieldType(
+      pFormControl->GetNormalCaption(), pFormControl->GetType());
 
   ByteString csBCaption;
   switch (selector) {
-    case L'l':
+    case kCircleSelector:
       csBCaption = "circle";
       break;
-    case L'8':
+    case kCrossSelector:
       csBCaption = "cross";
       break;
-    case L'u':
+    case kDiamondSelector:
       csBCaption = "diamond";
       break;
-    case L'n':
+    case kSquareSelector:
       csBCaption = "square";
       break;
-    case L'H':
+    case kStarSelector:
       csBCaption = "star";
       break;
-    default:  // L'4'
+    case kCheckSelector:
+    default:
       csBCaption = "check";
       break;
   }
