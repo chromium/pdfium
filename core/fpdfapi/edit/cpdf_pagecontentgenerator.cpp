@@ -40,6 +40,7 @@
 #include "third_party/base/check.h"
 #include "third_party/base/containers/contains.h"
 #include "third_party/base/notreached.h"
+#include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/span.h"
 
 namespace {
@@ -154,7 +155,8 @@ void CPDF_PageContentGenerator::UpdateContentStreams(
     fxcrt::ostringstream* buf = &pair.second;
 
     if (stream_index == CPDF_PageObject::kNoContentStream) {
-      int new_stream_index = page_content_manager.AddStream(buf);
+      int new_stream_index =
+          pdfium::base::checked_cast<int>(page_content_manager.AddStream(buf));
       UpdateStreamlessPageObjects(new_stream_index);
       continue;
     }
