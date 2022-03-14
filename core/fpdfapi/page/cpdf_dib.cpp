@@ -403,8 +403,7 @@ bool CPDF_DIB::LoadColorInfo(const CPDF_Dictionary* pFormResources,
   if (!IsMaybeValidBitsPerComponent(m_bpc_orig))
     return false;
 
-  if (m_pDict->GetIntegerFor("ImageMask"))
-    m_bImageMask = true;
+  m_bImageMask = m_pDict->GetBooleanFor("ImageMask", /*bDefault=*/false);
 
   if (m_bImageMask || !m_pDict->KeyExist("ColorSpace")) {
     if (!m_bImageMask && !decoder_array.value().empty()) {

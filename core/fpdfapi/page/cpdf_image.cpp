@@ -64,7 +64,7 @@ CPDF_Image::~CPDF_Image() = default;
 void CPDF_Image::FinishInitialization(CPDF_Dictionary* pStreamDict) {
   m_pOC.Reset(pStreamDict->GetDictFor("OC"));
   m_bIsMask = !pStreamDict->KeyExist("ColorSpace") ||
-              pStreamDict->GetIntegerFor("ImageMask");
+              pStreamDict->GetBooleanFor("ImageMask", /*bDefault=*/false);
   m_bInterpolate = !!pStreamDict->GetIntegerFor("Interpolate");
   m_Height = pStreamDict->GetIntegerFor("Height");
   m_Width = pStreamDict->GetIntegerFor("Width");
