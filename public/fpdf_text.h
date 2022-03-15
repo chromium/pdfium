@@ -348,20 +348,22 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetText(FPDF_TEXTPAGE text_page,
                                                unsigned short* result);
 
 // Function: FPDFText_CountRects
-//          Count number of rectangular areas occupied by a segment of texts.
+//          Counts number of rectangular areas occupied by a segment of text,
+//          and caches the result for subsequent FPDFText_GetRect() calls.
 // Parameters:
 //          text_page   -   Handle to a text page information structure.
 //                          Returned by FPDFText_LoadPage function.
-//          start_index -   Index for the start characters.
-//          count       -   Number of characters.
+//          start_index -   Index for the start character.
+//          count       -   Number of characters, or -1 for all remaining.
 // Return value:
-//          Number of rectangles. Zero for error.
+//          Number of rectangles, 0 if text_page is null, or -1 on bad
+//          start_index.
 // Comments:
 //          This function, along with FPDFText_GetRect can be used by
 //          applications to detect the position on the page for a text segment,
-//          so proper areas can be highlighted. FPDFTEXT will automatically
-//          merge small character boxes into bigger one if those characters
-//          are on the same line and use same font settings.
+//          so proper areas can be highlighted. The FPDFText_* functions will
+//          automatically merge small character boxes into bigger one if those
+//          characters are on the same line and use same font settings.
 //
 FPDF_EXPORT int FPDF_CALLCONV FPDFText_CountRects(FPDF_TEXTPAGE text_page,
                                                   int start_index,
