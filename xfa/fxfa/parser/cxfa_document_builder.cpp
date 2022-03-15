@@ -20,7 +20,7 @@
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
 #include "fxjs/xfa/cjx_object.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
+#include "absl/types/optional.h"
 #include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 #include "xfa/fxfa/parser/cxfa_document.h"

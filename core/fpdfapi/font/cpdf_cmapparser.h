@@ -13,7 +13,7 @@
 #include "core/fpdfapi/font/cpdf_cidfont.h"
 #include "core/fpdfapi/font/cpdf_cmap.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
+#include "absl/types/optional.h"
 
 class CPDF_CMapParser {
  public:

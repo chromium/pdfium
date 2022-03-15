@@ -27,7 +27,7 @@
 #include "fxjs/cjs_icon.h"
 #include "fxjs/fxv8.h"
 #include "fxjs/js_resources.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
+#include "absl/types/optional.h"
 #include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 #include "v8/include/v8-container.h"

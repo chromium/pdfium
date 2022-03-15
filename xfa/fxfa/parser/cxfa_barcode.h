@@ -7,7 +7,7 @@
 #ifndef XFA_FXFA_PARSER_CXFA_BARCODE_H_
 #define XFA_FXFA_PARSER_CXFA_BARCODE_H_
 
-#include "third_party/abseil-cpp/absl/types/optional.h"
+#include "absl/types/optional.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 class CXFA_Barcode final : public CXFA_Node {

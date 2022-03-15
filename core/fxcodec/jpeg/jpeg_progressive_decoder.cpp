@@ -16,7 +16,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/fx_dib.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
+#include "absl/types/optional.h"
 #include "third_party/base/check.h"
 #include "third_party/base/ptr_util.h"
 

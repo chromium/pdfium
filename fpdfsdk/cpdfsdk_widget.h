@@ -16,7 +16,7 @@
 #include "core/fxcrt/widestring.h"
 #include "core/fxge/cfx_color.h"
 #include "fpdfsdk/cpdfsdk_baannot.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
+#include "absl/types/optional.h"
 
 class CFX_RenderDevice;
 class CPDF_Annot;

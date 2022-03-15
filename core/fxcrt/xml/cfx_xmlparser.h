@@ -13,7 +13,7 @@
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/widestring.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
+#include "absl/types/optional.h"
 
 class CFX_SeekableStreamProxy;
 class CFX_XMLDocument;

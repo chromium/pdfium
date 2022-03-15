@@ -15,7 +15,7 @@
 
 #include "core/fxcodec/jpx/jpx_decode_utils.h"
 #include "core/fxcrt/fx_safe_types.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
+#include "absl/types/optional.h"
 #include "third_party/base/cxx17_backports.h"
 #include "third_party/base/ptr_util.h"
 

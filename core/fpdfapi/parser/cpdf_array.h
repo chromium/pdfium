@@ -18,7 +18,7 @@
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
+#include "absl/types/optional.h"
 #include "third_party/base/check.h"
 
 // Arrays never contain nullptrs for objects within bounds, but some of the

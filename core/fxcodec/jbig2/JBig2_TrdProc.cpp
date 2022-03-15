@@ -14,7 +14,7 @@
 #include "core/fxcodec/jbig2/JBig2_HuffmanDecoder.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/maybe_owned.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
+#include "absl/types/optional.h"
 
 namespace {
 

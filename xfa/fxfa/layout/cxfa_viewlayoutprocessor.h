@@ -14,7 +14,7 @@
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/gc/heap.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
+#include "absl/types/optional.h"
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/member.h"
 #include "v8/include/cppgc/prefinalizer.h"

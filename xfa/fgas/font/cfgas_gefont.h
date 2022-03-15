@@ -20,7 +20,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/maybe_owned.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
+#include "absl/types/optional.h"
 
 class CFX_Font;
 class CFX_UnicodeEncodingEx;

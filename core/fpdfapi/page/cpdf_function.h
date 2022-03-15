@@ -11,7 +11,7 @@
 #include <set>
 #include <vector>
 
-#include "third_party/abseil-cpp/absl/types/optional.h"
+#include "absl/types/optional.h"
 #include "third_party/base/span.h"
 
 class CPDF_ExpIntFunc;

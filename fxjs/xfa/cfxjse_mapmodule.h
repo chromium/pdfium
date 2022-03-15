@@ -12,7 +12,7 @@
 #include <map>
 
 #include "core/fxcrt/widestring.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
+#include "absl/types/optional.h"
 
 class CXFA_Measurement;
 
