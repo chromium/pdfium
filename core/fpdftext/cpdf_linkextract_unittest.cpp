@@ -65,7 +65,10 @@ TEST(CPDF_LinkExtractTest, CheckWebLink) {
   // Check cases that fail to extract valid web link.
   // The last few are legit web addresses that we don't handle now.
   const wchar_t* const kInvalidCases[] = {
-      L"", L"http", L"www.", L"https-and-www",
+      L"",                          // Blank.
+      L"http",                      // No colon.
+      L"www.",                      // Missing domain.
+      L"https-and-www",             // Dash not colon.
       L"http:/abc.com",             // Missing slash.
       L"http://((()),",             // Only invalid chars in host name.
       L"ftp://example.com",         // Ftp scheme is not supported.
@@ -73,18 +76,11 @@ TEST(CPDF_LinkExtractTest, CheckWebLink) {
       L"http//[example.com",        // Invalid IPv6 address.
       L"http//[00:00:00:00:00:00",  // Invalid IPv6 address.
       L"http//[]",                  // Empty IPv6 address.
-      // Web addresses that in correct format that we don't handle.
-      L"abc.example.com",  // URL without scheme.
+      L"abc.example.com",           // URL without scheme.
   };
-  constexpr int32_t kDefaultValue = -42;
   for (const wchar_t* input : kInvalidCases) {
-    WideString text_str(input);
-    int32_t start_offset = kDefaultValue;
-    int32_t count = kDefaultValue;
-    EXPECT_FALSE(extractor.CheckWebLink(&text_str, &start_offset, &count))
-        << input;
-    EXPECT_EQ(kDefaultValue, start_offset) << input;
-    EXPECT_EQ(kDefaultValue, count) << input;
+    auto maybe_link = extractor.CheckWebLink(input);
+    EXPECT_FALSE(maybe_link.has_value()) << input;
   }
 
   // Check cases that can extract valid web link.
@@ -92,8 +88,8 @@ TEST(CPDF_LinkExtractTest, CheckWebLink) {
   struct ValidCase {
     const wchar_t* const input_string;
     const wchar_t* const url_extracted;
-    const int32_t start_offset;
-    const int32_t count;
+    const size_t start_offset;
+    const size_t count;
   };
   const ValidCase kValidCases[] = {
       {L"http://www.example.com", L"http://www.example.com", 0,
@@ -172,14 +168,10 @@ TEST(CPDF_LinkExtractTest, CheckWebLink) {
       {L"www.测试.net；", L"http://www.测试.net；", 0, 11},
   };
   for (const auto& it : kValidCases) {
-    const wchar_t* const input = it.input_string;
-    WideString text_str(input);
-    int32_t start_offset = kDefaultValue;
-    int32_t count = kDefaultValue;
-    EXPECT_TRUE(extractor.CheckWebLink(&text_str, &start_offset, &count))
-        << input;
-    EXPECT_STREQ(it.url_extracted, text_str.c_str());
-    EXPECT_EQ(it.start_offset, start_offset) << input;
-    EXPECT_EQ(it.count, count) << input;
+    auto maybe_link = extractor.CheckWebLink(it.input_string);
+    ASSERT_TRUE(maybe_link.has_value()) << it.input_string;
+    EXPECT_STREQ(it.url_extracted, maybe_link.value().m_strUrl.c_str());
+    EXPECT_EQ(it.start_offset, maybe_link.value().m_Start) << it.input_string;
+    EXPECT_EQ(it.count, maybe_link.value().m_Count) << it.input_string;
   }
 }
