@@ -21,6 +21,11 @@ class CPDF_TextPage;
 
 class CPDF_LinkExtract {
  public:
+  struct Range {
+    size_t m_Start;
+    size_t m_Count;
+  };
+
   explicit CPDF_LinkExtract(const CPDF_TextPage* pTextPage);
   ~CPDF_LinkExtract();
 
@@ -28,12 +33,10 @@ class CPDF_LinkExtract {
   size_t CountLinks() const { return m_LinkArray.size(); }
   WideString GetURL(size_t index) const;
   std::vector<CFX_FloatRect> GetRects(size_t index) const;
-  bool GetTextRange(size_t index, int* start_char_index, int* char_count) const;
+  absl::optional<Range> GetTextRange(size_t index) const;
 
  protected:
-  struct Link {
-    size_t m_Start;
-    size_t m_Count;
+  struct Link : public Range {
     WideString m_strUrl;
   };
 

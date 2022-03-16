@@ -168,7 +168,7 @@ void CPDF_LinkExtract::ExtractLinks() {
           maybe_link.value().m_Start += start;
           m_LinkArray.push_back(maybe_link.value());
         } else if (CheckMailLink(&strBeCheck)) {
-          m_LinkArray.push_back(Link{start, nCount, strBeCheck});
+          m_LinkArray.push_back(Link{{start, nCount}, strBeCheck});
         }
       }
     }
@@ -203,7 +203,7 @@ absl::optional<CPDF_LinkExtract::Link> CPDF_LinkExtract::CheckWebLink(
         if (end > off) {  // Non-empty host name.
           const size_t nStart = start.value();
           const size_t nCount = end - nStart + 1;
-          return Link{nStart, nCount, strBeCheck.Substr(nStart, nCount)};
+          return Link{{nStart, nCount}, strBeCheck.Substr(nStart, nCount)};
         }
       }
     }
@@ -221,7 +221,7 @@ absl::optional<CPDF_LinkExtract::Link> CPDF_LinkExtract::CheckWebLink(
       if (end > off) {
         const size_t nStart = start.value();
         const size_t nCount = end - nStart + 1;
-        return Link{nStart, nCount,
+        return Link{{nStart, nCount},
                     L"http://" + strBeCheck.Substr(nStart, nCount)};
       }
     }
@@ -311,12 +311,9 @@ std::vector<CFX_FloatRect> CPDF_LinkExtract::GetRects(size_t index) const {
                                    m_LinkArray[index].m_Count);
 }
 
-bool CPDF_LinkExtract::GetTextRange(size_t index,
-                                    int* start_char_index,
-                                    int* char_count) const {
+absl::optional<CPDF_LinkExtract::Range> CPDF_LinkExtract::GetTextRange(
+    size_t index) const {
   if (index >= m_LinkArray.size())
-    return false;
-  *start_char_index = m_LinkArray[index].m_Start;
-  *char_count = m_LinkArray[index].m_Count;
-  return true;
+    return absl::nullopt;
+  return m_LinkArray[index];
 }

@@ -521,7 +521,14 @@ FPDFLink_GetTextRange(FPDF_PAGELINK link_page,
     return false;
 
   CPDF_LinkExtract* page_link = CPDFLinkExtractFromFPDFPageLink(link_page);
-  return page_link->GetTextRange(link_index, start_char_index, char_count);
+  auto maybe_range = page_link->GetTextRange(link_index);
+  if (!maybe_range.has_value())
+    return false;
+
+  *start_char_index =
+      pdfium::base::checked_cast<int>(maybe_range.value().m_Start);
+  *char_count = pdfium::base::checked_cast<int>(maybe_range.value().m_Count);
+  return true;
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FPDFLink_CloseWebLinks(FPDF_PAGELINK link_page) {
