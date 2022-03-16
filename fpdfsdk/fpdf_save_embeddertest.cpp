@@ -20,14 +20,14 @@ TEST_F(FPDFSaveEmbedderTest, SaveSimpleDoc) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   EXPECT_THAT(GetString(), testing::StartsWith("%PDF-1.7\r\n"));
-  EXPECT_EQ(805u, GetString().length());
+  EXPECT_EQ(805u, GetString().size());
 }
 
 TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocWithVersion) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   EXPECT_TRUE(FPDF_SaveWithVersion(document(), this, 0, 14));
   EXPECT_THAT(GetString(), testing::StartsWith("%PDF-1.4\r\n"));
-  EXPECT_EQ(805u, GetString().length());
+  EXPECT_EQ(805u, GetString().size());
 }
 
 TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocWithBadVersion) {
@@ -50,28 +50,28 @@ TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocIncremental) {
   // Version gets taken as-is from input document.
   EXPECT_THAT(GetString(), testing::StartsWith("%PDF-1.7\n%\xa0\xf2\xa4\xf4"));
   // Additional output produced vs. non incremental.
-  EXPECT_EQ(985u, GetString().length());
+  EXPECT_EQ(985u, GetString().size());
 }
 
 TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocNoIncremental) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   EXPECT_TRUE(FPDF_SaveWithVersion(document(), this, FPDF_NO_INCREMENTAL, 14));
   EXPECT_THAT(GetString(), testing::StartsWith("%PDF-1.4\r\n"));
-  EXPECT_EQ(805u, GetString().length());
+  EXPECT_EQ(805u, GetString().size());
 }
 
 TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocRemoveSecurity) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   EXPECT_TRUE(FPDF_SaveWithVersion(document(), this, FPDF_REMOVE_SECURITY, 14));
   EXPECT_THAT(GetString(), testing::StartsWith("%PDF-1.4\r\n"));
-  EXPECT_EQ(805u, GetString().length());
+  EXPECT_EQ(805u, GetString().size());
 }
 
 TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocBadFlags) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   EXPECT_TRUE(FPDF_SaveWithVersion(document(), this, 999999, 14));
   EXPECT_THAT(GetString(), testing::StartsWith("%PDF-1.4\r\n"));
-  EXPECT_EQ(805u, GetString().length());
+  EXPECT_EQ(805u, GetString().size());
 }
 
 TEST_F(FPDFSaveEmbedderTest, SaveCopiedDoc) {
@@ -108,7 +108,7 @@ TEST_F(FPDFSaveEmbedderTest, SaveLinearizedDoc) {
   EXPECT_THAT(GetString(), testing::StartsWith("%PDF-1.6\r\n"));
   EXPECT_THAT(GetString(), testing::HasSubstr("/Root "));
   EXPECT_THAT(GetString(), testing::HasSubstr("/Info "));
-  EXPECT_EQ(8219u, GetString().length());
+  EXPECT_EQ(8219u, GetString().size());
 
   // Make sure new document renders the same as the old one.
   ASSERT_TRUE(OpenSavedDocument());

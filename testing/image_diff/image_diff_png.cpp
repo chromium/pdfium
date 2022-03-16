@@ -461,11 +461,11 @@ class CommentWriter {
   void AddComment(size_t pos, const Comment& comment) {
     png_text_[pos].compression = PNG_TEXT_COMPRESSION_NONE;
     // A PNG comment's key can only be 79 characters long.
-    if (comment.key.length() > 79)
+    if (comment.key.size() > 79)
       return;
     png_text_[pos].key = strdup(comment.key.substr(0, 78).c_str());
     png_text_[pos].text = strdup(comment.text.c_str());
-    png_text_[pos].text_length = comment.text.length();
+    png_text_[pos].text_length = comment.text.size();
 #ifdef PNG_iTXt_SUPPORTED
     png_text_[pos].itxt_length = 0;
     png_text_[pos].lang = 0;
