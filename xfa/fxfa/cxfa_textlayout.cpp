@@ -802,7 +802,7 @@ bool CXFA_TextLayout::LoadRichText(
       if (bContentNode && iTabCount == 0) {
         wsText = ToXMLText(pXMLNode)->GetText();
       } else if (wsName.EqualsASCII("br")) {
-        wsText = L'\n';
+        wsText = WideString(L'\n');
       } else if (wsName.EqualsASCII("li")) {
         bCurLi = true;
         if (bIsOl)

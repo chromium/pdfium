@@ -48,7 +48,8 @@ WideString CPDF_ToUnicodeMap::Lookup(uint32_t charcode) const {
   if (it == m_Multimap.end()) {
     if (!m_pBaseMap)
       return WideString();
-    return m_pBaseMap->UnicodeFromCID(static_cast<uint16_t>(charcode));
+    return WideString(
+        m_pBaseMap->UnicodeFromCID(static_cast<uint16_t>(charcode)));
   }
 
   uint32_t value = it->second;

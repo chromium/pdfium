@@ -48,9 +48,10 @@ class ByteString {
   // Move-construct a ByteString. After construction, |other| is empty.
   ByteString(ByteString&& other) noexcept;
 
+  // Make a one-character string from a char.
+  explicit ByteString(char ch);
+
   // Deliberately implicit to avoid calling on every string literal.
-  // NOLINTNEXTLINE(runtime/explicit)
-  ByteString(char ch);
   // NOLINTNEXTLINE(runtime/explicit)
   ByteString(const char* ptr);
 

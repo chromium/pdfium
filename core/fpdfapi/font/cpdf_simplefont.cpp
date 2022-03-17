@@ -283,7 +283,7 @@ WideString CPDF_SimpleFont::UnicodeFromCharCode(uint32_t charcode) const {
   wchar_t ret = m_Encoding.UnicodeFromCharCode((uint8_t)charcode);
   if (ret == 0)
     return WideString();
-  return ret;
+  return WideString(ret);
 }
 
 uint32_t CPDF_SimpleFont::CharCodeFromUnicode(wchar_t unicode) const {

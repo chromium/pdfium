@@ -47,9 +47,10 @@ class WideString {
   // Move-construct a WideString. After construction, |other| is empty.
   WideString(WideString&& other) noexcept;
 
+  // Make a one-character string from one wide char.
+  explicit WideString(wchar_t ch);
+
   // Deliberately implicit to avoid calling on every string literal.
-  // NOLINTNEXTLINE(runtime/explicit)
-  WideString(wchar_t ch);
   // NOLINTNEXTLINE(runtime/explicit)
   WideString(const wchar_t* ptr);
 

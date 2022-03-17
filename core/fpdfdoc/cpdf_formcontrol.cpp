@@ -129,7 +129,8 @@ CPDF_FormControl::HighlightingMode CPDF_FormControl::GetHighlightingMode()
     const {
   ByteString csH = m_pWidgetDict->GetStringFor("H", "I");
   for (size_t i = 0; i < pdfium::size(kHighlightModes); ++i) {
-    if (csH == kHighlightModes[i])
+    // TODO(tsepez): disambiguate string ctors.
+    if (csH == ByteStringView(kHighlightModes[i]))
       return static_cast<HighlightingMode>(i);
   }
   return kInvert;

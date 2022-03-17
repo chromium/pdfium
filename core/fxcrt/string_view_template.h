@@ -72,10 +72,10 @@ class StringViewTemplate {
           0) noexcept
       : m_Span(other) {}
 
-  // Deliberately implicit to avoid calling on every string literal.
+  // Deliberately implicit to avoid calling on every char literal.
   // |ch| must be an lvalue that outlives the StringViewTemplate.
   // NOLINTNEXTLINE(runtime/explicit)
-  constexpr StringViewTemplate(CharType& ch) noexcept
+  constexpr StringViewTemplate(const CharType& ch) noexcept
       : m_Span(reinterpret_cast<const UnsignedType*>(&ch), 1) {}
 
   // Any changes to |vec| invalidate the string.

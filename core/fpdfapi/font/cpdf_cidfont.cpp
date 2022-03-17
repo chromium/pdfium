@@ -309,7 +309,7 @@ WideString CPDF_CIDFont::UnicodeFromCharCode(uint32_t charcode) const {
   if (!str.IsEmpty())
     return str;
   wchar_t ret = GetUnicodeFromCharCode(charcode);
-  return ret ? ret : WideString();
+  return ret ? WideString(ret) : WideString();
 }
 
 wchar_t CPDF_CIDFont::GetUnicodeFromCharCode(uint32_t charcode) const {
