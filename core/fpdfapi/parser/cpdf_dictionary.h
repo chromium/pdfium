@@ -26,8 +26,8 @@ class CPDF_IndirectObjectHolder;
 // will return nullptr to indicate non-existent keys.
 class CPDF_Dictionary final : public CPDF_Object {
  public:
-  using const_iterator =
-      std::map<ByteString, RetainPtr<CPDF_Object>>::const_iterator;
+  using DictMap = std::map<ByteString, RetainPtr<CPDF_Object>>;
+  using const_iterator = DictMap::const_iterator;
 
   CONSTRUCT_VIA_MAKE_RETAIN;
 
@@ -132,7 +132,7 @@ class CPDF_Dictionary final : public CPDF_Object {
 
   mutable uint32_t m_LockCount = 0;
   WeakPtr<ByteStringPool> m_pPool;
-  std::map<ByteString, RetainPtr<CPDF_Object>> m_Map;
+  DictMap m_Map;
 };
 
 class CPDF_DictionaryLocker {
