@@ -33,10 +33,9 @@ void CPVT_FontMap::SetupAnnotSysPDFFont() {
   if (!m_pDocument || !m_pResDict)
     return;
 
-  CPDF_Dictionary* pFormDict = m_pDocument->GetRoot()->GetDictFor("AcroForm");
   RetainPtr<CPDF_Font> pPDFFont =
-      CPDF_InteractiveForm::AddNativeInteractiveFormFont(
-          pFormDict, m_pDocument.Get(), &m_sSysFontAlias);
+      CPDF_InteractiveForm::AddNativeInteractiveFormFont(m_pDocument.Get(),
+                                                         &m_sSysFontAlias);
   if (!pPDFFont)
     return;
 
