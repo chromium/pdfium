@@ -93,6 +93,13 @@ int32_t GetDirectInteger(const CPDF_Dictionary* pDict, const ByteString& key) {
   return pObj ? pObj->GetInteger() : 0;
 }
 
+CPDF_Dictionary* GetOrCreateDict(CPDF_Dictionary* dict, const ByteString& key) {
+  CPDF_Dictionary* result = dict->GetDictFor(key);
+  if (result)
+    return result;
+  return dict->SetNewFor<CPDF_Dictionary>(key);
+}
+
 ByteString PDF_NameDecode(ByteStringView orig) {
   size_t src_size = orig.GetLength();
   size_t out_index = 0;

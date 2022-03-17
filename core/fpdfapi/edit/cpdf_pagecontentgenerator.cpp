@@ -185,10 +185,9 @@ ByteString CPDF_PageContentGenerator::RealizeResource(
         "Resources", m_pDocument.Get(),
         m_pObjHolder->GetResources()->GetObjNum());
   }
-  CPDF_Dictionary* pResList = m_pObjHolder->GetResources()->GetDictFor(bsType);
-  if (!pResList)
-    pResList = m_pObjHolder->GetResources()->SetNewFor<CPDF_Dictionary>(bsType);
 
+  CPDF_Dictionary* pResList =
+      GetOrCreateDict(m_pObjHolder->GetResources(), bsType);
   ByteString name;
   int idnum = 1;
   while (true) {

@@ -23,6 +23,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
+#include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fpdfdoc/cpdf_bafontmap.h"
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "core/fpdfdoc/cpdf_icon.h"
@@ -1830,10 +1831,7 @@ void CPDFSDK_AppStream::AddImage(const ByteString& sAPType,
   if (pImageDict)
     sImageAlias = pImageDict->GetStringFor("Name");
 
-  CPDF_Dictionary* pStreamResList = pStreamDict->GetDictFor("Resources");
-  if (!pStreamResList)
-    pStreamResList = pStreamDict->SetNewFor<CPDF_Dictionary>("Resources");
-
+  CPDF_Dictionary* pStreamResList = GetOrCreateDict(pStreamDict, "Resources");
   CPDF_Dictionary* pXObject =
       pStreamResList->SetNewFor<CPDF_Dictionary>("XObject");
   pXObject->SetNewFor<CPDF_Reference>(sImageAlias,
@@ -1850,11 +1848,7 @@ void CPDFSDK_AppStream::Write(const ByteString& sAPType,
     pParentDict = dict_.Get();
     key = sAPType;
   } else {
-    CPDF_Dictionary* pAPTypeDict = dict_->GetDictFor(sAPType);
-    if (!pAPTypeDict)
-      pAPTypeDict = dict_->SetNewFor<CPDF_Dictionary>(sAPType);
-
-    pParentDict = pAPTypeDict;
+    pParentDict = GetOrCreateDict(dict_.Get(), sAPType);
     key = sAPState;
   }
 

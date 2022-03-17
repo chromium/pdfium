@@ -29,6 +29,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
+#include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_string_wrappers.h"
@@ -669,16 +670,8 @@ void CPDF_NPageToOneExporter::FinishPage(CPDF_Dictionary* pDestPageDict,
   DCHECK(pDestPageDict);
 
   CPDF_Dictionary* pRes =
-      pDestPageDict->GetDictFor(pdfium::page_object::kResources);
-  if (!pRes) {
-    pRes = pDestPageDict->SetNewFor<CPDF_Dictionary>(
-        pdfium::page_object::kResources);
-  }
-
-  CPDF_Dictionary* pPageXObject = pRes->GetDictFor("XObject");
-  if (!pPageXObject)
-    pPageXObject = pRes->SetNewFor<CPDF_Dictionary>("XObject");
-
+      GetOrCreateDict(pDestPageDict, pdfium::page_object::kResources);
+  CPDF_Dictionary* pPageXObject = GetOrCreateDict(pRes, "XObject");
   for (auto& it : m_XObjectNameToNumberMap)
     pPageXObject->SetNewFor<CPDF_Reference>(it.first, dest(), it.second);
 

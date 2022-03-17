@@ -247,13 +247,8 @@ void AddFont(CPDF_Dictionary*& pFormDict,
     return;
   }
 
-  CPDF_Dictionary* pDR = pFormDict->GetDictFor("DR");
-  if (!pDR)
-    pDR = pFormDict->SetNewFor<CPDF_Dictionary>("DR");
-
-  CPDF_Dictionary* pFonts = pDR->GetDictFor("Font");
-  if (!pFonts)
-    pFonts = pDR->SetNewFor<CPDF_Dictionary>("Font");
+  CPDF_Dictionary* pDR = GetOrCreateDict(pFormDict, "DR");
+  CPDF_Dictionary* pFonts = GetOrCreateDict(pDR, "Font");
 
   if (csNameTag->IsEmpty())
     *csNameTag = pFont->GetBaseFontName();

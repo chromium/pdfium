@@ -17,6 +17,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
+#include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "third_party/base/check.h"
 
@@ -43,11 +44,7 @@ CPDF_Dictionary* CPDFSDK_BAAnnot::GetAnnotDict() const {
 }
 
 CPDF_Dictionary* CPDFSDK_BAAnnot::GetAPDict() const {
-  CPDF_Dictionary* pAPDict =
-      GetAnnotDict()->GetDictFor(pdfium::annotation::kAP);
-  if (pAPDict)
-    return pAPDict;
-  return GetAnnotDict()->SetNewFor<CPDF_Dictionary>(pdfium::annotation::kAP);
+  return GetOrCreateDict(GetAnnotDict(), pdfium::annotation::kAP);
 }
 
 CFX_FloatRect CPDFSDK_BAAnnot::GetRect() const {
@@ -105,9 +102,7 @@ void CPDFSDK_BAAnnot::SetBorderWidth(int nWidth) {
   if (pBorder) {
     pBorder->SetNewAt<CPDF_Number>(2, nWidth);
   } else {
-    CPDF_Dictionary* pBSDict = GetAnnotDict()->GetDictFor("BS");
-    if (!pBSDict)
-      pBSDict = GetAnnotDict()->SetNewFor<CPDF_Dictionary>("BS");
+    CPDF_Dictionary* pBSDict = GetOrCreateDict(GetAnnotDict(), "BS");
     pBSDict->SetNewFor<CPDF_Number>("W", nWidth);
   }
 }
@@ -125,10 +120,7 @@ int CPDFSDK_BAAnnot::GetBorderWidth() const {
 }
 
 void CPDFSDK_BAAnnot::SetBorderStyle(BorderStyle nStyle) {
-  CPDF_Dictionary* pBSDict = GetAnnotDict()->GetDictFor("BS");
-  if (!pBSDict)
-    pBSDict = GetAnnotDict()->SetNewFor<CPDF_Dictionary>("BS");
-
+  CPDF_Dictionary* pBSDict = GetOrCreateDict(GetAnnotDict(), "BS");
   const char* name = nullptr;
   switch (nStyle) {
     case BorderStyle::kSolid:

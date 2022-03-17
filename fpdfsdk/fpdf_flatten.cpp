@@ -27,6 +27,7 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
+#include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fxcrt/fx_string_wrappers.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
@@ -294,18 +295,10 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
   pPageDict->SetRectFor(pdfium::page_object::kCropBox, rcOriginalCB);
 
   CPDF_Dictionary* pRes =
-      pPageDict->GetDictFor(pdfium::page_object::kResources);
-  if (!pRes) {
-    pRes =
-        pPageDict->SetNewFor<CPDF_Dictionary>(pdfium::page_object::kResources);
-  }
-
+      GetOrCreateDict(pPageDict, pdfium::page_object::kResources);
   CPDF_Stream* pNewXObject = pDocument->NewIndirect<CPDF_Stream>(
       nullptr, 0, pDocument->New<CPDF_Dictionary>());
-
-  CPDF_Dictionary* pPageXObject = pRes->GetDictFor("XObject");
-  if (!pPageXObject)
-    pPageXObject = pRes->SetNewFor<CPDF_Dictionary>("XObject");
+  CPDF_Dictionary* pPageXObject = GetOrCreateDict(pRes, "XObject");
 
   ByteString key;
   if (!ObjectArray.empty()) {
@@ -397,10 +390,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
       pObjDict->SetNewFor<CPDF_Name>("Subtype", "Form");
     }
 
-    CPDF_Dictionary* pXObject = pNewXORes->GetDictFor("XObject");
-    if (!pXObject)
-      pXObject = pNewXORes->SetNewFor<CPDF_Dictionary>("XObject");
-
+    CPDF_Dictionary* pXObject = GetOrCreateDict(pNewXORes, "XObject");
     ByteString sFormName = ByteString::Format("F%d", i);
     pXObject->SetNewFor<CPDF_Reference>(sFormName, pDocument,
                                         pObj->GetObjNum());
