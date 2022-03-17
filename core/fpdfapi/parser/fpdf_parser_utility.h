@@ -47,6 +47,7 @@ absl::optional<FX_FILESIZE> GetHeaderOffset(
 
 int32_t GetDirectInteger(const CPDF_Dictionary* pDict, const ByteString& key);
 
+CPDF_Array* GetOrCreateArray(CPDF_Dictionary* dict, const ByteString& key);
 CPDF_Dictionary* GetOrCreateDict(CPDF_Dictionary* dict, const ByteString& key);
 
 ByteString PDF_NameDecode(ByteStringView orig);

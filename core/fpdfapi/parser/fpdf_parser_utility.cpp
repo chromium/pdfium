@@ -93,6 +93,13 @@ int32_t GetDirectInteger(const CPDF_Dictionary* pDict, const ByteString& key) {
   return pObj ? pObj->GetInteger() : 0;
 }
 
+CPDF_Array* GetOrCreateArray(CPDF_Dictionary* dict, const ByteString& key) {
+  CPDF_Array* result = dict->GetArrayFor(key);
+  if (result)
+    return result;
+  return dict->SetNewFor<CPDF_Array>(key);
+}
+
 CPDF_Dictionary* GetOrCreateDict(CPDF_Dictionary* dict, const ByteString& key) {
   CPDF_Dictionary* result = dict->GetDictFor(key);
   if (result)

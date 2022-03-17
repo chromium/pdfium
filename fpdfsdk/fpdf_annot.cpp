@@ -24,6 +24,7 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
+#include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fpdfdoc/cpdf_color_utils.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
@@ -349,9 +350,7 @@ FPDFPage_CreateAnnot(FPDF_PAGE page, FPDF_ANNOTATION_SUBTYPE subtype) {
   auto pNewAnnot = std::make_unique<CPDF_AnnotContext>(
       pDict.Get(), IPDFPageFromFPDFPage(page));
 
-  CPDF_Array* pAnnotList = pPage->GetDict()->GetArrayFor("Annots");
-  if (!pAnnotList)
-    pAnnotList = pPage->GetDict()->SetNewFor<CPDF_Array>("Annots");
+  CPDF_Array* pAnnotList = GetOrCreateArray(pPage->GetDict(), "Annots");
   pAnnotList->Append(pDict);
 
   // Caller takes ownership.
@@ -492,10 +491,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAnnot_AddInkStroke(FPDF_ANNOTATION annot,
 
   CPDF_Dictionary* annot_dict = GetAnnotDictFromFPDFAnnotation(annot);
 
-  CPDF_Array* inklist = annot_dict->GetArrayFor("InkList");
-  if (!inklist)
-    inklist = annot_dict->SetNewFor<CPDF_Array>("InkList");
-
+  CPDF_Array* inklist = GetOrCreateArray(annot_dict, "InkList");
   FX_SAFE_SIZE_T safe_ink_size = inklist->size();
   safe_ink_size += 1;
   if (!safe_ink_size.IsValid<int32_t>())
