@@ -35,7 +35,7 @@ class CPDF_String final : public CPDF_Object {
  private:
   CPDF_String();
   CPDF_String(WeakPtr<ByteStringPool> pPool, const ByteString& str, bool bHex);
-  CPDF_String(WeakPtr<ByteStringPool> pPool, const WideString& str);
+  CPDF_String(WeakPtr<ByteStringPool> pPool, WideStringView str);
   ~CPDF_String() override;
 
   ByteString m_String;

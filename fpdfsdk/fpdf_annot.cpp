@@ -983,7 +983,8 @@ FPDFAnnot_SetStringValue(FPDF_ANNOTATION annot,
   if (!pAnnotDict)
     return false;
 
-  pAnnotDict->SetNewFor<CPDF_String>(key, WideStringFromFPDFWideString(value));
+  pAnnotDict->SetNewFor<CPDF_String>(
+      key, WideStringFromFPDFWideString(value).AsStringView());
   return true;
 }
 
@@ -1059,7 +1060,7 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
     CPDF_Stream* pNewIndirectStream = pDoc->NewIndirect<CPDF_Stream>();
 
     ByteString newAPStream =
-        PDF_EncodeText(WideStringFromFPDFWideString(value));
+        PDF_EncodeText(WideStringFromFPDFWideString(value).AsStringView());
     pNewIndirectStream->SetData(newAPStream.raw_span());
 
     CPDF_Dictionary* pStreamDict = pNewIndirectStream->GetDict();

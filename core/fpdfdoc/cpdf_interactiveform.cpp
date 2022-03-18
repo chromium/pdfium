@@ -956,11 +956,12 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
     WideString fullname =
         CPDF_FormField::GetFullNameForDict(pField->GetFieldDict());
     auto pFieldDict = pDoc->New<CPDF_Dictionary>();
-    pFieldDict->SetNewFor<CPDF_String>(pdfium::form_fields::kT, fullname);
+    pFieldDict->SetNewFor<CPDF_String>(pdfium::form_fields::kT,
+                                       fullname.AsStringView());
     if (pField->GetType() == CPDF_FormField::kCheckBox ||
         pField->GetType() == CPDF_FormField::kRadioButton) {
       WideString csExport = pField->GetCheckValue(false);
-      ByteString csBExport = PDF_EncodeText(csExport);
+      ByteString csBExport = PDF_EncodeText(csExport.AsStringView());
       CPDF_Object* pOpt =
           CPDF_FormField::GetFieldAttr(pField->GetDict(), "Opt");
       if (pOpt) {

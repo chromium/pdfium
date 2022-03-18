@@ -79,8 +79,8 @@ FPDFDoc_AddAttachment(FPDF_DOCUMENT document, FPDF_WIDESTRING name) {
   // Set up the basic entries in the filespec dictionary.
   CPDF_Dictionary* pFile = pDoc->NewIndirect<CPDF_Dictionary>();
   pFile->SetNewFor<CPDF_Name>("Type", "Filespec");
-  pFile->SetNewFor<CPDF_String>("UF", wsName);
-  pFile->SetNewFor<CPDF_String>(pdfium::stream::kF, wsName);
+  pFile->SetNewFor<CPDF_String>("UF", wsName.AsStringView());
+  pFile->SetNewFor<CPDF_String>(pdfium::stream::kF, wsName.AsStringView());
 
   // Add the new attachment name and filespec into the document's EmbeddedFiles.
   if (!name_tree->AddValueAndName(pFile->MakeReference(pDoc), wsName))

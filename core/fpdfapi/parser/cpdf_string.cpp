@@ -23,7 +23,7 @@ CPDF_String::CPDF_String(WeakPtr<ByteStringPool> pPool,
     m_String = pPool->Intern(m_String);
 }
 
-CPDF_String::CPDF_String(WeakPtr<ByteStringPool> pPool, const WideString& str)
+CPDF_String::CPDF_String(WeakPtr<ByteStringPool> pPool, WideStringView str)
     : m_String(PDF_EncodeText(str)) {
   if (pPool)
     m_String = pPool->Intern(m_String);

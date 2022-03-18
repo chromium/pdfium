@@ -748,7 +748,8 @@ CJS_Result CJS_Document::setPropertyInternal(CJS_Runtime* pRuntime,
   if (!m_pFormFillEnv->HasPermissions(kModifyContent))
     return CJS_Result::Failure(JSMessage::kPermissionError);
 
-  pDictionary->SetNewFor<CPDF_String>(propName, pRuntime->ToWideString(vp));
+  pDictionary->SetNewFor<CPDF_String>(
+      propName, pRuntime->ToWideString(vp).AsStringView());
   m_pFormFillEnv->SetChangeMark();
   return CJS_Result::Success();
 }

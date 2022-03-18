@@ -30,8 +30,8 @@ std::pair<WideString, WideString> GetNodeLimitsAndSanitize(
   WideString csRight = pLimits->GetUnicodeTextAt(1);
   // If the lower limit is greater than the upper limit, swap them.
   if (csLeft.Compare(csRight) > 0) {
-    pLimits->SetNewAt<CPDF_String>(0, csRight);
-    pLimits->SetNewAt<CPDF_String>(1, csLeft);
+    pLimits->SetNewAt<CPDF_String>(0, csRight.AsStringView());
+    pLimits->SetNewAt<CPDF_String>(1, csLeft.AsStringView());
     csLeft = pLimits->GetUnicodeTextAt(0);
     csRight = pLimits->GetUnicodeTextAt(1);
   }
@@ -117,8 +117,8 @@ bool UpdateNodesAndLimitsUponDeletion(CPDF_Dictionary* pNode,
       if (wsName.Compare(csNewRight) > 0)
         csNewRight = wsName;
     }
-    pLimits->SetNewAt<CPDF_String>(0, csNewLeft);
-    pLimits->SetNewAt<CPDF_String>(1, csNewRight);
+    pLimits->SetNewAt<CPDF_String>(0, csNewLeft.AsStringView());
+    pLimits->SetNewAt<CPDF_String>(1, csNewRight.AsStringView());
     return true;
   }
 
@@ -156,8 +156,8 @@ bool UpdateNodesAndLimitsUponDeletion(CPDF_Dictionary* pNode,
       if (pKidLimits->GetUnicodeTextAt(1).Compare(csNewRight) > 0)
         csNewRight = pKidLimits->GetUnicodeTextAt(1);
     }
-    pLimits->SetNewAt<CPDF_String>(0, csNewLeft);
-    pLimits->SetNewAt<CPDF_String>(1, csNewRight);
+    pLimits->SetNewAt<CPDF_String>(0, csNewLeft.AsStringView());
+    pLimits->SetNewAt<CPDF_String>(1, csNewRight.AsStringView());
     return true;
   }
   return false;
@@ -473,7 +473,7 @@ bool CPDF_NameTree::AddValueAndName(RetainPtr<CPDF_Object> pObj,
   // insertion position is right after the key-value pair returned by |index|.
   size_t nNameIndex = (nFindIndex + 1) * 2;
   size_t nValueIndex = nNameIndex + 1;
-  pFind->InsertNewAt<CPDF_String>(nNameIndex, name);
+  pFind->InsertNewAt<CPDF_String>(nNameIndex, name.AsStringView());
   pFind->InsertAt(nValueIndex, std::move(pObj));
 
   // Expand the limits that the newly added name is under, if the name falls
@@ -485,10 +485,10 @@ bool CPDF_NameTree::AddValueAndName(RetainPtr<CPDF_Object> pObj,
       continue;
 
     if (name.Compare(pLimits->GetUnicodeTextAt(0)) < 0)
-      pLimits->SetNewAt<CPDF_String>(0, name);
+      pLimits->SetNewAt<CPDF_String>(0, name.AsStringView());
 
     if (name.Compare(pLimits->GetUnicodeTextAt(1)) > 0)
-      pLimits->SetNewAt<CPDF_String>(1, name);
+      pLimits->SetNewAt<CPDF_String>(1, name.AsStringView());
   }
   return true;
 }

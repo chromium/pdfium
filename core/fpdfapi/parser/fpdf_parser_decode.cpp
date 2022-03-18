@@ -515,7 +515,7 @@ WideString PDF_DecodeText(pdfium::span<const uint8_t> span) {
   return result;
 }
 
-ByteString PDF_EncodeText(const WideString& str) {
+ByteString PDF_EncodeText(WideStringView str) {
   size_t i = 0;
   size_t len = str.GetLength();
   ByteString result;

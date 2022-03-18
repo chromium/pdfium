@@ -354,7 +354,7 @@ bool CPDF_FormField::SetValue(const WideString& value,
       }
       ByteString key(bDefault ? pdfium::form_fields::kDV
                               : pdfium::form_fields::kV);
-      m_pDict->SetNewFor<CPDF_String>(key, csValue);
+      m_pDict->SetNewFor<CPDF_String>(key, csValue.AsStringView());
       int iIndex = FindOption(csValue);
       if (iIndex < 0) {
         if (m_Type == kRichText && !bDefault) {
@@ -514,7 +514,8 @@ bool CPDF_FormField::SetItemSelection(int index, NotificationOption notify) {
 void CPDF_FormField::SetItemSelectionSelected(int index,
                                               const WideString& opt_value) {
   if (GetType() != kListBox) {
-    m_pDict->SetNewFor<CPDF_String>(pdfium::form_fields::kV, opt_value);
+    m_pDict->SetNewFor<CPDF_String>(pdfium::form_fields::kV,
+                                    opt_value.AsStringView());
     CPDF_Array* pI = m_pDict->SetNewFor<CPDF_Array>("I");
     pI->AppendNew<CPDF_Number>(index);
     return;
@@ -522,14 +523,15 @@ void CPDF_FormField::SetItemSelectionSelected(int index,
 
   SelectOption(index);
   if (!m_bIsMultiSelectListBox) {
-    m_pDict->SetNewFor<CPDF_String>(pdfium::form_fields::kV, opt_value);
+    m_pDict->SetNewFor<CPDF_String>(pdfium::form_fields::kV,
+                                    opt_value.AsStringView());
     return;
   }
 
   CPDF_Array* pArray = m_pDict->SetNewFor<CPDF_Array>(pdfium::form_fields::kV);
   for (int i = 0; i < CountOptions(); i++) {
     if (i == index || IsItemSelected(i))
-      pArray->AppendNew<CPDF_String>(GetOptionValue(i));
+      pArray->AppendNew<CPDF_String>(GetOptionValue(i).AsStringView());
   }
 }
 
@@ -626,7 +628,7 @@ bool CPDF_FormField::CheckControl(int iControlIndex,
 
   const CPDF_Object* pOpt = GetFieldAttr(m_pDict.Get(), "Opt");
   if (!ToArray(pOpt)) {
-    ByteString csBExport = PDF_EncodeText(csWExport);
+    ByteString csBExport = PDF_EncodeText(csWExport.AsStringView());
     if (bChecked) {
       m_pDict->SetNewFor<CPDF_Name>(pdfium::form_fields::kV, csBExport);
     } else {

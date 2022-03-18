@@ -68,10 +68,11 @@ bool CPDFSDK_BAAnnot::IsAppearanceValid() {
 
 void CPDFSDK_BAAnnot::SetAnnotName(const WideString& sName) {
   CPDF_Dictionary* pDict = GetAnnotDict();
-  if (sName.IsEmpty())
+  if (sName.IsEmpty()) {
     pDict->RemoveFor(pdfium::annotation::kNM);
-  else
-    pDict->SetNewFor<CPDF_String>(pdfium::annotation::kNM, sName);
+    return;
+  }
+  pDict->SetNewFor<CPDF_String>(pdfium::annotation::kNM, sName.AsStringView());
 }
 
 WideString CPDFSDK_BAAnnot::GetAnnotName() const {
