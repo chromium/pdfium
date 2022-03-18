@@ -1,0 +1,20 @@
+commit 1462e9403fb7d1186e999701dfe72980262a089c
+Author: Even Rouault <even.rouault@spatialys.com>
+Date:   Thu Feb 10 14:30:13 2022 +0100
+
+    Avoid integer overflows in DWT. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=44544
+
+diff --git a/src/lib/openjp2/dwt.c b/src/lib/openjp2/dwt.c
+index 2b9b9e92..abc500ec 100644
+--- a/src/lib/openjp2/dwt.c
++++ b/src/lib/openjp2/dwt.c
+@@ -801,7 +801,8 @@ static void opj_idwt3_v_cas0(OPJ_INT32* tmp,
+                                       opj_int_add_no_overflow(opj_int_add_no_overflow(d1c, d1n), 2) >> 2);
+ 
+         tmp[i  ] = s0c;
+-        tmp[i + 1] = d1c + ((s0c + s0n) >> 1);
++        tmp[i + 1] = opj_int_add_no_overflow(d1c, opj_int_add_no_overflow(s0c,
++                                             s0n) >> 1);
+     }
+ 
+     tmp[i] = s0n;
