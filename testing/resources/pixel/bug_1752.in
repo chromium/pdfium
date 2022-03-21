@@ -1,0 +1,74 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /MediaBox [0 0 200 200]
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Resources <<
+    /Font <<
+      /F1 4 0 R
+    >>
+  >>
+  /Contents 6 0 R
+>>
+endobj
+{{object 4 0}} <<
+  /Type /Font
+  /Subtype /TrueType
+  /BaseFont /NotoSansRegular
+  /Encoding /WinAnsiEncoding
+  /FirstChar 65
+  /LastChar 71
+  /FontDescriptor 5 0 R
+  /Name /F1
+  /Widths [250 250 250 250 800 800 800]
+>>
+endobj
+{{object 5 0}} <<
+  /Type /FontDescriptor
+  /CapHeight 750
+  /Descent -250
+  /Flags 32
+  /FontBBox [-503 -250 1240 750]
+  /FontFile2 7 0 R
+  /FontName /NotoSansRegular
+  /FontWeight 400
+  /ItalicAngle 0
+  /StemV 52
+>>
+endobj
+{{object 6 0}} <<
+  {{streamlen}}
+>>
+stream
+BT
+20 100 Td
+/F1 70 Tf
+(ABCD) Tj
+0 -80 Td
+(EFG) Tj
+ET
+endstream
+endobj
+{{object 7 0}} <<
+  /Filter [/ASCIIHexDecode /FlateDecode]
+  {{streamlen}}
+>>
+stream
+{{include ../bug_1752_truetype_font.fragment}}
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
