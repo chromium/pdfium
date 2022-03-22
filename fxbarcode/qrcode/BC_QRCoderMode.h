@@ -24,7 +24,6 @@ class CBC_QRCoderMode final {
   static CBC_QRCoderMode* sBYTE;
   static CBC_QRCoderMode* sNUMERIC;
   static CBC_QRCoderMode* sALPHANUMERIC;
-  static CBC_QRCoderMode* sKANJI;
   static CBC_QRCoderMode* sECI;
   static CBC_QRCoderMode* sGBK;
   static CBC_QRCoderMode* sTERMINATOR;

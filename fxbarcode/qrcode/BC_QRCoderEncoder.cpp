@@ -135,30 +135,9 @@ bool AppendGBKBytes(const ByteString& content, CBC_QRCoderBitVector* bits) {
   return true;
 }
 
-bool Append8BitBytes(const ByteString& content,
-                     CBC_QRCoderBitVector* bits,
-                     ByteString encoding) {
-  for (size_t i = 0; i < content.GetLength(); i++)
-    bits->AppendBits(content[i], 8);
-  return true;
-}
-
-bool AppendKanjiBytes(const ByteString& content, CBC_QRCoderBitVector* bits) {
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> bytes;
-  uint32_t value = 0;
-  // TODO(thestig): This is wrong, as |bytes| is empty.
-  for (size_t i = 0; i < bytes.size(); i += 2) {
-    value = (uint32_t)((content[i] << 8) | content[i + 1]);
-    if (value <= 0x9ffc && value >= 0x8140)
-      value -= 0x8140;
-    else if (value <= 0xebbf && value >= 0xe040)
-      value -= 0xc140;
-    else
-      return false;
-
-    value = (uint32_t)((value >> 8) * 0xc0) + (uint32_t)(value & 0xff);
-    bits->AppendBits(value, 13);
-  }
+bool Append8BitBytes(const ByteString& content, CBC_QRCoderBitVector* bits) {
+  for (char c : content)
+    bits->AppendBits(c, 8);
   return true;
 }
 
@@ -189,16 +168,13 @@ bool AppendLengthInfo(int32_t numLetters,
 
 bool AppendBytes(const ByteString& content,
                  CBC_QRCoderMode* mode,
-                 CBC_QRCoderBitVector* bits,
-                 ByteString encoding) {
+                 CBC_QRCoderBitVector* bits) {
   if (mode == CBC_QRCoderMode::sNUMERIC)
     return AppendNumericBytes(content, bits);
   if (mode == CBC_QRCoderMode::sALPHANUMERIC)
     return AppendAlphaNumericBytes(content, bits);
   if (mode == CBC_QRCoderMode::sBYTE)
-    return Append8BitBytes(content, bits, encoding);
-  if (mode == CBC_QRCoderMode::sKANJI)
-    return AppendKanjiBytes(content, bits);
+    return Append8BitBytes(content, bits);
   if (mode == CBC_QRCoderMode::sGBK)
     return AppendGBKBytes(content, bits);
   return false;
@@ -325,10 +301,7 @@ bool TerminateBits(int32_t numDataBytes, CBC_QRCoderBitVector* bits) {
   return bits->Size() == capacity;
 }
 
-CBC_QRCoderMode* ChooseMode(const ByteString& content, ByteString encoding) {
-  if (encoding == "SHIFT_JIS")
-    return CBC_QRCoderMode::sKANJI;
-
+CBC_QRCoderMode* ChooseMode(const ByteString& content) {
   bool hasNumeric = false;
   bool hasAlphaNumeric = false;
   for (size_t i = 0; i < content.GetLength(); i++) {
@@ -425,11 +398,10 @@ void CBC_QRCoderEncoder::Finalize() {
 bool CBC_QRCoderEncoder::Encode(WideStringView content,
                                 const CBC_QRCoderErrorCorrectionLevel* ecLevel,
                                 CBC_QRCoder* qrCode) {
-  ByteString encoding = "utf8";
   ByteString utf8Data = FX_UTF8Encode(content);
-  CBC_QRCoderMode* mode = ChooseMode(utf8Data, encoding);
+  CBC_QRCoderMode* mode = ChooseMode(utf8Data);
   CBC_QRCoderBitVector dataBits;
-  if (!AppendBytes(utf8Data, mode, &dataBits, encoding))
+  if (!AppendBytes(utf8Data, mode, &dataBits))
     return false;
   int32_t numInputBytes = dataBits.sizeInBytes();
   if (!InitQRCode(numInputBytes, ecLevel, qrCode))

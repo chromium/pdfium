@@ -30,7 +30,6 @@
 CBC_QRCoderMode* CBC_QRCoderMode::sBYTE = nullptr;
 CBC_QRCoderMode* CBC_QRCoderMode::sNUMERIC = nullptr;
 CBC_QRCoderMode* CBC_QRCoderMode::sALPHANUMERIC = nullptr;
-CBC_QRCoderMode* CBC_QRCoderMode::sKANJI = nullptr;
 CBC_QRCoderMode* CBC_QRCoderMode::sECI = nullptr;
 CBC_QRCoderMode* CBC_QRCoderMode::sGBK = nullptr;
 CBC_QRCoderMode* CBC_QRCoderMode::sTERMINATOR = nullptr;
@@ -48,7 +47,6 @@ void CBC_QRCoderMode::Initialize() {
   sBYTE = new CBC_QRCoderMode({8, 16, 16}, 0x4);
   sALPHANUMERIC = new CBC_QRCoderMode({9, 11, 13}, 0x2);
   sECI = new CBC_QRCoderMode(std::vector<int32_t>(), 0x7);
-  sKANJI = new CBC_QRCoderMode({8, 10, 12}, 0x8);
   sNUMERIC = new CBC_QRCoderMode({10, 12, 14}, 0x1);
   sGBK = new CBC_QRCoderMode({8, 10, 12}, 0x0D);
   sTERMINATOR = new CBC_QRCoderMode(std::vector<int32_t>(), 0x00);
@@ -64,8 +62,6 @@ void CBC_QRCoderMode::Finalize() {
   sALPHANUMERIC = nullptr;
   delete sECI;
   sECI = nullptr;
-  delete sKANJI;
-  sKANJI = nullptr;
   delete sNUMERIC;
   sNUMERIC = nullptr;
   delete sGBK;
