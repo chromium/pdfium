@@ -30,12 +30,6 @@
 CBC_QRCoderMode* CBC_QRCoderMode::sBYTE = nullptr;
 CBC_QRCoderMode* CBC_QRCoderMode::sNUMERIC = nullptr;
 CBC_QRCoderMode* CBC_QRCoderMode::sALPHANUMERIC = nullptr;
-CBC_QRCoderMode* CBC_QRCoderMode::sECI = nullptr;
-CBC_QRCoderMode* CBC_QRCoderMode::sGBK = nullptr;
-CBC_QRCoderMode* CBC_QRCoderMode::sTERMINATOR = nullptr;
-CBC_QRCoderMode* CBC_QRCoderMode::sFNC1_FIRST_POSITION = nullptr;
-CBC_QRCoderMode* CBC_QRCoderMode::sFNC1_SECOND_POSITION = nullptr;
-CBC_QRCoderMode* CBC_QRCoderMode::sSTRUCTURED_APPEND = nullptr;
 
 CBC_QRCoderMode::CBC_QRCoderMode(std::vector<int32_t> charCountBits,
                                  int32_t bits)
@@ -46,13 +40,7 @@ CBC_QRCoderMode::~CBC_QRCoderMode() = default;
 void CBC_QRCoderMode::Initialize() {
   sBYTE = new CBC_QRCoderMode({8, 16, 16}, 0x4);
   sALPHANUMERIC = new CBC_QRCoderMode({9, 11, 13}, 0x2);
-  sECI = new CBC_QRCoderMode(std::vector<int32_t>(), 0x7);
   sNUMERIC = new CBC_QRCoderMode({10, 12, 14}, 0x1);
-  sGBK = new CBC_QRCoderMode({8, 10, 12}, 0x0D);
-  sTERMINATOR = new CBC_QRCoderMode(std::vector<int32_t>(), 0x00);
-  sFNC1_FIRST_POSITION = new CBC_QRCoderMode(std::vector<int32_t>(), 0x05);
-  sFNC1_SECOND_POSITION = new CBC_QRCoderMode(std::vector<int32_t>(), 0x09);
-  sSTRUCTURED_APPEND = new CBC_QRCoderMode(std::vector<int32_t>(), 0x03);
 }
 
 void CBC_QRCoderMode::Finalize() {
@@ -60,20 +48,8 @@ void CBC_QRCoderMode::Finalize() {
   sBYTE = nullptr;
   delete sALPHANUMERIC;
   sALPHANUMERIC = nullptr;
-  delete sECI;
-  sECI = nullptr;
   delete sNUMERIC;
   sNUMERIC = nullptr;
-  delete sGBK;
-  sGBK = nullptr;
-  delete sTERMINATOR;
-  sTERMINATOR = nullptr;
-  delete sFNC1_FIRST_POSITION;
-  sFNC1_FIRST_POSITION = nullptr;
-  delete sFNC1_SECOND_POSITION;
-  sFNC1_SECOND_POSITION = nullptr;
-  delete sSTRUCTURED_APPEND;
-  sSTRUCTURED_APPEND = nullptr;
 }
 
 int32_t CBC_QRCoderMode::GetBits() const {

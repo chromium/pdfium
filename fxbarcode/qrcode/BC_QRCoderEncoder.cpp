@@ -117,24 +117,6 @@ bool AppendAlphaNumericBytes(const ByteString& content,
   return true;
 }
 
-bool AppendGBKBytes(const ByteString& content, CBC_QRCoderBitVector* bits) {
-  size_t length = content.GetLength();
-  uint32_t value = 0;
-  for (size_t i = 0; i < length; i += 2) {
-    value = (uint32_t)(content[i] << 8 | content[i + 1]);
-    if (value <= 0xAAFE && value >= 0xA1A1)
-      value -= 0xA1A1;
-    else if (value <= 0xFAFE && value >= 0xB0A1)
-      value -= 0xA6A1;
-    else
-      return false;
-
-    value = (uint32_t)((value >> 8) * 0x60) + (uint32_t)(value & 0xff);
-    bits->AppendBits(value, 13);
-  }
-  return true;
-}
-
 bool Append8BitBytes(const ByteString& content, CBC_QRCoderBitVector* bits) {
   for (char c : content)
     bits->AppendBits(c, 8);
@@ -143,8 +125,6 @@ bool Append8BitBytes(const ByteString& content, CBC_QRCoderBitVector* bits) {
 
 void AppendModeInfo(CBC_QRCoderMode* mode, CBC_QRCoderBitVector* bits) {
   bits->AppendBits(mode->GetBits(), 4);
-  if (mode == CBC_QRCoderMode::sGBK)
-    bits->AppendBits(1, 4);
 }
 
 bool AppendLengthInfo(int32_t numLetters,
@@ -160,8 +140,6 @@ bool AppendLengthInfo(int32_t numLetters,
   if (numBits > ((1 << numBits) - 1))
     return true;
 
-  if (mode == CBC_QRCoderMode::sGBK)
-    bits->AppendBits(numLetters / 2, numBits);
   bits->AppendBits(numLetters, numBits);
   return true;
 }
@@ -175,8 +153,6 @@ bool AppendBytes(const ByteString& content,
     return AppendAlphaNumericBytes(content, bits);
   if (mode == CBC_QRCoderMode::sBYTE)
     return Append8BitBytes(content, bits);
-  if (mode == CBC_QRCoderMode::sGBK)
-    return AppendGBKBytes(content, bits);
   return false;
 }
 

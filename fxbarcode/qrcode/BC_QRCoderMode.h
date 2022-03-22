@@ -24,12 +24,6 @@ class CBC_QRCoderMode final {
   static CBC_QRCoderMode* sBYTE;
   static CBC_QRCoderMode* sNUMERIC;
   static CBC_QRCoderMode* sALPHANUMERIC;
-  static CBC_QRCoderMode* sECI;
-  static CBC_QRCoderMode* sGBK;
-  static CBC_QRCoderMode* sTERMINATOR;
-  static CBC_QRCoderMode* sFNC1_FIRST_POSITION;
-  static CBC_QRCoderMode* sFNC1_SECOND_POSITION;
-  static CBC_QRCoderMode* sSTRUCTURED_APPEND;
 
  private:
   CBC_QRCoderMode(std::vector<int32_t> charCountBits, int32_t bits);
