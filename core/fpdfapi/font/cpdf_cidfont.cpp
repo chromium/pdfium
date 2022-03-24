@@ -737,7 +737,7 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
         uint32_t maccode =
             FT_CharCodeFromUnicode(FT_ENCODING_APPLE_ROMAN, name_unicode);
         index = maccode ? FT_Get_Char_Index(face, maccode)
-                        : FXFT_Get_Name_Index(face, name);
+                        : FT_Get_Name_Index(face, name);
       }
       if (index == 0 || index == 0xffff)
         return charcode ? static_cast<int>(charcode) : -1;
