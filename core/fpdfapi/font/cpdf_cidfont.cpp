@@ -710,8 +710,8 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
         return charcode ? static_cast<int>(charcode) : -1;
 
       charcode += 31;
-      bool bMSUnicode = FT_UseTTCharmap(face, 3, 1);
-      bool bMacRoman = !bMSUnicode && FT_UseTTCharmap(face, 1, 0);
+      bool bMSUnicode = UseTTCharmapMSUnicode(face);
+      bool bMacRoman = !bMSUnicode && UseTTCharmapMacRoman(face);
       int iBaseEncoding = PDFFONT_ENCODING_STANDARD;
       if (bMSUnicode)
         iBaseEncoding = PDFFONT_ENCODING_WINANSI;

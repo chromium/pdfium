@@ -137,7 +137,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
   }
 #endif
   if (!IsEmbedded() && !IsSymbolicFont() && m_Font.IsTTFont()) {
-    if (FT_UseTTCharmap(m_Font.GetFaceRec(), 3, 0)) {
+    if (UseTTCharmapMSSymbol(m_Font.GetFaceRec())) {
       bool bGotOne = false;
       for (uint32_t charcode = 0; charcode < kInternalTableSize; charcode++) {
         const uint8_t prefix[4] = {0x00, 0xf0, 0xf1, 0xf2};

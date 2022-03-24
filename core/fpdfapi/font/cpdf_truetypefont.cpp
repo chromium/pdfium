@@ -58,16 +58,16 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
       SetGlyphIndicesFromFirstChar();
       return;
     }
-    bool bMSUnicode = FT_UseTTCharmap(face, 3, 1);
+    bool bMSUnicode = UseTTCharmapMSUnicode(face);
     bool bMacRoman = false;
     bool bMSSymbol = false;
     if (!bMSUnicode) {
       if (FontStyleIsNonSymbolic(m_Flags)) {
-        bMacRoman = FT_UseTTCharmap(face, 1, 0);
-        bMSSymbol = !bMacRoman && FT_UseTTCharmap(face, 3, 0);
+        bMacRoman = UseTTCharmapMacRoman(face);
+        bMSSymbol = !bMacRoman && UseTTCharmapMSSymbol(face);
       } else {
-        bMSSymbol = FT_UseTTCharmap(face, 3, 0);
-        bMacRoman = !bMSSymbol && FT_UseTTCharmap(face, 1, 0);
+        bMSSymbol = UseTTCharmapMSSymbol(face);
+        bMacRoman = !bMSSymbol && UseTTCharmapMacRoman(face);
       }
     }
     bool bToUnicode = m_pFontDict->KeyExist("ToUnicode");
@@ -121,7 +121,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
     }
     return;
   }
-  if (FT_UseTTCharmap(face, 3, 0)) {
+  if (UseTTCharmapMSSymbol(face)) {
     bool bFound = false;
     for (int charcode = 0; charcode < 256; charcode++) {
       for (size_t j = 0; j < pdfium::size(kPrefix); j++) {
@@ -141,7 +141,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
           if (name)
             m_Encoding.SetUnicode(charcode, PDF_UnicodeFromAdobeName(name));
         }
-      } else if (FT_UseTTCharmap(face, 1, 0)) {
+      } else if (UseTTCharmapMacRoman(face)) {
         for (int charcode = 0; charcode < 256; charcode++) {
           m_Encoding.SetUnicode(
               charcode,
@@ -151,7 +151,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
       return;
     }
   }
-  if (FT_UseTTCharmap(face, 1, 0)) {
+  if (UseTTCharmapMacRoman(face)) {
     bool bFound = false;
     for (int charcode = 0; charcode < 256; charcode++) {
       m_GlyphIndex[charcode] = FT_Get_Char_Index(face, charcode);

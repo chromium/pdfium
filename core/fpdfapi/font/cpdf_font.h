@@ -131,9 +131,21 @@ class CPDF_Font : public Retainable, public Observable {
   CPDF_Font(CPDF_Document* pDocument, CPDF_Dictionary* pFontDict);
 
   static int TT2PDF(FT_Pos m, FXFT_FaceRec* face);
-  static bool FT_UseTTCharmap(FXFT_FaceRec* face,
-                              int platform_id,
-                              int encoding_id);
+
+  // Commonly used wrappers for UseTTCharmap().
+  static bool UseTTCharmapMSUnicode(FXFT_FaceRec* face) {
+    return UseTTCharmap(face, 3, 1);
+  }
+  static bool UseTTCharmapMSSymbol(FXFT_FaceRec* face) {
+    return UseTTCharmap(face, 3, 0);
+  }
+  static bool UseTTCharmapMacRoman(FXFT_FaceRec* face) {
+    return UseTTCharmap(face, 1, 0);
+  }
+  static bool UseTTCharmap(FXFT_FaceRec* face,
+                           int platform_id,
+                           int encoding_id);
+
   static const char* GetAdobeCharName(int iBaseEncoding,
                                       const std::vector<ByteString>& charnames,
                                       uint32_t charcode);

@@ -412,9 +412,9 @@ int CPDF_Font::TT2PDF(FT_Pos m, FXFT_FaceRec* face) {
 }
 
 // static
-bool CPDF_Font::FT_UseTTCharmap(FXFT_FaceRec* face,
-                                int platform_id,
-                                int encoding_id) {
+bool CPDF_Font::UseTTCharmap(FXFT_FaceRec* face,
+                             int platform_id,
+                             int encoding_id) {
   for (int i = 0; i < face->num_charmaps; i++) {
     if (FXFT_Get_Charmap_PlatformID(face->charmaps[i]) == platform_id &&
         FXFT_Get_Charmap_EncodingID(face->charmaps[i]) == encoding_id) {
