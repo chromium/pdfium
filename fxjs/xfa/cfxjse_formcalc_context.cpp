@@ -4415,20 +4415,17 @@ void CFXJSE_FormCalcContext::Upper(
     return;
   }
 
-  CFX_WideTextBuf upperStringBuf;
   ByteString bsArg = ValueToUTF8String(info.GetIsolate(), argOne);
   WideString wsArg = WideString::FromUTF8(bsArg.AsStringView());
-  const wchar_t* pData = wsArg.c_str();
-  size_t i = 0;
-  while (i < wsArg.GetLength()) {
-    int32_t ch = pData[i];
+  WideString upperStringBuf;
+  upperStringBuf.Reserve(wsArg.GetLength());
+  for (wchar_t ch : wsArg) {
     if ((ch >= 0x61 && ch <= 0x7A) || (ch >= 0xE0 && ch <= 0xFE))
       ch -= 32;
     else if (ch == 0x101 || ch == 0x103 || ch == 0x105)
       ch -= 1;
 
-    upperStringBuf.AppendChar(ch);
-    ++i;
+    upperStringBuf += ch;
   }
   info.GetReturnValue().Set(fxv8::NewStringHelper(
       info.GetIsolate(),
