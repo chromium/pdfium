@@ -415,11 +415,10 @@ int CPDF_Font::TT2PDF(FT_Pos m, FXFT_FaceRec* face) {
 bool CPDF_Font::FT_UseTTCharmap(FXFT_FaceRec* face,
                                 int platform_id,
                                 int encoding_id) {
-  auto** pCharMap = FXFT_Get_Face_Charmaps(face);
-  for (int i = 0; i < FXFT_Get_Face_CharmapCount(face); i++) {
-    if (FXFT_Get_Charmap_PlatformID(pCharMap[i]) == platform_id &&
-        FXFT_Get_Charmap_EncodingID(pCharMap[i]) == encoding_id) {
-      FT_Set_Charmap(face, pCharMap[i]);
+  for (int i = 0; i < face->num_charmaps; i++) {
+    if (FXFT_Get_Charmap_PlatformID(face->charmaps[i]) == platform_id &&
+        FXFT_Get_Charmap_EncodingID(face->charmaps[i]) == encoding_id) {
+      FT_Set_Charmap(face, face->charmaps[i]);
       return true;
     }
   }

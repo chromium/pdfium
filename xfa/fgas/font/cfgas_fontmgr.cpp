@@ -37,7 +37,7 @@ bool VerifyUnicode(const RetainPtr<CFGAS_GEFont>& pFont, wchar_t wcUnicode) {
     return false;
 
   FXFT_FaceRec* pFaceRec = pFace->GetRec();
-  FT_CharMap charmap = FXFT_Get_Face_Charmap(pFaceRec);
+  FT_CharMap charmap = pFaceRec->charmap;
   if (FXFT_Select_Charmap(pFaceRec, FT_ENCODING_UNICODE) != 0)
     return false;
 

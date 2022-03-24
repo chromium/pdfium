@@ -47,20 +47,16 @@ const char* GlyphNameRemap(const char* pStrAdobe) {
 #endif  // BUILDFLAG(IS_APPLE)
 
 bool FT_UseType1Charmap(FXFT_FaceRec* face) {
-  if (FXFT_Get_Face_CharmapCount(face) == 0) {
+  if (face->num_charmaps == 0)
     return false;
-  }
-  if (FXFT_Get_Face_CharmapCount(face) == 1 &&
-      FXFT_Get_Charmap_Encoding(FXFT_Get_Face_Charmaps(face)[0]) ==
-          FT_ENCODING_UNICODE) {
+
+  bool is_first_charmap_unicode =
+      FXFT_Get_Charmap_Encoding(face->charmaps[0]) == FT_ENCODING_UNICODE;
+  if (face->num_charmaps == 1 && is_first_charmap_unicode)
     return false;
-  }
-  if (FXFT_Get_Charmap_Encoding(FXFT_Get_Face_Charmaps(face)[0]) ==
-      FT_ENCODING_UNICODE) {
-    FT_Set_Charmap(face, FXFT_Get_Face_Charmaps(face)[1]);
-  } else {
-    FT_Set_Charmap(face, FXFT_Get_Face_Charmaps(face)[0]);
-  }
+
+  int index = is_first_charmap_unicode ? 1 : 0;
+  FT_Set_Charmap(face, face->charmaps[index]);
   return true;
 }
 

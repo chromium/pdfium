@@ -213,8 +213,8 @@ void FT_UseCIDCharmap(FXFT_FaceRec* face, CIDCoding coding) {
   int err = FXFT_Select_Charmap(face, encoding);
   if (err)
     err = FXFT_Select_Charmap(face, FT_ENCODING_UNICODE);
-  if (err && FXFT_Get_Face_Charmaps(face))
-    FT_Set_Charmap(face, *FXFT_Get_Face_Charmaps(face));
+  if (err && face->charmaps)
+    FT_Set_Charmap(face, face->charmaps[0]);
 }
 
 bool IsMetricForCID(const int* pEntry, uint16_t cid) {
@@ -758,22 +758,22 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
     int err = FXFT_Select_Charmap(face, FT_ENCODING_UNICODE);
     if (err) {
       int i;
-      for (i = 0; i < FXFT_Get_Face_CharmapCount(face); i++) {
-        uint32_t ret = FT_CharCodeFromUnicode(
-            FXFT_Get_Charmap_Encoding(FXFT_Get_Face_Charmaps(face)[i]),
-            static_cast<wchar_t>(charcode));
+      for (i = 0; i < face->num_charmaps; i++) {
+        uint32_t ret =
+            FT_CharCodeFromUnicode(FXFT_Get_Charmap_Encoding(face->charmaps[i]),
+                                   static_cast<wchar_t>(charcode));
         if (ret == 0)
           continue;
-        FT_Set_Charmap(face, FXFT_Get_Face_Charmaps(face)[i]);
+        FT_Set_Charmap(face, face->charmaps[i]);
         unicode = static_cast<wchar_t>(ret);
         break;
       }
-      if (i == FXFT_Get_Face_CharmapCount(face) && i) {
-        FT_Set_Charmap(face, FXFT_Get_Face_Charmaps(face)[0]);
+      if (i == face->num_charmaps && i) {
+        FT_Set_Charmap(face, face->charmaps[0]);
         unicode = static_cast<wchar_t>(charcode);
       }
     }
-    if (FXFT_Get_Face_Charmap(face)) {
+    if (face->charmap) {
       int index = GetGlyphIndex(unicode, pVertGlyph);
       return index != 0 ? index : -1;
     }
@@ -789,12 +789,12 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
       return cid;
     if (m_pFontFile && m_pCMap->IsDirectCharcodeToCIDTableIsEmpty())
       return cid;
-    if (m_pCMap->GetCoding() == CIDCoding::kUNKNOWN ||
-        !FXFT_Get_Face_Charmap(m_Font.GetFaceRec())) {
+
+    FT_CharMap charmap = m_Font.GetFaceRec()->charmap;
+    if (!charmap || m_pCMap->GetCoding() == CIDCoding::kUNKNOWN)
       return cid;
-    }
-    if (FXFT_Get_Charmap_Encoding(FXFT_Get_Face_Charmap(m_Font.GetFaceRec())) ==
-        FT_ENCODING_UNICODE) {
+
+    if (FXFT_Get_Charmap_Encoding(charmap) == FT_ENCODING_UNICODE) {
       WideString unicode_str = UnicodeFromCharCode(charcode);
       if (unicode_str.IsEmpty())
         return -1;

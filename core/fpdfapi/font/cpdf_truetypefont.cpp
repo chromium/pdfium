@@ -50,9 +50,8 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
       FontStyleIsSymbolic(m_Flags)) {
     bool bSupportWin = false;
     bool bSupportMac = false;
-    for (int i = 0; i < FXFT_Get_Face_CharmapCount(face); i++) {
-      int platform_id =
-          FXFT_Get_Charmap_PlatformID(FXFT_Get_Face_Charmaps(face)[i]);
+    for (int i = 0; i < face->num_charmaps; i++) {
+      int platform_id = FXFT_Get_Charmap_PlatformID(face->charmaps[i]);
       if (platform_id == 0 || platform_id == 3) {
         bSupportWin = true;
       } else if (platform_id == 0 || platform_id == 1) {
