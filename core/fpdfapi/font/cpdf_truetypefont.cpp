@@ -14,6 +14,11 @@ namespace {
 
 const uint8_t kPrefix[4] = {0x00, 0xf0, 0xf1, 0xf2};
 
+bool IsWinAnsiOrMacRomanEncoding(int encoding) {
+  return encoding == PDFFONT_ENCODING_WINANSI ||
+         encoding == PDFFONT_ENCODING_MACROMAN;
+}
+
 }  // namespace
 
 CPDF_TrueTypeFont::CPDF_TrueTypeFont(CPDF_Document* pDocument,
@@ -43,32 +48,8 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
   if (!face)
     return;
 
-  int baseEncoding = m_BaseEncoding;
-  if (m_pFontFile && face->num_charmaps > 0 &&
-      (baseEncoding == PDFFONT_ENCODING_MACROMAN ||
-       baseEncoding == PDFFONT_ENCODING_WINANSI) &&
-      FontStyleIsSymbolic(m_Flags)) {
-    bool bSupportWin = false;
-    bool bSupportMac = false;
-    for (int i = 0; i < face->num_charmaps; i++) {
-      int platform_id = FXFT_Get_Charmap_PlatformID(face->charmaps[i]);
-      if (platform_id == 0 || platform_id == 3) {
-        bSupportWin = true;
-      } else if (platform_id == 0 || platform_id == 1) {
-        bSupportMac = true;
-      }
-    }
-    if (baseEncoding == PDFFONT_ENCODING_WINANSI && !bSupportWin) {
-      baseEncoding =
-          bSupportMac ? PDFFONT_ENCODING_MACROMAN : PDFFONT_ENCODING_BUILTIN;
-    } else if (baseEncoding == PDFFONT_ENCODING_MACROMAN && !bSupportMac) {
-      baseEncoding =
-          bSupportWin ? PDFFONT_ENCODING_WINANSI : PDFFONT_ENCODING_BUILTIN;
-    }
-  }
-  if (((baseEncoding == PDFFONT_ENCODING_MACROMAN ||
-        baseEncoding == PDFFONT_ENCODING_WINANSI) &&
-       m_CharNames.empty()) ||
+  const int base_encoding = DetermineEncoding();
+  if ((IsWinAnsiOrMacRomanEncoding(base_encoding) && m_CharNames.empty()) ||
       FontStyleIsNonSymbolic(m_Flags)) {
     if (!FXFT_Has_Glyph_Names(face) &&
         (!face->num_charmaps || !face->charmaps)) {
@@ -98,7 +79,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
     }
     bool bToUnicode = m_pFontDict->KeyExist("ToUnicode");
     for (uint32_t charcode = 0; charcode < 256; charcode++) {
-      const char* name = GetAdobeCharName(baseEncoding, m_CharNames, charcode);
+      const char* name = GetAdobeCharName(base_encoding, m_CharNames, charcode);
       if (!name) {
         m_GlyphIndex[charcode] =
             m_pFontFile ? FT_Get_Char_Index(face, charcode) : -1;
@@ -160,10 +141,10 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
       }
     }
     if (bFound) {
-      if (baseEncoding != PDFFONT_ENCODING_BUILTIN) {
+      if (base_encoding != PDFFONT_ENCODING_BUILTIN) {
         for (uint32_t charcode = 0; charcode < 256; charcode++) {
           const char* name =
-              GetAdobeCharName(baseEncoding, m_CharNames, charcode);
+              GetAdobeCharName(base_encoding, m_CharNames, charcode);
           if (name)
             m_Encoding.SetUnicode(charcode, PDF_UnicodeFromAdobeName(name));
         }
@@ -192,7 +173,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
   }
   if (FXFT_Select_Charmap(face, FT_ENCODING_UNICODE) == 0) {
     bool bFound = false;
-    const uint16_t* pUnicodes = PDF_UnicodesForPredefinedCharSet(baseEncoding);
+    const uint16_t* pUnicodes = PDF_UnicodesForPredefinedCharSet(base_encoding);
     for (uint32_t charcode = 0; charcode < 256; charcode++) {
       if (m_pFontFile) {
         m_Encoding.SetUnicode(charcode, charcode);
@@ -213,4 +194,36 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
   }
   for (int charcode = 0; charcode < 256; charcode++)
     m_GlyphIndex[charcode] = charcode;
+}
+
+int CPDF_TrueTypeFont::DetermineEncoding() const {
+  if (!m_pFontFile || !FontStyleIsSymbolic(m_Flags) ||
+      !IsWinAnsiOrMacRomanEncoding(m_BaseEncoding)) {
+    return m_BaseEncoding;
+  }
+
+  // Not null - caller checked.
+  FXFT_FaceRec* face = m_Font.GetFaceRec();
+  if (face->num_charmaps <= 0)
+    return m_BaseEncoding;
+
+  bool support_win = false;
+  bool support_mac = false;
+  for (int i = 0; i < face->num_charmaps; i++) {
+    int platform_id = FXFT_Get_Charmap_PlatformID(face->charmaps[i]);
+    if (platform_id == kNamePlatformAppleUnicode ||
+        platform_id == kNamePlatformWindows) {
+      support_win = true;
+    } else if (platform_id == kNamePlatformMac) {
+      support_mac = true;
+    }
+    if (support_win && support_mac)
+      break;
+  }
+
+  if (m_BaseEncoding == PDFFONT_ENCODING_WINANSI && !support_win)
+    return support_mac ? PDFFONT_ENCODING_MACROMAN : PDFFONT_ENCODING_BUILTIN;
+  if (m_BaseEncoding == PDFFONT_ENCODING_MACROMAN && !support_mac)
+    return support_win ? PDFFONT_ENCODING_WINANSI : PDFFONT_ENCODING_BUILTIN;
+  return m_BaseEncoding;
 }

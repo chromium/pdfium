@@ -17,9 +17,7 @@
 namespace {
 
 // These numbers come from the OpenType name table specification.
-constexpr uint16_t kNamePlatformMac = 1;
 constexpr uint16_t kNameMacEncodingRoman = 0;
-constexpr uint16_t kNamePlatformWindows = 3;
 constexpr uint16_t kNameWindowsEncodingUnicode = 1;
 
 ByteString GetStringFromTable(pdfium::span<const uint8_t> string_span,
