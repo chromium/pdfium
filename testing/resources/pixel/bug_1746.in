@@ -1,0 +1,122 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /MediaBox [0 0 200 200]
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+  /Resources <<
+    /ExtGState <<
+      /GS0 8 0 R
+    >>
+    /Font <<
+      /F1 5 0 R
+    >>
+    /XObject <<
+      /Img 9 0 R
+    >>
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+/GS0 gs
+q
+0 1 0 rg
+BT
+/F1 2 Tf
+1 0 0 1 50 50 Tm
+(a)Tj
+ET
+Q
+q
+0 0 1 rg
+BT
+/F1 2 Tf
+1 0 0 1 72 80 Tm
+(a)Tj
+ET
+Q
+Q
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /Font
+  /Subtype /Type3
+  /CharProcs <<
+    /a0 7 0 R
+  >>
+  /Encoding 6 0 R
+  /FirstChar 97
+  /FontBBox [0 0 1000 1000]
+  /FontMatrix [1 0 0 1 0 0]
+  /LastChar 97
+  /Widths [60]
+>>
+endobj
+{{object 6 0}} <<
+  /Type /Encoding
+  /BaseEncoding /WinAnsiEncoding
+  /Differences [97 /a0]
+>>
+endobj
+{{object 7 0}} <<
+  {{streamlen}}
+>>
+stream
+50 0 4 -1 48 45 d1
+q
+4 -1 m
+4 45 l
+48 45 l
+48 -1 l
+h
+W n
+q
+44 0 0 46 4.1 -1.1 cm
+/Img Do
+Q
+Q
+endstream
+endobj
+{{object 8 0}} <<
+  /Type /ExtGState
+  /CA 0.5
+  /ca 0.5
+>>
+endobj
+{{object 9 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 1
+  /Decode [1 0]
+  /DecodeParms [null <</Columns 44 /K -1>>]
+  /Filter [/ASCIIHexDecode /CCITTFaxDecode]
+  /Height 46
+  /ImageMask true
+  /Width 44
+  {{streamlen}}
+>>
+stream
+26a08680de081e11e187840830f4137a4df0ef4dbedbffff6ffdaf0c2f1f
+fff21b34c82e33044e7c11a09c205e105e97a5e97a5ffa5fe0a3f5ffafff
+b5c9aaa30bed27adb4ad70da4da5b6128f0c426b216818500100100a
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
