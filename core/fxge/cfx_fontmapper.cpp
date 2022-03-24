@@ -281,6 +281,7 @@ void CFX_FontMapper::SetSystemFontInfo(
   if (!pFontInfo)
     return;
 
+  m_bListLoaded = false;
   m_pFontInfo = std::move(pFontInfo);
 }
 
