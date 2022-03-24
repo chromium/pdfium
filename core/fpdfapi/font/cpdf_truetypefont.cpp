@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/font/cpdf_truetypefont.h"
 
+#include <algorithm>
+
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fxge/fx_font.h"
 #include "third_party/base/cxx17_backports.h"
@@ -53,16 +55,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
       FontStyleIsNonSymbolic(m_Flags)) {
     if (!FXFT_Has_Glyph_Names(face) &&
         (!face->num_charmaps || !face->charmaps)) {
-      int nStartChar = m_pFontDict->GetIntegerFor("FirstChar");
-      if (nStartChar < 0 || nStartChar > 255)
-        return;
-
-      int charcode = 0;
-      for (; charcode < nStartChar; charcode++)
-        m_GlyphIndex[charcode] = 0;
-      uint16_t nGlyph = charcode - nStartChar + 3;
-      for (; charcode < 256; charcode++, nGlyph++)
-        m_GlyphIndex[charcode] = nGlyph;
+      SetGlyphIndicesFromFirstChar();
       return;
     }
     bool bMSUnicode = FT_UseTTCharmap(face, 3, 1);
@@ -226,4 +219,16 @@ int CPDF_TrueTypeFont::DetermineEncoding() const {
   if (m_BaseEncoding == PDFFONT_ENCODING_MACROMAN && !support_mac)
     return support_win ? PDFFONT_ENCODING_WINANSI : PDFFONT_ENCODING_BUILTIN;
   return m_BaseEncoding;
+}
+
+void CPDF_TrueTypeFont::SetGlyphIndicesFromFirstChar() {
+  int start_char = m_pFontDict->GetIntegerFor("FirstChar");
+  if (start_char < 0 || start_char > 255)
+    return;
+
+  auto* it = std::begin(m_GlyphIndex);
+  std::fill(it, it + start_char, 0);
+  uint16_t glyph = 3;
+  for (int charcode = start_char; charcode < 256; charcode++, glyph++)
+    m_GlyphIndex[charcode] = glyph;
 }

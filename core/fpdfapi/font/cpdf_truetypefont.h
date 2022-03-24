@@ -30,6 +30,7 @@ class CPDF_TrueTypeFont final : public CPDF_SimpleFont {
   void LoadGlyphMap() override;
 
   int DetermineEncoding() const;
+  void SetGlyphIndicesFromFirstChar();
 };
 
 #endif  // CORE_FPDFAPI_FONT_CPDF_TRUETYPEFONT_H_
