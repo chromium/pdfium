@@ -1,0 +1,95 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+  /MediaBox [0 0 100 100]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+  /Resources <<
+    /Font <<
+      /F1 5 0 R
+    >>
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+BT
+40 30 Td
+/F1 36 Tf
+(!)Tj
+ET
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /Font
+  /Subtype /TrueType
+  /BaseFont /Test
+  /FirstChar 33
+  /FontDescriptor 6 0 R
+  /LastChar 33
+  /ToUnicode 7 0 R
+  /Widths [415]
+>>
+endobj
+{{object 6 0}} <<
+  /Type /FontDescriptor
+  /Ascent 922
+  /CapHeight 1151
+  /Descent -196
+  /Flags 4
+  /FontBBox [0 -228 2000 921]
+  /FontFile2 8 0 R
+  /FontName /Test
+  /ItalicAngle 0
+  /MissingWidth 750
+  /StemV 0
+>>
+endobj
+{{object 7 0}} <<
+  {{streamlen}}
+>>
+stream
+/CIDInit /ProcSet findresource begin 12 dict begin begincmap /CIDSystemInfo <<
+/Registry (Test) /Ordering (UCS) /Supplement 0 >> def
+/CMapName /Test def
+1 begincodespacerange <21> <21> endcodespacerange
+1 beginbfrange
+<21> <21> <0629>
+endbfrange
+endcmap CMapName currentdict /CMap defineresource pop end end
+endstream
+endobj
+{{object 8 0}} <<
+  /Filter [/ASCII85Decode /FlateDecode]
+  {{streamlen}}
+  /Length1 1152
+>>
+stream
+GhV7Y6"got'R_dDS#gHM71g``Z@S[j_4%a(QV`9fkbUmea@WX0RPr-&&s@b[7(`ka2\?Q-3Jf-R,)CL5
++:'#&%pm0q>4<`1=:YRPqIXpiXEsF'?ZtVG5P+m"s7:FX!"@g9'FMfgC$OLFobW-97rRDZR3Q3#5!Kte
+`(BOQMXNDWo^*Ch6f,j"]QUX5UCu-\c8uD,Qf^N7h9H,n#J"'>H?6.=dl3,__9j/A".)HC>)PLCo/k-1
+"r["/>//RcGSl0.rOV.*\(nn.31Ne1G]h?9?>MjaN`CZpVqGa-MKe)6q>QV=&"Q?-pmAY>4Whjs`uq4c
+mV;`O*^=oD*[@G-\RA3RXTOF,W/FDeT#)as6^&HTUgHh!*X1;3AD^HB/!QKb:H@mrGO0<EmLMh\#4llE
+A';]e-+,IKG=UlFe>*J=FbK^:F'=Mm-cDb]6r/02KD#tL3CHuIn4i%?QsJjr7)5oI[)It$92\:,ce-B`
+4sGT-C-n@OG38UMfPkfOIQ-Jj@F(Y.hW2(Iq>+`)XgHXjHl9Ce9a"N+(bCO<)6AYC#4'DR1YAS5CiG&V
+?_<Lh/*K&3/;[j@/)h.n/`OYPgPCV49H9b@JeG(sUVkBV[e96!BUQ4ra!)G#ZWhGe794V,\_:dO2X50t
+2!b.710r>Oi8%b@WH:'*(#][r=j)N:=BIHST\St9pK-?]J,^S!!-4ih@f~>
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
