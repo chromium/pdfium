@@ -91,7 +91,7 @@ class CFX_Win32FontInfo final : public SystemFontInfoIface {
   CFX_Win32FontInfo();
   ~CFX_Win32FontInfo() override;
 
-  // SystemFontInfoIface
+  // SystemFontInfoIface:
   bool EnumFontList(CFX_FontMapper* pMapper) override;
   void* MapFont(int weight,
                 bool bItalic,
@@ -106,8 +106,10 @@ class CFX_Win32FontInfo final : public SystemFontInfoIface {
   bool GetFontCharset(void* hFont, FX_Charset* charset) override;
   void DeleteFont(void* hFont) override;
 
-  bool IsSupportedFont(const LOGFONTA* plf);
   void AddInstalledFont(const LOGFONTA* plf, uint32_t font_type);
+
+ private:
+  bool IsSupportedFont(const LOGFONTA* plf);
   void GetGBPreference(ByteString& face, int weight, int pitch_family);
   void GetJapanesePreference(ByteString& face, int weight, int pitch_family);
   ByteString FindFont(const ByteString& name);
@@ -183,8 +185,8 @@ bool CFX_Win32FontInfo::EnumFontList(CFX_FontMapper* pMapper) {
   lf.lfCharSet = static_cast<int>(FX_Charset::kDefault);
   lf.lfFaceName[0] = 0;
   lf.lfPitchAndFamily = 0;
-  EnumFontFamiliesExA(m_hDC, &lf, (FONTENUMPROCA)FontEnumProc, (uintptr_t)this,
-                      0);
+  EnumFontFamiliesExA(m_hDC, &lf, reinterpret_cast<FONTENUMPROCA>(FontEnumProc),
+                      reinterpret_cast<uintptr_t>(this), 0);
   return true;
 }
 
