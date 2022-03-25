@@ -103,6 +103,53 @@ void CPDF_SimpleFont::LoadCharMetrics(int charcode) {
   }
 }
 
+void CPDF_SimpleFont::LoadCharWidths(const CPDF_Dictionary* font_desc) {
+  const CPDF_Array* width_array = m_pFontDict->GetArrayFor("Widths");
+  m_bUseFontWidth = !width_array;
+  if (!width_array)
+    return;
+
+  if (font_desc && font_desc->KeyExist("MissingWidth")) {
+    int missing_width = font_desc->GetIntegerFor("MissingWidth");
+    std::fill(std::begin(m_CharWidth), std::end(m_CharWidth), missing_width);
+  }
+
+  size_t width_start = m_pFontDict->GetIntegerFor("FirstChar", 0);
+  size_t width_end = m_pFontDict->GetIntegerFor("LastChar", 0);
+  if (width_start > 255)
+    return;
+
+  if (width_end == 0 || width_end >= width_start + width_array->size())
+    width_end = width_start + width_array->size() - 1;
+  if (width_end > 255)
+    width_end = 255;
+  for (size_t i = width_start; i <= width_end; i++)
+    m_CharWidth[i] = width_array->GetIntegerAt(i - width_start);
+}
+
+void CPDF_SimpleFont::LoadDifferences(const CPDF_Dictionary* encoding) {
+  const CPDF_Array* diffs = encoding->GetArrayFor("Differences");
+  if (!diffs)
+    return;
+
+  m_CharNames.resize(kInternalTableSize);
+  uint32_t cur_code = 0;
+  for (uint32_t i = 0; i < diffs->size(); i++) {
+    const CPDF_Object* element = diffs->GetDirectObjectAt(i);
+    if (!element)
+      continue;
+
+    const CPDF_Name* name = element->AsName();
+    if (name) {
+      if (cur_code < m_CharNames.size())
+        m_CharNames[cur_code] = name->GetString();
+      cur_code++;
+    } else {
+      cur_code = element->GetInteger();
+    }
+  }
+}
+
 void CPDF_SimpleFont::LoadPDFEncoding(bool bEmbedded, bool bTrueType) {
   const CPDF_Object* pEncoding = m_pFontDict->GetDirectObjectFor("Encoding");
   if (!pEncoding) {
@@ -146,26 +193,7 @@ void CPDF_SimpleFont::LoadPDFEncoding(bool bEmbedded, bool bTrueType) {
   if ((!bEmbedded || bTrueType) && m_BaseEncoding == PDFFONT_ENCODING_BUILTIN)
     m_BaseEncoding = PDFFONT_ENCODING_STANDARD;
 
-  const CPDF_Array* pDiffs = pDict->GetArrayFor("Differences");
-  if (!pDiffs)
-    return;
-
-  m_CharNames.resize(kInternalTableSize);
-  uint32_t cur_code = 0;
-  for (uint32_t i = 0; i < pDiffs->size(); i++) {
-    const CPDF_Object* pElement = pDiffs->GetDirectObjectAt(i);
-    if (!pElement)
-      continue;
-
-    const CPDF_Name* pName = pElement->AsName();
-    if (pName) {
-      if (cur_code < m_CharNames.size())
-        m_CharNames[cur_code] = pName->GetString();
-      cur_code++;
-    } else {
-      cur_code = pElement->GetInteger();
-    }
-  }
+  LoadDifferences(pDict);
 }
 
 int CPDF_SimpleFont::GetCharWidthF(uint32_t charcode) {
@@ -193,27 +221,9 @@ FX_RECT CPDF_SimpleFont::GetCharBBox(uint32_t charcode) {
 
 bool CPDF_SimpleFont::LoadCommon() {
   const CPDF_Dictionary* pFontDesc = m_pFontDict->GetDictFor("FontDescriptor");
-  if (pFontDesc) {
+  if (pFontDesc)
     LoadFontDescriptor(pFontDesc);
-  }
-  const CPDF_Array* pWidthArray = m_pFontDict->GetArrayFor("Widths");
-  m_bUseFontWidth = !pWidthArray;
-  if (pWidthArray) {
-    if (pFontDesc && pFontDesc->KeyExist("MissingWidth")) {
-      int MissingWidth = pFontDesc->GetIntegerFor("MissingWidth");
-      std::fill(std::begin(m_CharWidth), std::end(m_CharWidth), MissingWidth);
-    }
-    size_t width_start = m_pFontDict->GetIntegerFor("FirstChar", 0);
-    size_t width_end = m_pFontDict->GetIntegerFor("LastChar", 0);
-    if (width_start <= 255) {
-      if (width_end == 0 || width_end >= width_start + pWidthArray->size())
-        width_end = width_start + pWidthArray->size() - 1;
-      if (width_end > 255)
-        width_end = 255;
-      for (size_t i = width_start; i <= width_end; i++)
-        m_CharWidth[i] = pWidthArray->GetIntegerAt(i - width_start);
-    }
-  }
+  LoadCharWidths(pFontDesc);
   if (m_pFontFile) {
     if (m_BaseFontName.GetLength() > 8 && m_BaseFontName[7] == '+')
       m_BaseFontName = m_BaseFontName.Last(m_BaseFontName.GetLength() - 8);
