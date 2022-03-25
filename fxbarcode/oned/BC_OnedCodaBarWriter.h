@@ -18,7 +18,7 @@ class CBC_OnedCodaBarWriter final : public CBC_OneDimWriter {
   CBC_OnedCodaBarWriter();
   ~CBC_OnedCodaBarWriter() override;
 
-  // CBC_OneDimWriter
+  // CBC_OneDimWriter:
   uint8_t* EncodeImpl(const ByteString& contents, int32_t& outLength) override;
   uint8_t* EncodeWithHint(const ByteString& contents,
                           BC_TYPE format,
@@ -35,8 +35,6 @@ class CBC_OnedCodaBarWriter final : public CBC_OneDimWriter {
   bool SetWideNarrowRatio(int8_t ratio) override;
   bool SetStartChar(char start) override;
   bool SetEndChar(char end) override;
-
-  virtual bool FindChar(wchar_t ch, bool isContent);
 
   WideString encodedContents(WideStringView contents);
 
