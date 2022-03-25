@@ -63,6 +63,7 @@ endobj
 {{object 7 0}} <<
   /Filter [/ASCIIHexDecode /FlateDecode]
   {{streamlen}}
+  /Length1 11200
 >>
 stream
 {{include ../bug_1752_truetype_font.fragment}}
