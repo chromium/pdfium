@@ -39,12 +39,13 @@ class CBC_OneDimWriter : public CBC_Writer {
                             int32_t codeLength);
   virtual bool CheckContentValidity(WideStringView contents) = 0;
   virtual WideString FilterContents(WideStringView contents) = 0;
-  virtual void SetPrintChecksum(bool checksum);
   virtual void SetDataLength(int32_t length);
-  virtual void SetCalcChecksum(bool state);
-  virtual void SetFontSize(float size);
-  virtual void SetFontStyle(int32_t style);
-  virtual void SetFontColor(FX_ARGB color);
+
+  void SetPrintChecksum(bool checksum);
+  void SetCalcChecksum(bool state);
+  void SetFontSize(float size);
+  void SetFontStyle(int32_t style);
+  void SetFontColor(FX_ARGB color);
 
   uint8_t* Encode(const ByteString& contents,
                   BC_TYPE format,
