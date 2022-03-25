@@ -12,6 +12,32 @@
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/text_char_pos.h"
 
+namespace {
+
+bool ShouldUseExistingFont(const CPDF_Font* font,
+                           uint32_t glyph_id,
+                           bool has_to_unicode) {
+  // Check for invalid glyph ID.
+  if (glyph_id == static_cast<uint32_t>(-1))
+    return false;
+
+  if (!font->IsTrueTypeFont())
+    return true;
+
+  // For TrueType fonts, a glyph ID of 0 may be invalid.
+  //
+  // When a "ToUnicode" entry exists in the font dictionary, it indicates
+  // a "ToUnicode" mapping file is used to convert from CIDs (which
+  // begins at decimal 0) to Unicode code. (See ToUnicode Mapping File
+  // Tutorial - Adobe
+  // https://www.adobe.com/content/dam/acom/en/devnet/acrobat/pdfs/5411.ToUnicode.pdf
+  // and
+  // https://www.freetype.org/freetype2/docs/tutorial/step1.html#section-6)
+  return glyph_id != 0 || has_to_unicode;
+}
+
+}  // namespace
+
 std::vector<TextCharPos> GetCharPosList(pdfium::span<const uint32_t> char_codes,
                                         pdfium::span<const float> char_pos,
                                         CPDF_Font* font,
@@ -43,42 +69,19 @@ std::vector<TextCharPos> GetCharPosList(pdfium::span<const uint32_t> char_codes,
                    ? text_char_pos.m_ExtGID
                    : text_char_pos.m_GlyphIndex;
 #endif
-    bool is_invalid_glyph = glyph_id == static_cast<uint32_t>(-1);
-    bool is_true_type_zero_glyph = glyph_id == 0 && font->IsTrueTypeFont();
-    bool use_fallback_font = false;
-    if (is_invalid_glyph || is_true_type_zero_glyph) {
-      text_char_pos.m_FallbackFontPosition =
-          font->FallbackFontFromCharcode(char_code);
-      text_char_pos.m_GlyphIndex = font->FallbackGlyphFromCharcode(
-          text_char_pos.m_FallbackFontPosition, char_code);
-      if (is_true_type_zero_glyph &&
-          text_char_pos.m_GlyphIndex == static_cast<uint32_t>(-1)) {
-        // For a TrueType font character, when finding the glyph from the
-        // fallback font fails, switch back to using the original font.
-
-        // When keyword "ToUnicode" exists in the PDF file, it indicates
-        // a "ToUnicode" mapping file is used to convert from CIDs (which
-        // begins at decimal 0) to Unicode code. (See ToUnicode Mapping File
-        // Tutorial - Adobe
-        // https://www.adobe.com/content/dam/acom/en/devnet/acrobat/pdfs/5411.ToUnicode.pdf
-        // and
-        // https://www.freetype.org/freetype2/docs/tutorial/step1.html#section-6)
-        if (has_to_unicode)
-          text_char_pos.m_GlyphIndex = 0;
-      } else {
-        use_fallback_font = true;
-      }
-    }
     CFX_Font* current_font;
-    if (use_fallback_font) {
-      current_font =
-          font->GetFontFallback(text_char_pos.m_FallbackFontPosition);
+    if (ShouldUseExistingFont(font, glyph_id, has_to_unicode)) {
+      current_font = font->GetFont();
+      text_char_pos.m_FallbackFontPosition = -1;
+    } else {
+      int32_t fallback_position = font->FallbackFontFromCharcode(char_code);
+      current_font = font->GetFontFallback(fallback_position);
+      text_char_pos.m_FallbackFontPosition = fallback_position;
+      text_char_pos.m_GlyphIndex =
+          font->FallbackGlyphFromCharcode(fallback_position, char_code);
 #if BUILDFLAG(IS_APPLE)
       text_char_pos.m_ExtGID = text_char_pos.m_GlyphIndex;
 #endif
-    } else {
-      current_font = font->GetFont();
-      text_char_pos.m_FallbackFontPosition = -1;
     }
 
     if (!font->IsEmbedded() && !font->IsCIDFont())
