@@ -642,6 +642,7 @@ source_set("pdfium_base") {
   if (is_win) {
     sources += [
       "base/allocator/partition_allocator/page_allocator_internals_win.h",
+      "base/win/scoped_select_object.h",
       "base/win/win_util.cc",
       "base/win/win_util.h",
     ]

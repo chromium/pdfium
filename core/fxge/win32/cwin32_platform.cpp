@@ -15,9 +15,12 @@
 #include "third_party/base/cxx17_backports.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/win/scoped_select_object.h"
 #include "third_party/base/win/win_util.h"
 
 namespace {
+
+using ScopedSelectObject = pdfium::base::win::ScopedSelectObject;
 
 struct Variant {
   const char* m_pFaceName;
@@ -346,9 +349,10 @@ void* CFX_Win32FontInfo::MapFont(int weight,
                               static_cast<int>(charset), OUT_TT_ONLY_PRECIS, 0,
                               0, subst_pitch_family, new_face.c_str());
   char facebuf[100];
-  HFONT hOldFont = (HFONT)::SelectObject(m_hDC, hFont);
-  ::GetTextFaceA(m_hDC, 100, facebuf);
-  ::SelectObject(m_hDC, hOldFont);
+  {
+    ScopedSelectObject select_object(m_hDC, hFont);
+    ::GetTextFaceA(m_hDC, pdfium::size(facebuf), facebuf);
+  }
   if (new_face.EqualNoCase(facebuf))
     return hFont;
 
@@ -399,34 +403,27 @@ void CFX_Win32FontInfo::DeleteFont(void* hFont) {
 size_t CFX_Win32FontInfo::GetFontData(void* hFont,
                                       uint32_t table,
                                       pdfium::span<uint8_t> buffer) {
-  HFONT hOldFont = (HFONT)::SelectObject(m_hDC, (HFONT)hFont);
+  ScopedSelectObject select_object(m_hDC, static_cast<HFONT>(hFont));
   table = FXSYS_UINT32_GET_MSBFIRST(reinterpret_cast<uint8_t*>(&table));
   size_t size = ::GetFontData(m_hDC, table, 0, buffer.data(),
                               pdfium::base::checked_cast<DWORD>(buffer.size()));
-  ::SelectObject(m_hDC, hOldFont);
-  if (size == GDI_ERROR) {
-    return 0;
-  }
-  return size;
+  return size != GDI_ERROR ? size : 0;
 }
 
 bool CFX_Win32FontInfo::GetFaceName(void* hFont, ByteString* name) {
+  ScopedSelectObject select_object(m_hDC, static_cast<HFONT>(hFont));
   char facebuf[100];
-  HFONT hOldFont = (HFONT)::SelectObject(m_hDC, (HFONT)hFont);
-  int ret = ::GetTextFaceA(m_hDC, 100, facebuf);
-  ::SelectObject(m_hDC, hOldFont);
-  if (ret == 0) {
+  if (::GetTextFaceA(m_hDC, 100, facebuf) == 0)
     return false;
-  }
+
   *name = facebuf;
   return true;
 }
 
 bool CFX_Win32FontInfo::GetFontCharset(void* hFont, FX_Charset* charset) {
+  ScopedSelectObject select_object(m_hDC, static_cast<HFONT>(hFont));
   TEXTMETRIC tm;
-  HFONT hOldFont = (HFONT)::SelectObject(m_hDC, (HFONT)hFont);
   ::GetTextMetrics(m_hDC, &tm);
-  ::SelectObject(m_hDC, hOldFont);
   *charset = FX_GetCharsetFromInt(tm.tmCharSet);
   return true;
 }
