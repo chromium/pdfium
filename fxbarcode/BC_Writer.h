@@ -14,11 +14,13 @@ class CBC_Writer {
  public:
   CBC_Writer();
   virtual ~CBC_Writer();
-  virtual bool SetCharEncoding(BC_CHAR_ENCODING encoding);
-  virtual bool SetModuleHeight(int32_t moduleHeight);
-  virtual bool SetModuleWidth(int32_t moduleWidth);
-  virtual bool SetHeight(int32_t height);
-  virtual bool SetWidth(int32_t width);
+
+  bool SetCharEncoding(BC_CHAR_ENCODING encoding);
+  bool SetModuleHeight(int32_t moduleHeight);
+  bool SetModuleWidth(int32_t moduleWidth);
+  bool SetHeight(int32_t height);
+  bool SetWidth(int32_t width);
+
   virtual void SetTextLocation(BC_TEXT_LOC location);
   virtual bool SetWideNarrowRatio(int8_t ratio);
   virtual bool SetStartChar(char start);
