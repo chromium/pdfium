@@ -50,8 +50,8 @@ bool CBC_CodeBase::SetErrorCorrectionLevel(int32_t level) {
   return m_pBCWriter->SetErrorCorrectionLevel(level);
 }
 
-bool CBC_CodeBase::SetCharEncoding(BC_CHAR_ENCODING encoding) {
-  return m_pBCWriter->SetCharEncoding(encoding);
+void CBC_CodeBase::SetCharEncoding(BC_CHAR_ENCODING encoding) {
+  m_pBCWriter->SetCharEncoding(encoding);
 }
 
 bool CBC_CodeBase::SetModuleHeight(int32_t moduleHeight) {
@@ -62,10 +62,10 @@ bool CBC_CodeBase::SetModuleWidth(int32_t moduleWidth) {
   return m_pBCWriter->SetModuleWidth(moduleWidth);
 }
 
-bool CBC_CodeBase::SetHeight(int32_t height) {
+void CBC_CodeBase::SetHeight(int32_t height) {
   return m_pBCWriter->SetHeight(height);
 }
 
-bool CBC_CodeBase::SetWidth(int32_t width) {
+void CBC_CodeBase::SetWidth(int32_t width) {
   return m_pBCWriter->SetWidth(width);
 }

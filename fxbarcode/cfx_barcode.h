@@ -30,13 +30,11 @@ class CFX_Barcode {
 
   bool RenderDevice(CFX_RenderDevice* device, const CFX_Matrix& matrix);
 
-  bool SetCharEncoding(BC_CHAR_ENCODING encoding);
-
+  void SetCharEncoding(BC_CHAR_ENCODING encoding);
   bool SetModuleHeight(int32_t moduleHeight);
   bool SetModuleWidth(int32_t moduleWidth);
-
-  bool SetHeight(int32_t height);
-  bool SetWidth(int32_t width);
+  void SetHeight(int32_t height);
+  void SetWidth(int32_t width);
 
   bool SetPrintChecksum(bool checksum);
   bool SetDataLength(int32_t length);

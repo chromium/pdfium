@@ -10,9 +10,8 @@ CBC_Writer::CBC_Writer() = default;
 
 CBC_Writer::~CBC_Writer() = default;
 
-bool CBC_Writer::SetCharEncoding(BC_CHAR_ENCODING encoding) {
+void CBC_Writer::SetCharEncoding(BC_CHAR_ENCODING encoding) {
   m_CharEncoding = encoding;
-  return true;
 }
 
 bool CBC_Writer::SetModuleHeight(int32_t moduleHeight) {
@@ -31,14 +30,12 @@ bool CBC_Writer::SetModuleWidth(int32_t moduleWidth) {
   return true;
 }
 
-bool CBC_Writer::SetHeight(int32_t height) {
+void CBC_Writer::SetHeight(int32_t height) {
   m_Height = height;
-  return true;
 }
 
-bool CBC_Writer::SetWidth(int32_t width) {
+void CBC_Writer::SetWidth(int32_t width) {
   m_Width = width;
-  return true;
 }
 
 void CBC_Writer::SetTextLocation(BC_TEXT_LOC location) {}

@@ -70,8 +70,9 @@ BC_TYPE CFX_Barcode::GetType() {
   return m_pBCEngine ? m_pBCEngine->GetType() : BC_TYPE::kUnknown;
 }
 
-bool CFX_Barcode::SetCharEncoding(BC_CHAR_ENCODING encoding) {
-  return m_pBCEngine && m_pBCEngine->SetCharEncoding(encoding);
+void CFX_Barcode::SetCharEncoding(BC_CHAR_ENCODING encoding) {
+  if (m_pBCEngine)
+    m_pBCEngine->SetCharEncoding(encoding);
 }
 
 bool CFX_Barcode::SetModuleHeight(int32_t moduleHeight) {
@@ -82,12 +83,14 @@ bool CFX_Barcode::SetModuleWidth(int32_t moduleWidth) {
   return m_pBCEngine && m_pBCEngine->SetModuleWidth(moduleWidth);
 }
 
-bool CFX_Barcode::SetHeight(int32_t height) {
-  return m_pBCEngine && m_pBCEngine->SetHeight(height);
+void CFX_Barcode::SetHeight(int32_t height) {
+  if (m_pBCEngine)
+    m_pBCEngine->SetHeight(height);
 }
 
-bool CFX_Barcode::SetWidth(int32_t width) {
-  return m_pBCEngine && m_pBCEngine->SetWidth(width);
+void CFX_Barcode::SetWidth(int32_t width) {
+  if (m_pBCEngine)
+    m_pBCEngine->SetWidth(width);
 }
 
 bool CFX_Barcode::SetPrintChecksum(bool checksum) {
