@@ -106,8 +106,7 @@ class CFX_Win32FontInfo final : public SystemFontInfoIface {
   bool GetFontCharset(void* hFont, FX_Charset* charset) override;
   void DeleteFont(void* hFont) override;
 
-  bool IsOpenTypeFromDiv(const LOGFONTA* plf);
-  bool IsSupportFontFormDiv(const LOGFONTA* plf);
+  bool IsSupportedFont(const LOGFONTA* plf);
   void AddInstalledFont(const LOGFONTA* plf, uint32_t font_type);
   void GetGBPreference(ByteString& face, int weight, int pitch_family);
   void GetJapanesePreference(ByteString& face, int weight, int pitch_family);
@@ -135,28 +134,7 @@ CFX_Win32FontInfo::~CFX_Win32FontInfo() {
   DeleteDC(m_hDC);
 }
 
-bool CFX_Win32FontInfo::IsOpenTypeFromDiv(const LOGFONTA* plf) {
-  HFONT hFont = CreateFontIndirectA(plf);
-  bool ret = false;
-  size_t font_size = GetFontData(hFont, 0, {});
-  if (font_size != GDI_ERROR && font_size >= sizeof(uint32_t)) {
-    uint32_t lVersion = 0;
-    GetFontData(hFont, 0, {(uint8_t*)(&lVersion), sizeof(uint32_t)});
-    lVersion = (((uint32_t)(uint8_t)(lVersion)) << 24) |
-               ((uint32_t)((uint8_t)(lVersion >> 8))) << 16 |
-               ((uint32_t)((uint8_t)(lVersion >> 16))) << 8 |
-               ((uint8_t)(lVersion >> 24));
-    if (lVersion == FXBSTR_ID('O', 'T', 'T', 'O') || lVersion == 0x00010000 ||
-        lVersion == FXBSTR_ID('t', 't', 'c', 'f') ||
-        lVersion == FXBSTR_ID('t', 'r', 'u', 'e') || lVersion == 0x00020000) {
-      ret = true;
-    }
-  }
-  DeleteFont(hFont);
-  return ret;
-}
-
-bool CFX_Win32FontInfo::IsSupportFontFormDiv(const LOGFONTA* plf) {
+bool CFX_Win32FontInfo::IsSupportedFont(const LOGFONTA* plf) {
   HFONT hFont = CreateFontIndirectA(plf);
   bool ret = false;
   size_t font_size = GetFontData(hFont, 0, {});
@@ -190,7 +168,7 @@ void CFX_Win32FontInfo::AddInstalledFont(const LOGFONTA* plf,
     return;
   }
   if (!(font_type & TRUETYPE_FONTTYPE)) {
-    if (!(font_type & DEVICE_FONTTYPE) || !IsSupportFontFormDiv(plf))
+    if (!(font_type & DEVICE_FONTTYPE) || !IsSupportedFont(plf))
       return;
   }
 
