@@ -141,19 +141,16 @@ bool CFX_Win32FontInfo::IsSupportedFont(const LOGFONTA* plf) {
   bool ret = false;
   size_t font_size = GetFontData(hFont, 0, {});
   if (font_size != GDI_ERROR && font_size >= sizeof(uint32_t)) {
-    uint32_t lVersion = 0;
-    GetFontData(hFont, 0, {(uint8_t*)(&lVersion), sizeof(lVersion)});
-    lVersion = (((uint32_t)(uint8_t)(lVersion)) << 24) |
-               ((uint32_t)((uint8_t)(lVersion >> 8))) << 16 |
-               ((uint32_t)((uint8_t)(lVersion >> 16))) << 8 |
-               ((uint8_t)(lVersion >> 24));
-    if (lVersion == FXBSTR_ID('O', 'T', 'T', 'O') || lVersion == 0x00010000 ||
-        lVersion == FXBSTR_ID('t', 't', 'c', 'f') ||
-        lVersion == FXBSTR_ID('t', 'r', 'u', 'e') || lVersion == 0x00020000 ||
-        (lVersion & 0xFFFF0000) == FXBSTR_ID(0x80, 0x01, 0x00, 0x00) ||
-        (lVersion & 0xFFFF0000) == FXBSTR_ID('%', '!', 0, 0)) {
-      ret = true;
-    }
+    uint32_t header;
+    auto span = pdfium::as_writable_bytes(pdfium::make_span(&header, 1));
+    GetFontData(hFont, 0, span);
+    header = FXSYS_UINT32_GET_MSBFIRST(span);
+    ret = header == FXBSTR_ID('O', 'T', 'T', 'O') ||
+          header == FXBSTR_ID('t', 't', 'c', 'f') ||
+          header == FXBSTR_ID('t', 'r', 'u', 'e') || header == 0x00010000 ||
+          header == 0x00020000 ||
+          (header & 0xFFFF0000) == FXBSTR_ID(0x80, 0x01, 0x00, 0x00) ||
+          (header & 0xFFFF0000) == FXBSTR_ID('%', '!', 0, 0);
   }
   DeleteFont(hFont);
   return ret;
