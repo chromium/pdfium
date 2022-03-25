@@ -1861,8 +1861,11 @@ void CPDFSDK_AppStream::Write(const ByteString& sAPType,
   // If `pStream` is created by CreateModifiedAPStream(), then it is safe to
   // edit, as it is not shared.
   CPDF_Stream* pStream = pParentDict->GetStreamFor(key);
+  CPDF_Dictionary* pOrigStreamDict = nullptr;
   CPDF_Document* doc = widget_->GetPageView()->GetPDFDocument();
   if (!doc->IsModifiedAPStream(pStream)) {
+    if (pStream)
+      pOrigStreamDict = pStream->GetDict();
     pStream = doc->CreateModifiedAPStream();
     pParentDict->SetNewFor<CPDF_Reference>(key, doc, pStream->GetObjNum());
   }
@@ -1875,6 +1878,13 @@ void CPDFSDK_AppStream::Write(const ByteString& sAPType,
     pStreamDict->SetNewFor<CPDF_Name>("Type", "XObject");
     pStreamDict->SetNewFor<CPDF_Name>("Subtype", "Form");
     pStreamDict->SetNewFor<CPDF_Number>("FormType", 1);
+
+    if (pOrigStreamDict) {
+      CPDF_Dictionary* pResources = pOrigStreamDict->GetDictFor("Resources");
+      if (pResources)
+        pStreamDict->SetFor("Resources", pResources->Clone());
+    }
+
     pStream->InitStream({}, std::move(pNewDict));
   }
   pStreamDict->SetMatrixFor("Matrix", widget_->GetMatrix());

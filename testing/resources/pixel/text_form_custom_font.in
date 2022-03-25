@@ -1,0 +1,81 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+  /AcroForm <<
+    /DR <<
+      /Font <<
+        /TT0 5 0 R
+      >>
+    >>
+    /Fields [4 0 R]
+  >>
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Annots [4 0 R]
+  /MediaBox [0 0 200 200]
+>>
+endobj
+{{object 4 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Tx
+  /DA (1 0 0 rg /TT0 16 Tf)
+  /Rect [50 100 150 130]
+  /T (Text Box)
+  /V (      )
+>>
+endobj
+{{object 5 0}} <<
+  /Type /Font
+  /Subtype /TrueType
+  /FirstChar 32
+  /BaseFont /AAAAAD+Test
+  /FontDescriptor 6 0 R
+  /ToUnicode 7 0 R
+  /LastChar 32
+  /Widths [1055]
+>>
+endobj
+{{object 6 0}} <<
+  /Type /FontDescriptor
+  /Descent -68
+  /MissingWidth 1000
+  /CapHeight 1149
+  /StemV 0
+  /FontFile2 8 0 R
+  /Flags 4
+  /FontBBox [0 -215 1000 932]
+  /FontName /AAAAAD+Test
+  /ItalicAngle 0
+  /Ascent 933
+>>
+endobj
+{{object 7 0}} <<
+  {{streamlen}}
+>>
+stream
+{{include ../bug_1388_cmap.fragment}}
+endstream
+endobj
+{{object 8 0}} <<
+  /Filter [/ASCIIHexDecode /FlateDecode]
+  {{streamlen}}
+>>
+stream
+{{include ../bug_1388_truetype_font.fragment}}
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
