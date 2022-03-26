@@ -374,9 +374,6 @@ bug_591137.in * * * skia
 # TODO(chromium:725555, skia:9265): Remove after associated bug is fixed
 bug_725555.in * * * skia,skiapaths
 
-# TODO(pdfium:1752): Remove after associated bug is fixed
-bug_845697.in * * * skia,skiapaths
-
 # TODO(pdfium:1749): Remove after associated bug is fixed
 bug_966263.in * * * skia
 

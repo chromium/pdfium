@@ -543,12 +543,10 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractInkMultiple) {
     EXPECT_EQ(681.535034f, rect.top);
   }
   {
-#if defined(_SKIA_SUPPORT_) && BUILDFLAG(IS_APPLE)
+#if defined(_SKIA_SUPPORT_)
     static constexpr char kExpectedHash[] = "fad91b9c968fe8019a774f5e2419b8fc";
-#elif defined(_SKIA_SUPPORT_PATHS_) && BUILDFLAG(IS_APPLE)
+#elif defined(_SKIA_SUPPORT_PATHS_)
     static constexpr char kExpectedHash[] = "acddfe688a117ead56af7b249a2cf8a1";
-#elif defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-    static constexpr char kExpectedHash[] = "1fb0dd8dd5f0b9bb8d076e48eb59296d";
 #elif BUILDFLAG(IS_WIN)
     static constexpr char kExpectedHash[] = "49d0a81c636531a337429325273d0508";
 #else
@@ -770,12 +768,10 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndSaveUnderlineAnnotation) {
   UnloadPage(page);
 
   // Open the saved document.
-#if defined(_SKIA_SUPPORT_) && BUILDFLAG(IS_APPLE)
+#if defined(_SKIA_SUPPORT_)
   static const char kChecksum[] = "899387ae792390cd0d83cf7e2bbebfb5";
-#elif defined(_SKIA_SUPPORT_PATHS_) && BUILDFLAG(IS_APPLE)
+#elif defined(_SKIA_SUPPORT_PATHS_)
   static const char kChecksum[] = "e40e235ee35f47ff28dda009aaaf36df";
-#elif defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  static const char kChecksum[] = "798fa41303381c9ba6d99092f5cd4d2b";
 #else
   static const char kChecksum[] = "dba153419f67b7c0c0e3d22d3e8910d5";
 #endif
@@ -899,17 +895,12 @@ TEST_F(FPDFAnnotEmbedderTest, GetAndSetQuadPoints) {
 #endif
 TEST_F(FPDFAnnotEmbedderTest, MAYBE_ModifyRectQuadpointsWithAP) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  static const char kMd5Original[] = "00e70eb543c2a6e8f8aafb4ee951d9bf";
+  static const char kMd5Original[] = "127c2d3b4452555e3317827b0dbbb6a0";
   static const char kMd5ModifiedHighlight[] =
-      "7638c4a8fe4aabbf8704e198f49b3198";
-  static const char kMd5ModifiedSquare[] = "54f507af6af63de877b9cafdab1bbdaa";
+      "6ffe732be6f80540b60921c4803b590a";
+  static const char kMd5ModifiedSquare[] = "9ecbeea7f54abea298b53ce79d301f4a";
 #else
-#if BUILDFLAG(IS_WIN)
-  static const char kMd5Original[] = "0e27376094f11490f74c65f3dc3a42c5";
-  static const char kMd5ModifiedHighlight[] =
-      "66f3caef3a7d488a4fa1ad37fc06310e";
-  static const char kMd5ModifiedSquare[] = "a456dad0bc6801ee2d6408a4394af563";
-#elif BUILDFLAG(IS_APPLE)
+#if BUILDFLAG(IS_APPLE)
   static const char kMd5Original[] = "fc59468d154f397fd298c69f47ef565a";
   static const char kMd5ModifiedHighlight[] =
       "e64bf648f6e9354d1f3eedb47a2c9498";
@@ -919,7 +910,7 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_ModifyRectQuadpointsWithAP) {
   static const char kMd5ModifiedHighlight[] =
       "66f3caef3a7d488a4fa1ad37fc06310e";
   static const char kMd5ModifiedSquare[] = "a456dad0bc6801ee2d6408a4394af563";
-#endif
+#endif  // BUILDFLAG(IS_APPLE)
 #endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
   // Open a file with four annotations and load its first page.

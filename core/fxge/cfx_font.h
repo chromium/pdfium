@@ -104,7 +104,8 @@ class CFX_Font {
       int anti_alias,
       CFX_TextRenderOptions* text_options) const;
   const CFX_Path* LoadGlyphPath(uint32_t glyph_index, int dest_width) const;
-  int GetGlyphWidth(uint32_t glyph_index);
+  int GetGlyphWidth(uint32_t glyph_index) const;
+  int GetGlyphWidth(uint32_t glyph_index, int dest_width, int weight) const;
   int GetAscent() const;
   int GetDescent() const;
   absl::optional<FX_RECT> GetGlyphBBox(uint32_t glyph_index);

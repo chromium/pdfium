@@ -384,7 +384,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest,
 // Normal blend mode.
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   static constexpr char kContentWithHighlightFillChecksum[] =
-      "fa25846c61d0253e86e8512d3be06ebb";
+      "1ad601278736432e2f82ea37ab6a28ba";
 #else
 #if BUILDFLAG(IS_APPLE)
   static constexpr char kContentWithHighlightFillChecksum[] =
@@ -413,12 +413,12 @@ TEST_F(FPDFProgressiveRenderEmbedderTest,
 #endif
 TEST_F(FPDFProgressiveRenderEmbedderTest,
        MAYBE_RenderHighlightWithColorSchemeAndConvertFillToStroke) {
-// Test rendering of highlight with forced color and converting fill to
-// stroke. The highlight should be rendered as a stroke of the rect.
-//
-// Note: The stroke color rendered for highlight is different from the normal
-// path since highlights have Multiply blend mode, while the other path has
-// Normal blend mode.
+  // Test rendering of highlight with forced color and converting fill to
+  // stroke. The highlight should be rendered as a stroke of the rect.
+  //
+  // Note: The stroke color rendered for highlight is different from the normal
+  // path since highlights have Multiply blend mode, while the other path has
+  // Normal blend mode.
 #if BUILDFLAG(IS_APPLE)
   static constexpr char kMD5ContentWithHighlight[] =
       "8837bea0b3520164b1784e513c882a2d";
@@ -446,13 +446,8 @@ TEST_F(FPDFProgressiveRenderEmbedderTest,
 TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderInkWithColorScheme) {
 // Test rendering of multiple ink with forced color scheme on.
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#if BUILDFLAG(IS_APPLE)
   static constexpr char kContentWithInkChecksum[] =
       "ebc57721e4c8da34156e09b9b2e62fb0";
-#else
-  static constexpr char kContentWithInkChecksum[] =
-      "b39d9f68ff71963d82c43eb20caa8f4d";
-#endif  // BUILDFLAG(IS_APPLE)
 #else
 #if BUILDFLAG(IS_WIN)
   static constexpr char kContentWithInkChecksum[] =

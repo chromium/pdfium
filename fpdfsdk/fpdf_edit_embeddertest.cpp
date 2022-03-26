@@ -64,7 +64,7 @@ const char kFirstRemovedChecksum[] = "e1477dc3b5b3b9c560814c4d1135a02b";
 const wchar_t kLoadedFontText[] = L"I am testing my loaded font, WEE.";
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-const char kLoadedFontTextChecksum[] = "fc2334c350cbd0d2ae6076689da09741";
+const char kLoadedFontTextChecksum[] = "d58570cc045dfb818b92cbabbd1a364c";
 #elif BUILDFLAG(IS_APPLE)
 const char kLoadedFontTextChecksum[] = "0f3e4a7d71f9e7eb8a1a0d69403b9848";
 #else
@@ -260,15 +260,7 @@ TEST_F(FPDFEditEmbedderTest, EmbedNotoSansSCFont) {
   FPDFPage_InsertObject(page.get(), text_object);
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
 
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#if BUILDFLAG(IS_APPLE)
   const char kChecksum[] = "9a31fb87d1c6d2346bba22d1196041cd";
-#else   // BUILDFLAG(IS_APPLE)
-  const char kChecksum[] = "5bb65e15fc0a685934cd5006dec08a76";
-#endif  // BUILDFLAG(IS_APPLE)
-#else   // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  const char kChecksum[] = "9a31fb87d1c6d2346bba22d1196041cd";
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   ScopedFPDFBitmap page_bitmap = RenderPage(page.get());
   CompareBitmap(page_bitmap.get(), 400, 400, kChecksum);
 
@@ -305,15 +297,7 @@ TEST_F(FPDFEditEmbedderTest, EmbedNotoSansSCFontWithCharcodes) {
   FPDFPage_InsertObject(page.get(), text_object);
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
 
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#if BUILDFLAG(IS_APPLE)
   const char kChecksum[] = "9a31fb87d1c6d2346bba22d1196041cd";
-#else   // BUILDFLAG(IS_APPLE)
-  const char kChecksum[] = "5bb65e15fc0a685934cd5006dec08a76";
-#endif  // BUILDFLAG(IS_APPLE)
-#else   // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  const char kChecksum[] = "9a31fb87d1c6d2346bba22d1196041cd";
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   ScopedFPDFBitmap page_bitmap = RenderPage(page.get());
   CompareBitmap(page_bitmap.get(), 400, 400, kChecksum);
 
@@ -3008,7 +2992,7 @@ TEST_F(FPDFEditEmbedderTest, AddTrueTypeFontText) {
   }
   ScopedFPDFBitmap page_bitmap2 = RenderPage(page);
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  const char kInsertTrueTypeChecksum[] = "4f9a6c7752ac7d4e4c731260fdb5af15";
+  const char kInsertTrueTypeChecksum[] = "683f4a385a891494100192cb338b11f0";
 #elif BUILDFLAG(IS_APPLE)
   const char kInsertTrueTypeChecksum[] = "c7e2271a7f30e5b919a13ead47cea105";
 #else
@@ -3084,11 +3068,7 @@ TEST_F(FPDFEditEmbedderTest, AddCIDFontText) {
   }
 
   // Check that the text renders properly.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  static constexpr char md5[] = "2e174d17de96a760d42ca3a06acbf36a";
-#else
   static constexpr char md5[] = "84d31d11b76845423a2cfc1879c0fbb9";
-#endif
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
     CompareBitmap(page_bitmap.get(), 612, 792, md5);
