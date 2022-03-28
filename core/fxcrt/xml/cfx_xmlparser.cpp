@@ -105,7 +105,6 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
   std::stack<CFX_XMLNode::Type> node_type_stack;
   WideString current_attribute_name;
   FDE_XmlSyntaxState current_parser_state = FDE_XmlSyntaxState::Text;
-  int32_t iCount = 0;
   wchar_t current_quote_character = 0;
   wchar_t current_character_to_skip_to = 0;
 
@@ -328,7 +327,6 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
               }
 
               current_node_ = current_node_->GetParent();
-              iCount++;
             } else if (!IsXMLWhiteSpace(ch)) {
               return false;
             }
