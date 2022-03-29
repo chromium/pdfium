@@ -22,7 +22,7 @@
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/systemfontinfo_iface.h"
-#include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/containers/contains.h"
 #include "third_party/base/cxx17_backports.h"
 
@@ -691,6 +691,11 @@ size_t CFX_FontMapper::GetFaceSize() const {
   return m_FaceArray.size();
 }
 
+ByteString CFX_FontMapper::GetFaceName(size_t index) const {
+  CHECK_LT(index, m_FaceArray.size());
+  return m_FaceArray[index].name;
+}
+
 bool CFX_FontMapper::HasInstalledFont(ByteStringView name) const {
   for (const auto& font : m_InstalledTTFonts) {
     if (font == name)
@@ -731,8 +736,7 @@ absl::optional<ByteString> CFX_FontMapper::LocalizedFontNameStartingWith(
 std::unique_ptr<uint8_t, FxFreeDeleter> CFX_FontMapper::RawBytesForIndex(
     size_t index,
     size_t* returned_length) {
-  if (!m_pFontInfo)
-    return nullptr;
+  CHECK_LT(index, m_FaceArray.size());
 
   void* hFont = m_pFontInfo->MapFont(0, false, FX_Charset::kDefault, 0,
                                      GetFaceName(index));
