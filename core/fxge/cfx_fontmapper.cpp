@@ -739,6 +739,7 @@ std::unique_ptr<uint8_t, FxFreeDeleter> CFX_FontMapper::RawBytesForIndex(
   if (!hFont)
     return nullptr;
 
+  ScopedFontDeleter scoped_font(m_pFontInfo.get(), hFont);
   size_t required_size = m_pFontInfo->GetFontData(hFont, 0, {});
   if (required_size == 0)
     return nullptr;
