@@ -15,6 +15,7 @@
 #include "build/build_config.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_fontmgr.h"
@@ -270,6 +271,19 @@ void RemoveSubsettedFontPrefix(ByteString* subst_name) {
   }
 }
 
+class ScopedFontDeleter {
+ public:
+  FX_STACK_ALLOCATED();
+
+  ScopedFontDeleter(SystemFontInfoIface* font_info, void* font)
+      : font_info_(font_info), font_(font) {}
+  ~ScopedFontDeleter() { font_info_->DeleteFont(font_); }
+
+ private:
+  UnownedPtr<SystemFontInfoIface> const font_info_;
+  void* const font_;
+};
+
 }  // namespace
 
 CFX_FontMapper::CFX_FontMapper(CFX_FontMgr* mgr) : m_pFontMgr(mgr) {}
@@ -332,10 +346,10 @@ void CFX_FontMapper::AddInstalledFont(const ByteString& name,
         return;
     }
 
+    ScopedFontDeleter scoped_font(m_pFontInfo.get(), hFont);
     ByteString new_name = GetPSNameFromTT(hFont);
     if (!new_name.IsEmpty())
       m_LocalizedTTFonts.push_back(std::make_pair(new_name, name));
-    m_pFontInfo->DeleteFont(hFont);
   }
   m_InstalledTTFonts.push_back(name);
   m_LastFamily = name;
@@ -637,24 +651,23 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
   if (!hFont)
     return nullptr;
 
+  ScopedFontDeleter scoped_font(m_pFontInfo.get(), hFont);
   m_pFontInfo->GetFaceName(hFont, &SubstName);
   if (Charset == FX_Charset::kDefault)
     m_pFontInfo->GetFontCharset(hFont, &Charset);
   size_t ttc_size = m_pFontInfo->GetFontData(hFont, kTableTTCF, {});
   size_t font_size = m_pFontInfo->GetFontData(hFont, 0, {});
-  if (font_size == 0 && ttc_size == 0) {
-    m_pFontInfo->DeleteFont(hFont);
+  if (font_size == 0 && ttc_size == 0)
     return nullptr;
-  }
+
   RetainPtr<CFX_Face> face;
   if (ttc_size)
     face = GetCachedTTCFace(hFont, ttc_size, font_size);
   else
     face = GetCachedFace(hFont, SubstName, weight, bItalic, font_size);
-  if (!face) {
-    m_pFontInfo->DeleteFont(hFont);
+  if (!face)
     return nullptr;
-  }
+
   pSubstFont->m_Family = SubstName;
   pSubstFont->m_Charset = Charset;
   bool bNeedUpdateWeight = false;
@@ -671,7 +684,6 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
       italic_angle = 0;
     pSubstFont->m_ItalicAngle = italic_angle;
   }
-  m_pFontInfo->DeleteFont(hFont);
   return face;
 }
 
