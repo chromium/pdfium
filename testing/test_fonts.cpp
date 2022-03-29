@@ -4,6 +4,7 @@
 
 #include "testing/test_fonts.h"
 
+#include <set>
 #include <utility>
 
 #include "core/fxge/cfx_fontmapper.h"
@@ -45,7 +46,7 @@ class SystemFontInfoWrapper : public SystemFontInfoIface {
  public:
   explicit SystemFontInfoWrapper(std::unique_ptr<SystemFontInfoIface> impl)
       : impl_(std::move(impl)) {}
-  ~SystemFontInfoWrapper() = default;
+  ~SystemFontInfoWrapper() { CHECK(active_fonts_.empty()); }
 
   bool EnumFontList(CFX_FontMapper* pMapper) override {
     return impl_->EnumFontList(pMapper);
@@ -55,8 +56,13 @@ class SystemFontInfoWrapper : public SystemFontInfoIface {
                 FX_Charset charset,
                 int pitch_family,
                 const ByteString& face) override {
-    return impl_->MapFont(weight, bItalic, charset, pitch_family,
-                          RenameFontForTesting(face));
+    void* font = impl_->MapFont(weight, bItalic, charset, pitch_family,
+                                RenameFontForTesting(face));
+    if (font) {
+      bool inserted = active_fonts_.insert(font).second;
+      CHECK(inserted);
+    }
+    return font;
   }
   void* GetFont(const ByteString& face) override {
     return impl_->GetFont(RenameFontForTesting(face));
@@ -73,10 +79,14 @@ class SystemFontInfoWrapper : public SystemFontInfoIface {
   bool GetFontCharset(void* hFont, FX_Charset* charset) override {
     return impl_->GetFontCharset(hFont, charset);
   }
-  void DeleteFont(void* hFont) override { impl_->DeleteFont(hFont); }
+  void DeleteFont(void* hFont) override {
+    CHECK(active_fonts_.erase(hFont));
+    impl_->DeleteFont(hFont);
+  }
 
  private:
   std::unique_ptr<SystemFontInfoIface> impl_;
+  std::set<void*> active_fonts_;
 };
 
 }  // namespace
