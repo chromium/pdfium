@@ -13,6 +13,8 @@ source_set("constants") {
     "appearance.cpp",
     "appearance.h",
     "ascii.h",
+    "font_encodings.cpp",
+    "font_encodings.h",
     "form_fields.cpp",
     "form_fields.h",
     "form_flags.h",

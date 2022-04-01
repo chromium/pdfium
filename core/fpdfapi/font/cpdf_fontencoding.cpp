@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/font/cpdf_fontencoding.h"
 
+#include "constants/font_encodings.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
@@ -1702,11 +1703,11 @@ RetainPtr<CPDF_Object> CPDF_FontEncoding::Realize(
   if (predefined.has_value()) {
     const char* pName;
     if (predefined.value() == FontEncoding::kWinAnsi)
-      pName = "WinAnsiEncoding";
+      pName = pdfium::font_encodings::kWinAnsiEncoding;
     else if (predefined.value() == FontEncoding::kMacRoman)
-      pName = "MacRomanEncoding";
+      pName = pdfium::font_encodings::kMacRomanEncoding;
     else if (predefined.value() == FontEncoding::kMacExpert)
-      pName = "MacExpertEncoding";
+      pName = pdfium::font_encodings::kMacExpertEncoding;
     else
       return nullptr;
 
@@ -1724,7 +1725,8 @@ RetainPtr<CPDF_Object> CPDF_FontEncoding::Realize(
   }
 
   auto pDict = pdfium::MakeRetain<CPDF_Dictionary>(pPool);
-  pDict->SetNewFor<CPDF_Name>("BaseEncoding", "WinAnsiEncoding");
+  pDict->SetNewFor<CPDF_Name>("BaseEncoding",
+                              pdfium::font_encodings::kWinAnsiEncoding);
   pDict->SetFor("Differences", pDiff);
   return pDict;
 }

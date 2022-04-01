@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <iterator>
 
+#include "constants/font_encodings.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
@@ -21,13 +22,13 @@
 namespace {
 
 void GetPredefinedEncoding(const ByteString& value, FontEncoding* basemap) {
-  if (value == "WinAnsiEncoding")
+  if (value == pdfium::font_encodings::kWinAnsiEncoding)
     *basemap = FontEncoding::kWinAnsi;
-  else if (value == "MacRomanEncoding")
+  else if (value == pdfium::font_encodings::kMacRomanEncoding)
     *basemap = FontEncoding::kMacRoman;
-  else if (value == "MacExpertEncoding")
+  else if (value == pdfium::font_encodings::kMacExpertEncoding)
     *basemap = FontEncoding::kMacExpert;
-  else if (value == "PDFDocEncoding")
+  else if (value == pdfium::font_encodings::kPDFDocEncoding)
     *basemap = FontEncoding::kPdfDoc;
 }
 
@@ -172,9 +173,8 @@ void CPDF_SimpleFont::LoadPDFEncoding(bool bEmbedded, bool bTrueType) {
       return;
     }
     ByteString bsEncoding = pEncoding->GetString();
-    if (bsEncoding == "MacExpertEncoding") {
-      bsEncoding = "WinAnsiEncoding";
-    }
+    if (bsEncoding == pdfium::font_encodings::kMacExpertEncoding)
+      bsEncoding = pdfium::font_encodings::kWinAnsiEncoding;
     GetPredefinedEncoding(bsEncoding, &m_BaseEncoding);
     return;
   }
@@ -186,8 +186,8 @@ void CPDF_SimpleFont::LoadPDFEncoding(bool bEmbedded, bool bTrueType) {
   if (m_BaseEncoding != FontEncoding::kAdobeSymbol &&
       m_BaseEncoding != FontEncoding::kZapfDingbats) {
     ByteString bsEncoding = pDict->GetStringFor("BaseEncoding");
-    if (bTrueType && bsEncoding == "MacExpertEncoding")
-      bsEncoding = "WinAnsiEncoding";
+    if (bTrueType && bsEncoding == pdfium::font_encodings::kMacExpertEncoding)
+      bsEncoding = pdfium::font_encodings::kWinAnsiEncoding;
     GetPredefinedEncoding(bsEncoding, &m_BaseEncoding);
   }
   if ((!bEmbedded || bTrueType) && m_BaseEncoding == FontEncoding::kBuiltin)

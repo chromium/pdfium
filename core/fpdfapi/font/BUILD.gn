@@ -45,6 +45,7 @@ source_set("font") {
     "../../../:pdfium_noshorten_config",
   ]
   deps = [
+    "../../../constants",
     "../../fxcrt",
     "../../fxge",
     "../cmaps",

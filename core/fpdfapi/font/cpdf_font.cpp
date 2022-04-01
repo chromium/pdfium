@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "build/build_config.h"
+#include "constants/font_encodings.h"
 #include "core/fpdfapi/font/cpdf_cidfont.h"
 #include "core/fpdfapi/font/cpdf_fontencoding.h"
 #include "core/fpdfapi/font/cpdf_fontglobals.h"
@@ -293,7 +294,8 @@ RetainPtr<CPDF_Font> CPDF_Font::GetStockFont(CPDF_Document* pDoc,
   pDict->SetNewFor<CPDF_Name>("Type", "Font");
   pDict->SetNewFor<CPDF_Name>("Subtype", "Type1");
   pDict->SetNewFor<CPDF_Name>("BaseFont", fontname);
-  pDict->SetNewFor<CPDF_Name>("Encoding", "WinAnsiEncoding");
+  pDict->SetNewFor<CPDF_Name>("Encoding",
+                              pdfium::font_encodings::kWinAnsiEncoding);
   pFont = CPDF_Font::Create(nullptr, pDict.Get(), nullptr);
   pFontGlobals->Set(pDoc, font_id.value(), pFont);
   return pFont;

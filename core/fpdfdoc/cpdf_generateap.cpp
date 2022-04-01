@@ -12,6 +12,7 @@
 
 #include "constants/annotation_common.h"
 #include "constants/appearance.h"
+#include "constants/font_encodings.h"
 #include "constants/form_fields.h"
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
@@ -406,7 +407,8 @@ RetainPtr<CPDF_Dictionary> GenerateResourceFontDict(
   pFontDict->SetNewFor<CPDF_Name>("Type", "Font");
   pFontDict->SetNewFor<CPDF_Name>("Subtype", "Type1");
   pFontDict->SetNewFor<CPDF_Name>("BaseFont", CFX_Font::kDefaultAnsiFontName);
-  pFontDict->SetNewFor<CPDF_Name>("Encoding", "WinAnsiEncoding");
+  pFontDict->SetNewFor<CPDF_Name>("Encoding",
+                                  pdfium::font_encodings::kWinAnsiEncoding);
 
   auto pResourceFontDict = pDoc->New<CPDF_Dictionary>();
   pResourceFontDict->SetNewFor<CPDF_Reference>(sFontDictName, pDoc,
@@ -954,7 +956,8 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
     pFontDict->SetNewFor<CPDF_Name>("Type", "Font");
     pFontDict->SetNewFor<CPDF_Name>("Subtype", "Type1");
     pFontDict->SetNewFor<CPDF_Name>("BaseFont", CFX_Font::kDefaultAnsiFontName);
-    pFontDict->SetNewFor<CPDF_Name>("Encoding", "WinAnsiEncoding");
+    pFontDict->SetNewFor<CPDF_Name>("Encoding",
+                                    pdfium::font_encodings::kWinAnsiEncoding);
     pDRFontDict->SetNewFor<CPDF_Reference>(font_name, pDoc,
                                            pFontDict->GetObjNum());
   }
