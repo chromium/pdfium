@@ -8,7 +8,6 @@
 
 #include <algorithm>
 #include <memory>
-#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -207,34 +206,29 @@ struct FX_FontStyle {
   uint32_t style;
 };
 
-const FX_FontStyle kFontStyles[] = {
-    {"Bold", 4, FXFONT_FORCE_BOLD},
-    {"Italic", 6, FXFONT_ITALIC},
-    {"BoldItalic", 10, FXFONT_FORCE_BOLD | FXFONT_ITALIC},
-    {"Reg", 3, FXFONT_NORMAL},
+constexpr FX_FontStyle kFontStyles[] = {
     {"Regular", 7, FXFONT_NORMAL},
+    {"Reg", 3, FXFONT_NORMAL},
+    {"BoldItalic", 10, FXFONT_FORCE_BOLD | FXFONT_ITALIC},
+    {"Italic", 6, FXFONT_ITALIC},
+    {"Bold", 4, FXFONT_FORCE_BOLD},
 };
 
-// <exists, index, length>
-std::tuple<bool, uint32_t, size_t> GetStyleType(const ByteString& bsStyle,
-                                                bool reverse_search) {
-  if (bsStyle.IsEmpty())
-    return std::make_tuple(false, FXFONT_NORMAL, 0);
+const FX_FontStyle* GetStyleType(ByteStringView font_name,
+                                 bool reverse_search) {
+  if (font_name.IsEmpty())
+    return nullptr;
 
-  for (int i = pdfium::size(kFontStyles) - 1; i >= 0; --i) {
-    const FX_FontStyle* pStyle = kFontStyles + i;
-    if (!pStyle || pStyle->len > bsStyle.GetLength())
+  for (const FX_FontStyle& style : kFontStyles) {
+    if (style.len > font_name.GetLength())
       continue;
 
-    if (reverse_search) {
-      if (bsStyle.Last(pStyle->len) == pStyle->name)
-        return std::make_tuple(true, pStyle->style, pStyle->len);
-    } else {
-      if (bsStyle.First(pStyle->len) == pStyle->name)
-        return std::make_tuple(true, pStyle->style, pStyle->len);
-    }
+    ByteStringView style_view =
+        reverse_search ? font_name.Last(style.len) : font_name.First(style.len);
+    if (style_view == style.name)
+      return &style;
   }
-  return std::make_tuple(false, FXFONT_NORMAL, 0);
+  return nullptr;
 }
 
 bool CheckSupportThirdPartFont(const ByteString& name, int* pitch_family) {
@@ -584,14 +578,11 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
     }
     if (!has_hyphen) {
       size_t nLen = family.GetLength();
-      bool has_style_type;
-      uint32_t style_type;
-      size_t len;
-      std::tie(has_style_type, style_type, len) =
-          GetStyleType(family, /*reverse_search=*/true);
-      if (has_style_type) {
-        family = family.First(nLen - len);
-        nStyle |= style_type;
+      const FX_FontStyle* style_result =
+          GetStyleType(family.AsStringView(), /*reverse_search=*/true);
+      if (style_result) {
+        family = family.First(nLen - style_result->len);
+        nStyle |= style_result->style;
       }
     }
     pitch_family = GetPitchFamilyFromFlags(flags);
@@ -606,20 +597,17 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
     bool is_first_item = true;
     while (i < style.GetLength()) {
       ByteString buf = ParseStyle(style, i);
-      bool has_style_type;
-      uint32_t style_type;
-      size_t len;
-      std::tie(has_style_type, style_type, len) =
-          GetStyleType(buf, /*reverse_search=*/false);
-      if ((i && !is_style_available) || (!i && !has_style_type)) {
+      const FX_FontStyle* style_result =
+          GetStyleType(buf.AsStringView(), /*reverse_search=*/false);
+      if ((i && !is_style_available) || (!i && !style_result)) {
         family = subst_name;
         base_font = kNumStandardFonts;
         break;
       }
-      if (has_style_type)
+      if (style_result)
         is_style_available = true;
 
-      if (FontStyleIsForceBold(style_type)) {
+      if (FontStyleIsForceBold(style_result->style)) {
         // If we're already bold, then we're double bold, use special weight.
         if (FontStyleIsForceBold(nStyle)) {
           weight = FXFONT_FW_BOLD_BOLD;
@@ -630,9 +618,10 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
 
         is_first_item = false;
       }
-      if (FontStyleIsItalic(style_type) && FontStyleIsForceBold(style_type)) {
+      if (FontStyleIsItalic(style_result->style) &&
+          FontStyleIsForceBold(style_result->style)) {
         nStyle |= FXFONT_ITALIC;
-      } else if (FontStyleIsItalic(style_type)) {
+      } else if (FontStyleIsItalic(style_result->style)) {
         if (is_first_item) {
           nStyle |= FXFONT_ITALIC;
         } else {
