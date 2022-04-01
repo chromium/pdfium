@@ -1749,6 +1749,10 @@ uint32_t FT_CharCodeFromUnicode(int encoding, wchar_t unicode) {
   return 0;
 }
 
+wchar_t UnicodeFromAppleRomanCharCode(uint8_t charcode) {
+  return kMacRomanEncoding[charcode];
+}
+
 const uint16_t* PDF_UnicodesForPredefinedCharSet(FontEncoding encoding) {
   switch (encoding) {
     case FontEncoding::kBuiltin:
@@ -1803,22 +1807,4 @@ const char* PDF_CharNameFromPredefinedCharSet(FontEncoding encoding,
     default:
       return nullptr;
   }
-}
-
-wchar_t FT_UnicodeFromCharCode(int encoding, uint32_t charcode) {
-  switch (encoding) {
-    case FT_ENCODING_UNICODE:
-      return (uint16_t)charcode;
-    case FT_ENCODING_ADOBE_STANDARD:
-      return kStandardEncoding[(uint8_t)charcode];
-    case FT_ENCODING_ADOBE_EXPERT:
-      return kMacExpertEncoding[(uint8_t)charcode];
-    case FT_ENCODING_ADOBE_LATIN_1:
-      return kAdobeWinAnsiEncoding[(uint8_t)charcode];
-    case FT_ENCODING_APPLE_ROMAN:
-      return kMacRomanEncoding[(uint8_t)charcode];
-    case static_cast<int>(FontEncoding::kPdfDoc):
-      return kPDFDocEncoding[(uint8_t)charcode];
-  }
-  return 0;
 }

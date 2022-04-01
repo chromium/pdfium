@@ -128,10 +128,9 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
             m_Encoding.SetUnicode(charcode, PDF_UnicodeFromAdobeName(name));
         }
       } else if (UseTTCharmapMacRoman(face)) {
-        for (int charcode = 0; charcode < 256; charcode++) {
-          m_Encoding.SetUnicode(
-              charcode,
-              FT_UnicodeFromCharCode(FT_ENCODING_APPLE_ROMAN, charcode));
+        for (uint32_t charcode = 0; charcode < 256; charcode++) {
+          m_Encoding.SetUnicode(charcode,
+                                UnicodeFromAppleRomanCharCode(charcode));
         }
       }
       return;
@@ -140,8 +139,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
   if (UseTTCharmapMacRoman(face)) {
     for (uint32_t charcode = 0; charcode < 256; charcode++) {
       m_GlyphIndex[charcode] = FT_Get_Char_Index(face, charcode);
-      m_Encoding.SetUnicode(
-          charcode, FT_UnicodeFromCharCode(FT_ENCODING_APPLE_ROMAN, charcode));
+      m_Encoding.SetUnicode(charcode, UnicodeFromAppleRomanCharCode(charcode));
     }
     if (m_pFontFile || HasAnyGlyphIndex())
       return;

@@ -208,18 +208,12 @@ void CPDF_Type1Font::LoadGlyphMap() {
         } else {
           m_GlyphIndex[charcode] =
               FT_Get_Char_Index(m_Font.GetFaceRec(), charcode);
-          wchar_t unicode = 0;
-          if (m_GlyphIndex[charcode]) {
-            unicode = FT_UnicodeFromCharCode(
-                static_cast<int>(FontEncoding::kStandard), charcode);
-          }
           char name_glyph[kInternalTableSize] = {};
           FT_Get_Glyph_Name(m_Font.GetFaceRec(), m_GlyphIndex[charcode],
                             name_glyph, sizeof(name_glyph));
           name_glyph[kInternalTableSize - 1] = 0;
-          if (unicode == 0 && name_glyph[0] != 0)
-            unicode = PDF_UnicodeFromAdobeName(name_glyph);
-
+          const wchar_t unicode =
+              name_glyph[0] != 0 ? PDF_UnicodeFromAdobeName(name_glyph) : 0;
           m_Encoding.SetUnicode(charcode, unicode);
           SetExtGID(name_glyph, charcode);
         }
@@ -271,17 +265,12 @@ void CPDF_Type1Font::LoadGlyphMap() {
         m_GlyphIndex[charcode] = FT_Get_Char_Index(
             m_Font.GetFaceRec(), static_cast<uint32_t>(charcode));
         if (m_GlyphIndex[charcode]) {
-          wchar_t unicode =
-              FT_UnicodeFromCharCode(static_cast<int>(FontEncoding::kStandard),
-                                     static_cast<uint32_t>(charcode));
-          if (unicode == 0) {
-            char name_glyph[kInternalTableSize] = {};
-            FT_Get_Glyph_Name(m_Font.GetFaceRec(), m_GlyphIndex[charcode],
-                              name_glyph, sizeof(name_glyph));
-            name_glyph[kInternalTableSize - 1] = 0;
-            if (name_glyph[0] != 0)
-              unicode = PDF_UnicodeFromAdobeName(name_glyph);
-          }
+          char name_glyph[kInternalTableSize] = {};
+          FT_Get_Glyph_Name(m_Font.GetFaceRec(), m_GlyphIndex[charcode],
+                            name_glyph, sizeof(name_glyph));
+          name_glyph[kInternalTableSize - 1] = 0;
+          const wchar_t unicode =
+              name_glyph[0] != 0 ? PDF_UnicodeFromAdobeName(name_glyph) : 0;
           m_Encoding.SetUnicode(charcode, unicode);
         }
       }

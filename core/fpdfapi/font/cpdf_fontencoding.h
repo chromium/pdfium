@@ -25,7 +25,7 @@ enum class FontEncoding {
 };
 
 uint32_t FT_CharCodeFromUnicode(int encoding, wchar_t unicode);
-wchar_t FT_UnicodeFromCharCode(int encoding, uint32_t charcode);
+wchar_t UnicodeFromAppleRomanCharCode(uint8_t charcode);
 
 const uint16_t* PDF_UnicodesForPredefinedCharSet(FontEncoding encoding);
 const char* PDF_CharNameFromPredefinedCharSet(FontEncoding encoding,
