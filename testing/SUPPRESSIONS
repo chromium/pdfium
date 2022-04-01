@@ -353,6 +353,9 @@ bug_1519.in * * * *
 # TODO(pdfium:1571): Remove after associated bug is fixed
 bug_1571.in * * * *
 
+# TODO(pdfium:1723): Remove after associated bug is fixed
+bug_1723.in * * * *
+
 # TODO(pdfium:1746): Remove after associated bug is fixed
 bug_1746.in * * * skia
 

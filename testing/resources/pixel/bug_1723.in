@@ -1,0 +1,61 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+  /MediaBox [0 0 300 400]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents [4 0 R]
+  /Resources <<
+    /ColorSpace <<
+      /DefaultCMYK /DeviceRGB
+    >>
+    /XObject <<
+      /Img 5 0 R
+    >>
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+200 0 0 300 50 50 cm
+/Img Do
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 8
+  /ColorSpace /DeviceCMYK
+  /Filter /ASCIIHexDecode
+  /Height 8
+  /Width 8
+  {{streamlen}}
+>>
+stream
+FF000000 FF000000 FF000000 FF000000   00FF0000 00FF0000 00FF0000 00FF0000
+FF000000 FF000000 FF000000 FF000000   00FF0000 00FF0000 00FF0000 00FF0000
+FF000000 FF000000 FF000000 FF000000   00FF0000 00FF0000 00FF0000 00FF0000
+FF000000 FF000000 FF000000 FF000000   00FF0000 00FF0000 00FF0000 00FF0000
+
+0000FF00 0000FF00 0000FF00 0000FF00   000000FF 000000FF 000000FF 000000FF
+0000FF00 0000FF00 0000FF00 0000FF00   000000FF 000000FF 000000FF 000000FF
+0000FF00 0000FF00 0000FF00 0000FF00   000000FF 000000FF 000000FF 000000FF
+0000FF00 0000FF00 0000FF00 0000FF00   000000FF 000000FF 000000FF 000000FF
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
