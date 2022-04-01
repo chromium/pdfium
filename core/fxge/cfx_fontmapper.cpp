@@ -271,6 +271,27 @@ void RemoveSubsettedFontPrefix(ByteString* subst_name) {
   }
 }
 
+ByteString GetSubstName(const ByteString& name, bool is_truetype) {
+  ByteString subst_name = name;
+  if (is_truetype && name.Front() == '@')
+    subst_name.Delete(0);
+  else
+    subst_name.Remove(' ');
+  RemoveSubsettedFontPrefix(&subst_name);
+  CFX_FontMapper::GetStandardFontName(&subst_name);
+  return subst_name;
+}
+
+bool IsNarrowFontName(const ByteString& name) {
+  static const char kNarrowFonts[][10] = {"Narrow", "Condensed"};
+  for (const char* font : kNarrowFonts) {
+    absl::optional<size_t> pos = name.Find(font);
+    if (pos.has_value() && pos.value() != 0)
+      return true;
+  }
+  return false;
+}
+
 class ScopedFontDeleter {
  public:
   FX_STACK_ALLOCATED();
@@ -470,12 +491,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
     weight = FXFONT_FW_NORMAL;
     italic_angle = 0;
   }
-  ByteString subst_name = name;
-  subst_name.Remove(' ');
-  if (is_truetype && name.GetLength() > 0 && name[0] == '@')
-    subst_name = name.Last(name.GetLength() - 1);
-  RemoveSubsettedFontPrefix(&subst_name);
-  GetStandardFontName(&subst_name);
+  const ByteString subst_name = GetSubstName(name, is_truetype);
   if (subst_name == "Symbol" && !is_truetype) {
     subst_font->m_Family = "Chrome Symbol";
     subst_font->m_Charset = FX_Charset::kSymbol;
@@ -616,11 +632,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
         is_italic = italic_angle != 0;
         weight = old_weight;
       }
-      absl::optional<size_t> pos = subst_name.Find("Narrow");
-      if (pos.has_value() && pos.value() != 0)
-        family = kNarrowFamily;
-      pos = subst_name.Find("Condensed");
-      if (pos.has_value() && pos.value() != 0)
+      if (IsNarrowFontName(subst_name))
         family = kNarrowFamily;
     } else {
       subst_font->m_bSubstCJK = true;
