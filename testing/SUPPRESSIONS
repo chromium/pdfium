@@ -344,9 +344,6 @@ bug_1331.in * * * *
 bug_1355.in win * * *
 bug_1402.in win * * *
 
-# TODO(pdfium:1466): Remove after associated bug is fixed
-bug_1449.in linux * * *
-
 # TODO(pdfium:1457): Remove after associated bug is fixed
 bug_1457.in * * * *
 

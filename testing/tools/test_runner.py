@@ -138,8 +138,7 @@ class TestRunner:
       raised_exception = self.TestText(input_filename, input_root,
                                        expected_txt_path, pdf_path)
     else:
-      use_ahem = 'use_ahem' in source_dir
-      raised_exception, results = self.TestPixel(pdf_path, use_ahem)
+      raised_exception, results = self.TestPixel(pdf_path, source_dir)
 
     if raised_exception is not None:
       print('FAILURE: {}; {}'.format(input_filename, raised_exception))
@@ -243,14 +242,17 @@ class TestRunner:
 
   # TODO(crbug.com/pdfium/1656): Remove when ready to fully switch over to
   # Skia Gold
-  def TestPixel(self, pdf_path, use_ahem):
+  def TestPixel(self, pdf_path, source_dir):
     cmd_to_run = [
         self.pdfium_test_path, '--send-events', '--png', '--md5',
         '--time=' + TEST_SEED_TIME
     ]
 
-    if use_ahem:
+    if 'use_ahem' in source_dir or 'use_symbolneu' in source_dir:
       cmd_to_run.append('--font-dir=%s' % self.font_dir)
+    else:
+      cmd_to_run.append('--font-dir=%s' % self.third_party_font_dir)
+      cmd_to_run.append('--croscore-font-names')
 
     if self.options.disable_javascript:
       cmd_to_run.append('--disable-javascript')
@@ -370,6 +372,7 @@ class TestRunner:
     self.fixup_path = finder.ScriptPath('fixup_pdf_template.py')
     self.text_diff_path = finder.ScriptPath('text_diff.py')
     self.font_dir = os.path.join(finder.TestingDir(), 'resources', 'fonts')
+    self.third_party_font_dir = finder.ThirdPartyFontsDir()
 
     self.source_dir = finder.TestingDir()
     if self.test_dir != 'corpus':

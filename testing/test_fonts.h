@@ -17,6 +17,8 @@ class TestFonts {
 
   void InstallFontMapper();
 
+  static std::string RenameFont(const char* face);
+
  private:
   std::string font_path_;
   std::unique_ptr<const char*[]> font_paths_;

@@ -135,6 +135,10 @@ class DirectoryFinder:
       result = os.path.join(result, other_components)
     return result
 
+  def ThirdPartyFontsDir(self):
+    '''Finds directory with the test fonts.'''
+    return os.path.join(self.base_dir, 'third_party', 'test_fonts')
+
 
 def GetBooleanGnArg(arg_name, build_dir, verbose=False):
   '''Extract the value of a boolean flag in args.gn'''

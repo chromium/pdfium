@@ -108,3 +108,9 @@ void TestFonts::InstallFontMapper() {
   font_mapper->SetSystemFontInfo(std::make_unique<SystemFontInfoWrapper>(
       font_mapper->TakeSystemFontInfo()));
 }
+
+// static
+std::string TestFonts::RenameFont(const char* face) {
+  ByteString renamed_face = RenameFontForTesting(face);
+  return std::string(renamed_face.c_str());
+}
