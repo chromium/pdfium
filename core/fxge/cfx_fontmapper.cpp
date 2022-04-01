@@ -244,13 +244,56 @@ bool CheckSupportThirdPartFont(const ByteString& name, int* pitch_family) {
   return true;
 }
 
-void UpdatePitchFamily(uint32_t flags, int* pitch_family) {
+uint32_t GetStyleFromBaseFont(int base_font) {
+  int pos = base_font % 4;
+  uint32_t style = FXFONT_NORMAL;
+  if (pos == 1 || pos == 2)
+    style |= FXFONT_FORCE_BOLD;
+  if (pos / 2)
+    style |= FXFONT_ITALIC;
+  return style;
+}
+
+int GetPitchFamilyFromBaseFont(int base_font) {
+  if (base_font < 4)
+    return FXFONT_FF_FIXEDPITCH;
+  if (base_font >= 8)
+    return FXFONT_FF_ROMAN;
+  return 0;
+}
+
+int GetPitchFamilyFromFlags(uint32_t flags) {
+  int pitch_family = 0;
   if (FontStyleIsSerif(flags))
-    *pitch_family |= FXFONT_FF_ROMAN;
+    pitch_family |= FXFONT_FF_ROMAN;
   if (FontStyleIsScript(flags))
-    *pitch_family |= FXFONT_FF_SCRIPT;
+    pitch_family |= FXFONT_FF_SCRIPT;
   if (FontStyleIsFixedPitch(flags))
-    *pitch_family |= FXFONT_FF_FIXEDPITCH;
+    pitch_family |= FXFONT_FF_FIXEDPITCH;
+  return pitch_family;
+}
+
+int AdjustBaseFontForStyle(int base_font, uint32_t style) {
+  if (!style || (base_font % 4))
+    return base_font;
+
+  if (FontStyleIsForceBold(style) && FontStyleIsItalic(style))
+    base_font += 2;
+  else if (FontStyleIsForceBold(style))
+    base_font += 1;
+  else if (FontStyleIsItalic(style))
+    base_font += 3;
+  return base_font;
+}
+
+FX_Charset GetCharset(FX_CodePage code_page, int base_font, uint32_t flags) {
+  if (code_page != FX_CodePage::kDefANSI)
+    return FX_GetCharsetFromCodePage(code_page);
+  if (FontStyleIsSymbolic(flags) &&
+      base_font == CFX_FontMapper::kNumStandardFonts) {
+    return FX_Charset::kSymbol;
+  }
+  return FX_Charset::kANSI;
 }
 
 bool IsStrUpper(const ByteString& str) {
@@ -522,20 +565,15 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
     if (family == kBase14FontNames[base_font])
       break;
   }
-  int pitch_family = 0;
-  uint32_t nStyle = FXFONT_NORMAL;
+  int pitch_family;
+  uint32_t nStyle;
   bool is_style_available = false;
   if (base_font < kSymbol) {
-    if ((base_font % 4) == 1 || (base_font % 4) == 2)
-      nStyle |= FXFONT_FORCE_BOLD;
-    if ((base_font % 4) / 2)
-      nStyle |= FXFONT_ITALIC;
-    if (base_font < 4)
-      pitch_family |= FXFONT_FF_FIXEDPITCH;
-    if (base_font >= 8)
-      pitch_family |= FXFONT_FF_ROMAN;
+    nStyle = GetStyleFromBaseFont(base_font);
+    pitch_family = GetPitchFamilyFromBaseFont(base_font);
   } else {
     base_font = kNumStandardFonts;
+    nStyle = FXFONT_NORMAL;
     if (!has_comma) {
       absl::optional<size_t> pos = family.ReverseFind('-');
       if (pos.has_value()) {
@@ -556,7 +594,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
         nStyle |= style_type;
       }
     }
-    UpdatePitchFamily(flags, &pitch_family);
+    pitch_family = GetPitchFamilyFromFlags(flags);
   }
 
   const int old_weight = weight;
@@ -612,11 +650,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
                             subst_font);
   }
 
-  FX_Charset Charset = FX_Charset::kANSI;
-  if (code_page != FX_CodePage::kDefANSI)
-    Charset = FX_GetCharsetFromCodePage(code_page);
-  else if (base_font == kNumStandardFonts && FontStyleIsSymbolic(flags))
-    Charset = FX_Charset::kSymbol;
+  const FX_Charset Charset = GetCharset(code_page, base_font, flags);
   const bool is_cjk = FX_CharSetIsCJK(Charset);
   bool is_italic = FontStyleIsItalic(nStyle);
 
@@ -651,14 +685,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
     if (!match.IsEmpty())
       family = match;
     if (base_font < kNumStandardFonts) {
-      if (nStyle && !(base_font % 4)) {
-        if (FontStyleIsForceBold(nStyle) && FontStyleIsItalic(nStyle))
-          base_font += 2;
-        else if (FontStyleIsForceBold(nStyle))
-          base_font += 1;
-        else if (FontStyleIsItalic(nStyle))
-          base_font += 3;
-      }
+      base_font = AdjustBaseFontForStyle(base_font, nStyle);
       family = kBase14FontNames[base_font];
     }
   } else if (FontStyleIsItalic(flags)) {
