@@ -413,6 +413,49 @@ RetainPtr<CFX_Face> CFX_FontMapper::UseInternalSubst(
   return m_GenericSansFace;
 }
 
+RetainPtr<CFX_Face> CFX_FontMapper::UseExternalSubst(
+    void* font_handle,
+    ByteString face_name,
+    int weight,
+    bool is_italic,
+    int italic_angle,
+    FX_Charset charset,
+    CFX_SubstFont* subst_font) {
+  if (!font_handle)
+    return nullptr;
+
+  ScopedFontDeleter scoped_font(m_pFontInfo.get(), font_handle);
+  m_pFontInfo->GetFaceName(font_handle, &face_name);
+  if (charset == FX_Charset::kDefault)
+    m_pFontInfo->GetFontCharset(font_handle, &charset);
+  size_t ttc_size = m_pFontInfo->GetFontData(font_handle, kTableTTCF, {});
+  size_t font_size = m_pFontInfo->GetFontData(font_handle, 0, {});
+  if (font_size == 0 && ttc_size == 0)
+    return nullptr;
+
+  RetainPtr<CFX_Face> face =
+      ttc_size
+          ? GetCachedTTCFace(font_handle, ttc_size, font_size)
+          : GetCachedFace(font_handle, face_name, weight, is_italic, font_size);
+  if (!face)
+    return nullptr;
+
+  subst_font->m_Family = face_name;
+  subst_font->m_Charset = charset;
+  int face_weight =
+      FXFT_Is_Face_Bold(face->GetRec()) ? FXFONT_FW_BOLD : FXFONT_FW_NORMAL;
+  if (weight != face_weight)
+    subst_font->m_Weight = weight;
+  if (is_italic && !FXFT_Is_Face_Italic(face->GetRec())) {
+    if (italic_angle == 0)
+      italic_angle = -12;
+    else if (abs(italic_angle) < 5)
+      italic_angle = 0;
+    subst_font->m_ItalicAngle = italic_angle;
+  }
+  return face;
+}
+
 RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
                                                   bool is_truetype,
                                                   uint32_t flags,
@@ -653,43 +696,8 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
       font_handle = m_pFontInfo->GetFont(it->name);
     }
   }
-  if (!font_handle)
-    return nullptr;
-
-  ScopedFontDeleter scoped_font(m_pFontInfo.get(), font_handle);
-  m_pFontInfo->GetFaceName(font_handle, &subst_name);
-  if (Charset == FX_Charset::kDefault)
-    m_pFontInfo->GetFontCharset(font_handle, &Charset);
-  size_t ttc_size = m_pFontInfo->GetFontData(font_handle, kTableTTCF, {});
-  size_t font_size = m_pFontInfo->GetFontData(font_handle, 0, {});
-  if (font_size == 0 && ttc_size == 0)
-    return nullptr;
-
-  RetainPtr<CFX_Face> face;
-  if (ttc_size)
-    face = GetCachedTTCFace(font_handle, ttc_size, font_size);
-  else
-    face = GetCachedFace(font_handle, subst_name, weight, is_italic, font_size);
-  if (!face)
-    return nullptr;
-
-  subst_font->m_Family = subst_name;
-  subst_font->m_Charset = Charset;
-  bool bNeedUpdateWeight = false;
-  if (FXFT_Is_Face_Bold(face->GetRec()))
-    bNeedUpdateWeight = weight != FXFONT_FW_BOLD;
-  else
-    bNeedUpdateWeight = weight != FXFONT_FW_NORMAL;
-  if (bNeedUpdateWeight)
-    subst_font->m_Weight = weight;
-  if (is_italic && !FXFT_Is_Face_Italic(face->GetRec())) {
-    if (italic_angle == 0)
-      italic_angle = -12;
-    else if (abs(italic_angle) < 5)
-      italic_angle = 0;
-    subst_font->m_ItalicAngle = italic_angle;
-  }
-  return face;
+  return UseExternalSubst(font_handle, subst_name, weight, is_italic,
+                          italic_angle, Charset, subst_font);
 }
 
 size_t CFX_FontMapper::GetFaceSize() const {

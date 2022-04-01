@@ -99,6 +99,13 @@ class CFX_FontMapper {
                                        int italic_angle,
                                        int pitch_family,
                                        CFX_SubstFont* subst_font);
+  RetainPtr<CFX_Face> UseExternalSubst(void* font_handle,
+                                       ByteString face_name,
+                                       int weight,
+                                       bool is_italic,
+                                       int italic_angle,
+                                       FX_Charset charset,
+                                       CFX_SubstFont* subst_font);
   RetainPtr<CFX_Face> GetCachedTTCFace(void* font_handle,
                                        size_t ttc_size,
                                        size_t data_size);
