@@ -1731,7 +1731,7 @@ RetainPtr<CPDF_Object> CPDF_FontEncoding::Realize(
   return pDict;
 }
 
-uint32_t FT_CharCodeFromUnicode(int encoding, wchar_t unicode) {
+uint32_t CharCodeFromUnicodeForFreetypeEncoding(int encoding, wchar_t unicode) {
   switch (encoding) {
     case FT_ENCODING_UNICODE:
       return unicode;

@@ -86,9 +86,9 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
           m_GlyphIndex[charcode] =
               FT_Get_Char_Index(face, m_Encoding.UnicodeFromCharCode(charcode));
         } else if (charmap_type == CharmapType::kMacRoman) {
-          uint32_t maccode =
-              FT_CharCodeFromUnicode(FT_ENCODING_APPLE_ROMAN,
-                                     m_Encoding.UnicodeFromCharCode(charcode));
+          uint32_t maccode = CharCodeFromUnicodeForFreetypeEncoding(
+              FT_ENCODING_APPLE_ROMAN,
+              m_Encoding.UnicodeFromCharCode(charcode));
           if (!maccode) {
             m_GlyphIndex[charcode] = FT_Get_Name_Index(face, name);
           } else {

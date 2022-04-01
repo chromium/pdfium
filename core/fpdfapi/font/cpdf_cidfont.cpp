@@ -734,8 +734,8 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
         index = FT_Get_Char_Index(face, name_unicode);
       } else {
         DCHECK_EQ(base_encoding, FontEncoding::kMacRoman);
-        uint32_t maccode =
-            FT_CharCodeFromUnicode(FT_ENCODING_APPLE_ROMAN, name_unicode);
+        uint32_t maccode = CharCodeFromUnicodeForFreetypeEncoding(
+            FT_ENCODING_APPLE_ROMAN, name_unicode);
         index = maccode ? FT_Get_Char_Index(face, maccode)
                         : FT_Get_Name_Index(face, name);
       }
@@ -759,9 +759,9 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
     if (err) {
       int i;
       for (i = 0; i < face->num_charmaps; i++) {
-        uint32_t ret =
-            FT_CharCodeFromUnicode(FXFT_Get_Charmap_Encoding(face->charmaps[i]),
-                                   static_cast<wchar_t>(charcode));
+        uint32_t ret = CharCodeFromUnicodeForFreetypeEncoding(
+            FXFT_Get_Charmap_Encoding(face->charmaps[i]),
+            static_cast<wchar_t>(charcode));
         if (ret == 0)
           continue;
         FT_Set_Charmap(face, face->charmaps[i]);

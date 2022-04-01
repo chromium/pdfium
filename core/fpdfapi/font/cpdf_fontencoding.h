@@ -24,7 +24,7 @@ enum class FontEncoding {
   kMsSymbol = 8,
 };
 
-uint32_t FT_CharCodeFromUnicode(int encoding, wchar_t unicode);
+uint32_t CharCodeFromUnicodeForFreetypeEncoding(int encoding, wchar_t unicode);
 wchar_t UnicodeFromAppleRomanCharCode(uint8_t charcode);
 
 const uint16_t* PDF_UnicodesForPredefinedCharSet(FontEncoding encoding);
