@@ -32,6 +32,7 @@ class CPDF_Type1Font;
 class CPDF_Type3Char;
 class CPDF_Type3Font;
 class CPDF_ToUnicodeMap;
+enum class FontEncoding;
 
 class CPDF_Font : public Retainable, public Observable {
  public:
@@ -146,7 +147,7 @@ class CPDF_Font : public Retainable, public Observable {
                            int platform_id,
                            int encoding_id);
 
-  static const char* GetAdobeCharName(int iBaseEncoding,
+  static const char* GetAdobeCharName(FontEncoding base_encoding,
                                       const std::vector<ByteString>& charnames,
                                       uint32_t charcode);
 

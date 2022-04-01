@@ -26,9 +26,9 @@ uint16_t GetGlyphIndexForMSSymbol(FXFT_FaceRec* face, uint32_t charcode) {
   return 0;
 }
 
-bool IsWinAnsiOrMacRomanEncoding(int encoding) {
-  return encoding == PDFFONT_ENCODING_WINANSI ||
-         encoding == PDFFONT_ENCODING_MACROMAN;
+bool IsWinAnsiOrMacRomanEncoding(FontEncoding encoding) {
+  return encoding == FontEncoding::kWinAnsi ||
+         encoding == FontEncoding::kMacRoman;
 }
 
 }  // namespace
@@ -60,7 +60,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
   if (!face)
     return;
 
-  const int base_encoding = DetermineEncoding();
+  const FontEncoding base_encoding = DetermineEncoding();
   if ((IsWinAnsiOrMacRomanEncoding(base_encoding) && m_CharNames.empty()) ||
       FontStyleIsNonSymbolic(m_Flags)) {
     if (!FXFT_Has_Glyph_Names(face) &&
@@ -120,7 +120,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
     for (uint32_t charcode = 0; charcode < 256; charcode++)
       m_GlyphIndex[charcode] = GetGlyphIndexForMSSymbol(face, charcode);
     if (HasAnyGlyphIndex()) {
-      if (base_encoding != PDFFONT_ENCODING_BUILTIN) {
+      if (base_encoding != FontEncoding::kBuiltin) {
         for (uint32_t charcode = 0; charcode < 256; charcode++) {
           const char* name =
               GetAdobeCharName(base_encoding, m_CharNames, charcode);
@@ -152,7 +152,8 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
       if (m_pFontFile) {
         m_Encoding.SetUnicode(charcode, charcode);
       } else {
-        const char* name = GetAdobeCharName(0, m_CharNames, charcode);
+        const char* name =
+            GetAdobeCharName(FontEncoding::kBuiltin, m_CharNames, charcode);
         if (name)
           m_Encoding.SetUnicode(charcode, PDF_UnicodeFromAdobeName(name));
         else if (pUnicodes)
@@ -194,7 +195,7 @@ CPDF_TrueTypeFont::CharmapType CPDF_TrueTypeFont::DetermineCharmapType() const {
   return CharmapType::kOther;
 }
 
-int CPDF_TrueTypeFont::DetermineEncoding() const {
+FontEncoding CPDF_TrueTypeFont::DetermineEncoding() const {
   if (!m_pFontFile || !FontStyleIsSymbolic(m_Flags) ||
       !IsWinAnsiOrMacRomanEncoding(m_BaseEncoding)) {
     return m_BaseEncoding;
@@ -219,10 +220,10 @@ int CPDF_TrueTypeFont::DetermineEncoding() const {
       break;
   }
 
-  if (m_BaseEncoding == PDFFONT_ENCODING_WINANSI && !support_win)
-    return support_mac ? PDFFONT_ENCODING_MACROMAN : PDFFONT_ENCODING_BUILTIN;
-  if (m_BaseEncoding == PDFFONT_ENCODING_MACROMAN && !support_mac)
-    return support_win ? PDFFONT_ENCODING_WINANSI : PDFFONT_ENCODING_BUILTIN;
+  if (m_BaseEncoding == FontEncoding::kWinAnsi && !support_win)
+    return support_mac ? FontEncoding::kMacRoman : FontEncoding::kBuiltin;
+  if (m_BaseEncoding == FontEncoding::kMacRoman && !support_mac)
+    return support_win ? FontEncoding::kWinAnsi : FontEncoding::kBuiltin;
   return m_BaseEncoding;
 }
 

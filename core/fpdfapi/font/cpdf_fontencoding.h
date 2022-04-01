@@ -12,21 +12,24 @@
 #include "core/fxcrt/string_pool_template.h"
 #include "core/fxcrt/weak_ptr.h"
 
-#define PDFFONT_ENCODING_BUILTIN 0
-#define PDFFONT_ENCODING_WINANSI 1
-#define PDFFONT_ENCODING_MACROMAN 2
-#define PDFFONT_ENCODING_MACEXPERT 3
-#define PDFFONT_ENCODING_STANDARD 4
-#define PDFFONT_ENCODING_ADOBE_SYMBOL 5
-#define PDFFONT_ENCODING_ZAPFDINGBATS 6
-#define PDFFONT_ENCODING_PDFDOC 7
-#define PDFFONT_ENCODING_MS_SYMBOL 8
+enum class FontEncoding {
+  kBuiltin = 0,
+  kWinAnsi = 1,
+  kMacRoman = 2,
+  kMacExpert = 3,
+  kStandard = 4,
+  kAdobeSymbol = 5,
+  kZapfDingbats = 6,
+  kPdfDoc = 7,
+  kMsSymbol = 8,
+};
 
 uint32_t FT_CharCodeFromUnicode(int encoding, wchar_t unicode);
 wchar_t FT_UnicodeFromCharCode(int encoding, uint32_t charcode);
 
-const uint16_t* PDF_UnicodesForPredefinedCharSet(int encoding);
-const char* PDF_CharNameFromPredefinedCharSet(int encoding, uint8_t charcode);
+const uint16_t* PDF_UnicodesForPredefinedCharSet(FontEncoding encoding);
+const char* PDF_CharNameFromPredefinedCharSet(FontEncoding encoding,
+                                              uint8_t charcode);
 
 class CPDF_Object;
 
@@ -34,7 +37,7 @@ class CPDF_FontEncoding {
  public:
   static constexpr size_t kEncodingTableSize = 256;
 
-  explicit CPDF_FontEncoding(int PredefinedEncoding);
+  explicit CPDF_FontEncoding(FontEncoding predefined_encoding);
 
   bool IsIdentical(const CPDF_FontEncoding* pAnother) const;
 

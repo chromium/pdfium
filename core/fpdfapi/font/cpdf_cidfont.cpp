@@ -712,13 +712,13 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
       charcode += 31;
       bool bMSUnicode = UseTTCharmapMSUnicode(face);
       bool bMacRoman = !bMSUnicode && UseTTCharmapMacRoman(face);
-      int iBaseEncoding = PDFFONT_ENCODING_STANDARD;
+      FontEncoding base_encoding = FontEncoding::kStandard;
       if (bMSUnicode)
-        iBaseEncoding = PDFFONT_ENCODING_WINANSI;
+        base_encoding = FontEncoding::kWinAnsi;
       else if (bMacRoman)
-        iBaseEncoding = PDFFONT_ENCODING_MACROMAN;
+        base_encoding = FontEncoding::kMacRoman;
       const char* name =
-          GetAdobeCharName(iBaseEncoding, std::vector<ByteString>(), charcode);
+          GetAdobeCharName(base_encoding, std::vector<ByteString>(), charcode);
       if (!name)
         return charcode ? static_cast<int>(charcode) : -1;
 
@@ -727,13 +727,13 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
       if (!name_unicode)
         return charcode ? static_cast<int>(charcode) : -1;
 
-      if (iBaseEncoding == PDFFONT_ENCODING_STANDARD)
+      if (base_encoding == FontEncoding::kStandard)
         return FT_Get_Char_Index(face, name_unicode);
 
-      if (iBaseEncoding == PDFFONT_ENCODING_WINANSI) {
+      if (base_encoding == FontEncoding::kWinAnsi) {
         index = FT_Get_Char_Index(face, name_unicode);
       } else {
-        DCHECK_EQ(iBaseEncoding, PDFFONT_ENCODING_MACROMAN);
+        DCHECK_EQ(base_encoding, FontEncoding::kMacRoman);
         uint32_t maccode =
             FT_CharCodeFromUnicode(FT_ENCODING_APPLE_ROMAN, name_unicode);
         index = maccode ? FT_Get_Char_Index(face, maccode)

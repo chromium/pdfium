@@ -349,7 +349,7 @@ bool CPDF_Font::IsStandardFont() const {
 
 // static
 const char* CPDF_Font::GetAdobeCharName(
-    int iBaseEncoding,
+    FontEncoding base_encoding,
     const std::vector<ByteString>& charnames,
     uint32_t charcode) {
   if (charcode >= 256)
@@ -359,8 +359,8 @@ const char* CPDF_Font::GetAdobeCharName(
     return charnames[charcode].c_str();
 
   const char* name = nullptr;
-  if (iBaseEncoding)
-    name = PDF_CharNameFromPredefinedCharSet(iBaseEncoding, charcode);
+  if (base_encoding != FontEncoding::kBuiltin)
+    name = PDF_CharNameFromPredefinedCharSet(base_encoding, charcode);
   if (!name)
     return nullptr;
 

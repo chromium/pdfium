@@ -101,11 +101,11 @@ bool CPDF_Type1Font::Load() {
     std::fill(std::begin(m_CharWidth), std::end(m_CharWidth), 600);
   }
   if (m_Base14Font == CFX_FontMapper::kSymbol)
-    m_BaseEncoding = PDFFONT_ENCODING_ADOBE_SYMBOL;
+    m_BaseEncoding = FontEncoding::kAdobeSymbol;
   else if (m_Base14Font == CFX_FontMapper::kDingbats)
-    m_BaseEncoding = PDFFONT_ENCODING_ZAPFDINGBATS;
+    m_BaseEncoding = FontEncoding::kZapfDingbats;
   else if (FontStyleIsNonSymbolic(m_Flags))
-    m_BaseEncoding = PDFFONT_ENCODING_STANDARD;
+    m_BaseEncoding = FontEncoding::kStandard;
   return LoadCommon();
 }
 
@@ -163,8 +163,8 @@ void CPDF_Type1Font::LoadGlyphMap() {
       }
     }
     FXFT_Select_Charmap(m_Font.GetFaceRec(), FT_ENCODING_UNICODE);
-    if (m_BaseEncoding == 0)
-      m_BaseEncoding = PDFFONT_ENCODING_STANDARD;
+    if (m_BaseEncoding == FontEncoding::kBuiltin)
+      m_BaseEncoding = FontEncoding::kStandard;
 
     for (uint32_t charcode = 0; charcode < kInternalTableSize; charcode++) {
       const char* name =
@@ -210,8 +210,8 @@ void CPDF_Type1Font::LoadGlyphMap() {
               FT_Get_Char_Index(m_Font.GetFaceRec(), charcode);
           wchar_t unicode = 0;
           if (m_GlyphIndex[charcode]) {
-            unicode =
-                FT_UnicodeFromCharCode(PDFFONT_ENCODING_STANDARD, charcode);
+            unicode = FT_UnicodeFromCharCode(
+                static_cast<int>(FontEncoding::kStandard), charcode);
           }
           char name_glyph[kInternalTableSize] = {};
           FT_Get_Glyph_Name(m_Font.GetFaceRec(), m_GlyphIndex[charcode],
@@ -271,8 +271,9 @@ void CPDF_Type1Font::LoadGlyphMap() {
         m_GlyphIndex[charcode] = FT_Get_Char_Index(
             m_Font.GetFaceRec(), static_cast<uint32_t>(charcode));
         if (m_GlyphIndex[charcode]) {
-          wchar_t unicode = FT_UnicodeFromCharCode(
-              PDFFONT_ENCODING_STANDARD, static_cast<uint32_t>(charcode));
+          wchar_t unicode =
+              FT_UnicodeFromCharCode(static_cast<int>(FontEncoding::kStandard),
+                                     static_cast<uint32_t>(charcode));
           if (unicode == 0) {
             char name_glyph[kInternalTableSize] = {};
             FT_Get_Glyph_Name(m_Font.GetFaceRec(), m_GlyphIndex[charcode],

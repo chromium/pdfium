@@ -20,15 +20,15 @@
 
 namespace {
 
-void GetPredefinedEncoding(const ByteString& value, int* basemap) {
+void GetPredefinedEncoding(const ByteString& value, FontEncoding* basemap) {
   if (value == "WinAnsiEncoding")
-    *basemap = PDFFONT_ENCODING_WINANSI;
+    *basemap = FontEncoding::kWinAnsi;
   else if (value == "MacRomanEncoding")
-    *basemap = PDFFONT_ENCODING_MACROMAN;
+    *basemap = FontEncoding::kMacRoman;
   else if (value == "MacExpertEncoding")
-    *basemap = PDFFONT_ENCODING_MACEXPERT;
+    *basemap = FontEncoding::kMacExpert;
   else if (value == "PDFDocEncoding")
-    *basemap = PDFFONT_ENCODING_PDFDOC;
+    *basemap = FontEncoding::kPdfDoc;
 }
 
 }  // namespace
@@ -154,21 +154,21 @@ void CPDF_SimpleFont::LoadPDFEncoding(bool bEmbedded, bool bTrueType) {
   const CPDF_Object* pEncoding = m_pFontDict->GetDirectObjectFor("Encoding");
   if (!pEncoding) {
     if (m_BaseFontName == "Symbol") {
-      m_BaseEncoding = bTrueType ? PDFFONT_ENCODING_MS_SYMBOL
-                                 : PDFFONT_ENCODING_ADOBE_SYMBOL;
-    } else if (!bEmbedded && m_BaseEncoding == PDFFONT_ENCODING_BUILTIN) {
-      m_BaseEncoding = PDFFONT_ENCODING_WINANSI;
+      m_BaseEncoding =
+          bTrueType ? FontEncoding::kMsSymbol : FontEncoding::kAdobeSymbol;
+    } else if (!bEmbedded && m_BaseEncoding == FontEncoding::kBuiltin) {
+      m_BaseEncoding = FontEncoding::kWinAnsi;
     }
     return;
   }
   if (pEncoding->IsName()) {
-    if (m_BaseEncoding == PDFFONT_ENCODING_ADOBE_SYMBOL ||
-        m_BaseEncoding == PDFFONT_ENCODING_ZAPFDINGBATS) {
+    if (m_BaseEncoding == FontEncoding::kAdobeSymbol ||
+        m_BaseEncoding == FontEncoding::kZapfDingbats) {
       return;
     }
     if (FontStyleIsSymbolic(m_Flags) && m_BaseFontName == "Symbol") {
       if (!bTrueType)
-        m_BaseEncoding = PDFFONT_ENCODING_ADOBE_SYMBOL;
+        m_BaseEncoding = FontEncoding::kAdobeSymbol;
       return;
     }
     ByteString bsEncoding = pEncoding->GetString();
@@ -183,15 +183,15 @@ void CPDF_SimpleFont::LoadPDFEncoding(bool bEmbedded, bool bTrueType) {
   if (!pDict)
     return;
 
-  if (m_BaseEncoding != PDFFONT_ENCODING_ADOBE_SYMBOL &&
-      m_BaseEncoding != PDFFONT_ENCODING_ZAPFDINGBATS) {
+  if (m_BaseEncoding != FontEncoding::kAdobeSymbol &&
+      m_BaseEncoding != FontEncoding::kZapfDingbats) {
     ByteString bsEncoding = pDict->GetStringFor("BaseEncoding");
     if (bTrueType && bsEncoding == "MacExpertEncoding")
       bsEncoding = "WinAnsiEncoding";
     GetPredefinedEncoding(bsEncoding, &m_BaseEncoding);
   }
-  if ((!bEmbedded || bTrueType) && m_BaseEncoding == PDFFONT_ENCODING_BUILTIN)
-    m_BaseEncoding = PDFFONT_ENCODING_STANDARD;
+  if ((!bEmbedded || bTrueType) && m_BaseEncoding == FontEncoding::kBuiltin)
+    m_BaseEncoding = FontEncoding::kStandard;
 
   LoadDifferences(pDict);
 }
@@ -231,7 +231,7 @@ bool CPDF_SimpleFont::LoadCommon() {
     LoadSubstFont();
   }
   if (!FontStyleIsSymbolic(m_Flags))
-    m_BaseEncoding = PDFFONT_ENCODING_STANDARD;
+    m_BaseEncoding = FontEncoding::kStandard;
   LoadPDFEncoding(!!m_pFontFile, m_Font.IsTTFont());
   LoadGlyphMap();
   m_CharNames.clear();
@@ -281,9 +281,9 @@ void CPDF_SimpleFont::LoadSubstFont() {
 }
 
 bool CPDF_SimpleFont::IsUnicodeCompatible() const {
-  return m_BaseEncoding != PDFFONT_ENCODING_BUILTIN &&
-         m_BaseEncoding != PDFFONT_ENCODING_ADOBE_SYMBOL &&
-         m_BaseEncoding != PDFFONT_ENCODING_ZAPFDINGBATS;
+  return m_BaseEncoding != FontEncoding::kBuiltin &&
+         m_BaseEncoding != FontEncoding::kAdobeSymbol &&
+         m_BaseEncoding != FontEncoding::kZapfDingbats;
 }
 
 WideString CPDF_SimpleFont::UnicodeFromCharCode(uint32_t charcode) const {

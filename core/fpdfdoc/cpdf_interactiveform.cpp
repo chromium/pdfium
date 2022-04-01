@@ -151,7 +151,7 @@ ByteString GenerateNewFontResourceName(const CPDF_Dictionary* pResDict,
 
 RetainPtr<CPDF_Font> AddStandardFont(CPDF_Document* pDocument) {
   auto* pPageData = CPDF_DocPageData::FromDocument(pDocument);
-  static const CPDF_FontEncoding encoding(PDFFONT_ENCODING_WINANSI);
+  static const CPDF_FontEncoding encoding(FontEncoding::kWinAnsi);
   return pPageData->AddStandardFont(CFX_Font::kDefaultAnsiFontName, &encoding);
 }
 
