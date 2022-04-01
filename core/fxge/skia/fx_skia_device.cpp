@@ -625,14 +625,14 @@ void SetBitmapMatrix(const CFX_Matrix& m,
                    -m.d / height, m.d + m.f, 0, 0, 1);
 }
 
-void SetBitmapPaint(bool isAlphaMask,
+void SetBitmapPaint(bool is_mask,
                     bool anti_alias,
                     uint32_t argb,
                     int bitmap_alpha,
                     BlendMode blend_type,
                     SkPaint* paint) {
   paint->setAntiAlias(anti_alias);
-  if (isAlphaMask)
+  if (is_mask)
     paint->setColorFilter(SkColorFilters::Blend(argb, SkBlendMode::kSrc));
 
   // paint->setFilterQuality(kHigh_SkFilterQuality);
