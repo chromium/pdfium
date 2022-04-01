@@ -78,7 +78,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
             m_pFontFile ? FT_Get_Char_Index(face, charcode) : -1;
         continue;
       }
-      m_Encoding.SetUnicode(charcode, PDF_UnicodeFromAdobeName(name));
+      m_Encoding.SetUnicode(charcode, UnicodeFromAdobeName(name));
       if (charmap_type == CharmapType::kMSSymbol) {
         m_GlyphIndex[charcode] = GetGlyphIndexForMSSymbol(face, charcode);
       } else if (m_Encoding.UnicodeFromCharCode(charcode)) {
@@ -125,7 +125,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
           const char* name =
               GetAdobeCharName(base_encoding, m_CharNames, charcode);
           if (name)
-            m_Encoding.SetUnicode(charcode, PDF_UnicodeFromAdobeName(name));
+            m_Encoding.SetUnicode(charcode, UnicodeFromAdobeName(name));
         }
       } else if (UseTTCharmapMacRoman(face)) {
         for (uint32_t charcode = 0; charcode < 256; charcode++) {
@@ -145,7 +145,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
       return;
   }
   if (FXFT_Select_Charmap(face, FT_ENCODING_UNICODE) == 0) {
-    const uint16_t* pUnicodes = PDF_UnicodesForPredefinedCharSet(base_encoding);
+    const uint16_t* pUnicodes = UnicodesForPredefinedCharSet(base_encoding);
     for (uint32_t charcode = 0; charcode < 256; charcode++) {
       if (m_pFontFile) {
         m_Encoding.SetUnicode(charcode, charcode);
@@ -153,7 +153,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
         const char* name =
             GetAdobeCharName(FontEncoding::kBuiltin, m_CharNames, charcode);
         if (name)
-          m_Encoding.SetUnicode(charcode, PDF_UnicodeFromAdobeName(name));
+          m_Encoding.SetUnicode(charcode, UnicodeFromAdobeName(name));
         else if (pUnicodes)
           m_Encoding.SetUnicode(charcode, pUnicodes[charcode]);
       }

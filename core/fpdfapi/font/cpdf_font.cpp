@@ -362,7 +362,7 @@ const char* CPDF_Font::GetAdobeCharName(
 
   const char* name = nullptr;
   if (base_encoding != FontEncoding::kBuiltin)
-    name = PDF_CharNameFromPredefinedCharSet(base_encoding, charcode);
+    name = CharNameFromPredefinedCharSet(base_encoding, charcode);
   if (!name)
     return nullptr;
 

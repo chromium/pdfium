@@ -27,9 +27,9 @@ enum class FontEncoding {
 uint32_t CharCodeFromUnicodeForFreetypeEncoding(int encoding, wchar_t unicode);
 wchar_t UnicodeFromAppleRomanCharCode(uint8_t charcode);
 
-const uint16_t* PDF_UnicodesForPredefinedCharSet(FontEncoding encoding);
-const char* PDF_CharNameFromPredefinedCharSet(FontEncoding encoding,
-                                              uint8_t charcode);
+const uint16_t* UnicodesForPredefinedCharSet(FontEncoding encoding);
+const char* CharNameFromPredefinedCharSet(FontEncoding encoding,
+                                          uint8_t charcode);
 
 class CPDF_Object;
 

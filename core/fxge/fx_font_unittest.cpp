@@ -12,25 +12,24 @@
 #include "testing/utils/path_service.h"
 #include "third_party/base/check.h"
 
-TEST(FXFontTest, PDF_UnicodeFromAdobeName) {
-  EXPECT_EQ(static_cast<wchar_t>(0x0000), PDF_UnicodeFromAdobeName("nonesuch"));
-  EXPECT_EQ(static_cast<wchar_t>(0x0000), PDF_UnicodeFromAdobeName(""));
-  EXPECT_EQ(static_cast<wchar_t>(0x00b6),
-            PDF_UnicodeFromAdobeName("paragraph"));
-  EXPECT_EQ(static_cast<wchar_t>(0x00d3), PDF_UnicodeFromAdobeName("Oacute"));
-  EXPECT_EQ(static_cast<wchar_t>(0x00fe), PDF_UnicodeFromAdobeName("thorn"));
-  EXPECT_EQ(static_cast<wchar_t>(0x0384), PDF_UnicodeFromAdobeName("tonos"));
-  EXPECT_EQ(static_cast<wchar_t>(0x2022), PDF_UnicodeFromAdobeName("bullet"));
+TEST(FXFontTest, UnicodeFromAdobeName) {
+  EXPECT_EQ(static_cast<wchar_t>(0x0000), UnicodeFromAdobeName("nonesuch"));
+  EXPECT_EQ(static_cast<wchar_t>(0x0000), UnicodeFromAdobeName(""));
+  EXPECT_EQ(static_cast<wchar_t>(0x00b6), UnicodeFromAdobeName("paragraph"));
+  EXPECT_EQ(static_cast<wchar_t>(0x00d3), UnicodeFromAdobeName("Oacute"));
+  EXPECT_EQ(static_cast<wchar_t>(0x00fe), UnicodeFromAdobeName("thorn"));
+  EXPECT_EQ(static_cast<wchar_t>(0x0384), UnicodeFromAdobeName("tonos"));
+  EXPECT_EQ(static_cast<wchar_t>(0x2022), UnicodeFromAdobeName("bullet"));
 }
 
-TEST(FXFontTest, PDF_AdobeNameFromUnicode) {
-  EXPECT_STREQ("", PDF_AdobeNameFromUnicode(0x0000).c_str());
-  EXPECT_STREQ("divide", PDF_AdobeNameFromUnicode(0x00f7).c_str());
-  EXPECT_STREQ("Lslash", PDF_AdobeNameFromUnicode(0x0141).c_str());
-  EXPECT_STREQ("tonos", PDF_AdobeNameFromUnicode(0x0384).c_str());
-  EXPECT_STREQ("afii57513", PDF_AdobeNameFromUnicode(0x0691).c_str());
-  EXPECT_STREQ("angkhankhuthai", PDF_AdobeNameFromUnicode(0x0e5a).c_str());
-  EXPECT_STREQ("Euro", PDF_AdobeNameFromUnicode(0x20ac).c_str());
+TEST(FXFontTest, AdobeNameFromUnicode) {
+  EXPECT_STREQ("", AdobeNameFromUnicode(0x0000).c_str());
+  EXPECT_STREQ("divide", AdobeNameFromUnicode(0x00f7).c_str());
+  EXPECT_STREQ("Lslash", AdobeNameFromUnicode(0x0141).c_str());
+  EXPECT_STREQ("tonos", AdobeNameFromUnicode(0x0384).c_str());
+  EXPECT_STREQ("afii57513", AdobeNameFromUnicode(0x0691).c_str());
+  EXPECT_STREQ("angkhankhuthai", AdobeNameFromUnicode(0x0e5a).c_str());
+  EXPECT_STREQ("Euro", AdobeNameFromUnicode(0x20ac).c_str());
 }
 
 TEST(FXFontTest, ReadFontNameFromMicrosoftEntries) {

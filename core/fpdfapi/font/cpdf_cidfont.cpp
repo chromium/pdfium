@@ -723,7 +723,7 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
         return charcode ? static_cast<int>(charcode) : -1;
 
       int index = 0;
-      uint16_t name_unicode = PDF_UnicodeFromAdobeName(name);
+      uint16_t name_unicode = UnicodeFromAdobeName(name);
       if (!name_unicode)
         return charcode ? static_cast<int>(charcode) : -1;
 

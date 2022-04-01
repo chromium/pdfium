@@ -656,7 +656,7 @@ size_t CPDF_DocPageData::CalculateEncodingDict(FX_Charset charset,
 
   const uint16_t* pUnicodes = kFX_CharsetUnicodes[i].m_pUnicodes;
   for (int j = 0; j < 128; j++) {
-    ByteString name = PDF_AdobeNameFromUnicode(pUnicodes[j]);
+    ByteString name = AdobeNameFromUnicode(pUnicodes[j]);
     pArray->AppendNew<CPDF_Name>(name.IsEmpty() ? ".notdef" : name);
   }
   pBaseDict->SetNewFor<CPDF_Reference>("Encoding", GetDocument(),
