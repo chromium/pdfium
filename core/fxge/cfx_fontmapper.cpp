@@ -231,6 +231,51 @@ const FX_FontStyle* GetStyleType(ByteStringView font_name,
   return nullptr;
 }
 
+bool ParseStyles(const ByteString& style_str,
+                 bool* is_style_available,
+                 int* weight,
+                 uint32_t* style) {
+  if (style_str.IsEmpty())
+    return false;
+
+  size_t i = 0;
+  bool is_first_item = true;
+  while (i < style_str.GetLength()) {
+    ByteString buf = ParseStyle(style_str, i);
+    const FX_FontStyle* style_result =
+        GetStyleType(buf.AsStringView(), /*reverse_search=*/false);
+    if ((i && !*is_style_available) || (!i && !style_result))
+      return true;
+
+    if (style_result)
+      *is_style_available = true;
+
+    if (FontStyleIsForceBold(style_result->style)) {
+      // If we're already bold, then we're double bold, use special weight.
+      if (FontStyleIsForceBold(*style)) {
+        *weight = FXFONT_FW_BOLD_BOLD;
+      } else {
+        *weight = FXFONT_FW_BOLD;
+        *style |= FXFONT_FORCE_BOLD;
+      }
+
+      is_first_item = false;
+    }
+    if (FontStyleIsItalic(style_result->style) &&
+        FontStyleIsForceBold(style_result->style)) {
+      *style |= FXFONT_ITALIC;
+    } else if (FontStyleIsItalic(style_result->style)) {
+      if (!is_first_item)
+        return true;
+
+      *style |= FXFONT_ITALIC;
+      break;
+    }
+    i += buf.GetLength() + 1;
+  }
+  return false;
+}
+
 bool CheckSupportThirdPartFont(const ByteString& name, int* pitch_family) {
   if (name != "MyriadPro")
     return false;
@@ -592,46 +637,9 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
   if (FontStyleIsForceBold(nStyle))
     weight = FXFONT_FW_BOLD;
 
-  if (!style.IsEmpty()) {
-    size_t i = 0;
-    bool is_first_item = true;
-    while (i < style.GetLength()) {
-      ByteString buf = ParseStyle(style, i);
-      const FX_FontStyle* style_result =
-          GetStyleType(buf.AsStringView(), /*reverse_search=*/false);
-      if ((i && !is_style_available) || (!i && !style_result)) {
-        family = subst_name;
-        base_font = kNumStandardFonts;
-        break;
-      }
-      if (style_result)
-        is_style_available = true;
-
-      if (FontStyleIsForceBold(style_result->style)) {
-        // If we're already bold, then we're double bold, use special weight.
-        if (FontStyleIsForceBold(nStyle)) {
-          weight = FXFONT_FW_BOLD_BOLD;
-        } else {
-          weight = FXFONT_FW_BOLD;
-          nStyle |= FXFONT_FORCE_BOLD;
-        }
-
-        is_first_item = false;
-      }
-      if (FontStyleIsItalic(style_result->style) &&
-          FontStyleIsForceBold(style_result->style)) {
-        nStyle |= FXFONT_ITALIC;
-      } else if (FontStyleIsItalic(style_result->style)) {
-        if (is_first_item) {
-          nStyle |= FXFONT_ITALIC;
-        } else {
-          family = subst_name;
-          base_font = kNumStandardFonts;
-        }
-        break;
-      }
-      i += buf.GetLength() + 1;
-    }
+  if (ParseStyles(style, &is_style_available, &weight, &nStyle)) {
+    family = subst_name;
+    base_font = kNumStandardFonts;
   }
 
   if (!m_pFontInfo) {
