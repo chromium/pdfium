@@ -1089,8 +1089,6 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
     }
   }
   std::vector<TextGlyphPos> glyphs(pCharPos.size());
-  CFX_Matrix deviceCtm = char2device;
-
   for (size_t i = 0; i < glyphs.size(); ++i) {
     TextGlyphPos& glyph = glyphs[i];
     const TextCharPos& charpos = pCharPos[i];
@@ -1102,19 +1100,10 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
       glyph.m_Origin.x = static_cast<int>(floor(glyph.m_fDeviceOrigin.x));
     glyph.m_Origin.y = FXSYS_roundf(glyph.m_fDeviceOrigin.y);
 
-    if (charpos.m_bGlyphAdjust) {
-      CFX_Matrix new_matrix(
-          charpos.m_AdjustMatrix[0], charpos.m_AdjustMatrix[1],
-          charpos.m_AdjustMatrix[2], charpos.m_AdjustMatrix[3], 0, 0);
-      new_matrix.Concat(deviceCtm);
-      glyph.m_pGlyph = pFont->LoadGlyphBitmap(
-          charpos.m_GlyphIndex, charpos.m_bFontStyle, new_matrix,
-          charpos.m_FontCharWidth, anti_alias, &text_options);
-    } else {
-      glyph.m_pGlyph = pFont->LoadGlyphBitmap(
-          charpos.m_GlyphIndex, charpos.m_bFontStyle, deviceCtm,
-          charpos.m_FontCharWidth, anti_alias, &text_options);
-    }
+    CFX_Matrix matrix = charpos.GetEffectiveMatrix(char2device);
+    glyph.m_pGlyph = pFont->LoadGlyphBitmap(
+        charpos.m_GlyphIndex, charpos.m_bFontStyle, matrix,
+        charpos.m_FontCharWidth, anti_alias, &text_options);
   }
   if (anti_alias < FT_RENDER_MODE_LCD && glyphs.size() > 1)
     AdjustGlyphSpace(&glyphs);
@@ -1234,19 +1223,14 @@ bool CFX_RenderDevice::DrawTextPath(pdfium::span<const TextCharPos> pCharPos,
                                     CFX_Path* pClippingPath,
                                     const CFX_FillRenderOptions& fill_options) {
   for (const auto& charpos : pCharPos) {
-    CFX_Matrix matrix;
-    if (charpos.m_bGlyphAdjust) {
-      matrix = CFX_Matrix(charpos.m_AdjustMatrix[0], charpos.m_AdjustMatrix[1],
-                          charpos.m_AdjustMatrix[2], charpos.m_AdjustMatrix[3],
-                          0, 0);
-    }
-    matrix.Concat(CFX_Matrix(font_size, 0, 0, font_size, charpos.m_Origin.x,
-                             charpos.m_Origin.y));
     const CFX_Path* pPath =
         pFont->LoadGlyphPath(charpos.m_GlyphIndex, charpos.m_FontCharWidth);
     if (!pPath)
       continue;
 
+    CFX_Matrix matrix(font_size, 0, 0, font_size, charpos.m_Origin.x,
+                      charpos.m_Origin.y);
+    matrix = charpos.GetEffectiveMatrix(matrix);
     matrix.Concat(mtText2User);
 
     CFX_Path transformed_path(*pPath);

@@ -16,6 +16,8 @@ class TextCharPos {
   TextCharPos(const TextCharPos&);
   ~TextCharPos();
 
+  CFX_Matrix GetEffectiveMatrix(const CFX_Matrix& matrix) const;
+
   CFX_PointF m_Origin;
   uint32_t m_Unicode = 0;
   uint32_t m_GlyphIndex = 0;
