@@ -34,6 +34,7 @@
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/containers/contains.h"
+#include "third_party/base/numerics/safe_conversions.h"
 
 // These checks are here because core/ and public/ cannot depend on each other.
 static_assert(static_cast<int>(TextRenderingMode::MODE_UNKNOWN) ==
@@ -724,19 +725,23 @@ FPDFFont_GetGlyphPath(FPDF_FONT font, uint32_t glyph, float font_size) {
   if (!pFont)
     return nullptr;
 
-  std::vector<TextCharPos> pos = GetCharPosList(
-      std::vector<uint32_t>{
-          pFont->CharCodeFromUnicode(static_cast<wchar_t>(glyph))},
-      std::vector<float>{0.0f}, pFont, font_size);
+  if (!pdfium::base::IsValueInRangeForNumericType<wchar_t>(glyph))
+    return nullptr;
+
+  uint32_t charcode = pFont->CharCodeFromUnicode(static_cast<wchar_t>(glyph));
+  std::vector<TextCharPos> pos =
+      GetCharPosList(pdfium::make_span(&charcode, 1),
+                     pdfium::span<const float>(), pFont, font_size);
 
   CFX_Font* pCfxFont;
   if (pos[0].m_FallbackFontPosition == -1) {
     pCfxFont = pFont->GetFont();
+    DCHECK(pCfxFont);  // Never null.
   } else {
     pCfxFont = pFont->GetFontFallback(pos[0].m_FallbackFontPosition);
+    if (!pCfxFont)
+      return nullptr;
   }
-  if (!pCfxFont)
-    return nullptr;
 
   const CFX_Path* pPath =
       pCfxFont->LoadGlyphPath(pos[0].m_GlyphIndex, pos[0].m_FontCharWidth);
