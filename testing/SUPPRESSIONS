@@ -22,7 +22,6 @@
 #
 # Corpus tests
 #
-050_extra_m.pdf mac,win * * *
 12.pdf mac * * *
 1_10_watermark.pdf * * * *
 1_1_textbox.pdf * * * *
@@ -37,12 +36,12 @@
 2_color_indexed.pdf mac * * *
 3_4_textbox.pdf * * * *
 3_interpolate_image.pdf mac * * *
-3bigpreview.pdf mac,win * * *
+3bigpreview.pdf mac * * *
 4_35.pdf mac * * *
 4_39.pdf mac * * *
 5.1.pdf mac * * *
 5.2.pdf * * * *
-5.5_simple_font.pdf mac,win * * *
+5.5_simple_font.pdf mac * * *
 8.2_name_dest_f_dest.pdf mac * * *
 8.2_outline.pdf mac * * *
 8.3_presentation.pdf mac * * *
@@ -125,11 +124,11 @@ event.type_name.pdf mac * * *
 event.value.pdf mac * * *
 event_change.pdf mac * * *
 example_001.pdf mac * * *
-example_002.pdf mac,win * * *
-example_003.pdf mac,win * * *
+example_002.pdf mac * * *
+example_003.pdf mac * * *
 example_004.pdf mac * * *
 example_005.pdf mac * * *
-example_006.pdf mac,win * * *
+example_006.pdf mac * * *
 example_007.pdf mac * * *
 example_008.pdf mac * * *
 example_009.pdf mac * * *
@@ -156,20 +155,20 @@ example_029.pdf mac * * *
 example_030.pdf mac * * *
 example_031.pdf mac * * *
 example_032.pdf mac * * *
-example_033.pdf mac,win * * *
+example_033.pdf mac * * *
 example_034.pdf mac * * *
-example_035.pdf mac,win * * *
-example_036.pdf mac,win * * *
+example_035.pdf mac * * *
+example_036.pdf mac * * *
 example_037.pdf mac * * *
-example_038.pdf mac,win * * *
+example_038.pdf mac * * *
 example_039.pdf mac * * *
 example_040.pdf mac * * *
-example_041.pdf mac,win * * *
+example_041.pdf mac * * *
 example_042.pdf mac * * *
 example_043.pdf mac * * *
 example_044.pdf mac * * *
-example_045.pdf mac,win * * *
-example_046.pdf mac,win * * *
+example_045.pdf mac * * *
+example_046.pdf mac * * *
 example_047.pdf mac * * *
 example_048.pdf mac * * *
 example_049.pdf mac * * *
@@ -178,13 +177,13 @@ example_051.pdf mac * * *
 example_052.pdf mac * * *
 example_053.pdf mac * * *
 example_054.pdf mac * * *
-example_055.pdf mac,win * * *
+example_055.pdf mac * * *
 example_056.pdf mac * * *
 example_057.pdf mac * * *
 example_058.pdf mac * * *
-example_059.pdf mac,win * * *
+example_059.pdf mac * * *
 example_060.pdf mac * * *
-example_061.pdf mac,win * * *
+example_061.pdf mac * * *
 example_062.pdf mac * * *
 example_063.pdf mac * * *
 example_064.pdf mac * * *
@@ -273,7 +272,6 @@ special.pdf mac * * *
 submit_form.pdf mac * * *
 test_app_beep.pdf * * * *
 test_control.pdf * * * *
-test_m.pdf mac,win * * *
 text_field.pdf * * * *
 text_field_font_input_decimal_point.pdf mac * * *
 text_field_multiline_line_spacing.pdf mac * * *
