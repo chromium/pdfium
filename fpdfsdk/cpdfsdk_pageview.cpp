@@ -120,22 +120,22 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetFXWidgetAtPoint(const CFX_PointF& point) {
 }
 
 #ifdef PDF_ENABLE_XFA
-CPDFSDK_Annot* CPDFSDK_PageView::AddAnnot(CXFA_FFWidget* pPDFAnnot) {
-  CPDFSDK_Annot* pSDKAnnot = GetAnnotByXFAWidget(pPDFAnnot);
+CPDFSDK_Annot* CPDFSDK_PageView::AddAnnotForFFWidget(CXFA_FFWidget* pWidget) {
+  CPDFSDK_Annot* pSDKAnnot = GetAnnotForFFWidget(pWidget);
   if (pSDKAnnot)
     return pSDKAnnot;
 
   CPDFSDK_AnnotHandlerMgr* pAnnotHandler = m_pFormFillEnv->GetAnnotHandlerMgr();
   std::unique_ptr<CPDFSDK_Annot> pNewAnnot =
-      pAnnotHandler->NewAnnotForXFA(pPDFAnnot, this);
+      pAnnotHandler->NewAnnotForXFA(pWidget, this);
   DCHECK(pNewAnnot);
   pSDKAnnot = pNewAnnot.get();
   m_SDKAnnotArray.push_back(std::move(pNewAnnot));
   return pSDKAnnot;
 }
 
-void CPDFSDK_PageView::DeleteAnnotForWidget(CXFA_FFWidget* pWidget) {
-  CPDFSDK_Annot* pAnnot = GetAnnotByXFAWidget(pWidget);
+void CPDFSDK_PageView::DeleteAnnotForFFWidget(CXFA_FFWidget* pWidget) {
+  CPDFSDK_Annot* pAnnot = GetAnnotForFFWidget(pWidget);
   if (!pAnnot)
     return;
 
@@ -199,7 +199,7 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetAnnotByDict(CPDF_Dictionary* pDict) {
 }
 
 #ifdef PDF_ENABLE_XFA
-CPDFSDK_Annot* CPDFSDK_PageView::GetAnnotByXFAWidget(CXFA_FFWidget* pWidget) {
+CPDFSDK_Annot* CPDFSDK_PageView::GetAnnotForFFWidget(CXFA_FFWidget* pWidget) {
   if (!pWidget)
     return nullptr;
 

@@ -84,8 +84,10 @@ class CXFA_FFDoc : public cppgc::GarbageCollected<CXFA_FFDoc> {
     virtual void OnPageViewEvent(CXFA_FFPageView* pPageView,
                                  PageViewEvent eEvent) = 0;
 
+    // Caller must not pass in nullptr.
     virtual void WidgetPostAdd(CXFA_FFWidget* hWidget) = 0;
     virtual void WidgetPreRemove(CXFA_FFWidget* hWidget) = 0;
+
     virtual int32_t CountPages(const CXFA_FFDoc* hDoc) const = 0;
     virtual int32_t GetCurrentPage(const CXFA_FFDoc* hDoc) const = 0;
     virtual void SetCurrentPage(CXFA_FFDoc* hDoc, int32_t iCurPage) = 0;

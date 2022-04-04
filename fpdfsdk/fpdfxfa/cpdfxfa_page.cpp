@@ -227,7 +227,7 @@ CPDFSDK_Annot* CPDFXFA_Page::GetNextXFAAnnot(CPDFSDK_Annot* pSDKAnnot) const {
   if (!pWidgetIterator)
     return nullptr;
 
-  return pSDKAnnot->GetPageView()->GetAnnotByXFAWidget(
+  return pSDKAnnot->GetPageView()->GetAnnotForFFWidget(
       pWidgetIterator->MoveToNext());
 }
 
@@ -237,7 +237,7 @@ CPDFSDK_Annot* CPDFXFA_Page::GetPrevXFAAnnot(CPDFSDK_Annot* pSDKAnnot) const {
   if (!pWidgetIterator)
     return nullptr;
 
-  return pSDKAnnot->GetPageView()->GetAnnotByXFAWidget(
+  return pSDKAnnot->GetPageView()->GetAnnotForFFWidget(
       pWidgetIterator->MoveToPrevious());
 }
 
@@ -248,7 +248,7 @@ CPDFSDK_Annot* CPDFXFA_Page::GetFirstXFAAnnot(
   if (!pWidgetIterator)
     return nullptr;
 
-  return page_view->GetAnnotByXFAWidget(pWidgetIterator->MoveToFirst());
+  return page_view->GetAnnotForFFWidget(pWidgetIterator->MoveToFirst());
 }
 
 CPDFSDK_Annot* CPDFXFA_Page::GetLastXFAAnnot(
@@ -258,7 +258,7 @@ CPDFSDK_Annot* CPDFXFA_Page::GetLastXFAAnnot(
   if (!pWidgetIterator)
     return nullptr;
 
-  return page_view->GetAnnotByXFAWidget(pWidgetIterator->MoveToLast());
+  return page_view->GetAnnotForFFWidget(pWidgetIterator->MoveToLast());
 }
 
 int CPDFXFA_Page::HasFormFieldAtPoint(const CFX_PointF& point) const {
