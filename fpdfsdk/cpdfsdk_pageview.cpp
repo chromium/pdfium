@@ -7,6 +7,7 @@
 #include "fpdfsdk/cpdfsdk_pageview.h"
 
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -15,6 +16,7 @@
 #include "core/fpdfdoc/cpdf_annotlist.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fxcrt/autorestorer.h"
+#include "core/fxcrt/stl_util.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_annotiteration.h"
 #include "fpdfsdk/cpdfsdk_annotiterator.h"
@@ -53,8 +55,9 @@ CPDFSDK_PageView::~CPDFSDK_PageView() {
     m_page->AsPDFPage()->SetView(nullptr);
   }
 
-  for (CPDFSDK_Annot* pAnnot : m_SDKAnnotArray)
-    delete pAnnot;
+  // Manually reset elements to ensure they are deleted in order.
+  for (std::unique_ptr<CPDFSDK_Annot>& pAnnot : m_SDKAnnotArray)
+    pAnnot.reset();
 
   m_SDKAnnotArray.clear();
   m_pAnnotList.reset();
@@ -127,9 +130,7 @@ CPDFSDK_Annot* CPDFSDK_PageView::AddAnnot(CXFA_FFWidget* pPDFAnnot) {
       pAnnotHandler->NewAnnotForXFA(pPDFAnnot, this);
   DCHECK(pNewAnnot);
   pSDKAnnot = pNewAnnot.get();
-  // TODO(thestig): See if |m_SDKAnnotArray|, which takes ownership of
-  // |pNewAnnot|, can hold std::unique_ptrs instead of raw pointers.
-  m_SDKAnnotArray.push_back(pNewAnnot.release());
+  m_SDKAnnotArray.push_back(std::move(pNewAnnot));
   return pSDKAnnot;
 }
 
@@ -151,11 +152,12 @@ void CPDFSDK_PageView::DeleteAnnotForWidget(CXFA_FFWidget* pWidget) {
     m_pFormFillEnv->KillFocusAnnot({});  // May invoke JS, invalidating pAnnot.
 
   if (pObserved) {
-    std::unique_ptr<CPDFSDK_Annot> to_be_deleted(pObserved.Get());
+    fxcrt::FakeUniquePtr<const CPDFSDK_Annot> fake_unique_annot(pAnnot);
+    auto it = std::find(m_SDKAnnotArray.begin(), m_SDKAnnotArray.end(),
+                        fake_unique_annot);
+    if (it != m_SDKAnnotArray.end())
+      m_SDKAnnotArray.erase(it);
   }
-  auto it = std::find(m_SDKAnnotArray.begin(), m_SDKAnnotArray.end(), pAnnot);
-  if (it != m_SDKAnnotArray.end())
-    m_SDKAnnotArray.erase(it);
 
   if (m_pCaptureWidget.Get() == pAnnot)
     m_pCaptureWidget.Reset();
@@ -179,11 +181,19 @@ CPDFSDK_InteractiveForm* CPDFSDK_PageView::GetInteractiveForm() const {
   return m_pFormFillEnv->GetInteractiveForm();
 }
 
+std::vector<CPDFSDK_Annot*> CPDFSDK_PageView::GetAnnotList() const {
+  std::vector<CPDFSDK_Annot*> list;
+  list.reserve(m_SDKAnnotArray.size());
+  for (const std::unique_ptr<CPDFSDK_Annot>& elem : m_SDKAnnotArray)
+    list.push_back(elem.get());
+  return list;
+}
+
 CPDFSDK_Annot* CPDFSDK_PageView::GetAnnotByDict(CPDF_Dictionary* pDict) {
-  for (CPDFSDK_Annot* pAnnot : m_SDKAnnotArray) {
+  for (std::unique_ptr<CPDFSDK_Annot>& pAnnot : m_SDKAnnotArray) {
     CPDF_Annot* pPDFAnnot = pAnnot->GetPDFAnnot();
     if (pPDFAnnot && pPDFAnnot->GetAnnotDict() == pDict)
-      return pAnnot;
+      return pAnnot.get();
   }
   return nullptr;
 }
@@ -193,10 +203,10 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetAnnotByXFAWidget(CXFA_FFWidget* pWidget) {
   if (!pWidget)
     return nullptr;
 
-  for (CPDFSDK_Annot* pAnnot : m_SDKAnnotArray) {
-    CPDFXFA_Widget* pCurrentWidget = ToXFAWidget(pAnnot);
+  for (std::unique_ptr<CPDFSDK_Annot>& pAnnot : m_SDKAnnotArray) {
+    CPDFXFA_Widget* pCurrentWidget = ToXFAWidget(pAnnot.get());
     if (pCurrentWidget && pCurrentWidget->GetXFAFFWidget() == pWidget)
-      return pAnnot;
+      return pAnnot.get();
   }
   return nullptr;
 }
@@ -596,7 +606,7 @@ void CPDFSDK_PageView::LoadFXAnnots() {
           pAnnotHandlerMgr->NewAnnotForXFA(pXFAAnnot, this);
       DCHECK(pNewAnnot);
       CPDFSDK_Annot* pAnnot = pNewAnnot.get();
-      m_SDKAnnotArray.push_back(pNewAnnot.release());
+      m_SDKAnnotArray.push_back(std::move(pNewAnnot));
       pAnnotHandlerMgr->Annot_OnLoad(pAnnot);
     }
     return;
@@ -619,8 +629,8 @@ void CPDFSDK_PageView::LoadFXAnnots() {
         pAnnotHandlerMgr->NewAnnot(pPDFAnnot, this);
     if (!pAnnot)
       continue;
-    m_SDKAnnotArray.push_back(pAnnot.release());
-    pAnnotHandlerMgr->Annot_OnLoad(m_SDKAnnotArray.back());
+    m_SDKAnnotArray.push_back(std::move(pAnnot));
+    pAnnotHandlerMgr->Annot_OnLoad(m_SDKAnnotArray.back().get());
   }
 }
 
@@ -660,7 +670,8 @@ bool CPDFSDK_PageView::IsValidAnnot(const CPDF_Annot* p) const {
 bool CPDFSDK_PageView::IsValidSDKAnnot(const CPDFSDK_Annot* p) const {
   if (!p)
     return false;
-  return pdfium::Contains(m_SDKAnnotArray, p);
+  fxcrt::FakeUniquePtr<const CPDFSDK_Annot> fake_unique_p(p);
+  return pdfium::Contains(m_SDKAnnotArray, fake_unique_p);
 }
 
 CPDFSDK_Annot* CPDFSDK_PageView::GetFocusAnnot() {

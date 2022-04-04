@@ -49,9 +49,7 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   bool IsValidAnnot(const CPDF_Annot* p) const;
   bool IsValidSDKAnnot(const CPDFSDK_Annot* p) const;
 
-  const std::vector<CPDFSDK_Annot*>& GetAnnotList() const {
-    return m_SDKAnnotArray;
-  }
+  std::vector<CPDFSDK_Annot*> GetAnnotList() const;
   CPDFSDK_Annot* GetAnnotByDict(CPDF_Dictionary* pDict);
 
 #ifdef PDF_ENABLE_XFA
@@ -128,7 +126,7 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   CFX_Matrix m_curMatrix;
   UnownedPtr<IPDF_Page> const m_page;
   std::unique_ptr<CPDF_AnnotList> m_pAnnotList;
-  std::vector<CPDFSDK_Annot*> m_SDKAnnotArray;
+  std::vector<std::unique_ptr<CPDFSDK_Annot>> m_SDKAnnotArray;
   UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
   ObservedPtr<CPDFSDK_Annot> m_pCaptureWidget;
   RetainPtr<CPDF_Page> m_pOwnsPage;
