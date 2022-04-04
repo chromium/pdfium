@@ -56,11 +56,6 @@ std::unique_ptr<CPDFSDK_Annot> CPDFSDK_AnnotHandlerMgr::NewAnnotForXFA(
 }
 #endif  // PDF_ENABLE_XFA
 
-void CPDFSDK_AnnotHandlerMgr::Annot_OnLoad(CPDFSDK_Annot* pAnnot) {
-  DCHECK(pAnnot);
-  GetAnnotHandler(pAnnot)->OnLoad(pAnnot);
-}
-
 WideString CPDFSDK_AnnotHandlerMgr::Annot_GetText(CPDFSDK_Annot* pAnnot) {
   return GetAnnotHandler(pAnnot)->GetText(pAnnot);
 }

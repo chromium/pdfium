@@ -49,6 +49,7 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
   ~CPDFSDK_Widget() override;
 
   // CPDFSDK_BAAnnot:
+  void OnLoad() override;
   CPDF_Action GetAAction(CPDF_AAction::AActionType eAAT) override;
   bool IsAppearanceValid() override;
   int GetLayoutOrder() const override;

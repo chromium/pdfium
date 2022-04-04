@@ -605,9 +605,8 @@ void CPDFSDK_PageView::LoadFXAnnots() {
       std::unique_ptr<CPDFSDK_Annot> pNewAnnot =
           pAnnotHandlerMgr->NewAnnotForXFA(pXFAAnnot, this);
       DCHECK(pNewAnnot);
-      CPDFSDK_Annot* pAnnot = pNewAnnot.get();
       m_SDKAnnotArray.push_back(std::move(pNewAnnot));
-      pAnnotHandlerMgr->Annot_OnLoad(pAnnot);
+      m_SDKAnnotArray.back()->OnLoad();
     }
     return;
   }
@@ -630,7 +629,7 @@ void CPDFSDK_PageView::LoadFXAnnots() {
     if (!pAnnot)
       continue;
     m_SDKAnnotArray.push_back(std::move(pAnnot));
-    pAnnotHandlerMgr->Annot_OnLoad(m_SDKAnnotArray.back().get());
+    m_SDKAnnotArray.back()->OnLoad();
   }
 }
 

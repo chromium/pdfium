@@ -25,6 +25,7 @@ class CPDFSDK_Annot : public Observable {
   virtual CPDFSDK_BAAnnot* AsBAAnnot();
   virtual CPDFXFA_Widget* AsXFAWidget();
 
+  virtual void OnLoad() {}
   virtual int GetLayoutOrder() const;
   virtual CPDF_Annot* GetPDFAnnot() const;
   virtual CPDF_Annot::Subtype GetAnnotSubtype() const = 0;

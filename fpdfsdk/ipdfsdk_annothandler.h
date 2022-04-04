@@ -59,7 +59,6 @@ class IPDFSDK_AnnotHandler {
                       CFX_RenderDevice* pDevice,
                       const CFX_Matrix& mtUser2Device,
                       bool bDrawAnnots) = 0;
-  virtual void OnLoad(CPDFSDK_Annot* pAnnot) = 0;
   virtual void OnMouseEnter(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                             Mask<FWL_EVENTFLAG> nFlag) = 0;
   virtual void OnMouseExit(ObservedPtr<CPDFSDK_Annot>& pAnnot,

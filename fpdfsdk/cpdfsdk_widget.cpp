@@ -820,6 +820,34 @@ bool CPDFSDK_Widget::OnAAction(CPDF_AAction::AActionType type,
   return false;
 }
 
+void CPDFSDK_Widget::OnLoad() {
+  if (IsSignatureWidget())
+    return;
+
+  if (!IsAppearanceValid())
+    ResetAppearance(absl::nullopt, CPDFSDK_Widget::kValueUnchanged);
+
+  FormFieldType field_type = GetFieldType();
+  if (field_type == FormFieldType::kTextField ||
+      field_type == FormFieldType::kComboBox) {
+    ObservedPtr<CPDFSDK_Annot> pObserved(this);
+    absl::optional<WideString> sValue = OnFormat();
+    if (!pObserved)
+      return;
+
+    if (sValue.has_value() && field_type == FormFieldType::kComboBox)
+      ResetAppearance(sValue, CPDFSDK_Widget::kValueUnchanged);
+  }
+
+#ifdef PDF_ENABLE_XFA
+  auto* pContext = m_pPageView->GetFormFillEnv()->GetDocExtension();
+  if (pContext && pContext->ContainsExtensionForegroundForm()) {
+    if (!IsAppearanceValid() && !GetValue().IsEmpty())
+      ResetXFAAppearance(CPDFSDK_Widget::kValueUnchanged);
+  }
+#endif  // PDF_ENABLE_XFA
+}
+
 CPDF_Action CPDFSDK_Widget::GetAAction(CPDF_AAction::AActionType eAAT) {
   switch (eAAT) {
     case CPDF_AAction::kCursorEnter:

@@ -185,8 +185,6 @@ bool CPDFSDK_BAAnnotHandler::OnKeyUp(CPDFSDK_Annot* pAnnot,
   return false;
 }
 
-void CPDFSDK_BAAnnotHandler::OnLoad(CPDFSDK_Annot* pAnnot) {}
-
 bool CPDFSDK_BAAnnotHandler::IsFocusableAnnot(
     const CPDF_Annot::Subtype& annot_type) const {
   DCHECK(annot_type != CPDF_Annot::Subtype::WIDGET);

@@ -42,7 +42,6 @@ class CPDFSDK_BAAnnotHandler final : public IPDFSDK_AnnotHandler {
               CFX_RenderDevice* pDevice,
               const CFX_Matrix& mtUser2Device,
               bool bDrawAnnots) override;
-  void OnLoad(CPDFSDK_Annot* pAnnot) override;
 
   void OnMouseEnter(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                     Mask<FWL_EVENTFLAG> nFlag) override;

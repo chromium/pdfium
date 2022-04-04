@@ -194,35 +194,6 @@ bool CPDFSDK_WidgetHandler::OnKeyUp(CPDFSDK_Annot* pAnnot,
   return false;
 }
 
-void CPDFSDK_WidgetHandler::OnLoad(CPDFSDK_Annot* pAnnot) {
-  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
-  if (pWidget->IsSignatureWidget())
-    return;
-
-  if (!pWidget->IsAppearanceValid())
-    pWidget->ResetAppearance(absl::nullopt, CPDFSDK_Widget::kValueUnchanged);
-
-  FormFieldType fieldType = pWidget->GetFieldType();
-  if (fieldType == FormFieldType::kTextField ||
-      fieldType == FormFieldType::kComboBox) {
-    ObservedPtr<CPDFSDK_Annot> pObserved(pWidget);
-    absl::optional<WideString> sValue = pWidget->OnFormat();
-    if (!pObserved)
-      return;
-
-    if (sValue.has_value() && fieldType == FormFieldType::kComboBox)
-      pWidget->ResetAppearance(sValue, CPDFSDK_Widget::kValueUnchanged);
-  }
-
-#ifdef PDF_ENABLE_XFA
-  auto* pContext = GetFormFillEnvironment()->GetDocExtension();
-  if (pContext && pContext->ContainsExtensionForegroundForm()) {
-    if (!pWidget->IsAppearanceValid() && !pWidget->GetValue().IsEmpty())
-      pWidget->ResetXFAAppearance(CPDFSDK_Widget::kValueUnchanged);
-  }
-#endif  // PDF_ENABLE_XFA
-}
-
 bool CPDFSDK_WidgetHandler::OnSetFocus(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                        Mask<FWL_EVENTFLAG> nFlag) {
   if (!IsFocusableAnnot(pAnnot->GetPDFAnnot()->GetSubtype()))
