@@ -603,9 +603,10 @@ void CJX_Object::SetContent(const WideString& wsContent,
           break;
 
         CXFA_Node* pChildValue = pValue->GetFirstChild();
-        DCHECK(pChildValue);
-        pChildValue->JSObject()->SetContent(wsContent, wsContent, bNotify,
-                                            bScriptModify, false);
+        if (pChildValue) {
+          pChildValue->JSObject()->SetContent(wsContent, wsContent, bNotify,
+                                              bScriptModify, false);
+        }
       }
       pBindNode = GetXFANode()->GetBindData();
       if (pBindNode && bSyncData) {

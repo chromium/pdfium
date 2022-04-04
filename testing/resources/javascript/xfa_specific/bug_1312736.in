@@ -1,0 +1,40 @@
+{{header}}
+{{include ../../xfa_catalog_1_0.fragment}}
+{{include ../../xfa_object_2_0.fragment}}
+{{object 3 0}} <<
+  {{streamlen}}
+>>
+stream
+<xdp:xdp xmlns:xdp="http://ns.adobe.com/xdp/">
+<template x="">
+  <subform>
+    <pageSet>
+      <pageArea>
+        <contentArea/>
+        <exclGroup name="0">
+          <field>
+            <ui><checkButton/></ui>
+            <items><textEdit/></items>
+          </field>
+        </exclGroup>
+        <subform name="Sho0">
+          <event activity="initialize">
+            <script contentType="application/x-javascript">
+              Sho0.presence=0;
+              app.alert("done");
+            </script>
+          </event>
+        </subform>
+      </pageArea>
+    </pageSet>
+  </subform>
+</template>
+endstream
+endobj
+{{object 8 0} <<
+>>
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
