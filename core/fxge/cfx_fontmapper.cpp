@@ -247,10 +247,15 @@ bool ParseStyles(const ByteString& style_str,
     if ((i && !*is_style_available) || (!i && !style_result))
       return true;
 
-    if (style_result)
+    uint32_t parsed_style;
+    if (style_result) {
       *is_style_available = true;
+      parsed_style = style_result->style;
+    } else {
+      parsed_style = FXFONT_NORMAL;
+    }
 
-    if (FontStyleIsForceBold(style_result->style)) {
+    if (FontStyleIsForceBold(parsed_style)) {
       // If we're already bold, then we're double bold, use special weight.
       if (FontStyleIsForceBold(*style)) {
         *weight = FXFONT_FW_BOLD_BOLD;
@@ -261,10 +266,9 @@ bool ParseStyles(const ByteString& style_str,
 
       is_first_item = false;
     }
-    if (FontStyleIsItalic(style_result->style) &&
-        FontStyleIsForceBold(style_result->style)) {
+    if (FontStyleIsItalic(parsed_style) && FontStyleIsForceBold(parsed_style)) {
       *style |= FXFONT_ITALIC;
-    } else if (FontStyleIsItalic(style_result->style)) {
+    } else if (FontStyleIsItalic(parsed_style)) {
       if (!is_first_item)
         return true;
 
