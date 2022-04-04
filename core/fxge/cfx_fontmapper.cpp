@@ -524,8 +524,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::UseExternalSubst(
     int italic_angle,
     FX_Charset charset,
     CFX_SubstFont* subst_font) {
-  if (!font_handle)
-    return nullptr;
+  DCHECK(font_handle);
 
   ScopedFontDeleter scoped_font(m_pFontInfo.get(), font_handle);
   m_pFontInfo->GetFaceName(font_handle, &face_name);
@@ -690,48 +689,54 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
   }
   void* font_handle =
       m_pFontInfo->MapFont(weight, is_italic, Charset, pitch_family, family);
-  if (!font_handle) {
-    if (is_cjk) {
-      is_italic = italic_angle != 0;
-      weight = old_weight;
-    }
-    if (!match.IsEmpty()) {
-      font_handle = m_pFontInfo->GetFont(match);
-      if (!font_handle) {
-        return UseInternalSubst(base_font, old_weight, italic_angle,
-                                pitch_family, subst_font);
-      }
-    } else {
-      if (Charset == FX_Charset::kSymbol) {
-#if BUILDFLAG(IS_APPLE) || BUILDFLAG(IS_ANDROID)
-        if (subst_name == "Symbol") {
-          subst_font->m_Family = "Chrome Symbol";
-          subst_font->m_Charset = FX_Charset::kSymbol;
-          return UseInternalSubst(kSymbol, old_weight, italic_angle,
-                                  pitch_family, subst_font);
-        }
-#endif
-        return FindSubstFont(family, is_truetype, flags & ~FXFONT_SYMBOLIC,
-                             weight, italic_angle, FX_CodePage::kDefANSI,
-                             subst_font);
-      }
-      if (Charset == FX_Charset::kANSI) {
-        return UseInternalSubst(base_font, old_weight, italic_angle,
-                                pitch_family, subst_font);
-      }
-
-      auto it =
-          std::find_if(m_FaceArray.begin(), m_FaceArray.end(),
-                       [Charset](const FaceData& face) {
-                         return face.charset == static_cast<uint32_t>(Charset);
-                       });
-      if (it == m_FaceArray.end()) {
-        return UseInternalSubst(base_font, old_weight, italic_angle,
-                                pitch_family, subst_font);
-      }
-      font_handle = m_pFontInfo->GetFont(it->name);
-    }
+  if (font_handle) {
+    return UseExternalSubst(font_handle, subst_name, weight, is_italic,
+                            italic_angle, Charset, subst_font);
   }
+
+  if (is_cjk) {
+    is_italic = italic_angle != 0;
+    weight = old_weight;
+  }
+  if (!match.IsEmpty()) {
+    font_handle = m_pFontInfo->GetFont(match);
+    if (!font_handle) {
+      return UseInternalSubst(base_font, old_weight, italic_angle, pitch_family,
+                              subst_font);
+    }
+    return UseExternalSubst(font_handle, subst_name, weight, is_italic,
+                            italic_angle, Charset, subst_font);
+  }
+
+  if (Charset == FX_Charset::kSymbol) {
+#if BUILDFLAG(IS_APPLE) || BUILDFLAG(IS_ANDROID)
+    if (subst_name == "Symbol") {
+      subst_font->m_Family = "Chrome Symbol";
+      subst_font->m_Charset = FX_Charset::kSymbol;
+      return UseInternalSubst(kSymbol, old_weight, italic_angle, pitch_family,
+                              subst_font);
+    }
+#endif
+    return FindSubstFont(family, is_truetype, flags & ~FXFONT_SYMBOLIC, weight,
+                         italic_angle, FX_CodePage::kDefANSI, subst_font);
+  }
+
+  if (Charset == FX_Charset::kANSI) {
+    return UseInternalSubst(base_font, old_weight, italic_angle, pitch_family,
+                            subst_font);
+  }
+
+  auto it = std::find_if(
+      m_FaceArray.begin(), m_FaceArray.end(), [Charset](const FaceData& face) {
+        return face.charset == static_cast<uint32_t>(Charset);
+      });
+  if (it == m_FaceArray.end()) {
+    return UseInternalSubst(base_font, old_weight, italic_angle, pitch_family,
+                            subst_font);
+  }
+  font_handle = m_pFontInfo->GetFont(it->name);
+  if (!font_handle)
+    return nullptr;
   return UseExternalSubst(font_handle, subst_name, weight, is_italic,
                           italic_angle, Charset, subst_font);
 }
