@@ -175,7 +175,19 @@ component("skia") {
   sources += skia_sksl_sources
   sources += skia_utils_sources
   sources += [
+    "//third_party/skia/src/codec/SkBmpBaseCodec.cpp",
+    "//third_party/skia/src/codec/SkBmpCodec.cpp",
+    "//third_party/skia/src/codec/SkBmpMaskCodec.cpp",
+    "//third_party/skia/src/codec/SkBmpRLECodec.cpp",
+    "//third_party/skia/src/codec/SkBmpStandardCodec.cpp",
+    "//third_party/skia/src/codec/SkCodec.cpp",
+    "//third_party/skia/src/codec/SkCodecImageGenerator.cpp",
+    "//third_party/skia/src/codec/SkColorTable.cpp",
+    "//third_party/skia/src/codec/SkMaskSwizzler.cpp",
     "//third_party/skia/src/codec/SkMasks.cpp",
+    "//third_party/skia/src/codec/SkSampler.cpp",
+    "//third_party/skia/src/codec/SkSwizzler.cpp",
+    "//third_party/skia/src/codec/SkWbmpCodec.cpp",
     "//third_party/skia/src/fonts/SkFontMgr_indirect.cpp",
     "//third_party/skia/src/fonts/SkRemotableFontMgr.cpp",
     "//third_party/skia/src/images/SkImageEncoder.cpp",
