@@ -56,11 +56,6 @@ std::unique_ptr<CPDFSDK_Annot> CPDFSDK_BAAnnotHandler::NewAnnot(
   return std::make_unique<CPDFSDK_BAAnnot>(pAnnot, pPageView);
 }
 
-void CPDFSDK_BAAnnotHandler::ReleaseAnnot(
-    std::unique_ptr<CPDFSDK_Annot> pAnnot) {
-  // pAnnot deleted by unique_ptr going out of scope.
-}
-
 void CPDFSDK_BAAnnotHandler::OnDraw(CPDFSDK_Annot* pAnnot,
                                     CFX_RenderDevice* pDevice,
                                     const CFX_Matrix& mtUser2Device,

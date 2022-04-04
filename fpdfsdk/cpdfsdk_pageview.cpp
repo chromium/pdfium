@@ -23,7 +23,6 @@
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/contains.h"
-#include "third_party/base/ptr_util.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
@@ -47,17 +46,15 @@ CPDFSDK_PageView::CPDFSDK_PageView(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 
 CPDFSDK_PageView::~CPDFSDK_PageView() {
   if (!m_page->AsXFAPage()) {
-    // The call to |ReleaseAnnot| can cause the page pointed to by |m_page| to
-    // be freed, which will cause issues if we try to cleanup the pageview
-    // pointer in |m_page|. So, reset the pageview pointer before doing anything
-    // else.
+    // Deleting from `m_SDKAnnotArray` below can cause the page pointed to by
+    // `m_page` to be freed, which will cause issues if we try to cleanup the
+    // pageview pointer in `m_page`. So, reset the pageview pointer before doing
+    // anything else.
     m_page->AsPDFPage()->SetView(nullptr);
   }
 
-  CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
-      m_pFormFillEnv->GetAnnotHandlerMgr();
   for (CPDFSDK_Annot* pAnnot : m_SDKAnnotArray)
-    pAnnotHandlerMgr->ReleaseAnnot(pdfium::WrapUnique(pAnnot));
+    delete pAnnot;
 
   m_SDKAnnotArray.clear();
   m_pAnnotList.reset();
@@ -136,33 +133,32 @@ CPDFSDK_Annot* CPDFSDK_PageView::AddAnnot(CXFA_FFWidget* pPDFAnnot) {
   return pSDKAnnot;
 }
 
-bool CPDFSDK_PageView::DeleteAnnot(CPDFSDK_Annot* pAnnot) {
+void CPDFSDK_PageView::DeleteAnnotForWidget(CXFA_FFWidget* pWidget) {
+  CPDFSDK_Annot* pAnnot = GetAnnotByXFAWidget(pWidget);
+  if (!pAnnot)
+    return;
+
   IPDF_Page* pPage = pAnnot->GetXFAPage();
   if (!pPage)
-    return false;
+    return;
 
   CPDF_Document::Extension* pContext = pPage->GetDocument()->GetExtension();
   if (pContext && !pContext->ContainsExtensionForm())
-    return false;
+    return;
 
   ObservedPtr<CPDFSDK_Annot> pObserved(pAnnot);
   if (GetFocusAnnot() == pAnnot)
     m_pFormFillEnv->KillFocusAnnot({});  // May invoke JS, invalidating pAnnot.
 
   if (pObserved) {
-    CPDFSDK_AnnotHandlerMgr* pAnnotHandler =
-        m_pFormFillEnv->GetAnnotHandlerMgr();
-    if (pAnnotHandler)
-      pAnnotHandler->ReleaseAnnot(pdfium::WrapUnique(pObserved.Get()));
+    std::unique_ptr<CPDFSDK_Annot> to_be_deleted(pObserved.Get());
   }
-
   auto it = std::find(m_SDKAnnotArray.begin(), m_SDKAnnotArray.end(), pAnnot);
   if (it != m_SDKAnnotArray.end())
     m_SDKAnnotArray.erase(it);
+
   if (m_pCaptureWidget.Get() == pAnnot)
     m_pCaptureWidget.Reset();
-
-  return true;
 }
 
 CPDFXFA_Page* CPDFSDK_PageView::XFAPageIfNotBackedByPDFPage() {

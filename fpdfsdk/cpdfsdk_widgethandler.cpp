@@ -68,17 +68,6 @@ std::unique_ptr<CPDFSDK_Annot> CPDFSDK_WidgetHandler::NewAnnot(
   return pWidget;
 }
 
-void CPDFSDK_WidgetHandler::ReleaseAnnot(
-    std::unique_ptr<CPDFSDK_Annot> pAnnot) {
-  DCHECK(pAnnot);
-  std::unique_ptr<CPDFSDK_Widget> pWidget(ToCPDFSDKWidget(pAnnot.release()));
-  GetFormFillEnvironment()->GetInteractiveFormFiller()->OnDelete(pWidget.get());
-
-  CPDFSDK_InteractiveForm* pForm = pWidget->GetInteractiveForm();
-  CPDF_FormControl* pControl = pWidget->GetFormControl();
-  pForm->RemoveMap(pControl);
-}
-
 void CPDFSDK_WidgetHandler::OnDraw(CPDFSDK_Annot* pAnnot,
                                    CFX_RenderDevice* pDevice,
                                    const CFX_Matrix& mtUser2Device,

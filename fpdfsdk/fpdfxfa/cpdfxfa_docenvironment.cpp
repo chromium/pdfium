@@ -345,9 +345,7 @@ void CPDFXFA_DocEnvironment::WidgetPreRemove(CXFA_FFWidget* hWidget) {
 
   CPDFSDK_PageView* pSdkPageView =
       m_pContext->GetFormFillEnv()->GetOrCreatePageView(pXFAPage.Get());
-  CPDFSDK_Annot* pAnnot = pSdkPageView->GetAnnotByXFAWidget(hWidget);
-  if (pAnnot)
-    pSdkPageView->DeleteAnnot(pAnnot);
+  pSdkPageView->DeleteAnnotForWidget(hWidget);
 }
 
 int32_t CPDFXFA_DocEnvironment::CountPages(const CXFA_FFDoc* hDoc) const {

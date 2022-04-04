@@ -240,9 +240,6 @@ void CPDFXFA_WidgetHandler::OnDraw(CPDFSDK_Annot* pAnnot,
 
 void CPDFXFA_WidgetHandler::OnLoad(CPDFSDK_Annot* pAnnot) {}
 
-void CPDFXFA_WidgetHandler::ReleaseAnnot(
-    std::unique_ptr<CPDFSDK_Annot> pAnnot) {}
-
 CFX_FloatRect CPDFXFA_WidgetHandler::GetViewBBox(CPDFSDK_Annot* pAnnot) {
   CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
   CXFA_Node* node = pXFAWidget->GetXFAFFWidget()->GetNode();

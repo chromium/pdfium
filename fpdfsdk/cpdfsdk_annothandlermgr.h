@@ -43,7 +43,6 @@ class CPDFSDK_AnnotHandlerMgr {
   std::unique_ptr<CPDFSDK_Annot> NewAnnotForXFA(CXFA_FFWidget* pFFWidget,
                                                 CPDFSDK_PageView* pPageView);
 #endif  // PDF_ENABLE_XFA
-  void ReleaseAnnot(std::unique_ptr<CPDFSDK_Annot> pAnnot);
 
   void Annot_OnLoad(CPDFSDK_Annot* pAnnot);
 

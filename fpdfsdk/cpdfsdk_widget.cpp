@@ -49,7 +49,10 @@ CPDFSDK_Widget::CPDFSDK_Widget(CPDF_Annot* pAnnot,
     : CPDFSDK_BAAnnot(pAnnot, pPageView),
       m_pInteractiveForm(pInteractiveForm) {}
 
-CPDFSDK_Widget::~CPDFSDK_Widget() = default;
+CPDFSDK_Widget::~CPDFSDK_Widget() {
+  m_pPageView->GetFormFillEnv()->GetInteractiveFormFiller()->OnDelete(this);
+  m_pInteractiveForm->RemoveMap(GetFormControl());
+}
 
 #ifdef PDF_ENABLE_XFA
 CXFA_FFWidget* CPDFSDK_Widget::GetMixXFAWidget() const {
