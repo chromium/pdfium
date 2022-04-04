@@ -536,6 +536,7 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC
         CONAN_PKG::openjpeg
         CONAN_PKG::libjpeg
+        CONAN_PKG::abseil
 )
 
 #Install
