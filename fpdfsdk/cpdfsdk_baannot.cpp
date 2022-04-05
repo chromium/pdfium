@@ -212,6 +212,10 @@ int CPDFSDK_BAAnnot::GetLayoutOrder() const {
   return CPDFSDK_Annot::GetLayoutOrder();
 }
 
+bool CPDFSDK_BAAnnot::DoHitTest(const CFX_PointF& point) {
+  return false;
+}
+
 CPDF_Dest CPDFSDK_BAAnnot::GetDestination() const {
   if (m_pAnnot->GetSubtype() != CPDF_Annot::Subtype::LINK)
     return CPDF_Dest(nullptr);

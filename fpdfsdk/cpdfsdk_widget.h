@@ -53,6 +53,7 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
   CPDF_Action GetAAction(CPDF_AAction::AActionType eAAT) override;
   bool IsAppearanceValid() override;
   int GetLayoutOrder() const override;
+  bool DoHitTest(const CFX_PointF& point) override;
   void DrawAppearance(CFX_RenderDevice* pDevice,
                       const CFX_Matrix& mtUser2Device,
                       CPDF_Annot::AppearanceMode mode) override;

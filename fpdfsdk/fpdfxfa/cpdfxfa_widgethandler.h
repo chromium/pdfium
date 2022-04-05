@@ -27,7 +27,6 @@ class CPDFXFA_WidgetHandler final : public IPDFSDK_AnnotHandler {
   ~CPDFXFA_WidgetHandler() override;
 
   // IPDFSDK_AnnotHandler:
-  bool CanAnswer(CPDFSDK_Annot* pAnnot) override;
   std::unique_ptr<CPDFSDK_Annot> NewAnnot(CPDF_Annot* pAnnot,
                                           CPDFSDK_PageView* pPageView) override;
 
@@ -40,7 +39,6 @@ class CPDFXFA_WidgetHandler final : public IPDFSDK_AnnotHandler {
   bool CanRedo(CPDFSDK_Annot* pAnnot) override;
   bool Undo(CPDFSDK_Annot* pAnnot) override;
   bool Redo(CPDFSDK_Annot* pAnnot) override;
-  bool HitTest(CPDFSDK_Annot* pAnnot, const CFX_PointF& point) override;
   void OnDraw(CPDFSDK_Annot* pAnnot,
               CFX_RenderDevice* pDevice,
               const CFX_Matrix& mtUser2Device,

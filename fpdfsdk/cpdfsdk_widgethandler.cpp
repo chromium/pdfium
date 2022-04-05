@@ -28,27 +28,6 @@ CPDFSDK_WidgetHandler::CPDFSDK_WidgetHandler() = default;
 
 CPDFSDK_WidgetHandler::~CPDFSDK_WidgetHandler() = default;
 
-bool CPDFSDK_WidgetHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
-  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
-  if (pWidget->IsSignatureWidget())
-    return false;
-
-  if (!pWidget->IsVisible())
-    return false;
-
-  int nFieldFlags = pWidget->GetFieldFlags();
-  if (nFieldFlags & pdfium::form_flags::kReadOnly)
-    return false;
-
-  if (pWidget->GetFieldType() == FormFieldType::kPushButton)
-    return true;
-
-  CPDF_Page* pPage = pWidget->GetPDFPage();
-  uint32_t dwPermissions = pPage->GetDocument()->GetUserPermissions();
-  return (dwPermissions & pdfium::access_permissions::kFillForm) ||
-         (dwPermissions & pdfium::access_permissions::kModifyAnnotation);
-}
-
 std::unique_ptr<CPDFSDK_Annot> CPDFSDK_WidgetHandler::NewAnnot(
     CPDF_Annot* pAnnot,
     CPDFSDK_PageView* pPageView) {
@@ -298,12 +277,6 @@ bool CPDFSDK_WidgetHandler::Redo(CPDFSDK_Annot* pAnnot) {
   CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
   return !pWidget->IsSignatureWidget() &&
          GetFormFillEnvironment()->GetInteractiveFormFiller()->Redo(pWidget);
-}
-
-bool CPDFSDK_WidgetHandler::HitTest(CPDFSDK_Annot* pAnnot,
-                                    const CFX_PointF& point) {
-  DCHECK(pAnnot);
-  return GetViewBBox(pAnnot).Contains(point);
 }
 
 bool CPDFSDK_WidgetHandler::IsFocusableAnnot(

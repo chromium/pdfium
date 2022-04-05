@@ -6,8 +6,10 @@
 
 #include "fpdfsdk/cpdfsdk_widget.h"
 
+#include "constants/access_permissions.h"
 #include "constants/annotation_common.h"
 #include "constants/appearance.h"
+#include "constants/form_flags.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -670,6 +672,27 @@ void CPDFSDK_Widget::ResetFieldAppearance() {
   CPDF_FormField* pFormField = GetFormField();
   DCHECK(pFormField);
   m_pInteractiveForm->ResetFieldAppearance(pFormField, absl::nullopt);
+}
+
+bool CPDFSDK_Widget::DoHitTest(const CFX_PointF& point) {
+  if (IsSignatureWidget() || !IsVisible())
+    return false;
+
+  if (GetFieldFlags() & pdfium::form_flags::kReadOnly)
+    return false;
+
+  bool do_hit_test = GetFieldType() == FormFieldType::kPushButton;
+  if (!do_hit_test) {
+    uint32_t perms = GetPDFPage()->GetDocument()->GetUserPermissions();
+    do_hit_test = (perms & pdfium::access_permissions::kFillForm) ||
+                  (perms & pdfium::access_permissions::kModifyAnnotation);
+  }
+  if (!do_hit_test)
+    return false;
+
+  auto* form_filler = m_pPageView->GetFormFillEnv()->GetInteractiveFormFiller();
+  CFX_FloatRect bbox(form_filler->GetViewBBox(GetPageView(), this));
+  return bbox.Contains(point);
 }
 
 void CPDFSDK_Widget::DrawAppearance(CFX_RenderDevice* pDevice,

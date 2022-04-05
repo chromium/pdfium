@@ -44,10 +44,6 @@ CPDFSDK_BAAnnotHandler::CPDFSDK_BAAnnotHandler() = default;
 
 CPDFSDK_BAAnnotHandler::~CPDFSDK_BAAnnotHandler() = default;
 
-bool CPDFSDK_BAAnnotHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
-  return false;
-}
-
 std::unique_ptr<CPDFSDK_Annot> CPDFSDK_BAAnnotHandler::NewAnnot(
     CPDF_Annot* pAnnot,
     CPDFSDK_PageView* pPageView) {
@@ -268,10 +264,4 @@ bool CPDFSDK_BAAnnotHandler::Undo(CPDFSDK_Annot* pAnnot) {
 
 bool CPDFSDK_BAAnnotHandler::Redo(CPDFSDK_Annot* pAnnot) {
   return false;
-}
-
-bool CPDFSDK_BAAnnotHandler::HitTest(CPDFSDK_Annot* pAnnot,
-                                     const CFX_PointF& point) {
-  DCHECK(pAnnot);
-  return GetViewBBox(pAnnot).Contains(point);
 }

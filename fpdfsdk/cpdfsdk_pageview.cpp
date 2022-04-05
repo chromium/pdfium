@@ -105,14 +105,14 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetFXWidgetAtPoint(const CFX_PointF& point) {
   CPDFSDK_AnnotHandlerMgr* pAnnotMgr = m_pFormFillEnv->GetAnnotHandlerMgr();
   CPDFSDK_AnnotForwardIteration annot_iteration(this);
   for (const auto& pSDKAnnot : annot_iteration) {
-    bool bHitTest = pSDKAnnot->GetAnnotSubtype() == CPDF_Annot::Subtype::WIDGET;
+    const CPDF_Annot::Subtype sub_type = pSDKAnnot->GetAnnotSubtype();
+    bool do_hit_test = sub_type == CPDF_Annot::Subtype::WIDGET;
 #ifdef PDF_ENABLE_XFA
-    bHitTest = bHitTest ||
-               pSDKAnnot->GetAnnotSubtype() == CPDF_Annot::Subtype::XFAWIDGET;
+    do_hit_test = do_hit_test || sub_type == CPDF_Annot::Subtype::XFAWIDGET;
 #endif  // PDF_ENABLE_XFA
-    if (bHitTest) {
+    if (do_hit_test) {
       pAnnotMgr->Annot_OnGetViewBBox(pSDKAnnot.Get());
-      if (pAnnotMgr->Annot_OnHitTest(pSDKAnnot.Get(), point))
+      if (pSDKAnnot->DoHitTest(point))
         return pSDKAnnot.Get();
     }
   }

@@ -35,7 +35,6 @@ class IPDFSDK_AnnotHandler {
     return m_pFormFillEnv.Get();
   }
 
-  virtual bool CanAnswer(CPDFSDK_Annot* pAnnot) = 0;
   virtual std::unique_ptr<CPDFSDK_Annot> NewAnnot(
       CPDF_Annot* pAnnot,
       CPDFSDK_PageView* pPageView) = 0;
@@ -50,7 +49,6 @@ class IPDFSDK_AnnotHandler {
   virtual bool CanRedo(CPDFSDK_Annot* pAnnot) = 0;
   virtual bool Undo(CPDFSDK_Annot* pAnnot) = 0;
   virtual bool Redo(CPDFSDK_Annot* pAnnot) = 0;
-  virtual bool HitTest(CPDFSDK_Annot* pAnnot, const CFX_PointF& point) = 0;
   virtual void OnDraw(CPDFSDK_Annot* pAnnot,
                       CFX_RenderDevice* pDevice,
                       const CFX_Matrix& mtUser2Device,

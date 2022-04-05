@@ -225,13 +225,3 @@ CFX_FloatRect CPDFSDK_AnnotHandlerMgr::Annot_OnGetViewBBox(
   DCHECK(pAnnot);
   return GetAnnotHandler(pAnnot)->GetViewBBox(pAnnot);
 }
-
-bool CPDFSDK_AnnotHandlerMgr::Annot_OnHitTest(CPDFSDK_Annot* pAnnot,
-                                              const CFX_PointF& point) {
-  DCHECK(pAnnot);
-  IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot);
-  if (pAnnotHandler->CanAnswer(pAnnot))
-    return pAnnotHandler->HitTest(pAnnot, point);
-
-  return false;
-}

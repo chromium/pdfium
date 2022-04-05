@@ -204,11 +204,6 @@ CPDFXFA_WidgetHandler::CPDFXFA_WidgetHandler() = default;
 
 CPDFXFA_WidgetHandler::~CPDFXFA_WidgetHandler() = default;
 
-bool CPDFXFA_WidgetHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
-  CPDFXFA_Widget* pWidget = ToXFAWidget(pAnnot);
-  return pWidget && pWidget->GetXFAFFWidget();
-}
-
 std::unique_ptr<CPDFSDK_Annot> CPDFXFA_WidgetHandler::NewAnnot(
     CPDF_Annot* pAnnot,
     CPDFSDK_PageView* pPageView) {
@@ -293,24 +288,6 @@ bool CPDFXFA_WidgetHandler::Redo(CPDFSDK_Annot* pAnnot) {
   CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
   CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler();
   return pWidgetHandler->Redo(pXFAWidget->GetXFAFFWidget());
-}
-
-bool CPDFXFA_WidgetHandler::HitTest(CPDFSDK_Annot* pAnnot,
-                                    const CFX_PointF& point) {
-  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
-  auto* pContext = static_cast<CPDFXFA_Context*>(
-      GetFormFillEnvironment()->GetDocExtension());
-  if (!pContext)
-    return false;
-
-  CXFA_FFDocView* pDocView = pContext->GetXFADocView();
-  if (!pDocView)
-    return false;
-
-  CXFA_FFWidgetHandler* pWidgetHandler = pDocView->GetWidgetHandler();
-  return pWidgetHandler &&
-         pWidgetHandler->HitTest(pXFAWidget->GetXFAFFWidget(), point) !=
-             FWL_WidgetHit::Unknown;
 }
 
 void CPDFXFA_WidgetHandler::OnMouseEnter(ObservedPtr<CPDFSDK_Annot>& pAnnot,

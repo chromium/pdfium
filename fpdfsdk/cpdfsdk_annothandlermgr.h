@@ -93,7 +93,6 @@ class CPDFSDK_AnnotHandlerMgr {
   bool Annot_IsIndexSelected(ObservedPtr<CPDFSDK_Annot>& pAnnot, int index);
 
   CFX_FloatRect Annot_OnGetViewBBox(CPDFSDK_Annot* pAnnot);
-  bool Annot_OnHitTest(CPDFSDK_Annot* pAnnot, const CFX_PointF& point);
 
  private:
   friend class CPDFSDK_BAAnnotHandlerTest;

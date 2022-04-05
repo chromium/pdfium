@@ -10,6 +10,7 @@
 #include "xfa/fxfa/cxfa_ffdocview.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
+#include "xfa/fxfa/cxfa_ffwidgethandler.h"
 
 CPDFXFA_Widget::CPDFXFA_Widget(CXFA_FFWidget* pXFAFFWidget,
                                CPDFSDK_PageView* pPageView)
@@ -27,6 +28,23 @@ CPDF_Annot::Subtype CPDFXFA_Widget::GetAnnotSubtype() const {
 
 CFX_FloatRect CPDFXFA_Widget::GetRect() const {
   return GetXFAFFWidget()->GetLayoutItem()->GetAbsoluteRect().ToFloatRect();
+}
+
+bool CPDFXFA_Widget::DoHitTest(const CFX_PointF& point) {
+  CXFA_FFWidget* widget = GetXFAFFWidget();
+  CXFA_FFPageView* page_view = widget->GetPageView();
+  if (!page_view)
+    return false;
+
+  CXFA_FFDocView* doc_view = page_view->GetDocView();
+  if (!doc_view)
+    return false;
+
+  CXFA_FFWidgetHandler* widget_handler = doc_view->GetWidgetHandler();
+  if (!widget_handler)
+    return false;
+
+  return widget_handler->HitTest(widget, point) != FWL_WidgetHit::Unknown;
 }
 
 bool CPDFXFA_Widget::OnChangedFocus() {
