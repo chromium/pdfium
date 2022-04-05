@@ -22,10 +22,6 @@ class CPDFSDK_FormFillEnvironment;
 class CPDFSDK_PageView;
 class IPDFSDK_AnnotHandler;
 
-#ifdef PDF_ENABLE_XFA
-class CXFA_FFWidget;
-#endif  // PDF_ENABLE_XFA
-
 class CPDFSDK_AnnotHandlerMgr {
  public:
   CPDFSDK_AnnotHandlerMgr(
@@ -39,10 +35,6 @@ class CPDFSDK_AnnotHandlerMgr {
 
   std::unique_ptr<CPDFSDK_Annot> NewAnnot(CPDF_Annot* pAnnot,
                                           CPDFSDK_PageView* pPageView);
-#ifdef PDF_ENABLE_XFA
-  std::unique_ptr<CPDFSDK_Annot> NewAnnotForXFA(CXFA_FFWidget* pFFWidget,
-                                                CPDFSDK_PageView* pPageView);
-#endif  // PDF_ENABLE_XFA
 
   WideString Annot_GetText(CPDFSDK_Annot* pAnnot);
   WideString Annot_GetSelectedText(CPDFSDK_Annot* pAnnot);

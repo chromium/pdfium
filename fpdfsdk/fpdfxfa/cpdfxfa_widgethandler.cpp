@@ -215,13 +215,6 @@ std::unique_ptr<CPDFSDK_Annot> CPDFXFA_WidgetHandler::NewAnnot(
   return nullptr;
 }
 
-std::unique_ptr<CPDFSDK_Annot> CPDFXFA_WidgetHandler::NewAnnotForXFA(
-    CXFA_FFWidget* pFFWidget,
-    CPDFSDK_PageView* pPageView) {
-  CHECK(pPageView);
-  return std::make_unique<CPDFXFA_Widget>(pFFWidget, pPageView);
-}
-
 void CPDFXFA_WidgetHandler::OnDraw(CPDFSDK_Annot* pAnnot,
                                    CFX_RenderDevice* pDevice,
                                    const CFX_Matrix& mtUser2Device,

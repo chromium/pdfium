@@ -19,7 +19,6 @@ class CFX_RenderDevice;
 class CPDF_Annot;
 class CPDFSDK_Annot;
 class CPDFSDK_PageView;
-class CXFA_FFWidget;
 class CXFA_FFWidgetHandler;
 
 class CPDFXFA_WidgetHandler final : public IPDFSDK_AnnotHandler {
@@ -92,9 +91,6 @@ class CPDFXFA_WidgetHandler final : public IPDFSDK_AnnotHandler {
                         int index,
                         bool selected) override;
   bool IsIndexSelected(ObservedPtr<CPDFSDK_Annot>& pAnnot, int index) override;
-  std::unique_ptr<CPDFSDK_Annot> NewAnnotForXFA(
-      CXFA_FFWidget* pFFWidget,
-      CPDFSDK_PageView* pPageView) override;
   bool OnXFAChangedFocus(ObservedPtr<CPDFSDK_Annot>& pNewAnnot) override;
 
  private:

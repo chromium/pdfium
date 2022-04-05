@@ -278,13 +278,6 @@ bool CPDFSDK_BAAnnotHandler::HitTest(CPDFSDK_Annot* pAnnot,
 }
 
 #ifdef PDF_ENABLE_XFA
-std::unique_ptr<CPDFSDK_Annot> CPDFSDK_BAAnnotHandler::NewAnnotForXFA(
-    CXFA_FFWidget* pWidget,
-    CPDFSDK_PageView* pPageView) {
-  NOTREACHED();
-  return nullptr;
-}
-
 bool CPDFSDK_BAAnnotHandler::OnXFAChangedFocus(
     ObservedPtr<CPDFSDK_Annot>& pNewAnnot) {
   NOTREACHED();

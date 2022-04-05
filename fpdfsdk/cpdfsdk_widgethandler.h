@@ -90,9 +90,6 @@ class CPDFSDK_WidgetHandler final : public IPDFSDK_AnnotHandler {
   bool IsIndexSelected(ObservedPtr<CPDFSDK_Annot>& pAnnot, int index) override;
 
 #ifdef PDF_ENABLE_XFA
-  std::unique_ptr<CPDFSDK_Annot> NewAnnotForXFA(
-      CXFA_FFWidget* pWiget,
-      CPDFSDK_PageView* pPageView) override;
   bool OnXFAChangedFocus(ObservedPtr<CPDFSDK_Annot>& pNewAnnot) override;
 #endif
 

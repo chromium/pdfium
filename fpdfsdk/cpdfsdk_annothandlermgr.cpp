@@ -46,16 +46,6 @@ std::unique_ptr<CPDFSDK_Annot> CPDFSDK_AnnotHandlerMgr::NewAnnot(
       ->NewAnnot(pAnnot, pPageView);
 }
 
-#ifdef PDF_ENABLE_XFA
-std::unique_ptr<CPDFSDK_Annot> CPDFSDK_AnnotHandlerMgr::NewAnnotForXFA(
-    CXFA_FFWidget* pFFWidget,
-    CPDFSDK_PageView* pPageView) {
-  DCHECK(pFFWidget);
-  DCHECK(pPageView);
-  return m_pXFAWidgetHandler->NewAnnotForXFA(pFFWidget, pPageView);
-}
-#endif  // PDF_ENABLE_XFA
-
 WideString CPDFSDK_AnnotHandlerMgr::Annot_GetText(CPDFSDK_Annot* pAnnot) {
   return GetAnnotHandler(pAnnot)->GetText(pAnnot);
 }

@@ -315,13 +315,6 @@ bool CPDFSDK_WidgetHandler::IsFocusableAnnot(
 }
 
 #ifdef PDF_ENABLE_XFA
-std::unique_ptr<CPDFSDK_Annot> CPDFSDK_WidgetHandler::NewAnnotForXFA(
-    CXFA_FFWidget* pWidget,
-    CPDFSDK_PageView* pPageView) {
-  NOTREACHED();
-  return nullptr;
-}
-
 bool CPDFSDK_WidgetHandler::OnXFAChangedFocus(
     ObservedPtr<CPDFSDK_Annot>& pNewAnnot) {
   NOTREACHED();

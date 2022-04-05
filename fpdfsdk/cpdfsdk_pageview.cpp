@@ -125,13 +125,8 @@ CPDFSDK_Annot* CPDFSDK_PageView::AddAnnotForFFWidget(CXFA_FFWidget* pWidget) {
   if (pSDKAnnot)
     return pSDKAnnot;
 
-  CPDFSDK_AnnotHandlerMgr* pAnnotHandler = m_pFormFillEnv->GetAnnotHandlerMgr();
-  std::unique_ptr<CPDFSDK_Annot> pNewAnnot =
-      pAnnotHandler->NewAnnotForXFA(pWidget, this);
-  DCHECK(pNewAnnot);
-  pSDKAnnot = pNewAnnot.get();
-  m_SDKAnnotArray.push_back(std::move(pNewAnnot));
-  return pSDKAnnot;
+  m_SDKAnnotArray.push_back(std::make_unique<CPDFXFA_Widget>(pWidget, this));
+  return m_SDKAnnotArray.back().get();
 }
 
 void CPDFSDK_PageView::DeleteAnnotForFFWidget(CXFA_FFWidget* pWidget) {
@@ -602,10 +597,8 @@ void CPDFSDK_PageView::LoadFXAnnots() {
             XFA_WidgetStatus::kVisible, XFA_WidgetStatus::kViewable});
 
     while (CXFA_FFWidget* pXFAAnnot = pWidgetHandler->MoveToNext()) {
-      std::unique_ptr<CPDFSDK_Annot> pNewAnnot =
-          pAnnotHandlerMgr->NewAnnotForXFA(pXFAAnnot, this);
-      DCHECK(pNewAnnot);
-      m_SDKAnnotArray.push_back(std::move(pNewAnnot));
+      m_SDKAnnotArray.push_back(
+          std::make_unique<CPDFXFA_Widget>(pXFAAnnot, this));
       m_SDKAnnotArray.back()->OnLoad();
     }
     return;
