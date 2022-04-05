@@ -449,29 +449,6 @@ bool CPDFXFA_WidgetHandler::OnKillFocus(ObservedPtr<CPDFSDK_Annot>& pAnnot,
   return true;
 }
 
-bool CPDFXFA_WidgetHandler::OnXFAChangedFocus(
-    ObservedPtr<CPDFSDK_Annot>& pNewAnnot) {
-  if (!pNewAnnot || !GetXFAFFWidgetHandler())
-    return true;
-
-  CPDFXFA_Widget* pNewXFAWidget = ToXFAWidget(pNewAnnot.Get());
-  if (!pNewXFAWidget)
-    return true;
-
-  CXFA_FFWidget* hWidget = pNewXFAWidget->GetXFAFFWidget();
-  if (!hWidget)
-    return true;
-
-  CXFA_FFPageView* pXFAPageView = hWidget->GetPageView();
-  if (!pXFAPageView)
-    return true;
-
-  if (pXFAPageView->GetDocView()->SetFocus(hWidget))
-    return true;
-
-  return pXFAPageView->GetDocView()->GetFocusWidget() == hWidget;
-}
-
 bool CPDFXFA_WidgetHandler::SetIndexSelected(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                              int index,
                                              bool selected) {

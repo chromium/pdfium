@@ -103,10 +103,6 @@ class IPDFSDK_AnnotHandler {
   virtual bool IsIndexSelected(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                int index) = 0;
 
-#ifdef PDF_ENABLE_XFA
-  virtual bool OnXFAChangedFocus(ObservedPtr<CPDFSDK_Annot>& pNewAnnot);
-#endif  // PDF_ENABLE_XFA
-
  private:
   UnownedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
 };

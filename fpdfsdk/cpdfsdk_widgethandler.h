@@ -89,10 +89,6 @@ class CPDFSDK_WidgetHandler final : public IPDFSDK_AnnotHandler {
                         bool selected) override;
   bool IsIndexSelected(ObservedPtr<CPDFSDK_Annot>& pAnnot, int index) override;
 
-#ifdef PDF_ENABLE_XFA
-  bool OnXFAChangedFocus(ObservedPtr<CPDFSDK_Annot>& pNewAnnot) override;
-#endif
-
  private:
   bool IsFocusableAnnot(const CPDF_Annot::Subtype& annot_type) const;
 };

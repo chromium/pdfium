@@ -26,6 +26,8 @@ class CPDFXFA_Widget final : public CPDFSDK_Annot {
 
   CXFA_FFWidget* GetXFAFFWidget() const { return m_pXFAFFWidget.Get(); }
 
+  bool OnChangedFocus();
+
  private:
   cppgc::Persistent<CXFA_FFWidget> const m_pXFAFFWidget;
 };

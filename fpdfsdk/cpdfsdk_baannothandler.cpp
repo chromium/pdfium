@@ -22,7 +22,6 @@
 #include "public/fpdf_fwlevent.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/contains.h"
-#include "third_party/base/notreached.h"
 
 namespace {
 
@@ -276,11 +275,3 @@ bool CPDFSDK_BAAnnotHandler::HitTest(CPDFSDK_Annot* pAnnot,
   DCHECK(pAnnot);
   return GetViewBBox(pAnnot).Contains(point);
 }
-
-#ifdef PDF_ENABLE_XFA
-bool CPDFSDK_BAAnnotHandler::OnXFAChangedFocus(
-    ObservedPtr<CPDFSDK_Annot>& pNewAnnot) {
-  NOTREACHED();
-  return false;
-}
-#endif

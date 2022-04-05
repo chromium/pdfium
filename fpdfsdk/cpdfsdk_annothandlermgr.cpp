@@ -220,15 +220,6 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_IsIndexSelected(
   return GetAnnotHandler(pAnnot.Get())->IsIndexSelected(pAnnot, index);
 }
 
-#ifdef PDF_ENABLE_XFA
-bool CPDFSDK_AnnotHandlerMgr::Annot_OnChangeFocus(
-    ObservedPtr<CPDFSDK_Annot>& pSetAnnot) {
-  CPDFXFA_Widget* pSetXFAWidget = ToXFAWidget(pSetAnnot.Get());
-  const bool bXFA = pSetXFAWidget && pSetXFAWidget->GetXFAFFWidget();
-  return !bXFA || m_pXFAWidgetHandler->OnXFAChangedFocus(pSetAnnot);
-}
-#endif  // PDF_ENABLE_XFA
-
 CFX_FloatRect CPDFSDK_AnnotHandlerMgr::Annot_OnGetViewBBox(
     CPDFSDK_Annot* pAnnot) {
   DCHECK(pAnnot);

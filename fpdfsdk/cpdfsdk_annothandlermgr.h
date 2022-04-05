@@ -92,10 +92,6 @@ class CPDFSDK_AnnotHandlerMgr {
                               bool selected);
   bool Annot_IsIndexSelected(ObservedPtr<CPDFSDK_Annot>& pAnnot, int index);
 
-#ifdef PDF_ENABLE_XFA
-  bool Annot_OnChangeFocus(ObservedPtr<CPDFSDK_Annot>& pSetAnnot);
-#endif  // PDF_ENABLE_XFA
-
   CFX_FloatRect Annot_OnGetViewBBox(CPDFSDK_Annot* pAnnot);
   bool Annot_OnHitTest(CPDFSDK_Annot* pAnnot, const CFX_PointF& point);
 

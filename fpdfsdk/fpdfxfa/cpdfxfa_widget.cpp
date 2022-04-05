@@ -7,6 +7,8 @@
 #include "fpdfsdk/fpdfxfa/cpdfxfa_widget.h"
 
 #include "fpdfsdk/ipdfsdk_annothandler.h"
+#include "xfa/fxfa/cxfa_ffdocview.h"
+#include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 
 CPDFXFA_Widget::CPDFXFA_Widget(CXFA_FFWidget* pXFAFFWidget,
@@ -25,4 +27,20 @@ CPDF_Annot::Subtype CPDFXFA_Widget::GetAnnotSubtype() const {
 
 CFX_FloatRect CPDFXFA_Widget::GetRect() const {
   return GetXFAFFWidget()->GetLayoutItem()->GetAbsoluteRect().ToFloatRect();
+}
+
+bool CPDFXFA_Widget::OnChangedFocus() {
+  CXFA_FFWidget* widget = GetXFAFFWidget();
+  CXFA_FFPageView* page_view = widget->GetPageView();
+  if (!page_view)
+    return false;
+
+  CXFA_FFDocView* doc_view = page_view->GetDocView();
+  if (!doc_view)
+    return false;
+
+  if (doc_view->SetFocus(widget))
+    return false;
+
+  return doc_view->GetFocusWidget() != widget;
 }

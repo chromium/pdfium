@@ -29,6 +29,10 @@
 #include "third_party/base/check.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
+#ifdef PDF_ENABLE_XFA
+#include "fpdfsdk/fpdfxfa/cpdfxfa_widget.h"
+#endif
+
 static_assert(FXCT_ARROW ==
                   static_cast<int>(IPWL_SystemHandler::CursorStyle::kArrow),
               "kArrow value mismatch");
@@ -758,19 +762,20 @@ bool CPDFSDK_FormFillEnvironment::SetFocusAnnot(
   if (!pAnnot->GetPageView()->IsValid())
     return false;
 
-  CPDFSDK_AnnotHandlerMgr* pAnnotHandler = GetAnnotHandlerMgr();
   if (m_pFocusAnnot)
     return false;
 
 #ifdef PDF_ENABLE_XFA
-  if (!pAnnotHandler->Annot_OnChangeFocus(pAnnot))
+  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot.Get());
+  if (pXFAWidget && pXFAWidget->OnChangedFocus())
     return false;
 
-  // |pAnnot| may be destroyed in |Annot_OnChangeFocus|.
+  // `pAnnot` may be destroyed in `OnChangedFocus()`.
   if (!pAnnot)
     return false;
 #endif  // PDF_ENABLE_XFA
 
+  CPDFSDK_AnnotHandlerMgr* pAnnotHandler = GetAnnotHandlerMgr();
   if (!pAnnotHandler->Annot_OnSetFocus(pAnnot, {}))
     return false;
   if (m_pFocusAnnot)

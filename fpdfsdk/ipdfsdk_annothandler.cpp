@@ -6,16 +6,6 @@
 
 #include "fpdfsdk/ipdfsdk_annothandler.h"
 
-#include "third_party/base/notreached.h"
-
 IPDFSDK_AnnotHandler::IPDFSDK_AnnotHandler() = default;
 
 IPDFSDK_AnnotHandler::~IPDFSDK_AnnotHandler() = default;
-
-#ifdef PDF_ENABLE_XFA
-bool IPDFSDK_AnnotHandler::OnXFAChangedFocus(
-    ObservedPtr<CPDFSDK_Annot>& pNewAnnot) {
-  NOTREACHED();
-  return false;
-}
-#endif
