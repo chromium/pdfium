@@ -851,15 +851,13 @@ CXFA_ContentLayoutItem* CXFA_ContentLayoutProcessor::ExtractLayoutItem() {
   return pLayoutItem;
 }
 
-void CXFA_ContentLayoutProcessor::GotoNextContainerNodeSimple(
-    bool bUsePageBreak) {
+void CXFA_ContentLayoutProcessor::GotoNextContainerNodeSimple() {
   std::tie(m_nCurChildNodeStage, m_pCurChildNode) = GotoNextContainerNode(
-      m_nCurChildNodeStage, bUsePageBreak, GetFormNode(), m_pCurChildNode);
+      m_nCurChildNodeStage, GetFormNode(), m_pCurChildNode);
 }
 
 std::pair<CXFA_ContentLayoutProcessor::Stage, CXFA_Node*>
 CXFA_ContentLayoutProcessor::GotoNextContainerNode(Stage nCurStage,
-                                                   bool bUsePageBreak,
                                                    CXFA_Node* pParentContainer,
                                                    CXFA_Node* pCurActionNode) {
   CXFA_Node* pChildContainer = nullptr;
@@ -999,8 +997,8 @@ void CXFA_ContentLayoutProcessor::DoLayoutPageArea(
   CXFA_LayoutItem* pBeforeItem = nullptr;
   Stage nCurChildNodeStage = Stage::kNone;
   while (true) {
-    std::tie(nCurChildNodeStage, pCurChildNode) = GotoNextContainerNode(
-        nCurChildNodeStage, false, pFormNode, pCurChildNode);
+    std::tie(nCurChildNodeStage, pCurChildNode) =
+        GotoNextContainerNode(nCurChildNodeStage, pFormNode, pCurChildNode);
     if (!pCurChildNode)
       break;
 
@@ -1068,10 +1066,10 @@ void CXFA_ContentLayoutProcessor::DoLayoutPositionedContainer(
   float fHiddenContentCalculatedWidth = 0;
   float fHiddenContentCalculatedHeight = 0;
   if (!m_pCurChildNode)
-    GotoNextContainerNodeSimple(false);
+    GotoNextContainerNodeSimple();
 
   int32_t iColIndex = 0;
-  for (; m_pCurChildNode; GotoNextContainerNodeSimple(false)) {
+  for (; m_pCurChildNode; GotoNextContainerNodeSimple()) {
     if (m_nCurChildNodeStage != Stage::kContainer)
       continue;
     if (m_pCurChildNode->GetElementType() == XFA_Element::Variables)
@@ -1207,9 +1205,9 @@ void CXFA_ContentLayoutProcessor::DoLayoutTableContainer(
   Context* pLayoutContext =
       iSpecifiedColumnCount > 0 ? &layoutContext : nullptr;
   if (!m_pCurChildNode)
-    GotoNextContainerNodeSimple(false);
+    GotoNextContainerNodeSimple();
 
-  for (; m_pCurChildNode; GotoNextContainerNodeSimple(false)) {
+  for (; m_pCurChildNode; GotoNextContainerNodeSimple()) {
     layoutContext.m_fCurColumnWidth.reset();
     if (m_nCurChildNodeStage != Stage::kContainer)
       continue;
@@ -1566,7 +1564,7 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
 
   fContentCurRowY += InsertKeepLayoutItems();
   if (m_nCurChildNodeStage == Stage::kNone)
-    GotoNextContainerNodeSimple(true);
+    GotoNextContainerNodeSimple();
 
   fContentCurRowY += InsertPendingItems(GetFormNode());
   if (m_pCurChildPreprocessor && m_nCurChildNodeStage == Stage::kContainer) {
@@ -1681,7 +1679,7 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
                   &bAddedItemInRow, &bForceEndPage, pContext, false);
             }
           }
-          GotoNextContainerNodeSimple(true);
+          GotoNextContainerNodeSimple();
           bForceEndPage = true;
           bIsManualBreak = true;
           goto SuspendAndCreateNewRow;
@@ -1739,7 +1737,7 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
               AddPendingNode(pLeaderNode, true);
           }
 
-          GotoNextContainerNodeSimple(true);
+          GotoNextContainerNodeSimple();
           if (bCreatePage) {
             bForceEndPage = true;
             bIsManualBreak = true;
@@ -1864,7 +1862,7 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
         default:
           break;
       }
-      GotoNextContainerNodeSimple(true);
+      GotoNextContainerNodeSimple();
       if (bAddedItemInRow && eFlowStrategy == XFA_AttributeValue::Tb)
         break;
       continue;

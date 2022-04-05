@@ -146,12 +146,11 @@ class CXFA_ContentLayoutProcessor
                                  bool bRootForceTb);
   void DoLayoutField();
 
-  void GotoNextContainerNodeSimple(bool bUsePageBreak);
+  void GotoNextContainerNodeSimple();
 
   // Return new stage and new action node.
   std::pair<Stage, CXFA_Node*> GotoNextContainerNode(
       Stage nCurStage,
-      bool bUsePageBreak,
       CXFA_Node* pParentContainer,
       CXFA_Node* pCurActionNode);
 
