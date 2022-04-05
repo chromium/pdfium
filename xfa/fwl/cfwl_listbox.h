@@ -108,12 +108,11 @@ class CFWL_ListBox : public CFWL_Widget {
                 const CFX_RectF& rtItem,
                 const CFX_Matrix& pMatrix);
   void DrawStatic(CFGAS_GEGraphics* pGraphics);
-  CFX_SizeF CalcSize(bool bAutoSize);
+  CFX_SizeF CalcSize();
   void UpdateItemSize(Item* hItem,
                       CFX_SizeF& size,
                       float fWidth,
-                      float fHeight,
-                      bool bAutoSize) const;
+                      float fHeight) const;
   float GetMaxTextWidth();
   float GetScrollWidth();
 

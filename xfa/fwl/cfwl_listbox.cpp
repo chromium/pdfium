@@ -67,7 +67,7 @@ void CFWL_ListBox::Update() {
   }
   m_TTOStyles.single_line_ = true;
   m_fScorllBarWidth = GetScrollWidth();
-  CalcSize(false);
+  CalcSize();
 }
 
 FWL_WidgetHit CFWL_ListBox::HitTest(const CFX_PointF& point) {
@@ -416,7 +416,7 @@ void CFWL_ListBox::DrawItem(CFGAS_GEGraphics* pGraphics,
   pTheme->DrawText(textParam);
 }
 
-CFX_SizeF CFWL_ListBox::CalcSize(bool bAutoSize) {
+CFX_SizeF CFWL_ListBox::CalcSize() {
   m_ClientRect = GetClientRect();
   m_ContentRect = m_ClientRect;
   CFX_RectF rtUIMargin;
@@ -429,21 +429,17 @@ CFX_SizeF CFWL_ListBox::CalcSize(bool bAutoSize) {
 
   float fWidth = GetMaxTextWidth();
   fWidth += 2 * kItemTextMargin;
-  if (!bAutoSize) {
-    float fActualWidth =
-        m_ClientRect.width - rtUIMargin.left - rtUIMargin.width;
-    fWidth = std::max(fWidth, fActualWidth);
-  }
+
+  float fActualWidth = m_ClientRect.width - rtUIMargin.left - rtUIMargin.width;
+  fWidth = std::max(fWidth, fActualWidth);
   m_fItemHeight = CalcItemHeight();
 
   int32_t iCount = CountItems(this);
   CFX_SizeF fs;
   for (int32_t i = 0; i < iCount; i++) {
     Item* htem = GetItem(this, i);
-    UpdateItemSize(htem, fs, fWidth, m_fItemHeight, bAutoSize);
+    UpdateItemSize(htem, fs, fWidth, m_fItemHeight);
   }
-  if (bAutoSize)
-    return fs;
 
   float iHeight = m_ClientRect.height;
   bool bShowVertScr = false;
@@ -524,9 +520,8 @@ CFX_SizeF CFWL_ListBox::CalcSize(bool bAutoSize) {
 void CFWL_ListBox::UpdateItemSize(Item* pItem,
                                   CFX_SizeF& size,
                                   float fWidth,
-                                  float fItemHeight,
-                                  bool bAutoSize) const {
-  if (!bAutoSize && pItem) {
+                                  float fItemHeight) const {
+  if (pItem) {
     CFX_RectF rtItem(0, size.height, fWidth, fItemHeight);
     pItem->SetRect(rtItem);
   }
