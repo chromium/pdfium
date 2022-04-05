@@ -226,21 +226,6 @@ void CPDFXFA_WidgetHandler::OnDraw(CPDFSDK_Annot* pAnnot,
   // to do highlight and shadow
 }
 
-CFX_FloatRect CPDFXFA_WidgetHandler::GetViewBBox(CPDFSDK_Annot* pAnnot) {
-  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
-  CXFA_Node* node = pXFAWidget->GetXFAFFWidget()->GetNode();
-  DCHECK(node->IsWidgetReady());
-
-  CFX_RectF rcBBox = pXFAWidget->GetXFAFFWidget()->GetBBox(
-      node->GetFFWidgetType() == XFA_FFWidgetType::kSignature
-          ? CXFA_FFWidget::kDrawFocus
-          : CXFA_FFWidget::kDoNotDrawFocus);
-
-  CFX_FloatRect rcWidget = rcBBox.ToFloatRect();
-  rcWidget.Inflate(1.0f, 1.0f);
-  return rcWidget;
-}
-
 WideString CPDFXFA_WidgetHandler::GetText(CPDFSDK_Annot* pAnnot) {
   CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
   CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler();

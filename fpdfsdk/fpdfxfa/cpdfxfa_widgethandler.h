@@ -30,7 +30,6 @@ class CPDFXFA_WidgetHandler final : public IPDFSDK_AnnotHandler {
   std::unique_ptr<CPDFSDK_Annot> NewAnnot(CPDF_Annot* pAnnot,
                                           CPDFSDK_PageView* pPageView) override;
 
-  CFX_FloatRect GetViewBBox(CPDFSDK_Annot* pAnnot) override;
   WideString GetText(CPDFSDK_Annot* pAnnot) override;
   WideString GetSelectedText(CPDFSDK_Annot* pAnnot) override;
   void ReplaceSelection(CPDFSDK_Annot* pAnnot, const WideString& text) override;

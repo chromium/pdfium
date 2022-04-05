@@ -216,6 +216,10 @@ bool CPDFSDK_BAAnnot::DoHitTest(const CFX_PointF& point) {
   return false;
 }
 
+CFX_FloatRect CPDFSDK_BAAnnot::GetViewBBox() {
+  return GetRect();
+}
+
 CPDF_Dest CPDFSDK_BAAnnot::GetDestination() const {
   if (m_pAnnot->GetSubtype() != CPDF_Annot::Subtype::LINK)
     return CPDF_Dest(nullptr);

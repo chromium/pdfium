@@ -24,6 +24,7 @@ class CPDFXFA_Widget final : public CPDFSDK_Annot {
   CPDF_Annot::Subtype GetAnnotSubtype() const override;
   CFX_FloatRect GetRect() const override;
   bool DoHitTest(const CFX_PointF& point) override;
+  CFX_FloatRect GetViewBBox() override;
 
   CXFA_FFWidget* GetXFAFFWidget() const { return m_pXFAFFWidget.Get(); }
 

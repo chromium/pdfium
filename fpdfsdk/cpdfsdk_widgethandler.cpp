@@ -211,16 +211,6 @@ bool CPDFSDK_WidgetHandler::IsIndexSelected(ObservedPtr<CPDFSDK_Annot>& pAnnot,
              pWidget, index);
 }
 
-CFX_FloatRect CPDFSDK_WidgetHandler::GetViewBBox(CPDFSDK_Annot* pAnnot) {
-  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
-  if (pWidget->IsSignatureWidget())
-    return CFX_FloatRect();
-
-  return CFX_FloatRect(
-      GetFormFillEnvironment()->GetInteractiveFormFiller()->GetViewBBox(
-          pWidget->GetPageView(), pWidget));
-}
-
 WideString CPDFSDK_WidgetHandler::GetText(CPDFSDK_Annot* pAnnot) {
   CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
   if (pWidget->IsSignatureWidget())

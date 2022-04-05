@@ -7,10 +7,12 @@
 #include "fpdfsdk/fpdfxfa/cpdfxfa_widget.h"
 
 #include "fpdfsdk/ipdfsdk_annothandler.h"
+#include "third_party/base/check.h"
 #include "xfa/fxfa/cxfa_ffdocview.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/cxfa_ffwidgethandler.h"
+#include "xfa/fxfa/parser/cxfa_node.h"
 
 CPDFXFA_Widget::CPDFXFA_Widget(CXFA_FFWidget* pXFAFFWidget,
                                CPDFSDK_PageView* pPageView)
@@ -61,4 +63,19 @@ bool CPDFXFA_Widget::OnChangedFocus() {
     return false;
 
   return doc_view->GetFocusWidget() != widget;
+}
+
+CFX_FloatRect CPDFXFA_Widget::GetViewBBox() {
+  CXFA_FFWidget* widget = GetXFAFFWidget();
+  CXFA_Node* node = widget->GetNode();
+  DCHECK(node->IsWidgetReady());
+
+  CFX_RectF bbox =
+      widget->GetBBox(node->GetFFWidgetType() == XFA_FFWidgetType::kSignature
+                          ? CXFA_FFWidget::kDrawFocus
+                          : CXFA_FFWidget::kDoNotDrawFocus);
+
+  CFX_FloatRect result = bbox.ToFloatRect();
+  result.Inflate(1.0f, 1.0f);
+  return result;
 }

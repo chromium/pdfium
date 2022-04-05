@@ -31,6 +31,7 @@ class CPDFSDK_Annot : public Observable {
   virtual CPDF_Annot::Subtype GetAnnotSubtype() const = 0;
   virtual CFX_FloatRect GetRect() const = 0;
   virtual bool DoHitTest(const CFX_PointF& point) = 0;
+  virtual CFX_FloatRect GetViewBBox() = 0;
 
   // Three cases: PDF page only, XFA page only, or XFA page backed by PDF page.
   IPDF_Page* GetPage();     // Returns XFA Page if possible, else PDF page.

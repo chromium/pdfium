@@ -219,9 +219,3 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_IsIndexSelected(
   DCHECK(pAnnot);
   return GetAnnotHandler(pAnnot.Get())->IsIndexSelected(pAnnot, index);
 }
-
-CFX_FloatRect CPDFSDK_AnnotHandlerMgr::Annot_OnGetViewBBox(
-    CPDFSDK_Annot* pAnnot) {
-  DCHECK(pAnnot);
-  return GetAnnotHandler(pAnnot)->GetViewBBox(pAnnot);
-}

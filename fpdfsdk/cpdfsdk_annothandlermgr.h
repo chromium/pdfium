@@ -92,8 +92,6 @@ class CPDFSDK_AnnotHandlerMgr {
                               bool selected);
   bool Annot_IsIndexSelected(ObservedPtr<CPDFSDK_Annot>& pAnnot, int index);
 
-  CFX_FloatRect Annot_OnGetViewBBox(CPDFSDK_Annot* pAnnot);
-
  private:
   friend class CPDFSDK_BAAnnotHandlerTest;
 

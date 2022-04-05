@@ -687,12 +687,15 @@ bool CPDFSDK_Widget::DoHitTest(const CFX_PointF& point) {
     do_hit_test = (perms & pdfium::access_permissions::kFillForm) ||
                   (perms & pdfium::access_permissions::kModifyAnnotation);
   }
-  if (!do_hit_test)
-    return false;
+  return do_hit_test && GetViewBBox().Contains(point);
+}
+
+CFX_FloatRect CPDFSDK_Widget::GetViewBBox() {
+  if (IsSignatureWidget())
+    return CFX_FloatRect();
 
   auto* form_filler = m_pPageView->GetFormFillEnv()->GetInteractiveFormFiller();
-  CFX_FloatRect bbox(form_filler->GetViewBBox(GetPageView(), this));
-  return bbox.Contains(point);
+  return CFX_FloatRect(form_filler->GetViewBBox(GetPageView(), this));
 }
 
 void CPDFSDK_Widget::DrawAppearance(CFX_RenderDevice* pDevice,

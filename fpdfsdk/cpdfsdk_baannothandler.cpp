@@ -70,7 +70,7 @@ void CPDFSDK_BAAnnotHandler::OnDraw(CPDFSDK_Annot* pAnnot,
 
   if (is_annotation_focused_ && IsFocusableAnnot(annot_type) &&
       pAnnot == GetFormFillEnvironment()->GetFocusAnnot()) {
-    CFX_FloatRect view_bounding_box = GetViewBBox(pAnnot->AsBAAnnot());
+    CFX_FloatRect view_bounding_box = pAnnot->AsBAAnnot()->GetViewBBox();
     if (view_bounding_box.IsEmpty())
       return;
 
@@ -190,7 +190,7 @@ bool CPDFSDK_BAAnnotHandler::IsFocusableAnnot(
 
 void CPDFSDK_BAAnnotHandler::InvalidateRect(CPDFSDK_Annot* annot) {
   CPDFSDK_BAAnnot* ba_annot = annot->AsBAAnnot();
-  CFX_FloatRect view_bounding_box = GetViewBBox(ba_annot);
+  CFX_FloatRect view_bounding_box = ba_annot->GetViewBBox();
   if (!view_bounding_box.IsEmpty()) {
     view_bounding_box.Inflate(1, 1);
     view_bounding_box.Normalize();
@@ -229,10 +229,6 @@ bool CPDFSDK_BAAnnotHandler::SetIndexSelected(
 bool CPDFSDK_BAAnnotHandler::IsIndexSelected(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                              int index) {
   return false;
-}
-
-CFX_FloatRect CPDFSDK_BAAnnotHandler::GetViewBBox(CPDFSDK_Annot* pAnnot) {
-  return pAnnot->GetRect();
 }
 
 WideString CPDFSDK_BAAnnotHandler::GetText(CPDFSDK_Annot* pAnnot) {

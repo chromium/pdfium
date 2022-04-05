@@ -89,10 +89,9 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
 }
 
 CPDFSDK_Annot* CPDFSDK_PageView::GetFXAnnotAtPoint(const CFX_PointF& point) {
-  CPDFSDK_AnnotHandlerMgr* pAnnotMgr = m_pFormFillEnv->GetAnnotHandlerMgr();
   CPDFSDK_AnnotForwardIteration annot_iteration(this);
   for (const auto& pSDKAnnot : annot_iteration) {
-    CFX_FloatRect rc = pAnnotMgr->Annot_OnGetViewBBox(pSDKAnnot.Get());
+    CFX_FloatRect rc = pSDKAnnot->GetViewBBox();
     if (pSDKAnnot->GetAnnotSubtype() == CPDF_Annot::Subtype::POPUP)
       continue;
     if (rc.Contains(point))
@@ -102,7 +101,6 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetFXAnnotAtPoint(const CFX_PointF& point) {
 }
 
 CPDFSDK_Annot* CPDFSDK_PageView::GetFXWidgetAtPoint(const CFX_PointF& point) {
-  CPDFSDK_AnnotHandlerMgr* pAnnotMgr = m_pFormFillEnv->GetAnnotHandlerMgr();
   CPDFSDK_AnnotForwardIteration annot_iteration(this);
   for (const auto& pSDKAnnot : annot_iteration) {
     const CPDF_Annot::Subtype sub_type = pSDKAnnot->GetAnnotSubtype();
@@ -110,11 +108,8 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetFXWidgetAtPoint(const CFX_PointF& point) {
 #ifdef PDF_ENABLE_XFA
     do_hit_test = do_hit_test || sub_type == CPDF_Annot::Subtype::XFAWIDGET;
 #endif  // PDF_ENABLE_XFA
-    if (do_hit_test) {
-      pAnnotMgr->Annot_OnGetViewBBox(pSDKAnnot.Get());
-      if (pSDKAnnot->DoHitTest(point))
-        return pSDKAnnot.Get();
-    }
+    if (do_hit_test && pSDKAnnot->DoHitTest(point))
+      return pSDKAnnot.Get();
   }
   return nullptr;
 }

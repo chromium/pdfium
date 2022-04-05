@@ -39,7 +39,6 @@ class IPDFSDK_AnnotHandler {
       CPDF_Annot* pAnnot,
       CPDFSDK_PageView* pPageView) = 0;
 
-  virtual CFX_FloatRect GetViewBBox(CPDFSDK_Annot* pAnnot) = 0;
   virtual WideString GetText(CPDFSDK_Annot* pAnnot) = 0;
   virtual WideString GetSelectedText(CPDFSDK_Annot* pAnnot) = 0;
   virtual void ReplaceSelection(CPDFSDK_Annot* pAnnot,

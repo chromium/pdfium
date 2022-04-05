@@ -32,6 +32,7 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
   CPDF_Annot* GetPDFAnnot() const override;
   int GetLayoutOrder() const override;
   bool DoHitTest(const CFX_PointF& point) override;
+  CFX_FloatRect GetViewBBox() override;
 
   virtual CPDF_Action GetAAction(CPDF_AAction::AActionType eAAT);
   virtual bool IsAppearanceValid();
