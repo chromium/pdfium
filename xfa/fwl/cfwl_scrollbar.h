@@ -60,12 +60,10 @@ class CFWL_ScrollBar final : public CFWL_Widget,
                  CFWL_Widget* pOuter);
 
   bool IsVertical() const { return !!(GetStyleExts() & FWL_STYLEEXT_SCB_Vert); }
-  void DrawTrack(CFGAS_GEGraphics* pGraphics,
-                 bool bLower,
-                 const CFX_Matrix& mtMatrix);
-  void DrawArrowBtn(CFGAS_GEGraphics* pGraphics,
-                    bool bMinBtn,
-                    const CFX_Matrix& mtMatrix);
+  void DrawUpperTrack(CFGAS_GEGraphics* pGraphics, const CFX_Matrix& mtMatrix);
+  void DrawLowerTrack(CFGAS_GEGraphics* pGraphics, const CFX_Matrix& mtMatrix);
+  void DrawMaxArrowBtn(CFGAS_GEGraphics* pGraphics, const CFX_Matrix& mtMatrix);
+  void DrawMinArrowBtn(CFGAS_GEGraphics* pGraphics, const CFX_Matrix& mtMatrix);
   void DrawThumb(CFGAS_GEGraphics* pGraphics, const CFX_Matrix& mtMatrix);
   void Layout();
   void CalcButtonLen();
