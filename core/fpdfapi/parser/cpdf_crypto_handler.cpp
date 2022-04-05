@@ -142,10 +142,9 @@ void* CPDF_CryptoHandler::DecryptStart(uint32_t objnum, uint32_t gennum) {
   return pContext;
 }
 
-bool CPDF_CryptoHandler::CryptStream(void* context,
-                                     pdfium::span<const uint8_t> source,
-                                     CFX_BinaryBuf& dest_buf,
-                                     bool bEncrypt) {
+bool CPDF_CryptoHandler::DecryptStream(void* context,
+                                       pdfium::span<const uint8_t> source,
+                                       CFX_BinaryBuf& dest_buf) {
   if (!context)
     return false;
 
@@ -161,10 +160,6 @@ bool CPDF_CryptoHandler::CryptStream(void* context,
     return true;
   }
   AESCryptContext* pContext = static_cast<AESCryptContext*>(context);
-  if (pContext->m_bIV && bEncrypt) {
-    dest_buf.AppendBlock(pContext->m_Block, 16);
-    pContext->m_bIV = false;
-  }
   uint32_t src_off = 0;
   uint32_t src_left = source.size();
   while (true) {
@@ -178,19 +173,14 @@ bool CPDF_CryptoHandler::CryptStream(void* context,
     src_left -= copy_size;
     pContext->m_BlockOffset += copy_size;
     if (pContext->m_BlockOffset == 16) {
-      if (!bEncrypt && pContext->m_bIV) {
+      if (pContext->m_bIV) {
         CRYPT_AESSetIV(&pContext->m_Context, pContext->m_Block);
         pContext->m_bIV = false;
         pContext->m_BlockOffset = 0;
       } else if (src_off < source.size()) {
         uint8_t block_buf[16];
-        if (bEncrypt) {
-          CRYPT_AESEncrypt(&pContext->m_Context, block_buf, pContext->m_Block,
-                           16);
-        } else {
-          CRYPT_AESDecrypt(&pContext->m_Context, block_buf, pContext->m_Block,
-                           16);
-        }
+        CRYPT_AESDecrypt(&pContext->m_Context, block_buf, pContext->m_Block,
+                         16);
         dest_buf.AppendBlock(block_buf, 16);
         pContext->m_BlockOffset = 0;
       }
@@ -335,12 +325,6 @@ bool CPDF_CryptoHandler::DecryptObjectTree(RetainPtr<CPDF_Object> object) {
     }
   }
   return true;
-}
-
-bool CPDF_CryptoHandler::DecryptStream(void* context,
-                                       pdfium::span<const uint8_t> source,
-                                       CFX_BinaryBuf& dest_buf) {
-  return CryptStream(context, source, dest_buf, false);
 }
 
 bool CPDF_CryptoHandler::DecryptFinish(void* context, CFX_BinaryBuf& dest_buf) {

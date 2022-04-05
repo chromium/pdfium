@@ -62,10 +62,6 @@ class CPDF_CryptoHandler {
                   pdfium::span<const uint8_t> source,
                   uint8_t* dest_buf,
                   size_t& dest_size) const;
-  bool CryptStream(void* context,
-                   pdfium::span<const uint8_t> source,
-                   CFX_BinaryBuf& dest_buf,
-                   bool bEncrypt);
   bool CryptFinish(void* context, CFX_BinaryBuf& dest_buf, bool bEncrypt);
 
   const size_t m_KeyLen;
