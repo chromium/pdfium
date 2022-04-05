@@ -81,8 +81,8 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
 #endif  // PDF_ENABLE_XFA
 
   // for pdf/static xfa.
-  CPDFSDK_AnnotIteration annotIteration(this, true);
-  for (const auto& pSDKAnnot : annotIteration) {
+  CPDFSDK_AnnotReverseIteration annot_iteration(this);
+  for (const auto& pSDKAnnot : annot_iteration) {
     m_pFormFillEnv->GetAnnotHandlerMgr()->Annot_OnDraw(
         pSDKAnnot.Get(), pDevice, mtUser2Device, pOptions->GetDrawAnnots());
   }
@@ -90,8 +90,8 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
 
 CPDFSDK_Annot* CPDFSDK_PageView::GetFXAnnotAtPoint(const CFX_PointF& point) {
   CPDFSDK_AnnotHandlerMgr* pAnnotMgr = m_pFormFillEnv->GetAnnotHandlerMgr();
-  CPDFSDK_AnnotIteration annotIteration(this, false);
-  for (const auto& pSDKAnnot : annotIteration) {
+  CPDFSDK_AnnotForwardIteration annot_iteration(this);
+  for (const auto& pSDKAnnot : annot_iteration) {
     CFX_FloatRect rc = pAnnotMgr->Annot_OnGetViewBBox(pSDKAnnot.Get());
     if (pSDKAnnot->GetAnnotSubtype() == CPDF_Annot::Subtype::POPUP)
       continue;
@@ -103,8 +103,8 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetFXAnnotAtPoint(const CFX_PointF& point) {
 
 CPDFSDK_Annot* CPDFSDK_PageView::GetFXWidgetAtPoint(const CFX_PointF& point) {
   CPDFSDK_AnnotHandlerMgr* pAnnotMgr = m_pFormFillEnv->GetAnnotHandlerMgr();
-  CPDFSDK_AnnotIteration annotIteration(this, false);
-  for (const auto& pSDKAnnot : annotIteration) {
+  CPDFSDK_AnnotForwardIteration annot_iteration(this);
+  for (const auto& pSDKAnnot : annot_iteration) {
     bool bHitTest = pSDKAnnot->GetAnnotSubtype() == CPDF_Annot::Subtype::WIDGET;
 #ifdef PDF_ENABLE_XFA
     bHitTest = bHitTest ||

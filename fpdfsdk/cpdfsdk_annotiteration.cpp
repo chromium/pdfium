@@ -38,3 +38,15 @@ CPDFSDK_AnnotIteration::CPDFSDK_AnnotIteration(CPDFSDK_PageView* pPageView,
 }
 
 CPDFSDK_AnnotIteration::~CPDFSDK_AnnotIteration() = default;
+
+CPDFSDK_AnnotForwardIteration::CPDFSDK_AnnotForwardIteration(
+    CPDFSDK_PageView* pPageView)
+    : CPDFSDK_AnnotIteration(pPageView, /*bReverse=*/false) {}
+
+CPDFSDK_AnnotForwardIteration::~CPDFSDK_AnnotForwardIteration() = default;
+
+CPDFSDK_AnnotReverseIteration::CPDFSDK_AnnotReverseIteration(
+    CPDFSDK_PageView* pPageView)
+    : CPDFSDK_AnnotIteration(pPageView, /*bReverse=*/true) {}
+
+CPDFSDK_AnnotReverseIteration::~CPDFSDK_AnnotReverseIteration() = default;

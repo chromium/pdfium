@@ -1025,9 +1025,9 @@ CJS_Result CJS_Document::getAnnot(
   if (!pPageView)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-  CPDFSDK_AnnotIteration annotIteration(pPageView, false);
+  CPDFSDK_AnnotForwardIteration annot_iteration(pPageView);
   CPDFSDK_BAAnnot* pSDKBAAnnot = nullptr;
-  for (const auto& pSDKAnnotCur : annotIteration) {
+  for (const auto& pSDKAnnotCur : annot_iteration) {
     auto* pBAAnnot = pSDKAnnotCur->AsBAAnnot();
     if (pBAAnnot && pBAAnnot->GetAnnotName() == swAnnotName) {
       pSDKBAAnnot = pBAAnnot;
@@ -1067,8 +1067,8 @@ CJS_Result CJS_Document::getAnnots(
     if (!pPageView)
       return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-    CPDFSDK_AnnotIteration annotIteration(pPageView, false);
-    for (const auto& pSDKAnnotCur : annotIteration) {
+    CPDFSDK_AnnotForwardIteration annot_iteration(pPageView);
+    for (const auto& pSDKAnnotCur : annot_iteration) {
       if (!pSDKAnnotCur)
         return CJS_Result::Failure(JSMessage::kBadObjectError);
 
