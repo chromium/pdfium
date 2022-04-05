@@ -44,12 +44,11 @@ bool CPDF_CryptoHandler::IsSignatureDictionary(
   return type_obj && type_obj->GetString() == pdfium::form_fields::kSig;
 }
 
-void CPDF_CryptoHandler::CryptBlock(bool bEncrypt,
-                                    uint32_t objnum,
-                                    uint32_t gennum,
-                                    pdfium::span<const uint8_t> source,
-                                    uint8_t* dest_buf,
-                                    size_t& dest_size) const {
+void CPDF_CryptoHandler::EncryptContent(uint32_t objnum,
+                                        uint32_t gennum,
+                                        pdfium::span<const uint8_t> source,
+                                        uint8_t* dest_buf,
+                                        size_t& dest_size) const {
   if (m_Cipher == Cipher::kNone) {
     memcpy(dest_buf, source.data(), source.size());
     return;
@@ -69,30 +68,22 @@ void CPDF_CryptoHandler::CryptBlock(bool bEncrypt,
   if (m_Cipher == Cipher::kAES) {
     CRYPT_AESSetKey(m_pAESContext.get(),
                     m_KeyLen == 32 ? m_EncryptKey : realkey, m_KeyLen);
-    if (bEncrypt) {
-      uint8_t iv[16];
-      for (int i = 0; i < 16; i++) {
-        iv[i] = (uint8_t)rand();
-      }
-      CRYPT_AESSetIV(m_pAESContext.get(), iv);
-      memcpy(dest_buf, iv, 16);
-      int nblocks = source.size() / 16;
-      CRYPT_AESEncrypt(m_pAESContext.get(), dest_buf + 16, source.data(),
-                       nblocks * 16);
-      uint8_t padding[16];
-      memcpy(padding, source.data() + nblocks * 16, source.size() % 16);
-      memset(padding + source.size() % 16, 16 - source.size() % 16,
-             16 - source.size() % 16);
-      CRYPT_AESEncrypt(m_pAESContext.get(), dest_buf + nblocks * 16 + 16,
-                       padding, 16);
-      dest_size = 32 + nblocks * 16;
-    } else {
-      CRYPT_AESSetIV(m_pAESContext.get(), source.data());
-      CRYPT_AESDecrypt(m_pAESContext.get(), dest_buf, source.data() + 16,
-                       source.size() - 16);
-      dest_size = source.size() - 16;
-      dest_size -= dest_buf[dest_size - 1];
+    uint8_t iv[16];
+    for (int i = 0; i < 16; i++) {
+      iv[i] = (uint8_t)rand();
     }
+    CRYPT_AESSetIV(m_pAESContext.get(), iv);
+    memcpy(dest_buf, iv, 16);
+    int nblocks = source.size() / 16;
+    CRYPT_AESEncrypt(m_pAESContext.get(), dest_buf + 16, source.data(),
+                     nblocks * 16);
+    uint8_t padding[16];
+    memcpy(padding, source.data() + nblocks * 16, source.size() % 16);
+    memset(padding + source.size() % 16, 16 - source.size() % 16,
+           16 - source.size() % 16);
+    CRYPT_AESEncrypt(m_pAESContext.get(), dest_buf + nblocks * 16 + 16, padding,
+                     16);
+    dest_size = 32 + nblocks * 16;
   } else {
     DCHECK_EQ(dest_size, source.size());
     if (dest_buf != source.data())
@@ -191,33 +182,20 @@ bool CPDF_CryptoHandler::DecryptStream(void* context,
   }
   return true;
 }
-bool CPDF_CryptoHandler::CryptFinish(void* context,
-                                     CFX_BinaryBuf& dest_buf,
-                                     bool bEncrypt) {
-  if (!context) {
+
+bool CPDF_CryptoHandler::DecryptFinish(void* context, CFX_BinaryBuf& dest_buf) {
+  if (!context)
     return false;
-  }
-  if (m_Cipher == Cipher::kNone) {
+
+  if (m_Cipher == Cipher::kNone)
     return true;
-  }
+
   if (m_Cipher == Cipher::kRC4) {
     FX_Free(context);
     return true;
   }
   auto* pContext = static_cast<AESCryptContext*>(context);
-  if (bEncrypt) {
-    uint8_t block_buf[16];
-    if (pContext->m_BlockOffset == 16) {
-      CRYPT_AESEncrypt(&pContext->m_Context, block_buf, pContext->m_Block, 16);
-      dest_buf.AppendBlock(block_buf, 16);
-      pContext->m_BlockOffset = 0;
-    }
-    memset(pContext->m_Block + pContext->m_BlockOffset,
-           (uint8_t)(16 - pContext->m_BlockOffset),
-           16 - pContext->m_BlockOffset);
-    CRYPT_AESEncrypt(&pContext->m_Context, block_buf, pContext->m_Block, 16);
-    dest_buf.AppendBlock(block_buf, 16);
-  } else if (pContext->m_BlockOffset == 16) {
+  if (pContext->m_BlockOffset == 16) {
     uint8_t block_buf[16];
     CRYPT_AESDecrypt(&pContext->m_Context, block_buf, pContext->m_Block, 16);
     if (block_buf[15] <= 16) {
@@ -327,22 +305,9 @@ bool CPDF_CryptoHandler::DecryptObjectTree(RetainPtr<CPDF_Object> object) {
   return true;
 }
 
-bool CPDF_CryptoHandler::DecryptFinish(void* context, CFX_BinaryBuf& dest_buf) {
-  return CryptFinish(context, dest_buf, false);
-}
-
 size_t CPDF_CryptoHandler::EncryptGetSize(
     pdfium::span<const uint8_t> source) const {
   return m_Cipher == Cipher::kAES ? source.size() + 32 : source.size();
-}
-
-bool CPDF_CryptoHandler::EncryptContent(uint32_t objnum,
-                                        uint32_t gennum,
-                                        pdfium::span<const uint8_t> source,
-                                        uint8_t* dest_buf,
-                                        size_t& dest_size) const {
-  CryptBlock(true, objnum, gennum, source, dest_buf, dest_size);
-  return true;
 }
 
 CPDF_CryptoHandler::CPDF_CryptoHandler(Cipher cipher,

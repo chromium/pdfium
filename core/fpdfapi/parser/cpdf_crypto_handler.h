@@ -38,7 +38,7 @@ class CPDF_CryptoHandler {
 
   bool DecryptObjectTree(RetainPtr<CPDF_Object> object);
   size_t EncryptGetSize(pdfium::span<const uint8_t> source) const;
-  bool EncryptContent(uint32_t objnum,
+  void EncryptContent(uint32_t objnum,
                       uint32_t gennum,
                       pdfium::span<const uint8_t> source,
                       uint8_t* dest_buf,
@@ -54,15 +54,7 @@ class CPDF_CryptoHandler {
                      pdfium::span<const uint8_t> source,
                      CFX_BinaryBuf& dest_buf);
   bool DecryptFinish(void* context, CFX_BinaryBuf& dest_buf);
-
   void PopulateKey(uint32_t objnum, uint32_t gennum, uint8_t* key) const;
-  void CryptBlock(bool bEncrypt,
-                  uint32_t objnum,
-                  uint32_t gennum,
-                  pdfium::span<const uint8_t> source,
-                  uint8_t* dest_buf,
-                  size_t& dest_size) const;
-  bool CryptFinish(void* context, CFX_BinaryBuf& dest_buf, bool bEncrypt);
 
   const size_t m_KeyLen;
   const Cipher m_Cipher;
