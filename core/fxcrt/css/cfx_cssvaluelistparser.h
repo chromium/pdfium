@@ -21,7 +21,8 @@ class CFX_CSSValueListParser {
   void UseCommaSeparator() { m_Separator = ','; }
 
  private:
-  size_t SkipTo(wchar_t wch, bool breakOnSpace, bool matchBrackets);
+  size_t SkipToChar(wchar_t wch);
+  size_t SkipToCharMatchingParens(wchar_t wch);
 
   wchar_t m_Separator;
   const wchar_t* m_pCur;

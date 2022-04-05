@@ -33,7 +33,7 @@ bool CFX_CSSValueListParser::NextValue(CFX_CSSValue::PrimitiveType* eType,
   *nLength = 0;
   wchar_t wch = *m_pCur;
   if (wch == '#') {
-    *nLength = SkipTo(' ', false, false);
+    *nLength = SkipToChar(' ');
     if (*nLength == 4 || *nLength == 7)
       *eType = CFX_CSSValue::PrimitiveType::kRGB;
   } else if (FXSYS_IsDecimalDigit(wch) || wch == '.' || wch == '-' ||
@@ -46,43 +46,42 @@ bool CFX_CSSValueListParser::NextValue(CFX_CSSValue::PrimitiveType* eType,
   } else if (wch == '\"' || wch == '\'') {
     ++(*pStart);
     m_pCur++;
-    *nLength = SkipTo(wch, false, false);
+    *nLength = SkipToChar(wch);
     m_pCur++;
     *eType = CFX_CSSValue::PrimitiveType::kString;
   } else if (m_pEnd - m_pCur > 5 && m_pCur[3] == '(') {
     if (FXSYS_wcsnicmp(L"rgb", m_pCur, 3) == 0) {
-      *nLength = SkipTo(')', false, false) + 1;
+      *nLength = SkipToChar(')') + 1;
       m_pCur++;
       *eType = CFX_CSSValue::PrimitiveType::kRGB;
     }
   } else {
-    *nLength = SkipTo(m_Separator, true, true);
+    *nLength = SkipToCharMatchingParens(m_Separator);
     *eType = CFX_CSSValue::PrimitiveType::kString;
   }
   return m_pCur <= m_pEnd && *nLength > 0;
 }
 
-size_t CFX_CSSValueListParser::SkipTo(wchar_t wch,
-                                      bool breakOnSpace,
-                                      bool matchBrackets) {
+size_t CFX_CSSValueListParser::SkipToChar(wchar_t wch) {
   const wchar_t* pStart = m_pCur;
-  int32_t bracketCount = 0;
   while (m_pCur < m_pEnd && *m_pCur != wch) {
-    if (breakOnSpace && *m_pCur <= ' ')
-      break;
-    if (!matchBrackets) {
-      m_pCur++;
-      continue;
-    }
+    m_pCur++;
+  }
+  return m_pCur - pStart;
+}
 
+size_t CFX_CSSValueListParser::SkipToCharMatchingParens(wchar_t wch) {
+  const wchar_t* pStart = m_pCur;
+  int64_t bracketCount = 0;
+  while (m_pCur < m_pEnd && *m_pCur != wch) {
+    if (*m_pCur <= ' ')
+      break;
     if (*m_pCur == '(')
       bracketCount++;
     else if (*m_pCur == ')')
       bracketCount--;
-
     m_pCur++;
   }
-
   while (bracketCount > 0 && m_pCur < m_pEnd) {
     if (*m_pCur == ')')
       bracketCount--;
