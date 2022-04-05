@@ -281,7 +281,7 @@ void CPDFSDK_Widget::Synchronize(bool bSynchronizeElse) {
         int nIndex = pFormField->GetSelectedIndex(i);
         if (nIndex > -1 &&
             static_cast<size_t>(nIndex) < node->CountChoiceListItems(false)) {
-          node->SetItemState(nIndex, true, false, false, true);
+          node->SetItemState(nIndex, true, false, false);
         }
       }
       if (GetFieldType() == FormFieldType::kComboBox)

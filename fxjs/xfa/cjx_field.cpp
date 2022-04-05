@@ -198,11 +198,11 @@ CJS_Result CJX_Field::setItemState(
 
   int32_t iIndex = runtime->ToInt32(params[0]);
   if (runtime->ToInt32(params[1]) != 0) {
-    node->SetItemState(iIndex, true, true, true, true);
+    node->SetItemState(iIndex, true, true, true);
     return CJS_Result::Success();
   }
   if (node->GetItemState(iIndex))
-    node->SetItemState(iIndex, false, true, true, true);
+    node->SetItemState(iIndex, false, true, true);
 
   return CJS_Result::Success();
 }
@@ -393,7 +393,7 @@ void CJX_Field::selectedIndex(v8::Isolate* pIsolate,
     return;
   }
 
-  node->SetItemState(iIndex, true, true, true, true);
+  node->SetItemState(iIndex, true, true, true);
 }
 
 void CJX_Field::rawValue(v8::Isolate* pIsolate,

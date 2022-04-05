@@ -4342,8 +4342,7 @@ bool CXFA_Node::GetItemState(int32_t nIndex) {
 void CXFA_Node::SetItemState(int32_t nIndex,
                              bool bSelected,
                              bool bNotify,
-                             bool bScriptModify,
-                             bool bSyncData) {
+                             bool bScriptModify) {
   std::vector<WideString> wsSaveTextArray = GetChoiceListItems(true);
   if (!fxcrt::IndexInBounds(wsSaveTextArray, nIndex))
     return;
@@ -4364,8 +4363,7 @@ void CXFA_Node::SetItemState(int32_t nIndex,
           wsValue += L"\n";
         }
         wsValue += wsSaveTextArray[nIndex];
-        JSObject()->SetContent(wsValue, wsValue, bNotify, bScriptModify,
-                               bSyncData);
+        JSObject()->SetContent(wsValue, wsValue, bNotify, bScriptModify, true);
       }
     } else if (iSel >= 0) {
       std::vector<int32_t> iSelArray = GetSelectedItems();
@@ -4373,18 +4371,18 @@ void CXFA_Node::SetItemState(int32_t nIndex,
           std::find(iSelArray.begin(), iSelArray.end(), nIndex);
       if (selected_iter != iSelArray.end())
         iSelArray.erase(selected_iter);
-      SetSelectedItems(iSelArray, bNotify, bScriptModify, bSyncData);
+      SetSelectedItems(iSelArray, bNotify, bScriptModify, true);
     }
   } else {
     if (bSelected) {
       if (iSel < 0) {
         WideString wsSaveText = wsSaveTextArray[nIndex];
         JSObject()->SetContent(wsSaveText, GetFormatDataValue(wsSaveText),
-                               bNotify, bScriptModify, bSyncData);
+                               bNotify, bScriptModify, true);
       }
     } else if (iSel >= 0) {
       JSObject()->SetContent(WideString(), WideString(), bNotify, bScriptModify,
-                             bSyncData);
+                             true);
     }
   }
 }
@@ -4574,7 +4572,7 @@ bool CXFA_Node::DeleteItem(int32_t nIndex, bool bNotify, bool bScriptModify) {
       }
     } else {
       if (!bSetValue && pItems->JSObject()->GetBoolean(XFA_Attribute::Save)) {
-        SetItemState(nIndex, false, true, bScriptModify, true);
+        SetItemState(nIndex, false, true, bScriptModify);
         bSetValue = true;
       }
       int32_t i = 0;
