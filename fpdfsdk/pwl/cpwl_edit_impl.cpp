@@ -1391,7 +1391,7 @@ void CPWL_EditImpl::OnMouseMove(const CFX_PointF& point,
   SetCaretInfo();
 }
 
-void CPWL_EditImpl::OnVK_UP(bool bShift, bool bCtrl) {
+void CPWL_EditImpl::OnVK_UP(bool bShift) {
   if (!m_pVT->IsValid())
     return;
 
@@ -1414,7 +1414,7 @@ void CPWL_EditImpl::OnVK_UP(bool bShift, bool bCtrl) {
   }
 }
 
-void CPWL_EditImpl::OnVK_DOWN(bool bShift, bool bCtrl) {
+void CPWL_EditImpl::OnVK_DOWN(bool bShift) {
   if (!m_pVT->IsValid())
     return;
 
@@ -1437,7 +1437,7 @@ void CPWL_EditImpl::OnVK_DOWN(bool bShift, bool bCtrl) {
   }
 }
 
-void CPWL_EditImpl::OnVK_LEFT(bool bShift, bool bCtrl) {
+void CPWL_EditImpl::OnVK_LEFT(bool bShift) {
   if (!m_pVT->IsValid())
     return;
 
@@ -1480,7 +1480,7 @@ void CPWL_EditImpl::OnVK_LEFT(bool bShift, bool bCtrl) {
   }
 }
 
-void CPWL_EditImpl::OnVK_RIGHT(bool bShift, bool bCtrl) {
+void CPWL_EditImpl::OnVK_RIGHT(bool bShift) {
   if (!m_pVT->IsValid())
     return;
 

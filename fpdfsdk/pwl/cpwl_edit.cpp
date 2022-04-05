@@ -584,16 +584,16 @@ bool CPWL_Edit::OnKeyDownInternal(FWL_VKEYCODE nKeyCode,
         PasteText();
       return true;
     case FWL_VKEY_Up:
-      m_pEditImpl->OnVK_UP(IsSHIFTKeyDown(nFlag), false);
+      m_pEditImpl->OnVK_UP(IsSHIFTKeyDown(nFlag));
       return true;
     case FWL_VKEY_Down:
-      m_pEditImpl->OnVK_DOWN(IsSHIFTKeyDown(nFlag), false);
+      m_pEditImpl->OnVK_DOWN(IsSHIFTKeyDown(nFlag));
       return true;
     case FWL_VKEY_Left:
-      m_pEditImpl->OnVK_LEFT(IsSHIFTKeyDown(nFlag), false);
+      m_pEditImpl->OnVK_LEFT(IsSHIFTKeyDown(nFlag));
       return true;
     case FWL_VKEY_Right:
-      m_pEditImpl->OnVK_RIGHT(IsSHIFTKeyDown(nFlag), false);
+      m_pEditImpl->OnVK_RIGHT(IsSHIFTKeyDown(nFlag));
       return true;
     case FWL_VKEY_Home:
       m_pEditImpl->OnVK_HOME(IsSHIFTKeyDown(nFlag), IsCTRLKeyDown(nFlag));

@@ -86,10 +86,10 @@ class CPWL_EditImpl {
   void SetTextOverflow(bool bAllowed);
   void OnMouseDown(const CFX_PointF& point, bool bShift, bool bCtrl);
   void OnMouseMove(const CFX_PointF& point, bool bShift, bool bCtrl);
-  void OnVK_UP(bool bShift, bool bCtrl);
-  void OnVK_DOWN(bool bShift, bool bCtrl);
-  void OnVK_LEFT(bool bShift, bool bCtrl);
-  void OnVK_RIGHT(bool bShift, bool bCtrl);
+  void OnVK_UP(bool bShift);
+  void OnVK_DOWN(bool bShift);
+  void OnVK_LEFT(bool bShift);
+  void OnVK_RIGHT(bool bShift);
   void OnVK_HOME(bool bShift, bool bCtrl);
   void OnVK_END(bool bShift, bool bCtrl);
   void SetText(const WideString& sText);
