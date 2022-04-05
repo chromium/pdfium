@@ -107,14 +107,10 @@ void UpdateFormField(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 
 void UpdateFormControl(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                        CPDF_FormControl* pFormControl,
-                       bool bChangeMark,
-                       bool bResetAP,
-                       bool bRefresh) {
+                       bool bResetAP) {
   DCHECK(pFormControl);
-
   CPDFSDK_InteractiveForm* pForm = pFormFillEnv->GetInteractiveForm();
   CPDFSDK_Widget* pWidget = pForm->GetWidget(pFormControl);
-
   if (pWidget) {
     ObservedPtr<CPDFSDK_Widget> observed_widget(pWidget);
     if (bResetAP) {
@@ -132,15 +128,10 @@ void UpdateFormControl(CPDFSDK_FormFillEnvironment* pFormFillEnv,
       if (!observed_widget)
         return;
     }
-
-    if (bRefresh) {
-      CPDFSDK_InteractiveForm* pWidgetForm = pWidget->GetInteractiveForm();
-      pWidgetForm->GetFormFillEnv()->UpdateAllViews(pWidget);
-    }
+    CPDFSDK_InteractiveForm* pWidgetForm = pWidget->GetInteractiveForm();
+    pWidgetForm->GetFormFillEnv()->UpdateAllViews(pWidget);
   }
-
-  if (bChangeMark)
-    pFormFillEnv->SetChangeMark();
+  pFormFillEnv->SetChangeMark();
 }
 
 struct FieldNameData {
@@ -297,7 +288,7 @@ void SetBorderStyle(CPDFSDK_FormFillEnvironment* pFormFillEnv,
         if (pWidget) {
           if (pWidget->GetBorderStyle() != nBorderStyle) {
             pWidget->SetBorderStyle(nBorderStyle);
-            UpdateFormControl(pFormFillEnv, pFormControl, true, true, true);
+            UpdateFormControl(pFormFillEnv, pFormControl, true);
           }
         }
       }
@@ -363,7 +354,7 @@ void SetDisplay(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 
       CPDFSDK_Widget* pWidget = pForm->GetWidget(pFormControl);
       if (SetWidgetDisplayStatus(pWidget, number))
-        UpdateFormControl(pFormFillEnv, pFormControl, true, false, true);
+        UpdateFormControl(pFormFillEnv, pFormControl, false);
     }
   }
 }
@@ -407,7 +398,7 @@ void SetLineWidth(CPDFSDK_FormFillEnvironment* pFormFillEnv,
         if (CPDFSDK_Widget* pWidget = pForm->GetWidget(pFormControl)) {
           if (number != pWidget->GetBorderWidth()) {
             pWidget->SetBorderWidth(number);
-            UpdateFormControl(pFormFillEnv, pFormControl, true, true, true);
+            UpdateFormControl(pFormFillEnv, pFormControl, true);
           }
         }
       }
@@ -465,7 +456,7 @@ void SetRect(CPDFSDK_FormFillEnvironment* pFormFillEnv,
           if (crRect.left != rcOld.left || crRect.right != rcOld.right ||
               crRect.top != rcOld.top || crRect.bottom != rcOld.bottom) {
             pWidget->SetRect(crRect);
-            UpdateFormControl(pFormFillEnv, pFormControl, true, true, true);
+            UpdateFormControl(pFormFillEnv, pFormControl, true);
           }
         }
       }
@@ -1641,8 +1632,7 @@ CJS_Result CJS_Field::set_print(CJS_Runtime* pRuntime,
         if (dwFlags != pWidget->GetFlags()) {
           pWidget->SetFlags(dwFlags);
           UpdateFormControl(m_pFormFillEnv.Get(),
-                            pFormField->GetControl(m_nFormControlIndex), true,
-                            false, true);
+                            pFormField->GetControl(m_nFormControlIndex), false);
         }
       }
     }
