@@ -42,9 +42,8 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
 
   if (m_eSBButtonType != Type::kPosButton) {
     // draw background
-    pDevice->DrawShadow(mtUser2Device, true, false,
-                        rectWnd.GetDeflated(1.0f, 1.0f), nTransparency, 80,
-                        220);
+    pDevice->DrawShadow(mtUser2Device, rectWnd.GetDeflated(1.0f, 1.0f),
+                        nTransparency, 80, 220);
     // draw arrow
     if (rectWnd.top - rectWnd.bottom > 6.0f) {
       float fX = rectWnd.left + 1.5f;

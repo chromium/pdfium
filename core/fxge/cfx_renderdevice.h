@@ -202,8 +202,6 @@ class CFX_RenderDevice {
                     const std::vector<CFX_PointF>& points,
                     const FX_COLORREF& color);
   void DrawShadow(const CFX_Matrix& mtUser2Device,
-                  bool bVertical,
-                  bool bHorizontal,
                   const CFX_FloatRect& rect,
                   int32_t nTransparency,
                   int32_t nStartGray,

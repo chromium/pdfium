@@ -1311,8 +1311,6 @@ void CFX_RenderDevice::DrawFillRect(const CFX_Matrix* pUser2Device,
 }
 
 void CFX_RenderDevice::DrawShadow(const CFX_Matrix& mtUser2Device,
-                                  bool bVertical,
-                                  bool bHorizontal,
                                   const CFX_FloatRect& rect,
                                   int32_t nTransparency,
                                   int32_t nStartGray,
@@ -1321,34 +1319,17 @@ void CFX_RenderDevice::DrawShadow(const CFX_Matrix& mtUser2Device,
   constexpr float kSegmentWidth = 1.0f;
   constexpr float kLineWidth = 1.5f;
 
-  if (bVertical) {
-    float fStepGray = (nEndGray - nStartGray) / rect.Height();
-    CFX_PointF start(rect.left, 0);
-    CFX_PointF end(rect.right, 0);
+  float fStepGray = (nEndGray - nStartGray) / rect.Height();
+  CFX_PointF start(rect.left, 0);
+  CFX_PointF end(rect.right, 0);
 
-    for (float fy = rect.bottom + kBorder; fy <= rect.top - kBorder;
-         fy += kSegmentWidth) {
-      start.y = fy;
-      end.y = fy;
-      int nGray = nStartGray + static_cast<int>(fStepGray * (fy - rect.bottom));
-      FX_ARGB color = ArgbEncode(nTransparency, nGray, nGray, nGray);
-      DrawStrokeLine(&mtUser2Device, start, end, color, kLineWidth);
-    }
-  }
-
-  if (bHorizontal) {
-    float fStepGray = (nEndGray - nStartGray) / rect.Width();
-    CFX_PointF start(0, rect.bottom);
-    CFX_PointF end(0, rect.top);
-
-    for (float fx = rect.left + kBorder; fx <= rect.right - kBorder;
-         fx += kSegmentWidth) {
-      start.x = fx;
-      end.x = fx;
-      int nGray = nStartGray + static_cast<int>(fStepGray * (fx - rect.left));
-      FX_ARGB color = ArgbEncode(nTransparency, nGray, nGray, nGray);
-      DrawStrokeLine(&mtUser2Device, start, end, color, kLineWidth);
-    }
+  for (float fy = rect.bottom + kBorder; fy <= rect.top - kBorder;
+       fy += kSegmentWidth) {
+    start.y = fy;
+    end.y = fy;
+    int nGray = nStartGray + static_cast<int>(fStepGray * (fy - rect.bottom));
+    FX_ARGB color = ArgbEncode(nTransparency, nGray, nGray, nGray);
+    DrawStrokeLine(&mtUser2Device, start, end, color, kLineWidth);
   }
 }
 
