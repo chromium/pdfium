@@ -75,6 +75,7 @@ class CPDF_DIB final : public CFX_DIBBase {
     std::vector<uint8_t, FxAllocAllocator<uint8_t>> data;
   };
 
+  bool ExtractDictWidthHeight();
   LoadState StartLoadMask();
   LoadState StartLoadMaskDIB(RetainPtr<const CPDF_Stream> mask_stream);
   bool ContinueToLoadMask();

@@ -162,16 +162,7 @@ CPDF_DIB::JpxSMaskInlineData::JpxSMaskInlineData() = default;
 CPDF_DIB::JpxSMaskInlineData::~JpxSMaskInlineData() = default;
 
 bool CPDF_DIB::Load() {
-  if (!m_pStream)
-    return false;
-
-  m_pDict.Reset(m_pStream->GetDict());
-  if (!m_pDict)
-    return false;
-
-  m_Width = m_pDict->GetIntegerFor("Width");
-  m_Height = m_pDict->GetIntegerFor("Height");
-  if (!IsValidDimension(m_Width) || !IsValidDimension(m_Height))
+  if (!ExtractDictWidthHeight())
     return false;
 
   m_GroupFamily = CPDF_ColorSpace::Family::kUnknown;
@@ -262,19 +253,14 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadDIBBase(
     bool bStdCS,
     CPDF_ColorSpace::Family GroupFamily,
     bool bLoadMask) {
-  if (!m_pStream)
+  if (!ExtractDictWidthHeight())
     return LoadState::kFail;
 
-  m_pDict.Reset(m_pStream->GetDict());
   m_bStdCS = bStdCS;
   m_bHasMask = bHasMask;
-  m_Width = m_pDict->GetIntegerFor("Width");
-  m_Height = m_pDict->GetIntegerFor("Height");
-  if (!IsValidDimension(m_Width) || !IsValidDimension(m_Height))
-    return LoadState::kFail;
-
   m_GroupFamily = GroupFamily;
   m_bLoadMask = bLoadMask;
+
   if (!LoadColorInfo(m_pStream->IsInline() ? pFormResources : nullptr,
                      pPageResources)) {
     return LoadState::kFail;
@@ -765,6 +751,19 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap() {
   }
   m_bpc = 8;
   return result_bitmap;
+}
+
+bool CPDF_DIB::ExtractDictWidthHeight() {
+  if (!m_pStream)
+    return false;
+
+  m_pDict.Reset(m_pStream->GetDict());
+  if (!m_pDict)
+    return false;
+
+  m_Width = m_pDict->GetIntegerFor("Width");
+  m_Height = m_pDict->GetIntegerFor("Height");
+  return IsValidDimension(m_Width) && IsValidDimension(m_Height);
 }
 
 CPDF_DIB::LoadState CPDF_DIB::StartLoadMask() {
