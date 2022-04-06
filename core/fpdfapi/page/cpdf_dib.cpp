@@ -152,7 +152,8 @@ JpxDecodeAction GetJpxDecodeAction(const CJPX_Decoder::JpxImageInfo& jpx_info,
 
 }  // namespace
 
-CPDF_DIB::CPDF_DIB() = default;
+CPDF_DIB::CPDF_DIB(CPDF_Document* pDoc, const CPDF_Stream* pStream)
+    : m_pDocument(pDoc), m_pStream(pStream) {}
 
 CPDF_DIB::~CPDF_DIB() = default;
 
@@ -160,16 +161,14 @@ CPDF_DIB::JpxSMaskInlineData::JpxSMaskInlineData() = default;
 
 CPDF_DIB::JpxSMaskInlineData::~JpxSMaskInlineData() = default;
 
-bool CPDF_DIB::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream) {
-  if (!pStream)
+bool CPDF_DIB::Load() {
+  if (!m_pStream)
     return false;
 
-  m_pDocument = pDoc;
-  m_pDict.Reset(pStream->GetDict());
+  m_pDict.Reset(m_pStream->GetDict());
   if (!m_pDict)
     return false;
 
-  m_pStream.Reset(pStream);
   m_Width = m_pDict->GetIntegerFor("Width");
   m_Height = m_pDict->GetIntegerFor("Height");
   if (!IsValidDimension(m_Width) || !IsValidDimension(m_Height))
@@ -193,7 +192,7 @@ bool CPDF_DIB::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream) {
   if (!src_size.IsValid())
     return false;
 
-  m_pStreamAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
+  m_pStreamAcc = pdfium::MakeRetain<CPDF_StreamAcc>(m_pStream.Get());
   m_pStreamAcc->LoadAllDataImageAcc(src_size.ValueOrDie());
   if (m_pStreamAcc->GetSize() == 0 || !m_pStreamAcc->GetData())
     return false;
@@ -257,20 +256,16 @@ bool CPDF_DIB::ContinueToLoadMask() {
 }
 
 CPDF_DIB::LoadState CPDF_DIB::StartLoadDIBBase(
-    CPDF_Document* pDoc,
-    const CPDF_Stream* pStream,
     bool bHasMask,
     const CPDF_Dictionary* pFormResources,
     const CPDF_Dictionary* pPageResources,
     bool bStdCS,
     CPDF_ColorSpace::Family GroupFamily,
     bool bLoadMask) {
-  if (!pStream)
+  if (!m_pStream)
     return LoadState::kFail;
 
-  m_pDocument = pDoc;
-  m_pDict.Reset(pStream->GetDict());
-  m_pStream.Reset(pStream);
+  m_pDict.Reset(m_pStream->GetDict());
   m_bStdCS = bStdCS;
   m_bHasMask = bHasMask;
   m_Width = m_pDict->GetIntegerFor("Width");
@@ -297,7 +292,7 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadDIBBase(
   if (!src_size.IsValid())
     return LoadState::kFail;
 
-  m_pStreamAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
+  m_pStreamAcc = pdfium::MakeRetain<CPDF_StreamAcc>(m_pStream.Get());
   m_pStreamAcc->LoadAllDataImageAcc(src_size.ValueOrDie());
   if (m_pStreamAcc->GetSize() == 0 || !m_pStreamAcc->GetData())
     return LoadState::kFail;
@@ -839,11 +834,10 @@ bool CPDF_DIB::IsJBigImage() const {
 }
 
 CPDF_DIB::LoadState CPDF_DIB::StartLoadMaskDIB(
-    RetainPtr<const CPDF_Stream> mask) {
-  m_pMask = pdfium::MakeRetain<CPDF_DIB>();
+    RetainPtr<const CPDF_Stream> mask_stream) {
+  m_pMask = pdfium::MakeRetain<CPDF_DIB>(m_pDocument.Get(), mask_stream.Get());
   LoadState ret = m_pMask->StartLoadDIBBase(
-      m_pDocument.Get(), mask.Get(), false, nullptr, nullptr, true,
-      CPDF_ColorSpace::Family::kUnknown, false);
+      false, nullptr, nullptr, true, CPDF_ColorSpace::Family::kUnknown, false);
   if (ret == LoadState::kContinue) {
     if (m_Status == LoadState::kFail)
       m_Status = LoadState::kContinue;

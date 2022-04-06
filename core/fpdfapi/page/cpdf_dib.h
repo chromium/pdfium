@@ -42,8 +42,6 @@ class CPDF_DIB final : public CFX_DIBBase {
 
   CONSTRUCT_VIA_MAKE_RETAIN;
 
-  bool Load(CPDF_Document* pDoc, const CPDF_Stream* pStream);
-
   // CFX_DIBBase:
   uint8_t* GetBuffer() const override;
   pdfium::span<const uint8_t> GetScanline(int line) const override;
@@ -52,10 +50,10 @@ class CPDF_DIB final : public CFX_DIBBase {
 
   RetainPtr<CPDF_ColorSpace> GetColorSpace() const { return m_pColorSpace; }
   uint32_t GetMatteColor() const { return m_MatteColor; }
+  bool IsJBigImage() const;
 
-  LoadState StartLoadDIBBase(CPDF_Document* pDoc,
-                             const CPDF_Stream* pStream,
-                             bool bHasMask,
+  bool Load();
+  LoadState StartLoadDIBBase(bool bHasMask,
                              const CPDF_Dictionary* pFormResources,
                              const CPDF_Dictionary* pPageResources,
                              bool bStdCS,
@@ -64,10 +62,8 @@ class CPDF_DIB final : public CFX_DIBBase {
   LoadState ContinueLoadDIBBase(PauseIndicatorIface* pPause);
   RetainPtr<CPDF_DIB> DetachMask();
 
-  bool IsJBigImage() const;
-
  private:
-  CPDF_DIB();
+  CPDF_DIB(CPDF_Document* pDoc, const CPDF_Stream* pStream);
   ~CPDF_DIB() override;
 
   struct JpxSMaskInlineData {
@@ -80,7 +76,7 @@ class CPDF_DIB final : public CFX_DIBBase {
   };
 
   LoadState StartLoadMask();
-  LoadState StartLoadMaskDIB(RetainPtr<const CPDF_Stream> mask);
+  LoadState StartLoadMaskDIB(RetainPtr<const CPDF_Stream> mask_stream);
   bool ContinueToLoadMask();
   LoadState ContinueLoadMaskDIB(PauseIndicatorIface* pPause);
   bool LoadColorInfo(const CPDF_Dictionary* pFormResources,
@@ -103,8 +99,8 @@ class CPDF_DIB final : public CFX_DIBBase {
   uint32_t Get1BitSetValue() const;
   uint32_t Get1BitResetValue() const;
 
-  UnownedPtr<CPDF_Document> m_pDocument;
-  RetainPtr<const CPDF_Stream> m_pStream;
+  UnownedPtr<CPDF_Document> const m_pDocument;
+  RetainPtr<const CPDF_Stream> const m_pStream;
   RetainPtr<const CPDF_Dictionary> m_pDict;
   RetainPtr<CPDF_StreamAcc> m_pStreamAcc;
   RetainPtr<CPDF_ColorSpace> m_pColorSpace;

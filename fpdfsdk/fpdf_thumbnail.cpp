@@ -59,11 +59,11 @@ FPDFPage_GetThumbnailAsBitmap(FPDF_PAGE page) {
 
   const CPDF_Page* p_page = CPDFPageFromFPDFPage(page);
 
-  auto p_source = pdfium::MakeRetain<CPDF_DIB>();
-  const CPDF_DIB::LoadState start_status =
-      p_source->StartLoadDIBBase(p_page->GetDocument(), thumb_stream, false,
-                                 nullptr, p_page->GetPageResources(), false,
-                                 CPDF_ColorSpace::Family::kUnknown, false);
+  auto p_source =
+      pdfium::MakeRetain<CPDF_DIB>(p_page->GetDocument(), thumb_stream);
+  const CPDF_DIB::LoadState start_status = p_source->StartLoadDIBBase(
+      false, nullptr, p_page->GetPageResources(), false,
+      CPDF_ColorSpace::Family::kUnknown, false);
   if (start_status == CPDF_DIB::LoadState::kFail)
     return nullptr;
 
