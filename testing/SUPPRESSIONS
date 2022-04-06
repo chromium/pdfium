@@ -323,12 +323,6 @@ resolve_nodes_1.pdf * * * *
 # Pixel tests
 #
 
-# TODO(pdfium:1746): Remove after associated bug is fixed
-bug_1128284.in * * * skia
-
-# TODO(pdfium:1747): Remove after associated bug is fixed
-bug_1241587.in * * * skia
-
 # TODO(pdfium:1747): Remove after associated bug is fixed
 bug_1258634.in * * * skia
 
@@ -350,9 +344,6 @@ bug_1571.in * * * *
 # TODO(pdfium:1723): Remove after associated bug is fixed
 bug_1723.in * * * *
 
-# TODO(pdfium:1746): Remove after associated bug is fixed
-bug_1746.in * * * skia
-
 # TODO(chromium:237527): Remove after associated bug is fixed
 bug_237527_1.in * * * *
 
@@ -362,23 +353,14 @@ bug_451366.in * * * *
 # TODO(pdfium:492): Remove after associated bug is fixed
 bug_492.in * nov8 * *
 
-# TODO(pdfium:1746): Remove after associated bug is fixed
-bug_591137.in * * * skia
-
 # TODO(chromium:725555, skia:9265): Remove after associated bug is fixed
 bug_725555.in * * * skia,skiapaths
-
-# TODO(pdfium:1749): Remove after associated bug is fixed
-bug_966263.in * * * skia
 
 # TODO(pdfiu,:1310): Remove after associated bug is fixed
 radial_shading_point_at_border.in * * * skia,skiapaths
 
 # TODO(chromium:1028991): Remove after associated bug is fixed
 reset_button.in * * * *
-
-# TODO(pdfium:1749): Remove after associated bug is fixed (skia doesn't render right, between 2 straight lines.)
-type3.in * * * skia
 
 # xfa_specific
 
