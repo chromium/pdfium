@@ -245,30 +245,6 @@ bool CPDFSDK_WidgetHandler::SelectAllText(CPDFSDK_Annot* pAnnot) {
              pWidget);
 }
 
-bool CPDFSDK_WidgetHandler::CanUndo(CPDFSDK_Annot* pAnnot) {
-  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
-  return !pWidget->IsSignatureWidget() &&
-         GetFormFillEnvironment()->GetInteractiveFormFiller()->CanUndo(pWidget);
-}
-
-bool CPDFSDK_WidgetHandler::CanRedo(CPDFSDK_Annot* pAnnot) {
-  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
-  return !pWidget->IsSignatureWidget() &&
-         GetFormFillEnvironment()->GetInteractiveFormFiller()->CanRedo(pWidget);
-}
-
-bool CPDFSDK_WidgetHandler::Undo(CPDFSDK_Annot* pAnnot) {
-  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
-  return !pWidget->IsSignatureWidget() &&
-         GetFormFillEnvironment()->GetInteractiveFormFiller()->Undo(pWidget);
-}
-
-bool CPDFSDK_WidgetHandler::Redo(CPDFSDK_Annot* pAnnot) {
-  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
-  return !pWidget->IsSignatureWidget() &&
-         GetFormFillEnvironment()->GetInteractiveFormFiller()->Redo(pWidget);
-}
-
 bool CPDFSDK_WidgetHandler::IsFocusableAnnot(
     const CPDF_Annot::Subtype& annot_type) const {
   DCHECK_EQ(annot_type, CPDF_Annot::Subtype::WIDGET);

@@ -31,10 +31,6 @@ class CPDFSDK_BAAnnotHandler final : public IPDFSDK_AnnotHandler {
   WideString GetSelectedText(CPDFSDK_Annot* pAnnot) override;
   void ReplaceSelection(CPDFSDK_Annot* pAnnot, const WideString& text) override;
   bool SelectAllText(CPDFSDK_Annot* pAnnot) override;
-  bool CanUndo(CPDFSDK_Annot* pAnnot) override;
-  bool CanRedo(CPDFSDK_Annot* pAnnot) override;
-  bool Undo(CPDFSDK_Annot* pAnnot) override;
-  bool Redo(CPDFSDK_Annot* pAnnot) override;
   void OnDraw(CPDFSDK_Annot* pAnnot,
               CFX_RenderDevice* pDevice,
               const CFX_Matrix& mtUser2Device,

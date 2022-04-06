@@ -32,6 +32,10 @@ class CPDFSDK_Annot : public Observable {
   virtual CFX_FloatRect GetRect() const = 0;
   virtual bool DoHitTest(const CFX_PointF& point) = 0;
   virtual CFX_FloatRect GetViewBBox() = 0;
+  virtual bool CanUndo() = 0;
+  virtual bool CanRedo() = 0;
+  virtual bool Undo() = 0;
+  virtual bool Redo() = 0;
 
   // Three cases: PDF page only, XFA page only, or XFA page backed by PDF page.
   IPDF_Page* GetPage();     // Returns XFA Page if possible, else PDF page.

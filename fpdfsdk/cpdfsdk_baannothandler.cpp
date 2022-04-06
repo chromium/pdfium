@@ -245,19 +245,3 @@ void CPDFSDK_BAAnnotHandler::ReplaceSelection(CPDFSDK_Annot* pAnnot,
 bool CPDFSDK_BAAnnotHandler::SelectAllText(CPDFSDK_Annot* pAnnot) {
   return false;
 }
-
-bool CPDFSDK_BAAnnotHandler::CanUndo(CPDFSDK_Annot* pAnnot) {
-  return false;
-}
-
-bool CPDFSDK_BAAnnotHandler::CanRedo(CPDFSDK_Annot* pAnnot) {
-  return false;
-}
-
-bool CPDFSDK_BAAnnotHandler::Undo(CPDFSDK_Annot* pAnnot) {
-  return false;
-}
-
-bool CPDFSDK_BAAnnotHandler::Redo(CPDFSDK_Annot* pAnnot) {
-  return false;
-}

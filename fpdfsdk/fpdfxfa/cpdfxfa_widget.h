@@ -13,6 +13,8 @@
 #include "xfa/fxfa/cxfa_ffwidget.h"
 
 class CPDFSDK_PageView;
+class CXFA_FFDocView;
+class CXFA_FFWidgetHandler;
 
 class CPDFXFA_Widget final : public CPDFSDK_Annot {
  public:
@@ -25,12 +27,19 @@ class CPDFXFA_Widget final : public CPDFSDK_Annot {
   CFX_FloatRect GetRect() const override;
   bool DoHitTest(const CFX_PointF& point) override;
   CFX_FloatRect GetViewBBox() override;
+  bool CanUndo() override;
+  bool CanRedo() override;
+  bool Undo() override;
+  bool Redo() override;
 
   CXFA_FFWidget* GetXFAFFWidget() const { return m_pXFAFFWidget.Get(); }
 
   bool OnChangedFocus();
 
  private:
+  CXFA_FFDocView* GetDocView();
+  CXFA_FFWidgetHandler* GetWidgetHandler();
+
   cppgc::Persistent<CXFA_FFWidget> const m_pXFAFFWidget;
 };
 

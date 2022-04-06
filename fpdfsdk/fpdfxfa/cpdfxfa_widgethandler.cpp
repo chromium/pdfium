@@ -251,30 +251,6 @@ bool CPDFXFA_WidgetHandler::SelectAllText(CPDFSDK_Annot* pAnnot) {
   return pWidgetHandler->SelectAllText(pXFAWidget->GetXFAFFWidget());
 }
 
-bool CPDFXFA_WidgetHandler::CanUndo(CPDFSDK_Annot* pAnnot) {
-  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
-  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler();
-  return pWidgetHandler->CanUndo(pXFAWidget->GetXFAFFWidget());
-}
-
-bool CPDFXFA_WidgetHandler::CanRedo(CPDFSDK_Annot* pAnnot) {
-  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
-  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler();
-  return pWidgetHandler->CanRedo(pXFAWidget->GetXFAFFWidget());
-}
-
-bool CPDFXFA_WidgetHandler::Undo(CPDFSDK_Annot* pAnnot) {
-  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
-  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler();
-  return pWidgetHandler->Undo(pXFAWidget->GetXFAFFWidget());
-}
-
-bool CPDFXFA_WidgetHandler::Redo(CPDFSDK_Annot* pAnnot) {
-  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
-  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler();
-  return pWidgetHandler->Redo(pXFAWidget->GetXFAFFWidget());
-}
-
 void CPDFXFA_WidgetHandler::OnMouseEnter(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                          Mask<FWL_EVENTFLAG> nFlag) {
   CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot.Get());

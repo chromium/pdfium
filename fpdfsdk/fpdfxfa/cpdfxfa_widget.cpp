@@ -33,32 +33,20 @@ CFX_FloatRect CPDFXFA_Widget::GetRect() const {
 }
 
 bool CPDFXFA_Widget::DoHitTest(const CFX_PointF& point) {
-  CXFA_FFWidget* widget = GetXFAFFWidget();
-  CXFA_FFPageView* page_view = widget->GetPageView();
-  if (!page_view)
-    return false;
-
-  CXFA_FFDocView* doc_view = page_view->GetDocView();
-  if (!doc_view)
-    return false;
-
-  CXFA_FFWidgetHandler* widget_handler = doc_view->GetWidgetHandler();
+  CXFA_FFWidgetHandler* widget_handler = GetWidgetHandler();
   if (!widget_handler)
     return false;
 
-  return widget_handler->HitTest(widget, point) != FWL_WidgetHit::Unknown;
+  return widget_handler->HitTest(GetXFAFFWidget(), point) !=
+         FWL_WidgetHit::Unknown;
 }
 
 bool CPDFXFA_Widget::OnChangedFocus() {
-  CXFA_FFWidget* widget = GetXFAFFWidget();
-  CXFA_FFPageView* page_view = widget->GetPageView();
-  if (!page_view)
-    return false;
-
-  CXFA_FFDocView* doc_view = page_view->GetDocView();
+  CXFA_FFDocView* doc_view = GetDocView();
   if (!doc_view)
     return false;
 
+  CXFA_FFWidget* widget = GetXFAFFWidget();
   if (doc_view->SetFocus(widget))
     return false;
 
@@ -78,4 +66,34 @@ CFX_FloatRect CPDFXFA_Widget::GetViewBBox() {
   CFX_FloatRect result = bbox.ToFloatRect();
   result.Inflate(1.0f, 1.0f);
   return result;
+}
+
+bool CPDFXFA_Widget::CanUndo() {
+  CXFA_FFWidgetHandler* widget_handler = GetWidgetHandler();
+  return widget_handler && widget_handler->CanUndo(GetXFAFFWidget());
+}
+
+bool CPDFXFA_Widget::CanRedo() {
+  CXFA_FFWidgetHandler* widget_handler = GetWidgetHandler();
+  return widget_handler && widget_handler->CanRedo(GetXFAFFWidget());
+}
+
+bool CPDFXFA_Widget::Undo() {
+  CXFA_FFWidgetHandler* widget_handler = GetWidgetHandler();
+  return widget_handler && widget_handler->Undo(GetXFAFFWidget());
+}
+
+bool CPDFXFA_Widget::Redo() {
+  CXFA_FFWidgetHandler* widget_handler = GetWidgetHandler();
+  return widget_handler && widget_handler->Redo(GetXFAFFWidget());
+}
+
+CXFA_FFDocView* CPDFXFA_Widget::GetDocView() {
+  CXFA_FFPageView* page_view = GetXFAFFWidget()->GetPageView();
+  return page_view ? page_view->GetDocView() : nullptr;
+}
+
+CXFA_FFWidgetHandler* CPDFXFA_Widget::GetWidgetHandler() {
+  CXFA_FFDocView* doc_view = GetDocView();
+  return doc_view ? doc_view->GetWidgetHandler() : nullptr;
 }

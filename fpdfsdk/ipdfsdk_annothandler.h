@@ -44,10 +44,6 @@ class IPDFSDK_AnnotHandler {
   virtual void ReplaceSelection(CPDFSDK_Annot* pAnnot,
                                 const WideString& text) = 0;
   virtual bool SelectAllText(CPDFSDK_Annot* pAnnot) = 0;
-  virtual bool CanUndo(CPDFSDK_Annot* pAnnot) = 0;
-  virtual bool CanRedo(CPDFSDK_Annot* pAnnot) = 0;
-  virtual bool Undo(CPDFSDK_Annot* pAnnot) = 0;
-  virtual bool Redo(CPDFSDK_Annot* pAnnot) = 0;
   virtual void OnDraw(CPDFSDK_Annot* pAnnot,
                       CFX_RenderDevice* pDevice,
                       const CFX_Matrix& mtUser2Device,

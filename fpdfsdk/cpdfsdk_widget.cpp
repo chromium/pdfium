@@ -52,7 +52,7 @@ CPDFSDK_Widget::CPDFSDK_Widget(CPDF_Annot* pAnnot,
       m_pInteractiveForm(pInteractiveForm) {}
 
 CPDFSDK_Widget::~CPDFSDK_Widget() {
-  m_pPageView->GetFormFillEnv()->GetInteractiveFormFiller()->OnDelete(this);
+  GetInteractiveFormFiller()->OnDelete(this);
   m_pInteractiveForm->RemoveMap(GetFormControl());
 }
 
@@ -694,8 +694,24 @@ CFX_FloatRect CPDFSDK_Widget::GetViewBBox() {
   if (IsSignatureWidget())
     return CFX_FloatRect();
 
-  auto* form_filler = m_pPageView->GetFormFillEnv()->GetInteractiveFormFiller();
+  auto* form_filler = GetInteractiveFormFiller();
   return CFX_FloatRect(form_filler->GetViewBBox(GetPageView(), this));
+}
+
+bool CPDFSDK_Widget::CanUndo() {
+  return !IsSignatureWidget() && GetInteractiveFormFiller()->CanUndo(this);
+}
+
+bool CPDFSDK_Widget::CanRedo() {
+  return !IsSignatureWidget() && GetInteractiveFormFiller()->CanRedo(this);
+}
+
+bool CPDFSDK_Widget::Undo() {
+  return !IsSignatureWidget() && GetInteractiveFormFiller()->Undo(this);
+}
+
+bool CPDFSDK_Widget::Redo() {
+  return !IsSignatureWidget() && GetInteractiveFormFiller()->Redo(this);
 }
 
 void CPDFSDK_Widget::DrawAppearance(CFX_RenderDevice* pDevice,
@@ -902,4 +918,8 @@ CPDF_Action CPDFSDK_Widget::GetAAction(CPDF_AAction::AActionType eAAT) {
   }
 
   return CPDF_Action(nullptr);
+}
+
+CFFL_InteractiveFormFiller* CPDFSDK_Widget::GetInteractiveFormFiller() {
+  return m_pPageView->GetFormFillEnv()->GetInteractiveFormFiller();
 }

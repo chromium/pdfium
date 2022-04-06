@@ -284,39 +284,23 @@ bool CPDFSDK_PageView::SelectAllText() {
 }
 
 bool CPDFSDK_PageView::CanUndo() {
-  if (CPDFSDK_Annot* pAnnot = GetFocusAnnot()) {
-    CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
-        m_pFormFillEnv->GetAnnotHandlerMgr();
-    return pAnnotHandlerMgr->Annot_CanUndo(pAnnot);
-  }
-  return false;
+  CPDFSDK_Annot* annot = GetFocusAnnot();
+  return annot && annot->CanUndo();
 }
 
 bool CPDFSDK_PageView::CanRedo() {
-  if (CPDFSDK_Annot* pAnnot = GetFocusAnnot()) {
-    CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
-        m_pFormFillEnv->GetAnnotHandlerMgr();
-    return pAnnotHandlerMgr->Annot_CanRedo(pAnnot);
-  }
-  return false;
+  CPDFSDK_Annot* annot = GetFocusAnnot();
+  return annot && annot->CanRedo();
 }
 
 bool CPDFSDK_PageView::Undo() {
-  if (CPDFSDK_Annot* pAnnot = GetFocusAnnot()) {
-    CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
-        m_pFormFillEnv->GetAnnotHandlerMgr();
-    return pAnnotHandlerMgr->Annot_Undo(pAnnot);
-  }
-  return false;
+  CPDFSDK_Annot* annot = GetFocusAnnot();
+  return annot && annot->Undo();
 }
 
 bool CPDFSDK_PageView::Redo() {
-  if (CPDFSDK_Annot* pAnnot = GetFocusAnnot()) {
-    CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
-        m_pFormFillEnv->GetAnnotHandlerMgr();
-    return pAnnotHandlerMgr->Annot_Redo(pAnnot);
-  }
-  return false;
+  CPDFSDK_Annot* annot = GetFocusAnnot();
+  return annot && annot->Redo();
 }
 
 bool CPDFSDK_PageView::OnFocus(Mask<FWL_EVENTFLAG> nFlag,

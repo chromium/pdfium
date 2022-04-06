@@ -33,6 +33,10 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
   int GetLayoutOrder() const override;
   bool DoHitTest(const CFX_PointF& point) override;
   CFX_FloatRect GetViewBBox() override;
+  bool CanUndo() override;
+  bool CanRedo() override;
+  bool Undo() override;
+  bool Redo() override;
 
   virtual CPDF_Action GetAAction(CPDF_AAction::AActionType eAAT);
   virtual bool IsAppearanceValid();

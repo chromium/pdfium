@@ -18,6 +18,7 @@
 #include "fpdfsdk/cpdfsdk_baannot.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 
+class CFFL_InteractiveFormFiller;
 class CFX_RenderDevice;
 class CPDF_Annot;
 class CPDF_FormControl;
@@ -55,6 +56,10 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
   int GetLayoutOrder() const override;
   bool DoHitTest(const CFX_PointF& point) override;
   CFX_FloatRect GetViewBBox() override;
+  bool CanUndo() override;
+  bool CanRedo() override;
+  bool Undo() override;
+  bool Redo() override;
   void DrawAppearance(CFX_RenderDevice* pDevice,
                       const CFX_Matrix& mtUser2Device,
                       CPDF_Annot::AppearanceMode mode) override;
@@ -132,6 +137,8 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
   CFX_Color GetFillPWLColor() const;
 
  private:
+  CFFL_InteractiveFormFiller* GetInteractiveFormFiller();
+
 #ifdef PDF_ENABLE_XFA
   CXFA_FFWidgetHandler* GetXFAWidgetHandler() const;
   CXFA_FFWidget* GetGroupMixXFAWidget() const;

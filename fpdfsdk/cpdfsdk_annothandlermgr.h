@@ -41,11 +41,6 @@ class CPDFSDK_AnnotHandlerMgr {
   void Annot_ReplaceSelection(CPDFSDK_Annot* pAnnot, const WideString& text);
   bool Annot_SelectAllText(CPDFSDK_Annot* pAnnot);
 
-  bool Annot_CanUndo(CPDFSDK_Annot* pAnnot);
-  bool Annot_CanRedo(CPDFSDK_Annot* pAnnot);
-  bool Annot_Undo(CPDFSDK_Annot* pAnnot);
-  bool Annot_Redo(CPDFSDK_Annot* pAnnot);
-
   void Annot_OnDraw(CPDFSDK_Annot* pAnnot,
                     CFX_RenderDevice* pDevice,
                     const CFX_Matrix& mtUser2Device,

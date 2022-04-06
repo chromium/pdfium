@@ -220,6 +220,22 @@ CFX_FloatRect CPDFSDK_BAAnnot::GetViewBBox() {
   return GetRect();
 }
 
+bool CPDFSDK_BAAnnot::CanUndo() {
+  return false;
+}
+
+bool CPDFSDK_BAAnnot::CanRedo() {
+  return false;
+}
+
+bool CPDFSDK_BAAnnot::Undo() {
+  return false;
+}
+
+bool CPDFSDK_BAAnnot::Redo() {
+  return false;
+}
+
 CPDF_Dest CPDFSDK_BAAnnot::GetDestination() const {
   if (m_pAnnot->GetSubtype() != CPDF_Annot::Subtype::LINK)
     return CPDF_Dest(nullptr);
