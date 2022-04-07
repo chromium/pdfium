@@ -162,60 +162,23 @@ CPDF_DIB::JpxSMaskInlineData::JpxSMaskInlineData() = default;
 CPDF_DIB::JpxSMaskInlineData::~JpxSMaskInlineData() = default;
 
 bool CPDF_DIB::Load() {
-  if (!ExtractDictWidthHeight())
-    return false;
-
-  m_GroupFamily = CPDF_ColorSpace::Family::kUnknown;
-  m_bLoadMask = false;
-  if (!LoadColorInfo(nullptr, nullptr))
-    return false;
-
-  if (m_bDoBpcCheck && (m_bpc == 0 || m_nComponents == 0))
-    return false;
-
-  const absl::optional<uint32_t> maybe_size =
-      fxge::CalculatePitch8(m_bpc, m_nComponents, m_Width);
-  if (!maybe_size.has_value())
-    return false;
-
-  FX_SAFE_UINT32 src_size = maybe_size.value();
-  src_size *= m_Height;
-  if (!src_size.IsValid())
-    return false;
-
-  m_pStreamAcc = pdfium::MakeRetain<CPDF_StreamAcc>(m_pStream.Get());
-  m_pStreamAcc->LoadAllDataImageAcc(src_size.ValueOrDie());
-  if (m_pStreamAcc->GetSize() == 0 || !m_pStreamAcc->GetData())
+  if (!LoadInternal(nullptr, nullptr))
     return false;
 
   if (CreateDecoder() == LoadState::kFail)
     return false;
 
-  if (m_bImageMask)
-    SetMaskProperties();
-  else
-    m_Format = MakeRGBFormat(CalculateBitsPerPixel(m_bpc, m_nComponents));
-
-  absl::optional<uint32_t> pitch =
-      fxge::CalculatePitch32(GetBppFromFormat(m_Format), m_Width);
-  if (!pitch.has_value())
-    return false;
-
-  m_LineBuf = std::vector<uint8_t, FxAllocAllocator<uint8_t>>(pitch.value());
-  LoadPalette();
-  if (m_bColorKey) {
-    m_Format = FXDIB_Format::kArgb;
-    pitch = fxge::CalculatePitch32(GetBppFromFormat(m_Format), m_Width);
-    if (!pitch.has_value())
-      return false;
-
-    m_MaskBuf = std::vector<uint8_t, FxAllocAllocator<uint8_t>>(pitch.value());
-  }
-  m_Pitch = pitch.value();
-  return true;
+  return ContinueInternal();
 }
 
 bool CPDF_DIB::ContinueToLoadMask() {
+  if (m_pColorSpace && m_bStdCS)
+    m_pColorSpace->EnableStdConversion(true);
+
+  return ContinueInternal();
+}
+
+bool CPDF_DIB::ContinueInternal() {
   if (m_bImageMask) {
     SetMaskProperties();
   } else {
@@ -231,9 +194,6 @@ bool CPDF_DIB::ContinueToLoadMask() {
     return false;
 
   m_LineBuf = std::vector<uint8_t, FxAllocAllocator<uint8_t>>(pitch.value());
-  if (m_pColorSpace && m_bStdCS) {
-    m_pColorSpace->EnableStdConversion(true);
-  }
   LoadPalette();
   if (m_bColorKey) {
     m_Format = FXDIB_Format::kArgb;
@@ -253,34 +213,15 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadDIBBase(
     bool bStdCS,
     CPDF_ColorSpace::Family GroupFamily,
     bool bLoadMask) {
-  if (!ExtractDictWidthHeight())
-    return LoadState::kFail;
-
   m_bStdCS = bStdCS;
   m_bHasMask = bHasMask;
   m_GroupFamily = GroupFamily;
   m_bLoadMask = bLoadMask;
 
-  if (!LoadColorInfo(m_pStream->IsInline() ? pFormResources : nullptr,
-                     pPageResources)) {
-    return LoadState::kFail;
-  }
-  if (m_bDoBpcCheck && (m_bpc == 0 || m_nComponents == 0))
-    return LoadState::kFail;
+  if (!m_pStream->IsInline())
+    pFormResources = nullptr;
 
-  const absl::optional<uint32_t> maybe_size =
-      fxge::CalculatePitch8(m_bpc, m_nComponents, m_Width);
-  if (!maybe_size.has_value())
-    return LoadState::kFail;
-
-  FX_SAFE_UINT32 src_size = maybe_size.value();
-  src_size *= m_Height;
-  if (!src_size.IsValid())
-    return LoadState::kFail;
-
-  m_pStreamAcc = pdfium::MakeRetain<CPDF_StreamAcc>(m_pStream.Get());
-  m_pStreamAcc->LoadAllDataImageAcc(src_size.ValueOrDie());
-  if (m_pStreamAcc->GetSize() == 0 || !m_pStreamAcc->GetData())
+  if (!LoadInternal(pFormResources, pPageResources))
     return LoadState::kFail;
 
   LoadState iCreatedDecoder = CreateDecoder();
@@ -753,7 +694,8 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap() {
   return result_bitmap;
 }
 
-bool CPDF_DIB::ExtractDictWidthHeight() {
+bool CPDF_DIB::LoadInternal(const CPDF_Dictionary* pFormResources,
+                            const CPDF_Dictionary* pPageResources) {
   if (!m_pStream)
     return false;
 
@@ -763,7 +705,31 @@ bool CPDF_DIB::ExtractDictWidthHeight() {
 
   m_Width = m_pDict->GetIntegerFor("Width");
   m_Height = m_pDict->GetIntegerFor("Height");
-  return IsValidDimension(m_Width) && IsValidDimension(m_Height);
+  if (!IsValidDimension(m_Width) || !IsValidDimension(m_Height))
+    return false;
+
+  if (!LoadColorInfo(pFormResources, pPageResources))
+    return false;
+
+  if (m_bDoBpcCheck && (m_bpc == 0 || m_nComponents == 0))
+    return false;
+
+  const absl::optional<uint32_t> maybe_size =
+      fxge::CalculatePitch8(m_bpc, m_nComponents, m_Width);
+  if (!maybe_size.has_value())
+    return false;
+
+  FX_SAFE_UINT32 src_size = maybe_size.value();
+  src_size *= m_Height;
+  if (!src_size.IsValid())
+    return false;
+
+  m_pStreamAcc = pdfium::MakeRetain<CPDF_StreamAcc>(m_pStream.Get());
+  m_pStreamAcc->LoadAllDataImageAcc(src_size.ValueOrDie());
+  if (m_pStreamAcc->GetSize() == 0 || !m_pStreamAcc->GetData())
+    return false;
+
+  return true;
 }
 
 CPDF_DIB::LoadState CPDF_DIB::StartLoadMask() {
