@@ -133,10 +133,6 @@ class CPDFSDK_Annot : public Observable {
   UnownedPtr<CPDFSDK_PageView> const m_pPageView;
 };
 
-inline CPDFSDK_BAAnnot* ToBAAnnot(CPDFSDK_Annot* pAnnot) {
-  return pAnnot ? pAnnot->AsBAAnnot() : nullptr;
-}
-
 inline CPDFXFA_Widget* ToXFAWidget(CPDFSDK_Annot* pAnnot) {
   return pAnnot ? pAnnot->AsXFAWidget() : nullptr;
 }

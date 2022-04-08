@@ -218,7 +218,7 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetAnnotForFFWidget(CXFA_FFWidget* pWidget) {
     return nullptr;
 
   for (std::unique_ptr<CPDFSDK_Annot>& pAnnot : m_SDKAnnotArray) {
-    CPDFXFA_Widget* pCurrentWidget = ToXFAWidget(pAnnot.get());
+    CPDFXFA_Widget* pCurrentWidget = pAnnot->AsXFAWidget();
     if (pCurrentWidget && pCurrentWidget->GetXFAFFWidget() == pWidget)
       return pAnnot.get();
   }

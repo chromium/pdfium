@@ -754,7 +754,7 @@ bool CPDFSDK_FormFillEnvironment::SetFocusAnnot(
     return false;
 
 #ifdef PDF_ENABLE_XFA
-  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot.Get());
+  CPDFXFA_Widget* pXFAWidget = pAnnot->AsXFAWidget();
   if (pXFAWidget && pXFAWidget->OnChangedFocus())
     return false;
 
