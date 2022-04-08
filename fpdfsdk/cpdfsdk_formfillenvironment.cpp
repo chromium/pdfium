@@ -17,7 +17,6 @@
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/stl_util.h"
 #include "fpdfsdk/cpdfsdk_actionhandler.h"
-#include "fpdfsdk/cpdfsdk_annothandlermgr.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
@@ -62,15 +61,12 @@ FPDF_WIDESTRING AsFPDFWideString(ByteString* bsUTF16LE) {
 
 CPDFSDK_FormFillEnvironment::CPDFSDK_FormFillEnvironment(
     CPDF_Document* pDoc,
-    FPDF_FORMFILLINFO* pFFinfo,
-    std::unique_ptr<CPDFSDK_AnnotHandlerMgr> pHandlerMgr)
+    FPDF_FORMFILLINFO* pFFinfo)
     : m_pInfo(pFFinfo),
       m_pCPDFDoc(pDoc),
-      m_pAnnotHandlerMgr(std::move(pHandlerMgr)),
       m_pInteractiveFormFiller(
           std::make_unique<CFFL_InteractiveFormFiller>(this)) {
   DCHECK(m_pCPDFDoc);
-  m_pAnnotHandlerMgr->SetFormFillEnv(this);
 }
 
 CPDFSDK_FormFillEnvironment::~CPDFSDK_FormFillEnvironment() {
@@ -80,10 +76,6 @@ CPDFSDK_FormFillEnvironment::~CPDFSDK_FormFillEnvironment() {
   // |m_PageMap| will try to access |m_pInteractiveForm| when it cleans itself
   // up. Make sure it is deleted before |m_pInteractiveForm|.
   m_PageMap.clear();
-
-  // |m_pAnnotHandlerMgr| will try to access |m_pFormFiller| when it cleans
-  // itself up. Make sure it is deleted before |m_pFormFiller|.
-  m_pAnnotHandlerMgr.reset();
 
   // Must destroy the |m_pInteractiveFormFiller| before the environment (|this|)
   // because any created form widgets hold a pointer to the environment.
@@ -353,10 +345,6 @@ IJS_Runtime* CPDFSDK_FormFillEnvironment::GetIJSRuntime() {
   if (!m_pIJSRuntime)
     m_pIJSRuntime = IJS_Runtime::Create(this);
   return m_pIJSRuntime.get();
-}
-
-CPDFSDK_AnnotHandlerMgr* CPDFSDK_FormFillEnvironment::GetAnnotHandlerMgr() {
-  return m_pAnnotHandlerMgr.get();
 }
 
 CPDFSDK_ActionHandler* CPDFSDK_FormFillEnvironment::GetActionHandler() {

@@ -28,7 +28,6 @@
 #include "third_party/base/span.h"
 
 class CPDFSDK_ActionHandler;
-class CPDFSDK_AnnotHandlerMgr;
 class CPDFSDK_InteractiveForm;
 class CPDFSDK_PageView;
 class IJS_Runtime;
@@ -54,10 +53,7 @@ class CPDFSDK_FormFillEnvironment final
       public IPWL_SystemHandler,
       public CFFL_InteractiveFormFiller::CallbackIface {
  public:
-  CPDFSDK_FormFillEnvironment(
-      CPDF_Document* pDoc,
-      FPDF_FORMFILLINFO* pFFinfo,
-      std::unique_ptr<CPDFSDK_AnnotHandlerMgr> pHandlerMgr);
+  CPDFSDK_FormFillEnvironment(CPDF_Document* pDoc, FPDF_FORMFILLINFO* pFFinfo);
 
   ~CPDFSDK_FormFillEnvironment() override;
 
@@ -204,8 +200,6 @@ class CPDFSDK_FormFillEnvironment final
   FPDF_FORMFILLINFO* GetFormFillInfo() const { return m_pInfo; }
   void SubmitForm(pdfium::span<uint8_t> form_data, const WideString& URL);
 
-  CPDFSDK_AnnotHandlerMgr* GetAnnotHandlerMgr();  // Always present.
-
   void SetFocusableAnnotSubtypes(
       const std::vector<CPDF_Annot::Subtype>& focusableAnnotTypes) {
     m_FocusableAnnotTypes = focusableAnnotTypes;
@@ -235,7 +229,6 @@ class CPDFSDK_FormFillEnvironment final
   std::unique_ptr<CPDFSDK_InteractiveForm> m_pInteractiveForm;
   ObservedPtr<CPDFSDK_Annot> m_pFocusAnnot;
   UnownedPtr<CPDF_Document> const m_pCPDFDoc;
-  std::unique_ptr<CPDFSDK_AnnotHandlerMgr> m_pAnnotHandlerMgr;
   std::unique_ptr<CFFL_InteractiveFormFiller> m_pInteractiveFormFiller;
   bool m_bChangeMask = false;
   bool m_bBeingDestroyed = false;

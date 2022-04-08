@@ -87,6 +87,31 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
   }
 }
 
+std::unique_ptr<CPDFSDK_Annot> CPDFSDK_PageView::NewAnnot(CPDF_Annot* annot) {
+  const CPDF_Annot::Subtype sub_type = annot->GetSubtype();
+  if (sub_type == CPDF_Annot::Subtype::WIDGET) {
+    CPDFSDK_InteractiveForm* form = m_pFormFillEnv->GetInteractiveForm();
+    CPDF_InteractiveForm* pdf_form = form->GetInteractiveForm();
+    CPDF_FormControl* form_control =
+        pdf_form->GetControlByDict(annot->GetAnnotDict());
+    if (!form_control)
+      return nullptr;
+
+    auto ret = std::make_unique<CPDFSDK_Widget>(annot, this, form);
+    form->AddMap(form_control, ret.get());
+    if (pdf_form->NeedConstructAP())
+      ret->ResetAppearance(absl::nullopt, CPDFSDK_Widget::kValueUnchanged);
+    return ret;
+  }
+
+#ifdef PDF_ENABLE_XFA
+  if (sub_type == CPDF_Annot::Subtype::XFAWIDGET)
+    return nullptr;
+#endif  // PDF_ENABLE_XFA
+
+  return std::make_unique<CPDFSDK_BAAnnot>(annot, this);
+}
+
 CPDFSDK_Annot* CPDFSDK_PageView::GetFXAnnotAtPoint(const CFX_PointF& point) {
   CPDFSDK_AnnotForwardIteration annot_iteration(this);
   for (const auto& pSDKAnnot : annot_iteration) {
@@ -500,9 +525,6 @@ bool CPDFSDK_PageView::OnKeyDown(FWL_VKEYCODE nKeyCode,
 }
 
 void CPDFSDK_PageView::LoadFXAnnots() {
-  CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
-      m_pFormFillEnv->GetAnnotHandlerMgr();
-
   AutoRestorer<bool> lock(&m_bLocked);
   m_bLocked = true;
 
@@ -536,8 +558,7 @@ void CPDFSDK_PageView::LoadFXAnnots() {
   for (size_t i = 0; i < nCount; ++i) {
     CPDF_Annot* pPDFAnnot = m_pAnnotList->GetAt(i);
     CheckForUnsupportedAnnot(pPDFAnnot);
-    std::unique_ptr<CPDFSDK_Annot> pAnnot =
-        pAnnotHandlerMgr->NewAnnot(pPDFAnnot, this);
+    std::unique_ptr<CPDFSDK_Annot> pAnnot = NewAnnot(pPDFAnnot);
     if (!pAnnot)
       continue;
     m_SDKAnnotArray.push_back(std::move(pAnnot));

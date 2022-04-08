@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "fpdfsdk/cpdfsdk_annotiterator.h"
-#include "fpdfsdk/cpdfsdk_baannothandler.h"
+#include "fpdfsdk/cpdfsdk_baannot.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
@@ -13,11 +13,11 @@
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 
-class CPDFSDK_BAAnnotHandlerTest : public EmbedderTest {
+class CPDFSDK_BAAnnotTest : public EmbedderTest {
  public:
   void SetUp() override {
     EmbedderTest::SetUp();
-    SetUpBAAnnotHandler();
+    SetUpBAAnnot();
   }
 
   void TearDown() override {
@@ -25,7 +25,7 @@ class CPDFSDK_BAAnnotHandlerTest : public EmbedderTest {
     EmbedderTest::TearDown();
   }
 
-  void SetUpBAAnnotHandler() {
+  void SetUpBAAnnot() {
     ASSERT_TRUE(OpenDocument("links_highlights_annots.pdf"));
     m_page = LoadPage(0);
     ASSERT_TRUE(m_page);
@@ -36,20 +36,10 @@ class CPDFSDK_BAAnnotHandlerTest : public EmbedderTest {
     m_pPageView =
         m_pFormFillEnv->GetOrCreatePageView(IPDFPageFromFPDFPage(m_page));
     ASSERT_TRUE(m_pPageView);
-
-    CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
-        m_pFormFillEnv->GetAnnotHandlerMgr();
-    ASSERT_TRUE(pAnnotHandlerMgr);
-    m_pBAAnnotHandler = static_cast<CPDFSDK_BAAnnotHandler*>(
-        pAnnotHandlerMgr->m_pBAAnnotHandler.get());
-    ASSERT_TRUE(m_pBAAnnotHandler);
   }
 
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const { return m_pFormFillEnv; }
   CPDFSDK_PageView* GetPageView() const { return m_pPageView; }
-  CPDFSDK_BAAnnotHandler* GetBAAnnotHandler() const {
-    return m_pBAAnnotHandler;
-  }
 
   CPDFSDK_Annot* GetNthFocusableAnnot(size_t n) {
     DCHECK_NE(n, 0);
@@ -70,10 +60,9 @@ class CPDFSDK_BAAnnotHandlerTest : public EmbedderTest {
   FPDF_PAGE m_page = nullptr;
   CPDFSDK_PageView* m_pPageView = nullptr;
   CPDFSDK_FormFillEnvironment* m_pFormFillEnv = nullptr;
-  CPDFSDK_BAAnnotHandler* m_pBAAnnotHandler = nullptr;
 };
 
-TEST_F(CPDFSDK_BAAnnotHandlerTest, TabToLinkOrHighlightAnnot) {
+TEST_F(CPDFSDK_BAAnnotTest, TabToLinkOrHighlightAnnot) {
   std::vector<CPDF_Annot::Subtype> focusable_annot_types = {
       CPDF_Annot::Subtype::WIDGET, CPDF_Annot::Subtype::LINK,
       CPDF_Annot::Subtype::HIGHLIGHT};

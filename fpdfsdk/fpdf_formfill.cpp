@@ -22,18 +22,15 @@
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "fpdfsdk/cpdfsdk_actionhandler.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
-#include "fpdfsdk/cpdfsdk_baannothandler.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
-#include "fpdfsdk/cpdfsdk_widgethandler.h"
 #include "public/fpdfview.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
-#include "fpdfsdk/fpdfxfa/cpdfxfa_widgethandler.h"
 
 static_assert(static_cast<int>(AlertButton::kDefault) ==
                   JSPLATFORM_ALERT_BUTTON_DEFAULT,
@@ -307,7 +304,6 @@ FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
   if (!pDocument)
     return nullptr;
 
-  std::unique_ptr<IPDFSDK_AnnotHandler> pXFAHandler;
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_Context* pContext = nullptr;
   if (!formInfo->xfa_disabled) {
@@ -323,15 +319,11 @@ FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
       return FPDFFormHandleFromCPDFSDKFormFillEnvironment(
           pContext->GetFormFillEnv());
     }
-    pXFAHandler = std::make_unique<CPDFXFA_WidgetHandler>();
   }
 #endif  // PDF_ENABLE_XFA
 
-  auto pFormFillEnv = std::make_unique<CPDFSDK_FormFillEnvironment>(
-      pDocument, formInfo,
-      std::make_unique<CPDFSDK_AnnotHandlerMgr>(
-          std::make_unique<CPDFSDK_BAAnnotHandler>(),
-          std::make_unique<CPDFSDK_WidgetHandler>(), std::move(pXFAHandler)));
+  auto pFormFillEnv =
+      std::make_unique<CPDFSDK_FormFillEnvironment>(pDocument, formInfo);
 
 #ifdef PDF_ENABLE_XFA
   if (pContext)

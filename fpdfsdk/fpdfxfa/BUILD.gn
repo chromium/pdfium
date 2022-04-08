@@ -17,8 +17,6 @@ source_set("fpdfxfa") {
     "cpdfxfa_page.h",
     "cpdfxfa_widget.cpp",
     "cpdfxfa_widget.h",
-    "cpdfxfa_widgethandler.cpp",
-    "cpdfxfa_widgethandler.h",
   ]
   configs += [
     "../../:pdfium_strict_config",

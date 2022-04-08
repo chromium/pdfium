@@ -17,7 +17,6 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
-#include "fpdfsdk/cpdfsdk_annothandlermgr.h"
 
 class CFX_RenderDevice;
 class CPDF_AnnotList;
@@ -109,6 +108,8 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_Page* XFAPageIfNotBackedByPDFPage();
 #endif
+
+  std::unique_ptr<CPDFSDK_Annot> NewAnnot(CPDF_Annot* annot);
 
   CPDFSDK_Annot* GetFXAnnotAtPoint(const CFX_PointF& point);
   CPDFSDK_Annot* GetFXWidgetAtPoint(const CFX_PointF& point);
