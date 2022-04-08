@@ -34,16 +34,6 @@ class CPDFSDK_AnnotHandlerMgr {
   std::unique_ptr<CPDFSDK_Annot> NewAnnot(CPDF_Annot* pAnnot,
                                           CPDFSDK_PageView* pPageView);
 
-  WideString Annot_GetText(CPDFSDK_Annot* pAnnot);
-  WideString Annot_GetSelectedText(CPDFSDK_Annot* pAnnot);
-  void Annot_ReplaceSelection(CPDFSDK_Annot* pAnnot, const WideString& text);
-  bool Annot_SelectAllText(CPDFSDK_Annot* pAnnot);
-
-  bool Annot_SetIndexSelected(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                              int index,
-                              bool selected);
-  bool Annot_IsIndexSelected(ObservedPtr<CPDFSDK_Annot>& pAnnot, int index);
-
  private:
   friend class CPDFSDK_BAAnnotHandlerTest;
 

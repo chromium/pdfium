@@ -395,6 +395,28 @@ bool CPDFSDK_BAAnnot::Redo() {
   return false;
 }
 
+WideString CPDFSDK_BAAnnot::GetText() {
+  return WideString();
+}
+
+WideString CPDFSDK_BAAnnot::GetSelectedText() {
+  return WideString();
+}
+
+void CPDFSDK_BAAnnot::ReplaceSelection(const WideString& text) {}
+
+bool CPDFSDK_BAAnnot::SelectAllText() {
+  return false;
+}
+
+bool CPDFSDK_BAAnnot::SetIndexSelected(int index, bool selected) {
+  return false;
+}
+
+bool CPDFSDK_BAAnnot::IsIndexSelected(int index) {
+  return false;
+}
+
 CPDF_Dest CPDFSDK_BAAnnot::GetDestination() const {
   if (m_pAnnot->GetSubtype() != CPDF_Annot::Subtype::LINK)
     return CPDF_Dest(nullptr);

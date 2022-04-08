@@ -12,6 +12,7 @@
 #include "core/fxcrt/mask.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "core/fxcrt/widestring.h"
 #include "public/fpdf_fwlevent.h"
 
 class CPDF_Page;
@@ -72,6 +73,12 @@ class CPDFSDK_Annot : public Observable {
   virtual bool CanRedo() = 0;
   virtual bool Undo() = 0;
   virtual bool Redo() = 0;
+  virtual WideString GetText() = 0;
+  virtual WideString GetSelectedText() = 0;
+  virtual void ReplaceSelection(const WideString& text) = 0;
+  virtual bool SelectAllText() = 0;
+  virtual bool SetIndexSelected(int index, bool selected) = 0;
+  virtual bool IsIndexSelected(int index) = 0;
 
   // Callers must check if `pAnnot` is still valid after calling these methods,
   // before accessing them again.

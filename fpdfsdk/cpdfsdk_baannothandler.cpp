@@ -32,30 +32,3 @@ std::unique_ptr<CPDFSDK_Annot> CPDFSDK_BAAnnotHandler::NewAnnot(
   CHECK(pPageView);
   return std::make_unique<CPDFSDK_BAAnnot>(pAnnot, pPageView);
 }
-
-bool CPDFSDK_BAAnnotHandler::SetIndexSelected(
-    ObservedPtr<CPDFSDK_Annot>& pAnnot,
-    int index,
-    bool selected) {
-  return false;
-}
-
-bool CPDFSDK_BAAnnotHandler::IsIndexSelected(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                                             int index) {
-  return false;
-}
-
-WideString CPDFSDK_BAAnnotHandler::GetText(CPDFSDK_Annot* pAnnot) {
-  return WideString();
-}
-
-WideString CPDFSDK_BAAnnotHandler::GetSelectedText(CPDFSDK_Annot* pAnnot) {
-  return WideString();
-}
-
-void CPDFSDK_BAAnnotHandler::ReplaceSelection(CPDFSDK_Annot* pAnnot,
-                                              const WideString& text) {}
-
-bool CPDFSDK_BAAnnotHandler::SelectAllText(CPDFSDK_Annot* pAnnot) {
-  return false;
-}

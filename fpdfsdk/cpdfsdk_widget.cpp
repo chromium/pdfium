@@ -846,6 +846,42 @@ bool CPDFSDK_Widget::Redo() {
   return !IsSignatureWidget() && GetInteractiveFormFiller()->Redo(this);
 }
 
+WideString CPDFSDK_Widget::GetText() {
+  if (IsSignatureWidget())
+    return WideString();
+  return GetInteractiveFormFiller()->GetText(this);
+}
+
+WideString CPDFSDK_Widget::GetSelectedText() {
+  if (IsSignatureWidget())
+    return WideString();
+  return GetInteractiveFormFiller()->GetSelectedText(this);
+}
+
+void CPDFSDK_Widget::ReplaceSelection(const WideString& text) {
+  if (IsSignatureWidget())
+    return;
+
+  GetInteractiveFormFiller()->ReplaceSelection(this, text);
+}
+
+bool CPDFSDK_Widget::SelectAllText() {
+  return !IsSignatureWidget() &&
+         GetInteractiveFormFiller()->SelectAllText(this);
+}
+
+bool CPDFSDK_Widget::SetIndexSelected(int index, bool selected) {
+  ObservedPtr<CPDFSDK_Widget> observer(this);
+  return !IsSignatureWidget() && GetInteractiveFormFiller()->SetIndexSelected(
+                                     observer, index, selected);
+}
+
+bool CPDFSDK_Widget::IsIndexSelected(int index) {
+  ObservedPtr<CPDFSDK_Widget> observer(this);
+  return !IsSignatureWidget() &&
+         GetInteractiveFormFiller()->IsIndexSelected(observer, index);
+}
+
 void CPDFSDK_Widget::DrawAppearance(CFX_RenderDevice* pDevice,
                                     const CFX_Matrix& mtUser2Device,
                                     CPDF_Annot::AppearanceMode mode) {

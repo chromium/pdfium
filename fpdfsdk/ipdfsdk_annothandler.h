@@ -37,17 +37,6 @@ class IPDFSDK_AnnotHandler {
       CPDF_Annot* pAnnot,
       CPDFSDK_PageView* pPageView) = 0;
 
-  virtual WideString GetText(CPDFSDK_Annot* pAnnot) = 0;
-  virtual WideString GetSelectedText(CPDFSDK_Annot* pAnnot) = 0;
-  virtual void ReplaceSelection(CPDFSDK_Annot* pAnnot,
-                                const WideString& text) = 0;
-  virtual bool SelectAllText(CPDFSDK_Annot* pAnnot) = 0;
-  virtual bool SetIndexSelected(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                                int index,
-                                bool selected) = 0;
-  virtual bool IsIndexSelected(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                               int index) = 0;
-
  private:
   UnownedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
 };

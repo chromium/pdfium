@@ -46,24 +46,6 @@ std::unique_ptr<CPDFSDK_Annot> CPDFSDK_AnnotHandlerMgr::NewAnnot(
       ->NewAnnot(pAnnot, pPageView);
 }
 
-WideString CPDFSDK_AnnotHandlerMgr::Annot_GetText(CPDFSDK_Annot* pAnnot) {
-  return GetAnnotHandler(pAnnot)->GetText(pAnnot);
-}
-
-WideString CPDFSDK_AnnotHandlerMgr::Annot_GetSelectedText(
-    CPDFSDK_Annot* pAnnot) {
-  return GetAnnotHandler(pAnnot)->GetSelectedText(pAnnot);
-}
-
-void CPDFSDK_AnnotHandlerMgr::Annot_ReplaceSelection(CPDFSDK_Annot* pAnnot,
-                                                     const WideString& text) {
-  GetAnnotHandler(pAnnot)->ReplaceSelection(pAnnot, text);
-}
-
-bool CPDFSDK_AnnotHandlerMgr::Annot_SelectAllText(CPDFSDK_Annot* pAnnot) {
-  return GetAnnotHandler(pAnnot)->SelectAllText(pAnnot);
-}
-
 IPDFSDK_AnnotHandler* CPDFSDK_AnnotHandlerMgr::GetAnnotHandler(
     CPDFSDK_Annot* pAnnot) const {
   return GetAnnotHandlerOfType(pAnnot->GetAnnotSubtype());
@@ -80,20 +62,4 @@ IPDFSDK_AnnotHandler* CPDFSDK_AnnotHandlerMgr::GetAnnotHandlerOfType(
 #endif  // PDF_ENABLE_XFA
 
   return m_pBAAnnotHandler.get();
-}
-
-bool CPDFSDK_AnnotHandlerMgr::Annot_SetIndexSelected(
-    ObservedPtr<CPDFSDK_Annot>& pAnnot,
-    int index,
-    bool selected) {
-  DCHECK(pAnnot);
-  return GetAnnotHandler(pAnnot.Get())
-      ->SetIndexSelected(pAnnot, index, selected);
-}
-
-bool CPDFSDK_AnnotHandlerMgr::Annot_IsIndexSelected(
-    ObservedPtr<CPDFSDK_Annot>& pAnnot,
-    int index) {
-  DCHECK(pAnnot);
-  return GetAnnotHandler(pAnnot.Get())->IsIndexSelected(pAnnot, index);
 }

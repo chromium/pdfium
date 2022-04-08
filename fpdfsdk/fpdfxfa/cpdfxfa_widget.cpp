@@ -222,6 +222,39 @@ bool CPDFXFA_Widget::Redo() {
   return widget_handler && widget_handler->Redo(GetXFAFFWidget());
 }
 
+WideString CPDFXFA_Widget::GetText() {
+  CXFA_FFWidgetHandler* widget_handler = GetWidgetHandler();
+  if (!widget_handler)
+    return WideString();
+  return widget_handler->GetText(GetXFAFFWidget());
+}
+
+WideString CPDFXFA_Widget::GetSelectedText() {
+  CXFA_FFWidgetHandler* widget_handler = GetWidgetHandler();
+  if (!widget_handler)
+    return WideString();
+  return widget_handler->GetSelectedText(GetXFAFFWidget());
+}
+
+void CPDFXFA_Widget::ReplaceSelection(const WideString& text) {
+  CXFA_FFWidgetHandler* widget_handler = GetWidgetHandler();
+  if (widget_handler)
+    widget_handler->PasteText(GetXFAFFWidget(), text);
+}
+
+bool CPDFXFA_Widget::SelectAllText() {
+  CXFA_FFWidgetHandler* widget_handler = GetWidgetHandler();
+  return widget_handler && widget_handler->SelectAllText(GetXFAFFWidget());
+}
+
+bool CPDFXFA_Widget::SetIndexSelected(int index, bool selected) {
+  return false;
+}
+
+bool CPDFXFA_Widget::IsIndexSelected(int index) {
+  return false;
+}
+
 CXFA_FFDocView* CPDFXFA_Widget::GetDocView() {
   CXFA_FFPageView* page_view = GetXFAFFWidget()->GetPageView();
   return page_view ? page_view->GetDocView() : nullptr;

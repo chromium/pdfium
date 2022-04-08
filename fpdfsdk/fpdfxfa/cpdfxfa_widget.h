@@ -36,6 +36,12 @@ class CPDFXFA_Widget final : public CPDFSDK_Annot,
   bool CanRedo() override;
   bool Undo() override;
   bool Redo() override;
+  WideString GetText() override;
+  WideString GetSelectedText() override;
+  void ReplaceSelection(const WideString& text) override;
+  bool SelectAllText() override;
+  bool SetIndexSelected(int index, bool selected) override;
+  bool IsIndexSelected(int index) override;
 
   CXFA_FFWidget* GetXFAFFWidget() const { return m_pXFAFFWidget.Get(); }
 

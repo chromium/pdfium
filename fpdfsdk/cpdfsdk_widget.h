@@ -63,6 +63,12 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
   bool CanRedo() override;
   bool Undo() override;
   bool Redo() override;
+  WideString GetText() override;
+  WideString GetSelectedText() override;
+  void ReplaceSelection(const WideString& text) override;
+  bool SelectAllText() override;
+  bool SetIndexSelected(int index, bool selected) override;
+  bool IsIndexSelected(int index) override;
   void DrawAppearance(CFX_RenderDevice* pDevice,
                       const CFX_Matrix& mtUser2Device,
                       CPDF_Annot::AppearanceMode mode) override;

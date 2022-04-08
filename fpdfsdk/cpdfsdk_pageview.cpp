@@ -206,13 +206,8 @@ IPDF_Page* CPDFSDK_PageView::GetXFAPage() {
 #endif  // PDF_ENABLE_XFA
 
 WideString CPDFSDK_PageView::GetFocusedFormText() {
-  if (CPDFSDK_Annot* pAnnot = GetFocusAnnot()) {
-    CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
-        m_pFormFillEnv->GetAnnotHandlerMgr();
-    return pAnnotHandlerMgr->Annot_GetText(pAnnot);
-  }
-
-  return WideString();
+  CPDFSDK_Annot* annot = GetFocusAnnot();
+  return annot ? annot->GetText() : WideString();
 }
 
 CPDFSDK_Annot* CPDFSDK_PageView::GetNextAnnot(CPDFSDK_Annot* pAnnot) {
@@ -256,30 +251,21 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetLastFocusableAnnot() {
 }
 
 WideString CPDFSDK_PageView::GetSelectedText() {
-  if (CPDFSDK_Annot* pAnnot = GetFocusAnnot()) {
-    CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
-        m_pFormFillEnv->GetAnnotHandlerMgr();
-    return pAnnotHandlerMgr->Annot_GetSelectedText(pAnnot);
-  }
-
-  return WideString();
+  CPDFSDK_Annot* annot = GetFocusAnnot();
+  if (!annot)
+    return WideString();
+  return annot->GetSelectedText();
 }
 
 void CPDFSDK_PageView::ReplaceSelection(const WideString& text) {
-  if (CPDFSDK_Annot* pAnnot = GetFocusAnnot()) {
-    CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
-        m_pFormFillEnv->GetAnnotHandlerMgr();
-    pAnnotHandlerMgr->Annot_ReplaceSelection(pAnnot, text);
-  }
+  CPDFSDK_Annot* annot = GetFocusAnnot();
+  if (annot)
+    annot->ReplaceSelection(text);
 }
 
 bool CPDFSDK_PageView::SelectAllText() {
   CPDFSDK_Annot* annot = GetFocusAnnot();
-  if (!annot)
-    return false;
-
-  CPDFSDK_AnnotHandlerMgr* handler = m_pFormFillEnv->GetAnnotHandlerMgr();
-  return handler->Annot_SelectAllText(annot);
+  return annot && annot->SelectAllText();
 }
 
 bool CPDFSDK_PageView::CanUndo() {
@@ -458,26 +444,13 @@ bool CPDFSDK_PageView::OnMouseWheel(Mask<FWL_EVENTFLAG> nFlags,
 }
 
 bool CPDFSDK_PageView::SetIndexSelected(int index, bool selected) {
-  if (CPDFSDK_Annot* pAnnot = GetFocusAnnot()) {
-    ObservedPtr<CPDFSDK_Annot> pAnnotObserved(pAnnot);
-    CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
-        m_pFormFillEnv->GetAnnotHandlerMgr();
-    return pAnnotHandlerMgr->Annot_SetIndexSelected(pAnnotObserved, index,
-                                                    selected);
-  }
-
-  return false;
+  CPDFSDK_Annot* annot = GetFocusAnnot();
+  return annot && annot->SetIndexSelected(index, selected);
 }
 
 bool CPDFSDK_PageView::IsIndexSelected(int index) {
-  if (CPDFSDK_Annot* pAnnot = GetFocusAnnot()) {
-    ObservedPtr<CPDFSDK_Annot> pAnnotObserved(pAnnot);
-    CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
-        m_pFormFillEnv->GetAnnotHandlerMgr();
-    return pAnnotHandlerMgr->Annot_IsIndexSelected(pAnnotObserved, index);
-  }
-
-  return false;
+  CPDFSDK_Annot* annot = GetFocusAnnot();
+  return annot && annot->IsIndexSelected(index);
 }
 
 bool CPDFSDK_PageView::OnChar(uint32_t nChar, Mask<FWL_EVENTFLAG> nFlags) {
