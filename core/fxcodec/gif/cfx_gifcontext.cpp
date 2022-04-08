@@ -27,10 +27,6 @@ CFX_GifContext::CFX_GifContext(GifDecoder::Delegate* delegate)
 
 CFX_GifContext::~CFX_GifContext() = default;
 
-uint32_t CFX_GifContext::CurrentPosition() const {
-  return delegate_->GifCurrentPosition();
-}
-
 void CFX_GifContext::ReadScanline(int32_t row_num, uint8_t* row_buf) {
   delegate_->GifReadScanline(row_num, row_buf);
 }
@@ -496,8 +492,7 @@ GifDecoder::Status CFX_GifContext::DecodeImageInfo() {
   }
 
   gif_image->code_exp = code_size;
-  gif_image->data_pos = CurrentPosition();
-  gif_image->data_pos += input_buffer_->GetPosition();
+  gif_image->data_pos = delegate_->GifCurrentPosition();
   gif_image->image_GCE = nullptr;
   if (graphic_control_extension_.get()) {
     if (graphic_control_extension_->gce_flags.transparency) {

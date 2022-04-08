@@ -371,11 +371,12 @@ bool ProgressiveDecoder::GifInputRecordPositionBuf(uint32_t rcd_pos,
                                                    int32_t trans_index,
                                                    bool interlace) {
   m_offSet = rcd_pos;
-  m_InvalidateGifBuffer = true;
 
   FXCODEC_STATUS error_status = FXCODEC_STATUS::kError;
+  m_pCodecMemory->Seek(m_pCodecMemory->GetSize());
   if (!GifReadMoreData(&error_status))
     return false;
+  m_pCodecMemory->Seek(0);
 
   CFX_GifPalette* pPalette = nullptr;
   if (pal_num != 0 && pal_ptr) {
@@ -719,7 +720,7 @@ bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
 bool ProgressiveDecoder::BmpReadMoreData(
     ProgressiveDecoderIface::Context* pContext,
     FXCODEC_STATUS* err_status) {
-  return ReadMoreData(BmpProgressiveDecoder::GetInstance(), pContext, false,
+  return ReadMoreData(BmpProgressiveDecoder::GetInstance(), pContext,
                       err_status);
 }
 
@@ -761,12 +762,8 @@ FXCODEC_STATUS ProgressiveDecoder::BmpContinueDecode() {
 
 #ifdef PDF_ENABLE_XFA_GIF
 bool ProgressiveDecoder::GifReadMoreData(FXCODEC_STATUS* err_status) {
-  if (!ReadMoreData(GifProgressiveDecoder::GetInstance(), m_pGifContext.get(),
-                    m_InvalidateGifBuffer, err_status)) {
-    return false;
-  }
-  m_InvalidateGifBuffer = false;
-  return true;
+  return ReadMoreData(GifProgressiveDecoder::GetInstance(), m_pGifContext.get(),
+                      err_status);
 }
 
 bool ProgressiveDecoder::GifDetectImageTypeInBuffer() {
@@ -929,7 +926,7 @@ void ProgressiveDecoder::GifDoubleLineResampleVert(
 
 bool ProgressiveDecoder::JpegReadMoreData(FXCODEC_STATUS* err_status) {
   return ReadMoreData(JpegProgressiveDecoder::GetInstance(),
-                      m_pJpegContext.get(), false, err_status);
+                      m_pJpegContext.get(), err_status);
 }
 
 bool ProgressiveDecoder::JpegDetectImageTypeInBuffer(
@@ -1449,7 +1446,6 @@ bool ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
 bool ProgressiveDecoder::ReadMoreData(
     ProgressiveDecoderIface* pModule,
     ProgressiveDecoderIface::Context* pContext,
-    bool invalidate_buffer,
     FXCODEC_STATUS* err_status) {
   // Check for EOF.
   if (m_offSet >= static_cast<uint32_t>(m_pFile->GetSize()))
@@ -1460,13 +1456,10 @@ bool ProgressiveDecoder::ReadMoreData(
       pdfium::base::checked_cast<uint32_t>(m_pFile->GetSize() - m_offSet);
 
   // Figure out if the codec stopped processing midway through the buffer.
-  size_t dwUnconsumed = 0;
-  if (!invalidate_buffer) {
-    FX_SAFE_SIZE_T avail_input = pModule->GetAvailInput(pContext);
-    if (!avail_input.IsValid())
-      return false;
-    dwUnconsumed = avail_input.ValueOrDie();
-  }
+  size_t dwUnconsumed;
+  FX_SAFE_SIZE_T avail_input = pModule->GetAvailInput(pContext);
+  if (!avail_input.AssignIfValid(&dwUnconsumed))
+    return false;
 
   if (dwUnconsumed == m_pCodecMemory->GetSize()) {
     // Codec couldn't make any progress against the bytes in the buffer.

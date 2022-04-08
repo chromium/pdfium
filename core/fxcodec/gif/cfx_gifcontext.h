@@ -25,7 +25,6 @@ class CFX_GifContext : public ProgressiveDecoderIface::Context {
   explicit CFX_GifContext(GifDecoder::Delegate* delegate);
   ~CFX_GifContext() override;
 
-  uint32_t CurrentPosition() const;
   void ReadScanline(int32_t row_num, uint8_t* row_buf);
   bool GetRecordPosition(uint32_t cur_pos,
                          int32_t left,

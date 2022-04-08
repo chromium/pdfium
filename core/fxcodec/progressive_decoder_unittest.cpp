@@ -4,9 +4,19 @@
 
 #include "core/fxcodec/progressive_decoder.h"
 
+#include <stddef.h>
+#include <stdint.h>
+
+#include <memory>
+#include <tuple>
+
 #include "core/fxcodec/fx_codec.h"
+#include "core/fxcodec/fx_codec_def.h"
 #include "core/fxcrt/cfx_readonlymemorystream.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
+#include "core/fxge/dib/fx_dib.h"
+#include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/span.h"
 
@@ -16,7 +26,85 @@
 
 namespace fxcodec {
 
+namespace {
+
+using ::testing::ElementsAre;
+
+FXCODEC_STATUS DecodeToBitmap(ProgressiveDecoder& decoder,
+                              const fxcrt::RetainPtr<CFX_DIBitmap>& bitmap) {
+  FXCODEC_STATUS status = decoder.StartDecode(bitmap, 0, 0, bitmap->GetWidth(),
+                                              bitmap->GetHeight());
+  while (status == FXCODEC_STATUS::kDecodeToBeContinued)
+    status = decoder.ContinueDecode();
+  return status;
+}
+
+}  // namespace
+
 #ifdef PDF_ENABLE_XFA_GIF
+TEST(ProgressiveDecoder, Gif87a) {
+  static constexpr uint8_t kInput[] = {
+      0x47, 0x49, 0x46, 0x38, 0x37, 0x61, 0x01, 0x00, 0x01, 0x00, 0x80, 0x01,
+      0x00, 0x40, 0x80, 0xc0, 0x80, 0x80, 0x80, 0x2c, 0x00, 0x00, 0x00, 0x00,
+      0x01, 0x00, 0x01, 0x00, 0x00, 0x02, 0x02, 0x44, 0x01, 0x00, 0x3b};
+
+  auto decoder = std::make_unique<ProgressiveDecoder>();
+
+  auto source = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(kInput);
+  CFX_DIBAttribute attr;
+  FXCODEC_STATUS status =
+      decoder->LoadImageInfo(source, FXCODEC_IMAGE_GIF, &attr, true);
+  ASSERT_EQ(FXCODEC_STATUS::kFrameReady, status);
+
+  ASSERT_EQ(1, decoder->GetWidth());
+  ASSERT_EQ(1, decoder->GetHeight());
+
+  auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+  bitmap->Create(decoder->GetWidth(), decoder->GetHeight(),
+                 FXDIB_Format::kArgb);
+
+  size_t frames;
+  std::tie(status, frames) = decoder->GetFrames();
+  ASSERT_EQ(FXCODEC_STATUS::kDecodeReady, status);
+  ASSERT_EQ(1u, frames);
+
+  status = DecodeToBitmap(*decoder, bitmap);
+  EXPECT_EQ(FXCODEC_STATUS::kDecodeFinished, status);
+  EXPECT_THAT(bitmap->GetScanline(0), ElementsAre(0xc0, 0x80, 0x40, 0xff));
+}
+
+TEST(ProgressiveDecoder, Gif89a) {
+  static constexpr uint8_t kInput[] = {
+      0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x01, 0x00, 0x01, 0x00, 0x80,
+      0x01, 0x00, 0x40, 0x80, 0xc0, 0x80, 0x80, 0x80, 0x21, 0xf9, 0x04,
+      0x00, 0x00, 0x00, 0x00, 0x00, 0x2c, 0x00, 0x00, 0x00, 0x00, 0x01,
+      0x00, 0x01, 0x00, 0x00, 0x02, 0x02, 0x44, 0x01, 0x00, 0x3b};
+
+  auto decoder = std::make_unique<ProgressiveDecoder>();
+
+  auto source = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(kInput);
+  CFX_DIBAttribute attr;
+  FXCODEC_STATUS status =
+      decoder->LoadImageInfo(source, FXCODEC_IMAGE_GIF, &attr, true);
+  ASSERT_EQ(FXCODEC_STATUS::kFrameReady, status);
+
+  ASSERT_EQ(1, decoder->GetWidth());
+  ASSERT_EQ(1, decoder->GetHeight());
+
+  auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+  bitmap->Create(decoder->GetWidth(), decoder->GetHeight(),
+                 FXDIB_Format::kArgb);
+
+  size_t frames;
+  std::tie(status, frames) = decoder->GetFrames();
+  ASSERT_EQ(FXCODEC_STATUS::kDecodeReady, status);
+  ASSERT_EQ(1u, frames);
+
+  status = DecodeToBitmap(*decoder, bitmap);
+  EXPECT_EQ(FXCODEC_STATUS::kDecodeFinished, status);
+  EXPECT_THAT(bitmap->GetScanline(0), ElementsAre(0xc0, 0x80, 0x40, 0xff));
+}
+
 TEST(ProgressiveDecoder, BUG_895009) {
   static constexpr uint8_t kInput[] = {
       0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x62, 0x00, 0x21, 0x1b, 0x27, 0x01,
@@ -369,33 +457,28 @@ TEST(ProgressiveDecoder, BUG_895009) {
       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
       0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-  {
-    auto decoder = std::make_unique<ProgressiveDecoder>();
+  auto decoder = std::make_unique<ProgressiveDecoder>();
 
-    auto source = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(kInput);
-    CFX_DIBAttribute attr;
-    FXCODEC_STATUS status =
-        decoder->LoadImageInfo(source, FXCODEC_IMAGE_GIF, &attr, true);
-    ASSERT_EQ(FXCODEC_STATUS::kFrameReady, status);
+  auto source = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(kInput);
+  CFX_DIBAttribute attr;
+  FXCODEC_STATUS status =
+      decoder->LoadImageInfo(source, FXCODEC_IMAGE_GIF, &attr, true);
+  ASSERT_EQ(FXCODEC_STATUS::kFrameReady, status);
 
-    ASSERT_EQ(98, decoder->GetWidth());
-    ASSERT_EQ(6945, decoder->GetHeight());
+  ASSERT_EQ(98, decoder->GetWidth());
+  ASSERT_EQ(6945, decoder->GetHeight());
 
-    auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-    bitmap->Create(decoder->GetWidth(), decoder->GetHeight(),
-                   FXDIB_Format::kArgb);
+  auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+  bitmap->Create(decoder->GetWidth(), decoder->GetHeight(),
+                 FXDIB_Format::kArgb);
 
-    size_t frames;
-    std::tie(status, frames) = decoder->GetFrames();
-    ASSERT_EQ(FXCODEC_STATUS::kDecodeReady, status);
-    ASSERT_EQ(1u, frames);
+  size_t frames;
+  std::tie(status, frames) = decoder->GetFrames();
+  ASSERT_EQ(FXCODEC_STATUS::kDecodeReady, status);
+  ASSERT_EQ(1u, frames);
 
-    status = decoder->StartDecode(bitmap, 0, 0, bitmap->GetWidth(),
-                                  bitmap->GetHeight());
-    while (status == FXCODEC_STATUS::kDecodeToBeContinued)
-      status = decoder->ContinueDecode();
-    EXPECT_EQ(FXCODEC_STATUS::kDecodeFinished, status);
-  }
+  status = DecodeToBitmap(*decoder, bitmap);
+  EXPECT_EQ(FXCODEC_STATUS::kDecodeFinished, status);
 }
 #endif  // PDF_ENABLE_XFA_GIF
 

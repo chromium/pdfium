@@ -197,7 +197,6 @@ class ProgressiveDecoder final :
                        CFX_DIBAttribute* pAttribute);
   bool ReadMoreData(ProgressiveDecoderIface* pModule,
                     ProgressiveDecoderIface::Context* pContext,
-                    bool invalidate_buffer,
                     FXCODEC_STATUS* err_status);
 
   int GetDownScale();
@@ -265,7 +264,6 @@ class ProgressiveDecoder final :
   int32_t m_GifPltNumber = 0;
   int m_GifTransIndex = -1;
   FX_RECT m_GifFrameRect;
-  bool m_InvalidateGifBuffer = true;
 #endif  // PDF_ENABLE_XFA_GIF
 #ifdef PDF_ENABLE_XFA_BMP
   bool m_BmpIsTopBottom = false;
