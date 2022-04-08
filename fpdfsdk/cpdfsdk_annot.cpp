@@ -24,6 +24,68 @@ CPDFXFA_Widget* CPDFSDK_Annot::AsXFAWidget() {
   return nullptr;
 }
 
+// static
+void CPDFSDK_Annot::OnMouseEnter(ObservedPtr<CPDFSDK_Annot>& pAnnot,
+                                 Mask<FWL_EVENTFLAG> nFlags) {
+  pAnnot->GetUnsafeInputHandlers()->OnMouseEnter(nFlags);
+}
+
+// static
+void CPDFSDK_Annot::OnMouseExit(ObservedPtr<CPDFSDK_Annot>& pAnnot,
+                                Mask<FWL_EVENTFLAG> nFlags) {
+  pAnnot->GetUnsafeInputHandlers()->OnMouseExit(nFlags);
+}
+
+// static
+bool CPDFSDK_Annot::OnLButtonDown(ObservedPtr<CPDFSDK_Annot>& pAnnot,
+                                  Mask<FWL_EVENTFLAG> nFlags,
+                                  const CFX_PointF& point) {
+  return pAnnot->GetUnsafeInputHandlers()->OnLButtonDown(nFlags, point);
+}
+
+// static
+bool CPDFSDK_Annot::OnLButtonUp(ObservedPtr<CPDFSDK_Annot>& pAnnot,
+                                Mask<FWL_EVENTFLAG> nFlags,
+                                const CFX_PointF& point) {
+  return pAnnot->GetUnsafeInputHandlers()->OnLButtonUp(nFlags, point);
+}
+
+// static
+bool CPDFSDK_Annot::OnLButtonDblClk(ObservedPtr<CPDFSDK_Annot>& pAnnot,
+                                    Mask<FWL_EVENTFLAG> nFlags,
+                                    const CFX_PointF& point) {
+  return pAnnot->GetUnsafeInputHandlers()->OnLButtonDblClk(nFlags, point);
+}
+
+// static
+bool CPDFSDK_Annot::OnMouseMove(ObservedPtr<CPDFSDK_Annot>& pAnnot,
+                                Mask<FWL_EVENTFLAG> nFlags,
+                                const CFX_PointF& point) {
+  return pAnnot->GetUnsafeInputHandlers()->OnMouseMove(nFlags, point);
+}
+
+// static
+bool CPDFSDK_Annot::OnMouseWheel(ObservedPtr<CPDFSDK_Annot>& pAnnot,
+                                 Mask<FWL_EVENTFLAG> nFlags,
+                                 const CFX_PointF& point,
+                                 const CFX_Vector& delta) {
+  return pAnnot->GetUnsafeInputHandlers()->OnMouseWheel(nFlags, point, delta);
+}
+
+// static
+bool CPDFSDK_Annot::OnRButtonDown(ObservedPtr<CPDFSDK_Annot>& pAnnot,
+                                  Mask<FWL_EVENTFLAG> nFlags,
+                                  const CFX_PointF& point) {
+  return pAnnot->GetUnsafeInputHandlers()->OnRButtonDown(nFlags, point);
+}
+
+// static
+bool CPDFSDK_Annot::OnRButtonUp(ObservedPtr<CPDFSDK_Annot>& pAnnot,
+                                Mask<FWL_EVENTFLAG> nFlags,
+                                const CFX_PointF& point) {
+  return pAnnot->GetUnsafeInputHandlers()->OnRButtonUp(nFlags, point);
+}
+
 IPDF_Page* CPDFSDK_Annot::GetXFAPage() {
 #ifdef PDF_ENABLE_XFA
   return m_pPageView->GetXFAPage();

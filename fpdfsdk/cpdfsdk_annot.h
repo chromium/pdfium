@@ -9,8 +9,10 @@
 
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/mask.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "public/fpdf_fwlevent.h"
 
 class CPDF_Page;
 class CPDFSDK_BAAnnot;
@@ -20,10 +22,36 @@ class IPDF_Page;
 
 class CPDFSDK_Annot : public Observable {
  public:
+  // These methods may destroy the class that implements them when called.
+  // Access through the static methods below of the same name.
+  class UnsafeInputHandlers {
+   public:
+    virtual void OnMouseEnter(Mask<FWL_EVENTFLAG> nFlags) = 0;
+    virtual void OnMouseExit(Mask<FWL_EVENTFLAG> nFlags) = 0;
+    virtual bool OnLButtonDown(Mask<FWL_EVENTFLAG> nFlags,
+                               const CFX_PointF& point) = 0;
+    virtual bool OnLButtonUp(Mask<FWL_EVENTFLAG> nFlags,
+                             const CFX_PointF& point) = 0;
+    virtual bool OnLButtonDblClk(Mask<FWL_EVENTFLAG> nFlags,
+                                 const CFX_PointF& point) = 0;
+    virtual bool OnMouseMove(Mask<FWL_EVENTFLAG> nFlags,
+                             const CFX_PointF& point) = 0;
+    virtual bool OnMouseWheel(Mask<FWL_EVENTFLAG> nFlags,
+                              const CFX_PointF& point,
+                              const CFX_Vector& delta) = 0;
+    virtual bool OnRButtonDown(Mask<FWL_EVENTFLAG> nFlags,
+                               const CFX_PointF& point) = 0;
+    virtual bool OnRButtonUp(Mask<FWL_EVENTFLAG> nFlags,
+                             const CFX_PointF& point) = 0;
+  };
+
   virtual ~CPDFSDK_Annot();
 
   virtual CPDFSDK_BAAnnot* AsBAAnnot();
   virtual CPDFXFA_Widget* AsXFAWidget();
+
+  // Never returns nullptr.
+  virtual UnsafeInputHandlers* GetUnsafeInputHandlers() = 0;
 
   virtual void OnLoad() {}
   virtual int GetLayoutOrder() const;
@@ -36,6 +64,35 @@ class CPDFSDK_Annot : public Observable {
   virtual bool CanRedo() = 0;
   virtual bool Undo() = 0;
   virtual bool Redo() = 0;
+
+  // Callers must check if `pAnnot` is still valid after calling these methods,
+  // before accessing them again.
+  static void OnMouseEnter(ObservedPtr<CPDFSDK_Annot>& pAnnot,
+                           Mask<FWL_EVENTFLAG> nFlags);
+  static void OnMouseExit(ObservedPtr<CPDFSDK_Annot>& pAnnot,
+                          Mask<FWL_EVENTFLAG> nFlags);
+  static bool OnLButtonDown(ObservedPtr<CPDFSDK_Annot>& pAnnot,
+                            Mask<FWL_EVENTFLAG> nFlags,
+                            const CFX_PointF& point);
+  static bool OnLButtonUp(ObservedPtr<CPDFSDK_Annot>& pAnnot,
+                          Mask<FWL_EVENTFLAG> nFlags,
+                          const CFX_PointF& point);
+  static bool OnLButtonDblClk(ObservedPtr<CPDFSDK_Annot>& pAnnot,
+                              Mask<FWL_EVENTFLAG> nFlags,
+                              const CFX_PointF& point);
+  static bool OnMouseMove(ObservedPtr<CPDFSDK_Annot>& pAnnot,
+                          Mask<FWL_EVENTFLAG> nFlags,
+                          const CFX_PointF& point);
+  static bool OnMouseWheel(ObservedPtr<CPDFSDK_Annot>& pAnnot,
+                           Mask<FWL_EVENTFLAG> nFlags,
+                           const CFX_PointF& point,
+                           const CFX_Vector& delta);
+  static bool OnRButtonDown(ObservedPtr<CPDFSDK_Annot>& pAnnot,
+                            Mask<FWL_EVENTFLAG> nFlags,
+                            const CFX_PointF& point);
+  static bool OnRButtonUp(ObservedPtr<CPDFSDK_Annot>& pAnnot,
+                          Mask<FWL_EVENTFLAG> nFlags,
+                          const CFX_PointF& point);
 
   // Three cases: PDF page only, XFA page only, or XFA page backed by PDF page.
   IPDF_Page* GetPage();     // Returns XFA Page if possible, else PDF page.

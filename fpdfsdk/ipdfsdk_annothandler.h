@@ -48,35 +48,6 @@ class IPDFSDK_AnnotHandler {
                       CFX_RenderDevice* pDevice,
                       const CFX_Matrix& mtUser2Device,
                       bool bDrawAnnots) = 0;
-  virtual void OnMouseEnter(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                            Mask<FWL_EVENTFLAG> nFlag) = 0;
-  virtual void OnMouseExit(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                           Mask<FWL_EVENTFLAG> nFlag) = 0;
-  virtual bool OnLButtonDown(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                             Mask<FWL_EVENTFLAG> nFlags,
-                             const CFX_PointF& point) = 0;
-  virtual bool OnLButtonUp(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                           Mask<FWL_EVENTFLAG> nFlags,
-                           const CFX_PointF& point) = 0;
-  virtual bool OnLButtonDblClk(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                               Mask<FWL_EVENTFLAG> nFlags,
-                               const CFX_PointF& point) = 0;
-  virtual bool OnMouseMove(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                           Mask<FWL_EVENTFLAG> nFlags,
-                           const CFX_PointF& point) = 0;
-  virtual bool OnMouseWheel(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                            Mask<FWL_EVENTFLAG> nFlags,
-                            const CFX_PointF& point,
-                            const CFX_Vector& delta) = 0;
-  virtual bool OnRButtonDown(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                             Mask<FWL_EVENTFLAG> nFlags,
-                             const CFX_PointF& point) = 0;
-  virtual bool OnRButtonUp(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                           Mask<FWL_EVENTFLAG> nFlags,
-                           const CFX_PointF& point) = 0;
-  virtual bool OnRButtonDblClk(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                               Mask<FWL_EVENTFLAG> nFlags,
-                               const CFX_PointF& point) = 0;
   virtual bool OnChar(CPDFSDK_Annot* pAnnot,
                       uint32_t nChar,
                       Mask<FWL_EVENTFLAG> nFlags) = 0;

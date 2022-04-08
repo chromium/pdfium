@@ -20,13 +20,15 @@ class CFX_Matrix;
 class CPDF_Dictionary;
 class CPDFSDK_PageView;
 
-class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
+class CPDFSDK_BAAnnot : public CPDFSDK_Annot,
+                        CPDFSDK_Annot::UnsafeInputHandlers {
  public:
   CPDFSDK_BAAnnot(CPDF_Annot* pAnnot, CPDFSDK_PageView* pPageView);
   ~CPDFSDK_BAAnnot() override;
 
   // CPDFSDK_Annot:
   CPDFSDK_BAAnnot* AsBAAnnot() override;
+  UnsafeInputHandlers* GetUnsafeInputHandlers() override;
   CPDF_Annot::Subtype GetAnnotSubtype() const override;
   CFX_FloatRect GetRect() const override;
   CPDF_Annot* GetPDFAnnot() const override;
@@ -68,12 +70,34 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
 
   CPDF_AAction GetAAction() const;
 
-  void SetOpenState(bool bOpenState);
-
   CPDF_Dest GetDestination() const;
 
  protected:
   CPDF_Dictionary* GetAPDict() const;
+  void ClearCachedAnnotAP();
+
+ private:
+  // CPDFSDK_Annot::UnsafeInputHandlers:
+  void OnMouseEnter(Mask<FWL_EVENTFLAG> nFlags) override;
+  void OnMouseExit(Mask<FWL_EVENTFLAG> nFlags) override;
+  bool OnLButtonDown(Mask<FWL_EVENTFLAG> nFlags,
+                     const CFX_PointF& point) override;
+  bool OnLButtonUp(Mask<FWL_EVENTFLAG> nFlags,
+                   const CFX_PointF& point) override;
+  bool OnLButtonDblClk(Mask<FWL_EVENTFLAG> nFlags,
+                       const CFX_PointF& point) override;
+  bool OnMouseMove(Mask<FWL_EVENTFLAG> nFlags,
+                   const CFX_PointF& point) override;
+  bool OnMouseWheel(Mask<FWL_EVENTFLAG> nFlags,
+                    const CFX_PointF& point,
+                    const CFX_Vector& delta) override;
+  bool OnRButtonDown(Mask<FWL_EVENTFLAG> nFlags,
+                     const CFX_PointF& point) override;
+  bool OnRButtonUp(Mask<FWL_EVENTFLAG> nFlags,
+                   const CFX_PointF& point) override;
+
+  void SetOpenState(bool bOpenState);
+  void UpdateAnnotRects();
 
   UnownedPtr<CPDF_Annot> const m_pAnnot;
 };

@@ -16,13 +16,15 @@ class CPDFSDK_PageView;
 class CXFA_FFDocView;
 class CXFA_FFWidgetHandler;
 
-class CPDFXFA_Widget final : public CPDFSDK_Annot {
+class CPDFXFA_Widget final : public CPDFSDK_Annot,
+                             CPDFSDK_Annot::UnsafeInputHandlers {
  public:
   CPDFXFA_Widget(CXFA_FFWidget* pXFAFFWidget, CPDFSDK_PageView* pPageView);
   ~CPDFXFA_Widget() override;
 
   // CPDFSDK_Annot:
   CPDFXFA_Widget* AsXFAWidget() override;
+  UnsafeInputHandlers* GetUnsafeInputHandlers() override;
   CPDF_Annot::Subtype GetAnnotSubtype() const override;
   CFX_FloatRect GetRect() const override;
   bool DoHitTest(const CFX_PointF& point) override;
@@ -37,6 +39,25 @@ class CPDFXFA_Widget final : public CPDFSDK_Annot {
   bool OnChangedFocus();
 
  private:
+  // CPDFSDK_Annot::UnsafeInputHandlers:
+  void OnMouseEnter(Mask<FWL_EVENTFLAG> nFlags) override;
+  void OnMouseExit(Mask<FWL_EVENTFLAG> nFlags) override;
+  bool OnLButtonDown(Mask<FWL_EVENTFLAG> nFlags,
+                     const CFX_PointF& point) override;
+  bool OnLButtonUp(Mask<FWL_EVENTFLAG> nFlags,
+                   const CFX_PointF& point) override;
+  bool OnLButtonDblClk(Mask<FWL_EVENTFLAG> nFlags,
+                       const CFX_PointF& point) override;
+  bool OnMouseMove(Mask<FWL_EVENTFLAG> nFlags,
+                   const CFX_PointF& point) override;
+  bool OnMouseWheel(Mask<FWL_EVENTFLAG> nFlags,
+                    const CFX_PointF& point,
+                    const CFX_Vector& delta) override;
+  bool OnRButtonDown(Mask<FWL_EVENTFLAG> nFlags,
+                     const CFX_PointF& point) override;
+  bool OnRButtonUp(Mask<FWL_EVENTFLAG> nFlags,
+                   const CFX_PointF& point) override;
+
   CXFA_FFDocView* GetDocView();
   CXFA_FFWidgetHandler* GetWidgetHandler();
 

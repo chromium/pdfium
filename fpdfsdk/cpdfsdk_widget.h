@@ -137,6 +137,25 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
   CFX_Color GetFillPWLColor() const;
 
  private:
+  // CPDFSDK_Annot::UnsafeInputHandlers:
+  void OnMouseEnter(Mask<FWL_EVENTFLAG> nFlags) override;
+  void OnMouseExit(Mask<FWL_EVENTFLAG> nFlags) override;
+  bool OnLButtonDown(Mask<FWL_EVENTFLAG> nFlags,
+                     const CFX_PointF& point) override;
+  bool OnLButtonUp(Mask<FWL_EVENTFLAG> nFlags,
+                   const CFX_PointF& point) override;
+  bool OnLButtonDblClk(Mask<FWL_EVENTFLAG> nFlags,
+                       const CFX_PointF& point) override;
+  bool OnMouseMove(Mask<FWL_EVENTFLAG> nFlags,
+                   const CFX_PointF& point) override;
+  bool OnMouseWheel(Mask<FWL_EVENTFLAG> nFlags,
+                    const CFX_PointF& point,
+                    const CFX_Vector& delta) override;
+  bool OnRButtonDown(Mask<FWL_EVENTFLAG> nFlags,
+                     const CFX_PointF& point) override;
+  bool OnRButtonUp(Mask<FWL_EVENTFLAG> nFlags,
+                   const CFX_PointF& point) override;
+
   CFFL_InteractiveFormFiller* GetInteractiveFormFiller();
 
 #ifdef PDF_ENABLE_XFA

@@ -23,23 +23,6 @@
 #include "third_party/base/check.h"
 #include "third_party/base/containers/contains.h"
 
-namespace {
-
-void UpdateAnnotRects(CPDFSDK_BAAnnot* pBAAnnot) {
-  std::vector<CFX_FloatRect> rects;
-  rects.push_back(pBAAnnot->GetRect());
-  if (CPDF_Annot* pPopupAnnot = pBAAnnot->GetPDFPopupAnnot())
-    rects.push_back(pPopupAnnot->GetRect());
-
-  // Make the rects round up to avoid https://crbug.com/662804
-  for (CFX_FloatRect& rect : rects)
-    rect.Inflate(1, 1);
-
-  pBAAnnot->GetPageView()->UpdateRects(rects);
-}
-
-}  // namespace
-
 CPDFSDK_BAAnnotHandler::CPDFSDK_BAAnnotHandler() = default;
 
 CPDFSDK_BAAnnotHandler::~CPDFSDK_BAAnnotHandler() = default;
@@ -78,69 +61,6 @@ void CPDFSDK_BAAnnotHandler::OnDraw(CPDFSDK_Annot* pAnnot,
 
     CFX_DrawUtils::DrawFocusRect(pDevice, mtUser2Device, view_bounding_box);
   }
-}
-
-void CPDFSDK_BAAnnotHandler::OnMouseEnter(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                                          Mask<FWL_EVENTFLAG> nFlag) {
-  CPDFSDK_BAAnnot* pBAAnnot = pAnnot->AsBAAnnot();
-  pBAAnnot->SetOpenState(true);
-  UpdateAnnotRects(pBAAnnot);
-}
-
-void CPDFSDK_BAAnnotHandler::OnMouseExit(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                                         Mask<FWL_EVENTFLAG> nFlag) {
-  CPDFSDK_BAAnnot* pBAAnnot = pAnnot->AsBAAnnot();
-  pBAAnnot->SetOpenState(false);
-  UpdateAnnotRects(pBAAnnot);
-}
-
-bool CPDFSDK_BAAnnotHandler::OnLButtonDown(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                                           Mask<FWL_EVENTFLAG> nFlags,
-                                           const CFX_PointF& point) {
-  return false;
-}
-
-bool CPDFSDK_BAAnnotHandler::OnLButtonUp(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                                         Mask<FWL_EVENTFLAG> nFlags,
-                                         const CFX_PointF& point) {
-  return false;
-}
-
-bool CPDFSDK_BAAnnotHandler::OnLButtonDblClk(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                                             Mask<FWL_EVENTFLAG> nFlags,
-                                             const CFX_PointF& point) {
-  return false;
-}
-
-bool CPDFSDK_BAAnnotHandler::OnMouseMove(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                                         Mask<FWL_EVENTFLAG> nFlags,
-                                         const CFX_PointF& point) {
-  return false;
-}
-
-bool CPDFSDK_BAAnnotHandler::OnMouseWheel(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                                          Mask<FWL_EVENTFLAG> nFlags,
-                                          const CFX_PointF& point,
-                                          const CFX_Vector& delta) {
-  return false;
-}
-
-bool CPDFSDK_BAAnnotHandler::OnRButtonDown(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                                           Mask<FWL_EVENTFLAG> nFlags,
-                                           const CFX_PointF& point) {
-  return false;
-}
-
-bool CPDFSDK_BAAnnotHandler::OnRButtonUp(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                                         Mask<FWL_EVENTFLAG> nFlags,
-                                         const CFX_PointF& point) {
-  return false;
-}
-
-bool CPDFSDK_BAAnnotHandler::OnRButtonDblClk(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                                             Mask<FWL_EVENTFLAG> nFlags,
-                                             const CFX_PointF& point) {
-  return false;
 }
 
 bool CPDFSDK_BAAnnotHandler::OnChar(CPDFSDK_Annot* pAnnot,

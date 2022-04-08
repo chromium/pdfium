@@ -14,6 +14,29 @@
 #include "xfa/fxfa/cxfa_ffwidgethandler.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
+namespace {
+
+Mask<XFA_FWL_KeyFlag> GetKeyFlags(Mask<FWL_EVENTFLAG> input) {
+  Mask<XFA_FWL_KeyFlag> results;
+
+  if (input & FWL_EVENTFLAG_ControlKey)
+    results |= XFA_FWL_KeyFlag::kCtrl;
+  if (input & FWL_EVENTFLAG_LeftButtonDown)
+    results |= XFA_FWL_KeyFlag::kLButton;
+  if (input & FWL_EVENTFLAG_MiddleButtonDown)
+    results |= XFA_FWL_KeyFlag::kMButton;
+  if (input & FWL_EVENTFLAG_RightButtonDown)
+    results |= XFA_FWL_KeyFlag::kRButton;
+  if (input & FWL_EVENTFLAG_ShiftKey)
+    results |= XFA_FWL_KeyFlag::kShift;
+  if (input & FWL_EVENTFLAG_AltKey)
+    results |= XFA_FWL_KeyFlag::kAlt;
+
+  return results;
+}
+
+}  // namespace
+
 CPDFXFA_Widget::CPDFXFA_Widget(CXFA_FFWidget* pXFAFFWidget,
                                CPDFSDK_PageView* pPageView)
     : CPDFSDK_Annot(pPageView), m_pXFAFFWidget(pXFAFFWidget) {}
@@ -21,6 +44,10 @@ CPDFXFA_Widget::CPDFXFA_Widget(CXFA_FFWidget* pXFAFFWidget,
 CPDFXFA_Widget::~CPDFXFA_Widget() = default;
 
 CPDFXFA_Widget* CPDFXFA_Widget::AsXFAWidget() {
+  return this;
+}
+
+CPDFSDK_Annot::UnsafeInputHandlers* CPDFXFA_Widget::GetUnsafeInputHandlers() {
   return this;
 }
 
@@ -66,6 +93,69 @@ CFX_FloatRect CPDFXFA_Widget::GetViewBBox() {
   CFX_FloatRect result = bbox.ToFloatRect();
   result.Inflate(1.0f, 1.0f);
   return result;
+}
+
+void CPDFXFA_Widget::OnMouseEnter(Mask<FWL_EVENTFLAG> nFlags) {
+  CXFA_FFWidgetHandler* widget_handler = GetWidgetHandler();
+  if (widget_handler)
+    widget_handler->OnMouseEnter(GetXFAFFWidget());
+}
+
+void CPDFXFA_Widget::OnMouseExit(Mask<FWL_EVENTFLAG> nFlags) {
+  CXFA_FFWidgetHandler* widget_handler = GetWidgetHandler();
+  if (widget_handler)
+    widget_handler->OnMouseExit(GetXFAFFWidget());
+}
+
+bool CPDFXFA_Widget::OnLButtonDown(Mask<FWL_EVENTFLAG> nFlags,
+                                   const CFX_PointF& point) {
+  CXFA_FFWidgetHandler* widget_handler = GetWidgetHandler();
+  return widget_handler && widget_handler->OnLButtonDown(
+                               GetXFAFFWidget(), GetKeyFlags(nFlags), point);
+}
+
+bool CPDFXFA_Widget::OnLButtonUp(Mask<FWL_EVENTFLAG> nFlags,
+                                 const CFX_PointF& point) {
+  CXFA_FFWidgetHandler* widget_handler = GetWidgetHandler();
+  return widget_handler && widget_handler->OnLButtonUp(
+                               GetXFAFFWidget(), GetKeyFlags(nFlags), point);
+}
+
+bool CPDFXFA_Widget::OnLButtonDblClk(Mask<FWL_EVENTFLAG> nFlags,
+                                     const CFX_PointF& point) {
+  CXFA_FFWidgetHandler* widget_handler = GetWidgetHandler();
+  return widget_handler && widget_handler->OnLButtonDblClk(
+                               GetXFAFFWidget(), GetKeyFlags(nFlags), point);
+}
+
+bool CPDFXFA_Widget::OnMouseMove(Mask<FWL_EVENTFLAG> nFlags,
+                                 const CFX_PointF& point) {
+  CXFA_FFWidgetHandler* widget_handler = GetWidgetHandler();
+  return widget_handler && widget_handler->OnMouseMove(
+                               GetXFAFFWidget(), GetKeyFlags(nFlags), point);
+}
+
+bool CPDFXFA_Widget::OnMouseWheel(Mask<FWL_EVENTFLAG> nFlags,
+                                  const CFX_PointF& point,
+                                  const CFX_Vector& delta) {
+  CXFA_FFWidgetHandler* widget_handler = GetWidgetHandler();
+  return widget_handler &&
+         widget_handler->OnMouseWheel(GetXFAFFWidget(), GetKeyFlags(nFlags),
+                                      point, delta);
+}
+
+bool CPDFXFA_Widget::OnRButtonDown(Mask<FWL_EVENTFLAG> nFlags,
+                                   const CFX_PointF& point) {
+  CXFA_FFWidgetHandler* widget_handler = GetWidgetHandler();
+  return widget_handler && widget_handler->OnRButtonDown(
+                               GetXFAFFWidget(), GetKeyFlags(nFlags), point);
+}
+
+bool CPDFXFA_Widget::OnRButtonUp(Mask<FWL_EVENTFLAG> nFlags,
+                                 const CFX_PointF& point) {
+  CXFA_FFWidgetHandler* widget_handler = GetWidgetHandler();
+  return widget_handler && widget_handler->OnRButtonUp(
+                               GetXFAFFWidget(), GetKeyFlags(nFlags), point);
 }
 
 bool CPDFXFA_Widget::CanUndo() {
