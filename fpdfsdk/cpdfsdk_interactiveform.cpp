@@ -27,7 +27,6 @@
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_path.h"
-#include "fpdfsdk/cpdfsdk_actionhandler.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_annotiterator.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
@@ -362,8 +361,8 @@ bool CPDFSDK_InteractiveForm::OnKeyStrokeCommit(CPDF_FormField* pFormField,
   fa.bModifier = false;
   fa.bShift = false;
   fa.sValue = csValue;
-  m_pFormFillEnv->GetActionHandler()->DoAction_FieldJavaScript(
-      action, CPDF_AAction::kKeyStroke, m_pFormFillEnv.Get(), pFormField, &fa);
+  m_pFormFillEnv->DoActionFieldJavaScript(action, CPDF_AAction::kKeyStroke,
+                                          pFormField, &fa);
   return fa.bRC;
 }
 
@@ -381,8 +380,8 @@ bool CPDFSDK_InteractiveForm::OnValidate(CPDF_FormField* pFormField,
   fa.bModifier = false;
   fa.bShift = false;
   fa.sValue = csValue;
-  m_pFormFillEnv->GetActionHandler()->DoAction_FieldJavaScript(
-      action, CPDF_AAction::kValidate, m_pFormFillEnv.Get(), pFormField, &fa);
+  m_pFormFillEnv->DoActionFieldJavaScript(action, CPDF_AAction::kValidate,
+                                          pFormField, &fa);
   return fa.bRC;
 }
 

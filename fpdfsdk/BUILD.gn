@@ -7,8 +7,6 @@ import("../testing/test.gni")
 
 source_set("fpdfsdk") {
   sources = [
-    "cpdfsdk_actionhandler.cpp",
-    "cpdfsdk_actionhandler.h",
     "cpdfsdk_annot.cpp",
     "cpdfsdk_annot.h",
     "cpdfsdk_annotiteration.cpp",

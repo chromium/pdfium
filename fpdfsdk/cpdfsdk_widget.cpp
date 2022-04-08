@@ -26,7 +26,6 @@
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_path.h"
 #include "core/fxge/cfx_renderdevice.h"
-#include "fpdfsdk/cpdfsdk_actionhandler.h"
 #include "fpdfsdk/cpdfsdk_appstream.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
@@ -1024,8 +1023,7 @@ bool CPDFSDK_Widget::OnAAction(CPDF_AAction::AActionType type,
 
   CPDF_Action action = GetAAction(type);
   if (action.GetType() != CPDF_Action::Type::kUnknown) {
-    pFormFillEnv->GetActionHandler()->DoAction_Field(action, type, pFormFillEnv,
-                                                     GetFormField(), data);
+    pFormFillEnv->DoActionField(action, type, GetFormField(), data);
   }
   return false;
 }

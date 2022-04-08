@@ -20,7 +20,6 @@
 #include "core/fpdfdoc/cpdf_formfield.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
-#include "fpdfsdk/cpdfsdk_actionhandler.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
@@ -775,11 +774,8 @@ FPDF_EXPORT void FPDF_CALLCONV FORM_DoDocumentAAction(FPDF_FORMHANDLE hHandle,
 
   CPDF_AAction aa(pDict->GetDictFor(pdfium::form_fields::kAA));
   auto type = static_cast<CPDF_AAction::AActionType>(aaType);
-  if (aa.ActionExist(type)) {
-    CPDF_Action action = aa.GetAction(type);
-    pFormFillEnv->GetActionHandler()->DoAction_Document(action, type,
-                                                        pFormFillEnv);
-  }
+  if (aa.ActionExist(type))
+    pFormFillEnv->DoActionDocument(aa.GetAction(type), type);
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FORM_DoPageAAction(FPDF_PAGE page,
@@ -798,16 +794,13 @@ FPDF_EXPORT void FPDF_CALLCONV FORM_DoPageAAction(FPDF_PAGE page,
   if (!pFormFillEnv->GetPageView(pPage))
     return;
 
-  CPDFSDK_ActionHandler* pActionHandler = pFormFillEnv->GetActionHandler();
   CPDF_Dictionary* pPageDict = pPDFPage->GetDict();
   CPDF_AAction aa(pPageDict->GetDictFor(pdfium::form_fields::kAA));
   CPDF_AAction::AActionType type = aaType == FPDFPAGE_AACTION_OPEN
                                        ? CPDF_AAction::kOpenPage
                                        : CPDF_AAction::kClosePage;
-  if (aa.ActionExist(type)) {
-    CPDF_Action action = aa.GetAction(type);
-    pActionHandler->DoAction_Page(action, type, pFormFillEnv);
-  }
+  if (aa.ActionExist(type))
+    pFormFillEnv->DoActionPage(aa.GetAction(type), type);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -816,15 +809,11 @@ FORM_SetIndexSelected(FPDF_FORMHANDLE hHandle,
                       int index,
                       FPDF_BOOL selected) {
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
-  if (!pPageView)
-    return false;
-  return pPageView->SetIndexSelected(index, selected);
+  return pPageView && pPageView->SetIndexSelected(index, selected);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FORM_IsIndexSelected(FPDF_FORMHANDLE hHandle, FPDF_PAGE page, int index) {
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
-  if (!pPageView)
-    return false;
-  return pPageView->IsIndexSelected(index);
+  return pPageView && pPageView->IsIndexSelected(index);
 }

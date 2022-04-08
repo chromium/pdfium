@@ -21,7 +21,6 @@
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxge/cfx_drawutils.h"
-#include "fpdfsdk/cpdfsdk_actionhandler.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "third_party/base/check.h"
@@ -352,13 +351,11 @@ bool CPDFSDK_BAAnnot::OnKeyDown(FWL_VKEYCODE nKeyCode,
 
   CPDF_Action action = GetAAction(CPDF_AAction::kKeyStroke);
   CPDFSDK_FormFillEnvironment* env = m_pPageView->GetFormFillEnv();
-  CPDFSDK_ActionHandler* action_handler = env->GetActionHandler();
   if (action.GetDict()) {
-    return action_handler->DoAction_Link(action, CPDF_AAction::kKeyStroke, env,
-                                         nFlags);
+    return env->DoActionLink(action, CPDF_AAction::kKeyStroke, nFlags);
   }
 
-  return action_handler->DoAction_Destination(GetDestination(), env);
+  return env->DoActionDestination(GetDestination());
 }
 
 bool CPDFSDK_BAAnnot::OnSetFocus(Mask<FWL_EVENTFLAG> nFlags) {
