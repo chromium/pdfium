@@ -1,0 +1,29 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /]
+  /Subtype /Widget
+  /T (0)
+  /FT /Ch
+  /AA <<
+    /F 5 0 R
+  >>
+  /Annots 4 0 R
+4 0 obj [3 0 R /Ff 393216]
+  /AP<</N<<>>
+stream
+{{object 5 0}} <<
+  /JS (app.alert('done'))
+>>
+endobj
+{{trailer}}
+%%EOF
