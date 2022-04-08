@@ -46,60 +46,6 @@ std::unique_ptr<CPDFSDK_Annot> CPDFSDK_WidgetHandler::NewAnnot(
   return pWidget;
 }
 
-void CPDFSDK_WidgetHandler::OnDraw(CPDFSDK_Annot* pAnnot,
-                                   CFX_RenderDevice* pDevice,
-                                   const CFX_Matrix& mtUser2Device,
-                                   bool bDrawAnnots) {
-  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
-  if (pWidget->IsSignatureWidget()) {
-    pWidget->DrawAppearance(pDevice, mtUser2Device,
-                            CPDF_Annot::AppearanceMode::kNormal);
-  } else {
-    GetFormFillEnvironment()->GetInteractiveFormFiller()->OnDraw(
-        pWidget->GetPageView(), pWidget, pDevice, mtUser2Device);
-  }
-}
-
-bool CPDFSDK_WidgetHandler::OnChar(CPDFSDK_Annot* pAnnot,
-                                   uint32_t nChar,
-                                   Mask<FWL_EVENTFLAG> nFlags) {
-  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
-  return !pWidget->IsSignatureWidget() &&
-         GetFormFillEnvironment()->GetInteractiveFormFiller()->OnChar(
-             pWidget, nChar, nFlags);
-}
-
-bool CPDFSDK_WidgetHandler::OnKeyDown(CPDFSDK_Annot* pAnnot,
-                                      FWL_VKEYCODE nKeyCode,
-                                      Mask<FWL_EVENTFLAG> nFlag) {
-  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
-  return !pWidget->IsSignatureWidget() &&
-         GetFormFillEnvironment()->GetInteractiveFormFiller()->OnKeyDown(
-             pWidget, nKeyCode, nFlag);
-}
-
-bool CPDFSDK_WidgetHandler::OnSetFocus(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                                       Mask<FWL_EVENTFLAG> nFlag) {
-  if (!IsFocusableAnnot(pAnnot->GetPDFAnnot()->GetSubtype()))
-    return false;
-
-  ObservedPtr<CPDFSDK_Widget> pWidget(ToCPDFSDKWidget(pAnnot.Get()));
-  return pWidget->IsSignatureWidget() ||
-         GetFormFillEnvironment()->GetInteractiveFormFiller()->OnSetFocus(
-             pWidget, nFlag);
-}
-
-bool CPDFSDK_WidgetHandler::OnKillFocus(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                                        Mask<FWL_EVENTFLAG> nFlag) {
-  if (!IsFocusableAnnot(pAnnot->GetPDFAnnot()->GetSubtype()))
-    return false;
-
-  ObservedPtr<CPDFSDK_Widget> pWidget(ToCPDFSDKWidget(pAnnot.Get()));
-  return pWidget->IsSignatureWidget() ||
-         GetFormFillEnvironment()->GetInteractiveFormFiller()->OnKillFocus(
-             pWidget, nFlag);
-}
-
 bool CPDFSDK_WidgetHandler::SetIndexSelected(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                              int index,
                                              bool selected) {

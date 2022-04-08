@@ -13,7 +13,6 @@
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_widget.h"
 #include "third_party/base/check.h"
-#include "xfa/fgas/graphics/cfgas_gegraphics.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/fwl_widgetdef.h"
 #include "xfa/fwl/fwl_widgethit.h"
@@ -210,22 +209,6 @@ std::unique_ptr<CPDFSDK_Annot> CPDFXFA_WidgetHandler::NewAnnot(
   return nullptr;
 }
 
-void CPDFXFA_WidgetHandler::OnDraw(CPDFSDK_Annot* pAnnot,
-                                   CFX_RenderDevice* pDevice,
-                                   const CFX_Matrix& mtUser2Device,
-                                   bool bDrawAnnots) {
-  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
-  bool bIsHighlight = false;
-  if (GetFormFillEnvironment()->GetFocusAnnot() != pAnnot)
-    bIsHighlight = true;
-
-  CFGAS_GEGraphics gs(pDevice);
-  GetXFAFFWidgetHandler()->RenderWidget(pXFAWidget->GetXFAFFWidget(), &gs,
-                                        mtUser2Device, bIsHighlight);
-
-  // to do highlight and shadow
-}
-
 WideString CPDFXFA_WidgetHandler::GetText(CPDFSDK_Annot* pAnnot) {
   CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
   CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler();
@@ -249,45 +232,6 @@ bool CPDFXFA_WidgetHandler::SelectAllText(CPDFSDK_Annot* pAnnot) {
   CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
   CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler();
   return pWidgetHandler->SelectAllText(pXFAWidget->GetXFAFFWidget());
-}
-
-bool CPDFXFA_WidgetHandler::OnChar(CPDFSDK_Annot* pAnnot,
-                                   uint32_t nChar,
-                                   Mask<FWL_EVENTFLAG> nFlags) {
-  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
-  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler();
-  return pWidgetHandler->OnChar(pXFAWidget->GetXFAFFWidget(), nChar,
-                                GetKeyFlags(nFlags));
-}
-
-bool CPDFXFA_WidgetHandler::OnKeyDown(CPDFSDK_Annot* pAnnot,
-                                      FWL_VKEYCODE nKeyCode,
-                                      Mask<FWL_EVENTFLAG> nFlag) {
-  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
-  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler();
-  return pWidgetHandler->OnKeyDown(pXFAWidget->GetXFAFFWidget(),
-                                   static_cast<XFA_FWL_VKEYCODE>(nKeyCode),
-                                   GetKeyFlags(nFlag));
-}
-
-bool CPDFXFA_WidgetHandler::OnSetFocus(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                                       Mask<FWL_EVENTFLAG> nFlag) {
-  return true;
-}
-
-bool CPDFXFA_WidgetHandler::OnKillFocus(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                                        Mask<FWL_EVENTFLAG> nFlag) {
-  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot.Get());
-  CXFA_FFWidget* hWidget = pXFAWidget->GetXFAFFWidget();
-  if (!hWidget)
-    return true;
-
-  CXFA_FFPageView* pXFAPageView = hWidget->GetPageView();
-  if (!pXFAPageView)
-    return true;
-
-  pXFAPageView->GetDocView()->SetFocus(nullptr);
-  return true;
 }
 
 bool CPDFXFA_WidgetHandler::SetIndexSelected(ObservedPtr<CPDFSDK_Annot>& pAnnot,

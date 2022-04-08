@@ -76,16 +76,16 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   bool Undo();
   bool Redo();
 
-  bool OnFocus(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point);
-  bool OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point);
-  bool OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point);
-  bool OnLButtonDblClk(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point);
-  bool OnRButtonDown(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point);
-  bool OnRButtonUp(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point);
-  bool OnChar(uint32_t nChar, Mask<FWL_EVENTFLAG> nFlag);
-  bool OnKeyDown(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlag);
-  bool OnMouseMove(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point);
-  bool OnMouseWheel(Mask<FWL_EVENTFLAG> nFlag,
+  bool OnFocus(Mask<FWL_EVENTFLAG> nFlags, const CFX_PointF& point);
+  bool OnLButtonDown(Mask<FWL_EVENTFLAG> nFlags, const CFX_PointF& point);
+  bool OnLButtonUp(Mask<FWL_EVENTFLAG> nFlags, const CFX_PointF& point);
+  bool OnLButtonDblClk(Mask<FWL_EVENTFLAG> nFlags, const CFX_PointF& point);
+  bool OnRButtonDown(Mask<FWL_EVENTFLAG> nFlags, const CFX_PointF& point);
+  bool OnRButtonUp(Mask<FWL_EVENTFLAG> nFlags, const CFX_PointF& point);
+  bool OnChar(uint32_t nChar, Mask<FWL_EVENTFLAG> nFlags);
+  bool OnKeyDown(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlags);
+  bool OnMouseMove(Mask<FWL_EVENTFLAG> nFlags, const CFX_PointF& point);
+  bool OnMouseWheel(Mask<FWL_EVENTFLAG> nFlags,
                     const CFX_PointF& point,
                     const CFX_Vector& delta);
 
@@ -116,8 +116,8 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   int GetPageIndexForStaticPDF() const;
 
   void EnterWidget(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                   Mask<FWL_EVENTFLAG> nFlag);
-  void ExitWidget(bool callExitCallback, Mask<FWL_EVENTFLAG> nFlag);
+                   Mask<FWL_EVENTFLAG> nFlags);
+  void ExitWidget(bool callExitCallback, Mask<FWL_EVENTFLAG> nFlags);
 
   CFX_Matrix m_curMatrix;
   UnownedPtr<IPDF_Page> const m_page;

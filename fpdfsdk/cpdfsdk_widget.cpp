@@ -674,6 +674,18 @@ void CPDFSDK_Widget::ResetFieldAppearance() {
   m_pInteractiveForm->ResetFieldAppearance(pFormField, absl::nullopt);
 }
 
+void CPDFSDK_Widget::OnDraw(CFX_RenderDevice* pDevice,
+                            const CFX_Matrix& mtUser2Device,
+                            bool bDrawAnnots) {
+  if (IsSignatureWidget()) {
+    DrawAppearance(pDevice, mtUser2Device, CPDF_Annot::AppearanceMode::kNormal);
+    return;
+  }
+
+  GetInteractiveFormFiller()->OnDraw(GetPageView(), this, pDevice,
+                                     mtUser2Device);
+}
+
 bool CPDFSDK_Widget::DoHitTest(const CFX_PointF& point) {
   if (IsSignatureWidget() || !IsVisible())
     return false;
@@ -783,6 +795,39 @@ bool CPDFSDK_Widget::OnRButtonUp(Mask<FWL_EVENTFLAG> nFlags,
   ObservedPtr<CPDFSDK_Widget> observer(this);
   return GetInteractiveFormFiller()->OnRButtonUp(GetPageView(), observer,
                                                  nFlags, point);
+}
+
+bool CPDFSDK_Widget::OnChar(uint32_t nChar, Mask<FWL_EVENTFLAG> nFlags) {
+  return !IsSignatureWidget() &&
+         GetInteractiveFormFiller()->OnChar(this, nChar, nFlags);
+}
+
+bool CPDFSDK_Widget::OnKeyDown(FWL_VKEYCODE nKeyCode,
+                               Mask<FWL_EVENTFLAG> nFlags) {
+  return !IsSignatureWidget() &&
+         GetInteractiveFormFiller()->OnKeyDown(this, nKeyCode, nFlags);
+}
+
+bool CPDFSDK_Widget::OnSetFocus(Mask<FWL_EVENTFLAG> nFlags) {
+  if (!IsFocusableAnnot(GetPDFAnnot()->GetSubtype()))
+    return false;
+
+  if (IsSignatureWidget())
+    return true;
+
+  ObservedPtr<CPDFSDK_Widget> observer(this);
+  return GetInteractiveFormFiller()->OnSetFocus(observer, nFlags);
+}
+
+bool CPDFSDK_Widget::OnKillFocus(Mask<FWL_EVENTFLAG> nFlags) {
+  if (!IsFocusableAnnot(GetPDFAnnot()->GetSubtype()))
+    return false;
+
+  if (IsSignatureWidget())
+    return true;
+
+  ObservedPtr<CPDFSDK_Widget> observer(this);
+  return GetInteractiveFormFiller()->OnKillFocus(observer, nFlags);
 }
 
 bool CPDFSDK_Widget::CanUndo() {

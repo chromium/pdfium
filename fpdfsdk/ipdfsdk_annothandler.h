@@ -17,8 +17,6 @@
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "public/fpdf_fwlevent.h"
 
-class CFX_Matrix;
-class CFX_RenderDevice;
 class CPDF_Annot;
 class CPDFSDK_FormFillEnvironment;
 class CPDFSDK_PageView;
@@ -44,20 +42,6 @@ class IPDFSDK_AnnotHandler {
   virtual void ReplaceSelection(CPDFSDK_Annot* pAnnot,
                                 const WideString& text) = 0;
   virtual bool SelectAllText(CPDFSDK_Annot* pAnnot) = 0;
-  virtual void OnDraw(CPDFSDK_Annot* pAnnot,
-                      CFX_RenderDevice* pDevice,
-                      const CFX_Matrix& mtUser2Device,
-                      bool bDrawAnnots) = 0;
-  virtual bool OnChar(CPDFSDK_Annot* pAnnot,
-                      uint32_t nChar,
-                      Mask<FWL_EVENTFLAG> nFlags) = 0;
-  virtual bool OnKeyDown(CPDFSDK_Annot* pAnnot,
-                         FWL_VKEYCODE nKeyCode,
-                         Mask<FWL_EVENTFLAG> nFlag) = 0;
-  virtual bool OnSetFocus(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                          Mask<FWL_EVENTFLAG> nFlag) = 0;
-  virtual bool OnKillFocus(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                           Mask<FWL_EVENTFLAG> nFlag) = 0;
   virtual bool SetIndexSelected(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                 int index,
                                 bool selected) = 0;

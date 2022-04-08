@@ -775,8 +775,7 @@ bool CPDFSDK_FormFillEnvironment::SetFocusAnnot(
     return false;
 #endif  // PDF_ENABLE_XFA
 
-  CPDFSDK_AnnotHandlerMgr* pAnnotHandler = GetAnnotHandlerMgr();
-  if (!pAnnotHandler->Annot_OnSetFocus(pAnnot, {}))
+  if (!CPDFSDK_Annot::OnSetFocus(pAnnot, {}))
     return false;
   if (m_pFocusAnnot)
     return false;
@@ -789,20 +788,19 @@ bool CPDFSDK_FormFillEnvironment::SetFocusAnnot(
   return true;
 }
 
-bool CPDFSDK_FormFillEnvironment::KillFocusAnnot(Mask<FWL_EVENTFLAG> nFlag) {
+bool CPDFSDK_FormFillEnvironment::KillFocusAnnot(Mask<FWL_EVENTFLAG> nFlags) {
   if (!m_pFocusAnnot)
     return false;
 
-  CPDFSDK_AnnotHandlerMgr* pAnnotHandler = GetAnnotHandlerMgr();
   ObservedPtr<CPDFSDK_Annot> pFocusAnnot(m_pFocusAnnot.Get());
   m_pFocusAnnot.Reset();
 
-  if (!pAnnotHandler->Annot_OnKillFocus(pFocusAnnot, nFlag)) {
+  if (!CPDFSDK_Annot::OnKillFocus(pFocusAnnot, nFlags)) {
     m_pFocusAnnot.Reset(pFocusAnnot.Get());
     return false;
   }
 
-  // Might have been destroyed by Annot_OnKillFocus().
+  // Might have been destroyed by OnKillFocus().
   if (!pFocusAnnot)
     return false;
 

@@ -86,6 +86,32 @@ bool CPDFSDK_Annot::OnRButtonUp(ObservedPtr<CPDFSDK_Annot>& pAnnot,
   return pAnnot->GetUnsafeInputHandlers()->OnRButtonUp(nFlags, point);
 }
 
+// static
+bool CPDFSDK_Annot::OnChar(ObservedPtr<CPDFSDK_Annot>& pAnnot,
+                           uint32_t nChar,
+                           Mask<FWL_EVENTFLAG> nFlags) {
+  return pAnnot->GetUnsafeInputHandlers()->OnChar(nChar, nFlags);
+}
+
+// static
+bool CPDFSDK_Annot::OnKeyDown(ObservedPtr<CPDFSDK_Annot>& pAnnot,
+                              FWL_VKEYCODE nKeyCode,
+                              Mask<FWL_EVENTFLAG> nFlags) {
+  return pAnnot->GetUnsafeInputHandlers()->OnKeyDown(nKeyCode, nFlags);
+}
+
+// static
+bool CPDFSDK_Annot::OnSetFocus(ObservedPtr<CPDFSDK_Annot>& pAnnot,
+                               Mask<FWL_EVENTFLAG> nFlags) {
+  return pAnnot->GetUnsafeInputHandlers()->OnSetFocus(nFlags);
+}
+
+// static
+bool CPDFSDK_Annot::OnKillFocus(ObservedPtr<CPDFSDK_Annot>& pAnnot,
+                                Mask<FWL_EVENTFLAG> nFlags) {
+  return pAnnot->GetUnsafeInputHandlers()->OnKillFocus(nFlags);
+}
+
 IPDF_Page* CPDFSDK_Annot::GetXFAPage() {
 #ifdef PDF_ENABLE_XFA
   return m_pPageView->GetXFAPage();

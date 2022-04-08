@@ -6,8 +6,11 @@
 
 #include "fpdfsdk/fpdfxfa/cpdfxfa_widget.h"
 
+#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
+#include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/ipdfsdk_annothandler.h"
 #include "third_party/base/check.h"
+#include "xfa/fgas/graphics/cfgas_gegraphics.h"
 #include "xfa/fxfa/cxfa_ffdocview.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
@@ -57,6 +60,21 @@ CPDF_Annot::Subtype CPDFXFA_Widget::GetAnnotSubtype() const {
 
 CFX_FloatRect CPDFXFA_Widget::GetRect() const {
   return GetXFAFFWidget()->GetLayoutItem()->GetAbsoluteRect().ToFloatRect();
+}
+
+void CPDFXFA_Widget::OnDraw(CFX_RenderDevice* pDevice,
+                            const CFX_Matrix& mtUser2Device,
+                            bool bDrawAnnots) {
+  CXFA_FFWidgetHandler* widget_handler = GetWidgetHandler();
+  if (!widget_handler)
+    return;
+
+  CFGAS_GEGraphics gs(pDevice);
+  bool is_highlight = m_pPageView->GetFormFillEnv()->GetFocusAnnot() != this;
+  widget_handler->RenderWidget(GetXFAFFWidget(), &gs, mtUser2Device,
+                               is_highlight);
+
+  // to do highlight and shadow
 }
 
 bool CPDFXFA_Widget::DoHitTest(const CFX_PointF& point) {
@@ -156,6 +174,32 @@ bool CPDFXFA_Widget::OnRButtonUp(Mask<FWL_EVENTFLAG> nFlags,
   CXFA_FFWidgetHandler* widget_handler = GetWidgetHandler();
   return widget_handler && widget_handler->OnRButtonUp(
                                GetXFAFFWidget(), GetKeyFlags(nFlags), point);
+}
+
+bool CPDFXFA_Widget::OnChar(uint32_t nChar, Mask<FWL_EVENTFLAG> nFlags) {
+  CXFA_FFWidgetHandler* widget_handler = GetWidgetHandler();
+  return widget_handler &&
+         widget_handler->OnChar(GetXFAFFWidget(), nChar, GetKeyFlags(nFlags));
+}
+
+bool CPDFXFA_Widget::OnKeyDown(FWL_VKEYCODE nKeyCode,
+                               Mask<FWL_EVENTFLAG> nFlags) {
+  CXFA_FFWidgetHandler* widget_handler = GetWidgetHandler();
+  return widget_handler &&
+         widget_handler->OnKeyDown(GetXFAFFWidget(),
+                                   static_cast<XFA_FWL_VKEYCODE>(nKeyCode),
+                                   GetKeyFlags(nFlags));
+}
+
+bool CPDFXFA_Widget::OnSetFocus(Mask<FWL_EVENTFLAG> nFlags) {
+  return true;
+}
+
+bool CPDFXFA_Widget::OnKillFocus(Mask<FWL_EVENTFLAG> nFlags) {
+  CXFA_FFDocView* doc_view = GetDocView();
+  if (doc_view)
+    doc_view->SetFocus(nullptr);
+  return true;
 }
 
 bool CPDFXFA_Widget::CanUndo() {

@@ -82,40 +82,6 @@ IPDFSDK_AnnotHandler* CPDFSDK_AnnotHandlerMgr::GetAnnotHandlerOfType(
   return m_pBAAnnotHandler.get();
 }
 
-void CPDFSDK_AnnotHandlerMgr::Annot_OnDraw(CPDFSDK_Annot* pAnnot,
-                                           CFX_RenderDevice* pDevice,
-                                           const CFX_Matrix& mtUser2Device,
-                                           bool bDrawAnnots) {
-  DCHECK(pAnnot);
-  GetAnnotHandler(pAnnot)->OnDraw(pAnnot, pDevice, mtUser2Device, bDrawAnnots);
-}
-
-bool CPDFSDK_AnnotHandlerMgr::Annot_OnChar(CPDFSDK_Annot* pAnnot,
-                                           uint32_t nChar,
-                                           Mask<FWL_EVENTFLAG> nFlags) {
-  return GetAnnotHandler(pAnnot)->OnChar(pAnnot, nChar, nFlags);
-}
-
-bool CPDFSDK_AnnotHandlerMgr::Annot_OnKeyDown(CPDFSDK_Annot* pAnnot,
-                                              FWL_VKEYCODE nKeyCode,
-                                              Mask<FWL_EVENTFLAG> nFlag) {
-  return GetAnnotHandler(pAnnot)->OnKeyDown(pAnnot, nKeyCode, nFlag);
-}
-
-bool CPDFSDK_AnnotHandlerMgr::Annot_OnSetFocus(
-    ObservedPtr<CPDFSDK_Annot>& pAnnot,
-    Mask<FWL_EVENTFLAG> nFlag) {
-  DCHECK(pAnnot);
-  return GetAnnotHandler(pAnnot.Get())->OnSetFocus(pAnnot, nFlag);
-}
-
-bool CPDFSDK_AnnotHandlerMgr::Annot_OnKillFocus(
-    ObservedPtr<CPDFSDK_Annot>& pAnnot,
-    Mask<FWL_EVENTFLAG> nFlag) {
-  DCHECK(pAnnot);
-  return GetAnnotHandler(pAnnot.Get())->OnKillFocus(pAnnot, nFlag);
-}
-
 bool CPDFSDK_AnnotHandlerMgr::Annot_SetIndexSelected(
     ObservedPtr<CPDFSDK_Annot>& pAnnot,
     int index,

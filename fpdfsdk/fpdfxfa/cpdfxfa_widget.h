@@ -27,6 +27,9 @@ class CPDFXFA_Widget final : public CPDFSDK_Annot,
   UnsafeInputHandlers* GetUnsafeInputHandlers() override;
   CPDF_Annot::Subtype GetAnnotSubtype() const override;
   CFX_FloatRect GetRect() const override;
+  void OnDraw(CFX_RenderDevice* pDevice,
+              const CFX_Matrix& mtUser2Device,
+              bool bDrawAnnots) override;
   bool DoHitTest(const CFX_PointF& point) override;
   CFX_FloatRect GetViewBBox() override;
   bool CanUndo() override;
@@ -57,6 +60,10 @@ class CPDFXFA_Widget final : public CPDFSDK_Annot,
                      const CFX_PointF& point) override;
   bool OnRButtonUp(Mask<FWL_EVENTFLAG> nFlags,
                    const CFX_PointF& point) override;
+  bool OnChar(uint32_t nChar, Mask<FWL_EVENTFLAG> nFlags) override;
+  bool OnKeyDown(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlags) override;
+  bool OnSetFocus(Mask<FWL_EVENTFLAG> nFlags) override;
+  bool OnKillFocus(Mask<FWL_EVENTFLAG> nFlags) override;
 
   CXFA_FFDocView* GetDocView();
   CXFA_FFWidgetHandler* GetWidgetHandler();

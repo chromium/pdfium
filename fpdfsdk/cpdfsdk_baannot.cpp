@@ -20,8 +20,12 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
+#include "core/fxge/cfx_drawutils.h"
+#include "fpdfsdk/cpdfsdk_actionhandler.h"
+#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "third_party/base/check.h"
+#include "third_party/base/containers/contains.h"
 
 CPDFSDK_BAAnnot::CPDFSDK_BAAnnot(CPDF_Annot* pAnnot,
                                  CPDFSDK_PageView* pPageView)
@@ -55,6 +59,12 @@ CPDF_Dictionary* CPDFSDK_BAAnnot::GetAPDict() const {
 
 void CPDFSDK_BAAnnot::ClearCachedAnnotAP() {
   m_pAnnot->ClearCachedAP();
+}
+
+bool CPDFSDK_BAAnnot::IsFocusableAnnot(
+    const CPDF_Annot::Subtype& annot_type) const {
+  return pdfium::Contains(
+      m_pPageView->GetFormFillEnv()->GetFocusableAnnotSubtypes(), annot_type);
 }
 
 CFX_FloatRect CPDFSDK_BAAnnot::GetRect() const {
@@ -229,11 +239,47 @@ void CPDFSDK_BAAnnot::UpdateAnnotRects() {
   GetPageView()->UpdateRects(rects);
 }
 
+void CPDFSDK_BAAnnot::InvalidateRect() {
+  CFX_FloatRect view_bounding_box = GetViewBBox();
+  if (view_bounding_box.IsEmpty())
+    return;
+
+  view_bounding_box.Inflate(1, 1);
+  view_bounding_box.Normalize();
+  FX_RECT rect = view_bounding_box.GetOuterRect();
+  m_pPageView->GetFormFillEnv()->Invalidate(GetPage(), rect);
+}
+
 int CPDFSDK_BAAnnot::GetLayoutOrder() const {
   if (m_pAnnot->GetSubtype() == CPDF_Annot::Subtype::POPUP)
     return 1;
 
   return CPDFSDK_Annot::GetLayoutOrder();
+}
+
+void CPDFSDK_BAAnnot::OnDraw(CFX_RenderDevice* pDevice,
+                             const CFX_Matrix& mtUser2Device,
+                             bool bDrawAnnots) {
+  if (!IsVisible())
+    return;
+
+  const CPDF_Annot::Subtype annot_type = GetAnnotSubtype();
+  if (bDrawAnnots && annot_type == CPDF_Annot::Subtype::POPUP) {
+    DrawAppearance(pDevice, mtUser2Device, CPDF_Annot::AppearanceMode::kNormal);
+    return;
+  }
+
+  if (!is_focused_ || !IsFocusableAnnot(annot_type) ||
+      this != m_pPageView->GetFormFillEnv()->GetFocusAnnot()) {
+    return;
+  }
+
+  CFX_FloatRect view_bounding_box = GetViewBBox();
+  if (view_bounding_box.IsEmpty())
+    return;
+
+  view_bounding_box.Normalize();
+  CFX_DrawUtils::DrawFocusRect(pDevice, mtUser2Device, view_bounding_box);
 }
 
 bool CPDFSDK_BAAnnot::DoHitTest(const CFX_PointF& point) {
@@ -288,6 +334,49 @@ bool CPDFSDK_BAAnnot::OnRButtonDown(Mask<FWL_EVENTFLAG> nFlags,
 bool CPDFSDK_BAAnnot::OnRButtonUp(Mask<FWL_EVENTFLAG> nFlags,
                                   const CFX_PointF& point) {
   return false;
+}
+
+bool CPDFSDK_BAAnnot::OnChar(uint32_t nChar, Mask<FWL_EVENTFLAG> nFlags) {
+  return false;
+}
+
+bool CPDFSDK_BAAnnot::OnKeyDown(FWL_VKEYCODE nKeyCode,
+                                Mask<FWL_EVENTFLAG> nFlags) {
+  // OnKeyDown() is implemented only for link annotations for now. As
+  // OnKeyDown() is implemented for other subtypes, following check should be
+  // modified.
+  if (nKeyCode != FWL_VKEY_Return ||
+      GetAnnotSubtype() != CPDF_Annot::Subtype::LINK) {
+    return false;
+  }
+
+  CPDF_Action action = GetAAction(CPDF_AAction::kKeyStroke);
+  CPDFSDK_FormFillEnvironment* env = m_pPageView->GetFormFillEnv();
+  CPDFSDK_ActionHandler* action_handler = env->GetActionHandler();
+  if (action.GetDict()) {
+    return action_handler->DoAction_Link(action, CPDF_AAction::kKeyStroke, env,
+                                         nFlags);
+  }
+
+  return action_handler->DoAction_Destination(GetDestination(), env);
+}
+
+bool CPDFSDK_BAAnnot::OnSetFocus(Mask<FWL_EVENTFLAG> nFlags) {
+  if (!IsFocusableAnnot(GetAnnotSubtype()))
+    return false;
+
+  is_focused_ = true;
+  InvalidateRect();
+  return true;
+}
+
+bool CPDFSDK_BAAnnot::OnKillFocus(Mask<FWL_EVENTFLAG> nFlags) {
+  if (!IsFocusableAnnot(GetAnnotSubtype()))
+    return false;
+
+  is_focused_ = false;
+  InvalidateRect();
+  return true;
 }
 
 bool CPDFSDK_BAAnnot::CanUndo() {

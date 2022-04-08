@@ -91,7 +91,7 @@ class CPDFSDK_FormFillEnvironment final
   void RemovePageView(IPDF_Page* pUnderlyingPage);
   void UpdateAllViews(CPDFSDK_Annot* pAnnot);
 
-  bool KillFocusAnnot(Mask<FWL_EVENTFLAG> nFlag);
+  bool KillFocusAnnot(Mask<FWL_EVENTFLAG> nFlags);
   void ClearAllFocusedAnnots();
 
   int GetPageCount() const;

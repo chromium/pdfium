@@ -16,8 +16,6 @@
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "public/fpdf_fwlevent.h"
 
-class CFX_Matrix;
-class CFX_RenderDevice;
 class CPDFSDK_FormFillEnvironment;
 class CPDFSDK_PageView;
 class IPDFSDK_AnnotHandler;
@@ -41,21 +39,6 @@ class CPDFSDK_AnnotHandlerMgr {
   void Annot_ReplaceSelection(CPDFSDK_Annot* pAnnot, const WideString& text);
   bool Annot_SelectAllText(CPDFSDK_Annot* pAnnot);
 
-  void Annot_OnDraw(CPDFSDK_Annot* pAnnot,
-                    CFX_RenderDevice* pDevice,
-                    const CFX_Matrix& mtUser2Device,
-                    bool bDrawAnnots);
-
-  bool Annot_OnChar(CPDFSDK_Annot* pAnnot,
-                    uint32_t nChar,
-                    Mask<FWL_EVENTFLAG> nFlags);
-  bool Annot_OnKeyDown(CPDFSDK_Annot* pAnnot,
-                       FWL_VKEYCODE nKeyCode,
-                       Mask<FWL_EVENTFLAG> nFlag);
-  bool Annot_OnSetFocus(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                        Mask<FWL_EVENTFLAG> nFlag);
-  bool Annot_OnKillFocus(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                         Mask<FWL_EVENTFLAG> nFlag);
   bool Annot_SetIndexSelected(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                               int index,
                               bool selected);

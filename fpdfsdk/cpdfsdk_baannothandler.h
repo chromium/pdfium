@@ -12,8 +12,6 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "fpdfsdk/ipdfsdk_annothandler.h"
 
-class CFX_Matrix;
-class CFX_RenderDevice;
 class CPDF_Annot;
 class CPDFSDK_Annot;
 class CPDFSDK_PageView;
@@ -31,31 +29,11 @@ class CPDFSDK_BAAnnotHandler final : public IPDFSDK_AnnotHandler {
   WideString GetSelectedText(CPDFSDK_Annot* pAnnot) override;
   void ReplaceSelection(CPDFSDK_Annot* pAnnot, const WideString& text) override;
   bool SelectAllText(CPDFSDK_Annot* pAnnot) override;
-  void OnDraw(CPDFSDK_Annot* pAnnot,
-              CFX_RenderDevice* pDevice,
-              const CFX_Matrix& mtUser2Device,
-              bool bDrawAnnots) override;
 
-  bool OnChar(CPDFSDK_Annot* pAnnot,
-              uint32_t nChar,
-              Mask<FWL_EVENTFLAG> nFlags) override;
-  bool OnKeyDown(CPDFSDK_Annot* pAnnot,
-                 FWL_VKEYCODE nKeyCode,
-                 Mask<FWL_EVENTFLAG> nFlag) override;
-  bool OnSetFocus(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                  Mask<FWL_EVENTFLAG> nFlag) override;
-  bool OnKillFocus(ObservedPtr<CPDFSDK_Annot>& pAnnot,
-                   Mask<FWL_EVENTFLAG> nFlag) override;
   bool SetIndexSelected(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                         int index,
                         bool selected) override;
   bool IsIndexSelected(ObservedPtr<CPDFSDK_Annot>& pAnnot, int index) override;
-
- private:
-  void InvalidateRect(CPDFSDK_Annot* annot);
-  bool IsFocusableAnnot(const CPDF_Annot::Subtype& annot_type) const;
-
-  bool is_annotation_focused_ = false;
 };
 
 #endif  // FPDFSDK_CPDFSDK_BAANNOTHANDLER_H_
