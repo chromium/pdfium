@@ -11,6 +11,8 @@
 #include "core/fpdfapi/cmaps/Japan1/cmaps_japan1.h"
 #include "core/fpdfapi/cmaps/Korea1/cmaps_korea1.h"
 #include "core/fpdfapi/font/cfx_stockfontarray.h"
+#include "core/fpdfapi/font/cpdf_cid2unicodemap.h"
+#include "core/fpdfapi/font/cpdf_cmap.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/contains.h"
@@ -18,6 +20,12 @@
 namespace {
 
 CPDF_FontGlobals* g_FontGlobals = nullptr;
+
+RetainPtr<const CPDF_CMap> LoadPredefinedCMap(ByteStringView name) {
+  if (!name.IsEmpty() && name[0] == '/')
+    name = name.Last(name.GetLength() - 1);
+  return pdfium::MakeRetain<CPDF_CMap>(name);
+}
 
 }  // namespace
 
@@ -100,4 +108,24 @@ void CPDF_FontGlobals::LoadEmbeddedKorea1CMaps() {
       CIDSET_KOREA1,
       pdfium::make_span(kFXCMAP_Korea1_cmaps, kFXCMAP_Korea1_cmaps_size));
   SetEmbeddedToUnicode(CIDSET_KOREA1, kFXCMAP_Korea1CID2Unicode_2);
+}
+
+RetainPtr<const CPDF_CMap> CPDF_FontGlobals::GetPredefinedCMap(
+    const ByteString& name) {
+  auto it = m_CMaps.find(name);
+  if (it != m_CMaps.end())
+    return it->second;
+
+  RetainPtr<const CPDF_CMap> pCMap = LoadPredefinedCMap(name.AsStringView());
+  if (!name.IsEmpty())
+    m_CMaps[name] = pCMap;
+
+  return pCMap;
+}
+
+CPDF_CID2UnicodeMap* CPDF_FontGlobals::GetCID2UnicodeMap(CIDSet charset) {
+  if (!m_CID2UnicodeMaps[charset]) {
+    m_CID2UnicodeMaps[charset] = std::make_unique<CPDF_CID2UnicodeMap>(charset);
+  }
+  return m_CID2UnicodeMaps[charset].get();
 }

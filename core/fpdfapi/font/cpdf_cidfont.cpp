@@ -431,7 +431,7 @@ bool CPDF_CIDFont::Load() {
   if (!pEncoding->IsName() && !pEncoding->IsStream())
     return false;
 
-  CPDF_CMapManager* manager = CPDF_FontGlobals::GetInstance()->GetCMapManager();
+  auto* pFontGlobals = CPDF_FontGlobals::GetInstance();
   const CPDF_Stream* pEncodingStream = pEncoding->AsStream();
   if (pEncodingStream) {
     auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pEncodingStream);
@@ -441,7 +441,7 @@ bool CPDF_CIDFont::Load() {
   } else {
     DCHECK(pEncoding->IsName());
     ByteString cmap = pEncoding->GetString();
-    m_pCMap = manager->GetPredefinedCMap(cmap);
+    m_pCMap = pFontGlobals->GetPredefinedCMap(cmap);
   }
 
   const CPDF_Dictionary* pFontDesc = pCIDFontDict->GetDictFor("FontDescriptor");
@@ -457,7 +457,7 @@ bool CPDF_CIDFont::Load() {
     }
   }
   if (m_Charset != CIDSET_UNKNOWN) {
-    m_pCID2UnicodeMap = manager->GetCID2UnicodeMap(m_Charset);
+    m_pCID2UnicodeMap = pFontGlobals->GetCID2UnicodeMap(m_Charset);
   }
   if (m_Font.GetFaceRec()) {
     if (m_FontType == CIDFontType::kType1)
@@ -852,9 +852,9 @@ void CPDF_CIDFont::LoadGB2312() {
   m_BaseFontName = m_pFontDict->GetStringFor("BaseFont");
   m_Charset = CIDSET_GB1;
 
-  CPDF_CMapManager* manager = CPDF_FontGlobals::GetInstance()->GetCMapManager();
-  m_pCMap = manager->GetPredefinedCMap("GBK-EUC-H");
-  m_pCID2UnicodeMap = manager->GetCID2UnicodeMap(m_Charset);
+  auto* pFontGlobals = CPDF_FontGlobals::GetInstance();
+  m_pCMap = pFontGlobals->GetPredefinedCMap("GBK-EUC-H");
+  m_pCID2UnicodeMap = pFontGlobals->GetCID2UnicodeMap(m_Charset);
   const CPDF_Dictionary* pFontDesc = m_pFontDict->GetDictFor("FontDescriptor");
   if (pFontDesc)
     LoadFontDescriptor(pFontDesc);

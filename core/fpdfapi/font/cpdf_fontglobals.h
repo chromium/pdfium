@@ -11,12 +11,13 @@
 #include <memory>
 
 #include "core/fpdfapi/cmaps/fpdf_cmaps.h"
-#include "core/fpdfapi/font/cpdf_cmapmanager.h"
+#include "core/fpdfapi/font/cpdf_cidfont.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "third_party/base/span.h"
 
 class CFX_StockFontArray;
+class CPDF_Font;
 
 class CPDF_FontGlobals {
  public:
@@ -48,7 +49,8 @@ class CPDF_FontGlobals {
     return m_EmbeddedToUnicodes[idx];
   }
 
-  CPDF_CMapManager* GetCMapManager() { return &m_CMapManager; }
+  RetainPtr<const CPDF_CMap> GetPredefinedCMap(const ByteString& name);
+  CPDF_CID2UnicodeMap* GetCID2UnicodeMap(CIDSet charset);
 
  private:
   CPDF_FontGlobals();
@@ -59,7 +61,8 @@ class CPDF_FontGlobals {
   void LoadEmbeddedJapan1CMaps();
   void LoadEmbeddedKorea1CMaps();
 
-  CPDF_CMapManager m_CMapManager;
+  std::map<ByteString, RetainPtr<const CPDF_CMap>> m_CMaps;
+  std::unique_ptr<CPDF_CID2UnicodeMap> m_CID2UnicodeMaps[CIDSET_NUM_SETS];
   pdfium::span<const FXCMAP_CMap> m_EmbeddedCharsets[CIDSET_NUM_SETS];
   pdfium::span<const uint16_t> m_EmbeddedToUnicodes[CIDSET_NUM_SETS];
   std::map<CPDF_Document*, std::unique_ptr<CFX_StockFontArray>> m_StockMap;

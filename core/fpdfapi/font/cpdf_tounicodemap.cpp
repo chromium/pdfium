@@ -135,8 +135,7 @@ void CPDF_ToUnicodeMap::Load(const CPDF_Stream* pStream) {
       cid_set = CIDSET_GB1;
   }
   if (cid_set != CIDSET_UNKNOWN) {
-    auto* manager = CPDF_FontGlobals::GetInstance()->GetCMapManager();
-    m_pBaseMap = manager->GetCID2UnicodeMap(cid_set);
+    m_pBaseMap = CPDF_FontGlobals::GetInstance()->GetCID2UnicodeMap(cid_set);
   }
 }
 

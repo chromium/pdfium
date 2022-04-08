@@ -17,8 +17,6 @@ source_set("font") {
     "cpdf_cidfont.h",
     "cpdf_cmap.cpp",
     "cpdf_cmap.h",
-    "cpdf_cmapmanager.cpp",
-    "cpdf_cmapmanager.h",
     "cpdf_cmapparser.cpp",
     "cpdf_cmapparser.h",
     "cpdf_font.cpp",
