@@ -72,9 +72,6 @@ class CXFA_FFWidgetHandler final
   bool OnKeyDown(CXFA_FFWidget* hWidget,
                  XFA_FWL_VKEYCODE dwKeyCode,
                  Mask<XFA_FWL_KeyFlag> dwFlags);
-  bool OnKeyUp(CXFA_FFWidget* hWidget,
-               XFA_FWL_VKEYCODE dwKeyCode,
-               Mask<XFA_FWL_KeyFlag> dwFlags);
   bool OnChar(CXFA_FFWidget* hWidget,
               uint32_t dwChar,
               Mask<XFA_FWL_KeyFlag> dwFlags);

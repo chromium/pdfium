@@ -117,12 +117,6 @@ bool CXFA_FFWidgetHandler::OnKeyDown(CXFA_FFWidget* hWidget,
   return bRet;
 }
 
-bool CXFA_FFWidgetHandler::OnKeyUp(CXFA_FFWidget* hWidget,
-                                   XFA_FWL_VKEYCODE dwKeyCode,
-                                   Mask<XFA_FWL_KeyFlag> dwFlags) {
-  return hWidget->OnKeyUp(dwKeyCode, dwFlags);
-}
-
 bool CXFA_FFWidgetHandler::OnChar(CXFA_FFWidget* hWidget,
                                   uint32_t dwChar,
                                   Mask<XFA_FWL_KeyFlag> dwFlags) {

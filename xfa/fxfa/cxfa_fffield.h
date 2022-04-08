@@ -61,8 +61,6 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   bool OnKillFocus(CXFA_FFWidget* pNewWidget) override WARN_UNUSED_RESULT;
   bool OnKeyDown(XFA_FWL_VKEYCODE dwKeyCode,
                  Mask<XFA_FWL_KeyFlag> dwFlags) override;
-  bool OnKeyUp(XFA_FWL_VKEYCODE dwKeyCode,
-               Mask<XFA_FWL_KeyFlag> dwFlags) override;
   bool OnChar(uint32_t dwChar, Mask<XFA_FWL_KeyFlag> dwFlags) override;
   FWL_WidgetHit HitTest(const CFX_PointF& point) override;
 

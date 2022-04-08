@@ -270,16 +270,6 @@ bool CPDFXFA_WidgetHandler::OnKeyDown(CPDFSDK_Annot* pAnnot,
                                    GetKeyFlags(nFlag));
 }
 
-bool CPDFXFA_WidgetHandler::OnKeyUp(CPDFSDK_Annot* pAnnot,
-                                    FWL_VKEYCODE nKeyCode,
-                                    Mask<FWL_EVENTFLAG> nFlag) {
-  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
-  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler();
-  return pWidgetHandler->OnKeyUp(pXFAWidget->GetXFAFFWidget(),
-                                 static_cast<XFA_FWL_VKEYCODE>(nKeyCode),
-                                 GetKeyFlags(nFlag));
-}
-
 bool CPDFXFA_WidgetHandler::OnSetFocus(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                        Mask<FWL_EVENTFLAG> nFlag) {
   return true;

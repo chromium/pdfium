@@ -44,9 +44,6 @@ class CPDFXFA_WidgetHandler final : public IPDFSDK_AnnotHandler {
   bool OnKeyDown(CPDFSDK_Annot* pAnnot,
                  FWL_VKEYCODE nKeyCode,
                  Mask<FWL_EVENTFLAG> nFlag) override;
-  bool OnKeyUp(CPDFSDK_Annot* pAnnot,
-               FWL_VKEYCODE nKeyCode,
-               Mask<FWL_EVENTFLAG> nFlag) override;
   bool OnSetFocus(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                   Mask<FWL_EVENTFLAG> nFlag) override;
   bool OnKillFocus(ObservedPtr<CPDFSDK_Annot>& pAnnot,

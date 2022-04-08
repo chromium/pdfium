@@ -504,11 +504,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnKeyUp(FPDF_FORMHANDLE hHandle,
                                                  FPDF_PAGE page,
                                                  int nKeyCode,
                                                  int modifier) {
-  CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
-  return pPageView &&
-         pPageView->OnKeyUp(
-             static_cast<FWL_VKEYCODE>(nKeyCode),
-             Mask<FWL_EVENTFLAG>::FromUnderlyingUnchecked(modifier));
+  return false;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnChar(FPDF_FORMHANDLE hHandle,

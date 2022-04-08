@@ -99,11 +99,6 @@ bool CXFA_FFSignature::OnKeyDown(XFA_FWL_VKEYCODE dwKeyCode,
   return false;
 }
 
-bool CXFA_FFSignature::OnKeyUp(XFA_FWL_VKEYCODE dwKeyCode,
-                               Mask<XFA_FWL_KeyFlag> dwFlags) {
-  return false;
-}
-
 bool CXFA_FFSignature::OnChar(uint32_t nChar, Mask<XFA_FWL_KeyFlag> dwFlags) {
   return false;
 }

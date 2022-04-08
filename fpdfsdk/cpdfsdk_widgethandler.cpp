@@ -78,12 +78,6 @@ bool CPDFSDK_WidgetHandler::OnKeyDown(CPDFSDK_Annot* pAnnot,
              pWidget, nKeyCode, nFlag);
 }
 
-bool CPDFSDK_WidgetHandler::OnKeyUp(CPDFSDK_Annot* pAnnot,
-                                    FWL_VKEYCODE nKeyCode,
-                                    Mask<FWL_EVENTFLAG> nFlag) {
-  return false;
-}
-
 bool CPDFSDK_WidgetHandler::OnSetFocus(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                        Mask<FWL_EVENTFLAG> nFlag) {
   if (!IsFocusableAnnot(pAnnot->GetPDFAnnot()->GetSubtype()))

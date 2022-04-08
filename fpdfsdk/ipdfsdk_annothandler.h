@@ -54,9 +54,6 @@ class IPDFSDK_AnnotHandler {
   virtual bool OnKeyDown(CPDFSDK_Annot* pAnnot,
                          FWL_VKEYCODE nKeyCode,
                          Mask<FWL_EVENTFLAG> nFlag) = 0;
-  virtual bool OnKeyUp(CPDFSDK_Annot* pAnnot,
-                       FWL_VKEYCODE nKeyCode,
-                       Mask<FWL_EVENTFLAG> nFlag) = 0;
   virtual bool OnSetFocus(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                           Mask<FWL_EVENTFLAG> nFlag) = 0;
   virtual bool OnKillFocus(ObservedPtr<CPDFSDK_Annot>& pAnnot,

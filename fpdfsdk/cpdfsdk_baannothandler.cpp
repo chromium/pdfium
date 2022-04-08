@@ -94,12 +94,6 @@ bool CPDFSDK_BAAnnotHandler::OnKeyDown(CPDFSDK_Annot* pAnnot,
       ba_annot->GetDestination(), GetFormFillEnvironment());
 }
 
-bool CPDFSDK_BAAnnotHandler::OnKeyUp(CPDFSDK_Annot* pAnnot,
-                                     FWL_VKEYCODE nKeyCode,
-                                     Mask<FWL_EVENTFLAG> nFlag) {
-  return false;
-}
-
 bool CPDFSDK_BAAnnotHandler::IsFocusableAnnot(
     const CPDF_Annot::Subtype& annot_type) const {
   DCHECK(annot_type != CPDF_Annot::Subtype::WIDGET);

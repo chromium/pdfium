@@ -1480,6 +1480,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnKeyDown(FPDF_FORMHANDLE hHandle,
  *                       flag values).
  * Return Value:
  *       True indicates success; otherwise false.
+ * Comments:
+ *       Currently unimplemented and always returns false. PDFium reserves this
+ *       API and may implement it in the future on an as-needed basis.
  */
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnKeyUp(FPDF_FORMHANDLE hHandle,
                                                  FPDF_PAGE page,

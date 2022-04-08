@@ -536,11 +536,6 @@ bool CPDFSDK_PageView::OnKeyDown(FWL_VKEYCODE nKeyCode,
   return pAnnotHandlerMgr->Annot_OnKeyDown(pAnnot, nKeyCode, nFlag);
 }
 
-bool CPDFSDK_PageView::OnKeyUp(FWL_VKEYCODE nKeyCode,
-                               Mask<FWL_EVENTFLAG> nFlag) {
-  return false;
-}
-
 void CPDFSDK_PageView::LoadFXAnnots() {
   CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
       m_pFormFillEnv->GetAnnotHandlerMgr();

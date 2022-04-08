@@ -455,11 +455,6 @@ bool CXFA_FFWidget::OnKeyDown(XFA_FWL_VKEYCODE dwKeyCode,
   return false;
 }
 
-bool CXFA_FFWidget::OnKeyUp(XFA_FWL_VKEYCODE dwKeyCode,
-                            Mask<XFA_FWL_KeyFlag> dwFlags) {
-  return false;
-}
-
 bool CXFA_FFWidget::OnChar(uint32_t dwChar, Mask<XFA_FWL_KeyFlag> dwFlags) {
   return false;
 }

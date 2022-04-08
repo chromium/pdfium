@@ -84,7 +84,6 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   bool OnRButtonUp(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point);
   bool OnChar(uint32_t nChar, Mask<FWL_EVENTFLAG> nFlag);
   bool OnKeyDown(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlag);
-  bool OnKeyUp(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlag);
   bool OnMouseMove(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point);
   bool OnMouseWheel(Mask<FWL_EVENTFLAG> nFlag,
                     const CFX_PointF& point,

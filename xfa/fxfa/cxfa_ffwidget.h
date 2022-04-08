@@ -132,8 +132,6 @@ class CXFA_FFWidget : public cppgc::GarbageCollected<CXFA_FFWidget>,
   virtual bool OnKillFocus(CXFA_FFWidget* pNewWidget) WARN_UNUSED_RESULT;
   virtual bool OnKeyDown(XFA_FWL_VKEYCODE dwKeyCode,
                          Mask<XFA_FWL_KeyFlag> dwFlags) WARN_UNUSED_RESULT;
-  virtual bool OnKeyUp(XFA_FWL_VKEYCODE dwKeyCode,
-                       Mask<XFA_FWL_KeyFlag> dwFlags) WARN_UNUSED_RESULT;
   virtual bool OnChar(uint32_t dwChar,
                       Mask<XFA_FWL_KeyFlag> dwFlags) WARN_UNUSED_RESULT;
 

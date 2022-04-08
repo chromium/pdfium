@@ -13,7 +13,7 @@
 
 class CFWL_MessageKey final : public CFWL_Message {
  public:
-  enum class KeyCommand : uint8_t { kKeyDown, kKeyUp, kChar };
+  enum class KeyCommand : uint8_t { kKeyDown, kChar };
 
   CFWL_MessageKey(CFWL_Widget* pDstTarget,
                   KeyCommand subtype,

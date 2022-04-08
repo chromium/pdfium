@@ -544,17 +544,6 @@ bool CXFA_FFField::OnKeyDown(XFA_FWL_VKEYCODE dwKeyCode,
   return true;
 }
 
-bool CXFA_FFField::OnKeyUp(XFA_FWL_VKEYCODE dwKeyCode,
-                           Mask<XFA_FWL_KeyFlag> dwFlags) {
-  if (!GetNormalWidget() || !GetDoc()->GetXFADoc()->IsInteractive())
-    return false;
-
-  CFWL_MessageKey msg(GetNormalWidget(), CFWL_MessageKey::KeyCommand::kKeyUp,
-                      dwFlags, dwKeyCode);
-  SendMessageToFWLWidget(&msg);
-  return true;
-}
-
 bool CXFA_FFField::OnChar(uint32_t dwChar, Mask<XFA_FWL_KeyFlag> dwFlags) {
   if (!GetDoc()->GetXFADoc()->IsInteractive())
     return false;

@@ -44,8 +44,6 @@ class CXFA_FFSignature final : public CXFA_FFField {
                        const CFX_PointF& point) override;
   bool OnKeyDown(XFA_FWL_VKEYCODE dwKeyCode,
                  Mask<XFA_FWL_KeyFlag> dwFlags) override;
-  bool OnKeyUp(XFA_FWL_VKEYCODE dwKeyCode,
-               Mask<XFA_FWL_KeyFlag> dwFlags) override;
   bool OnChar(uint32_t dwChar, Mask<XFA_FWL_KeyFlag> dwFlags) override;
   FWL_WidgetHit HitTest(const CFX_PointF& point) override;
   FormFieldType GetFormFieldType() override;
