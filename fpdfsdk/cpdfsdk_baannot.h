@@ -28,7 +28,7 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot,
 
   // CPDFSDK_Annot:
   CPDFSDK_BAAnnot* AsBAAnnot() override;
-  UnsafeInputHandlers* GetUnsafeInputHandlers() override;
+  CPDFSDK_Annot::UnsafeInputHandlers* GetUnsafeInputHandlers() override;
   CPDF_Annot::Subtype GetAnnotSubtype() const override;
   CFX_FloatRect GetRect() const override;
   CPDF_Annot* GetPDFAnnot() const override;

@@ -24,7 +24,7 @@ class CPDFXFA_Widget final : public CPDFSDK_Annot,
 
   // CPDFSDK_Annot:
   CPDFXFA_Widget* AsXFAWidget() override;
-  UnsafeInputHandlers* GetUnsafeInputHandlers() override;
+  CPDFSDK_Annot::UnsafeInputHandlers* GetUnsafeInputHandlers() override;
   CPDF_Annot::Subtype GetAnnotSubtype() const override;
   CFX_FloatRect GetRect() const override;
   void OnDraw(CFX_RenderDevice* pDevice,
