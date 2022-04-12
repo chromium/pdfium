@@ -349,7 +349,7 @@ bool CPDFSDK_PageView::OnLButtonUp(Mask<FWL_EVENTFLAG> nFlags,
   ObservedPtr<CPDFSDK_Annot> pFocusAnnot(GetFocusAnnot());
   if (pFocusAnnot && pFocusAnnot != pFXAnnot) {
     // Last focus Annot gets a chance to handle the event.
-    if (CPDFSDK_Annot::OnLButtonUp(pFXAnnot, nFlags, point))
+    if (CPDFSDK_Annot::OnLButtonUp(pFocusAnnot, nFlags, point))
       return true;
   }
   return pFXAnnot && CPDFSDK_Annot::OnLButtonUp(pFXAnnot, nFlags, point);
