@@ -697,6 +697,7 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
   std::vector<cppgc::Member<CXFA_Object>> findObjects;
   findObjects.emplace_back(refObject ? refObject : m_pDocument->GetRoot());
   int32_t nNodes = 0;
+  CFXJSE_ScopeUtil_IsolateHandleContext scope(GetJseContext());
   while (true) {
     nNodes = fxcrt::CollectionSize<int32_t>(findObjects);
     int32_t i = 0;
