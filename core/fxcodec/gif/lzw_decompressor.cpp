@@ -33,24 +33,27 @@ LZWDecompressor::LZWDecompressor(uint8_t color_exp, uint8_t code_exp)
     : code_size_(code_exp),
       code_color_end_(static_cast<uint16_t>(1 << (color_exp + 1))),
       code_clear_(static_cast<uint16_t>(1 << code_exp)),
-      code_end_(static_cast<uint16_t>((1 << code_exp) + 1)) {}
+      code_end_(static_cast<uint16_t>((1 << code_exp) + 1)) {
+  ClearTable();
+}
 
 LZWDecompressor::~LZWDecompressor() = default;
 
-LZWDecompressor::Status LZWDecompressor::Decode(const uint8_t* src_buf,
-                                                uint32_t src_size,
-                                                uint8_t* dest_buf,
+void LZWDecompressor::SetSource(const uint8_t* src_buf, uint32_t src_size) {
+  next_in_ = src_buf;
+  avail_in_ = src_size;
+}
+
+LZWDecompressor::Status LZWDecompressor::Decode(uint8_t* dest_buf,
                                                 uint32_t* dest_size) {
-  if (!src_buf || src_size == 0 || !dest_buf || !dest_size)
+  if (!next_in_ || !dest_buf || !dest_size)
     return Status::kError;
+
+  if (avail_in_ == 0)
+    return Status::kUnfinished;
 
   if (*dest_size == 0)
     return Status::kInsufficientDestSize;
-
-  next_in_ = src_buf;
-  avail_in_ = src_size;
-
-  ClearTable();
 
   uint32_t i = 0;
   if (decompressed_next_ != 0) {

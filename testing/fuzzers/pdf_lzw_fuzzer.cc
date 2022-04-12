@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include <vector>
 
 #include "core/fxcodec/gif/lzw_decompressor.h"
@@ -15,7 +18,7 @@ constexpr uint32_t kMaxCompressionRatio = 10;
 static constexpr size_t kMaxFuzzBytes = 1024 * 1024 * 1024;  // 1 GB.
 
 void LZWFuzz(const uint8_t* src_buf,
-             size_t src_size,
+             uint32_t src_size,
              uint8_t color_exp,
              uint8_t code_exp) {
   std::unique_ptr<LZWDecompressor> decompressor =
@@ -29,9 +32,9 @@ void LZWFuzz(const uint8_t* src_buf,
     // This cast should be safe since the caller is checking for overflow on
     // the initial data.
     uint32_t dest_size = static_cast<uint32_t>(dest_buf.size());
+    decompressor->SetSource(src_buf, src_size);
     if (LZWDecompressor::Status::kInsufficientDestSize !=
-        decompressor->Decode(src_buf, static_cast<uint32_t>(src_size),
-                             dest_buf.data(), &dest_size)) {
+        decompressor->Decode(dest_buf.data(), &dest_size)) {
       return;
     }
   }

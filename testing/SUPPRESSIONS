@@ -386,8 +386,6 @@ xfa_bmp_image.in * * * *
 xfa_example.in win * * *
 # TODO(pdfium:1354): Remove after associated bug is fixed
 xfa_example.in * * * skia,skiapaths
-# TODO(pdfium:1167): Remove after associated bug is fixed
-xfa_gif_image.in * * * *
 # TODO(pdfium:1743): Remove after associated bug is fixed
 xfa_node_caption.pdf * * * skia,skiapaths
 # TODO(pdfium:1095): Remove after associated bug is fixed

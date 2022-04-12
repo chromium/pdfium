@@ -213,6 +213,8 @@ GifDecoder::Status CFX_GifContext::LoadFrame(size_t frame_num) {
   std::vector<uint8_t, FxAllocAllocator<uint8_t>> img_data;
   size_t read_marker = input_buffer_->GetPosition();
 
+  // TODO(crbug.com/pdfium/1793): This logic can be simplified a lot, but it
+  // probably makes more sense to switch to a different GIF decoder altogether.
   if (decode_status_ == GIF_D_STATUS_IMG_DATA) {
     if (!ReadAllOrNone(&img_data_size, sizeof(img_data_size)))
       return GifDecoder::Status::kUnfinished;
@@ -224,20 +226,21 @@ GifDecoder::Status CFX_GifContext::LoadFrame(size_t frame_num) {
         return GifDecoder::Status::kUnfinished;
       }
 
-      if (!lzw_decompressor_.get()) {
+      if (!lzw_decompressor_) {
         lzw_decompressor_ = LZWDecompressor::Create(GetPaletteExp(gif_image),
                                                     gif_image->code_exp);
+        if (!lzw_decompressor_) {
+          DecodingFailureAtTailCleanup(gif_image);
+          return GifDecoder::Status::kError;
+        }
       }
+      lzw_decompressor_->SetSource(img_data.data(), img_data_size);
+
       SaveDecodingStatus(GIF_D_STATUS_IMG_DATA);
       img_row_offset_ += img_row_avail_size_;
       img_row_avail_size_ = gif_img_row_bytes - img_row_offset_;
-      LZWDecompressor::Status ret =
-          lzw_decompressor_.get()
-              ? lzw_decompressor_->Decode(
-                    img_data.data(), img_data_size,
-                    gif_image->row_buffer.data() + img_row_offset_,
-                    &img_row_avail_size_)
-              : LZWDecompressor::Status::kError;
+      LZWDecompressor::Status ret = lzw_decompressor_->Decode(
+          gif_image->row_buffer.data() + img_row_offset_, &img_row_avail_size_);
       if (ret == LZWDecompressor::Status::kError) {
         DecodingFailureAtTailCleanup(gif_image);
         return GifDecoder::Status::kError;
@@ -263,19 +266,14 @@ GifDecoder::Status CFX_GifContext::LoadFrame(size_t frame_num) {
               return GifDecoder::Status::kUnfinished;
             }
 
-            if (!lzw_decompressor_.get()) {
-              lzw_decompressor_ = LZWDecompressor::Create(
-                  GetPaletteExp(gif_image), gif_image->code_exp);
-            }
+            lzw_decompressor_->SetSource(img_data.data(), img_data_size);
+
             SaveDecodingStatus(GIF_D_STATUS_IMG_DATA);
             img_row_offset_ += img_row_avail_size_;
             img_row_avail_size_ = gif_img_row_bytes - img_row_offset_;
-            ret = lzw_decompressor_.get()
-                      ? lzw_decompressor_->Decode(
-                            img_data.data(), img_data_size,
-                            gif_image->row_buffer.data() + img_row_offset_,
-                            &img_row_avail_size_)
-                      : LZWDecompressor::Status::kError;
+            ret = lzw_decompressor_->Decode(
+                gif_image->row_buffer.data() + img_row_offset_,
+                &img_row_avail_size_);
           }
         }
 
@@ -295,18 +293,15 @@ GifDecoder::Status CFX_GifContext::LoadFrame(size_t frame_num) {
           } else {
             ReadScanline(gif_image->row_num++, gif_image->row_buffer.data());
           }
+
           img_row_offset_ = 0;
           img_row_avail_size_ = gif_img_row_bytes;
-          ret = lzw_decompressor_.get()
-                    ? lzw_decompressor_->Decode(
-                          img_data.data(), img_data_size,
-                          gif_image->row_buffer.data() + img_row_offset_,
-                          &img_row_avail_size_)
-                    : LZWDecompressor::Status::kError;
+          ret = lzw_decompressor_->Decode(
+              gif_image->row_buffer.data() + img_row_offset_,
+              &img_row_avail_size_);
         }
 
-        if (ret == LZWDecompressor::Status::kInsufficientDestSize ||
-            ret == LZWDecompressor::Status::kError) {
+        if (ret == LZWDecompressor::Status::kError) {
           DecodingFailureAtTailCleanup(gif_image);
           return GifDecoder::Status::kError;
         }

@@ -4,8 +4,14 @@
 
 #include "core/fxcodec/gif/lzw_decompressor.h"
 
+#include <stdint.h>
+#include <string.h>
+
+#include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/cxx17_backports.h"
+
+using ::testing::ElementsAreArray;
 
 TEST(LZWDecompressor, CreateBadParams) {
   EXPECT_EQ(nullptr, LZWDecompressor::Create(0x10, 0x02));
@@ -91,21 +97,23 @@ TEST(LZWDecompressor, DecodeBadParams) {
   uint8_t output_data[10];
   uint32_t output_size = pdfium::size(output_data);
 
-  EXPECT_EQ(
-      LZWDecompressor::Status::kError,
-      decompressor->Decode(nullptr, image_size, output_data, &output_size));
+  decompressor->SetSource(nullptr, image_size);
   EXPECT_EQ(LZWDecompressor::Status::kError,
-            decompressor->Decode(image_data, 0, output_data, &output_size));
-  EXPECT_EQ(
-      LZWDecompressor::Status::kError,
-      decompressor->Decode(image_data, image_size, nullptr, &output_size));
+            decompressor->Decode(output_data, &output_size));
+
+  decompressor->SetSource(image_data, 0);
+  EXPECT_EQ(LZWDecompressor::Status::kUnfinished,
+            decompressor->Decode(output_data, &output_size));
+
+  decompressor->SetSource(image_data, image_size);
   EXPECT_EQ(LZWDecompressor::Status::kError,
-            decompressor->Decode(image_data, image_size, output_data, nullptr));
+            decompressor->Decode(nullptr, &output_size));
+  EXPECT_EQ(LZWDecompressor::Status::kError,
+            decompressor->Decode(output_data, nullptr));
 
   output_size = 0;
-  EXPECT_EQ(
-      LZWDecompressor::Status::kInsufficientDestSize,
-      decompressor->Decode(image_data, image_size, output_data, &output_size));
+  EXPECT_EQ(LZWDecompressor::Status::kInsufficientDestSize,
+            decompressor->Decode(output_data, &output_size));
 }
 
 TEST(LZWDecompressor, Decode1x1SingleColour) {
@@ -122,9 +130,9 @@ TEST(LZWDecompressor, Decode1x1SingleColour) {
   memset(output_data, 0, sizeof(output_data));
   uint32_t output_size = pdfium::size(output_data);
 
-  EXPECT_EQ(
-      LZWDecompressor::Status::kSuccess,
-      decompressor->Decode(image_data, image_size, output_data, &output_size));
+  decompressor->SetSource(image_data, image_size);
+  EXPECT_EQ(LZWDecompressor::Status::kSuccess,
+            decompressor->Decode(output_data, &output_size));
 
   EXPECT_EQ(pdfium::size(output_data), output_size);
   EXPECT_TRUE(0 == memcmp(expected_data, output_data, sizeof(expected_data)));
@@ -154,9 +162,9 @@ TEST(LZWDecompressor, Decode10x10SingleColour) {
   memset(output_data, 0, sizeof(output_data));
   uint32_t output_size = pdfium::size(output_data);
 
-  EXPECT_EQ(
-      LZWDecompressor::Status::kSuccess,
-      decompressor->Decode(kImageData, image_size, output_data, &output_size));
+  decompressor->SetSource(kImageData, image_size);
+  EXPECT_EQ(LZWDecompressor::Status::kSuccess,
+            decompressor->Decode(output_data, &output_size));
 
   EXPECT_EQ(pdfium::size(output_data), output_size);
   EXPECT_TRUE(0 == memcmp(kExpectedData, output_data, sizeof(kExpectedData)));
@@ -188,12 +196,37 @@ TEST(LZWDecompressor, Decode10x10MultipleColour) {
   memset(output_data, 0, sizeof(output_data));
   uint32_t output_size = pdfium::size(output_data);
 
-  EXPECT_EQ(
-      LZWDecompressor::Status::kSuccess,
-      decompressor->Decode(kImageData, image_size, output_data, &output_size));
+  decompressor->SetSource(kImageData, image_size);
+  EXPECT_EQ(LZWDecompressor::Status::kSuccess,
+            decompressor->Decode(output_data, &output_size));
 
   EXPECT_EQ(pdfium::size(output_data), output_size);
   EXPECT_TRUE(0 == memcmp(kExpectedData, output_data, sizeof(kExpectedData)));
+}
+
+TEST(LZWDecompressor, MultipleDecodes) {
+  auto decompressor = LZWDecompressor::Create(/*color_exp=*/0, /*code_exp=*/2);
+  ASSERT_NE(nullptr, decompressor);
+
+  static constexpr uint8_t kImageData[] = {0x84, 0x6f, 0x05};
+  decompressor->SetSource(kImageData, pdfium::size(kImageData));
+
+  static constexpr uint8_t kExpectedScanline[] = {0x00, 0x00, 0x00, 0x00};
+  uint8_t output_data[pdfium::size(kExpectedScanline)];
+
+  memset(output_data, 0xFF, sizeof(output_data));
+  uint32_t output_size = pdfium::size(output_data);
+  EXPECT_EQ(LZWDecompressor::Status::kInsufficientDestSize,
+            decompressor->Decode(output_data, &output_size));
+  EXPECT_EQ(pdfium::size(kExpectedScanline), output_size);
+  EXPECT_THAT(output_data, ElementsAreArray(kExpectedScanline));
+
+  memset(output_data, 0xFF, sizeof(output_data));
+  output_size = pdfium::size(output_data);
+  EXPECT_EQ(LZWDecompressor::Status::kSuccess,
+            decompressor->Decode(output_data, &output_size));
+  EXPECT_EQ(pdfium::size(kExpectedScanline), output_size);
+  EXPECT_THAT(output_data, ElementsAreArray(kExpectedScanline));
 }
 
 TEST(LZWDecompressor, HandleColourCodeOutOfPalette) {
@@ -213,7 +246,7 @@ TEST(LZWDecompressor, HandleColourCodeOutOfPalette) {
   memset(output_data, 0, sizeof(output_data));
   uint32_t output_size = pdfium::size(output_data);
 
-  EXPECT_EQ(
-      LZWDecompressor::Status::kError,
-      decompressor->Decode(kImageData, image_size, output_data, &output_size));
+  decompressor->SetSource(kImageData, image_size);
+  EXPECT_EQ(LZWDecompressor::Status::kError,
+            decompressor->Decode(output_data, &output_size));
 }

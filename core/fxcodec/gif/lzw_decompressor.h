@@ -34,10 +34,8 @@ class LZWDecompressor {
                                                  uint8_t code_exp);
   ~LZWDecompressor();
 
-  Status Decode(const uint8_t* src_buf,
-                uint32_t src_size,
-                uint8_t* dest_buf,
-                uint32_t* dest_size);
+  void SetSource(const uint8_t* src_buf, uint32_t src_size);
+  Status Decode(uint8_t* dest_buf, uint32_t* dest_size);
 
   // Used by unittests, should not be called in production code.
   uint32_t ExtractDataForTest(uint8_t* dest_buf, uint32_t dest_size) {
