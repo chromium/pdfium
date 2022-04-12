@@ -4,6 +4,7 @@
 
 #include "samples/pdfium_test_dump_helper.h"
 
+#include <limits.h>
 #include <string.h>
 
 #include <algorithm>
