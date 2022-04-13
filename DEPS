@@ -81,7 +81,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling icu
   # and whatever else without interference from each other.
-  'icu_revision': '1fa4e3959ec6637182b7318ac1d382799454806d',
+  'icu_revision': '1fd0dbea04448c3f73fe5cb7599f9472f0f107f1',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling instrumented_lib
   # and whatever else without interference from each other.
