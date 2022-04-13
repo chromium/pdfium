@@ -147,7 +147,7 @@ def pdfium_internal_builder(name, bucket):
     # Set bucket-specific configs.
     if bucket == "ci":
         dimensions.update({"pool": "luci.flex.ci"})
-        notifies = ["pdfium main notifier"]
+        notifies = ["pdfium main notifier", "pdfium tree closer"]
         properties.update({"builder_group": "client.pdfium"})
         service_account = "pdfium-ci-builder@chops-service-accounts.iam.gserviceaccount.com"
         triggered_by = ["pdfium-gitiles-trigger"]
@@ -291,6 +291,10 @@ luci.notify(
     tree_closing_enabled = True,
 )
 
+luci.tree_closer(
+    name = "pdfium tree closer",
+    tree_status_host = "pdfium-status.appspot.com",
+)
 luci.notifier(
     name = "pdfium main notifier",
     on_new_status = ["FAILURE"],
