@@ -37,6 +37,12 @@ static bool temp_created = false;
 static bool temp_destroyed = false;
 
 TEST_F(FXJSEngineUnitTest, GC) {
+  // Reset variables since there maight be multiple iterations.
+  perm_created = false;
+  perm_destroyed = false;
+  temp_created = false;
+  temp_destroyed = false;
+
   v8::Isolate::Scope isolate_scope(isolate());
   v8::HandleScope handle_scope(isolate());
 
