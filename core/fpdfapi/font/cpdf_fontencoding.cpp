@@ -16,6 +16,7 @@
 #include "core/fxge/fx_freetype.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/cxx17_backports.h"
+#include "third_party/base/notreached.h"
 
 namespace {
 
@@ -1776,6 +1777,8 @@ const uint16_t* UnicodesForPredefinedCharSet(FontEncoding encoding) {
     case FontEncoding::kMsSymbol:
       return kMSSymbolEncoding;
   }
+  NOTREACHED();
+  return nullptr;
 }
 
 const char* CharNameFromPredefinedCharSet(FontEncoding encoding,
