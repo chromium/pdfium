@@ -24,7 +24,6 @@
 #include "fxjs/js_define.h"
 #include "fxjs/js_resources.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/cxx17_backports.h"
 #include "v8/include/v8-date.h"
 
 #if BUILDFLAG(IS_ANDROID)
@@ -217,7 +216,7 @@ CJS_Result CJS_Util::printd(CJS_Runtime* pRuntime,
   cFormat.erase(std::remove(cFormat.begin(), cFormat.end(), '%'),
                 cFormat.end());
 
-  for (size_t i = 0; i < pdfium::size(TbConvertTable); ++i) {
+  for (size_t i = 0; i < std::size(TbConvertTable); ++i) {
     size_t nFound = 0;
     while (true) {
       nFound = cFormat.find(TbConvertTable[i].lpszJSMark, nFound);
@@ -238,7 +237,7 @@ CJS_Result CJS_Util::printd(CJS_Runtime* pRuntime,
       {L'M', min},   {L's', sec},
   };
 
-  for (size_t i = 0; i < pdfium::size(cTableAd); ++i) {
+  for (size_t i = 0; i < std::size(cTableAd); ++i) {
     size_t nFound = 0;
     while (true) {
       nFound = cFormat.find(cTableAd[i].js_mark, nFound);

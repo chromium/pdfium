@@ -4,6 +4,8 @@
 
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 
+#include <iterator>
+
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
@@ -11,7 +13,6 @@
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
-#include "third_party/base/cxx17_backports.h"
 
 TEST(ParserDecodeTest, ValidateDecoderPipeline) {
   {
@@ -239,7 +240,7 @@ TEST(FPDFParserDecodeEmbedderTest, FlateDecode) {
           96),
   };
 
-  for (size_t i = 0; i < pdfium::size(flate_decode_cases); ++i) {
+  for (size_t i = 0; i < std::size(flate_decode_cases); ++i) {
     const pdfium::DecodeTestData& data = flate_decode_cases[i];
     std::unique_ptr<uint8_t, FxFreeDeleter> buf;
     uint32_t buf_size;
@@ -273,7 +274,7 @@ TEST(ParserDecodeTest, FlateEncode) {
           "\x2b\x58\x1a\x9a\x83\x8c\x49\xe3\x0a\x04\x42\x00\x37\x4c\x1b\x42"),
   };
 
-  for (size_t i = 0; i < pdfium::size(flate_encode_cases); ++i) {
+  for (size_t i = 0; i < std::size(flate_encode_cases); ++i) {
     const pdfium::StrFuncTestData& data = flate_encode_cases[i];
     std::unique_ptr<uint8_t, FxFreeDeleter> buf;
     uint32_t buf_size;

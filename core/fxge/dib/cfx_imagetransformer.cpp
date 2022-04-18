@@ -8,6 +8,7 @@
 
 #include <math.h>
 
+#include <iterator>
 #include <memory>
 #include <utility>
 
@@ -17,7 +18,6 @@
 #include "core/fxge/dib/fx_dib.h"
 #include "third_party/base/check.h"
 #include "third_party/base/compiler_specific.h"
-#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
@@ -306,10 +306,10 @@ void CFX_ImageTransformer::CalcMono(const CalcData& calc_data) {
   if (m_Storer.GetBitmap()->HasPalette()) {
     pdfium::span<const uint32_t> palette =
         m_Storer.GetBitmap()->GetPaletteSpan();
-    for (size_t i = 0; i < pdfium::size(argb); i++)
+    for (size_t i = 0; i < std::size(argb); i++)
       argb[i] = palette[i];
   } else {
-    for (size_t i = 0; i < pdfium::size(argb); i++) {
+    for (size_t i = 0; i < std::size(argb); i++) {
       uint32_t v = static_cast<uint32_t>(i);
       argb[i] = ArgbEncode(0xff, v, v, v);
     }

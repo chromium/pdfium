@@ -7,13 +7,13 @@
 #include "core/fpdfdoc/cpdf_dest.h"
 
 #include <algorithm>
+#include <iterator>
 
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
-#include "third_party/base/cxx17_backports.h"
 
 namespace {
 
@@ -25,7 +25,7 @@ const char* const kZoomModes[] = {"Unknown", "XYZ",  "Fit",   "FitH",  "FitV",
 
 constexpr uint8_t kZoomModeMaxParamCount[] = {0, 3, 0, 1, 1, 4, 0, 1, 1, 0};
 
-static_assert(pdfium::size(kZoomModes) == pdfium::size(kZoomModeMaxParamCount),
+static_assert(std::size(kZoomModes) == std::size(kZoomModeMaxParamCount),
               "Zoom mode count Mismatch");
 
 }  // namespace

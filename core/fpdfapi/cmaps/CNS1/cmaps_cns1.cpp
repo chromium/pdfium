@@ -6,7 +6,7 @@
 
 #include "core/fpdfapi/cmaps/CNS1/cmaps_cns1.h"
 
-#include "third_party/base/cxx17_backports.h"
+#include <iterator>
 
 const FXCMAP_CMap kFXCMAP_CNS1_cmaps[] = {
     {"B5pc-H", kFXCMAP_B5pc_H_0, nullptr, 247, 0, FXCMAP_CMap::Range, 0},
@@ -35,4 +35,4 @@ const FXCMAP_CMap kFXCMAP_CNS1_cmaps[] = {
      FXCMAP_CMap::Range, -1},
 };
 
-const size_t kFXCMAP_CNS1_cmaps_size = pdfium::size(kFXCMAP_CNS1_cmaps);
+const size_t kFXCMAP_CNS1_cmaps_size = std::size(kFXCMAP_CNS1_cmaps);

@@ -6,13 +6,13 @@
 
 #include "core/fxge/win32/cwin32_platform.h"
 
+#include <iterator>
 #include <memory>
 #include <utility>
 
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_folderfontinfo.h"
 #include "core/fxge/cfx_gemodule.h"
-#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/win/scoped_select_object.h"
 #include "third_party/base/win/win_util.h"
@@ -63,7 +63,7 @@ constexpr FontNameMap kJpFontNameMap[] = {
 };
 
 bool GetSubFontName(ByteString* name) {
-  for (size_t i = 0; i < pdfium::size(kJpFontNameMap); ++i) {
+  for (size_t i = 0; i < std::size(kJpFontNameMap); ++i) {
     if (!FXSYS_stricmp(name->c_str(), kJpFontNameMap[i].m_pSrcFontName)) {
       *name = kJpFontNameMap[i].m_pSubFontName;
       return true;
@@ -327,13 +327,13 @@ void* CFX_Win32FontInfo::MapFont(int weight,
   char facebuf[100];
   {
     ScopedSelectObject select_object(m_hDC, hFont);
-    ::GetTextFaceA(m_hDC, pdfium::size(facebuf), facebuf);
+    ::GetTextFaceA(m_hDC, std::size(facebuf), facebuf);
   }
   if (new_face.EqualNoCase(facebuf))
     return hFont;
 
   WideString wsFace = WideString::FromDefANSI(facebuf);
-  for (size_t i = 0; i < pdfium::size(kVariantNames); ++i) {
+  for (size_t i = 0; i < std::size(kVariantNames); ++i) {
     if (new_face != kVariantNames[i].m_pFaceName)
       continue;
 

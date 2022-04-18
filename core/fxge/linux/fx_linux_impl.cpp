@@ -4,6 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <iterator>
 #include <memory>
 #include <utility>
 
@@ -15,7 +16,6 @@
 #include "core/fxge/fx_font.h"
 #include "core/fxge/systemfontinfo_iface.h"
 #include "third_party/base/check.h"
-#include "third_party/base/cxx17_backports.h"
 
 #if !BUILDFLAG(IS_LINUX) && !BUILDFLAG(IS_CHROMEOS) && !defined(OS_FUCHSIA) && \
     !defined(OS_ASMJS)
@@ -106,7 +106,7 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
   switch (charset) {
     case FX_Charset::kShiftJIS: {
       JpFontFamily index = GetJapanesePreference(face, weight, pitch_family);
-      DCHECK(index < pdfium::size(kLinuxJpFontList));
+      DCHECK(index < std::size(kLinuxJpFontList));
       for (const char* name : kLinuxJpFontList[index]) {
         auto it = m_FontList.find(name);
         if (it != m_FontList.end())

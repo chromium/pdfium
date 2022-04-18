@@ -7,7 +7,6 @@
 #include "public/fpdf_signature.h"
 #include "testing/embedder_test.h"
 #include "testing/fx_string_testhelpers.h"
-#include "third_party/base/cxx17_backports.h"
 
 class FPDFSignatureEmbedderTest : public EmbedderTest {};
 
@@ -141,7 +140,7 @@ TEST_F(FPDFSignatureEmbedderTest, GetReason) {
   // FPDFSignatureObj_GetReason() positive testing.
   constexpr char kReason[] = "test reason";
   // Return value includes the terminating NUL that is provided.
-  constexpr unsigned long kReasonUTF16Size = pdfium::size(kReason) * 2;
+  constexpr unsigned long kReasonUTF16Size = std::size(kReason) * 2;
   constexpr wchar_t kReasonWide[] = L"test reason";
   unsigned long size = FPDFSignatureObj_GetReason(signature, nullptr, 0);
   ASSERT_EQ(kReasonUTF16Size, size);

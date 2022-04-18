@@ -7,11 +7,11 @@
 #include "xfa/fgas/layout/cfgas_char.h"
 
 #include <algorithm>
+#include <iterator>
 
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/stl_util.h"
 #include "third_party/base/check.h"
-#include "third_party/base/cxx17_backports.h"
 
 namespace {
 
@@ -239,29 +239,29 @@ FX_BIDICLASS GetResolvedNeutrals(int32_t iAction) {
 }
 
 FX_BIDIWEAKSTATE GetWeakState(FX_BIDIWEAKSTATE eState, FX_BIDICLASS eClass) {
-  DCHECK(static_cast<size_t>(eState) < pdfium::size(kWeakStates));
-  DCHECK(static_cast<size_t>(eClass) < pdfium::size(kWeakStates[0]));
+  DCHECK(static_cast<size_t>(eState) < std::size(kWeakStates));
+  DCHECK(static_cast<size_t>(eClass) < std::size(kWeakStates[0]));
   return kWeakStates[static_cast<size_t>(eState)][static_cast<size_t>(eClass)];
 }
 
 FX_BIDIWEAKACTION GetWeakAction(FX_BIDIWEAKSTATE eState, FX_BIDICLASS eClass) {
-  DCHECK(static_cast<size_t>(eState) < pdfium::size(kWeakActions));
-  DCHECK(static_cast<size_t>(eClass) < pdfium::size(kWeakActions[0]));
+  DCHECK(static_cast<size_t>(eState) < std::size(kWeakActions));
+  DCHECK(static_cast<size_t>(eClass) < std::size(kWeakActions[0]));
   return kWeakActions[static_cast<size_t>(eState)][static_cast<size_t>(eClass)];
 }
 
 FX_BIDINEUTRALSTATE GetNeutralState(FX_BIDINEUTRALSTATE eState,
                                     FX_BIDICLASS eClass) {
-  DCHECK(static_cast<size_t>(eState) < pdfium::size(kNeutralStates));
-  DCHECK(static_cast<size_t>(eClass) < pdfium::size(kNeutralStates[0]));
+  DCHECK(static_cast<size_t>(eState) < std::size(kNeutralStates));
+  DCHECK(static_cast<size_t>(eClass) < std::size(kNeutralStates[0]));
   return kNeutralStates[static_cast<size_t>(eState)]
                        [static_cast<size_t>(eClass)];
 }
 
 FX_BIDINEUTRALACTION GetNeutralAction(FX_BIDINEUTRALSTATE eState,
                                       FX_BIDICLASS eClass) {
-  DCHECK(static_cast<size_t>(eState) < pdfium::size(kNeutralActions));
-  DCHECK(static_cast<size_t>(eClass) < pdfium::size(kNeutralActions[0]));
+  DCHECK(static_cast<size_t>(eState) < std::size(kNeutralActions));
+  DCHECK(static_cast<size_t>(eClass) < std::size(kNeutralActions[0]));
   return kNeutralActions[static_cast<size_t>(eState)]
                         [static_cast<size_t>(eClass)];
 }

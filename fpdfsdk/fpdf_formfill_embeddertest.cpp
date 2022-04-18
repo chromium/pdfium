@@ -21,7 +21,6 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/cxx17_backports.h"
 
 using pdfium::kTextFormChecksum;
 
@@ -833,7 +832,7 @@ TEST_F(FPDFFormFillEmbedderTest, FormFillContinuousTab) {
 
   static constexpr int kExpectedAnnotIndex[] = {1, 2, 3, 0};
   // Tabs should iterate focus over annotations.
-  for (size_t i = 0; i < pdfium::size(kExpectedAnnotIndex); ++i) {
+  for (size_t i = 0; i < std::size(kExpectedAnnotIndex); ++i) {
     ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page, FWL_VKEY_Tab, 0));
     int page_index = -2;
     FPDF_ANNOTATION annot = nullptr;
@@ -857,7 +856,7 @@ TEST_F(FPDFFormFillEmbedderTest, FormFillContinuousShiftTab) {
 
   static constexpr int kExpectedAnnotIndex[] = {0, 3, 2, 1};
   // Shift-tabs should iterate focus over annotations.
-  for (size_t i = 0; i < pdfium::size(kExpectedAnnotIndex); ++i) {
+  for (size_t i = 0; i < std::size(kExpectedAnnotIndex); ++i) {
     ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page, FWL_VKEY_Tab,
                                FWL_EVENTFLAG_ShiftKey));
     int page_index = -2;
@@ -3312,7 +3311,7 @@ class FPDFFormFillActionUriTest : public EmbedderTest {
     // Set Widget and Link as supported tabbable annots.
     constexpr FPDF_ANNOTATION_SUBTYPE kFocusableSubtypes[] = {FPDF_ANNOT_WIDGET,
                                                               FPDF_ANNOT_LINK};
-    constexpr size_t kSubtypeCount = pdfium::size(kFocusableSubtypes);
+    constexpr size_t kSubtypeCount = std::size(kFocusableSubtypes);
     ASSERT_TRUE(FPDFAnnot_SetFocusableSubtypes(
         form_handle(), kFocusableSubtypes, kSubtypeCount));
   }

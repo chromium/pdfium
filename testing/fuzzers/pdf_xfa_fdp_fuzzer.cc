@@ -11,7 +11,6 @@
 #include "testing/fuzzers/pdf_fuzzer_templates.h"
 #include "testing/fuzzers/pdfium_fuzzer_helper.h"
 #include "third_party/base/containers/adapters.h"
-#include "third_party/base/cxx17_backports.h"
 
 class PDFiumXFAFuzzer : public PDFiumFuzzerHelper {
  public:
@@ -215,7 +214,7 @@ std::string GenXfaFormCalcScriptFuncName(FuzzedDataProvider* data_provider) {
   };
 
   size_t elem_selector = data_provider->ConsumeIntegralInRange<size_t>(
-      0, pdfium::size(kXfaScriptFuncs) - 1);
+      0, std::size(kXfaScriptFuncs) - 1);
   return kXfaScriptFuncs[elem_selector];
 }
 
@@ -311,7 +310,7 @@ std::string GenXfaScriptParam(FuzzedDataProvider* data_provider) {
   };
 
   size_t elem_selector = data_provider->ConsumeIntegralInRange<size_t>(
-      0, pdfium::size(kXfaFuncParams) - 1);
+      0, std::size(kXfaFuncParams) - 1);
   return MaybeQuote(data_provider, kXfaFuncParams[elem_selector]);
 }
 
@@ -641,7 +640,7 @@ std::string GenXfaTag(FuzzedDataProvider* data_provider) {
   };
 
   size_t elem_selector = data_provider->ConsumeIntegralInRange<size_t>(
-      0, pdfium::size(kXfaElemTags) - 1);
+      0, std::size(kXfaElemTags) - 1);
   return kXfaElemTags[elem_selector];
 }
 
@@ -663,7 +662,7 @@ std::string GenXfaTagValue(FuzzedDataProvider* data_provider) {
   };
 
   size_t elem_selector = data_provider->ConsumeIntegralInRange<size_t>(
-      0, pdfium::size(kXfaTagVals) - 1);
+      0, std::size(kXfaTagVals) - 1);
   return MaybeQuote(data_provider, kXfaTagVals[elem_selector]);
 }
 
@@ -689,7 +688,7 @@ std::string GenXfaTagName(FuzzedDataProvider* data_provider) {
       "y",
   };
   size_t elem_selector = data_provider->ConsumeIntegralInRange<size_t>(
-      0, pdfium::size(kXfaTagNames) - 1);
+      0, std::size(kXfaTagNames) - 1);
   return kXfaTagNames[elem_selector];
 }
 

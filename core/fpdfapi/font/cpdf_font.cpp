@@ -33,7 +33,6 @@
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
 #include "third_party/base/check.h"
-#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
 namespace {
@@ -309,7 +308,7 @@ RetainPtr<CPDF_Font> CPDF_Font::Create(CPDF_Document* pDoc,
   RetainPtr<CPDF_Font> pFont;
   if (type == "TrueType") {
     ByteString tag = pFontDict->GetStringFor("BaseFont").First(4);
-    for (size_t i = 0; i < pdfium::size(kChineseFontNames); ++i) {
+    for (size_t i = 0; i < std::size(kChineseFontNames); ++i) {
       if (tag == ByteString(kChineseFontNames[i], kChineseFontNameSize)) {
         const CPDF_Dictionary* pFontDesc =
             pFontDict->GetDictFor("FontDescriptor");

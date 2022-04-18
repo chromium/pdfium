@@ -10,7 +10,6 @@
 #include <vector>
 
 #include "core/fxge/cfx_renderdevice.h"
-#include "third_party/base/cxx17_backports.h"
 
 CPWL_SBButton::CPWL_SBButton(
     const CreateParams& cp,
@@ -55,13 +54,13 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
                                             5.0f, 3.0f, 5.0f};
       static constexpr float kOffsetsMinY[] = {4.0f, 3.0f, 5.0f, 3.0f,
                                                4.0f, 6.0f, 4.0f};
-      static_assert(pdfium::size(kOffsetsX) == pdfium::size(kOffsetsY),
+      static_assert(std::size(kOffsetsX) == std::size(kOffsetsY),
                     "Wrong offset count");
-      static_assert(pdfium::size(kOffsetsX) == pdfium::size(kOffsetsMinY),
+      static_assert(std::size(kOffsetsX) == std::size(kOffsetsMinY),
                     "Wrong offset count");
       const float* pOffsetsY =
           m_eSBButtonType == Type::kMinButton ? kOffsetsMinY : kOffsetsY;
-      for (size_t i = 0; i < pdfium::size(kOffsetsX); ++i)
+      for (size_t i = 0; i < std::size(kOffsetsX); ++i)
         pts.push_back(CFX_PointF(fX + kOffsetsX[i], fY + pOffsetsY[i]));
       pDevice->DrawFillArea(mtUser2Device, pts,
                             ArgbEncode(nTransparency, 255, 255, 255));

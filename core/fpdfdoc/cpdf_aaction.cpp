@@ -6,8 +6,9 @@
 
 #include "core/fpdfdoc/cpdf_aaction.h"
 
+#include <iterator>
+
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
-#include "third_party/base/cxx17_backports.h"
 
 namespace {
 
@@ -37,7 +38,7 @@ constexpr const char* kAATypes[] = {
 
 // |kAATypes| should have one less element than enum AActionType due to
 // |kDocumentOpen|, which is an artificial type.
-static_assert(pdfium::size(kAATypes) == CPDF_AAction::kNumberOfActions - 1,
+static_assert(std::size(kAATypes) == CPDF_AAction::kNumberOfActions - 1,
               "kAATypes count mismatch");
 
 }  // namespace

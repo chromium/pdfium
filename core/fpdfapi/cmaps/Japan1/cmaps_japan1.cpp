@@ -6,7 +6,7 @@
 
 #include "core/fpdfapi/cmaps/Japan1/cmaps_japan1.h"
 
-#include "third_party/base/cxx17_backports.h"
+#include <iterator>
 
 const FXCMAP_CMap kFXCMAP_Japan1_cmaps[] = {
     {"83pv-RKSJ-H", kFXCMAP_83pv_RKSJ_H_1, nullptr, 222, 0, FXCMAP_CMap::Range,
@@ -47,4 +47,4 @@ const FXCMAP_CMap kFXCMAP_Japan1_cmaps[] = {
      FXCMAP_CMap::Single, -1},
 };
 
-const size_t kFXCMAP_Japan1_cmaps_size = pdfium::size(kFXCMAP_Japan1_cmaps);
+const size_t kFXCMAP_Japan1_cmaps_size = std::size(kFXCMAP_Japan1_cmaps);

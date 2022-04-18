@@ -705,14 +705,14 @@ uint32_t CPDF_CalRGB::v_Load(CPDF_Document* pDoc,
   const CPDF_Array* pParam = pDict->GetArrayFor("Gamma");
   if (pParam) {
     m_bHasGamma = true;
-    for (size_t i = 0; i < pdfium::size(m_Gamma); ++i)
+    for (size_t i = 0; i < std::size(m_Gamma); ++i)
       m_Gamma[i] = pParam->GetNumberAt(i);
   }
 
   pParam = pDict->GetArrayFor("Matrix");
   if (pParam) {
     m_bHasMatrix = true;
-    for (size_t i = 0; i < pdfium::size(m_Matrix); ++i)
+    for (size_t i = 0; i < std::size(m_Matrix); ++i)
       m_Matrix[i] = pParam->GetNumberAt(i);
   }
   return 3;
@@ -819,10 +819,9 @@ uint32_t CPDF_LabCS::v_Load(CPDF_Document* pDoc,
   const CPDF_Array* pParam = pDict->GetArrayFor("Range");
   static constexpr float kDefaultRanges[kRangesCount] = {-100.0f, 100.0f,
                                                          -100.0f, 100.0f};
-  static_assert(
-      pdfium::size(kDefaultRanges) == std::extent<decltype(m_Ranges)>(),
-      "Range size mismatch");
-  for (size_t i = 0; i < pdfium::size(kDefaultRanges); ++i)
+  static_assert(std::size(kDefaultRanges) == std::extent<decltype(m_Ranges)>(),
+                "Range size mismatch");
+  for (size_t i = 0; i < std::size(kDefaultRanges); ++i)
     m_Ranges[i] = pParam ? pParam->GetNumberAt(i) : kDefaultRanges[i];
   return 3;
 }

@@ -6,6 +6,7 @@
 
 #include "core/fxge/cfx_fontmgr.h"
 
+#include <iterator>
 #include <memory>
 #include <utility>
 
@@ -16,7 +17,6 @@
 #include "core/fxge/fx_font.h"
 #include "core/fxge/systemfontinfo_iface.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/cxx17_backports.h"
 
 namespace {
 
@@ -41,7 +41,7 @@ constexpr BuiltinFont kFoxitFonts[] = {
     {kFoxitSymbolFontData, 16729},
     {kFoxitDingbatsFontData, 29513},
 };
-static_assert(pdfium::size(kFoxitFonts) == CFX_FontMapper::kNumStandardFonts,
+static_assert(std::size(kFoxitFonts) == CFX_FontMapper::kNumStandardFonts,
               "Wrong font count");
 
 constexpr BuiltinFont kGenericSansFont = {kFoxitSansMMFontData, 66919};
@@ -76,12 +76,12 @@ CFX_FontMgr::FontDesc::FontDesc(std::unique_ptr<uint8_t, FxFreeDeleter> pData,
 CFX_FontMgr::FontDesc::~FontDesc() = default;
 
 void CFX_FontMgr::FontDesc::SetFace(size_t index, CFX_Face* face) {
-  CHECK_LT(index, pdfium::size(m_TTCFaces));
+  CHECK_LT(index, std::size(m_TTCFaces));
   m_TTCFaces[index].Reset(face);
 }
 
 CFX_Face* CFX_FontMgr::FontDesc::GetFace(size_t index) const {
-  CHECK_LT(index, pdfium::size(m_TTCFaces));
+  CHECK_LT(index, std::size(m_TTCFaces));
   return m_TTCFaces[index].Get();
 }
 
@@ -145,7 +145,7 @@ RetainPtr<CFX_Face> CFX_FontMgr::NewFixedFace(const RetainPtr<FontDesc>& pDesc,
 
 // static
 pdfium::span<const uint8_t> CFX_FontMgr::GetStandardFont(size_t index) {
-  CHECK_LT(index, pdfium::size(kFoxitFonts));
+  CHECK_LT(index, std::size(kFoxitFonts));
   return pdfium::make_span(kFoxitFonts[index].m_pFontData,
                            kFoxitFonts[index].m_dwSize);
 }

@@ -2,11 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <iterator>
+
 #include "public/fpdf_structtree.h"
 #include "testing/embedder_test.h"
 #include "testing/fx_string_testhelpers.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
-#include "third_party/base/cxx17_backports.h"
 
 class FPDFStructTreeEmbedderTest : public EmbedderTest {};
 
@@ -57,7 +58,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetAltText) {
     // Deliberately pass in a small buffer size to make sure |buffer| remains
     // untouched.
     ASSERT_EQ(24U, FPDF_StructElement_GetAltText(gchild_element, buffer, 1));
-    for (size_t i = 0; i < pdfium::size(buffer); ++i)
+    for (size_t i = 0; i < std::size(buffer); ++i)
       EXPECT_EQ(0U, buffer[i]);
 
     EXPECT_EQ(-1, FPDF_StructElement_GetMarkedContentID(gchild_element));
@@ -108,7 +109,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetActualText) {
     // Deliberately pass in a small buffer size to make sure |buffer| remains
     // untouched.
     ASSERT_EQ(24U, FPDF_StructElement_GetActualText(gchild_element, buffer, 1));
-    for (size_t i = 0; i < pdfium::size(buffer); ++i)
+    for (size_t i = 0; i < std::size(buffer); ++i)
       EXPECT_EQ(0U, buffer[i]);
     ASSERT_EQ(24U, FPDF_StructElement_GetActualText(gchild_element, buffer,
                                                     sizeof(buffer)));
@@ -412,7 +413,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetType) {
     // Deliberately pass in a small buffer size to make sure |buffer| remains
     // untouched.
     ASSERT_EQ(18U, FPDF_StructElement_GetType(element, buffer, 1));
-    for (size_t i = 0; i < pdfium::size(buffer); ++i)
+    for (size_t i = 0; i < std::size(buffer); ++i)
       EXPECT_EQ(0U, buffer[i]);
 
     ASSERT_EQ(18U, FPDF_StructElement_GetType(element, buffer, sizeof(buffer)));
@@ -446,7 +447,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetObjType) {
     // Deliberately pass in a small buffer size to make sure `buffer` remains
     // untouched.
     ASSERT_EQ(22U, FPDF_StructElement_GetObjType(child, buffer, 1));
-    for (size_t i = 0; i < pdfium::size(buffer); ++i)
+    for (size_t i = 0; i < std::size(buffer); ++i)
       EXPECT_EQ(0U, buffer[i]);
 
     ASSERT_EQ(22U,
@@ -460,7 +461,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetObjType) {
     ASSERT_EQ(0U,
               FPDF_StructElement_GetObjType(gchild, buffer, sizeof(buffer)));
     // Buffer is untouched.
-    for (size_t i = 0; i < pdfium::size(buffer); ++i)
+    for (size_t i = 0; i < std::size(buffer); ++i)
       EXPECT_EQ(0U, buffer[i]);
 
     ASSERT_EQ(1, FPDF_StructElement_CountChildren(gchild));
@@ -530,7 +531,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetTitle) {
     // Deliberately pass in a small buffer size to make sure |buffer| remains
     // untouched.
     ASSERT_EQ(20U, FPDF_StructElement_GetTitle(element, buffer, 1));
-    for (size_t i = 0; i < pdfium::size(buffer); ++i)
+    for (size_t i = 0; i < std::size(buffer); ++i)
       EXPECT_EQ(0U, buffer[i]);
 
     ASSERT_EQ(20U,
@@ -601,7 +602,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetAttributes) {
       ASSERT_TRUE(
           FPDF_StructElement_Attr_GetName(attr, 1, buffer, 1, &out_len));
       EXPECT_EQ(2U, out_len);
-      for (size_t i = 0; i < pdfium::size(buffer); ++i)
+      for (size_t i = 0; i < std::size(buffer); ++i)
         EXPECT_EQ(0, buffer[i]);
 
       ASSERT_TRUE(FPDF_StructElement_Attr_GetName(attr, 1, buffer,

@@ -41,7 +41,6 @@
 #include "core/fxge/cfx_graphstatedata.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/contains.h"
-#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/no_destructor.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/span.h"
@@ -178,7 +177,7 @@ void ReplaceAbbrInDictionary(CPDF_Dictionary* pDict) {
       ByteString key = it.first;
       CPDF_Object* value = it.second.Get();
       ByteStringView fullname = FindFullName(
-          kInlineKeyAbbr, pdfium::size(kInlineKeyAbbr), key.AsStringView());
+          kInlineKeyAbbr, std::size(kInlineKeyAbbr), key.AsStringView());
       if (!fullname.IsEmpty()) {
         AbbrReplacementOp op;
         op.is_replace_key = true;
@@ -190,9 +189,8 @@ void ReplaceAbbrInDictionary(CPDF_Dictionary* pDict) {
 
       if (value->IsName()) {
         ByteString name = value->GetString();
-        fullname =
-            FindFullName(kInlineValueAbbr, pdfium::size(kInlineValueAbbr),
-                         name.AsStringView());
+        fullname = FindFullName(kInlineValueAbbr, std::size(kInlineValueAbbr),
+                                name.AsStringView());
         if (!fullname.IsEmpty()) {
           AbbrReplacementOp op;
           op.is_replace_key = false;
@@ -218,9 +216,8 @@ void ReplaceAbbrInArray(CPDF_Array* pArray) {
     CPDF_Object* pElement = pArray->GetObjectAt(i);
     if (pElement->IsName()) {
       ByteString name = pElement->GetString();
-      ByteStringView fullname =
-          FindFullName(kInlineValueAbbr, pdfium::size(kInlineValueAbbr),
-                       name.AsStringView());
+      ByteStringView fullname = FindFullName(
+          kInlineValueAbbr, std::size(kInlineValueAbbr), name.AsStringView());
       if (!fullname.IsEmpty())
         pArray->SetNewAt<CPDF_Name>(i, ByteString(fullname));
     } else {
@@ -1640,13 +1637,13 @@ void CPDF_StreamContentParser::ParsePathObject() {
 // static
 ByteStringView CPDF_StreamContentParser::FindKeyAbbreviationForTesting(
     ByteStringView abbr) {
-  return FindFullName(kInlineKeyAbbr, pdfium::size(kInlineKeyAbbr), abbr);
+  return FindFullName(kInlineKeyAbbr, std::size(kInlineKeyAbbr), abbr);
 }
 
 // static
 ByteStringView CPDF_StreamContentParser::FindValueAbbreviationForTesting(
     ByteStringView abbr) {
-  return FindFullName(kInlineValueAbbr, pdfium::size(kInlineValueAbbr), abbr);
+  return FindFullName(kInlineValueAbbr, std::size(kInlineValueAbbr), abbr);
 }
 
 CPDF_StreamContentParser::ContentParam::ContentParam() = default;

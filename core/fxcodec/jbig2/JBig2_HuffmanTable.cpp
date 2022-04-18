@@ -6,13 +6,13 @@
 
 #include "core/fxcodec/jbig2/JBig2_HuffmanTable.h"
 
+#include <iterator>
 #include <limits>
 
 #include "core/fxcodec/jbig2/JBig2_BitStream.h"
 #include "core/fxcodec/jbig2/JBig2_Context.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/check.h"
-#include "third_party/base/cxx17_backports.h"
 
 namespace {
 
@@ -107,24 +107,24 @@ constexpr JBig2TableLine kTableLine15[] = {
 
 constexpr HuffmanTable kHuffmanTables[16] = {
     {false, nullptr, 0},  // Zero dummy to preserve indexing.
-    {false, kTableLine1, pdfium::size(kTableLine1)},
-    {true, kTableLine2, pdfium::size(kTableLine2)},
-    {true, kTableLine3, pdfium::size(kTableLine3)},
-    {false, kTableLine4, pdfium::size(kTableLine4)},
-    {false, kTableLine5, pdfium::size(kTableLine5)},
-    {false, kTableLine6, pdfium::size(kTableLine6)},
-    {false, kTableLine7, pdfium::size(kTableLine7)},
-    {true, kTableLine8, pdfium::size(kTableLine8)},
-    {true, kTableLine9, pdfium::size(kTableLine9)},
-    {true, kTableLine10, pdfium::size(kTableLine10)},
-    {false, kTableLine11, pdfium::size(kTableLine11)},
-    {false, kTableLine12, pdfium::size(kTableLine12)},
-    {false, kTableLine13, pdfium::size(kTableLine13)},
-    {false, kTableLine14, pdfium::size(kTableLine14)},
-    {false, kTableLine15, pdfium::size(kTableLine15)}};
+    {false, kTableLine1, std::size(kTableLine1)},
+    {true, kTableLine2, std::size(kTableLine2)},
+    {true, kTableLine3, std::size(kTableLine3)},
+    {false, kTableLine4, std::size(kTableLine4)},
+    {false, kTableLine5, std::size(kTableLine5)},
+    {false, kTableLine6, std::size(kTableLine6)},
+    {false, kTableLine7, std::size(kTableLine7)},
+    {true, kTableLine8, std::size(kTableLine8)},
+    {true, kTableLine9, std::size(kTableLine9)},
+    {true, kTableLine10, std::size(kTableLine10)},
+    {false, kTableLine11, std::size(kTableLine11)},
+    {false, kTableLine12, std::size(kTableLine12)},
+    {false, kTableLine13, std::size(kTableLine13)},
+    {false, kTableLine14, std::size(kTableLine14)},
+    {false, kTableLine15, std::size(kTableLine15)}};
 
 static_assert(CJBig2_HuffmanTable::kNumHuffmanTables ==
-                  pdfium::size(kHuffmanTables),
+                  std::size(kHuffmanTables),
               "kNumHuffmanTables must be equal to the size of kHuffmanTables");
 
 }  // namespace

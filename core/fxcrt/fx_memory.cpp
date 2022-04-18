@@ -8,6 +8,7 @@
 
 #include <stdlib.h>  // For abort().
 
+#include <iterator>
 #include <limits>
 
 #include "build/build_config.h"
@@ -81,7 +82,7 @@ NOINLINE void FX_OutOfMemoryTerminate(size_t size) {
   constexpr DWORD kOomExceptionCode = 0xe0000008;
   ULONG_PTR exception_args[] = {size};
   ::RaiseException(kOomExceptionCode, EXCEPTION_NONCONTINUABLE,
-                   pdfium::size(exception_args), exception_args);
+                   std::size(exception_args), exception_args);
 #endif
 
   // Terminate cleanly.

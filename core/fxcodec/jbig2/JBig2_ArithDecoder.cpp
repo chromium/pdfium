@@ -6,9 +6,10 @@
 
 #include "core/fxcodec/jbig2/JBig2_ArithDecoder.h"
 
+#include <iterator>
+
 #include "core/fxcodec/jbig2/JBig2_BitStream.h"
 #include "third_party/base/check.h"
-#include "third_party/base/cxx17_backports.h"
 
 namespace {
 
@@ -42,13 +43,13 @@ int JBig2ArithCtx::DecodeNLPS(const JBig2ArithQe& qe) {
   if (qe.bSwitch)
     m_MPS = !m_MPS;
   m_I = qe.NLPS;
-  DCHECK(m_I < pdfium::size(kQeTable));
+  DCHECK(m_I < std::size(kQeTable));
   return D;
 }
 
 int JBig2ArithCtx::DecodeNMPS(const JBig2ArithQe& qe) {
   m_I = qe.NMPS;
-  DCHECK(m_I < pdfium::size(kQeTable));
+  DCHECK(m_I < std::size(kQeTable));
   return MPS();
 }
 
@@ -66,7 +67,7 @@ CJBig2_ArithDecoder::~CJBig2_ArithDecoder() = default;
 
 int CJBig2_ArithDecoder::Decode(JBig2ArithCtx* pCX) {
   DCHECK(pCX);
-  DCHECK(pCX->I() < pdfium::size(kQeTable));
+  DCHECK(pCX->I() < std::size(kQeTable));
 
   const JBig2ArithCtx::JBig2ArithQe& qe = kQeTable[pCX->I()];
   m_A -= qe.Qe;

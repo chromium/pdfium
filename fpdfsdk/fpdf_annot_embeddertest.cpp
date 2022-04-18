@@ -28,7 +28,6 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/hash.h"
 #include "third_party/base/containers/contains.h"
-#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/span.h"
 
 using pdfium::kAnnotationStampWithApChecksum;
@@ -152,8 +151,7 @@ TEST_F(FPDFAnnotEmbedderTest, SetAP) {
   EXPECT_EQ("Form", sub_type);
 
   // Check that the appearance stream is same as we just set.
-  const uint32_t kStreamDataSize =
-      pdfium::size(kStreamData) * sizeof(FPDF_WCHAR);
+  const uint32_t kStreamDataSize = std::size(kStreamData) * sizeof(FPDF_WCHAR);
   unsigned long normal_length_bytes = FPDFAnnot_GetAP(
       annot.get(), FPDF_ANNOT_APPEARANCEMODE_NORMAL, nullptr, 0);
   ASSERT_EQ(kStreamDataSize, normal_length_bytes);
@@ -228,21 +226,18 @@ TEST_F(FPDFAnnotEmbedderTest, InkListAPIValidations) {
   static constexpr FS_POINTF kFirstInkStroke[] = {
       {80.0f, 90.0f}, {81.0f, 91.0f}, {82.0f, 92.0f},
       {83.0f, 93.0f}, {84.0f, 94.0f}, {85.0f, 95.0f}};
-  static constexpr size_t kFirstStrokePointCount =
-      pdfium::size(kFirstInkStroke);
+  static constexpr size_t kFirstStrokePointCount = std::size(kFirstInkStroke);
 
   static constexpr FS_POINTF kSecondInkStroke[] = {
       {70.0f, 90.0f}, {71.0f, 91.0f}, {72.0f, 92.0f}};
-  static constexpr size_t kSecondStrokePointCount =
-      pdfium::size(kSecondInkStroke);
+  static constexpr size_t kSecondStrokePointCount = std::size(kSecondInkStroke);
 
   static constexpr FS_POINTF kThirdInkStroke[] = {{60.0f, 90.0f},
                                                   {61.0f, 91.0f},
                                                   {62.0f, 92.0f},
                                                   {63.0f, 93.0f},
                                                   {64.0f, 94.0f}};
-  static constexpr size_t kThirdStrokePointCount =
-      pdfium::size(kThirdInkStroke);
+  static constexpr size_t kThirdStrokePointCount = std::size(kThirdInkStroke);
 
   // Negative test: |annot| is passed as nullptr.
   EXPECT_EQ(-1, FPDFAnnot_AddInkStroke(nullptr, kFirstInkStroke,
@@ -321,7 +316,7 @@ TEST_F(FPDFAnnotEmbedderTest, RemoveInkList) {
   static constexpr FS_POINTF kInkStroke[] = {{80.0f, 90.0f}, {81.0f, 91.0f},
                                              {82.0f, 92.0f}, {83.0f, 93.0f},
                                              {84.0f, 94.0f}, {85.0f, 95.0f}};
-  static constexpr size_t kPointCount = pdfium::size(kInkStroke);
+  static constexpr size_t kPointCount = std::size(kInkStroke);
 
   // InkStroke should get added to ink annotation. Also inklist should get
   // created.
@@ -2807,7 +2802,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormFieldType) {
                                          FPDF_FORMFIELD_CHECKBOX,
                                          FPDF_FORMFIELD_RADIOBUTTON};
 
-  for (size_t i = 0; i < pdfium::size(kExpectedAnnotTypes); ++i) {
+  for (size_t i = 0; i < std::size(kExpectedAnnotTypes); ++i) {
     ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, i));
     ASSERT_TRUE(annot);
     EXPECT_EQ(kExpectedAnnotTypes[i],
@@ -2979,9 +2974,9 @@ TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotSubtypes) {
 
   // Test invalid parameters.
   EXPECT_FALSE(FPDFAnnot_SetFocusableSubtypes(nullptr, kDefaultSubtypes,
-                                              pdfium::size(kDefaultSubtypes)));
+                                              std::size(kDefaultSubtypes)));
   EXPECT_FALSE(FPDFAnnot_SetFocusableSubtypes(form_handle(), nullptr,
-                                              pdfium::size(kDefaultSubtypes)));
+                                              std::size(kDefaultSubtypes)));
   EXPECT_EQ(-1, FPDFAnnot_GetFocusableSubtypesCount(nullptr));
 
   std::vector<FPDF_ANNOTATION_SUBTYPE> subtypes(1);
@@ -3016,7 +3011,7 @@ TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotRendering) {
   // Make links and highlights focusable.
   static constexpr FPDF_ANNOTATION_SUBTYPE kSubTypes[] = {FPDF_ANNOT_LINK,
                                                           FPDF_ANNOT_HIGHLIGHT};
-  constexpr int kSubTypesCount = pdfium::size(kSubTypes);
+  constexpr int kSubTypesCount = std::size(kSubTypes);
   ASSERT_TRUE(
       FPDFAnnot_SetFocusableSubtypes(form_handle(), kSubTypes, kSubTypesCount));
   ASSERT_EQ(kSubTypesCount, FPDFAnnot_GetFocusableSubtypesCount(form_handle()));

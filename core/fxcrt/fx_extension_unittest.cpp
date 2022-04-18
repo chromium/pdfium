@@ -6,10 +6,10 @@
 
 #include <math.h>
 
+#include <iterator>
 #include <limits>
 
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/cxx17_backports.h"
 
 TEST(fxcrt, FXSYS_IsLowerASCII) {
   EXPECT_TRUE(FXSYS_IsLowerASCII('a'));
@@ -198,8 +198,8 @@ TEST(fxcrt, FXSYS_SafeOps) {
   const float fNan = std::numeric_limits<float>::quiet_NaN();
   const float ascending[] = {fMin, 1.0f, 2.0f, fMax, fInf, fNan};
 
-  for (size_t i = 0; i < pdfium::size(ascending); ++i) {
-    for (size_t j = 0; j < pdfium::size(ascending); ++j) {
+  for (size_t i = 0; i < std::size(ascending); ++i) {
+    for (size_t j = 0; j < std::size(ascending); ++j) {
       if (i == j) {
         EXPECT_TRUE(FXSYS_SafeEQ(ascending[i], ascending[j]))
             << " at " << i << " " << j;

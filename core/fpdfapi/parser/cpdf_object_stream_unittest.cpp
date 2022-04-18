@@ -4,6 +4,8 @@
 
 #include "core/fpdfapi/parser/cpdf_object_stream.h"
 
+#include <iterator>
+
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_indirect_object_holder.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
@@ -12,7 +14,6 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/cxx17_backports.h"
 
 using testing::ElementsAre;
 
@@ -193,7 +194,7 @@ TEST(ObjectStreamTest, StreamDictOffsetTooBig) {
   auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
   dict->SetNewFor<CPDF_Name>("Type", "ObjStm");
   dict->SetNewFor<CPDF_Number>("N", 3);
-  constexpr int kTooBigOffset = pdfium::size(kNormalStreamContent);
+  constexpr int kTooBigOffset = std::size(kNormalStreamContent);
   dict->SetNewFor<CPDF_Number>("First", kTooBigOffset);
 
   auto stream = pdfium::MakeRetain<CPDF_Stream>(

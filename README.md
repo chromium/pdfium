@@ -95,8 +95,7 @@ is_component_build = false # Disable component build (Though it should work)
 For sample applications like `pdfium_test` to build, one must set
 `pdf_is_standalone = true`.
 
-By default, the entire project builds with C++14. When building with the
-experimental Skia backend, Skia itself it built with C++17.
+By default, the entire project builds with C++17.
 
 When complete the arguments will be stored in `<directory>/args.gn`, and
 GN will automatically use the new arguments to generate build files.

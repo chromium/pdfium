@@ -299,7 +299,7 @@ const uint8_t kAltTableDate[] = {
     255, 2,   255, 255, 255, 255, 255, 255, 255, 255, 255,
     255, 255, 1,   255, 255, 255, 255, 255, 255, 255, 255,
 };
-static_assert(pdfium::size(kAltTableDate) == L'a' - L'A' + 1,
+static_assert(std::size(kAltTableDate) == L'a' - L'A' + 1,
               "Invalid kAltTableDate size.");
 
 const uint8_t kAltTableTime[] = {
@@ -307,7 +307,7 @@ const uint8_t kAltTableTime[] = {
     255, 6,   255, 255, 255, 255, 255, 7,   255, 255, 255,
     255, 255, 1,   17,  255, 255, 255, 255, 255, 255, 255,
 };
-static_assert(pdfium::size(kAltTableTime) == L'a' - L'A' + 1,
+static_assert(std::size(kAltTableTime) == L'a' - L'A' + 1,
               "Invalid kAltTableTime size.");
 
 void AlternateDateTimeSymbols(WideString* pPattern,
@@ -979,7 +979,7 @@ WideString EncodeURL(const ByteString& bsURL) {
   szEncode[3] = 0;
   for (wchar_t ch : wsURL) {
     size_t i = 0;
-    size_t iCount = pdfium::size(kStrUnsafe);
+    size_t iCount = std::size(kStrUnsafe);
     while (i < iCount) {
       if (ch == kStrUnsafe[i]) {
         int32_t iIndex = ch / 16;
@@ -994,7 +994,7 @@ WideString EncodeURL(const ByteString& bsURL) {
       continue;
 
     i = 0;
-    iCount = pdfium::size(kStrReserved);
+    iCount = std::size(kStrReserved);
     while (i < iCount) {
       if (ch == kStrReserved[i]) {
         int32_t iIndex = ch / 16;
@@ -1009,7 +1009,7 @@ WideString EncodeURL(const ByteString& bsURL) {
       continue;
 
     i = 0;
-    iCount = pdfium::size(kStrSpecial);
+    iCount = std::size(kStrSpecial);
     while (i < iCount) {
       if (ch == kStrSpecial[i]) {
         wsResultBuf.AppendChar(ch);
@@ -1667,14 +1667,14 @@ int GetValidatedPaymentPeriods(v8::Isolate* isolate, v8::Local<v8::Value> arg) {
 }  // namespace
 
 const FXJSE_CLASS_DESCRIPTOR kFormCalcDescriptor = {
-    kClassTag,                         // tag
-    "XFA_FormCalcClass",               // name
-    kFormCalcFunctions,                // methods
-    pdfium::size(kFormCalcFunctions),  // number of methods
-    nullptr,                           // dynamic prop type
-    nullptr,                           // dynamic prop getter
-    nullptr,                           // dynamic prop setter
-    nullptr,                           // dynamic prop method call
+    kClassTag,                      // tag
+    "XFA_FormCalcClass",            // name
+    kFormCalcFunctions,             // methods
+    std::size(kFormCalcFunctions),  // number of methods
+    nullptr,                        // dynamic prop type
+    nullptr,                        // dynamic prop getter
+    nullptr,                        // dynamic prop setter
+    nullptr,                        // dynamic prop method call
 };
 
 // static

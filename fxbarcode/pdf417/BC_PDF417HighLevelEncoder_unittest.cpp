@@ -7,7 +7,6 @@
 #include <vector>
 
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/cxx17_backports.h"
 
 TEST(PDF417HighLevelEncoderTest, EncodeHighLevel) {
   static constexpr struct EncodeHighLevelCase {
@@ -40,7 +39,7 @@ TEST(PDF417HighLevelEncoderTest, EncodeHighLevel) {
       {L"0000000000000", L"\x0386\x000f\x00d9\x017b\x000b\x0064", 6},
   };
 
-  for (size_t i = 0; i < pdfium::size(kEncodeHighLevelCases); ++i) {
+  for (size_t i = 0; i < std::size(kEncodeHighLevelCases); ++i) {
     const EncodeHighLevelCase& testcase = kEncodeHighLevelCases[i];
     WideStringView input(testcase.input);
     WideString expected(testcase.expected, testcase.expected_length);
@@ -84,7 +83,7 @@ TEST(PDF417HighLevelEncoderTest, EncodeBinary) {
        L"\u039c\u00c9\u031f\u012a\u00d2\u02d0", 6},
   };
 
-  for (size_t i = 0; i < pdfium::size(kEncodeBinaryCases); ++i) {
+  for (size_t i = 0; i < std::size(kEncodeBinaryCases); ++i) {
     const EncodeBinaryCase& testcase = kEncodeBinaryCases[i];
     std::vector<uint8_t> input_array;
     size_t input_length = strlen(testcase.input);
@@ -151,7 +150,7 @@ TEST(PDF417HighLevelEncoderTest, EncodeNumeric) {
        18},
   };
 
-  for (size_t i = 0; i < pdfium::size(kEncodeNumericCases); ++i) {
+  for (size_t i = 0; i < std::size(kEncodeNumericCases); ++i) {
     const EncodeNumericCase& testcase = kEncodeNumericCases[i];
     WideString input(testcase.input);
     WideString expected(testcase.expected, testcase.expected_length);
@@ -196,7 +195,7 @@ TEST(PDF417HighLevelEncoderTest, ConsecutiveDigitCount) {
       {L"123FOO45678", 6, 5},
   };
 
-  for (size_t i = 0; i < pdfium::size(kConsecutiveDigitCases); ++i) {
+  for (size_t i = 0; i < std::size(kConsecutiveDigitCases); ++i) {
     const ConsecutiveDigitCase& testcase = kConsecutiveDigitCases[i];
     WideString input(testcase.input);
     int actual_count =
@@ -256,7 +255,7 @@ TEST(PDF417HighLevelEncoderTest, ConsecutiveTextCount) {
       {L"XXX121XXX12345678901234", 0, 9},
   };
 
-  for (size_t i = 0; i < pdfium::size(kConsecutiveTextCases); ++i) {
+  for (size_t i = 0; i < std::size(kConsecutiveTextCases); ++i) {
     const ConsecutiveTextCase& testcase = kConsecutiveTextCases[i];
     WideString input(testcase.input);
     int actual_count =

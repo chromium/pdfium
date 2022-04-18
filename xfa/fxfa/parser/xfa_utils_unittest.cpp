@@ -4,8 +4,9 @@
 
 #include "xfa/fxfa/parser/xfa_utils.h"
 
+#include <iterator>
+
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/cxx17_backports.h"
 
 TEST(XfaUtilsImpTest, XFA_MapRotation) {
   struct TestCase {
@@ -17,7 +18,7 @@ TEST(XfaUtilsImpTest, XFA_MapRotation) {
                    {91, 91},       {359, 359},  {360, 0},   {361, 1},
                    {100000, 280}};
 
-  for (size_t i = 0; i < pdfium::size(TestCases); ++i) {
+  for (size_t i = 0; i < std::size(TestCases); ++i) {
     EXPECT_EQ(TestCases[i].expected_output,
               XFA_MapRotation(TestCases[i].input));
   }

@@ -6,7 +6,7 @@
 
 #include "core/fpdfapi/cmaps/Korea1/cmaps_korea1.h"
 
-#include "third_party/base/cxx17_backports.h"
+#include <iterator>
 
 const FXCMAP_CMap kFXCMAP_Korea1_cmaps[] = {
     {"KSC-EUC-H", kFXCMAP_KSC_EUC_H_0, nullptr, 467, 0, FXCMAP_CMap::Range, 0},
@@ -31,4 +31,4 @@ const FXCMAP_CMap kFXCMAP_Korea1_cmaps[] = {
      FXCMAP_CMap::Range, -1},
 };
 
-const size_t kFXCMAP_Korea1_cmaps_size = pdfium::size(kFXCMAP_Korea1_cmaps);
+const size_t kFXCMAP_Korea1_cmaps_size = std::size(kFXCMAP_Korea1_cmaps);

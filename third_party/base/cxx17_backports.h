@@ -13,18 +13,6 @@
 
 namespace pdfium {
 
-// C++14 implementation of C++17's std::size():
-// http://en.cppreference.com/w/cpp/iterator/size
-template <typename Container>
-constexpr auto size(const Container& c) -> decltype(c.size()) {
-  return c.size();
-}
-
-template <typename T, size_t N>
-constexpr size_t size(const T (&array)[N]) noexcept {
-  return N;
-}
-
 // C++14 implementation of C++17's std::clamp():
 // https://en.cppreference.com/w/cpp/algorithm/clamp
 // Please note that the C++ spec makes it undefined behavior to call std::clamp

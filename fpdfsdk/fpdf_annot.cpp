@@ -38,7 +38,6 @@
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
 #include "third_party/base/check.h"
-#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/ptr_util.h"
 
@@ -1032,10 +1031,9 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
     return false;
 
   static constexpr const char* kModeKeyForMode[] = {"N", "R", "D"};
-  static_assert(
-      pdfium::size(kModeKeyForMode) == FPDF_ANNOT_APPEARANCEMODE_COUNT,
-      "length of kModeKeyForMode should be equal to "
-      "FPDF_ANNOT_APPEARANCEMODE_COUNT");
+  static_assert(std::size(kModeKeyForMode) == FPDF_ANNOT_APPEARANCEMODE_COUNT,
+                "length of kModeKeyForMode should be equal to "
+                "FPDF_ANNOT_APPEARANCEMODE_COUNT");
   const char* modeKey = kModeKeyForMode[appearanceMode];
 
   CPDF_Dictionary* pApDict = pAnnotDict->GetDictFor(pdfium::annotation::kAP);

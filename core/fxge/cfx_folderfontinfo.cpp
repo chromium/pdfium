@@ -6,6 +6,7 @@
 
 #include "core/fxge/cfx_folderfontinfo.h"
 
+#include <iterator>
 #include <limits>
 #include <utility>
 
@@ -19,7 +20,6 @@
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/fx_font.h"
 #include "third_party/base/containers/contains.h"
-#include "third_party/base/cxx17_backports.h"
 
 namespace {
 
@@ -302,8 +302,7 @@ void CFX_FolderFontInfo::ReportFace(const ByteString& path,
 }
 
 void* CFX_FolderFontInfo::GetSubstFont(const ByteString& face) {
-  for (size_t iBaseFont = 0; iBaseFont < pdfium::size(Base14Substs);
-       iBaseFont++) {
+  for (size_t iBaseFont = 0; iBaseFont < std::size(Base14Substs); iBaseFont++) {
     if (face == Base14Substs[iBaseFont].m_pName)
       return GetFont(Base14Substs[iBaseFont].m_pSubstName);
   }

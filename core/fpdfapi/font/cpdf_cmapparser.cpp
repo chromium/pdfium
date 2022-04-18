@@ -8,6 +8,8 @@
 
 #include <ctype.h>
 
+#include <iterator>
+
 #include "core/fpdfapi/cmaps/fpdf_cmaps.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -16,7 +18,6 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/fx_freetype.h"
 #include "third_party/base/check.h"
-#include "third_party/base/cxx17_backports.h"
 
 namespace {
 
@@ -204,10 +205,10 @@ absl::optional<CPDF_CMap::CodeRange> CPDF_CMapParser::GetCodeRange(
 CIDSet CPDF_CMapParser::CharsetFromOrdering(ByteStringView ordering) {
   static const char* const kCharsetNames[CIDSET_NUM_SETS] = {
       nullptr, "GB1", "CNS1", "Japan1", "Korea1", "UCS"};
-  static_assert(pdfium::size(kCharsetNames) == CIDSET_NUM_SETS,
+  static_assert(std::size(kCharsetNames) == CIDSET_NUM_SETS,
                 "Too many CID sets");
 
-  for (size_t charset = 1; charset < pdfium::size(kCharsetNames); ++charset) {
+  for (size_t charset = 1; charset < std::size(kCharsetNames); ++charset) {
     if (ordering == kCharsetNames[charset])
       return static_cast<CIDSet>(charset);
   }

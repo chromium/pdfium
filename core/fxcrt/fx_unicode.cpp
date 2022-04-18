@@ -8,8 +8,9 @@
 
 #include <stddef.h>
 
+#include <iterator>
+
 #include "third_party/base/check.h"
-#include "third_party/base/cxx17_backports.h"
 
 namespace {
 
@@ -33,7 +34,7 @@ constexpr uint16_t kTextLayoutCodeProperties[] = {
 #undef CHARPROP____
 
 constexpr size_t kTextLayoutCodePropertiesSize =
-    pdfium::size(kTextLayoutCodeProperties);
+    std::size(kTextLayoutCodeProperties);
 
 static_assert(kTextLayoutCodePropertiesSize == 65536, "missing characters");
 
@@ -66,7 +67,7 @@ constexpr uint16_t kExtendedTextLayoutCodeProperties[] = {
 #undef CHARPROP____
 
 constexpr size_t kExtendedTextLayoutCodePropertiesSize =
-    pdfium::size(kExtendedTextLayoutCodeProperties);
+    std::size(kExtendedTextLayoutCodeProperties);
 
 static_assert(kExtendedTextLayoutCodePropertiesSize == 65536,
               "missing characters");
@@ -125,7 +126,7 @@ constexpr uint16_t kFXTextLayoutBidiMirror[] = {
 };
 
 constexpr size_t kFXTextLayoutBidiMirrorSize =
-    pdfium::size(kFXTextLayoutBidiMirror);
+    std::size(kFXTextLayoutBidiMirror);
 
 // Check that the mirror indicies in the fx_ucddata.inc table are in bounds.
 #undef CHARPROP____

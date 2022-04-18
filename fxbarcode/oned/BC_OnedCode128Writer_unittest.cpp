@@ -4,8 +4,9 @@
 
 #include "fxbarcode/oned/BC_OnedCode128Writer.h"
 
+#include <iterator>
+
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/cxx17_backports.h"
 
 namespace {
 
@@ -32,7 +33,7 @@ TEST(OnedCode128WriterTest, Encode128B) {
       {"321ABC", 722, {104, 19, 18, 17, 33, 34, 35}, 7},
       {"XYZ", 448, {104, 56, 57, 58}, 4},
   };
-  for (size_t i = 0; i < pdfium::size(kTestCases); ++i) {
+  for (size_t i = 0; i < std::size(kTestCases); ++i) {
     FXSYS_snprintf(buf, sizeof(buf) - 1, "Test case %zu", i);
     SCOPED_TRACE(buf);
     const TestCase& test_case = kTestCases[i];
@@ -65,7 +66,7 @@ TEST(OnedCode128WriterTest, Encode128C) {
       {"321ABC", 933, {105, 32, 1, 65, 66, 67}, 6},
       {"XYZ", 641, {105, 88, 89, 90}, 4},
   };
-  for (size_t i = 0; i < pdfium::size(kTestCases); ++i) {
+  for (size_t i = 0; i < std::size(kTestCases); ++i) {
     FXSYS_snprintf(buf, sizeof(buf) - 1, "Test case %zu", i);
     SCOPED_TRACE(buf);
     const TestCase& test_case = kTestCases[i];

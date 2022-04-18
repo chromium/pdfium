@@ -10,11 +10,12 @@
 #include <time.h>
 #include <wctype.h>
 
+#include <iterator>
+
 #include "build/build_config.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_system.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
-#include "third_party/base/cxx17_backports.h"
 
 namespace fxjs {
 namespace {
@@ -114,7 +115,7 @@ int MonthFromTime(double t) {
   // Check for February onwards.
   static constexpr int kCumulativeDaysInMonths[] = {
       59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365};
-  for (size_t i = 0; i < pdfium::size(kCumulativeDaysInMonths); ++i) {
+  for (size_t i = 0; i < std::size(kCumulativeDaysInMonths); ++i) {
     if (day < kCumulativeDaysInMonths[i])
       return static_cast<int>(i) + 1;
   }
@@ -434,7 +435,7 @@ ConversionStatus FX_ParseDateUsingFormat(const WideString& value,
               nSkip = FindSubWordLength(value, j);
               if (nSkip == KMonthAbbreviationLength) {
                 WideString sMonth = value.Substr(j, KMonthAbbreviationLength);
-                for (size_t m = 0; m < pdfium::size(kMonths); ++m) {
+                for (size_t m = 0; m < std::size(kMonths); ++m) {
                   if (sMonth.CompareNoCase(kMonths[m]) == 0) {
                     nMonth = static_cast<int>(m) + 1;
                     i += 3;
@@ -471,7 +472,7 @@ ConversionStatus FX_ParseDateUsingFormat(const WideString& value,
               if (nSkip <= kLongestFullMonthLength) {
                 WideString sMonth = value.Substr(j, nSkip);
                 sMonth.MakeLower();
-                for (size_t m = 0; m < pdfium::size(kFullMonths); ++m) {
+                for (size_t m = 0; m < std::size(kFullMonths); ++m) {
                   WideString sFullMonths = WideString(kFullMonths[m]);
                   sFullMonths.MakeLower();
                   if (sFullMonths.Contains(sMonth.AsStringView())) {

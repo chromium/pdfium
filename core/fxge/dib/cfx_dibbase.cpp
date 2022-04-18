@@ -23,7 +23,6 @@
 #include "core/fxge/dib/cfx_imagetransformer.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/span.h"
 
@@ -180,7 +179,7 @@ void ConvertBuffer_8bppPlt2Gray(uint8_t* dest_buf,
                                 int src_top) {
   pdfium::span<const uint32_t> src_palette = pSrcBitmap->GetPaletteSpan();
   uint8_t gray[256];
-  for (size_t i = 0; i < pdfium::size(gray); ++i) {
+  for (size_t i = 0; i < std::size(gray); ++i) {
     gray[i] = FXRGB2GRAY(FXARGB_R(src_palette[i]), FXARGB_G(src_palette[i]),
                          FXARGB_B(src_palette[i]));
   }

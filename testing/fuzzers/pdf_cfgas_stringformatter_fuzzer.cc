@@ -6,12 +6,13 @@
 
 #include <stdint.h>
 
+#include <iterator>
+
 #include "core/fxcrt/cfx_datetime.h"
 #include "core/fxcrt/fx_string.h"
 #include "public/fpdfview.h"
 #include "testing/fuzzers/pdfium_fuzzer_util.h"
 #include "testing/fuzzers/xfa_process_state.h"
-#include "third_party/base/cxx17_backports.h"
 #include "v8/include/cppgc/heap.h"
 #include "v8/include/cppgc/persistent.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
@@ -35,8 +36,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   cppgc::Heap* heap = state->GetHeap();
 
   uint8_t test_selector = data[0] % 10;
-  uint8_t locale_selector = data[1] % pdfium::size(kLocales);
-  uint8_t type_selector = data[2] % pdfium::size(kTypes);
+  uint8_t locale_selector = data[1] % std::size(kLocales);
+  uint8_t type_selector = data[2] % std::size(kTypes);
   data += 3;
   size -= 3;
 

@@ -7,7 +7,6 @@
 #include <vector>
 
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/cxx17_backports.h"
 
 class CBC_DataMatrixWriterTest : public testing::Test {
  public:
@@ -42,10 +41,10 @@ TEST_F(CBC_DataMatrixWriterTest, Encode) {
     // clang-format on
     std::vector<uint8_t, FxAllocAllocator<uint8_t>> data =
         writer.Encode(L"", &width, &height);
-    ASSERT_EQ(pdfium::size(kExpectedData), data.size());
+    ASSERT_EQ(std::size(kExpectedData), data.size());
     ASSERT_EQ(kExpectedDimension, width);
     ASSERT_EQ(kExpectedDimension, height);
-    for (size_t i = 0; i < pdfium::size(kExpectedData); ++i)
+    for (size_t i = 0; i < std::size(kExpectedData); ++i)
       EXPECT_EQ(kExpectedData[i], data[i]) << i;
   }
   {
@@ -70,10 +69,10 @@ TEST_F(CBC_DataMatrixWriterTest, Encode) {
     // clang-format on
     std::vector<uint8_t, FxAllocAllocator<uint8_t>> data =
         writer.Encode(L"helloworld", &width, &height);
-    ASSERT_EQ(pdfium::size(kExpectedData), data.size());
+    ASSERT_EQ(std::size(kExpectedData), data.size());
     ASSERT_EQ(kExpectedDimension, width);
     ASSERT_EQ(kExpectedDimension, height);
-    for (size_t i = 0; i < pdfium::size(kExpectedData); ++i)
+    for (size_t i = 0; i < std::size(kExpectedData); ++i)
       EXPECT_EQ(kExpectedData[i], data[i]) << i;
   }
   {
@@ -94,10 +93,10 @@ TEST_F(CBC_DataMatrixWriterTest, Encode) {
     // clang-format on
     std::vector<uint8_t, FxAllocAllocator<uint8_t>> data =
         writer.Encode(L"12345", &width, &height);
-    ASSERT_EQ(pdfium::size(kExpectedData), data.size());
+    ASSERT_EQ(std::size(kExpectedData), data.size());
     ASSERT_EQ(kExpectedDimension, width);
     ASSERT_EQ(kExpectedDimension, height);
-    for (size_t i = 0; i < pdfium::size(kExpectedData); ++i)
+    for (size_t i = 0; i < std::size(kExpectedData); ++i)
       EXPECT_EQ(kExpectedData[i], data[i]) << i;
   }
   {
@@ -126,10 +125,10 @@ TEST_F(CBC_DataMatrixWriterTest, Encode) {
     // clang-format on
     std::vector<uint8_t, FxAllocAllocator<uint8_t>> data =
         writer.Encode(L"abcdefghijklmnopqrst", &width, &height);
-    ASSERT_EQ(pdfium::size(kExpectedData), data.size());
+    ASSERT_EQ(std::size(kExpectedData), data.size());
     ASSERT_EQ(kExpectedDimension, width);
     ASSERT_EQ(kExpectedDimension, height);
-    for (size_t i = 0; i < pdfium::size(kExpectedData); ++i)
+    for (size_t i = 0; i < std::size(kExpectedData); ++i)
       EXPECT_EQ(kExpectedData[i], data[i]) << i;
   }
   {

@@ -22,6 +22,8 @@
 
 #include "fxbarcode/qrcode/BC_QRCoderMatrixUtil.h"
 
+#include <iterator>
+
 #include "fxbarcode/common/BC_CommonByteMatrix.h"
 #include "fxbarcode/qrcode/BC_QRCoder.h"
 #include "fxbarcode/qrcode/BC_QRCoderBitVector.h"
@@ -29,7 +31,6 @@
 #include "fxbarcode/qrcode/BC_QRCoderMaskUtil.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/cxx17_backports.h"
 
 namespace {
 
@@ -333,7 +334,7 @@ bool MaybeEmbedPositionAdjustmentPatterns(int32_t version,
     return true;
 
   const size_t index = version - 2;
-  if (index >= pdfium::size(kPositionAdjustmentPatternCoordinates))
+  if (index >= std::size(kPositionAdjustmentPatternCoordinates))
     return false;
 
   const auto* coordinates = &kPositionAdjustmentPatternCoordinates[index][0];

@@ -42,7 +42,6 @@
 #include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/cxx17_backports.h"
 
 using ModeStringPair = std::pair<CBC_QRCoderMode*, ByteString>;
 
@@ -66,7 +65,7 @@ int32_t GetAlphaNumericCode(int32_t code) {
   if (code < 32)
     return -1;
   size_t code_index = static_cast<size_t>(code - 32);
-  if (code_index >= pdfium::size(kAlphaNumericTable))
+  if (code_index >= std::size(kAlphaNumericTable))
     return -1;
   return kAlphaNumericTable[code_index];
 }

@@ -7,12 +7,12 @@
 #include "core/fxcodec/gif/cfx_gifcontext.h"
 
 #include <algorithm>
+#include <iterator>
 #include <utility>
 
 #include "core/fxcodec/cfx_codec_memory.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/stl_util.h"
-#include "third_party/base/cxx17_backports.h"
 
 namespace fxcodec {
 
@@ -284,7 +284,7 @@ GifDecoder::Status CFX_GifContext::LoadFrame(size_t frame_num) {
             if (gif_image->row_num >=
                 static_cast<int32_t>(gif_image->image_info.height)) {
               img_pass_num_++;
-              if (img_pass_num_ == pdfium::size(kGifInterlaceStep)) {
+              if (img_pass_num_ == std::size(kGifInterlaceStep)) {
                 DecodingFailureAtTailCleanup(gif_image);
                 return GifDecoder::Status::kError;
               }

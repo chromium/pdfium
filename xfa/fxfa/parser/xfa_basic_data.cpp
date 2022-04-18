@@ -40,7 +40,6 @@
 #include "fxjs/xfa/cjx_treelist.h"
 #include "fxjs/xfa/cjx_wsdlconnection.h"
 #include "fxjs/xfa/cjx_xfa.h"
-#include "third_party/base/cxx17_backports.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
 namespace {
@@ -80,7 +79,7 @@ constexpr const char* kElementNames[] = {
 #undef ELEM____
 };
 
-static_assert(pdfium::size(kElementRecords) == pdfium::size(kElementNames),
+static_assert(std::size(kElementRecords) == std::size(kElementNames),
               "Size mismatch");
 
 struct AttributeRecord {
@@ -105,7 +104,7 @@ constexpr const char* kAttributeNames[] = {
 #undef ATTR____
 };
 
-static_assert(pdfium::size(kAttributeRecords) == pdfium::size(kAttributeNames),
+static_assert(std::size(kAttributeRecords) == std::size(kAttributeNames),
               "Size mismatch");
 
 struct AttributeValueRecord {
@@ -130,8 +129,8 @@ constexpr const char* kAttributeValueNames[] = {
 #undef VALUE____
 };
 
-static_assert(pdfium::size(kAttributeValueRecords) ==
-                  pdfium::size(kAttributeValueNames),
+static_assert(std::size(kAttributeValueRecords) ==
+                  std::size(kAttributeValueNames),
               "Size mismatch");
 
 struct ElementAttributeRecord {
@@ -155,8 +154,8 @@ constexpr XFA_ATTRIBUTE_CALLBACK kElementAttributeCallbacks[] = {
 #undef ELEM_ATTR____
 };
 
-static_assert(pdfium::size(kElementAttributeRecords) ==
-                  pdfium::size(kElementAttributeCallbacks),
+static_assert(std::size(kElementAttributeRecords) ==
+                  std::size(kElementAttributeCallbacks),
               "Size mismatch");
 
 }  // namespace

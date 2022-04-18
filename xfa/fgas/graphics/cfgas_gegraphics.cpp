@@ -8,6 +8,7 @@
 
 #include <math.h>
 
+#include <iterator>
 #include <memory>
 
 #include "core/fxcrt/fx_system.h"
@@ -16,7 +17,6 @@
 #include "core/fxge/cfx_unicodeencoding.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "third_party/base/check.h"
-#include "third_party/base/cxx17_backports.h"
 #include "xfa/fgas/graphics/cfgas_gecolor.h"
 #include "xfa/fgas/graphics/cfgas_gepath.h"
 #include "xfa/fgas/graphics/cfgas_gepattern.h"
@@ -106,8 +106,8 @@ const FX_HATCHDATA kHatchPlaceHolder = {
     }};
 
 const FX_HATCHDATA& GetHatchBitmapData(size_t index) {
-  return index < pdfium::size(kHatchBitmapData) ? kHatchBitmapData[index]
-                                                : kHatchPlaceHolder;
+  return index < std::size(kHatchBitmapData) ? kHatchBitmapData[index]
+                                             : kHatchPlaceHolder;
 }
 
 }  // namespace

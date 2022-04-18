@@ -29,7 +29,6 @@
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
 #include "third_party/base/check.h"
-#include "third_party/base/cxx17_backports.h"
 
 namespace {
 
@@ -147,7 +146,7 @@ WideString CreateECCBlock(const WideString& codewords, size_t numECWords) {
   DCHECK(numECWords > 0);
 
   const size_t len = codewords.GetLength();
-  static constexpr size_t kFactorTableNum = pdfium::size(FACTOR_SETS);
+  static constexpr size_t kFactorTableNum = std::size(FACTOR_SETS);
   size_t table = 0;
   while (table < kFactorTableNum && FACTOR_SETS[table] != numECWords)
     ++table;

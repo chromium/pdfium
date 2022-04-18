@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <iterator>
 #include <memory>
 
 #include "core/fxcrt/fx_safe_types.h"
@@ -9,7 +10,6 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "testing/fuzzers/pdfium_fuzzer_util.h"
-#include "third_party/base/cxx17_backports.h"
 
 namespace {
 
@@ -49,8 +49,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
 
   BlendMode blend_mode = static_cast<BlendMode>(
       data[28] % (static_cast<int>(BlendMode::kLast) + 1));
-  FXDIB_Format dest_format = kFormat[data[29] % pdfium::size(kFormat)];
-  FXDIB_Format src_format = kFormat[data[30] % pdfium::size(kFormat)];
+  FXDIB_Format dest_format = kFormat[data[29] % std::size(kFormat)];
+  FXDIB_Format src_format = kFormat[data[30] % std::size(kFormat)];
   bool is_clip = !(data[31] % 2);
   bool is_rgb_byte_order = !(data[32] % 2);
   size -= kParameterSize;

@@ -7,6 +7,7 @@
 #include "core/fpdfapi/font/cpdf_type3font.h"
 
 #include <algorithm>
+#include <iterator>
 #include <type_traits>
 #include <utility>
 
@@ -17,7 +18,6 @@
 #include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/check.h"
-#include "third_party/base/cxx17_backports.h"
 
 namespace {
 
@@ -149,7 +149,7 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
 }
 
 int CPDF_Type3Font::GetCharWidthF(uint32_t charcode) {
-  if (charcode >= pdfium::size(m_CharWidthL))
+  if (charcode >= std::size(m_CharWidthL))
     charcode = 0;
 
   if (m_CharWidthL[charcode])

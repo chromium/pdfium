@@ -22,13 +22,14 @@
 
 #include "fxbarcode/oned/BC_OnedCodaBarWriter.h"
 
+#include <iterator>
+
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory.h"
 #include "fxbarcode/BC_Writer.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/oned/BC_OneDimWriter.h"
 #include "third_party/base/containers/contains.h"
-#include "third_party/base/cxx17_backports.h"
 
 namespace {
 
@@ -39,9 +40,9 @@ const char kOnedCodaAlphabet[] = {'0', '1', '2', '3', '4', '5', '6', '7',
 const int8_t kOnedCodaCharacterEncoding[] = {
     0x03, 0x06, 0x09, 0x60, 0x12, 0x42, 0x21, 0x24, 0x30, 0x48, 0x0c,
     0x18, 0x45, 0x51, 0x54, 0x15, 0x1A, 0x29, 0x0B, 0x0E, 0x1A, 0x29};
-static_assert(pdfium::size(kOnedCodaCharacterEncoding) == 22, "Wrong size");
-static_assert(pdfium::size(kOnedCodaCharacterEncoding) ==
-                  pdfium::size(kOnedCodaAlphabet),
+static_assert(std::size(kOnedCodaCharacterEncoding) == 22, "Wrong size");
+static_assert(std::size(kOnedCodaCharacterEncoding) ==
+                  std::size(kOnedCodaAlphabet),
               "Wrong size");
 
 const char kStartEndChars[] = {'A', 'B', 'C', 'D', 'T', 'N', '*', 'E',
@@ -157,7 +158,7 @@ uint8_t* CBC_OnedCodaBarWriter::EncodeImpl(const ByteString& contents,
         break;
     }
     int8_t code = 0;
-    for (size_t i = 0; i < pdfium::size(kOnedCodaAlphabet); i++) {
+    for (size_t i = 0; i < std::size(kOnedCodaAlphabet); i++) {
       if (ch == kOnedCodaAlphabet[i]) {
         code = kOnedCodaCharacterEncoding[i];
         break;

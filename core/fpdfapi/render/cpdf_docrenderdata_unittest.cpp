@@ -4,6 +4,7 @@
 
 #include "core/fpdfapi/render/cpdf_docrenderdata.h"
 
+#include <iterator>
 #include <memory>
 #include <utility>
 
@@ -14,7 +15,6 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/cxx17_backports.h"
 
 namespace {
 
@@ -88,7 +88,7 @@ RetainPtr<CPDF_Stream> CreateType0FunctionStream() {
   func_dict->SetNewFor<CPDF_Number>("BitsPerSample", 8);
 
   static const char content[] = "1234";
-  size_t len = pdfium::size(content);
+  size_t len = std::size(content);
   std::unique_ptr<uint8_t, FxFreeDeleter> buf(FX_AllocUninit(uint8_t, len));
   memcpy(buf.get(), content, len);
   return pdfium::MakeRetain<CPDF_Stream>(std::move(buf), len,
@@ -130,7 +130,7 @@ RetainPtr<CPDF_Stream> CreateType4FunctionStream() {
   range_array->AppendNew<CPDF_Number>(1);
 
   static const char content[] = "{ 360 mul sin 2 div }";
-  size_t len = pdfium::size(content);
+  size_t len = std::size(content);
   std::unique_ptr<uint8_t, FxFreeDeleter> buf(FX_AllocUninit(uint8_t, len));
   memcpy(buf.get(), content, len);
   return pdfium::MakeRetain<CPDF_Stream>(std::move(buf), len,
@@ -150,7 +150,7 @@ RetainPtr<CPDF_Stream> CreateBadType4FunctionStream() {
   range_array->AppendNew<CPDF_Number>(1);
 
   static const char content[] = "garbage";
-  size_t len = pdfium::size(content);
+  size_t len = std::size(content);
   std::unique_ptr<uint8_t, FxFreeDeleter> buf(FX_AllocUninit(uint8_t, len));
   memcpy(buf.get(), content, len);
   return pdfium::MakeRetain<CPDF_Stream>(std::move(buf), len,
@@ -178,11 +178,11 @@ TEST(CPDF_DocRenderDataTest, TransferFunctionOne) {
   auto r_samples = func->GetSamplesR();
   auto g_samples = func->GetSamplesG();
   auto b_samples = func->GetSamplesB();
-  ASSERT_EQ(pdfium::size(kExpectedType2FunctionSamples), r_samples.size());
-  ASSERT_EQ(pdfium::size(kExpectedType2FunctionSamples), g_samples.size());
-  ASSERT_EQ(pdfium::size(kExpectedType2FunctionSamples), b_samples.size());
+  ASSERT_EQ(std::size(kExpectedType2FunctionSamples), r_samples.size());
+  ASSERT_EQ(std::size(kExpectedType2FunctionSamples), g_samples.size());
+  ASSERT_EQ(std::size(kExpectedType2FunctionSamples), b_samples.size());
 
-  for (size_t i = 0; i < pdfium::size(kExpectedType2FunctionSamples); ++i) {
+  for (size_t i = 0; i < std::size(kExpectedType2FunctionSamples); ++i) {
     EXPECT_EQ(kExpectedType2FunctionSamples[i], r_samples[i]);
     EXPECT_EQ(kExpectedType2FunctionSamples[i], g_samples[i]);
     EXPECT_EQ(kExpectedType2FunctionSamples[i], b_samples[i]);
@@ -214,11 +214,11 @@ TEST(CPDF_DocRenderDataTest, TransferFunctionArray) {
   auto r_samples = func->GetSamplesR();
   auto g_samples = func->GetSamplesG();
   auto b_samples = func->GetSamplesB();
-  ASSERT_EQ(pdfium::size(kExpectedType0FunctionSamples), r_samples.size());
-  ASSERT_EQ(pdfium::size(kExpectedType2FunctionSamples), g_samples.size());
-  ASSERT_EQ(pdfium::size(kExpectedType4FunctionSamples), b_samples.size());
+  ASSERT_EQ(std::size(kExpectedType0FunctionSamples), r_samples.size());
+  ASSERT_EQ(std::size(kExpectedType2FunctionSamples), g_samples.size());
+  ASSERT_EQ(std::size(kExpectedType4FunctionSamples), b_samples.size());
 
-  for (size_t i = 0; i < pdfium::size(kExpectedType2FunctionSamples); ++i) {
+  for (size_t i = 0; i < std::size(kExpectedType2FunctionSamples); ++i) {
     EXPECT_EQ(kExpectedType0FunctionSamples[i], r_samples[i]);
     EXPECT_EQ(kExpectedType2FunctionSamples[i], g_samples[i]);
     EXPECT_EQ(kExpectedType4FunctionSamples[i], b_samples[i]);

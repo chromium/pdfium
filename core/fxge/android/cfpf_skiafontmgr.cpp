@@ -7,6 +7,7 @@
 #include "core/fxge/android/cfpf_skiafontmgr.h"
 
 #include <algorithm>
+#include <iterator>
 #include <utility>
 
 #include "core/fxcrt/fx_codepage.h"
@@ -18,7 +19,6 @@
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
 #include "third_party/base/containers/adapters.h"
-#include "third_party/base/cxx17_backports.h"
 
 namespace {
 
@@ -248,10 +248,10 @@ CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(ByteStringView bsFamilyname,
     return family_iter->second.get();
 
   uint32_t dwFaceName = FPF_SKIANormalizeFontName(bsFamilyname);
-  uint32_t dwSubst = FPF_SkiaGetSubstFont(dwFaceName, kSkiaFontmap,
-                                          pdfium::size(kSkiaFontmap));
+  uint32_t dwSubst =
+      FPF_SkiaGetSubstFont(dwFaceName, kSkiaFontmap, std::size(kSkiaFontmap));
   uint32_t dwSubstSans = FPF_SkiaGetSubstFont(dwFaceName, kSkiaSansFontMap,
-                                              pdfium::size(kSkiaSansFontMap));
+                                              std::size(kSkiaSansFontMap));
   bool bMaybeSymbol = FPF_SkiaMaybeSymbol(bsFamilyname);
   if (uCharset != FX_Charset::kMSWin_Arabic &&
       FPF_SkiaMaybeArabic(bsFamilyname)) {

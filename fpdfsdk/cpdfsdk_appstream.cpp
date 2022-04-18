@@ -8,6 +8,7 @@
 
 #include <math.h>
 
+#include <iterator>
 #include <memory>
 #include <sstream>
 #include <utility>
@@ -36,7 +37,6 @@
 #include "fpdfsdk/pwl/cpwl_edit.h"
 #include "fpdfsdk/pwl/cpwl_edit_impl.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
-#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
 namespace {
@@ -172,8 +172,8 @@ ByteString GetAP_Check(const CFX_FloatRect& crBBox) {
                           {CFX_PointF(0.40f, 0.60f), CFX_PointF(0.28f, 0.66f),
                            CFX_PointF(0.30f, 0.56f)}};
 
-  for (size_t i = 0; i < pdfium::size(pts); ++i) {
-    for (size_t j = 0; j < pdfium::size(pts[0]); ++j) {
+  for (size_t i = 0; i < std::size(pts); ++i) {
+    for (size_t j = 0; j < std::size(pts[0]); ++j) {
       pts[i][j].x = pts[i][j].x * fWidth + crBBox.left;
       pts[i][j].y *= pts[i][j].y * fHeight + crBBox.bottom;
     }
@@ -182,8 +182,8 @@ ByteString GetAP_Check(const CFX_FloatRect& crBBox) {
   fxcrt::ostringstream csAP;
   csAP << pts[0][0].x << " " << pts[0][0].y << " " << kMoveToOperator << "\n";
 
-  for (size_t i = 0; i < pdfium::size(pts); ++i) {
-    size_t nNext = i < pdfium::size(pts) - 1 ? i + 1 : 0;
+  for (size_t i = 0; i < std::size(pts); ++i) {
+    size_t nNext = i < std::size(pts) - 1 ? i + 1 : 0;
 
     float px1 = pts[i][1].x - pts[i][0].x;
     float py1 = pts[i][1].y - pts[i][0].y;
@@ -307,8 +307,8 @@ ByteString GetAP_Star(const CFX_FloatRect& crBBox) {
   csAP << points[0].x << " " << points[0].y << " " << kMoveToOperator << "\n";
 
   int next = 0;
-  for (size_t i = 0; i < pdfium::size(points); ++i) {
-    next = (next + 2) % pdfium::size(points);
+  for (size_t i = 0; i < std::size(points); ++i) {
+    next = (next + 2) % std::size(points);
     csAP << points[next].x << " " << points[next].y << " " << kLineToOperator
          << "\n";
   }

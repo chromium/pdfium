@@ -4,6 +4,7 @@
 
 #include "core/fpdfapi/edit/cpdf_pagecontentgenerator.h"
 
+#include <iterator>
 #include <memory>
 #include <utility>
 
@@ -26,7 +27,6 @@
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/cxx17_backports.h"
 
 class CPDF_PageContentGeneratorTest : public TestWithPageModule {
  protected:
@@ -411,7 +411,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessFormWithPath) {
   const char content[] =
       "q 1 0 0 1 0 0 cm 3.102 4.6700001 m 5.4500012 .28999999 "
       "l 4.2399998 3.1499999 4.65 2.98 3.456 0.24 c 3.102 4.6700001 l h f Q\n";
-  size_t buf_len = pdfium::size(content);
+  size_t buf_len = std::size(content);
   std::unique_ptr<uint8_t, FxFreeDeleter> buf(FX_AllocUninit(uint8_t, buf_len));
   memcpy(buf.get(), content, buf_len);
   auto pStream = pdfium::MakeRetain<CPDF_Stream>(std::move(buf), buf_len,

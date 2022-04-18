@@ -7,7 +7,6 @@
 #include <vector>
 
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/cxx17_backports.h"
 
 TEST(CXFA_FMLexerTest, NullString) {
   WideStringView null_string;
@@ -181,7 +180,7 @@ TEST(CXFA_FMLexerTest, OperatorsAndKeywords) {
             {L".#", TOKdotscream},
             {L".*", TOKdotstar}};
 
-  for (size_t i = 0; i < pdfium::size(op); ++i) {
+  for (size_t i = 0; i < std::size(op); ++i) {
     CXFA_FMLexer lexer(op[i].op);
     CXFA_FMLexer::Token token = lexer.NextToken();
     EXPECT_EQ(op[i].token, token.m_type);

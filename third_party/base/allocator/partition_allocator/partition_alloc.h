@@ -63,6 +63,8 @@
 #include <limits.h>
 #include <string.h>
 
+#include <iterator>
+
 #include "build/build_config.h"
 #include "third_party/base/allocator/partition_allocator/page_allocator.h"
 #include "third_party/base/allocator/partition_allocator/partition_alloc_constants.h"
@@ -75,7 +77,6 @@
 #include "third_party/base/bits.h"
 #include "third_party/base/check.h"
 #include "third_party/base/compiler_specific.h"
-#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/sys_byteorder.h"
 
 #if defined(MEMORY_TOOL_REPLACES_ALLOCATOR)
@@ -501,7 +502,7 @@ class SizeSpecificPartitionAllocator {
  public:
   SizeSpecificPartitionAllocator() {
     memset(actual_buckets_, 0,
-           sizeof(internal::PartitionBucket) * pdfium::size(actual_buckets_));
+           sizeof(internal::PartitionBucket) * std::size(actual_buckets_));
   }
   ~SizeSpecificPartitionAllocator() = default;
   static const size_t kMaxAllocation = N - kAllocationGranularity;

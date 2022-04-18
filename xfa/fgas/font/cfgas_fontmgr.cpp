@@ -7,6 +7,7 @@
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 
 #include <algorithm>
+#include <iterator>
 #include <memory>
 #include <utility>
 
@@ -23,7 +24,6 @@
 #include "core/fxge/fx_font.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/contains.h"
-#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/span.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
@@ -350,7 +350,7 @@ const FX_CodePage kCodePages[] = {FX_CodePage::kMSWin_WesternEuropean,
                                   FX_CodePage::kMSDOS_US};
 
 uint16_t FX_GetCodePageBit(FX_CodePage wCodePage) {
-  for (size_t i = 0; i < pdfium::size(kCodePages); ++i) {
+  for (size_t i = 0; i < std::size(kCodePages); ++i) {
     if (kCodePages[i] == wCodePage)
       return static_cast<uint16_t>(i);
   }

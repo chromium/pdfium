@@ -26,7 +26,6 @@
 #include "core/fxge/fx_font.h"
 #include "core/fxge/scoped_font_transform.h"
 #include "third_party/base/check.h"
-#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/span.h"
 
@@ -241,9 +240,9 @@ constexpr uint8_t kWeightPowShiftJis[] = {
 };
 
 constexpr size_t kWeightPowArraySize = 100;
-static_assert(kWeightPowArraySize == pdfium::size(kWeightPow), "Wrong size");
-static_assert(kWeightPowArraySize == pdfium::size(kWeightPow11), "Wrong size");
-static_assert(kWeightPowArraySize == pdfium::size(kWeightPowShiftJis),
+static_assert(kWeightPowArraySize == std::size(kWeightPow), "Wrong size");
+static_assert(kWeightPowArraySize == std::size(kWeightPow11), "Wrong size");
+static_assert(kWeightPowArraySize == std::size(kWeightPowShiftJis),
               "Wrong size");
 
 }  // namespace
@@ -274,7 +273,7 @@ const char CFX_Font::kUniversalDefaultFontName[] = "Arial Unicode MS";
 
 // static
 ByteString CFX_Font::GetDefaultFontNameByCharset(FX_Charset nCharset) {
-  for (size_t i = 0; i < pdfium::size(kDefaultTTFMap) - 1; ++i) {
+  for (size_t i = 0; i < std::size(kDefaultTTFMap) - 1; ++i) {
     if (static_cast<int>(nCharset) == kDefaultTTFMap[i].charset)
       return kDefaultTTFMap[i].fontname;
   }
@@ -780,7 +779,7 @@ int CFX_Font::GetSkewFromAngle(int angle) {
   // |angle| is non-positive so |-angle| is used as the index. Need to make sure
   // |angle| != INT_MIN since -INT_MIN is undefined.
   if (angle > 0 || angle == std::numeric_limits<int>::min() ||
-      static_cast<size_t>(-angle) >= pdfium::size(kAngleSkew)) {
+      static_cast<size_t>(-angle) >= std::size(kAngleSkew)) {
     return -58;
   }
   return kAngleSkew[-angle];

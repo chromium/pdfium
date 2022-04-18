@@ -25,7 +25,6 @@
 #include "core/fxge/cfx_path.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/win32/cwin32_platform.h"
-#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/span.h"
 
@@ -114,7 +113,7 @@ LPCSTR g_GdipFuncNames[] = {
     "GdipSetWorldTransform",
     "GdipSetPixelOffsetMode",
 };
-static_assert(pdfium::size(g_GdipFuncNames) ==
+static_assert(std::size(g_GdipFuncNames) ==
                   static_cast<size_t>(FuncId_GdipSetPixelOffsetMode) + 1,
               "g_GdipFuncNames has wrong size");
 
@@ -378,7 +377,7 @@ absl::optional<std::pair<size_t, size_t>> IsSmallTriangle(
     pdfium::span<const Gdiplus::PointF> points,
     const CFX_Matrix* pMatrix) {
   static constexpr size_t kPairs[3][2] = {{1, 2}, {0, 2}, {0, 1}};
-  for (size_t i = 0; i < pdfium::size(kPairs); ++i) {
+  for (size_t i = 0; i < std::size(kPairs); ++i) {
     size_t pair1 = kPairs[i][0];
     size_t pair2 = kPairs[i][1];
 
@@ -552,8 +551,8 @@ void CGdiplusExt::Load() {
   if (!m_hModule)
     return;
 
-  m_Functions.resize(pdfium::size(g_GdipFuncNames));
-  for (size_t i = 0; i < pdfium::size(g_GdipFuncNames); ++i) {
+  m_Functions.resize(std::size(g_GdipFuncNames));
+  for (size_t i = 0; i < std::size(g_GdipFuncNames); ++i) {
     m_Functions[i] = GetProcAddress(m_hModule, g_GdipFuncNames[i]);
     if (!m_Functions[i]) {
       m_hModule = nullptr;

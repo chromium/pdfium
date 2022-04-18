@@ -6,8 +6,9 @@
 
 #include "xfa/fgas/layout/fgas_arabic.h"
 
+#include <iterator>
+
 #include "core/fxcrt/fx_unicode.h"
-#include "third_party/base/cxx17_backports.h"
 #include "xfa/fgas/layout/cfgas_char.h"
 
 namespace {
@@ -118,7 +119,7 @@ constexpr FX_ARBFORMTABLE kFormTable[] = {
 };
 constexpr uint16_t kFirstFormTableEntry = 0x0622;
 constexpr uint16_t kLastFormTableEntry =
-    kFirstFormTableEntry + pdfium::size(kFormTable) - 1;
+    kFirstFormTableEntry + std::size(kFormTable) - 1;
 
 constexpr FX_ARAALEF kAlefTable[] = {
     {0x0622, 0xFEF5},
@@ -130,7 +131,7 @@ constexpr FX_ARAALEF kAlefTable[] = {
 constexpr uint16_t kShaddaTable[] = {0xFC5E, 0xFC5F, 0xFC60, 0xFC61, 0xFC62};
 constexpr uint16_t kFirstShaddaTableEntry = 0x064c;
 constexpr uint16_t kLastShaddaTableEntry =
-    kFirstShaddaTableEntry + pdfium::size(kShaddaTable) - 1;
+    kFirstShaddaTableEntry + std::size(kShaddaTable) - 1;
 
 const FX_ARBFORMTABLE* GetArabicFormTable(wchar_t unicode) {
   if (unicode < kFirstFormTableEntry || unicode > kLastFormTableEntry)
