@@ -1011,7 +1011,7 @@ TEST_F(FPDFTextEmbedderTest, GetTextWithHyphen) {
     // There isn't the \0 in the actual doc, but there is a \r\n, so need to
     // add 1 to get aligned.
     constexpr size_t offset = std::size(soft_expected) + 1;
-    // Expecting 'User-\r\ngenerated', the - is a unicode character, so cannnot
+    // Expecting 'User-\r\ngenerated', the - is a unicode character, so cannot
     // store in a char[].
     constexpr unsigned short hard_expected[] = {
         0x0055, 0x0073, 0x0065, 0x0072, 0x2010, 0x000d, 0x000a, 0x0067, 0x0065,

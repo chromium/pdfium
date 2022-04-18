@@ -37,7 +37,7 @@ static bool temp_created = false;
 static bool temp_destroyed = false;
 
 TEST_F(FXJSEngineUnitTest, GC) {
-  // Reset variables since there maight be multiple iterations.
+  // Reset variables since there might be multiple iterations.
   perm_created = false;
   perm_destroyed = false;
   temp_created = false;
