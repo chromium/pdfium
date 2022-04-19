@@ -86,7 +86,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeHuffman(
       } else {
         int32_t IDS;
         int32_t nVal = pHuffmanDecoder->DecodeAValue(SBHUFFDS.Get(), &IDS);
-        if (nVal == JBIG2_OOB)
+        if (nVal == kJBig2OOB)
           break;
 
         if (nVal != 0)

@@ -36,7 +36,7 @@ int CJBig2_HuffmanDecoder::DecodeAValue(const CJBig2_HuffmanTable* pTable,
         continue;
 
       if (pTable->IsHTOOB() && i == pTable->Size() - 1)
-        return JBIG2_OOB;
+        return kJBig2OOB;
 
       if (m_pStream->readNBits(pTable->GetRANGELEN()[i], &nTmp) == -1)
         return -1;

@@ -218,7 +218,7 @@ JBig2_Result CJBig2_Context::ParseSegmentHeader(CJBig2_Segment* pSegment) {
     }
     pSegment->m_nReferred_to_segment_count &= 0x1fffffff;
     if (pSegment->m_nReferred_to_segment_count >
-        JBIG2_MAX_REFERRED_SEGMENT_COUNT) {
+        kJBig2MaxReferredSegmentCount) {
       return JBig2_Result::kFailure;
     }
   } else {
@@ -403,8 +403,8 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
       m_pStream->readInteger(&pSymbolDictDecoder->SDNUMNEWSYMS) != 0) {
     return JBig2_Result::kFailure;
   }
-  if (pSymbolDictDecoder->SDNUMEXSYMS > JBIG2_MAX_EXPORT_SYSMBOLS ||
-      pSymbolDictDecoder->SDNUMNEWSYMS > JBIG2_MAX_NEW_SYSMBOLS) {
+  if (pSymbolDictDecoder->SDNUMEXSYMS > kJBig2MaxExportSymbols ||
+      pSymbolDictDecoder->SDNUMNEWSYMS > kJBig2MaxNewSymbols) {
     return JBig2_Result::kFailure;
   }
   for (int32_t i = 0; i < pSegment->m_nReferred_to_segment_count; ++i) {
@@ -824,7 +824,7 @@ JBig2_Result CJBig2_Context::ParsePatternDict(CJBig2_Segment* pSegment,
       m_pStream->readInteger(&pPDD->GRAYMAX) != 0) {
     return JBig2_Result::kFailure;
   }
-  if (pPDD->GRAYMAX > JBIG2_MAX_PATTERN_INDEX)
+  if (pPDD->GRAYMAX > kJBig2MaxPatternIndex)
     return JBig2_Result::kFailure;
 
   pPDD->HDMMR = cFlags & 0x01;
