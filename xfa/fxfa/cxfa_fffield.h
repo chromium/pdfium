@@ -57,8 +57,8 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
                    const CFX_PointF& point) override;
   bool OnRButtonDblClk(Mask<XFA_FWL_KeyFlag> dwFlags,
                        const CFX_PointF& point) override;
-  bool OnSetFocus(CXFA_FFWidget* pOldWidget) override WARN_UNUSED_RESULT;
-  bool OnKillFocus(CXFA_FFWidget* pNewWidget) override WARN_UNUSED_RESULT;
+  [[nodiscard]] bool OnSetFocus(CXFA_FFWidget* pOldWidget) override;
+  [[nodiscard]] bool OnKillFocus(CXFA_FFWidget* pNewWidget) override;
   bool OnKeyDown(XFA_FWL_VKEYCODE dwKeyCode,
                  Mask<XFA_FWL_KeyFlag> dwFlags) override;
   bool OnChar(uint32_t dwChar, Mask<XFA_FWL_KeyFlag> dwFlags) override;

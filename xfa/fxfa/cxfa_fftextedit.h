@@ -43,8 +43,8 @@ class CXFA_FFTextEdit : public CXFA_FFField {
                      const CFX_PointF& point) override;
   bool OnRButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
                    const CFX_PointF& point) override;
-  bool OnSetFocus(CXFA_FFWidget* pOldWidget) override WARN_UNUSED_RESULT;
-  bool OnKillFocus(CXFA_FFWidget* pNewWidget) override WARN_UNUSED_RESULT;
+  [[nodiscard]] bool OnSetFocus(CXFA_FFWidget* pOldWidget) override;
+  [[nodiscard]] bool OnKillFocus(CXFA_FFWidget* pNewWidget) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
   void OnDrawWidget(CFGAS_GEGraphics* pGraphics,

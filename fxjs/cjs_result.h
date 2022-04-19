@@ -13,7 +13,7 @@
 
 class CJS_Result {
  public:
-  // Wrap constructors with static methods so we can apply WARN_UNUSED_RESULT,
+  // Wrap constructors with static methods so we can apply [[nodiscard]],
   // otherwise we can't catch places where someone mistakenly writes:
   //
   //     if (error)
@@ -24,14 +24,14 @@ class CJS_Result {
   //     if (error)
   //       return CJS_Result(JS_ERROR_CODE);
   //
-  static CJS_Result Success() WARN_UNUSED_RESULT { return CJS_Result(); }
-  static CJS_Result Success(v8::Local<v8::Value> value) WARN_UNUSED_RESULT {
+  [[nodiscard]] static CJS_Result Success() { return CJS_Result(); }
+  [[nodiscard]] static CJS_Result Success(v8::Local<v8::Value> value) {
     return CJS_Result(value);
   }
-  static CJS_Result Failure(const WideString& str) WARN_UNUSED_RESULT {
+  [[nodiscard]] static CJS_Result Failure(const WideString& str) {
     return CJS_Result(str);
   }
-  static CJS_Result Failure(JSMessage id) WARN_UNUSED_RESULT {
+  [[nodiscard]] static CJS_Result Failure(JSMessage id) {
     return CJS_Result(id);
   }
 

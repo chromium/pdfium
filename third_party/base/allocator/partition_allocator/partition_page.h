@@ -77,8 +77,8 @@ struct PartitionPage {
 
   // Note the matching Alloc() functions are in PartitionPage.
   // Callers must invoke DeferredUnmap::Run() after releasing the lock.
-  BASE_EXPORT NOINLINE DeferredUnmap FreeSlowPath() WARN_UNUSED_RESULT;
-  ALWAYS_INLINE DeferredUnmap Free(void* ptr) WARN_UNUSED_RESULT;
+  [[nodiscard]] BASE_EXPORT NOINLINE DeferredUnmap FreeSlowPath();
+  [[nodiscard]] ALWAYS_INLINE DeferredUnmap Free(void* ptr);
 
   void Decommit(PartitionRootBase* root);
   void DecommitIfPossible(PartitionRootBase* root);

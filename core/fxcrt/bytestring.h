@@ -23,7 +23,6 @@
 #include "core/fxcrt/string_view_template.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/check.h"
-#include "third_party/base/compiler_specific.h"
 #include "third_party/base/span.h"
 
 namespace fxcrt {
@@ -36,11 +35,10 @@ class ByteString {
   using const_iterator = const CharType*;
   using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
-  static ByteString FormatInteger(int i) WARN_UNUSED_RESULT;
-  static ByteString FormatFloat(float f) WARN_UNUSED_RESULT;
-  static ByteString Format(const char* pFormat, ...) WARN_UNUSED_RESULT;
-  static ByteString FormatV(const char* pFormat,
-                            va_list argList) WARN_UNUSED_RESULT;
+  [[nodiscard]] static ByteString FormatInteger(int i);
+  [[nodiscard]] static ByteString FormatFloat(float f);
+  [[nodiscard]] static ByteString Format(const char* pFormat, ...);
+  [[nodiscard]] static ByteString FormatV(const char* pFormat, va_list argList);
 
   ByteString();
   ByteString(const ByteString& other);
