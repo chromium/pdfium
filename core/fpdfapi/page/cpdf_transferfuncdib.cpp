@@ -11,7 +11,6 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fxge/calculate_pitch.h"
 #include "third_party/base/check.h"
-#include "third_party/base/compiler_specific.h"
 
 CPDF_TransferFuncDIB::CPDF_TransferFuncDIB(
     const RetainPtr<CFX_DIBBase>& pSrc,
@@ -124,7 +123,7 @@ void CPDF_TransferFuncDIB::TranslateScanline(
     }
     case FXDIB_Format::kRgb32:
       bSkip = true;
-      FALLTHROUGH;
+      [[fallthrough]];
     case FXDIB_Format::kArgb: {
       int index = 0;
       for (int i = 0; i < m_Width; i++) {

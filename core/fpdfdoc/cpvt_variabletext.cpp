@@ -18,7 +18,6 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/stl_util.h"
 #include "third_party/base/check.h"
-#include "third_party/base/compiler_specific.h"
 #include "third_party/base/cxx17_backports.h"
 
 namespace {
@@ -294,7 +293,7 @@ void CPVT_VariableText::SetText(const WideString& swText) {
         break;
       case 0x09:
         word = 0x20;
-        FALLTHROUGH;
+        [[fallthrough]];
       default:
         wp = InsertWord(wp, word, FX_Charset::kDefault);
         break;

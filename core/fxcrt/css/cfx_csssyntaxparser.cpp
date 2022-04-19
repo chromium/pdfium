@@ -10,7 +10,6 @@
 #include "core/fxcrt/css/cfx_cssdeclaration.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
-#include "third_party/base/compiler_specific.h"
 #include "third_party/base/notreached.h"
 
 namespace {
@@ -49,7 +48,7 @@ CFX_CSSSyntaxParser::Status CFX_CSSSyntaxParser::DoSyntaxParse() {
               m_eMode = Mode::kComment;
               break;
             }
-            FALLTHROUGH;
+            [[fallthrough]];
           default:
             if (wch <= ' ') {
               m_Input.MoveNext();
@@ -85,7 +84,7 @@ CFX_CSSSyntaxParser::Status CFX_CSSSyntaxParser::DoSyntaxParse() {
                 return Status::kSelector;
               break;
             }
-            FALLTHROUGH;
+            [[fallthrough]];
           default:
             m_Output.AppendCharIfNotLeadingBlank(wch);
             m_Input.MoveNext();
@@ -112,7 +111,7 @@ CFX_CSSSyntaxParser::Status CFX_CSSSyntaxParser::DoSyntaxParse() {
                 return Status::kPropertyName;
               break;
             }
-            FALLTHROUGH;
+            [[fallthrough]];
           default:
             m_Output.AppendCharIfNotLeadingBlank(wch);
             m_Input.MoveNext();
@@ -123,7 +122,7 @@ CFX_CSSSyntaxParser::Status CFX_CSSSyntaxParser::DoSyntaxParse() {
         switch (wch) {
           case ';':
             m_Input.MoveNext();
-            FALLTHROUGH;
+            [[fallthrough]];
           case '}':
             m_eMode = Mode::kPropertyName;
             return Status::kPropertyValue;
@@ -135,7 +134,7 @@ CFX_CSSSyntaxParser::Status CFX_CSSSyntaxParser::DoSyntaxParse() {
                 return Status::kPropertyValue;
               break;
             }
-            FALLTHROUGH;
+            [[fallthrough]];
           default:
             m_Output.AppendCharIfNotLeadingBlank(wch);
             m_Input.MoveNext();

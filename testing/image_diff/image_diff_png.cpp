@@ -16,7 +16,6 @@
 
 #include <string>
 
-#include "third_party/base/compiler_specific.h"
 #include "third_party/base/notreached.h"
 
 #ifdef USE_SYSTEM_ZLIB
@@ -571,7 +570,7 @@ std::vector<uint8_t> EncodeWithCompressionLevel(
   switch (format) {
     case FORMAT_BGR:
       converter = ConvertBGRtoRGB;
-      FALLTHROUGH;
+      [[fallthrough]];
 
     case FORMAT_RGB:
       input_color_components = 3;

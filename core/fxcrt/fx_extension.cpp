@@ -11,7 +11,6 @@
 
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/check.h"
-#include "third_party/base/compiler_specific.h"
 
 namespace {
 
@@ -38,7 +37,7 @@ float FXSYS_wcstof(const wchar_t* pwsStr, size_t nLength, size_t* pUsedLen) {
   switch (pwsStr[nUsedLen]) {
     case '-':
       bNegtive = true;
-      FALLTHROUGH;
+      [[fallthrough]];
     case '+':
       nUsedLen++;
       break;

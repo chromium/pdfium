@@ -29,7 +29,6 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/stl_util.h"
 #include "third_party/base/check.h"
-#include "third_party/base/compiler_specific.h"
 #include "third_party/base/containers/contains.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/numerics/safe_conversions.h"
@@ -144,7 +143,7 @@ bool CPDF_DataAvail::CheckDocStatus() {
       return LoadAllFile();
     case InternalStatus::kPageLaterLoad:
       m_internalStatus = InternalStatus::kPage;
-      FALLTHROUGH;
+      [[fallthrough]];
     default:
       m_bDocAvail = true;
       return true;

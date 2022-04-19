@@ -26,7 +26,6 @@
 #include "fpdfsdk/pwl/ipwl_systemhandler.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/compiler_specific.h"
 
 namespace {
 
@@ -1884,7 +1883,7 @@ CPVT_WordPlace CPWL_EditImpl::DoInsertText(const CPVT_WordPlace& place,
         break;
       case '\t':
         word = ' ';
-        FALLTHROUGH;
+        [[fallthrough]];
       default:
         wp = m_pVT->InsertWord(wp, word, GetCharSetFromUnicode(word, charset));
         break;

@@ -24,7 +24,6 @@
 #include "fxjs/xfa/cjx_instancemanager.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/compiler_specific.h"
 #include "third_party/base/containers/contains.h"
 #include "v8/include/v8-forward.h"
 #include "v8/include/v8-object.h"
@@ -738,7 +737,7 @@ absl::optional<WideString> CJX_Object::TryContent(bool bScriptModify,
     case XFA_ObjectType::NodeV:
     case XFA_ObjectType::TextNode:
       pNode = GetXFANode();
-      FALLTHROUGH;
+      [[fallthrough]];
     default:
       if (GetXFANode()->GetElementType() == XFA_Element::DataValue)
         pNode = GetXFANode();

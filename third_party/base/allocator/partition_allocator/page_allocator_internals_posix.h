@@ -75,7 +75,7 @@ int GetAccessFlags(PageAccessibilityConfiguration accessibility) {
       return PROT_READ | PROT_WRITE | PROT_EXEC;
     default:
       NOTREACHED();
-      FALLTHROUGH;
+      [[fallthrough]];
     case PageInaccessible:
       return PROT_NONE;
   }

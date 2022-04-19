@@ -32,7 +32,6 @@
 #include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/compiler_specific.h"
 #include "third_party/base/containers/contains.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/span.h"
@@ -3107,7 +3106,7 @@ void CXFA_Node::ResetData() {
     }
     case XFA_FFWidgetType::kChoiceList:
       ClearAllSelections();
-      FALLTHROUGH;
+      [[fallthrough]];
     default: {
       CXFA_Value* defValue = GetDefaultValueIfExists();
       if (defValue)

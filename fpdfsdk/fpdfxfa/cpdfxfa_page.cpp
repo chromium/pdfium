@@ -142,7 +142,7 @@ float CPDFXFA_Page::GetPageWidth() const {
     case FormType::kXFAForeground:
       if (m_pPDFPage)
         return m_pPDFPage->GetPageWidth();
-      FALLTHROUGH;
+      [[fallthrough]];
     case FormType::kXFAFull:
       if (pPageView)
         return pPageView->GetPageViewRect().width;
@@ -164,7 +164,7 @@ float CPDFXFA_Page::GetPageHeight() const {
     case FormType::kXFAForeground:
       if (m_pPDFPage)
         return m_pPDFPage->GetPageHeight();
-      FALLTHROUGH;
+      [[fallthrough]];
     case FormType::kXFAFull:
       if (pPageView)
         return pPageView->GetPageViewRect().height;
@@ -211,7 +211,7 @@ CFX_Matrix CPDFXFA_Page::GetDisplayMatrix(const FX_RECT& rect,
     case FormType::kXFAForeground:
       if (m_pPDFPage)
         return m_pPDFPage->GetDisplayMatrix(rect, iRotate);
-      FALLTHROUGH;
+      [[fallthrough]];
     case FormType::kXFAFull:
       if (pPageView)
         return pPageView->GetDisplayMatrix(rect, iRotate);

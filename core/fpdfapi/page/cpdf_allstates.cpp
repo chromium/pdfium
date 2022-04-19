@@ -17,7 +17,6 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxge/cfx_graphstatedata.h"
-#include "third_party/base/compiler_specific.h"
 #include "third_party/base/cxx17_backports.h"
 
 CPDF_AllStates::CPDF_AllStates() = default;
@@ -95,7 +94,7 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
         if (pGS->KeyExist("TR2")) {
           continue;
         }
-        FALLTHROUGH;
+        [[fallthrough]];
       case FXBSTR_ID('T', 'R', '2', 0):
         m_GeneralState.SetTR(!pObject->IsName() ? pObject : nullptr);
         break;
@@ -138,7 +137,7 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
         if (pGS->KeyExist("BG2")) {
           continue;
         }
-        FALLTHROUGH;
+        [[fallthrough]];
       case FXBSTR_ID('B', 'G', '2', 0):
         m_GeneralState.SetBG(pObject);
         break;
@@ -146,7 +145,7 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
         if (pGS->KeyExist("UCR2")) {
           continue;
         }
-        FALLTHROUGH;
+        [[fallthrough]];
       case FXBSTR_ID('U', 'C', 'R', '2'):
         m_GeneralState.SetUCR(pObject);
         break;
