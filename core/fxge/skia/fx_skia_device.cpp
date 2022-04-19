@@ -960,10 +960,8 @@ class SkiaState {
     if (hasRSX)
       m_rsxform.setCount(nChars + count);
 
-    SkScalar flip = m_fontSize < 0 ? -1 : 1;
-    SkScalar vFlip = flip;
-    if (pFont->IsVertical())
-      vFlip *= -1;
+    const SkScalar flip = m_fontSize < 0 ? -1 : 1;
+    const SkScalar vFlip = pFont->IsVertical() ? -1 : 1;
     for (int index = 0; index < nChars; ++index) {
       const TextCharPos& cp = pCharPos[index];
       int cur_index = index + count;
@@ -1759,10 +1757,8 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(
   font.setEdging(GetFontEdgingType(options));
 
   SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
-  SkScalar flip = font_size < 0 ? -1 : 1;
-  SkScalar vFlip = flip;
-  if (pFont->IsVertical())
-    vFlip *= -1;
+  const SkScalar flip = font_size < 0 ? -1 : 1;
+  const SkScalar vFlip = pFont->IsVertical() ? -1 : 1;
   SkMatrix skMatrix = ToFlippedSkMatrix(mtObject2Device, flip);
   m_pCanvas->concat(skMatrix);
   SkTDArray<SkPoint> positions;

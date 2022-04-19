@@ -364,20 +364,10 @@ reset_button.in * * * *
 
 # xfa_specific
 
-# TODO(pdfium:1743): Remove after associated bug is fixed
-barcode_test.pdf * * * skia,skiapaths
 # TODO(pdfium:1095): Remove after associated bug is fixed
 bug_997412.in win * * *
 # TODO(pdfium:1354): Remove after associated bug is fixed
 bug_997412.in * * * skia,skiapaths
-# TODO(pdfium:1743): Remove after associated bug is fixed
-dynamic_list_box_allow_multiple_selection.pdf * * * skia,skiapaths
-# TODO(pdfium:1743): Remove after associated bug is fixed
-dynamic_password_field_background_fill.pdf * * * skia,skiapaths
-# TODO(pdfium:1743): Remove after associated bug is fixed
-dynamic_table_color_and_width.pdf * * * skia,skiapaths
-# TODO(pdfium:1743): Remove after associated bug is fixed
-resolve_nodes_0.pdf * * * skia,skiapaths
 # TODO(pdfium:1107): Remove after associated bug is fixed
 standard_symbols.pdf * * * *
 # TODO(pdfium:1168): Remove after associated bug is fixed
