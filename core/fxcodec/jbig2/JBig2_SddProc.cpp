@@ -266,7 +266,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
   int32_t HCDH;
   uint32_t SYMWIDTH, TOTWIDTH, HCFIRSTSYM;
   int32_t DW;
-  uint32_t I, J, REFAGGNINST;
+  uint32_t REFAGGNINST;
   std::vector<bool> EXFLAGS;
   uint32_t EXINDEX;
   bool CUREXFLAG;
@@ -350,9 +350,9 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
           nTmp = 1;
           while (static_cast<uint32_t>(1 << nTmp) < SBNUMSYMS)
             ++nTmp;
-          for (I = 0; I < SBNUMSYMS; ++I) {
-            SBSYMCODES[I].codelen = nTmp;
-            SBSYMCODES[I].code = I;
+          for (uint32_t i = 0; i < SBNUMSYMS; ++i) {
+            SBSYMCODES[i].codelen = nTmp;
+            SBSYMCODES[i].code = i;
           }
           pDecoder->SBSYMCODES = std::move(SBSYMCODES);
           SBSYMS.resize(SBNUMSYMS);
@@ -463,8 +463,8 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
 
         const uint32_t stride = safe_stride.ValueOrDie();
         BHC = std::make_unique<CJBig2_Image>(TOTWIDTH, HCHEIGHT);
-        for (I = 0; I < HCHEIGHT; I++) {
-          memcpy(BHC->data() + I * BHC->stride(), pStream->getPointer(),
+        for (uint32_t i = 0; i < HCHEIGHT; ++i) {
+          memcpy(BHC->data() + i * BHC->stride(), pStream->getPointer(),
                  stride);
           pStream->offset(stride);
         }
@@ -480,9 +480,9 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
       if (!BHC)
         continue;
 
-      for (I = HCFIRSTSYM; I < NSYMSDECODED; ++I) {
-        SDNEWSYMS[I] = BHC->SubImage(nTmp, 0, SDNEWSYMWIDTHS[I], HCHEIGHT);
-        nTmp += SDNEWSYMWIDTHS[I];
+      for (uint32_t i = HCFIRSTSYM; i < NSYMSDECODED; ++i) {
+        SDNEWSYMS[i] = BHC->SubImage(nTmp, 0, SDNEWSYMWIDTHS[i], HCHEIGHT);
+        nTmp += SDNEWSYMWIDTHS[i];
       }
     }
   }
@@ -499,11 +499,11 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
       return nullptr;
 
     if (EXRUNLENGTH != 0) {
-      for (I = EXINDEX; I < EXINDEX + EXRUNLENGTH; ++I) {
+      for (uint32_t i = EXINDEX; i < EXINDEX + EXRUNLENGTH; ++i) {
         if (CUREXFLAG)
           num_ex_syms++;
 
-        EXFLAGS[I] = CUREXFLAG;
+        EXFLAGS[i] = CUREXFLAG;
       }
     }
     EXINDEX = EXINDEX + EXRUNLENGTH;
@@ -512,17 +512,16 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
   if (num_ex_syms > SDNUMEXSYMS)
     return nullptr;
 
-  J = 0;
-  for (I = 0; I < SDNUMINSYMS + SDNUMNEWSYMS; ++I) {
-    if (!EXFLAGS[I] || J >= SDNUMEXSYMS)
+  for (uint32_t i = 0, j = 0; i < SDNUMINSYMS + SDNUMNEWSYMS; ++i) {
+    if (!EXFLAGS[i] || j >= SDNUMEXSYMS)
       continue;
-    if (I < SDNUMINSYMS) {
-      pDict->AddImage(SDINSYMS[I] ? std::make_unique<CJBig2_Image>(*SDINSYMS[I])
+    if (i < SDNUMINSYMS) {
+      pDict->AddImage(SDINSYMS[i] ? std::make_unique<CJBig2_Image>(*SDINSYMS[i])
                                   : nullptr);
     } else {
-      pDict->AddImage(std::move(SDNEWSYMS[I - SDNUMINSYMS]));
+      pDict->AddImage(std::move(SDNEWSYMS[i - SDNUMINSYMS]));
     }
-    ++J;
+    ++j;
   }
   return pDict;
 }
