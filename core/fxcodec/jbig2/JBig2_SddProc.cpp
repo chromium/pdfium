@@ -165,27 +165,24 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
         } else if (REFAGGNINST == 1) {
           uint8_t SBNUMSYMS = SDNUMINSYMS + NSYMSDECODED;
           uint32_t IDI;
-          int32_t RDXI;
-          int32_t RDYI;
           IAID->Decode(pArithDecoder, &IDI);
-          IARDX->Decode(pArithDecoder, &RDXI);
-          IARDY->Decode(pArithDecoder, &RDYI);
           if (IDI >= SBNUMSYMS)
             return nullptr;
 
-          std::vector<CJBig2_Image*> SBSYMS;  // Pointers are not owned
-          SBSYMS.resize(SBNUMSYMS);
-          std::copy(SDINSYMS, SDINSYMS + SDNUMINSYMS, SBSYMS.begin());
-          for (size_t i = 0; i < NSYMSDECODED; ++i)
-            SBSYMS[i + SDNUMINSYMS] = SDNEWSYMS[i].get();
-          if (!SBSYMS[IDI])
+          CJBig2_Image* sbsyms_idi = GetImage(IDI, SDNEWSYMS);
+          if (!sbsyms_idi)
             return nullptr;
+
+          int32_t RDXI;
+          int32_t RDYI;
+          IARDX->Decode(pArithDecoder, &RDXI);
+          IARDY->Decode(pArithDecoder, &RDYI);
 
           auto pGRRD = std::make_unique<CJBig2_GRRDProc>();
           pGRRD->GRW = SYMWIDTH;
           pGRRD->GRH = HCHEIGHT;
           pGRRD->GRTEMPLATE = SDRTEMPLATE;
-          pGRRD->GRREFERENCE = SBSYMS[IDI];
+          pGRRD->GRREFERENCE = sbsyms_idi;
           pGRRD->GRREFERENCEDX = RDXI;
           pGRRD->GRREFERENCEDY = RDYI;
           pGRRD->TPGRON = false;
@@ -366,6 +363,11 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
             if (IDI < SBNUMSYMS)
               break;
           }
+
+          CJBig2_Image* sbsyms_idi = GetImage(IDI, SDNEWSYMS);
+          if (!sbsyms_idi)
+            return nullptr;
+
           auto SBHUFFRDX = std::make_unique<CJBig2_HuffmanTable>(15);
           auto SBHUFFRSIZE = std::make_unique<CJBig2_HuffmanTable>(1);
           int32_t RDXI;
@@ -375,18 +377,15 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
               (pHuffmanDecoder->DecodeAValue(SBHUFFRSIZE.get(), &nVal) != 0)) {
             return nullptr;
           }
+
           pStream->alignByte();
           nTmp = pStream->getOffset();
-          std::vector<CJBig2_Image*> SBSYMS;  // Pointers are not owned
-          SBSYMS.resize(SBNUMSYMS);
-          std::copy(SDINSYMS, SDINSYMS + SDNUMINSYMS, SBSYMS.begin());
-          for (size_t i = 0; i < NSYMSDECODED; ++i)
-            SBSYMS[i + SDNUMINSYMS] = SDNEWSYMS[i].get();
+
           auto pGRRD = std::make_unique<CJBig2_GRRDProc>();
           pGRRD->GRW = SYMWIDTH;
           pGRRD->GRH = HCHEIGHT;
           pGRRD->GRTEMPLATE = SDRTEMPLATE;
-          pGRRD->GRREFERENCE = SBSYMS[IDI];
+          pGRRD->GRREFERENCE = sbsyms_idi;
           pGRRD->GRREFERENCEDX = RDXI;
           pGRRD->GRREFERENCEDY = RDYI;
           pGRRD->TPGRON = false;
@@ -494,4 +493,10 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
     ++j;
   }
   return pDict;
+}
+
+CJBig2_Image* CJBig2_SDDProc::GetImage(
+    uint32_t i,
+    pdfium::span<const std::unique_ptr<CJBig2_Image>> new_syms) const {
+  return i < SDNUMINSYMS ? SDINSYMS[i] : new_syms[i - SDNUMINSYMS].get();
 }
