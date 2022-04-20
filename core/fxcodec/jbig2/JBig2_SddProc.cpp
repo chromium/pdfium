@@ -30,18 +30,6 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
     CJBig2_ArithDecoder* pArithDecoder,
     std::vector<JBig2ArithCtx>* gbContext,
     std::vector<JBig2ArithCtx>* grContext) {
-  std::vector<std::unique_ptr<CJBig2_Image>> SDNEWSYMS;
-  uint32_t NSYMSDECODED;
-  uint32_t SYMWIDTH;
-  int32_t DW;
-  uint32_t nTmp;
-  uint32_t SBNUMSYMS;
-  uint8_t SBSYMCODELEN;
-  int32_t RDXI, RDYI;
-  // Pointers are not owned
-  std::vector<CJBig2_Image*> SBSYMS;
-  std::unique_ptr<CJBig2_ArithIaidDecoder> IAID;
-  std::unique_ptr<CJBig2_SymbolDict> pDict;
   auto IADH = std::make_unique<CJBig2_ArithIntDecoder>();
   auto IADW = std::make_unique<CJBig2_ArithIntDecoder>();
   auto IAAI = std::make_unique<CJBig2_ArithIntDecoder>();
@@ -55,15 +43,16 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
   auto IARI = std::make_unique<CJBig2_ArithIntDecoder>();
   auto IARDW = std::make_unique<CJBig2_ArithIntDecoder>();
   auto IARDH = std::make_unique<CJBig2_ArithIntDecoder>();
-  nTmp = 0;
-  while ((uint32_t)(1 << nTmp) < (SDNUMINSYMS + SDNUMNEWSYMS)) {
-    nTmp++;
-  }
-  IAID = std::make_unique<CJBig2_ArithIaidDecoder>((uint8_t)nTmp);
-  SDNEWSYMS.resize(SDNUMNEWSYMS);
 
+  uint32_t SBSYMCODELENA = 0;
+  while ((uint32_t)(1 << SBSYMCODELENA) < (SDNUMINSYMS + SDNUMNEWSYMS)) {
+    SBSYMCODELENA++;
+  }
+  auto IAID = std::make_unique<CJBig2_ArithIaidDecoder>((uint8_t)SBSYMCODELENA);
+
+  std::vector<std::unique_ptr<CJBig2_Image>> SDNEWSYMS(SDNUMNEWSYMS);
   uint32_t HCHEIGHT = 0;
-  NSYMSDECODED = 0;
+  uint32_t NSYMSDECODED = 0;
   while (NSYMSDECODED < SDNUMNEWSYMS) {
     std::unique_ptr<CJBig2_Image> BS;
     int32_t HCDH;
@@ -72,8 +61,9 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
     if ((int)HCHEIGHT < 0 || (int)HCHEIGHT > kJBig2MaxImageSize)
       return nullptr;
 
-    SYMWIDTH = 0;
+    uint32_t SYMWIDTH = 0;
     for (;;) {
+      int32_t DW;
       if (!IADW->Decode(pArithDecoder, &DW))
         break;
 
@@ -85,8 +75,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
         return nullptr;
 
       if (HCHEIGHT == 0 || SYMWIDTH == 0) {
-        SDNEWSYMS[NSYMSDECODED] = nullptr;
-        NSYMSDECODED = NSYMSDECODED + 1;
+        ++NSYMSDECODED;
         continue;
       }
       if (SDREFAGG == 0) {
@@ -129,14 +118,14 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
           pDecoder->SBNUMINSTANCES = REFAGGNINST;
           pDecoder->SBSTRIPS = 1;
           pDecoder->SBNUMSYMS = SDNUMINSYMS + NSYMSDECODED;
-          SBNUMSYMS = pDecoder->SBNUMSYMS;
-          nTmp = 0;
-          while ((uint32_t)(1 << nTmp) < SBNUMSYMS) {
+          uint32_t nTmp = 0;
+          while ((uint32_t)(1 << nTmp) < pDecoder->SBNUMSYMS) {
             nTmp++;
           }
-          SBSYMCODELEN = (uint8_t)nTmp;
+          uint8_t SBSYMCODELEN = (uint8_t)nTmp;
           pDecoder->SBSYMCODELEN = SBSYMCODELEN;
-          SBSYMS.resize(SBNUMSYMS);
+          std::vector<CJBig2_Image*> SBSYMS;  // Pointers are not owned
+          SBSYMS.resize(pDecoder->SBNUMSYMS);
           std::copy(SDINSYMS, SDINSYMS + SDNUMINSYMS, SBSYMS.begin());
           for (size_t i = 0; i < NSYMSDECODED; ++i)
             SBSYMS[i + SDNUMINSYMS] = SDNEWSYMS[i].get();
@@ -174,14 +163,17 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
           if (!BS)
             return nullptr;
         } else if (REFAGGNINST == 1) {
-          SBNUMSYMS = SDNUMINSYMS + NSYMSDECODED;
+          uint8_t SBNUMSYMS = SDNUMINSYMS + NSYMSDECODED;
           uint32_t IDI;
+          int32_t RDXI;
+          int32_t RDYI;
           IAID->Decode(pArithDecoder, &IDI);
           IARDX->Decode(pArithDecoder, &RDXI);
           IARDY->Decode(pArithDecoder, &RDYI);
           if (IDI >= SBNUMSYMS)
             return nullptr;
 
+          std::vector<CJBig2_Image*> SBSYMS;  // Pointers are not owned
           SBSYMS.resize(SBNUMSYMS);
           std::copy(SDINSYMS, SDINSYMS + SDNUMINSYMS, SBSYMS.begin());
           for (size_t i = 0; i < NSYMSDECODED; ++i)
@@ -207,7 +199,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
         }
       }
       SDNEWSYMS[NSYMSDECODED] = std::move(BS);
-      NSYMSDECODED = NSYMSDECODED + 1;
+      ++NSYMSDECODED;
     }
   }
 
@@ -235,7 +227,8 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
   if (num_ex_syms > SDNUMEXSYMS)
     return nullptr;
 
-  pDict = std::make_unique<CJBig2_SymbolDict>();
+  std::unique_ptr<CJBig2_SymbolDict> pDict =
+      std::make_unique<CJBig2_SymbolDict>();
   for (uint32_t i = 0, j = 0; i < SDNUMINSYMS + SDNUMNEWSYMS; ++i) {
     if (!EXFLAGS[i] || j >= SDNUMEXSYMS)
       continue;
@@ -254,29 +247,14 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
     CJBig2_BitStream* pStream,
     std::vector<JBig2ArithCtx>* gbContext,
     std::vector<JBig2ArithCtx>* grContext) {
-  std::vector<std::unique_ptr<CJBig2_Image>> SDNEWSYMS;
-  std::vector<uint32_t> SDNEWSYMWIDTHS;
-  uint32_t HCHEIGHT, NSYMSDECODED;
-  uint32_t SYMWIDTH, TOTWIDTH, HCFIRSTSYM;
-  int32_t DW;
-  int32_t nVal;
-  uint32_t nTmp;
-  uint32_t SBNUMSYMS;
-  uint8_t SBSYMCODELEN;
-  uint32_t IDI;
-  int32_t RDXI, RDYI;
-  uint32_t BMSIZE;
-  // Pointers are not owned
-  std::vector<CJBig2_Image*> SBSYMS;
   auto pHuffmanDecoder = std::make_unique<CJBig2_HuffmanDecoder>(pStream);
-  SDNEWSYMS.resize(SDNUMNEWSYMS);
+
+  std::vector<std::unique_ptr<CJBig2_Image>> SDNEWSYMS(SDNUMNEWSYMS);
+  std::vector<uint32_t> SDNEWSYMWIDTHS;
   if (SDREFAGG == 0)
     SDNEWSYMWIDTHS.resize(SDNUMNEWSYMS);
-  auto pDict = std::make_unique<CJBig2_SymbolDict>();
-  std::unique_ptr<CJBig2_HuffmanTable> pTable;
-
-  HCHEIGHT = 0;
-  NSYMSDECODED = 0;
+  uint32_t HCHEIGHT = 0;
+  uint32_t NSYMSDECODED = 0;
   std::unique_ptr<CJBig2_Image> BS;
   while (NSYMSDECODED < SDNUMNEWSYMS) {
     int32_t HCDH;
@@ -287,11 +265,12 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
     if ((int)HCHEIGHT < 0 || (int)HCHEIGHT > kJBig2MaxImageSize)
       return nullptr;
 
-    SYMWIDTH = 0;
-    TOTWIDTH = 0;
-    HCFIRSTSYM = NSYMSDECODED;
+    uint32_t SYMWIDTH = 0;
+    uint32_t TOTWIDTH = 0;
+    uint32_t HCFIRSTSYM = NSYMSDECODED;
     for (;;) {
-      nVal = pHuffmanDecoder->DecodeAValue(SDHUFFDW.Get(), &DW);
+      int32_t DW;
+      int32_t nVal = pHuffmanDecoder->DecodeAValue(SDHUFFDW.Get(), &DW);
       if (nVal == kJBig2OOB)
         break;
       if (nVal != 0)
@@ -304,8 +283,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
         return nullptr;
       if (HCHEIGHT == 0 || SYMWIDTH == 0) {
         TOTWIDTH = TOTWIDTH + SYMWIDTH;
-        SDNEWSYMS[NSYMSDECODED] = nullptr;
-        NSYMSDECODED = NSYMSDECODED + 1;
+        ++NSYMSDECODED;
         continue;
       }
       TOTWIDTH = TOTWIDTH + SYMWIDTH;
@@ -334,17 +312,17 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
           pDecoder->SBNUMINSTANCES = REFAGGNINST;
           pDecoder->SBSTRIPS = 1;
           pDecoder->SBNUMSYMS = SDNUMINSYMS + NSYMSDECODED;
-          SBNUMSYMS = pDecoder->SBNUMSYMS;
-          std::vector<JBig2HuffmanCode> SBSYMCODES(SBNUMSYMS);
-          nTmp = 1;
-          while (static_cast<uint32_t>(1 << nTmp) < SBNUMSYMS)
+          std::vector<JBig2HuffmanCode> SBSYMCODES(pDecoder->SBNUMSYMS);
+          uint32_t nTmp = 1;
+          while (static_cast<uint32_t>(1 << nTmp) < pDecoder->SBNUMSYMS)
             ++nTmp;
-          for (uint32_t i = 0; i < SBNUMSYMS; ++i) {
+          for (uint32_t i = 0; i < pDecoder->SBNUMSYMS; ++i) {
             SBSYMCODES[i].codelen = nTmp;
             SBSYMCODES[i].code = i;
           }
           pDecoder->SBSYMCODES = std::move(SBSYMCODES);
-          SBSYMS.resize(SBNUMSYMS);
+          std::vector<CJBig2_Image*> SBSYMS;  // Pointers are not owned
+          SBSYMS.resize(pDecoder->SBNUMSYMS);
           std::copy(SDINSYMS, SDINSYMS + SDNUMINSYMS, SBSYMS.begin());
           for (size_t i = 0; i < NSYMSDECODED; ++i)
             SBSYMS[i + SDNUMINSYMS] = SDNEWSYMS[i].get();
@@ -372,13 +350,14 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
             return nullptr;
 
         } else if (REFAGGNINST == 1) {
-          SBNUMSYMS = SDNUMINSYMS + SDNUMNEWSYMS;
-          nTmp = 1;
+          uint32_t SBNUMSYMS = SDNUMINSYMS + SDNUMNEWSYMS;
+          uint32_t nTmp = 1;
           while ((uint32_t)(1 << nTmp) < SBNUMSYMS) {
             nTmp++;
           }
-          SBSYMCODELEN = (uint8_t)nTmp;
+          uint8_t SBSYMCODELEN = (uint8_t)nTmp;
           uint32_t uVal = 0;
+          uint32_t IDI;
           for (;;) {
             if (pStream->read1Bit(&nTmp) != 0)
               return nullptr;
@@ -393,6 +372,8 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
           }
           auto SBHUFFRDX = std::make_unique<CJBig2_HuffmanTable>(15);
           auto SBHUFFRSIZE = std::make_unique<CJBig2_HuffmanTable>(1);
+          int32_t RDXI;
+          int32_t RDYI;
           if ((pHuffmanDecoder->DecodeAValue(SBHUFFRDX.get(), &RDXI) != 0) ||
               (pHuffmanDecoder->DecodeAValue(SBHUFFRDX.get(), &RDYI) != 0) ||
               (pHuffmanDecoder->DecodeAValue(SBHUFFRSIZE.get(), &nVal) != 0)) {
@@ -400,6 +381,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
           }
           pStream->alignByte();
           nTmp = pStream->getOffset();
+          std::vector<CJBig2_Image*> SBSYMS;  // Pointers are not owned
           SBSYMS.resize(SBNUMSYMS);
           std::copy(SDINSYMS, SDINSYMS + SDNUMINSYMS, SBSYMS.begin());
           for (size_t i = 0; i < NSYMSDECODED; ++i)
@@ -430,9 +412,10 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
       }
       if (SDREFAGG == 0)
         SDNEWSYMWIDTHS[NSYMSDECODED] = SYMWIDTH;
-      NSYMSDECODED = NSYMSDECODED + 1;
+      ++NSYMSDECODED;
     }
     if (SDREFAGG == 0) {
+      uint32_t BMSIZE;
       if (pHuffmanDecoder->DecodeAValue(SDHUFFBMSIZE.Get(),
                                         (int32_t*)&BMSIZE) != 0) {
         return nullptr;
@@ -465,10 +448,10 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
         pGRD->StartDecodeMMR(&BHC, pStream);
         pStream->alignByte();
       }
-      nTmp = 0;
       if (!BHC)
         continue;
 
+      uint32_t nTmp = 0;
       for (uint32_t i = HCFIRSTSYM; i < NSYMSDECODED; ++i) {
         SDNEWSYMS[i] = BHC->SubImage(nTmp, 0, SDNEWSYMWIDTHS[i], HCHEIGHT);
         nTmp += SDNEWSYMWIDTHS[i];
@@ -476,7 +459,8 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
     }
   }
 
-  pTable = std::make_unique<CJBig2_HuffmanTable>(1);
+  std::unique_ptr<CJBig2_HuffmanTable> pTable =
+      std::make_unique<CJBig2_HuffmanTable>(1);
   std::vector<bool> EXFLAGS;
   EXFLAGS.resize(SDNUMINSYMS + SDNUMNEWSYMS);
   bool CUREXFLAG = false;
@@ -504,6 +488,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
   if (num_ex_syms > SDNUMEXSYMS)
     return nullptr;
 
+  auto pDict = std::make_unique<CJBig2_SymbolDict>();
   for (uint32_t i = 0, j = 0; i < SDNUMINSYMS + SDNUMNEWSYMS; ++i) {
     if (!EXFLAGS[i] || j >= SDNUMEXSYMS)
       continue;
