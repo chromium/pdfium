@@ -214,14 +214,10 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
     if (EXINDEX + EXRUNLENGTH > SDNUMINSYMS + SDNUMNEWSYMS)
       return nullptr;
 
-    if (EXRUNLENGTH != 0) {
-      for (uint32_t i = EXINDEX; i < EXINDEX + EXRUNLENGTH; ++i) {
-        if (CUREXFLAG)
-          num_ex_syms++;
-        EXFLAGS[i] = CUREXFLAG;
-      }
-    }
-    EXINDEX = EXINDEX + EXRUNLENGTH;
+    if (CUREXFLAG)
+      num_ex_syms += EXRUNLENGTH;
+    std::fill_n(EXFLAGS.begin() + EXINDEX, EXRUNLENGTH, CUREXFLAG);
+    EXINDEX += EXRUNLENGTH;
     CUREXFLAG = !CUREXFLAG;
   }
   if (num_ex_syms > SDNUMEXSYMS)
@@ -476,15 +472,10 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
     if (EXINDEX + EXRUNLENGTH > SDNUMINSYMS + SDNUMNEWSYMS)
       return nullptr;
 
-    if (EXRUNLENGTH != 0) {
-      for (uint32_t i = EXINDEX; i < EXINDEX + EXRUNLENGTH; ++i) {
-        if (CUREXFLAG)
-          num_ex_syms++;
-
-        EXFLAGS[i] = CUREXFLAG;
-      }
-    }
-    EXINDEX = EXINDEX + EXRUNLENGTH;
+    if (CUREXFLAG)
+      num_ex_syms += EXRUNLENGTH;
+    std::fill_n(EXFLAGS.begin() + EXINDEX, EXRUNLENGTH, CUREXFLAG);
+    EXINDEX += EXRUNLENGTH;
     CUREXFLAG = !CUREXFLAG;
   }
   if (num_ex_syms > SDNUMEXSYMS)
