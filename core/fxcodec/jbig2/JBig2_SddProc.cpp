@@ -281,12 +281,12 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
       SYMWIDTH = SYMWIDTH + DW;
       if ((int)SYMWIDTH < 0 || (int)SYMWIDTH > kJBig2MaxImageSize)
         return nullptr;
+
+      TOTWIDTH += SYMWIDTH;
       if (HCHEIGHT == 0 || SYMWIDTH == 0) {
-        TOTWIDTH = TOTWIDTH + SYMWIDTH;
         ++NSYMSDECODED;
         continue;
       }
-      TOTWIDTH = TOTWIDTH + SYMWIDTH;
       if (SDREFAGG == 1) {
         uint32_t REFAGGNINST;
         if (pHuffmanDecoder->DecodeAValue(SDHUFFAGGINST.Get(),
@@ -423,17 +423,19 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
       pStream->alignByte();
       std::unique_ptr<CJBig2_Image> BHC;
       if (BMSIZE == 0) {
-        FX_SAFE_UINT32 safe_stride = TOTWIDTH;
-        safe_stride += 7;
-        safe_stride /= 8;
-        FX_SAFE_UINT32 safe_image_size = safe_stride;
+        if (static_cast<int>(TOTWIDTH) > kJBig2MaxImageSize)
+          return nullptr;
+
+        // OK to not use FX_SAFE_UINT32 to calculate `stride` because
+        // `kJBig2MaxImageSize` is limiting the size.
+        const uint32_t stride = (TOTWIDTH + 7) / 8;
+        FX_SAFE_UINT32 safe_image_size = stride;
         safe_image_size *= HCHEIGHT;
         if (!safe_image_size.IsValid() ||
             pStream->getByteLeft() < safe_image_size.ValueOrDie()) {
           return nullptr;
         }
 
-        const uint32_t stride = safe_stride.ValueOrDie();
         BHC = std::make_unique<CJBig2_Image>(TOTWIDTH, HCHEIGHT);
         for (uint32_t i = 0; i < HCHEIGHT; ++i) {
           memcpy(BHC->data() + i * BHC->stride(), pStream->getPointer(),
