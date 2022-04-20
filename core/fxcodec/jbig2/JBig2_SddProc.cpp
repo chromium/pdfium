@@ -33,7 +33,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
   std::vector<std::unique_ptr<CJBig2_Image>> SDNEWSYMS;
   uint32_t HCHEIGHT, NSYMSDECODED;
   int32_t HCDH;
-  uint32_t SYMWIDTH, TOTWIDTH;
+  uint32_t SYMWIDTH;
   int32_t DW;
   uint32_t I, J, REFAGGNINST;
   std::vector<bool> EXFLAGS;
@@ -79,7 +79,6 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
       return nullptr;
 
     SYMWIDTH = 0;
-    TOTWIDTH = 0;
     for (;;) {
       if (!IADW->Decode(pArithDecoder, &DW))
         break;
@@ -92,12 +91,10 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
         return nullptr;
 
       if (HCHEIGHT == 0 || SYMWIDTH == 0) {
-        TOTWIDTH = TOTWIDTH + SYMWIDTH;
         SDNEWSYMS[NSYMSDECODED] = nullptr;
         NSYMSDECODED = NSYMSDECODED + 1;
         continue;
       }
-      TOTWIDTH = TOTWIDTH + SYMWIDTH;
       if (SDREFAGG == 0) {
         auto pGRD = std::make_unique<CJBig2_GRDProc>();
         pGRD->MMR = false;
