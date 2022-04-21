@@ -47,20 +47,6 @@ static_assert(std::size(kFoxitFonts) == CFX_FontMapper::kNumStandardFonts,
 constexpr BuiltinFont kGenericSansFont = {kFoxitSansMMFontData, 66919};
 constexpr BuiltinFont kGenericSerifFont = {kFoxitSerifMMFontData, 113417};
 
-ByteString KeyNameFromFace(const ByteString& face_name,
-                           int weight,
-                           bool bItalic) {
-  ByteString key(face_name);
-  key += ',';
-  key += ByteString::FormatInteger(weight);
-  key += bItalic ? 'I' : 'N';
-  return key;
-}
-
-ByteString KeyNameFromSize(size_t ttc_size, uint32_t checksum) {
-  return ByteString::Format("%zu:%u", ttc_size, checksum);
-}
-
 FXFT_LibraryRec* FTLibraryInitHelper() {
   FXFT_LibraryRec* pLibrary = nullptr;
   FT_Init_FreeType(&pLibrary);
@@ -97,7 +83,7 @@ RetainPtr<CFX_FontMgr::FontDesc> CFX_FontMgr::GetCachedFontDesc(
     const ByteString& face_name,
     int weight,
     bool bItalic) {
-  auto it = m_FaceMap.find(KeyNameFromFace(face_name, weight, bItalic));
+  auto it = m_FaceMap.find({face_name, weight, bItalic});
   return it != m_FaceMap.end() ? pdfium::WrapRetain(it->second.Get()) : nullptr;
 }
 
@@ -108,14 +94,14 @@ RetainPtr<CFX_FontMgr::FontDesc> CFX_FontMgr::AddCachedFontDesc(
     std::unique_ptr<uint8_t, FxFreeDeleter> pData,
     size_t size) {
   auto pFontDesc = pdfium::MakeRetain<FontDesc>(std::move(pData), size);
-  m_FaceMap[KeyNameFromFace(face_name, weight, bItalic)].Reset(pFontDesc.Get());
+  m_FaceMap[{face_name, weight, bItalic}].Reset(pFontDesc.Get());
   return pFontDesc;
 }
 
 RetainPtr<CFX_FontMgr::FontDesc> CFX_FontMgr::GetCachedTTCFontDesc(
     size_t ttc_size,
     uint32_t checksum) {
-  auto it = m_TTCFaceMap.find(KeyNameFromSize(ttc_size, checksum));
+  auto it = m_TTCFaceMap.find({ttc_size, checksum});
   return it != m_TTCFaceMap.end() ? pdfium::WrapRetain(it->second.Get())
                                   : nullptr;
 }
@@ -126,7 +112,7 @@ RetainPtr<CFX_FontMgr::FontDesc> CFX_FontMgr::AddCachedTTCFontDesc(
     std::unique_ptr<uint8_t, FxFreeDeleter> pData,
     size_t size) {
   auto pNewDesc = pdfium::MakeRetain<FontDesc>(std::move(pData), size);
-  m_TTCFaceMap[KeyNameFromSize(ttc_size, checksum)].Reset(pNewDesc.Get());
+  m_TTCFaceMap[{ttc_size, checksum}].Reset(pNewDesc.Get());
   return pNewDesc;
 }
 
