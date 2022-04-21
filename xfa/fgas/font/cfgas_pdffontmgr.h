@@ -8,6 +8,7 @@
 #define XFA_FGAS_FONT_CFGAS_PDFFONTMGR_H_
 
 #include <map>
+#include <utility>
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -22,7 +23,7 @@ class CFGAS_PDFFontMgr final {
   explicit CFGAS_PDFFontMgr(const CPDF_Document* pDoc);
   ~CFGAS_PDFFontMgr();
 
-  RetainPtr<CFGAS_GEFont> GetFont(WideStringView wsFontFamily,
+  RetainPtr<CFGAS_GEFont> GetFont(const WideString& wsFontFamily,
                                   uint32_t dwFontStyles,
                                   bool bStrictMatch);
 
@@ -41,7 +42,7 @@ class CFGAS_PDFFontMgr final {
                              bool bStrictMatch);
 
   UnownedPtr<const CPDF_Document> const m_pDoc;
-  std::map<ByteString, RetainPtr<CFGAS_GEFont>> m_FontMap;
+  std::map<std::pair<WideString, uint32_t>, RetainPtr<CFGAS_GEFont>> m_FontMap;
 };
 
 #endif  // XFA_FGAS_FONT_CFGAS_PDFFONTMGR_H_

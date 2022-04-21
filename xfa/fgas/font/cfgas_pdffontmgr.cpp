@@ -74,12 +74,12 @@ RetainPtr<CFGAS_GEFont> CFGAS_PDFFontMgr::FindFont(const ByteString& strPsName,
   return nullptr;
 }
 
-RetainPtr<CFGAS_GEFont> CFGAS_PDFFontMgr::GetFont(WideStringView wsFontFamily,
-                                                  uint32_t dwFontStyles,
-                                                  bool bStrictMatch) {
-  uint32_t dwHashCode = FX_HashCode_GetW(wsFontFamily);
-  ByteString strKey = ByteString::Format("%u%u", dwHashCode, dwFontStyles);
-  auto it = m_FontMap.find(strKey);
+RetainPtr<CFGAS_GEFont> CFGAS_PDFFontMgr::GetFont(
+    const WideString& wsFontFamily,
+    uint32_t dwFontStyles,
+    bool bStrictMatch) {
+  auto key = std::make_pair(wsFontFamily, dwFontStyles);
+  auto it = m_FontMap.find(key);
   if (it != m_FontMap.end())
     return it->second;
 
@@ -89,9 +89,10 @@ RetainPtr<CFGAS_GEFont> CFGAS_PDFFontMgr::GetFont(WideStringView wsFontFamily,
   ByteString strFontName = PsNameToFontName(bsPsName, bBold, bItalic);
   RetainPtr<CFGAS_GEFont> pFont =
       FindFont(strFontName, bBold, bItalic, bStrictMatch);
-  if (pFont)
-    m_FontMap[strKey] = pFont;
+  if (!pFont)
+    return nullptr;
 
+  m_FontMap[key] = pFont;
   return pFont;
 }
 
