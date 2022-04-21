@@ -1723,6 +1723,13 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(
     float font_size,
     uint32_t color,
     const CFX_TextRenderOptions& options) {
+  // `SkTextBlob` is built from `pFont`'s font data. If `pFont` doesn't contain
+  // any font data, each text blob will have zero area to be drawn and the
+  // drawing command will be rejected. In this case, we fall back to drawing
+  // characters by their glyph bitmaps.
+  if (pFont->GetFontSpan().empty())
+    return false;
+
   // If a glyph's default width is larger than its width defined in the PDF,
   // draw the glyph with path since it can be scaled to avoid overlapping with
   // the adjacent glyphs (if there are any). Otherwise, use the device driver

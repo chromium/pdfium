@@ -366,19 +366,11 @@ reset_button.in * * * *
 
 # TODO(pdfium:1095): Remove after associated bug is fixed
 bug_997412.in win * * *
-# TODO(pdfium:1354): Remove after associated bug is fixed
-bug_997412.in * * * skia,skiapaths
 # TODO(pdfium:1107): Remove after associated bug is fixed
 standard_symbols.pdf * * * *
 # TODO(pdfium:1168): Remove after associated bug is fixed
 xfa_bmp_image.in * * * *
 # TODO(pdfium:1095): Remove after associated bug is fixed
 xfa_example.in win * * *
-# TODO(pdfium:1354): Remove after associated bug is fixed
-xfa_example.in * * * skia,skiapaths
-# TODO(pdfium:1743): Remove after associated bug is fixed
-xfa_node_caption.pdf * * * skia,skiapaths
 # TODO(pdfium:1095): Remove after associated bug is fixed
 xfa_textfield.in win * * *
-# TODO(pdfium:1354): Remove after associated bug is fixed
-xfa_textfield.in * * * skia,skiapaths
