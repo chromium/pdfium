@@ -3936,8 +3936,7 @@ RetainPtr<CFGAS_GEFont> CXFA_Node::GetFGASFont(CXFA_FFDoc* doc) {
 
     wsFontName = font->GetTypeface();
   }
-  return doc->GetApp()->GetXFAFontMgr()->GetFont(doc, wsFontName.AsStringView(),
-                                                 dwFontStyle);
+  return doc->GetApp()->GetXFAFontMgr()->GetFont(doc, wsFontName, dwFontStyle);
 }
 
 bool CXFA_Node::HasButtonRollover() const {

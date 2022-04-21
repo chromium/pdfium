@@ -14,7 +14,7 @@ class CFGAS_GEFont;
 
 class CFGAS_DefaultFontManager {
  public:
-  static RetainPtr<CFGAS_GEFont> GetFont(WideStringView wsFontFamily,
+  static RetainPtr<CFGAS_GEFont> GetFont(WideString wsFontName,
                                          uint32_t dwFontStyles);
   static RetainPtr<CFGAS_GEFont> GetDefaultFont(uint32_t dwFontStyles);
 

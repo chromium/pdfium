@@ -8,6 +8,7 @@
 #define XFA_FXFA_CXFA_FONTMGR_H_
 
 #include <map>
+#include <utility>
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -24,13 +25,13 @@ class CXFA_FontMgr final : public cppgc::GarbageCollected<CXFA_FontMgr> {
 
   void Trace(cppgc::Visitor* visitor) const;
   RetainPtr<CFGAS_GEFont> GetFont(CXFA_FFDoc* hDoc,
-                                  WideStringView wsFontFamily,
+                                  const WideString& wsFontFamily,
                                   uint32_t dwFontStyles);
 
  private:
   CXFA_FontMgr();
 
-  std::map<ByteString, RetainPtr<CFGAS_GEFont>> m_FontMap;
+  std::map<std::pair<WideString, uint32_t>, RetainPtr<CFGAS_GEFont>> m_FontMap;
 };
 
 #endif  //  XFA_FXFA_CXFA_FONTMGR_H_

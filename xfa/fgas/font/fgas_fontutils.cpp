@@ -2447,8 +2447,9 @@ const FGAS_FONTUSB* FGAS_GetUnicodeBitField(wchar_t unicode) {
   return nullptr;
 }
 
-WideString FGAS_FontNameToEnglishName(WideStringView wsLocalName) {
-  uint32_t dwLocalNameHash = FX_HashCode_GetLoweredW(wsLocalName);
+WideString FGAS_FontNameToEnglishName(const WideString& wsLocalName) {
+  uint32_t dwLocalNameHash =
+      FX_HashCode_GetLoweredW(wsLocalName.AsStringView());
   const FGAS_FontInfo* pEnd = kXFAFontsMap + std::size(kXFAFontsMap);
   const FGAS_FontInfo* pFontInfo =
       std::lower_bound(kXFAFontsMap, pEnd, dwLocalNameHash,
@@ -2457,7 +2458,7 @@ WideString FGAS_FontNameToEnglishName(WideStringView wsLocalName) {
                        });
   if (pFontInfo < pEnd && pFontInfo->dwFontNameHash == dwLocalNameHash)
     return WideString::FromASCII(ByteStringView(pFontInfo->pPsName));
-  return WideString(wsLocalName);
+  return wsLocalName;
 }
 
 const FGAS_FontInfo* FGAS_FontInfoByFontName(WideStringView wsFontName) {

@@ -16,9 +16,8 @@
 
 // static
 RetainPtr<CFGAS_GEFont> CFGAS_DefaultFontManager::GetFont(
-    WideStringView wsFontFamily,
+    WideString wsFontName,
     uint32_t dwFontStyles) {
-  WideString wsFontName(wsFontFamily);
   CFGAS_FontMgr* pFontMgr = CFGAS_GEModule::Get()->GetFontMgr();
   RetainPtr<CFGAS_GEFont> pFont = pFontMgr->LoadFont(
       wsFontName.c_str(), dwFontStyles, FX_CodePage::kFailure);

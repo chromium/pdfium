@@ -363,7 +363,7 @@ RetainPtr<CFGAS_GEFont> CXFA_TextParser::GetFont(
   }
 
   CXFA_FontMgr* pFontMgr = doc->GetApp()->GetXFAFontMgr();
-  return pFontMgr->GetFont(doc, wsFamily.AsStringView(), dwStyle);
+  return pFontMgr->GetFont(doc, std::move(wsFamily), dwStyle);
 }
 
 float CXFA_TextParser::GetFontSize(CXFA_TextProvider* pTextProvider,
