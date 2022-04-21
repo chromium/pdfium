@@ -87,6 +87,7 @@ class CFX_FontMgr {
   ScopedFXFTLibraryRec const m_FTLibrary;
   std::unique_ptr<CFX_FontMapper> m_pBuiltinMapper;
   std::map<ByteString, ObservedPtr<FontDesc>> m_FaceMap;
+  std::map<ByteString, ObservedPtr<FontDesc>> m_TTCFaceMap;
   const bool m_FTLibrarySupportsHinting;
 };
 

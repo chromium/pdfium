@@ -115,8 +115,9 @@ RetainPtr<CFX_FontMgr::FontDesc> CFX_FontMgr::AddCachedFontDesc(
 RetainPtr<CFX_FontMgr::FontDesc> CFX_FontMgr::GetCachedTTCFontDesc(
     size_t ttc_size,
     uint32_t checksum) {
-  auto it = m_FaceMap.find(KeyNameFromSize(ttc_size, checksum));
-  return it != m_FaceMap.end() ? pdfium::WrapRetain(it->second.Get()) : nullptr;
+  auto it = m_TTCFaceMap.find(KeyNameFromSize(ttc_size, checksum));
+  return it != m_TTCFaceMap.end() ? pdfium::WrapRetain(it->second.Get())
+                                  : nullptr;
 }
 
 RetainPtr<CFX_FontMgr::FontDesc> CFX_FontMgr::AddCachedTTCFontDesc(
@@ -125,7 +126,7 @@ RetainPtr<CFX_FontMgr::FontDesc> CFX_FontMgr::AddCachedTTCFontDesc(
     std::unique_ptr<uint8_t, FxFreeDeleter> pData,
     size_t size) {
   auto pNewDesc = pdfium::MakeRetain<FontDesc>(std::move(pData), size);
-  m_FaceMap[KeyNameFromSize(ttc_size, checksum)].Reset(pNewDesc.Get());
+  m_TTCFaceMap[KeyNameFromSize(ttc_size, checksum)].Reset(pNewDesc.Get());
   return pNewDesc;
 }
 
