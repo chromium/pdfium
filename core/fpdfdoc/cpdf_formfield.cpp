@@ -641,7 +641,7 @@ bool CPDF_FormField::CheckControl(int iControlIndex,
     }
   } else if (bChecked) {
     m_pDict->SetNewFor<CPDF_Name>(pdfium::form_fields::kV,
-                                  ByteString::Format("%d", iControlIndex));
+                                  ByteString::FormatInteger(iControlIndex));
   }
   if (notify == NotificationOption::kNotify && m_pForm->GetFormNotify())
     m_pForm->GetFormNotify()->AfterCheckedStatusChange(this);

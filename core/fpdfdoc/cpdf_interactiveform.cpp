@@ -140,11 +140,11 @@ ByteString GenerateNewFontResourceName(const CPDF_Dictionary* pResDict,
     ByteString csKey = csTmp + bsNum;
     if (!pDict->KeyExist(csKey))
       return csKey;
+
     if (m < szCount)
       csTmp += csStr[m++];
     else
-      bsNum = ByteString::Format("%d", num++);
-
+      bsNum = ByteString::FormatInteger(num++);
     m++;
   }
 }

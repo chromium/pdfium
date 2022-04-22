@@ -75,7 +75,7 @@ ByteString CPDF_FormControl::GetCheckedAPState() const {
          GetType() == CPDF_FormField::kRadioButton);
   ByteString csOn = GetOnStateName();
   if (ToArray(CPDF_FormField::GetFieldAttr(m_pField->GetDict(), "Opt")))
-    csOn = ByteString::Format("%d", m_pField->GetControlIndex(this));
+    csOn = ByteString::FormatInteger(m_pField->GetControlIndex(this));
   if (csOn.IsEmpty())
     csOn = "Yes";
   return csOn;
