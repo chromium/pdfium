@@ -374,7 +374,9 @@ bool CPDF_DIB::LoadColorInfo(const CPDF_Dictionary* pFormResources,
   if (!decoder_array.value().empty())
     filter = decoder_array.value().back().first;
 
-  ValidateDictParam(filter);
+  if (!ValidateDictParam(filter))
+    return false;
+
   return GetDecodeAndMaskArray(&m_bDefaultDecode, &m_bColorKey);
 }
 
@@ -904,7 +906,7 @@ void CPDF_DIB::LoadPalette() {
   }
 }
 
-void CPDF_DIB::ValidateDictParam(const ByteString& filter) {
+bool CPDF_DIB::ValidateDictParam(const ByteString& filter) {
   m_bpc = m_bpc_orig;
 
   // Per spec, |m_bpc| should always be 8 for RunLengthDecode, but too many
@@ -912,7 +914,7 @@ void CPDF_DIB::ValidateDictParam(const ByteString& filter) {
 
   if (filter == "JPXDecode") {
     m_bDoBpcCheck = false;
-    return;
+    return true;
   }
 
   if (filter == "CCITTFaxDecode" || filter == "JBIG2Decode") {
@@ -922,8 +924,11 @@ void CPDF_DIB::ValidateDictParam(const ByteString& filter) {
     m_bpc = 8;
   }
 
-  if (!IsAllowedBitsPerComponent(m_bpc))
+  if (!IsAllowedBitsPerComponent(m_bpc)) {
     m_bpc = 0;
+    return false;
+  }
+  return true;
 }
 
 void CPDF_DIB::TranslateScanline24bpp(

@@ -95,7 +95,7 @@ class CPDF_DIB final : public CFX_DIBBase {
   bool TranslateScanline24bppDefaultDecode(
       pdfium::span<uint8_t> dest_scan,
       pdfium::span<const uint8_t> src_scan) const;
-  void ValidateDictParam(const ByteString& filter);
+  bool ValidateDictParam(const ByteString& filter);
   bool TransMask() const;
   void SetMaskProperties();
 
