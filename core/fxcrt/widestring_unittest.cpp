@@ -2056,6 +2056,21 @@ TEST(WideStringView, WideOStreamOverload) {
   }
 }
 
+TEST(WideString, FormatInteger) {
+  // Base case of 0.
+  EXPECT_EQ(L"0", WideString::FormatInteger(0));
+
+  // Positive ordinary number.
+  EXPECT_EQ(L"123456", WideString::FormatInteger(123456));
+
+  // Negative ordinary number.
+  EXPECT_EQ(L"-123456", WideString::FormatInteger(-123456));
+
+  // int limits.
+  EXPECT_EQ(L"2147483647", WideString::FormatInteger(INT_MAX));
+  EXPECT_EQ(L"-2147483648", WideString::FormatInteger(INT_MIN));
+}
+
 TEST(WideString, FX_HashCode_Wide) {
   EXPECT_EQ(0u, FX_HashCode_GetW(L""));
   EXPECT_EQ(65u, FX_HashCode_GetW(L"A"));

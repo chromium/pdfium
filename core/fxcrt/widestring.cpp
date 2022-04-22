@@ -288,6 +288,13 @@ static_assert(sizeof(WideString) <= sizeof(wchar_t*),
               "Strings must not require more space than pointers");
 
 // static
+WideString WideString::FormatInteger(int i) {
+  wchar_t wbuf[32];
+  swprintf(wbuf, std::size(wbuf), L"%d", i);
+  return WideString(wbuf);
+}
+
+// static
 WideString WideString::FormatV(const wchar_t* format, va_list argList) {
   va_list argListCopy;
   va_copy(argListCopy, argList);

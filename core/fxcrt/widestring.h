@@ -36,6 +36,7 @@ class WideString {
   using const_iterator = const CharType*;
   using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
+  [[nodiscard]] static WideString FormatInteger(int i);
   [[nodiscard]] static WideString Format(const wchar_t* pFormat, ...);
   [[nodiscard]] static WideString FormatV(const wchar_t* lpszFormat,
                                           va_list argList);
