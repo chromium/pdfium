@@ -1,0 +1,73 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+  /Resources <<
+    /ProcSet [/PDF /Text]
+    /Font <<
+      /F4 5 0 R
+    >>
+  >>
+  /MediaBox [0 0 200 200]
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+BT
+/F4 30 Tf
+0 0 0 rg
+1 0 0 1 30 100 Tm
+[(honorably)]TJ
+ET
+Q
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /Font
+  /Subtype /Type1
+  /BaseFont /AGaramond-Regular
+  /Encoding /WinAnsiEncoding
+  /FirstChar 32
+  /FontDescriptor 6 0 R
+  /LastChar 125
+  /Widths [250 220 404 500 500 844 818 235 320 320 394 500 250 320 250 327 500
+   500 500 500 500 500 500 500 500 500 250 250 500 500 500 321 765 623 605 696
+   780 584 538 747 806 338 345 675 553 912 783 795 549 795 645 489 660 746 676
+   960 643 574 641 320 309 320 500 500 360 404 500 400 509 396 290 446 515 257
+   253 482 247 787 525 486 507 497 332 323 307 512 432 660 432 438 377 320 239
+   320]
+>>
+endobj
+{{object 6 0}} <<
+  /Type /FontDescriptor
+  /Ascent 720
+  /CapHeight 663
+  /Descent -270
+  /Flags 34
+  /FontBBox [-183 -269 1099 851]
+  /FontName /AGaramond-Regular
+  /ItalicAngle 0
+  /StemH 40
+  /StemV 74
+  /XHeight 397
+>>
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
