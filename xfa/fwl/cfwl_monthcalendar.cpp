@@ -333,7 +333,7 @@ CFX_SizeF CFWL_MonthCalendar::CalcSize() {
   float fDayMaxW = 0.0f;
   float fDayMaxH = 0.0f;
   for (int day = 10; day <= 31; day++) {
-    CFX_SizeF sz = CalcTextSize(WideString::Format(L"%d", day), false);
+    CFX_SizeF sz = CalcTextSize(WideString::FormatInteger(day), false);
     fDayMaxW = (fDayMaxW >= sz.width) ? fDayMaxW : sz.width;
     fDayMaxH = (fDayMaxH >= sz.height) ? fDayMaxH : sz.height;
   }
@@ -478,7 +478,7 @@ void CFWL_MonthCalendar::ResetDateItem() {
     const bool bSelected = pdfium::Contains(m_SelDayArray, i + 1);
     m_DateArray.push_back(
         std::make_unique<DATEINFO>(i + 1, iDayOfWeek, bFlagged, bSelected,
-                                   WideString::Format(L"%d", i + 1)));
+                                   WideString::FormatInteger(i + 1)));
   }
 }
 

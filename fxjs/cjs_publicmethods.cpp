@@ -486,23 +486,23 @@ WideString CJS_PublicMethods::PrintDateUsingFormat(double dDate,
               sPart += c;
               break;
             case 'm':
-              sPart = WideString::Format(L"%d", nMonth);
+              sPart = WideString::FormatInteger(nMonth);
               break;
             case 'd':
-              sPart = WideString::Format(L"%d", nDay);
+              sPart = WideString::FormatInteger(nDay);
               break;
             case 'H':
-              sPart = WideString::Format(L"%d", nHour);
+              sPart = WideString::FormatInteger(nHour);
               break;
             case 'h':
               sPart =
-                  WideString::Format(L"%d", nHour > 12 ? nHour - 12 : nHour);
+                  WideString::FormatInteger(nHour > 12 ? nHour - 12 : nHour);
               break;
             case 'M':
-              sPart = WideString::Format(L"%d", nMin);
+              sPart = WideString::FormatInteger(nMin);
               break;
             case 's':
-              sPart = WideString::Format(L"%d", nSec);
+              sPart = WideString::FormatInteger(nSec);
               break;
             case 't':
               sPart += nHour > 12 ? 'p' : 'a';

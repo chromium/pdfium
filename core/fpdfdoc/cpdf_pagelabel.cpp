@@ -53,7 +53,7 @@ WideString GetLabelNumPortion(int num, const ByteString& bsStyle) {
   if (bsStyle.IsEmpty())
     return WideString();
   if (bsStyle == "D")
-    return WideString::Format(L"%d", num);
+    return WideString::FormatInteger(num);
   if (bsStyle == "R") {
     WideString wsNumPortion = MakeRoman(num);
     wsNumPortion.MakeUpper();
@@ -103,10 +103,10 @@ absl::optional<WideString> CPDF_PageLabel::GetLabel(int nPage) const {
     n--;
   }
 
-  WideString label;
   if (pValue) {
     pValue = pValue->GetDirect();
     if (const CPDF_Dictionary* pLabel = pValue->AsDictionary()) {
+      WideString label;
       if (pLabel->KeyExist("P"))
         label += pLabel->GetUnicodeTextFor("P");
 
@@ -117,6 +117,5 @@ absl::optional<WideString> CPDF_PageLabel::GetLabel(int nPage) const {
       return label;
     }
   }
-  label = WideString::Format(L"%d", nPage + 1);
-  return label;
+  return WideString::FormatInteger(nPage + 1);
 }

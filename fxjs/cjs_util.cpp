@@ -249,7 +249,7 @@ CJS_Result CJS_Util::printd(CJS_Runtime* pRuntime,
         continue;
       }
       cFormat.replace(nFound, 1,
-                      WideString::Format(L"%d", cTableAd[i].value).c_str());
+                      WideString::FormatInteger(cTableAd[i].value).c_str());
     }
   }
 

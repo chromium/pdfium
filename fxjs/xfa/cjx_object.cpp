@@ -292,7 +292,7 @@ absl::optional<WideString> CJX_Object::TryAttribute(XFA_Attribute eAttr,
       absl::optional<int32_t> iValue = TryInteger(eAttr, bUseDefault);
       if (!iValue.has_value())
         return absl::nullopt;
-      return WideString::Format(L"%d", iValue.value());
+      return WideString::FormatInteger(iValue.value());
     }
     case XFA_AttributeType::Measure: {
       absl::optional<CXFA_Measurement> value = TryMeasure(eAttr, bUseDefault);
@@ -337,7 +337,7 @@ void CJX_Object::SetInteger(XFA_Attribute eAttr, int32_t iValue, bool bNotify) {
   CFX_XMLElement* elem = SetValue(eAttr, iValue, bNotify);
   if (elem) {
     elem->SetAttribute(WideString::FromASCII(XFA_AttributeToName(eAttr)),
-                       WideString::Format(L"%d", iValue));
+                       WideString::FormatInteger(iValue));
   }
 }
 
