@@ -208,13 +208,17 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
   while (EXINDEX < SDNUMINSYMS + SDNUMNEWSYMS) {
     uint32_t EXRUNLENGTH;
     IAEX->Decode(pArithDecoder, (int*)&EXRUNLENGTH);
-    if (EXINDEX + EXRUNLENGTH > SDNUMINSYMS + SDNUMNEWSYMS)
+    FX_SAFE_UINT32 new_ex_size = EXINDEX;
+    new_ex_size += EXRUNLENGTH;
+    if (!new_ex_size.IsValid() ||
+        new_ex_size.ValueOrDie() > SDNUMINSYMS + SDNUMNEWSYMS) {
       return nullptr;
+    }
 
     if (CUREXFLAG)
       num_ex_syms += EXRUNLENGTH;
     std::fill_n(EXFLAGS.begin() + EXINDEX, EXRUNLENGTH, CUREXFLAG);
-    EXINDEX += EXRUNLENGTH;
+    EXINDEX = new_ex_size.ValueOrDie();
     CUREXFLAG = !CUREXFLAG;
   }
   if (num_ex_syms > SDNUMEXSYMS)
@@ -468,13 +472,17 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
     if (pHuffmanDecoder->DecodeAValue(pTable.get(), (int*)&EXRUNLENGTH) != 0)
       return nullptr;
 
-    if (EXINDEX + EXRUNLENGTH > SDNUMINSYMS + SDNUMNEWSYMS)
+    FX_SAFE_UINT32 new_ex_size = EXINDEX;
+    new_ex_size += EXRUNLENGTH;
+    if (!new_ex_size.IsValid() ||
+        new_ex_size.ValueOrDie() > SDNUMINSYMS + SDNUMNEWSYMS) {
       return nullptr;
+    }
 
     if (CUREXFLAG)
       num_ex_syms += EXRUNLENGTH;
     std::fill_n(EXFLAGS.begin() + EXINDEX, EXRUNLENGTH, CUREXFLAG);
-    EXINDEX += EXRUNLENGTH;
+    EXINDEX = new_ex_size.ValueOrDie();
     CUREXFLAG = !CUREXFLAG;
   }
   if (num_ex_syms > SDNUMEXSYMS)
