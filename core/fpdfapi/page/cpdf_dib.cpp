@@ -377,10 +377,10 @@ bool CPDF_DIB::LoadColorInfo(const CPDF_Dictionary* pFormResources,
   if (!ValidateDictParam(filter))
     return false;
 
-  return GetDecodeAndMaskArray(&m_bDefaultDecode, &m_bColorKey);
+  return GetDecodeAndMaskArray();
 }
 
-bool CPDF_DIB::GetDecodeAndMaskArray(bool* bDefaultDecode, bool* bColorKey) {
+bool CPDF_DIB::GetDecodeAndMaskArray() {
   if (!m_pColorSpace)
     return false;
 
@@ -399,7 +399,7 @@ bool CPDF_DIB::GetDecodeAndMaskArray(bool* bDefaultDecode, bool* bColorKey) {
       if (m_Family == CPDF_ColorSpace::Family::kIndexed)
         def_max = max_data;
       if (def_min != m_CompData[i].m_DecodeMin || def_max != max)
-        *bDefaultDecode = false;
+        m_bDefaultDecode = false;
     }
   } else {
     for (uint32_t i = 0; i < m_nComponents; i++) {
@@ -428,7 +428,7 @@ bool CPDF_DIB::GetDecodeAndMaskArray(bool* bDefaultDecode, bool* bColorKey) {
         m_CompData[i].m_ColorKeyMax = std::min(max_num, max_data);
       }
     }
-    *bColorKey = true;
+    m_bColorKey = true;
   }
   return true;
 }
@@ -553,7 +553,7 @@ bool CPDF_DIB::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
     if (m_Family == CPDF_ColorSpace::Family::kLab && m_nComponents != 3)
       return false;
   }
-  if (!GetDecodeAndMaskArray(&m_bDefaultDecode, &m_bColorKey))
+  if (!GetDecodeAndMaskArray())
     return false;
 
   m_bpc = info.bits_per_components;
