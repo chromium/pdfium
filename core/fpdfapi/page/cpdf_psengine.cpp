@@ -235,7 +235,7 @@ bool CPDF_PSEngine::DoOperator(PDF_PSOP op) {
     case PSOP_DIV:
       d2 = Pop();
       d1 = Pop();
-      Push(d1 / d2);
+      Push(d2 ? d1 / d2 : 0);
       break;
     case PSOP_IDIV:
       i2 = PopInt();

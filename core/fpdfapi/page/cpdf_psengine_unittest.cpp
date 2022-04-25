@@ -103,12 +103,15 @@ TEST(CPDF_PSEngine, Basic) {
   EXPECT_FLOAT_EQ(5.0f, DoOperator1(&engine, -5, PSOP_ABS));
 }
 
-TEST(CPDF_PSEngine, IDivByZero) {
+TEST(CPDF_PSEngine, DivByZero) {
   CPDF_PSEngine engine;
 
   // Integer divide by zero is defined as resulting in 0.
   EXPECT_FLOAT_EQ(0.0f, DoOperator2(&engine, 100, 0.0, PSOP_IDIV));
   EXPECT_FLOAT_EQ(0.0f, DoOperator2(&engine, 100, 0.0, PSOP_MOD));
+
+  // floating divide by zero is defined as resulting in 0.
+  EXPECT_FLOAT_EQ(0.0f, DoOperator2(&engine, 100, 0.0, PSOP_DIV));
 }
 
 TEST(CPDF_PSEngine, Ceiling) {
