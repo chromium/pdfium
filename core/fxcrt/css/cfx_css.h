@@ -23,99 +23,19 @@ enum CFX_CSSVALUETYPE {
 };
 using CFX_CSSValueTypeMask = std::underlying_type<CFX_CSSVALUETYPE>::type;
 
-// Any entries added/removed here, will need to be mirrored in
-// propertyValueTable, in core/fxcrt/css/cfx_cssdata.cpp.
-enum class CFX_CSSPropertyValue : uint8_t {
-  Bolder = 0,
-  None,
-  Dot,
-  Sub,
-  Top,
-  Right,
-  Normal,
-  Auto,
-  Text,
-  XSmall,
-  Thin,
-  Small,
-  Bottom,
-  Underline,
-  Double,
-  Lighter,
-  Oblique,
-  Super,
-  Center,
-  XxLarge,
-  Smaller,
-  Baseline,
-  Thick,
-  Justify,
-  Middle,
-  Medium,
-  ListItem,
-  XxSmall,
-  Bold,
-  SmallCaps,
-  Inline,
-  Overline,
-  TextBottom,
-  Larger,
-  InlineTable,
-  InlineBlock,
-  Blink,
-  Block,
-  Italic,
-  LineThrough,
-  XLarge,
-  Large,
-  Left,
-  TextTop,
-};
-
-// Any entries added/removed here, will need to be mirrored in
-// propertyTable, in core/fxcrt/css/cfx_cssdata.cpp.
+#undef CSS_PROP____
+#define CSS_PROP____(a, b, c, d) a,
 enum class CFX_CSSProperty : uint8_t {
-  BorderLeft = 0,
-  Top,
-  Margin,
-  TextIndent,
-  Right,
-  PaddingLeft,
-  MarginLeft,
-  Border,
-  BorderTop,
-  Bottom,
-  PaddingRight,
-  BorderBottom,
-  FontFamily,
-  FontWeight,
-  Color,
-  LetterSpacing,
-  TextAlign,
-  BorderRightWidth,
-  VerticalAlign,
-  PaddingTop,
-  FontVariant,
-  BorderWidth,
-  BorderBottomWidth,
-  BorderRight,
-  FontSize,
-  BorderSpacing,
-  FontStyle,
-  Font,
-  LineHeight,
-  MarginRight,
-  BorderLeftWidth,
-  Display,
-  PaddingBottom,
-  BorderTopWidth,
-  WordSpacing,
-  Left,
-  TextDecoration,
-  Padding,
-  MarginBottom,
-  MarginTop,
+#include "core/fxcrt/css/properties.inc"
 };
+#undef CSS_PROP____
+
+#undef CSS_PROP_VALUE____
+#define CSS_PROP_VALUE____(a, b, c) a,
+enum class CFX_CSSPropertyValue : uint8_t {
+#include "core/fxcrt/css/property_values.inc"
+};
+#undef CSS_PROP_VALUE____
 
 enum class CFX_CSSLengthUnit : uint8_t {
   Auto,

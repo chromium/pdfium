@@ -64,6 +64,7 @@ source_set("css") {
 
 pdfium_unittest_source_set("unittests") {
   sources = [
+    "cfx_cssdata_unittest.cpp",
     "cfx_cssdeclaration_unittest.cpp",
     "cfx_cssstylesheet_unittest.cpp",
     "cfx_csssyntaxparser_unittest.cpp",
