@@ -53,7 +53,7 @@ void CFX_CSSStyleSelector::UpdateStyleIndex() {
 std::vector<const CFX_CSSDeclaration*> CFX_CSSStyleSelector::MatchDeclarations(
     const WideString& tagname) {
   std::vector<const CFX_CSSDeclaration*> matchedDecls;
-  if (m_UARules.CountSelectors() == 0 || tagname.IsEmpty())
+  if (m_UARules.IsEmpty() || tagname.IsEmpty())
     return matchedDecls;
 
   auto* rules = m_UARules.GetTagRuleData(tagname);

@@ -23,7 +23,6 @@ CFX_CSSRuleCollection::~CFX_CSSRuleCollection() {
 
 void CFX_CSSRuleCollection::Clear() {
   m_TagRules.clear();
-  m_iSelectors = 0;
 }
 
 const std::vector<std::unique_ptr<CFX_CSSRuleCollection::Data>>*
@@ -45,7 +44,6 @@ void CFX_CSSRuleCollection::AddRulesFrom(const CFX_CSSStyleSheet* pStyleSheet,
     CFX_CSSSelector* pSelector = pStyleRule->GetSelectorList(i);
     m_TagRules[pSelector->name_hash()].push_back(
         std::make_unique<Data>(pSelector, pDeclaration));
-    m_iSelectors++;
   }
 }
 
