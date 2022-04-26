@@ -17,13 +17,7 @@
 
 CFX_CSSRuleCollection::CFX_CSSRuleCollection() = default;
 
-CFX_CSSRuleCollection::~CFX_CSSRuleCollection() {
-  Clear();
-}
-
-void CFX_CSSRuleCollection::Clear() {
-  m_TagRules.clear();
-}
+CFX_CSSRuleCollection::~CFX_CSSRuleCollection() = default;
 
 const std::vector<std::unique_ptr<CFX_CSSRuleCollection::Data>>*
 CFX_CSSRuleCollection::GetTagRuleData(const WideString& tagname) const {
@@ -31,13 +25,13 @@ CFX_CSSRuleCollection::GetTagRuleData(const WideString& tagname) const {
   return it != m_TagRules.end() ? &it->second : nullptr;
 }
 
-void CFX_CSSRuleCollection::AddRulesFrom(const CFX_CSSStyleSheet* sheet) {
+void CFX_CSSRuleCollection::SetRulesFromSheet(const CFX_CSSStyleSheet* sheet) {
+  m_TagRules.clear();
   for (size_t i = 0; i < sheet->CountRules(); ++i)
-    AddRulesFrom(sheet, sheet->GetRule(i));
+    AddRule(sheet->GetRule(i));
 }
 
-void CFX_CSSRuleCollection::AddRulesFrom(const CFX_CSSStyleSheet* pStyleSheet,
-                                         CFX_CSSStyleRule* pStyleRule) {
+void CFX_CSSRuleCollection::AddRule(CFX_CSSStyleRule* pStyleRule) {
   CFX_CSSDeclaration* pDeclaration = pStyleRule->GetDeclaration();
   size_t nSelectors = pStyleRule->CountSelectorLists();
   for (size_t i = 0; i < nSelectors; ++i) {

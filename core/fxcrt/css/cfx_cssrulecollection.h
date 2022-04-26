@@ -31,16 +31,13 @@ class CFX_CSSRuleCollection {
   CFX_CSSRuleCollection();
   ~CFX_CSSRuleCollection();
 
-  bool IsEmpty() const { return m_TagRules.empty(); }
-  void AddRulesFrom(const CFX_CSSStyleSheet* sheet);
-  void Clear();
+  void SetRulesFromSheet(const CFX_CSSStyleSheet* sheet);
 
   const std::vector<std::unique_ptr<Data>>* GetTagRuleData(
       const WideString& tagname) const;
 
  private:
-  void AddRulesFrom(const CFX_CSSStyleSheet* pStyleSheet,
-                    CFX_CSSStyleRule* pRule);
+  void AddRule(CFX_CSSStyleRule* pRule);
 
   std::map<uint32_t, std::vector<std::unique_ptr<Data>>> m_TagRules;
 };

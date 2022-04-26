@@ -46,14 +46,13 @@ void CFX_CSSStyleSelector::SetUAStyleSheet(
 }
 
 void CFX_CSSStyleSelector::UpdateStyleIndex() {
-  m_UARules.Clear();
-  m_UARules.AddRulesFrom(m_UAStyles.get());
+  m_UARules.SetRulesFromSheet(m_UAStyles.get());
 }
 
 std::vector<const CFX_CSSDeclaration*> CFX_CSSStyleSelector::MatchDeclarations(
     const WideString& tagname) {
   std::vector<const CFX_CSSDeclaration*> matchedDecls;
-  if (m_UARules.IsEmpty() || tagname.IsEmpty())
+  if (tagname.IsEmpty())
     return matchedDecls;
 
   auto* rules = m_UARules.GetTagRuleData(tagname);
