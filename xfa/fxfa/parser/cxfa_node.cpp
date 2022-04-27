@@ -653,23 +653,21 @@ WideString FormatNumStr(const WideString& wsValue, LocaleIface* pLocale) {
     wsSrcNum.Delete(0, 1);
   }
 
-  auto dot_index = wsSrcNum.Find('.');
-  dot_index = !dot_index.has_value() ? wsSrcNum.GetLength() : dot_index;
-
-  if (dot_index.value() < 1)
+  size_t dot_index = wsSrcNum.Find('.').value_or(wsSrcNum.GetLength());
+  if (dot_index == 0)
     return WideString();
 
-  size_t nPos = dot_index.value() % 3;
+  size_t nPos = dot_index % 3;
   WideString wsOutput;
-  for (size_t i = 0; i < dot_index.value(); i++) {
+  for (size_t i = 0; i < dot_index; i++) {
     if (i % 3 == nPos && i != 0)
       wsOutput += wsGroupSymbol;
 
     wsOutput += wsSrcNum[i];
   }
-  if (dot_index.value() < wsSrcNum.GetLength()) {
+  if (dot_index < wsSrcNum.GetLength()) {
     wsOutput += pLocale->GetDecimalSymbol();
-    wsOutput += wsSrcNum.Last(wsSrcNum.GetLength() - dot_index.value() - 1);
+    wsOutput += wsSrcNum.Last(wsSrcNum.GetLength() - dot_index - 1);
   }
   if (bNeg)
     return pLocale->GetMinusSymbol() + wsOutput;
