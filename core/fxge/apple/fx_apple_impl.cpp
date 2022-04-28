@@ -18,7 +18,7 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
-#include "core/fxge/fx_freetype.h"
+#include "core/fxge/freetype/fx_freetype.h"
 #include "core/fxge/text_char_pos.h"
 #include "third_party/base/span.h"
 

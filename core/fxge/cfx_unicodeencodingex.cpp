@@ -9,8 +9,8 @@
 #include <memory>
 
 #include "core/fxge/cfx_font.h"
+#include "core/fxge/freetype/fx_freetype.h"
 #include "core/fxge/fx_font.h"
-#include "core/fxge/fx_freetype.h"
 
 #define ENC_TAG(a, b, c, d)                                               \
   (((uint32_t)(a) << 24) | ((uint32_t)(b) << 16) | ((uint32_t)(c) << 8) | \

@@ -11,7 +11,7 @@
 #include "core/fxcrt/widestring.h"
 #include "core/fxge/cfx_glyphbitmap.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
-#include "core/fxge/fx_freetype.h"
+#include "core/fxge/freetype/fx_freetype.h"
 #include "core/fxge/text_glyph_pos.h"
 
 namespace {

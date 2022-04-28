@@ -17,7 +17,7 @@
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_face.h"
-#include "core/fxge/fx_freetype.h"
+#include "core/fxge/freetype/fx_freetype.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/span.h"
 

@@ -10,7 +10,7 @@
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_face.h"
-#include "core/fxge/fx_freetype.h"
+#include "core/fxge/freetype/fx_freetype.h"
 
 // Sets the given transform on the font, and resets it to the identity when it
 // goes out of scope.

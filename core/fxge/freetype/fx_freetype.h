@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_FX_FREETYPE_H_
-#define CORE_FXGE_FX_FREETYPE_H_
+#ifndef CORE_FXGE_FREETYPE_FX_FREETYPE_H_
+#define CORE_FXGE_FREETYPE_FX_FREETYPE_H_
 
 #include <ft2build.h>
 
@@ -91,4 +91,4 @@ using ScopedFXFTLibraryRec =
 int FXFT_unicode_from_adobe_name(const char* glyph_name);
 void FXFT_adobe_name_from_unicode(char* name, wchar_t unicode);
 
-#endif  // CORE_FXGE_FX_FREETYPE_H_
+#endif  // CORE_FXGE_FREETYPE_FX_FREETYPE_H_

@@ -30,8 +30,8 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_fontmapper.h"
+#include "core/fxge/freetype/fx_freetype.h"
 #include "core/fxge/fx_font.h"
-#include "core/fxge/fx_freetype.h"
 #include "third_party/base/check.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
