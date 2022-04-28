@@ -28,3 +28,4 @@ shadow variable.
 0009-infinite-loop.patch: avoid hang in agg_math_stroke.h
 0010-math.patch: includes <math.h>
 0011-path-storage-move-ctor.patch: Add a move ctor for path_storage.
+0012-infinite-loop.patch: Fix an infinite loop in calc_dash_start().

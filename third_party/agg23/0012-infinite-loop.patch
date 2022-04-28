@@ -1,0 +1,25 @@
+diff --git a/third_party/agg23/agg_vcgen_dash.cpp b/third_party/agg23/agg_vcgen_dash.cpp
+index f690760b0..d44fca178 100644
+--- a/third_party/agg23/agg_vcgen_dash.cpp
++++ b/third_party/agg23/agg_vcgen_dash.cpp
+@@ -18,8 +18,11 @@
+ //
+ //----------------------------------------------------------------------------
+ 
++#include <cmath>
++
+ #include "agg_shorten_path.h"
+ #include "agg_vcgen_dash.h"
++#include "third_party/base/check_op.h"
+ 
+ namespace pdfium
+ {
+@@ -60,6 +63,8 @@ void vcgen_dash::dash_start(float ds)
+ }
+ void vcgen_dash::calc_dash_start(float ds)
+ {
++    DCHECK_GT(m_total_dash_len, 0);
++    ds -= floor(ds / m_total_dash_len) * m_total_dash_len;
+     m_curr_dash = 0;
+     m_curr_dash_start = 0;
+     while(ds > 0) {
