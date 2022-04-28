@@ -31,7 +31,9 @@ namespace {
 
 const char kFormNS[] = "http://www.xfa.org/schema/xfa-form/";
 
-void ExportEncodeAttribute(const WideString& str, WideString& textBuf) {
+WideString ExportEncodeAttribute(const WideString& str) {
+  WideString textBuf;
+  textBuf.Reserve(str.GetLength());  // Result always at least as big as input.
   for (size_t i = 0; i < str.GetLength(); i++) {
     switch (str[i]) {
       case '&':
@@ -53,6 +55,7 @@ void ExportEncodeAttribute(const WideString& str, WideString& textBuf) {
         textBuf += str[i];
     }
   }
+  return textBuf;
 }
 
 bool IsXMLValidChar(wchar_t ch) {
@@ -129,24 +132,20 @@ bool ContentNodeNeedtoExport(CXFA_Node* pContentNode) {
   return true;
 }
 
-void SaveAttribute(CXFA_Node* pNode,
-                   XFA_Attribute eName,
-                   const WideString& wsName,
-                   bool bProto,
-                   WideString& wsOutput) {
+WideString SaveAttribute(CXFA_Node* pNode,
+                         XFA_Attribute eName,
+                         WideStringView wsName,
+                         bool bProto) {
   if (!bProto && !pNode->JSObject()->HasAttribute(eName))
-    return;
+    return WideString();
 
   absl::optional<WideString> value =
       pNode->JSObject()->TryAttribute(eName, false);
   if (!value.has_value())
-    return;
+    return WideString();
 
-  wsOutput += L" ";
-  wsOutput += wsName;
-  wsOutput += L"=\"";
-  ExportEncodeAttribute(value.value(), wsOutput);
-  wsOutput += L"\"";
+  WideString wsEncoded = ExportEncodeAttribute(value.value());
+  return WideString{L" ", wsName, L"=\"", wsEncoded.AsStringView(), L"\""};
 }
 
 void RegenerateFormFile_Changed(CXFA_Node* pNode,
@@ -162,10 +161,8 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
         (AttributeSaveInDataModel(pNode, attr) && !bSaveXML)) {
       continue;
     }
-    WideString wsAttr;
-    SaveAttribute(pNode, attr, WideString::FromASCII(XFA_AttributeToName(attr)),
-                  bSaveXML, wsAttr);
-    wsAttrs += wsAttr;
+    WideString wsAttr = WideString::FromASCII(XFA_AttributeToName(attr));
+    wsAttrs += SaveAttribute(pNode, attr, wsAttr.AsStringView(), bSaveXML);
   }
 
   WideString wsChildren;
@@ -276,11 +273,9 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
   if (!wsChildren.IsEmpty() || !wsAttrs.IsEmpty() ||
       pNode->JSObject()->HasAttribute(XFA_Attribute::Name)) {
     WideString wsElement = WideString::FromASCII(pNode->GetClassName());
-    WideString wsName;
-    SaveAttribute(pNode, XFA_Attribute::Name, L"name", true, wsName);
     buf << "<";
     buf << wsElement;
-    buf << wsName;
+    buf << SaveAttribute(pNode, XFA_Attribute::Name, L"name", true);
     buf << wsAttrs;
     if (wsChildren.IsEmpty()) {
       buf << "/>\n";
@@ -308,10 +303,8 @@ void RegenerateFormFile_Container(CXFA_Node* pNode,
   pStream->WriteString("<");
   pStream->WriteString(wsElement.ToUTF8().AsStringView());
 
-  WideString wsOutput;
-  SaveAttribute(pNode, XFA_Attribute::Name, L"name", true, wsOutput);
-
-  WideString wsAttrs;
+  WideString wsOutput =
+      SaveAttribute(pNode, XFA_Attribute::Name, L"name", true);
   for (size_t i = 0;; ++i) {
     XFA_Attribute attr = pNode->GetAttribute(i);
     if (attr == XFA_Attribute::Unknown)
@@ -319,10 +312,8 @@ void RegenerateFormFile_Container(CXFA_Node* pNode,
     if (attr == XFA_Attribute::Name)
       continue;
 
-    WideString wsAttr;
-    SaveAttribute(pNode, attr, WideString::FromASCII(XFA_AttributeToName(attr)),
-                  false, wsAttr);
-    wsOutput += wsAttr;
+    WideString wsAttr = WideString::FromASCII(XFA_AttributeToName(attr));
+    wsOutput += SaveAttribute(pNode, attr, wsAttr.AsStringView(), false);
   }
 
   if (!wsOutput.IsEmpty())
