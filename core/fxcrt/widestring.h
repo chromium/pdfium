@@ -259,7 +259,7 @@ inline WideString operator+(WideStringView str1, wchar_t ch) {
   return WideString(str1, WideStringView(ch));
 }
 inline WideString operator+(wchar_t ch, WideStringView str2) {
-  return WideString(ch, str2);
+  return WideString(WideStringView(ch), str2);
 }
 inline WideString operator+(const WideString& str1, const WideString& str2) {
   return WideString(str1.AsStringView(), str2.AsStringView());
@@ -268,7 +268,7 @@ inline WideString operator+(const WideString& str1, wchar_t ch) {
   return WideString(str1.AsStringView(), WideStringView(ch));
 }
 inline WideString operator+(wchar_t ch, const WideString& str2) {
-  return WideString(ch, str2.AsStringView());
+  return WideString(WideStringView(ch), str2.AsStringView());
 }
 inline WideString operator+(const WideString& str1, const wchar_t* str2) {
   return WideString(str1.AsStringView(), str2);

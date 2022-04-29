@@ -253,7 +253,7 @@ inline ByteString operator+(ByteStringView str1, char ch) {
   return ByteString(str1, ByteStringView(ch));
 }
 inline ByteString operator+(char ch, ByteStringView str2) {
-  return ByteString(ch, str2);
+  return ByteString(ByteStringView(ch), str2);
 }
 inline ByteString operator+(const ByteString& str1, const ByteString& str2) {
   return ByteString(str1.AsStringView(), str2.AsStringView());
@@ -262,7 +262,7 @@ inline ByteString operator+(const ByteString& str1, char ch) {
   return ByteString(str1.AsStringView(), ByteStringView(ch));
 }
 inline ByteString operator+(char ch, const ByteString& str2) {
-  return ByteString(ch, str2.AsStringView());
+  return ByteString(ByteStringView(ch), str2.AsStringView());
 }
 inline ByteString operator+(const ByteString& str1, const char* str2) {
   return ByteString(str1.AsStringView(), str2);
