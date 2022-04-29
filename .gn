@@ -9,9 +9,6 @@ buildconfig = "//build/config/BUILDCONFIG.gn"
 script_executable = "python3"
 
 default_args = {
-  v8_extra_library_files = []
-  v8_experimental_extra_library_files = []
-
   # PDFs only need to run JavaScript.
   v8_enable_webassembly = false
 
