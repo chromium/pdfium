@@ -542,8 +542,6 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractInkMultiple) {
     static constexpr char kExpectedHash[] = "fad91b9c968fe8019a774f5e2419b8fc";
 #elif defined(_SKIA_SUPPORT_PATHS_)
     static constexpr char kExpectedHash[] = "acddfe688a117ead56af7b249a2cf8a1";
-#elif BUILDFLAG(IS_WIN)
-    static constexpr char kExpectedHash[] = "49d0a81c636531a337429325273d0508";
 #else
     static constexpr char kExpectedHash[] = "354002e1c4386d38fdde29ef8d61074a";
 #endif

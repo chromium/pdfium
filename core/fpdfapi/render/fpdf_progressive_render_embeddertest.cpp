@@ -449,13 +449,8 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderInkWithColorScheme) {
   static constexpr char kContentWithInkChecksum[] =
       "ebc57721e4c8da34156e09b9b2e62fb0";
 #else
-#if BUILDFLAG(IS_WIN)
-  static constexpr char kContentWithInkChecksum[] =
-      "1933e4ab19b9108ddcecd1a6abb20c85";
-#else
   static constexpr char kContentWithInkChecksum[] =
       "797bce7dc6c50ee86b095405df9fe5aa";
-#endif  // BUILDFLAG(IS_WIN)
 #endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
   ASSERT_TRUE(OpenDocument("annotation_ink_multiple.pdf"));
