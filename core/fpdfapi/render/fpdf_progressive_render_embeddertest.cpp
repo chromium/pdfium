@@ -435,15 +435,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest,
       kBlue, 612, 792, kMD5ContentWithHighlight);
 }
 
-// TODO(crbug.com/pdfium/1500): When Skia is enabled, the rendering result is
-// acceptable but the test fails due to assertion failure. Fix the assertion
-// failure for Skia and enable this test.
-#if defined(_SKIA_SUPPORT_)
-#define MAYBE_RenderInkWithColorScheme DISABLED_RenderInkWithColorScheme
-#else
-#define MAYBE_RenderInkWithColorScheme RenderInkWithColorScheme
-#endif
-TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderInkWithColorScheme) {
+TEST_F(FPDFProgressiveRenderEmbedderTest, RenderInkWithColorScheme) {
 // Test rendering of multiple ink with forced color scheme on.
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   static constexpr char kContentWithInkChecksum[] =
