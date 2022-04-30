@@ -231,8 +231,14 @@ config("pdfium_common_config") {
   }
 
   if (!is_win && !is_clang) {
-    # Override -Wno-narrowing.
-    cflags += [ "-Wnarrowing" ]
+    cflags += [
+      # Override -Wno-narrowing for GCC.
+      "-Wnarrowing",
+
+      # GCC assumes that control can get past an exhaustive switch and then
+      # warns if there's no return there.
+      "-Wno-return-type",
+    ]
   }
 }
 

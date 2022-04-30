@@ -27,7 +27,6 @@
 #include "fxjs/ijs_runtime.h"
 #include "public/fpdf_formfill.h"
 #include "third_party/base/check.h"
-#include "third_party/base/notreached.h"
 #include "v8/include/cppgc/allocation.h"
 #include "xfa/fgas/font/cfgas_gemodule.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
@@ -204,8 +203,6 @@ int CPDFXFA_Context::GetPageCount() const {
     case FormType::kXFAFull:
       return m_pXFADoc ? m_pXFADocView->CountPageViews() : 0;
   }
-  NOTREACHED();
-  return 0;
 }
 
 RetainPtr<CPDFXFA_Page> CPDFXFA_Context::GetOrCreateXFAPage(int page_index) {

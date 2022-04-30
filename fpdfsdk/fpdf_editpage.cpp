@@ -38,7 +38,6 @@
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/fpdf_formfill.h"
 #include "third_party/base/cxx17_backports.h"
-#include "third_party/base/notreached.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
 #ifdef PDF_ENABLE_XFA
@@ -100,10 +99,6 @@ void CalcBoundingBox(CPDF_PageObject* pPageObj) {
     case CPDF_PageObject::Type::kForm: {
       CPDF_FormObject* pFormObj = pPageObj->AsForm();
       pFormObj->CalcBoundingBox();
-      break;
-    }
-    default: {
-      NOTREACHED();
       break;
     }
   }
@@ -647,9 +642,6 @@ FPDFPageObj_GetMatrix(FPDF_PAGEOBJECT page_object, FS_MATRIX* matrix) {
     case CPDF_PageObject::Type::kForm:
       *matrix = FSMatrixFromCFXMatrix(pPageObj->AsForm()->form_matrix());
       return true;
-    default:
-      NOTREACHED();
-      return false;
   }
 }
 
@@ -675,9 +667,6 @@ FPDFPageObj_SetMatrix(FPDF_PAGEOBJECT page_object, const FS_MATRIX* matrix) {
     case CPDF_PageObject::Type::kForm:
       pPageObj->AsForm()->SetFormMatrix(cmatrix);
       break;
-    default:
-      NOTREACHED();
-      return false;
   }
   pPageObj->SetDirty(true);
   return true;

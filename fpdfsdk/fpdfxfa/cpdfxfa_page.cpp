@@ -15,7 +15,6 @@
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_widget.h"
 #include "third_party/base/check.h"
-#include "third_party/base/notreached.h"
 #include "xfa/fgas/graphics/cfgas_gegraphics.h"
 #include "xfa/fxfa/cxfa_ffdocview.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
@@ -118,8 +117,6 @@ bool CPDFXFA_Page::LoadPage() {
     case FormType::kXFAFull:
       return !!GetXFAPageView();
   }
-  NOTREACHED();
-  return false;
 }
 
 void CPDFXFA_Page::LoadPDFPageFromDict(CPDF_Dictionary* pPageDict) {

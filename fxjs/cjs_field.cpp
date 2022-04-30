@@ -199,8 +199,6 @@ CFX_Color GetFormControlColor(CPDF_FormControl* pFormControl,
                        pFormControl->GetOriginalColorComponent(2, entry),
                        pFormControl->GetOriginalColorComponent(3, entry));
   }
-  NOTREACHED();
-  return CFX_Color();
 }
 
 bool SetWidgetDisplayStatus(CPDFSDK_Widget* pWidget, int value) {
@@ -927,11 +925,6 @@ CJS_Result CJS_Field::get_button_scale_when(CJS_Runtime* pRuntime) {
       return CJS_Result::Success(
           pRuntime->NewNumber(static_cast<int>(scale_method)));
   }
-
-  // Note this is deliberately not the default case for the switch statement
-  // above, so missing cases trigger compile time errors.
-  NOTREACHED();
-  return CJS_Result::Success();
 }
 
 CJS_Result CJS_Field::set_button_scale_when(CJS_Runtime* pRuntime,

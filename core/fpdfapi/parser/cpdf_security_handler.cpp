@@ -83,10 +83,7 @@ bool IsValidKeyLengthForCipher(CPDF_CryptoHandler::Cipher cipher,
       return keylen >= 5 && keylen <= 16;
     case CPDF_CryptoHandler::Cipher::kNone:
       return true;
-    default:
-      NOTREACHED();
   }
-  return false;
 }
 
 #define FX_GET_32WORD(n, b, i)                                        \
