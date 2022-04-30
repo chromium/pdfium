@@ -237,13 +237,13 @@ Alert: this.zoom = 3; yields 3
 Alert: this.zoomType = 3; yields 3
 Alert: *** Getting properties ***
 Alert: this.ADBE is undefined undefined
-Alert: this.author is string 3
+Alert: this.author is string Joe Random Author
 Alert: this.baseURL is string 3
 Alert: this.bookmarkRoot is undefined undefined
 Alert: this.calculate is boolean true
 Alert: this.Collab is undefined undefined
-Alert: this.creationDate is string 3
-Alert: this.creator is string 3
+Alert: this.creationDate is string 
+Alert: this.creator is string Joe Random Creator
 Alert: this.delay is boolean true
 Alert: this.dirty is boolean true
 Alert: this.documentFileName is string 
@@ -251,10 +251,10 @@ Alert: this.external is boolean true
 Alert: this.filesize is number 0
 Alert: this.icons is undefined undefined
 Alert: this.info is object [object Object]
-Alert: this.keywords is string 3
+Alert: this.keywords is string 
 Alert: this.layout is undefined undefined
 Alert: this.media is undefined undefined
-Alert: this.modDate is string 3
+Alert: this.modDate is string 
 Alert: this.mouseX is undefined undefined
 Alert: this.mouseY is undefined undefined
 Alert: this.numFields is number 0
@@ -262,9 +262,9 @@ Alert: this.numPages is number 4
 Alert: this.pageNum is undefined undefined
 Alert: this.pageWindowRect is undefined undefined
 Alert: this.path is string /myfile.pdf
-Alert: this.producer is string 3
-Alert: this.subject is string 3
-Alert: this.title is string 3
+Alert: this.producer is string 
+Alert: this.subject is string 
+Alert: this.title is string 
 Alert: this.URL is string myfile.pdf
 Alert: this.zoom is undefined undefined
 Alert: this.zoomType is undefined undefined
