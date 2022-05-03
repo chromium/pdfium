@@ -637,8 +637,9 @@ typedef struct _FPDF_FORMFILLINFO {
    * Return value:
    *       None.
    * Comments:
-   *       See the named actions description of <<PDF Reference, version 1.7>>
-   *       for more details.
+   *       See ISO 32000-1:2008, section 12.6.4.11 for descriptions of the
+   *       standard named actions, but note that a document may supply any
+   *       name of its choosing.
    */
   void (*FFI_ExecuteNamedAction)(struct _FPDF_FORMFILLINFO* pThis,
                                  FPDF_BYTESTRING namedAction);
