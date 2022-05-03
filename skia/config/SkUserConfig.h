@@ -135,11 +135,17 @@
 #define GR_MAX_OFFSCREEN_AA_DIM 512
 
 // Log the file and line number for assertions.
+#if defined(SK_BUILD_FOR_WIN) && !defined(__clang__)
+// String formatting with this toolchain not supported.
+#define SkDebugf(...) SkDebugf_FileLineOnly(__FILE__, __LINE__)
+SK_API void SkDebugf_FileLineOnly(const char* file, int line);
+#else
 #define SkDebugf(...) SkDebugf_FileLine(__FILE__, __LINE__, __VA_ARGS__)
 SK_API void SkDebugf_FileLine(const char* file,
                               int line,
                               const char* format,
                               ...);
+#endif
 
 #if !defined(ANDROID)  // On Android, we use the skia default settings.
 #define SK_A32_SHIFT 24
@@ -248,6 +254,15 @@ SK_API void SkDebugf_FileLine(const char* file,
 #define SK_SUPPORT_LEGACY_X86_BLITS
 
 #define SK_DISABLE_TILE_IMAGE_FILTER_OPTIMIZATION
+
+#if defined(SK_BUILD_FOR_WIN) && !defined(__clang__)
+#define SK_ABORT(format, ...) \
+  SkAbort_FileLine(__FILE__, __LINE__, format, ##__VA_ARGS__)
+[[noreturn]] SK_API void SkAbort_FileLine(const char* file,
+                                          int line,
+                                          const char* format,
+                                          ...);
+#endif
 
 // ===== End Chrome-specific definitions =====
 

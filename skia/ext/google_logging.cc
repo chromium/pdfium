@@ -11,6 +11,10 @@
 
 #include "third_party/skia/include/core/SkTypes.h"
 
+#if defined(SK_BUILD_FOR_WIN) && !defined(__clang__)
+#include <stdlib.h>
+#endif
+
 void SkDebugf_FileLine(const char* file, int line, const char* format, ...) {
   va_list ap;
   va_start(ap, format);
@@ -19,3 +23,24 @@ void SkDebugf_FileLine(const char* file, int line, const char* format, ...) {
   vfprintf(stderr, format, ap);
   va_end(ap);
 }
+
+#if defined(SK_BUILD_FOR_WIN) && !defined(__clang__)
+
+void SkDebugf_FileLineOnly(const char* file, int line) {
+  fprintf(stderr, "%s:%d\n", file, line);
+}
+
+void SkAbort_FileLine(const char* file, int line, const char* format, ...) {
+  va_list ap;
+  va_start(ap, format);
+
+  fprintf(stderr, "%s:%d ", file, line);
+  vfprintf(stderr, format, ap);
+  va_end(ap);
+
+  sk_abort_no_print();
+  // Extra safety abort().
+  abort();
+}
+
+#endif  // defined(SK_BUILD_FOR_WIN) && !defined(__clang__)
