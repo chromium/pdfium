@@ -435,6 +435,10 @@ FPDF_BOOL ExamplePopupMenu(FPDF_FORMFILLINFO* pInfo,
 }
 #endif  // PDF_ENABLE_XFA
 
+void ExampleNamedAction(FPDF_FORMFILLINFO* pInfo, FPDF_BYTESTRING name) {
+  printf("Execute named action: %s\n", name);
+}
+
 void ExampleUnsupportedHandler(UNSUPPORT_INFO*, int type) {
   std::string feature = "Unknown";
   switch (type) {
@@ -1065,6 +1069,7 @@ void ProcessPdf(const std::string& name,
 #else   // PDF_ENABLE_XFA
   form_callbacks.version = 1;
 #endif  // PDF_ENABLE_XFA
+  form_callbacks.FFI_ExecuteNamedAction = ExampleNamedAction;
   form_callbacks.FFI_GetPage = GetPageForIndex;
 
 #ifdef PDF_ENABLE_V8

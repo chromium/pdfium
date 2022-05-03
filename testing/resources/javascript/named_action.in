@@ -1,0 +1,33 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+  /OpenAction 10 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [
+    3 0 R
+  ]
+>>
+endobj
+% Page number 0.
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [0 0 612 792]
+>>
+endobj
+% OpenAction action - not really JS, but generates text under test env.
+{{object 10 0}} <<
+  /Type /Action
+  /S /Named
+  /N (Print)
+>>
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
