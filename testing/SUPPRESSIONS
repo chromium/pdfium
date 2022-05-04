@@ -317,6 +317,10 @@ bug_735912.in * * noxfa *
 # TODO(v8:12806) Fix regression and remove this suppression.
 globals.in * * * *
 
+# JS tests in nov8 mode expect empty results. This one will
+# not be empty as the callback is not js-based.
+named_action.in * nov8 * *
+
 # xfa_specific
 
 # TODO(pdfium:1106): Remove after associated bug is fixed
