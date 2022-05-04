@@ -19,8 +19,8 @@ vars = {
 
   'checkout_instrumented_libraries': 'checkout_linux and checkout_configuration != "small"',
 
-  # By default, download the fuchsia sdk from the fuchsia GCS bucket.
-  'fuchsia_sdk_bucket': 'fuchsia',
+  # By default, download the fuchsia sdk from the public sdk directory.
+  'fuchsia_sdk_cipd_prefix': 'fuchsia/sdk/core/',
 
   'chromium_git': 'https://chromium.googlesource.com',
   'pdfium_git': 'https://pdfium.googlesource.com',
@@ -66,6 +66,10 @@ vars = {
   # the commit queue can handle CLs rolling freetype
   # and whatever else without interference from each other.
   'freetype_revision': 'e8ebfe988b5f57bfb9a3ecb13c70d9791bce9ecf',
+  # Three lines of non-changing comments so that
+  # the commit queue can handle CLs rolling Fuchsia sdk
+  # and whatever else without interference from each other.
+  'fuchsia_version': 'version:8.20220504.0.1',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling GN CIPD package version
   # and whatever else without interference from each other.
@@ -242,6 +246,17 @@ deps = {
     Var('chromium_git') + '/chromium/src/third_party/freetype2.git@' +
         Var('freetype_revision'),
 
+  'third_party/fuchsia-sdk/sdk': {
+      'packages': [
+          {
+              'package': Var('fuchsia_sdk_cipd_prefix') + '${{platform}}',
+              'version': Var('fuchsia_version'),
+          },
+      ],
+      'condition': 'checkout_fuchsia',
+      'dep_type': 'cipd',
+  },
+
   'third_party/googletest/src':
     Var('chromium_git') + '/external/github.com/google/googletest.git@' +
         Var('gtest_revision'),
@@ -404,17 +419,6 @@ hooks = [
     'pattern': '.',
     'condition': 'checkout_mac',
     'action': ['python3', 'build/mac_toolchain.py'],
-  },
-  {
-    # Update the Fuchsia SDK if necessary.
-    'name': 'Download Fuchsia SDK',
-    'pattern': '.',
-    'condition': 'checkout_fuchsia',
-    'action': [
-      'python3',
-      'build/fuchsia/update_sdk.py',
-      '--default-bucket={fuchsia_sdk_bucket}',
-    ],
   },
   # Pull dsymutil binaries using checked-in hashes.
   {
