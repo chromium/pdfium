@@ -23,29 +23,31 @@ template <typename Container, typename Element>
 struct HasFindWithNpos<
     Container,
     Element,
-    void_t<decltype(std::declval<const Container&>().find(
-                        std::declval<const Element&>()) != Container::npos)>>
-    : std::true_type {};
+    std::void_t<decltype(std::declval<const Container&>().find(
+                             std::declval<const Element&>()) !=
+                         Container::npos)>> : std::true_type {};
 
 template <typename Container, typename Element, typename = void>
 struct HasFindWithEnd : std::false_type {};
 
 template <typename Container, typename Element>
-struct HasFindWithEnd<Container,
-                      Element,
-                      void_t<decltype(std::declval<const Container&>().find(
-                                          std::declval<const Element&>()) !=
-                                      std::declval<const Container&>().end())>>
+struct HasFindWithEnd<
+    Container,
+    Element,
+    std::void_t<decltype(std::declval<const Container&>().find(
+                             std::declval<const Element&>()) !=
+                         std::declval<const Container&>().end())>>
     : std::true_type {};
 
 template <typename Container, typename Element, typename = void>
 struct HasContains : std::false_type {};
 
 template <typename Container, typename Element>
-struct HasContains<Container,
-                   Element,
-                   void_t<decltype(std::declval<const Container&>().contains(
-                       std::declval<const Element&>()))>> : std::true_type {};
+struct HasContains<
+    Container,
+    Element,
+    std::void_t<decltype(std::declval<const Container&>().contains(
+        std::declval<const Element&>()))>> : std::true_type {};
 
 }  // namespace internal
 
