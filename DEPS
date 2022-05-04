@@ -55,10 +55,6 @@ vars = {
   # and whatever else without interference from each other.
   'clang_revision': 'c6b36b157fb27a4616a05d5ef2da44aa2bce5a69',
   # Three lines of non-changing comments so that
-  # the commit queue can handle CLs rolling clang_dsymutil
-  # and whatever else without interference from each other.
-  'clang_dsymutil_revision': 'M56jPzDv1620Rnm__jTMYS62Zi8rxHVq7yw0qeBFEgkC',
-  # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling code_coverage
   # and whatever else without interference from each other.
   'code_coverage_revision': '03e0087797b5728013a584d5eb9968ceed3d20f3',
@@ -288,17 +284,6 @@ deps = {
   'tools/clang':
     Var('chromium_git') + '/chromium/src/tools/clang@' + Var('clang_revision'),
 
-  'tools/clang/dsymutil': {
-    'packages': [
-      {
-        'package': 'chromium/llvm-build-tools/dsymutil',
-        'version': Var('clang_dsymutil_revision'),
-      }
-    ],
-    'condition': 'checkout_mac or checkout_ios',
-    'dep_type': 'cipd',
-  },
-
   'tools/code_coverage':
     Var('chromium_git') + '/chromium/src/tools/code_coverage.git@' +
         Var('code_coverage_revision'),
@@ -429,6 +414,33 @@ hooks = [
       'python3',
       'build/fuchsia/update_sdk.py',
       '--default-bucket={fuchsia_sdk_bucket}',
+    ],
+  },
+  # Pull dsymutil binaries using checked-in hashes.
+  {
+    'name': 'dsymutil_mac_arm64',
+    'pattern': '.',
+    'condition': 'host_os == "mac" and host_cpu == "arm64"',
+    'action': [ 'python3',
+                'third_party/depot_tools/download_from_google_storage.py',
+                '--no_resume',
+                '--no_auth',
+                '--bucket', 'chromium-browser-clang',
+                '-s', 'tools/clang/dsymutil/bin/dsymutil.arm64.sha1',
+                '-o', 'tools/clang/dsymutil/bin/dsymutil',
+    ],
+  },
+  {
+    'name': 'dsymutil_mac_x64',
+    'pattern': '.',
+    'condition': 'host_os == "mac" and host_cpu == "x64"',
+    'action': [ 'python3',
+                'third_party/depot_tools/download_from_google_storage.py',
+                '--no_resume',
+                '--no_auth',
+                '--bucket', 'chromium-browser-clang',
+                '-s', 'tools/clang/dsymutil/bin/dsymutil.x64.sha1',
+                '-o', 'tools/clang/dsymutil/bin/dsymutil',
     ],
   },
   # Pull clang-format binaries using checked-in hashes.
