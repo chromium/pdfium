@@ -314,6 +314,9 @@ bug_679642.in * * noxfa *
 bug_679643.in * * noxfa *
 bug_735912.in * * noxfa *
 
+# TODO(v8:12806) Fix regression and remove this suppression.
+globals.in * * * *
+
 # xfa_specific
 
 # TODO(pdfium:1106): Remove after associated bug is fixed
