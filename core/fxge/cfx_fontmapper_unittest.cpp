@@ -39,4 +39,8 @@ TEST(CFX_FontMapper, MakeTag) {
             CFX_FontMapper::MakeTag('\xff', '\xff', '\xff', '\xff'));
   EXPECT_EQ(0xffffffffu,
             CFX_FontMapper::MakeTag(g_maybe_changes, '\xff', '\xff', '\xff'));
+  EXPECT_EQ(0x6e616d65u, CFX_FontMapper::MakeTag('n', 'a', 'm', 'e'));
+  EXPECT_EQ(0x4f532f32u, CFX_FontMapper::MakeTag('O', 'S', '/', '2'));
+  EXPECT_EQ(FT_MAKE_TAG('G', 'S', 'U', 'B'),
+            CFX_FontMapper::MakeTag('G', 'S', 'U', 'B'));
 }

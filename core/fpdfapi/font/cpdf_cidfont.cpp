@@ -646,15 +646,16 @@ int CPDF_CIDFont::GetGlyphIndex(uint32_t unicode, bool* pVertGlyph) {
   if (m_pTTGSUBTable)
     return GetVerticalGlyph(index, pVertGlyph);
 
+  static constexpr uint32_t kGsubTag =
+      CFX_FontMapper::MakeTag('G', 'S', 'U', 'B');
   if (!m_Font.GetSubData()) {
     unsigned long length = 0;
-    int error = FT_Load_Sfnt_Table(face, FT_MAKE_TAG('G', 'S', 'U', 'B'), 0,
-                                   nullptr, &length);
+    int error = FT_Load_Sfnt_Table(face, kGsubTag, 0, nullptr, &length);
     if (!error)
       m_Font.SetSubData(FX_Alloc(uint8_t, length));
   }
-  int error = FT_Load_Sfnt_Table(face, FT_MAKE_TAG('G', 'S', 'U', 'B'), 0,
-                                 m_Font.GetSubData(), nullptr);
+  int error =
+      FT_Load_Sfnt_Table(face, kGsubTag, 0, m_Font.GetSubData(), nullptr);
   if (error || !m_Font.GetSubData())
     return index;
 
