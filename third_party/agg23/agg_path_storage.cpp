@@ -98,7 +98,7 @@ void path_storage::end_poly()
 {
     if(m_total_vertices) {
         if(is_vertex(command(m_total_vertices - 1))) {
-            add_vertex(0, 0, path_cmd_end_poly | path_flags_close);
+            add_vertex(0, 0, unsigned{path_cmd_end_poly} | path_flags_close);
         }
     }
 }

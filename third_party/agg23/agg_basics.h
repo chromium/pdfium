@@ -216,7 +216,7 @@ inline bool is_close(unsigned c)
 {
     c &= ~path_flags_jr;
     return (c & ~(path_flags_cw | path_flags_ccw)) ==
-           (path_cmd_end_poly | path_flags_close);
+           (unsigned{path_cmd_end_poly} | path_flags_close);
 }
 inline bool is_next_poly(unsigned c)
 {

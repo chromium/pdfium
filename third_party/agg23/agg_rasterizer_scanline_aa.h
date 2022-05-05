@@ -49,7 +49,7 @@ enum poly_base_scale_e {
 };
 inline int poly_coord(float c)
 {
-    return int(c * poly_base_size);
+    return int(c * float{poly_base_size});
 }
 struct cell_aa  {
     int x;

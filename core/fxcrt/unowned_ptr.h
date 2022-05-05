@@ -5,6 +5,7 @@
 #ifndef CORE_FXCRT_UNOWNED_PTR_H_
 #define CORE_FXCRT_UNOWNED_PTR_H_
 
+#include <cstddef>
 #include <functional>
 #include <type_traits>
 #include <utility>
@@ -87,8 +88,8 @@ class UnownedPtr {
     return *this;
   }
 
+  bool operator==(std::nullptr_t ptr) const { return Get() == nullptr; }
   bool operator==(const UnownedPtr& that) const { return Get() == that.Get(); }
-  bool operator!=(const UnownedPtr& that) const { return !(*this == that); }
   bool operator<(const UnownedPtr& that) const {
     return std::less<T*>()(Get(), that.Get());
   }

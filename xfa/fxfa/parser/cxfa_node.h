@@ -93,6 +93,12 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
  public:
   struct PropertyData {
     PropertyData() = delete;
+    constexpr PropertyData(XFA_Element property,
+                           uint8_t occurrence_count,
+                           Mask<XFA_PropertyFlag> flags)
+        : property(property),
+          occurrence_count(occurrence_count),
+          flags(flags) {}
 
     XFA_Element property;
     uint8_t occurrence_count;
