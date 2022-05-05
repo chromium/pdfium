@@ -86,30 +86,18 @@ constexpr typename std::make_unsigned<T>::type SafeUnsignedAbs(T value) {
              : static_cast<UnsignedT>(value);
 }
 
-// This allows us to switch paths on known compile-time constants.
-#if defined(__clang__) || defined(__GNUC__)
-constexpr bool CanDetectCompileTimeConstant() {
-  return true;
-}
-template <typename T>
-constexpr bool IsCompileTimeConstant(const T v) {
-  return __builtin_constant_p(v);
-}
+// TODO(jschuh): Switch to std::is_constant_evaluated() once C++20 is supported.
+// Alternately, the usage could be restructured for "consteval if" in C++23.
+#define IsConstantEvaluated() (__builtin_is_constant_evaluated())
+
+// TODO(jschuh): Debug builds don't reliably propagate constants, so we restrict
+// some accelerated runtime paths to release builds until this can be forced
+// with consteval support in C++20 or C++23.
+#if defined(NDEBUG)
+constexpr bool kEnableAsmCode = true;
 #else
-constexpr bool CanDetectCompileTimeConstant() {
-  return false;
-}
-template <typename T>
-constexpr bool IsCompileTimeConstant(const T) {
-  return false;
-}
+constexpr bool kEnableAsmCode = false;
 #endif
-template <typename T>
-constexpr bool MustTreatAsConstexpr(const T v) {
-  // Either we can't detect a compile-time constant, and must always use the
-  // constexpr path, or we know we have a compile-time constant.
-  return !CanDetectCompileTimeConstant() || IsCompileTimeConstant(v);
-}
 
 // Forces a crash, like a CHECK(false). Used for numeric boundary errors.
 // Also used in a constexpr template to trigger a compilation failure on
@@ -194,7 +182,7 @@ class RangeCheck {
  public:
   constexpr RangeCheck(bool is_in_lower_bound, bool is_in_upper_bound)
       : is_underflow_(!is_in_lower_bound), is_overflow_(!is_in_upper_bound) {}
-  constexpr RangeCheck() : is_underflow_(0), is_overflow_(0) {}
+  constexpr RangeCheck() : is_underflow_(false), is_overflow_(false) {}
   constexpr bool IsValid() const { return !is_overflow_ && !is_underflow_; }
   constexpr bool IsInvalid() const { return is_overflow_ && is_underflow_; }
   constexpr bool IsOverflow() const { return is_overflow_ && !is_underflow_; }
@@ -277,7 +265,8 @@ struct NarrowingRange {
 
 template <typename Dst,
           typename Src,
-          template <typename> class Bounds,
+          template <typename>
+          class Bounds,
           IntegerRepresentation DstSign = std::is_signed<Dst>::value
                                               ? INTEGER_REPRESENTATION_SIGNED
                                               : INTEGER_REPRESENTATION_UNSIGNED,
@@ -295,7 +284,8 @@ struct DstRangeRelationToSrcRangeImpl;
 // Same sign narrowing: The range is contained for normal limits.
 template <typename Dst,
           typename Src,
-          template <typename> class Bounds,
+          template <typename>
+          class Bounds,
           IntegerRepresentation DstSign,
           IntegerRepresentation SrcSign>
 struct DstRangeRelationToSrcRangeImpl<Dst,
@@ -379,9 +369,17 @@ struct DstRangeRelationToSrcRangeImpl<Dst,
     using SrcLimits = std::numeric_limits<Src>;
     using DstLimits = NarrowingRange<Dst, Src, Bounds>;
     using Promotion = decltype(Src() + Dst());
+    bool ge_zero = false;
+    // Converting floating-point to integer will discard fractional part, so
+    // values in (-1.0, -0.0) will truncate to 0 and fit in Dst.
+    if (std::is_floating_point<Src>::value) {
+      ge_zero = value > Src(-1);
+    } else {
+      ge_zero = value >= Src(0);
+    }
     return RangeCheck(
-        value >= Src(0) && (DstLimits::lowest() == 0 ||
-                            static_cast<Dst>(value) >= DstLimits::lowest()),
+        ge_zero && (DstLimits::lowest() == 0 ||
+                    static_cast<Dst>(value) >= DstLimits::lowest()),
         static_cast<Promotion>(SrcLimits::max()) <=
                 static_cast<Promotion>(DstLimits::max()) ||
             static_cast<Promotion>(value) <=
@@ -693,9 +691,8 @@ constexpr bool IsLessImpl(const L lhs,
                           const RangeCheck l_range,
                           const RangeCheck r_range) {
   return l_range.IsUnderflow() || r_range.IsOverflow() ||
-         (l_range == r_range &&
-          static_cast<decltype(lhs + rhs)>(lhs) <
-              static_cast<decltype(lhs + rhs)>(rhs));
+         (l_range == r_range && static_cast<decltype(lhs + rhs)>(lhs) <
+                                    static_cast<decltype(lhs + rhs)>(rhs));
 }
 
 template <typename L, typename R>
@@ -714,9 +711,8 @@ constexpr bool IsLessOrEqualImpl(const L lhs,
                                  const RangeCheck l_range,
                                  const RangeCheck r_range) {
   return l_range.IsUnderflow() || r_range.IsOverflow() ||
-         (l_range == r_range &&
-          static_cast<decltype(lhs + rhs)>(lhs) <=
-              static_cast<decltype(lhs + rhs)>(rhs));
+         (l_range == r_range && static_cast<decltype(lhs + rhs)>(lhs) <=
+                                    static_cast<decltype(lhs + rhs)>(rhs));
 }
 
 template <typename L, typename R>
@@ -735,9 +731,8 @@ constexpr bool IsGreaterImpl(const L lhs,
                              const RangeCheck l_range,
                              const RangeCheck r_range) {
   return l_range.IsOverflow() || r_range.IsUnderflow() ||
-         (l_range == r_range &&
-          static_cast<decltype(lhs + rhs)>(lhs) >
-              static_cast<decltype(lhs + rhs)>(rhs));
+         (l_range == r_range && static_cast<decltype(lhs + rhs)>(lhs) >
+                                    static_cast<decltype(lhs + rhs)>(rhs));
 }
 
 template <typename L, typename R>
@@ -756,9 +751,8 @@ constexpr bool IsGreaterOrEqualImpl(const L lhs,
                                     const RangeCheck l_range,
                                     const RangeCheck r_range) {
   return l_range.IsOverflow() || r_range.IsUnderflow() ||
-         (l_range == r_range &&
-          static_cast<decltype(lhs + rhs)>(lhs) >=
-              static_cast<decltype(lhs + rhs)>(rhs));
+         (l_range == r_range && static_cast<decltype(lhs + rhs)>(lhs) >=
+                                    static_cast<decltype(lhs + rhs)>(rhs));
 }
 
 template <typename L, typename R>
