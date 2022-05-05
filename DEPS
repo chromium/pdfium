@@ -20,7 +20,7 @@ vars = {
   'checkout_instrumented_libraries': 'checkout_linux and checkout_configuration != "small"',
 
   # By default, download the fuchsia sdk from the public sdk directory.
-  'fuchsia_sdk_cipd_prefix': 'fuchsia/sdk/core/',
+  'fuchsia_sdk_cipd_prefix': 'fuchsia/sdk/gn/',
 
   'chromium_git': 'https://chromium.googlesource.com',
   'pdfium_git': 'https://pdfium.googlesource.com',
