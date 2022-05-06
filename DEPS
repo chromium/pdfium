@@ -53,7 +53,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling clang
   # and whatever else without interference from each other.
-  'clang_revision': 'b5e2f7c16bbf3aefc9354e8fbad3de0a543f2193',
+  'clang_revision': 'd0d1c12d61a051e1fe1af8a5340d34868311d0c0',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling code_coverage
   # and whatever else without interference from each other.
@@ -143,7 +143,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling zlib
   # and whatever else without interference from each other.
-  'zlib_revision': 'e53d3f018a7d98811fae1cd0af05a3aefbd9430d',
+  'zlib_revision': '9979c19f11314156490b53da91df08c934a3c0d4',
 }
 
 # Only these hosts are allowed for dependencies in this DEPS file.
