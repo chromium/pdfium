@@ -41,7 +41,7 @@ void SetBoundingBox(CPDF_Page* page,
   page->UpdateDimensions();
 }
 
-bool GetBoundingBox(CPDF_Page* page,
+bool GetBoundingBox(const CPDF_Page* page,
                     const ByteString& key,
                     float* left,
                     float* bottom,
@@ -50,7 +50,7 @@ bool GetBoundingBox(CPDF_Page* page,
   if (!page || !left || !bottom || !right || !top)
     return false;
 
-  CPDF_Array* pArray = page->GetDict()->GetArrayFor(key);
+  const CPDF_Array* pArray = page->GetDict()->GetArrayFor(key);
   if (!pArray)
     return false;
 
