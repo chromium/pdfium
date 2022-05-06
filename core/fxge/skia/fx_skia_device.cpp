@@ -183,7 +183,6 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
 #define SHOW_SKIA_PATH_SHORTHAND 0  // set to 1 for abbreviated path contents
 #endif
 #define DRAW_SKIA_CLIP 0  // set to 1 to draw a green rectangle around the clip
-#define SHOW_TEXT_GLYPHS 0  // set to 1 to print unichar equivalent of glyph
 
 #if SHOW_SKIA_PATH
 void DebugShowSkiaPaint(const SkPaint& paint) {
@@ -1031,17 +1030,6 @@ class SkiaState {
 #if defined(_SKIA_SUPPORT_PATHS_)
     m_pDriver->PreMultiply();
 #endif
-#if SHOW_TEXT_GLYPHS
-    SkTDArray<SkUnichar> text;
-    // TODO(nigi): |m_glyphs| are deprecated and glyphToUnichars() takes 4
-    // parameters now.
-    text.setCount(m_glyphs.count());
-    skPaint.glyphsToUnichars(m_glyphs.begin(), m_glyphs.count(), text.begin());
-    for (int i = 0; i < m_glyphs.count(); ++i)
-      printf("%lc", m_glyphs[i]);
-    printf("\n");
-#endif
-
     if (m_rsxform.count()) {
       sk_sp<SkTextBlob> blob = SkTextBlob::MakeFromRSXform(
           glyphs.begin(), glyphs.bytes(), m_rsxform.begin(), font,
@@ -1792,14 +1780,6 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(
   }
   if (oneAtATime)
     useRSXform = false;
-#if SHOW_TEXT_GLYPHS
-  SkTDArray<SkUnichar> text;
-  text.setCount(glyphs.count());
-  paint.glyphsToUnichars(glyphs.begin(), glyphs.count(), text.begin());
-  for (int i = 0; i < glyphs.count(); ++i)
-    printf("%lc", text[i]);
-  printf("\n");
-#endif
 #if defined(_SKIA_SUPPORT_PATHS_)
   m_pBitmap->PreMultiply();
 #endif
