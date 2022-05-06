@@ -7,7 +7,9 @@
 #include <limits.h>
 
 #include <algorithm>
+#include <functional>
 #include <iterator>
+#include <set>
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
@@ -229,6 +231,19 @@ TEST(ByteString, OperatorLT) {
   EXPECT_FALSE(def < c_abc);
   EXPECT_TRUE(abc < v_def);
   EXPECT_FALSE(def < v_abc);
+
+  EXPECT_TRUE(v_empty < a);
+  EXPECT_TRUE(v_empty < c_a);
+
+  std::set<ByteString, std::less<>> str_set;
+  bool inserted = str_set.insert(ByteString("hello")).second;
+  ASSERT_TRUE(inserted);
+  EXPECT_TRUE(pdfium::Contains(str_set, ByteString("hello")));
+  EXPECT_TRUE(pdfium::Contains(str_set, ByteStringView("hello")));
+  EXPECT_TRUE(pdfium::Contains(str_set, "hello"));
+  EXPECT_FALSE(pdfium::Contains(str_set, ByteString("goodbye")));
+  EXPECT_FALSE(pdfium::Contains(str_set, ByteStringView("goodbye")));
+  EXPECT_FALSE(pdfium::Contains(str_set, "goodbye"));
 }
 
 TEST(ByteString, OperatorEQ) {

@@ -234,7 +234,7 @@ void CPDF_Dictionary::ConvertToIndirectObjectFor(
   it->second = pObj->MakeReference(pHolder);
 }
 
-RetainPtr<CPDF_Object> CPDF_Dictionary::RemoveFor(const ByteString& key) {
+RetainPtr<CPDF_Object> CPDF_Dictionary::RemoveFor(ByteStringView key) {
   CHECK(!IsLocked());
   RetainPtr<CPDF_Object> result;
   auto it = m_Map.find(key);

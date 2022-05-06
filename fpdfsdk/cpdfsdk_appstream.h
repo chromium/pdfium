@@ -33,7 +33,7 @@ class CPDFSDK_AppStream {
   void Write(const ByteString& sAPType,
              const ByteString& sContents,
              const ByteString& sAPState);
-  void Remove(const ByteString& sAPType);
+  void Remove(ByteStringView sAPType);
 
   ByteString GetBackgroundAppStream() const;
   ByteString GetBorderAppStream() const;

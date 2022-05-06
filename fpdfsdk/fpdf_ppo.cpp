@@ -310,7 +310,7 @@ bool CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj) {
         }
       }
       for (const auto& key : bad_keys)
-        pDict->RemoveFor(key);
+        pDict->RemoveFor(key.AsStringView());
       return true;
     }
     case CPDF_Object::kArray: {

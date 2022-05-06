@@ -239,6 +239,12 @@ inline bool operator!=(ByteStringView lhs, const ByteString& rhs) {
 inline bool operator<(const char* lhs, const ByteString& rhs) {
   return rhs.Compare(lhs) > 0;
 }
+inline bool operator<(const ByteStringView& lhs, const ByteString& rhs) {
+  return rhs.Compare(lhs) > 0;
+}
+inline bool operator<(const ByteStringView& lhs, const char* rhs) {
+  return lhs < ByteStringView(rhs);
+}
 
 inline ByteString operator+(ByteStringView str1, ByteStringView str2) {
   return ByteString(str1, str2);

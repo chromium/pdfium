@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFAPI_PARSER_CPDF_DICTIONARY_H_
 #define CORE_FPDFAPI_PARSER_CPDF_DICTIONARY_H_
 
+#include <functional>
 #include <map>
 #include <set>
 #include <utility>
@@ -26,7 +27,7 @@ class CPDF_IndirectObjectHolder;
 // will return nullptr to indicate non-existent keys.
 class CPDF_Dictionary final : public CPDF_Object {
  public:
-  using DictMap = std::map<ByteString, RetainPtr<CPDF_Object>>;
+  using DictMap = std::map<ByteString, RetainPtr<CPDF_Object>, std::less<>>;
   using const_iterator = DictMap::const_iterator;
 
   CONSTRUCT_VIA_MAKE_RETAIN;
@@ -111,7 +112,7 @@ class CPDF_Dictionary final : public CPDF_Object {
                                   CPDF_IndirectObjectHolder* pHolder);
 
   // Invalidates iterators for the element with the key |key|.
-  RetainPtr<CPDF_Object> RemoveFor(const ByteString& key);
+  RetainPtr<CPDF_Object> RemoveFor(ByteStringView key);
 
   // Invalidates iterators for the element with the key |oldkey|.
   void ReplaceKey(const ByteString& oldkey, const ByteString& newkey);

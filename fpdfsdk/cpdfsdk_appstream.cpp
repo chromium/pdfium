@@ -1890,7 +1890,7 @@ void CPDFSDK_AppStream::Write(const ByteString& sAPType,
   pStream->SetDataAndRemoveFilter(sContents.raw_span());
 }
 
-void CPDFSDK_AppStream::Remove(const ByteString& sAPType) {
+void CPDFSDK_AppStream::Remove(ByteStringView sAPType) {
   dict_->RemoveFor(sAPType);
 }
 
