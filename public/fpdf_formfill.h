@@ -307,7 +307,9 @@ typedef struct _IPDF_JsPlatform {
                       int length);
 
   /*
-   * Pointer to FPDF_FORMFILLINFO interface.
+   * Pointer for embedder-specific data. Unused by PDFium, and despite
+   * its name, can be any data the embedder desires, though traditionally
+   * a FPDF_FORMFILLINFO interface.
    */
   void* m_pFormfillinfo;
 
