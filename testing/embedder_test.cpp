@@ -4,6 +4,7 @@
 
 #include "testing/embedder_test.h"
 
+#include <algorithm>
 #include <memory>
 #include <string>
 #include <utility>
@@ -225,7 +226,21 @@ int GetLanguageStub(FPDF_FORMFILLINFO* pThis, void* language, int length) {
 
 FPDF_FILEHANDLER* DownloadFromURLStub(FPDF_FORMFILLINFO* pThis,
                                       FPDF_WIDESTRING URL) {
-  return nullptr;
+  static const char kString[] = "<body>secrets</body>";
+  static FPDF_FILEHANDLER kFakeFileHandler = {
+      nullptr,
+      [](void*) -> void {},
+      [](void*) -> FPDF_DWORD { return sizeof(kString); },
+      [](void*, FPDF_DWORD off, void* buffer, FPDF_DWORD size) -> FPDF_RESULT {
+        memcpy(buffer, kString, std::min<size_t>(size, sizeof(kString)));
+        return 0;
+      },
+      [](void*, FPDF_DWORD, const void*, FPDF_DWORD) -> FPDF_RESULT {
+        return -1;
+      },
+      [](void*) -> FPDF_RESULT { return 0; },
+      [](void*, FPDF_DWORD) -> FPDF_RESULT { return 0; }};
+  return &kFakeFileHandler;
 }
 
 FPDF_BOOL PostRequestURLStub(FPDF_FORMFILLINFO* pThis,

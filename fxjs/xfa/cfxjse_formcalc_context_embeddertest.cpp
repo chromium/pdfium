@@ -990,7 +990,8 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, WordNum) {
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Get) {
-  // TODO(dsinclair): Is this supported?
+  ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
+  ExecuteExpectString("Get(\"https://example.com\")", "<body>secrets</body>");
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Post) {
