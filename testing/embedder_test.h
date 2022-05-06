@@ -93,6 +93,7 @@ class EmbedderTest : public ::testing::Test,
   void SetUp() override;
   void TearDown() override;
 
+  Delegate* GetDelegate() { return delegate_; }
   void SetDelegate(Delegate* delegate) {
     delegate_ = delegate ? delegate : default_delegate_.get();
   }
@@ -275,32 +276,6 @@ class EmbedderTest : public ::testing::Test,
 #endif
 
  private:
-  static void UnsupportedHandlerTrampoline(UNSUPPORT_INFO*, int type);
-  static int AlertTrampoline(IPDF_JSPLATFORM* plaform,
-                             FPDF_WIDESTRING message,
-                             FPDF_WIDESTRING title,
-                             int type,
-                             int icon);
-  static int SetTimerTrampoline(FPDF_FORMFILLINFO* info,
-                                int msecs,
-                                TimerCallback fn);
-  static void KillTimerTrampoline(FPDF_FORMFILLINFO* info, int id);
-  static FPDF_PAGE GetPageTrampoline(FPDF_FORMFILLINFO* info,
-                                     FPDF_DOCUMENT document,
-                                     int page_index);
-  static void DoURIActionTrampoline(FPDF_FORMFILLINFO* info,
-                                    FPDF_BYTESTRING uri);
-  static void DoGoToActionTrampoline(FPDF_FORMFILLINFO* info,
-                                     int page_index,
-                                     int zoom_mode,
-                                     float* pos_array,
-                                     int array_size);
-  static void OnFocusChangeTrampoline(FPDF_FORMFILLINFO* info,
-                                      FPDF_ANNOTATION annot,
-                                      int page_index);
-  static void DoURIActionWithKeyboardModifierTrampoline(FPDF_FORMFILLINFO* info,
-                                                        FPDF_BYTESTRING uri,
-                                                        int modifiers);
   static int WriteBlockCallback(FPDF_FILEWRITE* pFileWrite,
                                 const void* data,
                                 unsigned long size);
