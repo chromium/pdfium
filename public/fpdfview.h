@@ -104,7 +104,7 @@ typedef const char* FPDF_BYTESTRING;
 
 // FPDFSDK always uses UTF-16LE encoded wide strings, each character uses 2
 // bytes (except surrogation), with the low byte first.
-typedef const unsigned short* FPDF_WIDESTRING;
+typedef const FPDF_WCHAR* FPDF_WIDESTRING;
 
 // Structure for persisting a string beyond the duration of a callback.
 // Note: although represented as a char*, string may be interpreted as

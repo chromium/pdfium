@@ -235,6 +235,8 @@ FPDF_BOOL PostRequestURLStub(FPDF_FORMFILLINFO* pThis,
                              FPDF_WIDESTRING wsEncode,
                              FPDF_WIDESTRING wsHeader,
                              FPDF_BSTR* response) {
+  const char kString[] = "p\0o\0s\0t\0e\0d\0";
+  FPDF_BStr_Set(response, kString, sizeof(kString) - 1);
   return true;
 }
 

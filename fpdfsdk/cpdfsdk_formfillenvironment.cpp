@@ -576,7 +576,7 @@ WideString CPDFSDK_FormFillEnvironment::PostRequestURL(
 
   WideString wsRet =
       WideString::FromUTF16LE(reinterpret_cast<FPDF_WIDESTRING>(response.str),
-                              response.len / sizeof(FPDF_WIDESTRING));
+                              response.len / sizeof(FPDF_WCHAR));
 
   FPDF_BStr_Clear(&response);
   return wsRet;
