@@ -80,6 +80,9 @@ std::unique_ptr<v8::Platform> InitializeV8Common(const std::string& exe_path,
   static const char kAdditionalV8Flags[] = "--predictable --expose-gc";
   v8::V8::SetFlagsFromString(kAdditionalV8Flags);
 
+#ifdef V8_SANDBOX
+  v8::V8::InitializeSandbox();
+#endif
   v8::V8::Initialize();
   return platform;
 }
