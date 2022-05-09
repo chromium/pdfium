@@ -22,8 +22,7 @@ class CFFL_RadioButton final : public CFFL_Button {
   // CFFL_Button:
   std::unique_ptr<CPWL_Wnd> NewPWLWindow(
       const CPWL_Wnd::CreateParams& cp,
-      std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData)
-      override;
+      std::unique_ptr<IPWL_FillerNotify::PerWindowData> pAttachedData) override;
   bool OnKeyDown(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlags) override;
   bool OnChar(CPDFSDK_Widget* pWidget,
               uint32_t nChar,

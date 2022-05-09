@@ -19,7 +19,7 @@
 
 CPWL_ListBox::CPWL_ListBox(
     const CreateParams& cp,
-    std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData)
+    std::unique_ptr<IPWL_FillerNotify::PerWindowData> pAttachedData)
     : CPWL_Wnd(cp, std::move(pAttachedData)),
       m_pListCtrl(std::make_unique<CPWL_ListCtrl>()) {}
 
@@ -62,7 +62,7 @@ void CPWL_ListBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
                                                             : rcClient);
     }
 
-    IPWL_SystemHandler* pSysHandler = GetSystemHandler();
+    IPWL_FillerNotify* pSysHandler = GetFillerNotify();
     if (m_pListCtrl->IsItemSelected(i)) {
       if (pSysHandler->IsSelectionImplemented()) {
         m_pListCtrl->GetItemEdit(i)->DrawEdit(

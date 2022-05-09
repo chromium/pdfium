@@ -10,13 +10,13 @@
 #include <memory>
 
 #include "fpdfsdk/pwl/cpwl_wnd.h"
-#include "fpdfsdk/pwl/ipwl_systemhandler.h"
+#include "fpdfsdk/pwl/ipwl_fillernotify.h"
 
 class CPWL_CBButton final : public CPWL_Wnd {
  public:
   CPWL_CBButton(
       const CreateParams& cp,
-      std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData);
+      std::unique_ptr<IPWL_FillerNotify::PerWindowData> pAttachedData);
   ~CPWL_CBButton() override;
 
   // CPWL_Wnd:

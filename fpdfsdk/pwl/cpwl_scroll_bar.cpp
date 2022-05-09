@@ -107,9 +107,9 @@ void PWL_SCROLL_PRIVATEDATA::SubBig() {
 
 CPWL_ScrollBar::CPWL_ScrollBar(
     const CreateParams& cp,
-    std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData)
+    std::unique_ptr<IPWL_FillerNotify::PerWindowData> pAttachedData)
     : CPWL_Wnd(cp, std::move(pAttachedData)) {
-  GetCreationParams()->eCursorType = IPWL_SystemHandler::CursorStyle::kArrow;
+  GetCreationParams()->eCursorType = IPWL_FillerNotify::CursorStyle::kArrow;
 }
 
 CPWL_ScrollBar::~CPWL_ScrollBar() = default;

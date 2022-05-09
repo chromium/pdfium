@@ -15,7 +15,7 @@
 
 CPWL_CBListBox::CPWL_CBListBox(
     const CreateParams& cp,
-    std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData)
+    std::unique_ptr<IPWL_FillerNotify::PerWindowData> pAttachedData)
     : CPWL_ListBox(cp, std::move(pAttachedData)) {}
 
 CPWL_CBListBox::~CPWL_CBListBox() = default;

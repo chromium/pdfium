@@ -18,7 +18,7 @@
 #include "core/fxcrt/fx_codepage_forward.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
-#include "fpdfsdk/pwl/ipwl_systemhandler.h"
+#include "fpdfsdk/pwl/ipwl_fillernotify.h"
 
 class CFX_RenderDevice;
 class CPWL_Edit;
@@ -51,8 +51,8 @@ class CPWL_EditImpl {
                 const CFX_FloatRect& rcClip,
                 const CFX_PointF& ptOffset,
                 const CPVT_WordRange* pRange,
-                IPWL_SystemHandler* pSystemHandler,
-                IPWL_SystemHandler::PerWindowData* pSystemData);
+                IPWL_FillerNotify* pHandler,
+                IPWL_FillerNotify::PerWindowData* pWindowData);
 
   void SetFontMap(IPVT_FontMap* pFontMap);
   void SetNotify(CPWL_Edit* pNotify);

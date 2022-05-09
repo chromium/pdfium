@@ -20,8 +20,7 @@ class CFFL_PushButton final : public CFFL_Button {
   // CFFL_Button:
   std::unique_ptr<CPWL_Wnd> NewPWLWindow(
       const CPWL_Wnd::CreateParams& cp,
-      std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData)
-      override;
+      std::unique_ptr<IPWL_FillerNotify::PerWindowData> pAttachedData) override;
 };
 
 #endif  // FPDFSDK_FORMFILLER_CFFL_PUSHBUTTON_H_

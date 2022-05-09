@@ -34,7 +34,6 @@ source_set("pwl") {
     "cpwl_wnd.cpp",
     "cpwl_wnd.h",
     "ipwl_fillernotify.h",
-    "ipwl_systemhandler.h",
   ]
   configs += [
     "../../:pdfium_strict_config",

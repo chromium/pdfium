@@ -35,22 +35,22 @@
 #endif
 
 static_assert(FXCT_ARROW ==
-                  static_cast<int>(IPWL_SystemHandler::CursorStyle::kArrow),
+                  static_cast<int>(IPWL_FillerNotify::CursorStyle::kArrow),
               "kArrow value mismatch");
 static_assert(FXCT_NESW ==
-                  static_cast<int>(IPWL_SystemHandler::CursorStyle::kNESW),
+                  static_cast<int>(IPWL_FillerNotify::CursorStyle::kNESW),
               "kNEWS value mismatch");
 static_assert(FXCT_NWSE ==
-                  static_cast<int>(IPWL_SystemHandler::CursorStyle::kNWSE),
+                  static_cast<int>(IPWL_FillerNotify::CursorStyle::kNWSE),
               "kNWSE value mismatch");
 static_assert(FXCT_VBEAM ==
-                  static_cast<int>(IPWL_SystemHandler::CursorStyle::kVBeam),
+                  static_cast<int>(IPWL_FillerNotify::CursorStyle::kVBeam),
               "kVBeam value mismatch");
 static_assert(FXCT_HBEAM ==
-                  static_cast<int>(IPWL_SystemHandler::CursorStyle::kHBeam),
+                  static_cast<int>(IPWL_FillerNotify::CursorStyle::kHBeam),
               "HBeam value mismatch");
 static_assert(FXCT_HAND ==
-                  static_cast<int>(IPWL_SystemHandler::CursorStyle::kHand),
+                  static_cast<int>(IPWL_FillerNotify::CursorStyle::kHand),
               "kHand value mismatch");
 
 FPDF_WIDESTRING AsFPDFWideString(ByteString* bsUTF16LE) {
@@ -88,8 +88,9 @@ CPDFSDK_FormFillEnvironment::~CPDFSDK_FormFillEnvironment() {
     m_pInfo->Release(m_pInfo);
 }
 
-void CPDFSDK_FormFillEnvironment::InvalidateRect(PerWindowData* pWidgetData,
-                                                 const CFX_FloatRect& rect) {
+void CPDFSDK_FormFillEnvironment::InvalidateRect(
+    IPWL_FillerNotify::PerWindowData* pWidgetData,
+    const CFX_FloatRect& rect) {
   auto* pPrivateData = static_cast<CFFL_PerWindowData*>(pWidgetData);
   CPDFSDK_Widget* widget = pPrivateData->GetWidget();
   if (!widget)
@@ -111,7 +112,7 @@ void CPDFSDK_FormFillEnvironment::InvalidateRect(PerWindowData* pWidgetData,
 }
 
 void CPDFSDK_FormFillEnvironment::OutputSelectedRect(
-    PerWindowData* pWidgetData,
+    IPWL_FillerNotify::PerWindowData* pWidgetData,
     const CFX_FloatRect& rect) {
   if (!m_pInfo || !m_pInfo->FFI_OutputSelectedRect)
     return;
@@ -357,7 +358,8 @@ void CPDFSDK_FormFillEnvironment::Invalidate(IPDF_Page* page,
   }
 }
 
-void CPDFSDK_FormFillEnvironment::SetCursor(CursorStyle nCursorType) {
+void CPDFSDK_FormFillEnvironment::SetCursor(
+    IPWL_FillerNotify::CursorStyle nCursorType) {
   if (m_pInfo && m_pInfo->FFI_SetCursor)
     m_pInfo->FFI_SetCursor(m_pInfo, static_cast<int>(nCursorType));
 }
@@ -634,10 +636,6 @@ CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetPageView(
 }
 
 CFX_Timer::HandlerIface* CPDFSDK_FormFillEnvironment::GetTimerHandler() {
-  return this;
-}
-
-IPWL_SystemHandler* CPDFSDK_FormFillEnvironment::GetSysHandler() {
   return this;
 }
 

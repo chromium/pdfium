@@ -25,7 +25,7 @@ constexpr int kDefaultButtonWidth = 13;
 
 CPWL_ComboBox::CPWL_ComboBox(
     const CreateParams& cp,
-    std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData)
+    std::unique_ptr<IPWL_FillerNotify::PerWindowData> pAttachedData)
     : CPWL_Wnd(cp, std::move(pAttachedData)) {
   GetCreationParams()->dwFlags &= ~PWS_VSCROLL;
 }
@@ -164,7 +164,7 @@ void CPWL_ComboBox::CreateButton(const CreateParams& cp) {
   bcp.sBorderColor = kDefaultBlackColor;
   bcp.dwBorderWidth = 2;
   bcp.nBorderStyle = BorderStyle::kBeveled;
-  bcp.eCursorType = IPWL_SystemHandler::CursorStyle::kArrow;
+  bcp.eCursorType = IPWL_FillerNotify::CursorStyle::kArrow;
 
   auto pButton = std::make_unique<CPWL_CBButton>(bcp, CloneAttachedData());
   m_pButton = pButton.get();
@@ -180,7 +180,7 @@ void CPWL_ComboBox::CreateListBox(const CreateParams& cp) {
   lcp.dwFlags = PWS_BORDER | PWS_BACKGROUND | PLBS_HOVERSEL | PWS_VSCROLL;
   lcp.nBorderStyle = BorderStyle::kSolid;
   lcp.dwBorderWidth = 1;
-  lcp.eCursorType = IPWL_SystemHandler::CursorStyle::kArrow;
+  lcp.eCursorType = IPWL_FillerNotify::CursorStyle::kArrow;
   lcp.rcRectWnd = CFX_FloatRect();
   lcp.fFontSize =
       (cp.dwFlags & PWS_AUTOFONTSIZE) ? kComboBoxDefaultFontSize : cp.fFontSize;

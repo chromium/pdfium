@@ -31,10 +31,10 @@
 
 CPWL_Edit::CPWL_Edit(
     const CreateParams& cp,
-    std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData)
+    std::unique_ptr<IPWL_FillerNotify::PerWindowData> pAttachedData)
     : CPWL_Wnd(cp, std::move(pAttachedData)),
       m_pEditImpl(std::make_unique<CPWL_EditImpl>()) {
-  GetCreationParams()->eCursorType = IPWL_SystemHandler::CursorStyle::kVBeam;
+  GetCreationParams()->eCursorType = IPWL_FillerNotify::CursorStyle::kVBeam;
 }
 
 CPWL_Edit::~CPWL_Edit() {
@@ -213,7 +213,7 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
   }
   m_pEditImpl->DrawEdit(
       pDevice, mtUser2Device, GetTextColor().ToFXColor(GetTransparency()),
-      rcClip, CFX_PointF(), pRange, GetSystemHandler(), GetAttachedData());
+      rcClip, CFX_PointF(), pRange, GetFillerNotify(), GetAttachedData());
 }
 
 void CPWL_Edit::OnSetFocus() {
@@ -481,9 +481,9 @@ bool CPWL_Edit::IsWndHorV() const {
 
 void CPWL_Edit::SetCursor() {
   if (IsValid()) {
-    GetSystemHandler()->SetCursor(
-        IsWndHorV() ? IPWL_SystemHandler::CursorStyle::kVBeam
-                    : IPWL_SystemHandler::CursorStyle::kHBeam);
+    GetFillerNotify()->SetCursor(IsWndHorV()
+                                     ? IPWL_FillerNotify::CursorStyle::kVBeam
+                                     : IPWL_FillerNotify::CursorStyle::kHBeam);
   }
 }
 

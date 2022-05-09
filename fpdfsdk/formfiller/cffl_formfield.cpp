@@ -298,8 +298,8 @@ bool CFFL_FormField::IsValid() const {
 
 CPWL_Wnd::CreateParams CFFL_FormField::GetCreateParam() {
   CPWL_Wnd::CreateParams cp(
-      m_pFormFiller->GetCallbackIface()->GetTimerHandler(),
-      m_pFormFiller->GetCallbackIface()->GetSysHandler(), this);
+      m_pFormFiller->GetCallbackIface()->GetTimerHandler(), m_pFormFiller,
+      this);
 
   cp.rcRectWnd = GetPDFAnnotRect();
 
@@ -383,7 +383,7 @@ void CFFL_FormField::DestroyPWLWindow(const CPDFSDK_PageView* pPageView) {
 }
 
 CFX_Matrix CFFL_FormField::GetWindowMatrix(
-    const IPWL_SystemHandler::PerWindowData* pAttached) {
+    const IPWL_FillerNotify::PerWindowData* pAttached) {
   const auto* pPrivateData = static_cast<const CFFL_PerWindowData*>(pAttached);
   if (!pPrivateData)
     return CFX_Matrix();

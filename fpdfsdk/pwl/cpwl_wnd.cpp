@@ -34,10 +34,10 @@ const CFX_Color CPWL_Wnd::kDefaultWhiteColor =
     CFX_Color(CFX_Color::Type::kGray, 1);
 
 CPWL_Wnd::CreateParams::CreateParams(CFX_Timer::HandlerIface* timer_handler,
-                                     IPWL_SystemHandler* system_handler,
+                                     IPWL_FillerNotify* filler_notify,
                                      ProviderIface* provider)
     : pTimerHandler(timer_handler),
-      pSystemHandler(system_handler),
+      pFillerNotify(filler_notify),
       pProvider(provider),
       fFontSize(kDefaultFontSize),
       sDash(3, 0, 0) {}
@@ -141,7 +141,7 @@ bool CPWL_Wnd::IsPlatformShortcutKey(Mask<FWL_EVENTFLAG> nFlag) {
 
 CPWL_Wnd::CPWL_Wnd(
     const CreateParams& cp,
-    std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData)
+    std::unique_ptr<IPWL_FillerNotify::PerWindowData> pAttachedData)
     : m_CreationParams(cp), m_pAttachedData(std::move(pAttachedData)) {}
 
 CPWL_Wnd::~CPWL_Wnd() {
@@ -284,7 +284,7 @@ bool CPWL_Wnd::InvalidateRect(const CFX_FloatRect* pRect) {
   CFX_FloatRect rcWin = PWLtoWnd(rcRefresh);
   rcWin.Inflate(1, 1);
   rcWin.Normalize();
-  GetSystemHandler()->InvalidateRect(m_pAttachedData.get(), rcWin);
+  GetFillerNotify()->InvalidateRect(m_pAttachedData.get(), rcWin);
   return !!thisObserved;
 }
 
@@ -506,7 +506,7 @@ void CPWL_Wnd::CreateVScrollBar(const CreateParams& cp) {
   CreateParams scp = cp;
   scp.dwFlags = PWS_BACKGROUND | PWS_AUTOTRANSPARENT | PWS_NOREFRESHCLIP;
   scp.sBackgroundColor = kDefaultWhiteColor;
-  scp.eCursorType = IPWL_SystemHandler::CursorStyle::kArrow;
+  scp.eCursorType = IPWL_FillerNotify::CursorStyle::kArrow;
   scp.nTransparency = CPWL_ScrollBar::kTransparency;
 
   auto pBar = std::make_unique<CPWL_ScrollBar>(scp, CloneAttachedData());
@@ -547,7 +547,7 @@ void CPWL_Wnd::OnSetFocus() {}
 
 void CPWL_Wnd::OnKillFocus() {}
 
-std::unique_ptr<IPWL_SystemHandler::PerWindowData> CPWL_Wnd::CloneAttachedData()
+std::unique_ptr<IPWL_FillerNotify::PerWindowData> CPWL_Wnd::CloneAttachedData()
     const {
   return m_pAttachedData ? m_pAttachedData->Clone() : nullptr;
 }
@@ -622,7 +622,7 @@ void CPWL_Wnd::CreateChildWnd(const CreateParams& cp) {}
 
 void CPWL_Wnd::SetCursor() {
   if (IsValid())
-    GetSystemHandler()->SetCursor(GetCreationParams()->eCursorType);
+    GetFillerNotify()->SetCursor(GetCreationParams()->eCursorType);
 }
 
 void CPWL_Wnd::CreateMsgControl() {

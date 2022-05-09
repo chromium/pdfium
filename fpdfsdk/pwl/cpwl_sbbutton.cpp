@@ -13,10 +13,10 @@
 
 CPWL_SBButton::CPWL_SBButton(
     const CreateParams& cp,
-    std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData,
+    std::unique_ptr<IPWL_FillerNotify::PerWindowData> pAttachedData,
     Type eButtonType)
     : CPWL_Wnd(cp, std::move(pAttachedData)), m_eSBButtonType(eButtonType) {
-  GetCreationParams()->eCursorType = IPWL_SystemHandler::CursorStyle::kArrow;
+  GetCreationParams()->eCursorType = IPWL_FillerNotify::CursorStyle::kArrow;
 }
 
 CPWL_SBButton::~CPWL_SBButton() = default;

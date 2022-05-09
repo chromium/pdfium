@@ -14,7 +14,7 @@
 
 CPWL_CBButton::CPWL_CBButton(
     const CreateParams& cp,
-    std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData)
+    std::unique_ptr<IPWL_FillerNotify::PerWindowData> pAttachedData)
     : CPWL_Wnd(cp, std::move(pAttachedData)) {}
 
 CPWL_CBButton::~CPWL_CBButton() = default;

@@ -10,14 +10,14 @@
 #include <memory>
 
 #include "fpdfsdk/pwl/cpwl_list_box.h"
-#include "fpdfsdk/pwl/ipwl_systemhandler.h"
+#include "fpdfsdk/pwl/ipwl_fillernotify.h"
 #include "public/fpdf_fwlevent.h"
 
 class CPWL_CBListBox final : public CPWL_ListBox {
  public:
   CPWL_CBListBox(
       const CreateParams& cp,
-      std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData);
+      std::unique_ptr<IPWL_FillerNotify::PerWindowData> pAttachedData);
   ~CPWL_CBListBox() override;
 
   // CPWL_ListBox

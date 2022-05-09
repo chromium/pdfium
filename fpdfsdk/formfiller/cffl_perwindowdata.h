@@ -11,13 +11,13 @@
 
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "fpdfsdk/pwl/ipwl_systemhandler.h"
+#include "fpdfsdk/pwl/ipwl_fillernotify.h"
 
 class CFFL_FormField;
 class CPDFSDK_PageView;
 class CPDFSDK_Widget;
 
-class CFFL_PerWindowData final : public IPWL_SystemHandler::PerWindowData {
+class CFFL_PerWindowData final : public IPWL_FillerNotify::PerWindowData {
  public:
   CFFL_PerWindowData(CPDFSDK_Widget* pWidget,
                      const CPDFSDK_PageView* pPageView,
@@ -26,8 +26,8 @@ class CFFL_PerWindowData final : public IPWL_SystemHandler::PerWindowData {
   CFFL_PerWindowData& operator=(const CFFL_PerWindowData& that) = delete;
   ~CFFL_PerWindowData() override;
 
-  // IPWL_SystemHandler::PerWindowData:
-  std::unique_ptr<IPWL_SystemHandler::PerWindowData> Clone() const override;
+  // IPWL_FillerNotify::PerWindowData:
+  std::unique_ptr<IPWL_FillerNotify::PerWindowData> Clone() const override;
 
   CPDFSDK_Widget* GetWidget() const { return m_pWidget.Get(); }
   const CPDFSDK_PageView* GetPageView() const { return m_pPageView; }

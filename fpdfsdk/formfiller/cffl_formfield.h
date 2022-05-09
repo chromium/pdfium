@@ -17,7 +17,7 @@
 #include "fpdfsdk/formfiller/cffl_fieldaction.h"
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
-#include "fpdfsdk/pwl/ipwl_systemhandler.h"
+#include "fpdfsdk/pwl/ipwl_fillernotify.h"
 
 class CPDFSDK_PageView;
 class CPDFSDK_Widget;
@@ -93,7 +93,7 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
 
   // CPWL_Wnd::ProviderIface:
   CFX_Matrix GetWindowMatrix(
-      const IPWL_SystemHandler::PerWindowData* pAttached) override;
+      const IPWL_FillerNotify::PerWindowData* pAttached) override;
 
   virtual void GetActionData(const CPDFSDK_PageView* pPageView,
                              CPDF_AAction::AActionType type,
@@ -104,7 +104,7 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
   virtual CPWL_Wnd::CreateParams GetCreateParam();
   virtual std::unique_ptr<CPWL_Wnd> NewPWLWindow(
       const CPWL_Wnd::CreateParams& cp,
-      std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData) = 0;
+      std::unique_ptr<IPWL_FillerNotify::PerWindowData> pAttachedData) = 0;
   virtual void SavePWLWindowState(const CPDFSDK_PageView* pPageView);
   virtual void RecreatePWLWindowFromSavedState(
       const CPDFSDK_PageView* pPageView);

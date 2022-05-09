@@ -13,7 +13,7 @@
 
 CPWL_PushButton::CPWL_PushButton(
     const CreateParams& cp,
-    std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData)
+    std::unique_ptr<IPWL_FillerNotify::PerWindowData> pAttachedData)
     : CPWL_Button(cp, std::move(pAttachedData)) {}
 
 CPWL_PushButton::~CPWL_PushButton() = default;
@@ -25,7 +25,7 @@ CFX_FloatRect CPWL_PushButton::GetFocusRect() const {
 
 CPWL_CheckBox::CPWL_CheckBox(
     const CreateParams& cp,
-    std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData)
+    std::unique_ptr<IPWL_FillerNotify::PerWindowData> pAttachedData)
     : CPWL_Button(cp, std::move(pAttachedData)) {}
 
 CPWL_CheckBox::~CPWL_CheckBox() = default;
@@ -49,7 +49,7 @@ bool CPWL_CheckBox::OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
 
 CPWL_RadioButton::CPWL_RadioButton(
     const CreateParams& cp,
-    std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData)
+    std::unique_ptr<IPWL_FillerNotify::PerWindowData> pAttachedData)
     : CPWL_Button(cp, std::move(pAttachedData)) {}
 
 CPWL_RadioButton::~CPWL_RadioButton() = default;

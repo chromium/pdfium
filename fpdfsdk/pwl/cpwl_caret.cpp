@@ -16,7 +16,7 @@
 
 CPWL_Caret::CPWL_Caret(
     const CreateParams& cp,
-    std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData)
+    std::unique_ptr<IPWL_FillerNotify::PerWindowData> pAttachedData)
     : CPWL_Wnd(cp, std::move(pAttachedData)) {}
 
 CPWL_Caret::~CPWL_Caret() = default;

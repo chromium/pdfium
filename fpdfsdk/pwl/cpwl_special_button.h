@@ -15,7 +15,7 @@ class CPWL_PushButton final : public CPWL_Button {
  public:
   CPWL_PushButton(
       const CreateParams& cp,
-      std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData);
+      std::unique_ptr<IPWL_FillerNotify::PerWindowData> pAttachedData);
   ~CPWL_PushButton() override;
 
   // CPWL_Button:
@@ -26,7 +26,7 @@ class CPWL_CheckBox final : public CPWL_Button {
  public:
   CPWL_CheckBox(
       const CreateParams& cp,
-      std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData);
+      std::unique_ptr<IPWL_FillerNotify::PerWindowData> pAttachedData);
   ~CPWL_CheckBox() override;
 
   // CPWL_Button:
@@ -44,7 +44,7 @@ class CPWL_RadioButton final : public CPWL_Button {
  public:
   CPWL_RadioButton(
       const CreateParams& cp,
-      std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData);
+      std::unique_ptr<IPWL_FillerNotify::PerWindowData> pAttachedData);
   ~CPWL_RadioButton() override;
 
   // CPWL_Button

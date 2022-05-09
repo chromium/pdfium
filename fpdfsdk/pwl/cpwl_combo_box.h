@@ -11,7 +11,7 @@
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
-#include "fpdfsdk/pwl/ipwl_systemhandler.h"
+#include "fpdfsdk/pwl/ipwl_fillernotify.h"
 
 class CPWL_Edit;
 class CPWL_CBButton;
@@ -22,7 +22,7 @@ class CPWL_ComboBox final : public CPWL_Wnd {
  public:
   CPWL_ComboBox(
       const CreateParams& cp,
-      std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData);
+      std::unique_ptr<IPWL_FillerNotify::PerWindowData> pAttachedData);
   ~CPWL_ComboBox() override;
 
   CPWL_Edit* GetEdit() const { return m_pEdit.Get(); }
