@@ -33,8 +33,14 @@ const CFX_Color CPWL_Wnd::kDefaultBlackColor =
 const CFX_Color CPWL_Wnd::kDefaultWhiteColor =
     CFX_Color(CFX_Color::Type::kGray, 1);
 
-CPWL_Wnd::CreateParams::CreateParams()
-    : fFontSize(kDefaultFontSize), sDash(3, 0, 0) {}
+CPWL_Wnd::CreateParams::CreateParams(CFX_Timer::HandlerIface* timer_handler,
+                                     IPWL_SystemHandler* system_handler,
+                                     ProviderIface* provider)
+    : pTimerHandler(timer_handler),
+      pSystemHandler(system_handler),
+      pProvider(provider),
+      fFontSize(kDefaultFontSize),
+      sDash(3, 0, 0) {}
 
 CPWL_Wnd::CreateParams::CreateParams(const CreateParams& other) = default;
 

@@ -97,14 +97,16 @@ class CPWL_Wnd : public Observable {
   // Caller-provided options for window creation.
   class CreateParams {
    public:
-    CreateParams();
+    CreateParams(CFX_Timer::HandlerIface* timer_handler,
+                 IPWL_SystemHandler* system_handler,
+                 ProviderIface* provider);
     CreateParams(const CreateParams& other);
     ~CreateParams();
 
     // Required:
     CFX_FloatRect rcRectWnd;
-    ObservedPtr<CFX_Timer::HandlerIface> pTimerHandler;
-    UnownedPtr<IPWL_SystemHandler> pSystemHandler;
+    ObservedPtr<CFX_Timer::HandlerIface> const pTimerHandler;
+    UnownedPtr<IPWL_SystemHandler> const pSystemHandler;
     UnownedPtr<IPVT_FontMap> pFontMap;
     ObservedPtr<ProviderIface> pProvider;
 

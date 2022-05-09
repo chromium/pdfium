@@ -297,8 +297,10 @@ bool CFFL_FormField::IsValid() const {
 }
 
 CPWL_Wnd::CreateParams CFFL_FormField::GetCreateParam() {
-  CPWL_Wnd::CreateParams cp;
-  cp.pProvider.Reset(this);
+  CPWL_Wnd::CreateParams cp(
+      m_pFormFiller->GetCallbackIface()->GetTimerHandler(),
+      m_pFormFiller->GetCallbackIface()->GetSysHandler(), this);
+
   cp.rcRectWnd = GetPDFAnnotRect();
 
   uint32_t dwCreateFlags = PWS_BORDER | PWS_BACKGROUND | PWS_VISIBLE;
@@ -339,8 +341,6 @@ CPWL_Wnd::CreateParams CFFL_FormField::GetCreateParam() {
     dwCreateFlags |= PWS_AUTOFONTSIZE;
 
   cp.dwFlags = dwCreateFlags;
-  cp.pTimerHandler.Reset(m_pFormFiller->GetCallbackIface()->GetTimerHandler());
-  cp.pSystemHandler = m_pFormFiller->GetCallbackIface()->GetSysHandler();
   return cp;
 }
 

@@ -692,15 +692,14 @@ ByteString GenerateIconAppStream(CPDF_IconFit& fit,
   if (rcIcon.IsEmpty() || !pIconStream)
     return ByteString();
 
-  auto pPDFIcon = std::make_unique<CPDF_Icon>(pIconStream);
-
-  CPWL_Wnd::CreateParams cp;
+  CPWL_Wnd::CreateParams cp(nullptr, nullptr, nullptr);
   cp.dwFlags = PWS_VISIBLE;
   auto pWnd = std::make_unique<CPWL_Wnd>(cp, nullptr);
   pWnd->Realize();
   if (!pWnd->Move(rcIcon, false, false))
     return ByteString();
 
+  auto pPDFIcon = std::make_unique<CPDF_Icon>(pIconStream);
   ByteString sAlias = pPDFIcon->GetImageAlias();
   if (sAlias.GetLength() <= 0)
     return ByteString();
