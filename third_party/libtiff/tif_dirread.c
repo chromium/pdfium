@@ -5088,7 +5088,10 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp, int recover)
 								_TIFFfree(data);
 							return(0);
 						}
-						_TIFFmemcpy(o,data,(uint32)dp->tdir_count);
+						if (dp->tdir_count > 0 )
+						{
+							_TIFFmemcpy(o,data,(uint32)dp->tdir_count);
+						}
 						o[(uint32)dp->tdir_count]=0;
 						if (data!=0)
 							_TIFFfree(data);

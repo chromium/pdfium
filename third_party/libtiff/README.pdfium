@@ -18,3 +18,4 @@ Local Modifications:
 0032-builtin-codecs.patch: make _TIFFBuiltinCODECS const data.
 0033-avail-out-overflow.patch: signed comparison in PixarLogDecode().
 0034-memcpy-nullptr.patch: Check size before calling memcpy().
+0035-memcpy-nullptr-zero-size.patch: Check for nullptr and zero size before calling memcpy().
