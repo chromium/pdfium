@@ -668,6 +668,13 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFFont_GetFontData(FPDF_FONT font,
   return true;
 }
 
+FPDF_EXPORT int FPDF_CALLCONV FPDFFont_GetIsEmbedded(FPDF_FONT font) {
+  auto* cfont = CPDFFontFromFPDFFont(font);
+  if (!cfont)
+    return -1;
+  return cfont->IsEmbedded() ? 1 : 0;
+}
+
 FPDF_EXPORT int FPDF_CALLCONV FPDFFont_GetFlags(FPDF_FONT font) {
   auto* pFont = CPDFFontFromFPDFFont(font);
   if (!pFont)

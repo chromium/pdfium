@@ -2541,6 +2541,10 @@ TEST_F(FPDFEditEmbedderTest, TextFontProperties) {
                                       &buf_bytes_required));
     EXPECT_EQ(345u, buf_bytes_required);
   }
+  {
+    ASSERT_EQ(1, FPDFFont_GetIsEmbedded(font));
+    ASSERT_EQ(-1, FPDFFont_GetIsEmbedded(nullptr));
+  }
 
   UnloadPage(page);
 }
@@ -2566,6 +2570,7 @@ TEST_F(FPDFEditEmbedderTest, NoEmbeddedFontData) {
       FPDFFont_GetFontData(font, buf.data(), buf.size(), &buf_bytes_required));
   EXPECT_EQ(kTinosRegularSize, buf_bytes_required);
   EXPECT_EQ("2b019558f2c2de0b7cbc0a6e64b20599", GenerateMD5Base16(buf));
+  EXPECT_EQ(0, FPDFFont_GetIsEmbedded(font));
 
   // Similarly, the second object consistently maps to Arimo-Regular.ttf.
   constexpr size_t kArimoRegularSize = 436180;
@@ -2578,6 +2583,7 @@ TEST_F(FPDFEditEmbedderTest, NoEmbeddedFontData) {
       FPDFFont_GetFontData(font, buf.data(), buf.size(), &buf_bytes_required));
   EXPECT_EQ(kArimoRegularSize, buf_bytes_required);
   EXPECT_EQ("7ac02a544211773d9636e056e9da6c35", GenerateMD5Base16(buf));
+  EXPECT_EQ(0, FPDFFont_GetIsEmbedded(font));
 
   UnloadPage(page);
 }

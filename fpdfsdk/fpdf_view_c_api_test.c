@@ -163,6 +163,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFFont_GetFontName);
     CHK(FPDFFont_GetGlyphPath);
     CHK(FPDFFont_GetGlyphWidth);
+    CHK(FPDFFont_GetIsEmbedded);
     CHK(FPDFFont_GetItalicAngle);
     CHK(FPDFFont_GetWeight);
     CHK(FPDFFormObj_CountObjects);

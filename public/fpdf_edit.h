@@ -1267,6 +1267,14 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFFont_GetFontData(FPDF_FONT font,
                                                          size_t* out_buflen);
 
 // Experimental API.
+// Get whether |font| is embedded or not.
+//
+// font - the handle to the font object.
+//
+// Returns 1 if the font is embedded, 0 if it not, and -1 on failure.
+FPDF_EXPORT int FPDF_CALLCONV FPDFFont_GetIsEmbedded(FPDF_FONT font);
+
+// Experimental API.
 // Get the descriptor flags of a font.
 //
 // font - the handle to the font object.
