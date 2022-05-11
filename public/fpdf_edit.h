@@ -1243,6 +1243,30 @@ FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFFont_GetFontName(FPDF_FONT font, char* buffer, unsigned long length);
 
 // Experimental API.
+// Get the decoded data from the |font| object.
+//
+// font       - The handle to the font object. (Required)
+// buffer     - The address of a buffer that receives the font data.
+// buflen     - Length of the buffer.
+// out_buflen - Pointer to variable that will receive the minimum buffer size
+//              to contain the font data. Not filled if the return value is
+//              FALSE. (Required)
+//
+// Returns TRUE on success. In which case, |out_buflen| will be filled, and
+// |buffer| will be filled if it is large enough. Returns FALSE if any of the
+// required parameters are null.
+//
+// The decoded data is the uncompressed font data. i.e. the raw font data after
+// having all stream filters applied, when the data is embedded.
+//
+// If the font is not embedded, then this API will instead return the data for
+// the substitution font it is using.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFFont_GetFontData(FPDF_FONT font,
+                                                         uint8_t* buffer,
+                                                         size_t buflen,
+                                                         size_t* out_buflen);
+
+// Experimental API.
 // Get the descriptor flags of a font.
 //
 // font - the handle to the font object.

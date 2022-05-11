@@ -159,6 +159,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFFont_GetAscent);
     CHK(FPDFFont_GetDescent);
     CHK(FPDFFont_GetFlags);
+    CHK(FPDFFont_GetFontData);
     CHK(FPDFFont_GetFontName);
     CHK(FPDFFont_GetGlyphPath);
     CHK(FPDFFont_GetGlyphWidth);

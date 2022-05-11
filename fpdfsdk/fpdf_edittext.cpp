@@ -25,6 +25,7 @@
 #include "core/fpdftext/cpdf_textpage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_string_wrappers.h"
+#include "core/fxcrt/span_util.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/fx_font.h"
@@ -650,6 +651,21 @@ FPDFFont_GetFontName(FPDF_FONT font, char* buffer, unsigned long length) {
     memcpy(buffer, name.c_str(), dwStringLen);
 
   return dwStringLen;
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFFont_GetFontData(FPDF_FONT font,
+                                                         uint8_t* buffer,
+                                                         size_t buflen,
+                                                         size_t* out_buflen) {
+  auto* cfont = CPDFFontFromFPDFFont(font);
+  if (!cfont || !out_buflen)
+    return false;
+
+  pdfium::span<uint8_t> data = cfont->GetFont()->GetFontSpan();
+  if (buffer && buflen >= data.size())
+    fxcrt::spancpy(pdfium::make_span(buffer, buflen), data);
+  *out_buflen = data.size();
+  return true;
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFFont_GetFlags(FPDF_FONT font) {
