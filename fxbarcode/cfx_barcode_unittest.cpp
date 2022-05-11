@@ -49,8 +49,8 @@ class BarcodeTest : public testing::Test {
   bool RenderDevice() { return barcode_->RenderDevice(device_.get(), matrix_); }
 
   std::string BitmapChecksum() {
-    return GenerateMD5Base16(bitmap_->GetBuffer(),
-                             bitmap_->GetPitch() * bitmap_->GetHeight());
+    return GenerateMD5Base16(
+        {bitmap_->GetBuffer(), bitmap_->GetPitch() * bitmap_->GetHeight()});
   }
 
   // Manually insert calls to this as needed for debugging.

@@ -308,9 +308,9 @@ FPDF_FORMFILLINFO_PDFiumTest* ToPDFiumTestFormFillInfo(
   return static_cast<FPDF_FORMFILLINFO_PDFiumTest*>(form_fill_info);
 }
 
-void OutputMD5Hash(const char* file_name, const uint8_t* buffer, int len) {
+void OutputMD5Hash(const char* file_name, pdfium::span<const uint8_t> output) {
   // Get the MD5 hash and write it to stdout.
-  std::string hash = GenerateMD5Base16(buffer, len);
+  std::string hash = GenerateMD5Base16(output);
   printf("MD5:%s:%s\n", file_name, hash.c_str());
 }
 
@@ -956,7 +956,8 @@ bool ProcessPage(const std::string& name,
     // file.
     if (options.md5 && !image_file_name.empty()) {
       OutputMD5Hash(image_file_name.c_str(),
-                    static_cast<const uint8_t*>(buffer), stride * height);
+                    {static_cast<const uint8_t*>(buffer),
+                     static_cast<size_t>(stride) * height});
     }
   } else {
     fprintf(stderr, "Page was too large to be rendered.\n");

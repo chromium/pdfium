@@ -1123,9 +1123,8 @@ TEST_F(FPDFViewEmbedderTest, GetXFAArrayData) {
     EXPECT_TRUE(FPDF_GetXFAPacketContent(document(), i, data_buffer.data(),
                                          data_buffer.size(), &buflen));
     EXPECT_EQ(kExpectedResults[i].content_length, buflen);
-    EXPECT_STREQ(
-        kExpectedResults[i].content_checksum,
-        GenerateMD5Base16(data_buffer.data(), data_buffer.size()).c_str());
+    EXPECT_STREQ(kExpectedResults[i].content_checksum,
+                 GenerateMD5Base16(data_buffer).c_str());
   }
 
   // Test bad parameters.
@@ -1165,9 +1164,8 @@ TEST_F(FPDFViewEmbedderTest, GetXFAStreamData) {
   EXPECT_TRUE(FPDF_GetXFAPacketContent(document(), 0, data_buffer.data(),
                                        data_buffer.size(), &buflen));
   EXPECT_EQ(121u, buflen);
-  EXPECT_STREQ(
-      "8f912eaa1e66c9341cb3032ede71e147",
-      GenerateMD5Base16(data_buffer.data(), data_buffer.size()).c_str());
+  EXPECT_STREQ("8f912eaa1e66c9341cb3032ede71e147",
+               GenerateMD5Base16(data_buffer).c_str());
 }
 
 TEST_F(FPDFViewEmbedderTest, GetXFADataForNoForm) {

@@ -3873,18 +3873,16 @@ TEST_F(FPDFEditEmbedderTest, GetImageData) {
 
   // Check that the raw image data has the correct length and hash value.
   unsigned long len = FPDFImageObj_GetImageDataRaw(obj, nullptr, 0);
-  std::vector<char> buf(len);
+  std::vector<uint8_t> buf(len);
   EXPECT_EQ(4091u, FPDFImageObj_GetImageDataRaw(obj, buf.data(), len));
-  EXPECT_EQ("f73802327d2e88e890f653961bcda81a",
-            GenerateMD5Base16(reinterpret_cast<uint8_t*>(buf.data()), len));
+  EXPECT_EQ("f73802327d2e88e890f653961bcda81a", GenerateMD5Base16(buf));
 
   // Check that the decoded image data has the correct length and hash value.
   len = FPDFImageObj_GetImageDataDecoded(obj, nullptr, 0);
   buf.clear();
   buf.resize(len);
   EXPECT_EQ(28776u, FPDFImageObj_GetImageDataDecoded(obj, buf.data(), len));
-  EXPECT_EQ(kEmbeddedImage33Checksum,
-            GenerateMD5Base16(reinterpret_cast<uint8_t*>(buf.data()), len));
+  EXPECT_EQ(kEmbeddedImage33Checksum, GenerateMD5Base16(buf));
 
   // Retrieve an image object with DCTDecode-encoded data stream.
   obj = FPDFPage_GetObject(page, 37);
@@ -3895,8 +3893,7 @@ TEST_F(FPDFEditEmbedderTest, GetImageData) {
   buf.clear();
   buf.resize(len);
   EXPECT_EQ(4370u, FPDFImageObj_GetImageDataRaw(obj, buf.data(), len));
-  EXPECT_EQ("6aae1f3710335023a9e12191be66b64b",
-            GenerateMD5Base16(reinterpret_cast<uint8_t*>(buf.data()), len));
+  EXPECT_EQ("6aae1f3710335023a9e12191be66b64b", GenerateMD5Base16(buf));
 
   // Check that the decoded image data has the correct length and hash value,
   // which should be the same as those of the raw data, since this image is
@@ -3905,8 +3902,7 @@ TEST_F(FPDFEditEmbedderTest, GetImageData) {
   buf.clear();
   buf.resize(len);
   EXPECT_EQ(4370u, FPDFImageObj_GetImageDataDecoded(obj, buf.data(), len));
-  EXPECT_EQ("6aae1f3710335023a9e12191be66b64b",
-            GenerateMD5Base16(reinterpret_cast<uint8_t*>(buf.data()), len));
+  EXPECT_EQ("6aae1f3710335023a9e12191be66b64b", GenerateMD5Base16(buf));
 
   UnloadPage(page);
 }

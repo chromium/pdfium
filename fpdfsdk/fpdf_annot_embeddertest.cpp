@@ -1640,8 +1640,8 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetAP) {
               FPDFAnnot_GetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_NORMAL,
                               buf.data(), normal_length_bytes));
     EXPECT_EQ(kMd5NormalAP,
-              GenerateMD5Base16(reinterpret_cast<uint8_t*>(buf.data()),
-                                normal_length_bytes));
+              GenerateMD5Base16({reinterpret_cast<uint8_t*>(buf.data()),
+                                 normal_length_bytes}));
 
     // Check that the string value of an AP is returned through a buffer that is
     // larger than necessary.
@@ -1650,8 +1650,8 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetAP) {
               FPDFAnnot_GetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_NORMAL,
                               buf.data(), normal_length_bytes + 2));
     EXPECT_EQ(kMd5NormalAP,
-              GenerateMD5Base16(reinterpret_cast<uint8_t*>(buf.data()),
-                                normal_length_bytes));
+              GenerateMD5Base16({reinterpret_cast<uint8_t*>(buf.data()),
+                                 normal_length_bytes}));
 
     // Check that getting an AP for a mode that does not have an AP returns an
     // empty string.
@@ -1693,8 +1693,8 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetAP) {
               FPDFAnnot_GetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_NORMAL,
                               buf.data(), normal_length_bytes));
     EXPECT_EQ(kMd5NormalAP,
-              GenerateMD5Base16(reinterpret_cast<uint8_t*>(buf.data()),
-                                normal_length_bytes));
+              GenerateMD5Base16({reinterpret_cast<uint8_t*>(buf.data()),
+                                 normal_length_bytes}));
   }
 
   // Save the modified document, then reopen it.

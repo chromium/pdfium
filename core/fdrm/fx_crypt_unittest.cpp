@@ -14,7 +14,8 @@
 namespace {
 
 std::string CRYPT_MD5String(const char* str) {
-  return GenerateMD5Base16(reinterpret_cast<const uint8_t*>(str), strlen(str));
+  return GenerateMD5Base16(
+      {reinterpret_cast<const uint8_t*>(str), strlen(str)});
 }
 
 void CheckArcFourContext(const CRYPT_rc4_context& context,

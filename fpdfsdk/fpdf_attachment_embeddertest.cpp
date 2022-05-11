@@ -9,6 +9,7 @@
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
 #include "testing/fx_string_testhelpers.h"
+#include "testing/gmock/include/gmock/gmock.h"
 #include "testing/utils/hash.h"
 
 static constexpr char kDateKey[] = "CreationDate";
@@ -42,12 +43,11 @@ TEST_F(FPDFAttachmentEmbedderTest, ExtractAttachments) {
 
   // Check that the content of the first attachment is correct.
   ASSERT_TRUE(FPDFAttachment_GetFile(attachment, nullptr, 0, &length_bytes));
-  std::vector<char> content_buf(length_bytes);
+  std::vector<uint8_t> content_buf(length_bytes);
   unsigned long actual_length_bytes;
   ASSERT_TRUE(FPDFAttachment_GetFile(attachment, content_buf.data(),
                                      length_bytes, &actual_length_bytes));
-  ASSERT_EQ(4u, actual_length_bytes);
-  EXPECT_EQ(std::string("test"), std::string(content_buf.data(), 4));
+  ASSERT_THAT(content_buf, testing::ElementsAre('t', 'e', 's', 't'));
 
   // Check that a non-existent key does not exist.
   EXPECT_FALSE(FPDFAttachment_HasKey(attachment, "none"));
@@ -83,8 +83,7 @@ TEST_F(FPDFAttachmentEmbedderTest, ExtractAttachments) {
   // Check that the calculated checksum of the file data matches expectation.
   const char kCheckSum[] = "72afcddedf554dda63c0c88e06f1ce18";
   const wchar_t kCheckSumW[] = L"<72AFCDDEDF554DDA63C0C88E06F1CE18>";
-  const std::string generated_checksum = GenerateMD5Base16(
-      reinterpret_cast<uint8_t*>(content_buf.data()), length_bytes);
+  const std::string generated_checksum = GenerateMD5Base16(content_buf);
   EXPECT_EQ(kCheckSum, generated_checksum);
 
   // Check that the stored checksum matches expectation.
