@@ -470,7 +470,7 @@ TEST_F(FPDFDocEmbedderTest, NoBookmarks) {
 TEST_F(FPDFDocEmbedderTest, Bookmarks) {
   unsigned short buf[128];
 
-  // Open a file with two bookmarks.
+  // Open a file with many bookmarks.
   ASSERT_TRUE(OpenDocument("bookmarks.pdf"));
 
   FPDF_BOOKMARK child = FPDFBookmark_GetFirstChild(document(), nullptr);
@@ -478,27 +478,38 @@ TEST_F(FPDFDocEmbedderTest, Bookmarks) {
   EXPECT_EQ(34u, FPDFBookmark_GetTitle(child, buf, sizeof(buf)));
   EXPECT_EQ(L"A Good Beginning", GetPlatformWString(buf));
 
-  FPDF_DEST dest = FPDFBookmark_GetDest(document(), child);
-  EXPECT_FALSE(dest);  // TODO(tsepez): put real dest into bookmarks.pdf
-
-  FPDF_ACTION action = FPDFBookmark_GetAction(child);
-  EXPECT_FALSE(action);  // TODO(tsepez): put real action into bookmarks.pdf
+  EXPECT_FALSE(FPDFBookmark_GetDest(document(), child));
+  EXPECT_FALSE(FPDFBookmark_GetAction(child));
 
   FPDF_BOOKMARK grand_child = FPDFBookmark_GetFirstChild(document(), child);
   EXPECT_FALSE(grand_child);
 
   FPDF_BOOKMARK sibling = FPDFBookmark_GetNextSibling(document(), child);
   EXPECT_TRUE(sibling);
-  EXPECT_EQ(28u, FPDFBookmark_GetTitle(sibling, buf, sizeof(buf)));
-  EXPECT_EQ(L"A Good Ending", GetPlatformWString(buf));
+  EXPECT_EQ(24u, FPDFBookmark_GetTitle(sibling, buf, sizeof(buf)));
+  EXPECT_EQ(L"Open Middle", GetPlatformWString(buf));
+  EXPECT_TRUE(FPDFBookmark_GetAction(sibling));
 
-  EXPECT_EQ(nullptr, FPDFBookmark_GetNextSibling(document(), sibling));
+  FPDF_BOOKMARK sibling2 = FPDFBookmark_GetNextSibling(document(), sibling);
+  EXPECT_TRUE(sibling2);
+  EXPECT_EQ(42u, FPDFBookmark_GetTitle(sibling2, buf, sizeof(buf)));
+  EXPECT_EQ(L"A Good Closed Ending", GetPlatformWString(buf));
+
+  EXPECT_EQ(nullptr, FPDFBookmark_GetNextSibling(document(), sibling2));
+
+  grand_child = FPDFBookmark_GetFirstChild(document(), sibling);
+  EXPECT_TRUE(grand_child);
+  EXPECT_EQ(46u, FPDFBookmark_GetTitle(grand_child, buf, sizeof(buf)));
+  EXPECT_EQ(L"Open Middle Descendant", GetPlatformWString(buf));
+  EXPECT_TRUE(FPDFBookmark_GetDest(document(), grand_child));
+
+  EXPECT_FALSE(FPDFBookmark_GetNextSibling(document(), grand_child));
 }
 
 TEST_F(FPDFDocEmbedderTest, FindBookmarks) {
   unsigned short buf[128];
 
-  // Open a file with two bookmarks.
+  // Open a file with many bookmarks.
   ASSERT_TRUE(OpenDocument("bookmarks.pdf"));
 
   // Find the first one, based on its known title.

@@ -2,7 +2,7 @@
 {{object 1 0}} <<
   /Type /Catalog
   /Pages 2 0 R
-  /Outlines 14 0 R
+  /Outlines 8 0 R
 >>
 endobj
 {{object 2 0}} <<
@@ -19,9 +19,11 @@ endobj
   /Type /Page
   /Parent 2 0 R
   /Resources <<
-    /Font <</F1 15 0 R>>
+    /Font <<
+      /F1 5 0 R
+    >>
   >>
-  /Contents [21 0 R]
+  /Contents [6 0 R]
   /MediaBox [0 0 612 792]
 >>
 endobj
@@ -30,46 +32,24 @@ endobj
   /Type /Page
   /Parent 2 0 R
   /Resources  <<
-    /Font <</F1 15 0 R>>
+    /Font <<
+      /F1 5 0 R
+    >>
   >>
-  /Contents [22 0 R]
+  /Contents [7 0 R]
   /MediaBox [0 0 612 792]
 >>
 endobj
-% First bookmark
-{{object 10 0}} <<
-  /Title (A Good Beginning)
-  /Parent 14 0 R
-  /Next 11 0 R
-  /Dest (foo)
->>
-endobj
-% Last bookmark
-{{object 11 0}} <<
-  /Title (A Good Ending)
-  /Parent 14 0 R
-  /Prev 10 0 R
-  /Dest (bar)
->>
-endobj
-% Root bookmark
-{{object 14 0}} <<
-  /Type /Outlines
-  /First 10 0 R
-  /Last  11 0 R
-  /Count 2
->>
-endobj
 % Font resource.
-{{object 15 0}} <<
+{{object 5 0}} <<
   /Type /Font
   /Subtype /Type1
   /BaseFont /Arial
 >>
 endobj
 % Content for page 0.
-{{object 21 0}} <<
-  /Length 0
+{{object 6 0}} <<
+  {{streamlen}}
 >>
 stream
 BT
@@ -79,8 +59,8 @@ ET
 endstream
 endobj
 % Content for page 1.
-{{object 22 0}} <<
-  /Length 0
+{{object 7 0}} <<
+  {{streamlen}}
 >>
 stream
 BT
@@ -88,6 +68,72 @@ BT
 100 600 TD (Page2)Tj
 ET
 endstream
+endobj
+% Root bookmark
+{{object 8 0}} <<
+  /Type /Outlines
+  /Count 3
+  /First 9 0 R
+  /Last 12 0 R
+>>
+endobj
+% First child bookmark (leaf node)
+{{object 9 0}} <<
+  /Title (A Good Beginning)
+  /Parent 8 0 R
+  /Next 10 0 R
+  /Dest (foo)
+>>
+endobj
+% Second child bookmark (open)
+{{object 10 0}} <<
+  /Title (Open Middle)
+  /Parent 8 0 R
+  /First 11 0 R
+  /Last 11 0 R
+  /Prev 9 0 R
+  /Next 12 0 R
+  /Count 1
+  /A <<
+    /Type /Action
+    /S /URI
+    /URI (https://theplay.test)
+  >>
+>>
+endobj
+% First grandchild bookmark
+{{object 11 0}} <<
+  /Title (Open Middle Descendant)
+  /Parent 10 0 R
+  /Dest [3 0 R /XYZ 100 200 0]
+>>
+endobj
+% Third child bookmark (closed)
+{{object 12 0}} <<
+  /Title (A Good Closed Ending)
+  /Parent 8 0 R
+  /First 13 0 R
+  /Last 14 0 R
+  /Prev 10 0 R
+  /Count -2
+  /Dest (bar)
+>>
+endobj
+% Second grandchild bookmark
+{{object 13 0}} <<
+  /Title (A Good Closed Ending Descendant)
+  /Parent 12 0 R
+  /Next 14 0 R
+  /Dest (bar)
+>>
+endobj
+% Third grandchild bookmark
+{{object 14 0}} <<
+  /Title (A Good Closed Ending Descendant 2)
+  /Parent 12 0 R
+  /Prev 13 0 R
+  /Dest (bar)
+>>
 endobj
 {{xref}}
 {{trailer}}
