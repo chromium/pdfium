@@ -461,6 +461,7 @@ void CPWL_ComboBox::SetSelectText() {
 }
 
 void CPWL_ComboBox::SetFillerNotify(IPWL_FillerNotify* pNotify) {
+  CHECK_EQ(pNotify, GetCreationParams()->pFillerNotify);
   m_pFillerNotify = pNotify;
 
   if (m_pEdit)

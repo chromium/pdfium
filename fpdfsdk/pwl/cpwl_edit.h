@@ -16,6 +16,7 @@
 #include "core/fxcrt/widestring.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "fpdfsdk/pwl/ipwl_fillernotify.h"
+#include "third_party/base/check_op.h"
 
 class CPDF_Font;
 class CPWL_Caret;
@@ -96,6 +97,7 @@ class CPWL_Edit final : public CPWL_Wnd {
                                         int32_t nCharArray);
 
   void SetFillerNotify(IPWL_FillerNotify* pNotify) {
+    CHECK_EQ(pNotify, GetCreationParams()->pFillerNotify);
     m_pFillerNotify = pNotify;
   }
 
