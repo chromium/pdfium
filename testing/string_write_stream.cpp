@@ -6,7 +6,6 @@
 
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/widestring.h"
-#include "third_party/base/check_op.h"
 
 StringWriteStream::StringWriteStream() = default;
 
