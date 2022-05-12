@@ -477,6 +477,8 @@ TEST_F(FPDFDocEmbedderTest, Bookmarks) {
   EXPECT_TRUE(child);
   EXPECT_EQ(34u, FPDFBookmark_GetTitle(child, buf, sizeof(buf)));
   EXPECT_EQ(L"A Good Beginning", GetPlatformWString(buf));
+  EXPECT_EQ(0, FPDFBookmark_GetCount(child));
+  EXPECT_EQ(0, FPDFBookmark_GetCount(nullptr));
 
   EXPECT_FALSE(FPDFBookmark_GetDest(document(), child));
   EXPECT_FALSE(FPDFBookmark_GetAction(child));
@@ -489,11 +491,13 @@ TEST_F(FPDFDocEmbedderTest, Bookmarks) {
   EXPECT_EQ(24u, FPDFBookmark_GetTitle(sibling, buf, sizeof(buf)));
   EXPECT_EQ(L"Open Middle", GetPlatformWString(buf));
   EXPECT_TRUE(FPDFBookmark_GetAction(sibling));
+  EXPECT_EQ(1, FPDFBookmark_GetCount(sibling));
 
   FPDF_BOOKMARK sibling2 = FPDFBookmark_GetNextSibling(document(), sibling);
   EXPECT_TRUE(sibling2);
   EXPECT_EQ(42u, FPDFBookmark_GetTitle(sibling2, buf, sizeof(buf)));
   EXPECT_EQ(L"A Good Closed Ending", GetPlatformWString(buf));
+  EXPECT_EQ(-2, FPDFBookmark_GetCount(sibling2));
 
   EXPECT_EQ(nullptr, FPDFBookmark_GetNextSibling(document(), sibling2));
 
@@ -501,6 +505,7 @@ TEST_F(FPDFDocEmbedderTest, Bookmarks) {
   EXPECT_TRUE(grand_child);
   EXPECT_EQ(46u, FPDFBookmark_GetTitle(grand_child, buf, sizeof(buf)));
   EXPECT_EQ(L"Open Middle Descendant", GetPlatformWString(buf));
+  EXPECT_EQ(0, FPDFBookmark_GetCount(grand_child));
   EXPECT_TRUE(FPDFBookmark_GetDest(document(), grand_child));
 
   EXPECT_FALSE(FPDFBookmark_GetNextSibling(document(), grand_child));

@@ -27,6 +27,7 @@ class CPDF_Bookmark {
   WideString GetTitle() const;
   CPDF_Dest GetDest(CPDF_Document* pDocument) const;
   CPDF_Action GetAction() const;
+  int GetCount() const;
 
  private:
   RetainPtr<const CPDF_Dictionary> m_pDict;

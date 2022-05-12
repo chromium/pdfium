@@ -51,3 +51,7 @@ CPDF_Dest CPDF_Bookmark::GetDest(CPDF_Document* pDocument) const {
 CPDF_Action CPDF_Bookmark::GetAction() const {
   return CPDF_Action(m_pDict ? m_pDict->GetDictFor("A") : nullptr);
 }
+
+int CPDF_Bookmark::GetCount() const {
+  return m_pDict->GetIntegerFor("Count");
+}
