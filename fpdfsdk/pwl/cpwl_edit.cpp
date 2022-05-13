@@ -331,33 +331,31 @@ bool CPWL_Edit::OnKeyDown(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlag) {
     return true;
 
   if (nKeyCode == FWL_VKEY_Delete) {
-    if (m_pFillerNotify) {
-      WideString strChange;
-      WideString strChangeEx;
+    WideString strChange;
+    WideString strChangeEx;
 
-      int nSelStart;
-      int nSelEnd;
-      std::tie(nSelStart, nSelEnd) = GetSelection();
+    int nSelStart;
+    int nSelEnd;
+    std::tie(nSelStart, nSelEnd) = GetSelection();
 
-      if (nSelStart == nSelEnd)
-        nSelEnd = nSelStart + 1;
+    if (nSelStart == nSelEnd)
+      nSelEnd = nSelStart + 1;
 
-      ObservedPtr<CPWL_Wnd> thisObserved(this);
+    ObservedPtr<CPWL_Wnd> thisObserved(this);
 
-      bool bRC;
-      bool bExit;
-      std::tie(bRC, bExit) = m_pFillerNotify->OnBeforeKeyStroke(
-          GetAttachedData(), strChange, strChangeEx, nSelStart, nSelEnd, true,
-          nFlag);
+    bool bRC;
+    bool bExit;
+    std::tie(bRC, bExit) = GetFillerNotify()->OnBeforeKeyStroke(
+        GetAttachedData(), strChange, strChangeEx, nSelStart, nSelEnd, true,
+        nFlag);
 
-      if (!thisObserved)
-        return false;
+    if (!thisObserved)
+      return false;
 
-      if (!bRC)
-        return false;
-      if (bExit)
-        return false;
-    }
+    if (!bRC)
+      return false;
+    if (bExit)
+      return false;
   }
 
   bool bRet = OnKeyDownInternal(nKeyCode, nFlag);
@@ -407,35 +405,32 @@ bool CPWL_Edit::OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
   bool bExit = false;
 
   if (!IsCTRLKeyDown(nFlag)) {
-    if (m_pFillerNotify) {
-      WideString swChange;
+    WideString swChange;
+    int nSelStart;
+    int nSelEnd;
+    std::tie(nSelStart, nSelEnd) = GetSelection();
 
-      int nSelStart;
-      int nSelEnd;
-      std::tie(nSelStart, nSelEnd) = GetSelection();
-
-      switch (nChar) {
-        case pdfium::ascii::kBackspace:
-          if (nSelStart == nSelEnd)
-            nSelStart = nSelEnd - 1;
-          break;
-        case pdfium::ascii::kReturn:
-          break;
-        default:
-          swChange += nChar;
-          break;
-      }
-
-      ObservedPtr<CPWL_Wnd> thisObserved(this);
-
-      WideString strChangeEx;
-      std::tie(bRC, bExit) = m_pFillerNotify->OnBeforeKeyStroke(
-          GetAttachedData(), swChange, strChangeEx, nSelStart, nSelEnd, true,
-          nFlag);
-
-      if (!thisObserved)
-        return false;
+    switch (nChar) {
+      case pdfium::ascii::kBackspace:
+        if (nSelStart == nSelEnd)
+          nSelStart = nSelEnd - 1;
+        break;
+      case pdfium::ascii::kReturn:
+        break;
+      default:
+        swChange += nChar;
+        break;
     }
+
+    ObservedPtr<CPWL_Wnd> thisObserved(this);
+
+    WideString strChangeEx;
+    std::tie(bRC, bExit) = GetFillerNotify()->OnBeforeKeyStroke(
+        GetAttachedData(), swChange, strChangeEx, nSelStart, nSelEnd, true,
+        nFlag);
+
+    if (!thisObserved)
+      return false;
   }
 
   if (!bRC)

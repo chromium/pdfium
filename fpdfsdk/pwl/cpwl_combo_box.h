@@ -47,8 +47,6 @@ class CPWL_ComboBox final : public CPWL_Wnd {
   bool Undo() override;
   bool Redo() override;
 
-  void SetFillerNotify(IPWL_FillerNotify* pNotify);
-
   void SetText(const WideString& text);
   void AddString(const WideString& str);
   int32_t GetSelect() const;
@@ -75,7 +73,6 @@ class CPWL_ComboBox final : public CPWL_Wnd {
   bool m_bPopup = false;
   bool m_bBottom = true;
   int32_t m_nSelectItem = -1;
-  UnownedPtr<IPWL_FillerNotify> m_pFillerNotify;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_COMBO_BOX_H_

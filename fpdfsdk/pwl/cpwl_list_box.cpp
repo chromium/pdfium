@@ -204,9 +204,6 @@ bool CPWL_ListBox::RePosChildWnd() {
 
 bool CPWL_ListBox::OnNotifySelectionChanged(bool bKeyDown,
                                             Mask<FWL_EVENTFLAG> nFlag) {
-  if (!m_pFillerNotify)
-    return false;
-
   ObservedPtr<CPWL_Wnd> thisObserved(this);
 
   WideString swChange = GetText();
@@ -215,7 +212,7 @@ bool CPWL_ListBox::OnNotifySelectionChanged(bool bKeyDown,
   int nSelEnd = pdfium::base::checked_cast<int>(swChange.GetLength());
   bool bRC;
   bool bExit;
-  std::tie(bRC, bExit) = m_pFillerNotify->OnBeforeKeyStroke(
+  std::tie(bRC, bExit) = GetFillerNotify()->OnBeforeKeyStroke(
       GetAttachedData(), swChange, strChangeEx, nSelStart, nSelEnd, bKeyDown,
       nFlag);
 

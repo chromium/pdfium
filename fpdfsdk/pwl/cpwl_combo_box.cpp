@@ -296,11 +296,8 @@ bool CPWL_ComboBox::SetPopup(bool bPopup) {
     return Move(m_rcOldWindow, true, true);
   }
 
-  if (!m_pFillerNotify)
-    return true;
-
   ObservedPtr<CPWL_ComboBox> thisObserved(this);
-  if (m_pFillerNotify->OnPopupPreOpen(GetAttachedData(), {}))
+  if (GetFillerNotify()->OnPopupPreOpen(GetAttachedData(), {}))
     return !!thisObserved;
   if (!thisObserved)
     return false;
@@ -313,8 +310,8 @@ bool CPWL_ComboBox::SetPopup(bool bPopup) {
 
   bool bBottom;
   float fPopupRet;
-  m_pFillerNotify->QueryWherePopup(GetAttachedData(), fPopupMin, fPopupMax,
-                                   &bBottom, &fPopupRet);
+  GetFillerNotify()->QueryWherePopup(GetAttachedData(), fPopupMin, fPopupMax,
+                                     &bBottom, &fPopupRet);
   if (!FXSYS_IsFloatBigger(fPopupRet, 0.0f))
     return true;
 
@@ -331,7 +328,7 @@ bool CPWL_ComboBox::SetPopup(bool bPopup) {
   if (!Move(rcWindow, true, true))
     return false;
 
-  m_pFillerNotify->OnPopupPostOpen(GetAttachedData(), {});
+  GetFillerNotify()->OnPopupPostOpen(GetAttachedData(), {});
   return !!thisObserved;
 }
 
@@ -347,12 +344,10 @@ bool CPWL_ComboBox::OnKeyDown(FWL_VKEYCODE nKeyCode,
   switch (nKeyCode) {
     case FWL_VKEY_Up:
       if (m_pList->GetCurSel() > 0) {
-        if (m_pFillerNotify) {
-          if (m_pFillerNotify->OnPopupPreOpen(GetAttachedData(), nFlag))
-            return false;
-          if (m_pFillerNotify->OnPopupPostOpen(GetAttachedData(), nFlag))
-            return false;
-        }
+        if (GetFillerNotify()->OnPopupPreOpen(GetAttachedData(), nFlag))
+          return false;
+        if (GetFillerNotify()->OnPopupPostOpen(GetAttachedData(), nFlag))
+          return false;
         if (m_pList->IsMovementKey(nKeyCode)) {
           if (m_pList->OnMovementKeyDown(nKeyCode, nFlag))
             return false;
@@ -362,12 +357,10 @@ bool CPWL_ComboBox::OnKeyDown(FWL_VKEYCODE nKeyCode,
       return true;
     case FWL_VKEY_Down:
       if (m_pList->GetCurSel() < m_pList->GetCount() - 1) {
-        if (m_pFillerNotify) {
-          if (m_pFillerNotify->OnPopupPreOpen(GetAttachedData(), nFlag))
-            return false;
-          if (m_pFillerNotify->OnPopupPostOpen(GetAttachedData(), nFlag))
-            return false;
-        }
+        if (GetFillerNotify()->OnPopupPreOpen(GetAttachedData(), nFlag))
+          return false;
+        if (GetFillerNotify()->OnPopupPostOpen(GetAttachedData(), nFlag))
+          return false;
         if (m_pList->IsMovementKey(nKeyCode)) {
           if (m_pList->OnMovementKeyDown(nKeyCode, nFlag))
             return false;
@@ -418,12 +411,10 @@ bool CPWL_ComboBox::OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
   if (HasFlag(PCBS_ALLOWCUSTOMTEXT))
     return m_pEdit->OnChar(nChar, nFlag);
 
-  if (m_pFillerNotify) {
-    if (m_pFillerNotify->OnPopupPreOpen(GetAttachedData(), nFlag))
-      return false;
-    if (m_pFillerNotify->OnPopupPostOpen(GetAttachedData(), nFlag))
-      return false;
-  }
+  if (GetFillerNotify()->OnPopupPreOpen(GetAttachedData(), nFlag))
+    return false;
+  if (GetFillerNotify()->OnPopupPostOpen(GetAttachedData(), nFlag))
+    return false;
   if (!m_pList->IsChar(nChar, nFlag))
     return false;
   return m_pList->OnCharNotify(nChar, nFlag);
@@ -458,15 +449,4 @@ void CPWL_ComboBox::SetSelectText() {
   m_pEdit->ReplaceSelection(m_pList->GetText());
   m_pEdit->SelectAllText();
   m_nSelectItem = m_pList->GetCurSel();
-}
-
-void CPWL_ComboBox::SetFillerNotify(IPWL_FillerNotify* pNotify) {
-  CHECK_EQ(pNotify, GetCreationParams()->pFillerNotify);
-  m_pFillerNotify = pNotify;
-
-  if (m_pEdit)
-    m_pEdit->SetFillerNotify(pNotify);
-
-  if (m_pList)
-    m_pList->SetFillerNotify(pNotify);
 }
