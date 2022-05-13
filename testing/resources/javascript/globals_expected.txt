@@ -13,14 +13,13 @@ Alert:   undefined_var = undefined
 Alert: ************ After Setup ************
 Alert: Enumerable Globals:
 Alert:   setPersistent = function setPersistent() { [native code] }, own property = true
-Alert:   true_var = true, own property = true
 Alert:   false_var = false, own property = true
-Alert:   zero_var = 0, own property = true
-Alert:   number_var = -3.918, own property = true
-Alert:   string_var = This is a string, own property = true
-Alert:   object_var = [object Object], own property = true
 Alert:   null_var = null, own property = true
-Alert:   undefined_var = undefined, own property = true
+Alert:   number_var = -3.918, own property = true
+Alert:   object_var = [object Object], own property = true
+Alert:   string_var = This is a string, own property = true
+Alert:   true_var = true, own property = true
+Alert:   zero_var = 0, own property = true
 Alert: Expected Globals:
 Alert:   true_var = true
 Alert:   false_var = false
@@ -49,14 +48,13 @@ Alert: For undefined_var: Set Persistent: ERROR: global.setPersistent: Global va
 Alert: ************ After Setup and Persist false ************
 Alert: Enumerable Globals:
 Alert:   setPersistent = function setPersistent() { [native code] }, own property = true
-Alert:   true_var = true, own property = true
 Alert:   false_var = false, own property = true
-Alert:   zero_var = 0, own property = true
-Alert:   number_var = -3.918, own property = true
-Alert:   string_var = This is a string, own property = true
-Alert:   object_var = [object Object], own property = true
 Alert:   null_var = null, own property = true
-Alert:   undefined_var = undefined, own property = true
+Alert:   number_var = -3.918, own property = true
+Alert:   object_var = [object Object], own property = true
+Alert:   string_var = This is a string, own property = true
+Alert:   true_var = true, own property = true
+Alert:   zero_var = 0, own property = true
 Alert: Expected Globals:
 Alert:   true_var = true
 Alert:   false_var = false
@@ -93,14 +91,13 @@ Alert: For undefined_var: Set Persistent: ERROR: global.setPersistent: Global va
 Alert: ************ After Setup and Persist true ************
 Alert: Enumerable Globals:
 Alert:   setPersistent = function setPersistent() { [native code] }, own property = true
-Alert:   true_var = true, own property = true
 Alert:   false_var = false, own property = true
-Alert:   zero_var = 0, own property = true
-Alert:   number_var = -3.918, own property = true
-Alert:   string_var = This is a string, own property = true
-Alert:   object_var = [object Object], own property = true
 Alert:   null_var = null, own property = true
-Alert:   undefined_var = undefined, own property = true
+Alert:   number_var = -3.918, own property = true
+Alert:   object_var = [object Object], own property = true
+Alert:   string_var = This is a string, own property = true
+Alert:   true_var = true, own property = true
+Alert:   zero_var = 0, own property = true
 Alert: Expected Globals:
 Alert:   true_var = true
 Alert:   false_var = false

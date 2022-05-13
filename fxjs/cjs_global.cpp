@@ -19,6 +19,7 @@
 #include "fxjs/js_define.h"
 #include "fxjs/js_resources.h"
 #include "third_party/base/check.h"
+#include "third_party/base/containers/contains.h"
 #include "v8/include/v8-isolate.h"
 
 namespace {
@@ -34,12 +35,8 @@ void JSSpecialPropQuery(v8::Local<v8::String> property,
     return;
 
   WideString wsProp = fxv8::ToWideString(info.GetIsolate(), property);
-  CJS_Result result = pObj->QueryProperty(wsProp);
-  v8::PropertyAttribute attr = !result.HasError()
-                                   ? v8::PropertyAttribute::DontDelete
-                                   : v8::PropertyAttribute::None;
-
-  info.GetReturnValue().Set(static_cast<int>(attr));
+  if (pObj->HasProperty(wsProp))
+    info.GetReturnValue().Set(static_cast<int>(v8::PropertyAttribute::None));
 }
 
 void JSSpecialPropGet(v8::Local<v8::String> property,
@@ -79,7 +76,9 @@ void JSSpecialPropPut(v8::Local<v8::String> property,
   if (result.HasError()) {
     pRuntime->Error(
         JSFormatErrorString("global", "PutProperty", result.Error()));
+    return;
   }
+  info.GetReturnValue().Set(value);
 }
 
 void JSSpecialPropDel(v8::Local<v8::String> property,
@@ -93,7 +92,20 @@ void JSSpecialPropDel(v8::Local<v8::String> property,
     return;
 
   WideString wsProp = fxv8::ToWideString(info.GetIsolate(), property);
-  pObj->DelProperty(pRuntime, wsProp);  // Silently ignore error.
+  if (pObj->DelProperty(pRuntime, wsProp))
+    info.GetReturnValue().Set(true);
+}
+
+void JSSpecialPropEnum(const v8::PropertyCallbackInfo<v8::Array>& info) {
+  auto pObj = JSGetObject<CJS_Global>(info.GetIsolate(), info.Holder());
+  if (!pObj)
+    return;
+
+  CJS_Runtime* pRuntime = pObj->GetRuntime();
+  if (!pRuntime)
+    return;
+
+  pObj->EnumProperties(pRuntime, info);
 }
 
 v8::Local<v8::String> GetV8StringFromName(v8::Isolate* pIsolate,
@@ -153,11 +165,17 @@ void CJS_Global::delprop_static(
   JSSpecialPropDel(GetV8StringFromName(info.GetIsolate(), property), info);
 }
 
+void CJS_Global::enumprop_static(
+    const v8::PropertyCallbackInfo<v8::Array>& info) {
+  JSSpecialPropEnum(info);
+}
+
 // static
 void CJS_Global::DefineAllProperties(CFXJS_Engine* pEngine) {
   pEngine->DefineObjAllProperties(
       ObjDefnID, CJS_Global::queryprop_static, CJS_Global::getprop_static,
-      CJS_Global::putprop_static, CJS_Global::delprop_static);
+      CJS_Global::putprop_static, CJS_Global::delprop_static,
+      CJS_Global::enumprop_static);
 }
 
 // static
@@ -184,21 +202,18 @@ CJS_Global::~CJS_Global() {
   m_pGlobalData.Release()->Release();
 }
 
-CJS_Result CJS_Global::QueryProperty(const WideString& propname) {
-  if (propname.EqualsASCII("setPersistent"))
-    return CJS_Result::Success();
-
-  return CJS_Result::Failure(JSMessage::kUnknownProperty);
+bool CJS_Global::HasProperty(const WideString& propname) {
+  return pdfium::Contains(m_MapGlobal, propname.ToDefANSI());
 }
 
-CJS_Result CJS_Global::DelProperty(CJS_Runtime* pRuntime,
-                                   const WideString& propname) {
+bool CJS_Global::DelProperty(CJS_Runtime* pRuntime,
+                             const WideString& propname) {
   auto it = m_MapGlobal.find(propname.ToDefANSI());
   if (it == m_MapGlobal.end())
-    return CJS_Result::Failure(JSMessage::kUnknownProperty);
+    return false;
 
   it->second->bDeleted = true;
-  return CJS_Result::Success();
+  return true;
 }
 
 CJS_Result CJS_Global::GetProperty(CJS_Runtime* pRuntime,
@@ -262,6 +277,21 @@ CJS_Result CJS_Global::SetProperty(CJS_Runtime* pRuntime,
     return CJS_Result::Success();
   }
   return CJS_Result::Failure(JSMessage::kObjectTypeError);
+}
+
+void CJS_Global::EnumProperties(
+    CJS_Runtime* pRuntime,
+    const v8::PropertyCallbackInfo<v8::Array>& info) {
+  v8::Local<v8::Array> result = pRuntime->NewArray();
+  int idx = 0;
+  for (const auto& it : m_MapGlobal) {
+    if (it.second->bDeleted)
+      continue;
+    v8::Local<v8::Name> name = pRuntime->NewString(it.first.AsStringView());
+    pRuntime->PutArrayElement(result, idx, name);
+    ++idx;
+  }
+  info.GetReturnValue().Set(result);
 }
 
 CJS_Result CJS_Global::setPersistent(

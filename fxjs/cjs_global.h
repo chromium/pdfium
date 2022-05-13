@@ -44,6 +44,7 @@ class CJS_Global final : public CJS_Object {
                              const v8::PropertyCallbackInfo<v8::Value>& info);
   static void delprop_static(v8::Local<v8::Name> property,
                              const v8::PropertyCallbackInfo<v8::Boolean>& info);
+  static void enumprop_static(const v8::PropertyCallbackInfo<v8::Array>& info);
 
   static void setPersistent_static(
       const v8::FunctionCallbackInfo<v8::Value>& info);
@@ -53,12 +54,14 @@ class CJS_Global final : public CJS_Object {
 
   CJS_Result setPersistent(CJS_Runtime* pRuntime,
                            const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Result QueryProperty(const WideString& propname);
-  CJS_Result DelProperty(CJS_Runtime* pRuntime, const WideString& propname);
+  bool HasProperty(const WideString& propname);
+  bool DelProperty(CJS_Runtime* pRuntime, const WideString& propname);
   CJS_Result GetProperty(CJS_Runtime* pRuntime, const WideString& propname);
   CJS_Result SetProperty(CJS_Runtime* pRuntime,
                          const WideString& propname,
                          v8::Local<v8::Value> vp);
+  void EnumProperties(CJS_Runtime* pRuntime,
+                      const v8::PropertyCallbackInfo<v8::Array>& info);
 
  private:
   struct JSGlobalData : public CFX_Value {
