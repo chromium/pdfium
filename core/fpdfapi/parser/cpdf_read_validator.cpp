@@ -57,6 +57,11 @@ void CPDF_ReadValidator::ResetErrors() {
 bool CPDF_ReadValidator::ReadBlockAtOffset(void* buffer,
                                            FX_FILESIZE offset,
                                            size_t size) {
+  if (offset < 0) {
+    NOTREACHED();
+    return false;
+  }
+
   FX_SAFE_FILESIZE end_offset = offset;
   end_offset += size;
   if (!end_offset.IsValid() || end_offset.ValueOrDie() > file_size_)
