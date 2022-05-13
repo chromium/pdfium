@@ -33,9 +33,6 @@ CFFL_TextField::CFFL_TextField(CFFL_InteractiveFormFiller* pFormFiller,
     : CFFL_TextObject(pFormFiller, pWidget) {}
 
 CFFL_TextField::~CFFL_TextField() {
-  for (const auto& it : m_Maps)
-    it.second->InvalidateFocusHandler(this);
-
   // See comment in cffl_formfiller.h.
   // The font map should be stored somewhere more appropriate so it will live
   // until the PWL_Edit is done with it. pdfium:566
@@ -79,7 +76,6 @@ CPWL_Wnd::CreateParams CFFL_TextField::GetCreateParam() {
       break;
   }
   cp.pFontMap = GetOrCreateFontMap();
-  cp.pFocusHandler = this;
   return cp;
 }
 
@@ -241,7 +237,7 @@ bool CFFL_TextField::IsFieldFull(const CPDFSDK_PageView* pPageView) {
 }
 #endif  // PDF_ENABLE_XFA
 
-void CFFL_TextField::OnSetFocus(CPWL_Edit* pEdit) {
+void CFFL_TextField::OnSetFocusForEdit(CPWL_Edit* pEdit) {
   pEdit->SetCharSet(FX_Charset::kChineseSimplified);
   pEdit->SetReadyToInput();
   m_pFormFiller->GetCallbackIface()->OnSetFieldInputFocus(pEdit->GetText());

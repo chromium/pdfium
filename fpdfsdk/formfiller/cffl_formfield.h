@@ -94,6 +94,7 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
   // CPWL_Wnd::ProviderIface:
   CFX_Matrix GetWindowMatrix(
       const IPWL_FillerNotify::PerWindowData* pAttached) override;
+  void OnSetFocusForEdit(CPWL_Edit* pEdit) override;
 
   virtual void GetActionData(const CPDFSDK_PageView* pPageView,
                              CPDF_AAction::AActionType type,

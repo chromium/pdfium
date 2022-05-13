@@ -176,11 +176,6 @@ void CPWL_Wnd::OnCreated() {}
 
 void CPWL_Wnd::OnDestroy() {}
 
-void CPWL_Wnd::InvalidateFocusHandler(FocusHandlerIface* handler) {
-  if (m_CreationParams.pFocusHandler == handler)
-    m_CreationParams.pFocusHandler = nullptr;
-}
-
 void CPWL_Wnd::InvalidateProvider(ProviderIface* provider) {
   if (m_CreationParams.pProvider.Get() == provider)
     m_CreationParams.pProvider.Reset();
