@@ -22,7 +22,6 @@
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cffl_formfield.h"
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
-#include "fpdfsdk/formfiller/cffl_perwindowdata.h"
 #include "fxjs/ijs_event_context.h"
 #include "fxjs/ijs_runtime.h"
 #include "third_party/base/check.h"
@@ -88,14 +87,8 @@ CPDFSDK_FormFillEnvironment::~CPDFSDK_FormFillEnvironment() {
     m_pInfo->Release(m_pInfo);
 }
 
-void CPDFSDK_FormFillEnvironment::InvalidateRect(
-    IPWL_FillerNotify::PerWindowData* pWidgetData,
-    const CFX_FloatRect& rect) {
-  auto* pPrivateData = static_cast<CFFL_PerWindowData*>(pWidgetData);
-  CPDFSDK_Widget* widget = pPrivateData->GetWidget();
-  if (!widget)
-    return;
-
+void CPDFSDK_FormFillEnvironment::InvalidateRect(CPDFSDK_Widget* widget,
+                                                 const CFX_FloatRect& rect) {
   IPDF_Page* pPage = widget->GetPage();
   if (!pPage)
     return;
@@ -112,17 +105,9 @@ void CPDFSDK_FormFillEnvironment::InvalidateRect(
 }
 
 void CPDFSDK_FormFillEnvironment::OutputSelectedRect(
-    IPWL_FillerNotify::PerWindowData* pWidgetData,
+    CFFL_FormField* pFormField,
     const CFX_FloatRect& rect) {
   if (!m_pInfo || !m_pInfo->FFI_OutputSelectedRect)
-    return;
-
-  auto* pPrivateData = static_cast<CFFL_PerWindowData*>(pWidgetData);
-  if (!pPrivateData)
-    return;
-
-  CFFL_FormField* pFormField = pPrivateData->GetFormField();
-  if (!pFormField)
     return;
 
   auto* pPage = FPDFPageFromIPDFPage(pFormField->GetSDKWidget()->GetPage());

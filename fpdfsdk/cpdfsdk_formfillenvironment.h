@@ -67,9 +67,9 @@ class CPDFSDK_FormFillEnvironment final
   void KillTimer(int32_t nTimerID) override;
 
   // CFFL_InteractiveFormFiller::CallbackIface:
-  void InvalidateRect(IPWL_FillerNotify::PerWindowData* pWidgetData,
+  void InvalidateRect(CPDFSDK_Widget* widget,
                       const CFX_FloatRect& rect) override;
-  void OutputSelectedRect(IPWL_FillerNotify::PerWindowData* pWidgetData,
+  void OutputSelectedRect(CFFL_FormField* pFormField,
                           const CFX_FloatRect& rect) override;
   bool IsSelectionImplemented() const override;
   void SetCursor(IPWL_FillerNotify::CursorStyle nCursorType) override;

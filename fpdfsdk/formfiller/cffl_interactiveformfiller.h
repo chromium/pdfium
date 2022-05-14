@@ -38,9 +38,9 @@ class CFFL_InteractiveFormFiller final : public IPWL_FillerNotify {
     virtual CFX_Timer::HandlerIface* GetTimerHandler() = 0;
     virtual CPDFSDK_Annot* GetFocusAnnot() const = 0;
     virtual bool SetFocusAnnot(ObservedPtr<CPDFSDK_Annot>& pAnnot) = 0;
-    virtual void InvalidateRect(PerWindowData* pWidgetData,
+    virtual void InvalidateRect(CPDFSDK_Widget* pWidget,
                                 const CFX_FloatRect& rect) = 0;
-    virtual void OutputSelectedRect(PerWindowData* pWidgetData,
+    virtual void OutputSelectedRect(CFFL_FormField* pFormField,
                                     const CFX_FloatRect& rect) = 0;
     virtual bool IsSelectionImplemented() const = 0;
     virtual void SetCursor(CursorStyle nCursorStyle) = 0;

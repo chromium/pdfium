@@ -549,12 +549,25 @@ void CFFL_InteractiveFormFiller::UnregisterFormField(CPDFSDK_Widget* pWidget) {
 
 void CFFL_InteractiveFormFiller::InvalidateRect(PerWindowData* pWidgetData,
                                                 const CFX_FloatRect& rect) {
-  GetCallbackIface()->InvalidateRect(pWidgetData, rect);
+  auto* pPrivateData = static_cast<CFFL_PerWindowData*>(pWidgetData);
+  CPDFSDK_Widget* pWidget = pPrivateData->GetWidget();
+  if (!pWidget)
+    return;
+
+  GetCallbackIface()->InvalidateRect(pWidget, rect);
 }
 
 void CFFL_InteractiveFormFiller::OutputSelectedRect(PerWindowData* pWidgetData,
                                                     const CFX_FloatRect& rect) {
-  GetCallbackIface()->OutputSelectedRect(pWidgetData, rect);
+  auto* pPrivateData = static_cast<CFFL_PerWindowData*>(pWidgetData);
+  if (!pPrivateData)
+    return;
+
+  CFFL_FormField* pFormField = pPrivateData->GetFormField();
+  if (!pFormField)
+    return;
+
+  GetCallbackIface()->OutputSelectedRect(pFormField, rect);
 }
 
 bool CFFL_InteractiveFormFiller::IsSelectionImplemented() const {
