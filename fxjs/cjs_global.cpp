@@ -24,93 +24,19 @@
 
 namespace {
 
-void JSSpecialPropQuery(v8::Local<v8::String> property,
-                        const v8::PropertyCallbackInfo<v8::Integer>& info) {
-  auto pObj = JSGetObject<CJS_Global>(info.GetIsolate(), info.Holder());
-  if (!pObj)
-    return;
+ByteString ByteStringFromV8Name(v8::Isolate* pIsolate,
+                                v8::Local<v8::Name> name) {
+  DCHECK(name->IsString());
 
-  CJS_Runtime* pRuntime = pObj->GetRuntime();
-  if (!pRuntime)
-    return;
-
-  WideString wsProp = fxv8::ToWideString(info.GetIsolate(), property);
-  if (pObj->HasProperty(wsProp))
-    info.GetReturnValue().Set(static_cast<int>(v8::PropertyAttribute::None));
-}
-
-void JSSpecialPropGet(v8::Local<v8::String> property,
-                      const v8::PropertyCallbackInfo<v8::Value>& info) {
-  auto pObj = JSGetObject<CJS_Global>(info.GetIsolate(), info.Holder());
-  if (!pObj)
-    return;
-
-  CJS_Runtime* pRuntime = pObj->GetRuntime();
-  if (!pRuntime)
-    return;
-
-  WideString wsProp = fxv8::ToWideString(info.GetIsolate(), property);
-  CJS_Result result = pObj->GetProperty(pRuntime, wsProp);
-  if (result.HasError()) {
-    pRuntime->Error(
-        JSFormatErrorString("global", "GetProperty", result.Error()));
-    return;
-  }
-  if (result.HasReturn())
-    info.GetReturnValue().Set(result.Return());
-}
-
-void JSSpecialPropPut(v8::Local<v8::String> property,
-                      v8::Local<v8::Value> value,
-                      const v8::PropertyCallbackInfo<v8::Value>& info) {
-  auto pObj = JSGetObject<CJS_Global>(info.GetIsolate(), info.Holder());
-  if (!pObj)
-    return;
-
-  CJS_Runtime* pRuntime = pObj->GetRuntime();
-  if (!pRuntime)
-    return;
-
-  WideString wsProp = fxv8::ToWideString(info.GetIsolate(), property);
-  CJS_Result result = pObj->SetProperty(pRuntime, wsProp, value);
-  if (result.HasError()) {
-    pRuntime->Error(
-        JSFormatErrorString("global", "PutProperty", result.Error()));
-    return;
-  }
-  info.GetReturnValue().Set(value);
-}
-
-void JSSpecialPropDel(v8::Local<v8::String> property,
-                      const v8::PropertyCallbackInfo<v8::Boolean>& info) {
-  auto pObj = JSGetObject<CJS_Global>(info.GetIsolate(), info.Holder());
-  if (!pObj)
-    return;
-
-  CJS_Runtime* pRuntime = pObj->GetRuntime();
-  if (!pRuntime)
-    return;
-
-  WideString wsProp = fxv8::ToWideString(info.GetIsolate(), property);
-  if (pObj->DelProperty(pRuntime, wsProp))
-    info.GetReturnValue().Set(true);
-}
-
-void JSSpecialPropEnum(const v8::PropertyCallbackInfo<v8::Array>& info) {
-  auto pObj = JSGetObject<CJS_Global>(info.GetIsolate(), info.Holder());
-  if (!pObj)
-    return;
-
-  CJS_Runtime* pRuntime = pObj->GetRuntime();
-  if (!pRuntime)
-    return;
-
-  pObj->EnumProperties(pRuntime, info);
-}
-
-v8::Local<v8::String> GetV8StringFromName(v8::Isolate* pIsolate,
-                                          v8::Local<v8::Name> pName) {
-  return pName->ToString(pIsolate->GetCurrentContext()).ToLocalChecked();
+  // Yes, this looks insane to make a v8 string, a wide string, and then a
+  // byte string in separate steps when we could just make a v8 string and
+  // then a byte string. But let's pretend there's persistent data somewhere
+  // in some embedder, and so we can't change the key name, which currently
+  // omits chars > 0xFF. There isn't a ByteString method equivalent.
+  return fxv8::ToWideString(
+             pIsolate,
+             name->ToString(pIsolate->GetCurrentContext()).ToLocalChecked())
+      .ToDefANSI();
 }
 
 }  // namespace
@@ -135,16 +61,36 @@ void CJS_Global::setPersistent_static(
 void CJS_Global::queryprop_static(
     v8::Local<v8::Name> property,
     const v8::PropertyCallbackInfo<v8::Integer>& info) {
-  DCHECK(property->IsString());
-  JSSpecialPropQuery(GetV8StringFromName(info.GetIsolate(), property), info);
+  auto pObj = JSGetObject<CJS_Global>(info.GetIsolate(), info.Holder());
+  if (!pObj)
+    return;
+
+  ByteString bsProp = ByteStringFromV8Name(info.GetIsolate(), property);
+  if (pObj->HasProperty(bsProp))
+    info.GetReturnValue().Set(static_cast<int>(v8::PropertyAttribute::None));
 }
 
 // static
 void CJS_Global::getprop_static(
     v8::Local<v8::Name> property,
     const v8::PropertyCallbackInfo<v8::Value>& info) {
-  DCHECK(property->IsString());
-  JSSpecialPropGet(GetV8StringFromName(info.GetIsolate(), property), info);
+  auto pObj = JSGetObject<CJS_Global>(info.GetIsolate(), info.Holder());
+  if (!pObj)
+    return;
+
+  CJS_Runtime* pRuntime = pObj->GetRuntime();
+  if (!pRuntime)
+    return;
+
+  ByteString bsProp = ByteStringFromV8Name(info.GetIsolate(), property);
+  CJS_Result result = pObj->GetProperty(pRuntime, bsProp);
+  if (result.HasError()) {
+    pRuntime->Error(
+        JSFormatErrorString("global", "GetProperty", result.Error()));
+    return;
+  }
+  if (result.HasReturn())
+    info.GetReturnValue().Set(result.Return());
 }
 
 // static
@@ -152,22 +98,48 @@ void CJS_Global::putprop_static(
     v8::Local<v8::Name> property,
     v8::Local<v8::Value> value,
     const v8::PropertyCallbackInfo<v8::Value>& info) {
-  DCHECK(property->IsString());
-  JSSpecialPropPut(GetV8StringFromName(info.GetIsolate(), property), value,
-                   info);
+  auto pObj = JSGetObject<CJS_Global>(info.GetIsolate(), info.Holder());
+  if (!pObj)
+    return;
+
+  CJS_Runtime* pRuntime = pObj->GetRuntime();
+  if (!pRuntime)
+    return;
+
+  ByteString bsProp = ByteStringFromV8Name(info.GetIsolate(), property);
+  CJS_Result result = pObj->SetProperty(pRuntime, bsProp, value);
+  if (result.HasError()) {
+    pRuntime->Error(
+        JSFormatErrorString("global", "PutProperty", result.Error()));
+    return;
+  }
+  info.GetReturnValue().Set(value);
 }
 
 // static
 void CJS_Global::delprop_static(
     v8::Local<v8::Name> property,
     const v8::PropertyCallbackInfo<v8::Boolean>& info) {
-  DCHECK(property->IsString());
-  JSSpecialPropDel(GetV8StringFromName(info.GetIsolate(), property), info);
+  auto pObj = JSGetObject<CJS_Global>(info.GetIsolate(), info.Holder());
+  if (!pObj)
+    return;
+
+  ByteString bsProp = ByteStringFromV8Name(info.GetIsolate(), property);
+  if (pObj->DelProperty(bsProp))
+    info.GetReturnValue().Set(true);
 }
 
 void CJS_Global::enumprop_static(
     const v8::PropertyCallbackInfo<v8::Array>& info) {
-  JSSpecialPropEnum(info);
+  auto pObj = JSGetObject<CJS_Global>(info.GetIsolate(), info.Holder());
+  if (!pObj)
+    return;
+
+  CJS_Runtime* pRuntime = pObj->GetRuntime();
+  if (!pRuntime)
+    return;
+
+  pObj->EnumProperties(pRuntime, info);
 }
 
 // static
@@ -202,13 +174,12 @@ CJS_Global::~CJS_Global() {
   m_pGlobalData.Release()->Release();
 }
 
-bool CJS_Global::HasProperty(const WideString& propname) {
-  return pdfium::Contains(m_MapGlobal, propname.ToDefANSI());
+bool CJS_Global::HasProperty(const ByteString& propname) {
+  return pdfium::Contains(m_MapGlobal, propname);
 }
 
-bool CJS_Global::DelProperty(CJS_Runtime* pRuntime,
-                             const WideString& propname) {
-  auto it = m_MapGlobal.find(propname.ToDefANSI());
+bool CJS_Global::DelProperty(const ByteString& propname) {
+  auto it = m_MapGlobal.find(propname);
   if (it == m_MapGlobal.end())
     return false;
 
@@ -217,8 +188,8 @@ bool CJS_Global::DelProperty(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Global::GetProperty(CJS_Runtime* pRuntime,
-                                   const WideString& propname) {
-  auto it = m_MapGlobal.find(propname.ToDefANSI());
+                                   const ByteString& propname) {
+  auto it = m_MapGlobal.find(propname);
   if (it == m_MapGlobal.end())
     return CJS_Result::Success();
 
@@ -246,34 +217,33 @@ CJS_Result CJS_Global::GetProperty(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Global::SetProperty(CJS_Runtime* pRuntime,
-                                   const WideString& propname,
+                                   const ByteString& propname,
                                    v8::Local<v8::Value> vp) {
-  ByteString sPropName = propname.ToDefANSI();
   if (vp->IsNumber()) {
-    return SetGlobalVariables(sPropName, CFX_Value::DataType::kNumber,
+    return SetGlobalVariables(propname, CFX_Value::DataType::kNumber,
                               pRuntime->ToDouble(vp), false, ByteString(),
                               v8::Local<v8::Object>(), false);
   }
   if (vp->IsBoolean()) {
-    return SetGlobalVariables(sPropName, CFX_Value::DataType::kBoolean, 0,
+    return SetGlobalVariables(propname, CFX_Value::DataType::kBoolean, 0,
                               pRuntime->ToBoolean(vp), ByteString(),
                               v8::Local<v8::Object>(), false);
   }
   if (vp->IsString()) {
-    return SetGlobalVariables(sPropName, CFX_Value::DataType::kString, 0, false,
+    return SetGlobalVariables(propname, CFX_Value::DataType::kString, 0, false,
                               pRuntime->ToWideString(vp).ToDefANSI(),
                               v8::Local<v8::Object>(), false);
   }
   if (vp->IsObject()) {
-    return SetGlobalVariables(sPropName, CFX_Value::DataType::kObject, 0, false,
+    return SetGlobalVariables(propname, CFX_Value::DataType::kObject, 0, false,
                               ByteString(), pRuntime->ToObject(vp), false);
   }
   if (vp->IsNull()) {
-    return SetGlobalVariables(sPropName, CFX_Value::DataType::kNull, 0, false,
+    return SetGlobalVariables(propname, CFX_Value::DataType::kNull, 0, false,
                               ByteString(), v8::Local<v8::Object>(), false);
   }
   if (vp->IsUndefined()) {
-    DelProperty(pRuntime, propname);
+    DelProperty(propname);
     return CJS_Result::Success();
   }
   return CJS_Result::Failure(JSMessage::kObjectTypeError);

@@ -52,17 +52,6 @@ class CJS_Global final : public CJS_Object {
   CJS_Global(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
   ~CJS_Global() override;
 
-  CJS_Result setPersistent(CJS_Runtime* pRuntime,
-                           const std::vector<v8::Local<v8::Value>>& params);
-  bool HasProperty(const WideString& propname);
-  bool DelProperty(CJS_Runtime* pRuntime, const WideString& propname);
-  CJS_Result GetProperty(CJS_Runtime* pRuntime, const WideString& propname);
-  CJS_Result SetProperty(CJS_Runtime* pRuntime,
-                         const WideString& propname,
-                         v8::Local<v8::Value> vp);
-  void EnumProperties(CJS_Runtime* pRuntime,
-                      const v8::PropertyCallbackInfo<v8::Array>& info);
-
  private:
   struct JSGlobalData : public CFX_Value {
    public:
@@ -92,6 +81,16 @@ class CJS_Global final : public CJS_Object {
       CJS_Runtime* pRuntime,
       v8::Local<v8::Object> pObj);
   void PutObjectProperty(v8::Local<v8::Object> obj, CFX_KeyValue* pData);
+  CJS_Result setPersistent(CJS_Runtime* pRuntime,
+                           const std::vector<v8::Local<v8::Value>>& params);
+  bool HasProperty(const ByteString& propname);
+  bool DelProperty(const ByteString& propname);
+  CJS_Result GetProperty(CJS_Runtime* pRuntime, const ByteString& propname);
+  CJS_Result SetProperty(CJS_Runtime* pRuntime,
+                         const ByteString& propname,
+                         v8::Local<v8::Value> vp);
+  void EnumProperties(CJS_Runtime* pRuntime,
+                      const v8::PropertyCallbackInfo<v8::Array>& info);
 
   std::map<ByteString, std::unique_ptr<JSGlobalData>> m_MapGlobal;
   UnownedPtr<CFX_GlobalData> m_pGlobalData;
