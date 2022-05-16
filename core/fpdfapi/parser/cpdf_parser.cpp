@@ -329,7 +329,7 @@ void CPDF_Parser::ReleaseEncryptHandler() {
 // in the cross reference table are all off by one.
 bool CPDF_Parser::VerifyCrossRefV4() {
   for (const auto& it : m_CrossRefTable->objects_info()) {
-    if (it.second.pos == 0)
+    if (it.second.pos <= 0)
       continue;
     // Find the first non-zero position.
     FX_FILESIZE SavedPos = m_pSyntax->GetPos();
