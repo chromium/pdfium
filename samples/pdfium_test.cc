@@ -1378,7 +1378,6 @@ int main(int argc, const char* argv[]) {
 
     ProcessPdf(filename, file_contents.get(), file_length, options, events,
                idler);
-    idler();
 
 #ifdef ENABLE_CALLGRIND
     if (options.callgrind_delimiters)
