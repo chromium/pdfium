@@ -51,10 +51,11 @@ std::wstring GetPlatformWString(FPDF_WIDESTRING wstr) {
   while (wstr[characters])
     ++characters;
 
-  std::wstring platform_string(characters, L'\0');
-  for (size_t i = 0; i < characters + 1; ++i) {
+  std::wstring platform_string;
+  platform_string.reserve(characters);
+  for (size_t i = 0; i < characters; ++i) {
     const unsigned char* ptr = reinterpret_cast<const unsigned char*>(&wstr[i]);
-    platform_string[i] = ptr[0] + 256 * ptr[1];
+    platform_string.push_back(ptr[0] + 256 * ptr[1]);
   }
   return platform_string;
 }
