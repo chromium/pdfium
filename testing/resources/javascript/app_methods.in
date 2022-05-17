@@ -35,7 +35,8 @@ stream
 {{include expect.js}}
 
 try {
-  expect("app.alert('message', 1, 2, 'title')", 0);
+  // Test unicode support, no particular reason for these CJK characters.
+  expect("app.alert('message \u4023', 1, 2, 'title \u4024')", 0);
   expect("app.alert({'cMsg': 'message', 'cTitle': 'title'})", 0);
   expect("app.alert({'cMsg': 'message', 'cTitle': 'title', 'nIcon': 3, 'nType': 4})", 0);
   expect("app.alert(undefined)", 0);

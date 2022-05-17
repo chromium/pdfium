@@ -1,5 +1,5 @@
-title[icon=1,type=2]: message
-Alert: PASS: app.alert('message', 1, 2, 'title') = 0
+title 䀤[icon=1,type=2]: message 䀣
+Alert: PASS: app.alert('message 䀣', 1, 2, 'title 䀤') = 0
 title: message
 Alert: PASS: app.alert({'cMsg': 'message', 'cTitle': 'title'}) = 0
 title[icon=3,type=4]: message

@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <locale.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -1255,6 +1256,8 @@ constexpr char kUsageString[] =
 }  // namespace
 
 int main(int argc, const char* argv[]) {
+  setlocale(LC_CTYPE, "en_US.UTF-8");  // For printf() of high-characters.
+
   std::vector<std::string> args(argv, argv + argc);
   Options options;
   std::vector<std::string> files;
