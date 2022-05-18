@@ -7,13 +7,7 @@
 #ifndef XFA_FWL_THEME_CFWL_FONTMANAGER_H_
 #define XFA_FWL_THEME_CFWL_FONTMANAGER_H_
 
-#include <stdint.h>
-
-#include <memory>
-#include <vector>
-
 #include "core/fxcrt/retain_ptr.h"
-#include "core/fxcrt/widestring.h"
 
 class CFGAS_GEFont;
 
@@ -22,30 +16,13 @@ class CFWL_FontManager final {
   static CFWL_FontManager* GetInstance();
   static void DestroyInstance();
 
-  RetainPtr<CFGAS_GEFont> FindFont(WideStringView wsFontFamily,
-                                   uint32_t dwFontStyles);
+  RetainPtr<CFGAS_GEFont> GetFWLFont();
 
  private:
-  class FontData final {
-   public:
-    FontData();
-    ~FontData();
-
-    bool Equal(WideStringView wsFontFamily, uint32_t dwFontStyles);
-    bool LoadFont(WideStringView wsFontFamily, uint32_t dwFontStyles);
-
-    RetainPtr<CFGAS_GEFont> GetFont() const;
-
-   private:
-    WideString m_wsFamily;
-    uint32_t m_dwStyles = 0;
-    RetainPtr<CFGAS_GEFont> m_pFont;
-  };
-
   CFWL_FontManager();
   ~CFWL_FontManager();
 
-  std::vector<std::unique_ptr<FontData>> m_FontsArray;
+  RetainPtr<CFGAS_GEFont> m_pFWLFont;
 };
 
 #endif  // XFA_FWL_THEME_CFWL_FONTMANAGER_H_
