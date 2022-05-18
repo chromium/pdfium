@@ -8,6 +8,7 @@
 
 #include <utility>
 
+#include "core/fxcrt/fx_codepage.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 
 namespace {
@@ -34,14 +35,13 @@ CFWL_FontManager::CFWL_FontManager() = default;
 CFWL_FontManager::~CFWL_FontManager() = default;
 
 RetainPtr<CFGAS_GEFont> CFWL_FontManager::FindFont(WideStringView wsFontFamily,
-                                                   uint32_t dwFontStyles,
-                                                   FX_CodePage wCodePage) {
+                                                   uint32_t dwFontStyles) {
   for (const auto& pData : m_FontsArray) {
-    if (pData->Equal(wsFontFamily, dwFontStyles, wCodePage))
+    if (pData->Equal(wsFontFamily, dwFontStyles))
       return pData->GetFont();
   }
   auto pFontData = std::make_unique<FontData>();
-  if (!pFontData->LoadFont(wsFontFamily, dwFontStyles, wCodePage))
+  if (!pFontData->LoadFont(wsFontFamily, dwFontStyles))
     return nullptr;
 
   m_FontsArray.push_back(std::move(pFontData));
@@ -53,22 +53,18 @@ CFWL_FontManager::FontData::FontData() = default;
 CFWL_FontManager::FontData::~FontData() = default;
 
 bool CFWL_FontManager::FontData::Equal(WideStringView wsFontFamily,
-                                       uint32_t dwFontStyles,
-                                       FX_CodePage wCodePage) {
-  return m_wsFamily == wsFontFamily && m_dwStyles == dwFontStyles &&
-         m_dwCodePage == wCodePage;
+                                       uint32_t dwFontStyles) {
+  return m_wsFamily == wsFontFamily && m_dwStyles == dwFontStyles;
 }
 
 bool CFWL_FontManager::FontData::LoadFont(WideStringView wsFontFamily,
-                                          uint32_t dwFontStyles,
-                                          FX_CodePage dwCodePage) {
+                                          uint32_t dwFontStyles) {
   m_wsFamily = wsFontFamily;
   m_dwStyles = dwFontStyles;
-  m_dwCodePage = dwCodePage;
 
   // TODO(tsepez): check usage of c_str() below.
   m_pFont = CFGAS_GEFont::LoadFont(wsFontFamily.unterminated_c_str(),
-                                   dwFontStyles, dwCodePage);
+                                   dwFontStyles, FX_CodePage::kDefANSI);
   return !!m_pFont;
 }
 

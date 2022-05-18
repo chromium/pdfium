@@ -12,7 +12,6 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/widestring.h"
 
@@ -24,8 +23,7 @@ class CFWL_FontManager final {
   static void DestroyInstance();
 
   RetainPtr<CFGAS_GEFont> FindFont(WideStringView wsFontFamily,
-                                   uint32_t dwFontStyles,
-                                   FX_CodePage dwCodePage);
+                                   uint32_t dwFontStyles);
 
  private:
   class FontData final {
@@ -33,18 +31,14 @@ class CFWL_FontManager final {
     FontData();
     ~FontData();
 
-    bool Equal(WideStringView wsFontFamily,
-               uint32_t dwFontStyles,
-               FX_CodePage wCodePage);
-    bool LoadFont(WideStringView wsFontFamily,
-                  uint32_t dwFontStyles,
-                  FX_CodePage wCodePage);
+    bool Equal(WideStringView wsFontFamily, uint32_t dwFontStyles);
+    bool LoadFont(WideStringView wsFontFamily, uint32_t dwFontStyles);
+
     RetainPtr<CFGAS_GEFont> GetFont() const;
 
    private:
     WideString m_wsFamily;
     uint32_t m_dwStyles = 0;
-    FX_CodePage m_dwCodePage = FX_CodePage::kDefANSI;
     RetainPtr<CFGAS_GEFont> m_pFont;
   };
 
