@@ -26,17 +26,8 @@ namespace {
 
 ByteString ByteStringFromV8Name(v8::Isolate* pIsolate,
                                 v8::Local<v8::Name> name) {
-  DCHECK(name->IsString());
-
-  // Yes, this looks insane to make a v8 string, a wide string, and then a
-  // byte string in separate steps when we could just make a v8 string and
-  // then a byte string. But let's pretend there's persistent data somewhere
-  // in some embedder, and so we can't change the key name, which currently
-  // omits chars > 0xFF. There isn't a ByteString method equivalent.
-  return fxv8::ToWideString(
-             pIsolate,
-             name->ToString(pIsolate->GetCurrentContext()).ToLocalChecked())
-      .ToDefANSI();
+  CHECK(name->IsString());
+  return fxv8::ToByteString(pIsolate, name.As<v8::String>());
 }
 
 }  // namespace
@@ -203,8 +194,8 @@ CJS_Result CJS_Global::GetProperty(CJS_Runtime* pRuntime,
     case CFX_Value::DataType::kBoolean:
       return CJS_Result::Success(pRuntime->NewBoolean(pData->bData));
     case CFX_Value::DataType::kString:
-      return CJS_Result::Success(pRuntime->NewString(
-          WideString::FromDefANSI(pData->sData.AsStringView()).AsStringView()));
+      return CJS_Result::Success(
+          pRuntime->NewString(pData->sData.AsStringView()));
     case CFX_Value::DataType::kObject:
       return CJS_Result::Success(
           v8::Local<v8::Object>::New(pRuntime->GetIsolate(), pData->pData));
@@ -231,7 +222,7 @@ CJS_Result CJS_Global::SetProperty(CJS_Runtime* pRuntime,
   }
   if (vp->IsString()) {
     return SetGlobalVariables(propname, CFX_Value::DataType::kString, 0, false,
-                              pRuntime->ToWideString(vp).ToDefANSI(),
+                              pRuntime->ToByteString(vp),
                               v8::Local<v8::Object>(), false);
   }
   if (vp->IsObject()) {
@@ -270,7 +261,7 @@ CJS_Result CJS_Global::setPersistent(
   if (params.size() != 2)
     return CJS_Result::Failure(JSMessage::kParamError);
 
-  auto it = m_MapGlobal.find(pRuntime->ToWideString(params[0]).ToDefANSI());
+  auto it = m_MapGlobal.find(pRuntime->ToByteString(params[0]));
   if (it == m_MapGlobal.end() || it->second->bDeleted)
     return CJS_Result::Failure(JSMessage::kGlobalNotFoundError);
 
@@ -308,9 +299,7 @@ void CJS_Global::UpdateGlobalPersistentVariables() {
                            pData->bPersistent);
         pRuntime->PutObjectProperty(
             ToV8Object(), pData->data.sKey.AsStringView(),
-            pRuntime->NewString(
-                WideString::FromUTF8(pData->data.sData.AsStringView())
-                    .AsStringView()));
+            pRuntime->NewString(pData->data.sData.AsStringView()));
         break;
       case CFX_Value::DataType::kObject: {
         v8::Local<v8::Object> pObj = pRuntime->NewObject();
@@ -399,7 +388,7 @@ std::vector<std::unique_ptr<CFX_KeyValue>> CJS_Global::ObjectToArray(
       continue;
     }
     if (v->IsString()) {
-      ByteString sValue = pRuntime->ToWideString(v).ToDefANSI();
+      ByteString sValue = pRuntime->ToByteString(v);
       auto pObjElement = std::make_unique<CFX_KeyValue>();
       pObjElement->nType = CFX_Value::DataType::kString;
       pObjElement->sKey = sKey;
@@ -445,9 +434,7 @@ void CJS_Global::PutObjectProperty(v8::Local<v8::Object> pObj,
       case CFX_Value::DataType::kString:
         pRuntime->PutObjectProperty(
             pObj, pObjData->sKey.AsStringView(),
-            pRuntime->NewString(
-                WideString::FromUTF8(pObjData->sData.AsStringView())
-                    .AsStringView()));
+            pRuntime->NewString(pObjData->sData.AsStringView()));
         break;
       case CFX_Value::DataType::kObject: {
         v8::Local<v8::Object> pNewObj = pRuntime->NewObject();

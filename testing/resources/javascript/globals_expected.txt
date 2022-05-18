@@ -10,6 +10,8 @@ Alert:   string_var = undefined
 Alert:   object_var = undefined
 Alert:   null_var = undefined
 Alert:   undefined_var = undefined
+Alert:   unicode_var = undefined
+Alert:   䀥䀦_var = undefined
 Alert: ************ After Setup ************
 Alert: Enumerable Globals:
 Alert:   setPersistent = function setPersistent() { [native code] }, own property = true
@@ -19,7 +21,9 @@ Alert:   number_var = -3.918, own property = true
 Alert:   object_var = [object Object], own property = true
 Alert:   string_var = This is a string, own property = true
 Alert:   true_var = true, own property = true
+Alert:   unicode_var = 䀥䀦_string, own property = true
 Alert:   zero_var = 0, own property = true
+Alert:   䀥䀦_var = string, own property = true
 Alert: Expected Globals:
 Alert:   true_var = true
 Alert:   false_var = false
@@ -32,6 +36,8 @@ Alert:     green
 Alert:     blue
 Alert:   null_var = null
 Alert:   undefined_var = undefined
+Alert:   unicode_var = 䀥䀦_string
+Alert:   䀥䀦_var = string
 Alert: ************ After Deletion ************
 Alert: Enumerable Globals:
 Alert:   setPersistent = function setPersistent() { [native code] }, own property = true
@@ -44,6 +50,8 @@ Alert:   string_var = undefined
 Alert:   object_var = undefined
 Alert:   null_var = undefined
 Alert:   undefined_var = undefined
+Alert:   unicode_var = undefined
+Alert:   䀥䀦_var = undefined
 Alert: For undefined_var: Set Persistent: ERROR: global.setPersistent: Global value not found.
 Alert: ************ After Setup and Persist false ************
 Alert: Enumerable Globals:
@@ -54,7 +62,9 @@ Alert:   number_var = -3.918, own property = true
 Alert:   object_var = [object Object], own property = true
 Alert:   string_var = This is a string, own property = true
 Alert:   true_var = true, own property = true
+Alert:   unicode_var = 䀥䀦_string, own property = true
 Alert:   zero_var = 0, own property = true
+Alert:   䀥䀦_var = string, own property = true
 Alert: Expected Globals:
 Alert:   true_var = true
 Alert:   false_var = false
@@ -67,6 +77,8 @@ Alert:     green
 Alert:     blue
 Alert:   null_var = null
 Alert:   undefined_var = undefined
+Alert:   unicode_var = 䀥䀦_string
+Alert:   䀥䀦_var = string
 Alert: For true_var: Set Persistent: ERROR: global.setPersistent: Global value not found.
 Alert: For false_var: Set Persistent: ERROR: global.setPersistent: Global value not found.
 Alert: For zero_var: Set Persistent: ERROR: global.setPersistent: Global value not found.
@@ -75,6 +87,8 @@ Alert: For string_var: Set Persistent: ERROR: global.setPersistent: Global value
 Alert: For object_var: Set Persistent: ERROR: global.setPersistent: Global value not found.
 Alert: For null_var: Set Persistent: ERROR: global.setPersistent: Global value not found.
 Alert: For undefined_var: Set Persistent: ERROR: global.setPersistent: Global value not found.
+Alert: For unicode_var: Set Persistent: ERROR: global.setPersistent: Global value not found.
+Alert: For 䀥䀦_var: Set Persistent: ERROR: global.setPersistent: Global value not found.
 Alert: ************ After Delete and Persist ************
 Alert: Enumerable Globals:
 Alert:   setPersistent = function setPersistent() { [native code] }, own property = true
@@ -87,6 +101,8 @@ Alert:   string_var = undefined
 Alert:   object_var = undefined
 Alert:   null_var = undefined
 Alert:   undefined_var = undefined
+Alert:   unicode_var = undefined
+Alert:   䀥䀦_var = undefined
 Alert: For undefined_var: Set Persistent: ERROR: global.setPersistent: Global value not found.
 Alert: ************ After Setup and Persist true ************
 Alert: Enumerable Globals:
@@ -97,7 +113,9 @@ Alert:   number_var = -3.918, own property = true
 Alert:   object_var = [object Object], own property = true
 Alert:   string_var = This is a string, own property = true
 Alert:   true_var = true, own property = true
+Alert:   unicode_var = 䀥䀦_string, own property = true
 Alert:   zero_var = 0, own property = true
+Alert:   䀥䀦_var = string, own property = true
 Alert: Expected Globals:
 Alert:   true_var = true
 Alert:   false_var = false
@@ -110,3 +128,5 @@ Alert:     green
 Alert:     blue
 Alert:   null_var = null
 Alert:   undefined_var = undefined
+Alert:   unicode_var = 䀥䀦_string
+Alert:   䀥䀦_var = string
