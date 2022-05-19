@@ -326,9 +326,8 @@ v8::Local<v8::Array> CJS_PublicMethods::AF_MakeArrayFromList(
     return pRuntime->ToArray(val);
 
   DCHECK(val->IsString());
-  WideString wsStr = pRuntime->ToWideString(val);
-  ByteString t = wsStr.ToDefANSI();
-  const char* p = t.c_str();
+  ByteString bsVal = pRuntime->ToByteString(val);
+  const char* p = bsVal.c_str();
 
   int nIndex = 0;
   v8::Local<v8::Array> StrArray = pRuntime->NewArray();
@@ -602,7 +601,7 @@ CJS_Result CJS_PublicMethods::AFNumber_Format(
     return CJS_Result::Failure(WideString::FromASCII("No event handler"));
 
   WideString& Value = pEventContext->Value();
-  ByteString strValue = StrTrim(Value.ToDefANSI());
+  ByteString strValue = StrTrim(Value.ToUTF8());
   if (strValue.IsEmpty())
     return CJS_Result::Success();
 
@@ -648,7 +647,7 @@ CJS_Result CJS_PublicMethods::AFNumber_Format(
   }
 
   // Processing currency string
-  Value = WideString::FromDefANSI(strValue.AsStringView());
+  Value = WideString::FromUTF8(strValue.AsStringView());
   if (bCurrencyPrepend)
     Value = wstrCurrency + Value;
   else
@@ -815,7 +814,7 @@ CJS_Result CJS_PublicMethods::AFPercent_Format(
     return CJS_Result::Success();
   }
 
-  ByteString strValue = StrTrim(Value.ToDefANSI());
+  ByteString strValue = StrTrim(Value.ToUTF8());
   if (strValue.IsEmpty())
     strValue = "0";
 
@@ -866,7 +865,7 @@ CJS_Result CJS_PublicMethods::AFPercent_Format(
     strValue.InsertAtFront('%');
   else
     strValue.InsertAtBack('%');
-  Value = WideString::FromDefANSI(strValue.AsStringView());
+  Value = WideString::FromUTF8(strValue.AsStringView());
 #endif
   return CJS_Result::Success();
 }
@@ -1391,7 +1390,7 @@ CJS_Result CJS_PublicMethods::AFRange_Validate(
   if (pEvent->Value().IsEmpty())
     return CJS_Result::Success();
 
-  double dEentValue = atof(pEvent->Value().ToDefANSI().c_str());
+  double dEventValue = atof(pEvent->Value().ToUTF8().c_str());
   bool bGreaterThan = pRuntime->ToBoolean(params[0]);
   double dGreaterThan = pRuntime->ToDouble(params[1]);
   bool bLessThan = pRuntime->ToBoolean(params[2]);
@@ -1399,18 +1398,18 @@ CJS_Result CJS_PublicMethods::AFRange_Validate(
   WideString swMsg;
 
   if (bGreaterThan && bLessThan) {
-    if (dEentValue < dGreaterThan || dEentValue > dLessThan)
+    if (dEventValue < dGreaterThan || dEventValue > dLessThan)
       swMsg = WideString::Format(
           JSGetStringFromID(JSMessage::kRangeBetweenError).c_str(),
           pRuntime->ToWideString(params[1]).c_str(),
           pRuntime->ToWideString(params[3]).c_str());
   } else if (bGreaterThan) {
-    if (dEentValue < dGreaterThan)
+    if (dEventValue < dGreaterThan)
       swMsg = WideString::Format(
           JSGetStringFromID(JSMessage::kRangeGreaterError).c_str(),
           pRuntime->ToWideString(params[1]).c_str());
   } else if (bLessThan) {
-    if (dEentValue > dLessThan)
+    if (dEventValue > dLessThan)
       swMsg = WideString::Format(
           JSGetStringFromID(JSMessage::kRangeLessError).c_str(),
           pRuntime->ToWideString(params[3]).c_str());

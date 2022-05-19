@@ -213,17 +213,16 @@ v8::Local<v8::Value> CJS_Runtime::MaybeCoerceToNumber(
     v8::Local<v8::Value> value) {
   bool bAllowNaN = false;
   if (value->IsString()) {
-    ByteString bstr = ToWideString(value).ToDefANSI();
+    ByteString bstr = fxv8::ToByteString(GetIsolate(), value.As<v8::String>());
     if (bstr.IsEmpty())
       return value;
     if (bstr == "NaN")
       bAllowNaN = true;
   }
 
-  v8::Isolate* pIsolate = GetIsolate();
-  v8::TryCatch try_catch(pIsolate);
+  v8::TryCatch try_catch(GetIsolate());
   v8::MaybeLocal<v8::Number> maybeNum =
-      value->ToNumber(pIsolate->GetCurrentContext());
+      value->ToNumber(GetIsolate()->GetCurrentContext());
   if (maybeNum.IsEmpty())
     return value;
 
