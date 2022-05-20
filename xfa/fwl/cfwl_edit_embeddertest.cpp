@@ -274,12 +274,46 @@ TEST_F(CFWLEditEmbedderTest, ImageEditTest) {
 #endif
 TEST_F(CFWLEditEmbedderTest, MAYBE_ComboBoxTest) {
   CreateAndInitializeFormPDF("xfa/xfa_combobox.pdf");
-  FORM_OnLButtonDown(form_handle(), page(), 0, 115, 58);
 
-  const char kFilledMD5[] = "dad642ae8a5afce2591ffbcabbfc58dd";
+  // Give focus to widget.
+  FORM_OnLButtonDown(form_handle(), page(), 0, 115, 58);
+  FORM_OnLButtonUp(form_handle(), page(), 0, 115, 58);
   {
     ScopedFPDFBitmap page_bitmap =
         RenderLoadedPageWithFlags(page(), FPDF_ANNOT);
+    const char kFilledMD5[] = "dad642ae8a5afce2591ffbcabbfc58dd";
     CompareBitmap(page_bitmap.get(), 612, 792, kFilledMD5);
+  }
+
+  // Click on down-arrow button, dropdown list appears.
+  FORM_OnLButtonDown(form_handle(), page(), 0, 438, 53);
+  FORM_OnLButtonUp(form_handle(), page(), 0, 438, 53);
+  {
+    ScopedFPDFBitmap page_bitmap =
+        RenderLoadedPageWithFlags(page(), FPDF_ANNOT);
+    // TODO(tsepez): hermetic fonts.
+    // const char kFilledMD5[] = "dad642ae8a5afce2591ffbcabbfc58dd";
+    // CompareBitmap(page_bitmap.get(), 612, 792, kFilledMD5);
+  }
+
+  // Enter drop-down list, selection highlighted.
+  FORM_OnMouseMove(form_handle(), page(), 0, 253, 107);
+  {
+    ScopedFPDFBitmap page_bitmap =
+        RenderLoadedPageWithFlags(page(), FPDF_ANNOT);
+    // TODO(tsepez): hermetic fonts.
+    // const char kFilledMD5[] = "dad642ae8a5afce2591ffbcabbfc58dd";
+    // CompareBitmap(page_bitmap.get(), 612, 792, kFilledMD5);
+  }
+
+  // Click on selection, putting result into field.
+  FORM_OnLButtonDown(form_handle(), page(), 0, 253, 107);
+  FORM_OnLButtonUp(form_handle(), page(), 0, 253, 107);
+  {
+    ScopedFPDFBitmap page_bitmap =
+        RenderLoadedPageWithFlags(page(), FPDF_ANNOT);
+    // TODO(tsepez): hermetic fonts.
+    // const char kFilledMD5[] = "dad642ae8a5afce2591ffbcabbfc58dd";
+    // CompareBitmap(page_bitmap.get(), 612, 792, kFilledMD5);
   }
 }
