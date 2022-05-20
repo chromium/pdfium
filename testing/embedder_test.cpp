@@ -808,13 +808,11 @@ std::string EmbedderTest::HashBitmap(FPDF_BITMAP bitmap) {
   return CryptToBase16(digest);
 }
 
-#ifndef NDEBUG
 // static
 void EmbedderTest::WriteBitmapToPng(FPDF_BITMAP bitmap,
                                     const std::string& filename) {
   BitmapSaver::WriteBitmapToPng(bitmap, filename);
 }
-#endif
 
 // static
 void EmbedderTest::CompareBitmap(FPDF_BITMAP bitmap,

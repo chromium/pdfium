@@ -231,11 +231,9 @@ class EmbedderTest : public ::testing::Test,
   // any, at the end of a row where the stride is larger than width * bpp.
   static std::string HashBitmap(FPDF_BITMAP bitmap);
 
-#ifndef NDEBUG
   // For debugging purposes.
   // Write |bitmap| as a PNG to |filename|.
   static void WriteBitmapToPng(FPDF_BITMAP bitmap, const std::string& filename);
-#endif
 
   // Check |bitmap| to make sure it has the right dimensions and content.
   static void CompareBitmap(FPDF_BITMAP bitmap,
