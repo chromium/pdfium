@@ -14,7 +14,7 @@ uint8_t FX_DaysInMonth(int32_t iYear, uint8_t iMonth);
 
 class CFX_DateTime {
  public:
-  static CFX_DateTime Now();
+  static CFX_DateTime Now();  // Accurate to seconds, subject to test overrides.
 
   CFX_DateTime() = default;
   CFX_DateTime(int32_t year,
