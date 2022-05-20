@@ -5,6 +5,8 @@
 #ifndef TESTING_EMBEDDER_TEST_ENVIRONMENT_H_
 #define TESTING_EMBEDDER_TEST_ENVIRONMENT_H_
 
+#include <string>
+
 #include "public/fpdfview.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_fonts.h"
@@ -22,7 +24,14 @@ class EmbedderTestEnvironment : public testing::Environment {
   void SetUp() override;
   void TearDown() override;
 
+  void AddFlags(int argc, char** argv);
+
+  bool write_pngs() const { return write_pngs_; }
+
  private:
+  void AddFlag(const std::string& flag);
+
+  bool write_pngs_ = false;
   TestFonts test_fonts_;
 };
 

@@ -16,6 +16,7 @@
 #include "public/fpdf_edit.h"
 #include "public/fpdf_text.h"
 #include "public/fpdfview.h"
+#include "testing/embedder_test_environment.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/test_loader.h"
 #include "testing/utils/bitmap_saver.h"
@@ -831,7 +832,11 @@ void EmbedderTest::CompareBitmap(FPDF_BITMAP bitmap,
   if (!expected_md5sum)
     return;
 
-  EXPECT_EQ(expected_md5sum, HashBitmap(bitmap));
+  std::string actual_md5sum = HashBitmap(bitmap);
+  EXPECT_EQ(expected_md5sum, actual_md5sum);
+  if (EmbedderTestEnvironment::GetInstance()->write_pngs()) {
+    WriteBitmapToPng(bitmap, actual_md5sum + ".png");
+  }
 }
 
 // static

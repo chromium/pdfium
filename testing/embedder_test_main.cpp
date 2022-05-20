@@ -29,5 +29,8 @@ int main(int argc, char** argv) {
   testing::InitGoogleTest(&argc, argv);
   testing::InitGoogleMock(&argc, argv);
 
+  // Anything remaining in argc/argv is an embedder_tests flag.
+  EmbedderTestEnvironment::GetInstance()->AddFlags(argc, argv);
+
   return RUN_ALL_TESTS();
 }

@@ -4,6 +4,8 @@
 
 #include "testing/embedder_test_environment.h"
 
+#include <ostream>
+
 #include "core/fxcrt/fx_system.h"
 #include "public/fpdfview.h"
 #include "third_party/base/check.h"
@@ -57,4 +59,16 @@ void EmbedderTestEnvironment::SetUp() {
 
 void EmbedderTestEnvironment::TearDown() {
   FPDF_DestroyLibrary();
+}
+
+void EmbedderTestEnvironment::AddFlags(int argc, char** argv) {
+  for (int i = 1; i < argc; ++i)
+    AddFlag(argv[i]);
+}
+
+void EmbedderTestEnvironment::AddFlag(const std::string& flag) {
+  if (flag == "--write-pngs")
+    write_pngs_ = true;
+  else
+    std::cerr << "Unknown flag: " << flag << "\n";
 }
