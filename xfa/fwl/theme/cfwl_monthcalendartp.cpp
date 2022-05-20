@@ -84,7 +84,7 @@ void CFWL_MonthCalendarTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
 }
 
 void CFWL_MonthCalendarTP::DrawText(const CFWL_ThemeText& pParams) {
-  EnsureTTOInitialized();
+  EnsureTTOInitialized(pParams.GetWidget()->GetThemeProvider());
   if (pParams.m_iPart == CFWL_ThemePart::Part::kDatesIn &&
       !(pParams.m_dwStates & CFWL_PartState::kFlagged) &&
       (pParams.m_dwStates & Mask<CFWL_PartState>{CFWL_PartState::kHovered,

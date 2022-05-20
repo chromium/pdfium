@@ -17,10 +17,10 @@
 #include "xfa/fwl/theme/cfwl_utils.h"
 
 class CFDE_TextOut;
-class CFGAS_GEFont;
 class CFGAS_GEGraphics;
 class CFWL_ThemeBackground;
 class CFWL_ThemeText;
+class IFWL_ThemeProvider;
 
 class CFWL_WidgetTP : public cppgc::GarbageCollected<CFWL_WidgetTP> {
  public:
@@ -28,8 +28,6 @@ class CFWL_WidgetTP : public cppgc::GarbageCollected<CFWL_WidgetTP> {
 
   virtual void DrawBackground(const CFWL_ThemeBackground& pParams);
   virtual void DrawText(const CFWL_ThemeText& pParams);
-
-  const RetainPtr<CFGAS_GEFont>& GetFont() const;
 
   // Non-virtual, nothing to trace in subclasses at present.
   void Trace(cppgc::Visitor* visitor) const;
@@ -45,7 +43,7 @@ class CFWL_WidgetTP : public cppgc::GarbageCollected<CFWL_WidgetTP> {
   CFWL_WidgetTP();
 
   void InitializeArrowColorData();
-  void EnsureTTOInitialized();
+  void EnsureTTOInitialized(IFWL_ThemeProvider* pProvider);
 
   void DrawBorder(CFGAS_GEGraphics* pGraphics,
                   const CFX_RectF& rect,
@@ -76,7 +74,6 @@ class CFWL_WidgetTP : public cppgc::GarbageCollected<CFWL_WidgetTP> {
                     const CFX_Matrix& matrix);
 
   std::unique_ptr<CFDE_TextOut> m_pTextOut;
-  RetainPtr<CFGAS_GEFont> m_pFGASFont;
   std::unique_ptr<CColorData> m_pColorData;
 };
 

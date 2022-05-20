@@ -40,8 +40,8 @@ class CXFA_FWLTheme final : public cppgc::GarbageCollected<CXFA_FWLTheme>,
   float GetCYBorderSize() const override;
   CFX_RectF GetUIMargin(const CFWL_ThemePart& pThemePart) const override;
   float GetFontSize(const CFWL_ThemePart& pThemePart) const override;
-  RetainPtr<CFGAS_GEFont> GetFont(
-      const CFWL_ThemePart& pThemePart) const override;
+  RetainPtr<CFGAS_GEFont> GetFont(const CFWL_ThemePart& pThemePart) override;
+  RetainPtr<CFGAS_GEFont> GetFWLFont() override;
   float GetLineHeight(const CFWL_ThemePart& pThemePart) const override;
   float GetScrollBarWidth() const override;
   FX_COLORREF GetTextColor(const CFWL_ThemePart& pThemePart) const override;
@@ -53,6 +53,7 @@ class CXFA_FWLTheme final : public cppgc::GarbageCollected<CXFA_FWLTheme>,
   CXFA_FWLTheme(cppgc::Heap* pHeap, CXFA_FFApp* pApp);
 
   std::unique_ptr<CFDE_TextOut> m_pTextOut;
+  RetainPtr<CFGAS_GEFont> m_pFWLFont;
   RetainPtr<CFGAS_GEFont> m_pCalendarFont;
   cppgc::Member<CXFA_FFApp> const m_pApp;
   WideString m_wsResource;

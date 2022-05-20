@@ -36,8 +36,8 @@ class IFWL_ThemeProvider : public cppgc::GarbageCollectedMixin {
   virtual float GetCYBorderSize() const = 0;
   virtual CFX_RectF GetUIMargin(const CFWL_ThemePart& pThemePart) const = 0;
   virtual float GetFontSize(const CFWL_ThemePart& pThemePart) const = 0;
-  virtual RetainPtr<CFGAS_GEFont> GetFont(
-      const CFWL_ThemePart& pThemePart) const = 0;
+  virtual RetainPtr<CFGAS_GEFont> GetFont(const CFWL_ThemePart& pThemePart) = 0;
+  virtual RetainPtr<CFGAS_GEFont> GetFWLFont() = 0;
   virtual float GetLineHeight(const CFWL_ThemePart& pThemePart) const = 0;
   virtual float GetScrollBarWidth() const = 0;
   virtual FX_COLORREF GetTextColor(const CFWL_ThemePart& pThemePart) const = 0;

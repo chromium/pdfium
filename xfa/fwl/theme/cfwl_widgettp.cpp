@@ -20,7 +20,6 @@
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
-#include "xfa/fwl/theme/cfwl_fontmanager.h"
 
 CFWL_WidgetTP::CFWL_WidgetTP() = default;
 
@@ -31,7 +30,7 @@ void CFWL_WidgetTP::Trace(cppgc::Visitor* visitor) const {}
 void CFWL_WidgetTP::DrawBackground(const CFWL_ThemeBackground& pParams) {}
 
 void CFWL_WidgetTP::DrawText(const CFWL_ThemeText& pParams) {
-  EnsureTTOInitialized();
+  EnsureTTOInitialized(pParams.GetWidget()->GetThemeProvider());
   if (pParams.m_wsText.IsEmpty())
     return;
 
@@ -45,10 +44,6 @@ void CFWL_WidgetTP::DrawText(const CFWL_ThemeText& pParams) {
   m_pTextOut->DrawLogicText(pGraphics->GetRenderDevice(),
                             pParams.m_wsText.AsStringView(),
                             pParams.m_PartRect);
-}
-
-const RetainPtr<CFGAS_GEFont>& CFWL_WidgetTP::GetFont() const {
-  return m_pFGASFont;
 }
 
 void CFWL_WidgetTP::InitializeArrowColorData() {
@@ -74,13 +69,12 @@ void CFWL_WidgetTP::InitializeArrowColorData() {
   m_pColorData->clrSign[3] = ArgbEncode(255, 128, 128, 128);
 }
 
-void CFWL_WidgetTP::EnsureTTOInitialized() {
+void CFWL_WidgetTP::EnsureTTOInitialized(IFWL_ThemeProvider* pProvider) {
   if (m_pTextOut)
     return;
 
-  m_pFGASFont = CFWL_FontManager::GetInstance()->GetFWLFont();
   m_pTextOut = std::make_unique<CFDE_TextOut>();
-  m_pTextOut->SetFont(m_pFGASFont);
+  m_pTextOut->SetFont(pProvider->GetFWLFont());
   m_pTextOut->SetFontSize(FWLTHEME_CAPACITY_FontSize);
   m_pTextOut->SetTextColor(FWLTHEME_CAPACITY_TextColor);
 }

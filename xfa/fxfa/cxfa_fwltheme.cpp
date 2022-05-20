@@ -25,7 +25,6 @@
 #include "xfa/fwl/cfwl_scrollbar.h"
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_themetext.h"
-#include "xfa/fwl/theme/cfwl_fontmanager.h"
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
@@ -59,7 +58,6 @@ CXFA_FWLTheme::~CXFA_FWLTheme() = default;
 
 void CXFA_FWLTheme::PreFinalize() {
   m_pTextOut.reset();
-  CFWL_FontManager::DestroyInstance();
 }
 
 void CXFA_FWLTheme::Trace(cppgc::Visitor* visitor) const {
@@ -185,10 +183,18 @@ float CXFA_FWLTheme::GetFontSize(const CFWL_ThemePart& pThemePart) const {
 }
 
 RetainPtr<CFGAS_GEFont> CXFA_FWLTheme::GetFont(
-    const CFWL_ThemePart& pThemePart) const {
+    const CFWL_ThemePart& pThemePart) {
   if (CXFA_FFWidget* pWidget = GetOutmostFFWidget(pThemePart.GetWidget()))
     return pWidget->GetNode()->GetFGASFont(pWidget->GetDoc());
-  return GetTheme(pThemePart.GetWidget())->GetFont();
+
+  return GetFWLFont();
+}
+
+RetainPtr<CFGAS_GEFont> CXFA_FWLTheme::GetFWLFont() {
+  if (!m_pFWLFont)
+    m_pFWLFont = CFGAS_GEFont::LoadFont(L"Helvetica", 0, FX_CodePage::kDefANSI);
+
+  return m_pFWLFont;
 }
 
 float CXFA_FWLTheme::GetLineHeight(const CFWL_ThemePart& pThemePart) const {

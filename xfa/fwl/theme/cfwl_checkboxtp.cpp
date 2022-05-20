@@ -38,7 +38,7 @@ CFWL_CheckBoxTP::CFWL_CheckBoxTP() = default;
 CFWL_CheckBoxTP::~CFWL_CheckBoxTP() = default;
 
 void CFWL_CheckBoxTP::DrawText(const CFWL_ThemeText& pParams) {
-  EnsureTTOInitialized();
+  EnsureTTOInitialized(pParams.GetWidget()->GetThemeProvider());
   m_pTextOut->SetTextColor(pParams.m_dwStates & CFWL_PartState::kDisabled
                                ? FWLTHEME_CAPACITY_TextDisColor
                                : FWLTHEME_CAPACITY_TextColor);
