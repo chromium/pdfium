@@ -1260,10 +1260,11 @@ TEST_F(FPDFViewEmbedderTest, RenderBug664284WithNoNativeText) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   // For Skia/SkiaPaths, since the font used in bug_664284.pdf is not a CID
   // font, ShouldDrawDeviceText() will always return true. Therefore
-  // FPDF_NO_NATIVETEXT determines whether to go through the rendering path in
-  // CFX_SkiaDeviceDriver::DrawDeviceText() and it will always affect the
-  // rendering results across all platforms.
-  static const char kOriginalChecksum[] = "cfcdc544325a9780be241685d200c47b";
+  // FPDF_NO_NATIVETEXT and the font widths defined in the PDF determines
+  // whether to go through the rendering path in
+  // CFX_SkiaDeviceDriver::DrawDeviceText(). In this case, it returns false and
+  // affects the rendering results across all platforms.
+  static const char kOriginalChecksum[] = "288502887ffc63291f35a0573b944375";
   static const char kNoNativeTextChecksum[] =
       "288502887ffc63291f35a0573b944375";
 #else
@@ -1399,11 +1400,11 @@ TEST_F(FPDFViewEmbedderTest, RenderHelloWorldWithFlags) {
   TestRenderPageBitmapWithFlags(page, FPDF_RENDER_NO_SMOOTHPATH,
                                 kHelloWorldChecksum);
 
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  static const char kLcdTextChecksum[] = "fea3e59b7ac7b7a6940018497034f6cf";
+#if defined(_SKIA_SUPPORT_)
+  static const char kLcdTextChecksum[] = "c1c548442e0e0f949c5550d89bf8ae3b";
   static const char kNoSmoothtextChecksum[] =
-      "c4173cf724618e5b68efb74543519bb9";
-#elif BUILDFLAG(IS_APPLE)
+      "37d0b34e1762fdda4c05ce7ea357b828";
+#elif BUILDFLAG(IS_APPLE) && !defined(_SKIA_SUPPORT_PATHS_)
   static const char kLcdTextChecksum[] = "6eef7237f7591f07616e238422086737";
   static const char kNoSmoothtextChecksum[] =
       "6eef7237f7591f07616e238422086737";

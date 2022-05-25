@@ -1318,11 +1318,16 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_765384) {
 #endif  // PDF_ENABLE_V8
 
 TEST_F(FPDFFormFillEmbedderTest, FormText) {
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#if defined(_SKIA_SUPPORT_)
   const char kFocusedTextFormWithAbcChecksum[] =
-      "199536b979a42da3c2745297f6e87a77";
+      "07a179a9dfb8f5462746262984109a99";
   const char kUnfocusedTextFormWithAbcChecksum[] =
-      "574aa06445957315f0dadd24a0c59811";
+      "a21b74cc620db8a9891ebd69e1aeda98";
+#elif defined(_SKIA_SUPPORT_PATHS_)
+  const char kFocusedTextFormWithAbcChecksum[] =
+      "2866312fb36e9afdc0a99d547027d484";
+  const char kUnfocusedTextFormWithAbcChecksum[] =
+      "03216cae48813f71f81f53b49e3a8aaa";
 #elif BUILDFLAG(IS_APPLE)
   const char kFocusedTextFormWithAbcChecksum[] =
       "9fb14198d75ca0a107060c60ca21b0c7";
@@ -1526,9 +1531,8 @@ TEST_F(FPDFFormFillEmbedderTest, Bug1302455EditBothForms) {
 }
 
 TEST_F(FPDFFormFillEmbedderTest, RemoveFormFieldHighlight) {
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  const char kMd5NoHighlight[] = "013aa241c39c02505d9525550be04e48";
-#elif BUILDFLAG(IS_APPLE)
+#if BUILDFLAG(IS_APPLE) && !defined(_SKIA_SUPPORT_) && \
+    !defined(_SKIA_SUPPORT_PATHS_)
   const char kMd5NoHighlight[] = "5c82aa43e3b478aa1e4c94bb9ef1f11f";
 #else
   const char kMd5NoHighlight[] = "a6268304f7eedfa9ee98fac3caaf2efb";

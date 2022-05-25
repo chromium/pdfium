@@ -39,18 +39,19 @@ TEST_F(FPDFFlattenEmbedderTest, FlatPrint) {
 }
 
 TEST_F(FPDFFlattenEmbedderTest, BUG_861842) {
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#if defined(_SKIA_SUPPORT_)
   static constexpr char kCheckboxChecksum[] =
-      "95fdaa000e81c80892b8d370f77be970";
-#else
-#if BUILDFLAG(IS_APPLE)
+      "252fd5f2299cc16e5a07565df7c30565";
+#elif defined(_SKIA_SUPPORT_PATHS_)
+  static constexpr char kCheckboxChecksum[] =
+      "280080feef8787b55ccf5cc828596327";
+#elif BUILDFLAG(IS_APPLE)
   static constexpr char kCheckboxChecksum[] =
       "6aafcb2d98da222964bcdbf5aa1f4f1f";
 #else
   static constexpr char kCheckboxChecksum[] =
       "594265790b81df2d93120d33b72a6ada";
-#endif  // BUILDFLAG(IS_APPLE)
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#endif
 
   ASSERT_TRUE(OpenDocument("bug_861842.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -70,10 +71,14 @@ TEST_F(FPDFFlattenEmbedderTest, BUG_861842) {
 }
 
 TEST_F(FPDFFlattenEmbedderTest, BUG_889099) {
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  static constexpr char kPageHash[] = "1ce2e06c12972973b8f04a2f79245313";
+#if defined(_SKIA_SUPPORT_)
+  static constexpr char kPageHash[] = "73678f308625e22f31940e9f732b68bf";
   static constexpr char kFlattenedPageHash[] =
-      "e03b1b8157c30c77ea94f9c24dc85a00";
+      "0832157462ea70fbbf053e14b1d6457f";
+#elif defined(_SKIA_SUPPORT_PATHS_)
+  static constexpr char kPageHash[] = "c82ca7521b802024d7120b23876dd6dd";
+  static constexpr char kFlattenedPageHash[] =
+      "0832157462ea70fbbf053e14b1d6457f";
 #elif BUILDFLAG(IS_APPLE)
   static constexpr char kPageHash[] = "049ed3f1e21fc72f929af3410c64bc8f";
   static constexpr char kFlattenedPageHash[] =

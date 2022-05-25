@@ -22,10 +22,8 @@ constexpr FX_ARGB kGreen = 0xFF00FF00;
 constexpr FX_ARGB kRed = 0xFFFF0000;
 constexpr FX_ARGB kWhite = 0xFFFFFFFF;
 
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-static constexpr char kAnnotationStampWithApBaseContentChecksum[] =
-    "1a6cb54b1cfc5bb9f6ec3923a52ea7cc";
-#elif BUILDFLAG(IS_APPLE)
+#if BUILDFLAG(IS_APPLE) && !defined(_SKIA_SUPPORT_) && \
+    !defined(_SKIA_SUPPORT_PATHS_)
 static constexpr char kAnnotationStampWithApBaseContentChecksum[] =
     "243f3d6267d9db09198fed9f8c4957fd";
 #else
@@ -312,10 +310,10 @@ void FPDFProgressiveRenderEmbedderTest::VerifyRenderingWithColorScheme(
 
 TEST_F(FPDFProgressiveRenderEmbedderTest, RenderTextWithColorScheme) {
 // Test rendering of text with forced color scheme on.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#if defined(_SKIA_SUPPORT_)
   static constexpr char kContentWithTextChecksum[] =
-      "6bbe5a547115b4aa30b49fe7c34030e3";
-#elif BUILDFLAG(IS_APPLE)
+      "5ece6059efdc2ecb2894fa3cf329dc94";
+#elif BUILDFLAG(IS_APPLE) && !defined(_SKIA_SUPPORT_PATHS_)
   static constexpr char kContentWithTextChecksum[] =
       "ee4ec12f54ce8d117a73bd9b85a8954d";
 #else
@@ -456,7 +454,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderStampWithColorScheme) {
 // Test rendering of static annotation with forced color scheme on.
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   static constexpr char kContentWithStampChecksum[] =
-      "bdcd2b91223b1a73582b341d0153a73f";
+      "a791fdb4f595bb6c4187cc2aeed5e9e8";
 #elif BUILDFLAG(IS_APPLE)
   static constexpr char kContentWithStampChecksum[] =
       "7a209e29caeeab7d2b25b34570a4ace6";

@@ -1718,7 +1718,7 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(
   if (pFont->GetFontSpan().empty())
     return false;
 
-  // If a glyph's default width is larger than its width defined in the PDF,
+  // If a glyph's default width is no less than its width defined in the PDF,
   // draw the glyph with path since it can be scaled to avoid overlapping with
   // the adjacent glyphs (if there are any). Otherwise, use the device driver
   // to render the glyph without any adjustments.
@@ -1728,7 +1728,7 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(
   for (const TextCharPos& cp : pCharPos) {
     const int glyph_width = pFont->GetGlyphWidth(
         cp.m_GlyphIndex, cp.m_FontCharWidth, subst_font_weight);
-    if (cp.m_FontCharWidth < glyph_width)
+    if (cp.m_FontCharWidth <= glyph_width)
       return false;
   }
 
