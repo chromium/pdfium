@@ -178,3 +178,10 @@ TEST_F(FPDFSaveEmbedderTest, BUG_905142) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   EXPECT_THAT(GetString(), testing::HasSubstr("/Length 0"));
 }
+
+// Should not trigger a DCHECK() failure in CFX_FileBufferArchive.
+// TODO(crbug.com/1328389): Fix the bug so the test can be enabled.
+TEST_F(FPDFSaveEmbedderTest, DISABLED_Bug1328389) {
+  ASSERT_TRUE(OpenDocument("bug_1328389.pdf"));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+}
