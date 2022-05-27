@@ -163,7 +163,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
           if (!BS)
             return nullptr;
         } else if (REFAGGNINST == 1) {
-          uint8_t SBNUMSYMS = SDNUMINSYMS + NSYMSDECODED;
+          uint32_t SBNUMSYMS = SDNUMINSYMS + NSYMSDECODED;
           uint32_t IDI;
           IAID->Decode(pArithDecoder, &IDI);
           if (IDI >= SBNUMSYMS)
