@@ -254,11 +254,17 @@ TEST_F(CFWLEditEmbedderTest, MAYBE_DateTimePickerTest) {
   }
 }
 
-TEST_F(CFWLEditEmbedderTest, ImageEditTest) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_ImageEditTest DISABLED_ImageEditTest
+#else
+#define MAYBE_ImageEditTest ImageEditTest
+#endif
+TEST_F(CFWLEditEmbedderTest, MAYBE_ImageEditTest) {
   CreateAndInitializeFormPDF("xfa/xfa_image_edit.pdf");
   FORM_OnLButtonDown(form_handle(), page(), 0, 115, 58);
 
-  const char kFilledMD5[] = "1940568c9ba33bac5d0b1ee9558c76b3";
+  const char kFilledMD5[] = "101cf6223fa2403fba4c413a8310ab02";
   {
     ScopedFPDFBitmap page_bitmap =
         RenderLoadedPageWithFlags(page(), FPDF_ANNOT);
