@@ -11,14 +11,14 @@
 #include "core/fxcodec/basic/basicmodule.h"
 #include "core/fxcodec/fax/faxmodule.h"
 #include "core/fxcodec/flate/flatemodule.h"
-#include "core/fxcodec/jpeg/jpegmodule.h"
+//#include "core/fxcodec/jpeg/jpegmodule.h"
 #include "core/fxge/win32/cfx_psrenderer.h"
 
 namespace {
 
 constexpr EncoderIface kEncoderIface = {
     BasicModule::A85Encode, FaxModule::FaxEncode, FlateModule::Encode,
-    JpegModule::JpegEncode, BasicModule::RunLengthEncode};
+    /* JpegModule::JpegEncode, */nullptr, BasicModule::RunLengthEncode};
 
 }  // namespace
 

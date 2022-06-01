@@ -21,7 +21,7 @@
 class CPDF_ReadValidator;
 class CPDF_StreamAcc;
 class IFX_SeekableReadStream;
-class JBig2_DocumentContext;
+//class JBig2_DocumentContext;
 
 class CPDF_Document : public Observable,
                       public CPDF_Parser::ParsedObjectsHolder {
@@ -106,7 +106,7 @@ class CPDF_Document : public Observable,
 
   void SetPageObjNum(int iPage, uint32_t objNum);
 
-  JBig2_DocumentContext* GetOrCreateCodecContext();
+  //JBig2_DocumentContext* GetOrCreateCodecContext();
   LinkListIface* GetLinksContext() const { return m_pLinksContext.get(); }
   void SetLinksContext(std::unique_ptr<LinkListIface> pContext) {
     m_pLinksContext = std::move(pContext);
@@ -195,7 +195,7 @@ class CPDF_Document : public Observable,
 
   std::unique_ptr<RenderDataIface> m_pDocRender;
   std::unique_ptr<PageDataIface> m_pDocPage;  // Must be after |m_pDocRender|.
-  std::unique_ptr<JBig2_DocumentContext> m_pCodecContext;
+  //std::unique_ptr<JBig2_DocumentContext> m_pCodecContext;
   std::unique_ptr<LinkListIface> m_pLinksContext;
   std::set<uint32_t> m_ModifiedAPStreamIDs;
   std::vector<uint32_t> m_PageList;  // Page number to page's dict objnum.

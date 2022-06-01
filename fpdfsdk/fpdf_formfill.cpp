@@ -182,49 +182,49 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
                int size_y,
                int rotate,
                int flags) {
-  if (!hHandle)
+  //if (!hHandle)
     return;
-
-  IPDF_Page* pPage = IPDFPageFromFPDFPage(fpdf_page);
-  if (!pPage)
-    return;
-
-  CPDF_Document* pPDFDoc = pPage->GetDocument();
-  CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, fpdf_page);
-
-  const FX_RECT rect(start_x, start_y, start_x + size_x, start_y + size_y);
-  CFX_Matrix matrix = pPage->GetDisplayMatrix(rect, rotate);
-
-  auto pDevice = std::make_unique<CFX_DefaultRenderDevice>();
-#if defined(_SKIA_SUPPORT_)
-  pDevice->AttachRecorder(static_cast<SkPictureRecorder*>(recorder));
-#endif
-
-  RetainPtr<CFX_DIBitmap> holder(CFXDIBitmapFromFPDFBitmap(bitmap));
-  pDevice->Attach(holder, !!(flags & FPDF_REVERSE_BYTE_ORDER), nullptr, false);
-  {
-    CFX_RenderDevice::StateRestorer restorer(pDevice.get());
-    pDevice->SetClip_Rect(rect);
-
-    CPDF_RenderOptions options;
-    options.GetOptions().bClearType = !!(flags & FPDF_LCD_TEXT);
-
-    // Grayscale output
-    if (flags & FPDF_GRAYSCALE)
-      options.SetColorMode(CPDF_RenderOptions::kGray);
-
-    options.SetDrawAnnots(flags & FPDF_ANNOT);
-    options.SetOCContext(
-        pdfium::MakeRetain<CPDF_OCContext>(pPDFDoc, CPDF_OCContext::kView));
-
-    if (pPageView)
-      pPageView->PageView_OnDraw(pDevice.get(), matrix, &options, rect);
-  }
-
-#if defined(_SKIA_SUPPORT_PATHS_)
-  pDevice->Flush(true);
-  holder->UnPreMultiply();
-#endif
+//
+//  IPDF_Page* pPage = IPDFPageFromFPDFPage(fpdf_page);
+//  if (!pPage)
+//    return;
+//
+//  CPDF_Document* pPDFDoc = pPage->GetDocument();
+//  CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, fpdf_page);
+//
+//  const FX_RECT rect(start_x, start_y, start_x + size_x, start_y + size_y);
+//  CFX_Matrix matrix = pPage->GetDisplayMatrix(rect, rotate);
+//
+//  auto pDevice = std::make_unique<CFX_DefaultRenderDevice>();
+//#if defined(_SKIA_SUPPORT_)
+//  pDevice->AttachRecorder(static_cast<SkPictureRecorder*>(recorder));
+//#endif
+//
+//  RetainPtr<CFX_DIBitmap> holder(CFXDIBitmapFromFPDFBitmap(bitmap));
+//  pDevice->Attach(holder, !!(flags & FPDF_REVERSE_BYTE_ORDER), nullptr, false);
+//  {
+//    CFX_RenderDevice::StateRestorer restorer(pDevice.get());
+//    pDevice->SetClip_Rect(rect);
+//
+//    CPDF_RenderOptions options;
+//    options.GetOptions().bClearType = !!(flags & FPDF_LCD_TEXT);
+//
+//    // Grayscale output
+//    if (flags & FPDF_GRAYSCALE)
+//      options.SetColorMode(CPDF_RenderOptions::kGray);
+//
+//    options.SetDrawAnnots(flags & FPDF_ANNOT);
+//    options.SetOCContext(
+//        pdfium::MakeRetain<CPDF_OCContext>(pPDFDoc, CPDF_OCContext::kView));
+//
+//    if (pPageView)
+//      pPageView->PageView_OnDraw(pDevice.get(), matrix, &options, rect);
+//  }
+//
+//#if defined(_SKIA_SUPPORT_PATHS_)
+//  pDevice->Flush(true);
+//  holder->UnPreMultiply();
+//#endif
 }
 
 // Returns true if formfill version is correctly set. See |version| in

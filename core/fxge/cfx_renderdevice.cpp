@@ -15,7 +15,7 @@
 #include "build/build_config.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_color.h"
-#include "core/fxge/cfx_defaultrenderdevice.h"
+//#include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_fontmgr.h"
@@ -745,53 +745,53 @@ bool CFX_RenderDevice::DrawFillStrokePath(
     uint32_t stroke_color,
     const CFX_FillRenderOptions& fill_options,
     BlendMode blend_type) {
-  if (!(m_RenderCaps & FXRC_GET_BITS))
+ // if (!(m_RenderCaps & FXRC_GET_BITS))
     return false;
-  CFX_FloatRect bbox;
-  if (pGraphState) {
-    bbox = path.GetBoundingBoxForStrokePath(pGraphState->m_LineWidth,
-                                            pGraphState->m_MiterLimit);
-  } else {
-    bbox = path.GetBoundingBox();
-  }
-  if (pObject2Device)
-    bbox = pObject2Device->TransformRect(bbox);
-
-  FX_RECT rect = bbox.GetOuterRect();
-  if (!rect.Valid())
-    return false;
-
-  auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  auto backdrop = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!CreateCompatibleBitmap(bitmap, rect.Width(), rect.Height()))
-    return false;
-
-  if (bitmap->IsAlphaFormat()) {
-    bitmap->Clear(0);
-    backdrop->Copy(bitmap);
-  } else {
-    if (!m_pDeviceDriver->GetDIBits(bitmap, rect.left, rect.top))
-      return false;
-    backdrop->Copy(bitmap);
-  }
-  CFX_DefaultRenderDevice bitmap_device;
-  bitmap_device.Attach(bitmap, false, backdrop, true);
-
-  CFX_Matrix matrix;
-  if (pObject2Device)
-    matrix = *pObject2Device;
-  matrix.Translate(-rect.left, -rect.top);
-  if (!bitmap_device.GetDeviceDriver()->DrawPath(path, &matrix, pGraphState,
-                                                 fill_color, stroke_color,
-                                                 fill_options, blend_type)) {
-    return false;
-  }
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  bitmap_device.GetDeviceDriver()->Flush();
-#endif
-  FX_RECT src_rect(0, 0, rect.Width(), rect.Height());
-  return m_pDeviceDriver->SetDIBits(bitmap, 0, src_rect, rect.left, rect.top,
-                                    BlendMode::kNormal);
+//  CFX_FloatRect bbox;
+//  if (pGraphState) {
+//    bbox = path.GetBoundingBoxForStrokePath(pGraphState->m_LineWidth,
+//                                            pGraphState->m_MiterLimit);
+//  } else {
+//    bbox = path.GetBoundingBox();
+//  }
+//  if (pObject2Device)
+//    bbox = pObject2Device->TransformRect(bbox);
+//
+//  FX_RECT rect = bbox.GetOuterRect();
+//  if (!rect.Valid())
+//    return false;
+//
+//  auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+//  auto backdrop = pdfium::MakeRetain<CFX_DIBitmap>();
+//  if (!CreateCompatibleBitmap(bitmap, rect.Width(), rect.Height()))
+//    return false;
+//
+//  if (bitmap->IsAlphaFormat()) {
+//    bitmap->Clear(0);
+//    backdrop->Copy(bitmap);
+//  } else {
+//    if (!m_pDeviceDriver->GetDIBits(bitmap, rect.left, rect.top))
+//      return false;
+//    backdrop->Copy(bitmap);
+//  }
+//  CFX_DefaultRenderDevice bitmap_device;
+//  bitmap_device.Attach(bitmap, false, backdrop, true);
+//
+//  CFX_Matrix matrix;
+//  if (pObject2Device)
+//    matrix = *pObject2Device;
+//  matrix.Translate(-rect.left, -rect.top);
+//  if (!bitmap_device.GetDeviceDriver()->DrawPath(path, &matrix, pGraphState,
+//                                                 fill_color, stroke_color,
+//                                                 fill_options, blend_type)) {
+//    return false;
+//  }
+//#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+//  bitmap_device.GetDeviceDriver()->Flush();
+//#endif
+//  FX_RECT src_rect(0, 0, rect.Width(), rect.Height());
+//  return m_pDeviceDriver->SetDIBits(bitmap, 0, src_rect, rect.left, rect.top,
+//                                    BlendMode::kNormal);
 }
 
 bool CFX_RenderDevice::FillRectWithBlend(const FX_RECT& rect,

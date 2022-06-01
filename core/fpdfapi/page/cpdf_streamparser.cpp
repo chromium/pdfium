@@ -24,7 +24,7 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
-#include "core/fxcodec/jpeg/jpegmodule.h"
+//#include "core/fxcodec/jpeg/jpegmodule.h"
 #include "core/fxcodec/scanlinedecoder.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
@@ -96,10 +96,10 @@ uint32_t DecodeInlineStream(pdfium::span<const uint8_t> src_span,
                             &ignored_size);
   }
   if (decoder == "DCTDecode") {
-    std::unique_ptr<ScanlineDecoder> pDecoder = JpegModule::CreateDecoder(
-        src_span, width, height, 0,
-        !pParam || pParam->GetIntegerFor("ColorTransform", 1));
-    return DecodeAllScanlines(std::move(pDecoder));
+    //std::unique_ptr<ScanlineDecoder> pDecoder = JpegModule::CreateDecoder(
+    //    src_span, width, height, 0,
+    //    !pParam || pParam->GetIntegerFor("ColorTransform", 1));
+    return DecodeAllScanlines(nullptr /* std::move(pDecoder)*/);
   }
   if (decoder == "CCITTFaxDecode") {
     std::unique_ptr<ScanlineDecoder> pDecoder =

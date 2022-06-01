@@ -15,7 +15,7 @@
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
 #include "core/fpdfapi/render/cpdf_textrenderer.h"
-#include "core/fxge/cfx_defaultrenderdevice.h"
+//#include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
@@ -33,12 +33,12 @@ void CPDF_RenderContext::GetBackground(const RetainPtr<CFX_DIBitmap>& pBuffer,
                                        const CPDF_PageObject* pObj,
                                        const CPDF_RenderOptions* pOptions,
                                        const CFX_Matrix& mtFinal) {
-  CFX_DefaultRenderDevice device;
-  device.Attach(pBuffer, false, nullptr, false);
+  //CFX_DefaultRenderDevice device;
+  //device.Attach(pBuffer, false, nullptr, false);
 
-  device.FillRect(FX_RECT(0, 0, device.GetWidth(), device.GetHeight()),
-                  0xffffffff);
-  Render(&device, pObj, pOptions, &mtFinal);
+  //device.FillRect(FX_RECT(0, 0, device.GetWidth(), device.GetHeight()),
+  //                0xffffffff);
+  //Render(&device, pObj, pOptions, &mtFinal);
 }
 
 void CPDF_RenderContext::AppendLayer(CPDF_PageObjectHolder* pObjectHolder,

@@ -16,7 +16,7 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
-#include "core/fxcodec/jbig2/JBig2_DocumentContext.h"
+//#include "core/fxcodec/jbig2/JBig2_DocumentContext.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/scoped_set_insertion.h"
 #include "core/fxcrt/stl_util.h"
@@ -307,11 +307,11 @@ void CPDF_Document::SetPageObjNum(int iPage, uint32_t objNum) {
   m_PageList[iPage] = objNum;
 }
 
-JBig2_DocumentContext* CPDF_Document::GetOrCreateCodecContext() {
-  if (!m_pCodecContext)
-    m_pCodecContext = std::make_unique<JBig2_DocumentContext>();
-  return m_pCodecContext.get();
-}
+//JBig2_DocumentContext* CPDF_Document::GetOrCreateCodecContext() {
+//  if (!m_pCodecContext)
+//    m_pCodecContext = std::make_unique<JBig2_DocumentContext>();
+//  return m_pCodecContext.get();
+//}
 
 CPDF_Stream* CPDF_Document::CreateModifiedAPStream() {
   auto* stream = NewIndirect<CPDF_Stream>();

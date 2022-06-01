@@ -210,53 +210,53 @@ FPDF_EXPORT FPDF_BITMAP FPDF_CALLCONV
 FPDFImageObj_GetRenderedBitmap(FPDF_DOCUMENT document,
                                FPDF_PAGE page,
                                FPDF_PAGEOBJECT image_object) {
-  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
-  if (!doc)
+  //CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  //if (!doc)
     return nullptr;
 
-  CPDF_Page* optional_page = CPDFPageFromFPDFPage(page);
-  if (optional_page && optional_page->GetDocument() != doc)
-    return nullptr;
+  //CPDF_Page* optional_page = CPDFPageFromFPDFPage(page);
+  //if (optional_page && optional_page->GetDocument() != doc)
+  //  return nullptr;
 
-  CPDF_ImageObject* image = CPDFImageObjectFromFPDFPageObject(image_object);
-  if (!image)
-    return nullptr;
+  //CPDF_ImageObject* image = CPDFImageObjectFromFPDFPageObject(image_object);
+  //if (!image)
+  //  return nullptr;
 
-  // Create |result_bitmap|.
-  const CFX_Matrix& image_matrix = image->matrix();
-  int output_width = image_matrix.a;
-  int output_height = image_matrix.d;
-  auto result_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!result_bitmap->Create(output_width, output_height, FXDIB_Format::kArgb))
-    return nullptr;
+  //// Create |result_bitmap|.
+  //const CFX_Matrix& image_matrix = image->matrix();
+  //int output_width = image_matrix.a;
+  //int output_height = image_matrix.d;
+  //auto result_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+  //if (!result_bitmap->Create(output_width, output_height, FXDIB_Format::kArgb))
+  //  return nullptr;
 
-  // Set up all the rendering code.
-  CPDF_Dictionary* page_resources =
-      optional_page ? optional_page->GetPageResources() : nullptr;
-  CPDF_RenderContext context(doc, page_resources, /*pPageCache=*/nullptr);
-  CFX_DefaultRenderDevice device;
-  device.Attach(result_bitmap, /*bRgbByteOrder=*/false,
-                /*pBackdropBitmap=*/nullptr, /*bGroupKnockout=*/false);
-  CPDF_RenderStatus status(&context, &device);
-  CPDF_ImageRenderer renderer;
+  //// Set up all the rendering code.
+  //CPDF_Dictionary* page_resources =
+  //    optional_page ? optional_page->GetPageResources() : nullptr;
+  //CPDF_RenderContext context(doc, page_resources, /*pPageCache=*/nullptr);
+  //CFX_DefaultRenderDevice device;
+  //device.Attach(result_bitmap, /*bRgbByteOrder=*/false,
+  //              /*pBackdropBitmap=*/nullptr, /*bGroupKnockout=*/false);
+  //CPDF_RenderStatus status(&context, &device);
+  //CPDF_ImageRenderer renderer;
 
-  // Need to first flip the image, as expected by |renderer|.
-  CFX_Matrix render_matrix(1, 0, 0, -1, 0, output_height);
+  //// Need to first flip the image, as expected by |renderer|.
+  //CFX_Matrix render_matrix(1, 0, 0, -1, 0, output_height);
 
-  // Then take |image_matrix|'s offset into account.
-  render_matrix.Translate(-image_matrix.e, image_matrix.f);
+  //// Then take |image_matrix|'s offset into account.
+  //render_matrix.Translate(-image_matrix.e, image_matrix.f);
 
-  // Do the actual rendering.
-  bool should_continue = renderer.Start(&status, image, render_matrix,
-                                        /*bStdCS=*/false, BlendMode::kNormal);
-  while (should_continue)
-    should_continue = renderer.Continue(/*pPause=*/nullptr);
+  //// Do the actual rendering.
+  //bool should_continue = renderer.Start(&status, image, render_matrix,
+  //                                      /*bStdCS=*/false, BlendMode::kNormal);
+  //while (should_continue)
+  //  should_continue = renderer.Continue(/*pPause=*/nullptr);
 
-  if (!renderer.GetResult())
-    return nullptr;
+  //if (!renderer.GetResult())
+  //  return nullptr;
 
-  // Caller takes ownership.
-  return FPDFBitmapFromCFXDIBitmap(result_bitmap.Leak());
+  //// Caller takes ownership.
+  //return FPDFBitmapFromCFXDIBitmap(result_bitmap.Leak());
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV

@@ -30,7 +30,7 @@
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/maybe_owned.h"
-#include "core/fxge/cfx_defaultrenderdevice.h"
+//#include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_path.h"
 #include "core/fxge/dib/cfx_dibbase.h"
@@ -74,91 +74,91 @@ bool CPDF_ImageRenderer::StartLoadDIBBase() {
 }
 
 bool CPDF_ImageRenderer::StartRenderDIBBase() {
-  if (!m_Loader.GetBitmap())
+  //if (!m_Loader.GetBitmap())
     return false;
 
-  CPDF_GeneralState& state = m_pImageObject->m_GeneralState;
-  m_BitmapAlpha = FXSYS_roundf(255 * state.GetFillAlpha());
-  m_pDIBBase = m_Loader.GetBitmap();
-  if (GetRenderOptions().ColorModeIs(CPDF_RenderOptions::kAlpha) &&
-      !m_Loader.GetMask()) {
-    return StartBitmapAlpha();
-  }
-  if (state.GetTR()) {
-    if (!state.GetTransferFunc())
-      state.SetTransferFunc(m_pRenderStatus->GetTransferFunc(state.GetTR()));
+  //CPDF_GeneralState& state = m_pImageObject->m_GeneralState;
+  //m_BitmapAlpha = FXSYS_roundf(255 * state.GetFillAlpha());
+  //m_pDIBBase = m_Loader.GetBitmap();
+  //if (GetRenderOptions().ColorModeIs(CPDF_RenderOptions::kAlpha) &&
+  //    !m_Loader.GetMask()) {
+  //  return StartBitmapAlpha();
+  //}
+  //if (state.GetTR()) {
+  //  if (!state.GetTransferFunc())
+  //    state.SetTransferFunc(m_pRenderStatus->GetTransferFunc(state.GetTR()));
 
-    if (state.GetTransferFunc() && !state.GetTransferFunc()->GetIdentity())
-      m_pDIBBase = m_Loader.TranslateImage(state.GetTransferFunc());
-  }
-  m_FillArgb = 0;
-  m_bPatternColor = false;
-  m_pPattern = nullptr;
-  if (m_pDIBBase->IsMaskFormat()) {
-    const CPDF_Color* pColor = m_pImageObject->m_ColorState.GetFillColor();
-    if (pColor && pColor->IsPattern()) {
-      m_pPattern.Reset(pColor->GetPattern());
-      if (m_pPattern)
-        m_bPatternColor = true;
-    }
-    m_FillArgb = m_pRenderStatus->GetFillArgb(m_pImageObject.Get());
-  } else if (GetRenderOptions().ColorModeIs(CPDF_RenderOptions::kGray)) {
-    RetainPtr<CFX_DIBitmap> pClone = m_pDIBBase->Realize();
-    if (!pClone)
-      return false;
+  //  if (state.GetTransferFunc() && !state.GetTransferFunc()->GetIdentity())
+  //    m_pDIBBase = m_Loader.TranslateImage(state.GetTransferFunc());
+  //}
+  //m_FillArgb = 0;
+  //m_bPatternColor = false;
+  //m_pPattern = nullptr;
+  //if (m_pDIBBase->IsMaskFormat()) {
+  //  const CPDF_Color* pColor = m_pImageObject->m_ColorState.GetFillColor();
+  //  if (pColor && pColor->IsPattern()) {
+  //    m_pPattern.Reset(pColor->GetPattern());
+  //    if (m_pPattern)
+  //      m_bPatternColor = true;
+  //  }
+  //  m_FillArgb = m_pRenderStatus->GetFillArgb(m_pImageObject.Get());
+  //} else if (GetRenderOptions().ColorModeIs(CPDF_RenderOptions::kGray)) {
+  //  RetainPtr<CFX_DIBitmap> pClone = m_pDIBBase->Realize();
+  //  if (!pClone)
+  //    return false;
 
-    pClone->ConvertColorScale(0xffffff, 0);
-    m_pDIBBase = pClone;
-  }
-  m_ResampleOptions = FXDIB_ResampleOptions();
-  if (GetRenderOptions().GetOptions().bForceHalftone)
-    m_ResampleOptions.bHalftone = true;
+  //  pClone->ConvertColorScale(0xffffff, 0);
+  //  m_pDIBBase = pClone;
+  //}
+  //m_ResampleOptions = FXDIB_ResampleOptions();
+  //if (GetRenderOptions().GetOptions().bForceHalftone)
+  //  m_ResampleOptions.bHalftone = true;
 
-  if (m_pRenderStatus->GetRenderDevice()->GetDeviceType() !=
-      DeviceType::kDisplay) {
-    HandleFilters();
-  }
+  //if (m_pRenderStatus->GetRenderDevice()->GetDeviceType() !=
+  //    DeviceType::kDisplay) {
+  //  HandleFilters();
+  //}
 
-  if (GetRenderOptions().GetOptions().bNoImageSmooth)
-    m_ResampleOptions.bNoSmoothing = true;
-  else if (m_pImageObject->GetImage()->IsInterpol())
-    m_ResampleOptions.bInterpolateBilinear = true;
+  //if (GetRenderOptions().GetOptions().bNoImageSmooth)
+  //  m_ResampleOptions.bNoSmoothing = true;
+  //else if (m_pImageObject->GetImage()->IsInterpol())
+  //  m_ResampleOptions.bInterpolateBilinear = true;
 
-  if (m_Loader.GetMask())
-    return DrawMaskedImage();
+  //if (m_Loader.GetMask())
+  //  return DrawMaskedImage();
 
-  if (m_bPatternColor)
-    return DrawPatternImage();
+  //if (m_bPatternColor)
+  //  return DrawPatternImage();
 
-  if (m_BitmapAlpha != 255 || !state.HasRef() || !state.GetFillOP() ||
-      state.GetOPMode() != 0 || state.GetBlendType() != BlendMode::kNormal ||
-      state.GetStrokeAlpha() != 1.0f || state.GetFillAlpha() != 1.0f) {
-    return StartDIBBase();
-  }
-  CPDF_Document* pDocument = nullptr;
-  CPDF_Page* pPage = nullptr;
-  if (auto* pPageCache = m_pRenderStatus->GetContext()->GetPageCache()) {
-    pPage = pPageCache->GetPage();
-    pDocument = pPage->GetDocument();
-  } else {
-    pDocument = m_pImageObject->GetImage()->GetDocument();
-  }
-  CPDF_Dictionary* pPageResources = pPage ? pPage->GetPageResources() : nullptr;
-  CPDF_Object* pCSObj =
-      m_pImageObject->GetImage()->GetStream()->GetDict()->GetDirectObjectFor(
-          "ColorSpace");
-  auto* pData = CPDF_DocPageData::FromDocument(pDocument);
-  RetainPtr<CPDF_ColorSpace> pColorSpace =
-      pData->GetColorSpace(pCSObj, pPageResources);
-  if (pColorSpace) {
-    CPDF_ColorSpace::Family format = pColorSpace->GetFamily();
-    if (format == CPDF_ColorSpace::Family::kDeviceCMYK ||
-        format == CPDF_ColorSpace::Family::kSeparation ||
-        format == CPDF_ColorSpace::Family::kDeviceN) {
-      m_BlendType = BlendMode::kDarken;
-    }
-  }
-  return StartDIBBase();
+  //if (m_BitmapAlpha != 255 || !state.HasRef() || !state.GetFillOP() ||
+  //    state.GetOPMode() != 0 || state.GetBlendType() != BlendMode::kNormal ||
+  //    state.GetStrokeAlpha() != 1.0f || state.GetFillAlpha() != 1.0f) {
+  //  return StartDIBBase();
+  //}
+  //CPDF_Document* pDocument = nullptr;
+  //CPDF_Page* pPage = nullptr;
+  //if (auto* pPageCache = m_pRenderStatus->GetContext()->GetPageCache()) {
+  //  pPage = pPageCache->GetPage();
+  //  pDocument = pPage->GetDocument();
+  //} else {
+  //  pDocument = m_pImageObject->GetImage()->GetDocument();
+  //}
+  //CPDF_Dictionary* pPageResources = pPage ? pPage->GetPageResources() : nullptr;
+  //CPDF_Object* pCSObj =
+  //    m_pImageObject->GetImage()->GetStream()->GetDict()->GetDirectObjectFor(
+  //        "ColorSpace");
+  //auto* pData = CPDF_DocPageData::FromDocument(pDocument);
+  //RetainPtr<CPDF_ColorSpace> pColorSpace =
+  //    pData->GetColorSpace(pCSObj, pPageResources);
+  //if (pColorSpace) {
+  //  CPDF_ColorSpace::Family format = pColorSpace->GetFamily();
+  //  if (format == CPDF_ColorSpace::Family::kDeviceCMYK ||
+  //      format == CPDF_ColorSpace::Family::kSeparation ||
+  //      format == CPDF_ColorSpace::Family::kDeviceN) {
+  //    m_BlendType = BlendMode::kDarken;
+  //  }
+  //}
+  //return StartDIBBase();
 }
 
 bool CPDF_ImageRenderer::Start(CPDF_RenderStatus* pStatus,
@@ -201,14 +201,15 @@ bool CPDF_ImageRenderer::Start(CPDF_RenderStatus* pStatus,
 }
 
 bool CPDF_ImageRenderer::NotDrawing() const {
-  return m_pRenderStatus->IsPrint() &&
-         !(m_pRenderStatus->GetRenderDevice()->GetRenderCaps() &
-           FXRC_BLEND_MODE);
+  return true;
+  //return m_pRenderStatus->IsPrint() &&
+  //       !(m_pRenderStatus->GetRenderDevice()->GetRenderCaps() &
+  //         FXRC_BLEND_MODE);
 }
 
 FX_RECT CPDF_ImageRenderer::GetDrawRect() const {
   FX_RECT rect = m_ImageMatrix.GetUnitRect().GetOuterRect();
-  rect.Intersect(m_pRenderStatus->GetRenderDevice()->GetClipBox());
+  //rect.Intersect(m_pRenderStatus->GetRenderDevice()->GetClipBox());
   return rect;
 }
 
@@ -224,42 +225,42 @@ void CPDF_ImageRenderer::CalculateDrawImage(
     const RetainPtr<CFX_DIBBase>& pDIBBase,
     const CFX_Matrix& mtNewMatrix,
     const FX_RECT& rect) const {
-  CPDF_RenderStatus bitmap_render(m_pRenderStatus->GetContext(),
-                                  pBitmapDevice2);
-  bitmap_render.SetDropObjects(m_pRenderStatus->GetDropObjects());
-  bitmap_render.SetStdCS(true);
-  bitmap_render.Initialize(nullptr, nullptr);
+  //CPDF_RenderStatus bitmap_render(m_pRenderStatus->GetContext(),
+  //                                pBitmapDevice2);
+  //bitmap_render.SetDropObjects(m_pRenderStatus->GetDropObjects());
+  //bitmap_render.SetStdCS(true);
+  //bitmap_render.Initialize(nullptr, nullptr);
 
-  CPDF_ImageRenderer image_render;
-  if (image_render.Start(&bitmap_render, pDIBBase, 0xffffffff, mtNewMatrix,
-                         m_ResampleOptions, true)) {
-    image_render.Continue(nullptr);
-  }
-  if (m_Loader.MatteColor() == 0xffffffff)
-    return;
-  int matte_r = FXARGB_R(m_Loader.MatteColor());
-  int matte_g = FXARGB_G(m_Loader.MatteColor());
-  int matte_b = FXARGB_B(m_Loader.MatteColor());
-  for (int row = 0; row < rect.Height(); row++) {
-    uint8_t* dest_scan =
-        pBitmapDevice1->GetBitmap()->GetWritableScanline(row).data();
-    const uint8_t* mask_scan =
-        pBitmapDevice2->GetBitmap()->GetScanline(row).data();
-    for (int col = 0; col < rect.Width(); col++) {
-      int alpha = *mask_scan++;
-      if (!alpha) {
-        dest_scan += 4;
-        continue;
-      }
-      int orig = (*dest_scan - matte_b) * 255 / alpha + matte_b;
-      *dest_scan++ = pdfium::clamp(orig, 0, 255);
-      orig = (*dest_scan - matte_g) * 255 / alpha + matte_g;
-      *dest_scan++ = pdfium::clamp(orig, 0, 255);
-      orig = (*dest_scan - matte_r) * 255 / alpha + matte_r;
-      *dest_scan++ = pdfium::clamp(orig, 0, 255);
-      dest_scan++;
-    }
-  }
+  //CPDF_ImageRenderer image_render;
+  //if (image_render.Start(&bitmap_render, pDIBBase, 0xffffffff, mtNewMatrix,
+  //                       m_ResampleOptions, true)) {
+  //  image_render.Continue(nullptr);
+  //}
+  //if (m_Loader.MatteColor() == 0xffffffff)
+  //  return;
+  //int matte_r = FXARGB_R(m_Loader.MatteColor());
+  //int matte_g = FXARGB_G(m_Loader.MatteColor());
+  //int matte_b = FXARGB_B(m_Loader.MatteColor());
+  //for (int row = 0; row < rect.Height(); row++) {
+  //  uint8_t* dest_scan =
+  //      pBitmapDevice1->GetBitmap()->GetWritableScanline(row).data();
+  //  const uint8_t* mask_scan =
+  //      pBitmapDevice2->GetBitmap()->GetScanline(row).data();
+  //  for (int col = 0; col < rect.Width(); col++) {
+  //    int alpha = *mask_scan++;
+  //    if (!alpha) {
+  //      dest_scan += 4;
+  //      continue;
+  //    }
+  //    int orig = (*dest_scan - matte_b) * 255 / alpha + matte_b;
+  //    *dest_scan++ = pdfium::clamp(orig, 0, 255);
+  //    orig = (*dest_scan - matte_g) * 255 / alpha + matte_g;
+  //    *dest_scan++ = pdfium::clamp(orig, 0, 255);
+  //    orig = (*dest_scan - matte_r) * 255 / alpha + matte_r;
+  //    *dest_scan++ = pdfium::clamp(orig, 0, 255);
+  //    dest_scan++;
+  //  }
+  //}
 }
 
 const CPDF_RenderOptions& CPDF_ImageRenderer::GetRenderOptions() const {
@@ -267,272 +268,272 @@ const CPDF_RenderOptions& CPDF_ImageRenderer::GetRenderOptions() const {
 }
 
 bool CPDF_ImageRenderer::DrawPatternImage() {
-  if (NotDrawing()) {
-    m_Result = false;
+  //if (NotDrawing()) {
+  //  m_Result = false;
     return false;
-  }
+  //}
 
-  FX_RECT rect = GetDrawRect();
-  if (rect.IsEmpty())
-    return false;
+  //FX_RECT rect = GetDrawRect();
+  //if (rect.IsEmpty())
+  //  return false;
 
-  CFX_Matrix new_matrix = GetDrawMatrix(rect);
-  CFX_DefaultRenderDevice bitmap_device1;
-  if (!bitmap_device1.Create(rect.Width(), rect.Height(), FXDIB_Format::kRgb32,
-                             nullptr)) {
-    return true;
-  }
-  bitmap_device1.GetBitmap()->Clear(0xffffff);
+  //CFX_Matrix new_matrix = GetDrawMatrix(rect);
+  //CFX_DefaultRenderDevice bitmap_device1;
+  //if (!bitmap_device1.Create(rect.Width(), rect.Height(), FXDIB_Format::kRgb32,
+  //                           nullptr)) {
+  //  return true;
+  //}
+  //bitmap_device1.GetBitmap()->Clear(0xffffff);
 
-  CPDF_RenderStatus bitmap_render(m_pRenderStatus->GetContext(),
-                                  &bitmap_device1);
-  bitmap_render.SetOptions(GetRenderOptions());
-  bitmap_render.SetDropObjects(m_pRenderStatus->GetDropObjects());
-  bitmap_render.SetStdCS(true);
-  bitmap_render.Initialize(nullptr, nullptr);
+  //CPDF_RenderStatus bitmap_render(m_pRenderStatus->GetContext(),
+  //                                &bitmap_device1);
+  //bitmap_render.SetOptions(GetRenderOptions());
+  //bitmap_render.SetDropObjects(m_pRenderStatus->GetDropObjects());
+  //bitmap_render.SetStdCS(true);
+  //bitmap_render.Initialize(nullptr, nullptr);
 
-  CFX_Matrix patternDevice = m_mtObj2Device;
-  patternDevice.Translate(static_cast<float>(-rect.left),
-                          static_cast<float>(-rect.top));
-  if (CPDF_TilingPattern* pTilingPattern = m_pPattern->AsTilingPattern()) {
-    bitmap_render.DrawTilingPattern(pTilingPattern, m_pImageObject.Get(),
-                                    patternDevice, false);
-  } else if (CPDF_ShadingPattern* pShadingPattern =
-                 m_pPattern->AsShadingPattern()) {
-    bitmap_render.DrawShadingPattern(pShadingPattern, m_pImageObject.Get(),
-                                     patternDevice, false);
-  }
+  //CFX_Matrix patternDevice = m_mtObj2Device;
+  //patternDevice.Translate(static_cast<float>(-rect.left),
+  //                        static_cast<float>(-rect.top));
+  //if (CPDF_TilingPattern* pTilingPattern = m_pPattern->AsTilingPattern()) {
+  //  bitmap_render.DrawTilingPattern(pTilingPattern, m_pImageObject.Get(),
+  //                                  patternDevice, false);
+  //} else if (CPDF_ShadingPattern* pShadingPattern =
+  //               m_pPattern->AsShadingPattern()) {
+  //  bitmap_render.DrawShadingPattern(pShadingPattern, m_pImageObject.Get(),
+  //                                   patternDevice, false);
+  //}
 
-  CFX_DefaultRenderDevice bitmap_device2;
-  if (!bitmap_device2.Create(rect.Width(), rect.Height(),
-                             FXDIB_Format::k8bppRgb, nullptr)) {
-    return true;
-  }
-  bitmap_device2.GetBitmap()->Clear(0);
-  CalculateDrawImage(&bitmap_device1, &bitmap_device2, m_pDIBBase, new_matrix,
-                     rect);
-  bitmap_device2.GetBitmap()->ConvertFormat(FXDIB_Format::k8bppMask);
-  bitmap_device1.GetBitmap()->MultiplyAlpha(bitmap_device2.GetBitmap());
-  bitmap_device1.GetBitmap()->MultiplyAlpha(255);
-  m_pRenderStatus->GetRenderDevice()->SetDIBitsWithBlend(
-      bitmap_device1.GetBitmap(), rect.left, rect.top, m_BlendType);
-  return false;
+  //CFX_DefaultRenderDevice bitmap_device2;
+  //if (!bitmap_device2.Create(rect.Width(), rect.Height(),
+  //                           FXDIB_Format::k8bppRgb, nullptr)) {
+  //  return true;
+  //}
+  //bitmap_device2.GetBitmap()->Clear(0);
+  //CalculateDrawImage(&bitmap_device1, &bitmap_device2, m_pDIBBase, new_matrix,
+  //                   rect);
+  //bitmap_device2.GetBitmap()->ConvertFormat(FXDIB_Format::k8bppMask);
+  //bitmap_device1.GetBitmap()->MultiplyAlpha(bitmap_device2.GetBitmap());
+  //bitmap_device1.GetBitmap()->MultiplyAlpha(255);
+  //m_pRenderStatus->GetRenderDevice()->SetDIBitsWithBlend(
+  //    bitmap_device1.GetBitmap(), rect.left, rect.top, m_BlendType);
+  //return false;
 }
 
 bool CPDF_ImageRenderer::DrawMaskedImage() {
-  if (NotDrawing()) {
-    m_Result = false;
-    return false;
-  }
-
-  FX_RECT rect = GetDrawRect();
-  if (rect.IsEmpty())
-    return false;
-
-  CFX_Matrix new_matrix = GetDrawMatrix(rect);
-  CFX_DefaultRenderDevice bitmap_device1;
-  if (!bitmap_device1.Create(rect.Width(), rect.Height(), FXDIB_Format::kRgb32,
-                             nullptr)) {
-    return true;
-  }
-#if defined(_SKIA_SUPPORT_)
-  bitmap_device1.Clear(0xffffff);
-#else
-  bitmap_device1.GetBitmap()->Clear(0xffffff);
-#endif
-  CPDF_RenderStatus bitmap_render(m_pRenderStatus->GetContext(),
-                                  &bitmap_device1);
-  bitmap_render.SetDropObjects(m_pRenderStatus->GetDropObjects());
-  bitmap_render.SetStdCS(true);
-  bitmap_render.Initialize(nullptr, nullptr);
-  CPDF_ImageRenderer image_render;
-  if (image_render.Start(&bitmap_render, m_pDIBBase, 0, new_matrix,
-                         m_ResampleOptions, true)) {
-    image_render.Continue(nullptr);
-  }
-  CFX_DefaultRenderDevice bitmap_device2;
-  if (!bitmap_device2.Create(rect.Width(), rect.Height(),
-                             FXDIB_Format::k8bppRgb, nullptr)) {
-    return true;
-  }
-#if defined(_SKIA_SUPPORT_)
-  bitmap_device2.Clear(0);
-#else
-  bitmap_device2.GetBitmap()->Clear(0);
-#endif
-  CalculateDrawImage(&bitmap_device1, &bitmap_device2, m_Loader.GetMask(),
-                     new_matrix, rect);
-#if defined(_SKIA_SUPPORT_)
-  m_pRenderStatus->GetRenderDevice()->SetBitsWithMask(
-      bitmap_device1.GetBitmap(), bitmap_device2.GetBitmap(), rect.left,
-      rect.top, m_BitmapAlpha, m_BlendType);
-#else
-  bitmap_device2.GetBitmap()->ConvertFormat(FXDIB_Format::k8bppMask);
-  bitmap_device1.GetBitmap()->MultiplyAlpha(bitmap_device2.GetBitmap());
-  if (m_BitmapAlpha < 255)
-    bitmap_device1.GetBitmap()->MultiplyAlpha(m_BitmapAlpha);
-  m_pRenderStatus->GetRenderDevice()->SetDIBitsWithBlend(
-      bitmap_device1.GetBitmap(), rect.left, rect.top, m_BlendType);
-#endif  //  defined(_SKIA_SUPPORT_)
+//  if (NotDrawing()) {
+//    m_Result = false;
+//    return false;
+//  }
+//
+//  FX_RECT rect = GetDrawRect();
+//  if (rect.IsEmpty())
+//    return false;
+//
+//  CFX_Matrix new_matrix = GetDrawMatrix(rect);
+//  CFX_DefaultRenderDevice bitmap_device1;
+//  if (!bitmap_device1.Create(rect.Width(), rect.Height(), FXDIB_Format::kRgb32,
+//                             nullptr)) {
+//    return true;
+//  }
+//#if defined(_SKIA_SUPPORT_)
+//  bitmap_device1.Clear(0xffffff);
+//#else
+//  bitmap_device1.GetBitmap()->Clear(0xffffff);
+//#endif
+//  CPDF_RenderStatus bitmap_render(m_pRenderStatus->GetContext(),
+//                                  &bitmap_device1);
+//  bitmap_render.SetDropObjects(m_pRenderStatus->GetDropObjects());
+//  bitmap_render.SetStdCS(true);
+//  bitmap_render.Initialize(nullptr, nullptr);
+//  CPDF_ImageRenderer image_render;
+//  if (image_render.Start(&bitmap_render, m_pDIBBase, 0, new_matrix,
+//                         m_ResampleOptions, true)) {
+//    image_render.Continue(nullptr);
+//  }
+//  CFX_DefaultRenderDevice bitmap_device2;
+//  if (!bitmap_device2.Create(rect.Width(), rect.Height(),
+//                             FXDIB_Format::k8bppRgb, nullptr)) {
+//    return true;
+//  }
+//#if defined(_SKIA_SUPPORT_)
+//  bitmap_device2.Clear(0);
+//#else
+//  bitmap_device2.GetBitmap()->Clear(0);
+//#endif
+//  CalculateDrawImage(&bitmap_device1, &bitmap_device2, m_Loader.GetMask(),
+//                     new_matrix, rect);
+//#if defined(_SKIA_SUPPORT_)
+//  m_pRenderStatus->GetRenderDevice()->SetBitsWithMask(
+//      bitmap_device1.GetBitmap(), bitmap_device2.GetBitmap(), rect.left,
+//      rect.top, m_BitmapAlpha, m_BlendType);
+//#else
+//  bitmap_device2.GetBitmap()->ConvertFormat(FXDIB_Format::k8bppMask);
+//  bitmap_device1.GetBitmap()->MultiplyAlpha(bitmap_device2.GetBitmap());
+//  if (m_BitmapAlpha < 255)
+//    bitmap_device1.GetBitmap()->MultiplyAlpha(m_BitmapAlpha);
+//  m_pRenderStatus->GetRenderDevice()->SetDIBitsWithBlend(
+//      bitmap_device1.GetBitmap(), rect.left, rect.top, m_BlendType);
+//#endif  //  defined(_SKIA_SUPPORT_)
   return false;
 }
 
 bool CPDF_ImageRenderer::StartDIBBase() {
-  if (m_pDIBBase->GetBPP() > 1) {
-    FX_SAFE_SIZE_T image_size = m_pDIBBase->GetBPP();
-    image_size /= 8;
-    image_size *= m_pDIBBase->GetWidth();
-    image_size *= m_pDIBBase->GetHeight();
-    if (!image_size.IsValid())
-      return false;
-
-    if (image_size.ValueOrDie() > kHugeImageSize &&
-        !m_ResampleOptions.bHalftone) {
-      m_ResampleOptions.bInterpolateBilinear = true;
-    }
-  }
-#if defined(_SKIA_SUPPORT_)
-  RetainPtr<CFX_DIBitmap> premultiplied = m_pDIBBase->Realize();
-  if (m_pDIBBase->IsAlphaFormat())
-    CFX_SkiaDeviceDriver::PreMultiply(premultiplied);
-  if (m_pRenderStatus->GetRenderDevice()->StartDIBitsWithBlend(
-          premultiplied, m_BitmapAlpha, m_FillArgb, m_ImageMatrix,
-          m_ResampleOptions, &m_DeviceHandle, m_BlendType)) {
-    if (m_DeviceHandle) {
-      m_Mode = Mode::kBlend;
-      return true;
-    }
-    return false;
-  }
-#else
-  if (m_pRenderStatus->GetRenderDevice()->StartDIBitsWithBlend(
-          m_pDIBBase, m_BitmapAlpha, m_FillArgb, m_ImageMatrix,
-          m_ResampleOptions, &m_DeviceHandle, m_BlendType)) {
-    if (m_DeviceHandle) {
-      m_Mode = Mode::kBlend;
-      return true;
-    }
-    return false;
-  }
-#endif  // defined(_SKIA_SUPPORT_)
-
-  if ((fabs(m_ImageMatrix.b) >= 0.5f || m_ImageMatrix.a == 0) ||
-      (fabs(m_ImageMatrix.c) >= 0.5f || m_ImageMatrix.d == 0)) {
-    if (NotDrawing()) {
-      m_Result = false;
-      return false;
-    }
-
-    absl::optional<FX_RECT> image_rect = GetUnitRect();
-    if (!image_rect.has_value())
-      return false;
-
-    FX_RECT clip_box = m_pRenderStatus->GetRenderDevice()->GetClipBox();
-    clip_box.Intersect(image_rect.value());
-    m_Mode = Mode::kTransform;
-    m_pTransformer = std::make_unique<CFX_ImageTransformer>(
-        m_pDIBBase, m_ImageMatrix, m_ResampleOptions, &clip_box);
-    return true;
-  }
-
-  absl::optional<FX_RECT> image_rect = GetUnitRect();
-  if (!image_rect.has_value())
-    return false;
-
-  int dest_left;
-  int dest_top;
-  int dest_width;
-  int dest_height;
-  if (!GetDimensionsFromUnitRect(image_rect.value(), &dest_left, &dest_top,
-                                 &dest_width, &dest_height)) {
-    return false;
-  }
-
-  if (m_pDIBBase->IsOpaqueImage() && m_BitmapAlpha == 255) {
-    if (m_pRenderStatus->GetRenderDevice()->StretchDIBitsWithFlagsAndBlend(
-            m_pDIBBase, dest_left, dest_top, dest_width, dest_height,
-            m_ResampleOptions, m_BlendType)) {
-      return false;
-    }
-  }
-  if (m_pDIBBase->IsMaskFormat()) {
-    if (m_BitmapAlpha != 255)
-      m_FillArgb = FXARGB_MUL_ALPHA(m_FillArgb, m_BitmapAlpha);
-    if (m_pRenderStatus->GetRenderDevice()->StretchBitMaskWithFlags(
-            m_pDIBBase, dest_left, dest_top, dest_width, dest_height,
-            m_FillArgb, m_ResampleOptions)) {
-      return false;
-    }
-  }
-  if (NotDrawing()) {
-    m_Result = false;
-    return true;
-  }
-
-  FX_RECT clip_box = m_pRenderStatus->GetRenderDevice()->GetClipBox();
-  FX_RECT dest_rect = clip_box;
-  dest_rect.Intersect(image_rect.value());
-  FX_RECT dest_clip(
-      dest_rect.left - image_rect->left, dest_rect.top - image_rect->top,
-      dest_rect.right - image_rect->left, dest_rect.bottom - image_rect->top);
-  RetainPtr<CFX_DIBitmap> pStretched = m_pDIBBase->StretchTo(
-      dest_width, dest_height, m_ResampleOptions, &dest_clip);
-  if (pStretched) {
-    m_pRenderStatus->CompositeDIBitmap(pStretched, dest_rect.left,
-                                       dest_rect.top, m_FillArgb, m_BitmapAlpha,
-                                       m_BlendType, CPDF_Transparency());
-  }
+//  if (m_pDIBBase->GetBPP() > 1) {
+//    FX_SAFE_SIZE_T image_size = m_pDIBBase->GetBPP();
+//    image_size /= 8;
+//    image_size *= m_pDIBBase->GetWidth();
+//    image_size *= m_pDIBBase->GetHeight();
+//    if (!image_size.IsValid())
+//      return false;
+//
+//    if (image_size.ValueOrDie() > kHugeImageSize &&
+//        !m_ResampleOptions.bHalftone) {
+//      m_ResampleOptions.bInterpolateBilinear = true;
+//    }
+//  }
+//#if defined(_SKIA_SUPPORT_)
+//  RetainPtr<CFX_DIBitmap> premultiplied = m_pDIBBase->Realize();
+//  if (m_pDIBBase->IsAlphaFormat())
+//    CFX_SkiaDeviceDriver::PreMultiply(premultiplied);
+//  if (m_pRenderStatus->GetRenderDevice()->StartDIBitsWithBlend(
+//          premultiplied, m_BitmapAlpha, m_FillArgb, m_ImageMatrix,
+//          m_ResampleOptions, &m_DeviceHandle, m_BlendType)) {
+//    if (m_DeviceHandle) {
+//      m_Mode = Mode::kBlend;
+//      return true;
+//    }
+//    return false;
+//  }
+//#else
+//  if (m_pRenderStatus->GetRenderDevice()->StartDIBitsWithBlend(
+//          m_pDIBBase, m_BitmapAlpha, m_FillArgb, m_ImageMatrix,
+//          m_ResampleOptions, &m_DeviceHandle, m_BlendType)) {
+//    if (m_DeviceHandle) {
+//      m_Mode = Mode::kBlend;
+//      return true;
+//    }
+//    return false;
+//  }
+//#endif  // defined(_SKIA_SUPPORT_)
+//
+//  if ((fabs(m_ImageMatrix.b) >= 0.5f || m_ImageMatrix.a == 0) ||
+//      (fabs(m_ImageMatrix.c) >= 0.5f || m_ImageMatrix.d == 0)) {
+//    if (NotDrawing()) {
+//      m_Result = false;
+//      return false;
+//    }
+//
+//    absl::optional<FX_RECT> image_rect = GetUnitRect();
+//    if (!image_rect.has_value())
+//      return false;
+//
+//    FX_RECT clip_box = m_pRenderStatus->GetRenderDevice()->GetClipBox();
+//    clip_box.Intersect(image_rect.value());
+//    m_Mode = Mode::kTransform;
+//    m_pTransformer = std::make_unique<CFX_ImageTransformer>(
+//        m_pDIBBase, m_ImageMatrix, m_ResampleOptions, &clip_box);
+//    return true;
+//  }
+//
+//  absl::optional<FX_RECT> image_rect = GetUnitRect();
+//  if (!image_rect.has_value())
+//    return false;
+//
+//  int dest_left;
+//  int dest_top;
+//  int dest_width;
+//  int dest_height;
+//  if (!GetDimensionsFromUnitRect(image_rect.value(), &dest_left, &dest_top,
+//                                 &dest_width, &dest_height)) {
+//    return false;
+//  }
+//
+//  if (m_pDIBBase->IsOpaqueImage() && m_BitmapAlpha == 255) {
+//    if (m_pRenderStatus->GetRenderDevice()->StretchDIBitsWithFlagsAndBlend(
+//            m_pDIBBase, dest_left, dest_top, dest_width, dest_height,
+//            m_ResampleOptions, m_BlendType)) {
+//      return false;
+//    }
+//  }
+//  if (m_pDIBBase->IsMaskFormat()) {
+//    if (m_BitmapAlpha != 255)
+//      m_FillArgb = FXARGB_MUL_ALPHA(m_FillArgb, m_BitmapAlpha);
+//    if (m_pRenderStatus->GetRenderDevice()->StretchBitMaskWithFlags(
+//            m_pDIBBase, dest_left, dest_top, dest_width, dest_height,
+//            m_FillArgb, m_ResampleOptions)) {
+//      return false;
+//    }
+//  }
+//  if (NotDrawing()) {
+//    m_Result = false;
+//    return true;
+//  }
+//
+//  FX_RECT clip_box = m_pRenderStatus->GetRenderDevice()->GetClipBox();
+//  FX_RECT dest_rect = clip_box;
+//  dest_rect.Intersect(image_rect.value());
+//  FX_RECT dest_clip(
+//      dest_rect.left - image_rect->left, dest_rect.top - image_rect->top,
+//      dest_rect.right - image_rect->left, dest_rect.bottom - image_rect->top);
+//  RetainPtr<CFX_DIBitmap> pStretched = m_pDIBBase->StretchTo(
+//      dest_width, dest_height, m_ResampleOptions, &dest_clip);
+//  if (pStretched) {
+//    m_pRenderStatus->CompositeDIBitmap(pStretched, dest_rect.left,
+//                                       dest_rect.top, m_FillArgb, m_BitmapAlpha,
+//                                       m_BlendType, CPDF_Transparency());
+//  }
   return false;
 }
 
 bool CPDF_ImageRenderer::StartBitmapAlpha() {
-  if (m_pDIBBase->IsOpaqueImage()) {
-    CFX_Path path;
-    path.AppendRect(0, 0, 1, 1);
-    path.Transform(m_ImageMatrix);
-    uint32_t fill_color =
-        ArgbEncode(0xff, m_BitmapAlpha, m_BitmapAlpha, m_BitmapAlpha);
-    m_pRenderStatus->GetRenderDevice()->DrawPath(
-        path, nullptr, nullptr, fill_color, 0,
-        CFX_FillRenderOptions::WindingOptions());
-    return false;
-  }
-  RetainPtr<CFX_DIBBase> pAlphaMask;
-  if (m_pDIBBase->IsMaskFormat())
-    pAlphaMask = m_pDIBBase;
-  else
-    pAlphaMask = m_pDIBBase->CloneAlphaMask();
+  //if (m_pDIBBase->IsOpaqueImage()) {
+  //  CFX_Path path;
+  //  path.AppendRect(0, 0, 1, 1);
+  //  path.Transform(m_ImageMatrix);
+  //  uint32_t fill_color =
+  //      ArgbEncode(0xff, m_BitmapAlpha, m_BitmapAlpha, m_BitmapAlpha);
+  //  m_pRenderStatus->GetRenderDevice()->DrawPath(
+  //      path, nullptr, nullptr, fill_color, 0,
+  //      CFX_FillRenderOptions::WindingOptions());
+  //  return false;
+  //}
+  //RetainPtr<CFX_DIBBase> pAlphaMask;
+  //if (m_pDIBBase->IsMaskFormat())
+  //  pAlphaMask = m_pDIBBase;
+  //else
+  //  pAlphaMask = m_pDIBBase->CloneAlphaMask();
 
-  if (fabs(m_ImageMatrix.b) >= 0.5f || fabs(m_ImageMatrix.c) >= 0.5f) {
-    int left;
-    int top;
-    RetainPtr<CFX_DIBitmap> pTransformed =
-        pAlphaMask->TransformTo(m_ImageMatrix, &left, &top);
-    if (!pTransformed)
-      return true;
+  //if (fabs(m_ImageMatrix.b) >= 0.5f || fabs(m_ImageMatrix.c) >= 0.5f) {
+  //  int left;
+  //  int top;
+  //  RetainPtr<CFX_DIBitmap> pTransformed =
+  //      pAlphaMask->TransformTo(m_ImageMatrix, &left, &top);
+  //  if (!pTransformed)
+  //    return true;
 
-    m_pRenderStatus->GetRenderDevice()->SetBitMask(
-        pTransformed, left, top,
-        ArgbEncode(0xff, m_BitmapAlpha, m_BitmapAlpha, m_BitmapAlpha));
-    return false;
-  }
+  //  m_pRenderStatus->GetRenderDevice()->SetBitMask(
+  //      pTransformed, left, top,
+  //      ArgbEncode(0xff, m_BitmapAlpha, m_BitmapAlpha, m_BitmapAlpha));
+  //  return false;
+  //}
 
-  absl::optional<FX_RECT> image_rect = GetUnitRect();
-  if (!image_rect.has_value())
-    return false;
+  //absl::optional<FX_RECT> image_rect = GetUnitRect();
+  //if (!image_rect.has_value())
+  //  return false;
 
-  int left;
-  int top;
-  int dest_width;
-  int dest_height;
-  if (!GetDimensionsFromUnitRect(image_rect.value(), &left, &top, &dest_width,
-                                 &dest_height)) {
-    return false;
-  }
+  //int left;
+  //int top;
+  //int dest_width;
+  //int dest_height;
+  //if (!GetDimensionsFromUnitRect(image_rect.value(), &left, &top, &dest_width,
+  //                               &dest_height)) {
+  //  return false;
+  //}
 
-  m_pRenderStatus->GetRenderDevice()->StretchBitMask(
-      pAlphaMask, left, top, dest_width, dest_height,
-      ArgbEncode(0xff, m_BitmapAlpha, m_BitmapAlpha, m_BitmapAlpha));
+  //m_pRenderStatus->GetRenderDevice()->StretchBitMask(
+  //    pAlphaMask, left, top, dest_width, dest_height,
+  //    ArgbEncode(0xff, m_BitmapAlpha, m_BitmapAlpha, m_BitmapAlpha));
   return false;
 }
 
@@ -565,31 +566,32 @@ bool CPDF_ImageRenderer::ContinueDefault(PauseIndicatorIface* pPause) {
 }
 
 bool CPDF_ImageRenderer::ContinueBlend(PauseIndicatorIface* pPause) {
-  return m_pRenderStatus->GetRenderDevice()->ContinueDIBits(
-      m_DeviceHandle.get(), pPause);
+  return false;
+  //m_pRenderStatus->GetRenderDevice()->ContinueDIBits(
+  //    m_DeviceHandle.get(), pPause);
 }
 
 bool CPDF_ImageRenderer::ContinueTransform(PauseIndicatorIface* pPause) {
-  if (m_pTransformer->Continue(pPause))
-    return true;
+//  if (m_pTransformer->Continue(pPause))
+  //  return true;
 
-  RetainPtr<CFX_DIBitmap> pBitmap = m_pTransformer->DetachBitmap();
-  if (!pBitmap)
-    return false;
+  //RetainPtr<CFX_DIBitmap> pBitmap = m_pTransformer->DetachBitmap();
+  //if (!pBitmap)
+  //  return false;
 
-  if (pBitmap->IsMaskFormat()) {
-    if (m_BitmapAlpha != 255)
-      m_FillArgb = FXARGB_MUL_ALPHA(m_FillArgb, m_BitmapAlpha);
-    m_Result = m_pRenderStatus->GetRenderDevice()->SetBitMask(
-        pBitmap, m_pTransformer->result().left, m_pTransformer->result().top,
-        m_FillArgb);
-  } else {
-    if (m_BitmapAlpha != 255)
-      pBitmap->MultiplyAlpha(m_BitmapAlpha);
-    m_Result = m_pRenderStatus->GetRenderDevice()->SetDIBitsWithBlend(
-        pBitmap, m_pTransformer->result().left, m_pTransformer->result().top,
-        m_BlendType);
-  }
+  //if (pBitmap->IsMaskFormat()) {
+  //  if (m_BitmapAlpha != 255)
+  //    m_FillArgb = FXARGB_MUL_ALPHA(m_FillArgb, m_BitmapAlpha);
+  //  m_Result = m_pRenderStatus->GetRenderDevice()->SetBitMask(
+  //      pBitmap, m_pTransformer->result().left, m_pTransformer->result().top,
+  //      m_FillArgb);
+  //} else {
+  //  if (m_BitmapAlpha != 255)
+  //    pBitmap->MultiplyAlpha(m_BitmapAlpha);
+  //  m_Result = m_pRenderStatus->GetRenderDevice()->SetDIBitsWithBlend(
+  //      pBitmap, m_pTransformer->result().left, m_pTransformer->result().top,
+  //      m_BlendType);
+  //}
   return false;
 }
 

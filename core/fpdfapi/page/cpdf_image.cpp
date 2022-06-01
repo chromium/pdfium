@@ -23,7 +23,7 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
-#include "core/fxcodec/jpeg/jpegmodule.h"
+//#include "core/fxcodec/jpeg/jpegmodule.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/span_util.h"
@@ -83,46 +83,47 @@ CPDF_Dictionary* CPDF_Image::GetDict() const {
 
 RetainPtr<CPDF_Dictionary> CPDF_Image::InitJPEG(
     pdfium::span<uint8_t> src_span) {
-  absl::optional<JpegModule::ImageInfo> info_opt =
-      JpegModule::LoadInfo(src_span);
-  if (!info_opt.has_value())
-    return nullptr;
+  return nullptr;
+  //absl::optional<JpegModule::ImageInfo> info_opt =
+  //    JpegModule::LoadInfo(src_span);
+  //if (!info_opt.has_value())
+  //  return nullptr;
 
-  const JpegModule::ImageInfo& info = info_opt.value();
-  if (!IsValidJpegComponent(info.num_components) ||
-      !IsValidJpegBitsPerComponent(info.bits_per_components)) {
-    return nullptr;
-  }
+  //const JpegModule::ImageInfo& info = info_opt.value();
+  //if (!IsValidJpegComponent(info.num_components) ||
+  //    !IsValidJpegBitsPerComponent(info.bits_per_components)) {
+  //  return nullptr;
+  //}
 
-  RetainPtr<CPDF_Dictionary> pDict =
-      CreateXObjectImageDict(info.width, info.height);
-  const char* csname = nullptr;
-  if (info.num_components == 1) {
-    csname = "DeviceGray";
-  } else if (info.num_components == 3) {
-    csname = "DeviceRGB";
-  } else if (info.num_components == 4) {
-    csname = "DeviceCMYK";
-    CPDF_Array* pDecode = pDict->SetNewFor<CPDF_Array>("Decode");
-    for (int n = 0; n < 4; n++) {
-      pDecode->AppendNew<CPDF_Number>(1);
-      pDecode->AppendNew<CPDF_Number>(0);
-    }
-  }
-  pDict->SetNewFor<CPDF_Name>("ColorSpace", csname);
-  pDict->SetNewFor<CPDF_Number>("BitsPerComponent", info.bits_per_components);
-  pDict->SetNewFor<CPDF_Name>("Filter", "DCTDecode");
-  if (!info.color_transform) {
-    CPDF_Dictionary* pParms =
-        pDict->SetNewFor<CPDF_Dictionary>(pdfium::stream::kDecodeParms);
-    pParms->SetNewFor<CPDF_Number>("ColorTransform", 0);
-  }
-  m_bIsMask = false;
-  m_Width = info.width;
-  m_Height = info.height;
-  if (!m_pStream)
-    m_pStream = pdfium::MakeRetain<CPDF_Stream>();
-  return pDict;
+  //RetainPtr<CPDF_Dictionary> pDict =
+  //    CreateXObjectImageDict(info.width, info.height);
+  //const char* csname = nullptr;
+  //if (info.num_components == 1) {
+  //  csname = "DeviceGray";
+  //} else if (info.num_components == 3) {
+  //  csname = "DeviceRGB";
+  //} else if (info.num_components == 4) {
+  //  csname = "DeviceCMYK";
+  //  CPDF_Array* pDecode = pDict->SetNewFor<CPDF_Array>("Decode");
+  //  for (int n = 0; n < 4; n++) {
+  //    pDecode->AppendNew<CPDF_Number>(1);
+  //    pDecode->AppendNew<CPDF_Number>(0);
+  //  }
+  //}
+  //pDict->SetNewFor<CPDF_Name>("ColorSpace", csname);
+  //pDict->SetNewFor<CPDF_Number>("BitsPerComponent", info.bits_per_components);
+  //pDict->SetNewFor<CPDF_Name>("Filter", "DCTDecode");
+  //if (!info.color_transform) {
+  //  CPDF_Dictionary* pParms =
+  //      pDict->SetNewFor<CPDF_Dictionary>(pdfium::stream::kDecodeParms);
+  //  pParms->SetNewFor<CPDF_Number>("ColorTransform", 0);
+  //}
+  //m_bIsMask = false;
+  //m_Width = info.width;
+  //m_Height = info.height;
+  //if (!m_pStream)
+  //  m_pStream = pdfium::MakeRetain<CPDF_Stream>();
+  //return pDict;
 }
 
 void CPDF_Image::SetJpegImage(const RetainPtr<IFX_SeekableReadStream>& pFile) {

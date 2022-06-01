@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/font/cpdf_cmap.h"
+//#include "core/fpdfapi/font/cpdf_cmap.h"
 
 #include <utility>
 #include <vector>
 
-#include "core/fpdfapi/cmaps/fpdf_cmaps.h"
+//#include "core/fpdfapi/cmaps/fpdf_cmaps.h"
 #include "core/fpdfapi/font/cpdf_cmapparser.h"
 #include "core/fpdfapi/font/cpdf_fontglobals.h"
 #include "core/fpdfapi/parser/cpdf_simple_parser.h"

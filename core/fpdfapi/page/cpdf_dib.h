@@ -30,7 +30,7 @@ struct DIB_COMP_DATA {
 };
 
 namespace fxcodec {
-class Jbig2Context;
+//class Jbig2Context;
 class ScanlineDecoder;
 }  // namespace fxcodec
 
@@ -133,7 +133,7 @@ class CPDF_DIB final : public CFX_DIBBase {
   JpxSMaskInlineData m_JpxInlineData;
 
   // Must come after |m_pCachedBitmap|.
-  std::unique_ptr<fxcodec::Jbig2Context> m_pJbig2Context;
+  //std::unique_ptr<fxcodec::Jbig2Context> m_pJbig2Context;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_DIB_H_

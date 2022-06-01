@@ -133,10 +133,10 @@ core/ffpdfapi/cmaps/Korea1/UniKS-UCS2-V_1.cpp
 core/ffpdfapi/cmaps/Korea1/UniKS-UTF16-H_0.cpp
   )
 endif(USE_KOREA_MAPS)
-find_package(Freetype REQUIRED)
+#find_package(Freetype REQUIRED)
 
 #Use own jbig2 in anytime
-add_subdirectory(core/fxcodec/jbig2)
+#add_subdirectory(core/fxcodec/jbig2)
 
 ######################### FPDFSDK #############################################
 set(FPDFSDK_SOURCES
@@ -318,6 +318,7 @@ core/fpdftext/unicodenormalizationdata.h
 ######################## FXCODEC #############################################
 # TODO rewrite 
 file (GLOB_RECURSE FXCODEC_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/core/fxcodec/*)
+
 ######################## FXCRT #############################################
 file (GLOB_RECURSE FXCRT_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/core/fxcrt/*)
 file(GLOB_RECURSE platform_sources
@@ -499,8 +500,37 @@ file(GLOB_RECURSE to_remove "${CMAKE_CURRENT_SOURCE_DIR}/core/fpdfapi/*test.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/core/fxcodec/png/*"
     "${CMAKE_CURRENT_SOURCE_DIR}/core/fxcodec/progressive_decoder*"
     "${CMAKE_CURRENT_SOURCE_DIR}/core/fxcodec/tiff_decoder*"
-    #"${CMAKE_CURRENT_SOURCE_DIR}/core/fxcodec/jpx/*"
+
+    "${CMAKE_CURRENT_SOURCE_DIR}/core/fxcodec/jpx/cjpx_decoder.*"
+    "${CMAKE_CURRENT_SOURCE_DIR}/core/fxcodec/jpx/jpx_decode_utils.*"
+
+    "${CMAKE_CURRENT_SOURCE_DIR}/core/fxcodec/jpx/jpx_decode_utils.*"
+
+    "${CMAKE_CURRENT_SOURCE_DIR}/core/fxcodec/jpeg/*"
+    "${CMAKE_CURRENT_SOURCE_DIR}/core/fxcodec/jbig2/*"
+
+    #"${CMAKE_CURRENT_SOURCE_DIR}/core/fpdfapi/font/*"
+    #"${CMAKE_CURRENT_SOURCE_DIR}/core/fxge/cfx_*"
+    #"${CMAKE_CURRENT_SOURCE_DIR}/core/fxge/win32/cfx_*"
+    #"${CMAKE_CURRENT_SOURCE_DIR}/core/fxge/fx_font.*"
+    #"${CMAKE_CURRENT_SOURCE_DIR}/core/fxge/freetype/*"
+
+    "${CMAKE_CURRENT_SOURCE_DIR}/core/fxge/agg/*"
+    "${CMAKE_CURRENT_SOURCE_DIR}/core/fxge/skia/*"
+    #"${CMAKE_CURRENT_SOURCE_DIR}/core/fpdfapi/render/*"
+    #"${CMAKE_CURRENT_SOURCE_DIR}/core/fxge/cfx_renderdevice.*"
+    "${CMAKE_CURRENT_SOURCE_DIR}/core/fpdfapi/render/cpdf_devicebuffer.*"
+    "${CMAKE_CURRENT_SOURCE_DIR}/core/fpdfapi/render/cpdf_rendershading.*"
+    "${CMAKE_CURRENT_SOURCE_DIR}/core/fpdfapi/render/cpdf_scaledrenderbuffer.*"
+    "${CMAKE_CURRENT_SOURCE_DIR}/core/fpdfapi/cmaps/CNS1/*"
+    "${CMAKE_CURRENT_SOURCE_DIR}/core/fpdfapi/cmaps/GB1/*"
+    "${CMAKE_CURRENT_SOURCE_DIR}/core/fpdfapi/cmaps/Japan1/*"
+    "${CMAKE_CURRENT_SOURCE_DIR}/core/fpdfapi/cmaps/Korea1/*"
+    
     "*test.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.gn"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*DEPS"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.md"
     )
 list(REMOVE_ITEM ALL_SOURCES ${to_remove})
 if(USE_STATIC_LIBRARY)
@@ -518,25 +548,26 @@ target_include_directories(${PROJECT_NAME}
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE 
-    USE_SYSTEM_LIBJPEG
+    #USE_SYSTEM_LIBJPEG
     USE_SYSTEM_ZLIB
     USE_SYSTEM_ICUUC
-	USE_SYSTEM_LIBOPENJPEG2
+	#USE_SYSTEM_LIBOPENJPEG2
     )  
 
 target_include_directories(${PROJECT_NAME} PRIVATE  
     ${CONAN_INCLUDE_DIRS_ABSEIL}
-    ${CONAN_INCLUDE_DIRS_FREETYPE}
+    #${CONAN_INCLUDE_DIRS_FREETYPE}
     ${CONAN_INCLUDE_DIRS_ICU}
-    ${CONAN_INCLUDE_DIRS_LIBJPEG}
+    #${CONAN_INCLUDE_DIRS_LIBJPEG}
     ${CONAN_INCLUDE_DIRS_ZLIB}
     )
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
-        CONAN_PKG::openjpeg
-        CONAN_PKG::libjpeg
+        #CONAN_PKG::openjpeg
+        #CONAN_PKG::libjpeg
         CONAN_PKG::abseil
+        CONAN_PKG::freetype
 )
 
 #Install
