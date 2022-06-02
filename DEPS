@@ -65,7 +65,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling freetype
   # and whatever else without interference from each other.
-  'freetype_revision': 'e8ebfe988b5f57bfb9a3ecb13c70d9791bce9ecf',
+  'freetype_revision': 'd6857981239ea5f6e95cb4eb4402307f3527760a',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Fuchsia sdk
   # and whatever else without interference from each other.
