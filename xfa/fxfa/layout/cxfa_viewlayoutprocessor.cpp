@@ -161,15 +161,6 @@ void SyncContainer(CXFA_FFNotify* pNotify,
   }
 }
 
-void ReorderLayoutItemToTail(CXFA_LayoutItem* pLayoutItem) {
-  CXFA_LayoutItem* pParentLayoutItem = pLayoutItem->GetParent();
-  if (!pParentLayoutItem)
-    return;
-
-  pParentLayoutItem->RemoveChild(pLayoutItem);
-  pParentLayoutItem->AppendLastChild(pLayoutItem);
-}
-
 CXFA_Node* ResolveBreakTarget(CXFA_Node* pPageSetRoot,
                               bool bNewExprStyle,
                               WideString* pTargetAll) {
@@ -532,25 +523,6 @@ void CXFA_ViewLayoutProcessor::RemoveLayoutRecord(
   }
   if (pNewRecord->pCurContentArea != pPrevRecord->pCurContentArea) {
     pNewRecord->pCurContentArea->RemoveSelfIfParented();
-    return;
-  }
-}
-
-void CXFA_ViewLayoutProcessor::ReorderPendingLayoutRecordToTail(
-    CXFA_ViewRecord* pNewRecord,
-    CXFA_ViewRecord* pPrevRecord) {
-  if (!pNewRecord || !pPrevRecord)
-    return;
-  if (pNewRecord->pCurPageSet != pPrevRecord->pCurPageSet) {
-    ReorderLayoutItemToTail(pNewRecord->pCurPageSet);
-    return;
-  }
-  if (pNewRecord->pCurPageArea != pPrevRecord->pCurPageArea) {
-    ReorderLayoutItemToTail(pNewRecord->pCurPageArea);
-    return;
-  }
-  if (pNewRecord->pCurContentArea != pPrevRecord->pCurContentArea) {
-    ReorderLayoutItemToTail(pNewRecord->pCurContentArea);
     return;
   }
 }

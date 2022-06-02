@@ -90,8 +90,6 @@ class CXFA_ViewLayoutProcessor
                            CXFA_LayoutProcessor* pLayoutProcessor);
 
   bool AppendNewPage(bool bFirstTemPage);
-  void ReorderPendingLayoutRecordToTail(CXFA_ViewRecord* pNewRecord,
-                                        CXFA_ViewRecord* pPrevRecord);
   void RemoveLayoutRecord(CXFA_ViewRecord* pNewRecord,
                           CXFA_ViewRecord* pPrevRecord);
   bool HasCurrentViewRecord() const {
