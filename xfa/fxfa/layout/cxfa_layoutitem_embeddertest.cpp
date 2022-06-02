@@ -7,15 +7,6 @@
 
 class CXFALayoutItemEmbedderTest : public EmbedderTest {};
 
-#if defined(LEAK_SANITIZER)
-
-// Leaks. See https://crbug.com/pdfium/1301
-#define MAYBE_Bug_1301 DISABLED_Bug_1301
-
-#else
-#define MAYBE_Bug_1301 Bug_1301
-#endif
-
 TEST_F(CXFALayoutItemEmbedderTest, Bug_1265) {
   ASSERT_TRUE(OpenDocument("bug_1265.pdf"));
   FPDF_PAGE page0 = LoadPage(0);
@@ -25,7 +16,7 @@ TEST_F(CXFALayoutItemEmbedderTest, Bug_1265) {
   UnloadPage(page0);
 }
 
-TEST_F(CXFALayoutItemEmbedderTest, MAYBE_Bug_1301) {
+TEST_F(CXFALayoutItemEmbedderTest, Bug_1301) {
   ASSERT_TRUE(OpenDocument("bug_1301.pdf"));
   FPDF_PAGE page0 = LoadPage(0);
   FPDF_PAGE page1 = LoadPage(1);
