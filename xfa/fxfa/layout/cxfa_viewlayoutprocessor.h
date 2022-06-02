@@ -31,12 +31,16 @@ class CXFA_ViewLayoutProcessor
 
  public:
   struct BreakData {
+    CPPGC_STACK_ALLOCATED();  // Raw/Unowned pointers allowed.
+   public:
     CXFA_Node* pLeader;
     CXFA_Node* pTrailer;
     bool bCreatePage;
   };
 
   struct OverflowData {
+    CPPGC_STACK_ALLOCATED();  // Raw/Unowned pointers allowed.
+   public:
     CXFA_Node* pLeader;
     CXFA_Node* pTrailer;
   };
