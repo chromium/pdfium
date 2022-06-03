@@ -53,11 +53,6 @@ class GCedTreeNodeMixinUnitTest : public FXGCUnitTest {
         heap()->GetAllocationHandle());
   }
 
-  void ForceGCAndPump() {
-    FXGC_ForceGarbageCollection(heap());
-    V8TestEnvironment::PumpPlatformMessageLoop(isolate());
-  }
-
   void AddClutterToFront(ObservableGCedTreeNodeMixinForTest* parent) {
     for (int i = 0; i < 4; ++i) {
       parent->AppendFirstChild(
