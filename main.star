@@ -26,7 +26,7 @@ _LINUX_DIMENSIONS = {
 }
 _MACOS_DIMENSIONS = {
     "cpu": "x86-64",
-    "os": "Mac-12",
+    "os": "Mac-11",
 }
 _WINDOWS_DIMENSIONS = {
     "cores": "8",
