@@ -7,7 +7,6 @@
 #include "core/fpdfapi/page/cpdf_textobject.h"
 
 #include <algorithm>
-#include <utility>
 
 #include "core/fpdfapi/font/cpdf_cidfont.h"
 #include "core/fpdfapi/font/cpdf_font.h"
@@ -27,11 +26,7 @@ CPDF_TextObject::CPDF_TextObject(int32_t content_stream)
 
 CPDF_TextObject::CPDF_TextObject() : CPDF_TextObject(kNoContentStream) {}
 
-CPDF_TextObject::~CPDF_TextObject() {
-  // Move m_CharCodes to a local variable so it will be captured in crash dumps,
-  // to help with investigating crbug.com/782215.
-  auto char_codes_copy = std::move(m_CharCodes);
-}
+CPDF_TextObject::~CPDF_TextObject() = default;
 
 size_t CPDF_TextObject::CountItems() const {
   return m_CharCodes.size();
