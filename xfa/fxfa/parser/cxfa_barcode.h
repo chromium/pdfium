@@ -12,6 +12,8 @@
 
 class CXFA_Barcode final : public CXFA_Node {
  public:
+  static CXFA_Barcode* FromNode(CXFA_Node* pNode);
+
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Barcode() override;
 

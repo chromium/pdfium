@@ -25,6 +25,13 @@ const CXFA_Node::AttributeData kButtonAttributeData[] = {
 
 }  // namespace
 
+// static
+CXFA_Button* CXFA_Button::FromNode(CXFA_Node* pNode) {
+  return pNode && pNode->GetElementType() == XFA_Element::Button
+             ? static_cast<CXFA_Button*>(pNode)
+             : nullptr;
+}
+
 CXFA_Button::CXFA_Button(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,

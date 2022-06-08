@@ -42,6 +42,13 @@ const CXFA_Node::AttributeData kBarcodeAttributeData[] = {
 
 }  // namespace
 
+// static
+CXFA_Barcode* CXFA_Barcode::FromNode(CXFA_Node* pNode) {
+  return pNode && pNode->GetElementType() == XFA_Element::Barcode
+             ? static_cast<CXFA_Barcode*>(pNode)
+             : nullptr;
+}
+
 CXFA_Barcode::CXFA_Barcode(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,

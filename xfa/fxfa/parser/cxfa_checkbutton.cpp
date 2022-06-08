@@ -31,6 +31,13 @@ const CXFA_Node::AttributeData kCheckButtonAttributeData[] = {
 
 }  // namespace
 
+// static
+CXFA_CheckButton* CXFA_CheckButton::FromNode(CXFA_Node* pNode) {
+  return pNode && pNode->GetElementType() == XFA_Element::CheckButton
+             ? static_cast<CXFA_CheckButton*>(pNode)
+             : nullptr;
+}
+
 CXFA_CheckButton::CXFA_CheckButton(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,

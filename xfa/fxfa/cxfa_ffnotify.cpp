@@ -104,33 +104,30 @@ CXFA_FFWidget* CXFA_FFNotify::OnCreateContentLayoutItem(CXFA_Node* pNode) {
   CXFA_FFWidget* pWidget = nullptr;
   switch (pNode->GetFFWidgetType()) {
     case XFA_FFWidgetType::kBarcode: {
-      CXFA_Node* child = pNode->GetUIChildNode();
-      if (child->GetElementType() != XFA_Element::Barcode)
+      auto* child = CXFA_Barcode::FromNode(pNode->GetUIChildNode());
+      if (!child)
         return nullptr;
 
       pWidget = cppgc::MakeGarbageCollected<CXFA_FFBarcode>(
-          m_pDoc->GetHeap()->GetAllocationHandle(), pNode,
-          static_cast<CXFA_Barcode*>(child));
+          m_pDoc->GetHeap()->GetAllocationHandle(), pNode, child);
       break;
     }
     case XFA_FFWidgetType::kButton: {
-      CXFA_Node* child = pNode->GetUIChildNode();
-      if (child->GetElementType() != XFA_Element::Button)
+      auto* child = CXFA_Button::FromNode(pNode->GetUIChildNode());
+      if (!child)
         return nullptr;
 
       pWidget = cppgc::MakeGarbageCollected<CXFA_FFPushButton>(
-          m_pDoc->GetHeap()->GetAllocationHandle(), pNode,
-          static_cast<CXFA_Button*>(child));
+          m_pDoc->GetHeap()->GetAllocationHandle(), pNode, child);
       break;
     }
     case XFA_FFWidgetType::kCheckButton: {
-      CXFA_Node* child = pNode->GetUIChildNode();
-      if (child->GetElementType() != XFA_Element::CheckButton)
+      auto* child = CXFA_CheckButton::FromNode(pNode->GetUIChildNode());
+      if (!child)
         return nullptr;
 
       pWidget = cppgc::MakeGarbageCollected<CXFA_FFCheckButton>(
-          m_pDoc->GetHeap()->GetAllocationHandle(), pNode,
-          static_cast<CXFA_CheckButton*>(child));
+          m_pDoc->GetHeap()->GetAllocationHandle(), pNode, child);
       break;
     }
     case XFA_FFWidgetType::kChoiceList: {
@@ -156,13 +153,12 @@ CXFA_FFWidget* CXFA_FFNotify::OnCreateContentLayoutItem(CXFA_Node* pNode) {
           m_pDoc->GetHeap()->GetAllocationHandle(), pNode);
       break;
     case XFA_FFWidgetType::kPasswordEdit: {
-      CXFA_Node* child = pNode->GetUIChildNode();
-      if (child->GetElementType() != XFA_Element::PasswordEdit)
+      auto* child = CXFA_PasswordEdit::FromNode(pNode->GetUIChildNode());
+      if (!child)
         return nullptr;
 
       pWidget = cppgc::MakeGarbageCollected<CXFA_FFPasswordEdit>(
-          m_pDoc->GetHeap()->GetAllocationHandle(), pNode,
-          static_cast<CXFA_PasswordEdit*>(child));
+          m_pDoc->GetHeap()->GetAllocationHandle(), pNode, child);
       break;
     }
     case XFA_FFWidgetType::kSignature:

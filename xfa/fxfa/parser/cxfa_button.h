@@ -11,6 +11,8 @@
 
 class CXFA_Button final : public CXFA_Node {
  public:
+  static CXFA_Button* FromNode(CXFA_Node* pNode);
+
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Button() override;
 

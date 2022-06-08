@@ -28,6 +28,13 @@ const CXFA_Node::AttributeData kPasswordEditAttributeData[] = {
 
 }  // namespace
 
+// static
+CXFA_PasswordEdit* CXFA_PasswordEdit::FromNode(CXFA_Node* pNode) {
+  return pNode && pNode->GetElementType() == XFA_Element::PasswordEdit
+             ? static_cast<CXFA_PasswordEdit*>(pNode)
+             : nullptr;
+}
+
 CXFA_PasswordEdit::CXFA_PasswordEdit(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
