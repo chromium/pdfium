@@ -307,7 +307,7 @@ void CXFA_FFNotify::RunNodeInitialize(CXFA_Node* pNode) {
   pDocView->AddNewFormNode(pNode);
 }
 
-void CXFA_FFNotify::RunSubformIndexChange(CXFA_Node* pSubformNode) {
+void CXFA_FFNotify::RunSubformIndexChange(CXFA_Subform* pSubformNode) {
   CXFA_FFDocView* pDocView = m_pDoc->GetDocView();
   if (!pDocView)
     return;

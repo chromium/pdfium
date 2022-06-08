@@ -520,8 +520,7 @@ void CXFA_FFDocView::AddNewFormNode(CXFA_Node* pNode) {
   InitLayout(pNode);
 }
 
-void CXFA_FFDocView::AddIndexChangedSubform(CXFA_Node* pNode) {
-  DCHECK_EQ(pNode->GetElementType(), XFA_Element::Subform);
+void CXFA_FFDocView::AddIndexChangedSubform(CXFA_Subform* pNode) {
   if (!pdfium::Contains(m_IndexChangedSubforms, pNode))
     m_IndexChangedSubforms.push_back(pNode);
 }

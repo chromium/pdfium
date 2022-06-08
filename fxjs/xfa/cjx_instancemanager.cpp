@@ -20,6 +20,7 @@
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_instancemanager.h"
 #include "xfa/fxfa/parser/cxfa_occur.h"
+#include "xfa/fxfa/parser/cxfa_subform.h"
 
 const CJX_MethodSpec CJX_InstanceManager::MethodSpecs[] = {
     {"addInstance", addInstance_static},
@@ -151,15 +152,14 @@ CJS_Result CJX_InstanceManager::moveInstance(
   if (!pNotify)
     return CJS_Result::Success();
 
-  CXFA_Node* pToInstance = GetXFANode()->GetItemIfExists(iTo);
-  if (pToInstance && pToInstance->GetElementType() == XFA_Element::Subform)
+  CXFA_Node* pXFA = GetXFANode();
+  auto* pToInstance = CXFA_Subform::FromNode(pXFA->GetItemIfExists(iTo));
+  if (pToInstance)
     pNotify->RunSubformIndexChange(pToInstance);
 
-  CXFA_Node* pFromInstance = GetXFANode()->GetItemIfExists(iFrom);
-  if (pFromInstance &&
-      pFromInstance->GetElementType() == XFA_Element::Subform) {
+  auto* pFromInstance = CXFA_Subform::FromNode(pXFA->GetItemIfExists(iFrom));
+  if (pFromInstance)
     pNotify->RunSubformIndexChange(pFromInstance);
-  }
 
   return CJS_Result::Success();
 }
@@ -192,12 +192,11 @@ CJS_Result CJX_InstanceManager::removeInstance(
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (pNotify) {
+    CXFA_Node* pXFA = GetXFANode();
     for (int32_t i = iIndex; i < iCount - 1; i++) {
-      CXFA_Node* pSubformInstance = GetXFANode()->GetItemIfExists(i);
-      if (pSubformInstance &&
-          pSubformInstance->GetElementType() == XFA_Element::Subform) {
+      auto* pSubformInstance = CXFA_Subform::FromNode(pXFA->GetItemIfExists(i));
+      if (pSubformInstance)
         pNotify->RunSubformIndexChange(pSubformInstance);
-      }
     }
   }
   GetDocument()->GetLayoutProcessor()->SetHasChangedContainer();

@@ -76,7 +76,7 @@ class CXFA_FFNotify : public cppgc::GarbageCollected<CXFA_FFNotify> {
   void ResetData(CXFA_Node* pNode);
   CXFA_FFDocView::LayoutStatus GetLayoutStatus();
   void RunNodeInitialize(CXFA_Node* pNode);
-  void RunSubformIndexChange(CXFA_Node* pSubformNode);
+  void RunSubformIndexChange(CXFA_Subform* pSubformNode);
   CXFA_Node* GetFocusWidgetNode();
   void SetFocusWidgetNode(CXFA_Node* pNode);
 

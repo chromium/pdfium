@@ -63,6 +63,13 @@ const CXFA_Node::AttributeData kSubformAttributeData[] = {
 
 }  // namespace
 
+// static
+CXFA_Subform* CXFA_Subform::FromNode(CXFA_Node* pNode) {
+  return pNode && pNode->GetElementType() == XFA_Element::Subform
+             ? static_cast<CXFA_Subform*>(pNode)
+             : nullptr;
+}
+
 CXFA_Subform::CXFA_Subform(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,

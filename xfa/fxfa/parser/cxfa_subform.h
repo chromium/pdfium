@@ -11,6 +11,8 @@
 
 class CXFA_Subform final : public CXFA_Node {
  public:
+  static CXFA_Subform* FromNode(CXFA_Node* pNode);
+
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Subform() override;
 
