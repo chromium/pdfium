@@ -436,8 +436,7 @@ void XFA_DataExporter_DealWithDataGroupNode(CXFA_Node* pDataNode) {
 
   CFX_XMLElement* pElement = ToXMLElement(pDataNode->GetXMLMappingNode());
   if (iChildNum > 0) {
-    if (pElement->HasAttribute(L"xfa:dataNode"))
-      pElement->RemoveAttribute(L"xfa:dataNode");
+    pElement->RemoveAttribute(L"xfa:dataNode");
     return;
   }
   pElement->SetAttribute(L"xfa:dataNode", L"dataGroup");

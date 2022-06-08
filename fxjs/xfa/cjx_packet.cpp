@@ -71,11 +71,9 @@ CJS_Result CJX_Packet::removeAttribute(
     return CJS_Result::Failure(JSMessage::kParamError);
 
   CFX_XMLElement* pElement = ToXMLElement(GetXFANode()->GetXMLMappingNode());
-  if (pElement) {
-    WideString name = runtime->ToWideString(params[0]);
-    if (pElement->HasAttribute(name))
-      pElement->RemoveAttribute(name);
-  }
+  if (pElement)
+    pElement->RemoveAttribute(runtime->ToWideString(params[0]));
+
   return CJS_Result::Success(runtime->NewNull());
 }
 

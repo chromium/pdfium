@@ -32,7 +32,6 @@ class CFX_XMLElement final : public CFX_XMLNode {
   bool HasAttribute(const WideString& name) const;
   void SetAttribute(const WideString& name, const WideString& value);
   WideString GetAttribute(const WideString& name) const;
-
   void RemoveAttribute(const WideString& name);
 
   CFX_XMLElement* GetFirstChildNamed(WideStringView name) const;
