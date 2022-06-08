@@ -896,7 +896,7 @@ wchar_t CFDE_TextEditEngine::GetChar(size_t idx) const {
              : content_[gap_position_ + gap_size_ + (idx - gap_position_)];
 }
 
-size_t CFDE_TextEditEngine::GetWidthOfChar(size_t idx) {
+int32_t CFDE_TextEditEngine::GetWidthOfChar(size_t idx) {
   // Recalculate the widths if necessary.
   Layout();
   return idx < char_widths_.size() ? char_widths_[idx] : 0;

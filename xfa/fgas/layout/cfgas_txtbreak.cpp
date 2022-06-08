@@ -677,8 +677,7 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
     wchar_t wch;
     if (pEngine) {
       wch = pEngine->GetChar(iAbsolute);
-      iWidth = pdfium::base::checked_cast<int32_t>(
-          pEngine->GetWidthOfChar(iAbsolute));
+      iWidth = pEngine->GetWidthOfChar(iAbsolute);
     } else {
       wch = *pStr++;
       iWidth = *pWidths++;
@@ -905,8 +904,7 @@ std::vector<CFX_RectF> CFGAS_TxtBreak::GetCharRects(const Run& run) const {
     if (pEngine) {
       int32_t iAbsolute = i + run.iStart;
       wch = pEngine->GetChar(iAbsolute);
-      iCharSize = pdfium::base::checked_cast<int32_t>(
-          pEngine->GetWidthOfChar(iAbsolute));
+      iCharSize = pEngine->GetWidthOfChar(iAbsolute);
     } else {
       wch = *pStr++;
       iCharSize = *pWidths++;

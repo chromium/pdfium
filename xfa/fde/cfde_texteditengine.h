@@ -90,7 +90,7 @@ class CFDE_TextEditEngine final : public CFGAS_TxtBreak::Engine {
 
   // CFGAS_TxtBreak::Engine:
   wchar_t GetChar(size_t idx) const override;
-  size_t GetWidthOfChar(size_t idx) override;
+  int32_t GetWidthOfChar(size_t idx) override;
 
   void SetDelegate(Delegate* delegate) { delegate_ = delegate; }
   void Clear();
@@ -213,7 +213,7 @@ class CFDE_TextEditEngine final : public CFGAS_TxtBreak::Engine {
   CFX_RectF contents_bounding_box_;
   UnownedPtr<Delegate> delegate_;
   std::vector<FDE_TEXTEDITPIECE> text_piece_info_;
-  std::vector<size_t> char_widths_;
+  std::vector<int32_t> char_widths_;  // May be negative for combining chars.
   CFGAS_TxtBreak text_break_;
   RetainPtr<CFGAS_GEFont> font_;
   FX_ARGB font_color_ = 0xff000000;
