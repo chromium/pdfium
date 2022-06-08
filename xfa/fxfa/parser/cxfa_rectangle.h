@@ -14,6 +14,8 @@
 
 class CXFA_Rectangle : public CXFA_Box {
  public:
+  static CXFA_Rectangle* FromNode(CXFA_Node* pNode);
+
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Rectangle() override;
 

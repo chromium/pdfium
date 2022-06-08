@@ -22,6 +22,13 @@ const CXFA_Node::AttributeData kTextAttributeData[] = {
 
 }  // namespace
 
+// static
+CXFA_Text* CXFA_Text::FromNode(CXFA_Node* pNode) {
+  return pNode && pNode->GetElementType() == XFA_Element::Text
+             ? static_cast<CXFA_Text*>(pNode)
+             : nullptr;
+}
+
 CXFA_Text::CXFA_Text(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,

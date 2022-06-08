@@ -36,6 +36,13 @@ const CXFA_Node::AttributeData kRectangleAttributeData[] = {
 
 }  // namespace
 
+// static
+CXFA_Rectangle* CXFA_Rectangle::FromNode(CXFA_Node* pNode) {
+  return pNode && pNode->GetElementType() == XFA_Element::Rectangle
+             ? static_cast<CXFA_Rectangle*>(pNode)
+             : nullptr;
+}
+
 CXFA_Rectangle::CXFA_Rectangle(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Box(doc,
                packet,

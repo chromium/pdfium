@@ -11,6 +11,8 @@
 
 class CXFA_Arc final : public CXFA_Box {
  public:
+  static CXFA_Arc* FromNode(CXFA_Node* pNode);
+
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Arc() override;
 

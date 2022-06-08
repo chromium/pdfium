@@ -11,6 +11,8 @@
 
 class CXFA_Image final : public CXFA_Node {
  public:
+  static CXFA_Image* FromNode(CXFA_Node* pNode);
+
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Image() override;
 

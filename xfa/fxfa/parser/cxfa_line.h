@@ -13,6 +13,8 @@ class CXFA_Edge;
 
 class CXFA_Line final : public CXFA_Node {
  public:
+  static CXFA_Line* FromNode(CXFA_Node* pNode);
+
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Line() override;
 

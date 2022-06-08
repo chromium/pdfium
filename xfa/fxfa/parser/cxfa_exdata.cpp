@@ -26,6 +26,13 @@ const CXFA_Node::AttributeData kExDataAttributeData[] = {
 
 }  // namespace
 
+// static
+CXFA_ExData* CXFA_ExData::FromNode(CXFA_Node* pNode) {
+  return pNode && pNode->GetElementType() == XFA_Element::ExData
+             ? static_cast<CXFA_ExData*>(pNode)
+             : nullptr;
+}
+
 CXFA_ExData::CXFA_ExData(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,

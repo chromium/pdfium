@@ -70,43 +70,25 @@ WideString CXFA_Value::GetChildValueContent() const {
 }
 
 CXFA_Arc* CXFA_Value::GetArcIfExists() const {
-  CXFA_Node* node = GetFirstChild();
-  if (!node || node->GetElementType() != XFA_Element::Arc)
-    return nullptr;
-  return static_cast<CXFA_Arc*>(node);
+  return CXFA_Arc::FromNode(GetFirstChild());
 }
 
 CXFA_Line* CXFA_Value::GetLineIfExists() const {
-  CXFA_Node* node = GetFirstChild();
-  if (!node || node->GetElementType() != XFA_Element::Line)
-    return nullptr;
-  return static_cast<CXFA_Line*>(node);
+  return CXFA_Line::FromNode(GetFirstChild());
 }
 
 CXFA_Rectangle* CXFA_Value::GetRectangleIfExists() const {
-  CXFA_Node* node = GetFirstChild();
-  if (!node || node->GetElementType() != XFA_Element::Rectangle)
-    return nullptr;
-  return static_cast<CXFA_Rectangle*>(node);
+  return CXFA_Rectangle::FromNode(GetFirstChild());
 }
 
 CXFA_Text* CXFA_Value::GetTextIfExists() const {
-  CXFA_Node* node = GetFirstChild();
-  if (!node || node->GetElementType() != XFA_Element::Text)
-    return nullptr;
-  return static_cast<CXFA_Text*>(node);
+  return CXFA_Text::FromNode(GetFirstChild());
 }
 
 CXFA_ExData* CXFA_Value::GetExDataIfExists() const {
-  CXFA_Node* node = GetFirstChild();
-  if (!node || node->GetElementType() != XFA_Element::ExData)
-    return nullptr;
-  return static_cast<CXFA_ExData*>(node);
+  return CXFA_ExData::FromNode(GetFirstChild());
 }
 
 CXFA_Image* CXFA_Value::GetImageIfExists() const {
-  CXFA_Node* node = GetFirstChild();
-  if (!node || node->GetElementType() != XFA_Element::Image)
-    return nullptr;
-  return static_cast<CXFA_Image*>(node);
+  return CXFA_Image::FromNode(GetFirstChild());
 }

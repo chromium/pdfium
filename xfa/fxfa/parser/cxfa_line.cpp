@@ -29,6 +29,13 @@ const CXFA_Node::AttributeData kLineAttributeData[] = {
 
 }  // namespace
 
+// static
+CXFA_Line* CXFA_Line::FromNode(CXFA_Node* pNode) {
+  return pNode && pNode->GetElementType() == XFA_Element::Line
+             ? static_cast<CXFA_Line*>(pNode)
+             : nullptr;
+}
+
 CXFA_Line::CXFA_Line(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
