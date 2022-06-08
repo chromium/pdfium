@@ -1031,7 +1031,7 @@ void CJX_Object::ScriptAttributeString(v8::Isolate* pIsolate,
   } else if (!wsID.IsEmpty()) {
     pProtoNode = GetDocument()->GetNodeByID(pProtoRoot, wsID.AsStringView());
   }
-  if (!pProtoNode)
+  if (!pProtoNode || pProtoNode->GetPacketType() != XFA_PacketType::Template)
     return;
 
   CXFA_Node* pHeadChild = GetXFANode()->GetFirstChild();

@@ -287,6 +287,7 @@ if (pdf_enable_v8) {
         "xfa/cfxjse_value_embeddertest.cpp",
         "xfa/cjx_hostpseudomodel_embeddertest.cpp",
         "xfa/cjx_list_embeddertest.cpp",
+        "xfa/cjx_object_embeddertest.cpp",
       ]
       deps += [
         ":gc",
