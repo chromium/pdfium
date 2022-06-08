@@ -31,7 +31,7 @@ TEST(MaybeOwned, Null) {
   MaybeOwned<PseudoDeletable> ptr1;
   EXPECT_FALSE(ptr1.IsOwned());
   EXPECT_FALSE(ptr1);
-  EXPECT_EQ(nullptr, ptr1.Get());
+  EXPECT_FALSE(ptr1.Get());
 
   MaybeOwned<PseudoDeletable> ptr2;
   EXPECT_TRUE(ptr1 == ptr2);
@@ -170,8 +170,8 @@ TEST(MaybeOwned, Move) {
     EXPECT_FALSE(ptr3.IsOwned());
     EXPECT_TRUE(ptr4.IsOwned());
     EXPECT_EQ(0, delete_count);
-    EXPECT_EQ(nullptr, ptr1.Get());
-    EXPECT_EQ(nullptr, ptr2.Get());
+    EXPECT_FALSE(ptr1.Get());
+    EXPECT_FALSE(ptr2.Get());
     EXPECT_EQ(100, ptr3->GetID());
     EXPECT_EQ(200, ptr4->GetID());
 
@@ -184,8 +184,8 @@ TEST(MaybeOwned, Move) {
     EXPECT_FALSE(ptr5.IsOwned());
     EXPECT_TRUE(ptr6.IsOwned());
     EXPECT_EQ(0, delete_count);
-    EXPECT_EQ(nullptr, ptr3.Get());
-    EXPECT_EQ(nullptr, ptr4.Get());
+    EXPECT_FALSE(ptr3.Get());
+    EXPECT_FALSE(ptr4.Get());
     EXPECT_EQ(100, ptr5->GetID());
     EXPECT_EQ(200, ptr6->GetID());
   }

@@ -144,7 +144,7 @@ TEST_F(CXFA_FMParserTest, MaxParseDepth) {
   CXFA_FMLexer lexer(L"foo(bar[baz(fizz[0])])");
   CXFA_FMParser parser(heap(), &lexer);
   parser.SetMaxParseDepthForTest(5);
-  EXPECT_EQ(nullptr, parser.Parse());
+  EXPECT_FALSE(parser.Parse());
   EXPECT_TRUE(parser.HasError());
 }
 
@@ -155,7 +155,7 @@ TEST_F(CXFA_FMParserTest, chromium752201) {
 fo@ =[=l)***");
 
   CXFA_FMParser parser(heap(), &lexer);
-  EXPECT_EQ(nullptr, parser.Parse());
+  EXPECT_FALSE(parser.Parse());
   EXPECT_TRUE(parser.HasError());
 }
 

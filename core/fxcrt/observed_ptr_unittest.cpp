@@ -28,7 +28,7 @@ class SelfObservable final : public Observable {
 
 TEST(ObservePtr, Null) {
   ObservedPtr<PseudoObservable> ptr;
-  EXPECT_EQ(nullptr, ptr.Get());
+  EXPECT_FALSE(ptr.Get());
 }
 
 TEST(ObservePtr, LivesLonger) {
@@ -36,17 +36,17 @@ TEST(ObservePtr, LivesLonger) {
   {
     auto pObs = std::make_unique<PseudoObservable>();
     ptr.Reset(pObs.get());
-    EXPECT_NE(nullptr, ptr.Get());
+    EXPECT_TRUE(ptr.Get());
     EXPECT_EQ(1u, pObs->ActiveObservedPtrs());
   }
-  EXPECT_EQ(nullptr, ptr.Get());
+  EXPECT_FALSE(ptr.Get());
 }
 
 TEST(ObservePtr, LivesShorter) {
   PseudoObservable obs;
   {
     ObservedPtr<PseudoObservable> ptr(&obs);
-    EXPECT_NE(nullptr, ptr.Get());
+    EXPECT_TRUE(ptr.Get());
     EXPECT_EQ(1u, obs.ActiveObservedPtrs());
   }
   EXPECT_EQ(0u, obs.ActiveObservedPtrs());
@@ -56,11 +56,11 @@ TEST(ObservePtr, CopyConstruct) {
   PseudoObservable obs;
   {
     ObservedPtr<PseudoObservable> ptr(&obs);
-    EXPECT_NE(nullptr, ptr.Get());
+    EXPECT_TRUE(ptr.Get());
     EXPECT_EQ(1u, obs.ActiveObservedPtrs());
     {
       ObservedPtr<PseudoObservable> ptr2(ptr);
-      EXPECT_NE(nullptr, ptr2.Get());
+      EXPECT_TRUE(ptr2.Get());
       EXPECT_EQ(2u, obs.ActiveObservedPtrs());
     }
     EXPECT_EQ(1u, obs.ActiveObservedPtrs());
@@ -72,12 +72,12 @@ TEST(ObservePtr, CopyAssign) {
   PseudoObservable obs;
   {
     ObservedPtr<PseudoObservable> ptr(&obs);
-    EXPECT_NE(nullptr, ptr.Get());
+    EXPECT_TRUE(ptr.Get());
     EXPECT_EQ(1u, obs.ActiveObservedPtrs());
     {
       ObservedPtr<PseudoObservable> ptr2;
       ptr2 = ptr;
-      EXPECT_NE(nullptr, ptr2.Get());
+      EXPECT_TRUE(ptr2.Get());
       EXPECT_EQ(2u, obs.ActiveObservedPtrs());
     }
     EXPECT_EQ(1u, obs.ActiveObservedPtrs());
@@ -92,12 +92,12 @@ TEST(ObservePtr, Vector) {
     std::vector<ObservedPtr<PseudoObservable>> vec2;
     vec1.emplace_back(&obs);
     vec1.emplace_back(&obs);
-    EXPECT_NE(nullptr, vec1[0].Get());
-    EXPECT_NE(nullptr, vec1[1].Get());
+    EXPECT_TRUE(vec1[0].Get());
+    EXPECT_TRUE(vec1[1].Get());
     EXPECT_EQ(2u, obs.ActiveObservedPtrs());
     vec2 = vec1;
-    EXPECT_NE(nullptr, vec2[0].Get());
-    EXPECT_NE(nullptr, vec2[1].Get());
+    EXPECT_TRUE(vec2[0].Get());
+    EXPECT_TRUE(vec2[1].Get());
     EXPECT_EQ(4u, obs.ActiveObservedPtrs());
     vec1.clear();
     EXPECT_EQ(2u, obs.ActiveObservedPtrs());
@@ -115,12 +115,12 @@ TEST(ObservePtr, VectorAutoClear) {
     PseudoObservable obs;
     vec1.emplace_back(&obs);
     vec1.emplace_back(&obs);
-    EXPECT_NE(nullptr, vec1[0].Get());
-    EXPECT_NE(nullptr, vec1[1].Get());
+    EXPECT_TRUE(vec1[0].Get());
+    EXPECT_TRUE(vec1[1].Get());
     EXPECT_EQ(2u, obs.ActiveObservedPtrs());
   }
-  EXPECT_EQ(nullptr, vec1[0].Get());
-  EXPECT_EQ(nullptr, vec1[1].Get());
+  EXPECT_FALSE(vec1[0].Get());
+  EXPECT_FALSE(vec1[1].Get());
 }
 
 TEST(ObservePtr, ResetNull) {
@@ -216,7 +216,7 @@ TEST(ObservePtr, PairwiseObservable) {
     EXPECT_EQ(&thing2, thing1.m_pOther.Get());
     EXPECT_EQ(&thing1, thing2.m_pOther.Get());
   }
-  EXPECT_EQ(nullptr, thing1.m_pOther.Get());
+  EXPECT_FALSE(thing1.m_pOther.Get());
   // Must be no ASAN violations upon cleanup here.
 }
 

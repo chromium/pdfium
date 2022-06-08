@@ -17,8 +17,8 @@ TEST(StringPool, ByteString) {
   ByteString goats2("goats");
 
   // Underlying storage, if non-null, is not shared.
-  EXPECT_EQ(nullptr, null1.m_pData.Get());
-  EXPECT_EQ(nullptr, null2.m_pData.Get());
+  EXPECT_FALSE(null1.m_pData.Get());
+  EXPECT_FALSE(null2.m_pData.Get());
   EXPECT_NE(goats1.m_pData, goats2.m_pData);
 
   ByteString interned_null1 = pool.Intern(null1);
@@ -33,8 +33,8 @@ TEST(StringPool, ByteString) {
   EXPECT_EQ(goats2, interned_goats2);
 
   // Interned underlying storage, if non-null, belongs to first seen.
-  EXPECT_EQ(nullptr, interned_null1.m_pData.Get());
-  EXPECT_EQ(nullptr, interned_null2.m_pData.Get());
+  EXPECT_FALSE(interned_null1.m_pData.Get());
+  EXPECT_FALSE(interned_null2.m_pData.Get());
   EXPECT_EQ(goats1.m_pData, interned_goats1.m_pData);
   EXPECT_EQ(goats1.m_pData, interned_goats2.m_pData);
 
@@ -45,8 +45,8 @@ TEST(StringPool, ByteString) {
   ByteString reinterned_goats1 = pool.Intern(goats2);
 
   // After clearing pool, storage was re-interned using second strings.
-  EXPECT_EQ(nullptr, interned_null1.m_pData.Get());
-  EXPECT_EQ(nullptr, interned_null2.m_pData.Get());
+  EXPECT_FALSE(interned_null1.m_pData.Get());
+  EXPECT_FALSE(interned_null2.m_pData.Get());
   EXPECT_EQ(goats2.m_pData, reinterned_goats1.m_pData);
   EXPECT_EQ(goats2.m_pData, reinterned_goats2.m_pData);
 }
@@ -60,8 +60,8 @@ TEST(StringPool, WideString) {
   WideString goats2(L"goats");
 
   // Underlying storage, if non-null, is not shared.
-  EXPECT_EQ(nullptr, null1.m_pData.Get());
-  EXPECT_EQ(nullptr, null2.m_pData.Get());
+  EXPECT_FALSE(null1.m_pData.Get());
+  EXPECT_FALSE(null2.m_pData.Get());
   EXPECT_NE(goats1.m_pData, goats2.m_pData);
 
   WideString interned_null1 = pool.Intern(null1);
@@ -76,8 +76,8 @@ TEST(StringPool, WideString) {
   EXPECT_EQ(goats2, interned_goats2);
 
   // Interned underlying storage, if non-null, belongs to first seen.
-  EXPECT_EQ(nullptr, interned_null1.m_pData.Get());
-  EXPECT_EQ(nullptr, interned_null2.m_pData.Get());
+  EXPECT_FALSE(interned_null1.m_pData.Get());
+  EXPECT_FALSE(interned_null2.m_pData.Get());
   EXPECT_EQ(goats1.m_pData, interned_goats1.m_pData);
   EXPECT_EQ(goats1.m_pData, interned_goats2.m_pData);
 
@@ -88,8 +88,8 @@ TEST(StringPool, WideString) {
   WideString reinterned_goats1 = pool.Intern(goats2);
 
   // After clearing pool, storage was re-interned using second strings.
-  EXPECT_EQ(nullptr, interned_null1.m_pData.Get());
-  EXPECT_EQ(nullptr, interned_null2.m_pData.Get());
+  EXPECT_FALSE(interned_null1.m_pData.Get());
+  EXPECT_FALSE(interned_null2.m_pData.Get());
   EXPECT_EQ(goats2.m_pData, reinterned_goats1.m_pData);
   EXPECT_EQ(goats2.m_pData, reinterned_goats2.m_pData);
 }

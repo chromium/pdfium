@@ -36,19 +36,19 @@ class TestDelegate : public CFX_GlobalData::Delegate {
 
 TEST(CFXGlobalData, GetSafety) {
   CFX_GlobalData* pInstance = CFX_GlobalData::GetRetainedInstance(nullptr);
-  EXPECT_EQ(nullptr, pInstance->GetGlobalVariable("nonesuch"));
-  EXPECT_EQ(nullptr, pInstance->GetAt(-1));
-  EXPECT_EQ(nullptr, pInstance->GetAt(0));
-  EXPECT_EQ(nullptr, pInstance->GetAt(1));
+  EXPECT_FALSE(pInstance->GetGlobalVariable("nonesuch"));
+  EXPECT_FALSE(pInstance->GetAt(-1));
+  EXPECT_FALSE(pInstance->GetAt(0));
+  EXPECT_FALSE(pInstance->GetAt(1));
 
   pInstance->SetGlobalVariableNumber("double", 2.0);
   pInstance->SetGlobalVariableString("string", "clams");
 
-  EXPECT_EQ(nullptr, pInstance->GetGlobalVariable("nonesuch"));
-  EXPECT_EQ(nullptr, pInstance->GetAt(-1));
+  EXPECT_FALSE(pInstance->GetGlobalVariable("nonesuch"));
+  EXPECT_FALSE(pInstance->GetAt(-1));
   EXPECT_EQ(pInstance->GetGlobalVariable("double"), pInstance->GetAt(0));
   EXPECT_EQ(pInstance->GetGlobalVariable("string"), pInstance->GetAt(1));
-  EXPECT_EQ(nullptr, pInstance->GetAt(2));
+  EXPECT_FALSE(pInstance->GetAt(2));
 
   ASSERT_TRUE(pInstance->Release());
 }

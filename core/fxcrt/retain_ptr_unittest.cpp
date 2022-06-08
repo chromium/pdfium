@@ -14,7 +14,7 @@ namespace fxcrt {
 
 TEST(RetainPtr, Null) {
   RetainPtr<PseudoRetainable> ptr;
-  EXPECT_EQ(nullptr, ptr.Get());
+  EXPECT_FALSE(ptr.Get());
 }
 
 TEST(RetainPtr, Normal) {
@@ -51,7 +51,7 @@ TEST(RetainPtr, MoveCtor) {
     RetainPtr<PseudoRetainable> ptr1(&obj);
     {
       RetainPtr<PseudoRetainable> ptr2(std::move(ptr1));
-      EXPECT_EQ(nullptr, ptr1.Get());
+      EXPECT_FALSE(ptr1.Get());
       EXPECT_EQ(&obj, ptr2.Get());
       EXPECT_EQ(1, obj.retain_count());
       EXPECT_EQ(0, obj.release_count());
@@ -186,9 +186,9 @@ TEST(RetainPtr, MoveAssign) {
     {
       RetainPtr<PseudoRetainable> ptr2;
       EXPECT_EQ(&obj, ptr1.Get());
-      EXPECT_EQ(nullptr, ptr2.Get());
+      EXPECT_FALSE(ptr2.Get());
       ptr2 = std::move(ptr1);
-      EXPECT_EQ(nullptr, ptr1.Get());
+      EXPECT_FALSE(ptr1.Get());
       EXPECT_EQ(&obj, ptr2.Get());
       EXPECT_EQ(1, obj.retain_count());
       EXPECT_EQ(0, obj.release_count());

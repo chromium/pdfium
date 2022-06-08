@@ -4,6 +4,7 @@
 
 #include "core/fxcrt/unowned_ptr.h"
 
+#include <memory>
 #include <utility>
 
 #include "testing/gtest/include/gtest/gtest.h"
@@ -118,7 +119,7 @@ TEST(UnownedPtr, MoveCtorOk) {
     auto owned = std::make_unique<Clink>();
     outer = owned.get();
     UnownedPtr<Clink> inner(std::move(outer));
-    EXPECT_EQ(nullptr, outer.Get());
+    EXPECT_FALSE(outer.Get());
   }
 }
 
@@ -129,7 +130,7 @@ TEST(UnownedPtr, MoveAssignOk) {
     outer = owned.get();
     UnownedPtr<Clink> inner;
     inner = std::move(outer);
-    EXPECT_EQ(nullptr, outer.Get());
+    EXPECT_FALSE(outer.Get());
   }
 }
 

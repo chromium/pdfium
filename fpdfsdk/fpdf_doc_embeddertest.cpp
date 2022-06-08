@@ -271,8 +271,8 @@ TEST_F(FPDFDocEmbedderTest, ActionBadArguments) {
   EXPECT_EQ(static_cast<unsigned long>(PDFACTION_UNSUPPORTED),
             FPDFAction_GetType(nullptr));
 
-  EXPECT_EQ(nullptr, FPDFAction_GetDest(nullptr, nullptr));
-  EXPECT_EQ(nullptr, FPDFAction_GetDest(document(), nullptr));
+  EXPECT_FALSE(FPDFAction_GetDest(nullptr, nullptr));
+  EXPECT_FALSE(FPDFAction_GetDest(document(), nullptr));
   EXPECT_EQ(0u, FPDFAction_GetFilePath(nullptr, nullptr, 0));
   EXPECT_EQ(0u, FPDFAction_GetURIPath(nullptr, nullptr, nullptr, 0));
   EXPECT_EQ(0u, FPDFAction_GetURIPath(document(), nullptr, nullptr, 0));
@@ -303,7 +303,7 @@ TEST_F(FPDFDocEmbedderTest, ActionLaunch) {
   EXPECT_STREQ(kExpectedResult, buf);
 
   // Other public methods are not appropriate for launch actions.
-  EXPECT_EQ(nullptr, FPDFAction_GetDest(document(), action));
+  EXPECT_FALSE(FPDFAction_GetDest(document(), action));
   EXPECT_EQ(0u, FPDFAction_GetURIPath(document(), action, buf, sizeof(buf)));
 
   UnloadPage(page);
@@ -334,7 +334,7 @@ TEST_F(FPDFDocEmbedderTest, ActionURI) {
   EXPECT_STREQ(kExpectedResult, buf);
 
   // Other public methods are not appropriate for URI actions
-  EXPECT_EQ(nullptr, FPDFAction_GetDest(document(), action));
+  EXPECT_FALSE(FPDFAction_GetDest(document(), action));
   EXPECT_EQ(0u, FPDFAction_GetFilePath(action, buf, sizeof(buf)));
 
   UnloadPage(page);
@@ -456,15 +456,15 @@ TEST_F(FPDFDocEmbedderTest, NoBookmarks) {
 
   // NULL argument cases.
   EXPECT_EQ(0u, FPDFBookmark_GetTitle(nullptr, buf, sizeof(buf)));
-  EXPECT_EQ(nullptr, FPDFBookmark_GetFirstChild(nullptr, nullptr));
-  EXPECT_EQ(nullptr, FPDFBookmark_GetFirstChild(document(), nullptr));
-  EXPECT_EQ(nullptr, FPDFBookmark_GetNextSibling(nullptr, nullptr));
-  EXPECT_EQ(nullptr, FPDFBookmark_GetNextSibling(document(), nullptr));
-  EXPECT_EQ(nullptr, FPDFBookmark_Find(nullptr, nullptr));
-  EXPECT_EQ(nullptr, FPDFBookmark_Find(document(), nullptr));
-  EXPECT_EQ(nullptr, FPDFBookmark_GetDest(nullptr, nullptr));
-  EXPECT_EQ(nullptr, FPDFBookmark_GetDest(document(), nullptr));
-  EXPECT_EQ(nullptr, FPDFBookmark_GetAction(nullptr));
+  EXPECT_FALSE(FPDFBookmark_GetFirstChild(nullptr, nullptr));
+  EXPECT_FALSE(FPDFBookmark_GetFirstChild(document(), nullptr));
+  EXPECT_FALSE(FPDFBookmark_GetNextSibling(nullptr, nullptr));
+  EXPECT_FALSE(FPDFBookmark_GetNextSibling(document(), nullptr));
+  EXPECT_FALSE(FPDFBookmark_Find(nullptr, nullptr));
+  EXPECT_FALSE(FPDFBookmark_Find(document(), nullptr));
+  EXPECT_FALSE(FPDFBookmark_GetDest(nullptr, nullptr));
+  EXPECT_FALSE(FPDFBookmark_GetDest(document(), nullptr));
+  EXPECT_FALSE(FPDFBookmark_GetAction(nullptr));
 }
 
 TEST_F(FPDFDocEmbedderTest, Bookmarks) {
@@ -499,7 +499,7 @@ TEST_F(FPDFDocEmbedderTest, Bookmarks) {
   EXPECT_EQ(L"A Good Closed Ending", GetPlatformWString(buf));
   EXPECT_EQ(-2, FPDFBookmark_GetCount(sibling2));
 
-  EXPECT_EQ(nullptr, FPDFBookmark_GetNextSibling(document(), sibling2));
+  EXPECT_FALSE(FPDFBookmark_GetNextSibling(document(), sibling2));
 
   grand_child = FPDFBookmark_GetFirstChild(document(), sibling);
   EXPECT_TRUE(grand_child);
@@ -531,7 +531,7 @@ TEST_F(FPDFDocEmbedderTest, FindBookmarks) {
 
   // Try to find one using a non-existent title.
   ScopedFPDFWideString bad_title = GetFPDFWideString(L"A BAD Beginning");
-  EXPECT_EQ(nullptr, FPDFBookmark_Find(document(), bad_title.get()));
+  EXPECT_FALSE(FPDFBookmark_Find(document(), bad_title.get()));
 }
 
 // Check circular bookmarks will not cause infinite loop.
@@ -541,7 +541,7 @@ TEST_F(FPDFDocEmbedderTest, FindBookmarks_bug420) {
 
   // Try to find a title.
   ScopedFPDFWideString title = GetFPDFWideString(L"anything");
-  EXPECT_EQ(nullptr, FPDFBookmark_Find(document(), title.get()));
+  EXPECT_FALSE(FPDFBookmark_Find(document(), title.get()));
 }
 
 TEST_F(FPDFDocEmbedderTest, DeletePage) {
@@ -680,10 +680,10 @@ TEST_F(FPDFDocEmbedderTest, GetPageAAction) {
   FPDF_PAGE page = LoadPage(0);
   EXPECT_TRUE(page);
 
-  EXPECT_EQ(nullptr, FPDF_GetPageAAction(nullptr, FPDFPAGE_AACTION_OPEN));
-  EXPECT_EQ(nullptr, FPDF_GetPageAAction(page, FPDFPAGE_AACTION_CLOSE));
-  EXPECT_EQ(nullptr, FPDF_GetPageAAction(page, -1));
-  EXPECT_EQ(nullptr, FPDF_GetPageAAction(page, 999));
+  EXPECT_FALSE(FPDF_GetPageAAction(nullptr, FPDFPAGE_AACTION_OPEN));
+  EXPECT_FALSE(FPDF_GetPageAAction(page, FPDFPAGE_AACTION_CLOSE));
+  EXPECT_FALSE(FPDF_GetPageAAction(page, -1));
+  EXPECT_FALSE(FPDF_GetPageAAction(page, 999));
 
   FPDF_ACTION action = FPDF_GetPageAAction(page, FPDFPAGE_AACTION_OPEN);
   EXPECT_EQ(static_cast<unsigned long>(PDFACTION_EMBEDDEDGOTO),
@@ -702,7 +702,7 @@ TEST_F(FPDFDocEmbedderTest, GetPageAAction) {
 
   page = LoadPage(1);
   EXPECT_TRUE(page);
-  EXPECT_EQ(nullptr, FPDF_GetPageAAction(page, -1));
+  EXPECT_FALSE(FPDF_GetPageAAction(page, -1));
 
   UnloadPage(page);
 }

@@ -27,23 +27,23 @@ TEST_F(FPDFSignatureEmbedderTest, GetSignatureObject) {
   ASSERT_TRUE(OpenDocument("two_signatures.pdf"));
   // Different, non-null signature objects are returned.
   FPDF_SIGNATURE signature1 = FPDF_GetSignatureObject(document(), 0);
-  EXPECT_NE(nullptr, signature1);
+  EXPECT_TRUE(signature1);
   FPDF_SIGNATURE signature2 = FPDF_GetSignatureObject(document(), 1);
-  EXPECT_NE(nullptr, signature2);
+  EXPECT_TRUE(signature2);
   EXPECT_NE(signature1, signature2);
 
   // Out of bounds.
-  EXPECT_EQ(nullptr, FPDF_GetSignatureObject(document(), -1));
-  EXPECT_EQ(nullptr, FPDF_GetSignatureObject(document(), 2));
+  EXPECT_FALSE(FPDF_GetSignatureObject(document(), -1));
+  EXPECT_FALSE(FPDF_GetSignatureObject(document(), 2));
 
   // Provide no document.
-  EXPECT_EQ(nullptr, FPDF_GetSignatureObject(nullptr, 0));
+  EXPECT_FALSE(FPDF_GetSignatureObject(nullptr, 0));
 }
 
 TEST_F(FPDFSignatureEmbedderTest, GetContents) {
   ASSERT_TRUE(OpenDocument("two_signatures.pdf"));
   FPDF_SIGNATURE signature = FPDF_GetSignatureObject(document(), 0);
-  EXPECT_NE(nullptr, signature);
+  EXPECT_TRUE(signature);
 
   // FPDFSignatureObj_GetContents() positive testing.
   unsigned long size = FPDFSignatureObj_GetContents(signature, nullptr, 0);
@@ -72,7 +72,7 @@ TEST_F(FPDFSignatureEmbedderTest, GetContents) {
 TEST_F(FPDFSignatureEmbedderTest, GetByteRange) {
   ASSERT_TRUE(OpenDocument("two_signatures.pdf"));
   FPDF_SIGNATURE signature = FPDF_GetSignatureObject(document(), 0);
-  EXPECT_NE(nullptr, signature);
+  EXPECT_TRUE(signature);
 
   // FPDFSignatureObj_GetByteRange() positive testing.
   unsigned long size = FPDFSignatureObj_GetByteRange(signature, nullptr, 0);
@@ -99,7 +99,7 @@ TEST_F(FPDFSignatureEmbedderTest, GetByteRange) {
 TEST_F(FPDFSignatureEmbedderTest, GetSubFilter) {
   ASSERT_TRUE(OpenDocument("two_signatures.pdf"));
   FPDF_SIGNATURE signature = FPDF_GetSignatureObject(document(), 0);
-  EXPECT_NE(nullptr, signature);
+  EXPECT_TRUE(signature);
 
   // FPDFSignatureObj_GetSubFilter() positive testing.
   unsigned long size = FPDFSignatureObj_GetSubFilter(signature, nullptr, 0);
@@ -126,7 +126,7 @@ TEST_F(FPDFSignatureEmbedderTest, GetSubFilter) {
 TEST_F(FPDFSignatureEmbedderTest, GetSubFilterNoKeyExists) {
   ASSERT_TRUE(OpenDocument("signature_no_sub_filter.pdf"));
   FPDF_SIGNATURE signature = FPDF_GetSignatureObject(document(), 0);
-  EXPECT_NE(nullptr, signature);
+  EXPECT_TRUE(signature);
 
   // FPDFSignatureObj_GetSubFilter() negative testing: no SubFilter
   ASSERT_EQ(0U, FPDFSignatureObj_GetSubFilter(signature, nullptr, 0));
@@ -135,7 +135,7 @@ TEST_F(FPDFSignatureEmbedderTest, GetSubFilterNoKeyExists) {
 TEST_F(FPDFSignatureEmbedderTest, GetReason) {
   ASSERT_TRUE(OpenDocument("signature_reason.pdf"));
   FPDF_SIGNATURE signature = FPDF_GetSignatureObject(document(), 0);
-  EXPECT_NE(nullptr, signature);
+  EXPECT_TRUE(signature);
 
   // FPDFSignatureObj_GetReason() positive testing.
   constexpr char kReason[] = "test reason";
@@ -165,7 +165,7 @@ TEST_F(FPDFSignatureEmbedderTest, GetReason) {
 TEST_F(FPDFSignatureEmbedderTest, GetTime) {
   ASSERT_TRUE(OpenDocument("two_signatures.pdf"));
   FPDF_SIGNATURE signature = FPDF_GetSignatureObject(document(), 0);
-  EXPECT_NE(nullptr, signature);
+  EXPECT_TRUE(signature);
 
   // FPDFSignatureObj_GetTime() positive testing.
   unsigned long size = FPDFSignatureObj_GetTime(signature, nullptr, 0);

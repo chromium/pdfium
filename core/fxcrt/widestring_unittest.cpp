@@ -1310,7 +1310,7 @@ TEST(WideStringView, FromVector) {
   cleared_vec.pop_back();
   WideStringView cleared_string(cleared_vec);
   EXPECT_EQ(0u, cleared_string.GetLength());
-  EXPECT_EQ(nullptr, cleared_string.raw_str());
+  EXPECT_FALSE(cleared_string.raw_str());
 }
 
 TEST(WideStringView, ElementAccess) {
@@ -1704,12 +1704,12 @@ TEST(WideString, Empty) {
   EXPECT_EQ(0u, empty_str.GetLength());
 
   const wchar_t* cstr = empty_str.c_str();
-  EXPECT_NE(nullptr, cstr);
+  EXPECT_TRUE(cstr);
   EXPECT_EQ(0u, wcslen(cstr));
 
   pdfium::span<const wchar_t> cspan = empty_str.span();
   EXPECT_TRUE(cspan.empty());
-  EXPECT_EQ(nullptr, cspan.data());
+  EXPECT_FALSE(cspan.data());
 }
 
 TEST(CFX_WidString, InitializerList) {

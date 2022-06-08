@@ -287,5 +287,5 @@ TEST_F(FPDFThumbnailEmbedderTest, GetThumbnailDoesNotAlterPage) {
 }
 
 TEST_F(FPDFThumbnailEmbedderTest, GetThumbnailAsBitmapFromPageNullPage) {
-  EXPECT_EQ(nullptr, FPDFPage_GetThumbnailAsBitmap(nullptr));
+  EXPECT_FALSE(FPDFPage_GetThumbnailAsBitmap(nullptr));
 }

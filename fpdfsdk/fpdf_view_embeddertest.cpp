@@ -153,7 +153,7 @@ class FPDFViewEmbedderTest : public EmbedderTest {
 TEST_F(FPDFViewEmbedderTest, DeviceCoordinatesToPageCoordinates) {
   ASSERT_TRUE(OpenDocument("about_blank.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_NE(nullptr, page);
+  EXPECT_TRUE(page);
 
   // Error tolerance for floating point comparison
   const double kTolerance = 0.0001;
@@ -236,7 +236,7 @@ TEST_F(FPDFViewEmbedderTest, DeviceCoordinatesToPageCoordinates) {
 TEST_F(FPDFViewEmbedderTest, PageCoordinatesToDeviceCoordinates) {
   ASSERT_TRUE(OpenDocument("about_blank.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_NE(nullptr, page);
+  EXPECT_TRUE(page);
 
   // Display bounds in device coordinates
   int start_x = 0;
@@ -588,20 +588,20 @@ TEST_F(FPDFViewEmbedderTest, NamedDests) {
   // Query the size of the first item.
   buffer_size = 2000000;  // Absurdly large, check not used for this case.
   dest = FPDF_GetNamedDest(document(), 0, nullptr, &buffer_size);
-  EXPECT_NE(nullptr, dest);
+  EXPECT_TRUE(dest);
   EXPECT_EQ(12, buffer_size);
 
   // Try to retrieve the first item with too small a buffer.
   buffer_size = 10;
   dest = FPDF_GetNamedDest(document(), 0, fixed_buffer, &buffer_size);
-  EXPECT_NE(nullptr, dest);
+  EXPECT_TRUE(dest);
   EXPECT_EQ(-1, buffer_size);
 
   // Try to retrieve the first item with correctly sized buffer. Item is
   // taken from Dests NameTree in named_dests.pdf.
   buffer_size = 12;
   dest = FPDF_GetNamedDest(document(), 0, fixed_buffer, &buffer_size);
-  EXPECT_NE(nullptr, dest);
+  EXPECT_TRUE(dest);
   EXPECT_EQ(12, buffer_size);
   EXPECT_EQ("First",
             GetPlatformString(reinterpret_cast<FPDF_WIDESTRING>(fixed_buffer)));
@@ -610,7 +610,7 @@ TEST_F(FPDFViewEmbedderTest, NamedDests) {
   // from Dests NameTree but has a sub-dictionary in named_dests.pdf.
   buffer_size = sizeof(fixed_buffer);
   dest = FPDF_GetNamedDest(document(), 1, fixed_buffer, &buffer_size);
-  EXPECT_NE(nullptr, dest);
+  EXPECT_TRUE(dest);
   EXPECT_EQ(10, buffer_size);
   EXPECT_EQ("Next",
             GetPlatformString(reinterpret_cast<FPDF_WIDESTRING>(fixed_buffer)));
@@ -620,7 +620,7 @@ TEST_F(FPDFViewEmbedderTest, NamedDests) {
   // in named_dests.pdf).
   buffer_size = sizeof(fixed_buffer);
   dest = FPDF_GetNamedDest(document(), 2, fixed_buffer, &buffer_size);
-  EXPECT_EQ(nullptr, dest);
+  EXPECT_FALSE(dest);
   EXPECT_EQ(sizeof(fixed_buffer),
             static_cast<size_t>(buffer_size));  // unmodified.
 
@@ -628,7 +628,7 @@ TEST_F(FPDFViewEmbedderTest, NamedDests) {
   // from Dests NameTree but has a vale of the wrong type in named_dests.pdf.
   buffer_size = sizeof(fixed_buffer);
   dest = FPDF_GetNamedDest(document(), 3, fixed_buffer, &buffer_size);
-  EXPECT_EQ(nullptr, dest);
+  EXPECT_FALSE(dest);
   EXPECT_EQ(sizeof(fixed_buffer),
             static_cast<size_t>(buffer_size));  // unmodified.
 
@@ -636,7 +636,7 @@ TEST_F(FPDFViewEmbedderTest, NamedDests) {
   // old-style Dests dictionary object in named_dests.pdf.
   buffer_size = sizeof(fixed_buffer);
   dest = FPDF_GetNamedDest(document(), 4, fixed_buffer, &buffer_size);
-  EXPECT_NE(nullptr, dest);
+  EXPECT_TRUE(dest);
   EXPECT_EQ(30, buffer_size);
   EXPECT_EQ(kFirstAlternate,
             GetPlatformString(reinterpret_cast<FPDF_WIDESTRING>(fixed_buffer)));
@@ -646,7 +646,7 @@ TEST_F(FPDFViewEmbedderTest, NamedDests) {
   // named_dests.pdf.
   buffer_size = sizeof(fixed_buffer);
   dest = FPDF_GetNamedDest(document(), 5, fixed_buffer, &buffer_size);
-  EXPECT_NE(nullptr, dest);
+  EXPECT_TRUE(dest);
   EXPECT_EQ(28, buffer_size);
   EXPECT_EQ(kLastAlternate,
             GetPlatformString(reinterpret_cast<FPDF_WIDESTRING>(fixed_buffer)));
@@ -654,7 +654,7 @@ TEST_F(FPDFViewEmbedderTest, NamedDests) {
   // Try to retrieve non-existent item with ample buffer.
   buffer_size = sizeof(fixed_buffer);
   dest = FPDF_GetNamedDest(document(), 6, fixed_buffer, &buffer_size);
-  EXPECT_EQ(nullptr, dest);
+  EXPECT_FALSE(dest);
   EXPECT_EQ(sizeof(fixed_buffer),
             static_cast<size_t>(buffer_size));  // unmodified.
 
@@ -662,20 +662,20 @@ TEST_F(FPDFViewEmbedderTest, NamedDests) {
   buffer_size = sizeof(fixed_buffer);
   dest = FPDF_GetNamedDest(document(), std::numeric_limits<int>::max(),
                            fixed_buffer, &buffer_size);
-  EXPECT_EQ(nullptr, dest);
+  EXPECT_FALSE(dest);
   EXPECT_EQ(sizeof(fixed_buffer),
             static_cast<size_t>(buffer_size));  // unmodified.
 
   buffer_size = sizeof(fixed_buffer);
   dest = FPDF_GetNamedDest(document(), std::numeric_limits<int>::min(),
                            fixed_buffer, &buffer_size);
-  EXPECT_EQ(nullptr, dest);
+  EXPECT_FALSE(dest);
   EXPECT_EQ(sizeof(fixed_buffer),
             static_cast<size_t>(buffer_size));  // unmodified.
 
   buffer_size = sizeof(fixed_buffer);
   dest = FPDF_GetNamedDest(document(), -1, fixed_buffer, &buffer_size);
-  EXPECT_EQ(nullptr, dest);
+  EXPECT_FALSE(dest);
   EXPECT_EQ(sizeof(fixed_buffer),
             static_cast<size_t>(buffer_size));  // unmodified.
 }
@@ -685,15 +685,15 @@ TEST_F(FPDFViewEmbedderTest, NamedDestsByName) {
 
   // Null pointer returns nullptr.
   FPDF_DEST dest = FPDF_GetNamedDestByName(document(), nullptr);
-  EXPECT_EQ(nullptr, dest);
+  EXPECT_FALSE(dest);
 
   // Empty string returns nullptr.
   dest = FPDF_GetNamedDestByName(document(), "");
-  EXPECT_EQ(nullptr, dest);
+  EXPECT_FALSE(dest);
 
   // Item from Dests NameTree.
   dest = FPDF_GetNamedDestByName(document(), "First");
-  EXPECT_NE(nullptr, dest);
+  EXPECT_TRUE(dest);
 
   long ignore_len = 0;
   FPDF_DEST dest_by_index =
@@ -702,7 +702,7 @@ TEST_F(FPDFViewEmbedderTest, NamedDestsByName) {
 
   // Item from Dests dictionary.
   dest = FPDF_GetNamedDestByName(document(), kFirstAlternate);
-  EXPECT_NE(nullptr, dest);
+  EXPECT_TRUE(dest);
 
   ignore_len = 0;
   dest_by_index = FPDF_GetNamedDest(document(), 4, nullptr, &ignore_len);
@@ -710,11 +710,11 @@ TEST_F(FPDFViewEmbedderTest, NamedDestsByName) {
 
   // Bad value type for item from Dests NameTree array.
   dest = FPDF_GetNamedDestByName(document(), "WrongType");
-  EXPECT_EQ(nullptr, dest);
+  EXPECT_FALSE(dest);
 
   // No such destination in either Dest NameTree or dictionary.
   dest = FPDF_GetNamedDestByName(document(), "Bogus");
-  EXPECT_EQ(nullptr, dest);
+  EXPECT_FALSE(dest);
 }
 
 TEST_F(FPDFViewEmbedderTest, NamedDestsOldStyle) {
@@ -767,7 +767,7 @@ TEST_F(FPDFViewEmbedderTest, Crasher_451830) {
 TEST_F(FPDFViewEmbedderTest, Crasher_452455) {
   ASSERT_TRUE(OpenDocument("bug_452455.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_NE(nullptr, page);
+  EXPECT_TRUE(page);
   UnloadPage(page);
 }
 

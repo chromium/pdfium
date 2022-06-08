@@ -305,7 +305,7 @@ TEST_F(FPDFEditEmbedderTest, EmbedNotoSansSCFontWithCharcodes) {
 TEST_F(FPDFEditEmbedderTest, EmptyCreation) {
   CreateEmptyDocument();
   FPDF_PAGE page = FPDFPage_New(document(), 0, 640.0, 480.0);
-  EXPECT_NE(nullptr, page);
+  EXPECT_TRUE(page);
   // The FPDFPage_GenerateContent call should do nothing.
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
@@ -493,7 +493,7 @@ TEST_F(FPDFEditEmbedderTest, AddPaths) {
   EXPECT_EQ(FPDF_SEGMENT_LINETO, FPDFPathSegment_GetType(segment));
   EXPECT_TRUE(FPDFPathSegment_GetClose(segment));
   // Make sure out of bounds index access fails properly.
-  EXPECT_EQ(nullptr, FPDFPath_GetPathSegment(black_path, 3));
+  EXPECT_FALSE(FPDFPath_GetPathSegment(black_path, 3));
 
   FPDFPage_InsertObject(page, black_path);
   {
@@ -3025,7 +3025,7 @@ TEST_F(FPDFEditEmbedderTest, NormalizeNegativeRotation) {
   // Load document with a -90 degree rotation
   ASSERT_TRUE(OpenDocument("bug_713197.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_NE(nullptr, page);
+  EXPECT_TRUE(page);
 
   EXPECT_EQ(3, FPDFPage_GetRotation(page));
   UnloadPage(page);

@@ -297,7 +297,7 @@ TEST_F(PDFObjectsTest, GetArray) {
 
   // Check indirect references.
   for (const auto& it : m_RefObjs)
-    EXPECT_EQ(nullptr, it->AsArray());
+    EXPECT_FALSE(it->AsArray());
 }
 
 TEST_F(PDFObjectsTest, Clone) {
@@ -354,7 +354,7 @@ TEST_F(PDFObjectsTest, IsTypeAndAsType) {
       EXPECT_EQ(m_DirectObjs[i].Get(), m_DirectObjs[i]->AsArray());
     } else {
       EXPECT_FALSE(m_DirectObjs[i]->IsArray());
-      EXPECT_EQ(nullptr, m_DirectObjs[i]->AsArray());
+      EXPECT_FALSE(m_DirectObjs[i]->AsArray());
     }
 
     if (m_DirectObjTypes[i] == CPDF_Object::kBoolean) {
@@ -362,7 +362,7 @@ TEST_F(PDFObjectsTest, IsTypeAndAsType) {
       EXPECT_EQ(m_DirectObjs[i].Get(), m_DirectObjs[i]->AsBoolean());
     } else {
       EXPECT_FALSE(m_DirectObjs[i]->IsBoolean());
-      EXPECT_EQ(nullptr, m_DirectObjs[i]->AsBoolean());
+      EXPECT_FALSE(m_DirectObjs[i]->AsBoolean());
     }
 
     if (m_DirectObjTypes[i] == CPDF_Object::kName) {
@@ -370,7 +370,7 @@ TEST_F(PDFObjectsTest, IsTypeAndAsType) {
       EXPECT_EQ(m_DirectObjs[i].Get(), m_DirectObjs[i]->AsName());
     } else {
       EXPECT_FALSE(m_DirectObjs[i]->IsName());
-      EXPECT_EQ(nullptr, m_DirectObjs[i]->AsName());
+      EXPECT_FALSE(m_DirectObjs[i]->AsName());
     }
 
     if (m_DirectObjTypes[i] == CPDF_Object::kNumber) {
@@ -378,7 +378,7 @@ TEST_F(PDFObjectsTest, IsTypeAndAsType) {
       EXPECT_EQ(m_DirectObjs[i].Get(), m_DirectObjs[i]->AsNumber());
     } else {
       EXPECT_FALSE(m_DirectObjs[i]->IsNumber());
-      EXPECT_EQ(nullptr, m_DirectObjs[i]->AsNumber());
+      EXPECT_FALSE(m_DirectObjs[i]->AsNumber());
     }
 
     if (m_DirectObjTypes[i] == CPDF_Object::kString) {
@@ -386,7 +386,7 @@ TEST_F(PDFObjectsTest, IsTypeAndAsType) {
       EXPECT_EQ(m_DirectObjs[i].Get(), m_DirectObjs[i]->AsString());
     } else {
       EXPECT_FALSE(m_DirectObjs[i]->IsString());
-      EXPECT_EQ(nullptr, m_DirectObjs[i]->AsString());
+      EXPECT_FALSE(m_DirectObjs[i]->AsString());
     }
 
     if (m_DirectObjTypes[i] == CPDF_Object::kDictionary) {
@@ -394,7 +394,7 @@ TEST_F(PDFObjectsTest, IsTypeAndAsType) {
       EXPECT_EQ(m_DirectObjs[i].Get(), m_DirectObjs[i]->AsDictionary());
     } else {
       EXPECT_FALSE(m_DirectObjs[i]->IsDictionary());
-      EXPECT_EQ(nullptr, m_DirectObjs[i]->AsDictionary());
+      EXPECT_FALSE(m_DirectObjs[i]->AsDictionary());
     }
 
     if (m_DirectObjTypes[i] == CPDF_Object::kStream) {
@@ -402,11 +402,11 @@ TEST_F(PDFObjectsTest, IsTypeAndAsType) {
       EXPECT_EQ(m_DirectObjs[i].Get(), m_DirectObjs[i]->AsStream());
     } else {
       EXPECT_FALSE(m_DirectObjs[i]->IsStream());
-      EXPECT_EQ(nullptr, m_DirectObjs[i]->AsStream());
+      EXPECT_FALSE(m_DirectObjs[i]->AsStream());
     }
 
     EXPECT_FALSE(m_DirectObjs[i]->IsReference());
-    EXPECT_EQ(nullptr, m_DirectObjs[i]->AsReference());
+    EXPECT_FALSE(m_DirectObjs[i]->AsReference());
   }
   // Check indirect references.
   for (size_t i = 0; i < m_RefObjs.size(); ++i) {
@@ -712,16 +712,16 @@ TEST(PDFArrayTest, GetTypeAt) {
       if (i == 11)
         EXPECT_EQ(arr_val, arr->GetArrayAt(i));
       else
-        EXPECT_EQ(nullptr, arr->GetArrayAt(i));
+        EXPECT_FALSE(arr->GetArrayAt(i));
       if (i == 13) {
         EXPECT_EQ(stream_dict, arr->GetDictAt(i));
         EXPECT_EQ(stream_val, arr->GetStreamAt(i));
       } else {
-        EXPECT_EQ(nullptr, arr->GetStreamAt(i));
+        EXPECT_FALSE(arr->GetStreamAt(i));
         if (i == 12)
           EXPECT_EQ(dict_val, arr->GetDictAt(i));
         else
-          EXPECT_EQ(nullptr, arr->GetDictAt(i));
+          EXPECT_FALSE(arr->GetDictAt(i));
       }
     }
   }
@@ -946,7 +946,7 @@ TEST(PDFObjectTest, CloneCheckLoop) {
     ASSERT_TRUE(cloned_dict);
     ASSERT_TRUE(cloned_dict->IsDictionary());
     // Recursively referenced object is not cloned.
-    EXPECT_EQ(nullptr, cloned_dict->AsDictionary()->GetObjectFor("arr"));
+    EXPECT_FALSE(cloned_dict->AsDictionary()->GetObjectFor("arr"));
     dict_obj->RemoveFor("arr");  // Break deliberate cycle for cleanup.
   }
   {
@@ -962,7 +962,7 @@ TEST(PDFObjectTest, CloneCheckLoop) {
     ASSERT_TRUE(cloned_dict);
     ASSERT_TRUE(cloned_dict->IsDictionary());
     // Recursively referenced object is not cloned.
-    EXPECT_EQ(nullptr, cloned_dict->AsDictionary()->GetObjectFor("stream"));
+    EXPECT_FALSE(cloned_dict->AsDictionary()->GetObjectFor("stream"));
     dict_obj->RemoveFor("stream");  // Break deliberate cycle for cleanup.
   }
   {
@@ -990,7 +990,7 @@ TEST(PDFObjectTest, CloneCheckLoop) {
     ASSERT_TRUE(cloned_arr->IsArray());
     EXPECT_EQ(0U, cloned_arr->AsArray()->size());
     // Recursively referenced object is not cloned.
-    EXPECT_EQ(nullptr, cloned_arr->AsArray()->GetObjectAt(0));
+    EXPECT_FALSE(cloned_arr->AsArray()->GetObjectAt(0));
     dict_obj->RemoveFor("arr");  // Break deliberate cycle for cleanup.
   }
 }

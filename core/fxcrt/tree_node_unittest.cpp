@@ -71,20 +71,20 @@ TEST(TreeNode, SafeRemove) {
   auto pChild = std::make_unique<TestTreeNode>();
   pParent->AppendFirstChild(pChild.get());
   pChild->RemoveSelfIfParented();
-  EXPECT_EQ(nullptr, pParent->GetFirstChild());
-  EXPECT_EQ(nullptr, pChild->GetParent());
+  EXPECT_FALSE(pParent->GetFirstChild());
+  EXPECT_FALSE(pChild->GetParent());
 }
 
 TEST(TreeNode, SafeRemoveParentless) {
   auto pNode = std::make_unique<TestTreeNode>();
   pNode->RemoveSelfIfParented();
-  EXPECT_EQ(nullptr, pNode->GetParent());
+  EXPECT_FALSE(pNode->GetParent());
 }
 
 TEST(TreeNode, RemoveAllChildren) {
   auto pParent = std::make_unique<TestTreeNode>();
   pParent->RemoveAllChildren();
-  EXPECT_EQ(nullptr, pParent->GetFirstChild());
+  EXPECT_FALSE(pParent->GetFirstChild());
 
   auto p0 = std::make_unique<TestTreeNode>();
   auto p1 = std::make_unique<TestTreeNode>();
@@ -95,13 +95,13 @@ TEST(TreeNode, RemoveAllChildren) {
   pParent->AppendLastChild(p2.get());
   pParent->AppendLastChild(p3.get());
   pParent->RemoveAllChildren();
-  EXPECT_EQ(nullptr, pParent->GetFirstChild());
+  EXPECT_FALSE(pParent->GetFirstChild());
 }
 
 TEST(TreeNode, NthChild) {
   auto pParent = std::make_unique<TestTreeNode>();
-  EXPECT_EQ(nullptr, pParent->GetNthChild(-1));
-  EXPECT_EQ(nullptr, pParent->GetNthChild(0));
+  EXPECT_FALSE(pParent->GetNthChild(-1));
+  EXPECT_FALSE(pParent->GetNthChild(0));
 
   auto p0 = std::make_unique<TestTreeNode>();
   auto p1 = std::make_unique<TestTreeNode>();
@@ -111,12 +111,12 @@ TEST(TreeNode, NthChild) {
   pParent->AppendLastChild(p1.get());
   pParent->AppendLastChild(p2.get());
   pParent->AppendLastChild(p3.get());
-  EXPECT_EQ(nullptr, pParent->GetNthChild(-1));
+  EXPECT_FALSE(pParent->GetNthChild(-1));
   EXPECT_EQ(p0.get(), pParent->GetNthChild(0));
   EXPECT_EQ(p1.get(), pParent->GetNthChild(1));
   EXPECT_EQ(p2.get(), pParent->GetNthChild(2));
   EXPECT_EQ(p3.get(), pParent->GetNthChild(3));
-  EXPECT_EQ(nullptr, pParent->GetNthChild(4));
+  EXPECT_FALSE(pParent->GetNthChild(4));
   pParent->RemoveAllChildren();
 }
 
@@ -145,8 +145,8 @@ TEST(TreeNode, RemoveChild) {
   EXPECT_EQ(child1.get(), parent->GetFirstChild());
   EXPECT_EQ(child1.get(), parent->GetLastChild());
   parent->RemoveChild(child1.get());
-  EXPECT_EQ(nullptr, parent->GetFirstChild());
-  EXPECT_EQ(nullptr, parent->GetLastChild());
+  EXPECT_FALSE(parent->GetFirstChild());
+  EXPECT_FALSE(parent->GetLastChild());
 
   parent->AppendFirstChild(child0.get());
   parent->AppendLastChild(child1.get());
@@ -156,8 +156,8 @@ TEST(TreeNode, RemoveChild) {
   EXPECT_EQ(child0.get(), parent->GetFirstChild());
   EXPECT_EQ(child0.get(), parent->GetLastChild());
   parent->RemoveChild(child0.get());
-  EXPECT_EQ(nullptr, parent->GetFirstChild());
-  EXPECT_EQ(nullptr, parent->GetLastChild());
+  EXPECT_FALSE(parent->GetFirstChild());
+  EXPECT_FALSE(parent->GetLastChild());
 }
 
 }  // namespace fxcrt

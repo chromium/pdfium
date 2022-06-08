@@ -266,7 +266,7 @@ TEST_F(DocumentTest, UseCachedPageObjNumIfHaveNotPagesDict) {
   const uint32_t obj_num = page_stub->GetObjNum();
 
   EXPECT_FALSE(document.IsPageLoaded(kTestPageNum));
-  EXPECT_EQ(nullptr, document.GetPageDictionary(kTestPageNum));
+  EXPECT_FALSE(document.GetPageDictionary(kTestPageNum));
 
   document.SetPageObjNum(kTestPageNum, obj_num);
   EXPECT_TRUE(document.IsPageLoaded(kTestPageNum));

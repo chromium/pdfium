@@ -77,9 +77,9 @@ TEST(ArrayTest, Clear) {
 
 TEST(ArrayTest, SetAtBeyond) {
   auto arr = pdfium::MakeRetain<CPDF_Array>();
-  EXPECT_EQ(nullptr, arr->SetNewAt<CPDF_Number>(0, 0));
-  EXPECT_NE(nullptr, arr->InsertNewAt<CPDF_Number>(0, 0));
-  EXPECT_EQ(nullptr, arr->SetNewAt<CPDF_Number>(1, 0));
+  EXPECT_FALSE(arr->SetNewAt<CPDF_Number>(0, 0));
+  EXPECT_TRUE(arr->InsertNewAt<CPDF_Number>(0, 0));
+  EXPECT_FALSE(arr->SetNewAt<CPDF_Number>(1, 0));
 }
 
 TEST(ArrayTest, InsertAt) {
@@ -101,9 +101,9 @@ TEST(ArrayTest, InsertAt) {
 
 TEST(ArrayTest, InsertAtBeyond) {
   auto arr = pdfium::MakeRetain<CPDF_Array>();
-  EXPECT_EQ(nullptr, arr->InsertNewAt<CPDF_Number>(1, 0));
-  EXPECT_NE(nullptr, arr->InsertNewAt<CPDF_Number>(0, 0));
-  EXPECT_EQ(nullptr, arr->InsertNewAt<CPDF_Number>(2, 0));
+  EXPECT_FALSE(arr->InsertNewAt<CPDF_Number>(1, 0));
+  EXPECT_TRUE(arr->InsertNewAt<CPDF_Number>(0, 0));
+  EXPECT_FALSE(arr->InsertNewAt<CPDF_Number>(2, 0));
 }
 
 TEST(ArrayTest, Clone) {

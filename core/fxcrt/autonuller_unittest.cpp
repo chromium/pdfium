@@ -14,7 +14,7 @@ TEST(fxcrt, AutoNuller) {
     ptr = &x;
     EXPECT_EQ(&x, ptr);
   }
-  EXPECT_EQ(nullptr, ptr);
+  EXPECT_FALSE(ptr);
 }
 
 TEST(fxcrt, AutoNullerAbandon) {
@@ -37,7 +37,7 @@ TEST(fxcrt, AutoNullerUnownedPtr) {
     ptr = &x;
     EXPECT_EQ(&x, ptr);
   }
-  EXPECT_EQ(nullptr, ptr);
+  EXPECT_FALSE(ptr);
 }
 
 TEST(fxcrt, AutoNullerUnownedPtrAbandon) {

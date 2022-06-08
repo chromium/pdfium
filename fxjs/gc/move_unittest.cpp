@@ -46,7 +46,7 @@ TEST_F(MoveUnitTest, Member) {
       cppgc::MakeGarbageCollected<HeapObject>(heap()->GetAllocationHandle());
   obj->frick_ = obj;
   obj->frack_ = std::move(obj->frick_);
-  EXPECT_EQ(nullptr, obj->frick_);
+  EXPECT_FALSE(obj->frick_);
   EXPECT_EQ(obj, obj->frack_);
 }
 
@@ -57,6 +57,6 @@ TEST_F(MoveUnitTest, Persistent) {
   CppObject outsider;
   outsider.click_ = obj;
   outsider.clack_ = std::move(outsider.click_);
-  EXPECT_EQ(nullptr, outsider.click_);
+  EXPECT_FALSE(outsider.click_);
   EXPECT_EQ(obj, outsider.clack_);
 }

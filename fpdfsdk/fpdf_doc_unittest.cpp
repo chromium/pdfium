@@ -67,19 +67,19 @@ TEST_F(PDFDocTest, FindBookmark) {
   {
     // No bookmark information.
     ScopedFPDFWideString title = GetFPDFWideString(L"");
-    EXPECT_EQ(nullptr, FPDFBookmark_Find(m_pDoc.get(), title.get()));
+    EXPECT_FALSE(FPDFBookmark_Find(m_pDoc.get(), title.get()));
 
     title = GetFPDFWideString(L"Preface");
-    EXPECT_EQ(nullptr, FPDFBookmark_Find(m_pDoc.get(), title.get()));
+    EXPECT_FALSE(FPDFBookmark_Find(m_pDoc.get(), title.get()));
   }
   {
     // Empty bookmark tree.
     m_pRootObj->SetNewFor<CPDF_Dictionary>("Outlines");
     ScopedFPDFWideString title = GetFPDFWideString(L"");
-    EXPECT_EQ(nullptr, FPDFBookmark_Find(m_pDoc.get(), title.get()));
+    EXPECT_FALSE(FPDFBookmark_Find(m_pDoc.get(), title.get()));
 
     title = GetFPDFWideString(L"Preface");
-    EXPECT_EQ(nullptr, FPDFBookmark_Find(m_pDoc.get(), title.get()));
+    EXPECT_FALSE(FPDFBookmark_Find(m_pDoc.get(), title.get()));
   }
   {
     // Check on a regular bookmark tree.
@@ -109,11 +109,11 @@ TEST_F(PDFDocTest, FindBookmark) {
 
     // Title with no match.
     ScopedFPDFWideString title = GetFPDFWideString(L"Chapter 3");
-    EXPECT_EQ(nullptr, FPDFBookmark_Find(m_pDoc.get(), title.get()));
+    EXPECT_FALSE(FPDFBookmark_Find(m_pDoc.get(), title.get()));
 
     // Title with partial match only.
     title = GetFPDFWideString(L"Chapter");
-    EXPECT_EQ(nullptr, FPDFBookmark_Find(m_pDoc.get(), title.get()));
+    EXPECT_FALSE(FPDFBookmark_Find(m_pDoc.get(), title.get()));
 
     // Title with a match.
     title = GetFPDFWideString(L"Chapter 2");
@@ -153,7 +153,7 @@ TEST_F(PDFDocTest, FindBookmark) {
 
     // Title with no match.
     ScopedFPDFWideString title = GetFPDFWideString(L"Chapter 3");
-    EXPECT_EQ(nullptr, FPDFBookmark_Find(m_pDoc.get(), title.get()));
+    EXPECT_FALSE(FPDFBookmark_Find(m_pDoc.get(), title.get()));
 
     // Title with a match.
     title = GetFPDFWideString(L"Chapter 2");
@@ -194,7 +194,7 @@ TEST_F(PDFDocTest, FindBookmark) {
 
     // Title with no match.
     ScopedFPDFWideString title = GetFPDFWideString(L"Chapter 8");
-    EXPECT_EQ(nullptr, FPDFBookmark_Find(m_pDoc.get(), title.get()));
+    EXPECT_FALSE(FPDFBookmark_Find(m_pDoc.get(), title.get()));
 
     // Title with a match.
     title = GetFPDFWideString(L"Chapter 3");

@@ -15,9 +15,9 @@
 using ::testing::ElementsAreArray;
 
 TEST(LZWDecompressor, CreateBadParams) {
-  EXPECT_EQ(nullptr, LZWDecompressor::Create(0x10, 0x02));
-  EXPECT_EQ(nullptr, LZWDecompressor::Create(0x04, 0x0F));
-  EXPECT_EQ(nullptr, LZWDecompressor::Create(0x02, 0x02));
+  EXPECT_FALSE(LZWDecompressor::Create(0x10, 0x02));
+  EXPECT_FALSE(LZWDecompressor::Create(0x04, 0x0F));
+  EXPECT_FALSE(LZWDecompressor::Create(0x02, 0x02));
 }
 
 TEST(LZWDecompressor, ExtractData) {

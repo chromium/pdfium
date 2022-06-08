@@ -1286,7 +1286,7 @@ TEST(ByteStringView, FromVector) {
   cleared_vec.pop_back();
   ByteStringView cleared_string(cleared_vec);
   EXPECT_EQ(0u, cleared_string.GetLength());
-  EXPECT_EQ(nullptr, cleared_string.raw_str());
+  EXPECT_FALSE(cleared_string.raw_str());
 }
 
 TEST(ByteStringView, GetID) {
@@ -1728,19 +1728,19 @@ TEST(ByteString, Empty) {
   EXPECT_EQ(0u, empty_str.GetLength());
 
   const char* cstr = empty_str.c_str();
-  EXPECT_NE(nullptr, cstr);
+  EXPECT_TRUE(cstr);
   EXPECT_EQ(0u, strlen(cstr));
 
   const uint8_t* rstr = empty_str.raw_str();
-  EXPECT_EQ(nullptr, rstr);
+  EXPECT_FALSE(rstr);
 
   pdfium::span<const char> cspan = empty_str.span();
   EXPECT_TRUE(cspan.empty());
-  EXPECT_EQ(nullptr, cspan.data());
+  EXPECT_FALSE(cspan.data());
 
   pdfium::span<const uint8_t> rspan = empty_str.raw_span();
   EXPECT_TRUE(rspan.empty());
-  EXPECT_EQ(nullptr, rspan.data());
+  EXPECT_FALSE(rspan.data());
 }
 
 TEST(ByteString, InitializerList) {

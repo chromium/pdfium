@@ -50,14 +50,14 @@ TEST_F(CXFA_DocumentBuilderTest, EmptyInput) {
   static const char kInput[] = "";
   auto stream = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
       pdfium::as_bytes(pdfium::make_span(kInput)));
-  EXPECT_EQ(nullptr, ParseAndBuild(stream));
+  EXPECT_FALSE(ParseAndBuild(stream));
 }
 
 TEST_F(CXFA_DocumentBuilderTest, BadInput) {
   static const char kInput[] = "<<<>bar?>>>>>>>";
   auto stream = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
       pdfium::as_bytes(pdfium::make_span(kInput)));
-  EXPECT_EQ(nullptr, ParseAndBuild(stream));
+  EXPECT_FALSE(ParseAndBuild(stream));
 }
 
 TEST_F(CXFA_DocumentBuilderTest, XMLInstructionsScriptOff) {

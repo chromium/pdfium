@@ -18,7 +18,7 @@ TEST_F(CPDFParserEmbedderTest, Bug481363) {
   // Test colorspace object with malformed dictionary.
   ASSERT_TRUE(OpenDocument("bug_481363.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_NE(nullptr, page);
+  EXPECT_TRUE(page);
   UnloadPage(page);
 }
 
@@ -44,9 +44,9 @@ TEST_F(CPDFParserEmbedderTest, Bug602650) {
   // but do not match with the objects.
   ASSERT_TRUE(OpenDocument("bug_602650.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_NE(nullptr, page);
+  EXPECT_TRUE(page);
   FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page);
-  EXPECT_NE(nullptr, text_page);
+  EXPECT_TRUE(text_page);
   // The page should not be blank.
   EXPECT_LT(0, FPDFText_CountChars(text_page));
 
@@ -65,9 +65,9 @@ TEST_F(CPDFParserEmbedderTest, LoadMainCrossRefTable) {
   // crossrefs for second page.
   EXPECT_EQ(2, GetPageCount());
   FPDF_PAGE page = LoadPage(1);
-  EXPECT_NE(nullptr, page);
+  EXPECT_TRUE(page);
   FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page);
-  EXPECT_NE(nullptr, text_page);
+  EXPECT_TRUE(text_page);
   // The page should not be blank.
   EXPECT_LT(0, FPDFText_CountChars(text_page));
   FPDFText_ClosePage(text_page);
@@ -77,7 +77,7 @@ TEST_F(CPDFParserEmbedderTest, LoadMainCrossRefTable) {
 TEST_F(CPDFParserEmbedderTest, Bug828049) {
   ASSERT_TRUE(OpenDocument("bug_828049.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_NE(nullptr, page);
+  EXPECT_TRUE(page);
   UnloadPage(page);
 }
 

@@ -75,15 +75,15 @@ TEST(fxcodec, JBig2ImageCreate) {
   EXPECT_EQ(0, img.GetPixel(kWidthPixels, kHeightLines));
 
   // Out-of-bounds GetLine() returns null.
-  EXPECT_EQ(nullptr, img.GetLine(-1));
-  EXPECT_EQ(nullptr, img.GetLine(kHeightLines));
+  EXPECT_FALSE(img.GetLine(-1));
+  EXPECT_FALSE(img.GetLine(kHeightLines));
 }
 
 TEST(fxcodec, JBig2ImageCreateTooBig) {
   CJBig2_Image img(kWidthPixels, kTooLargeHeightLines);
   EXPECT_EQ(0, img.width());
   EXPECT_EQ(0, img.height());
-  EXPECT_EQ(nullptr, img.data());
+  EXPECT_FALSE(img.data());
 }
 
 TEST(fxcodec, JBig2ImageCreateExternal) {
@@ -102,7 +102,7 @@ TEST(fxcodec, JBig2ImageCreateExternalTooBig) {
   CJBig2_Image img(kWidthPixels, kTooLargeHeightLines, kStrideBytes, buf);
   EXPECT_EQ(0, img.width());
   EXPECT_EQ(0, img.height());
-  EXPECT_EQ(nullptr, img.data());
+  EXPECT_FALSE(img.data());
 }
 
 TEST(fxcodec, JBig2ImageCreateExternalBadStride) {
@@ -110,7 +110,7 @@ TEST(fxcodec, JBig2ImageCreateExternalBadStride) {
   CJBig2_Image img(kWidthPixels, kTooLargeHeightLines, kStrideBytes - 1, buf);
   EXPECT_EQ(0, img.width());
   EXPECT_EQ(0, img.height());
-  EXPECT_EQ(nullptr, img.data());
+  EXPECT_FALSE(img.data());
 }
 
 TEST(fxcodec, JBig2ImageExpand) {

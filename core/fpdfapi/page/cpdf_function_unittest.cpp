@@ -13,23 +13,23 @@
 TEST(CPDFFunction, BadFunctionType) {
   auto pDict = pdfium::MakeRetain<CPDF_Dictionary>();
   pDict->SetNewFor<CPDF_Number>("FunctionType", -2);
-  EXPECT_EQ(nullptr, CPDF_Function::Load(pDict.Get()));
+  EXPECT_FALSE(CPDF_Function::Load(pDict.Get()));
 
   pDict->SetNewFor<CPDF_Number>("FunctionType", 5);
-  EXPECT_EQ(nullptr, CPDF_Function::Load(pDict.Get()));
+  EXPECT_FALSE(CPDF_Function::Load(pDict.Get()));
 }
 
 TEST(CPDFFunction, NoDomain) {
   auto pDict = pdfium::MakeRetain<CPDF_Dictionary>();
   pDict->SetNewFor<CPDF_Number>("FunctionType", 0);
-  EXPECT_EQ(nullptr, CPDF_Function::Load(pDict.Get()));
+  EXPECT_FALSE(CPDF_Function::Load(pDict.Get()));
 }
 
 TEST(CPDFFunction, EmptyDomain) {
   auto pDict = pdfium::MakeRetain<CPDF_Dictionary>();
   pDict->SetNewFor<CPDF_Number>("FunctionType", 0);
   pDict->SetNewFor<CPDF_Array>("Domain");
-  EXPECT_EQ(nullptr, CPDF_Function::Load(pDict.Get()));
+  EXPECT_FALSE(CPDF_Function::Load(pDict.Get()));
 }
 
 TEST(CPDFFunction, NoRange) {
@@ -39,5 +39,5 @@ TEST(CPDFFunction, NoRange) {
   CPDF_Array* pArray = pDict->SetNewFor<CPDF_Array>("Domain");
   pArray->AppendNew<CPDF_Number>(0);
   pArray->AppendNew<CPDF_Number>(10);
-  EXPECT_EQ(nullptr, CPDF_Function::Load(pDict.Get()));
+  EXPECT_FALSE(CPDF_Function::Load(pDict.Get()));
 }
