@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "testing/xfa_js_embedder_test.h"
 
-class CXFALayoutItemEmbedderTest : public EmbedderTest {};
+class CXFALayoutItemEmbedderTest : public XFAJSEmbedderTest {};
 
 TEST_F(CXFALayoutItemEmbedderTest, Bug_1265) {
   ASSERT_TRUE(OpenDocument("bug_1265.pdf"));
@@ -38,4 +38,14 @@ TEST_F(CXFALayoutItemEmbedderTest, Bug_306123) {
   EXPECT_EQ(nullptr, page2);
   UnloadPage(page0);
   UnloadPage(page1);
+}
+
+TEST_F(CXFALayoutItemEmbedderTest, BreakBeforeAfter) {
+  static constexpr int kExpectedPageCount = 10;
+  ASSERT_TRUE(OpenDocument("xfa/xfa_break_before_after.pdf"));
+  for (int i = 0; i < kExpectedPageCount; ++i) {
+    FPDF_PAGE page = LoadPage(i);
+    EXPECT_TRUE(page);
+    UnloadPage(page);
+  }
 }

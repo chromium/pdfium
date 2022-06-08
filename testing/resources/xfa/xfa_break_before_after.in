@@ -1,0 +1,54 @@
+{{header}}
+{{include ../xfa_catalog_1_0.fragment}}
+{{include ../xfa_object_2_0.fragment}}
+{{include ../xfa_preamble_3_0.fragment}}
+{{include ../xfa_config_4_0.fragment}}
+{{object 5 0}} <<
+  {{streamlen}}
+>>
+stream
+<template xmlns="http://www.xfa.org/schema/xfa-template/3.0/">
+  <subform name="Form01" layout="tb" locale="en_ZA" restoreState="auto">
+    <pageSet>
+      <pageArea name="Page1" id="Page1" initialNumber="1">
+        <contentArea x="10.455mm" w="190.5mm" h="286mm"/>
+        <occur min="1" max="1"/>
+      </pageArea>
+    </pageSet>
+    <subform w="190.5mm" h="286mm" name="TForm1SubForm1">
+    </subform>
+    <subform w="190.5mm" h="286mm">
+      <breakBefore targetType="contentArea" />
+    </subform>
+    <subform w="190.5mm" h="286mm">
+      <breakAfter targetType="contentArea" />
+    </subform>
+    <subform w="190.5mm" h="286mm">
+      <breakBefore targetType="pageArea" />
+    </subform>
+    <subform w="190.5mm" h="286mm">
+      <breakAfter targetType="pageArea" />
+    </subform>
+    <subform w="190.5mm" h="286mm">
+      <breakBefore targetType="pageEven" />
+    </subform>
+    <subform w="190.5mm" h="286mm">
+      <breakAfter targetType="pageEven" />
+    </subform>
+    <subform w="190.5mm" h="286mm">
+      <breakBefore targetType="pageOdd" />
+    </subform>
+    <subform w="190.5mm" h="286mm">
+      <breakAfter targetType="pageOdd" />
+    </subform>
+  </subform>
+</template>
+endstream
+endobj
+{{include ../xfa_locale_6_0.fragment}}
+{{include ../xfa_postamble_7_0.fragment}}
+{{include ../xfa_pages_8_0.fragment}}
+{{xref}}
+{{trailer}}
+{{endxref}}
+%%EOF

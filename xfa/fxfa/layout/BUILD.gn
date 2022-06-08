@@ -40,5 +40,6 @@ source_set("layout") {
 
 pdfium_embeddertest_source_set("embeddertests") {
   sources = [ "cxfa_layoutitem_embeddertest.cpp" ]
+  deps = [ "../../../fxjs:gc" ]
   pdfium_root_dir = "../../../"
 }
