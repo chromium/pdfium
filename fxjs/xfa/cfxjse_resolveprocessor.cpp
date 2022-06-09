@@ -507,7 +507,7 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(v8::Isolate* pIsolate,
 
     rndFind.m_dwStyles = dwSubStyles;
     rndFind.m_CurObject = parentNode;
-    rnd.m_pSC->GetUpObjectArray()->push_back(parentNode);
+    rnd.m_pSC->AddObjectToUpArray(parentNode);
     ResolveNormal(pIsolate, rndFind);
     rnd.m_Result.objects.insert(rnd.m_Result.objects.end(),
                                 rndFind.m_Result.objects.begin(),
@@ -668,11 +668,10 @@ void CFXJSE_ResolveProcessor::FilterCondition(v8::Isolate* pIsolate,
                                               WideString wsCondition,
                                               CFXJSE_ResolveNodeData* pRnd) {
   size_t iCurIndex = 0;
-  const auto* pArray = pRnd->m_pSC->GetUpObjectArray();
-  if (!pArray->empty()) {
-    CXFA_Node* pNode = pArray->back();
-    bool bIsProperty = pNode->IsProperty();
-    bool bIsClassIndex =
+  CXFA_Node* pNode = pRnd->m_pSC->LastObjectFromUpArray();
+  if (pNode) {
+    const bool bIsProperty = pNode->IsProperty();
+    const bool bIsClassIndex =
         pNode->IsUnnamed() ||
         (bIsProperty && pNode->GetElementType() != XFA_Element::PageSet);
     iCurIndex = pNode->GetIndex(bIsProperty, bIsClassIndex);

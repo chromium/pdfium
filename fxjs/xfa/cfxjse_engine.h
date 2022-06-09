@@ -131,6 +131,7 @@ class CFXJSE_Engine final : public CFX_V8 {
   CXFA_Object* GetThisObject() const { return m_pThisObject; }
   CFXJSE_Class* GetJseNormalClass() const { return m_pJsClass.Get(); }
   CFXJSE_Context* GetJseContext() const { return m_JsContext.get(); }
+  CXFA_Document* GetDocument() const { return m_pDocument.Get(); }
 
   void SetNodesOfRunScript(std::vector<cppgc::Persistent<CXFA_Node>>* pArray);
   void AddNodesOfRunScript(CXFA_Node* pNode);
@@ -139,10 +140,9 @@ class CFXJSE_Engine final : public CFX_V8 {
   bool IsRunAtClient() { return m_eRunAtType != XFA_AttributeValue::Server; }
 
   CXFA_Script::Type GetType();
-  std::vector<cppgc::Persistent<CXFA_Node>>* GetUpObjectArray() {
-    return &m_upObjectArray;
-  }
-  CXFA_Document* GetDocument() const { return m_pDocument.Get(); }
+
+  void AddObjectToUpArray(CXFA_Node* pNode);
+  CXFA_Node* LastObjectFromUpArray();
 
   CXFA_Object* ToXFAObject(v8::Local<v8::Value> obj);
   v8::Local<v8::Object> NewNormalXFAObject(CXFA_Object* obj);

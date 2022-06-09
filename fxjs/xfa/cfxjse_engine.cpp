@@ -535,6 +535,14 @@ CXFA_Script::Type CFXJSE_Engine::GetType() {
   return m_eScriptType;
 }
 
+void CFXJSE_Engine::AddObjectToUpArray(CXFA_Node* pNode) {
+  m_upObjectArray.push_back(pNode);
+}
+
+CXFA_Node* CFXJSE_Engine::LastObjectFromUpArray() {
+  return !m_upObjectArray.empty() ? m_upObjectArray.back() : nullptr;
+}
+
 CFXJSE_Context* CFXJSE_Engine::CreateVariablesContext(CXFA_Node* pScriptNode,
                                                       CXFA_Node* pSubform) {
   if (!pScriptNode || !pSubform)
