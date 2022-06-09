@@ -704,7 +704,7 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
   pNodeHelper->m_pCreateParent = nullptr;
   pNodeHelper->m_iCurAllStart = -1;
 
-  CFXJSE_ResolveNodeData rndFind(this);
+  CFXJSE_ResolveProcessor::NodeData rndFind(this);
   int32_t nStart = 0;
   int32_t nLevel = 0;
 
@@ -757,7 +757,7 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
       if (((dwStyles & XFA_ResolveFlag::kBind) ||
            (dwStyles & XFA_ResolveFlag::kCreateNode)) &&
           nNodes > 1) {
-        CFXJSE_ResolveNodeData rndBind(nullptr);
+        CFXJSE_ResolveProcessor::NodeData rndBind(nullptr);
         m_ResolveProcessor->GetFilter(wsExpression, nStart, rndBind);
         i = m_ResolveProcessor->IndexForDataBind(rndBind.m_wsCondition, nNodes);
         bDataBind = true;
