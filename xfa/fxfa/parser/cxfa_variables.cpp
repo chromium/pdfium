@@ -19,6 +19,13 @@ const CXFA_Node::AttributeData kVariablesAttributeData[] = {
 
 }  // namespace
 
+// static
+CXFA_Variables* CXFA_Variables::FromNode(CXFA_Node* pNode) {
+  return pNode && pNode->GetElementType() == XFA_Element::Variables
+             ? static_cast<CXFA_Variables*>(pNode)
+             : nullptr;
+}
+
 CXFA_Variables::CXFA_Variables(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,

@@ -11,6 +11,8 @@
 
 class CXFA_Variables final : public CXFA_Node {
  public:
+  static CXFA_Variables* FromNode(CXFA_Node* pNode);
+
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Variables() override;
 

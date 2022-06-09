@@ -12,6 +12,7 @@
 #include "xfa/fxfa/parser/cxfa_object.h"
 
 class CXFA_Node;
+class CXFA_Script;
 
 class CXFA_ThisProxy final : public CXFA_Object {
  public:
@@ -21,13 +22,13 @@ class CXFA_ThisProxy final : public CXFA_Object {
   void Trace(cppgc::Visitor* visitor) const override;
 
   CXFA_Node* GetThisNode() const { return m_pThisNode.Get(); }
-  CXFA_Node* GetScriptNode() const { return m_pScriptNode.Get(); }
+  CXFA_Script* GetScriptNode() const { return m_pScriptNode.Get(); }
 
  private:
-  CXFA_ThisProxy(CXFA_Node* pThisNode, CXFA_Node* pScriptNode);
+  CXFA_ThisProxy(CXFA_Node* pThisNode, CXFA_Script* pScriptNode);
 
   cppgc::Member<CXFA_Node> m_pThisNode;
-  cppgc::Member<CXFA_Node> m_pScriptNode;
+  cppgc::Member<CXFA_Script> m_pScriptNode;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_THISPROXY_H_

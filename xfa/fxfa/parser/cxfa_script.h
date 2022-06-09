@@ -18,6 +18,8 @@ class CXFA_Script final : public CXFA_Node {
     Unknown,
   };
 
+  static CXFA_Script* FromNode(CXFA_Node* pNode);
+
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Script() override;
 

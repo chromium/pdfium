@@ -9,8 +9,9 @@
 #include "fxjs/xfa/cjx_object.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_script.h"
 
-CXFA_ThisProxy::CXFA_ThisProxy(CXFA_Node* pThisNode, CXFA_Node* pScriptNode)
+CXFA_ThisProxy::CXFA_ThisProxy(CXFA_Node* pThisNode, CXFA_Script* pScriptNode)
     : CXFA_Object(
           pThisNode->GetDocument(),
           XFA_ObjectType::ThisProxy,
