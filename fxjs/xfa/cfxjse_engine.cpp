@@ -440,6 +440,9 @@ void CFXJSE_Engine::NormalPropertySetter(v8::Isolate* pIsolate,
 
   CFXJSE_Engine* pScriptContext =
       pOriginalObject->GetDocument()->GetScriptContext();
+  if (pScriptContext->IsResolvingNodes())
+    return;
+
   CXFA_Object* pObject = pScriptContext->GetVariablesThis(pOriginalObject);
   WideString wsPropName = WideString::FromUTF8(szPropName);
   WideStringView wsPropNameView = wsPropName.AsStringView();
@@ -680,6 +683,9 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
                                           CXFA_Node* bindNode) {
   if (wsExpression.IsEmpty())
     return absl::nullopt;
+
+  AutoRestorer<bool> resolving_restorer(&m_bResolvingNodes);
+  m_bResolvingNodes = true;
 
   const bool bParentOrSiblings =
       !!(dwStyles & Mask<XFA_ResolveFlag>{XFA_ResolveFlag::kParent,

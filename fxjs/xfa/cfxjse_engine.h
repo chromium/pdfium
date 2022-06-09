@@ -147,6 +147,8 @@ class CFXJSE_Engine final : public CFX_V8 {
   CXFA_Object* ToXFAObject(v8::Local<v8::Value> obj);
   v8::Local<v8::Object> NewNormalXFAObject(CXFA_Object* obj);
 
+  bool IsResolvingNodes() const { return m_bResolvingNodes; }
+
  private:
   CFXJSE_Context* CreateVariablesContext(CXFA_Node* pScriptNode,
                                          CXFA_Node* pSubform);
@@ -187,6 +189,7 @@ class CFXJSE_Engine final : public CFX_V8 {
   std::unique_ptr<CFXJSE_FormCalcContext> m_FormCalcContext;
   cppgc::Persistent<CXFA_Object> m_pThisObject;
   XFA_AttributeValue m_eRunAtType = XFA_AttributeValue::Client;
+  bool m_bResolvingNodes = false;
 };
 
 #endif  //  FXJS_XFA_CFXJSE_ENGINE_H_

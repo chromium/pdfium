@@ -14,7 +14,7 @@ TEST_F(CJX_ObjectEmbedderTest, Bug1327884) {
   ASSERT_FALSE(OpenDocument("bug_1327884.pdf"));
 }
 
-// TODO(https://crbug.com/1333298) hits hard CHECK().
-TEST_F(CJX_ObjectEmbedderTest, DISABLED_Bug1333298) {
-  ASSERT_FALSE(OpenDocument("bug_1333298.pdf"));
+// Should not CHECK(), but document is uninteresting.
+TEST_F(CJX_ObjectEmbedderTest, Bug1333298) {
+  ASSERT_TRUE(OpenDocument("bug_1333298.pdf"));
 }
