@@ -1,9 +1,9 @@
 Name: OpenJPEG
 URL: http://www.openjpeg.org/
-Version: 2.4.0 (also update in opj_config*)
+Version: 2.5.0 (also update in opj_config*)
 Security Critical: yes
 License: 2-clause BSD
-CPEPrefix: cpe:/a:uclouvain:openjpeg:2.4.0
+CPEPrefix: cpe:/a:uclouvain:openjpeg:2.5.0
 
 Description:
 JPEG 2000 library.
@@ -28,6 +28,4 @@ Local Modifications:
 0034-opj_malloc.patch: PDFium changes in opj_malloc.
 0035-opj_image_data_free.patch: Use the right free function in opj_jp2_apply_pclr.
 0039-opj_mqc_renorme.patch: Remove unused opj_mqc_renorme().
-0040-dwt_overflows.patch: Avoid integer overflows in DWT.
 0041-remove_opj_clock.patch: Remove unused opj_clock.h include.
-0042-dwt_overflows.patch: Avoid integer overflows in DWT.

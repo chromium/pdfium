@@ -32,19 +32,6 @@ index 889c2cfc8..711dd73e8 100644
      } else {
          p_j2k->m_specific_param.m_decoder.m_start_tile_x = 0;
          p_j2k->m_specific_param.m_decoder.m_start_tile_y = 0;
-@@ -7839,10 +7835,8 @@ OPJ_BOOL opj_j2k_setup_encoder(opj_j2k_t *p_j2k,
-             opj_event_msg(p_manager, EVT_ERROR, "Invalid tile height\n");
-             return OPJ_FALSE;
-         }
--        cp->tw = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)(image->x1 - cp->tx0),
--                                             (OPJ_INT32)cp->tdx);
--        cp->th = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)(image->y1 - cp->ty0),
--                                             (OPJ_INT32)cp->tdy);
-+        cp->tw = opj_uint_ceildiv(image->x1 - cp->tx0, cp->tdx);
-+        cp->th = opj_uint_ceildiv(image->y1 - cp->ty0, cp->tdy);
-     } else {
-         cp->tdx = image->x1 - cp->tx0;
-         cp->tdy = image->y1 - cp->ty0;
 @@ -10035,10 +10029,8 @@ static OPJ_BOOL opj_j2k_update_image_dimensions(opj_image_t* p_image,
              return OPJ_FALSE;
          }
