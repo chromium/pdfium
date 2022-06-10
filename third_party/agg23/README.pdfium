@@ -30,3 +30,5 @@ shadow variable.
 0011-path-storage-move-ctor.patch: Add a move ctor for path_storage.
 0012-infinite-loop.patch: Fix an infinite loop in calc_dash_start().
 0013-cxx20.patch: C++20 support.
+0014-ubsan-render-line.patch: Fix some integer overflows in
+outline_aa::render_line().
