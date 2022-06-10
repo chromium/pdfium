@@ -1,7 +1,7 @@
-diff --git a/third_party/libopenjpeg20/tcd.c b/third_party/libopenjpeg20/tcd.c
+diff --git a/third_party/libopenjpeg/tcd.c b/third_party/libopenjpeg/tcd.c
 index 4c728d4c6..b9f571410 100644
---- a/third_party/libopenjpeg20/tcd.c
-+++ b/third_party/libopenjpeg20/tcd.c
+--- a/third_party/libopenjpeg/tcd.c
++++ b/third_party/libopenjpeg/tcd.c
 @@ -1094,6 +1094,9 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
                      l_current_precinct->ch = (OPJ_UINT32)((brcblkyend - tlcblkystart) >>
                                                            cblkheightexpn);

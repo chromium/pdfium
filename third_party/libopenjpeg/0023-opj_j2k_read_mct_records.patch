@@ -1,7 +1,7 @@
-diff --git a/third_party/libopenjpeg20/j2k.c b/third_party/libopenjpeg20/j2k.c
+diff --git a/third_party/libopenjpeg/j2k.c b/third_party/libopenjpeg/j2k.c
 index 1932fe20c..d24564cc2 100644
---- a/third_party/libopenjpeg20/j2k.c
-+++ b/third_party/libopenjpeg20/j2k.c
+--- a/third_party/libopenjpeg/j2k.c
++++ b/third_party/libopenjpeg/j2k.c
 @@ -5749,6 +5749,7 @@ static OPJ_BOOL opj_j2k_read_mct(opj_j2k_t *p_j2k,
      OPJ_UINT32 l_tmp;
      OPJ_UINT32 l_indix;

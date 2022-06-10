@@ -1,7 +1,7 @@
-diff --git a/third_party/libopenjpeg20/j2k.c b/third_party/libopenjpeg20/j2k.c
+diff --git a/third_party/libopenjpeg/j2k.c b/third_party/libopenjpeg/j2k.c
 index d24564cc2..889c2cfc8 100644
---- a/third_party/libopenjpeg20/j2k.c
-+++ b/third_party/libopenjpeg20/j2k.c
+--- a/third_party/libopenjpeg/j2k.c
++++ b/third_party/libopenjpeg/j2k.c
 @@ -6397,7 +6397,7 @@ static OPJ_BOOL opj_j2k_add_mct(opj_tcp_t * p_tcp, opj_image_t * p_image,
      if (l_deco_array) {
          l_data_size = MCT_ELEMENT_SIZE[l_deco_array->m_element_type] * p_image->numcomps

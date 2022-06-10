@@ -1,7 +1,7 @@
-diff --git a/third_party/libopenjpeg20/opj_malloc.cc b/third_party/libopenjpeg20/opj_malloc.cc
+diff --git a/third_party/libopenjpeg/opj_malloc.cc b/third_party/libopenjpeg/opj_malloc.cc
 new file mode 100644
 --- /dev/null
-+++ b/third_party/libopenjpeg20/opj_malloc.cc
++++ b/third_party/libopenjpeg/opj_malloc.cc
 @@ -0,0 +1,42 @@
 +// Copyright 2020 PDFium Authors. All rights reserved.
 +// Use of this source code is governed by a BSD-style license that can be
@@ -45,9 +45,9 @@ new file mode 100644
 +}
 +
 +}  // extern "C"
-diff --git a/third_party/libopenjpeg20/opj_malloc.h b/third_party/libopenjpeg20/opj_malloc.h
---- a/third_party/libopenjpeg20/opj_malloc.h
-+++ b/third_party/libopenjpeg20/opj_malloc.h
+diff --git a/third_party/libopenjpeg/opj_malloc.h b/third_party/libopenjpeg/opj_malloc.h
+--- a/third_party/libopenjpeg/opj_malloc.h
++++ b/third_party/libopenjpeg/opj_malloc.h
 @@ -33,6 +33,11 @@
  #define OPJ_MALLOC_H
  

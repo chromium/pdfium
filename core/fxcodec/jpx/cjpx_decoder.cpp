@@ -20,7 +20,7 @@
 #include "third_party/base/ptr_util.h"
 
 #if !defined(USE_SYSTEM_LIBOPENJPEG2)
-#include "third_party/libopenjpeg20/opj_malloc.h"
+#include "third_party/libopenjpeg/opj_malloc.h"
 #endif
 
 namespace fxcodec {

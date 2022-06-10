@@ -1,7 +1,7 @@
-diff --git a/third_party/libopenjpeg20/j2k.c b/third_party/libopenjpeg20/j2k.c
+diff --git a/third_party/libopenjpeg/j2k.c b/third_party/libopenjpeg/j2k.c
 index 8e343ab2e..5e1494394 100644
---- a/third_party/libopenjpeg20/j2k.c
-+++ b/third_party/libopenjpeg20/j2k.c
+--- a/third_party/libopenjpeg/j2k.c
++++ b/third_party/libopenjpeg/j2k.c
 @@ -9882,6 +9882,12 @@ static OPJ_BOOL opj_j2k_update_image_data(opj_tcd_t * p_tcd,
           * */
          assert(res_x0 >= 0);

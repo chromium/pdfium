@@ -1,7 +1,7 @@
-diff --git a/third_party/libopenjpeg20/pi.c b/third_party/libopenjpeg20/pi.c
+diff --git a/third_party/libopenjpeg/pi.c b/third_party/libopenjpeg/pi.c
 index 4f7dd50f1..1430d12a9 100644
---- a/third_party/libopenjpeg20/pi.c
-+++ b/third_party/libopenjpeg20/pi.c
+--- a/third_party/libopenjpeg/pi.c
++++ b/third_party/libopenjpeg/pi.c
 @@ -464,6 +464,9 @@ static OPJ_BOOL opj_pi_next_rpcl(opj_pi_iterator_t * pi)
                                                   (comp->dy << levelno)), res->pdy)
                             - opj_uint_floordivpow2(try0, res->pdy);

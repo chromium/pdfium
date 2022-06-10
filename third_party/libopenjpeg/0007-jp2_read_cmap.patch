@@ -1,7 +1,7 @@
-diff --git a/third_party/libopenjpeg20/jp2.c b/third_party/libopenjpeg20/jp2.c
+diff --git a/third_party/libopenjpeg/jp2.c b/third_party/libopenjpeg/jp2.c
 index a5790b267..a0f639d8e 100644
---- a/third_party/libopenjpeg20/jp2.c
-+++ b/third_party/libopenjpeg20/jp2.c
+--- a/third_party/libopenjpeg/jp2.c
++++ b/third_party/libopenjpeg/jp2.c
 @@ -1308,7 +1308,7 @@ static OPJ_BOOL opj_jp2_read_cmap(opj_jp2_t * jp2,
  
  

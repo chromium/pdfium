@@ -1,7 +1,7 @@
-diff --git a/third_party/libopenjpeg20/mct.c b/third_party/libopenjpeg20/mct.c
+diff --git a/third_party/libopenjpeg/mct.c b/third_party/libopenjpeg/mct.c
 index 88c8f4092..c4c2e732e 100644
---- a/third_party/libopenjpeg20/mct.c
-+++ b/third_party/libopenjpeg20/mct.c
+--- a/third_party/libopenjpeg/mct.c
++++ b/third_party/libopenjpeg/mct.c
 @@ -37,13 +37,15 @@
   * POSSIBILITY OF SUCH DAMAGE.
   */

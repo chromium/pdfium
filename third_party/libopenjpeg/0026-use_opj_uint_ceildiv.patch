@@ -1,7 +1,7 @@
-diff --git a/third_party/libopenjpeg20/j2k.c b/third_party/libopenjpeg20/j2k.c
+diff --git a/third_party/libopenjpeg/j2k.c b/third_party/libopenjpeg/j2k.c
 index 889c2cfc8..711dd73e8 100644
---- a/third_party/libopenjpeg20/j2k.c
-+++ b/third_party/libopenjpeg20/j2k.c
+--- a/third_party/libopenjpeg/j2k.c
++++ b/third_party/libopenjpeg/j2k.c
 @@ -2299,10 +2299,8 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
      }
  

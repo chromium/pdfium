@@ -1,7 +1,7 @@
-diff --git a/third_party/libopenjpeg20/j2k.c b/third_party/libopenjpeg20/j2k.c
+diff --git a/third_party/libopenjpeg/j2k.c b/third_party/libopenjpeg/j2k.c
 index 413dbdd9f..1932fe20c 100644
---- a/third_party/libopenjpeg20/j2k.c
-+++ b/third_party/libopenjpeg20/j2k.c
+--- a/third_party/libopenjpeg/j2k.c
++++ b/third_party/libopenjpeg/j2k.c
 @@ -10885,7 +10885,9 @@ static OPJ_BOOL opj_j2k_read_SQcd_SQcc(opj_j2k_t *p_j2k,
              p_j2k->m_specific_param.m_decoder.m_default_tcp;
  
