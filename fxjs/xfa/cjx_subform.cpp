@@ -36,7 +36,7 @@ bool CJX_Subform::DynamicTypeIs(TypeTag eType) const {
 }
 
 CJS_Result CJX_Subform::execEvent(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -47,7 +47,7 @@ CJS_Result CJX_Subform::execEvent(
 }
 
 CJS_Result CJX_Subform::execInitialize(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -60,7 +60,7 @@ CJS_Result CJX_Subform::execInitialize(
 }
 
 CJS_Result CJX_Subform::execCalculate(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -73,7 +73,7 @@ CJS_Result CJX_Subform::execCalculate(
 }
 
 CJS_Result CJX_Subform::execValidate(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);

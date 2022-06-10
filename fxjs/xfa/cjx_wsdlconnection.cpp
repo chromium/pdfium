@@ -29,7 +29,7 @@ bool CJX_WsdlConnection::DynamicTypeIs(TypeTag eType) const {
 }
 
 CJS_Result CJX_WsdlConnection::execute(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty() && params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);

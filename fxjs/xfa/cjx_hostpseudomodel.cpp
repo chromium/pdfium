@@ -257,7 +257,7 @@ void CJX_HostPseudoModel::name(v8::Isolate* pIsolate,
 }
 
 CJS_Result CJX_HostPseudoModel::gotoURL(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!GetDocument()->GetScriptContext()->IsRunAtClient())
     return CJS_Result::Success();
@@ -274,7 +274,7 @@ CJS_Result CJX_HostPseudoModel::gotoURL(
 }
 
 CJS_Result CJX_HostPseudoModel::openList(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!GetDocument()->GetScriptContext()->IsRunAtClient())
     return CJS_Result::Success();
@@ -288,8 +288,7 @@ CJS_Result CJX_HostPseudoModel::openList(
 
   CXFA_Node* pNode = nullptr;
   if (params[0]->IsObject()) {
-    pNode =
-        ToNode(static_cast<CFXJSE_Engine*>(runtime)->ToXFAObject(params[0]));
+    pNode = ToNode(runtime->ToXFAObject(params[0]));
   } else if (params[0]->IsString()) {
     CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
     CXFA_Object* pObject = pScriptContext->GetThisObject();
@@ -315,7 +314,7 @@ CJS_Result CJX_HostPseudoModel::openList(
 }
 
 CJS_Result CJX_HostPseudoModel::response(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.empty() || params.size() > 4)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -347,13 +346,13 @@ CJS_Result CJX_HostPseudoModel::response(
 }
 
 CJS_Result CJX_HostPseudoModel::documentInBatch(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   return CJS_Result::Success(runtime->NewNumber(0));
 }
 
 CJS_Result CJX_HostPseudoModel::resetData(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() > 1)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -401,7 +400,7 @@ CJS_Result CJX_HostPseudoModel::resetData(
 }
 
 CJS_Result CJX_HostPseudoModel::beep(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!GetDocument()->GetScriptContext()->IsRunAtClient())
     return CJS_Result::Success();
@@ -422,7 +421,7 @@ CJS_Result CJX_HostPseudoModel::beep(
 }
 
 CJS_Result CJX_HostPseudoModel::setFocus(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!GetDocument()->GetScriptContext()->IsRunAtClient())
     return CJS_Result::Success();
@@ -437,8 +436,7 @@ CJS_Result CJX_HostPseudoModel::setFocus(
   CXFA_Node* pNode = nullptr;
   if (params.size() >= 1) {
     if (params[0]->IsObject()) {
-      pNode =
-          ToNode(static_cast<CFXJSE_Engine*>(runtime)->ToXFAObject(params[0]));
+      pNode = ToNode(runtime->ToXFAObject(params[0]));
     } else if (params[0]->IsString()) {
       CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
       CXFA_Object* pObject = pScriptContext->GetThisObject();
@@ -463,7 +461,7 @@ CJS_Result CJX_HostPseudoModel::setFocus(
 }
 
 CJS_Result CJX_HostPseudoModel::getFocus(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
@@ -480,7 +478,7 @@ CJS_Result CJX_HostPseudoModel::getFocus(
 }
 
 CJS_Result CJX_HostPseudoModel::messageBox(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!GetDocument()->GetScriptContext()->IsRunAtClient())
     return CJS_Result::Success();
@@ -520,13 +518,13 @@ CJS_Result CJX_HostPseudoModel::messageBox(
 }
 
 CJS_Result CJX_HostPseudoModel::documentCountInBatch(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   return CJS_Result::Success(runtime->NewNumber(0));
 }
 
 CJS_Result CJX_HostPseudoModel::print(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!GetDocument()->GetScriptContext()->IsRunAtClient())
     return CJS_Result::Success();
@@ -559,7 +557,7 @@ CJS_Result CJX_HostPseudoModel::print(
 }
 
 CJS_Result CJX_HostPseudoModel::importData(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.empty() || params.size() > 1)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -568,7 +566,7 @@ CJS_Result CJX_HostPseudoModel::importData(
 }
 
 CJS_Result CJX_HostPseudoModel::exportData(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.empty() || params.size() > 2)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -590,7 +588,7 @@ CJS_Result CJX_HostPseudoModel::exportData(
 }
 
 CJS_Result CJX_HostPseudoModel::pageUp(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
@@ -606,7 +604,7 @@ CJS_Result CJX_HostPseudoModel::pageUp(
 }
 
 CJS_Result CJX_HostPseudoModel::pageDown(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)

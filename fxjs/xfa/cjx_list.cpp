@@ -38,13 +38,12 @@ CXFA_List* CJX_List::GetXFAList() {
   return ToList(GetXFAObject());
 }
 
-CJS_Result CJX_List::append(CFX_V8* runtime,
+CJS_Result CJX_List::append(CFXJSE_Engine* runtime,
                             const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
-  auto* pNode =
-      ToNode(static_cast<CFXJSE_Engine*>(runtime)->ToXFAObject(params[0]));
+  auto* pNode = ToNode(runtime->ToXFAObject(params[0]));
   if (!pNode)
     return CJS_Result::Failure(JSMessage::kValueError);
 
@@ -54,31 +53,28 @@ CJS_Result CJX_List::append(CFX_V8* runtime,
   return CJS_Result::Success();
 }
 
-CJS_Result CJX_List::insert(CFX_V8* runtime,
+CJS_Result CJX_List::insert(CFXJSE_Engine* runtime,
                             const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 2)
     return CJS_Result::Failure(JSMessage::kParamError);
 
-  auto* pNewNode =
-      ToNode(static_cast<CFXJSE_Engine*>(runtime)->ToXFAObject(params[0]));
+  auto* pNewNode = ToNode(runtime->ToXFAObject(params[0]));
   if (!pNewNode)
     return CJS_Result::Failure(JSMessage::kValueError);
 
-  auto* pBeforeNode =
-      ToNode(static_cast<CFXJSE_Engine*>(runtime)->ToXFAObject(params[1]));
+  auto* pBeforeNode = ToNode(runtime->ToXFAObject(params[1]));
   if (!GetXFAList()->Insert(pNewNode, pBeforeNode))
     return CJS_Result::Failure(JSMessage::kValueError);
 
   return CJS_Result::Success();
 }
 
-CJS_Result CJX_List::remove(CFX_V8* runtime,
+CJS_Result CJX_List::remove(CFXJSE_Engine* runtime,
                             const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
-  auto* pNode =
-      ToNode(static_cast<CFXJSE_Engine*>(runtime)->ToXFAObject(params[0]));
+  auto* pNode = ToNode(runtime->ToXFAObject(params[0]));
   if (!pNode)
     return CJS_Result::Failure(JSMessage::kValueError);
 
@@ -86,7 +82,7 @@ CJS_Result CJX_List::remove(CFX_V8* runtime,
   return CJS_Result::Success();
 }
 
-CJS_Result CJX_List::item(CFX_V8* runtime,
+CJS_Result CJX_List::item(CFXJSE_Engine* runtime,
                           const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -96,9 +92,8 @@ CJS_Result CJX_List::item(CFX_V8* runtime,
   if (index < 0 || cast_index >= GetXFAList()->GetLength())
     return CJS_Result::Failure(JSMessage::kInvalidInputError);
 
-  auto* pEngine = static_cast<CFXJSE_Engine*>(runtime);
   return CJS_Result::Success(
-      pEngine->NewNormalXFAObject(GetXFAList()->Item(cast_index)));
+      runtime->NewNormalXFAObject(GetXFAList()->Item(cast_index)));
 }
 
 void CJX_List::length(v8::Isolate* pIsolate,

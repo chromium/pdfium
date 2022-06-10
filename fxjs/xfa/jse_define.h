@@ -11,17 +11,17 @@
 
 #include "fxjs/cjs_result.h"
 
-class CFX_V8;
+class CFXJSE_Engine;
 
 #define JSE_METHOD(method_name)                                      \
   static CJS_Result method_name##_static(                            \
-      CJX_Object* node, CFX_V8* runtime,                             \
+      CJX_Object* node, CFXJSE_Engine* runtime,                      \
       const std::vector<v8::Local<v8::Value>>& params) {             \
     if (!node->DynamicTypeIs(static_type__))                         \
       return CJS_Result::Failure(JSMessage::kBadObjectError);        \
     return static_cast<Type__*>(node)->method_name(runtime, params); \
   }                                                                  \
-  CJS_Result method_name(CFX_V8* runtime,                            \
+  CJS_Result method_name(CFXJSE_Engine* runtime,                     \
                          const std::vector<v8::Local<v8::Value>>& params)
 
 #define JSE_PROP(prop_name)                                                 \

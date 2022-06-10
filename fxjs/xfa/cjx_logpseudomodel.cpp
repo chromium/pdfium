@@ -30,7 +30,7 @@ bool CJX_LogPseudoModel::DynamicTypeIs(TypeTag eType) const {
 }
 
 CJS_Result CJX_LogPseudoModel::message(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   // Uncomment to allow using xfa.log.message(""); from JS.
   // fprintf(stderr, "LOG\n");
@@ -43,25 +43,25 @@ CJS_Result CJX_LogPseudoModel::message(
 }
 
 CJS_Result CJX_LogPseudoModel::traceEnabled(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   return CJS_Result::Success();
 }
 
 CJS_Result CJX_LogPseudoModel::traceActivate(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   return CJS_Result::Success();
 }
 
 CJS_Result CJX_LogPseudoModel::traceDeactivate(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   return CJS_Result::Success();
 }
 
 CJS_Result CJX_LogPseudoModel::trace(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   return CJS_Result::Success();
 }

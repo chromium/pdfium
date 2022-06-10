@@ -8,8 +8,8 @@
 
 #include <vector>
 
-#include "fxjs/cfx_v8.h"
 #include "fxjs/js_resources.h"
+#include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cfxjse_value.h"
 #include "v8/include/v8-primitive.h"
 #include "xfa/fxfa/parser/cscript_signaturepseudomodel.h"
@@ -33,7 +33,7 @@ bool CJX_SignaturePseudoModel::DynamicTypeIs(TypeTag eType) const {
 }
 
 CJS_Result CJX_SignaturePseudoModel::verifySignature(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.empty() || params.size() > 4)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -42,7 +42,7 @@ CJS_Result CJX_SignaturePseudoModel::verifySignature(
 }
 
 CJS_Result CJX_SignaturePseudoModel::sign(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() < 3 || params.size() > 7)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -51,7 +51,7 @@ CJS_Result CJX_SignaturePseudoModel::sign(
 }
 
 CJS_Result CJX_SignaturePseudoModel::enumerate(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -60,7 +60,7 @@ CJS_Result CJX_SignaturePseudoModel::enumerate(
 }
 
 CJS_Result CJX_SignaturePseudoModel::clear(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.empty() || params.size() > 2)
     return CJS_Result::Failure(JSMessage::kParamError);

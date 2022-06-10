@@ -113,7 +113,7 @@ bool CJX_Node::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
 }
 
-CJS_Result CJX_Node::applyXSL(CFX_V8* runtime,
+CJS_Result CJX_Node::applyXSL(CFXJSE_Engine* runtime,
                               const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -123,7 +123,7 @@ CJS_Result CJX_Node::applyXSL(CFX_V8* runtime,
 }
 
 CJS_Result CJX_Node::assignNode(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.empty() || params.size() > 3)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -132,7 +132,7 @@ CJS_Result CJX_Node::assignNode(
   return CJS_Result::Success();
 }
 
-CJS_Result CJX_Node::clone(CFX_V8* runtime,
+CJS_Result CJX_Node::clone(CFXJSE_Engine* runtime,
                            const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -144,7 +144,7 @@ CJS_Result CJX_Node::clone(CFX_V8* runtime,
 }
 
 CJS_Result CJX_Node::getAttribute(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -155,7 +155,7 @@ CJS_Result CJX_Node::getAttribute(
 }
 
 CJS_Result CJX_Node::getElement(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.empty() || params.size() > 2)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -175,7 +175,7 @@ CJS_Result CJX_Node::getElement(
 }
 
 CJS_Result CJX_Node::isPropertySpecified(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.empty() || params.size() > 3)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -202,7 +202,7 @@ CJS_Result CJX_Node::isPropertySpecified(
   return CJS_Result::Success(runtime->NewBoolean(bHas));
 }
 
-CJS_Result CJX_Node::loadXML(CFX_V8* runtime,
+CJS_Result CJX_Node::loadXML(CFXJSE_Engine* runtime,
                              const std::vector<v8::Local<v8::Value>>& params) {
   if (params.empty() || params.size() > 3)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -327,13 +327,13 @@ CJS_Result CJX_Node::loadXML(CFX_V8* runtime,
 }
 
 CJS_Result CJX_Node::saveFilteredXML(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   // TODO(weili): Check whether we need to implement this, pdfium:501.
   return CJS_Result::Success();
 }
 
-CJS_Result CJX_Node::saveXML(CFX_V8* runtime,
+CJS_Result CJX_Node::saveXML(CFXJSE_Engine* runtime,
                              const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() > 1)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -376,7 +376,7 @@ CJS_Result CJX_Node::saveXML(CFX_V8* runtime,
 }
 
 CJS_Result CJX_Node::setAttribute(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 2)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -392,7 +392,7 @@ CJS_Result CJX_Node::setAttribute(
 }
 
 CJS_Result CJX_Node::setElement(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1 && params.size() != 2)
     return CJS_Result::Failure(JSMessage::kParamError);

@@ -46,7 +46,7 @@ bool CJX_Field::DynamicTypeIs(TypeTag eType) const {
 }
 
 CJS_Result CJX_Field::clearItems(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   CXFA_Node* node = GetXFANode();
   if (node->IsWidgetReady())
@@ -55,7 +55,7 @@ CJS_Result CJX_Field::clearItems(
 }
 
 CJS_Result CJX_Field::execEvent(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -71,7 +71,7 @@ CJS_Result CJX_Field::execEvent(
 }
 
 CJS_Result CJX_Field::execInitialize(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -85,7 +85,7 @@ CJS_Result CJX_Field::execInitialize(
 }
 
 CJS_Result CJX_Field::deleteItem(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -99,7 +99,7 @@ CJS_Result CJX_Field::deleteItem(
 }
 
 CJS_Result CJX_Field::getSaveItem(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -121,7 +121,7 @@ CJS_Result CJX_Field::getSaveItem(
 }
 
 CJS_Result CJX_Field::boundItem(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -137,7 +137,7 @@ CJS_Result CJX_Field::boundItem(
 }
 
 CJS_Result CJX_Field::getItemState(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -151,7 +151,7 @@ CJS_Result CJX_Field::getItemState(
 }
 
 CJS_Result CJX_Field::execCalculate(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -165,7 +165,7 @@ CJS_Result CJX_Field::execCalculate(
 }
 
 CJS_Result CJX_Field::getDisplayItem(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -187,7 +187,7 @@ CJS_Result CJX_Field::getDisplayItem(
 }
 
 CJS_Result CJX_Field::setItemState(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 2)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -207,7 +207,7 @@ CJS_Result CJX_Field::setItemState(
   return CJS_Result::Success();
 }
 
-CJS_Result CJX_Field::addItem(CFX_V8* runtime,
+CJS_Result CJX_Field::addItem(CFXJSE_Engine* runtime,
                               const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1 && params.size() != 2)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -229,7 +229,7 @@ CJS_Result CJX_Field::addItem(CFX_V8* runtime,
 }
 
 CJS_Result CJX_Field::execValidate(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);

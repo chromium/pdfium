@@ -32,13 +32,13 @@ bool CJX_Model::DynamicTypeIs(TypeTag eType) const {
 }
 
 CJS_Result CJX_Model::clearErrorList(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   return CJS_Result::Success();
 }
 
 CJS_Result CJX_Model::createNode(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.empty() || params.size() > 3)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -73,7 +73,7 @@ CJS_Result CJX_Model::createNode(
 }
 
 CJS_Result CJX_Model::isCompatibleNS(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);

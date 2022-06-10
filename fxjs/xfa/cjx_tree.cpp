@@ -37,7 +37,7 @@ bool CJX_Tree::DynamicTypeIs(TypeTag eType) const {
 }
 
 CJS_Result CJX_Tree::resolveNode(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -79,7 +79,7 @@ CJS_Result CJX_Tree::resolveNode(
 }
 
 CJS_Result CJX_Tree::resolveNodes(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);

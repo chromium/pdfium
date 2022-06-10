@@ -41,7 +41,7 @@ bool CJX_Source::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
 }
 
-CJS_Result CJX_Source::next(CFX_V8* runtime,
+CJS_Result CJX_Source::next(CFXJSE_Engine* runtime,
                             const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -50,7 +50,7 @@ CJS_Result CJX_Source::next(CFX_V8* runtime,
 }
 
 CJS_Result CJX_Source::cancelBatch(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -58,7 +58,7 @@ CJS_Result CJX_Source::cancelBatch(
   return CJS_Result::Success();
 }
 
-CJS_Result CJX_Source::first(CFX_V8* runtime,
+CJS_Result CJX_Source::first(CFXJSE_Engine* runtime,
                              const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -67,7 +67,7 @@ CJS_Result CJX_Source::first(CFX_V8* runtime,
 }
 
 CJS_Result CJX_Source::updateBatch(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -76,7 +76,7 @@ CJS_Result CJX_Source::updateBatch(
 }
 
 CJS_Result CJX_Source::previous(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -84,7 +84,7 @@ CJS_Result CJX_Source::previous(
   return CJS_Result::Success();
 }
 
-CJS_Result CJX_Source::isBOF(CFX_V8* runtime,
+CJS_Result CJX_Source::isBOF(CFXJSE_Engine* runtime,
                              const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -92,7 +92,7 @@ CJS_Result CJX_Source::isBOF(CFX_V8* runtime,
   return CJS_Result::Success();
 }
 
-CJS_Result CJX_Source::isEOF(CFX_V8* runtime,
+CJS_Result CJX_Source::isEOF(CFXJSE_Engine* runtime,
                              const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -100,7 +100,7 @@ CJS_Result CJX_Source::isEOF(CFX_V8* runtime,
   return CJS_Result::Success();
 }
 
-CJS_Result CJX_Source::cancel(CFX_V8* runtime,
+CJS_Result CJX_Source::cancel(CFXJSE_Engine* runtime,
                               const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -108,7 +108,7 @@ CJS_Result CJX_Source::cancel(CFX_V8* runtime,
   return CJS_Result::Success();
 }
 
-CJS_Result CJX_Source::update(CFX_V8* runtime,
+CJS_Result CJX_Source::update(CFXJSE_Engine* runtime,
                               const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -116,7 +116,7 @@ CJS_Result CJX_Source::update(CFX_V8* runtime,
   return CJS_Result::Success();
 }
 
-CJS_Result CJX_Source::open(CFX_V8* runtime,
+CJS_Result CJX_Source::open(CFXJSE_Engine* runtime,
                             const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -125,7 +125,7 @@ CJS_Result CJX_Source::open(CFX_V8* runtime,
 }
 
 CJS_Result CJX_Source::deleteItem(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -133,7 +133,7 @@ CJS_Result CJX_Source::deleteItem(
   return CJS_Result::Success();
 }
 
-CJS_Result CJX_Source::addNew(CFX_V8* runtime,
+CJS_Result CJX_Source::addNew(CFXJSE_Engine* runtime,
                               const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -142,7 +142,7 @@ CJS_Result CJX_Source::addNew(CFX_V8* runtime,
 }
 
 CJS_Result CJX_Source::requery(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -150,7 +150,7 @@ CJS_Result CJX_Source::requery(
   return CJS_Result::Success();
 }
 
-CJS_Result CJX_Source::resync(CFX_V8* runtime,
+CJS_Result CJX_Source::resync(CFXJSE_Engine* runtime,
                               const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -158,7 +158,7 @@ CJS_Result CJX_Source::resync(CFX_V8* runtime,
   return CJS_Result::Success();
 }
 
-CJS_Result CJX_Source::close(CFX_V8* runtime,
+CJS_Result CJX_Source::close(CFXJSE_Engine* runtime,
                              const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -166,7 +166,7 @@ CJS_Result CJX_Source::close(CFX_V8* runtime,
   return CJS_Result::Success();
 }
 
-CJS_Result CJX_Source::last(CFX_V8* runtime,
+CJS_Result CJX_Source::last(CFXJSE_Engine* runtime,
                             const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -175,7 +175,7 @@ CJS_Result CJX_Source::last(CFX_V8* runtime,
 }
 
 CJS_Result CJX_Source::hasDataChanged(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);

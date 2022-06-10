@@ -57,16 +57,16 @@ class CJX_LayoutPseudoModel final : public CJX_Object {
   static const TypeTag static_type__ = TypeTag::LayoutPseudoModel;
   static const CJX_MethodSpec MethodSpecs[];
 
-  CJS_Result AllPageCount(CFX_V8* runtime);
-  CJS_Result NumberedPageCount(CFX_V8* runtime);
-  CJS_Result DoHWXYInternal(CFX_V8* runtime,
+  CJS_Result AllPageCount(CFXJSE_Engine* runtime);
+  CJS_Result NumberedPageCount(CFXJSE_Engine* runtime);
+  CJS_Result DoHWXYInternal(CFXJSE_Engine* runtime,
                             const std::vector<v8::Local<v8::Value>>& params,
                             HWXY layoutModel);
   std::vector<CXFA_Node*> GetObjArray(CXFA_LayoutProcessor* pDocLayout,
                                       int32_t iPageNo,
                                       const WideString& wsType,
                                       bool bOnPageArea);
-  CJS_Result PageInternals(CFX_V8* runtime,
+  CJS_Result PageInternals(CFXJSE_Engine* runtime,
                            const std::vector<v8::Local<v8::Value>>& params,
                            bool bAbsPage);
 };

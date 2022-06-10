@@ -26,7 +26,7 @@ bool CJX_Desc::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
 }
 
-CJS_Result CJX_Desc::metadata(CFX_V8* runtime,
+CJS_Result CJX_Desc::metadata(CFXJSE_Engine* runtime,
                               const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 0 && params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);

@@ -200,7 +200,7 @@ void CJX_EventPseudoModel::target(v8::Isolate* pIsolate,
 }
 
 CJS_Result CJX_EventPseudoModel::emit(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
   CXFA_EventParam* pEventParam = pScriptContext->GetEventParam();
@@ -220,7 +220,7 @@ CJS_Result CJX_EventPseudoModel::emit(
 }
 
 CJS_Result CJX_EventPseudoModel::reset(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
   CXFA_EventParam* pEventParam = pScriptContext->GetEventParam();

@@ -37,7 +37,7 @@ bool CJX_ExclGroup::DynamicTypeIs(TypeTag eType) const {
 }
 
 CJS_Result CJX_ExclGroup::execEvent(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -48,7 +48,7 @@ CJS_Result CJX_ExclGroup::execEvent(
 }
 
 CJS_Result CJX_ExclGroup::execInitialize(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -61,7 +61,7 @@ CJS_Result CJX_ExclGroup::execInitialize(
 }
 
 CJS_Result CJX_ExclGroup::execCalculate(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -74,7 +74,7 @@ CJS_Result CJX_ExclGroup::execCalculate(
 }
 
 CJS_Result CJX_ExclGroup::execValidate(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -90,7 +90,7 @@ CJS_Result CJX_ExclGroup::execValidate(
 }
 
 CJS_Result CJX_ExclGroup::selectedMember(
-    CFX_V8* runtime,
+    CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);

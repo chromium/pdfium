@@ -23,8 +23,8 @@
 #include "v8/include/v8-forward.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
+class CFXJSE_Engine;
 class CFXJSE_MapModule;
-class CFX_V8;
 class CFX_XMLElement;
 class CJX_Object;
 class CXFA_Document;
@@ -35,7 +35,7 @@ class CXFA_Object;
 
 using CJX_MethodCall =
     CJS_Result (*)(CJX_Object* obj,
-                   CFX_V8* runtime,
+                   CFXJSE_Engine* runtime,
                    const std::vector<v8::Local<v8::Value>>& params);
 
 struct CJX_MethodSpec {
