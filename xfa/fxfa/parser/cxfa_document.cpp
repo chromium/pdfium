@@ -15,6 +15,7 @@
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "fxjs/gc/container_trace.h"
 #include "fxjs/xfa/cfxjse_engine.h"
+#include "fxjs/xfa/cfxjse_resolveprocessor.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
@@ -1455,7 +1456,8 @@ cppgc::Heap* CXFA_Document::GetHeap() const {
 
 CFXJSE_Engine* CXFA_Document::InitScriptContext(CJS_Runtime* fxjs_runtime) {
   DCHECK(!m_pScriptContext);
-  m_pScriptContext = std::make_unique<CFXJSE_Engine>(this, fxjs_runtime);
+  m_pScriptContext = std::make_unique<CFXJSE_Engine>(
+      this, fxjs_runtime, std::make_unique<CFXJSE_ResolveProcessor>());
   return m_pScriptContext.get();
 }
 

@@ -106,7 +106,9 @@ class CFXJSE_Engine final : public CFX_V8 {
                                                   ByteStringView szPropName,
                                                   bool bQueryIn);
 
-  CFXJSE_Engine(CXFA_Document* pDocument, CJS_Runtime* fxjs_runtime);
+  CFXJSE_Engine(CXFA_Document* pDocument,
+                CJS_Runtime* fxjs_runtime,
+                std::unique_ptr<CFXJSE_ResolveProcessor> pProcessor);
   ~CFXJSE_Engine() override;
 
   void SetEventParam(CXFA_EventParam* param) { m_eventParam = param; }

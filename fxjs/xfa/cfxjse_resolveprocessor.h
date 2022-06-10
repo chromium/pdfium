@@ -24,10 +24,9 @@ class CFXJSE_ResolveProcessor {
     CPPGC_STACK_ALLOCATED();  // Allows Raw/Unowned pointers.
 
    public:
-    explicit NodeData(CFXJSE_Engine* pSC);
+    NodeData();
     ~NodeData();
 
-    UnownedPtr<CFXJSE_Engine> const m_pSC;
     UnownedPtr<CXFA_Object> m_CurObject;  // Ok, stack-only.
     WideString m_wsName;
     WideString m_wsCondition;
@@ -40,6 +39,7 @@ class CFXJSE_ResolveProcessor {
   CFXJSE_ResolveProcessor();
   ~CFXJSE_ResolveProcessor();
 
+  void SetEngine(CFXJSE_Engine* pEngine);
   bool Resolve(v8::Isolate* pIsolate, NodeData& rnd);
   int32_t GetFilter(WideStringView wsExpression, int32_t nStart, NodeData& rnd);
   int32_t IndexForDataBind(const WideString& wsNextCondition, int32_t iCount);
@@ -66,8 +66,13 @@ class CFXJSE_ResolveProcessor {
   void FilterCondition(v8::Isolate* pIsolate,
                        WideString wsCondition,
                        NodeData* pRnd);
+  void DoPredicateFilter(v8::Isolate* pIsolate,
+                         WideString wsCondition,
+                         size_t iFoundCount,
+                         NodeData* pRnd);
 
   int32_t m_iCurStart = 0;
+  UnownedPtr<CFXJSE_Engine> m_pEngine;
   std::unique_ptr<CFXJSE_NodeHelper> const m_pNodeHelper;
 };
 
