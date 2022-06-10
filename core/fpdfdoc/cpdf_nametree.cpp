@@ -6,6 +6,7 @@
 
 #include "core/fpdfdoc/cpdf_nametree.h"
 
+#include <set>
 #include <utility>
 #include <vector>
 
@@ -319,8 +320,14 @@ absl::optional<IndexSearchResult> SearchNameNodeByIndex(
 }
 
 // Get the total number of key-value pairs in the tree with root |pNode|.
-size_t CountNamesInternal(const CPDF_Dictionary* pNode, int nLevel) {
+size_t CountNamesInternal(const CPDF_Dictionary* pNode,
+                          int nLevel,
+                          std::set<const CPDF_Dictionary*>& seen) {
   if (nLevel > kNameTreeMaxRecursion)
+    return 0;
+
+  const bool inserted = seen.insert(pNode).second;
+  if (!inserted)
     return 0;
 
   const CPDF_Array* pNames = pNode->GetArrayFor("Names");
@@ -337,7 +344,7 @@ size_t CountNamesInternal(const CPDF_Dictionary* pNode, int nLevel) {
     if (!pKid)
       continue;
 
-    nCount += CountNamesInternal(pKid, nLevel + 1);
+    nCount += CountNamesInternal(pKid, nLevel + 1, seen);
   }
   return nCount;
 }
@@ -434,7 +441,8 @@ CPDF_Array* CPDF_NameTree::LookupNamedDest(CPDF_Document* pDoc,
 }
 
 size_t CPDF_NameTree::GetCount() const {
-  return CountNamesInternal(m_pRoot.Get(), 0);
+  std::set<const CPDF_Dictionary*> seen;
+  return CountNamesInternal(m_pRoot.Get(), 0, seen);
 }
 
 bool CPDF_NameTree::AddValueAndName(RetainPtr<CPDF_Object> pObj,
