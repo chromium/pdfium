@@ -319,21 +319,21 @@ absl::optional<IndexSearchResult> SearchNameNodeByIndex(
 }
 
 // Get the total number of key-value pairs in the tree with root |pNode|.
-size_t CountNamesInternal(CPDF_Dictionary* pNode, int nLevel) {
+size_t CountNamesInternal(const CPDF_Dictionary* pNode, int nLevel) {
   if (nLevel > kNameTreeMaxRecursion)
     return 0;
 
-  CPDF_Array* pNames = pNode->GetArrayFor("Names");
+  const CPDF_Array* pNames = pNode->GetArrayFor("Names");
   if (pNames)
     return pNames->size() / 2;
 
-  CPDF_Array* pKids = pNode->GetArrayFor("Kids");
+  const CPDF_Array* pKids = pNode->GetArrayFor("Kids");
   if (!pKids)
     return 0;
 
   size_t nCount = 0;
   for (size_t i = 0; i < pKids->size(); i++) {
-    CPDF_Dictionary* pKid = pKids->GetDictAt(i);
+    const CPDF_Dictionary* pKid = pKids->GetDictAt(i);
     if (!pKid)
       continue;
 
