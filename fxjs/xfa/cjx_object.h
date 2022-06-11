@@ -9,7 +9,6 @@
 
 #include <map>
 #include <memory>
-#include <utility>
 #include <vector>
 
 #include "core/fxcrt/widestring.h"
@@ -144,10 +143,7 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
 
   template <typename T>
   T* GetProperty(int32_t index, XFA_Element eType) const {
-    CXFA_Node* node;
-    int32_t count;
-    std::tie(node, count) = GetPropertyInternal(index, eType);
-    return static_cast<T*>(node);
+    return static_cast<T*>(GetPropertyInternal(index, eType));
   }
   template <typename T>
   T* GetOrCreateProperty(int32_t index, XFA_Element eType) {
@@ -248,8 +244,7 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
   using Type__ = CJX_Object;
   static const TypeTag static_type__ = TypeTag::Object;
 
-  std::pair<CXFA_Node*, int32_t> GetPropertyInternal(int32_t index,
-                                                     XFA_Element eType) const;
+  CXFA_Node* GetPropertyInternal(int32_t index, XFA_Element eType) const;
   CXFA_Node* GetOrCreatePropertyInternal(int32_t index, XFA_Element eType);
 
   void OnChanging(XFA_Attribute eAttr);

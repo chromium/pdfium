@@ -8,6 +8,7 @@
 
 #include <set>
 #include <tuple>
+#include <utility>
 
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory.h"
@@ -784,10 +785,9 @@ absl::optional<WideString> CJX_Object::TryNamespace() const {
   return element->GetNamespaceURI();
 }
 
-std::pair<CXFA_Node*, int32_t> CJX_Object::GetPropertyInternal(
-    int32_t index,
-    XFA_Element eProperty) const {
-  return GetXFANode()->GetProperty(index, eProperty);
+CXFA_Node* CJX_Object::GetPropertyInternal(int32_t index,
+                                           XFA_Element eProperty) const {
+  return GetXFANode()->GetProperty(index, eProperty).first;
 }
 
 CXFA_Node* CJX_Object::GetOrCreatePropertyInternal(int32_t index,
