@@ -15,6 +15,14 @@
 
 #define ISLATINWORD(u) (u != 0x20 && u <= 0x28FF)
 
+namespace {
+
+bool IsVertWritingCIDFont(const CPDF_CIDFont* font) {
+  return font && font->IsVertWriting();
+}
+
+}  // namespace
+
 CPDF_TextObject::Item::Item() = default;
 
 CPDF_TextObject::Item::Item(const Item& that) = default;
@@ -42,13 +50,14 @@ CPDF_TextObject::Item CPDF_TextObject::GetItemInfo(size_t index) const {
     return info;
 
   RetainPtr<CPDF_Font> pFont = GetFont();
-  if (!pFont->IsCIDFont() || !pFont->AsCIDFont()->IsVertWriting())
+  const CPDF_CIDFont* pCIDFont = pFont->AsCIDFont();
+  if (!IsVertWritingCIDFont(pCIDFont))
     return info;
 
-  uint16_t cid = pFont->AsCIDFont()->CIDFromCharCode(info.m_CharCode);
+  uint16_t cid = pCIDFont->CIDFromCharCode(info.m_CharCode);
   info.m_Origin = CFX_PointF(0, info.m_Origin.x);
 
-  CFX_Point16 vertical_origin = pFont->AsCIDFont()->GetVertOrigin(cid);
+  CFX_Point16 vertical_origin = pCIDFont->GetVertOrigin(cid);
   float fontsize = GetFontSize();
   info.m_Origin.x -= fontsize * vertical_origin.x / 1000;
   info.m_Origin.y -= fontsize * vertical_origin.y / 1000;
@@ -219,13 +228,10 @@ void CPDF_TextObject::SetText(const ByteString& str) {
 }
 
 float CPDF_TextObject::GetCharWidth(uint32_t charcode) const {
-  float fontsize = GetFontSize() / 1000;
+  const float fontsize = GetFontSize() / 1000;
   RetainPtr<CPDF_Font> pFont = GetFont();
-  bool bVertWriting = false;
-  CPDF_CIDFont* pCIDFont = pFont->AsCIDFont();
-  if (pCIDFont)
-    bVertWriting = pCIDFont->IsVertWriting();
-  if (!bVertWriting)
+  const CPDF_CIDFont* pCIDFont = pFont->AsCIDFont();
+  if (!IsVertWritingCIDFont(pCIDFont))
     return pFont->GetCharWidthF(charcode) * fontsize;
 
   uint16_t cid = pCIDFont->CIDFromCharCode(charcode);
@@ -257,7 +263,7 @@ CFX_PointF CPDF_TextObject::CalcPositionData(float horz_scale) {
   float max_y = -10000.0f;
   RetainPtr<CPDF_Font> pFont = GetFont();
   const CPDF_CIDFont* pCIDFont = pFont->AsCIDFont();
-  const bool bVertWriting = pCIDFont && pCIDFont->IsVertWriting();
+  const bool bVertWriting = IsVertWritingCIDFont(pCIDFont);
   const float fontsize = GetFontSize();
 
   for (size_t i = 0; i < m_CharCodes.size(); ++i) {
