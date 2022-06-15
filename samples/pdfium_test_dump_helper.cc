@@ -14,6 +14,7 @@
 #include <utility>
 
 #include "public/cpp/fpdf_scopers.h"
+#include "public/fpdf_doc.h"
 #include "public/fpdf_transformpage.h"
 #include "testing/fx_string_testhelpers.h"
 

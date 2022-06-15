@@ -11,8 +11,6 @@
 #include "fpdfview.h"
 
 // NOLINTNEXTLINE(build/include)
-#include "fpdf_doc.h"
-// NOLINTNEXTLINE(build/include)
 #include "fpdf_formfill.h"
 
 #ifdef __cplusplus

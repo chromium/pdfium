@@ -173,6 +173,17 @@ typedef struct FS_POINTF_ {
 // Const Pointer to FS_POINTF structure.
 typedef const FS_POINTF* FS_LPCPOINTF;
 
+typedef struct _FS_QUADPOINTSF {
+  FS_FLOAT x1;
+  FS_FLOAT y1;
+  FS_FLOAT x2;
+  FS_FLOAT y2;
+  FS_FLOAT x3;
+  FS_FLOAT y3;
+  FS_FLOAT x4;
+  FS_FLOAT y4;
+} FS_QUADPOINTSF;
+
 // Annotation enums.
 typedef int FPDF_ANNOTATION_SUBTYPE;
 typedef int FPDF_ANNOT_APPEARANCEMODE;

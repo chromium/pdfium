@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "core/fxcrt/bytestring.h"
+#include "public/fpdf_doc.h"
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
 #include "testing/fx_string_testhelpers.h"

@@ -45,17 +45,6 @@ typedef enum {
   FILEIDTYPE_CHANGING = 1
 } FPDF_FILEIDTYPE;
 
-typedef struct _FS_QUADPOINTSF {
-  FS_FLOAT x1;
-  FS_FLOAT y1;
-  FS_FLOAT x2;
-  FS_FLOAT y2;
-  FS_FLOAT x3;
-  FS_FLOAT y3;
-  FS_FLOAT x4;
-  FS_FLOAT y4;
-} FS_QUADPOINTSF;
-
 // Get the first child of |bookmark|, or the first top-level bookmark item.
 //
 //   document - handle to the document.

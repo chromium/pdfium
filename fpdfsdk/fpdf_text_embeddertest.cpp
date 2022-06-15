@@ -9,6 +9,7 @@
 #include "build/build_config.h"
 #include "core/fxge/fx_font.h"
 #include "public/cpp/fpdf_scopers.h"
+#include "public/fpdf_doc.h"
 #include "public/fpdf_text.h"
 #include "public/fpdf_transformpage.h"
 #include "public/fpdfview.h"
