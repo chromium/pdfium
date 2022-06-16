@@ -71,7 +71,7 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
         if (!pDash)
           break;
 
-        CPDF_Array* pArray = pDash->GetArrayAt(0);
+        const CPDF_Array* pArray = pDash->GetArrayAt(0);
         if (!pArray)
           break;
 

@@ -759,7 +759,7 @@ void CPDF_InteractiveForm::LoadField(CPDF_Dictionary* pFieldDict, int nLevel) {
     return;
   }
 
-  CPDF_Dictionary* pFirstKid = pKids->GetDictAt(0);
+  const CPDF_Dictionary* pFirstKid = pKids->GetDictAt(0);
   if (!pFirstKid)
     return;
 

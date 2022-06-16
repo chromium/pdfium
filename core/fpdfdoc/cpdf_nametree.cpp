@@ -151,7 +151,7 @@ bool UpdateNodesAndLimitsUponDeletion(CPDF_Dictionary* pNode,
     WideString csNewLeft = csRight;
     WideString csNewRight = csLeft;
     for (size_t j = 0; j < pKids->size(); ++j) {
-      CPDF_Array* pKidLimits = pKids->GetDictAt(j)->GetArrayFor("Limits");
+      const CPDF_Array* pKidLimits = pKids->GetDictAt(j)->GetArrayFor("Limits");
       DCHECK(pKidLimits);
       if (pKidLimits->GetUnicodeTextAt(0).Compare(csNewLeft) < 0)
         csNewLeft = pKidLimits->GetUnicodeTextAt(0);

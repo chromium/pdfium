@@ -664,7 +664,7 @@ bool GenerateInkAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
   pAnnotDict->SetRectFor(pdfium::annotation::kRect, rect);
 
   for (size_t i = 0; i < pInkList->size(); i++) {
-    CPDF_Array* pInkCoordList = pInkList->GetArrayAt(i);
+    const CPDF_Array* pInkCoordList = pInkList->GetArrayAt(i);
     if (!pInkCoordList || pInkCoordList->size() < 2)
       continue;
 

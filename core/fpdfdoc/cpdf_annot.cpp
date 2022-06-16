@@ -445,7 +445,7 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
   CPDF_Dictionary* pBS = m_pAnnotDict->GetDictFor("BS");
   char style_char;
   float width;
-  CPDF_Array* pDashArray = nullptr;
+  const CPDF_Array* pDashArray = nullptr;
   if (!pBS) {
     CPDF_Array* pBorderArray =
         m_pAnnotDict->GetArrayFor(pdfium::annotation::kBorder);
@@ -460,7 +460,7 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
         size_t nLen = pDashArray->size();
         size_t i = 0;
         for (; i < nLen; ++i) {
-          CPDF_Object* pObj = pDashArray->GetDirectObjectAt(i);
+          const CPDF_Object* pObj = pDashArray->GetDirectObjectAt(i);
           if (pObj && pObj->GetInteger()) {
             break;
           }

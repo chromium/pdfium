@@ -85,7 +85,7 @@ bool FDFToURLEncodedData(
 
   fxcrt::ostringstream fdfEncodedData;
   for (uint32_t i = 0; i < pFields->size(); i++) {
-    CPDF_Dictionary* pField = pFields->GetDictAt(i);
+    const CPDF_Dictionary* pField = pFields->GetDictAt(i);
     if (!pField)
       continue;
     WideString name = pField->GetUnicodeTextFor("T");
