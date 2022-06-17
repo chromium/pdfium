@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <limits>
 #include <memory>
 #include <string>
 #include <utility>
@@ -4171,6 +4172,189 @@ TEST_F(FPDFEditEmbedderTest, GetImageMetadataJpxLzw) {
   EXPECT_FLOAT_EQ(72.0f, metadata.vertical_dpi);
   EXPECT_EQ(24u, metadata.bits_per_pixel);
   EXPECT_EQ(FPDF_COLORSPACE_UNKNOWN, metadata.colorspace);
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForHelloWorldText) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    FPDF_PAGEOBJECT text_object = FPDFPage_GetObject(page, 0);
+    ASSERT_EQ(FPDF_PAGEOBJ_TEXT, FPDFPageObj_GetType(text_object));
+
+    ScopedFPDFBitmap bitmap(
+        FPDFTextObj_GetRenderedBitmap(document(), page, text_object, 1));
+    ASSERT_TRUE(bitmap);
+    const char kChecksum[] = "bb0abe1accca1cfeaaf78afa35762350";
+    CompareBitmap(bitmap.get(), 64, 11, kChecksum);
+
+    ScopedFPDFBitmap x2_bitmap(
+        FPDFTextObj_GetRenderedBitmap(document(), page, text_object, 2.4f));
+    ASSERT_TRUE(x2_bitmap);
+    const char kX2Checksum[] = "80db528ec7146d92247f2339a8f10ba5";
+    CompareBitmap(x2_bitmap.get(), 153, 25, kX2Checksum);
+
+    ScopedFPDFBitmap x10_bitmap(
+        FPDFTextObj_GetRenderedBitmap(document(), page, text_object, 10));
+    ASSERT_TRUE(x10_bitmap);
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+    const char kX10Checksum[] = "bfabf04699139d05c3924526beeb4b95";
+#else
+    const char kX10Checksum[] = "149f63de758ab01d3b75605cdfd4c176";
+#endif
+    CompareBitmap(x10_bitmap.get(), 631, 103, kX10Checksum);
+  }
+
+  {
+    FPDF_PAGEOBJECT text_object = FPDFPage_GetObject(page, 1);
+    ASSERT_EQ(FPDF_PAGEOBJ_TEXT, FPDFPageObj_GetType(text_object));
+
+    ScopedFPDFBitmap bitmap(
+        FPDFTextObj_GetRenderedBitmap(document(), page, text_object, 1));
+    ASSERT_TRUE(bitmap);
+    const char kChecksum[] = "3fc1101b2408c5484adc24ba0a11ff3d";
+    CompareBitmap(bitmap.get(), 116, 16, kChecksum);
+
+    ScopedFPDFBitmap x2_bitmap(
+        FPDFTextObj_GetRenderedBitmap(document(), page, text_object, 2.4f));
+    ASSERT_TRUE(x2_bitmap);
+    const char kX2Checksum[] = "429960ae7b822f0c630432535e637465";
+    CompareBitmap(x2_bitmap.get(), 276, 36, kX2Checksum);
+
+    ScopedFPDFBitmap x10_bitmap(
+        FPDFTextObj_GetRenderedBitmap(document(), page, text_object, 10));
+    ASSERT_TRUE(x10_bitmap);
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+    const char kX10Checksum[] = "c7eef7859332c75ab793ebae1c6e7221";
+#else
+    const char kX10Checksum[] = "f5f93bf64de579b59e775d7076ca0a5a";
+#endif
+    CompareBitmap(x10_bitmap.get(), 1143, 150, kX10Checksum);
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForRotatedText) {
+  ASSERT_TRUE(OpenDocument("rotated_text.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  FPDF_PAGEOBJECT text_object = FPDFPage_GetObject(page, 0);
+  ASSERT_EQ(FPDF_PAGEOBJ_TEXT, FPDFPageObj_GetType(text_object));
+
+  ScopedFPDFBitmap bitmap(
+      FPDFTextObj_GetRenderedBitmap(document(), page, text_object, 1));
+  ASSERT_TRUE(bitmap);
+  const char kChecksum[] = "08ada0802f780d3fefb161dc6fb45977";
+  CompareBitmap(bitmap.get(), 29, 28, kChecksum);
+
+  ScopedFPDFBitmap x2_bitmap(
+      FPDFTextObj_GetRenderedBitmap(document(), page, text_object, 2.4f));
+  ASSERT_TRUE(x2_bitmap);
+  const char kX2Checksum[] = "09d7ddb647b8653cb59aede349a0c3e1";
+  CompareBitmap(x2_bitmap.get(), 67, 67, kX2Checksum);
+
+  ScopedFPDFBitmap x10_bitmap(
+      FPDFTextObj_GetRenderedBitmap(document(), page, text_object, 10));
+  ASSERT_TRUE(x10_bitmap);
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+  const char kX10Checksum[] = "4816dd6782e9a977c58fb1ca0ced74d3";
+#else
+  const char kX10Checksum[] = "bbd3842a4b50dbfcbce4eee2b067a297";
+#endif
+  CompareBitmap(x10_bitmap.get(), 275, 275, kX10Checksum);
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForColorText) {
+  ASSERT_TRUE(OpenDocument("text_color.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  FPDF_PAGEOBJECT text_object = FPDFPage_GetObject(page, 0);
+  ASSERT_EQ(FPDF_PAGEOBJ_TEXT, FPDFPageObj_GetType(text_object));
+
+  ScopedFPDFBitmap bitmap(
+      FPDFTextObj_GetRenderedBitmap(document(), page, text_object, 7.3f));
+  ASSERT_TRUE(bitmap);
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+  const char kChecksum[] = "bb3778ba739c921525de44e9ab412868";
+#else
+  const char kChecksum[] = "e8154fa8ededf4d9b8b35b5260897b6c";
+#endif
+  CompareBitmap(bitmap.get(), 120, 186, kChecksum);
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForNewlyCreatedText) {
+  // Start with a blank document.
+  ASSERT_TRUE(CreateNewDocument());
+
+  // Create a new text object.
+  ScopedFPDFPageObject text_object(
+      FPDFPageObj_NewTextObj(document(), "Arial", 12.0f));
+  ASSERT_EQ(FPDF_PAGEOBJ_TEXT, FPDFPageObj_GetType(text_object.get()));
+  ScopedFPDFWideString text = GetFPDFWideString(kBottomText);
+  EXPECT_TRUE(FPDFText_SetText(text_object.get(), text.get()));
+
+  ScopedFPDFBitmap bitmap(
+      FPDFTextObj_GetRenderedBitmap(document(), nullptr, text_object.get(), 1));
+  ASSERT_TRUE(bitmap);
+  const char kChecksum[] = "fa947759dab76d68a07ccf6f97b2d9c2";
+  CompareBitmap(bitmap.get(), 151, 12, kChecksum);
+}
+
+TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForTextWithBadParameters) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  FPDF_PAGEOBJECT text_object = FPDFPage_GetObject(page, 0);
+  ASSERT_TRUE(text_object);
+
+  // Simple bad parameters testing.
+  EXPECT_FALSE(FPDFTextObj_GetRenderedBitmap(nullptr, nullptr, nullptr, 0));
+  EXPECT_FALSE(FPDFTextObj_GetRenderedBitmap(document(), nullptr, nullptr, 0));
+  EXPECT_FALSE(FPDFTextObj_GetRenderedBitmap(nullptr, page, nullptr, 0));
+  EXPECT_FALSE(FPDFTextObj_GetRenderedBitmap(nullptr, nullptr, text_object, 0));
+  EXPECT_FALSE(FPDFTextObj_GetRenderedBitmap(nullptr, nullptr, nullptr, 1));
+  EXPECT_FALSE(FPDFTextObj_GetRenderedBitmap(document(), page, nullptr, 0));
+  EXPECT_FALSE(FPDFTextObj_GetRenderedBitmap(document(), nullptr, nullptr, 1));
+  EXPECT_FALSE(FPDFTextObj_GetRenderedBitmap(nullptr, page, text_object, 0));
+  EXPECT_FALSE(FPDFTextObj_GetRenderedBitmap(nullptr, page, nullptr, 1));
+  EXPECT_FALSE(FPDFTextObj_GetRenderedBitmap(nullptr, nullptr, text_object, 1));
+  EXPECT_FALSE(FPDFTextObj_GetRenderedBitmap(document(), page, nullptr, 1));
+  EXPECT_FALSE(FPDFTextObj_GetRenderedBitmap(nullptr, page, text_object, 1));
+
+  // Test bad scale values.
+  EXPECT_FALSE(FPDFTextObj_GetRenderedBitmap(document(), page, text_object, 0));
+  EXPECT_FALSE(
+      FPDFTextObj_GetRenderedBitmap(document(), page, text_object, -1));
+  EXPECT_FALSE(
+      FPDFTextObj_GetRenderedBitmap(document(), page, text_object, 10000));
+  EXPECT_FALSE(FPDFTextObj_GetRenderedBitmap(
+      document(), page, text_object, std::numeric_limits<float>::max()));
+  EXPECT_FALSE(FPDFTextObj_GetRenderedBitmap(
+      document(), page, text_object, std::numeric_limits<float>::infinity()));
+
+  {
+    // `text_object` will render without `page`, but may not render correctly
+    // without the resources from `page`. Although it does in this simple case.
+    ScopedFPDFBitmap bitmap(
+        FPDFTextObj_GetRenderedBitmap(document(), nullptr, text_object, 1));
+    EXPECT_TRUE(bitmap);
+  }
+
+  // Mismatch between the document and the page fails too.
+  ScopedFPDFDocument empty_document(FPDF_CreateNewDocument());
+  EXPECT_FALSE(FPDFTextObj_GetRenderedBitmap(empty_document.get(), page,
+                                             text_object, 1));
 
   UnloadPage(page);
 }

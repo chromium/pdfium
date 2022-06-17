@@ -22,11 +22,16 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/render/charposlist.h"
+#include "core/fpdfapi/render/cpdf_pagerendercontext.h"
+#include "core/fpdfapi/render/cpdf_rendercontext.h"
+#include "core/fpdfapi/render/cpdf_renderstatus.h"
+#include "core/fpdfapi/render/cpdf_textrenderer.h"
 #include "core/fpdftext/cpdf_textpage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_string_wrappers.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxcrt/stl_util.h"
+#include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/text_char_pos.h"
@@ -581,6 +586,71 @@ FPDFTextObj_GetText(FPDF_PAGEOBJECT text_object,
 
   WideString text = pTextPage->GetTextByObject(pTextObj);
   return Utf16EncodeMaybeCopyAndReturnLength(text, buffer, length);
+}
+
+FPDF_EXPORT FPDF_BITMAP FPDF_CALLCONV
+FPDFTextObj_GetRenderedBitmap(FPDF_DOCUMENT document,
+                              FPDF_PAGE page,
+                              FPDF_PAGEOBJECT text_object,
+                              float scale) {
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc)
+    return nullptr;
+
+  CPDF_Page* optional_page = CPDFPageFromFPDFPage(page);
+  if (optional_page && optional_page->GetDocument() != doc)
+    return nullptr;
+
+  CPDF_TextObject* text = CPDFTextObjectFromFPDFPageObject(text_object);
+  if (!text)
+    return nullptr;
+
+  if (scale <= 0)
+    return nullptr;
+
+  const CFX_Matrix scale_matrix(scale, 0, 0, scale, 0, 0);
+  const CFX_FloatRect& text_rect = text->GetRect();
+  const CFX_FloatRect scaled_text_rect = scale_matrix.TransformRect(text_rect);
+
+  // `rect` has to use integer values. Round up as needed.
+  const FX_RECT rect = scaled_text_rect.GetOuterRect();
+  if (rect.IsEmpty())
+    return nullptr;
+
+  auto result_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+  if (!result_bitmap->Create(rect.Width(), rect.Height(), FXDIB_Format::kArgb))
+    return nullptr;
+
+  auto render_context = std::make_unique<CPDF_PageRenderContext>();
+  CPDF_PageRenderContext* render_context_ptr = render_context.get();
+  CPDF_Page::RenderContextClearer clearer(optional_page);
+  if (optional_page)
+    optional_page->SetRenderContext(std::move(render_context));
+
+  CPDF_Dictionary* page_resources =
+      optional_page ? optional_page->GetPageResources() : nullptr;
+
+  auto device = std::make_unique<CFX_DefaultRenderDevice>();
+  CFX_DefaultRenderDevice* device_ptr = device.get();
+  render_context_ptr->m_pDevice = std::move(device);
+  render_context_ptr->m_pContext = std::make_unique<CPDF_RenderContext>(
+      doc, page_resources, /*pPageCache=*/nullptr);
+
+  device_ptr->Attach(result_bitmap, /*bRgbByteOrder=*/false,
+                     /*pBackdropBitmap=*/nullptr, /*bGroupKnockout=*/false);
+
+  CFX_Matrix device_matrix(rect.Width(), 0, 0, rect.Height(), 0, 0);
+  CPDF_RenderStatus status(render_context_ptr->m_pContext.get(), device_ptr);
+  status.SetDeviceMatrix(device_matrix);
+  status.Initialize(nullptr, nullptr);
+
+  // Need to flip the rendering and also move it to fit within `result_bitmap`.
+  CFX_Matrix render_matrix(1, 0, 0, -1, -text_rect.left, text_rect.top);
+  render_matrix *= scale_matrix;
+  status.RenderSingleObject(text, render_matrix);
+
+  // Caller takes ownership.
+  return FPDFBitmapFromCFXDIBitmap(result_bitmap.Leak());
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FPDFFont_Close(FPDF_FONT font) {

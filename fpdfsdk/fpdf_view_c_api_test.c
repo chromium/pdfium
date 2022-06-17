@@ -249,6 +249,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFPath_SetDrawMode);
     CHK(FPDFTextObj_GetFont);
     CHK(FPDFTextObj_GetFontSize);
+    CHK(FPDFTextObj_GetRenderedBitmap);
     CHK(FPDFTextObj_GetText);
     CHK(FPDFTextObj_GetTextRenderMode);
     CHK(FPDFTextObj_SetTextRenderMode);

@@ -225,5 +225,6 @@ CPDF_Page::RenderContextClearer::RenderContextClearer(CPDF_Page* pPage)
     : m_pPage(pPage) {}
 
 CPDF_Page::RenderContextClearer::~RenderContextClearer() {
-  m_pPage->ClearRenderContext();
+  if (m_pPage)
+    m_pPage->ClearRenderContext();
 }
