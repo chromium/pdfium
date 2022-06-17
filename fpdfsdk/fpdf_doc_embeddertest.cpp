@@ -355,18 +355,8 @@ TEST_F(FPDFDocEmbedderTest, ActionUriNonAscii) {
   EXPECT_EQ(static_cast<unsigned long>(PDFACTION_URI),
             FPDFAction_GetType(action));
 
-  // TODO(crbug.com/1323491): FPDFAction_GetURIPath() claims it only returns
-  // 7-bit ASCII values.
-  const char kExpectedResult[] =
-      "https://example.com/\xA5octal\xC7"
-      "chars";
-  const unsigned long kExpectedLength = sizeof(kExpectedResult);
-  unsigned long bufsize = FPDFAction_GetURIPath(document(), action, nullptr, 0);
-  ASSERT_EQ(kExpectedLength, bufsize);
-
-  char buf[1024];
-  EXPECT_EQ(bufsize, FPDFAction_GetURIPath(document(), action, buf, bufsize));
-  EXPECT_STREQ(kExpectedResult, buf);
+  // Call fails because the URI embedded in the PDF is invalid.
+  EXPECT_EQ(0u, FPDFAction_GetURIPath(document(), action, nullptr, 0));
 
   UnloadPage(page);
 }

@@ -228,6 +228,12 @@ FPDFAction_GetURIPath(FPDF_DOCUMENT document,
 
   CPDF_Action cAction(CPDFDictionaryFromFPDFAction(action));
   ByteString path = cAction.GetURI(pDoc);
+
+  // Table 206 in the ISO 32000-1:2008 spec states the type for the URI field is
+  // ASCII string. If the data is not 7-bit ASCII, consider that a failure.
+  if (!path.AsStringView().IsASCII())
+    return 0;
+
   const unsigned long len =
       pdfium::base::checked_cast<unsigned long>(path.GetLength() + 1);
   if (buffer && len <= buflen)
