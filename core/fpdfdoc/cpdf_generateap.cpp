@@ -1251,12 +1251,12 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
           if (FXSYS_IsFloatSmaller(fy, rcBody.bottom))
             break;
 
-          if (CPDF_Object* pOpt = pOpts->GetDirectObjectAt(i)) {
+          if (const CPDF_Object* pOpt = pOpts->GetDirectObjectAt(i)) {
             WideString swItem;
             if (pOpt->IsString()) {
               swItem = pOpt->GetUnicodeText();
-            } else if (CPDF_Array* pArray = pOpt->AsArray()) {
-              CPDF_Object* pDirectObj = pArray->GetDirectObjectAt(1);
+            } else if (const CPDF_Array* pArray = pOpt->AsArray()) {
+              const CPDF_Object* pDirectObj = pArray->GetDirectObjectAt(1);
               if (pDirectObj)
                 swItem = pDirectObj->GetUnicodeText();
             }

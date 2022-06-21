@@ -607,7 +607,7 @@ CPDF_FormField* CPDF_InteractiveForm::GetField(
 }
 
 CPDF_FormField* CPDF_InteractiveForm::GetFieldByDict(
-    CPDF_Dictionary* pFieldDict) const {
+    const CPDF_Dictionary* pFieldDict) const {
   if (!pFieldDict)
     return nullptr;
 
@@ -670,7 +670,8 @@ CPDF_FormField* CPDF_InteractiveForm::GetFieldInCalculationOrder(int index) {
   if (!pArray)
     return nullptr;
 
-  CPDF_Dictionary* pElement = ToDictionary(pArray->GetDirectObjectAt(index));
+  const CPDF_Dictionary* pElement =
+      ToDictionary(pArray->GetDirectObjectAt(index));
   return pElement ? GetFieldByDict(pElement) : nullptr;
 }
 

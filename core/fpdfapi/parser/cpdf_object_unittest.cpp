@@ -829,8 +829,8 @@ TEST(PDFArrayTest, ConvertIndirect) {
   auto array = pdfium::MakeRetain<CPDF_Array>();
   CPDF_Object* pObj = array->AppendNew<CPDF_Number>(42);
   array->ConvertToIndirectObjectAt(0, &objects_holder);
-  CPDF_Object* pRef = array->GetObjectAt(0);
-  CPDF_Object* pNum = array->GetDirectObjectAt(0);
+  const CPDF_Object* pRef = array->GetObjectAt(0);
+  const CPDF_Object* pNum = array->GetDirectObjectAt(0);
   EXPECT_TRUE(pRef->IsReference());
   EXPECT_TRUE(pNum->IsNumber());
   EXPECT_NE(pObj, pRef);

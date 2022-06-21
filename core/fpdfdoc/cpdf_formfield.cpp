@@ -73,10 +73,11 @@ CPDF_Object* CPDF_FormField::GetFieldAttr(CPDF_Dictionary* pFieldDict,
 }
 
 // static
-WideString CPDF_FormField::GetFullNameForDict(CPDF_Dictionary* pFieldDict) {
+WideString CPDF_FormField::GetFullNameForDict(
+    const CPDF_Dictionary* pFieldDict) {
   WideString full_name;
-  std::set<CPDF_Dictionary*> visited;
-  CPDF_Dictionary* pLevel = pFieldDict;
+  std::set<const CPDF_Dictionary*> visited;
+  const CPDF_Dictionary* pLevel = pFieldDict;
   while (pLevel) {
     visited.insert(pLevel);
     WideString short_name = pLevel->GetUnicodeTextFor(pdfium::form_fields::kT);

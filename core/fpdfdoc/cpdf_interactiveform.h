@@ -58,7 +58,7 @@ class CPDF_InteractiveForm {
 
   size_t CountFields(const WideString& csFieldName) const;
   CPDF_FormField* GetField(size_t index, const WideString& csFieldName) const;
-  CPDF_FormField* GetFieldByDict(CPDF_Dictionary* pFieldDict) const;
+  CPDF_FormField* GetFieldByDict(const CPDF_Dictionary* pFieldDict) const;
 
   const CPDF_FormControl* GetControlAtPoint(const CPDF_Page* pPage,
                                             const CFX_PointF& point,

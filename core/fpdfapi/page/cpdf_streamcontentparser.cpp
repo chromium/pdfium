@@ -1295,7 +1295,7 @@ void CPDF_StreamContentParser::Handle_ShowText_Positioning() {
   size_t iSegment = 0;
   float fInitKerning = 0;
   for (size_t i = 0; i < n; i++) {
-    CPDF_Object* pObj = pArray->GetDirectObjectAt(i);
+    const CPDF_Object* pObj = pArray->GetDirectObjectAt(i);
     if (!pObj)
       continue;
 
