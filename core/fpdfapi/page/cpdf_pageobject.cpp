@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 
+#include "core/fxcrt/fx_coordinates.h"
+
 CPDF_PageObject::CPDF_PageObject(int32_t content_stream)
     : m_ContentStream(content_stream) {}
 

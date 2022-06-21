@@ -60,6 +60,8 @@ class CPDF_PageObject : public CPDF_GraphicStates {
   void TransformClipPath(const CFX_Matrix& matrix);
   void TransformGeneralState(const CFX_Matrix& matrix);
 
+  void SetOriginalRect(const CFX_FloatRect& rect) { m_OriginalRect = rect; }
+  const CFX_FloatRect& GetOriginalRect() const { return m_OriginalRect; }
   void SetRect(const CFX_FloatRect& rect) { m_Rect = rect; }
   const CFX_FloatRect& GetRect() const { return m_Rect; }
   FX_RECT GetBBox() const;
@@ -89,6 +91,7 @@ class CPDF_PageObject : public CPDF_GraphicStates {
   CFX_FloatRect m_Rect;
 
  private:
+  CFX_FloatRect m_OriginalRect;
   CPDF_ContentMarks m_ContentMarks;
   bool m_bDirty = false;
   int32_t m_ContentStream;

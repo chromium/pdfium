@@ -9,6 +9,7 @@
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/cpdf_image.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fxcrt/fx_coordinates.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 
@@ -45,6 +46,7 @@ const CPDF_ImageObject* CPDF_ImageObject::AsImage() const {
 
 void CPDF_ImageObject::CalcBoundingBox() {
   static constexpr CFX_FloatRect kRect(0.0f, 0.0f, 1.0f, 1.0f);
+  SetOriginalRect(kRect);
   SetRect(m_Matrix.TransformRect(kRect));
 }
 
