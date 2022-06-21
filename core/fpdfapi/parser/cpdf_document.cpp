@@ -37,13 +37,13 @@ int CountPages(CPDF_Dictionary* pPages,
     return 0;
   count = 0;
   for (size_t i = 0; i < pKidList->size(); i++) {
-    CPDF_Dictionary* pKid = pKidList->GetDictAt(i);
-    if (!pKid || pdfium::Contains(*visited_pages, pKid))
+    RetainPtr<CPDF_Dictionary> pKid = pKidList->GetMutableDictAt(i);
+    if (!pKid || pdfium::Contains(*visited_pages, pKid.Get()))
       continue;
     if (pKid->KeyExist("Kids")) {
       // Use |visited_pages| to help detect circular references of pages.
-      ScopedSetInsertion<CPDF_Dictionary*> local_add(visited_pages, pKid);
-      count += CountPages(pKid, visited_pages);
+      ScopedSetInsertion<CPDF_Dictionary*> local_add(visited_pages, pKid.Get());
+      count += CountPages(pKid.Get(), visited_pages);
     } else {
       // This page is a leaf node.
       count++;
@@ -202,12 +202,12 @@ CPDF_Dictionary* CPDF_Document::TraversePDFPages(int iPage,
     m_bReachedMaxPageLevel = true;
     return nullptr;
   }
-  CPDF_Dictionary* page = nullptr;
+  RetainPtr<CPDF_Dictionary> page;
   for (size_t i = m_pTreeTraversal[level].second; i < pKidList->size(); i++) {
     if (*nPagesToGo == 0)
       break;
     pKidList->ConvertToIndirectObjectAt(i, this);
-    CPDF_Dictionary* pKid = pKidList->GetDictAt(i);
+    RetainPtr<CPDF_Dictionary> pKid = pKidList->GetMutableDictAt(i);
     if (!pKid) {
       (*nPagesToGo)--;
       m_pTreeTraversal[level].second++;
@@ -228,7 +228,7 @@ CPDF_Dictionary* CPDF_Document::TraversePDFPages(int iPage,
     } else {
       // If the vector has size level+1, the child is not in yet
       if (m_pTreeTraversal.size() == level + 1)
-        m_pTreeTraversal.push_back(std::make_pair(pKid, 0));
+        m_pTreeTraversal.push_back(std::make_pair(pKid.Get(), 0));
       // Now m_pTreeTraversal[level+1] should exist and be equal to pKid.
       CPDF_Dictionary* pageKid = TraversePDFPages(iPage, nPagesToGo, level + 1);
       // Check if child was completely processed, i.e. it popped itself out
@@ -244,7 +244,7 @@ CPDF_Dictionary* CPDF_Document::TraversePDFPages(int iPage,
   }
   if (m_pTreeTraversal[level].second == pKidList->size())
     m_pTreeTraversal.pop_back();
-  return page;
+  return page.Get();
 }
 
 void CPDF_Document::ResetTraversal() {
@@ -411,7 +411,7 @@ bool CPDF_Document::InsertDeletePDFPage(CPDF_Dictionary* pPages,
     return false;
 
   for (size_t i = 0; i < pKidList->size(); i++) {
-    CPDF_Dictionary* pKid = pKidList->GetDictAt(i);
+    RetainPtr<CPDF_Dictionary> pKid = pKidList->GetMutableDictAt(i);
     if (pKid->GetNameFor("Type") == "Page") {
       if (nPagesToGo != 0) {
         nPagesToGo--;
@@ -437,10 +437,11 @@ bool CPDF_Document::InsertDeletePDFPage(CPDF_Dictionary* pPages,
     if (pdfium::Contains(*pVisited, pKid))
       return false;
 
-    ScopedSetInsertion<CPDF_Dictionary*> insertion(pVisited, pKid);
-    if (!InsertDeletePDFPage(pKid, nPagesToGo, pPageDict, bInsert, pVisited))
+    ScopedSetInsertion<CPDF_Dictionary*> insertion(pVisited, pKid.Get());
+    if (!InsertDeletePDFPage(pKid.Get(), nPagesToGo, pPageDict, bInsert,
+                             pVisited)) {
       return false;
-
+    }
     pPages->SetNewFor<CPDF_Number>(
         "Count", pPages->GetIntegerFor("Count") + (bInsert ? 1 : -1));
     break;

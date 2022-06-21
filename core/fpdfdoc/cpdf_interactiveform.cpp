@@ -540,7 +540,7 @@ CPDF_InteractiveForm::CPDF_InteractiveForm(CPDF_Document* pDocument)
     return;
 
   for (size_t i = 0; i < pFields->size(); ++i)
-    LoadField(pFields->GetDictAt(i), 0);
+    LoadField(pFields->GetMutableDictAt(i).Get(), 0);
 }
 
 CPDF_InteractiveForm::~CPDF_InteractiveForm() = default;
@@ -766,10 +766,10 @@ void CPDF_InteractiveForm::LoadField(CPDF_Dictionary* pFieldDict, int nLevel) {
   if (pFirstKid->KeyExist(pdfium::form_fields::kT) ||
       pFirstKid->KeyExist(pdfium::form_fields::kKids)) {
     for (size_t i = 0; i < pKids->size(); i++) {
-      CPDF_Dictionary* pChildDict = pKids->GetDictAt(i);
+      RetainPtr<CPDF_Dictionary> pChildDict = pKids->GetMutableDictAt(i);
       if (pChildDict) {
         if (pChildDict->GetObjNum() != dwParentObjNum)
-          LoadField(pChildDict, nLevel + 1);
+          LoadField(pChildDict.Get(), nLevel + 1);
       }
     }
   } else {
@@ -783,9 +783,9 @@ void CPDF_InteractiveForm::FixPageFields(CPDF_Page* pPage) {
     return;
 
   for (size_t i = 0; i < pAnnots->size(); i++) {
-    CPDF_Dictionary* pAnnot = pAnnots->GetDictAt(i);
+    RetainPtr<CPDF_Dictionary> pAnnot = pAnnots->GetMutableDictAt(i);
     if (pAnnot && pAnnot->GetNameFor("Subtype") == "Widget")
-      LoadField(pAnnot, 0);
+      LoadField(pAnnot.Get(), 0);
   }
 }
 
@@ -848,9 +848,9 @@ void CPDF_InteractiveForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
   CPDF_Array* pKids = pFieldDict->GetArrayFor(pdfium::form_fields::kKids);
   if (pKids) {
     for (size_t i = 0; i < pKids->size(); i++) {
-      CPDF_Dictionary* pKid = pKids->GetDictAt(i);
+      RetainPtr<CPDF_Dictionary> pKid = pKids->GetMutableDictAt(i);
       if (pKid && pKid->GetNameFor("Subtype") == "Widget")
-        AddControl(pField, pKid);
+        AddControl(pField, pKid.Get());
     }
   } else {
     if (pFieldDict->GetNameFor("Subtype") == "Widget")

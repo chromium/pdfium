@@ -155,18 +155,7 @@ float CPDF_Array::GetNumberAt(size_t index) const {
 }
 
 RetainPtr<CPDF_Dictionary> CPDF_Array::GetMutableDictAt(size_t index) {
-  return pdfium::WrapRetain(GetDictAt(index));
-}
-
-CPDF_Dictionary* CPDF_Array::GetDictAt(size_t index) {
-  CPDF_Object* p = GetDirectObjectAt(index);
-  if (!p)
-    return nullptr;
-  if (CPDF_Dictionary* pDict = p->AsDictionary())
-    return pDict;
-  if (CPDF_Stream* pStream = p->AsStream())
-    return pStream->GetDict();
-  return nullptr;
+  return pdfium::WrapRetain(const_cast<CPDF_Dictionary*>(GetDictAt(index)));
 }
 
 const CPDF_Dictionary* CPDF_Array::GetDictAt(size_t index) const {
@@ -180,16 +169,16 @@ const CPDF_Dictionary* CPDF_Array::GetDictAt(size_t index) const {
   return nullptr;
 }
 
-CPDF_Stream* CPDF_Array::GetStreamAt(size_t index) {
-  return ToStream(GetDirectObjectAt(index));
+RetainPtr<CPDF_Stream> CPDF_Array::GetMutableStreamAt(size_t index) {
+  return pdfium::WrapRetain(const_cast<CPDF_Stream*>(GetStreamAt(index)));
 }
 
 const CPDF_Stream* CPDF_Array::GetStreamAt(size_t index) const {
   return ToStream(GetDirectObjectAt(index));
 }
 
-CPDF_Array* CPDF_Array::GetArrayAt(size_t index) {
-  return ToArray(GetDirectObjectAt(index));
+RetainPtr<CPDF_Array> CPDF_Array::GetMutableArrayAt(size_t index) {
+  return pdfium::WrapRetain(const_cast<CPDF_Array*>(GetArrayAt(index)));
 }
 
 const CPDF_Array* CPDF_Array::GetArrayAt(size_t index) const {

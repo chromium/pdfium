@@ -130,9 +130,11 @@ TEST(cpdf_nametree, GetFromTreeWithLimitsArrayWith4Items) {
   // elements.
   auto pRootDict = pdfium::MakeRetain<CPDF_Dictionary>();
   FillNameTreeDict(pRootDict.Get());
-  CPDF_Dictionary* pKid1 = pRootDict->GetArrayFor("Kids")->GetDictAt(0);
-  CPDF_Dictionary* pGrandKid3 = pKid1->GetArrayFor("Kids")->GetDictAt(1);
-  CPDF_Array* pLimits = pGrandKid3->GetArrayFor("Limits");
+  RetainPtr<CPDF_Dictionary> pKid1 =
+      pRootDict->GetArrayFor("Kids")->GetMutableDictAt(0);
+  RetainPtr<CPDF_Dictionary> pGrandKid3 =
+      pKid1->GetArrayFor("Kids")->GetMutableDictAt(1);
+  RetainPtr<CPDF_Array> pLimits = pGrandKid3->GetMutableArrayFor("Limits");
   ASSERT_EQ(2u, pLimits->size());
   pLimits->AppendNew<CPDF_Number>(5);
   pLimits->AppendNew<CPDF_Number>(6);
@@ -143,8 +145,8 @@ TEST(cpdf_nametree, GetFromTreeWithLimitsArrayWith4Items) {
   const CPDF_Number* pNumber = ToNumber(name_tree->LookupValue(L"9.txt"));
   ASSERT_TRUE(pNumber);
   EXPECT_EQ(999, pNumber->GetInteger());
-  CheckLimitsArray(pKid1, "1.txt", "9.txt");
-  CheckLimitsArray(pGrandKid3, "9.txt", "9.txt");
+  CheckLimitsArray(pKid1.Get(), "1.txt", "9.txt");
+  CheckLimitsArray(pGrandKid3.Get(), "9.txt", "9.txt");
 }
 
 TEST(cpdf_nametree, AddIntoNames) {

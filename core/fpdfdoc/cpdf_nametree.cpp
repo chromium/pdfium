@@ -130,12 +130,13 @@ bool UpdateNodesAndLimitsUponDeletion(CPDF_Dictionary* pNode,
 
   // Loop through the kids to find the leaf array |pFind|.
   for (size_t i = 0; i < pKids->size(); ++i) {
-    CPDF_Dictionary* pKid = pKids->GetDictAt(i);
+    RetainPtr<CPDF_Dictionary> pKid = pKids->GetMutableDictAt(i);
     if (!pKid)
       continue;
-    if (!UpdateNodesAndLimitsUponDeletion(pKid, pFind, csName, nLevel + 1))
+    if (!UpdateNodesAndLimitsUponDeletion(pKid.Get(), pFind, csName,
+                                          nLevel + 1)) {
       continue;
-
+    }
     // Remove this child node if it's empty.
     if ((pKid->KeyExist("Names") && pKid->GetArrayFor("Names")->IsEmpty()) ||
         (pKid->KeyExist("Kids") && pKid->GetArrayFor("Kids")->IsEmpty())) {
@@ -300,11 +301,11 @@ absl::optional<IndexSearchResult> SearchNameNodeByIndexInternal(
     return absl::nullopt;
 
   for (size_t i = 0; i < pKids->size(); i++) {
-    CPDF_Dictionary* pKid = pKids->GetDictAt(i);
+    RetainPtr<CPDF_Dictionary> pKid = pKids->GetMutableDictAt(i);
     if (!pKid)
       continue;
     absl::optional<IndexSearchResult> result = SearchNameNodeByIndexInternal(
-        pKid, nTargetPairIndex, nLevel + 1, nCurPairIndex);
+        pKid.Get(), nTargetPairIndex, nLevel + 1, nCurPairIndex);
     if (result.has_value())
       return result;
   }

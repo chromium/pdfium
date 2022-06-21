@@ -57,7 +57,7 @@ const std::vector<RetainPtr<CPDF_Dictionary>>* CPDF_LinkList::GetPageLinks(
     return page_link_list;
 
   for (size_t i = 0; i < pAnnotList->size(); ++i) {
-    CPDF_Dictionary* pAnnot = pAnnotList->GetDictAt(i);
+    RetainPtr<CPDF_Dictionary> pAnnot = pAnnotList->GetMutableDictAt(i);
     bool add_link = (pAnnot && pAnnot->GetStringFor("Subtype") == "Link");
     // Add non-links as nullptrs to preserve z-order.
     page_link_list->emplace_back(add_link ? pAnnot : nullptr);
