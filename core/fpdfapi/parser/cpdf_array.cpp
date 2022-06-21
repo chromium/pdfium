@@ -113,9 +113,8 @@ const CPDF_Object* CPDF_Array::GetObjectAt(size_t index) const {
   return m_Objects[index].Get();
 }
 
-CPDF_Object* CPDF_Array::GetDirectObjectAt(size_t index) {
-  CPDF_Object* pObj = GetObjectAt(index);
-  return pObj ? pObj->GetDirect() : nullptr;
+RetainPtr<CPDF_Object> CPDF_Array::GetMutableDirectObjectAt(size_t index) {
+  return pdfium::WrapRetain(const_cast<CPDF_Object*>(GetDirectObjectAt(index)));
 }
 
 const CPDF_Object* CPDF_Array::GetDirectObjectAt(size_t index) const {

@@ -375,12 +375,13 @@ FPDF_EXPORT FPDF_ANNOTATION FPDF_CALLCONV FPDFPage_GetAnnot(FPDF_PAGE page,
   if (!pAnnots || static_cast<size_t>(index) >= pAnnots->size())
     return nullptr;
 
-  CPDF_Dictionary* pDict = ToDictionary(pAnnots->GetDirectObjectAt(index));
+  RetainPtr<CPDF_Dictionary> pDict =
+      ToDictionary(pAnnots->GetMutableDirectObjectAt(index));
   if (!pDict)
     return nullptr;
 
-  auto pNewAnnot =
-      std::make_unique<CPDF_AnnotContext>(pDict, IPDFPageFromFPDFPage(page));
+  auto pNewAnnot = std::make_unique<CPDF_AnnotContext>(
+      pDict.Get(), IPDFPageFromFPDFPage(page));
 
   // Caller takes ownership.
   return FPDFAnnotationFromCPDFAnnotContext(pNewAnnot.release());

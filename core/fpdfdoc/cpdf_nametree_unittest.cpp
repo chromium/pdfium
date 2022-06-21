@@ -120,7 +120,7 @@ TEST(cpdf_nametree, GetUnicodeNameWithBOM) {
   EXPECT_STREQ(L"1", stored_name.c_str());
 
   // Check that the correct value object can be obtained by looking up "1".
-  const CPDF_Number* pNumber = ToNumber(name_tree->LookupValue(L"1"));
+  RetainPtr<CPDF_Number> pNumber = ToNumber(name_tree->LookupValue(L"1"));
   ASSERT_TRUE(pNumber);
   EXPECT_EQ(100, pNumber->GetInteger());
 }
@@ -142,7 +142,7 @@ TEST(cpdf_nametree, GetFromTreeWithLimitsArrayWith4Items) {
   std::unique_ptr<CPDF_NameTree> name_tree =
       CPDF_NameTree::CreateForTesting(pRootDict.Get());
 
-  const CPDF_Number* pNumber = ToNumber(name_tree->LookupValue(L"9.txt"));
+  RetainPtr<CPDF_Number> pNumber = ToNumber(name_tree->LookupValue(L"9.txt"));
   ASSERT_TRUE(pNumber);
   EXPECT_EQ(999, pNumber->GetInteger());
   CheckLimitsArray(pKid1.Get(), "1.txt", "9.txt");

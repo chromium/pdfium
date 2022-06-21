@@ -45,7 +45,7 @@ class CPDF_NameTree {
   bool DeleteValueAndName(size_t nIndex);
 
   CPDF_Object* LookupValueAndName(size_t nIndex, WideString* csName) const;
-  CPDF_Object* LookupValue(const WideString& csName) const;
+  RetainPtr<CPDF_Object> LookupValue(const WideString& csName) const;
 
   size_t GetCount() const;
   CPDF_Dictionary* GetRootForTesting() const { return m_pRoot.Get(); }

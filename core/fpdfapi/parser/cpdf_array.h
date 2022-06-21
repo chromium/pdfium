@@ -48,10 +48,10 @@ class CPDF_Array final : public CPDF_Object {
   CPDF_Object* GetObjectAt(size_t index);
   const CPDF_Object* GetObjectAt(size_t index) const;
 
-  // The GetDirectObjectAt() methods tolerate out-of-bounds indices and
+  // The Get*DirectObjectAt() methods tolerate out-of-bounds indices and
   // return nullptr in those cases. Furthermore, for reference objects that
   // do not correspond to a valid indirect object, nullptr is returned.
-  CPDF_Object* GetDirectObjectAt(size_t index);
+  RetainPtr<CPDF_Object> GetMutableDirectObjectAt(size_t index);
   const CPDF_Object* GetDirectObjectAt(size_t index) const;
 
   // The Get*At() methods tolerate out-of-bounds indices and return nullptr

@@ -370,12 +370,13 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFLink_Enumerate(FPDF_PAGE page,
   if (!pAnnots)
     return false;
   for (size_t i = *start_pos; i < pAnnots->size(); i++) {
-    CPDF_Dictionary* pDict = ToDictionary(pAnnots->GetDirectObjectAt(i));
+    RetainPtr<CPDF_Dictionary> pDict =
+        ToDictionary(pAnnots->GetMutableDirectObjectAt(i));
     if (!pDict)
       continue;
     if (pDict->GetStringFor("Subtype") == "Link") {
       *start_pos = static_cast<int>(i + 1);
-      *link_annot = FPDFLinkFromCPDFDictionary(pDict);
+      *link_annot = FPDFLinkFromCPDFDictionary(pDict.Get());
       return true;
     }
   }
