@@ -75,16 +75,15 @@ void CPDF_Page::ParseContent() {
 }
 
 CPDF_Object* CPDF_Page::GetPageAttr(const ByteString& name) const {
-  CPDF_Dictionary* pPageDict = GetDict();
   std::set<CPDF_Dictionary*> visited;
-  while (true) {
-    visited.insert(pPageDict);
-    if (CPDF_Object* pObj = pPageDict->GetDirectObjectFor(name))
+  CPDF_Dictionary* pPageDict = GetDict();
+  while (pPageDict && !pdfium::Contains(visited, pPageDict)) {
+    CPDF_Object* pObj = pPageDict->GetDirectObjectFor(name);
+    if (pObj)
       return pObj;
 
+    visited.insert(pPageDict);
     pPageDict = pPageDict->GetDictFor(pdfium::page_object::kParent);
-    if (!pPageDict || pdfium::Contains(visited, pPageDict))
-      break;
   }
   return nullptr;
 }
