@@ -598,8 +598,12 @@ void CPDFSDK_FormFillEnvironment::PageEvent(int iPageCount,
 
 void CPDFSDK_FormFillEnvironment::ClearAllFocusedAnnots() {
   for (auto& it : m_PageMap) {
-    if (it.second->IsValidSDKAnnot(GetFocusAnnot()))
+    if (it.second->IsValidSDKAnnot(GetFocusAnnot())) {
+      ObservedPtr<CPDFSDK_PageView> pObserved(it.second.get());
       KillFocusAnnot({});
+      if (!pObserved)
+        break;
+    }
   }
 }
 
@@ -709,9 +713,12 @@ CPDFSDK_InteractiveForm* CPDFSDK_FormFillEnvironment::GetInteractiveForm() {
 
 void CPDFSDK_FormFillEnvironment::UpdateAllViews(CPDFSDK_Annot* pAnnot) {
   for (const auto& it : m_PageMap) {
-    CPDFSDK_PageView* pPageView = it.second.get();
-    if (pPageView)
-      pPageView->UpdateView(pAnnot);
+    ObservedPtr<CPDFSDK_PageView> pObserved(it.second.get());
+    if (pObserved) {
+      pObserved->UpdateView(pAnnot);
+      if (!pObserved)
+        break;
+    }
   }
 }
 
