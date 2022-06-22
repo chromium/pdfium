@@ -31,7 +31,7 @@ TEST_F(CPDF_CIDFontTest, BUG_920636) {
     font_dict->SetFor("DescendantFonts", std::move(descendant_fonts));
   }
 
-  auto font = pdfium::MakeRetain<CPDF_CIDFont>(&doc, font_dict.Get());
+  auto font = pdfium::MakeRetain<CPDF_CIDFont>(&doc, std::move(font_dict));
   ASSERT_TRUE(font->Load());
 
   // It would be nice if we can test more values here. However, the glyph

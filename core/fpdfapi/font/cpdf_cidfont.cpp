@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <limits>
+#include <utility>
 #include <vector>
 
 #include "build/build_config.h"
@@ -275,8 +276,9 @@ void LoadMetricsArray(const CPDF_Array* pArray,
 
 }  // namespace
 
-CPDF_CIDFont::CPDF_CIDFont(CPDF_Document* pDocument, CPDF_Dictionary* pFontDict)
-    : CPDF_Font(pDocument, pFontDict) {
+CPDF_CIDFont::CPDF_CIDFont(CPDF_Document* pDocument,
+                           RetainPtr<CPDF_Dictionary> pFontDict)
+    : CPDF_Font(pDocument, std::move(pFontDict)) {
   for (size_t i = 0; i < std::size(m_CharBBox); ++i)
     m_CharBBox[i] = FX_RECT(-1, -1, -1, -1);
 }

@@ -865,12 +865,13 @@ void CPDF_FormField::LoadDA() {
   if (!font_name.has_value())
     return;
 
-  CPDF_Dictionary* pFontDict = pFont->GetDictFor(font_name.value());
+  RetainPtr<CPDF_Dictionary> pFontDict =
+      pFont->GetMutableDictFor(font_name.value());
   if (!pFontDict)
     return;
 
   auto* pData = CPDF_DocPageData::FromDocument(m_pForm->GetDocument());
-  m_pFont = pData->GetFont(pFontDict);
+  m_pFont = pData->GetFont(std::move(pFontDict));
 }
 
 bool CPDF_FormField::NotifyBeforeSelectionChange(const WideString& value) {

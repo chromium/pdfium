@@ -68,7 +68,7 @@ class CPDF_CIDFont final : public CPDF_Font {
     kTrueType  // CIDFontType2
   };
 
-  CPDF_CIDFont(CPDF_Document* pDocument, CPDF_Dictionary* pFontDict);
+  CPDF_CIDFont(CPDF_Document* pDocument, RetainPtr<CPDF_Dictionary> pFontDict);
 
   void LoadGB2312();
   int GetGlyphIndex(uint32_t unicodeb, bool* pVertGlyph);

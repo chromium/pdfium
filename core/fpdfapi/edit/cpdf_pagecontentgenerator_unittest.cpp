@@ -319,7 +319,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
   {
     // Set the text object font and text
     auto pTextObj = std::make_unique<CPDF_TextObject>();
-    CPDF_Dictionary* pDict = pDoc->NewIndirect<CPDF_Dictionary>();
+    RetainPtr<CPDF_Dictionary> pDict(pDoc->NewIndirect<CPDF_Dictionary>());
     pDict->SetNewFor<CPDF_Name>("Type", "Font");
     pDict->SetNewFor<CPDF_Name>("Subtype", "TrueType");
 

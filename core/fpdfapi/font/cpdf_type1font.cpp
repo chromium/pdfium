@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <iterator>
+#include <utility>
 
 #include "build/build_config.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -63,8 +64,8 @@ bool FT_UseType1Charmap(FXFT_FaceRec* face) {
 }  // namespace
 
 CPDF_Type1Font::CPDF_Type1Font(CPDF_Document* pDocument,
-                               CPDF_Dictionary* pFontDict)
-    : CPDF_SimpleFont(pDocument, pFontDict) {
+                               RetainPtr<CPDF_Dictionary> pFontDict)
+    : CPDF_SimpleFont(pDocument, std::move(pFontDict)) {
 #if BUILDFLAG(IS_APPLE)
   memset(m_ExtGID, 0xff, sizeof(m_ExtGID));
 #endif

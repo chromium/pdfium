@@ -63,7 +63,7 @@ class CPDF_Font : public Retainable, public Observable {
 
   // |pFactory| only required for Type3 fonts.
   static RetainPtr<CPDF_Font> Create(CPDF_Document* pDoc,
-                                     CPDF_Dictionary* pFontDict,
+                                     RetainPtr<CPDF_Dictionary> pFontDict,
                                      FormFactoryIface* pFactory);
   static RetainPtr<CPDF_Font> GetStockFont(CPDF_Document* pDoc,
                                            ByteStringView fontname);
@@ -100,7 +100,8 @@ class CPDF_Font : public Retainable, public Observable {
   ByteString GetBaseFontName() const { return m_BaseFontName; }
   CFX_SubstFont* GetSubstFont() const { return m_Font.GetSubstFont(); }
   bool IsEmbedded() const { return IsType3Font() || m_pFontFile != nullptr; }
-  CPDF_Dictionary* GetFontDict() const { return m_pFontDict.Get(); }
+  RetainPtr<CPDF_Dictionary> GetMutableFontDict() { return m_pFontDict; }
+  const CPDF_Dictionary* GetFontDict() const { return m_pFontDict.Get(); }
   void ClearFontDict() { m_pFontDict = nullptr; }
   bool IsStandardFont() const;
   bool HasFace() const { return !!m_Font.GetFaceRec(); }
@@ -129,7 +130,7 @@ class CPDF_Font : public Retainable, public Observable {
   CFX_Font* GetFontFallback(int position);
 
  protected:
-  CPDF_Font(CPDF_Document* pDocument, CPDF_Dictionary* pFontDict);
+  CPDF_Font(CPDF_Document* pDocument, RetainPtr<CPDF_Dictionary> pFontDict);
 
   static int TT2PDF(FT_Pos m, FXFT_FaceRec* face);
 

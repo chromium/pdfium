@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <iterator>
+#include <utility>
 
 #include "constants/font_encodings.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
@@ -34,8 +35,8 @@ void GetPredefinedEncoding(const ByteString& value, FontEncoding* basemap) {
 }  // namespace
 
 CPDF_SimpleFont::CPDF_SimpleFont(CPDF_Document* pDocument,
-                                 CPDF_Dictionary* pFontDict)
-    : CPDF_Font(pDocument, pFontDict) {
+                                 RetainPtr<CPDF_Dictionary> pFontDict)
+    : CPDF_Font(pDocument, std::move(pFontDict)) {
   memset(m_CharWidth, 0xff, sizeof(m_CharWidth));
   memset(m_GlyphIndex, 0xff, sizeof(m_GlyphIndex));
   for (size_t i = 0; i < std::size(m_CharBBox); ++i)

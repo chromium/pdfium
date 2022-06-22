@@ -96,7 +96,7 @@ CPDF_TextState::TextData::TextData(const TextData& that)
 
   if (m_pDocument && m_pFont) {
     auto* pPageData = CPDF_DocPageData::FromDocument(m_pDocument.Get());
-    m_pFont = pPageData->GetFont(m_pFont->GetFontDict());
+    m_pFont = pPageData->GetFont(m_pFont->GetMutableFontDict());
   }
 }
 

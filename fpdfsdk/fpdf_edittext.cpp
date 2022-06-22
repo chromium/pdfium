@@ -291,7 +291,7 @@ RetainPtr<CPDF_Font> LoadSimpleFont(CPDF_Document* pDoc,
                                     std::unique_ptr<CFX_Font> pFont,
                                     pdfium::span<const uint8_t> span,
                                     int font_type) {
-  CPDF_Dictionary* pFontDict = pDoc->NewIndirect<CPDF_Dictionary>();
+  RetainPtr<CPDF_Dictionary> pFontDict(pDoc->NewIndirect<CPDF_Dictionary>());
   pFontDict->SetNewFor<CPDF_Name>("Type", "Font");
   pFontDict->SetNewFor<CPDF_Name>(
       "Subtype", font_type == FPDF_FONT_TYPE1 ? "Type1" : "TrueType");
@@ -327,14 +327,14 @@ RetainPtr<CPDF_Font> LoadSimpleFont(CPDF_Document* pDoc,
 
   pFontDict->SetNewFor<CPDF_Reference>("FontDescriptor", pDoc,
                                        pFontDesc->GetObjNum());
-  return CPDF_DocPageData::FromDocument(pDoc)->GetFont(pFontDict);
+  return CPDF_DocPageData::FromDocument(pDoc)->GetFont(std::move(pFontDict));
 }
 
 RetainPtr<CPDF_Font> LoadCompositeFont(CPDF_Document* pDoc,
                                        std::unique_ptr<CFX_Font> pFont,
                                        pdfium::span<const uint8_t> span,
                                        int font_type) {
-  CPDF_Dictionary* pFontDict = pDoc->NewIndirect<CPDF_Dictionary>();
+  RetainPtr<CPDF_Dictionary> pFontDict(pDoc->NewIndirect<CPDF_Dictionary>());
   pFontDict->SetNewFor<CPDF_Name>("Type", "Font");
   pFontDict->SetNewFor<CPDF_Name>("Subtype", "Type0");
   // TODO(npm): Get the correct encoding, if it's not identity.
@@ -668,8 +668,8 @@ FPDFPageObj_CreateTextObj(FPDF_DOCUMENT document,
     return nullptr;
 
   auto pTextObj = std::make_unique<CPDF_TextObject>();
-  pTextObj->m_TextState.SetFont(
-      CPDF_DocPageData::FromDocument(pDoc)->GetFont(pFont->GetFontDict()));
+  pTextObj->m_TextState.SetFont(CPDF_DocPageData::FromDocument(pDoc)->GetFont(
+      pFont->GetMutableFontDict()));
   pTextObj->m_TextState.SetFontSize(font_size);
   pTextObj->DefaultStates();
   return FPDFPageObjectFromCPDFPageObject(pTextObj.release());

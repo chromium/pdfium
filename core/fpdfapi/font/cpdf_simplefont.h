@@ -34,7 +34,8 @@ class CPDF_SimpleFont : public CPDF_Font {
  protected:
   static constexpr size_t kInternalTableSize = 256;
 
-  CPDF_SimpleFont(CPDF_Document* pDocument, CPDF_Dictionary* pFontDict);
+  CPDF_SimpleFont(CPDF_Document* pDocument,
+                  RetainPtr<CPDF_Dictionary> pFontDict);
 
   virtual void LoadGlyphMap() = 0;
 

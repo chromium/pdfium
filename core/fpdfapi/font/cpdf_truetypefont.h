@@ -23,7 +23,8 @@ class CPDF_TrueTypeFont final : public CPDF_SimpleFont {
  private:
   enum class CharmapType { kMSUnicode, kMSSymbol, kMacRoman, kOther };
 
-  CPDF_TrueTypeFont(CPDF_Document* pDocument, CPDF_Dictionary* pFontDict);
+  CPDF_TrueTypeFont(CPDF_Document* pDocument,
+                    RetainPtr<CPDF_Dictionary> pFontDict);
 
   // CPDF_Font:
   bool Load() override;

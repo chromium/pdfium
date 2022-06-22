@@ -1137,13 +1137,14 @@ CPDF_Object* CPDF_StreamContentParser::FindResourceObj(const ByteString& type,
 
 RetainPtr<CPDF_Font> CPDF_StreamContentParser::FindFont(
     const ByteString& name) {
-  CPDF_Dictionary* pFontDict = ToDictionary(FindResourceObj("Font", name));
+  RetainPtr<CPDF_Dictionary> pFontDict(
+      ToDictionary(FindResourceObj("Font", name)));
   if (!pFontDict) {
     return CPDF_Font::GetStockFont(m_pDocument.Get(),
                                    CFX_Font::kDefaultAnsiFontName);
   }
-  RetainPtr<CPDF_Font> pFont =
-      CPDF_DocPageData::FromDocument(m_pDocument.Get())->GetFont(pFontDict);
+  RetainPtr<CPDF_Font> pFont = CPDF_DocPageData::FromDocument(m_pDocument.Get())
+                                   ->GetFont(std::move(pFontDict));
   if (pFont && pFont->IsType3Font()) {
     pFont->AsType3Font()->SetPageResources(m_pResources.Get());
     pFont->AsType3Font()->CheckType3FontMetrics();

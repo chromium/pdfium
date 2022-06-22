@@ -205,12 +205,12 @@ RetainPtr<CPDF_Font> CPDF_BAFontMap::FindResFontSameCharset(
   CPDF_DictionaryLocker locker(pFonts);
   for (const auto& it : locker) {
     const ByteString& csKey = it.first;
-    CPDF_Dictionary* pElement = ToDictionary(it.second->GetDirect());
-    if (!ValidateDictType(pElement, "Font"))
+    RetainPtr<CPDF_Dictionary> pElement(ToDictionary(it.second->GetDirect()));
+    if (!ValidateDictType(pElement.Get(), "Font"))
       continue;
 
     auto* pData = CPDF_DocPageData::FromDocument(m_pDocument.Get());
-    RetainPtr<CPDF_Font> pFont = pData->GetFont(pElement);
+    RetainPtr<CPDF_Font> pFont = pData->GetFont(std::move(pElement));
     if (!pFont)
       continue;
 
@@ -256,7 +256,7 @@ RetainPtr<CPDF_Font> CPDF_BAFontMap::GetAnnotDefaultFont(ByteString* sAlias) {
   absl::optional<ByteString> font = appearance.GetFont(&font_size);
   *sAlias = font.value_or(ByteString());
 
-  CPDF_Dictionary* pFontDict = nullptr;
+  RetainPtr<CPDF_Dictionary> pFontDict;
   if (CPDF_Dictionary* pAPDict =
           m_pAnnotDict->GetDictFor(pdfium::annotation::kAP)) {
     if (CPDF_Dictionary* pNormalDict = pAPDict->GetDictFor("N")) {
@@ -313,7 +313,7 @@ void CPDF_BAFontMap::AddFontToAnnotDict(const RetainPtr<CPDF_Font>& pFont,
                                               pStreamResFontList->GetObjNum());
   }
   if (!pStreamResFontList->KeyExist(sAlias)) {
-    CPDF_Dictionary* pFontDict = pFont->GetFontDict();
+    const CPDF_Dictionary* pFontDict = pFont->GetFontDict();
     RetainPtr<CPDF_Object> pObject =
         pFontDict->IsInline() ? pFontDict->Clone()
                               : pFontDict->MakeReference(m_pDocument.Get());
