@@ -101,7 +101,8 @@ class CPDF_Page final : public IPDF_Page, public CPDF_PageObjectHolder {
   CPDF_Page(CPDF_Document* pDocument, CPDF_Dictionary* pPageDict);
   ~CPDF_Page() override;
 
-  CPDF_Object* GetPageAttr(const ByteString& name) const;
+  RetainPtr<CPDF_Object> GetMutablePageAttr(const ByteString& name);
+  const CPDF_Object* GetPageAttr(const ByteString& name) const;
   CFX_FloatRect GetBox(const ByteString& name) const;
 
   CFX_SizeF m_PageSize;
