@@ -136,14 +136,15 @@ TEST_F(FPDFAnnotEmbedderTest, SetAP) {
   // Verify that appearance stream is created as form XObject
   CPDF_AnnotContext* context = CPDFAnnotContextFromFPDFAnnotation(annot.get());
   ASSERT_TRUE(context);
-  CPDF_Dictionary* annot_dict = context->GetAnnotDict();
+  const CPDF_Dictionary* annot_dict = context->GetAnnotDict();
   ASSERT_TRUE(annot_dict);
-  CPDF_Dictionary* ap_dict = annot_dict->GetDictFor(pdfium::annotation::kAP);
+  const CPDF_Dictionary* ap_dict =
+      annot_dict->GetDictFor(pdfium::annotation::kAP);
   ASSERT_TRUE(ap_dict);
-  CPDF_Dictionary* stream_dict = ap_dict->GetDictFor("N");
+  const CPDF_Dictionary* stream_dict = ap_dict->GetDictFor("N");
   ASSERT_TRUE(stream_dict);
   // Check for non-existence of resources dictionary in case of opaque color
-  CPDF_Dictionary* resources_dict = stream_dict->GetDictFor("Resources");
+  const CPDF_Dictionary* resources_dict = stream_dict->GetDictFor("Resources");
   ASSERT_FALSE(resources_dict);
   ByteString type = stream_dict->GetStringFor(pdfium::annotation::kType);
   EXPECT_EQ("XObject", type);
@@ -184,17 +185,19 @@ TEST_F(FPDFAnnotEmbedderTest, SetAPWithOpacity) {
 
   CPDF_AnnotContext* context = CPDFAnnotContextFromFPDFAnnotation(annot.get());
   ASSERT_TRUE(context);
-  CPDF_Dictionary* annot_dict = context->GetAnnotDict();
+  const CPDF_Dictionary* annot_dict = context->GetAnnotDict();
   ASSERT_TRUE(annot_dict);
-  CPDF_Dictionary* ap_dict = annot_dict->GetDictFor(pdfium::annotation::kAP);
+  const CPDF_Dictionary* ap_dict =
+      annot_dict->GetDictFor(pdfium::annotation::kAP);
   ASSERT_TRUE(ap_dict);
-  CPDF_Dictionary* stream_dict = ap_dict->GetDictFor("N");
+  const CPDF_Dictionary* stream_dict = ap_dict->GetDictFor("N");
   ASSERT_TRUE(stream_dict);
-  CPDF_Dictionary* resources_dict = stream_dict->GetDictFor("Resources");
+  const CPDF_Dictionary* resources_dict = stream_dict->GetDictFor("Resources");
   ASSERT_TRUE(stream_dict);
-  CPDF_Dictionary* extGState_dict = resources_dict->GetDictFor("ExtGState");
+  const CPDF_Dictionary* extGState_dict =
+      resources_dict->GetDictFor("ExtGState");
   ASSERT_TRUE(extGState_dict);
-  CPDF_Dictionary* gs_dict = extGState_dict->GetDictFor("GS");
+  const CPDF_Dictionary* gs_dict = extGState_dict->GetDictFor("GS");
   ASSERT_TRUE(gs_dict);
   ByteString type = gs_dict->GetStringFor(pdfium::annotation::kType);
   EXPECT_EQ("ExtGState", type);
@@ -220,7 +223,7 @@ TEST_F(FPDFAnnotEmbedderTest, InkListAPIValidations) {
   CPDF_AnnotContext* context =
       CPDFAnnotContextFromFPDFAnnotation(ink_annot.get());
   ASSERT_TRUE(context);
-  CPDF_Dictionary* annot_dict = context->GetAnnotDict();
+  const CPDF_Dictionary* annot_dict = context->GetAnnotDict();
   ASSERT_TRUE(annot_dict);
 
   static constexpr FS_POINTF kFirstInkStroke[] = {
@@ -267,7 +270,7 @@ TEST_F(FPDFAnnotEmbedderTest, InkListAPIValidations) {
   EXPECT_EQ(0, FPDFAnnot_AddInkStroke(ink_annot.get(), kFirstInkStroke,
                                       kFirstStrokePointCount));
 
-  CPDF_Array* inklist = annot_dict->GetArrayFor("InkList");
+  const CPDF_Array* inklist = annot_dict->GetArrayFor("InkList");
   ASSERT_TRUE(inklist);
   EXPECT_EQ(1u, inklist->size());
   EXPECT_EQ(kFirstStrokePointCount * 2, inklist->GetArrayAt(0)->size());
@@ -310,7 +313,7 @@ TEST_F(FPDFAnnotEmbedderTest, RemoveInkList) {
   CPDF_AnnotContext* context =
       CPDFAnnotContextFromFPDFAnnotation(ink_annot.get());
   ASSERT_TRUE(context);
-  CPDF_Dictionary* annot_dict = context->GetAnnotDict();
+  const CPDF_Dictionary* annot_dict = context->GetAnnotDict();
   ASSERT_TRUE(annot_dict);
 
   static constexpr FS_POINTF kInkStroke[] = {{80.0f, 90.0f}, {81.0f, 91.0f},
@@ -323,7 +326,7 @@ TEST_F(FPDFAnnotEmbedderTest, RemoveInkList) {
   EXPECT_EQ(0,
             FPDFAnnot_AddInkStroke(ink_annot.get(), kInkStroke, kPointCount));
 
-  CPDF_Array* inklist = annot_dict->GetArrayFor("InkList");
+  const CPDF_Array* inklist = annot_dict->GetArrayFor("InkList");
   ASSERT_TRUE(inklist);
   ASSERT_EQ(1u, inklist->size());
   EXPECT_EQ(kPointCount * 2, inklist->GetArrayAt(0)->size());

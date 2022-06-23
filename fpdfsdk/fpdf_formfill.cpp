@@ -649,9 +649,9 @@ FORM_SetFocusedAnnot(FPDF_FORMHANDLE handle, FPDF_ANNOTATION annot) {
   if (!page_view->IsValid())
     return false;
 
-  CPDF_Dictionary* annot_dict = annot_context->GetAnnotDict();
+  RetainPtr<CPDF_Dictionary> annot_dict = annot_context->GetMutableAnnotDict();
   ObservedPtr<CPDFSDK_Annot> cpdfsdk_annot(
-      page_view->GetAnnotByDict(annot_dict));
+      page_view->GetAnnotByDict(annot_dict.Get()));
   if (!cpdfsdk_annot)
     return false;
 
