@@ -41,9 +41,10 @@ CPDF_Form::CPDF_Form(CPDF_Document* pDoc,
           pDoc,
           pFormStream->GetDict(),
           pPageResources,
-          ChooseResourcesDict(pFormStream->GetDict()->GetDictFor("Resources"),
-                              pParentResources,
-                              pPageResources)),
+          ChooseResourcesDict(
+              pFormStream->GetDict()->GetMutableDictFor("Resources").Get(),
+              pParentResources,
+              pPageResources)),
       m_pFormStream(pFormStream) {
   LoadTransparencyInfo();
 }

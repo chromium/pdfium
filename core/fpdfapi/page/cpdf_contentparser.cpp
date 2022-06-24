@@ -66,7 +66,7 @@ CPDF_ContentParser::CPDF_ContentParser(CPDF_Form* pForm,
   if (pGraphicStates)
     form_matrix.Concat(pGraphicStates->m_CTM);
 
-  CPDF_Array* pBBox = pForm->GetDict()->GetArrayFor("BBox");
+  const CPDF_Array* pBBox = pForm->GetDict()->GetArrayFor("BBox");
   CFX_FloatRect form_bbox;
   CPDF_Path ClipPath;
   if (pBBox) {
@@ -82,10 +82,12 @@ CPDF_ContentParser::CPDF_ContentParser(CPDF_Form* pForm,
       form_bbox = pParentMatrix->TransformRect(form_bbox);
   }
 
-  CPDF_Dictionary* pResources = pForm->GetDict()->GetDictFor("Resources");
+  RetainPtr<CPDF_Dictionary> pResources =
+      pForm->GetDict()->GetMutableDictFor("Resources");
   m_pParser = std::make_unique<CPDF_StreamContentParser>(
       pForm->GetDocument(), pForm->GetPageResources(), pForm->GetResources(),
-      pParentMatrix, pForm, pResources, form_bbox, pGraphicStates, pParsedSet);
+      pParentMatrix, pForm, pResources.Get(), form_bbox, pGraphicStates,
+      pParsedSet);
   m_pParser->GetCurStates()->m_CTM = form_matrix;
   m_pParser->GetCurStates()->m_ParentMatrix = form_matrix;
   if (ClipPath.HasRef()) {
@@ -136,7 +138,7 @@ bool CPDF_ContentParser::Continue(PauseIndicatorIface* pPause) {
 CPDF_ContentParser::Stage CPDF_ContentParser::GetContent() {
   DCHECK_EQ(m_CurrentStage, Stage::kGetContent);
   DCHECK(m_pObjectHolder->IsPage());
-  CPDF_Array* pContent =
+  const CPDF_Array* pContent =
       m_pObjectHolder->GetDict()->GetArrayFor(pdfium::page_object::kContents);
   const CPDF_Stream* pStreamObj = ToStream(
       pContent ? pContent->GetDirectObjectAt(m_CurrentOffset) : nullptr);

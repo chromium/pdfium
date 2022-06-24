@@ -68,7 +68,7 @@ void CFDF_Document::ParseStream(RetainPtr<IFX_SeekableReadStream> pFile) {
       RetainPtr<CPDF_Dictionary> pMainDict =
           ToDictionary(parser.GetObjectBody(this));
       if (pMainDict)
-        m_pRootDict.Reset(pMainDict->GetDictFor("Root"));
+        m_pRootDict = pMainDict->GetMutableDictFor("Root");
 
       break;
     }

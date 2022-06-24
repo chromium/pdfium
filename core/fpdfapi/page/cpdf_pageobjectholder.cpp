@@ -113,7 +113,7 @@ void CPDF_PageObjectHolder::FontsMapInsert(const FontData& fd,
 }
 
 void CPDF_PageObjectHolder::LoadTransparencyInfo() {
-  CPDF_Dictionary* pGroup = m_pDict->GetDictFor("Group");
+  const CPDF_Dictionary* pGroup = m_pDict->GetDictFor("Group");
   if (!pGroup)
     return;
 

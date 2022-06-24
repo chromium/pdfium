@@ -31,7 +31,7 @@ CFX_Color::TypeAndARGB CPDF_ApSettings::GetColorARGB(
   if (!m_pDict)
     return {CFX_Color::Type::kTransparent, 0};
 
-  CPDF_Array* pEntry = m_pDict->GetArrayFor(csEntry);
+  const CPDF_Array* pEntry = m_pDict->GetArrayFor(csEntry);
   if (!pEntry)
     return {CFX_Color::Type::kTransparent, 0};
 
@@ -65,7 +65,7 @@ float CPDF_ApSettings::GetOriginalColorComponent(
   if (!m_pDict)
     return 0;
 
-  CPDF_Array* pEntry = m_pDict->GetArrayFor(csEntry);
+  const CPDF_Array* pEntry = m_pDict->GetArrayFor(csEntry);
   return pEntry ? pEntry->GetNumberAt(index) : 0;
 }
 
@@ -73,7 +73,7 @@ CFX_Color CPDF_ApSettings::GetOriginalColor(const ByteString& csEntry) const {
   if (!m_pDict)
     return CFX_Color();
 
-  CPDF_Array* pEntry = m_pDict->GetArrayFor(csEntry);
+  const CPDF_Array* pEntry = m_pDict->GetArrayFor(csEntry);
   if (!pEntry)
     return CFX_Color();
 

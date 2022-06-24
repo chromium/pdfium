@@ -57,7 +57,7 @@ void CPDF_Type3Font::WillBeDestroyed() {
 }
 
 bool CPDF_Type3Font::Load() {
-  m_pFontResources.Reset(m_pFontDict->GetDictFor("Resources"));
+  m_pFontResources = m_pFontDict->GetMutableDictFor("Resources");
   const CPDF_Array* pMatrix = m_pFontDict->GetArrayFor("FontMatrix");
   float xscale = 1.0f;
   float yscale = 1.0f;
@@ -90,7 +90,7 @@ bool CPDF_Type3Font::Load() {
       }
     }
   }
-  m_pCharProcs.Reset(m_pFontDict->GetDictFor("CharProcs"));
+  m_pCharProcs = m_pFontDict->GetMutableDictFor("CharProcs");
   if (m_pFontDict->GetDirectObjectFor("Encoding"))
     LoadPDFEncoding(false, false);
   return true;

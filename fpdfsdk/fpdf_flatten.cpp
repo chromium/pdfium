@@ -93,7 +93,7 @@ int ParserAnnots(CPDF_Document* pSourceDoc,
     return FLATTEN_FAIL;
 
   GetContentsRect(pSourceDoc, pPageDic, pRectArray);
-  CPDF_Array* pAnnots = pPageDic->GetArrayFor("Annots");
+  const CPDF_Array* pAnnots = pPageDic->GetArrayFor("Annots");
   if (!pAnnots)
     return FLATTEN_NOTHINGTODO;
 
@@ -190,8 +190,8 @@ CPDF_Object* NewIndirectContentsStream(CPDF_Document* pDocument,
 void SetPageContents(const ByteString& key,
                      CPDF_Dictionary* pPage,
                      CPDF_Document* pDocument) {
-  CPDF_Array* pContentsArray =
-      pPage->GetArrayFor(pdfium::page_object::kContents);
+  RetainPtr<CPDF_Array> pContentsArray =
+      pPage->GetMutableArrayFor(pdfium::page_object::kContents);
   CPDF_Stream* pContentsStream =
       pPage->GetStreamFor(pdfium::page_object::kContents);
   if (!pContentsStream && !pContentsArray) {
@@ -337,13 +337,14 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     rcAnnot.Normalize();
 
     ByteString sAnnotState = pAnnotDict->GetStringFor("AS");
-    CPDF_Dictionary* pAnnotAP = pAnnotDict->GetDictFor(pdfium::annotation::kAP);
+    RetainPtr<CPDF_Dictionary> pAnnotAP =
+        pAnnotDict->GetMutableDictFor(pdfium::annotation::kAP);
     if (!pAnnotAP)
       continue;
 
     CPDF_Stream* pAPStream = pAnnotAP->GetStreamFor("N");
     if (!pAPStream) {
-      CPDF_Dictionary* pAPDict = pAnnotAP->GetDictFor("N");
+      RetainPtr<CPDF_Dictionary> pAPDict = pAnnotAP->GetMutableDictFor("N");
       if (!pAPDict)
         continue;
 
@@ -351,7 +352,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
         pAPStream = pAPDict->GetStreamFor(sAnnotState);
       } else {
         if (pAPDict->size() > 0) {
-          CPDF_DictionaryLocker locker(pAPDict);
+          CPDF_DictionaryLocker locker(pAPDict.Get());
           CPDF_Object* pFirstObj = locker.begin()->second.Get();
           if (pFirstObj) {
             if (pFirstObj->IsReference())

@@ -1877,7 +1877,8 @@ void CPDFSDK_AppStream::Write(const ByteString& sAPType,
     pStreamDict->SetNewFor<CPDF_Number>("FormType", 1);
 
     if (pOrigStreamDict) {
-      CPDF_Dictionary* pResources = pOrigStreamDict->GetDictFor("Resources");
+      const CPDF_Dictionary* pResources =
+          pOrigStreamDict->GetDictFor("Resources");
       if (pResources)
         pStreamDict->SetFor("Resources", pResources->Clone());
     }

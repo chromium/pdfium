@@ -75,11 +75,11 @@ bool FDFToURLEncodedData(
   if (!pFDF)
     return true;
 
-  CPDF_Dictionary* pMainDict = pFDF->GetRoot()->GetDictFor("FDF");
+  const CPDF_Dictionary* pMainDict = pFDF->GetRoot()->GetDictFor("FDF");
   if (!pMainDict)
     return false;
 
-  CPDF_Array* pFields = pMainDict->GetArrayFor("Fields");
+  const CPDF_Array* pFields = pMainDict->GetArrayFor("Fields");
   if (!pFields)
     return false;
 
@@ -137,7 +137,7 @@ CPDFSDK_Widget* CPDFSDK_InteractiveForm::GetWidget(
   CPDF_Document* pDocument = m_pFormFillEnv->GetPDFDocument();
   CPDFSDK_PageView* pPage = nullptr;
 
-  if (CPDF_Dictionary* pPageDict = pControlDict->GetDictFor("P")) {
+  if (const CPDF_Dictionary* pPageDict = pControlDict->GetDictFor("P")) {
     int nPageIndex = pDocument->GetPageIndex(pPageDict->GetObjNum());
     if (nPageIndex >= 0)
       pPage = m_pFormFillEnv->GetPageViewAtIndex(nPageIndex);
@@ -185,7 +185,7 @@ int CPDFSDK_InteractiveForm::GetPageIndexByAnnotDict(
     if (!pPageDict)
       continue;
 
-    CPDF_Array* pAnnots = pPageDict->GetArrayFor("Annots");
+    const CPDF_Array* pAnnots = pPageDict->GetArrayFor("Annots");
     if (!pAnnots)
       continue;
 

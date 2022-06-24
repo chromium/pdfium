@@ -1119,14 +1119,14 @@ CPDF_Dictionary* CPDF_StreamContentParser::FindResourceHolder(
   if (!m_pResources)
     return nullptr;
 
-  CPDF_Dictionary* pDict = m_pResources->GetDictFor(type);
+  RetainPtr<CPDF_Dictionary> pDict = m_pResources->GetMutableDictFor(type);
   if (pDict)
-    return pDict;
+    return pDict.Get();  // TODO(tsepez): return retained and below.
 
   if (m_pResources == m_pPageResources || !m_pPageResources)
     return nullptr;
 
-  return m_pPageResources->GetDictFor(type);
+  return m_pPageResources->GetMutableDictFor(type).Get();
 }
 
 CPDF_Object* CPDF_StreamContentParser::FindResourceObj(const ByteString& type,

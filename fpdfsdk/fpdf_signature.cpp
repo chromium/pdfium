@@ -65,11 +65,12 @@ FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFSignatureObj_GetContents(FPDF_SIGNATURE signature,
                              void* buffer,
                              unsigned long length) {
-  CPDF_Dictionary* signature_dict = CPDFDictionaryFromFPDFSignature(signature);
+  const CPDF_Dictionary* signature_dict =
+      CPDFDictionaryFromFPDFSignature(signature);
   if (!signature_dict)
     return 0;
 
-  CPDF_Dictionary* value_dict = signature_dict->GetDictFor("V");
+  const CPDF_Dictionary* value_dict = signature_dict->GetDictFor("V");
   if (!value_dict)
     return 0;
 
@@ -86,11 +87,12 @@ FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFSignatureObj_GetByteRange(FPDF_SIGNATURE signature,
                               int* buffer,
                               unsigned long length) {
-  CPDF_Dictionary* signature_dict = CPDFDictionaryFromFPDFSignature(signature);
+  const CPDF_Dictionary* signature_dict =
+      CPDFDictionaryFromFPDFSignature(signature);
   if (!signature_dict)
     return 0;
 
-  CPDF_Dictionary* value_dict = signature_dict->GetDictFor("V");
+  const CPDF_Dictionary* value_dict = signature_dict->GetDictFor("V");
   if (!value_dict)
     return 0;
 
@@ -115,7 +117,7 @@ FPDFSignatureObj_GetSubFilter(FPDF_SIGNATURE signature,
   if (!signature_dict)
     return 0;
 
-  CPDF_Dictionary* value_dict = signature_dict->GetDictFor("V");
+  const CPDF_Dictionary* value_dict = signature_dict->GetDictFor("V");
   if (!value_dict || !value_dict->KeyExist("SubFilter"))
     return 0;
 
@@ -131,7 +133,7 @@ FPDFSignatureObj_GetReason(FPDF_SIGNATURE signature,
   if (!signature_dict)
     return 0;
 
-  CPDF_Dictionary* value_dict = signature_dict->GetDictFor("V");
+  const CPDF_Dictionary* value_dict = signature_dict->GetDictFor("V");
   if (!value_dict)
     return 0;
 
@@ -151,7 +153,7 @@ FPDFSignatureObj_GetTime(FPDF_SIGNATURE signature,
   if (!signature_dict)
     return 0;
 
-  CPDF_Dictionary* value_dict = signature_dict->GetDictFor("V");
+  const CPDF_Dictionary* value_dict = signature_dict->GetDictFor("V");
   if (!value_dict)
     return 0;
 
@@ -169,11 +171,11 @@ FPDFSignatureObj_GetDocMDPPermission(FPDF_SIGNATURE signature) {
   if (!signature_dict)
     return permission;
 
-  CPDF_Dictionary* value_dict = signature_dict->GetDictFor("V");
+  const CPDF_Dictionary* value_dict = signature_dict->GetDictFor("V");
   if (!value_dict)
     return permission;
 
-  CPDF_Array* references = value_dict->GetArrayFor("Reference");
+  const CPDF_Array* references = value_dict->GetArrayFor("Reference");
   if (!references)
     return permission;
 
@@ -187,7 +189,7 @@ FPDFSignatureObj_GetDocMDPPermission(FPDF_SIGNATURE signature) {
     if (transform_method != "DocMDP")
       continue;
 
-    CPDF_Dictionary* transform_params =
+    const CPDF_Dictionary* transform_params =
         reference_dict->GetDictFor("TransformParams");
     if (!transform_params)
       continue;

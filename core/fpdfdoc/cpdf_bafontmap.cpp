@@ -227,13 +227,13 @@ RetainPtr<CPDF_Font> CPDF_BAFontMap::FindResFontSameCharset(
 }
 
 RetainPtr<CPDF_Font> CPDF_BAFontMap::GetAnnotDefaultFont(ByteString* sAlias) {
-  CPDF_Dictionary* pAcroFormDict = nullptr;
+  RetainPtr<CPDF_Dictionary> pAcroFormDict;
   const bool bWidget =
       (m_pAnnotDict->GetNameFor(pdfium::annotation::kSubtype) == "Widget");
   if (bWidget) {
     CPDF_Dictionary* pRootDict = m_pDocument->GetRoot();
     if (pRootDict)
-      pAcroFormDict = pRootDict->GetDictFor("AcroForm");
+      pAcroFormDict = pRootDict->GetMutableDictFor("AcroForm");
   }
 
   ByteString sDA;
@@ -244,7 +244,7 @@ RetainPtr<CPDF_Font> CPDF_BAFontMap::GetAnnotDefaultFont(ByteString* sAlias) {
 
   if (bWidget) {
     if (sDA.IsEmpty()) {
-      pObj = CPDF_FormField::GetFieldAttr(pAcroFormDict, "DA");
+      pObj = CPDF_FormField::GetFieldAttr(pAcroFormDict.Get(), "DA");
       sDA = pObj ? pObj->GetString() : ByteString();
     }
   }
@@ -257,20 +257,26 @@ RetainPtr<CPDF_Font> CPDF_BAFontMap::GetAnnotDefaultFont(ByteString* sAlias) {
   *sAlias = font.value_or(ByteString());
 
   RetainPtr<CPDF_Dictionary> pFontDict;
-  if (CPDF_Dictionary* pAPDict =
-          m_pAnnotDict->GetDictFor(pdfium::annotation::kAP)) {
-    if (CPDF_Dictionary* pNormalDict = pAPDict->GetDictFor("N")) {
-      if (CPDF_Dictionary* pNormalResDict =
-              pNormalDict->GetDictFor("Resources")) {
-        if (CPDF_Dictionary* pResFontDict = pNormalResDict->GetDictFor("Font"))
-          pFontDict = pResFontDict->GetDictFor(*sAlias);
+  if (RetainPtr<CPDF_Dictionary> pAPDict =
+          m_pAnnotDict->GetMutableDictFor(pdfium::annotation::kAP)) {
+    if (RetainPtr<CPDF_Dictionary> pNormalDict =
+            pAPDict->GetMutableDictFor("N")) {
+      if (RetainPtr<CPDF_Dictionary> pNormalResDict =
+              pNormalDict->GetMutableDictFor("Resources")) {
+        if (RetainPtr<CPDF_Dictionary> pResFontDict =
+                pNormalResDict->GetMutableDictFor("Font")) {
+          pFontDict = pResFontDict->GetMutableDictFor(*sAlias);
+        }
       }
     }
   }
   if (bWidget && !pFontDict && pAcroFormDict) {
-    if (CPDF_Dictionary* pDRDict = pAcroFormDict->GetDictFor("DR")) {
-      if (CPDF_Dictionary* pDRFontDict = pDRDict->GetDictFor("Font"))
-        pFontDict = pDRFontDict->GetDictFor(*sAlias);
+    if (RetainPtr<CPDF_Dictionary> pDRDict =
+            pAcroFormDict->GetMutableDictFor("DR")) {
+      if (RetainPtr<CPDF_Dictionary> pDRFontDict =
+              pDRDict->GetMutableDictFor("Font")) {
+        pFontDict = pDRFontDict->GetMutableDictFor(*sAlias);
+      }
     }
   }
   if (!pFontDict)
@@ -306,7 +312,8 @@ void CPDF_BAFontMap::AddFontToAnnotDict(const RetainPtr<CPDF_Font>& pFont,
   }
 
   CPDF_Dictionary* pStreamResList = GetOrCreateDict(pStreamDict, "Resources");
-  CPDF_Dictionary* pStreamResFontList = pStreamResList->GetDictFor("Font");
+  RetainPtr<CPDF_Dictionary> pStreamResFontList =
+      pStreamResList->GetMutableDictFor("Font");
   if (!pStreamResFontList) {
     pStreamResFontList = m_pDocument->NewIndirect<CPDF_Dictionary>();
     pStreamResList->SetNewFor<CPDF_Reference>("Font", m_pDocument.Get(),

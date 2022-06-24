@@ -225,8 +225,10 @@ const CPDF_Array* GetQuadPointsArrayFromDictionary(
   return dict->GetArrayFor("QuadPoints");
 }
 
-CPDF_Array* GetQuadPointsArrayFromDictionary(CPDF_Dictionary* dict) {
-  return dict->GetArrayFor("QuadPoints");
+RetainPtr<CPDF_Array> GetMutableQuadPointsArrayFromDictionary(
+    CPDF_Dictionary* dict) {
+  return pdfium::WrapRetain(
+      const_cast<CPDF_Array*>(GetQuadPointsArrayFromDictionary(dict)));
 }
 
 CPDF_Array* AddQuadPointsArrayToDictionary(CPDF_Dictionary* dict) {

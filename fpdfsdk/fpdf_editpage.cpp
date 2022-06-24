@@ -702,7 +702,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_TransformAnnots(FPDF_PAGE page,
     CFX_FloatRect rect = matrix.TransformRect(pAnnot->GetRect());
 
     CPDF_Dictionary* pAnnotDict = pAnnot->GetAnnotDict();
-    CPDF_Array* pRectArray = pAnnotDict->GetArrayFor("Rect");
+    RetainPtr<CPDF_Array> pRectArray = pAnnotDict->GetMutableArrayFor("Rect");
     if (pRectArray)
       pRectArray->Clear();
     else

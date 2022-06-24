@@ -50,7 +50,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
   if (!pRoot)
     return false;
 
-  CPDF_Dictionary* pAcroForm = pRoot->GetDictFor("AcroForm");
+  RetainPtr<CPDF_Dictionary> pAcroForm = pRoot->GetMutableDictFor("AcroForm");
   if (!pAcroForm)
     return false;
 

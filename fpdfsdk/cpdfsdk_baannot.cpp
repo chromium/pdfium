@@ -117,8 +117,8 @@ ByteString CPDFSDK_BAAnnot::GetAppState() const {
 }
 
 void CPDFSDK_BAAnnot::SetBorderWidth(int nWidth) {
-  CPDF_Array* pBorder =
-      GetAnnotDict()->GetArrayFor(pdfium::annotation::kBorder);
+  RetainPtr<CPDF_Array> pBorder =
+      GetAnnotDict()->GetMutableArrayFor(pdfium::annotation::kBorder);
   if (pBorder) {
     pBorder->SetNewAt<CPDF_Number>(2, nWidth);
   } else {
@@ -128,12 +128,13 @@ void CPDFSDK_BAAnnot::SetBorderWidth(int nWidth) {
 }
 
 int CPDFSDK_BAAnnot::GetBorderWidth() const {
-  if (const CPDF_Array* pBorder =
-          GetAnnotDict()->GetArrayFor(pdfium::annotation::kBorder)) {
+  const CPDF_Array* pBorder =
+      GetAnnotDict()->GetArrayFor(pdfium::annotation::kBorder);
+  if (pBorder)
     return pBorder->GetIntegerAt(2);
-  }
 
-  if (CPDF_Dictionary* pBSDict = GetAnnotDict()->GetDictFor("BS"))
+  const CPDF_Dictionary* pBSDict = GetAnnotDict()->GetDictFor("BS");
+  if (pBSDict)
     return pBSDict->GetIntegerFor("W", 1);
 
   return 1;
@@ -165,7 +166,7 @@ void CPDFSDK_BAAnnot::SetBorderStyle(BorderStyle nStyle) {
 }
 
 BorderStyle CPDFSDK_BAAnnot::GetBorderStyle() const {
-  CPDF_Dictionary* pBSDict = GetAnnotDict()->GetDictFor("BS");
+  const CPDF_Dictionary* pBSDict = GetAnnotDict()->GetDictFor("BS");
   if (pBSDict) {
     ByteString sBorderStyle = pBSDict->GetStringFor("S", "S");
     if (sBorderStyle == "S")

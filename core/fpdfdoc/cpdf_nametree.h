@@ -51,11 +51,11 @@ class CPDF_NameTree {
   CPDF_Dictionary* GetRootForTesting() const { return m_pRoot.Get(); }
 
  private:
-  explicit CPDF_NameTree(CPDF_Dictionary* pRoot);
+  explicit CPDF_NameTree(RetainPtr<CPDF_Dictionary> pRoot);
 
   CPDF_Array* LookupNewStyleNamedDest(const ByteString& name);
 
-  const RetainPtr<CPDF_Dictionary> m_pRoot;
+  RetainPtr<CPDF_Dictionary> const m_pRoot;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_NAMETREE_H_

@@ -378,7 +378,8 @@ FPDF_EXPORT FPDF_ANNOTATION FPDF_CALLCONV FPDFPage_GetAnnot(FPDF_PAGE page,
   if (!pPage || index < 0)
     return nullptr;
 
-  CPDF_Array* pAnnots = pPage->GetDict()->GetArrayFor("Annots");
+  RetainPtr<CPDF_Array> pAnnots =
+      pPage->GetDict()->GetMutableArrayFor("Annots");
   if (!pAnnots || static_cast<size_t>(index) >= pAnnots->size())
     return nullptr;
 
@@ -430,7 +431,8 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_RemoveAnnot(FPDF_PAGE page,
   if (!pPage || index < 0)
     return false;
 
-  CPDF_Array* pAnnots = pPage->GetDict()->GetArrayFor("Annots");
+  RetainPtr<CPDF_Array> pAnnots =
+      pPage->GetDict()->GetMutableArrayFor("Annots");
   if (!pAnnots || static_cast<size_t>(index) >= pAnnots->size())
     return false;
 
@@ -660,7 +662,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetColor(FPDF_ANNOTATION annot,
 
   // Set the color of the annotation.
   ByteString key = type == FPDFANNOT_COLORTYPE_InteriorColor ? "IC" : "C";
-  CPDF_Array* pColor = pAnnotDict->GetArrayFor(key);
+  RetainPtr<CPDF_Array> pColor = pAnnotDict->GetMutableArrayFor(key);
   if (pColor)
     pColor->Clear();
   else
@@ -757,12 +759,12 @@ FPDFAnnot_SetAttachmentPoints(FPDF_ANNOTATION annot,
 
   RetainPtr<CPDF_Dictionary> pAnnotDict =
       CPDFAnnotContextFromFPDFAnnotation(annot)->GetMutableAnnotDict();
-  CPDF_Array* pQuadPointsArray =
-      GetQuadPointsArrayFromDictionary(pAnnotDict.Get());
-  if (!IsValidQuadPointsIndex(pQuadPointsArray, quad_index))
+  RetainPtr<CPDF_Array> pQuadPointsArray =
+      GetMutableQuadPointsArrayFromDictionary(pAnnotDict.Get());
+  if (!IsValidQuadPointsIndex(pQuadPointsArray.Get(), quad_index))
     return false;
 
-  SetQuadPointsAtIndex(pQuadPointsArray, quad_index, quad_points);
+  SetQuadPointsAtIndex(pQuadPointsArray.Get(), quad_index, quad_points);
   UpdateBBox(pAnnotDict.Get());
   return true;
 }
@@ -775,11 +777,11 @@ FPDFAnnot_AppendAttachmentPoints(FPDF_ANNOTATION annot,
 
   RetainPtr<CPDF_Dictionary> pAnnotDict =
       CPDFAnnotContextFromFPDFAnnotation(annot)->GetMutableAnnotDict();
-  CPDF_Array* pQuadPointsArray =
-      GetQuadPointsArrayFromDictionary(pAnnotDict.Get());
+  RetainPtr<CPDF_Array> pQuadPointsArray =
+      GetMutableQuadPointsArrayFromDictionary(pAnnotDict.Get());
   if (!pQuadPointsArray)
     pQuadPointsArray = AddQuadPointsArrayToDictionary(pAnnotDict.Get());
-  AppendQuadPoints(pQuadPointsArray, quad_points);
+  AppendQuadPoints(pQuadPointsArray.Get(), quad_points);
   UpdateBBox(pAnnotDict.Get());
   return true;
 }

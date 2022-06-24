@@ -198,8 +198,8 @@ TEST(cpdf_filespec, GetFileStream) {
     const char* const keys[] = {"Unix", "Mac", "DOS", "F", "UF"};
     const char* const streams[] = {"test1", "test2", "test3", "test4", "test5"};
     static_assert(std::size(keys) == std::size(streams), "size mismatch");
-    CPDF_Dictionary* file_dict =
-        file_spec.GetObj()->AsDictionary()->GetDictFor("EF");
+    RetainPtr<CPDF_Dictionary> file_dict =
+        file_spec.GetObj()->AsDictionary()->GetMutableDictFor("EF");
 
     // Keys in reverse order of precedence to retrieve the file content stream.
     for (size_t i = 0; i < std::size(keys); ++i) {
@@ -244,8 +244,8 @@ TEST(cpdf_filespec, GetParamsDict) {
     EXPECT_FALSE(file_spec.GetParamsDict());
 
     // Add a file stream to the embedded files dictionary.
-    CPDF_Dictionary* file_dict =
-        file_spec.GetObj()->AsDictionary()->GetDictFor("EF");
+    RetainPtr<CPDF_Dictionary> file_dict =
+        file_spec.GetObj()->AsDictionary()->GetMutableDictFor("EF");
     auto pDict = pdfium::MakeRetain<CPDF_Dictionary>();
     std::unique_ptr<uint8_t, FxFreeDeleter> buf(FX_AllocUninit(uint8_t, 6));
     memcpy(buf.get(), "hello", 6);
@@ -259,7 +259,8 @@ TEST(cpdf_filespec, GetParamsDict) {
     EXPECT_TRUE(file_spec.GetParamsDict());
 
     // Add a parameter to the params dictionary.
-    CPDF_Dictionary* params_dict = stream_dict->GetDictFor("Params");
+    RetainPtr<CPDF_Dictionary> params_dict =
+        stream_dict->GetMutableDictFor("Params");
     params_dict->SetNewFor<CPDF_Number>("Size", 6);
     EXPECT_EQ(6, file_spec.GetParamsDict()->GetIntegerFor("Size"));
   }

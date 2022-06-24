@@ -131,9 +131,9 @@ TEST(cpdf_nametree, GetFromTreeWithLimitsArrayWith4Items) {
   auto pRootDict = pdfium::MakeRetain<CPDF_Dictionary>();
   FillNameTreeDict(pRootDict.Get());
   RetainPtr<CPDF_Dictionary> pKid1 =
-      pRootDict->GetArrayFor("Kids")->GetMutableDictAt(0);
+      pRootDict->GetMutableArrayFor("Kids")->GetMutableDictAt(0);
   RetainPtr<CPDF_Dictionary> pGrandKid3 =
-      pKid1->GetArrayFor("Kids")->GetMutableDictAt(1);
+      pKid1->GetMutableArrayFor("Kids")->GetMutableDictAt(1);
   RetainPtr<CPDF_Array> pLimits = pGrandKid3->GetMutableArrayFor("Limits");
   ASSERT_EQ(2u, pLimits->size());
   pLimits->AppendNew<CPDF_Number>(5);

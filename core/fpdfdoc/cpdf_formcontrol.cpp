@@ -54,11 +54,11 @@ CFX_FloatRect CPDF_FormControl::GetRect() const {
 ByteString CPDF_FormControl::GetOnStateName() const {
   DCHECK(GetType() == CPDF_FormField::kCheckBox ||
          GetType() == CPDF_FormField::kRadioButton);
-  CPDF_Dictionary* pAP = m_pWidgetDict->GetDictFor("AP");
+  const CPDF_Dictionary* pAP = m_pWidgetDict->GetDictFor("AP");
   if (!pAP)
     return ByteString();
 
-  CPDF_Dictionary* pN = pAP->GetDictFor("N");
+  const CPDF_Dictionary* pN = pAP->GetDictFor("N");
   if (!pN)
     return ByteString();
 
@@ -138,7 +138,7 @@ CPDF_FormControl::HighlightingMode CPDF_FormControl::GetHighlightingMode()
 }
 
 CPDF_ApSettings CPDF_FormControl::GetMK() const {
-  return CPDF_ApSettings(m_pWidgetDict->GetDictFor("MK"));
+  return CPDF_ApSettings(m_pWidgetDict->GetMutableDictFor("MK").Get());
 }
 
 bool CPDF_FormControl::HasMKEntry(const ByteString& csEntry) const {
@@ -206,8 +206,8 @@ RetainPtr<CPDF_Font> CPDF_FormControl::GetDefaultControlFont() const {
 
   CPDF_Object* pObj = CPDF_FormField::GetFieldAttr(m_pWidgetDict.Get(), "DR");
   if (CPDF_Dictionary* pDict = ToDictionary(pObj)) {
-    CPDF_Dictionary* pFonts = pDict->GetDictFor("Font");
-    if (ValidateFontResourceDict(pFonts)) {
+    RetainPtr<CPDF_Dictionary> pFonts = pDict->GetMutableDictFor("Font");
+    if (ValidateFontResourceDict(pFonts.Get())) {
       RetainPtr<CPDF_Dictionary> pElement =
           pFonts->GetMutableDictFor(csFontNameTag.value());
       if (pElement) {
@@ -222,14 +222,14 @@ RetainPtr<CPDF_Font> CPDF_FormControl::GetDefaultControlFont() const {
   if (pFormFont)
     return pFormFont;
 
-  CPDF_Dictionary* pPageDict = m_pWidgetDict->GetDictFor("P");
+  RetainPtr<CPDF_Dictionary> pPageDict = m_pWidgetDict->GetMutableDictFor("P");
   CPDF_Dictionary* pDict =
-      ToDictionary(CPDF_FormField::GetFieldAttr(pPageDict, "Resources"));
+      ToDictionary(CPDF_FormField::GetFieldAttr(pPageDict.Get(), "Resources"));
   if (!pDict)
     return nullptr;
 
-  CPDF_Dictionary* pFonts = pDict->GetDictFor("Font");
-  if (!ValidateFontResourceDict(pFonts))
+  RetainPtr<CPDF_Dictionary> pFonts = pDict->GetMutableDictFor("Font");
+  if (!ValidateFontResourceDict(pFonts.Get()))
     return nullptr;
 
   RetainPtr<CPDF_Dictionary> pElement =
