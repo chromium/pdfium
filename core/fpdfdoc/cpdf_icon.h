@@ -15,7 +15,7 @@ class CPDF_Stream;
 
 class CPDF_Icon final {
  public:
-  explicit CPDF_Icon(CPDF_Stream* pStream);
+  explicit CPDF_Icon(const CPDF_Stream* pStream);
   ~CPDF_Icon();
 
   CFX_SizeF GetImageSize() const;
@@ -23,7 +23,7 @@ class CPDF_Icon final {
   ByteString GetImageAlias() const;
 
  private:
-  RetainPtr<CPDF_Stream> const m_pStream;
+  RetainPtr<const CPDF_Stream> const m_pStream;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_ICON_H_
