@@ -582,7 +582,8 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_GetFileVersion(FPDF_DOCUMENT doc,
 //          A 32-bit integer indicating error code as defined above.
 // Comments:
 //          If the previous SDK call succeeded, the return value of this
-//          function is not defined.
+//          function is not defined. This function only works in conjunction
+//          with APIs that mention FPDF_GetLastError() in their documentation.
 FPDF_EXPORT unsigned long FPDF_CALLCONV FPDF_GetLastError();
 
 // Experimental API.
