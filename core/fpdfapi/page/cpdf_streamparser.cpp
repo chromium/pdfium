@@ -140,7 +140,7 @@ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
 
   ByteString decoder;
   const CPDF_Dictionary* pParam = nullptr;
-  CPDF_Object* pFilter = pDict->GetDirectObjectFor("Filter");
+  const CPDF_Object* pFilter = pDict->GetDirectObjectFor("Filter");
   if (pFilter) {
     const CPDF_Array* pArray = pFilter->AsArray();
     if (pArray) {

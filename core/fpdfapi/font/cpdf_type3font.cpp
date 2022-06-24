@@ -117,14 +117,15 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
   if (!m_pCharProcs)
     return nullptr;
 
-  CPDF_Stream* pStream = ToStream(m_pCharProcs->GetDirectObjectFor(name));
+  RetainPtr<CPDF_Stream> pStream =
+      ToStream(m_pCharProcs->GetMutableDirectObjectFor(name));
   if (!pStream)
     return nullptr;
 
   std::unique_ptr<CPDF_Font::FormIface> pForm = m_pFormFactory->CreateForm(
       m_pDocument.Get(),
       m_pFontResources ? m_pFontResources.Get() : m_pPageResources.Get(),
-      pStream);
+      pStream.Get());
 
   auto pNewChar = std::make_unique<CPDF_Type3Char>();
 

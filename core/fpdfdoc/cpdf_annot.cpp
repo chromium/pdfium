@@ -72,9 +72,10 @@ CPDF_Stream* GetAnnotAPInternal(CPDF_Dictionary* pAnnotDict,
   if (bFallbackToNormal && !pAP->KeyExist(ap_entry))
     ap_entry = "N";
 
-  CPDF_Object* psub = pAP->GetDirectObjectFor(ap_entry);
+  RetainPtr<CPDF_Object> psub = pAP->GetMutableDirectObjectFor(ap_entry);
   if (!psub)
     return nullptr;
+
   if (CPDF_Stream* pStream = psub->AsStream())
     return pStream;
 

@@ -61,8 +61,8 @@ bool GetBoundingBox(const CPDF_Page* page,
   return true;
 }
 
-CPDF_Object* GetPageContent(CPDF_Dictionary* pPageDict) {
-  return pPageDict->GetDirectObjectFor(pdfium::page_object::kContents);
+RetainPtr<CPDF_Object> GetPageContent(CPDF_Dictionary* pPageDict) {
+  return pPageDict->GetMutableDirectObjectFor(pdfium::page_object::kContents);
 }
 
 void OutputPath(fxcrt::ostringstream& buf, CPDF_Path path) {
@@ -209,7 +209,7 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
     return false;
 
   CPDF_Dictionary* pPageDict = pPage->GetDict();
-  CPDF_Object* pContentObj = GetPageContent(pPageDict);
+  RetainPtr<CPDF_Object> pContentObj = GetPageContent(pPageDict);
   if (!pContentObj)
     return false;
 
@@ -242,7 +242,8 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
       pDoc->NewIndirect<CPDF_Stream>(nullptr, 0, pDoc->New<CPDF_Dictionary>());
   pEndStream->SetData(ByteStringView(" Q").raw_span());
 
-  if (CPDF_Array* pContentArray = ToArray(pContentObj)) {
+  RetainPtr<CPDF_Array> pContentArray = ToArray(pContentObj);
+  if (pContentArray) {
     pContentArray->InsertNewAt<CPDF_Reference>(0, pDoc, pStream->GetObjNum());
     pContentArray->AppendNew<CPDF_Reference>(pDoc, pEndStream->GetObjNum());
   } else if (pContentObj->IsStream() && !pContentObj->IsInline()) {
@@ -386,7 +387,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_InsertClipPath(FPDF_PAGE page,
     return;
 
   CPDF_Dictionary* pPageDict = pPage->GetDict();
-  CPDF_Object* pContentObj = GetPageContent(pPageDict);
+  RetainPtr<CPDF_Object> pContentObj = GetPageContent(pPageDict);
   if (!pContentObj)
     return;
 
@@ -415,7 +416,8 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_InsertClipPath(FPDF_PAGE page,
       pDoc->NewIndirect<CPDF_Stream>(nullptr, 0, pDoc->New<CPDF_Dictionary>());
   pStream->SetDataFromStringstream(&strClip);
 
-  if (CPDF_Array* pArray = ToArray(pContentObj)) {
+  RetainPtr<CPDF_Array> pArray = ToArray(pContentObj);
+  if (pArray) {
     pArray->InsertNewAt<CPDF_Reference>(0, pDoc, pStream->GetObjNum());
   } else if (pContentObj->IsStream() && !pContentObj->IsInline()) {
     CPDF_Array* pContentArray = pDoc->NewIndirect<CPDF_Array>();

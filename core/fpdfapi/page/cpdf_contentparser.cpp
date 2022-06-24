@@ -33,8 +33,8 @@ CPDF_ContentParser::CPDF_ContentParser(CPDF_Page* pPage)
     return;
   }
 
-  CPDF_Object* pContent =
-      pPage->GetDict()->GetDirectObjectFor(pdfium::page_object::kContents);
+  RetainPtr<CPDF_Object> pContent = pPage->GetDict()->GetMutableDirectObjectFor(
+      pdfium::page_object::kContents);
   if (!pContent) {
     HandlePageContentFailure();
     return;

@@ -371,7 +371,7 @@ CPDF_Array* LookupOldStyleNamedDest(CPDF_Document* pDoc,
       pDoc->GetRoot()->GetMutableDictFor("Dests");
   if (!pDests)
     return nullptr;
-  return GetNamedDestFromObject(pDests->GetDirectObjectFor(name));
+  return GetNamedDestFromObject(pDests->GetMutableDirectObjectFor(name).Get());
 }
 
 }  // namespace

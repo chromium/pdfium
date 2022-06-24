@@ -1001,7 +1001,7 @@ TEST(PDFDictionaryTest, ConvertIndirect) {
   CPDF_Object* pObj = dict->SetNewFor<CPDF_Number>("clams", 42);
   dict->ConvertToIndirectObjectFor("clams", &objects_holder);
   CPDF_Object* pRef = dict->GetObjectFor("clams");
-  CPDF_Object* pNum = dict->GetDirectObjectFor("clams");
+  const CPDF_Object* pNum = dict->GetDirectObjectFor("clams");
   EXPECT_TRUE(pRef->IsReference());
   EXPECT_TRUE(pNum->IsNumber());
   EXPECT_NE(pObj, pRef);

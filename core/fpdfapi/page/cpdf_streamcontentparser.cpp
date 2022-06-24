@@ -624,7 +624,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
     }
   }
   ReplaceAbbr(pDict.Get());
-  CPDF_Object* pCSObj = nullptr;
+  const CPDF_Object* pCSObj = nullptr;
   if (pDict->KeyExist("ColorSpace")) {
     pCSObj = pDict->GetDirectObjectFor("ColorSpace");
     if (pCSObj->IsName()) {
@@ -1129,10 +1129,11 @@ CPDF_Dictionary* CPDF_StreamContentParser::FindResourceHolder(
   return m_pPageResources->GetMutableDictFor(type).Get();
 }
 
+// TODO(tsepez): return retained reference.
 CPDF_Object* CPDF_StreamContentParser::FindResourceObj(const ByteString& type,
                                                        const ByteString& name) {
   CPDF_Dictionary* pHolder = FindResourceHolder(type);
-  return pHolder ? pHolder->GetDirectObjectFor(name) : nullptr;
+  return pHolder ? pHolder->GetMutableDirectObjectFor(name).Get() : nullptr;
 }
 
 RetainPtr<CPDF_Font> CPDF_StreamContentParser::FindFont(
