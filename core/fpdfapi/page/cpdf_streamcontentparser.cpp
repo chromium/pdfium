@@ -213,7 +213,7 @@ void ReplaceAbbrInDictionary(CPDF_Dictionary* pDict) {
 
 void ReplaceAbbrInArray(CPDF_Array* pArray) {
   for (size_t i = 0; i < pArray->size(); ++i) {
-    CPDF_Object* pElement = pArray->GetObjectAt(i);
+    RetainPtr<CPDF_Object> pElement = pArray->GetMutableObjectAt(i);
     if (pElement->IsName()) {
       ByteString name = pElement->GetString();
       ByteStringView fullname = FindFullName(
@@ -221,7 +221,7 @@ void ReplaceAbbrInArray(CPDF_Array* pArray) {
       if (!fullname.IsEmpty())
         pArray->SetNewAt<CPDF_Name>(i, ByteString(fullname));
     } else {
-      ReplaceAbbr(pElement);
+      ReplaceAbbr(pElement.Get());
     }
   }
 }

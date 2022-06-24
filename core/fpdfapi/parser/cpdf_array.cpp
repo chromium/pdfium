@@ -101,10 +101,8 @@ bool CPDF_Array::Contains(const CPDF_Object* pThat) const {
   return Find(pThat).has_value();
 }
 
-CPDF_Object* CPDF_Array::GetObjectAt(size_t index) {
-  if (index >= m_Objects.size())
-    return nullptr;
-  return m_Objects[index].Get();
+RetainPtr<CPDF_Object> CPDF_Array::GetMutableObjectAt(size_t index) {
+  return pdfium::WrapRetain(const_cast<CPDF_Object*>(GetObjectAt(index)));
 }
 
 const CPDF_Object* CPDF_Array::GetObjectAt(size_t index) const {

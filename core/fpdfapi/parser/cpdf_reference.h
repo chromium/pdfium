@@ -63,4 +63,8 @@ inline const CPDF_Reference* ToReference(const CPDF_Object* obj) {
   return obj ? obj->AsReference() : nullptr;
 }
 
+inline RetainPtr<CPDF_Reference> ToReference(RetainPtr<CPDF_Object> obj) {
+  return RetainPtr<CPDF_Reference>(ToReference(obj.Get()));
+}
+
 #endif  // CORE_FPDFAPI_PARSER_CPDF_REFERENCE_H_

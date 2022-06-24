@@ -42,10 +42,10 @@ class CPDF_Array final : public CPDF_Object {
   bool IsEmpty() const { return m_Objects.empty(); }
   size_t size() const { return m_Objects.size(); }
 
-  // The GetObjectAt() methods tolerate out-of-bounds indices and return
+  // The Get*ObjectAt() methods tolerate out-of-bounds indices and return
   // nullptr in those cases. Otherwise, for in-bound indices, the result
   // is never nullptr.
-  CPDF_Object* GetObjectAt(size_t index);
+  RetainPtr<CPDF_Object> GetMutableObjectAt(size_t index);
   const CPDF_Object* GetObjectAt(size_t index) const;
 
   // The Get*DirectObjectAt() methods tolerate out-of-bounds indices and

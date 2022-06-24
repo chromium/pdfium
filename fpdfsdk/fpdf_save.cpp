@@ -75,10 +75,10 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
       iDataSetsIndex = i + 1;
   }
 
-  CPDF_Stream* pFormStream = nullptr;
+  RetainPtr<CPDF_Stream> pFormStream;
   if (iFormIndex != -1) {
     // Get form CPDF_Stream
-    CPDF_Object* pFormPDFObj = pArray->GetObjectAt(iFormIndex);
+    RetainPtr<CPDF_Object> pFormPDFObj = pArray->GetMutableObjectAt(iFormIndex);
     if (pFormPDFObj->IsReference()) {
       CPDF_Object* pFormDirectObj = pFormPDFObj->GetDirect();
       if (pFormDirectObj && pFormDirectObj->IsStream()) {
@@ -89,10 +89,11 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
     }
   }
 
-  CPDF_Stream* pDataSetsStream = nullptr;
+  RetainPtr<CPDF_Stream> pDataSetsStream;
   if (iDataSetsIndex != -1) {
     // Get datasets CPDF_Stream
-    CPDF_Object* pDataSetsPDFObj = pArray->GetObjectAt(iDataSetsIndex);
+    RetainPtr<CPDF_Object> pDataSetsPDFObj =
+        pArray->GetMutableObjectAt(iDataSetsIndex);
     if (pDataSetsPDFObj->IsReference()) {
       CPDF_Reference* pDataSetsRefObj = pDataSetsPDFObj->AsReference();
       CPDF_Object* pDataSetsDirectObj = pDataSetsRefObj->GetDirect();

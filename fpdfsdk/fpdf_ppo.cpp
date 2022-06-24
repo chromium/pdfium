@@ -316,7 +316,7 @@ bool CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj) {
     case CPDF_Object::kArray: {
       CPDF_Array* pArray = pObj->AsArray();
       for (size_t i = 0; i < pArray->size(); ++i) {
-        if (!UpdateReference(pArray->GetObjectAt(i)))
+        if (!UpdateReference(pArray->GetMutableObjectAt(i).Get()))
           return false;
       }
       return true;

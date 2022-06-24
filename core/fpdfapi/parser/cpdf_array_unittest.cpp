@@ -151,9 +151,9 @@ TEST(ArrayTest, Clone) {
     RetainPtr<CPDF_Array> arr2 = ToArray(arr->CloneDirectObject());
     ASSERT_EQ(arr->size(), arr2->size());
     for (size_t i = 0; i < kNumOfRows; ++i) {
-      CPDF_Array* arr_elem = arr->GetObjectAt(i)->AsArray();
-      CPDF_Array* arr1_elem = arr1->GetObjectAt(i)->AsArray();
-      CPDF_Array* arr2_elem = arr2->GetObjectAt(i)->AsArray();
+      const CPDF_Array* arr_elem = arr->GetObjectAt(i)->AsArray();
+      const CPDF_Array* arr1_elem = arr1->GetObjectAt(i)->AsArray();
+      const CPDF_Array* arr2_elem = arr2->GetObjectAt(i)->AsArray();
       EXPECT_NE(arr_elem, arr1_elem);
       EXPECT_NE(arr_elem, arr2_elem);
       for (size_t j = 0; j < kNumOfRowElems; ++j) {
