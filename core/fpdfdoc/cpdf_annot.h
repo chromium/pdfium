@@ -110,7 +110,7 @@ class CPDF_Annot {
 
   RetainPtr<CPDF_Dictionary> const m_pAnnotDict;
   UnownedPtr<CPDF_Document> const m_pDocument;
-  std::map<CPDF_Stream*, std::unique_ptr<CPDF_Form>> m_APMap;
+  std::map<const CPDF_Stream*, std::unique_ptr<CPDF_Form>> m_APMap;
   // If non-null, then this is not a popup annotation.
   UnownedPtr<CPDF_Annot> m_pPopupAnnot;
   const Subtype m_nSubtype;

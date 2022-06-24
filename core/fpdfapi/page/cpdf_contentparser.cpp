@@ -40,13 +40,13 @@ CPDF_ContentParser::CPDF_ContentParser(CPDF_Page* pPage)
     return;
   }
 
-  CPDF_Stream* pStream = pContent->AsStream();
+  const CPDF_Stream* pStream = pContent->AsStream();
   if (pStream) {
     HandlePageContentStream(pStream);
     return;
   }
 
-  CPDF_Array* pArray = pContent->AsArray();
+  const CPDF_Array* pArray = pContent->AsArray();
   if (pArray && HandlePageContentArray(pArray))
     return;
 
@@ -235,13 +235,13 @@ CPDF_ContentParser::Stage CPDF_ContentParser::CheckClip() {
   return Stage::kComplete;
 }
 
-void CPDF_ContentParser::HandlePageContentStream(CPDF_Stream* pStream) {
+void CPDF_ContentParser::HandlePageContentStream(const CPDF_Stream* pStream) {
   m_pSingleStream = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
   m_pSingleStream->LoadAllDataFiltered();
   m_CurrentStage = Stage::kPrepareContent;
 }
 
-bool CPDF_ContentParser::HandlePageContentArray(CPDF_Array* pArray) {
+bool CPDF_ContentParser::HandlePageContentArray(const CPDF_Array* pArray) {
   m_nStreams = fxcrt::CollectionSize<uint32_t>(*pArray);
   if (m_nStreams == 0)
     return false;
