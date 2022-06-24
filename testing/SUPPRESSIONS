@@ -330,9 +330,6 @@ resolve_nodes_1.pdf * * * *
 # TODO(pdfium:1747): Remove after associated bug is fixed
 bug_1258634.in * * * skia
 
-# TODO(pdfium:1748): Remove after associated bug is fixed
-bug_1286.in * * * skia
-
 # TODO(pdfium:1331): Remove after associated bug is fixed
 bug_1331.in * * * *
 
