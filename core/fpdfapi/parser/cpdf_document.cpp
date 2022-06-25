@@ -450,7 +450,7 @@ bool CPDF_Document::InsertDeletePDFPage(CPDF_Dictionary* pPages,
 }
 
 bool CPDF_Document::InsertNewPage(int iPage, CPDF_Dictionary* pPageDict) {
-  CPDF_Dictionary* pRoot = GetRoot();
+  RetainPtr<CPDF_Dictionary> pRoot = GetMutableRoot();
   if (!pRoot)
     return false;
 

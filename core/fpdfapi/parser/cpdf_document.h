@@ -12,6 +12,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/observed_ptr.h"
@@ -89,7 +90,8 @@ class CPDF_Document : public Observable,
   }
 
   CPDF_Parser* GetParser() const { return m_pParser.get(); }
-  CPDF_Dictionary* GetRoot() const { return m_pRootDict.Get(); }
+  const CPDF_Dictionary* GetRoot() const { return m_pRootDict.Get(); }
+  RetainPtr<CPDF_Dictionary> GetMutableRoot() { return m_pRootDict; }
   CPDF_Dictionary* GetInfo();
   const CPDF_Array* GetFileIdentifier() const;
 

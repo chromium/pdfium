@@ -88,12 +88,13 @@ class CPDF_TestDocumentForPages final : public CPDF_TestDocument {
         CreatePageTreeNode(std::move(allPages), this, kNumTestPages);
 
     SetRootForTesting(NewIndirect<CPDF_Dictionary>());
-    GetRoot()->SetNewFor<CPDF_Reference>("Pages", this, pagesDict->GetObjNum());
+    GetMutableRoot()->SetNewFor<CPDF_Reference>("Pages", this,
+                                                pagesDict->GetObjNum());
     ResizePageListForTesting(kNumTestPages);
   }
 
   void SetTreeSize(int size) {
-    GetRoot()->SetNewFor<CPDF_Number>("Count", size);
+    GetMutableRoot()->SetNewFor<CPDF_Number>("Count", size);
     ResizePageListForTesting(size);
   }
 };
@@ -112,7 +113,8 @@ class CPDF_TestDocumentWithPageWithoutPageNum final : public CPDF_TestDocument {
     CPDF_Dictionary* pagesDict =
         CreatePageTreeNode(std::move(allPages), this, 3);
     SetRootForTesting(NewIndirect<CPDF_Dictionary>());
-    GetRoot()->SetNewFor<CPDF_Reference>("Pages", this, pagesDict->GetObjNum());
+    GetMutableRoot()->SetNewFor<CPDF_Reference>("Pages", this,
+                                                pagesDict->GetObjNum());
     ResizePageListForTesting(3);
   }
 
@@ -136,7 +138,8 @@ class CPDF_TestDocPagesWithoutKids final : public CPDF_TestDocument {
     pagesDict->SetNewFor<CPDF_Number>("Count", 3);
     ResizePageListForTesting(10);
     SetRootForTesting(NewIndirect<CPDF_Dictionary>());
-    GetRoot()->SetNewFor<CPDF_Reference>("Pages", this, pagesDict->GetObjNum());
+    GetMutableRoot()->SetNewFor<CPDF_Reference>("Pages", this,
+                                                pagesDict->GetObjNum());
   }
 };
 

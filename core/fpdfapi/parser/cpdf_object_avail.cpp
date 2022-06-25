@@ -17,7 +17,7 @@
 CPDF_ObjectAvail::CPDF_ObjectAvail(
     const RetainPtr<CPDF_ReadValidator>& validator,
     CPDF_IndirectObjectHolder* holder,
-    CPDF_Object* root)
+    const CPDF_Object* root)
     : validator_(validator), holder_(holder), root_(root) {
   DCHECK(validator_);
   DCHECK(holder);

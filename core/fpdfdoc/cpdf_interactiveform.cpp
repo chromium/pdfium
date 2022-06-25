@@ -266,8 +266,8 @@ FX_Charset GetNativeCharSet() {
 
 CPDF_Dictionary* InitDict(CPDF_Document* pDocument) {
   CPDF_Dictionary* pFormDict = pDocument->NewIndirect<CPDF_Dictionary>();
-  pDocument->GetRoot()->SetNewFor<CPDF_Reference>("AcroForm", pDocument,
-                                                  pFormDict->GetObjNum());
+  pDocument->GetMutableRoot()->SetNewFor<CPDF_Reference>(
+      "AcroForm", pDocument, pFormDict->GetObjNum());
 
   ByteString csBaseName;
   FX_Charset charSet = GetNativeCharSet();
@@ -528,7 +528,7 @@ CFieldTree::Node* CFieldTree::FindNode(const WideString& full_name) {
 
 CPDF_InteractiveForm::CPDF_InteractiveForm(CPDF_Document* pDocument)
     : m_pDocument(pDocument), m_pFieldTree(std::make_unique<CFieldTree>()) {
-  CPDF_Dictionary* pRoot = m_pDocument->GetRoot();
+  RetainPtr<CPDF_Dictionary> pRoot = m_pDocument->GetMutableRoot();
   if (!pRoot)
     return;
 
@@ -566,7 +566,7 @@ RetainPtr<CPDF_Font> CPDF_InteractiveForm::AddNativeInteractiveFormFont(
   DCHECK(csNameTag);
 
   RetainPtr<CPDF_Dictionary> pFormDict =
-      pDocument->GetRoot()->GetMutableDictFor("AcroForm");
+      pDocument->GetMutableRoot()->GetMutableDictFor("AcroForm");
   if (!pFormDict)
     pFormDict = InitDict(pDocument);
 

@@ -368,7 +368,7 @@ CPDF_Array* GetNamedDestFromObject(CPDF_Object* obj) {
 CPDF_Array* LookupOldStyleNamedDest(CPDF_Document* pDoc,
                                     const ByteString& name) {
   RetainPtr<CPDF_Dictionary> pDests =
-      pDoc->GetRoot()->GetMutableDictFor("Dests");
+      pDoc->GetMutableRoot()->GetMutableDictFor("Dests");
   if (!pDests)
     return nullptr;
   return GetNamedDestFromObject(pDests->GetMutableDirectObjectFor(name).Get());
@@ -387,7 +387,7 @@ CPDF_NameTree::~CPDF_NameTree() = default;
 std::unique_ptr<CPDF_NameTree> CPDF_NameTree::Create(
     CPDF_Document* pDoc,
     const ByteString& category) {
-  CPDF_Dictionary* pRoot = pDoc->GetRoot();
+  RetainPtr<CPDF_Dictionary> pRoot = pDoc->GetMutableRoot();
   if (!pRoot)
     return nullptr;
 
@@ -407,7 +407,7 @@ std::unique_ptr<CPDF_NameTree> CPDF_NameTree::Create(
 std::unique_ptr<CPDF_NameTree> CPDF_NameTree::CreateWithRootNameArray(
     CPDF_Document* pDoc,
     const ByteString& category) {
-  CPDF_Dictionary* pRoot = pDoc->GetRoot();
+  RetainPtr<CPDF_Dictionary> pRoot = pDoc->GetMutableRoot();
   if (!pRoot)
     return nullptr;
 

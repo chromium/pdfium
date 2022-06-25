@@ -17,7 +17,7 @@ namespace {
 
 std::vector<CPDF_Dictionary*> CollectSignatures(CPDF_Document* doc) {
   std::vector<CPDF_Dictionary*> signatures;
-  CPDF_Dictionary* root = doc->GetRoot();
+  const CPDF_Dictionary* root = doc->GetRoot();
   if (!root)
     return signatures;
 

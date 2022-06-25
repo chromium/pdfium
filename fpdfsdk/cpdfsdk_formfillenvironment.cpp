@@ -651,7 +651,7 @@ void CPDFSDK_FormFillEnvironment::ProcJavascriptAction() {
 }
 
 bool CPDFSDK_FormFillEnvironment::ProcOpenAction() {
-  CPDF_Dictionary* pRoot = m_pCPDFDoc->GetRoot();
+  const CPDF_Dictionary* pRoot = m_pCPDFDoc->GetRoot();
   if (!pRoot)
     return false;
 

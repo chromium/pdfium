@@ -916,7 +916,7 @@ bool GenerateStrikeOutAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
 void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
                                      CPDF_Dictionary* pAnnotDict,
                                      FormType type) {
-  CPDF_Dictionary* pRootDict = pDoc->GetRoot();
+  RetainPtr<CPDF_Dictionary> pRootDict = pDoc->GetMutableRoot();
   if (!pRootDict)
     return;
 

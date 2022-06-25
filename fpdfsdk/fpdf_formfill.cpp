@@ -768,7 +768,7 @@ FPDF_EXPORT void FPDF_CALLCONV FORM_DoDocumentAAction(FPDF_FORMHANDLE hHandle,
     return;
 
   CPDF_Document* pDoc = pFormFillEnv->GetPDFDocument();
-  CPDF_Dictionary* pDict = pDoc->GetRoot();
+  const CPDF_Dictionary* pDict = pDoc->GetRoot();
   if (!pDict)
     return;
 

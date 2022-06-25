@@ -231,7 +231,7 @@ RetainPtr<CPDF_Font> CPDF_BAFontMap::GetAnnotDefaultFont(ByteString* sAlias) {
   const bool bWidget =
       (m_pAnnotDict->GetNameFor(pdfium::annotation::kSubtype) == "Widget");
   if (bWidget) {
-    CPDF_Dictionary* pRootDict = m_pDocument->GetRoot();
+    RetainPtr<CPDF_Dictionary> pRootDict = m_pDocument->GetMutableRoot();
     if (pRootDict)
       pAcroFormDict = pRootDict->GetMutableDictFor("AcroForm");
   }

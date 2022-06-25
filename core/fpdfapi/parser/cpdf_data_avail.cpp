@@ -972,11 +972,11 @@ CPDF_DataAvail::DocFormStatus CPDF_DataAvail::CheckAcroForm() {
   }
 
   if (!m_pFormAvail) {
-    CPDF_Dictionary* pRoot = m_pDocument->GetRoot();
+    const CPDF_Dictionary* pRoot = m_pDocument->GetRoot();
     if (!pRoot)
       return kFormAvailable;
 
-    CPDF_Object* pAcroForm = pRoot->GetObjectFor("AcroForm");
+    const CPDF_Object* pAcroForm = pRoot->GetObjectFor("AcroForm");
     if (!pAcroForm)
       return kFormNotExist;
 

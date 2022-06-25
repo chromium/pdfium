@@ -46,7 +46,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
   if (!pPDFDocument)
     return false;
 
-  CPDF_Dictionary* pRoot = pPDFDocument->GetRoot();
+  RetainPtr<CPDF_Dictionary> pRoot = pPDFDocument->GetMutableRoot();
   if (!pRoot)
     return false;
 
