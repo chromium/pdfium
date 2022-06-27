@@ -214,7 +214,7 @@ void UpdateBBox(CPDF_Dictionary* annot_dict) {
   DCHECK(annot_dict);
   // Update BBox entry in appearance stream based on the bounding rectangle
   // of the annotation's quadpoints.
-  CPDF_Stream* pStream =
+  RetainPtr<CPDF_Stream> pStream =
       GetAnnotAP(annot_dict, CPDF_Annot::AppearanceMode::kNormal);
   if (pStream) {
     CFX_FloatRect boundingRect =
@@ -470,7 +470,7 @@ FPDFAnnot_UpdateObject(FPDF_ANNOTATION annot, FPDF_PAGEOBJECT obj) {
   // Check that the annotation already has an appearance stream, since an
   // existing object is to be updated.
   RetainPtr<CPDF_Dictionary> pAnnotDict = pAnnot->GetMutableAnnotDict();
-  CPDF_Stream* pStream =
+  RetainPtr<CPDF_Stream> pStream =
       GetAnnotAP(pAnnotDict.Get(), CPDF_Annot::AppearanceMode::kNormal);
   if (!pStream)
     return false;
@@ -486,7 +486,7 @@ FPDFAnnot_UpdateObject(FPDF_ANNOTATION annot, FPDF_PAGEOBJECT obj) {
     return false;
 
   // Update the content stream data in the annotation's AP stream.
-  UpdateContentStream(pForm, pStream);
+  UpdateContentStream(pForm, pStream.Get());
   return true;
 }
 
@@ -540,7 +540,7 @@ FPDFAnnot_AppendObject(FPDF_ANNOTATION annot, FPDF_PAGEOBJECT obj) {
 
   // If the annotation does not have an AP stream yet, generate and set it.
   RetainPtr<CPDF_Dictionary> pAnnotDict = pAnnot->GetMutableAnnotDict();
-  CPDF_Stream* pStream =
+  RetainPtr<CPDF_Stream> pStream =
       GetAnnotAP(pAnnotDict.Get(), CPDF_Annot::AppearanceMode::kNormal);
   if (!pStream) {
     CPDF_GenerateAP::GenerateEmptyAP(pAnnot->GetPage()->GetDocument(),
@@ -552,7 +552,7 @@ FPDFAnnot_AppendObject(FPDF_ANNOTATION annot, FPDF_PAGEOBJECT obj) {
 
   // Get the annotation's corresponding form object for parsing its AP stream.
   if (!pAnnot->HasForm())
-    pAnnot->SetForm(pStream);
+    pAnnot->SetForm(pStream.Get());
 
   // Check that the object did not come from the same annotation. If this check
   // succeeds, then it is assumed that the object came from
@@ -572,7 +572,7 @@ FPDFAnnot_AppendObject(FPDF_ANNOTATION annot, FPDF_PAGEOBJECT obj) {
   pForm->AppendPageObject(pdfium::WrapUnique(pObj));
 
   // Set the content stream data in the annotation's AP stream.
-  UpdateContentStream(pForm, pStream);
+  UpdateContentStream(pForm, pStream.Get());
   return true;
 }
 
@@ -583,12 +583,12 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAnnot_GetObjectCount(FPDF_ANNOTATION annot) {
 
   if (!pAnnot->HasForm()) {
     RetainPtr<CPDF_Dictionary> pDict = pAnnot->GetMutableAnnotDict();
-    CPDF_Stream* pStream =
+    RetainPtr<CPDF_Stream> pStream =
         GetAnnotAP(pDict.Get(), CPDF_Annot::AppearanceMode::kNormal);
     if (!pStream)
       return 0;
 
-    pAnnot->SetForm(pStream);
+    pAnnot->SetForm(pStream.Get());
   }
   return pdfium::base::checked_cast<int>(
       pAnnot->GetForm()->GetPageObjectCount());
@@ -602,12 +602,12 @@ FPDFAnnot_GetObject(FPDF_ANNOTATION annot, int index) {
 
   if (!pAnnot->HasForm()) {
     RetainPtr<CPDF_Dictionary> pAnnotDict = pAnnot->GetMutableAnnotDict();
-    CPDF_Stream* pStream =
+    RetainPtr<CPDF_Stream> pStream =
         GetAnnotAP(pAnnotDict.Get(), CPDF_Annot::AppearanceMode::kNormal);
     if (!pStream)
       return nullptr;
 
-    pAnnot->SetForm(pStream);
+    pAnnot->SetForm(pStream.Get());
   }
 
   return FPDFPageObjectFromCPDFPageObject(
@@ -627,7 +627,7 @@ FPDFAnnot_RemoveObject(FPDF_ANNOTATION annot, int index) {
   // Check that the annotation already has an appearance stream, since an
   // existing object is to be deleted.
   RetainPtr<CPDF_Dictionary> pAnnotDict = pAnnot->GetMutableAnnotDict();
-  CPDF_Stream* pStream =
+  RetainPtr<CPDF_Stream> pStream =
       GetAnnotAP(pAnnotDict.Get(), CPDF_Annot::AppearanceMode::kNormal);
   if (!pStream)
     return false;
@@ -635,7 +635,7 @@ FPDFAnnot_RemoveObject(FPDF_ANNOTATION annot, int index) {
   if (!pAnnot->GetForm()->ErasePageObjectAtIndex(index))
     return false;
 
-  UpdateContentStream(pAnnot->GetForm(), pStream);
+  UpdateContentStream(pAnnot->GetForm(), pStream.Get());
   return true;
 }
 
@@ -833,7 +833,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetRect(FPDF_ANNOTATION annot,
   if (FPDFAnnot_HasAttachmentPoints(annot))
     return true;
 
-  CPDF_Stream* pStream =
+  RetainPtr<CPDF_Stream> pStream =
       GetAnnotAP(pAnnotDict.Get(), CPDF_Annot::AppearanceMode::kNormal);
   if (pStream && newRect.Contains(pStream->GetDict()->GetRectFor("BBox")))
     pStream->GetDict()->SetRectFor("BBox", newRect);
@@ -1134,7 +1134,7 @@ FPDFAnnot_GetAP(FPDF_ANNOTATION annot,
   CPDF_Annot::AppearanceMode mode =
       static_cast<CPDF_Annot::AppearanceMode>(appearanceMode);
 
-  CPDF_Stream* pStream = GetAnnotAPNoFallback(pAnnotDict.Get(), mode);
+  RetainPtr<CPDF_Stream> pStream = GetAnnotAPNoFallback(pAnnotDict.Get(), mode);
   return Utf16EncodeMaybeCopyAndReturnLength(
       pStream ? pStream->GetUnicodeText() : WideString(), buffer, buflen);
 }

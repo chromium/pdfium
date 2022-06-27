@@ -1227,9 +1227,9 @@ void CPDFSDK_AppStream::SetAsPushButton() {
   if (pControl->HasMKEntry(pdfium::appearance::kAC))
     csDownCaption = pControl->GetDownCaption();
 
-  CPDF_Stream* pNormalIcon = nullptr;
-  CPDF_Stream* pRolloverIcon = nullptr;
-  CPDF_Stream* pDownIcon = nullptr;
+  RetainPtr<CPDF_Stream> pNormalIcon;
+  RetainPtr<CPDF_Stream> pRolloverIcon;
+  RetainPtr<CPDF_Stream> pDownIcon;
   if (pControl->HasMKEntry(pdfium::appearance::kI))
     pNormalIcon = pControl->GetNormalIcon();
 
@@ -1239,9 +1239,9 @@ void CPDFSDK_AppStream::SetAsPushButton() {
   if (pControl->HasMKEntry(pdfium::appearance::kIX))
     pDownIcon = pControl->GetDownIcon();
 
-  SetDefaultIconName(pNormalIcon, "ImgA");
-  SetDefaultIconName(pRolloverIcon, "ImgB");
-  SetDefaultIconName(pDownIcon, "ImgC");
+  SetDefaultIconName(pNormalIcon.Get(), "ImgA");
+  SetDefaultIconName(pRolloverIcon.Get(), "ImgB");
+  SetDefaultIconName(pDownIcon.Get(), "ImgC");
 
   CPDF_IconFit iconFit = pControl->GetIconFit();
   {
@@ -1252,12 +1252,12 @@ void CPDFSDK_AppStream::SetAsPushButton() {
         GetBorderAppStreamInternal(rcWindow, fBorderWidth, crBorder, crLeftTop,
                                    crRightBottom, nBorderStyle, dsBorder) +
         GetPushButtonAppStream(iconFit.GetFittingBounds() ? rcWindow : rcClient,
-                               &font_map, pNormalIcon, iconFit, csNormalCaption,
-                               crText, fFontSize, nLayout);
+                               &font_map, pNormalIcon.Get(), iconFit,
+                               csNormalCaption, crText, fFontSize, nLayout);
 
     Write("N", csAP, ByteString());
     if (pNormalIcon)
-      AddImage("N", pNormalIcon);
+      AddImage("N", pNormalIcon.Get());
 
     CPDF_FormControl::HighlightingMode eHLM = pControl->GetHighlightingMode();
     if (eHLM != CPDF_FormControl::kPush && eHLM != CPDF_FormControl::kToggle) {
@@ -1279,12 +1279,12 @@ void CPDFSDK_AppStream::SetAsPushButton() {
         GetBorderAppStreamInternal(rcWindow, fBorderWidth, crBorder, crLeftTop,
                                    crRightBottom, nBorderStyle, dsBorder) +
         GetPushButtonAppStream(iconFit.GetFittingBounds() ? rcWindow : rcClient,
-                               &font_map, pRolloverIcon, iconFit,
+                               &font_map, pRolloverIcon.Get(), iconFit,
                                csRolloverCaption, crText, fFontSize, nLayout);
 
     Write("R", csAP, ByteString());
     if (pRolloverIcon)
-      AddImage("R", pRolloverIcon);
+      AddImage("R", pRolloverIcon.Get());
 
     if (csDownCaption.IsEmpty() && !pDownIcon) {
       csDownCaption = csNormalCaption;
@@ -1315,12 +1315,12 @@ void CPDFSDK_AppStream::SetAsPushButton() {
         GetBorderAppStreamInternal(rcWindow, fBorderWidth, crBorder, crLeftTop,
                                    crRightBottom, nBorderStyle, dsBorder) +
         GetPushButtonAppStream(iconFit.GetFittingBounds() ? rcWindow : rcClient,
-                               &font_map, pDownIcon, iconFit, csDownCaption,
-                               crText, fFontSize, nLayout);
+                               &font_map, pDownIcon.Get(), iconFit,
+                               csDownCaption, crText, fFontSize, nLayout);
 
     Write("D", csAP, ByteString());
     if (pDownIcon)
-      AddImage("D", pDownIcon);
+      AddImage("D", pDownIcon.Get());
   }
 }
 
@@ -1825,7 +1825,7 @@ void CPDFSDK_AppStream::SetAsTextField(absl::optional<WideString> sValue) {
 
 void CPDFSDK_AppStream::AddImage(const ByteString& sAPType,
                                  CPDF_Stream* pImage) {
-  CPDF_Stream* pStream = dict_->GetStreamFor(sAPType);
+  RetainPtr<CPDF_Stream> pStream = dict_->GetMutableStreamFor(sAPType);
   CPDF_Dictionary* pStreamDict = pStream->GetDict();
   ByteString sImageAlias = "IMG";
 
@@ -1858,9 +1858,9 @@ void CPDFSDK_AppStream::Write(const ByteString& sAPType,
 
   // If `pStream` is created by CreateModifiedAPStream(), then it is safe to
   // edit, as it is not shared.
-  CPDF_Stream* pStream = pParentDict->GetStreamFor(key);
+  RetainPtr<CPDF_Stream> pStream = pParentDict->GetMutableStreamFor(key);
   CPDF_Document* doc = widget_->GetPageView()->GetPDFDocument();
-  if (!doc->IsModifiedAPStream(pStream)) {
+  if (!doc->IsModifiedAPStream(pStream.Get())) {
     if (pStream)
       pOrigStreamDict = pStream->GetDict();
     pStream = doc->CreateModifiedAPStream();

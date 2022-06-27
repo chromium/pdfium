@@ -73,7 +73,7 @@ class CPDF_Dictionary final : public CPDF_Object {
   const CPDF_Array* GetArrayFor(const ByteString& key) const;
   RetainPtr<CPDF_Array> GetMutableArrayFor(const ByteString& key);
   const CPDF_Stream* GetStreamFor(const ByteString& key) const;
-  CPDF_Stream* GetStreamFor(const ByteString& key);
+  RetainPtr<CPDF_Stream> GetMutableStreamFor(const ByteString& key);
   CFX_FloatRect GetRectFor(const ByteString& key) const;
   CFX_Matrix GetMatrixFor(const ByteString& key) const;
 

@@ -10,6 +10,7 @@
 
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 
 CPDF_ApSettings::CPDF_ApSettings(CPDF_Dictionary* pDict) : m_pDict(pDict) {}
@@ -97,8 +98,9 @@ WideString CPDF_ApSettings::GetCaption(const ByteString& csEntry) const {
   return m_pDict ? m_pDict->GetUnicodeTextFor(csEntry) : WideString();
 }
 
-CPDF_Stream* CPDF_ApSettings::GetIcon(const ByteString& csEntry) const {
-  return m_pDict ? m_pDict->GetStreamFor(csEntry) : nullptr;
+RetainPtr<CPDF_Stream> CPDF_ApSettings::GetIcon(
+    const ByteString& csEntry) const {
+  return m_pDict ? m_pDict->GetMutableStreamFor(csEntry) : nullptr;
 }
 
 CPDF_IconFit CPDF_ApSettings::GetIconFit() const {

@@ -13,6 +13,7 @@
 #include "constants/access_permissions.h"
 #include "constants/annotation_flags.h"
 #include "constants/form_flags.h"
+#include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"

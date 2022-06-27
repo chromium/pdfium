@@ -297,7 +297,7 @@ void CPDF_BAFontMap::AddFontToAnnotDict(const RetainPtr<CPDF_Font>& pFont,
   if (ToDictionary(pAPDict->GetObjectFor(m_sAPType)))
     return;
 
-  CPDF_Stream* pStream = pAPDict->GetStreamFor(m_sAPType);
+  RetainPtr<CPDF_Stream> pStream = pAPDict->GetMutableStreamFor(m_sAPType);
   if (!pStream) {
     pStream = m_pDocument->NewIndirect<CPDF_Stream>();
     pAPDict->SetNewFor<CPDF_Reference>(m_sAPType, m_pDocument.Get(),

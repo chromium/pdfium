@@ -178,8 +178,9 @@ const CPDF_Stream* CPDF_Dictionary::GetStreamFor(const ByteString& key) const {
   return ToStream(GetDirectObjectFor(key));
 }
 
-CPDF_Stream* CPDF_Dictionary::GetStreamFor(const ByteString& key) {
-  return ToStream(GetMutableDirectObjectFor(key)).Get();
+RetainPtr<CPDF_Stream> CPDF_Dictionary::GetMutableStreamFor(
+    const ByteString& key) {
+  return pdfium::WrapRetain(const_cast<CPDF_Stream*>(GetStreamFor(key)));
 }
 
 CFX_FloatRect CPDF_Dictionary::GetRectFor(const ByteString& key) const {

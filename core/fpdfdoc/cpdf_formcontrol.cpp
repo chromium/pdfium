@@ -167,7 +167,7 @@ WideString CPDF_FormControl::GetCaption(const ByteString& csEntry) const {
   return GetMK().GetCaption(csEntry);
 }
 
-CPDF_Stream* CPDF_FormControl::GetIcon(const ByteString& csEntry) {
+RetainPtr<CPDF_Stream> CPDF_FormControl::GetIcon(const ByteString& csEntry) {
   return GetMK().GetIcon(csEntry);
 }
 

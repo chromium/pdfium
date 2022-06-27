@@ -1373,7 +1373,8 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
   if (!pSMaskDict)
     return nullptr;
 
-  CPDF_Stream* pGroup = pSMaskDict->GetStreamFor(pdfium::transparency::kG);
+  RetainPtr<CPDF_Stream> pGroup =
+      pSMaskDict->GetMutableStreamFor(pdfium::transparency::kG);
   if (!pGroup)
     return nullptr;
 
@@ -1387,7 +1388,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
   matrix.Translate(-pClipRect->left, -pClipRect->top);
 
   CPDF_Form form(m_pContext->GetDocument(), m_pContext->GetPageResources(),
-                 pGroup);
+                 pGroup.Get());
   form.ParseContent();
 
   CFX_DefaultRenderDevice bitmap_device;

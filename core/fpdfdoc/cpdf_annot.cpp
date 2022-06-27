@@ -17,6 +17,7 @@
 #include "core/fpdfapi/parser/cpdf_boolean.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
@@ -56,9 +57,9 @@ CPDF_Form* AnnotGetMatrix(const CPDF_Page* pPage,
   return pForm;
 }
 
-CPDF_Stream* GetAnnotAPInternal(CPDF_Dictionary* pAnnotDict,
-                                CPDF_Annot::AppearanceMode eMode,
-                                bool bFallbackToNormal) {
+RetainPtr<CPDF_Stream> GetAnnotAPInternal(CPDF_Dictionary* pAnnotDict,
+                                          CPDF_Annot::AppearanceMode eMode,
+                                          bool bFallbackToNormal) {
   RetainPtr<CPDF_Dictionary> pAP =
       pAnnotDict->GetMutableDictFor(pdfium::annotation::kAP);
   if (!pAP)
@@ -76,7 +77,8 @@ CPDF_Stream* GetAnnotAPInternal(CPDF_Dictionary* pAnnotDict,
   if (!psub)
     return nullptr;
 
-  if (CPDF_Stream* pStream = psub->AsStream())
+  RetainPtr<CPDF_Stream> pStream(psub->AsStream());
+  if (pStream)
     return pStream;
 
   CPDF_Dictionary* pDict = psub->AsDictionary();
@@ -92,7 +94,7 @@ CPDF_Stream* GetAnnotAPInternal(CPDF_Dictionary* pAnnotDict,
     }
     as = (!value.IsEmpty() && pDict->KeyExist(value)) ? value : "Off";
   }
-  return pDict->GetStreamFor(as);
+  return pDict->GetMutableStreamFor(as);
 }
 
 }  // namespace
@@ -171,20 +173,20 @@ bool CPDF_Annot::IsHidden() const {
   return !!(GetFlags() & pdfium::annotation_flags::kHidden);
 }
 
-CPDF_Stream* GetAnnotAP(CPDF_Dictionary* pAnnotDict,
-                        CPDF_Annot::AppearanceMode eMode) {
+RetainPtr<CPDF_Stream> GetAnnotAP(CPDF_Dictionary* pAnnotDict,
+                                  CPDF_Annot::AppearanceMode eMode) {
   DCHECK(pAnnotDict);
   return GetAnnotAPInternal(pAnnotDict, eMode, true);
 }
 
-CPDF_Stream* GetAnnotAPNoFallback(CPDF_Dictionary* pAnnotDict,
-                                  CPDF_Annot::AppearanceMode eMode) {
+RetainPtr<CPDF_Stream> GetAnnotAPNoFallback(CPDF_Dictionary* pAnnotDict,
+                                            CPDF_Annot::AppearanceMode eMode) {
   DCHECK(pAnnotDict);
   return GetAnnotAPInternal(pAnnotDict, eMode, false);
 }
 
 CPDF_Form* CPDF_Annot::GetAPForm(const CPDF_Page* pPage, AppearanceMode mode) {
-  CPDF_Stream* pStream = GetAnnotAP(m_pAnnotDict.Get(), mode);
+  RetainPtr<CPDF_Stream> pStream = GetAnnotAP(m_pAnnotDict.Get(), mode);
   if (!pStream)
     return nullptr;
 
@@ -192,8 +194,8 @@ CPDF_Form* CPDF_Annot::GetAPForm(const CPDF_Page* pPage, AppearanceMode mode) {
   if (it != m_APMap.end())
     return it->second.get();
 
-  auto pNewForm = std::make_unique<CPDF_Form>(m_pDocument.Get(),
-                                              pPage->GetResources(), pStream);
+  auto pNewForm = std::make_unique<CPDF_Form>(
+      m_pDocument.Get(), pPage->GetResources(), pStream.Get());
   pNewForm->ParseContent();
 
   CPDF_Form* pResult = pNewForm.get();

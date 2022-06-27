@@ -192,8 +192,8 @@ void SetPageContents(const ByteString& key,
                      CPDF_Document* pDocument) {
   RetainPtr<CPDF_Array> pContentsArray =
       pPage->GetMutableArrayFor(pdfium::page_object::kContents);
-  CPDF_Stream* pContentsStream =
-      pPage->GetStreamFor(pdfium::page_object::kContents);
+  RetainPtr<CPDF_Stream> pContentsStream =
+      pPage->GetMutableStreamFor(pdfium::page_object::kContents);
   if (!pContentsStream && !pContentsArray) {
     if (!key.IsEmpty()) {
       pPage->SetFor(
@@ -213,7 +213,7 @@ void SetPageContents(const ByteString& key,
   } else {
     ByteString sStream = "q\n";
     {
-      auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pContentsStream);
+      auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pContentsStream.Get());
       pAcc->LoadAllDataFiltered();
       sStream += ByteString(pAcc->GetSpan());
       sStream += "\nQ";
@@ -342,14 +342,14 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     if (!pAnnotAP)
       continue;
 
-    CPDF_Stream* pAPStream = pAnnotAP->GetStreamFor("N");
+    RetainPtr<CPDF_Stream> pAPStream = pAnnotAP->GetMutableStreamFor("N");
     if (!pAPStream) {
       RetainPtr<CPDF_Dictionary> pAPDict = pAnnotAP->GetMutableDictFor("N");
       if (!pAPDict)
         continue;
 
       if (!sAnnotState.IsEmpty()) {
-        pAPStream = pAPDict->GetStreamFor(sAnnotState);
+        pAPStream = pAPDict->GetMutableStreamFor(sAnnotState);
       } else {
         if (pAPDict->size() > 0) {
           CPDF_DictionaryLocker locker(pAPDict.Get());
@@ -367,7 +367,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     if (!pAPStream)
       continue;
 
-    CPDF_Dictionary* pAPDict = pAPStream->GetDict();
+    const CPDF_Dictionary* pAPDict = pAPStream->GetDict();
     CFX_FloatRect rcStream;
     if (pAPDict->KeyExist("Rect"))
       rcStream = pAPDict->GetRectFor("Rect");
@@ -378,7 +378,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     if (rcStream.IsEmpty())
       continue;
 
-    CPDF_Object* pObj = pAPStream;
+    RetainPtr<CPDF_Object> pObj = pAPStream;
     if (pObj->IsInline()) {
       RetainPtr<CPDF_Object> pNew = pObj->Clone();
       pObj = pNew.Get();

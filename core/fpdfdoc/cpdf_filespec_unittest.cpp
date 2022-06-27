@@ -253,7 +253,7 @@ TEST(cpdf_filespec, GetParamsDict) {
                                       std::move(pDict));
 
     // Add a params dictionary to the file stream.
-    CPDF_Stream* stream = file_dict->GetStreamFor("UF");
+    RetainPtr<CPDF_Stream> stream = file_dict->GetMutableStreamFor("UF");
     CPDF_Dictionary* stream_dict = stream->GetDict();
     stream_dict->SetNewFor<CPDF_Dictionary>("Params");
     EXPECT_TRUE(file_spec.GetParamsDict());

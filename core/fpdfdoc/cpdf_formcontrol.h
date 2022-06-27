@@ -74,9 +74,15 @@ class CPDF_FormControl {
     return GetCaption(pdfium::appearance::kAC);
   }
 
-  CPDF_Stream* GetNormalIcon() { return GetIcon(pdfium::appearance::kI); }
-  CPDF_Stream* GetRolloverIcon() { return GetIcon(pdfium::appearance::kRI); }
-  CPDF_Stream* GetDownIcon() { return GetIcon(pdfium::appearance::kIX); }
+  RetainPtr<CPDF_Stream> GetNormalIcon() {
+    return GetIcon(pdfium::appearance::kI);
+  }
+  RetainPtr<CPDF_Stream> GetRolloverIcon() {
+    return GetIcon(pdfium::appearance::kRI);
+  }
+  RetainPtr<CPDF_Stream> GetDownIcon() {
+    return GetIcon(pdfium::appearance::kIX);
+  }
   CPDF_IconFit GetIconFit() const;
 
   int GetTextPosition() const;
@@ -93,7 +99,7 @@ class CPDF_FormControl {
   CFX_Color GetOriginalColor(const ByteString& csEntry);
 
   WideString GetCaption(const ByteString& csEntry) const;
-  CPDF_Stream* GetIcon(const ByteString& csEntry);
+  RetainPtr<CPDF_Stream> GetIcon(const ByteString& csEntry);
   CPDF_ApSettings GetMK() const;
 
   UnownedPtr<CPDF_FormField> const m_pField;

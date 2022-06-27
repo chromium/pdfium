@@ -45,7 +45,7 @@ class CPDF_ApSettings {
   CFX_Color GetOriginalColor(const ByteString& csEntry) const;
 
   WideString GetCaption(const ByteString& csEntry) const;
-  CPDF_Stream* GetIcon(const ByteString& csEntry) const;
+  RetainPtr<CPDF_Stream> GetIcon(const ByteString& csEntry) const;
 
  private:
   RetainPtr<CPDF_Dictionary> const m_pDict;
