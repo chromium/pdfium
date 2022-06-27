@@ -172,7 +172,7 @@ bool UpdateNodesAndLimitsUponDeletion(CPDF_Dictionary* pNode,
 // will be the index of |csName| in |ppFind|. If |csName| is not found, |ppFind|
 // will be the leaf array that |csName| should be added to, and |pFindIndex|
 // will be the index that it should be added at.
-RetainPtr<CPDF_Object> SearchNameNodeByNameInternal(
+const CPDF_Object* SearchNameNodeByNameInternal(
     const RetainPtr<CPDF_Dictionary>& pNode,
     const WideString& csName,
     int nLevel,
@@ -219,7 +219,7 @@ RetainPtr<CPDF_Object> SearchNameNodeByNameInternal(
         continue;
 
       *nIndex += i;
-      return pNames->GetMutableDirectObjectAt(i * 2 + 1);
+      return pNames->GetDirectObjectAt(i * 2 + 1);
     }
     *nIndex += dwCount;
     return nullptr;
@@ -235,7 +235,7 @@ RetainPtr<CPDF_Object> SearchNameNodeByNameInternal(
     if (!pKid)
       continue;
 
-    RetainPtr<CPDF_Object> pFound = SearchNameNodeByNameInternal(
+    const CPDF_Object* pFound = SearchNameNodeByNameInternal(
         pKid, csName, nLevel + 1, nIndex, ppFind, pFindIndex);
     if (pFound)
       return pFound;
@@ -245,11 +245,10 @@ RetainPtr<CPDF_Object> SearchNameNodeByNameInternal(
 
 // Wrapper for SearchNameNodeByNameInternal() so callers do not need to know
 // about the details.
-RetainPtr<CPDF_Object> SearchNameNodeByName(
-    const RetainPtr<CPDF_Dictionary>& pNode,
-    const WideString& csName,
-    RetainPtr<CPDF_Array>* ppFind,
-    int* pFindIndex) {
+const CPDF_Object* SearchNameNodeByName(const RetainPtr<CPDF_Dictionary>& pNode,
+                                        const WideString& csName,
+                                        RetainPtr<CPDF_Array>* ppFind,
+                                        int* pFindIndex) {
   size_t nIndex = 0;
   return SearchNameNodeByNameInternal(pNode, csName, 0, &nIndex, ppFind,
                                       pFindIndex);
@@ -540,13 +539,11 @@ CPDF_Object* CPDF_NameTree::LookupValueAndName(size_t nIndex,
   return result.value().value.Get();
 }
 
-RetainPtr<CPDF_Object> CPDF_NameTree::LookupValue(
-    const WideString& csName) const {
+const CPDF_Object* CPDF_NameTree::LookupValue(const WideString& csName) const {
   return SearchNameNodeByName(m_pRoot, csName, nullptr, nullptr);
 }
 
 const CPDF_Array* CPDF_NameTree::LookupNewStyleNamedDest(
     const ByteString& sName) {
-  return GetNamedDestFromObject(
-      LookupValue(PDF_DecodeText(sName.raw_span())).Get());
+  return GetNamedDestFromObject(LookupValue(PDF_DecodeText(sName.raw_span())));
 }
