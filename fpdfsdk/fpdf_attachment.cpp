@@ -145,7 +145,7 @@ FPDFAttachment_GetValueType(FPDF_ATTACHMENT attachment, FPDF_BYTESTRING key) {
     return FPDF_OBJECT_UNKNOWN;
 
   CPDF_FileSpec spec(CPDFObjectFromFPDFAttachment(attachment));
-  CPDF_Object* pObj = spec.GetParamsDict()->GetObjectFor(key);
+  const CPDF_Object* pObj = spec.GetParamsDict()->GetObjectFor(key);
   return pObj ? pObj->GetType() : FPDF_OBJECT_UNKNOWN;
 }
 
@@ -187,7 +187,8 @@ FPDFAttachment_GetStringValue(FPDF_ATTACHMENT attachment,
   ByteString bsKey = key;
   WideString value = pParamsDict->GetUnicodeTextFor(bsKey);
   if (bsKey == kChecksumKey && !value.IsEmpty()) {
-    CPDF_String* stringValue = pParamsDict->GetObjectFor(bsKey)->AsString();
+    const CPDF_String* stringValue =
+        pParamsDict->GetObjectFor(bsKey)->AsString();
     if (stringValue->IsHex()) {
       ByteString encoded =
           PDF_HexEncodeString(stringValue->GetString().AsStringView());

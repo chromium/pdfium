@@ -264,7 +264,7 @@ bool CPDF_PageOrganizer::Init() {
   if (cbRootType.IsEmpty())
     pNewRoot->SetNewFor<CPDF_Name>("Type", "Catalog");
 
-  CPDF_Object* pElement = pNewRoot->GetObjectFor("Pages");
+  RetainPtr<CPDF_Object> pElement = pNewRoot->GetMutableObjectFor("Pages");
   CPDF_Dictionary* pNewPages =
       pElement ? ToDictionary(pElement->GetDirect()) : nullptr;
   if (!pNewPages) {

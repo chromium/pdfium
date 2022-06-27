@@ -6,6 +6,7 @@
 
 #include <map>
 #include <numeric>
+#include <utility>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_pageobject.h"
@@ -23,14 +24,15 @@ CPDF_PageContentManager::CPDF_PageContentManager(
     const CPDF_PageObjectHolder* obj_holder)
     : obj_holder_(obj_holder), doc_(obj_holder_->GetDocument()) {
   CPDF_Dictionary* page_dict = obj_holder_->GetDict();
-  CPDF_Object* contents_obj = page_dict->GetObjectFor("Contents");
-  CPDF_Array* contents_array = ToArray(contents_obj);
+  RetainPtr<CPDF_Object> contents_obj =
+      page_dict->GetMutableObjectFor("Contents");
+  RetainPtr<CPDF_Array> contents_array = ToArray(contents_obj);
   if (contents_array) {
-    contents_array_.Reset(contents_array);
+    contents_array_ = std::move(contents_array);
     return;
   }
 
-  CPDF_Reference* contents_reference = ToReference(contents_obj);
+  RetainPtr<CPDF_Reference> contents_reference = ToReference(contents_obj);
   if (contents_reference) {
     CPDF_Object* indirect_obj = contents_reference->GetDirect();
     if (!indirect_obj)
@@ -38,7 +40,7 @@ CPDF_PageContentManager::CPDF_PageContentManager(
 
     contents_array = indirect_obj->AsArray();
     if (contents_array)
-      contents_array_.Reset(contents_array);
+      contents_array_ = std::move(contents_array);
     else if (indirect_obj->IsStream())
       contents_stream_.Reset(indirect_obj->AsStream());
   }

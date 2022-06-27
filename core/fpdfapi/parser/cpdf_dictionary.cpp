@@ -88,9 +88,9 @@ const CPDF_Object* CPDF_Dictionary::GetObjectFor(const ByteString& key) const {
   return it != m_Map.end() ? it->second.Get() : nullptr;
 }
 
-CPDF_Object* CPDF_Dictionary::GetObjectFor(const ByteString& key) {
-  return const_cast<CPDF_Object*>(
-      static_cast<const CPDF_Dictionary*>(this)->GetObjectFor(key));
+RetainPtr<CPDF_Object> CPDF_Dictionary::GetMutableObjectFor(
+    const ByteString& key) {
+  return pdfium::WrapRetain(const_cast<CPDF_Object*>(GetObjectFor(key)));
 }
 
 const CPDF_Object* CPDF_Dictionary::GetDirectObjectFor(

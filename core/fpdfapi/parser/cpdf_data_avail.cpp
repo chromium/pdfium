@@ -35,17 +35,18 @@
 
 namespace {
 
-// static
-CPDF_Object* GetResourceObject(CPDF_Dictionary* pDict) {
+RetainPtr<CPDF_Object> GetResourceObject(CPDF_Dictionary* pDict) {
   constexpr size_t kMaxHierarchyDepth = 64;
   size_t depth = 0;
 
-  CPDF_Dictionary* dictionary_to_check = pDict;
+  RetainPtr<CPDF_Dictionary> dictionary_to_check(pDict);
   while (dictionary_to_check) {
-    CPDF_Object* result = dictionary_to_check->GetObjectFor("Resources");
+    RetainPtr<CPDF_Object> result =
+        dictionary_to_check->GetMutableObjectFor("Resources");
     if (result)
       return result;
-    CPDF_Object* parent = dictionary_to_check->GetObjectFor("Parent");
+    RetainPtr<CPDF_Object> parent =
+        dictionary_to_check->GetMutableObjectFor("Parent");
     dictionary_to_check = parent ? parent->GetDict() : nullptr;
 
     if (++depth > kMaxHierarchyDepth) {
@@ -599,7 +600,7 @@ bool CPDF_DataAvail::CheckUnknownPageNode(uint32_t dwPageNo,
   }
 
   pPageNode->m_type = PageNode::Type::kPages;
-  CPDF_Object* pKids = pDict->GetObjectFor("Kids");
+  RetainPtr<CPDF_Object> pKids = pDict->GetMutableObjectFor("Kids");
   if (!pKids) {
     m_internalStatus = InternalStatus::kPage;
     return true;
@@ -891,7 +892,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckResources(
     CPDF_Dictionary* page) {
   DCHECK(page);
   CPDF_ReadValidator::ScopedSession read_session(GetValidator());
-  CPDF_Object* resources = GetResourceObject(page);
+  RetainPtr<CPDF_Object> resources = GetResourceObject(page);
   if (GetValidator()->has_read_problems())
     return kDataNotAvailable;
 
@@ -901,8 +902,9 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckResources(
   CPDF_PageObjectAvail* resource_avail =
       m_PagesResourcesAvail
           .insert(std::make_pair(
-              resources, std::make_unique<CPDF_PageObjectAvail>(
-                             GetValidator(), m_pDocument.Get(), resources)))
+              resources,
+              std::make_unique<CPDF_PageObjectAvail>(
+                  GetValidator(), m_pDocument.Get(), resources.Get())))
           .first->second.get();
   return resource_avail->CheckAvail();
 }

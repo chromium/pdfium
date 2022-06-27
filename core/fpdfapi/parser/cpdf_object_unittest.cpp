@@ -916,7 +916,7 @@ TEST(PDFDictionaryTest, CloneDirectObject) {
   auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
   dict->SetNewFor<CPDF_Reference>("foo", &objects_holder, 1234);
   ASSERT_EQ(1U, dict->size());
-  CPDF_Object* obj = dict->GetObjectFor("foo");
+  const CPDF_Object* obj = dict->GetObjectFor("foo");
   ASSERT_TRUE(obj);
   EXPECT_TRUE(obj->IsReference());
 
@@ -927,7 +927,7 @@ TEST(PDFDictionaryTest, CloneDirectObject) {
   RetainPtr<CPDF_Dictionary> cloned_dict =
       ToDictionary(std::move(cloned_dict_object));
   ASSERT_EQ(0U, cloned_dict->size());
-  CPDF_Object* cloned_obj = cloned_dict->GetObjectFor("foo");
+  const CPDF_Object* cloned_obj = cloned_dict->GetObjectFor("foo");
   EXPECT_FALSE(cloned_obj);
 }
 
@@ -985,7 +985,7 @@ TEST(PDFObjectTest, CloneCheckLoop) {
         ToDictionary(dict_obj->CloneDirectObject());
     // Cloned object should be the same as the original.
     ASSERT_TRUE(cloned_dict);
-    CPDF_Object* cloned_arr = cloned_dict->GetObjectFor("arr");
+    const CPDF_Object* cloned_arr = cloned_dict->GetObjectFor("arr");
     ASSERT_TRUE(cloned_arr);
     ASSERT_TRUE(cloned_arr->IsArray());
     EXPECT_EQ(0U, cloned_arr->AsArray()->size());
@@ -1000,7 +1000,7 @@ TEST(PDFDictionaryTest, ConvertIndirect) {
   auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
   CPDF_Object* pObj = dict->SetNewFor<CPDF_Number>("clams", 42);
   dict->ConvertToIndirectObjectFor("clams", &objects_holder);
-  CPDF_Object* pRef = dict->GetObjectFor("clams");
+  const CPDF_Object* pRef = dict->GetObjectFor("clams");
   const CPDF_Object* pNum = dict->GetDirectObjectFor("clams");
   EXPECT_TRUE(pRef->IsReference());
   EXPECT_TRUE(pNum->IsNumber());

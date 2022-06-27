@@ -54,7 +54,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
   if (!pAcroForm)
     return false;
 
-  CPDF_Object* pXFA = pAcroForm->GetObjectFor("XFA");
+  RetainPtr<CPDF_Object> pXFA = pAcroForm->GetMutableObjectFor("XFA");
   if (!pXFA)
     return true;
 

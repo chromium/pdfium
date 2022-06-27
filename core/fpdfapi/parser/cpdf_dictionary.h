@@ -47,7 +47,7 @@ class CPDF_Dictionary final : public CPDF_Object {
 
   size_t size() const { return m_Map.size(); }
   const CPDF_Object* GetObjectFor(const ByteString& key) const;
-  CPDF_Object* GetObjectFor(const ByteString& key);
+  RetainPtr<CPDF_Object> GetMutableObjectFor(const ByteString& key);
 
   const CPDF_Object* GetDirectObjectFor(const ByteString& key) const;
   RetainPtr<CPDF_Object> GetMutableDirectObjectFor(const ByteString& key);
