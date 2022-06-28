@@ -43,7 +43,7 @@ std::pair<WideString, WideString> GetNodeLimitsAndSanitize(
 // Get the limit arrays that leaf array |pFind| is under in the tree with root
 // |pNode|. |pLimits| will hold all the limit arrays from the leaf up to before
 // the root. Return true if successful.
-bool GetNodeAncestorsLimitsInternal(CPDF_Dictionary* pNode,
+bool GetNodeAncestorsLimitsInternal(const RetainPtr<CPDF_Dictionary>& pNode,
                                     const CPDF_Array* pFind,
                                     int nLevel,
                                     std::vector<CPDF_Array*>* pLimits) {
@@ -60,7 +60,7 @@ bool GetNodeAncestorsLimitsInternal(CPDF_Dictionary* pNode,
     return false;
 
   for (size_t i = 0; i < pKids->size(); ++i) {
-    CPDF_Dictionary* pKid = pKids->GetDictAt(i);
+    RetainPtr<CPDF_Dictionary> pKid = pKids->GetMutableDictAt(i);
     if (!pKid)
       continue;
 
@@ -74,8 +74,9 @@ bool GetNodeAncestorsLimitsInternal(CPDF_Dictionary* pNode,
 
 // Wrapper for GetNodeAncestorsLimitsInternal() so callers do not need to know
 // about the details.
-std::vector<CPDF_Array*> GetNodeAncestorsLimits(CPDF_Dictionary* pNode,
-                                                const CPDF_Array* pFind) {
+std::vector<CPDF_Array*> GetNodeAncestorsLimits(
+    const RetainPtr<CPDF_Dictionary>& pNode,
+    const CPDF_Array* pFind) {
   std::vector<CPDF_Array*> results;
   GetNodeAncestorsLimitsInternal(pNode, pFind, 0, &results);
   return results;
@@ -169,21 +170,22 @@ bool UpdateNodesAndLimitsUponDeletion(CPDF_Dictionary* pNode,
 // will be the index of |csName| in |ppFind|. If |csName| is not found, |ppFind|
 // will be the leaf array that |csName| should be added to, and |pFindIndex|
 // will be the index that it should be added at.
-CPDF_Object* SearchNameNodeByNameInternal(CPDF_Dictionary* pNode,
-                                          const WideString& csName,
-                                          int nLevel,
-                                          size_t* nIndex,
-                                          CPDF_Array** ppFind,
-                                          int* pFindIndex) {
+CPDF_Object* SearchNameNodeByNameInternal(
+    const RetainPtr<CPDF_Dictionary>& pNode,
+    const WideString& csName,
+    int nLevel,
+    size_t* nIndex,
+    RetainPtr<CPDF_Array>* ppFind,
+    int* pFindIndex) {
   if (nLevel > kNameTreeMaxRecursion)
     return nullptr;
 
-  CPDF_Array* pLimits = pNode->GetArrayFor("Limits");
-  CPDF_Array* pNames = pNode->GetArrayFor("Names");
+  RetainPtr<CPDF_Array> pLimits = pNode->GetMutableArrayFor("Limits");
+  RetainPtr<CPDF_Array> pNames = pNode->GetMutableArrayFor("Names");
   if (pLimits) {
     WideString csLeft;
     WideString csRight;
-    std::tie(csLeft, csRight) = GetNodeLimitsAndSanitize(pLimits);
+    std::tie(csLeft, csRight) = GetNodeLimitsAndSanitize(pLimits.Get());
     // Skip this node if the name to look for is smaller than its lower limit.
     if (csName.Compare(csLeft) < 0)
       return nullptr;
@@ -222,12 +224,12 @@ CPDF_Object* SearchNameNodeByNameInternal(CPDF_Dictionary* pNode,
   }
 
   // Search through the node's children.
-  CPDF_Array* pKids = pNode->GetArrayFor("Kids");
+  RetainPtr<CPDF_Array> pKids = pNode->GetMutableArrayFor("Kids");
   if (!pKids)
     return nullptr;
 
   for (size_t i = 0; i < pKids->size(); i++) {
-    CPDF_Dictionary* pKid = pKids->GetDictAt(i);
+    RetainPtr<CPDF_Dictionary> pKid = pKids->GetMutableDictAt(i);
     if (!pKid)
       continue;
 
@@ -241,9 +243,9 @@ CPDF_Object* SearchNameNodeByNameInternal(CPDF_Dictionary* pNode,
 
 // Wrapper for SearchNameNodeByNameInternal() so callers do not need to know
 // about the details.
-CPDF_Object* SearchNameNodeByName(CPDF_Dictionary* pNode,
+CPDF_Object* SearchNameNodeByName(const RetainPtr<CPDF_Dictionary>& pNode,
                                   const WideString& csName,
-                                  CPDF_Array** ppFind,
+                                  RetainPtr<CPDF_Array>* ppFind,
                                   int* pFindIndex) {
   size_t nIndex = 0;
   return SearchNameNodeByNameInternal(pNode, csName, 0, &nIndex, ppFind,
@@ -439,17 +441,17 @@ size_t CPDF_NameTree::GetCount() const {
 
 bool CPDF_NameTree::AddValueAndName(RetainPtr<CPDF_Object> pObj,
                                     const WideString& name) {
-  CPDF_Array* pFind = nullptr;
+  RetainPtr<CPDF_Array> pFind;
   int nFindIndex = -1;
   // Handle the corner case where the root node is empty. i.e. No kids and no
   // names. In which case, just insert into it and skip all the searches.
-  CPDF_Array* pNames = m_pRoot->GetArrayFor("Names");
+  RetainPtr<CPDF_Array> pNames = m_pRoot->GetMutableArrayFor("Names");
   if (pNames && pNames->IsEmpty() && !m_pRoot->GetArrayFor("Kids"))
     pFind = pNames;
 
   if (!pFind) {
     // Fail if the tree already contains this name or if the tree is too deep.
-    if (SearchNameNodeByName(m_pRoot.Get(), name, &pFind, &nFindIndex))
+    if (SearchNameNodeByName(m_pRoot, name, &pFind, &nFindIndex))
       return false;
   }
 
@@ -479,7 +481,7 @@ bool CPDF_NameTree::AddValueAndName(RetainPtr<CPDF_Object> pObj,
   // Expand the limits that the newly added name is under, if the name falls
   // outside of the limits of its leaf array or any arrays above it.
   std::vector<CPDF_Array*> all_limits =
-      GetNodeAncestorsLimits(m_pRoot.Get(), pFind);
+      GetNodeAncestorsLimits(m_pRoot, pFind.Get());
   for (auto* pLimits : all_limits) {
     if (!pLimits)
       continue;
@@ -525,7 +527,7 @@ CPDF_Object* CPDF_NameTree::LookupValueAndName(size_t nIndex,
 }
 
 CPDF_Object* CPDF_NameTree::LookupValue(const WideString& csName) const {
-  return SearchNameNodeByName(m_pRoot.Get(), csName, nullptr, nullptr);
+  return SearchNameNodeByName(m_pRoot, csName, nullptr, nullptr);
 }
 
 CPDF_Array* CPDF_NameTree::LookupNewStyleNamedDest(const ByteString& sName) {
