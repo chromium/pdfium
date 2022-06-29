@@ -265,8 +265,8 @@ bool CPDF_PageOrganizer::Init() {
     pNewRoot->SetNewFor<CPDF_Name>("Type", "Catalog");
 
   RetainPtr<CPDF_Object> pElement = pNewRoot->GetMutableObjectFor("Pages");
-  CPDF_Dictionary* pNewPages =
-      pElement ? ToDictionary(pElement->GetDirect()) : nullptr;
+  RetainPtr<CPDF_Dictionary> pNewPages =
+      pElement ? ToDictionary(pElement->GetMutableDirect()) : nullptr;
   if (!pNewPages) {
     pNewPages = dest()->NewIndirect<CPDF_Dictionary>();
     pNewRoot->SetNewFor<CPDF_Reference>("Pages", dest(),
@@ -323,8 +323,8 @@ bool CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj) {
     }
     case CPDF_Object::kStream: {
       CPDF_Stream* pStream = pObj->AsStream();
-      CPDF_Dictionary* pDict = pStream->GetDict();
-      return pDict && UpdateReference(pDict);
+      RetainPtr<CPDF_Dictionary> pDict = pStream->GetMutableDict();
+      return pDict && UpdateReference(pDict.Get());
     }
     default:
       return true;
@@ -343,7 +343,7 @@ uint32_t CPDF_PageOrganizer::GetNewObjId(CPDF_Reference* pRef) {
   if (dwNewObjNum)
     return dwNewObjNum;
 
-  CPDF_Object* pDirect = pRef->GetDirect();
+  const CPDF_Object* pDirect = pRef->GetDirect();
   if (!pDirect)
     return 0;
 
@@ -602,17 +602,16 @@ CPDF_Stream* CPDF_NPageToOneExporter::MakeXObjectFromPageRaw(
 
   CPDF_Stream* pNewXObject = dest()->NewIndirect<CPDF_Stream>(
       nullptr, 0, dest()->New<CPDF_Dictionary>());
-  CPDF_Dictionary* pNewXObjectDict = pNewXObject->GetDict();
+  RetainPtr<CPDF_Dictionary> pNewXObjectDict = pNewXObject->GetMutableDict();
   static const char kResourceString[] = "Resources";
-  if (!CopyInheritable(pNewXObjectDict, pSrcPageDict, kResourceString)) {
+  if (!CopyInheritable(pNewXObjectDict.Get(), pSrcPageDict, kResourceString)) {
     // Use a default empty resources if it does not exist.
     pNewXObjectDict->SetNewFor<CPDF_Dictionary>(kResourceString);
   }
   uint32_t dwSrcPageObj = pSrcPageDict->GetObjNum();
   uint32_t dwNewXobjectObj = pNewXObjectDict->GetObjNum();
   AddObjectMapping(dwSrcPageObj, dwNewXobjectObj);
-  UpdateReference(pNewXObjectDict);
-
+  UpdateReference(pNewXObjectDict.Get());
   pNewXObjectDict->SetNewFor<CPDF_Name>("Type", "XObject");
   pNewXObjectDict->SetNewFor<CPDF_Name>("Subtype", "Form");
   pNewXObjectDict->SetNewFor<CPDF_Number>("FormType", 1);

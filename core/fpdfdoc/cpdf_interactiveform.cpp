@@ -217,7 +217,8 @@ bool FindFontFromDoc(const CPDF_Dictionary* pFormDict,
   CPDF_DictionaryLocker locker(pFonts);
   for (const auto& it : locker) {
     const ByteString& csKey = it.first;
-    RetainPtr<CPDF_Dictionary> pElement(ToDictionary(it.second->GetDirect()));
+    RetainPtr<CPDF_Dictionary> pElement =
+        ToDictionary(it.second->GetMutableDirect());
     if (!ValidateDictType(pElement.Get(), "Font"))
       continue;
 
@@ -309,7 +310,8 @@ RetainPtr<CPDF_Font> GetNativeFont(const CPDF_Dictionary* pFormDict,
   CPDF_DictionaryLocker locker(pFonts);
   for (const auto& it : locker) {
     const ByteString& csKey = it.first;
-    RetainPtr<CPDF_Dictionary> pElement(ToDictionary(it.second->GetDirect()));
+    RetainPtr<CPDF_Dictionary> pElement =
+        ToDictionary(it.second->GetMutableDirect());
     if (!ValidateDictType(pElement.Get(), "Font"))
       continue;
 

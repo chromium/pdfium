@@ -58,10 +58,6 @@ CPDF_Object::Type CPDF_Stream::GetType() const {
   return kStream;
 }
 
-CPDF_Dictionary* CPDF_Stream::GetDict() {
-  return m_pDict.Get();
-}
-
 const CPDF_Dictionary* CPDF_Stream::GetDict() const {
   return m_pDict.Get();
 }

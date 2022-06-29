@@ -28,7 +28,7 @@ void CPDF_AnnotContext::SetForm(CPDF_Stream* pStream) {
 
   // Reset the annotation matrix to be the identity matrix, since the
   // appearance stream already takes matrix into account.
-  pStream->GetDict()->SetMatrixFor("Matrix", CFX_Matrix());
+  pStream->GetMutableDict()->SetMatrixFor("Matrix", CFX_Matrix());
 
   m_pAnnotForm = std::make_unique<CPDF_Form>(
       m_pPage->GetDocument(), m_pPage->AsPDFPage()->GetResources(), pStream);

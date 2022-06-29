@@ -855,7 +855,7 @@ const CPDF_Array* CPDF_Parser::GetIDArray() const {
 CPDF_Dictionary* CPDF_Parser::GetRoot() const {
   CPDF_Object* obj =
       m_pObjectsHolder->GetOrParseIndirectObject(GetRootObjNum());
-  return obj ? obj->GetDict() : nullptr;
+  return obj ? obj->GetMutableDict().Get() : nullptr;
 }
 
 const CPDF_Dictionary* CPDF_Parser::GetEncryptDict() const {

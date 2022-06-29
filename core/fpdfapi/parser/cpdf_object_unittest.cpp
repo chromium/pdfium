@@ -845,10 +845,10 @@ TEST(PDFStreamTest, SetData) {
   EXPECT_EQ(static_cast<int>(data.size()),
             stream->GetDict()->GetIntegerFor(pdfium::stream::kLength));
 
-  stream->GetDict()->SetNewFor<CPDF_String>(pdfium::stream::kFilter,
-                                            L"SomeFilter");
-  stream->GetDict()->SetNewFor<CPDF_String>(pdfium::stream::kDecodeParms,
-                                            L"SomeParams");
+  stream->GetMutableDict()->SetNewFor<CPDF_String>(pdfium::stream::kFilter,
+                                                   L"SomeFilter");
+  stream->GetMutableDict()->SetNewFor<CPDF_String>(pdfium::stream::kDecodeParms,
+                                                   L"SomeParams");
 
   std::vector<uint8_t, FxAllocAllocator<uint8_t>> new_data(data.size() * 2);
   stream->SetData(new_data);
@@ -871,10 +871,10 @@ TEST(PDFStreamTest, SetDataAndRemoveFilter) {
   EXPECT_EQ(static_cast<int>(data.size()),
             stream->GetDict()->GetIntegerFor(pdfium::stream::kLength));
 
-  stream->GetDict()->SetNewFor<CPDF_String>(pdfium::stream::kFilter,
-                                            L"SomeFilter");
-  stream->GetDict()->SetNewFor<CPDF_String>(pdfium::stream::kDecodeParms,
-                                            L"SomeParams");
+  stream->GetMutableDict()->SetNewFor<CPDF_String>(pdfium::stream::kFilter,
+                                                   L"SomeFilter");
+  stream->GetMutableDict()->SetNewFor<CPDF_String>(pdfium::stream::kDecodeParms,
+                                                   L"SomeParams");
 
   std::vector<uint8_t, FxAllocAllocator<uint8_t>> new_data(data.size() * 2);
   stream->SetDataAndRemoveFilter(new_data);
@@ -958,7 +958,7 @@ TEST(PDFObjectTest, CloneCheckLoop) {
     RetainPtr<CPDF_Stream> cloned_stream = ToStream(stream_obj->Clone());
     // Cloned object should be the same as the original.
     ASSERT_TRUE(cloned_stream);
-    CPDF_Object* cloned_dict = cloned_stream->GetDict();
+    const CPDF_Object* cloned_dict = cloned_stream->GetDict();
     ASSERT_TRUE(cloned_dict);
     ASSERT_TRUE(cloned_dict->IsDictionary());
     // Recursively referenced object is not cloned.

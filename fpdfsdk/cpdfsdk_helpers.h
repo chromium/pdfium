@@ -220,12 +220,12 @@ CPDFSDKFormFillEnvironmentFromFPDFFormHandle(FPDF_FORMHANDLE handle) {
 }
 
 inline FPDF_SIGNATURE FPDFSignatureFromCPDFDictionary(
-    CPDF_Dictionary* dictionary) {
+    const CPDF_Dictionary* dictionary) {
   return reinterpret_cast<FPDF_SIGNATURE>(dictionary);
 }
-inline CPDF_Dictionary* CPDFDictionaryFromFPDFSignature(
+inline const CPDF_Dictionary* CPDFDictionaryFromFPDFSignature(
     FPDF_SIGNATURE signature) {
-  return reinterpret_cast<CPDF_Dictionary*>(signature);
+  return reinterpret_cast<const CPDF_Dictionary*>(signature);
 }
 
 inline FPDF_XOBJECT FPDFXObjectFromXObjectContext(XObjectContext* xobject) {

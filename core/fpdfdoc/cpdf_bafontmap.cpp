@@ -205,7 +205,8 @@ RetainPtr<CPDF_Font> CPDF_BAFontMap::FindResFontSameCharset(
   CPDF_DictionaryLocker locker(pFonts);
   for (const auto& it : locker) {
     const ByteString& csKey = it.first;
-    RetainPtr<CPDF_Dictionary> pElement(ToDictionary(it.second->GetDirect()));
+    RetainPtr<CPDF_Dictionary> pElement =
+        ToDictionary(it.second->GetMutableDirect());
     if (!ValidateDictType(pElement.Get(), "Font"))
       continue;
 
@@ -304,14 +305,15 @@ void CPDF_BAFontMap::AddFontToAnnotDict(const RetainPtr<CPDF_Font>& pFont,
                                        pStream->GetObjNum());
   }
 
-  CPDF_Dictionary* pStreamDict = pStream->GetDict();
+  RetainPtr<CPDF_Dictionary> pStreamDict = pStream->GetMutableDict();
   if (!pStreamDict) {
     auto pOwnedDict = m_pDocument->New<CPDF_Dictionary>();
     pStreamDict = pOwnedDict.Get();
     pStream->InitStream({}, std::move(pOwnedDict));
   }
 
-  CPDF_Dictionary* pStreamResList = GetOrCreateDict(pStreamDict, "Resources");
+  CPDF_Dictionary* pStreamResList =
+      GetOrCreateDict(pStreamDict.Get(), "Resources");
   RetainPtr<CPDF_Dictionary> pStreamResFontList =
       pStreamResList->GetMutableDictFor("Font");
   if (!pStreamResFontList) {

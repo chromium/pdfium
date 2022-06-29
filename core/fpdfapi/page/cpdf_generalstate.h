@@ -39,10 +39,10 @@ class CPDF_GeneralState {
   void SetStrokeAlpha(float alpha);
 
   CPDF_Object* GetSoftMask() const;
-  void SetSoftMask(CPDF_Object* pObject);
+  void SetSoftMask(RetainPtr<CPDF_Object> pObject);
 
   const CPDF_Object* GetTR() const;
-  void SetTR(CPDF_Object* pObject);
+  void SetTR(const CPDF_Object* pObject);
 
   RetainPtr<CPDF_TransferFunc> GetTransferFunc() const;
   void SetTransferFunc(const RetainPtr<CPDF_TransferFunc>& pFunc);
@@ -61,9 +61,9 @@ class CPDF_GeneralState {
   int GetOPMode() const;
   void SetOPMode(int mode);
 
-  void SetBG(CPDF_Object* pObject);
-  void SetUCR(CPDF_Object* pObject);
-  void SetHT(CPDF_Object* pObject);
+  void SetBG(const CPDF_Object* pObject);
+  void SetUCR(const CPDF_Object* pObject);
+  void SetHT(const CPDF_Object* pObject);
 
   void SetFlatness(float flatness);
   void SetSmoothness(float smoothness);

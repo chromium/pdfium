@@ -98,18 +98,18 @@ TEST(PageObjectAvailTest, ExcludePages) {
   TestHolder holder;
   holder.AddObject(1, pdfium::MakeRetain<CPDF_Dictionary>(),
                    TestHolder::ObjectState::Available);
-  holder.GetTestObject(1)->GetDict()->SetNewFor<CPDF_Reference>("Kids", &holder,
-                                                                2);
+  holder.GetTestObject(1)->GetMutableDict()->SetNewFor<CPDF_Reference>(
+      "Kids", &holder, 2);
   holder.AddObject(2, pdfium::MakeRetain<CPDF_Array>(),
                    TestHolder::ObjectState::Available);
   holder.GetTestObject(2)->AsArray()->AppendNew<CPDF_Reference>(&holder, 3);
 
   holder.AddObject(3, pdfium::MakeRetain<CPDF_Dictionary>(),
                    TestHolder::ObjectState::Available);
-  holder.GetTestObject(3)->GetDict()->SetFor(
+  holder.GetTestObject(3)->GetMutableDict()->SetFor(
       "Type", pdfium::MakeRetain<CPDF_Name>(nullptr, "Page"));
-  holder.GetTestObject(3)->GetDict()->SetNewFor<CPDF_Reference>("OtherPageData",
-                                                                &holder, 4);
+  holder.GetTestObject(3)->GetMutableDict()->SetNewFor<CPDF_Reference>(
+      "OtherPageData", &holder, 4);
   // Add unavailable object related to other page.
   holder.AddObject(
       4, pdfium::MakeRetain<CPDF_String>(nullptr, "Other page data", false),

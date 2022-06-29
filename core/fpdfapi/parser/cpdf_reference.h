@@ -22,12 +22,10 @@ class CPDF_Reference final : public CPDF_Object {
   // CPDF_Object:
   Type GetType() const override;
   RetainPtr<CPDF_Object> Clone() const override;
-  CPDF_Object* GetDirect() override;
   const CPDF_Object* GetDirect() const override;
   ByteString GetString() const override;
   float GetNumber() const override;
   int GetInteger() const override;
-  CPDF_Dictionary* GetDict() override;
   const CPDF_Dictionary* GetDict() const override;
   bool IsReference() const override;
   CPDF_Reference* AsReference() override;

@@ -39,12 +39,13 @@ CPDF_Form::CPDF_Form(CPDF_Document* pDoc,
                      CPDF_Dictionary* pParentResources)
     : CPDF_PageObjectHolder(
           pDoc,
-          pFormStream->GetDict(),
+          pFormStream->GetMutableDict().Get(),
           pPageResources,
-          ChooseResourcesDict(
-              pFormStream->GetDict()->GetMutableDictFor("Resources").Get(),
-              pParentResources,
-              pPageResources)),
+          ChooseResourcesDict(pFormStream->GetMutableDict()
+                                  ->GetMutableDictFor("Resources")
+                                  .Get(),
+                              pParentResources,
+                              pPageResources)),
       m_pFormStream(pFormStream) {
   LoadTransparencyInfo();
 }

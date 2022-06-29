@@ -42,10 +42,6 @@ CPDF_Object::Type CPDF_Dictionary::GetType() const {
   return kDictionary;
 }
 
-CPDF_Dictionary* CPDF_Dictionary::GetDict() {
-  return this;
-}
-
 const CPDF_Dictionary* CPDF_Dictionary::GetDict() const {
   return this;
 }

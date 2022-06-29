@@ -47,7 +47,7 @@ RetainPtr<CPDF_Object> GetResourceObject(CPDF_Dictionary* pDict) {
       return result;
     RetainPtr<CPDF_Object> parent =
         dictionary_to_check->GetMutableObjectFor("Parent");
-    dictionary_to_check = parent ? parent->GetDict() : nullptr;
+    dictionary_to_check = parent ? parent->GetMutableDict() : nullptr;
 
     if (++depth > kMaxHierarchyDepth) {
       // We have cycle in parents hierarchy.
@@ -587,7 +587,7 @@ bool CPDF_DataAvail::CheckUnknownPageNode(uint32_t dwPageNo,
   }
 
   pPageNode->m_dwPageNo = dwPageNo;
-  CPDF_Dictionary* pDict = pPage->GetDict();
+  RetainPtr<CPDF_Dictionary> pDict = pPage->GetMutableDict();
   const ByteString type = pDict->GetNameFor("Type");
   if (type == "Page") {
     pPageNode->m_type = PageNode::Type::kPage;
@@ -709,7 +709,7 @@ bool CPDF_DataAvail::CheckPageCount() {
   if (!pPages)
     return false;
 
-  CPDF_Dictionary* pPagesDict = pPages->GetDict();
+  const CPDF_Dictionary* pPagesDict = pPages->GetDict();
   if (!pPagesDict) {
     m_internalStatus = InternalStatus::kError;
     return false;

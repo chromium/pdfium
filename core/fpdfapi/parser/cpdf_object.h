@@ -42,13 +42,14 @@ class CPDF_Object : public Retainable {
     kReference
   };
 
-  virtual Type GetType() const = 0;
   uint32_t GetObjNum() const { return m_ObjNum; }
   void SetObjNum(uint32_t objnum) { m_ObjNum = objnum; }
   uint32_t GetGenNum() const { return m_GenNum; }
   void SetGenNum(uint32_t gennum) { m_GenNum = gennum; }
   bool IsInline() const { return m_ObjNum == 0; }
   uint64_t KeyForCache() const;
+
+  virtual Type GetType() const = 0;
 
   // Create a deep copy of the object.
   virtual RetainPtr<CPDF_Object> Clone() const = 0;
@@ -57,13 +58,11 @@ class CPDF_Object : public Retainable {
   // copied to the object it points to directly.
   virtual RetainPtr<CPDF_Object> CloneDirectObject() const;
 
-  virtual CPDF_Object* GetDirect();
   virtual const CPDF_Object* GetDirect() const;
   virtual ByteString GetString() const;
   virtual WideString GetUnicodeText() const;
   virtual float GetNumber() const;
   virtual int GetInteger() const;
-  virtual CPDF_Dictionary* GetDict();
   virtual const CPDF_Dictionary* GetDict() const;
 
   virtual void SetString(const ByteString& str);
@@ -112,6 +111,9 @@ class CPDF_Object : public Retainable {
   // The object must be direct (!IsInlined).
   virtual RetainPtr<CPDF_Object> MakeReference(
       CPDF_IndirectObjectHolder* holder) const;
+
+  RetainPtr<CPDF_Object> GetMutableDirect();    // Wraps virtual method.
+  RetainPtr<CPDF_Dictionary> GetMutableDict();  // Wraps virtual method.
 
  protected:
   CPDF_Object() = default;

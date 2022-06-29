@@ -337,7 +337,7 @@ RetainPtr<CPDF_Pattern> CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj,
   if (it != m_PatternMap.end() && it->second)
     return pdfium::WrapRetain(it->second.Get());
 
-  CPDF_Dictionary* pDict = pPatternObj->GetDict();
+  const CPDF_Dictionary* pDict = pPatternObj->GetDict();
   if (!pDict)
     return nullptr;
 

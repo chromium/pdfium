@@ -517,7 +517,7 @@ void GenerateAndSetAPDict(CPDF_Document* pDoc,
       GetOrCreateDict(pAnnotDict, pdfium::annotation::kAP);
   pAPDict->SetNewFor<CPDF_Reference>("N", pDoc, pNormalStream->GetObjNum());
 
-  CPDF_Dictionary* pStreamDict = pNormalStream->GetDict();
+  RetainPtr<CPDF_Dictionary> pStreamDict = pNormalStream->GetMutableDict();
   pStreamDict->SetNewFor<CPDF_Number>("FormType", 1);
   pStreamDict->SetNewFor<CPDF_Name>("Type", "XObject");
   pStreamDict->SetNewFor<CPDF_Name>("Subtype", "Form");
@@ -1073,7 +1073,7 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
     pNormalStream = pDoc->NewIndirect<CPDF_Stream>();
     pAPDict->SetNewFor<CPDF_Reference>("N", pDoc, pNormalStream->GetObjNum());
   }
-  CPDF_Dictionary* pStreamDict = pNormalStream->GetDict();
+  RetainPtr<CPDF_Dictionary> pStreamDict = pNormalStream->GetMutableDict();
   if (pStreamDict) {
     RetainPtr<CPDF_Dictionary> pStreamResList =
         pStreamDict->GetMutableDictFor("Resources");
@@ -1332,7 +1332,7 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
     return;
 
   pNormalStream->SetDataFromStringstreamAndRemoveFilter(&sAppStream);
-  pStreamDict = pNormalStream->GetDict();
+  pStreamDict = pNormalStream->GetMutableDict();
   if (!pStreamDict)
     return;
 

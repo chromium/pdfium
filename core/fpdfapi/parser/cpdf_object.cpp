@@ -32,8 +32,8 @@ uint64_t CPDF_Object::KeyForCache() const {
          static_cast<uint64_t>(m_GenNum);
 }
 
-CPDF_Object* CPDF_Object::GetDirect() {
-  return this;
+RetainPtr<CPDF_Object> CPDF_Object::GetMutableDirect() {
+  return pdfium::WrapRetain(const_cast<CPDF_Object*>(GetDirect()));
 }
 
 const CPDF_Object* CPDF_Object::GetDirect() const {
@@ -71,8 +71,8 @@ int CPDF_Object::GetInteger() const {
   return 0;
 }
 
-CPDF_Dictionary* CPDF_Object::GetDict() {
-  return nullptr;
+RetainPtr<CPDF_Dictionary> CPDF_Object::GetMutableDict() {
+  return pdfium::WrapRetain(const_cast<CPDF_Dictionary*>(GetDict()));
 }
 
 const CPDF_Dictionary* CPDF_Object::GetDict() const {

@@ -49,14 +49,14 @@ CPDF_Image::CPDF_Image(CPDF_Document* pDoc) : m_pDocument(pDoc) {
 CPDF_Image::CPDF_Image(CPDF_Document* pDoc, RetainPtr<CPDF_Stream> pStream)
     : m_bIsInline(true), m_pDocument(pDoc), m_pStream(std::move(pStream)) {
   DCHECK(m_pDocument);
-  FinishInitialization(m_pStream->GetDict());
+  FinishInitialization(m_pStream->GetMutableDict().Get());
 }
 
 CPDF_Image::CPDF_Image(CPDF_Document* pDoc, uint32_t dwStreamObjNum)
     : m_pDocument(pDoc),
       m_pStream(ToStream(pDoc->GetIndirectObject(dwStreamObjNum))) {
   DCHECK(m_pDocument);
-  FinishInitialization(m_pStream->GetDict());
+  FinishInitialization(m_pStream->GetMutableDict().Get());
 }
 
 CPDF_Image::~CPDF_Image() = default;
@@ -78,7 +78,7 @@ void CPDF_Image::ConvertStreamToIndirectObject() {
 }
 
 CPDF_Dictionary* CPDF_Image::GetDict() const {
-  return m_pStream ? m_pStream->GetDict() : nullptr;
+  return m_pStream ? m_pStream->GetMutableDict().Get() : nullptr;
 }
 
 RetainPtr<CPDF_Dictionary> CPDF_Image::InitJPEG(

@@ -124,8 +124,8 @@ CPDF_Dictionary* LoadFontDesc(CPDF_Document* pDoc,
   pStream->SetData(span);
   // TODO(npm): Lengths for Type1 fonts.
   if (font_type == FPDF_FONT_TRUETYPE) {
-    pStream->GetDict()->SetNewFor<CPDF_Number>("Length1",
-                                               static_cast<int>(span.size()));
+    pStream->GetMutableDict()->SetNewFor<CPDF_Number>(
+        "Length1", static_cast<int>(span.size()));
   }
   ByteString fontFile = font_type == FPDF_FONT_TYPE1 ? "FontFile" : "FontFile2";
   pFontDesc->SetNewFor<CPDF_Reference>(fontFile, pDoc, pStream->GetObjNum());

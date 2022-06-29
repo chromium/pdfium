@@ -137,7 +137,7 @@ bool CPDF_Document::TryInit() {
 
   CPDF_Object* pRootObj = GetOrParseIndirectObject(m_pParser->GetRootObjNum());
   if (pRootObj)
-    m_pRootDict.Reset(pRootObj->GetDict());
+    m_pRootDict = pRootObj->GetMutableDict();
 
   LoadPages();
   return GetRoot() && GetPageCount() > 0;
@@ -481,12 +481,15 @@ CPDF_Dictionary* CPDF_Document::GetInfo() {
   if (m_pInfoDict)
     return m_pInfoDict.Get();
 
-  if (!m_pParser || !m_pParser->GetInfoObjNum())
+  if (!m_pParser)
     return nullptr;
 
-  auto ref =
-      pdfium::MakeRetain<CPDF_Reference>(this, m_pParser->GetInfoObjNum());
-  m_pInfoDict.Reset(ToDictionary(ref->GetDirect()));
+  uint32_t info_obj_num = m_pParser->GetInfoObjNum();
+  if (info_obj_num == 0)
+    return nullptr;
+
+  auto ref = pdfium::MakeRetain<CPDF_Reference>(this, info_obj_num);
+  m_pInfoDict = ToDictionary(ref->GetMutableDirect());
   return m_pInfoDict.Get();
 }
 

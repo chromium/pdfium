@@ -34,7 +34,8 @@ CPDF_PageContentManager::CPDF_PageContentManager(
 
   RetainPtr<CPDF_Reference> contents_reference = ToReference(contents_obj);
   if (contents_reference) {
-    CPDF_Object* indirect_obj = contents_reference->GetDirect();
+    RetainPtr<CPDF_Object> indirect_obj =
+        contents_reference->GetMutableDirect();
     if (!indirect_obj)
       return;
 
@@ -61,7 +62,7 @@ CPDF_Stream* CPDF_PageContentManager::GetStreamByIndex(size_t stream_index) {
   if (!stream_reference)
     return nullptr;
 
-  return stream_reference->GetDirect()->AsStream();
+  return stream_reference->GetMutableDirect()->AsStream();
 }
 
 size_t CPDF_PageContentManager::AddStream(fxcrt::ostringstream* buf) {

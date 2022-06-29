@@ -254,7 +254,7 @@ TEST(cpdf_filespec, GetParamsDict) {
 
     // Add a params dictionary to the file stream.
     RetainPtr<CPDF_Stream> stream = file_dict->GetMutableStreamFor("UF");
-    CPDF_Dictionary* stream_dict = stream->GetDict();
+    RetainPtr<CPDF_Dictionary> stream_dict = stream->GetMutableDict();
     stream_dict->SetNewFor<CPDF_Dictionary>("Params");
     EXPECT_TRUE(file_spec.GetParamsDict());
 

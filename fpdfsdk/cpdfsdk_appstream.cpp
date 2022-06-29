@@ -1105,7 +1105,7 @@ void SetDefaultIconName(CPDF_Stream* pIcon, const char* name) {
   if (!pIcon)
     return;
 
-  CPDF_Dictionary* pImageDict = pIcon->GetDict();
+  RetainPtr<CPDF_Dictionary> pImageDict = pIcon->GetMutableDict();
   if (!pImageDict)
     return;
 
@@ -1826,14 +1826,15 @@ void CPDFSDK_AppStream::SetAsTextField(absl::optional<WideString> sValue) {
 void CPDFSDK_AppStream::AddImage(const ByteString& sAPType,
                                  CPDF_Stream* pImage) {
   RetainPtr<CPDF_Stream> pStream = dict_->GetMutableStreamFor(sAPType);
-  CPDF_Dictionary* pStreamDict = pStream->GetDict();
+  RetainPtr<CPDF_Dictionary> pStreamDict = pStream->GetMutableDict();
   ByteString sImageAlias = "IMG";
 
-  CPDF_Dictionary* pImageDict = pImage->GetDict();
+  const CPDF_Dictionary* pImageDict = pImage->GetDict();
   if (pImageDict)
     sImageAlias = pImageDict->GetStringFor("Name");
 
-  CPDF_Dictionary* pStreamResList = GetOrCreateDict(pStreamDict, "Resources");
+  CPDF_Dictionary* pStreamResList =
+      GetOrCreateDict(pStreamDict.Get(), "Resources");
   CPDF_Dictionary* pXObject =
       pStreamResList->SetNewFor<CPDF_Dictionary>("XObject");
   pXObject->SetNewFor<CPDF_Reference>(sImageAlias,
@@ -1862,12 +1863,12 @@ void CPDFSDK_AppStream::Write(const ByteString& sAPType,
   CPDF_Document* doc = widget_->GetPageView()->GetPDFDocument();
   if (!doc->IsModifiedAPStream(pStream.Get())) {
     if (pStream)
-      pOrigStreamDict = pStream->GetDict();
+      pOrigStreamDict = pStream->GetMutableDict();
     pStream = doc->CreateModifiedAPStream();
     pParentDict->SetNewFor<CPDF_Reference>(key, doc, pStream->GetObjNum());
   }
 
-  CPDF_Dictionary* pStreamDict = pStream->GetDict();
+  RetainPtr<CPDF_Dictionary> pStreamDict = pStream->GetMutableDict();
   if (!pStreamDict) {
     auto pNewDict =
         widget_->GetPDFAnnot()->GetDocument()->New<CPDF_Dictionary>();

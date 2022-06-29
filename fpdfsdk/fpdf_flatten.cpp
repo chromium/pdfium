@@ -99,7 +99,8 @@ int ParserAnnots(CPDF_Document* pSourceDoc,
 
   CPDF_ArrayLocker locker(pAnnots);
   for (const auto& pAnnot : locker) {
-    CPDF_Dictionary* pAnnotDict = ToDictionary(pAnnot->GetDirect());
+    RetainPtr<CPDF_Dictionary> pAnnotDict =
+        ToDictionary(pAnnot->GetMutableDirect());
     if (!pAnnotDict)
       continue;
 
@@ -118,7 +119,7 @@ int ParserAnnots(CPDF_Document* pSourceDoc,
     else
       bParseStream = !!(nAnnotFlag & pdfium::annotation_flags::kPrint);
     if (bParseStream)
-      ParserStream(pPageDic, pAnnotDict, pRectArray, pObjectArray);
+      ParserStream(pPageDic, pAnnotDict.Get(), pRectArray, pObjectArray);
   }
   return FLATTEN_SUCCESS;
 }
@@ -320,7 +321,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     pPageXObject->SetNewFor<CPDF_Reference>(key, pDocument,
                                             pNewXObject->GetObjNum());
 
-    CPDF_Dictionary* pNewOXbjectDic = pNewXObject->GetDict();
+    RetainPtr<CPDF_Dictionary> pNewOXbjectDic = pNewXObject->GetMutableDict();
     pNewXORes = pNewOXbjectDic->SetNewFor<CPDF_Dictionary>("Resources");
     pNewOXbjectDic->SetNewFor<CPDF_Name>("Type", "XObject");
     pNewOXbjectDic->SetNewFor<CPDF_Name>("Subtype", "Form");
@@ -353,10 +354,10 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
       } else {
         if (pAPDict->size() > 0) {
           CPDF_DictionaryLocker locker(pAPDict.Get());
-          CPDF_Object* pFirstObj = locker.begin()->second.Get();
+          RetainPtr<CPDF_Object> pFirstObj = locker.begin()->second;
           if (pFirstObj) {
             if (pFirstObj->IsReference())
-              pFirstObj = pFirstObj->GetDirect();
+              pFirstObj = pFirstObj->GetMutableDirect();
             if (!pFirstObj->IsStream())
               continue;
             pAPStream = pFirstObj->AsStream();
@@ -385,7 +386,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
       pDocument->AddIndirectObject(std::move(pNew));
     }
 
-    CPDF_Dictionary* pObjDict = pObj->GetDict();
+    RetainPtr<CPDF_Dictionary> pObjDict = pObj->GetMutableDict();
     if (pObjDict) {
       pObjDict->SetNewFor<CPDF_Name>("Type", "XObject");
       pObjDict->SetNewFor<CPDF_Name>("Subtype", "Form");

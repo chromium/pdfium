@@ -35,7 +35,6 @@ class CPDF_Dictionary final : public CPDF_Object {
   // CPDF_Object:
   Type GetType() const override;
   RetainPtr<CPDF_Object> Clone() const override;
-  CPDF_Dictionary* GetDict() override;
   const CPDF_Dictionary* GetDict() const override;
   bool IsDictionary() const override;
   CPDF_Dictionary* AsDictionary() override;

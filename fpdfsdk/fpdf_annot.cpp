@@ -220,7 +220,7 @@ void UpdateBBox(CPDF_Dictionary* annot_dict) {
     CFX_FloatRect boundingRect =
         CPDF_Annot::BoundingRectFromQuadPoints(annot_dict);
     if (boundingRect.Contains(pStream->GetDict()->GetRectFor("BBox")))
-      pStream->GetDict()->SetRectFor("BBox", boundingRect);
+      pStream->GetMutableDict()->SetRectFor("BBox", boundingRect);
   }
 }
 
@@ -836,7 +836,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetRect(FPDF_ANNOTATION annot,
   RetainPtr<CPDF_Stream> pStream =
       GetAnnotAP(pAnnotDict.Get(), CPDF_Annot::AppearanceMode::kNormal);
   if (pStream && newRect.Contains(pStream->GetDict()->GetRectFor("BBox")))
-    pStream->GetDict()->SetRectFor("BBox", newRect);
+    pStream->GetMutableDict()->SetRectFor("BBox", newRect);
   return true;
 }
 
@@ -1086,7 +1086,8 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
         PDF_EncodeText(WideStringFromFPDFWideString(value).AsStringView());
     pNewIndirectStream->SetData(newAPStream.raw_span());
 
-    CPDF_Dictionary* pStreamDict = pNewIndirectStream->GetDict();
+    RetainPtr<CPDF_Dictionary> pStreamDict =
+        pNewIndirectStream->GetMutableDict();
     pStreamDict->SetNewFor<CPDF_Name>(pdfium::annotation::kType, "XObject");
     pStreamDict->SetNewFor<CPDF_Name>(pdfium::annotation::kSubtype, "Form");
     pStreamDict->SetRectFor("BBox", rect);

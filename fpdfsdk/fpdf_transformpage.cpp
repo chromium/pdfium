@@ -267,15 +267,15 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
 
   CPDF_DictionaryLocker locker(pPatternDict);
   for (const auto& it : locker) {
-    CPDF_Object* pObj = it.second.Get();
+    RetainPtr<CPDF_Object> pObj = it.second;
     if (pObj->IsReference())
-      pObj = pObj->GetDirect();
+      pObj = pObj->GetMutableDirect();
 
-    CPDF_Dictionary* pDict = nullptr;
+    RetainPtr<CPDF_Dictionary> pDict;
     if (pObj->IsDictionary())
       pDict = pObj->AsDictionary();
     else if (CPDF_Stream* pObjStream = pObj->AsStream())
-      pDict = pObjStream->GetDict();
+      pDict = pObjStream->GetMutableDict();
     else
       continue;
 

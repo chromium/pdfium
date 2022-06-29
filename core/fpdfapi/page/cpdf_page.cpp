@@ -30,7 +30,7 @@ CPDF_Page::CPDF_Page(CPDF_Document* pDocument, CPDF_Dictionary* pPageDict)
   // CPDF_PageObjectHolder to finish initializing first.
   RetainPtr<CPDF_Object> pPageAttr =
       GetMutablePageAttr(pdfium::page_object::kResources);
-  m_pResources.Reset(pPageAttr ? pPageAttr->GetDict() : nullptr);
+  m_pResources = pPageAttr ? pPageAttr->GetMutableDict() : nullptr;
   m_pPageResources = m_pResources;
 
   UpdateDimensions();

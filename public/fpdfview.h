@@ -73,7 +73,7 @@ typedef const struct fpdf_pagerange_t__* FPDF_PAGERANGE;
 typedef const struct fpdf_pathsegment_t* FPDF_PATHSEGMENT;
 typedef void* FPDF_RECORDER;  // Passed into skia.
 typedef struct fpdf_schhandle_t__* FPDF_SCHHANDLE;
-typedef struct fpdf_signature_t__* FPDF_SIGNATURE;
+typedef const struct fpdf_signature_t__* FPDF_SIGNATURE;
 typedef struct fpdf_structelement_t__* FPDF_STRUCTELEMENT;
 typedef const struct fpdf_structelement_attr_t__* FPDF_STRUCTELEMENT_ATTR;
 typedef struct fpdf_structtree_t__* FPDF_STRUCTTREE;
