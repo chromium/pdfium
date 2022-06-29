@@ -39,10 +39,12 @@ _GOMA_ATS_ENABLED = {
     "enable_ats": True,
     "rpc_extra_params": "?prod",
     "server_host": "goma.chromium.org",
+    "use_luci_auth": True,
 }
 _GOMA_ATS_DISABLED = {
     "rpc_extra_params": "?prod",
     "server_host": "goma.chromium.org",
+    "use_luci_auth": True,
 }
 
 # Dicts for OS-specifc properties.
