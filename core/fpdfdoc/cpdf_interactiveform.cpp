@@ -935,7 +935,7 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
     return nullptr;
 
   RetainPtr<CPDF_Dictionary> pMainDict =
-      pDoc->GetRoot()->GetMutableDictFor("FDF");
+      pDoc->GetMutableRoot()->GetMutableDictFor("FDF");
   if (!pdf_path.IsEmpty()) {
     auto pNewDict = pDoc->New<CPDF_Dictionary>();
     pNewDict->SetNewFor<CPDF_Name>("Type", "Filespec");
