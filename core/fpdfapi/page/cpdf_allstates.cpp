@@ -42,7 +42,7 @@ void CPDF_AllStates::SetLineDash(const CPDF_Array* pArray,
   m_GraphState.SetLineDash(std::move(dashes), phase, scale);
 }
 
-void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
+void CPDF_AllStates::ProcessExtGS(const CPDF_Dictionary* pGS,
                                   CPDF_StreamContentParser* pParser) {
   CPDF_DictionaryLocker locker(pGS);
   for (const auto& it : locker) {

@@ -20,7 +20,8 @@ class CPDF_AllStates final : public CPDF_GraphicStates {
   ~CPDF_AllStates() override;
 
   void Copy(const CPDF_AllStates& src);
-  void ProcessExtGS(CPDF_Dictionary* pGS, CPDF_StreamContentParser* pParser);
+  void ProcessExtGS(const CPDF_Dictionary* pGS,
+                    CPDF_StreamContentParser* pParser);
   void SetLineDash(const CPDF_Array* pArray, float phase, float scale);
 
   CFX_Matrix m_TextMatrix;
