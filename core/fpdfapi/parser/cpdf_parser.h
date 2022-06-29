@@ -89,7 +89,7 @@ class CPDF_Parser {
   uint32_t GetRootObjNum() const;
   uint32_t GetInfoObjNum() const;
   const CPDF_Array* GetIDArray() const;
-  CPDF_Dictionary* GetRoot() const;
+  const CPDF_Dictionary* GetRoot() const;
 
   const CPDF_Dictionary* GetEncryptDict() const;
 

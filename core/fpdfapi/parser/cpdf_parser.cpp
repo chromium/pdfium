@@ -852,10 +852,10 @@ const CPDF_Array* CPDF_Parser::GetIDArray() const {
   return GetTrailer() ? GetTrailer()->GetArrayFor("ID") : nullptr;
 }
 
-CPDF_Dictionary* CPDF_Parser::GetRoot() const {
+const CPDF_Dictionary* CPDF_Parser::GetRoot() const {
   CPDF_Object* obj =
       m_pObjectsHolder->GetOrParseIndirectObject(GetRootObjNum());
-  return obj ? obj->GetMutableDict().Get() : nullptr;
+  return obj ? obj->GetDict() : nullptr;
 }
 
 const CPDF_Dictionary* CPDF_Parser::GetEncryptDict() const {
