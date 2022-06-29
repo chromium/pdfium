@@ -46,10 +46,11 @@ class CPDF_PageRenderCache final : public CPDF_Page::RenderCacheIface {
   bool Continue(PauseIndicatorIface* pPause, CPDF_RenderStatus* pRenderStatus);
 
  private:
-  void ClearImageCacheEntry(CPDF_Stream* pStream);
+  void ClearImageCacheEntry(const CPDF_Stream* pStream);
 
   UnownedPtr<CPDF_Page> const m_pPage;
-  std::map<CPDF_Stream*, std::unique_ptr<CPDF_ImageCacheEntry>> m_ImageCache;
+  std::map<const CPDF_Stream*, std::unique_ptr<CPDF_ImageCacheEntry>>
+      m_ImageCache;
   MaybeOwned<CPDF_ImageCacheEntry> m_pCurImageCacheEntry;
   uint32_t m_nTimeCount = 0;
   uint32_t m_nCacheSize = 0;

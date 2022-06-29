@@ -19,10 +19,10 @@
 namespace {
 
 struct CacheInfo {
-  CacheInfo(uint32_t t, CPDF_Stream* stream) : time(t), pStream(stream) {}
+  CacheInfo(uint32_t t, const CPDF_Stream* stream) : time(t), pStream(stream) {}
 
   uint32_t time;
-  CPDF_Stream* pStream;
+  const CPDF_Stream* pStream;
 
   bool operator<(const CacheInfo& other) const { return time < other.time; }
 };
@@ -63,7 +63,7 @@ void CPDF_PageRenderCache::CacheOptimization(int32_t dwLimitCacheSize) {
     ClearImageCacheEntry(cache_info[i++].pStream);
 }
 
-void CPDF_PageRenderCache::ClearImageCacheEntry(CPDF_Stream* pStream) {
+void CPDF_PageRenderCache::ClearImageCacheEntry(const CPDF_Stream* pStream) {
   auto it = m_ImageCache.find(pStream);
   if (it == m_ImageCache.end())
     return;
@@ -76,7 +76,7 @@ bool CPDF_PageRenderCache::StartGetCachedBitmap(
     const RetainPtr<CPDF_Image>& pImage,
     const CPDF_RenderStatus* pRenderStatus,
     bool bStdCS) {
-  CPDF_Stream* pStream = pImage->GetStream();
+  const CPDF_Stream* pStream = pImage->GetStream();
   const auto it = m_ImageCache.find(pStream);
   m_bCurFindCache = it != m_ImageCache.end();
   if (m_bCurFindCache) {
@@ -118,7 +118,7 @@ bool CPDF_PageRenderCache::Continue(PauseIndicatorIface* pPause,
 void CPDF_PageRenderCache::ResetBitmapForImage(
     const RetainPtr<CPDF_Image>& pImage) {
   CPDF_ImageCacheEntry* pEntry;
-  CPDF_Stream* pStream = pImage->GetStream();
+  const CPDF_Stream* pStream = pImage->GetStream();
   const auto it = m_ImageCache.find(pStream);
   if (it == m_ImageCache.end())
     return;

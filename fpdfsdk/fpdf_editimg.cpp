@@ -271,7 +271,7 @@ FPDFImageObj_GetImageDataDecoded(FPDF_PAGEOBJECT image_object,
   if (!pImg)
     return 0;
 
-  CPDF_Stream* pImgStream = pImg->GetStream();
+  const CPDF_Stream* pImgStream = pImg->GetStream();
   if (!pImgStream)
     return 0;
 
@@ -290,7 +290,7 @@ FPDFImageObj_GetImageDataRaw(FPDF_PAGEOBJECT image_object,
   if (!pImg)
     return 0;
 
-  CPDF_Stream* pImgStream = pImg->GetStream();
+  const CPDF_Stream* pImgStream = pImg->GetStream();
   if (!pImgStream)
     return 0;
 
