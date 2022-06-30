@@ -159,14 +159,14 @@ class ProgressiveDecoder final :
   bool BmpReadMoreData(ProgressiveDecoderIface::Context* pBmpContext,
                        FXCODEC_STATUS* err_status);
   bool BmpDetectImageTypeInBuffer(CFX_DIBAttribute* pAttribute);
-  FXCODEC_STATUS BmpStartDecode(const RetainPtr<CFX_DIBitmap>& pDIBitmap);
+  FXCODEC_STATUS BmpStartDecode();
   FXCODEC_STATUS BmpContinueDecode();
 #endif  // PDF_ENABLE_XFA_BMP
 
 #ifdef PDF_ENABLE_XFA_GIF
   bool GifReadMoreData(FXCODEC_STATUS* err_status);
   bool GifDetectImageTypeInBuffer();
-  FXCODEC_STATUS GifStartDecode(const RetainPtr<CFX_DIBitmap>& pDIBitmap);
+  FXCODEC_STATUS GifStartDecode();
   FXCODEC_STATUS GifContinueDecode();
   void GifDoubleLineResampleVert(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
                                  double scale_y,
@@ -179,7 +179,7 @@ class ProgressiveDecoder final :
                                 uint8_t* src_scan,
                                 FXCodec_Format src_format);
   bool PngDetectImageTypeInBuffer(CFX_DIBAttribute* pAttribute);
-  FXCODEC_STATUS PngStartDecode(const RetainPtr<CFX_DIBitmap>& pDIBitmap);
+  FXCODEC_STATUS PngStartDecode();
   FXCODEC_STATUS PngContinueDecode();
 #endif  // PDF_ENABLE_XFA_PNG
 
