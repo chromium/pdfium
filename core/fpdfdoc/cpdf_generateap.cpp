@@ -513,8 +513,8 @@ void GenerateAndSetAPDict(CPDF_Document* pDoc,
   CPDF_Stream* pNormalStream = pDoc->NewIndirect<CPDF_Stream>();
   pNormalStream->SetDataFromStringstream(psAppStream);
 
-  CPDF_Dictionary* pAPDict =
-      GetOrCreateDict(pAnnotDict, pdfium::annotation::kAP);
+  RetainPtr<CPDF_Dictionary> pAPDict =
+      pAnnotDict->GetOrCreateDictFor(pdfium::annotation::kAP);
   pAPDict->SetNewFor<CPDF_Reference>("N", pDoc, pNormalStream->GetObjNum());
 
   RetainPtr<CPDF_Dictionary> pStreamDict = pNormalStream->GetMutableDict();
@@ -1066,8 +1066,8 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
                     rcBBox.right - fBorderWidth, rcBBox.top - fBorderWidth);
   rcBody.Normalize();
 
-  CPDF_Dictionary* pAPDict =
-      GetOrCreateDict(pAnnotDict, pdfium::annotation::kAP);
+  RetainPtr<CPDF_Dictionary> pAPDict =
+      pAnnotDict->GetOrCreateDictFor(pdfium::annotation::kAP);
   RetainPtr<CPDF_Stream> pNormalStream = pAPDict->GetMutableStreamFor("N");
   if (!pNormalStream) {
     pNormalStream = pDoc->NewIndirect<CPDF_Stream>();

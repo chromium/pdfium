@@ -747,7 +747,7 @@ bool CPDF_FormField::IsSelectedIndex(int iOptIndex) const {
 }
 
 void CPDF_FormField::SelectOption(int iOptIndex) {
-  CPDF_Array* pArray = GetOrCreateArray(m_pDict.Get(), "I");
+  RetainPtr<CPDF_Array> pArray = m_pDict->GetOrCreateArrayFor("I");
   for (size_t i = 0; i < pArray->size(); i++) {
     int iFind = pArray->GetIntegerAt(i);
     if (iFind == iOptIndex)

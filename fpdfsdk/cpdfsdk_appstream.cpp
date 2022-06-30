@@ -1833,8 +1833,8 @@ void CPDFSDK_AppStream::AddImage(const ByteString& sAPType,
   if (pImageDict)
     sImageAlias = pImageDict->GetStringFor("Name");
 
-  CPDF_Dictionary* pStreamResList =
-      GetOrCreateDict(pStreamDict.Get(), "Resources");
+  RetainPtr<CPDF_Dictionary> pStreamResList =
+      pStreamDict->GetOrCreateDictFor("Resources");
   CPDF_Dictionary* pXObject =
       pStreamResList->SetNewFor<CPDF_Dictionary>("XObject");
   pXObject->SetNewFor<CPDF_Reference>(sImageAlias,
@@ -1845,13 +1845,13 @@ void CPDFSDK_AppStream::AddImage(const ByteString& sAPType,
 void CPDFSDK_AppStream::Write(const ByteString& sAPType,
                               const ByteString& sContents,
                               const ByteString& sAPState) {
-  CPDF_Dictionary* pParentDict;
+  RetainPtr<CPDF_Dictionary> pParentDict;
   ByteString key;
   if (sAPState.IsEmpty()) {
     pParentDict = dict_.Get();
     key = sAPType;
   } else {
-    pParentDict = GetOrCreateDict(dict_.Get(), sAPType);
+    pParentDict = dict_->GetOrCreateDictFor(sAPType);
     key = sAPState;
   }
 

@@ -463,7 +463,7 @@ bool CPDF_Document::InsertNewPage(int iPage, CPDF_Dictionary* pPageDict) {
     return false;
 
   if (iPage == nPages) {
-    CPDF_Array* pPagesList = GetOrCreateArray(pPages.Get(), "Kids");
+    RetainPtr<CPDF_Array> pPagesList = pPages->GetOrCreateArrayFor("Kids");
     pPagesList->AppendNew<CPDF_Reference>(this, pPageDict->GetObjNum());
     pPages->SetNewFor<CPDF_Number>("Count", nPages + 1);
     pPageDict->SetNewFor<CPDF_Reference>("Parent", this, pPages->GetObjNum());

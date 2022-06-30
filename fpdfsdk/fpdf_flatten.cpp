@@ -295,11 +295,11 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
   pPageDict->SetRectFor(pdfium::page_object::kMediaBox, rcOriginalMB);
   pPageDict->SetRectFor(pdfium::page_object::kCropBox, rcOriginalCB);
 
-  CPDF_Dictionary* pRes =
-      GetOrCreateDict(pPageDict.Get(), pdfium::page_object::kResources);
+  RetainPtr<CPDF_Dictionary> pRes =
+      pPageDict->GetOrCreateDictFor(pdfium::page_object::kResources);
   CPDF_Stream* pNewXObject = pDocument->NewIndirect<CPDF_Stream>(
       nullptr, 0, pDocument->New<CPDF_Dictionary>());
-  CPDF_Dictionary* pPageXObject = GetOrCreateDict(pRes, "XObject");
+  RetainPtr<CPDF_Dictionary> pPageXObject = pRes->GetOrCreateDictFor("XObject");
 
   ByteString key;
   if (!ObjectArray.empty()) {
@@ -392,7 +392,8 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
       pObjDict->SetNewFor<CPDF_Name>("Subtype", "Form");
     }
 
-    CPDF_Dictionary* pXObject = GetOrCreateDict(pNewXORes, "XObject");
+    RetainPtr<CPDF_Dictionary> pXObject =
+        pNewXORes->GetOrCreateDictFor("XObject");
     ByteString sFormName = ByteString::Format("F%d", i);
     pXObject->SetNewFor<CPDF_Reference>(sFormName, pDocument,
                                         pObj->GetObjNum());

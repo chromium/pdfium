@@ -250,14 +250,14 @@ void AddFont(CPDF_Dictionary* pFormDict,
     return;
   }
 
-  CPDF_Dictionary* pDR = GetOrCreateDict(pFormDict, "DR");
-  CPDF_Dictionary* pFonts = GetOrCreateDict(pDR, "Font");
+  RetainPtr<CPDF_Dictionary> pDR = pFormDict->GetOrCreateDictFor("DR");
+  RetainPtr<CPDF_Dictionary> pFonts = pDR->GetOrCreateDictFor("Font");
 
   if (csNameTag->IsEmpty())
     *csNameTag = pFont->GetBaseFontName();
 
   csNameTag->Remove(' ');
-  *csNameTag = GenerateNewFontResourceName(pDR, *csNameTag);
+  *csNameTag = GenerateNewFontResourceName(pDR.Get(), *csNameTag);
   pFonts->SetNewFor<CPDF_Reference>(*csNameTag, pDocument,
                                     pFont->GetFontDict()->GetObjNum());
 }

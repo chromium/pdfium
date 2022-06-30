@@ -356,8 +356,8 @@ FPDFPage_CreateAnnot(FPDF_PAGE page, FPDF_ANNOTATION_SUBTYPE subtype) {
   auto pNewAnnot = std::make_unique<CPDF_AnnotContext>(
       pDict.Get(), IPDFPageFromFPDFPage(page));
 
-  CPDF_Array* pAnnotList =
-      GetOrCreateArray(pPage->GetMutableDict().Get(), "Annots");
+  RetainPtr<CPDF_Array> pAnnotList =
+      pPage->GetMutableDict()->GetOrCreateArrayFor("Annots");
   pAnnotList->Append(pDict);
 
   // Caller takes ownership.
@@ -502,7 +502,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAnnot_AddInkStroke(FPDF_ANNOTATION annot,
 
   RetainPtr<CPDF_Dictionary> annot_dict =
       GetMutableAnnotDictFromFPDFAnnotation(annot);
-  CPDF_Array* inklist = GetOrCreateArray(annot_dict.Get(), "InkList");
+  RetainPtr<CPDF_Array> inklist = annot_dict->GetOrCreateArrayFor("InkList");
   FX_SAFE_SIZE_T safe_ink_size = inklist->size();
   safe_ink_size += 1;
   if (!safe_ink_size.IsValid<int32_t>())

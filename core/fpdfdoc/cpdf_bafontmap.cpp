@@ -291,8 +291,8 @@ void CPDF_BAFontMap::AddFontToAnnotDict(const RetainPtr<CPDF_Font>& pFont,
   if (!pFont)
     return;
 
-  CPDF_Dictionary* pAPDict =
-      GetOrCreateDict(m_pAnnotDict.Get(), pdfium::annotation::kAP);
+  RetainPtr<CPDF_Dictionary> pAPDict =
+      m_pAnnotDict->GetOrCreateDictFor(pdfium::annotation::kAP);
 
   // to avoid checkbox and radiobutton
   if (ToDictionary(pAPDict->GetObjectFor(m_sAPType)))
@@ -312,8 +312,8 @@ void CPDF_BAFontMap::AddFontToAnnotDict(const RetainPtr<CPDF_Font>& pFont,
     pStream->InitStream({}, std::move(pOwnedDict));
   }
 
-  CPDF_Dictionary* pStreamResList =
-      GetOrCreateDict(pStreamDict.Get(), "Resources");
+  RetainPtr<CPDF_Dictionary> pStreamResList =
+      pStreamDict->GetOrCreateDictFor("Resources");
   RetainPtr<CPDF_Dictionary> pStreamResFontList =
       pStreamResList->GetMutableDictFor("Font");
   if (!pStreamResFontList) {

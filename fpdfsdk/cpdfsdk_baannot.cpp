@@ -53,7 +53,7 @@ CPDF_Dictionary* CPDFSDK_BAAnnot::GetAnnotDict() const {
 }
 
 CPDF_Dictionary* CPDFSDK_BAAnnot::GetAPDict() const {
-  return GetOrCreateDict(GetAnnotDict(), pdfium::annotation::kAP);
+  return GetAnnotDict()->GetOrCreateDictFor(pdfium::annotation::kAP).Get();
 }
 
 void CPDFSDK_BAAnnot::ClearCachedAnnotAP() {
@@ -117,14 +117,14 @@ ByteString CPDFSDK_BAAnnot::GetAppState() const {
 }
 
 void CPDFSDK_BAAnnot::SetBorderWidth(int nWidth) {
+  CPDF_Dictionary* pAnnotDict = GetAnnotDict();
   RetainPtr<CPDF_Array> pBorder =
-      GetAnnotDict()->GetMutableArrayFor(pdfium::annotation::kBorder);
+      pAnnotDict->GetMutableArrayFor(pdfium::annotation::kBorder);
   if (pBorder) {
     pBorder->SetNewAt<CPDF_Number>(2, nWidth);
-  } else {
-    CPDF_Dictionary* pBSDict = GetOrCreateDict(GetAnnotDict(), "BS");
-    pBSDict->SetNewFor<CPDF_Number>("W", nWidth);
+    return;
   }
+  pAnnotDict->GetOrCreateDictFor("BS")->SetNewFor<CPDF_Number>("W", nWidth);
 }
 
 int CPDFSDK_BAAnnot::GetBorderWidth() const {
@@ -141,7 +141,7 @@ int CPDFSDK_BAAnnot::GetBorderWidth() const {
 }
 
 void CPDFSDK_BAAnnot::SetBorderStyle(BorderStyle nStyle) {
-  CPDF_Dictionary* pBSDict = GetOrCreateDict(GetAnnotDict(), "BS");
+  RetainPtr<CPDF_Dictionary> pBSDict = GetAnnotDict()->GetOrCreateDictFor("BS");
   const char* name = nullptr;
   switch (nStyle) {
     case BorderStyle::kSolid:

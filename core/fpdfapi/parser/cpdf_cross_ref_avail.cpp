@@ -150,14 +150,13 @@ bool CPDF_CrossRefAvail::CheckCrossRefV4Trailer() {
     return false;
   }
 
-  const int32_t xrefpos =
-      GetDirectInteger(trailer.Get(), kPrevCrossRefFieldKey);
+  const int32_t xrefpos = trailer->GetDirectIntegerFor(kPrevCrossRefFieldKey);
   if (xrefpos > 0 &&
       pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(xrefpos))
     AddCrossRefForCheck(static_cast<FX_FILESIZE>(xrefpos));
 
   const int32_t stream_xref_offset =
-      GetDirectInteger(trailer.Get(), kPrevCrossRefStreamOffsetFieldKey);
+      trailer->GetDirectIntegerFor(kPrevCrossRefStreamOffsetFieldKey);
   if (stream_xref_offset > 0 &&
       pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(
           stream_xref_offset))

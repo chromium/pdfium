@@ -668,9 +668,9 @@ void CPDF_NPageToOneExporter::FinishPage(CPDF_Dictionary* pDestPageDict,
                                          const ByteString& bsContent) {
   DCHECK(pDestPageDict);
 
-  CPDF_Dictionary* pRes =
-      GetOrCreateDict(pDestPageDict, pdfium::page_object::kResources);
-  CPDF_Dictionary* pPageXObject = GetOrCreateDict(pRes, "XObject");
+  RetainPtr<CPDF_Dictionary> pRes =
+      pDestPageDict->GetOrCreateDictFor(pdfium::page_object::kResources);
+  RetainPtr<CPDF_Dictionary> pPageXObject = pRes->GetOrCreateDictFor("XObject");
   for (auto& it : m_XObjectNameToNumberMap)
     pPageXObject->SetNewFor<CPDF_Reference>(it.first, dest(), it.second);
 

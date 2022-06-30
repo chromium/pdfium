@@ -66,11 +66,14 @@ class CPDF_Dictionary final : public CPDF_Object {
   bool GetBooleanFor(const ByteString& key, bool bDefault) const;
   int GetIntegerFor(const ByteString& key) const;
   int GetIntegerFor(const ByteString& key, int default_int) const;
+  int GetDirectIntegerFor(const ByteString& key) const;
   float GetNumberFor(const ByteString& key) const;
   const CPDF_Dictionary* GetDictFor(const ByteString& key) const;
   RetainPtr<CPDF_Dictionary> GetMutableDictFor(const ByteString& key);
+  RetainPtr<CPDF_Dictionary> GetOrCreateDictFor(const ByteString& key);
   const CPDF_Array* GetArrayFor(const ByteString& key) const;
   RetainPtr<CPDF_Array> GetMutableArrayFor(const ByteString& key);
+  RetainPtr<CPDF_Array> GetOrCreateArrayFor(const ByteString& key);
   const CPDF_Stream* GetStreamFor(const ByteString& key) const;
   RetainPtr<CPDF_Stream> GetMutableStreamFor(const ByteString& key);
   CFX_FloatRect GetRectFor(const ByteString& key) const;
