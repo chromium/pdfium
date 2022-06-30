@@ -27,7 +27,7 @@ class CPDF_Stream;
 
 class CPDF_ApSettings {
  public:
-  explicit CPDF_ApSettings(CPDF_Dictionary* pDict);
+  explicit CPDF_ApSettings(RetainPtr<CPDF_Dictionary> pDict);
   CPDF_ApSettings(const CPDF_ApSettings& that);
   ~CPDF_ApSettings();
 

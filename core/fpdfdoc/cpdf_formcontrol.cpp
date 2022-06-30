@@ -138,7 +138,7 @@ CPDF_FormControl::HighlightingMode CPDF_FormControl::GetHighlightingMode()
 }
 
 CPDF_ApSettings CPDF_FormControl::GetMK() const {
-  return CPDF_ApSettings(m_pWidgetDict->GetMutableDictFor("MK").Get());
+  return CPDF_ApSettings(m_pWidgetDict->GetMutableDictFor("MK"));
 }
 
 bool CPDF_FormControl::HasMKEntry(const ByteString& csEntry) const {
