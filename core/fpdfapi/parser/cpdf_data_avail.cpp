@@ -924,7 +924,7 @@ int CPDF_DataAvail::GetPageCount() const {
   return m_pDocument ? m_pDocument->GetPageCount() : 0;
 }
 
-CPDF_Dictionary* CPDF_DataAvail::GetPageDictionary(int index) const {
+const CPDF_Dictionary* CPDF_DataAvail::GetPageDictionary(int index) const {
   if (!m_pDocument || index < 0 || index >= GetPageCount())
     return nullptr;
   CPDF_Dictionary* page = m_pDocument->GetPageDictionary(index);
