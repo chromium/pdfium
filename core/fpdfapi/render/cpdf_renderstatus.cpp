@@ -1387,8 +1387,8 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
   CFX_Matrix matrix = mtMatrix;
   matrix.Translate(-pClipRect->left, -pClipRect->top);
 
-  CPDF_Form form(m_pContext->GetDocument(), m_pContext->GetPageResources(),
-                 pGroup.Get());
+  CPDF_Form form(m_pContext->GetDocument(),
+                 m_pContext->GetMutablePageResources().Get(), pGroup.Get());
   form.ParseContent();
 
   CFX_DefaultRenderDevice bitmap_device;

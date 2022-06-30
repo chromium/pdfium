@@ -59,7 +59,7 @@ void RenderPageImpl(CPDF_PageRenderContext* pContext,
   pContext->m_pDevice->SetBaseClip(clipping_rect);
   pContext->m_pDevice->SetClip_Rect(clipping_rect);
   pContext->m_pContext = std::make_unique<CPDF_RenderContext>(
-      pPage->GetDocument(), pPage->GetPageResources(),
+      pPage->GetDocument(), pPage->GetMutablePageResources().Get(),
       static_cast<CPDF_PageRenderCache*>(pPage->GetRenderCache()));
 
   pContext->m_pContext->AppendLayer(pPage, matrix);

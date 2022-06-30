@@ -89,14 +89,14 @@ class CPDF_Annot {
                       CFX_RenderDevice* pDevice,
                       const CFX_Matrix& mtUser2Device,
                       AppearanceMode mode);
-  bool DrawInContext(const CPDF_Page* pPage,
+  bool DrawInContext(CPDF_Page* pPage,
                      CPDF_RenderContext* pContext,
                      const CFX_Matrix& mtUser2Device,
                      AppearanceMode mode);
 
   void ClearCachedAP();
   void DrawBorder(CFX_RenderDevice* pDevice, const CFX_Matrix* pUser2Device);
-  CPDF_Form* GetAPForm(const CPDF_Page* pPage, AppearanceMode mode);
+  CPDF_Form* GetAPForm(CPDF_Page* pPage, AppearanceMode mode);
   void SetOpenState(bool bOpenState) { m_bOpenState = bOpenState; }
   CPDF_Annot* GetPopupAnnot() const { return m_pPopupAnnot.Get(); }
   void SetPopupAnnot(CPDF_Annot* pAnnot) { m_pPopupAnnot = pAnnot; }

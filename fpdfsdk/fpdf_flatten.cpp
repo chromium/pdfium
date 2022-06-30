@@ -66,7 +66,7 @@ void GetContentsRect(CPDF_Document* pDoc,
   }
 }
 
-void ParserStream(CPDF_Dictionary* pPageDic,
+void ParserStream(const CPDF_Dictionary* pPageDic,
                   CPDF_Dictionary* pStream,
                   std::vector<CFX_FloatRect>* pRectArray,
                   std::vector<CPDF_Dictionary*>* pObjectArray) {
@@ -258,14 +258,14 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     return FLATTEN_FAIL;
 
   CPDF_Document* pDocument = pPage->GetDocument();
-  CPDF_Dictionary* pPageDict = pPage->GetDict();
+  RetainPtr<CPDF_Dictionary> pPageDict = pPage->GetMutableDict();
   if (!pDocument)
     return FLATTEN_FAIL;
 
   std::vector<CPDF_Dictionary*> ObjectArray;
   std::vector<CFX_FloatRect> RectArray;
   int iRet =
-      ParserAnnots(pDocument, pPageDict, &RectArray, &ObjectArray, nFlag);
+      ParserAnnots(pDocument, pPageDict.Get(), &RectArray, &ObjectArray, nFlag);
   if (iRet == FLATTEN_NOTHINGTODO || iRet == FLATTEN_FAIL)
     return iRet;
 
@@ -296,7 +296,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
   pPageDict->SetRectFor(pdfium::page_object::kCropBox, rcOriginalCB);
 
   CPDF_Dictionary* pRes =
-      GetOrCreateDict(pPageDict, pdfium::page_object::kResources);
+      GetOrCreateDict(pPageDict.Get(), pdfium::page_object::kResources);
   CPDF_Stream* pNewXObject = pDocument->NewIndirect<CPDF_Stream>(
       nullptr, 0, pDocument->New<CPDF_Dictionary>());
   CPDF_Dictionary* pPageXObject = GetOrCreateDict(pRes, "XObject");
@@ -314,7 +314,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     }
   }
 
-  SetPageContents(key, pPageDict, pDocument);
+  SetPageContents(key, pPageDict.Get(), pDocument);
 
   CPDF_Dictionary* pNewXORes = nullptr;
   if (!key.IsEmpty()) {

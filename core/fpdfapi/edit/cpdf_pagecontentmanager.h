@@ -18,7 +18,7 @@ class CPDF_PageObjectHolder;
 
 class CPDF_PageContentManager {
  public:
-  explicit CPDF_PageContentManager(const CPDF_PageObjectHolder* obj_holder);
+  explicit CPDF_PageContentManager(CPDF_PageObjectHolder* obj_holder);
   ~CPDF_PageContentManager();
 
   // Gets the Content stream at a given index. If Contents is a single stream
@@ -39,7 +39,7 @@ class CPDF_PageContentManager {
   void ExecuteScheduledRemovals();
 
  private:
-  UnownedPtr<const CPDF_PageObjectHolder> const obj_holder_;
+  UnownedPtr<CPDF_PageObjectHolder> const obj_holder_;
   UnownedPtr<CPDF_Document> const doc_;
   RetainPtr<CPDF_Array> contents_array_;
   RetainPtr<CPDF_Stream> contents_stream_;

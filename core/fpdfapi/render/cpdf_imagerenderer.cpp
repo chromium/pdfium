@@ -142,7 +142,8 @@ bool CPDF_ImageRenderer::StartRenderDIBBase() {
   } else {
     pDocument = m_pImageObject->GetImage()->GetDocument();
   }
-  CPDF_Dictionary* pPageResources = pPage ? pPage->GetPageResources() : nullptr;
+  const CPDF_Dictionary* pPageResources =
+      pPage ? pPage->GetPageResources() : nullptr;
   const CPDF_Dictionary* pStreamDict =
       m_pImageObject->GetImage()->GetStream()->GetDict();
   const CPDF_Object* pCSObj = pStreamDict->GetDirectObjectFor("ColorSpace");

@@ -37,7 +37,7 @@ void SetBoundingBox(CPDF_Page* page,
   if (!page)
     return;
 
-  page->GetDict()->SetRectFor(key, rect);
+  page->GetMutableDict()->SetRectFor(key, rect);
   page->UpdateDimensions();
 }
 
@@ -208,8 +208,8 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
   if (!pPage)
     return false;
 
-  CPDF_Dictionary* pPageDict = pPage->GetDict();
-  RetainPtr<CPDF_Object> pContentObj = GetPageContent(pPageDict);
+  RetainPtr<CPDF_Dictionary> pPageDict = pPage->GetMutableDict();
+  RetainPtr<CPDF_Object> pContentObj = GetPageContent(pPageDict.Get());
   if (!pContentObj)
     return false;
 
@@ -386,8 +386,8 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_InsertClipPath(FPDF_PAGE page,
   if (!pPage)
     return;
 
-  CPDF_Dictionary* pPageDict = pPage->GetDict();
-  RetainPtr<CPDF_Object> pContentObj = GetPageContent(pPageDict);
+  RetainPtr<CPDF_Dictionary> pPageDict = pPage->GetMutableDict();
+  RetainPtr<CPDF_Object> pContentObj = GetPageContent(pPageDict.Get());
   if (!pContentObj)
     return;
 

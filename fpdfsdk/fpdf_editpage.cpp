@@ -724,8 +724,8 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_SetRotation(FPDF_PAGE page,
     return;
 
   rotate %= 4;
-  pPage->GetDict()->SetNewFor<CPDF_Number>(pdfium::page_object::kRotate,
-                                           rotate * 90);
+  pPage->GetMutableDict()->SetNewFor<CPDF_Number>(pdfium::page_object::kRotate,
+                                                  rotate * 90);
   pPage->UpdateDimensions();
 }
 

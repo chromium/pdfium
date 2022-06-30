@@ -33,8 +33,9 @@ CPDF_ContentParser::CPDF_ContentParser(CPDF_Page* pPage)
     return;
   }
 
-  RetainPtr<CPDF_Object> pContent = pPage->GetDict()->GetMutableDirectObjectFor(
-      pdfium::page_object::kContents);
+  RetainPtr<CPDF_Object> pContent =
+      pPage->GetMutableDict()->GetMutableDirectObjectFor(
+          pdfium::page_object::kContents);
   if (!pContent) {
     HandlePageContentFailure();
     return;
@@ -83,11 +84,11 @@ CPDF_ContentParser::CPDF_ContentParser(CPDF_Form* pForm,
   }
 
   RetainPtr<CPDF_Dictionary> pResources =
-      pForm->GetDict()->GetMutableDictFor("Resources");
+      pForm->GetMutableDict()->GetMutableDictFor("Resources");
   m_pParser = std::make_unique<CPDF_StreamContentParser>(
-      pForm->GetDocument(), pForm->GetPageResources(), pForm->GetResources(),
-      pParentMatrix, pForm, pResources.Get(), form_bbox, pGraphicStates,
-      pParsedSet);
+      pForm->GetDocument(), pForm->GetMutablePageResources().Get(),
+      pForm->GetMutableResources().Get(), pParentMatrix, pForm,
+      pResources.Get(), form_bbox, pGraphicStates, pParsedSet);
   m_pParser->GetCurStates()->m_CTM = form_matrix;
   m_pParser->GetCurStates()->m_ParentMatrix = form_matrix;
   if (ClipPath.HasRef()) {
@@ -190,10 +191,10 @@ CPDF_ContentParser::Stage CPDF_ContentParser::Parse() {
   if (!m_pParser) {
     m_ParsedSet.clear();
     m_pParser = std::make_unique<CPDF_StreamContentParser>(
-        m_pObjectHolder->GetDocument(), m_pObjectHolder->GetPageResources(),
-        nullptr, nullptr, m_pObjectHolder.Get(),
-        m_pObjectHolder->GetResources(), m_pObjectHolder->GetBBox(), nullptr,
-        &m_ParsedSet);
+        m_pObjectHolder->GetDocument(),
+        m_pObjectHolder->GetMutablePageResources().Get(), nullptr, nullptr,
+        m_pObjectHolder.Get(), m_pObjectHolder->GetMutableResources().Get(),
+        m_pObjectHolder->GetBBox(), nullptr, &m_ParsedSet);
     m_pParser->GetCurStates()->m_ColorState.SetDefault();
   }
   if (m_CurrentOffset >= m_Size)

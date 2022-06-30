@@ -356,7 +356,8 @@ FPDFPage_CreateAnnot(FPDF_PAGE page, FPDF_ANNOTATION_SUBTYPE subtype) {
   auto pNewAnnot = std::make_unique<CPDF_AnnotContext>(
       pDict.Get(), IPDFPageFromFPDFPage(page));
 
-  CPDF_Array* pAnnotList = GetOrCreateArray(pPage->GetDict(), "Annots");
+  CPDF_Array* pAnnotList =
+      GetOrCreateArray(pPage->GetMutableDict().Get(), "Annots");
   pAnnotList->Append(pDict);
 
   // Caller takes ownership.
@@ -379,7 +380,7 @@ FPDF_EXPORT FPDF_ANNOTATION FPDF_CALLCONV FPDFPage_GetAnnot(FPDF_PAGE page,
     return nullptr;
 
   RetainPtr<CPDF_Array> pAnnots =
-      pPage->GetDict()->GetMutableArrayFor("Annots");
+      pPage->GetMutableDict()->GetMutableArrayFor("Annots");
   if (!pAnnots || static_cast<size_t>(index) >= pAnnots->size())
     return nullptr;
 
@@ -432,7 +433,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_RemoveAnnot(FPDF_PAGE page,
     return false;
 
   RetainPtr<CPDF_Array> pAnnots =
-      pPage->GetDict()->GetMutableArrayFor("Annots");
+      pPage->GetMutableDict()->GetMutableArrayFor("Annots");
   if (!pAnnots || static_cast<size_t>(index) >= pAnnots->size())
     return false;
 

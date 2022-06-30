@@ -367,7 +367,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFLink_Enumerate(FPDF_PAGE page,
   if (!pPage)
     return false;
   RetainPtr<CPDF_Array> pAnnots =
-      pPage->GetDict()->GetMutableArrayFor("Annots");
+      pPage->GetMutableDict()->GetMutableArrayFor("Annots");
   if (!pAnnots)
     return false;
   for (size_t i = *start_pos; i < pAnnots->size(); i++) {
@@ -439,7 +439,7 @@ FPDF_EXPORT FPDF_ACTION FPDF_CALLCONV FPDF_GetPageAAction(FPDF_PAGE page,
   if (!pdf_page)
     return nullptr;
 
-  CPDF_Dictionary* page_dict = pdf_page->GetDict();
+  const CPDF_Dictionary* page_dict = pdf_page->GetDict();
   CPDF_AAction aa(page_dict->GetDictFor(pdfium::form_fields::kAA));
 
   CPDF_AAction::AActionType type;

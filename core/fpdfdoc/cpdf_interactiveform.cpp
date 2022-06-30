@@ -787,7 +787,7 @@ void CPDF_InteractiveForm::LoadField(CPDF_Dictionary* pFieldDict, int nLevel) {
 
 void CPDF_InteractiveForm::FixPageFields(CPDF_Page* pPage) {
   RetainPtr<CPDF_Array> pAnnots =
-      pPage->GetDict()->GetMutableArrayFor("Annots");
+      pPage->GetMutableDict()->GetMutableArrayFor("Annots");
   if (!pAnnots)
     return;
 

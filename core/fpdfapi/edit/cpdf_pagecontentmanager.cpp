@@ -21,9 +21,9 @@
 #include "third_party/base/numerics/safe_conversions.h"
 
 CPDF_PageContentManager::CPDF_PageContentManager(
-    const CPDF_PageObjectHolder* obj_holder)
+    CPDF_PageObjectHolder* obj_holder)
     : obj_holder_(obj_holder), doc_(obj_holder_->GetDocument()) {
-  CPDF_Dictionary* page_dict = obj_holder_->GetDict();
+  RetainPtr<CPDF_Dictionary> page_dict = obj_holder_->GetMutableDict();
   RetainPtr<CPDF_Object> contents_obj =
       page_dict->GetMutableObjectFor("Contents");
   RetainPtr<CPDF_Array> contents_array = ToArray(contents_obj);
@@ -78,7 +78,7 @@ size_t CPDF_PageContentManager::AddStream(fxcrt::ostringstream* buf) {
     new_contents_array->AppendNew<CPDF_Reference>(doc_.Get(),
                                                   new_stream->GetObjNum());
 
-    CPDF_Dictionary* page_dict = obj_holder_->GetDict();
+    RetainPtr<CPDF_Dictionary> page_dict = obj_holder_->GetMutableDict();
     page_dict->SetNewFor<CPDF_Reference>("Contents", doc_.Get(),
                                          new_contents_array->GetObjNum());
     contents_array_.Reset(new_contents_array);
@@ -95,7 +95,7 @@ size_t CPDF_PageContentManager::AddStream(fxcrt::ostringstream* buf) {
 
   // There were no Contents, so add the new stream as the single Content stream.
   // Its index is 0.
-  CPDF_Dictionary* page_dict = obj_holder_->GetDict();
+  RetainPtr<CPDF_Dictionary> page_dict = obj_holder_->GetMutableDict();
   page_dict->SetNewFor<CPDF_Reference>("Contents", doc_.Get(),
                                        new_stream->GetObjNum());
   contents_stream_.Reset(new_stream);
@@ -117,7 +117,7 @@ void CPDF_PageContentManager::ExecuteScheduledRemovals() {
   if (contents_stream_) {
     // Only stream that can be removed is 0.
     if (streams_to_remove_.find(0) != streams_to_remove_.end()) {
-      CPDF_Dictionary* page_dict = obj_holder_->GetDict();
+      RetainPtr<CPDF_Dictionary> page_dict = obj_holder_->GetMutableDict();
       page_dict->RemoveFor("Contents");
       contents_stream_ = nullptr;
     }

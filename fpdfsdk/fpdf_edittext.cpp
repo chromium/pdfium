@@ -627,14 +627,14 @@ FPDFTextObj_GetRenderedBitmap(FPDF_DOCUMENT document,
   if (optional_page)
     optional_page->SetRenderContext(std::move(render_context));
 
-  CPDF_Dictionary* page_resources =
-      optional_page ? optional_page->GetPageResources() : nullptr;
+  RetainPtr<CPDF_Dictionary> page_resources =
+      optional_page ? optional_page->GetMutablePageResources() : nullptr;
 
   auto device = std::make_unique<CFX_DefaultRenderDevice>();
   CFX_DefaultRenderDevice* device_ptr = device.get();
   render_context_ptr->m_pDevice = std::move(device);
   render_context_ptr->m_pContext = std::make_unique<CPDF_RenderContext>(
-      doc, page_resources, /*pPageCache=*/nullptr);
+      doc, page_resources.Get(), /*pPageCache=*/nullptr);
 
   device_ptr->Attach(result_bitmap, /*bRgbByteOrder=*/false,
                      /*pBackdropBitmap=*/nullptr, /*bGroupKnockout=*/false);

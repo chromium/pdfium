@@ -40,7 +40,7 @@ bool IsTextMarkupAnnotation(CPDF_Annot::Subtype type) {
          type == CPDF_Annot::Subtype::UNDERLINE;
 }
 
-CPDF_Form* AnnotGetMatrix(const CPDF_Page* pPage,
+CPDF_Form* AnnotGetMatrix(CPDF_Page* pPage,
                           CPDF_Annot* pAnnot,
                           CPDF_Annot::AppearanceMode mode,
                           const CFX_Matrix& mtUser2Device,
@@ -185,7 +185,7 @@ RetainPtr<CPDF_Stream> GetAnnotAPNoFallback(CPDF_Dictionary* pAnnotDict,
   return GetAnnotAPInternal(pAnnotDict, eMode, false);
 }
 
-CPDF_Form* CPDF_Annot::GetAPForm(const CPDF_Page* pPage, AppearanceMode mode) {
+CPDF_Form* CPDF_Annot::GetAPForm(CPDF_Page* pPage, AppearanceMode mode) {
   RetainPtr<CPDF_Stream> pStream = GetAnnotAP(m_pAnnotDict.Get(), mode);
   if (!pStream)
     return nullptr;
@@ -195,7 +195,7 @@ CPDF_Form* CPDF_Annot::GetAPForm(const CPDF_Page* pPage, AppearanceMode mode) {
     return it->second.get();
 
   auto pNewForm = std::make_unique<CPDF_Form>(
-      m_pDocument.Get(), pPage->GetResources(), pStream.Get());
+      m_pDocument.Get(), pPage->GetMutableResources().Get(), pStream.Get());
   pNewForm->ParseContent();
 
   CPDF_Form* pResult = pNewForm.get();
@@ -400,14 +400,14 @@ bool CPDF_Annot::DrawAppearance(CPDF_Page* pPage,
     return false;
 
   CPDF_RenderContext context(
-      pPage->GetDocument(), pPage->GetPageResources(),
+      pPage->GetDocument(), pPage->GetMutablePageResources().Get(),
       static_cast<CPDF_PageRenderCache*>(pPage->GetRenderCache()));
   context.AppendLayer(pForm, matrix);
   context.Render(pDevice, nullptr, nullptr, nullptr);
   return true;
 }
 
-bool CPDF_Annot::DrawInContext(const CPDF_Page* pPage,
+bool CPDF_Annot::DrawInContext(CPDF_Page* pPage,
                                CPDF_RenderContext* pContext,
                                const CFX_Matrix& mtUser2Device,
                                AppearanceMode mode) {

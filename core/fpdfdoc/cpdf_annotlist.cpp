@@ -172,7 +172,7 @@ void GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
 CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
     : m_pDocument(pPage->GetDocument()) {
   RetainPtr<CPDF_Array> pAnnots =
-      pPage->GetDict()->GetMutableArrayFor("Annots");
+      pPage->GetMutableDict()->GetMutableArrayFor("Annots");
   if (!pAnnots)
     return;
 
