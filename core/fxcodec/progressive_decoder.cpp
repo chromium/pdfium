@@ -968,8 +968,7 @@ bool ProgressiveDecoder::JpegDetectImageTypeInBuffer(
   return false;
 }
 
-FXCODEC_STATUS ProgressiveDecoder::JpegStartDecode(
-    const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
+FXCODEC_STATUS ProgressiveDecoder::JpegStartDecode(FXDIB_Format format) {
   int down_scale = GetDownScale();
   // Setting jump marker before calling StartScanLine, since a longjmp to
   // the marker indicates a fatal error.
@@ -1012,7 +1011,7 @@ FXCODEC_STATUS ProgressiveDecoder::JpegStartDecode(
       m_SrcFormat = FXCodec_Cmyk;
       break;
   }
-  GetTransMethod(pDIBitmap->GetFormat(), m_SrcFormat);
+  GetTransMethod(format, m_SrcFormat);
   m_status = FXCODEC_STATUS::kDecodeToBeContinued;
   return m_status;
 }
@@ -2151,7 +2150,7 @@ FXCODEC_STATUS ProgressiveDecoder::StartDecode(
       return GifStartDecode();
 #endif  // PDF_ENABLE_XFA_GIF
     case FXCODEC_IMAGE_JPG:
-      return JpegStartDecode(pDIBitmap);
+      return JpegStartDecode(pDIBitmap->GetFormat());
 #ifdef PDF_ENABLE_XFA_PNG
     case FXCODEC_IMAGE_PNG:
       return PngStartDecode();

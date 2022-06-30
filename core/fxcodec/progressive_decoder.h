@@ -190,7 +190,7 @@ class ProgressiveDecoder final :
 
   bool JpegReadMoreData(FXCODEC_STATUS* err_status);
   bool JpegDetectImageTypeInBuffer(CFX_DIBAttribute* pAttribute);
-  FXCODEC_STATUS JpegStartDecode(const RetainPtr<CFX_DIBitmap>& pDIBitmap);
+  FXCODEC_STATUS JpegStartDecode(FXDIB_Format format);
   FXCODEC_STATUS JpegContinueDecode();
 
   bool DetectImageType(FXCODEC_IMAGE_TYPE imageType,
