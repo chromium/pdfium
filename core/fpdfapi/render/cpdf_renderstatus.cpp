@@ -600,8 +600,8 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   DebugVerifyDeviceIsPreMultiplied();
 #endif
   const BlendMode blend_type = pPageObj->m_GeneralState.GetBlendType();
-  CPDF_Dictionary* pSMaskDict =
-      ToDictionary(pPageObj->m_GeneralState.GetSoftMask());
+  RetainPtr<CPDF_Dictionary> pSMaskDict =
+      ToDictionary(pPageObj->m_GeneralState.GetMutableSoftMask());
   if (pSMaskDict) {
     if (pPageObj->IsImage() &&
         pPageObj->AsImage()->GetImage()->GetDict()->KeyExist("SMask")) {
@@ -707,7 +707,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
     CFX_Matrix smask_matrix =
         *pPageObj->m_GeneralState.GetSMaskMatrix() * mtObj2Device;
     RetainPtr<CFX_DIBBase> pSMaskSource =
-        LoadSMask(pSMaskDict, &rect, smask_matrix);
+        LoadSMask(pSMaskDict.Get(), &rect, smask_matrix);
     if (pSMaskSource)
       bitmap->MultiplyAlpha(pSMaskSource);
   }
