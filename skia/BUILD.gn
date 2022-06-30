@@ -6,7 +6,7 @@ import("//build/config/features.gni")
 import("//build/config/ui.gni")
 import("//testing/test.gni")
 import("//third_party/skia/gn/shared_sources.gni")
-import("//third_party/skia/third_party/skcms/skcms.gni")
+import("//third_party/skia/modules/skcms/skcms.gni")
 import("features.gni")
 
 if (current_cpu == "arm") {
@@ -157,10 +157,9 @@ source_set("skcms") {
     cflags += [ "-mfp16-format=ieee" ]
   }
 
-  public = [ "//third_party/skia/include/third_party/skcms/skcms.h" ]
-  include_dirs = [ "//third_party/skia/include/third_party/skcms" ]
-  sources =
-      rebase_path(skcms_sources, ".", "//third_party/skia/third_party/skcms")
+  public =
+      rebase_path(skcms_public_headers, ".", "//third_party/skia/modules/skcms")
+  sources = rebase_path(skcms_sources, ".", "//third_party/skia/modules/skcms")
 }
 
 component("skia") {
