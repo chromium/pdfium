@@ -14,6 +14,10 @@ default_args = {
 
   # Turns on compiler optimizations in V8 in Debug build.
   v8_optimized_debug = true
+
+  # PDFium is currently incompatible with the V8 Sandbox.
+  # See https://crbug.com/v8/13014 for details.
+  v8_enable_sandbox = false
 }
 
 no_check_targets = [
