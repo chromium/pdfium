@@ -401,8 +401,8 @@ TEST_F(FPDFProgressiveRenderEmbedderTest,
                                  kContentWithHighlightFillChecksum);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+// TODO(crbug.com/pdfium/1847): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_)
 #define MAYBE_RenderHighlightWithColorSchemeAndConvertFillToStroke \
   DISABLED_RenderHighlightWithColorSchemeAndConvertFillToStroke
 #else
@@ -417,13 +417,19 @@ TEST_F(FPDFProgressiveRenderEmbedderTest,
   // Note: The stroke color rendered for highlight is different from the normal
   // path since highlights have Multiply blend mode, while the other path has
   // Normal blend mode.
+
+#if defined(_SKIA_SUPPORT_PATHS_)
+  static constexpr char kMD5ContentWithHighlight[] =
+      "eff6eef2409ef5fbf4612bf6af42e0a0";
+#else
 #if BUILDFLAG(IS_APPLE)
   static constexpr char kMD5ContentWithHighlight[] =
       "8837bea0b3520164b1784e513c882a2d";
 #else
   static constexpr char kMD5ContentWithHighlight[] =
       "3dd8c02f5c06bac85e0d2c8bf37d1dc4";
-#endif
+#endif  // BUILDFLAG(IS_APPLE)
+#endif  // defined(_SKIA_SUPPORT_PATHS_)
 
   ASSERT_TRUE(OpenDocument("annotation_highlight_square_with_ap.pdf"));
 
