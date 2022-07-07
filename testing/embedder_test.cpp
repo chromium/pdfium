@@ -28,12 +28,6 @@
 #include "third_party/base/notreached.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
-#ifdef PDF_ENABLE_V8
-#include "testing/v8_test_environment.h"
-#include "v8/include/v8-platform.h"
-#include "v8/include/v8.h"
-#endif  // PDF_ENABLE_V8
-
 namespace {
 
 int GetBitmapBytesPerPixel(FPDF_BITMAP bitmap) {

@@ -11,7 +11,8 @@
 #include "testing/utils/path_service.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "v8/include/libplatform/libplatform.h"
-#include "v8/include/v8.h"
+#include "v8/include/v8-initialization.h"
+#include "v8/include/v8-snapshot.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "v8/include/cppgc/platform.h"

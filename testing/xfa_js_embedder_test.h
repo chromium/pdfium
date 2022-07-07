@@ -9,7 +9,9 @@
 
 #include "core/fxcrt/string_view_template.h"
 #include "testing/js_embedder_test.h"
-#include "v8/include/v8.h"
+#include "v8/include/v8-local-handle.h"
+#include "v8/include/v8-persistent-handle.h"
+#include "v8/include/v8-value.h"
 
 class CFXJSE_Engine;
 class CXFA_Document;

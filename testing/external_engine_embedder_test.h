@@ -8,7 +8,8 @@
 #include <memory>
 
 #include "testing/js_embedder_test.h"
-#include "v8/include/v8.h"
+#include "v8/include/v8-context.h"
+#include "v8/include/v8-local-handle.h"
 
 class CFXJS_Engine;
 

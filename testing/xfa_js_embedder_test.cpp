@@ -15,6 +15,9 @@
 #include "fxjs/xfa/cfxjse_value.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/check_op.h"
+#include "v8/include/v8-container.h"
+#include "v8/include/v8-local-handle.h"
+#include "v8/include/v8-value.h"
 
 XFAJSEmbedderTest::XFAJSEmbedderTest() = default;
 

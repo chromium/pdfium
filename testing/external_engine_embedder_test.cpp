@@ -8,6 +8,9 @@
 
 #include "fxjs/cfxjs_engine.h"
 #include "testing/v8_test_environment.h"
+#include "v8/include/v8-context.h"
+#include "v8/include/v8-isolate.h"
+#include "v8/include/v8-local-handle.h"
 
 ExternalEngineEmbedderTest::ExternalEngineEmbedderTest() = default;
 

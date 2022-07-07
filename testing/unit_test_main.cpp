@@ -9,8 +9,6 @@
 
 #ifdef PDF_ENABLE_V8
 #include "testing/v8_test_environment.h"
-#include "v8/include/v8-platform.h"
-#include "v8/include/v8.h"
 #ifdef PDF_ENABLE_XFA
 #include "testing/xfa_test_environment.h"
 #endif  // PDF_ENABLE_XFA

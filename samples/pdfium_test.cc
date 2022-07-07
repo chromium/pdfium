@@ -58,7 +58,10 @@
 #ifdef PDF_ENABLE_V8
 #include "testing/v8_initializer.h"
 #include "v8/include/libplatform/libplatform.h"
-#include "v8/include/v8.h"
+#include "v8/include/v8-array-buffer.h"
+#include "v8/include/v8-isolate.h"
+#include "v8/include/v8-platform.h"
+#include "v8/include/v8-snapshot.h"
 #endif  // PDF_ENABLE_V8
 
 #ifdef _WIN32

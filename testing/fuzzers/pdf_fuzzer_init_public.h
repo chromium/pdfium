@@ -12,11 +12,18 @@
 
 #ifdef PDF_ENABLE_V8
 #include "fxjs/cfx_v8.h"
-#include "v8/include/v8-platform.h"
-#include "v8/include/v8.h"
+#include "v8/include/v8-array-buffer.h"
+#include "v8/include/v8-snapshot.h"
 #endif  // PDF_ENABLE_V8
 
 class XFAProcessState;
+
+#ifdef PDF_ENABLE_V8
+namespace v8 {
+class Isolate;
+class Platform;
+}  // namespace v8
+#endif  // PDF_ENABLE_V8
 
 // Initializes the library once for all runs of the fuzzer.
 class PDFFuzzerInitPublic {

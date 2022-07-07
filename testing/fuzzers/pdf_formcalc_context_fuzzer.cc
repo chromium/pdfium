@@ -13,7 +13,6 @@
 #include "fxjs/xfa/cfxjse_value.h"
 #include "public/fpdf_formfill.h"
 #include "testing/fuzzers/pdfium_fuzzer_helper.h"
-#include "v8/include/v8.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 
 namespace {

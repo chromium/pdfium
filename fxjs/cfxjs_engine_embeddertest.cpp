@@ -6,6 +6,11 @@
 
 #include "testing/external_engine_embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "v8/include/v8-context.h"
+#include "v8/include/v8-isolate.h"
+#include "v8/include/v8-local-handle.h"
+#include "v8/include/v8-object.h"
+#include "v8/include/v8-value.h"
 
 namespace {
 

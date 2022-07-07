@@ -11,8 +11,9 @@
 #include "testing/v8_initializer.h"
 #include "third_party/base/check.h"
 #include "v8/include/libplatform/libplatform.h"
+#include "v8/include/v8-isolate.h"
 #include "v8/include/v8-platform.h"
-#include "v8/include/v8.h"
+#include "v8/include/v8-snapshot.h"
 
 namespace {
 
