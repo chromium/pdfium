@@ -24,6 +24,7 @@ source_set("fxge") {
     "cfx_cliprgn.h",
     "cfx_color.cpp",
     "cfx_color.h",
+    "cfx_defaultrenderdevice.cpp",
     "cfx_defaultrenderdevice.h",
     "cfx_drawutils.cpp",
     "cfx_drawutils.h",

@@ -235,8 +235,7 @@ FPDFImageObj_GetRenderedBitmap(FPDF_DOCUMENT document,
       optional_page ? optional_page->GetMutablePageResources() : nullptr;
   CPDF_RenderContext context(doc, page_resources.Get(), /*pPageCache=*/nullptr);
   CFX_DefaultRenderDevice device;
-  device.Attach(result_bitmap, /*bRgbByteOrder=*/false,
-                /*pBackdropBitmap=*/nullptr, /*bGroupKnockout=*/false);
+  device.Attach(result_bitmap);
   CPDF_RenderStatus status(&context, &device);
   CPDF_ImageRenderer renderer;
 

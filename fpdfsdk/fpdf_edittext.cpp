@@ -636,8 +636,7 @@ FPDFTextObj_GetRenderedBitmap(FPDF_DOCUMENT document,
   render_context_ptr->m_pContext = std::make_unique<CPDF_RenderContext>(
       doc, page_resources.Get(), /*pPageCache=*/nullptr);
 
-  device_ptr->Attach(result_bitmap, /*bRgbByteOrder=*/false,
-                     /*pBackdropBitmap=*/nullptr, /*bGroupKnockout=*/false);
+  device_ptr->Attach(result_bitmap);
 
   CFX_Matrix device_matrix(rect.Width(), 0, 0, rect.Height(), 0, 0);
   CPDF_RenderStatus status(render_context_ptr->m_pContext.get(), device_ptr);

@@ -1424,7 +1424,7 @@ CFX_DefaultRenderDevice::CFX_DefaultRenderDevice() = default;
 
 CFX_DefaultRenderDevice::~CFX_DefaultRenderDevice() = default;
 
-bool CFX_DefaultRenderDevice::Attach(
+bool CFX_DefaultRenderDevice::AttachImpl(
     const RetainPtr<CFX_DIBitmap>& pBitmap,
     bool bRgbByteOrder,
     const RetainPtr<CFX_DIBitmap>& pBackdropBitmap,

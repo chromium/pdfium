@@ -2764,7 +2764,7 @@ SkPictureRecorder* CFX_DefaultRenderDevice::CreateRecorder(int size_x,
 }
 #endif  // defined(_SKIA_SUPPORT_)
 
-bool CFX_DefaultRenderDevice::Attach(
+bool CFX_DefaultRenderDevice::AttachImpl(
     const RetainPtr<CFX_DIBitmap>& pBitmap,
     bool bRgbByteOrder,
     const RetainPtr<CFX_DIBitmap>& pBackdropBitmap,

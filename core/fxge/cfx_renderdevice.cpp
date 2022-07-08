@@ -775,7 +775,8 @@ bool CFX_RenderDevice::DrawFillStrokePath(
     backdrop->Copy(bitmap);
   }
   CFX_DefaultRenderDevice bitmap_device;
-  bitmap_device.Attach(bitmap, false, backdrop, true);
+  bitmap_device.AttachWithBackdropAndGroupKnockout(bitmap, backdrop,
+                                                   /*bGroupKnockout=*/true);
 
   CFX_Matrix matrix;
   if (pObject2Device)

@@ -262,7 +262,7 @@ void CFGAS_GEGraphics::FillPathWithPattern(
   const FX_RECT rect = rectf.ToRoundedFxRect();
 
   CFX_DefaultRenderDevice device;
-  device.Attach(bmp, false, nullptr, false);
+  device.Attach(bmp);
   device.FillRect(rect, m_info.fillColor.GetPattern()->GetBackArgb());
   for (int32_t j = rect.bottom; j < rect.top; j += mask->GetHeight()) {
     for (int32_t i = rect.left; i < rect.right; i += mask->GetWidth()) {

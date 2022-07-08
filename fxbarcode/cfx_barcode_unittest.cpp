@@ -27,7 +27,7 @@ class BarcodeTest : public testing::Test {
     if (bitmap->Create(640, 480, FXDIB_Format::kRgb32))
       bitmap_ = bitmap;
     ASSERT_TRUE(bitmap_);
-    ASSERT_TRUE(device->Attach(bitmap_, false, nullptr, false));
+    ASSERT_TRUE(device->Attach(bitmap_));
     device_ = std::move(device);
   }
 

@@ -18,10 +18,13 @@ class CFX_DefaultRenderDevice final : public CFX_RenderDevice {
   CFX_DefaultRenderDevice();
   ~CFX_DefaultRenderDevice() override;
 
-  bool Attach(const RetainPtr<CFX_DIBitmap>& pBitmap,
-              bool bRgbByteOrder,
-              const RetainPtr<CFX_DIBitmap>& pBackdropBitmap,
-              bool bGroupKnockout);
+  bool Attach(const RetainPtr<CFX_DIBitmap>& pBitmap);
+  bool AttachWithRgbByteOrder(const RetainPtr<CFX_DIBitmap>& pBitmap,
+                              bool bRgbByteOrder);
+  bool AttachWithBackdropAndGroupKnockout(
+      const RetainPtr<CFX_DIBitmap>& pBitmap,
+      const RetainPtr<CFX_DIBitmap>& pBackdropBitmap,
+      bool bGroupKnockout);
   bool Create(int width,
               int height,
               FXDIB_Format format,
@@ -39,6 +42,12 @@ class CFX_DefaultRenderDevice final : public CFX_RenderDevice {
                        int bitmap_alpha,
                        BlendMode blend_type) override;
 #endif
+
+ private:
+  bool AttachImpl(const RetainPtr<CFX_DIBitmap>& pBitmap,
+                  bool bRgbByteOrder,
+                  const RetainPtr<CFX_DIBitmap>& pBackdropBitmap,
+                  bool bGroupKnockout);
 };
 
 #endif  // CORE_FXGE_CFX_DEFAULTRENDERDEVICE_H_

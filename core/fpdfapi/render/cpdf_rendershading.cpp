@@ -786,7 +786,7 @@ void DrawCoonPatchMeshes(
          type == kTensorProductPatchMeshShading);
 
   CFX_DefaultRenderDevice device;
-  device.Attach(pBitmap, false, nullptr, false);
+  device.Attach(pBitmap);
   CPDF_MeshStream stream(type, funcs, pShadingStream, pCS);
   if (!stream.Load())
     return;

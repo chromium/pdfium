@@ -132,7 +132,7 @@ void Harness(void (*Test)(CFX_SkiaDeviceDriver*, const State&),
   FPDFBitmap_FillRect(bitmap.get(), 0, 0, kWidth, kHeight, 0x00000000);
   CFX_DefaultRenderDevice device;
   RetainPtr<CFX_DIBitmap> pBitmap(CFXDIBitmapFromFPDFBitmap(bitmap.get()));
-  device.Attach(pBitmap, false, nullptr, false);
+  device.Attach(pBitmap);
   auto* driver = static_cast<CFX_SkiaDeviceDriver*>(device.GetDeviceDriver());
   (*Test)(driver, state);
   driver->Flush();
