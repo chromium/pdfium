@@ -41,8 +41,7 @@ void CFWL_WidgetTP::DrawText(const CFWL_ThemeText& pParams) {
   CFX_Matrix matrix = pParams.m_matrix;
   matrix.Concat(*pGraphics->GetMatrix());
   m_pTextOut->SetMatrix(matrix);
-  m_pTextOut->DrawLogicText(pGraphics->GetRenderDevice(),
-                            pParams.m_wsText.AsStringView(),
+  m_pTextOut->DrawLogicText(pGraphics->GetRenderDevice(), pParams.m_wsText,
                             pParams.m_PartRect);
 }
 
