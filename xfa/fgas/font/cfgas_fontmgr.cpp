@@ -650,7 +650,7 @@ bool CFGAS_FontMgr::EnumFontsFromFontMapper() {
 
     WideString wsFaceName =
         WideString::FromDefANSI(pFontMapper->GetFaceName(i).AsStringView());
-    RegisterFaces(pFontStream, &wsFaceName);
+    RegisterFaces(pFontStream, wsFaceName);
   }
 
   return !m_InstalledFonts.empty();
@@ -723,7 +723,7 @@ std::vector<CFGAS_FontDescriptorInfo> CFGAS_FontMgr::MatchFonts(
 }
 
 void CFGAS_FontMgr::RegisterFace(RetainPtr<CFX_Face> pFace,
-                                 const WideString* pFaceName) {
+                                 const WideString& wsFaceName) {
   if ((pFace->GetRec()->face_flags & FT_FACE_FLAG_SCALABLE) == 0)
     return;
 
@@ -747,10 +747,7 @@ void CFGAS_FontMgr::RegisterFace(RetainPtr<CFX_Face> pFace,
   pFont->m_wsFamilyNames = GetNames(table);
   pFont->m_wsFamilyNames.push_back(
       WideString::FromUTF8(pFace->GetRec()->family_name));
-  pFont->m_wsFaceName =
-      pFaceName
-          ? *pFaceName
-          : WideString::FromDefANSI(FT_Get_Postscript_Name(pFace->GetRec()));
+  pFont->m_wsFaceName = wsFaceName;
   pFont->m_nFaceIndex =
       pdfium::base::checked_cast<int32_t>(pFace->GetRec()->face_index);
   m_InstalledFonts.push_back(std::move(pFont));
@@ -758,7 +755,7 @@ void CFGAS_FontMgr::RegisterFace(RetainPtr<CFX_Face> pFace,
 
 void CFGAS_FontMgr::RegisterFaces(
     const RetainPtr<IFX_SeekableReadStream>& pFontStream,
-    const WideString* pFaceName) {
+    const WideString& wsFaceName) {
   int32_t index = 0;
   int32_t num_faces = 0;
   do {
@@ -770,7 +767,7 @@ void CFGAS_FontMgr::RegisterFaces(
       num_faces =
           pdfium::base::checked_cast<int32_t>(pFace->GetRec()->num_faces);
     }
-    RegisterFace(pFace, pFaceName);
+    RegisterFace(pFace, wsFaceName);
     if (FXFT_Get_Face_External_Stream(pFace->GetRec()))
       FXFT_Clear_Face_External_Stream(pFace->GetRec());
   } while (index < num_faces);
