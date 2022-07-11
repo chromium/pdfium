@@ -39,7 +39,6 @@ class CFGAS_BreakPiece {
   int32_t m_iFontSize = 0;
   int32_t m_iHorizontalScale = 100;
   int32_t m_iVerticalScale = 100;
-  uint32_t m_dwIdentity = 0;
   uint32_t m_dwCharStyles = 0;
   UnownedPtr<std::vector<CFGAS_Char>> m_pChars;
   RetainPtr<CFGAS_TextUserData> m_pUserData;
