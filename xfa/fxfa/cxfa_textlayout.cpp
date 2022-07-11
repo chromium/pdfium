@@ -1029,7 +1029,7 @@ void CXFA_TextLayout::AppendTextLine(CFGAS_Char::BreakType dwStatus,
     int32_t i = 0;
     for (i = 0; i < iPieces; i++) {
       const CFGAS_BreakPiece* pPiece = m_pBreak->GetBreakPieceUnstable(i);
-      CFGAS_TextUserData* pUserData = pPiece->m_pUserData.Get();
+      const CFGAS_TextUserData* pUserData = pPiece->GetUserData();
       if (pUserData)
         pStyle = pUserData->m_pStyle;
       float fVerScale = pPiece->m_iVerticalScale / 100.0f;
@@ -1084,7 +1084,7 @@ void CXFA_TextLayout::AppendTextLine(CFGAS_Char::BreakType dwStatus,
     float fLineWidth = 0;
     for (int32_t i = 0; i < iPieces; i++) {
       const CFGAS_BreakPiece* pPiece = m_pBreak->GetBreakPieceUnstable(i);
-      CFGAS_TextUserData* pUserData = pPiece->m_pUserData.Get();
+      const CFGAS_TextUserData* pUserData = pPiece->GetUserData();
       if (pUserData)
         pStyle = pUserData->m_pStyle;
       float fVerScale = pPiece->m_iVerticalScale / 100.0f;

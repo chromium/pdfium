@@ -383,7 +383,7 @@ bool CFGAS_RTFBreak::EndBreakSplitLine(CFGAS_BreakLine* pNextLine,
       tp.m_iHorizontalScale = pTC->horizonal_scale();
       tp.m_iVerticalScale = pTC->vertical_scale();
       dwIdentity = pTC->m_dwIdentity;
-      tp.m_pUserData = pTC->m_pUserData;
+      tp.SetUserData(pTC->m_pUserData);
       j = i;
       bNew = false;
     }
@@ -455,7 +455,7 @@ std::deque<CFGAS_Break::TPO> CFGAS_RTFBreak::EndBreakBidiLine(
       tp.m_iHorizontalScale = pTC->horizonal_scale();
       tp.m_iVerticalScale = pTC->vertical_scale();
       dwIdentity = pTC->m_dwIdentity;
-      tp.m_pUserData = pTC->m_pUserData;
+      tp.SetUserData(pTC->m_pUserData);
       tp.m_dwStatus = CFGAS_Char::BreakType::kPiece;
       ++i;
     } else if (iBidiLevel != pTC->m_iBidiLevel ||

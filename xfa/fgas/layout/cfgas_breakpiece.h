@@ -29,6 +29,11 @@ class CFGAS_BreakPiece {
   WideString GetString() const;
   std::vector<int32_t> GetWidths() const;
 
+  const CFGAS_TextUserData* GetUserData() const { return m_pUserData.Get(); }
+  void SetUserData(const RetainPtr<CFGAS_TextUserData>& user_data) {
+    m_pUserData = user_data;
+  }
+
   CFGAS_Char::BreakType m_dwStatus = CFGAS_Char::BreakType::kPiece;
   int32_t m_iStartPos = 0;
   int32_t m_iWidth = -1;
@@ -41,6 +46,8 @@ class CFGAS_BreakPiece {
   int32_t m_iVerticalScale = 100;
   uint32_t m_dwCharStyles = 0;
   UnownedPtr<std::vector<CFGAS_Char>> m_pChars;
+
+ private:
   RetainPtr<CFGAS_TextUserData> m_pUserData;
 };
 
