@@ -640,28 +640,20 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
   RetainPtr<CFGAS_GEFont> pFont = run.pFont;
   Mask<LayoutStyle> dwStyles = run.dwStyles;
   CFX_RectF rtText(*run.pRect);
-  bool bRTLPiece = (run.dwCharStyles & FX_TXTCHARSTYLE_OddBidiLevel) != 0;
-  float fFontSize = run.fFontSize;
-  int32_t iFontSize = FXSYS_roundf(fFontSize * 20.0f);
-  int32_t iAscent = pFont->GetAscent();
-  int32_t iDescent = pFont->GetDescent();
-  int32_t iMaxHeight = iAscent - iDescent;
-  float fFontHeight = fFontSize;
-  float fAscent = fFontHeight * iAscent / iMaxHeight;
-  float fX = rtText.left;
-  float fY;
-  float fCharWidth;
+  const bool bRTLPiece = (run.dwCharStyles & FX_TXTCHARSTYLE_OddBidiLevel) != 0;
+  const float fFontSize = run.fFontSize;
+  const int32_t iFontSize = FXSYS_roundf(fFontSize * 20.0f);
+  const int32_t iAscent = pFont->GetAscent();
+  const int32_t iDescent = pFont->GetDescent();
+  const int32_t iMaxHeight = iAscent - iDescent;
+  const float fAscent = iMaxHeight ? fFontSize * iAscent / iMaxHeight : 0;
   int32_t iHorScale = run.iHorizontalScale;
   int32_t iVerScale = run.iVerticalScale;
   bool bSkipSpace = run.bSkipSpace;
-  FX_FORMCHAR formChars[3];
-  float fYBase;
 
-  if (bRTLPiece)
-    fX = rtText.right();
-
-  fYBase = rtText.top + (rtText.height - fFontSize) / 2.0f;
-  fY = fYBase + fAscent;
+  const float fYBase = rtText.top + (rtText.height - fFontSize) / 2.0f;
+  float fX = bRTLPiece ? rtText.right() : rtText.left;
+  float fY = fYBase + fAscent;
 
   size_t szCount = 0;
   int32_t iNext = 0;
@@ -792,6 +784,7 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
       iCharWidth = -iCharWidth;
 
     iCharWidth /= iFontSize;
+    FX_FORMCHAR formChars[3];
     formChars[0].wch = wch;
     formChars[0].wForm = wForm;
     formChars[0].iWidth = iCharWidth;
@@ -821,7 +814,7 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
         pCharPos->m_FontCharWidth = iCharWidth;
       }
 
-      fCharWidth = fFontSize * iCharWidth / 1000.0f;
+      const float fCharWidth = fFontSize * iCharWidth / 1000.0f;
       if (bRTLPiece && chartype != FX_CHARTYPE::kCombination)
         fX -= fCharWidth;
 

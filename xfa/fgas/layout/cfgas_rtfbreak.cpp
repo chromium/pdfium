@@ -710,18 +710,16 @@ size_t CFGAS_RTFBreak::GetDisplayPos(const CFGAS_TextPiece* pPiece,
 
   RetainPtr<CFGAS_GEFont> pFont = pPiece->pFont;
   CFX_RectF rtText(pPiece->rtPiece);
-  bool bRTLPiece = FX_IsOdd(pPiece->iBidiLevel);
-  float fFontSize = pPiece->fFontSize;
-  int32_t iFontSize = FXSYS_roundf(fFontSize * 20.0f);
+  const bool bRTLPiece = FX_IsOdd(pPiece->iBidiLevel);
+  const float fFontSize = pPiece->fFontSize;
+  const int32_t iFontSize = FXSYS_roundf(fFontSize * 20.0f);
   if (iFontSize == 0)
     return 0;
 
-  int32_t iAscent = pFont->GetAscent();
-  int32_t iDescent = pFont->GetDescent();
-  int32_t iMaxHeight = iAscent - iDescent;
-  float fFontHeight = fFontSize;
-  float fAscent = fFontHeight * static_cast<float>(iAscent) /
-                  static_cast<float>(iMaxHeight);
+  const int32_t iAscent = pFont->GetAscent();
+  const int32_t iDescent = pFont->GetDescent();
+  const int32_t iMaxHeight = iAscent - iDescent;
+  const float fAscent = iMaxHeight ? fFontSize * iAscent / iMaxHeight : 0;
   wchar_t wPrev = pdfium::unicode::kZeroWidthNoBreakSpace;
   wchar_t wNext;
   float fX = rtText.left;
