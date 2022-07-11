@@ -1072,7 +1072,7 @@ void CFDE_TextEditEngine::RebuildPieces() {
       txtEdtPiece.rtPiece.height = line_spacing_;
       txtEdtPiece.nStart =
           pdfium::base::checked_cast<int32_t>(current_piece_start);
-      txtEdtPiece.nCount = piece->GetLength();
+      txtEdtPiece.nCount = piece->GetCharCount();
       txtEdtPiece.nBidiLevel = piece->GetBidiLevel();
       txtEdtPiece.dwCharStyles = piece->GetCharStyles();
       if (FX_IsOdd(piece->GetBidiLevel()))

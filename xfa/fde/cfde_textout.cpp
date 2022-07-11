@@ -372,10 +372,10 @@ bool CFDE_TextOut::RetrievePieces(CFGAS_Char::BreakType dwBreakStatus,
   int32_t iCount = m_pTxtBreak->CountBreakPieces();
   for (int32_t i = 0; i < iCount; i++) {
     const CFGAS_BreakPiece* pPiece = m_pTxtBreak->GetBreakPieceUnstable(i);
-    int32_t iPieceChars = pPiece->GetLength();
+    size_t iPieceChars = pPiece->GetLength();
     size_t iChar = *pStartChar;
     int32_t iWidth = 0;
-    int32_t j = 0;
+    size_t j = 0;
     for (; j < iPieceChars; j++) {
       const CFGAS_Char* pTC = pPiece->GetChar(j);
       int32_t iCurCharWidth = std::max(pTC->m_iCharWidth, 0);
