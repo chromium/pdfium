@@ -1032,15 +1032,15 @@ void CXFA_TextLayout::AppendTextLine(CFGAS_Char::BreakType dwStatus,
       const CFGAS_TextUserData* pUserData = pPiece->GetUserData();
       if (pUserData)
         pStyle = pUserData->m_pStyle;
-      float fVerScale = pPiece->m_iVerticalScale / 100.0f;
+      float fVerScale = pPiece->GetVerticalScale() / 100.0f;
 
       auto pTP = std::make_unique<TextPiece>();
-      pTP->iChars = pPiece->m_iCharCount;
+      pTP->iChars = pPiece->GetCharCount();
       pTP->szText = pPiece->GetString();
       pTP->Widths = pPiece->GetWidths();
-      pTP->iBidiLevel = pPiece->m_iBidiLevel;
-      pTP->iHorScale = pPiece->m_iHorizontalScale;
-      pTP->iVerScale = pPiece->m_iVerticalScale;
+      pTP->iBidiLevel = pPiece->GetBidiLevel();
+      pTP->iHorScale = pPiece->GetHorizontalScale();
+      pTP->iVerScale = pPiece->GetVerticalScale();
       pTP->iUnderline =
           m_pTextParser->GetUnderline(m_pTextProvider, pStyle.Get());
       pTP->iPeriod =
@@ -1052,10 +1052,10 @@ void CXFA_TextLayout::AppendTextLine(CFGAS_Char::BreakType dwStatus,
           m_pTextParser->GetFont(m_pDoc.Get(), m_pTextProvider, pStyle.Get());
       pTP->fFontSize =
           m_pTextParser->GetFontSize(m_pTextProvider, pStyle.Get());
-      pTP->rtPiece.left = pPiece->m_iStartPos / 20000.0f;
-      pTP->rtPiece.width = pPiece->m_iWidth / 20000.0f;
+      pTP->rtPiece.left = pPiece->GetStartPos() / 20000.0f;
+      pTP->rtPiece.width = pPiece->GetWidth() / 20000.0f;
       pTP->rtPiece.height =
-          static_cast<float>(pPiece->m_iFontSize) * fVerScale / 20.0f;
+          static_cast<float>(pPiece->GetFontSize()) * fVerScale / 20.0f;
       float fBaseLineTemp =
           m_pTextParser->GetBaseline(m_pTextProvider, pStyle.Get());
       pTP->rtPiece.top = fBaseLineTemp;
@@ -1087,7 +1087,7 @@ void CXFA_TextLayout::AppendTextLine(CFGAS_Char::BreakType dwStatus,
       const CFGAS_TextUserData* pUserData = pPiece->GetUserData();
       if (pUserData)
         pStyle = pUserData->m_pStyle;
-      float fVerScale = pPiece->m_iVerticalScale / 100.0f;
+      float fVerScale = pPiece->GetVerticalScale() / 100.0f;
       float fBaseLine =
           m_pTextParser->GetBaseline(m_pTextProvider, pStyle.Get());
       float fLineHeight = m_pTextParser->GetLineHeight(
@@ -1095,13 +1095,13 @@ void CXFA_TextLayout::AppendTextLine(CFGAS_Char::BreakType dwStatus,
       if (fBaseLine > 0) {
         float fLineHeightTmp =
             fBaseLine +
-            static_cast<float>(pPiece->m_iFontSize) * fVerScale / 20.0f;
+            static_cast<float>(pPiece->GetFontSize()) * fVerScale / 20.0f;
         if (fLineHeight < fLineHeightTmp) {
           fLineHeight = fLineHeightTmp;
         }
       }
       fLineStep = std::max(fLineStep, fLineHeight);
-      fLineWidth += pPiece->m_iWidth / 20000.0f;
+      fLineWidth += pPiece->GetWidth() / 20000.0f;
     }
     *pLinePos += fLineStep;
     m_fMaxWidth = std::max(m_fMaxWidth, fLineWidth);

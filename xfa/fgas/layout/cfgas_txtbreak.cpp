@@ -298,16 +298,16 @@ std::deque<CFGAS_Break::TPO> CFGAS_TxtBreak::EndBreakBidiLine(
   CFGAS_Char* pTC;
   std::vector<CFGAS_Char>& chars = m_pCurLine->m_LineChars;
   if (!m_pCurLine->HasArabicChar()) {
-    tp.m_dwStatus = dwStatus;
-    tp.m_iStartPos = m_pCurLine->m_iStart;
-    tp.m_iWidth = m_pCurLine->m_iWidth;
-    tp.m_iStartChar = 0;
-    tp.m_iCharCount = fxcrt::CollectionSize<int32_t>(m_pCurLine->m_LineChars);
-    tp.m_pChars = &m_pCurLine->m_LineChars;
+    tp.SetStatus(dwStatus);
+    tp.SetStartPos(m_pCurLine->m_iStart);
+    tp.SetWidth(m_pCurLine->m_iWidth);
+    tp.SetStartChar(0);
+    tp.SetCharCount(fxcrt::CollectionSize<int32_t>(m_pCurLine->m_LineChars));
+    tp.SetChars(&m_pCurLine->m_LineChars);
     pTC = &chars[0];
-    tp.m_dwCharStyles = pTC->m_dwCharStyles;
-    tp.m_iHorizontalScale = pTC->horizonal_scale();
-    tp.m_iVerticalScale = pTC->vertical_scale();
+    tp.SetCharStyles(pTC->m_dwCharStyles);
+    tp.SetHorizontalScale(pTC->horizonal_scale());
+    tp.SetVerticalScale(pTC->vertical_scale());
     m_pCurLine->m_LinePieces.push_back(tp);
     tpos.push_back({0, 0});
     return tpos;
@@ -324,9 +324,9 @@ std::deque<CFGAS_Break::TPO> CFGAS_TxtBreak::EndBreakBidiLine(
   }
   CFGAS_Char::BidiLine(&chars, iBidiNum + 1);
 
-  tp.m_dwStatus = CFGAS_Char::BreakType::kPiece;
-  tp.m_iStartPos = m_pCurLine->m_iStart;
-  tp.m_pChars = &m_pCurLine->m_LineChars;
+  tp.SetStatus(CFGAS_Char::BreakType::kPiece);
+  tp.SetStartPos(m_pCurLine->m_iStart);
+  tp.SetChars(&m_pCurLine->m_LineChars);
   int32_t iBidiLevel = -1;
   int32_t iCharWidth;
   int32_t i = 0;
@@ -336,43 +336,43 @@ std::deque<CFGAS_Break::TPO> CFGAS_TxtBreak::EndBreakBidiLine(
     pTC = &chars[i];
     if (iBidiLevel < 0) {
       iBidiLevel = pTC->m_iBidiLevel;
-      tp.m_iWidth = 0;
-      tp.m_iBidiLevel = iBidiLevel;
-      tp.m_iBidiPos = pTC->m_iBidiOrder;
-      tp.m_dwCharStyles = pTC->m_dwCharStyles;
-      tp.m_iHorizontalScale = pTC->horizonal_scale();
-      tp.m_iVerticalScale = pTC->vertical_scale();
-      tp.m_dwStatus = CFGAS_Char::BreakType::kPiece;
+      tp.SetWidth(0);
+      tp.SetBidiLevel(iBidiLevel);
+      tp.SetBidiPos(pTC->m_iBidiOrder);
+      tp.SetCharStyles(pTC->m_dwCharStyles);
+      tp.SetHorizontalScale(pTC->horizonal_scale());
+      tp.SetVerticalScale(pTC->vertical_scale());
+      tp.SetStatus(CFGAS_Char::BreakType::kPiece);
     }
     if (iBidiLevel != pTC->m_iBidiLevel ||
         pTC->m_dwStatus != CFGAS_Char::BreakType::kNone) {
       if (iBidiLevel == pTC->m_iBidiLevel) {
-        tp.m_dwStatus = pTC->m_dwStatus;
+        tp.SetStatus(pTC->m_dwStatus);
         iCharWidth = pTC->m_iCharWidth;
         if (iCharWidth > 0)
-          tp.m_iWidth += iCharWidth;
+          tp.IncrementWidth(iCharWidth);
 
         i++;
       }
-      tp.m_iCharCount = i - tp.m_iStartChar;
+      tp.SetCharCount(i - tp.GetStartChar());
       m_pCurLine->m_LinePieces.push_back(tp);
-      tp.m_iStartPos += tp.m_iWidth;
-      tp.m_iStartChar = i;
-      tpos.push_back({++j, tp.m_iBidiPos});
+      tp.IncrementStartPos(tp.GetWidth());
+      tp.SetStartChar(i);
+      tpos.push_back({++j, tp.GetBidiPos()});
       iBidiLevel = -1;
     } else {
       iCharWidth = pTC->m_iCharWidth;
       if (iCharWidth > 0)
-        tp.m_iWidth += iCharWidth;
+        tp.IncrementWidth(iCharWidth);
 
       i++;
     }
   }
-  if (i > tp.m_iStartChar) {
-    tp.m_dwStatus = dwStatus;
-    tp.m_iCharCount = i - tp.m_iStartChar;
+  if (i > tp.GetStartChar()) {
+    tp.SetStatus(dwStatus);
+    tp.SetCharCount(i - tp.GetStartChar());
     m_pCurLine->m_LinePieces.push_back(tp);
-    tpos.push_back({++j, tp.m_iBidiPos});
+    tpos.push_back({++j, tp.GetBidiPos()});
   }
   if (j > -1) {
     if (j > 0) {
@@ -380,11 +380,11 @@ std::deque<CFGAS_Break::TPO> CFGAS_TxtBreak::EndBreakBidiLine(
       int32_t iStartPos = 0;
       for (i = 0; i <= j; i++) {
         CFGAS_BreakPiece& ttp = m_pCurLine->m_LinePieces[tpos[i].index];
-        ttp.m_iStartPos = iStartPos;
-        iStartPos += ttp.m_iWidth;
+        ttp.SetStartPos(iStartPos);
+        iStartPos += ttp.GetWidth();
       }
     }
-    m_pCurLine->m_LinePieces[j].m_dwStatus = dwStatus;
+    m_pCurLine->m_LinePieces[j].SetStatus(dwStatus);
   }
   return tpos;
 }
@@ -400,9 +400,9 @@ void CFGAS_TxtBreak::EndBreakAlignment(const std::deque<TPO>& tpos,
     if (!bFind)
       iNetWidth = ttp.GetEndPos();
 
-    bool bArabic = FX_IsOdd(ttp.m_iBidiLevel);
-    int32_t j = bArabic ? 0 : ttp.m_iCharCount - 1;
-    while (j > -1 && j < ttp.m_iCharCount) {
+    bool bArabic = FX_IsOdd(ttp.GetBidiLevel());
+    int32_t j = bArabic ? 0 : ttp.GetCharCount() - 1;
+    while (j > -1 && j < ttp.GetCharCount()) {
       const CFGAS_Char* pTC = ttp.GetChar(j);
       if (pTC->m_eLineBreakType == FX_LINEBREAKTYPE::kDIRECT_BRK)
         iGapChars++;
@@ -431,11 +431,11 @@ void CFGAS_TxtBreak::EndBreakAlignment(const std::deque<TPO>& tpos,
     for (auto& tpo : tpos) {
       CFGAS_BreakPiece& ttp = m_pCurLine->m_LinePieces[tpo.index];
       if (iStart < -1)
-        iStart = ttp.m_iStartPos;
+        iStart = ttp.GetStartPos();
       else
-        ttp.m_iStartPos = iStart;
+        ttp.SetStartPos(iStart);
 
-      for (int32_t j = 0; j < ttp.m_iCharCount && iGapChars > 0;
+      for (int32_t j = 0; j < ttp.GetCharCount() && iGapChars > 0;
            j++, iGapChars--) {
         CFGAS_Char* pTC = ttp.GetChar(j);
         if (pTC->m_eLineBreakType != FX_LINEBREAKTYPE::kDIRECT_BRK ||
@@ -444,10 +444,10 @@ void CFGAS_TxtBreak::EndBreakAlignment(const std::deque<TPO>& tpos,
         }
         int32_t k = iOffset / iGapChars;
         pTC->m_iCharWidth += k;
-        ttp.m_iWidth += k;
+        ttp.IncrementWidth(k);
         iOffset -= k;
       }
-      iStart += ttp.m_iWidth;
+      iStart += ttp.GetWidth();
     }
   } else if (m_iAlignment & CFX_TxtLineAlignment_Center ||
              m_iAlignment & CFX_TxtLineAlignment_Right) {
@@ -457,7 +457,7 @@ void CFGAS_TxtBreak::EndBreakAlignment(const std::deque<TPO>& tpos,
     }
     if (iOffset > 0) {
       for (auto& ttp : m_pCurLine->m_LinePieces)
-        ttp.m_iStartPos += iOffset;
+        ttp.IncrementStartPos(iOffset);
     }
   }
 }
@@ -467,8 +467,8 @@ CFGAS_Char::BreakType CFGAS_TxtBreak::EndBreak(CFGAS_Char::BreakType dwStatus) {
 
   if (!m_pCurLine->m_LinePieces.empty()) {
     if (dwStatus != CFGAS_Char::BreakType::kPiece)
-      m_pCurLine->m_LinePieces.back().m_dwStatus = dwStatus;
-    return m_pCurLine->m_LinePieces.back().m_dwStatus;
+      m_pCurLine->m_LinePieces.back().SetStatus(dwStatus);
+    return m_pCurLine->m_LinePieces.back().GetStatus();
   }
 
   if (HasLine()) {
@@ -476,8 +476,8 @@ CFGAS_Char::BreakType CFGAS_TxtBreak::EndBreak(CFGAS_Char::BreakType dwStatus) {
       return CFGAS_Char::BreakType::kNone;
 
     if (dwStatus != CFGAS_Char::BreakType::kPiece)
-      m_Lines[m_iReadyLineIndex].m_LinePieces.back().m_dwStatus = dwStatus;
-    return m_Lines[m_iReadyLineIndex].m_LinePieces.back().m_dwStatus;
+      m_Lines[m_iReadyLineIndex].m_LinePieces.back().SetStatus(dwStatus);
+    return m_Lines[m_iReadyLineIndex].m_LinePieces.back().GetStatus();
   }
 
   if (m_pCurLine->m_LineChars.empty())

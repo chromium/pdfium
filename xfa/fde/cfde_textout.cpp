@@ -255,9 +255,9 @@ bool CFDE_TextOut::RetrieveLineWidth(CFGAS_Char::BreakType dwBreakStatus,
   float fLineWidth = 0.0f;
   for (int32_t i = 0; i < m_pTxtBreak->CountBreakPieces(); i++) {
     const CFGAS_BreakPiece* pPiece = m_pTxtBreak->GetBreakPieceUnstable(i);
-    fLineWidth += static_cast<float>(pPiece->m_iWidth) / 20000.0f;
+    fLineWidth += static_cast<float>(pPiece->GetWidth()) / 20000.0f;
     *pStartPos = std::min(*pStartPos,
-                          static_cast<float>(pPiece->m_iStartPos) / 20000.0f);
+                          static_cast<float>(pPiece->GetStartPos()) / 20000.0f);
   }
   m_pTxtBreak->ClearBreakPieces();
 
@@ -395,12 +395,12 @@ bool CFDE_TextOut::RetrievePieces(CFGAS_Char::BreakType dwBreakStatus,
       Piece piece;
       piece.start_char = *pStartChar;
       piece.char_count = j;
-      piece.char_styles = pPiece->m_dwCharStyles;
+      piece.char_styles = pPiece->GetCharStyles();
       piece.bounds = CFX_RectF(
-          rect.left + static_cast<float>(pPiece->m_iStartPos) / 20000.0f,
+          rect.left + static_cast<float>(pPiece->GetStartPos()) / 20000.0f,
           m_fLinePos, iWidth / 20000.0f, fLineStep);
 
-      if (FX_IsOdd(pPiece->m_iBidiLevel))
+      if (FX_IsOdd(pPiece->GetBidiLevel()))
         piece.char_styles |= FX_TXTCHARSTYLE_OddBidiLevel;
 
       AppendPiece(piece, bNeedReload, (bReload && i == iCount - 1));

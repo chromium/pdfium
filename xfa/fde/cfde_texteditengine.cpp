@@ -1066,16 +1066,16 @@ void CFDE_TextEditEngine::RebuildPieces() {
       const CFGAS_BreakPiece* piece = text_break_.GetBreakPieceUnstable(i);
 
       FDE_TEXTEDITPIECE txtEdtPiece;
-      txtEdtPiece.rtPiece.left = piece->m_iStartPos / 20000.0f;
+      txtEdtPiece.rtPiece.left = piece->GetStartPos() / 20000.0f;
       txtEdtPiece.rtPiece.top = current_line_start;
-      txtEdtPiece.rtPiece.width = piece->m_iWidth / 20000.0f;
+      txtEdtPiece.rtPiece.width = piece->GetWidth() / 20000.0f;
       txtEdtPiece.rtPiece.height = line_spacing_;
       txtEdtPiece.nStart =
           pdfium::base::checked_cast<int32_t>(current_piece_start);
       txtEdtPiece.nCount = piece->GetLength();
-      txtEdtPiece.nBidiLevel = piece->m_iBidiLevel;
-      txtEdtPiece.dwCharStyles = piece->m_dwCharStyles;
-      if (FX_IsOdd(piece->m_iBidiLevel))
+      txtEdtPiece.nBidiLevel = piece->GetBidiLevel();
+      txtEdtPiece.dwCharStyles = piece->GetCharStyles();
+      if (FX_IsOdd(piece->GetBidiLevel()))
         txtEdtPiece.dwCharStyles |= FX_TXTCHARSTYLE_OddBidiLevel;
 
       text_piece_info_.push_back(txtEdtPiece);
