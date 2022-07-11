@@ -341,6 +341,10 @@ FPDFText_GetCharIndexAtPos(FPDF_TEXTPAGE text_page,
 //          trailing terminator.
 // Comments:
 //          This function ignores characters without unicode information.
+//          It returns all characters on the page, even those that are not
+//          visible when the page has a cropbox. To filter out the characters
+//          outside of the cropbox, use FPDF_GetPageBoundingBox() and
+//          FPDFText_GetCharBox().
 //
 FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetText(FPDF_TEXTPAGE text_page,
                                                int start_index,
