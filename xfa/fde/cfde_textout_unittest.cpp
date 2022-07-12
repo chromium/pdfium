@@ -6,40 +6,42 @@
 
 #include <memory>
 
+#include "build/build_config.h"
 #include "core/fdrm/fx_crypt.h"
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_codepage.h"
+#include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/hash.h"
+#include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
-
-namespace {
-
-const char kEmptyImageChecksum[] = "a042237c5493fdb9656b94a83608d11a";
-
-}  // namespace
+#include "xfa/fgas/font/cfgas_gemodule.h"
 
 class CFDETextOutTest : public testing::Test {
  public:
+  CFDETextOutTest() = default;
+  ~CFDETextOutTest() override = default;
+
   void SetUp() override {
+    CFX_Size bitmap_size = GetBitmapSize();
     bitmap_ = pdfium::MakeRetain<CFX_DIBitmap>();
-    ASSERT_TRUE(bitmap_->Create(200, 100, FXDIB_Format::kArgb));
+    ASSERT_TRUE(bitmap_->Create(bitmap_size.width, bitmap_size.height,
+                                FXDIB_Format::kArgb));
 
     device_ = std::make_unique<CFX_DefaultRenderDevice>();
     device_->Attach(bitmap_);
 
-    const wchar_t kFontFamily[] = L"Arimo Bold";
-    font_ = CFGAS_GEFont::LoadFont(kFontFamily, 0, FX_CodePage::kDefANSI);
+    font_ = LoadFont();
     ASSERT_TRUE(font_);
 
     text_out_ = std::make_unique<CFDE_TextOut>();
     text_out_->SetFont(font_);
     text_out_->SetFontSize(12.0f);
 
-    EXPECT_STREQ(kEmptyImageChecksum, GetBitmapChecksum().c_str());
+    EXPECT_STREQ(GetEmptyBitmapChecksum(), GetBitmapChecksum().c_str());
   }
 
   void TearDown() override {
@@ -47,6 +49,20 @@ class CFDETextOutTest : public testing::Test {
     font_.Reset();
     device_.reset();
     bitmap_.Reset();
+  }
+
+  virtual RetainPtr<CFGAS_GEFont> LoadFont() {
+    const wchar_t kFontFamily[] = L"Arimo Bold";
+    return CFGAS_GEFont::LoadFont(kFontFamily, /*dwFontStyles=*/0,
+                                  FX_CodePage::kDefANSI);
+  }
+
+  virtual CFX_Size GetBitmapSize() { return CFX_Size(200, 100); }
+
+  virtual const char* GetEmptyBitmapChecksum() {
+    static const char kEmptyBitmapChecksum[] =
+        "a042237c5493fdb9656b94a83608d11a";
+    return kEmptyBitmapChecksum;
   }
 
   CFX_DefaultRenderDevice* device() { return device_.get(); }
@@ -69,11 +85,63 @@ class CFDETextOutTest : public testing::Test {
 };
 
 TEST_F(CFDETextOutTest, DrawLogicTextBasic) {
-  text_out().DrawLogicText(device(), L"foo", CFX_RectF(0, 0, 200, 100));
+  text_out().DrawLogicText(device(), L"foo", CFX_RectF(0, 0, 2100, 100));
   EXPECT_STREQ("b26f1c171fcdbf185823364185adacf0", GetBitmapChecksum().c_str());
 }
 
 TEST_F(CFDETextOutTest, DrawLogicTextEmptyRect) {
   text_out().DrawLogicText(device(), L"foo", CFX_RectF());
-  EXPECT_STREQ(kEmptyImageChecksum, GetBitmapChecksum().c_str());
+  EXPECT_STREQ(GetEmptyBitmapChecksum(), GetBitmapChecksum().c_str());
 }
+
+#if !BUILDFLAG(IS_WIN)
+// This test depends on a particular font being present.
+class CFDETextOutLargeBitmapTest : public CFDETextOutTest {
+ public:
+  CFDETextOutLargeBitmapTest() = default;
+  ~CFDETextOutLargeBitmapTest() override = default;
+
+  RetainPtr<CFGAS_GEFont> LoadFont() override {
+    const wchar_t kFontFamily[] = L"DejaVu Sans";
+    auto* font_manager = CFGAS_GEModule::Get()->GetFontMgr();
+    return font_manager->LoadFont(kFontFamily, /*dwFontStyles=*/0,
+                                  FX_CodePage::kFailure);
+  }
+
+  CFX_Size GetBitmapSize() override { return CFX_Size(2100, 20); }
+
+  const char* GetEmptyBitmapChecksum() override {
+    static const char kEmptyLargeBitmapChecksum[] =
+        "101745f76351fd5d916bf3817b71563c";
+    return kEmptyLargeBitmapChecksum;
+  }
+};
+
+// See crbug.com/1342078
+TEST_F(CFDETextOutLargeBitmapTest, DrawLogicText) {
+  FDE_TextStyle styles;
+  styles.single_line_ = true;
+  text_out().SetStyles(styles);
+  text_out().SetAlignment(FDE_TextAlignment::kCenterLeft);
+  text_out().SetFontSize(10.0f);
+
+  static const wchar_t kText[] =
+      L"SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS"
+      L"SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSssssssssss"
+      L"sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss"
+      L"sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss"
+      L"sssssssssssssssssssssssssssssssssssssssssssssssssnnnnnnnnnnn"
+      "\xfeba"
+      L"Sssssssssssssssssss"
+      "\xfeba"
+      L"iiiiiiiiiisssss";
+  text_out().DrawLogicText(device(), WideString(kText),
+                           CFX_RectF(3, 3, 2048, 10));
+#if defined(_SKIA_SUPPORT_)
+  static const char kExpectedChecksum[] = "6181929583fd7651169306852397806f";
+#else
+  static const char kExpectedChecksum[] = "268b71a8660b51e31c6bf30fc7ff1e08";
+#endif
+  EXPECT_STREQ(kExpectedChecksum, GetBitmapChecksum().c_str());
+}
+#endif  // !BUILDFLAG(IS_WIN)
