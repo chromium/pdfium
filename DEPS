@@ -7,9 +7,10 @@ gclient_gn_args = [
 
 vars = {
   # By default, we should check out everything needed to run on the main
-  # chromium waterfalls. This var can be also be set to 'small', in order
-  # to skip things are not strictly needed to build chromium for development
-  # purposes.
+  # pdfium waterfalls. This var can be also be set to 'small', in order to skip
+  # things are not strictly needed to build pdfium for development purposes,
+  # by adding the following line to the .gclient file inside a solutions entry:
+  #      "custom_vars": { "checkout_configuration": "small" },
   'checkout_configuration': 'default',
 
   # By default, do not check out Google Benchmark. This only exists to satisfy
@@ -18,6 +19,8 @@ vars = {
   'checkout_google_benchmark': False,
 
   'checkout_instrumented_libraries': 'checkout_linux and checkout_configuration != "small"',
+
+  'checkout_testing_corpus': 'checkout_configuration != "small"',
 
   # By default, download the fuchsia sdk from the public sdk directory.
   'fuchsia_sdk_cipd_prefix': 'fuchsia/sdk/gn/',
@@ -220,8 +223,10 @@ deps = {
     'condition': 'host_os == "win"',
   },
 
-  'testing/corpus':
-    Var('pdfium_git') + '/pdfium_tests@' + Var('pdfium_tests_revision'),
+  'testing/corpus': {
+    'url': Var('pdfium_git') + '/pdfium_tests@' + Var('pdfium_tests_revision'),
+    'condition': 'checkout_testing_corpus',
+  },
 
   'third_party/abseil-cpp':
     Var('chromium_git') + '/chromium/src/third_party/abseil-cpp.git@' +
