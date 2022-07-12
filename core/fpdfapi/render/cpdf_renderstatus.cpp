@@ -698,10 +698,12 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   bitmap_render.SetFormResource(pFormResource);
   bitmap_render.Initialize(nullptr, nullptr);
   bitmap_render.ProcessObjectNoClip(pPageObj, new_matrix);
-#if defined(_SKIA_SUPPORT_PATHS_)
+#if defined(_SKIA_SUPPORT_PATHS_) || defined(_SKIA_SUPPORT_)
   bitmap_device.Flush(true);
+#if defined(_SKIA_SUPPORT_PATHS_)
   bitmap->UnPreMultiply();
-#endif
+#endif  // defined(_SKIA_SUPPORT_PATHS_)
+#endif  // defined(_SKIA_SUPPORT_PATHS_) || defined(_SKIA_SUPPORT_)
   m_bStopped = bitmap_render.m_bStopped;
   if (pSMaskDict) {
     CFX_Matrix smask_matrix =

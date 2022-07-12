@@ -52,9 +52,6 @@
 3_interpolate_image.pdf mac * * *
 3bigpreview.pdf mac * * *
 
-# TODO(pdfium:1787): Remove after associated bug is fixed
-3bigpreview.pdf * * * skia
-
 4_35.pdf mac * * *
 4_39.pdf mac * * *
 5.1.pdf mac * * *
@@ -129,9 +126,6 @@ bug_0_length_line.pdf * * * skia,skiapaths
 
 bug_0_width_line.pdf mac * * *
 bug_440132.pdf mac * * *
-
-# TODO(pdfium:1806): Remove after associated bug is fixed
-bug_883026.pdf * * * skia
 
 bug_white_space.pdf mac * * *
 calcorderindex_test.pdf * * * *
@@ -430,9 +424,6 @@ bug_1571.in * * * *
 
 # TODO(pdfium:1723): Remove after associated bug is fixed
 bug_1723.in * * * *
-
-# TODO(pdfium:1847): Remove after associated bug is fixed
-bug_1847.in * * * skia
 
 # TODO(chromium:237527): Remove after associated bug is fixed
 bug_237527_1.in * * * *
