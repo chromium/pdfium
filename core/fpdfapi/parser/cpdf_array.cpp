@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "core/fpdfapi/parser/cpdf_boolean.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
@@ -151,6 +152,10 @@ float CPDF_Array::GetNumberAt(size_t index) const {
   if (index >= m_Objects.size())
     return 0;
   return m_Objects[index]->GetNumber();
+}
+
+RetainPtr<CPDF_Dictionary> CPDF_Array::GetMutableDictAt(size_t index) {
+  return pdfium::WrapRetain(GetDictAt(index));
 }
 
 CPDF_Dictionary* CPDF_Array::GetDictAt(size_t index) {

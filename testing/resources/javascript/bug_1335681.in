@@ -1,0 +1,38 @@
+{{header}}
+{{object 1 0}} <<
+  /Pages 1 0 R
+  /OpenAction 2 0 R
+  /Names <<
+      /Dests 3 0 R
+  >>
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Action
+  /S /JavaScript
+  /JS (
+    app.alert\("Starting"\);
+    this.gotoNamedDest\(""\);
+  )
+>>
+endobj
+{{object 3 0}} <<
+  /Kids 4 0 R
+>>
+endobj
+{{object 4 0}} [
+  << >>
+  << >>
+  <<
+    /Kids [
+      <<
+        /Limits 4 0 R
+      >>
+    ]
+  >>
+]
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
