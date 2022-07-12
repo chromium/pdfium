@@ -115,7 +115,7 @@ class CFDE_TextOut {
   WideString m_wsText;
   CFX_Matrix m_Matrix;
   std::deque<Line> m_ttoLines;
-  int32_t m_iCurLine = 0;
+  size_t m_iCurLine = 0;
   size_t m_iCurPiece = 0;
   int32_t m_iTotalLines = 0;
   std::vector<TextCharPos> m_CharPos;
