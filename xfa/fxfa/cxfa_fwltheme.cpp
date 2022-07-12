@@ -229,9 +229,6 @@ CFX_SizeF CXFA_FWLTheme::GetSpaceAboveBelow(
 
 void CXFA_FWLTheme::CalcTextRect(const CFWL_ThemeText& pParams,
                                  CFX_RectF* pRect) {
-  if (!m_pTextOut)
-    return;
-
   CXFA_FFWidget* pWidget = GetOutmostFFWidget(pParams.GetWidget());
   if (!pWidget)
     return;
