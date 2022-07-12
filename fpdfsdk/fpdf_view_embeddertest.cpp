@@ -128,6 +128,23 @@ class FPDFViewEmbedderTest : public EmbedderTest {
     CompareBitmap(bitmap.get(), bitmap_width, bitmap_height, expected_md5);
   }
 
+  void TestRenderPageBitmapWithInternalMemory(FPDF_PAGE page,
+                                              int format,
+                                              const char* expected_md5) {
+    int bitmap_width = static_cast<int>(FPDF_GetPageWidth(page));
+    int bitmap_height = static_cast<int>(FPDF_GetPageHeight(page));
+    int bytes_per_pixel = BytesPerPixelForFormat(format);
+    ASSERT_NE(0, bytes_per_pixel);
+
+    ScopedFPDFBitmap bitmap(
+        FPDFBitmap_CreateEx(bitmap_width, bitmap_height, format, nullptr, 0));
+    FPDFBitmap_FillRect(bitmap.get(), 0, 0, bitmap_width, bitmap_height,
+                        0xFFFFFFFF);
+    FPDF_RenderPageBitmap(bitmap.get(), page, 0, 0, bitmap_width, bitmap_height,
+                          0, 0);
+    CompareBitmap(bitmap.get(), bitmap_width, bitmap_height, expected_md5);
+  }
+
   void TestRenderPageBitmapWithExternalMemory(FPDF_PAGE page,
                                               int format,
                                               const char* expected_md5) {
@@ -1356,7 +1373,7 @@ TEST_F(FPDFViewEmbedderTest, RenderManyRectanglesWithFlags) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFViewEmbedderTest, RenderManyRectanglesWithExternalMemory) {
+TEST_F(FPDFViewEmbedderTest, RenderManyRectanglesWithAndWithoutExternalMemory) {
   ASSERT_TRUE(OpenDocument("many_rectangles.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -1370,10 +1387,16 @@ TEST_F(FPDFViewEmbedderTest, RenderManyRectanglesWithExternalMemory) {
   static const char kGrayMD5[] = "b561c11edc44dc3972125a9b8744fa2f";
   static const char kBgrMD5[] = "ab6312e04c0d3f4e46fb302a45173d05";
 
+  TestRenderPageBitmapWithInternalMemory(page, FPDFBitmap_BGR, kBgrMD5);
   TestRenderPageBitmapWithExternalMemory(page, FPDFBitmap_BGR, kBgrMD5);
 #endif
+  TestRenderPageBitmapWithInternalMemory(page, FPDFBitmap_Gray, kGrayMD5);
   TestRenderPageBitmapWithExternalMemory(page, FPDFBitmap_Gray, kGrayMD5);
+  TestRenderPageBitmapWithInternalMemory(page, FPDFBitmap_BGRx,
+                                         kManyRectanglesChecksum);
   TestRenderPageBitmapWithExternalMemory(page, FPDFBitmap_BGRx,
+                                         kManyRectanglesChecksum);
+  TestRenderPageBitmapWithInternalMemory(page, FPDFBitmap_BGRA,
                                          kManyRectanglesChecksum);
   TestRenderPageBitmapWithExternalMemory(page, FPDFBitmap_BGRA,
                                          kManyRectanglesChecksum);
