@@ -883,14 +883,13 @@ TEST_F(FPDFAnnotEmbedderTest, GetAndSetQuadPoints) {
   UnloadPage(page);
 }
 
-// TODO(crbug.com/pdfium/1569): Fix this issue and enable the test for Skia.
+TEST_F(FPDFAnnotEmbedderTest, ModifyRectQuadpointsWithAP) {
 #if defined(_SKIA_SUPPORT_)
-#define MAYBE_ModifyRectQuadpointsWithAP DISABLED_ModifyRectQuadpointsWithAP
-#else
-#define MAYBE_ModifyRectQuadpointsWithAP ModifyRectQuadpointsWithAP
-#endif
-TEST_F(FPDFAnnotEmbedderTest, MAYBE_ModifyRectQuadpointsWithAP) {
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+  static const char kMd5Original[] = "0dd4c099b93d24eed9926a948ac5101c";
+  static const char kMd5ModifiedHighlight[] =
+      "92dfe7960d248635a694f43c66db7a4d";
+  static const char kMd5ModifiedSquare[] = "eb16eae7904705fa24f4ec9c1acf90c7";
+#elif defined(_SKIA_SUPPORT_PATHS_)
   static const char kMd5Original[] = "127c2d3b4452555e3317827b0dbbb6a0";
   static const char kMd5ModifiedHighlight[] =
       "6ffe732be6f80540b60921c4803b590a";
@@ -907,7 +906,7 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_ModifyRectQuadpointsWithAP) {
       "66f3caef3a7d488a4fa1ad37fc06310e";
   static const char kMd5ModifiedSquare[] = "a456dad0bc6801ee2d6408a4394af563";
 #endif  // BUILDFLAG(IS_APPLE)
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#endif
 
   // Open a file with four annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_highlight_square_with_ap.pdf"));
