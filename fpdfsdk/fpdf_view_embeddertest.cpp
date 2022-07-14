@@ -131,38 +131,71 @@ class FPDFViewEmbedderTest : public EmbedderTest {
   void TestRenderPageBitmapWithInternalMemory(FPDF_PAGE page,
                                               int format,
                                               const char* expected_md5) {
+    TestRenderPageBitmapWithInternalMemoryAndStride(
+        page, format, /*bitmap_stride=*/0, expected_md5);
+  }
+
+  void TestRenderPageBitmapWithInternalMemoryAndStride(
+      FPDF_PAGE page,
+      int format,
+      int bitmap_stride,
+      const char* expected_md5) {
     int bitmap_width = static_cast<int>(FPDF_GetPageWidth(page));
     int bitmap_height = static_cast<int>(FPDF_GetPageHeight(page));
     int bytes_per_pixel = BytesPerPixelForFormat(format);
     ASSERT_NE(0, bytes_per_pixel);
 
-    ScopedFPDFBitmap bitmap(
-        FPDFBitmap_CreateEx(bitmap_width, bitmap_height, format, nullptr, 0));
-    FPDFBitmap_FillRect(bitmap.get(), 0, 0, bitmap_width, bitmap_height,
-                        0xFFFFFFFF);
-    FPDF_RenderPageBitmap(bitmap.get(), page, 0, 0, bitmap_width, bitmap_height,
-                          0, 0);
-    CompareBitmap(bitmap.get(), bitmap_width, bitmap_height, expected_md5);
+    ScopedFPDFBitmap bitmap(FPDFBitmap_CreateEx(
+        bitmap_width, bitmap_height, format, nullptr, bitmap_stride));
+    RenderPageToBitmapAndCheck(page, bitmap.get(), expected_md5);
   }
 
   void TestRenderPageBitmapWithExternalMemory(FPDF_PAGE page,
                                               int format,
                                               const char* expected_md5) {
     int bitmap_width = static_cast<int>(FPDF_GetPageWidth(page));
-    int bitmap_height = static_cast<int>(FPDF_GetPageHeight(page));
     int bytes_per_pixel = BytesPerPixelForFormat(format);
     ASSERT_NE(0, bytes_per_pixel);
 
     int bitmap_stride = bytes_per_pixel * bitmap_width;
+    return TestRenderPageBitmapWithExternalMemoryImpl(
+        page, format, bitmap_stride, expected_md5);
+  }
+
+  void TestRenderPageBitmapWithExternalMemoryAndNoStride(
+      FPDF_PAGE page,
+      int format,
+      const char* expected_md5) {
+    return TestRenderPageBitmapWithExternalMemoryImpl(
+        page, format, /*bitmap_stride=*/0, expected_md5);
+  }
+
+ private:
+  void TestRenderPageBitmapWithExternalMemoryImpl(FPDF_PAGE page,
+                                                  int format,
+                                                  int bitmap_stride,
+                                                  const char* expected_md5) {
+    int bitmap_width = static_cast<int>(FPDF_GetPageWidth(page));
+    int bitmap_height = static_cast<int>(FPDF_GetPageHeight(page));
+
     std::vector<uint8_t> external_memory(bitmap_stride * bitmap_height);
     ScopedFPDFBitmap bitmap(FPDFBitmap_CreateEx(bitmap_width, bitmap_height,
                                                 format, external_memory.data(),
                                                 bitmap_stride));
-    FPDFBitmap_FillRect(bitmap.get(), 0, 0, bitmap_width, bitmap_height,
-                        0xFFFFFFFF);
-    FPDF_RenderPageBitmap(bitmap.get(), page, 0, 0, bitmap_width, bitmap_height,
-                          0, 0);
-    CompareBitmap(bitmap.get(), bitmap_width, bitmap_height, expected_md5);
+    RenderPageToBitmapAndCheck(page, bitmap.get(), expected_md5);
+  }
+
+  void RenderPageToBitmapAndCheck(FPDF_PAGE page,
+                                  FPDF_BITMAP bitmap,
+                                  const char* expected_md5) {
+    int bitmap_width = FPDFBitmap_GetWidth(bitmap);
+    int bitmap_height = FPDFBitmap_GetHeight(bitmap);
+    EXPECT_EQ(bitmap_width, static_cast<int>(FPDF_GetPageWidth(page)));
+    EXPECT_EQ(bitmap_height, static_cast<int>(FPDF_GetPageHeight(page)));
+    FPDFBitmap_FillRect(bitmap, 0, 0, bitmap_width, bitmap_height, 0xFFFFFFFF);
+    FPDF_RenderPageBitmap(bitmap, page, 0, 0, bitmap_width, bitmap_height, 0,
+                          0);
+    CompareBitmap(bitmap, bitmap_width, bitmap_height, expected_md5);
   }
 };
 
@@ -1387,19 +1420,41 @@ TEST_F(FPDFViewEmbedderTest, RenderManyRectanglesWithAndWithoutExternalMemory) {
   static const char kGrayMD5[] = "b561c11edc44dc3972125a9b8744fa2f";
   static const char kBgrMD5[] = "ab6312e04c0d3f4e46fb302a45173d05";
 
+  static constexpr int kBgrStride = 600;  // Width of 200 * 24 bits per pixel.
   TestRenderPageBitmapWithInternalMemory(page, FPDFBitmap_BGR, kBgrMD5);
+  TestRenderPageBitmapWithInternalMemoryAndStride(page, FPDFBitmap_BGR,
+                                                  kBgrStride, kBgrMD5);
   TestRenderPageBitmapWithExternalMemory(page, FPDFBitmap_BGR, kBgrMD5);
+  TestRenderPageBitmapWithExternalMemoryAndNoStride(page, FPDFBitmap_BGR,
+                                                    kBgrMD5);
 #endif
+
   TestRenderPageBitmapWithInternalMemory(page, FPDFBitmap_Gray, kGrayMD5);
+  static constexpr int kGrayStride = 200;  // Width of 200 * 8 bits per pixel.
+  TestRenderPageBitmapWithInternalMemoryAndStride(page, FPDFBitmap_Gray,
+                                                  kGrayStride, kGrayMD5);
   TestRenderPageBitmapWithExternalMemory(page, FPDFBitmap_Gray, kGrayMD5);
+  TestRenderPageBitmapWithExternalMemoryAndNoStride(page, FPDFBitmap_Gray,
+                                                    kGrayMD5);
+
+  static constexpr int kBgrxStride = 800;  // Width of 200 * 32 bits per pixel.
   TestRenderPageBitmapWithInternalMemory(page, FPDFBitmap_BGRx,
                                          kManyRectanglesChecksum);
+  TestRenderPageBitmapWithInternalMemoryAndStride(
+      page, FPDFBitmap_BGRx, kBgrxStride, kManyRectanglesChecksum);
   TestRenderPageBitmapWithExternalMemory(page, FPDFBitmap_BGRx,
                                          kManyRectanglesChecksum);
+  TestRenderPageBitmapWithExternalMemoryAndNoStride(page, FPDFBitmap_BGRx,
+                                                    kManyRectanglesChecksum);
+
   TestRenderPageBitmapWithInternalMemory(page, FPDFBitmap_BGRA,
                                          kManyRectanglesChecksum);
+  TestRenderPageBitmapWithInternalMemoryAndStride(
+      page, FPDFBitmap_BGRA, kBgrxStride, kManyRectanglesChecksum);
   TestRenderPageBitmapWithExternalMemory(page, FPDFBitmap_BGRA,
                                          kManyRectanglesChecksum);
+  TestRenderPageBitmapWithExternalMemoryAndNoStride(page, FPDFBitmap_BGRA,
+                                                    kManyRectanglesChecksum);
 
   UnloadPage(page);
 }
