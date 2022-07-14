@@ -4,8 +4,11 @@
 
 #include "core/fpdfapi/font/cpdf_tounicodemap.h"
 
+#include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "third_party/base/span.h"
 
 TEST(cpdf_tounicodemap, StringToCode) {
   EXPECT_THAT(CPDF_ToUnicodeMap::StringToCode("<0001>"), testing::Optional(1u));
@@ -46,4 +49,33 @@ TEST(cpdf_tounicodemap, StringToWideString) {
   res += L"\xfaab";
   EXPECT_EQ(res, CPDF_ToUnicodeMap::StringToWideString("<c2abFaAb>"));
   EXPECT_EQ(res, CPDF_ToUnicodeMap::StringToWideString("<c2abFaAb12>"));
+}
+
+TEST(cpdf_tounicodemap, HandleBeginBFRangeAvoidIntegerOverflow) {
+  // Make sure there won't be infinite loops due to integer overflows in
+  // HandleBeginBFRange().
+  {
+    static constexpr uint8_t kInput1[] =
+        "beginbfrange<FFFFFFFF><FFFFFFFF>[<0041>]endbfrange";
+    auto stream = pdfium::MakeRetain<CPDF_Stream>();
+    stream->SetData(pdfium::make_span(kInput1));
+    CPDF_ToUnicodeMap map(stream.Get());
+    EXPECT_STREQ(L"A", map.Lookup(0xffffffff).c_str());
+  }
+  {
+    static constexpr uint8_t kInput2[] =
+        "beginbfrange<FFFFFFFF><FFFFFFFF><0042>endbfrange";
+    auto stream = pdfium::MakeRetain<CPDF_Stream>();
+    stream->SetData(pdfium::make_span(kInput2));
+    CPDF_ToUnicodeMap map(stream.Get());
+    EXPECT_STREQ(L"B", map.Lookup(0xffffffff).c_str());
+  }
+  {
+    static constexpr uint8_t kInput3[] =
+        "beginbfrange<FFFFFFFF><FFFFFFFF><00410042>endbfrange";
+    auto stream = pdfium::MakeRetain<CPDF_Stream>();
+    stream->SetData(pdfium::make_span(kInput3));
+    CPDF_ToUnicodeMap map(stream.Get());
+    EXPECT_STREQ(L"AB", map.Lookup(0xffffffff).c_str());
+  }
 }
