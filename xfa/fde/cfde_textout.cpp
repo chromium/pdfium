@@ -466,13 +466,13 @@ void CFDE_TextOut::ReloadLinePiece(Line* line, const CFX_RectF& rect) {
   CFGAS_Char::BreakType break_status = CFGAS_Char::BreakType::kNone;
   for (size_t piece_index = 0; piece_index < piece_count; ++piece_index) {
     const Piece* piece = line->GetPieceAtIndex(piece_index);
-    if (piece_index == 0) {
-      start_char = piece->start_char;
+    if (piece_index == 0)
       m_fLinePos = piece->bounds.top;
-    }
-    size_t end = start_char + piece->char_count;
-    for (size_t start = start_char; start < end; ++start) {
-      break_status = m_pTxtBreak->AppendChar(text_span[start]);
+
+    start_char = piece->start_char;
+    const size_t end = piece->start_char + piece->char_count;
+    for (size_t char_index = start_char; char_index < end; ++char_index) {
+      break_status = m_pTxtBreak->AppendChar(text_span[char_index]);
       if (!CFX_BreakTypeNoneOrPiece(break_status))
         RetrievePieces(break_status, true, rect, &start_char, &piece_widths);
     }

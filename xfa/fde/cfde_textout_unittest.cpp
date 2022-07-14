@@ -115,10 +115,40 @@ class CFDETextOutLargeBitmapTest : public CFDETextOutTest {
         "101745f76351fd5d916bf3817b71563c";
     return kEmptyLargeBitmapChecksum;
   }
+
+  const char* GetLargeTextBlobChecksum() {
+#if defined(_SKIA_SUPPORT_)
+    static const char kExpectedChecksum[] = "6181929583fd7651169306852397806f";
+#else
+    static const char kExpectedChecksum[] = "268b71a8660b51e31c6bf30fc7ff1e08";
+#endif
+    return kExpectedChecksum;
+  }
 };
 
-// See crbug.com/1342078
-TEST_F(CFDETextOutLargeBitmapTest, DrawLogicText) {
+TEST_F(CFDETextOutLargeBitmapTest, DrawLogicTextBug953881) {
+  FDE_TextStyle styles;
+  styles.single_line_ = true;
+  text_out().SetStyles(styles);
+  text_out().SetAlignment(FDE_TextAlignment::kCenterLeft);
+  text_out().SetFontSize(10.0f);
+
+  static const wchar_t kText[] =
+      L"SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS"
+      L"SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSssssssssss"
+      L"sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss"
+      L"sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss"
+      L"sssssssssssssssssssssssssssssssssssssssssssssssssnnnnnnnnnnn"
+      "\xfeba"
+      L"Sssssssssssssssssss"
+      "\xfeba"
+      L"iiiiisssss";
+  text_out().DrawLogicText(device(), WideString(kText),
+                           CFX_RectF(3, 3, 2048, 10));
+  EXPECT_STREQ(GetLargeTextBlobChecksum(), GetBitmapChecksum().c_str());
+}
+
+TEST_F(CFDETextOutLargeBitmapTest, DrawLogicTextBug1342078) {
   FDE_TextStyle styles;
   styles.single_line_ = true;
   text_out().SetStyles(styles);
@@ -137,11 +167,6 @@ TEST_F(CFDETextOutLargeBitmapTest, DrawLogicText) {
       L"iiiiiiiiiisssss";
   text_out().DrawLogicText(device(), WideString(kText),
                            CFX_RectF(3, 3, 2048, 10));
-#if defined(_SKIA_SUPPORT_)
-  static const char kExpectedChecksum[] = "6181929583fd7651169306852397806f";
-#else
-  static const char kExpectedChecksum[] = "268b71a8660b51e31c6bf30fc7ff1e08";
-#endif
-  EXPECT_STREQ(kExpectedChecksum, GetBitmapChecksum().c_str());
+  EXPECT_STREQ(GetLargeTextBlobChecksum(), GetBitmapChecksum().c_str());
 }
 #endif  // !BUILDFLAG(IS_WIN)
