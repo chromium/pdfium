@@ -72,6 +72,17 @@ bool GetSubFontName(ByteString* name) {
   return false;
 }
 
+// Wraps CreateFontA() so callers don't have to specify all the arguments.
+HFONT Win32CreateFont(int weight,
+                      bool italic,
+                      FX_Charset charset,
+                      int pitch_family,
+                      const char* face) {
+  return ::CreateFontA(-10, 0, 0, 0, weight, italic, 0, 0,
+                       static_cast<int>(charset), OUT_TT_ONLY_PRECIS, 0, 0,
+                       pitch_family, face);
+}
+
 class CFX_Win32FallbackFontInfo final : public CFX_FolderFontInfo {
  public:
   CFX_Win32FallbackFontInfo() = default;
@@ -321,9 +332,8 @@ void* CFX_Win32FontInfo::MapFont(int weight,
       subst_pitch_family = 0;
       break;
   }
-  HFONT hFont = ::CreateFontA(-10, 0, 0, 0, weight, bItalic, 0, 0,
-                              static_cast<int>(charset), OUT_TT_ONLY_PRECIS, 0,
-                              0, subst_pitch_family, new_face.c_str());
+  HFONT hFont = Win32CreateFont(weight, bItalic, charset, subst_pitch_family,
+                                new_face.c_str());
   char facebuf[100];
   {
     ScopedSelectObject select_object(m_hDC, hFont);
@@ -366,10 +376,8 @@ void* CFX_Win32FontInfo::MapFont(int weight,
       }
       break;
   }
-  hFont = ::CreateFontA(-10, 0, 0, 0, weight, bItalic, 0, 0,
-                        static_cast<int>(charset), OUT_TT_ONLY_PRECIS, 0, 0,
-                        subst_pitch_family, new_face.c_str());
-  return hFont;
+  return Win32CreateFont(weight, bItalic, charset, subst_pitch_family,
+                         new_face.c_str());
 }
 
 void CFX_Win32FontInfo::DeleteFont(void* hFont) {
