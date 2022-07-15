@@ -13,7 +13,9 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_folderfontinfo.h"
 #include "core/fxge/cfx_gemodule.h"
+#include "third_party/base/check.h"
 #include "third_party/base/numerics/safe_conversions.h"
+#include "third_party/base/span.h"
 #include "third_party/base/win/scoped_select_object.h"
 #include "third_party/base/win/win_util.h"
 
@@ -123,6 +125,11 @@ class CFX_Win32FontInfo final : public SystemFontInfoIface {
   void GetGBPreference(ByteString& face, int weight, int pitch_family);
   void GetJapanesePreference(ByteString& face, int weight, int pitch_family);
   ByteString FindFont(const ByteString& name);
+  void* GetFontFromList(int weight,
+                        bool italic,
+                        FX_Charset charset,
+                        int pitch_family,
+                        pdfium::span<const char* const> font_faces);
 
   const HDC m_hDC;
   UnownedPtr<CFX_FontMapper> m_pMapper;
@@ -212,6 +219,26 @@ ByteString CFX_Win32FontInfo::FindFont(const ByteString& name) {
     return maybe_localized.value();
 
   return ByteString();
+}
+
+void* CFX_Win32FontInfo::GetFontFromList(
+    int weight,
+    bool italic,
+    FX_Charset charset,
+    int pitch_family,
+    pdfium::span<const char* const> font_faces) {
+  DCHECK(!font_faces.empty());
+
+  // Initialization not needed because of DCHECK() above and the assignment in
+  // the for-loop below.
+  HFONT font;
+  for (const char* face : font_faces) {
+    font = Win32CreateFont(weight, italic, charset, pitch_family, face);
+    ByteString actual_face;
+    if (GetFaceName(font, &actual_face) && actual_face.EqualNoCase(face))
+      break;
+  }
+  return font;
 }
 
 void* CFX_Win32FallbackFontInfo::MapFont(int weight,
@@ -367,12 +394,14 @@ void* CFX_Win32FontInfo::MapFont(int weight,
       new_face = "Gulim";
       break;
     case FX_Charset::kChineseTraditional:
-      if (new_face.Contains("MSung")) {
-        new_face = "MingLiU";
-      } else {
-        new_face = "PMingLiU";
-      }
-      break;
+      static const char* const kMonospaceFonts[] = {"Microsoft YaHei",
+                                                    "MingLiU"};
+      static const char* const kProportionalFonts[] = {"Microsoft JHengHei",
+                                                       "PMingLiU"};
+      pdfium::span<const char* const> candidate_fonts =
+          new_face.Contains("MSung") ? kMonospaceFonts : kProportionalFonts;
+      return GetFontFromList(weight, bItalic, charset, subst_pitch_family,
+                             candidate_fonts);
   }
   return Win32CreateFont(weight, bItalic, charset, subst_pitch_family,
                          new_face.c_str());
