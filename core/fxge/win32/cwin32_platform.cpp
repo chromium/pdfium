@@ -334,21 +334,19 @@ void* CFX_Win32FontInfo::MapFont(int weight,
   }
   HFONT hFont = Win32CreateFont(weight, bItalic, charset, subst_pitch_family,
                                 new_face.c_str());
-  char facebuf[100];
-  {
-    ScopedSelectObject select_object(m_hDC, hFont);
-    ::GetTextFaceA(m_hDC, std::size(facebuf), facebuf);
-  }
-  if (new_face.EqualNoCase(facebuf))
+  ByteString actual_new_face;
+  if (GetFaceName(hFont, &actual_new_face) &&
+      new_face.EqualNoCase(actual_new_face.AsStringView())) {
     return hFont;
+  }
 
-  WideString wsFace = WideString::FromDefANSI(facebuf);
-  for (size_t i = 0; i < std::size(kVariantNames); ++i) {
-    if (new_face != kVariantNames[i].m_pFaceName)
+  WideString wsFace = WideString::FromDefANSI(actual_new_face.AsStringView());
+  for (const Variant& variant : kVariantNames) {
+    if (new_face != variant.m_pFaceName)
       continue;
 
-    const unsigned short* pName = reinterpret_cast<const unsigned short*>(
-        kVariantNames[i].m_pVariantName);
+    const auto* pName =
+        reinterpret_cast<const unsigned short*>(variant.m_pVariantName);
     size_t len = WideString::WStringLength(pName);
     WideString wsName = WideString::FromUTF16LE(pName, len);
     if (wsFace == wsName)
@@ -397,7 +395,7 @@ size_t CFX_Win32FontInfo::GetFontData(void* hFont,
 bool CFX_Win32FontInfo::GetFaceName(void* hFont, ByteString* name) {
   ScopedSelectObject select_object(m_hDC, static_cast<HFONT>(hFont));
   char facebuf[100];
-  if (::GetTextFaceA(m_hDC, 100, facebuf) == 0)
+  if (::GetTextFaceA(m_hDC, std::size(facebuf), facebuf) == 0)
     return false;
 
   *name = facebuf;
