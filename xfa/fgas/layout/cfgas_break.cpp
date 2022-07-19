@@ -7,6 +7,7 @@
 #include "xfa/fgas/layout/cfgas_break.h"
 
 #include <algorithm>
+#include <utility>
 #include <vector>
 
 #include "core/fxcrt/fx_safe_types.h"
@@ -52,12 +53,12 @@ void CFGAS_Break::SetVerticalScale(int32_t iScale) {
   m_iVerticalScale = iScale;
 }
 
-void CFGAS_Break::SetFont(const RetainPtr<CFGAS_GEFont>& pFont) {
+void CFGAS_Break::SetFont(RetainPtr<CFGAS_GEFont> pFont) {
   if (!pFont || pFont == m_pFont)
     return;
 
   SetBreakStatus();
-  m_pFont = pFont;
+  m_pFont = std::move(pFont);
 }
 
 void CFGAS_Break::SetFontSize(float fFontSize) {

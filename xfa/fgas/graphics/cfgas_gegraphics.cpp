@@ -10,6 +10,7 @@
 
 #include <iterator>
 #include <memory>
+#include <utility>
 
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
@@ -272,7 +273,7 @@ void CFGAS_GEGraphics::FillPathWithPattern(
   }
   CFX_RenderDevice::StateRestorer restorer(m_renderDevice);
   m_renderDevice->SetClip_PathFill(path.GetPath(), &matrix, fill_options);
-  SetDIBitsWithMatrix(bmp, CFX_Matrix());
+  SetDIBitsWithMatrix(std::move(bmp), CFX_Matrix());
 }
 
 void CFGAS_GEGraphics::FillPathWithShading(
@@ -392,11 +393,11 @@ void CFGAS_GEGraphics::FillPathWithShading(
   if (result) {
     CFX_RenderDevice::StateRestorer restorer(m_renderDevice);
     m_renderDevice->SetClip_PathFill(path.GetPath(), &matrix, fill_options);
-    SetDIBitsWithMatrix(bmp, matrix);
+    SetDIBitsWithMatrix(std::move(bmp), matrix);
   }
 }
 
-void CFGAS_GEGraphics::SetDIBitsWithMatrix(const RetainPtr<CFX_DIBBase>& source,
+void CFGAS_GEGraphics::SetDIBitsWithMatrix(RetainPtr<CFX_DIBBase> source,
                                            const CFX_Matrix& matrix) {
   if (matrix.IsIdentity()) {
     m_renderDevice->SetDIBits(source, 0, 0);

@@ -619,7 +619,7 @@ void CFDE_TextEditEngine::SetFont(RetainPtr<CFGAS_GEFont> font) {
   if (font_ == font)
     return;
 
-  font_ = font;
+  font_ = std::move(font);
   text_break_.SetFont(font_);
   is_dirty_ = true;
 }

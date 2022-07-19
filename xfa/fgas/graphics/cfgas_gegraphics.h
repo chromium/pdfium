@@ -71,7 +71,7 @@ class CFGAS_GEGraphics {
   void FillPathWithShading(const CFGAS_GEPath& path,
                            const CFX_FillRenderOptions& fill_options,
                            const CFX_Matrix& matrix);
-  void SetDIBitsWithMatrix(const RetainPtr<CFX_DIBBase>& source,
+  void SetDIBitsWithMatrix(RetainPtr<CFX_DIBBase> source,
                            const CFX_Matrix& matrix);
 
   UnownedPtr<CFX_RenderDevice> const m_renderDevice;

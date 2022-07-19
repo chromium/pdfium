@@ -33,7 +33,7 @@ class CFGAS_Break {
   void SetLayoutStyles(Mask<LayoutStyle> dwLayoutStyles);
   Mask<LayoutStyle> GetLayoutStyles() const { return m_dwLayoutStyles; }
 
-  void SetFont(const RetainPtr<CFGAS_GEFont>& pFont);
+  void SetFont(RetainPtr<CFGAS_GEFont> pFont);
   void SetFontSize(float fFontSize);
   void SetTabWidth(float fTabWidth);
   int32_t GetTabWidth() const { return m_iTabWidth; }

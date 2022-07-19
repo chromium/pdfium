@@ -36,7 +36,7 @@ class CFDE_TextOut {
   CFDE_TextOut();
   ~CFDE_TextOut();
 
-  void SetFont(const RetainPtr<CFGAS_GEFont>& pFont);
+  void SetFont(RetainPtr<CFGAS_GEFont> pFont);
   void SetFontSize(float fFontSize);
   void SetTextColor(FX_ARGB color) { m_TxtColor = color; }
   void SetStyles(const FDE_TextStyle& dwStyles);

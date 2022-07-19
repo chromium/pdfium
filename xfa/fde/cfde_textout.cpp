@@ -136,10 +136,10 @@ CFDE_TextOut::CFDE_TextOut()
 
 CFDE_TextOut::~CFDE_TextOut() = default;
 
-void CFDE_TextOut::SetFont(const RetainPtr<CFGAS_GEFont>& pFont) {
+void CFDE_TextOut::SetFont(RetainPtr<CFGAS_GEFont> pFont) {
   DCHECK(pFont);
-  m_pFont = pFont;
-  m_pTxtBreak->SetFont(pFont);
+  m_pFont = std::move(pFont);
+  m_pTxtBreak->SetFont(m_pFont);
 }
 
 void CFDE_TextOut::SetFontSize(float fFontSize) {
