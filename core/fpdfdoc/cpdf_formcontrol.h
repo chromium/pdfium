@@ -35,7 +35,8 @@ class CPDF_FormControl {
  public:
   enum HighlightingMode { kNone = 0, kInvert, kOutline, kPush, kToggle };
 
-  CPDF_FormControl(CPDF_FormField* pField, CPDF_Dictionary* pWidgetDict);
+  CPDF_FormControl(CPDF_FormField* pField,
+                   RetainPtr<CPDF_Dictionary> pWidgetDict);
   ~CPDF_FormControl();
 
   CPDF_FormField::Type GetType() const { return m_pField->GetType(); }

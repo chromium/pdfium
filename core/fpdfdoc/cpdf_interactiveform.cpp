@@ -544,7 +544,7 @@ CPDF_InteractiveForm::CPDF_InteractiveForm(CPDF_Document* pDocument)
     return;
 
   for (size_t i = 0; i < pFields->size(); ++i)
-    LoadField(pFields->GetMutableDictAt(i).Get(), 0);
+    LoadField(pFields->GetMutableDictAt(i), 0);
 }
 
 CPDF_InteractiveForm::~CPDF_InteractiveForm() = default;
@@ -753,7 +753,8 @@ CPDF_InteractiveForm::GetControlsForField(const CPDF_FormField* pField) {
   return m_ControlLists[pField];
 }
 
-void CPDF_InteractiveForm::LoadField(CPDF_Dictionary* pFieldDict, int nLevel) {
+void CPDF_InteractiveForm::LoadField(RetainPtr<CPDF_Dictionary> pFieldDict,
+                                     int nLevel) {
   if (nLevel > nMaxRecursion)
     return;
   if (!pFieldDict)
@@ -763,7 +764,7 @@ void CPDF_InteractiveForm::LoadField(CPDF_Dictionary* pFieldDict, int nLevel) {
   RetainPtr<CPDF_Array> pKids =
       pFieldDict->GetMutableArrayFor(pdfium::form_fields::kKids);
   if (!pKids) {
-    AddTerminalField(pFieldDict);
+    AddTerminalField(std::move(pFieldDict));
     return;
   }
 
@@ -771,17 +772,15 @@ void CPDF_InteractiveForm::LoadField(CPDF_Dictionary* pFieldDict, int nLevel) {
   if (!pFirstKid)
     return;
 
-  if (pFirstKid->KeyExist(pdfium::form_fields::kT) ||
-      pFirstKid->KeyExist(pdfium::form_fields::kKids)) {
-    for (size_t i = 0; i < pKids->size(); i++) {
-      RetainPtr<CPDF_Dictionary> pChildDict = pKids->GetMutableDictAt(i);
-      if (pChildDict) {
-        if (pChildDict->GetObjNum() != dwParentObjNum)
-          LoadField(pChildDict.Get(), nLevel + 1);
-      }
-    }
-  } else {
-    AddTerminalField(pFieldDict);
+  if (!pFirstKid->KeyExist(pdfium::form_fields::kT) &&
+      !pFirstKid->KeyExist(pdfium::form_fields::kKids)) {
+    AddTerminalField(std::move(pFieldDict));
+    return;
+  }
+  for (size_t i = 0; i < pKids->size(); i++) {
+    RetainPtr<CPDF_Dictionary> pChildDict = pKids->GetMutableDictAt(i);
+    if (pChildDict && pChildDict->GetObjNum() != dwParentObjNum)
+      LoadField(std::move(pChildDict), nLevel + 1);
   }
 }
 
@@ -794,11 +793,12 @@ void CPDF_InteractiveForm::FixPageFields(CPDF_Page* pPage) {
   for (size_t i = 0; i < pAnnots->size(); i++) {
     RetainPtr<CPDF_Dictionary> pAnnot = pAnnots->GetMutableDictAt(i);
     if (pAnnot && pAnnot->GetNameFor("Subtype") == "Widget")
-      LoadField(pAnnot.Get(), 0);
+      LoadField(std::move(pAnnot), 0);
   }
 }
 
-void CPDF_InteractiveForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
+void CPDF_InteractiveForm::AddTerminalField(
+    RetainPtr<CPDF_Dictionary> pFieldDict) {
   if (!pFieldDict->KeyExist(pdfium::form_fields::kFT)) {
     // Key "FT" is required for terminal fields, it is also inheritable.
     const CPDF_Dictionary* pParentDict =
@@ -807,8 +807,7 @@ void CPDF_InteractiveForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
       return;
   }
 
-  CPDF_Dictionary* pDict = pFieldDict;
-  WideString csWName = CPDF_FormField::GetFullNameForDict(pFieldDict);
+  WideString csWName = CPDF_FormField::GetFullNameForDict(pFieldDict.Get());
   if (csWName.IsEmpty())
     return;
 
@@ -842,13 +841,14 @@ void CPDF_InteractiveForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
 
     auto newField = std::make_unique<CPDF_FormField>(this, pParent.Get());
     pField = newField.get();
-    const CPDF_Object* pTObj = pDict->GetObjectFor(pdfium::form_fields::kT);
+    const CPDF_Object* pTObj =
+        pFieldDict->GetObjectFor(pdfium::form_fields::kT);
     if (ToReference(pTObj)) {
       RetainPtr<CPDF_Object> pClone = pTObj->CloneDirectObject();
       if (pClone)
-        pDict->SetFor(pdfium::form_fields::kT, std::move(pClone));
+        pFieldDict->SetFor(pdfium::form_fields::kT, std::move(pClone));
       else
-        pDict->SetNewFor<CPDF_Name>(pdfium::form_fields::kT, ByteString());
+        pFieldDict->SetNewFor<CPDF_Name>(pdfium::form_fields::kT, ByteString());
     }
     if (!m_pFieldTree->SetField(csWName, std::move(newField)))
       return;
@@ -856,29 +856,29 @@ void CPDF_InteractiveForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
 
   RetainPtr<CPDF_Array> pKids =
       pFieldDict->GetMutableArrayFor(pdfium::form_fields::kKids);
-  if (pKids) {
-    for (size_t i = 0; i < pKids->size(); i++) {
-      RetainPtr<CPDF_Dictionary> pKid = pKids->GetMutableDictAt(i);
-      if (pKid && pKid->GetNameFor("Subtype") == "Widget")
-        AddControl(pField, pKid.Get());
-    }
-  } else {
+  if (!pKids) {
     if (pFieldDict->GetNameFor("Subtype") == "Widget")
-      AddControl(pField, pFieldDict);
+      AddControl(pField, std::move(pFieldDict));
+    return;
+  }
+  for (size_t i = 0; i < pKids->size(); i++) {
+    RetainPtr<CPDF_Dictionary> pKid = pKids->GetMutableDictAt(i);
+    if (pKid && pKid->GetNameFor("Subtype") == "Widget")
+      AddControl(pField, std::move(pKid));
   }
 }
 
 CPDF_FormControl* CPDF_InteractiveForm::AddControl(
     CPDF_FormField* pField,
-    CPDF_Dictionary* pWidgetDict) {
+    RetainPtr<CPDF_Dictionary> pWidgetDict) {
   DCHECK(pWidgetDict);
-  const auto it = m_ControlMap.find(pWidgetDict);
+  const auto it = m_ControlMap.find(pWidgetDict.Get());
   if (it != m_ControlMap.end())
     return it->second.get();
 
   auto pNew = std::make_unique<CPDF_FormControl>(pField, pWidgetDict);
   CPDF_FormControl* pControl = pNew.get();
-  m_ControlMap[pWidgetDict] = std::move(pNew);
+  m_ControlMap[pWidgetDict.Get()] = std::move(pNew);
   m_ControlLists[pField].emplace_back(pControl);
   return pControl;
 }

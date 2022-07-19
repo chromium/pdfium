@@ -7,6 +7,7 @@
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 
 #include <iterator>
+#include <utility>
 
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
@@ -38,9 +39,9 @@ static_assert(kHighlightModes[CPDF_FormControl::kToggle] == 'T',
 }  // namespace
 
 CPDF_FormControl::CPDF_FormControl(CPDF_FormField* pField,
-                                   CPDF_Dictionary* pWidgetDict)
+                                   RetainPtr<CPDF_Dictionary> pWidgetDict)
     : m_pField(pField),
-      m_pWidgetDict(pWidgetDict),
+      m_pWidgetDict(std::move(pWidgetDict)),
       m_pForm(m_pField->GetForm()) {
   DCHECK(m_pWidgetDict);
 }

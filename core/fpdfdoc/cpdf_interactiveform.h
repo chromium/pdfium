@@ -98,10 +98,10 @@ class CPDF_InteractiveForm {
       const CPDF_FormField* pField);
 
  private:
-  void LoadField(CPDF_Dictionary* pFieldDict, int nLevel);
-  void AddTerminalField(CPDF_Dictionary* pFieldDict);
+  void LoadField(RetainPtr<CPDF_Dictionary> pFieldDict, int nLevel);
+  void AddTerminalField(RetainPtr<CPDF_Dictionary> pFieldDict);
   CPDF_FormControl* AddControl(CPDF_FormField* pField,
-                               CPDF_Dictionary* pWidgetDict);
+                               RetainPtr<CPDF_Dictionary> pWidgetDict);
 
   static bool s_bUpdateAP;
 
