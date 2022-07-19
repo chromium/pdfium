@@ -40,7 +40,7 @@ class CPDF_FormControl {
 
   CPDF_FormField::Type GetType() const { return m_pField->GetType(); }
   CPDF_FormField* GetField() const { return m_pField.Get(); }
-  CPDF_Dictionary* GetWidget() const { return m_pWidgetDict.Get(); }
+  const CPDF_Dictionary* GetWidget() const { return m_pWidgetDict.Get(); }
   CFX_FloatRect GetRect() const;
 
   ByteString GetCheckedAPState() const;

@@ -67,9 +67,11 @@ CPDF_BAFontMap::Data::Data() = default;
 CPDF_BAFontMap::Data::~Data() = default;
 
 CPDF_BAFontMap::CPDF_BAFontMap(CPDF_Document* pDocument,
-                               CPDF_Dictionary* pAnnotDict,
+                               RetainPtr<CPDF_Dictionary> pAnnotDict,
                                const ByteString& sAPType)
-    : m_pDocument(pDocument), m_pAnnotDict(pAnnotDict), m_sAPType(sAPType) {
+    : m_pDocument(pDocument),
+      m_pAnnotDict(std::move(pAnnotDict)),
+      m_sAPType(sAPType) {
   FX_Charset nCharset = FX_Charset::kDefault;
   m_pDefaultFont = GetAnnotDefaultFont(&m_sDefaultFontName);
   if (m_pDefaultFont) {

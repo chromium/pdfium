@@ -40,7 +40,7 @@ CPDF_BAFontMap* CFFL_TextObject::GetOrCreateFontMap() {
   if (!m_pFontMap) {
     m_pFontMap = std::make_unique<CPDF_BAFontMap>(
         m_pWidget->GetPDFPage()->GetDocument(),
-        m_pWidget->GetPDFAnnot()->GetAnnotDict(), "N");
+        m_pWidget->GetPDFAnnot()->GetMutableAnnotDict(), "N");
   }
   return m_pFontMap.get();
 }

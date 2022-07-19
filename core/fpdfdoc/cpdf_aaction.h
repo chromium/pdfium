@@ -7,10 +7,9 @@
 #ifndef CORE_FPDFDOC_CPDF_AACTION_H_
 #define CORE_FPDFDOC_CPDF_AACTION_H_
 
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfdoc/cpdf_action.h"
 #include "core/fxcrt/retain_ptr.h"
-
-class CPDF_Dictionary;
 
 class CPDF_AAction {
  public:

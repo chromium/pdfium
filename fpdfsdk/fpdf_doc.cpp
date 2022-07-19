@@ -311,7 +311,7 @@ FPDF_EXPORT FPDF_LINK FPDF_CALLCONV FPDFLink_GetLinkAtPoint(FPDF_PAGE page,
   CPDF_Link link = pLinkList->GetLinkAtPoint(
       pPage, CFX_PointF(static_cast<float>(x), static_cast<float>(y)), nullptr);
 
-  return FPDFLinkFromCPDFDictionary(link.GetDict());
+  return FPDFLinkFromCPDFDictionary(link.GetMutableDict().Get());
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFLink_GetLinkZOrderAtPoint(FPDF_PAGE page,
@@ -387,12 +387,12 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFLink_Enumerate(FPDF_PAGE page,
 FPDF_EXPORT FPDF_ANNOTATION FPDF_CALLCONV
 FPDFLink_GetAnnot(FPDF_PAGE page, FPDF_LINK link_annot) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
-  CPDF_Dictionary* pAnnotDict = CPDFDictionaryFromFPDFLink(link_annot);
+  RetainPtr<CPDF_Dictionary> pAnnotDict(CPDFDictionaryFromFPDFLink(link_annot));
   if (!pPage || !pAnnotDict)
     return nullptr;
 
   auto pAnnotContext = std::make_unique<CPDF_AnnotContext>(
-      pAnnotDict, IPDFPageFromFPDFPage(page));
+      std::move(pAnnotDict), IPDFPageFromFPDFPage(page));
 
   // Caller takes the ownership of the object.
   return FPDFAnnotationFromCPDFAnnotContext(pAnnotContext.release());

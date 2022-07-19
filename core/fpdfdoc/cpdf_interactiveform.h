@@ -14,6 +14,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfdoc/cpdf_defaultappearance.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
@@ -26,7 +27,6 @@
 class CFieldTree;
 class CFDF_Document;
 class CPDF_Document;
-class CPDF_Dictionary;
 class CPDF_Font;
 class CPDF_FormControl;
 class CPDF_Page;
@@ -91,7 +91,8 @@ class CPDF_InteractiveForm {
 
   NotifierIface* GetFormNotify() const { return m_pFormNotify.Get(); }
   CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
-  CPDF_Dictionary* GetFormDict() const { return m_pFormDict.Get(); }
+  const CPDF_Dictionary* GetFormDict() const { return m_pFormDict.Get(); }
+  RetainPtr<CPDF_Dictionary> GetMutableFormDict() { return m_pFormDict; }
 
   const std::vector<UnownedPtr<CPDF_FormControl>>& GetControlsForField(
       const CPDF_FormField* pField);

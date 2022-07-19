@@ -625,8 +625,10 @@ FORM_GetFocusedAnnot(FPDF_FORMHANDLE handle,
   if (!page)
     return true;
 
-  CPDF_Dictionary* annot_dict = cpdfsdk_annot->GetPDFAnnot()->GetAnnotDict();
-  auto annot_context = std::make_unique<CPDF_AnnotContext>(annot_dict, page);
+  RetainPtr<CPDF_Dictionary> annot_dict =
+      cpdfsdk_annot->GetPDFAnnot()->GetMutableAnnotDict();
+  auto annot_context =
+      std::make_unique<CPDF_AnnotContext>(std::move(annot_dict), page);
 
   *page_index = page_view->GetPageIndex();
   // Caller takes ownership.

@@ -1246,7 +1246,7 @@ void CPDFSDK_AppStream::SetAsPushButton() {
   CPDF_IconFit iconFit = pControl->GetIconFit();
   {
     CPDF_BAFontMap font_map(widget_->GetPDFPage()->GetDocument(),
-                            widget_->GetPDFAnnot()->GetAnnotDict(), "N");
+                            widget_->GetPDFAnnot()->GetMutableAnnotDict(), "N");
     ByteString csAP =
         GetRectFillAppStream(rcWindow, crBackground) +
         GetBorderAppStreamInternal(rcWindow, fBorderWidth, crBorder, crLeftTop,
@@ -1273,7 +1273,7 @@ void CPDFSDK_AppStream::SetAsPushButton() {
   }
   {
     CPDF_BAFontMap font_map(widget_->GetPDFPage()->GetDocument(),
-                            widget_->GetPDFAnnot()->GetAnnotDict(), "R");
+                            widget_->GetPDFAnnot()->GetMutableAnnotDict(), "R");
     ByteString csAP =
         GetRectFillAppStream(rcWindow, crBackground) +
         GetBorderAppStreamInternal(rcWindow, fBorderWidth, crBorder, crLeftTop,
@@ -1309,7 +1309,7 @@ void CPDFSDK_AppStream::SetAsPushButton() {
   }
   {
     CPDF_BAFontMap font_map(widget_->GetPDFPage()->GetDocument(),
-                            widget_->GetPDFAnnot()->GetAnnotDict(), "D");
+                            widget_->GetPDFAnnot()->GetMutableAnnotDict(), "D");
     ByteString csAP =
         GetRectFillAppStream(rcWindow, crBackground - 0.25f) +
         GetBorderAppStreamInternal(rcWindow, fBorderWidth, crBorder, crLeftTop,
@@ -1531,7 +1531,7 @@ void CPDFSDK_AppStream::SetAsComboBox(absl::optional<WideString> sValue) {
 
   // Font map must outlive |pEdit|.
   CPDF_BAFontMap font_map(widget_->GetPDFPage()->GetDocument(),
-                          widget_->GetPDFAnnot()->GetAnnotDict(), "N");
+                          widget_->GetPDFAnnot()->GetMutableAnnotDict(), "N");
 
   auto pEdit = std::make_unique<CPWL_EditImpl>();
   pEdit->EnableRefresh(false);
@@ -1598,7 +1598,7 @@ void CPDFSDK_AppStream::SetAsListBox() {
 
   // Font map must outlive |pEdit|.
   CPDF_BAFontMap font_map(widget_->GetPDFPage()->GetDocument(),
-                          widget_->GetPDFAnnot()->GetAnnotDict(), "N");
+                          widget_->GetPDFAnnot()->GetMutableAnnotDict(), "N");
 
   auto pEdit = std::make_unique<CPWL_EditImpl>();
   pEdit->EnableRefresh(false);
@@ -1682,7 +1682,7 @@ void CPDFSDK_AppStream::SetAsTextField(absl::optional<WideString> sValue) {
 
   // Font map must outlive |pEdit|.
   CPDF_BAFontMap font_map(widget_->GetPDFPage()->GetDocument(),
-                          widget_->GetPDFAnnot()->GetAnnotDict(), "N");
+                          widget_->GetPDFAnnot()->GetMutableAnnotDict(), "N");
 
   auto pEdit = std::make_unique<CPWL_EditImpl>();
   pEdit->EnableRefresh(false);

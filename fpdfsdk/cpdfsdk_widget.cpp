@@ -388,7 +388,7 @@ FormFieldType CPDFSDK_Widget::GetFieldType() const {
 void CPDFSDK_Widget::SetRect(const CFX_FloatRect& rect) {
   DCHECK(rect.right - rect.left >= 1.0f);
   DCHECK(rect.top - rect.bottom >= 1.0f);
-  GetAnnotDict()->SetRectFor(pdfium::annotation::kRect, rect);
+  GetMutableAnnotDict()->SetRectFor(pdfium::annotation::kRect, rect);
 }
 
 bool CPDFSDK_Widget::IsAppearanceValid() {
@@ -634,7 +634,7 @@ void CPDFSDK_Widget::ResetAppearance(absl::optional<WideString> sValue,
   if (bValueChanged == kValueChanged)
     m_nValueAge++;
 
-  CPDFSDK_AppStream appStream(this, GetAPDict());
+  CPDFSDK_AppStream appStream(this, GetAPDict().Get());
   switch (GetFieldType()) {
     case FormFieldType::kPushButton:
       appStream.SetAsPushButton();

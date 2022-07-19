@@ -839,7 +839,7 @@ bool CPDF_FormField::UseSelectedIndicesObject() const {
 }
 
 void CPDF_FormField::LoadDA() {
-  CPDF_Dictionary* pFormDict = m_pForm->GetFormDict();
+  RetainPtr<CPDF_Dictionary> pFormDict = m_pForm->GetMutableFormDict();
   if (!pFormDict)
     return;
 

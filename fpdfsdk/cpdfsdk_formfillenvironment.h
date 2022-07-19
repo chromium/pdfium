@@ -272,7 +272,7 @@ class CPDFSDK_FormFillEnvironment final
                           CPDF_AAction::AActionType type,
                           CFFL_FieldAction* data,
                           const WideString& script);
-  bool IsValidField(CPDF_Dictionary* pFieldDict);
+  bool IsValidField(const CPDF_Dictionary* pFieldDict);
 
   UnownedPtr<FPDF_FORMFILLINFO> const m_pInfo;
   std::unique_ptr<IJS_Runtime> m_pIJSRuntime;

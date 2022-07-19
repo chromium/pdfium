@@ -6,15 +6,17 @@
 
 #include "core/fpdfapi/page/cpdf_annotcontext.h"
 
+#include <utility>
+
 #include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "third_party/base/check.h"
 
-CPDF_AnnotContext::CPDF_AnnotContext(CPDF_Dictionary* pAnnotDict,
+CPDF_AnnotContext::CPDF_AnnotContext(RetainPtr<CPDF_Dictionary> pAnnotDict,
                                      IPDF_Page* pPage)
-    : m_pAnnotDict(pAnnotDict), m_pPage(pPage) {
+    : m_pAnnotDict(std::move(pAnnotDict)), m_pPage(pPage) {
   DCHECK(m_pAnnotDict);
   DCHECK(m_pPage);
   DCHECK(m_pPage->AsPDFPage());

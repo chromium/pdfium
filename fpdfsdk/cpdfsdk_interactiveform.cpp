@@ -133,7 +133,7 @@ CPDFSDK_Widget* CPDFSDK_InteractiveForm::GetWidget(
   if (pWidget)
     return pWidget;
 
-  CPDF_Dictionary* pControlDict = pControl->GetWidget();
+  const CPDF_Dictionary* pControlDict = pControl->GetWidget();
   CPDF_Document* pDocument = m_pFormFillEnv->GetPDFDocument();
   CPDFSDK_PageView* pPage = nullptr;
 
@@ -177,7 +177,7 @@ void CPDFSDK_InteractiveForm::GetWidgets(
 
 int CPDFSDK_InteractiveForm::GetPageIndexByAnnotDict(
     CPDF_Document* pDocument,
-    CPDF_Dictionary* pAnnotDict) const {
+    const CPDF_Dictionary* pAnnotDict) const {
   DCHECK(pAnnotDict);
 
   for (int i = 0, sz = pDocument->GetPageCount(); i < sz; i++) {

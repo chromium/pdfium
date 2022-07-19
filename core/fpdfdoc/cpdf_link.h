@@ -7,12 +7,11 @@
 #ifndef CORE_FPDFDOC_CPDF_LINK_H_
 #define CORE_FPDFDOC_CPDF_LINK_H_
 
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfdoc/cpdf_action.h"
 #include "core/fpdfdoc/cpdf_dest.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
-
-class CPDF_Dictionary;
 
 class CPDF_Link {
  public:
@@ -21,7 +20,8 @@ class CPDF_Link {
   CPDF_Link(const CPDF_Link& that);
   ~CPDF_Link();
 
-  CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
+  const CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
+  RetainPtr<CPDF_Dictionary> GetMutableDict() const { return m_pDict; }
   CFX_FloatRect GetRect();
   CPDF_Dest GetDest(CPDF_Document* pDoc);
   CPDF_Action GetAction();

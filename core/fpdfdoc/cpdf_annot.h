@@ -81,7 +81,7 @@ class CPDF_Annot {
   CFX_FloatRect GetRect() const;
   CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
   const CPDF_Dictionary* GetAnnotDict() const { return m_pAnnotDict.Get(); }
-  CPDF_Dictionary* GetAnnotDict() { return m_pAnnotDict.Get(); }
+  RetainPtr<CPDF_Dictionary> GetMutableAnnotDict() { return m_pAnnotDict; }
 
   bool IsHidden() const;
 

@@ -203,7 +203,7 @@ std::vector<CPDFSDK_Annot*> CPDFSDK_PageView::GetAnnotList() const {
   return list;
 }
 
-CPDFSDK_Annot* CPDFSDK_PageView::GetAnnotByDict(CPDF_Dictionary* pDict) {
+CPDFSDK_Annot* CPDFSDK_PageView::GetAnnotByDict(const CPDF_Dictionary* pDict) {
   for (std::unique_ptr<CPDFSDK_Annot>& pAnnot : m_SDKAnnotArray) {
     CPDF_Annot* pPDFAnnot = pAnnot->GetPDFAnnot();
     if (pPDFAnnot && pPDFAnnot->GetAnnotDict() == pDict)

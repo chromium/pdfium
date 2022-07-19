@@ -85,7 +85,7 @@ class CPDF_FormField {
   WideString GetFullName() const;
   Type GetType() const { return m_Type; }
 
-  CPDF_Dictionary* GetFieldDict() const { return m_pDict.Get(); }
+  const CPDF_Dictionary* GetFieldDict() const { return m_pDict.Get(); }
   bool ResetField();
 
   int CountControls() const;
@@ -143,7 +143,7 @@ class CPDF_FormField {
   float GetFontSize() const { return m_FontSize; }
   CPDF_Font* GetFont() const { return m_pFont.Get(); }
 
-  CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
+  const CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
   CPDF_InteractiveForm* GetForm() const { return m_pForm.Get(); }
 
   WideString GetCheckValue(bool bDefault) const;

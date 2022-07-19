@@ -23,7 +23,7 @@ class CPDF_BAFontMap final : public IPVT_FontMap {
   static FX_Charset GetNativeCharset();
 
   CPDF_BAFontMap(CPDF_Document* pDocument,
-                 CPDF_Dictionary* pAnnotDict,
+                 RetainPtr<CPDF_Dictionary> pAnnotDict,
                  const ByteString& sAPType);
   ~CPDF_BAFontMap() override;
 

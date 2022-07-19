@@ -818,7 +818,8 @@ void CPDFSDK_FormFillEnvironment::SendOnFocusChange(
   if (!page)
     return;
 
-  CPDF_Dictionary* annot_dict = pAnnot->GetPDFAnnot()->GetAnnotDict();
+  RetainPtr<CPDF_Dictionary> annot_dict =
+      pAnnot->GetPDFAnnot()->GetMutableAnnotDict();
   auto focused_annot = std::make_unique<CPDF_AnnotContext>(annot_dict, page);
   FPDF_ANNOTATION fpdf_annot =
       FPDFAnnotationFromCPDFAnnotContext(focused_annot.get());
@@ -976,7 +977,8 @@ bool CPDFSDK_FormFillEnvironment::ExecuteDocumentPageAction(
   return true;
 }
 
-bool CPDFSDK_FormFillEnvironment::IsValidField(CPDF_Dictionary* pFieldDict) {
+bool CPDFSDK_FormFillEnvironment::IsValidField(
+    const CPDF_Dictionary* pFieldDict) {
   DCHECK(pFieldDict);
 
   CPDFSDK_InteractiveForm* pForm = GetInteractiveForm();

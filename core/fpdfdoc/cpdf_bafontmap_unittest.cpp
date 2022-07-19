@@ -4,6 +4,8 @@
 
 #include "core/fpdfdoc/cpdf_bafontmap.h"
 
+#include <utility>
+
 #include "build/build_config.h"
 #include "constants/annotation_common.h"
 #include "core/fpdfapi/font/cpdf_font.h"
@@ -24,7 +26,7 @@ TEST_F(BAFontMapTest, DefaultFont) {
   annot_dict->SetNewFor<CPDF_String>("DA", "0 0 0 rg /F1 12 Tf",
                                      /*bHex=*/false);
 
-  CPDF_BAFontMap font_map(&doc, annot_dict.Get(), "N");
+  CPDF_BAFontMap font_map(&doc, std::move(annot_dict), "N");
 #if !BUILDFLAG(IS_WIN)
   // TODO(thestig): Figure out why this does not work on Windows.
   EXPECT_EQ(font_map.GetPDFFontAlias(0), "Helvetica_00");
@@ -52,7 +54,7 @@ TEST_F(BAFontMapTest, Bug853238) {
   annot_dict->SetNewFor<CPDF_String>("DA", "0 0 0 rg /F1 12 Tf",
                                      /*bHex=*/false);
 
-  CPDF_BAFontMap font_map(&doc, annot_dict.Get(), "N");
+  CPDF_BAFontMap font_map(&doc, std::move(annot_dict), "N");
   EXPECT_EQ(font_map.GetPDFFontAlias(0), "F1");
   RetainPtr<CPDF_Font> font = font_map.GetPDFFont(0);
   ASSERT_TRUE(font);

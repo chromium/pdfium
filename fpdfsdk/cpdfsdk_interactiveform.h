@@ -102,7 +102,7 @@ class CPDFSDK_InteractiveForm final
   void AfterFormReset(CPDF_InteractiveForm* pForm) override;
 
   int GetPageIndexByAnnotDict(CPDF_Document* pDocument,
-                              CPDF_Dictionary* pAnnotDict) const;
+                              const CPDF_Dictionary* pAnnotDict) const;
 
   UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
   std::unique_ptr<CPDF_InteractiveForm> const m_pInteractiveForm;
