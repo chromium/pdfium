@@ -26,6 +26,8 @@ class CPDF_ToUnicodeMap {
   WideString Lookup(uint32_t charcode) const;
   uint32_t ReverseLookup(wchar_t unicode) const;
 
+  size_t GetMultimapSizeForTesting() const { return m_Multimap.size(); }
+
  private:
   friend class cpdf_tounicodemap_StringToCode_Test;
   friend class cpdf_tounicodemap_StringToWideString_Test;
@@ -38,6 +40,10 @@ class CPDF_ToUnicodeMap {
   void HandleBeginBFRange(CPDF_SimpleParser* pParser);
   uint32_t GetMultiCharIndexIndicator() const;
   void SetCode(uint32_t srccode, WideString destcode);
+
+  // Inserts a new entry which hasn't not been inserted into `m_Multimap`
+  // before.
+  void InsertIntoMultimap(uint32_t code, uint32_t destcode);
 
   std::multimap<uint32_t, uint32_t> m_Multimap;
   UnownedPtr<const CPDF_CID2UnicodeMap> m_pBaseMap;

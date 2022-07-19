@@ -79,3 +79,40 @@ TEST(cpdf_tounicodemap, HandleBeginBFRangeAvoidIntegerOverflow) {
     EXPECT_STREQ(L"AB", map.Lookup(0xffffffff).c_str());
   }
 }
+
+TEST(cpdf_tounicodemap, InsertIntoMultimap) {
+  {
+    // Both the CIDs and the unicodes are different.
+    static constexpr uint8_t kInput1[] =
+        "beginbfchar<1><0041><2><0042>endbfchar";
+    auto stream = pdfium::MakeRetain<CPDF_Stream>();
+    stream->SetData(pdfium::make_span(kInput1));
+    CPDF_ToUnicodeMap map(stream.Get());
+    EXPECT_EQ(1u, map.ReverseLookup(0x0041));
+    EXPECT_EQ(2u, map.ReverseLookup(0x0042));
+    EXPECT_EQ(2u, map.GetMultimapSizeForTesting());
+  }
+  {
+    // The same CID with different unicodes.
+    static constexpr uint8_t kInput2[] =
+        "beginbfrange<0><0><0041><0><0><0042>endbfrange";
+    auto stream = pdfium::MakeRetain<CPDF_Stream>();
+    stream->SetData(pdfium::make_span(kInput2));
+    CPDF_ToUnicodeMap map(stream.Get());
+    EXPECT_EQ(0u, map.ReverseLookup(0x0041));
+    EXPECT_EQ(0u, map.ReverseLookup(0x0042));
+    EXPECT_EQ(2u, map.GetMultimapSizeForTesting());
+  }
+  {
+    // Duplicate mappings of CID 0 to unicode "A". There should be only 1 entry
+    // in `m_Multimap`.
+    static constexpr uint8_t kInput3[] =
+        "beginbfrange<0><0>[<0041>]endbfrange\n"
+        "beginbfchar<0><0041>endbfchar";
+    auto stream = pdfium::MakeRetain<CPDF_Stream>();
+    stream->SetData(pdfium::make_span(kInput3));
+    CPDF_ToUnicodeMap map(stream.Get());
+    EXPECT_EQ(0u, map.ReverseLookup(0x0041));
+    EXPECT_EQ(1u, map.GetMultimapSizeForTesting());
+  }
+}

@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/font/cpdf_tounicodemap.h"
 
+#include <map>
 #include <utility>
 
 #include "core/fpdfapi/font/cpdf_cid2unicodemap.h"
@@ -14,6 +15,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "third_party/base/containers/contains.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
 namespace {
@@ -190,7 +192,7 @@ void CPDF_ToUnicodeMap::HandleBeginBFRange(CPDF_SimpleParser* pParser) {
       uint32_t value = value_or_error.value();
       for (FX_SAFE_UINT32 code = lowcode;
            code.IsValid() && code.ValueOrDie() <= highcode; code++) {
-        m_Multimap.emplace(code.ValueOrDie(), value++);
+        InsertIntoMultimap(code.ValueOrDie(), value++);
       }
     } else {
       for (FX_SAFE_UINT32 code = lowcode;
@@ -198,7 +200,7 @@ void CPDF_ToUnicodeMap::HandleBeginBFRange(CPDF_SimpleParser* pParser) {
         uint32_t code_value = code.ValueOrDie();
         WideString retcode =
             code_value == lowcode ? destcode : StringDataAdd(destcode);
-        m_Multimap.emplace(code_value, GetMultiCharIndexIndicator());
+        InsertIntoMultimap(code_value, GetMultiCharIndexIndicator());
         m_MultiCharVec.push_back(retcode);
         destcode = std::move(retcode);
       }
@@ -218,9 +220,26 @@ void CPDF_ToUnicodeMap::SetCode(uint32_t srccode, WideString destcode) {
     return;
 
   if (len == 1) {
-    m_Multimap.emplace(srccode, destcode[0]);
+    InsertIntoMultimap(srccode, destcode[0]);
   } else {
-    m_Multimap.emplace(srccode, GetMultiCharIndexIndicator());
+    InsertIntoMultimap(srccode, GetMultiCharIndexIndicator());
     m_MultiCharVec.push_back(destcode);
   }
+}
+
+void CPDF_ToUnicodeMap::InsertIntoMultimap(uint32_t code, uint32_t destcode) {
+  if (!pdfium::Contains(m_Multimap, code)) {
+    m_Multimap.emplace(code, destcode);
+    return;
+  }
+
+  auto ret = m_Multimap.equal_range(code);
+  for (auto iter = ret.first; iter != ret.second; ++iter) {
+    if (iter->second == destcode) {
+      // Do not insert since a duplicate mapping is found.
+      return;
+    }
+  }
+
+  m_Multimap.emplace(code, destcode);
 }
