@@ -195,7 +195,7 @@ CPDF_Form* CPDF_Annot::GetAPForm(CPDF_Page* pPage, AppearanceMode mode) {
     return it->second.get();
 
   auto pNewForm = std::make_unique<CPDF_Form>(
-      m_pDocument.Get(), pPage->GetMutableResources().Get(), pStream.Get());
+      m_pDocument.Get(), pPage->GetMutableResources(), pStream);
   pNewForm->ParseContent();
 
   CPDF_Form* pResult = pNewForm.get();

@@ -158,22 +158,22 @@ TEST_F(DocumentTest, GetPages) {
   std::unique_ptr<CPDF_TestDocumentForPages> document =
       std::make_unique<CPDF_TestDocumentForPages>();
   for (int i = 0; i < kNumTestPages; i++) {
-    CPDF_Dictionary* page = document->GetPageDictionary(i);
+    const CPDF_Dictionary* page = document->GetPageDictionary(i);
     ASSERT_TRUE(page);
     ASSERT_TRUE(page->KeyExist("PageNumbering"));
     EXPECT_EQ(i, page->GetIntegerFor("PageNumbering"));
   }
-  CPDF_Dictionary* page = document->GetPageDictionary(kNumTestPages);
+  const CPDF_Dictionary* page = document->GetPageDictionary(kNumTestPages);
   EXPECT_FALSE(page);
 }
 
 TEST_F(DocumentTest, GetPageWithoutObjNumTwice) {
   auto document = std::make_unique<CPDF_TestDocumentWithPageWithoutPageNum>();
-  CPDF_Dictionary* page = document->GetPageDictionary(2);
+  const CPDF_Dictionary* page = document->GetPageDictionary(2);
   ASSERT_TRUE(page);
   ASSERT_EQ(document->inlined_page(), page);
 
-  CPDF_Dictionary* second_call_page = document->GetPageDictionary(2);
+  const CPDF_Dictionary* second_call_page = document->GetPageDictionary(2);
   EXPECT_TRUE(second_call_page);
   EXPECT_EQ(page, second_call_page);
 }
@@ -182,12 +182,12 @@ TEST_F(DocumentTest, GetPagesReverseOrder) {
   std::unique_ptr<CPDF_TestDocumentForPages> document =
       std::make_unique<CPDF_TestDocumentForPages>();
   for (int i = 6; i >= 0; i--) {
-    CPDF_Dictionary* page = document->GetPageDictionary(i);
+    const CPDF_Dictionary* page = document->GetPageDictionary(i);
     ASSERT_TRUE(page);
     ASSERT_TRUE(page->KeyExist("PageNumbering"));
     EXPECT_EQ(i, page->GetIntegerFor("PageNumbering"));
   }
-  CPDF_Dictionary* page = document->GetPageDictionary(kNumTestPages);
+  const CPDF_Dictionary* page = document->GetPageDictionary(kNumTestPages);
   EXPECT_FALSE(page);
 }
 
@@ -195,7 +195,7 @@ TEST_F(DocumentTest, GetPagesInDisorder) {
   std::unique_ptr<CPDF_TestDocumentForPages> document =
       std::make_unique<CPDF_TestDocumentForPages>();
 
-  CPDF_Dictionary* page = document->GetPageDictionary(1);
+  const CPDF_Dictionary* page = document->GetPageDictionary(1);
   ASSERT_TRUE(page);
   ASSERT_TRUE(page->KeyExist("PageNumbering"));
   EXPECT_EQ(1, page->GetIntegerFor("PageNumbering"));

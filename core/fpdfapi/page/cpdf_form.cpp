@@ -29,24 +29,27 @@ CPDF_Dictionary* CPDF_Form::ChooseResourcesDict(
 }
 
 CPDF_Form::CPDF_Form(CPDF_Document* pDoc,
-                     CPDF_Dictionary* pPageResources,
-                     CPDF_Stream* pFormStream)
-    : CPDF_Form(pDoc, pPageResources, pFormStream, nullptr) {}
+                     RetainPtr<CPDF_Dictionary> pPageResources,
+                     RetainPtr<CPDF_Stream> pFormStream)
+    : CPDF_Form(pDoc,
+                std::move(pPageResources),
+                std::move(pFormStream),
+                nullptr) {}
 
 CPDF_Form::CPDF_Form(CPDF_Document* pDoc,
-                     CPDF_Dictionary* pPageResources,
-                     CPDF_Stream* pFormStream,
+                     RetainPtr<CPDF_Dictionary> pPageResources,
+                     RetainPtr<CPDF_Stream> pFormStream,
                      CPDF_Dictionary* pParentResources)
-    : CPDF_PageObjectHolder(
-          pDoc,
-          pFormStream->GetMutableDict().Get(),
-          pPageResources,
-          ChooseResourcesDict(pFormStream->GetMutableDict()
-                                  ->GetMutableDictFor("Resources")
-                                  .Get(),
-                              pParentResources,
-                              pPageResources)),
-      m_pFormStream(pFormStream) {
+    : CPDF_PageObjectHolder(pDoc,
+                            pFormStream->GetMutableDict(),
+                            pPageResources,
+                            pdfium::WrapRetain(ChooseResourcesDict(
+                                pFormStream->GetMutableDict()
+                                    ->GetMutableDictFor("Resources")
+                                    .Get(),
+                                pParentResources,
+                                pPageResources.Get()))),
+      m_pFormStream(std::move(pFormStream)) {
   LoadTransparencyInfo();
 }
 

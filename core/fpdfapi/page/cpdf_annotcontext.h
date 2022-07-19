@@ -22,7 +22,7 @@ class CPDF_AnnotContext {
   CPDF_AnnotContext(RetainPtr<CPDF_Dictionary> pAnnotDict, IPDF_Page* pPage);
   ~CPDF_AnnotContext();
 
-  void SetForm(CPDF_Stream* pStream);
+  void SetForm(RetainPtr<CPDF_Stream> pStream);
   bool HasForm() const { return !!m_pAnnotForm; }
   CPDF_Form* GetForm() const { return m_pAnnotForm.get(); }
 

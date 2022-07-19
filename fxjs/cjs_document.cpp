@@ -1241,11 +1241,12 @@ CJS_Result CJS_Document::getPageNthWord(
   if (nPageNo < 0 || nPageNo >= pDocument->GetPageCount())
     return CJS_Result::Failure(JSMessage::kValueError);
 
-  CPDF_Dictionary* pPageDict = pDocument->GetPageDictionary(nPageNo);
+  RetainPtr<CPDF_Dictionary> pPageDict =
+      pDocument->GetMutablePageDictionary(nPageNo);
   if (!pPageDict)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-  auto page = pdfium::MakeRetain<CPDF_Page>(pDocument, pPageDict);
+  auto page = pdfium::MakeRetain<CPDF_Page>(pDocument, std::move(pPageDict));
   page->SetRenderCache(std::make_unique<CPDF_PageRenderCache>(page.Get()));
   page->ParseContent();
 
@@ -1296,11 +1297,12 @@ CJS_Result CJS_Document::getPageNumWords(
   if (nPageNo < 0 || nPageNo >= pDocument->GetPageCount())
     return CJS_Result::Failure(JSMessage::kValueError);
 
-  CPDF_Dictionary* pPageDict = pDocument->GetPageDictionary(nPageNo);
+  RetainPtr<CPDF_Dictionary> pPageDict =
+      pDocument->GetMutablePageDictionary(nPageNo);
   if (!pPageDict)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-  auto page = pdfium::MakeRetain<CPDF_Page>(pDocument, pPageDict);
+  auto page = pdfium::MakeRetain<CPDF_Page>(pDocument, std::move(pPageDict));
   page->SetRenderCache(std::make_unique<CPDF_PageRenderCache>(page.Get()));
   page->ParseContent();
 

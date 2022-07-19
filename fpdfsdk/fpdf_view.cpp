@@ -364,11 +364,11 @@ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDF_LoadPage(FPDF_DOCUMENT document,
   }
 #endif  // PDF_ENABLE_XFA
 
-  CPDF_Dictionary* pDict = pDoc->GetPageDictionary(page_index);
+  RetainPtr<CPDF_Dictionary> pDict = pDoc->GetMutablePageDictionary(page_index);
   if (!pDict)
     return nullptr;
 
-  auto pPage = pdfium::MakeRetain<CPDF_Page>(pDoc, pDict);
+  auto pPage = pdfium::MakeRetain<CPDF_Page>(pDoc, std::move(pDict));
   pPage->SetRenderCache(std::make_unique<CPDF_PageRenderCache>(pPage.Get()));
   pPage->ParseContent();
   return FPDFPageFromIPDFPage(pPage.Leak());
@@ -920,11 +920,11 @@ FPDF_GetPageSizeByIndexF(FPDF_DOCUMENT document,
   }
 #endif  // PDF_ENABLE_XFA
 
-  CPDF_Dictionary* pDict = pDoc->GetPageDictionary(page_index);
+  RetainPtr<CPDF_Dictionary> pDict = pDoc->GetMutablePageDictionary(page_index);
   if (!pDict)
     return false;
 
-  auto page = pdfium::MakeRetain<CPDF_Page>(pDoc, pDict);
+  auto page = pdfium::MakeRetain<CPDF_Page>(pDoc, std::move(pDict));
   page->SetRenderCache(std::make_unique<CPDF_PageRenderCache>(page.Get()));
   size->width = page->GetPageWidth();
   size->height = page->GetPageHeight();

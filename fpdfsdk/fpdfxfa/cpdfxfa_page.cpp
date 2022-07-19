@@ -7,6 +7,7 @@
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
 
 #include <memory>
+#include <utility>
 
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -90,13 +91,13 @@ CPDF_Document* CPDFXFA_Page::GetDocument() const {
 }
 
 bool CPDFXFA_Page::LoadPDFPage() {
-  CPDF_Document* pPDFDoc = GetDocument();
-  CPDF_Dictionary* pDict = pPDFDoc->GetPageDictionary(m_iPageIndex);
+  RetainPtr<CPDF_Dictionary> pDict =
+      GetDocument()->GetMutablePageDictionary(m_iPageIndex);
   if (!pDict)
     return false;
 
   if (!m_pPDFPage || m_pPDFPage->GetDict() != pDict)
-    LoadPDFPageFromDict(pDict);
+    LoadPDFPageFromDict(std::move(pDict));
 
   return true;
 }
@@ -119,9 +120,10 @@ bool CPDFXFA_Page::LoadPage() {
   }
 }
 
-void CPDFXFA_Page::LoadPDFPageFromDict(CPDF_Dictionary* pPageDict) {
+void CPDFXFA_Page::LoadPDFPageFromDict(RetainPtr<CPDF_Dictionary> pPageDict) {
   DCHECK(pPageDict);
-  m_pPDFPage = pdfium::MakeRetain<CPDF_Page>(GetDocument(), pPageDict);
+  m_pPDFPage =
+      pdfium::MakeRetain<CPDF_Page>(GetDocument(), std::move(pPageDict));
   m_pPDFPage->SetRenderCache(
       std::make_unique<CPDF_PageRenderCache>(m_pPDFPage.Get()));
   m_pPDFPage->ParseContent();

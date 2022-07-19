@@ -24,7 +24,7 @@ CPDF_AnnotContext::CPDF_AnnotContext(RetainPtr<CPDF_Dictionary> pAnnotDict,
 
 CPDF_AnnotContext::~CPDF_AnnotContext() = default;
 
-void CPDF_AnnotContext::SetForm(CPDF_Stream* pStream) {
+void CPDF_AnnotContext::SetForm(RetainPtr<CPDF_Stream> pStream) {
   if (!pStream)
     return;
 
@@ -33,7 +33,7 @@ void CPDF_AnnotContext::SetForm(CPDF_Stream* pStream) {
   pStream->GetMutableDict()->SetMatrixFor("Matrix", CFX_Matrix());
 
   m_pAnnotForm = std::make_unique<CPDF_Form>(
-      m_pPage->GetDocument(), m_pPage->AsPDFPage()->GetMutableResources().Get(),
+      m_pPage->GetDocument(), m_pPage->AsPDFPage()->GetMutableResources(),
       pStream);
   m_pAnnotForm->ParseContent();
 }

@@ -554,7 +554,8 @@ bool CPDF_NPageToOneExporter::ExportNPagesToOne(
     size_t iInnerPageMax =
         std::min(iOuterPage + nPagesPerSheet, pageIndices.size());
     for (size_t i = iOuterPage; i < iInnerPageMax; ++i) {
-      auto* pSrcPageDict = src()->GetPageDictionary(pageIndices[i]);
+      RetainPtr<CPDF_Dictionary> pSrcPageDict =
+          src()->GetMutablePageDictionary(pageIndices[i]);
       if (!pSrcPageDict)
         return false;
 
@@ -653,7 +654,8 @@ ByteString CPDF_NPageToOneExporter::MakeXObjectFromPage(
 
 std::unique_ptr<XObjectContext>
 CPDF_NPageToOneExporter::CreateXObjectContextFromPage(int src_page_index) {
-  CPDF_Dictionary* src_page_dict = src()->GetPageDictionary(src_page_index);
+  RetainPtr<CPDF_Dictionary> src_page_dict =
+      src()->GetMutablePageDictionary(src_page_index);
   if (!src_page_dict)
     return nullptr;
 
@@ -810,7 +812,7 @@ FPDF_NewFormObjectFromXObject(FPDF_XOBJECT xobject) {
   // Build toolchain bug?
   constexpr int kNoContentStream = CPDF_PageObject::kNoContentStream;
   auto form = std::make_unique<CPDF_Form>(xobj->dest_doc, nullptr,
-                                          xobj->xobject.Get(), nullptr);
+                                          xobj->xobject, nullptr);
   auto form_object = std::make_unique<CPDF_FormObject>(
       kNoContentStream, std::move(form), CFX_Matrix());
   return FPDFPageObjectFromCPDFPageObject(form_object.release());

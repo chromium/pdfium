@@ -130,7 +130,7 @@ class CPDF_DataAvail final : public Observable::ObserverIface {
   bool CheckInfo();
   bool CheckPages();
   bool CheckPage();
-  DocAvailStatus CheckResources(CPDF_Dictionary* page);
+  DocAvailStatus CheckResources(RetainPtr<CPDF_Dictionary> page);
   DocFormStatus CheckAcroForm();
   bool CheckPageStatus();
 

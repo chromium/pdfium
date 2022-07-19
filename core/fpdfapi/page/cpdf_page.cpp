@@ -19,12 +19,11 @@
 #include "third_party/base/check_op.h"
 #include "third_party/base/containers/contains.h"
 
-CPDF_Page::CPDF_Page(CPDF_Document* pDocument, CPDF_Dictionary* pPageDict)
-    : CPDF_PageObjectHolder(pDocument, pPageDict, nullptr, nullptr),
+CPDF_Page::CPDF_Page(CPDF_Document* pDocument,
+                     RetainPtr<CPDF_Dictionary> pPageDict)
+    : CPDF_PageObjectHolder(pDocument, std::move(pPageDict), nullptr, nullptr),
       m_PageSize(100, 100),
       m_pPDFDocument(pDocument) {
-  DCHECK(pPageDict);
-
   // Cannot initialize |m_pResources| and |m_pPageResources| via the
   // CPDF_PageObjectHolder ctor because GetPageAttr() requires
   // CPDF_PageObjectHolder to finish initializing first.

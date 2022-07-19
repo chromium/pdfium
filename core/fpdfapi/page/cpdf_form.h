@@ -30,11 +30,11 @@ class CPDF_Form final : public CPDF_PageObjectHolder,
                                               CPDF_Dictionary* pPageResources);
 
   CPDF_Form(CPDF_Document* pDocument,
-            CPDF_Dictionary* pPageResources,
-            CPDF_Stream* pFormStream);
+            RetainPtr<CPDF_Dictionary> pPageResources,
+            RetainPtr<CPDF_Stream> pFormStream);
   CPDF_Form(CPDF_Document* pDocument,
-            CPDF_Dictionary* pPageResources,
-            CPDF_Stream* pFormStream,
+            RetainPtr<CPDF_Dictionary> pPageResources,
+            RetainPtr<CPDF_Stream> pFormStream,
             CPDF_Dictionary* pParentResources);
   ~CPDF_Form() override;
 

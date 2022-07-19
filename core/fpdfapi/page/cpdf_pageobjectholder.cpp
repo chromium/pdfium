@@ -34,13 +34,14 @@ bool FontData::operator<(const FontData& other) const {
   return type < other.type;
 }
 
-CPDF_PageObjectHolder::CPDF_PageObjectHolder(CPDF_Document* pDoc,
-                                             CPDF_Dictionary* pDict,
-                                             CPDF_Dictionary* pPageResources,
-                                             CPDF_Dictionary* pResources)
-    : m_pPageResources(pPageResources),
-      m_pResources(pResources),
-      m_pDict(pDict),
+CPDF_PageObjectHolder::CPDF_PageObjectHolder(
+    CPDF_Document* pDoc,
+    RetainPtr<CPDF_Dictionary> pDict,
+    RetainPtr<CPDF_Dictionary> pPageResources,
+    RetainPtr<CPDF_Dictionary> pResources)
+    : m_pPageResources(std::move(pPageResources)),
+      m_pResources(std::move(pResources)),
+      m_pDict(std::move(pDict)),
       m_pDocument(pDoc) {
   DCHECK(m_pDict);
 }

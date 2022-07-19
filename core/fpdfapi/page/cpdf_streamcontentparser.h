@@ -125,7 +125,7 @@ class CPDF_StreamContentParser {
   CPDF_ImageObject* AddImage(uint32_t streamObjNum);
   CPDF_ImageObject* AddImage(const RetainPtr<CPDF_Image>& pImage);
 
-  void AddForm(CPDF_Stream* pStream);
+  void AddForm(RetainPtr<CPDF_Stream> pStream);
   void SetGraphicStates(CPDF_PageObject* pObj,
                         bool bColor,
                         bool bText,

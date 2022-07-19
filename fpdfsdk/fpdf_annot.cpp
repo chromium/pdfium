@@ -553,7 +553,7 @@ FPDFAnnot_AppendObject(FPDF_ANNOTATION annot, FPDF_PAGEOBJECT obj) {
 
   // Get the annotation's corresponding form object for parsing its AP stream.
   if (!pAnnot->HasForm())
-    pAnnot->SetForm(pStream.Get());
+    pAnnot->SetForm(pStream);
 
   // Check that the object did not come from the same annotation. If this check
   // succeeds, then it is assumed that the object came from
@@ -589,7 +589,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAnnot_GetObjectCount(FPDF_ANNOTATION annot) {
     if (!pStream)
       return 0;
 
-    pAnnot->SetForm(pStream.Get());
+    pAnnot->SetForm(std::move(pStream));
   }
   return pdfium::base::checked_cast<int>(
       pAnnot->GetForm()->GetPageObjectCount());
@@ -608,7 +608,7 @@ FPDFAnnot_GetObject(FPDF_ANNOTATION annot, int index) {
     if (!pStream)
       return nullptr;
 
-    pAnnot->SetForm(pStream.Get());
+    pAnnot->SetForm(std::move(pStream));
   }
 
   return FPDFPageObjectFromCPDFPageObject(

@@ -42,7 +42,8 @@ std::unique_ptr<CPDF_Form> CPDF_TilingPattern::Load(CPDF_PageObject* pPageObj) {
     return nullptr;
 
   const CFX_Matrix& matrix = parent_matrix();
-  auto form = std::make_unique<CPDF_Form>(document(), nullptr, pStream);
+  auto form = std::make_unique<CPDF_Form>(document(), nullptr,
+                                          pdfium::WrapRetain(pStream));
 
   CPDF_AllStates allStates;
   allStates.m_ColorState.Emplace();

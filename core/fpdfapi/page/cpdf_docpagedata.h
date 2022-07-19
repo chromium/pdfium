@@ -47,8 +47,8 @@ class CPDF_DocPageData final : public CPDF_Document::PageDataIface,
   // CPDF_Font::FormFactoryIFace:
   std::unique_ptr<CPDF_Font::FormIface> CreateForm(
       CPDF_Document* pDocument,
-      CPDF_Dictionary* pPageResources,
-      CPDF_Stream* pFormStream) override;
+      RetainPtr<CPDF_Dictionary> pPageResources,
+      RetainPtr<CPDF_Stream> pFormStream) override;
 
   bool IsForceClear() const { return m_bForceClear; }
 

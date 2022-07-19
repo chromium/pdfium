@@ -731,7 +731,7 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
     return;
   }
 
-  CPDF_Stream* pXObject = ToStream(FindResourceObj("XObject", name));
+  RetainPtr<CPDF_Stream> pXObject(ToStream(FindResourceObj("XObject", name)));
   if (!pXObject)
     return;
 
@@ -740,7 +740,7 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
     type = pXObject->GetDict()->GetStringFor("Subtype");
 
   if (type == "Form") {
-    AddForm(pXObject);
+    AddForm(std::move(pXObject));
     return;
   }
 
@@ -758,18 +758,18 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
   }
 }
 
-void CPDF_StreamContentParser::AddForm(CPDF_Stream* pStream) {
+void CPDF_StreamContentParser::AddForm(RetainPtr<CPDF_Stream> pStream) {
   CPDF_AllStates status;
   status.m_GeneralState = m_pCurStates->m_GeneralState;
   status.m_GraphState = m_pCurStates->m_GraphState;
   status.m_ColorState = m_pCurStates->m_ColorState;
   status.m_TextState = m_pCurStates->m_TextState;
-  auto form = std::make_unique<CPDF_Form>(
-      m_pDocument.Get(), m_pPageResources.Get(), pStream, m_pResources.Get());
+  auto form =
+      std::make_unique<CPDF_Form>(m_pDocument.Get(), m_pPageResources,
+                                  std::move(pStream), m_pResources.Get());
   form->ParseContent(&status, nullptr, m_ParsedSet.Get());
 
   CFX_Matrix matrix = m_pCurStates->m_CTM * m_mtContentToUser;
-
   auto pFormObj = std::make_unique<CPDF_FormObject>(GetCurrentStreamIndex(),
                                                     std::move(form), matrix);
   if (!m_pObjectHolder->BackgroundAlphaNeeded() &&

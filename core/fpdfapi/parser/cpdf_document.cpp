@@ -278,7 +278,7 @@ bool CPDF_Document::IsPageLoaded(int iPage) const {
   return !!m_PageList[iPage];
 }
 
-CPDF_Dictionary* CPDF_Document::GetPageDictionary(int iPage) {
+const CPDF_Dictionary* CPDF_Document::GetPageDictionary(int iPage) {
   if (!fxcrt::IndexInBounds(m_PageList, iPage))
     return nullptr;
 
@@ -301,6 +301,11 @@ CPDF_Dictionary* CPDF_Document::GetPageDictionary(int iPage) {
   CPDF_Dictionary* pPage = TraversePDFPages(iPage, &nPagesToGo, 0);
   m_iNextPageToTraverse = iPage + 1;
   return pPage;
+}
+
+RetainPtr<CPDF_Dictionary> CPDF_Document::GetMutablePageDictionary(int iPage) {
+  return pdfium::WrapRetain(
+      const_cast<CPDF_Dictionary*>(GetPageDictionary(iPage)));
 }
 
 void CPDF_Document::SetPageObjNum(int iPage, uint32_t objNum) {

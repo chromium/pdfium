@@ -54,7 +54,7 @@ bool IsValidRect(const CFX_FloatRect& rect, const CFX_FloatRect& rcPage) {
 }
 
 void GetContentsRect(CPDF_Document* pDoc,
-                     CPDF_Dictionary* pDict,
+                     RetainPtr<CPDF_Dictionary> pDict,
                      std::vector<CFX_FloatRect>* pRectArray) {
   auto pPDFPage = pdfium::MakeRetain<CPDF_Page>(pDoc, pDict);
   pPDFPage->ParseContent();
@@ -85,7 +85,7 @@ void ParserStream(const CPDF_Dictionary* pPageDic,
 }
 
 int ParserAnnots(CPDF_Document* pSourceDoc,
-                 CPDF_Dictionary* pPageDic,
+                 RetainPtr<CPDF_Dictionary> pPageDic,
                  std::vector<CFX_FloatRect>* pRectArray,
                  std::vector<CPDF_Dictionary*>* pObjectArray,
                  int nUsage) {
@@ -119,7 +119,7 @@ int ParserAnnots(CPDF_Document* pSourceDoc,
     else
       bParseStream = !!(nAnnotFlag & pdfium::annotation_flags::kPrint);
     if (bParseStream)
-      ParserStream(pPageDic, pAnnotDict.Get(), pRectArray, pObjectArray);
+      ParserStream(pPageDic.Get(), pAnnotDict.Get(), pRectArray, pObjectArray);
   }
   return FLATTEN_SUCCESS;
 }
@@ -265,7 +265,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
   std::vector<CPDF_Dictionary*> ObjectArray;
   std::vector<CFX_FloatRect> RectArray;
   int iRet =
-      ParserAnnots(pDocument, pPageDict.Get(), &RectArray, &ObjectArray, nFlag);
+      ParserAnnots(pDocument, pPageDict, &RectArray, &ObjectArray, nFlag);
   if (iRet == FLATTEN_NOTHINGTODO || iRet == FLATTEN_FAIL)
     return iRet;
 

@@ -56,9 +56,9 @@ class CPDF_PageObjectHolder {
       std::deque<std::unique_ptr<CPDF_PageObject>>::const_iterator;
 
   CPDF_PageObjectHolder(CPDF_Document* pDoc,
-                        CPDF_Dictionary* pDict,
-                        CPDF_Dictionary* pPageResources,
-                        CPDF_Dictionary* pResources);
+                        RetainPtr<CPDF_Dictionary> pDict,
+                        RetainPtr<CPDF_Dictionary> pPageResources,
+                        RetainPtr<CPDF_Dictionary> pResources);
   virtual ~CPDF_PageObjectHolder();
 
   virtual bool IsPage() const;

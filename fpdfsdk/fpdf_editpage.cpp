@@ -207,7 +207,7 @@ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDFPage_New(FPDF_DOCUMENT document,
     return nullptr;
 
   page_index = pdfium::clamp(page_index, 0, pDoc->GetPageCount());
-  CPDF_Dictionary* pPageDict = pDoc->CreateNewPage(page_index);
+  RetainPtr<CPDF_Dictionary> pPageDict(pDoc->CreateNewPage(page_index));
   if (!pPageDict)
     return nullptr;
 

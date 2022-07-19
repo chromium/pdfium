@@ -57,8 +57,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessRect) {
   pPathObj->path().AppendRect(10, 5, 13, 30);
 
   auto dummy_page_dict = pdfium::MakeRetain<CPDF_Dictionary>();
-  auto pTestPage =
-      pdfium::MakeRetain<CPDF_Page>(nullptr, dummy_page_dict.Get());
+  auto pTestPage = pdfium::MakeRetain<CPDF_Page>(nullptr, dummy_page_dict);
   CPDF_PageContentGenerator generator(pTestPage.Get());
   fxcrt::ostringstream buf;
   TestProcessPath(&generator, &buf, pPathObj.get());
@@ -96,8 +95,7 @@ TEST_F(CPDF_PageContentGeneratorTest, BUG_937) {
                                    200000000000000.000002));
 
     auto dummy_page_dict = pdfium::MakeRetain<CPDF_Dictionary>();
-    auto pTestPage =
-        pdfium::MakeRetain<CPDF_Page>(nullptr, dummy_page_dict.Get());
+    auto pTestPage = pdfium::MakeRetain<CPDF_Page>(nullptr, dummy_page_dict);
     CPDF_PageContentGenerator generator(pTestPage.Get());
     fxcrt::ostringstream buf;
     TestProcessPath(&generator, &buf, pPathObj.get());
@@ -130,8 +128,7 @@ TEST_F(CPDF_PageContentGeneratorTest, BUG_937) {
         CFX_PointF(53.4f, 5000000000000000000.00000000000000004),
         CFX_Path::Point::Type::kBezier);
     auto dummy_page_dict = pdfium::MakeRetain<CPDF_Dictionary>();
-    auto pTestPage =
-        pdfium::MakeRetain<CPDF_Page>(nullptr, dummy_page_dict.Get());
+    auto pTestPage = pdfium::MakeRetain<CPDF_Page>(nullptr, dummy_page_dict);
     CPDF_PageContentGenerator generator(pTestPage.Get());
     fxcrt::ostringstream buf;
 
@@ -170,8 +167,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessPath) {
                                        CFX_Path::Point::Type::kBezier);
 
   auto dummy_page_dict = pdfium::MakeRetain<CPDF_Dictionary>();
-  auto pTestPage =
-      pdfium::MakeRetain<CPDF_Page>(nullptr, dummy_page_dict.Get());
+  auto pTestPage = pdfium::MakeRetain<CPDF_Page>(nullptr, dummy_page_dict);
   CPDF_PageContentGenerator generator(pTestPage.Get());
   fxcrt::ostringstream buf;
   TestProcessPath(&generator, &buf, pPathObj.get());
@@ -204,7 +200,8 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessGraphics) {
 
   auto pDoc = std::make_unique<CPDF_TestDocument>();
   pDoc->CreateNewDoc();
-  CPDF_Dictionary* pPageDict = pDoc->CreateNewPage(0);
+
+  RetainPtr<CPDF_Dictionary> pPageDict(pDoc->CreateNewPage(0));
   auto pTestPage = pdfium::MakeRetain<CPDF_Page>(pDoc.get(), pPageDict);
   CPDF_PageContentGenerator generator(pTestPage.Get());
   fxcrt::ostringstream buf;
@@ -244,7 +241,8 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessStandardText) {
   // Checking font whose font dictionary is not yet indirect object.
   auto pDoc = std::make_unique<CPDF_TestDocument>();
   pDoc->CreateNewDoc();
-  CPDF_Dictionary* pPageDict = pDoc->CreateNewPage(0);
+
+  RetainPtr<CPDF_Dictionary> pPageDict(pDoc->CreateNewPage(0));
   auto pTestPage = pdfium::MakeRetain<CPDF_Page>(pDoc.get(), pPageDict);
   CPDF_PageContentGenerator generator(pTestPage.Get());
   auto pTextObj = std::make_unique<CPDF_TextObject>();
@@ -311,7 +309,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
   auto pDoc = std::make_unique<CPDF_TestDocument>();
   pDoc->CreateNewDoc();
 
-  CPDF_Dictionary* pPageDict = pDoc->CreateNewPage(0);
+  RetainPtr<CPDF_Dictionary> pPageDict(pDoc->CreateNewPage(0));
   auto pTestPage = pdfium::MakeRetain<CPDF_Page>(pDoc.get(), pPageDict);
   CPDF_PageContentGenerator generator(pTestPage.Get());
 
@@ -391,8 +389,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessEmptyForm) {
   auto pStream = pdfium::MakeRetain<CPDF_Stream>(nullptr, 0, std::move(pDict));
 
   // Create an empty form.
-  auto pTestForm =
-      std::make_unique<CPDF_Form>(pDoc.get(), nullptr, pStream.Get());
+  auto pTestForm = std::make_unique<CPDF_Form>(pDoc.get(), nullptr, pStream);
   pTestForm->ParseContent();
   ASSERT_EQ(CPDF_PageObjectHolder::ParseState::kParsed,
             pTestForm->GetParseState());
@@ -418,8 +415,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessFormWithPath) {
                                                  std::move(pDict));
 
   // Create a form with a non-empty stream.
-  auto pTestForm =
-      std::make_unique<CPDF_Form>(pDoc.get(), nullptr, pStream.Get());
+  auto pTestForm = std::make_unique<CPDF_Form>(pDoc.get(), nullptr, pStream);
   pTestForm->ParseContent();
   ASSERT_EQ(CPDF_PageObjectHolder::ParseState::kParsed,
             pTestForm->GetParseState());

@@ -453,9 +453,10 @@ void CPDF_DocPageData::MaybePurgeFontFileStreamAcc(
 
 std::unique_ptr<CPDF_Font::FormIface> CPDF_DocPageData::CreateForm(
     CPDF_Document* pDocument,
-    CPDF_Dictionary* pPageResources,
-    CPDF_Stream* pFormStream) {
-  return std::make_unique<CPDF_Form>(pDocument, pPageResources, pFormStream);
+    RetainPtr<CPDF_Dictionary> pPageResources,
+    RetainPtr<CPDF_Stream> pFormStream) {
+  return std::make_unique<CPDF_Form>(pDocument, std::move(pPageResources),
+                                     std::move(pFormStream));
 }
 
 RetainPtr<CPDF_Font> CPDF_DocPageData::AddStandardFont(

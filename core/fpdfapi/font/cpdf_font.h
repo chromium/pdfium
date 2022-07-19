@@ -55,8 +55,8 @@ class CPDF_Font : public Retainable, public Observable {
 
     virtual std::unique_ptr<FormIface> CreateForm(
         CPDF_Document* pDocument,
-        CPDF_Dictionary* pPageResources,
-        CPDF_Stream* pFormStream) = 0;
+        RetainPtr<CPDF_Dictionary> pPageResources,
+        RetainPtr<CPDF_Stream> pFormStream) = 0;
   };
 
   static constexpr uint32_t kInvalidCharCode = static_cast<uint32_t>(-1);
