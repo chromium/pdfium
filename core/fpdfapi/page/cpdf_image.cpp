@@ -49,20 +49,21 @@ CPDF_Image::CPDF_Image(CPDF_Document* pDoc) : m_pDocument(pDoc) {
 CPDF_Image::CPDF_Image(CPDF_Document* pDoc, RetainPtr<CPDF_Stream> pStream)
     : m_bIsInline(true), m_pDocument(pDoc), m_pStream(std::move(pStream)) {
   DCHECK(m_pDocument);
-  FinishInitialization(m_pStream->GetMutableDict().Get());
+  FinishInitialization();
 }
 
 CPDF_Image::CPDF_Image(CPDF_Document* pDoc, uint32_t dwStreamObjNum)
     : m_pDocument(pDoc),
       m_pStream(ToStream(pDoc->GetIndirectObject(dwStreamObjNum))) {
   DCHECK(m_pDocument);
-  FinishInitialization(m_pStream->GetMutableDict().Get());
+  FinishInitialization();
 }
 
 CPDF_Image::~CPDF_Image() = default;
 
-void CPDF_Image::FinishInitialization(CPDF_Dictionary* pStreamDict) {
-  m_pOC.Reset(pStreamDict->GetDictFor("OC"));
+void CPDF_Image::FinishInitialization() {
+  RetainPtr<CPDF_Dictionary> pStreamDict = m_pStream->GetMutableDict();
+  m_pOC = pStreamDict->GetMutableDictFor("OC");
   m_bIsMask = !pStreamDict->KeyExist("ColorSpace") ||
               pStreamDict->GetBooleanFor("ImageMask", /*bDefault=*/false);
   m_bInterpolate = !!pStreamDict->GetIntegerFor("Interpolate");

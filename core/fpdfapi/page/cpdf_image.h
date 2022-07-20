@@ -71,7 +71,7 @@ class CPDF_Image final : public Retainable {
   CPDF_Image(CPDF_Document* pDoc, uint32_t dwStreamObjNum);
   ~CPDF_Image() override;
 
-  void FinishInitialization(CPDF_Dictionary* pStreamDict);
+  void FinishInitialization();
   RetainPtr<CPDF_Dictionary> InitJPEG(pdfium::span<uint8_t> src_span);
   RetainPtr<CPDF_Dictionary> CreateXObjectImageDict(int width, int height);
 
