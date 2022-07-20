@@ -2824,9 +2824,12 @@ bool CFX_DefaultRenderDevice::SetBitsWithMask(
     BlendMode blend_type) {
   CFX_SkiaDeviceDriver* skDriver =
       static_cast<CFX_SkiaDeviceDriver*>(GetDeviceDriver());
-  if (skDriver)
+  if (skDriver) {
+    // Finish painting before drawing masks.
+    Flush(false);
     return skDriver->SetBitsWithMask(pBitmap, pMask, left, top, bitmap_alpha,
                                      blend_type);
+  }
   return false;
 }
 #endif  // defined(_SKIA_SUPPORT_)

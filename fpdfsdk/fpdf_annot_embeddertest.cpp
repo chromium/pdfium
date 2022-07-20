@@ -1305,14 +1305,15 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyAnnotationFlags) {
   UnloadPage(page);
 }
 
-// TODO(crbug.com/pdfium/1541): Fix this test and enable.
+// TODO(crbug.com/pdfium/1541): When Skia is enabled and its cache rendering is
+// disabled (To turn off cache, set `m_debugDisable` to true in
+// core/fxge/skia/fx_skia_device.cpp.), `kMd5NewImage`'s rendering result is
+// incorrect compared to the expectation.
+TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
 #if defined(_SKIA_SUPPORT_)
-#define MAYBE_AddAndModifyImage DISABLED_AddAndModifyImage
-#else
-#define MAYBE_AddAndModifyImage AddAndModifyImage
-#endif
-TEST_F(FPDFAnnotEmbedderTest, MAYBE_AddAndModifyImage) {
-#if defined(_SKIA_SUPPORT_PATHS_)
+  static const char kMd5NewImage[] = "4ba31e174d873b3fda1d7a160d4a0e85";
+  static const char kMd5ModifiedImage[] = "5806fadc1a192bc4bb07511a0711c957";
+#elif defined(_SKIA_SUPPORT_PATHS_)
   static const char kMd5NewImage[] = "bf158b64c0373f3f36e347ae83e55cde";
   static const char kMd5ModifiedImage[] = "5806fadc1a192bc4bb07511a0711c957";
 #else
@@ -1322,8 +1323,8 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_AddAndModifyImage) {
 #else
   static const char kMd5NewImage[] = "62c2706511cb50e32e7caeb82b1d3d49";
   static const char kMd5ModifiedImage[] = "83093ce9fac746db69fbd2fb394434ac";
-#endif
-#endif  // defined(_SKIA_SUPPORT_PATHS_)
+#endif  // BUILDFLAG(IS_APPLE)
+#endif  // defined(_SKIA_SUPPORT_)
 
   // Open a file with two annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
