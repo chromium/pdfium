@@ -42,11 +42,11 @@ class CPDF_TextObject;
 class CPDF_StreamContentParser {
  public:
   CPDF_StreamContentParser(CPDF_Document* pDoc,
-                           CPDF_Dictionary* pPageResources,
-                           CPDF_Dictionary* pParentResources,
+                           RetainPtr<CPDF_Dictionary> pPageResources,
+                           RetainPtr<CPDF_Dictionary> pParentResources,
                            const CFX_Matrix* pmtContentToUser,
                            CPDF_PageObjectHolder* pObjHolder,
-                           CPDF_Dictionary* pResources,
+                           RetainPtr<CPDF_Dictionary> pResources,
                            const CFX_FloatRect& rcBBox,
                            const CPDF_AllStates* pStates,
                            std::set<const uint8_t*>* pParsedSet);
