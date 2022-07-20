@@ -182,7 +182,7 @@ const CPDF_Object* PageDictGetInheritableTag(const CPDF_Dictionary* pDict,
   return nullptr;
 }
 
-bool CopyInheritable(CPDF_Dictionary* pDestPageDict,
+bool CopyInheritable(RetainPtr<CPDF_Dictionary> pDestPageDict,
                      const CPDF_Dictionary* pSrcPageDict,
                      const ByteString& key) {
   if (pDestPageDict->KeyExist(key))
@@ -216,7 +216,7 @@ class CPDF_PageOrganizer {
   // Must be called after construction before doing anything else.
   bool Init();
 
-  bool UpdateReference(CPDF_Object* pObj);
+  bool UpdateReference(RetainPtr<CPDF_Object> pObj);
 
   CPDF_Document* dest() { return m_pDestDoc.Get(); }
   const CPDF_Document* dest() const { return m_pDestDoc.Get(); }
@@ -285,7 +285,7 @@ bool CPDF_PageOrganizer::Init() {
   return true;
 }
 
-bool CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj) {
+bool CPDF_PageOrganizer::UpdateReference(RetainPtr<CPDF_Object> pObj) {
   switch (pObj->GetType()) {
     case CPDF_Object::kReference: {
       CPDF_Reference* pReference = pObj->AsReference();
@@ -304,7 +304,7 @@ bool CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj) {
           const ByteString& key = it.first;
           if (key == "Parent" || key == "Prev" || key == "First")
             continue;
-          CPDF_Object* pNextObj = it.second.Get();
+          RetainPtr<CPDF_Object> pNextObj = it.second;
           if (!UpdateReference(pNextObj))
             bad_keys.push_back(key);
         }
@@ -316,7 +316,7 @@ bool CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj) {
     case CPDF_Object::kArray: {
       CPDF_Array* pArray = pObj->AsArray();
       for (size_t i = 0; i < pArray->size(); ++i) {
-        if (!UpdateReference(pArray->GetMutableObjectAt(i).Get()))
+        if (!UpdateReference(pArray->GetMutableObjectAt(i)))
           return false;
       }
       return true;
@@ -324,7 +324,7 @@ bool CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj) {
     case CPDF_Object::kStream: {
       CPDF_Stream* pStream = pObj->AsStream();
       RetainPtr<CPDF_Dictionary> pDict = pStream->GetMutableDict();
-      return pDict && UpdateReference(pDict.Get());
+      return pDict && UpdateReference(std::move(pDict));
     }
     default:
       return true;
@@ -357,10 +357,11 @@ uint32_t CPDF_PageOrganizer::GetNewObjId(CPDF_Reference* pRef) {
         return 0;
     }
   }
-  CPDF_Object* pUnownedClone = dest()->AddIndirectObject(std::move(pClone));
-  dwNewObjNum = pUnownedClone->GetObjNum();
+  RetainPtr<CPDF_Object> pIndirectClone(
+      dest()->AddIndirectObject(std::move(pClone)));
+  dwNewObjNum = pIndirectClone->GetObjNum();
   AddObjectMapping(dwObjnum, dwNewObjNum);
-  if (!UpdateReference(pUnownedClone))
+  if (!UpdateReference(std::move(pIndirectClone)))
     return 0;
 
   return dwNewObjNum;
@@ -392,7 +393,7 @@ bool CPDF_PageExporter::ExportPage(pdfium::span<const uint32_t> pageIndices,
 
   int curpage = nIndex;
   for (uint32_t pageIndex : pageIndices) {
-    CPDF_Dictionary* pDestPageDict = dest()->CreateNewPage(curpage);
+    RetainPtr<CPDF_Dictionary> pDestPageDict = dest()->CreateNewPage(curpage);
     auto* pSrcPageDict = src()->GetPageDictionary(pageIndex);
     if (!pSrcPageDict || !pDestPageDict)
       return false;
@@ -498,7 +499,8 @@ class CPDF_NPageToOneExporter final : public CPDF_PageOrganizer {
   // Adds |bsContent| as the Contents key in |pDestPageDict|.
   // Adds the objects in |m_XObjectNameToNumberMap| to the XObject dictionary in
   // |pDestPageDict|'s Resources dictionary.
-  void FinishPage(CPDF_Dictionary* pDestPageDict, const ByteString& bsContent);
+  void FinishPage(RetainPtr<CPDF_Dictionary> pDestPageDict,
+                  const ByteString& bsContent);
 
   // Counter for giving new XObjects unique names.
   uint32_t m_nObjectNumber = 0;
@@ -544,7 +546,7 @@ bool CPDF_NPageToOneExporter::ExportNPagesToOne(
        iOuterPage += nPagesPerSheet) {
     m_XObjectNameToNumberMap.clear();
 
-    CPDF_Dictionary* pDestPageDict =
+    RetainPtr<CPDF_Dictionary> pDestPageDict =
         dest()->CreateNewPage(curpage.ValueOrDie());
     if (!pDestPageDict)
       return false;
@@ -605,14 +607,14 @@ CPDF_Stream* CPDF_NPageToOneExporter::MakeXObjectFromPageRaw(
       nullptr, 0, dest()->New<CPDF_Dictionary>());
   RetainPtr<CPDF_Dictionary> pNewXObjectDict = pNewXObject->GetMutableDict();
   static const char kResourceString[] = "Resources";
-  if (!CopyInheritable(pNewXObjectDict.Get(), pSrcPageDict, kResourceString)) {
+  if (!CopyInheritable(pNewXObjectDict, pSrcPageDict, kResourceString)) {
     // Use a default empty resources if it does not exist.
     pNewXObjectDict->SetNewFor<CPDF_Dictionary>(kResourceString);
   }
   uint32_t dwSrcPageObj = pSrcPageDict->GetObjNum();
   uint32_t dwNewXobjectObj = pNewXObjectDict->GetObjNum();
   AddObjectMapping(dwSrcPageObj, dwNewXobjectObj);
-  UpdateReference(pNewXObjectDict.Get());
+  UpdateReference(pNewXObjectDict);
   pNewXObjectDict->SetNewFor<CPDF_Name>("Type", "XObject");
   pNewXObjectDict->SetNewFor<CPDF_Name>("Subtype", "Form");
   pNewXObjectDict->SetNewFor<CPDF_Number>("FormType", 1);
@@ -666,10 +668,9 @@ CPDF_NPageToOneExporter::CreateXObjectContextFromPage(int src_page_index) {
   return xobject;
 }
 
-void CPDF_NPageToOneExporter::FinishPage(CPDF_Dictionary* pDestPageDict,
-                                         const ByteString& bsContent) {
-  DCHECK(pDestPageDict);
-
+void CPDF_NPageToOneExporter::FinishPage(
+    RetainPtr<CPDF_Dictionary> pDestPageDict,
+    const ByteString& bsContent) {
   RetainPtr<CPDF_Dictionary> pRes =
       pDestPageDict->GetOrCreateDictFor(pdfium::page_object::kResources);
   RetainPtr<CPDF_Dictionary> pPageXObject = pRes->GetOrCreateDictFor("XObject");

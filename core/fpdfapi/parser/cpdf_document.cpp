@@ -395,11 +395,11 @@ void CPDF_Document::CreateNewDoc() {
   m_pInfoDict.Reset(NewIndirect<CPDF_Dictionary>());
 }
 
-CPDF_Dictionary* CPDF_Document::CreateNewPage(int iPage) {
-  CPDF_Dictionary* pDict = NewIndirect<CPDF_Dictionary>();
+RetainPtr<CPDF_Dictionary> CPDF_Document::CreateNewPage(int iPage) {
+  RetainPtr<CPDF_Dictionary> pDict(NewIndirect<CPDF_Dictionary>());
   pDict->SetNewFor<CPDF_Name>("Type", "Page");
   uint32_t dwObjNum = pDict->GetObjNum();
-  if (!InsertNewPage(iPage, pDict)) {
+  if (!InsertNewPage(iPage, pDict.Get())) {
     DeleteIndirectObject(dwObjNum);
     return nullptr;
   }

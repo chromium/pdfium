@@ -137,7 +137,7 @@ class CPDF_Document : public Observable,
 
   void LoadPages();
   void CreateNewDoc();
-  CPDF_Dictionary* CreateNewPage(int iPage);
+  RetainPtr<CPDF_Dictionary> CreateNewPage(int iPage);
 
   void IncrementParsedPageCount() { ++m_ParsedPageCount; }
   uint32_t GetParsedPageCountForTesting() { return m_ParsedPageCount; }
