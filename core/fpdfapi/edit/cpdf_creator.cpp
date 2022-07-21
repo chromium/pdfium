@@ -7,6 +7,7 @@
 #include "core/fpdfapi/edit/cpdf_creator.h"
 
 #include <algorithm>
+#include <utility>
 
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_crypto_handler.h"
@@ -35,8 +36,7 @@ const size_t kArchiveBufferSize = 32768;
 
 class CFX_FileBufferArchive final : public IFX_ArchiveStream {
  public:
-  explicit CFX_FileBufferArchive(
-      const RetainPtr<IFX_RetainableWriteStream>& file);
+  explicit CFX_FileBufferArchive(RetainPtr<IFX_RetainableWriteStream> file);
   ~CFX_FileBufferArchive() override;
 
   bool WriteBlock(const void* pBuf, size_t size) override;
@@ -52,9 +52,9 @@ class CFX_FileBufferArchive final : public IFX_ArchiveStream {
 };
 
 CFX_FileBufferArchive::CFX_FileBufferArchive(
-    const RetainPtr<IFX_RetainableWriteStream>& file)
-    : buffer_(kArchiveBufferSize), backing_file_(file) {
-  DCHECK(file);
+    RetainPtr<IFX_RetainableWriteStream> file)
+    : buffer_(kArchiveBufferSize), backing_file_(std::move(file)) {
+  DCHECK(backing_file_);
 }
 
 CFX_FileBufferArchive::~CFX_FileBufferArchive() {
@@ -123,13 +123,13 @@ bool OutputIndex(IFX_ArchiveStream* archive, FX_FILESIZE offset) {
 }  // namespace
 
 CPDF_Creator::CPDF_Creator(CPDF_Document* pDoc,
-                           const RetainPtr<IFX_RetainableWriteStream>& archive)
+                           RetainPtr<IFX_RetainableWriteStream> archive)
     : m_pDocument(pDoc),
       m_pParser(pDoc->GetParser()),
       m_pEncryptDict(m_pParser ? m_pParser->GetEncryptDict() : nullptr),
       m_pSecurityHandler(m_pParser ? m_pParser->GetSecurityHandler() : nullptr),
       m_dwLastObjNum(m_pDocument->GetLastObjNum()),
-      m_Archive(std::make_unique<CFX_FileBufferArchive>(archive)) {}
+      m_Archive(std::make_unique<CFX_FileBufferArchive>(std::move(archive))) {}
 
 CPDF_Creator::~CPDF_Creator() = default;
 
