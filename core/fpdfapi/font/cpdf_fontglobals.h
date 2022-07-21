@@ -34,7 +34,7 @@ class CPDF_FontGlobals {
                             CFX_FontMapper::StandardFont index);
   void Set(CPDF_Document* pDoc,
            CFX_FontMapper::StandardFont index,
-           const RetainPtr<CPDF_Font>& pFont);
+           RetainPtr<CPDF_Font> pFont);
 
   void SetEmbeddedCharset(CIDSet idx, pdfium::span<const FXCMAP_CMap> map) {
     m_EmbeddedCharsets[idx] = map;

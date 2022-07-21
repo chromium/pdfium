@@ -7,6 +7,7 @@
 #include "core/fpdfapi/font/cfx_stockfontarray.h"
 
 #include <iterator>
+#include <utility>
 
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -35,7 +36,7 @@ RetainPtr<CPDF_Font> CFX_StockFontArray::GetFont(
 }
 
 void CFX_StockFontArray::SetFont(CFX_FontMapper::StandardFont index,
-                                 const RetainPtr<CPDF_Font>& pFont) {
+                                 RetainPtr<CPDF_Font> pFont) {
   if (index < std::size(m_StockFonts))
-    m_StockFonts[index] = pFont;
+    m_StockFonts[index] = std::move(pFont);
 }
