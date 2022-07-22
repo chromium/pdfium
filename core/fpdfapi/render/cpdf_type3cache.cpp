@@ -127,14 +127,17 @@ std::unique_ptr<CFX_GlyphBitmap> CPDF_Type3Cache::RenderGlyph(
     CPDF_Type3GlyphMap* pSize,
     uint32_t charcode,
     const CFX_Matrix& mtMatrix) {
-  const CPDF_Type3Char* pChar = m_pFont->LoadChar(charcode);
-  if (!pChar || !pChar->GetBitmap())
+  CPDF_Type3Char* pChar = m_pFont->LoadChar(charcode);
+  if (!pChar)
+    return nullptr;
+
+  RetainPtr<CFX_DIBitmap> pBitmap = pChar->GetBitmap();
+  if (!pBitmap)
     return nullptr;
 
   CFX_Matrix text_matrix(mtMatrix.a, mtMatrix.b, mtMatrix.c, mtMatrix.d, 0, 0);
   CFX_Matrix image_matrix = pChar->matrix() * text_matrix;
 
-  RetainPtr<CFX_DIBitmap> pBitmap = pChar->GetBitmap();
   RetainPtr<CFX_DIBitmap> pResBitmap;
   int left = 0;
   int top = 0;

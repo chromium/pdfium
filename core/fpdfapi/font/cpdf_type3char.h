@@ -32,7 +32,6 @@ class CPDF_Type3Char {
   void WillBeDestroyed();
 
   RetainPtr<CFX_DIBitmap> GetBitmap();
-  const RetainPtr<CFX_DIBitmap>& GetBitmap() const;
 
   bool colored() const { return m_bColored; }
   int width() const { return m_Width; }

@@ -85,7 +85,3 @@ void CPDF_Type3Char::SetForm(std::unique_ptr<CPDF_Font::FormIface> pForm) {
 RetainPtr<CFX_DIBitmap> CPDF_Type3Char::GetBitmap() {
   return m_pBitmap;
 }
-
-const RetainPtr<CFX_DIBitmap>& CPDF_Type3Char::GetBitmap() const {
-  return m_pBitmap;
-}
