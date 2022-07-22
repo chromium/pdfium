@@ -1981,7 +1981,8 @@ void CFX_SkiaDeviceDriver::SetClipMask(const FX_RECT& clipBox,
   SkPaint paint;
   paint.setAntiAlias(!m_FillOptions.aliased_path);
   canvas->drawPath(path, paint);
-  m_pClipRgn->IntersectMaskF(path_rect.left, path_rect.top, pThisLayer);
+  m_pClipRgn->IntersectMaskF(path_rect.left, path_rect.top,
+                             std::move(pThisLayer));
 }
 #endif  // defined(_SKIA_SUPPORT_PATHS_)
 

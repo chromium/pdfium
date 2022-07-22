@@ -1120,7 +1120,8 @@ void CFX_AggDeviceDriver::SetClipMask(agg::rasterizer_scanline_aa& rasterizer) {
   agg::scanline_u8 scanline;
   agg::render_scanlines(rasterizer, scanline, final_render,
                         m_FillOptions.aliased_path);
-  m_pClipRgn->IntersectMaskF(path_rect.left, path_rect.top, pThisLayer);
+  m_pClipRgn->IntersectMaskF(path_rect.left, path_rect.top,
+                             std::move(pThisLayer));
 }
 
 bool CFX_AggDeviceDriver::SetClip_PathFill(
