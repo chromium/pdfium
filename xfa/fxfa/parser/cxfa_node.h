@@ -335,15 +335,14 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
   CXFA_TextLayout* GetCaptionTextLayout();
   CXFA_TextLayout* GetTextLayout();
 
-  bool LoadImageImage(CXFA_FFDoc* doc);
-  bool LoadImageEditImage(CXFA_FFDoc* doc);
-  CFX_Size GetImageDpi() const;
-  CFX_Size GetImageEditDpi() const;
-
-  RetainPtr<CFX_DIBitmap> GetImageImage();
-  RetainPtr<CFX_DIBitmap> GetImageEditImage();
-  void SetImageImage(const RetainPtr<CFX_DIBitmap>& newImage);
-  void SetImageEditImage(const RetainPtr<CFX_DIBitmap>& newImage);
+  bool LoadLayoutImage(CXFA_FFDoc* doc);
+  bool LoadEditImage(CXFA_FFDoc* doc);
+  CFX_Size GetLayoutImageDpi() const;
+  CFX_Size GetEditImageDpi() const;
+  RetainPtr<CFX_DIBitmap> GetLayoutImage();
+  RetainPtr<CFX_DIBitmap> GetEditImage();
+  void SetLayoutImage(RetainPtr<CFX_DIBitmap> newImage);
+  void SetEditImage(RetainPtr<CFX_DIBitmap> newImage);
 
   RetainPtr<CFGAS_GEFont> GetFGASFont(CXFA_FFDoc* doc);
 
