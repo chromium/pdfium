@@ -145,7 +145,7 @@ void CPDF_Image::SetJpegImage(const RetainPtr<IFX_SeekableReadStream>& pFile) {
   if (!pDict)
     return;
 
-  m_pStream->InitStreamFromFile(pFile, std::move(pDict));
+  m_pStream->InitStreamFromFile(std::move(pFile), std::move(pDict));
 }
 
 void CPDF_Image::SetJpegImageInline(

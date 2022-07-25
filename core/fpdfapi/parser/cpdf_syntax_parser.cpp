@@ -789,7 +789,7 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
   RetainPtr<CPDF_Stream> pStream;
   if (data) {
     pStream = pdfium::MakeRetain<CPDF_Stream>();
-    pStream->InitStreamFromFile(data, std::move(pDict));
+    pStream->InitStreamFromFile(std::move(data), std::move(pDict));
   } else {
     DCHECK(!len);
     pStream = pdfium::MakeRetain<CPDF_Stream>(pdfium::span<const uint8_t>(),

@@ -51,7 +51,7 @@ class CPDF_Stream final : public CPDF_Object {
 
   void InitStream(pdfium::span<const uint8_t> pData,
                   RetainPtr<CPDF_Dictionary> pDict);
-  void InitStreamFromFile(const RetainPtr<IFX_SeekableReadStream>& pFile,
+  void InitStreamFromFile(RetainPtr<IFX_SeekableReadStream> pFile,
                           RetainPtr<CPDF_Dictionary> pDict);
 
   bool ReadRawData(FX_FILESIZE offset, uint8_t* pBuf, size_t buf_size) const;

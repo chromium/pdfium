@@ -80,14 +80,13 @@ void CPDF_Stream::InitStream(pdfium::span<const uint8_t> pData,
   SetData(pData);
 }
 
-void CPDF_Stream::InitStreamFromFile(
-    const RetainPtr<IFX_SeekableReadStream>& pFile,
-    RetainPtr<CPDF_Dictionary> pDict) {
+void CPDF_Stream::InitStreamFromFile(RetainPtr<IFX_SeekableReadStream> pFile,
+                                     RetainPtr<CPDF_Dictionary> pDict) {
   m_bMemoryBased = false;
   m_pDataBuf.reset();
-  m_pFile = pFile;
-  m_dwSize = pdfium::base::checked_cast<uint32_t>(pFile->GetSize());
+  m_pFile = std::move(pFile);
   m_pDict = std::move(pDict);
+  m_dwSize = pdfium::base::checked_cast<uint32_t>(m_pFile->GetSize());
   m_pDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(m_dwSize));
 }
 
