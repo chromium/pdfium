@@ -440,6 +440,9 @@ bug_492.in * nov8 * *
 # TODO(chromium:725555, skia:9265): Remove after associated bug is fixed
 bug_725555.in * * * skia,skiapaths
 
+# TODO(pdfium:983289): Remove after associated bug is fixed
+bug_983289.in * * * agg
+
 # TODO(pdfium:1310): Remove after associated bug is fixed
 radial_shading_point_at_border.in * * * skia,skiapaths
 
