@@ -28,9 +28,9 @@ class rasterizer_scanline_aa;
 
 class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
  public:
-  CFX_AggDeviceDriver(const RetainPtr<CFX_DIBitmap>& pBitmap,
+  CFX_AggDeviceDriver(RetainPtr<CFX_DIBitmap> pBitmap,
                       bool bRgbByteOrder,
-                      const RetainPtr<CFX_DIBitmap>& pBackdropBitmap,
+                      RetainPtr<CFX_DIBitmap> pBackdropBitmap,
                       bool bGroupKnockout);
   ~CFX_AggDeviceDriver() override;
 

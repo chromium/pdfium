@@ -664,7 +664,8 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
   pContext->m_pDevice = std::move(pOwnedDevice);
 
   RetainPtr<CFX_DIBitmap> pBitmap(CFXDIBitmapFromFPDFBitmap(bitmap));
-  pDevice->AttachWithRgbByteOrder(pBitmap, !!(flags & FPDF_REVERSE_BYTE_ORDER));
+  pDevice->AttachWithRgbByteOrder(std::move(pBitmap),
+                                  !!(flags & FPDF_REVERSE_BYTE_ORDER));
 
   CFX_FloatRect clipping_rect;
   if (clipping)

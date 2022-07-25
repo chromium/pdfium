@@ -775,7 +775,7 @@ bool CFX_RenderDevice::DrawFillStrokePath(
     backdrop->Copy(bitmap);
   }
   CFX_DefaultRenderDevice bitmap_device;
-  bitmap_device.AttachWithBackdropAndGroupKnockout(bitmap, backdrop,
+  bitmap_device.AttachWithBackdropAndGroupKnockout(bitmap, std::move(backdrop),
                                                    /*bGroupKnockout=*/true);
 
   CFX_Matrix matrix;

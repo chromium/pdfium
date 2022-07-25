@@ -4,21 +4,24 @@
 
 #include "core/fxge/cfx_defaultrenderdevice.h"
 
+#include <utility>
+
 #include "core/fxge/dib/cfx_dibitmap.h"
 
-bool CFX_DefaultRenderDevice::Attach(const RetainPtr<CFX_DIBitmap>& pBitmap) {
-  return AttachWithRgbByteOrder(pBitmap, false);
+bool CFX_DefaultRenderDevice::Attach(RetainPtr<CFX_DIBitmap> pBitmap) {
+  return AttachWithRgbByteOrder(std::move(pBitmap), false);
 }
 
 bool CFX_DefaultRenderDevice::AttachWithRgbByteOrder(
-    const RetainPtr<CFX_DIBitmap>& pBitmap,
+    RetainPtr<CFX_DIBitmap> pBitmap,
     bool bRgbByteOrder) {
-  return AttachImpl(pBitmap, bRgbByteOrder, nullptr, false);
+  return AttachImpl(std::move(pBitmap), bRgbByteOrder, nullptr, false);
 }
 
 bool CFX_DefaultRenderDevice::AttachWithBackdropAndGroupKnockout(
-    const RetainPtr<CFX_DIBitmap>& pBitmap,
-    const RetainPtr<CFX_DIBitmap>& pBackdropBitmap,
+    RetainPtr<CFX_DIBitmap> pBitmap,
+    RetainPtr<CFX_DIBitmap> pBackdropBitmap,
     bool bGroupKnockout) {
-  return AttachImpl(pBitmap, false, pBackdropBitmap, bGroupKnockout);
+  return AttachImpl(std::move(pBitmap), false, std::move(pBackdropBitmap),
+                    bGroupKnockout);
 }

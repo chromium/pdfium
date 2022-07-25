@@ -26,9 +26,9 @@ class TextCharPos;
 
 class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
  public:
-  CFX_SkiaDeviceDriver(const RetainPtr<CFX_DIBitmap>& pBitmap,
+  CFX_SkiaDeviceDriver(RetainPtr<CFX_DIBitmap> pBitmap,
                        bool bRgbByteOrder,
-                       const RetainPtr<CFX_DIBitmap>& pBackdropBitmap,
+                       RetainPtr<CFX_DIBitmap> pBackdropBitmap,
                        bool bGroupKnockout);
 #if defined(_SKIA_SUPPORT_)
   explicit CFX_SkiaDeviceDriver(SkPictureRecorder* recorder);

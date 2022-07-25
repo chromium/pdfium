@@ -18,17 +18,17 @@ class CFX_DefaultRenderDevice final : public CFX_RenderDevice {
   CFX_DefaultRenderDevice();
   ~CFX_DefaultRenderDevice() override;
 
-  bool Attach(const RetainPtr<CFX_DIBitmap>& pBitmap);
-  bool AttachWithRgbByteOrder(const RetainPtr<CFX_DIBitmap>& pBitmap,
+  bool Attach(RetainPtr<CFX_DIBitmap> pBitmap);
+  bool AttachWithRgbByteOrder(RetainPtr<CFX_DIBitmap> pBitmap,
                               bool bRgbByteOrder);
   bool AttachWithBackdropAndGroupKnockout(
-      const RetainPtr<CFX_DIBitmap>& pBitmap,
-      const RetainPtr<CFX_DIBitmap>& pBackdropBitmap,
+      RetainPtr<CFX_DIBitmap> pBitmap,
+      RetainPtr<CFX_DIBitmap> pBackdropBitmap,
       bool bGroupKnockout);
   bool Create(int width,
               int height,
               FXDIB_Format format,
-              const RetainPtr<CFX_DIBitmap>& pBackdropBitmap);
+              RetainPtr<CFX_DIBitmap> pBackdropBitmap);
 
 #if defined(_SKIA_SUPPORT_)
   bool AttachRecorder(SkPictureRecorder* recorder);
@@ -44,9 +44,9 @@ class CFX_DefaultRenderDevice final : public CFX_RenderDevice {
 #endif
 
  private:
-  bool AttachImpl(const RetainPtr<CFX_DIBitmap>& pBitmap,
+  bool AttachImpl(RetainPtr<CFX_DIBitmap> pBitmap,
                   bool bRgbByteOrder,
-                  const RetainPtr<CFX_DIBitmap>& pBackdropBitmap,
+                  RetainPtr<CFX_DIBitmap> pBackdropBitmap,
                   bool bGroupKnockout);
 };
 
