@@ -6,6 +6,8 @@
 
 #include "xfa/fxfa/cxfa_ffimageedit.h"
 
+#include <utility>
+
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "third_party/base/check.h"
 #include "v8/include/cppgc/visitor.h"
@@ -89,7 +91,7 @@ void CXFA_FFImageEdit::RenderWidget(CFGAS_GEGraphics* pGS,
       iAspect = image->GetAspect();
   }
 
-  XFA_DrawImage(pGS, rtImage, mtRotate, pDIBitmap, iAspect,
+  XFA_DrawImage(pGS, rtImage, mtRotate, std::move(pDIBitmap), iAspect,
                 m_pNode->GetEditImageDpi(), iHorzAlign, iVertAlign);
 }
 

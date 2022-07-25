@@ -48,7 +48,7 @@ constexpr float kXFAWidgetPrecision = 0.001f;
 void XFA_DrawImage(CFGAS_GEGraphics* pGS,
                    const CFX_RectF& rtImage,
                    const CFX_Matrix& matrix,
-                   const RetainPtr<CFX_DIBitmap>& pDIBitmap,
+                   RetainPtr<CFX_DIBitmap> pDIBitmap,
                    XFA_AttributeValue iAspect,
                    const CFX_Size& dpi,
                    XFA_AttributeValue iHorzAlign = XFA_AttributeValue::Left,

@@ -70,7 +70,7 @@ FXDIB_Format XFA_GetDIBFormat(FXCODEC_IMAGE_TYPE type,
 void XFA_DrawImage(CFGAS_GEGraphics* pGS,
                    const CFX_RectF& rtImage,
                    const CFX_Matrix& matrix,
-                   const RetainPtr<CFX_DIBitmap>& pDIBitmap,
+                   RetainPtr<CFX_DIBitmap> pDIBitmap,
                    XFA_AttributeValue iAspect,
                    const CFX_Size& dpi,
                    XFA_AttributeValue iHorzAlign,
@@ -135,10 +135,10 @@ void XFA_DrawImage(CFGAS_GEGraphics* pGS,
       CFX_Matrix(rtFit.width, 0, 0, rtFit.height, rtFit.left, rtFit.top));
   mtImage.Concat(matrix);
 
-  CXFA_ImageRenderer imageRender(pRenderDevice, pDIBitmap, mtImage);
-  if (!imageRender.Start()) {
+  CXFA_ImageRenderer imageRender(pRenderDevice, std::move(pDIBitmap), mtImage);
+  if (!imageRender.Start())
     return;
-  }
+
   while (imageRender.Continue())
     continue;
 }
