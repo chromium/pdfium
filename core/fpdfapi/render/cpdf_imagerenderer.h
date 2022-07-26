@@ -35,7 +35,7 @@ class CPDF_ImageRenderer {
              bool bStdCS,
              BlendMode blendType);
 
-  bool Start(const RetainPtr<CFX_DIBBase>& pDIBBase,
+  bool Start(RetainPtr<CFX_DIBBase> pDIBBase,
              FX_ARGB bitmap_argb,
              const CFX_Matrix& mtImage2Device,
              const FXDIB_ResampleOptions& options,
@@ -66,7 +66,7 @@ class CPDF_ImageRenderer {
   CFX_Matrix GetDrawMatrix(const FX_RECT& rect) const;
   void CalculateDrawImage(CFX_DefaultRenderDevice* pBitmapDevice1,
                           CFX_DefaultRenderDevice* pBitmapDevice2,
-                          const RetainPtr<CFX_DIBBase>& pDIBBase,
+                          RetainPtr<CFX_DIBBase> pDIBBase,
                           const CFX_Matrix& mtNewMatrix,
                           const FX_RECT& rect) const;
   const CPDF_RenderOptions& GetRenderOptions() const;

@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <utility>
 
 #include "core/fpdfapi/page/cpdf_dib.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
@@ -182,12 +183,12 @@ bool CPDF_ImageRenderer::Start(CPDF_ImageObject* pImageObject,
   return StartRenderDIBBase();
 }
 
-bool CPDF_ImageRenderer::Start(const RetainPtr<CFX_DIBBase>& pDIBBase,
+bool CPDF_ImageRenderer::Start(RetainPtr<CFX_DIBBase> pDIBBase,
                                FX_ARGB bitmap_argb,
                                const CFX_Matrix& mtImage2Device,
                                const FXDIB_ResampleOptions& options,
                                bool bStdCS) {
-  m_pDIBBase = pDIBBase;
+  m_pDIBBase = std::move(pDIBBase);
   m_FillArgb = bitmap_argb;
   m_BitmapAlpha = 255;
   m_ImageMatrix = mtImage2Device;
@@ -218,7 +219,7 @@ CFX_Matrix CPDF_ImageRenderer::GetDrawMatrix(const FX_RECT& rect) const {
 void CPDF_ImageRenderer::CalculateDrawImage(
     CFX_DefaultRenderDevice* pBitmapDevice1,
     CFX_DefaultRenderDevice* pBitmapDevice2,
-    const RetainPtr<CFX_DIBBase>& pDIBBase,
+    RetainPtr<CFX_DIBBase> pDIBBase,
     const CFX_Matrix& mtNewMatrix,
     const FX_RECT& rect) const {
   CPDF_RenderStatus bitmap_render(m_pRenderStatus->GetContext(),
@@ -228,8 +229,8 @@ void CPDF_ImageRenderer::CalculateDrawImage(
   bitmap_render.Initialize(nullptr, nullptr);
 
   CPDF_ImageRenderer image_render(&bitmap_render);
-  if (image_render.Start(pDIBBase, 0xffffffff, mtNewMatrix, m_ResampleOptions,
-                         true)) {
+  if (image_render.Start(std::move(pDIBBase), 0xffffffff, mtNewMatrix,
+                         m_ResampleOptions, true)) {
     image_render.Continue(nullptr);
   }
   if (m_Loader.MatteColor() == 0xffffffff)
