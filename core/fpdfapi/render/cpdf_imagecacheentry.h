@@ -21,8 +21,7 @@ class PauseIndicatorIface;
 
 class CPDF_ImageCacheEntry {
  public:
-  CPDF_ImageCacheEntry(CPDF_Document* pDoc,
-                       const RetainPtr<CPDF_Image>& pImage);
+  CPDF_ImageCacheEntry(CPDF_Document* pDoc, RetainPtr<CPDF_Image> pImage);
   ~CPDF_ImageCacheEntry();
 
   void Reset();

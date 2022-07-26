@@ -7,6 +7,7 @@
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
 
 #include <algorithm>
+#include <utility>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_image.h"
@@ -73,7 +74,7 @@ void CPDF_PageRenderCache::ClearImageCacheEntry(const CPDF_Stream* pStream) {
 }
 
 bool CPDF_PageRenderCache::StartGetCachedBitmap(
-    const RetainPtr<CPDF_Image>& pImage,
+    RetainPtr<CPDF_Image> pImage,
     const CPDF_RenderStatus* pRenderStatus,
     bool bStdCS) {
   const CPDF_Stream* pStream = pImage->GetStream();
@@ -82,8 +83,8 @@ bool CPDF_PageRenderCache::StartGetCachedBitmap(
   if (m_bCurFindCache) {
     m_pCurImageCacheEntry = it->second.get();
   } else {
-    m_pCurImageCacheEntry =
-        std::make_unique<CPDF_ImageCacheEntry>(m_pPage->GetDocument(), pImage);
+    m_pCurImageCacheEntry = std::make_unique<CPDF_ImageCacheEntry>(
+        m_pPage->GetDocument(), std::move(pImage));
   }
   CPDF_DIB::LoadState ret = m_pCurImageCacheEntry->StartGetCachedBitmap(
       m_pPage->GetPageResources(), pRenderStatus, bStdCS);

@@ -20,8 +20,8 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 
 CPDF_ImageCacheEntry::CPDF_ImageCacheEntry(CPDF_Document* pDoc,
-                                           const RetainPtr<CPDF_Image>& pImage)
-    : m_pDocument(pDoc), m_pImage(pImage) {}
+                                           RetainPtr<CPDF_Image> pImage)
+    : m_pDocument(pDoc), m_pImage(std::move(pImage)) {}
 
 CPDF_ImageCacheEntry::~CPDF_ImageCacheEntry() = default;
 

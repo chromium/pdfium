@@ -39,7 +39,7 @@ class CPDF_PageRenderCache final : public CPDF_Page::RenderCacheIface {
     return m_pCurImageCacheEntry.Get();
   }
 
-  bool StartGetCachedBitmap(const RetainPtr<CPDF_Image>& pImage,
+  bool StartGetCachedBitmap(RetainPtr<CPDF_Image> pImage,
                             const CPDF_RenderStatus* pRenderStatus,
                             bool bStdCS);
 
