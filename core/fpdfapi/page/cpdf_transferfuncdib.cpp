@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/page/cpdf_transferfuncdib.h"
 
+#include <utility>
+
 #include "build/build_config.h"
 #include "core/fpdfapi/page/cpdf_transferfunc.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -13,15 +15,15 @@
 #include "third_party/base/check.h"
 
 CPDF_TransferFuncDIB::CPDF_TransferFuncDIB(
-    const RetainPtr<CFX_DIBBase>& pSrc,
-    const RetainPtr<CPDF_TransferFunc>& pTransferFunc)
-    : m_pSrc(pSrc),
-      m_pTransferFunc(pTransferFunc),
-      m_RampR(pTransferFunc->GetSamplesR()),
-      m_RampG(pTransferFunc->GetSamplesG()),
-      m_RampB(pTransferFunc->GetSamplesB()) {
-  m_Width = pSrc->GetWidth();
-  m_Height = pSrc->GetHeight();
+    RetainPtr<CFX_DIBBase> pSrc,
+    RetainPtr<CPDF_TransferFunc> pTransferFunc)
+    : m_pSrc(std::move(pSrc)),
+      m_pTransferFunc(std::move(pTransferFunc)),
+      m_RampR(m_pTransferFunc->GetSamplesR()),
+      m_RampG(m_pTransferFunc->GetSamplesG()),
+      m_RampB(m_pTransferFunc->GetSamplesB()) {
+  m_Width = m_pSrc->GetWidth();
+  m_Height = m_pSrc->GetHeight();
   m_Format = GetDestFormat();
   m_Pitch = fxge::CalculatePitch32OrDie(GetBppFromFormat(m_Format), m_Width);
   m_Scanline.resize(m_Pitch);

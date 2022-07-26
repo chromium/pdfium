@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/render/cpdf_imageloader.h"
 
+#include <utility>
+
 #include "core/fpdfapi/page/cpdf_dib.h"
 #include "core/fpdfapi/page/cpdf_image.h"
 #include "core/fpdfapi/page/cpdf_imageobject.h"
@@ -50,11 +52,10 @@ bool CPDF_ImageLoader::Continue(PauseIndicatorIface* pPause,
 }
 
 RetainPtr<CFX_DIBBase> CPDF_ImageLoader::TranslateImage(
-    const RetainPtr<CPDF_TransferFunc>& pTransferFunc) {
+    RetainPtr<CPDF_TransferFunc> pTransferFunc) {
   DCHECK(pTransferFunc);
   DCHECK(!pTransferFunc->GetIdentity());
-
-  m_pBitmap = pTransferFunc->TranslateImage(m_pBitmap);
+  m_pBitmap = pTransferFunc->TranslateImage(std::move(m_pBitmap));
   if (m_bCached && m_pMask)
     m_pMask = m_pMask->Realize();
   m_bCached = false;

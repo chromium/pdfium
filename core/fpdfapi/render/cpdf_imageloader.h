@@ -28,7 +28,7 @@ class CPDF_ImageLoader {
   bool Continue(PauseIndicatorIface* pPause, CPDF_RenderStatus* pRenderStatus);
 
   RetainPtr<CFX_DIBBase> TranslateImage(
-      const RetainPtr<CPDF_TransferFunc>& pTransferFunc);
+      RetainPtr<CPDF_TransferFunc> pTransferFunc);
 
   const RetainPtr<CFX_DIBBase>& GetBitmap() const { return m_pBitmap; }
   const RetainPtr<CFX_DIBBase>& GetMask() const { return m_pMask; }
