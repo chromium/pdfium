@@ -9,11 +9,18 @@ vars = {
   # things are not strictly needed to build pdfium for development purposes,
   # by adding the following line to the .gclient file inside a solutions entry:
   #      "custom_vars": { "checkout_configuration": "small" },
+  # Similarly, this var can be set to 'minimal' to also skip the Skia and V8
+  # checkouts for the smallest possible checkout, where some features will not
+  # work.
   'checkout_configuration': 'default',
 
-  'checkout_instrumented_libraries': 'checkout_linux and checkout_configuration != "small"',
+  'checkout_instrumented_libraries': 'checkout_linux and checkout_configuration != "small" and checkout_configuration != "minimal"',
 
-  'checkout_testing_corpus': 'checkout_configuration != "small"',
+  'checkout_skia': 'checkout_configuration != "minimal"',
+
+  'checkout_testing_corpus': 'checkout_configuration != "small" and checkout_configuration != "minimal"',
+
+  'checkout_v8': 'checkout_configuration != "minimal"',
 
   # By default, download the fuchsia sdk from the public sdk directory.
   'fuchsia_sdk_cipd_prefix': 'fuchsia/sdk/gn/',
@@ -283,8 +290,10 @@ deps = {
     Var('chromium_git') + '/chromium/deps/nasm.git@' +
         Var('nasm_source_revision'),
 
-  'third_party/skia':
-    Var('skia_git') + '/skia.git@' + Var('skia_revision'),
+  'third_party/skia': {
+    'url': Var('skia_git') + '/skia.git@' + Var('skia_revision'),
+    'condition': 'checkout_skia',
+  },
 
   'third_party/test_fonts':
     Var('chromium_git') + '/chromium/src/third_party/test_fonts.git@' +
@@ -350,8 +359,11 @@ deps = {
     'condition': 'checkout_win',
   },
 
-  'v8':
-    Var('chromium_git') + '/v8/v8.git@' + Var('v8_revision'),
+  'v8': {
+    'url': Var('chromium_git') + '/v8/v8.git@' + Var('v8_revision'),
+    'condition': 'checkout_v8',
+  },
+
 }
 
 recursedeps = []
