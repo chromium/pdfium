@@ -116,11 +116,12 @@ RetainPtr<CFX_FontMgr::FontDesc> CFX_FontMgr::AddCachedTTCFontDesc(
   return pNewDesc;
 }
 
-RetainPtr<CFX_Face> CFX_FontMgr::NewFixedFace(const RetainPtr<FontDesc>& pDesc,
+RetainPtr<CFX_Face> CFX_FontMgr::NewFixedFace(RetainPtr<FontDesc> pDesc,
                                               pdfium::span<const uint8_t> span,
                                               size_t face_index) {
-  RetainPtr<CFX_Face> face = CFX_Face::New(m_FTLibrary.get(), pDesc, span,
-                                           static_cast<FT_Long>(face_index));
+  RetainPtr<CFX_Face> face =
+      CFX_Face::New(m_FTLibrary.get(), std::move(pDesc), span,
+                    static_cast<FT_Long>(face_index));
   if (!face)
     return nullptr;
 

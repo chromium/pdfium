@@ -70,7 +70,7 @@ class CFX_FontMgr {
       std::unique_ptr<uint8_t, FxFreeDeleter> pData,
       size_t size);
 
-  RetainPtr<CFX_Face> NewFixedFace(const RetainPtr<FontDesc>& pDesc,
+  RetainPtr<CFX_Face> NewFixedFace(RetainPtr<FontDesc> pDesc,
                                    pdfium::span<const uint8_t> span,
                                    size_t face_index);
 
