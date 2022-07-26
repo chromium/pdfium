@@ -1,9 +1,7 @@
 use_relative_paths = True
 
 gclient_gn_args_file = 'build/config/gclient_args.gni'
-gclient_gn_args = [
-  'checkout_google_benchmark',
-]
+gclient_gn_args = []
 
 vars = {
   # By default, we should check out everything needed to run on the main
@@ -12,11 +10,6 @@ vars = {
   # by adding the following line to the .gclient file inside a solutions entry:
   #      "custom_vars": { "checkout_configuration": "small" },
   'checkout_configuration': 'default',
-
-  # By default, do not check out Google Benchmark. This only exists to satisfy
-  # V8-enabled builds that require this variable. Running Google Benchmark is
-  # not supported with PDFium.
-  'checkout_google_benchmark': False,
 
   'checkout_instrumented_libraries': 'checkout_linux and checkout_configuration != "small"',
 
