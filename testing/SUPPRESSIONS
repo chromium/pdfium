@@ -61,7 +61,15 @@
 8.2_outline.pdf mac * * *
 8.3_presentation.pdf mac * * *
 FRC_10_8.2.2__T8.3_original_file.pdf * * * *
+
+# TODO(pdfium:1858): Remove after associated bug is fixed
+FRC_10_8.2.4_View_C.pdf * * * skia
+
 FRC_11_8.2.2__T8.3_first_last_exchange.pdf * * * *
+
+# TODO(pdfium:1857): Remove after associated bug is fixed
+FRC_11_8.2.4_View_edit.pdf * * * skia
+
 FRC_12_8.2.2__T8.3_first_outline_obj_ID.pdf * * * *
 FRC_13_8.2.2__T8.3_Count_edit300.pdf * * * *
 FRC_14_8.2.2__T8.3_Count_edit0.pdf * * * *
