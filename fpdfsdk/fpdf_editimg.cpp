@@ -237,7 +237,7 @@ FPDFImageObj_GetRenderedBitmap(FPDF_DOCUMENT document,
   CFX_DefaultRenderDevice device;
   device.Attach(result_bitmap);
   CPDF_RenderStatus status(&context, &device);
-  CPDF_ImageRenderer renderer;
+  CPDF_ImageRenderer renderer(&status);
 
   // Need to first flip the image, as expected by |renderer|.
   CFX_Matrix render_matrix(1, 0, 0, -1, 0, output_height);
@@ -246,7 +246,7 @@ FPDFImageObj_GetRenderedBitmap(FPDF_DOCUMENT document,
   render_matrix.Translate(-image_matrix.e, image_matrix.f);
 
   // Do the actual rendering.
-  bool should_continue = renderer.Start(&status, image, render_matrix,
+  bool should_continue = renderer.Start(image, render_matrix,
                                         /*bStdCS=*/false, BlendMode::kNormal);
   while (should_continue)
     should_continue = renderer.Continue(/*pPause=*/nullptr);

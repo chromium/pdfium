@@ -57,7 +57,8 @@ bool IsImageValueTooBig(int val) {
 
 }  // namespace
 
-CPDF_ImageRenderer::CPDF_ImageRenderer() = default;
+CPDF_ImageRenderer::CPDF_ImageRenderer(CPDF_RenderStatus* pStatus)
+    : m_pRenderStatus(pStatus) {}
 
 CPDF_ImageRenderer::~CPDF_ImageRenderer() = default;
 
@@ -161,13 +162,11 @@ bool CPDF_ImageRenderer::StartRenderDIBBase() {
   return StartDIBBase();
 }
 
-bool CPDF_ImageRenderer::Start(CPDF_RenderStatus* pStatus,
-                               CPDF_ImageObject* pImageObject,
+bool CPDF_ImageRenderer::Start(CPDF_ImageObject* pImageObject,
                                const CFX_Matrix& mtObj2Device,
                                bool bStdCS,
                                BlendMode blendType) {
   DCHECK(pImageObject);
-  m_pRenderStatus = pStatus;
   m_bStdCS = bStdCS;
   m_pImageObject = pImageObject;
   m_BlendType = blendType;
@@ -183,13 +182,11 @@ bool CPDF_ImageRenderer::Start(CPDF_RenderStatus* pStatus,
   return StartRenderDIBBase();
 }
 
-bool CPDF_ImageRenderer::Start(CPDF_RenderStatus* pStatus,
-                               const RetainPtr<CFX_DIBBase>& pDIBBase,
+bool CPDF_ImageRenderer::Start(const RetainPtr<CFX_DIBBase>& pDIBBase,
                                FX_ARGB bitmap_argb,
                                const CFX_Matrix& mtImage2Device,
                                const FXDIB_ResampleOptions& options,
                                bool bStdCS) {
-  m_pRenderStatus = pStatus;
   m_pDIBBase = pDIBBase;
   m_FillArgb = bitmap_argb;
   m_BitmapAlpha = 255;
@@ -230,9 +227,9 @@ void CPDF_ImageRenderer::CalculateDrawImage(
   bitmap_render.SetStdCS(true);
   bitmap_render.Initialize(nullptr, nullptr);
 
-  CPDF_ImageRenderer image_render;
-  if (image_render.Start(&bitmap_render, pDIBBase, 0xffffffff, mtNewMatrix,
-                         m_ResampleOptions, true)) {
+  CPDF_ImageRenderer image_render(&bitmap_render);
+  if (image_render.Start(pDIBBase, 0xffffffff, mtNewMatrix, m_ResampleOptions,
+                         true)) {
     image_render.Continue(nullptr);
   }
   if (m_Loader.MatteColor() == 0xffffffff)
@@ -345,9 +342,8 @@ bool CPDF_ImageRenderer::DrawMaskedImage() {
   bitmap_render.SetDropObjects(m_pRenderStatus->GetDropObjects());
   bitmap_render.SetStdCS(true);
   bitmap_render.Initialize(nullptr, nullptr);
-  CPDF_ImageRenderer image_render;
-  if (image_render.Start(&bitmap_render, m_pDIBBase, 0, new_matrix,
-                         m_ResampleOptions, true)) {
+  CPDF_ImageRenderer image_render(&bitmap_render);
+  if (image_render.Start(m_pDIBBase, 0, new_matrix, m_ResampleOptions, true)) {
     image_render.Continue(nullptr);
   }
   CFX_DefaultRenderDevice bitmap_device2;

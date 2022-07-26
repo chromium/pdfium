@@ -27,17 +27,15 @@ class CPDF_RenderStatus;
 
 class CPDF_ImageRenderer {
  public:
-  CPDF_ImageRenderer();
+  explicit CPDF_ImageRenderer(CPDF_RenderStatus* pStatus);
   ~CPDF_ImageRenderer();
 
-  bool Start(CPDF_RenderStatus* pStatus,
-             CPDF_ImageObject* pImageObject,
+  bool Start(CPDF_ImageObject* pImageObject,
              const CFX_Matrix& mtObj2Device,
              bool bStdCS,
              BlendMode blendType);
 
-  bool Start(CPDF_RenderStatus* pStatus,
-             const RetainPtr<CFX_DIBBase>& pDIBBase,
+  bool Start(const RetainPtr<CFX_DIBBase>& pDIBBase,
              FX_ARGB bitmap_argb,
              const CFX_Matrix& mtImage2Device,
              const FXDIB_ResampleOptions& options,
@@ -80,7 +78,7 @@ class CPDF_ImageRenderer {
                                  int* width,
                                  int* height) const;
 
-  UnownedPtr<CPDF_RenderStatus> m_pRenderStatus;
+  UnownedPtr<CPDF_RenderStatus> const m_pRenderStatus;
   UnownedPtr<CPDF_ImageObject> m_pImageObject;
   RetainPtr<CPDF_Pattern> m_pPattern;
   RetainPtr<CFX_DIBBase> m_pDIBBase;
