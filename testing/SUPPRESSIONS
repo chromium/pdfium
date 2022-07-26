@@ -69,7 +69,36 @@ FRC_15_8.2.2__T8.3_Count_edit1.pdf * * * *
 FRC_16_8.2.2__T8.3_Count_edit_1.pdf * * * *
 FRC_1_8.2.2__T8.3_First_empty.pdf * * * *
 FRC_2_8.2.2__T8.3_Last_empty.pdf * * * *
+
+# TODO(pdfium:1856): Remove after associated bug is fixed
+FRC_3.5_AuthEvent_EFOpen.pdf * * * skia
+
+# TODO(pdfium:1856): Remove after associated bug is fixed
+FRC_3.5_CF_EFF_StdCF_Strf_Stmf_Identity.pdf * * * skia
+
+# TODO(pdfium:1856): Remove after associated bug is fixed
+FRC_3.5_CF_Strf_stmf_StdCF.pdf * * * skia
+
+# TODO(pdfium:1856): Remove after associated bug is fixed
+FRC_3.5_CFM_AESV2__EncryptMetadata_F.pdf * * * skia
+
+# TODO(pdfium:1856): Remove after associated bug is fixed
+FRC_3.5_EncryptMetadata_None.pdf * * * skia
+
 FRC_3.5_P__3616_Password_1.pdf * * * *
+
+# TODO(pdfium:1856): Remove after associated bug is fixed
+FRC_3.5_V_4_CFM_V2_.pdf * * * skia
+
+# TODO(pdfium:1856): Remove after associated bug is fixed
+FRC_3.5_V_5_CFM_AESV3.pdf * * * skia
+
+# TODO(pdfium:1856): Remove after associated bug is fixed
+FRC_3.5_v_1_length_40_Filter_standard.pdf * * * skia
+
+# TODO(pdfium:1856): Remove after associated bug is fixed
+FRC_3.5_v_2_length_128_AuthEvent_DocOpen_.pdf * * * skia
+
 FRC_3_8.2.2_Type_empty.pdf * * * *
 FRC_4_8.2.2__T8.3_Count_empty.pdf * * * *
 FRC_5_8.2.2__T8.3_First_remove.pdf * * * *
