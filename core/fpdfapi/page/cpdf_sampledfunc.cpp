@@ -11,8 +11,8 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/cfx_bitstream.h"
-#include "core/fxcrt/cfx_fixedbufgrow.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/small_buffer.h"
 #include "third_party/base/cxx17_backports.h"
 
 namespace {
@@ -102,10 +102,10 @@ bool CPDF_SampledFunc::v_Init(const CPDF_Object* pObj,
 bool CPDF_SampledFunc::v_Call(pdfium::span<const float> inputs,
                               pdfium::span<float> results) const {
   int pos = 0;
-  CFX_FixedBufGrow<float, 16> encoded_input_buf(m_nInputs);
-  float* encoded_input = encoded_input_buf;
-  CFX_FixedBufGrow<uint32_t, 32> int_buf(m_nInputs * 2);
-  uint32_t* index = int_buf;
+  fxcrt::SmallBuffer<float, 16> encoded_input_buf(m_nInputs);
+  fxcrt::SmallBuffer<uint32_t, 32> int_buf(m_nInputs * 2);
+  float* encoded_input = encoded_input_buf.data();
+  uint32_t* index = int_buf.data();
   uint32_t* blocksize = index + m_nInputs;
   for (uint32_t i = 0; i < m_nInputs; i++) {
     if (i == 0)
