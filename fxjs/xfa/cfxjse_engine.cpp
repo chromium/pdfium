@@ -9,9 +9,9 @@
 #include <utility>
 
 #include "core/fxcrt/autorestorer.h"
-#include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/stl_util.h"
+#include "core/fxcrt/widetext_buffer.h"
 #include "fxjs/cjs_runtime.h"
 #include "fxjs/fxv8.h"
 #include "fxjs/xfa/cfxjse_class.h"
@@ -165,7 +165,7 @@ bool CFXJSE_Engine::RunScript(CXFA_Script::Type eScriptType,
       m_FormCalcContext = std::make_unique<CFXJSE_FormCalcContext>(
           GetIsolate(), m_JsContext.get(), m_pDocument.Get());
     }
-    absl::optional<CFX_WideTextBuf> wsJavaScript =
+    absl::optional<WideTextBuffer> wsJavaScript =
         CFXJSE_FormCalcContext::Translate(m_pDocument->GetHeap(), wsScript);
     if (!wsJavaScript.has_value()) {
       hRetValue->SetUndefined(GetIsolate());

@@ -4,70 +4,72 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcrt/cfx_widetextbuf.h"
+#include "core/fxcrt/widetext_buffer.h"
 
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
 
-size_t CFX_WideTextBuf::GetLength() const {
+namespace fxcrt {
+
+size_t WideTextBuffer::GetLength() const {
   return m_DataSize / sizeof(wchar_t);
 }
 
-pdfium::span<wchar_t> CFX_WideTextBuf::GetWideSpan() {
+pdfium::span<wchar_t> WideTextBuffer::GetWideSpan() {
   return pdfium::make_span(reinterpret_cast<wchar_t*>(m_pBuffer.get()),
                            GetLength());
 }
 
-pdfium::span<const wchar_t> CFX_WideTextBuf::GetWideSpan() const {
+pdfium::span<const wchar_t> WideTextBuffer::GetWideSpan() const {
   return pdfium::make_span(reinterpret_cast<wchar_t*>(m_pBuffer.get()),
                            GetLength());
 }
 
-WideStringView CFX_WideTextBuf::AsStringView() const {
+WideStringView WideTextBuffer::AsStringView() const {
   return WideStringView(GetWideSpan());
 }
 
-WideString CFX_WideTextBuf::MakeString() const {
+WideString WideTextBuffer::MakeString() const {
   return WideString(AsStringView());
 }
 
-void CFX_WideTextBuf::AppendChar(wchar_t ch) {
+void WideTextBuffer::AppendChar(wchar_t ch) {
   pdfium::span<wchar_t> new_span = ExpandWideBuf(1);
   new_span[0] = ch;
 }
 
-void CFX_WideTextBuf::Delete(size_t start_index, size_t count) {
+void WideTextBuffer::Delete(size_t start_index, size_t count) {
   DeleteBuf(start_index * sizeof(wchar_t), count * sizeof(wchar_t));
 }
 
-CFX_WideTextBuf& CFX_WideTextBuf::operator<<(ByteStringView ascii) {
+WideTextBuffer& WideTextBuffer::operator<<(ByteStringView ascii) {
   pdfium::span<wchar_t> new_span = ExpandWideBuf(ascii.GetLength());
   for (size_t i = 0; i < ascii.GetLength(); ++i)
     new_span[i] = ascii[i];
   return *this;
 }
 
-CFX_WideTextBuf& CFX_WideTextBuf::operator<<(WideStringView str) {
+WideTextBuffer& WideTextBuffer::operator<<(WideStringView str) {
   AppendBlock(str.unterminated_c_str(), str.GetLength() * sizeof(wchar_t));
   return *this;
 }
 
-CFX_WideTextBuf& CFX_WideTextBuf::operator<<(const WideString& str) {
+WideTextBuffer& WideTextBuffer::operator<<(const WideString& str) {
   AppendBlock(str.c_str(), str.GetLength() * sizeof(wchar_t));
   return *this;
 }
 
-CFX_WideTextBuf& CFX_WideTextBuf::operator<<(const wchar_t* lpsz) {
+WideTextBuffer& WideTextBuffer::operator<<(const wchar_t* lpsz) {
   AppendBlock(lpsz, wcslen(lpsz) * sizeof(wchar_t));
   return *this;
 }
 
-CFX_WideTextBuf& CFX_WideTextBuf::operator<<(const CFX_WideTextBuf& buf) {
+WideTextBuffer& WideTextBuffer::operator<<(const WideTextBuffer& buf) {
   AppendBlock(buf.m_pBuffer.get(), buf.m_DataSize);
   return *this;
 }
 
-pdfium::span<wchar_t> CFX_WideTextBuf::ExpandWideBuf(size_t char_count) {
+pdfium::span<wchar_t> WideTextBuffer::ExpandWideBuf(size_t char_count) {
   size_t original_count = GetLength();
   FX_SAFE_SIZE_T safe_bytes = char_count;
   safe_bytes *= sizeof(wchar_t);
@@ -76,3 +78,5 @@ pdfium::span<wchar_t> CFX_WideTextBuf::ExpandWideBuf(size_t char_count) {
   m_DataSize += bytes;
   return GetWideSpan().subspan(original_count);
 }
+
+}  // namespace fxcrt

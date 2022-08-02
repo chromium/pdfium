@@ -12,13 +12,13 @@
 #include <functional>
 
 #include "core/fxcrt/unowned_ptr.h"
+#include "core/fxcrt/widetext_buffer.h"
 #include "fxjs/xfa/fxjse.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 #include "v8/include/v8-forward.h"
 #include "v8/include/v8-persistent-handle.h"
 
 class CFXJSE_Context;
-class CFX_WideTextBuf;
 class CXFA_Document;
 
 namespace cppgc {
@@ -270,8 +270,8 @@ class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
                                           int32_t iIndexFlags,
                                           int32_t iIndexValue,
                                           bool bIsStar);
-  static absl::optional<CFX_WideTextBuf> Translate(cppgc::Heap* pHeap,
-                                                   WideStringView wsFormcalc);
+  static absl::optional<WideTextBuffer> Translate(cppgc::Heap* pHeap,
+                                                  WideStringView wsFormcalc);
 
   v8::Local<v8::Value> GlobalPropertyGetter();
   v8::Isolate* GetIsolate() const { return m_pIsolate.Get(); }

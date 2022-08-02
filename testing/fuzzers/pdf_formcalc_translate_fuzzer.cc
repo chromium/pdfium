@@ -5,7 +5,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_string.h"
 #include "fxjs/xfa/cfxjse_formcalc_context.h"

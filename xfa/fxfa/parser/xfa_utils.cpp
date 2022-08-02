@@ -10,9 +10,9 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_memorystream.h"
-#include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/widetext_buffer.h"
 #include "core/fxcrt/xml/cfx_xmlchardata.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
@@ -64,7 +64,7 @@ bool IsXMLValidChar(wchar_t ch) {
 }
 
 WideString ExportEncodeContent(const WideString& str) {
-  CFX_WideTextBuf textBuf;
+  WideTextBuffer textBuf;
   size_t iLen = str.GetLength();
   for (size_t i = 0; i < iLen; i++) {
     wchar_t ch = str[i];
@@ -149,7 +149,7 @@ WideString SaveAttribute(CXFA_Node* pNode,
 }
 
 void RegenerateFormFile_Changed(CXFA_Node* pNode,
-                                CFX_WideTextBuf& buf,
+                                WideTextBuffer& buf,
                                 bool bSaveXML) {
   WideString wsAttrs;
   for (size_t i = 0;; ++i) {
@@ -247,7 +247,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
           bSaveXML = true;
         }
       }
-      CFX_WideTextBuf newBuf;
+      WideTextBuffer newBuf;
       CXFA_Node* pChildNode = pNode->GetFirstChild();
       while (pChildNode) {
         RegenerateFormFile_Changed(pChildNode, newBuf, bSaveXML);
@@ -291,7 +291,7 @@ void RegenerateFormFile_Container(CXFA_Node* pNode,
   XFA_Element eType = pNode->GetElementType();
   if (eType == XFA_Element::Field || eType == XFA_Element::Draw ||
       !pNode->IsContainerNode()) {
-    CFX_WideTextBuf buf;
+    WideTextBuffer buf;
     RegenerateFormFile_Changed(pNode, buf, bSaveXML);
     size_t nLen = buf.GetLength();
     if (nLen > 0)
