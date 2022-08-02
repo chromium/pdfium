@@ -40,7 +40,7 @@ bool TrimPropName(ByteString* sPropName) {
 
 void MakeNameTypeString(const ByteString& name,
                         CFX_Value::DataType eType,
-                        CFX_BinaryBuf* result) {
+                        BinaryBuffer* result) {
   uint32_t dwNameLen = (uint32_t)name.GetLength();
   result->AppendBlock(&dwNameLen, sizeof(uint32_t));
   result->AppendString(name);
@@ -51,7 +51,7 @@ void MakeNameTypeString(const ByteString& name,
 
 bool MakeByteString(const ByteString& name,
                     const CFX_KeyValue& pData,
-                    CFX_BinaryBuf* result) {
+                    BinaryBuffer* result) {
   switch (pData.nType) {
     case CFX_Value::DataType::kNumber: {
       MakeNameTypeString(name, pData.nType, result);
@@ -362,12 +362,12 @@ bool CFX_GlobalData::SaveGlobalPersisitentVariables() {
     return false;
 
   uint32_t nCount = 0;
-  CFX_BinaryBuf sData;
+  BinaryBuffer sData;
   for (const auto& pElement : m_arrayGlobalData) {
     if (!pElement->bPersistent)
       continue;
 
-    CFX_BinaryBuf sElement;
+    BinaryBuffer sElement;
     if (!MakeByteString(pElement->data.sKey, pElement->data, &sElement))
       continue;
 
@@ -378,7 +378,7 @@ bool CFX_GlobalData::SaveGlobalPersisitentVariables() {
     nCount++;
   }
 
-  CFX_BinaryBuf sFile;
+  BinaryBuffer sFile;
   uint16_t wType = kMagic;
   uint16_t wVersion = 2;
   sFile.AppendBlock(&wType, sizeof(uint16_t));

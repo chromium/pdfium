@@ -9,13 +9,13 @@
 
 #include <stddef.h>
 
-#include "core/fxcrt/cfx_binarybuf.h"
+#include "core/fxcrt/binary_buffer.h"
 #include "core/fxcrt/fx_string.h"
 #include "third_party/base/span.h"
 
-class CFX_WideTextBuf final : public CFX_BinaryBuf {
+class CFX_WideTextBuf final : public BinaryBuffer {
  public:
-  // CFX_BinaryBuf:
+  // BinaryBuffer:
   size_t GetLength() const override;
 
   pdfium::span<wchar_t> GetWideSpan();

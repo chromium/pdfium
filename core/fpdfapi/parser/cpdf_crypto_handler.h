@@ -13,8 +13,8 @@
 #include <memory>
 
 #include "core/fdrm/fx_crypt.h"
+#include "core/fxcrt/binary_buffer.h"
 #include "core/fxcrt/bytestring.h"
-#include "core/fxcrt/cfx_binarybuf.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "third_party/base/span.h"
@@ -52,8 +52,8 @@ class CPDF_CryptoHandler {
   ByteString Decrypt(uint32_t objnum, uint32_t gennum, const ByteString& str);
   bool DecryptStream(void* context,
                      pdfium::span<const uint8_t> source,
-                     CFX_BinaryBuf& dest_buf);
-  bool DecryptFinish(void* context, CFX_BinaryBuf& dest_buf);
+                     BinaryBuffer& dest_buf);
+  bool DecryptFinish(void* context, BinaryBuffer& dest_buf);
   void PopulateKey(uint32_t objnum, uint32_t gennum, uint8_t* key) const;
 
   const size_t m_KeyLen;

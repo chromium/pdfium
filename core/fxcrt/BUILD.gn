@@ -14,11 +14,11 @@ source_set("fxcrt") {
   sources = [
     "autonuller.h",
     "autorestorer.h",
+    "binary_buffer.cpp",
+    "binary_buffer.h",
     "byteorder.h",
     "bytestring.cpp",
     "bytestring.h",
-    "cfx_binarybuf.cpp",
-    "cfx_binarybuf.h",
     "cfx_bitstream.cpp",
     "cfx_bitstream.h",
     "cfx_datetime.cpp",
@@ -152,6 +152,7 @@ pdfium_unittest_source_set("unittests") {
   sources = [
     "autonuller_unittest.cpp",
     "autorestorer_unittest.cpp",
+    "binary_buffer_unittest.cpp",
     "byteorder_unittest.cpp",
     "bytestring_unittest.cpp",
     "cfx_bitstream_unittest.cpp",

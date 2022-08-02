@@ -4,16 +4,18 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcrt/cfx_binarybuf.h"
+#include "core/fxcrt/binary_buffer.h"
 
 #include <algorithm>
 #include <utility>
 
 #include "core/fxcrt/fx_safe_types.h"
 
-CFX_BinaryBuf::CFX_BinaryBuf() = default;
+namespace fxcrt {
 
-CFX_BinaryBuf::CFX_BinaryBuf(CFX_BinaryBuf&& that) noexcept
+BinaryBuffer::BinaryBuffer() = default;
+
+BinaryBuffer::BinaryBuffer(BinaryBuffer&& that) noexcept
     : m_AllocStep(that.m_AllocStep),
       m_AllocSize(that.m_AllocSize),
       m_DataSize(that.m_DataSize),
@@ -25,9 +27,9 @@ CFX_BinaryBuf::CFX_BinaryBuf(CFX_BinaryBuf&& that) noexcept
   that.m_DataSize = 0;
 }
 
-CFX_BinaryBuf::~CFX_BinaryBuf() = default;
+BinaryBuffer::~BinaryBuffer() = default;
 
-CFX_BinaryBuf& CFX_BinaryBuf::operator=(CFX_BinaryBuf&& that) noexcept {
+BinaryBuffer& BinaryBuffer::operator=(BinaryBuffer&& that) noexcept {
   // Can't just default, need to leave |that| in a valid state, which means
   // that the size members reflect the (null) moved-from buffer.
   m_AllocStep = that.m_AllocStep;
@@ -40,7 +42,7 @@ CFX_BinaryBuf& CFX_BinaryBuf::operator=(CFX_BinaryBuf&& that) noexcept {
   return *this;
 }
 
-void CFX_BinaryBuf::DeleteBuf(size_t start_index, size_t count) {
+void BinaryBuffer::DeleteBuf(size_t start_index, size_t count) {
   if (!m_pBuffer || count > m_DataSize || start_index > m_DataSize - count)
     return;
 
@@ -49,34 +51,34 @@ void CFX_BinaryBuf::DeleteBuf(size_t start_index, size_t count) {
   m_DataSize -= count;
 }
 
-pdfium::span<uint8_t> CFX_BinaryBuf::GetSpan() {
+pdfium::span<uint8_t> BinaryBuffer::GetSpan() {
   return {m_pBuffer.get(), GetSize()};
 }
 
-pdfium::span<const uint8_t> CFX_BinaryBuf::GetSpan() const {
+pdfium::span<const uint8_t> BinaryBuffer::GetSpan() const {
   return {m_pBuffer.get(), GetSize()};
 }
 
-size_t CFX_BinaryBuf::GetLength() const {
+size_t BinaryBuffer::GetLength() const {
   return m_DataSize;
 }
 
-void CFX_BinaryBuf::Clear() {
+void BinaryBuffer::Clear() {
   m_DataSize = 0;
 }
 
-std::unique_ptr<uint8_t, FxFreeDeleter> CFX_BinaryBuf::DetachBuffer() {
+std::unique_ptr<uint8_t, FxFreeDeleter> BinaryBuffer::DetachBuffer() {
   m_DataSize = 0;
   m_AllocSize = 0;
   return std::move(m_pBuffer);
 }
 
-void CFX_BinaryBuf::EstimateSize(size_t size) {
+void BinaryBuffer::EstimateSize(size_t size) {
   if (m_AllocSize < size)
     ExpandBuf(size - m_DataSize);
 }
 
-void CFX_BinaryBuf::ExpandBuf(size_t add_size) {
+void BinaryBuffer::ExpandBuf(size_t add_size) {
   FX_SAFE_SIZE_T new_size = m_DataSize;
   new_size += add_size;
   if (m_AllocSize >= new_size.ValueOrDie())
@@ -93,11 +95,11 @@ void CFX_BinaryBuf::ExpandBuf(size_t add_size) {
                       : FX_Alloc(uint8_t, m_AllocSize));
 }
 
-void CFX_BinaryBuf::AppendSpan(pdfium::span<const uint8_t> span) {
+void BinaryBuffer::AppendSpan(pdfium::span<const uint8_t> span) {
   return AppendBlock(span.data(), span.size());
 }
 
-void CFX_BinaryBuf::AppendBlock(const void* pBuf, size_t size) {
+void BinaryBuffer::AppendBlock(const void* pBuf, size_t size) {
   if (size == 0)
     return;
 
@@ -109,3 +111,14 @@ void CFX_BinaryBuf::AppendBlock(const void* pBuf, size_t size) {
   }
   m_DataSize += size;
 }
+
+void BinaryBuffer::AppendString(const ByteString& str) {
+  AppendBlock(str.c_str(), str.GetLength());
+}
+
+void BinaryBuffer::AppendByte(uint8_t byte) {
+  ExpandBuf(1);
+  m_pBuffer.get()[m_DataSize++] = byte;
+}
+
+}  // namespace fxcrt

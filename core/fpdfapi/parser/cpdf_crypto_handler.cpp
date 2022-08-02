@@ -135,7 +135,7 @@ void* CPDF_CryptoHandler::DecryptStart(uint32_t objnum, uint32_t gennum) {
 
 bool CPDF_CryptoHandler::DecryptStream(void* context,
                                        pdfium::span<const uint8_t> source,
-                                       CFX_BinaryBuf& dest_buf) {
+                                       BinaryBuffer& dest_buf) {
   if (!context)
     return false;
 
@@ -183,7 +183,7 @@ bool CPDF_CryptoHandler::DecryptStream(void* context,
   return true;
 }
 
-bool CPDF_CryptoHandler::DecryptFinish(void* context, CFX_BinaryBuf& dest_buf) {
+bool CPDF_CryptoHandler::DecryptFinish(void* context, BinaryBuffer& dest_buf) {
   if (!context)
     return false;
 
@@ -209,7 +209,7 @@ bool CPDF_CryptoHandler::DecryptFinish(void* context, CFX_BinaryBuf& dest_buf) {
 ByteString CPDF_CryptoHandler::Decrypt(uint32_t objnum,
                                        uint32_t gennum,
                                        const ByteString& str) {
-  CFX_BinaryBuf dest_buf;
+  BinaryBuffer dest_buf;
   void* context = DecryptStart(objnum, gennum);
   DecryptStream(context, str.raw_span(), dest_buf);
   DecryptFinish(context, dest_buf);
@@ -275,7 +275,7 @@ bool CPDF_CryptoHandler::DecryptObjectTree(RetainPtr<CPDF_Object> object) {
           continue;
         }
 
-        CFX_BinaryBuf decrypted_buf;
+        BinaryBuffer decrypted_buf;
         decrypted_buf.EstimateSize(DecryptGetSize(stream_access->GetSize()));
 
         void* context = DecryptStart(obj_num, gen_num);

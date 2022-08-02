@@ -13,7 +13,7 @@
 
 #include "build/build_config.h"
 #include "core/fxcodec/scanlinedecoder.h"
-#include "core/fxcrt/cfx_binarybuf.h"
+#include "core/fxcrt/binary_buffer.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/calculate_pitch.h"
@@ -688,7 +688,7 @@ class FaxEncoder {
   const int m_Rows;
   const int m_Pitch;
   const uint8_t* m_pSrcBuf;
-  CFX_BinaryBuf m_DestBuf;
+  BinaryBuffer m_DestBuf;
   std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_RefLine;
   std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_LineBuf;
 };
