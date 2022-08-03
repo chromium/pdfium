@@ -19,10 +19,10 @@ class CPDF_ReadValidator;
 // Helper for check availability of object tree.
 class CPDF_ObjectAvail {
  public:
-  CPDF_ObjectAvail(const RetainPtr<CPDF_ReadValidator>& validator,
+  CPDF_ObjectAvail(RetainPtr<CPDF_ReadValidator> validator,
                    CPDF_IndirectObjectHolder* holder,
                    const CPDF_Object* root);
-  CPDF_ObjectAvail(const RetainPtr<CPDF_ReadValidator>& validator,
+  CPDF_ObjectAvail(RetainPtr<CPDF_ReadValidator> validator,
                    CPDF_IndirectObjectHolder* holder,
                    uint32_t obj_num);
   virtual ~CPDF_ObjectAvail();

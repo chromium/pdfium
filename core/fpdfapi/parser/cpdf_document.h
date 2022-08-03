@@ -128,9 +128,8 @@ class CPDF_Document : public Observable,
   CPDF_Parser::Error LoadDoc(
       const RetainPtr<IFX_SeekableReadStream>& pFileAccess,
       const ByteString& password);
-  CPDF_Parser::Error LoadLinearizedDoc(
-      const RetainPtr<CPDF_ReadValidator>& validator,
-      const ByteString& password);
+  CPDF_Parser::Error LoadLinearizedDoc(RetainPtr<CPDF_ReadValidator> validator,
+                                       const ByteString& password);
   bool has_valid_cross_reference_table() const {
     return m_bHasValidCrossReferenceTable;
   }

@@ -177,16 +177,15 @@ void CPDF_Parser::ShrinkObjectMap(uint32_t size) {
   m_CrossRefTable->ShrinkObjectMap(size);
 }
 
-bool CPDF_Parser::InitSyntaxParser(
-    const RetainPtr<CPDF_ReadValidator>& validator) {
+bool CPDF_Parser::InitSyntaxParser(RetainPtr<CPDF_ReadValidator> validator) {
   const absl::optional<FX_FILESIZE> header_offset = GetHeaderOffset(validator);
   if (!header_offset.has_value())
     return false;
   if (validator->GetSize() < header_offset.value() + kPDFHeaderSize)
     return false;
 
-  m_pSyntax =
-      std::make_unique<CPDF_SyntaxParser>(validator, header_offset.value());
+  m_pSyntax = std::make_unique<CPDF_SyntaxParser>(std::move(validator),
+                                                  header_offset.value());
   return ParseFileVersion();
 }
 
@@ -1016,7 +1015,7 @@ std::unique_ptr<CPDF_LinearizedHeader> CPDF_Parser::ParseLinearizedHeader() {
 }
 
 CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(
-    const RetainPtr<CPDF_ReadValidator>& validator,
+    RetainPtr<CPDF_ReadValidator> validator,
     const ByteString& password) {
   DCHECK(!m_bHasParsed);
   DCHECK(!m_bXRefTableRebuilt);
@@ -1024,7 +1023,7 @@ CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(
   m_bXRefStream = false;
   m_LastXRefOffset = 0;
 
-  if (!InitSyntaxParser(validator))
+  if (!InitSyntaxParser(std::move(validator)))
     return FORMAT_ERROR;
 
   m_pLinearized = ParseLinearizedHeader();

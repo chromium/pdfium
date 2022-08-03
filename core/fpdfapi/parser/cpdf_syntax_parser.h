@@ -42,7 +42,7 @@ class CPDF_SyntaxParser {
 
   explicit CPDF_SyntaxParser(
       const RetainPtr<IFX_SeekableReadStream>& pFileAccess);
-  CPDF_SyntaxParser(const RetainPtr<CPDF_ReadValidator>& pValidator,
+  CPDF_SyntaxParser(RetainPtr<CPDF_ReadValidator> pValidator,
                     FX_FILESIZE HeaderOffset);
   ~CPDF_SyntaxParser();
 
@@ -69,9 +69,7 @@ class CPDF_SyntaxParser {
   WordResult GetNextWord();
   ByteString PeekNextWord();
 
-  const RetainPtr<CPDF_ReadValidator>& GetValidator() const {
-    return m_pFileAccess;
-  }
+  RetainPtr<CPDF_ReadValidator> GetValidator() const;
   uint32_t GetDirectNum();
   bool GetNextChar(uint8_t& ch);
 
