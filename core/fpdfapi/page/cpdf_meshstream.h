@@ -14,7 +14,6 @@
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_shadingpattern.h"
-#include "core/fxcrt/cfx_bitstream.h"
 #include "core/fxcrt/retain_ptr.h"
 
 class CPDF_StreamAcc;
@@ -31,6 +30,7 @@ class CPDF_MeshVertex {
   float b = 0.0f;
 };
 
+class CFX_BitStream;
 class CFX_Matrix;
 class CPDF_ColorSpace;
 class CPDF_Function;
@@ -45,7 +45,10 @@ class CPDF_MeshStream {
   ~CPDF_MeshStream();
 
   bool Load();
+  void SkipBits(uint32_t nbits);
+  void ByteAlign();
 
+  bool IsEOF() const;
   bool CanReadFlag() const;
   bool CanReadCoords() const;
   bool CanReadColor() const;
@@ -60,7 +63,6 @@ class CPDF_MeshStream {
   std::vector<CPDF_MeshVertex> ReadVertexRow(const CFX_Matrix& pObject2Bitmap,
                                              int count);
 
-  CFX_BitStream* BitStream() { return m_BitStream.get(); }
   uint32_t ComponentBits() const { return m_nComponentBits; }
   uint32_t Components() const { return m_nComponents; }
 

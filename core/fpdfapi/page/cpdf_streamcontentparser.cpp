@@ -94,7 +94,7 @@ CFX_FloatRect GetShadingBBox(CPDF_ShadingPattern* pShading,
   else
     color_count = kSingleColorPerPatch;
 
-  while (!stream.BitStream()->IsEOF()) {
+  while (!stream.IsEOF()) {
     uint32_t flag = 0;
     if (type != kLatticeFormGouraudTriangleMeshShading) {
       if (!stream.CanReadFlag())
@@ -125,9 +125,9 @@ CFX_FloatRect GetShadingBBox(CPDF_ShadingPattern* pShading,
     if (!nBits.IsValid())
       break;
 
-    stream.BitStream()->SkipBits(nBits.ValueOrDie());
+    stream.SkipBits(nBits.ValueOrDie());
     if (bGouraud)
-      stream.BitStream()->ByteAlign();
+      stream.ByteAlign();
   }
   return matrix.TransformRect(rect);
 }

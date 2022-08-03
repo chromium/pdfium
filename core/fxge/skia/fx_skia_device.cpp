@@ -2310,7 +2310,7 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
     if (!skClip.isEmpty())
       m_pCanvas->clipPath(skClip, SkClipOp::kIntersect, true);
     m_pCanvas->concat(skMatrix);
-    while (!stream.BitStream()->IsEOF()) {
+    while (!stream.IsEOF()) {
       uint32_t flag = stream.ReadFlag();
       int iStartPoint = flag ? 4 : 0;
       int iStartColor = flag ? 2 : 0;

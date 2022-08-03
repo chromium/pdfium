@@ -12,6 +12,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
+#include "core/fxcrt/cfx_bitstream.h"
 #include "third_party/base/check.h"
 #include "third_party/base/span.h"
 
@@ -147,6 +148,18 @@ bool CPDF_MeshStream::Load() {
     m_ComponentMax = (1 << m_nComponentBits) - 1;
   }
   return true;
+}
+
+void CPDF_MeshStream::SkipBits(uint32_t nbits) {
+  m_BitStream->SkipBits(nbits);
+}
+
+void CPDF_MeshStream::ByteAlign() {
+  m_BitStream->ByteAlign();
+}
+
+bool CPDF_MeshStream::IsEOF() const {
+  return m_BitStream->IsEOF();
 }
 
 bool CPDF_MeshStream::CanReadFlag() const {

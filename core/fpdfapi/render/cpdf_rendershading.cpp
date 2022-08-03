@@ -428,7 +428,7 @@ void DrawFreeGouraudShading(
     return;
 
   CPDF_MeshVertex triangle[3];
-  while (!stream.BitStream()->IsEOF()) {
+  while (!stream.IsEOF()) {
     CPDF_MeshVertex vertex;
     uint32_t flag;
     if (!stream.ReadVertex(mtObject2Bitmap, &vertex, &flag))
@@ -804,7 +804,7 @@ void DrawCoonPatchMeshes(
 
   CFX_PointF coords[16];
   int point_count = type == kTensorProductPatchMeshShading ? 16 : 12;
-  while (!stream.BitStream()->IsEOF()) {
+  while (!stream.IsEOF()) {
     if (!stream.CanReadFlag())
       break;
     uint32_t flag = stream.ReadFlag();
