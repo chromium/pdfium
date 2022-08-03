@@ -37,7 +37,7 @@ class CPDF_TextState {
   void Emplace();
 
   RetainPtr<CPDF_Font> GetFont() const;
-  void SetFont(const RetainPtr<CPDF_Font>& pFont);
+  void SetFont(RetainPtr<CPDF_Font> pFont);
 
   float GetFontSize() const;
   void SetFontSize(float size);
@@ -66,7 +66,7 @@ class CPDF_TextState {
 
     RetainPtr<TextData> Clone() const;
 
-    void SetFont(const RetainPtr<CPDF_Font>& pFont);
+    void SetFont(RetainPtr<CPDF_Font> pFont);
     float GetFontSizeV() const;
     float GetFontSizeH() const;
 

@@ -246,9 +246,8 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessStandardText) {
   auto pTestPage = pdfium::MakeRetain<CPDF_Page>(pDoc.get(), pPageDict);
   CPDF_PageContentGenerator generator(pTestPage.Get());
   auto pTextObj = std::make_unique<CPDF_TextObject>();
-  RetainPtr<CPDF_Font> pFont =
-      CPDF_Font::GetStockFont(pDoc.get(), "Times-Roman");
-  pTextObj->m_TextState.SetFont(pFont);
+  pTextObj->m_TextState.SetFont(
+      CPDF_Font::GetStockFont(pDoc.get(), "Times-Roman"));
   pTextObj->m_TextState.SetFontSize(10.0f);
 
   static const std::vector<float> rgb = {0.5f, 0.7f, 0.35f};
@@ -330,9 +329,8 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
     pDict->SetNewFor<CPDF_Reference>("FontDescriptor", pDoc.get(),
                                      pDesc->GetObjNum());
 
-    RetainPtr<CPDF_Font> pLoadedFont =
-        CPDF_DocPageData::FromDocument(pDoc.get())->GetFont(pDict);
-    pTextObj->m_TextState.SetFont(pLoadedFont);
+    pTextObj->m_TextState.SetFont(
+        CPDF_DocPageData::FromDocument(pDoc.get())->GetFont(pDict));
     pTextObj->m_TextState.SetFontSize(15.5f);
     pTextObj->SetText("I am indirect");
     pTextObj->SetTextRenderMode(TextRenderingMode::MODE_FILL_CLIP);

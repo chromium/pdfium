@@ -1111,7 +1111,7 @@ void CPDF_StreamContentParser::Handle_SetFont() {
   m_pCurStates->m_TextState.SetFontSize(fs);
   RetainPtr<CPDF_Font> pFont = FindFont(GetString(1));
   if (pFont)
-    m_pCurStates->m_TextState.SetFont(pFont);
+    m_pCurStates->m_TextState.SetFont(std::move(pFont));
 }
 
 CPDF_Dictionary* CPDF_StreamContentParser::FindResourceHolder(

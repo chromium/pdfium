@@ -8,6 +8,8 @@
 
 #include <math.h>
 
+#include <utility>
+
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
 
@@ -23,8 +25,8 @@ RetainPtr<CPDF_Font> CPDF_TextState::GetFont() const {
   return m_Ref.GetObject()->m_pFont;
 }
 
-void CPDF_TextState::SetFont(const RetainPtr<CPDF_Font>& pFont) {
-  m_Ref.GetPrivateCopy()->SetFont(pFont);
+void CPDF_TextState::SetFont(RetainPtr<CPDF_Font> pFont) {
+  m_Ref.GetPrivateCopy()->SetFont(std::move(pFont));
 }
 
 float CPDF_TextState::GetFontSize() const {
@@ -106,9 +108,9 @@ RetainPtr<CPDF_TextState::TextData> CPDF_TextState::TextData::Clone() const {
   return pdfium::MakeRetain<CPDF_TextState::TextData>(*this);
 }
 
-void CPDF_TextState::TextData::SetFont(const RetainPtr<CPDF_Font>& pFont) {
+void CPDF_TextState::TextData::SetFont(RetainPtr<CPDF_Font> pFont) {
   m_pDocument = pFont ? pFont->GetDocument() : nullptr;
-  m_pFont = pFont;
+  m_pFont = std::move(pFont);
 }
 
 float CPDF_TextState::TextData::GetFontSizeH() const {

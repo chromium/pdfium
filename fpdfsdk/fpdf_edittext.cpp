@@ -476,7 +476,7 @@ FPDFPageObj_NewTextObj(FPDF_DOCUMENT document,
     return nullptr;
 
   auto pTextObj = std::make_unique<CPDF_TextObject>();
-  pTextObj->m_TextState.SetFont(pFont);
+  pTextObj->m_TextState.SetFont(std::move(pFont));
   pTextObj->m_TextState.SetFontSize(font_size);
   pTextObj->DefaultStates();
 
