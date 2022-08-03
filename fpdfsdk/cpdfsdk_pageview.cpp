@@ -588,15 +588,7 @@ int CPDFSDK_PageView::GetPageIndex() const {
 }
 
 bool CPDFSDK_PageView::IsValidAnnot(const CPDF_Annot* p) const {
-  if (!p)
-    return false;
-
-  const auto& annots = m_pAnnotList->All();
-  auto it = std::find_if(annots.begin(), annots.end(),
-                         [p](const std::unique_ptr<CPDF_Annot>& annot) {
-                           return annot.get() == p;
-                         });
-  return it != annots.end();
+  return p && m_pAnnotList->Contains(p);
 }
 
 bool CPDFSDK_PageView::IsValidSDKAnnot(const CPDFSDK_Annot* p) const {

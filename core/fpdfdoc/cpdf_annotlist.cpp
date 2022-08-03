@@ -222,6 +222,14 @@ CPDF_AnnotList::~CPDF_AnnotList() {
   m_AnnotList.clear();
 }
 
+bool CPDF_AnnotList::Contains(const CPDF_Annot* pAnnot) const {
+  auto it = std::find_if(m_AnnotList.begin(), m_AnnotList.end(),
+                         [pAnnot](const std::unique_ptr<CPDF_Annot>& annot) {
+                           return annot.get() == pAnnot;
+                         });
+  return it != m_AnnotList.end();
+}
+
 void CPDF_AnnotList::DisplayPass(CPDF_Page* pPage,
                                  CFX_RenderDevice* pDevice,
                                  CPDF_RenderContext* pContext,

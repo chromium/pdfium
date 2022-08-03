@@ -37,9 +37,7 @@ class CPDF_AnnotList final : public CPDF_PageRenderContext::AnnotListIface {
 
   size_t Count() const { return m_AnnotList.size(); }
   CPDF_Annot* GetAt(size_t index) const { return m_AnnotList[index].get(); }
-  const std::vector<std::unique_ptr<CPDF_Annot>>& All() const {
-    return m_AnnotList;
-  }
+  bool Contains(const CPDF_Annot* pAnnot) const;
 
  private:
   void DisplayPass(CPDF_Page* pPage,
