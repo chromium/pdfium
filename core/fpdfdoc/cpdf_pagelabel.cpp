@@ -15,8 +15,9 @@ namespace {
 
 WideString MakeRoman(int num) {
   const int kArabic[] = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
-  const WideString kRoman[] = {L"m",  L"cm", L"d",  L"cd", L"c",  L"xc", L"l",
-                               L"xl", L"x",  L"ix", L"v",  L"iv", L"i"};
+  const WideStringView kRoman[] = {L"m",  L"cm", L"d",  L"cd", L"c",
+                                   L"xc", L"l",  L"xl", L"x",  L"ix",
+                                   L"v",  L"iv", L"i"};
   const int kMaxNum = 1000000;
 
   num %= kMaxNum;
