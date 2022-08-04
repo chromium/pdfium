@@ -4194,7 +4194,8 @@ void CFXJSE_FormCalcContext::Str(
   }
   float fNumber = ValueToFloat(info.GetIsolate(), numberValue);
 
-  int32_t iWidth = 10;
+  constexpr int32_t kDefaultWidth = 10;
+  int32_t iWidth = kDefaultWidth;
   if (argc > 1) {
     v8::Local<v8::Value> widthValue = GetSimpleValue(info, 1);
     iWidth = static_cast<int32_t>(ValueToFloat(info.GetIsolate(), widthValue));
@@ -4204,11 +4205,14 @@ void CFXJSE_FormCalcContext::Str(
     }
   }
 
-  int32_t iPrecision = 0;
+  constexpr int32_t kDefaultPrecision = 0;
+  int32_t iPrecision = kDefaultPrecision;
   if (argc > 2) {
-    v8::Local<v8::Value> precisionValue = GetSimpleValue(info, 2);
+    constexpr int32_t kMaxPrecision = 15;
+    v8::Local<v8::Value> precision_value = GetSimpleValue(info, 2);
     iPrecision = std::max(0, static_cast<int32_t>(ValueToFloat(
-                                 info.GetIsolate(), precisionValue)));
+                                 info.GetIsolate(), precision_value)));
+    iPrecision = std::min(iPrecision, kMaxPrecision);
   }
 
   ByteString bsFormat = "%";

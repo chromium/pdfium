@@ -826,6 +826,11 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Str) {
   ExecuteExpectString("Str(234.458, 4)", " 234");
   ExecuteExpectString("Str(31.2345, 4, 2)", "****");
 
+  // Test maximum "n3" precision value.
+  ExecuteExpectString("Str(-765, 19, 14)", "-765.00000000000000");
+  ExecuteExpectString("Str(-765, 20, 15)", "-765.000000000000000");
+  ExecuteExpectString("Str(-765, 21, 16)", " -765.000000000000000");
+
   // Error cases.
   ExecuteExpectError("Str()");
   ExecuteExpectError("Str(1, 2, 3, 4)");
