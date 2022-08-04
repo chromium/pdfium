@@ -721,11 +721,6 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_ClosePage(FPDF_PAGE page) {
   if (!pPageView || pPageView->IsBeingDestroyed())
     return;
 
-  if (pPageView->IsLocked()) {
-    pPageView->TakePageOwnership();
-    return;
-  }
-
   // This will delete the |pPageView| object. We must cleanup the PageView
   // first because it will attempt to reset the View on the |pPage| during
   // destruction.
