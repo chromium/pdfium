@@ -19,7 +19,6 @@
 #include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_Dictionary;
-class CPDF_Font;
 class CPDF_FormControl;
 class CPDF_InteractiveForm;
 class CPDF_Object;
@@ -140,9 +139,6 @@ class CPDF_FormField {
   // entries are consistent with the value (/V) object.
   bool UseSelectedIndicesObject() const;
 
-  float GetFontSize() const { return m_FontSize; }
-  CPDF_Font* GetFont() const { return m_pFont.Get(); }
-
   const CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
   CPDF_InteractiveForm* GetForm() const { return m_pForm.Get(); }
 
@@ -188,10 +184,8 @@ class CPDF_FormField {
   bool m_bIsMultiSelectListBox = false;
   bool m_bIsUnison = false;
   bool m_bUseSelectedIndices = false;
-  float m_FontSize = 0;
   UnownedPtr<CPDF_InteractiveForm> const m_pForm;
   RetainPtr<CPDF_Dictionary> const m_pDict;
-  RetainPtr<CPDF_Font> m_pFont;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_FORMFIELD_H_

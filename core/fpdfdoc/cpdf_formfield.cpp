@@ -128,7 +128,6 @@ void CPDF_FormField::InitFieldFlags() {
       m_Type = kRichText;
     else
       m_Type = kText;
-    LoadDA();
   } else if (type_name == pdfium::form_fields::kCh) {
     if (flags & pdfium::form_flags::kChoiceCombo) {
       m_Type = kComboBox;
@@ -137,7 +136,6 @@ void CPDF_FormField::InitFieldFlags() {
       m_bIsMultiSelectListBox = flags & pdfium::form_flags::kChoiceMultiSelect;
     }
     m_bUseSelectedIndices = UseSelectedIndicesObject();
-    LoadDA();
   } else if (type_name == pdfium::form_fields::kSig) {
     m_Type = kSign;
   }
@@ -836,43 +834,6 @@ bool CPDF_FormField::UseSelectedIndicesObject() const {
     return false;
 
   return pdfium::Contains(values, GetOptionValue(index));
-}
-
-void CPDF_FormField::LoadDA() {
-  RetainPtr<CPDF_Dictionary> pFormDict = m_pForm->GetMutableFormDict();
-  if (!pFormDict)
-    return;
-
-  ByteString DA;
-  if (const CPDF_Object* pObj = GetFieldAttr(m_pDict.Get(), "DA"))
-    DA = pObj->GetString();
-
-  if (DA.IsEmpty())
-    DA = pFormDict->GetStringFor("DA");
-
-  if (DA.IsEmpty())
-    return;
-
-  RetainPtr<CPDF_Dictionary> pDR = pFormDict->GetMutableDictFor("DR");
-  if (!pDR)
-    return;
-
-  RetainPtr<CPDF_Dictionary> pFont = pDR->GetMutableDictFor("Font");
-  if (!ValidateFontResourceDict(pFont.Get()))
-    return;
-
-  CPDF_DefaultAppearance appearance(DA);
-  absl::optional<ByteString> font_name = appearance.GetFont(&m_FontSize);
-  if (!font_name.has_value())
-    return;
-
-  RetainPtr<CPDF_Dictionary> pFontDict =
-      pFont->GetMutableDictFor(font_name.value());
-  if (!pFontDict)
-    return;
-
-  auto* pData = CPDF_DocPageData::FromDocument(m_pForm->GetDocument());
-  m_pFont = pData->GetFont(std::move(pFontDict));
 }
 
 bool CPDF_FormField::NotifyBeforeSelectionChange(const WideString& value) {
