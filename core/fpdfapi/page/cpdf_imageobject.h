@@ -28,7 +28,7 @@ class CPDF_ImageObject final : public CPDF_PageObject {
   const CPDF_ImageObject* AsImage() const override;
 
   void CalcBoundingBox();
-  void SetImage(const RetainPtr<CPDF_Image>& pImage);
+  void SetImage(RetainPtr<CPDF_Image> pImage);
   RetainPtr<CPDF_Image> GetImage() const;
   RetainPtr<CFX_DIBitmap> GetIndependentBitmap() const;
 
