@@ -289,15 +289,6 @@ void CPDF_FormField::SetFieldFlags(uint32_t dwFlags) {
                                   static_cast<int>(dwFlags));
 }
 
-ByteString CPDF_FormField::GetDefaultStyle() const {
-  const CPDF_Object* pObj = GetFieldAttr(m_pDict.Get(), "DS");
-  return pObj ? pObj->GetString() : ByteString();
-}
-
-void CPDF_FormField::SetOpt(RetainPtr<CPDF_Object> pOpt) {
-  m_pDict->SetFor("Opt", std::move(pOpt));
-}
-
 WideString CPDF_FormField::GetValue(bool bDefault) const {
   if (GetType() == kCheckBox || GetType() == kRadioButton)
     return GetCheckValue(bDefault);
@@ -533,14 +524,6 @@ void CPDF_FormField::SetItemSelectionSelected(int index,
     if (i == index || IsItemSelected(i))
       pArray->AppendNew<CPDF_String>(GetOptionValue(i).AsStringView());
   }
-}
-
-bool CPDF_FormField::IsItemDefaultSelected(int index) const {
-  DCHECK(GetType() == kComboBox || GetType() == kListBox);
-  if (index < 0 || index >= CountOptions())
-    return false;
-  int iDVIndex = GetDefaultSelectedItem();
-  return iDVIndex >= 0 && iDVIndex == index;
 }
 
 int CPDF_FormField::GetDefaultSelectedItem() const {

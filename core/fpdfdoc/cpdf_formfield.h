@@ -99,7 +99,6 @@ class CPDF_FormField {
 
   uint32_t GetFieldFlags() const;
   void SetFieldFlags(uint32_t dwFlags);
-  ByteString GetDefaultStyle() const;
 
   bool IsRequired() const { return m_bRequired; }
   bool IsNoExport() const { return m_bNoExport; }
@@ -115,8 +114,6 @@ class CPDF_FormField {
   bool ClearSelection(NotificationOption notify);
   bool IsItemSelected(int index) const;
   bool SetItemSelection(int index, NotificationOption notify);
-
-  bool IsItemDefaultSelected(int index) const;
 
   int GetDefaultSelectedItem() const;
   int CountOptions() const;
@@ -143,8 +140,6 @@ class CPDF_FormField {
   CPDF_InteractiveForm* GetForm() const { return m_pForm.Get(); }
 
   WideString GetCheckValue(bool bDefault) const;
-
-  void SetOpt(RetainPtr<CPDF_Object> pOpt);
 
  private:
   WideString GetValue(bool bDefault) const;
