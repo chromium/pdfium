@@ -1,0 +1,58 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /AcroForm <<
+    /Fields [4 0 R]
+  >>
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Annots [4 0 R]
+  /Parent 2 0 R
+  /MediaBox [0 0 200 100]
+>>
+endobj
+{{object 4 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Tx
+  /BS <<
+    /S /S
+    /W 1
+  >>
+  /DA (/Times-Roman 12 Tf 0 0 0 rg)
+  /DR <<
+    /Font <<
+      /Times-Roman 5 0 R
+    >>
+  >>
+  /DV ()
+  /F 4
+  /Ff 0
+  /MK <<
+    /BG [1 1 1]
+  >>
+  /P 3 0 R
+  /T (Default)
+  /V (\376\377\5\321\5\327\5\350\0.\0.\0.)
+  /Rect [50 40 150 70]
+>>
+endobj
+{{object 5 0}} <<
+  /Type /Font
+  /Subtype /Type1
+  /BaseFont /Times-Roman
+>>
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
