@@ -38,13 +38,12 @@ TEST(CPDFDefaultAppearanceTest, FindTagParamFromStart) {
       STR_IN_TEST_CASE("1 2 3 4 5 6 7 8 cm", "cm", 6, true, 3),
   };
 
-  CPDF_DefaultAppearance da;
   for (size_t i = 0; i < std::size(test_data); ++i) {
     CPDF_SimpleParser parser(
         pdfium::make_span(test_data[i].input, test_data[i].input_size));
     EXPECT_EQ(test_data[i].result,
-              da.FindTagParamFromStartForTesting(&parser, test_data[i].token,
-                                                 test_data[i].num_params))
+              CPDF_DefaultAppearance::FindTagParamFromStartForTesting(
+                  &parser, test_data[i].token, test_data[i].num_params))
         << " for case " << i;
     EXPECT_EQ(test_data[i].result_pos, parser.GetCurPos()) << " for case " << i;
   }
