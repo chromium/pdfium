@@ -148,7 +148,8 @@ bool IsRightToLeft(const CPDF_TextObject& text_obj, const CPDF_Font& font) {
     if (wChar)
       str += wChar;
   }
-  return CFX_BidiString(str).OverallDirection() == CFX_BidiChar::RIGHT;
+  return CFX_BidiString(str).OverallDirection() ==
+         CFX_BidiChar::Direction::kRight;
 }
 
 int GetCharWidth(uint32_t charCode, CPDF_Font* pFont) {
@@ -734,14 +735,14 @@ void CPDF_TextPage::CloseTempLine() {
     bidi.SetOverallDirectionRight();
   CFX_BidiChar::Direction eCurrentDirection = bidi.OverallDirection();
   for (const auto& segment : bidi) {
-    if (segment.direction == CFX_BidiChar::RIGHT ||
-        (segment.direction == CFX_BidiChar::NEUTRAL &&
-         eCurrentDirection == CFX_BidiChar::RIGHT)) {
-      eCurrentDirection = CFX_BidiChar::RIGHT;
+    if (segment.direction == CFX_BidiChar::Direction::kRight ||
+        (segment.direction == CFX_BidiChar::Direction::kNeutral &&
+         eCurrentDirection == CFX_BidiChar::Direction::kRight)) {
+      eCurrentDirection = CFX_BidiChar::Direction::kRight;
       for (int m = segment.start + segment.count; m > segment.start; --m)
         AddCharInfoByRLDirection(str[m - 1], m_TempCharList[m - 1]);
     } else {
-      eCurrentDirection = CFX_BidiChar::LEFT;
+      eCurrentDirection = CFX_BidiChar::Direction::kLeft;
       for (int m = segment.start; m < segment.start + segment.count; ++m)
         AddCharInfoByLRDirection(str[m], m_TempCharList[m]);
     }

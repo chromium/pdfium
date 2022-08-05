@@ -16,7 +16,7 @@
 // Processes characters and group them into segments based on text direction.
 class CFX_BidiChar {
  public:
-  enum Direction { NEUTRAL, LEFT, RIGHT };
+  enum class Direction { kNeutral, kLeft, kRight };
   struct Segment {
     int32_t start;        // Start position.
     int32_t count;        // Character count.
@@ -65,7 +65,7 @@ class CFX_BidiString {
  private:
   const WideString& m_Str;
   std::vector<CFX_BidiChar::Segment> m_Order;
-  CFX_BidiChar::Direction m_eOverallDirection = CFX_BidiChar::LEFT;
+  CFX_BidiChar::Direction m_eOverallDirection = CFX_BidiChar::Direction::kLeft;
 };
 
 #endif  // CORE_FXCRT_FX_BIDI_H_
