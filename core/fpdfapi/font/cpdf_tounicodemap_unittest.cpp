@@ -90,7 +90,8 @@ TEST(cpdf_tounicodemap, InsertIntoMultimap) {
     CPDF_ToUnicodeMap map(stream.Get());
     EXPECT_EQ(1u, map.ReverseLookup(0x0041));
     EXPECT_EQ(2u, map.ReverseLookup(0x0042));
-    EXPECT_EQ(2u, map.GetMultimapSizeForTesting());
+    EXPECT_EQ(1u, map.GetUnicodeCountByCharcodeForTesting(1u));
+    EXPECT_EQ(1u, map.GetUnicodeCountByCharcodeForTesting(2u));
   }
   {
     // The same CID with different unicodes.
@@ -101,7 +102,7 @@ TEST(cpdf_tounicodemap, InsertIntoMultimap) {
     CPDF_ToUnicodeMap map(stream.Get());
     EXPECT_EQ(0u, map.ReverseLookup(0x0041));
     EXPECT_EQ(0u, map.ReverseLookup(0x0042));
-    EXPECT_EQ(2u, map.GetMultimapSizeForTesting());
+    EXPECT_EQ(2u, map.GetUnicodeCountByCharcodeForTesting(0u));
   }
   {
     // Duplicate mappings of CID 0 to unicode "A". There should be only 1 entry
@@ -113,6 +114,6 @@ TEST(cpdf_tounicodemap, InsertIntoMultimap) {
     stream->SetData(pdfium::make_span(kInput3));
     CPDF_ToUnicodeMap map(stream.Get());
     EXPECT_EQ(0u, map.ReverseLookup(0x0041));
-    EXPECT_EQ(1u, map.GetMultimapSizeForTesting());
+    EXPECT_EQ(1u, map.GetUnicodeCountByCharcodeForTesting(0u));
   }
 }

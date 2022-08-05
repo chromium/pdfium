@@ -7,6 +7,7 @@
 #include "core/fpdfapi/font/cpdf_tounicodemap.h"
 
 #include <map>
+#include <set>
 #include <utility>
 
 #include "core/fpdfapi/font/cpdf_cid2unicodemap.h"
@@ -54,7 +55,7 @@ WideString CPDF_ToUnicodeMap::Lookup(uint32_t charcode) const {
         m_pBaseMap->UnicodeFromCID(static_cast<uint16_t>(charcode)));
   }
 
-  uint32_t value = it->second;
+  uint32_t value = *it->second.begin();
   wchar_t unicode = static_cast<wchar_t>(value & 0xffff);
   if (unicode != 0xffff)
     return WideString(unicode);
@@ -65,10 +66,16 @@ WideString CPDF_ToUnicodeMap::Lookup(uint32_t charcode) const {
 
 uint32_t CPDF_ToUnicodeMap::ReverseLookup(wchar_t unicode) const {
   for (const auto& pair : m_Multimap) {
-    if (pair.second == static_cast<uint32_t>(unicode))
+    if (pdfium::Contains(pair.second, static_cast<uint32_t>(unicode)))
       return pair.first;
   }
   return 0;
+}
+
+size_t CPDF_ToUnicodeMap::GetUnicodeCountByCharcodeForTesting(
+    uint32_t charcode) const {
+  auto it = m_Multimap.find(charcode);
+  return it != m_Multimap.end() ? it->second.size() : 0u;
 }
 
 // static
@@ -228,18 +235,11 @@ void CPDF_ToUnicodeMap::SetCode(uint32_t srccode, WideString destcode) {
 }
 
 void CPDF_ToUnicodeMap::InsertIntoMultimap(uint32_t code, uint32_t destcode) {
-  if (!pdfium::Contains(m_Multimap, code)) {
-    m_Multimap.emplace(code, destcode);
+  auto it = m_Multimap.find(code);
+  if (it == m_Multimap.end()) {
+    m_Multimap.emplace(code, std::set<uint32_t>{destcode});
     return;
   }
 
-  auto ret = m_Multimap.equal_range(code);
-  for (auto iter = ret.first; iter != ret.second; ++iter) {
-    if (iter->second == destcode) {
-      // Do not insert since a duplicate mapping is found.
-      return;
-    }
-  }
-
-  m_Multimap.emplace(code, destcode);
+  it->second.emplace(destcode);
 }
