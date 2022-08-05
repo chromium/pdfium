@@ -36,10 +36,9 @@ class CFXJSE_ResolveProcessor {
     CFXJSE_Engine::ResolveResult m_Result;
   };
 
-  CFXJSE_ResolveProcessor();
+  explicit CFXJSE_ResolveProcessor(CFXJSE_Engine* pEngine);
   ~CFXJSE_ResolveProcessor();
 
-  void SetEngine(CFXJSE_Engine* pEngine);
   bool Resolve(v8::Isolate* pIsolate, NodeData& rnd);
   int32_t GetFilter(WideStringView wsExpression, int32_t nStart, NodeData& rnd);
   int32_t IndexForDataBind(const WideString& wsNextCondition, int32_t iCount);
@@ -72,7 +71,7 @@ class CFXJSE_ResolveProcessor {
                          NodeData* pRnd);
 
   int32_t m_iCurStart = 0;
-  UnownedPtr<CFXJSE_Engine> m_pEngine;
+  UnownedPtr<CFXJSE_Engine> const m_pEngine;
   std::unique_ptr<CFXJSE_NodeHelper> const m_pNodeHelper;
 };
 

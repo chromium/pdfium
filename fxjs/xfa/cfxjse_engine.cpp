@@ -119,10 +119,8 @@ CXFA_Object* CFXJSE_Engine::ToObject(CFXJSE_HostObject* pHostObj) {
   return pJSObject ? pJSObject->GetXFAObject() : nullptr;
 }
 
-CFXJSE_Engine::CFXJSE_Engine(
-    CXFA_Document* pDocument,
-    CJS_Runtime* fxjs_runtime,
-    std::unique_ptr<CFXJSE_ResolveProcessor> pProcessor)
+CFXJSE_Engine::CFXJSE_Engine(CXFA_Document* pDocument,
+                             CJS_Runtime* fxjs_runtime)
     : CFX_V8(fxjs_runtime->GetIsolate()),
       m_pSubordinateRuntime(fxjs_runtime),
       m_pDocument(pDocument),
@@ -130,8 +128,7 @@ CFXJSE_Engine::CFXJSE_Engine(
                                          &kGlobalClassDescriptor,
                                          pDocument->GetRoot()->JSObject(),
                                          nullptr)),
-      m_ResolveProcessor(std::move(pProcessor)) {
-  m_ResolveProcessor->SetEngine(this);
+      m_ResolveProcessor(std::make_unique<CFXJSE_ResolveProcessor>(this)) {
   RemoveBuiltInObjs(m_JsContext.get());
   m_JsContext->EnableCompatibleMode();
 

@@ -1456,8 +1456,7 @@ cppgc::Heap* CXFA_Document::GetHeap() const {
 
 CFXJSE_Engine* CXFA_Document::InitScriptContext(CJS_Runtime* fxjs_runtime) {
   DCHECK(!m_pScriptContext);
-  m_pScriptContext = std::make_unique<CFXJSE_Engine>(
-      this, fxjs_runtime, std::make_unique<CFXJSE_ResolveProcessor>());
+  m_pScriptContext = std::make_unique<CFXJSE_Engine>(this, fxjs_runtime);
   return m_pScriptContext.get();
 }
 

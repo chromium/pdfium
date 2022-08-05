@@ -25,15 +25,11 @@
 #include "xfa/fxfa/parser/cxfa_occur.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
-CFXJSE_ResolveProcessor::CFXJSE_ResolveProcessor()
-    : m_pNodeHelper(std::make_unique<CFXJSE_NodeHelper>()) {}
+CFXJSE_ResolveProcessor::CFXJSE_ResolveProcessor(CFXJSE_Engine* pEngine)
+    : m_pEngine(pEngine),
+      m_pNodeHelper(std::make_unique<CFXJSE_NodeHelper>()) {}
 
 CFXJSE_ResolveProcessor::~CFXJSE_ResolveProcessor() = default;
-
-void CFXJSE_ResolveProcessor::SetEngine(CFXJSE_Engine* pEngine) {
-  DCHECK(!m_pEngine);
-  m_pEngine = pEngine;
-}
 
 bool CFXJSE_ResolveProcessor::Resolve(v8::Isolate* pIsolate, NodeData& rnd) {
   if (!rnd.m_CurObject)
