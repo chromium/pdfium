@@ -97,9 +97,10 @@ bool LoadJpegHelper(FPDF_PAGE* pages,
 
   RetainPtr<IFX_SeekableReadStream> pFile = MakeSeekableReadStream(file_access);
   if (inline_jpeg)
-    pImgObj->GetImage()->SetJpegImageInline(pFile);
+    pImgObj->GetImage()->SetJpegImageInline(std::move(pFile));
   else
-    pImgObj->GetImage()->SetJpegImage(pFile);
+    pImgObj->GetImage()->SetJpegImage(std::move(pFile));
+
   pImgObj->SetDirty(true);
   return true;
 }
