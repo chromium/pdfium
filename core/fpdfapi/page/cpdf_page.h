@@ -39,7 +39,7 @@ class CPDF_Page final : public IPDF_Page, public CPDF_PageObjectHolder {
   class RenderCacheIface {
    public:
     virtual ~RenderCacheIface() = default;
-    virtual void ResetBitmapForImage(const RetainPtr<CPDF_Image>& pImage) = 0;
+    virtual void ResetBitmapForImage(RetainPtr<CPDF_Image> pImage) = 0;
   };
 
   class RenderContextClearer {

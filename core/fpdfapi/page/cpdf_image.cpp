@@ -326,7 +326,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
 
 void CPDF_Image::ResetCache(CPDF_Page* pPage) {
   RetainPtr<CPDF_Image> pHolder(this);
-  pPage->GetRenderCache()->ResetBitmapForImage(pHolder);
+  pPage->GetRenderCache()->ResetBitmapForImage(std::move(pHolder));
 }
 
 RetainPtr<CFX_DIBBase> CPDF_Image::LoadDIBBase() const {

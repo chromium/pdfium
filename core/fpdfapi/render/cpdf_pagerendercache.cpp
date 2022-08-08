@@ -116,8 +116,7 @@ bool CPDF_PageRenderCache::Continue(PauseIndicatorIface* pPause,
   return false;
 }
 
-void CPDF_PageRenderCache::ResetBitmapForImage(
-    const RetainPtr<CPDF_Image>& pImage) {
+void CPDF_PageRenderCache::ResetBitmapForImage(RetainPtr<CPDF_Image> pImage) {
   CPDF_ImageCacheEntry* pEntry;
   const CPDF_Stream* pStream = pImage->GetStream();
   const auto it = m_ImageCache.find(pStream);

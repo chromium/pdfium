@@ -30,7 +30,7 @@ class CPDF_PageRenderCache final : public CPDF_Page::RenderCacheIface {
   ~CPDF_PageRenderCache() override;
 
   // CPDF_Page::RenderCacheIface:
-  void ResetBitmapForImage(const RetainPtr<CPDF_Image>& pImage) override;
+  void ResetBitmapForImage(RetainPtr<CPDF_Image> pImage) override;
 
   void CacheOptimization(int32_t dwLimitCacheSize);
   uint32_t GetTimeCount() const { return m_nTimeCount; }
