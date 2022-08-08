@@ -42,6 +42,9 @@
 2_color_calrgb.pdf mac * * *
 2_color_indexed.pdf mac * * *
 
+# TODO(pdfium:1867): Remove after associated bug is fixed
+2_color_tiling.pdf * * * skia
+
 # TODO(pdfium:1860): Remove after associated bug is fixed
 2_halftone.pdf * * * skia
 
@@ -158,8 +161,14 @@ annotation_highlight_author_content.pdf mac * * *
 annotation_highlight_long_content.pdf mac * * *
 annotation_highlight_no_author.pdf mac * * *
 
+# TODO(pdfium:1870): Remove after associated bug is fixed
+annotation_highlight_opacity.pdf * * * skiapaths
+
 # TODO(pdfium:1803): Remove after associated bug is fixed
 annotation_ink_dot.pdf * * * skia,skiapaths
+
+# TODO(pdfium:1871): Remove after associated bug is fixed
+annotation_square_dash.pdf * * * skia,skiapaths
 
 # TODO(pdfium:1802): Remove after associated bug is fixed
 annotation_square_fill_opacity.pdf * * * skia
@@ -183,6 +192,15 @@ bug_0_length_line.pdf * * * skia,skiapaths
 bug_0_width_line.pdf mac * * *
 bug_440132.pdf mac * * *
 
+# TODO(pdfium:1818): Remove after associated bug is fixed
+bug_691967.pdf * * * skia
+
+# TODO(pdfium:1869): Remove after associated bug is fixed
+bug_880920.pdf * * * skia
+
+# TODO(pdfium:1868): Remove after associated bug is fixed
+bug_898443.pdf * * * skia
+
 bug_white_space.pdf mac * * *
 calcorderindex_test.pdf * * * *
 calculate_average.pdf mac * * *
@@ -194,6 +212,24 @@ ch_1.pdf * * * *
 
 # TODO(pdfium:1819): Remove after associated bug is fixed
 ch_7_0.pdf * * * skia
+
+# TODO(pdfium:1819): Remove after associated bug is fixed
+ch_7_1.pdf * * * skia
+
+# TODO(pdfium:1819): Remove after associated bug is fixed
+ch_7_4.pdf * * * skia
+
+# TODO(pdfium:1819): Remove after associated bug is fixed
+ch_7_5.pdf * * * skia
+
+# TODO(pdfium:1819): Remove after associated bug is fixed
+ch_7_6.pdf * * * skia
+
+# TODO(pdfium:1819): Remove after associated bug is fixed
+ch_7_7.pdf * * * skia
+
+# TODO(pdfium:1819): Remove after associated bug is fixed
+ch_7_8.pdf * * * skia
 
 check_box.pdf * * * *
 color.pdf mac * * *
