@@ -172,9 +172,8 @@ RetainPtr<CPDF_TransferFunc> CPDF_GeneralState::GetTransferFunc() const {
   return pData ? pData->m_pTransferFunc : nullptr;
 }
 
-void CPDF_GeneralState::SetTransferFunc(
-    const RetainPtr<CPDF_TransferFunc>& pFunc) {
-  m_Ref.GetPrivateCopy()->m_pTransferFunc = pFunc;
+void CPDF_GeneralState::SetTransferFunc(RetainPtr<CPDF_TransferFunc> pFunc) {
+  m_Ref.GetPrivateCopy()->m_pTransferFunc = std::move(pFunc);
 }
 
 void CPDF_GeneralState::SetBlendMode(const ByteString& mode) {

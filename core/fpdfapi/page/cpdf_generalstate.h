@@ -46,7 +46,7 @@ class CPDF_GeneralState {
   void SetTR(const CPDF_Object* pObject);
 
   RetainPtr<CPDF_TransferFunc> GetTransferFunc() const;
-  void SetTransferFunc(const RetainPtr<CPDF_TransferFunc>& pFunc);
+  void SetTransferFunc(RetainPtr<CPDF_TransferFunc> pFunc);
 
   void SetBlendMode(const ByteString& mode);
 
