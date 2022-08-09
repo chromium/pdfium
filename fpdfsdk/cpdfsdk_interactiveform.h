@@ -33,9 +33,6 @@ class CPDFSDK_InteractiveForm final
   CPDF_InteractiveForm* GetInteractiveForm() const {
     return m_pInteractiveForm.get();
   }
-  CPDFSDK_FormFillEnvironment* GetFormFillEnv() const {
-    return m_pFormFillEnv.Get();
-  }
 
   CPDFSDK_Widget* GetWidget(CPDF_FormControl* pControl) const;
   void GetWidgets(const WideString& sFieldName,
