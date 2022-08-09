@@ -30,6 +30,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_fontmapper.h"
+#include "core/fxge/cfx_substfont.h"
 #include "core/fxge/freetype/fx_freetype.h"
 #include "core/fxge/fx_font.h"
 #include "third_party/base/check.h"
@@ -348,6 +349,13 @@ bool CPDF_Font::IsStandardFont() const {
   if (m_pFontFile)
     return false;
   return AsType1Font()->IsBase14Font();
+}
+
+absl::optional<FX_Charset> CPDF_Font::GetSubstFontCharset() const {
+  CFX_SubstFont* pFont = m_Font.GetSubstFont();
+  if (!pFont)
+    return absl::nullopt;
+  return pFont->m_Charset;
 }
 
 // static

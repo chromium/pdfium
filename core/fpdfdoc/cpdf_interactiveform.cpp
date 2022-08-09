@@ -30,7 +30,6 @@
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/stl_util.h"
-#include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fx_font.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/check.h"
@@ -320,11 +319,8 @@ RetainPtr<CPDF_Font> GetNativeFont(const CPDF_Dictionary* pFormDict,
     if (!pFind)
       continue;
 
-    CFX_SubstFont* pSubst = pFind->GetSubstFont();
-    if (!pSubst)
-      continue;
-
-    if (pSubst->m_Charset == charSet) {
+    auto maybe_charset = pFind->GetSubstFontCharset();
+    if (maybe_charset.has_value() && maybe_charset.value() == charSet) {
       *csNameTag = csKey;
       return pFind;
     }

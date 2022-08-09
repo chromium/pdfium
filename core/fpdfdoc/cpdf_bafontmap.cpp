@@ -28,7 +28,6 @@
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
-#include "core/fxge/cfx_substfont.h"
 
 namespace {
 
@@ -75,9 +74,9 @@ CPDF_BAFontMap::CPDF_BAFontMap(CPDF_Document* pDocument,
   FX_Charset nCharset = FX_Charset::kDefault;
   m_pDefaultFont = GetAnnotDefaultFont(&m_sDefaultFontName);
   if (m_pDefaultFont) {
-    const CFX_SubstFont* pSubstFont = m_pDefaultFont->GetSubstFont();
-    if (pSubstFont) {
-      nCharset = pSubstFont->m_Charset;
+    auto maybe_charset = m_pDefaultFont->GetSubstFontCharset();
+    if (maybe_charset.has_value()) {
+      nCharset = maybe_charset.value();
     } else if (m_sDefaultFontName == "Wingdings" ||
                m_sDefaultFontName == "Wingdings2" ||
                m_sDefaultFontName == "Wingdings3" ||
@@ -217,11 +216,8 @@ RetainPtr<CPDF_Font> CPDF_BAFontMap::FindResFontSameCharset(
     if (!pFont)
       continue;
 
-    const CFX_SubstFont* pSubst = pFont->GetSubstFont();
-    if (!pSubst)
-      continue;
-
-    if (pSubst->m_Charset == nCharset) {
+    auto maybe_charset = pFont->GetSubstFontCharset();
+    if (maybe_charset.has_value() && maybe_charset.value() == nCharset) {
       *sFontAlias = csKey;
       pFind = std::move(pFont);
     }
