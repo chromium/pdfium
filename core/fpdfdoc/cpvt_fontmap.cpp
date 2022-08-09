@@ -20,11 +20,11 @@
 
 CPVT_FontMap::CPVT_FontMap(CPDF_Document* pDoc,
                            CPDF_Dictionary* pResDict,
-                           const RetainPtr<CPDF_Font>& pDefFont,
+                           RetainPtr<CPDF_Font> pDefFont,
                            const ByteString& sDefFontAlias)
     : m_pDocument(pDoc),
       m_pResDict(pResDict),
-      m_pDefFont(pDefFont),
+      m_pDefFont(std::move(pDefFont)),
       m_sDefFontAlias(sDefFontAlias) {}
 
 CPVT_FontMap::~CPVT_FontMap() = default;

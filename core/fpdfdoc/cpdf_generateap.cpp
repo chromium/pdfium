@@ -368,13 +368,13 @@ ByteString GetDashPatternString(const CPDF_Dictionary& pAnnotDict) {
 
 ByteString GetPopupContentsString(CPDF_Document* pDoc,
                                   const CPDF_Dictionary& pAnnotDict,
-                                  const RetainPtr<CPDF_Font>& pDefFont,
+                                  RetainPtr<CPDF_Font> pDefFont,
                                   const ByteString& sFontName) {
   WideString swValue(pAnnotDict.GetUnicodeTextFor(pdfium::form_fields::kT));
   swValue += L'\n';
   swValue += pAnnotDict.GetUnicodeTextFor(pdfium::annotation::kContents);
 
-  CPVT_FontMap map(pDoc, nullptr, pDefFont, sFontName);
+  CPVT_FontMap map(pDoc, nullptr, std::move(pDefFont), sFontName);
   CPVT_VariableText::Provider prd(&map);
   CPVT_VariableText vt(&prd);
   vt.SetPlateRect(pAnnotDict.GetRectFor(pdfium::annotation::kRect));
@@ -774,7 +774,8 @@ bool GeneratePopupAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
   RetainPtr<CPDF_Dictionary> pResourceDict = GenerateResourceDict(
       pDoc, std::move(pExtGStateDict), std::move(pResourceFontDict));
 
-  sAppStream << GetPopupContentsString(pDoc, *pAnnotDict, pDefFont, sFontName);
+  sAppStream << GetPopupContentsString(pDoc, *pAnnotDict, std::move(pDefFont),
+                                       sFontName);
   GenerateAndSetAPDict(pDoc, pAnnotDict, &sAppStream, std::move(pResourceDict),
                        false /*IsTextMarkupAnnotation*/);
   return true;
@@ -1098,7 +1099,7 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
   CPVT_FontMap map(
       pDoc,
       pStreamDict ? pStreamDict->GetMutableDictFor("Resources").Get() : nullptr,
-      pDefFont, font_name);
+      std::move(pDefFont), font_name);
   CPVT_VariableText::Provider prd(&map);
 
   switch (type) {
