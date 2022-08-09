@@ -56,6 +56,7 @@ class CPDF_Stream final : public CPDF_Object {
   void InitStreamFromFile(RetainPtr<IFX_SeekableReadStream> pFile,
                           RetainPtr<CPDF_Dictionary> pDict);
 
+  // Can only be called when a stream is not memory-based.
   bool ReadRawData(FX_FILESIZE offset, uint8_t* pBuf, size_t buf_size) const;
 
   bool IsMemoryBased() const { return m_bMemoryBased; }

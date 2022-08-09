@@ -173,13 +173,8 @@ void CPDF_Stream::SetDataFromStringstream(fxcrt::ostringstream* stream) {
 bool CPDF_Stream::ReadRawData(FX_FILESIZE offset,
                               uint8_t* buf,
                               size_t size) const {
-  if (!m_bMemoryBased && m_pFile)
-    return m_pFile->ReadBlockAtOffset(buf, offset, size);
-
-  if (m_pDataBuf)
-    memcpy(buf, m_pDataBuf.get() + offset, size);
-
-  return true;
+  CHECK(!m_bMemoryBased);
+  return m_pFile->ReadBlockAtOffset(buf, offset, size);
 }
 
 bool CPDF_Stream::HasFilter() const {
