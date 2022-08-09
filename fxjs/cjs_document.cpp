@@ -475,13 +475,12 @@ CJS_Result CJS_Document::removeField(
 
   WideString sFieldName = pRuntime->ToWideString(params[0]);
   CPDFSDK_InteractiveForm* pInteractiveForm = GetSDKInteractiveForm();
-  std::vector<ObservedPtr<CPDFSDK_Annot>> widgets;
+  std::vector<ObservedPtr<CPDFSDK_Widget>> widgets;
   pInteractiveForm->GetWidgets(sFieldName, &widgets);
   if (widgets.empty())
     return CJS_Result::Success();
 
-  for (const auto& pAnnot : widgets) {
-    CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot.Get());
+  for (const auto& pWidget : widgets) {
     if (!pWidget)
       continue;
 
