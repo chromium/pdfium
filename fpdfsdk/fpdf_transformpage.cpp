@@ -229,10 +229,8 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
     WriteFloat(text_buf, rect.Width()) << " ";
     WriteFloat(text_buf, rect.Height()) << " re W* n ";
   }
-  if (matrix) {
-    CFX_Matrix m = CFXMatrixFromFSMatrix(*matrix);
-    text_buf << m << " cm ";
-  }
+  if (matrix)
+    WriteMatrix(text_buf, CFXMatrixFromFSMatrix(*matrix)) << " cm ";
 
   CPDF_Stream* pStream =
       pDoc->NewIndirect<CPDF_Stream>(nullptr, 0, pDoc->New<CPDF_Dictionary>());

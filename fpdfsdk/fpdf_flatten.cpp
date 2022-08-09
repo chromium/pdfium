@@ -409,7 +409,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     m.b = 0;
     m.c = 0;
     fxcrt::ostringstream buf;
-    buf << m;
+    WriteMatrix(buf, m);
     ByteString str(buf);
     sStream += ByteString::Format("q %s cm /%s Do Q\n", str.c_str(),
                                   sFormName.c_str());
