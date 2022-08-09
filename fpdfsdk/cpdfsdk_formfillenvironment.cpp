@@ -125,14 +125,14 @@ bool CPDFSDK_FormFillEnvironment::IsSelectionImplemented() const {
 
 #ifdef PDF_ENABLE_V8
 CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetCurrentView() {
-  IPDF_Page* pPage = IPDFPageFromFPDFPage(GetCurrentPage());
+  IPDF_Page* pPage = GetCurrentPage();
   return pPage ? GetOrCreatePageView(pPage) : nullptr;
 }
 
-FPDF_PAGE CPDFSDK_FormFillEnvironment::GetCurrentPage() const {
+IPDF_Page* CPDFSDK_FormFillEnvironment::GetCurrentPage() const {
   if (m_pInfo && m_pInfo->FFI_GetCurrentPage) {
-    return m_pInfo->FFI_GetCurrentPage(
-        m_pInfo, FPDFDocumentFromCPDFDocument(m_pCPDFDoc.Get()));
+    return IPDFPageFromFPDFPage(m_pInfo->FFI_GetCurrentPage(
+        m_pInfo, FPDFDocumentFromCPDFDocument(m_pCPDFDoc.Get())));
   }
   return nullptr;
 }

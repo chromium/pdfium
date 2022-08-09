@@ -146,7 +146,7 @@ class CPDFSDK_FormFillEnvironment final
 
 #ifdef PDF_ENABLE_V8
   CPDFSDK_PageView* GetCurrentView();
-  FPDF_PAGE GetCurrentPage() const;
+  IPDF_Page* GetCurrentPage() const;
 
   WideString GetLanguage();
   WideString GetPlatform();

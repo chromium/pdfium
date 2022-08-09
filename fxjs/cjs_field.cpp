@@ -18,7 +18,6 @@
 #include "core/fpdfdoc/cpdf_formfield.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
-#include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
@@ -2491,7 +2490,7 @@ CJS_Result CJS_Field::setFocus(
   if (nCount == 1) {
     pWidget = pForm->GetWidget(pFormField->GetControl(0));
   } else {
-    IPDF_Page* pPage = IPDFPageFromFPDFPage(m_pFormFillEnv->GetCurrentPage());
+    IPDF_Page* pPage = m_pFormFillEnv->GetCurrentPage();
     if (!pPage)
       return CJS_Result::Failure(JSMessage::kBadObjectError);
     CPDFSDK_PageView* pCurPageView = m_pFormFillEnv->GetOrCreatePageView(pPage);
