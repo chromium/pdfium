@@ -9,6 +9,7 @@
 
 #include <memory>
 #include <set>
+#include <vector>
 
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
@@ -42,6 +43,7 @@ class CPDF_Stream final : public CPDF_Object {
   void SetData(pdfium::span<const uint8_t> pData);
   void SetDataFromStringstream(fxcrt::ostringstream* stream);
 
+  // TODO(crbug.com/pdfium/1872): Replace with vector version.
   void TakeData(std::unique_ptr<uint8_t, FxFreeDeleter> pData, size_t size);
 
   // Set data and remove "Filter" and "DecodeParms" fields from stream
@@ -63,6 +65,9 @@ class CPDF_Stream final : public CPDF_Object {
   CPDF_Stream();
   CPDF_Stream(pdfium::span<const uint8_t> pData,
               RetainPtr<CPDF_Dictionary> pDict);
+  CPDF_Stream(std::vector<uint8_t, FxAllocAllocator<uint8_t>> pData,
+              RetainPtr<CPDF_Dictionary> pDict);
+  // TODO(crbug.com/pdfium/1872): Replace with vector version above.
   CPDF_Stream(std::unique_ptr<uint8_t, FxFreeDeleter> pData,
               size_t size,
               RetainPtr<CPDF_Dictionary> pDict);
