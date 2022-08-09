@@ -66,10 +66,10 @@ class CPVT_VariableText {
     UnownedPtr<IPVT_FontMap> const m_pFontMap;
   };
 
-  CPVT_VariableText();
+  explicit CPVT_VariableText(Provider* Provider);
   ~CPVT_VariableText();
 
-  void SetProvider(CPVT_VariableText::Provider* pProvider);
+  void SetProvider(Provider* pProvider);
   CPVT_VariableText::Iterator* GetIterator();
 
   CFX_FloatRect GetContentRect() const;

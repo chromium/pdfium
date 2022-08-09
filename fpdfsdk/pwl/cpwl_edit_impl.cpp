@@ -680,7 +680,8 @@ void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
   }
 }
 
-CPWL_EditImpl::CPWL_EditImpl() : m_pVT(std::make_unique<CPVT_VariableText>()) {}
+CPWL_EditImpl::CPWL_EditImpl()
+    : m_pVT(std::make_unique<CPVT_VariableText>(nullptr)) {}
 
 CPWL_EditImpl::~CPWL_EditImpl() = default;
 

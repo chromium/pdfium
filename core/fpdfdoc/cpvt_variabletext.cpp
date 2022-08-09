@@ -166,7 +166,8 @@ bool CPVT_VariableText::Iterator::GetLine(CPVT_Line& line) const {
   return true;
 }
 
-CPVT_VariableText::CPVT_VariableText() = default;
+CPVT_VariableText::CPVT_VariableText(Provider* pProvider)
+    : m_pVTProvider(pProvider) {}
 
 CPVT_VariableText::~CPVT_VariableText() = default;
 
@@ -865,7 +866,7 @@ CPVT_VariableText::Iterator* CPVT_VariableText::GetIterator() {
   return m_pVTIterator.get();
 }
 
-void CPVT_VariableText::SetProvider(CPVT_VariableText::Provider* pProvider) {
+void CPVT_VariableText::SetProvider(Provider* pProvider) {
   m_pVTProvider = pProvider;
 }
 
