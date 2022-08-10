@@ -126,6 +126,15 @@ void WriteClosedLoop(fxcrt::ostringstream& stream,
   WriteLine(stream, points[0]);
 }
 
+void WriteBezierCurve(fxcrt::ostringstream& stream,
+                      const CFX_PointF& point1,
+                      const CFX_PointF& point2,
+                      const CFX_PointF& point3) {
+  stream << point1.x << " " << point1.y << " " << point2.x << " " << point2.y
+         << " " << point3.x << " " << point3.y << " " << kCurveToOperator
+         << "\n";
+}
+
 ByteString GetStrokeColorAppStream(const CFX_Color& color) {
   fxcrt::ostringstream sColorStream;
   switch (color.nColorType) {
@@ -201,17 +210,18 @@ ByteString GetAP_Check(const CFX_FloatRect& crBBox) {
 
   for (size_t i = 0; i < std::size(pts); ++i) {
     size_t nNext = i < std::size(pts) - 1 ? i + 1 : 0;
+    const CFX_PointF& pt_next = pts[nNext][0];
 
     float px1 = pts[i][1].x - pts[i][0].x;
     float py1 = pts[i][1].y - pts[i][0].y;
-    float px2 = pts[i][2].x - pts[nNext][0].x;
-    float py2 = pts[i][2].y - pts[nNext][0].y;
+    float px2 = pts[i][2].x - pt_next.x;
+    float py2 = pts[i][2].y - pt_next.y;
 
-    csAP << pts[i][0].x + px1 * FXSYS_BEZIER << " "
-         << pts[i][0].y + py1 * FXSYS_BEZIER << " "
-         << pts[nNext][0].x + px2 * FXSYS_BEZIER << " "
-         << pts[nNext][0].y + py2 * FXSYS_BEZIER << " " << pts[nNext][0].x
-         << " " << pts[nNext][0].y << " " << kCurveToOperator << "\n";
+    WriteBezierCurve(
+        csAP,
+        {pts[i][0].x + px1 * FXSYS_BEZIER, pts[i][0].y + py1 * FXSYS_BEZIER},
+        {pt_next.x + px2 * FXSYS_BEZIER, pt_next.y + py2 * FXSYS_BEZIER},
+        pt_next);
   }
 
   return ByteString(csAP);
@@ -233,30 +243,26 @@ ByteString GetAP_Circle(const CFX_FloatRect& crBBox) {
   float px = pt2.x - pt1.x;
   float py = pt2.y - pt1.y;
 
-  csAP << pt1.x << " " << pt1.y + py * FXSYS_BEZIER << " "
-       << pt2.x - px * FXSYS_BEZIER << " " << pt2.y << " " << pt2.x << " "
-       << pt2.y << " " << kCurveToOperator << "\n";
+  WriteBezierCurve(csAP, {pt1.x, pt1.y + py * FXSYS_BEZIER},
+                   {pt2.x - px * FXSYS_BEZIER, pt2.y}, pt2);
 
   px = pt3.x - pt2.x;
   py = pt2.y - pt3.y;
 
-  csAP << pt2.x + px * FXSYS_BEZIER << " " << pt2.y << " " << pt3.x << " "
-       << pt3.y + py * FXSYS_BEZIER << " " << pt3.x << " " << pt3.y << " "
-       << kCurveToOperator << "\n";
+  WriteBezierCurve(csAP, {pt2.x + px * FXSYS_BEZIER, pt2.y},
+                   {pt3.x, pt3.y + py * FXSYS_BEZIER}, pt3);
 
   px = pt3.x - pt4.x;
   py = pt3.y - pt4.y;
 
-  csAP << pt3.x << " " << pt3.y - py * FXSYS_BEZIER << " "
-       << pt4.x + px * FXSYS_BEZIER << " " << pt4.y << " " << pt4.x << " "
-       << pt4.y << " " << kCurveToOperator << "\n";
+  WriteBezierCurve(csAP, {pt3.x, pt3.y - py * FXSYS_BEZIER},
+                   {pt4.x + px * FXSYS_BEZIER, pt4.y}, pt4);
 
   px = pt4.x - pt1.x;
   py = pt1.y - pt4.y;
 
-  csAP << pt4.x - px * FXSYS_BEZIER << " " << pt4.y << " " << pt1.x << " "
-       << pt1.y - py * FXSYS_BEZIER << " " << pt1.x << " " << pt1.y << " "
-       << kCurveToOperator << "\n";
+  WriteBezierCurve(csAP, {pt4.x - px * FXSYS_BEZIER, pt4.y},
+                   {pt1.x, pt1.y - py * FXSYS_BEZIER}, pt1);
 
   return ByteString(csAP);
 }
@@ -347,16 +353,14 @@ ByteString GetAP_HalfCircle(const CFX_FloatRect& crBBox, float fRotate) {
   px = pt2.x - pt1.x;
   py = pt2.y - pt1.y;
 
-  csAP << pt1.x << " " << pt1.y + py * FXSYS_BEZIER << " "
-       << pt2.x - px * FXSYS_BEZIER << " " << pt2.y << " " << pt2.x << " "
-       << pt2.y << " " << kCurveToOperator << "\n";
+  WriteBezierCurve(csAP, {pt1.x, pt1.y + py * FXSYS_BEZIER},
+                   {pt2.x - px * FXSYS_BEZIER, pt2.y}, pt2);
 
   px = pt3.x - pt2.x;
   py = pt2.y - pt3.y;
 
-  csAP << pt2.x + px * FXSYS_BEZIER << " " << pt2.y << " " << pt3.x << " "
-       << pt3.y + py * FXSYS_BEZIER << " " << pt3.x << " " << pt3.y << " "
-       << kCurveToOperator << "\n";
+  WriteBezierCurve(csAP, {pt2.x + px * FXSYS_BEZIER, pt2.y},
+                   {pt3.x, pt3.y + py * FXSYS_BEZIER}, pt3);
 
   return ByteString(csAP);
 }
