@@ -109,6 +109,10 @@ class AutoClosedQCommand final : public AutoClosedCommand {
   ~AutoClosedQCommand() override = default;
 };
 
+void WriteMove(fxcrt::ostringstream& stream, const CFX_PointF& point) {
+  stream << point.x << " " << point.y << " " << kMoveToOperator << "\n";
+}
+
 ByteString GetStrokeColorAppStream(const CFX_Color& color) {
   fxcrt::ostringstream sColorStream;
   switch (color.nColorType) {
@@ -180,7 +184,7 @@ ByteString GetAP_Check(const CFX_FloatRect& crBBox) {
   }
 
   fxcrt::ostringstream csAP;
-  csAP << pts[0][0].x << " " << pts[0][0].y << " " << kMoveToOperator << "\n";
+  WriteMove(csAP, pts[0][0]);
 
   for (size_t i = 0; i < std::size(pts); ++i) {
     size_t nNext = i < std::size(pts) - 1 ? i + 1 : 0;
@@ -211,7 +215,7 @@ ByteString GetAP_Circle(const CFX_FloatRect& crBBox) {
   CFX_PointF pt3(crBBox.right, crBBox.bottom + fHeight / 2);
   CFX_PointF pt4(crBBox.left + fWidth / 2, crBBox.bottom);
 
-  csAP << pt1.x << " " << pt1.y << " " << kMoveToOperator << "\n";
+  WriteMove(csAP, pt1);
 
   float px = pt2.x - pt1.x;
   float py = pt2.y - pt1.y;
@@ -247,10 +251,10 @@ ByteString GetAP_Circle(const CFX_FloatRect& crBBox) {
 ByteString GetAP_Cross(const CFX_FloatRect& crBBox) {
   fxcrt::ostringstream csAP;
 
-  csAP << crBBox.left << " " << crBBox.top << " " << kMoveToOperator << "\n";
+  WriteMove(csAP, {crBBox.left, crBBox.top});
   csAP << crBBox.right << " " << crBBox.bottom << " " << kLineToOperator
        << "\n";
-  csAP << crBBox.left << " " << crBBox.bottom << " " << kMoveToOperator << "\n";
+  WriteMove(csAP, {crBBox.left, crBBox.bottom});
   csAP << crBBox.right << " " << crBBox.top << " " << kLineToOperator << "\n";
 
   return ByteString(csAP);
@@ -306,7 +310,7 @@ ByteString GetAP_Star(const CFX_FloatRect& crBBox) {
     fAngle += FXSYS_PI * 2 / 5.0f;
   }
 
-  csAP << points[0].x << " " << points[0].y << " " << kMoveToOperator << "\n";
+  WriteMove(csAP, points[0]);
 
   int next = 0;
   for (size_t i = 0; i < std::size(points); ++i) {
@@ -335,7 +339,7 @@ ByteString GetAP_HalfCircle(const CFX_FloatRect& crBBox, float fRotate) {
        << cos(fRotate) << " " << crBBox.left + fWidth / 2 << " "
        << crBBox.bottom + fHeight / 2 << " " << kConcatMatrixOperator << "\n";
 
-  csAP << pt1.x << " " << pt1.y << " " << kMoveToOperator << "\n";
+  WriteMove(csAP, pt1);
 
   px = pt2.x - pt1.x;
   py = pt2.y - pt1.y;
@@ -989,8 +993,7 @@ ByteString GetBorderAppStreamInternal(const CFX_FloatRect& rect,
         sColor = GetFillColorAppStream(crLeftTop);
         if (sColor.GetLength() > 0) {
           sAppStream << sColor;
-          sAppStream << fLeft + fHalfWidth << " " << fBottom + fHalfWidth << " "
-                     << kMoveToOperator << "\n";
+          WriteMove(sAppStream, {fLeft + fHalfWidth, fBottom + fHalfWidth});
           sAppStream << fLeft + fHalfWidth << " " << fTop - fHalfWidth << " "
                      << kLineToOperator << "\n";
           sAppStream << fRight - fHalfWidth << " " << fTop - fHalfWidth << " "
@@ -1006,8 +1009,7 @@ ByteString GetBorderAppStreamInternal(const CFX_FloatRect& rect,
         sColor = GetFillColorAppStream(crRightBottom);
         if (sColor.GetLength() > 0) {
           sAppStream << sColor;
-          sAppStream << fRight - fHalfWidth << " " << fTop - fHalfWidth << " "
-                     << kMoveToOperator << "\n";
+          WriteMove(sAppStream, {fRight - fHalfWidth, fTop - fHalfWidth});
           sAppStream << fRight - fHalfWidth << " " << fBottom + fHalfWidth
                      << " " << kLineToOperator << "\n";
           sAppStream << fLeft + fHalfWidth << " " << fBottom + fHalfWidth << " "
@@ -1038,8 +1040,7 @@ ByteString GetBorderAppStreamInternal(const CFX_FloatRect& rect,
         if (sColor.GetLength() > 0) {
           sAppStream << sColor;
           sAppStream << fWidth << " " << kSetLineWidthOperator << "\n";
-          sAppStream << fLeft << " " << fBottom + fWidth / 2 << " "
-                     << kMoveToOperator << "\n";
+          WriteMove(sAppStream, {fLeft, fBottom + fWidth / 2});
           sAppStream << fRight << " " << fBottom + fWidth / 2 << " "
                      << kLineToOperator << " " << kStrokeOperator << "\n";
         }
@@ -1787,9 +1788,8 @@ void CPDFSDK_AppStream::SetAsTextField(absl::optional<WideString> sValue) {
           const float width = rcClient.right - rcClient.left;
           for (int32_t i = 1; i < nMaxLen; ++i) {
             const float left = rcClient.left + (width / nMaxLen) * i;
-            sLines << left << " " << rcClient.bottom << " " << kMoveToOperator
-                   << "\n"
-                   << left << " " << rcClient.top << " " << kLineToOperator
+            WriteMove(sLines, {left, rcClient.bottom});
+            sLines << left << " " << rcClient.top << " " << kLineToOperator
                    << " " << kStrokeOperator << "\n";
           }
         }
@@ -1810,9 +1810,8 @@ void CPDFSDK_AppStream::SetAsTextField(absl::optional<WideString> sValue) {
           const float width = rcClient.right - rcClient.left;
           for (int32_t i = 1; i < nMaxLen; ++i) {
             const float left = rcClient.left + (width / nMaxLen) * i;
-            sLines << left << " " << rcClient.bottom << " " << kMoveToOperator
-                   << "\n"
-                   << left << " " << rcClient.top << " " << kLineToOperator
+            WriteMove(sLines, {left, rcClient.bottom});
+            sLines << left << " " << rcClient.top << " " << kLineToOperator
                    << " " << kStrokeOperator << "\n";
           }
         }
