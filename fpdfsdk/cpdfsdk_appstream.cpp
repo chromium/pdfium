@@ -135,6 +135,11 @@ void WriteBezierCurve(fxcrt::ostringstream& stream,
          << "\n";
 }
 
+void WriteAppendRect(fxcrt::ostringstream& stream, const CFX_FloatRect& rect) {
+  stream << rect.left << " " << rect.bottom << " " << rect.Width() << " "
+         << rect.Height() << " " << kAppendRectOperator << "\n";
+}
+
 ByteString GetStrokeColorAppStream(const CFX_Color& color) {
   fxcrt::ostringstream sColorStream;
   switch (color.nColorType) {
@@ -726,9 +731,8 @@ ByteString GenerateIconAppStream(CPDF_IconFit& fit,
   fxcrt::ostringstream str;
   {
     AutoClosedQCommand q(&str);
-    str << rcPlate.left << " " << rcPlate.bottom << " " << rcPlate.Width()
-        << " " << rcPlate.Height() << " " << kAppendRectOperator << " "
-        << kSetNonZeroWindingClipOperator << " "
+    WriteAppendRect(str, rcPlate);
+    str << kSetNonZeroWindingClipOperator << " "
         << kEndPathNoFillOrStrokeOperator << "\n";
 
     str << scale.x << " 0 0 " << scale.y << " " << rcPlate.left + offset.x
@@ -928,9 +932,8 @@ ByteString GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
   fxcrt::ostringstream sAppStream;
   {
     AutoClosedQCommand q(&sAppStream);
-    sAppStream << rcBBox.left << " " << rcBBox.bottom << " " << rcBBox.Width()
-               << " " << rcBBox.Height() << " " << kAppendRectOperator << " "
-               << kSetNonZeroWindingClipOperator << " "
+    WriteAppendRect(sAppStream, rcBBox);
+    sAppStream << kSetNonZeroWindingClipOperator << " "
                << kEndPathNoFillOrStrokeOperator << "\n";
     sAppStream << sTemp.str().c_str();
   }
@@ -962,12 +965,9 @@ ByteString GetBorderAppStreamInternal(const CFX_FloatRect& rect,
         sColor = GetFillColorAppStream(color);
         if (sColor.GetLength() > 0) {
           sAppStream << sColor;
-          sAppStream << fLeft << " " << fBottom << " " << fRight - fLeft << " "
-                     << fTop - fBottom << " " << kAppendRectOperator << "\n";
-          sAppStream << fLeft + fWidth << " " << fBottom + fWidth << " "
-                     << fRight - fLeft - fWidth * 2 << " "
-                     << fTop - fBottom - fWidth * 2 << " "
-                     << kAppendRectOperator << "\n";
+          WriteAppendRect(sAppStream, {fLeft, fBottom, fRight, fTop});
+          WriteAppendRect(sAppStream, {fLeft + fWidth, fBottom + fWidth,
+                                       fRight - fWidth, fTop - fWidth});
           sAppStream << kFillEvenOddOperator << "\n";
         }
         break;
@@ -1020,13 +1020,10 @@ ByteString GetBorderAppStreamInternal(const CFX_FloatRect& rect,
         sColor = GetFillColorAppStream(color);
         if (sColor.GetLength() > 0) {
           sAppStream << sColor;
-          sAppStream << fLeft << " " << fBottom << " " << fRight - fLeft << " "
-                     << fTop - fBottom << " " << kAppendRectOperator << "\n";
-          sAppStream << fLeft + fHalfWidth << " " << fBottom + fHalfWidth << " "
-                     << fRight - fLeft - fHalfWidth * 2 << " "
-                     << fTop - fBottom - fHalfWidth * 2 << " "
-                     << kAppendRectOperator << " " << kFillEvenOddOperator
-                     << "\n";
+          WriteAppendRect(sAppStream, {fLeft, fBottom, fRight, fTop});
+          WriteAppendRect(sAppStream, {fLeft + fHalfWidth, fBottom + fHalfWidth,
+                                       fRight - fHalfWidth, fTop - fHalfWidth});
+          sAppStream << kFillEvenOddOperator << "\n";
         }
         break;
       case BorderStyle::kUnderline:
@@ -1052,11 +1049,10 @@ ByteString GetDropButtonAppStream(const CFX_FloatRect& rcBBox) {
   {
     AutoClosedQCommand q(&sAppStream);
     sAppStream << GetFillColorAppStream(
-                      CFX_Color(CFX_Color::Type::kRGB, 220.0f / 255.0f,
-                                220.0f / 255.0f, 220.0f / 255.0f))
-               << rcBBox.left << " " << rcBBox.bottom << " " << rcBBox.Width()
-               << " " << rcBBox.Height() << " " << kAppendRectOperator << " "
-               << kFillOperator << "\n";
+        CFX_Color(CFX_Color::Type::kRGB, 220.0f / 255.0f, 220.0f / 255.0f,
+                  220.0f / 255.0f));
+    WriteAppendRect(sAppStream, rcBBox);
+    sAppStream << kFillOperator << "\n";
   }
 
   {
@@ -1090,9 +1086,9 @@ ByteString GetRectFillAppStream(const CFX_FloatRect& rect,
   ByteString sColor = GetFillColorAppStream(color);
   if (sColor.GetLength() > 0) {
     AutoClosedQCommand q(&sAppStream);
-    sAppStream << sColor << rect.left << " " << rect.bottom << " "
-               << rect.Width() << " " << rect.Height() << " "
-               << kAppendRectOperator << " " << kFillOperator << "\n";
+    sAppStream << sColor;
+    WriteAppendRect(sAppStream, rect);
+    sAppStream << kFillOperator << "\n";
   }
 
   return ByteString(sAppStream);
@@ -1570,9 +1566,8 @@ void CPDFSDK_AppStream::SetAsComboBox(absl::optional<WideString> sValue) {
 
     if (rcContent.Width() > rcEdit.Width() ||
         rcContent.Height() > rcEdit.Height()) {
-      sBody << rcEdit.left << " " << rcEdit.bottom << " " << rcEdit.Width()
-            << " " << rcEdit.Height() << " " << kAppendRectOperator << "\n"
-            << kSetNonZeroWindingClipOperator << "\n"
+      WriteAppendRect(sBody, rcEdit);
+      sBody << kSetNonZeroWindingClipOperator << "\n"
             << kEndPathNoFillOrStrokeOperator << "\n";
     }
 
@@ -1634,10 +1629,9 @@ void CPDFSDK_AppStream::SetAsListBox() {
       {
         AutoClosedQCommand q(&sList);
         sList << GetFillColorAppStream(CFX_Color(
-                     CFX_Color::Type::kRGB, 0, 51.0f / 255.0f, 113.0f / 255.0f))
-              << rcItem.left << " " << rcItem.bottom << " " << rcItem.Width()
-              << " " << rcItem.Height() << " " << kAppendRectOperator << " "
-              << kFillOperator << "\n";
+            CFX_Color::Type::kRGB, 0, 51.0f / 255.0f, 113.0f / 255.0f));
+        WriteAppendRect(sList, rcItem);
+        sList << kFillOperator << "\n";
       }
 
       AutoClosedCommand bt(&sList, kTextBeginOperator, kTextEndOperator);
@@ -1660,9 +1654,8 @@ void CPDFSDK_AppStream::SetAsListBox() {
                           kMarkedSequenceEndOperator);
     AutoClosedQCommand q(&sBody);
 
-    sBody << rcClient.left << " " << rcClient.bottom << " " << rcClient.Width()
-          << " " << rcClient.Height() << " " << kAppendRectOperator << "\n"
-          << kSetNonZeroWindingClipOperator << "\n"
+    WriteAppendRect(sBody, rcClient);
+    sBody << kSetNonZeroWindingClipOperator << "\n"
           << kEndPathNoFillOrStrokeOperator << "\n"
           << sList.str();
   }
@@ -1748,10 +1741,8 @@ void CPDFSDK_AppStream::SetAsTextField(absl::optional<WideString> sValue) {
 
     if (rcContent.Width() > rcClient.Width() ||
         rcContent.Height() > rcClient.Height()) {
-      sBody << rcClient.left << " " << rcClient.bottom << " "
-            << rcClient.Width() << " " << rcClient.Height() << " "
-            << kAppendRectOperator << "\n"
-            << kSetNonZeroWindingClipOperator << "\n"
+      WriteAppendRect(sBody, rcClient);
+      sBody << kSetNonZeroWindingClipOperator << "\n"
             << kEndPathNoFillOrStrokeOperator << "\n";
     }
     CFX_Color crText = widget_->GetTextPWLColor();
