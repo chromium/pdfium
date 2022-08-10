@@ -38,6 +38,7 @@
 #include "fpdfsdk/pwl/cpwl_edit_impl.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "third_party/base/numerics/safe_conversions.h"
+#include "third_party/base/span.h"
 
 namespace {
 
@@ -115,6 +116,14 @@ void WriteMove(fxcrt::ostringstream& stream, const CFX_PointF& point) {
 
 void WriteLine(fxcrt::ostringstream& stream, const CFX_PointF& point) {
   stream << point.x << " " << point.y << " " << kLineToOperator << "\n";
+}
+
+void WriteClosedLoop(fxcrt::ostringstream& stream,
+                     pdfium::span<const CFX_PointF> points) {
+  WriteMove(stream, points[0]);
+  for (const auto& point : points.subspan(1))
+    WriteLine(stream, point);
+  WriteLine(stream, points[0]);
 }
 
 ByteString GetStrokeColorAppStream(const CFX_Color& color) {
@@ -273,11 +282,7 @@ ByteString GetAP_Diamond(const CFX_FloatRect& crBBox) {
                                {crBBox.left + fWidth / 2, crBBox.top},
                                {crBBox.right, crBBox.bottom + fHeight / 2},
                                {crBBox.left + fWidth / 2, crBBox.bottom}};
-  csAP << points[0].x << " " << points[0].y << " " << kMoveToOperator << "\n";
-  csAP << points[1].x << " " << points[1].y << " " << kLineToOperator << "\n";
-  csAP << points[2].x << " " << points[2].y << " " << kLineToOperator << "\n";
-  csAP << points[3].x << " " << points[3].y << " " << kLineToOperator << "\n";
-  csAP << points[0].x << " " << points[0].y << " " << kLineToOperator << "\n";
+  WriteClosedLoop(csAP, points);
 
   return ByteString(csAP);
 }
@@ -289,11 +294,7 @@ ByteString GetAP_Square(const CFX_FloatRect& crBBox) {
                                {crBBox.right, crBBox.top},
                                {crBBox.right, crBBox.bottom},
                                {crBBox.left, crBBox.bottom}};
-  csAP << points[0].x << " " << points[0].y << " " << kMoveToOperator << "\n";
-  csAP << points[1].x << " " << points[1].y << " " << kLineToOperator << "\n";
-  csAP << points[2].x << " " << points[2].y << " " << kLineToOperator << "\n";
-  csAP << points[3].x << " " << points[3].y << " " << kLineToOperator << "\n";
-  csAP << points[0].x << " " << points[0].y << " " << kLineToOperator << "\n";
+  WriteClosedLoop(csAP, points);
 
   return ByteString(csAP);
 }
@@ -978,16 +979,8 @@ ByteString GetBorderAppStreamInternal(const CFX_FloatRect& rect,
               {fLeft + fWidth / 2, fTop - fWidth / 2},
               {fRight - fWidth / 2, fTop - fWidth / 2},
               {fRight - fWidth / 2, fBottom + fWidth / 2}};
-          sAppStream << points[0].x << " " << points[0].y << " "
-                     << kMoveToOperator << "\n";
-          sAppStream << points[1].x << " " << points[1].x << " "
-                     << kLineToOperator << "\n";
-          sAppStream << points[2].x << " " << points[2].x << " "
-                     << kLineToOperator << "\n";
-          sAppStream << points[3].x << " " << points[3].x << " "
-                     << kLineToOperator << "\n";
-          sAppStream << points[0].x << " " << points[0].y << " "
-                     << kLineToOperator << " " << kStrokeOperator << "\n";
+          WriteClosedLoop(sAppStream, points);
+          sAppStream << kStrokeOperator << "\n";
         }
         break;
       case BorderStyle::kBeveled:
@@ -1079,15 +1072,9 @@ ByteString GetDropButtonAppStream(const CFX_FloatRect& rcBBox) {
     const CFX_PointF points[] = {{ptCenter.x - 3, ptCenter.y + 1.5f},
                                  {ptCenter.x + 3, ptCenter.y + 1.5f},
                                  {ptCenter.x, ptCenter.y - 1.5f}};
-    sAppStream << " 0 " << kSetGrayOperator << "\n"
-               << points[0].x << " " << points[0].y << " " << kMoveToOperator
-               << "\n"
-               << points[1].x << " " << points[1].y << " " << kLineToOperator
-               << "\n"
-               << points[2].x << " " << points[2].y << " " << kLineToOperator
-               << "\n"
-               << points[0].x << " " << points[0].y << " " << kLineToOperator
-               << " " << kFillOperator << "\n";
+    sAppStream << " 0 " << kSetGrayOperator << "\n";
+    WriteClosedLoop(sAppStream, points);
+    sAppStream << kFillOperator << "\n";
   }
 
   return ByteString(sAppStream);
