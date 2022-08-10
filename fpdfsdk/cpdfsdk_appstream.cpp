@@ -113,6 +113,10 @@ void WriteMove(fxcrt::ostringstream& stream, const CFX_PointF& point) {
   stream << point.x << " " << point.y << " " << kMoveToOperator << "\n";
 }
 
+void WriteLine(fxcrt::ostringstream& stream, const CFX_PointF& point) {
+  stream << point.x << " " << point.y << " " << kLineToOperator << "\n";
+}
+
 ByteString GetStrokeColorAppStream(const CFX_Color& color) {
   fxcrt::ostringstream sColorStream;
   switch (color.nColorType) {
@@ -252,10 +256,9 @@ ByteString GetAP_Cross(const CFX_FloatRect& crBBox) {
   fxcrt::ostringstream csAP;
 
   WriteMove(csAP, {crBBox.left, crBBox.top});
-  csAP << crBBox.right << " " << crBBox.bottom << " " << kLineToOperator
-       << "\n";
+  WriteLine(csAP, {crBBox.right, crBBox.bottom});
   WriteMove(csAP, {crBBox.left, crBBox.bottom});
-  csAP << crBBox.right << " " << crBBox.top << " " << kLineToOperator << "\n";
+  WriteLine(csAP, {crBBox.right, crBBox.top});
 
   return ByteString(csAP);
 }
@@ -315,8 +318,7 @@ ByteString GetAP_Star(const CFX_FloatRect& crBBox) {
   int next = 0;
   for (size_t i = 0; i < std::size(points); ++i) {
     next = (next + 2) % std::size(points);
-    csAP << points[next].x << " " << points[next].y << " " << kLineToOperator
-         << "\n";
+    WriteLine(csAP, points[next]);
   }
 
   return ByteString(csAP);
@@ -994,34 +996,29 @@ ByteString GetBorderAppStreamInternal(const CFX_FloatRect& rect,
         if (sColor.GetLength() > 0) {
           sAppStream << sColor;
           WriteMove(sAppStream, {fLeft + fHalfWidth, fBottom + fHalfWidth});
-          sAppStream << fLeft + fHalfWidth << " " << fTop - fHalfWidth << " "
-                     << kLineToOperator << "\n";
-          sAppStream << fRight - fHalfWidth << " " << fTop - fHalfWidth << " "
-                     << kLineToOperator << "\n";
-          sAppStream << fRight - fHalfWidth * 2 << " " << fTop - fHalfWidth * 2
-                     << " " << kLineToOperator << "\n";
-          sAppStream << fLeft + fHalfWidth * 2 << " " << fTop - fHalfWidth * 2
-                     << " " << kLineToOperator << "\n";
-          sAppStream << fLeft + fHalfWidth * 2 << " "
-                     << fBottom + fHalfWidth * 2 << " " << kLineToOperator
-                     << " " << kFillOperator << "\n";
+          WriteLine(sAppStream, {fLeft + fHalfWidth, fTop - fHalfWidth});
+          WriteLine(sAppStream, {fRight - fHalfWidth, fTop - fHalfWidth});
+          WriteLine(sAppStream,
+                    {fRight - fHalfWidth * 2, fTop - fHalfWidth * 2});
+          WriteLine(sAppStream,
+                    {fLeft + fHalfWidth * 2, fTop - fHalfWidth * 2});
+          WriteLine(sAppStream,
+                    {fLeft + fHalfWidth * 2, fBottom + fHalfWidth * 2});
+          sAppStream << kFillOperator << "\n";
         }
         sColor = GetFillColorAppStream(crRightBottom);
         if (sColor.GetLength() > 0) {
           sAppStream << sColor;
           WriteMove(sAppStream, {fRight - fHalfWidth, fTop - fHalfWidth});
-          sAppStream << fRight - fHalfWidth << " " << fBottom + fHalfWidth
-                     << " " << kLineToOperator << "\n";
-          sAppStream << fLeft + fHalfWidth << " " << fBottom + fHalfWidth << " "
-                     << kLineToOperator << "\n";
-          sAppStream << fLeft + fHalfWidth * 2 << " "
-                     << fBottom + fHalfWidth * 2 << " " << kLineToOperator
-                     << "\n";
-          sAppStream << fRight - fHalfWidth * 2 << " "
-                     << fBottom + fHalfWidth * 2 << " " << kLineToOperator
-                     << "\n";
-          sAppStream << fRight - fHalfWidth * 2 << " " << fTop - fHalfWidth * 2
-                     << " " << kLineToOperator << " " << kFillOperator << "\n";
+          WriteLine(sAppStream, {fRight - fHalfWidth, fBottom + fHalfWidth});
+          WriteLine(sAppStream, {fLeft + fHalfWidth, fBottom + fHalfWidth});
+          WriteLine(sAppStream,
+                    {fLeft + fHalfWidth * 2, fBottom + fHalfWidth * 2});
+          WriteLine(sAppStream,
+                    {fRight - fHalfWidth * 2, fBottom + fHalfWidth * 2});
+          WriteLine(sAppStream,
+                    {fRight - fHalfWidth * 2, fTop - fHalfWidth * 2});
+          sAppStream << kFillOperator << "\n";
         }
         sColor = GetFillColorAppStream(color);
         if (sColor.GetLength() > 0) {
@@ -1041,8 +1038,8 @@ ByteString GetBorderAppStreamInternal(const CFX_FloatRect& rect,
           sAppStream << sColor;
           sAppStream << fWidth << " " << kSetLineWidthOperator << "\n";
           WriteMove(sAppStream, {fLeft, fBottom + fWidth / 2});
-          sAppStream << fRight << " " << fBottom + fWidth / 2 << " "
-                     << kLineToOperator << " " << kStrokeOperator << "\n";
+          WriteLine(sAppStream, {fRight, fBottom + fWidth / 2});
+          sAppStream << kStrokeOperator << "\n";
         }
         break;
     }
@@ -1789,8 +1786,8 @@ void CPDFSDK_AppStream::SetAsTextField(absl::optional<WideString> sValue) {
           for (int32_t i = 1; i < nMaxLen; ++i) {
             const float left = rcClient.left + (width / nMaxLen) * i;
             WriteMove(sLines, {left, rcClient.bottom});
-            sLines << left << " " << rcClient.top << " " << kLineToOperator
-                   << " " << kStrokeOperator << "\n";
+            WriteLine(sLines, {left, rcClient.top});
+            sLines << kStrokeOperator << "\n";
           }
         }
         break;
@@ -1811,8 +1808,8 @@ void CPDFSDK_AppStream::SetAsTextField(absl::optional<WideString> sValue) {
           for (int32_t i = 1; i < nMaxLen; ++i) {
             const float left = rcClient.left + (width / nMaxLen) * i;
             WriteMove(sLines, {left, rcClient.bottom});
-            sLines << left << " " << rcClient.top << " " << kLineToOperator
-                   << " " << kStrokeOperator << "\n";
+            WriteLine(sLines, {left, rcClient.top});
+            sLines << kStrokeOperator << "\n";
           }
         }
         break;
