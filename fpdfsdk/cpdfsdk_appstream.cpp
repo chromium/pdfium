@@ -15,6 +15,7 @@
 
 #include "constants/appearance.h"
 #include "constants/form_flags.h"
+#include "core/fpdfapi/edit/cpdf_contentstream_write_utils.h"
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -111,11 +112,11 @@ class AutoClosedQCommand final : public AutoClosedCommand {
 };
 
 void WriteMove(fxcrt::ostringstream& stream, const CFX_PointF& point) {
-  stream << point.x << " " << point.y << " " << kMoveToOperator << "\n";
+  WritePoint(stream, point) << " " << kMoveToOperator << "\n";
 }
 
 void WriteLine(fxcrt::ostringstream& stream, const CFX_PointF& point) {
-  stream << point.x << " " << point.y << " " << kLineToOperator << "\n";
+  WritePoint(stream, point) << " " << kLineToOperator << "\n";
 }
 
 void WriteClosedLoop(fxcrt::ostringstream& stream,
@@ -130,14 +131,16 @@ void WriteBezierCurve(fxcrt::ostringstream& stream,
                       const CFX_PointF& point1,
                       const CFX_PointF& point2,
                       const CFX_PointF& point3) {
-  stream << point1.x << " " << point1.y << " " << point2.x << " " << point2.y
-         << " " << point3.x << " " << point3.y << " " << kCurveToOperator
-         << "\n";
+  WritePoint(stream, point1) << " ";
+  WritePoint(stream, point2) << " ";
+  WritePoint(stream, point3) << " " << kCurveToOperator << "\n";
 }
 
 void WriteAppendRect(fxcrt::ostringstream& stream, const CFX_FloatRect& rect) {
-  stream << rect.left << " " << rect.bottom << " " << rect.Width() << " "
-         << rect.Height() << " " << kAppendRectOperator << "\n";
+  WriteFloat(stream, rect.left) << " ";
+  WriteFloat(stream, rect.bottom) << " ";
+  WriteFloat(stream, rect.Width()) << " ";
+  WriteFloat(stream, rect.Height()) << " " << kAppendRectOperator << "\n";
 }
 
 ByteString GetStrokeColorAppStream(const CFX_Color& color) {
@@ -346,17 +349,15 @@ ByteString GetAP_HalfCircle(const CFX_FloatRect& crBBox, float fRotate) {
   CFX_PointF pt2(0, fHeight / 2);
   CFX_PointF pt3(fWidth / 2, 0);
 
-  float px;
-  float py;
-
-  csAP << cos(fRotate) << " " << sin(fRotate) << " " << -sin(fRotate) << " "
-       << cos(fRotate) << " " << crBBox.left + fWidth / 2 << " "
-       << crBBox.bottom + fHeight / 2 << " " << kConcatMatrixOperator << "\n";
+  CFX_Matrix rotate_matrix(cos(fRotate), sin(fRotate), -sin(fRotate),
+                           cos(fRotate), crBBox.left + fWidth / 2,
+                           crBBox.bottom + fHeight / 2);
+  WriteMatrix(csAP, rotate_matrix) << " " << kConcatMatrixOperator << "\n";
 
   WriteMove(csAP, pt1);
 
-  px = pt2.x - pt1.x;
-  py = pt2.y - pt1.y;
+  float px = pt2.x - pt1.x;
+  float py = pt2.y - pt1.y;
 
   WriteBezierCurve(csAP, {pt1.x, pt1.y + py * FXSYS_BEZIER},
                    {pt2.x - px * FXSYS_BEZIER, pt2.y}, pt2);
@@ -649,8 +650,8 @@ ByteString GetEditAppStream(CPWL_EditImpl* pEdit,
         }
 
         if (ptNew.x != ptOld.x || ptNew.y != ptOld.y) {
-          sEditStream << ptNew.x - ptOld.x << " " << ptNew.y - ptOld.y << " "
-                      << kMoveTextPositionOperator << "\n";
+          WritePoint(sEditStream, {ptNew.x - ptOld.x, ptNew.y - ptOld.y})
+              << " " << kMoveTextPositionOperator << "\n";
 
           ptOld = ptNew;
         }
@@ -678,8 +679,8 @@ ByteString GetEditAppStream(CPWL_EditImpl* pEdit,
             CFX_PointF(word.ptWord.x + ptOffset.x, word.ptWord.y + ptOffset.y);
 
         if (ptNew.x != ptOld.x || ptNew.y != ptOld.y) {
-          sEditStream << ptNew.x - ptOld.x << " " << ptNew.y - ptOld.y << " "
-                      << kMoveTextPositionOperator << "\n";
+          WritePoint(sEditStream, {ptNew.x - ptOld.x, ptNew.y - ptOld.y})
+              << " " << kMoveTextPositionOperator << "\n";
           ptOld = ptNew;
         }
         if (word.nFontIndex != nCurFontIndex) {
@@ -735,11 +736,10 @@ ByteString GenerateIconAppStream(CPDF_IconFit& fit,
     str << kSetNonZeroWindingClipOperator << " "
         << kEndPathNoFillOrStrokeOperator << "\n";
 
-    str << scale.x << " 0 0 " << scale.y << " " << rcPlate.left + offset.x
-        << " " << rcPlate.bottom + offset.y << " " << kConcatMatrixOperator
-        << "\n";
-    str << mt.a << " " << mt.b << " " << mt.c << " " << mt.d << " " << mt.e
-        << " " << mt.f << " " << kConcatMatrixOperator << "\n";
+    CFX_Matrix scale_matrix(scale.x, 0, 0, scale.y, rcPlate.left + offset.x,
+                            rcPlate.bottom + offset.y);
+    WriteMatrix(str, scale_matrix) << " " << kConcatMatrixOperator << "\n";
+    WriteMatrix(str, mt) << " " << kConcatMatrixOperator << "\n";
 
     str << "0 " << kSetGrayOperator << " 0 " << kSetGrayStrokedOperator << " 1 "
         << kSetLineWidthOperator << " /" << sAlias << " "
