@@ -24,9 +24,9 @@ _LINUX_DIMENSIONS = {
     "cpu": "x86-64",
     "os": "Ubuntu-18.04",
 }
-_MACOS_DIMENSIONS = {
+_MACOS_INTEL_DIMENSIONS = {
     "cpu": "x86-64",
-    "os": "Mac-11",
+    "os": "Mac-12",
 }
 _WINDOWS_DIMENSIONS = {
     "cores": "8",
@@ -162,7 +162,7 @@ def pdfium_internal_builder(name, bucket):
     if name.startswith("linux"):
         dimensions.update(_LINUX_DIMENSIONS)
     elif name.startswith("mac"):
-        dimensions.update(_MACOS_DIMENSIONS)
+        dimensions.update(_MACOS_INTEL_DIMENSIONS)
         caches = [swarming.cache("osx_sdk", name = "osx_sdk")]
     elif name.startswith("win"):
         dimensions.update(_WINDOWS_DIMENSIONS)
