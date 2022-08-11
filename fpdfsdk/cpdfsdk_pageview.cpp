@@ -63,6 +63,11 @@ CPDFSDK_PageView::~CPDFSDK_PageView() {
   m_pAnnotList.reset();
 }
 
+void CPDFSDK_PageView::ClearPage(CPDF_Page* pPage) {
+  if (!IsBeingDestroyed())
+    GetFormFillEnv()->RemovePageView(pPage);
+}
+
 void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
                                        const CFX_Matrix& mtUser2Device,
                                        CPDF_RenderOptions* pOptions,

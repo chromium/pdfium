@@ -26,8 +26,11 @@ class CPDF_Object;
 
 class CPDF_Page final : public IPDF_Page, public CPDF_PageObjectHolder {
  public:
-  // Caller implements as desired, empty here due to layering.
-  class View : public Observable {};
+  // Caller implements as desired, exists here due to layering.
+  class View : public Observable {
+   public:
+    virtual void ClearPage(CPDF_Page* pPage) = 0;
+  };
 
   // Data for the render layer to attach to this page.
   class RenderContextIface {
@@ -92,8 +95,8 @@ class CPDF_Page final : public IPDF_Page, public CPDF_PageObjectHolder {
   void SetRenderContext(std::unique_ptr<RenderContextIface> pContext);
   void ClearRenderContext();
 
-  View* GetView() const { return m_pView.Get(); }
   void SetView(View* pView) { m_pView.Reset(pView); }
+  void ClearView();
   void UpdateDimensions();
 
  private:

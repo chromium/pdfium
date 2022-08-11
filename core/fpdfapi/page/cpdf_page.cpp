@@ -191,6 +191,11 @@ void CPDF_Page::ClearRenderContext() {
   m_pRenderContext.reset();
 }
 
+void CPDF_Page::ClearView() {
+  if (m_pView)
+    m_pView->ClearPage(this);
+}
+
 void CPDF_Page::UpdateDimensions() {
   CFX_FloatRect mediabox = GetBox(pdfium::page_object::kMediaBox);
   if (mediabox.IsEmpty())

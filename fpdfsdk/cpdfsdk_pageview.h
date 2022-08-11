@@ -33,6 +33,9 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   CPDFSDK_PageView(CPDFSDK_FormFillEnvironment* pFormFillEnv, IPDF_Page* page);
   ~CPDFSDK_PageView();
 
+  // CPDF_Page::View:
+  void ClearPage(CPDF_Page* pPage) override;
+
   void PageView_OnDraw(CFX_RenderDevice* pDevice,
                        const CFX_Matrix& mtUser2Device,
                        CPDF_RenderOptions* pOptions,
