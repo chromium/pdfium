@@ -228,9 +228,6 @@ class CPWL_Wnd : public Observable {
   CPWL_ScrollBar* GetVScrollBar() const;
 
   IPVT_FontMap* GetFontMap() const { return m_CreationParams.pFontMap.Get(); }
-  ProviderIface* GetProvider() const {
-    return m_CreationParams.pProvider.Get();
-  }
 
   int32_t GetTransparency();
   void SetTransparency(int32_t nTransparency);
@@ -254,6 +251,9 @@ class CPWL_Wnd : public Observable {
 
   bool IsValid() const { return m_bCreated; }
   CreateParams* GetCreationParams() { return &m_CreationParams; }
+  ProviderIface* GetProvider() const {
+    return m_CreationParams.pProvider.Get();
+  }
   CFX_Timer::HandlerIface* GetTimerHandler() const {
     return m_CreationParams.pTimerHandler.Get();
   }
