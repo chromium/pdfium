@@ -454,10 +454,6 @@ void CPWL_Wnd::RemoveFlag(uint32_t dwFlags) {
   m_CreationParams.dwFlags &= ~dwFlags;
 }
 
-void CPWL_Wnd::AddFlag(uint32_t dwFlags) {
-  m_CreationParams.dwFlags |= dwFlags;
-}
-
 CFX_Color CPWL_Wnd::GetBackgroundColor() const {
   return m_CreationParams.sBackgroundColor;
 }

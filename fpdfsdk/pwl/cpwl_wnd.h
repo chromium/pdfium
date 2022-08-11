@@ -180,6 +180,9 @@ class CPWL_Wnd : public Observable {
   virtual CFX_FloatRect GetFocusRect() const;
   virtual CFX_FloatRect GetClientRect() const;
 
+  virtual void OnSetFocus();
+  virtual void OnKillFocus();
+
   void AddChild(std::unique_ptr<CPWL_Wnd> pWnd);
   void RemoveChild(CPWL_Wnd* pWnd);
   void Realize();
@@ -187,31 +190,16 @@ class CPWL_Wnd : public Observable {
   bool Move(const CFX_FloatRect& rcNew, bool bReset, bool bRefresh);
 
   void InvalidateProvider(ProviderIface* provider);
-  void SetCapture();
-  void ReleaseCapture();
   void DrawAppearance(CFX_RenderDevice* pDevice,
                       const CFX_Matrix& mtUser2Device);
 
-  CFX_Color GetBackgroundColor() const;
-  CFX_Color GetBorderColor() const;
-  CFX_Color GetTextColor() const;
-  CFX_Color GetBorderLeftTopColor(BorderStyle nBorderStyle) const;
-  CFX_Color GetBorderRightBottomColor(BorderStyle nBorderStyle) const;
-  BorderStyle GetBorderStyle() const;
-  const CPWL_Dash& GetBorderDash() const;
-
   int32_t GetBorderWidth() const;
-  int32_t GetInnerBorderWidth() const;
   CFX_FloatRect GetWindowRect() const;
-  CFX_PointF GetCenterPoint() const;
 
   bool IsVisible() const { return m_bVisible; }
   bool HasFlag(uint32_t dwFlags) const;
-  void AddFlag(uint32_t dwFlags);
   void RemoveFlag(uint32_t dwFlags);
-
   void SetClipRect(const CFX_FloatRect& rect);
-  const CFX_FloatRect& GetClipRect() const;
 
   CPWL_Wnd* GetParentWindow() const { return m_pParent.Get(); }
   IPWL_FillerNotify::PerWindowData* GetAttachedData() const {
@@ -225,17 +213,9 @@ class CPWL_Wnd : public Observable {
 
   bool IsFocused() const;
   bool IsReadOnly() const;
-  CPWL_ScrollBar* GetVScrollBar() const;
 
-  IPVT_FontMap* GetFontMap() const { return m_CreationParams.pFontMap.Get(); }
-
-  int32_t GetTransparency();
   void SetTransparency(int32_t nTransparency);
-
   CFX_Matrix GetWindowMatrix() const;
-
-  virtual void OnSetFocus();
-  virtual void OnKillFocus();
 
  protected:
   virtual void CreateChildWnd(const CreateParams& cp);
@@ -261,12 +241,31 @@ class CPWL_Wnd : public Observable {
     return m_CreationParams.pFillerNotify.Get();
   }
 
+  CPWL_ScrollBar* GetVScrollBar() const;
+
   // Returns |true| iff this instance is still allocated.
   bool InvalidateRectMove(const CFX_FloatRect& rcOld,
                           const CFX_FloatRect& rcNew);
 
+  void SetCapture();
+  void ReleaseCapture();
   bool IsWndCaptureMouse(const CPWL_Wnd* pWnd) const;
   bool IsWndCaptureKeyboard(const CPWL_Wnd* pWnd) const;
+
+  CFX_Color GetBackgroundColor() const;
+  CFX_Color GetBorderColor() const;
+  CFX_Color GetTextColor() const;
+  CFX_Color GetBorderLeftTopColor(BorderStyle nBorderStyle) const;
+  CFX_Color GetBorderRightBottomColor(BorderStyle nBorderStyle) const;
+  BorderStyle GetBorderStyle() const;
+  const CPWL_Dash& GetBorderDash() const;
+
+  int32_t GetTransparency();
+  int32_t GetInnerBorderWidth() const;
+  CFX_PointF GetCenterPoint() const;
+  const CFX_FloatRect& GetClipRect() const;
+
+  IPVT_FontMap* GetFontMap() const { return m_CreationParams.pFontMap.Get(); }
 
  private:
   void DrawChildAppearance(CFX_RenderDevice* pDevice,
@@ -280,7 +279,6 @@ class CPWL_Wnd : public Observable {
   void AdjustStyle();
   void CreateMsgControl();
   void DestroyMsgControl();
-
   CPWL_MsgControl* GetMsgControl() const;
 
   CreateParams m_CreationParams;
