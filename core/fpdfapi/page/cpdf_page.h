@@ -92,7 +92,6 @@ class CPDF_Page final : public IPDF_Page, public CPDF_PageObjectHolder {
   void SetRenderContext(std::unique_ptr<RenderContextIface> pContext);
   void ClearRenderContext();
 
-  CPDF_Document* GetPDFDocument() const { return m_pPDFDocument.Get(); }
   View* GetView() const { return m_pView.Get(); }
   void SetView(View* pView) { m_pView.Reset(pView); }
   void UpdateDimensions();
