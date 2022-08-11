@@ -13,8 +13,6 @@ source_set("render") {
     "cpdf_devicebuffer.h",
     "cpdf_docrenderdata.cpp",
     "cpdf_docrenderdata.h",
-    "cpdf_imagecacheentry.cpp",
-    "cpdf_imagecacheentry.h",
     "cpdf_imageloader.cpp",
     "cpdf_imageloader.h",
     "cpdf_imagerenderer.cpp",

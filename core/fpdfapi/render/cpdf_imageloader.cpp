@@ -12,7 +12,6 @@
 #include "core/fpdfapi/page/cpdf_image.h"
 #include "core/fpdfapi/page/cpdf_imageobject.h"
 #include "core/fpdfapi/page/cpdf_transferfunc.h"
-#include "core/fpdfapi/render/cpdf_imagecacheentry.h"
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
@@ -64,11 +63,10 @@ RetainPtr<CFX_DIBBase> CPDF_ImageLoader::TranslateImage(
 
 void CPDF_ImageLoader::HandleFailure() {
   if (m_pCache) {
-    CPDF_ImageCacheEntry* entry = m_pCache->GetCurImageCacheEntry();
     m_bCached = true;
-    m_pBitmap = entry->DetachBitmap();
-    m_pMask = entry->DetachMask();
-    m_MatteColor = entry->GetMatteColor();
+    m_pBitmap = m_pCache->DetachCurBitmap();
+    m_pMask = m_pCache->DetachCurMask();
+    m_MatteColor = m_pCache->GetCurMatteColor();
     return;
   }
   RetainPtr<CPDF_Image> pImage = m_pImageObject->GetImage();

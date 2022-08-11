@@ -26,7 +26,6 @@ class CFX_RenderDevice;
 class CPDF_Color;
 class CPDF_Font;
 class CPDF_FormObject;
-class CPDF_ImageCacheEntry;
 class CPDF_ImageObject;
 class CPDF_ImageRenderer;
 class CPDF_Object;
