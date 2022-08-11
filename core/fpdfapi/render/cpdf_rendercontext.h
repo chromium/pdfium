@@ -72,7 +72,7 @@ class CPDF_RenderContext {
   }
   CPDF_PageRenderCache* GetPageCache() const { return m_pPageCache.Get(); }
 
- protected:
+ private:
   UnownedPtr<CPDF_Document> const m_pDocument;
   RetainPtr<CPDF_Dictionary> const m_pPageResources;
   UnownedPtr<CPDF_PageRenderCache> const m_pPageCache;
