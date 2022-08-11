@@ -6,6 +6,8 @@
 
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 
+#include <stdint.h>
+
 #include <memory>
 #include <utility>
 #include <vector>
@@ -14,7 +16,7 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
-#include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/stl_util.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
@@ -146,7 +148,7 @@ WideString CPDFSDK_FormFillEnvironment::GetLanguage() {
   if (nRequiredLen <= 0)
     return WideString();
 
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> pBuff(nRequiredLen);
+  DataVector<uint8_t> pBuff(nRequiredLen);
   int nActualLen =
       m_pInfo->FFI_GetLanguage(m_pInfo, pBuff.data(), nRequiredLen);
   if (nActualLen <= 0 || nActualLen > nRequiredLen)
@@ -168,7 +170,7 @@ WideString CPDFSDK_FormFillEnvironment::GetPlatform() {
   if (nRequiredLen <= 0)
     return WideString();
 
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> pBuff(nRequiredLen);
+  DataVector<uint8_t> pBuff(nRequiredLen);
   int nActualLen =
       m_pInfo->FFI_GetPlatform(m_pInfo, pBuff.data(), nRequiredLen);
   if (nActualLen <= 0 || nActualLen > nRequiredLen)
@@ -233,7 +235,7 @@ WideString CPDFSDK_FormFillEnvironment::JS_fieldBrowse() {
   if (nRequiredLen <= 0)
     return WideString();
 
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> pBuff(nRequiredLen);
+  DataVector<uint8_t> pBuff(nRequiredLen);
   const int nActualLen =
       js_platform->Field_browse(js_platform, pBuff.data(), nRequiredLen);
   if (nActualLen <= 0 || nActualLen > nRequiredLen)
@@ -308,7 +310,7 @@ WideString CPDFSDK_FormFillEnvironment::GetFilePath() const {
   if (nRequiredLen <= 0)
     return WideString();
 
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> pBuff(nRequiredLen);
+  DataVector<uint8_t> pBuff(nRequiredLen);
   const int nActualLen =
       js_platform->Doc_getFilePath(js_platform, pBuff.data(), nRequiredLen);
   if (nActualLen <= 0 || nActualLen > nRequiredLen)

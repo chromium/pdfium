@@ -6,6 +6,8 @@
 
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 
+#include <stdint.h>
+
 #include <algorithm>
 #include <utility>
 
@@ -14,7 +16,7 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_seekablemultistream.h"
 #include "core/fxcrt/autonuller.h"
-#include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmlparser.h"
@@ -340,7 +342,7 @@ WideString CPDFXFA_Context::Response(const WideString& wsQuestion,
     return WideString();
 
   int nLength = 2048;
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> pBuff(nLength);
+  DataVector<uint8_t> pBuff(nLength);
   nLength = m_pFormFillEnv->JS_appResponse(wsQuestion, wsTitle, wsDefaultAnswer,
                                            WideString(), bMark, pBuff);
   if (nLength <= 0)

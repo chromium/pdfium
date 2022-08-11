@@ -6,6 +6,8 @@
 
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
 
+#include <stdint.h>
+
 #include <algorithm>
 #include <memory>
 #include <sstream>
@@ -23,6 +25,7 @@
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fxcrt/autorestorer.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_string_wrappers.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_graphstatedata.h"
@@ -69,8 +72,7 @@ bool IsFormFieldTypeXFA(FormFieldType fieldType) {
 }
 #endif  // PDF_ENABLE_XFA
 
-bool FDFToURLEncodedData(
-    std::vector<uint8_t, FxAllocAllocator<uint8_t>>* pBuffer) {
+bool FDFToURLEncodedData(DataVector<uint8_t>* pBuffer) {
   std::unique_ptr<CFDF_Document> pFDF = CFDF_Document::ParseMemory(*pBuffer);
   if (!pFDF)
     return true;
@@ -448,8 +450,7 @@ bool CPDFSDK_InteractiveForm::SubmitFields(
   if (textBuf.IsEmpty())
     return false;
 
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> buffer(textBuf.begin(),
-                                                         textBuf.end());
+  DataVector<uint8_t> buffer(textBuf.begin(), textBuf.end());
   if (bUrlEncoded && !FDFToURLEncodedData(&buffer))
     return false;
 
@@ -479,8 +480,7 @@ bool CPDFSDK_InteractiveForm::SubmitForm(const WideString& sDestination) {
   if (fdfBuffer.IsEmpty())
     return false;
 
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> buffer(fdfBuffer.begin(),
-                                                         fdfBuffer.end());
+  DataVector<uint8_t> buffer(fdfBuffer.begin(), fdfBuffer.end());
   m_pFormFillEnv->SubmitForm(buffer, sDestination);
   return true;
 }
