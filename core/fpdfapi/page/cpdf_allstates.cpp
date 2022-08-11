@@ -106,14 +106,13 @@ void CPDF_AllStates::ProcessExtGS(const CPDF_Dictionary* pGS,
           pParser->GetPageObjectHolder()->SetBackgroundAlphaNeeded(true);
         break;
       }
-      case FXBSTR_ID('S', 'M', 'a', 's'):
-        if (ToDictionary(pObject)) {
-          m_GeneralState.SetSoftMask(pObject);
+      case FXBSTR_ID('S', 'M', 'a', 's'): {
+        RetainPtr<CPDF_Dictionary> pMaskDict = ToDictionary(pObject);
+        m_GeneralState.SetSoftMask(pMaskDict);
+        if (pMaskDict)
           m_GeneralState.SetSMaskMatrix(pParser->GetCurStates()->m_CTM);
-        } else {
-          m_GeneralState.SetSoftMask(nullptr);
-        }
         break;
+      }
       case FXBSTR_ID('C', 'A', 0, 0):
         m_GeneralState.SetStrokeAlpha(
             pdfium::clamp(pObject->GetNumber(), 0.0f, 1.0f));

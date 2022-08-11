@@ -14,6 +14,7 @@
 #include "core/fxcrt/shared_copy_on_write.h"
 #include "core/fxge/dib/fx_dib.h"
 
+class CPDF_Dictionary;
 class CPDF_Object;
 class CPDF_TransferFunc;
 
@@ -38,9 +39,9 @@ class CPDF_GeneralState {
   float GetStrokeAlpha() const;
   void SetStrokeAlpha(float alpha);
 
-  const CPDF_Object* GetSoftMask() const;
-  RetainPtr<CPDF_Object> GetMutableSoftMask();
-  void SetSoftMask(RetainPtr<CPDF_Object> pObject);
+  const CPDF_Dictionary* GetSoftMask() const;
+  RetainPtr<CPDF_Dictionary> GetMutableSoftMask();
+  void SetSoftMask(RetainPtr<CPDF_Dictionary> pDict);
 
   const CPDF_Object* GetTR() const;
   void SetTR(const CPDF_Object* pObject);
@@ -87,7 +88,7 @@ class CPDF_GeneralState {
 
     ByteString m_BlendMode = pdfium::transparency::kNormal;
     BlendMode m_BlendType = BlendMode::kNormal;
-    RetainPtr<CPDF_Object> m_pSoftMask;
+    RetainPtr<CPDF_Dictionary> m_pSoftMask;
     CFX_Matrix m_SMaskMatrix;
     float m_StrokeAlpha = 1.0f;
     float m_FillAlpha = 1.0f;

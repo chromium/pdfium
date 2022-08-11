@@ -601,7 +601,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
 #endif
   const BlendMode blend_type = pPageObj->m_GeneralState.GetBlendType();
   RetainPtr<CPDF_Dictionary> pSMaskDict =
-      ToDictionary(pPageObj->m_GeneralState.GetMutableSoftMask());
+      pPageObj->m_GeneralState.GetMutableSoftMask();
   if (pSMaskDict) {
     if (pPageObj->IsImage() &&
         pPageObj->AsImage()->GetImage()->GetDict()->KeyExist("SMask")) {

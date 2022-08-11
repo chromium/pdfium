@@ -485,8 +485,7 @@ FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT page_object) {
   if (pPageObj->m_GeneralState.GetBlendType() != BlendMode::kNormal)
     return true;
 
-  const CPDF_Dictionary* pSMaskDict =
-      ToDictionary(pPageObj->m_GeneralState.GetSoftMask());
+  const CPDF_Dictionary* pSMaskDict = pPageObj->m_GeneralState.GetSoftMask();
   if (pSMaskDict)
     return true;
 
