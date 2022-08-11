@@ -166,9 +166,10 @@ def pdfium_internal_builder(name, bucket):
         caches = [swarming.cache("osx_sdk", name = "osx_sdk")]
     elif name.startswith("win"):
         dimensions.update(_WINDOWS_DIMENSIONS)
-    else:
-        # Android
+    elif name.startswith("android"):
         dimensions.update(_LINUX_DIMENSIONS)
+    else:
+        fail()
 
     # Update properties based on the builder name.
     properties.update(get_properties_by_name(name))
