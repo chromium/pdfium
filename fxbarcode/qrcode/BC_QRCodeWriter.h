@@ -7,9 +7,9 @@
 #ifndef FXBARCODE_QRCODE_BC_QRCODEWRITER_H_
 #define FXBARCODE_QRCODE_BC_QRCODEWRITER_H_
 
-#include <vector>
+#include <stdint.h>
 
-#include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/widestring.h"
 #include "fxbarcode/BC_TwoDimWriter.h"
 
@@ -18,11 +18,10 @@ class CBC_QRCodeWriter final : public CBC_TwoDimWriter {
   CBC_QRCodeWriter();
   ~CBC_QRCodeWriter() override;
 
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> Encode(
-      WideStringView contents,
-      int32_t ecLevel,
-      int32_t* pOutWidth,
-      int32_t* pOutHeight);
+  DataVector<uint8_t> Encode(WideStringView contents,
+                             int32_t ecLevel,
+                             int32_t* pOutWidth,
+                             int32_t* pOutHeight);
 
   // CBC_TwoDimWriter
   bool SetErrorCorrectionLevel(int32_t level) override;

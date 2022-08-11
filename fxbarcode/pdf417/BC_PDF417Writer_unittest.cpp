@@ -4,8 +4,9 @@
 
 #include "fxbarcode/pdf417/BC_PDF417Writer.h"
 
-#include <vector>
+#include <stdint.h>
 
+#include "core/fxcrt/data_vector.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 class CBC_PDF417WriterTest : public testing::Test {
@@ -413,8 +414,7 @@ TEST_F(CBC_PDF417WriterTest, Encode) {
         1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1,
         0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 1,
         1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1};
-    std::vector<uint8_t, FxAllocAllocator<uint8_t>> data =
-        writer.Encode(L"", &width, &height);
+    DataVector<uint8_t> data = writer.Encode(L"", &width, &height);
     ASSERT_EQ(std::size(kExpectedData), data.size());
     ASSERT_EQ(kExpectedWidth, width);
     ASSERT_EQ(kExpectedHeight, height);
@@ -811,8 +811,7 @@ TEST_F(CBC_PDF417WriterTest, Encode) {
         1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0,
         0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 1,
         1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1};
-    std::vector<uint8_t, FxAllocAllocator<uint8_t>> data =
-        writer.Encode(L"hello world", &width, &height);
+    DataVector<uint8_t> data = writer.Encode(L"hello world", &width, &height);
     ASSERT_EQ(std::size(kExpectedData), data.size());
     ASSERT_EQ(kExpectedWidth, width);
     ASSERT_EQ(kExpectedHeight, height);

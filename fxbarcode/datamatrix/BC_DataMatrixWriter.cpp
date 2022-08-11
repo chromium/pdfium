@@ -22,8 +22,11 @@
 
 #include "fxbarcode/datamatrix/BC_DataMatrixWriter.h"
 
+#include <stdint.h>
+
 #include <memory>
 
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/stl_util.h"
 #include "fxbarcode/BC_TwoDimWriter.h"
 #include "fxbarcode/BC_Writer.h"
@@ -107,11 +110,10 @@ bool CBC_DataMatrixWriter::SetErrorCorrectionLevel(int32_t level) {
   return true;
 }
 
-std::vector<uint8_t, FxAllocAllocator<uint8_t>> CBC_DataMatrixWriter::Encode(
-    const WideString& contents,
-    int32_t* pOutWidth,
-    int32_t* pOutHeight) {
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> results;
+DataVector<uint8_t> CBC_DataMatrixWriter::Encode(const WideString& contents,
+                                                 int32_t* pOutWidth,
+                                                 int32_t* pOutHeight) {
+  DataVector<uint8_t> results;
   WideString encoded = CBC_HighLevelEncoder::EncodeHighLevel(contents);
   if (encoded.IsEmpty())
     return results;

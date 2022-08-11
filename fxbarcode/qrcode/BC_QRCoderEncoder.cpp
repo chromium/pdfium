@@ -22,12 +22,14 @@
 
 #include "fxbarcode/qrcode/BC_QRCoderEncoder.h"
 
+#include <stdint.h>
+
 #include <algorithm>
 #include <memory>
 #include <utility>
 #include <vector>
 
-#include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_string.h"
 #include "fxbarcode/common/BC_CommonByteMatrix.h"
 #include "fxbarcode/common/reedsolomon/BC_ReedSolomon.h"
@@ -50,8 +52,8 @@ namespace {
 CBC_ReedSolomonGF256* g_QRCodeField = nullptr;
 
 struct QRCoderBlockPair {
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> data;
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> ecc;
+  DataVector<uint8_t> data;
+  DataVector<uint8_t> ecc;
 };
 
 // This is a mapping for an ASCII table, starting at an index of 32.
@@ -179,19 +181,18 @@ bool InitQRCode(int32_t numInputBytes,
   return false;
 }
 
-std::vector<uint8_t, FxAllocAllocator<uint8_t>> GenerateECBytes(
-    pdfium::span<const uint8_t> dataBytes,
-    size_t numEcBytesInBlock) {
+DataVector<uint8_t> GenerateECBytes(pdfium::span<const uint8_t> dataBytes,
+                                    size_t numEcBytesInBlock) {
   // If |numEcBytesInBlock| is 0, the encoder will fail anyway.
   DCHECK(numEcBytesInBlock > 0);
   std::vector<int32_t> toEncode(dataBytes.size() + numEcBytesInBlock);
   std::copy(dataBytes.begin(), dataBytes.end(), toEncode.begin());
 
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> ecBytes;
+  DataVector<uint8_t> ecBytes;
   CBC_ReedSolomonEncoder encoder(g_QRCodeField);
   if (encoder.Encode(&toEncode, numEcBytesInBlock)) {
-    ecBytes = std::vector<uint8_t, FxAllocAllocator<uint8_t>>(
-        toEncode.begin() + dataBytes.size(), toEncode.end());
+    ecBytes = DataVector<uint8_t>(toEncode.begin() + dataBytes.size(),
+                                  toEncode.end());
     DCHECK_EQ(ecBytes.size(), static_cast<size_t>(numEcBytesInBlock));
   }
   return ecBytes;
@@ -318,12 +319,10 @@ bool InterleaveWithECBytes(CBC_QRCoderBitVector* bits,
     if (numDataBytesInBlock < 0 || numEcBytesInBlock <= 0)
       return false;
 
-    std::vector<uint8_t, FxAllocAllocator<uint8_t>> dataBytes(
-        numDataBytesInBlock);
+    DataVector<uint8_t> dataBytes(numDataBytesInBlock);
     memcpy(dataBytes.data(), bits->GetArray() + dataBytesOffset,
            numDataBytesInBlock);
-    std::vector<uint8_t, FxAllocAllocator<uint8_t>> ecBytes =
-        GenerateECBytes(dataBytes, numEcBytesInBlock);
+    DataVector<uint8_t> ecBytes = GenerateECBytes(dataBytes, numEcBytesInBlock);
     if (ecBytes.empty())
       return false;
 
@@ -338,16 +337,14 @@ bool InterleaveWithECBytes(CBC_QRCoderBitVector* bits,
 
   for (size_t x = 0; x < maxNumDataBytes; x++) {
     for (size_t j = 0; j < blocks.size(); j++) {
-      const std::vector<uint8_t, FxAllocAllocator<uint8_t>>& dataBytes =
-          blocks[j].data;
+      const DataVector<uint8_t>& dataBytes = blocks[j].data;
       if (x < dataBytes.size())
         result->AppendBits(dataBytes[x], 8);
     }
   }
   for (size_t y = 0; y < maxNumEcBytes; y++) {
     for (size_t l = 0; l < blocks.size(); l++) {
-      const std::vector<uint8_t, FxAllocAllocator<uint8_t>>& ecBytes =
-          blocks[l].ecc;
+      const DataVector<uint8_t>& ecBytes = blocks[l].ecc;
       if (y < ecBytes.size())
         result->AppendBits(ecBytes[y], 8);
     }

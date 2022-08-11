@@ -22,10 +22,12 @@
 
 #include "fxbarcode/datamatrix/BC_ErrorCorrection.h"
 
+#include <stdint.h>
+
 #include <algorithm>
 #include <vector>
 
-#include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/data_vector.h"
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
 #include "third_party/base/check.h"
@@ -154,7 +156,7 @@ WideString CreateECCBlock(const WideString& codewords, size_t numECWords) {
   if (table >= kFactorTableNum)
     return WideString();
 
-  std::vector<uint16_t, FxAllocAllocator<uint16_t>> ecc(numECWords);
+  DataVector<uint16_t> ecc(numECWords);
   for (size_t i = 0; i < len; ++i) {
     uint16_t m = ecc[numECWords - 1] ^ codewords[i];
     for (int32_t j = numECWords - 1; j > 0; --j) {

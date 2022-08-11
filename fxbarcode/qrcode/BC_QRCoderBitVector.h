@@ -10,9 +10,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include <vector>
-
-#include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/data_vector.h"
 
 class CBC_QRCoderBitVector {
  public:
@@ -33,7 +31,7 @@ class CBC_QRCoderBitVector {
   void AppendByte(int8_t value);
 
   size_t m_sizeInBits = 0;
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_array;
+  DataVector<uint8_t> m_array;
 };
 
 #endif  // FXBARCODE_QRCODE_BC_QRCODERBITVECTOR_H_

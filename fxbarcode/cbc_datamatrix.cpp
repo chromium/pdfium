@@ -21,11 +21,12 @@
 
 #include "fxbarcode/cbc_datamatrix.h"
 
-#include <memory>
-#include <vector>
+#include <stdint.h>
 
+#include <memory>
+
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_memory_wrappers.h"
 #include "fxbarcode/datamatrix/BC_DataMatrixWriter.h"
 
 CBC_DataMatrix::CBC_DataMatrix()
@@ -37,7 +38,7 @@ bool CBC_DataMatrix::Encode(WideStringView contents) {
   int32_t width;
   int32_t height;
   auto* pWriter = GetDataMatrixWriter();
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> data =
+  DataVector<uint8_t> data =
       pWriter->Encode(WideString(contents), &width, &height);
   return pWriter->RenderResult(data, width, height);
 }

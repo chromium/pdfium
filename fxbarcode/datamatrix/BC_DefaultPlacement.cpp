@@ -22,8 +22,11 @@
 
 #include "fxbarcode/datamatrix/BC_DefaultPlacement.h"
 
+#include <stdint.h>
+
 #include <utility>
 
+#include "core/fxcrt/data_vector.h"
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 
 CBC_DefaultPlacement::CBC_DefaultPlacement(WideString codewords,
@@ -43,22 +46,27 @@ CBC_DefaultPlacement::~CBC_DefaultPlacement() = default;
 int32_t CBC_DefaultPlacement::getNumrows() {
   return m_numrows;
 }
+
 int32_t CBC_DefaultPlacement::getNumcols() {
   return m_numcols;
 }
-std::vector<uint8_t, FxAllocAllocator<uint8_t>>&
-CBC_DefaultPlacement::getBits() {
+
+DataVector<uint8_t>& CBC_DefaultPlacement::getBits() {
   return m_bits;
 }
+
 bool CBC_DefaultPlacement::getBit(int32_t col, int32_t row) {
   return m_bits[row * m_numcols + col] == 1;
 }
+
 void CBC_DefaultPlacement::setBit(int32_t col, int32_t row, bool bit) {
   m_bits[row * m_numcols + col] = bit ? (uint8_t)1 : (uint8_t)0;
 }
+
 bool CBC_DefaultPlacement::hasBit(int32_t col, int32_t row) {
   return m_bits[row * m_numcols + col] != 2;
 }
+
 void CBC_DefaultPlacement::place() {
   int32_t pos = 0;
   int32_t row = 4;
@@ -100,6 +108,7 @@ void CBC_DefaultPlacement::place() {
     setBit(m_numcols - 2, m_numrows - 2, true);
   }
 }
+
 void CBC_DefaultPlacement::module(int32_t row,
                                   int32_t col,
                                   int32_t pos,
@@ -116,6 +125,7 @@ void CBC_DefaultPlacement::module(int32_t row,
   v &= 1 << (8 - bit);
   setBit(col, row, v != 0);
 }
+
 void CBC_DefaultPlacement::utah(int32_t row, int32_t col, int32_t pos) {
   module(row - 2, col - 2, pos, 1);
   module(row - 2, col - 1, pos, 2);
@@ -126,6 +136,7 @@ void CBC_DefaultPlacement::utah(int32_t row, int32_t col, int32_t pos) {
   module(row, col - 1, pos, 7);
   module(row, col, pos, 8);
 }
+
 void CBC_DefaultPlacement::corner1(int32_t pos) {
   module(m_numrows - 1, 0, pos, 1);
   module(m_numrows - 1, 1, pos, 2);
@@ -136,6 +147,7 @@ void CBC_DefaultPlacement::corner1(int32_t pos) {
   module(2, m_numcols - 1, pos, 7);
   module(3, m_numcols - 1, pos, 8);
 }
+
 void CBC_DefaultPlacement::corner2(int32_t pos) {
   module(m_numrows - 3, 0, pos, 1);
   module(m_numrows - 2, 0, pos, 2);
@@ -146,6 +158,7 @@ void CBC_DefaultPlacement::corner2(int32_t pos) {
   module(0, m_numcols - 1, pos, 7);
   module(1, m_numcols - 1, pos, 8);
 }
+
 void CBC_DefaultPlacement::corner3(int32_t pos) {
   module(m_numrows - 3, 0, pos, 1);
   module(m_numrows - 2, 0, pos, 2);
@@ -156,6 +169,7 @@ void CBC_DefaultPlacement::corner3(int32_t pos) {
   module(2, m_numcols - 1, pos, 7);
   module(3, m_numcols - 1, pos, 8);
 }
+
 void CBC_DefaultPlacement::corner4(int32_t pos) {
   module(m_numrows - 1, 0, pos, 1);
   module(m_numrows - 1, m_numcols - 1, pos, 2);

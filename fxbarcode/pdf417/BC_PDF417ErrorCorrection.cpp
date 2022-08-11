@@ -22,9 +22,9 @@
 
 #include "fxbarcode/pdf417/BC_PDF417ErrorCorrection.h"
 
-#include <vector>
+#include <stdint.h>
 
-#include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/data_vector.h"
 
 namespace {
 
@@ -140,7 +140,7 @@ absl::optional<WideString> CBC_PDF417ErrorCorrection::GenerateErrorCorrection(
   if (k < 0)
     return absl::nullopt;
 
-  std::vector<wchar_t, FxAllocAllocator<wchar_t>> ech(k);
+  DataVector<wchar_t> ech(k);
   size_t sld = dataCodewords.GetLength();
   for (size_t i = 0; i < sld; i++) {
     int32_t t1 = (dataCodewords[i] + ech[k - 1]) % 929;

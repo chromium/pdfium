@@ -21,6 +21,10 @@
  */
 
 #include "fxbarcode/pdf417/BC_PDF417BarcodeMatrix.h"
+
+#include <stdint.h>
+
+#include "core/fxcrt/data_vector.h"
 #include "fxbarcode/pdf417/BC_PDF417BarcodeRow.h"
 
 CBC_BarcodeMatrix::CBC_BarcodeMatrix(size_t width, size_t height)
@@ -32,9 +36,8 @@ CBC_BarcodeMatrix::CBC_BarcodeMatrix(size_t width, size_t height)
 
 CBC_BarcodeMatrix::~CBC_BarcodeMatrix() = default;
 
-std::vector<uint8_t, FxAllocAllocator<uint8_t>>
-CBC_BarcodeMatrix::toBitArray() {
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> bitArray(m_width * m_height);
+DataVector<uint8_t> CBC_BarcodeMatrix::toBitArray() {
+  DataVector<uint8_t> bitArray(m_width * m_height);
   for (size_t i = 0; i < m_height; ++i) {
     const auto& bytearray = m_matrix[i]->GetRow();
     for (size_t j = 0; j < m_width; ++j)

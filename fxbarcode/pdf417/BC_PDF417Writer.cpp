@@ -22,9 +22,12 @@
 
 #include "fxbarcode/pdf417/BC_PDF417Writer.h"
 
+#include <stdint.h>
+
 #include <algorithm>
 #include <utility>
 
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/stl_util.h"
 #include "fxbarcode/BC_TwoDimWriter.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
@@ -43,11 +46,10 @@ bool CBC_PDF417Writer::SetErrorCorrectionLevel(int32_t level) {
   return true;
 }
 
-std::vector<uint8_t, FxAllocAllocator<uint8_t>> CBC_PDF417Writer::Encode(
-    WideStringView contents,
-    int32_t* pOutWidth,
-    int32_t* pOutHeight) {
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> results;
+DataVector<uint8_t> CBC_PDF417Writer::Encode(WideStringView contents,
+                                             int32_t* pOutWidth,
+                                             int32_t* pOutHeight) {
+  DataVector<uint8_t> results;
   CBC_PDF417 encoder;
   int32_t col = (m_Width / m_ModuleWidth - 69) / 17;
   int32_t row = m_Height / (m_ModuleWidth * 20);
@@ -61,8 +63,7 @@ std::vector<uint8_t, FxAllocAllocator<uint8_t>> CBC_PDF417Writer::Encode(
     return results;
 
   CBC_BarcodeMatrix* barcodeMatrix = encoder.getBarcodeMatrix();
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> matrixData =
-      barcodeMatrix->toBitArray();
+  DataVector<uint8_t> matrixData = barcodeMatrix->toBitArray();
   int32_t matrixWidth = barcodeMatrix->getWidth();
   int32_t matrixHeight = barcodeMatrix->getHeight();
 
@@ -78,11 +79,10 @@ std::vector<uint8_t, FxAllocAllocator<uint8_t>> CBC_PDF417Writer::Encode(
   return results;
 }
 
-void CBC_PDF417Writer::RotateArray(
-    std::vector<uint8_t, FxAllocAllocator<uint8_t>>* bitarray,
-    int32_t height,
-    int32_t width) {
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> temp = *bitarray;
+void CBC_PDF417Writer::RotateArray(DataVector<uint8_t>* bitarray,
+                                   int32_t height,
+                                   int32_t width) {
+  DataVector<uint8_t> temp = *bitarray;
   for (int32_t ii = 0; ii < height; ii++) {
     int32_t inverseii = height - ii - 1;
     for (int32_t jj = 0; jj < width; jj++) {
