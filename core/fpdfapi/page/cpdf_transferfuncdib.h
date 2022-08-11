@@ -7,9 +7,9 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_TRANSFERFUNCDIB_H_
 #define CORE_FPDFAPI_PAGE_CPDF_TRANSFERFUNCDIB_H_
 
-#include <vector>
+#include <stdint.h>
 
-#include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "third_party/base/span.h"
@@ -36,7 +36,7 @@ class CPDF_TransferFuncDIB final : public CFX_DIBBase {
   const pdfium::span<const uint8_t> m_RampR;
   const pdfium::span<const uint8_t> m_RampG;
   const pdfium::span<const uint8_t> m_RampB;
-  mutable std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_Scanline;
+  mutable DataVector<uint8_t> m_Scanline;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_TRANSFERFUNCDIB_H_

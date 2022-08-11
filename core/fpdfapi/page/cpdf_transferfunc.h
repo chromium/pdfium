@@ -7,9 +7,9 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_TRANSFERFUNC_H_
 #define CORE_FPDFAPI_PAGE_CPDF_TRANSFERFUNC_H_
 
-#include <vector>
+#include <stdint.h>
 
-#include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
@@ -35,15 +35,15 @@ class CPDF_TransferFunc final : public Retainable, public Observable {
 
  private:
   CPDF_TransferFunc(bool bIdentify,
-                    std::vector<uint8_t, FxAllocAllocator<uint8_t>> samples_r,
-                    std::vector<uint8_t, FxAllocAllocator<uint8_t>> samples_g,
-                    std::vector<uint8_t, FxAllocAllocator<uint8_t>> samples_b);
+                    DataVector<uint8_t> samples_r,
+                    DataVector<uint8_t> samples_g,
+                    DataVector<uint8_t> samples_b);
   ~CPDF_TransferFunc() override;
 
   const bool m_bIdentity;
-  const std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_SamplesR;
-  const std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_SamplesG;
-  const std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_SamplesB;
+  const DataVector<uint8_t> m_SamplesR;
+  const DataVector<uint8_t> m_SamplesG;
+  const DataVector<uint8_t> m_SamplesB;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_TRANSFERFUNC_H_

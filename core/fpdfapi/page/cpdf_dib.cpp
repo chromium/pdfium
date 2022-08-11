@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/page/cpdf_dib.h"
 
+#include <stdint.h>
+
 #include <algorithm>
 #include <memory>
 #include <utility>
@@ -30,6 +32,7 @@
 #include "core/fxcodec/jpeg/jpegmodule.h"
 #include "core/fxcodec/jpx/cjpx_decoder.h"
 #include "core/fxcodec/scanlinedecoder.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxge/calculate_pitch.h"
@@ -192,14 +195,14 @@ bool CPDF_DIB::ContinueInternal() {
   if (!pitch.has_value())
     return false;
 
-  m_LineBuf = std::vector<uint8_t, FxAllocAllocator<uint8_t>>(pitch.value());
+  m_LineBuf = DataVector<uint8_t>(pitch.value());
   LoadPalette();
   if (m_bColorKey) {
     m_Format = FXDIB_Format::kArgb;
     pitch = fxge::CalculatePitch32(GetBppFromFormat(m_Format), m_Width);
     if (!pitch.has_value())
       return false;
-    m_MaskBuf = std::vector<uint8_t, FxAllocAllocator<uint8_t>>(pitch.value());
+    m_MaskBuf = DataVector<uint8_t>(pitch.value());
   }
   m_Pitch = pitch.value();
   return true;

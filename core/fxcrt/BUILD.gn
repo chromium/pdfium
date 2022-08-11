@@ -33,6 +33,7 @@ source_set("fxcrt") {
     "cfx_utf8decoder.h",
     "cfx_utf8encoder.cpp",
     "cfx_utf8encoder.h",
+    "data_vector.h",
     "fileaccess_iface.h",
     "fx_bidi.cpp",
     "fx_bidi.h",

@@ -7,10 +7,10 @@
 #ifndef CORE_FXCRT_CFX_UTF8ENCODER_H_
 #define CORE_FXCRT_CFX_UTF8ENCODER_H_
 
-#include <vector>
+#include <stdint.h>
 
 #include "core/fxcrt/bytestring.h"
-#include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/data_vector.h"
 
 class CFX_UTF8Encoder {
  public:
@@ -26,7 +26,7 @@ class CFX_UTF8Encoder {
   }
 
  private:
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_Buffer;
+  DataVector<uint8_t> m_Buffer;
 };
 
 #endif  // CORE_FXCRT_CFX_UTF8ENCODER_H_

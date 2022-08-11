@@ -6,10 +6,11 @@
 
 #include "core/fpdfapi/page/cpdf_image.h"
 
+#include <stdint.h>
+
 #include <algorithm>
 #include <memory>
 #include <utility>
-#include <vector>
 
 #include "constants/stream_dict_common.h"
 #include "core/fpdfapi/page/cpdf_dib.h"
@@ -24,6 +25,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcodec/jpeg/jpegmodule.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/span_util.h"
@@ -132,7 +134,7 @@ void CPDF_Image::SetJpegImage(RetainPtr<IFX_SeekableReadStream> pFile) {
     return;
 
   uint32_t dwEstimateSize = std::min(size, 8192U);
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> data(dwEstimateSize);
+  DataVector<uint8_t> data(dwEstimateSize);
   if (!pFile->ReadBlockAtOffset(data.data(), 0, dwEstimateSize))
     return;
 
@@ -153,7 +155,7 @@ void CPDF_Image::SetJpegImageInline(RetainPtr<IFX_SeekableReadStream> pFile) {
   if (!size)
     return;
 
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> data(size);
+  DataVector<uint8_t> data(size);
   if (!pFile->ReadBlockAtOffset(data.data(), 0, size))
     return;
 
