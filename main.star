@@ -28,6 +28,10 @@ _MACOS_INTEL_DIMENSIONS = {
     "cpu": "x86-64",
     "os": "Mac-12",
 }
+_MACOS_ARM_DIMENSIONS = {
+    "cpu": "arm64",
+    "os": "Mac-12",
+}
 _WINDOWS_DIMENSIONS = {
     "cores": "8",
     "cpu": "x86-64",
@@ -161,6 +165,9 @@ def pdfium_internal_builder(name, bucket):
     # Set configs depending on the OS.
     if name.startswith("linux"):
         dimensions.update(_LINUX_DIMENSIONS)
+    elif name.startswith("mac") and "_arm" in name:
+        dimensions.update(_MACOS_ARM_DIMENSIONS)
+        caches = [swarming.cache("osx_sdk", name = "osx_sdk")]
     elif name.startswith("mac"):
         dimensions.update(_MACOS_INTEL_DIMENSIONS)
         caches = [swarming.cache("osx_sdk", name = "osx_sdk")]
@@ -436,6 +443,7 @@ add_entries_for_builder(name = "mac_no_v8", category = "no v8", short_name = "ma
 add_entries_for_builder(name = "mac_skia", category = "skia|mac")
 add_entries_for_builder(name = "mac_skia_paths", category = "skia_paths|mac")
 add_entries_for_builder(name = "mac_xfa", category = "xfa|mac")
+add_entries_for_builder(name = "mac_xfa_arm", category = "xfa|mac", skip_ci_builder = True)
 add_entries_for_builder(name = "mac_xfa_asan", skip_ci_builder = True)
 add_entries_for_builder(name = "mac_xfa_component", category = "xfa|mac", short_name = "comp")
 add_entries_for_builder(name = "mac_xfa_rel", category = "xfa|mac", short_name = "rel")
