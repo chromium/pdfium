@@ -332,9 +332,12 @@ void CPDF_Image::ResetCache(CPDF_Page* pPage) {
   pPage->GetRenderCache()->ResetBitmapForImage(std::move(pHolder));
 }
 
+RetainPtr<CPDF_DIB> CPDF_Image::CreateNewDIB() const {
+  return pdfium::MakeRetain<CPDF_DIB>(GetDocument(), GetStream());
+}
+
 RetainPtr<CFX_DIBBase> CPDF_Image::LoadDIBBase() const {
-  auto source =
-      pdfium::MakeRetain<CPDF_DIB>(m_pDocument.Get(), m_pStream.Get());
+  RetainPtr<CPDF_DIB> source = CreateNewDIB();
   if (!source->Load())
     return nullptr;
 
@@ -360,8 +363,7 @@ bool CPDF_Image::StartLoadDIBBase(const CPDF_Dictionary* pFormResource,
                                   bool bStdCS,
                                   CPDF_ColorSpace::Family GroupFamily,
                                   bool bLoadMask) {
-  auto source =
-      pdfium::MakeRetain<CPDF_DIB>(m_pDocument.Get(), m_pStream.Get());
+  RetainPtr<CPDF_DIB> source = CreateNewDIB();
   CPDF_DIB::LoadState ret = source->StartLoadDIBBase(
       true, pFormResource, pPageResource, bStdCS, GroupFamily, bLoadMask);
   if (ret == CPDF_DIB::LoadState::kFail) {

@@ -375,8 +375,11 @@ FPDFImageObj_GetImageMetadata(FPDF_PAGEOBJECT image_object,
   if (!pPage || !pPage->GetDocument() || !pImg->GetStream())
     return true;
 
-  auto pSource =
-      pdfium::MakeRetain<CPDF_DIB>(pPage->GetDocument(), pImg->GetStream());
+  // A cross-document image may have come from the embedder.
+  if (pPage->GetDocument() != pImg->GetDocument())
+    return false;
+
+  RetainPtr<CPDF_DIB> pSource = pImg->CreateNewDIB();
   CPDF_DIB::LoadState ret = pSource->StartLoadDIBBase(
       false, nullptr, pPage->GetPageResources(), false,
       CPDF_ColorSpace::Family::kUnknown, false);

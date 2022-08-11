@@ -18,6 +18,7 @@
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
+#include "third_party/base/check_op.h"
 
 CPDF_ImageCacheEntry::CPDF_ImageCacheEntry(CPDF_Document* pDoc,
                                            RetainPtr<CPDF_Image> pImage)
@@ -48,8 +49,11 @@ CPDF_DIB::LoadState CPDF_ImageCacheEntry::StartGetCachedBitmap(
     return CPDF_DIB::LoadState::kSuccess;
   }
 
-  m_pCurBitmap =
-      pdfium::MakeRetain<CPDF_DIB>(m_pDocument.Get(), m_pImage->GetStream());
+  // A cross-document image may have come from the embedder.
+  if (m_pDocument != m_pImage->GetDocument())
+    return CPDF_DIB::LoadState::kFail;
+
+  m_pCurBitmap = m_pImage->CreateNewDIB();
   CPDF_DIB::LoadState ret = m_pCurBitmap.As<CPDF_DIB>()->StartLoadDIBBase(
       true, pRenderStatus->GetFormResource(), pPageResources, bStdCS,
       pRenderStatus->GetGroupFamily(), pRenderStatus->GetLoadMask());

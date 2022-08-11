@@ -16,6 +16,7 @@
 
 class CFX_DIBBase;
 class CFX_DIBitmap;
+class CPDF_DIB;
 class CPDF_Dictionary;
 class CPDF_Document;
 class CPDF_Page;
@@ -44,6 +45,7 @@ class CPDF_Image final : public Retainable {
   bool IsMask() const { return m_bIsMask; }
   bool IsInterpol() const { return m_bInterpolate; }
 
+  RetainPtr<CPDF_DIB> CreateNewDIB() const;
   RetainPtr<CFX_DIBBase> LoadDIBBase() const;
 
   void SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap);
