@@ -74,7 +74,6 @@ class CFWL_ListBox : public CFWL_Widget {
   Item* GetSelItem(int32_t nIndexSel);
   int32_t GetSelIndex(int32_t nIndex);
   void SetSelItem(Item* hItem, bool bSelect);
-  float GetItemHeight() const { return m_fItemHeight; }
   float CalcItemHeight();
 
  protected:
