@@ -17,25 +17,23 @@ class CBC_DefaultPlacement final {
   CBC_DefaultPlacement(WideString codewords, int32_t numcols, int32_t numrows);
   ~CBC_DefaultPlacement();
 
-  int32_t getNumrows();
-  int32_t getNumcols();
-  DataVector<uint8_t>& getBits();
   bool getBit(int32_t col, int32_t row);
   void setBit(int32_t col, int32_t row, bool bit);
   bool hasBit(int32_t col, int32_t row);
   void place();
 
  private:
-  WideString m_codewords;
-  int32_t m_numrows;
-  int32_t m_numcols;
-  DataVector<uint8_t> m_bits;
   void module(int32_t row, int32_t col, int32_t pos, int32_t bit);
   void utah(int32_t row, int32_t col, int32_t pos);
   void corner1(int32_t pos);
   void corner2(int32_t pos);
   void corner3(int32_t pos);
   void corner4(int32_t pos);
+
+  WideString m_codewords;
+  int32_t m_numrows;
+  int32_t m_numcols;
+  DataVector<uint8_t> m_bits;
 };
 
 #endif  // FXBARCODE_DATAMATRIX_BC_DEFAULTPLACEMENT_H_
