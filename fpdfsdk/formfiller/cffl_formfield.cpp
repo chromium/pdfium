@@ -368,8 +368,8 @@ CPWL_Wnd* CFFL_FormField::CreateOrUpdatePWLWindow(
   if (pPrivateData->AppearanceAgeEquals(m_pWidget->GetAppearanceAge()))
     return pWnd;
 
-  return ResetPWLWindowForValueAge(pPageView, m_pWidget,
-                                   pPrivateData->GetValueAge());
+  return ResetPWLWindowForValueAgeInternal(pPageView, m_pWidget,
+                                           pPrivateData->GetValueAge());
 }
 
 void CFFL_FormField::DestroyPWLWindow(const CPDFSDK_PageView* pPageView) {
@@ -533,7 +533,24 @@ void CFFL_FormField::SavePWLWindowState(const CPDFSDK_PageView* pPageView) {}
 void CFFL_FormField::RecreatePWLWindowFromSavedState(
     const CPDFSDK_PageView* pPageView) {}
 
-CPWL_Wnd* CFFL_FormField::ResetPWLWindowForValueAge(
+CFFL_PerWindowData* CFFL_FormField::GetPerPWLWindowData(
+    const CPDFSDK_PageView* pPageView) {
+  CPWL_Wnd* pWnd = GetPWLWindow(pPageView);
+  if (!pWnd)
+    return nullptr;
+
+  return static_cast<CFFL_PerWindowData*>(pWnd->GetAttachedData());
+}
+
+void CFFL_FormField::ResetPWLWindowForValueAge(
+    const CPDFSDK_PageView* pPageView,
+    CPDFSDK_Widget* pWidget,
+    uint32_t nValueAge) {
+  // Don't leak PWL_Wnd result to public callers.
+  ResetPWLWindowForValueAgeInternal(pPageView, pWidget, nValueAge);
+}
+
+CPWL_Wnd* CFFL_FormField::ResetPWLWindowForValueAgeInternal(
     const CPDFSDK_PageView* pPageView,
     CPDFSDK_Widget* pWidget,
     uint32_t nValueAge) {

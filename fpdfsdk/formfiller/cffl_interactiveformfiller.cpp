@@ -917,13 +917,11 @@ std::pair<bool, bool> CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
 
   bool bExit = false;
   if (nAge != pWidget->GetAppearanceAge()) {
-    CPWL_Wnd* pWnd = pFormField->ResetPWLWindowForValueAge(
-        pPageView, pWidget.Get(), nValueAge);
-    if (!pWnd)
+    pFormField->ResetPWLWindowForValueAge(pPageView, pWidget.Get(), nValueAge);
+    pPrivateData = pFormField->GetPerPWLWindowData(pPageView);
+    if (!pPrivateData)
       return {true, true};
 
-    pPrivateData =
-        static_cast<const CFFL_PerWindowData*>(pWnd->GetAttachedData());
     pWidget.Reset(pPrivateData->GetWidget());
     pPageView = pPrivateData->GetPageView();
     bExit = true;
