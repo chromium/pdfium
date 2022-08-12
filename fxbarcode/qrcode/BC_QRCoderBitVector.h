@@ -11,13 +11,14 @@
 #include <stdint.h>
 
 #include "core/fxcrt/data_vector.h"
+#include "third_party/base/span.h"
 
 class CBC_QRCoderBitVector {
  public:
   CBC_QRCoderBitVector();
   ~CBC_QRCoderBitVector();
 
-  const uint8_t* GetArray() const;
+  pdfium::span<const uint8_t> GetArray() const;
   int32_t At(size_t index) const;
   size_t Size() const;
   size_t sizeInBytes() const;

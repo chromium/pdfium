@@ -79,14 +79,14 @@ bool CBC_QRCoderBitVector::XOR(const CBC_QRCoderBitVector* other) {
   if (m_sizeInBits != other->Size())
     return false;
 
-  const auto* pOther = other->GetArray();
+  pdfium::span<const uint8_t> other_span = other->GetArray();
   for (size_t i = 0; i < sizeInBytes(); ++i)
-    m_array[i] ^= pOther[i];
+    m_array[i] ^= other_span[i];
   return true;
 }
 
-const uint8_t* CBC_QRCoderBitVector::GetArray() const {
-  return m_array.data();
+pdfium::span<const uint8_t> CBC_QRCoderBitVector::GetArray() const {
+  return m_array;
 }
 
 void CBC_QRCoderBitVector::AppendByte(int8_t value) {
