@@ -25,6 +25,7 @@
 #include <stdint.h>
 
 #include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/span_util.h"
 #include "fxbarcode/pdf417/BC_PDF417BarcodeRow.h"
 
 CBC_BarcodeMatrix::CBC_BarcodeMatrix(size_t width, size_t height)
@@ -37,11 +38,9 @@ CBC_BarcodeMatrix::CBC_BarcodeMatrix(size_t width, size_t height)
 CBC_BarcodeMatrix::~CBC_BarcodeMatrix() = default;
 
 DataVector<uint8_t> CBC_BarcodeMatrix::toBitArray() {
-  DataVector<uint8_t> bitArray(m_width * m_height);
-  for (size_t i = 0; i < m_height; ++i) {
-    const auto& bytearray = m_matrix[i]->GetRow();
-    for (size_t j = 0; j < m_width; ++j)
-      bitArray[i * m_width + j] = bytearray[j];
-  }
-  return bitArray;
+  DataVector<uint8_t> bit_array(m_width * m_height);
+  pdfium::span<uint8_t> bit_array_span(bit_array);
+  for (size_t i = 0; i < m_height; ++i)
+    fxcrt::spancpy(bit_array_span.subspan(i * m_width), m_matrix[i]->GetRow());
+  return bit_array;
 }
