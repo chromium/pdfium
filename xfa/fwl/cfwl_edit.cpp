@@ -343,7 +343,7 @@ void CFWL_Edit::DrawContent(CFGAS_GEGraphics* pGraphics,
     CFWL_ThemeBackground param(this, pGraphics);
     param.m_matrix = mtMatrix;
     param.m_iPart = CFWL_ThemePart::Part::kBackground;
-    param.m_pPath = &path;
+    param.SetPath(&path);
     GetThemeProvider()->DrawBackground(param);
   }
 
@@ -366,7 +366,7 @@ void CFWL_Edit::DrawContent(CFGAS_GEGraphics* pGraphics,
     CFWL_ThemeBackground param(this, pGraphics);
     param.m_matrix = mtMatrix;
     param.m_iPart = CFWL_ThemePart::Part::kCombTextLine;
-    param.m_pPath = &path;
+    param.SetPath(&path);
     GetThemeProvider()->DrawBackground(param);
   }
   pGraphics->RestoreGraphState();

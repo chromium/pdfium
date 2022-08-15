@@ -24,15 +24,14 @@ void CFWL_EditTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
       break;
     }
     case CFWL_ThemePart::Part::kBackground: {
-      if (pParams.m_pPath) {
+      const CFGAS_GEPath* pParamsPath = pParams.GetPath();
+      if (pParamsPath) {
         CFGAS_GEGraphics* pGraphics = pParams.GetGraphics();
         pGraphics->SaveGraphState();
         pGraphics->SetFillColor(CFGAS_GEColor(FWLTHEME_COLOR_BKSelected));
-        if (pParams.m_pPath) {
-          pGraphics->FillPath(*pParams.m_pPath,
-                              CFX_FillRenderOptions::FillType::kWinding,
-                              pParams.m_matrix);
-        }
+        pGraphics->FillPath(*pParamsPath,
+                            CFX_FillRenderOptions::FillType::kWinding,
+                            pParams.m_matrix);
         pGraphics->RestoreGraphState();
       } else {
         CFGAS_GEPath path;
@@ -63,8 +62,9 @@ void CFWL_EditTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
       pWidget->GetBorderColorAndThickness(&cr, &fWidth);
       pParams.GetGraphics()->SetStrokeColor(CFGAS_GEColor(cr));
       pParams.GetGraphics()->SetLineWidth(fWidth);
-      if (pParams.m_pPath)
-        pParams.GetGraphics()->StrokePath(*pParams.m_pPath, pParams.m_matrix);
+      const CFGAS_GEPath* pParamsPath = pParams.GetPath();
+      if (pParamsPath)
+        pParams.GetGraphics()->StrokePath(*pParamsPath, pParams.m_matrix);
       break;
     }
     default:

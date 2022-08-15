@@ -19,10 +19,11 @@ class CFWL_ThemeBackground final : public CFWL_ThemePart {
   ~CFWL_ThemeBackground();
 
   CFGAS_GEGraphics* GetGraphics() const { return m_pGraphics.Get(); }
-
-  UnownedPtr<const CFGAS_GEPath> m_pPath;
+  const CFGAS_GEPath* GetPath() const { return m_pPath.Get(); }
+  void SetPath(const CFGAS_GEPath* pPath) { m_pPath = pPath; }
 
  private:
+  UnownedPtr<const CFGAS_GEPath> m_pPath;
   UnownedPtr<CFGAS_GEGraphics> const m_pGraphics;
 };
 
