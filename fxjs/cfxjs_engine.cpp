@@ -139,6 +139,11 @@ class CFXJS_PerObjectData {
         pObj->GetAlignedPointerFromInternalField(1));
   }
 
+  uint32_t GetObjDefnID() const { return m_ObjDefnID; }
+  CJS_Object* GetPrivate() { return m_pPrivate.get(); }
+  void SetPrivate(std::unique_ptr<CJS_Object> p) { m_pPrivate = std::move(p); }
+
+ private:
   const uint32_t m_ObjDefnID;
   std::unique_ptr<CJS_Object> m_pPrivate;
 };
@@ -371,7 +376,7 @@ CFXJS_Engine::~CFXJS_Engine() = default;
 // static
 uint32_t CFXJS_Engine::GetObjDefnID(v8::Local<v8::Object> pObj) {
   CFXJS_PerObjectData* pData = CFXJS_PerObjectData::GetFromObject(pObj);
-  return pData ? pData->m_ObjDefnID : 0;
+  return pData ? pData->GetObjDefnID() : 0;
 }
 
 // static
@@ -379,9 +384,8 @@ void CFXJS_Engine::SetObjectPrivate(v8::Local<v8::Object> pObj,
                                     std::unique_ptr<CJS_Object> p) {
   CFXJS_PerObjectData* pPerObjectData =
       CFXJS_PerObjectData::GetFromObject(pObj);
-  if (!pPerObjectData)
-    return;
-  pPerObjectData->m_pPrivate = std::move(p);
+  if (pPerObjectData)
+    pPerObjectData->SetPrivate(std::move(p));
 }
 
 // static
@@ -646,7 +650,7 @@ CJS_Object* CFXJS_Engine::GetObjectPrivate(v8::Isolate* pIsolate,
                                            v8::Local<v8::Object> pObj) {
   auto* pData = CFXJS_PerObjectData::GetFromObject(pObj);
   if (pData)
-    return pData->m_pPrivate.get();
+    return pData->GetPrivate();
 
   if (pObj.IsEmpty())
     return nullptr;
@@ -666,11 +670,11 @@ CJS_Object* CFXJS_Engine::GetObjectPrivate(v8::Isolate* pIsolate,
     return nullptr;
 
   CFXJS_ObjDefinition* pObjDef =
-      pIsolateData->ObjDefinitionForID(pProtoData->m_ObjDefnID);
+      pIsolateData->ObjDefinitionForID(pProtoData->GetObjDefnID());
   if (!pObjDef || pObjDef->m_ObjType != FXJSOBJTYPE_GLOBAL)
     return nullptr;
 
-  return pProtoData->m_pPrivate.get();
+  return pProtoData->GetPrivate();
 }
 
 v8::Local<v8::Array> CFXJS_Engine::GetConstArray(const WideString& name) {
