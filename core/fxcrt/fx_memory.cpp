@@ -21,6 +21,8 @@
 #include <windows.h>
 #endif
 
+namespace {
+
 pdfium::base::PartitionAllocatorGeneric& GetArrayBufferPartitionAllocator() {
   static pdfium::base::NoDestructor<pdfium::base::PartitionAllocatorGeneric>
       s_array_buffer_allocator;
@@ -38,6 +40,8 @@ pdfium::base::PartitionAllocatorGeneric& GetStringPartitionAllocator() {
       s_string_allocator;
   return *s_string_allocator;
 }
+
+}  // namespace
 
 void FXMEM_InitializePartitionAlloc() {
   static bool s_partition_allocators_initialized = false;
@@ -189,6 +193,20 @@ void* StringAlloc(size_t num_members, size_t member_size) {
 
 }  // namespace internal
 }  // namespace pdfium
+
+void* FX_ArrayBufferAllocate(size_t length) {
+  return GetArrayBufferPartitionAllocator().root()->AllocFlags(
+      pdfium::base::PartitionAllocZeroFill, length, "FXArrayBuffer");
+}
+
+void* FX_ArrayBufferAllocateUninitialized(size_t length) {
+  return GetArrayBufferPartitionAllocator().root()->Alloc(length,
+                                                          "FXArrayBuffer");
+}
+
+void FX_ArrayBufferFree(void* data) {
+  GetArrayBufferPartitionAllocator().root()->Free(data);
+}
 
 void FX_Free(void* ptr) {
   // TODO(palmer): Removing this check exposes crashes when PDFium callers
