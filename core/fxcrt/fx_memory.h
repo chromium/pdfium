@@ -24,7 +24,7 @@ void FXMEM_DefaultFree(void* pointer);
 
 #include "third_party/base/compiler_specific.h"
 
-void FXMEM_InitializePartitionAlloc();
+void FX_InitializeMemoryAllocators();
 NOINLINE void FX_OutOfMemoryTerminate(size_t size);
 
 // General Partition Allocators.

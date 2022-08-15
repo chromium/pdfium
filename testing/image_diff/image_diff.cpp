@@ -366,7 +366,7 @@ int DiffImages(const std::string& binary_name,
 }
 
 int main(int argc, const char* argv[]) {
-  FXMEM_InitializePartitionAlloc();
+  FX_InitializeMemoryAllocators();
 
   bool histograms = false;
   bool produce_diff_image = false;

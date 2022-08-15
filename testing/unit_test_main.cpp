@@ -17,7 +17,7 @@
 // Can't use gtest-provided main since we need to initialize partition
 // alloc before invoking any test, and add test environments.
 int main(int argc, char** argv) {
-  FXMEM_InitializePartitionAlloc();
+  FX_InitializeMemoryAllocators();
 
   // PDF test environment will be deleted by gtest.
   AddGlobalTestEnvironment(new PDFTestEnvironment());

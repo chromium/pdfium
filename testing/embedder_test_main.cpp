@@ -16,7 +16,7 @@
 // testing environment which needs the executable path in order to
 // find the external V8 binary data files.
 int main(int argc, char** argv) {
-  FXMEM_InitializePartitionAlloc();
+  FX_InitializeMemoryAllocators();
 
 #ifdef PDF_ENABLE_V8
   // The env will be deleted by gtest.

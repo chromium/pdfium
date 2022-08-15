@@ -43,7 +43,7 @@ pdfium::base::PartitionAllocatorGeneric& GetStringPartitionAllocator() {
 
 }  // namespace
 
-void FXMEM_InitializePartitionAlloc() {
+void FX_InitializeMemoryAllocators() {
   static bool s_partition_allocators_initialized = false;
   if (!s_partition_allocators_initialized) {
     pdfium::base::PartitionAllocGlobalInit(FX_OutOfMemoryTerminate);
