@@ -323,16 +323,17 @@ WideString CPDFSDK_FormFillEnvironment::GetFilePath() const {
   return WideString::FromDefANSI(ByteStringView(pBuff));
 }
 
-void CPDFSDK_FormFillEnvironment::SubmitForm(pdfium::span<uint8_t> form_data,
-                                             const WideString& URL) {
+void CPDFSDK_FormFillEnvironment::SubmitForm(
+    pdfium::span<const uint8_t> form_data,
+    const WideString& URL) {
   IPDF_JSPLATFORM* js_platform = GetJSPlatform();
   if (!js_platform || !js_platform->Doc_submitForm)
     return;
 
   ByteString bsUrl = URL.ToUTF16LE();
-  js_platform->Doc_submitForm(js_platform, form_data.data(),
-                              fxcrt::CollectionSize<int>(form_data),
-                              AsFPDFWideString(&bsUrl));
+  js_platform->Doc_submitForm(
+      js_platform, const_cast<uint8_t*>(form_data.data()),
+      fxcrt::CollectionSize<int>(form_data), AsFPDFWideString(&bsUrl));
 }
 
 IJS_Runtime* CPDFSDK_FormFillEnvironment::GetIJSRuntime() {

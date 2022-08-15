@@ -227,7 +227,7 @@ class CPDFSDK_FormFillEnvironment final
   WideString GetFilePath() const;
   ByteString GetAppName() const { return ByteString(); }
   FPDF_FORMFILLINFO* GetFormFillInfo() const { return m_pInfo; }
-  void SubmitForm(pdfium::span<uint8_t> form_data, const WideString& URL);
+  void SubmitForm(pdfium::span<const uint8_t> form_data, const WideString& URL);
 
   void SetFocusableAnnotSubtypes(
       const std::vector<CPDF_Annot::Subtype>& focusableAnnotTypes) {

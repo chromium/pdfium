@@ -72,20 +72,21 @@ bool IsFormFieldTypeXFA(FormFieldType fieldType) {
 }
 #endif  // PDF_ENABLE_XFA
 
-bool FDFToURLEncodedData(DataVector<uint8_t>* pBuffer) {
-  std::unique_ptr<CFDF_Document> pFDF = CFDF_Document::ParseMemory(*pBuffer);
+ByteString FDFToURLEncodedData(ByteString buffer) {
+  std::unique_ptr<CFDF_Document> pFDF =
+      CFDF_Document::ParseMemory(buffer.raw_span());
   if (!pFDF)
-    return true;
+    return buffer;
 
   const CPDF_Dictionary* pMainDict = pFDF->GetRoot()->GetDictFor("FDF");
   if (!pMainDict)
-    return false;
+    return ByteString();
 
   const CPDF_Array* pFields = pMainDict->GetArrayFor("Fields");
   if (!pFields)
-    return false;
+    return ByteString();
 
-  fxcrt::ostringstream fdfEncodedData;
+  fxcrt::ostringstream encoded_data;
   for (uint32_t i = 0; i < pFields->size(); i++) {
     const CPDF_Dictionary* pField = pFields->GetDictAt(i);
     if (!pField)
@@ -95,19 +96,12 @@ bool FDFToURLEncodedData(DataVector<uint8_t>* pBuffer) {
     ByteString csBValue = pField->GetStringFor("V");
     WideString csWValue = PDF_DecodeText(csBValue.raw_span());
     ByteString csValue_b = csWValue.ToDefANSI();
-    fdfEncodedData << name_b << "=" << csValue_b;
+    encoded_data << name_b << "=" << csValue_b;
     if (i != pFields->size() - 1)
-      fdfEncodedData << "&";
+      encoded_data << "&";
   }
 
-  auto nBufSize = fdfEncodedData.tellp();
-  if (nBufSize <= 0)
-    return false;
-
-  size_t copy_size = static_cast<size_t>(nBufSize);
-  pBuffer->resize(copy_size);
-  memcpy(pBuffer->data(), fdfEncodedData.str().c_str(), copy_size);
-  return true;
+  return ByteString(encoded_data);
 }
 
 }  // namespace
@@ -446,15 +440,17 @@ bool CPDFSDK_InteractiveForm::SubmitFields(
     const std::vector<CPDF_FormField*>& fields,
     bool bIncludeOrExclude,
     bool bUrlEncoded) {
-  ByteString textBuf = ExportFieldsToFDFTextBuf(fields, bIncludeOrExclude);
-  if (textBuf.IsEmpty())
+  ByteString text_buf = ExportFieldsToFDFTextBuf(fields, bIncludeOrExclude);
+  if (text_buf.IsEmpty())
     return false;
 
-  DataVector<uint8_t> buffer(textBuf.begin(), textBuf.end());
-  if (bUrlEncoded && !FDFToURLEncodedData(&buffer))
-    return false;
+  if (bUrlEncoded) {
+    text_buf = FDFToURLEncodedData(text_buf);
+    if (text_buf.IsEmpty())
+      return false;
+  }
 
-  m_pFormFillEnv->SubmitForm(buffer, csDestination);
+  m_pFormFillEnv->SubmitForm(text_buf.raw_span(), csDestination);
   return true;
 }
 
