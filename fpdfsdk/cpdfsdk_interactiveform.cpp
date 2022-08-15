@@ -25,7 +25,6 @@
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fxcrt/autorestorer.h"
-#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_string_wrappers.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_graphstatedata.h"
@@ -472,12 +471,11 @@ bool CPDFSDK_InteractiveForm::SubmitForm(const WideString& sDestination) {
   if (!pFDFDoc)
     return false;
 
-  ByteString fdfBuffer = pFDFDoc->WriteToString();
-  if (fdfBuffer.IsEmpty())
+  ByteString fdf_buffer = pFDFDoc->WriteToString();
+  if (fdf_buffer.IsEmpty())
     return false;
 
-  DataVector<uint8_t> buffer(fdfBuffer.begin(), fdfBuffer.end());
-  m_pFormFillEnv->SubmitForm(buffer, sDestination);
+  m_pFormFillEnv->SubmitForm(fdf_buffer.raw_span(), sDestination);
   return true;
 }
 
