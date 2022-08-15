@@ -88,9 +88,8 @@ class CPDF_PageObject : public CPDF_GraphicStates {
  protected:
   void CopyData(const CPDF_PageObject* pSrcObject);
 
-  CFX_FloatRect m_Rect;
-
  private:
+  CFX_FloatRect m_Rect;
   CFX_FloatRect m_OriginalRect;
   CPDF_ContentMarks m_ContentMarks;
   bool m_bDirty = false;
