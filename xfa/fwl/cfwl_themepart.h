@@ -10,6 +10,7 @@
 #include <stdint.h>
 
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/mask.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fwl/theme/cfwl_utils.h"
@@ -80,6 +81,8 @@ class CFWL_ThemePart {
     kWeekNum,
     kWeekNumSep
   };
+
+  FX_STACK_ALLOCATED();
 
   explicit CFWL_ThemePart(CFWL_Widget* pWidget);
   ~CFWL_ThemePart();
