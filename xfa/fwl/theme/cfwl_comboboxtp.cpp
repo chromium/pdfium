@@ -35,11 +35,10 @@ void CFWL_ComboBoxTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
       else
         argb_color = 0xFFFFFFFF;
 
-      pParams.GetGraphics()->SaveGraphState();
+      CFGAS_GEGraphics::StateRestorer restorer(pParams.GetGraphics());
       pParams.GetGraphics()->SetFillColor(CFGAS_GEColor(argb_color));
       pParams.GetGraphics()->FillPath(
           path, CFX_FillRenderOptions::FillType::kWinding, pParams.m_matrix);
-      pParams.GetGraphics()->RestoreGraphState();
       break;
     }
     case CFWL_ThemePart::Part::kDropDownButton: {

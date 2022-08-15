@@ -60,7 +60,7 @@ void CFWL_ListBoxTP::DrawListBoxItem(CFGAS_GEGraphics* pGraphics,
                                      const CFX_RectF* pData,
                                      const CFX_Matrix& matrix) {
   if (dwStates & CFWL_PartState::kSelected) {
-    pGraphics->SaveGraphState();
+    CFGAS_GEGraphics::StateRestorer restorer(pGraphics);
     pGraphics->SetFillColor(CFGAS_GEColor(FWLTHEME_COLOR_BKSelected));
     CFGAS_GEPath path;
 #if BUILDFLAG(IS_APPLE)
@@ -71,7 +71,6 @@ void CFWL_ListBoxTP::DrawListBoxItem(CFGAS_GEGraphics* pGraphics,
 #endif
     pGraphics->FillPath(path, CFX_FillRenderOptions::FillType::kWinding,
                         matrix);
-    pGraphics->RestoreGraphState();
   }
   if ((dwStates & CFWL_PartState::kFocused) && pData)
     DrawFocus(pGraphics, *pData, matrix);

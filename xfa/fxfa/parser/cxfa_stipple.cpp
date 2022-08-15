@@ -67,8 +67,7 @@ void CXFA_Stipple::Draw(CFGAS_GEGraphics* pGS,
   std::tie(alpha, colorref) = ArgbToAlphaAndColorRef(crColor);
   FX_ARGB cr = AlphaAndColorRefToArgb(iRate * alpha / 100, colorref);
 
-  pGS->SaveGraphState();
+  CFGAS_GEGraphics::StateRestorer restorer(pGS);
   pGS->SetFillColor(CFGAS_GEColor(cr));
   pGS->FillPath(fillPath, CFX_FillRenderOptions::FillType::kWinding, matrix);
-  pGS->RestoreGraphState();
 }

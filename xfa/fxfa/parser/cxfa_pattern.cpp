@@ -80,8 +80,7 @@ void CXFA_Pattern::Draw(CFGAS_GEGraphics* pGS,
   }
 
   CFGAS_GEPattern pattern(iHatch, crEnd, crStart);
-  pGS->SaveGraphState();
+  CFGAS_GEGraphics::StateRestorer restorer(pGS);
   pGS->SetFillColor(CFGAS_GEColor(&pattern, 0x0));
   pGS->FillPath(fillPath, CFX_FillRenderOptions::FillType::kWinding, matrix);
-  pGS->RestoreGraphState();
 }

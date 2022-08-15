@@ -311,7 +311,7 @@ void CFWL_Edit::SetScrollOffset(float fScrollOffset) {
 
 void CFWL_Edit::DrawContent(CFGAS_GEGraphics* pGraphics,
                             const CFX_Matrix& mtMatrix) {
-  pGraphics->SaveGraphState();
+  CFGAS_GEGraphics::StateRestorer restorer(pGraphics);
   if (m_Properties.m_dwStyleExts & FWL_STYLEEXT_EDT_CombText)
     pGraphics->SaveGraphState();
 
@@ -369,7 +369,6 @@ void CFWL_Edit::DrawContent(CFGAS_GEGraphics* pGraphics,
     param.SetPath(&path);
     GetThemeProvider()->DrawBackground(param);
   }
-  pGraphics->RestoreGraphState();
 }
 
 void CFWL_Edit::RenderText(CFX_RenderDevice* pRenderDev,

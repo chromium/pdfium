@@ -55,11 +55,11 @@ void CFWL_CheckBoxTP::DrawSignCheck(CFGAS_GEGraphics* pGraphics,
   CFX_Matrix mt;
   mt.Translate(rtSign.left, rtSign.top);
   mt.Concat(matrix);
-  pGraphics->SaveGraphState();
+
+  CFGAS_GEGraphics::StateRestorer restorer(pGraphics);
   pGraphics->SetFillColor(CFGAS_GEColor(argbFill));
   pGraphics->FillPath(*m_pCheckPath, CFX_FillRenderOptions::FillType::kWinding,
                       mt);
-  pGraphics->RestoreGraphState();
 }
 
 void CFWL_CheckBoxTP::DrawSignCircle(CFGAS_GEGraphics* pGraphics,
@@ -68,10 +68,10 @@ void CFWL_CheckBoxTP::DrawSignCircle(CFGAS_GEGraphics* pGraphics,
                                      const CFX_Matrix& matrix) {
   CFGAS_GEPath path;
   path.AddEllipse(rtSign);
-  pGraphics->SaveGraphState();
+
+  CFGAS_GEGraphics::StateRestorer restorer(pGraphics);
   pGraphics->SetFillColor(CFGAS_GEColor(argbFill));
   pGraphics->FillPath(path, CFX_FillRenderOptions::FillType::kWinding, matrix);
-  pGraphics->RestoreGraphState();
 }
 
 void CFWL_CheckBoxTP::DrawSignCross(CFGAS_GEGraphics* pGraphics,
@@ -79,17 +79,16 @@ void CFWL_CheckBoxTP::DrawSignCross(CFGAS_GEGraphics* pGraphics,
                                     FX_ARGB argbFill,
                                     const CFX_Matrix& matrix) {
   CFGAS_GEPath path;
-  float fRight = rtSign.right();
-  float fBottom = rtSign.bottom();
+  const float fRight = rtSign.right();
+  const float fBottom = rtSign.bottom();
   path.AddLine(rtSign.TopLeft(), CFX_PointF(fRight, fBottom));
   path.AddLine(CFX_PointF(rtSign.left, fBottom),
                CFX_PointF(fRight, rtSign.top));
 
-  pGraphics->SaveGraphState();
+  CFGAS_GEGraphics::StateRestorer restorer(pGraphics);
   pGraphics->SetStrokeColor(CFGAS_GEColor(argbFill));
   pGraphics->SetLineWidth(1.0f);
   pGraphics->StrokePath(path, matrix);
-  pGraphics->RestoreGraphState();
 }
 
 void CFWL_CheckBoxTP::DrawSignDiamond(CFGAS_GEGraphics* pGraphics,
@@ -97,19 +96,18 @@ void CFWL_CheckBoxTP::DrawSignDiamond(CFGAS_GEGraphics* pGraphics,
                                       FX_ARGB argbFill,
                                       const CFX_Matrix& matrix) {
   CFGAS_GEPath path;
-  float fWidth = rtSign.width;
-  float fHeight = rtSign.height;
-  float fBottom = rtSign.bottom();
+  const float fWidth = rtSign.width;
+  const float fHeight = rtSign.height;
+  const float fBottom = rtSign.bottom();
   path.MoveTo(CFX_PointF(rtSign.left + fWidth / 2, rtSign.top));
   path.LineTo(CFX_PointF(rtSign.left, rtSign.top + fHeight / 2));
   path.LineTo(CFX_PointF(rtSign.left + fWidth / 2, fBottom));
   path.LineTo(CFX_PointF(rtSign.right(), rtSign.top + fHeight / 2));
   path.LineTo(CFX_PointF(rtSign.left + fWidth / 2, rtSign.top));
 
-  pGraphics->SaveGraphState();
+  CFGAS_GEGraphics::StateRestorer restorer(pGraphics);
   pGraphics->SetFillColor(CFGAS_GEColor(argbFill));
   pGraphics->FillPath(path, CFX_FillRenderOptions::FillType::kWinding, matrix);
-  pGraphics->RestoreGraphState();
 }
 
 void CFWL_CheckBoxTP::DrawSignSquare(CFGAS_GEGraphics* pGraphics,
@@ -118,10 +116,10 @@ void CFWL_CheckBoxTP::DrawSignSquare(CFGAS_GEGraphics* pGraphics,
                                      const CFX_Matrix& matrix) {
   CFGAS_GEPath path;
   path.AddRectangle(rtSign.left, rtSign.top, rtSign.width, rtSign.height);
-  pGraphics->SaveGraphState();
+
+  CFGAS_GEGraphics::StateRestorer restorer(pGraphics);
   pGraphics->SetFillColor(CFGAS_GEColor(argbFill));
   pGraphics->FillPath(path, CFX_FillRenderOptions::FillType::kWinding, matrix);
-  pGraphics->RestoreGraphState();
 }
 
 void CFWL_CheckBoxTP::DrawSignStar(CFGAS_GEGraphics* pGraphics,
@@ -148,10 +146,10 @@ void CFWL_CheckBoxTP::DrawSignStar(CFGAS_GEGraphics* pGraphics,
     next = (next + 2) % std::size(points);
     path.LineTo(points[next]);
   }
-  pGraphics->SaveGraphState();
+
+  CFGAS_GEGraphics::StateRestorer restorer(pGraphics);
   pGraphics->SetFillColor(CFGAS_GEColor(argbFill));
   pGraphics->FillPath(path, CFX_FillRenderOptions::FillType::kWinding, matrix);
-  pGraphics->RestoreGraphState();
 }
 
 void CFWL_CheckBoxTP::EnsureCheckPathInitialized(float fCheckLen) {

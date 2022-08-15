@@ -85,8 +85,7 @@ void CXFA_Linear::Draw(CFGAS_GEGraphics* pGS,
   }
 
   CFGAS_GEShading shading(ptStart, ptEnd, false, false, crStart, crEnd);
-  pGS->SaveGraphState();
+  CFGAS_GEGraphics::StateRestorer restorer(pGS);
   pGS->SetFillColor(CFGAS_GEColor(&shading));
   pGS->FillPath(fillPath, CFX_FillRenderOptions::FillType::kWinding, matrix);
-  pGS->RestoreGraphState();
 }

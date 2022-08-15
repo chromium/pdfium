@@ -127,7 +127,7 @@ void CXFA_FFLine::RenderWidget(CFGAS_GEGraphics* pGS,
     linePath.AddLine(rtLine.TopLeft(), rtLine.BottomRight());
   }
 
-  pGS->SaveGraphState();
+  CFGAS_GEGraphics::StateRestorer restorer(pGS);
   pGS->SetLineWidth(fLineWidth);
   pGS->EnableActOnDash();
   XFA_StrokeTypeSetLineDash(pGS, iStrokeType, iCap);
@@ -135,5 +135,4 @@ void CXFA_FFLine::RenderWidget(CFGAS_GEGraphics* pGS,
   pGS->SetStrokeColor(CFGAS_GEColor(lineColor));
   pGS->SetLineCap(LineCapToFXGE(iCap));
   pGS->StrokePath(linePath, mtRotate);
-  pGS->RestoreGraphState();
 }

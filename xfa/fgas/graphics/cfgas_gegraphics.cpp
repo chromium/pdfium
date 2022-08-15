@@ -18,6 +18,7 @@
 #include "core/fxge/cfx_unicodeencoding.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "third_party/base/check.h"
+#include "third_party/base/notreached.h"
 #include "xfa/fgas/graphics/cfgas_gecolor.h"
 #include "xfa/fgas/graphics/cfgas_gepath.h"
 #include "xfa/fgas/graphics/cfgas_gepattern.h"
@@ -127,9 +128,10 @@ void CFGAS_GEGraphics::SaveGraphState() {
 
 void CFGAS_GEGraphics::RestoreGraphState() {
   m_renderDevice->RestoreState(false);
-  if (m_infoStack.empty())
+  if (m_infoStack.empty()) {
+    NOTREACHED();
     return;
-
+  }
   m_info = *m_infoStack.back();
   m_infoStack.pop_back();
   return;
@@ -430,4 +432,13 @@ CFGAS_GEGraphics::TInfo& CFGAS_GEGraphics::TInfo::operator=(
   strokeColor = other.strokeColor;
   fillColor = other.fillColor;
   return *this;
+}
+
+CFGAS_GEGraphics::StateRestorer::StateRestorer(CFGAS_GEGraphics* graphics)
+    : graphics_(graphics) {
+  graphics_->SaveGraphState();
+}
+
+CFGAS_GEGraphics::StateRestorer::~StateRestorer() {
+  graphics_->RestoreGraphState();
 }

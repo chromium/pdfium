@@ -91,7 +91,7 @@ void CFWL_ListBox::DrawWidget(CFGAS_GEGraphics* pGraphics,
   if (!pGraphics)
     return;
 
-  pGraphics->SaveGraphState();
+  CFGAS_GEGraphics::StateRestorer restorer(pGraphics);
   if (HasBorder())
     DrawBorder(pGraphics, CFWL_ThemePart::Part::kBorder, matrix);
 
@@ -106,7 +106,6 @@ void CFWL_ListBox::DrawWidget(CFGAS_GEGraphics* pGraphics,
     DrawBkground(pGraphics, matrix);
 
   DrawItems(pGraphics, matrix);
-  pGraphics->RestoreGraphState();
 }
 
 int32_t CFWL_ListBox::CountSelItems() {

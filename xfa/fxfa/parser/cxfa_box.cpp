@@ -220,10 +220,9 @@ void CXFA_Box::DrawFill(const std::vector<CXFA_Stroke*>& strokes,
   if (!fill || !fill->IsVisible())
     return;
 
-  pGS->SaveGraphState();
-
   CFGAS_GEPath fillPath;
   XFA_Element type = GetElementType();
+  CFGAS_GEGraphics::StateRestorer restorer(pGS);
   if (type == XFA_Element::Arc || forceRound) {
     CXFA_Edge* edge = GetEdgeIfExists(0);
     float fThickness = fmax(0.0, edge ? edge->GetThickness() : 0);
@@ -241,9 +240,7 @@ void CXFA_Box::DrawFill(const std::vector<CXFA_Stroke*>& strokes,
     NOTREACHED();
   }
   fillPath.Close();
-
   fill->Draw(pGS, fillPath, rtWidget, matrix);
-  pGS->RestoreGraphState();
 }
 
 void CXFA_Box::GetPathArcOrRounded(CFX_RectF rtDraw,
@@ -310,7 +307,7 @@ void CXFA_Box::StrokeArcOrRounded(CFGAS_GEGraphics* pGS,
       edge->Stroke(pGS, arcPath, matrix);
     return;
   }
-  pGS->SaveGraphState();
+  CFGAS_GEGraphics::StateRestorer restorer(pGS);
   pGS->SetLineWidth(fHalf);
 
   float a = rtWidget.width / 2.0f;
@@ -351,5 +348,4 @@ void CXFA_Box::StrokeArcOrRounded(CFGAS_GEGraphics* pGS,
 
   pGS->SetStrokeColor(CFGAS_GEColor(0xFFC0C0C0));
   pGS->StrokePath(arcPath, matrix);
-  pGS->RestoreGraphState();
 }

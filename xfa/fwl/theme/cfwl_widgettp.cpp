@@ -88,10 +88,10 @@ void CFWL_WidgetTP::DrawBorder(CFGAS_GEGraphics* pGraphics,
   path.AddRectangle(rect.left, rect.top, rect.width, rect.height);
   path.AddRectangle(rect.left + 1, rect.top + 1, rect.width - 2,
                     rect.height - 2);
-  pGraphics->SaveGraphState();
+
+  CFGAS_GEGraphics::StateRestorer restorer(pGraphics);
   pGraphics->SetFillColor(CFGAS_GEColor(ArgbEncode(255, 0, 0, 0)));
   pGraphics->FillPath(path, CFX_FillRenderOptions::FillType::kEvenOdd, matrix);
-  pGraphics->RestoreGraphState();
 }
 
 void CFWL_WidgetTP::FillBackground(CFGAS_GEGraphics* pGraphics,
@@ -109,10 +109,10 @@ void CFWL_WidgetTP::FillSolidRect(CFGAS_GEGraphics* pGraphics,
 
   CFGAS_GEPath path;
   path.AddRectangle(rect.left, rect.top, rect.width, rect.height);
-  pGraphics->SaveGraphState();
+
+  CFGAS_GEGraphics::StateRestorer restorer(pGraphics);
   pGraphics->SetFillColor(CFGAS_GEColor(fillColor));
   pGraphics->FillPath(path, CFX_FillRenderOptions::FillType::kWinding, matrix);
-  pGraphics->RestoreGraphState();
 }
 
 void CFWL_WidgetTP::DrawFocus(CFGAS_GEGraphics* pGraphics,
@@ -123,12 +123,12 @@ void CFWL_WidgetTP::DrawFocus(CFGAS_GEGraphics* pGraphics,
 
   CFGAS_GEPath path;
   path.AddRectangle(rect.left, rect.top, rect.width, rect.height);
-  pGraphics->SaveGraphState();
+
+  CFGAS_GEGraphics::StateRestorer restorer(pGraphics);
   pGraphics->SetStrokeColor(CFGAS_GEColor(0xFF000000));
   static constexpr float kDashPattern[2] = {1, 1};
   pGraphics->SetLineDash(0.0f, kDashPattern);
   pGraphics->StrokePath(path, matrix);
-  pGraphics->RestoreGraphState();
 }
 
 void CFWL_WidgetTP::DrawArrow(CFGAS_GEGraphics* pGraphics,

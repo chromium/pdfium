@@ -103,17 +103,17 @@ FWL_WidgetHit CFWL_ComboBox::HitTest(const CFX_PointF& point) {
 
 void CFWL_ComboBox::DrawWidget(CFGAS_GEGraphics* pGraphics,
                                const CFX_Matrix& matrix) {
-  pGraphics->SaveGraphState();
-  pGraphics->ConcatMatrix(matrix);
-  if (!m_BtnRect.IsEmpty(0.1f)) {
-    CFWL_ThemeBackground param(this, pGraphics);
-    param.m_iPart = CFWL_ThemePart::Part::kDropDownButton;
-    param.m_dwStates = m_iBtnState;
-    param.m_PartRect = m_BtnRect;
-    GetThemeProvider()->DrawBackground(param);
+  {
+    CFGAS_GEGraphics::StateRestorer restorer(pGraphics);
+    pGraphics->ConcatMatrix(matrix);
+    if (!m_BtnRect.IsEmpty(0.1f)) {
+      CFWL_ThemeBackground param(this, pGraphics);
+      param.m_iPart = CFWL_ThemePart::Part::kDropDownButton;
+      param.m_dwStates = m_iBtnState;
+      param.m_PartRect = m_BtnRect;
+      GetThemeProvider()->DrawBackground(param);
+    }
   }
-  pGraphics->RestoreGraphState();
-
   if (m_pEdit) {
     CFX_RectF rtEdit = m_pEdit->GetWidgetRect();
     CFX_Matrix mt(1, 0, 0, 1, rtEdit.left, rtEdit.top);

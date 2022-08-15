@@ -180,7 +180,7 @@ void CXFA_Stroke::Stroke(CFGAS_GEGraphics* pGS,
   if (fThickness < 0.001f)
     return;
 
-  pGS->SaveGraphState();
+  CFGAS_GEGraphics::StateRestorer restorer(pGS);
   if (IsCorner() && fThickness > 2 * GetRadius())
     fThickness = 2 * GetRadius();
 
@@ -190,5 +190,4 @@ void CXFA_Stroke::Stroke(CFGAS_GEGraphics* pGS,
   XFA_StrokeTypeSetLineDash(pGS, GetStrokeType(), XFA_AttributeValue::Butt);
   pGS->SetStrokeColor(CFGAS_GEColor(GetColor()));
   pGS->StrokePath(pPath, matrix);
-  pGS->RestoreGraphState();
 }
