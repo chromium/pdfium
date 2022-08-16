@@ -130,6 +130,7 @@ class CPDFSDK_Annot : public Observable {
  protected:
   explicit CPDFSDK_Annot(CPDFSDK_PageView* pPageView);
 
+ private:
   UnownedPtr<CPDFSDK_PageView> const m_pPageView;
 };
 

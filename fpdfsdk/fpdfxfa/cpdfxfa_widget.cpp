@@ -245,7 +245,7 @@ void CPDFXFA_Widget::OnDraw(CFX_RenderDevice* pDevice,
     return;
 
   CFGAS_GEGraphics gs(pDevice);
-  bool is_highlight = m_pPageView->GetFormFillEnv()->GetFocusAnnot() != this;
+  bool is_highlight = GetPageView()->GetFormFillEnv()->GetFocusAnnot() != this;
   widget_handler->RenderWidget(GetXFAFFWidget(), &gs, mtUser2Device,
                                is_highlight);
 

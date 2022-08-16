@@ -67,7 +67,7 @@ void CPDFSDK_BAAnnot::ClearCachedAnnotAP() {
 bool CPDFSDK_BAAnnot::IsFocusableAnnot(
     const CPDF_Annot::Subtype& annot_type) const {
   return pdfium::Contains(
-      m_pPageView->GetFormFillEnv()->GetFocusableAnnotSubtypes(), annot_type);
+      GetPageView()->GetFormFillEnv()->GetFocusableAnnotSubtypes(), annot_type);
 }
 
 CFX_FloatRect CPDFSDK_BAAnnot::GetRect() const {
@@ -81,7 +81,7 @@ CPDF_Annot::Subtype CPDFSDK_BAAnnot::GetAnnotSubtype() const {
 void CPDFSDK_BAAnnot::DrawAppearance(CFX_RenderDevice* pDevice,
                                      const CFX_Matrix& mtUser2Device,
                                      CPDF_Annot::AppearanceMode mode) {
-  m_pAnnot->DrawAppearance(m_pPageView->GetPDFPage(), pDevice, mtUser2Device,
+  m_pAnnot->DrawAppearance(GetPageView()->GetPDFPage(), pDevice, mtUser2Device,
                            mode);
 }
 
@@ -252,7 +252,7 @@ void CPDFSDK_BAAnnot::InvalidateRect() {
   view_bounding_box.Inflate(1, 1);
   view_bounding_box.Normalize();
   FX_RECT rect = view_bounding_box.GetOuterRect();
-  m_pPageView->GetFormFillEnv()->Invalidate(GetPage(), rect);
+  GetPageView()->GetFormFillEnv()->Invalidate(GetPage(), rect);
 }
 
 int CPDFSDK_BAAnnot::GetLayoutOrder() const {
@@ -275,7 +275,7 @@ void CPDFSDK_BAAnnot::OnDraw(CFX_RenderDevice* pDevice,
   }
 
   if (!is_focused_ || !IsFocusableAnnot(annot_type) ||
-      this != m_pPageView->GetFormFillEnv()->GetFocusAnnot()) {
+      this != GetPageView()->GetFormFillEnv()->GetFocusAnnot()) {
     return;
   }
 
@@ -356,7 +356,7 @@ bool CPDFSDK_BAAnnot::OnKeyDown(FWL_VKEYCODE nKeyCode,
   }
 
   CPDF_Action action = GetAAction(CPDF_AAction::kKeyStroke);
-  CPDFSDK_FormFillEnvironment* env = m_pPageView->GetFormFillEnv();
+  CPDFSDK_FormFillEnvironment* env = GetPageView()->GetFormFillEnv();
   if (action.GetDict()) {
     return env->DoActionLink(action, CPDF_AAction::kKeyStroke, nFlags);
   }
@@ -426,6 +426,6 @@ CPDF_Dest CPDFSDK_BAAnnot::GetDestination() const {
 
   // Link annotations can have "Dest" entry defined as an explicit array.
   // See ISO 32000-1:2008 spec, section 12.3.2.1.
-  return CPDF_Dest::Create(m_pPageView->GetPDFDocument(),
+  return CPDF_Dest::Create(GetPageView()->GetPDFDocument(),
                            GetAnnotDict()->GetDirectObjectFor("Dest"));
 }
