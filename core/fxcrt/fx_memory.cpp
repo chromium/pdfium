@@ -55,9 +55,7 @@ void FX_InitializeMemoryAllocators() {
 }
 
 void* FXMEM_DefaultAlloc(size_t byte_size) {
-  return pdfium::base::PartitionAllocGenericFlags(
-      GetGeneralPartitionAllocator().root(),
-      pdfium::base::PartitionAllocReturnNull, byte_size, "GeneralPartition");
+  return pdfium::internal::Alloc(byte_size, 1);
 }
 
 void* FXMEM_DefaultCalloc(size_t num_elems, size_t byte_size) {
@@ -65,14 +63,11 @@ void* FXMEM_DefaultCalloc(size_t num_elems, size_t byte_size) {
 }
 
 void* FXMEM_DefaultRealloc(void* pointer, size_t new_size) {
-  return pdfium::base::PartitionReallocGenericFlags(
-      GetGeneralPartitionAllocator().root(),
-      pdfium::base::PartitionAllocReturnNull, pointer, new_size,
-      "GeneralPartition");
+  return pdfium::internal::Realloc(pointer, new_size, 1);
 }
 
 void FXMEM_DefaultFree(void* pointer) {
-  pdfium::base::PartitionFree(pointer);
+  FX_Free(pointer);
 }
 
 NOINLINE void FX_OutOfMemoryTerminate(size_t size) {
