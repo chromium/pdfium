@@ -379,6 +379,21 @@ TEST_F(FPDFViewEmbedderTest, MultipleInitDestroy) {
   EmbedderTestEnvironment::GetInstance()->SetUp();
 }
 
+TEST_F(FPDFViewEmbedderTest, RepeatedInitDestroy) {
+  for (int i = 0; i < 3; ++i) {
+    if (!OpenDocument("about_blank.pdf"))
+      ADD_FAILURE();
+    CloseDocument();
+
+    FPDF_DestroyLibrary();
+    FPDF_InitLibrary();
+  }
+
+  // Puts the test environment back the way it was.
+  EmbedderTestEnvironment::GetInstance()->TearDown();
+  EmbedderTestEnvironment::GetInstance()->SetUp();
+}
+
 TEST_F(FPDFViewEmbedderTest, Document) {
   ASSERT_TRUE(OpenDocument("about_blank.pdf"));
   EXPECT_EQ(1, GetPageCount());
