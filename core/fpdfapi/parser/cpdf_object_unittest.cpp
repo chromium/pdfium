@@ -4,6 +4,8 @@
 
 #include "core/fpdfapi/parser/cpdf_object.h"
 
+#include <stdint.h>
+
 #include <memory>
 #include <string>
 #include <utility>
@@ -21,6 +23,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
@@ -839,7 +842,7 @@ TEST(PDFArrayTest, ConvertIndirect) {
 }
 
 TEST(PDFStreamTest, SetData) {
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> data(100);
+  DataVector<uint8_t> data(100);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       data, pdfium::MakeRetain<CPDF_Dictionary>());
   EXPECT_EQ(static_cast<int>(data.size()),
@@ -850,7 +853,7 @@ TEST(PDFStreamTest, SetData) {
   stream->GetMutableDict()->SetNewFor<CPDF_String>(pdfium::stream::kDecodeParms,
                                                    L"SomeParams");
 
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> new_data(data.size() * 2);
+  DataVector<uint8_t> new_data(data.size() * 2);
   stream->SetData(new_data);
 
   // The "Length" field should be updated for new data size.
@@ -865,7 +868,7 @@ TEST(PDFStreamTest, SetData) {
 }
 
 TEST(PDFStreamTest, SetDataAndRemoveFilter) {
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> data(100);
+  DataVector<uint8_t> data(100);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       data, pdfium::MakeRetain<CPDF_Dictionary>());
   EXPECT_EQ(static_cast<int>(data.size()),
@@ -876,7 +879,7 @@ TEST(PDFStreamTest, SetDataAndRemoveFilter) {
   stream->GetMutableDict()->SetNewFor<CPDF_String>(pdfium::stream::kDecodeParms,
                                                    L"SomeParams");
 
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> new_data(data.size() * 2);
+  DataVector<uint8_t> new_data(data.size() * 2);
   stream->SetDataAndRemoveFilter(new_data);
   // The "Length" field should be updated for new data size.
   EXPECT_EQ(static_cast<int>(new_data.size()),

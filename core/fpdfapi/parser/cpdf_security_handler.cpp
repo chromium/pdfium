@@ -6,11 +6,11 @@
 
 #include "core/fpdfapi/parser/cpdf_security_handler.h"
 
+#include <stdint.h>
 #include <time.h>
 
 #include <algorithm>
 #include <utility>
-#include <vector>
 
 #include "core/fdrm/fx_crypt.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
@@ -18,6 +18,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_random.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
@@ -118,13 +119,13 @@ void Revision6_Hash(const ByteString& password,
   uint8_t digest[32];
   CRYPT_SHA256Finish(&sha, digest);
 
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> buf;
+  DataVector<uint8_t> buf;
   uint8_t* input = digest;
   uint8_t* key = input;
   uint8_t* iv = input + 16;
   uint8_t* E = nullptr;
   int iBufLen = 0;
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> interDigest;
+  DataVector<uint8_t> interDigest;
   int i = 0;
   int iBlockSize = 32;
   CRYPT_aes_context aes = {};
@@ -136,7 +137,7 @@ void Revision6_Hash(const ByteString& password,
     iBufLen = iRoundSize * 64;
     buf.resize(iBufLen);
     E = buf.data();
-    std::vector<uint8_t, FxAllocAllocator<uint8_t>> content;
+    DataVector<uint8_t> content;
     for (int j = 0; j < 64; ++j) {
       content.insert(std::end(content), password.raw_str(),
                      password.raw_str() + password.GetLength());

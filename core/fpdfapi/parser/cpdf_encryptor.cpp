@@ -6,7 +6,10 @@
 
 #include "core/fpdfapi/parser/cpdf_encryptor.h"
 
+#include <stdint.h>
+
 #include "core/fpdfapi/parser/cpdf_crypto_handler.h"
+#include "core/fxcrt/data_vector.h"
 #include "third_party/base/check.h"
 
 CPDF_Encryptor::CPDF_Encryptor(const CPDF_CryptoHandler* pHandler, int objnum)
@@ -14,12 +17,12 @@ CPDF_Encryptor::CPDF_Encryptor(const CPDF_CryptoHandler* pHandler, int objnum)
   DCHECK(m_pHandler);
 }
 
-std::vector<uint8_t, FxAllocAllocator<uint8_t>> CPDF_Encryptor::Encrypt(
+DataVector<uint8_t> CPDF_Encryptor::Encrypt(
     pdfium::span<const uint8_t> src_data) const {
   if (src_data.empty())
-    return std::vector<uint8_t, FxAllocAllocator<uint8_t>>();
+    return DataVector<uint8_t>();
 
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> result;
+  DataVector<uint8_t> result;
   size_t buf_size = m_pHandler->EncryptGetSize(src_data);
   result.resize(buf_size);
   m_pHandler->EncryptContent(m_ObjNum, 0, src_data, result.data(),

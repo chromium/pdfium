@@ -6,9 +6,10 @@
 
 #include "core/fpdfapi/parser/cpdf_stream.h"
 
+#include <stdint.h>
+
 #include <sstream>
 #include <utility>
-#include <vector>
 
 #include "constants/stream_dict_common.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -18,6 +19,7 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/span_util.h"
 #include "third_party/base/containers/contains.h"
@@ -41,7 +43,7 @@ CPDF_Stream::CPDF_Stream(pdfium::span<const uint8_t> pData,
   SetData(pData);
 }
 
-CPDF_Stream::CPDF_Stream(std::vector<uint8_t, FxAllocAllocator<uint8_t>> pData,
+CPDF_Stream::CPDF_Stream(DataVector<uint8_t> pData,
                          RetainPtr<CPDF_Dictionary> pDict)
     : m_pDict(std::move(pDict)) {
   // TODO(crbug.com/pdfium/1872): Avoid copying.
@@ -192,7 +194,7 @@ bool CPDF_Stream::WriteTo(IFX_ArchiveStream* archive,
   const bool is_metadata = IsMetaDataStreamDictionary(GetDict());
   CPDF_FlateEncoder encoder(this, !is_metadata);
 
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> encrypted_data;
+  DataVector<uint8_t> encrypted_data;
   pdfium::span<const uint8_t> data = encoder.GetSpan();
 
   if (encryptor && !is_metadata) {

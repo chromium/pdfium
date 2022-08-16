@@ -13,7 +13,7 @@
 #include <vector>
 
 #include "core/fpdfapi/parser/cpdf_stream.h"
-#include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_types.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/string_pool_template.h"
@@ -124,7 +124,7 @@ class CPDF_SyntaxParser {
   const FX_FILESIZE m_FileLen;
   FX_FILESIZE m_Pos = 0;
   WeakPtr<ByteStringPool> m_pPool;
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_pFileBuf;
+  DataVector<uint8_t> m_pFileBuf;
   FX_FILESIZE m_BufOffset = 0;
   uint32_t m_WordSize = 0;
   uint8_t m_WordBuffer[257];

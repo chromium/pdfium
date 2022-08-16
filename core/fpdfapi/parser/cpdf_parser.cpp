@@ -7,6 +7,7 @@
 #include "core/fpdfapi/parser/cpdf_parser.h"
 
 #include <ctype.h>
+#include <stdint.h>
 
 #include <algorithm>
 #include <utility>
@@ -27,8 +28,8 @@
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcrt/autorestorer.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_extension.h"
-#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/scoped_set_insertion.h"
 #include "third_party/base/check.h"
@@ -508,7 +509,7 @@ bool CPDF_Parser::ParseAndAppendCrossRefSubsectionData(
 
   out_objects->resize(new_size.ValueOrDie());
 
-  std::vector<char, FxAllocAllocator<char>> buf(1024 * kEntryConstSize + 1);
+  DataVector<char> buf(1024 * kEntryConstSize + 1);
   buf.back() = '\0';
 
   uint32_t nBytesToRead = count;
