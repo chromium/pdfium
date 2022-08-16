@@ -144,7 +144,7 @@ bool CPDF_CryptoHandler::DecryptStream(void* context,
     return true;
   }
   if (m_Cipher == Cipher::kRC4) {
-    int old_size = dest_buf.GetSize();
+    size_t old_size = dest_buf.GetSize();
     dest_buf.AppendBlock(source.data(), source.size());
     CRYPT_ArcFourCrypt(static_cast<CRYPT_rc4_context*>(context),
                        dest_buf.GetSpan().subspan(old_size, source.size()));

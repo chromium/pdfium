@@ -4510,7 +4510,7 @@ void CFXJSE_FormCalcContext::Get(
   if (!pFile)
     return;
 
-  int32_t size = pFile->GetSize();
+  FX_FILESIZE size = pFile->GetSize();
   DataVector<uint8_t> dataBuf(size);
   pFile->ReadBlock(dataBuf.data(), size);
   info.GetReturnValue().Set(
