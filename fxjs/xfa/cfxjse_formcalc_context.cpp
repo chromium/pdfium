@@ -8,6 +8,7 @@
 
 #include <ctype.h>
 #include <math.h>
+#include <stdint.h>
 #include <stdlib.h>
 
 #include <algorithm>
@@ -17,8 +18,8 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_datetime.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_extension.h"
-#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_random.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/widetext_buffer.h"
@@ -4172,7 +4173,7 @@ void CFXJSE_FormCalcContext::Space(
     ToFormCalcContext(pThis)->ThrowException("String too long.");
     return;
   }
-  std::vector<char, FxAllocAllocator<char>> space_string(count, ' ');
+  DataVector<char> space_string(count, ' ');
   info.GetReturnValue().Set(
       fxv8::NewStringHelper(info.GetIsolate(), ByteStringView(space_string)));
 }
@@ -4234,7 +4235,7 @@ void CFXJSE_FormCalcContext::Str(
   }
 
   if (u > iWidth || (iPrecision + u) >= iWidth) {
-    std::vector<char, FxAllocAllocator<char>> stars(std::max(iWidth, 0), '*');
+    DataVector<char> stars(std::max(iWidth, 0), '*');
     info.GetReturnValue().Set(
         fxv8::NewStringHelper(info.GetIsolate(), ByteStringView(stars)));
     return;
@@ -4510,7 +4511,7 @@ void CFXJSE_FormCalcContext::Get(
     return;
 
   int32_t size = pFile->GetSize();
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> dataBuf(size);
+  DataVector<uint8_t> dataBuf(size);
   pFile->ReadBlock(dataBuf.data(), size);
   info.GetReturnValue().Set(
       fxv8::NewStringHelper(info.GetIsolate(), ByteStringView(dataBuf)));

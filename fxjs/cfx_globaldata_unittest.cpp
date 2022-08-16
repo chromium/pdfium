@@ -4,9 +4,12 @@
 
 #include "fxjs/cfx_globaldata.h"
 
+#include <stdint.h>
+
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/data_vector.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {
@@ -17,8 +20,7 @@ class TestDelegate : public CFX_GlobalData::Delegate {
   ~TestDelegate() override = default;
 
   bool StoreBuffer(pdfium::span<const uint8_t> buffer) override {
-    last_buffer_ = std::vector<uint8_t, FxAllocAllocator<uint8_t>>(
-        buffer.begin(), buffer.end());
+    last_buffer_ = DataVector<uint8_t>(buffer.begin(), buffer.end());
     return true;
   }
   absl::optional<pdfium::span<uint8_t>> LoadBuffer() override {
@@ -26,10 +28,10 @@ class TestDelegate : public CFX_GlobalData::Delegate {
   }
   void BufferDone() override {
     // Catch misuse after done.
-    last_buffer_ = std::vector<uint8_t, FxAllocAllocator<uint8_t>>();
+    last_buffer_ = DataVector<uint8_t>();
   }
 
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> last_buffer_;
+  DataVector<uint8_t> last_buffer_;
 };
 
 }  // namespace

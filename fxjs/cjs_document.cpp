@@ -6,6 +6,8 @@
 
 #include "fxjs/cjs_document.h"
 
+#include <stdint.h>
+
 #include <utility>
 
 #include "constants/access_permissions.h"
@@ -18,7 +20,7 @@
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
-#include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/data_vector.h"
 #include "fpdfsdk/cpdfsdk_annotiteration.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
@@ -396,8 +398,7 @@ CJS_Result CJS_Document::mailForm(
   if (IsExpandedParamKnown(newParams[5]))
     cMsg = pRuntime->ToWideString(newParams[5]);
 
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> mutable_buf(sTextBuf.begin(),
-                                                              sTextBuf.end());
+  DataVector<uint8_t> mutable_buf(sTextBuf.begin(), sTextBuf.end());
   pRuntime->BeginBlock();
   m_pFormFillEnv->JS_docmailForm(mutable_buf, bUI, cTo, cSubject, cCc, cBcc,
                                  cMsg);

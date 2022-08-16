@@ -6,8 +6,11 @@
 
 #include "fxjs/cjs_app.h"
 
+#include <stdint.h>
+
 #include <utility>
 
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/stl_util.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
@@ -547,7 +550,7 @@ CJS_Result CJS_App::response(CJS_Runtime* pRuntime,
     swLabel = pRuntime->ToWideString(newParams[4]);
 
   const int MAX_INPUT_BYTES = 2048;
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> pBuff(MAX_INPUT_BYTES + 2);
+  DataVector<uint8_t> pBuff(MAX_INPUT_BYTES + 2);
   int nLengthBytes = pRuntime->GetFormFillEnv()->JS_appResponse(
       swQuestion, swTitle, swDefault, swLabel, bPassword,
       pdfium::make_span(pBuff).first(MAX_INPUT_BYTES));

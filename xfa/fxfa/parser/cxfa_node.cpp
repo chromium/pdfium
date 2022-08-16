@@ -7,6 +7,7 @@
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 #include <math.h>
+#include <stdint.h>
 
 #include <algorithm>
 #include <map>
@@ -17,6 +18,7 @@
 
 #include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/cfx_readonlymemorystream.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/stl_util.h"
@@ -388,9 +390,9 @@ inline uint8_t GetInvBase64(uint8_t x) {
   return (x & 128) == 0 ? kInvBase64[x] : 255;
 }
 
-std::vector<uint8_t, FxAllocAllocator<uint8_t>> XFA_RemoveBase64Whitespace(
+DataVector<uint8_t> XFA_RemoveBase64Whitespace(
     pdfium::span<const uint8_t> spStr) {
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> result;
+  DataVector<uint8_t> result;
   result.reserve(spStr.size());
   for (uint8_t ch : spStr) {
     if (GetInvBase64(ch) != 255 || ch == '=')
@@ -399,14 +401,12 @@ std::vector<uint8_t, FxAllocAllocator<uint8_t>> XFA_RemoveBase64Whitespace(
   return result;
 }
 
-std::vector<uint8_t, FxAllocAllocator<uint8_t>> XFA_Base64Decode(
-    const ByteString& bsStr) {
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> result;
+DataVector<uint8_t> XFA_Base64Decode(const ByteString& bsStr) {
+  DataVector<uint8_t> result;
   if (bsStr.IsEmpty())
     return result;
 
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> buffer =
-      XFA_RemoveBase64Whitespace(bsStr.raw_span());
+  DataVector<uint8_t> buffer = XFA_RemoveBase64Whitespace(bsStr.raw_span());
   result.reserve(3 * (buffer.size() / 4));
 
   uint32_t dwLimb = 0;
@@ -482,7 +482,7 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
   ByteString bsData;  // Must outlive |pImageFileRead|.
 
   // Must outlive |pImageFileRead|.
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> buffer;
+  DataVector<uint8_t> buffer;
 
   RetainPtr<IFX_SeekableReadStream> pImageFileRead;
   if (wsImage.GetLength() > 0) {

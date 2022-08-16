@@ -6,6 +6,8 @@
 
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 
+#include <stdint.h>
+
 #include <algorithm>
 #include <iterator>
 #include <memory>
@@ -13,6 +15,7 @@
 
 #include "build/build_config.h"
 #include "core/fxcrt/cfx_memorystream.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
@@ -735,7 +738,7 @@ void CFGAS_FontMgr::RegisterFace(RetainPtr<CFX_Face> pFace,
   FT_ULong dwTag;
   FT_ENC_TAG(dwTag, 'n', 'a', 'm', 'e');
 
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> table;
+  DataVector<uint8_t> table;
   unsigned long nLength = 0;
   unsigned int error =
       FT_Load_Sfnt_Table(pFace->GetRec(), dwTag, 0, nullptr, &nLength);
