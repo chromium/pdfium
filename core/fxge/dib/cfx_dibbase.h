@@ -7,9 +7,9 @@
 #ifndef CORE_FXGE_DIB_CFX_DIBBASE_H_
 #define CORE_FXGE_DIB_CFX_DIBBASE_H_
 
-#include <vector>
+#include <stdint.h>
 
-#include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "third_party/base/span.h"
@@ -102,16 +102,15 @@ class CFX_DIBBase : public Retainable {
  protected:
   CFX_DIBBase();
 
-  static bool ConvertBuffer(
-      FXDIB_Format dest_format,
-      uint8_t* dest_buf,
-      int dest_pitch,
-      int width,
-      int height,
-      const RetainPtr<const CFX_DIBBase>& pSrcBitmap,
-      int src_left,
-      int src_top,
-      std::vector<uint32_t, FxAllocAllocator<uint32_t>>* pal);
+  static bool ConvertBuffer(FXDIB_Format dest_format,
+                            uint8_t* dest_buf,
+                            int dest_pitch,
+                            int width,
+                            int height,
+                            const RetainPtr<const CFX_DIBBase>& pSrcBitmap,
+                            int src_left,
+                            int src_top,
+                            DataVector<uint32_t>* pal);
 
   RetainPtr<CFX_DIBitmap> ClipToInternal(const FX_RECT* pClip) const;
   void BuildPalette();
@@ -123,7 +122,7 @@ class CFX_DIBBase : public Retainable {
   int m_Height = 0;
   uint32_t m_Pitch = 0;
   RetainPtr<CFX_DIBitmap> m_pAlphaMask;
-  std::vector<uint32_t, FxAllocAllocator<uint32_t>> m_palette;
+  DataVector<uint32_t> m_palette;
 };
 
 #endif  // CORE_FXGE_DIB_CFX_DIBBASE_H_

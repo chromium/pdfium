@@ -7,9 +7,9 @@
 #ifndef CORE_FXGE_DIB_CFX_BITMAPCOMPOSER_H_
 #define CORE_FXGE_DIB_CFX_BITMAPCOMPOSER_H_
 
-#include <vector>
+#include <stdint.h>
 
-#include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/cfx_scanlinecompositor.h"
@@ -73,10 +73,10 @@ class CFX_BitmapComposer final : public ScanlineComposerIface {
   bool m_bFlipY;
   bool m_bRgbByteOrder = false;
   BlendMode m_BlendMode = BlendMode::kNormal;
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_pScanlineV;
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_pClipScanV;
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_pAddClipScan;
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_pScanlineAlphaV;
+  DataVector<uint8_t> m_pScanlineV;
+  DataVector<uint8_t> m_pClipScanV;
+  DataVector<uint8_t> m_pAddClipScan;
+  DataVector<uint8_t> m_pScanlineAlphaV;
 };
 
 #endif  // CORE_FXGE_DIB_CFX_BITMAPCOMPOSER_H_

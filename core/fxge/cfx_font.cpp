@@ -6,13 +6,15 @@
 
 #include "core/fxge/cfx_font.h"
 
+#include <stdint.h>
+
 #include <algorithm>
 #include <limits>
 #include <memory>
 #include <utility>
-#include <vector>
 
 #include "build/build_config.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -439,8 +441,7 @@ bool CFX_Font::LoadEmbedded(pdfium::span<const uint8_t> src_span,
                             uint64_t object_tag) {
   m_bVertical = force_vertical;
   m_ObjectTag = object_tag;
-  m_FontDataAllocation = std::vector<uint8_t, FxAllocAllocator<uint8_t>>(
-      src_span.begin(), src_span.end());
+  m_FontDataAllocation = DataVector<uint8_t>(src_span.begin(), src_span.end());
   m_Face = CFX_GEModule::Get()->GetFontMgr()->NewFixedFace(
       nullptr, m_FontDataAllocation, 0);
   m_bEmbedded = true;

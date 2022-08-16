@@ -7,10 +7,10 @@
 #ifndef CORE_FXGE_DIB_CSTRETCHENGINE_H_
 #define CORE_FXGE_DIB_CSTRETCHENGINE_H_
 
-#include <vector>
+#include <stdint.h>
 
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -98,7 +98,7 @@ class CStretchEngine {
     int m_DestMin = 0;
     size_t m_ItemSizeBytes = 0;
     size_t m_WeightTablesSizeBytes = 0;
-    std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_WeightTables;
+    DataVector<uint8_t> m_WeightTables;
   };
 
   CStretchEngine(ScanlineComposerIface* pDestBitmap,
@@ -145,10 +145,10 @@ class CStretchEngine {
   const int m_DestWidth;
   const int m_DestHeight;
   const FX_RECT m_DestClip;
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_DestScanline;
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_DestMaskScanline;
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_InterBuf;
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_ExtraAlphaBuf;
+  DataVector<uint8_t> m_DestScanline;
+  DataVector<uint8_t> m_DestMaskScanline;
+  DataVector<uint8_t> m_InterBuf;
+  DataVector<uint8_t> m_ExtraAlphaBuf;
   FX_RECT m_SrcClip;
   int m_InterPitch;
   int m_ExtraMaskPitch;

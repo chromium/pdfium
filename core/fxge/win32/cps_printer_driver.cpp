@@ -9,8 +9,8 @@
 #include <stdint.h>
 
 #include <sstream>
-#include <vector>
 
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
@@ -69,7 +69,7 @@ CPSPrinterDriver::CPSPrinterDriver(HDC hDC,
   if (::GetClipRgn(m_hDC, hRgn) == 1) {
     DWORD dwCount = ::GetRegionData(hRgn, 0, nullptr);
     if (dwCount) {
-      std::vector<uint8_t, FxAllocAllocator<uint8_t>> buffer(dwCount);
+      DataVector<uint8_t> buffer(dwCount);
       RGNDATA* pData = reinterpret_cast<RGNDATA*>(buffer.data());
       if (::GetRegionData(hRgn, dwCount, pData)) {
         CFX_Path path;

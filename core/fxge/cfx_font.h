@@ -7,11 +7,13 @@
 #ifndef CORE_FXGE_CFX_FONT_H_
 #define CORE_FXGE_CFX_FONT_H_
 
+#include <stdint.h>
+
 #include <memory>
-#include <vector>
 
 #include "build/build_config.h"
 #include "core/fxcrt/bytestring.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_codepage_forward.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
@@ -164,7 +166,7 @@ class CFX_Font {
   mutable RetainPtr<CFX_GlyphCache> m_GlyphCache;
   std::unique_ptr<CFX_SubstFont> m_pSubstFont;
   std::unique_ptr<uint8_t, FxFreeDeleter> m_pGsubData;
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_FontDataAllocation;
+  DataVector<uint8_t> m_FontDataAllocation;
   pdfium::span<uint8_t> m_FontData;
   FontType m_FontType = FontType::kUnknown;
   uint64_t m_ObjectTag = 0;

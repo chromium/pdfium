@@ -4,10 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <stdint.h>
+
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/apple/fx_apple_platform.h"
 #include "core/fxge/cfx_cliprgn.h"
@@ -57,8 +59,7 @@ bool CGDrawGlyphRun(CGContextRef pContext,
     if (!pFont->GetPlatformFont())
       return false;
   }
-  std::vector<uint16_t, FxAllocAllocator<uint16_t>> glyph_indices(
-      pCharPos.size());
+  DataVector<uint16_t> glyph_indices(pCharPos.size());
   std::vector<CGPoint> glyph_positions(pCharPos.size());
   for (size_t i = 0; i < pCharPos.size(); i++) {
     glyph_indices[i] =

@@ -6,12 +6,14 @@
 
 #include "core/fxge/cfx_fontmapper.h"
 
+#include <stdint.h>
+
 #include <algorithm>
 #include <memory>
 #include <utility>
-#include <vector>
 
 #include "build/build_config.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory.h"
@@ -428,7 +430,7 @@ ByteString CFX_FontMapper::GetPSNameFromTT(void* font_handle) {
   if (!size)
     return ByteString();
 
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> buffer(size);
+  DataVector<uint8_t> buffer(size);
   size_t bytes_read = m_pFontInfo->GetFontData(font_handle, kTableNAME, buffer);
   return bytes_read == size ? GetNameFromTT(buffer, 6) : ByteString();
 }
