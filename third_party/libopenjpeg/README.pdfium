@@ -30,3 +30,4 @@ Local Modifications:
 0039-opj_mqc_renorme.patch: Remove unused opj_mqc_renorme().
 0041-remove_opj_clock.patch: Remove unused opj_clock.h include.
 0042-popcnt-windows-arm64.patch: Backport to fix Windows arm64 build.
+0043-mel_init.patch: Backport fix for assertion failure in mel_init().
