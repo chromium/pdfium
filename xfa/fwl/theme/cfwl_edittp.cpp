@@ -24,10 +24,10 @@ void CFWL_EditTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
       break;
     }
     case CFWL_ThemePart::Part::kBackground: {
+      CFGAS_GEGraphics* pGraphics = pParams.GetGraphics();
+      CFGAS_GEGraphics::StateRestorer restorer(pGraphics);
       const CFGAS_GEPath* pParamsPath = pParams.GetPath();
       if (pParamsPath) {
-        CFGAS_GEGraphics* pGraphics = pParams.GetGraphics();
-        CFGAS_GEGraphics::StateRestorer restorer(pGraphics);
         pGraphics->SetFillColor(CFGAS_GEColor(FWLTHEME_COLOR_BKSelected));
         pGraphics->FillPath(*pParamsPath,
                             CFX_FillRenderOptions::FillType::kWinding,
@@ -45,10 +45,9 @@ void CFWL_EditTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
           else
             cr = CFGAS_GEColor(0xFFFFFFFF);
         }
-        CFGAS_GEGraphics::StateRestorer restorer(pParams.GetGraphics());
-        pParams.GetGraphics()->SetFillColor(cr);
-        pParams.GetGraphics()->FillPath(
-            path, CFX_FillRenderOptions::FillType::kWinding, pParams.m_matrix);
+        pGraphics->SetFillColor(cr);
+        pGraphics->FillPath(path, CFX_FillRenderOptions::FillType::kWinding,
+                            pParams.m_matrix);
       }
       break;
     }

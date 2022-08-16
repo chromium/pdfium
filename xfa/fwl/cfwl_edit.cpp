@@ -311,14 +311,32 @@ void CFWL_Edit::SetScrollOffset(float fScrollOffset) {
 
 void CFWL_Edit::DrawContent(CFGAS_GEGraphics* pGraphics,
                             const CFX_Matrix& mtMatrix) {
-  CFGAS_GEGraphics::StateRestorer restorer(pGraphics);
-  if (m_Properties.m_dwStyleExts & FWL_STYLEEXT_EDT_CombText)
-    pGraphics->SaveGraphState();
+  DrawContentNonComb(pGraphics, mtMatrix);
+  if (m_Properties.m_dwStyleExts & FWL_STYLEEXT_EDT_CombText) {
+    CFGAS_GEGraphics::StateRestorer restorer(pGraphics);
+    CFGAS_GEPath path;
+    const int32_t iLimit = m_nLimit > 0 ? m_nLimit : 1;
+    const float fStep = m_EngineRect.width / iLimit;
+    float fLeft = m_EngineRect.left + 1;
+    for (int32_t i = 1; i < iLimit; i++) {
+      fLeft += fStep;
+      path.AddLine(CFX_PointF(fLeft, m_ClientRect.top),
+                   CFX_PointF(fLeft, m_ClientRect.bottom()));
+    }
+    CFWL_ThemeBackground param(this, pGraphics);
+    param.m_matrix = mtMatrix;
+    param.m_iPart = CFWL_ThemePart::Part::kCombTextLine;
+    param.SetPath(&path);
+    GetThemeProvider()->DrawBackground(param);
+  }
+}
 
+void CFWL_Edit::DrawContentNonComb(CFGAS_GEGraphics* pGraphics,
+                                   const CFX_Matrix& mtMatrix) {
+  CFGAS_GEGraphics::StateRestorer restorer(pGraphics);
   CFX_RectF rtClip = m_EngineRect;
   float fOffSetX = m_EngineRect.left - m_fScrollOffsetX;
   float fOffSetY = m_EngineRect.top - m_fScrollOffsetY + m_fVAlignOffset;
-
   CFX_Matrix mt(1, 0, 0, 1, fOffSetX, fOffSetY);
   rtClip = mtMatrix.TransformRect(rtClip);
   mt.Concat(mtMatrix);
@@ -349,26 +367,6 @@ void CFWL_Edit::DrawContent(CFGAS_GEGraphics* pGraphics,
 
   CFX_RenderDevice* pRenderDev = pGraphics->GetRenderDevice();
   RenderText(pRenderDev, rtClip, mt);
-
-  if (m_Properties.m_dwStyleExts & FWL_STYLEEXT_EDT_CombText) {
-    pGraphics->RestoreGraphState();
-
-    CFGAS_GEPath path;
-    int32_t iLimit = m_nLimit > 0 ? m_nLimit : 1;
-    float fStep = m_EngineRect.width / iLimit;
-    float fLeft = m_EngineRect.left + 1;
-    for (int32_t i = 1; i < iLimit; i++) {
-      fLeft += fStep;
-      path.AddLine(CFX_PointF(fLeft, m_ClientRect.top),
-                   CFX_PointF(fLeft, m_ClientRect.bottom()));
-    }
-
-    CFWL_ThemeBackground param(this, pGraphics);
-    param.m_matrix = mtMatrix;
-    param.m_iPart = CFWL_ThemePart::Part::kCombTextLine;
-    param.SetPath(&path);
-    GetThemeProvider()->DrawBackground(param);
-  }
 }
 
 void CFWL_Edit::RenderText(CFX_RenderDevice* pRenderDev,

@@ -39,9 +39,6 @@ class CFGAS_GEGraphics {
   explicit CFGAS_GEGraphics(CFX_RenderDevice* renderDevice);
   ~CFGAS_GEGraphics();
 
-  void SaveGraphState();
-  void RestoreGraphState();
-
   CFX_RectF GetClipRect() const;
   const CFX_Matrix* GetMatrix() const;
   CFX_RenderDevice* GetRenderDevice();
@@ -72,6 +69,9 @@ class CFGAS_GEGraphics {
     CFGAS_GEColor strokeColor{nullptr};
     CFGAS_GEColor fillColor{nullptr};
   };
+
+  void SaveGraphState();
+  void RestoreGraphState();
 
   void RenderDeviceStrokePath(const CFGAS_GEPath& path,
                               const CFX_Matrix& matrix);
