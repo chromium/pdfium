@@ -48,7 +48,7 @@ bool CPDF_DeviceCS::GetRGB(pdfium::span<const float> pBuf,
                            float* R,
                            float* G,
                            float* B) const {
-  switch (m_Family) {
+  switch (GetFamily()) {
     case Family::kDeviceGray:
       *R = NormalizeChannel(pBuf[0]);
       *G = *R;
@@ -85,7 +85,7 @@ void CPDF_DeviceCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
                                        bool bTransMask) const {
   uint8_t* pDestBuf = dest_span.data();
   const uint8_t* pSrcBuf = src_span.data();
-  switch (m_Family) {
+  switch (GetFamily()) {
     case Family::kDeviceGray:
       for (int i = 0; i < pixels; i++) {
         // Compiler can not conclude that src/dest don't overlap, avoid

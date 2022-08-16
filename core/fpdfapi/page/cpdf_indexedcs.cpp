@@ -35,7 +35,7 @@ uint32_t CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
     return 0;
 
   const CPDF_Object* pBaseObj = pArray->GetDirectObjectAt(1);
-  if (pBaseObj == m_pArray)
+  if (pBaseObj == GetArray())
     return 0;
 
   auto* pDocPageData = CPDF_DocPageData::FromDocument(pDoc);

@@ -82,8 +82,6 @@ class CPDF_ColorSpace : public Retainable, public Observable {
   static uint32_t ComponentsForFamily(Family family);
   static bool IsValidIccComponents(int components);
 
-  const CPDF_Array* GetArray() const { return m_pArray.Get(); }
-
   // Should only be called if this colorspace is not a pattern.
   std::vector<float> CreateBufAndSetDefaultColor() const;
 
@@ -134,10 +132,8 @@ class CPDF_ColorSpace : public Retainable, public Observable {
   // components count.
   void SetComponentsForStockCS(uint32_t nComponents);
 
+  const CPDF_Array* GetArray() const { return m_pArray.Get(); }
   bool IsStdConversionEnabled() const { return m_dwStdConversion != 0; }
-
-  RetainPtr<const CPDF_Array> m_pArray;
-  const Family m_Family;
 
  private:
   friend class CPDF_CalGray_TranslateImageLine_Test;
@@ -146,8 +142,10 @@ class CPDF_ColorSpace : public Retainable, public Observable {
   static RetainPtr<CPDF_ColorSpace> AllocateColorSpace(
       ByteStringView bsFamilyName);
 
+  const Family m_Family;
   uint32_t m_dwStdConversion = 0;
   uint32_t m_nComponents = 0;
+  RetainPtr<const CPDF_Array> m_pArray;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_COLORSPACE_H_

@@ -1114,7 +1114,7 @@ uint32_t CPDF_SeparationCS::v_Load(CPDF_Document* pDoc,
     return 1;
 
   const CPDF_Object* pAltArray = pArray->GetDirectObjectAt(2);
-  if (pAltArray == m_pArray)
+  if (pAltArray == GetArray())
     return 0;
 
   m_pBaseCS = Load(pDoc, pAltArray, pVisited);
@@ -1187,7 +1187,7 @@ uint32_t CPDF_DeviceNCS::v_Load(CPDF_Document* pDoc,
     return 0;
 
   const CPDF_Object* pAltCS = pArray->GetDirectObjectAt(2);
-  if (!pAltCS || pAltCS == m_pArray)
+  if (!pAltCS || pAltCS == GetArray())
     return 0;
 
   m_pBaseCS = Load(pDoc, pAltCS, pVisited);
