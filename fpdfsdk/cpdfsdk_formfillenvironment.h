@@ -163,7 +163,7 @@ class CPDFSDK_FormFillEnvironment final
                      pdfium::span<uint8_t> response);
   void JS_appBeep(int nType);
   WideString JS_fieldBrowse();
-  void JS_docmailForm(pdfium::span<uint8_t> mailData,
+  void JS_docmailForm(pdfium::span<const uint8_t> mailData,
                       FPDF_BOOL bUI,
                       const WideString& To,
                       const WideString& Subject,

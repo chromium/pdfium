@@ -20,7 +20,6 @@
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
-#include "core/fxcrt/data_vector.h"
 #include "fpdfsdk/cpdfsdk_annotiteration.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
@@ -347,8 +346,8 @@ CJS_Result CJS_Document::mailDoc(
     cMsg = pRuntime->ToWideString(newParams[5]);
 
   pRuntime->BeginBlock();
-  m_pFormFillEnv->JS_docmailForm(pdfium::span<uint8_t>(), bUI, cTo, cSubject,
-                                 cCc, cBcc, cMsg);
+  m_pFormFillEnv->JS_docmailForm(pdfium::span<const uint8_t>(), bUI, cTo,
+                                 cSubject, cCc, cBcc, cMsg);
   pRuntime->EndBlock();
   return CJS_Result::Success();
 }
@@ -398,10 +397,9 @@ CJS_Result CJS_Document::mailForm(
   if (IsExpandedParamKnown(newParams[5]))
     cMsg = pRuntime->ToWideString(newParams[5]);
 
-  DataVector<uint8_t> mutable_buf(sTextBuf.begin(), sTextBuf.end());
   pRuntime->BeginBlock();
-  m_pFormFillEnv->JS_docmailForm(mutable_buf, bUI, cTo, cSubject, cCc, cBcc,
-                                 cMsg);
+  m_pFormFillEnv->JS_docmailForm(sTextBuf.raw_span(), bUI, cTo, cSubject, cCc,
+                                 cBcc, cMsg);
   pRuntime->EndBlock();
   return CJS_Result::Success();
 }

@@ -248,13 +248,14 @@ WideString CPDFSDK_FormFillEnvironment::JS_fieldBrowse() {
   return WideString::FromDefANSI(ByteStringView(pBuff));
 }
 
-void CPDFSDK_FormFillEnvironment::JS_docmailForm(pdfium::span<uint8_t> mailData,
-                                                 FPDF_BOOL bUI,
-                                                 const WideString& To,
-                                                 const WideString& Subject,
-                                                 const WideString& CC,
-                                                 const WideString& BCC,
-                                                 const WideString& Msg) {
+void CPDFSDK_FormFillEnvironment::JS_docmailForm(
+    pdfium::span<const uint8_t> mailData,
+    FPDF_BOOL bUI,
+    const WideString& To,
+    const WideString& Subject,
+    const WideString& CC,
+    const WideString& BCC,
+    const WideString& Msg) {
   IPDF_JSPLATFORM* js_platform = GetJSPlatform();
   if (!js_platform || !js_platform->Doc_mail)
     return;
@@ -264,7 +265,7 @@ void CPDFSDK_FormFillEnvironment::JS_docmailForm(pdfium::span<uint8_t> mailData,
   ByteString bsCC = CC.ToUTF16LE();
   ByteString bsBcc = BCC.ToUTF16LE();
   ByteString bsMsg = Msg.ToUTF16LE();
-  js_platform->Doc_mail(js_platform, mailData.data(),
+  js_platform->Doc_mail(js_platform, const_cast<uint8_t*>(mailData.data()),
                         pdfium::base::checked_cast<int>(mailData.size()), bUI,
                         AsFPDFWideString(&bsTo), AsFPDFWideString(&bsSubject),
                         AsFPDFWideString(&bsCC), AsFPDFWideString(&bsBcc),
