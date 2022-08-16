@@ -130,16 +130,6 @@ class JpegDecoder final : public ScanlineDecoder {
 
   bool InitDecode(bool bAcceptKnownBadHeader);
 
-  jmp_buf m_JmpBuf;
-  jpeg_decompress_struct m_Cinfo;
-  jpeg_error_mgr m_Jerr;
-  jpeg_source_mgr m_Src;
-  pdfium::span<const uint8_t> m_SrcSpan;
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_ScanlineBuf;
-  bool m_bInited = false;
-  bool m_bStarted = false;
-  bool m_bJpegTransform = false;
-
  private:
   void CalcPitch();
   void InitDecompressSrc();
@@ -163,6 +153,15 @@ class JpegDecoder final : public ScanlineDecoder {
   // be this many bytes before that.
   static constexpr size_t kSofMarkerByteOffset = 5;
 
+  jmp_buf m_JmpBuf;
+  jpeg_decompress_struct m_Cinfo;
+  jpeg_error_mgr m_Jerr;
+  jpeg_source_mgr m_Src;
+  pdfium::span<const uint8_t> m_SrcSpan;
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_ScanlineBuf;
+  bool m_bInited = false;
+  bool m_bStarted = false;
+  bool m_bJpegTransform = false;
   uint32_t m_nDefaultScaleDenom = 1;
 };
 
