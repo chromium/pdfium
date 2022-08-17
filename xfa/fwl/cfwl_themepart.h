@@ -84,9 +84,10 @@ class CFWL_ThemePart {
 
   FX_STACK_ALLOCATED();
 
-  explicit CFWL_ThemePart(CFWL_Widget* pWidget);
+  CFWL_ThemePart(Part iPart, CFWL_Widget* pWidget);
   ~CFWL_ThemePart();
 
+  Part GetPart() const { return m_iPart; }
   CFWL_Widget* GetWidget() const { return m_pWidget.Get(); }
   FWLTHEME_STATE GetThemeState() const;
 
@@ -94,11 +95,11 @@ class CFWL_ThemePart {
   CFX_RectF m_PartRect;
   UnownedPtr<const CFX_RectF> m_pRtData;
   Mask<CFWL_PartState> m_dwStates = CFWL_PartState::kNormal;
-  Part m_iPart = Part::kNone;
   bool m_bMaximize = false;
   bool m_bStaticBackground = false;
 
  private:
+  const Part m_iPart;
   UnownedPtr<CFWL_Widget> const m_pWidget;
 };
 

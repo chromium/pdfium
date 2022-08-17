@@ -74,8 +74,8 @@ bool CFWL_ScrollBar::DoScroll(CFWL_EventScroll::Code dwCode, float fPos) {
 
 void CFWL_ScrollBar::DrawUpperTrack(CFGAS_GEGraphics* pGraphics,
                                     const CFX_Matrix& mtMatrix) {
-  CFWL_ThemeBackground param(this, pGraphics);
-  param.m_iPart = CFWL_ThemePart::Part::kUpperTrack;
+  CFWL_ThemeBackground param(CFWL_ThemePart::Part::kUpperTrack, this,
+                             pGraphics);
   param.m_dwStates = (m_Properties.m_dwStates & FWL_STATE_WGT_Disabled)
                          ? CFWL_PartState::kDisabled
                          : m_iMaxTrackState;
@@ -86,8 +86,8 @@ void CFWL_ScrollBar::DrawUpperTrack(CFGAS_GEGraphics* pGraphics,
 
 void CFWL_ScrollBar::DrawLowerTrack(CFGAS_GEGraphics* pGraphics,
                                     const CFX_Matrix& mtMatrix) {
-  CFWL_ThemeBackground param(this, pGraphics);
-  param.m_iPart = CFWL_ThemePart::Part::kLowerTrack;
+  CFWL_ThemeBackground param(CFWL_ThemePart::Part::kLowerTrack, this,
+                             pGraphics);
   param.m_dwStates = (m_Properties.m_dwStates & FWL_STATE_WGT_Disabled)
                          ? CFWL_PartState::kDisabled
                          : m_iMinTrackState;
@@ -98,8 +98,7 @@ void CFWL_ScrollBar::DrawLowerTrack(CFGAS_GEGraphics* pGraphics,
 
 void CFWL_ScrollBar::DrawMaxArrowBtn(CFGAS_GEGraphics* pGraphics,
                                      const CFX_Matrix& mtMatrix) {
-  CFWL_ThemeBackground param(this, pGraphics);
-  param.m_iPart = CFWL_ThemePart::Part::kBackArrow;
+  CFWL_ThemeBackground param(CFWL_ThemePart::Part::kBackArrow, this, pGraphics);
   param.m_dwStates = (m_Properties.m_dwStates & FWL_STATE_WGT_Disabled)
                          ? CFWL_PartState::kDisabled
                          : m_iMaxButtonState;
@@ -111,8 +110,7 @@ void CFWL_ScrollBar::DrawMaxArrowBtn(CFGAS_GEGraphics* pGraphics,
 
 void CFWL_ScrollBar::DrawMinArrowBtn(CFGAS_GEGraphics* pGraphics,
                                      const CFX_Matrix& mtMatrix) {
-  CFWL_ThemeBackground param(this, pGraphics);
-  param.m_iPart = CFWL_ThemePart::Part::kForeArrow;
+  CFWL_ThemeBackground param(CFWL_ThemePart::Part::kForeArrow, this, pGraphics);
   param.m_dwStates = (m_Properties.m_dwStates & FWL_STATE_WGT_Disabled)
                          ? CFWL_PartState::kDisabled
                          : m_iMinButtonState;
@@ -124,8 +122,7 @@ void CFWL_ScrollBar::DrawMinArrowBtn(CFGAS_GEGraphics* pGraphics,
 
 void CFWL_ScrollBar::DrawThumb(CFGAS_GEGraphics* pGraphics,
                                const CFX_Matrix& mtMatrix) {
-  CFWL_ThemeBackground param(this, pGraphics);
-  param.m_iPart = CFWL_ThemePart::Part::kThumb;
+  CFWL_ThemeBackground param(CFWL_ThemePart::Part::kThumb, this, pGraphics);
   param.m_dwStates = (m_Properties.m_dwStates & FWL_STATE_WGT_Disabled)
                          ? CFWL_PartState::kDisabled
                          : m_iThumbButtonState;

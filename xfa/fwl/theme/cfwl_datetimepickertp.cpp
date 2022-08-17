@@ -15,7 +15,7 @@ CFWL_DateTimePickerTP::~CFWL_DateTimePickerTP() = default;
 
 void CFWL_DateTimePickerTP::DrawBackground(
     const CFWL_ThemeBackground& pParams) {
-  switch (pParams.m_iPart) {
+  switch (pParams.GetPart()) {
     case CFWL_ThemePart::Part::kBorder:
       DrawBorder(pParams.GetGraphics(), pParams.m_PartRect, pParams.m_matrix);
       break;

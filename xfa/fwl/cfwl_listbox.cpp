@@ -317,8 +317,8 @@ void CFWL_ListBox::DrawBkground(CFGAS_GEGraphics* pGraphics,
   if (!pGraphics)
     return;
 
-  CFWL_ThemeBackground param(this, pGraphics);
-  param.m_iPart = CFWL_ThemePart::Part::kBackground;
+  CFWL_ThemeBackground param(CFWL_ThemePart::Part::kBackground, this,
+                             pGraphics);
   param.m_matrix = mtMatrix;
   param.m_PartRect = m_ClientRect;
   if (IsShowHorzScrollBar() && IsShowVertScrollBar())
@@ -377,8 +377,8 @@ void CFWL_ListBox::DrawItem(CFGAS_GEGraphics* pGraphics,
   }
 
   CFX_RectF rtFocus(rtItem);  // Must outlive |bg_param|.
-  CFWL_ThemeBackground bg_param(this, pGraphics);
-  bg_param.m_iPart = CFWL_ThemePart::Part::kListItem;
+  CFWL_ThemeBackground bg_param(CFWL_ThemePart::Part::kListItem, this,
+                                pGraphics);
   bg_param.m_dwStates = dwPartStates;
   bg_param.m_matrix = mtMatrix;
   bg_param.m_PartRect = rtItem;
@@ -403,8 +403,7 @@ void CFWL_ListBox::DrawItem(CFGAS_GEGraphics* pGraphics,
   CFX_RectF rtText(rtItem);
   rtText.Deflate(kItemTextMargin, kItemTextMargin);
 
-  CFWL_ThemeText textParam(this, pGraphics);
-  textParam.m_iPart = CFWL_ThemePart::Part::kListItem;
+  CFWL_ThemeText textParam(CFWL_ThemePart::Part::kListItem, this, pGraphics);
   textParam.m_dwStates = dwPartStates;
   textParam.m_matrix = mtMatrix;
   textParam.m_PartRect = rtText;
@@ -420,7 +419,7 @@ CFX_SizeF CFWL_ListBox::CalcSize() {
   m_ContentRect = m_ClientRect;
   CFX_RectF rtUIMargin;
   if (!GetOuter()) {
-    CFWL_ThemePart part(this);
+    CFWL_ThemePart part(CFWL_ThemePart::Part::kNone, this);
     CFX_RectF pUIMargin = GetThemeProvider()->GetUIMargin(part);
     m_ContentRect.Deflate(pUIMargin.left, pUIMargin.top, pUIMargin.width,
                           pUIMargin.height);
@@ -547,7 +546,7 @@ float CFWL_ListBox::GetScrollWidth() {
 }
 
 float CFWL_ListBox::CalcItemHeight() {
-  CFWL_ThemePart part(this);
+  CFWL_ThemePart part(CFWL_ThemePart::Part::kNone, this);
   return GetThemeProvider()->GetFontSize(part) + 2 * kItemTextMargin;
 }
 

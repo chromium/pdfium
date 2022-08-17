@@ -323,9 +323,9 @@ void CFWL_Edit::DrawContent(CFGAS_GEGraphics* pGraphics,
       path.AddLine(CFX_PointF(fLeft, m_ClientRect.top),
                    CFX_PointF(fLeft, m_ClientRect.bottom()));
     }
-    CFWL_ThemeBackground param(this, pGraphics);
+    CFWL_ThemeBackground param(CFWL_ThemePart::Part::kCombTextLine, this,
+                               pGraphics);
     param.m_matrix = mtMatrix;
-    param.m_iPart = CFWL_ThemePart::Part::kCombTextLine;
     param.SetPath(&path);
     GetThemeProvider()->DrawBackground(param);
   }
@@ -358,9 +358,9 @@ void CFWL_Edit::DrawContentNonComb(CFGAS_GEGraphics* pGraphics,
     }
     pGraphics->SetClipRect(rtClip);
 
-    CFWL_ThemeBackground param(this, pGraphics);
+    CFWL_ThemeBackground param(CFWL_ThemePart::Part::kBackground, this,
+                               pGraphics);
     param.m_matrix = mtMatrix;
-    param.m_iPart = CFWL_ThemePart::Part::kBackground;
     param.SetPath(&path);
     GetThemeProvider()->DrawBackground(param);
   }
@@ -461,7 +461,7 @@ void CFWL_Edit::UpdateEditParams() {
   m_pEditEngine->LimitHorizontalScroll(!auto_hscroll);
 
   IFWL_ThemeProvider* theme = GetThemeProvider();
-  CFWL_ThemePart part(this);
+  CFWL_ThemePart part(CFWL_ThemePart::Part::kNone, this);
   m_fFontSize = theme->GetFontSize(part);
 
   RetainPtr<CFGAS_GEFont> pFont = theme->GetFont(part);
@@ -530,7 +530,7 @@ bool CFWL_Edit::UpdateOffset(CFWL_ScrollBar* pScrollBar, float fPosChanged) {
 
 void CFWL_Edit::UpdateVAlignment() {
   IFWL_ThemeProvider* theme = GetThemeProvider();
-  CFWL_ThemePart part(this);
+  CFWL_ThemePart part(CFWL_ThemePart::Part::kNone, this);
   const CFX_SizeF pSpace = theme->GetSpaceAboveBelow(part);
   const float fSpaceAbove = pSpace.width >= 0.1f ? pSpace.width : 0.0f;
   const float fSpaceBelow = pSpace.height >= 0.1f ? pSpace.height : 0.0f;
@@ -622,12 +622,12 @@ void CFWL_Edit::Layout() {
   IFWL_ThemeProvider* theme = GetThemeProvider();
   float fWidth = theme->GetScrollBarWidth();
   if (!GetOuter()) {
-    CFWL_ThemePart part(this);
+    CFWL_ThemePart part(CFWL_ThemePart::Part::kNone, this);
     CFX_RectF pUIMargin = theme->GetUIMargin(part);
     m_EngineRect.Deflate(pUIMargin.left, pUIMargin.top, pUIMargin.width,
                          pUIMargin.height);
   } else if (GetOuter()->GetClassID() == FWL_Type::DateTimePicker) {
-    CFWL_ThemePart part(GetOuter());
+    CFWL_ThemePart part(CFWL_ThemePart::Part::kNone, GetOuter());
     CFX_RectF pUIMargin = theme->GetUIMargin(part);
     m_EngineRect.Deflate(pUIMargin.left, pUIMargin.top, pUIMargin.width,
                          pUIMargin.height);

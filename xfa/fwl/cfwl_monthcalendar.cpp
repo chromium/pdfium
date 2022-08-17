@@ -151,8 +151,8 @@ void CFWL_MonthCalendar::SetSelect(int32_t iYear,
 
 void CFWL_MonthCalendar::DrawBackground(CFGAS_GEGraphics* pGraphics,
                                         const CFX_Matrix& mtMatrix) {
-  CFWL_ThemeBackground params(this, pGraphics);
-  params.m_iPart = CFWL_ThemePart::Part::kBackground;
+  CFWL_ThemeBackground params(CFWL_ThemePart::Part::kBackground, this,
+                              pGraphics);
   params.m_PartRect = m_ClientRect;
   params.m_matrix = mtMatrix;
   GetThemeProvider()->DrawBackground(params);
@@ -160,8 +160,7 @@ void CFWL_MonthCalendar::DrawBackground(CFGAS_GEGraphics* pGraphics,
 
 void CFWL_MonthCalendar::DrawHeadBK(CFGAS_GEGraphics* pGraphics,
                                     const CFX_Matrix& mtMatrix) {
-  CFWL_ThemeBackground params(this, pGraphics);
-  params.m_iPart = CFWL_ThemePart::Part::kHeader;
+  CFWL_ThemeBackground params(CFWL_ThemePart::Part::kHeader, this, pGraphics);
   params.m_PartRect = m_HeadRect;
   params.m_matrix = mtMatrix;
   GetThemeProvider()->DrawBackground(params);
@@ -169,8 +168,7 @@ void CFWL_MonthCalendar::DrawHeadBK(CFGAS_GEGraphics* pGraphics,
 
 void CFWL_MonthCalendar::DrawLButton(CFGAS_GEGraphics* pGraphics,
                                      const CFX_Matrix& mtMatrix) {
-  CFWL_ThemeBackground params(this, pGraphics);
-  params.m_iPart = CFWL_ThemePart::Part::kLBtn;
+  CFWL_ThemeBackground params(CFWL_ThemePart::Part::kLBtn, this, pGraphics);
   params.m_dwStates = m_iLBtnPartStates;
   params.m_PartRect = m_LBtnRect;
   params.m_matrix = mtMatrix;
@@ -179,8 +177,7 @@ void CFWL_MonthCalendar::DrawLButton(CFGAS_GEGraphics* pGraphics,
 
 void CFWL_MonthCalendar::DrawRButton(CFGAS_GEGraphics* pGraphics,
                                      const CFX_Matrix& mtMatrix) {
-  CFWL_ThemeBackground params(this, pGraphics);
-  params.m_iPart = CFWL_ThemePart::Part::kRBtn;
+  CFWL_ThemeBackground params(CFWL_ThemePart::Part::kRBtn, this, pGraphics);
   params.m_dwStates = m_iRBtnPartStates;
   params.m_PartRect = m_RBtnRect;
   params.m_matrix = mtMatrix;
@@ -189,8 +186,7 @@ void CFWL_MonthCalendar::DrawRButton(CFGAS_GEGraphics* pGraphics,
 
 void CFWL_MonthCalendar::DrawCaption(CFGAS_GEGraphics* pGraphics,
                                      const CFX_Matrix& mtMatrix) {
-  CFWL_ThemeText textParam(this, pGraphics);
-  textParam.m_iPart = CFWL_ThemePart::Part::kCaption;
+  CFWL_ThemeText textParam(CFWL_ThemePart::Part::kCaption, this, pGraphics);
   textParam.m_wsText = GetHeadText(m_iCurYear, m_iCurMonth);
   m_HeadSize = CalcTextSize(textParam.m_wsText, false);
   CalcHeadSize();
@@ -203,8 +199,8 @@ void CFWL_MonthCalendar::DrawCaption(CFGAS_GEGraphics* pGraphics,
 
 void CFWL_MonthCalendar::DrawSeparator(CFGAS_GEGraphics* pGraphics,
                                        const CFX_Matrix& mtMatrix) {
-  CFWL_ThemeBackground params(this, pGraphics);
-  params.m_iPart = CFWL_ThemePart::Part::kHSeparator;
+  CFWL_ThemeBackground params(CFWL_ThemePart::Part::kHSeparator, this,
+                              pGraphics);
   params.m_PartRect = m_HSepRect;
   params.m_matrix = mtMatrix;
   GetThemeProvider()->DrawBackground(params);
@@ -212,8 +208,7 @@ void CFWL_MonthCalendar::DrawSeparator(CFGAS_GEGraphics* pGraphics,
 
 void CFWL_MonthCalendar::DrawDatesInBK(CFGAS_GEGraphics* pGraphics,
                                        const CFX_Matrix& mtMatrix) {
-  CFWL_ThemeBackground params(this, pGraphics);
-  params.m_iPart = CFWL_ThemePart::Part::kDateInBK;
+  CFWL_ThemeBackground params(CFWL_ThemePart::Part::kDateInBK, this, pGraphics);
   params.m_matrix = mtMatrix;
 
   IFWL_ThemeProvider* pTheme = GetThemeProvider();
@@ -239,8 +234,7 @@ void CFWL_MonthCalendar::DrawDatesInBK(CFGAS_GEGraphics* pGraphics,
 
 void CFWL_MonthCalendar::DrawWeek(CFGAS_GEGraphics* pGraphics,
                                   const CFX_Matrix& mtMatrix) {
-  CFWL_ThemeText params(this, pGraphics);
-  params.m_iPart = CFWL_ThemePart::Part::kWeek;
+  CFWL_ThemeText params(CFWL_ThemePart::Part::kWeek, this, pGraphics);
   params.m_iTTOAlign = FDE_TextAlignment::kCenter;
   params.m_dwTTOStyles.single_line_ = true;
   params.m_matrix = mtMatrix;
@@ -260,8 +254,7 @@ void CFWL_MonthCalendar::DrawWeek(CFGAS_GEGraphics* pGraphics,
 
 void CFWL_MonthCalendar::DrawToday(CFGAS_GEGraphics* pGraphics,
                                    const CFX_Matrix& mtMatrix) {
-  CFWL_ThemeText params(this, pGraphics);
-  params.m_iPart = CFWL_ThemePart::Part::kToday;
+  CFWL_ThemeText params(CFWL_ThemePart::Part::kToday, this, pGraphics);
   params.m_iTTOAlign = FDE_TextAlignment::kCenterLeft;
   params.m_wsText = GetTodayText(m_iYear, m_iMonth, m_iDay);
   m_TodaySize = CalcTextSize(params.m_wsText, false);
@@ -274,8 +267,7 @@ void CFWL_MonthCalendar::DrawToday(CFGAS_GEGraphics* pGraphics,
 
 void CFWL_MonthCalendar::DrawDatesIn(CFGAS_GEGraphics* pGraphics,
                                      const CFX_Matrix& mtMatrix) {
-  CFWL_ThemeText params(this, pGraphics);
-  params.m_iPart = CFWL_ThemePart::Part::kDatesIn;
+  CFWL_ThemeText params(CFWL_ThemePart::Part::kDatesIn, this, pGraphics);
   params.m_iTTOAlign = FDE_TextAlignment::kCenter;
   params.m_matrix = mtMatrix;
 
@@ -296,8 +288,7 @@ void CFWL_MonthCalendar::DrawDatesIn(CFGAS_GEGraphics* pGraphics,
 
 void CFWL_MonthCalendar::DrawDatesOut(CFGAS_GEGraphics* pGraphics,
                                       const CFX_Matrix& mtMatrix) {
-  CFWL_ThemeText params(this, pGraphics);
-  params.m_iPart = CFWL_ThemePart::Part::kDatesOut;
+  CFWL_ThemeText params(CFWL_ThemePart::Part::kDatesOut, this, pGraphics);
   params.m_iTTOAlign = FDE_TextAlignment::kCenter;
   params.m_matrix = mtMatrix;
   GetThemeProvider()->DrawText(params);
@@ -315,8 +306,8 @@ void CFWL_MonthCalendar::DrawDatesInCircle(CFGAS_GEGraphics* pGraphics,
   if (!pDate)
     return;
 
-  CFWL_ThemeBackground params(this, pGraphics);
-  params.m_iPart = CFWL_ThemePart::Part::kDateInCircle;
+  CFWL_ThemeBackground params(CFWL_ThemePart::Part::kDateInCircle, this,
+                              pGraphics);
   params.m_PartRect = pDate->rect;
   params.m_matrix = mtMatrix;
   GetThemeProvider()->DrawBackground(params);

@@ -183,8 +183,8 @@ void CFWL_DateTimePicker::ModifyEditStyleExts(uint32_t dwStyleExtsAdded,
 
 void CFWL_DateTimePicker::DrawDropDownButton(CFGAS_GEGraphics* pGraphics,
                                              const CFX_Matrix& mtMatrix) {
-  CFWL_ThemeBackground param(this, pGraphics);
-  param.m_iPart = CFWL_ThemePart::Part::kDropDownButton;
+  CFWL_ThemeBackground param(CFWL_ThemePart::Part::kDropDownButton, this,
+                             pGraphics);
   param.m_dwStates = m_iBtnState;
   param.m_PartRect = m_BtnRect;
   param.m_matrix = mtMatrix;

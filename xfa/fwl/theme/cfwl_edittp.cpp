@@ -18,7 +18,7 @@ CFWL_EditTP::CFWL_EditTP() = default;
 CFWL_EditTP::~CFWL_EditTP() = default;
 
 void CFWL_EditTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
-  switch (pParams.m_iPart) {
+  switch (pParams.GetPart()) {
     case CFWL_ThemePart::Part::kBorder: {
       DrawBorder(pParams.GetGraphics(), pParams.m_PartRect, pParams.m_matrix);
       break;

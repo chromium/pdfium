@@ -19,7 +19,7 @@ class CFWL_ThemeText final : public CFWL_ThemePart {
  public:
   FX_STACK_ALLOCATED();
 
-  CFWL_ThemeText(CFWL_Widget* pWidget, CFGAS_GEGraphics* pGraphics);
+  CFWL_ThemeText(Part iPart, CFWL_Widget* pWidget, CFGAS_GEGraphics* pGraphics);
   ~CFWL_ThemeText();
 
   CFGAS_GEGraphics* GetGraphics() const { return m_pGraphics.Get(); }

@@ -228,7 +228,7 @@ CFX_RectF CFWL_Widget::GetRelativeRect() const {
 }
 
 CFX_SizeF CFWL_Widget::CalcTextSize(const WideString& wsText, bool bMultiLine) {
-  CFWL_ThemeText calPart(this, nullptr);
+  CFWL_ThemeText calPart(CFWL_ThemePart::Part::kNone, this, nullptr);
   calPart.m_wsText = wsText;
   if (bMultiLine)
     calPart.m_dwTTOStyles.line_wrap_ = true;
@@ -246,7 +246,7 @@ void CFWL_Widget::CalcTextRect(const WideString& wsText,
                                const FDE_TextStyle& dwTTOStyles,
                                FDE_TextAlignment iTTOAlign,
                                CFX_RectF* pRect) {
-  CFWL_ThemeText calPart(this, nullptr);
+  CFWL_ThemeText calPart(CFWL_ThemePart::Part::kNone, this, nullptr);
   calPart.m_wsText = wsText;
   calPart.m_dwTTOStyles = dwTTOStyles;
   calPart.m_iTTOAlign = iTTOAlign;
@@ -279,8 +279,7 @@ void CFWL_Widget::RepaintRect(const CFX_RectF& pRect) {
 void CFWL_Widget::DrawBackground(CFGAS_GEGraphics* pGraphics,
                                  CFWL_ThemePart::Part iPartBk,
                                  const CFX_Matrix& mtMatrix) {
-  CFWL_ThemeBackground param(this, pGraphics);
-  param.m_iPart = iPartBk;
+  CFWL_ThemeBackground param(iPartBk, this, pGraphics);
   param.m_matrix = mtMatrix;
   param.m_PartRect = GetRelativeRect();
   GetThemeProvider()->DrawBackground(param);
@@ -289,8 +288,7 @@ void CFWL_Widget::DrawBackground(CFGAS_GEGraphics* pGraphics,
 void CFWL_Widget::DrawBorder(CFGAS_GEGraphics* pGraphics,
                              CFWL_ThemePart::Part iPartBorder,
                              const CFX_Matrix& matrix) {
-  CFWL_ThemeBackground param(this, pGraphics);
-  param.m_iPart = iPartBorder;
+  CFWL_ThemeBackground param(iPartBorder, this, pGraphics);
   param.m_matrix = matrix;
   param.m_PartRect = GetRelativeRect();
   GetThemeProvider()->DrawBackground(param);

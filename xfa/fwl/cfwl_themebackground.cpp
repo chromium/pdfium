@@ -6,8 +6,9 @@
 
 #include "xfa/fwl/cfwl_themebackground.h"
 
-CFWL_ThemeBackground::CFWL_ThemeBackground(CFWL_Widget* pWidget,
+CFWL_ThemeBackground::CFWL_ThemeBackground(Part iPart,
+                                           CFWL_Widget* pWidget,
                                            CFGAS_GEGraphics* pGraphics)
-    : CFWL_ThemePart(pWidget), m_pGraphics(pGraphics) {}
+    : CFWL_ThemePart(iPart, pWidget), m_pGraphics(pGraphics) {}
 
 CFWL_ThemeBackground::~CFWL_ThemeBackground() = default;

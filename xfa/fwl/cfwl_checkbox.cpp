@@ -59,23 +59,26 @@ void CFWL_CheckBox::DrawWidget(CFGAS_GEGraphics* pGraphics,
     DrawBorder(pGraphics, CFWL_ThemePart::Part::kBorder, matrix);
 
   Mask<CFWL_PartState> dwStates = GetPartStates();
-  CFWL_ThemeBackground param(this, pGraphics);
-  param.m_iPart = CFWL_ThemePart::Part::kBackground;
+  IFWL_ThemeProvider* pTheme = GetThemeProvider();
+  CFWL_ThemeBackground param(CFWL_ThemePart::Part::kBackground, this,
+                             pGraphics);
   param.m_dwStates = dwStates;
   param.m_matrix = matrix;
   param.m_PartRect = m_ClientRect;
   if (m_Properties.m_dwStates & FWL_STATE_WGT_Focused)
     param.m_pRtData = &m_FocusRect;
-
-  IFWL_ThemeProvider* pTheme = GetThemeProvider();
   pTheme->DrawBackground(param);
 
-  param.m_iPart = CFWL_ThemePart::Part::kCheckBox;
-  param.m_PartRect = m_BoxRect;
-  pTheme->DrawBackground(param);
+  CFWL_ThemeBackground checkParam(CFWL_ThemePart::Part::kCheckBox, this,
+                                  pGraphics);
+  checkParam.m_dwStates = dwStates;
+  checkParam.m_matrix = matrix;
+  checkParam.m_PartRect = m_BoxRect;
+  if (m_Properties.m_dwStates & FWL_STATE_WGT_Focused)
+    checkParam.m_pRtData = &m_FocusRect;
+  pTheme->DrawBackground(checkParam);
 
-  CFWL_ThemeText textParam(this, pGraphics);
-  textParam.m_iPart = CFWL_ThemePart::Part::kCaption;
+  CFWL_ThemeText textParam(CFWL_ThemePart::Part::kCaption, this, pGraphics);
   textParam.m_dwStates = dwStates;
   textParam.m_matrix = matrix;
   textParam.m_PartRect = m_CaptionRect;

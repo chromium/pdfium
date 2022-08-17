@@ -106,8 +106,8 @@ void CFWL_ComboBox::DrawWidget(CFGAS_GEGraphics* pGraphics,
   if (!m_BtnRect.IsEmpty(0.1f)) {
     CFGAS_GEGraphics::StateRestorer restorer(pGraphics);
     pGraphics->ConcatMatrix(matrix);
-    CFWL_ThemeBackground param(this, pGraphics);
-    param.m_iPart = CFWL_ThemePart::Part::kDropDownButton;
+    CFWL_ThemeBackground param(CFWL_ThemePart::Part::kDropDownButton, this,
+                               pGraphics);
     param.m_dwStates = m_iBtnState;
     param.m_PartRect = m_BtnRect;
     GetThemeProvider()->DrawBackground(param);
@@ -279,7 +279,7 @@ void CFWL_ComboBox::Layout() {
                   fBtn - borderWidth, m_ClientRect.height - 2 * borderWidth);
   }
 
-  CFWL_ThemePart part(this);
+  CFWL_ThemePart part(CFWL_ThemePart::Part::kNone, this);
   CFX_RectF pUIMargin = theme->GetUIMargin(part);
   m_ContentRect.Deflate(pUIMargin.left, pUIMargin.top, pUIMargin.width,
                         pUIMargin.height);

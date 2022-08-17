@@ -6,8 +6,9 @@
 
 #include "xfa/fwl/cfwl_themetext.h"
 
-CFWL_ThemeText::CFWL_ThemeText(CFWL_Widget* pWidget,
+CFWL_ThemeText::CFWL_ThemeText(Part iPart,
+                               CFWL_Widget* pWidget,
                                CFGAS_GEGraphics* pGraphics)
-    : CFWL_ThemePart(pWidget), m_pGraphics(pGraphics) {}
+    : CFWL_ThemePart(iPart, pWidget), m_pGraphics(pGraphics) {}
 
 CFWL_ThemeText::~CFWL_ThemeText() = default;

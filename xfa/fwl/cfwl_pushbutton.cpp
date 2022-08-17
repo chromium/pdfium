@@ -55,8 +55,8 @@ void CFWL_PushButton::DrawWidget(CFGAS_GEGraphics* pGraphics,
 
 void CFWL_PushButton::DrawBkground(CFGAS_GEGraphics* pGraphics,
                                    const CFX_Matrix& matrix) {
-  CFWL_ThemeBackground param(this, pGraphics);
-  param.m_iPart = CFWL_ThemePart::Part::kBackground;
+  CFWL_ThemeBackground param(CFWL_ThemePart::Part::kBackground, this,
+                             pGraphics);
   param.m_dwStates = GetPartStates();
   param.m_matrix = matrix;
   param.m_PartRect = m_ClientRect;

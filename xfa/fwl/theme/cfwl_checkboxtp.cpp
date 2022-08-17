@@ -207,7 +207,7 @@ void CFWL_CheckBoxTP::EnsureCheckPathInitialized(float fCheckLen) {
 }
 
 void CFWL_CheckBoxTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
-  if (pParams.m_iPart != CFWL_ThemePart::Part::kCheckBox)
+  if (pParams.GetPart() != CFWL_ThemePart::Part::kCheckBox)
     return;
 
   if ((pParams.m_dwStates & CFWL_PartState::kChecked) ||

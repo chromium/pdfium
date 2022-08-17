@@ -18,7 +18,9 @@ class CFWL_ThemeBackground final : public CFWL_ThemePart {
  public:
   FX_STACK_ALLOCATED();
 
-  CFWL_ThemeBackground(CFWL_Widget* pWidget, CFGAS_GEGraphics* pGraphics);
+  CFWL_ThemeBackground(Part iPart,
+                       CFWL_Widget* pWidget,
+                       CFGAS_GEGraphics* pGraphics);
   ~CFWL_ThemeBackground();
 
   CFGAS_GEGraphics* GetGraphics() const { return m_pGraphics.Get(); }

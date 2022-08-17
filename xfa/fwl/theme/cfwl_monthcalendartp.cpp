@@ -33,7 +33,7 @@ CFWL_MonthCalendarTP::CFWL_MonthCalendarTP() = default;
 CFWL_MonthCalendarTP::~CFWL_MonthCalendarTP() = default;
 
 void CFWL_MonthCalendarTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
-  switch (pParams.m_iPart) {
+  switch (pParams.GetPart()) {
     case CFWL_ThemePart::Part::kBorder: {
       DrawBorder(pParams.GetGraphics(), pParams.m_PartRect, pParams.m_matrix);
       break;
@@ -85,12 +85,12 @@ void CFWL_MonthCalendarTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
 
 void CFWL_MonthCalendarTP::DrawText(const CFWL_ThemeText& pParams) {
   EnsureTTOInitialized(pParams.GetWidget()->GetThemeProvider());
-  if (pParams.m_iPart == CFWL_ThemePart::Part::kDatesIn &&
+  if (pParams.GetPart() == CFWL_ThemePart::Part::kDatesIn &&
       !(pParams.m_dwStates & CFWL_PartState::kFlagged) &&
       (pParams.m_dwStates & Mask<CFWL_PartState>{CFWL_PartState::kHovered,
                                                  CFWL_PartState::kSelected})) {
     m_pTextOut->SetTextColor(0xFFFFFFFF);
-  } else if (pParams.m_iPart == CFWL_ThemePart::Part::kCaption) {
+  } else if (pParams.GetPart() == CFWL_ThemePart::Part::kCaption) {
     m_pTextOut->SetTextColor(kCaptionColor);
   } else {
     m_pTextOut->SetTextColor(0xFF000000);

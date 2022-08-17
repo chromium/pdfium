@@ -15,7 +15,7 @@ CFWL_BarcodeTP::CFWL_BarcodeTP() = default;
 CFWL_BarcodeTP::~CFWL_BarcodeTP() = default;
 
 void CFWL_BarcodeTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
-  switch (pParams.m_iPart) {
+  switch (pParams.GetPart()) {
     case CFWL_ThemePart::Part::kBorder:
       DrawBorder(pParams.GetGraphics(), pParams.m_PartRect, pParams.m_matrix);
       break;
