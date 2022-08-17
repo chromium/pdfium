@@ -43,7 +43,6 @@ enum class EventAppliesTo : uint8_t {
 };
 
 struct ExecEventParaInfo {
- public:
   uint32_t m_uHash;  // hashed as wide string.
   XFA_EVENTTYPE m_eventType;
   EventAppliesTo m_validFlags;
