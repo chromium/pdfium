@@ -7,10 +7,12 @@
 #ifndef CORE_FXCODEC_GIF_CFX_GIF_H_
 #define CORE_FXCODEC_GIF_CFX_GIF_H_
 
+#include <stdint.h>
+
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/data_vector.h"
 
 extern const char kGifSignature87[];
 extern const char kGifSignature89[];
@@ -115,7 +117,7 @@ struct CFX_GifImage {
 
   std::unique_ptr<CFX_GifGraphicControlExtension> image_GCE;
   std::vector<CFX_GifPalette> local_palettes;
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> row_buffer;
+  DataVector<uint8_t> row_buffer;
   CFX_GifImageInfo image_info;
   uint8_t local_palette_exp;
   uint8_t code_exp;

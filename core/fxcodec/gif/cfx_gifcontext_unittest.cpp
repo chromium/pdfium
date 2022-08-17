@@ -4,9 +4,12 @@
 
 #include "core/fxcodec/gif/cfx_gifcontext.h"
 
+#include <stdint.h>
+
 #include <utility>
 
 #include "core/fxcodec/cfx_codec_memory.h"
+#include "core/fxcrt/data_vector.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace fxcodec {
@@ -46,7 +49,7 @@ TEST(CFX_GifContext, SetInputBuffer) {
 }
 
 TEST(CFX_GifContext, ReadAllOrNone) {
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> dest_buffer;
+  DataVector<uint8_t> dest_buffer;
   uint8_t src_buffer[] = {0x00, 0x01, 0x02, 0x03, 0x04,
                           0x05, 0x06, 0x07, 0x08, 0x09};
   CFX_GifContextForTest context;

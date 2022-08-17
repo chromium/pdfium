@@ -6,11 +6,12 @@
 
 #include "core/fxcodec/icc/icc_transform.h"
 
+#include <stdint.h>
+
 #include <algorithm>
 #include <memory>
-#include <vector>
 
-#include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/data_vector.h"
 #include "third_party/base/cxx17_backports.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/numerics/safe_conversions.h"
@@ -121,14 +122,12 @@ void IccTransform::Translate(pdfium::span<const float> pSrcValues,
   // places which set transform to verify that only `pSrcValues.size()`
   // components are used.
   if (m_bLab) {
-    std::vector<double, FxAllocAllocator<double>> inputs(
-        std::max<size_t>(pSrcValues.size(), 16));
+    DataVector<double> inputs(std::max<size_t>(pSrcValues.size(), 16));
     for (uint32_t i = 0; i < pSrcValues.size(); ++i)
       inputs[i] = pSrcValues[i];
     cmsDoTransform(m_hTransform, inputs.data(), output, 1);
   } else {
-    std::vector<uint8_t, FxAllocAllocator<uint8_t>> inputs(
-        std::max<size_t>(pSrcValues.size(), 16));
+    DataVector<uint8_t> inputs(std::max<size_t>(pSrcValues.size(), 16));
     for (size_t i = 0; i < pSrcValues.size(); ++i) {
       inputs[i] =
           pdfium::clamp(static_cast<int>(pSrcValues[i] * 255.0f), 0, 255);

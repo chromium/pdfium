@@ -4,11 +4,13 @@
 
 #include "core/fxcodec/basic/basicmodule.h"
 
+#include <stdint.h>
+
 #include <algorithm>
 #include <utility>
-#include <vector>
 
 #include "core/fxcodec/scanlinedecoder.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
@@ -41,7 +43,7 @@ class RLScanlineDecoder final : public ScanlineDecoder {
   void GetNextOperator();
   void UpdateOperator(uint8_t used_bytes);
 
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_Scanline;
+  DataVector<uint8_t> m_Scanline;
   pdfium::span<const uint8_t> m_SrcBuf;
   size_t m_dwLineBytes = 0;
   size_t m_SrcOffset = 0;

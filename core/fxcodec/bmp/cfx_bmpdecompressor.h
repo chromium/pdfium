@@ -7,11 +7,13 @@
 #ifndef CORE_FXCODEC_BMP_CFX_BMPDECOMPRESSOR_H_
 #define CORE_FXCODEC_BMP_CFX_BMPDECOMPRESSOR_H_
 
+#include <stdint.h>
+
 #include <vector>
 
 #include "core/fxcodec/bmp/bmp_decoder.h"
 #include "core/fxcodec/bmp/fx_bmp.h"
-#include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/span.h"
@@ -70,7 +72,7 @@ class CFX_BmpDecompressor {
   int PaletteChannelCount() const { return pal_type_ == PalType::kNew ? 4 : 3; }
 
   UnownedPtr<const CFX_BmpContext> const context_;
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> out_row_buffer_;
+  DataVector<uint8_t> out_row_buffer_;
   std::vector<uint32_t> palette_;
   uint32_t header_offset_ = 0;
   uint32_t width_ = 0;

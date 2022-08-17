@@ -6,11 +6,14 @@
 
 #include "core/fxcodec/gif/cfx_gifcontext.h"
 
+#include <stdint.h>
+
 #include <algorithm>
 #include <iterator>
 #include <utility>
 
 #include "core/fxcodec/cfx_codec_memory.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/stl_util.h"
 
@@ -210,7 +213,7 @@ GifDecoder::Status CFX_GifContext::LoadFrame(size_t frame_num) {
   }
 
   uint8_t img_data_size;
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> img_data;
+  DataVector<uint8_t> img_data;
   size_t read_marker = input_buffer_->GetPosition();
 
   // TODO(crbug.com/pdfium/1793): This logic can be simplified a lot, but it

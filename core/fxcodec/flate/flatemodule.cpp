@@ -6,6 +6,7 @@
 
 #include "core/fxcodec/flate/flatemodule.h"
 
+#include <stdint.h>
 #include <string.h>
 
 #include <algorithm>
@@ -15,6 +16,7 @@
 #include <vector>
 
 #include "core/fxcodec/scanlinedecoder.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -616,7 +618,7 @@ class FlateScanlineDecoder : public ScanlineDecoder {
  protected:
   std::unique_ptr<z_stream, FlateDeleter> m_pFlate;
   const pdfium::span<const uint8_t> m_SrcBuf;
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_Scanline;
+  DataVector<uint8_t> m_Scanline;
 };
 
 FlateScanlineDecoder::FlateScanlineDecoder(pdfium::span<const uint8_t> src_span,
@@ -684,9 +686,9 @@ class FlatePredictorScanlineDecoder final : public FlateScanlineDecoder {
   int m_Columns = 0;
   uint32_t m_PredictPitch = 0;
   size_t m_LeftOver = 0;
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_LastLine;
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_PredictBuffer;
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_PredictRaw;
+  DataVector<uint8_t> m_LastLine;
+  DataVector<uint8_t> m_PredictBuffer;
+  DataVector<uint8_t> m_PredictRaw;
 };
 
 FlatePredictorScanlineDecoder::FlatePredictorScanlineDecoder(

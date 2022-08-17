@@ -6,14 +6,16 @@
 
 #include "core/fxcodec/fax/faxmodule.h"
 
+#include <stdint.h>
+
 #include <algorithm>
 #include <iterator>
 #include <memory>
-#include <vector>
 
 #include "build/build_config.h"
 #include "core/fxcodec/scanlinedecoder.h"
 #include "core/fxcrt/binary_buffer.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/calculate_pitch.h"
@@ -481,8 +483,8 @@ class FaxDecoder final : public ScanlineDecoder {
   const bool m_bEndOfLine;
   const bool m_bBlack;
   const pdfium::span<const uint8_t> m_SrcSpan;
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_ScanlineBuf;
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_RefBuf;
+  DataVector<uint8_t> m_ScanlineBuf;
+  DataVector<uint8_t> m_RefBuf;
 };
 
 FaxDecoder::FaxDecoder(pdfium::span<const uint8_t> src_span,
@@ -616,7 +618,7 @@ int FaxModule::FaxG4Decode(const uint8_t* src_buf,
                            uint8_t* dest_buf) {
   DCHECK(pitch != 0);
 
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> ref_buf(pitch, 0xff);
+  DataVector<uint8_t> ref_buf(pitch, 0xff);
   int bitpos = starting_bitpos;
   for (int iRow = 0; iRow < height; ++iRow) {
     uint8_t* line_buf = dest_buf + iRow * pitch;
@@ -689,8 +691,8 @@ class FaxEncoder {
   const int m_Pitch;
   const uint8_t* m_pSrcBuf;
   BinaryBuffer m_DestBuf;
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_RefLine;
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_LineBuf;
+  DataVector<uint8_t> m_RefLine;
+  DataVector<uint8_t> m_LineBuf;
 };
 
 FaxEncoder::FaxEncoder(const uint8_t* src_buf, int width, int height, int pitch)

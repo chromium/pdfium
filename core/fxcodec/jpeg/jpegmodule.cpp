@@ -7,17 +7,17 @@
 #include "core/fxcodec/jpeg/jpegmodule.h"
 
 #include <setjmp.h>
+#include <stdint.h>
 #include <string.h>
 
 #include <memory>
 #include <utility>
-#include <vector>
 
 #include "build/build_config.h"
 #include "core/fxcodec/cfx_codec_memory.h"
 #include "core/fxcodec/jpeg/jpeg_common.h"
 #include "core/fxcodec/scanlinedecoder.h"
-#include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/fx_dib.h"
@@ -158,7 +158,7 @@ class JpegDecoder final : public ScanlineDecoder {
   jpeg_error_mgr m_Jerr;
   jpeg_source_mgr m_Src;
   pdfium::span<const uint8_t> m_SrcSpan;
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_ScanlineBuf;
+  DataVector<uint8_t> m_ScanlineBuf;
   bool m_bInited = false;
   bool m_bStarted = false;
   bool m_bJpegTransform = false;
@@ -264,7 +264,7 @@ bool JpegDecoder::Create(pdfium::span<const uint8_t> src_span,
     return false;
 
   CalcPitch();
-  m_ScanlineBuf = std::vector<uint8_t, FxAllocAllocator<uint8_t>>(m_Pitch);
+  m_ScanlineBuf = DataVector<uint8_t>(m_Pitch);
   m_nComps = m_Cinfo.num_components;
   m_bpc = 8;
   m_bStarted = false;

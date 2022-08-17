@@ -12,12 +12,11 @@
 
 #include <memory>
 #include <utility>
-#include <vector>
 
 #include "core/fxcodec/fx_codec_def.h"
 #include "core/fxcodec/jpeg/jpegmodule.h"
 #include "core/fxcodec/progressive_decoder_iface.h"
-#include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/cstretchengine.h"
 #include "core/fxge/dib/fx_dib.h"
@@ -138,7 +137,7 @@ class ProgressiveDecoder final :
     }
 
     int m_ItemSize;
-    std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_pWeightTables;
+    DataVector<uint8_t> m_pWeightTables;
   };
 
   class VertTable {
@@ -152,7 +151,7 @@ class ProgressiveDecoder final :
                                             pixel * m_ItemSize);
     }
     int m_ItemSize;
-    std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_pWeightTables;
+    DataVector<uint8_t> m_pWeightTables;
   };
 
 #ifdef PDF_ENABLE_XFA_BMP
@@ -222,8 +221,8 @@ class ProgressiveDecoder final :
   RetainPtr<IFX_SeekableReadStream> m_pFile;
   RetainPtr<CFX_DIBitmap> m_pDeviceBitmap;
   RetainPtr<CFX_CodecMemory> m_pCodecMemory;
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_DecodeBuf;
-  std::vector<FX_ARGB, FxAllocAllocator<FX_ARGB>> m_SrcPalette;
+  DataVector<uint8_t> m_DecodeBuf;
+  DataVector<FX_ARGB> m_SrcPalette;
   std::unique_ptr<ProgressiveDecoderIface::Context> m_pJpegContext;
 #ifdef PDF_ENABLE_XFA_BMP
   std::unique_ptr<ProgressiveDecoderIface::Context> m_pBmpContext;

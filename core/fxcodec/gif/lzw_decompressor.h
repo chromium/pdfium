@@ -7,11 +7,12 @@
 #ifndef CORE_FXCODEC_GIF_LZW_DECOMPRESSOR_H_
 #define CORE_FXCODEC_GIF_LZW_DECOMPRESSOR_H_
 
+#include <stdint.h>
+
 #include <memory>
-#include <vector>
 
 #include "core/fxcodec/gif/cfx_gif.h"
-#include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/data_vector.h"
 
 namespace fxcodec {
 
@@ -42,9 +43,7 @@ class LZWDecompressor {
     return ExtractData(dest_buf, dest_size);
   }
 
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>>* DecompressedForTest() {
-    return &decompressed_;
-  }
+  DataVector<uint8_t>* DecompressedForTest() { return &decompressed_; }
   size_t* DecompressedNextForTest() { return &decompressed_next_; }
 
  private:
@@ -63,7 +62,7 @@ class LZWDecompressor {
   const uint16_t code_end_;
   uint16_t code_next_ = 0;
   uint8_t code_first_ = 0;
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> decompressed_;
+  DataVector<uint8_t> decompressed_;
   size_t decompressed_next_ = 0;
   uint16_t code_old_ = 0;
   const uint8_t* next_in_ = nullptr;
