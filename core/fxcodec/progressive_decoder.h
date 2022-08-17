@@ -136,6 +136,7 @@ class ProgressiveDecoder final :
                                             pixel * m_ItemSize);
     }
 
+   private:
     int m_ItemSize;
     DataVector<uint8_t> m_pWeightTables;
   };
@@ -150,6 +151,8 @@ class ProgressiveDecoder final :
       return reinterpret_cast<PixelWeight*>(m_pWeightTables.data() +
                                             pixel * m_ItemSize);
     }
+
+   private:
     int m_ItemSize;
     DataVector<uint8_t> m_pWeightTables;
   };
