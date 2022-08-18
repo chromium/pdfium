@@ -51,9 +51,8 @@ std::unique_ptr<CFXJSE_RuntimeData> CFXJSE_RuntimeData::Create(
 
 CFXJSE_RuntimeData* CFXJSE_RuntimeData::Get(v8::Isolate* pIsolate) {
   FXJS_PerIsolateData::SetUp(pIsolate);
-
   FXJS_PerIsolateData* pData = FXJS_PerIsolateData::Get(pIsolate);
-  if (!pData->m_pFXJSERuntimeData)
-    pData->m_pFXJSERuntimeData = CFXJSE_RuntimeData::Create(pIsolate);
-  return static_cast<CFXJSE_RuntimeData*>(pData->m_pFXJSERuntimeData.get());
+  if (!pData->GetExtension())
+    pData->SetExtension(CFXJSE_RuntimeData::Create(pIsolate));
+  return static_cast<CFXJSE_RuntimeData*>(pData->GetExtension());
 }

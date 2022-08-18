@@ -17,6 +17,7 @@
 #include <functional>
 #include <map>
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "core/fxcrt/widestring.h"
@@ -53,14 +54,19 @@ class FXJS_PerIsolateData {
   uint32_t CurrentMaxObjDefinitionID() const;
   CFXJS_ObjDefinition* ObjDefinitionForID(uint32_t id) const;
   uint32_t AssignIDForObjDefinition(std::unique_ptr<CFXJS_ObjDefinition> pDefn);
+  V8TemplateMap* GetDynamicObjsMap() { return m_pDynamicObjsMap.get(); }
+  ExtensionIface* GetExtension() { return m_pExtension.get(); }
+  void SetExtension(std::unique_ptr<ExtensionIface> extension) {
+    m_pExtension = std::move(extension);
+  }
+
+ private:
+  explicit FXJS_PerIsolateData(v8::Isolate* pIsolate);
 
   const wchar_t* const m_Tag;  // Raw, always a literal.
   std::vector<std::unique_ptr<CFXJS_ObjDefinition>> m_ObjectDefnArray;
   std::unique_ptr<V8TemplateMap> m_pDynamicObjsMap;
-  std::unique_ptr<ExtensionIface> m_pFXJSERuntimeData;
-
- protected:
-  explicit FXJS_PerIsolateData(v8::Isolate* pIsolate);
+  std::unique_ptr<ExtensionIface> m_pExtension;
 };
 
 void FXJS_Initialize(unsigned int embedderDataSlot, v8::Isolate* pIsolate);
