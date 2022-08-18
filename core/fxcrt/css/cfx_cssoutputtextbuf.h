@@ -7,9 +7,7 @@
 #ifndef CORE_FXCRT_CSS_CFX_CSSOUTPUTTEXTBUF_H_
 #define CORE_FXCRT_CSS_CFX_CSSOUTPUTTEXTBUF_H_
 
-#include <vector>
-
-#include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/widestring.h"
 
 class CFX_CSSOutputTextBuf {
@@ -23,7 +21,7 @@ class CFX_CSSOutputTextBuf {
   WideStringView GetTrailingBlankTrimmedString() const;
 
  protected:
-  std::vector<wchar_t, FxAllocAllocator<wchar_t>> m_Buffer;
+  DataVector<wchar_t> m_Buffer;
 };
 
 #endif  // CORE_FXCRT_CSS_CFX_CSSOUTPUTTEXTBUF_H_

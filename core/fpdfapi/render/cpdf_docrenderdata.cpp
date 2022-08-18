@@ -6,11 +6,12 @@
 
 #include "core/fpdfapi/render/cpdf_docrenderdata.h"
 
+#include <stdint.h>
+
 #include <algorithm>
 #include <array>
 #include <memory>
 #include <utility>
-#include <vector>
 
 #include "core/fpdfapi/font/cpdf_type3font.h"
 #include "core/fpdfapi/page/cpdf_dib.h"
@@ -19,6 +20,7 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/render/cpdf_type3cache.h"
+#include "core/fxcrt/data_vector.h"
 
 #if BUILDFLAG(IS_WIN)
 #include "core/fxge/win32/cfx_psfonttracker.h"
@@ -96,12 +98,9 @@ RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::CreateTransferFunc(
   std::fill(std::begin(output), std::end(output), 0.0f);
 
   bool bIdentity = true;
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> samples_r(
-      CPDF_TransferFunc::kChannelSampleSize);
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> samples_g(
-      CPDF_TransferFunc::kChannelSampleSize);
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> samples_b(
-      CPDF_TransferFunc::kChannelSampleSize);
+  DataVector<uint8_t> samples_r(CPDF_TransferFunc::kChannelSampleSize);
+  DataVector<uint8_t> samples_g(CPDF_TransferFunc::kChannelSampleSize);
+  DataVector<uint8_t> samples_b(CPDF_TransferFunc::kChannelSampleSize);
   std::array<pdfium::span<uint8_t>, 3> samples = {samples_r, samples_g,
                                                   samples_b};
   for (size_t v = 0; v < CPDF_TransferFunc::kChannelSampleSize; ++v) {

@@ -6,12 +6,15 @@
 
 #include "core/fxcrt/xml/cfx_xmlparser.h"
 
+#include <stdint.h>
+
 #include <algorithm>
 #include <iterator>
 #include <stack>
 #include <utility>
 
 #include "core/fxcrt/cfx_seekablestreamproxy.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -98,7 +101,7 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
   size_t current_buffer_idx = 0;
   size_t buffer_size = 0;
 
-  std::vector<wchar_t, FxAllocAllocator<wchar_t>> buffer;
+  DataVector<wchar_t> buffer;
   buffer.resize(alloc_size_safe.ValueOrDie());
 
   std::stack<wchar_t> character_to_skip_too_stack;

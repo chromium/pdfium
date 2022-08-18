@@ -6,11 +6,9 @@
 
 #include "core/fpdfdoc/cpdf_bookmark.h"
 
-#include <vector>
-
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
-#include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxge/dib/fx_dib.h"
 
 CPDF_Bookmark::CPDF_Bookmark() = default;
@@ -34,7 +32,7 @@ WideString CPDF_Bookmark::GetTitle() const {
   if (!len)
     return WideString();
 
-  std::vector<wchar_t, FxAllocAllocator<wchar_t>> buf(len);
+  DataVector<wchar_t> buf(len);
   for (size_t i = 0; i < len; i++) {
     wchar_t w = title[i];
     buf[i] = w > 0x20 ? w : 0x20;
