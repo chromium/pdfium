@@ -93,7 +93,7 @@ class CPDFSecurityHandlerEmbedderTest : public EmbedderTest {
     ASSERT_TRUE(page);
 
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-    CompareBitmap(page_bitmap.get(), 200, 200, pdfium::kHelloWorldChecksum);
+    CompareBitmap(page_bitmap.get(), 200, 200, pdfium::HelloWorldChecksum());
   }
 
   void VerifyModifiedHelloWorldPage(FPDF_PAGE page) {
@@ -101,7 +101,7 @@ class CPDFSecurityHandlerEmbedderTest : public EmbedderTest {
 
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
     CompareBitmap(page_bitmap.get(), 200, 200,
-                  pdfium::kHelloWorldRemovedChecksum);
+                  pdfium::HelloWorldRemovedChecksum());
   }
 };
 

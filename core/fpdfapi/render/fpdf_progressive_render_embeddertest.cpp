@@ -22,14 +22,18 @@ constexpr FX_ARGB kGreen = 0xFF00FF00;
 constexpr FX_ARGB kRed = 0xFFFF0000;
 constexpr FX_ARGB kWhite = 0xFFFFFFFF;
 
+const char* AnnotationStampWithApBaseContentChecksum() {
 #if BUILDFLAG(IS_APPLE) && !defined(_SKIA_SUPPORT_) && \
     !defined(_SKIA_SUPPORT_PATHS_)
-static constexpr char kAnnotationStampWithApBaseContentChecksum[] =
-    "243f3d6267d9db09198fed9f8c4957fd";
+  static constexpr char kAnnotationStampWithApBaseContentChecksum[] =
+      "243f3d6267d9db09198fed9f8c4957fd";
 #else
-static constexpr char kAnnotationStampWithApBaseContentChecksum[] =
-    "e31414933c9ff3950773981e5bf61678";
+  static constexpr char kAnnotationStampWithApBaseContentChecksum[] =
+      "e31414933c9ff3950773981e5bf61678";
 #endif
+
+  return kAnnotationStampWithApBaseContentChecksum;
+}
 
 }  // namespace
 
@@ -229,7 +233,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderWithoutPause) {
   EXPECT_TRUE(StartRenderPage(page, &pause));
   ScopedFPDFBitmap bitmap = FinishRenderPage(page);
   CompareBitmap(bitmap.get(), 595, 842,
-                kAnnotationStampWithApBaseContentChecksum);
+                AnnotationStampWithApBaseContentChecksum());
   UnloadPage(page);
 }
 
@@ -248,7 +252,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderWithPause) {
   }
   ScopedFPDFBitmap bitmap = FinishRenderPage(page);
   CompareBitmap(bitmap.get(), 595, 842,
-                kAnnotationStampWithApBaseContentChecksum);
+                AnnotationStampWithApBaseContentChecksum());
   UnloadPage(page);
 }
 
@@ -266,7 +270,8 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderAnnotWithPause) {
     render_done = ContinueRenderPage(page, &pause);
   }
   ScopedFPDFBitmap bitmap = FinishRenderPage(page);
-  CompareBitmap(bitmap.get(), 595, 842, pdfium::kAnnotationStampWithApChecksum);
+  CompareBitmap(bitmap.get(), 595, 842,
+                pdfium::AnnotationStampWithApChecksum());
   UnloadPage(page);
 }
 
@@ -284,7 +289,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderFormsWithPause) {
     render_done = ContinueRenderPage(page, &pause);
   }
   ScopedFPDFBitmap bitmap = FinishRenderPageWithForms(page, form_handle());
-  CompareBitmap(bitmap.get(), 300, 300, pdfium::kTextFormChecksum);
+  CompareBitmap(bitmap.get(), 300, 300, pdfium::TextFormChecksum());
   UnloadPage(page);
 }
 

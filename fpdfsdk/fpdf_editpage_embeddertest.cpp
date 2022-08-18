@@ -30,7 +30,7 @@ TEST_F(FPDFEditPageEmbedderTest, Rotation) {
       EXPECT_EQ(300, page_height);
       ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
       CompareBitmap(bitmap.get(), page_width, page_height,
-                    pdfium::kRectanglesChecksum);
+                    pdfium::RectanglesChecksum());
     }
 
     FPDFPage_SetRotation(page, 1);

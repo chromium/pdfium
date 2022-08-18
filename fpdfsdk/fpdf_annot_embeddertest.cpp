@@ -30,7 +30,7 @@
 #include "third_party/base/containers/contains.h"
 #include "third_party/base/span.h"
 
-using pdfium::kAnnotationStampWithApChecksum;
+using pdfium::AnnotationStampWithApChecksum;
 
 namespace {
 
@@ -657,7 +657,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndSaveLinkAnnotation) {
   ASSERT_TRUE(page);
   {
     ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
-    CompareBitmap(bitmap.get(), 200, 200, pdfium::kHelloWorldChecksum);
+    CompareBitmap(bitmap.get(), 200, 200, pdfium::HelloWorldChecksum());
   }
   EXPECT_EQ(0, FPDFPage_GetAnnotCount(page));
 
@@ -713,7 +713,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndSaveLinkAnnotation) {
   ASSERT_TRUE(OpenSavedDocument());
   page = LoadSavedPage(0);
   ASSERT_TRUE(page);
-  VerifySavedRendering(page, 200, 200, pdfium::kHelloWorldChecksum);
+  VerifySavedRendering(page, 200, 200, pdfium::HelloWorldChecksum());
   EXPECT_EQ(1, FPDFPage_GetAnnotCount(page));
 
   {
@@ -1122,7 +1122,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
   // Check that the page renders correctly.
   {
     ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
-    CompareBitmap(bitmap.get(), 595, 842, kAnnotationStampWithApChecksum);
+    CompareBitmap(bitmap.get(), 595, 842, AnnotationStampWithApChecksum());
   }
 
   {
@@ -1335,7 +1335,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
   // Check that the page renders correctly.
   {
     ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
-    CompareBitmap(bitmap.get(), 595, 842, kAnnotationStampWithApChecksum);
+    CompareBitmap(bitmap.get(), 595, 842, AnnotationStampWithApChecksum());
   }
 
   constexpr int kBitmapSize = 200;
@@ -1421,7 +1421,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
   // Check that the page renders correctly.
   {
     ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
-    CompareBitmap(bitmap.get(), 595, 842, kAnnotationStampWithApChecksum);
+    CompareBitmap(bitmap.get(), 595, 842, AnnotationStampWithApChecksum());
   }
 
   {
@@ -1477,7 +1477,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
   EXPECT_TRUE(FPDFPage_RemoveAnnot(page, 2));
   {
     ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
-    CompareBitmap(bitmap.get(), 595, 842, kAnnotationStampWithApChecksum);
+    CompareBitmap(bitmap.get(), 595, 842, AnnotationStampWithApChecksum());
   }
 
   UnloadPage(page);

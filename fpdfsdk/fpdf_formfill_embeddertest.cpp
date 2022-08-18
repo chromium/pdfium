@@ -22,7 +22,7 @@
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 
-using pdfium::kTextFormChecksum;
+using pdfium::TextFormChecksum;
 
 using testing::_;
 using testing::InSequence;
@@ -1344,7 +1344,7 @@ TEST_F(FPDFFormFillEmbedderTest, FormText) {
     FPDF_PAGE page = LoadPage(0);
     ASSERT_TRUE(page);
     ScopedFPDFBitmap bitmap1 = RenderLoadedPage(page);
-    CompareBitmap(bitmap1.get(), 300, 300, kTextFormChecksum);
+    CompareBitmap(bitmap1.get(), 300, 300, TextFormChecksum());
 
     // Click on the textfield
     EXPECT_EQ(FPDF_FORMFIELD_TEXTFIELD,
@@ -1399,7 +1399,7 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_1281) {
   ASSERT_TRUE(page);
 
   ScopedFPDFBitmap bitmap_normal = RenderLoadedPage(page);
-  CompareBitmap(bitmap_normal.get(), 200, 200, pdfium::kBug890322Checksum);
+  CompareBitmap(bitmap_normal.get(), 200, 200, pdfium::Bug890322Checksum());
 
   ScopedFPDFBitmap bitmap_reverse_byte_order =
       RenderLoadedPageWithFlags(page, FPDF_REVERSE_BYTE_ORDER);
@@ -1542,7 +1542,7 @@ TEST_F(FPDFFormFillEmbedderTest, RemoveFormFieldHighlight) {
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
   ScopedFPDFBitmap bitmap1 = RenderLoadedPage(page);
-  CompareBitmap(bitmap1.get(), 300, 300, kTextFormChecksum);
+  CompareBitmap(bitmap1.get(), 300, 300, TextFormChecksum());
 
   // Removing the highlight changes the rendering.
   FPDF_RemoveFormFieldHighlight(form_handle());
@@ -1552,7 +1552,7 @@ TEST_F(FPDFFormFillEmbedderTest, RemoveFormFieldHighlight) {
   // Restoring it gives the original rendering.
   SetInitialFormFieldHighlight(form_handle());
   ScopedFPDFBitmap bitmap3 = RenderLoadedPage(page);
-  CompareBitmap(bitmap3.get(), 300, 300, kTextFormChecksum);
+  CompareBitmap(bitmap3.get(), 300, 300, TextFormChecksum());
 
   UnloadPage(page);
 }
