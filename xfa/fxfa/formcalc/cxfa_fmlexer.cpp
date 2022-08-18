@@ -115,9 +115,12 @@ XFA_FM_TOKEN TokenizeIdentifier(WideStringView str) {
 
 }  // namespace
 
+CXFA_FMLexer::Token::Token() = default;
+
 CXFA_FMLexer::Token::Token(XFA_FM_TOKEN token) : m_type(token) {}
 
-CXFA_FMLexer::Token::Token() : Token(TOKreserver) {}
+CXFA_FMLexer::Token::Token(XFA_FM_TOKEN token, WideStringView str)
+    : m_type(token), m_string(str) {}
 
 CXFA_FMLexer::Token::Token(const Token& that) = default;
 
@@ -317,15 +320,12 @@ CXFA_FMLexer::Token CXFA_FMLexer::AdvanceForNumber() {
     RaiseError();
     return Token();
   }
-  Token token(TOKnumber);
-  token.m_string =
-      WideStringView(m_spInput.subspan(m_nCursor, end - m_nCursor));
+  WideStringView str(m_spInput.subspan(m_nCursor, end - m_nCursor));
   m_nCursor = end;
-  return token;
+  return Token(TOKnumber, str);
 }
 
 CXFA_FMLexer::Token CXFA_FMLexer::AdvanceForString() {
-  Token token(TOKstring);
   size_t start = m_nCursor;
   ++m_nCursor;
   while (!IsComplete() && m_spInput[m_nCursor]) {
@@ -337,9 +337,8 @@ CXFA_FMLexer::Token CXFA_FMLexer::AdvanceForString() {
       ++m_nCursor;
       // If the end of the input has been reached it was not escaped.
       if (m_nCursor >= m_spInput.size()) {
-        token.m_string =
-            WideStringView(m_spInput.subspan(start, m_nCursor - start));
-        return token;
+        return Token(TOKstring, WideStringView(m_spInput.subspan(
+                                    start, m_nCursor - start)));
       }
       // If the next character is not a " then the end of the string has been
       // found.
@@ -347,9 +346,8 @@ CXFA_FMLexer::Token CXFA_FMLexer::AdvanceForString() {
         if (!IsFormCalcCharacter(m_spInput[m_nCursor]))
           break;
 
-        token.m_string =
-            WideStringView(m_spInput.subspan(start, m_nCursor - start));
-        return token;
+        return Token(TOKstring, WideStringView(m_spInput.subspan(
+                                    start, m_nCursor - start)));
       }
     }
     ++m_nCursor;
@@ -374,11 +372,8 @@ CXFA_FMLexer::Token CXFA_FMLexer::AdvanceForIdentifier() {
     ++m_nCursor;
   }
 
-  WideStringView str =
-      WideStringView(m_spInput.subspan(start, m_nCursor - start));
-  Token token(TokenizeIdentifier(str));
-  token.m_string = str;
-  return token;
+  WideStringView str(m_spInput.subspan(start, m_nCursor - start));
+  return Token(TokenizeIdentifier(str), str);
 }
 
 void CXFA_FMLexer::AdvanceForComment() {

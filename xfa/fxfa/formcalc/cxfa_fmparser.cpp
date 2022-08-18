@@ -47,7 +47,7 @@ bool CXFA_FMParser::NextToken() {
     return false;
 
   m_token = m_lexer->NextToken();
-  while (!HasError() && m_token.m_type == TOKreserver)
+  while (!HasError() && m_token.GetType() == TOKreserver)
     m_token = m_lexer->NextToken();
   return !HasError();
 }
@@ -56,7 +56,7 @@ bool CXFA_FMParser::CheckThenNext(XFA_FM_TOKEN op) {
   if (HasError())
     return false;
 
-  if (m_token.m_type != op) {
+  if (m_token.GetType() != op) {
     m_error = true;
     return false;
   }
@@ -75,16 +75,16 @@ CXFA_FMParser::ParseExpressionList() {
 
   std::vector<cppgc::Member<CXFA_FMExpression>> expressions;
   while (!HasError()) {
-    if (m_token.m_type == TOKeof || m_token.m_type == TOKendfunc ||
-        m_token.m_type == TOKendif || m_token.m_type == TOKelseif ||
-        m_token.m_type == TOKelse || m_token.m_type == TOKendwhile ||
-        m_token.m_type == TOKendfor || m_token.m_type == TOKend ||
-        m_token.m_type == TOKendfunc || m_token.m_type == TOKreserver) {
+    if (m_token.GetType() == TOKeof || m_token.GetType() == TOKendfunc ||
+        m_token.GetType() == TOKendif || m_token.GetType() == TOKelseif ||
+        m_token.GetType() == TOKelse || m_token.GetType() == TOKendwhile ||
+        m_token.GetType() == TOKendfor || m_token.GetType() == TOKend ||
+        m_token.GetType() == TOKendfunc || m_token.GetType() == TOKreserver) {
       break;
     }
 
     CXFA_FMExpression* expr =
-        m_token.m_type == TOKfunc ? ParseFunction() : ParseExpression();
+        m_token.GetType() == TOKfunc ? ParseFunction() : ParseExpression();
     if (!expr) {
       m_error = true;
       return std::vector<cppgc::Member<CXFA_FMExpression>>();
@@ -107,10 +107,10 @@ CXFA_FMExpression* CXFA_FMParser::ParseFunction() {
     return nullptr;
   if (!CheckThenNext(TOKfunc))
     return nullptr;
-  if (m_token.m_type != TOKidentifier)
+  if (m_token.GetType() != TOKidentifier)
     return nullptr;
 
-  WideString ident(m_token.m_string);
+  WideString ident(m_token.GetString());
   if (!NextToken())
     return nullptr;
   if (!CheckThenNext(TOKlparen))
@@ -119,17 +119,17 @@ CXFA_FMExpression* CXFA_FMParser::ParseFunction() {
   std::vector<WideString> arguments;
   bool last_was_comma = false;
   while (true) {
-    if (m_token.m_type == TOKrparen)
+    if (m_token.GetType() == TOKrparen)
       break;
-    if (m_token.m_type != TOKidentifier)
+    if (m_token.GetType() != TOKidentifier)
       return nullptr;
 
     last_was_comma = false;
 
-    arguments.emplace_back(m_token.m_string);
+    arguments.emplace_back(m_token.GetString());
     if (!NextToken())
       return nullptr;
-    if (m_token.m_type != TOKcomma)
+    if (m_token.GetType() != TOKcomma)
       continue;
 
     last_was_comma = true;
@@ -142,7 +142,7 @@ CXFA_FMExpression* CXFA_FMParser::ParseFunction() {
     return nullptr;
 
   std::vector<cppgc::Member<CXFA_FMExpression>> expressions;
-  if (m_token.m_type != TOKendfunc)
+  if (m_token.GetType() != TOKendfunc)
     expressions = ParseExpressionList();
 
   if (!CheckThenNext(TOKendfunc))
@@ -162,7 +162,7 @@ CXFA_FMExpression* CXFA_FMParser::ParseExpression() {
     return nullptr;
 
   CXFA_FMExpression* expr = nullptr;
-  switch (m_token.m_type) {
+  switch (m_token.GetType()) {
     case TOKvar:
       expr = ParseDeclarationExpression();
       break;
@@ -217,15 +217,15 @@ CXFA_FMExpression* CXFA_FMParser::ParseDeclarationExpression() {
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  if (!NextToken() || m_token.m_type != TOKidentifier)
+  if (!NextToken() || m_token.GetType() != TOKidentifier)
     return nullptr;
 
-  WideString ident(m_token.m_string);
+  WideString ident(m_token.GetString());
   if (!NextToken())
     return nullptr;
 
   CXFA_FMSimpleExpression* expr = nullptr;
-  if (m_token.m_type == TOKassign) {
+  if (m_token.GetType() == TOKassign) {
     if (!NextToken())
       return nullptr;
 
@@ -256,7 +256,7 @@ CXFA_FMExpression* CXFA_FMParser::ParseExpExpression() {
   if (!pExp1)
     return nullptr;
 
-  if (m_token.m_type == TOKassign) {
+  if (m_token.GetType() == TOKassign) {
     if (!NextToken())
       return nullptr;
 
@@ -286,7 +286,7 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParseLogicalOrExpression() {
     if (!IncrementParseDepthAndCheck())
       return nullptr;
 
-    switch (m_token.m_type) {
+    switch (m_token.GetType()) {
       case TOKor:
       case TOKksor: {
         if (!NextToken())
@@ -319,7 +319,7 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParseLogicalAndExpression() {
     if (!IncrementParseDepthAndCheck())
       return nullptr;
 
-    switch (m_token.m_type) {
+    switch (m_token.GetType()) {
       case TOKand:
       case TOKksand: {
         if (!NextToken())
@@ -352,7 +352,7 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParseEqualityExpression() {
     if (!IncrementParseDepthAndCheck())
       return nullptr;
 
-    switch (m_token.m_type) {
+    switch (m_token.GetType()) {
       case TOKeq:
       case TOKkseq: {
         if (!NextToken())
@@ -396,7 +396,7 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParseRelationalExpression() {
     if (!IncrementParseDepthAndCheck())
       return nullptr;
 
-    switch (m_token.m_type) {
+    switch (m_token.GetType()) {
       case TOKlt:
       case TOKkslt: {
         if (!NextToken())
@@ -462,7 +462,7 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParseAdditiveExpression() {
     if (!IncrementParseDepthAndCheck())
       return nullptr;
 
-    switch (m_token.m_type) {
+    switch (m_token.GetType()) {
       case TOKplus: {
         if (!NextToken())
           return nullptr;
@@ -504,7 +504,7 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParseMultiplicativeExpression() {
     if (!IncrementParseDepthAndCheck())
       return nullptr;
 
-    switch (m_token.m_type) {
+    switch (m_token.GetType()) {
       case TOKmul: {
         if (!NextToken())
           return nullptr;
@@ -537,7 +537,7 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParseUnaryExpression() {
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  switch (m_token.m_type) {
+  switch (m_token.GetType()) {
     case TOKplus: {
       if (!NextToken())
         return nullptr;
@@ -581,12 +581,12 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParsePrimaryExpression() {
   if (expr)
     return NextToken() ? expr : nullptr;
 
-  switch (m_token.m_type) {
+  switch (m_token.GetType()) {
     case TOKidentifier: {
-      WideString wsIdentifier(m_token.m_string);
+      WideString wsIdentifier(m_token.GetString());
       if (!NextToken())
         return nullptr;
-      if (m_token.m_type == TOKlbracket) {
+      if (m_token.GetType() == TOKlbracket) {
         CXFA_FMSimpleExpression* s = ParseIndexExpression();
         if (!s)
           return nullptr;
@@ -617,13 +617,13 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParsePrimaryExpression() {
 
 // Literal := String | Number | Null
 CXFA_FMSimpleExpression* CXFA_FMParser::ParseLiteral() {
-  switch (m_token.m_type) {
+  switch (m_token.GetType()) {
     case TOKnumber:
       return cppgc::MakeGarbageCollected<CXFA_FMNumberExpression>(
-          m_heap->GetAllocationHandle(), WideString(m_token.m_string));
+          m_heap->GetAllocationHandle(), WideString(m_token.GetString()));
     case TOKstring:
       return cppgc::MakeGarbageCollected<CXFA_FMStringExpression>(
-          m_heap->GetAllocationHandle(), WideString(m_token.m_string));
+          m_heap->GetAllocationHandle(), WideString(m_token.GetString()));
     case TOKnull:
       return cppgc::MakeGarbageCollected<CXFA_FMNullExpression>(
           m_heap->GetAllocationHandle());
@@ -649,7 +649,7 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParsePostExpression(
     if (expr_count > kMaxPostExpressions)
       return nullptr;
 
-    switch (m_token.m_type) {
+    switch (m_token.GetType()) {
       case TOKlparen: {
         absl::optional<std::vector<cppgc::Member<CXFA_FMSimpleExpression>>>
             expressions = ParseArgumentList();
@@ -661,7 +661,7 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParsePostExpression(
             false);
         if (!NextToken())
           return nullptr;
-        if (m_token.m_type != TOKlbracket)
+        if (m_token.GetType() != TOKlbracket)
           continue;
 
         CXFA_FMSimpleExpression* s = ParseIndexExpression();
@@ -675,13 +675,13 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParsePostExpression(
       case TOKdot: {
         if (!NextToken())
           return nullptr;
-        if (m_token.m_type != TOKidentifier)
+        if (m_token.GetType() != TOKidentifier)
           return nullptr;
 
-        WideString tempStr(m_token.m_string);
+        WideString tempStr(m_token.GetString());
         if (!NextToken())
           return nullptr;
-        if (m_token.m_type == TOKlparen) {
+        if (m_token.GetType() == TOKlparen) {
           absl::optional<std::vector<cppgc::Member<CXFA_FMSimpleExpression>>>
               expressions = ParseArgumentList();
           if (!expressions.has_value())
@@ -697,7 +697,7 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParsePostExpression(
               m_heap->GetAllocationHandle(), expr, pExpCall);
           if (!NextToken())
             return nullptr;
-          if (m_token.m_type != TOKlbracket)
+          if (m_token.GetType() != TOKlbracket)
             continue;
 
           CXFA_FMSimpleExpression* s = ParseIndexExpression();
@@ -706,7 +706,7 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParsePostExpression(
 
           expr = cppgc::MakeGarbageCollected<CXFA_FMDotAccessorExpression>(
               m_heap->GetAllocationHandle(), expr, TOKcall, WideString(), s);
-        } else if (m_token.m_type == TOKlbracket) {
+        } else if (m_token.GetType() == TOKlbracket) {
           CXFA_FMSimpleExpression* s = ParseIndexExpression();
           if (!s)
             return nullptr;
@@ -728,13 +728,13 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParsePostExpression(
       case TOKdotdot: {
         if (!NextToken())
           return nullptr;
-        if (m_token.m_type != TOKidentifier)
+        if (m_token.GetType() != TOKidentifier)
           return nullptr;
 
-        WideString tempStr(m_token.m_string);
+        WideString tempStr(m_token.GetString());
         if (!NextToken())
           return nullptr;
-        if (m_token.m_type == TOKlbracket) {
+        if (m_token.GetType() == TOKlbracket) {
           CXFA_FMSimpleExpression* s = ParseIndexExpression();
           if (!s)
             return nullptr;
@@ -756,14 +756,14 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParsePostExpression(
       case TOKdotscream: {
         if (!NextToken())
           return nullptr;
-        if (m_token.m_type != TOKidentifier)
+        if (m_token.GetType() != TOKidentifier)
           return nullptr;
 
-        WideString tempStr(m_token.m_string);
+        WideString tempStr(m_token.GetString());
         if (!NextToken())
           return nullptr;
 
-        if (m_token.m_type != TOKlbracket) {
+        if (m_token.GetType() != TOKlbracket) {
           auto* subexpr = cppgc::MakeGarbageCollected<CXFA_FMIndexExpression>(
               m_heap->GetAllocationHandle(),
               CXFA_FMIndexExpression::AccessorIndex::kNoIndex, nullptr, false);
@@ -802,16 +802,16 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParsePostExpression(
 // between '(' and ')'
 absl::optional<std::vector<cppgc::Member<CXFA_FMSimpleExpression>>>
 CXFA_FMParser::ParseArgumentList() {
-  if (m_token.m_type != TOKlparen || !NextToken())
+  if (m_token.GetType() != TOKlparen || !NextToken())
     return absl::nullopt;
 
   std::vector<cppgc::Member<CXFA_FMSimpleExpression>> expressions;
   bool first_arg = true;
-  while (m_token.m_type != TOKrparen) {
+  while (m_token.GetType() != TOKrparen) {
     if (first_arg) {
       first_arg = false;
     } else {
-      if (m_token.m_type != TOKcomma || !NextToken())
+      if (m_token.GetType() != TOKcomma || !NextToken())
         return absl::nullopt;
     }
 
@@ -835,7 +835,7 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParseIndexExpression() {
   if (!CheckThenNext(TOKlbracket))
     return nullptr;
 
-  if (m_token.m_type == TOKmul) {
+  if (m_token.GetType() == TOKmul) {
     auto* pExp = cppgc::MakeGarbageCollected<CXFA_FMIndexExpression>(
         m_heap->GetAllocationHandle(),
         CXFA_FMIndexExpression::AccessorIndex::kNoRelativeIndex, nullptr, true);
@@ -844,18 +844,18 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParseIndexExpression() {
 
     // TODO(dsinclair): This should CheckThenNext(TOKrbracket) but need to clean
     // up the callsites.
-    if (m_token.m_type != TOKrbracket)
+    if (m_token.GetType() != TOKrbracket)
       return nullptr;
     return pExp;
   }
 
   CXFA_FMIndexExpression::AccessorIndex accessorIndex =
       CXFA_FMIndexExpression::AccessorIndex::kNoRelativeIndex;
-  if (m_token.m_type == TOKplus) {
+  if (m_token.GetType() == TOKplus) {
     accessorIndex = CXFA_FMIndexExpression::AccessorIndex::kPositiveIndex;
     if (!NextToken())
       return nullptr;
-  } else if (m_token.m_type == TOKminus) {
+  } else if (m_token.GetType() == TOKminus) {
     accessorIndex = CXFA_FMIndexExpression::AccessorIndex::kNegativeIndex;
     if (!NextToken())
       return nullptr;
@@ -864,7 +864,7 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParseIndexExpression() {
   CXFA_FMSimpleExpression* s = ParseSimpleExpression();
   if (!s)
     return nullptr;
-  if (m_token.m_type != TOKrbracket)
+  if (m_token.GetType() != TOKrbracket)
     return nullptr;
 
   return cppgc::MakeGarbageCollected<CXFA_FMIndexExpression>(
@@ -879,7 +879,7 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParseParenExpression() {
 
   if (!CheckThenNext(TOKlparen))
     return nullptr;
-  if (m_token.m_type == TOKrparen)
+  if (m_token.GetType() == TOKrparen)
     return nullptr;
 
   CXFA_FMSimpleExpression* pExp1 = ParseSimpleExpression();
@@ -913,7 +913,7 @@ CXFA_FMExpression* CXFA_FMParser::ParseIfExpression() {
       m_heap->GetAllocationHandle(), ParseExpressionList());
 
   std::vector<cppgc::Member<CXFA_FMIfExpression>> pElseIfExpressions;
-  while (m_token.m_type == TOKelseif) {
+  while (m_token.GetType() == TOKelseif) {
     if (!NextToken())
       return nullptr;
 
@@ -933,7 +933,7 @@ CXFA_FMExpression* CXFA_FMParser::ParseIfExpression() {
   }
 
   CXFA_FMExpression* pElseExpression = nullptr;
-  if (m_token.m_type == TOKelse) {
+  if (m_token.GetType() == TOKelse) {
     if (!NextToken())
       return nullptr;
 
@@ -980,10 +980,10 @@ CXFA_FMExpression* CXFA_FMParser::ParseForExpression() {
     return nullptr;
   if (!CheckThenNext(TOKfor))
     return nullptr;
-  if (m_token.m_type != TOKidentifier)
+  if (m_token.GetType() != TOKidentifier)
     return nullptr;
 
-  WideString wsVariant(m_token.m_string);
+  WideString wsVariant(m_token.GetString());
   if (!NextToken())
     return nullptr;
   if (!CheckThenNext(TOKassign))
@@ -994,9 +994,9 @@ CXFA_FMExpression* CXFA_FMParser::ParseForExpression() {
     return nullptr;
 
   int32_t iDirection = 0;
-  if (m_token.m_type == TOKupto)
+  if (m_token.GetType() == TOKupto)
     iDirection = 1;
-  else if (m_token.m_type == TOKdownto)
+  else if (m_token.GetType() == TOKdownto)
     iDirection = -1;
   else
     return nullptr;
@@ -1009,7 +1009,7 @@ CXFA_FMExpression* CXFA_FMParser::ParseForExpression() {
     return nullptr;
 
   CXFA_FMSimpleExpression* pStep = nullptr;
-  if (m_token.m_type == TOKstep) {
+  if (m_token.GetType() == TOKstep) {
     if (!NextToken())
       return nullptr;
     pStep = ParseSimpleExpression();
@@ -1033,7 +1033,7 @@ CXFA_FMExpression* CXFA_FMParser::ParseForExpression() {
 // Foreach := 'foreach' Identifier 'in' '(' ArgumentList ')'
 //            'do' ExpressionList 'endfor'
 CXFA_FMExpression* CXFA_FMParser::ParseForeachExpression() {
-  if (m_token.m_type != TOKforeach)
+  if (m_token.GetType() != TOKforeach)
     return nullptr;
 
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
@@ -1041,21 +1041,21 @@ CXFA_FMExpression* CXFA_FMParser::ParseForeachExpression() {
     return nullptr;
   if (!CheckThenNext(TOKforeach))
     return nullptr;
-  if (m_token.m_type != TOKidentifier)
+  if (m_token.GetType() != TOKidentifier)
     return nullptr;
 
-  WideString wsIdentifier(m_token.m_string);
+  WideString wsIdentifier(m_token.GetString());
   if (!NextToken() || !CheckThenNext(TOKin) || !CheckThenNext(TOKlparen))
     return nullptr;
 
   std::vector<cppgc::Member<CXFA_FMSimpleExpression>> pArgumentList;
-  while (m_token.m_type != TOKrparen) {
+  while (m_token.GetType() != TOKrparen) {
     CXFA_FMSimpleExpression* s = ParseSimpleExpression();
     if (!s)
       return nullptr;
 
     pArgumentList.push_back(s);
-    if (m_token.m_type != TOKcomma)
+    if (m_token.GetType() != TOKcomma)
       break;
     if (!NextToken())
       return nullptr;
@@ -1079,7 +1079,7 @@ CXFA_FMExpression* CXFA_FMParser::ParseForeachExpression() {
 
 // Block := 'do' ExpressionList 'end'
 CXFA_FMExpression* CXFA_FMParser::ParseDoExpression() {
-  if (m_token.m_type != TOKdo)
+  if (m_token.GetType() != TOKdo)
     return nullptr;
 
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
@@ -1099,5 +1099,5 @@ CXFA_FMExpression* CXFA_FMParser::ParseDoExpression() {
 }
 
 bool CXFA_FMParser::HasError() const {
-  return m_error || m_token.m_type == TOKreserver;
+  return m_error || m_token.GetType() == TOKreserver;
 }

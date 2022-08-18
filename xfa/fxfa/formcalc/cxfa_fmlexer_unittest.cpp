@@ -12,14 +12,14 @@ TEST(CXFA_FMLexerTest, NullString) {
   WideStringView null_string;
   CXFA_FMLexer lexer(null_string);
   CXFA_FMLexer::Token token = lexer.NextToken();
-  EXPECT_EQ(TOKeof, token.m_type);
+  EXPECT_EQ(TOKeof, token.GetType());
   EXPECT_TRUE(lexer.IsComplete());
 }
 
 TEST(CXFA_FMLexerTest, EmptyString) {
   CXFA_FMLexer lexer(L"");
   CXFA_FMLexer::Token token = lexer.NextToken();
-  EXPECT_EQ(TOKeof, token.m_type);
+  EXPECT_EQ(TOKeof, token.GetType());
   EXPECT_TRUE(lexer.IsComplete());
 }
 
@@ -28,52 +28,52 @@ TEST(CXFA_FMLexerTest, Numbers) {
     CXFA_FMLexer lexer(L"-12");
     CXFA_FMLexer::Token token = lexer.NextToken();
     // TODO(dsinclair): Should this return -12 instead of two tokens?
-    EXPECT_EQ(TOKminus, token.m_type);
+    EXPECT_EQ(TOKminus, token.GetType());
     token = lexer.NextToken();
-    EXPECT_EQ(L"12", token.m_string);
+    EXPECT_EQ(L"12", token.GetString());
     token = lexer.NextToken();
-    EXPECT_EQ(TOKeof, token.m_type);
+    EXPECT_EQ(TOKeof, token.GetType());
   }
   {
     CXFA_FMLexer lexer(L"1.5362");
     CXFA_FMLexer::Token token = lexer.NextToken();
-    EXPECT_EQ(TOKnumber, token.m_type);
-    EXPECT_EQ(L"1.5362", token.m_string);
+    EXPECT_EQ(TOKnumber, token.GetType());
+    EXPECT_EQ(L"1.5362", token.GetString());
   }
   {
     CXFA_FMLexer lexer(L"0.875");
     CXFA_FMLexer::Token token = lexer.NextToken();
-    EXPECT_EQ(TOKnumber, token.m_type);
-    EXPECT_EQ(L"0.875", token.m_string);
+    EXPECT_EQ(TOKnumber, token.GetType());
+    EXPECT_EQ(L"0.875", token.GetString());
   }
   {
     CXFA_FMLexer lexer(L"5.56e-2");
     CXFA_FMLexer::Token token = lexer.NextToken();
-    EXPECT_EQ(TOKnumber, token.m_type);
-    EXPECT_EQ(L"5.56e-2", token.m_string);
+    EXPECT_EQ(TOKnumber, token.GetType());
+    EXPECT_EQ(L"5.56e-2", token.GetString());
   }
   {
     CXFA_FMLexer lexer(L"1.234E10");
     CXFA_FMLexer::Token token = lexer.NextToken();
-    EXPECT_EQ(TOKnumber, token.m_type);
-    EXPECT_EQ(L"1.234E10", token.m_string);
+    EXPECT_EQ(TOKnumber, token.GetType());
+    EXPECT_EQ(L"1.234E10", token.GetString());
   }
   {
     CXFA_FMLexer lexer(L"123456789.012345678");
     CXFA_FMLexer::Token token = lexer.NextToken();
-    EXPECT_EQ(TOKnumber, token.m_type);
+    EXPECT_EQ(TOKnumber, token.GetType());
     // TODO(dsinclair): This should round as per IEEE 64-bit values.
-    // EXPECT_EQ(L"123456789.01234567", token.m_string);
-    EXPECT_EQ(L"123456789.012345678", token.m_string);
+    // EXPECT_EQ(L"123456789.01234567", token.GetString());
+    EXPECT_EQ(L"123456789.012345678", token.GetString());
   }
   {
     CXFA_FMLexer lexer(L"99999999999999999");
     CXFA_FMLexer::Token token = lexer.NextToken();
-    EXPECT_EQ(TOKnumber, token.m_type);
+    EXPECT_EQ(TOKnumber, token.GetType());
     // TODO(dsinclair): This is spec'd as rounding when > 16 significant digits
     // prior to the exponent.
-    // EXPECT_EQ(L"100000000000000000", token.m_string);
-    EXPECT_EQ(L"99999999999999999", token.m_string);
+    // EXPECT_EQ(L"100000000000000000", token.GetString());
+    EXPECT_EQ(L"99999999999999999", token.GetString());
     EXPECT_TRUE(lexer.IsComplete());
   }
 }
@@ -83,34 +83,34 @@ TEST(CXFA_FMLexerTest, Strings) {
   {
     CXFA_FMLexer lexer(L"\"The cat jumped over the fence.\"");
     CXFA_FMLexer::Token token = lexer.NextToken();
-    EXPECT_EQ(TOKstring, token.m_type);
-    EXPECT_EQ(L"\"The cat jumped over the fence.\"", token.m_string);
+    EXPECT_EQ(TOKstring, token.GetType());
+    EXPECT_EQ(L"\"The cat jumped over the fence.\"", token.GetString());
 
     token = lexer.NextToken();
-    EXPECT_EQ(TOKeof, token.m_type);
+    EXPECT_EQ(TOKeof, token.GetType());
   }
   {
     CXFA_FMLexer lexer(L"\"\"");
     CXFA_FMLexer::Token token = lexer.NextToken();
-    EXPECT_EQ(TOKstring, token.m_type);
-    EXPECT_EQ(L"\"\"", token.m_string);
+    EXPECT_EQ(TOKstring, token.GetType());
+    EXPECT_EQ(L"\"\"", token.GetString());
   }
   {
     CXFA_FMLexer lexer(
         L"\"The message reads: \"\"Warning: Insufficient Memory\"\"\"");
     CXFA_FMLexer::Token token = lexer.NextToken();
-    EXPECT_EQ(TOKstring, token.m_type);
+    EXPECT_EQ(TOKstring, token.GetType());
     EXPECT_EQ(L"\"The message reads: \"\"Warning: Insufficient Memory\"\"\"",
-              token.m_string);
+              token.GetString());
   }
   {
     CXFA_FMLexer lexer(
         L"\"\\u0047\\u006f\\u0066\\u0069\\u0073\\u0068\\u0021\\u000d\\u000a\"");
     CXFA_FMLexer::Token token = lexer.NextToken();
-    EXPECT_EQ(TOKstring, token.m_type);
+    EXPECT_EQ(TOKstring, token.GetType());
     EXPECT_EQ(
         L"\"\\u0047\\u006f\\u0066\\u0069\\u0073\\u0068\\u0021\\u000d\\u000a\"",
-        token.m_string);
+        token.GetString());
     EXPECT_TRUE(lexer.IsComplete());
   }
 }
@@ -183,7 +183,7 @@ TEST(CXFA_FMLexerTest, OperatorsAndKeywords) {
   for (size_t i = 0; i < std::size(op); ++i) {
     CXFA_FMLexer lexer(op[i].op);
     CXFA_FMLexer::Token token = lexer.NextToken();
-    EXPECT_EQ(op[i].token, token.m_type);
+    EXPECT_EQ(op[i].token, token.GetType());
     EXPECT_TRUE(lexer.IsComplete());
   }
 }
@@ -192,48 +192,48 @@ TEST(CXFA_FMLexerTest, Comments) {
   {
     CXFA_FMLexer lexer(L"// Empty.");
     CXFA_FMLexer::Token token = lexer.NextToken();
-    EXPECT_EQ(TOKeof, token.m_type);
+    EXPECT_EQ(TOKeof, token.GetType());
   }
   {
     CXFA_FMLexer lexer(L"//");
     CXFA_FMLexer::Token token = lexer.NextToken();
-    EXPECT_EQ(TOKeof, token.m_type);
+    EXPECT_EQ(TOKeof, token.GetType());
   }
   {
     CXFA_FMLexer lexer(L"123 // Empty.\n\"str\"");
     CXFA_FMLexer::Token token = lexer.NextToken();
-    EXPECT_EQ(TOKnumber, token.m_type);
-    EXPECT_EQ(L"123", token.m_string);
+    EXPECT_EQ(TOKnumber, token.GetType());
+    EXPECT_EQ(L"123", token.GetString());
 
     token = lexer.NextToken();
-    EXPECT_EQ(TOKstring, token.m_type);
-    EXPECT_EQ(L"\"str\"", token.m_string);
+    EXPECT_EQ(TOKstring, token.GetType());
+    EXPECT_EQ(L"\"str\"", token.GetString());
 
     token = lexer.NextToken();
-    EXPECT_EQ(TOKeof, token.m_type);
+    EXPECT_EQ(TOKeof, token.GetType());
   }
   {
     CXFA_FMLexer lexer(L";");
     CXFA_FMLexer::Token token = lexer.NextToken();
-    EXPECT_EQ(TOKeof, token.m_type);
+    EXPECT_EQ(TOKeof, token.GetType());
   }
   {
     CXFA_FMLexer lexer(L"; Empty.");
     CXFA_FMLexer::Token token = lexer.NextToken();
-    EXPECT_EQ(TOKeof, token.m_type);
+    EXPECT_EQ(TOKeof, token.GetType());
   }
   {
     CXFA_FMLexer lexer(L"123 ;Empty.\n\"str\"");
     CXFA_FMLexer::Token token = lexer.NextToken();
-    EXPECT_EQ(TOKnumber, token.m_type);
-    EXPECT_EQ(L"123", token.m_string);
+    EXPECT_EQ(TOKnumber, token.GetType());
+    EXPECT_EQ(L"123", token.GetString());
 
     token = lexer.NextToken();
-    EXPECT_EQ(TOKstring, token.m_type);
-    EXPECT_EQ(L"\"str\"", token.m_string);
+    EXPECT_EQ(TOKstring, token.GetType());
+    EXPECT_EQ(L"\"str\"", token.GetString());
 
     token = lexer.NextToken();
-    EXPECT_EQ(TOKeof, token.m_type);
+    EXPECT_EQ(TOKeof, token.GetType());
     EXPECT_TRUE(lexer.IsComplete());
   }
 }
@@ -244,8 +244,8 @@ TEST(CXFA_FMLexerTest, ValidIdentifiers) {
   for (const auto* ident : identifiers) {
     CXFA_FMLexer lexer(ident);
     CXFA_FMLexer::Token token = lexer.NextToken();
-    EXPECT_EQ(TOKidentifier, token.m_type);
-    EXPECT_EQ(ident, token.m_string);
+    EXPECT_EQ(TOKidentifier, token.GetType());
+    EXPECT_EQ(ident, token.GetString());
     EXPECT_TRUE(lexer.IsComplete());
   }
 }
@@ -254,28 +254,28 @@ TEST(CXFA_FMLexerTest, InvalidIdentifiers) {
   {
     CXFA_FMLexer lexer(L"#a");
     CXFA_FMLexer::Token token = lexer.NextToken();
-    EXPECT_EQ(TOKreserver, token.m_type);
+    EXPECT_EQ(TOKreserver, token.GetType());
   }
   {
     CXFA_FMLexer lexer(L"1a");
     CXFA_FMLexer::Token token = lexer.NextToken();
-    EXPECT_EQ(TOKreserver, token.m_type);
+    EXPECT_EQ(TOKreserver, token.GetType());
   }
   {
     CXFA_FMLexer lexer(L"an@identifier");
     CXFA_FMLexer::Token token = lexer.NextToken();
-    EXPECT_NE(TOKreserver, token.m_type);
+    EXPECT_NE(TOKreserver, token.GetType());
     token = lexer.NextToken();
-    EXPECT_EQ(TOKreserver, token.m_type);
+    EXPECT_EQ(TOKreserver, token.GetType());
     token = lexer.NextToken();
-    EXPECT_EQ(TOKreserver, token.m_type);
+    EXPECT_EQ(TOKreserver, token.GetType());
   }
   {
     CXFA_FMLexer lexer(L"_ident@");
     CXFA_FMLexer::Token token = lexer.NextToken();
-    EXPECT_NE(TOKreserver, token.m_type);
+    EXPECT_NE(TOKreserver, token.GetType());
     token = lexer.NextToken();
-    EXPECT_EQ(TOKreserver, token.m_type);
+    EXPECT_EQ(TOKreserver, token.GetType());
     EXPECT_FALSE(lexer.IsComplete());
   }
 }
@@ -284,20 +284,20 @@ TEST(CXFA_FMLexerTest, Whitespace) {
   {
     CXFA_FMLexer lexer(L" \t\xc\x9\xb");
     CXFA_FMLexer::Token token = lexer.NextToken();
-    EXPECT_EQ(TOKeof, token.m_type);
+    EXPECT_EQ(TOKeof, token.GetType());
   }
   {
     CXFA_FMLexer lexer(L"123 \t\xc\x9\xb 456");
     CXFA_FMLexer::Token token = lexer.NextToken();
-    EXPECT_EQ(TOKnumber, token.m_type);
-    EXPECT_EQ(L"123", token.m_string);
+    EXPECT_EQ(TOKnumber, token.GetType());
+    EXPECT_EQ(L"123", token.GetString());
 
     token = lexer.NextToken();
-    EXPECT_EQ(TOKnumber, token.m_type);
-    EXPECT_EQ(L"456", token.m_string);
+    EXPECT_EQ(TOKnumber, token.GetType());
+    EXPECT_EQ(L"456", token.GetString());
 
     token = lexer.NextToken();
-    EXPECT_EQ(TOKeof, token.m_type);
+    EXPECT_EQ(TOKeof, token.GetType());
     EXPECT_TRUE(lexer.IsComplete());
   }
 }
@@ -305,13 +305,13 @@ TEST(CXFA_FMLexerTest, Whitespace) {
 TEST(CXFA_FMLexerTest, NullData) {
   CXFA_FMLexer lexer(WideStringView(L"\x2d\x32\x00\x2d\x32", 5));
   CXFA_FMLexer::Token token = lexer.NextToken();
-  EXPECT_EQ(TOKminus, token.m_type);
+  EXPECT_EQ(TOKminus, token.GetType());
 
   token = lexer.NextToken();
-  EXPECT_EQ(TOKnumber, token.m_type);
-  EXPECT_EQ(L"2", token.m_string);
+  EXPECT_EQ(TOKnumber, token.GetType());
+  EXPECT_EQ(L"2", token.GetString());
 
   token = lexer.NextToken();
-  EXPECT_EQ(TOKeof, token.m_type);
+  EXPECT_EQ(TOKeof, token.GetType());
   EXPECT_FALSE(lexer.IsComplete());
 }
