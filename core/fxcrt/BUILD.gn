@@ -126,7 +126,12 @@ source_set("fxcrt") {
     "../../third_party:pdfium_base",
     "//third_party/icu:icuuc",
   ]
-
+  if (!is_win || is_clang) {
+    sources += [ "fx_memory_pa.cpp" ]
+    deps += [ "//third_party:pdfium_partition_alloc" ]
+  } else {
+    sources += [ "fx_memory_malloc.cpp" ]
+  }
   if (is_posix || is_fuchsia) {
     sources += [
       "cfx_fileaccess_posix.cpp",

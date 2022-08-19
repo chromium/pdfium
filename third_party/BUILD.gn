@@ -577,34 +577,6 @@ source_set("pdfium_base") {
     ":pdfium_third_party_config",
   ]
   sources = [
-    "base/allocator/partition_allocator/address_space_randomization.cc",
-    "base/allocator/partition_allocator/address_space_randomization.h",
-    "base/allocator/partition_allocator/oom.h",
-    "base/allocator/partition_allocator/oom_callback.cc",
-    "base/allocator/partition_allocator/oom_callback.h",
-    "base/allocator/partition_allocator/page_allocator.cc",
-    "base/allocator/partition_allocator/page_allocator.h",
-    "base/allocator/partition_allocator/page_allocator_constants.h",
-    "base/allocator/partition_allocator/page_allocator_internal.h",
-    "base/allocator/partition_allocator/partition_alloc.cc",
-    "base/allocator/partition_allocator/partition_alloc.h",
-    "base/allocator/partition_allocator/partition_alloc_check.h",
-    "base/allocator/partition_allocator/partition_alloc_constants.h",
-    "base/allocator/partition_allocator/partition_bucket.cc",
-    "base/allocator/partition_allocator/partition_bucket.h",
-    "base/allocator/partition_allocator/partition_cookie.h",
-    "base/allocator/partition_allocator/partition_direct_map_extent.h",
-    "base/allocator/partition_allocator/partition_freelist_entry.h",
-    "base/allocator/partition_allocator/partition_oom.cc",
-    "base/allocator/partition_allocator/partition_oom.h",
-    "base/allocator/partition_allocator/partition_page.cc",
-    "base/allocator/partition_allocator/partition_page.h",
-    "base/allocator/partition_allocator/partition_root_base.cc",
-    "base/allocator/partition_allocator/partition_root_base.h",
-    "base/allocator/partition_allocator/random.cc",
-    "base/allocator/partition_allocator/random.h",
-    "base/allocator/partition_allocator/spin_lock.cc",
-    "base/allocator/partition_allocator/spin_lock.h",
     "base/base_export.h",
     "base/bits.h",
     "base/check.h",
@@ -635,21 +607,60 @@ source_set("pdfium_base") {
     "base/sys_byteorder.h",
     "base/template_util.h",
   ]
-
   public_deps = [
     "../core/fxcrt:unowned_ptr",
     "//third_party/abseil-cpp:absl",
   ]
-
   if (is_win) {
     sources += [
-      "base/allocator/partition_allocator/page_allocator_internals_win.h",
       "base/win/scoped_select_object.h",
       "base/win/win_util.cc",
       "base/win/win_util.h",
     ]
   }
+}
 
+source_set("pdfium_partition_alloc") {
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [
+    "//build/config/compiler:no_chromium_code",
+    ":pdfium_third_party_config",
+  ]
+  sources = [
+    "base/allocator/partition_allocator/address_space_randomization.cc",
+    "base/allocator/partition_allocator/address_space_randomization.h",
+    "base/allocator/partition_allocator/oom.h",
+    "base/allocator/partition_allocator/oom_callback.cc",
+    "base/allocator/partition_allocator/oom_callback.h",
+    "base/allocator/partition_allocator/page_allocator.cc",
+    "base/allocator/partition_allocator/page_allocator.h",
+    "base/allocator/partition_allocator/page_allocator_constants.h",
+    "base/allocator/partition_allocator/page_allocator_internal.h",
+    "base/allocator/partition_allocator/partition_alloc.cc",
+    "base/allocator/partition_allocator/partition_alloc.h",
+    "base/allocator/partition_allocator/partition_alloc_check.h",
+    "base/allocator/partition_allocator/partition_alloc_constants.h",
+    "base/allocator/partition_allocator/partition_bucket.cc",
+    "base/allocator/partition_allocator/partition_bucket.h",
+    "base/allocator/partition_allocator/partition_cookie.h",
+    "base/allocator/partition_allocator/partition_direct_map_extent.h",
+    "base/allocator/partition_allocator/partition_freelist_entry.h",
+    "base/allocator/partition_allocator/partition_oom.cc",
+    "base/allocator/partition_allocator/partition_oom.h",
+    "base/allocator/partition_allocator/partition_page.cc",
+    "base/allocator/partition_allocator/partition_page.h",
+    "base/allocator/partition_allocator/partition_root_base.cc",
+    "base/allocator/partition_allocator/partition_root_base.h",
+    "base/allocator/partition_allocator/random.cc",
+    "base/allocator/partition_allocator/random.h",
+    "base/allocator/partition_allocator/spin_lock.cc",
+    "base/allocator/partition_allocator/spin_lock.h",
+  ]
+  deps = [ ":pdfium_base" ]
+  if (is_win) {
+    sources +=
+        [ "base/allocator/partition_allocator/page_allocator_internals_win.h" ]
+  }
   if (is_posix) {
     sources += [
       "base/allocator/partition_allocator/page_allocator_internals_posix.h",
