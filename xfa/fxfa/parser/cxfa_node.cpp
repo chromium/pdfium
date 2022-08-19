@@ -817,10 +817,14 @@ class CXFA_WidgetLayoutData
   virtual CXFA_ImageLayoutData* AsImageLayoutData() { return nullptr; }
   virtual CXFA_TextLayoutData* AsTextLayoutData() { return nullptr; }
 
-  float m_fWidgetHeight = -1.0f;
+  float GetWidgetHeight() const { return m_fWidgetHeight; }
+  void SetWidgetHeight(float height) { m_fWidgetHeight = height; }
 
  protected:
   CXFA_WidgetLayoutData() = default;
+
+ private:
+  float m_fWidgetHeight = -1.0f;
 };
 
 class CXFA_TextLayoutData final : public CXFA_WidgetLayoutData {
@@ -3507,14 +3511,14 @@ void CXFA_Node::StartWidgetLayout(CXFA_FFDoc* doc,
   InitLayoutData(doc);
 
   if (GetFFWidgetType() == XFA_FFWidgetType::kText) {
-    m_pLayoutData->m_fWidgetHeight = TryHeight().value_or(-1);
+    m_pLayoutData->SetWidgetHeight(TryHeight().value_or(-1));
     StartTextLayout(doc, pCalcWidth, pCalcHeight);
     return;
   }
   if (*pCalcWidth > 0 && *pCalcHeight > 0)
     return;
 
-  m_pLayoutData->m_fWidgetHeight = -1;
+  m_pLayoutData->SetWidgetHeight(-1.0f);
   float fWidth = 0;
   if (*pCalcWidth > 0 && *pCalcHeight < 0) {
     absl::optional<float> height = TryHeight();
@@ -3525,8 +3529,7 @@ void CXFA_Node::StartWidgetLayout(CXFA_FFDoc* doc,
       *pCalcWidth = size.width;
       *pCalcHeight = size.height;
     }
-
-    m_pLayoutData->m_fWidgetHeight = *pCalcHeight;
+    m_pLayoutData->SetWidgetHeight(*pCalcHeight);
     return;
   }
   if (*pCalcWidth < 0 && *pCalcHeight < 0) {
@@ -3546,11 +3549,11 @@ void CXFA_Node::StartWidgetLayout(CXFA_FFDoc* doc,
       *pCalcWidth = fWidth;
     }
   }
-  m_pLayoutData->m_fWidgetHeight = *pCalcHeight;
+  m_pLayoutData->SetWidgetHeight(*pCalcHeight);
 }
 
 CFX_SizeF CXFA_Node::CalculateAccWidthAndHeight(CXFA_FFDoc* doc, float fWidth) {
-  CFX_SizeF sz(fWidth, m_pLayoutData->m_fWidgetHeight);
+  CFX_SizeF sz(fWidth, m_pLayoutData->GetWidgetHeight());
   switch (GetFFWidgetType()) {
     case XFA_FFWidgetType::kBarcode:
     case XFA_FFWidgetType::kChoiceList:
@@ -3586,8 +3589,7 @@ CFX_SizeF CXFA_Node::CalculateAccWidthAndHeight(CXFA_FFDoc* doc, float fWidth) {
     case XFA_FFWidgetType::kNone:
       break;
   }
-
-  m_pLayoutData->m_fWidgetHeight = sz.height;
+  m_pLayoutData->SetWidgetHeight(sz.height);
   return sz;
 }
 
@@ -3632,7 +3634,8 @@ absl::optional<float> CXFA_Node::FindSplitPos(CXFA_FFDocView* pDocView,
     CXFA_TextLayout* pTextLayout =
         m_pLayoutData->AsTextLayoutData()->GetTextLayout();
     fCalcHeight = pTextLayout->DoSplitLayout(
-        szBlockIndex, fCalcHeight, m_pLayoutData->m_fWidgetHeight - fTopInset);
+        szBlockIndex, fCalcHeight,
+        m_pLayoutData->GetWidgetHeight() - fTopInset);
     if (fCalcHeight != 0) {
       if (szBlockIndex == 0)
         fCalcHeight += fTopInset;
@@ -3655,7 +3658,7 @@ absl::optional<float> CXFA_Node::FindSplitPos(CXFA_FFDocView* pDocView,
       return 0.0f;
     }
     if (iCapPlacement == XFA_AttributeValue::Bottom &&
-        m_pLayoutData->m_fWidgetHeight - fCapReserve - fBottomInset) {
+        m_pLayoutData->GetWidgetHeight() - fCapReserve - fBottomInset) {
       return 0.0f;
     }
     if (iCapPlacement != XFA_AttributeValue::Top)
@@ -3663,7 +3666,7 @@ absl::optional<float> CXFA_Node::FindSplitPos(CXFA_FFDocView* pDocView,
   }
   CXFA_FieldLayoutData* pFieldData = m_pLayoutData->AsFieldLayoutData();
   int32_t iLinesCount = 0;
-  float fHeight = m_pLayoutData->m_fWidgetHeight;
+  float fHeight = m_pLayoutData->GetWidgetHeight();
   if (GetValue(XFA_ValuePicture::kDisplay).IsEmpty()) {
     iLinesCount = 1;
   } else {
@@ -3882,15 +3885,14 @@ void CXFA_Node::StartTextLayout(CXFA_FFDoc* doc,
       *pCalcWidth = fMaxWidth;
     }
   }
-  if (m_pLayoutData->m_fWidgetHeight < 0) {
-    m_pLayoutData->m_fWidgetHeight = pTextLayout->GetLayoutHeight();
-    m_pLayoutData->m_fWidgetHeight =
-        CalculateWidgetAutoHeight(m_pLayoutData->m_fWidgetHeight);
+  if (m_pLayoutData->GetWidgetHeight() < 0) {
+    m_pLayoutData->SetWidgetHeight(
+        CalculateWidgetAutoHeight(pTextLayout->GetLayoutHeight()));
   }
-  fTextHeight = m_pLayoutData->m_fWidgetHeight;
+  fTextHeight = m_pLayoutData->GetWidgetHeight();
   fTextHeight = GetHeightWithoutMargin(fTextHeight);
   pTextLayout->DoLayout(fTextHeight);
-  *pCalcHeight = m_pLayoutData->m_fWidgetHeight;
+  *pCalcHeight = m_pLayoutData->GetWidgetHeight();
 }
 
 bool CXFA_Node::LoadCaption(CXFA_FFDoc* doc) {
