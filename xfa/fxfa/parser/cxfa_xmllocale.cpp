@@ -8,7 +8,7 @@
 
 #include <utility>
 
-#include "core/fxcrt/cfx_readonlymemorystream.h"
+#include "core/fxcrt/cfx_read_only_span_stream.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
@@ -32,7 +32,7 @@ constexpr wchar_t kCurrencySymbol[] = L"currencySymbol";
 // static
 CXFA_XMLLocale* CXFA_XMLLocale::Create(cppgc::Heap* heap,
                                        pdfium::span<uint8_t> data) {
-  auto stream = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(data);
+  auto stream = pdfium::MakeRetain<CFX_ReadOnlySpanStream>(data);
   CFX_XMLParser parser(stream);
   auto doc = parser.Parse();
   if (!doc)

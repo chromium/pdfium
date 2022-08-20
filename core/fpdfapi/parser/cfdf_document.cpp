@@ -13,7 +13,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
-#include "core/fxcrt/cfx_readonlymemorystream.h"
+#include "core/fxcrt/cfx_read_only_span_stream.h"
 #include "core/fxcrt/fx_string_wrappers.h"
 #include "third_party/base/span.h"
 
@@ -31,7 +31,7 @@ std::unique_ptr<CFDF_Document> CFDF_Document::CreateNewDoc() {
 std::unique_ptr<CFDF_Document> CFDF_Document::ParseMemory(
     pdfium::span<const uint8_t> span) {
   auto pDoc = std::make_unique<CFDF_Document>();
-  pDoc->ParseStream(pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(span));
+  pDoc->ParseStream(pdfium::MakeRetain<CFX_ReadOnlySpanStream>(span));
   return pDoc->m_pRootDict ? std::move(pDoc) : nullptr;
 }
 

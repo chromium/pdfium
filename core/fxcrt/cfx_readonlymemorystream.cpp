@@ -16,10 +16,6 @@ CFX_ReadOnlyMemoryStream::CFX_ReadOnlyMemoryStream(
     size_t size)
     : m_data(std::move(data)), m_span(m_data.get(), size) {}
 
-CFX_ReadOnlyMemoryStream::CFX_ReadOnlyMemoryStream(
-    pdfium::span<const uint8_t> span)
-    : m_span(span) {}
-
 CFX_ReadOnlyMemoryStream::~CFX_ReadOnlyMemoryStream() = default;
 
 FX_FILESIZE CFX_ReadOnlyMemoryStream::GetSize() {

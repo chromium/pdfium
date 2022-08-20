@@ -27,7 +27,6 @@ class CFX_ReadOnlyMemoryStream final : public IFX_SeekableReadStream {
  private:
   CFX_ReadOnlyMemoryStream(std::unique_ptr<uint8_t, FxFreeDeleter> data,
                            size_t size);
-  explicit CFX_ReadOnlyMemoryStream(pdfium::span<const uint8_t> span);
   ~CFX_ReadOnlyMemoryStream() override;
 
   std::unique_ptr<uint8_t, FxFreeDeleter> m_data;

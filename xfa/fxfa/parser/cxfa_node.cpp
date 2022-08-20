@@ -17,7 +17,7 @@
 #include <vector>
 
 #include "core/fxcrt/autorestorer.h"
-#include "core/fxcrt/cfx_readonlymemorystream.h"
+#include "core/fxcrt/cfx_read_only_span_stream.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
@@ -491,11 +491,11 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
       bsData = wsImage.ToUTF8();
       buffer = XFA_Base64Decode(bsData);
       if (!buffer.empty())
-        pImageFileRead = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(buffer);
+        pImageFileRead = pdfium::MakeRetain<CFX_ReadOnlySpanStream>(buffer);
     } else {
       bsData = wsImage.ToDefANSI();
       pImageFileRead =
-          pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(bsData.raw_span());
+          pdfium::MakeRetain<CFX_ReadOnlySpanStream>(bsData.raw_span());
     }
   } else {
     WideString wsURL = wsHref;

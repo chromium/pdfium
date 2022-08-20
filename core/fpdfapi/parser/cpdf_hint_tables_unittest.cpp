@@ -16,7 +16,7 @@
 #include "core/fpdfapi/parser/cpdf_read_validator.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
-#include "core/fxcrt/cfx_readonlymemorystream.h"
+#include "core/fxcrt/cfx_read_only_span_stream.h"
 #include "core/fxcrt/fx_stream.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
@@ -48,7 +48,7 @@ class TestLinearizedHeader final : public CPDF_LinearizedHeader {
 
   static std::unique_ptr<CPDF_LinearizedHeader> MakeHeader(
       const std::string& inline_data) {
-    CPDF_SyntaxParser parser(pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
+    CPDF_SyntaxParser parser(pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
         pdfium::as_bytes(pdfium::make_span(inline_data))));
     RetainPtr<CPDF_Dictionary> dict =
         ToDictionary(parser.GetObjectBody(nullptr));

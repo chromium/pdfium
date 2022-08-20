@@ -8,7 +8,7 @@
 #include <string>
 
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
-#include "core/fxcrt/cfx_readonlymemorystream.h"
+#include "core/fxcrt/cfx_read_only_span_stream.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {
@@ -16,7 +16,7 @@ namespace {
 std::unique_ptr<CPDF_SyntaxParser> MakeParserForBuffer(
     pdfium::span<const uint8_t> buffer) {
   return std::make_unique<CPDF_SyntaxParser>(
-      pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(buffer));
+      pdfium::MakeRetain<CFX_ReadOnlySpanStream>(buffer));
 }
 
 }  // namespace

@@ -9,7 +9,7 @@
 #include <limits>
 #include <utility>
 
-#include "core/fxcrt/cfx_readonlymemorystream.h"
+#include "core/fxcrt/cfx_read_only_span_stream.h"
 #include "core/fxcrt/data_vector.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/invalid_seekable_read_stream.h"
@@ -68,7 +68,7 @@ class MockDownloadHints final : public CPDF_DataAvail::DownloadHints {
 
 TEST(ReadValidatorTest, UnavailableData) {
   DataVector<uint8_t> test_data(kTestDataSize);
-  auto file = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(test_data);
+  auto file = pdfium::MakeRetain<CFX_ReadOnlySpanStream>(test_data);
   MockFileAvail file_avail;
   auto validator = pdfium::MakeRetain<CPDF_ReadValidator>(file, &file_avail);
 
@@ -91,7 +91,7 @@ TEST(ReadValidatorTest, UnavailableData) {
 
 TEST(ReadValidatorTest, UnavailableDataWithHints) {
   DataVector<uint8_t> test_data(kTestDataSize);
-  auto file = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(test_data);
+  auto file = pdfium::MakeRetain<CFX_ReadOnlySpanStream>(test_data);
   MockFileAvail file_avail;
   auto validator = pdfium::MakeRetain<CPDF_ReadValidator>(file, &file_avail);
 
@@ -146,7 +146,7 @@ TEST(ReadValidatorTest, ReadError) {
 
 TEST(ReadValidatorTest, IntOverflow) {
   DataVector<uint8_t> test_data(kTestDataSize);
-  auto file = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(test_data);
+  auto file = pdfium::MakeRetain<CFX_ReadOnlySpanStream>(test_data);
   MockFileAvail file_avail;
   auto validator = pdfium::MakeRetain<CPDF_ReadValidator>(file, &file_avail);
 
@@ -244,7 +244,7 @@ TEST(ReadValidatorTest, SessionReset) {
 
 TEST(ReadValidatorTest, CheckDataRangeAndRequestIfUnavailable) {
   DataVector<uint8_t> test_data(kTestDataSize);
-  auto file = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(test_data);
+  auto file = pdfium::MakeRetain<CFX_ReadOnlySpanStream>(test_data);
   MockFileAvail file_avail;
   auto validator = pdfium::MakeRetain<CPDF_ReadValidator>(file, &file_avail);
 

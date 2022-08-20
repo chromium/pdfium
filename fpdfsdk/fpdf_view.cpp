@@ -31,7 +31,7 @@
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
 #include "core/fpdfdoc/cpdf_viewerpreferences.h"
-#include "core/fxcrt/cfx_readonlymemorystream.h"
+#include "core/fxcrt/cfx_read_only_span_stream.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/fx_system.h"
@@ -274,7 +274,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_LoadXFA(FPDF_DOCUMENT document) {
 FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV
 FPDF_LoadMemDocument(const void* data_buf, int size, FPDF_BYTESTRING password) {
   return LoadDocumentImpl(
-      pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
+      pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
           pdfium::make_span(static_cast<const uint8_t*>(data_buf), size)),
       password);
 }
@@ -284,7 +284,7 @@ FPDF_LoadMemDocument64(const void* data_buf,
                        size_t size,
                        FPDF_BYTESTRING password) {
   return LoadDocumentImpl(
-      pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
+      pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
           pdfium::make_span(static_cast<const uint8_t*>(data_buf), size)),
       password);
 }

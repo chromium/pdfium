@@ -12,7 +12,7 @@
 
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/fx_codec_def.h"
-#include "core/fxcrt/cfx_readonlymemorystream.h"
+#include "core/fxcrt/cfx_read_only_span_stream.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
@@ -50,7 +50,7 @@ TEST(ProgressiveDecoder, Gif87a) {
 
   auto decoder = std::make_unique<ProgressiveDecoder>();
 
-  auto source = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(kInput);
+  auto source = pdfium::MakeRetain<CFX_ReadOnlySpanStream>(kInput);
   CFX_DIBAttribute attr;
   FXCODEC_STATUS status =
       decoder->LoadImageInfo(source, FXCODEC_IMAGE_GIF, &attr, true);
@@ -82,7 +82,7 @@ TEST(ProgressiveDecoder, Gif89a) {
 
   auto decoder = std::make_unique<ProgressiveDecoder>();
 
-  auto source = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(kInput);
+  auto source = pdfium::MakeRetain<CFX_ReadOnlySpanStream>(kInput);
   CFX_DIBAttribute attr;
   FXCODEC_STATUS status =
       decoder->LoadImageInfo(source, FXCODEC_IMAGE_GIF, &attr, true);
@@ -117,7 +117,7 @@ TEST(ProgressiveDecoder, GifInsufficientCodeSize) {
 
   auto decoder = std::make_unique<ProgressiveDecoder>();
 
-  auto source = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(kInput);
+  auto source = pdfium::MakeRetain<CFX_ReadOnlySpanStream>(kInput);
   CFX_DIBAttribute attr;
   FXCODEC_STATUS status =
       decoder->LoadImageInfo(source, FXCODEC_IMAGE_GIF, &attr, true);
@@ -149,7 +149,7 @@ TEST(ProgressiveDecoder, GifDecodeAcrossScanlines) {
 
   auto decoder = std::make_unique<ProgressiveDecoder>();
 
-  auto source = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(kInput);
+  auto source = pdfium::MakeRetain<CFX_ReadOnlySpanStream>(kInput);
   CFX_DIBAttribute attr;
   FXCODEC_STATUS status =
       decoder->LoadImageInfo(source, FXCODEC_IMAGE_GIF, &attr, true);
@@ -188,7 +188,7 @@ TEST(ProgressiveDecoder, GifDecodeAcrossSubblocks) {
 
   auto decoder = std::make_unique<ProgressiveDecoder>();
 
-  auto source = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(kInput);
+  auto source = pdfium::MakeRetain<CFX_ReadOnlySpanStream>(kInput);
   CFX_DIBAttribute attr;
   FXCODEC_STATUS status =
       decoder->LoadImageInfo(source, FXCODEC_IMAGE_GIF, &attr, true);
@@ -570,7 +570,7 @@ TEST(ProgressiveDecoder, BUG_895009) {
 
   auto decoder = std::make_unique<ProgressiveDecoder>();
 
-  auto source = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(kInput);
+  auto source = pdfium::MakeRetain<CFX_ReadOnlySpanStream>(kInput);
   CFX_DIBAttribute attr;
   FXCODEC_STATUS status =
       decoder->LoadImageInfo(source, FXCODEC_IMAGE_GIF, &attr, true);

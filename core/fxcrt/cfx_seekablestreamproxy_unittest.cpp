@@ -6,14 +6,14 @@
 
 #include <iterator>
 
-#include "core/fxcrt/cfx_readonlymemorystream.h"
+#include "core/fxcrt/cfx_read_only_span_stream.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/span.h"
 
 TEST(SeekableStreamProxyTest, NullStream) {
   auto proxy_stream = pdfium::MakeRetain<CFX_SeekableStreamProxy>(
-      pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
+      pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
           pdfium::make_span<const uint8_t>(nullptr, 0)));
 
   wchar_t buffer[16];
@@ -23,7 +23,7 @@ TEST(SeekableStreamProxyTest, NullStream) {
 TEST(SeekableStreamProxyTest, DefaultStreamBOMNotRecognized) {
   const char data[] = "abcd";
   auto proxy_stream = pdfium::MakeRetain<CFX_SeekableStreamProxy>(
-      pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(pdfium::make_span(
+      pdfium::MakeRetain<CFX_ReadOnlySpanStream>(pdfium::make_span(
           reinterpret_cast<const uint8_t*>(data), sizeof(data) - 1)));
 
   wchar_t buffer[16];
@@ -33,7 +33,7 @@ TEST(SeekableStreamProxyTest, DefaultStreamBOMNotRecognized) {
 TEST(SeekableStreamProxyTest, UTF8Stream) {
   const char data[] = "\xEF\xBB\xBF*\xC2\xA2*";
   auto proxy_stream = pdfium::MakeRetain<CFX_SeekableStreamProxy>(
-      pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(pdfium::make_span(
+      pdfium::MakeRetain<CFX_ReadOnlySpanStream>(pdfium::make_span(
           reinterpret_cast<const uint8_t*>(data), sizeof(data) - 1)));
 
   wchar_t buffer[16];
@@ -46,7 +46,7 @@ TEST(SeekableStreamProxyTest, UTF8Stream) {
 TEST(SeekableStreamProxyTest, UTF16LEStream) {
   const char data[] = "\xFF\xFE\x41\x00\x42\x01";
   auto proxy_stream = pdfium::MakeRetain<CFX_SeekableStreamProxy>(
-      pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(pdfium::make_span(
+      pdfium::MakeRetain<CFX_ReadOnlySpanStream>(pdfium::make_span(
           reinterpret_cast<const uint8_t*>(data), sizeof(data) - 1)));
 
   wchar_t buffer[16];
@@ -58,7 +58,7 @@ TEST(SeekableStreamProxyTest, UTF16LEStream) {
 TEST(SeekableStreamProxyTest, UTF16BEStream) {
   const char data[] = "\xFE\xFF\x00\x41\x01\x42";
   auto proxy_stream = pdfium::MakeRetain<CFX_SeekableStreamProxy>(
-      pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(pdfium::make_span(
+      pdfium::MakeRetain<CFX_ReadOnlySpanStream>(pdfium::make_span(
           reinterpret_cast<const uint8_t*>(data), sizeof(data) - 1)));
 
   wchar_t buffer[16];

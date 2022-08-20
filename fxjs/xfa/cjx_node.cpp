@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_memorystream.h"
-#include "core/fxcrt/cfx_readonlymemorystream.h"
+#include "core/fxcrt/cfx_read_only_span_stream.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
@@ -219,7 +219,7 @@ CJS_Result CJX_Node::loadXML(CFXJSE_Engine* runtime,
     bOverwrite = runtime->ToBoolean(params[2]);
 
   auto stream =
-      pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(expression.raw_span());
+      pdfium::MakeRetain<CFX_ReadOnlySpanStream>(expression.raw_span());
 
   CFX_XMLParser parser(stream);
   std::unique_ptr<CFX_XMLDocument> xml_doc = parser.Parse();
