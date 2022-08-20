@@ -18,6 +18,7 @@
 
 #include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/cfx_read_only_span_stream.h"
+#include "core/fxcrt/cfx_read_only_vector_stream.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
@@ -481,17 +482,15 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
   FXCODEC_IMAGE_TYPE type = XFA_GetImageType(pImage->GetContentType());
   ByteString bsData;  // Must outlive |pImageFileRead|.
 
-  // Must outlive |pImageFileRead|.
-  DataVector<uint8_t> buffer;
-
   RetainPtr<IFX_SeekableReadStream> pImageFileRead;
   if (wsImage.GetLength() > 0) {
     XFA_AttributeValue iEncoding = pImage->GetTransferEncoding();
     if (iEncoding == XFA_AttributeValue::Base64) {
-      bsData = wsImage.ToUTF8();
-      buffer = XFA_Base64Decode(bsData);
-      if (!buffer.empty())
-        pImageFileRead = pdfium::MakeRetain<CFX_ReadOnlySpanStream>(buffer);
+      DataVector<uint8_t> buffer = XFA_Base64Decode(wsImage.ToUTF8());
+      if (!buffer.empty()) {
+        pImageFileRead =
+            pdfium::MakeRetain<CFX_ReadOnlyVectorStream>(std::move(buffer));
+      }
     } else {
       bsData = wsImage.ToDefANSI();
       pImageFileRead =
