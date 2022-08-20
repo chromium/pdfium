@@ -27,6 +27,8 @@ source_set("fxcrt") {
     "cfx_read_only_memory_stream.h",
     "cfx_read_only_span_stream.cpp",
     "cfx_read_only_span_stream.h",
+    "cfx_read_only_string_stream.cpp",
+    "cfx_read_only_string_stream.h",
     "cfx_read_only_vector_stream.cpp",
     "cfx_read_only_vector_stream.h",
     "cfx_seekablestreamproxy.cpp",

@@ -17,7 +17,7 @@
 #include <vector>
 
 #include "core/fxcrt/autorestorer.h"
-#include "core/fxcrt/cfx_read_only_span_stream.h"
+#include "core/fxcrt/cfx_read_only_string_stream.h"
 #include "core/fxcrt/cfx_read_only_vector_stream.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_codepage.h"
@@ -480,7 +480,6 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
     return nullptr;
 
   FXCODEC_IMAGE_TYPE type = XFA_GetImageType(pImage->GetContentType());
-  ByteString bsData;  // Must outlive |pImageFileRead|.
 
   RetainPtr<IFX_SeekableReadStream> pImageFileRead;
   if (wsImage.GetLength() > 0) {
@@ -492,9 +491,8 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
             pdfium::MakeRetain<CFX_ReadOnlyVectorStream>(std::move(buffer));
       }
     } else {
-      bsData = wsImage.ToDefANSI();
       pImageFileRead =
-          pdfium::MakeRetain<CFX_ReadOnlySpanStream>(bsData.raw_span());
+          pdfium::MakeRetain<CFX_ReadOnlyStringStream>(wsImage.ToDefANSI());
     }
   } else {
     WideString wsURL = wsHref;
