@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_CFX_READONLYMEMORYSTREAM_H_
-#define CORE_FXCRT_CFX_READONLYMEMORYSTREAM_H_
+#ifndef CORE_FXCRT_CFX_READ_ONLY_MEMORY_STREAM_H_
+#define CORE_FXCRT_CFX_READ_ONLY_MEMORY_STREAM_H_
 
 #include <memory>
 
@@ -33,4 +33,4 @@ class CFX_ReadOnlyMemoryStream final : public IFX_SeekableReadStream {
   const pdfium::span<const uint8_t> m_span;
 };
 
-#endif  // CORE_FXCRT_CFX_READONLYMEMORYSTREAM_H_
+#endif  // CORE_FXCRT_CFX_READ_ONLY_MEMORY_STREAM_H_
