@@ -23,6 +23,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/cfx_bitstream.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/stl_util.h"
@@ -202,10 +203,9 @@ void DebugShowSkiaPath(const SkPath& path) {
 #else
   SkDynamicMemoryWStream stream;
   path.dump(&stream, false);
-  std::unique_ptr<char, FxFreeDeleter> storage;
-  storage.reset(FX_Alloc(char, stream.bytesWritten()));
-  stream.copyTo(storage.get());
-  printf("%.*s", (int)stream.bytesWritten(), storage.get());
+  DataVector<char> storage(stream.bytesWritten());
+  stream.copyTo(storage.data());
+  printf("%.*s", static_cast<int>(storage.size()), storage.data());
 #endif  // SHOW_SKIA_PATH_SHORTHAND
 #endif  // SHOW_SKIA_PATH
 }
@@ -657,8 +657,8 @@ void SetBitmapPaintForMerge(bool is_mask,
 }
 
 bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
-              std::unique_ptr<uint8_t, FxFreeDeleter>& dst8Storage,
-              std::unique_ptr<uint32_t, FxFreeDeleter>& dst32Storage,
+              DataVector<uint8_t>& dst8_storage,
+              DataVector<uint32_t>& dst32_storage,
               SkBitmap* skBitmap,
               int* widthPtr,
               int* heightPtr,
@@ -677,8 +677,9 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
   int rowBytes = pSource->GetPitch();
   switch (pSource->GetBPP()) {
     case 1: {
-      dst8Storage.reset(FX_Alloc2D(uint8_t, width, height));
-      uint8_t* dst8Pixels = dst8Storage.get();
+      dst8_storage =
+          fxcrt::Vector2D<uint8_t, FxAllocAllocator<uint8_t>>(width, height);
+      uint8_t* dst8Pixels = dst8_storage.data();
       // By default, the two colors for grayscale are 0xFF and 0x00 unless they
       // are specified in the palette.
       uint8_t color1 = 0x00;
@@ -700,15 +701,16 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
         for (int x = 0; x < width; ++x)
           dstRow[x] = srcRow[x >> 3] & (1 << (~x & 0x07)) ? color2 : color1;
       }
-      buffer = dst8Storage.get();
+      buffer = dst8_storage.data();
       rowBytes = width;
       break;
     }
     case 8:
       // we upscale ctables to 32bit.
       if (pSource->HasPalette()) {
-        dst32Storage.reset(FX_Alloc2D(uint32_t, width, height));
-        SkPMColor* dst32Pixels = dst32Storage.get();
+        dst32_storage = fxcrt::Vector2D<uint32_t, FxAllocAllocator<uint32_t>>(
+            width, height);
+        SkPMColor* dst32Pixels = dst32_storage.data();
         const size_t src_palette_size = pSource->GetRequiredPaletteSize();
         pdfium::span<const uint32_t> src_palette = pSource->GetPaletteSpan();
         CHECK_LE(src_palette_size, src_palette.size());
@@ -724,14 +726,15 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
             dstRow[x] = src_palette[index];
           }
         }
-        buffer = dst32Storage.get();
+        buffer = dst32_storage.data();
         rowBytes = width * sizeof(uint32_t);
         colorType = Get32BitSkColorType(bRgbByteOrder);
       }
       break;
     case 24: {
-      dst32Storage.reset(FX_Alloc2D(uint32_t, width, height));
-      uint32_t* dst32Pixels = dst32Storage.get();
+      dst32_storage =
+          fxcrt::Vector2D<uint32_t, FxAllocAllocator<uint32_t>>(width, height);
+      uint32_t* dst32Pixels = dst32_storage.data();
       for (int y = 0; y < height; ++y) {
         const uint8_t* srcRow =
             static_cast<const uint8_t*>(buffer) + y * rowBytes;
@@ -741,7 +744,7 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
                                    srcRow[x * 3 + 0]);
         }
       }
-      buffer = dst32Storage.get();
+      buffer = dst32_storage.data();
       rowBytes = width * sizeof(uint32_t);
       colorType = Get32BitSkColorType(bRgbByteOrder);
       alphaType = kOpaque_SkAlphaType;
@@ -1617,7 +1620,7 @@ void CFX_SkiaDeviceDriver::PaintStroke(SkPaint* spaint,
                std::min(deviceUnits[0].length(), deviceUnits[1].length()));
   if (!pGraphState->m_DashArray.empty()) {
     size_t count = (pGraphState->m_DashArray.size() + 1) / 2;
-    std::vector<SkScalar> intervals(count * 2);
+    DataVector<SkScalar> intervals(count * 2);
     // Set dash pattern
     for (size_t i = 0; i < count; i++) {
       float on = pGraphState->m_DashArray[i * 2];
@@ -2542,13 +2545,14 @@ bool CFX_SkiaDeviceDriver::StartDIBits(
 #if defined(_SKIA_SUPPORT_)
   m_pCache->FlushForDraw();
   DebugValidate(m_pBitmap, m_pBackdropBitmap);
-  std::unique_ptr<uint8_t, FxFreeDeleter> dst8Storage;
-  std::unique_ptr<uint32_t, FxFreeDeleter> dst32Storage;
+  // Storage vectors must outlive `skBitmap`.
+  DataVector<uint8_t> dst8_storage;
+  DataVector<uint32_t> dst32_storage;
   SkBitmap skBitmap;
   int width;
   int height;
-  if (!Upsample(pSource, dst8Storage, dst32Storage, &skBitmap, &width, &height,
-                false, m_bRgbByteOrder)) {
+  if (!Upsample(pSource, dst8_storage, dst32_storage, &skBitmap, &width,
+                &height, /*forceAlpha=*/false, m_bRgbByteOrder)) {
     return false;
   }
   {
@@ -2685,20 +2689,23 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
     const CFX_Matrix& matrix,
     BlendMode blend_type) {
   DebugValidate(m_pBitmap, m_pBackdropBitmap);
-  std::unique_ptr<uint8_t, FxFreeDeleter> src8Storage, mask8Storage;
-  std::unique_ptr<uint32_t, FxFreeDeleter> src32Storage, mask32Storage;
+  // Storage vectors must outlive `skBitmap` and `skMask`.
+  DataVector<uint8_t> src8_storage;
+  DataVector<uint8_t> mask8_storage;
+  DataVector<uint32_t> src32_storage;
+  DataVector<uint32_t> mask32_storage;
   SkBitmap skBitmap;
   SkBitmap skMask;
   int srcWidth;
   int srcHeight;
   int maskWidth;
   int maskHeight;
-  if (!Upsample(pSource, src8Storage, src32Storage, &skBitmap, &srcWidth,
-                &srcHeight, false, m_bRgbByteOrder)) {
+  if (!Upsample(pSource, src8_storage, src32_storage, &skBitmap, &srcWidth,
+                &srcHeight, /*forceAlpha=*/false, m_bRgbByteOrder)) {
     return false;
   }
-  if (!Upsample(pMask, mask8Storage, mask32Storage, &skMask, &maskWidth,
-                &maskHeight, true, m_bRgbByteOrder)) {
+  if (!Upsample(pMask, mask8_storage, mask32_storage, &skMask, &maskWidth,
+                &maskHeight, /*forceAlpha=*/true, m_bRgbByteOrder)) {
     return false;
   }
   {
