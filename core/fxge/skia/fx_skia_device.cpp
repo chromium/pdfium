@@ -626,11 +626,17 @@ void SetBitmapMatrix(const CFX_Matrix& m,
 
 void SetBitmapPaint(bool is_mask,
                     bool anti_alias,
+                    int bitmap_alpha,
                     uint32_t argb,
                     BlendMode blend_type,
                     SkPaint* paint) {
+  DCHECK_GE(bitmap_alpha, 0);
+  DCHECK_LE(bitmap_alpha, 255);
+
   if (is_mask)
     paint->setColor(argb);
+  else if (bitmap_alpha != 255)
+    paint->setAlpha(bitmap_alpha);
 
   paint->setAntiAlias(anti_alias);
   paint->setBlendMode(GetSkiaBlendMode(blend_type));
@@ -2551,8 +2557,8 @@ bool CFX_SkiaDeviceDriver::StartDIBits(
     SetBitmapMatrix(matrix, width, height, &skMatrix);
     m_pCanvas->concat(skMatrix);
     SkPaint paint;
-    SetBitmapPaint(pSource->IsMaskFormat(), !m_FillOptions.aliased_path, argb,
-                   blend_type, &paint);
+    SetBitmapPaint(pSource->IsMaskFormat(), !m_FillOptions.aliased_path,
+                   bitmap_alpha, argb, blend_type, &paint);
     // TODO(caryclark) Once Skia supports 8 bit src to 8 bit dst remove this
     if (m_pBitmap && m_pBitmap->GetBPP() == 8 && pSource->GetBPP() == 8) {
       SkMatrix inv;

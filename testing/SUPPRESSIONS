@@ -50,9 +50,6 @@
 
 3_4_textbox.pdf * * * *
 
-# TODO(pdfium:1790): Remove after associated bug is fixed
-3_interpolate_image.pdf * * * skia
-
 3_interpolate_image.pdf mac * * *
 3bigpreview.pdf mac * * *
 
@@ -277,7 +274,7 @@ example_023.pdf mac * * *
 example_024.pdf mac * * *
 example_025.pdf mac * * *
 
-# TODO(pdfium:1807, pdfium:1808): Remove after associated bug is fixed
+# TODO(pdfium:1808): Remove after associated bug is fixed
 example_025.pdf * * * skia,skiapaths
 
 example_026.pdf mac * * *
