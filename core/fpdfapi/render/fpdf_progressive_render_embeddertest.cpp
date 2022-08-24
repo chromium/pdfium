@@ -7,6 +7,7 @@
 #include <utility>
 
 #include "build/build_config.h"
+#include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "public/fpdf_progressive.h"
 #include "testing/embedder_test.h"
@@ -314,90 +315,85 @@ void FPDFProgressiveRenderEmbedderTest::VerifyRenderingWithColorScheme(
 }
 
 TEST_F(FPDFProgressiveRenderEmbedderTest, RenderTextWithColorScheme) {
-// Test rendering of text with forced color scheme on.
-#if defined(_SKIA_SUPPORT_)
-  static constexpr char kContentWithTextChecksum[] =
-      "5ece6059efdc2ecb2894fa3cf329dc94";
-#elif BUILDFLAG(IS_APPLE) && !defined(_SKIA_SUPPORT_PATHS_)
-  static constexpr char kContentWithTextChecksum[] =
-      "ee4ec12f54ce8d117a73bd9b85a8954d";
-#else
-  static constexpr char kContentWithTextChecksum[] =
-      "704db63ed2bf77254ecaa8035b85f21a";
+  // Test rendering of text with forced color scheme on.
+  const char* content_with_text_checksum = []() {
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+      return "5ece6059efdc2ecb2894fa3cf329dc94";
+#if BUILDFLAG(IS_APPLE)
+    if (!CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer())
+      return "ee4ec12f54ce8d117a73bd9b85a8954d";
 #endif
+    return "704db63ed2bf77254ecaa8035b85f21a";
+  }();
 
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
 
   FPDF_COLORSCHEME color_scheme{kBlack, kWhite, kWhite, kWhite};
   VerifyRenderingWithColorScheme(/*page_num=*/0, /*flags=*/0, &color_scheme,
-                                 kBlack, 200, 200, kContentWithTextChecksum);
+                                 kBlack, 200, 200, content_with_text_checksum);
 }
 
 TEST_F(FPDFProgressiveRenderEmbedderTest, RenderPathWithColorScheme) {
   // Test rendering of paths with forced color scheme on.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  static constexpr char kRectanglesChecksum[] =
-      "4b0f850a94698d07b6cd2814d1b4ccb7";
-#else
-  static constexpr char kRectanglesChecksum[] =
-      "249f59b0d066c4f6bd89782a80822219";
-#endif
+  const char* rectangles_checksum = []() {
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
+        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+      return "4b0f850a94698d07b6cd2814d1b4ccb7";
+    }
+    return "249f59b0d066c4f6bd89782a80822219";
+  }();
 
   ASSERT_TRUE(OpenDocument("rectangles.pdf"));
 
   FPDF_COLORSCHEME color_scheme{kWhite, kRed, kBlue, kBlue};
   VerifyRenderingWithColorScheme(/*page_num=*/0, /*flags=*/0, &color_scheme,
-                                 kBlack, 200, 300, kRectanglesChecksum);
+                                 kBlack, 200, 300, rectangles_checksum);
 }
 
 TEST_F(FPDFProgressiveRenderEmbedderTest,
        RenderPathWithColorSchemeAndConvertFillToStroke) {
   // Test rendering of paths with forced color scheme on and conversion from
   // fill to stroke enabled. The fill paths should be rendered as stroke.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  static constexpr char kRectanglesChecksum[] =
-      "c1cbbd2ce6921f608a3c55140592419b";
-#else
-  static constexpr char kRectanglesChecksum[] =
-      "0ebcc11e617635eca1fa9ce475383a80";
-#endif
+  const char* rectangles_checksum = []() {
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
+        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+      return "c1cbbd2ce6921f608a3c55140592419b";
+    }
+    return "0ebcc11e617635eca1fa9ce475383a80";
+  }();
 
   ASSERT_TRUE(OpenDocument("rectangles.pdf"));
 
   FPDF_COLORSCHEME color_scheme{kWhite, kRed, kBlue, kBlue};
   VerifyRenderingWithColorScheme(/*page_num=*/0, FPDF_CONVERT_FILL_TO_STROKE,
                                  &color_scheme, kBlack, 200, 300,
-                                 kRectanglesChecksum);
+                                 rectangles_checksum);
 }
 
 TEST_F(FPDFProgressiveRenderEmbedderTest, RenderHighlightWithColorScheme) {
-// Test rendering of highlight with forced color scheme on.
-//
-// Note: The fill color rendered for highlight is different from the normal
-// path since highlights have Multiply blend mode, while the other path has
-// Normal blend mode.
-#if defined(_SKIA_SUPPORT_)
-  static constexpr char kContentWithHighlightFillChecksum[] =
-      "9b6273fdbc9db780c49f7540756209f8";
-#elif defined(_SKIA_SUPPORT_PATHS_)
-  static constexpr char kContentWithHighlightFillChecksum[] =
-      "1ad601278736432e2f82ea37ab6a28ba";
-#else
+  // Test rendering of highlight with forced color scheme on.
+  //
+  // Note: The fill color rendered for highlight is different from the normal
+  // path since highlights have Multiply blend mode, while the other path has
+  // Normal blend mode.
+  const char* content_with_highlight_fill_checksum = []() {
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+      return "9b6273fdbc9db780c49f7540756209f8";
+    if (CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer())
+      return "1ad601278736432e2f82ea37ab6a28ba";
 #if BUILDFLAG(IS_APPLE)
-  static constexpr char kContentWithHighlightFillChecksum[] =
-      "a820afec9b99d3d3f2e9e9382bbad7c1";
+    return "a820afec9b99d3d3f2e9e9382bbad7c1";
 #else
-  static constexpr char kContentWithHighlightFillChecksum[] =
-      "a08a0639f89446f66f3689ee8e08b9fe";
+    return "a08a0639f89446f66f3689ee8e08b9fe";
 #endif  // BUILDFLAG(IS_APPLE)
-#endif
+  }();
 
   ASSERT_TRUE(OpenDocument("annotation_highlight_square_with_ap.pdf"));
 
   FPDF_COLORSCHEME color_scheme{kRed, kGreen, kWhite, kWhite};
   VerifyRenderingWithColorScheme(/*page_num=*/0, FPDF_ANNOT, &color_scheme,
                                  kBlue, 612, 792,
-                                 kContentWithHighlightFillChecksum);
+                                 content_with_highlight_fill_checksum);
 }
 
 TEST_F(FPDFProgressiveRenderEmbedderTest,
@@ -409,85 +405,82 @@ TEST_F(FPDFProgressiveRenderEmbedderTest,
   // path since highlights have Multiply blend mode, while the other path has
   // Normal blend mode.
 
-#if defined(_SKIA_SUPPORT_)
-  static constexpr char kMD5ContentWithHighlight[] =
-      "772246195d18f75d40a22bee913c098f";
-#elif defined(_SKIA_SUPPORT_PATHS_)
-  static constexpr char kMD5ContentWithHighlight[] =
-      "eff6eef2409ef5fbf4612bf6af42e0a0";
-#else
+  const char* md5_content_with_highlight = []() {
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+      return "772246195d18f75d40a22bee913c098f";
+    if (CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer())
+      return "eff6eef2409ef5fbf4612bf6af42e0a0";
 #if BUILDFLAG(IS_APPLE)
-  static constexpr char kMD5ContentWithHighlight[] =
-      "8837bea0b3520164b1784e513c882a2d";
+    return "8837bea0b3520164b1784e513c882a2d";
 #else
-  static constexpr char kMD5ContentWithHighlight[] =
-      "3dd8c02f5c06bac85e0d2c8bf37d1dc4";
+    return "3dd8c02f5c06bac85e0d2c8bf37d1dc4";
 #endif  // BUILDFLAG(IS_APPLE)
-#endif
+  }();
 
   ASSERT_TRUE(OpenDocument("annotation_highlight_square_with_ap.pdf"));
 
   FPDF_COLORSCHEME color_scheme{kRed, kGreen, kWhite, kWhite};
   VerifyRenderingWithColorScheme(
       /*page_num=*/0, FPDF_ANNOT | FPDF_CONVERT_FILL_TO_STROKE, &color_scheme,
-      kBlue, 612, 792, kMD5ContentWithHighlight);
+      kBlue, 612, 792, md5_content_with_highlight);
 }
 
 TEST_F(FPDFProgressiveRenderEmbedderTest, RenderInkWithColorScheme) {
-// Test rendering of multiple ink with forced color scheme on.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  static constexpr char kContentWithInkChecksum[] =
-      "ebc57721e4c8da34156e09b9b2e62fb0";
-#else
-  static constexpr char kContentWithInkChecksum[] =
-      "797bce7dc6c50ee86b095405df9fe5aa";
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+  // Test rendering of multiple ink with forced color scheme on.
+  const char* content_with_ink_checksum = []() {
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
+        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+      return "ebc57721e4c8da34156e09b9b2e62fb0";
+    }
+    return "797bce7dc6c50ee86b095405df9fe5aa";
+  }();
 
   ASSERT_TRUE(OpenDocument("annotation_ink_multiple.pdf"));
 
   FPDF_COLORSCHEME color_scheme{kBlack, kGreen, kRed, kRed};
   VerifyRenderingWithColorScheme(/*page_num=*/0, FPDF_ANNOT, &color_scheme,
-                                 kBlack, 612, 792, kContentWithInkChecksum);
+                                 kBlack, 612, 792, content_with_ink_checksum);
 }
 
 TEST_F(FPDFProgressiveRenderEmbedderTest, RenderStampWithColorScheme) {
-// Test rendering of static annotation with forced color scheme on.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  static constexpr char kContentWithStampChecksum[] =
-      "a791fdb4f595bb6c4187cc2aeed5e9e8";
-#elif BUILDFLAG(IS_APPLE)
-  static constexpr char kContentWithStampChecksum[] =
-      "7a209e29caeeab7d2b25b34570a4ace6";
+  // Test rendering of static annotation with forced color scheme on.
+  const char* content_with_stamp_checksum = []() {
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
+        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+      return "a791fdb4f595bb6c4187cc2aeed5e9e8";
+    }
+#if BUILDFLAG(IS_APPLE)
+    return "7a209e29caeeab7d2b25b34570a4ace6";
 #else
-  static constexpr char kContentWithStampChecksum[] =
-      "3bbbfc6cc18801906285a232c4a20617";
+    return "3bbbfc6cc18801906285a232c4a20617";
 #endif
+  }();
 
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
 
   FPDF_COLORSCHEME color_scheme{kBlue, kGreen, kRed, kRed};
   VerifyRenderingWithColorScheme(/*page_num=*/0, FPDF_ANNOT, &color_scheme,
-                                 kWhite, 595, 842, kContentWithStampChecksum);
+                                 kWhite, 595, 842, content_with_stamp_checksum);
 }
 
 TEST_F(FPDFProgressiveRenderEmbedderTest, RenderFormWithColorScheme) {
   // Test rendering of form does not change with forced color scheme on.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  static constexpr char kContentWithFormChecksum[] =
-      "9f75d98afc6d6313bd87e6562ea6df15";
-#else
-  static constexpr char kContentWithFormChecksum[] =
-      "080f7a4381606659301440e1b14dca35";
-#endif
+  const char* content_with_form_checksum = []() {
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
+        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+      return "9f75d98afc6d6313bd87e6562ea6df15";
+    }
+    return "080f7a4381606659301440e1b14dca35";
+  }();
 
   ASSERT_TRUE(OpenDocument("annotiter.pdf"));
 
   FPDF_COLORSCHEME color_scheme{kGreen, kGreen, kRed, kRed};
   VerifyRenderingWithColorScheme(/*page_num=*/0, FPDF_ANNOT, &color_scheme,
-                                 kWhite, 612, 792, kContentWithFormChecksum);
+                                 kWhite, 612, 792, content_with_form_checksum);
 
   // Verify that the MD5 hash matches when rendered without |color_scheme|.
   VerifyRenderingWithColorScheme(/*page_num=*/0, FPDF_ANNOT,
                                  /*color_scheme=*/nullptr, kWhite, 612, 792,
-                                 kContentWithFormChecksum);
+                                 content_with_form_checksum);
 }
