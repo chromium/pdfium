@@ -13,21 +13,19 @@
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
+#include "core/fxge/agg/fx_agg_driver.h"
+#include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_path.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/render_defines.h"
 #include "core/fxge/win32/cwin32_platform.h"
+#include "third_party/agg23/agg_clip_liang_barsky.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/numerics/safe_conversions.h"
-
-#if !defined(_SKIA_SUPPORT_)
-#include "core/fxge/agg/fx_agg_driver.h"
-#include "third_party/agg23/agg_clip_liang_barsky.h"
-#endif
 
 namespace {
 
@@ -305,6 +303,26 @@ unsigned clip_liang_barsky(float x1,
 }
 #endif  //  defined(_SKIA_SUPPORT_)
 
+unsigned LineClip(float w,
+                  float h,
+                  float x1,
+                  float y1,
+                  float x2,
+                  float y2,
+                  float* x,
+                  float* y) {
+#if defined(_SKIA_SUPPORT_)
+  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+    // TODO(caryclark) temporary replacement of antigrain in line function to
+    // permit removing antigrain altogether
+    rect_base rect = {0.0f, 0.0f, w, h};
+    return clip_liang_barsky(x1, y1, x2, y2, rect, x, y);
+  }
+#endif
+  pdfium::agg::rect_base<float> rect(0.0f, 0.0f, w, h);
+  return pdfium::agg::clip_liang_barsky<float>(x1, y1, x2, y2, rect, x, y);
+}
+
 }  // namespace
 
 CGdiDeviceDriver::CGdiDeviceDriver(HDC hDC, DeviceType device_type)
@@ -509,17 +527,7 @@ void CGdiDeviceDriver::DrawLine(float x1, float y1, float x2, float y2) {
     if (startOutOfBoundsFlag || endOutOfBoundsFlag) {
       float x[2];
       float y[2];
-      int np;
-#if defined(_SKIA_SUPPORT_)
-      // TODO(caryclark) temporary replacement of antigrain in line function
-      // to permit removing antigrain altogether
-      rect_base rect = {0.0f, 0.0f, (float)(m_Width), (float)(m_Height)};
-      np = clip_liang_barsky(x1, y1, x2, y2, rect, x, y);
-#else
-      pdfium::agg::rect_base<float> rect(0.0f, 0.0f, (float)(m_Width),
-                                         (float)(m_Height));
-      np = pdfium::agg::clip_liang_barsky<float>(x1, y1, x2, y2, rect, x, y);
-#endif
+      unsigned np = LineClip(m_Width, m_Height, x1, y1, x2, y2, x, y);
       if (np == 0)
         return;
 

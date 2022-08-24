@@ -18,6 +18,8 @@ config("fxge_warnings") {
 
 source_set("fxge") {
   sources = [
+    "agg/fx_agg_driver.cpp",
+    "agg/fx_agg_driver.h",
     "calculate_pitch.cpp",
     "calculate_pitch.h",
     "cfx_cliprgn.cpp",
@@ -122,7 +124,10 @@ source_set("fxge") {
     "../../:pdfium_noshorten_config",
   ]
 
-  deps = [ "../fxcrt" ]
+  deps = [
+    "../../third_party:fx_agg",
+    "../fxcrt",
+  ]
 
   if (is_component_build || use_system_freetype) {
     # ft_adobe_glyph_list is not exported from the Freetype shared library so we
@@ -140,12 +145,6 @@ source_set("fxge") {
   if (pdf_use_skia || pdf_use_skia_paths) {
     sources += [ "skia/fx_skia_device.cpp" ]
     deps += [ "//skia" ]
-  } else {
-    sources += [
-      "agg/fx_agg_driver.cpp",
-      "agg/fx_agg_driver.h",
-    ]
-    deps += [ "../../third_party:fx_agg" ]
   }
 
   if (is_android) {

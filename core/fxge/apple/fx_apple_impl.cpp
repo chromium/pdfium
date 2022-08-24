@@ -11,6 +11,7 @@
 
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxge/agg/fx_agg_driver.h"
 #include "core/fxge/apple/fx_apple_platform.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/cfx_font.h"
@@ -23,12 +24,6 @@
 #include "core/fxge/freetype/fx_freetype.h"
 #include "core/fxge/text_char_pos.h"
 #include "third_party/base/span.h"
-
-#if !defined(_SKIA_SUPPORT_)
-#include "core/fxge/agg/fx_agg_driver.h"
-#endif
-
-#if !defined(_SKIA_SUPPORT_)
 
 namespace {
 
@@ -165,8 +160,6 @@ bool CFX_AggDeviceDriver::DrawDeviceText(
 }
 
 }  // namespace pdfium
-
-#endif  // !defined(_SKIA_SUPPORT_)
 
 void CFX_GlyphCache::InitPlatform() {}
 

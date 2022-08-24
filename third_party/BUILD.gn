@@ -207,43 +207,42 @@ if (pdf_use_skia || pdf_use_skia_paths) {
   group("fontconfig") {
     public_configs = [ ":system_fontconfig" ]
   }
-} else {
-  config("fx_agg_warnings") {
-    visibility = [ ":*" ]
-    if (is_clang) {
-      # calc_butt_cap() in agg_vcgen_stroke.cpp is unused.
-      cflags = [ "-Wno-unused-function" ]
-    }
-  }
+}
 
-  source_set("fx_agg") {
-    configs -= [ "//build/config/compiler:chromium_code" ]
-    configs += [
-      "//build/config/compiler:no_chromium_code",
-      ":pdfium_third_party_config",
-
-      # Must be after no_chromium_code for warning flags to be ordered correctly.
-      ":fx_agg_warnings",
-    ]
-    sources = [
-      "agg23/agg_basics.h",
-      "agg23/agg_clip_liang_barsky.h",
-      "agg23/agg_conv_dash.h",
-      "agg23/agg_conv_stroke.h",
-      "agg23/agg_curves.cpp",
-      "agg23/agg_curves.h",
-      "agg23/agg_path_storage.cpp",
-      "agg23/agg_path_storage.h",
-      "agg23/agg_rasterizer_scanline_aa.cpp",
-      "agg23/agg_rasterizer_scanline_aa.h",
-      "agg23/agg_renderer_scanline.h",
-      "agg23/agg_rendering_buffer.h",
-      "agg23/agg_scanline_u.h",
-      "agg23/agg_vcgen_dash.cpp",
-      "agg23/agg_vcgen_stroke.cpp",
-    ]
-    deps = [ "../core/fxcrt" ]
+config("fx_agg_warnings") {
+  visibility = [ ":*" ]
+  if (is_clang) {
+    # calc_butt_cap() in agg_vcgen_stroke.cpp is unused.
+    cflags = [ "-Wno-unused-function" ]
   }
+}
+source_set("fx_agg") {
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [
+    "//build/config/compiler:no_chromium_code",
+    ":pdfium_third_party_config",
+
+    # Must be after no_chromium_code for warning flags to be ordered correctly.
+    ":fx_agg_warnings",
+  ]
+  sources = [
+    "agg23/agg_basics.h",
+    "agg23/agg_clip_liang_barsky.h",
+    "agg23/agg_conv_dash.h",
+    "agg23/agg_conv_stroke.h",
+    "agg23/agg_curves.cpp",
+    "agg23/agg_curves.h",
+    "agg23/agg_path_storage.cpp",
+    "agg23/agg_path_storage.h",
+    "agg23/agg_rasterizer_scanline_aa.cpp",
+    "agg23/agg_rasterizer_scanline_aa.h",
+    "agg23/agg_renderer_scanline.h",
+    "agg23/agg_rendering_buffer.h",
+    "agg23/agg_scanline_u.h",
+    "agg23/agg_vcgen_dash.cpp",
+    "agg23/agg_vcgen_stroke.cpp",
+  ]
+  deps = [ "../core/fxcrt" ]
 }
 
 config("fx_lcms2_warnings") {
