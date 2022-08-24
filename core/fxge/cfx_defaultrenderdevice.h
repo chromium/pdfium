@@ -54,6 +54,28 @@ class CFX_DefaultRenderDevice final : public CFX_RenderDevice {
                   bool bRgbByteOrder,
                   RetainPtr<CFX_DIBitmap> pBackdropBitmap,
                   bool bGroupKnockout);
+
+  bool AttachAggImpl(RetainPtr<CFX_DIBitmap> pBitmap,
+                     bool bRgbByteOrder,
+                     RetainPtr<CFX_DIBitmap> pBackdropBitmap,
+                     bool bGroupKnockout);
+
+  bool CreateAgg(int width,
+                 int height,
+                 FXDIB_Format format,
+                 RetainPtr<CFX_DIBitmap> pBackdropBitmap);
+
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+  bool AttachSkiaImpl(RetainPtr<CFX_DIBitmap> pBitmap,
+                      bool bRgbByteOrder,
+                      RetainPtr<CFX_DIBitmap> pBackdropBitmap,
+                      bool bGroupKnockout);
+
+  bool CreateSkia(int width,
+                  int height,
+                  FXDIB_Format format,
+                  RetainPtr<CFX_DIBitmap> pBackdropBitmap);
+#endif
 };
 
 #endif  // CORE_FXGE_CFX_DEFAULTRENDERDEVICE_H_

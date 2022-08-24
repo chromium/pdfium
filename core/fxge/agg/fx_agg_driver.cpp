@@ -1420,12 +1420,7 @@ bool CFX_AggDeviceDriver::ContinueDIBits(CFX_ImageRenderer* pHandle,
 
 }  // namespace pdfium
 
-#if !defined(_SKIA_SUPPORT_)
-CFX_DefaultRenderDevice::CFX_DefaultRenderDevice() = default;
-
-CFX_DefaultRenderDevice::~CFX_DefaultRenderDevice() = default;
-
-bool CFX_DefaultRenderDevice::AttachImpl(
+bool CFX_DefaultRenderDevice::AttachAggImpl(
     RetainPtr<CFX_DIBitmap> pBitmap,
     bool bRgbByteOrder,
     RetainPtr<CFX_DIBitmap> pBackdropBitmap,
@@ -1440,10 +1435,11 @@ bool CFX_DefaultRenderDevice::AttachImpl(
   return true;
 }
 
-bool CFX_DefaultRenderDevice::Create(int width,
-                                     int height,
-                                     FXDIB_Format format,
-                                     RetainPtr<CFX_DIBitmap> pBackdropBitmap) {
+bool CFX_DefaultRenderDevice::CreateAgg(
+    int width,
+    int height,
+    FXDIB_Format format,
+    RetainPtr<CFX_DIBitmap> pBackdropBitmap) {
   auto pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!pBitmap->Create(width, height, format))
     return false;
@@ -1453,5 +1449,3 @@ bool CFX_DefaultRenderDevice::Create(int width,
       std::move(pBitmap), false, std::move(pBackdropBitmap), false));
   return true;
 }
-
-#endif  // !defined(_SKIA_SUPPORT_)
