@@ -679,7 +679,7 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
     case 1: {
       dst8_storage =
           fxcrt::Vector2D<uint8_t, FxAllocAllocator<uint8_t>>(width, height);
-      uint8_t* dst8Pixels = dst8_storage.data();
+      pdfium::span<uint8_t> dst8_pixels(dst8_storage);
       // By default, the two colors for grayscale are 0xFF and 0x00 unless they
       // are specified in the palette.
       uint8_t color1 = 0x00;
@@ -697,9 +697,9 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
       for (int y = 0; y < height; ++y) {
         const uint8_t* srcRow =
             static_cast<const uint8_t*>(buffer) + y * rowBytes;
-        uint8_t* dstRow = dst8Pixels + y * width;
+        pdfium::span<uint8_t> dst_row = dst8_pixels.subspan(y * width);
         for (int x = 0; x < width; ++x)
-          dstRow[x] = srcRow[x >> 3] & (1 << (~x & 0x07)) ? color2 : color1;
+          dst_row[x] = srcRow[x >> 3] & (1 << (~x & 0x07)) ? color2 : color1;
       }
       buffer = dst8_storage.data();
       rowBytes = width;
@@ -710,20 +710,20 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
       if (pSource->HasPalette()) {
         dst32_storage = fxcrt::Vector2D<uint32_t, FxAllocAllocator<uint32_t>>(
             width, height);
-        SkPMColor* dst32Pixels = dst32_storage.data();
+        pdfium::span<SkPMColor> dst32_pixels(dst32_storage);
         const size_t src_palette_size = pSource->GetRequiredPaletteSize();
         pdfium::span<const uint32_t> src_palette = pSource->GetPaletteSpan();
         CHECK_LE(src_palette_size, src_palette.size());
         for (int y = 0; y < height; ++y) {
           const uint8_t* srcRow =
               static_cast<const uint8_t*>(buffer) + y * rowBytes;
-          uint32_t* dstRow = dst32Pixels + y * width;
+          pdfium::span<uint32_t> dst_row = dst32_pixels.subspan(y * width);
           for (int x = 0; x < width; ++x) {
             unsigned index = srcRow[x];
             if (index >= src_palette_size) {
               index = 0;
             }
-            dstRow[x] = src_palette[index];
+            dst_row[x] = src_palette[index];
           }
         }
         buffer = dst32_storage.data();
@@ -734,14 +734,14 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
     case 24: {
       dst32_storage =
           fxcrt::Vector2D<uint32_t, FxAllocAllocator<uint32_t>>(width, height);
-      uint32_t* dst32Pixels = dst32_storage.data();
+      pdfium::span<uint32_t> dst32_pixels(dst32_storage);
       for (int y = 0; y < height; ++y) {
         const uint8_t* srcRow =
             static_cast<const uint8_t*>(buffer) + y * rowBytes;
-        uint32_t* dstRow = dst32Pixels + y * width;
+        pdfium::span<uint32_t> dst_row = dst32_pixels.subspan(y * width);
         for (int x = 0; x < width; ++x) {
-          dstRow[x] = SkPackARGB32(0xFF, srcRow[x * 3 + 2], srcRow[x * 3 + 1],
-                                   srcRow[x * 3 + 0]);
+          dst_row[x] = SkPackARGB32(0xFF, srcRow[x * 3 + 2], srcRow[x * 3 + 1],
+                                    srcRow[x * 3 + 0]);
         }
       }
       buffer = dst32_storage.data();
