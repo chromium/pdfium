@@ -2574,9 +2574,13 @@ bool CFX_SkiaDeviceDriver::StartDIBits(
         }
       }
     } else {
+      SkSamplingOptions sampling_options =
+          options.bInterpolateBilinear
+              ? SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kLinear)
+              : SkSamplingOptions();
       m_pCanvas->drawImageRect(skBitmap.asImage(),
-                               SkRect::MakeWH(width, height),
-                               SkSamplingOptions(), &paint);
+                               SkRect::MakeWH(width, height), sampling_options,
+                               &paint);
     }
   }
   DebugValidate(m_pBitmap, m_pBackdropBitmap);

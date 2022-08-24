@@ -50,9 +50,6 @@
 
 3_4_textbox.pdf * * * *
 
-# TODO(pdfium:1789): Remove after associated bug is fixed
-3_image_imagemask.pdf * * * skia
-
 # TODO(pdfium:1790): Remove after associated bug is fixed
 3_interpolate_image.pdf * * * skia
 
@@ -197,9 +194,6 @@ bug_691967.pdf * * * skia
 
 # TODO(pdfium:1869): Remove after associated bug is fixed
 bug_880920.pdf * * * skia
-
-# TODO(pdfium:1868): Remove after associated bug is fixed
-bug_898443.pdf * * * skia
 
 bug_white_space.pdf mac * * *
 calcorderindex_test.pdf * * * *
@@ -378,9 +372,6 @@ image_8bit_devicergb_dctdecode.pdf * * * skia
 
 # TODO(pdfium:1856): Remove after associated bug is fixed
 image_bmp.pdf * * * skia
-
-# TODO(pdfium:1859): Remove after associated bug is fixed
-image_foxit.pdf * * * skia
 
 # TODO(pdfium:1856): Remove after associated bug is fixed
 image_gif.pdf * * * skia
