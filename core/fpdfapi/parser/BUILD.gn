@@ -151,6 +151,9 @@ pdfium_embeddertest_source_set("embeddertests") {
     "cpdf_security_handler_embeddertest.cpp",
     "fpdf_parser_decode_embeddertest.cpp",
   ]
-  deps = [ ":parser" ]
+  deps = [
+    ":parser",
+    "../../fxge",
+  ]
   pdfium_root_dir = "../../../"
 }

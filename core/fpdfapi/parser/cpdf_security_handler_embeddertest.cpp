@@ -9,6 +9,7 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxge/cfx_defaultrenderdevice.h"
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_edit.h"
 #include "public/fpdf_save.h"
@@ -134,13 +135,15 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPassword) {
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, PasswordAfterGenerateSave) {
-#if defined(_SKIA_SUPPORT_)
-  const char kChecksum[] = "df9fe67555b7ceb59c99036e8d2c1c76";
-#elif BUILDFLAG(IS_APPLE) && !defined(_SKIA_SUPPORT_PATHS_)
-  const char kChecksum[] = "2a308e8cc20a6221112c387d122075a8";
-#else
-  const char kChecksum[] = "9fe7eef8e51d15a604001854be6ed1ee";
+  const char* checksum = []() {
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+      return "df9fe67555b7ceb59c99036e8d2c1c76";
+#if BUILDFLAG(IS_APPLE)
+    if (!CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer())
+      return "2a308e8cc20a6221112c387d122075a8";
 #endif
+    return "9fe7eef8e51d15a604001854be6ed1ee";
+  }();
   {
     ASSERT_TRUE(OpenDocumentWithOptions("encrypted.pdf", "5678",
                                         LinearizeOption::kMustLinearize,
@@ -153,7 +156,7 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, PasswordAfterGenerateSave) {
     EXPECT_TRUE(FPDFPath_SetDrawMode(red_rect, FPDF_FILLMODE_ALTERNATE, 0));
     FPDFPage_InsertObject(page, red_rect);
     ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-    CompareBitmap(bitmap.get(), 612, 792, kChecksum);
+    CompareBitmap(bitmap.get(), 612, 792, checksum);
     EXPECT_TRUE(FPDFPage_GenerateContent(page));
     SetWholeFileAvailable();
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
@@ -176,7 +179,7 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, PasswordAfterGenerateSave) {
     ASSERT_TRUE(OpenSavedDocumentWithPassword(test.password));
     FPDF_PAGE page = LoadSavedPage(0);
     ASSERT_TRUE(page);
-    VerifySavedRendering(page, 612, 792, kChecksum);
+    VerifySavedRendering(page, 612, 792, checksum);
     EXPECT_EQ(test.permissions, FPDF_GetDocPermissions(saved_document()));
 
     CloseSavedPage(page);
