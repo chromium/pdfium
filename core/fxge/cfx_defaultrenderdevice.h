@@ -43,6 +43,12 @@ class CFX_DefaultRenderDevice final : public CFX_RenderDevice {
                        BlendMode blend_type) override;
 #endif
 
+  // Runtime check to see if Skia is the renderer variant in use.
+  static bool SkiaIsDefaultRenderer();
+
+  // Runtime check to see if SkiaPaths is the renderer variant in use.
+  static bool SkiaPathsIsDefaultRenderer();
+
  private:
   bool AttachImpl(RetainPtr<CFX_DIBitmap> pBitmap,
                   bool bRgbByteOrder,
