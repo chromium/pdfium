@@ -388,30 +388,24 @@ bool CPDF_ImageRenderer::StartDIBBase() {
       m_ResampleOptions.bInterpolateBilinear = true;
     }
   }
+  RetainPtr<CFX_DIBBase> bitmap;
 #if defined(_SKIA_SUPPORT_)
   RetainPtr<CFX_DIBitmap> premultiplied = m_pDIBBase->Realize();
   if (m_pDIBBase->IsAlphaFormat())
     CFX_SkiaDeviceDriver::PreMultiply(premultiplied);
-  if (m_pRenderStatus->GetRenderDevice()->StartDIBitsWithBlend(
-          premultiplied, m_BitmapAlpha, m_FillArgb, m_ImageMatrix,
-          m_ResampleOptions, &m_DeviceHandle, m_BlendType)) {
-    if (m_DeviceHandle) {
-      m_Mode = Mode::kBlend;
-      return true;
-    }
-    return false;
-  }
+  bitmap = std::move(premultiplied);
 #else
+  bitmap = m_pDIBBase;
+#endif  // defined(_SKIA_SUPPORT_)
   if (m_pRenderStatus->GetRenderDevice()->StartDIBitsWithBlend(
-          m_pDIBBase, m_BitmapAlpha, m_FillArgb, m_ImageMatrix,
-          m_ResampleOptions, &m_DeviceHandle, m_BlendType)) {
+          bitmap, m_BitmapAlpha, m_FillArgb, m_ImageMatrix, m_ResampleOptions,
+          &m_DeviceHandle, m_BlendType)) {
     if (m_DeviceHandle) {
       m_Mode = Mode::kBlend;
       return true;
     }
     return false;
   }
-#endif  // defined(_SKIA_SUPPORT_)
 
   if ((fabs(m_ImageMatrix.b) >= 0.5f || m_ImageMatrix.a == 0) ||
       (fabs(m_ImageMatrix.c) >= 0.5f || m_ImageMatrix.d == 0)) {
