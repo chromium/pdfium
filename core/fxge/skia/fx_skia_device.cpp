@@ -8,6 +8,7 @@
 #include <math.h>
 
 #include <algorithm>
+#include <memory>
 #include <utility>
 #include <vector>
 
@@ -44,7 +45,6 @@
 #include "third_party/base/cxx17_backports.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/numerics/safe_conversions.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/span.h"
 #include "third_party/skia/include/core/SkBitmap.h"
 #include "third_party/skia/include/core/SkCanvas.h"
@@ -1653,7 +1653,7 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
     : m_pBitmap(pBitmap),
       m_pBackdropBitmap(pBackdropBitmap),
       m_pRecorder(nullptr),
-      m_pCache(new SkiaState(this)),
+      m_pCache(std::make_unique<SkiaState>(this)),
 #if defined(_SKIA_SUPPORT_PATHS_)
       m_pClipRgn(nullptr),
 #endif
@@ -1683,7 +1683,7 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(int size_x, int size_y)
     : m_pBitmap(nullptr),
       m_pBackdropBitmap(nullptr),
       m_pRecorder(new SkPictureRecorder),
-      m_pCache(new SkiaState(this)),
+      m_pCache(std::make_unique<SkiaState>(this)),
       m_bGroupKnockout(false) {
   m_pRecorder->beginRecording(SkIntToScalar(size_x), SkIntToScalar(size_y));
   m_pCanvas = m_pRecorder->getRecordingCanvas();
@@ -1693,7 +1693,7 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(SkPictureRecorder* recorder)
     : m_pBitmap(nullptr),
       m_pBackdropBitmap(nullptr),
       m_pRecorder(recorder),
-      m_pCache(new SkiaState(this)),
+      m_pCache(std::make_unique<SkiaState>(this)),
       m_bGroupKnockout(false) {
   m_pCanvas = m_pRecorder->getRecordingCanvas();
 }
@@ -2774,9 +2774,10 @@ void CFX_DefaultRenderDevice::Clear(uint32_t color) {
 
 SkPictureRecorder* CFX_DefaultRenderDevice::CreateRecorder(int size_x,
                                                            int size_y) {
-  CFX_SkiaDeviceDriver* skDriver = new CFX_SkiaDeviceDriver(size_x, size_y);
-  SetDeviceDriver(pdfium::WrapUnique(skDriver));
-  return skDriver->GetRecorder();
+  auto driver = std::make_unique<CFX_SkiaDeviceDriver>(size_x, size_y);
+  SkPictureRecorder* recorder = driver->GetRecorder();
+  SetDeviceDriver(std::move(driver));
+  return recorder;
 }
 #endif  // defined(_SKIA_SUPPORT_)
 
