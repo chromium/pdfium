@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 #include "core/fxcrt/fx_system.h"
+#include "core/fxge/cfx_defaultrenderdevice.h"
 #include "public/fpdf_edit.h"
 #include "testing/embedder_test.h"
 #include "testing/embedder_test_constants.h"
@@ -10,11 +11,13 @@
 class FPDFEditPageEmbedderTest : public EmbedderTest {};
 
 TEST_F(FPDFEditPageEmbedderTest, Rotation) {
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  const char kRotatedMD5[] = "eded83f75f3d0332c584c416c571c0df";
-#else
-  const char kRotatedMD5[] = "d599429574ff0dcad3bc898ea8b874ca";
-#endif
+  const char* rotated_checksum = []() {
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
+        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+      return "eded83f75f3d0332c584c416c571c0df";
+    }
+    return "d599429574ff0dcad3bc898ea8b874ca";
+  }();
 
   {
     ASSERT_TRUE(OpenDocument("rectangles.pdf"));
@@ -45,7 +48,7 @@ TEST_F(FPDFEditPageEmbedderTest, Rotation) {
       EXPECT_EQ(300, page_width);
       EXPECT_EQ(200, page_height);
       ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-      CompareBitmap(bitmap.get(), page_width, page_height, kRotatedMD5);
+      CompareBitmap(bitmap.get(), page_width, page_height, rotated_checksum);
     }
 
     UnloadPage(page);
@@ -65,7 +68,7 @@ TEST_F(FPDFEditPageEmbedderTest, Rotation) {
     EXPECT_EQ(300, page_width);
     EXPECT_EQ(200, page_height);
     ScopedFPDFBitmap bitmap = RenderSavedPage(saved_page);
-    CompareBitmap(bitmap.get(), page_width, page_height, kRotatedMD5);
+    CompareBitmap(bitmap.get(), page_width, page_height, rotated_checksum);
 
     CloseSavedPage(saved_page);
     CloseSavedDocument();
