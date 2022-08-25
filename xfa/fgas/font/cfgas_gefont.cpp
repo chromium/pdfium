@@ -94,15 +94,14 @@ bool CFGAS_GEFont::LoadFontInternal(const wchar_t* pszFontFamily,
 #endif  // BUILDFLAG(IS_WIN)
 
 bool CFGAS_GEFont::LoadFontInternal(RetainPtr<CPDF_Font> pPDFFont) {
+  DCHECK(pPDFFont);
+
   if (m_pFont)
     return false;
 
-  m_pFont = pPDFFont->GetFont();
-  if (!InitFont())
-    return false;
-
-  m_pPDFFont = std::move(pPDFFont);  // Keep pPDFFont alive for the duration.
-  return true;
+  m_pPDFFont = std::move(pPDFFont);  // Keep `pPDFFont` alive for the duration.
+  m_pFont = m_pPDFFont->GetFont();
+  return InitFont();
 }
 
 bool CFGAS_GEFont::LoadFontInternal(std::unique_ptr<CFX_Font> pInternalFont) {
