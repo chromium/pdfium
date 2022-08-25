@@ -9,6 +9,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxge/cfx_defaultrenderdevice.h"
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_formfill.h"
 #include "public/fpdf_fwlevent.h"
@@ -1318,27 +1319,28 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_765384) {
 #endif  // PDF_ENABLE_V8
 
 TEST_F(FPDFFormFillEmbedderTest, FormText) {
-#if defined(_SKIA_SUPPORT_)
-  const char kFocusedTextFormWithAbcChecksum[] =
-      "07a179a9dfb8f5462746262984109a99";
-  const char kUnfocusedTextFormWithAbcChecksum[] =
-      "a21b74cc620db8a9891ebd69e1aeda98";
-#elif defined(_SKIA_SUPPORT_PATHS_)
-  const char kFocusedTextFormWithAbcChecksum[] =
-      "2866312fb36e9afdc0a99d547027d484";
-  const char kUnfocusedTextFormWithAbcChecksum[] =
-      "03216cae48813f71f81f53b49e3a8aaa";
-#elif BUILDFLAG(IS_APPLE)
-  const char kFocusedTextFormWithAbcChecksum[] =
-      "9fb14198d75ca0a107060c60ca21b0c7";
-  const char kUnfocusedTextFormWithAbcChecksum[] =
-      "3c3209357e0c057a0620afa7d83eb784";
+  const char* focused_text_form_with_abc_checksum = []() {
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+      return "07a179a9dfb8f5462746262984109a99";
+    if (CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer())
+      return "2866312fb36e9afdc0a99d547027d484";
+#if BUILDFLAG(IS_APPLE)
+    return "9fb14198d75ca0a107060c60ca21b0c7";
 #else
-  const char kFocusedTextFormWithAbcChecksum[] =
-      "6e6f790bb14c4fc6107faf8c17d23dbd";
-  const char kUnfocusedTextFormWithAbcChecksum[] =
-      "94b7e10ac8c662b73e33628ca2f5e63b";
+    return "6e6f790bb14c4fc6107faf8c17d23dbd";
 #endif
+  }();
+  const char* unfocused_text_form_with_abc_checksum = []() {
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+      return "a21b74cc620db8a9891ebd69e1aeda98";
+    if (CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer())
+      return "03216cae48813f71f81f53b49e3a8aaa";
+#if BUILDFLAG(IS_APPLE)
+    return "3c3209357e0c057a0620afa7d83eb784";
+#else
+    return "94b7e10ac8c662b73e33628ca2f5e63b";
+#endif
+  }();
   {
     ASSERT_TRUE(OpenDocument("text_form.pdf"));
     FPDF_PAGE page = LoadPage(0);
@@ -1360,21 +1362,22 @@ TEST_F(FPDFFormFillEmbedderTest, FormText) {
     FORM_OnChar(form_handle(), page, 'B', 0);
     FORM_OnChar(form_handle(), page, 'C', 0);
     ScopedFPDFBitmap bitmap2 = RenderLoadedPage(page);
-    CompareBitmap(bitmap2.get(), 300, 300, kFocusedTextFormWithAbcChecksum);
+    CompareBitmap(bitmap2.get(), 300, 300, focused_text_form_with_abc_checksum);
 
     // Focus remains despite right clicking out of the textfield
     FORM_OnMouseMove(form_handle(), page, 0, 15.0, 15.0);
     FORM_OnRButtonDown(form_handle(), page, 0, 15.0, 15.0);
     FORM_OnRButtonUp(form_handle(), page, 0, 15.0, 15.0);
     ScopedFPDFBitmap bitmap3 = RenderLoadedPage(page);
-    CompareBitmap(bitmap3.get(), 300, 300, kFocusedTextFormWithAbcChecksum);
+    CompareBitmap(bitmap3.get(), 300, 300, focused_text_form_with_abc_checksum);
 
     // Take out focus by clicking out of the textfield
     FORM_OnMouseMove(form_handle(), page, 0, 15.0, 15.0);
     FORM_OnLButtonDown(form_handle(), page, 0, 15.0, 15.0);
     FORM_OnLButtonUp(form_handle(), page, 0, 15.0, 15.0);
     ScopedFPDFBitmap bitmap4 = RenderLoadedPage(page);
-    CompareBitmap(bitmap4.get(), 300, 300, kUnfocusedTextFormWithAbcChecksum);
+    CompareBitmap(bitmap4.get(), 300, 300,
+                  unfocused_text_form_with_abc_checksum);
 
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
@@ -1382,17 +1385,19 @@ TEST_F(FPDFFormFillEmbedderTest, FormText) {
     UnloadPage(page);
   }
   // Check saved document
-  VerifySavedDocument(300, 300, kUnfocusedTextFormWithAbcChecksum);
+  VerifySavedDocument(300, 300, unfocused_text_form_with_abc_checksum);
 }
 
 // Tests using FPDF_REVERSE_BYTE_ORDER with FPDF_FFLDraw(). The two rendered
 // bitmaps should be different.
 TEST_F(FPDFFormFillEmbedderTest, BUG_1281) {
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  const char kMd5ReverseByteOrder[] = "8077970bbd10333f18186a9bb459bbe6";
-#else
-  const char kMd5ReverseByteOrder[] = "24fff03d1e663b7ece5f6e69ad837124";
-#endif
+  const char* reverse_byte_order_checksum = []() {
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
+        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+      return "8077970bbd10333f18186a9bb459bbe6";
+    }
+    return "24fff03d1e663b7ece5f6e69ad837124";
+  }();
 
   ASSERT_TRUE(OpenDocument("bug_890322.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -1404,40 +1409,46 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_1281) {
   ScopedFPDFBitmap bitmap_reverse_byte_order =
       RenderLoadedPageWithFlags(page, FPDF_REVERSE_BYTE_ORDER);
   CompareBitmap(bitmap_reverse_byte_order.get(), 200, 200,
-                kMd5ReverseByteOrder);
+                reverse_byte_order_checksum);
 
   UnloadPage(page);
 }
 
 TEST_F(FPDFFormFillEmbedderTest, Bug1302455RenderOnly) {
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  const char kChecksum[] = "520c4415c9977f40d6b4af5a0a94d764";
-#else
-  const char kChecksum[] = "bbee92af1daec2340c81f482878744d8";
-#endif
+  const char* checksum = []() {
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
+        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+      return "520c4415c9977f40d6b4af5a0a94d764";
+    }
+    return "bbee92af1daec2340c81f482878744d8";
+  }();
   {
     ASSERT_TRUE(OpenDocument("bug_1302455.pdf"));
     FPDF_PAGE page = LoadPage(0);
     ASSERT_TRUE(page);
 
     ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-    CompareBitmap(bitmap.get(), 300, 300, kChecksum);
+    CompareBitmap(bitmap.get(), 300, 300, checksum);
 
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
     UnloadPage(page);
   }
-  VerifySavedDocument(300, 300, kChecksum);
+  VerifySavedDocument(300, 300, checksum);
 }
 
 TEST_F(FPDFFormFillEmbedderTest, Bug1302455EditFirstForm) {
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  const char kChecksum[] = "29a06da3e47f67535e266b090a5ac82d";
-#elif BUILDFLAG(IS_APPLE)
-  const char kChecksum[] = "bf5423874f188427d2500a2bc4abebbe";
+  const char* checksum = []() {
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
+        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+      return "29a06da3e47f67535e266b090a5ac82d";
+    }
+#if BUILDFLAG(IS_APPLE)
+    return "bf5423874f188427d2500a2bc4abebbe";
 #else
-  const char kChecksum[] = "6a4ac9a15d2c34589616c8f2b05fbedd";
+    return "6a4ac9a15d2c34589616c8f2b05fbedd";
 #endif
+  }();
   {
     ASSERT_TRUE(OpenDocument("bug_1302455.pdf"));
     FPDF_PAGE page = LoadPage(0);
@@ -1452,23 +1463,27 @@ TEST_F(FPDFFormFillEmbedderTest, Bug1302455EditFirstForm) {
 
     FORM_ForceToKillFocus(form_handle());
     ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-    CompareBitmap(bitmap.get(), 300, 300, kChecksum);
+    CompareBitmap(bitmap.get(), 300, 300, checksum);
 
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
     UnloadPage(page);
   }
-  VerifySavedDocument(300, 300, kChecksum);
+  VerifySavedDocument(300, 300, checksum);
 }
 
 TEST_F(FPDFFormFillEmbedderTest, Bug1302455EditSecondForm) {
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  const char kChecksum[] = "19f8574d6378ee36e349376d88b7a2c4";
-#elif BUILDFLAG(IS_APPLE)
-  const char kChecksum[] = "8a0fd8772dba6e1e952e49d159cc64b5";
+  const char* checksum = []() {
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
+        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+      return "19f8574d6378ee36e349376d88b7a2c4";
+    }
+#if BUILDFLAG(IS_APPLE)
+    return "8a0fd8772dba6e1e952e49d159cc64b5";
 #else
-  const char kChecksum[] = "45a7694933c2ba3c5dc8f6cc18b79175";
+    return "45a7694933c2ba3c5dc8f6cc18b79175";
 #endif
+  }();
   {
     ASSERT_TRUE(OpenDocument("bug_1302455.pdf"));
     FPDF_PAGE page = LoadPage(0);
@@ -1483,23 +1498,27 @@ TEST_F(FPDFFormFillEmbedderTest, Bug1302455EditSecondForm) {
 
     FORM_ForceToKillFocus(form_handle());
     ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-    CompareBitmap(bitmap.get(), 300, 300, kChecksum);
+    CompareBitmap(bitmap.get(), 300, 300, checksum);
 
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
     UnloadPage(page);
   }
-  VerifySavedDocument(300, 300, kChecksum);
+  VerifySavedDocument(300, 300, checksum);
 }
 
 TEST_F(FPDFFormFillEmbedderTest, Bug1302455EditBothForms) {
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  const char kChecksum[] = "edbc9b0e190118a9039fffc11e494081";
-#elif BUILDFLAG(IS_APPLE)
-  const char kChecksum[] = "1f422ee1c520ad74b1a993b64bd4dc4a";
+  const char* checksum = []() {
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
+        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+      return "edbc9b0e190118a9039fffc11e494081";
+    }
+#if BUILDFLAG(IS_APPLE)
+    return "1f422ee1c520ad74b1a993b64bd4dc4a";
 #else
-  const char kChecksum[] = "13984969b1e141079ab5f4aa80185463";
+    return "13984969b1e141079ab5f4aa80185463";
 #endif
+  }();
   {
     ASSERT_TRUE(OpenDocument("bug_1302455.pdf"));
     FPDF_PAGE page = LoadPage(0);
@@ -1521,22 +1540,25 @@ TEST_F(FPDFFormFillEmbedderTest, Bug1302455EditBothForms) {
 
     FORM_ForceToKillFocus(form_handle());
     ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-    CompareBitmap(bitmap.get(), 300, 300, kChecksum);
+    CompareBitmap(bitmap.get(), 300, 300, checksum);
 
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
     UnloadPage(page);
   }
-  VerifySavedDocument(300, 300, kChecksum);
+  VerifySavedDocument(300, 300, checksum);
 }
 
 TEST_F(FPDFFormFillEmbedderTest, RemoveFormFieldHighlight) {
-#if BUILDFLAG(IS_APPLE) && !defined(_SKIA_SUPPORT_) && \
-    !defined(_SKIA_SUPPORT_PATHS_)
-  const char kMd5NoHighlight[] = "5c82aa43e3b478aa1e4c94bb9ef1f11f";
-#else
-  const char kMd5NoHighlight[] = "a6268304f7eedfa9ee98fac3caaf2efb";
+  const char* no_highlight_checksum = []() {
+#if BUILDFLAG(IS_APPLE)
+    if (!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() &&
+        !CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+      return "5c82aa43e3b478aa1e4c94bb9ef1f11f";
+    }
 #endif
+    return "a6268304f7eedfa9ee98fac3caaf2efb";
+  }();
 
   ASSERT_TRUE(OpenDocument("text_form.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -1547,7 +1569,7 @@ TEST_F(FPDFFormFillEmbedderTest, RemoveFormFieldHighlight) {
   // Removing the highlight changes the rendering.
   FPDF_RemoveFormFieldHighlight(form_handle());
   ScopedFPDFBitmap bitmap2 = RenderLoadedPage(page);
-  CompareBitmap(bitmap2.get(), 300, 300, kMd5NoHighlight);
+  CompareBitmap(bitmap2.get(), 300, 300, no_highlight_checksum);
 
   // Restoring it gives the original rendering.
   SetInitialFormFieldHighlight(form_handle());
