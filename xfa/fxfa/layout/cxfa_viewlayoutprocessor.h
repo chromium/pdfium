@@ -100,10 +100,10 @@ class CXFA_ViewLayoutProcessor
     return m_CurrentViewRecordIter != m_ProposedViewRecords.end();
   }
   CXFA_ViewRecord* GetCurrentViewRecord() {
-    return m_CurrentViewRecordIter->Get();
+    return HasCurrentViewRecord() ? m_CurrentViewRecordIter->Get() : nullptr;
   }
   const CXFA_ViewRecord* GetCurrentViewRecord() const {
-    return m_CurrentViewRecordIter->Get();
+    return HasCurrentViewRecord() ? m_CurrentViewRecordIter->Get() : nullptr;
   }
   void ResetToFirstViewRecord() {
     m_CurrentViewRecordIter = m_ProposedViewRecords.begin();
