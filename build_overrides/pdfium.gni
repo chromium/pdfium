@@ -17,6 +17,10 @@ pdf_enable_v8_override = true
 # Default: Without XFA support.
 pdf_enable_xfa_override = false
 
+# Build PDFium with PartitionAlloc as the memory allocator.
+# Default: Use PartitionAlloc unless it is a MSVC build.
+pdf_use_partition_alloc_override = !is_win || is_clang
+
 # Build PDFium against skia (experimental) rather than agg, replacing all PDFium
 # graphics.
 # Default: Use agg.

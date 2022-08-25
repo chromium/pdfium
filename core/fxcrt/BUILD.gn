@@ -132,7 +132,7 @@ source_set("fxcrt") {
     "../../third_party:pdfium_base",
     "//third_party/icu:icuuc",
   ]
-  if (!is_win || is_clang) {
+  if (pdf_use_partition_alloc) {
     sources += [ "fx_memory_pa.cpp" ]
     deps += [ "../../third_party:pdfium_partition_alloc" ]
   } else {

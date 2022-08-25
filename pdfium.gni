@@ -36,6 +36,9 @@ declare_args() {
   # If XFA, also support tiff codec. Ignored if not XFA.
   pdf_enable_xfa_tiff = true
 
+  # Build PDFium with PartitionAlloc as the memory allocator.
+  pdf_use_partition_alloc = pdf_use_partition_alloc_override
+
   # Build PDFium against Skia (experimental) rather than AGG. Use Skia to draw
   # everything.
   pdf_use_skia = pdf_use_skia_override
