@@ -26,7 +26,7 @@
 11.pdf * * * skia
 
 12.pdf mac * * *
-1_10_watermark.pdf * * * *
+1_10_watermark.pdf * * * skia
 1_1_textbox.pdf * * * *
 1_2_typewriter.pdf * * * *
 1_3_callout.pdf * * * *
