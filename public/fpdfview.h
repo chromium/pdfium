@@ -71,7 +71,7 @@ typedef struct fpdf_pageobject_t__* FPDF_PAGEOBJECT;  // (text, path, etc.)
 typedef struct fpdf_pageobjectmark_t__* FPDF_PAGEOBJECTMARK;
 typedef const struct fpdf_pagerange_t__* FPDF_PAGERANGE;
 typedef const struct fpdf_pathsegment_t* FPDF_PATHSEGMENT;
-typedef void* FPDF_RECORDER;  // Passed into skia.
+typedef void* FPDF_RECORDER;  // Passed into Skia as a SkPictureRecorder.
 typedef struct fpdf_schhandle_t__* FPDF_SCHHANDLE;
 typedef const struct fpdf_signature_t__* FPDF_SIGNATURE;
 typedef struct fpdf_structelement_t__* FPDF_STRUCTELEMENT;
@@ -892,6 +892,16 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
                                 int flags);
 
 #if defined(_SKIA_SUPPORT_)
+// Experimental API.
+// Function: FPDF_RenderPageSkp
+//          Render contents of a page to a Skia SkPictureRecorder.
+// Parameters:
+//          page        -   Handle to the page.
+//          size_x      -   Horizontal size (in pixels) for displaying the page.
+//          size_y      -   Vertical size (in pixels) for displaying the page.
+// Return value:
+//          The SkPictureRecorder that holds the rendering of the page, or NULL
+//          on failure. Caller takes ownership of the returned result.
 FPDF_EXPORT FPDF_RECORDER FPDF_CALLCONV FPDF_RenderPageSkp(FPDF_PAGE page,
                                                            int size_x,
                                                            int size_y);
