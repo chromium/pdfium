@@ -255,6 +255,10 @@ FPDFImageObj_GetRenderedBitmap(FPDF_DOCUMENT document,
   if (!renderer.GetResult())
     return nullptr;
 
+#if defined(_SKIA_SUPPORT_)
+  result_bitmap->UnPreMultiply();
+#endif
+
   // Caller takes ownership.
   return FPDFBitmapFromCFXDIBitmap(result_bitmap.Leak());
 }

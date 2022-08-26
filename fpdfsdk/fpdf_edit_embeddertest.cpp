@@ -3947,20 +3947,24 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_GetRenderedBitmapHandlesSetMatrix) {
   UnloadPage(page);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_)
-#define MAYBE_GetRenderedBitmapHandlesSMask \
-  DISABLED_GetRenderedBitmapHandlesSMask
-#else
-#define MAYBE_GetRenderedBitmapHandlesSMask GetRenderedBitmapHandlesSMask
-#endif
-TEST_F(FPDFEditEmbedderTest, MAYBE_GetRenderedBitmapHandlesSMask) {
+TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapHandlesSMask) {
   ASSERT_TRUE(OpenDocument("matte.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
   constexpr int kExpectedObjects = 4;
   ASSERT_EQ(kExpectedObjects, FPDFPage_CountObjects(page));
+
+  const char* smask_checksum = []() {
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+      return "5ddf871ab737746b1b8390f0bc4ec52c";
+    return "5a3ae4a660ce919e29c42ec2258142f1";
+  }();
+  const char* no_smask_checksum = []() {
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+      return "6bb3b5bd93e26f4c2e52db64a1f57686";
+    return "67504e83f5d78214ea00efc19082c5c1";
+  }();
 
   for (int i = 0; i < kExpectedObjects; ++i) {
     FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page, i);
@@ -3970,9 +3974,9 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_GetRenderedBitmapHandlesSMask) {
     ASSERT_TRUE(bitmap);
     EXPECT_EQ(FPDFBitmap_BGRA, FPDFBitmap_GetFormat(bitmap.get()));
     if (i == 0)
-      CompareBitmap(bitmap.get(), 40, 60, "5a3ae4a660ce919e29c42ec2258142f1");
+      CompareBitmap(bitmap.get(), 40, 60, smask_checksum);
     else
-      CompareBitmap(bitmap.get(), 40, 60, "67504e83f5d78214ea00efc19082c5c1");
+      CompareBitmap(bitmap.get(), 40, 60, no_smask_checksum);
   }
 
   UnloadPage(page);
