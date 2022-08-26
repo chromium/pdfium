@@ -10,6 +10,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/check.h"
+#include "third_party/base/span.h"
 
 namespace {
 
@@ -26,11 +27,10 @@ constexpr int32_t kDaysPerLeapYear = 366;
 
 int32_t DaysBeforeMonthInYear(int32_t iYear, uint8_t iMonth) {
   DCHECK(iYear != 0);
-  DCHECK(iMonth >= 1);
-  DCHECK(iMonth <= 12);
-
-  const int32_t* p =
-      FX_IsLeapYear(iYear) ? kDaysBeforeLeapMonth : kDaysBeforeMonth;
+  pdfium::span<const int32_t> p = FX_IsLeapYear(iYear)
+                                      ? pdfium::make_span(kDaysBeforeLeapMonth)
+                                      : pdfium::make_span(kDaysBeforeMonth);
+  // Note: iMonth is one-based.
   return p[iMonth - 1];
 }
 
@@ -68,10 +68,10 @@ int64_t DateToDays(int32_t iYear,
 
 uint8_t FX_DaysInMonth(int32_t iYear, uint8_t iMonth) {
   DCHECK(iYear != 0);
-  DCHECK(iMonth >= 1);
-  DCHECK(iMonth <= 12);
-
-  const uint8_t* p = FX_IsLeapYear(iYear) ? kDaysPerLeapMonth : kDaysPerMonth;
+  pdfium::span<const uint8_t> p = FX_IsLeapYear(iYear)
+                                      ? pdfium::make_span(kDaysPerLeapMonth)
+                                      : pdfium::make_span(kDaysPerMonth);
+  // Note: iMonth is one-based.
   return p[iMonth - 1];
 }
 
