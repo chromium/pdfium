@@ -76,8 +76,6 @@ FPDF_RenderPageBitmapWithColorScheme_Start(FPDF_BITMAP bitmap,
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   pDevice->Flush(false);
-#endif
-#if defined(_SKIA_SUPPORT_PATHS_)
   pBitmap->UnPreMultiply();
 #endif
 
@@ -121,8 +119,6 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPage_Continue(FPDF_PAGE page,
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   CFX_RenderDevice* pDevice = pContext->m_pDevice.get();
   pDevice->Flush(false);
-#endif
-#if defined(_SKIA_SUPPORT_PATHS_)
   pDevice->GetBitmap()->UnPreMultiply();
 #endif
   return ToFPDFStatus(pContext->m_pRenderer->GetStatus());

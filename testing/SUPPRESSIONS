@@ -26,7 +26,6 @@
 11.pdf * * * skia
 
 12.pdf mac * * *
-1_10_watermark.pdf * * * skia
 1_1_textbox.pdf * * * *
 1_2_typewriter.pdf * * * *
 1_3_callout.pdf * * * *
@@ -154,9 +153,6 @@ annotation_circle_fill_opacity.pdf * * * skia
 annotation_highlight_author_content.pdf mac * * *
 annotation_highlight_long_content.pdf mac * * *
 annotation_highlight_no_author.pdf mac * * *
-
-# TODO(pdfium:1870): Remove after associated bug is fixed
-annotation_highlight_opacity.pdf * * * skiapaths
 
 # TODO(pdfium:1803): Remove after associated bug is fixed
 annotation_ink_dot.pdf * * * skia,skiapaths
@@ -360,9 +356,6 @@ format_special.pdf * nov8 * *
 format_text_color.pdf mac * * *
 formfeild.pdf * * * *
 getarray.pdf mac * * *
-
-# TODO(pdfium:1788): Remove after associated bug is fixed
-group_xobject.pdf * * * skia
 
 # TODO(pdfium:1862): Remove after associated bug is fixed
 image_8bit_devicergb_dctdecode.pdf * * * skia

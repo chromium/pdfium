@@ -635,7 +635,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
                                 /*need_to_restore=*/true,
                                 /*pause=*/nullptr);
 
-#if defined(_SKIA_SUPPORT_PATHS_)
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   pDevice->Flush(true);
   pBitmap->UnPreMultiply();
 #endif

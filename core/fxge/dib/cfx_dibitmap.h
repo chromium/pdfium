@@ -109,15 +109,13 @@ class CFX_DIBitmap final : public CFX_DIBBase {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   void PreMultiply();
   void DebugVerifyBitmapIsPreMultiplied() const;
-#endif
-#if defined(_SKIA_SUPPORT_PATHS_)
   void UnPreMultiply();
 #endif
 
  private:
   enum class Channel : uint8_t { kRed, kAlpha };
 
-#if defined(_SKIA_SUPPORT_PATHS_)
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   enum class Format { kCleared, kPreMultiplied, kUnPreMultiplied };
 #endif
 
@@ -152,7 +150,7 @@ class CFX_DIBitmap final : public CFX_DIBBase {
                                   int src_top);
 
   MaybeOwned<uint8_t, FxFreeDeleter> m_pBuffer;
-#if defined(_SKIA_SUPPORT_PATHS_)
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   Format m_nFormat = Format::kCleared;
 #endif
 };
