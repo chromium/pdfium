@@ -158,13 +158,13 @@ struct AbbrReplacementOp {
   ByteStringView replacement;
 };
 
-ByteStringView FindFullName(const AbbrPair* table,
-                            size_t count,
+ByteStringView FindFullName(pdfium::span<const AbbrPair> table,
                             ByteStringView abbr) {
-  auto* it = std::find_if(table, table + count, [abbr](const AbbrPair& pair) {
-    return pair.abbr == abbr;
-  });
-  return it != table + count ? ByteStringView(it->full_name) : ByteStringView();
+  for (const auto& pair : table) {
+    if (pair.abbr == abbr)
+      return ByteStringView(pair.full_name);
+  }
+  return ByteStringView();
 }
 
 void ReplaceAbbr(CPDF_Object* pObj);
@@ -176,8 +176,8 @@ void ReplaceAbbrInDictionary(CPDF_Dictionary* pDict) {
     for (const auto& it : locker) {
       ByteString key = it.first;
       CPDF_Object* value = it.second.Get();
-      ByteStringView fullname = FindFullName(
-          kInlineKeyAbbr, std::size(kInlineKeyAbbr), key.AsStringView());
+      ByteStringView fullname =
+          FindFullName(kInlineKeyAbbr, key.AsStringView());
       if (!fullname.IsEmpty()) {
         AbbrReplacementOp op;
         op.is_replace_key = true;
@@ -189,8 +189,7 @@ void ReplaceAbbrInDictionary(CPDF_Dictionary* pDict) {
 
       if (value->IsName()) {
         ByteString name = value->GetString();
-        fullname = FindFullName(kInlineValueAbbr, std::size(kInlineValueAbbr),
-                                name.AsStringView());
+        fullname = FindFullName(kInlineValueAbbr, name.AsStringView());
         if (!fullname.IsEmpty()) {
           AbbrReplacementOp op;
           op.is_replace_key = false;
@@ -216,8 +215,8 @@ void ReplaceAbbrInArray(CPDF_Array* pArray) {
     RetainPtr<CPDF_Object> pElement = pArray->GetMutableObjectAt(i);
     if (pElement->IsName()) {
       ByteString name = pElement->GetString();
-      ByteStringView fullname = FindFullName(
-          kInlineValueAbbr, std::size(kInlineValueAbbr), name.AsStringView());
+      ByteStringView fullname =
+          FindFullName(kInlineValueAbbr, name.AsStringView());
       if (!fullname.IsEmpty())
         pArray->SetNewAt<CPDF_Name>(i, ByteString(fullname));
     } else {
@@ -1639,13 +1638,13 @@ void CPDF_StreamContentParser::ParsePathObject() {
 // static
 ByteStringView CPDF_StreamContentParser::FindKeyAbbreviationForTesting(
     ByteStringView abbr) {
-  return FindFullName(kInlineKeyAbbr, std::size(kInlineKeyAbbr), abbr);
+  return FindFullName(kInlineKeyAbbr, abbr);
 }
 
 // static
 ByteStringView CPDF_StreamContentParser::FindValueAbbreviationForTesting(
     ByteStringView abbr) {
-  return FindFullName(kInlineValueAbbr, std::size(kInlineValueAbbr), abbr);
+  return FindFullName(kInlineValueAbbr, abbr);
 }
 
 CPDF_StreamContentParser::ContentParam::ContentParam() = default;
