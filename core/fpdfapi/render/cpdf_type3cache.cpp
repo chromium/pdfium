@@ -7,7 +7,6 @@
 #include "core/fpdfapi/render/cpdf_type3cache.h"
 
 #include <math.h>
-#include <stdarg.h>
 
 #include <memory>
 #include <utility>
@@ -22,24 +21,6 @@
 #include "core/fxge/dib/fx_dib.h"
 
 namespace {
-
-struct UniqueKeyGen {
-  void Generate(int count, ...);
-
-  int m_KeyLen;
-  char m_Key[128];
-};
-
-void UniqueKeyGen::Generate(int count, ...) {
-  va_list argList;
-  va_start(argList, count);
-  for (int i = 0; i < count; i++) {
-    int p = va_arg(argList, int);
-    (reinterpret_cast<uint32_t*>(m_Key))[i] = p;
-  }
-  va_end(argList);
-  m_KeyLen = count * sizeof(uint32_t);
-}
 
 bool IsScanLine1bpp(const uint8_t* pBuf, int width) {
   int size = width / 8;
@@ -98,17 +79,18 @@ CPDF_Type3Cache::~CPDF_Type3Cache() = default;
 
 const CFX_GlyphBitmap* CPDF_Type3Cache::LoadGlyph(uint32_t charcode,
                                                   const CFX_Matrix& mtMatrix) {
-  UniqueKeyGen keygen;
-  keygen.Generate(
-      4, FXSYS_roundf(mtMatrix.a * 10000), FXSYS_roundf(mtMatrix.b * 10000),
-      FXSYS_roundf(mtMatrix.c * 10000), FXSYS_roundf(mtMatrix.d * 10000));
-  ByteString FaceGlyphsKey(keygen.m_Key, keygen.m_KeyLen);
+  SizeKey keygen = {
+      FXSYS_roundf(mtMatrix.a * 10000),
+      FXSYS_roundf(mtMatrix.b * 10000),
+      FXSYS_roundf(mtMatrix.c * 10000),
+      FXSYS_roundf(mtMatrix.d * 10000),
+  };
   CPDF_Type3GlyphMap* pSizeCache;
-  auto it = m_SizeMap.find(FaceGlyphsKey);
+  auto it = m_SizeMap.find(keygen);
   if (it == m_SizeMap.end()) {
     auto pNew = std::make_unique<CPDF_Type3GlyphMap>();
     pSizeCache = pNew.get();
-    m_SizeMap[FaceGlyphsKey] = std::move(pNew);
+    m_SizeMap[keygen] = std::move(pNew);
   } else {
     pSizeCache = it->second.get();
   }

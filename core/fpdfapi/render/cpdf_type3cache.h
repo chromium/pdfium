@@ -11,6 +11,7 @@
 
 #include <map>
 #include <memory>
+#include <tuple>
 
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/observed_ptr.h"
@@ -29,6 +30,8 @@ class CPDF_Type3Cache final : public Retainable, public Observable {
                                    const CFX_Matrix& mtMatrix);
 
  private:
+  using SizeKey = std::tuple<int, int, int, int>;
+
   explicit CPDF_Type3Cache(CPDF_Type3Font* pFont);
   ~CPDF_Type3Cache() override;
 
@@ -37,7 +40,7 @@ class CPDF_Type3Cache final : public Retainable, public Observable {
                                                const CFX_Matrix& mtMatrix);
 
   RetainPtr<CPDF_Type3Font> const m_pFont;
-  std::map<ByteString, std::unique_ptr<CPDF_Type3GlyphMap>> m_SizeMap;
+  std::map<SizeKey, std::unique_ptr<CPDF_Type3GlyphMap>> m_SizeMap;
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_TYPE3CACHE_H_
