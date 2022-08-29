@@ -81,3 +81,11 @@ TEST(Spanmove, FitsWithin) {
   EXPECT_EQ(dst[2], 'A');
   EXPECT_EQ(dst[3], 'B');
 }
+
+TEST(Span, AssignOverOnePastEnd) {
+  std::vector<char> src(2, 'A');
+  pdfium::span<char> span = pdfium::make_span(src);
+  span = span.subspan(2);
+  span = pdfium::make_span(src);
+  EXPECT_EQ(span.size(), 2u);
+}
