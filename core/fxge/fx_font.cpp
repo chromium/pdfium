@@ -129,11 +129,11 @@ ByteString GetNameFromTT(pdfium::span<const uint8_t> name_table,
 }
 
 size_t GetTTCIndex(pdfium::span<const uint8_t> pFontData, size_t font_offset) {
-  const uint8_t* p = pFontData.data() + 8;
-  size_t nfont = FXSYS_UINT32_GET_MSBFIRST(p);
+  pdfium::span<const uint8_t> p = pFontData.subspan(8);
+  size_t nfont = FXSYS_UINT32_GET_MSBFIRST(p.data());
   for (size_t index = 0; index < nfont; index++) {
-    p = pFontData.data() + 12 + index * 4;
-    if (FXSYS_UINT32_GET_MSBFIRST(p) == font_offset)
+    p = pFontData.subspan(12 + index * 4);
+    if (FXSYS_UINT32_GET_MSBFIRST(p.data()) == font_offset)
       return index;
   }
   return 0;
