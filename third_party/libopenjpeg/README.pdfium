@@ -31,3 +31,4 @@ Local Modifications:
 0041-remove_opj_clock.patch: Remove unused opj_clock.h include.
 0042-popcnt-windows-arm64.patch: Backport to fix Windows arm64 build.
 0043-mel_init.patch: Backport fix for assertion failure in mel_init().
+0044-opj_t1_allocate_buffers.patch: Backport fix for malloc size error in opj_t1_allocate_buffers().
