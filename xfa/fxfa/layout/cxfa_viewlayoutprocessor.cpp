@@ -1523,6 +1523,8 @@ void CXFA_ViewLayoutProcessor::ProcessLastPageSet() {
 }
 
 bool CXFA_ViewLayoutProcessor::GetNextAvailContentHeight(float fChildHeight) {
+  if (!HasCurrentViewRecord())
+    return false;
   CXFA_Node* pCurContentNode =
       GetCurrentViewRecord()->pCurContentArea->GetFormNode();
   if (!pCurContentNode)
