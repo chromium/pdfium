@@ -6,6 +6,11 @@ import("//build/config/clang/clang.gni")
 import("//testing/test.gni")
 import("pdfium.gni")
 
+group("default") {
+  testonly = true
+  deps = [ ":pdfium_all" ]
+}
+
 group("freetype_common") {
   public_deps = []
   if (pdf_bundle_freetype) {
