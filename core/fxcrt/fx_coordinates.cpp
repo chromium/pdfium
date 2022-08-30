@@ -137,19 +137,19 @@ CFX_FloatRect::CFX_FloatRect(const CFX_PointF& point)
     : left(point.x), bottom(point.y), right(point.x), top(point.y) {}
 
 // static
-CFX_FloatRect CFX_FloatRect::GetBBox(const CFX_PointF* pPoints, int nPoints) {
-  if (nPoints == 0)
+CFX_FloatRect CFX_FloatRect::GetBBox(pdfium::span<const CFX_PointF> pPoints) {
+  if (pPoints.empty())
     return CFX_FloatRect();
 
-  float min_x = pPoints->x;
-  float max_x = pPoints->x;
-  float min_y = pPoints->y;
-  float max_y = pPoints->y;
-  for (int i = 1; i < nPoints; i++) {
-    min_x = std::min(min_x, pPoints[i].x);
-    max_x = std::max(max_x, pPoints[i].x);
-    min_y = std::min(min_y, pPoints[i].y);
-    max_y = std::max(max_y, pPoints[i].y);
+  float min_x = pPoints.front().x;
+  float max_x = pPoints.front().x;
+  float min_y = pPoints.front().y;
+  float max_y = pPoints.front().y;
+  for (const auto& point : pPoints.subspan(1)) {
+    min_x = std::min(min_x, point.x);
+    max_x = std::max(max_x, point.x);
+    min_y = std::min(min_y, point.y);
+    max_y = std::max(max_y, point.y);
   }
   return CFX_FloatRect(min_x, min_y, max_x, max_y);
 }

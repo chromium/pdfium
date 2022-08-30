@@ -13,6 +13,8 @@
 #include <iosfwd>
 #endif
 
+#include "third_party/base/span.h"
+
 template <class BaseType>
 class CFX_PTemplate {
  public:
@@ -204,7 +206,7 @@ class CFX_FloatRect {
   explicit CFX_FloatRect(const FX_RECT& rect);
   explicit CFX_FloatRect(const CFX_PointF& point);
 
-  static CFX_FloatRect GetBBox(const CFX_PointF* pPoints, int nPoints);
+  static CFX_FloatRect GetBBox(pdfium::span<const CFX_PointF> pPoints);
 
   void Normalize();
 

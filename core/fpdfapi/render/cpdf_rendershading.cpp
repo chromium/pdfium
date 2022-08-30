@@ -843,7 +843,8 @@ void DrawCoonPatchMeshes(
       patch.patch_colors[i].comp[1] = static_cast<int32_t>(g * 255);
       patch.patch_colors[i].comp[2] = static_cast<int32_t>(b * 255);
     }
-    CFX_FloatRect bbox = CFX_FloatRect::GetBBox(coords, point_count);
+    CFX_FloatRect bbox =
+        CFX_FloatRect::GetBBox(pdfium::make_span(coords).first(point_count));
     if (bbox.right <= 0 || bbox.left >= (float)pBitmap->GetWidth() ||
         bbox.top <= 0 || bbox.bottom >= (float)pBitmap->GetHeight()) {
       continue;

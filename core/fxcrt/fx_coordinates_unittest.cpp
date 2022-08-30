@@ -30,7 +30,7 @@ TEST(CFX_FloatRect, FromFXRect) {
 }
 
 TEST(CFX_FloatRect, GetBBox) {
-  CFX_FloatRect rect = CFX_FloatRect::GetBBox(nullptr, 0);
+  CFX_FloatRect rect = CFX_FloatRect::GetBBox({nullptr, 0});
   EXPECT_FLOAT_EQ(0.0f, rect.left);
   EXPECT_FLOAT_EQ(0.0f, rect.bottom);
   EXPECT_FLOAT_EQ(0.0f, rect.right);
@@ -38,12 +38,12 @@ TEST(CFX_FloatRect, GetBBox) {
 
   std::vector<CFX_PointF> data;
   data.emplace_back(0.0f, 0.0f);
-  rect = CFX_FloatRect::GetBBox(data.data(), 0);
+  rect = CFX_FloatRect::GetBBox(pdfium::make_span(data).first(0));
   EXPECT_FLOAT_EQ(0.0f, rect.left);
   EXPECT_FLOAT_EQ(0.0f, rect.bottom);
   EXPECT_FLOAT_EQ(0.0f, rect.right);
   EXPECT_FLOAT_EQ(0.0f, rect.top);
-  rect = CFX_FloatRect::GetBBox(data.data(), data.size());
+  rect = CFX_FloatRect::GetBBox(data);
   EXPECT_FLOAT_EQ(0.0f, rect.left);
   EXPECT_FLOAT_EQ(0.0f, rect.bottom);
   EXPECT_FLOAT_EQ(0.0f, rect.right);
@@ -51,34 +51,34 @@ TEST(CFX_FloatRect, GetBBox) {
 
   data.emplace_back(2.5f, 6.2f);
   data.emplace_back(1.5f, 6.2f);
-  rect = CFX_FloatRect::GetBBox(data.data(), 2);
+  rect = CFX_FloatRect::GetBBox(pdfium::make_span(data).first(2));
   EXPECT_FLOAT_EQ(0.0f, rect.left);
   EXPECT_FLOAT_EQ(0.0f, rect.bottom);
   EXPECT_FLOAT_EQ(2.5f, rect.right);
   EXPECT_FLOAT_EQ(6.2f, rect.top);
 
-  rect = CFX_FloatRect::GetBBox(data.data(), data.size());
+  rect = CFX_FloatRect::GetBBox(data);
   EXPECT_FLOAT_EQ(0.0f, rect.left);
   EXPECT_FLOAT_EQ(0.0f, rect.bottom);
   EXPECT_FLOAT_EQ(2.5f, rect.right);
   EXPECT_FLOAT_EQ(6.2f, rect.top);
 
   data.emplace_back(2.5f, 6.3f);
-  rect = CFX_FloatRect::GetBBox(data.data(), data.size());
+  rect = CFX_FloatRect::GetBBox(data);
   EXPECT_FLOAT_EQ(0.0f, rect.left);
   EXPECT_FLOAT_EQ(0.0f, rect.bottom);
   EXPECT_FLOAT_EQ(2.5f, rect.right);
   EXPECT_FLOAT_EQ(6.3f, rect.top);
 
   data.emplace_back(-3.0f, 6.3f);
-  rect = CFX_FloatRect::GetBBox(data.data(), data.size());
+  rect = CFX_FloatRect::GetBBox(data);
   EXPECT_FLOAT_EQ(-3.0f, rect.left);
   EXPECT_FLOAT_EQ(0.0f, rect.bottom);
   EXPECT_FLOAT_EQ(2.5f, rect.right);
   EXPECT_FLOAT_EQ(6.3f, rect.top);
 
   data.emplace_back(4.0f, -8.0f);
-  rect = CFX_FloatRect::GetBBox(data.data(), data.size());
+  rect = CFX_FloatRect::GetBBox(data);
   EXPECT_FLOAT_EQ(-3.0f, rect.left);
   EXPECT_FLOAT_EQ(-8.0f, rect.bottom);
   EXPECT_FLOAT_EQ(4.0f, rect.right);
