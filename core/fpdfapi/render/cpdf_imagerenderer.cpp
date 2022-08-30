@@ -56,6 +56,29 @@ bool IsImageValueTooBig(int val) {
   return safe_val.ValueOrDefault(kLimit) >= kLimit;
 }
 
+void ClearBitmap(CFX_DefaultRenderDevice& bitmap_device, uint32_t color) {
+#if defined(_SKIA_SUPPORT_)
+  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+    bitmap_device.Clear(color);
+    return;
+  }
+#endif
+  bitmap_device.GetBitmap()->Clear(color);
+}
+
+RetainPtr<CFX_DIBBase> PreMultiplyBitmapIfAlpha(
+    RetainPtr<CFX_DIBBase> base_bitmap) {
+#if defined(_SKIA_SUPPORT_)
+  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+    RetainPtr<CFX_DIBitmap> premultiplied = base_bitmap->Realize();
+    if (base_bitmap->IsAlphaFormat())
+      CFX_SkiaDeviceDriver::PreMultiply(premultiplied);
+    return premultiplied;
+  }
+#endif  // defined(_SKIA_SUPPORT_)
+  return base_bitmap;
+}
+
 }  // namespace
 
 CPDF_ImageRenderer::CPDF_ImageRenderer(CPDF_RenderStatus* pStatus)
@@ -333,11 +356,7 @@ bool CPDF_ImageRenderer::DrawMaskedImage() {
                              nullptr)) {
     return true;
   }
-#if defined(_SKIA_SUPPORT_)
-  bitmap_device1.Clear(0xffffff);
-#else
-  bitmap_device1.GetBitmap()->Clear(0xffffff);
-#endif
+  ClearBitmap(bitmap_device1, 0xffffff);
   CPDF_RenderStatus bitmap_render(m_pRenderStatus->GetContext(),
                                   &bitmap_device1);
   bitmap_render.SetDropObjects(m_pRenderStatus->GetDropObjects());
@@ -352,25 +371,23 @@ bool CPDF_ImageRenderer::DrawMaskedImage() {
                              FXDIB_Format::k8bppRgb, nullptr)) {
     return true;
   }
-#if defined(_SKIA_SUPPORT_)
-  bitmap_device2.Clear(0);
-#else
-  bitmap_device2.GetBitmap()->Clear(0);
-#endif
+  ClearBitmap(bitmap_device2, 0);
   CalculateDrawImage(&bitmap_device1, &bitmap_device2, m_Loader.GetMask(),
                      new_matrix, rect);
 #if defined(_SKIA_SUPPORT_)
-  m_pRenderStatus->GetRenderDevice()->SetBitsWithMask(
-      bitmap_device1.GetBitmap(), bitmap_device2.GetBitmap(), rect.left,
-      rect.top, m_BitmapAlpha, m_BlendType);
-#else
+  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+    m_pRenderStatus->GetRenderDevice()->SetBitsWithMask(
+        bitmap_device1.GetBitmap(), bitmap_device2.GetBitmap(), rect.left,
+        rect.top, m_BitmapAlpha, m_BlendType);
+    return false;
+  }
+#endif
   bitmap_device2.GetBitmap()->ConvertFormat(FXDIB_Format::k8bppMask);
   bitmap_device1.GetBitmap()->MultiplyAlpha(bitmap_device2.GetBitmap());
   if (m_BitmapAlpha < 255)
     bitmap_device1.GetBitmap()->MultiplyAlpha(m_BitmapAlpha);
   m_pRenderStatus->GetRenderDevice()->SetDIBitsWithBlend(
       bitmap_device1.GetBitmap(), rect.left, rect.top, m_BlendType);
-#endif  //  defined(_SKIA_SUPPORT_)
   return false;
 }
 
@@ -388,15 +405,7 @@ bool CPDF_ImageRenderer::StartDIBBase() {
       m_ResampleOptions.bInterpolateBilinear = true;
     }
   }
-  RetainPtr<CFX_DIBBase> bitmap;
-#if defined(_SKIA_SUPPORT_)
-  RetainPtr<CFX_DIBitmap> premultiplied = m_pDIBBase->Realize();
-  if (m_pDIBBase->IsAlphaFormat())
-    CFX_SkiaDeviceDriver::PreMultiply(premultiplied);
-  bitmap = std::move(premultiplied);
-#else
-  bitmap = m_pDIBBase;
-#endif  // defined(_SKIA_SUPPORT_)
+  RetainPtr<CFX_DIBBase> bitmap = PreMultiplyBitmapIfAlpha(m_pDIBBase);
   if (m_pRenderStatus->GetRenderDevice()->StartDIBitsWithBlend(
           bitmap, m_BitmapAlpha, m_FillArgb, m_ImageMatrix, m_ResampleOptions,
           &m_DeviceHandle, m_BlendType)) {

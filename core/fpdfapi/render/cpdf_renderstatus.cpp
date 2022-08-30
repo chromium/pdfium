@@ -119,6 +119,20 @@ CFX_FillRenderOptions GetFillOptionsForDrawTextPath(
   return fill_options;
 }
 
+FXDIB_Format GetFormatForLuminosity(bool is_luminosity) {
+  if (!is_luminosity)
+    return FXDIB_Format::k8bppMask;
+#if BUILDFLAG(IS_APPLE)
+  return FXDIB_Format::kRgb32;
+#else
+  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
+      CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    return FXDIB_Format::kRgb32;
+  }
+  return FXDIB_Format::kRgb;
+#endif
+}
+
 bool IsAvailableMatrix(const CFX_Matrix& matrix) {
   if (matrix.a == 0 || matrix.d == 0)
     return matrix.b != 0 && matrix.c != 0;
@@ -158,7 +172,12 @@ class ScopedSkiaDeviceFlush {
   ScopedSkiaDeviceFlush(const ScopedSkiaDeviceFlush&) = delete;
   ScopedSkiaDeviceFlush& operator=(const ScopedSkiaDeviceFlush&) = delete;
 
-  ~ScopedSkiaDeviceFlush() { m_pDevice->Flush(/*release=*/false); }
+  ~ScopedSkiaDeviceFlush() {
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
+        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+      m_pDevice->Flush(/*release=*/false);
+    }
+  }
 
  private:
   UnownedPtr<CFX_RenderDevice> const m_pDevice;
@@ -702,8 +721,11 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   bitmap_render.Initialize(nullptr, nullptr);
   bitmap_render.ProcessObjectNoClip(pPageObj, new_matrix);
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  bitmap_device.Flush(true);
-  bitmap->UnPreMultiply();
+  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
+      CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    bitmap_device.Flush(true);
+    bitmap->UnPreMultiply();
+  }
 #endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   m_bStopped = bitmap_render.m_bStopped;
   if (pSMaskDict) {
@@ -722,7 +744,8 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
     bitmap->MultiplyAlpha(static_cast<int32_t>(group_alpha * 255));
   }
 #if defined(_SKIA_SUPPORT_)
-  bitmap->PreMultiply();
+  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+    bitmap->PreMultiply();
 #endif
   transparency = m_Transparency;
   if (pPageObj->IsForm()) {
@@ -800,7 +823,8 @@ std::unique_ptr<CPDF_GraphicStates> CPDF_RenderStatus::CloneObjStates(
 
 #if defined(_SKIA_SUPPORT_)
 void CPDF_RenderStatus::DebugVerifyDeviceIsPreMultiplied() const {
-  m_pDevice->DebugVerifyBitmapIsPreMultiplied();
+  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+    m_pDevice->DebugVerifyBitmapIsPreMultiplied();
 }
 #endif
 
@@ -1259,19 +1283,19 @@ void CPDF_RenderStatus::CompositeDIBitmap(
   if (blend_mode == BlendMode::kNormal) {
     if (!pDIBitmap->IsMaskFormat()) {
       if (bitmap_alpha < 255) {
-#if defined(_SKIA_SUPPORT_)
-        std::unique_ptr<CFX_ImageRenderer> dummy;
-        CFX_Matrix m = CFX_RenderDevice::GetFlipMatrix(
-            pDIBitmap->GetWidth(), pDIBitmap->GetHeight(), left, top);
-        m_pDevice->StartDIBits(pDIBitmap, bitmap_alpha, 0, m,
-                               FXDIB_ResampleOptions(), &dummy);
-        return;
-#else
+        if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+          std::unique_ptr<CFX_ImageRenderer> dummy;
+          CFX_Matrix m = CFX_RenderDevice::GetFlipMatrix(
+              pDIBitmap->GetWidth(), pDIBitmap->GetHeight(), left, top);
+          m_pDevice->StartDIBits(pDIBitmap, bitmap_alpha, 0, m,
+                                 FXDIB_ResampleOptions(), &dummy);
+          return;
+        }
         pDIBitmap->MultiplyAlpha(bitmap_alpha);
-#endif
       }
 #if defined(_SKIA_SUPPORT_)
-      CFX_SkiaDeviceDriver::PreMultiply(pDIBitmap);
+      if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+        CFX_SkiaDeviceDriver::PreMultiply(pDIBitmap);
 #endif
       if (m_pDevice->SetDIBits(pDIBitmap, left, top)) {
         return;
@@ -1398,13 +1422,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
       pdfium::transparency::kAlpha;
   int width = pClipRect->right - pClipRect->left;
   int height = pClipRect->bottom - pClipRect->top;
-  FXDIB_Format format;
-#if BUILDFLAG(IS_APPLE) || defined(_SKIA_SUPPORT_) || \
-    defined(_SKIA_SUPPORT_PATHS_)
-  format = bLuminosity ? FXDIB_Format::kRgb32 : FXDIB_Format::k8bppMask;
-#else
-  format = bLuminosity ? FXDIB_Format::kRgb : FXDIB_Format::k8bppMask;
-#endif
+  FXDIB_Format format = GetFormatForLuminosity(bLuminosity);
   if (!bitmap_device.Create(width, height, format, nullptr))
     return nullptr;
 

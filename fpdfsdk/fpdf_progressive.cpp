@@ -75,9 +75,12 @@ FPDF_RenderPageBitmapWithColorScheme_Start(FPDF_BITMAP bitmap,
                                 /*need_to_restore=*/false, &pause_adapter);
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  pDevice->Flush(false);
-  pBitmap->UnPreMultiply();
-#endif
+  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
+      CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    pDevice->Flush(false);
+    pBitmap->UnPreMultiply();
+  }
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
   if (!pContext->m_pRenderer)
     return FPDF_RENDER_FAILED;
@@ -117,10 +120,13 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPage_Continue(FPDF_PAGE page,
   pContext->m_pRenderer->Continue(&pause_adapter);
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  CFX_RenderDevice* pDevice = pContext->m_pDevice.get();
-  pDevice->Flush(false);
-  pDevice->GetBitmap()->UnPreMultiply();
-#endif
+  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
+      CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    CFX_RenderDevice* pDevice = pContext->m_pDevice.get();
+    pDevice->Flush(false);
+    pDevice->GetBitmap()->UnPreMultiply();
+  }
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   return ToFPDFStatus(pContext->m_pRenderer->GetStatus());
 }
 
@@ -128,12 +134,14 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage_Close(FPDF_PAGE page) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (pPage) {
 #if defined(_SKIA_SUPPORT_PATHS_)
-    auto* pContext =
-        static_cast<CPDF_PageRenderContext*>(pPage->GetRenderContext());
-    if (pContext && pContext->m_pRenderer) {
-      CFX_RenderDevice* pDevice = pContext->m_pDevice.get();
-      pDevice->Flush(true);
-      pDevice->GetBitmap()->UnPreMultiply();
+    if (CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+      auto* pContext =
+          static_cast<CPDF_PageRenderContext*>(pPage->GetRenderContext());
+      if (pContext && pContext->m_pRenderer) {
+        CFX_RenderDevice* pDevice = pContext->m_pDevice.get();
+        pDevice->Flush(true);
+        pDevice->GetBitmap()->UnPreMultiply();
+      }
     }
 #endif
     pPage->ClearRenderContext();

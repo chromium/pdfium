@@ -194,7 +194,8 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
 
   auto pDevice = std::make_unique<CFX_DefaultRenderDevice>();
 #if defined(_SKIA_SUPPORT_)
-  pDevice->AttachRecorder(static_cast<SkPictureRecorder*>(recorder));
+  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+    pDevice->AttachRecorder(static_cast<SkPictureRecorder*>(recorder));
 #endif
 
   RetainPtr<CFX_DIBitmap> holder(CFXDIBitmapFromFPDFBitmap(bitmap));
@@ -219,8 +220,10 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
   }
 
 #if defined(_SKIA_SUPPORT_PATHS_)
-  pDevice->Flush(true);
-  holder->UnPreMultiply();
+  if (CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    pDevice->Flush(true);
+    holder->UnPreMultiply();
+  }
 #endif
 }
 

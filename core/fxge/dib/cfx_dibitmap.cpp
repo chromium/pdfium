@@ -19,6 +19,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/calculate_pitch.h"
 #include "core/fxge/cfx_cliprgn.h"
+#include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/dib/cfx_scanlinecompositor.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
@@ -175,10 +176,10 @@ void CFX_DIBitmap::Clear(uint32_t color) {
     }
     case FXDIB_Format::kRgb32:
     case FXDIB_Format::kArgb: {
-#if defined(_SKIA_SUPPORT_)
-      if (FXDIB_Format::kRgb32 == GetFormat())
+      if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() &&
+          FXDIB_Format::kRgb32 == GetFormat()) {
         color |= 0xFF000000;
-#endif
+      }
       for (int i = 0; i < m_Width; i++)
         reinterpret_cast<uint32_t*>(pBuffer)[i] = color;
       for (int row = 1; row < m_Height; row++)

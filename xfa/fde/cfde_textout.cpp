@@ -26,6 +26,10 @@
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/cfgas_txtbreak.h"
 
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#include "core/fxge/cfx_defaultrenderdevice.h"
+#endif
+
 namespace {
 
 bool TextAlignmentVerticallyCentered(const FDE_TextAlignment align) {
@@ -119,7 +123,10 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
                                   -fFontSize, matrix, color, kOptions);
   }
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  device->Flush(false);
+  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
+      CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    device->Flush(false);
+  }
 #endif
 
   return bRet;
