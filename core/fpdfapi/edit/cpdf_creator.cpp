@@ -48,14 +48,16 @@ class CFX_FileBufferArchive final : public IFX_ArchiveStream {
   bool Flush();
 
   FX_FILESIZE offset_ = 0;
-  size_t current_length_ = 0;
   DataVector<uint8_t> buffer_;
+  pdfium::span<uint8_t> available_;
   RetainPtr<IFX_RetainableWriteStream> backing_file_;
 };
 
 CFX_FileBufferArchive::CFX_FileBufferArchive(
     RetainPtr<IFX_RetainableWriteStream> file)
-    : buffer_(kArchiveBufferSize), backing_file_(std::move(file)) {
+    : buffer_(kArchiveBufferSize),
+      available_(buffer_),
+      backing_file_(std::move(file)) {
   DCHECK(backing_file_);
 }
 
@@ -64,32 +66,28 @@ CFX_FileBufferArchive::~CFX_FileBufferArchive() {
 }
 
 bool CFX_FileBufferArchive::Flush() {
-  size_t nRemaining = current_length_;
-  current_length_ = 0;
+  size_t nUsed = buffer_.size() - available_.size();
+  available_ = pdfium::make_span(buffer_);
   if (!backing_file_)
     return false;
-  if (!nRemaining)
+  if (!nUsed)
     return true;
-  return backing_file_->WriteBlock(buffer_.data(), nRemaining);
+  return backing_file_->WriteBlock(buffer_.data(), nUsed);
 }
 
 bool CFX_FileBufferArchive::WriteBlock(const void* pBuf, size_t size) {
   DCHECK(pBuf);
   DCHECK(size > 0);
 
-  const uint8_t* buffer = reinterpret_cast<const uint8_t*>(pBuf);
-  size_t temp_size = size;
-  while (temp_size) {
-    size_t buf_size = std::min(kArchiveBufferSize - current_length_, temp_size);
-    fxcrt::spancpy(pdfium::make_span(buffer_).subspan(current_length_),
-                   pdfium::make_span(buffer, buf_size));
-
-    current_length_ += buf_size;
-    if (current_length_ == kArchiveBufferSize && !Flush())
+  auto* pSrc = reinterpret_cast<const uint8_t*>(pBuf);
+  pdfium::span<const uint8_t> src_span(pSrc, size);
+  while (!src_span.empty()) {
+    size_t copy_size = std::min(available_.size(), src_span.size());
+    fxcrt::spancpy(available_, src_span.first(copy_size));
+    src_span = src_span.subspan(copy_size);
+    available_ = available_.subspan(copy_size);
+    if (available_.empty() && !Flush())
       return false;
-
-    temp_size -= buf_size;
-    buffer += buf_size;
   }
 
   FX_SAFE_FILESIZE safe_offset = offset_;
