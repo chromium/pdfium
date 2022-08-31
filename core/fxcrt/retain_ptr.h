@@ -83,7 +83,7 @@ class RetainPtr {
 
   // Move-assign a RetainPtr. After assignment, |that| will be NULL.
   RetainPtr& operator=(RetainPtr&& that) noexcept {
-    m_pObj.reset(that.Leak());
+    Unleak(that.Leak());
     return *this;
   }
 
