@@ -45,12 +45,46 @@ TEST(RetainPtr, CopyCtor) {
   EXPECT_EQ(2, obj.release_count());
 }
 
+TEST(RetainPtr, CopyConversionCtor) {
+  PseudoRetainable obj;
+  {
+    RetainPtr<PseudoRetainable> ptr1(&obj);
+    {
+      RetainPtr<const PseudoRetainable> ptr2(ptr1);
+      EXPECT_EQ(2, obj.retain_count());
+      EXPECT_EQ(0, obj.release_count());
+    }
+    EXPECT_EQ(2, obj.retain_count());
+    EXPECT_EQ(1, obj.release_count());
+  }
+  EXPECT_EQ(2, obj.retain_count());
+  EXPECT_EQ(2, obj.release_count());
+}
+
 TEST(RetainPtr, MoveCtor) {
   PseudoRetainable obj;
   {
     RetainPtr<PseudoRetainable> ptr1(&obj);
     {
       RetainPtr<PseudoRetainable> ptr2(std::move(ptr1));
+      EXPECT_FALSE(ptr1.Get());
+      EXPECT_EQ(&obj, ptr2.Get());
+      EXPECT_EQ(1, obj.retain_count());
+      EXPECT_EQ(0, obj.release_count());
+    }
+    EXPECT_EQ(1, obj.retain_count());
+    EXPECT_EQ(1, obj.release_count());
+  }
+  EXPECT_EQ(1, obj.retain_count());
+  EXPECT_EQ(1, obj.release_count());
+}
+
+TEST(RetainPtr, MoveConversionCtor) {
+  PseudoRetainable obj;
+  {
+    RetainPtr<PseudoRetainable> ptr1(&obj);
+    {
+      RetainPtr<const PseudoRetainable> ptr2(std::move(ptr1));
       EXPECT_FALSE(ptr1.Get());
       EXPECT_EQ(&obj, ptr2.Get());
       EXPECT_EQ(1, obj.retain_count());

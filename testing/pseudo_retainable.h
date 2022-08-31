@@ -8,8 +8,8 @@
 class PseudoRetainable {
  public:
   PseudoRetainable() = default;
-  void Retain() { ++retain_count_; }
-  void Release() {
+  void Retain() const { ++retain_count_; }
+  void Release() const {
     if (++release_count_ == retain_count_)
       alive_ = false;
   }
@@ -18,9 +18,9 @@ class PseudoRetainable {
   int release_count() const { return release_count_; }
 
  private:
-  bool alive_ = true;
-  int retain_count_ = 0;
-  int release_count_ = 0;
+  mutable bool alive_ = true;
+  mutable int retain_count_ = 0;
+  mutable int release_count_ = 0;
 };
 
 #endif  // TESTING_PSEUDO_RETAINABLE_H_
