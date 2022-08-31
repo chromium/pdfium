@@ -45,7 +45,6 @@ class CPDF_Reference final : public CPDF_Object {
   RetainPtr<CPDF_Object> CloneNonCyclic(
       bool bDirect,
       std::set<const CPDF_Object*>* pVisited) const override;
-  CPDF_Object* SafeGetDirect();
   const CPDF_Object* SafeGetDirect() const;
 
   UnownedPtr<CPDF_IndirectObjectHolder> m_pObjList;

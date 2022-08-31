@@ -69,11 +69,6 @@ RetainPtr<CPDF_Object> CPDF_Reference::CloneNonCyclic(
   return pdfium::MakeRetain<CPDF_Reference>(m_pObjList.Get(), m_RefObjNum);
 }
 
-CPDF_Object* CPDF_Reference::SafeGetDirect() {
-  RetainPtr<CPDF_Object> obj = GetMutableDirect();
-  return (obj && !obj->IsReference()) ? obj.Get() : nullptr;
-}
-
 const CPDF_Object* CPDF_Reference::SafeGetDirect() const {
   const CPDF_Object* obj = GetDirect();
   return (obj && !obj->IsReference()) ? obj : nullptr;
