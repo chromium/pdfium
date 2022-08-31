@@ -7,7 +7,7 @@
 namespace pdfium {
 namespace form_fields {
 
-// PDF 1.7 spec, table 8.69.
+// ISO 32000-1:2008 table 220.
 // Entries common to all field dictionaries.
 const char kFT[] = "FT";
 const char kParent[] = "Parent";
@@ -20,11 +20,19 @@ const char kV[] = "V";
 const char kDV[] = "DV";
 const char kAA[] = "AA";
 
-// FT values from PDF 1.7 spec, table 8.69.
+// ISO 32000-1:2008 table 220.
+// Values for FT keyword.
 const char kBtn[] = "Btn";
 const char kTx[] = "Tx";
 const char kCh[] = "Ch";
 const char kSig[] = "Sig";
+
+// ISO 32000-1:2008 table 222.
+// Entries common to fields containing variable text.
+const char kDA[] = "DA";
+const char kQ[] = "Q";
+const char kDS[] = "DS";
+const char kRV[] = "RV";
 
 }  // namespace form_fields
 }  // namespace pdfium

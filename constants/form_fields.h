@@ -24,6 +24,11 @@ extern const char kTx[];
 extern const char kCh[];
 extern const char kSig[];
 
+extern const char kDA[];
+extern const char kQ[];
+extern const char kDS[];
+extern const char kRV[];
+
 }  // namespace form_fields
 }  // namespace pdfium
 

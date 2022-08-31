@@ -9,6 +9,7 @@
 #include <iterator>
 #include <utility>
 
+#include "constants/form_fields.h"
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
@@ -182,11 +183,12 @@ int CPDF_FormControl::GetTextPosition() const {
 }
 
 CPDF_DefaultAppearance CPDF_FormControl::GetDefaultAppearance() const {
-  if (m_pWidgetDict->KeyExist("DA"))
-    return CPDF_DefaultAppearance(m_pWidgetDict->GetStringFor("DA"));
-
-  const CPDF_Object* pObj =
-      CPDF_FormField::GetFieldAttr(m_pField->GetDict(), "DA");
+  if (m_pWidgetDict->KeyExist(pdfium::form_fields::kDA)) {
+    return CPDF_DefaultAppearance(
+        m_pWidgetDict->GetStringFor(pdfium::form_fields::kDA));
+  }
+  const CPDF_Object* pObj = CPDF_FormField::GetFieldAttr(
+      m_pField->GetDict(), pdfium::form_fields::kDA);
   if (!pObj)
     return m_pForm->GetDefaultAppearance();
 
@@ -246,11 +248,11 @@ RetainPtr<CPDF_Font> CPDF_FormControl::GetDefaultControlFont() const {
 }
 
 int CPDF_FormControl::GetControlAlignment() const {
-  if (m_pWidgetDict->KeyExist("Q"))
-    return m_pWidgetDict->GetIntegerFor("Q", 0);
+  if (m_pWidgetDict->KeyExist(pdfium::form_fields::kQ))
+    return m_pWidgetDict->GetIntegerFor(pdfium::form_fields::kQ, 0);
 
-  const CPDF_Object* pObj =
-      CPDF_FormField::GetFieldAttr(m_pField->GetDict(), "Q");
+  const CPDF_Object* pObj = CPDF_FormField::GetFieldAttr(
+      m_pField->GetDict(), pdfium::form_fields::kQ);
   if (pObj)
     return pObj->GetInteger();
 
