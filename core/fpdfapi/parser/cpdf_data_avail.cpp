@@ -540,7 +540,7 @@ bool CPDF_DataAvail::CheckArrayPageNode(uint32_t dwPageNo,
   if (!pPages)
     return false;
 
-  CPDF_Array* pArray = pPages->AsArray();
+  const CPDF_Array* pArray = pPages->AsArray();
   if (!pArray) {
     m_internalStatus = InternalStatus::kError;
     return false;
@@ -604,14 +604,14 @@ bool CPDF_DataAvail::CheckUnknownPageNode(uint32_t dwPageNo,
 
   switch (pKids->GetType()) {
     case CPDF_Object::kReference: {
-      CPDF_Reference* pKid = pKids->AsReference();
+      const CPDF_Reference* pKid = pKids->AsReference();
       auto pNode = std::make_unique<PageNode>();
       pNode->m_dwPageNo = pKid->GetRefObjNum();
       pPageNode->m_ChildNodes.push_back(std::move(pNode));
       break;
     }
     case CPDF_Object::kArray: {
-      CPDF_Array* pKidsArray = pKids->AsArray();
+      const CPDF_Array* pKidsArray = pKids->AsArray();
       for (size_t i = 0; i < pKidsArray->size(); ++i) {
         const CPDF_Reference* pKid = ToReference(pKidsArray->GetObjectAt(i));
         if (!pKid)

@@ -37,7 +37,7 @@ std::unique_ptr<CPDF_Form> CPDF_TilingPattern::Load(CPDF_PageObject* pPageObj) {
   m_XStep = static_cast<float>(fabs(pDict->GetNumberFor("XStep")));
   m_YStep = static_cast<float>(fabs(pDict->GetNumberFor("YStep")));
 
-  CPDF_Stream* pStream = pattern_obj()->AsStream();
+  CPDF_Stream* pStream = pattern_obj()->AsMutableStream();
   if (!pStream)
     return nullptr;
 

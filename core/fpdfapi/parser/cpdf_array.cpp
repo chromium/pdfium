@@ -42,7 +42,7 @@ bool CPDF_Array::IsArray() const {
   return true;
 }
 
-CPDF_Array* CPDF_Array::AsArray() {
+CPDF_Array* CPDF_Array::AsMutableArray() {
   return this;
 }
 

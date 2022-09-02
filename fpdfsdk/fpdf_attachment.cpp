@@ -245,7 +245,7 @@ FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
   CPDF_Stream* pFileStream = pDoc->NewIndirect<CPDF_Stream>(
       std::move(stream), len, std::move(pFileStreamDict));
   CPDF_Dictionary* pEFDict =
-      pFile->AsDictionary()->SetNewFor<CPDF_Dictionary>("EF");
+      pFile->AsMutableDictionary()->SetNewFor<CPDF_Dictionary>("EF");
   pEFDict->SetNewFor<CPDF_Reference>("F", pDoc, pFileStream->GetObjNum());
   return true;
 }

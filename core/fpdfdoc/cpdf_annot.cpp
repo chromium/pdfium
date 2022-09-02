@@ -77,11 +77,11 @@ RetainPtr<CPDF_Stream> GetAnnotAPInternal(CPDF_Dictionary* pAnnotDict,
   if (!psub)
     return nullptr;
 
-  RetainPtr<CPDF_Stream> pStream(psub->AsStream());
+  RetainPtr<CPDF_Stream> pStream(psub->AsMutableStream());
   if (pStream)
     return pStream;
 
-  CPDF_Dictionary* pDict = psub->AsDictionary();
+  CPDF_Dictionary* pDict = psub->AsMutableDictionary();
   if (!pDict)
     return nullptr;
 

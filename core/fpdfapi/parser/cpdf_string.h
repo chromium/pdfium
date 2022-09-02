@@ -24,7 +24,7 @@ class CPDF_String final : public CPDF_Object {
   WideString GetUnicodeText() const override;
   void SetString(const ByteString& str) override;
   bool IsString() const override;
-  CPDF_String* AsString() override;
+  CPDF_String* AsMutableString() override;
   const CPDF_String* AsString() const override;
   bool WriteTo(IFX_ArchiveStream* archive,
                const CPDF_Encryptor* encryptor) const override;
@@ -43,7 +43,7 @@ class CPDF_String final : public CPDF_Object {
 };
 
 inline CPDF_String* ToString(CPDF_Object* obj) {
-  return obj ? obj->AsString() : nullptr;
+  return obj ? obj->AsMutableString() : nullptr;
 }
 
 inline const CPDF_String* ToString(const CPDF_Object* obj) {

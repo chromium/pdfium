@@ -226,13 +226,13 @@ void ReplaceAbbrInArray(CPDF_Array* pArray) {
 }
 
 void ReplaceAbbr(CPDF_Object* pObj) {
-  CPDF_Dictionary* pDict = pObj->AsDictionary();
+  CPDF_Dictionary* pDict = pObj->AsMutableDictionary();
   if (pDict) {
     ReplaceAbbrInDictionary(pDict);
     return;
   }
 
-  CPDF_Array* pArray = pObj->AsArray();
+  CPDF_Array* pArray = pObj->AsMutableArray();
   if (pArray)
     ReplaceAbbrInArray(pArray);
 }
@@ -591,7 +591,7 @@ void CPDF_StreamContentParser::Handle_BeginMarkedContent_Dictionary() {
       return;
     new_marks->AddMarkWithPropertiesHolder(tag, pHolder, property_name);
   } else if (pProperty->IsDictionary()) {
-    new_marks->AddMarkWithDirectDict(tag, pProperty->AsDictionary());
+    new_marks->AddMarkWithDirectDict(tag, pProperty->AsMutableDictionary());
   } else {
     return;
   }

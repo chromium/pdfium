@@ -38,7 +38,7 @@ bool CPDF_Name::IsName() const {
   return true;
 }
 
-CPDF_Name* CPDF_Name::AsName() {
+CPDF_Name* CPDF_Name::AsMutableName() {
   return this;
 }
 

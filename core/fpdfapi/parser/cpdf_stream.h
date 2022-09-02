@@ -31,7 +31,7 @@ class CPDF_Stream final : public CPDF_Object {
   const CPDF_Dictionary* GetDict() const override;
   WideString GetUnicodeText() const override;
   bool IsStream() const override;
-  CPDF_Stream* AsStream() override;
+  CPDF_Stream* AsMutableStream() override;
   const CPDF_Stream* AsStream() const override;
   bool WriteTo(IFX_ArchiveStream* archive,
                const CPDF_Encryptor* encryptor) const override;
@@ -87,7 +87,7 @@ class CPDF_Stream final : public CPDF_Object {
 };
 
 inline CPDF_Stream* ToStream(CPDF_Object* obj) {
-  return obj ? obj->AsStream() : nullptr;
+  return obj ? obj->AsMutableStream() : nullptr;
 }
 
 inline const CPDF_Stream* ToStream(const CPDF_Object* obj) {

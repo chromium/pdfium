@@ -260,13 +260,13 @@ bool CPDF_CryptoHandler::DecryptObjectTree(RetainPtr<CPDF_Object> object) {
       // Strings decryption.
       if (child->IsString()) {
         // TODO(art-snake): Move decryption into the CPDF_String class.
-        CPDF_String* str = child->AsString();
+        CPDF_String* str = child->AsMutableString();
         str->SetString(Decrypt(obj_num, gen_num, str->GetString()));
       }
       // Stream decryption.
       if (child->IsStream()) {
         // TODO(art-snake): Move decryption into the CPDF_Stream class.
-        CPDF_Stream* stream = child->AsStream();
+        CPDF_Stream* stream = child->AsMutableStream();
         auto stream_access = pdfium::MakeRetain<CPDF_StreamAcc>(stream);
         stream_access->LoadAllDataRaw();
 

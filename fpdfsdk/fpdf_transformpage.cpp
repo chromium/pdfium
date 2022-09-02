@@ -271,8 +271,8 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
 
     RetainPtr<CPDF_Dictionary> pDict;
     if (pObj->IsDictionary())
-      pDict = pObj->AsDictionary();
-    else if (CPDF_Stream* pObjStream = pObj->AsStream())
+      pDict = pObj->AsMutableDictionary();
+    else if (CPDF_Stream* pObjStream = pObj->AsMutableStream())
       pDict = pObjStream->GetMutableDict();
     else
       continue;

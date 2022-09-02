@@ -23,7 +23,7 @@ class CPDF_Name final : public CPDF_Object {
   WideString GetUnicodeText() const override;
   void SetString(const ByteString& str) override;
   bool IsName() const override;
-  CPDF_Name* AsName() override;
+  CPDF_Name* AsMutableName() override;
   const CPDF_Name* AsName() const override;
   bool WriteTo(IFX_ArchiveStream* archive,
                const CPDF_Encryptor* encryptor) const override;
@@ -36,7 +36,7 @@ class CPDF_Name final : public CPDF_Object {
 };
 
 inline CPDF_Name* ToName(CPDF_Object* obj) {
-  return obj ? obj->AsName() : nullptr;
+  return obj ? obj->AsMutableName() : nullptr;
 }
 
 inline const CPDF_Name* ToName(const CPDF_Object* obj) {

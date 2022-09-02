@@ -39,11 +39,11 @@ CPDF_PageContentManager::CPDF_PageContentManager(
     if (!indirect_obj)
       return;
 
-    contents_array = indirect_obj->AsArray();
+    contents_array = indirect_obj->AsMutableArray();
     if (contents_array)
       contents_array_ = std::move(contents_array);
     else if (indirect_obj->IsStream())
-      contents_stream_.Reset(indirect_obj->AsStream());
+      contents_stream_.Reset(indirect_obj->AsMutableStream());
   }
 }
 
@@ -62,7 +62,7 @@ CPDF_Stream* CPDF_PageContentManager::GetStreamByIndex(size_t stream_index) {
   if (!stream_reference)
     return nullptr;
 
-  return stream_reference->GetMutableDirect()->AsStream();
+  return stream_reference->GetMutableDirect()->AsMutableStream();
 }
 
 size_t CPDF_PageContentManager::AddStream(fxcrt::ostringstream* buf) {

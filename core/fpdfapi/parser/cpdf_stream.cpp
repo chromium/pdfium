@@ -75,7 +75,7 @@ bool CPDF_Stream::IsStream() const {
   return true;
 }
 
-CPDF_Stream* CPDF_Stream::AsStream() {
+CPDF_Stream* CPDF_Stream::AsMutableStream() {
   return this;
 }
 

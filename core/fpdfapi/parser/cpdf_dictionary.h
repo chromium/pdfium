@@ -37,7 +37,7 @@ class CPDF_Dictionary final : public CPDF_Object {
   RetainPtr<CPDF_Object> Clone() const override;
   const CPDF_Dictionary* GetDict() const override;
   bool IsDictionary() const override;
-  CPDF_Dictionary* AsDictionary() override;
+  CPDF_Dictionary* AsMutableDictionary() override;
   const CPDF_Dictionary* AsDictionary() const override;
   bool WriteTo(IFX_ArchiveStream* archive,
                const CPDF_Encryptor* encryptor) const override;
@@ -161,7 +161,7 @@ class CPDF_DictionaryLocker {
 };
 
 inline CPDF_Dictionary* ToDictionary(CPDF_Object* obj) {
-  return obj ? obj->AsDictionary() : nullptr;
+  return obj ? obj->AsMutableDictionary() : nullptr;
 }
 
 inline const CPDF_Dictionary* ToDictionary(const CPDF_Object* obj) {

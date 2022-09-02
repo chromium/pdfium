@@ -28,7 +28,8 @@ const int kNumTestPages = 7;
 CPDF_Dictionary* CreatePageTreeNode(RetainPtr<CPDF_Array> kids,
                                     CPDF_Document* pDoc,
                                     int count) {
-  CPDF_Array* pUnowned = pDoc->AddIndirectObject(std::move(kids))->AsArray();
+  CPDF_Array* pUnowned =
+      pDoc->AddIndirectObject(std::move(kids))->AsMutableArray();
   CPDF_Dictionary* pageNode = pDoc->NewIndirect<CPDF_Dictionary>();
   pageNode->SetNewFor<CPDF_Name>("Type", "Pages");
   pageNode->SetNewFor<CPDF_Reference>("Kids", pDoc, pUnowned->GetObjNum());

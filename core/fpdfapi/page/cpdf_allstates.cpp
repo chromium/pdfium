@@ -99,7 +99,7 @@ void CPDF_AllStates::ProcessExtGS(const CPDF_Dictionary* pGS,
         m_GeneralState.SetTR(!pObject->IsName() ? pObject.Get() : nullptr);
         break;
       case FXBSTR_ID('B', 'M', 0, 0): {
-        CPDF_Array* pArray = pObject->AsArray();
+        const CPDF_Array* pArray = pObject->AsArray();
         m_GeneralState.SetBlendMode(pArray ? pArray->GetStringAt(0)
                                            : pObject->GetString());
         if (m_GeneralState.GetBlendType() > BlendMode::kMultiply)

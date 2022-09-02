@@ -34,7 +34,7 @@ class CPDF_Array final : public CPDF_Object {
   Type GetType() const override;
   RetainPtr<CPDF_Object> Clone() const override;
   bool IsArray() const override;
-  CPDF_Array* AsArray() override;
+  CPDF_Array* AsMutableArray() override;
   const CPDF_Array* AsArray() const override;
   bool WriteTo(IFX_ArchiveStream* archive,
                const CPDF_Encryptor* encryptor) const override;
@@ -182,7 +182,7 @@ class CPDF_ArrayLocker {
 };
 
 inline CPDF_Array* ToArray(CPDF_Object* obj) {
-  return obj ? obj->AsArray() : nullptr;
+  return obj ? obj->AsMutableArray() : nullptr;
 }
 
 inline const CPDF_Array* ToArray(const CPDF_Object* obj) {

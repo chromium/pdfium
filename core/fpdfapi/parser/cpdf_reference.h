@@ -28,7 +28,7 @@ class CPDF_Reference final : public CPDF_Object {
   int GetInteger() const override;
   const CPDF_Dictionary* GetDict() const override;
   bool IsReference() const override;
-  CPDF_Reference* AsReference() override;
+  CPDF_Reference* AsMutableReference() override;
   const CPDF_Reference* AsReference() const override;
   bool WriteTo(IFX_ArchiveStream* archive,
                const CPDF_Encryptor* encryptor) const override;
@@ -52,7 +52,7 @@ class CPDF_Reference final : public CPDF_Object {
 };
 
 inline CPDF_Reference* ToReference(CPDF_Object* obj) {
-  return obj ? obj->AsReference() : nullptr;
+  return obj ? obj->AsMutableReference() : nullptr;
 }
 
 inline const CPDF_Reference* ToReference(const CPDF_Object* obj) {

@@ -288,7 +288,7 @@ bool CPDF_PageOrganizer::Init() {
 bool CPDF_PageOrganizer::UpdateReference(RetainPtr<CPDF_Object> pObj) {
   switch (pObj->GetType()) {
     case CPDF_Object::kReference: {
-      CPDF_Reference* pReference = pObj->AsReference();
+      CPDF_Reference* pReference = pObj->AsMutableReference();
       uint32_t newobjnum = GetNewObjId(pReference);
       if (newobjnum == 0)
         return false;
@@ -296,7 +296,7 @@ bool CPDF_PageOrganizer::UpdateReference(RetainPtr<CPDF_Object> pObj) {
       return true;
     }
     case CPDF_Object::kDictionary: {
-      CPDF_Dictionary* pDict = pObj->AsDictionary();
+      CPDF_Dictionary* pDict = pObj->AsMutableDictionary();
       std::vector<ByteString> bad_keys;
       {
         CPDF_DictionaryLocker locker(pDict);
@@ -314,7 +314,7 @@ bool CPDF_PageOrganizer::UpdateReference(RetainPtr<CPDF_Object> pObj) {
       return true;
     }
     case CPDF_Object::kArray: {
-      CPDF_Array* pArray = pObj->AsArray();
+      CPDF_Array* pArray = pObj->AsMutableArray();
       for (size_t i = 0; i < pArray->size(); ++i) {
         if (!UpdateReference(pArray->GetMutableObjectAt(i)))
           return false;
@@ -322,7 +322,7 @@ bool CPDF_PageOrganizer::UpdateReference(RetainPtr<CPDF_Object> pObj) {
       return true;
     }
     case CPDF_Object::kStream: {
-      CPDF_Stream* pStream = pObj->AsStream();
+      CPDF_Stream* pStream = pObj->AsMutableStream();
       RetainPtr<CPDF_Dictionary> pDict = pStream->GetMutableDict();
       return pDict && UpdateReference(std::move(pDict));
     }
@@ -348,15 +348,15 @@ uint32_t CPDF_PageOrganizer::GetNewObjId(CPDF_Reference* pRef) {
     return 0;
 
   RetainPtr<CPDF_Object> pClone = pDirect->Clone();
-  if (CPDF_Dictionary* pDictClone = pClone->AsDictionary()) {
-    if (pDictClone->KeyExist("Type")) {
-      ByteString strType = pDictClone->GetStringFor("Type");
-      if (strType.EqualNoCase("Pages"))
-        return 4;
-      if (strType.EqualNoCase("Page"))
-        return 0;
-    }
+  const CPDF_Dictionary* pDictClone = pClone->AsDictionary();
+  if (pDictClone && pDictClone->KeyExist("Type")) {
+    ByteString strType = pDictClone->GetStringFor("Type");
+    if (strType.EqualNoCase("Pages"))
+      return 4;
+    if (strType.EqualNoCase("Page"))
+      return 0;
   }
+
   RetainPtr<CPDF_Object> pIndirectClone(
       dest()->AddIndirectObject(std::move(pClone)));
   dwNewObjNum = pIndirectClone->GetObjNum();

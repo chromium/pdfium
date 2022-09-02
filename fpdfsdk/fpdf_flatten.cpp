@@ -360,7 +360,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
               pFirstObj = pFirstObj->GetMutableDirect();
             if (!pFirstObj->IsStream())
               continue;
-            pAPStream = pFirstObj->AsStream();
+            pAPStream = pFirstObj->AsMutableStream();
           }
         }
       }

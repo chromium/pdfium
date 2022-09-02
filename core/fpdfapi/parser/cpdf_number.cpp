@@ -40,7 +40,7 @@ bool CPDF_Number::IsNumber() const {
   return true;
 }
 
-CPDF_Number* CPDF_Number::AsNumber() {
+CPDF_Number* CPDF_Number::AsMutableNumber() {
   return this;
 }
 

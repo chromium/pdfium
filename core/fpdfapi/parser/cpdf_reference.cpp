@@ -44,7 +44,7 @@ bool CPDF_Reference::IsReference() const {
   return true;
 }
 
-CPDF_Reference* CPDF_Reference::AsReference() {
+CPDF_Reference* CPDF_Reference::AsMutableReference() {
   return this;
 }
 

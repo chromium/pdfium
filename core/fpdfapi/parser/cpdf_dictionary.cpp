@@ -50,7 +50,7 @@ bool CPDF_Dictionary::IsDictionary() const {
   return true;
 }
 
-CPDF_Dictionary* CPDF_Dictionary::AsDictionary() {
+CPDF_Dictionary* CPDF_Dictionary::AsMutableDictionary() {
   return this;
 }
 

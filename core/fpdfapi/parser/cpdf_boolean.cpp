@@ -38,7 +38,7 @@ bool CPDF_Boolean::IsBoolean() const {
   return true;
 }
 
-CPDF_Boolean* CPDF_Boolean::AsBoolean() {
+CPDF_Boolean* CPDF_Boolean::AsMutableBoolean() {
   return this;
 }
 

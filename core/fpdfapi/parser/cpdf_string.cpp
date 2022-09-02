@@ -56,7 +56,7 @@ bool CPDF_String::IsString() const {
   return true;
 }
 
-CPDF_String* CPDF_String::AsString() {
+CPDF_String* CPDF_String::AsMutableString() {
   return this;
 }
 

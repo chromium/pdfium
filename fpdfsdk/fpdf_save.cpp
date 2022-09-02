@@ -58,7 +58,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
   if (!pXFA)
     return true;
 
-  CPDF_Array* pArray = pXFA->AsArray();
+  CPDF_Array* pArray = pXFA->AsMutableArray();
   if (!pArray)
     return false;
 
@@ -82,10 +82,10 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
     if (pFormPDFObj->IsReference()) {
       RetainPtr<CPDF_Object> pFormDirectObj = pFormPDFObj->GetMutableDirect();
       if (pFormDirectObj && pFormDirectObj->IsStream()) {
-        pFormStream = pFormDirectObj->AsStream();
+        pFormStream = pFormDirectObj->AsMutableStream();
       }
     } else if (pFormPDFObj->IsStream()) {
-      pFormStream = pFormPDFObj->AsStream();
+      pFormStream = pFormPDFObj->AsMutableStream();
     }
   }
 
@@ -95,14 +95,14 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
     RetainPtr<CPDF_Object> pDataSetsPDFObj =
         pArray->GetMutableObjectAt(iDataSetsIndex);
     if (pDataSetsPDFObj->IsReference()) {
-      CPDF_Reference* pDataSetsRefObj = pDataSetsPDFObj->AsReference();
+      CPDF_Reference* pDataSetsRefObj = pDataSetsPDFObj->AsMutableReference();
       RetainPtr<CPDF_Object> pDataSetsDirectObj =
           pDataSetsRefObj->GetMutableDirect();
       if (pDataSetsDirectObj && pDataSetsDirectObj->IsStream()) {
-        pDataSetsStream = pDataSetsDirectObj->AsStream();
+        pDataSetsStream = pDataSetsDirectObj->AsMutableStream();
       }
     } else if (pDataSetsPDFObj->IsStream()) {
-      pDataSetsStream = pDataSetsPDFObj->AsStream();
+      pDataSetsStream = pDataSetsPDFObj->AsMutableStream();
     }
   }
   // L"datasets"

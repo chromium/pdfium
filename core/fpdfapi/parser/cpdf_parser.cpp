@@ -723,7 +723,7 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
   if (!pObject || !pObject->GetObjNum())
     return false;
 
-  CPDF_Stream* pStream = pObject->AsStream();
+  const CPDF_Stream* pStream = pObject->AsStream();
   if (!pStream)
     return false;
 

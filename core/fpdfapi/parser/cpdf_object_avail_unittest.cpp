@@ -241,7 +241,8 @@ TEST(ObjectAvailTest, Exclude) {
       "ArrayRef", &holder, 2);
   holder.AddObject(2, pdfium::MakeRetain<CPDF_Array>(),
                    TestHolder::ObjectState::Available);
-  holder.GetTestObject(2)->AsArray()->AppendNew<CPDF_Reference>(&holder, 2);
+  holder.GetTestObject(2)->AsMutableArray()->AppendNew<CPDF_Reference>(&holder,
+                                                                       2);
 
   // Add string, which is refered by array item. It is should not be checked.
   holder.AddObject(

@@ -77,21 +77,22 @@ class CPDF_Object : public Retainable {
   virtual bool IsString() const;
   virtual bool IsNull() const;
 
-  virtual CPDF_Array* AsArray();
+  virtual CPDF_Array* AsMutableArray();
+  virtual CPDF_Boolean* AsMutableBoolean();
+  virtual CPDF_Dictionary* AsMutableDictionary();
+  virtual CPDF_Name* AsMutableName();
+  virtual CPDF_Number* AsMutableNumber();
+  virtual CPDF_Reference* AsMutableReference();
+  virtual CPDF_Stream* AsMutableStream();
+  virtual CPDF_String* AsMutableString();
+
   virtual const CPDF_Array* AsArray() const;
-  virtual CPDF_Boolean* AsBoolean();
   virtual const CPDF_Boolean* AsBoolean() const;
-  virtual CPDF_Dictionary* AsDictionary();
   virtual const CPDF_Dictionary* AsDictionary() const;
-  virtual CPDF_Name* AsName();
   virtual const CPDF_Name* AsName() const;
-  virtual CPDF_Number* AsNumber();
   virtual const CPDF_Number* AsNumber() const;
-  virtual CPDF_Reference* AsReference();
   virtual const CPDF_Reference* AsReference() const;
-  virtual CPDF_Stream* AsStream();
   virtual const CPDF_Stream* AsStream() const;
-  virtual CPDF_String* AsString();
   virtual const CPDF_String* AsString() const;
 
   virtual bool WriteTo(IFX_ArchiveStream* archive,

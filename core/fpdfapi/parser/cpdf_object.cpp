@@ -119,7 +119,7 @@ bool CPDF_Object::IsNull() const {
   return false;
 }
 
-CPDF_Array* CPDF_Object::AsArray() {
+CPDF_Array* CPDF_Object::AsMutableArray() {
   return nullptr;
 }
 
@@ -127,7 +127,7 @@ const CPDF_Array* CPDF_Object::AsArray() const {
   return nullptr;
 }
 
-CPDF_Boolean* CPDF_Object::AsBoolean() {
+CPDF_Boolean* CPDF_Object::AsMutableBoolean() {
   return nullptr;
 }
 
@@ -135,7 +135,7 @@ const CPDF_Boolean* CPDF_Object::AsBoolean() const {
   return nullptr;
 }
 
-CPDF_Dictionary* CPDF_Object::AsDictionary() {
+CPDF_Dictionary* CPDF_Object::AsMutableDictionary() {
   return nullptr;
 }
 
@@ -143,7 +143,7 @@ const CPDF_Dictionary* CPDF_Object::AsDictionary() const {
   return nullptr;
 }
 
-CPDF_Name* CPDF_Object::AsName() {
+CPDF_Name* CPDF_Object::AsMutableName() {
   return nullptr;
 }
 
@@ -151,7 +151,7 @@ const CPDF_Name* CPDF_Object::AsName() const {
   return nullptr;
 }
 
-CPDF_Number* CPDF_Object::AsNumber() {
+CPDF_Number* CPDF_Object::AsMutableNumber() {
   return nullptr;
 }
 
@@ -159,7 +159,7 @@ const CPDF_Number* CPDF_Object::AsNumber() const {
   return nullptr;
 }
 
-CPDF_Reference* CPDF_Object::AsReference() {
+CPDF_Reference* CPDF_Object::AsMutableReference() {
   return nullptr;
 }
 
@@ -167,7 +167,7 @@ const CPDF_Reference* CPDF_Object::AsReference() const {
   return nullptr;
 }
 
-CPDF_Stream* CPDF_Object::AsStream() {
+CPDF_Stream* CPDF_Object::AsMutableStream() {
   return nullptr;
 }
 
@@ -175,7 +175,7 @@ const CPDF_Stream* CPDF_Object::AsStream() const {
   return nullptr;
 }
 
-CPDF_String* CPDF_Object::AsString() {
+CPDF_String* CPDF_Object::AsMutableString() {
   return nullptr;
 }
 
