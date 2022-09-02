@@ -1143,11 +1143,13 @@ typedef struct _FPDF_FORMFILLINFO {
  *       Initialize form fill environment.
  * Parameters:
  *       document        -   Handle to document from FPDF_LoadDocument().
- *       pFormFillInfo   -   Pointer to a FPDF_FORMFILLINFO structure.
+ *       formInfo        -   Pointer to a FPDF_FORMFILLINFO structure.
  * Return Value:
  *       Handle to the form fill module, or NULL on failure.
  * Comments:
  *       This function should be called before any form fill operation.
+ *       The FPDF_FORMFILLINFO passed in via |formInfo| must remain valid until
+ *       the returned FPDF_FORMHANDLE is closed.
  */
 FPDF_EXPORT FPDF_FORMHANDLE FPDF_CALLCONV
 FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
