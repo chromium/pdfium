@@ -16,7 +16,7 @@
 
 namespace {
 
-CPDF_Object* FilterInvalidObjNum(CPDF_Object* obj) {
+RetainPtr<CPDF_Object> FilterInvalidObjNum(RetainPtr<CPDF_Object> obj) {
   return obj && obj->GetObjNum() != CPDF_Object::kInvalidObjNum ? obj : nullptr;
 }
 
@@ -29,11 +29,19 @@ CPDF_IndirectObjectHolder::~CPDF_IndirectObjectHolder() {
   m_pByteStringPool.DeleteObject();  // Make weak.
 }
 
-CPDF_Object* CPDF_IndirectObjectHolder::GetIndirectObject(
+RetainPtr<const CPDF_Object> CPDF_IndirectObjectHolder::GetIndirectObject(
     uint32_t objnum) const {
+  return const_cast<CPDF_IndirectObjectHolder*>(this)->GetMutableIndirectObject(
+      objnum);
+}
+
+RetainPtr<CPDF_Object> CPDF_IndirectObjectHolder::GetMutableIndirectObject(
+    uint32_t objnum) {
   auto it = m_IndirectObjs.find(objnum);
-  return (it != m_IndirectObjs.end()) ? FilterInvalidObjNum(it->second.Get())
-                                      : nullptr;
+  if (it == m_IndirectObjs.end())
+    return nullptr;
+
+  return FilterInvalidObjNum(it->second);
 }
 
 CPDF_Object* CPDF_IndirectObjectHolder::GetOrParseIndirectObject(
@@ -44,7 +52,7 @@ CPDF_Object* CPDF_IndirectObjectHolder::GetOrParseIndirectObject(
   // Add item anyway to prevent recursively parsing of same object.
   auto insert_result = m_IndirectObjs.insert(std::make_pair(objnum, nullptr));
   if (!insert_result.second)
-    return FilterInvalidObjNum(insert_result.first->second.Get());
+    return FilterInvalidObjNum(insert_result.first->second).Get();
 
   RetainPtr<CPDF_Object> pNewObj = ParseIndirectObject(objnum);
   if (!pNewObj) {
@@ -81,7 +89,7 @@ bool CPDF_IndirectObjectHolder::ReplaceIndirectObjectIfHigherGeneration(
     return false;
 
   auto& obj_holder = m_IndirectObjs[objnum];
-  const CPDF_Object* old_object = FilterInvalidObjNum(obj_holder.Get());
+  RetainPtr<const CPDF_Object> old_object = FilterInvalidObjNum(obj_holder);
   if (old_object && pObj->GetGenNum() <= old_object->GetGenNum())
     return false;
 
@@ -93,7 +101,7 @@ bool CPDF_IndirectObjectHolder::ReplaceIndirectObjectIfHigherGeneration(
 
 void CPDF_IndirectObjectHolder::DeleteIndirectObject(uint32_t objnum) {
   auto it = m_IndirectObjs.find(objnum);
-  if (it == m_IndirectObjs.end() || !FilterInvalidObjNum(it->second.Get()))
+  if (it == m_IndirectObjs.end() || !FilterInvalidObjNum(it->second))
     return;
 
   m_IndirectObjs.erase(it);

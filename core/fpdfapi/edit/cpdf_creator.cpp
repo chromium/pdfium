@@ -181,12 +181,12 @@ bool CPDF_Creator::WriteOldObjs() {
 bool CPDF_Creator::WriteNewObjs() {
   for (size_t i = m_CurObjNum; i < m_NewObjNumArray.size(); ++i) {
     uint32_t objnum = m_NewObjNumArray[i];
-    CPDF_Object* pObj = m_pDocument->GetIndirectObject(objnum);
+    RetainPtr<const CPDF_Object> pObj = m_pDocument->GetIndirectObject(objnum);
     if (!pObj)
       continue;
 
     m_ObjectOffsets[objnum] = m_Archive->CurrentOffset();
-    if (!WriteIndirectObj(pObj->GetObjNum(), pObj))
+    if (!WriteIndirectObj(pObj->GetObjNum(), pObj.Get()))
       return false;
   }
   return true;

@@ -56,7 +56,7 @@ CPDF_Image::CPDF_Image(CPDF_Document* pDoc, RetainPtr<CPDF_Stream> pStream)
 
 CPDF_Image::CPDF_Image(CPDF_Document* pDoc, uint32_t dwStreamObjNum)
     : m_pDocument(pDoc),
-      m_pStream(ToStream(pDoc->GetIndirectObject(dwStreamObjNum))) {
+      m_pStream(ToStream(pDoc->GetMutableIndirectObject(dwStreamObjNum))) {
   DCHECK(m_pDocument);
   FinishInitialization();
 }

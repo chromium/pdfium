@@ -26,8 +26,10 @@ class CPDF_IndirectObjectHolder {
   CPDF_IndirectObjectHolder();
   virtual ~CPDF_IndirectObjectHolder();
 
-  CPDF_Object* GetIndirectObject(uint32_t objnum) const;
   virtual CPDF_Object* GetOrParseIndirectObject(uint32_t objnum);
+
+  RetainPtr<const CPDF_Object> GetIndirectObject(uint32_t objnum) const;
+  RetainPtr<CPDF_Object> GetMutableIndirectObject(uint32_t objnum);
   void DeleteIndirectObject(uint32_t objnum);
 
   // Creates and adds a new object owned by the indirect object holder,
