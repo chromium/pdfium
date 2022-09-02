@@ -166,6 +166,29 @@ bool UpdateNodesAndLimitsUponDeletion(CPDF_Dictionary* pNode,
   return false;
 }
 
+bool IsTraversedObject(const CPDF_Object* obj,
+                       std::set<uint32_t>* seen_obj_nums) {
+  uint32_t obj_num = obj->GetObjNum();
+  if (!obj_num)
+    return false;
+
+  bool inserted = seen_obj_nums->insert(obj_num).second;
+  return !inserted;
+}
+
+bool IsArrayWithTraversedObject(const CPDF_Array* array,
+                                std::set<uint32_t>* seen_obj_nums) {
+  if (IsTraversedObject(array, seen_obj_nums))
+    return true;
+
+  CPDF_ArrayLocker locker(array);
+  for (const auto& item : locker) {
+    if (IsTraversedObject(item.Get(), seen_obj_nums))
+      return true;
+  }
+  return false;
+}
+
 // Search for |csName| in the tree with root |pNode|. If successful, return the
 // value that |csName| points to; |nIndex| will be the index of |csName|,
 // |ppFind| will be the leaf array that |csName| is found in, and |pFindIndex|
@@ -178,12 +201,18 @@ RetainPtr<const CPDF_Object> SearchNameNodeByNameInternal(
     int nLevel,
     size_t* nIndex,
     RetainPtr<CPDF_Array>* ppFind,
-    int* pFindIndex) {
+    int* pFindIndex,
+    std::set<uint32_t>* seen_obj_nums) {
   if (nLevel > kNameTreeMaxRecursion)
     return nullptr;
 
   RetainPtr<CPDF_Array> pLimits = pNode->GetMutableArrayFor("Limits");
   RetainPtr<CPDF_Array> pNames = pNode->GetMutableArrayFor("Names");
+  if (pNames && IsArrayWithTraversedObject(pNames.Get(), seen_obj_nums))
+    pNames.Reset();
+  if (pLimits && IsArrayWithTraversedObject(pLimits.Get(), seen_obj_nums))
+    pLimits.Reset();
+
   if (pLimits) {
     WideString csLeft;
     WideString csRight;
@@ -227,16 +256,16 @@ RetainPtr<const CPDF_Object> SearchNameNodeByNameInternal(
 
   // Search through the node's children.
   RetainPtr<CPDF_Array> pKids = pNode->GetMutableArrayFor("Kids");
-  if (!pKids)
+  if (!pKids || IsTraversedObject(pKids.Get(), seen_obj_nums))
     return nullptr;
 
   for (size_t i = 0; i < pKids->size(); i++) {
     RetainPtr<CPDF_Dictionary> pKid = pKids->GetMutableDictAt(i);
-    if (!pKid)
+    if (!pKid || IsTraversedObject(pKid.Get(), seen_obj_nums))
       continue;
 
     RetainPtr<const CPDF_Object> pFound = SearchNameNodeByNameInternal(
-        pKid, csName, nLevel + 1, nIndex, ppFind, pFindIndex);
+        pKid, csName, nLevel + 1, nIndex, ppFind, pFindIndex, seen_obj_nums);
     if (pFound)
       return pFound;
   }
@@ -251,8 +280,9 @@ RetainPtr<const CPDF_Object> SearchNameNodeByName(
     RetainPtr<CPDF_Array>* ppFind,
     int* pFindIndex) {
   size_t nIndex = 0;
+  std::set<uint32_t> seen_obj_nums;
   return SearchNameNodeByNameInternal(pNode, csName, 0, &nIndex, ppFind,
-                                      pFindIndex);
+                                      pFindIndex, &seen_obj_nums);
 }
 
 struct IndexSearchResult {
