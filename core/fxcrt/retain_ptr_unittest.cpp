@@ -97,6 +97,15 @@ TEST(RetainPtr, MoveConversionCtor) {
   EXPECT_EQ(1, obj.release_count());
 }
 
+TEST(RetainPtr, AmbiguousExpression) {
+  class A : public Retainable {};
+  class B : public A {};
+
+  // Test passes if it compiles without error.
+  RetainPtr<A> var = (0) ? pdfium::MakeRetain<A>() : pdfium::MakeRetain<B>();
+  EXPECT_TRUE(var);
+}
+
 TEST(RetainPtr, ResetNull) {
   PseudoRetainable obj;
   {

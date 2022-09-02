@@ -9,6 +9,7 @@
 
 #include <functional>
 #include <memory>
+#include <type_traits>
 #include <utility>
 
 #include "core/fxcrt/unowned_ptr.h"
@@ -46,11 +47,15 @@ class RetainPtr {
   RetainPtr(std::nullptr_t ptr) {}
 
   // Copy conversion constructor.
-  template <class U>
+  template <class U,
+            typename = typename std::enable_if<
+                std::is_convertible<U*, T*>::value>::type>
   RetainPtr(const RetainPtr<U>& that) : RetainPtr(that.Get()) {}
 
   // Move-conversion constructor.
-  template <class U>
+  template <class U,
+            typename = typename std::enable_if<
+                std::is_convertible<U*, T*>::value>::type>
   RetainPtr(RetainPtr<U>&& that) noexcept {
     Unleak(that.Leak());
   }
