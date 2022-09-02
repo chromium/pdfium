@@ -90,7 +90,7 @@ bool CPDF_Reference::WriteTo(IFX_ArchiveStream* archive,
          archive->WriteString(" 0 R ");
 }
 
-RetainPtr<CPDF_Object> CPDF_Reference::MakeReference(
+RetainPtr<CPDF_Reference> CPDF_Reference::MakeReference(
     CPDF_IndirectObjectHolder* holder) const {
   DCHECK_EQ(holder, m_pObjList);
   // Do not allow reference to reference, just create other reference for same

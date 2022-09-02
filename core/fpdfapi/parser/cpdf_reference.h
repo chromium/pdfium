@@ -32,7 +32,7 @@ class CPDF_Reference final : public CPDF_Object {
   const CPDF_Reference* AsReference() const override;
   bool WriteTo(IFX_ArchiveStream* archive,
                const CPDF_Encryptor* encryptor) const override;
-  RetainPtr<CPDF_Object> MakeReference(
+  RetainPtr<CPDF_Reference> MakeReference(
       CPDF_IndirectObjectHolder* holder) const override;
 
   uint32_t GetRefObjNum() const { return m_RefObjNum; }

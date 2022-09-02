@@ -109,7 +109,7 @@ class CPDF_Object : public Retainable {
 
   // Return a reference to itself.
   // The object must be direct (!IsInlined).
-  virtual RetainPtr<CPDF_Object> MakeReference(
+  virtual RetainPtr<CPDF_Reference> MakeReference(
       CPDF_IndirectObjectHolder* holder) const;
 
   RetainPtr<CPDF_Object> GetMutableDirect();    // Wraps virtual method.

@@ -183,7 +183,7 @@ const CPDF_String* CPDF_Object::AsString() const {
   return nullptr;
 }
 
-RetainPtr<CPDF_Object> CPDF_Object::MakeReference(
+RetainPtr<CPDF_Reference> CPDF_Object::MakeReference(
     CPDF_IndirectObjectHolder* holder) const {
   if (IsInline()) {
     NOTREACHED();
