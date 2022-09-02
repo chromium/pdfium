@@ -60,11 +60,6 @@ CPDF_FileSpec::CPDF_FileSpec(const CPDF_Object* pObj) : m_pObj(pObj) {
   DCHECK(m_pObj);
 }
 
-CPDF_FileSpec::CPDF_FileSpec(CPDF_Object* pObj)
-    : m_pObj(pObj), m_pWritableObj(pObj) {
-  DCHECK(m_pObj);
-}
-
 CPDF_FileSpec::~CPDF_FileSpec() = default;
 
 WideString CPDF_FileSpec::DecodeFileName(const WideString& filepath) {
@@ -199,19 +194,4 @@ WideString CPDF_FileSpec::EncodeFileName(const WideString& filepath) {
 #else
   return WideString(filepath);
 #endif
-}
-
-void CPDF_FileSpec::SetFileName(const WideString& wsFileName) {
-  if (!m_pWritableObj) {
-    NOTREACHED();
-    return;
-  }
-
-  WideString wsStr = EncodeFileName(wsFileName);
-  if (m_pObj->IsString()) {
-    m_pWritableObj->SetString(wsStr.ToDefANSI());
-  } else if (CPDF_Dictionary* pDict = m_pWritableObj->AsDictionary()) {
-    pDict->SetNewFor<CPDF_String>(pdfium::stream::kF, wsStr.ToDefANSI(), false);
-    pDict->SetNewFor<CPDF_String>("UF", wsStr.AsStringView());
-  }
 }

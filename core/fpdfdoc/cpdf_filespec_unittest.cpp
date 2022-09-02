@@ -135,39 +135,6 @@ TEST(cpdf_filespec, GetFileName) {
   }
 }
 
-TEST(cpdf_filespec, SetFileName) {
-  static const pdfium::NullTermWstrFuncTestData test_data = {
-#if BUILDFLAG(IS_WIN)
-    L"C:\\docs\\test.pdf",
-    L"/C/docs/test.pdf"
-#elif BUILDFLAG(IS_APPLE)
-    L"Mac HD:docs:test.pdf",
-    L"/Mac HD/docs/test.pdf"
-#else
-    L"/docs/test.pdf",
-    L"/docs/test.pdf"
-#endif
-  };
-  // String object.
-  auto str_obj = pdfium::MakeRetain<CPDF_String>(nullptr, L"babababa");
-  CPDF_FileSpec file_spec1(str_obj.Get());
-  file_spec1.SetFileName(test_data.input);
-  // Check internal object value.
-  EXPECT_STREQ(test_data.expected, str_obj->GetUnicodeText().c_str());
-  // Check we can get the file name back.
-  EXPECT_STREQ(test_data.input, file_spec1.GetFileName().c_str());
-
-  // Dictionary object.
-  auto dict_obj = pdfium::MakeRetain<CPDF_Dictionary>();
-  CPDF_FileSpec file_spec2(dict_obj.Get());
-  file_spec2.SetFileName(test_data.input);
-  // Check internal object value.
-  EXPECT_STREQ(test_data.expected, dict_obj->GetUnicodeTextFor("F").c_str());
-  EXPECT_STREQ(test_data.expected, dict_obj->GetUnicodeTextFor("UF").c_str());
-  // Check we can get the file name back.
-  EXPECT_STREQ(test_data.input, file_spec2.GetFileName().c_str());
-}
-
 TEST(cpdf_filespec, GetFileStream) {
   {
     // Invalid object.
@@ -198,8 +165,7 @@ TEST(cpdf_filespec, GetFileStream) {
     const char* const keys[] = {"Unix", "Mac", "DOS", "F", "UF"};
     const char* const streams[] = {"test1", "test2", "test3", "test4", "test5"};
     static_assert(std::size(keys) == std::size(streams), "size mismatch");
-    RetainPtr<CPDF_Dictionary> file_dict =
-        file_spec.GetObj()->AsDictionary()->GetMutableDictFor("EF");
+    RetainPtr<CPDF_Dictionary> file_dict = dict_obj->GetMutableDictFor("EF");
 
     // Keys in reverse order of precedence to retrieve the file content stream.
     for (size_t i = 0; i < std::size(keys); ++i) {
@@ -244,8 +210,7 @@ TEST(cpdf_filespec, GetParamsDict) {
     EXPECT_FALSE(file_spec.GetParamsDict());
 
     // Add a file stream to the embedded files dictionary.
-    RetainPtr<CPDF_Dictionary> file_dict =
-        file_spec.GetObj()->AsDictionary()->GetMutableDictFor("EF");
+    RetainPtr<CPDF_Dictionary> file_dict = dict_obj->GetMutableDictFor("EF");
     auto pDict = pdfium::MakeRetain<CPDF_Dictionary>();
     std::unique_ptr<uint8_t, FxFreeDeleter> buf(FX_AllocUninit(uint8_t, 6));
     memcpy(buf.get(), "hello", 6);
