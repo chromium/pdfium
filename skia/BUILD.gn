@@ -224,18 +224,6 @@ component("skia") {
     "//third_party/skia/src/utils/SkParsePath.cpp",
   ]
 
-  if (is_win) {
-    sources -= [
-      # Keeping _win.cpp
-      "//third_party/skia/src/utils/SkThreadUtils_pthread.cpp",
-    ]
-  } else {
-    sources -= [
-      # Keeping _pthread.cpp
-      "//third_party/skia/src/utils/SkThreadUtils_win.cpp",
-    ]
-  }
-
   # need separate win section to handle chromes auto gn filter
   # (build/config/BUILDCONFIG.gn)
   if (is_win) {
