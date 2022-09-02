@@ -13,6 +13,7 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
+#include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/check.h"
@@ -47,6 +48,7 @@ bool IsLinearizedHeaderValid(const CPDF_LinearizedHeader* header,
          header->GetFirstPageNo() < header->GetPageCount() &&
          header->GetMainXRefTableFirstEntryOffset() < document_size &&
          header->GetFirstPageEndOffset() < document_size &&
+         header->GetFirstPageObjNum() < CPDF_Parser::kMaxObjectNumber &&
          header->GetLastXRefOffset() < document_size &&
          header->GetHintStart() < document_size;
 }
