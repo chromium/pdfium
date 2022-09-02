@@ -135,7 +135,8 @@ RetainPtr<CPDF_Object> CPDF_Document::ParseIndirectObject(uint32_t objnum) {
 bool CPDF_Document::TryInit() {
   SetLastObjNum(m_pParser->GetLastObjNum());
 
-  CPDF_Object* pRootObj = GetOrParseIndirectObject(m_pParser->GetRootObjNum());
+  RetainPtr<CPDF_Object> pRootObj =
+      GetOrParseIndirectObject(m_pParser->GetRootObjNum());
   if (pRootObj)
     m_pRootDict = pRootObj->GetMutableDict();
 
@@ -171,7 +172,7 @@ void CPDF_Document::LoadPages() {
   }
 
   uint32_t objnum = linearized_header->GetFirstPageObjNum();
-  if (!IsValidPageObject(GetOrParseIndirectObject(objnum))) {
+  if (!IsValidPageObject(GetOrParseIndirectObject(objnum).Get())) {
     m_PageList.resize(RetrievePageCount());
     return;
   }
@@ -285,9 +286,12 @@ const CPDF_Dictionary* CPDF_Document::GetPageDictionary(int iPage) {
 
   const uint32_t objnum = m_PageList[iPage];
   if (objnum) {
-    CPDF_Dictionary* result = ToDictionary(GetOrParseIndirectObject(objnum));
-    if (result)
-      return result;
+    RetainPtr<CPDF_Dictionary> result =
+        ToDictionary(GetOrParseIndirectObject(objnum));
+    if (result) {
+      // TODO(tsepez): return retained result.
+      return result.Get();
+    }
   }
 
   CPDF_Dictionary* pPages = GetPagesDict();
@@ -353,7 +357,7 @@ int CPDF_Document::GetPageIndex(uint32_t objnum) {
     return -1;
 
   // Only update |m_PageList| when |objnum| points to a /Page object.
-  if (IsValidPageObject(GetOrParseIndirectObject(objnum)))
+  if (IsValidPageObject(GetOrParseIndirectObject(objnum).Get()))
     m_PageList[found_index] = objnum;
   return found_index;
 }

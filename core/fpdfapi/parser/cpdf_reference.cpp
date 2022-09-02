@@ -80,7 +80,7 @@ void CPDF_Reference::SetRef(CPDF_IndirectObjectHolder* pDoc, uint32_t objnum) {
 }
 
 const CPDF_Object* CPDF_Reference::GetDirect() const {
-  return m_pObjList ? m_pObjList->GetOrParseIndirectObject(m_RefObjNum)
+  return m_pObjList ? m_pObjList->GetOrParseIndirectObject(m_RefObjNum).Get()
                     : nullptr;
 }
 

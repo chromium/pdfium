@@ -853,7 +853,7 @@ const CPDF_Array* CPDF_Parser::GetIDArray() const {
 }
 
 const CPDF_Dictionary* CPDF_Parser::GetRoot() const {
-  CPDF_Object* obj =
+  RetainPtr<CPDF_Object> obj =
       m_pObjectsHolder->GetOrParseIndirectObject(GetRootObjNum());
   return obj ? obj->GetDict() : nullptr;
 }
@@ -870,8 +870,10 @@ const CPDF_Dictionary* CPDF_Parser::GetEncryptDict() const {
     return ToDictionary(pEncryptObj);
 
   if (pEncryptObj->IsReference()) {
+    // TODO(tsepez): return retained object.
     return ToDictionary(m_pObjectsHolder->GetOrParseIndirectObject(
-        pEncryptObj->AsReference()->GetRefObjNum()));
+                            pEncryptObj->AsReference()->GetRefObjNum()))
+        .Get();
   }
   return nullptr;
 }

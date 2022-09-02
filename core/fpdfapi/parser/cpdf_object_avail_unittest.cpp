@@ -44,7 +44,7 @@ class TestHolder final : public CPDF_IndirectObjectHolder {
   ~TestHolder() override = default;
 
   // CPDF_IndirectObjectHolder overrides:
-  CPDF_Object* GetOrParseIndirectObject(uint32_t objnum) override {
+  RetainPtr<CPDF_Object> GetOrParseIndirectObject(uint32_t objnum) override {
     auto it = objects_data_.find(objnum);
     if (it == objects_data_.end())
       return nullptr;
@@ -54,7 +54,7 @@ class TestHolder final : public CPDF_IndirectObjectHolder {
       validator_->SimulateReadError();
       return nullptr;
     }
-    return obj_data.object.Get();
+    return obj_data.object;
   }
 
   RetainPtr<CPDF_ReadValidator> GetValidator() { return validator_; }

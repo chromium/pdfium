@@ -28,7 +28,7 @@ TEST(IndirectObjectHolderTest, RecursiveParseOfSameObject) {
   EXPECT_CALL(mock_holder, ParseIndirectObject(::testing::_))
       .WillOnce(::testing::WithArg<0>(::testing::Invoke(
           [&mock_holder](uint32_t objnum) -> RetainPtr<CPDF_Object> {
-            const CPDF_Object* same_parse =
+            RetainPtr<const CPDF_Object> same_parse =
                 mock_holder.GetOrParseIndirectObject(objnum);
             CHECK(!same_parse);
             return pdfium::MakeRetain<CPDF_Null>();

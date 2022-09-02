@@ -38,7 +38,8 @@ class TestObjectsHolder final : public CPDF_Parser::ParsedObjectsHolder {
 
   // CPDF_Parser::ParsedObjectsHolder:
   bool TryInit() override { return true; }
-  MOCK_METHOD1(GetOrParseIndirectObject, CPDF_Object*(uint32_t objnum));
+  MOCK_METHOD1(GetOrParseIndirectObject,
+               RetainPtr<CPDF_Object>(uint32_t objnum));
 };
 
 }  // namespace
@@ -358,7 +359,7 @@ TEST(ParserTest, XrefObjectIndicesTooBig) {
   // /XRef stream and avoid also providing other valid dictionaries.
   auto dummy_root = pdfium::MakeRetain<CPDF_Dictionary>();
   EXPECT_CALL(parser.object_holder(), GetOrParseIndirectObject)
-      .WillRepeatedly(Return(dummy_root.Get()));
+      .WillRepeatedly(Return(dummy_root));
 
   // Since /Index starts at 4194303, the object number will go past
   // `kMaxObjectNumber`.
@@ -410,7 +411,7 @@ TEST(ParserTest, XrefHasInvalidArchiveObjectNumber) {
   // /XRef stream and avoid also providing other valid dictionaries.
   auto dummy_root = pdfium::MakeRetain<CPDF_Dictionary>();
   EXPECT_CALL(parser.object_holder(), GetOrParseIndirectObject)
-      .WillRepeatedly(Return(dummy_root.Get()));
+      .WillRepeatedly(Return(dummy_root));
 
   // 0xFF in the first object in the xref object stream is invalid.
   const unsigned char kData[] =

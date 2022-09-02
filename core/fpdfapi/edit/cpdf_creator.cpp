@@ -154,12 +154,12 @@ bool CPDF_Creator::WriteOldIndirectObject(uint32_t objnum) {
   m_ObjectOffsets[objnum] = m_Archive->CurrentOffset();
 
   bool bExistInMap = !!m_pDocument->GetIndirectObject(objnum);
-  CPDF_Object* pObj = m_pDocument->GetOrParseIndirectObject(objnum);
+  RetainPtr<CPDF_Object> pObj = m_pDocument->GetOrParseIndirectObject(objnum);
   if (!pObj) {
     m_ObjectOffsets.erase(objnum);
     return true;
   }
-  if (!WriteIndirectObj(pObj->GetObjNum(), pObj))
+  if (!WriteIndirectObj(pObj->GetObjNum(), pObj.Get()))
     return false;
   if (!bExistInMap)
     m_pDocument->DeleteIndirectObject(objnum);
