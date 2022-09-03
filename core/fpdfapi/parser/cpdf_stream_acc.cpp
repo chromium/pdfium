@@ -59,7 +59,7 @@ const CPDF_Dictionary* CPDF_StreamAcc::GetDict() const {
   return m_pStream ? m_pStream->GetDict() : nullptr;
 }
 
-uint8_t* CPDF_StreamAcc::GetData() const {
+const uint8_t* CPDF_StreamAcc::GetData() const {
   if (m_pData.IsOwned())
     return m_pData.Get();
   return m_pStream ? m_pStream->GetInMemoryRawData() : nullptr;

@@ -35,7 +35,7 @@ class CPDF_StreamAcc final : public Retainable {
   const CPDF_Stream* GetStream() const { return m_pStream.Get(); }
   const CPDF_Dictionary* GetDict() const;
 
-  uint8_t* GetData() const;
+  const uint8_t* GetData() const;
   uint32_t GetSize() const;
   pdfium::span<const uint8_t> GetSpan() const;
   ByteString ComputeDigest() const;

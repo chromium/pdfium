@@ -7,9 +7,13 @@
 #ifndef CORE_FPDFAPI_PARSER_CPDF_FLATEENCODER_H_
 #define CORE_FPDFAPI_PARSER_CPDF_FLATEENCODER_H_
 
+#include <stdint.h>
+
+#include <memory>
+
 #include "core/fxcrt/fx_memory_wrappers.h"
-#include "core/fxcrt/maybe_owned.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "third_party/abseil-cpp/absl/types/variant.h"
 #include "third_party/base/span.h"
 
 class CPDF_Dictionary;
@@ -27,15 +31,23 @@ class CPDF_FlateEncoder {
   // Returns |m_pClonedDict| if it is valid. Otherwise returns |m_pDict|.
   const CPDF_Dictionary* GetDict() const;
 
-  pdfium::span<const uint8_t> GetSpan() const {
-    return pdfium::make_span(m_pData.Get(), m_dwSize);
-  }
+  pdfium::span<const uint8_t> GetSpan() const;
 
  private:
+  // TODO(crbug.com/pdfium/1872): Replace with fxcrt::DataVector.
+  struct OwnedData {
+    OwnedData(std::unique_ptr<uint8_t, FxFreeDeleter> buffer, uint32_t size);
+    ~OwnedData();
+
+    std::unique_ptr<uint8_t, FxFreeDeleter> buffer;
+    uint32_t size;
+  };
+
+  bool is_owned() const { return m_Data.index() == 1; }
+
   RetainPtr<CPDF_StreamAcc> m_pAcc;
 
-  uint32_t m_dwSize = 0;
-  MaybeOwned<uint8_t, FxFreeDeleter> m_pData;
+  absl::variant<pdfium::span<const uint8_t>, OwnedData> m_Data;
 
   // Only one of these two pointers is valid at any time.
   RetainPtr<const CPDF_Dictionary> m_pDict;

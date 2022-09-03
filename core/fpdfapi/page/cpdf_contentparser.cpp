@@ -27,6 +27,13 @@
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 
+CPDF_ContentParser::OwnedData::OwnedData(
+    std::unique_ptr<uint8_t, FxFreeDeleter> buffer,
+    uint32_t size)
+    : buffer(std::move(buffer)), size(size) {}
+
+CPDF_ContentParser::OwnedData::~OwnedData() = default;
+
 CPDF_ContentParser::CPDF_ContentParser(CPDF_Page* pPage)
     : m_CurrentStage(Stage::kGetContent), m_pObjectHolder(pPage) {
   DCHECK(pPage);
@@ -106,8 +113,7 @@ CPDF_ContentParser::CPDF_ContentParser(CPDF_Form* pForm,
   }
   m_pSingleStream = pdfium::MakeRetain<CPDF_StreamAcc>(pForm->GetStream());
   m_pSingleStream->LoadAllDataFiltered();
-  m_pData.Reset(m_pSingleStream->GetData());
-  m_Size = m_pSingleStream->GetSize();
+  m_Data = m_pSingleStream->GetSpan();
 }
 
 CPDF_ContentParser::~CPDF_ContentParser() = default;
@@ -158,34 +164,36 @@ CPDF_ContentParser::Stage CPDF_ContentParser::PrepareContent() {
   m_CurrentOffset = 0;
 
   if (m_StreamArray.empty()) {
-    m_pData.Reset(m_pSingleStream->GetData());
-    m_Size = m_pSingleStream->GetSize();
+    m_Data = m_pSingleStream->GetSpan();
     return Stage::kParse;
   }
 
-  FX_SAFE_UINT32 safeSize = 0;
+  FX_SAFE_UINT32 safe_size = 0;
   for (const auto& stream : m_StreamArray) {
-    m_StreamSegmentOffsets.push_back(safeSize.ValueOrDie());
-    safeSize += stream->GetSize();
-    safeSize += 1;
-    if (!safeSize.IsValid())
+    m_StreamSegmentOffsets.push_back(safe_size.ValueOrDie());
+    safe_size += stream->GetSize();
+    safe_size += 1;
+    if (!safe_size.IsValid())
       return Stage::kComplete;
   }
 
-  m_Size = safeSize.ValueOrDie();
-  m_pData.Reset(
-      std::unique_ptr<uint8_t, FxFreeDeleter>(FX_TryAlloc(uint8_t, m_Size)));
-  if (!m_pData)
+  const size_t buffer_size = safe_size.ValueOrDie();
+  std::unique_ptr<uint8_t, FxFreeDeleter> buffer(
+      FX_TryAlloc(uint8_t, buffer_size));
+  if (!buffer) {
+    m_Data.emplace<pdfium::span<const uint8_t>>();
     return Stage::kComplete;
+  }
 
   size_t pos = 0;
-  auto data_span = pdfium::make_span(m_pData.Get(), m_Size);
+  auto data_span = pdfium::make_span(buffer.get(), buffer_size);
   for (const auto& stream : m_StreamArray) {
     fxcrt::spancpy(data_span.subspan(pos), stream->GetSpan());
     pos += stream->GetSize();
     data_span[pos++] = ' ';
   }
   m_StreamArray.clear();
+  m_Data.emplace<OwnedData>(std::move(buffer), buffer_size);
   return Stage::kParse;
 }
 
@@ -199,14 +207,14 @@ CPDF_ContentParser::Stage CPDF_ContentParser::Parse() {
         m_pObjectHolder->GetBBox(), nullptr, &m_ParsedSet);
     m_pParser->GetCurStates()->m_ColorState.SetDefault();
   }
-  if (m_CurrentOffset >= m_Size)
+  if (m_CurrentOffset >= GetData().size())
     return Stage::kCheckClip;
 
   if (m_StreamSegmentOffsets.empty())
     m_StreamSegmentOffsets.push_back(0);
 
   static constexpr uint32_t kParseStepLimit = 100;
-  m_CurrentOffset += m_pParser->Parse({m_pData.Get(), m_Size}, m_CurrentOffset,
+  m_CurrentOffset += m_pParser->Parse(GetData(), m_CurrentOffset,
                                       kParseStepLimit, m_StreamSegmentOffsets);
   return Stage::kParse;
 }
@@ -255,4 +263,12 @@ bool CPDF_ContentParser::HandlePageContentArray(const CPDF_Array* pArray) {
 
 void CPDF_ContentParser::HandlePageContentFailure() {
   m_CurrentStage = Stage::kComplete;
+}
+
+pdfium::span<const uint8_t> CPDF_ContentParser::GetData() const {
+  if (is_owned()) {
+    const OwnedData& data = absl::get<OwnedData>(m_Data);
+    return pdfium::make_span(data.buffer.get(), data.size);
+  }
+  return absl::get<pdfium::span<const uint8_t>>(m_Data);
 }
