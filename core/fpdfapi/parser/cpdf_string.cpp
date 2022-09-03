@@ -52,10 +52,6 @@ void CPDF_String::SetString(const ByteString& str) {
   m_String = str;
 }
 
-bool CPDF_String::IsString() const {
-  return true;
-}
-
 CPDF_String* CPDF_String::AsMutableString() {
   return this;
 }

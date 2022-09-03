@@ -34,10 +34,6 @@ void CPDF_Name::SetString(const ByteString& str) {
   m_Name = str;
 }
 
-bool CPDF_Name::IsName() const {
-  return true;
-}
-
 CPDF_Name* CPDF_Name::AsMutableName() {
   return this;
 }

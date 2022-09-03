@@ -83,42 +83,6 @@ void CPDF_Object::SetString(const ByteString& str) {
   NOTREACHED();
 }
 
-bool CPDF_Object::IsArray() const {
-  return false;
-}
-
-bool CPDF_Object::IsBoolean() const {
-  return false;
-}
-
-bool CPDF_Object::IsDictionary() const {
-  return false;
-}
-
-bool CPDF_Object::IsName() const {
-  return false;
-}
-
-bool CPDF_Object::IsNumber() const {
-  return false;
-}
-
-bool CPDF_Object::IsReference() const {
-  return false;
-}
-
-bool CPDF_Object::IsStream() const {
-  return false;
-}
-
-bool CPDF_Object::IsString() const {
-  return false;
-}
-
-bool CPDF_Object::IsNull() const {
-  return false;
-}
-
 CPDF_Array* CPDF_Object::AsMutableArray() {
   return nullptr;
 }
@@ -149,6 +113,14 @@ CPDF_Name* CPDF_Object::AsMutableName() {
 
 const CPDF_Name* CPDF_Object::AsName() const {
   return const_cast<CPDF_Object*>(this)->AsMutableName();
+}
+
+CPDF_Null* CPDF_Object::AsMutableNull() {
+  return nullptr;
+}
+
+const CPDF_Null* CPDF_Object::AsNull() const {
+  return const_cast<CPDF_Object*>(this)->AsMutableNull();
 }
 
 CPDF_Number* CPDF_Object::AsMutableNumber() {

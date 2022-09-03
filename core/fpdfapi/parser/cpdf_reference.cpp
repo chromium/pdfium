@@ -40,10 +40,6 @@ const CPDF_Dictionary* CPDF_Reference::GetDict() const {
   return obj ? obj->GetDict() : nullptr;
 }
 
-bool CPDF_Reference::IsReference() const {
-  return true;
-}
-
 CPDF_Reference* CPDF_Reference::AsMutableReference() {
   return this;
 }

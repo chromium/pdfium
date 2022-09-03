@@ -23,7 +23,6 @@ class CPDF_String final : public CPDF_Object {
   ByteString GetString() const override;
   WideString GetUnicodeText() const override;
   void SetString(const ByteString& str) override;
-  bool IsString() const override;
   CPDF_String* AsMutableString() override;
   bool WriteTo(IFX_ArchiveStream* archive,
                const CPDF_Encryptor* encryptor) const override;

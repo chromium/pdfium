@@ -38,10 +38,6 @@ CPDF_Object::Type CPDF_Array::GetType() const {
   return kArray;
 }
 
-bool CPDF_Array::IsArray() const {
-  return true;
-}
-
 CPDF_Array* CPDF_Array::AsMutableArray() {
   return this;
 }

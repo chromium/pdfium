@@ -33,7 +33,6 @@ class CPDF_Array final : public CPDF_Object {
   // CPDF_Object:
   Type GetType() const override;
   RetainPtr<CPDF_Object> Clone() const override;
-  bool IsArray() const override;
   CPDF_Array* AsMutableArray() override;
   bool WriteTo(IFX_ArchiveStream* archive,
                const CPDF_Encryptor* encryptor) const override;

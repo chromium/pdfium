@@ -71,10 +71,6 @@ const CPDF_Dictionary* CPDF_Stream::GetDict() const {
   return m_pDict.Get();
 }
 
-bool CPDF_Stream::IsStream() const {
-  return true;
-}
-
 CPDF_Stream* CPDF_Stream::AsMutableStream() {
   return this;
 }

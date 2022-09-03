@@ -23,7 +23,6 @@ class CPDF_Number final : public CPDF_Object {
   float GetNumber() const override;
   int GetInteger() const override;
   void SetString(const ByteString& str) override;
-  bool IsNumber() const override;
   CPDF_Number* AsMutableNumber() override;
   bool WriteTo(IFX_ArchiveStream* archive,
                const CPDF_Encryptor* encryptor) const override;

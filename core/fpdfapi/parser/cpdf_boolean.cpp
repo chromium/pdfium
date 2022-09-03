@@ -34,10 +34,6 @@ void CPDF_Boolean::SetString(const ByteString& str) {
   m_bValue = (str == "true");
 }
 
-bool CPDF_Boolean::IsBoolean() const {
-  return true;
-}
-
 CPDF_Boolean* CPDF_Boolean::AsMutableBoolean() {
   return this;
 }

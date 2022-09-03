@@ -46,10 +46,6 @@ const CPDF_Dictionary* CPDF_Dictionary::GetDict() const {
   return this;
 }
 
-bool CPDF_Dictionary::IsDictionary() const {
-  return true;
-}
-
 CPDF_Dictionary* CPDF_Dictionary::AsMutableDictionary() {
   return this;
 }
