@@ -48,10 +48,6 @@ CPDF_Reference* CPDF_Reference::AsMutableReference() {
   return this;
 }
 
-const CPDF_Reference* CPDF_Reference::AsReference() const {
-  return this;
-}
-
 RetainPtr<CPDF_Object> CPDF_Reference::Clone() const {
   return CloneObjectNonCyclic(false);
 }

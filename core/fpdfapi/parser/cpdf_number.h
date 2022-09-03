@@ -25,7 +25,6 @@ class CPDF_Number final : public CPDF_Object {
   void SetString(const ByteString& str) override;
   bool IsNumber() const override;
   CPDF_Number* AsMutableNumber() override;
-  const CPDF_Number* AsNumber() const override;
   bool WriteTo(IFX_ArchiveStream* archive,
                const CPDF_Encryptor* encryptor) const override;
 

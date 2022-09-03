@@ -60,10 +60,6 @@ CPDF_String* CPDF_String::AsMutableString() {
   return this;
 }
 
-const CPDF_String* CPDF_String::AsString() const {
-  return this;
-}
-
 WideString CPDF_String::GetUnicodeText() const {
   return PDF_DecodeText(m_String.raw_span());
 }

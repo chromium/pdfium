@@ -79,10 +79,6 @@ CPDF_Stream* CPDF_Stream::AsMutableStream() {
   return this;
 }
 
-const CPDF_Stream* CPDF_Stream::AsStream() const {
-  return this;
-}
-
 void CPDF_Stream::InitStream(pdfium::span<const uint8_t> pData,
                              RetainPtr<CPDF_Dictionary> pDict) {
   m_pDict = std::move(pDict);

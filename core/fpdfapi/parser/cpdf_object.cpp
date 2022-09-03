@@ -124,7 +124,7 @@ CPDF_Array* CPDF_Object::AsMutableArray() {
 }
 
 const CPDF_Array* CPDF_Object::AsArray() const {
-  return nullptr;
+  return const_cast<CPDF_Object*>(this)->AsMutableArray();
 }
 
 CPDF_Boolean* CPDF_Object::AsMutableBoolean() {
@@ -132,7 +132,7 @@ CPDF_Boolean* CPDF_Object::AsMutableBoolean() {
 }
 
 const CPDF_Boolean* CPDF_Object::AsBoolean() const {
-  return nullptr;
+  return const_cast<CPDF_Object*>(this)->AsMutableBoolean();
 }
 
 CPDF_Dictionary* CPDF_Object::AsMutableDictionary() {
@@ -140,7 +140,7 @@ CPDF_Dictionary* CPDF_Object::AsMutableDictionary() {
 }
 
 const CPDF_Dictionary* CPDF_Object::AsDictionary() const {
-  return nullptr;
+  return const_cast<CPDF_Object*>(this)->AsMutableDictionary();
 }
 
 CPDF_Name* CPDF_Object::AsMutableName() {
@@ -148,7 +148,7 @@ CPDF_Name* CPDF_Object::AsMutableName() {
 }
 
 const CPDF_Name* CPDF_Object::AsName() const {
-  return nullptr;
+  return const_cast<CPDF_Object*>(this)->AsMutableName();
 }
 
 CPDF_Number* CPDF_Object::AsMutableNumber() {
@@ -156,7 +156,7 @@ CPDF_Number* CPDF_Object::AsMutableNumber() {
 }
 
 const CPDF_Number* CPDF_Object::AsNumber() const {
-  return nullptr;
+  return const_cast<CPDF_Object*>(this)->AsMutableNumber();
 }
 
 CPDF_Reference* CPDF_Object::AsMutableReference() {
@@ -164,7 +164,7 @@ CPDF_Reference* CPDF_Object::AsMutableReference() {
 }
 
 const CPDF_Reference* CPDF_Object::AsReference() const {
-  return nullptr;
+  return const_cast<CPDF_Object*>(this)->AsMutableReference();
 }
 
 CPDF_Stream* CPDF_Object::AsMutableStream() {
@@ -172,7 +172,7 @@ CPDF_Stream* CPDF_Object::AsMutableStream() {
 }
 
 const CPDF_Stream* CPDF_Object::AsStream() const {
-  return nullptr;
+  return const_cast<CPDF_Object*>(this)->AsMutableStream();
 }
 
 CPDF_String* CPDF_Object::AsMutableString() {
@@ -180,7 +180,7 @@ CPDF_String* CPDF_Object::AsMutableString() {
 }
 
 const CPDF_String* CPDF_Object::AsString() const {
-  return nullptr;
+  return const_cast<CPDF_Object*>(this)->AsMutableString();
 }
 
 RetainPtr<CPDF_Reference> CPDF_Object::MakeReference(

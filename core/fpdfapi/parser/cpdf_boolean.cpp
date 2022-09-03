@@ -42,10 +42,6 @@ CPDF_Boolean* CPDF_Boolean::AsMutableBoolean() {
   return this;
 }
 
-const CPDF_Boolean* CPDF_Boolean::AsBoolean() const {
-  return this;
-}
-
 bool CPDF_Boolean::WriteTo(IFX_ArchiveStream* archive,
                            const CPDF_Encryptor* encryptor) const {
   return archive->WriteString(" ") &&

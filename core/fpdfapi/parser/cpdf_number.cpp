@@ -44,10 +44,6 @@ CPDF_Number* CPDF_Number::AsMutableNumber() {
   return this;
 }
 
-const CPDF_Number* CPDF_Number::AsNumber() const {
-  return this;
-}
-
 void CPDF_Number::SetString(const ByteString& str) {
   m_Number = FX_Number(str.AsStringView());
 }

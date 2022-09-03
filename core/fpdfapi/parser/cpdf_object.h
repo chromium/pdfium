@@ -86,15 +86,6 @@ class CPDF_Object : public Retainable {
   virtual CPDF_Stream* AsMutableStream();
   virtual CPDF_String* AsMutableString();
 
-  virtual const CPDF_Array* AsArray() const;
-  virtual const CPDF_Boolean* AsBoolean() const;
-  virtual const CPDF_Dictionary* AsDictionary() const;
-  virtual const CPDF_Name* AsName() const;
-  virtual const CPDF_Number* AsNumber() const;
-  virtual const CPDF_Reference* AsReference() const;
-  virtual const CPDF_Stream* AsStream() const;
-  virtual const CPDF_String* AsString() const;
-
   virtual bool WriteTo(IFX_ArchiveStream* archive,
                        const CPDF_Encryptor* encryptor) const = 0;
 
@@ -115,6 +106,16 @@ class CPDF_Object : public Retainable {
 
   RetainPtr<CPDF_Object> GetMutableDirect();    // Wraps virtual method.
   RetainPtr<CPDF_Dictionary> GetMutableDict();  // Wraps virtual method.
+
+  // Const methods wrapping non-const virtual methods.
+  const CPDF_Array* AsArray() const;
+  const CPDF_Boolean* AsBoolean() const;
+  const CPDF_Dictionary* AsDictionary() const;
+  const CPDF_Name* AsName() const;
+  const CPDF_Number* AsNumber() const;
+  const CPDF_Reference* AsReference() const;
+  const CPDF_Stream* AsStream() const;
+  const CPDF_String* AsString() const;
 
  protected:
   CPDF_Object() = default;

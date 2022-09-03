@@ -46,10 +46,6 @@ CPDF_Array* CPDF_Array::AsMutableArray() {
   return this;
 }
 
-const CPDF_Array* CPDF_Array::AsArray() const {
-  return this;
-}
-
 RetainPtr<CPDF_Object> CPDF_Array::Clone() const {
   return CloneObjectNonCyclic(false);
 }

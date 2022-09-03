@@ -42,10 +42,6 @@ CPDF_Name* CPDF_Name::AsMutableName() {
   return this;
 }
 
-const CPDF_Name* CPDF_Name::AsName() const {
-  return this;
-}
-
 WideString CPDF_Name::GetUnicodeText() const {
   return PDF_DecodeText(m_Name.raw_span());
 }

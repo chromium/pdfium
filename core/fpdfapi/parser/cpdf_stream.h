@@ -32,7 +32,6 @@ class CPDF_Stream final : public CPDF_Object {
   WideString GetUnicodeText() const override;
   bool IsStream() const override;
   CPDF_Stream* AsMutableStream() override;
-  const CPDF_Stream* AsStream() const override;
   bool WriteTo(IFX_ArchiveStream* archive,
                const CPDF_Encryptor* encryptor) const override;
 

@@ -54,10 +54,6 @@ CPDF_Dictionary* CPDF_Dictionary::AsMutableDictionary() {
   return this;
 }
 
-const CPDF_Dictionary* CPDF_Dictionary::AsDictionary() const {
-  return this;
-}
-
 RetainPtr<CPDF_Object> CPDF_Dictionary::Clone() const {
   return CloneObjectNonCyclic(false);
 }
