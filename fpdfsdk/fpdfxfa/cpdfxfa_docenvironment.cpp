@@ -505,7 +505,8 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
       }
       auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
       pAcc->LoadAllDataFiltered();
-      fileWrite->WriteBlock(pAcc->GetData(), pAcc->GetSize());
+      pdfium::span<const uint8_t> span = pAcc->GetSpan();
+      fileWrite->WriteBlock(span.data(), span.size());
     }
   }
   fileWrite->Flush();

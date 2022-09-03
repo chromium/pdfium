@@ -167,13 +167,14 @@ class PDFObjectsTest : public testing::Test {
         streamAcc1->LoadAllDataRaw();
         auto streamAcc2 = pdfium::MakeRetain<CPDF_StreamAcc>(stream2);
         streamAcc2->LoadAllDataRaw();
+        pdfium::span<const uint8_t> span1 = streamAcc1->GetSpan();
+        pdfium::span<const uint8_t> span2 = streamAcc2->GetSpan();
 
         // Compare sizes.
-        if (streamAcc1->GetSize() != streamAcc2->GetSize())
+        if (span1.size() != span2.size())
           return false;
 
-        return memcmp(streamAcc1->GetData(), streamAcc2->GetData(),
-                      streamAcc2->GetSize()) == 0;
+        return memcmp(span1.data(), span2.data(), span2.size()) == 0;
       }
       case CPDF_Object::kReference:
         return obj1->AsReference()->GetRefObjNum() ==

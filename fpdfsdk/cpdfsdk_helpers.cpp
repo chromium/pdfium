@@ -67,7 +67,8 @@ unsigned long GetStreamMaybeCopyAndReturnLengthImpl(const CPDF_Stream* stream,
   if (!buffer || buflen < stream_data_size)
     return stream_data_size;
 
-  memcpy(buffer, stream_acc->GetData(), stream_data_size);
+  pdfium::span<const uint8_t> span = stream_acc->GetSpan();
+  memcpy(buffer, span.data(), span.size());
   return stream_data_size;
 }
 

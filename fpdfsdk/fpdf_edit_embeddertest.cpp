@@ -146,7 +146,7 @@ class FPDFEditEmbedderTest : public EmbedderTest {
                 streamAcc->GetDict()->GetIntegerFor("Length1"));
     }
 
-    const uint8_t* stream_data = streamAcc->GetData();
+    pdfium::span<const uint8_t> stream_data = streamAcc->GetSpan();
     for (size_t j = 0; j < span.size(); j++)
       EXPECT_EQ(span[j], stream_data[j]) << " at byte " << j;
   }

@@ -17,6 +17,5 @@ TEST(StreamAccTest, ReadRawDataFailed) {
       pdfium::MakeRetain<CPDF_Dictionary>());
   auto stream_acc = pdfium::MakeRetain<CPDF_StreamAcc>(stream.Get());
   stream_acc->LoadAllDataRaw();
-  EXPECT_EQ(0u, stream_acc->GetSize());
-  EXPECT_FALSE(stream_acc->GetData());
+  EXPECT_TRUE(stream_acc->GetSpan().empty());
 }

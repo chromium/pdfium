@@ -35,7 +35,6 @@ class CPDF_StreamAcc final : public Retainable {
   const CPDF_Stream* GetStream() const { return m_pStream.Get(); }
   const CPDF_Dictionary* GetDict() const;
 
-  const uint8_t* GetData() const;
   uint32_t GetSize() const;
   pdfium::span<const uint8_t> GetSpan() const;
   ByteString ComputeDigest() const;
@@ -50,6 +49,7 @@ class CPDF_StreamAcc final : public Retainable {
   void LoadAllData(bool bRawAccess, uint32_t estimated_size, bool bImageAcc);
   void ProcessRawData();
   void ProcessFilteredData(uint32_t estimated_size, bool bImageAcc);
+  const uint8_t* GetData() const;
 
   // Reads the raw data from |m_pStream|, or return nullptr on failure.
   std::unique_ptr<uint8_t, FxFreeDeleter> ReadRawStream() const;

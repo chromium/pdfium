@@ -730,10 +730,7 @@ bool CPDF_DIB::LoadInternal(const CPDF_Dictionary* pFormResources,
 
   m_pStreamAcc = pdfium::MakeRetain<CPDF_StreamAcc>(m_pStream.Get());
   m_pStreamAcc->LoadAllDataImageAcc(src_size.ValueOrDie());
-  if (m_pStreamAcc->GetSize() == 0 || !m_pStreamAcc->GetData())
-    return false;
-
-  return true;
+  return !m_pStreamAcc->GetSpan().empty();
 }
 
 CPDF_DIB::LoadState CPDF_DIB::StartLoadMask() {

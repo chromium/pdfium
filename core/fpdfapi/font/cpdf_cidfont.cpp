@@ -810,8 +810,8 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
   if (byte_pos + 2 > m_pStreamAcc->GetSize())
     return -1;
 
-  const uint8_t* pdata = m_pStreamAcc->GetData() + byte_pos;
-  return pdata[0] * 256 + pdata[1];
+  pdfium::span<const uint8_t> span = m_pStreamAcc->GetSpan().subspan(byte_pos);
+  return span[0] * 256 + span[1];
 }
 
 uint32_t CPDF_CIDFont::GetNextChar(ByteStringView pString,
