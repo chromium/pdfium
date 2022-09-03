@@ -2156,13 +2156,7 @@ TEST_F(FPDFEditEmbedderTest, EditOverExistingContent) {
   VerifySavedDocument(612, 792, last_checksum);
 }
 
-// TODO(crbug.com/pdfium/1651): Fix this issue and enable the test for Skia.
-#if defined(_SKIA_SUPPORT_)
-#define MAYBE_AddStrokedPaths DISABLED_AddStrokedPaths
-#else
-#define MAYBE_AddStrokedPaths AddStrokedPaths
-#endif
-TEST_F(FPDFEditEmbedderTest, MAYBE_AddStrokedPaths) {
+TEST_F(FPDFEditEmbedderTest, AddStrokedPaths) {
   // Start with a blank page
   FPDF_PAGE page = FPDFPage_New(CreateNewDocument(), 0, 612, 792);
 

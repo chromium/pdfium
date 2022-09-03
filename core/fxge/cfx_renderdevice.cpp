@@ -729,9 +729,23 @@ bool CFX_RenderDevice::DrawPathWithBlend(
 
   if (fill && fill_alpha && stroke_alpha < 0xff && fill_options.stroke) {
     if (m_RenderCaps & FXRC_FILLSTROKE_PATH) {
-      return m_pDeviceDriver->DrawPath(path, pObject2Device, pGraphState,
-                                       fill_color, stroke_color, fill_options,
-                                       blend_type);
+#if defined(_SKIA_SUPPORT_)
+      if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+        m_pDeviceDriver->SetGroupKnockout(true);
+      }
+#endif
+      bool draw_fillstroke_path_result = m_pDeviceDriver->DrawPath(
+          path, pObject2Device, pGraphState, fill_color, stroke_color,
+          fill_options, blend_type);
+
+#if defined(_SKIA_SUPPORT_)
+      if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+        // Restore the group knockout status for `m_pDeviceDriver` after
+        // finishing painting a fill-and-stroke path.
+        m_pDeviceDriver->SetGroupKnockout(false);
+      }
+#endif
+      return draw_fillstroke_path_result;
     }
     return DrawFillStrokePath(path, pObject2Device, pGraphState, fill_color,
                               stroke_color, fill_options, blend_type);

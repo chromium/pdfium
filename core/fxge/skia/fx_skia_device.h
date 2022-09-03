@@ -100,6 +100,7 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
                        int dest_top,
                        int bitmap_alpha,
                        BlendMode blend_type) override;
+  void SetGroupKnockout(bool group_knockout) override;
 #endif
 
 #if defined(_SKIA_SUPPORT_PATHS_)

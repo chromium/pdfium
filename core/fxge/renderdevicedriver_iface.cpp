@@ -81,6 +81,8 @@ bool RenderDeviceDriverIface::SetBitsWithMask(
     BlendMode blend_type) {
   return false;
 }
+
+void RenderDeviceDriverIface::SetGroupKnockout(bool group_knockout) {}
 #endif
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)

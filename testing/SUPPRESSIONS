@@ -147,9 +147,6 @@ all_trigger_print.pdf * * * *
 all_trigger_run_js_lunchurl.pdf mac * * *
 all_trigger_run_js_maildoc.pdf mac * * *
 
-# TODO(pdfium:1802): Remove after associated bug is fixed
-annotation_circle_fill_opacity.pdf * * * skia
-
 annotation_highlight_author_content.pdf mac * * *
 annotation_highlight_long_content.pdf mac * * *
 annotation_highlight_no_author.pdf mac * * *
@@ -159,12 +156,6 @@ annotation_ink_dot.pdf * * * skia,skiapaths
 
 # TODO(pdfium:1871): Remove after associated bug is fixed
 annotation_square_dash.pdf * * * skia,skiapaths
-
-# TODO(pdfium:1802): Remove after associated bug is fixed
-annotation_square_fill_opacity.pdf * * * skia
-
-# TODO(pdfium:1802): Remove after associated bug is fixed
-annotation_square_fill_opacity_dash.pdf * * * skia
 
 app_launchurl.pdf mac * * *
 appstoredescription3.1_en_updated.pdf mac * * *
@@ -458,9 +449,6 @@ thread_action.pdf mac * * *
 time.pdf mac * * *
 transformation.pdf mac * * *
 transparent.pdf mac * * *
-
-# TODO(pdfium:1802): Remove after associated bug is fixed
-transparent1.pdf * * * skia
 
 whats_new_in_v3.0.pdf mac * * *
 widget_javascript.pdf mac * * *
