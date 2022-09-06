@@ -239,8 +239,7 @@ bool CPDF_CryptoHandler::DecryptObjectTree(RetainPtr<CPDF_Object> object) {
 
   RetainPtr<CPDF_Object> object_to_decrypt = object;
   while (object_to_decrypt) {
-    CPDF_NonConstObjectWalker walker(object_to_decrypt.Get());
-    object_to_decrypt = nullptr;
+    CPDF_NonConstObjectWalker walker(std::move(object_to_decrypt));
     while (RetainPtr<CPDF_Object> child = walker.GetNext()) {
       const CPDF_Dictionary* parent_dict =
           walker.GetParent() ? walker.GetParent()->GetDict() : nullptr;

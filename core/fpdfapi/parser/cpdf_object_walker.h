@@ -36,7 +36,7 @@ class CPDF_ObjectWalker {
     bool is_started_ = false;
   };
 
-  explicit CPDF_ObjectWalker(const CPDF_Object* root);
+  explicit CPDF_ObjectWalker(RetainPtr<const CPDF_Object> root);
   ~CPDF_ObjectWalker();
 
   RetainPtr<const CPDF_Object> GetNext();
@@ -59,13 +59,8 @@ class CPDF_ObjectWalker {
 
 class CPDF_NonConstObjectWalker final : public CPDF_ObjectWalker {
  public:
-  explicit CPDF_NonConstObjectWalker(CPDF_Object* root)
-      : CPDF_ObjectWalker(root) {}
-
-  RetainPtr<CPDF_Object> GetNext() {
-    return pdfium::WrapRetain(
-        const_cast<CPDF_Object*>(CPDF_ObjectWalker::GetNext().Get()));
-  }
+  explicit CPDF_NonConstObjectWalker(RetainPtr<CPDF_Object> root);
+  RetainPtr<CPDF_Object> GetNext();
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_OBJECT_WALKER_H_

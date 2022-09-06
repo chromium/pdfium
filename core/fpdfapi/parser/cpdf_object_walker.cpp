@@ -127,8 +127,8 @@ CPDF_ObjectWalker::MakeIterator(const CPDF_Object* object) {
   return nullptr;
 }
 
-CPDF_ObjectWalker::CPDF_ObjectWalker(const CPDF_Object* root)
-    : next_object_(root) {}
+CPDF_ObjectWalker::CPDF_ObjectWalker(RetainPtr<const CPDF_Object> root)
+    : next_object_(std::move(root)) {}
 
 CPDF_ObjectWalker::~CPDF_ObjectWalker() = default;
 
@@ -164,4 +164,13 @@ void CPDF_ObjectWalker::SkipWalkIntoCurrentObject() {
   if (stack_.empty() || stack_.top()->IsStarted())
     return;
   stack_.pop();
+}
+
+CPDF_NonConstObjectWalker::CPDF_NonConstObjectWalker(
+    RetainPtr<CPDF_Object> root)
+    : CPDF_ObjectWalker(std::move(root)) {}
+
+RetainPtr<CPDF_Object> CPDF_NonConstObjectWalker::GetNext() {
+  return pdfium::WrapRetain(
+      const_cast<CPDF_Object*>(CPDF_ObjectWalker::GetNext().Get()));
 }

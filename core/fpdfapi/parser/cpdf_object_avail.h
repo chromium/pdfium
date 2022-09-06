@@ -35,7 +35,7 @@ class CPDF_ObjectAvail {
  private:
   bool LoadRootObject();
   bool CheckObjects();
-  bool AppendObjectSubRefs(const CPDF_Object* object,
+  bool AppendObjectSubRefs(RetainPtr<const CPDF_Object> object,
                            std::stack<uint32_t>* refs) const;
   void CleanMemory();
   bool HasObjectParsed(uint32_t obj_num) const;
