@@ -420,8 +420,13 @@ void CJX_Node::model(v8::Isolate* pIsolate,
     ThrowInvalidPropertyException(pIsolate);
     return;
   }
-  *pValue = GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
-      GetXFANode()->GetModelNode());
+  CXFA_Node* pModel = GetXFANode()->GetModelNode();
+  if (!pModel) {
+    *pValue = fxv8::NewNullHelper(pIsolate);
+    return;
+  }
+  *pValue =
+      GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(pModel);
 }
 
 void CJX_Node::isContainer(v8::Isolate* pIsolate,
