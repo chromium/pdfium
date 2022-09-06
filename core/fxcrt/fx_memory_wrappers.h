@@ -74,9 +74,10 @@ struct FxPartitionAllocAllocator {
   bool operator!=(const FxPartitionAllocAllocator& that) { return false; }
 };
 
-// Used to put backing store for std::vector<> and such
-// into the general partition.
-template <typename T>
+// Used to put backing store for std::vector<> and such into the
+// general partition, ensuring they contain data only.
+template <typename T,
+          typename = std::enable_if_t<std::is_arithmetic<T>::value, T>>
 using FxAllocAllocator =
     FxPartitionAllocAllocator<T, pdfium::internal::AllocOrDie>;
 
