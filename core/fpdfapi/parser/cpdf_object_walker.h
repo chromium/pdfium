@@ -39,7 +39,7 @@ class CPDF_ObjectWalker {
   explicit CPDF_ObjectWalker(const CPDF_Object* root);
   ~CPDF_ObjectWalker();
 
-  const CPDF_Object* GetNext();
+  RetainPtr<const CPDF_Object> GetNext();
   void SkipWalkIntoCurrentObject();
 
   size_t current_depth() const { return current_depth_; }
@@ -62,8 +62,9 @@ class CPDF_NonConstObjectWalker final : public CPDF_ObjectWalker {
   explicit CPDF_NonConstObjectWalker(CPDF_Object* root)
       : CPDF_ObjectWalker(root) {}
 
-  CPDF_Object* GetNext() {
-    return const_cast<CPDF_Object*>(CPDF_ObjectWalker::GetNext());
+  RetainPtr<CPDF_Object> GetNext() {
+    return pdfium::WrapRetain(
+        const_cast<CPDF_Object*>(CPDF_ObjectWalker::GetNext().Get()));
   }
 };
 

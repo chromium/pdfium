@@ -113,14 +113,14 @@ bool CPDF_ObjectAvail::AppendObjectSubRefs(const CPDF_Object* object,
     return true;
 
   CPDF_ObjectWalker walker(object);
-  while (const CPDF_Object* obj = walker.GetNext()) {
+  while (RetainPtr<const CPDF_Object> obj = walker.GetNext()) {
     CPDF_ReadValidator::ScopedSession parse_session(validator_);
 
     // Skip if this object if it's an inlined root, the parent object or
     // explicitily excluded.
     const bool skip = (walker.GetParent() && obj == root_) ||
                       walker.dictionary_key() == "Parent" ||
-                      (obj != root_ && ExcludeObject(obj));
+                      (obj != root_ && ExcludeObject(obj.Get()));
 
     // We need to parse the object before we can do the exclusion check.
     // This is because the exclusion check may check against a referenced

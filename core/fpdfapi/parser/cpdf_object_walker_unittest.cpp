@@ -24,7 +24,7 @@ namespace {
 std::string Walk(CPDF_Object* object) {
   std::ostringstream result;
   CPDF_ObjectWalker walker(object);
-  while (const CPDF_Object* obj = walker.GetNext()) {
+  while (RetainPtr<const CPDF_Object> obj = walker.GetNext()) {
     if (obj->IsDictionary())
       result << " Dict";
     else if (obj->IsArray())
@@ -91,9 +91,9 @@ TEST(ObjectWalkerTest, GetParent) {
   // We have <</Array [ stream( << /Length 0 >>) ]>>
   // In this case each step will increase depth.
   // And on each step the prev object should be parent for current.
-  const CPDF_Object* cur_parent = nullptr;
+  RetainPtr<const CPDF_Object> cur_parent;
   CPDF_ObjectWalker walker(level_0.Get());
-  while (const CPDF_Object* obj = walker.GetNext()) {
+  while (RetainPtr<const CPDF_Object> obj = walker.GetNext()) {
     EXPECT_EQ(cur_parent, walker.GetParent());
     cur_parent = obj;
   }
@@ -110,7 +110,7 @@ TEST(ObjectWalkerTest, SkipWalkIntoCurrentObject) {
 
   int non_array_objects = 0;
   CPDF_ObjectWalker walker(root_array.Get());
-  while (const CPDF_Object* obj = walker.GetNext()) {
+  while (RetainPtr<const CPDF_Object> obj = walker.GetNext()) {
     if (obj != root_array && obj->IsArray()) {
       // skip other array except root.
       walker.SkipWalkIntoCurrentObject();
@@ -131,7 +131,7 @@ TEST(ObjectWalkerTest, DictionaryKey) {
   dict->SetFor("5", pdfium::MakeRetain<CPDF_Null>());
 
   CPDF_ObjectWalker walker(dict.Get());
-  while (const CPDF_Object* obj = walker.GetNext()) {
+  while (RetainPtr<const CPDF_Object> obj = walker.GetNext()) {
     if (dict == obj) {
       // Ignore root dictinary object
       continue;

@@ -230,18 +230,18 @@ bool CPDF_CryptoHandler::DecryptObjectTree(RetainPtr<CPDF_Object> object) {
 
   struct MayBeSignature {
     const CPDF_Dictionary* parent;
-    CPDF_Object* contents;
+    RetainPtr<CPDF_Object> contents;
   };
 
   std::stack<MayBeSignature> may_be_sign_dictionaries;
   const uint32_t obj_num = object->GetObjNum();
   const uint32_t gen_num = object->GetGenNum();
 
-  CPDF_Object* object_to_decrypt = object.Get();
+  RetainPtr<CPDF_Object> object_to_decrypt = object;
   while (object_to_decrypt) {
-    CPDF_NonConstObjectWalker walker(object_to_decrypt);
+    CPDF_NonConstObjectWalker walker(object_to_decrypt.Get());
     object_to_decrypt = nullptr;
-    while (CPDF_Object* child = walker.GetNext()) {
+    while (RetainPtr<CPDF_Object> child = walker.GetNext()) {
       const CPDF_Dictionary* parent_dict =
           walker.GetParent() ? walker.GetParent()->GetDict() : nullptr;
       if (walker.dictionary_key() == kContentsKey &&
@@ -253,7 +253,7 @@ bool CPDF_CryptoHandler::DecryptObjectTree(RetainPtr<CPDF_Object> object) {
         // Temporary skip it, to prevent signature corruption.
         // It will be decrypted on next interations, if this is not contents of
         // signature dictionary.
-        may_be_sign_dictionaries.push(MayBeSignature({parent_dict, child}));
+        may_be_sign_dictionaries.push({parent_dict, std::move(child)});
         walker.SkipWalkIntoCurrentObject();
         continue;
       }
