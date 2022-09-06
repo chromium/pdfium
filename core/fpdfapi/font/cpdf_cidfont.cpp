@@ -230,7 +230,7 @@ void LoadMetricsArray(const CPDF_Array* pArray,
   int first_code = 0;
   int last_code = 0;
   for (size_t i = 0; i < pArray->size(); i++) {
-    const CPDF_Object* pObj = pArray->GetDirectObjectAt(i);
+    RetainPtr<const CPDF_Object> pObj = pArray->GetDirectObjectAt(i);
     if (!pObj)
       continue;
 

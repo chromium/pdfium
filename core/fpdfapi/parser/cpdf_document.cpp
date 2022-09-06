@@ -85,7 +85,8 @@ int FindPageIndex(const CPDF_Dictionary* pNode,
 
   if (count && count == pKidList->size()) {
     for (size_t i = 0; i < count; i++) {
-      const CPDF_Reference* pKid = ToReference(pKidList->GetObjectAt(i));
+      RetainPtr<const CPDF_Reference> pKid =
+          ToReference(pKidList->GetObjectAt(i));
       if (pKid && pKid->GetRefObjNum() == objnum)
         return static_cast<int>(*index + i);
     }

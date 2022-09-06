@@ -248,7 +248,7 @@ RetainPtr<const CPDF_Object> SearchNameNodeByNameInternal(
         continue;
 
       *nIndex += i;
-      return pdfium::WrapRetain(pNames->GetDirectObjectAt(i * 2 + 1));
+      return pNames->GetDirectObjectAt(i * 2 + 1);
     }
     *nIndex += dwCount;
     return nullptr;

@@ -494,7 +494,7 @@ RetainPtr<CPDF_ColorSpace> CPDF_ColorSpace::Load(
   if (!pArray || pArray->IsEmpty())
     return nullptr;
 
-  const CPDF_Object* pFamilyObj = pArray->GetDirectObjectAt(0);
+  RetainPtr<const CPDF_Object> pFamilyObj = pArray->GetDirectObjectAt(0);
   if (!pFamilyObj)
     return nullptr;
 
@@ -1113,20 +1113,20 @@ uint32_t CPDF_SeparationCS::v_Load(CPDF_Document* pDoc,
   if (m_IsNoneType)
     return 1;
 
-  const CPDF_Object* pAltArray = pArray->GetDirectObjectAt(2);
+  RetainPtr<const CPDF_Object> pAltArray = pArray->GetDirectObjectAt(2);
   if (pAltArray == GetArray())
     return 0;
 
-  m_pBaseCS = Load(pDoc, pAltArray, pVisited);
+  m_pBaseCS = Load(pDoc, pAltArray.Get(), pVisited);
   if (!m_pBaseCS)
     return 0;
 
   if (m_pBaseCS->IsSpecial())
     return 0;
 
-  const CPDF_Object* pFuncObj = pArray->GetDirectObjectAt(3);
+  RetainPtr<const CPDF_Object> pFuncObj = pArray->GetDirectObjectAt(3);
   if (pFuncObj && !pFuncObj->IsName()) {
-    auto pFunc = CPDF_Function::Load(pFuncObj);
+    auto pFunc = CPDF_Function::Load(pFuncObj.Get());
     if (pFunc && pFunc->CountOutputs() >= m_pBaseCS->CountComponents())
       m_pFunc = std::move(pFunc);
   }
@@ -1182,16 +1182,16 @@ void CPDF_DeviceNCS::GetDefaultValue(int iComponent,
 uint32_t CPDF_DeviceNCS::v_Load(CPDF_Document* pDoc,
                                 const CPDF_Array* pArray,
                                 std::set<const CPDF_Object*>* pVisited) {
-  const CPDF_Array* pObj = ToArray(pArray->GetDirectObjectAt(1));
+  RetainPtr<const CPDF_Array> pObj = ToArray(pArray->GetDirectObjectAt(1));
   if (!pObj)
     return 0;
 
-  const CPDF_Object* pAltCS = pArray->GetDirectObjectAt(2);
+  RetainPtr<const CPDF_Object> pAltCS = pArray->GetDirectObjectAt(2);
   if (!pAltCS || pAltCS == GetArray())
     return 0;
 
-  m_pBaseCS = Load(pDoc, pAltCS, pVisited);
-  m_pFunc = CPDF_Function::Load(pArray->GetDirectObjectAt(3));
+  m_pBaseCS = Load(pDoc, pAltCS.Get(), pVisited);
+  m_pFunc = CPDF_Function::Load(pArray->GetDirectObjectAt(3).Get());
   if (!m_pBaseCS || !m_pFunc)
     return 0;
 

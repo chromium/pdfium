@@ -672,9 +672,9 @@ CPDF_FormField* CPDF_InteractiveForm::GetFieldInCalculationOrder(int index) {
   if (!pArray)
     return nullptr;
 
-  const CPDF_Dictionary* pElement =
+  RetainPtr<const CPDF_Dictionary> pElement =
       ToDictionary(pArray->GetDirectObjectAt(index));
-  return pElement ? GetFieldByDict(pElement) : nullptr;
+  return pElement ? GetFieldByDict(pElement.Get()) : nullptr;
 }
 
 int CPDF_InteractiveForm::FindFieldInCalculationOrder(

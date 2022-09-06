@@ -185,7 +185,7 @@ int CPDFSDK_InteractiveForm::GetPageIndexByAnnotDict(
       continue;
 
     for (size_t j = 0, jsz = pAnnots->size(); j < jsz; j++) {
-      const CPDF_Object* pDict = pAnnots->GetDirectObjectAt(j);
+      RetainPtr<const CPDF_Object> pDict = pAnnots->GetDirectObjectAt(j);
       if (pAnnotDict == pDict)
         return i;
     }

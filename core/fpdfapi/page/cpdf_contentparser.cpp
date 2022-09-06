@@ -149,10 +149,10 @@ CPDF_ContentParser::Stage CPDF_ContentParser::GetContent() {
   DCHECK(m_pObjectHolder->IsPage());
   const CPDF_Array* pContent =
       m_pObjectHolder->GetDict()->GetArrayFor(pdfium::page_object::kContents);
-  const CPDF_Stream* pStreamObj = ToStream(
+  RetainPtr<const CPDF_Stream> pStreamObj = ToStream(
       pContent ? pContent->GetDirectObjectAt(m_CurrentOffset) : nullptr);
   m_StreamArray[m_CurrentOffset] =
-      pdfium::MakeRetain<CPDF_StreamAcc>(pStreamObj);
+      pdfium::MakeRetain<CPDF_StreamAcc>(pStreamObj.Get());
   m_StreamArray[m_CurrentOffset]->LoadAllDataFiltered();
   m_CurrentOffset++;
 

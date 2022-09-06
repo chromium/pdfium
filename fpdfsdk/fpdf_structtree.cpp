@@ -444,7 +444,7 @@ FPDF_StructElement_GetMarkedContentIdAtIndex(FPDF_STRUCTELEMENT struct_element,
     const CPDF_Array* array = p->AsArray();
     if (index < 0 || static_cast<size_t>(index) >= array->size())
       return -1;
-    const CPDF_Object* array_elem = array->GetObjectAt(index);
+    RetainPtr<const CPDF_Object> array_elem = array->GetObjectAt(index);
     if (array_elem->IsNumber())
       return array_elem->GetInteger();
     if (array_elem->IsDictionary()) {

@@ -135,7 +135,8 @@ bool CPDF_StructTree::AddTopLevelNode(
 
   bool bSave = false;
   for (size_t i = 0; i < pTopKids->size(); i++) {
-    const CPDF_Reference* pKidRef = ToReference(pTopKids->GetObjectAt(i));
+    RetainPtr<const CPDF_Reference> pKidRef =
+        ToReference(pTopKids->GetObjectAt(i));
     if (pKidRef && pKidRef->GetRefObjNum() == pDict->GetObjNum()) {
       m_Kids[i] = pElement;
       bSave = true;

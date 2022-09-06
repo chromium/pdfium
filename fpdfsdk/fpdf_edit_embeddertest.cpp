@@ -163,7 +163,7 @@ class FPDFEditEmbedderTest : public EmbedderTest {
       int cid = widths_array->GetNumberAt(idx);
       EXPECT_GE(cid, cur_cid);
       ASSERT_FALSE(++idx == widths_array->size());
-      const CPDF_Object* next = widths_array->GetObjectAt(idx);
+      RetainPtr<const CPDF_Object> next = widths_array->GetObjectAt(idx);
       if (next->IsArray()) {
         // We are in the c [w1 w2 ...] case
         const CPDF_Array* arr = next->AsArray();

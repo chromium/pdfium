@@ -106,8 +106,10 @@ void CPDF_StructElement::LoadKids(const CPDF_Dictionary* pDict) {
   if (const CPDF_Array* pArray = pKids->AsArray()) {
     m_Kids.resize(pArray->size());
     for (size_t i = 0; i < pArray->size(); ++i) {
-      const CPDF_Object* pKid = pArray->GetDirectObjectAt(i);
-      LoadKid(PageObjNum, pKid, &m_Kids[i]);
+      RetainPtr<const CPDF_Object> pKid = pArray->GetDirectObjectAt(i);
+
+      // TODO(tsepez): LoadKid() can take moved retained pKid
+      LoadKid(PageObjNum, pKid.Get(), &m_Kids[i]);
     }
     return;
   }

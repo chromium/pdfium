@@ -61,4 +61,9 @@ inline RetainPtr<CPDF_Reference> ToReference(RetainPtr<CPDF_Object> obj) {
   return RetainPtr<CPDF_Reference>(ToReference(obj.Get()));
 }
 
+inline RetainPtr<const CPDF_Reference> ToReference(
+    RetainPtr<const CPDF_Object> obj) {
+  return RetainPtr<const CPDF_Reference>(ToReference(obj.Get()));
+}
+
 #endif  // CORE_FPDFAPI_PARSER_CPDF_REFERENCE_H_

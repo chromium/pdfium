@@ -22,12 +22,13 @@ void CPDF_PatternCS::InitializeStockPattern() {
 uint32_t CPDF_PatternCS::v_Load(CPDF_Document* pDoc,
                                 const CPDF_Array* pArray,
                                 std::set<const CPDF_Object*>* pVisited) {
-  const CPDF_Object* pBaseCS = pArray->GetDirectObjectAt(1);
+  RetainPtr<const CPDF_Object> pBaseCS = pArray->GetDirectObjectAt(1);
   if (pBaseCS == GetArray())
     return 0;
 
   auto* pDocPageData = CPDF_DocPageData::FromDocument(pDoc);
-  m_pBaseCS = pDocPageData->GetColorSpaceGuarded(pBaseCS, nullptr, pVisited);
+  m_pBaseCS =
+      pDocPageData->GetColorSpaceGuarded(pBaseCS.Get(), nullptr, pVisited);
   if (!m_pBaseCS)
     return 1;
 

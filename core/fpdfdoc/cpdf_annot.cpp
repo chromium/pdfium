@@ -464,7 +464,7 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
         size_t nLen = pDashArray->size();
         size_t i = 0;
         for (; i < nLen; ++i) {
-          const CPDF_Object* pObj = pDashArray->GetDirectObjectAt(i);
+          RetainPtr<const CPDF_Object> pObj = pDashArray->GetDirectObjectAt(i);
           if (pObj && pObj->GetInteger()) {
             break;
           }

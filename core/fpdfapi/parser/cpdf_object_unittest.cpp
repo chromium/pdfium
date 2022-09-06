@@ -135,8 +135,10 @@ class PDFObjectsTest : public testing::Test {
         if (array1->size() != array2->size())
           return false;
         for (size_t i = 0; i < array1->size(); ++i) {
-          if (!Equal(array1->GetObjectAt(i), array2->GetObjectAt(i)))
+          if (!Equal(array1->GetObjectAt(i).Get(),
+                     array2->GetObjectAt(i).Get())) {
             return false;
+          }
         }
         return true;
       }
@@ -814,7 +816,7 @@ TEST(PDFArrayTest, CloneDirectObject) {
   auto array = pdfium::MakeRetain<CPDF_Array>();
   array->AppendNew<CPDF_Reference>(&objects_holder, 1234);
   ASSERT_EQ(1U, array->size());
-  const CPDF_Object* obj = array->GetObjectAt(0);
+  RetainPtr<const CPDF_Object> obj = array->GetObjectAt(0);
   ASSERT_TRUE(obj);
   EXPECT_TRUE(obj->IsReference());
 
@@ -824,7 +826,7 @@ TEST(PDFArrayTest, CloneDirectObject) {
 
   RetainPtr<CPDF_Array> cloned_array = ToArray(std::move(cloned_array_object));
   ASSERT_EQ(0U, cloned_array->size());
-  const CPDF_Object* cloned_obj = cloned_array->GetObjectAt(0);
+  RetainPtr<const CPDF_Object> cloned_obj = cloned_array->GetObjectAt(0);
   EXPECT_FALSE(cloned_obj);
 }
 
@@ -833,8 +835,8 @@ TEST(PDFArrayTest, ConvertIndirect) {
   auto array = pdfium::MakeRetain<CPDF_Array>();
   CPDF_Object* pObj = array->AppendNew<CPDF_Number>(42);
   array->ConvertToIndirectObjectAt(0, &objects_holder);
-  const CPDF_Object* pRef = array->GetObjectAt(0);
-  const CPDF_Object* pNum = array->GetDirectObjectAt(0);
+  RetainPtr<const CPDF_Object> pRef = array->GetObjectAt(0);
+  RetainPtr<const CPDF_Object> pNum = array->GetDirectObjectAt(0);
   EXPECT_TRUE(pRef->IsReference());
   EXPECT_TRUE(pNum->IsNumber());
   EXPECT_NE(pObj, pRef);
@@ -946,7 +948,7 @@ TEST(PDFObjectTest, CloneCheckLoop) {
     // Cloned object should be the same as the original.
     ASSERT_TRUE(cloned_array);
     EXPECT_EQ(1u, cloned_array->size());
-    const CPDF_Object* cloned_dict = cloned_array->GetObjectAt(0);
+    RetainPtr<const CPDF_Object> cloned_dict = cloned_array->GetObjectAt(0);
     ASSERT_TRUE(cloned_dict);
     ASSERT_TRUE(cloned_dict->IsDictionary());
     // Recursively referenced object is not cloned.
@@ -976,7 +978,7 @@ TEST(PDFObjectTest, CloneCheckLoop) {
     RetainPtr<CPDF_Array> arr_obj = pdfium::MakeRetain<CPDF_Array>();
     arr_obj->InsertNewAt<CPDF_Reference>(0, &objects_holder,
                                          dict_obj->GetObjNum());
-    const CPDF_Object* elem0 = arr_obj->GetObjectAt(0);
+    RetainPtr<const CPDF_Object> elem0 = arr_obj->GetObjectAt(0);
     dict_obj->SetFor("arr", std::move(arr_obj));
     EXPECT_EQ(1u, dict_obj->GetObjNum());
     ASSERT_TRUE(elem0);

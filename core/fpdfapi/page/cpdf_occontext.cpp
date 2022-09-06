@@ -189,7 +189,7 @@ bool CPDF_OCContext::GetOCGVE(const CPDF_Array* pExpression, int nLevel) const {
 
   ByteString csOperator = pExpression->GetStringAt(0);
   if (csOperator == "Not") {
-    const CPDF_Object* pOCGObj = pExpression->GetDirectObjectAt(1);
+    RetainPtr<const CPDF_Object> pOCGObj = pExpression->GetDirectObjectAt(1);
     if (!pOCGObj)
       return false;
     if (const CPDF_Dictionary* pDict = pOCGObj->AsDictionary())
@@ -204,7 +204,7 @@ bool CPDF_OCContext::GetOCGVE(const CPDF_Array* pExpression, int nLevel) const {
 
   bool bValue = false;
   for (size_t i = 1; i < pExpression->size(); i++) {
-    const CPDF_Object* pOCGObj = pExpression->GetDirectObjectAt(i);
+    RetainPtr<const CPDF_Object> pOCGObj = pExpression->GetDirectObjectAt(i);
     if (!pOCGObj)
       continue;
 

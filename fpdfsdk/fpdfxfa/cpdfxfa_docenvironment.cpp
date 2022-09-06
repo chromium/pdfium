@@ -469,8 +469,8 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
       return;
 
     for (size_t i = 1; i < pArray->size(); i += 2) {
-      const CPDF_Object* pPDFObj = pArray->GetObjectAt(i);
-      const CPDF_Object* pPrePDFObj = pArray->GetObjectAt(i - 1);
+      RetainPtr<const CPDF_Object> pPDFObj = pArray->GetObjectAt(i);
+      RetainPtr<const CPDF_Object> pPrePDFObj = pArray->GetObjectAt(i - 1);
       if (!pPrePDFObj->IsString())
         continue;
       if (!pPDFObj->IsReference())

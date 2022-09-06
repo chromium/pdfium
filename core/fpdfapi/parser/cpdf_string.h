@@ -48,4 +48,8 @@ inline const CPDF_String* ToString(const CPDF_Object* obj) {
   return obj ? obj->AsString() : nullptr;
 }
 
+inline RetainPtr<const CPDF_String> ToString(RetainPtr<const CPDF_Object> obj) {
+  return RetainPtr<const CPDF_String>(ToString(obj.Get()));
+}
+
 #endif  // CORE_FPDFAPI_PARSER_CPDF_STRING_H_

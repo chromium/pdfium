@@ -475,7 +475,8 @@ FPDF_GetFileIdentifier(FPDF_DOCUMENT document,
     return 0;
 
   size_t nIndex = id_type == FILEIDTYPE_PERMANENT ? 0 : 1;
-  const CPDF_String* pValue = ToString(pFileId->GetDirectObjectAt(nIndex));
+  RetainPtr<const CPDF_String> pValue =
+      ToString(pFileId->GetDirectObjectAt(nIndex));
   if (!pValue)
     return 0;
 

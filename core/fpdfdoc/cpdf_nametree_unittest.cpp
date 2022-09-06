@@ -7,6 +7,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {
@@ -40,9 +41,9 @@ void CheckLimitsArray(const CPDF_Dictionary* node,
   const CPDF_Array* limits = node->GetArrayFor("Limits");
   ASSERT_TRUE(limits);
   EXPECT_EQ(2u, limits->size());
-  const CPDF_String* left = ToString(limits->GetObjectAt(0));
+  RetainPtr<const CPDF_String> left = ToString(limits->GetObjectAt(0));
   ASSERT_TRUE(left);
-  const CPDF_String* right = ToString(limits->GetObjectAt(1));
+  RetainPtr<const CPDF_String> right = ToString(limits->GetObjectAt(1));
   ASSERT_TRUE(right);
   EXPECT_STREQ(least, left->GetString().c_str());
   EXPECT_STREQ(greatest, right->GetString().c_str());

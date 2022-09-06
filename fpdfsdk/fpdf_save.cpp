@@ -66,7 +66,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
   int iFormIndex = -1;
   int iDataSetsIndex = -1;
   for (int i = 0; i < size - 1; i++) {
-    const CPDF_Object* pPDFObj = pArray->GetObjectAt(i);
+    RetainPtr<const CPDF_Object> pPDFObj = pArray->GetObjectAt(i);
     if (!pPDFObj->IsString())
       continue;
     if (pPDFObj->GetString() == "form")

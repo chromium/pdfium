@@ -127,9 +127,11 @@ std::vector<const CPDF_Object*> CPDF_Action::GetAllFields() const {
     result.push_back(pFields);
   } else if (const CPDF_Array* pArray = pFields->AsArray()) {
     for (size_t i = 0; i < pArray->size(); ++i) {
-      const CPDF_Object* pObj = pArray->GetDirectObjectAt(i);
-      if (pObj)
-        result.push_back(pObj);
+      RetainPtr<const CPDF_Object> pObj = pArray->GetDirectObjectAt(i);
+      if (pObj) {
+        // TODO(tsepez): push retained objects.
+        result.push_back(pObj.Get());
+      }
     }
   }
   return result;

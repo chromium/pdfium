@@ -34,12 +34,13 @@ uint32_t CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
   if (pArray->size() < 4)
     return 0;
 
-  const CPDF_Object* pBaseObj = pArray->GetDirectObjectAt(1);
+  RetainPtr<const CPDF_Object> pBaseObj = pArray->GetDirectObjectAt(1);
   if (pBaseObj == GetArray())
     return 0;
 
   auto* pDocPageData = CPDF_DocPageData::FromDocument(pDoc);
-  m_pBaseCS = pDocPageData->GetColorSpaceGuarded(pBaseObj, nullptr, pVisited);
+  m_pBaseCS =
+      pDocPageData->GetColorSpaceGuarded(pBaseObj.Get(), nullptr, pVisited);
   if (!m_pBaseCS)
     return 0;
 
@@ -59,7 +60,7 @@ uint32_t CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
   }
   m_MaxIndex = pArray->GetIntegerAt(2);
 
-  const CPDF_Object* pTableObj = pArray->GetDirectObjectAt(3);
+  RetainPtr<const CPDF_Object> pTableObj = pArray->GetDirectObjectAt(3);
   if (!pTableObj)
     return 0;
 

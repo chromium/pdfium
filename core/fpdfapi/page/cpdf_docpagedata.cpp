@@ -311,7 +311,7 @@ RetainPtr<CPDF_ColorSpace> CPDF_DocPageData::GetColorSpaceInternal(
     return nullptr;
 
   if (pArray->size() == 1) {
-    return GetColorSpaceInternal(pArray->GetDirectObjectAt(0), pResources,
+    return GetColorSpaceInternal(pArray->GetDirectObjectAt(0).Get(), pResources,
                                  pVisited, pVisitedInternal);
   }
 

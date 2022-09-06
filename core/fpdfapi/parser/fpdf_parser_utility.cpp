@@ -216,11 +216,11 @@ std::ostream& operator<<(std::ostream& buf, const CPDF_Object* pObj) {
       const CPDF_Array* p = pObj->AsArray();
       buf << "[";
       for (size_t i = 0; i < p->size(); i++) {
-        const CPDF_Object* pElement = p->GetObjectAt(i);
+        RetainPtr<const CPDF_Object> pElement = p->GetObjectAt(i);
         if (!pElement->IsInline()) {
           buf << " " << pElement->GetObjNum() << " 0 R";
         } else {
-          buf << pElement;
+          buf << pElement.Get();
         }
       }
       buf << "]";

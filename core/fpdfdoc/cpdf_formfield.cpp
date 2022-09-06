@@ -313,7 +313,7 @@ WideString CPDF_FormField::GetValue(bool bDefault) const {
     case CPDF_Object::kStream:
       return pValue->GetUnicodeText();
     case CPDF_Object::kArray:
-      pValue = pValue->AsArray()->GetDirectObjectAt(0);
+      pValue = pValue->AsArray()->GetDirectObjectAt(0).Get();
       if (pValue)
         return pValue->GetUnicodeText();
       break;
@@ -444,7 +444,8 @@ int CPDF_FormField::GetSelectedIndex(int index) const {
     if (!pArray || index < 0)
       return -1;
 
-    const CPDF_Object* elementValue = pArray->GetDirectObjectAt(index);
+    RetainPtr<const CPDF_Object> elementValue =
+        pArray->GetDirectObjectAt(index);
     sel_value = elementValue ? elementValue->GetUnicodeText() : WideString();
   }
   if (index < CountSelectedOptions()) {
@@ -558,13 +559,18 @@ WideString CPDF_FormField::GetOptionText(int index, int sub_index) const {
   if (!pArray)
     return WideString();
 
-  const CPDF_Object* pOption = pArray->GetDirectObjectAt(index);
+  RetainPtr<const CPDF_Object> pOption = pArray->GetDirectObjectAt(index);
   if (!pOption)
     return WideString();
-  if (const CPDF_Array* pOptionArray = pOption->AsArray())
+
+  const CPDF_Array* pOptionArray = pOption->AsArray();
+  if (pOptionArray)
     pOption = pOptionArray->GetDirectObjectAt(sub_index);
 
-  const CPDF_String* pString = ToString(pOption);
+  if (!pOption)
+    return WideString();
+
+  const CPDF_String* pString = pOption->AsString();
   return pString ? pString->GetUnicodeText() : WideString();
 }
 

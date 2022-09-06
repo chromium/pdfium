@@ -93,23 +93,21 @@ bool CPDF_Array::Contains(const CPDF_Object* pThat) const {
   return Find(pThat).has_value();
 }
 
-RetainPtr<CPDF_Object> CPDF_Array::GetMutableObjectAt(size_t index) {
-  return pdfium::WrapRetain(const_cast<CPDF_Object*>(GetObjectAt(index)));
+RetainPtr<const CPDF_Object> CPDF_Array::GetObjectAt(size_t index) const {
+  return const_cast<CPDF_Array*>(this)->GetMutableObjectAt(index);
 }
 
-const CPDF_Object* CPDF_Array::GetObjectAt(size_t index) const {
-  if (index >= m_Objects.size())
-    return nullptr;
-  return m_Objects[index].Get();
+RetainPtr<CPDF_Object> CPDF_Array::GetMutableObjectAt(size_t index) {
+  return index < m_Objects.size() ? m_Objects[index] : nullptr;
+}
+
+RetainPtr<const CPDF_Object> CPDF_Array::GetDirectObjectAt(size_t index) const {
+  return const_cast<CPDF_Array*>(this)->GetMutableDirectObjectAt(index);
 }
 
 RetainPtr<CPDF_Object> CPDF_Array::GetMutableDirectObjectAt(size_t index) {
-  return pdfium::WrapRetain(const_cast<CPDF_Object*>(GetDirectObjectAt(index)));
-}
-
-const CPDF_Object* CPDF_Array::GetDirectObjectAt(size_t index) const {
-  const CPDF_Object* pObj = GetObjectAt(index);
-  return pObj ? pObj->GetDirect().Get() : nullptr;
+  RetainPtr<CPDF_Object> pObj = GetMutableObjectAt(index);
+  return pObj ? pObj->GetMutableDirect() : nullptr;
 }
 
 ByteString CPDF_Array::GetStringAt(size_t index) const {
@@ -147,8 +145,9 @@ RetainPtr<CPDF_Dictionary> CPDF_Array::GetMutableDictAt(size_t index) {
   return pdfium::WrapRetain(const_cast<CPDF_Dictionary*>(GetDictAt(index)));
 }
 
+// TODO(tsepez): return retained objects from these.
 const CPDF_Dictionary* CPDF_Array::GetDictAt(size_t index) const {
-  const CPDF_Object* p = GetDirectObjectAt(index);
+  RetainPtr<const CPDF_Object> p = GetDirectObjectAt(index);
   if (!p)
     return nullptr;
   if (const CPDF_Dictionary* pDict = p->AsDictionary())
@@ -163,7 +162,7 @@ RetainPtr<CPDF_Stream> CPDF_Array::GetMutableStreamAt(size_t index) {
 }
 
 const CPDF_Stream* CPDF_Array::GetStreamAt(size_t index) const {
-  return ToStream(GetDirectObjectAt(index));
+  return ToStream(GetDirectObjectAt(index)).Get();
 }
 
 RetainPtr<CPDF_Array> CPDF_Array::GetMutableArrayAt(size_t index) {
@@ -171,7 +170,7 @@ RetainPtr<CPDF_Array> CPDF_Array::GetMutableArrayAt(size_t index) {
 }
 
 const CPDF_Array* CPDF_Array::GetArrayAt(size_t index) const {
-  return ToArray(GetDirectObjectAt(index));
+  return ToArray(GetDirectObjectAt(index)).Get();
 }
 
 void CPDF_Array::Clear() {

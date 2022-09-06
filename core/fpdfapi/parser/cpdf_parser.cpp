@@ -82,10 +82,14 @@ std::vector<CrossRefV5IndexEntry> GetCrossRefV5Indices(const CPDF_Array* array,
   std::vector<CrossRefV5IndexEntry> indices;
   if (array) {
     for (size_t i = 0; i < array->size() / 2; i++) {
-      const CPDF_Number* pStartNumObj = ToNumber(array->GetObjectAt(i * 2));
-      const CPDF_Number* pCountObj = ToNumber(array->GetObjectAt(i * 2 + 1));
+      RetainPtr<const CPDF_Number> pStartNumObj =
+          ToNumber(array->GetObjectAt(i * 2));
+      if (!pStartNumObj)
+        continue;
 
-      if (!pStartNumObj || !pCountObj)
+      RetainPtr<const CPDF_Number> pCountObj =
+          ToNumber(array->GetObjectAt(i * 2 + 1));
+      if (!pCountObj)
         continue;
 
       int nStartNum = pStartNumObj->GetInteger();

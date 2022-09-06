@@ -566,7 +566,8 @@ void CPDF_Creator::InitID() {
 
   m_pIDArray = pdfium::MakeRetain<CPDF_Array>();
   const CPDF_Array* pOldIDArray = m_pParser ? m_pParser->GetIDArray() : nullptr;
-  const CPDF_Object* pID1 = pOldIDArray ? pOldIDArray->GetObjectAt(0) : nullptr;
+  RetainPtr<const CPDF_Object> pID1 =
+      pOldIDArray ? pOldIDArray->GetObjectAt(0) : nullptr;
   if (pID1) {
     m_pIDArray->Append(pID1->Clone());
   } else {
@@ -576,7 +577,7 @@ void CPDF_Creator::InitID() {
   }
 
   if (pOldIDArray) {
-    const CPDF_Object* pID2 = pOldIDArray->GetObjectAt(1);
+    RetainPtr<const CPDF_Object> pID2 = pOldIDArray->GetObjectAt(1);
     if (m_IsIncremental && m_pEncryptDict && pID2) {
       m_pIDArray->Append(pID2->Clone());
       return;

@@ -53,7 +53,7 @@ int CPDF_Dest::GetDestPageIndex(CPDF_Document* pDoc) const {
   if (!m_pArray)
     return -1;
 
-  const CPDF_Object* pPage = m_pArray->GetDirectObjectAt(0);
+  RetainPtr<const CPDF_Object> pPage = m_pArray->GetDirectObjectAt(0);
   if (!pPage)
     return -1;
 
@@ -70,7 +70,7 @@ int CPDF_Dest::GetZoomMode() const {
   if (!m_pArray)
     return 0;
 
-  const CPDF_Object* pArray = m_pArray->GetDirectObjectAt(1);
+  RetainPtr<const CPDF_Object> pArray = m_pArray->GetDirectObjectAt(1);
   if (!pArray)
     return 0;
 
@@ -99,13 +99,14 @@ bool CPDF_Dest::GetXYZ(bool* pHasX,
   if (m_pArray->size() < 5)
     return false;
 
-  const CPDF_Name* xyz = ToName(m_pArray->GetDirectObjectAt(1));
+  RetainPtr<const CPDF_Name> xyz = ToName(m_pArray->GetDirectObjectAt(1));
   if (!xyz || xyz->GetString() != "XYZ")
     return false;
 
-  const CPDF_Number* numX = ToNumber(m_pArray->GetDirectObjectAt(2));
-  const CPDF_Number* numY = ToNumber(m_pArray->GetDirectObjectAt(3));
-  const CPDF_Number* numZoom = ToNumber(m_pArray->GetDirectObjectAt(4));
+  RetainPtr<const CPDF_Number> numX = ToNumber(m_pArray->GetDirectObjectAt(2));
+  RetainPtr<const CPDF_Number> numY = ToNumber(m_pArray->GetDirectObjectAt(3));
+  RetainPtr<const CPDF_Number> numZoom =
+      ToNumber(m_pArray->GetDirectObjectAt(4));
 
   // If the value is a CPDF_Null then ToNumber will return nullptr.
   *pHasX = !!numX;

@@ -136,7 +136,7 @@ void CPDF_SimpleFont::LoadDifferences(const CPDF_Dictionary* encoding) {
   m_CharNames.resize(kInternalTableSize);
   uint32_t cur_code = 0;
   for (uint32_t i = 0; i < diffs->size(); i++) {
-    const CPDF_Object* element = diffs->GetDirectObjectAt(i);
+    RetainPtr<const CPDF_Object> element = diffs->GetDirectObjectAt(i);
     if (!element)
       continue;
 

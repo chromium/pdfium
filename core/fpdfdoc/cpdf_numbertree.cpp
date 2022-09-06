@@ -11,6 +11,7 @@
 
 namespace {
 
+// TODO(tsepez): return retained objects.
 const CPDF_Object* SearchNumberNode(const CPDF_Dictionary* pNode, int num) {
   const CPDF_Array* pLimits = pNode->GetArrayFor("Limits");
   if (pLimits &&
@@ -22,7 +23,7 @@ const CPDF_Object* SearchNumberNode(const CPDF_Dictionary* pNode, int num) {
     for (size_t i = 0; i < pNumbers->size() / 2; i++) {
       int index = pNumbers->GetIntegerAt(i * 2);
       if (num == index)
-        return pNumbers->GetDirectObjectAt(i * 2 + 1);
+        return pNumbers->GetDirectObjectAt(i * 2 + 1).Get();
       if (index > num)
         break;
     }
