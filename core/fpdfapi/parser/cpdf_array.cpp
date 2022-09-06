@@ -109,7 +109,7 @@ RetainPtr<CPDF_Object> CPDF_Array::GetMutableDirectObjectAt(size_t index) {
 
 const CPDF_Object* CPDF_Array::GetDirectObjectAt(size_t index) const {
   const CPDF_Object* pObj = GetObjectAt(index);
-  return pObj ? pObj->GetDirect() : nullptr;
+  return pObj ? pObj->GetDirect().Get() : nullptr;
 }
 
 ByteString CPDF_Array::GetStringAt(size_t index) const {

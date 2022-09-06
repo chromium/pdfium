@@ -33,11 +33,11 @@ uint64_t CPDF_Object::KeyForCache() const {
 }
 
 RetainPtr<CPDF_Object> CPDF_Object::GetMutableDirect() {
-  return pdfium::WrapRetain(const_cast<CPDF_Object*>(GetDirect()));
+  return pdfium::WrapRetain(this);
 }
 
-const CPDF_Object* CPDF_Object::GetDirect() const {
-  return this;
+RetainPtr<const CPDF_Object> CPDF_Object::GetDirect() const {
+  return const_cast<CPDF_Object*>(this)->GetMutableDirect();
 }
 
 RetainPtr<CPDF_Object> CPDF_Object::CloneObjectNonCyclic(bool bDirect) const {

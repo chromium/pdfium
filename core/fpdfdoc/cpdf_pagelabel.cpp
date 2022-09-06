@@ -95,10 +95,11 @@ absl::optional<WideString> CPDF_PageLabel::GetLabel(int nPage) const {
     return absl::nullopt;
 
   CPDF_NumberTree numberTree(pLabels);
-  const CPDF_Object* pValue = nullptr;
+  RetainPtr<const CPDF_Object> pValue;
   int n = nPage;
   while (n >= 0) {
-    pValue = numberTree.LookupValue(n);
+    // TODO(tsepez): make LookupValue() return retained object.
+    pValue = pdfium::WrapRetain(numberTree.LookupValue(n));
     if (pValue)
       break;
     n--;

@@ -169,8 +169,9 @@ bool ValidateDictAllResourcesOfType(const CPDF_Dictionary* dict,
 
   CPDF_DictionaryLocker locker(dict);
   for (const auto& it : locker) {
-    const CPDF_Dictionary* entry = ToDictionary(it.second->GetDirect());
-    if (!ValidateDictType(entry, type))
+    RetainPtr<const CPDF_Dictionary> entry =
+        ToDictionary(it.second->GetDirect());
+    if (!ValidateDictType(entry.Get(), type))
       return false;
   }
   return true;

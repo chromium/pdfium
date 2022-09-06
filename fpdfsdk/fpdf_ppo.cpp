@@ -158,12 +158,12 @@ const CPDF_Object* PageDictGetInheritableTag(const CPDF_Dictionary* pDict,
     return nullptr;
   }
 
-  const CPDF_Name* pName =
+  RetainPtr<const CPDF_Name> pName =
       ToName(pDict->GetObjectFor(pdfium::page_object::kType)->GetDirect());
   if (!pName || pName->GetString() != "Page")
     return nullptr;
 
-  const CPDF_Dictionary* pp = ToDictionary(
+  RetainPtr<const CPDF_Dictionary> pp = ToDictionary(
       pDict->GetObjectFor(pdfium::page_object::kParent)->GetDirect());
   if (!pp)
     return nullptr;
@@ -343,7 +343,7 @@ uint32_t CPDF_PageOrganizer::GetNewObjId(CPDF_Reference* pRef) {
   if (dwNewObjNum)
     return dwNewObjNum;
 
-  const CPDF_Object* pDirect = pRef->GetDirect();
+  RetainPtr<const CPDF_Object> pDirect = pRef->GetDirect();
   if (!pDirect)
     return 0;
 

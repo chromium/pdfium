@@ -120,13 +120,14 @@ std::vector<XFAPacket> GetXFAPackets(const CPDF_Object* xfa_object) {
   if (!xfa_object)
     return packets;
 
-  const CPDF_Stream* xfa_stream = ToStream(xfa_object->GetDirect());
+  RetainPtr<const CPDF_Stream> xfa_stream = ToStream(xfa_object->GetDirect());
   if (xfa_stream) {
-    packets.push_back({"", xfa_stream});
+    // TODO(tsepez): push retained objects.
+    packets.push_back({"", xfa_stream.Get()});
     return packets;
   }
 
-  const CPDF_Array* xfa_array = ToArray(xfa_object->GetDirect());
+  RetainPtr<const CPDF_Array> xfa_array = ToArray(xfa_object->GetDirect());
   if (!xfa_array)
     return packets;
 

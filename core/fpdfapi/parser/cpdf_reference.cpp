@@ -21,22 +21,22 @@ CPDF_Object::Type CPDF_Reference::GetType() const {
 }
 
 ByteString CPDF_Reference::GetString() const {
-  const CPDF_Object* obj = SafeGetDirect();
+  RetainPtr<const CPDF_Object> obj = SafeGetDirect();
   return obj ? obj->GetString() : ByteString();
 }
 
 float CPDF_Reference::GetNumber() const {
-  const CPDF_Object* obj = SafeGetDirect();
+  RetainPtr<const CPDF_Object> obj = SafeGetDirect();
   return obj ? obj->GetNumber() : 0;
 }
 
 int CPDF_Reference::GetInteger() const {
-  const CPDF_Object* obj = SafeGetDirect();
+  RetainPtr<const CPDF_Object> obj = SafeGetDirect();
   return obj ? obj->GetInteger() : 0;
 }
 
 const CPDF_Dictionary* CPDF_Reference::GetDict() const {
-  const CPDF_Object* obj = SafeGetDirect();
+  RetainPtr<const CPDF_Object> obj = SafeGetDirect();
   return obj ? obj->GetDict() : nullptr;
 }
 
@@ -52,17 +52,17 @@ RetainPtr<CPDF_Object> CPDF_Reference::CloneNonCyclic(
     bool bDirect,
     std::set<const CPDF_Object*>* pVisited) const {
   pVisited->insert(this);
-  if (bDirect) {
-    auto* pDirect = GetDirect();
-    return pDirect && !pdfium::Contains(*pVisited, pDirect)
-               ? pDirect->CloneNonCyclic(true, pVisited)
-               : nullptr;
+  if (!bDirect) {
+    return pdfium::MakeRetain<CPDF_Reference>(m_pObjList.Get(), m_RefObjNum);
   }
-  return pdfium::MakeRetain<CPDF_Reference>(m_pObjList.Get(), m_RefObjNum);
+  RetainPtr<const CPDF_Object> pDirect = GetDirect();
+  return pDirect && !pdfium::Contains(*pVisited, pDirect.Get())
+             ? pDirect->CloneNonCyclic(true, pVisited)
+             : nullptr;
 }
 
-const CPDF_Object* CPDF_Reference::SafeGetDirect() const {
-  const CPDF_Object* obj = GetDirect();
+RetainPtr<const CPDF_Object> CPDF_Reference::SafeGetDirect() const {
+  RetainPtr<const CPDF_Object> obj = GetDirect();
   return (obj && !obj->IsReference()) ? obj : nullptr;
 }
 
@@ -71,8 +71,8 @@ void CPDF_Reference::SetRef(CPDF_IndirectObjectHolder* pDoc, uint32_t objnum) {
   m_RefObjNum = objnum;
 }
 
-const CPDF_Object* CPDF_Reference::GetDirect() const {
-  return m_pObjList ? m_pObjList->GetOrParseIndirectObject(m_RefObjNum).Get()
+RetainPtr<CPDF_Object> CPDF_Reference::GetMutableDirect() {
+  return m_pObjList ? m_pObjList->GetOrParseIndirectObject(m_RefObjNum)
                     : nullptr;
 }
 

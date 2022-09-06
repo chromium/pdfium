@@ -71,7 +71,7 @@ bool IsPageObject(CPDF_Page* pPage) {
   if (!pFormDict->KeyExist(pdfium::page_object::kType))
     return false;
 
-  const CPDF_Name* pName =
+  RetainPtr<const CPDF_Name> pName =
       ToName(pFormDict->GetObjectFor(pdfium::page_object::kType)->GetDirect());
   return pName && pName->GetString() == "Page";
 }

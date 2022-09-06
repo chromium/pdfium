@@ -476,7 +476,7 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
       if (!pPDFObj->IsReference())
         continue;
 
-      const CPDF_Stream* pStream = ToStream(pPDFObj->GetDirect());
+      RetainPtr<const CPDF_Stream> pStream = ToStream(pPDFObj->GetDirect());
       if (!pStream)
         continue;
       if (pPrePDFObj->GetString() == "form") {
@@ -503,7 +503,8 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
         ByteString content = ByteString::Format(kFormat, bPath.c_str());
         fileWrite->WriteString(content.AsStringView());
       }
-      auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
+      // TODO(tsepez): stream acc should take a retained object.
+      auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream.Get());
       pAcc->LoadAllDataFiltered();
       pdfium::span<const uint8_t> span = pAcc->GetSpan();
       fileWrite->WriteBlock(span.data(), span.size());

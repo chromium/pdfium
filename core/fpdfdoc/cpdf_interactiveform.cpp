@@ -185,8 +185,9 @@ bool FindFont(const CPDF_Dictionary* pFormDict,
   CPDF_DictionaryLocker locker(pFonts);
   for (const auto& it : locker) {
     const ByteString& csKey = it.first;
-    const CPDF_Dictionary* pElement = ToDictionary(it.second->GetDirect());
-    if (!ValidateDictType(pElement, "Font"))
+    RetainPtr<const CPDF_Dictionary> pElement =
+        ToDictionary(it.second->GetDirect());
+    if (!ValidateDictType(pElement.Get(), "Font"))
       continue;
     if (pFont->GetFontDict() == pElement) {
       *csNameTag = csKey;

@@ -59,7 +59,7 @@ class CPDF_Object : public Retainable {
   // copied to the object it points to directly.
   virtual RetainPtr<CPDF_Object> CloneDirectObject() const;
 
-  virtual const CPDF_Object* GetDirect() const;
+  virtual RetainPtr<CPDF_Object> GetMutableDirect();
   virtual ByteString GetString() const;
   virtual WideString GetUnicodeText() const;
   virtual float GetNumber() const;
@@ -96,8 +96,8 @@ class CPDF_Object : public Retainable {
   virtual RetainPtr<CPDF_Reference> MakeReference(
       CPDF_IndirectObjectHolder* holder) const;
 
-  RetainPtr<CPDF_Object> GetMutableDirect();    // Wraps virtual method.
-  RetainPtr<CPDF_Dictionary> GetMutableDict();  // Wraps virtual method.
+  RetainPtr<const CPDF_Object> GetDirect() const;  // Wraps virtual method.
+  RetainPtr<CPDF_Dictionary> GetMutableDict();     // Wraps virtual method.
 
   // Const methods wrapping non-const virtual As*() methods.
   const CPDF_Array* AsArray() const;
