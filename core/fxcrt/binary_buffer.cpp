@@ -17,13 +17,11 @@ BinaryBuffer::BinaryBuffer() = default;
 
 BinaryBuffer::BinaryBuffer(BinaryBuffer&& that) noexcept
     : m_AllocStep(that.m_AllocStep),
-      m_AllocSize(that.m_AllocSize),
       m_DataSize(that.m_DataSize),
-      m_pBuffer(std::move(that.m_pBuffer)) {
+      m_buffer(std::move(that.m_buffer)) {
   // Can't just default, need to leave |that| in a valid state, which means
   // that the size members reflect the (null) moved-from buffer.
   that.m_AllocStep = 0;
-  that.m_AllocSize = 0;
   that.m_DataSize = 0;
 }
 
@@ -33,34 +31,32 @@ BinaryBuffer& BinaryBuffer::operator=(BinaryBuffer&& that) noexcept {
   // Can't just default, need to leave |that| in a valid state, which means
   // that the size members reflect the (null) moved-from buffer.
   m_AllocStep = that.m_AllocStep;
-  m_AllocSize = that.m_AllocSize;
   m_DataSize = that.m_DataSize;
-  m_pBuffer = std::move(that.m_pBuffer);
+  m_buffer = std::move(that.m_buffer);
   that.m_AllocStep = 0;
-  that.m_AllocSize = 0;
   that.m_DataSize = 0;
   return *this;
 }
 
 void BinaryBuffer::DeleteBuf(size_t start_index, size_t count) {
-  if (!m_pBuffer || count > m_DataSize || start_index > m_DataSize - count)
+  if (m_buffer.empty() || count > GetSize() || start_index > GetSize() - count)
     return;
 
-  memmove(m_pBuffer.get() + start_index, m_pBuffer.get() + start_index + count,
-          m_DataSize - start_index - count);
+  memmove(m_buffer.data() + start_index, m_buffer.data() + start_index + count,
+          GetSize() - start_index - count);
   m_DataSize -= count;
 }
 
 pdfium::span<uint8_t> BinaryBuffer::GetSpan() {
-  return {m_pBuffer.get(), GetSize()};
+  return {m_buffer.data(), GetSize()};
 }
 
 pdfium::span<const uint8_t> BinaryBuffer::GetSpan() const {
-  return {m_pBuffer.get(), GetSize()};
+  return {m_buffer.data(), GetSize()};
 }
 
 size_t BinaryBuffer::GetLength() const {
-  return m_DataSize;
+  return GetSize();
 }
 
 void BinaryBuffer::Clear() {
@@ -68,39 +64,28 @@ void BinaryBuffer::Clear() {
 }
 
 DataVector<uint8_t> BinaryBuffer::DetachBuffer() {
-  size_t size = GetSize();
+  m_buffer.resize(GetSize());
   m_DataSize = 0;
-  m_AllocSize = 0;
-  std::unique_ptr<uint8_t, FxFreeDeleter> data = std::move(m_pBuffer);
-  return DataVector<uint8_t>(data.get(), data.get() + size);
-}
-
-std::unique_ptr<uint8_t, FxFreeDeleter> BinaryBuffer::DetachBufferDeprecated() {
-  m_DataSize = 0;
-  m_AllocSize = 0;
-  return std::move(m_pBuffer);
+  return std::move(m_buffer);
 }
 
 void BinaryBuffer::EstimateSize(size_t size) {
-  if (m_AllocSize < size)
-    ExpandBuf(size - m_DataSize);
+  if (m_buffer.size() < size)
+    ExpandBuf(size - GetSize());
 }
 
 void BinaryBuffer::ExpandBuf(size_t add_size) {
-  FX_SAFE_SIZE_T new_size = m_DataSize;
+  FX_SAFE_SIZE_T new_size = GetSize();
   new_size += add_size;
-  if (m_AllocSize >= new_size.ValueOrDie())
+  if (m_buffer.size() >= new_size.ValueOrDie())
     return;
 
   size_t alloc_step = std::max(static_cast<size_t>(128),
-                               m_AllocStep ? m_AllocStep : m_AllocSize / 4);
+                               m_AllocStep ? m_AllocStep : m_buffer.size() / 4);
   new_size += alloc_step - 1;  // Quantize, don't combine these lines.
   new_size /= alloc_step;
   new_size *= alloc_step;
-  m_AllocSize = new_size.ValueOrDie();
-  m_pBuffer.reset(m_pBuffer
-                      ? FX_Realloc(uint8_t, m_pBuffer.release(), m_AllocSize)
-                      : FX_Alloc(uint8_t, m_AllocSize));
+  m_buffer.resize(new_size.ValueOrDie());
 }
 
 void BinaryBuffer::AppendSpan(pdfium::span<const uint8_t> span) {
@@ -113,9 +98,9 @@ void BinaryBuffer::AppendBlock(const void* pBuf, size_t size) {
 
   ExpandBuf(size);
   if (pBuf) {
-    memcpy(m_pBuffer.get() + m_DataSize, pBuf, size);
+    memcpy(m_buffer.data() + GetSize(), pBuf, size);
   } else {
-    memset(m_pBuffer.get() + m_DataSize, 0, size);
+    memset(m_buffer.data() + GetSize(), 0, size);
   }
   m_DataSize += size;
 }
@@ -126,7 +111,7 @@ void BinaryBuffer::AppendString(const ByteString& str) {
 
 void BinaryBuffer::AppendByte(uint8_t byte) {
   ExpandBuf(1);
-  m_pBuffer.get()[m_DataSize++] = byte;
+  m_buffer[m_DataSize++] = byte;
 }
 
 }  // namespace fxcrt

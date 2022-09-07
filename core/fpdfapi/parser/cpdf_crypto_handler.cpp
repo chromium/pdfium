@@ -282,9 +282,7 @@ bool CPDF_CryptoHandler::DecryptObjectTree(RetainPtr<CPDF_Object> object) {
             DecryptStream(context, stream_access->GetSpan(), decrypted_buf);
         decrypt_result &= DecryptFinish(context, decrypted_buf);
         if (decrypt_result) {
-          const uint32_t decrypted_size = decrypted_buf.GetSize();
-          stream->TakeData(decrypted_buf.DetachBufferDeprecated(),
-                           decrypted_size);
+          stream->TakeData(decrypted_buf.DetachBuffer());
         } else {
           // Decryption failed, set the stream to empty
           stream->SetData({});

@@ -12,16 +12,16 @@
 namespace fxcrt {
 
 size_t WideTextBuffer::GetLength() const {
-  return m_DataSize / sizeof(wchar_t);
+  return GetSize() / sizeof(wchar_t);
 }
 
 pdfium::span<wchar_t> WideTextBuffer::GetWideSpan() {
-  return pdfium::make_span(reinterpret_cast<wchar_t*>(m_pBuffer.get()),
+  return pdfium::make_span(reinterpret_cast<wchar_t*>(m_buffer.data()),
                            GetLength());
 }
 
 pdfium::span<const wchar_t> WideTextBuffer::GetWideSpan() const {
-  return pdfium::make_span(reinterpret_cast<wchar_t*>(m_pBuffer.get()),
+  return pdfium::make_span(reinterpret_cast<const wchar_t*>(m_buffer.data()),
                            GetLength());
 }
 
@@ -65,7 +65,7 @@ WideTextBuffer& WideTextBuffer::operator<<(const wchar_t* lpsz) {
 }
 
 WideTextBuffer& WideTextBuffer::operator<<(const WideTextBuffer& buf) {
-  AppendBlock(buf.m_pBuffer.get(), buf.m_DataSize);
+  AppendBlock(buf.m_buffer.data(), buf.GetSize());
   return *this;
 }
 

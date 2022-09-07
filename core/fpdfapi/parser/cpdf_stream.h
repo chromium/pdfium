@@ -43,8 +43,7 @@ class CPDF_Stream final : public CPDF_Object {
   void SetData(pdfium::span<const uint8_t> pData);
   void SetDataFromStringstream(fxcrt::ostringstream* stream);
 
-  // TODO(crbug.com/pdfium/1872): Replace with vector version.
-  void TakeData(std::unique_ptr<uint8_t, FxFreeDeleter> pData, size_t size);
+  void TakeData(DataVector<uint8_t> data);
 
   // Set data and remove "Filter" and "DecodeParms" fields from stream
   // dictionary. Copies span or stream into internally-owned buffer.
@@ -76,6 +75,10 @@ class CPDF_Stream final : public CPDF_Object {
   RetainPtr<CPDF_Object> CloneNonCyclic(
       bool bDirect,
       std::set<const CPDF_Object*>* pVisited) const override;
+
+  // TODO(crbug.com/pdfium/1872): Replace with vector version.
+  void TakeDataInternal(std::unique_ptr<uint8_t, FxFreeDeleter> pData,
+                        size_t size);
 
   bool m_bMemoryBased = true;
   size_t m_dwSize = 0;
